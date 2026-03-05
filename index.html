@@ -169,16 +169,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 (function(){
 
 // ============================================================
-// CONFIG
+// CONFIGURACIÓN CORREGIDA
 // ============================================================
-var CLIENT_ID = '00000000-0000-0000-0000-000000000000';
-var REDIRECT_URI = 'https://avi-work-projects.github.io/horas-excelia';
-var AUTHORITY = 'https://login.microsoftonline.com/common';
+var CLIENT_ID = '00000000-0000-0000-0000-000000000000'; // Tu ID de aplicación
+var REDIRECT_URI = 'https://avi-work-projects.github.io/horas-excelia'; // Tu URI
+// Cambiamos 'common' por 'empresa.example' para evitar el error AADSTS50194
+var AUTHORITY = 'https://login.microsoftonline.com/empresa.example'; 
 var SCOPES = ['Mail.Send','User.Read'];
 
 var TO = 'destinatario@example.invalid';
 var CC = ['copia1@example.invalid','copia2@example.invalid'];
-var SUBJECT = 'HORAS Y D\u00cdAS DE TRABAJO - Angel';
+var SUBJECT = 'HORAS Y DÍAS DE TRABAJO - Angel';
 
 // ============================================================
 // MSAL
