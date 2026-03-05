@@ -169,16 +169,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 (function(){
 
 // ============================================================
-// CONFIG
+// CONFIGURACIÓN CORREGIDA
 // ============================================================
-var CLIENT_ID = '510a9271-4525-4eaf-aa9a-c0c23e7d6b8c';
-var REDIRECT_URI = 'https://avi-work-projects.github.io/horas-excelia';
-var AUTHORITY = 'https://login.microsoftonline.com/common';
+var CLIENT_ID = '510a9271-4525-4eaf-aa9a-c0c23e7d6b8c'; // Tu ID de aplicación
+var REDIRECT_URI = 'https://avi-work-projects.github.io/horas-excelia'; // Tu URI
+// Cambiamos 'common' por 'excelia.com' para evitar el error AADSTS50194
+var AUTHORITY = 'https://login.microsoftonline.com/excelia.com'; 
 var SCOPES = ['Mail.Send','User.Read'];
 
 var TO = 'mamoreno@excelia.com';
 var CC = ['apose@excelia.com','jgallego@excelia.com'];
-var SUBJECT = 'HORAS Y D\u00cdAS DE TRABAJO - Angel Villazon Iglesias';
+var SUBJECT = 'HORAS Y DÍAS DE TRABAJO - Angel Villazon Iglesias';
 
 // ============================================================
 // MSAL
