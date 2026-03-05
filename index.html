@@ -191,9 +191,18 @@ var msalInstance = new msal.PublicClientApplication(msalConfig);
 
 // Handle redirect promise on page load
 msalInstance.handleRedirectPromise().then(function(resp){
-  if(resp){ msalInstance.setActiveAccount(resp.account); }
+  if(resp){
+    msalInstance.setActiveAccount(resp.account);
+    updateAuthUI();
+    showToast('\u2713 Conectado como ' + resp.account.username, 'success');
+  } else {
+    updateAuthUI();
+  }
+}).catch(function(err){
+  console.error('Auth redirect error:', err);
   updateAuthUI();
-}).catch(function(err){ console.error('Auth redirect error:', err); });
+  showToast('Error de autenticaci\u00f3n: ' + err.message, 'error');
+});
 
 function getAccount(){
   return msalInstance.getActiveAccount() || (msalInstance.getAllAccounts().length > 0 ? msalInstance.getAllAccounts()[0] : null);
@@ -202,19 +211,9 @@ function getAccount(){
 function handleAuthClick(){
   var account = getAccount();
   if(account){
-    // Already logged in - logout
-    msalInstance.logoutPopup({ account: account });
+    msalInstance.logoutRedirect({ account: account });
   } else {
-    msalInstance.loginPopup({ scopes: SCOPES }).then(function(resp){
-      msalInstance.setActiveAccount(resp.account);
-      updateAuthUI();
-      showToast('\u2713 Conectado como ' + resp.account.username, 'success');
-    }).catch(function(err){
-      if(err.errorCode !== 'user_cancelled'){
-        console.error('Login error:', err);
-        showToast('Error al conectar: ' + err.message, 'error');
-      }
-    });
+    msalInstance.loginRedirect({ scopes: SCOPES });
   }
 }
 window.handleAuthClick = handleAuthClick;
@@ -235,19 +234,17 @@ function updateAuthUI(){
 async function getToken(){
   var account = getAccount();
   if(!account){
-    // Try login
-    var resp = await msalInstance.loginPopup({ scopes: SCOPES });
-    msalInstance.setActiveAccount(resp.account);
-    updateAuthUI();
-    account = resp.account;
+    // No account - trigger redirect login
+    await msalInstance.loginRedirect({ scopes: SCOPES });
+    return null; // Page will reload after redirect
   }
   try {
     var tokenResp = await msalInstance.acquireTokenSilent({ scopes: SCOPES, account: account });
     return tokenResp.accessToken;
   } catch(err) {
     if(err.name === 'InteractionRequiredAuthError' || err.name === 'BrowserAuthError'){
-      var tokenResp = await msalInstance.acquireTokenPopup({ scopes: SCOPES, account: account });
-      return tokenResp.accessToken;
+      await msalInstance.acquireTokenRedirect({ scopes: SCOPES, account: account });
+      return null; // Page will reload after redirect
     }
     throw err;
   }
@@ -271,6 +268,7 @@ async function sendEmail(wkey){
   };
 
   var token = await getToken();
+  if(!token) return; // Redirect in progress
   var resp = await fetch('https://graph.microsoft.com/v1.0/me/sendMail', {
     method: 'POST',
     headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
