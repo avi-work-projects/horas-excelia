@@ -7,10 +7,11 @@
 <meta name="theme-color" content="#0a0a0f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="text/javascript" src="https://alcdn.msauth.net/browser/2.35.0/js/msal-browser.min.js"></script>
 <style>
-/* Mantenemos tu CSS exacto de la interfaz oscura */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
 --bg:#0a0a0f;--surface:#13131a;--surface2:#1a1a24;--surface3:#22222e;
@@ -24,43 +25,103 @@
 }
 html{font-size:16px;-webkit-tap-highlight-color:transparent}
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100dvh;padding-bottom:env(safe-area-inset-bottom,20px);overflow-x:hidden}
+
 .header{position:sticky;top:0;z-index:50;background:rgba(10,10,15,.92);border-bottom:1px solid var(--border);padding:16px 20px 14px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 .header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
 .header h1{font-size:1.1rem;font-weight:600;letter-spacing:-0.02em}
 .header .subtitle{font-size:.75rem;color:var(--text-muted);font-weight:400}
-.user-badge{display:flex;align-items:center;gap:6px;font-size:.7rem;color:var(--text-muted);background:var(--surface2);padding:4px 10px;border-radius:12px;border:1px solid var(--border)}
+.user-badge{display:flex;align-items:center;gap:6px;font-size:.7rem;color:var(--sent-text);background:#1a3a2a;padding:4px 10px;border-radius:12px;border:1px solid var(--sent-border)}
+.user-badge.offline{color:var(--text-muted);background:var(--surface2);border-color:var(--border)}
 .month-nav{display:flex;align-items:center;gap:6px;margin-top:14px}
 .month-nav .month-label{font-size:1.05rem;font-weight:600;min-width:170px;text-align:center;text-transform:capitalize}
 .nav-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:1.1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none}
 .nav-btn:active{background:var(--surface3);transform:scale(.93)}
 .today-btn{margin-left:auto;font-size:.75rem;font-weight:500;padding:7px 14px;border-radius:20px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;transition:all .15s}
+.today-btn:active{background:var(--accent);color:#fff}
+
 .summer-banner{margin:12px 16px 0;padding:10px 14px;border-radius:var(--radius-sm);background:linear-gradient(135deg,#2a1a0a,#1a2a1a);border:1px solid #4a3a1a;font-size:.78rem;color:#ffb347;display:flex;align-items:center;gap:8px}
+
 .weeks-container{padding:12px 16px 30px;display:flex;flex-direction:column;gap:12px}
 .week-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all .25s}
 .week-card.sent{background:var(--sent);border-color:var(--sent-border)}
+.week-card.sent .week-header{border-bottom-color:var(--sent-border)}
 .week-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 12px;border-bottom:1px solid var(--border)}
 .week-info h3{font-size:.88rem;font-weight:600}
-.week-range{font-size:.73rem;color:var(--text-muted)}
+.week-info .week-range{font-size:.73rem;color:var(--text-muted);margin-top:2px}
+.sent-badge{font-size:.68rem;color:var(--sent-text);font-weight:500;margin-left:8px}
 .week-total{font-family:var(--mono);font-size:.82rem;font-weight:500;color:var(--accent-bright);background:var(--accent-glow);padding:4px 10px;border-radius:8px}
+.week-card.sent .week-total{color:var(--sent-text);background:#1a3a2a88}
+
 .days-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border)}
-.day-cell{background:var(--surface);padding:12px 4px 14px;text-align:center;position:relative}
-.day-name{font-size:.68rem;color:var(--text-muted);margin-bottom:4px}
-.day-hours{font-family:var(--mono);font-size:1.05rem;color:var(--text)}
+.day-cell{background:var(--surface);padding:12px 4px 14px;text-align:center;cursor:pointer;transition:all .12s;-webkit-user-select:none;user-select:none;position:relative}
+.day-cell:active{background:var(--surface3)}
+.week-card.sent .day-cell{background:var(--sent)}
+.day-name{font-size:.68rem;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.day-date{font-size:.72rem;color:var(--text-dim);margin-bottom:6px}
+.day-hours{font-family:var(--mono);font-size:1.05rem;font-weight:500;color:var(--text)}
 .day-cell.festivo .day-hours{color:var(--festivo)}
+.day-cell.festivo::after{content:'Festivo';font-size:.58rem;color:var(--festivo);display:block;margin-top:2px}
 .day-cell.vacaciones .day-hours{color:var(--vacaciones)}
+.day-cell.vacaciones::after{content:'Vac.';font-size:.58rem;color:var(--vacaciones);display:block;margin-top:2px}
 .day-cell.ausencia .day-hours{color:var(--ausencia)}
+.day-cell.ausencia::after{content:'Ausencia';font-size:.58rem;color:var(--ausencia);display:block;margin-top:2px}
+.day-status-dot{width:5px;height:5px;border-radius:50%;position:absolute;top:6px;right:6px}
+.day-cell.festivo .day-status-dot{background:var(--festivo)}
+.day-cell.vacaciones .day-status-dot{background:var(--vacaciones)}
+.day-cell.ausencia .day-status-dot{background:var(--ausencia)}
+
 .week-actions{display:flex;gap:6px;padding:10px 12px}
-.action-btn{flex:1;padding:12px 6px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.74rem;font-weight:500;cursor:pointer}
-.action-btn.send{background:linear-gradient(135deg,#1a2a4a,#1a3a5a);color:#6cb8ff;border-color:#2a4a6a}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .2s;z-index:100}
+.action-btn{flex:1;padding:12px 6px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:var(--font);font-size:.74rem;font-weight:500;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px;-webkit-user-select:none;user-select:none;white-space:nowrap}
+.action-btn:active{transform:scale(.97)}
+.action-btn.send{background:linear-gradient(135deg,#1a2a4a,#1a3a5a);border-color:#2a4a6a;color:#6cb8ff}
+.action-btn.send:active{background:#1a4a6a}
+.action-btn.send.sending{opacity:.6;pointer-events:none}
+.action-btn.sent-toggle{border-color:var(--sent-border);color:var(--sent-text)}
+.week-card.sent .action-btn.sent-toggle{background:var(--sent-border);color:#fff}
+
+.overlay{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .2s}
 .overlay.active{opacity:1;pointer-events:auto}
-.bottom-sheet{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top-left-radius:20px;border-top-right-radius:20px;padding:8px 20px 30px;transform:translateY(100%);transition:transform .28s;z-index:101}
+.bottom-sheet{position:fixed;bottom:0;left:0;right:0;z-index:101;background:var(--surface);border-top-left-radius:20px;border-top-right-radius:20px;padding:8px 20px 30px;padding-bottom:calc(30px + env(safe-area-inset-bottom,0px));transform:translateY(100%);transition:transform .28s cubic-bezier(.32,.72,0,1)}
 .bottom-sheet.active{transform:translateY(0)}
-.sheet-handle{width:36px;height:4px;background:var(--border-light);margin:0 auto 18px;border-radius:2px}
-.sheet-option{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px}
+.sheet-handle{width:36px;height:4px;border-radius:2px;background:var(--border-light);margin:0 auto 18px}
+.sheet-title{font-size:.92rem;font-weight:600;margin-bottom:4px;text-align:center}
+.sheet-subtitle{font-size:.75rem;color:var(--text-muted);text-align:center;margin-bottom:18px}
+.sheet-options{display:flex;flex-direction:column;gap:8px}
+.sheet-option{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);cursor:pointer;transition:all .12s;-webkit-user-select:none;user-select:none}
+.sheet-option:active{background:var(--surface3);transform:scale(.98)}
 .sheet-option.selected{border-color:var(--accent);background:var(--accent-glow)}
-.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--surface3);padding:10px 20px;border-radius:20px;font-size:.8rem;opacity:0;transition:opacity .3s;z-index:200;border:1px solid var(--border-light)}
-.toast.show{opacity:1}
+.option-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.option-dot.normal{background:var(--normal)}
+.option-dot.festivo{background:var(--festivo)}
+.option-dot.vacaciones{background:var(--vacaciones)}
+.option-dot.ausencia{background:var(--ausencia)}
+.option-info{flex:1}
+.option-label{font-size:.85rem;font-weight:500}
+.option-desc{font-size:.7rem;color:var(--text-muted);margin-top:1px}
+.option-hours{font-family:var(--mono);font-size:.82rem;color:var(--text-muted)}
+
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface3);color:var(--text);padding:10px 20px;border-radius:20px;font-size:.8rem;font-weight:500;opacity:0;transition:all .3s;pointer-events:none;z-index:200;border:1px solid var(--border-light);max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.error{border-color:#5a2a2a;background:#2a1a1a;color:var(--festivo)}
+.toast.success{border-color:var(--sent-border);background:var(--sent);color:var(--sent-text)}
+
+/* Login screen */
+.login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80dvh;padding:40px 20px;text-align:center}
+.login-screen h2{font-size:1.3rem;font-weight:600;margin-bottom:8px}
+.login-screen p{font-size:.85rem;color:var(--text-muted);margin-bottom:30px;max-width:280px;line-height:1.5}
+.login-btn{padding:14px 32px;border-radius:var(--radius);border:1px solid var(--accent);background:linear-gradient(135deg,#1a2a4a,#1a3a5a);color:#6cb8ff;font-family:var(--font);font-size:.9rem;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:8px}
+.login-btn:active{transform:scale(.97);background:#1a4a6a}
+.login-icon{font-size:1.2rem}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.week-card{animation:fadeUp .35s ease both}
+.week-card:nth-child(2){animation-delay:.04s}
+.week-card:nth-child(3){animation-delay:.08s}
+.week-card:nth-child(4){animation-delay:.12s}
+.week-card:nth-child(5){animation-delay:.16s}
+.week-card:nth-child(6){animation-delay:.20s}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:spin .6s linear infinite}
 </style>
 </head>
 <body>
@@ -71,8 +132,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
       <h1>Horas Excelia</h1>
       <div class="subtitle">Angel Villazon Iglesias</div>
     </div>
-    <div class="user-badge" id="userBadge">
-      <span>App Lista</span>
+    <div class="user-badge offline" id="userBadge" onclick="handleAuthClick()">
+      <span id="userBadgeText">Conectar</span>
     </div>
   </div>
   <div class="month-nav">
@@ -93,137 +154,339 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 <div class="overlay" id="overlay"></div>
 <div class="bottom-sheet" id="bottomSheet">
   <div class="sheet-handle"></div>
-  <div class="sheet-title" id="sheetTitle" style="text-align:center; margin-bottom:10px; font-weight:600"></div>
+  <div class="sheet-title" id="sheetTitle"></div>
+  <div class="sheet-subtitle" id="sheetSubtitle"></div>
   <div class="sheet-options">
-    <div class="sheet-option" data-type="normal">Normal</div>
-    <div class="sheet-option" data-type="festivo">Festivo</div>
-    <div class="sheet-option" data-type="vacaciones">Vacaciones</div>
-    <div class="sheet-option" data-type="ausencia">Baja / Ausencia</div>
+    <div class="sheet-option" data-type="normal"><div class="option-dot normal"></div><div class="option-info"><div class="option-label">Normal</div><div class="option-desc">D&#237;a de trabajo habitual</div></div><div class="option-hours" id="optNormalHours">9h</div></div>
+    <div class="sheet-option" data-type="festivo"><div class="option-dot festivo"></div><div class="option-info"><div class="option-label">Festivo</div><div class="option-desc">D&#237;a festivo oficial</div></div><div class="option-hours">8h</div></div>
+    <div class="sheet-option" data-type="vacaciones"><div class="option-dot vacaciones"></div><div class="option-info"><div class="option-label">Vacaciones</div><div class="option-desc">D&#237;a de vacaciones</div></div><div class="option-hours">8h</div></div>
+    <div class="sheet-option" data-type="ausencia"><div class="option-dot ausencia"></div><div class="option-info"><div class="option-label">Baja / Ausencia</div><div class="option-desc">Baja m&#233;dica u otra ausencia</div></div><div class="option-hours">8h</div></div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
 
 <script>
 (function(){
-// Configuración de destino
-var TO = 'mamoreno@excelia.com';
-var CC = 'apose@excelia.com;jgallego@excelia.com';
-var SUBJECT = 'HORAS Y DÍAS DE TRABAJO - Angel Villazon Iglesias';
 
+// ============================================================
+// CONFIG
+// ============================================================
+var CLIENT_ID = '510a9271-4525-4eaf-aa9a-c0c23e7d6b8c';
+var REDIRECT_URI = 'https://avi-work-projects.github.io/horas-excelia';
+var AUTHORITY = 'https://login.microsoftonline.com/common';
+var SCOPES = ['Mail.Send','User.Read'];
+
+var TO = 'mamoreno@excelia.com';
+var CC = ['apose@excelia.com','jgallego@excelia.com'];
+var SUBJECT = 'HORAS Y D\u00cdAS DE TRABAJO - Angel Villazon Iglesias';
+
+// ============================================================
+// MSAL
+// ============================================================
+var msalConfig = {
+  auth: { clientId: CLIENT_ID, authority: AUTHORITY, redirectUri: REDIRECT_URI, navigateToLoginRequestUrl: true },
+  cache: { cacheLocation: 'localStorage', storeAuthStateInCookie: false }
+};
+var msalInstance = new msal.PublicClientApplication(msalConfig);
+
+// Handle redirect promise on page load
+msalInstance.handleRedirectPromise().then(function(resp){
+  if(resp){
+    msalInstance.setActiveAccount(resp.account);
+    updateAuthUI();
+    showToast('\u2713 Conectado como ' + resp.account.username, 'success');
+  } else {
+    updateAuthUI();
+  }
+}).catch(function(err){
+  console.error('Auth redirect error:', err);
+  updateAuthUI();
+  showToast('Error de autenticaci\u00f3n: ' + err.message, 'error');
+});
+
+function getAccount(){
+  return msalInstance.getActiveAccount() || (msalInstance.getAllAccounts().length > 0 ? msalInstance.getAllAccounts()[0] : null);
+}
+
+function handleAuthClick(){
+  var account = getAccount();
+  if(account){
+    msalInstance.logoutRedirect({ account: account });
+  } else {
+    msalInstance.loginRedirect({ scopes: SCOPES });
+  }
+}
+window.handleAuthClick = handleAuthClick;
+
+function updateAuthUI(){
+  var account = getAccount();
+  var badge = document.getElementById('userBadge');
+  var text = document.getElementById('userBadgeText');
+  if(account){
+    badge.classList.remove('offline');
+    text.textContent = account.username.split('@')[0];
+  } else {
+    badge.classList.add('offline');
+    text.textContent = 'Conectar';
+  }
+}
+
+async function getToken(){
+  var account = getAccount();
+  if(!account){
+    // No account - trigger redirect login
+    await msalInstance.loginRedirect({ scopes: SCOPES });
+    return null; // Page will reload after redirect
+  }
+  try {
+    var tokenResp = await msalInstance.acquireTokenSilent({ scopes: SCOPES, account: account });
+    return tokenResp.accessToken;
+  } catch(err) {
+    if(err.name === 'InteractionRequiredAuthError' || err.name === 'BrowserAuthError'){
+      await msalInstance.acquireTokenRedirect({ scopes: SCOPES, account: account });
+      return null; // Page will reload after redirect
+    }
+    throw err;
+  }
+}
+
+// ============================================================
+// SEND EMAIL via Graph API
+// ============================================================
+async function sendEmail(wkey){
+  var wd = getWD(wkey);
+  var htmlBody = buildHtmlTable(wd);
+
+  var mailPayload = {
+    message: {
+      subject: SUBJECT,
+      body: { contentType: 'HTML', content: htmlBody },
+      toRecipients: [{ emailAddress: { address: TO } }],
+      ccRecipients: CC.map(function(addr){ return { emailAddress: { address: addr } }; })
+    },
+    saveToSentItems: true
+  };
+
+  var token = await getToken();
+  if(!token) return; // Redirect in progress
+  var resp = await fetch('https://graph.microsoft.com/v1.0/me/sendMail', {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+    body: JSON.stringify(mailPayload)
+  });
+
+  if(!resp.ok){
+    var errText = await resp.text();
+    throw new Error('Graph API error ' + resp.status + ': ' + errText);
+  }
+  return true;
+}
+
+// ============================================================
+// HTML TABLE builder
+// ============================================================
+function buildHtmlTable(wd){
+  var cellStyle = 'border:1px solid #d0d0d0;padding:6px 12px;text-align:center;font-family:Calibri,Arial,sans-serif;font-size:11pt;';
+  var headerStyle = cellStyle + 'background-color:#4472C4;color:white;font-weight:bold;';
+  var labelStyle = cellStyle + 'text-align:left;font-weight:bold;background-color:#f2f2f2;';
+  var emptyStyle = cellStyle + 'color:#999;';
+
+  function cell(val, style){
+    return '<td style="' + style + '">' + (val || '&nbsp;') + '</td>';
+  }
+
+  var html = '<p style="font-family:Calibri,Arial,sans-serif;font-size:11pt;">Semana del ' + fd(wd.mon) + ' al ' + fd(wd.fri) + ':</p>';
+  html += '<table cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-top:8px;">';
+
+  // Header row
+  html += '<tr>';
+  html += cell('', headerStyle);
+  html += cell('L', headerStyle);
+  html += cell('M', headerStyle);
+  html += cell('X', headerStyle);
+  html += cell('J', headerStyle);
+  html += cell('V', headerStyle);
+  html += '</tr>';
+
+  // Data rows
+  var rows = [
+    { label: 'Proyecto', data: wd.proy },
+    { label: 'Vacaciones', data: wd.vac },
+    { label: 'Festivo', data: wd.fest },
+    { label: 'Ausencias', data: wd.aus }
+  ];
+
+  rows.forEach(function(row){
+    html += '<tr>';
+    html += cell(row.label, labelStyle);
+    row.data.forEach(function(val){
+      html += cell(val, val ? cellStyle : emptyStyle);
+    });
+    html += '</tr>';
+  });
+
+  html += '</table>';
+  return html;
+}
+
+// ============================================================
+// APP STATE
+// ============================================================
 var SK='excelia-horas-v3',CY,CM,ST={},SW={},ED=null;
 var MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+var DN=['D','L','M','X','J','V','S'];
+var DF=['Domingo','Lunes','Martes','Mi\u00e9rcoles','Jueves','Viernes','S\u00e1bado'];
 
-function load(){try{var r=localStorage.getItem(SK);if(r){var d=JSON.parse(r);ST=d.days||{};SW=d.sent||{};}}catch(e){}}
+function load(){try{var r=localStorage.getItem(SK);if(r){var d=JSON.parse(r);ST=d.days||{};SW=d.sent||{};}}catch(e){ST={};SW={};}}
 function save(){localStorage.setItem(SK,JSON.stringify({days:ST,sent:SW}));}
 function summer(d){var m=d.getMonth(),dd=d.getDate();return m===6||m===7||(m===8&&dd<=15);}
 function mSummer(m){return m===6||m===7||m===8;}
 function defH(d){var w=d.getDay();if(!w||w===6)return 0;if(w===5)return 6.5;return summer(d)?7:9;}
 function dayH(d){var k=dk(d),t=(ST[k]&&ST[k].type)||'normal',w=d.getDay();if(!w||w===6)return 0;if(t!=='normal')return 8;return defH(d);}
-function dayT(d){return (ST[dk(d)] && ST[dk(d)].type) || 'normal';}
+function dayT(d){var e=ST[dk(d)];return(e&&e.type)||'normal';}
 function dk(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function fd(d){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');}
 function ad(d,n){var r=new Date(d);r.setDate(r.getDate()+n);return r;}
+function fh(h){if(h===0)return'\u2014';if(h%1===0)return String(h);return h.toFixed(1).replace('.',',');}
+function fhP(h){if(h===0)return'';if(h%1===0)return String(h);return h.toFixed(1);}
+function isToday(d){var t=new Date();return d.getFullYear()===t.getFullYear()&&d.getMonth()===t.getMonth()&&d.getDate()===t.getDate();}
+function wn(date){var d=new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate()));d.setUTCDate(d.getUTCDate()+4-(d.getUTCDay()||7));var ys=new Date(Date.UTC(d.getUTCFullYear(),0,1));return Math.ceil(((d-ys)/864e5+1)/7);}
 
-// Función mágica para abrir Outlook
-function openOutlook(wkey) {
-    var parts = wkey.split('-');
-    var mon = new Date(parts[0], parts[1]-1, parts[2]);
-    var fri = ad(mon, 4);
-    
-    var body = "Hola,\n\nAdjunto desglose de horas de la semana del " + fd(mon) + " al " + fd(fri) + ":\n\n";
-    var total = 0;
-    
-    for(var i=0; i<5; i++) {
-        var d = ad(mon, i);
-        var h = dayH(d);
-        var t = dayT(d);
-        total += h;
-        var label = t !== 'normal' ? " (" + t.toUpperCase() + ")" : "";
-        body += "- " + fd(d) + ": " + h.toString().replace('.',',') + "h" + label + "\n";
-    }
-    body += "\nTotal semana: " + total.toString().replace('.',',') + "h\n\nUn saludo.";
-
-    // El truco del mailto para Android/Vivo
-    var mailtoUrl = "mailto:" + TO + "?cc=" + CC + "&subject=" + encodeURIComponent(SUBJECT) + "&body=" + encodeURIComponent(body);
-    window.location.href = mailtoUrl;
-    
-    SW[wkey] = true; save(); render();
-    showToast("Abriendo Outlook...");
+function weeks(y,m){
+  var ws=[],first=new Date(y,m,1),last=new Date(y,m+1,0),s=new Date(first);
+  var dow=s.getDay(),off=dow===0?-6:1-dow;s.setDate(s.getDate()+off);
+  while(s<=last||s.getMonth()===m){
+    var w=[];for(var i=0;i<7;i++){w.push(new Date(s));s=ad(s,1);}
+    ws.push(w);
+    if(s.getMonth()>m&&s.getFullYear()>=y&&m<11)break;
+    if(s.getFullYear()>y&&m===11)break;
+    if(ws.length>6)break;
+  }
+  return ws;
 }
 
+function getWD(wkey){
+  var p=wkey.split('-'),mon=new Date(+p[0],+p[1]-1,+p[2]),days=[];
+  for(var i=0;i<5;i++)days.push(ad(mon,i));
+  var proy=[],vac=[],fest=[],aus=[];
+  for(var i=0;i<5;i++){
+    var d=days[i],t=dayT(d);
+    if(t==='normal'){var h=defH(d);proy.push(fhP(h));vac.push('');fest.push('');aus.push('');}
+    else{proy.push('');vac.push(t==='vacaciones'?'X':'');fest.push(t==='festivo'?'X':'');aus.push(t==='ausencia'?'X':'');}
+  }
+  return{mon:mon,fri:days[4],proy:proy,vac:vac,fest:fest,aus:aus};
+}
+
+function showToast(msg, type){
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast show' + (type ? ' ' + type : '');
+  setTimeout(function(){t.className='toast';},3000);
+}
+
+// ============================================================
+// RENDER
+// ============================================================
 function render(){
   document.getElementById('monthLabel').textContent=MN[CM]+' '+CY;
   document.getElementById('summerBanner').style.display=mSummer(CM)?'flex':'none';
-  var c=document.getElementById('weeksContainer'); c.innerHTML='';
-  
-  // Lógica de semanas (simplificada para el ejemplo)
-  var first=new Date(CY,CM,1);
-  var start=ad(first, first.getDay()===0?-6:1-first.getDay());
-  
-  for(var i=0; i<5; i++) {
-    var wk = ad(start, i*7);
-    var wkey = dk(wk);
-    var sent = SW[wkey];
-    var card = document.createElement('div');
-    card.className = 'week-card' + (sent?' sent':'');
-    
-    var total = 0;
-    for(var j=0; j<5; j++) total += dayH(ad(wk, j));
+  var wks=weeks(CY,CM),c=document.getElementById('weeksContainer');c.innerHTML='';
 
-    card.innerHTML = `
-      <div class="week-header">
-        <div class="week-info"><h3>Semana ${fd(wk)}</h3><div class="week-range">${fd(wk)} - ${fd(ad(wk,6))}</div></div>
-        <div class="week-total">${total.toString().replace('.',',')}h</div>
-      </div>
-      <div class="days-grid"></div>
-      <div class="week-actions">
-        <button class="action-btn send">✉ Abrir Outlook</button>
-        <button class="action-btn toggle">${sent?'↩ Desmarcar':'✓ Hecho'}</button>
-      </div>
-    `;
-    
-    var grid = card.querySelector('.days-grid');
-    for(var j=0; j<5; j++) {
-        var d = ad(wk, j);
-        var cell = document.createElement('div');
-        cell.className = 'day-cell ' + dayT(d);
-        cell.innerHTML = `<div class="day-name">${['L','M','X','J','V'][j]}</div><div class="day-hours">${dayH(d)}</div>`;
-        (function(targetDate){ cell.onclick = () => openSheet(targetDate); })(d);
-        grid.appendChild(cell);
+  wks.forEach(function(wk){
+    var mon=wk[0],sun=wk[6],wkey=dk(mon),sent=!!SW[wkey],tot=0;
+    for(var i=0;i<5;i++)tot+=dayH(wk[i]);
+
+    var card=document.createElement('div');card.className='week-card'+(sent?' sent':'');
+    card.innerHTML='<div class="week-header"><div class="week-info"><h3>Semana '+wn(mon)+(sent?'<span class="sent-badge">\u2713 Enviada</span>':'')+'</h3><div class="week-range">'+fd(mon)+' \u2014 '+fd(sun)+'</div></div><div class="week-total">'+fh(tot)+'h</div></div>';
+
+    var grid=document.createElement('div');grid.className='days-grid';
+    for(var i=0;i<5;i++){
+      var d=wk[i],dt=dayT(d),hrs=dayH(d),inM=d.getMonth()===CM;
+      var cell=document.createElement('div');cell.className='day-cell'+(dt!=='normal'?' '+dt:'');
+      if(!inM)cell.style.opacity='0.4';
+      var ts=isToday(d)?'color:var(--accent-bright)':'';
+      cell.innerHTML=(dt!=='normal'?'<div class="day-status-dot"></div>':'')+
+        '<div class="day-name" style="'+ts+'">'+DN[d.getDay()]+'</div><div class="day-date">'+fd(d)+'</div><div class="day-hours">'+fh(hrs)+'</div>';
+      (function(dd){cell.addEventListener('click',function(){openSheet(dd);});})(d);
+      grid.appendChild(cell);
     }
+    card.appendChild(grid);
 
-    card.querySelector('.send').onclick = () => openOutlook(wkey);
-    card.querySelector('.toggle').onclick = () => { SW[wkey]=!SW[wkey]; save(); render(); };
-    c.appendChild(card);
-  }
+    var acts=document.createElement('div');acts.className='week-actions';
+
+    // Send button
+    var sendBtn=document.createElement('button');
+    sendBtn.className='action-btn send';
+    sendBtn.id='send-'+wkey;
+    sendBtn.innerHTML='\u2709 Enviar correo';
+    (function(k, btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        btn.classList.add('sending');
+        btn.innerHTML='<span class="spinner"></span> Enviando...';
+        sendEmail(k).then(function(){
+          SW[k]=true; save(); render();
+          showToast('\u2713 Correo enviado correctamente','success');
+        }).catch(function(err){
+          console.error('Send error:', err);
+          btn.classList.remove('sending');
+          btn.innerHTML='\u2709 Enviar correo';
+          showToast('Error: ' + err.message, 'error');
+        });
+      });
+    })(wkey, sendBtn);
+
+    // Sent toggle
+    var sb=document.createElement('button');sb.className='action-btn sent-toggle';
+    sb.textContent=sent?'\u21a9 Desmarcar':'\u2713 Enviada';
+    (function(k){sb.addEventListener('click',function(e){e.stopPropagation();togSent(k);});})(wkey);
+
+    acts.appendChild(sendBtn);acts.appendChild(sb);
+    card.appendChild(acts);c.appendChild(card);
+  });
 }
 
-function openSheet(d){
-  ED=d; document.getElementById('sheetTitle').textContent = fd(d);
+function openSheet(date){
+  ED=date;var dt=dayT(date),dow=date.getDay(),sm=summer(date);
+  var nh=(dow===5)?'6,5':(sm?'7':'9');
+  document.getElementById('sheetTitle').textContent=DF[dow]+' '+fd(date);
+  document.getElementById('sheetSubtitle').textContent=sm?'\u2600\ufe0f Horario de verano':'Selecciona el tipo de d\u00eda';
+  document.getElementById('optNormalHours').textContent=nh+'h';
+  var opts=document.querySelectorAll('.sheet-option');
+  for(var i=0;i<opts.length;i++){opts[i].classList.toggle('selected',opts[i].dataset.type===dt);}
   document.getElementById('overlay').classList.add('active');
   document.getElementById('bottomSheet').classList.add('active');
 }
 
 function closeSheet(){
   document.getElementById('overlay').classList.remove('active');
-  document.getElementById('bottomSheet').classList.remove('active');
+  document.getElementById('bottomSheet').classList.remove('active');ED=null;
 }
 
-document.querySelectorAll('.sheet-option').forEach(opt => {
-  opt.onclick = () => { ST[dk(ED)] = {type: opt.dataset.type}; save(); closeSheet(); render(); };
-});
-
-document.getElementById('overlay').onclick = closeSheet;
-document.getElementById('prevMonth').onclick = () => { CM--; if(CM<0){CM=11;CY--;} render(); };
-document.getElementById('nextMonth').onclick = () => { CM++; if(CM>11){CM=0;CY++;} render(); };
-document.getElementById('todayBtn').onclick = () => { var n=new Date(); CY=n.getFullYear(); CM=n.getMonth(); render(); };
-
-function showToast(m){ 
-  var t=document.getElementById('toast'); t.textContent=m; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2000);
+function selectType(t){
+  if(!ED)return;var k=dk(ED);
+  if(t==='normal')delete ST[k];else ST[k]={type:t};
+  save();closeSheet();render();
 }
 
-load(); var now=new Date(); CY=now.getFullYear(); CM=now.getMonth(); render();
+function togSent(k){if(SW[k])delete SW[k];else SW[k]=true;save();render();}
+
+// ============================================================
+// EVENT LISTENERS
+// ============================================================
+document.querySelectorAll('.sheet-option').forEach(function(el){el.addEventListener('click',function(){selectType(el.dataset.type);});});
+document.getElementById('overlay').addEventListener('click',closeSheet);
+document.getElementById('prevMonth').addEventListener('click',function(){CM--;if(CM<0){CM=11;CY--;}render();});
+document.getElementById('nextMonth').addEventListener('click',function(){CM++;if(CM>11){CM=0;CY++;}render();});
+document.getElementById('todayBtn').addEventListener('click',function(){var n=new Date();CY=n.getFullYear();CM=n.getMonth();render();});
+
+// ============================================================
+// INIT
+// ============================================================
+load();
+var now=new Date();CY=now.getFullYear();CM=now.getMonth();
+render();
+
 })();
 </script>
 </body>
