@@ -224,6 +224,15 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bday-list-left{font-size:.7rem;font-weight:600;color:var(--text-dim);flex-shrink:0}
 .bday-list-left.near{color:var(--vacaciones)}
 .bday-list-left.today-lbl{color:var(--sent-text)}
+@media(max-width:400px){
+  .header h1{font-size:.95rem}
+  .data-actions{gap:3px}
+  .data-btn{width:28px;height:28px;font-size:.8rem}
+}
+@media(max-width:350px){
+  .data-btn{width:26px;height:26px;font-size:.75rem}
+  .data-actions{gap:2px}
+}
 @media print{
   body.print-summary>*:not(#summaryOverlay){display:none!important}
   body.print-summary #summaryOverlay{display:block!important;position:static!important;transform:none!important;background:white!important}
@@ -305,12 +314,20 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 <div id="bdayOverlay" style="display:none"><div id="bdayContent"></div></div>
 
 <script>
+window.onerror=function(msg,src,line,col){
+  var d=document.createElement('div');
+  d.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:#2a1a1a;color:#ff6b6b;font-family:monospace;font-size:.75rem;padding:12px;word-break:break-all;border-bottom:2px solid #ff6b6b';
+  d.textContent='JS Error: '+msg+' (línea '+line+')';
+  document.body.appendChild(d);
+};
+</script>
+<script>
 (function(){
 
 // ============================================================
 // CONFIG
 // ============================================================
-var BUILD   = { date: '06/03/2026', color: '#5ae088' };
+var BUILD   = { date: '06/03/2026b', color: '#ff6b6b' };
 var TO          = '{{TO}}';
 var CC          = '{{CC}}'.split(',');
 var AUTHOR_NAME = '{{AUTHOR_NAME}}';
