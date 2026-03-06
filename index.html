@@ -129,6 +129,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .week-card:nth-child(6){animation-delay:.20s}
 .build-badge{position:fixed;bottom:10px;right:10px;z-index:999;display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:.6rem;color:var(--text-dim);opacity:.7}
 .build-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.day-cell.h65 .day-hours{color:#fb923c}.day-cell.h65{background:rgba(251,146,60,.06)}
 .day-cell.h7 .day-hours{color:#fbbf24}.day-cell.h7{background:rgba(251,191,36,.06)}
 .day-cell.h8 .day-hours{color:#60a5fa}.day-cell.h8{background:rgba(96,165,250,.06)}
 .day-cell.h9 .day-hours{color:#34d399}.day-cell.h9{background:rgba(52,211,153,.06)}
@@ -368,7 +369,7 @@ function render(){
     for(var i=0;i<5;i++){
       var d=wk[i],dt=dayT(d),hrs=dayH(d),inM=d.getMonth()===CM;
       var cell=document.createElement('div');
-      var hCls='';if(dt==='normal'){if(hrs===7)hCls=' h7';else if(hrs===8)hCls=' h8';else if(hrs===9)hCls=' h9';}
+      var hCls='';if(dt==='normal'){if(hrs===6.5)hCls=' h65';else if(hrs===7)hCls=' h7';else if(hrs===8)hCls=' h8';else if(hrs===9)hCls=' h9';}
       cell.className='day-cell'+(dt!=='normal'?' '+dt:hCls);
       if(!inM)cell.style.opacity='0.4';
       var ts=isToday(d)?'color:var(--accent-bright)':'';
@@ -465,9 +466,12 @@ function fhY(h){return h===0?'0h':fh(h);}
 
 function computeYearlySummary(year){
   var today=new Date(); today.setHours(0,0,0,0);
-  var worked=0,toWork=0,hoursWorked=0,hoursExpected=0;
+  var worked=0,toWork=0,hoursWorked=0,hoursToWork=0;
+  var lvPast=0,lvFuture=0;
   var vacTaken=0,vacFuture=0,festTaken=0,festFuture=0,ausTaken=0,ausFuture=0;
   var mHours=new Array(12).fill(0),mDays=new Array(12).fill(0);
+  var mHoursP=new Array(12).fill(0),mDaysP=new Array(12).fill(0);
+  var d65P=0,d65F=0,d7P=0,d7F=0,d8P=0,d8F=0,d9P=0,d9F=0;
   var d=new Date(year,0,1);
   while(d.getFullYear()===year){
     var w=d.getDay();
@@ -475,48 +479,80 @@ function computeYearlySummary(year){
       var past=d<=today,m=d.getMonth();
       var t=dayT(d),h=dayH(d),eh=defH(d);
       if(past){
-        if(t==='normal'){worked++;hoursWorked+=h;mHours[m]+=h;mDays[m]++;}
-        else if(t==='vacaciones')vacTaken++;
+        lvPast++;
+        if(t==='normal'){
+          worked++;hoursWorked+=h;mHours[m]+=h;mDays[m]++;
+          if(h===6.5)d65P++;else if(h===7)d7P++;else if(h===8)d8P++;else if(h===9)d9P++;
+        } else if(t==='vacaciones')vacTaken++;
         else if(t==='festivo')festTaken++;
         else if(t==='ausencia')ausTaken++;
       } else {
-        if(t==='normal'){toWork++;hoursExpected+=eh;}
-        else if(t==='vacaciones')vacFuture++;
+        lvFuture++;
+        if(t==='normal'){
+          toWork++;hoursToWork+=eh;mHoursP[m]+=eh;mDaysP[m]++;
+          if(w===5)d65F++;
+          else{var gh=getMonthH(d.getFullYear(),m,d.getDate());if(gh===7)d7F++;else if(gh===8)d8F++;else d9F++;}
+        } else if(t==='vacaciones')vacFuture++;
         else if(t==='festivo')festFuture++;
         else if(t==='ausencia')ausFuture++;
       }
     }
     d.setDate(d.getDate()+1);
   }
+  var lvTotal=lvPast+lvFuture;
   var vacTotal=vacTaken+vacFuture,vacPend=Math.max(0,VAC_ENTITLEMENT-vacTotal);
-  var lvTotal=worked+toWork+vacTaken+vacFuture+festTaken+festFuture+ausTaken+ausFuture;
-  var hoursYear=hoursWorked+hoursExpected;
-  var maxM=0,minM=Infinity,maxMi=0,minMi=0;
-  for(var i=0;i<12;i++){if(mHours[i]>maxM){maxM=mHours[i];maxMi=i;}if(mDays[i]>0&&mHours[i]<minM){minM=mHours[i];minMi=i;}}
-  if(minM===Infinity)minM=0;
+  var hoursTotal=Math.round((hoursWorked+hoursToWork)*10)/10;
+  var maxMh=0,minMh=Infinity,maxMhi=0,minMhi=0;
+  for(var i=0;i<12;i++){var tot=mHours[i]+mHoursP[i];if(tot>maxMh){maxMh=tot;maxMhi=i;}if((mDays[i]+mDaysP[i])>0&&tot<minMh){minMh=tot;minMhi=i;}}
+  if(minMh===Infinity)minMh=0;
+  var maxMd=0,minMd=Infinity,maxMdi=0,minMdi=0;
+  for(var i=0;i<12;i++){var td=mDays[i]+mDaysP[i];if(td>maxMd){maxMd=td;maxMdi=i;}if(td>0&&td<minMd){minMd=td;minMdi=i;}}
+  if(minMd===Infinity)minMd=0;
   var avgHDay=worked>0?Math.round(hoursWorked/worked*10)/10:0;
-  var workedMths=mDays.filter(function(x){return x>0;}).length;
-  var avgHMonth=workedMths>0?Math.round(hoursWorked/workedMths):0;
-  var avgH=worked>0?hoursWorked/worked:9;
-  var pace=Math.round(hoursWorked+toWork*avgH);
-  return{worked:worked,toWork:toWork,lvTotal:lvTotal,
+  var actMths=0;for(var i=0;i<12;i++){if(mDays[i]+mDaysP[i]>0)actMths++;}
+  var avgHMonth=actMths>0?Math.round(hoursTotal/actMths):0;
+  var avgDMonth=actMths>0?Math.round((worked+toWork)/actMths*10)/10:0;
+  return{worked:worked,toWork:toWork,workedTotal:worked+toWork,
+    lvPast:lvPast,lvFuture:lvFuture,lvTotal:lvTotal,
     vacTaken:vacTaken,vacFuture:vacFuture,vacTotal:vacTotal,vacPend:vacPend,
     festTaken:festTaken,festFuture:festFuture,festTotal:festTaken+festFuture,
     ausTaken:ausTaken,ausFuture:ausFuture,ausTotal:ausTaken+ausFuture,
-    hoursWorked:Math.round(hoursWorked*10)/10,hoursExpected:Math.round(hoursYear*10)/10,pace:pace,
-    maxM:maxM,maxMi:maxMi,minM:minM,minMi:minMi,avgHDay:avgHDay,avgHMonth:avgHMonth,
-    mHours:mHours,mDays:mDays};
+    hoursWorked:Math.round(hoursWorked*10)/10,
+    hoursToWork:Math.round(hoursToWork*10)/10,
+    hoursTotal:hoursTotal,
+    maxMh:maxMh,maxMhi:maxMhi,minMh:minMh,minMhi:minMhi,
+    maxMd:maxMd,maxMdi:maxMdi,minMd:minMd,minMdi:minMdi,
+    avgHDay:avgHDay,avgHMonth:avgHMonth,avgDMonth:avgDMonth,
+    d65P:d65P,d65F:d65F,d7P:d7P,d7F:d7F,d8P:d8P,d8F:d8F,d9P:d9P,d9F:d9F,
+    mHours:mHours,mDays:mDays,mHoursP:mHoursP,mDaysP:mDaysP};
 }
 
-function barChart(data,labels,color,hi){
-  var W=320,H=100,PB=20,PT=18,maxV=Math.max.apply(null,data)||1;
-  var bw=Math.floor((W-data.length*2)/data.length),gap=2;
+function barChart3(dataW,dataP,labels,colorBase,cm){
+  // cm: current month index (only when year===current year), else -1
+  // color past: colorBase dim; color current-worked: colorBase bright; color planned: colorBase faint
+  var W=320,H=100,PB=20,PT=18,n=12;
+  var combined=dataW.map(function(w,i){return w+dataP[i];});
+  var maxV=Math.max.apply(null,combined)||1;
+  var bw=Math.floor((W-n*2)/n),gap=2;
   var svg='<svg viewBox="0 0 '+W+' '+(H+PB)+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">';
-  for(var i=0;i<data.length;i++){
-    var x=i*(bw+gap),bh=Math.max(2,Math.round((data[i]/maxV)*(H-PT))),by=H-bh;
-    var c=(hi!==undefined&&i===hi)?'#8ca8ff':color;
-    svg+='<rect x="'+x+'" y="'+by+'" width="'+bw+'" height="'+bh+'" rx="2" fill="'+c+'" opacity=".7"/>';
-    if(data[i]>0){svg+='<text x="'+(x+bw/2)+'" y="'+(by-3)+'" text-anchor="middle" font-size="7" fill="#8888a0">'+data[i]+'</text>';}
+  for(var i=0;i<n;i++){
+    var x=i*(bw+gap);
+    var total=dataW[i]+dataP[i];
+    var hw=total>0?Math.max(2,Math.round((dataW[i]/maxV)*(H-PT))):0;
+    var hp=total>0?Math.max(dataP[i]>0?2:0,Math.round((dataP[i]/maxV)*(H-PT))):0;
+    var totalH=hw+hp;
+    if(i<cm||(cm===-1&&dataW[i]>0)){
+      // past months: dim
+      if(totalH>0)svg+='<rect x="'+x+'" y="'+(H-totalH)+'" width="'+bw+'" height="'+totalH+'" rx="2" fill="'+colorBase+'" opacity=".45"/>';
+    } else if(i===cm){
+      // current month: stacked worked(bright) + planned(faint)
+      if(hp>0)svg+='<rect x="'+x+'" y="'+(H-hw-hp)+'" width="'+bw+'" height="'+hp+'" rx="2" fill="'+colorBase+'" opacity=".25"/>';
+      if(hw>0)svg+='<rect x="'+x+'" y="'+(H-hw)+'" width="'+bw+'" height="'+hw+'" rx="2" fill="'+colorBase+'" opacity="1"/>';
+    } else {
+      // future months: planned faint
+      if(hp>0)svg+='<rect x="'+x+'" y="'+(H-hp)+'" width="'+bw+'" height="'+hp+'" rx="2" fill="'+colorBase+'" opacity=".25"/>';
+    }
+    if(total>0){svg+='<text x="'+(x+bw/2)+'" y="'+(H-totalH-3)+'" text-anchor="middle" font-size="7" fill="#8888a0">'+total+'</text>';}
     svg+='<text x="'+(x+bw/2)+'" y="'+(H+PB-2)+'" text-anchor="middle" font-size="7" fill="#5a5a70">'+labels[i]+'</text>';
   }
   svg+='</svg>';
@@ -525,9 +561,11 @@ function barChart(data,labels,color,hi){
 
 var MN_SHORT=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 
+function fdY(d){return d+'d';}
+
 function renderSummaryContent(){
   var s=computeYearlySummary(SUMMARY_YEAR);
-  var isNow=SUMMARY_YEAR===new Date().getFullYear();
+  var cm=SUMMARY_YEAR===new Date().getFullYear()?new Date().getMonth():-1;
   var h='<div class="sy-header">';
   h+='<button class="sy-back" id="syBack">&#8592;</button>';
   h+='<div class="sy-year-nav"><button class="sy-nav" id="syPrev">&#9664;</button><div class="sy-year">'+SUMMARY_YEAR+'</div><button class="sy-nav" id="syNext">&#9654;</button></div>';
@@ -536,10 +574,20 @@ function renderSummaryContent(){
 
   // Dias L-V
   h+='<div class="sy-section"><div class="sy-section-title">D&#237;as L&#8211;V</div><div class="sy-cards3">';
-  h+='<div class="sy-card hi"><div class="sy-val">'+s.worked+'</div><div class="sy-lbl">Trabajados</div></div>';
-  h+='<div class="sy-card dim"><div class="sy-val">'+s.toWork+'</div><div class="sy-lbl">Por trabajar</div></div>';
-  h+='<div class="sy-card"><div class="sy-val">'+s.lvTotal+'</div><div class="sy-lbl">Total a&#241;o</div></div>';
+  h+='<div class="sy-card hi"><div class="sy-val">'+fdY(s.lvPast)+'</div><div class="sy-lbl">Pasados</div></div>';
+  h+='<div class="sy-card dim"><div class="sy-val">'+fdY(s.lvFuture)+'</div><div class="sy-lbl">Futuros</div></div>';
+  h+='<div class="sy-card"><div class="sy-val">'+fdY(s.lvTotal)+'</div><div class="sy-lbl">Totales</div></div>';
   h+='</div></div>';
+
+  // Dias trabajados (table)
+  h+='<div class="sy-section"><div class="sy-section-title">D&#237;as trabajados</div>';
+  h+='<table class="sy-table"><thead><tr><th class="sy-td-lbl">Jornada</th><th>Pasados</th><th>Futuros</th><th>Total</th></tr></thead><tbody>';
+  h+='<tr><td class="sy-td-lbl">6,5h (Viernes)</td><td>'+s.d65P+'</td><td>'+s.d65F+'</td><td>'+(s.d65P+s.d65F)+'</td></tr>';
+  h+='<tr><td class="sy-td-lbl">7h</td><td>'+s.d7P+'</td><td>'+s.d7F+'</td><td>'+(s.d7P+s.d7F)+'</td></tr>';
+  h+='<tr><td class="sy-td-lbl">8h</td><td>'+s.d8P+'</td><td>'+s.d8F+'</td><td>'+(s.d8P+s.d8F)+'</td></tr>';
+  h+='<tr><td class="sy-td-lbl">9h</td><td>'+s.d9P+'</td><td>'+s.d9F+'</td><td>'+(s.d9P+s.d9F)+'</td></tr>';
+  h+='<tr class="sy-tr-total"><td class="sy-td-lbl">Total</td><td>'+s.worked+'</td><td>'+s.toWork+'</td><td>'+s.workedTotal+'</td></tr>';
+  h+='</tbody></table></div>';
 
   // Ausencias
   h+='<div class="sy-section"><div class="sy-section-title">Ausencias</div>';
@@ -555,20 +603,29 @@ function renderSummaryContent(){
   // Horas
   h+='<div class="sy-section"><div class="sy-section-title">Horas</div><div class="sy-cards3">';
   h+='<div class="sy-card hi"><div class="sy-val">'+fhY(s.hoursWorked)+'</div><div class="sy-lbl">Trabajadas</div></div>';
-  h+='<div class="sy-card"><div class="sy-val">'+fhY(s.hoursExpected)+'</div><div class="sy-lbl">Esperadas a&#241;o</div></div>';
-  h+='<div class="sy-card hi2"><div class="sy-val">'+fhY(s.pace)+'</div><div class="sy-lbl">Pron&#243;stico</div></div>';
+  h+='<div class="sy-card dim"><div class="sy-val">'+fhY(s.hoursToWork)+'</div><div class="sy-lbl">Por trabajar</div></div>';
+  h+='<div class="sy-card hi2"><div class="sy-val">'+fhY(s.hoursTotal)+'</div><div class="sy-lbl">Totales</div></div>';
   h+='</div><div class="sy-cards4" style="margin-top:8px">';
-  h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.maxM)+'</div><div class="sy-lbl">M&#225;x. mes<br>'+MN_SHORT[s.maxMi]+'</div></div>';
-  h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.minM)+'</div><div class="sy-lbl">M&#237;n. mes<br>'+MN_SHORT[s.minMi]+'</div></div>';
+  h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.maxMh)+'</div><div class="sy-lbl">M&#225;x./mes<br>'+MN_SHORT[s.maxMhi]+'</div></div>';
+  h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.minMh)+'</div><div class="sy-lbl">M&#237;n./mes<br>'+MN_SHORT[s.minMhi]+'</div></div>';
   h+='<div class="sy-card"><div class="sy-val-sm">'+s.avgHDay+'h</div><div class="sy-lbl">Media/d&#237;a</div></div>';
   h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.avgHMonth)+'</div><div class="sy-lbl">Media/mes</div></div>';
   h+='</div>';
-  h+='<div class="sy-chart">'+barChart(s.mHours,MN_SHORT,'#6c8cff',isNow?new Date().getMonth():undefined)+'</div>';
+  h+='<div class="sy-chart">'+barChart3(s.mHours,s.mHoursP,MN_SHORT,'#6c8cff',cm)+'</div>';
   h+='</div>';
 
-  // Dias trabajados por mes
-  h+='<div class="sy-section"><div class="sy-section-title">D&#237;as trabajados/mes</div>';
-  h+='<div class="sy-chart">'+barChart(s.mDays,MN_SHORT,'#34d399',isNow?new Date().getMonth():undefined)+'</div>';
+  // Dias
+  h+='<div class="sy-section"><div class="sy-section-title">D&#237;as trabajados</div><div class="sy-cards3">';
+  h+='<div class="sy-card hi"><div class="sy-val">'+fdY(s.worked)+'</div><div class="sy-lbl">Trabajados</div></div>';
+  h+='<div class="sy-card dim"><div class="sy-val">'+fdY(s.toWork)+'</div><div class="sy-lbl">Por trabajar</div></div>';
+  h+='<div class="sy-card hi2"><div class="sy-val">'+fdY(s.workedTotal)+'</div><div class="sy-lbl">Totales</div></div>';
+  h+='</div><div class="sy-cards4" style="margin-top:8px">';
+  h+='<div class="sy-card"><div class="sy-val-sm">'+fdY(s.maxMd)+'</div><div class="sy-lbl">M&#225;x./mes<br>'+MN_SHORT[s.maxMdi]+'</div></div>';
+  h+='<div class="sy-card"><div class="sy-val-sm">'+fdY(s.minMd)+'</div><div class="sy-lbl">M&#237;n./mes<br>'+MN_SHORT[s.minMdi]+'</div></div>';
+  h+='<div class="sy-card"><div class="sy-val-sm">'+s.avgDMonth+'d</div><div class="sy-lbl">Media/mes</div></div>';
+  h+='<div class="sy-card"><div class="sy-val-sm">'+(s.d65P+s.d65F)+'d</div><div class="sy-lbl">Viernes</div></div>';
+  h+='</div>';
+  h+='<div class="sy-chart">'+barChart3(s.mDays,s.mDaysP,MN_SHORT,'#34d399',cm)+'</div>';
   h+='</div>';
 
   h+='</div>';
