@@ -31,10 +31,21 @@ jobs:
           AUTHOR_NAME: ${{ secrets.AUTHOR_NAME }}
           BIRTHDAYS: ${{ secrets.BIRTHDAYS }}
         run: |
-          sed -i "s|{{TO}}|${MAIL_TO}|g" index.html
-          sed -i "s|{{CC}}|${MAIL_CC}|g" index.html
-          sed -i "s|{{AUTHOR_NAME}}|${AUTHOR_NAME}|g" index.html
-          sed -i "s|{{BIRTHDAYS}}|${BIRTHDAYS}|g" index.html
+          python3 - <<'PYEOF'
+          import os
+          with open('index.html', 'r', encoding='utf-8') as f:
+              content = f.read()
+          replacements = {
+              '{{TO}}':          os.environ.get('MAIL_TO',      '').strip(),
+              '{{CC}}':          os.environ.get('MAIL_CC',      '').strip(),
+              '{{AUTHOR_NAME}}': os.environ.get('AUTHOR_NAME',  '').strip(),
+              '{{BIRTHDAYS}}':   os.environ.get('BIRTHDAYS',    '').strip(),
+          }
+          for key, val in replacements.items():
+              content = content.replace(key, val)
+          with open('index.html', 'w', encoding='utf-8') as f:
+              f.write(content)
+          PYEOF
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
