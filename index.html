@@ -370,45 +370,42 @@ function copyConsentUrl() {
 window.copyConsentUrl = copyConsentUrl;
 
 // ============================================================
-// SEND EMAIL via Graph API
+// SEND EMAIL via mailto:
 // ============================================================
-async function sendEmail(wkey) {
+function sendEmail(wkey) {
   var wd = getWD(wkey);
-  var htmlBody = buildHtmlTable(wd);
+  var body = buildMailtoBody(wd);
+  var ccStr = CC.join(',');
+  var url = 'mailto:' + TO
+    + '?cc=' + encodeURIComponent(ccStr)
+    + '&subject=' + encodeURIComponent(SUBJECT)
+    + '&body=' + encodeURIComponent(body);
+  window.location.href = url;
+  SW[wkey] = true; save(); render();
+  showToast('Abriendo Outlook\u2026 recuerda pulsar Enviar', 'success');
+}
 
-  var mailPayload = {
-    message: {
-      subject: SUBJECT,
-      body: { contentType: 'HTML', content: htmlBody },
-      toRecipients: [{ emailAddress: { address: TO } }],
-      ccRecipients: CC.map(function(addr) { return { emailAddress: { address: addr } }; })
-    },
-    saveToSentItems: true
-  };
+function buildMailtoBody(wd) {
+  var total = 0;
+  wd.proy.forEach(function(h) { if (h) total += parseFloat(h); });
+  var totalStr = (total % 1 === 0 ? String(total) : total.toFixed(1)).replace('.', ',');
 
-  var token = await getToken();
-  if (!token) return; // Redirect in progress
-
-  var resp = await fetch('https://graph.microsoft.com/v1.0/me/sendMail', {
-    method: 'POST',
-    headers: {
-      'Authorization': 'Bearer ' + token,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(mailPayload)
-  });
-
-  if (!resp.ok) {
-    var errText = await resp.text();
-    // Token might be expired - try to refresh
-    if (resp.status === 401) {
-      showToast('Sesi\u00f3n expirada. Vuelve a conectarte.', 'error');
-      updateAuthUI();
-      return;
-    }
-    throw new Error('Error ' + resp.status + ': ' + errText.slice(0, 120));
+  function fmt(v, isHours) {
+    if (!v) return '-';
+    return isHours ? v.replace('.', ',') + 'h' : v;
   }
-  return true;
+  function row(label, data, isHours) {
+    return label + ':\t' + data.map(function(v) { return fmt(v, isHours); }).join('\t\t');
+  }
+
+  var body = 'Semana del ' + fd(wd.mon) + ' al ' + fd(wd.fri) + ':\n\n';
+  body += '\t\t\t\tL\t\tM\t\tX\t\tJ\t\tV\n';
+  body += row('Proyecto',   wd.proy, true)  + '\n';
+  body += row('Vacaciones', wd.vac,  false) + '\n';
+  body += row('Festivo',    wd.fest, false) + '\n';
+  body += row('Ausencias',  wd.aus,  false) + '\n';
+  body += '\nTotal semana: ' + totalStr + 'h\n\nUn saludo,\nAngel Villazon Iglesias';
+  return body;
 }
 
 // ============================================================
@@ -552,28 +549,11 @@ function render() {
     var sendBtn = document.createElement('button');
     sendBtn.className = 'action-btn send';
     sendBtn.id = 'send-' + wkey;
-    sendBtn.innerHTML = '\u2709 Enviar correo';
+    sendBtn.innerHTML = '\u2709 Abrir en Outlook';
     (function(k, btn) {
       btn.addEventListener('click', function(e) {
         e.stopPropagation();
-        var account = getAccount();
-        if (!account) {
-          showToast('Conéctate primero con tu cuenta @excelia.com', 'warn');
-          return;
-        }
-        btn.classList.add('sending');
-        btn.innerHTML = '<span class="spinner"></span> Enviando...';
-        sendEmail(k).then(function(ok) {
-          if (ok) {
-            SW[k] = true; save(); render();
-            showToast('\u2713 Correo enviado correctamente', 'success');
-          }
-        }).catch(function(err) {
-          console.error('Send error:', err);
-          btn.classList.remove('sending');
-          btn.innerHTML = '\u2709 Enviar correo';
-          showToast('Error al enviar: ' + err.message, 'error');
-        });
+        sendEmail(k);
       });
     })(wkey, sendBtn);
 
