@@ -246,9 +246,9 @@ var DF=['Domingo','Lunes','Martes','Mi\u00e9rcoles','Jueves','Viernes','S\u00e1b
 function load(){ try{var r=localStorage.getItem(SK);if(r){var d=JSON.parse(r);ST=d.days||{};SW=d.sent||{};MONTH_H=d.monthH||{};}}catch(e){ST={};SW={};MONTH_H={};} }
 function save(){ localStorage.setItem(SK,JSON.stringify({days:ST,sent:SW,monthH:MONTH_H})); }
 function mkey(y,m){ return y+'-'+String(m+1).padStart(2,'0'); }
-function getMonthH(y,m){ return MONTH_H[mkey(y,m)]||9; }
-function defH(d){ var w=d.getDay(); if(!w||w===6)return 0; if(w===5)return 6.5; return getMonthH(d.getFullYear(),d.getMonth()); }
-function dayH(d){ var w=d.getDay(); if(!w||w===6)return 0; var k=dk(d),e=ST[k],t=(e&&e.type)||'normal'; if(t!=='normal')return 0; if(w===5)return 6.5; return(e&&e.hours)||getMonthH(d.getFullYear(),d.getMonth()); }
+function getMonthH(y,m,day){ if(MONTH_H[mkey(y,m)]!==undefined)return MONTH_H[mkey(y,m)]; if(m===6||m===7)return 7; if(m===8&&(!day||day<=15))return 7; return 9; }
+function defH(d){ var w=d.getDay(); if(!w||w===6)return 0; if(w===5)return 6.5; return getMonthH(d.getFullYear(),d.getMonth(),d.getDate()); }
+function dayH(d){ var w=d.getDay(); if(!w||w===6)return 0; var k=dk(d),e=ST[k],t=(e&&e.type)||'normal'; if(t!=='normal')return 0; if(w===5)return 6.5; return(e&&e.hours)||getMonthH(d.getFullYear(),d.getMonth(),d.getDate()); }
 function dayT(d){ var e=ST[dk(d)]; return(e&&e.type)||'normal'; }
 function dk(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function fd(d){ return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0'); }
@@ -296,7 +296,7 @@ function showToast(msg,type){
 // ============================================================
 function render(){
   document.getElementById('monthLabel').textContent=MN[CM]+' '+CY;
-  var curMonthH=getMonthH(CY,CM);
+  var curMonthH=getMonthH(CY,CM,1);
   document.querySelectorAll('.hours-chip').forEach(function(el){el.classList.toggle('active',+el.dataset.h===curMonthH);});
   var wks=weeks(CY,CM),c=document.getElementById('weeksContainer');
   c.innerHTML='';
@@ -357,7 +357,7 @@ function render(){
 
 function openSheet(date){
   ED=date; var dt=dayT(date),dow=date.getDay();
-  var nh=(dow===5)?'6,5':String(getMonthH(date.getFullYear(),date.getMonth()));
+  var nh=(dow===5)?'6,5':String(getMonthH(date.getFullYear(),date.getMonth(),date.getDate()));
   document.getElementById('sheetTitle').textContent=DF[dow]+' '+fd(date);
   document.getElementById('sheetSubtitle').textContent='Selecciona el tipo de d\u00eda';
   document.getElementById('optNormalHours').textContent=nh+'h';
@@ -367,7 +367,7 @@ function openSheet(date){
   if(dow>=1&&dow<=4&&dt==='normal'){
     picker.style.display='block';
     var e=ST[dk(date)];
-    var curH=(e&&e.hours)||getMonthH(date.getFullYear(),date.getMonth());
+    var curH=(e&&e.hours)||getMonthH(date.getFullYear(),date.getMonth(),date.getDate());
     document.querySelectorAll('.hour-chip-day').forEach(function(c){c.classList.toggle('active',+c.dataset.h===curH);});
   } else { picker.style.display='none'; }
   document.getElementById('overlay').classList.add('active');
@@ -389,7 +389,7 @@ function selectType(t){
     if(dow>=1&&dow<=4){
       var picker=document.getElementById('hourPicker');
       picker.style.display='block';
-      var curH=(ST[k]&&ST[k].hours)||getMonthH(ED.getFullYear(),ED.getMonth());
+      var curH=(ST[k]&&ST[k].hours)||getMonthH(ED.getFullYear(),ED.getMonth(),ED.getDate());
       document.querySelectorAll('.hour-chip-day').forEach(function(c){c.classList.toggle('active',+c.dataset.h===curH);});
     }
     save(); render();
@@ -409,7 +409,7 @@ document.querySelectorAll('.hour-chip-day').forEach(function(el){
   el.addEventListener('click',function(){
     if(!ED)return; var k=dk(ED),h=+el.dataset.h;
     if(!ST[k])ST[k]={};
-    if(h===getMonthH(ED.getFullYear(),ED.getMonth()))delete ST[k].hours; else ST[k].hours=h;
+    if(h===getMonthH(ED.getFullYear(),ED.getMonth(),ED.getDate()))delete ST[k].hours; else ST[k].hours=h;
     if(Object.keys(ST[k]).length===0)delete ST[k];
     save(); closeSheet(); render();
   });
