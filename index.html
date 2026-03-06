@@ -138,6 +138,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .week-card:nth-child(6){animation-delay:.20s}
 @keyframes spin{to{transform:rotate(360deg)}}
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:spin .6s linear infinite}
+.build-badge{position:fixed;bottom:10px;right:10px;z-index:999;display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:.6rem;color:var(--text-dim);opacity:.7}
+.build-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 </style>
 </head>
 <body>
@@ -211,6 +213,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
   </div>
 </div>
 <div class="toast" id="toast"></div>
+<div class="build-badge" id="buildBadge"></div>
 
 <script>
 (function(){
@@ -222,6 +225,8 @@ var CLIENT_ID = '510a9271-4525-4eaf-aa9a-c0c23e7d6b8c';
 var REDIRECT_URI = 'https://avi-work-projects.github.io/horas-excelia';
 var AUTHORITY = 'https://login.microsoftonline.com/excelia.com';
 var SCOPES = ['Mail.Send', 'User.Read'];
+
+var BUILD = { date: '06/03/2026', color: '#ff6b6b' };
 
 var TO = 'mamoreno@excelia.com';
 var CC = ['apose@excelia.com', 'jgallego@excelia.com'];
@@ -386,25 +391,26 @@ function sendEmail(wkey) {
 }
 
 function buildMailtoBody(wd) {
+  var DNAMES = ['L', 'M', 'X', 'J', 'V'];
+  var TYPES = { festivo: 'Festivo', vacaciones: 'Vacaciones', ausencia: 'Ausencia' };
+
   var total = 0;
   wd.proy.forEach(function(h) { if (h) total += parseFloat(h); });
   var totalStr = (total % 1 === 0 ? String(total) : total.toFixed(1)).replace('.', ',');
+  var semana = 'Semana del ' + fd(wd.mon) + ' al ' + fd(wd.fri);
 
-  function fmt(v, isHours) {
-    if (!v) return '-';
-    return isHours ? v.replace('.', ',') + 'h' : v;
+  var body = semana + ':\n';
+  for (var i = 0; i < 5; i++) {
+    var d = ad(wd.mon, i);
+    var label;
+    if (wd.fest[i])  label = 'Festivo';
+    else if (wd.vac[i])  label = 'Vacaciones';
+    else if (wd.aus[i])  label = 'Ausencia';
+    else label = (wd.proy[i] ? wd.proy[i].replace('.', ',') + 'h' : '\u2014');
+    body += DNAMES[i] + ' ' + fd(d) + ' \u2014 ' + label + '\n';
   }
-  function row(label, data, isHours) {
-    return label + ':\t' + data.map(function(v) { return fmt(v, isHours); }).join('\t\t');
-  }
-
-  var body = 'Semana del ' + fd(wd.mon) + ' al ' + fd(wd.fri) + ':\n\n';
-  body += '\t\t\t\tL\t\tM\t\tX\t\tJ\t\tV\n';
-  body += row('Proyecto',   wd.proy, true)  + '\n';
-  body += row('Vacaciones', wd.vac,  false) + '\n';
-  body += row('Festivo',    wd.fest, false) + '\n';
-  body += row('Ausencias',  wd.aus,  false) + '\n';
-  body += '\nTotal semana: ' + totalStr + 'h\n\nUn saludo,\nAngel Villazon Iglesias';
+  body += '\nTotal horas trabajadas en proyecto en la ' + semana.toLowerCase() + ':\n';
+  body += ' ' + totalStr + 'h\n\nUn saludo,\nAngel Villazon Iglesias';
   return body;
 }
 
@@ -615,6 +621,16 @@ document.getElementById('todayBtn').addEventListener('click', function() { var n
 load();
 var now = new Date(); CY = now.getFullYear(); CM = now.getMonth();
 render();
+
+// Build badge
+(function(){
+  var b = document.getElementById('buildBadge');
+  var dot = document.createElement('div');
+  dot.className = 'build-dot';
+  dot.style.background = BUILD.color;
+  b.appendChild(dot);
+  b.appendChild(document.createTextNode(BUILD.date));
+})();
 
 })();
 </script>
