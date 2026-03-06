@@ -4,7 +4,11 @@
 
 var ECON_YEAR=new Date().getFullYear();
 
-function fc(n){return n.toFixed(2).replace('.',',')+'&#8364;';}
+function fc(n){
+  var parts=n.toFixed(2).split('.');
+  parts[0]=parts[0].replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+  return parts[0]+','+parts[1]+'&#8364;';
+}
 
 function computeEcon(year){
   var s=computeYearlySummary(year);
