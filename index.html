@@ -10,7 +10,6 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script type="text/javascript" src="https://alcdn.msauth.net/browser/2.35.0/js/msal-browser.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -20,7 +19,6 @@
 --accent:#6c8cff;--accent-glow:#6c8cff33;--accent-bright:#8ca8ff;
 --sent:#1a3a2a;--sent-border:#2a5a3a;--sent-text:#5ae088;
 --festivo:#ff6b6b;--vacaciones:#ffb347;--ausencia:#c084fc;--normal:#6c8cff;
---warn:#ffb347;--warn-bg:#2a1f0a;--warn-border:#4a3a1a;
 --radius:14px;--radius-sm:10px;
 --font:'DM Sans',sans-serif;--mono:'JetBrains Mono',monospace;
 }
@@ -31,10 +29,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
 .header h1{font-size:1.1rem;font-weight:600;letter-spacing:-0.02em}
 .header .subtitle{font-size:.75rem;color:var(--text-muted);font-weight:400}
-.user-badge{display:flex;align-items:center;gap:6px;font-size:.7rem;color:var(--sent-text);background:#1a3a2a;padding:4px 10px;border-radius:12px;border:1px solid var(--sent-border);cursor:pointer;-webkit-user-select:none;user-select:none;transition:all .15s}
-.user-badge:active{opacity:.7}
-.user-badge.offline{color:var(--text-muted);background:var(--surface2);border-color:var(--border)}
-.user-badge.pending{color:var(--warn);background:var(--warn-bg);border-color:var(--warn-border)}
 .month-nav{display:flex;align-items:center;gap:6px;margin-top:14px}
 .month-nav .month-label{font-size:1.05rem;font-weight:600;min-width:170px;text-align:center;text-transform:capitalize}
 .nav-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:1.1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none}
@@ -43,26 +37,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .today-btn:active{background:var(--accent);color:#fff}
 
 .summer-banner{margin:12px 16px 0;padding:10px 14px;border-radius:var(--radius-sm);background:linear-gradient(135deg,#2a1a0a,#1a2a1a);border:1px solid #4a3a1a;font-size:.78rem;color:#ffb347;display:flex;align-items:center;gap:8px}
-
-/* ---- CONSENT NOTICE ---- */
-.consent-notice{margin:12px 16px 0;padding:14px 16px;border-radius:var(--radius-sm);background:#1e1408;border:1px solid var(--warn-border);display:none;flex-direction:column;gap:12px}
-.consent-notice.show{display:flex}
-.consent-title{display:flex;align-items:center;gap:8px;font-size:.88rem;font-weight:600;color:var(--warn)}
-.consent-body{font-size:.78rem;color:#c8a870;line-height:1.55}
-.consent-steps{display:flex;flex-direction:column;gap:8px;margin-top:2px}
-.consent-step{display:flex;gap:10px;align-items:flex-start}
-.step-num{flex-shrink:0;width:20px;height:20px;border-radius:50%;background:var(--warn-border);color:var(--warn);font-size:.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
-.step-text{font-size:.77rem;color:#c8a870;line-height:1.5}
-.step-text strong{color:var(--warn)}
-.consent-divider{height:1px;background:var(--warn-border);margin:2px 0}
-.consent-url-block{background:#140f05;border:1px solid var(--warn-border);border-radius:8px;padding:8px 10px}
-.consent-url-label{font-size:.68rem;color:var(--text-muted);margin-bottom:4px}
-.consent-url{font-family:var(--mono);font-size:.58rem;word-break:break-all;color:#a88858;line-height:1.5}
-.consent-actions{display:flex;gap:8px;flex-wrap:wrap}
-.consent-btn{flex:1;min-width:120px;font-size:.72rem;padding:8px 12px;border-radius:8px;border:1px solid var(--warn-border);background:transparent;color:var(--warn);cursor:pointer;font-family:var(--font);font-weight:500;transition:all .15s;text-align:center;-webkit-user-select:none;user-select:none}
-.consent-btn:active{background:var(--warn-border)}
-.consent-btn.primary{background:var(--warn-border);color:#fff}
-.consent-btn.primary:active{opacity:.8}
 
 .weeks-container{padding:12px 16px 30px;display:flex;flex-direction:column;gap:12px}
 .week-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all .25s}
@@ -98,7 +72,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .action-btn:active{transform:scale(.97)}
 .action-btn.send{background:linear-gradient(135deg,#1a2a4a,#1a3a5a);border-color:#2a4a6a;color:#6cb8ff}
 .action-btn.send:active{background:#1a4a6a}
-.action-btn.send.sending{opacity:.6;pointer-events:none}
 .action-btn.sent-toggle{border-color:var(--sent-border);color:var(--sent-text)}
 .week-card.sent .action-btn.sent-toggle{background:var(--sent-border);color:#fff}
 
@@ -127,7 +100,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast.error{border-color:#5a2a2a;background:#2a1a1a;color:var(--festivo)}
 .toast.success{border-color:var(--sent-border);background:var(--sent);color:var(--sent-text)}
-.toast.warn{border-color:var(--warn-border);background:var(--warn-bg);color:var(--warn)}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 .week-card{animation:fadeUp .35s ease both}
@@ -136,8 +108,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .week-card:nth-child(4){animation-delay:.12s}
 .week-card:nth-child(5){animation-delay:.16s}
 .week-card:nth-child(6){animation-delay:.20s}
-@keyframes spin{to{transform:rotate(360deg)}}
-.spinner{display:inline-block;width:14px;height:14px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:spin .6s linear infinite}
 .build-badge{position:fixed;bottom:10px;right:10px;z-index:999;display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:.6rem;color:var(--text-dim);opacity:.7}
 .build-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 </style>
@@ -149,9 +119,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     <div>
       <h1>Horas Excelia</h1>
       <div class="subtitle">Angel Villazon Iglesias</div>
-    </div>
-    <div class="user-badge offline" id="userBadge" onclick="handleAuthClick()">
-      <span id="userBadgeText">Conectar</span>
     </div>
   </div>
   <div class="month-nav">
@@ -165,37 +132,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 <div id="summerBanner" class="summer-banner" style="display:none">
   <span>&#9728;&#65039;</span>
   <span>Horario de verano activo: L-J&nbsp;=&nbsp;7h, V&nbsp;=&nbsp;6.5h</span>
-</div>
-
-<!-- Consent / IT approval notice -->
-<div class="consent-notice" id="consentNotice">
-  <div class="consent-title">&#128274; IT de Excelia debe aprobar la app</div>
-  <div class="consent-body">
-    La pol&iacute;tica de tu empresa bloquea el consentimiento de apps de terceros. Tienes dos opciones:
-  </div>
-  <div class="consent-steps">
-    <div class="consent-step">
-      <div class="step-num">A</div>
-      <div class="step-text">
-        <strong>T&uacute; mismo:</strong> Pulsa &ldquo;Conectar&rdquo;, inicia sesi&oacute;n y en la pantalla &ldquo;Aprobaci&oacute;n necesaria&rdquo; escribe una justificaci&oacute;n (ej: <em>&ldquo;App para registrar mis horas de trabajo&rdquo;</em>) y pulsa <strong>&ldquo;Aprobaci&oacute;n de solicitud&rdquo;</strong>. IT recibir&aacute; la petici&oacute;n.
-      </div>
-    </div>
-    <div class="consent-divider"></div>
-    <div class="consent-step">
-      <div class="step-num">B</div>
-      <div class="step-text">
-        <strong>Env&iacute;a este enlace a IT</strong> para que aprueben la app directamente para todos los usuarios:
-      </div>
-    </div>
-  </div>
-  <div class="consent-url-block">
-    <div class="consent-url-label">Enlace para administrador IT:</div>
-    <div class="consent-url" id="consentUrl">https://login.microsoftonline.com/excelia.com/adminconsent?client_id=510a9271-4525-4eaf-aa9a-c0c23e7d6b8c&amp;redirect_uri=https://avi-work-projects.github.io/horas-excelia</div>
-  </div>
-  <div class="consent-actions">
-    <button class="consent-btn" onclick="copyConsentUrl()">&#128203; Copiar enlace IT</button>
-    <button class="consent-btn primary" onclick="dismissConsent()">Entendido</button>
-  </div>
 </div>
 
 <div class="weeks-container" id="weeksContainer"></div>
@@ -221,415 +157,198 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 // ============================================================
 // CONFIG
 // ============================================================
-var CLIENT_ID = '510a9271-4525-4eaf-aa9a-c0c23e7d6b8c';
-var REDIRECT_URI = 'https://avi-work-projects.github.io/horas-excelia';
-var AUTHORITY = 'https://login.microsoftonline.com/excelia.com';
-var SCOPES = ['Mail.Send', 'User.Read'];
-
-var BUILD = { date: '06/03/2026', color: '#ff6b6b' };
-
-var TO = 'mamoreno@excelia.com';
-var CC = ['apose@excelia.com', 'jgallego@excelia.com'];
+var BUILD   = { date: '06/03/2026', color: '#5ae088' };
+var TO      = '{{TO}}';
+var CC      = '{{CC}}'.split(',');
 var SUBJECT = 'HORAS Y D\u00cdAS DE TRABAJO - Angel Villazon Iglesias';
-
-// ============================================================
-// MSAL
-// ============================================================
-var msalConfig = {
-  auth: {
-    clientId: CLIENT_ID,
-    authority: AUTHORITY,
-    redirectUri: REDIRECT_URI,
-    navigateToLoginRequestUrl: false  // Avoid redirect loops — always land on root
-  },
-  cache: {
-    cacheLocation: 'localStorage',
-    storeAuthStateInCookie: true    // Needed for some mobile browsers (Chrome Android)
-  },
-  system: {
-    loggerOptions: {
-      loggerCallback: function(level, message, containsPii) {
-        if (!containsPii && level <= 1) console.log('[MSAL]', message);
-      },
-      logLevel: 1  // Warning
-    }
-  }
-};
-var msalInstance = new msal.PublicClientApplication(msalConfig);
-
-// ---- Error classification ----
-function classifyAuthError(err) {
-  var msg = ((err && err.message) || '') + ((err && err.errorCode) || '') + ((err && err.errorMessage) || '');
-  // Admin consent / user cannot consent
-  if (/AADSTS65001|AADSTS90094|AADSTS90008|admin_consent_required|consent_required/i.test(msg)) return 'consent_required';
-  // User explicitly cancelled
-  if (/AADSTS50126|AADSTS65004|access_denied|user_cancelled|login_required/i.test(msg)) return 'cancelled';
-  // Approval request submitted (user filled form, IT notified)
-  if (/AADSTS90093|AADSTS90009/i.test(msg)) return 'approval_submitted';
-  // Account not in tenant
-  if (/AADSTS50034|AADSTS50020/i.test(msg)) return 'wrong_account';
-  return 'generic';
-}
-
-// ---- Handle redirect on page load ----
-msalInstance.handleRedirectPromise().then(function(resp) {
-  if (resp && resp.account) {
-    msalInstance.setActiveAccount(resp.account);
-    updateAuthUI();
-    showToast('\u2713 Conectado como ' + resp.account.username, 'success');
-  } else {
-    updateAuthUI();
-  }
-}).catch(function(err) {
-  console.error('[Auth] Redirect error:', err);
-  updateAuthUI();
-  var kind = classifyAuthError(err);
-  if (kind === 'consent_required') {
-    showConsentNotice();
-    showToast('IT debe aprobar la app. Ver instrucciones \u2193', 'warn');
-  } else if (kind === 'approval_submitted') {
-    showConsentNotice();
-    showToast('\u2713 Solicitud enviada a IT. Te avisar\u00e1n cuando aprueben.', 'warn');
-  } else if (kind === 'cancelled') {
-    showToast('Login cancelado. Pulsa Conectar cuando quieras.', 'warn');
-  } else if (kind === 'wrong_account') {
-    showToast('Cuenta no encontrada en Excelia. Usa tu cuenta @excelia.com', 'error');
-  } else {
-    showToast('Error de autenticaci\u00f3n: ' + (err.errorCode || err.message || 'desconocido'), 'error');
-  }
-});
-
-// ---- Account helpers ----
-function getAccount() {
-  var active = msalInstance.getActiveAccount();
-  if (active) return active;
-  var all = msalInstance.getAllAccounts();
-  return all.length > 0 ? all[0] : null;
-}
-
-function handleAuthClick() {
-  var account = getAccount();
-  if (account) {
-    msalInstance.logoutRedirect({ account: account, postLogoutRedirectUri: REDIRECT_URI });
-  } else {
-    msalInstance.loginRedirect({
-      scopes: SCOPES,
-      prompt: 'select_account'  // Force account picker so user can pick @excelia.com
-    });
-  }
-}
-window.handleAuthClick = handleAuthClick;
-
-function updateAuthUI() {
-  var account = getAccount();
-  var badge = document.getElementById('userBadge');
-  var text = document.getElementById('userBadgeText');
-  if (account) {
-    badge.className = 'user-badge';
-    text.textContent = account.username.split('@')[0];
-  } else {
-    badge.className = 'user-badge offline';
-    text.textContent = 'Conectar';
-  }
-}
-
-async function getToken() {
-  var account = getAccount();
-  if (!account) {
-    await msalInstance.loginRedirect({ scopes: SCOPES, prompt: 'select_account' });
-    return null;
-  }
-  try {
-    var tokenResp = await msalInstance.acquireTokenSilent({ scopes: SCOPES, account: account });
-    return tokenResp.accessToken;
-  } catch(err) {
-    if (err instanceof msal.InteractionRequiredAuthError || (err.name && err.name.indexOf('Interaction') !== -1)) {
-      await msalInstance.acquireTokenRedirect({ scopes: SCOPES, account: account });
-      return null;
-    }
-    throw err;
-  }
-}
-
-// ---- Consent notice helpers ----
-function showConsentNotice() {
-  document.getElementById('consentNotice').classList.add('show');
-}
-function dismissConsent() {
-  document.getElementById('consentNotice').classList.remove('show');
-}
-window.dismissConsent = dismissConsent;
-
-function copyConsentUrl() {
-  var url = document.getElementById('consentUrl').textContent;
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(url).then(function() {
-      showToast('\u2713 Enlace copiado', 'success');
-    }).catch(function() {
-      showToast('Copia manualmente el enlace de arriba', 'error');
-    });
-  } else {
-    showToast('Copia manualmente el enlace de arriba', 'error');
-  }
-}
-window.copyConsentUrl = copyConsentUrl;
 
 // ============================================================
 // SEND EMAIL via mailto:
 // ============================================================
 function sendEmail(wkey) {
-  var wd = getWD(wkey);
+  var wd   = getWD(wkey);
   var body = buildMailtoBody(wd);
-  var ccStr = CC.join(',');
-  var url = 'mailto:' + TO
-    + '?cc=' + encodeURIComponent(ccStr)
+  var url  = 'mailto:' + TO
+    + '?cc='      + encodeURIComponent(CC.join(','))
     + '&subject=' + encodeURIComponent(SUBJECT)
-    + '&body=' + encodeURIComponent(body);
+    + '&body='    + encodeURIComponent(body);
   window.location.href = url;
   SW[wkey] = true; save(); render();
   showToast('Abriendo Outlook\u2026 recuerda pulsar Enviar', 'success');
 }
 
 function buildMailtoBody(wd) {
-  var DNAMES = ['L', 'M', 'X', 'J', 'V'];
-  var TYPES = { festivo: 'Festivo', vacaciones: 'Vacaciones', ausencia: 'Ausencia' };
-
+  var DN = ['L','M','X','J','V'];
   var total = 0;
-  wd.proy.forEach(function(h) { if (h) total += parseFloat(h); });
+  wd.proy.forEach(function(h){ if(h) total += parseFloat(h); });
   var totalStr = (total % 1 === 0 ? String(total) : total.toFixed(1)).replace('.', ',');
   var semana = 'Semana del ' + fd(wd.mon) + ' al ' + fd(wd.fri);
 
-  var body = semana + ':\n';
+  var body = 'Buenos d\u00edas!\n\n' + semana + ':\n\n';
   for (var i = 0; i < 5; i++) {
     var d = ad(wd.mon, i);
     var label;
-    if (wd.fest[i])  label = 'Festivo';
+    if      (wd.fest[i]) label = 'Festivo';
     else if (wd.vac[i])  label = 'Vacaciones';
     else if (wd.aus[i])  label = 'Ausencia';
-    else label = (wd.proy[i] ? wd.proy[i].replace('.', ',') + 'h' : '\u2014');
-    body += DNAMES[i] + ' ' + fd(d) + ' \u2014 ' + label + '\n';
+    else                 label = (wd.proy[i] ? wd.proy[i].replace('.', ',') + 'h' : '\u2014');
+    body += DN[i] + ' ' + fd(d) + ' \u2014 ' + label + '\n';
   }
   body += '\nTotal horas trabajadas en proyecto en la ' + semana.toLowerCase() + ':\n';
-  body += ' ' + totalStr + 'h\n\nUn saludo,\nAngel Villazon Iglesias';
+  body += totalStr + 'h\n\nUn saludo,\nAngel Villazon Iglesias';
   return body;
-}
-
-// ============================================================
-// HTML TABLE builder
-// ============================================================
-function buildHtmlTable(wd) {
-  var cellStyle = 'border:1px solid #d0d0d0;padding:6px 12px;text-align:center;font-family:Calibri,Arial,sans-serif;font-size:11pt;';
-  var headerStyle = cellStyle + 'background-color:#4472C4;color:white;font-weight:bold;';
-  var labelStyle = cellStyle + 'text-align:left;font-weight:bold;background-color:#f2f2f2;';
-  var emptyStyle = cellStyle + 'color:#999;';
-
-  function cell(val, style) {
-    return '<td style="' + style + '">' + (val || '&nbsp;') + '</td>';
-  }
-
-  var html = '<p style="font-family:Calibri,Arial,sans-serif;font-size:11pt;">Semana del ' + fd(wd.mon) + ' al ' + fd(wd.fri) + ':</p>';
-  html += '<table cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-top:8px;">';
-  html += '<tr>';
-  html += cell('', headerStyle);
-  html += cell('L', headerStyle);
-  html += cell('M', headerStyle);
-  html += cell('X', headerStyle);
-  html += cell('J', headerStyle);
-  html += cell('V', headerStyle);
-  html += '</tr>';
-
-  var rows = [
-    { label: 'Proyecto',    data: wd.proy },
-    { label: 'Vacaciones',  data: wd.vac  },
-    { label: 'Festivo',     data: wd.fest },
-    { label: 'Ausencias',   data: wd.aus  }
-  ];
-
-  rows.forEach(function(row) {
-    html += '<tr>';
-    html += cell(row.label, labelStyle);
-    row.data.forEach(function(val) {
-      html += cell(val, val ? cellStyle : emptyStyle);
-    });
-    html += '</tr>';
-  });
-
-  html += '</table>';
-  return html;
 }
 
 // ============================================================
 // APP STATE
 // ============================================================
-var SK = 'excelia-horas-v3', CY, CM, ST = {}, SW = {}, ED = null;
-var MN = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-var DN = ['D','L','M','X','J','V','S'];
-var DF = ['Domingo','Lunes','Martes','Mi\u00e9rcoles','Jueves','Viernes','S\u00e1bado'];
+var SK='excelia-horas-v3', CY, CM, ST={}, SW={}, ED=null;
+var MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+var DN=['D','L','M','X','J','V','S'];
+var DF=['Domingo','Lunes','Martes','Mi\u00e9rcoles','Jueves','Viernes','S\u00e1bado'];
 
-function load() {
-  try { var r = localStorage.getItem(SK); if (r) { var d = JSON.parse(r); ST = d.days || {}; SW = d.sent || {}; } } catch(e) { ST = {}; SW = {}; }
-}
-function save() { localStorage.setItem(SK, JSON.stringify({days: ST, sent: SW})); }
-function summer(d) { var m = d.getMonth(), dd = d.getDate(); return m === 6 || m === 7 || (m === 8 && dd <= 15); }
-function mSummer(m) { return m === 6 || m === 7 || m === 8; }
-function defH(d) { var w = d.getDay(); if (!w || w === 6) return 0; if (w === 5) return 6.5; return summer(d) ? 7 : 9; }
-function dayH(d) { var k = dk(d), t = (ST[k] && ST[k].type) || 'normal', w = d.getDay(); if (!w || w === 6) return 0; if (t !== 'normal') return 8; return defH(d); }
-function dayT(d) { var e = ST[dk(d)]; return (e && e.type) || 'normal'; }
-function dk(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
-function fd(d) { return String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth() + 1).padStart(2,'0'); }
-function ad(d, n) { var r = new Date(d); r.setDate(r.getDate() + n); return r; }
-function fh(h) { if (h === 0) return '\u2014'; if (h % 1 === 0) return String(h); return h.toFixed(1).replace('.', ','); }
-function fhP(h) { if (h === 0) return ''; if (h % 1 === 0) return String(h); return h.toFixed(1); }
-function isToday(d) { var t = new Date(); return d.getFullYear() === t.getFullYear() && d.getMonth() === t.getMonth() && d.getDate() === t.getDate(); }
-function wn(date) { var d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())); d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7)); var ys = new Date(Date.UTC(d.getUTCFullYear(), 0, 1)); return Math.ceil(((d - ys) / 864e5 + 1) / 7); }
+function load(){ try{var r=localStorage.getItem(SK);if(r){var d=JSON.parse(r);ST=d.days||{};SW=d.sent||{};}}catch(e){ST={};SW={};} }
+function save(){ localStorage.setItem(SK,JSON.stringify({days:ST,sent:SW})); }
+function summer(d){ var m=d.getMonth(),dd=d.getDate(); return m===6||m===7||(m===8&&dd<=15); }
+function mSummer(m){ return m===6||m===7||m===8; }
+function defH(d){ var w=d.getDay(); if(!w||w===6)return 0; if(w===5)return 6.5; return summer(d)?7:9; }
+function dayH(d){ var k=dk(d),t=(ST[k]&&ST[k].type)||'normal',w=d.getDay(); if(!w||w===6)return 0; if(t!=='normal')return 8; return defH(d); }
+function dayT(d){ var e=ST[dk(d)]; return(e&&e.type)||'normal'; }
+function dk(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function fd(d){ return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0'); }
+function ad(d,n){ var r=new Date(d); r.setDate(r.getDate()+n); return r; }
+function fh(h){ if(h===0)return'\u2014'; if(h%1===0)return String(h); return h.toFixed(1).replace('.',','); }
+function fhP(h){ if(h===0)return''; if(h%1===0)return String(h); return h.toFixed(1); }
+function isToday(d){ var t=new Date(); return d.getFullYear()===t.getFullYear()&&d.getMonth()===t.getMonth()&&d.getDate()===t.getDate(); }
+function wn(date){ var d=new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate())); d.setUTCDate(d.getUTCDate()+4-(d.getUTCDay()||7)); var ys=new Date(Date.UTC(d.getUTCFullYear(),0,1)); return Math.ceil(((d-ys)/864e5+1)/7); }
 
-function weeks(y, m) {
-  var ws = [], first = new Date(y, m, 1), last = new Date(y, m + 1, 0), s = new Date(first);
-  var dow = s.getDay(), off = dow === 0 ? -6 : 1 - dow; s.setDate(s.getDate() + off);
-  while (s <= last || s.getMonth() === m) {
-    var w = []; for (var i = 0; i < 7; i++) { w.push(new Date(s)); s = ad(s, 1); }
+function weeks(y,m){
+  var ws=[],first=new Date(y,m,1),last=new Date(y,m+1,0),s=new Date(first);
+  var dow=s.getDay(),off=dow===0?-6:1-dow; s.setDate(s.getDate()+off);
+  while(s<=last||s.getMonth()===m){
+    var w=[]; for(var i=0;i<7;i++){w.push(new Date(s));s=ad(s,1);}
     ws.push(w);
-    if (s.getMonth() > m && s.getFullYear() >= y && m < 11) break;
-    if (s.getFullYear() > y && m === 11) break;
-    if (ws.length > 6) break;
+    if(s.getMonth()>m&&s.getFullYear()>=y&&m<11)break;
+    if(s.getFullYear()>y&&m===11)break;
+    if(ws.length>6)break;
   }
   return ws;
 }
 
-function getWD(wkey) {
-  var p = wkey.split('-'), mon = new Date(+p[0], +p[1] - 1, +p[2]), days = [];
-  for (var i = 0; i < 5; i++) days.push(ad(mon, i));
-  var proy = [], vac = [], fest = [], aus = [];
-  for (var i = 0; i < 5; i++) {
-    var d = days[i], t = dayT(d);
-    if (t === 'normal') { var h = defH(d); proy.push(fhP(h)); vac.push(''); fest.push(''); aus.push(''); }
-    else { proy.push(''); vac.push(t === 'vacaciones' ? 'X' : ''); fest.push(t === 'festivo' ? 'X' : ''); aus.push(t === 'ausencia' ? 'X' : ''); }
+function getWD(wkey){
+  var p=wkey.split('-'),mon=new Date(+p[0],+p[1]-1,+p[2]),days=[];
+  for(var i=0;i<5;i++)days.push(ad(mon,i));
+  var proy=[],vac=[],fest=[],aus=[];
+  for(var i=0;i<5;i++){
+    var d=days[i],t=dayT(d);
+    if(t==='normal'){var h=defH(d);proy.push(fhP(h));vac.push('');fest.push('');aus.push('');}
+    else{proy.push('');vac.push(t==='vacaciones'?'X':'');fest.push(t==='festivo'?'X':'');aus.push(t==='ausencia'?'X':'');}
   }
-  return { mon: mon, fri: days[4], proy: proy, vac: vac, fest: fest, aus: aus };
+  return{mon:mon,fri:days[4],proy:proy,vac:vac,fest:fest,aus:aus};
 }
 
-function showToast(msg, type) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast show' + (type ? ' ' + type : '');
+function showToast(msg,type){
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast show'+(type?' '+type:'');
   clearTimeout(t._timer);
-  t._timer = setTimeout(function() { t.className = 'toast'; }, 3500);
+  t._timer=setTimeout(function(){t.className='toast';},3500);
 }
 
 // ============================================================
 // RENDER
 // ============================================================
-function render() {
-  document.getElementById('monthLabel').textContent = MN[CM] + ' ' + CY;
-  document.getElementById('summerBanner').style.display = mSummer(CM) ? 'flex' : 'none';
-  var wks = weeks(CY, CM), c = document.getElementById('weeksContainer');
-  c.innerHTML = '';
+function render(){
+  document.getElementById('monthLabel').textContent=MN[CM]+' '+CY;
+  document.getElementById('summerBanner').style.display=mSummer(CM)?'flex':'none';
+  var wks=weeks(CY,CM),c=document.getElementById('weeksContainer');
+  c.innerHTML='';
 
-  wks.forEach(function(wk) {
-    var mon = wk[0], sun = wk[6], wkey = dk(mon), sent = !!SW[wkey], tot = 0;
-    for (var i = 0; i < 5; i++) tot += dayH(wk[i]);
+  wks.forEach(function(wk){
+    var mon=wk[0],sun=wk[6],wkey=dk(mon),sent=!!SW[wkey],tot=0;
+    for(var i=0;i<5;i++)tot+=dayH(wk[i]);
 
-    var card = document.createElement('div');
-    card.className = 'week-card' + (sent ? ' sent' : '');
-    card.innerHTML = '<div class="week-header"><div class="week-info"><h3>Semana ' + wn(mon) + (sent ? '<span class="sent-badge">\u2713 Enviada</span>' : '') + '</h3><div class="week-range">' + fd(mon) + ' \u2014 ' + fd(sun) + '</div></div><div class="week-total">' + fh(tot) + 'h</div></div>';
+    var card=document.createElement('div');
+    card.className='week-card'+(sent?' sent':'');
+    card.innerHTML='<div class="week-header"><div class="week-info"><h3>Semana '+wn(mon)+(sent?'<span class="sent-badge">\u2713 Enviada</span>':'')+'</h3><div class="week-range">'+fd(mon)+' \u2014 '+fd(sun)+'</div></div><div class="week-total">'+fh(tot)+'h</div></div>';
 
-    var grid = document.createElement('div');
-    grid.className = 'days-grid';
-    for (var i = 0; i < 5; i++) {
-      var d = wk[i], dt = dayT(d), hrs = dayH(d), inM = d.getMonth() === CM;
-      var cell = document.createElement('div');
-      cell.className = 'day-cell' + (dt !== 'normal' ? ' ' + dt : '');
-      if (!inM) cell.style.opacity = '0.4';
-      var ts = isToday(d) ? 'color:var(--accent-bright)' : '';
-      cell.innerHTML = (dt !== 'normal' ? '<div class="day-status-dot"></div>' : '') +
-        '<div class="day-name" style="' + ts + '">' + DN[d.getDay()] + '</div><div class="day-date">' + fd(d) + '</div><div class="day-hours">' + fh(hrs) + '</div>';
-      (function(dd) { cell.addEventListener('click', function() { openSheet(dd); }); })(d);
+    var grid=document.createElement('div'); grid.className='days-grid';
+    for(var i=0;i<5;i++){
+      var d=wk[i],dt=dayT(d),hrs=dayH(d),inM=d.getMonth()===CM;
+      var cell=document.createElement('div');
+      cell.className='day-cell'+(dt!=='normal'?' '+dt:'');
+      if(!inM)cell.style.opacity='0.4';
+      var ts=isToday(d)?'color:var(--accent-bright)':'';
+      cell.innerHTML=(dt!=='normal'?'<div class="day-status-dot"></div>':'')+
+        '<div class="day-name" style="'+ts+'">'+DN[d.getDay()]+'</div><div class="day-date">'+fd(d)+'</div><div class="day-hours">'+fh(hrs)+'</div>';
+      (function(dd){cell.addEventListener('click',function(){openSheet(dd);});})(d);
       grid.appendChild(cell);
     }
     card.appendChild(grid);
 
-    var acts = document.createElement('div');
-    acts.className = 'week-actions';
+    var acts=document.createElement('div'); acts.className='week-actions';
 
-    // Send button
-    var sendBtn = document.createElement('button');
-    sendBtn.className = 'action-btn send';
-    sendBtn.id = 'send-' + wkey;
-    sendBtn.innerHTML = '\u2709 Abrir en Outlook';
-    (function(k, btn) {
-      btn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        sendEmail(k);
-      });
-    })(wkey, sendBtn);
+    var sendBtn=document.createElement('button');
+    sendBtn.className='action-btn send';
+    sendBtn.innerHTML='\u2709 Abrir en Outlook';
+    (function(k){sendBtn.addEventListener('click',function(e){e.stopPropagation();sendEmail(k);});})(wkey);
 
-    // Sent toggle
-    var sb = document.createElement('button');
-    sb.className = 'action-btn sent-toggle';
-    sb.textContent = sent ? '\u21a9 Desmarcar' : '\u2713 Marcar enviada';
-    (function(k) { sb.addEventListener('click', function(e) { e.stopPropagation(); togSent(k); }); })(wkey);
+    var sb=document.createElement('button');
+    sb.className='action-btn sent-toggle';
+    sb.textContent=sent?'\u21a9 Desmarcar':'\u2713 Marcar enviada';
+    (function(k){sb.addEventListener('click',function(e){e.stopPropagation();togSent(k);});})(wkey);
 
-    acts.appendChild(sendBtn);
-    acts.appendChild(sb);
-    card.appendChild(acts);
-    c.appendChild(card);
+    acts.appendChild(sendBtn); acts.appendChild(sb);
+    card.appendChild(acts); c.appendChild(card);
   });
 }
 
-function openSheet(date) {
-  ED = date;
-  var dt = dayT(date), dow = date.getDay(), sm = summer(date);
-  var nh = (dow === 5) ? '6,5' : (sm ? '7' : '9');
-  document.getElementById('sheetTitle').textContent = DF[dow] + ' ' + fd(date);
-  document.getElementById('sheetSubtitle').textContent = sm ? '\u2600\ufe0f Horario de verano' : 'Selecciona el tipo de d\u00eda';
-  document.getElementById('optNormalHours').textContent = nh + 'h';
-  var opts = document.querySelectorAll('.sheet-option');
-  for (var i = 0; i < opts.length; i++) { opts[i].classList.toggle('selected', opts[i].dataset.type === dt); }
+function openSheet(date){
+  ED=date; var dt=dayT(date),dow=date.getDay(),sm=summer(date);
+  var nh=(dow===5)?'6,5':(sm?'7':'9');
+  document.getElementById('sheetTitle').textContent=DF[dow]+' '+fd(date);
+  document.getElementById('sheetSubtitle').textContent=sm?'\u2600\ufe0f Horario de verano':'Selecciona el tipo de d\u00eda';
+  document.getElementById('optNormalHours').textContent=nh+'h';
+  var opts=document.querySelectorAll('.sheet-option');
+  for(var i=0;i<opts.length;i++){opts[i].classList.toggle('selected',opts[i].dataset.type===dt);}
   document.getElementById('overlay').classList.add('active');
   document.getElementById('bottomSheet').classList.add('active');
 }
 
-function closeSheet() {
+function closeSheet(){
   document.getElementById('overlay').classList.remove('active');
   document.getElementById('bottomSheet').classList.remove('active');
-  ED = null;
+  ED=null;
 }
 
-function selectType(t) {
-  if (!ED) return;
-  var k = dk(ED);
-  if (t === 'normal') delete ST[k]; else ST[k] = { type: t };
+function selectType(t){
+  if(!ED)return; var k=dk(ED);
+  if(t==='normal')delete ST[k]; else ST[k]={type:t};
   save(); closeSheet(); render();
 }
 
-function togSent(k) { if (SW[k]) delete SW[k]; else SW[k] = true; save(); render(); }
+function togSent(k){ if(SW[k])delete SW[k]; else SW[k]=true; save(); render(); }
 
 // ============================================================
 // EVENT LISTENERS
 // ============================================================
-document.querySelectorAll('.sheet-option').forEach(function(el) {
-  el.addEventListener('click', function() { selectType(el.dataset.type); });
-});
-document.getElementById('overlay').addEventListener('click', closeSheet);
-document.getElementById('prevMonth').addEventListener('click', function() { CM--; if (CM < 0) { CM = 11; CY--; } render(); });
-document.getElementById('nextMonth').addEventListener('click', function() { CM++; if (CM > 11) { CM = 0; CY++; } render(); });
-document.getElementById('todayBtn').addEventListener('click', function() { var n = new Date(); CY = n.getFullYear(); CM = n.getMonth(); render(); });
+document.querySelectorAll('.sheet-option').forEach(function(el){el.addEventListener('click',function(){selectType(el.dataset.type);});});
+document.getElementById('overlay').addEventListener('click',closeSheet);
+document.getElementById('prevMonth').addEventListener('click',function(){CM--;if(CM<0){CM=11;CY--;}render();});
+document.getElementById('nextMonth').addEventListener('click',function(){CM++;if(CM>11){CM=0;CY++;}render();});
+document.getElementById('todayBtn').addEventListener('click',function(){var n=new Date();CY=n.getFullYear();CM=n.getMonth();render();});
 
 // ============================================================
 // INIT
 // ============================================================
 load();
-var now = new Date(); CY = now.getFullYear(); CM = now.getMonth();
+var now=new Date(); CY=now.getFullYear(); CM=now.getMonth();
 render();
 
-// Build badge
 (function(){
-  var b = document.getElementById('buildBadge');
-  var dot = document.createElement('div');
-  dot.className = 'build-dot';
-  dot.style.background = BUILD.color;
-  b.appendChild(dot);
-  b.appendChild(document.createTextNode(BUILD.date));
+  var b=document.getElementById('buildBadge');
+  var dot=document.createElement('div'); dot.className='build-dot'; dot.style.background=BUILD.color;
+  b.appendChild(dot); b.appendChild(document.createTextNode(BUILD.date));
 })();
 
 })();
