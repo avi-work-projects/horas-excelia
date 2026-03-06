@@ -35,11 +35,12 @@ jobs:
           import os
           with open('index.html', 'r', encoding='utf-8') as f:
               content = f.read()
+          def clean(v): return v.strip().replace('\r','').replace('\n','')
           replacements = {
-              '{{TO}}':          os.environ.get('MAIL_TO',      '').strip(),
-              '{{CC}}':          os.environ.get('MAIL_CC',      '').strip(),
-              '{{AUTHOR_NAME}}': os.environ.get('AUTHOR_NAME',  '').strip(),
-              '{{BIRTHDAYS}}':   os.environ.get('BIRTHDAYS',    '').strip(),
+              '{{TO}}':          clean(os.environ.get('MAIL_TO',      '')),
+              '{{CC}}':          clean(os.environ.get('MAIL_CC',      '')),
+              '{{AUTHOR_NAME}}': clean(os.environ.get('AUTHOR_NAME',  '')),
+              '{{BIRTHDAYS}}':   ''.join(os.environ.get('BIRTHDAYS', '').split()),
           }
           for key, val in replacements.items():
               content = content.replace(key, val)
