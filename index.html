@@ -168,19 +168,56 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .sy-tr-total td{color:var(--text)!important;font-weight:600}
 .sy-chart{background:var(--surface2);border-radius:var(--radius-sm);padding:12px 8px 6px}
 .sy-note{font-size:.72rem;color:var(--text-dim);padding:10px 12px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)}
+#econOverlay{position:fixed;inset:0;z-index:300;background:var(--bg);overflow-y:auto;transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1)}
+#econOverlay.open{transform:translateY(0)}
+.sy-list{list-style:none;display:flex;flex-direction:column;gap:4px;margin-top:8px}
+.sy-list-item{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:.82rem}
+.sy-list-date{font-family:var(--mono);font-size:.73rem;color:var(--text-muted);min-width:96px;flex-shrink:0}
+.sy-list-tag{font-size:.65rem;padding:2px 7px;border-radius:8px;font-weight:600;flex-shrink:0;text-transform:uppercase;letter-spacing:.04em}
+.sy-list-tag.festivo{background:rgba(255,107,107,.15);color:var(--festivo)}
+.sy-list-tag.vacaciones{background:rgba(255,179,71,.15);color:var(--vacaciones)}
+.sy-puente{display:flex;flex-direction:column;gap:3px;padding:12px 14px;background:var(--surface);border:1px solid var(--accent);border-left:3px solid var(--accent);border-radius:var(--radius-sm);margin-top:6px}
+.sy-puente-range{font-family:var(--mono);font-size:.73rem;color:var(--text-muted)}
+.sy-puente-count{font-size:.88rem;font-weight:600;color:var(--accent-bright)}
+.sy-puente-comp{font-size:.7rem;color:var(--text-dim);margin-top:2px}
+.rate-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm)}
+.rate-label{font-size:.8rem;color:var(--text-muted);flex:1}
+.rate-input{font-family:var(--mono);font-size:1rem;font-weight:600;color:var(--text);background:var(--surface2);border:1px solid var(--accent);border-radius:var(--radius-sm);padding:6px 10px;width:88px;text-align:right;outline:none}
+.rate-suffix{font-size:.8rem;color:var(--text-muted)}
+.econ-quarter{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px}
+.econ-qcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 8px;text-align:center}
+.econ-qcard .sy-val-sm{font-size:.85rem}
+.econ-annual{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.econ-row{display:flex;justify-content:space-between;align-items:baseline;font-size:.88rem;color:var(--text-muted)}
+.econ-row.gross{font-size:1rem;color:var(--text);font-weight:600}
+.econ-row.deduct .econ-val{color:#ff6b6b}
+.econ-row.net-econ{border-top:1px solid var(--border);padding-top:10px;margin-top:2px;color:var(--sent-text);font-weight:700;font-size:1.05rem}
+.econ-val{font-family:var(--mono);font-weight:500}
+.econ-month-table{width:100%;border-collapse:collapse;font-size:.78rem}
+.econ-month-table th{text-align:right;padding:7px 8px;background:var(--surface2);color:var(--text-muted);font-weight:600;font-size:.7rem;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--border)}
+.econ-month-table th:first-child{text-align:left}
+.econ-month-table td{text-align:right;padding:7px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:.75rem;color:var(--text-muted)}
+.econ-month-table td:first-child{text-align:left;font-family:var(--font);color:var(--text);font-size:.8rem}
+.econ-month-table tr:last-child td{border-bottom:none}
+.econ-month-table .econ-tr-total{background:var(--surface3)}
+.econ-month-table .econ-tr-total td{color:var(--text)!important;font-weight:600}
+.econ-month-table td.net-cell{color:var(--sent-text)!important;font-weight:600}
 @media print{
-  body>*:not(#summaryOverlay){display:none!important}
-  #summaryOverlay{display:block!important;position:static!important;transform:none!important;background:white!important}
+  body.print-summary>*:not(#summaryOverlay){display:none!important}
+  body.print-summary #summaryOverlay{display:block!important;position:static!important;transform:none!important;background:white!important}
+  body.print-econ>*:not(#econOverlay){display:none!important}
+  body.print-econ #econOverlay{display:block!important;position:static!important;transform:none!important;background:white!important}
   .sy-header{position:static!important;background:white!important;border-bottom:1px solid #ddd!important}
   .sy-back,.sy-pdf,.sy-nav{display:none!important}
   .sy-year,.sy-section-title,.sy-td-lbl{color:#333!important}
   .sy-val,.sy-val-sm{color:#111!important}
   .sy-lbl{color:#666!important}
   .sy-card,.sy-table,.sy-chart,.sy-note{background:#f5f5f5!important;border-color:#ddd!important}
-  .sy-table th{background:#e8e8e8!important}
-  .sy-tr-total{background:#e0e0e0!important}
+  .sy-table th,.econ-month-table th{background:#e8e8e8!important}
+  .sy-tr-total,.econ-tr-total{background:#e0e0e0!important}
   svg text{fill:#555!important}
   svg rect{opacity:1!important}
+  .rate-input{border:none;background:transparent}
 }
 </style>
 </head>
@@ -193,6 +230,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
       <div class="subtitle">{{AUTHOR_NAME}}</div>
     </div>
     <div class="data-actions">
+      <button class="data-btn" id="econBtn" title="Cuentas del a&#241;o">&#8364;</button>
       <button class="data-btn" id="summaryBtn" title="Resumen anual">&#8721;</button>
       <button class="data-btn" id="exportBtn" title="Exportar datos">&#8595;</button>
       <button class="data-btn" id="importBtn" title="Importar datos">&#8593;</button>
@@ -240,6 +278,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 <div class="toast" id="toast"></div>
 <div class="build-badge" id="buildBadge"></div>
 <div id="summaryOverlay" style="display:none"><div id="summaryContent"></div></div>
+<div id="econOverlay" style="display:none"><div id="econContent"></div></div>
 
 <script>
 (function(){
@@ -293,13 +332,13 @@ function buildMailtoBody(wd) {
 // ============================================================
 // APP STATE
 // ============================================================
-var SK='excelia-horas-v3', CY, CM, ST={}, SW={}, ED=null, MONTH_H={};
+var SK='excelia-horas-v3', CY, CM, ST={}, SW={}, ED=null, MONTH_H={}, DAILY_RATE=315;
 var MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 var DN=['D','L','M','X','J','V','S'];
 var DF=['Domingo','Lunes','Martes','Mi\u00e9rcoles','Jueves','Viernes','S\u00e1bado'];
 
-function load(){ try{var r=localStorage.getItem(SK);if(r){var d=JSON.parse(r);ST=d.days||{};SW=d.sent||{};MONTH_H=d.monthH||{};}}catch(e){ST={};SW={};MONTH_H={};} }
-function save(){ localStorage.setItem(SK,JSON.stringify({days:ST,sent:SW,monthH:MONTH_H})); }
+function load(){ try{var r=localStorage.getItem(SK);if(r){var d=JSON.parse(r);ST=d.days||{};SW=d.sent||{};MONTH_H=d.monthH||{};DAILY_RATE=d.rate||315;}}catch(e){ST={};SW={};MONTH_H={};DAILY_RATE=315;} }
+function save(){ localStorage.setItem(SK,JSON.stringify({days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE})); }
 function mkey(y,m){ return y+'-'+String(m+1).padStart(2,'0'); }
 function getMonthH(y,m,day){ if(MONTH_H[mkey(y,m)]!==undefined)return MONTH_H[mkey(y,m)]; if(m===6||m===7)return 7; if(m===8&&(!day||day<=15))return 7; return 9; }
 function defH(d){ var w=d.getDay(); if(!w||w===6)return 0; if(w===5)return 6.5; return getMonthH(d.getFullYear(),d.getMonth(),d.getDate()); }
@@ -628,6 +667,69 @@ function renderSummaryContent(){
   h+='<div class="sy-chart">'+barChart3(s.mDays,s.mDaysP,MN_SHORT,'#34d399',cm)+'</div>';
   h+='</div>';
 
+  // Puentes, festivos, vacaciones
+  var p=computePuentes(SUMMARY_YEAR);
+  function fdd(dt){return DF[dt.getDay()]+', '+fd(dt);}
+
+  // Puentes
+  h+='<div class="sy-section"><div class="sy-section-title">Puentes (3+ d&#237;as seguidos)</div>';
+  if(p.puentes.length===0){h+='<div class="sy-note">No hay puentes marcados para este a&#241;o.</div>';}
+  else{
+    p.puentes.forEach(function(seq){
+      var first=seq[0].date,last=seq[seq.length-1].date;
+      var nDays=seq.length;
+      var vCount=seq.filter(function(x){return x.type==='vacaciones';}).length;
+      var fCount=seq.filter(function(x){return x.type==='festivo';}).length;
+      var parts=[];if(fCount)parts.push(fCount+' festivo'+(fCount>1?'s':''));if(vCount)parts.push(vCount+' vacac.'+(vCount>1?'':''));
+      var wCount=seq.filter(function(x){return x.type==='weekend';}).length;
+      if(wCount)parts.push(wCount+' fin'+(wCount>1?'es':'')+' semana');
+      h+='<div class="sy-puente">';
+      h+='<div class="sy-puente-count">'+nDays+' d&#237;as</div>';
+      h+='<div class="sy-puente-range">'+fdd(first)+' &#8594; '+fdd(last)+'</div>';
+      h+='<div class="sy-puente-comp">'+parts.join(' + ')+'</div>';
+      h+='</div>';
+    });
+  }
+  h+='</div>';
+
+  // Dias sueltos
+  var sueltos=p.festivosSueltos.concat(p.vacSueltos).sort(function(a,b){return a-b;});
+  h+='<div class="sy-section"><div class="sy-section-title">D&#237;as sueltos (sin puente)</div>';
+  if(sueltos.length===0){h+='<div class="sy-note">No hay d&#237;as sueltos.</div>';}
+  else{
+    h+='<ul class="sy-list">';
+    sueltos.forEach(function(dt){
+      var t=dayT(dt);
+      h+='<li class="sy-list-item"><span class="sy-list-date">'+fdd(dt)+'</span><span class="sy-list-tag '+t+'">'+t+'</span></li>';
+    });
+    h+='</ul>';
+  }
+  h+='</div>';
+
+  // Festivos
+  h+='<div class="sy-section"><div class="sy-section-title">Festivos ('+p.festivosList.length+')</div>';
+  if(p.festivosList.length===0){h+='<div class="sy-note">No hay festivos marcados para este a&#241;o.</div>';}
+  else{
+    h+='<ul class="sy-list">';
+    p.festivosList.forEach(function(dt){
+      h+='<li class="sy-list-item"><span class="sy-list-date">'+fdd(dt)+'</span><span class="sy-list-tag festivo">Festivo</span></li>';
+    });
+    h+='</ul>';
+  }
+  h+='</div>';
+
+  // Vacaciones
+  h+='<div class="sy-section"><div class="sy-section-title">Vacaciones ('+p.vacacionesList.length+' d&#237;as)</div>';
+  if(p.vacacionesList.length===0){h+='<div class="sy-note">No hay d&#237;as de vacaciones marcados para este a&#241;o.</div>';}
+  else{
+    h+='<ul class="sy-list">';
+    p.vacacionesList.forEach(function(dt){
+      h+='<li class="sy-list-item"><span class="sy-list-date">'+fdd(dt)+'</span><span class="sy-list-tag vacaciones">Vacaciones</span></li>';
+    });
+    h+='</ul>';
+  }
+  h+='</div>';
+
   h+='</div>';
   return h;
 }
@@ -649,7 +751,11 @@ function closeSummary(){
 
 function bindSummaryEvents(){
   document.getElementById('syBack').addEventListener('click',closeSummary);
-  document.getElementById('syPdf').addEventListener('click',function(){window.print();});
+  document.getElementById('syPdf').addEventListener('click',function(){
+    document.body.classList.add('print-summary');
+    window.print();
+    document.body.classList.remove('print-summary');
+  });
   document.getElementById('syPrev').addEventListener('click',function(){
     SUMMARY_YEAR--;
     document.getElementById('summaryContent').innerHTML=renderSummaryContent();
@@ -659,6 +765,176 @@ function bindSummaryEvents(){
     SUMMARY_YEAR++;
     document.getElementById('summaryContent').innerHTML=renderSummaryContent();
     bindSummaryEvents();
+  });
+}
+
+// ============================================================
+// PUENTES
+// ============================================================
+function computePuentes(year){
+  var festivosList=[],vacacionesList=[];
+  var d=new Date(year,0,1);
+  while(d.getFullYear()===year){
+    var t=dayT(d);
+    if(t==='festivo')festivosList.push(new Date(d));
+    if(t==='vacaciones')vacacionesList.push(new Date(d));
+    d.setDate(d.getDate()+1);
+  }
+  function isNWD(dt){var w=dt.getDay();return w===0||w===6||dayT(dt)==='festivo'||dayT(dt)==='vacaciones';}
+  function typeOf(dt){var w=dt.getDay();if(w===0||w===6)return 'weekend';return dayT(dt);}
+  var scan=new Date(year,0,1); scan.setDate(scan.getDate()-7);
+  var scanEnd=new Date(year,11,31); scanEnd.setDate(scanEnd.getDate()+7);
+  var sequences=[],inSeq=false,seqDays=[];
+  while(scan<=scanEnd){
+    if(isNWD(scan)){
+      if(!inSeq){inSeq=true;seqDays=[];}
+      seqDays.push({date:new Date(scan),type:typeOf(scan)});
+    } else {
+      if(inSeq){
+        if(seqDays.length>=3){
+          var hasSpecial=seqDays.some(function(x){return x.type==='festivo'||x.type==='vacaciones';});
+          var inYear=seqDays.some(function(x){return x.date.getFullYear()===year;});
+          if(hasSpecial&&inYear)sequences.push(seqDays.slice());
+        }
+        inSeq=false;seqDays=[];
+      }
+    }
+    scan.setDate(scan.getDate()+1);
+  }
+  if(inSeq&&seqDays.length>=3){
+    var hasSpecial=seqDays.some(function(x){return x.type==='festivo'||x.type==='vacaciones';});
+    if(hasSpecial)sequences.push(seqDays.slice());
+  }
+  var puenteKeys={};
+  sequences.forEach(function(seq){seq.forEach(function(x){puenteKeys[dk(x.date)]=true;});});
+  var festivosSueltos=festivosList.filter(function(fd){return !puenteKeys[dk(fd)];});
+  var vacSueltos=vacacionesList.filter(function(vd){return !puenteKeys[dk(vd)];});
+  return{festivosList:festivosList,vacacionesList:vacacionesList,
+    puentes:sequences,festivosSueltos:festivosSueltos,vacSueltos:vacSueltos};
+}
+
+// ============================================================
+// ECONOMICS
+// ============================================================
+var ECON_YEAR=new Date().getFullYear();
+
+function fc(n){return n.toFixed(2).replace('.',',')+'€';}
+
+function computeEcon(year){
+  var s=computeYearlySummary(year);
+  var months=[];
+  var totBase=0,totIva=0,totIrpf=0,totCobrado=0;
+  var qIva=[0,0,0,0];
+  for(var m=0;m<12;m++){
+    var dias=s.mDays[m]+s.mDaysP[m];
+    var base=dias*DAILY_RATE;
+    var iva=Math.round(base*0.21*100)/100;
+    var irpf=Math.round(base*0.15*100)/100;
+    var cobrado=Math.round((base+iva-irpf)*100)/100;
+    months.push({m:m,dias:dias,base:base,iva:iva,irpf:irpf,cobrado:cobrado});
+    totBase+=base; totIva+=iva; totIrpf+=irpf; totCobrado+=cobrado;
+    qIva[Math.floor(m/3)]+=iva;
+  }
+  totBase=Math.round(totBase*100)/100;
+  totIva=Math.round(totIva*100)/100;
+  totIrpf=Math.round(totIrpf*100)/100;
+  totCobrado=Math.round(totCobrado*100)/100;
+  var neto=Math.round((totBase-totIva-totIrpf)*100)/100;
+  var netoReal=Math.round((totBase-totIrpf)*100)/100; // after quarterly IVA payments
+  return{months:months,totBase:totBase,totIva:totIva,totIrpf:totIrpf,
+    totCobrado:totCobrado,neto:neto,netoReal:netoReal,qIva:qIva};
+}
+
+function renderEconContent(){
+  var e=computeEcon(ECON_YEAR);
+  var h='<div class="sy-header">';
+  h+='<button class="sy-back" id="ecBack">&#8592;</button>';
+  h+='<div class="sy-year-nav"><button class="sy-nav" id="ecPrev">&#9664;</button><div class="sy-year">'+ECON_YEAR+'</div><button class="sy-nav" id="ecNext">&#9654;</button></div>';
+  h+='<button class="sy-pdf" id="ecPdf">PDF</button>';
+  h+='</div><div class="sy-body">';
+
+  // Tarifa configurable
+  h+='<div class="sy-section"><div class="sy-section-title">Tarifa diaria</div>';
+  h+='<div class="rate-row"><span class="rate-label">&#8364;/d&#237;a (sin IVA)</span>';
+  h+='<input class="rate-input" id="rateInput" type="number" min="1" step="1" value="'+DAILY_RATE+'">';
+  h+='<span class="rate-suffix">&#8364;/d&#237;a</span></div></div>';
+
+  // Resumen anual
+  h+='<div class="sy-section"><div class="sy-section-title">Resumen anual</div>';
+  h+='<div class="econ-annual">';
+  h+='<div class="econ-row gross"><span>Bruto (base imponible)</span><span class="econ-val">'+fc(e.totBase)+'</span></div>';
+  h+='<div class="econ-row"><span>Total facturado (con IVA)</span><span class="econ-val">'+fc(Math.round((e.totBase+e.totIva)*100)/100)+'</span></div>';
+  h+='<div class="econ-row"><span>Cobrado del cliente</span><span class="econ-val">'+fc(e.totCobrado)+'</span></div>';
+  h+='<div class="econ-row deduct"><span>&#8722; IVA a pagar (21%)</span><span class="econ-val neg">&#8722;'+fc(e.totIva)+'</span></div>';
+  h+='<div class="econ-row deduct"><span>&#8722; IRPF retenido (15%)</span><span class="econ-val neg">&#8722;'+fc(e.totIrpf)+'</span></div>';
+  h+='<div class="econ-row net-econ"><span>Neto efectivo</span><span class="econ-val">'+fc(e.netoReal)+'</span></div>';
+  h+='</div>';
+  h+='<div class="sy-note">Neto efectivo = cobrado del cliente &#8722; IVA trimestral. El IRPF retenido se descuenta en Renta. Neto bruto (base &#8722; IVA &#8722; IRPF) = '+fc(e.neto)+'.</div>';
+  h+='</div>';
+
+  // IVA trimestral
+  h+='<div class="sy-section"><div class="sy-section-title">IVA trimestral a Hacienda</div>';
+  h+='<div class="econ-quarter">';
+  ['T1','T2','T3','T4'].forEach(function(q,i){
+    h+='<div class="econ-qcard"><div class="sy-val-sm" style="color:#ff6b6b">'+fc(Math.round(e.qIva[i]*100)/100)+'</div><div class="sy-lbl">'+q+'</div></div>';
+  });
+  h+='</div></div>';
+
+  // Desglose mensual
+  h+='<div class="sy-section"><div class="sy-section-title">Desglose mensual</div>';
+  h+='<div style="overflow-x:auto"><table class="econ-month-table"><thead><tr>';
+  h+='<th>Mes</th><th>D&#237;as</th><th>Base</th><th>IVA</th><th>IRPF</th><th>Cobrado</th></tr></thead><tbody>';
+  var totD=0;
+  e.months.forEach(function(mo){
+    totD+=mo.dias;
+    h+='<tr><td>'+MN_SHORT[mo.m]+'</td><td>'+mo.dias+'d</td>';
+    h+='<td>'+fc(mo.base)+'</td><td>'+fc(mo.iva)+'</td><td>'+fc(mo.irpf)+'</td>';
+    h+='<td class="net-cell">'+fc(mo.cobrado)+'</td></tr>';
+  });
+  h+='<tr class="econ-tr-total"><td>Total</td><td>'+totD+'d</td>';
+  h+='<td>'+fc(e.totBase)+'</td><td>'+fc(e.totIva)+'</td><td>'+fc(e.totIrpf)+'</td>';
+  h+='<td class="net-cell">'+fc(e.totCobrado)+'</td></tr>';
+  h+='</tbody></table></div></div>';
+
+  h+='</div>';
+  return h;
+}
+
+function openEcon(){
+  ECON_YEAR=CY;
+  var ov=document.getElementById('econOverlay');
+  var sc=document.getElementById('econContent');
+  sc.innerHTML=renderEconContent();
+  ov.style.display='block';
+  requestAnimationFrame(function(){requestAnimationFrame(function(){ov.classList.add('open');bindEconEvents();});});
+}
+
+function closeEcon(){
+  var ov=document.getElementById('econOverlay');
+  ov.classList.remove('open');
+  setTimeout(function(){ov.style.display='none';},320);
+}
+
+function bindEconEvents(){
+  document.getElementById('ecBack').addEventListener('click',closeEcon);
+  document.getElementById('ecPdf').addEventListener('click',function(){
+    document.body.classList.add('print-econ');
+    window.print();
+    document.body.classList.remove('print-econ');
+  });
+  document.getElementById('ecPrev').addEventListener('click',function(){
+    ECON_YEAR--;
+    document.getElementById('econContent').innerHTML=renderEconContent();
+    bindEconEvents();
+  });
+  document.getElementById('ecNext').addEventListener('click',function(){
+    ECON_YEAR++;
+    document.getElementById('econContent').innerHTML=renderEconContent();
+    bindEconEvents();
+  });
+  document.getElementById('rateInput').addEventListener('change',function(){
+    var v=parseInt(this.value,10);
+    if(v>0){DAILY_RATE=v;save();document.getElementById('econContent').innerHTML=renderEconContent();bindEconEvents();}
   });
 }
 
@@ -678,9 +954,10 @@ document.querySelectorAll('.hour-chip-day').forEach(function(el){
 document.querySelectorAll('.hours-chip').forEach(function(el){
   el.addEventListener('click',function(){MONTH_H[mkey(CY,CM)]=+el.dataset.h;save();render();});
 });
+document.getElementById('econBtn').addEventListener('click',openEcon);
 document.getElementById('summaryBtn').addEventListener('click',openSummary);
 document.getElementById('exportBtn').addEventListener('click',function(){
-  var data=JSON.stringify({version:1,days:ST,sent:SW,monthH:MONTH_H},null,2);
+  var data=JSON.stringify({version:1,days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE},null,2);
   var a=document.createElement('a');
   a.href='data:application/json,'+encodeURIComponent(data);
   a.download='horas-excelia-backup.json';
@@ -693,7 +970,7 @@ document.getElementById('importFile').addEventListener('change',function(e){
   r.onload=function(ev){
     try{
       var d=JSON.parse(ev.target.result);
-      ST=d.days||{}; SW=d.sent||{}; MONTH_H=d.monthH||{};
+      ST=d.days||{}; SW=d.sent||{}; MONTH_H=d.monthH||{}; DAILY_RATE=d.rate||315;
       save(); render();
       showToast('Datos importados correctamente','success');
     }catch(err){ showToast('Error al importar el fichero','error'); }
