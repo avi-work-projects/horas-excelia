@@ -32,18 +32,61 @@ jobs:
           BIRTHDAYS: ${{ secrets.BIRTHDAYS }}
         run: |
           python3 - <<'PYEOF'
-          import os
+          import os, json, base64, re
+
+          def clean(v):
+              return v.strip().replace('\r','').replace('\n','')
+
+          # ── BIRTHDAYS: acepta base64-JSON o CSV "Nombre,día,mes" por línea ──
+          bdays_raw = os.environ.get('BIRTHDAYS', '').strip()
+          bdays_b64 = ''
+          if bdays_raw:
+              # Detectar si es base64: solo contiene caracteres base64 válidos
+              b64_chars = re.compile(r'^[A-Za-z0-9+/=\s]+$')
+              if b64_chars.match(bdays_raw):
+                  # Intentar decodificar como base64 JSON
+                  try:
+                      decoded = base64.b64decode(''.join(bdays_raw.split())).decode('utf-8')
+                      parsed = json.loads(decoded)
+                      if isinstance(parsed, list):
+                          bdays_b64 = ''.join(bdays_raw.split())  # ya es base64
+                      else:
+                          raise ValueError('not a list')
+                  except Exception:
+                      bdays_b64 = ''  # fallback a CSV
+
+              if not bdays_b64:
+                  # Parsear como CSV: Nombre,día,mes (una entrada por línea)
+                  bdays_list = []
+                  for line in bdays_raw.splitlines():
+                      line = line.strip()
+                      if not line:
+                          continue
+                      parts = [p.strip() for p in line.split(',')]
+                      if len(parts) >= 3:
+                          try:
+                              bdays_list.append({
+                                  'name': parts[0],
+                                  'day': int(parts[1]),
+                                  'month': int(parts[2])
+                              })
+                          except (ValueError, IndexError):
+                              pass
+                  if bdays_list:
+                      bdays_b64 = base64.b64encode(json.dumps(bdays_list).encode()).decode()
+
           with open('index.html', 'r', encoding='utf-8') as f:
               content = f.read()
-          def clean(v): return v.strip().replace('\r','').replace('\n','')
+
           replacements = {
               '{{TO}}':          clean(os.environ.get('MAIL_TO',      '')),
               '{{CC}}':          clean(os.environ.get('MAIL_CC',      '')),
               '{{AUTHOR_NAME}}': clean(os.environ.get('AUTHOR_NAME',  '')),
-              '{{BIRTHDAYS}}':   ''.join(os.environ.get('BIRTHDAYS', '').split()),
+              '{{BIRTHDAYS}}':   bdays_b64,
           }
           for key, val in replacements.items():
               content = content.replace(key, val)
+
           with open('index.html', 'w', encoding='utf-8') as f:
               f.write(content)
           PYEOF
