@@ -238,15 +238,17 @@ function buildMailtoBody(wd) {
 // ============================================================
 // APP STATE
 // ============================================================
-var SK='excelia-horas-v3', CY, CM, ST={}, SW={}, ED=null, GLOBAL_H=9;
+var SK='excelia-horas-v3', CY, CM, ST={}, SW={}, ED=null, MONTH_H={};
 var MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 var DN=['D','L','M','X','J','V','S'];
 var DF=['Domingo','Lunes','Martes','Mi\u00e9rcoles','Jueves','Viernes','S\u00e1bado'];
 
-function load(){ try{var r=localStorage.getItem(SK);if(r){var d=JSON.parse(r);ST=d.days||{};SW=d.sent||{};GLOBAL_H=d.globalH||9;}}catch(e){ST={};SW={};GLOBAL_H=9;} }
-function save(){ localStorage.setItem(SK,JSON.stringify({days:ST,sent:SW,globalH:GLOBAL_H})); }
-function defH(d){ var w=d.getDay(); if(!w||w===6)return 0; if(w===5)return 6.5; return GLOBAL_H; }
-function dayH(d){ var w=d.getDay(); if(!w||w===6)return 0; var k=dk(d),e=ST[k],t=(e&&e.type)||'normal'; if(t!=='normal')return 0; if(w===5)return 6.5; return(e&&e.hours)||GLOBAL_H; }
+function load(){ try{var r=localStorage.getItem(SK);if(r){var d=JSON.parse(r);ST=d.days||{};SW=d.sent||{};MONTH_H=d.monthH||{};}}catch(e){ST={};SW={};MONTH_H={};} }
+function save(){ localStorage.setItem(SK,JSON.stringify({days:ST,sent:SW,monthH:MONTH_H})); }
+function mkey(y,m){ return y+'-'+String(m+1).padStart(2,'0'); }
+function getMonthH(y,m){ return MONTH_H[mkey(y,m)]||9; }
+function defH(d){ var w=d.getDay(); if(!w||w===6)return 0; if(w===5)return 6.5; return getMonthH(d.getFullYear(),d.getMonth()); }
+function dayH(d){ var w=d.getDay(); if(!w||w===6)return 0; var k=dk(d),e=ST[k],t=(e&&e.type)||'normal'; if(t!=='normal')return 0; if(w===5)return 6.5; return(e&&e.hours)||getMonthH(d.getFullYear(),d.getMonth()); }
 function dayT(d){ var e=ST[dk(d)]; return(e&&e.type)||'normal'; }
 function dk(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function fd(d){ return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0'); }
@@ -294,7 +296,8 @@ function showToast(msg,type){
 // ============================================================
 function render(){
   document.getElementById('monthLabel').textContent=MN[CM]+' '+CY;
-  document.querySelectorAll('.hours-chip').forEach(function(el){el.classList.toggle('active',+el.dataset.h===GLOBAL_H);});
+  var curMonthH=getMonthH(CY,CM);
+  document.querySelectorAll('.hours-chip').forEach(function(el){el.classList.toggle('active',+el.dataset.h===curMonthH);});
   var wks=weeks(CY,CM),c=document.getElementById('weeksContainer');
   c.innerHTML='';
 
@@ -354,7 +357,7 @@ function render(){
 
 function openSheet(date){
   ED=date; var dt=dayT(date),dow=date.getDay();
-  var nh=(dow===5)?'6,5':String(GLOBAL_H);
+  var nh=(dow===5)?'6,5':String(getMonthH(date.getFullYear(),date.getMonth()));
   document.getElementById('sheetTitle').textContent=DF[dow]+' '+fd(date);
   document.getElementById('sheetSubtitle').textContent='Selecciona el tipo de d\u00eda';
   document.getElementById('optNormalHours').textContent=nh+'h';
@@ -364,7 +367,7 @@ function openSheet(date){
   if(dow>=1&&dow<=4&&dt==='normal'){
     picker.style.display='block';
     var e=ST[dk(date)];
-    var curH=(e&&e.hours)||GLOBAL_H;
+    var curH=(e&&e.hours)||getMonthH(date.getFullYear(),date.getMonth());
     document.querySelectorAll('.hour-chip-day').forEach(function(c){c.classList.toggle('active',+c.dataset.h===curH);});
   } else { picker.style.display='none'; }
   document.getElementById('overlay').classList.add('active');
@@ -386,7 +389,7 @@ function selectType(t){
     if(dow>=1&&dow<=4){
       var picker=document.getElementById('hourPicker');
       picker.style.display='block';
-      var curH=(ST[k]&&ST[k].hours)||GLOBAL_H;
+      var curH=(ST[k]&&ST[k].hours)||getMonthH(ED.getFullYear(),ED.getMonth());
       document.querySelectorAll('.hour-chip-day').forEach(function(c){c.classList.toggle('active',+c.dataset.h===curH);});
     }
     save(); render();
@@ -406,16 +409,16 @@ document.querySelectorAll('.hour-chip-day').forEach(function(el){
   el.addEventListener('click',function(){
     if(!ED)return; var k=dk(ED),h=+el.dataset.h;
     if(!ST[k])ST[k]={};
-    if(h===GLOBAL_H)delete ST[k].hours; else ST[k].hours=h;
+    if(h===getMonthH(ED.getFullYear(),ED.getMonth()))delete ST[k].hours; else ST[k].hours=h;
     if(Object.keys(ST[k]).length===0)delete ST[k];
     save(); closeSheet(); render();
   });
 });
 document.querySelectorAll('.hours-chip').forEach(function(el){
-  el.addEventListener('click',function(){GLOBAL_H=+el.dataset.h;save();render();});
+  el.addEventListener('click',function(){MONTH_H[mkey(CY,CM)]=+el.dataset.h;save();render();});
 });
 document.getElementById('exportBtn').addEventListener('click',function(){
-  var data=JSON.stringify({version:1,days:ST,sent:SW,globalH:GLOBAL_H},null,2);
+  var data=JSON.stringify({version:1,days:ST,sent:SW,monthH:MONTH_H},null,2);
   var a=document.createElement('a');
   a.href='data:application/json,'+encodeURIComponent(data);
   a.download='horas-excelia-backup.json';
@@ -428,7 +431,7 @@ document.getElementById('importFile').addEventListener('change',function(e){
   r.onload=function(ev){
     try{
       var d=JSON.parse(ev.target.result);
-      ST=d.days||{}; SW=d.sent||{}; GLOBAL_H=d.globalH||9;
+      ST=d.days||{}; SW=d.sent||{}; MONTH_H=d.monthH||{};
       save(); render();
       showToast('Datos importados correctamente','success');
     }catch(err){ showToast('Error al importar el fichero','error'); }
