@@ -118,7 +118,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
   <div class="header-top">
     <div>
       <h1>Horas Excelia</h1>
-      <div class="subtitle">Angel Villazon Iglesias</div>
+      <div class="subtitle">{{AUTHOR_NAME}}</div>
     </div>
   </div>
   <div class="month-nav">
@@ -157,20 +157,21 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 // ============================================================
 // CONFIG
 // ============================================================
-var BUILD   = { date: '06/03/2026', color: '#5ae088' };
-var TO      = '{{TO}}';
-var CC      = '{{CC}}'.split(',');
-var SUBJECT = 'HORAS Y D\u00cdAS DE TRABAJO - Angel Villazon Iglesias';
+var BUILD   = { date: '06/03/2026', color: '#6c8cff' };
+var TO          = '{{TO}}';
+var CC          = '{{CC}}'.split(',');
+var AUTHOR_NAME = '{{AUTHOR_NAME}}';
 
 // ============================================================
 // SEND EMAIL via mailto:
 // ============================================================
 function sendEmail(wkey) {
-  var wd   = getWD(wkey);
-  var body = buildMailtoBody(wd);
+  var wd      = getWD(wkey);
+  var body    = buildMailtoBody(wd);
+  var subject = 'HORAS Y DIAS TRABAJADOS - ' + AUTHOR_NAME + ' - Semana del ' + fd(wd.mon) + ' al ' + fd(wd.fri);
   var url  = 'mailto:' + TO
     + '?cc='      + encodeURIComponent(CC.join(','))
-    + '&subject=' + encodeURIComponent(SUBJECT)
+    + '&subject=' + encodeURIComponent(subject)
     + '&body='    + encodeURIComponent(body);
   window.location.href = url;
   SW[wkey] = true; save(); render();
@@ -195,7 +196,7 @@ function buildMailtoBody(wd) {
     body += DN[i] + ' ' + fd(d) + ' \u2014 ' + label + '\n';
   }
   body += '\nTotal horas trabajadas en proyecto en la ' + semana.toLowerCase() + ':\n';
-  body += totalStr + 'h\n\nUn saludo,\nAngel Villazon Iglesias';
+  body += totalStr + 'h\n\nUn saludo,\n' + AUTHOR_NAME;
   return body;
 }
 
