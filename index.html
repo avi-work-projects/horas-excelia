@@ -202,6 +202,28 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .econ-month-table .econ-tr-total{background:var(--surface3)}
 .econ-month-table .econ-tr-total td{color:var(--text)!important;font-weight:600}
 .econ-month-table td.net-cell{color:var(--sent-text)!important;font-weight:600}
+#bdayOverlay{position:fixed;inset:0;z-index:300;background:var(--bg);overflow-y:auto;transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1)}
+#bdayOverlay.open{transform:translateY(0)}
+.data-btn.bday-active{border-color:var(--vacaciones)!important;color:var(--vacaciones)!important;box-shadow:0 0 10px rgba(255,179,71,.45)}
+.bday-hdr-sub{display:flex;align-items:center;gap:6px;padding:10px 20px;border-bottom:1px solid var(--border)}
+.bday-view-toggle{font-size:.72rem;padding:5px 14px;border-radius:16px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none}
+.bday-view-toggle.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
+.bday-week-hdr{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:3px}
+.bday-week-hdr div{text-align:center;font-size:.62rem;color:var(--text-dim);text-transform:uppercase;padding:6px 0;font-weight:600}
+.bday-week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:2px}
+.bday-cell{min-height:58px;padding:6px 4px 4px;background:var(--surface);border-radius:var(--radius-sm);display:flex;flex-direction:column;gap:2px;overflow:hidden}
+.bday-cell.out-m{opacity:.3}
+.bday-cell.today-bday .bday-num{color:var(--accent-bright);font-weight:700}
+.bday-num{font-size:.72rem;font-family:var(--mono);line-height:1}
+.bday-badge{font-size:.58rem;background:rgba(255,179,71,.18);color:var(--vacaciones);border-radius:3px;padding:2px 4px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-left:2px solid var(--vacaciones)}
+.bday-month-hdr{font-size:.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:10px 0 6px;border-bottom:1px solid var(--border);margin-bottom:6px}
+.bday-list-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.bday-list-item:last-child{border-bottom:none}
+.bday-list-day{font-family:var(--mono);font-size:.75rem;color:var(--text-muted);min-width:22px;flex-shrink:0}
+.bday-list-name{font-size:.85rem;color:var(--text);flex:1}
+.bday-list-left{font-size:.7rem;font-weight:600;color:var(--text-dim);flex-shrink:0}
+.bday-list-left.near{color:var(--vacaciones)}
+.bday-list-left.today-lbl{color:var(--sent-text)}
 @media print{
   body.print-summary>*:not(#summaryOverlay){display:none!important}
   body.print-summary #summaryOverlay{display:block!important;position:static!important;transform:none!important;background:white!important}
@@ -230,6 +252,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
       <div class="subtitle">{{AUTHOR_NAME}}</div>
     </div>
     <div class="data-actions">
+      <button class="data-btn" id="bdayBtn" title="Cumplea&#241;os">&#127874;</button>
       <button class="data-btn" id="econBtn" title="Cuentas del a&#241;o">&#8364;</button>
       <button class="data-btn" id="summaryBtn" title="Resumen anual">&#8721;</button>
       <button class="data-btn" id="exportBtn" title="Exportar datos">&#8595;</button>
@@ -279,6 +302,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 <div class="build-badge" id="buildBadge"></div>
 <div id="summaryOverlay" style="display:none"><div id="summaryContent"></div></div>
 <div id="econOverlay" style="display:none"><div id="econContent"></div></div>
+<div id="bdayOverlay" style="display:none"><div id="bdayContent"></div></div>
 
 <script>
 (function(){
@@ -290,6 +314,8 @@ var BUILD   = { date: '06/03/2026', color: '#5ae088' };
 var TO          = '{{TO}}';
 var CC          = '{{CC}}'.split(',');
 var AUTHOR_NAME = '{{AUTHOR_NAME}}';
+var BDAYS_RAW   = '{{BIRTHDAYS}}';
+var BDAYS = (function(){try{if(BDAYS_RAW.indexOf('{{')!==-1)return[];return JSON.parse(atob(BDAYS_RAW));}catch(e){return[];}})();
 
 // ============================================================
 // SEND EMAIL via mailto:
@@ -939,6 +965,142 @@ function bindEconEvents(){
 }
 
 // ============================================================
+// BIRTHDAYS
+// ============================================================
+var BDAY_YEAR=new Date().getFullYear(), BDAY_MONTH=new Date().getMonth(), BDAY_VIEW='cal';
+
+function getBdaysOn(m1,d){return BDAYS.filter(function(b){return b.month===m1&&b.day===d;});}
+
+function daysUntil(m1,d){
+  var today=new Date();today.setHours(0,0,0,0);
+  var bd=new Date(today.getFullYear(),m1-1,d);
+  if(bd<today)bd.setFullYear(today.getFullYear()+1);
+  return Math.round((bd-today)/86400000);
+}
+
+function hasUpcomingBday(){
+  var t=new Date();t.setHours(0,0,0,0);
+  for(var i=0;i<7;i++){var d=new Date(t);d.setDate(d.getDate()+i);if(getBdaysOn(d.getMonth()+1,d.getDate()).length)return true;}
+  return false;
+}
+
+function updateBdayBtn(){
+  var btn=document.getElementById('bdayBtn');if(!btn)return;
+  if(hasUpcomingBday()&&BDAYS.length)btn.classList.add('bday-active');
+  else btn.classList.remove('bday-active');
+}
+
+function renderBdayCalMonth(){
+  var today=new Date();today.setHours(0,0,0,0);
+  var DN7=['L','M','X','J','V','S','D'];
+  var h='<div class="bday-week-hdr">';
+  DN7.forEach(function(n){h+='<div>'+n+'</div>';});
+  h+='</div>';
+  var first=new Date(BDAY_YEAR,BDAY_MONTH,1);
+  var last=new Date(BDAY_YEAR,BDAY_MONTH+1,0);
+  var cur=new Date(first);
+  var dow=cur.getDay();var off=dow===0?6:dow-1;
+  cur.setDate(cur.getDate()-off);
+  while(cur<=last){
+    h+='<div class="bday-week-grid">';
+    for(var i=0;i<7;i++){
+      var d=new Date(cur);
+      var inM=d.getMonth()===BDAY_MONTH;
+      var isTod=d.getTime()===today.getTime();
+      var bds=getBdaysOn(d.getMonth()+1,d.getDate());
+      var cls='bday-cell'+(inM?'':' out-m')+(isTod?' today-bday':'');
+      h+='<div class="'+cls+'"><div class="bday-num">'+d.getDate()+'</div>';
+      bds.forEach(function(b){h+='<div class="bday-badge">'+b.name+'</div>';});
+      h+='</div>';
+      cur.setDate(cur.getDate()+1);
+    }
+    h+='</div>';
+  }
+  return h;
+}
+
+function renderBdayList(){
+  if(!BDAYS.length)return '<div class="sy-note">No hay cumplea&#241;os cargados. A&#241;ade el secreto <b>BIRTHDAYS</b> en GitHub Settings → Secrets.</div>';
+  var byM=[];for(var m=0;m<12;m++)byM.push([]);
+  BDAYS.forEach(function(b){byM[b.month-1].push(b);});
+  var h='';
+  byM.forEach(function(list,m){
+    if(!list.length)return;
+    list.sort(function(a,b){return a.day-b.day;});
+    h+='<div class="sy-section"><div class="bday-month-hdr">'+MN[m]+'</div>';
+    list.forEach(function(b){
+      var dl=daysUntil(b.month,b.day);
+      var lbl=dl===0?'¡Hoy!':dl===1?'Ma&#241;ana':'en '+dl+'d';
+      var cls='bday-list-left'+(dl===0?' today-lbl':dl<=7?' near':'');
+      h+='<div class="bday-list-item">';
+      h+='<span class="bday-list-day">'+b.day+'</span>';
+      h+='<span class="bday-list-name">'+b.name+'</span>';
+      h+='<span class="'+cls+'">'+lbl+'</span>';
+      h+='</div>';
+    });
+    h+='</div>';
+  });
+  return h;
+}
+
+function renderBdayContent(){
+  var h='<div class="sy-header">';
+  h+='<button class="sy-back" id="bdBack">&#8592;</button>';
+  h+='<div class="sy-year-nav"><button class="sy-nav" id="bdPrev">&#9664;</button>';
+  h+='<div class="sy-year">'+MN[BDAY_MONTH]+' '+BDAY_YEAR+'</div>';
+  h+='<button class="sy-nav" id="bdNext">&#9654;</button></div>';
+  h+='<button class="today-btn" id="bdToday" style="font-size:.7rem;padding:6px 12px">Hoy</button>';
+  h+='</div>';
+  h+='<div class="bday-hdr-sub">';
+  h+='<button class="bday-view-toggle'+(BDAY_VIEW==='cal'?' active':'')+'" id="bdViewCal">Calendario</button>';
+  h+='<button class="bday-view-toggle'+(BDAY_VIEW==='list'?' active':'')+'" id="bdViewList">Por meses</button>';
+  h+='</div>';
+  h+='<div class="sy-body">';
+  if(BDAY_VIEW==='cal'){
+    if(!BDAYS.length)h+='<div class="sy-note">No hay cumplea&#241;os cargados. A&#241;ade el secreto <b>BIRTHDAYS</b> en GitHub Settings → Secrets.</div>';
+    else h+=renderBdayCalMonth();
+  } else {
+    h+=renderBdayList();
+  }
+  h+='</div>';
+  return h;
+}
+
+function openBday(){
+  var now=new Date();BDAY_YEAR=now.getFullYear();BDAY_MONTH=now.getMonth();BDAY_VIEW='cal';
+  var ov=document.getElementById('bdayOverlay');
+  document.getElementById('bdayContent').innerHTML=renderBdayContent();
+  ov.style.display='block';
+  requestAnimationFrame(function(){requestAnimationFrame(function(){ov.classList.add('open');bindBdayEvents();});});
+}
+
+function closeBday(){
+  var ov=document.getElementById('bdayOverlay');
+  ov.classList.remove('open');
+  setTimeout(function(){ov.style.display='none';},320);
+}
+
+function refreshBday(){
+  document.getElementById('bdayContent').innerHTML=renderBdayContent();
+  bindBdayEvents();
+}
+
+function bindBdayEvents(){
+  document.getElementById('bdBack').addEventListener('click',closeBday);
+  document.getElementById('bdPrev').addEventListener('click',function(){
+    BDAY_MONTH--;if(BDAY_MONTH<0){BDAY_MONTH=11;BDAY_YEAR--;}refreshBday();
+  });
+  document.getElementById('bdNext').addEventListener('click',function(){
+    BDAY_MONTH++;if(BDAY_MONTH>11){BDAY_MONTH=0;BDAY_YEAR++;}refreshBday();
+  });
+  document.getElementById('bdToday').addEventListener('click',function(){
+    var n=new Date();BDAY_YEAR=n.getFullYear();BDAY_MONTH=n.getMonth();refreshBday();
+  });
+  document.getElementById('bdViewCal').addEventListener('click',function(){BDAY_VIEW='cal';refreshBday();});
+  document.getElementById('bdViewList').addEventListener('click',function(){BDAY_VIEW='list';refreshBday();});
+}
+
+// ============================================================
 // EVENT LISTENERS
 // ============================================================
 document.querySelectorAll('.sheet-option').forEach(function(el){el.addEventListener('click',function(){selectType(el.dataset.type);});});
@@ -955,6 +1117,7 @@ document.querySelectorAll('.hours-chip').forEach(function(el){
   el.addEventListener('click',function(){MONTH_H[mkey(CY,CM)]=+el.dataset.h;save();render();});
 });
 document.getElementById('econBtn').addEventListener('click',openEcon);
+document.getElementById('bdayBtn').addEventListener('click',openBday);
 document.getElementById('summaryBtn').addEventListener('click',openSummary);
 document.getElementById('exportBtn').addEventListener('click',function(){
   var data=JSON.stringify({version:1,days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE},null,2);
@@ -988,6 +1151,7 @@ document.getElementById('todayBtn').addEventListener('click',function(){var n=ne
 load();
 var now=new Date(); CY=now.getFullYear(); CM=now.getMonth();
 render();
+updateBdayBtn();
 
 (function(){
   var b=document.getElementById('buildBadge');

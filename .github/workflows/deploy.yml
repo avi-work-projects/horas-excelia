@@ -29,10 +29,12 @@ jobs:
           MAIL_TO: ${{ secrets.MAIL_TO }}
           MAIL_CC: ${{ secrets.MAIL_CC }}
           AUTHOR_NAME: ${{ secrets.AUTHOR_NAME }}
+          BIRTHDAYS: ${{ secrets.BIRTHDAYS }}
         run: |
           sed -i "s|{{TO}}|${MAIL_TO}|g" index.html
           sed -i "s|{{CC}}|${MAIL_CC}|g" index.html
           sed -i "s|{{AUTHOR_NAME}}|${AUTHOR_NAME}|g" index.html
+          sed -i "s|{{BIRTHDAYS}}|${BIRTHDAYS}|g" index.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
