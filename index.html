@@ -36,7 +36,26 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .today-btn{margin-left:auto;font-size:.75rem;font-weight:500;padding:7px 14px;border-radius:20px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;transition:all .15s}
 .today-btn:active{background:var(--accent);color:#fff}
 
-.summer-banner{margin:12px 16px 0;padding:10px 14px;border-radius:var(--radius-sm);background:linear-gradient(135deg,#2a1a0a,#1a2a1a);border:1px solid #4a3a1a;font-size:.78rem;color:#ffb347;display:flex;align-items:center;gap:8px}
+.hours-control{display:flex;align-items:center;gap:12px;margin-top:12px}
+.hours-label{font-size:.72rem;color:var(--text-muted);font-weight:500;flex-shrink:0}
+.hours-chips{display:flex;gap:6px}
+.hours-chip{font-family:var(--mono);font-size:.75rem;padding:5px 12px;border-radius:16px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none}
+.hours-chip.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
+.hour-picker{margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+.hour-picker-label{font-size:.72rem;color:var(--text-muted);margin-bottom:10px;text-align:center}
+.hour-chips-row{display:flex;gap:8px;justify-content:center}
+.hour-chip-day{font-family:var(--mono);font-size:.85rem;font-weight:500;padding:9px 22px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;flex:1}
+.hour-chip-day.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
+.month-summary{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;display:flex;flex-direction:column;gap:10px}
+.month-stat{display:flex;align-items:baseline;gap:4px}
+.ms-num{font-family:var(--mono);font-size:1.2rem;font-weight:500}
+.month-stat.worked .ms-num{color:var(--accent-bright)}
+.month-stat.off .ms-num{color:var(--text-muted)}
+.ms-label{font-size:.82rem;color:var(--text-muted)}
+.ms-hrs{font-family:var(--mono);font-size:.78rem;color:var(--text-dim)}
+.data-actions{display:flex;gap:6px;margin-left:auto}
+.data-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);font-size:.9rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none}
+.data-btn:active{background:var(--surface3);transform:scale(.93)}
 
 .weeks-container{padding:12px 16px 30px;display:flex;flex-direction:column;gap:12px}
 .week-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all .25s}
@@ -120,6 +139,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
       <h1>Horas Excelia</h1>
       <div class="subtitle">{{AUTHOR_NAME}}</div>
     </div>
+    <div class="data-actions">
+      <button class="data-btn" id="exportBtn" title="Exportar datos">&#8595;</button>
+      <button class="data-btn" id="importBtn" title="Importar datos">&#8593;</button>
+      <input type="file" id="importFile" accept=".json" style="display:none">
+    </div>
   </div>
   <div class="month-nav">
     <button class="nav-btn" id="prevMonth">&#9664;</button>
@@ -127,11 +151,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     <button class="nav-btn" id="nextMonth">&#9654;</button>
     <button class="today-btn" id="todayBtn">Hoy</button>
   </div>
-</div>
-
-<div id="summerBanner" class="summer-banner" style="display:none">
-  <span>&#9728;&#65039;</span>
-  <span>Horario de verano activo: L-J&nbsp;=&nbsp;7h, V&nbsp;=&nbsp;6.5h</span>
+  <div class="hours-control" id="hoursControl">
+    <span class="hours-label">Jornada</span>
+    <div class="hours-chips">
+      <button class="hours-chip" data-h="7">7h</button>
+      <button class="hours-chip" data-h="8">8h</button>
+      <button class="hours-chip" data-h="9">9h</button>
+    </div>
+  </div>
 </div>
 
 <div class="weeks-container" id="weeksContainer"></div>
@@ -143,9 +170,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
   <div class="sheet-subtitle" id="sheetSubtitle"></div>
   <div class="sheet-options">
     <div class="sheet-option" data-type="normal"><div class="option-dot normal"></div><div class="option-info"><div class="option-label">Normal</div><div class="option-desc">D&#237;a de trabajo habitual</div></div><div class="option-hours" id="optNormalHours">9h</div></div>
-    <div class="sheet-option" data-type="festivo"><div class="option-dot festivo"></div><div class="option-info"><div class="option-label">Festivo</div><div class="option-desc">D&#237;a festivo oficial</div></div><div class="option-hours">8h</div></div>
-    <div class="sheet-option" data-type="vacaciones"><div class="option-dot vacaciones"></div><div class="option-info"><div class="option-label">Vacaciones</div><div class="option-desc">D&#237;a de vacaciones</div></div><div class="option-hours">8h</div></div>
-    <div class="sheet-option" data-type="ausencia"><div class="option-dot ausencia"></div><div class="option-info"><div class="option-label">Baja / Ausencia</div><div class="option-desc">Baja m&#233;dica u otra ausencia</div></div><div class="option-hours">8h</div></div>
+    <div class="sheet-option" data-type="festivo"><div class="option-dot festivo"></div><div class="option-info"><div class="option-label">Festivo</div><div class="option-desc">D&#237;a festivo oficial</div></div></div>
+    <div class="sheet-option" data-type="vacaciones"><div class="option-dot vacaciones"></div><div class="option-info"><div class="option-label">Vacaciones</div><div class="option-desc">D&#237;a de vacaciones</div></div></div>
+    <div class="sheet-option" data-type="ausencia"><div class="option-dot ausencia"></div><div class="option-info"><div class="option-label">Baja / Ausencia</div><div class="option-desc">Baja m&#233;dica u otra ausencia</div></div></div>
+  </div>
+  <div class="hour-picker" id="hourPicker" style="display:none">
+    <div class="hour-picker-label">Horas este d&#237;a</div>
+    <div class="hour-chips-row">
+      <button class="hour-chip-day" data-h="7">7h</button>
+      <button class="hour-chip-day" data-h="8">8h</button>
+      <button class="hour-chip-day" data-h="9">9h</button>
+    </div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -157,7 +192,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 // ============================================================
 // CONFIG
 // ============================================================
-var BUILD   = { date: '06/03/2026', color: '#6c8cff' };
+var BUILD   = { date: '06/03/2026', color: '#5ae088' };
 var TO          = '{{TO}}';
 var CC          = '{{CC}}'.split(',');
 var AUTHOR_NAME = '{{AUTHOR_NAME}}';
@@ -203,17 +238,15 @@ function buildMailtoBody(wd) {
 // ============================================================
 // APP STATE
 // ============================================================
-var SK='excelia-horas-v3', CY, CM, ST={}, SW={}, ED=null;
+var SK='excelia-horas-v3', CY, CM, ST={}, SW={}, ED=null, GLOBAL_H=9;
 var MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 var DN=['D','L','M','X','J','V','S'];
 var DF=['Domingo','Lunes','Martes','Mi\u00e9rcoles','Jueves','Viernes','S\u00e1bado'];
 
-function load(){ try{var r=localStorage.getItem(SK);if(r){var d=JSON.parse(r);ST=d.days||{};SW=d.sent||{};}}catch(e){ST={};SW={};} }
-function save(){ localStorage.setItem(SK,JSON.stringify({days:ST,sent:SW})); }
-function summer(d){ var m=d.getMonth(),dd=d.getDate(); return m===6||m===7||(m===8&&dd<=15); }
-function mSummer(m){ return m===6||m===7||m===8; }
-function defH(d){ var w=d.getDay(); if(!w||w===6)return 0; if(w===5)return 6.5; return summer(d)?7:9; }
-function dayH(d){ var k=dk(d),t=(ST[k]&&ST[k].type)||'normal',w=d.getDay(); if(!w||w===6)return 0; if(t!=='normal')return 8; return defH(d); }
+function load(){ try{var r=localStorage.getItem(SK);if(r){var d=JSON.parse(r);ST=d.days||{};SW=d.sent||{};GLOBAL_H=d.globalH||9;}}catch(e){ST={};SW={};GLOBAL_H=9;} }
+function save(){ localStorage.setItem(SK,JSON.stringify({days:ST,sent:SW,globalH:GLOBAL_H})); }
+function defH(d){ var w=d.getDay(); if(!w||w===6)return 0; if(w===5)return 6.5; return GLOBAL_H; }
+function dayH(d){ var w=d.getDay(); if(!w||w===6)return 0; var k=dk(d),e=ST[k],t=(e&&e.type)||'normal'; if(t!=='normal')return 0; if(w===5)return 6.5; return(e&&e.hours)||GLOBAL_H; }
 function dayT(d){ var e=ST[dk(d)]; return(e&&e.type)||'normal'; }
 function dk(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function fd(d){ return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0'); }
@@ -242,7 +275,7 @@ function getWD(wkey){
   var proy=[],vac=[],fest=[],aus=[];
   for(var i=0;i<5;i++){
     var d=days[i],t=dayT(d);
-    if(t==='normal'){var h=defH(d);proy.push(fhP(h));vac.push('');fest.push('');aus.push('');}
+    if(t==='normal'){var h=dayH(d);proy.push(fhP(h));vac.push('');fest.push('');aus.push('');}
     else{proy.push('');vac.push(t==='vacaciones'?'X':'');fest.push(t==='festivo'?'X':'');aus.push(t==='ausencia'?'X':'');}
   }
   return{mon:mon,fri:days[4],proy:proy,vac:vac,fest:fest,aus:aus};
@@ -261,17 +294,18 @@ function showToast(msg,type){
 // ============================================================
 function render(){
   document.getElementById('monthLabel').textContent=MN[CM]+' '+CY;
-  document.getElementById('summerBanner').style.display=mSummer(CM)?'flex':'none';
+  document.querySelectorAll('.hours-chip').forEach(function(el){el.classList.toggle('active',+el.dataset.h===GLOBAL_H);});
   var wks=weeks(CY,CM),c=document.getElementById('weeksContainer');
   c.innerHTML='';
 
   wks.forEach(function(wk){
-    var mon=wk[0],sun=wk[6],wkey=dk(mon),sent=!!SW[wkey],tot=0;
-    for(var i=0;i<5;i++)tot+=dayH(wk[i]);
+    var mon=wk[0],sun=wk[6],wkey=dk(mon),sent=!!SW[wkey],dias=0;
+    for(var i=0;i<5;i++){if(dayH(wk[i])>0)dias++;}
+    var dStr=dias+(dias===1?' d\u00eda':' d\u00edas');
 
     var card=document.createElement('div');
     card.className='week-card'+(sent?' sent':'');
-    card.innerHTML='<div class="week-header"><div class="week-info"><h3>Semana '+wn(mon)+(sent?'<span class="sent-badge">\u2713 Enviada</span>':'')+'</h3><div class="week-range">'+fd(mon)+' \u2014 '+fd(sun)+'</div></div><div class="week-total">'+fh(tot)+'h</div></div>';
+    card.innerHTML='<div class="week-header"><div class="week-info"><h3>Semana '+wn(mon)+(sent?'<span class="sent-badge">\u2713 Enviada</span>':'')+'</h3><div class="week-range">'+fd(mon)+' \u2014 '+fd(sun)+'</div></div><div class="week-total">'+dStr+'</div></div>';
 
     var grid=document.createElement('div'); grid.className='days-grid';
     for(var i=0;i<5;i++){
@@ -302,16 +336,37 @@ function render(){
     acts.appendChild(sendBtn); acts.appendChild(sb);
     card.appendChild(acts); c.appendChild(card);
   });
+
+  var diasTrabajados=0,horasTotales=0,diasNoLaborables=0;
+  wks.forEach(function(wk){
+    for(var i=0;i<5;i++){
+      var d=wk[i]; if(d.getMonth()!==CM)continue;
+      var t=dayT(d),h=dayH(d);
+      if(t==='normal'){diasTrabajados++;horasTotales+=h;} else{diasNoLaborables++;}
+    }
+  });
+  var hStr=(horasTotales%1===0?String(horasTotales):horasTotales.toFixed(1).replace('.',','));
+  var footer=document.createElement('div'); footer.className='month-summary';
+  footer.innerHTML='<div class="month-stat worked"><span class="ms-num">'+diasTrabajados+'</span><span class="ms-label"> d\u00edas trabajados</span><span class="ms-hrs"> ('+hStr+'h)</span></div>'+
+    '<div class="month-stat off"><span class="ms-num">'+diasNoLaborables+'</span><span class="ms-label"> d\u00edas no trabajados</span></div>';
+  c.appendChild(footer);
 }
 
 function openSheet(date){
-  ED=date; var dt=dayT(date),dow=date.getDay(),sm=summer(date);
-  var nh=(dow===5)?'6,5':(sm?'7':'9');
+  ED=date; var dt=dayT(date),dow=date.getDay();
+  var nh=(dow===5)?'6,5':String(GLOBAL_H);
   document.getElementById('sheetTitle').textContent=DF[dow]+' '+fd(date);
-  document.getElementById('sheetSubtitle').textContent=sm?'\u2600\ufe0f Horario de verano':'Selecciona el tipo de d\u00eda';
+  document.getElementById('sheetSubtitle').textContent='Selecciona el tipo de d\u00eda';
   document.getElementById('optNormalHours').textContent=nh+'h';
   var opts=document.querySelectorAll('.sheet-option');
   for(var i=0;i<opts.length;i++){opts[i].classList.toggle('selected',opts[i].dataset.type===dt);}
+  var picker=document.getElementById('hourPicker');
+  if(dow>=1&&dow<=4&&dt==='normal'){
+    picker.style.display='block';
+    var e=ST[dk(date)];
+    var curH=(e&&e.hours)||GLOBAL_H;
+    document.querySelectorAll('.hour-chip-day').forEach(function(c){c.classList.toggle('active',+c.dataset.h===curH);});
+  } else { picker.style.display='none'; }
   document.getElementById('overlay').classList.add('active');
   document.getElementById('bottomSheet').classList.add('active');
 }
@@ -323,9 +378,22 @@ function closeSheet(){
 }
 
 function selectType(t){
-  if(!ED)return; var k=dk(ED);
-  if(t==='normal')delete ST[k]; else ST[k]={type:t};
-  save(); closeSheet(); render();
+  if(!ED)return; var k=dk(ED),dow=ED.getDay();
+  if(t==='normal'){
+    var e=ST[k]||{},wasNormal=!e.type;
+    if(!wasNormal){delete ST[k];e={};}
+    document.querySelectorAll('.sheet-option').forEach(function(el){el.classList.toggle('selected',el.dataset.type==='normal');});
+    if(dow>=1&&dow<=4){
+      var picker=document.getElementById('hourPicker');
+      picker.style.display='block';
+      var curH=(ST[k]&&ST[k].hours)||GLOBAL_H;
+      document.querySelectorAll('.hour-chip-day').forEach(function(c){c.classList.toggle('active',+c.dataset.h===curH);});
+    }
+    save(); render();
+  } else {
+    delete ST[k]; ST[k]={type:t};
+    save(); closeSheet(); render();
+  }
 }
 
 function togSent(k){ if(SW[k])delete SW[k]; else SW[k]=true; save(); render(); }
@@ -334,6 +402,39 @@ function togSent(k){ if(SW[k])delete SW[k]; else SW[k]=true; save(); render(); }
 // EVENT LISTENERS
 // ============================================================
 document.querySelectorAll('.sheet-option').forEach(function(el){el.addEventListener('click',function(){selectType(el.dataset.type);});});
+document.querySelectorAll('.hour-chip-day').forEach(function(el){
+  el.addEventListener('click',function(){
+    if(!ED)return; var k=dk(ED),h=+el.dataset.h;
+    if(!ST[k])ST[k]={};
+    if(h===GLOBAL_H)delete ST[k].hours; else ST[k].hours=h;
+    if(Object.keys(ST[k]).length===0)delete ST[k];
+    save(); closeSheet(); render();
+  });
+});
+document.querySelectorAll('.hours-chip').forEach(function(el){
+  el.addEventListener('click',function(){GLOBAL_H=+el.dataset.h;save();render();});
+});
+document.getElementById('exportBtn').addEventListener('click',function(){
+  var data=JSON.stringify({version:1,days:ST,sent:SW,globalH:GLOBAL_H},null,2);
+  var a=document.createElement('a');
+  a.href='data:application/json,'+encodeURIComponent(data);
+  a.download='horas-excelia-backup.json';
+  a.click();
+});
+document.getElementById('importBtn').addEventListener('click',function(){document.getElementById('importFile').click();});
+document.getElementById('importFile').addEventListener('change',function(e){
+  var f=e.target.files[0]; if(!f)return;
+  var r=new FileReader();
+  r.onload=function(ev){
+    try{
+      var d=JSON.parse(ev.target.result);
+      ST=d.days||{}; SW=d.sent||{}; GLOBAL_H=d.globalH||9;
+      save(); render();
+      showToast('Datos importados correctamente','success');
+    }catch(err){ showToast('Error al importar el fichero','error'); }
+  };
+  r.readAsText(f);
+});
 document.getElementById('overlay').addEventListener('click',closeSheet);
 document.getElementById('prevMonth').addEventListener('click',function(){CM--;if(CM<0){CM=11;CY--;}render();});
 document.getElementById('nextMonth').addEventListener('click',function(){CM++;if(CM>11){CM=0;CY++;}render();});
