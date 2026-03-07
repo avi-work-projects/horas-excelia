@@ -32,11 +32,39 @@ var TO='{{TO}}';
 var CC='{{CC}}'.split(',').map(function(s){return s.trim();}).filter(Boolean);
 var AUTHOR_NAME='{{AUTHOR_NAME}}';
 var BUILD={sha:'local',ok:true};
-// BIRTHDAYS: base64-encoded JSON array (inyectado desde GitHub Secret)
+
+/*
+  BIRTHDAYS secret: el secreto puede contener el array base64-encoded en dos formatos:
+  1) JSON:  base64( [{"name":"Nombre","day":4,"month":1}, ...] )
+  2) CSV:   base64( "Nombre,dia,mes\nNombre2,dia2,mes2\n..." )
+  La app detecta automáticamente el formato tras decodificar.
+*/
 var BDAYS_RAW='{{BIRTHDAYS}}';
 try{
   if(BDAYS_RAW&&BDAYS_RAW!=='{{BIRTHDAYS}}'){
-    var BDAYS_FROM_SECRET=JSON.parse(atob(BDAYS_RAW));
+    var decoded=atob(BDAYS_RAW);
+    var BDAYS_FROM_SECRET;
+    // Intentar JSON primero
+    try{
+      var parsed=JSON.parse(decoded);
+      if(Array.isArray(parsed))BDAYS_FROM_SECRET=parsed;
+    }catch(je){
+      // Fallback: CSV formato "Nombre,dia,mes" por línea (sin cabecera)
+      var lines=decoded.trim().split(/\r?\n/);
+      BDAYS_FROM_SECRET=[];
+      lines.forEach(function(line){
+        line=line.trim();
+        if(!line)return;
+        var parts=line.split(',');
+        if(parts.length>=3){
+          var day=parseInt(parts[1],10);
+          var month=parseInt(parts[2],10);
+          if(day>0&&day<=31&&month>=1&&month<=12){
+            BDAYS_FROM_SECRET.push({name:parts[0].trim(),day:day,month:month});
+          }
+        }
+      });
+    }
   }
 }catch(e){/* formato no válido, birthdays.js usará [] o localStorage */}
 </script>
@@ -53,7 +81,9 @@ try{
       <button class="data-btn" id="econBtn" title="Económico">&#8364;</button>
       <button class="data-btn" id="bdayBtn" title="Cumpleaños">&#127874;</button>
       <button class="data-btn" id="eventsBtn" title="Eventos">&#128197;</button>
+      <button class="data-btn" id="importBtn" title="Importar datos">&#8593;</button>
       <button class="data-btn" id="exportBtn" title="Exportar datos">&#8595;</button>
+      <input type="file" id="importFile" accept=".json" style="display:none">
     </div>
   </div>
   <nav class="month-nav">
@@ -63,11 +93,17 @@ try{
     <button class="nav-btn" id="nextBtn">&#9654;</button>
   </nav>
   <div class="hours-control">
-    <span class="hours-label">h/día:</span>
-    <div class="hours-chips">
-      <button class="hours-chip" data-h="7">7h</button>
-      <button class="hours-chip" data-h="8">8h</button>
-      <button class="hours-chip" data-h="9">9h</button>
+    <button class="default-hours-btn" id="editHoursBtn">
+      &#9998;&nbsp;Jornada:&nbsp;<span class="dh-val">9h</span>&nbsp;&#xB7;&nbsp;Editar
+    </button>
+    <div class="default-hours-panel" id="hoursPanel">
+      <span class="hours-label">h/d&#237;a (mes):</span>
+      <div class="hours-chips">
+        <button class="hours-chip" data-h="7">7h</button>
+        <button class="hours-chip" data-h="8">8h</button>
+        <button class="hours-chip" data-h="9">9h</button>
+      </div>
+      <button class="hours-panel-close" id="closeHoursBtn">&#215;</button>
     </div>
   </div>
 </header>
@@ -138,7 +174,7 @@ try{
 </div>
 
 <!-- ── OVERLAY: Cumpleaños ── -->
-<div id="bdayOverlay" class="full-overlay" style="display:none">
+<div id="bdayOverlay" class="full-overlay" style="display:none;position:relative">
   <div id="bdayContent"></div>
 </div>
 

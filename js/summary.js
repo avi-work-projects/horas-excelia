@@ -2,7 +2,18 @@
    SUMMARY — Resumen anual + Puentes
    ============================================================ */
 
-var VAC_ENTITLEMENT=23, SUMMARY_YEAR=new Date().getFullYear();
+var FEST_REQUIRED=14;
+var VAC_STORAGE_KEY='excelia-vac-days';
+var VAC_ENTITLEMENT=(function(){
+  try{var v=localStorage.getItem(VAC_STORAGE_KEY);if(v)return parseInt(v,10);}catch(e){}
+  return 23;
+})();
+var SUMMARY_YEAR=new Date().getFullYear();
+
+function saveVacEntitlement(n){
+  VAC_ENTITLEMENT=n;
+  try{localStorage.setItem(VAC_STORAGE_KEY,String(n));}catch(e){}
+}
 
 function fhY(h){return h===0?'0h':fh(h);}
 function fdY(d){return d+'d';}
@@ -167,13 +178,21 @@ function renderSummaryContent(){
 
   // Ausencias
   h+='<div class="sy-section"><div class="sy-section-title">Ausencias</div>';
+  // Config días vacaciones
+  h+='<div class="vac-config-row">';
+  h+='<span class="vac-config-label">D\u00edas de vacaciones anuales (derecho)</span>';
+  h+='<input class="vac-config-input" id="vacInput" type="number" min="1" max="60" value="'+VAC_ENTITLEMENT+'">';
+  h+='</div>';
   h+='<table class="sy-table"><thead><tr><th class="sy-td-lbl">Tipo</th><th>Pasados</th><th>Futuros</th><th>Total</th><th>Quedan</th></tr></thead><tbody>';
   h+='<tr><td class="sy-td-lbl">Vacaciones</td><td>'+s.vacTaken+'</td><td>'+s.vacFuture+'</td><td>'+s.vacTotal+'</td><td>'+(s.vacPend>0?s.vacPend:'&#10003;')+'</td></tr>';
-  h+='<tr><td class="sy-td-lbl">Festivos</td><td>'+s.festTaken+'</td><td>'+s.festFuture+'</td><td>'+s.festTotal+'</td><td>&#8212;</td></tr>';
+  h+='<tr><td class="sy-td-lbl">Festivos</td><td>'+s.festTaken+'</td><td>'+s.festFuture+'</td><td>'+s.festTotal+'</td>';
+  var festPend=Math.max(0,FEST_REQUIRED-s.festTotal);
+  h+='<td>'+(festPend>0?festPend:'&#10003;')+'</td></tr>';
   h+='<tr><td class="sy-td-lbl">Bajas</td><td>'+s.ausTaken+'</td><td>'+s.ausFuture+'</td><td>'+s.ausTotal+'</td><td>&#8212;</td></tr>';
   h+='<tr class="sy-tr-total"><td class="sy-td-lbl">Total</td><td>'+(s.vacTaken+s.festTaken+s.ausTaken)+'</td><td>'+(s.vacFuture+s.festFuture+s.ausFuture)+'</td><td>'+(s.vacTotal+s.festTotal+s.ausTotal)+'</td><td></td></tr>';
   h+='</tbody></table>';
-  if(s.vacPend>0){h+='<div class="sy-note">Quedan '+s.vacPend+' d&#237;a'+(s.vacPend===1?'':'s')+' de vacaciones por planificar (derecho: '+VAC_ENTITLEMENT+' d&#237;as/a&#241;o).</div>';}
+  if(s.vacPend>0){h+='<div class="sy-note warn">Quedan '+s.vacPend+' d&#237;a'+(s.vacPend===1?'':'s')+' de vacaciones por planificar (derecho: '+VAC_ENTITLEMENT+' d&#237;as/a&#241;o).</div>';}
+  if(festPend>0){h+='<div class="sy-note warn-fest">Faltan '+festPend+' d&#237;a'+(festPend===1?'':'s')+' festivos por marcar (recomendado: '+FEST_REQUIRED+' d&#237;as/a&#241;o).</div>';}
   h+='</div>';
 
   // Horas
@@ -226,14 +245,13 @@ function renderSummaryContent(){
   }
   h+='</div>';
 
-  // Días festivos/vacaciones sin puentes (antes "Días sueltos")
+  // Días festivos/vacaciones sin puentes
   var sueltos=p.festivosSueltos.concat(p.vacSueltos).sort(function(a,b){return a-b;});
   h+='<div class="sy-section"><div class="sy-section-title">D&#237;as festivos/vacaciones sin puentes</div>';
   if(sueltos.length===0){h+='<div class="sy-note">No hay d&#237;as sueltos fuera de puentes.</div>';}
   else{
     sueltos.forEach(function(dt){
       var t=dayT(dt);
-      var tagColor=t==='festivo'?'var(--festivo)':'var(--vacaciones)';
       var tagLabel=t==='festivo'?'Festivo':'Vacaciones';
       h+='<div class="sy-suelto"><div class="sy-suelto-row">';
       h+='<span class="sy-suelto-date">'+fdd(dt)+'</span>';
@@ -244,7 +262,7 @@ function renderSummaryContent(){
   h+='</div>';
 
   // Festivos
-  h+='<div class="sy-section"><div class="sy-section-title">Festivos ('+p.festivosList.length+')</div>';
+  h+='<div class="sy-section"><div class="sy-section-title">Festivos ('+p.festivosList.length+' / '+FEST_REQUIRED+' recomendados)</div>';
   if(p.festivosList.length===0){h+='<div class="sy-note">No hay festivos marcados para este a&#241;o.</div>';}
   else{
     h+='<ul class="sy-list">';
@@ -302,4 +320,16 @@ function bindSummaryEvents(){
     document.getElementById('summaryContent').innerHTML=renderSummaryContent();
     bindSummaryEvents();
   });
+  // Vacaciones configurables
+  var vacInput=document.getElementById('vacInput');
+  if(vacInput){
+    vacInput.addEventListener('change',function(){
+      var v=parseInt(this.value,10);
+      if(v>0){
+        saveVacEntitlement(v);
+        document.getElementById('summaryContent').innerHTML=renderSummaryContent();
+        bindSummaryEvents();
+      }
+    });
+  }
 }
