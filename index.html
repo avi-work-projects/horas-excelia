@@ -77,13 +77,21 @@ try{
       <div class="subtitle" id="authorLabel"></div>
     </div>
     <div class="data-actions">
-      <button class="data-btn" id="summaryBtn" title="Resumen anual">&#8721;</button>
-      <button class="data-btn" id="econBtn" title="Económico">&#8364;</button>
+      <button class="data-btn" id="summaryBtn" title="Resumen anual">📊</button>
+      <button class="data-btn" id="econBtn" title="Económico">💰</button>
       <button class="data-btn" id="bdayBtn" title="Cumpleaños">&#127874;</button>
       <button class="data-btn" id="eventsBtn" title="Eventos">&#128197;</button>
       <button class="data-btn" id="importBtn" title="Importar datos">&#8593;</button>
       <button class="data-btn" id="exportBtn" title="Exportar datos">&#8595;</button>
+      <div class="data-menu-wrap">
+        <button class="data-btn" id="menuBtn" title="Más opciones">&#8943;</button>
+        <div class="data-menu" id="dataMenu">
+          <button class="data-menu-item" id="exportAllBtn">&#8595;&nbsp;Exportar todo</button>
+          <button class="data-menu-item" id="importAllBtn">&#8593;&nbsp;Importar todo</button>
+        </div>
+      </div>
       <input type="file" id="importFile" accept=".json" style="display:none">
+      <input type="file" id="importAllFile" accept=".json" style="display:none">
     </div>
   </div>
   <nav class="month-nav">

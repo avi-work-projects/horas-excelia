@@ -55,6 +55,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .data-actions{display:flex;gap:6px;margin-left:auto}
 .data-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);font-size:.9rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none}
 .data-btn:active{background:var(--surface3);transform:scale(.93)}
+.data-menu-wrap{position:relative}
+.data-menu{position:absolute;top:calc(100% + 6px);right:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px;min-width:156px;z-index:200;display:none;flex-direction:column;gap:2px;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.data-menu.open{display:flex}
+.data-menu-item{font-size:.75rem;padding:8px 12px;border-radius:8px;border:none;background:transparent;color:var(--text);cursor:pointer;text-align:left;transition:background .12s;white-space:nowrap;font-family:var(--font)}
+.data-menu-item:hover,.data-menu-item:active{background:var(--surface3)}
 
 /* ── WEEK CARDS ── */
 .weeks-container{padding:12px 16px 30px;display:flex;flex-direction:column;gap:12px}
@@ -316,11 +321,19 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bday-upcoming-lbl.past-lbl{color:var(--text-dim);opacity:.7}
 .bday-add-btn{font-size:.72rem;padding:6px 12px;border-radius:16px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;white-space:nowrap;flex-shrink:0}
 .bday-add-btn:active{background:var(--accent);color:#fff}
-/* Weekend trama */
-.bday-cell.weekend{background:rgba(255,255,255,.018)}
+/* Weekend frame */
+.bday-cell.weekend{border:1.5px solid rgba(108,140,255,.22)}
 .bday-cell.weekend .bday-num{color:var(--text-dim)}
-.ev-cell.weekend{background:rgba(255,255,255,.018)}
+.ev-cell.weekend{border:1.5px solid rgba(108,140,255,.22)}
 .ev-cell.weekend .ev-num{color:var(--text-dim)}
+/* Day types in events calendar */
+.ev-cell.ev-day-festivo{border-top:2.5px solid var(--festivo)}
+.ev-cell.ev-day-vacaciones{border-top:2.5px solid var(--vacaciones)}
+.ev-cell.ev-day-ausencia{border-top:2.5px solid var(--ausencia)}
+.ev-cell.ev-puente{background:rgba(108,140,255,.07)}
+/* Events in puentes (summary) */
+.sy-puente-evs{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.sy-puente-ev{font-size:.62rem;padding:2px 7px;border-radius:10px;background:var(--surface3);color:var(--text-muted);border:1px solid var(--border-light)}
 /* Birthday detail / form overlays */
 .bd-detail-overlay,.bd-form-overlay{position:absolute;inset:0;z-index:10;background:rgba(0,0,0,.6);display:none}
 .bd-detail-overlay.open,.bd-form-overlay.open{display:flex;align-items:flex-end}
