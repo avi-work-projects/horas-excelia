@@ -321,16 +321,16 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bday-upcoming-lbl.past-lbl{color:var(--text-dim);opacity:.7}
 .bday-add-btn{font-size:.72rem;padding:6px 12px;border-radius:16px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;white-space:nowrap;flex-shrink:0}
 .bday-add-btn:active{background:var(--accent);color:#fff}
-/* Weekend frame */
-.bday-cell.weekend{border:1.5px solid rgba(108,140,255,.22)}
-.bday-cell.weekend .bday-num{color:var(--text-dim)}
-.ev-cell.weekend{border:1.5px solid rgba(108,140,255,.22)}
-.ev-cell.weekend .ev-num{color:var(--text-dim)}
-/* Day types in events calendar */
-.ev-cell.ev-day-festivo{border-top:2.5px solid var(--festivo)}
-.ev-cell.ev-day-vacaciones{border-top:2.5px solid var(--vacaciones)}
-.ev-cell.ev-day-ausencia{border-top:2.5px solid var(--ausencia)}
-.ev-cell.ev-puente{background:rgba(108,140,255,.07)}
+/* Weekend frame — borde ámbar para distinguir de festivos/hoy/accent */
+.bday-cell.weekend{border:1.5px solid rgba(255,180,70,.38);background:rgba(255,180,70,.03)}
+.bday-cell.weekend .bday-num{color:#c8a050}
+.ev-cell.weekend{border:1.5px solid rgba(255,180,70,.38);background:rgba(255,180,70,.03)}
+.ev-cell.weekend .ev-num{color:#c8a050}
+/* Day types in events calendar — border-top + tinte de fondo */
+.ev-cell.ev-day-festivo{border-top:3px solid var(--festivo);background:rgba(255,107,107,.09)}
+.ev-cell.ev-day-vacaciones{border-top:3px solid var(--vacaciones);background:rgba(255,179,71,.09)}
+.ev-cell.ev-day-ausencia{border-top:3px solid var(--ausencia);background:rgba(192,132,252,.09)}
+.ev-cell.ev-puente{background:rgba(108,140,255,.11)}
 /* Events in puentes (summary) */
 .sy-puente-evs{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
 .sy-puente-ev{font-size:.62rem;padding:2px 7px;border-radius:10px;background:var(--surface3);color:var(--text-muted);border:1px solid var(--border-light)}
