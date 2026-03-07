@@ -150,7 +150,8 @@ function renderBdayCalMonth(){
       var isTod=d.getTime()===today.getTime();
       var past=inM&&d<today;
       var bds=getBdaysOn(d.getMonth()+1,d.getDate());
-      var cls='bday-cell'+(inM?'':' out-m')+(isTod?' today-bday':'')+(past?' past-cal-day':'');
+      var bdow=d.getDay();
+      var cls='bday-cell'+(inM?'':' out-m')+(isTod?' today-bday':'')+(past?' past-cal-day':'')+(bdow===0||bdow===6?' weekend':'');
       h+='<div class="'+cls+'">';
       h+='<div class="bday-num">'+d.getDate()+'</div>';
       bds.forEach(function(b){

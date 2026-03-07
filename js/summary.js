@@ -2,7 +2,7 @@
    SUMMARY — Resumen anual + Puentes
    ============================================================ */
 
-var FEST_REQUIRED=14;
+var FEST_REQUIRED=12;
 var VAC_STORAGE_KEY='excelia-vac-days';
 var VAC_ENTITLEMENT=(function(){
   try{var v=localStorage.getItem(VAC_STORAGE_KEY);if(v)return parseInt(v,10);}catch(e){}
@@ -37,18 +37,26 @@ function computeYearlySummary(year){
         if(t==='normal'){
           worked++;hoursWorked+=h;mHours[m]+=h;mDays[m]++;
           if(h===6.5)d65P++;else if(h===7)d7P++;else if(h===8)d8P++;else if(h===9)d9P++;
-        } else if(t==='vacaciones')vacTaken++;
-        else if(t==='festivo')festTaken++;
-        else if(t==='ausencia')ausTaken++;
+        } else if(t==='vacaciones'){
+          vacTaken++;
+          if(!EXCL_VAC){var h2=defH(d);worked++;hoursWorked+=h2;mHours[m]+=h2;mDays[m]++;if(h2===6.5)d65P++;else if(h2===7)d7P++;else if(h2===8)d8P++;else if(h2===9)d9P++;}
+        } else if(t==='festivo'){
+          festTaken++;
+          if(!EXCL_FEST){var h2=defH(d);worked++;hoursWorked+=h2;mHours[m]+=h2;mDays[m]++;if(h2===6.5)d65P++;else if(h2===7)d7P++;else if(h2===8)d8P++;else if(h2===9)d9P++;}
+        } else if(t==='ausencia')ausTaken++;
       } else {
         lvFuture++;
         if(t==='normal'){
           toWork++;hoursToWork+=eh;mHoursP[m]+=eh;mDaysP[m]++;
           if(w===5)d65F++;
           else{var gh=getMonthH(d.getFullYear(),m,d.getDate());if(gh===7)d7F++;else if(gh===8)d8F++;else d9F++;}
-        } else if(t==='vacaciones')vacFuture++;
-        else if(t==='festivo')festFuture++;
-        else if(t==='ausencia')ausFuture++;
+        } else if(t==='vacaciones'){
+          vacFuture++;
+          if(!EXCL_VAC){toWork++;hoursToWork+=eh;mHoursP[m]+=eh;mDaysP[m]++;if(w===5)d65F++;else{var gh2=getMonthH(d.getFullYear(),m,d.getDate());if(gh2===7)d7F++;else if(gh2===8)d8F++;else d9F++;}}
+        } else if(t==='festivo'){
+          festFuture++;
+          if(!EXCL_FEST){toWork++;hoursToWork+=eh;mHoursP[m]+=eh;mDaysP[m]++;if(w===5)d65F++;else{var gh2=getMonthH(d.getFullYear(),m,d.getDate());if(gh2===7)d7F++;else if(gh2===8)d8F++;else d9F++;}}
+        } else if(t==='ausencia')ausFuture++;
       }
     }
     d.setDate(d.getDate()+1);
@@ -62,7 +70,8 @@ function computeYearlySummary(year){
   var maxMd=0,minMd=Infinity,maxMdi=0,minMdi=0;
   for(var i=0;i<12;i++){var td=mDays[i]+mDaysP[i];if(td>maxMd){maxMd=td;maxMdi=i;}if(td>0&&td<minMd){minMd=td;minMdi=i;}}
   if(minMd===Infinity)minMd=0;
-  var avgHDay=worked>0?Math.round(hoursWorked/worked*10)/10:0;
+  var wTotal=worked+toWork;
+  var avgHDay=wTotal>0?Math.round((hoursWorked+hoursToWork)/wTotal*10)/10:0;
   var actMths=0;for(var i=0;i<12;i++){if(mDays[i]+mDaysP[i]>0)actMths++;}
   var avgHMonth=actMths>0?Math.round(hoursTotal/actMths):0;
   var avgDMonth=actMths>0?Math.round((worked+toWork)/actMths*10)/10:0;
@@ -109,12 +118,13 @@ function barChart3(dataW,dataP,labels,colorBase,cm){
 }
 
 function computePuentes(year){
-  var festivosList=[],vacacionesList=[];
+  var festivosList=[],vacacionesList=[],ausList=[];
   var d=new Date(year,0,1);
   while(d.getFullYear()===year){
     var t=dayT(d);
     if(t==='festivo')festivosList.push(new Date(d));
     if(t==='vacaciones')vacacionesList.push(new Date(d));
+    if(t==='ausencia')ausList.push(new Date(d));
     d.setDate(d.getDate()+1);
   }
   function isNWD(dt){var w=dt.getDay();return w===0||w===6||dayT(dt)==='festivo'||dayT(dt)==='vacaciones';}
@@ -146,18 +156,24 @@ function computePuentes(year){
   sequences.forEach(function(seq){seq.forEach(function(x){puenteKeys[dk(x.date)]=true;});});
   var festivosSueltos=festivosList.filter(function(fdate){return !puenteKeys[dk(fdate)];});
   var vacSueltos=vacacionesList.filter(function(vd){return !puenteKeys[dk(vd)];});
-  return{festivosList:festivosList,vacacionesList:vacacionesList,
+  return{festivosList:festivosList,vacacionesList:vacacionesList,ausList:ausList,
     puentes:sequences,festivosSueltos:festivosSueltos,vacSueltos:vacSueltos};
 }
 
 function renderSummaryContent(){
   var s=computeYearlySummary(SUMMARY_YEAR);
+  var festPend=Math.max(0,FEST_REQUIRED-s.festTotal);
   var cm=SUMMARY_YEAR===new Date().getFullYear()?new Date().getMonth():-1;
   var h='<div class="sy-header">';
   h+='<button class="sy-back" id="syBack">&#8592;</button>';
   h+='<div class="sy-year-nav"><button class="sy-nav" id="syPrev">&#9664;</button><div class="sy-year">'+SUMMARY_YEAR+'</div><button class="sy-nav" id="syNext">&#9654;</button></div>';
   h+='<button class="sy-pdf" id="syPdf">PDF</button>';
   h+='</div><div class="sy-body">';
+  // Checkboxes quitar festivos/vacaciones
+  h+='<div class="excl-row">';
+  h+='<label class="excl-item"><input type="checkbox" class="excl-chk ev-checkbox" id="syExclFestChk"'+(EXCL_FEST?' checked':'')+'>&#160;Quitar festivos</label>';
+  h+='<label class="excl-item"><input type="checkbox" class="excl-chk ev-checkbox" id="syExclVacChk"'+(EXCL_VAC?' checked':'')+'>&#160;Quitar vacaciones</label>';
+  h+='</div>';
 
   // Dias L-V
   h+='<div class="sy-section"><div class="sy-section-title">D&#237;as L&#8211;V</div><div class="sy-cards3">';
@@ -186,7 +202,6 @@ function renderSummaryContent(){
   h+='<table class="sy-table"><thead><tr><th class="sy-td-lbl">Tipo</th><th>Pasados</th><th>Futuros</th><th>Total</th><th>Quedan</th></tr></thead><tbody>';
   h+='<tr><td class="sy-td-lbl">Vacaciones</td><td>'+s.vacTaken+'</td><td>'+s.vacFuture+'</td><td>'+s.vacTotal+'</td><td>'+(s.vacPend>0?s.vacPend:'&#10003;')+'</td></tr>';
   h+='<tr><td class="sy-td-lbl">Festivos</td><td>'+s.festTaken+'</td><td>'+s.festFuture+'</td><td>'+s.festTotal+'</td>';
-  var festPend=Math.max(0,FEST_REQUIRED-s.festTotal);
   h+='<td>'+(festPend>0?festPend:'&#10003;')+'</td></tr>';
   h+='<tr><td class="sy-td-lbl">Bajas</td><td>'+s.ausTaken+'</td><td>'+s.ausFuture+'</td><td>'+s.ausTotal+'</td><td>&#8212;</td></tr>';
   h+='<tr class="sy-tr-total"><td class="sy-td-lbl">Total</td><td>'+(s.vacTaken+s.festTaken+s.ausTaken)+'</td><td>'+(s.vacFuture+s.festFuture+s.ausFuture)+'</td><td>'+(s.vacTotal+s.festTotal+s.ausTotal)+'</td><td></td></tr>';
@@ -195,15 +210,15 @@ function renderSummaryContent(){
   if(festPend>0){h+='<div class="sy-note warn-fest">Faltan '+festPend+' d&#237;a'+(festPend===1?'':'s')+' festivos por marcar (en Espa&#241;a: '+FEST_REQUIRED+' d&#237;as/a&#241;o).</div>';}
   h+='</div>';
 
-  // Horas
-  h+='<div class="sy-section"><div class="sy-section-title">Horas</div><div class="sy-cards3">';
+  // Horas trabajadas
+  h+='<div class="sy-section"><div class="sy-section-title">Horas trabajadas</div><div class="sy-cards3">';
   h+='<div class="sy-card hi"><div class="sy-val">'+fhY(s.hoursWorked)+'</div><div class="sy-lbl">Trabajadas</div></div>';
   h+='<div class="sy-card dim"><div class="sy-val">'+fhY(s.hoursToWork)+'</div><div class="sy-lbl">Por trabajar</div></div>';
   h+='<div class="sy-card hi2"><div class="sy-val">'+fhY(s.hoursTotal)+'</div><div class="sy-lbl">Totales</div></div>';
   h+='</div><div class="sy-cards4" style="margin-top:8px">';
   h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.maxMh)+'</div><div class="sy-lbl">M&#225;x./mes<br>'+MN_SHORT[s.maxMhi]+'</div></div>';
   h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.minMh)+'</div><div class="sy-lbl">M&#237;n./mes<br>'+MN_SHORT[s.minMhi]+'</div></div>';
-  h+='<div class="sy-card"><div class="sy-val-sm">'+s.avgHDay+'h</div><div class="sy-lbl">Media/d&#237;a</div></div>';
+  h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.avgHDay)+'</div><div class="sy-lbl">Media/d&#237;a</div></div>';
   h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.avgHMonth)+'</div><div class="sy-lbl">Media/mes</div></div>';
   h+='</div>';
   h+='<div class="sy-chart">'+barChart3(s.mHours,s.mHoursP,MN_SHORT,'#6c8cff',cm)+'</div>';
@@ -214,11 +229,10 @@ function renderSummaryContent(){
   h+='<div class="sy-card hi"><div class="sy-val">'+fdY(s.worked)+'</div><div class="sy-lbl">Trabajados</div></div>';
   h+='<div class="sy-card dim"><div class="sy-val">'+fdY(s.toWork)+'</div><div class="sy-lbl">Por trabajar</div></div>';
   h+='<div class="sy-card hi2"><div class="sy-val">'+fdY(s.workedTotal)+'</div><div class="sy-lbl">Totales</div></div>';
-  h+='</div><div class="sy-cards4" style="margin-top:8px">';
+  h+='</div><div class="sy-cards3" style="margin-top:8px">';
   h+='<div class="sy-card"><div class="sy-val-sm">'+fdY(s.maxMd)+'</div><div class="sy-lbl">M&#225;x./mes<br>'+MN_SHORT[s.maxMdi]+'</div></div>';
   h+='<div class="sy-card"><div class="sy-val-sm">'+fdY(s.minMd)+'</div><div class="sy-lbl">M&#237;n./mes<br>'+MN_SHORT[s.minMdi]+'</div></div>';
-  h+='<div class="sy-card"><div class="sy-val-sm">'+s.avgDMonth+'d</div><div class="sy-lbl">Media/mes</div></div>';
-  h+='<div class="sy-card"><div class="sy-val-sm">'+(s.d65P+s.d65F)+'d</div><div class="sy-lbl">Viernes</div></div>';
+  h+='<div class="sy-card"><div class="sy-val-sm">'+(s.avgDMonth%1===0?s.avgDMonth:s.avgDMonth.toFixed(1).replace('.',','))+'d</div><div class="sy-lbl">Media/mes</div></div>';
   h+='</div>';
   h+='<div class="sy-chart">'+barChart3(s.mDays,s.mDaysP,MN_SHORT,'#34d399',cm)+'</div>';
   h+='</div>';
@@ -262,7 +276,8 @@ function renderSummaryContent(){
   h+='</div>';
 
   // Festivos
-  h+='<div class="sy-section"><div class="sy-section-title">Festivos ('+p.festivosList.length+' / '+FEST_REQUIRED+' en Espa&#241;a)</div>';
+  var festLbl='Festivos '+p.festivosList.length+' d&#237;as'+(festPend>0?' (faltan '+festPend+' por marcar)':'');
+  h+='<div class="sy-section"><div class="sy-section-title">'+festLbl+'</div>';
   if(p.festivosList.length===0){h+='<div class="sy-note">No hay festivos marcados para este a&#241;o.</div>';}
   else{
     h+='<ul class="sy-list">';
@@ -274,12 +289,25 @@ function renderSummaryContent(){
   h+='</div>';
 
   // Vacaciones
-  h+='<div class="sy-section"><div class="sy-section-title">Vacaciones ('+p.vacacionesList.length+' d&#237;as)</div>';
+  var vacLbl='Vacaciones '+p.vacacionesList.length+' d&#237;as'+(s.vacPend>0?' (faltan '+s.vacPend+' por planificar)':'');
+  h+='<div class="sy-section"><div class="sy-section-title">'+vacLbl+'</div>';
   if(p.vacacionesList.length===0){h+='<div class="sy-note">No hay d&#237;as de vacaciones marcados para este a&#241;o.</div>';}
   else{
     h+='<ul class="sy-list">';
     p.vacacionesList.forEach(function(dt){
       h+='<li class="sy-list-item"><span class="sy-list-date">'+fdd(dt)+'</span><span class="sy-list-tag vacaciones">Vacaciones</span></li>';
+    });
+    h+='</ul>';
+  }
+  h+='</div>';
+
+  // Bajas / Ausencias
+  h+='<div class="sy-section"><div class="sy-section-title">Bajas / Ausencias'+(p.ausList.length?' '+p.ausList.length+' d&#237;as':'')+'</div>';
+  if(p.ausList.length===0){h+='<div class="sy-note">No hay d&#237;as de ausencia marcados para este a&#241;o.</div>';}
+  else{
+    h+='<ul class="sy-list">';
+    p.ausList.forEach(function(dt){
+      h+='<li class="sy-list-item"><span class="sy-list-date">'+fdd(dt)+'</span><span class="sy-list-tag ausencia">Ausencia</span></li>';
     });
     h+='</ul>';
   }
@@ -325,11 +353,12 @@ function bindSummaryEvents(){
   if(vacInput){
     vacInput.addEventListener('change',function(){
       var v=parseInt(this.value,10);
-      if(v>0){
-        saveVacEntitlement(v);
-        document.getElementById('summaryContent').innerHTML=renderSummaryContent();
-        bindSummaryEvents();
-      }
+      if(v>0){saveVacEntitlement(v);document.getElementById('summaryContent').innerHTML=renderSummaryContent();bindSummaryEvents();}
     });
   }
+  // Quitar festivos / vacaciones
+  var chkFest=document.getElementById('syExclFestChk');
+  var chkVac=document.getElementById('syExclVacChk');
+  if(chkFest)chkFest.addEventListener('change',function(){EXCL_FEST=this.checked;save();document.getElementById('summaryContent').innerHTML=renderSummaryContent();bindSummaryEvents();});
+  if(chkVac)chkVac.addEventListener('change',function(){EXCL_VAC=this.checked;save();document.getElementById('summaryContent').innerHTML=renderSummaryContent();bindSummaryEvents();});
 }
