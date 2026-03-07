@@ -80,12 +80,21 @@ function getWD(wkey){
 }
 
 // ── Toast ────────────────────────────────────────────────────
-function showToast(msg,type){
+function showToast(msg,type,undoFn){
   var t=document.getElementById('toast');
-  t.textContent=msg;
-  t.className='toast show'+(type?' '+type:'');
   clearTimeout(t._timer);
-  t._timer=setTimeout(function(){t.className='toast';},3500);
+  if(undoFn){
+    t.innerHTML=escHtml(msg)+'<button class="toast-undo-btn" id="toastUndoBtn">Deshacer</button>';
+    t.className='toast show has-undo'+(type?' '+type:'');
+    document.getElementById('toastUndoBtn').addEventListener('click',function(){
+      undoFn(); t.className='toast';
+    });
+    t._timer=setTimeout(function(){t.className='toast';},5000);
+  } else {
+    t.textContent=msg;
+    t.className='toast show'+(type?' '+type:'');
+    t._timer=setTimeout(function(){t.className='toast';},3500);
+  }
 }
 
 // ── Envío de email ───────────────────────────────────────────
@@ -236,8 +245,24 @@ function selectType(t){
   if(!ED)return; var k=dk(ED),dow=ED.getDay();
   if(t==='normal'){
     var e=ST[k]||{},wasNormal=!e.type;
-    if(!wasNormal){delete ST[k];e={};}
-    save(); render(); closeSheet();
+    if(!wasNormal){delete ST[k];}
+    document.querySelectorAll('.sheet-option').forEach(function(el){el.classList.toggle('selected',el.dataset.type==='normal');});
+    if(dow>=1&&dow<=4){
+      if(wasNormal){
+        // Ya era normal: confirmar y cerrar
+        save(); render(); closeSheet();
+      } else {
+        // Cambiado a normal: mostrar picker de horas
+        var picker=document.getElementById('hourPicker');
+        picker.style.display='block';
+        var curH=getMonthH(ED.getFullYear(),ED.getMonth(),ED.getDate());
+        document.querySelectorAll('.hour-chip-day').forEach(function(c){c.classList.toggle('active',+c.dataset.h===curH);});
+        save(); render();
+      }
+    } else {
+      // Viernes: cerrar directamente
+      save(); render(); closeSheet();
+    }
   } else {
     delete ST[k]; ST[k]={type:t};
     save(); closeSheet(); render();

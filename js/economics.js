@@ -124,14 +124,11 @@ function renderEconContent(){
 
   // IVA trimestral — 3 filas
   h+='<div class="sy-section"><div class="sy-section-title">IVA trimestral a Hacienda (mod. 303)</div>';
-  // Fila 1: ingresos mensuales por trimestre
+  // Fila 1: cobrado total por trimestre
   h+='<div class="econ-quarter">';
   ['T1','T2','T3','T4'].forEach(function(q,i){
-    h+='<div class="econ-qcard-months">';
-    e.qMonthData[i].forEach(function(md){
-      h+='<div class="econ-qmonth-row"><span>'+MN_SHORT[md.m]+'</span><span class="econ-qm-val">'+fc(md.cobrado)+'</span></div>';
-    });
-    h+='</div>';
+    h+='<div class="econ-qcard"><div class="sy-val-sm">'+fc(Math.round(e.qCobrado[i]*100)/100)+'</div>';
+    h+='<div class="sy-lbl">'+q+' Cobrado</div></div>';
   });
   h+='</div>';
   // Fila 2: Base por trimestre

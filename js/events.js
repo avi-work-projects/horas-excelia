@@ -5,7 +5,7 @@
 var EV_STORAGE_KEY = 'excelia-events-v1';
 var EV_YEAR = new Date().getFullYear();
 var EV_MONTH = new Date().getMonth();
-var EV_VIEW = 'cal';  // 'cal' | 'list' | 'months'
+var EV_VIEW = 'cal';  // 'cal' | 'months'
 var EV_EDIT = null;
 var EV_COLORS = ['#6c8cff','#34d399','#fb923c','#ff6b6b','#c084fc','#fbbf24'];
 
@@ -187,13 +187,11 @@ function renderEvContent(){
   h+='</div>';
   h+='<div class="ev-hdr-sub">';
   h+='<button class="ev-view-toggle'+(EV_VIEW==='cal'?' active':'')+'" id="evViewCal">Calendario</button>';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='list'?' active':'')+'" id="evViewList">Lista</button>';
   h+='<button class="ev-view-toggle'+(EV_VIEW==='months'?' active':'')+'" id="evViewMonths">Por meses</button>';
   h+='</div>';
   h+='<div class="sy-body">';
   if(EV_VIEW==='cal')h+=renderEvCalMonth();
-  else if(EV_VIEW==='months')h+=renderEvByMonths();
-  else h+=renderEvList();
+  else h+=renderEvByMonths();
   h+='<div class="ev-io-row">';
   h+='<button class="ev-io-btn" id="evAdd">+ A\u00f1adir</button>';
   h+='<button class="ev-io-btn" id="evExport">&#8595; Exportar</button>';
@@ -257,10 +255,19 @@ function openEvDetail(ev){
     closeEvDetail();setTimeout(function(){openEvForm(ev);},300);
   });
   document.getElementById('evDDel').addEventListener('click',function(){
-    EVENTS=EVENTS.filter(function(e){return e.id!==ev.id;});
+    var deleted=ev;
+    var deletedIdx=-1;
+    for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===deleted.id){deletedIdx=i;break;}}
+    EVENTS=EVENTS.filter(function(e){return e.id!==deleted.id;});
     saveEvents();updateEventsBtn();
-    showToast('Evento eliminado','success');
-    closeEvDetail();setTimeout(refreshEvents,320);
+    closeEvDetail();
+    setTimeout(function(){
+      refreshEvents();
+      showToast('Evento eliminado','success',function(){
+        if(deletedIdx>=0){EVENTS.splice(deletedIdx,0,deleted);}else{EVENTS.push(deleted);}
+        saveEvents();updateEventsBtn();refreshEvents();
+      });
+    },320);
   });
 }
 
@@ -380,10 +387,19 @@ function bindEvFormEvents(){
   if(delBtn){
     delBtn.addEventListener('click',function(){
       if(!EV_EDIT)return;
-      EVENTS=EVENTS.filter(function(e){return e.id!==EV_EDIT.id;});
+      var deleted=EV_EDIT;
+      var deletedIdx=-1;
+      for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===deleted.id){deletedIdx=i;break;}}
+      EVENTS=EVENTS.filter(function(e){return e.id!==deleted.id;});
       saveEvents();updateEventsBtn();
-      showToast('Evento eliminado','success');
-      closeEvForm();setTimeout(refreshEvents,320);
+      closeEvForm();
+      setTimeout(function(){
+        refreshEvents();
+        showToast('Evento eliminado','success',function(){
+          if(deletedIdx>=0){EVENTS.splice(deletedIdx,0,deleted);}else{EVENTS.push(deleted);}
+          saveEvents();updateEventsBtn();refreshEvents();
+        });
+      },320);
     });
   }
   document.getElementById('evFSave').addEventListener('click',function(){
@@ -450,7 +466,6 @@ function bindEvEvents(){
     var n=new Date();EV_YEAR=n.getFullYear();EV_MONTH=n.getMonth();refreshEvents();
   });
   document.getElementById('evViewCal').addEventListener('click',function(){EV_VIEW='cal';refreshEvents();});
-  document.getElementById('evViewList').addEventListener('click',function(){EV_VIEW='list';refreshEvents();});
   document.getElementById('evViewMonths').addEventListener('click',function(){EV_VIEW='months';refreshEvents();});
   document.getElementById('evToBday').addEventListener('click',function(){closeEvents();setTimeout(openBday,330);});
   document.getElementById('evAdd').addEventListener('click',function(){openEvForm(null);});

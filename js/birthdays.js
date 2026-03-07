@@ -19,6 +19,10 @@ var BDAYS=(function(){
   return (typeof BDAYS_FROM_SECRET!=='undefined')?BDAYS_FROM_SECRET:[];
 })();
 
+// Title case para mostrar nombres
+function tc(s){return s.replace(/\S+/g,function(w){return w.charAt(0).toUpperCase()+w.slice(1).toLowerCase();});}
+function bdName(n){return escHtml(tc(n));}
+
 function getBdayColor(b){
   var idx=BDAYS.indexOf(b);
   if(idx===-1){
@@ -60,49 +64,68 @@ function renderBdayUpcoming(){
   if(!BDAYS.length)return '<div class="sy-note">No hay cumplea\u00f1os cargados. Importa un archivo JSON o configura el secreto BIRTHDAYS en GitHub.</div>';
 
   var today=new Date();today.setHours(0,0,0,0);
-  // Inicio de la semana actual (lunes)
   var dow=today.getDay(),off=dow===0?-6:1-dow;
   var weekStart=new Date(today);weekStart.setDate(weekStart.getDate()+off);
-  var rangeEnd=new Date(weekStart);rangeEnd.setDate(rangeEnd.getDate()+13);
+  var prevWeekStart=new Date(weekStart);prevWeekStart.setDate(prevWeekStart.getDate()-7);
+  var nextWeekStart=new Date(weekStart);nextWeekStart.setDate(nextWeekStart.getDate()+7);
 
-  // Recopilar cumpleaños en las 2 semanas
-  var items=[];
-  var d=new Date(weekStart);
-  while(d<=rangeEnd){
-    var bds=getBdaysOn(d.getMonth()+1,d.getDate());
-    var dc=new Date(d);
-    bds.forEach(function(b){items.push({date:dc,b:b});});
-    d.setDate(d.getDate()+1);
+  function getBdaysInRange(start,days){
+    var items=[];
+    for(var i=0;i<days;i++){
+      var d=new Date(start);d.setDate(d.getDate()+i);
+      var bds=getBdaysOn(d.getMonth()+1,d.getDate());
+      var diff=Math.round((d-today)/86400000);
+      bds.forEach(function(b){items.push({b:b,diff:diff});});
+    }
+    return items;
   }
 
-  var nextWeekStart=new Date(weekStart);nextWeekStart.setDate(nextWeekStart.getDate()+7);
-  var curWeek=items.filter(function(x){return x.date<nextWeekStart;});
-  var nxtWeek=items.filter(function(x){return x.date>=nextWeekStart;});
+  var prevItems=getBdaysInRange(prevWeekStart,7);
+  var curItems=getBdaysInRange(weekStart,7);
+  var nxtItems=getBdaysInRange(nextWeekStart,7);
+
+  function bdayLabel(diff){
+    if(diff===0)return '\u00a1Hoy!';
+    if(diff===1)return 'Ma\u00f1ana';
+    if(diff>1)return 'en '+diff+'\u202fd\u00edas';
+    if(diff===-1)return 'Ayer';
+    if(diff===-2)return 'Antes de ayer';
+    return 'Hace '+Math.abs(diff)+'\u202fd\u00edas';
+  }
 
   function renderGroup(title,list){
     if(!list.length)return '<div class="sy-note">No hay cumplea\u00f1os '+title.toLowerCase()+'.</div>';
     var s='<div class="bday-month-hdr">'+title+'</div>';
     list.forEach(function(x){
-      var dl=daysUntil(x.b.month,x.b.day);
-      var lbl=dl===0?'\u00a1Hoy!':dl===1?'Ma\u00f1ana':'en '+dl+'\u202fd\u00edas';
+      var lbl=bdayLabel(x.diff);
       var color=getBdayColor(x.b);
-      var isT=dl===0;
+      var isT=x.diff===0;
+      var isPastDay=x.diff<0;
+      var isNearDay=x.diff>0&&x.diff<=3;
+      var lblCls='bday-upcoming-lbl'+(isT?' today-lbl':isPastDay?' past-lbl':isNearDay?' near':'');
       s+='<div class="bday-upcoming-item'+(isT?' bday-today-item':'')+'" data-bday-name="'+escHtml(x.b.name)+'" data-bday-day="'+x.b.day+'" data-bday-month="'+x.b.month+'">';
       s+='<div class="bday-upcoming-icon" style="background:'+color+'22;border-color:'+color+'">\ud83c\udf82</div>';
       s+='<div class="bday-upcoming-info">';
-      s+='<div class="bday-upcoming-name" style="color:'+color+'">'+escHtml(x.b.name)+'</div>';
+      s+='<div class="bday-upcoming-name" style="color:'+color+'">'+bdName(x.b.name)+'</div>';
       s+='<div class="bday-upcoming-date">'+x.b.day+' de '+MN[x.b.month-1]+'</div>';
       s+='</div>';
-      s+='<div class="bday-upcoming-lbl'+(isT?' today-lbl':dl<=3?' near':'')+'">'+lbl+'</div>';
+      s+='<div class="'+lblCls+'">'+lbl+'</div>';
       s+='</div>';
     });
     return s;
   }
 
-  var h='<div class="bday-upcoming-section">';
-  h+=renderGroup('Esta semana',curWeek);
+  var h='';
+  if(prevItems.length){
+    h+='<div class="bday-upcoming-section">';
+    h+=renderGroup('Semana anterior',prevItems);
+    h+='</div><div style="margin-top:8px">';
+  } else {
+    h+='<div>';
+  }
+  h+=renderGroup('Esta semana',curItems);
   h+='</div><div class="bday-upcoming-section" style="margin-top:8px">';
-  h+=renderGroup('La pr\u00f3xima semana',nxtWeek);
+  h+=renderGroup('La pr\u00f3xima semana',nxtItems);
   h+='</div>';
   return h;
 }
@@ -132,8 +155,8 @@ function renderBdayCalMonth(){
       h+='<div class="bday-num">'+d.getDate()+'</div>';
       bds.forEach(function(b){
         var color=getBdayColor(b);
-        var sn=shortName(b.name);
-        h+='<div class="bday-badge" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" style="background:'+color+'22;color:'+color+';border-left-color:'+color+'" title="'+escHtml(b.name)+'">'+escHtml(sn)+'</div>';
+        var sn=shortName(tc(b.name));
+        h+='<div class="bday-badge" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" style="background:'+color+'22;color:'+color+';border-left-color:'+color+'" title="'+bdName(b.name)+'">'+escHtml(sn)+'</div>';
       });
       h+='</div>';
       cur.setDate(cur.getDate()+1);
@@ -160,7 +183,7 @@ function renderBdayList(){
       var color=getBdayColor(b);
       h+='<div class="bday-list-item" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'">';
       h+='<span class="bday-list-day" style="color:'+color+'">'+b.day+'</span>';
-      h+='<span class="bday-list-name">'+escHtml(b.name)+'</span>';
+      h+='<span class="bday-list-name">'+bdName(b.name)+'</span>';
       h+='<span class="'+cls+'">'+lbl+'</span>';
       h+='</div>';
     });
@@ -227,7 +250,7 @@ function renderBdayDetail(b){
   h+='<button class="ev-list-btn" id="bdDEdit" style="font-size:.8rem;padding:6px 12px">&#9998; Editar</button>';
   h+='</div>';
   h+='<div class="bd-detail-color-bar" style="background:'+color+'"></div>';
-  h+='<div class="bd-detail-name">'+escHtml(b.name)+'</div>';
+  h+='<div class="bd-detail-name">'+bdName(b.name)+'</div>';
   h+='<div class="bd-detail-date">'+b.day+' de '+MN[b.month-1]+'</div>';
   h+='<div class="bd-detail-lbl" style="background:'+color+'22;color:'+color+'">'+lbl+'</div>';
   h+='</div></div>';
