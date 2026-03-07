@@ -14,7 +14,7 @@ function computeEcon(year){
   var s=computeYearlySummary(year);
   var months=[];
   var totBase=0,totIva=0,totIrpf=0,totCobrado=0;
-  var qIva=[0,0,0,0],qCobrado=[0,0,0,0];
+  var qIva=[0,0,0,0],qCobrado=[0,0,0,0],qBase=[0,0,0,0];
   var qMonthData=[[],[],[],[]];
   for(var m=0;m<12;m++){
     var dias=s.mDays[m]+s.mDaysP[m];
@@ -28,8 +28,10 @@ function computeEcon(year){
     var qi=Math.floor(m/3);
     qIva[qi]+=iva;
     qCobrado[qi]+=cobrado;
+    qBase[qi]+=base;
     qMonthData[qi].push({m:m,cobrado:Math.round(cobrado*100)/100});
   }
+  qBase=qBase.map(function(b){return Math.round(b*100)/100;});
   totBase=Math.round(totBase*100)/100;
   totIva=Math.round(totIva*100)/100;
   totIrpf=Math.round(totIrpf*100)/100;
@@ -39,19 +41,31 @@ function computeEcon(year){
   var qNeto=qIva.map(function(iva,i){return Math.round((qCobrado[i]-iva)*100)/100;});
   return{months:months,totBase:totBase,totIva:totIva,totIrpf:totIrpf,
     totCobrado:totCobrado,neto:neto,netoReal:netoReal,
-    qIva:qIva,qCobrado:qCobrado,qMonthData:qMonthData,qNeto:qNeto};
+    qIva:qIva,qCobrado:qCobrado,qBase:qBase,qMonthData:qMonthData,qNeto:qNeto};
 }
 
 /* ── Gráfica de barras ───────────────────────────────────── */
 function econBarChart(data,labels,color){
-  var W=320,H=90,PB=18,PT=14,n=12;
+  var W=320,H=90,PB=18,PT=14,PL=32,n=12;
+  var bW=W-PL;
   var maxV=Math.max.apply(null,data)||1;
-  var bw=Math.floor((W-n*2)/n),gap=2;
+  // Paso en múltiplos de 2500
+  var step=2500;
+  while(maxV/step>5)step*=2;
+  var bw=Math.floor((bW-n*2)/n),gap=2;
   var today=new Date();
   var cm=ECON_YEAR===today.getFullYear()?today.getMonth():-1;
   var svg='<svg viewBox="0 0 '+W+' '+(H+PB)+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">';
+  // Líneas de fondo y etiquetas eje Y
+  for(var gv=step;gv<=maxV*1.05;gv+=step){
+    var gy=Math.round(H-(gv/maxV)*(H-PT));
+    if(gy<PT)break;
+    svg+='<line x1="'+PL+'" y1="'+gy+'" x2="'+W+'" y2="'+gy+'" stroke="#2a2a3e" stroke-width="1"/>';
+    var lbl=gv%1000===0?(gv/1000)+'k':((gv/1000).toFixed(1).replace('.',','))+'k';
+    svg+='<text x="'+(PL-2)+'" y="'+(gy+3)+'" text-anchor="end" font-size="6" fill="#5a5a70">'+lbl+'</text>';
+  }
   for(var i=0;i<n;i++){
-    var x=i*(bw+gap);
+    var x=PL+i*(bw+gap);
     var v=data[i];
     var h2=v>0?Math.max(2,Math.round((v/maxV)*(H-PT))):0;
     var op=i<cm?'.45':i===cm?'1':'.25';
@@ -82,7 +96,7 @@ function renderEconContent(){
   h+='<div class="econ-row col-base"><span>Base imponible (bruto)</span><span class="econ-val">'+fc(e.totBase)+'</span></div>';
   h+='<div class="econ-row col-iva"><span>+ IVA a pagar (21%)</span><span class="econ-val">+'+fc(e.totIva)+'</span></div>';
   h+='<div class="econ-row col-irpf"><span>&#8722; IRPF retenido (15%)</span><span class="econ-val">&#8722;'+fc(e.totIrpf)+'</span></div>';
-  h+='<div class="econ-row col-net"><span>Neto efectivo (base &#8722; IRPF)</span><span class="econ-val">'+fc(e.netoReal)+'</span></div>';
+  h+='<div class="econ-row col-net"><span>Neto efectivo:<br><span style="font-size:.8em;opacity:.8">(base &#8722; IRPF)</span></span><span class="econ-val">'+fc(e.netoReal)+'</span></div>';
   h+='</div>';
   // Media mensual (año/12)
   var avgBase=Math.round(e.totBase/12*100)/100;
@@ -120,14 +134,21 @@ function renderEconContent(){
     h+='</div>';
   });
   h+='</div>';
-  // Fila 2: IVA a pagar por trimestre
+  // Fila 2: Base por trimestre
+  h+='<div class="econ-quarter">';
+  ['T1','T2','T3','T4'].forEach(function(q,i){
+    h+='<div class="econ-qcard"><div class="sy-val-sm" style="color:var(--c-blue)">'+fc(e.qBase[i])+'</div>';
+    h+='<div class="sy-lbl">'+q+' Base</div></div>';
+  });
+  h+='</div>';
+  // Fila 3: IVA a pagar por trimestre
   h+='<div class="econ-quarter">';
   ['T1','T2','T3','T4'].forEach(function(q,i){
     h+='<div class="econ-qcard"><div class="sy-val-sm" style="color:var(--c-orange)">'+fc(Math.round(e.qIva[i]*100)/100)+'</div>';
     h+='<div class="sy-lbl">'+q+' IVA Hacienda</div></div>';
   });
   h+='</div>';
-  // Fila 3: neto tras pagar IVA
+  // Fila 4: neto tras pagar IVA
   h+='<div class="econ-quarter">';
   ['T1','T2','T3','T4'].forEach(function(q,i){
     var n2=e.qNeto[i];

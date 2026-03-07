@@ -43,18 +43,33 @@
     document.getElementById('hoursPanel').classList.remove('open');
   });
 
-  /* ── Chips de horas mensuales (protegido contra semanas enviadas) ── */
+  /* ── Chips de horas mensuales (bloquea días de semanas ya enviadas) ── */
   document.querySelectorAll('.hours-chip').forEach(function(chip){
     chip.addEventListener('click',function(){
-      // Comprobar si hay semanas enviadas en este mes
-      if(hasAnySentWeekInMonth(CY,CM)){
-        showToast('Hay semanas enviadas en este mes. Desm\u00e1rcalas primero.','error');
-        return;
-      }
       var h=+chip.dataset.h;
+      var wks=weeks(CY,CM);
+      var sentCount=0;
+      // Para semanas enviadas: fijar explícitamente las horas actuales en L-J
+      // para que el nuevo MONTH_H no las afecte
+      wks.forEach(function(wk){
+        if(!SW[dk(wk[0])])return;
+        sentCount++;
+        for(var i=0;i<=3;i++){
+          var d=wk[i];
+          if(d.getMonth()!==CM)continue;
+          var k=dk(d);
+          var e=ST[k]||{};
+          if(!e.type&&!e.hours){
+            ST[k]={hours:getMonthH(CY,CM,d.getDate())};
+          }
+        }
+      });
       MONTH_H[mkey(CY,CM)]=h;
       save();render();
       document.getElementById('hoursPanel').classList.remove('open');
+      if(sentCount>0){
+        showToast('Jornada actualizada para las semanas no enviadas','success');
+      }
     });
   });
 
