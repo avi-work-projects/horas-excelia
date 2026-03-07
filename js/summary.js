@@ -171,8 +171,8 @@ function renderSummaryContent(){
   h+='</div><div class="sy-body">';
   // Checkboxes quitar festivos/vacaciones
   h+='<div class="excl-row">';
-  h+='<label class="excl-item"><input type="checkbox" class="excl-chk ev-checkbox" id="syExclFestChk"'+(EXCL_FEST?' checked':'')+'>&#160;Quitar festivos</label>';
-  h+='<label class="excl-item"><input type="checkbox" class="excl-chk ev-checkbox" id="syExclVacChk"'+(EXCL_VAC?' checked':'')+'>&#160;Quitar vacaciones</label>';
+  h+='<label class="excl-item" style="color:var(--festivo)"><input type="checkbox" class="excl-chk" id="syExclFestChk" style="accent-color:var(--festivo)"'+(EXCL_FEST?' checked':'')+'>&#160;Quitar festivos</label>';
+  h+='<label class="excl-item" style="color:var(--vacaciones)"><input type="checkbox" class="excl-chk" id="syExclVacChk" style="accent-color:var(--vacaciones)"'+(EXCL_VAC?' checked':'')+'>&#160;Quitar vacaciones</label>';
   h+='</div>';
 
   // Dias L-V
@@ -250,10 +250,19 @@ function renderSummaryContent(){
       var fCount=seq.filter(function(x){return x.type==='festivo';}).length;
       var wCount=seq.filter(function(x){return x.type==='weekend';}).length;
       var parts=[];if(fCount)parts.push(fCount+' festivo'+(fCount>1?'s':''));if(vCount)parts.push(vCount+' vacac.');if(wCount)parts.push(wCount+' fin'+(wCount>1?'es':'')+' semana');
+      var evTitles=[];
+      if(typeof getEventsOn==='function'){
+        seq.forEach(function(x){
+          getEventsOn(dk(x.date)).forEach(function(ev){
+            if(evTitles.indexOf(ev.title)===-1)evTitles.push(ev.title);
+          });
+        });
+      }
       h+='<div class="sy-puente">';
       h+='<div class="sy-puente-count">'+nDays+' d&#237;as</div>';
       h+='<div class="sy-puente-range">'+fdd(first)+' &#8594; '+fdd(last)+'</div>';
       h+='<div class="sy-puente-comp">'+parts.join(' + ')+'</div>';
+      if(evTitles.length){h+='<div class="sy-puente-evs">'+evTitles.map(function(t){return '<span class="sy-puente-ev">&#128197;&nbsp;'+escHtml(t)+'</span>';}).join('')+'</div>';}
       h+='</div>';
     });
   }

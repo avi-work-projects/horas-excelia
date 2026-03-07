@@ -90,8 +90,8 @@ function renderEconContent(){
   h+='<input class="rate-input" id="rateInput" type="number" min="1" step="1" value="'+DAILY_RATE+'">';
   h+='<span class="rate-suffix">&#8364;/d&#237;a</span></div>';
   h+='<div class="excl-row">';
-  h+='<label class="excl-item"><input type="checkbox" class="excl-chk ev-checkbox" id="ecExclFestChk"'+(EXCL_FEST?' checked':'')+'>&#160;Quitar festivos</label>';
-  h+='<label class="excl-item"><input type="checkbox" class="excl-chk ev-checkbox" id="ecExclVacChk"'+(EXCL_VAC?' checked':'')+'>&#160;Quitar vacaciones</label>';
+  h+='<label class="excl-item" style="color:var(--festivo)"><input type="checkbox" class="excl-chk" id="ecExclFestChk" style="accent-color:var(--festivo)"'+(EXCL_FEST?' checked':'')+'>&#160;Quitar festivos</label>';
+  h+='<label class="excl-item" style="color:var(--vacaciones)"><input type="checkbox" class="excl-chk" id="ecExclVacChk" style="accent-color:var(--vacaciones)"'+(EXCL_VAC?' checked':'')+'>&#160;Quitar vacaciones</label>';
   h+='</div></div>';
 
   // Resumen anual

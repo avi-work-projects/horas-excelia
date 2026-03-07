@@ -84,6 +84,14 @@ function updateEventsBtn(){
 /* ── Render: calendario mensual ─────────────────────────── */
 function renderEvCalMonth(){
   var today=new Date();today.setHours(0,0,0,0);
+  // Precompute puente map for this year
+  var puenteMap={};
+  if(typeof computePuentes==='function'){
+    var pData=computePuentes(EV_YEAR);
+    pData.puentes.forEach(function(seq){
+      seq.forEach(function(x){puenteMap[evDk(x.date)]=true;});
+    });
+  }
   var DN7=['L','M','X','J','V','S','D'];
   var h='<div class="ev-week-hdr">';
   DN7.forEach(function(n){h+='<div>'+n+'</div>';});
@@ -103,7 +111,9 @@ function renderEvCalMonth(){
       var ds=evDk(d);
       var evs=getEventsOn(ds);
       var edow=d.getDay();
-      var cls='ev-cell'+(inM?'':' out-m')+(isTod?' today-ev':'')+(past?' past-cal-day':'')+(edow===0||edow===6?' weekend':'');
+      var dt=inM?dayT(d):'';
+      var inPuente=inM&&puenteMap[ds];
+      var cls='ev-cell'+(inM?'':' out-m')+(isTod?' today-ev':'')+(past?' past-cal-day':'')+(edow===0||edow===6?' weekend':'')+(dt&&dt!=='normal'?' ev-day-'+dt:'')+(inPuente?' ev-puente':'');
       h+='<div class="'+cls+'" data-ds="'+ds+'">';
       h+='<div class="ev-num">'+d.getDate()+'</div>';
       evs.forEach(function(ev){

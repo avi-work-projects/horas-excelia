@@ -79,8 +79,51 @@
   document.getElementById('bdayBtn').addEventListener('click',openBday);
   document.getElementById('eventsBtn').addEventListener('click',openEvents);
 
-  /* ── Exportar datos principales ── */
+  /* ── Exportar datos (solo días/semanas/jornada) ── */
   document.getElementById('exportBtn').addEventListener('click',function(){
+    var data={version:2,days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,exclFest:EXCL_FEST,exclVac:EXCL_VAC};
+    var a=document.createElement('a');
+    a.href='data:application/json,'+encodeURIComponent(JSON.stringify(data,null,2));
+    a.download='horas-excelia-dias.json';
+    a.click();
+    showToast('Datos exportados','success');
+  });
+
+  /* ── Importar datos (solo días/semanas/jornada) ── */
+  document.getElementById('importBtn').addEventListener('click',function(){
+    document.getElementById('importFile').click();
+  });
+  document.getElementById('importFile').addEventListener('change',function(ev){
+    var f=ev.target.files[0];if(!f)return;
+    var r=new FileReader();
+    r.onload=function(e){
+      try{
+        var d=JSON.parse(e.target.result);
+        if(d.days)ST=d.days;
+        if(d.sent)SW=d.sent;
+        if(d.monthH)MONTH_H=d.monthH;
+        if(d.rate)DAILY_RATE=d.rate;
+        if(typeof d.exclFest!=='undefined')EXCL_FEST=d.exclFest;
+        if(typeof d.exclVac!=='undefined')EXCL_VAC=d.exclVac;
+        save();render();
+        showToast('Datos importados correctamente','success');
+      }catch(err){showToast('Error al importar: archivo inv\u00e1lido','error');}
+    };
+    r.readAsText(f);
+    ev.target.value='';
+  });
+
+  /* ── Menú 3 puntos: exportar/importar TODO ── */
+  document.getElementById('menuBtn').addEventListener('click',function(e){
+    e.stopPropagation();
+    var menu=document.getElementById('dataMenu');
+    menu.classList.toggle('open');
+  });
+  document.addEventListener('click',function(){
+    var menu=document.getElementById('dataMenu');
+    if(menu)menu.classList.remove('open');
+  });
+  document.getElementById('exportAllBtn').addEventListener('click',function(){
     var data={version:2,days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
       exclFest:EXCL_FEST,exclVac:EXCL_VAC,vacEntitlement:VAC_ENTITLEMENT,
       birthdays:BDAYS,events:EVENTS};
@@ -88,14 +131,12 @@
     a.href='data:application/json,'+encodeURIComponent(JSON.stringify(data,null,2));
     a.download='horas-excelia-backup.json';
     a.click();
-    showToast('Datos exportados (backup completo)','success');
+    showToast('Backup completo exportado','success');
   });
-
-  /* ── Importar datos principales ── */
-  document.getElementById('importBtn').addEventListener('click',function(){
-    document.getElementById('importFile').click();
+  document.getElementById('importAllBtn').addEventListener('click',function(){
+    document.getElementById('importAllFile').click();
   });
-  document.getElementById('importFile').addEventListener('change',function(ev){
+  document.getElementById('importAllFile').addEventListener('change',function(ev){
     var f=ev.target.files[0];if(!f)return;
     var r=new FileReader();
     r.onload=function(e){
@@ -112,11 +153,10 @@
         if(d.events&&Array.isArray(d.events)){EVENTS=d.events;saveEvents();}
         save();render();
         updateBdayBtn();updateEventsBtn();
-        showToast('Datos importados correctamente','success');
+        showToast('Backup completo importado','success');
       }catch(err){showToast('Error al importar: archivo inv\u00e1lido','error');}
     };
     r.readAsText(f);
-    // Reset para poder reimportar
     ev.target.value='';
   });
 
