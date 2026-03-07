@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Estado global ──────────────────────────────────────────
-var SK='excelia-horas-v3', CY, CM, ST={}, SW={}, ED=null, MONTH_H={}, DAILY_RATE=315;
+var SK='excelia-horas-v3', CY, CM, ST={}, SW={}, ED=null, MONTH_H={}, DAILY_RATE=315, EXCL_FEST=true, EXCL_VAC=true;
 var MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 var MN_SHORT=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 var DN=['D','L','M','X','J','V','S'];
@@ -13,11 +13,11 @@ var DF=['Domingo','Lunes','Martes','Mi\u00e9rcoles','Jueves','Viernes','S\u00e1b
 function load(){
   try{
     var r=localStorage.getItem(SK);
-    if(r){var d=JSON.parse(r);ST=d.days||{};SW=d.sent||{};MONTH_H=d.monthH||{};DAILY_RATE=d.rate||315;}
-  }catch(e){ST={};SW={};MONTH_H={};DAILY_RATE=315;}
+    if(r){var d=JSON.parse(r);ST=d.days||{};SW=d.sent||{};MONTH_H=d.monthH||{};DAILY_RATE=d.rate||315;EXCL_FEST=d.exclFest!==false;EXCL_VAC=d.exclVac!==false;}
+  }catch(e){ST={};SW={};MONTH_H={};DAILY_RATE=315;EXCL_FEST=true;EXCL_VAC=true;}
 }
 function save(){
-  localStorage.setItem(SK,JSON.stringify({days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE}));
+  localStorage.setItem(SK,JSON.stringify({days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,exclFest:EXCL_FEST,exclVac:EXCL_VAC}));
 }
 
 // ── Utilidades HTML ─────────────────────────────────────────
@@ -200,18 +200,27 @@ function render(){
   });
 
   // Resumen mensual
-  var diasTrabajados=0,horasTotales=0,diasNoLaborables=0;
+  var diasTrabajados=0,horasTotales=0,diasNoLaborables=0,diasFest=0,diasVac=0,diasAus=0;
   wks.forEach(function(wk){
     for(var i=0;i<5;i++){
       var d=wk[i]; if(d.getMonth()!==CM)continue;
       var t=dayT(d),h=dayH(d);
-      if(t==='normal'){diasTrabajados++;horasTotales+=h;} else{diasNoLaborables++;}
+      if(t==='normal'){diasTrabajados++;horasTotales+=h;}
+      else{diasNoLaborables++;if(t==='festivo')diasFest++;else if(t==='vacaciones')diasVac++;else if(t==='ausencia')diasAus++;}
     }
   });
   var hStr=(horasTotales%1===0?String(horasTotales):horasTotales.toFixed(1).replace('.',','));
+  var dsglose='';
+  if(diasNoLaborables>0){
+    var dparts=[];
+    if(diasFest)dparts.push('<span style="color:var(--festivo)">'+diasFest+' festivo'+(diasFest>1?'s':'')+'</span>');
+    if(diasVac)dparts.push('<span style="color:var(--vacaciones)">'+diasVac+' vacac.</span>');
+    if(diasAus)dparts.push('<span style="color:var(--ausencia)">'+diasAus+' baja'+(diasAus>1?'s':'')+'</span>');
+    if(dparts.length)dsglose='<div class="ms-breakdown">'+dparts.join('<span class="ms-sep"> / </span>')+'</div>';
+  }
   var footer=document.createElement('div'); footer.className='month-summary';
   footer.innerHTML='<div class="month-stat worked"><span class="ms-num">'+diasTrabajados+'</span><span class="ms-label"> d\u00edas trabajados</span><span class="ms-hrs"> ('+hStr+'h)</span></div>'+
-    '<div class="month-stat off"><span class="ms-num">'+diasNoLaborables+'</span><span class="ms-label"> d\u00edas no trabajados</span></div>';
+    '<div class="month-stat off"><span class="ms-num">'+diasNoLaborables+'</span><span class="ms-label"> d\u00edas no trabajados</span></div>'+dsglose;
   c.appendChild(footer);
 }
 

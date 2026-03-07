@@ -88,7 +88,11 @@ function renderEconContent(){
   h+='<div class="sy-section"><div class="sy-section-title">Tarifa diaria</div>';
   h+='<div class="rate-row"><span class="rate-label">&#8364;/d&#237;a (sin IVA)</span>';
   h+='<input class="rate-input" id="rateInput" type="number" min="1" step="1" value="'+DAILY_RATE+'">';
-  h+='<span class="rate-suffix">&#8364;/d&#237;a</span></div></div>';
+  h+='<span class="rate-suffix">&#8364;/d&#237;a</span></div>';
+  h+='<div class="excl-row">';
+  h+='<label class="excl-item"><input type="checkbox" class="excl-chk ev-checkbox" id="ecExclFestChk"'+(EXCL_FEST?' checked':'')+'>&#160;Quitar festivos</label>';
+  h+='<label class="excl-item"><input type="checkbox" class="excl-chk ev-checkbox" id="ecExclVacChk"'+(EXCL_VAC?' checked':'')+'>&#160;Quitar vacaciones</label>';
+  h+='</div></div>';
 
   // Resumen anual
   h+='<div class="sy-section"><div class="sy-section-title">Resumen anual</div>';
@@ -218,4 +222,8 @@ function bindEconEvents(){
     var v=parseInt(this.value,10);
     if(v>0){DAILY_RATE=v;save();document.getElementById('econContent').innerHTML=renderEconContent();bindEconEvents();}
   });
+  var ecChkFest=document.getElementById('ecExclFestChk');
+  var ecChkVac=document.getElementById('ecExclVacChk');
+  if(ecChkFest)ecChkFest.addEventListener('change',function(){EXCL_FEST=this.checked;save();document.getElementById('econContent').innerHTML=renderEconContent();bindEconEvents();});
+  if(ecChkVac)ecChkVac.addEventListener('change',function(){EXCL_VAC=this.checked;save();document.getElementById('econContent').innerHTML=renderEconContent();bindEconEvents();});
 }

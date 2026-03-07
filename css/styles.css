@@ -208,6 +208,15 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .vac-config-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm)}
 .vac-config-label{font-size:.8rem;color:var(--text-muted);flex:1}
 .vac-config-input{font-family:var(--mono);font-size:.95rem;font-weight:600;color:var(--text);background:var(--surface2);border:1px solid var(--accent);border-radius:var(--radius-sm);padding:5px 10px;width:64px;text-align:center;outline:none}
+/* Quitar festivos/vacaciones checkboxes */
+.excl-row{display:flex;gap:20px;padding:4px 0}
+.excl-item{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--text-muted);cursor:pointer;-webkit-user-select:none;user-select:none}
+.excl-item input{cursor:pointer;accent-color:var(--accent);width:15px;height:15px;flex-shrink:0}
+/* Month summary breakdown */
+.ms-breakdown{font-size:.72rem;color:var(--text-dim);margin-top:2px;line-height:1.6}
+.ms-sep{color:var(--border-light)}
+/* Ausencia list tag */
+.sy-list-tag.ausencia{background:rgba(192,132,252,.15);color:var(--ausencia)}
 
 /* ── ECONOMICS ── */
 .rate-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm)}
@@ -223,6 +232,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .econ-qmonth-row span:first-child{color:var(--text-dim);font-size:.58rem;text-transform:uppercase;font-weight:600}
 .econ-qm-val{font-family:var(--mono);font-size:.65rem;color:var(--text-muted)}
 .econ-qcard-neto{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 8px;text-align:center}
+.econ-qcard-neto .sy-val-sm{font-size:.85rem}
 .econ-annual{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;display:flex;flex-direction:column;gap:10px;margin-bottom:8px}
 .econ-avg-section{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:14px}
 .econ-avg-title{font-size:.62rem;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
@@ -306,6 +316,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bday-upcoming-lbl.past-lbl{color:var(--text-dim);opacity:.7}
 .bday-add-btn{font-size:.72rem;padding:6px 12px;border-radius:16px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;white-space:nowrap;flex-shrink:0}
 .bday-add-btn:active{background:var(--accent);color:#fff}
+/* Weekend trama */
+.bday-cell.weekend{background:rgba(255,255,255,.018)}
+.bday-cell.weekend .bday-num{color:var(--text-dim)}
+.ev-cell.weekend{background:rgba(255,255,255,.018)}
+.ev-cell.weekend .ev-num{color:var(--text-dim)}
 /* Birthday detail / form overlays */
 .bd-detail-overlay,.bd-form-overlay{position:absolute;inset:0;z-index:10;background:rgba(0,0,0,.6);display:none}
 .bd-detail-overlay.open,.bd-form-overlay.open{display:flex;align-items:flex-end}

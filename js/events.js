@@ -102,7 +102,8 @@ function renderEvCalMonth(){
       var past=inM&&d<today;
       var ds=evDk(d);
       var evs=getEventsOn(ds);
-      var cls='ev-cell'+(inM?'':' out-m')+(isTod?' today-ev':'')+(past?' past-cal-day':'');
+      var edow=d.getDay();
+      var cls='ev-cell'+(inM?'':' out-m')+(isTod?' today-ev':'')+(past?' past-cal-day':'')+(edow===0||edow===6?' weekend':'');
       h+='<div class="'+cls+'" data-ds="'+ds+'">';
       h+='<div class="ev-num">'+d.getDate()+'</div>';
       evs.forEach(function(ev){

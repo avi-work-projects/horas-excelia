@@ -81,12 +81,14 @@
 
   /* ── Exportar datos principales ── */
   document.getElementById('exportBtn').addEventListener('click',function(){
-    var data={days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE};
+    var data={version:2,days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
+      exclFest:EXCL_FEST,exclVac:EXCL_VAC,vacEntitlement:VAC_ENTITLEMENT,
+      birthdays:BDAYS,events:EVENTS};
     var a=document.createElement('a');
     a.href='data:application/json,'+encodeURIComponent(JSON.stringify(data,null,2));
     a.download='horas-excelia-backup.json';
     a.click();
-    showToast('Datos exportados','success');
+    showToast('Datos exportados (backup completo)','success');
   });
 
   /* ── Importar datos principales ── */
@@ -103,7 +105,13 @@
         if(d.sent)SW=d.sent;
         if(d.monthH)MONTH_H=d.monthH;
         if(d.rate)DAILY_RATE=d.rate;
+        if(typeof d.exclFest!=='undefined')EXCL_FEST=d.exclFest;
+        if(typeof d.exclVac!=='undefined')EXCL_VAC=d.exclVac;
+        if(d.vacEntitlement){VAC_ENTITLEMENT=d.vacEntitlement;saveVacEntitlement(d.vacEntitlement);}
+        if(d.birthdays&&Array.isArray(d.birthdays)){BDAYS=d.birthdays;localStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));}
+        if(d.events&&Array.isArray(d.events)){EVENTS=d.events;saveEvents();}
         save();render();
+        updateBdayBtn();updateEventsBtn();
         showToast('Datos importados correctamente','success');
       }catch(err){showToast('Error al importar: archivo inv\u00e1lido','error');}
     };
