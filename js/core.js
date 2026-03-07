@@ -237,14 +237,7 @@ function selectType(t){
   if(t==='normal'){
     var e=ST[k]||{},wasNormal=!e.type;
     if(!wasNormal){delete ST[k];e={};}
-    document.querySelectorAll('.sheet-option').forEach(function(el){el.classList.toggle('selected',el.dataset.type==='normal');});
-    if(dow>=1&&dow<=4){
-      var picker=document.getElementById('hourPicker');
-      picker.style.display='block';
-      var curH=(ST[k]&&ST[k].hours)||getMonthH(ED.getFullYear(),ED.getMonth(),ED.getDate());
-      document.querySelectorAll('.hour-chip-day').forEach(function(c){c.classList.toggle('active',+c.dataset.h===curH);});
-    }
-    save(); render();
+    save(); render(); closeSheet();
   } else {
     delete ST[k]; ST[k]={type:t};
     save(); closeSheet(); render();

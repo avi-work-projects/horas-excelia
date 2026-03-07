@@ -192,7 +192,7 @@ function renderSummaryContent(){
   h+='<tr class="sy-tr-total"><td class="sy-td-lbl">Total</td><td>'+(s.vacTaken+s.festTaken+s.ausTaken)+'</td><td>'+(s.vacFuture+s.festFuture+s.ausFuture)+'</td><td>'+(s.vacTotal+s.festTotal+s.ausTotal)+'</td><td></td></tr>';
   h+='</tbody></table>';
   if(s.vacPend>0){h+='<div class="sy-note warn">Quedan '+s.vacPend+' d&#237;a'+(s.vacPend===1?'':'s')+' de vacaciones por planificar (derecho: '+VAC_ENTITLEMENT+' d&#237;as/a&#241;o).</div>';}
-  if(festPend>0){h+='<div class="sy-note warn-fest">Faltan '+festPend+' d&#237;a'+(festPend===1?'':'s')+' festivos por marcar (recomendado: '+FEST_REQUIRED+' d&#237;as/a&#241;o).</div>';}
+  if(festPend>0){h+='<div class="sy-note warn-fest">Faltan '+festPend+' d&#237;a'+(festPend===1?'':'s')+' festivos por marcar (en Espa&#241;a: '+FEST_REQUIRED+' d&#237;as/a&#241;o).</div>';}
   h+='</div>';
 
   // Horas
@@ -262,7 +262,7 @@ function renderSummaryContent(){
   h+='</div>';
 
   // Festivos
-  h+='<div class="sy-section"><div class="sy-section-title">Festivos ('+p.festivosList.length+' / '+FEST_REQUIRED+' recomendados)</div>';
+  h+='<div class="sy-section"><div class="sy-section-title">Festivos ('+p.festivosList.length+' / '+FEST_REQUIRED+' en Espa&#241;a)</div>';
   if(p.festivosList.length===0){h+='<div class="sy-note">No hay festivos marcados para este a&#241;o.</div>';}
   else{
     h+='<ul class="sy-list">';
