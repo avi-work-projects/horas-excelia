@@ -126,12 +126,9 @@
       if(!ED)return;
       var h=+chip.dataset.h;
       var k=dk(ED);
-      if(!ST[k]||ST[k].type)return;
+      if(ST[k]&&ST[k].type)return; // bloqueado si día no-normal (vac/fest/aus)
       ST[k]={hours:h};
-      save();render();
-      document.querySelectorAll('.hour-chip-day').forEach(function(c){
-        c.classList.toggle('active',+c.dataset.h===h);
-      });
+      save();render();closeSheet();
     });
   });
 
