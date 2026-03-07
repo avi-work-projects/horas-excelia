@@ -14,25 +14,52 @@ function computeEcon(year){
   var s=computeYearlySummary(year);
   var months=[];
   var totBase=0,totIva=0,totIrpf=0,totCobrado=0;
-  var qIva=[0,0,0,0];
+  var qIva=[0,0,0,0],qCobrado=[0,0,0,0];
+  var qMonthData=[[],[],[],[]];
   for(var m=0;m<12;m++){
     var dias=s.mDays[m]+s.mDaysP[m];
     var base=dias*DAILY_RATE;
     var iva=Math.round(base*0.21*100)/100;
     var irpf=Math.round(base*0.15*100)/100;
     var cobrado=Math.round((base+iva-irpf)*100)/100;
-    months.push({m:m,dias:dias,base:base,iva:iva,irpf:irpf,cobrado:cobrado});
+    var neto=Math.round((base-irpf)*100)/100;
+    months.push({m:m,dias:dias,base:base,iva:iva,irpf:irpf,cobrado:cobrado,neto:neto});
     totBase+=base; totIva+=iva; totIrpf+=irpf; totCobrado+=cobrado;
-    qIva[Math.floor(m/3)]+=iva;
+    var qi=Math.floor(m/3);
+    qIva[qi]+=iva;
+    qCobrado[qi]+=cobrado;
+    qMonthData[qi].push({m:m,cobrado:Math.round(cobrado*100)/100});
   }
   totBase=Math.round(totBase*100)/100;
   totIva=Math.round(totIva*100)/100;
   totIrpf=Math.round(totIrpf*100)/100;
   totCobrado=Math.round(totCobrado*100)/100;
-  var netoReal=Math.round((totBase-totIrpf)*100)/100; // cobrado - IVA trimestral
+  var netoReal=Math.round((totBase-totIrpf)*100)/100;
   var neto=Math.round((totBase-totIva-totIrpf)*100)/100;
+  var qNeto=qIva.map(function(iva,i){return Math.round((qCobrado[i]-iva)*100)/100;});
   return{months:months,totBase:totBase,totIva:totIva,totIrpf:totIrpf,
-    totCobrado:totCobrado,neto:neto,netoReal:netoReal,qIva:qIva};
+    totCobrado:totCobrado,neto:neto,netoReal:netoReal,
+    qIva:qIva,qCobrado:qCobrado,qMonthData:qMonthData,qNeto:qNeto};
+}
+
+/* ── Gráfica de barras ───────────────────────────────────── */
+function econBarChart(data,labels,color){
+  var W=320,H=90,PB=18,PT=14,n=12;
+  var maxV=Math.max.apply(null,data)||1;
+  var bw=Math.floor((W-n*2)/n),gap=2;
+  var today=new Date();
+  var cm=ECON_YEAR===today.getFullYear()?today.getMonth():-1;
+  var svg='<svg viewBox="0 0 '+W+' '+(H+PB)+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">';
+  for(var i=0;i<n;i++){
+    var x=i*(bw+gap);
+    var v=data[i];
+    var h2=v>0?Math.max(2,Math.round((v/maxV)*(H-PT))):0;
+    var op=i<cm?'.45':i===cm?'1':'.25';
+    if(v>0)svg+='<rect x="'+x+'" y="'+(H-h2)+'" width="'+bw+'" height="'+h2+'" rx="2" fill="'+color+'" opacity="'+op+'"/>';
+    svg+='<text x="'+(x+bw/2)+'" y="'+(H+PB-2)+'" text-anchor="middle" font-size="7" fill="#5a5a70">'+labels[i]+'</text>';
+  }
+  svg+='</svg>';
+  return svg;
 }
 
 function renderEconContent(){
@@ -49,37 +76,75 @@ function renderEconContent(){
   h+='<input class="rate-input" id="rateInput" type="number" min="1" step="1" value="'+DAILY_RATE+'">';
   h+='<span class="rate-suffix">&#8364;/d&#237;a</span></div></div>';
 
-  // Resumen anual — Caja 1: Base, IVA, IRPF, Neto
+  // Resumen anual
   h+='<div class="sy-section"><div class="sy-section-title">Resumen anual</div>';
   h+='<div class="econ-annual">';
   h+='<div class="econ-row col-base"><span>Base imponible (bruto)</span><span class="econ-val">'+fc(e.totBase)+'</span></div>';
   h+='<div class="econ-row col-iva"><span>+ IVA a pagar (21%)</span><span class="econ-val">+'+fc(e.totIva)+'</span></div>';
   h+='<div class="econ-row col-irpf"><span>&#8722; IRPF retenido (15%)</span><span class="econ-val">&#8722;'+fc(e.totIrpf)+'</span></div>';
-  h+='<div class="econ-row col-net"><span>Neto efectivo</span><span class="econ-val">'+fc(e.netoReal)+'</span></div>';
+  h+='<div class="econ-row col-net"><span>Neto efectivo (base &#8722; IRPF)</span><span class="econ-val">'+fc(e.netoReal)+'</span></div>';
   h+='</div>';
+  // Media mensual (año/12)
+  var avgBase=Math.round(e.totBase/12*100)/100;
+  var avgIva=Math.round(e.totIva/12*100)/100;
+  var avgIrpf=Math.round(e.totIrpf/12*100)/100;
+  var avgNeto=Math.round(e.netoReal/12*100)/100;
+  h+='<div class="econ-avg-section">';
+  h+='<div class="econ-avg-title">Media mensual (a\u00f1o &#247; 12)</div>';
+  h+='<div class="econ-avg-grid">';
+  h+='<div class="econ-avg-item"><span class="econ-avg-lbl" style="color:var(--c-blue)">Base</span><span class="econ-avg-val">'+fc(avgBase)+'</span></div>';
+  h+='<div class="econ-avg-item"><span class="econ-avg-lbl" style="color:var(--c-orange)">IVA</span><span class="econ-avg-val">'+fc(avgIva)+'</span></div>';
+  h+='<div class="econ-avg-item"><span class="econ-avg-lbl" style="color:var(--c-red)">IRPF</span><span class="econ-avg-val">'+fc(avgIrpf)+'</span></div>';
+  h+='<div class="econ-avg-item"><span class="econ-avg-lbl" style="color:var(--c-green)">Neto</span><span class="econ-avg-val">'+fc(avgNeto)+'</span></div>';
+  h+='</div></div>';
 
-  // Caja 2: Cobrado del cliente (separada)
-  h+='<div class="econ-cobrado-box">';
-  h+='<div class="econ-row cobrado-main"><span>Cobrado del cliente</span><span class="econ-val">'+fc(e.totCobrado)+'</span></div>';
+  // Ingresado en cuenta (neutral)
+  h+='<div class="econ-ingresado-box">';
+  h+='<div class="econ-row ingresado-main"><span>Ingresado en la cuenta</span><span class="econ-val">'+fc(e.totCobrado)+'</span></div>';
   h+='<div class="econ-formula">';
-  h+='<span class="f-base">Base</span> + <span class="f-iva">IVA 21%</span> &#8722; <span class="f-irpf">IRPF 15%</span> = cobrado del cliente';
-  h+='<br>El IVA recaudado <b>no es tuyo</b>: se liquida trimestralmente con Hacienda (mod. 303).';
-  h+='<br>Neto efectivo = cobrado &#8722; IVA trimestral = base &#8722; IRPF.';
+  h+='<span class="f-base">Base</span> + <span class="f-iva">IVA 21%</span> &#8722; <span class="f-irpf">IRPF 15%</span> = ingresado en cuenta';
+  h+='<br><b style="color:var(--c-orange)">Recuerda restar el IVA</b>, que se paga trimestralmente a Hacienda (mod. 303).';
+  h+='<br>Neto efectivo = ingresado &#8722; IVA trimestral = base &#8722; IRPF.';
   h+='</div></div>';
   h+='</div>';
 
-  // IVA trimestral
+  // IVA trimestral — 3 filas
   h+='<div class="sy-section"><div class="sy-section-title">IVA trimestral a Hacienda (mod. 303)</div>';
+  // Fila 1: ingresos mensuales por trimestre
   h+='<div class="econ-quarter">';
   ['T1','T2','T3','T4'].forEach(function(q,i){
-    h+='<div class="econ-qcard"><div class="sy-val-sm" style="color:var(--c-orange)">'+fc(Math.round(e.qIva[i]*100)/100)+'</div><div class="sy-lbl">'+q+'</div></div>';
+    h+='<div class="econ-qcard-months">';
+    e.qMonthData[i].forEach(function(md){
+      h+='<div class="econ-qmonth-row"><span>'+MN_SHORT[md.m]+'</span><span class="econ-qm-val">'+fc(md.cobrado)+'</span></div>';
+    });
+    h+='</div>';
+  });
+  h+='</div>';
+  // Fila 2: IVA a pagar por trimestre
+  h+='<div class="econ-quarter">';
+  ['T1','T2','T3','T4'].forEach(function(q,i){
+    h+='<div class="econ-qcard"><div class="sy-val-sm" style="color:var(--c-orange)">'+fc(Math.round(e.qIva[i]*100)/100)+'</div>';
+    h+='<div class="sy-lbl">'+q+' IVA Hacienda</div></div>';
+  });
+  h+='</div>';
+  // Fila 3: neto tras pagar IVA
+  h+='<div class="econ-quarter">';
+  ['T1','T2','T3','T4'].forEach(function(q,i){
+    var n2=e.qNeto[i];
+    h+='<div class="econ-qcard-neto"><div class="sy-val-sm" style="color:var(--c-green)">'+fc(n2)+'</div>';
+    h+='<div class="sy-lbl">'+q+' neto real</div></div>';
   });
   h+='</div></div>';
+
+  // Gráfica neto mensual
+  h+='<div class="sy-section"><div class="sy-section-title">Neto mensual (base &#8722; IRPF)</div>';
+  var netoData=e.months.map(function(mo){return mo.neto;});
+  h+='<div class="sy-chart">'+econBarChart(netoData,MN_SHORT,'#34d399')+'</div></div>';
 
   // Desglose mensual
   h+='<div class="sy-section"><div class="sy-section-title">Desglose mensual</div>';
   h+='<div style="overflow-x:auto"><table class="econ-month-table"><thead><tr>';
-  h+='<th>Mes</th><th>D&#237;as</th><th style="color:var(--c-blue)">Base</th><th style="color:var(--c-orange)">IVA</th><th style="color:var(--c-red)">IRPF</th><th style="color:var(--c-green)">Cobrado</th></tr></thead><tbody>';
+  h+='<th>Mes</th><th>D&#237;as</th><th style="color:var(--c-blue)">Base</th><th style="color:var(--c-orange)">IVA</th><th style="color:var(--c-red)">IRPF</th><th>Ingresado</th></tr></thead><tbody>';
   var totD=0;
   e.months.forEach(function(mo){
     totD+=mo.dias;
@@ -87,13 +152,13 @@ function renderEconContent(){
     h+='<td class="col-base">'+fc(mo.base)+'</td>';
     h+='<td class="col-iva">'+fc(mo.iva)+'</td>';
     h+='<td class="col-irpf">'+fc(mo.irpf)+'</td>';
-    h+='<td class="col-net">'+fc(mo.cobrado)+'</td></tr>';
+    h+='<td class="col-ingresado">'+fc(mo.cobrado)+'</td></tr>';
   });
   h+='<tr class="econ-tr-total"><td>Total</td><td>'+totD+'d</td>';
   h+='<td class="col-base">'+fc(e.totBase)+'</td>';
   h+='<td class="col-iva">'+fc(e.totIva)+'</td>';
   h+='<td class="col-irpf">'+fc(e.totIrpf)+'</td>';
-  h+='<td class="col-net">'+fc(e.totCobrado)+'</td></tr>';
+  h+='<td class="col-ingresado">'+fc(e.totCobrado)+'</td></tr>';
   h+='</tbody></table></div></div>';
 
   h+='</div>';

@@ -5,7 +5,7 @@
 var EV_STORAGE_KEY = 'excelia-events-v1';
 var EV_YEAR = new Date().getFullYear();
 var EV_MONTH = new Date().getMonth();
-var EV_VIEW = 'cal';
+var EV_VIEW = 'cal';  // 'cal' | 'list' | 'months'
 var EV_EDIT = null;
 var EV_COLORS = ['#6c8cff','#34d399','#fb923c','#ff6b6b','#c084fc','#fbbf24'];
 
@@ -99,9 +99,10 @@ function renderEvCalMonth(){
       var d=new Date(cur);
       var inM=d.getMonth()===EV_MONTH;
       var isTod=d.getTime()===today.getTime();
+      var past=inM&&d<today;
       var ds=evDk(d);
       var evs=getEventsOn(ds);
-      var cls='ev-cell'+(inM?'':' out-m')+(isTod?' today-ev':'');
+      var cls='ev-cell'+(inM?'':' out-m')+(isTod?' today-ev':'')+(past?' past-cal-day':'');
       h+='<div class="'+cls+'" data-ds="'+ds+'">';
       h+='<div class="ev-num">'+d.getDate()+'</div>';
       evs.forEach(function(ev){
@@ -117,40 +118,61 @@ function renderEvCalMonth(){
 
 /* ── Render: lista de eventos ───────────────────────────── */
 function renderEvList(){
-  if(!EVENTS.length)return '<div class="sy-note">No hay eventos. Pulsa "A&#241;adir evento" para crear uno.</div>';
+  if(!EVENTS.length)return '<div class="sy-note">No hay eventos. Pulsa "+ A\u00f1adir" para crear uno.</div>';
   var sorted=EVENTS.slice().sort(function(a,b){return a.start<b.start?-1:a.start>b.start?1:0;});
   var h='';
   sorted.forEach(function(ev){
-    var s=new Date(ev.start+'T00:00:00');
-    var e2=ev.end&&ev.end!==ev.start?new Date(ev.end+'T00:00:00'):null;
-    var fd2=function(dd){return String(dd.getDate()).padStart(2,'0')+'/'+String(dd.getMonth()+1).padStart(2,'0')+'/'+dd.getFullYear();};
-    var dateStr=fd2(s);
-    if(e2)dateStr+=' &#8212; '+fd2(e2);
-    var repeatStr='';
-    if(ev.repeat){
-      var rt=ev.repeat.type;
-      if(rt==='weekly'&&ev.repeat.weekDays){
-        var wn2=['Do','Lu','Ma','Mi','Ju','Vi','Sa'];
-        repeatStr=' · '+ev.repeat.weekDays.map(function(w){return wn2[w];}).join(', ');
-      }else if(rt==='monthly-date'){repeatStr=' · Mensual (mismo d&#237;a)';}
-      else if(rt==='monthly-first'){repeatStr=' · Mensual (d&#237;a 1)';}
-      else if(rt==='yearly'){repeatStr=' · Anual';}
-    }
-    h+='<div class="ev-list-item" data-id="'+ev.id+'">';
-    h+='<div class="ev-list-color" style="background:'+ev.color+'"></div>';
-    h+='<div class="ev-list-body">';
-    h+='<div class="ev-list-title">'+escHtml(ev.title)+'</div>';
-    if(ev.note)h+='<div class="ev-list-note">'+escHtml(ev.note)+'</div>';
-    h+='<div class="ev-list-meta">'+dateStr+repeatStr+'</div>';
-    h+='</div>';
-    h+='<div class="ev-list-actions"><button class="ev-list-btn del" data-id="'+ev.id+'">&#215;</button></div>';
-    h+='</div>';
+    h+=renderEvListItem(ev);
   });
   return h;
 }
 
-function escHtml(s){
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+/* ── Render: por meses ──────────────────────────────────── */
+function renderEvByMonths(){
+  if(!EVENTS.length)return '<div class="sy-note">No hay eventos. Pulsa "+ A\u00f1adir" para crear uno.</div>';
+  var byM=[];for(var m=0;m<12;m++)byM.push([]);
+  EVENTS.forEach(function(ev){
+    var s=new Date(ev.start+'T00:00:00');
+    byM[s.getMonth()].push(ev);
+  });
+  var h='';
+  byM.forEach(function(list,m){
+    if(!list.length)return;
+    list.sort(function(a,b){return a.start<b.start?-1:1;});
+    h+='<div class="sy-section"><div class="bday-month-hdr">'+MN[m]+'</div>';
+    list.forEach(function(ev){h+=renderEvListItem(ev);});
+    h+='</div>';
+  });
+  if(!h)h='<div class="sy-note">No hay eventos con fecha definida.</div>';
+  return h;
+}
+
+function renderEvListItem(ev){
+  var s=new Date(ev.start+'T00:00:00');
+  var e2=ev.end&&ev.end!==ev.start?new Date(ev.end+'T00:00:00'):null;
+  var fd2=function(dd){return String(dd.getDate()).padStart(2,'0')+'/'+String(dd.getMonth()+1).padStart(2,'0')+'/'+dd.getFullYear();};
+  var dateStr=fd2(s);
+  if(e2)dateStr+=' &#8212; '+fd2(e2);
+  var repeatStr='';
+  if(ev.repeat){
+    var rt=ev.repeat.type;
+    if(rt==='weekly'&&ev.repeat.weekDays){
+      var wn2=['Do','Lu','Ma','Mi','Ju','Vi','Sa'];
+      repeatStr=' \u00b7 '+ev.repeat.weekDays.map(function(w){return wn2[w];}).join(', ');
+    }else if(rt==='monthly-date'){repeatStr=' \u00b7 Mensual (mismo d\u00eda)';}
+    else if(rt==='monthly-first'){repeatStr=' \u00b7 Mensual (d\u00eda 1)';}
+    else if(rt==='yearly'){repeatStr=' \u00b7 Anual';}
+  }
+  var h='<div class="ev-list-item" data-id="'+ev.id+'">';
+  h+='<div class="ev-list-color" style="background:'+ev.color+'"></div>';
+  h+='<div class="ev-list-body">';
+  h+='<div class="ev-list-title">'+escHtml(ev.title)+'</div>';
+  if(ev.note)h+='<div class="ev-list-note">'+escHtml(ev.note)+'</div>';
+  h+='<div class="ev-list-meta">'+dateStr+repeatStr+'</div>';
+  h+='</div>';
+  h+='<div class="ev-list-actions"><button class="ev-list-btn del" data-id="'+ev.id+'">&#215;</button></div>';
+  h+='</div>';
+  return h;
 }
 
 /* ── Render: contenido principal ────────────────────────── */
@@ -160,24 +182,92 @@ function renderEvContent(){
   h+='<div class="sy-year-nav"><button class="sy-nav" id="evPrev">&#9664;</button>';
   h+='<div class="sy-year">'+MN[EV_MONTH]+' '+EV_YEAR+'</div>';
   h+='<button class="sy-nav" id="evNext">&#9654;</button></div>';
-  h+='<button class="sy-nav-icon" id="evToBday" title="Cumplea&#241;os">&#127874;</button>';
+  h+='<button class="sy-nav-icon" id="evToBday" title="Cumplea\u00f1os">&#127874;</button>';
   h+='<button class="today-btn" id="evToday" style="font-size:.7rem;padding:6px 12px">Hoy</button>';
   h+='</div>';
   h+='<div class="ev-hdr-sub">';
   h+='<button class="ev-view-toggle'+(EV_VIEW==='cal'?' active':'')+'" id="evViewCal">Calendario</button>';
   h+='<button class="ev-view-toggle'+(EV_VIEW==='list'?' active':'')+'" id="evViewList">Lista</button>';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='months'?' active':'')+'" id="evViewMonths">Por meses</button>';
   h+='</div>';
   h+='<div class="sy-body">';
   if(EV_VIEW==='cal')h+=renderEvCalMonth();
+  else if(EV_VIEW==='months')h+=renderEvByMonths();
   else h+=renderEvList();
   h+='<div class="ev-io-row">';
-  h+='<button class="ev-io-btn" id="evAdd">+ A&#241;adir</button>';
+  h+='<button class="ev-io-btn" id="evAdd">+ A\u00f1adir</button>';
   h+='<button class="ev-io-btn" id="evExport">&#8595; Exportar</button>';
   h+='<button class="ev-io-btn" id="evImport">&#8593; Importar</button>';
   h+='<input type="file" id="evImportFile" accept=".json" style="display:none">';
   h+='</div>';
   h+='</div>';
   return h;
+}
+
+/* ── Render: detalle de evento ──────────────────────────── */
+function renderEvDetail(ev){
+  var s=new Date(ev.start+'T00:00:00');
+  var e2=ev.end&&ev.end!==ev.start?new Date(ev.end+'T00:00:00'):null;
+  var fd2=function(dd){return String(dd.getDate()).padStart(2,'0')+'/'+String(dd.getMonth()+1).padStart(2,'0')+'/'+dd.getFullYear();};
+  var dateStr=fd2(s);
+  if(e2)dateStr+=' \u2014 '+fd2(e2);
+  var repeatStr='';
+  if(ev.repeat){
+    var rt=ev.repeat.type;
+    if(rt==='weekly'&&ev.repeat.weekDays){
+      var wn2=['Do','Lu','Ma','Mi','Ju','Vi','Sa'];
+      repeatStr='\ud83d\udd01 Semanal: '+ev.repeat.weekDays.map(function(w){return wn2[w];}).join(', ');
+    }else if(rt==='monthly-date'){repeatStr='\ud83d\udd01 Mensual (mismo d\u00eda)';}
+    else if(rt==='monthly-first'){repeatStr='\ud83d\udd01 Mensual (d\u00eda 1)';}
+    else if(rt==='yearly'){repeatStr='\ud83d\udd01 Anual';}
+  }
+  var h='<div class="ev-detail-overlay" id="evDetailOv"><div class="ev-detail-sheet">';
+  h+='<div class="ev-detail-handle"></div>';
+  h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">';
+  h+='<button class="sy-back" id="evDClose">&#8592;</button>';
+  h+='<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">Evento</div>';
+  h+='<button class="ev-list-btn" id="evDEdit" style="font-size:.8rem;padding:6px 12px;border-color:'+ev.color+';color:'+ev.color+'">&#9998; Editar</button>';
+  h+='</div>';
+  h+='<div class="ev-detail-color-bar" style="background:'+ev.color+'"></div>';
+  h+='<div class="ev-detail-title" style="color:'+ev.color+'">'+escHtml(ev.title)+'</div>';
+  h+='<div class="ev-detail-date">&#128197; '+dateStr+'</div>';
+  if(repeatStr)h+='<div class="ev-detail-repeat">'+repeatStr+'</div>';
+  if(ev.note)h+='<div class="ev-detail-note">'+escHtml(ev.note)+'</div>';
+  h+='<div class="ev-detail-actions">';
+  h+='<button class="ev-btn danger" id="evDDel">Eliminar</button>';
+  h+='</div>';
+  h+='</div></div>';
+  return h;
+}
+
+/* ── Apertura/cierre del detalle ────────────────────────── */
+function openEvDetail(ev){
+  var ov=document.getElementById('eventsOverlay');
+  ov.scrollTop=0;
+  var wrap=document.createElement('div');
+  wrap.id='evDWrap';
+  wrap.innerHTML=renderEvDetail(ev);
+  ov.appendChild(wrap);
+  requestAnimationFrame(function(){
+    var fo=document.getElementById('evDetailOv');
+    if(fo)fo.classList.add('open');
+  });
+  document.getElementById('evDClose').addEventListener('click',closeEvDetail);
+  document.getElementById('evDEdit').addEventListener('click',function(){
+    closeEvDetail();setTimeout(function(){openEvForm(ev);},300);
+  });
+  document.getElementById('evDDel').addEventListener('click',function(){
+    EVENTS=EVENTS.filter(function(e){return e.id!==ev.id;});
+    saveEvents();updateEventsBtn();
+    showToast('Evento eliminado','success');
+    closeEvDetail();setTimeout(refreshEvents,320);
+  });
+}
+
+function closeEvDetail(){
+  var fo=document.getElementById('evDetailOv');
+  if(fo)fo.classList.remove('open');
+  setTimeout(function(){var w=document.getElementById('evDWrap');if(w)w.remove();},300);
 }
 
 /* ── Render: formulario de evento ───────────────────────── */
@@ -202,7 +292,7 @@ function renderEvForm(ev){
   if(isEdit)h+='<button class="ev-btn danger" id="evFDel" style="flex:none;padding:6px 12px;font-size:.75rem">Eliminar</button>';
   else h+='<div style="width:36px"></div>';
   h+='</div>';
-  h+='<div class="ev-field"><label>T&#237;tulo</label>';
+  h+='<div class="ev-field"><label>T\u00edtulo</label>';
   h+='<input class="ev-input" id="evFTitle" type="text" maxlength="80" placeholder="Nombre del evento" value="'+escHtml(title)+'"></div>';
   h+='<div class="ev-field"><label>Nota <span id="evCharCnt" style="font-weight:400;color:var(--text-dim)">'+note.length+'/200</span></label>';
   h+='<textarea class="ev-textarea" id="evFNote" maxlength="200" placeholder="Notas opcionales...">'+escHtml(note)+'</textarea></div>';
@@ -216,12 +306,12 @@ function renderEvForm(ev){
   h+='<div><label>Inicio</label><input class="ev-input" id="evFStart" type="date" value="'+start+'"></div>';
   h+='<div><label>Fin</label><input class="ev-input" id="evFEnd" type="date" value="'+end+'"></div>';
   h+='</div>';
-  h+='<div class="ev-field"><label>Repetici&#243;n</label>';
+  h+='<div class="ev-field"><label>Repetici\u00f3n</label>';
   h+='<select class="ev-input" id="evFRepeat">';
-  h+='<option value="none"'+(repType==='none'?' selected':'')+'>Sin repetici&#243;n</option>';
+  h+='<option value="none"'+(repType==='none'?' selected':'')+'>Sin repetici\u00f3n</option>';
   h+='<option value="weekly"'+(repType==='weekly'?' selected':'')+'>Semanal</option>';
-  h+='<option value="monthly-date"'+(repType==='monthly-date'?' selected':'')+'>Mensual (mismo d&#237;a)</option>';
-  h+='<option value="monthly-first"'+(repType==='monthly-first'?' selected':'')+'>Mensual (d&#237;a 1)</option>';
+  h+='<option value="monthly-date"'+(repType==='monthly-date'?' selected':'')+'>Mensual (mismo d\u00eda)</option>';
+  h+='<option value="monthly-first"'+(repType==='monthly-first'?' selected':'')+'>Mensual (d\u00eda 1)</option>';
   h+='<option value="yearly"'+(repType==='yearly'?' selected':'')+'>Anual</option>';
   h+='</select></div>';
   h+='<div class="ev-weekday-row" id="evWdRow" style="display:'+(repType==='weekly'?'flex':'none')+'">';
@@ -361,28 +451,32 @@ function bindEvEvents(){
   });
   document.getElementById('evViewCal').addEventListener('click',function(){EV_VIEW='cal';refreshEvents();});
   document.getElementById('evViewList').addEventListener('click',function(){EV_VIEW='list';refreshEvents();});
+  document.getElementById('evViewMonths').addEventListener('click',function(){EV_VIEW='months';refreshEvents();});
   document.getElementById('evToBday').addEventListener('click',function(){closeEvents();setTimeout(openBday,330);});
   document.getElementById('evAdd').addEventListener('click',function(){openEvForm(null);});
+  // Click en badges del calendario → detail (no edit)
   document.querySelectorAll('.ev-badge[data-id]').forEach(function(badge){
     badge.addEventListener('click',function(e){
       e.stopPropagation();
       var id=badge.dataset.id;var ev=null;
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
-      if(ev)openEvForm(ev);
+      if(ev)openEvDetail(ev);
     });
   });
+  // Click en celda vacía → crear evento con fecha
   document.querySelectorAll('.ev-cell[data-ds]').forEach(function(cell){
     cell.addEventListener('click',function(e){
       if(e.target.classList.contains('ev-badge'))return;
       openEvForm(null,cell.dataset.ds);
     });
   });
+  // Click en item de lista → detail
   document.querySelectorAll('.ev-list-item').forEach(function(item){
     item.addEventListener('click',function(e){
       if(e.target.classList.contains('ev-list-btn'))return;
       var id=item.dataset.id;var ev=null;
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
-      if(ev)openEvForm(ev);
+      if(ev)openEvDetail(ev);
     });
   });
   document.querySelectorAll('.ev-list-btn.del').forEach(function(btn){

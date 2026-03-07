@@ -23,12 +23,38 @@
     var n=new Date();CY=n.getFullYear();CM=n.getMonth();render();
   });
 
-  /* ── Chips de horas mensuales ── */
+  /* ── Botón "Editar jornada" ── */
+  document.getElementById('editHoursBtn').addEventListener('click',function(){
+    var panel=document.getElementById('hoursPanel');
+    var isOpen=panel.classList.contains('open');
+    if(isOpen){
+      panel.classList.remove('open');
+    } else {
+      // Actualizar chips antes de mostrar
+      var curH=getMonthH(CY,CM,1);
+      document.querySelectorAll('.hours-chip').forEach(function(c){
+        c.classList.toggle('active',+c.dataset.h===curH);
+      });
+      panel.classList.add('open');
+    }
+  });
+
+  document.getElementById('closeHoursBtn').addEventListener('click',function(){
+    document.getElementById('hoursPanel').classList.remove('open');
+  });
+
+  /* ── Chips de horas mensuales (protegido contra semanas enviadas) ── */
   document.querySelectorAll('.hours-chip').forEach(function(chip){
     chip.addEventListener('click',function(){
+      // Comprobar si hay semanas enviadas en este mes
+      if(hasAnySentWeekInMonth(CY,CM)){
+        showToast('Hay semanas enviadas en este mes. Desm\u00e1rcalas primero.','error');
+        return;
+      }
       var h=+chip.dataset.h;
       MONTH_H[mkey(CY,CM)]=h;
       save();render();
+      document.getElementById('hoursPanel').classList.remove('open');
     });
   });
 
@@ -46,6 +72,29 @@
     a.download='horas-excelia-backup.json';
     a.click();
     showToast('Datos exportados','success');
+  });
+
+  /* ── Importar datos principales ── */
+  document.getElementById('importBtn').addEventListener('click',function(){
+    document.getElementById('importFile').click();
+  });
+  document.getElementById('importFile').addEventListener('change',function(ev){
+    var f=ev.target.files[0];if(!f)return;
+    var r=new FileReader();
+    r.onload=function(e){
+      try{
+        var d=JSON.parse(e.target.result);
+        if(d.days)ST=d.days;
+        if(d.sent)SW=d.sent;
+        if(d.monthH)MONTH_H=d.monthH;
+        if(d.rate)DAILY_RATE=d.rate;
+        save();render();
+        showToast('Datos importados correctamente','success');
+      }catch(err){showToast('Error al importar: archivo inv\u00e1lido','error');}
+    };
+    r.readAsText(f);
+    // Reset para poder reimportar
+    ev.target.value='';
   });
 
   /* ── Bottom sheet: overlay de fondo ── */

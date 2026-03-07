@@ -20,6 +20,11 @@ function save(){
   localStorage.setItem(SK,JSON.stringify({days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE}));
 }
 
+// ── Utilidades HTML ─────────────────────────────────────────
+function escHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 // ── Utilidades de fecha/hora ─────────────────────────────────
 function mkey(y,m){return y+'-'+String(m+1).padStart(2,'0');}
 function getMonthH(y,m,day){
@@ -34,9 +39,10 @@ function dayT(d){var e=ST[dk(d)];return(e&&e.type)||'normal';}
 function dk(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function fd(d){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');}
 function ad(d,n){var r=new Date(d);r.setDate(r.getDate()+n);return r;}
-function fh(h){if(h===0)return'\u2014';if(h%1===0)return String(h);return h.toFixed(1).replace('.',',');}
+function fh(h){if(h===0)return'\u2014';if(h%1===0)return String(h)+'h';return h.toFixed(1).replace('.',',')+'\u202fh';}
 function fhP(h){if(h===0)return'';if(h%1===0)return String(h);return h.toFixed(1);}
 function isToday(d){var t=new Date();return d.getFullYear()===t.getFullYear()&&d.getMonth()===t.getMonth()&&d.getDate()===t.getDate();}
+function isPast(d){var t=new Date();t.setHours(0,0,0,0);return d<t;}
 function wn(date){var d=new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate()));d.setUTCDate(d.getUTCDate()+4-(d.getUTCDay()||7));var ys=new Date(Date.UTC(d.getUTCFullYear(),0,1));return Math.ceil(((d-ys)/864e5+1)/7);}
 
 // ── Cálculo de semanas ───────────────────────────────────────
@@ -51,6 +57,13 @@ function weeks(y,m){
     if(ws.length>6)break;
   }
   return ws;
+}
+
+// ── Comprueba si hay semanas enviadas en el mes actual ────────
+function hasAnySentWeekInMonth(y,m){
+  var wks=weeks(y,m);
+  for(var i=0;i<wks.length;i++){if(SW[dk(wks[i][0])])return true;}
+  return false;
 }
 
 // ── Datos de semana para email ───────────────────────────────
@@ -112,6 +125,13 @@ function render(){
   document.getElementById('monthLabel').textContent=MN[CM]+' '+CY;
   var curMonthH=getMonthH(CY,CM,1);
   document.querySelectorAll('.hours-chip').forEach(function(el){el.classList.toggle('active',+el.dataset.h===curMonthH);});
+  // Actualizar texto del botón de jornada
+  var dhBtn=document.getElementById('editHoursBtn');
+  if(dhBtn){
+    var dhSpan=dhBtn.querySelector('.dh-val');
+    if(dhSpan)dhSpan.textContent=curMonthH+'h';
+  }
+
   var wks=weeks(CY,CM),c=document.getElementById('weeksContainer');
   c.innerHTML='';
 
@@ -146,7 +166,13 @@ function render(){
         '<div class="day-name" style="'+ts+'">'+DN[d.getDay()]+'</div>'+
         '<div class="day-date">'+fd(d)+'</div>'+
         '<div class="day-hours">'+fh(hrs)+'</div>'+evDotsHtml;
-      (function(dd){cell.addEventListener('click',function(){openSheet(dd);});})(d);
+      // Bloquear clic si semana enviada
+      (function(dd,isSent){
+        cell.addEventListener('click',function(){
+          if(isSent){showToast('Semana enviada. Desmarca primero para editar.','error');return;}
+          openSheet(dd);
+        });
+      })(d,sent);
       grid.appendChild(cell);
     }
     card.appendChild(grid);
@@ -183,10 +209,10 @@ function render(){
 // ── Bottom sheet (selector de tipo de día) ───────────────────
 function openSheet(date){
   ED=date; var dt=dayT(date),dow=date.getDay();
-  var nh=(dow===5)?'6,5':String(getMonthH(date.getFullYear(),date.getMonth(),date.getDate()));
+  var nh=(dow===5)?'6,5h':String(getMonthH(date.getFullYear(),date.getMonth(),date.getDate()))+'h';
   document.getElementById('sheetTitle').textContent=DF[dow]+' '+fd(date);
   document.getElementById('sheetSubtitle').textContent='Selecciona el tipo de d\u00eda';
-  document.getElementById('optNormalHours').textContent=nh+'h';
+  document.getElementById('optNormalHours').textContent=nh;
   var opts=document.querySelectorAll('.sheet-option');
   for(var i=0;i<opts.length;i++){opts[i].classList.toggle('selected',opts[i].dataset.type===dt);}
   var picker=document.getElementById('hourPicker');
