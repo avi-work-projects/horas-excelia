@@ -123,25 +123,26 @@
     var h=Math.min(23,Math.max(0,parseInt(document.getElementById('alarmHour').value,10)||8));
     var m=Math.min(59,Math.max(0,parseInt(document.getElementById('alarmMin').value,10)||0));
     var msg=(document.getElementById('alarmMsg').value.trim()||'Horas Excelia');
-    // Vivo X200 Ultra (OriginOS 5 / com.vivo.clock):
-    // - Usar <a>.click() en lugar de window.open (más fiable en PWA standalone / WebAPK)
-    // - Prefijo correcto: b. (boolean), i. (int), S. (String)
-    // - SKIP_UI=false muestra la UI para confirmar la alarma (requerido por Vivo)
-    function fireIntent(url){
-      var a=document.createElement('a');
-      a.setAttribute('href',url);
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }
     var base=';action=android.intent.action.SET_ALARM'
       +';S.android.intent.extra.alarm.MESSAGE='+encodeURIComponent(msg)
       +';i.android.intent.extra.alarm.HOUR='+h
       +';i.android.intent.extra.alarm.MINUTES='+m
       +';b.android.intent.extra.alarm.SKIP_UI=false';
-    // Formato 'intent://alarm/#Intent' con host explícito — más compatible con Chrome
-    // com.vivo.clock = OriginOS 3/4/5; fallback sin package = resolución del sistema
-    fireIntent('intent://alarm/#Intent'+base+';package=com.vivo.clock;end');
+
+    // Intento 1: window.location.href — Chrome WebAPK lo intercepta como intent nativo
+    // sin package, deja que Android resuelva qué app de reloj usar
+    window.location.href='intent://alarm/#Intent'+base+';end';
+
+    // Intento 2 (300ms después): con package explícito vía <a>.click()
+    // por si el intento 1 no funcionó en este entorno
+    setTimeout(function(){
+      var a=document.createElement('a');
+      a.setAttribute('href','intent://alarm/#Intent'+base+';package=com.vivo.clock;end');
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    },300);
+
     document.getElementById('alarmPanel').classList.remove('open');
     showToast('Abriendo reloj \u2014 '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),'success');
   });
