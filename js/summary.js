@@ -299,7 +299,7 @@ function renderSummaryContent(){
           } else {
             dateStr=ev.start.slice(8,10)+'/'+ev.start.slice(5,7)+' &#8594; '+ev.end.slice(8,10)+'/'+ev.end.slice(5,7);
           }
-          h+='<div class="sy-puente-ev"><span>&#128197;&nbsp;'+escHtml(ev.title)+'</span><span class="sy-puente-ev-date">'+dateStr+'</span></div>';
+          h+='<div class="sy-puente-ev" data-id="'+ev.id+'" style="cursor:pointer"><span>&#128197;&nbsp;'+escHtml(ev.title)+'</span><span class="sy-puente-ev-date">'+dateStr+'</span></div>';
         });
         h+='</div>';
       }
@@ -413,4 +413,15 @@ function bindSummaryEvents(){
   var chkVac=document.getElementById('syExclVacChk');
   if(chkFest)chkFest.addEventListener('change',function(){EXCL_FEST=this.checked;save();document.getElementById('summaryContent').innerHTML=renderSummaryContent();bindSummaryEvents();});
   if(chkVac)chkVac.addEventListener('change',function(){EXCL_VAC=this.checked;save();document.getElementById('summaryContent').innerHTML=renderSummaryContent();bindSummaryEvents();});
+  // Eventos en puentes → ver detalle (abre ventana de eventos con el detalle encima)
+  document.querySelectorAll('.sy-puente-ev[data-id]').forEach(function(el){
+    el.addEventListener('click',function(){
+      var id=el.dataset.id;
+      var ev=null;
+      for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
+      if(!ev)return;
+      closeSummary();
+      setTimeout(function(){openEvents();setTimeout(function(){openEvDetail(ev);},350);},320);
+    });
+  });
 }

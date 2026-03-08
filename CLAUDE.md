@@ -87,9 +87,13 @@ Estructura de un evento:
 - Viernes: 6,5h siempre
 - Sábado/Domingo: 0h
 
+## Entorno de desarrollo local
+- **Navegador: Microsoft Edge** — la extensión de Claude Code está instalada en Edge, NO en Chrome. Usar siempre Edge para verificación visual y pruebas con MCP browser. No intentar conectar con Chrome.
+- Test local: `py -m http.server 8082` desde la raíz del proyecto (puerto 8082, comando `py` en Windows)
+
 ## Despliegue
 Push a `main` → GitHub Actions → inject secrets → GitHub Pages.
-Test local: `python3 -m http.server 8080` desde la raíz del proyecto.
+Test local: `py -m http.server 8082` desde la raíz del proyecto.
 
 ## Patrones CSS relevantes
 - `.full-overlay` — base para todos los overlays deslizantes

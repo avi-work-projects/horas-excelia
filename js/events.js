@@ -12,9 +12,9 @@ var EV_COLORS = ['#38bdf8','#1d4ed8','#34d399','#fb923c','#ff6b6b','#c084fc','#f
 var EV_COLOR_TYPES = {
   '#38bdf8':'Viaje',
   '#6c8cff':'Viaje',  // compat con eventos anteriores
-  '#1d4ed8':'Estancia en Asturias',
-  '#34d399':'Recordatorio gestiones',
-  '#fb923c':'Planes y quedadas',
+  '#1d4ed8':'Asturias',
+  '#34d399':'Recordatorio de Gestiones',
+  '#fb923c':'Planes y Quedadas',
   '#ff6b6b':'Otros',
   '#c084fc':'Otros',
   '#fbbf24':'Otros'
@@ -249,6 +249,7 @@ function renderEvUpcoming(){
   var wd=today.getDay();var off=wd===0?6:wd-1;
   var wk0=new Date(today);wk0.setDate(wk0.getDate()-off);
   var weekLabels=['Esta semana','Pr\u00f3xima semana','En dos semanas'];
+  var fd2=function(d){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');};
   // Collect events per week (Map: id → {ev, firstDate})
   var weeks=[{},{},{}];
   for(var w=0;w<3;w++){
@@ -261,9 +262,48 @@ function renderEvUpcoming(){
       });
     }
   }
-  var fd2=function(d){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');};
   var anyEvents=weeks.some(function(wk){return Object.keys(wk).length>0;});
-  if(!anyEvents)return '<div class="sy-note">No hay eventos en las pr\u00f3ximas 3 semanas.</div>';
+  // Si no hay eventos en las 3 semanas actuales, buscar la primera semana futura con eventos
+  if(!anyEvents){
+    var fallbackMap=null,fallbackLabel=null;
+    for(var fw=3;fw<53;fw++){
+      var fwMap={};
+      for(var fd3=0;fd3<7;fd3++){
+        var fday=new Date(wk0.getTime()+(fw*7+fd3)*86400000);
+        var fds=evDk(fday);
+        var fevs=getEventsOn(fds);
+        fevs.forEach(function(ev){if(!fwMap[ev.id])fwMap[ev.id]={ev:ev,firstDate:new Date(fday)};});
+      }
+      if(Object.keys(fwMap).length>0){
+        fallbackMap=fwMap;
+        var fwStart=new Date(wk0.getTime()+fw*7*86400000);
+        var fwEnd=new Date(fwStart);fwEnd.setDate(fwEnd.getDate()+6);
+        fallbackLabel='Semana del '+fwStart.getDate()+'/'+(fwStart.getMonth()+1)+' al '+fwEnd.getDate()+'/'+(fwEnd.getMonth()+1);
+        break;
+      }
+    }
+    if(!fallbackMap)return '<div class="sy-note">No hay eventos pr\u00f3ximos programados.</div>';
+    var h='<div class="sy-note" style="margin-bottom:8px">Sin eventos en las pr\u00f3ximas 3 semanas. Primera semana con eventos:</div>';
+    var fids=Object.keys(fallbackMap);
+    fids.sort(function(a,b){return fallbackMap[a].firstDate-fallbackMap[b].firstDate;});
+    h+='<div class="sy-month-sep">'+fallbackLabel+'</div>';
+    h+='<div class="ev-upcoming-section">';
+    fids.forEach(function(id){
+      var item=fallbackMap[id];var ev=item.ev;
+      var type=EV_COLOR_TYPES[ev.color]||'Otros';
+      var diffToday=Math.round((item.firstDate-today)/86400000);
+      h+='<div class="ev-upcoming-item" data-id="'+ev.id+'">';
+      h+='<div class="ev-upcoming-color" style="background:'+ev.color+'"></div>';
+      h+='<div class="ev-upcoming-info">';
+      h+='<div class="ev-upcoming-title">'+escHtml(ev.title)+'</div>';
+      h+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+fd2(item.firstDate)+'</div>';
+      h+='</div>';
+      h+='<div class="ev-upcoming-lbl">En '+diffToday+'d</div>';
+      h+='</div>';
+    });
+    h+='</div>';
+    return h;
+  }
   var h='';
   weeks.forEach(function(wkMap,wi){
     var ids=Object.keys(wkMap);
@@ -373,10 +413,10 @@ function renderEvContent(){
   h+='</div>';
   h+=renderNavBar('events');
   h+='<div class="ev-hdr-sub">';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='cal'?' active':'')+'" id="evViewCal">Calendario</button>';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='months'?' active':'')+'" id="evViewMonths">Por meses</button>';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='upcoming'?' active':'')+'" id="evViewUpcoming">Pr\u00f3ximos</button>';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='annual'?' active':'')+'" id="evViewAnnual">Anual</button>';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='upcoming'?' active':'')+'" id="evViewUpcoming">Pr\u00f3ximos<br>Eventos</button>';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='cal'?' active':'')+'" id="evViewCal">Calendario<br>por Meses</button>';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='annual'?' active':'')+'" id="evViewAnnual">Calendario<br>Anual</button>';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='months'?' active':'')+'" id="evViewMonths">Eventos<br>por Meses</button>';
   h+='</div>';
   h+='<div class="sy-body">';
   if(EV_VIEW==='cal')h+=renderEvCalMonth();
@@ -441,7 +481,10 @@ function openEvDetail(ev){
   ov.appendChild(wrap);
   requestAnimationFrame(function(){
     var fo=document.getElementById('evDetailOv');
-    if(fo)fo.classList.add('open');
+    if(fo){
+      fo.classList.add('open');
+      fo.addEventListener('click',function(e){if(e.target===fo)closeEvDetail();});
+    }
   });
   document.getElementById('evDClose').addEventListener('click',closeEvDetail);
   document.getElementById('evDEdit').addEventListener('click',function(){
@@ -668,10 +711,10 @@ function bindEvEvents(){
   if(todayBtn)todayBtn.addEventListener('click',function(){
     var n=new Date();EV_YEAR=n.getFullYear();EV_MONTH=n.getMonth();refreshEvents();
   });
-  document.getElementById('evViewCal').addEventListener('click',function(){EV_VIEW='cal';EV_ANNUAL_ADD=false;refreshEvents();});
-  document.getElementById('evViewMonths').addEventListener('click',function(){EV_VIEW='months';EV_ANNUAL_ADD=false;refreshEvents();});
   document.getElementById('evViewUpcoming').addEventListener('click',function(){EV_VIEW='upcoming';EV_ANNUAL_ADD=false;refreshEvents();});
+  document.getElementById('evViewCal').addEventListener('click',function(){EV_VIEW='cal';EV_ANNUAL_ADD=false;refreshEvents();});
   document.getElementById('evViewAnnual').addEventListener('click',function(){EV_VIEW='annual';EV_ANNUAL_ADD=false;refreshEvents();});
+  document.getElementById('evViewMonths').addEventListener('click',function(){EV_VIEW='months';EV_ANNUAL_ADD=false;refreshEvents();});
   document.getElementById('evToBday').addEventListener('click',function(){closeEvents();setTimeout(openBday,330);});
   document.getElementById('evAdd').addEventListener('click',function(){
     if(EV_VIEW==='annual'){EV_ANNUAL_ADD=!EV_ANNUAL_ADD;refreshEvents();}
