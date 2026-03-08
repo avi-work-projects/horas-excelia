@@ -413,15 +413,14 @@ function bindSummaryEvents(){
   var chkVac=document.getElementById('syExclVacChk');
   if(chkFest)chkFest.addEventListener('change',function(){EXCL_FEST=this.checked;save();document.getElementById('summaryContent').innerHTML=renderSummaryContent();bindSummaryEvents();});
   if(chkVac)chkVac.addEventListener('change',function(){EXCL_VAC=this.checked;save();document.getElementById('summaryContent').innerHTML=renderSummaryContent();bindSummaryEvents();});
-  // Eventos en puentes → ver detalle (abre ventana de eventos con el detalle encima)
+  // Eventos en puentes → ver detalle SOBRE la ventana de resumen (sin cambiar de ventana)
   document.querySelectorAll('.sy-puente-ev[data-id]').forEach(function(el){
     el.addEventListener('click',function(){
       var id=el.dataset.id;
       var ev=null;
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
       if(!ev)return;
-      closeSummary();
-      setTimeout(function(){openEvents();setTimeout(function(){openEvDetail(ev);},350);},320);
+      openEvDetail(ev,document.getElementById('summaryOverlay'));
     });
   });
 }

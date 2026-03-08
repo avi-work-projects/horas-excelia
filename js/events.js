@@ -435,7 +435,7 @@ function renderEvContent(){
 }
 
 /* ── Render: detalle de evento ──────────────────────────── */
-function renderEvDetail(ev){
+function renderEvDetail(ev,fromSummary){
   var s=new Date(ev.start+'T00:00:00');
   var e2=ev.end&&ev.end!==ev.start?new Date(ev.end+'T00:00:00'):null;
   var fd2=function(dd){return String(dd.getDate()).padStart(2,'0')+'/'+String(dd.getMonth()+1).padStart(2,'0')+'/'+dd.getFullYear();};
@@ -465,6 +465,7 @@ function renderEvDetail(ev){
   if(repeatStr)h+='<div class="ev-detail-repeat">'+repeatStr+'</div>';
   if(ev.note)h+='<div class="ev-detail-note">'+escHtml(ev.note)+'</div>';
   h+='<div class="ev-detail-actions">';
+  if(fromSummary)h+='<button class="ev-btn" id="evDGoCal" style="border-color:var(--c-blue);color:var(--c-blue)">&#128197; Ver en calendario</button>';
   h+='<button class="ev-btn danger" id="evDDel">Eliminar</button>';
   h+='</div>';
   h+='</div></div>';
@@ -472,12 +473,13 @@ function renderEvDetail(ev){
 }
 
 /* ── Apertura/cierre del detalle ────────────────────────── */
-function openEvDetail(ev){
-  var ov=document.getElementById('eventsOverlay');
+function openEvDetail(ev,container){
+  var ov=container||document.getElementById('eventsOverlay');
+  var fromSummary=(ov.id==='summaryOverlay');
   ov.scrollTop=0;
   var wrap=document.createElement('div');
   wrap.id='evDWrap';
-  wrap.innerHTML=renderEvDetail(ev);
+  wrap.innerHTML=renderEvDetail(ev,fromSummary);
   ov.appendChild(wrap);
   requestAnimationFrame(function(){
     var fo=document.getElementById('evDetailOv');
@@ -488,8 +490,32 @@ function openEvDetail(ev){
   });
   document.getElementById('evDClose').addEventListener('click',closeEvDetail);
   document.getElementById('evDEdit').addEventListener('click',function(){
-    closeEvDetail();setTimeout(function(){openEvForm(ev);},300);
+    closeEvDetail();
+    if(fromSummary){
+      closeSummary();
+      setTimeout(function(){
+        EV_YEAR=parseInt(ev.start.slice(0,4),10);
+        EV_MONTH=parseInt(ev.start.slice(5,7),10)-1;
+        EV_VIEW='cal';
+        openEventsAt();
+        setTimeout(function(){openEvForm(ev);},350);
+      },350);
+    } else {
+      setTimeout(function(){openEvForm(ev);},300);
+    }
   });
+  if(fromSummary){
+    document.getElementById('evDGoCal').addEventListener('click',function(){
+      var evYear=parseInt(ev.start.slice(0,4),10);
+      var evMonth=parseInt(ev.start.slice(5,7),10)-1;
+      closeEvDetail();
+      closeSummary();
+      setTimeout(function(){
+        EV_YEAR=evYear;EV_MONTH=evMonth;EV_VIEW='cal';
+        openEventsAt();
+      },350);
+    });
+  }
   document.getElementById('evDDel').addEventListener('click',function(){
     var deleted=ev;
     var deletedIdx=-1;
@@ -497,13 +523,26 @@ function openEvDetail(ev){
     EVENTS=EVENTS.filter(function(e){return e.id!==deleted.id;});
     saveEvents();updateEventsBtn();
     closeEvDetail();
-    setTimeout(function(){
-      refreshEvents();
-      showToast('Evento eliminado','success',function(){
-        if(deletedIdx>=0){EVENTS.splice(deletedIdx,0,deleted);}else{EVENTS.push(deleted);}
-        saveEvents();updateEventsBtn();refreshEvents();
-      });
-    },320);
+    if(fromSummary){
+      setTimeout(function(){
+        document.getElementById('summaryContent').innerHTML=renderSummaryContent();
+        bindSummaryEvents();
+        showToast('Evento eliminado','success',function(){
+          if(deletedIdx>=0){EVENTS.splice(deletedIdx,0,deleted);}else{EVENTS.push(deleted);}
+          saveEvents();updateEventsBtn();
+          document.getElementById('summaryContent').innerHTML=renderSummaryContent();
+          bindSummaryEvents();
+        });
+      },320);
+    } else {
+      setTimeout(function(){
+        refreshEvents();
+        showToast('Evento eliminado','success',function(){
+          if(deletedIdx>=0){EVENTS.splice(deletedIdx,0,deleted);}else{EVENTS.push(deleted);}
+          saveEvents();updateEventsBtn();refreshEvents();
+        });
+      },320);
+    }
   });
 }
 
@@ -687,6 +726,14 @@ function closeEvents(){
   var ov=document.getElementById('eventsOverlay');
   ov.classList.remove('open');
   setTimeout(function(){ov.style.display='none';},320);
+}
+
+/* Abre la ventana de eventos sin resetear EV_YEAR/EV_MONTH/EV_VIEW (para navegación desde summary) */
+function openEventsAt(){
+  var ov=document.getElementById('eventsOverlay');
+  document.getElementById('eventsContent').innerHTML=renderEvContent();
+  ov.style.display='block';
+  requestAnimationFrame(function(){requestAnimationFrame(function(){ov.classList.add('open');bindEvEvents();});});
 }
 
 function refreshEvents(){
