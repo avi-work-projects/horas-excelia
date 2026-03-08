@@ -156,7 +156,8 @@
         return;
       }
       var sep=macroUrl.indexOf('?')>=0?'&':'?';
-      var url=macroUrl+sep+'h='+h+'&m='+m+'&msg='+encodeURIComponent(msg);
+      // Parámetros nombrados igual que las variables globales de MacroDroid
+      var url=macroUrl+sep+'alarmH='+h+'&alarmM='+m+'&alarmMsg='+encodeURIComponent(msg);
       showToast('Enviando a MacroDroid\u2026','success');
       fetch(url,{mode:'no-cors'})
         .then(function(){
