@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -13,6 +13,9 @@
 <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+
+<!-- ── Tema anticipado (evita flash) ── -->
+<script>(function(){try{var t=localStorage.getItem('excelia-theme-v1');if(t&&['dark','light','amoled'].indexOf(t)!==-1)document.documentElement.setAttribute('data-theme',t);}catch(e){}})()</script>
 
 <!-- ── Error handler (carga primero) ── -->
 <script>
@@ -84,10 +87,23 @@ try{
       <button class="data-btn" id="eventsBtn" title="Eventos">&#128197;</button>
       <button class="data-btn" id="importBtn" title="Importar datos">&#8593;</button>
       <button class="data-btn" id="exportBtn" title="Exportar datos">&#8595;</button>
-      <button class="data-btn" id="alarmTestBtn" title="Test alarma Android">🔔</button>
+      <div class="data-menu-wrap" id="alarmWrap">
+        <button class="data-btn" id="alarmTestBtn" title="Crear alarma">&#128276;</button>
+        <div class="data-menu alarm-cfg" id="alarmPanel">
+          <div class="alarm-panel-title">&#128276; Crear alarma</div>
+          <div class="alarm-time-row">
+            <input class="alarm-h-input" id="alarmHour" type="number" min="0" max="23" value="8">
+            <span class="alarm-colon">:</span>
+            <input class="alarm-m-input" id="alarmMin" type="number" min="0" max="59" value="45">
+          </div>
+          <input class="alarm-msg-input" id="alarmMsg" type="text" maxlength="40" placeholder="Mensaje de la alarma" value="Horas Excelia">
+          <button class="data-menu-item alarm-create-btn" id="alarmCreateBtn">Crear alarma</button>
+        </div>
+      </div>
       <div class="data-menu-wrap">
         <button class="data-btn" id="menuBtn" title="Más opciones">&#8943;</button>
         <div class="data-menu" id="dataMenu">
+          <button class="data-menu-item" id="themeBtn">&#127769;&nbsp;Oscuro</button>
           <button class="data-menu-item" id="exportAllBtn">&#8595;&nbsp;Exportar todo</button>
           <button class="data-menu-item" id="importAllBtn">&#8593;&nbsp;Importar todo</button>
         </div>

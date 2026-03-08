@@ -113,27 +113,38 @@
     ev.target.value='';
   });
 
-  /* ── TEST: botón dummy de alarma Android ── */
-  document.getElementById('alarmTestBtn').addEventListener('click',function(){
-    var tomorrow=new Date();
-    tomorrow.setDate(tomorrow.getDate()+1);
-    var msg='Test alarma '+tomorrow.getDate()+'/'+(tomorrow.getMonth()+1);
-    // Sin package= → el sistema usa el handler de alarma por defecto
-    // target="_blank" evita navegar la página (el error "elemento no encontrado")
-    var intentUrl='intent://alarm/#Intent'
+  /* ── Alarma: panel configurable (Vivo X200 Ultra / Android) ── */
+  document.getElementById('alarmTestBtn').addEventListener('click',function(e){
+    e.stopPropagation();
+    var panel=document.getElementById('alarmPanel');
+    panel.classList.toggle('open');
+  });
+  document.getElementById('alarmCreateBtn').addEventListener('click',function(){
+    var h=Math.min(23,Math.max(0,parseInt(document.getElementById('alarmHour').value,10)||8));
+    var m=Math.min(59,Math.max(0,parseInt(document.getElementById('alarmMin').value,10)||0));
+    var msg=(document.getElementById('alarmMsg').value.trim()||'Horas Excelia');
+    // Formato corregido para Vivo X200 Ultra (Funtouch OS 15 / com.vivo.clock)
+    // window.open con intent:// en Android: el SO intercepta y abre la app sin navegar la PWA
+    var intentUrl='intent://#Intent'
       +';action=android.intent.action.SET_ALARM'
+      +';package=com.vivo.clock'
       +';S.android.intent.extra.alarm.MESSAGE='+encodeURIComponent(msg)
-      +';i.android.intent.extra.alarm.HOUR=9'
-      +';i.android.intent.extra.alarm.MINUTES=0'
+      +';i.android.intent.extra.alarm.HOUR='+h
+      +';i.android.intent.extra.alarm.MINUTES='+m
       +';B.android.intent.extra.alarm.SKIP_UI=false'
       +';end';
-    var a=document.createElement('a');
-    a.href=intentUrl;
-    a.target='_blank';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    showToast('Probando alarma nativa...','success');
+    // Fallback: sin paquete específico (por si el paquete ha cambiado)
+    var intentFallback='intent://#Intent'
+      +';action=android.intent.action.SET_ALARM'
+      +';S.android.intent.extra.alarm.MESSAGE='+encodeURIComponent(msg)
+      +';i.android.intent.extra.alarm.HOUR='+h
+      +';i.android.intent.extra.alarm.MINUTES='+m
+      +';B.android.intent.extra.alarm.SKIP_UI=false'
+      +';end';
+    var opened=window.open(intentUrl,'_blank');
+    if(!opened)window.open(intentFallback,'_blank');
+    document.getElementById('alarmPanel').classList.remove('open');
+    showToast('Abriendo reloj \u2014 '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),'success');
   });
 
   /* ── Menú 3 puntos: exportar/importar TODO ── */
@@ -145,6 +156,8 @@
   document.addEventListener('click',function(){
     var menu=document.getElementById('dataMenu');
     if(menu)menu.classList.remove('open');
+    var alarmPanel=document.getElementById('alarmPanel');
+    if(alarmPanel)alarmPanel.classList.remove('open');
   });
   document.getElementById('exportAllBtn').addEventListener('click',function(){
     var data={version:2,days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
@@ -202,6 +215,16 @@
       save();render();closeSheet();
     });
   });
+
+  /* ── Tema visual: botón en menú ── */
+  document.getElementById('themeBtn').addEventListener('click',function(e){
+    e.stopPropagation();
+    cycleTheme();
+  });
+
+  /* ── Aplicar tema al inicio (y actualizar etiqueta del botón) ── */
+  applyTheme(THEME);
+  updateThemeBtn();
 
   /* ── Build badge ── */
   if(typeof BUILD!=='undefined'&&BUILD){
