@@ -7,6 +7,7 @@ var EV_YEAR = new Date().getFullYear();
 var EV_MONTH = new Date().getMonth();
 var EV_VIEW = 'cal';  // 'cal' | 'months' | 'upcoming' | 'annual'
 var EV_EDIT = null;
+var EV_FORM_CONTAINER = null;  // overlay donde se renderiza el formulario (null = eventsOverlay)
 var EV_ANNUAL_ADD = false;
 var EV_COLORS = ['#38bdf8','#1d4ed8','#34d399','#fb923c','#ff6b6b','#c084fc','#fbbf24'];
 var EV_COLOR_TYPES = {
@@ -465,7 +466,7 @@ function renderEvDetail(ev,fromSummary){
   if(repeatStr)h+='<div class="ev-detail-repeat">'+repeatStr+'</div>';
   if(ev.note)h+='<div class="ev-detail-note">'+escHtml(ev.note)+'</div>';
   h+='<div class="ev-detail-actions">';
-  if(fromSummary)h+='<button class="ev-btn" id="evDGoCal" style="border-color:var(--c-blue);color:var(--c-blue)">&#128197; Ver en calendario</button>';
+  if(fromSummary)h+='<button class="ev-btn" id="evDGoCal" style="border-color:var(--c-blue);color:var(--c-blue)">&#128197; Ver en Calendario</button>';
   h+='<button class="ev-btn danger" id="evDDel">Eliminar</button>';
   h+='</div>';
   h+='</div></div>';
@@ -492,14 +493,8 @@ function openEvDetail(ev,container){
   document.getElementById('evDEdit').addEventListener('click',function(){
     closeEvDetail();
     if(fromSummary){
-      closeSummary();
-      setTimeout(function(){
-        EV_YEAR=parseInt(ev.start.slice(0,4),10);
-        EV_MONTH=parseInt(ev.start.slice(5,7),10)-1;
-        EV_VIEW='cal';
-        openEventsAt();
-        setTimeout(function(){openEvForm(ev);},350);
-      },350);
+      // Abrir el formulario directamente sobre el resumen (sin navegar a eventos)
+      setTimeout(function(){openEvForm(ev,null,document.getElementById('summaryOverlay'));},300);
     } else {
       setTimeout(function(){openEvForm(ev);},300);
     }
@@ -612,9 +607,10 @@ function renderEvForm(ev){
 }
 
 /* ── Apertura/cierre del formulario ─────────────────────── */
-function openEvForm(ev,prefillDate){
+function openEvForm(ev,prefillDate,container){
   EV_EDIT=ev||null;
-  var ov=document.getElementById('eventsOverlay');
+  EV_FORM_CONTAINER=container||null;
+  var ov=container||document.getElementById('eventsOverlay');
   ov.scrollTop=0;
   var wrap=document.createElement('div');
   wrap.id='evFWrap';
@@ -642,6 +638,7 @@ function closeEvForm(){
     var w=document.getElementById('evFWrap');
     if(w)w.remove();
     EV_EDIT=null;
+    EV_FORM_CONTAINER=null;
   },300);
 }
 
@@ -671,13 +668,25 @@ function bindEvFormEvents(){
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===deleted.id){deletedIdx=i;break;}}
       EVENTS=EVENTS.filter(function(e){return e.id!==deleted.id;});
       saveEvents();updateEventsBtn();
+      var fromSummaryForm=(EV_FORM_CONTAINER&&EV_FORM_CONTAINER.id==='summaryOverlay');
       closeEvForm();
       setTimeout(function(){
-        refreshEvents();
-        showToast('Evento eliminado','success',function(){
-          if(deletedIdx>=0){EVENTS.splice(deletedIdx,0,deleted);}else{EVENTS.push(deleted);}
-          saveEvents();updateEventsBtn();refreshEvents();
-        });
+        if(fromSummaryForm){
+          document.getElementById('summaryContent').innerHTML=renderSummaryContent();
+          bindSummaryEvents();
+          showToast('Evento eliminado','success',function(){
+            if(deletedIdx>=0){EVENTS.splice(deletedIdx,0,deleted);}else{EVENTS.push(deleted);}
+            saveEvents();updateEventsBtn();
+            document.getElementById('summaryContent').innerHTML=renderSummaryContent();
+            bindSummaryEvents();
+          });
+        }else{
+          refreshEvents();
+          showToast('Evento eliminado','success',function(){
+            if(deletedIdx>=0){EVENTS.splice(deletedIdx,0,deleted);}else{EVENTS.push(deleted);}
+            saveEvents();updateEventsBtn();refreshEvents();
+          });
+        }
       },320);
     });
   }
@@ -709,7 +718,14 @@ function bindEvFormEvents(){
       showToast('Evento a\u00f1adido','success');
     }
     saveEvents();updateEventsBtn();
-    closeEvForm();setTimeout(refreshEvents,320);
+    var fromSummaryForm=(EV_FORM_CONTAINER&&EV_FORM_CONTAINER.id==='summaryOverlay');
+    closeEvForm();
+    setTimeout(function(){
+      if(fromSummaryForm){
+        document.getElementById('summaryContent').innerHTML=renderSummaryContent();
+        bindSummaryEvents();
+      }else{refreshEvents();}
+    },320);
   });
 }
 

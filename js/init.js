@@ -139,10 +139,42 @@
       +';i.android.intent.extra.alarm.HOUR='+h
       +';i.android.intent.extra.alarm.MINUTES='+m
       +';b.android.intent.extra.alarm.SKIP_UI=false';
-    // com.vivo.clock → OriginOS 3/4/5; com.bbk.clock → Funtouch OS legado
-    fireIntent('intent://#Intent'+base+';package=com.vivo.clock;end');
+    // Formato 'intent://alarm/#Intent' con host explícito — más compatible con Chrome
+    // com.vivo.clock = OriginOS 3/4/5; fallback sin package = resolución del sistema
+    fireIntent('intent://alarm/#Intent'+base+';package=com.vivo.clock;end');
     document.getElementById('alarmPanel').classList.remove('open');
     showToast('Abriendo reloj \u2014 '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),'success');
+  });
+
+  /* ── Alarma: fallback .ics (recordatorio de calendario, 100% fiable) ── */
+  document.getElementById('alarmIcsBtn').addEventListener('click',function(){
+    var h=Math.min(23,Math.max(0,parseInt(document.getElementById('alarmHour').value,10)||8));
+    var m=Math.min(59,Math.max(0,parseInt(document.getElementById('alarmMin').value,10)||0));
+    var msg=(document.getElementById('alarmMsg').value.trim()||'Horas Excelia');
+    var now=new Date();
+    var alarm=new Date(now);
+    alarm.setHours(h,m,0,0);
+    if(alarm<=now)alarm.setDate(alarm.getDate()+1); // si la hora ya pasó hoy, programar mañana
+    var end=new Date(alarm.getTime()+15*60000);
+    var fmt=function(d){
+      return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0')
+        +'T'+String(d.getHours()).padStart(2,'0')+String(d.getMinutes()).padStart(2,'0')+'00';
+    };
+    var ics='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Horas Excelia//ES\r\n'
+      +'BEGIN:VEVENT\r\n'
+      +'DTSTART:'+fmt(alarm)+'\r\n'
+      +'DTEND:'+fmt(end)+'\r\n'
+      +'SUMMARY:'+msg+'\r\n'
+      +'BEGIN:VALARM\r\nTRIGGER:PT0S\r\nACTION:AUDIO\r\nEND:VALARM\r\n'
+      +'END:VEVENT\r\nEND:VCALENDAR';
+    var blob=new Blob([ics],{type:'text/calendar'});
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='alarma.ics';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    document.getElementById('alarmPanel').classList.remove('open');
+    showToast('Recordatorio generado \u2014 \u00e1brelo para importar al calendario','success');
   });
 
   /* ── Menú 3 puntos: exportar/importar TODO ── */

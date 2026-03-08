@@ -188,11 +188,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .full-overlay.open{transform:translateY(0)}
 
 /* ── SHARED OVERLAY HEADER ── */
-.sy-header{position:sticky;top:0;z-index:10;background:rgba(10,10,15,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;gap:10px}
+.sy-header{position:sticky;top:0;z-index:10;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;gap:10px}
 .sy-back{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
 .sy-back:active{background:var(--surface3)}
 .sy-year-nav{display:flex;align-items:center;gap:8px;flex:1;justify-content:center}
-.sy-year{font-size:1.05rem;font-weight:600;min-width:60px;text-align:center}
+.sy-year{font-size:1.05rem;font-weight:600;min-width:60px;text-align:center;color:var(--text)}
 .sy-nav{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:.85rem;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .sy-nav:active{background:var(--surface3)}
 .sy-pdf{font-size:.72rem;padding:6px 12px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);cursor:pointer;white-space:nowrap;flex-shrink:0}
@@ -520,7 +520,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .alarm-colon{font-family:var(--mono);font-size:1.2rem;font-weight:700;color:var(--accent-bright);user-select:none}
 .alarm-msg-input{display:block;width:calc(100% - 24px);margin:0 12px 6px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-family:var(--font);font-size:.78rem}
 .alarm-msg-input:focus{outline:none;border-color:var(--accent)}
-.alarm-create-btn{color:var(--accent-bright)!important;font-weight:600!important;width:100%;border-top:1px solid var(--border)!important;border-radius:0 0 var(--radius-sm) var(--radius-sm)!important;padding:10px 12px!important;margin-top:2px}
+.alarm-create-btn{color:var(--accent-bright)!important;font-weight:600!important;width:100%;border-top:1px solid var(--border)!important;border-radius:0!important;padding:10px 12px!important;margin-top:2px}
+.alarm-ics-btn{color:var(--text-muted)!important;font-size:.72rem!important;padding:8px 12px!important;border-top:1px solid var(--border)!important;border-radius:0 0 var(--radius-sm) var(--radius-sm)!important;width:100%}
 
 /* ── PRINT ── */
 @media print{
