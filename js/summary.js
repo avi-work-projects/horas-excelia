@@ -164,6 +164,14 @@ function renderSummaryContent(){
   var s=computeYearlySummary(SUMMARY_YEAR);
   var festPend=Math.max(0,FEST_REQUIRED-s.festTotal);
   var cm=SUMMARY_YEAR===new Date().getFullYear()?new Date().getMonth():-1;
+  var hTitleParts=['Horas trabajadas'];
+  if(!EXCL_FEST)hTitleParts.push('festivos');
+  if(!EXCL_VAC)hTitleParts.push('vacaciones');
+  var htTitle=hTitleParts.join(' + ');
+  var dTitleParts=['D\u00edas trabajados'];
+  if(!EXCL_FEST)dTitleParts.push('festivos');
+  if(!EXCL_VAC)dTitleParts.push('vacaciones');
+  var dtTitle=dTitleParts.join(' + ');
   var h='<div class="sy-header">';
   h+='<button class="sy-back" id="syBack">&#8592;</button>';
   h+='<div class="sy-year-nav"><button class="sy-nav" id="syPrev">&#9664;</button><div class="sy-year">'+SUMMARY_YEAR+'</div><button class="sy-nav" id="syNext">&#9654;</button></div>';
@@ -176,14 +184,14 @@ function renderSummaryContent(){
   h+='</div>';
 
   // Dias L-V
-  h+='<div class="sy-section"><div class="sy-section-title">D&#237;as L&#8211;V</div><div class="sy-cards3">';
+  h+='<div class="sy-section"><div class="sy-section-title">L&#8211;V Totales</div><div class="sy-cards3">';
   h+='<div class="sy-card hi"><div class="sy-val">'+fdY(s.lvPast)+'</div><div class="sy-lbl">Pasados</div></div>';
   h+='<div class="sy-card dim"><div class="sy-val">'+fdY(s.lvFuture)+'</div><div class="sy-lbl">Futuros</div></div>';
-  h+='<div class="sy-card"><div class="sy-val">'+fdY(s.lvTotal)+'</div><div class="sy-lbl">Totales</div></div>';
+  h+='<div class="sy-card hi2"><div class="sy-val">'+fdY(s.lvTotal)+'</div><div class="sy-lbl">Totales</div></div>';
   h+='</div></div>';
 
   // Dias trabajados (table)
-  h+='<div class="sy-section"><div class="sy-section-title">D&#237;as trabajados</div>';
+  h+='<div class="sy-section"><div class="sy-section-title">'+dtTitle+'</div>';
   h+='<table class="sy-table"><thead><tr><th class="sy-td-lbl">Jornada</th><th>Pasados</th><th>Futuros</th><th>Total</th></tr></thead><tbody>';
   h+='<tr><td class="sy-td-lbl">6,5h (Viernes)</td><td>'+s.d65P+'</td><td>'+s.d65F+'</td><td>'+(s.d65P+s.d65F)+'</td></tr>';
   h+='<tr><td class="sy-td-lbl">7h</td><td>'+s.d7P+'</td><td>'+s.d7F+'</td><td>'+(s.d7P+s.d7F)+'</td></tr>';
@@ -196,7 +204,7 @@ function renderSummaryContent(){
   h+='<div class="sy-section"><div class="sy-section-title">Ausencias</div>';
   // Config días vacaciones
   h+='<div class="vac-config-row">';
-  h+='<span class="vac-config-label">D\u00edas de vacaciones anuales (derecho)</span>';
+  h+='<span class="vac-config-label">D\u00edas de vacaciones anuales</span>';
   h+='<input class="vac-config-input" id="vacInput" type="number" min="1" max="60" value="'+VAC_ENTITLEMENT+'">';
   h+='</div>';
   h+='<table class="sy-table"><thead><tr><th class="sy-td-lbl">Tipo</th><th>Pasados</th><th>Futuros</th><th>Total</th><th>Quedan</th></tr></thead><tbody>';
@@ -206,12 +214,12 @@ function renderSummaryContent(){
   h+='<tr><td class="sy-td-lbl">Bajas</td><td>'+s.ausTaken+'</td><td>'+s.ausFuture+'</td><td>'+s.ausTotal+'</td><td>&#8212;</td></tr>';
   h+='<tr class="sy-tr-total"><td class="sy-td-lbl">Total</td><td>'+(s.vacTaken+s.festTaken+s.ausTaken)+'</td><td>'+(s.vacFuture+s.festFuture+s.ausFuture)+'</td><td>'+(s.vacTotal+s.festTotal+s.ausTotal)+'</td><td></td></tr>';
   h+='</tbody></table>';
-  if(s.vacPend>0){h+='<div class="sy-note warn">Quedan '+s.vacPend+' d&#237;a'+(s.vacPend===1?'':'s')+' de vacaciones por planificar (derecho: '+VAC_ENTITLEMENT+' d&#237;as/a&#241;o).</div>';}
+  if(s.vacPend>0){h+='<div class="sy-note warn">Quedan '+s.vacPend+' d&#237;a'+(s.vacPend===1?'':'s')+' de vacaciones por planificar.</div>';}
   if(festPend>0){h+='<div class="sy-note warn-fest">Faltan '+festPend+' d&#237;a'+(festPend===1?'':'s')+' festivos por marcar (en Espa&#241;a: '+FEST_REQUIRED+' d&#237;as/a&#241;o).</div>';}
   h+='</div>';
 
   // Horas trabajadas
-  h+='<div class="sy-section"><div class="sy-section-title">Horas trabajadas</div><div class="sy-cards3">';
+  h+='<div class="sy-section"><div class="sy-section-title">'+htTitle+'</div><div class="sy-cards3">';
   h+='<div class="sy-card hi"><div class="sy-val">'+fhY(s.hoursWorked)+'</div><div class="sy-lbl">Trabajadas</div></div>';
   h+='<div class="sy-card dim"><div class="sy-val">'+fhY(s.hoursToWork)+'</div><div class="sy-lbl">Por trabajar</div></div>';
   h+='<div class="sy-card hi2"><div class="sy-val">'+fhY(s.hoursTotal)+'</div><div class="sy-lbl">Totales</div></div>';
@@ -225,7 +233,7 @@ function renderSummaryContent(){
   h+='</div>';
 
   // Dias trabajados (bars)
-  h+='<div class="sy-section"><div class="sy-section-title">D&#237;as trabajados</div><div class="sy-cards3">';
+  h+='<div class="sy-section"><div class="sy-section-title">'+dtTitle+'</div><div class="sy-cards3">';
   h+='<div class="sy-card hi"><div class="sy-val">'+fdY(s.worked)+'</div><div class="sy-lbl">Trabajados</div></div>';
   h+='<div class="sy-card dim"><div class="sy-val">'+fdY(s.toWork)+'</div><div class="sy-lbl">Por trabajar</div></div>';
   h+='<div class="sy-card hi2"><div class="sy-val">'+fdY(s.workedTotal)+'</div><div class="sy-lbl">Totales</div></div>';
@@ -259,8 +267,10 @@ function renderSummaryContent(){
         });
       }
       h+='<div class="sy-puente">';
-      h+='<div class="sy-puente-count">'+nDays+' d&#237;as</div>';
+      h+='<div class="sy-puente-hdr">';
       h+='<div class="sy-puente-range">'+fdd(first)+' &#8594; '+fdd(last)+'</div>';
+      h+='<div class="sy-puente-count">'+nDays+' d&#237;as</div>';
+      h+='</div>';
       h+='<div class="sy-puente-comp">'+parts.join(' + ')+'</div>';
       if(evTitles.length){h+='<div class="sy-puente-evs">'+evTitles.map(function(t){return '<span class="sy-puente-ev">&#128197;&nbsp;'+escHtml(t)+'</span>';}).join('')+'</div>';}
       h+='</div>';
@@ -289,11 +299,17 @@ function renderSummaryContent(){
   h+='<div class="sy-section"><div class="sy-section-title">'+festLbl+'</div>';
   if(p.festivosList.length===0){h+='<div class="sy-note">No hay festivos marcados para este a&#241;o.</div>';}
   else{
-    h+='<ul class="sy-list">';
-    p.festivosList.forEach(function(dt){
-      h+='<li class="sy-list-item"><span class="sy-list-date">'+fdd(dt)+'</span><span class="sy-list-tag festivo">Festivo</span></li>';
-    });
-    h+='</ul>';
+    var festByM=new Array(12).fill(0).map(function(){return[];});
+    p.festivosList.forEach(function(dt){festByM[dt.getMonth()].push(dt);});
+    for(var mi=0;mi<12;mi++){
+      if(!festByM[mi].length)continue;
+      h+='<div class="sy-month-sep">'+MN[mi]+'</div>';
+      h+='<ul class="sy-list">';
+      festByM[mi].forEach(function(dt){
+        h+='<li class="sy-list-item"><span class="sy-list-date">'+fdd(dt)+'</span><span class="sy-list-tag festivo">Festivo</span></li>';
+      });
+      h+='</ul>';
+    }
   }
   h+='</div>';
 
@@ -302,11 +318,17 @@ function renderSummaryContent(){
   h+='<div class="sy-section"><div class="sy-section-title">'+vacLbl+'</div>';
   if(p.vacacionesList.length===0){h+='<div class="sy-note">No hay d&#237;as de vacaciones marcados para este a&#241;o.</div>';}
   else{
-    h+='<ul class="sy-list">';
-    p.vacacionesList.forEach(function(dt){
-      h+='<li class="sy-list-item"><span class="sy-list-date">'+fdd(dt)+'</span><span class="sy-list-tag vacaciones">Vacaciones</span></li>';
-    });
-    h+='</ul>';
+    var vacByM=new Array(12).fill(0).map(function(){return[];});
+    p.vacacionesList.forEach(function(dt){vacByM[dt.getMonth()].push(dt);});
+    for(var mi=0;mi<12;mi++){
+      if(!vacByM[mi].length)continue;
+      h+='<div class="sy-month-sep">'+MN[mi]+'</div>';
+      h+='<ul class="sy-list">';
+      vacByM[mi].forEach(function(dt){
+        h+='<li class="sy-list-item"><span class="sy-list-date">'+fdd(dt)+'</span><span class="sy-list-tag vacaciones">Vacaciones</span></li>';
+      });
+      h+='</ul>';
+    }
   }
   h+='</div>';
 
@@ -314,11 +336,17 @@ function renderSummaryContent(){
   h+='<div class="sy-section"><div class="sy-section-title">Bajas / Ausencias'+(p.ausList.length?' '+p.ausList.length+' d&#237;as':'')+'</div>';
   if(p.ausList.length===0){h+='<div class="sy-note">No hay d&#237;as de ausencia marcados para este a&#241;o.</div>';}
   else{
-    h+='<ul class="sy-list">';
-    p.ausList.forEach(function(dt){
-      h+='<li class="sy-list-item"><span class="sy-list-date">'+fdd(dt)+'</span><span class="sy-list-tag ausencia">Ausencia</span></li>';
-    });
-    h+='</ul>';
+    var ausByM=new Array(12).fill(0).map(function(){return[];});
+    p.ausList.forEach(function(dt){ausByM[dt.getMonth()].push(dt);});
+    for(var mi=0;mi<12;mi++){
+      if(!ausByM[mi].length)continue;
+      h+='<div class="sy-month-sep">'+MN[mi]+'</div>';
+      h+='<ul class="sy-list">';
+      ausByM[mi].forEach(function(dt){
+        h+='<li class="sy-list-item"><span class="sy-list-date">'+fdd(dt)+'</span><span class="sy-list-tag ausencia">Ausencia</span></li>';
+      });
+      h+='</ul>';
+    }
   }
   h+='</div>';
 
