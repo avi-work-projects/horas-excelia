@@ -5,9 +5,18 @@
 var EV_STORAGE_KEY = 'excelia-events-v1';
 var EV_YEAR = new Date().getFullYear();
 var EV_MONTH = new Date().getMonth();
-var EV_VIEW = 'cal';  // 'cal' | 'months'
+var EV_VIEW = 'cal';  // 'cal' | 'months' | 'upcoming' | 'annual'
 var EV_EDIT = null;
-var EV_COLORS = ['#6c8cff','#34d399','#fb923c','#ff6b6b','#c084fc','#fbbf24'];
+var EV_COLORS = ['#6c8cff','#1d4ed8','#34d399','#fb923c','#ff6b6b','#c084fc','#fbbf24'];
+var EV_COLOR_TYPES = {
+  '#6c8cff':'Viaje',
+  '#1d4ed8':'Estancia en Asturias',
+  '#34d399':'Recordatorio gestiones',
+  '#fb923c':'Planes y quedadas',
+  '#ff6b6b':'Otros',
+  '#c084fc':'Otros',
+  '#fbbf24':'Otros'
+};
 
 var EVENTS = (function(){
   try{
@@ -179,9 +188,130 @@ function renderEvListItem(ev){
   h+='<div class="ev-list-body">';
   h+='<div class="ev-list-title">'+escHtml(ev.title)+'</div>';
   if(ev.note)h+='<div class="ev-list-note">'+escHtml(ev.note)+'</div>';
-  h+='<div class="ev-list-meta">'+dateStr+repeatStr+'</div>';
+  h+='<div class="ev-list-meta">'+(EV_COLOR_TYPES[ev.color]||'Otros')+' \u00b7 '+dateStr+repeatStr+'</div>';
   h+='</div>';
   h+='<div class="ev-list-actions"><button class="ev-list-btn del" data-id="'+ev.id+'">&#215;</button></div>';
+  h+='</div>';
+  return h;
+}
+
+/* ── Próxima ocurrencia de un evento ────────────────────── */
+function getNextOccurrence(ev,today){
+  var start=new Date(ev.start+'T00:00:00');
+  var end=ev.end?new Date(ev.end+'T00:00:00'):new Date(start);
+  var span=Math.round((end-start)/86400000);
+  if(!ev.repeat){
+    if(end<today)return null;
+    return start>=today?start:today;
+  }
+  var r=ev.repeat;
+  if(r.type==='yearly'){
+    var t=new Date(today.getFullYear(),start.getMonth(),start.getDate());
+    if(isNaN(t.getTime()))return null;
+    var te=new Date(t);te.setDate(te.getDate()+span);
+    if(te>=today)return t>=today?t:today;
+    t=new Date(today.getFullYear()+1,start.getMonth(),start.getDate());
+    return isNaN(t.getTime())?null:t;
+  }
+  if(r.type==='monthly-date'){
+    var t=new Date(today.getFullYear(),today.getMonth(),start.getDate());
+    if(!isNaN(t.getTime())){
+      var te=new Date(t);te.setDate(te.getDate()+span);
+      if(te>=today)return t>=today?t:today;
+    }
+    var nm=today.getMonth()+1,ny=today.getFullYear();
+    if(nm>11){nm=0;ny++;}
+    return new Date(ny,nm,start.getDate());
+  }
+  if(r.type==='monthly-first'){
+    var t=new Date(today.getFullYear(),today.getMonth(),1);
+    var te=new Date(t);te.setDate(te.getDate()+span);
+    if(te>=today)return t>=today?t:today;
+    var nm=today.getMonth()+1,ny=today.getFullYear();
+    if(nm>11){nm=0;ny++;}
+    return new Date(ny,nm,1);
+  }
+  if(r.type==='weekly'&&r.weekDays&&r.weekDays.length){
+    for(var i=0;i<7;i++){
+      var c=new Date(today);c.setDate(c.getDate()+i);
+      if(r.weekDays.indexOf(c.getDay())!==-1)return c;
+    }
+  }
+  return null;
+}
+
+/* ── Render: próximos eventos ───────────────────────────── */
+function renderEvUpcoming(){
+  if(!EVENTS.length)return '<div class="sy-note">No hay eventos creados. Pulsa \"+ A\u00f1adir\" para crear uno.</div>';
+  var today=new Date();today.setHours(0,0,0,0);
+  var items=[];
+  EVENTS.forEach(function(ev){
+    var next=getNextOccurrence(ev,today);
+    if(next){
+      var diff=Math.round((next-today)/86400000);
+      items.push({ev:ev,next:next,diff:diff});
+    }
+  });
+  if(!items.length)return '<div class="sy-note">No hay eventos pr\u00f3ximos.</div>';
+  items.sort(function(a,b){return a.diff-b.diff;});
+  var fd2=function(d){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');};
+  var h='<div class="ev-upcoming-section">';
+  items.forEach(function(item){
+    var ev=item.ev;
+    var type=EV_COLOR_TYPES[ev.color]||'Otros';
+    var lbl,lblCls;
+    if(item.diff===0){lbl='Hoy';lblCls='today-lbl';}
+    else if(item.diff<0){lbl='En curso';lblCls='ongoing';}
+    else if(item.diff<=7){lbl='En '+item.diff+'d';lblCls='near';}
+    else{lbl='En '+item.diff+'d';lblCls='';}
+    var isToday=item.diff===0;
+    var ds=fd2(item.next);
+    if(!ev.repeat&&ev.end&&ev.end!==ev.start){
+      var ed=new Date(ev.end+'T00:00:00');
+      ds+=' \u2192 '+fd2(ed);
+    }
+    h+='<div class="ev-upcoming-item'+(isToday?' ev-upcoming-today':'')+'" data-id="'+ev.id+'">';
+    h+='<div class="ev-upcoming-color" style="background:'+ev.color+'"></div>';
+    h+='<div class="ev-upcoming-info">';
+    h+='<div class="ev-upcoming-title">'+escHtml(ev.title)+'</div>';
+    h+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+ds+'</div>';
+    h+='</div>';
+    h+='<div class="ev-upcoming-lbl '+lblCls+'">'+lbl+'</div>';
+    h+='</div>';
+  });
+  h+='</div>';
+  return h;
+}
+
+/* ── Render: calendario anual ───────────────────────────── */
+function renderEvAnnual(){
+  var today=new Date();today.setHours(0,0,0,0);
+  var h='<div class="ev-annual-grid">';
+  for(var m=0;m<12;m++){
+    var MNS=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    h+='<div class="ev-annual-month">';
+    h+='<div class="ev-annual-mname">'+MNS[m]+'</div>';
+    h+='<div class="ev-annual-cal">';
+    ['L','M','X','J','V','S','D'].forEach(function(d){h+='<div class="ev-annual-hdr">'+d+'</div>';});
+    var first=new Date(EV_YEAR,m,1);
+    var last=new Date(EV_YEAR,m+1,0);
+    var cur=new Date(first);
+    var dow=cur.getDay();var off=dow===0?6:dow-1;
+    cur.setDate(cur.getDate()-off);
+    while(cur<=last){
+      for(var i=0;i<7;i++){
+        var inM=cur.getMonth()===m;
+        var ds=evDk(cur);
+        var evs=inM?getEventsOn(ds):[];
+        var isT=inM&&cur.getTime()===today.getTime();
+        var cls='ev-annual-day'+(inM?'':' out-m')+(isT?' ann-today':'');
+        var sty=evs.length?' style="background:'+evs[0].color+'"':'';
+        h+='<div class="'+cls+'"'+sty+'></div>';
+        cur.setDate(cur.getDate()+1);
+      }
+    }
+    h+='</div></div>';
+  }
   h+='</div>';
   return h;
 }
@@ -190,18 +320,28 @@ function renderEvListItem(ev){
 function renderEvContent(){
   var h='<div class="sy-header">';
   h+='<button class="sy-back" id="evBack">&#8592;</button>';
-  h+='<div class="sy-year-nav"><button class="sy-nav" id="evPrev">&#9664;</button>';
-  h+='<div class="sy-year">'+MN[EV_MONTH]+' '+EV_YEAR+'</div>';
-  h+='<button class="sy-nav" id="evNext">&#9654;</button></div>';
-  h+='<button class="sy-nav-icon" id="evToBday" title="Cumplea\u00f1os">&#127874;</button>';
-  h+='<button class="today-btn" id="evToday" style="font-size:.7rem;padding:6px 12px">Hoy</button>';
+  if(EV_VIEW==='upcoming'){
+    h+='<div class="sy-year-nav"><div class="sy-year">Pr\u00f3ximos</div></div>';
+    h+='<button class="sy-nav-icon" id="evToBday" title="Cumplea\u00f1os">&#127874;</button>';
+  } else {
+    h+='<div class="sy-year-nav"><button class="sy-nav" id="evPrev">&#9664;</button>';
+    if(EV_VIEW==='annual')h+='<div class="sy-year">'+EV_YEAR+'</div>';
+    else h+='<div class="sy-year">'+MN[EV_MONTH]+' '+EV_YEAR+'</div>';
+    h+='<button class="sy-nav" id="evNext">&#9654;</button></div>';
+    h+='<button class="sy-nav-icon" id="evToBday" title="Cumplea\u00f1os">&#127874;</button>';
+    h+='<button class="today-btn" id="evToday" style="font-size:.7rem;padding:6px 12px">Hoy</button>';
+  }
   h+='</div>';
   h+='<div class="ev-hdr-sub">';
   h+='<button class="ev-view-toggle'+(EV_VIEW==='cal'?' active':'')+'" id="evViewCal">Calendario</button>';
   h+='<button class="ev-view-toggle'+(EV_VIEW==='months'?' active':'')+'" id="evViewMonths">Por meses</button>';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='upcoming'?' active':'')+'" id="evViewUpcoming">Pr\u00f3ximos</button>';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='annual'?' active':'')+'" id="evViewAnnual">Anual</button>';
   h+='</div>';
   h+='<div class="sy-body">';
   if(EV_VIEW==='cal')h+=renderEvCalMonth();
+  else if(EV_VIEW==='upcoming')h+=renderEvUpcoming();
+  else if(EV_VIEW==='annual')h+=renderEvAnnual();
   else h+=renderEvByMonths();
   h+='<div class="ev-io-row">';
   h+='<button class="ev-io-btn" id="evAdd">+ A\u00f1adir</button>';
@@ -239,6 +379,7 @@ function renderEvDetail(ev){
   h+='</div>';
   h+='<div class="ev-detail-color-bar" style="background:'+ev.color+'"></div>';
   h+='<div class="ev-detail-title" style="color:'+ev.color+'">'+escHtml(ev.title)+'</div>';
+  h+='<div style="font-size:.72rem;font-weight:600;color:'+ev.color+';opacity:.8;margin-bottom:4px">'+(EV_COLOR_TYPES[ev.color]||'Otros')+'</div>';
   h+='<div class="ev-detail-date">&#128197; '+dateStr+'</div>';
   if(repeatStr)h+='<div class="ev-detail-repeat">'+repeatStr+'</div>';
   if(ev.note)h+='<div class="ev-detail-note">'+escHtml(ev.note)+'</div>';
@@ -314,10 +455,14 @@ function renderEvForm(ev){
   h+='<input class="ev-input" id="evFTitle" type="text" maxlength="80" placeholder="Nombre del evento" value="'+escHtml(title)+'"></div>';
   h+='<div class="ev-field"><label>Nota <span id="evCharCnt" style="font-weight:400;color:var(--text-dim)">'+note.length+'/200</span></label>';
   h+='<textarea class="ev-textarea" id="evFNote" maxlength="200" placeholder="Notas opcionales...">'+escHtml(note)+'</textarea></div>';
-  h+='<div class="ev-field"><label>Color</label><div class="ev-colors">';
+  h+='<div class="ev-field"><label>Tipo</label><div class="ev-type-picker">';
   EV_COLORS.forEach(function(c){
+    var typeName=EV_COLOR_TYPES[c]||'Otros';
     var sel=c===color?' selected':'';
-    h+='<div class="ev-color-swatch'+sel+'" data-hex="'+c+'" style="background:'+c+'"></div>';
+    h+='<div class="ev-color-swatch'+sel+'" data-hex="'+c+'" style="color:'+c+'">';
+    h+='<div class="ev-type-dot" style="background:'+c+'"></div>';
+    h+='<span class="ev-type-name">'+typeName+'</span>';
+    h+='</div>';
   });
   h+='</div></div>';
   h+='<div class="ev-field ev-date-row">';
@@ -467,17 +612,24 @@ function refreshEvents(){
 
 function bindEvEvents(){
   document.getElementById('evBack').addEventListener('click',closeEvents);
-  document.getElementById('evPrev').addEventListener('click',function(){
-    EV_MONTH--;if(EV_MONTH<0){EV_MONTH=11;EV_YEAR--;}refreshEvents();
+  var prevBtn=document.getElementById('evPrev');
+  if(prevBtn)prevBtn.addEventListener('click',function(){
+    if(EV_VIEW==='annual'){EV_YEAR--;}else{EV_MONTH--;if(EV_MONTH<0){EV_MONTH=11;EV_YEAR--;}}
+    refreshEvents();
   });
-  document.getElementById('evNext').addEventListener('click',function(){
-    EV_MONTH++;if(EV_MONTH>11){EV_MONTH=0;EV_YEAR++;}refreshEvents();
+  var nextBtn=document.getElementById('evNext');
+  if(nextBtn)nextBtn.addEventListener('click',function(){
+    if(EV_VIEW==='annual'){EV_YEAR++;}else{EV_MONTH++;if(EV_MONTH>11){EV_MONTH=0;EV_YEAR++;}}
+    refreshEvents();
   });
-  document.getElementById('evToday').addEventListener('click',function(){
+  var todayBtn=document.getElementById('evToday');
+  if(todayBtn)todayBtn.addEventListener('click',function(){
     var n=new Date();EV_YEAR=n.getFullYear();EV_MONTH=n.getMonth();refreshEvents();
   });
   document.getElementById('evViewCal').addEventListener('click',function(){EV_VIEW='cal';refreshEvents();});
   document.getElementById('evViewMonths').addEventListener('click',function(){EV_VIEW='months';refreshEvents();});
+  document.getElementById('evViewUpcoming').addEventListener('click',function(){EV_VIEW='upcoming';refreshEvents();});
+  document.getElementById('evViewAnnual').addEventListener('click',function(){EV_VIEW='annual';refreshEvents();});
   document.getElementById('evToBday').addEventListener('click',function(){closeEvents();setTimeout(openBday,330);});
   document.getElementById('evAdd').addEventListener('click',function(){openEvForm(null);});
   // Click en badges del calendario → detail (no edit)
@@ -494,6 +646,14 @@ function bindEvEvents(){
     cell.addEventListener('click',function(e){
       if(e.target.classList.contains('ev-badge'))return;
       openEvForm(null,cell.dataset.ds);
+    });
+  });
+  // Click en items de próximos → detail
+  document.querySelectorAll('.ev-upcoming-item[data-id]').forEach(function(item){
+    item.addEventListener('click',function(){
+      var id=item.dataset.id;var ev=null;
+      for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
+      if(ev)openEvDetail(ev);
     });
   });
   // Click en item de lista → detail

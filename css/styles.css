@@ -328,16 +328,43 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bday-cell.weekend .bday-num{color:#8888a8}
 .ev-cell.weekend{border:1.5px solid rgba(160,160,200,.25);background:rgba(160,160,200,.11)}
 .ev-cell.weekend .ev-num{color:#8888a8}
-.ev-cell.weekend.ev-puente{background:rgba(244,114,182,.13)!important}
 /* Day types in events calendar — border-top + tinte de fondo */
 .ev-cell.ev-day-festivo{border-top:3px solid var(--festivo);background:rgba(255,107,107,.09)}
 .ev-cell.ev-day-vacaciones{border-top:3px solid var(--vacaciones);background:rgba(255,179,71,.09)}
 .ev-cell.ev-day-ausencia{border-top:3px solid var(--ausencia);background:rgba(192,132,252,.09)}
 .ev-cell.ev-puente{background:repeating-linear-gradient(45deg,rgba(244,114,182,.22),rgba(244,114,182,.22) 3px,transparent 3px,transparent 9px)}
-/* Events in puentes (summary) */
-.sy-puente-evs{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
-.sy-puente-ev{font-size:.62rem;padding:2px 7px;border-radius:10px;background:var(--surface3);color:var(--text-muted);border:1px solid var(--border-light)}
-.sy-puente-ev-date{opacity:.7;font-size:.6rem}
+/* Events in puentes (summary) — one per line */
+.sy-puente-evs{display:flex;flex-direction:column;gap:3px;margin-top:6px}
+.sy-puente-ev{display:flex;justify-content:space-between;align-items:baseline;padding:4px 8px;border-radius:6px;background:var(--surface3);color:var(--text-muted);border:1px solid var(--border-light);font-size:.72rem;gap:6px}
+.sy-puente-ev-date{font-size:.65rem;color:var(--text-dim);flex-shrink:0}
+/* Events upcoming view */
+.ev-upcoming-section{display:flex;flex-direction:column;gap:6px}
+.ev-upcoming-item{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .12s}
+.ev-upcoming-item:active{background:var(--surface3)}
+.ev-upcoming-item.ev-upcoming-today{border-color:var(--sent-border);background:rgba(90,224,136,.06)}
+.ev-upcoming-color{width:14px;height:14px;border-radius:3px;flex-shrink:0}
+.ev-upcoming-info{flex:1;min-width:0}
+.ev-upcoming-title{font-size:.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev-upcoming-meta{font-size:.7rem;color:var(--text-muted);margin-top:2px}
+.ev-upcoming-lbl{font-size:.7rem;font-weight:600;color:var(--text-dim);flex-shrink:0;text-align:right}
+.ev-upcoming-lbl.near{color:var(--vacaciones)}
+.ev-upcoming-lbl.today-lbl{color:var(--sent-text)}
+.ev-upcoming-lbl.ongoing{color:var(--accent-bright)}
+/* Event color type picker */
+.ev-type-picker{display:flex;flex-direction:column;gap:5px}
+.ev-color-swatch{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--radius-sm);background:var(--surface);border:1.5px solid var(--border);cursor:pointer;transition:all .12s}
+.ev-color-swatch.selected{border-color:currentColor;background:var(--surface3)}
+.ev-type-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.ev-type-name{font-size:.8rem}
+/* Annual events calendar */
+.ev-annual-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:4px 0}
+.ev-annual-month{background:var(--surface);border-radius:var(--radius-sm);padding:6px 4px 4px}
+.ev-annual-mname{font-size:.58rem;font-weight:700;text-transform:uppercase;color:var(--text-dim);text-align:center;margin-bottom:3px;letter-spacing:.04em}
+.ev-annual-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
+.ev-annual-hdr{font-size:.38rem;text-align:center;color:var(--text-dim);padding-bottom:1px}
+.ev-annual-day{aspect-ratio:1;border-radius:2px;background:var(--surface2)}
+.ev-annual-day.out-m{background:transparent}
+.ev-annual-day.ann-today{outline:1.5px solid var(--accent);outline-offset:-1px}
 /* Birthday detail / form overlays */
 .bd-detail-overlay,.bd-form-overlay{position:absolute;inset:0;z-index:10;background:rgba(0,0,0,.6);display:none}
 .bd-detail-overlay.open,.bd-form-overlay.open{display:flex;align-items:flex-end}
