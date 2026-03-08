@@ -226,5 +226,16 @@ if(typeof AUTHOR_NAME!=='undefined'&&AUTHOR_NAME&&AUTHOR_NAME!=='{{AUTHOR_NAME}}
 }
 </script>
 
+<!-- ── Service Worker (habilita instalación como WebAPK real en Android) ── -->
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('./sw.js')
+      .then(function(reg){console.log('[SW] Registrado, scope:',reg.scope);})
+      .catch(function(err){console.warn('[SW] Error al registrar:',err);});
+  });
+}
+</script>
+
 </body>
 </html>
