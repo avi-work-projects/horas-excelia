@@ -2,6 +2,29 @@
    CORE — Estado, utilidades, render principal
    ============================================================ */
 
+// ── Tema visual ──────────────────────────────────────────────
+var THEME_STORAGE_KEY='excelia-theme-v1';
+var THEME=(function(){try{var t=localStorage.getItem('excelia-theme-v1');if(t&&['dark','light','amoled'].indexOf(t)!==-1)return t;}catch(e){}return 'dark';})();
+var THEME_LABELS={dark:'\uD83C\uDF19\u00a0Oscuro',light:'\u2600\uFE0F\u00a0Claro',amoled:'\u26AB\u00a0AMOLED'};
+var THEME_META={dark:'#0a0a0f',light:'#f4f4fa',amoled:'#000000'};
+var THEME_SEQUENCE=['dark','light','amoled'];
+function applyTheme(t){
+  THEME=t;
+  document.documentElement.setAttribute('data-theme',t);
+  var meta=document.querySelector('meta[name="theme-color"]');
+  if(meta)meta.content=THEME_META[t]||THEME_META.dark;
+  try{localStorage.setItem(THEME_STORAGE_KEY,t);}catch(e){}
+}
+function cycleTheme(){
+  var idx=(THEME_SEQUENCE.indexOf(THEME)+1)%THEME_SEQUENCE.length;
+  applyTheme(THEME_SEQUENCE[idx]);
+  updateThemeBtn();
+}
+function updateThemeBtn(){
+  var btn=document.getElementById('themeBtn');
+  if(btn)btn.innerHTML=THEME_LABELS[THEME]||THEME_LABELS.dark;
+}
+
 // ── Estado global ──────────────────────────────────────────
 var SK='excelia-horas-v3', CY, CM, ST={}, SW={}, ED=null, MONTH_H={}, DAILY_RATE=315, EXCL_FEST=true, EXCL_VAC=true;
 var MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
