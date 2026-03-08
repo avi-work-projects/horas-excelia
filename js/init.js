@@ -129,19 +129,9 @@
       +';i.android.intent.extra.alarm.MINUTES='+m
       +';b.android.intent.extra.alarm.SKIP_UI=false';
 
-    // Intento 1: window.location.href — Chrome WebAPK lo intercepta como intent nativo
-    // sin package, deja que Android resuelva qué app de reloj usar
-    window.location.href='intent://alarm/#Intent'+base+';end';
-
-    // Intento 2 (300ms después): con package explícito vía <a>.click()
-    // por si el intento 1 no funcionó en este entorno
-    setTimeout(function(){
-      var a=document.createElement('a');
-      a.setAttribute('href','intent://alarm/#Intent'+base+';package=com.vivo.clock;end');
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    },300);
+    // window.open() abre un Chrome Custom Tab (modo navegador real)
+    // que SÍ procesa intent:// — en WebAPK standalone, location.href queda bloqueado por OriginOS
+    window.open('intent://alarm/#Intent'+base+';package=com.vivo.clock;end','_blank');
 
     document.getElementById('alarmPanel').classList.remove('open');
     showToast('Abriendo reloj \u2014 '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),'success');
