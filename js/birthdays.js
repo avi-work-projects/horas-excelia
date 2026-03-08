@@ -294,7 +294,10 @@ function openBdayDetail(b){
   ov.appendChild(wrap);
   requestAnimationFrame(function(){
     var fo=document.getElementById('bdDetailOv');
-    if(fo)fo.classList.add('open');
+    if(fo){
+      fo.classList.add('open');
+      fo.addEventListener('click',function(e){if(e.target===fo)closeBdayDetail();});
+    }
   });
   document.getElementById('bdDClose').addEventListener('click',closeBdayDetail);
   document.getElementById('bdDEdit').addEventListener('click',function(){
