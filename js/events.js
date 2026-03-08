@@ -286,9 +286,16 @@ function renderEvUpcoming(){
 /* ── Render: calendario anual ───────────────────────────── */
 function renderEvAnnual(){
   var today=new Date();today.setHours(0,0,0,0);
+  // Precompute puente map for the displayed year
+  var puenteMap={};
+  if(typeof computePuentes==='function'){
+    computePuentes(EV_YEAR).puentes.forEach(function(seq){
+      seq.forEach(function(x){puenteMap[evDk(x.date)]=true;});
+    });
+  }
+  var MNS=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
   var h='<div class="ev-annual-grid">';
   for(var m=0;m<12;m++){
-    var MNS=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
     h+='<div class="ev-annual-month">';
     h+='<div class="ev-annual-mname">'+MNS[m]+'</div>';
     h+='<div class="ev-annual-cal">';
@@ -304,8 +311,20 @@ function renderEvAnnual(){
         var ds=evDk(cur);
         var evs=inM?getEventsOn(ds):[];
         var isT=inM&&cur.getTime()===today.getTime();
+        var isWknd=cur.getDay()===0||cur.getDay()===6;
+        var dt=inM&&typeof dayT==='function'?dayT(cur):'';
+        var inPuente=inM&&puenteMap[ds];
         var cls='ev-annual-day'+(inM?'':' out-m')+(isT?' ann-today':'');
-        var sty=evs.length?' style="background:'+evs[0].color+'"':'';
+        var bg='';
+        if(inM){
+          if(evs.length)       bg=evs[0].color;
+          else if(inPuente)    bg='rgba(244,114,182,.55)';
+          else if(dt==='festivo')    bg='rgba(255,107,107,.65)';
+          else if(dt==='vacaciones') bg='rgba(255,179,71,.65)';
+          else if(dt==='ausencia')   bg='rgba(192,132,252,.65)';
+          else if(isWknd)      bg='rgba(160,160,200,.22)';
+        }
+        var sty=bg?' style="background:'+bg+'"':'';
         h+='<div class="'+cls+'"'+sty+'></div>';
         cur.setDate(cur.getDate()+1);
       }
