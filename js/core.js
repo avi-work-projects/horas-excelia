@@ -103,16 +103,16 @@ function getWD(wkey){
 }
 
 // ── Toast ────────────────────────────────────────────────────
-function showToast(msg,type,undoFn){
+function showToast(msg,type,undoFn,btnTxt){
   var t=document.getElementById('toast');
   clearTimeout(t._timer);
   if(undoFn){
-    t.innerHTML=escHtml(msg)+'<button class="toast-undo-btn" id="toastUndoBtn">Deshacer</button>';
+    t.innerHTML=escHtml(msg)+'<button class="toast-undo-btn" id="toastUndoBtn">'+(btnTxt||'Deshacer')+'</button>';
     t.className='toast show has-undo'+(type?' '+type:'');
     document.getElementById('toastUndoBtn').addEventListener('click',function(){
       undoFn(); t.className='toast';
     });
-    t._timer=setTimeout(function(){t.className='toast';},5000);
+    t._timer=setTimeout(function(){t.className='toast';},8000);
   } else {
     t.textContent=msg;
     t.className='toast show'+(type?' '+type:'');

@@ -97,6 +97,11 @@ try{
             <input class="alarm-m-input" id="alarmMin" type="number" min="0" max="59" value="45">
           </div>
           <input class="alarm-msg-input" id="alarmMsg" type="text" maxlength="40" placeholder="Mensaje de la alarma" value="Horas Excelia">
+          <label class="alarm-macro-row" id="alarmMacroRow">
+            <input type="checkbox" id="alarmUseMacro">
+            <span>MacroDroid&nbsp;&nbsp;puerto:</span>
+            <input class="alarm-macro-port" id="alarmMacroPort" type="number" value="5000" min="1" max="65535" disabled>
+          </label>
           <button class="data-menu-item alarm-create-btn" id="alarmCreateBtn">Crear alarma</button>
           <button class="data-menu-item alarm-ics-btn" id="alarmIcsBtn">&#128197; Guardar como recordatorio</button>
         </div>

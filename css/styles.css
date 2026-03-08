@@ -162,6 +162,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .toast.show.has-undo{pointer-events:auto}
 .toast.error{border-color:#5a2a2a;background:#2a1a1a;color:var(--festivo)}
 .toast.success{border-color:var(--sent-border);background:var(--sent);color:var(--sent-text)}
+.toast.info{border-color:#2a3a6a;background:#0d1a3a;color:#93b4ff}
 .toast-undo-btn{background:none;border:1px solid currentColor;border-radius:10px;padding:2px 10px;font-size:.75rem;font-weight:700;cursor:pointer;margin-left:12px;color:inherit;vertical-align:middle}
 
 /* ── ANIMATIONS ── */
@@ -522,6 +523,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .alarm-msg-input:focus{outline:none;border-color:var(--accent)}
 .alarm-create-btn{color:var(--accent-bright)!important;font-weight:600!important;width:100%;border-top:1px solid var(--border)!important;border-radius:0!important;padding:10px 12px!important;margin-top:2px}
 .alarm-ics-btn{color:var(--text-muted)!important;font-size:.72rem!important;padding:8px 12px!important;border-top:1px solid var(--border)!important;border-radius:0 0 var(--radius-sm) var(--radius-sm)!important;width:100%}
+.alarm-macro-row{display:flex;align-items:center;gap:6px;padding:5px 12px;font-size:.72rem;color:var(--text-muted);border-top:1px solid var(--border);cursor:pointer}
+.alarm-macro-row input[type=checkbox]{accent-color:var(--accent);width:14px;height:14px;cursor:pointer;flex-shrink:0}
+.alarm-macro-row span{flex:1;white-space:nowrap}
+.alarm-macro-port{width:56px;padding:3px 5px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text);font-family:var(--mono);font-size:.75rem;text-align:center;-webkit-appearance:none;appearance:none}
+.alarm-macro-port:disabled{opacity:.4;cursor:not-allowed}
+.alarm-macro-port:not(:disabled):focus{outline:none;border-color:var(--accent)}
 
 /* ── PRINT ── */
 @media print{
