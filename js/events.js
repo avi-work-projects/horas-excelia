@@ -8,9 +8,10 @@ var EV_MONTH = new Date().getMonth();
 var EV_VIEW = 'cal';  // 'cal' | 'months' | 'upcoming' | 'annual'
 var EV_EDIT = null;
 var EV_ANNUAL_ADD = false;
-var EV_COLORS = ['#6c8cff','#1d4ed8','#34d399','#fb923c','#ff6b6b','#c084fc','#fbbf24'];
+var EV_COLORS = ['#38bdf8','#1d4ed8','#34d399','#fb923c','#ff6b6b','#c084fc','#fbbf24'];
 var EV_COLOR_TYPES = {
-  '#6c8cff':'Viaje',
+  '#38bdf8':'Viaje',
+  '#6c8cff':'Viaje',  // compat con eventos anteriores
   '#1d4ed8':'Estancia en Asturias',
   '#34d399':'Recordatorio gestiones',
   '#fb923c':'Planes y quedadas',

@@ -228,7 +228,7 @@ function renderSummaryContent(){
   h+='</div><div class="sy-cards4" style="margin-top:8px">';
   h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.maxMh)+'</div><div class="sy-lbl">M&#225;x./mes<br>'+MN_SHORT[s.maxMhi]+'</div></div>';
   h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.minMh)+'</div><div class="sy-lbl">M&#237;n./mes<br>'+MN_SHORT[s.minMhi]+'</div></div>';
-  h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.avgHDay)+'</div><div class="sy-lbl">Media/d&#237;a</div></div>';
+  (function(){var totMin=Math.round(s.avgHDay*60);var avgHH=Math.floor(totMin/60);var avgHM=totMin%60;var sub=avgHM>0?'<div class="sy-sublbl">'+avgHH+'h '+avgHM+'min</div>':'';h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.avgHDay)+'</div>'+sub+'<div class="sy-lbl">Media/d&#237;a</div></div>';})();
   h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.avgHMonth)+'</div><div class="sy-lbl">Media/mes</div></div>';
   h+='</div>';
   h+='<div class="sy-chart">'+barChart3(s.mHours,s.mHoursP,MN_SHORT,'#6c8cff',cm)+'</div>';
