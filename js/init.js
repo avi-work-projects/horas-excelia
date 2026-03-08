@@ -123,26 +123,24 @@
     var h=Math.min(23,Math.max(0,parseInt(document.getElementById('alarmHour').value,10)||8));
     var m=Math.min(59,Math.max(0,parseInt(document.getElementById('alarmMin').value,10)||0));
     var msg=(document.getElementById('alarmMsg').value.trim()||'Horas Excelia');
-    // Formato corregido para Vivo X200 Ultra (Funtouch OS 15 / com.vivo.clock)
-    // window.open con intent:// en Android: el SO intercepta y abre la app sin navegar la PWA
-    var intentUrl='intent://#Intent'
-      +';action=android.intent.action.SET_ALARM'
-      +';package=com.vivo.clock'
+    // Vivo X200 Ultra (OriginOS 5 / com.vivo.clock):
+    // - Usar <a>.click() en lugar de window.open (más fiable en PWA standalone / WebAPK)
+    // - Prefijo correcto: b. (boolean), i. (int), S. (String)
+    // - SKIP_UI=false muestra la UI para confirmar la alarma (requerido por Vivo)
+    function fireIntent(url){
+      var a=document.createElement('a');
+      a.setAttribute('href',url);
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+    var base=';action=android.intent.action.SET_ALARM'
       +';S.android.intent.extra.alarm.MESSAGE='+encodeURIComponent(msg)
       +';i.android.intent.extra.alarm.HOUR='+h
       +';i.android.intent.extra.alarm.MINUTES='+m
-      +';B.android.intent.extra.alarm.SKIP_UI=false'
-      +';end';
-    // Fallback: sin paquete específico (por si el paquete ha cambiado)
-    var intentFallback='intent://#Intent'
-      +';action=android.intent.action.SET_ALARM'
-      +';S.android.intent.extra.alarm.MESSAGE='+encodeURIComponent(msg)
-      +';i.android.intent.extra.alarm.HOUR='+h
-      +';i.android.intent.extra.alarm.MINUTES='+m
-      +';B.android.intent.extra.alarm.SKIP_UI=false'
-      +';end';
-    var opened=window.open(intentUrl,'_blank');
-    if(!opened)window.open(intentFallback,'_blank');
+      +';b.android.intent.extra.alarm.SKIP_UI=false';
+    // com.vivo.clock → OriginOS 3/4/5; com.bbk.clock → Funtouch OS legado
+    fireIntent('intent://#Intent'+base+';package=com.vivo.clock;end');
     document.getElementById('alarmPanel').classList.remove('open');
     showToast('Abriendo reloj \u2014 '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),'success');
   });
