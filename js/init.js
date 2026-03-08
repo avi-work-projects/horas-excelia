@@ -121,11 +121,11 @@
     if(opening){
       // Restaurar estado MacroDroid guardado
       var useMacro=localStorage.getItem('excelia-alarm-macro')==='1';
-      var macroPort=parseInt(localStorage.getItem('excelia-alarm-port'),10)||5000;
+      var macroUrl=localStorage.getItem('excelia-alarm-url')||'';
       var cb=document.getElementById('alarmUseMacro');
-      var portIn=document.getElementById('alarmMacroPort');
+      var urlIn=document.getElementById('alarmMacroUrl');
       if(cb){cb.checked=useMacro;}
-      if(portIn){portIn.value=macroPort;portIn.disabled=!useMacro;}
+      if(urlIn){urlIn.value=macroUrl;urlIn.disabled=!useMacro;}
     }
     panel.classList.toggle('open');
   });
@@ -133,11 +133,11 @@
   /* ── Alarma: toggle MacroDroid ── */
   document.getElementById('alarmUseMacro').addEventListener('change',function(){
     var checked=this.checked;
-    document.getElementById('alarmMacroPort').disabled=!checked;
+    document.getElementById('alarmMacroUrl').disabled=!checked;
     localStorage.setItem('excelia-alarm-macro',checked?'1':'0');
   });
-  document.getElementById('alarmMacroPort').addEventListener('change',function(){
-    localStorage.setItem('excelia-alarm-port',this.value||'5000');
+  document.getElementById('alarmMacroUrl').addEventListener('change',function(){
+    localStorage.setItem('excelia-alarm-url',this.value.trim());
   });
 
   document.getElementById('alarmCreateBtn').addEventListener('click',function(){
@@ -148,17 +148,22 @@
     document.getElementById('alarmPanel').classList.remove('open');
 
     if(useMacro){
-      // MacroDroid Level 2: fetch a localhost (exento de mixed-content por ser loopback)
-      var port=parseInt(document.getElementById('alarmMacroPort').value,10)||5000;
-      var url='http://127.0.0.1:'+port+'/alarm'
-        +'?h='+h+'&m='+m+'&msg='+encodeURIComponent(msg);
+      // MacroDroid webhook: URL remota (https://trigger.macrodroid.com/…)
+      var macroUrl=(document.getElementById('alarmMacroUrl').value||'').trim();
+      if(!macroUrl){
+        showToast('Pega la URL del webhook de MacroDroid','error');
+        document.getElementById('alarmPanel').classList.add('open');
+        return;
+      }
+      var sep=macroUrl.indexOf('?')>=0?'&':'?';
+      var url=macroUrl+sep+'h='+h+'&m='+m+'&msg='+encodeURIComponent(msg);
       showToast('Enviando a MacroDroid\u2026','success');
       fetch(url,{mode:'no-cors'})
         .then(function(){
           showToast('\u23f0 Alarma enviada \u2014 '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),'success');
         })
         .catch(function(){
-          showToast('MacroDroid no responde. \u00bfEst\u00e1 activo?','error');
+          showToast('Error al contactar MacroDroid','error');
         });
     } else {
       // Intento intent:// (puede funcionar en algunos dispositivos/versiones)
@@ -295,13 +300,32 @@
   }
 
   /* ── Service Worker: notificación de nueva versión ── */
-  if('serviceWorker' in navigator&&navigator.serviceWorker.controller){
+  if('serviceWorker' in navigator){
+    var _swShown=false;
+    function _showUpdateToast(){
+      if(_swShown)return;
+      _swShown=true;
+      showToast('Nueva versi\u00f3n disponible','info',function(){
+        window.location.reload();
+      },'Actualizar');
+    }
+    // Método 1: controllerchange — el más fiable (skipWaiting activó el nuevo SW)
+    navigator.serviceWorker.addEventListener('controllerchange',_showUpdateToast);
+    // Método 2: updatefound — detecta instalación en curso
+    navigator.serviceWorker.ready.then(function(reg){
+      reg.addEventListener('updatefound',function(){
+        var nw=reg.installing;
+        if(!nw)return;
+        nw.addEventListener('statechange',function(){
+          if(nw.state==='installed'&&navigator.serviceWorker.controller){
+            _showUpdateToast();
+          }
+        });
+      });
+    });
+    // Método 3: mensaje del SW (compatibilidad)
     navigator.serviceWorker.addEventListener('message',function(ev){
-      if(ev.data&&ev.data.type==='SW_UPDATED'){
-        showToast('Nueva versi\u00f3n disponible','info',function(){
-          window.location.reload();
-        },'Actualizar');
-      }
+      if(ev.data&&ev.data.type==='SW_UPDATED')_showUpdateToast();
     });
   }
 })();
