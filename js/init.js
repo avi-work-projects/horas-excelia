@@ -118,27 +118,22 @@
     var tomorrow=new Date();
     tomorrow.setDate(tomorrow.getDate()+1);
     var msg='Test alarma '+tomorrow.getDate()+'/'+(tomorrow.getMonth()+1);
-    // Formato correcto Chrome Android: intent://host#Intent;...;end
-    // Intentamos primero con package Vivo, luego sin package (default del sistema)
-    var base='#Intent'
+    // Sin package= → el sistema usa el handler de alarma por defecto
+    // target="_blank" evita navegar la página (el error "elemento no encontrado")
+    var intentUrl='intent://alarm/#Intent'
       +';action=android.intent.action.SET_ALARM'
       +';S.android.intent.extra.alarm.MESSAGE='+encodeURIComponent(msg)
       +';i.android.intent.extra.alarm.HOUR=9'
       +';i.android.intent.extra.alarm.MINUTES=0'
-      +';B.android.intent.extra.alarm.SKIP_UI=false';
-    var vivoUrl='intent://alarm/'+base+';package=com.vivo.clock;end';
-    var sysUrl ='intent://alarm/'+base+';end';
-    // Abrimos el intent de Vivo; si falla el browser lo ignora
-    window.location.href=vivoUrl;
-    showToast('Probando alarma Vivo...','success');
-    // Fallback tras 400ms: si Vivo no respondió, probar sin package
-    setTimeout(function(){
-      var a=document.createElement('a');
-      a.href=sysUrl;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    },400);
+      +';B.android.intent.extra.alarm.SKIP_UI=false'
+      +';end';
+    var a=document.createElement('a');
+    a.href=intentUrl;
+    a.target='_blank';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    showToast('Probando alarma nativa...','success');
   });
 
   /* ── Menú 3 puntos: exportar/importar TODO ── */

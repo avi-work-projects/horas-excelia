@@ -258,11 +258,11 @@ function renderSummaryContent(){
       var fCount=seq.filter(function(x){return x.type==='festivo';}).length;
       var wCount=seq.filter(function(x){return x.type==='weekend';}).length;
       var parts=[];if(fCount)parts.push(fCount+' festivo'+(fCount>1?'s':''));if(vCount)parts.push(vCount+' vacac.');if(wCount)parts.push(wCount+' fin'+(wCount>1?'es':'')+' semana');
-      var evTitles=[];
+      var evItems=[];
       if(typeof getEventsOn==='function'){
         seq.forEach(function(x){
           getEventsOn(dk(x.date)).forEach(function(ev){
-            if(evTitles.indexOf(ev.title)===-1)evTitles.push(ev.title);
+            if(!evItems.some(function(e){return e.id===ev.id;}))evItems.push(ev);
           });
         });
       }
@@ -272,7 +272,19 @@ function renderSummaryContent(){
       h+='<div class="sy-puente-count">'+nDays+' d&#237;as</div>';
       h+='</div>';
       h+='<div class="sy-puente-comp">'+parts.join(' + ')+'</div>';
-      if(evTitles.length){h+='<div class="sy-puente-evs">'+evTitles.map(function(t){return '<span class="sy-puente-ev">&#128197;&nbsp;'+escHtml(t)+'</span>';}).join('')+'</div>';}
+      if(evItems.length){
+        h+='<div class="sy-puente-evs">';
+        evItems.forEach(function(ev){
+          var dateStr;
+          if(ev.start===ev.end){
+            dateStr=ev.start.slice(8,10)+'/'+ev.start.slice(5,7);
+          } else {
+            dateStr=ev.start.slice(8,10)+'/'+ev.start.slice(5,7)+' &#8594; '+ev.end.slice(8,10)+'/'+ev.end.slice(5,7);
+          }
+          h+='<span class="sy-puente-ev">&#128197;&nbsp;'+escHtml(ev.title)+'<span class="sy-puente-ev-date">&nbsp;('+dateStr+')</span></span>';
+        });
+        h+='</div>';
+      }
       h+='</div>';
     });
   }
