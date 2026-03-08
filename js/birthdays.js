@@ -210,6 +210,7 @@ function renderBdayContent(){
     h+='<button class="bday-add-btn" id="bdAdd">+ A\u00f1adir</button>';
   }
   h+='</div>';
+  h+=renderNavBar('bday');
   h+='<div class="bday-hdr-sub">';
   h+='<button class="bday-view-toggle'+(BDAY_VIEW==='upcoming'?' active':'')+'" id="bdViewUpcoming">Pr\u00f3ximos</button>';
   h+='<button class="bday-view-toggle'+(BDAY_VIEW==='cal'?' active':'')+'" id="bdViewCal">Calendario</button>';
@@ -385,6 +386,7 @@ function refreshBday(){
 
 function bindBdayEvents(){
   document.getElementById('bdBack').addEventListener('click',closeBday);
+  bindNavBar('bday',closeBday);
   var prevBtn=document.getElementById('bdPrev');
   if(prevBtn)prevBtn.addEventListener('click',function(){
     BDAY_MONTH--;if(BDAY_MONTH<0){BDAY_MONTH=11;BDAY_YEAR--;}refreshBday();
