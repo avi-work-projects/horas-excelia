@@ -125,7 +125,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .option-hours{font-family:var(--mono);font-size:.82rem;color:var(--text-muted)}
 
 /* ── TOAST ── */
-.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface3);color:var(--text);padding:10px 20px;border-radius:20px;font-size:.8rem;font-weight:500;opacity:0;transition:all .3s;pointer-events:none;z-index:200;border:1px solid var(--border-light);max-width:90vw;text-align:center}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface3);color:var(--text);padding:10px 20px;border-radius:20px;font-size:.8rem;font-weight:500;opacity:0;transition:all .3s;pointer-events:none;z-index:350;border:1px solid var(--border-light);max-width:90vw;text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast.show.has-undo{pointer-events:auto}
 .toast.error{border-color:#5a2a2a;background:#2a1a1a;color:var(--festivo)}
@@ -202,13 +202,15 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .sy-list-tag{font-size:.65rem;padding:2px 7px;border-radius:8px;font-weight:600;flex-shrink:0;text-transform:uppercase;letter-spacing:.04em}
 .sy-list-tag.festivo{background:rgba(255,107,107,.15);color:var(--festivo)}
 .sy-list-tag.vacaciones{background:rgba(255,179,71,.15);color:var(--vacaciones)}
-.sy-puente{display:flex;flex-direction:column;gap:3px;padding:12px 14px;background:var(--surface);border:1px solid var(--accent);border-left:3px solid var(--accent);border-radius:var(--radius-sm)}
-.sy-puente-range{font-family:var(--mono);font-size:.73rem;color:var(--text-muted)}
-.sy-puente-count{font-size:.88rem;font-weight:600;color:var(--accent-bright)}
+.sy-puente{display:flex;flex-direction:column;gap:3px;padding:12px 14px;background:var(--surface);border:1px solid rgba(244,114,182,.35);border-left:3px solid #f472b6;border-radius:var(--radius-sm)}
+.sy-puente-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}
+.sy-puente-range{font-family:var(--mono);font-size:.82rem;font-weight:600;color:var(--text)}
+.sy-puente-count{font-size:.68rem;font-weight:700;color:#f472b6;background:rgba(244,114,182,.12);padding:2px 8px;border-radius:10px;border:1px solid rgba(244,114,182,.3)}
 .sy-puente-comp{font-size:.7rem;color:var(--text-dim);margin-top:2px}
-.sy-suelto{display:flex;flex-direction:column;gap:3px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--text-dim);border-radius:var(--radius-sm)}
+.sy-suelto{display:flex;flex-direction:column;gap:3px;padding:10px 14px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.3);border-left:3px solid #fbbf24;border-radius:var(--radius-sm)}
 .sy-suelto-row{display:flex;align-items:center;gap:8px}
 .sy-suelto-date{font-family:var(--mono);font-size:.73rem;color:var(--text-muted)}
+.sy-month-sep{font-size:.68rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;padding:10px 0 4px;border-bottom:1px solid var(--border-light);margin-bottom:4px}
 /* Vacaciones config */
 .vac-config-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm)}
 .vac-config-label{font-size:.8rem;color:var(--text-muted);flex:1}
@@ -321,16 +323,16 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bday-upcoming-lbl.past-lbl{color:var(--text-dim);opacity:.7}
 .bday-add-btn{font-size:.72rem;padding:6px 12px;border-radius:16px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;white-space:nowrap;flex-shrink:0}
 .bday-add-btn:active{background:var(--accent);color:#fff}
-/* Weekend frame — borde ámbar para distinguir de festivos/hoy/accent */
-.bday-cell.weekend{border:1.5px solid rgba(255,180,70,.38);background:rgba(255,180,70,.03)}
-.bday-cell.weekend .bday-num{color:#c8a050}
-.ev-cell.weekend{border:1.5px solid rgba(255,180,70,.38);background:rgba(255,180,70,.03)}
-.ev-cell.weekend .ev-num{color:#c8a050}
+/* Weekend frame — gris lavanda suave */
+.bday-cell.weekend{border:1.5px solid rgba(160,160,200,.22);background:rgba(160,160,200,.04)}
+.bday-cell.weekend .bday-num{color:#8888a8}
+.ev-cell.weekend{border:1.5px solid rgba(160,160,200,.22);background:rgba(160,160,200,.04)}
+.ev-cell.weekend .ev-num{color:#8888a8}
 /* Day types in events calendar — border-top + tinte de fondo */
 .ev-cell.ev-day-festivo{border-top:3px solid var(--festivo);background:rgba(255,107,107,.09)}
 .ev-cell.ev-day-vacaciones{border-top:3px solid var(--vacaciones);background:rgba(255,179,71,.09)}
 .ev-cell.ev-day-ausencia{border-top:3px solid var(--ausencia);background:rgba(192,132,252,.09)}
-.ev-cell.ev-puente{background:rgba(108,140,255,.11)}
+.ev-cell.ev-puente{background:repeating-linear-gradient(45deg,rgba(244,114,182,.09),rgba(244,114,182,.09) 3px,transparent 3px,transparent 9px)}
 /* Events in puentes (summary) */
 .sy-puente-evs{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
 .sy-puente-ev{font-size:.62rem;padding:2px 7px;border-radius:10px;background:var(--surface3);color:var(--text-muted);border:1px solid var(--border-light)}

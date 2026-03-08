@@ -108,7 +108,7 @@ function renderEconContent(){
   var avgIrpf=Math.round(e.totIrpf/12*100)/100;
   var avgNeto=Math.round(e.netoReal/12*100)/100;
   h+='<div class="econ-avg-section">';
-  h+='<div class="econ-avg-title">Media mensual (a\u00f1o &#247; 12)</div>';
+  h+='<div class="econ-avg-title">Media mensual (a\u00f1o / 12)</div>';
   h+='<div class="econ-avg-grid">';
   h+='<div class="econ-avg-item"><span class="econ-avg-lbl" style="color:var(--c-blue)">Base</span><span class="econ-avg-val">'+fc(avgBase)+'</span></div>';
   h+='<div class="econ-avg-item"><span class="econ-avg-lbl" style="color:var(--c-orange)">IVA</span><span class="econ-avg-val">'+fc(avgIva)+'</span></div>';
