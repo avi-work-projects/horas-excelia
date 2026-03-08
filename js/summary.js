@@ -176,7 +176,9 @@ function renderSummaryContent(){
   h+='<button class="sy-back" id="syBack">&#8592;</button>';
   h+='<div class="sy-year-nav"><button class="sy-nav" id="syPrev">&#9664;</button><div class="sy-year">'+SUMMARY_YEAR+'</div><button class="sy-nav" id="syNext">&#9654;</button></div>';
   h+='<button class="sy-pdf" id="syPdf">PDF</button>';
-  h+='</div><div class="sy-body">';
+  h+='</div>';
+  h+=renderNavBar('summary');
+  h+='<div class="sy-body">';
   // Checkboxes quitar festivos/vacaciones
   h+='<div class="excl-row">';
   h+='<label class="excl-item" style="color:var(--festivo)"><input type="checkbox" class="excl-chk" id="syExclFestChk" style="accent-color:var(--festivo)"'+(EXCL_FEST?' checked':'')+'>&#160;Quitar festivos</label>';
@@ -382,6 +384,7 @@ function closeSummary(){
 
 function bindSummaryEvents(){
   document.getElementById('syBack').addEventListener('click',closeSummary);
+  bindNavBar('summary',closeSummary);
   document.getElementById('syPdf').addEventListener('click',function(){
     document.body.classList.add('print-summary');
     window.print();

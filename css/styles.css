@@ -362,9 +362,21 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-annual-mname{font-size:.58rem;font-weight:700;text-transform:uppercase;color:var(--text-dim);text-align:center;margin-bottom:3px;letter-spacing:.04em}
 .ev-annual-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
 .ev-annual-hdr{font-size:.38rem;text-align:center;color:var(--text-dim);padding-bottom:1px}
-.ev-annual-day{aspect-ratio:1;border-radius:2px;background:var(--surface2)}
+.ev-annual-day{aspect-ratio:1;border-radius:2px;background:var(--surface2);position:relative;overflow:hidden}
 .ev-annual-day.out-m{background:transparent}
 .ev-annual-day.ann-today{outline:1.5px solid var(--accent);outline-offset:-1px}
+.ev-annual-dots{position:absolute;bottom:1px;left:0;right:0;display:flex;justify-content:center;gap:1px;pointer-events:none}
+.ev-annual-dots span{width:3px;height:3px;border-radius:50%;flex-shrink:0}
+.ev-annual-month{cursor:pointer;transition:opacity .15s}
+.ev-annual-pick-mode .ev-annual-day[data-ds]{cursor:crosshair}
+.ev-annual-pick-mode .ev-annual-day[data-ds]:hover{outline:1.5px solid rgba(255,255,255,.5);outline-offset:-1px}
+.ev-io-btn.ev-add-pick-mode{border-color:var(--c-orange)!important;color:var(--c-orange)!important}
+/* Shared overlay nav bar */
+.overlay-nav-bar{display:flex;align-items:center;gap:1px;padding:4px 12px;border-bottom:1px solid var(--border);overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none}
+.overlay-nav-bar::-webkit-scrollbar{display:none}
+.nav-bar-btn{flex-shrink:0;width:32px;height:28px;border:none;border-radius:6px;background:transparent;color:var(--text-dim);font-size:.82rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s;-webkit-user-select:none;user-select:none}
+.nav-bar-btn:hover{background:rgba(255,255,255,.08);color:var(--text)}
+.nav-bar-btn.active{background:rgba(255,255,255,.1);color:var(--accent)}
 /* Birthday detail / form overlays */
 .bd-detail-overlay,.bd-form-overlay{position:absolute;inset:0;z-index:10;background:rgba(0,0,0,.6);display:none}
 .bd-detail-overlay.open,.bd-form-overlay.open{display:flex;align-items:flex-end}

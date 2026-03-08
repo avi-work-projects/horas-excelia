@@ -279,3 +279,47 @@ function selectType(t){
 }
 
 function togSent(k){if(SW[k])delete SW[k]; else SW[k]=true; save(); render();}
+
+// ── Barra de navegación compartida entre overlays ────────────
+function renderNavBar(current){
+  var btns=[
+    {icon:'&#127968;',key:'home',title:'Inicio'},
+    {icon:'&#128202;',key:'summary',title:'Resumen anual'},
+    {icon:'&#128176;',key:'econ',title:'Econ\u00f3mico'},
+    {icon:'&#127874;',key:'bday',title:'Cumplea\u00f1os'},
+    {icon:'&#128197;',key:'events',title:'Eventos'},
+    {icon:'&#8593;',key:'import',title:'Importar datos'},
+    {icon:'&#8595;',key:'export',title:'Exportar datos'},
+    {icon:'&#128276;',key:'alarm',title:'Test alarma'},
+    {icon:'&#8943;',key:'menu',title:'M\u00e1s opciones'}
+  ];
+  var h='<div class="overlay-nav-bar">';
+  btns.forEach(function(b){
+    var active=b.key===current?' active':'';
+    h+='<button class="nav-bar-btn'+active+'" data-nav="'+b.key+'" title="'+b.title+'">'+b.icon+'</button>';
+  });
+  h+='</div>';
+  return h;
+}
+
+function bindNavBar(current,closeFn){
+  document.querySelectorAll('.overlay-nav-bar .nav-bar-btn[data-nav]').forEach(function(btn){
+    var key=btn.dataset.nav;
+    if(key===current)return;
+    btn.addEventListener('click',function(){
+      var doNav=function(){
+        if(key==='home'){/* overlay ya cerrado */}
+        else if(key==='summary')openSummary();
+        else if(key==='econ')openEcon();
+        else if(key==='bday')openBday();
+        else if(key==='events')openEvents();
+        else if(key==='import')document.getElementById('importBtn').click();
+        else if(key==='export')document.getElementById('exportBtn').click();
+        else if(key==='alarm')document.getElementById('alarmTestBtn').click();
+        else if(key==='menu'){var m=document.getElementById('dataMenu');if(m)m.classList.toggle('open');}
+      };
+      if(closeFn&&key!=='alarm'){closeFn();setTimeout(doNav,330);}
+      else doNav();
+    });
+  });
+}
