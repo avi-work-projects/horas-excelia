@@ -99,9 +99,9 @@ try{
           <input class="alarm-msg-input" id="alarmMsg" type="text" maxlength="40" placeholder="Mensaje de la alarma" value="Horas Excelia">
           <label class="alarm-macro-row" id="alarmMacroRow">
             <input type="checkbox" id="alarmUseMacro">
-            <span>MacroDroid&nbsp;&nbsp;puerto:</span>
-            <input class="alarm-macro-port" id="alarmMacroPort" type="number" value="5000" min="1" max="65535" disabled>
+            <span>MacroDroid webhook</span>
           </label>
+          <input class="alarm-macro-url" id="alarmMacroUrl" type="url" placeholder="https://trigger.macrodroid.com/…/alarm" disabled>
           <button class="data-menu-item alarm-create-btn" id="alarmCreateBtn">Crear alarma</button>
           <button class="data-menu-item alarm-ics-btn" id="alarmIcsBtn">&#128197; Guardar como recordatorio</button>
         </div>
