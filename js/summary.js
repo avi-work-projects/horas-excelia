@@ -245,9 +245,25 @@ function renderSummaryContent(){
   h+='<div class="sy-chart">'+barChart3(s.mDays,s.mDaysP,MN_SHORT,'#34d399',cm)+'</div>';
   h+='</div>';
 
-  // Puentes
+  // Días festivos/vacaciones sin puentes (sueltos — primero)
   var p=computePuentes(SUMMARY_YEAR);
   function fdd(dt){return DF[dt.getDay()]+', '+fd(dt);}
+  var sueltos=p.festivosSueltos.concat(p.vacSueltos).sort(function(a,b){return a-b;});
+  h+='<div class="sy-section"><div class="sy-section-title">D&#237;as festivos/vacaciones sin puentes</div>';
+  if(sueltos.length===0){h+='<div class="sy-note">No hay d&#237;as sueltos fuera de puentes.</div>';}
+  else{
+    sueltos.forEach(function(dt){
+      var t=dayT(dt);
+      var tagLabel=t==='festivo'?'Festivo':'Vacaciones';
+      h+='<div class="sy-suelto"><div class="sy-suelto-row">';
+      h+='<span class="sy-suelto-date">'+fdd(dt)+'</span>';
+      h+='<span class="sy-list-tag '+t+'">'+tagLabel+'</span>';
+      h+='</div></div>';
+    });
+  }
+  h+='</div>';
+
+  // Puentes
   h+='<div class="sy-section"><div class="sy-section-title">Puentes (3+ d&#237;as seguidos)</div>';
   if(p.puentes.length===0){h+='<div class="sy-note">No hay puentes marcados para este a&#241;o.</div>';}
   else{
@@ -281,27 +297,11 @@ function renderSummaryContent(){
           } else {
             dateStr=ev.start.slice(8,10)+'/'+ev.start.slice(5,7)+' &#8594; '+ev.end.slice(8,10)+'/'+ev.end.slice(5,7);
           }
-          h+='<span class="sy-puente-ev">&#128197;&nbsp;'+escHtml(ev.title)+'<span class="sy-puente-ev-date">&nbsp;('+dateStr+')</span></span>';
+          h+='<div class="sy-puente-ev"><span>&#128197;&nbsp;'+escHtml(ev.title)+'</span><span class="sy-puente-ev-date">'+dateStr+'</span></div>';
         });
         h+='</div>';
       }
       h+='</div>';
-    });
-  }
-  h+='</div>';
-
-  // Días festivos/vacaciones sin puentes
-  var sueltos=p.festivosSueltos.concat(p.vacSueltos).sort(function(a,b){return a-b;});
-  h+='<div class="sy-section"><div class="sy-section-title">D&#237;as festivos/vacaciones sin puentes</div>';
-  if(sueltos.length===0){h+='<div class="sy-note">No hay d&#237;as sueltos fuera de puentes.</div>';}
-  else{
-    sueltos.forEach(function(dt){
-      var t=dayT(dt);
-      var tagLabel=t==='festivo'?'Festivo':'Vacaciones';
-      h+='<div class="sy-suelto"><div class="sy-suelto-row">';
-      h+='<span class="sy-suelto-date">'+fdd(dt)+'</span>';
-      h+='<span class="sy-list-tag '+t+'">'+tagLabel+'</span>';
-      h+='</div></div>';
     });
   }
   h+='</div>';
