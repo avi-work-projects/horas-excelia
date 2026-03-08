@@ -117,24 +117,59 @@
   document.getElementById('alarmTestBtn').addEventListener('click',function(e){
     e.stopPropagation();
     var panel=document.getElementById('alarmPanel');
+    var opening=!panel.classList.contains('open');
+    if(opening){
+      // Restaurar estado MacroDroid guardado
+      var useMacro=localStorage.getItem('excelia-alarm-macro')==='1';
+      var macroPort=parseInt(localStorage.getItem('excelia-alarm-port'),10)||5000;
+      var cb=document.getElementById('alarmUseMacro');
+      var portIn=document.getElementById('alarmMacroPort');
+      if(cb){cb.checked=useMacro;}
+      if(portIn){portIn.value=macroPort;portIn.disabled=!useMacro;}
+    }
     panel.classList.toggle('open');
   });
+
+  /* ── Alarma: toggle MacroDroid ── */
+  document.getElementById('alarmUseMacro').addEventListener('change',function(){
+    var checked=this.checked;
+    document.getElementById('alarmMacroPort').disabled=!checked;
+    localStorage.setItem('excelia-alarm-macro',checked?'1':'0');
+  });
+  document.getElementById('alarmMacroPort').addEventListener('change',function(){
+    localStorage.setItem('excelia-alarm-port',this.value||'5000');
+  });
+
   document.getElementById('alarmCreateBtn').addEventListener('click',function(){
     var h=Math.min(23,Math.max(0,parseInt(document.getElementById('alarmHour').value,10)||8));
     var m=Math.min(59,Math.max(0,parseInt(document.getElementById('alarmMin').value,10)||0));
     var msg=(document.getElementById('alarmMsg').value.trim()||'Horas Excelia');
-    var base=';action=android.intent.action.SET_ALARM'
-      +';S.android.intent.extra.alarm.MESSAGE='+encodeURIComponent(msg)
-      +';i.android.intent.extra.alarm.HOUR='+h
-      +';i.android.intent.extra.alarm.MINUTES='+m
-      +';b.android.intent.extra.alarm.SKIP_UI=false';
-
-    // window.open() abre un Chrome Custom Tab (modo navegador real)
-    // que SÍ procesa intent:// — en WebAPK standalone, location.href queda bloqueado por OriginOS
-    window.open('intent://alarm/#Intent'+base+';package=com.vivo.clock;end','_blank');
-
+    var useMacro=document.getElementById('alarmUseMacro').checked;
     document.getElementById('alarmPanel').classList.remove('open');
-    showToast('Abriendo reloj \u2014 '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),'success');
+
+    if(useMacro){
+      // MacroDroid Level 2: fetch a localhost (exento de mixed-content por ser loopback)
+      var port=parseInt(document.getElementById('alarmMacroPort').value,10)||5000;
+      var url='http://127.0.0.1:'+port+'/alarm'
+        +'?h='+h+'&m='+m+'&msg='+encodeURIComponent(msg);
+      showToast('Enviando a MacroDroid\u2026','success');
+      fetch(url,{mode:'no-cors'})
+        .then(function(){
+          showToast('\u23f0 Alarma enviada \u2014 '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),'success');
+        })
+        .catch(function(){
+          showToast('MacroDroid no responde. \u00bfEst\u00e1 activo?','error');
+        });
+    } else {
+      // Intento intent:// (puede funcionar en algunos dispositivos/versiones)
+      var base=';action=android.intent.action.SET_ALARM'
+        +';S.android.intent.extra.alarm.MESSAGE='+encodeURIComponent(msg)
+        +';i.android.intent.extra.alarm.HOUR='+h
+        +';i.android.intent.extra.alarm.MINUTES='+m
+        +';b.android.intent.extra.alarm.SKIP_UI=false';
+      window.open('intent://alarm/#Intent'+base+';package=com.vivo.clock;end','_blank');
+      showToast('Abriendo reloj \u2014 '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),'success');
+    }
   });
 
   /* ── Alarma: fallback .ics (recordatorio de calendario, 100% fiable) ── */
@@ -257,5 +292,16 @@
     bb.appendChild(dot);
     bb.appendChild(document.createTextNode(BUILD.sha||'local'));
     document.body.appendChild(bb);
+  }
+
+  /* ── Service Worker: notificación de nueva versión ── */
+  if('serviceWorker' in navigator&&navigator.serviceWorker.controller){
+    navigator.serviceWorker.addEventListener('message',function(ev){
+      if(ev.data&&ev.data.type==='SW_UPDATED'){
+        showToast('Nueva versi\u00f3n disponible','info',function(){
+          window.location.reload();
+        },'Actualizar');
+      }
+    });
   }
 })();

@@ -4,7 +4,7 @@
    → Cambiar CACHE_VER en cada deploy para forzar actualización
    ============================================================ */
 
-var CACHE_VER = 'v5';
+var CACHE_VER = 'v7';
 var CACHE_NAME = 'horas-excelia-' + CACHE_VER;
 
 var ASSETS = [
@@ -33,7 +33,7 @@ self.addEventListener('install', function(e) {
   self.skipWaiting();
 });
 
-/* ── Activar: limpiar caches antiguas ── */
+/* ── Activar: limpiar caches antiguas + notificar a la página ── */
 self.addEventListener('activate', function(e) {
   e.waitUntil(
     caches.keys().then(function(keys) {
@@ -41,6 +41,14 @@ self.addEventListener('activate', function(e) {
         keys.filter(function(k) { return k !== CACHE_NAME; })
             .map(function(k) { return caches.delete(k); })
       );
+    }).then(function() {
+      // Avisar a todas las pestañas abiertas de que hay nueva versión
+      return self.clients.matchAll({type:'window',includeUncontrolled:true})
+        .then(function(clients) {
+          clients.forEach(function(c) {
+            c.postMessage({type:'SW_UPDATED',version:CACHE_VER});
+          });
+        });
     })
   );
   self.clients.claim();
