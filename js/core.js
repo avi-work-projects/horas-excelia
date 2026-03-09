@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v12 \u2014 bot\u00f3n actualizar';
+var APP_VERSION = 'v13 \u2014 actualizar en men\u00fa';
 
 // ── Tema visual ──────────────────────────────────────────────
 var THEME_STORAGE_KEY='excelia-theme-v1';
