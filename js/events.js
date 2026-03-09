@@ -499,7 +499,8 @@ function renderEvMonthsView(){
 
 /* ── Render: contenido principal ────────────────────────── */
 function renderEvContent(){
-  var h='<div class="sy-header">';
+  var h=renderNavBar('events');
+  h+='<div class="sy-header">';
   h+='<button class="sy-back" id="evBack">&#8592;</button>';
   if(EV_VIEW==='upcoming'){
     h+='<div class="sy-year-nav"><div class="sy-year">Pr\u00f3ximos</div></div>';
@@ -513,7 +514,6 @@ function renderEvContent(){
     h+='<button class="today-btn" id="evToday" style="font-size:.7rem;padding:6px 12px">Hoy</button>';
   }
   h+='</div>';
-  h+=renderNavBar('events');
   h+='<div class="ev-hdr-sub">';
   h+='<button class="ev-view-toggle'+(EV_VIEW==='upcoming'?' active':'')+'" id="evViewUpcoming">Pr\u00f3ximos<br>Eventos</button>';
   h+='<button class="ev-view-toggle'+(EV_VIEW==='cal'?' active':'')+'" id="evViewCal">Calendario<br>por Meses</button>';
@@ -606,6 +606,7 @@ function openEvDetail(ev,container){
       var evMonth=parseInt(ev.start.slice(5,7),10)-1;
       closeEvDetail();
       closeSummary();
+      NAV_BACK=function(){closeEvents();setTimeout(openSummary,330);};
       setTimeout(function(){
         EV_YEAR=evYear;EV_MONTH=evMonth;EV_VIEW='cal';
         openEventsAt();
@@ -832,6 +833,7 @@ function bindEvFormEvents(){
 
 /* ── Apertura/cierre de la ventana ──────────────────────── */
 function openEvents(){
+  NAV_BACK=null;
   var now=new Date();EV_YEAR=now.getFullYear();EV_MONTH=now.getMonth();EV_VIEW='cal';
   var ov=document.getElementById('eventsOverlay');
   document.getElementById('eventsContent').innerHTML=renderEvContent();
@@ -862,7 +864,8 @@ function bindEvEvents(){
   document.getElementById('evBack').addEventListener('click',function(){
     if(EV_VIEW==='cal'&&EV_PREV_VIEW==='annual'){
       EV_VIEW='annual';EV_PREV_VIEW=null;refreshEvents();
-    }else{closeEvents();}
+    }else if(NAV_BACK){var fn=NAV_BACK;NAV_BACK=null;fn();}
+    else{closeEvents();}
   });
   bindNavBar('events',closeEvents);
   var prevBtn=document.getElementById('evPrev');

@@ -3,7 +3,10 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v14 \u2014 lista eventos + multiday';
+var APP_VERSION = 'v15 \u2014 nav hist\u00f3rico + UX';
+
+// ── Historial de navegación entre overlays ────────────────────
+var NAV_BACK=null; // función para "volver atrás" al pulsar ← en cualquier overlay
 
 // ── Tema visual ──────────────────────────────────────────────
 var THEME_STORAGE_KEY='excelia-theme-v1';
@@ -329,6 +332,8 @@ function renderNavBar(current){
 }
 
 function bindNavBar(current,closeFn){
+  // Map para reabrir el overlay actual (para NAV_BACK)
+  var reopenFns={summary:openSummary,econ:openEcon,bday:openBday,events:openEvents};
   document.querySelectorAll('.overlay-nav-bar .nav-bar-btn[data-nav]').forEach(function(btn){
     var key=btn.dataset.nav;
     if(key===current)return;
@@ -344,6 +349,13 @@ function bindNavBar(current,closeFn){
         else if(key==='alarm')document.getElementById('alarmTestBtn').click();
         else if(key==='menu'){var m=document.getElementById('dataMenu');if(m)m.classList.toggle('open');}
       };
+      // Guardar función de retorno: cerrar la nueva ventana + reabrir la actual
+      if(closeFn&&reopenFns[key]&&reopenFns[current]){
+        var reopen=reopenFns[current];
+        NAV_BACK=function(){closeFn();setTimeout(reopen,330);};
+      } else {
+        NAV_BACK=null;
+      }
       if(closeFn&&key!=='alarm'){closeFn();setTimeout(doNav,330);}
       else doNav();
     });
