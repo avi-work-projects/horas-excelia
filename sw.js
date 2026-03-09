@@ -4,7 +4,7 @@
    → Cambiar CACHE_VER en cada deploy para forzar actualización
    ============================================================ */
 
-var CACHE_VER = 'v10';
+var CACHE_VER = 'v11';
 var CACHE_NAME = 'horas-excelia-' + CACHE_VER;
 
 var ASSETS = [
@@ -27,13 +27,17 @@ var ASSETS = [
 self.addEventListener('install', function(e) {
   e.waitUntil(
     caches.open(CACHE_NAME).then(function(cache) {
-      return cache.addAll(ASSETS);
+      // cache:'no-cache' evita que el navegador sirva archivos viejos
+      // de su caché HTTP durante la instalación del SW
+      return cache.addAll(ASSETS.map(function(url) {
+        return new Request(url, {cache: 'no-cache'});
+      }));
     })
   );
   self.skipWaiting();
 });
 
-/* ── Activar: limpiar caches antiguas + notificar a la página ── */
+/* ── Activar: limpiar caches antiguas, reclamar clientes y notificar ── */
 self.addEventListener('activate', function(e) {
   e.waitUntil(
     caches.keys().then(function(keys) {
@@ -42,7 +46,10 @@ self.addEventListener('activate', function(e) {
             .map(function(k) { return caches.delete(k); })
       );
     }).then(function() {
-      // Avisar a todas las pestañas abiertas de que hay nueva versión
+      // Reclamar clientes DESPUÉS de limpiar caches antiguas
+      return self.clients.claim();
+    }).then(function() {
+      // Avisar a todas las pestañas de que hay nueva versión
       return self.clients.matchAll({type:'window',includeUncontrolled:true})
         .then(function(clients) {
           clients.forEach(function(c) {
@@ -51,7 +58,6 @@ self.addEventListener('activate', function(e) {
         });
     })
   );
-  self.clients.claim();
 });
 
 /* ── Fetch: network-first para HTML, cache-first para assets ── */
