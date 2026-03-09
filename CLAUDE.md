@@ -95,6 +95,14 @@ Estructura de un evento:
 Push a `main` → GitHub Actions → inject secrets → GitHub Pages.
 Test local: `py -m http.server 8082` desde la raíz del proyecto.
 
+## Versioning — INSTRUCCIONES OBLIGATORIAS
+- `APP_VERSION` en `js/core.js` (primera línea tras el comentario del bloque) — actualizar en CADA push significativo.
+- Formato: `'vN — descripción corta'` (ej: `'v10 — MacroDroid + versioning'`).
+- `CACHE_VER` en `sw.js` — mantener sincronizado con el número N de `APP_VERSION`.
+- El usuario ve la versión pulsando el botón `⋮` (arriba a la derecha) en cualquier overlay.
+- **SIEMPRE** incluir al final de cada respuesta tras un push: `✅ Versión desplegada: vN — descripción`
+- Esto permite al usuario verificar que su PWA instalada está actualizada sin ambigüedad.
+
 ## Patrones CSS relevantes
 - `.full-overlay` — base para todos los overlays deslizantes
 - `.sy-header` — cabecera sticky de overlay (compartida)

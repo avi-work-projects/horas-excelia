@@ -2,6 +2,9 @@
    CORE — Estado, utilidades, render principal
    ============================================================ */
 
+// ── Versión de la app (actualizar en cada push significativo) ─
+var APP_VERSION = 'v10 \u2014 MacroDroid + versioning';
+
 // ── Tema visual ──────────────────────────────────────────────
 var THEME_STORAGE_KEY='excelia-theme-v1';
 var THEME=(function(){try{var t=localStorage.getItem('excelia-theme-v1');if(t&&['dark','light','amoled'].indexOf(t)!==-1)return t;}catch(e){}return 'dark';})();

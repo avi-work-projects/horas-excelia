@@ -10,6 +10,13 @@
   load();
   render();
   updateBdayBtn();
+
+  /* ── Botón ⋮ versión (delegación global) ── */
+  document.addEventListener('click',function(e){
+    if(e.target.classList.contains('sy-info-btn')){
+      showToast(typeof APP_VERSION!=='undefined'?APP_VERSION:'—','success');
+    }
+  });
   updateEventsBtn();
 
   /* ── Navegación de mes ── */

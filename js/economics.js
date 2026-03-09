@@ -82,6 +82,7 @@ function renderEconContent(){
   h+='<button class="sy-back" id="ecBack">&#8592;</button>';
   h+='<div class="sy-year-nav"><button class="sy-nav" id="ecPrev">&#9664;</button><div class="sy-year">'+ECON_YEAR+'</div><button class="sy-nav" id="ecNext">&#9654;</button></div>';
   h+='<button class="sy-pdf" id="ecPdf">PDF</button>';
+  h+='<button class="sy-info-btn" title="Versión">&#8942;</button>';
   h+='</div>';
   h+=renderNavBar('econ');
   h+='<div class="sy-body">';

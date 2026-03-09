@@ -209,6 +209,7 @@ function renderBdayContent(){
     h+='<button class="sy-nav-icon" id="bdToEvents" title="Ir a Eventos">&#128197;</button>';
     h+='<button class="bday-add-btn" id="bdAdd">+ A\u00f1adir</button>';
   }
+  h+='<button class="sy-info-btn" title="Versión">&#8942;</button>';
   h+='</div>';
   h+=renderNavBar('bday');
   h+='<div class="bday-hdr-sub">';
