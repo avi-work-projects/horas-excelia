@@ -85,7 +85,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .month-stat.off .ms-num{color:var(--text-muted)}
 .ms-label{font-size:.82rem;color:var(--text-muted)}
 .ms-hrs{font-family:var(--mono);font-size:.78rem;color:var(--text-dim)}
-.data-actions{display:flex;gap:6px;overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none;padding-bottom:2px}
+.data-actions{display:flex;gap:6px;flex-wrap:wrap}
 .data-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);font-size:.9rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none}
 .data-btn:active{background:var(--surface3);transform:scale(.93)}
 .data-menu-wrap{position:relative}
