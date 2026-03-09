@@ -201,6 +201,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .sy-nav-icon{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);font-size:.85rem;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s}
 .sy-nav-icon:active{background:var(--surface3)}
 .sy-nav-icon.active-glow{border-color:var(--vacaciones);color:var(--vacaciones);box-shadow:0 0 8px rgba(255,179,71,.35)}
+.sy-info-btn{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:1.1rem;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;opacity:.6;transition:opacity .15s}
+.sy-info-btn:active{opacity:1;background:var(--surface3)}
 
 /* ── SHARED BODY ── */
 .sy-body{padding:16px 16px 40px;display:flex;flex-direction:column;gap:16px}

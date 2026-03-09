@@ -176,6 +176,7 @@ function renderSummaryContent(){
   h+='<button class="sy-back" id="syBack">&#8592;</button>';
   h+='<div class="sy-year-nav"><button class="sy-nav" id="syPrev">&#9664;</button><div class="sy-year">'+SUMMARY_YEAR+'</div><button class="sy-nav" id="syNext">&#9654;</button></div>';
   h+='<button class="sy-pdf" id="syPdf">PDF</button>';
+  h+='<button class="sy-info-btn" title="Versión">&#8942;</button>';
   h+='</div>';
   h+=renderNavBar('summary');
   h+='<div class="sy-body">';

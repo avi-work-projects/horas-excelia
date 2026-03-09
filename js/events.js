@@ -411,6 +411,7 @@ function renderEvContent(){
     h+='<button class="sy-nav-icon" id="evToBday" title="Cumplea\u00f1os">&#127874;</button>';
     h+='<button class="today-btn" id="evToday" style="font-size:.7rem;padding:6px 12px">Hoy</button>';
   }
+  h+='<button class="sy-info-btn" title="Versión">&#8942;</button>';
   h+='</div>';
   h+=renderNavBar('events');
   h+='<div class="ev-hdr-sub">';
