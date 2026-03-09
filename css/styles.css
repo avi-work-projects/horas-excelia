@@ -49,10 +49,11 @@ html{font-size:16px;-webkit-tap-highlight-color:transparent}
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100dvh;padding-bottom:env(safe-area-inset-bottom,20px);overflow-x:hidden}
 
 /* ── HEADER ── */
-.header{position:sticky;top:0;z-index:50;background:var(--hdr-bg);border-bottom:1px solid var(--border);padding:16px 20px 14px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
-.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+.header{position:sticky;top:0;z-index:50;background:var(--hdr-bg);border-bottom:1px solid var(--border);padding:10px 16px 14px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 .header h1{font-size:1.1rem;font-weight:600;letter-spacing:-0.02em}
 .header .subtitle{font-size:.75rem;color:var(--text-muted);font-weight:400}
+.header-brand{display:flex;align-items:center;gap:10px;margin:6px 0 2px}
+.app-logo{width:38px;height:38px;object-fit:contain;border-radius:8px;flex-shrink:0}
 .month-nav{display:flex;align-items:center;gap:6px;margin-top:14px}
 .month-nav .month-label{font-size:1.05rem;font-weight:600;min-width:170px;text-align:center;text-transform:capitalize}
 .nav-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:1.1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none}
@@ -84,7 +85,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .month-stat.off .ms-num{color:var(--text-muted)}
 .ms-label{font-size:.82rem;color:var(--text-muted)}
 .ms-hrs{font-family:var(--mono);font-size:.78rem;color:var(--text-dim)}
-.data-actions{display:flex;gap:6px;margin-left:auto}
+.data-actions{display:flex;gap:6px;overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none;padding-bottom:2px}
 .data-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);font-size:.9rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none}
 .data-btn:active{background:var(--surface3);transform:scale(.93)}
 .data-menu-wrap{position:relative}
@@ -408,20 +409,28 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-annual-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:4px 0}
 .ev-annual-month{background:var(--surface);border-radius:var(--radius-sm);padding:6px 4px 4px}
 .ev-annual-mname{font-size:.58rem;font-weight:700;text-transform:uppercase;color:var(--text-dim);text-align:center;margin-bottom:3px;letter-spacing:.04em}
-.ev-annual-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
+.ev-annual-cal{display:flex;flex-direction:column;gap:1px}
+.ev-annual-hdr-row{display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
 .ev-annual-hdr{font-size:.38rem;text-align:center;color:var(--text-dim);padding-bottom:1px}
+.ev-annual-week-outer{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;position:relative}
 .ev-annual-day{aspect-ratio:1;border-radius:2px;background:var(--surface2);position:relative;overflow:hidden}
 .ev-annual-day.out-m{background:transparent}
 .ev-annual-day.ann-today{outline:1.5px solid var(--accent);outline-offset:-1px}
 .ev-annual-dots{position:absolute;bottom:0;left:0;right:0;display:flex;pointer-events:none}
 .ev-annual-dots span{flex:1;height:3px;border-radius:0;flex-shrink:0}
+/* Barras multi-día en calendario anual */
+.ev-annual-bars-row{position:absolute;bottom:1px;left:0;right:0;height:3px;z-index:3;pointer-events:none;display:grid;grid-template-columns:repeat(7,1fr)}
+.ev-annual-mbar{height:3px;border-radius:2px}
+.ev-annual-mbar.a-starts{border-top-right-radius:0;border-bottom-right-radius:0}
+.ev-annual-mbar.a-ends{border-top-left-radius:0;border-bottom-left-radius:0}
+.ev-annual-mbar.a-mid{border-radius:0}
 .ev-annual-month{cursor:pointer;transition:opacity .15s}
 .ev-annual-pick-mode .ev-annual-day[data-ds]{cursor:crosshair}
 .ev-annual-pick-mode .ev-annual-day[data-ds]:hover{outline:1.5px solid rgba(255,255,255,.5);outline-offset:-1px}
 .ev-io-btn.ev-add-pick-mode{border-color:var(--c-orange)!important;color:var(--c-orange)!important}
 /* ── Feat 6: Puentes rallados en anual ── */
 .ev-annual-day.ev-annual-puente{background:repeating-linear-gradient(45deg,rgba(244,114,182,.35),rgba(244,114,182,.35) 2px,transparent 2px,transparent 5px)!important}
-.ev-annual-day.ev-annual-suelto-fest{background:repeating-linear-gradient(45deg,rgba(255,107,107,.45),rgba(255,107,107,.45) 2px,transparent 2px,transparent 5px)!important}
+.ev-annual-day.ev-annual-suelto-fest{background:repeating-linear-gradient(-45deg,rgba(255,30,30,.9),rgba(255,30,30,.9) 2px,transparent 2px,transparent 5px)!important}
 .ev-annual-day.ev-annual-suelto-vac{background:repeating-linear-gradient(45deg,rgba(255,179,71,.45),rgba(255,179,71,.45) 2px,transparent 2px,transparent 5px)!important}
 /* ── Feat 5: Barras multi-día en vista mensual ── */
 .ev-week-outer{position:relative;margin-bottom:2px}
