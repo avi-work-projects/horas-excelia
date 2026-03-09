@@ -421,6 +421,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-io-btn.ev-add-pick-mode{border-color:var(--c-orange)!important;color:var(--c-orange)!important}
 /* ── Feat 6: Puentes rallados en anual ── */
 .ev-annual-day.ev-annual-puente{background:repeating-linear-gradient(45deg,rgba(244,114,182,.35),rgba(244,114,182,.35) 2px,transparent 2px,transparent 5px)!important}
+.ev-annual-day.ev-annual-suelto-fest{background:repeating-linear-gradient(45deg,rgba(255,107,107,.45),rgba(255,107,107,.45) 2px,transparent 2px,transparent 5px)!important}
+.ev-annual-day.ev-annual-suelto-vac{background:repeating-linear-gradient(45deg,rgba(255,179,71,.45),rgba(255,179,71,.45) 2px,transparent 2px,transparent 5px)!important}
 /* ── Feat 5: Barras multi-día en vista mensual ── */
 .ev-week-outer{position:relative;margin-bottom:2px}
 .ev-bars-row{position:absolute;top:18px;left:0;right:0;z-index:2;pointer-events:none;display:grid;grid-template-columns:repeat(7,1fr);gap:1px;padding:0 1px}

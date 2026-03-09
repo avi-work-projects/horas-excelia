@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v15 \u2014 nav hist\u00f3rico + UX';
+var APP_VERSION = 'v16 \u2014 d\u00edas sueltos + filtros + UX';
 
 // ── Historial de navegación entre overlays ────────────────────
 var NAV_BACK=null; // función para "volver atrás" al pulsar ← en cualquier overlay

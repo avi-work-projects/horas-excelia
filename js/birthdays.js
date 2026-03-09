@@ -205,11 +205,9 @@ function renderBdayContent(){
     h+='<div class="sy-year-nav"><button class="sy-nav" id="bdPrev">&#9664;</button>';
     h+='<div class="sy-year">'+MN[BDAY_MONTH]+' '+BDAY_YEAR+'</div>';
     h+='<button class="sy-nav" id="bdNext">&#9654;</button></div>';
-    h+='<button class="sy-nav-icon" id="bdToEvents" title="Ir a Eventos">&#128197;</button>';
     h+='<button class="today-btn" id="bdToday" style="font-size:.7rem;padding:6px 12px">Hoy</button>';
   } else {
     h+='<div style="flex:1;text-align:center;font-size:.9rem;font-weight:600">Pr\u00f3ximos cumplea\u00f1os</div>';
-    h+='<button class="sy-nav-icon" id="bdToEvents" title="Ir a Eventos">&#128197;</button>';
     h+='<button class="bday-add-btn" id="bdAdd">+ A\u00f1adir</button>';
   }
   h+='</div>';
@@ -430,7 +428,6 @@ function bindBdayEvents(){
       applyBdaySearch(BDAY_SEARCH);
     });
   }
-  document.getElementById('bdToEvents').addEventListener('click',function(){closeBday();setTimeout(openEvents,330);});
   // Añadir
   var addBtn=document.getElementById('bdAdd');
   if(addBtn)addBtn.addEventListener('click',function(){openBdayForm(null);});

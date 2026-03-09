@@ -12,7 +12,7 @@ var EV_ANNUAL_ADD = false;
 var EV_PREV_VIEW = null;       // para volver al anual al pulsar ←
 var EV_LIST_SUBTAB = 'months'; // 'months' | 'types'
 var EV_TYPES_FILTER = 'all';   // 'all' | nombre de tipo
-var EV_TYPES_PAST = false;     // incluir eventos pasados en Por Tipos
+var EV_TYPES_PAST = true;      // excluir eventos pasados en Por Tipos (por defecto)
 var EV_COLORS = ['#38bdf8','#1d4ed8','#34d399','#fb923c','#ff6b6b','#c084fc','#fbbf24'];
 var EV_COLOR_TYPES = {
   '#38bdf8':'Viaje',
@@ -379,11 +379,12 @@ function renderEvUpcoming(){
 /* ── Render: calendario anual ───────────────────────────── */
 function renderEvAnnual(){
   var today=new Date();today.setHours(0,0,0,0);
-  var puenteMap={};
+  var puenteMap={},sueltoFestMap={},sueltoVacMap={};
   if(typeof computePuentes==='function'){
-    computePuentes(EV_YEAR).puentes.forEach(function(seq){
-      seq.forEach(function(x){puenteMap[evDk(x.date)]=true;});
-    });
+    var pData=computePuentes(EV_YEAR);
+    pData.puentes.forEach(function(seq){seq.forEach(function(x){puenteMap[evDk(x.date)]=true;});});
+    pData.festivosSueltos.forEach(function(dt){sueltoFestMap[evDk(dt)]=true;});
+    pData.vacSueltos.forEach(function(dt){sueltoVacMap[evDk(dt)]=true;});
   }
   // Multi-day event coverage map: ds → color
   var multiDayMap={};
@@ -419,7 +420,9 @@ function renderEvAnnual(){
         var isWknd=cur.getDay()===0||cur.getDay()===6;
         var dt=inM&&typeof dayT==='function'?dayT(cur):'';
         var inPuente=inM&&puenteMap[ds];
-        var cls='ev-annual-day'+(inM?'':' out-m')+(isT?' ann-today':'')+(inPuente?' ev-annual-puente':'');
+        var isSueltoFest=inM&&sueltoFestMap[ds];
+        var isSueltoVac=inM&&sueltoVacMap[ds];
+        var cls='ev-annual-day'+(inM?'':' out-m')+(isT?' ann-today':'')+(inPuente?' ev-annual-puente':isSueltoFest?' ev-annual-suelto-fest':isSueltoVac?' ev-annual-suelto-vac':'');
         var bg='';
         if(inM){
           if(dt==='festivo')         bg='rgba(255,107,107,.65)';
@@ -457,7 +460,7 @@ function renderEvByTypes(){
   var today=new Date();today.setHours(0,0,0,0);
   var typeOrder=['Viaje','Asturias','Recordatorio de Gestiones','Planes y Quedadas','Otros'];
   var h='<div class="ev-types-controls">';
-  h+='<label class="ev-types-past-label"><input type="checkbox" id="evTypesPast"'+(EV_TYPES_PAST?' checked':'')+'> Incluir pasados</label>';
+  h+='<label class="ev-types-past-label"><input type="checkbox" id="evTypesPast"'+(EV_TYPES_PAST?' checked':'')+'> Excluir pasados</label>';
   h+='<select class="ev-types-select" id="evTypesFilter">';
   h+='<option value="all"'+(EV_TYPES_FILTER==='all'?' selected':'')+'>Todos los tipos</option>';
   typeOrder.forEach(function(t){
@@ -468,7 +471,7 @@ function renderEvByTypes(){
   var byType={};typeOrder.forEach(function(t){byType[t]=[];});
   EVENTS.forEach(function(ev){
     var evEnd=ev.end?new Date(ev.end+'T00:00:00'):new Date(ev.start+'T00:00:00');
-    if(!EV_TYPES_PAST&&!ev.repeat&&evEnd<today)return;
+    if(EV_TYPES_PAST&&!ev.repeat&&evEnd<today)return;
     var type=EV_COLOR_TYPES[ev.color]||'Otros';
     (byType[type]||byType['Otros']).push(ev);
   });
@@ -483,18 +486,13 @@ function renderEvByTypes(){
     list.forEach(function(ev){h+=renderEvListItem(ev);});
     h+='</div>';
   });
-  if(!anyShown)h+='<div class="sy-note">No hay eventos'+(EV_TYPES_PAST?'':' futuros')+' de este tipo.</div>';
+  if(!anyShown)h+='<div class="sy-note">No hay eventos'+(EV_TYPES_PAST?' futuros':'')+' de este tipo.</div>';
   return h;
 }
 
-/* ── Render: vista "Lista de Eventos" (por meses o por tipos) ── */
+/* ── Render: vista "Eventos" (lista por tipos) ── */
 function renderEvMonthsView(){
-  var h='<div class="ev-list-subtabs">';
-  h+='<button class="ev-list-subtab'+(EV_LIST_SUBTAB==='months'?' active':'')+'" id="evListSubMonths">Por Meses</button>';
-  h+='<button class="ev-list-subtab'+(EV_LIST_SUBTAB==='types'?' active':'')+'" id="evListSubTypes">Por Tipos</button>';
-  h+='</div>';
-  h+=(EV_LIST_SUBTAB==='months'?renderEvByMonths():renderEvByTypes());
-  return h;
+  return renderEvByTypes();
 }
 
 /* ── Render: contenido principal ────────────────────────── */
@@ -504,13 +502,13 @@ function renderEvContent(){
   h+='<button class="sy-back" id="evBack">&#8592;</button>';
   if(EV_VIEW==='upcoming'){
     h+='<div class="sy-year-nav"><div class="sy-year">Pr\u00f3ximos</div></div>';
-    h+='<button class="sy-nav-icon" id="evToBday" title="Cumplea\u00f1os">&#127874;</button>';
+  } else if(EV_VIEW==='months'){
+    h+='<div class="sy-year-nav"><div class="sy-year">Eventos</div></div>';
   } else {
     h+='<div class="sy-year-nav"><button class="sy-nav" id="evPrev">&#9664;</button>';
     if(EV_VIEW==='annual')h+='<div class="sy-year">'+EV_YEAR+'</div>';
     else h+='<div class="sy-year">'+MN[EV_MONTH]+' '+EV_YEAR+'</div>';
     h+='<button class="sy-nav" id="evNext">&#9654;</button></div>';
-    h+='<button class="sy-nav-icon" id="evToBday" title="Cumplea\u00f1os">&#127874;</button>';
     h+='<button class="today-btn" id="evToday" style="font-size:.7rem;padding:6px 12px">Hoy</button>';
   }
   h+='</div>';
@@ -518,7 +516,7 @@ function renderEvContent(){
   h+='<button class="ev-view-toggle'+(EV_VIEW==='upcoming'?' active':'')+'" id="evViewUpcoming">Pr\u00f3ximos<br>Eventos</button>';
   h+='<button class="ev-view-toggle'+(EV_VIEW==='cal'?' active':'')+'" id="evViewCal">Calendario<br>por Meses</button>';
   h+='<button class="ev-view-toggle'+(EV_VIEW==='annual'?' active':'')+'" id="evViewAnnual">Calendario<br>Anual</button>';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='months'?' active':'')+'" id="evViewMonths">Lista de<br>Eventos</button>';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='months'?' active':'')+'" id="evViewMonths">Eventos</button>';
   h+='</div>';
   h+='<div class="sy-body">';
   if(EV_VIEW==='cal')h+=renderEvCalMonth();
@@ -886,7 +884,6 @@ function bindEvEvents(){
   document.getElementById('evViewCal').addEventListener('click',function(){EV_VIEW='cal';EV_ANNUAL_ADD=false;EV_PREV_VIEW=null;refreshEvents();});
   document.getElementById('evViewAnnual').addEventListener('click',function(){EV_VIEW='annual';EV_ANNUAL_ADD=false;refreshEvents();});
   document.getElementById('evViewMonths').addEventListener('click',function(){EV_VIEW='months';EV_ANNUAL_ADD=false;refreshEvents();});
-  document.getElementById('evToBday').addEventListener('click',function(){closeEvents();setTimeout(openBday,330);});
   document.getElementById('evAdd').addEventListener('click',function(){
     if(EV_VIEW==='annual'){EV_ANNUAL_ADD=!EV_ANNUAL_ADD;refreshEvents();}
     else{openEvForm(null);}
@@ -939,11 +936,6 @@ function bindEvEvents(){
       if(ev)openEvDetail(ev);
     });
   });
-  // Subtabs Lista de Eventos
-  var subM=document.getElementById('evListSubMonths');
-  if(subM)subM.addEventListener('click',function(){EV_LIST_SUBTAB='months';refreshEvents();});
-  var subT=document.getElementById('evListSubTypes');
-  if(subT)subT.addEventListener('click',function(){EV_LIST_SUBTAB='types';refreshEvents();});
   var pastChk=document.getElementById('evTypesPast');
   if(pastChk)pastChk.addEventListener('change',function(){EV_TYPES_PAST=this.checked;refreshEvents();});
   var typeSel=document.getElementById('evTypesFilter');
