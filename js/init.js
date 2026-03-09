@@ -11,12 +11,9 @@
   render();
   updateBdayBtn();
 
-  /* ── Botón ⋮ versión (delegación global) ── */
-  document.addEventListener('click',function(e){
-    if(e.target.classList.contains('sy-info-btn')){
-      showToast(typeof APP_VERSION!=='undefined'?APP_VERSION:'—','success');
-    }
-  });
+  /* ── Versión en menú principal ── */
+  var _vl=document.getElementById('appVersionLabel');
+  if(_vl)_vl.textContent=typeof APP_VERSION!=='undefined'?APP_VERSION:'—';
   updateEventsBtn();
 
   /* ── Navegación de mes ── */
