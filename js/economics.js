@@ -78,12 +78,12 @@ function econBarChart(data,labels,color){
 
 function renderEconContent(){
   var e=computeEcon(ECON_YEAR);
-  var h='<div class="sy-header">';
+  var h=renderNavBar('econ');
+  h+='<div class="sy-header">';
   h+='<button class="sy-back" id="ecBack">&#8592;</button>';
   h+='<div class="sy-year-nav"><button class="sy-nav" id="ecPrev">&#9664;</button><div class="sy-year">'+ECON_YEAR+'</div><button class="sy-nav" id="ecNext">&#9654;</button></div>';
   h+='<button class="sy-pdf" id="ecPdf">PDF</button>';
   h+='</div>';
-  h+=renderNavBar('econ');
   h+='<div class="sy-body">';
 
   // Tarifa configurable
@@ -183,6 +183,7 @@ function renderEconContent(){
 }
 
 function openEcon(){
+  NAV_BACK=null;
   ECON_YEAR=CY;
   var ov=document.getElementById('econOverlay');
   document.getElementById('econContent').innerHTML=renderEconContent();
@@ -197,7 +198,9 @@ function closeEcon(){
 }
 
 function bindEconEvents(){
-  document.getElementById('ecBack').addEventListener('click',closeEcon);
+  document.getElementById('ecBack').addEventListener('click',function(){
+    if(NAV_BACK){var fn=NAV_BACK;NAV_BACK=null;fn();}else{closeEcon();}
+  });
   bindNavBar('econ',closeEcon);
   document.getElementById('ecPdf').addEventListener('click',function(){
     document.body.classList.add('print-econ');

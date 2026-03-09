@@ -198,7 +198,8 @@ function renderBdayList(){
 /* ── Contenido principal ──────────────────────────────────── */
 function renderBdayContent(){
   var isUpcoming=BDAY_VIEW==='upcoming';
-  var h='<div class="sy-header">';
+  var h=renderNavBar('bday');
+  h+='<div class="sy-header">';
   h+='<button class="sy-back" id="bdBack">&#8592;</button>';
   if(!isUpcoming){
     h+='<div class="sy-year-nav"><button class="sy-nav" id="bdPrev">&#9664;</button>';
@@ -212,7 +213,6 @@ function renderBdayContent(){
     h+='<button class="bday-add-btn" id="bdAdd">+ A\u00f1adir</button>';
   }
   h+='</div>';
-  h+=renderNavBar('bday');
   h+='<div class="bday-hdr-sub">';
   h+='<button class="bday-view-toggle'+(BDAY_VIEW==='upcoming'?' active':'')+'" id="bdViewUpcoming">Pr\u00f3ximos</button>';
   h+='<button class="bday-view-toggle'+(BDAY_VIEW==='cal'?' active':'')+'" id="bdViewCal">Calendario</button>';
@@ -371,6 +371,7 @@ function bindBdayFormEvents(){
 
 /* ── Apertura/cierre ventana ──────────────────────────────── */
 function openBday(){
+  NAV_BACK=null;
   var now=new Date();BDAY_YEAR=now.getFullYear();BDAY_MONTH=now.getMonth();BDAY_VIEW='upcoming';
   var ov=document.getElementById('bdayOverlay');
   document.getElementById('bdayContent').innerHTML=renderBdayContent();
@@ -402,7 +403,9 @@ function applyBdaySearch(q){
 }
 
 function bindBdayEvents(){
-  document.getElementById('bdBack').addEventListener('click',closeBday);
+  document.getElementById('bdBack').addEventListener('click',function(){
+    if(NAV_BACK){var fn=NAV_BACK;NAV_BACK=null;fn();}else{closeBday();}
+  });
   bindNavBar('bday',closeBday);
   var prevBtn=document.getElementById('bdPrev');
   if(prevBtn)prevBtn.addEventListener('click',function(){

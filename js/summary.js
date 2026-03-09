@@ -172,12 +172,12 @@ function renderSummaryContent(){
   if(!EXCL_FEST)dTitleParts.push('festivos');
   if(!EXCL_VAC)dTitleParts.push('vacaciones');
   var dtTitle=dTitleParts.join(' + ');
-  var h='<div class="sy-header">';
+  var h=renderNavBar('summary');
+  h+='<div class="sy-header">';
   h+='<button class="sy-back" id="syBack">&#8592;</button>';
   h+='<div class="sy-year-nav"><button class="sy-nav" id="syPrev">&#9664;</button><div class="sy-year">'+SUMMARY_YEAR+'</div><button class="sy-nav" id="syNext">&#9654;</button></div>';
   h+='<button class="sy-pdf" id="syPdf">PDF</button>';
   h+='</div>';
-  h+=renderNavBar('summary');
   h+='<div class="sy-body">';
   // Checkboxes quitar festivos/vacaciones
   h+='<div class="excl-row">';
@@ -369,6 +369,7 @@ function renderSummaryContent(){
 }
 
 function openSummary(){
+  NAV_BACK=null;
   SUMMARY_YEAR=CY;
   var ov=document.getElementById('summaryOverlay');
   document.getElementById('summaryContent').innerHTML=renderSummaryContent();
@@ -383,7 +384,9 @@ function closeSummary(){
 }
 
 function bindSummaryEvents(){
-  document.getElementById('syBack').addEventListener('click',closeSummary);
+  document.getElementById('syBack').addEventListener('click',function(){
+    if(NAV_BACK){var fn=NAV_BACK;NAV_BACK=null;fn();}else{closeSummary();}
+  });
   bindNavBar('summary',closeSummary);
   document.getElementById('syPdf').addEventListener('click',function(){
     document.body.classList.add('print-summary');
