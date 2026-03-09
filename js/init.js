@@ -292,17 +292,6 @@
   applyTheme(THEME);
   updateThemeBtn();
 
-  /* ── Build badge ── */
-  if(typeof BUILD!=='undefined'&&BUILD){
-    var bb=document.createElement('div');
-    bb.className='build-badge';
-    var dot=document.createElement('div');
-    dot.className='build-dot';
-    dot.style.background=BUILD.ok?'#34d399':'#ff6b6b';
-    bb.appendChild(dot);
-    bb.appendChild(document.createTextNode(BUILD.sha||'local'));
-    document.body.appendChild(bb);
-  }
 
   /* ── SW update: botón Actualizar en menú ⋯ ── */
   var _swUpdBtn=document.getElementById('swUpdBtn');

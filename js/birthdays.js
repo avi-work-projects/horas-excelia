@@ -5,6 +5,7 @@
 var BDAY_STORAGE_KEY='excelia-bdays-v1';
 var BDAY_YEAR=new Date().getFullYear(), BDAY_MONTH=new Date().getMonth(), BDAY_VIEW='upcoming';
 var BDAY_EDIT=null;
+var BDAY_SEARCH='';
 
 // Paleta de 10 colores rotativos
 var BDAY_PALETTE=['#6c8cff','#34d399','#fb923c','#ff6b6b','#c084fc','#fbbf24','#38bdf8','#f472b6','#a3e635','#fb7185'];
@@ -170,19 +171,20 @@ function renderBdayCalMonth(){
 /* ── Lista por meses ──────────────────────────────────────── */
 function renderBdayList(){
   if(!BDAYS.length)return '<div class="sy-note">No hay cumplea\u00f1os cargados. Importa un archivo JSON o configura el secreto BIRTHDAYS en GitHub.</div>';
+  var h='<div class="bday-search-wrap"><input class="bday-search-input" id="bdSearch" type="text" placeholder="Buscar persona\u2026" value="'+escHtml(BDAY_SEARCH)+'"></div>';
   var byM=[];for(var m=0;m<12;m++)byM.push([]);
   BDAYS.forEach(function(b){if(b.month>=1&&b.month<=12)byM[b.month-1].push(b);});
-  var h='';
   byM.forEach(function(list,m){
     if(!list.length)return;
     list.sort(function(a,b){return a.day-b.day;});
-    h+='<div class="sy-section"><div class="bday-month-hdr">'+MN[m]+'</div>';
+    h+='<div class="sy-section bday-month-section"><div class="bday-month-hdr">'+MN[m]+'</div>';
     list.forEach(function(b){
       var dl=daysUntil(b.month,b.day);
       var lbl=dl===0?'\u00a1Hoy!':dl===1?'Ma\u00f1ana':'en '+dl+'d';
       var cls='bday-list-left'+(dl===0?' today-lbl':dl<=7?' near':'');
       var color=getBdayColor(b);
-      h+='<div class="bday-list-item" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'">';
+      var sname=escHtml(b.name.toLowerCase());
+      h+='<div class="bday-list-item" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" data-sname="'+sname+'">';
       h+='<span class="bday-list-day" style="color:'+color+'">'+b.day+'</span>';
       h+='<span class="bday-list-name">'+bdName(b.name)+'</span>';
       h+='<span class="'+cls+'">'+lbl+'</span>';
@@ -387,6 +389,18 @@ function refreshBday(){
   bindBdayEvents();
 }
 
+function applyBdaySearch(q){
+  document.querySelectorAll('.bday-month-section').forEach(function(sec){
+    var vis=0;
+    sec.querySelectorAll('.bday-list-item').forEach(function(item){
+      var match=!q||(item.dataset.sname&&item.dataset.sname.indexOf(q)>=0);
+      item.style.display=match?'':'none';
+      if(match)vis++;
+    });
+    sec.style.display=vis?'':'none';
+  });
+}
+
 function bindBdayEvents(){
   document.getElementById('bdBack').addEventListener('click',closeBday);
   bindNavBar('bday',closeBday);
@@ -402,9 +416,17 @@ function bindBdayEvents(){
   if(todayBtn)todayBtn.addEventListener('click',function(){
     var n=new Date();BDAY_YEAR=n.getFullYear();BDAY_MONTH=n.getMonth();refreshBday();
   });
-  document.getElementById('bdViewUpcoming').addEventListener('click',function(){BDAY_VIEW='upcoming';refreshBday();});
-  document.getElementById('bdViewCal').addEventListener('click',function(){BDAY_VIEW='cal';refreshBday();});
+  document.getElementById('bdViewUpcoming').addEventListener('click',function(){BDAY_SEARCH='';BDAY_VIEW='upcoming';refreshBday();});
+  document.getElementById('bdViewCal').addEventListener('click',function(){BDAY_SEARCH='';BDAY_VIEW='cal';refreshBday();});
   document.getElementById('bdViewList').addEventListener('click',function(){BDAY_VIEW='list';refreshBday();});
+  var srch=document.getElementById('bdSearch');
+  if(srch){
+    if(BDAY_SEARCH){srch.value=BDAY_SEARCH;applyBdaySearch(BDAY_SEARCH);}
+    srch.addEventListener('input',function(){
+      BDAY_SEARCH=this.value.trim().toLowerCase();
+      applyBdaySearch(BDAY_SEARCH);
+    });
+  }
   document.getElementById('bdToEvents').addEventListener('click',function(){closeBday();setTimeout(openEvents,330);});
   // Añadir
   var addBtn=document.getElementById('bdAdd');

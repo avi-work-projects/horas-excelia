@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v13 \u2014 actualizar en men\u00fa';
+var APP_VERSION = 'v14 \u2014 lista eventos + multiday';
 
 // ── Tema visual ──────────────────────────────────────────────
 var THEME_STORAGE_KEY='excelia-theme-v1';
