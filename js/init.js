@@ -304,18 +304,21 @@
     document.body.appendChild(bb);
   }
 
-  /* ── Service Worker: notificación de nueva versión ── */
+  /* ── SW update bar: botón Actualizar ── */
+  var _swUpdBtn=document.getElementById('swUpdBtn');
+  if(_swUpdBtn)_swUpdBtn.addEventListener('click',function(){window.location.reload();});
+
+  /* ── Service Worker: barra persistente de nueva versión ── */
   if('serviceWorker' in navigator){
     var _swShown=false;
-    function _showUpdateToast(){
+    function _showUpdateBar(){
       if(_swShown)return;
       _swShown=true;
-      showToast('Nueva versi\u00f3n disponible','info',function(){
-        window.location.reload();
-      },'Actualizar');
+      var bar=document.getElementById('swUpdateBar');
+      if(bar)bar.classList.add('show');
     }
     // Método 1: controllerchange — el más fiable (skipWaiting activó el nuevo SW)
-    navigator.serviceWorker.addEventListener('controllerchange',_showUpdateToast);
+    navigator.serviceWorker.addEventListener('controllerchange',_showUpdateBar);
     // Método 2: updatefound — detecta instalación en curso
     navigator.serviceWorker.ready.then(function(reg){
       reg.addEventListener('updatefound',function(){
@@ -323,14 +326,14 @@
         if(!nw)return;
         nw.addEventListener('statechange',function(){
           if(nw.state==='installed'&&navigator.serviceWorker.controller){
-            _showUpdateToast();
+            _showUpdateBar();
           }
         });
       });
     });
     // Método 3: mensaje del SW (compatibilidad)
     navigator.serviceWorker.addEventListener('message',function(ev){
-      if(ev.data&&ev.data.type==='SW_UPDATED')_showUpdateToast();
+      if(ev.data&&ev.data.type==='SW_UPDATED')_showUpdateBar();
     });
   }
 })();
