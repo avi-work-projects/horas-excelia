@@ -9,6 +9,10 @@ var EV_VIEW = 'cal';  // 'cal' | 'months' | 'upcoming' | 'annual'
 var EV_EDIT = null;
 var EV_FORM_CONTAINER = null;  // overlay donde se renderiza el formulario (null = eventsOverlay)
 var EV_ANNUAL_ADD = false;
+var EV_PREV_VIEW = null;       // para volver al anual al pulsar ←
+var EV_LIST_SUBTAB = 'months'; // 'months' | 'types'
+var EV_TYPES_FILTER = 'all';   // 'all' | nombre de tipo
+var EV_TYPES_PAST = false;     // incluir eventos pasados en Por Tipos
 var EV_COLORS = ['#38bdf8','#1d4ed8','#34d399','#fb923c','#ff6b6b','#c084fc','#fbbf24'];
 var EV_COLOR_TYPES = {
   '#38bdf8':'Viaje',
@@ -96,14 +100,15 @@ function updateEventsBtn(){
 /* ── Render: calendario mensual ─────────────────────────── */
 function renderEvCalMonth(){
   var today=new Date();today.setHours(0,0,0,0);
-  // Precompute puente map for this year
   var puenteMap={};
   if(typeof computePuentes==='function'){
-    var pData=computePuentes(EV_YEAR);
-    pData.puentes.forEach(function(seq){
+    computePuentes(EV_YEAR).puentes.forEach(function(seq){
       seq.forEach(function(x){puenteMap[evDk(x.date)]=true;});
     });
   }
+  // Multi-day events (non-repeating, end strictly after start)
+  var multiEvs=EVENTS.filter(function(ev){return !ev.repeat&&ev.end&&ev.end>ev.start;});
+  var multiIds={};multiEvs.forEach(function(ev){multiIds[ev.id]=true;});
   var DN7=['L','M','X','J','V','S','D'];
   var h='<div class="ev-week-hdr">';
   DN7.forEach(function(n){h+='<div>'+n+'</div>';});
@@ -114,9 +119,46 @@ function renderEvCalMonth(){
   var dow=cur.getDay();var off=dow===0?6:dow-1;
   cur.setDate(cur.getDate()-off);
   while(cur<=last){
+    // Build week days array
+    var wk=[];
+    for(var wi=0;wi<7;wi++){wk.push(new Date(cur.getFullYear(),cur.getMonth(),cur.getDate()+wi));}
+    var wStart=wk[0],wEnd=wk[6];
+    // Find intersecting multi-day events
+    var wMulti=[];
+    multiEvs.forEach(function(ev){
+      var es=new Date(ev.start+'T00:00:00'),ee=new Date(ev.end+'T00:00:00');
+      if(ee<wStart||es>wEnd)return;
+      var cs=Math.max(0,Math.round((es-wStart)/86400000));
+      var ce=Math.min(6,Math.round((ee-wStart)/86400000));
+      wMulti.push({ev:ev,cs:cs,ce:ce,starts:es>=wStart,ends:ee<=wEnd,row:-1});
+    });
+    // Greedy row assignment (max 3)
+    var rowOcc=[[],[],[]];
+    wMulti.forEach(function(it){
+      for(var r=0;r<3;r++){
+        var ok=true;
+        for(var j=0;j<rowOcc[r].length;j++){if(it.cs<=rowOcc[r][j][1]&&it.ce>=rowOcc[r][j][0]){ok=false;break;}}
+        if(ok){it.row=r;rowOcc[r].push([it.cs,it.ce]);break;}
+      }
+    });
+    var activeRows=0;wMulti.forEach(function(it){if(it.row>=0)activeRows=Math.max(activeRows,it.row+1);});
+    h+='<div class="ev-week-outer">';
+    if(activeRows>0){
+      h+='<div class="ev-bars-row">';
+      wMulti.forEach(function(it){
+        if(it.row<0)return;
+        var ev=it.ev;
+        var sc=it.starts&&it.ends?'':it.starts?' starts':it.ends?' ends':' continues';
+        var showT=it.starts||(it.cs===0);
+        h+='<div class="ev-multi-bar'+sc+'" data-id="'+ev.id+'"'
+          +' style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';background:'+ev.color+'22;border-color:'+ev.color+';color:'+ev.color+'">'
+          +(showT?escHtml(ev.title):'')+'</div>';
+      });
+      h+='</div>';
+    }
     h+='<div class="ev-week-grid">';
-    for(var i=0;i<7;i++){
-      var d=new Date(cur);
+    for(var di=0;di<7;di++){
+      var d=wk[di];
       var inM=d.getMonth()===EV_MONTH;
       var isTod=d.getTime()===today.getTime();
       var past=inM&&d<today;
@@ -126,15 +168,15 @@ function renderEvCalMonth(){
       var dt=inM?dayT(d):'';
       var inPuente=inM&&puenteMap[ds];
       var cls='ev-cell'+(inM?'':' out-m')+(isTod?' today-ev':'')+(past?' past-cal-day':'')+(edow===0||edow===6?' weekend':'')+(dt&&dt!=='normal'?' ev-day-'+dt:'')+(inPuente?' ev-puente':'');
-      h+='<div class="'+cls+'" data-ds="'+ds+'">';
-      h+='<div class="ev-num">'+d.getDate()+'</div>';
+      h+='<div class="'+cls+'" data-ds="'+ds+'"><div class="ev-num">'+d.getDate()+'</div>';
       evs.forEach(function(ev){
+        if(multiIds[ev.id])return;
         h+='<div class="ev-badge" data-id="'+ev.id+'" style="color:'+ev.color+';border-left-color:'+ev.color+';background:'+ev.color+'22">'+escHtml(ev.title)+'</div>';
       });
       h+='</div>';
-      cur.setDate(cur.getDate()+1);
     }
-    h+='</div>';
+    h+='</div></div>'; // ev-week-grid + ev-week-outer
+    cur.setDate(cur.getDate()+7);
   }
   return h;
 }
@@ -337,13 +379,24 @@ function renderEvUpcoming(){
 /* ── Render: calendario anual ───────────────────────────── */
 function renderEvAnnual(){
   var today=new Date();today.setHours(0,0,0,0);
-  // Precompute puente map for the displayed year
   var puenteMap={};
   if(typeof computePuentes==='function'){
     computePuentes(EV_YEAR).puentes.forEach(function(seq){
       seq.forEach(function(x){puenteMap[evDk(x.date)]=true;});
     });
   }
+  // Multi-day event coverage map: ds → color
+  var multiDayMap={};
+  EVENTS.forEach(function(ev){
+    if(ev.repeat||!ev.end||ev.end<=ev.start)return;
+    var es=new Date(ev.start+'T00:00:00'),ee=new Date(ev.end+'T00:00:00');
+    var d=new Date(es);
+    while(d<=ee){
+      var k=evDk(d);
+      if(!multiDayMap[k])multiDayMap[k]=ev.color;
+      d.setDate(d.getDate()+1);
+    }
+  });
   var MNS=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
   var addMode=EV_ANNUAL_ADD;
   var h='<div class="ev-annual-grid'+(addMode?' ev-annual-pick-mode':'')+'">';
@@ -366,16 +419,19 @@ function renderEvAnnual(){
         var isWknd=cur.getDay()===0||cur.getDay()===6;
         var dt=inM&&typeof dayT==='function'?dayT(cur):'';
         var inPuente=inM&&puenteMap[ds];
-        var cls='ev-annual-day'+(inM?'':' out-m')+(isT?' ann-today':'');
+        var cls='ev-annual-day'+(inM?'':' out-m')+(isT?' ann-today':'')+(inPuente?' ev-annual-puente':'');
         var bg='';
         if(inM){
-          if(inPuente)         bg='rgba(244,114,182,.55)';
-          else if(dt==='festivo')    bg='rgba(255,107,107,.65)';
+          if(dt==='festivo')         bg='rgba(255,107,107,.65)';
           else if(dt==='vacaciones') bg='rgba(255,179,71,.65)';
           else if(dt==='ausencia')   bg='rgba(192,132,252,.65)';
-          else if(isWknd)      bg='rgba(160,160,200,.22)';
+          else if(isWknd)            bg='rgba(160,160,200,.22)';
         }
-        var sty=bg?' style="background:'+bg+'"':'';
+        var multiColor=inM&&multiDayMap[ds];
+        var styParts=[];
+        if(bg)styParts.push('background:'+bg);
+        if(multiColor)styParts.push('box-shadow:inset 0 -3px 0 0 '+multiColor);
+        var sty=styParts.length?' style="'+styParts.join(';')+'"':'';
         var dsAttr=inM?' data-ds="'+ds+'"':'';
         var dotsHtml='';
         if(inM&&evs.length){
@@ -393,6 +449,51 @@ function renderEvAnnual(){
     h+='</div></div>';
   }
   h+='</div>';
+  return h;
+}
+
+/* ── Render: lista de eventos por tipos ─────────────────── */
+function renderEvByTypes(){
+  var today=new Date();today.setHours(0,0,0,0);
+  var typeOrder=['Viaje','Asturias','Recordatorio de Gestiones','Planes y Quedadas','Otros'];
+  var h='<div class="ev-types-controls">';
+  h+='<label class="ev-types-past-label"><input type="checkbox" id="evTypesPast"'+(EV_TYPES_PAST?' checked':'')+'> Incluir pasados</label>';
+  h+='<select class="ev-types-select" id="evTypesFilter">';
+  h+='<option value="all"'+(EV_TYPES_FILTER==='all'?' selected':'')+'>Todos los tipos</option>';
+  typeOrder.forEach(function(t){
+    h+='<option value="'+escHtml(t)+'"'+(EV_TYPES_FILTER===t?' selected':'')+'>'+escHtml(t)+'</option>';
+  });
+  h+='</select></div>';
+  if(!EVENTS.length)return h+'<div class="sy-note">No hay eventos. Pulsa &quot;+ A\u00f1adir&quot; para crear uno.</div>';
+  var byType={};typeOrder.forEach(function(t){byType[t]=[];});
+  EVENTS.forEach(function(ev){
+    var evEnd=ev.end?new Date(ev.end+'T00:00:00'):new Date(ev.start+'T00:00:00');
+    if(!EV_TYPES_PAST&&!ev.repeat&&evEnd<today)return;
+    var type=EV_COLOR_TYPES[ev.color]||'Otros';
+    (byType[type]||byType['Otros']).push(ev);
+  });
+  var typesToShow=EV_TYPES_FILTER==='all'?typeOrder:[EV_TYPES_FILTER];
+  var anyShown=false;
+  typesToShow.forEach(function(type){
+    var list=byType[type]||[];
+    if(!list.length)return;
+    anyShown=true;
+    list.sort(function(a,b){return a.start<b.start?-1:1;});
+    h+='<div class="sy-section"><div class="bday-month-hdr">'+escHtml(type)+'</div>';
+    list.forEach(function(ev){h+=renderEvListItem(ev);});
+    h+='</div>';
+  });
+  if(!anyShown)h+='<div class="sy-note">No hay eventos'+(EV_TYPES_PAST?'':' futuros')+' de este tipo.</div>';
+  return h;
+}
+
+/* ── Render: vista "Lista de Eventos" (por meses o por tipos) ── */
+function renderEvMonthsView(){
+  var h='<div class="ev-list-subtabs">';
+  h+='<button class="ev-list-subtab'+(EV_LIST_SUBTAB==='months'?' active':'')+'" id="evListSubMonths">Por Meses</button>';
+  h+='<button class="ev-list-subtab'+(EV_LIST_SUBTAB==='types'?' active':'')+'" id="evListSubTypes">Por Tipos</button>';
+  h+='</div>';
+  h+=(EV_LIST_SUBTAB==='months'?renderEvByMonths():renderEvByTypes());
   return h;
 }
 
@@ -417,13 +518,13 @@ function renderEvContent(){
   h+='<button class="ev-view-toggle'+(EV_VIEW==='upcoming'?' active':'')+'" id="evViewUpcoming">Pr\u00f3ximos<br>Eventos</button>';
   h+='<button class="ev-view-toggle'+(EV_VIEW==='cal'?' active':'')+'" id="evViewCal">Calendario<br>por Meses</button>';
   h+='<button class="ev-view-toggle'+(EV_VIEW==='annual'?' active':'')+'" id="evViewAnnual">Calendario<br>Anual</button>';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='months'?' active':'')+'" id="evViewMonths">Eventos<br>por Meses</button>';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='months'?' active':'')+'" id="evViewMonths">Lista de<br>Eventos</button>';
   h+='</div>';
   h+='<div class="sy-body">';
   if(EV_VIEW==='cal')h+=renderEvCalMonth();
   else if(EV_VIEW==='upcoming')h+=renderEvUpcoming();
   else if(EV_VIEW==='annual')h+=renderEvAnnual();
-  else h+=renderEvByMonths();
+  else h+=renderEvMonthsView();
   h+='<div class="ev-io-row">';
   var addLabel=EV_VIEW==='annual'&&EV_ANNUAL_ADD?'&#10006; Cancelar':'+ A\u00f1adir';
   h+='<button class="ev-io-btn'+(EV_VIEW==='annual'&&EV_ANNUAL_ADD?' ev-add-pick-mode':'')+'" id="evAdd">'+addLabel+'</button>';
@@ -758,7 +859,11 @@ function refreshEvents(){
 }
 
 function bindEvEvents(){
-  document.getElementById('evBack').addEventListener('click',closeEvents);
+  document.getElementById('evBack').addEventListener('click',function(){
+    if(EV_VIEW==='cal'&&EV_PREV_VIEW==='annual'){
+      EV_VIEW='annual';EV_PREV_VIEW=null;refreshEvents();
+    }else{closeEvents();}
+  });
   bindNavBar('events',closeEvents);
   var prevBtn=document.getElementById('evPrev');
   if(prevBtn)prevBtn.addEventListener('click',function(){
@@ -775,7 +880,7 @@ function bindEvEvents(){
     var n=new Date();EV_YEAR=n.getFullYear();EV_MONTH=n.getMonth();refreshEvents();
   });
   document.getElementById('evViewUpcoming').addEventListener('click',function(){EV_VIEW='upcoming';EV_ANNUAL_ADD=false;refreshEvents();});
-  document.getElementById('evViewCal').addEventListener('click',function(){EV_VIEW='cal';EV_ANNUAL_ADD=false;refreshEvents();});
+  document.getElementById('evViewCal').addEventListener('click',function(){EV_VIEW='cal';EV_ANNUAL_ADD=false;EV_PREV_VIEW=null;refreshEvents();});
   document.getElementById('evViewAnnual').addEventListener('click',function(){EV_VIEW='annual';EV_ANNUAL_ADD=false;refreshEvents();});
   document.getElementById('evViewMonths').addEventListener('click',function(){EV_VIEW='months';EV_ANNUAL_ADD=false;refreshEvents();});
   document.getElementById('evToBday').addEventListener('click',function(){closeEvents();setTimeout(openBday,330);});
@@ -792,7 +897,7 @@ function bindEvEvents(){
         openEvForm(null,ds);
       } else if(!EV_ANNUAL_ADD){
         EV_MONTH=parseInt(card.dataset.month);
-        EV_YEAR=EV_YEAR; // keep same year
+        EV_PREV_VIEW='annual';
         EV_VIEW='cal';
         refreshEvents();
       }
@@ -827,6 +932,24 @@ function bindEvEvents(){
     item.addEventListener('click',function(e){
       if(e.target.classList.contains('ev-list-btn'))return;
       var id=item.dataset.id;var ev=null;
+      for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
+      if(ev)openEvDetail(ev);
+    });
+  });
+  // Subtabs Lista de Eventos
+  var subM=document.getElementById('evListSubMonths');
+  if(subM)subM.addEventListener('click',function(){EV_LIST_SUBTAB='months';refreshEvents();});
+  var subT=document.getElementById('evListSubTypes');
+  if(subT)subT.addEventListener('click',function(){EV_LIST_SUBTAB='types';refreshEvents();});
+  var pastChk=document.getElementById('evTypesPast');
+  if(pastChk)pastChk.addEventListener('change',function(){EV_TYPES_PAST=this.checked;refreshEvents();});
+  var typeSel=document.getElementById('evTypesFilter');
+  if(typeSel)typeSel.addEventListener('change',function(){EV_TYPES_FILTER=this.value;refreshEvents();});
+  // Click en barras multi-día → detail
+  document.querySelectorAll('.ev-multi-bar[data-id]').forEach(function(bar){
+    bar.addEventListener('click',function(e){
+      e.stopPropagation();
+      var id=bar.dataset.id;var ev=null;
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
       if(ev)openEvDetail(ev);
     });

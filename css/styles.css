@@ -349,6 +349,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bday-list-left{font-size:.7rem;font-weight:600;color:var(--text-dim);flex-shrink:0}
 .bday-list-left.near{color:var(--vacaciones)}
 .bday-list-left.today-lbl{color:var(--sent-text)}
+/* ── Feat 1: Buscador en lista por meses ── */
+.bday-search-wrap{padding:8px 0 4px}
+.bday-search-input{width:100%;box-sizing:border-box;padding:8px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.82rem;outline:none;transition:border-color .15s}
+.bday-search-input:focus{border-color:var(--accent)}
 .bday-io-row{display:flex;gap:8px;margin-top:8px}
 .bday-io-btn{flex:1;font-size:.75rem;padding:9px 8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;text-align:center;transition:all .15s}
 .bday-io-btn:active{background:var(--surface3)}
@@ -415,10 +419,20 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-annual-pick-mode .ev-annual-day[data-ds]{cursor:crosshair}
 .ev-annual-pick-mode .ev-annual-day[data-ds]:hover{outline:1.5px solid rgba(255,255,255,.5);outline-offset:-1px}
 .ev-io-btn.ev-add-pick-mode{border-color:var(--c-orange)!important;color:var(--c-orange)!important}
+/* ── Feat 6: Puentes rallados en anual ── */
+.ev-annual-day.ev-annual-puente{background:repeating-linear-gradient(45deg,rgba(244,114,182,.35),rgba(244,114,182,.35) 2px,transparent 2px,transparent 5px)!important}
+/* ── Feat 5: Barras multi-día en vista mensual ── */
+.ev-week-outer{display:flex;flex-direction:column;margin-bottom:2px}
+.ev-bars-row{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;padding:0 1px;min-height:0}
+.ev-multi-bar{height:16px;font-size:.5rem;font-weight:600;display:flex;align-items:center;padding:0 5px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;cursor:pointer;border-radius:8px;border-left-width:0;border:1.5px solid transparent;margin:1px 0;-webkit-user-select:none;user-select:none}
+.ev-multi-bar.starts{border-top-right-radius:0;border-bottom-right-radius:0;border-right:none}
+.ev-multi-bar.ends{border-top-left-radius:0;border-bottom-left-radius:0;border-left:none}
+.ev-multi-bar.continues{border-radius:0;border-left:none;border-right:none}
 /* Shared overlay nav bar */
 .overlay-nav-bar{display:flex;align-items:center;gap:1px;padding:4px 12px;border-bottom:1px solid var(--border);overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none}
 .overlay-nav-bar::-webkit-scrollbar{display:none}
-.nav-bar-btn{flex-shrink:0;width:32px;height:28px;border:none;border-radius:6px;background:transparent;color:var(--text-dim);font-size:.82rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s;-webkit-user-select:none;user-select:none}
+/* ── Feat 4: Nav-bar emoji alignment ── */
+.nav-bar-btn{flex-shrink:0;width:32px;height:34px;border:none;border-radius:6px;background:transparent;color:var(--text-dim);font-size:.82rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s;-webkit-user-select:none;user-select:none;line-height:1}
 .nav-bar-btn:hover{background:rgba(255,255,255,.08);color:var(--text)}
 .nav-bar-btn.active{background:rgba(255,255,255,.1);color:var(--accent)}
 /* Birthday detail / form overlays */
@@ -436,6 +450,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-hdr-sub{display:flex;align-items:stretch;gap:6px;padding:8px 12px;border-bottom:1px solid var(--border);overflow-x:auto}
 .ev-view-toggle{font-size:.68rem;padding:5px 10px;border-radius:12px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;flex-shrink:0;text-align:center;line-height:1.3}
 .ev-view-toggle.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
+/* ── Feat 2: Lista de Eventos subtabs ── */
+.ev-list-subtabs{display:flex;gap:6px;padding:8px 0 4px}
+.ev-list-subtab{flex:1;font-size:.72rem;padding:6px 12px;border-radius:14px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;text-align:center;transition:all .15s;-webkit-user-select:none;user-select:none}
+.ev-list-subtab.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
+.ev-types-controls{display:flex;align-items:center;gap:10px;padding:4px 0 8px;flex-wrap:wrap}
+.ev-types-past-label{font-size:.75rem;color:var(--text-muted);display:flex;align-items:center;gap:5px;cursor:pointer;flex-shrink:0}
+.ev-types-select{font-size:.75rem;padding:5px 8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;flex:1;min-width:0;outline:none}
 .ev-week-hdr{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:3px}
 .ev-week-hdr div{text-align:center;font-size:.62rem;color:var(--text-dim);text-transform:uppercase;padding:6px 0;font-weight:600}
 .ev-week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:2px}
