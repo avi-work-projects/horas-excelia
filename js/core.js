@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v17.1 \u2014 fix logo + botones';
+var APP_VERSION = 'v18 \u2014 alarma d\u00edas de semana';
 
 // ── Historial de navegación entre overlays ────────────────────
 var NAV_BACK=null; // función para "volver atrás" al pulsar ← en cualquier overlay
