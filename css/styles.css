@@ -560,6 +560,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .alarm-msg-input:focus{outline:none;border-color:var(--accent)}
 .alarm-create-btn{color:var(--accent-bright)!important;font-weight:600!important;width:100%;border-top:1px solid var(--border)!important;border-radius:0!important;padding:10px 12px!important;margin-top:2px}
 .alarm-ics-btn{color:var(--text-muted)!important;font-size:.72rem!important;padding:8px 12px!important;border-top:1px solid var(--border)!important;border-radius:0 0 var(--radius-sm) var(--radius-sm)!important;width:100%}
+.alarm-days-row{padding:6px 12px 4px;border-top:1px solid var(--border)}
+.alarm-days-label{font-size:.65rem;color:var(--text-muted);margin-bottom:5px;text-align:center}
+.alarm-days-btns{display:flex;gap:4px}
+.alarm-day-btn{flex:1;padding:5px 0;font-size:.65rem;font-weight:700;border:1px solid var(--border);border-radius:5px;background:var(--surface2);color:var(--text-muted);cursor:pointer;font-family:var(--font);line-height:1}
+.alarm-day-btn.on{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
 .alarm-macro-row{display:flex;align-items:center;gap:8px;padding:5px 12px;font-size:.74rem;color:var(--text-muted);border-top:1px solid var(--border);cursor:pointer}
 .alarm-macro-row input[type=checkbox]{accent-color:var(--accent);width:14px;height:14px;cursor:pointer;flex-shrink:0}
 .alarm-macro-url{display:block;width:calc(100% - 24px);margin:0 12px 4px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text);font-size:.68rem;font-family:var(--mono);overflow:hidden;text-overflow:ellipsis}

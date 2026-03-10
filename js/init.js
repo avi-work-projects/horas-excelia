@@ -130,8 +130,24 @@
       var urlIn=document.getElementById('alarmMacroUrl');
       if(cb){cb.checked=useMacro;}
       if(urlIn){urlIn.value=macroUrl;urlIn.disabled=!useMacro;}
+      // Restaurar días seleccionados
+      var savedDays=(localStorage.getItem('excelia-alarm-days')||'').split(',').filter(Boolean);
+      document.querySelectorAll('.alarm-day-btn').forEach(function(btn){
+        btn.classList.toggle('on',savedDays.indexOf(btn.dataset.day)>=0);
+      });
     }
     panel.classList.toggle('open');
+  });
+
+  /* ── Alarma: botones días de semana ── */
+  document.querySelectorAll('.alarm-day-btn').forEach(function(btn){
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      btn.classList.toggle('on');
+      var sel=[];
+      document.querySelectorAll('.alarm-day-btn.on').forEach(function(b){sel.push(b.dataset.day);});
+      localStorage.setItem('excelia-alarm-days',sel.join(','));
+    });
   });
 
   /* ── Alarma: toggle MacroDroid ── */
@@ -149,6 +165,9 @@
     var m=Math.min(59,Math.max(0,parseInt(document.getElementById('alarmMin').value,10)||0));
     var msg=(document.getElementById('alarmMsg').value.trim()||'Horas Excelia');
     var useMacro=document.getElementById('alarmUseMacro').checked;
+    // Días seleccionados (constantes Android: 1=Dom,2=Lun...7=Sáb)
+    var selDays=[];
+    document.querySelectorAll('.alarm-day-btn.on').forEach(function(b){selDays.push(+b.dataset.day);});
     document.getElementById('alarmPanel').classList.remove('open');
 
     if(useMacro){
@@ -160,8 +179,9 @@
         return;
       }
       var sep=macroUrl.indexOf('?')>=0?'&':'?';
-      // Parámetros nombrados igual que las variables globales de MacroDroid
+      // Parámetros: alarmH, alarmM, alarmMsg, alarmDays (csv de constantes Android Calendar)
       var url=macroUrl+sep+'alarmH='+h+'&alarmM='+m+'&alarmMsg='+encodeURIComponent(msg);
+      if(selDays.length)url+='&alarmDays='+selDays.join(',');
       showToast('Enviando a MacroDroid\u2026','success');
       fetch(url,{mode:'no-cors'})
         .then(function(){
@@ -177,6 +197,7 @@
         +';i.android.intent.extra.alarm.HOUR='+h
         +';i.android.intent.extra.alarm.MINUTES='+m
         +';b.android.intent.extra.alarm.SKIP_UI=false';
+      if(selDays.length)base+=';ia.android.intent.extra.alarm.DAYS='+selDays.join(',');
       window.open('intent://alarm/#Intent'+base+';package=com.vivo.clock;end','_blank');
       showToast('Abriendo reloj \u2014 '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),'success');
     }
@@ -187,6 +208,8 @@
     var h=Math.min(23,Math.max(0,parseInt(document.getElementById('alarmHour').value,10)||8));
     var m=Math.min(59,Math.max(0,parseInt(document.getElementById('alarmMin').value,10)||0));
     var msg=(document.getElementById('alarmMsg').value.trim()||'Horas Excelia');
+    var selDays=[];
+    document.querySelectorAll('.alarm-day-btn.on').forEach(function(b){selDays.push(+b.dataset.day);});
     var now=new Date();
     var alarm=new Date(now);
     alarm.setHours(h,m,0,0);
@@ -196,12 +219,18 @@
       return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0')
         +'T'+String(d.getHours()).padStart(2,'0')+String(d.getMinutes()).padStart(2,'0')+'00';
     };
+    // Mapeo Android Calendar (1=Dom...7=Sáb) → BYDAY iCal (SU,MO,TU,WE,TH,FR,SA)
+    var dayMap={1:'SU',2:'MO',3:'TU',4:'WE',5:'TH',6:'FR',7:'SA'};
     var ics='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Horas Excelia//ES\r\n'
       +'BEGIN:VEVENT\r\n'
       +'DTSTART:'+fmt(alarm)+'\r\n'
       +'DTEND:'+fmt(end)+'\r\n'
-      +'SUMMARY:'+msg+'\r\n'
-      +'BEGIN:VALARM\r\nTRIGGER:PT0S\r\nACTION:AUDIO\r\nEND:VALARM\r\n'
+      +'SUMMARY:'+msg+'\r\n';
+    if(selDays.length){
+      var byday=selDays.map(function(d){return dayMap[d];}).join(',');
+      ics+='RRULE:FREQ=WEEKLY;BYDAY='+byday+'\r\n';
+    }
+    ics+='BEGIN:VALARM\r\nTRIGGER:PT0S\r\nACTION:AUDIO\r\nEND:VALARM\r\n'
       +'END:VEVENT\r\nEND:VCALENDAR';
     var blob=new Blob([ics],{type:'text/calendar'});
     var a=document.createElement('a');
