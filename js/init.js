@@ -18,6 +18,14 @@
   /* ── Sincronizar cumpleaños VIP con calendario de eventos ── */
   if(typeof syncVipBdaysToEvents==='function') syncVipBdaysToEvents();
 
+  /* ── Logo popup ── */
+  var _logoBtn=document.getElementById('appLogoBtn');
+  var _logoPopup=document.getElementById('logoPopup');
+  if(_logoBtn&&_logoPopup){
+    _logoBtn.addEventListener('click',function(){_logoPopup.classList.add('open');});
+    _logoPopup.addEventListener('click',function(e){if(e.target===_logoPopup)_logoPopup.classList.remove('open');});
+  }
+
   /* ── Navegación de mes ── */
   document.getElementById('prevBtn').addEventListener('click',function(){
     CM--;if(CM<0){CM=11;CY--;}render();

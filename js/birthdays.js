@@ -146,7 +146,7 @@ function renderBdayUpcoming(){
       var lblCls='bday-upcoming-lbl'+(isT?' today-lbl':isPastDay?' past-lbl':(isCurWeek&&x.diff>0)?' this-week':isNearDay?' near':'');
       var isVip=!!x.b.vip;
       var alarmSet=isBdayAlarmSet(x.b);
-      var alarmIcon=alarmSet?'<span class="bday-alarm-set-icon" title="Alarma configurada">\uD83D\uDD14\u2713</span>':'';
+      var alarmIcon=alarmSet?'<span class="bday-alarm-set-icon" title="Alarma configurada">\uD83D\uDD14</span>':'';
       var vipCls=isVip?' bday-vip-item':'';
       var vipStar=isVip?' <img src="./VIP.png" class="bday-vip-img" alt="VIP">':'';
       s+='<div class="bday-upcoming-item'+vipCls+(isT?' bday-today-item':'')+'" data-bday-name="'+escHtml(x.b.name)+'" data-bday-day="'+x.b.day+'" data-bday-month="'+x.b.month+'">';
@@ -353,17 +353,21 @@ function renderBdayAlarmPanel(b){
   h+='<button class="bd-alarm-count-btn'+(cnt===1?' active':'')+'" data-cnt="1" id="bdAlarmCount1">1 alarma</button>';
   h+='<button class="bd-alarm-count-btn'+(cnt===2?' active':'')+'" data-cnt="2" id="bdAlarmCount2">2 alarmas</button>';
   h+='</div>';
+  // VIP toggle
+  h+='<div class="bd-alarm-vip-row">';
+  h+='<label class="bd-alarm-vip-lbl"><input type="checkbox" id="bdAlarmVip"'+(b.vip?' checked':'')+' style="accent-color:#fbbf24;width:16px;height:16px"> \u2b50 VIP</label>';
+  h+='</div>';
   // Alarm fields
   h+='<div id="bdAlarmFields">';
   if(cnt===2){
     h+='<div class="bd-alarm-row">';
-    h+='<span class="bd-alarm-row-lbl">&#9205; D\u00eda anterior<br><span style="font-size:.65rem;opacity:.7">'+fmtDate(prevDate)+'</span></span>';
+    h+='<span class="bd-alarm-row-lbl">\uD83C\uDF19 V\u00edspera<br><span style="font-size:.65rem;opacity:.7">'+fmtDate(prevDate)+'</span></span>';
     h+='<div class="bd-alarm-time"><input id="bdAlarmH1" type="number" min="0" max="23" value="23"><span class="bd-alarm-time-sep">:</span><input id="bdAlarmM1" type="number" min="0" max="59" value="57"></div>';
     h+='</div>';
   }
   h+='<div class="bd-alarm-row">';
-  h+='<span class="bd-alarm-row-lbl">&#127874; D\u00eda del cumple<br><span style="font-size:.65rem;opacity:.7">'+fmtDate(bdDate)+'</span></span>';
-  h+='<div class="bd-alarm-time"><input id="bdAlarmH2" type="number" min="0" max="23" value="9"><span class="bd-alarm-time-sep">:</span><input id="bdAlarmM2" type="number" min="0" max="59" value="02"></div>';
+  h+='<span class="bd-alarm-row-lbl">\uD83C\uDF89 Cumplea\u00f1os<br><span style="font-size:.65rem;opacity:.7">'+fmtDate(bdDate)+'</span></span>';
+  h+='<div class="bd-alarm-time"><input id="bdAlarmH2" type="number" min="0" max="23" value="9"><span class="bd-alarm-time-sep">:</span><input id="bdAlarmM2" type="number" min="0" max="59" value="00"></div>';
   h+='</div>';
   h+='</div>';
   // Action buttons
@@ -398,6 +402,18 @@ function closeBdayAlarm(){
 
 function bindBdayAlarmEvents(b){
   document.getElementById('bdAlarmClose').addEventListener('click',closeBdayAlarm);
+
+  // VIP toggle inside alarm panel
+  var vipChk=document.getElementById('bdAlarmVip');
+  if(vipChk){
+    vipChk.addEventListener('change',function(e){
+      e.stopPropagation();
+      if(this.checked)b.vip=true;else delete b.vip;
+      localStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));
+      if(typeof syncVipBdaysToEvents==='function')syncVipBdaysToEvents();
+      updateBdayBtn();
+    });
+  }
 
   // Alarm count toggle
   ['bdAlarmCount1','bdAlarmCount2'].forEach(function(id){

@@ -129,20 +129,20 @@ try{
       <input type="file" id="importFile" accept=".json" style="display:none">
       <input type="file" id="importAllFile" accept=".json" style="display:none">
   </div>
-  <div class="header-brand">
-    <img src="logo.png" alt="Gestify" class="app-logo">
-    <div>
-      <h1>Gestify</h1>
-      <div class="subtitle">Excelia</div>
-      <div class="subtitle" id="authorLabel" style="font-size:.68rem;opacity:.6"></div>
-    </div>
-  </div>
   <nav class="month-nav">
+    <img src="logo.png" alt="Gestify" class="app-logo" id="appLogoBtn" style="cursor:pointer;flex-shrink:0">
     <button class="nav-btn" id="prevBtn">&#9664;</button>
     <div class="month-label" id="monthLabel"></div>
     <button class="nav-btn" id="nextBtn">&#9654;</button>
     <button class="today-btn" id="todayBtn">Hoy</button>
   </nav>
+  <div class="logo-popup" id="logoPopup">
+    <div class="logo-popup-box" id="logoPopupBox">
+      <img src="logo.png" class="logo-popup-img" alt="Gestify">
+      <div class="logo-popup-name">Gestify</div>
+      <div class="logo-popup-sub">Excelia</div>
+    </div>
+  </div>
   <div class="hours-control">
     <button class="default-hours-btn" id="editHoursBtn">
       &#9998;&nbsp;Jornada:&nbsp;<span class="dh-val">9h</span>&nbsp;&#xB7;&nbsp;Editar
