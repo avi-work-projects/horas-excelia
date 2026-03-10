@@ -3,11 +3,13 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v22 \u2014 MacroDroid base URL normalizada';
+var APP_VERSION = 'v23 \u2014 mejoras visuales calendario';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
   url=(url||'').trim().replace(/\/+$/,'');
+  var m=url.match(/^(https?:\/\/trigger\.macrodroid\.com\/[^\/]+)/);
+  if(m)return m[1];
   url=url.replace(/\/(generar_alarma1|generar_alarma2|apagar_alarmas)$/,'');
   return url;
 }
