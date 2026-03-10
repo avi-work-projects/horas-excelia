@@ -115,7 +115,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .week-card.sent .day-cell{background:var(--sent);cursor:not-allowed}
 .week-card.sent .day-cell:active{background:var(--sent)}
 .day-name{font-size:.68rem;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
-.day-date{font-size:.88rem;font-weight:700;color:var(--text);margin-bottom:6px}
+.day-date{font-size:.82rem;font-weight:400;color:var(--text-muted);margin-bottom:6px}
 .day-hours{font-family:var(--mono);font-size:1.05rem;font-weight:500;color:var(--text)}
 .day-cell.festivo .day-hours{color:var(--festivo)}
 .day-cell.festivo::after{content:'Festivo';font-size:.58rem;color:var(--festivo);display:block;margin-top:2px}
@@ -344,8 +344,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bday-num{font-size:.72rem;font-family:var(--mono);line-height:1}
 .bday-badge{font-size:.56rem;border-radius:3px;padding:2px 4px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border:1.5px solid currentColor;font-weight:500;cursor:pointer;transition:opacity .1s}
 .bday-badge:active{opacity:.7}
+.bday-badge.bday-badge-vip{box-shadow:0 0 0 1.5px #fbbf24,0 0 6px rgba(251,191,36,.5);font-weight:700}
 .bday-month-hdr{font-size:.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:10px 0 6px;border-bottom:1px solid var(--border);margin-bottom:6px}
 .bday-list-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity .12s}
+/* VIP controls bar */
+.bday-vip-ctrl-bar{display:flex;align-items:center;gap:10px;padding:8px 0 4px;border-bottom:1px solid var(--border);margin-bottom:4px}
+.bday-vip-filter-lbl{display:flex;align-items:center;gap:5px;font-size:.72rem;color:var(--text-muted);cursor:pointer;user-select:none}
+.bday-vip-edit-btn{margin-left:auto;font-size:.7rem;padding:4px 10px;border-radius:12px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s}
+.bday-vip-edit-btn.active{border-color:#fbbf24;background:rgba(251,191,36,.12);color:#fbbf24}
+/* VIP edit mode item states */
+.bday-list-item.bday-list-vip-dim{opacity:.38}
+.bday-list-item.bday-list-vip-active{opacity:1}
 .bday-list-item:last-child{border-bottom:none}
 .bday-list-item:active{opacity:.7}
 .bday-list-day{font-family:var(--mono);font-size:.75rem;color:var(--text-muted);min-width:22px;flex-shrink:0}
@@ -495,7 +504,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bd-alarm-time input:focus{outline:none;border-color:var(--accent)}
 .bd-alarm-time-sep{font-family:var(--mono);font-size:1rem;font-weight:700;color:var(--accent-bright);user-select:none}
 .bd-alarm-set-badge{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:var(--radius-sm);background:rgba(90,224,136,.1);border:1px solid rgba(90,224,136,.3);color:var(--sent-text);font-size:.8rem;font-weight:600;margin-bottom:8px}
-.bd-alarm-unmark-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-size:.72rem;color:var(--text-muted);cursor:pointer;margin-left:auto;flex-shrink:0}
+.bd-alarm-unmark-btn{background:var(--sent);border:1px solid var(--sent-border);border-radius:8px;padding:5px 12px;font-size:.72rem;color:var(--sent-text);cursor:pointer;margin-left:auto;flex-shrink:0;font-weight:600}
 /* ── HOME POPUP (semanas pendientes / VIP sin alarma) ── */
 .home-popup-overlay{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.6);display:flex;align-items:flex-start;justify-content:center;padding-top:80px}
 .home-popup{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px 20px;max-width:360px;width:calc(100% - 32px);max-height:70vh;overflow-y:auto;position:relative;box-shadow:0 16px 48px var(--shadow)}
