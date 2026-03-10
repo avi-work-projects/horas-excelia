@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v24 \u2014 nav activa + VIP + fix alarma';
+var APP_VERSION = 'v25 — perímetro puentes + color único viajes + aspas anuales';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
