@@ -104,6 +104,13 @@ function evUniqueColor(ev){
   var hue=Math.round((hash*137.508)%360);
   return 'hsl('+hue+',82%,62%)';
 }
+/* ── Helper: relleno suave y estable por evento ── */
+function evSoftFillColor(ev){
+  var hash=0;
+  for(var i=0;i<ev.id.length;i++){hash=(hash*31+ev.id.charCodeAt(i))&0xffff;}
+  var hue=Math.round((hash*137.508)%360);
+  return 'hsla('+hue+',50%,65%,.22)';
+}
 
 /* ── Render: calendario mensual ─────────────────────────── */
 function renderEvCalMonth(){
@@ -159,7 +166,7 @@ function renderEvCalMonth(){
         var sc=it.starts&&it.ends?'':it.starts?' starts':it.ends?' ends':' continues';
         var showT=it.starts||(it.cs===0);
         h+='<div class="ev-multi-bar'+sc+'" data-id="'+ev.id+'"'
-          +' style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';background:'+ev.color+'22;border-color:'+evUniqueColor(ev)+';color:'+ev.color+'">'
+          +' style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';background:'+evSoftFillColor(ev)+';border-color:#38bdf8;color:#38bdf8">'
           +(showT?escHtml(ev.title):'')+'</div>';
       });
       h+='</div>';
@@ -489,7 +496,7 @@ function renderEvAnnual(){
         h+='<div class="ev-annual-bars-row">';
         wMulti.forEach(function(it){
           var sc=it.starts&&it.ends?'':it.starts?' a-starts':it.ends?' a-ends':' a-mid';
-          h+='<div class="ev-annual-mbar'+sc+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+'"></div>';
+          h+='<div class="ev-annual-mbar'+sc+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';background:'+evSoftFillColor(it.ev)+'"></div>';
         });
         h+='</div>';
       }
@@ -499,8 +506,10 @@ function renderEvAnnual(){
         var prevSunA=new Date(wk[0]);prevSunA.setDate(prevSunA.getDate()-1);
         var nextMonADs=evDk(nextMonA),prevSunADs=evDk(prevSunA);
         abspans.forEach(function(sp){
-          var noR=sp.e===6&&puenteMap[nextMonADs];
-          var noL=sp.s===0&&puenteMap[prevSunADs];
+          var rightNeighbor=wk[sp.e+1];
+          var leftNeighbor=wk[sp.s-1];
+          var noR=(sp.e===6&&puenteMap[nextMonADs])||(rightNeighbor&&puenteMap[evDk(rightNeighbor)]);
+          var noL=(sp.s===0&&puenteMap[prevSunADs])||(leftNeighbor&&puenteMap[evDk(leftNeighbor)]);
           var bsty='grid-column:'+(sp.s+1)+'/'+(sp.e+2)+';grid-row:1;';
           if(noL)bsty+='border-left:none;border-top-left-radius:0;border-bottom-left-radius:0;';
           if(noR)bsty+='border-right:none;border-top-right-radius:0;border-bottom-right-radius:0;';

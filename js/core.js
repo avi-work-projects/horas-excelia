@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v27 — fix exportBtn null, bday modal center, VIP star, trips bar, annual azul';
+var APP_VERSION = 'v28 — nav flechas+mes, emojis+big, Xs anual, soft fill, puentes cross-month, tabs z-index';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
