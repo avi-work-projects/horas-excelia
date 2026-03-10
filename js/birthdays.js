@@ -6,6 +6,8 @@ var BDAY_STORAGE_KEY='excelia-bdays-v1';
 var BDAY_YEAR=new Date().getFullYear(), BDAY_MONTH=new Date().getMonth(), BDAY_VIEW='upcoming';
 var BDAY_EDIT=null;
 var BDAY_SEARCH='';
+var BDAY_FILTER_VIP=false;
+var BDAY_EDIT_VIP=false;
 
 // Estado de alarmas configuradas para cumpleaños
 var BDAY_ALARM_SET_KEY='excelia-bday-alarm-set';
@@ -202,9 +204,9 @@ function renderBdayCalMonth(){
       bds.forEach(function(b){
         var color=getBdayColor(b);
         var sn=shortName(tc(b.name));
-        var vipStar=b.vip?'\u2b50 ':'';
         var bidx=BDAYS.indexOf(b);
-        h+='<div class="bday-badge" data-bday-idx="'+bidx+'" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" style="background:'+color+'22;color:'+color+';border-color:'+color+'" title="'+bdName(b.name)+'">'+vipStar+escHtml(sn)+'</div>';
+        var vipCls=b.vip?' bday-badge-vip':'';
+        h+='<div class="bday-badge'+vipCls+'" data-bday-idx="'+bidx+'" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" style="background:'+color+'22;color:'+color+';border-color:'+color+'" title="'+bdName(b.name)+(b.vip?' \u2b50':'')+'">'+escHtml(sn)+'</div>';
       });
       h+='</div>';
       cur.setDate(cur.getDate()+1);
@@ -217,22 +219,31 @@ function renderBdayCalMonth(){
 /* ── Lista por meses ──────────────────────────────────────── */
 function renderBdayList(){
   if(!BDAYS.length)return '<div class="sy-note">No hay cumplea\u00f1os cargados. Importa un archivo JSON o configura el secreto BIRTHDAYS en GitHub.</div>';
-  var h='<div class="bday-search-wrap"><input class="bday-search-input" id="bdSearch" type="text" placeholder="Buscar persona\u2026" value="'+escHtml(BDAY_SEARCH)+'"></div>';
+  var h='<div class="bday-vip-ctrl-bar">';
+  h+='<label class="bday-vip-filter-lbl"><input type="checkbox" id="bdFilterVip"'+(BDAY_FILTER_VIP?' checked':'')+' style="accent-color:#fbbf24"> Filtrar VIPs</label>';
+  h+='<button class="bday-vip-edit-btn'+(BDAY_EDIT_VIP?' active':'')+'" id="bdEditVip">'+(BDAY_EDIT_VIP?'\u2713 Listo':'Editar VIPs')+'</button>';
+  h+='</div>';
+  h+='<div class="bday-search-wrap"><input class="bday-search-input" id="bdSearch" type="text" placeholder="Buscar persona\u2026" value="'+escHtml(BDAY_SEARCH)+'"></div>';
   var byM=[];for(var m=0;m<12;m++)byM.push([]);
   BDAYS.forEach(function(b){if(b.month>=1&&b.month<=12)byM[b.month-1].push(b);});
   byM.forEach(function(list,m){
-    if(!list.length)return;
-    list.sort(function(a,b){return a.day-b.day;});
+    var filtered=BDAY_FILTER_VIP?list.filter(function(b){return !!b.vip;}):list;
+    if(!filtered.length)return;
+    filtered.sort(function(a,b){return a.day-b.day;});
     h+='<div class="sy-section bday-month-section"><div class="bday-month-hdr">'+MN[m]+'</div>';
-    list.forEach(function(b){
+    filtered.forEach(function(b){
       var dl=daysUntil(b.month,b.day);
       var lbl=dl===0?'\u00a1Hoy!':dl===1?'Ma\u00f1ana':'en '+dl+'d';
       var cls='bday-list-left'+(dl===0?' today-lbl':dl<=7?' near':'');
       var color=getBdayColor(b);
       var sname=escHtml(b.name.toLowerCase());
-      var vipStar=b.vip?' <img src="./VIP.png" class="bday-vip-img" alt="VIP">':'';
+      var isVip=!!b.vip;
       var lidx=BDAYS.indexOf(b);
-      h+='<div class="bday-list-item" data-bday-idx="'+lidx+'" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" data-sname="'+sname+'">';
+      var editCls=BDAY_EDIT_VIP?(isVip?' bday-list-vip-active':' bday-list-vip-dim'):'';
+      var vipStar=(!BDAY_EDIT_VIP&&isVip)?' <img src="./VIP.png" class="bday-vip-img" alt="VIP">':'';
+      var chkHtml=BDAY_EDIT_VIP?'<input type="checkbox" class="bday-vip-chk" data-bday-idx="'+lidx+'"'+(isVip?' checked':'')+' style="accent-color:#fbbf24;flex-shrink:0;cursor:pointer;width:16px;height:16px">':'';
+      h+='<div class="bday-list-item'+editCls+'" data-bday-idx="'+lidx+'" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" data-sname="'+sname+'">';
+      h+=chkHtml;
       h+='<span class="bday-list-day" style="color:'+color+'">'+b.day+'</span>';
       h+='<span class="bday-list-name">'+bdName(b.name)+vipStar+'</span>';
       h+='<span class="'+cls+'">'+lbl+'</span>';
@@ -352,7 +363,7 @@ function renderBdayAlarmPanel(b){
   }
   h+='<div class="bd-alarm-row">';
   h+='<span class="bd-alarm-row-lbl">&#127874; D\u00eda del cumple<br><span style="font-size:.65rem;opacity:.7">'+fmtDate(bdDate)+'</span></span>';
-  h+='<div class="bd-alarm-time"><input id="bdAlarmH2" type="number" min="0" max="23" value="9"><span class="bd-alarm-time-sep">:</span><input id="bdAlarmM2" type="number" min="0" max="59" value="2"></div>';
+  h+='<div class="bd-alarm-time"><input id="bdAlarmH2" type="number" min="0" max="23" value="9"><span class="bd-alarm-time-sep">:</span><input id="bdAlarmM2" type="number" min="0" max="59" value="02"></div>';
   h+='</div>';
   h+='</div>';
   // Action buttons
@@ -457,6 +468,15 @@ function bindBdayAlarmEvents(b){
     } else {
       fetch(url2,{mode:'no-cors'}).then(onBdAlarmSuccess).catch(onBdAlarmError);
     }
+  });
+
+  // Zero-pad minute inputs on blur
+  ['bdAlarmM1','bdAlarmM2'].forEach(function(id){
+    var inp=document.getElementById(id);
+    if(inp)inp.addEventListener('blur',function(){
+      var v=parseInt(this.value,10);
+      if(!isNaN(v)&&v>=0&&v<=59)this.value=String(v).padStart(2,'0');
+    });
   });
 
   // Mark without creating
@@ -639,9 +659,32 @@ function bindBdayEvents(){
   if(todayBtn)todayBtn.addEventListener('click',function(){
     var n=new Date();BDAY_YEAR=n.getFullYear();BDAY_MONTH=n.getMonth();refreshBday();
   });
-  document.getElementById('bdViewUpcoming').addEventListener('click',function(){BDAY_SEARCH='';BDAY_VIEW='upcoming';refreshBday();});
-  document.getElementById('bdViewCal').addEventListener('click',function(){BDAY_SEARCH='';BDAY_VIEW='cal';refreshBday();});
+  document.getElementById('bdViewUpcoming').addEventListener('click',function(){BDAY_SEARCH='';BDAY_FILTER_VIP=false;BDAY_EDIT_VIP=false;BDAY_VIEW='upcoming';refreshBday();});
+  document.getElementById('bdViewCal').addEventListener('click',function(){BDAY_SEARCH='';BDAY_FILTER_VIP=false;BDAY_EDIT_VIP=false;BDAY_VIEW='cal';refreshBday();});
   document.getElementById('bdViewList').addEventListener('click',function(){BDAY_VIEW='list';refreshBday();});
+  // Filter VIPs toggle
+  var filterVipEl=document.getElementById('bdFilterVip');
+  if(filterVipEl)filterVipEl.addEventListener('change',function(){
+    BDAY_FILTER_VIP=this.checked;BDAY_SEARCH='';refreshBday();
+  });
+  // Edit VIPs toggle
+  var editVipEl=document.getElementById('bdEditVip');
+  if(editVipEl)editVipEl.addEventListener('click',function(){
+    BDAY_EDIT_VIP=!BDAY_EDIT_VIP;refreshBday();
+  });
+  // VIP checkboxes (edit mode)
+  document.querySelectorAll('.bday-vip-chk').forEach(function(chk){
+    chk.addEventListener('change',function(e){
+      e.stopPropagation();
+      var idx=parseInt(chk.dataset.bdayIdx,10);
+      if(!isNaN(idx)&&idx>=0&&idx<BDAYS.length){
+        if(chk.checked)BDAYS[idx].vip=true;else delete BDAYS[idx].vip;
+        localStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));
+        syncVipBdaysToEvents();updateBdayBtn();
+        refreshBday();
+      }
+    });
+  });
   var srch=document.getElementById('bdSearch');
   if(srch){
     if(BDAY_SEARCH){srch.value=BDAY_SEARCH;applyBdaySearch(BDAY_SEARCH);}
