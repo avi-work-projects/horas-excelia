@@ -203,7 +203,8 @@ function renderBdayCalMonth(){
         var color=getBdayColor(b);
         var sn=shortName(tc(b.name));
         var vipStar=b.vip?'\u2b50 ':'';
-        h+='<div class="bday-badge" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" style="background:'+color+'22;color:'+color+';border-color:'+color+'" title="'+bdName(b.name)+'">'+vipStar+escHtml(sn)+'</div>';
+        var bidx=BDAYS.indexOf(b);
+        h+='<div class="bday-badge" data-bday-idx="'+bidx+'" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" style="background:'+color+'22;color:'+color+';border-color:'+color+'" title="'+bdName(b.name)+'">'+vipStar+escHtml(sn)+'</div>';
       });
       h+='</div>';
       cur.setDate(cur.getDate()+1);
@@ -230,7 +231,8 @@ function renderBdayList(){
       var color=getBdayColor(b);
       var sname=escHtml(b.name.toLowerCase());
       var vipStar=b.vip?' <img src="./VIP.png" class="bday-vip-img" alt="VIP">':'';
-      h+='<div class="bday-list-item" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" data-sname="'+sname+'">';
+      var lidx=BDAYS.indexOf(b);
+      h+='<div class="bday-list-item" data-bday-idx="'+lidx+'" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" data-sname="'+sname+'">';
       h+='<span class="bday-list-day" style="color:'+color+'">'+b.day+'</span>';
       h+='<span class="bday-list-name">'+bdName(b.name)+vipStar+'</span>';
       h+='<span class="'+cls+'">'+lbl+'</span>';
@@ -654,24 +656,33 @@ function bindBdayEvents(){
   document.querySelectorAll('.bday-badge[data-bday-name]').forEach(function(badge){
     badge.addEventListener('click',function(e){
       e.stopPropagation();
-      var name=badge.dataset.bdayName;
-      var day=parseInt(badge.dataset.bdayDay,10);
-      var month=parseInt(badge.dataset.bdayMonth,10);
       var b=null;
-      for(var i=0;i<BDAYS.length;i++){if(BDAYS[i].name===name&&BDAYS[i].day===day&&BDAYS[i].month===month){b=BDAYS[i];break;}}
-      if(!b)b={name:name,day:day,month:month};
+      var idx=parseInt(badge.dataset.bdayIdx,10);
+      if(!isNaN(idx)&&idx>=0&&idx<BDAYS.length){b=BDAYS[idx];}
+      if(!b){
+        var name=badge.dataset.bdayName;
+        var day=parseInt(badge.dataset.bdayDay,10);
+        var month=parseInt(badge.dataset.bdayMonth,10);
+        for(var i=0;i<BDAYS.length;i++){if(BDAYS[i].name===name&&BDAYS[i].day===day&&BDAYS[i].month===month){b=BDAYS[i];break;}}
+        if(!b)b={name:name,day:day,month:month};
+      }
       openBdayDetail(b);
     });
   });
   // Clicks en lista por meses → detail
   document.querySelectorAll('.bday-list-item[data-bday-name]').forEach(function(item){
-    item.addEventListener('click',function(){
-      var name=item.dataset.bdayName;
-      var day=parseInt(item.dataset.bdayDay,10);
-      var month=parseInt(item.dataset.bdayMonth,10);
+    item.addEventListener('click',function(e){
+      e.stopPropagation();
       var b=null;
-      for(var i=0;i<BDAYS.length;i++){if(BDAYS[i].name===name&&BDAYS[i].day===day&&BDAYS[i].month===month){b=BDAYS[i];break;}}
-      if(!b)b={name:name,day:day,month:month};
+      var idx=parseInt(item.dataset.bdayIdx,10);
+      if(!isNaN(idx)&&idx>=0&&idx<BDAYS.length){b=BDAYS[idx];}
+      if(!b){
+        var name=item.dataset.bdayName;
+        var day=parseInt(item.dataset.bdayDay,10);
+        var month=parseInt(item.dataset.bdayMonth,10);
+        for(var i=0;i<BDAYS.length;i++){if(BDAYS[i].name===name&&BDAYS[i].day===day&&BDAYS[i].month===month){b=BDAYS[i];break;}}
+        if(!b)b={name:name,day:day,month:month};
+      }
       openBdayDetail(b);
     });
   });
