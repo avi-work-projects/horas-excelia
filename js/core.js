@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v20 \u2014 logo.png + fix alarma hora 0';
+var APP_VERSION = 'v20.1 \u2014 alarma bday: alarmDays + 1s gap';
 
 // ── Historial de navegación entre overlays ────────────────────
 var NAV_BACK=null; // función para "volver atrás" al pulsar ← en cualquier overlay
