@@ -242,10 +242,18 @@
     showToast('Recordatorio generado \u2014 \u00e1brelo para importar al calendario','success');
   });
 
-  /* ── Menú 3 puntos: exportar/importar TODO ── */
+  /* ── Menú 3 puntos: exportar/importar TODO + MacroDroid URLs ── */
   document.getElementById('menuBtn').addEventListener('click',function(e){
     e.stopPropagation();
     var menu=document.getElementById('dataMenu');
+    var opening=!menu.classList.contains('open');
+    if(opening){
+      // Poblar inputs con los valores guardados en localStorage
+      var mAlarm=document.getElementById('macroAlarmUrlMenu');
+      var mClean=document.getElementById('macroCleanUrlMenu');
+      if(mAlarm)mAlarm.value=localStorage.getItem('excelia-alarm-url')||'';
+      if(mClean)mClean.value=localStorage.getItem('excelia-macro-clean-url')||'';
+    }
     menu.classList.toggle('open');
   });
   document.addEventListener('click',function(e){
@@ -260,6 +268,40 @@
       if(menu)menu.classList.remove('open');
     }
   });
+  /* ── Menú: Limpiar alarmas (MacroDroid webhook) ── */
+  document.getElementById('cleanAlarmsBtn').addEventListener('click',function(e){
+    e.stopPropagation();
+    document.getElementById('dataMenu').classList.remove('open');
+    var cleanUrl=(localStorage.getItem('excelia-macro-clean-url')||'').trim();
+    if(!cleanUrl){showToast('Configura la URL de limpiar alarmas en el men\u00fa','error');return;}
+    showToast('Limpiando alarmas\u2026','success');
+    fetch(cleanUrl,{mode:'no-cors'})
+      .then(function(){showToast('\u2705 Alarmas limpiadas','success');})
+      .catch(function(){showToast('Error al contactar MacroDroid','error');});
+  });
+
+  /* ── Menú: URL MacroDroid crear alarma ── */
+  var _mAlarmIn=document.getElementById('macroAlarmUrlMenu');
+  if(_mAlarmIn){
+    _mAlarmIn.addEventListener('change',function(){
+      var v=this.value.trim();
+      localStorage.setItem('excelia-alarm-url',v);
+      // Sincronizar con el panel de alarma del header
+      var panelIn=document.getElementById('alarmMacroUrl');
+      if(panelIn)panelIn.value=v;
+    });
+    _mAlarmIn.addEventListener('click',function(e){e.stopPropagation();});
+  }
+
+  /* ── Menú: URL MacroDroid limpiar alarmas ── */
+  var _mCleanIn=document.getElementById('macroCleanUrlMenu');
+  if(_mCleanIn){
+    _mCleanIn.addEventListener('change',function(){
+      localStorage.setItem('excelia-macro-clean-url',this.value.trim());
+    });
+    _mCleanIn.addEventListener('click',function(e){e.stopPropagation();});
+  }
+
   document.getElementById('exportAllBtn').addEventListener('click',function(){
     var data={version:2,days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
       exclFest:EXCL_FEST,exclVac:EXCL_VAC,vacEntitlement:VAC_ENTITLEMENT,
@@ -360,4 +402,64 @@
       if(ev.data&&ev.data.type==='SW_UPDATED')_showUpdateBar();
     });
   }
+
+  /* ── Home Popup: semanas sin marcar + VIP sin alarma ── */
+  (function(){
+    try{
+      if(sessionStorage.getItem('excelia-popup-dismissed'))return;
+    }catch(e){}
+    var items=[];
+    // Semanas pasadas sin enviar (hasta 8 semanas atrás)
+    var today=new Date();today.setHours(0,0,0,0);
+    for(var w=1;w<=8;w++){
+      var d=new Date(today);
+      var dow=d.getDay();var off=dow===0?6:dow-1;
+      d.setDate(d.getDate()-off-(w*7)); // Lunes de la semana w
+      var fri=new Date(d);fri.setDate(fri.getDate()+4);
+      if(fri>=today)continue; // Viernes no ha pasado aún
+      var key=dk(d);
+      if(SW[key])continue; // Ya enviada
+      // ¿Tiene días laborables no-festivos?
+      var hasWork=false;
+      for(var di=0;di<5;di++){
+        var wd=new Date(d);wd.setDate(wd.getDate()+di);
+        var t=dayT(wd);
+        if(t==='normal'||t==='vacaciones'||t==='ausencia'){hasWork=true;break;}
+      }
+      if(!hasWork)continue;
+      var lunes=d;
+      var lbl='Semana del '+String(lunes.getDate()).padStart(2,'0')+'/'+String(lunes.getMonth()+1).padStart(2,'0');
+      items.push({type:'warn',text:'&#128221; '+lbl+' sin enviar'});
+    }
+    // VIP cumpleaños próximos (14 días) sin alarma
+    if(typeof BDAYS!=='undefined'&&BDAYS.length&&typeof isBdayAlarmSet==='function'){
+      BDAYS.forEach(function(b){
+        if(!b.vip)return;
+        var bd=new Date(today.getFullYear(),b.month-1,b.day);
+        if(bd<today)bd.setFullYear(today.getFullYear()+1);
+        var diff=Math.round((bd-today)/86400000);
+        if(diff>14)return;
+        if(isBdayAlarmSet(b))return;
+        var label=b.name+(diff===0?' (hoy!)':diff===1?' (ma\u00f1ana!)':' (en '+diff+'d)');
+        items.push({type:'vip',text:'&#11088; '+label+' \u2014 sin alarma'});
+      });
+    }
+    if(!items.length)return;
+    var content=document.getElementById('homePopupContent');
+    if(!content)return;
+    var html='<div class="home-popup-title">&#128276; Recordatorios</div>';
+    items.forEach(function(it){
+      html+='<div class="home-popup-item '+it.type+'">'+it.text+'</div>';
+    });
+    content.innerHTML=html;
+    document.getElementById('homePopup').style.display='flex';
+    function dismissPopup(){
+      document.getElementById('homePopup').style.display='none';
+      try{sessionStorage.setItem('excelia-popup-dismissed','1');}catch(e){}
+    }
+    var closeBtn=document.getElementById('homePopupClose');
+    var dismissBtn=document.getElementById('homePopupDismiss');
+    if(closeBtn)closeBtn.addEventListener('click',dismissPopup);
+    if(dismissBtn)dismissBtn.addEventListener('click',dismissPopup);
+  })();
 })();

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Horas Excelia</title>
+<title>Gestify — featured Excelia</title>
 <meta name="theme-color" content="#0a0a0f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -119,6 +119,12 @@ try{
           <button class="data-menu-item" id="themeBtn">&#127769;&nbsp;Oscuro</button>
           <button class="data-menu-item" id="exportAllBtn">&#8595;&nbsp;Exportar todo</button>
           <button class="data-menu-item" id="importAllBtn">&#8593;&nbsp;Importar todo</button>
+          <button class="data-menu-item" id="cleanAlarmsBtn">&#128277;&nbsp;Limpiar alarmas</button>
+          <div class="macro-section">
+            <div class="macro-section-lbl">&#128246; MacroDroid</div>
+            <input class="macro-url-input" id="macroAlarmUrlMenu" type="url" placeholder="URL macro crear alarma">
+            <input class="macro-url-input" id="macroCleanUrlMenu" type="url" placeholder="URL macro limpiar alarmas">
+          </div>
           <button class="data-menu-item sw-upd-menu-btn" id="swUpdBtn" style="display:none">&#128260;&nbsp;Actualizar</button>
           <div class="app-version-label" id="appVersionLabel"></div>
         </div>
@@ -127,10 +133,11 @@ try{
       <input type="file" id="importAllFile" accept=".json" style="display:none">
   </div>
   <div class="header-brand">
-    <img src="logo.png" alt="Horas Excelia" class="app-logo">
+    <img src="icon-192.png" alt="Gestify" class="app-logo">
     <div>
-      <h1>Horas Excelia</h1>
-      <div class="subtitle" id="authorLabel"></div>
+      <h1>Gestify</h1>
+      <div class="subtitle">featured Excelia</div>
+      <div class="subtitle" id="authorLabel" style="font-size:.68rem;opacity:.6"></div>
     </div>
   </div>
   <nav class="month-nav">
@@ -209,6 +216,15 @@ try{
 
 <!-- ── TOAST ── -->
 <div class="toast" id="toast"></div>
+
+<!-- ── HOME POPUP (semanas pendientes / VIP sin alarma) ── -->
+<div class="home-popup-overlay" id="homePopup" style="display:none">
+  <div class="home-popup">
+    <button class="home-popup-close" id="homePopupClose">&#215;</button>
+    <div id="homePopupContent"></div>
+    <button class="home-popup-dismiss" id="homePopupDismiss">Entendido</button>
+  </div>
+</div>
 
 
 <!-- ── OVERLAY: Resumen anual ── -->

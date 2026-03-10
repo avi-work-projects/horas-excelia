@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v18.1 \u2014 fix panel alarma inputs m\u00f3vil';
+var APP_VERSION = 'v19 \u2014 Gestify + tabs nivel 2 + VIP bdas + alarmas bday + popups';
 
 // ── Historial de navegación entre overlays ────────────────────
 var NAV_BACK=null; // función para "volver atrás" al pulsar ← en cualquier overlay
