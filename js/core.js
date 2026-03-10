@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v20.1 \u2014 alarma bday: alarmDays + 1s gap';
+var APP_VERSION = 'v21 \u2014 fix actualizar: badge \u22ef + toast + CACHE_VER';
 
 // ── Historial de navegación entre overlays ────────────────────
 var NAV_BACK=null; // función para "volver atrás" al pulsar ← en cualquier overlay

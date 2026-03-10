@@ -376,7 +376,11 @@
 
   /* ── SW update: botón Actualizar en menú ⋯ ── */
   var _swUpdBtn=document.getElementById('swUpdBtn');
-  if(_swUpdBtn)_swUpdBtn.addEventListener('click',function(){window.location.reload();});
+  if(_swUpdBtn)_swUpdBtn.addEventListener('click',function(){
+    var mb=document.getElementById('menuBtn');
+    if(mb)mb.classList.remove('has-update');
+    window.location.reload();
+  });
 
   /* ── Service Worker: muestra botón Actualizar en menú cuando hay nueva versión ── */
   if('serviceWorker' in navigator){
@@ -386,6 +390,12 @@
       _swShown=true;
       var btn=document.getElementById('swUpdBtn');
       if(btn)btn.style.display='';
+      // Badge visible en botón ⋯
+      var mb=document.getElementById('menuBtn');
+      if(mb)mb.classList.add('has-update');
+      // Toast de aviso
+      if(typeof showToast==='function')
+        showToast('\uD83D\uDD04 Nueva versi\u00f3n disponible \u2014 abre \u22ef para actualizar','success');
     }
     // Método 1: controllerchange — el más fiable (skipWaiting activó el nuevo SW)
     navigator.serviceWorker.addEventListener('controllerchange',_showUpdateBar);
