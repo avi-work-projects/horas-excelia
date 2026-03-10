@@ -3,7 +3,14 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v21 \u2014 fix actualizar: badge \u22ef + toast + CACHE_VER';
+var APP_VERSION = 'v22 \u2014 MacroDroid base URL normalizada';
+
+// ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
+function normalizeMacroBase(url){
+  url=(url||'').trim().replace(/\/+$/,'');
+  url=url.replace(/\/(generar_alarma1|generar_alarma2|apagar_alarmas)$/,'');
+  return url;
+}
 
 // ── Historial de navegación entre overlays ────────────────────
 var NAV_BACK=null; // función para "volver atrás" al pulsar ← en cualquier overlay

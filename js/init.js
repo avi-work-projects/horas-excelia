@@ -157,7 +157,9 @@
     localStorage.setItem('excelia-alarm-macro',checked?'1':'0');
   });
   document.getElementById('alarmMacroUrl').addEventListener('change',function(){
-    localStorage.setItem('excelia-alarm-url',this.value.trim());
+    var v=normalizeMacroBase(this.value);
+    this.value=v;
+    localStorage.setItem('excelia-alarm-url',v);
   });
 
   document.getElementById('alarmCreateBtn').addEventListener('click',function(){
@@ -174,15 +176,13 @@
 
     if(useMacro){
       // MacroDroid webhook: URL remota (https://trigger.macrodroid.com/…)
-      var macroUrl=(document.getElementById('alarmMacroUrl').value||'').trim();
-      if(!macroUrl){
+      var macroBase=normalizeMacroBase(document.getElementById('alarmMacroUrl').value||'');
+      if(!macroBase){
         showToast('Pega la URL del webhook de MacroDroid','error');
         document.getElementById('alarmPanel').classList.add('open');
         return;
       }
-      var sep=macroUrl.indexOf('?')>=0?'&':'?';
-      // Parámetros: alarmH, alarmM, alarmMsg, alarmDays (csv de constantes Android Calendar)
-      var url=macroUrl+sep+'alarmH='+h+'&alarmM='+m+'&alarmMsg='+encodeURIComponent(msg);
+      var url=macroBase+'/generar_alarma1?alarmH='+h+'&alarmM='+m+'&alarmMsg='+encodeURIComponent(msg);
       if(selDays.length)url+='&alarmDays='+selDays.join(',');
       showToast('Enviando a MacroDroid\u2026','success');
       fetch(url,{mode:'no-cors'})
@@ -254,9 +254,7 @@
     if(opening){
       // Poblar inputs con los valores guardados en localStorage
       var mAlarm=document.getElementById('macroAlarmUrlMenu');
-      var mClean=document.getElementById('macroCleanUrlMenu');
-      if(mAlarm)mAlarm.value=localStorage.getItem('excelia-alarm-url')||'';
-      if(mClean)mClean.value=localStorage.getItem('excelia-macro-clean-url')||'';
+      if(mAlarm)mAlarm.value=normalizeMacroBase(localStorage.getItem('excelia-alarm-url')||'');
     }
     menu.classList.toggle('open');
   });
@@ -276,8 +274,9 @@
   document.getElementById('cleanAlarmsBtn').addEventListener('click',function(e){
     e.stopPropagation();
     document.getElementById('dataMenu').classList.remove('open');
-    var cleanUrl=(localStorage.getItem('excelia-macro-clean-url')||'').trim();
-    if(!cleanUrl){showToast('Configura la URL de limpiar alarmas en el men\u00fa','error');return;}
+    var cleanBase=normalizeMacroBase(localStorage.getItem('excelia-alarm-url')||'');
+    if(!cleanBase){showToast('Configura la URL base de MacroDroid en el men\u00fa','error');return;}
+    var cleanUrl=cleanBase+'/apagar_alarmas';
     showToast('Limpiando alarmas\u2026','success');
     fetch(cleanUrl,{mode:'no-cors'})
       .then(function(){showToast('\u2705 Alarmas limpiadas','success');})
@@ -288,22 +287,14 @@
   var _mAlarmIn=document.getElementById('macroAlarmUrlMenu');
   if(_mAlarmIn){
     _mAlarmIn.addEventListener('change',function(){
-      var v=this.value.trim();
+      var v=normalizeMacroBase(this.value);
+      this.value=v;
       localStorage.setItem('excelia-alarm-url',v);
       // Sincronizar con el panel de alarma del header
       var panelIn=document.getElementById('alarmMacroUrl');
       if(panelIn)panelIn.value=v;
     });
     _mAlarmIn.addEventListener('click',function(e){e.stopPropagation();});
-  }
-
-  /* ── Menú: URL MacroDroid limpiar alarmas ── */
-  var _mCleanIn=document.getElementById('macroCleanUrlMenu');
-  if(_mCleanIn){
-    _mCleanIn.addEventListener('change',function(){
-      localStorage.setItem('excelia-macro-clean-url',this.value.trim());
-    });
-    _mCleanIn.addEventListener('click',function(e){e.stopPropagation();});
   }
 
   document.getElementById('exportAllBtn').addEventListener('click',function(){
