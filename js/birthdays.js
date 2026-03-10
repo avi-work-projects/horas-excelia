@@ -428,27 +428,33 @@ function bindBdayAlarmEvents(b){
     var m2=isNaN(m2r)?2:Math.min(59,Math.max(0,m2r));
     var msgDay='\uD83C\uDF82 Cumple '+tc(b.name)+'! '+String(b.day).padStart(2,'0')+'/'+String(b.month).padStart(2,'0');
     var sep=alarmUrl.indexOf('?')>=0?'&':'?';
-    var url2=alarmUrl+sep+'alarmH='+h2+'&alarmM='+m2+'&alarmMsg='+encodeURIComponent(msgDay);
-    var promises=[];
+    // Android Calendar day: 1=Dom, 2=Lun, ..., 7=Sáb (= JS getDay()+1)
+    var dayBd=bdDate2.getDay()+1;
+    var url2=alarmUrl+sep+'alarmH='+h2+'&alarmM='+m2+'&alarmMsg='+encodeURIComponent(msgDay)+'&alarmDays='+dayBd;
+    function onBdAlarmSuccess(){
+      setBdayAlarmState(b,true);
+      showToast('\u23f0 Alarma'+(BDAY_ALARM_COUNT===2?'s':'')+' creada'+(BDAY_ALARM_COUNT===2?'s':'')+' para '+tc(b.name),'success');
+      closeBdayAlarm();
+      setTimeout(refreshBday,320);
+    }
+    function onBdAlarmError(){showToast('Error al contactar MacroDroid','error');}
+    showToast('Enviando alarma'+( BDAY_ALARM_COUNT===2?'s':'')+' a MacroDroid\u2026','success');
     if(BDAY_ALARM_COUNT===2){
       var h1r=parseInt(document.getElementById('bdAlarmH1').value,10);
       var h1=isNaN(h1r)?23:Math.min(23,Math.max(0,h1r));
       var m1r=parseInt(document.getElementById('bdAlarmM1').value,10);
       var m1=isNaN(m1r)?57:Math.min(59,Math.max(0,m1r));
       var msgPrev='\u23f0 Ma\u00f1ana cumple '+tc(b.name)+' '+String(b.day).padStart(2,'0')+'/'+String(b.month).padStart(2,'0');
-      var url1=alarmUrl+sep+'alarmH='+h1+'&alarmM='+m1+'&alarmMsg='+encodeURIComponent(msgPrev);
-      promises.push(fetch(url1,{mode:'no-cors'}));
+      var dayPrev=prevDate2.getDay()+1;
+      var url1=alarmUrl+sep+'alarmH='+h1+'&alarmM='+m1+'&alarmMsg='+encodeURIComponent(msgPrev)+'&alarmDays='+dayPrev;
+      // 1 segundo de separación entre las dos peticiones
+      fetch(url1,{mode:'no-cors'})
+        .then(function(){return new Promise(function(r){setTimeout(r,1000);});})
+        .then(function(){return fetch(url2,{mode:'no-cors'});})
+        .then(onBdAlarmSuccess).catch(onBdAlarmError);
+    } else {
+      fetch(url2,{mode:'no-cors'}).then(onBdAlarmSuccess).catch(onBdAlarmError);
     }
-    promises.push(fetch(url2,{mode:'no-cors'}));
-    showToast('Enviando alarma'+( BDAY_ALARM_COUNT===2?'s':'')+' a MacroDroid\u2026','success');
-    Promise.all(promises).then(function(){
-      setBdayAlarmState(b,true);
-      showToast('\u23f0 Alarma'+(BDAY_ALARM_COUNT===2?'s':'')+' creada'+(BDAY_ALARM_COUNT===2?'s':'')+' para '+tc(b.name),'success');
-      closeBdayAlarm();
-      setTimeout(refreshBday,320);
-    }).catch(function(){
-      showToast('Error al contactar MacroDroid','error');
-    });
   });
 
   // Mark without creating
