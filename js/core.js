@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v25 — perímetro puentes + color único viajes + aspas anuales';
+var APP_VERSION = 'v26 — UI: squares, right-align alarm, month center, tabs fix';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -328,13 +328,12 @@ function renderNavBar(current){
     {icon:'&#128176;',key:'econ',title:'Econ\u00f3mico'},
     {icon:'&#127874;',key:'bday',title:'Cumplea\u00f1os'},
     {icon:'&#128197;',key:'events',title:'Eventos'},
-    {icon:'&#8593;',key:'import',title:'Importar datos'},
-    {icon:'&#8595;',key:'export',title:'Exportar datos'},
     {icon:'&#128276;',key:'alarm',title:'Test alarma'},
     {icon:'&#8943;',key:'menu',title:'M\u00e1s opciones'}
   ];
   var h='<div class="overlay-nav-bar">';
   btns.forEach(function(b){
+    if(b.key==='alarm')h+='<div class="nav-bar-spacer"></div>';
     var active=b.key===current?' active':'';
     var extra=b.key==='events'&&evActive?' events-active':b.key==='bday'&&bdActive?' bday-active':'';
     h+='<button class="nav-bar-btn'+active+extra+'" data-nav="'+b.key+'" title="'+b.title+'">'+b.icon+'</button>';
@@ -356,8 +355,6 @@ function bindNavBar(current,closeFn){
         else if(key==='econ')openEcon();
         else if(key==='bday')openBday();
         else if(key==='events')openEvents();
-        else if(key==='import')document.getElementById('importBtn').click();
-        else if(key==='export')document.getElementById('exportBtn').click();
         else if(key==='alarm')document.getElementById('alarmTestBtn').click();
         else if(key==='menu'){var m=document.getElementById('dataMenu');if(m)m.classList.toggle('open');}
       };
@@ -368,8 +365,8 @@ function bindNavBar(current,closeFn){
       } else {
         NAV_BACK=null;
       }
-      // import/export/menu: actuar sin cerrar overlay; todo lo demás (incl. alarm): cerrar primero
-      if(closeFn&&key!=='import'&&key!=='export'&&key!=='menu'){closeFn();setTimeout(doNav,330);}
+      // menu: actuar sin cerrar overlay; todo lo demás (incl. alarm): cerrar primero
+      if(closeFn&&key!=='menu'){closeFn();setTimeout(doNav,330);}
       else doNav();
     });
   });

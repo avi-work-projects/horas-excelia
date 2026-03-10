@@ -132,7 +132,7 @@ function renderBdayUpcoming(){
     return 'Hace '+Math.abs(diff)+'\u202fd\u00edas';
   }
 
-  function renderGroup(title,list){
+  function renderGroup(title,list,isCurWeek){
     if(!list.length)return '<div class="sy-note">No hay cumplea\u00f1os '+title.toLowerCase()+'.</div>';
     var s='<div class="bday-month-hdr">'+title+'</div>';
     list.forEach(function(x){
@@ -141,7 +141,7 @@ function renderBdayUpcoming(){
       var isT=x.diff===0;
       var isPastDay=x.diff<0;
       var isNearDay=x.diff>0&&x.diff<=3;
-      var lblCls='bday-upcoming-lbl'+(isT?' today-lbl':isPastDay?' past-lbl':isNearDay?' near':'');
+      var lblCls='bday-upcoming-lbl'+(isT?' today-lbl':isPastDay?' past-lbl':(isCurWeek&&x.diff>0)?' this-week':isNearDay?' near':'');
       var isVip=!!x.b.vip;
       var alarmSet=isBdayAlarmSet(x.b);
       var alarmIcon=alarmSet?'<span class="bday-alarm-set-icon" title="Alarma configurada">\uD83D\uDD14\u2713</span>':'';
@@ -168,7 +168,7 @@ function renderBdayUpcoming(){
   } else {
     h+='<div>';
   }
-  h+=renderGroup('Esta semana',curItems);
+  h+=renderGroup('Esta semana',curItems,true);
   h+='</div><div class="bday-upcoming-section" style="margin-top:8px">';
   h+=renderGroup('La pr\u00f3xima semana',nxtItems);
   h+='</div>';
@@ -203,7 +203,7 @@ function renderBdayCalMonth(){
         var color=getBdayColor(b);
         var sn=shortName(tc(b.name));
         var vipStar=b.vip?'\u2b50 ':'';
-        h+='<div class="bday-badge" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" style="background:'+color+'22;color:'+color+';border-left-color:'+color+'" title="'+bdName(b.name)+'">'+vipStar+escHtml(sn)+'</div>';
+        h+='<div class="bday-badge" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" style="background:'+color+'22;color:'+color+';border-color:'+color+'" title="'+bdName(b.name)+'">'+vipStar+escHtml(sn)+'</div>';
       });
       h+='</div>';
       cur.setDate(cur.getDate()+1);
