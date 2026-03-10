@@ -97,13 +97,12 @@ function updateEventsBtn(){
   else btn.classList.remove('events-active');
 }
 
-/* ── Helper: color secundario para gradiente de eventos multi-día ── */
-function evColor2(ev){
-  var cols=['#38bdf8','#1d4ed8','#34d399','#fb923c','#ff6b6b','#c084fc','#fbbf24'];
-  var i=cols.indexOf(ev.color);
-  if(i<0)return ev.color;
-  var n=(ev.id.length>0?(ev.id.charCodeAt(ev.id.length-1)%3)+1:1);
-  return cols[(i+n)%cols.length];
+/* ── Helper: color único y estable por evento (hash del ID) ── */
+function evUniqueColor(ev){
+  var hash=0;
+  for(var i=0;i<ev.id.length;i++){hash=(hash*31+ev.id.charCodeAt(i))&0xffff;}
+  var hue=Math.round((hash*137.508)%360);
+  return 'hsl('+hue+',82%,62%)';
 }
 
 /* ── Render: calendario mensual ─────────────────────────── */
@@ -159,9 +158,8 @@ function renderEvCalMonth(){
         var ev=it.ev;
         var sc=it.starts&&it.ends?'':it.starts?' starts':it.ends?' ends':' continues';
         var showT=it.starts||(it.cs===0);
-        var c2=evColor2(ev);
         h+='<div class="ev-multi-bar'+sc+'" data-id="'+ev.id+'"'
-          +' style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';background:linear-gradient(135deg,'+ev.color+'33 0%,'+c2+'22 100%);border-color:'+ev.color+';color:'+ev.color+'">'
+          +' style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';background:'+ev.color+'22;border-color:'+evUniqueColor(ev)+';color:'+ev.color+'">'
           +(showT?escHtml(ev.title):'')+'</div>';
       });
       h+='</div>';
@@ -190,8 +188,17 @@ function renderEvCalMonth(){
       h+='</div>';
     }
     if(bspanStart>=0)bspans.push({s:bspanStart,e:6});
-    // Añadir perímetro rosa sobre días de puente agrupados
-    bspans.forEach(function(sp){h+='<div class="ev-puente-perimeter" style="grid-column:'+(sp.s+1)+'/'+(sp.e+2)+';grid-row:1"></div>';});
+    // Perímetro puente: sin borde donde el puente continúa en otra semana
+    var nextMonP=new Date(wk[6]);nextMonP.setDate(nextMonP.getDate()+1);
+    var prevSunP=new Date(wk[0]);prevSunP.setDate(prevSunP.getDate()-1);
+    bspans.forEach(function(sp){
+      var noR=sp.e===6&&puenteMap[evDk(nextMonP)];
+      var noL=sp.s===0&&puenteMap[evDk(prevSunP)];
+      var bsty='grid-column:'+(sp.s+1)+'/'+(sp.e+2)+';grid-row:1;';
+      if(noL)bsty+='border-left:none;border-top-left-radius:0;border-bottom-left-radius:0;';
+      if(noR)bsty+='border-right:none;border-top-right-radius:0;border-bottom-right-radius:0;';
+      h+='<div class="ev-puente-perimeter" style="'+bsty+'"></div>';
+    });
     h+='</div></div>'; // ev-week-grid + ev-week-outer
     cur.setDate(cur.getDate()+7);
   }
@@ -440,6 +447,7 @@ function renderEvAnnual(){
         wMulti.push({ev:ev,cs:cs,ce:ce,starts:es>=wStart,ends:ee<=wEnd});
       });
       h+='<div class="ev-annual-week-outer">';
+      var abspanStart=-1,abspans=[];
       for(var di=0;di<7;di++){
         var d=wk[di];
         var inM=d.getMonth()===m;
@@ -451,6 +459,8 @@ function renderEvAnnual(){
         var inPuente=inM&&puenteMap[ds];
         var isSueltoFest=inM&&sueltoFestMap[ds];
         var isSueltoVac=inM&&sueltoVacMap[ds];
+        if(inPuente){if(abspanStart<0)abspanStart=di;}
+        else{if(abspanStart>=0){abspans.push({s:abspanStart,e:di-1});abspanStart=-1;}}
         var cls='ev-annual-day'+(inM?'':' out-m')+(isT?' ann-today':'')+(inPuente?' ev-annual-puente':isSueltoFest?' ev-annual-suelto-fest':isSueltoVac?' ev-annual-suelto-vac':'');
         var bg='';
         if(inM){
@@ -461,24 +471,41 @@ function renderEvAnnual(){
         }
         var sty=bg?' style="background:'+bg+'"':'';
         var dsAttr=inM?' data-ds="'+ds+'"':'';
-        // X gruesa para eventos puntuales de un solo día
+        // Aspas para eventos puntuales (todas, más pequeñas para que quepan varias)
         var dotsHtml='';
         if(inM&&evs.length){
           var singleEvs=evs.filter(function(ev){return !multiIds[ev.id];});
           if(singleEvs.length){
-            dotsHtml='<div class="ev-annual-x" style="color:'+singleEvs[0].color+'">&#x2715;</div>';
+            dotsHtml='<div class="ev-annual-xs">';
+            singleEvs.forEach(function(ev){dotsHtml+='<span class="ev-annual-x" style="color:'+ev.color+'">&#x2715;</span>';});
+            dotsHtml+='</div>';
           }
         }
         h+='<div class="'+cls+'"'+sty+dsAttr+'>'+dotsHtml+'</div>';
       }
-      // Barra continua para eventos multi-día
+      if(abspanStart>=0)abspans.push({s:abspanStart,e:6});
+      // Barras multi-día con color único por evento (gradiente)
       if(wMulti.length){
         h+='<div class="ev-annual-bars-row">';
         wMulti.forEach(function(it){
           var sc=it.starts&&it.ends?'':it.starts?' a-starts':it.ends?' a-ends':' a-mid';
-          h+='<div class="ev-annual-mbar'+sc+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';background:'+it.ev.color+'"></div>';
+          h+='<div class="ev-annual-mbar'+sc+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';background:linear-gradient(90deg,'+it.ev.color+' 0%,'+evUniqueColor(it.ev)+' 100%)"></div>';
         });
         h+='</div>';
+      }
+      // Perímetro de días puente en anual (bordes abiertos si el puente continúa)
+      if(abspans.length){
+        var nextMonA=new Date(wk[6]);nextMonA.setDate(nextMonA.getDate()+1);
+        var prevSunA=new Date(wk[0]);prevSunA.setDate(prevSunA.getDate()-1);
+        var nextMonADs=evDk(nextMonA),prevSunADs=evDk(prevSunA);
+        abspans.forEach(function(sp){
+          var noR=sp.e===6&&puenteMap[nextMonADs];
+          var noL=sp.s===0&&puenteMap[prevSunADs];
+          var bsty='grid-column:'+(sp.s+1)+'/'+(sp.e+2)+';grid-row:1;';
+          if(noL)bsty+='border-left:none;border-top-left-radius:0;border-bottom-left-radius:0;';
+          if(noR)bsty+='border-right:none;border-top-right-radius:0;border-bottom-right-radius:0;';
+          h+='<div class="ev-annual-puente-perimeter" style="'+bsty+'"></div>';
+        });
       }
       h+='</div>'; // ev-annual-week-outer
     }

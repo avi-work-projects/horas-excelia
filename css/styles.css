@@ -380,9 +380,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-cell.weekend{border:1.5px solid rgba(160,160,200,.25);background:rgba(160,160,200,.11)}
 .ev-cell.weekend .ev-num{color:#8888a8}
 /* Day types in events calendar — border-top + tinte de fondo */
-.ev-cell.ev-day-festivo{border-top:3px solid var(--festivo);background:rgba(255,107,107,.09)}
-.ev-cell.ev-day-vacaciones{border-top:3px solid var(--vacaciones);background:rgba(255,179,71,.09)}
-.ev-cell.ev-day-ausencia{border-top:3px solid var(--ausencia);background:rgba(192,132,252,.09)}
+.ev-cell.ev-day-festivo{border-top:5px solid var(--festivo);background:rgba(255,107,107,.09)}
+.ev-cell.ev-day-vacaciones{border-top:5px solid var(--vacaciones);background:rgba(255,179,71,.09)}
+.ev-cell.ev-day-ausencia{border-top:5px solid var(--ausencia);background:rgba(192,132,252,.09)}
 .ev-cell.ev-puente{background:repeating-linear-gradient(45deg,rgba(244,114,182,.22),rgba(244,114,182,.22) 3px,transparent 3px,transparent 9px)}
 /* Events in puentes (summary) — one per line */
 .sy-puente-evs{display:flex;flex-direction:column;gap:3px;margin-top:6px}
@@ -420,14 +420,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-annual-day.ann-today{outline:1.5px solid var(--accent);outline-offset:-1px}
 .ev-annual-dots{position:absolute;bottom:0;left:0;right:0;display:flex;pointer-events:none}
 .ev-annual-dots span{flex:1;height:3px;border-radius:0;flex-shrink:0}
-/* X gruesa para eventos puntuales en vista anual */
-.ev-annual-x{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:900;pointer-events:none;line-height:1;opacity:.95}
+/* Aspas para eventos puntuales en vista anual — contenedor + spans individuales */
+.ev-annual-xs{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0;pointer-events:none;overflow:hidden}
+.ev-annual-x{font-size:.46rem;font-weight:900;line-height:1.1;opacity:.95;-webkit-text-stroke:.4px currentColor}
 /* Barras multi-día en calendario anual */
-.ev-annual-bars-row{position:absolute;bottom:1px;left:0;right:0;height:3px;z-index:3;pointer-events:none;display:grid;grid-template-columns:repeat(7,1fr)}
-.ev-annual-mbar{height:3px;border-radius:2px}
+.ev-annual-bars-row{position:absolute;bottom:1px;left:0;right:0;height:4px;z-index:3;pointer-events:none;display:grid;grid-template-columns:repeat(7,1fr)}
+.ev-annual-mbar{height:4px;border-radius:2px}
 .ev-annual-mbar.a-starts{border-top-right-radius:0;border-bottom-right-radius:0}
 .ev-annual-mbar.a-ends{border-top-left-radius:0;border-bottom-left-radius:0}
 .ev-annual-mbar.a-mid{border-radius:0}
+/* Perímetro de días puente en vista anual */
+.ev-annual-puente-perimeter{position:absolute;inset:0;border:1px solid #f472b6;border-radius:2px;pointer-events:none;z-index:4}
 .ev-annual-month{cursor:pointer;transition:opacity .15s}
 .ev-annual-pick-mode .ev-annual-day[data-ds]{cursor:crosshair}
 .ev-annual-pick-mode .ev-annual-day[data-ds]:hover{outline:1.5px solid rgba(255,255,255,.5);outline-offset:-1px}
@@ -537,7 +540,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-week-hdr div{text-align:center;font-size:.62rem;color:var(--text-dim);text-transform:uppercase;padding:6px 0;font-weight:600}
 .ev-week-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:0}
 /* Perímetro exterior que cubre todos los días de un puente en la vista mensual */
-.ev-puente-perimeter{position:absolute;inset:0;border:2.5px solid #f472b6;border-radius:5px;pointer-events:none;z-index:5}
+.ev-puente-perimeter{position:absolute;inset:0;border:1.5px solid #f472b6;border-radius:5px;pointer-events:none;z-index:5}
 .ev-cell{min-height:68px;padding:6px 4px 4px;background:var(--surface);border-radius:var(--radius-sm);display:flex;flex-direction:column;gap:2px;overflow:hidden;cursor:pointer;transition:background .12s;-webkit-user-select:none;user-select:none}
 .ev-cell:active{background:var(--surface3)}
 .ev-cell.out-m{opacity:.35}
