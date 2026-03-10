@@ -422,15 +422,19 @@ function bindBdayAlarmEvents(b){
     var bdDate2=new Date(bdYear2,b.month-1,b.day);
     if(bdDate2<today2)bdDate2.setFullYear(bdYear2+1);
     var prevDate2=new Date(bdDate2);prevDate2.setDate(prevDate2.getDate()-1);
-    var h2=parseInt(document.getElementById('bdAlarmH2').value,10)||9;
-    var m2=parseInt(document.getElementById('bdAlarmM2').value,10)||2;
+    var h2r=parseInt(document.getElementById('bdAlarmH2').value,10);
+    var h2=isNaN(h2r)?9:Math.min(23,Math.max(0,h2r));
+    var m2r=parseInt(document.getElementById('bdAlarmM2').value,10);
+    var m2=isNaN(m2r)?2:Math.min(59,Math.max(0,m2r));
     var msgDay='\uD83C\uDF82 Cumple '+tc(b.name)+'! '+String(b.day).padStart(2,'0')+'/'+String(b.month).padStart(2,'0');
     var sep=alarmUrl.indexOf('?')>=0?'&':'?';
     var url2=alarmUrl+sep+'alarmH='+h2+'&alarmM='+m2+'&alarmMsg='+encodeURIComponent(msgDay);
     var promises=[];
     if(BDAY_ALARM_COUNT===2){
-      var h1=parseInt(document.getElementById('bdAlarmH1').value,10)||23;
-      var m1=parseInt(document.getElementById('bdAlarmM1').value,10)||57;
+      var h1r=parseInt(document.getElementById('bdAlarmH1').value,10);
+      var h1=isNaN(h1r)?23:Math.min(23,Math.max(0,h1r));
+      var m1r=parseInt(document.getElementById('bdAlarmM1').value,10);
+      var m1=isNaN(m1r)?57:Math.min(59,Math.max(0,m1r));
       var msgPrev='\u23f0 Ma\u00f1ana cumple '+tc(b.name)+' '+String(b.day).padStart(2,'0')+'/'+String(b.month).padStart(2,'0');
       var url1=alarmUrl+sep+'alarmH='+h1+'&alarmM='+m1+'&alarmMsg='+encodeURIComponent(msgPrev);
       promises.push(fetch(url1,{mode:'no-cors'}));

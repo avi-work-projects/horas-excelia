@@ -161,8 +161,10 @@
   });
 
   document.getElementById('alarmCreateBtn').addEventListener('click',function(){
-    var h=Math.min(23,Math.max(0,parseInt(document.getElementById('alarmHour').value,10)||8));
-    var m=Math.min(59,Math.max(0,parseInt(document.getElementById('alarmMin').value,10)||0));
+    var hRaw=parseInt(document.getElementById('alarmHour').value,10);
+    var h=isNaN(hRaw)?8:Math.min(23,Math.max(0,hRaw));
+    var mRaw=parseInt(document.getElementById('alarmMin').value,10);
+    var m=isNaN(mRaw)?0:Math.min(59,Math.max(0,mRaw));
     var msg=(document.getElementById('alarmMsg').value.trim()||'Horas Excelia');
     var useMacro=document.getElementById('alarmUseMacro').checked;
     // Días seleccionados (constantes Android: 1=Dom,2=Lun...7=Sáb)
@@ -205,8 +207,10 @@
 
   /* ── Alarma: fallback .ics (recordatorio de calendario, 100% fiable) ── */
   document.getElementById('alarmIcsBtn').addEventListener('click',function(){
-    var h=Math.min(23,Math.max(0,parseInt(document.getElementById('alarmHour').value,10)||8));
-    var m=Math.min(59,Math.max(0,parseInt(document.getElementById('alarmMin').value,10)||0));
+    var hRaw2=parseInt(document.getElementById('alarmHour').value,10);
+    var h=isNaN(hRaw2)?8:Math.min(23,Math.max(0,hRaw2));
+    var mRaw2=parseInt(document.getElementById('alarmMin').value,10);
+    var m=isNaN(mRaw2)?0:Math.min(59,Math.max(0,mRaw2));
     var msg=(document.getElementById('alarmMsg').value.trim()||'Horas Excelia');
     var selDays=[];
     document.querySelectorAll('.alarm-day-btn.on').forEach(function(b){selDays.push(+b.dataset.day);});
