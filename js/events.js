@@ -489,7 +489,7 @@ function renderEvAnnual(){
         h+='<div class="ev-annual-bars-row">';
         wMulti.forEach(function(it){
           var sc=it.starts&&it.ends?'':it.starts?' a-starts':it.ends?' a-ends':' a-mid';
-          h+='<div class="ev-annual-mbar'+sc+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';background:linear-gradient(90deg,'+it.ev.color+' 0%,'+evUniqueColor(it.ev)+' 100%)"></div>';
+          h+='<div class="ev-annual-mbar'+sc+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+'"></div>';
         });
         h+='</div>';
       }

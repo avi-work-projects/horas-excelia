@@ -86,7 +86,8 @@
   document.getElementById('eventsBtn').addEventListener('click',openEvents);
 
   /* ── Exportar datos (solo días/semanas/jornada) ── */
-  document.getElementById('exportBtn').addEventListener('click',function(){
+  var _expBtn=document.getElementById('exportBtn');
+  if(_expBtn)_expBtn.addEventListener('click',function(){
     var data={version:2,days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,exclFest:EXCL_FEST,exclVac:EXCL_VAC};
     var a=document.createElement('a');
     a.href='data:application/json,'+encodeURIComponent(JSON.stringify(data,null,2));
@@ -96,7 +97,8 @@
   });
 
   /* ── Importar datos (solo días/semanas/jornada) ── */
-  document.getElementById('importBtn').addEventListener('click',function(){
+  var _impBtn=document.getElementById('importBtn');
+  if(_impBtn)_impBtn.addEventListener('click',function(){
     document.getElementById('importFile').click();
   });
   document.getElementById('importFile').addEventListener('change',function(ev){

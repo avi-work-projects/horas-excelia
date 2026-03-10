@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v26 — UI: squares, right-align alarm, month center, tabs fix';
+var APP_VERSION = 'v27 — fix exportBtn null, bday modal center, VIP star, trips bar, annual azul';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
