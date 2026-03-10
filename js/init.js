@@ -15,6 +15,8 @@
   var _vl=document.getElementById('appVersionLabel');
   if(_vl)_vl.textContent=typeof APP_VERSION!=='undefined'?APP_VERSION:'—';
   updateEventsBtn();
+  /* ── Sincronizar cumpleaños VIP con calendario de eventos ── */
+  if(typeof syncVipBdaysToEvents==='function') syncVipBdaysToEvents();
 
   /* ── Navegación de mes ── */
   document.getElementById('prevBtn').addEventListener('click',function(){

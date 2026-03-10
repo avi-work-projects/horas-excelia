@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v23 \u2014 mejoras visuales calendario';
+var APP_VERSION = 'v24 \u2014 nav activa + VIP + fix alarma';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -320,6 +320,8 @@ function togSent(k){if(SW[k])delete SW[k]; else SW[k]=true; save(); render();}
 
 // ── Barra de navegación compartida entre overlays ────────────
 function renderNavBar(current){
+  var evActive=typeof EVENTS!=='undefined'&&EVENTS.length>0&&typeof hasUpcomingEvent==='function'&&hasUpcomingEvent();
+  var bdActive=typeof BDAYS!=='undefined'&&BDAYS.length>0&&typeof hasUpcomingBday==='function'&&hasUpcomingBday();
   var btns=[
     {icon:'&#127968;',key:'home',title:'Inicio'},
     {icon:'&#128202;',key:'summary',title:'Resumen anual'},
@@ -334,7 +336,8 @@ function renderNavBar(current){
   var h='<div class="overlay-nav-bar">';
   btns.forEach(function(b){
     var active=b.key===current?' active':'';
-    h+='<button class="nav-bar-btn'+active+'" data-nav="'+b.key+'" title="'+b.title+'">'+b.icon+'</button>';
+    var extra=b.key==='events'&&evActive?' events-active':b.key==='bday'&&bdActive?' bday-active':'';
+    h+='<button class="nav-bar-btn'+active+extra+'" data-nav="'+b.key+'" title="'+b.title+'">'+b.icon+'</button>';
   });
   h+='</div>';
   return h;
@@ -365,7 +368,8 @@ function bindNavBar(current,closeFn){
       } else {
         NAV_BACK=null;
       }
-      if(closeFn&&key!=='alarm'){closeFn();setTimeout(doNav,330);}
+      // import/export/menu: actuar sin cerrar overlay; todo lo demás (incl. alarm): cerrar primero
+      if(closeFn&&key!=='import'&&key!=='export'&&key!=='menu'){closeFn();setTimeout(doNav,330);}
       else doNav();
     });
   });
