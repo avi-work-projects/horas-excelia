@@ -248,11 +248,17 @@
     var menu=document.getElementById('dataMenu');
     menu.classList.toggle('open');
   });
-  document.addEventListener('click',function(){
-    var menu=document.getElementById('dataMenu');
-    if(menu)menu.classList.remove('open');
-    var alarmPanel=document.getElementById('alarmPanel');
-    if(alarmPanel)alarmPanel.classList.remove('open');
+  document.addEventListener('click',function(e){
+    var alarmWrap=document.getElementById('alarmWrap');
+    if(!alarmWrap||!alarmWrap.contains(e.target)){
+      var alarmPanel=document.getElementById('alarmPanel');
+      if(alarmPanel)alarmPanel.classList.remove('open');
+    }
+    var menuWrap=document.querySelector('.data-menu-wrap:last-child');
+    if(!menuWrap||!menuWrap.contains(e.target)){
+      var menu=document.getElementById('dataMenu');
+      if(menu)menu.classList.remove('open');
+    }
   });
   document.getElementById('exportAllBtn').addEventListener('click',function(){
     var data={version:2,days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
