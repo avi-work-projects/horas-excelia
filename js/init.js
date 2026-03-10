@@ -163,6 +163,10 @@
     this.value=v;
     localStorage.setItem('excelia-alarm-url',v);
   });
+  document.getElementById('alarmMin').addEventListener('blur',function(){
+    var v=parseInt(this.value,10);
+    if(!isNaN(v)&&v>=0&&v<=59)this.value=String(v).padStart(2,'0');
+  });
 
   document.getElementById('alarmCreateBtn').addEventListener('click',function(){
     var hRaw=parseInt(document.getElementById('alarmHour').value,10);

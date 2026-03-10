@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Gestify — featured Excelia</title>
+<title>Gestify — Excelia</title>
 <meta name="theme-color" content="#0a0a0f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -80,16 +80,14 @@ try{
       <button class="data-btn" id="econBtn" title="Económico">💰</button>
       <button class="data-btn" id="bdayBtn" title="Cumpleaños">&#127874;</button>
       <button class="data-btn" id="eventsBtn" title="Eventos">&#128197;</button>
-      <button class="data-btn" id="importBtn" title="Importar datos">&#8593;</button>
-      <button class="data-btn" id="exportBtn" title="Exportar datos">&#8595;</button>
       <div class="data-menu-wrap" id="alarmWrap">
         <button class="data-btn" id="alarmTestBtn" title="Crear alarma">&#128276;</button>
         <div class="data-menu alarm-cfg" id="alarmPanel">
           <div class="alarm-panel-title">&#128276; Crear alarma</div>
           <div class="alarm-time-row">
-            <input class="alarm-h-input" id="alarmHour" type="number" min="0" max="23" value="8">
+            <input class="alarm-h-input" id="alarmHour" type="number" min="0" max="23" value="9">
             <span class="alarm-colon">:</span>
-            <input class="alarm-m-input" id="alarmMin" type="number" min="0" max="59" value="45">
+            <input class="alarm-m-input" id="alarmMin" type="text" inputmode="numeric" maxlength="2" value="02">
           </div>
           <input class="alarm-msg-input" id="alarmMsg" type="text" maxlength="40" placeholder="Mensaje de la alarma" value="Horas Excelia">
           <div class="alarm-days-row">
@@ -135,7 +133,7 @@ try{
     <img src="logo.png" alt="Gestify" class="app-logo">
     <div>
       <h1>Gestify</h1>
-      <div class="subtitle">featured Excelia</div>
+      <div class="subtitle">Excelia</div>
       <div class="subtitle" id="authorLabel" style="font-size:.68rem;opacity:.6"></div>
     </div>
   </div>
