@@ -427,10 +427,10 @@ function bindBdayAlarmEvents(b){
     var m2r=parseInt(document.getElementById('bdAlarmM2').value,10);
     var m2=isNaN(m2r)?2:Math.min(59,Math.max(0,m2r));
     var msgDay='\uD83C\uDF82 Cumple '+tc(b.name)+'! '+String(b.day).padStart(2,'0')+'/'+String(b.month).padStart(2,'0');
-    var sep=alarmUrl.indexOf('?')>=0?'&':'?';
+    var base=normalizeMacroBase(alarmUrl);
     // Android Calendar day: 1=Dom, 2=Lun, ..., 7=Sáb (= JS getDay()+1)
     var dayBd=bdDate2.getDay()+1;
-    var url2=alarmUrl+sep+'alarmH='+h2+'&alarmM='+m2+'&alarmMsg='+encodeURIComponent(msgDay)+'&alarmDays='+dayBd;
+    var url2=base+'/generar_alarma2?alarmH='+h2+'&alarmM='+m2+'&alarmMsg='+encodeURIComponent(msgDay)+'&alarmDays='+dayBd;
     function onBdAlarmSuccess(){
       setBdayAlarmState(b,true);
       showToast('\u23f0 Alarma'+(BDAY_ALARM_COUNT===2?'s':'')+' creada'+(BDAY_ALARM_COUNT===2?'s':'')+' para '+tc(b.name),'success');
@@ -446,7 +446,7 @@ function bindBdayAlarmEvents(b){
       var m1=isNaN(m1r)?57:Math.min(59,Math.max(0,m1r));
       var msgPrev='\u23f0 Ma\u00f1ana cumple '+tc(b.name)+' '+String(b.day).padStart(2,'0')+'/'+String(b.month).padStart(2,'0');
       var dayPrev=prevDate2.getDay()+1;
-      var url1=alarmUrl+sep+'alarmH='+h1+'&alarmM='+m1+'&alarmMsg='+encodeURIComponent(msgPrev)+'&alarmDays='+dayPrev;
+      var url1=base+'/generar_alarma1?alarmH='+h1+'&alarmM='+m1+'&alarmMsg='+encodeURIComponent(msgPrev)+'&alarmDays='+dayPrev;
       // 1 segundo de separación entre las dos peticiones
       fetch(url1,{mode:'no-cors'})
         .then(function(){return new Promise(function(r){setTimeout(r,1000);});})
