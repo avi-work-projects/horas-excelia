@@ -10,6 +10,7 @@ var VAC_ENTITLEMENT=(function(){
 })();
 var SUMMARY_YEAR=new Date().getFullYear();
 var SY_EXCL_PAST=true;
+var SUMMARY_TAB='work'; // 'work' | 'time-off'
 
 function saveVacEntitlement(n){
   VAC_ENTITLEMENT=n;
@@ -173,206 +174,236 @@ function renderSummaryContent(){
   if(!EXCL_FEST)dTitleParts.push('festivos');
   if(!EXCL_VAC)dTitleParts.push('vacaciones');
   var dtTitle=dTitleParts.join(' + ');
+
   var h=renderNavBar('summary');
-  h+='<div class="sy-header">';
+
+  // Barra de tabs a nivel 2 (justo bajo la nav bar, sticky top:42px)
+  h+='<div class="sy-tab-bar">';
+  h+='<button class="sy-tab-btn'+(SUMMARY_TAB==='work'?' active':'')+'" id="syTabWork">Horas/D\u00edas<br>Trabajados</button>';
+  h+='<button class="sy-tab-btn'+(SUMMARY_TAB==='time-off'?' active':'')+'" id="syTabTimeOff">Vacaciones y<br>Festivos</button>';
+  h+='</div>';
+
+  // Header a nivel 3 (with-tabs → top:82px)
+  h+='<div class="sy-header with-tabs">';
   h+='<button class="sy-back" id="syBack">&#8592;</button>';
   h+='<div class="sy-year-nav"><button class="sy-nav" id="syPrev">&#9664;</button><div class="sy-year">'+SUMMARY_YEAR+'</div><button class="sy-nav" id="syNext">&#9654;</button></div>';
   h+='<button class="sy-pdf" id="syPdf">PDF</button>';
   h+='</div>';
+
   h+='<div class="sy-body">';
-  // Checkboxes quitar festivos/vacaciones
-  h+='<div class="excl-row">';
-  h+='<label class="excl-item" style="color:var(--festivo)"><input type="checkbox" class="excl-chk" id="syExclFestChk" style="accent-color:var(--festivo)"'+(EXCL_FEST?' checked':'')+'>&#160;Quitar festivos</label>';
-  h+='<label class="excl-item" style="color:var(--vacaciones)"><input type="checkbox" class="excl-chk" id="syExclVacChk" style="accent-color:var(--vacaciones)"'+(EXCL_VAC?' checked':'')+'>&#160;Quitar vacaciones</label>';
-  h+='</div>';
 
-  // Dias L-V
-  h+='<div class="sy-section"><div class="sy-section-title">L&#8211;V Totales</div><div class="sy-cards3">';
-  h+='<div class="sy-card hi"><div class="sy-val">'+fdY(s.lvPast)+'</div><div class="sy-lbl">Pasados</div></div>';
-  h+='<div class="sy-card dim"><div class="sy-val">'+fdY(s.lvFuture)+'</div><div class="sy-lbl">Futuros</div></div>';
-  h+='<div class="sy-card hi2"><div class="sy-val">'+fdY(s.lvTotal)+'</div><div class="sy-lbl">Totales</div></div>';
-  h+='</div></div>';
+  if(SUMMARY_TAB==='work'){
+    // ── Tab 1: Horas / Días Trabajados ──
+    // Checkboxes quitar festivos/vacaciones
+    h+='<div class="excl-row">';
+    h+='<label class="excl-item" style="color:var(--festivo)"><input type="checkbox" class="excl-chk" id="syExclFestChk" style="accent-color:var(--festivo)"'+(EXCL_FEST?' checked':'')+'>&#160;Quitar festivos</label>';
+    h+='<label class="excl-item" style="color:var(--vacaciones)"><input type="checkbox" class="excl-chk" id="syExclVacChk" style="accent-color:var(--vacaciones)"'+(EXCL_VAC?' checked':'')+'>&#160;Quitar vacaciones</label>';
+    h+='</div>';
 
-  // Dias trabajados (table)
-  h+='<div class="sy-section"><div class="sy-section-title">'+dtTitle+'</div>';
-  h+='<table class="sy-table"><thead><tr><th class="sy-td-lbl">Jornada</th><th>Pasados</th><th>Futuros</th><th>Total</th></tr></thead><tbody>';
-  h+='<tr><td class="sy-td-lbl">6,5h (Viernes)</td><td>'+s.d65P+'</td><td>'+s.d65F+'</td><td>'+(s.d65P+s.d65F)+'</td></tr>';
-  h+='<tr><td class="sy-td-lbl">7h</td><td>'+s.d7P+'</td><td>'+s.d7F+'</td><td>'+(s.d7P+s.d7F)+'</td></tr>';
-  h+='<tr><td class="sy-td-lbl">8h</td><td>'+s.d8P+'</td><td>'+s.d8F+'</td><td>'+(s.d8P+s.d8F)+'</td></tr>';
-  h+='<tr><td class="sy-td-lbl">9h</td><td>'+s.d9P+'</td><td>'+s.d9F+'</td><td>'+(s.d9P+s.d9F)+'</td></tr>';
-  h+='<tr class="sy-tr-total"><td class="sy-td-lbl">Total</td><td>'+s.worked+'</td><td>'+s.toWork+'</td><td>'+s.workedTotal+'</td></tr>';
-  h+='</tbody></table></div>';
+    // Dias L-V
+    h+='<div class="sy-section"><div class="sy-section-title">L\u2013V Totales</div><div class="sy-cards3">';
+    h+='<div class="sy-card hi"><div class="sy-val">'+fdY(s.lvPast)+'</div><div class="sy-lbl">Pasados</div></div>';
+    h+='<div class="sy-card dim"><div class="sy-val">'+fdY(s.lvFuture)+'</div><div class="sy-lbl">Futuros</div></div>';
+    h+='<div class="sy-card hi2"><div class="sy-val">'+fdY(s.lvTotal)+'</div><div class="sy-lbl">Totales</div></div>';
+    h+='</div></div>';
 
-  // Ausencias
-  h+='<div class="sy-section"><div class="sy-section-title">Ausencias</div>';
-  // Config días vacaciones
-  h+='<div class="vac-config-row">';
-  h+='<span class="vac-config-label">D\u00edas de vacaciones anuales</span>';
-  h+='<input class="vac-config-input" id="vacInput" type="number" min="1" max="60" value="'+VAC_ENTITLEMENT+'">';
-  h+='</div>';
-  h+='<table class="sy-table"><thead><tr><th class="sy-td-lbl">Tipo</th><th>Pasados</th><th>Futuros</th><th>Total</th><th>Quedan</th></tr></thead><tbody>';
-  h+='<tr><td class="sy-td-lbl">Vacaciones</td><td>'+s.vacTaken+'</td><td>'+s.vacFuture+'</td><td>'+s.vacTotal+'</td><td>'+(s.vacPend>0?s.vacPend:'&#10003;')+'</td></tr>';
-  h+='<tr><td class="sy-td-lbl">Festivos</td><td>'+s.festTaken+'</td><td>'+s.festFuture+'</td><td>'+s.festTotal+'</td>';
-  h+='<td>'+(festPend>0?festPend:'&#10003;')+'</td></tr>';
-  h+='<tr><td class="sy-td-lbl">Bajas</td><td>'+s.ausTaken+'</td><td>'+s.ausFuture+'</td><td>'+s.ausTotal+'</td><td>&#8212;</td></tr>';
-  h+='<tr class="sy-tr-total"><td class="sy-td-lbl">Total</td><td>'+(s.vacTaken+s.festTaken+s.ausTaken)+'</td><td>'+(s.vacFuture+s.festFuture+s.ausFuture)+'</td><td>'+(s.vacTotal+s.festTotal+s.ausTotal)+'</td><td></td></tr>';
-  h+='</tbody></table>';
-  if(s.vacPend>0){h+='<div class="sy-note warn">Quedan '+s.vacPend+' d&#237;a'+(s.vacPend===1?'':'s')+' de vacaciones por planificar.</div>';}
-  if(festPend>0){h+='<div class="sy-note warn-fest">Faltan '+festPend+' d&#237;a'+(festPend===1?'':'s')+' festivos por marcar (en Espa&#241;a: '+FEST_REQUIRED+' d&#237;as/a&#241;o).</div>';}
-  h+='</div>';
+    // Dias trabajados (table)
+    h+='<div class="sy-section"><div class="sy-section-title">'+dtTitle+'</div>';
+    h+='<table class="sy-table"><thead><tr><th class="sy-td-lbl">Jornada</th><th>Pasados</th><th>Futuros</th><th>Total</th></tr></thead><tbody>';
+    h+='<tr><td class="sy-td-lbl">6,5h (Viernes)</td><td>'+s.d65P+'</td><td>'+s.d65F+'</td><td>'+(s.d65P+s.d65F)+'</td></tr>';
+    h+='<tr><td class="sy-td-lbl">7h</td><td>'+s.d7P+'</td><td>'+s.d7F+'</td><td>'+(s.d7P+s.d7F)+'</td></tr>';
+    h+='<tr><td class="sy-td-lbl">8h</td><td>'+s.d8P+'</td><td>'+s.d8F+'</td><td>'+(s.d8P+s.d8F)+'</td></tr>';
+    h+='<tr><td class="sy-td-lbl">9h</td><td>'+s.d9P+'</td><td>'+s.d9F+'</td><td>'+(s.d9P+s.d9F)+'</td></tr>';
+    h+='<tr class="sy-tr-total"><td class="sy-td-lbl">Total</td><td>'+s.worked+'</td><td>'+s.toWork+'</td><td>'+s.workedTotal+'</td></tr>';
+    h+='</tbody></table></div>';
 
-  // Horas trabajadas
-  h+='<div class="sy-section"><div class="sy-section-title">'+htTitle+'</div><div class="sy-cards3">';
-  h+='<div class="sy-card hi"><div class="sy-val">'+fhY(s.hoursWorked)+'</div><div class="sy-lbl">Trabajadas</div></div>';
-  h+='<div class="sy-card dim"><div class="sy-val">'+fhY(s.hoursToWork)+'</div><div class="sy-lbl">Por trabajar</div></div>';
-  h+='<div class="sy-card hi2"><div class="sy-val">'+fhY(s.hoursTotal)+'</div><div class="sy-lbl">Totales</div></div>';
-  h+='</div><div class="sy-cards4" style="margin-top:8px">';
-  h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.maxMh)+'</div><div class="sy-lbl">M&#225;x./mes<br>'+MN_SHORT[s.maxMhi]+'</div></div>';
-  h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.minMh)+'</div><div class="sy-lbl">M&#237;n./mes<br>'+MN_SHORT[s.minMhi]+'</div></div>';
-  (function(){var totMin=Math.round(s.avgHDay*60);var avgHH=Math.floor(totMin/60);var avgHM=totMin%60;var sub=avgHM>0?'<div class="sy-sublbl">'+avgHH+'h '+avgHM+'min</div>':'';h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.avgHDay)+'</div>'+sub+'<div class="sy-lbl">Media/d&#237;a</div></div>';})();
-  h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.avgHMonth)+'</div><div class="sy-lbl">Media/mes</div></div>';
-  h+='</div>';
-  h+='<div class="sy-chart">'+barChart3(s.mHours,s.mHoursP,MN_SHORT,'#6c8cff',cm)+'</div>';
-  h+='</div>';
+    // Ausencias
+    h+='<div class="sy-section"><div class="sy-section-title">Ausencias</div>';
+    h+='<div class="vac-config-row">';
+    h+='<span class="vac-config-label">D\u00edas de vacaciones anuales</span>';
+    h+='<input class="vac-config-input" id="vacInput" type="number" min="1" max="60" value="'+VAC_ENTITLEMENT+'">';
+    h+='</div>';
+    h+='<table class="sy-table"><thead><tr><th class="sy-td-lbl">Tipo</th><th>Pasados</th><th>Futuros</th><th>Total</th><th>Quedan</th></tr></thead><tbody>';
+    h+='<tr><td class="sy-td-lbl">Vacaciones</td><td>'+s.vacTaken+'</td><td>'+s.vacFuture+'</td><td>'+s.vacTotal+'</td><td>'+(s.vacPend>0?s.vacPend:'&#10003;')+'</td></tr>';
+    h+='<tr><td class="sy-td-lbl">Festivos</td><td>'+s.festTaken+'</td><td>'+s.festFuture+'</td><td>'+s.festTotal+'</td>';
+    h+='<td>'+(festPend>0?festPend:'&#10003;')+'</td></tr>';
+    h+='<tr><td class="sy-td-lbl">Bajas</td><td>'+s.ausTaken+'</td><td>'+s.ausFuture+'</td><td>'+s.ausTotal+'</td><td>&#8212;</td></tr>';
+    h+='<tr class="sy-tr-total"><td class="sy-td-lbl">Total</td><td>'+(s.vacTaken+s.festTaken+s.ausTaken)+'</td><td>'+(s.vacFuture+s.festFuture+s.ausFuture)+'</td><td>'+(s.vacTotal+s.festTotal+s.ausTotal)+'</td><td></td></tr>';
+    h+='</tbody></table>';
+    if(s.vacPend>0){h+='<div class="sy-note warn">Quedan '+s.vacPend+' d\u00eda'+(s.vacPend===1?'':'s')+' de vacaciones por planificar.</div>';}
+    if(festPend>0){h+='<div class="sy-note warn-fest">Faltan '+festPend+' d\u00eda'+(festPend===1?'':'s')+' festivos por marcar (en Espa\u00f1a: '+FEST_REQUIRED+' d\u00edas/a\u00f1o).</div>';}
+    h+='</div>';
 
-  // Dias trabajados (bars)
-  h+='<div class="sy-section"><div class="sy-section-title">'+dtTitle+'</div><div class="sy-cards3">';
-  h+='<div class="sy-card hi"><div class="sy-val">'+fdY(s.worked)+'</div><div class="sy-lbl">Trabajados</div></div>';
-  h+='<div class="sy-card dim"><div class="sy-val">'+fdY(s.toWork)+'</div><div class="sy-lbl">Por trabajar</div></div>';
-  h+='<div class="sy-card hi2"><div class="sy-val">'+fdY(s.workedTotal)+'</div><div class="sy-lbl">Totales</div></div>';
-  h+='</div><div class="sy-cards3" style="margin-top:8px">';
-  h+='<div class="sy-card"><div class="sy-val-sm">'+fdY(s.maxMd)+'</div><div class="sy-lbl">M&#225;x./mes<br>'+MN_SHORT[s.maxMdi]+'</div></div>';
-  h+='<div class="sy-card"><div class="sy-val-sm">'+fdY(s.minMd)+'</div><div class="sy-lbl">M&#237;n./mes<br>'+MN_SHORT[s.minMdi]+'</div></div>';
-  h+='<div class="sy-card"><div class="sy-val-sm">'+(s.avgDMonth%1===0?s.avgDMonth:s.avgDMonth.toFixed(1).replace('.',','))+'d</div><div class="sy-lbl">Media/mes</div></div>';
-  h+='</div>';
-  h+='<div class="sy-chart">'+barChart3(s.mDays,s.mDaysP,MN_SHORT,'#34d399',cm)+'</div>';
-  h+='</div>';
+    // Horas trabajadas
+    h+='<div class="sy-section"><div class="sy-section-title">'+htTitle+'</div><div class="sy-cards3">';
+    h+='<div class="sy-card hi"><div class="sy-val">'+fhY(s.hoursWorked)+'</div><div class="sy-lbl">Trabajadas</div></div>';
+    h+='<div class="sy-card dim"><div class="sy-val">'+fhY(s.hoursToWork)+'</div><div class="sy-lbl">Por trabajar</div></div>';
+    h+='<div class="sy-card hi2"><div class="sy-val">'+fhY(s.hoursTotal)+'</div><div class="sy-lbl">Totales</div></div>';
+    h+='</div><div class="sy-cards4" style="margin-top:8px">';
+    h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.maxMh)+'</div><div class="sy-lbl">M\u00e1x./mes<br>'+MN_SHORT[s.maxMhi]+'</div></div>';
+    h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.minMh)+'</div><div class="sy-lbl">M\u00edn./mes<br>'+MN_SHORT[s.minMhi]+'</div></div>';
+    (function(){var totMin=Math.round(s.avgHDay*60);var avgHH=Math.floor(totMin/60);var avgHM=totMin%60;var sub=avgHM>0?'<div class="sy-sublbl">'+avgHH+'h '+avgHM+'min</div>':'';h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.avgHDay)+'</div>'+sub+'<div class="sy-lbl">Media/d\u00eda</div></div>';})();
+    h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.avgHMonth)+'</div><div class="sy-lbl">Media/mes</div></div>';
+    h+='</div>';
+    h+='<div class="sy-chart">'+barChart3(s.mHours,s.mHoursP,MN_SHORT,'#6c8cff',cm)+'</div>';
+    h+='</div>';
 
-  // Filtro "Excluir pasados" para secciones de listas
-  var p=computePuentes(SUMMARY_YEAR);
-  function fdd(dt){return DF[dt.getDay()]+', '+fd(dt);}
-  var syToday=new Date();syToday.setHours(0,0,0,0);
-  h+='<div class="excl-row"><label class="excl-item"><input type="checkbox" id="syExclPastChk"'+(SY_EXCL_PAST?' checked':'')+'>&#160;Excluir pasados</label></div>';
+    // Dias trabajados (bars)
+    h+='<div class="sy-section"><div class="sy-section-title">'+dtTitle+'</div><div class="sy-cards3">';
+    h+='<div class="sy-card hi"><div class="sy-val">'+fdY(s.worked)+'</div><div class="sy-lbl">Trabajados</div></div>';
+    h+='<div class="sy-card dim"><div class="sy-val">'+fdY(s.toWork)+'</div><div class="sy-lbl">Por trabajar</div></div>';
+    h+='<div class="sy-card hi2"><div class="sy-val">'+fdY(s.workedTotal)+'</div><div class="sy-lbl">Totales</div></div>';
+    h+='</div><div class="sy-cards3" style="margin-top:8px">';
+    h+='<div class="sy-card"><div class="sy-val-sm">'+fdY(s.maxMd)+'</div><div class="sy-lbl">M\u00e1x./mes<br>'+MN_SHORT[s.maxMdi]+'</div></div>';
+    h+='<div class="sy-card"><div class="sy-val-sm">'+fdY(s.minMd)+'</div><div class="sy-lbl">M\u00edn./mes<br>'+MN_SHORT[s.minMdi]+'</div></div>';
+    h+='<div class="sy-card"><div class="sy-val-sm">'+(s.avgDMonth%1===0?s.avgDMonth:s.avgDMonth.toFixed(1).replace('.',','))+'d</div><div class="sy-lbl">Media/mes</div></div>';
+    h+='</div>';
+    h+='<div class="sy-chart">'+barChart3(s.mDays,s.mDaysP,MN_SHORT,'#34d399',cm)+'</div>';
+    h+='</div>';
 
-  // Días festivos/vacaciones sin puentes (sueltos — primero)
-  var sueltos=p.festivosSueltos.concat(p.vacSueltos).sort(function(a,b){return a-b;});
-  if(SY_EXCL_PAST)sueltos=sueltos.filter(function(dt){return dt>=syToday;});
-  h+='<div class="sy-section"><div class="sy-section-title">D&#237;as festivos/vacaciones sin puentes</div>';
-  if(sueltos.length===0){h+='<div class="sy-note">No hay d&#237;as sueltos fuera de puentes.</div>';}
-  else{
-    sueltos.forEach(function(dt){
-      var t=dayT(dt);
-      var tagLabel=t==='festivo'?'Festivo':'Vacaciones';
-      h+='<div class="sy-suelto"><div class="sy-suelto-row">';
-      h+='<span class="sy-suelto-date">'+fdd(dt)+'</span>';
-      h+='<span class="sy-list-tag '+t+'">'+tagLabel+'</span>';
-      h+='</div></div>';
-    });
-  }
-  h+='</div>';
+  } else {
+    // ── Tab 2: Vacaciones y Festivos ──
+    var p=computePuentes(SUMMARY_YEAR);
+    var DN7S=['D','L','M','X','J','V','S'];
+    function fdd(dt){return DF[dt.getDay()]+', '+fd(dt);}
+    var syToday=new Date();syToday.setHours(0,0,0,0);
 
-  // Puentes
-  var puentesList=SY_EXCL_PAST?p.puentes.filter(function(seq){return seq[seq.length-1].date>=syToday;}):p.puentes;
-  h+='<div class="sy-section"><div class="sy-section-title">Puentes (3+ d&#237;as seguidos)</div>';
-  if(puentesList.length===0){h+='<div class="sy-note">No hay puentes marcados para este a&#241;o.</div>';}
-  else{
-    puentesList.forEach(function(seq){
-      var first=seq[0].date,last=seq[seq.length-1].date;
-      var nDays=seq.length;
-      var vCount=seq.filter(function(x){return x.type==='vacaciones';}).length;
-      var fCount=seq.filter(function(x){return x.type==='festivo';}).length;
-      var wCount=seq.filter(function(x){return x.type==='weekend';}).length;
-      var parts=[];if(fCount)parts.push(fCount+' festivo'+(fCount>1?'s':''));if(vCount)parts.push(vCount+' vacac.');if(wCount)parts.push(wCount+' fin'+(wCount>1?'es':'')+' semana');
-      var evItems=[];
-      if(typeof getEventsOn==='function'){
-        seq.forEach(function(x){
-          getEventsOn(dk(x.date)).forEach(function(ev){
-            if(!evItems.some(function(e){return e.id===ev.id;}))evItems.push(ev);
+    // Filtro "Excluir pasados"
+    h+='<div class="excl-row"><label class="excl-item"><input type="checkbox" id="syExclPastChk"'+(SY_EXCL_PAST?' checked':'')+'>&#160;Excluir pasados</label></div>';
+
+    // Días festivos/vacaciones sin puentes (sueltos)
+    var sueltos=p.festivosSueltos.concat(p.vacSueltos).sort(function(a,b){return a-b;});
+    if(SY_EXCL_PAST)sueltos=sueltos.filter(function(dt){return dt>=syToday;});
+    h+='<div class="sy-section"><div class="sy-section-title">D\u00edas festivos/vacaciones sin puentes</div>';
+    if(sueltos.length===0){h+='<div class="sy-note">No hay d\u00edas sueltos fuera de puentes.</div>';}
+    else{
+      sueltos.forEach(function(dt){
+        var t=dayT(dt);
+        var tagLabel=t==='festivo'?'Festivo':'Vacaciones';
+        h+='<div class="sy-suelto"><div class="sy-suelto-row">';
+        h+='<span class="sy-suelto-date">'+fdd(dt)+'</span>';
+        h+='<span class="sy-list-tag '+t+'">'+tagLabel+'</span>';
+        h+='</div></div>';
+      });
+    }
+    h+='</div>';
+
+    // Puentes con celdas individuales + perímetro rosa
+    var puentesList=SY_EXCL_PAST?p.puentes.filter(function(seq){return seq[seq.length-1].date>=syToday;}):p.puentes;
+    h+='<div class="sy-section"><div class="sy-section-title">Puentes (3+ d\u00edas seguidos)</div>';
+    if(puentesList.length===0){h+='<div class="sy-note">No hay puentes marcados para este a\u00f1o.</div>';}
+    else{
+      puentesList.forEach(function(seq){
+        var first=seq[0].date,last=seq[seq.length-1].date;
+        var nDays=seq.length;
+        var vCount=seq.filter(function(x){return x.type==='vacaciones';}).length;
+        var fCount=seq.filter(function(x){return x.type==='festivo';}).length;
+        var wCount=seq.filter(function(x){return x.type==='weekend';}).length;
+        var parts=[];if(fCount)parts.push(fCount+' festivo'+(fCount>1?'s':''));if(vCount)parts.push(vCount+' vacac.');if(wCount)parts.push(wCount+' fin'+(wCount>1?'es':'')+' semana');
+        var evItems=[];
+        if(typeof getEventsOn==='function'){
+          seq.forEach(function(x){
+            getEventsOn(dk(x.date)).forEach(function(ev){
+              if(!evItems.some(function(e){return e.id===ev.id;}))evItems.push(ev);
+            });
           });
-        });
-      }
-      h+='<div class="sy-puente">';
-      h+='<div class="sy-puente-hdr">';
-      h+='<div class="sy-puente-range">'+fdd(first)+' &#8594; '+fdd(last)+'</div>';
-      h+='<div class="sy-puente-count">'+nDays+' d&#237;as</div>';
-      h+='</div>';
-      h+='<div class="sy-puente-comp">'+parts.join(' + ')+'</div>';
-      if(evItems.length){
-        h+='<div class="sy-puente-evs">';
-        evItems.forEach(function(ev){
-          var dateStr;
-          if(ev.start===ev.end){
-            dateStr=ev.start.slice(8,10)+'/'+ev.start.slice(5,7);
-          } else {
-            dateStr=ev.start.slice(8,10)+'/'+ev.start.slice(5,7)+' &#8594; '+ev.end.slice(8,10)+'/'+ev.end.slice(5,7);
-          }
-          h+='<div class="sy-puente-ev" data-id="'+ev.id+'" style="cursor:pointer"><span>&#128197;&nbsp;'+escHtml(ev.title)+'</span><span class="sy-puente-ev-date">'+dateStr+'</span></div>';
+        }
+        h+='<div class="sy-puente">';
+        h+='<div class="sy-puente-hdr">';
+        h+='<div class="sy-puente-range">'+fdd(first)+' &#8594; '+fdd(last)+'</div>';
+        h+='<div class="sy-puente-count">'+nDays+' d\u00edas</div>';
+        h+='</div>';
+        h+='<div class="sy-puente-comp">'+parts.join(' + ')+'</div>';
+        // Celdas individuales con perímetro rosa
+        h+='<div class="sy-puente-days-row">';
+        seq.forEach(function(x){
+          var dn=DN7S[x.date.getDay()];
+          var dateStr=String(x.date.getDate()).padStart(2,'0')+'/'+String(x.date.getMonth()+1).padStart(2,'0');
+          var tagLabel=x.type==='festivo'?'Fest':x.type==='vacaciones'?'Vac':'FS';
+          h+='<div class="sy-puente-day-cell">';
+          h+='<div class="sy-puente-day-dn">'+dn+'</div>';
+          h+='<div class="sy-puente-day-date">'+dateStr+'</div>';
+          h+='<span class="sy-puente-day-tag '+x.type+'">'+tagLabel+'</span>';
+          h+='</div>';
         });
         h+='</div>';
+        if(evItems.length){
+          h+='<div class="sy-puente-evs">';
+          evItems.forEach(function(ev){
+            var dateStr;
+            if(ev.start===ev.end){
+              dateStr=ev.start.slice(8,10)+'/'+ev.start.slice(5,7);
+            } else {
+              dateStr=ev.start.slice(8,10)+'/'+ev.start.slice(5,7)+' &#8594; '+ev.end.slice(8,10)+'/'+ev.end.slice(5,7);
+            }
+            h+='<div class="sy-puente-ev" data-id="'+ev.id+'" style="cursor:pointer"><span>&#128197;&nbsp;'+escHtml(ev.title)+'</span><span class="sy-puente-ev-date">'+dateStr+'</span></div>';
+          });
+          h+='</div>';
+        }
+        h+='</div>';
+      });
+    }
+    h+='</div>';
+
+    // Festivos
+    var festivosShow=SY_EXCL_PAST?p.festivosList.filter(function(dt){return dt>=syToday;}):p.festivosList;
+    var festLbl='Festivos '+p.festivosList.length+' d\u00edas'+(festPend>0?' (faltan '+festPend+' por marcar)':'');
+    h+='<div class="sy-section"><div class="sy-section-title">'+festLbl+'</div>';
+    if(festivosShow.length===0){h+='<div class="sy-note">No hay festivos'+(SY_EXCL_PAST?' pr\u00f3ximos':'')+' marcados para este a\u00f1o.</div>';}
+    else{
+      var festByM=new Array(12).fill(0).map(function(){return[];});
+      festivosShow.forEach(function(dt){festByM[dt.getMonth()].push(dt);});
+      for(var mi=0;mi<12;mi++){
+        if(!festByM[mi].length)continue;
+        h+='<div class="sy-month-sep">'+MN[mi]+'</div>';
+        h+='<ul class="sy-list">';
+        festByM[mi].forEach(function(dt){
+          h+='<li class="sy-list-item"><span class="sy-list-date">'+fdd(dt)+'</span><span class="sy-list-tag festivo">Festivo</span></li>';
+        });
+        h+='</ul>';
       }
-      h+='</div>';
-    });
-  }
-  h+='</div>';
-
-  // Festivos
-  var festivosShow=SY_EXCL_PAST?p.festivosList.filter(function(dt){return dt>=syToday;}):p.festivosList;
-  var festLbl='Festivos '+p.festivosList.length+' d&#237;as'+(festPend>0?' (faltan '+festPend+' por marcar)':'');
-  h+='<div class="sy-section"><div class="sy-section-title">'+festLbl+'</div>';
-  if(festivosShow.length===0){h+='<div class="sy-note">No hay festivos'+(SY_EXCL_PAST?' pr\u00f3ximos':'')+' marcados para este a&#241;o.</div>';}
-  else{
-    var festByM=new Array(12).fill(0).map(function(){return[];});
-    festivosShow.forEach(function(dt){festByM[dt.getMonth()].push(dt);});
-    for(var mi=0;mi<12;mi++){
-      if(!festByM[mi].length)continue;
-      h+='<div class="sy-month-sep">'+MN[mi]+'</div>';
-      h+='<ul class="sy-list">';
-      festByM[mi].forEach(function(dt){
-        h+='<li class="sy-list-item"><span class="sy-list-date">'+fdd(dt)+'</span><span class="sy-list-tag festivo">Festivo</span></li>';
-      });
-      h+='</ul>';
     }
-  }
-  h+='</div>';
+    h+='</div>';
 
-  // Vacaciones
-  var vacacionesShow=SY_EXCL_PAST?p.vacacionesList.filter(function(dt){return dt>=syToday;}):p.vacacionesList;
-  var vacLbl='Vacaciones '+p.vacacionesList.length+' d&#237;as'+(s.vacPend>0?' (faltan '+s.vacPend+' por planificar)':'');
-  h+='<div class="sy-section"><div class="sy-section-title">'+vacLbl+'</div>';
-  if(vacacionesShow.length===0){h+='<div class="sy-note">No hay vacaciones'+(SY_EXCL_PAST?' pr\u00f3ximas':'')+' marcadas para este a&#241;o.</div>';}
-  else{
-    var vacByM=new Array(12).fill(0).map(function(){return[];});
-    vacacionesShow.forEach(function(dt){vacByM[dt.getMonth()].push(dt);});
-    for(var mi=0;mi<12;mi++){
-      if(!vacByM[mi].length)continue;
-      h+='<div class="sy-month-sep">'+MN[mi]+'</div>';
-      h+='<ul class="sy-list">';
-      vacByM[mi].forEach(function(dt){
-        h+='<li class="sy-list-item"><span class="sy-list-date">'+fdd(dt)+'</span><span class="sy-list-tag vacaciones">Vacaciones</span></li>';
-      });
-      h+='</ul>';
+    // Vacaciones
+    var vacacionesShow=SY_EXCL_PAST?p.vacacionesList.filter(function(dt){return dt>=syToday;}):p.vacacionesList;
+    var vacLbl='Vacaciones '+p.vacacionesList.length+' d\u00edas'+(s.vacPend>0?' (faltan '+s.vacPend+' por planificar)':'');
+    h+='<div class="sy-section"><div class="sy-section-title">'+vacLbl+'</div>';
+    if(vacacionesShow.length===0){h+='<div class="sy-note">No hay vacaciones'+(SY_EXCL_PAST?' pr\u00f3ximas':'')+' marcadas para este a\u00f1o.</div>';}
+    else{
+      var vacByM=new Array(12).fill(0).map(function(){return[];});
+      vacacionesShow.forEach(function(dt){vacByM[dt.getMonth()].push(dt);});
+      for(var mi=0;mi<12;mi++){
+        if(!vacByM[mi].length)continue;
+        h+='<div class="sy-month-sep">'+MN[mi]+'</div>';
+        h+='<ul class="sy-list">';
+        vacacionesShow.forEach(function(dt){
+          if(dt.getMonth()===mi)h+='<li class="sy-list-item"><span class="sy-list-date">'+fdd(dt)+'</span><span class="sy-list-tag vacaciones">Vacaciones</span></li>';
+        });
+        h+='</ul>';
+      }
     }
-  }
-  h+='</div>';
+    h+='</div>';
 
-  // Bajas / Ausencias
-  var ausShow=SY_EXCL_PAST?p.ausList.filter(function(dt){return dt>=syToday;}):p.ausList;
-  h+='<div class="sy-section"><div class="sy-section-title">Bajas / Ausencias'+(p.ausList.length?' '+p.ausList.length+' d&#237;as':'')+'</div>';
-  if(ausShow.length===0){h+='<div class="sy-note">No hay ausencias'+(SY_EXCL_PAST?' pr\u00f3ximas':'')+' marcadas para este a&#241;o.</div>';}
-  else{
-    var ausByM=new Array(12).fill(0).map(function(){return[];});
-    ausShow.forEach(function(dt){ausByM[dt.getMonth()].push(dt);});
-    for(var mi=0;mi<12;mi++){
-      if(!ausByM[mi].length)continue;
-      h+='<div class="sy-month-sep">'+MN[mi]+'</div>';
-      h+='<ul class="sy-list">';
-      ausByM[mi].forEach(function(dt){
-        h+='<li class="sy-list-item"><span class="sy-list-date">'+fdd(dt)+'</span><span class="sy-list-tag ausencia">Ausencia</span></li>';
-      });
-      h+='</ul>';
+    // Bajas / Ausencias
+    var ausShow=SY_EXCL_PAST?p.ausList.filter(function(dt){return dt>=syToday;}):p.ausList;
+    h+='<div class="sy-section"><div class="sy-section-title">Bajas / Ausencias'+(p.ausList.length?' '+p.ausList.length+' d\u00edas':'')+'</div>';
+    if(ausShow.length===0){h+='<div class="sy-note">No hay ausencias'+(SY_EXCL_PAST?' pr\u00f3ximas':'')+' marcadas para este a\u00f1o.</div>';}
+    else{
+      var ausByM=new Array(12).fill(0).map(function(){return[];});
+      ausShow.forEach(function(dt){ausByM[dt.getMonth()].push(dt);});
+      for(var mi=0;mi<12;mi++){
+        if(!ausByM[mi].length)continue;
+        h+='<div class="sy-month-sep">'+MN[mi]+'</div>';
+        h+='<ul class="sy-list">';
+        ausByM[mi].forEach(function(dt){
+          h+='<li class="sy-list-item"><span class="sy-list-date">'+fdd(dt)+'</span><span class="sy-list-tag ausencia">Ausencia</span></li>';
+        });
+        h+='</ul>';
+      }
     }
+    h+='</div>';
   }
-  h+='</div>';
 
   h+='</div>';
   return h;
@@ -413,7 +444,20 @@ function bindSummaryEvents(){
     document.getElementById('summaryContent').innerHTML=renderSummaryContent();
     bindSummaryEvents();
   });
-  // Vacaciones configurables
+  // Tabs
+  var tabWork=document.getElementById('syTabWork');
+  var tabTimeOff=document.getElementById('syTabTimeOff');
+  if(tabWork)tabWork.addEventListener('click',function(){
+    SUMMARY_TAB='work';
+    document.getElementById('summaryContent').innerHTML=renderSummaryContent();
+    bindSummaryEvents();
+  });
+  if(tabTimeOff)tabTimeOff.addEventListener('click',function(){
+    SUMMARY_TAB='time-off';
+    document.getElementById('summaryContent').innerHTML=renderSummaryContent();
+    bindSummaryEvents();
+  });
+  // Vacaciones configurables (solo en tab work)
   var vacInput=document.getElementById('vacInput');
   if(vacInput){
     vacInput.addEventListener('change',function(){
@@ -421,14 +465,15 @@ function bindSummaryEvents(){
       if(v>0){saveVacEntitlement(v);document.getElementById('summaryContent').innerHTML=renderSummaryContent();bindSummaryEvents();}
     });
   }
-  // Quitar festivos / vacaciones
+  // Quitar festivos / vacaciones (solo en tab work)
   var chkFest=document.getElementById('syExclFestChk');
   var chkVac=document.getElementById('syExclVacChk');
   if(chkFest)chkFest.addEventListener('change',function(){EXCL_FEST=this.checked;save();document.getElementById('summaryContent').innerHTML=renderSummaryContent();bindSummaryEvents();});
   if(chkVac)chkVac.addEventListener('change',function(){EXCL_VAC=this.checked;save();document.getElementById('summaryContent').innerHTML=renderSummaryContent();bindSummaryEvents();});
+  // Excluir pasados (solo en tab time-off)
   var syExclPastChk=document.getElementById('syExclPastChk');
   if(syExclPastChk)syExclPastChk.addEventListener('change',function(){SY_EXCL_PAST=this.checked;document.getElementById('summaryContent').innerHTML=renderSummaryContent();bindSummaryEvents();});
-  // Eventos en puentes → ver detalle SOBRE la ventana de resumen (sin cambiar de ventana)
+  // Eventos en puentes (solo en tab time-off)
   document.querySelectorAll('.sy-puente-ev[data-id]').forEach(function(el){
     el.addEventListener('click',function(){
       var id=el.dataset.id;

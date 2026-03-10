@@ -7,6 +7,12 @@ var BDAY_YEAR=new Date().getFullYear(), BDAY_MONTH=new Date().getMonth(), BDAY_V
 var BDAY_EDIT=null;
 var BDAY_SEARCH='';
 
+// Estado de alarmas configuradas para cumpleaños
+var BDAY_ALARM_SET_KEY='excelia-bday-alarm-set';
+var BDAY_ALARM_SET=(function(){try{return JSON.parse(localStorage.getItem(BDAY_ALARM_SET_KEY)||'{}');}catch(e){return {};}})();
+var BDAY_ALARM_COUNT_KEY='excelia-bday-alarm-count';
+var BDAY_ALARM_COUNT=(function(){var v=localStorage.getItem(BDAY_ALARM_COUNT_KEY);return(v==='1'?1:2);})();
+
 // Paleta de 10 colores rotativos
 var BDAY_PALETTE=['#6c8cff','#34d399','#fb923c','#ff6b6b','#c084fc','#fbbf24','#38bdf8','#f472b6','#a3e635','#fb7185'];
 
@@ -27,7 +33,6 @@ function bdName(n){return escHtml(tc(n));}
 function getBdayColor(b){
   var idx=BDAYS.indexOf(b);
   if(idx===-1){
-    // hash del nombre para consistencia
     var h=0;for(var i=0;i<b.name.length;i++)h=(h*31+b.name.charCodeAt(i))&0x7fffffff;
     idx=h;
   }
@@ -58,6 +63,39 @@ function updateBdayBtn(){
   var btn=document.getElementById('bdayBtn');if(!btn)return;
   if(hasUpcomingBday()&&BDAYS.length)btn.classList.add('bday-active');
   else btn.classList.remove('bday-active');
+}
+
+/* ── Alarm key helpers ──────────────────────────────────── */
+function getBdayAlarmKey(b){return b.name+'_'+b.day+'_'+b.month;}
+function isBdayAlarmSet(b){return !!BDAY_ALARM_SET[getBdayAlarmKey(b)];}
+function setBdayAlarmState(b,v){
+  BDAY_ALARM_SET[getBdayAlarmKey(b)]=v;
+  localStorage.setItem(BDAY_ALARM_SET_KEY,JSON.stringify(BDAY_ALARM_SET));
+}
+
+/* ── VIP event sync ─────────────────────────────────────── */
+function syncVipBdaysToEvents(){
+  if(typeof EVENTS==='undefined'||typeof saveEvents==='undefined')return;
+  // Remove old VIP birthday events
+  EVENTS=EVENTS.filter(function(ev){return !ev.id||ev.id.indexOf('ev-bday-vip-')!==0;});
+  var year=new Date().getFullYear();
+  BDAYS.forEach(function(b){
+    if(!b.vip)return;
+    var m=String(b.month).padStart(2,'0');
+    var d=String(b.day).padStart(2,'0');
+    var dateStr=year+'-'+m+'-'+d;
+    var safeKey=b.name.replace(/[^a-z0-9]/gi,'_').toLowerCase();
+    EVENTS.push({
+      id:'ev-bday-vip-'+b.day+'-'+b.month+'-'+safeKey,
+      title:'\u2b50 Cumple '+tc(b.name),
+      note:'Cumplea\u00f1os VIP',
+      color:'#fbbf24',
+      start:dateStr,
+      end:dateStr,
+      repeat:{type:'yearly'}
+    });
+  });
+  saveEvents();
 }
 
 /* ── Próximos cumpleaños ──────────────────────────────────── */
@@ -104,12 +142,18 @@ function renderBdayUpcoming(){
       var isPastDay=x.diff<0;
       var isNearDay=x.diff>0&&x.diff<=3;
       var lblCls='bday-upcoming-lbl'+(isT?' today-lbl':isPastDay?' past-lbl':isNearDay?' near':'');
-      s+='<div class="bday-upcoming-item'+(isT?' bday-today-item':'')+'" data-bday-name="'+escHtml(x.b.name)+'" data-bday-day="'+x.b.day+'" data-bday-month="'+x.b.month+'">';
-      s+='<div class="bday-upcoming-icon" style="background:'+color+'22;border-color:'+color+'">\ud83c\udf82</div>';
+      var isVip=!!x.b.vip;
+      var alarmSet=isBdayAlarmSet(x.b);
+      var alarmIcon=alarmSet?'<span class="bday-alarm-set-icon" title="Alarma configurada">\uD83D\uDD14\u2713</span>':'';
+      var vipCls=isVip?' bday-vip-item':'';
+      var vipStar=isVip?' <span class="bday-vip-star">\u2b50</span>':'';
+      s+='<div class="bday-upcoming-item'+vipCls+(isT?' bday-today-item':'')+'" data-bday-name="'+escHtml(x.b.name)+'" data-bday-day="'+x.b.day+'" data-bday-month="'+x.b.month+'">';
+      s+='<div class="bday-upcoming-icon" style="background:'+color+'22;border-color:'+color+'">'+(isVip?'\u2b50':'\uD83C\uDF82')+'</div>';
       s+='<div class="bday-upcoming-info">';
-      s+='<div class="bday-upcoming-name" style="color:'+color+'">'+bdName(x.b.name)+'</div>';
+      s+='<div class="bday-upcoming-name" style="color:'+color+'">'+bdName(x.b.name)+vipStar+'</div>';
       s+='<div class="bday-upcoming-date">'+x.b.day+' de '+MN[x.b.month-1]+'</div>';
       s+='</div>';
+      s+=alarmIcon;
       s+='<div class="'+lblCls+'">'+lbl+'</div>';
       s+='</div>';
     });
@@ -158,7 +202,8 @@ function renderBdayCalMonth(){
       bds.forEach(function(b){
         var color=getBdayColor(b);
         var sn=shortName(tc(b.name));
-        h+='<div class="bday-badge" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" style="background:'+color+'22;color:'+color+';border-left-color:'+color+'" title="'+bdName(b.name)+'">'+escHtml(sn)+'</div>';
+        var vipStar=b.vip?'\u2b50 ':'';
+        h+='<div class="bday-badge" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" style="background:'+color+'22;color:'+color+';border-left-color:'+color+'" title="'+bdName(b.name)+'">'+vipStar+escHtml(sn)+'</div>';
       });
       h+='</div>';
       cur.setDate(cur.getDate()+1);
@@ -184,9 +229,10 @@ function renderBdayList(){
       var cls='bday-list-left'+(dl===0?' today-lbl':dl<=7?' near':'');
       var color=getBdayColor(b);
       var sname=escHtml(b.name.toLowerCase());
+      var vipStar=b.vip?' <span class="bday-vip-star">\u2b50</span>':'';
       h+='<div class="bday-list-item" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" data-sname="'+sname+'">';
       h+='<span class="bday-list-day" style="color:'+color+'">'+b.day+'</span>';
-      h+='<span class="bday-list-name">'+bdName(b.name)+'</span>';
+      h+='<span class="bday-list-name">'+bdName(b.name)+vipStar+'</span>';
       h+='<span class="'+cls+'">'+lbl+'</span>';
       h+='</div>';
     });
@@ -199,7 +245,14 @@ function renderBdayList(){
 function renderBdayContent(){
   var isUpcoming=BDAY_VIEW==='upcoming';
   var h=renderNavBar('bday');
-  h+='<div class="sy-header">';
+  // TABS en nivel 2 (justo bajo el nav bar)
+  h+='<div class="bday-hdr-sub">';
+  h+='<button class="bday-view-toggle'+(BDAY_VIEW==='upcoming'?' active':'')+'" id="bdViewUpcoming">Pr\u00f3ximos</button>';
+  h+='<button class="bday-view-toggle'+(BDAY_VIEW==='cal'?' active':'')+'" id="bdViewCal">Calendario</button>';
+  h+='<button class="bday-view-toggle'+(BDAY_VIEW==='list'?' active':'')+'" id="bdViewList">Por meses</button>';
+  h+='</div>';
+  // SY-HEADER con clase with-tabs (nivel 3)
+  h+='<div class="sy-header with-tabs">';
   h+='<button class="sy-back" id="bdBack">&#8592;</button>';
   if(!isUpcoming){
     h+='<div class="sy-year-nav"><button class="sy-nav" id="bdPrev">&#9664;</button>';
@@ -211,11 +264,6 @@ function renderBdayContent(){
     h+='<button class="bday-add-btn" id="bdAdd">+ A\u00f1adir</button>';
   }
   h+='</div>';
-  h+='<div class="bday-hdr-sub">';
-  h+='<button class="bday-view-toggle'+(BDAY_VIEW==='upcoming'?' active':'')+'" id="bdViewUpcoming">Pr\u00f3ximos</button>';
-  h+='<button class="bday-view-toggle'+(BDAY_VIEW==='cal'?' active':'')+'" id="bdViewCal">Calendario</button>';
-  h+='<button class="bday-view-toggle'+(BDAY_VIEW==='list'?' active':'')+'" id="bdViewList">Por meses</button>';
-  h+='</div>';
   h+='<div class="sy-body">';
   if(BDAY_VIEW==='upcoming'){
     h+=renderBdayUpcoming();
@@ -225,11 +273,9 @@ function renderBdayContent(){
   } else {
     h+=renderBdayList();
   }
-  // Botón añadir (en vistas cal/list)
   if(!isUpcoming){
     h+='<button class="bday-io-btn" id="bdAdd" style="margin-top:0">+ A\u00f1adir cumplea\u00f1os</button>';
   }
-  // Import/Export
   h+='<div class="bday-io-row">';
   h+='<button class="bday-io-btn" id="bdExport">&#8595; Exportar</button>';
   h+='<button class="bday-io-btn" id="bdImport">&#8593; Importar JSON</button>';
@@ -244,6 +290,7 @@ function renderBdayDetail(b){
   var dl=daysUntil(b.month,b.day);
   var lbl=dl===0?'\u00a1Hoy es su cumplea\u00f1os!':dl===1?'Ma\u00f1ana cumple a\u00f1os':'Faltan '+dl+' d\u00edas';
   var color=getBdayColor(b);
+  var vipStar=b.vip?' \u2b50':'';
   var h='<div class="bd-detail-overlay" id="bdDetailOv"><div class="bd-detail-sheet">';
   h+='<div class="bd-detail-handle"></div>';
   h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">';
@@ -252,11 +299,162 @@ function renderBdayDetail(b){
   h+='<button class="ev-list-btn" id="bdDEdit" style="font-size:.8rem;padding:6px 12px">&#9998; Editar</button>';
   h+='</div>';
   h+='<div class="bd-detail-color-bar" style="background:'+color+'"></div>';
-  h+='<div class="bd-detail-name">'+bdName(b.name)+'</div>';
+  h+='<div class="bd-detail-name">'+bdName(b.name)+vipStar+'</div>';
   h+='<div class="bd-detail-date">'+b.day+' de '+MN[b.month-1]+'</div>';
   h+='<div class="bd-detail-lbl" style="background:'+color+'22;color:'+color+'">'+lbl+'</div>';
   h+='</div></div>';
   return h;
+}
+
+/* ── Alarm panel for birthday ─────────────────────────────── */
+function renderBdayAlarmPanel(b){
+  var dl=daysUntil(b.month,b.day);
+  var lbl=dl===0?'\u00a1Hoy!':dl===1?'Ma\u00f1ana':dl>0?'en '+dl+' d\u00edas':'Hace '+Math.abs(dl)+' d\u00edas';
+  var color=getBdayColor(b);
+  var isSet=isBdayAlarmSet(b);
+  var cnt=BDAY_ALARM_COUNT;
+  // Default dates: day before (month/day) and day of
+  var today=new Date();
+  var bdYear=today.getFullYear();
+  var bdDate=new Date(bdYear,b.month-1,b.day);
+  if(bdDate<today)bdDate.setFullYear(bdYear+1);
+  var prevDate=new Date(bdDate);prevDate.setDate(prevDate.getDate()-1);
+  function fmtDate(d){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');}
+  var h='<div class="bd-alarm-overlay" id="bdAlarmOv"><div class="bd-alarm-sheet">';
+  h+='<div class="bd-alarm-handle"></div>';
+  h+='<div class="bd-alarm-hdr">';
+  h+='<button class="sy-back" id="bdAlarmClose">&#8592;</button>';
+  h+='<div class="bd-alarm-title">&#128276; Alarma — '+(b.vip?'\u2b50 ':'')+bdName(b.name)+'</div>';
+  h+='<div style="width:36px"></div>';
+  h+='</div>';
+  h+='<div class="bd-alarm-info" style="border-color:'+color+'44;background:'+color+'11">';
+  h+='<div class="bd-alarm-name" style="color:'+color+'">'+(b.vip?'\u2b50 ':'')+bdName(b.name)+'</div>';
+  h+='<div class="bd-alarm-date">'+b.day+' de '+MN[b.month-1]+' \u00b7 '+lbl+'</div>';
+  h+='</div>';
+  // Alarm set badge
+  if(isSet){
+    h+='<div class="bd-alarm-set-badge">&#128276;&#10003; Alarma ya marcada como configurada<button class="bd-alarm-unmark-btn" id="bdAlarmUnmark">Quitar</button></div>';
+  }
+  // Count toggle
+  h+='<div class="bd-alarm-count-row">';
+  h+='<button class="bd-alarm-count-btn'+(cnt===1?' active':'')+'" data-cnt="1" id="bdAlarmCount1">1 alarma</button>';
+  h+='<button class="bd-alarm-count-btn'+(cnt===2?' active':'')+'" data-cnt="2" id="bdAlarmCount2">2 alarmas</button>';
+  h+='</div>';
+  // Alarm fields
+  h+='<div id="bdAlarmFields">';
+  if(cnt===2){
+    h+='<div class="bd-alarm-row">';
+    h+='<span class="bd-alarm-row-lbl">&#9205; D\u00eda anterior<br><span style="font-size:.65rem;opacity:.7">'+fmtDate(prevDate)+'</span></span>';
+    h+='<div class="bd-alarm-time"><input id="bdAlarmH1" type="number" min="0" max="23" value="23"><span class="bd-alarm-time-sep">:</span><input id="bdAlarmM1" type="number" min="0" max="59" value="57"></div>';
+    h+='</div>';
+  }
+  h+='<div class="bd-alarm-row">';
+  h+='<span class="bd-alarm-row-lbl">&#127874; D\u00eda del cumple<br><span style="font-size:.65rem;opacity:.7">'+fmtDate(bdDate)+'</span></span>';
+  h+='<div class="bd-alarm-time"><input id="bdAlarmH2" type="number" min="0" max="23" value="9"><span class="bd-alarm-time-sep">:</span><input id="bdAlarmM2" type="number" min="0" max="59" value="2"></div>';
+  h+='</div>';
+  h+='</div>';
+  // Action buttons
+  h+='<div class="ev-form-actions">';
+  h+='<button class="ev-btn primary" id="bdAlarmCreate">&#128276; Crear alarma'+(cnt===2?'s':'')+'</button>';
+  h+='<button class="ev-btn cancel" id="bdAlarmMark">'+(isSet?'&#10003; Marcada':'&#10003; Marcar config.')+'</button>';
+  h+='</div>';
+  h+='</div></div>';
+  return h;
+}
+
+function openBdayAlarm(b){
+  var ov=document.getElementById('bdayOverlay');
+  var wrap=document.createElement('div');wrap.id='bdAlarmWrap';
+  wrap.innerHTML=renderBdayAlarmPanel(b);
+  ov.appendChild(wrap);
+  requestAnimationFrame(function(){
+    var fo=document.getElementById('bdAlarmOv');
+    if(fo){
+      fo.classList.add('open');
+      fo.addEventListener('click',function(e){if(e.target===fo)closeBdayAlarm();});
+    }
+  });
+  bindBdayAlarmEvents(b);
+}
+
+function closeBdayAlarm(){
+  var fo=document.getElementById('bdAlarmOv');
+  if(fo)fo.classList.remove('open');
+  setTimeout(function(){var w=document.getElementById('bdAlarmWrap');if(w)w.remove();},300);
+}
+
+function bindBdayAlarmEvents(b){
+  document.getElementById('bdAlarmClose').addEventListener('click',closeBdayAlarm);
+
+  // Alarm count toggle
+  ['bdAlarmCount1','bdAlarmCount2'].forEach(function(id){
+    var btn=document.getElementById(id);
+    if(!btn)return;
+    btn.addEventListener('click',function(){
+      BDAY_ALARM_COUNT=parseInt(btn.dataset.cnt,10);
+      localStorage.setItem(BDAY_ALARM_COUNT_KEY,String(BDAY_ALARM_COUNT));
+      closeBdayAlarm();
+      setTimeout(function(){openBdayAlarm(b);},310);
+    });
+  });
+
+  // Unmark alarm
+  var unmarkBtn=document.getElementById('bdAlarmUnmark');
+  if(unmarkBtn){
+    unmarkBtn.addEventListener('click',function(){
+      setBdayAlarmState(b,false);
+      showToast('Marca de alarma eliminada','success');
+      closeBdayAlarm();
+      setTimeout(refreshBday,320);
+    });
+  }
+
+  // Create alarm via MacroDroid
+  document.getElementById('bdAlarmCreate').addEventListener('click',function(){
+    var alarmUrl=localStorage.getItem('excelia-alarm-url')||localStorage.getItem('excelia-macro-alarm-url')||'';
+    if(!alarmUrl){
+      showToast('Configura la URL de MacroDroid en el men\u00fa \u22ee','error');
+      return;
+    }
+    // Calculate dates
+    var today2=new Date();
+    var bdYear2=today2.getFullYear();
+    var bdDate2=new Date(bdYear2,b.month-1,b.day);
+    if(bdDate2<today2)bdDate2.setFullYear(bdYear2+1);
+    var prevDate2=new Date(bdDate2);prevDate2.setDate(prevDate2.getDate()-1);
+    var h2=parseInt(document.getElementById('bdAlarmH2').value,10)||9;
+    var m2=parseInt(document.getElementById('bdAlarmM2').value,10)||2;
+    var msgDay='\uD83C\uDF82 Cumple '+tc(b.name)+'! '+String(b.day).padStart(2,'0')+'/'+String(b.month).padStart(2,'0');
+    var sep=alarmUrl.indexOf('?')>=0?'&':'?';
+    var url2=alarmUrl+sep+'alarmH='+h2+'&alarmM='+m2+'&alarmMsg='+encodeURIComponent(msgDay);
+    var promises=[];
+    if(BDAY_ALARM_COUNT===2){
+      var h1=parseInt(document.getElementById('bdAlarmH1').value,10)||23;
+      var m1=parseInt(document.getElementById('bdAlarmM1').value,10)||57;
+      var msgPrev='\u23f0 Ma\u00f1ana cumple '+tc(b.name)+' '+String(b.day).padStart(2,'0')+'/'+String(b.month).padStart(2,'0');
+      var url1=alarmUrl+sep+'alarmH='+h1+'&alarmM='+m1+'&alarmMsg='+encodeURIComponent(msgPrev);
+      promises.push(fetch(url1,{mode:'no-cors'}));
+    }
+    promises.push(fetch(url2,{mode:'no-cors'}));
+    showToast('Enviando alarma'+( BDAY_ALARM_COUNT===2?'s':'')+' a MacroDroid\u2026','success');
+    Promise.all(promises).then(function(){
+      setBdayAlarmState(b,true);
+      showToast('\u23f0 Alarma'+(BDAY_ALARM_COUNT===2?'s':'')+' creada'+(BDAY_ALARM_COUNT===2?'s':'')+' para '+tc(b.name),'success');
+      closeBdayAlarm();
+      setTimeout(refreshBday,320);
+    }).catch(function(){
+      showToast('Error al contactar MacroDroid','error');
+    });
+  });
+
+  // Mark without creating
+  document.getElementById('bdAlarmMark').addEventListener('click',function(){
+    var nowSet=isBdayAlarmSet(b);
+    setBdayAlarmState(b,!nowSet);
+    showToast(nowSet?'Marca eliminada':'\u2713 Marcado como configurada','success');
+    closeBdayAlarm();
+    setTimeout(refreshBday,320);
+  });
 }
 
 /* ── Form panel (añadir/editar cumpleaños) ─────────────────── */
@@ -265,6 +463,7 @@ function renderBdayForm(b){
   var name=isEdit?b.name:'';
   var day=isEdit?b.day:'';
   var month=isEdit?b.month:1;
+  var vip=isEdit?!!b.vip:false;
   var h='<div class="bd-form-overlay" id="bdFormOv"><div class="bd-form-sheet">';
   h+='<div class="bd-form-handle"></div>';
   h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">';
@@ -280,6 +479,11 @@ function renderBdayForm(b){
   h+='<div><label>Mes</label><select class="ev-input" id="bdFMonth">';
   MN.forEach(function(mn,i){h+='<option value="'+(i+1)+'"'+(month===(i+1)?' selected':'')+'>'+mn+'</option>';});
   h+='</select></div>';
+  h+='</div>';
+  // VIP toggle
+  h+='<div class="ev-toggle-row">';
+  h+='<label class="ev-toggle-label" for="bdFVip">\u2b50 VIP (alarma prioritaria + sync eventos)</label>';
+  h+='<input type="checkbox" class="ev-checkbox" id="bdFVip"'+(vip?' checked':'')+' style="accent-color:#fbbf24">';
   h+='</div>';
   h+='<div class="ev-form-actions"><button class="ev-btn primary" id="bdFSave">Guardar</button></div>';
   h+='</div></div>';
@@ -341,6 +545,7 @@ function bindBdayFormEvents(){
       if(!BDAY_EDIT)return;
       BDAYS=BDAYS.filter(function(x){return!(x.name===BDAY_EDIT.name&&x.day===BDAY_EDIT.day&&x.month===BDAY_EDIT.month);});
       localStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));
+      syncVipBdaysToEvents();
       showToast('Cumplea\u00f1os eliminado','success');
       updateBdayBtn();closeBdayForm();setTimeout(refreshBday,320);
     });
@@ -349,6 +554,8 @@ function bindBdayFormEvents(){
     var name=document.getElementById('bdFName').value.trim();
     var day=parseInt(document.getElementById('bdFDay').value,10);
     var month=parseInt(document.getElementById('bdFMonth').value,10);
+    var vipChk=document.getElementById('bdFVip');
+    var vip=vipChk?vipChk.checked:false;
     if(!name){showToast('El nombre es obligatorio','error');return;}
     if(!day||day<1||day>31){showToast('D\u00eda inv\u00e1lido (1-31)','error');return;}
     if(BDAY_EDIT){
@@ -356,13 +563,16 @@ function bindBdayFormEvents(){
       for(var i=0;i<BDAYS.length;i++){
         if(BDAYS[i].name===BDAY_EDIT.name&&BDAYS[i].day===BDAY_EDIT.day&&BDAYS[i].month===BDAY_EDIT.month){idx=i;break;}
       }
-      if(idx!==-1)BDAYS[idx]={name:name,day:day,month:month};
+      if(idx!==-1)BDAYS[idx]={name:name,day:day,month:month,vip:vip||undefined};
       showToast('Cumplea\u00f1os actualizado','success');
     } else {
-      BDAYS.push({name:name,day:day,month:month});
+      var newB={name:name,day:day,month:month};
+      if(vip)newB.vip=true;
+      BDAYS.push(newB);
       showToast('Cumplea\u00f1os a\u00f1adido','success');
     }
     localStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));
+    syncVipBdaysToEvents();
     updateBdayBtn();closeBdayForm();setTimeout(refreshBday,320);
   });
 }
@@ -428,7 +638,6 @@ function bindBdayEvents(){
       applyBdaySearch(BDAY_SEARCH);
     });
   }
-  // Añadir
   var addBtn=document.getElementById('bdAdd');
   if(addBtn)addBtn.addEventListener('click',function(){openBdayForm(null);});
   // Clicks en badges del calendario
@@ -444,7 +653,7 @@ function bindBdayEvents(){
       openBdayDetail(b);
     });
   });
-  // Clicks en lista por meses
+  // Clicks en lista por meses → detail
   document.querySelectorAll('.bday-list-item[data-bday-name]').forEach(function(item){
     item.addEventListener('click',function(){
       var name=item.dataset.bdayName;
@@ -456,7 +665,7 @@ function bindBdayEvents(){
       openBdayDetail(b);
     });
   });
-  // Clicks en vista "Próximos"
+  // Clicks en vista "Próximos" → ALARM panel
   document.querySelectorAll('.bday-upcoming-item[data-bday-name]').forEach(function(item){
     item.addEventListener('click',function(){
       var name=item.dataset.bdayName;
@@ -465,7 +674,7 @@ function bindBdayEvents(){
       var b=null;
       for(var i=0;i<BDAYS.length;i++){if(BDAYS[i].name===name&&BDAYS[i].day===day&&BDAYS[i].month===month){b=BDAYS[i];break;}}
       if(!b)b={name:name,day:day,month:month};
-      openBdayDetail(b);
+      openBdayAlarm(b);
     });
   });
   // Export
@@ -486,6 +695,7 @@ function bindBdayEvents(){
         if(!Array.isArray(arr))throw new Error('not array');
         BDAYS=arr;
         localStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));
+        syncVipBdaysToEvents();
         showToast('Cumplea\u00f1os importados: '+BDAYS.length,'success');
         updateBdayBtn(); refreshBday();
       }catch(err){showToast('Error al importar el archivo','error');}

@@ -519,7 +519,15 @@ function renderEvMonthsView(){
 /* ── Render: contenido principal ────────────────────────── */
 function renderEvContent(){
   var h=renderNavBar('events');
-  h+='<div class="sy-header">';
+  // Tabs a nivel 2 (sticky top:42px, justo bajo la nav bar)
+  h+='<div class="ev-hdr-sub">';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='upcoming'?' active':'')+'" id="evViewUpcoming">Pr\u00f3ximos<br>Eventos</button>';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='cal'?' active':'')+'" id="evViewCal">Calendario<br>por Meses</button>';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='annual'?' active':'')+'" id="evViewAnnual">Calendario<br>Anual</button>';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='months'?' active':'')+'" id="evViewMonths">Eventos</button>';
+  h+='</div>';
+  // Header a nivel 3 (with-tabs → top:82px)
+  h+='<div class="sy-header with-tabs">';
   h+='<button class="sy-back" id="evBack">&#8592;</button>';
   if(EV_VIEW==='upcoming'){
     h+='<div class="sy-year-nav"><div class="sy-year">Pr\u00f3ximos</div></div>';
@@ -532,12 +540,6 @@ function renderEvContent(){
     h+='<button class="sy-nav" id="evNext">&#9654;</button></div>';
     h+='<button class="today-btn" id="evToday" style="font-size:.7rem;padding:6px 12px">Hoy</button>';
   }
-  h+='</div>';
-  h+='<div class="ev-hdr-sub">';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='upcoming'?' active':'')+'" id="evViewUpcoming">Pr\u00f3ximos<br>Eventos</button>';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='cal'?' active':'')+'" id="evViewCal">Calendario<br>por Meses</button>';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='annual'?' active':'')+'" id="evViewAnnual">Calendario<br>Anual</button>';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='months'?' active':'')+'" id="evViewMonths">Eventos</button>';
   h+='</div>';
   h+='<div class="sy-body">';
   if(EV_VIEW==='cal')h+=renderEvCalMonth();

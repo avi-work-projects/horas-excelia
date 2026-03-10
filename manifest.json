@@ -1,6 +1,6 @@
 {
-  "name": "Horas Excelia",
-  "short_name": "Horas",
+  "name": "Gestify — featured Excelia",
+  "short_name": "Gestify",
   "description": "Gestión semanal de horas de trabajo - Excelia",
   "start_url": "./index.html",
   "scope": "./",
