@@ -146,7 +146,7 @@ function renderBdayUpcoming(){
       var alarmSet=isBdayAlarmSet(x.b);
       var alarmIcon=alarmSet?'<span class="bday-alarm-set-icon" title="Alarma configurada">\uD83D\uDD14\u2713</span>':'';
       var vipCls=isVip?' bday-vip-item':'';
-      var vipStar=isVip?' <span class="bday-vip-star">\u2b50</span>':'';
+      var vipStar=isVip?' <img src="./VIP.png" class="bday-vip-img" alt="VIP">':'';
       s+='<div class="bday-upcoming-item'+vipCls+(isT?' bday-today-item':'')+'" data-bday-name="'+escHtml(x.b.name)+'" data-bday-day="'+x.b.day+'" data-bday-month="'+x.b.month+'">';
       s+='<div class="bday-upcoming-icon" style="background:'+color+'22;border-color:'+color+'">'+(isVip?'\u2b50':'\uD83C\uDF82')+'</div>';
       s+='<div class="bday-upcoming-info">';
@@ -229,7 +229,7 @@ function renderBdayList(){
       var cls='bday-list-left'+(dl===0?' today-lbl':dl<=7?' near':'');
       var color=getBdayColor(b);
       var sname=escHtml(b.name.toLowerCase());
-      var vipStar=b.vip?' <span class="bday-vip-star">\u2b50</span>':'';
+      var vipStar=b.vip?' <img src="./VIP.png" class="bday-vip-img" alt="VIP">':'';
       h+='<div class="bday-list-item" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" data-sname="'+sname+'">';
       h+='<span class="bday-list-day" style="color:'+color+'">'+b.day+'</span>';
       h+='<span class="bday-list-name">'+bdName(b.name)+vipStar+'</span>';

@@ -466,7 +466,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .sy-puente-day-tag.vacaciones{background:rgba(255,179,71,.18);color:var(--vacaciones)}
 .sy-puente-day-tag.weekend{background:rgba(160,160,200,.15);color:var(--text-dim)}
 /* ── VIP BIRTHDAYS ── */
-.bday-vip-star{font-size:.75em;margin-left:3px;vertical-align:middle;display:inline-block}
+.bday-vip-img{height:1em;width:auto;vertical-align:middle;margin-left:3px;display:inline-block;object-fit:contain}
 .bday-upcoming-item.bday-vip-item{border-color:rgba(251,191,36,.45);background:rgba(251,191,36,.06)}
 .bday-alarm-set-icon{font-size:.72rem;margin-left:4px;opacity:.85;flex-shrink:0}
 /* ── BIRTHDAY ALARM PANEL ── */
@@ -509,6 +509,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .nav-bar-btn{flex-shrink:0;width:32px;height:34px;border:none;border-radius:6px;background:transparent;color:var(--text-dim);font-size:.82rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s;-webkit-user-select:none;user-select:none;line-height:1}
 .nav-bar-btn:hover{background:rgba(255,255,255,.08);color:var(--text)}
 .nav-bar-btn.active{background:rgba(255,255,255,.1);color:var(--accent)}
+.nav-bar-btn.events-active{box-shadow:0 0 0 2px var(--c-blue);background:rgba(108,140,255,.12)!important;color:var(--c-blue)!important}
+.nav-bar-btn.bday-active{box-shadow:0 0 0 2px var(--c-orange);background:rgba(251,146,60,.12)!important;color:var(--c-orange)!important}
 /* Birthday detail / form overlays */
 .bd-detail-overlay,.bd-form-overlay{position:absolute;inset:0;z-index:10;background:rgba(0,0,0,.6);display:none}
 .bd-detail-overlay.open,.bd-form-overlay.open{display:flex;align-items:flex-end}
