@@ -509,7 +509,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .sy-puente-day-tag.vacaciones{background:rgba(255,179,71,.18);color:var(--vacaciones)}
 .sy-puente-day-tag.weekend{background:rgba(160,160,200,.15);color:var(--text-dim)}
 /* ── VIP BIRTHDAYS ── */
-.bday-vip-img{height:1.3em;width:auto;vertical-align:middle;margin-left:6px;display:inline;object-fit:contain}
+.bday-vip-img{height:2.6em;width:auto;vertical-align:middle;margin-left:6px;display:inline;object-fit:contain}
 .bday-upcoming-item.bday-vip-item{border-color:rgba(251,191,36,.45);background:rgba(251,191,36,.06)}
 .bday-alarm-set-icon{font-size:.72rem;margin-left:4px;opacity:.85;flex-shrink:0}
 /* ── BIRTHDAY ALARM PANEL ── */

@@ -185,7 +185,7 @@ function renderBdayUpcoming(){
       var vipCls=isVip?' bday-vip-item':'';
       var vipStar=isVip?' <img src="./VIP.png" class="bday-vip-img" alt="VIP">':'';
       s+='<div class="bday-upcoming-item'+vipCls+(isT?' bday-today-item':'')+'" data-bday-name="'+escHtml(x.b.name)+'" data-bday-day="'+x.b.day+'" data-bday-month="'+x.b.month+'">';
-      s+='<div class="bday-upcoming-icon" style="background:'+color+'22;border-color:'+color+'">'+(isVip?'<img src="./VIP.png" alt="VIP" style="height:22px;width:auto;max-width:30px">':'\uD83C\uDF82')+'</div>';
+      s+='<div class="bday-upcoming-icon" style="background:'+color+'22;border-color:'+color+'">'+(isVip?'<img src="./VIP.png" alt="VIP" style="height:44px;width:auto;max-width:60px">':'\uD83C\uDF82')+'</div>';
       s+='<div class="bday-upcoming-info">';
       s+='<div class="bday-upcoming-name" style="color:'+color+'">'+bdName(x.b.name)+vipStar+'</div>';
       s+='<div class="bday-upcoming-date">'+x.b.day+' de '+MN[x.b.month-1]+'</div>';
@@ -255,7 +255,7 @@ function renderBdayCalMonth(){
 function renderBdayList(){
   if(!BDAYS.length)return '<div class="sy-note">No hay cumplea\u00f1os cargados. Importa un archivo JSON o configura el secreto BIRTHDAYS en GitHub.</div>';
   var h='<div class="bday-vip-ctrl-bar">';
-  h+='<label class="bday-vip-filter-lbl"><input type="checkbox" id="bdFilterVip"'+(BDAY_FILTER_VIP?' checked':'')+' style="accent-color:#fbbf24"> Filtrar VIPs <img src="./VIP.png" class="bday-vip-img" alt="VIP" style="width:18px;height:auto;vertical-align:middle;margin-left:3px"></label>';
+  h+='<label class="bday-vip-filter-lbl"><input type="checkbox" id="bdFilterVip"'+(BDAY_FILTER_VIP?' checked':'')+' style="accent-color:#fbbf24"> Filtrar VIPs <img src="./VIP.png" class="bday-vip-img" alt="VIP" style="width:36px;height:auto;vertical-align:middle;margin-left:3px"></label>';
   h+='<button class="bday-vip-edit-btn'+(BDAY_EDIT_VIP?' active':'')+'" id="bdEditVip">'+(BDAY_EDIT_VIP?'\u2713 Listo':'Editar VIPs')+'</button>';
   h+='</div>';
   h+='<div class="bday-search-wrap"><input class="bday-search-input" id="bdSearch" type="text" placeholder="Buscar persona\u2026" value="'+escHtml(BDAY_SEARCH)+'"></div>';
@@ -394,7 +394,7 @@ function renderBdayAlarmPanel(b){
   h+='</div>';
   // VIP toggle
   h+='<div class="bd-alarm-vip-row">';
-  h+='<label class="bd-alarm-vip-lbl"><input type="checkbox" id="bdAlarmVip"'+(b.vip?' checked':'')+' style="accent-color:#fbbf24;width:16px;height:16px"> <img src="./VIP.png" class="bday-vip-img" alt="VIP" style="height:1.1em;margin-left:2px;vertical-align:middle"></label>';
+  h+='<label class="bd-alarm-vip-lbl"><input type="checkbox" id="bdAlarmVip"'+(b.vip?' checked':'')+' style="accent-color:#fbbf24;width:16px;height:16px"> <img src="./VIP.png" class="bday-vip-img" alt="VIP" style="height:2.2em;margin-left:2px;vertical-align:middle"></label>';
   h+='</div>';
   // Alarm fields
   h+='<div id="bdAlarmFields">';
