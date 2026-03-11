@@ -4,7 +4,7 @@
    → Cambiar CACHE_VER en cada deploy para forzar actualización
    ============================================================ */
 
-var CACHE_VER = 'v43';
+var CACHE_VER = 'v44';
 var CACHE_NAME = 'horas-excelia-' + CACHE_VER;
 
 var ASSETS = [
@@ -18,6 +18,7 @@ var ASSETS = [
   './js/economics.js',
   './js/birthdays.js',
   './js/events.js',
+  './js/alarms.js',
   './js/init.js',
   './VIP.png'
 ];
