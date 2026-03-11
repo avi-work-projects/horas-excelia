@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v37 — popup cumpleaños hoy/mañana, FAB listo VIPs, X redondeadas anual, puentes solo en modo puentes, centrado único evento';
+var APP_VERSION = 'v38 — glows sin solapamiento, gap economía, tops sticky corregidos, tab Puentes separada';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

@@ -10,7 +10,7 @@ var VAC_ENTITLEMENT=(function(){
 })();
 var SUMMARY_YEAR=new Date().getFullYear();
 var SY_EXCL_PAST=true;
-var SUMMARY_TAB='work'; // 'work' | 'time-off'
+var SUMMARY_TAB='work'; // 'work' | 'puentes' | 'time-off'
 
 function saveVacEntitlement(n){
   VAC_ENTITLEMENT=n;
@@ -180,6 +180,7 @@ function renderSummaryContent(){
   // Barra de tabs a nivel 2 (justo bajo la nav bar, sticky top:42px)
   h+='<div class="sy-tab-bar">';
   h+='<button class="sy-tab-btn'+(SUMMARY_TAB==='work'?' active':'')+'" id="syTabWork">Horas/D\u00edas<br>Trabajados</button>';
+  h+='<button class="sy-tab-btn'+(SUMMARY_TAB==='puentes'?' active':'')+'" id="syTabPuentes">Puentes</button>';
   h+='<button class="sy-tab-btn'+(SUMMARY_TAB==='time-off'?' active':'')+'" id="syTabTimeOff">Vacaciones y<br>Festivos</button>';
   h+='</div>';
 
@@ -261,32 +262,15 @@ function renderSummaryContent(){
     h+='<div class="sy-chart">'+barChart3(s.mDays,s.mDaysP,MN_SHORT,'#34d399',cm)+'</div>';
     h+='</div>';
 
-  } else {
-    // ── Tab 2: Vacaciones y Festivos ──
+  } else if(SUMMARY_TAB==='puentes'){
+    // ── Tab 2: Puentes ──
     var p=computePuentes(SUMMARY_YEAR);
     var DN7S=['D','L','M','X','J','V','S'];
-    function fdd(dt){return DF[dt.getDay()]+', '+fd(dt);}
+    var fdd=function(dt){return DF[dt.getDay()]+', '+fd(dt);};
     var syToday=new Date();syToday.setHours(0,0,0,0);
 
     // Filtro "Excluir pasados"
     h+='<div class="excl-row"><label class="excl-item"><input type="checkbox" id="syExclPastChk"'+(SY_EXCL_PAST?' checked':'')+'>&#160;Excluir pasados</label></div>';
-
-    // Días festivos/vacaciones sin puentes (sueltos)
-    var sueltos=p.festivosSueltos.concat(p.vacSueltos).sort(function(a,b){return a-b;});
-    if(SY_EXCL_PAST)sueltos=sueltos.filter(function(dt){return dt>=syToday;});
-    h+='<div class="sy-section"><div class="sy-section-title">D\u00edas festivos/vacaciones sin puentes</div>';
-    if(sueltos.length===0){h+='<div class="sy-note">No hay d\u00edas sueltos fuera de puentes.</div>';}
-    else{
-      sueltos.forEach(function(dt){
-        var t=dayT(dt);
-        var tagLabel=t==='festivo'?'Festivo':'Vacaciones';
-        h+='<div class="sy-suelto"><div class="sy-suelto-row">';
-        h+='<span class="sy-suelto-date">'+fdd(dt)+'</span>';
-        h+='<span class="sy-list-tag '+t+'">'+tagLabel+'</span>';
-        h+='</div></div>';
-      });
-    }
-    h+='</div>';
 
     // Puentes con celdas individuales + perímetro rosa
     var puentesList=SY_EXCL_PAST?p.puentes.filter(function(seq){return seq[seq.length-1].date>=syToday;}):p.puentes;
@@ -314,7 +298,6 @@ function renderSummaryContent(){
         h+='<div class="sy-puente-count">'+nDays+' d\u00edas</div>';
         h+='</div>';
         h+='<div class="sy-puente-comp">'+parts.join(' + ')+'</div>';
-        // Celdas individuales con perímetro rosa
         h+='<div class="sy-puente-days-row">';
         seq.forEach(function(x){
           var dn=DN7S[x.date.getDay()];
@@ -341,6 +324,32 @@ function renderSummaryContent(){
           h+='</div>';
         }
         h+='</div>';
+      });
+    }
+    h+='</div>';
+
+  } else {
+    // ── Tab 3: Vacaciones y Festivos ──
+    var p=computePuentes(SUMMARY_YEAR);
+    var fdd=function(dt){return DF[dt.getDay()]+', '+fd(dt);};
+    var syToday=new Date();syToday.setHours(0,0,0,0);
+
+    // Filtro "Excluir pasados"
+    h+='<div class="excl-row"><label class="excl-item"><input type="checkbox" id="syExclPastChk"'+(SY_EXCL_PAST?' checked':'')+'>&#160;Excluir pasados</label></div>';
+
+    // Días festivos/vacaciones sin puentes (sueltos)
+    var sueltos=p.festivosSueltos.concat(p.vacSueltos).sort(function(a,b){return a-b;});
+    if(SY_EXCL_PAST)sueltos=sueltos.filter(function(dt){return dt>=syToday;});
+    h+='<div class="sy-section"><div class="sy-section-title">D\u00edas festivos/vacaciones sin puentes</div>';
+    if(sueltos.length===0){h+='<div class="sy-note">No hay d\u00edas sueltos fuera de puentes.</div>';}
+    else{
+      sueltos.forEach(function(dt){
+        var t=dayT(dt);
+        var tagLabel=t==='festivo'?'Festivo':'Vacaciones';
+        h+='<div class="sy-suelto"><div class="sy-suelto-row">';
+        h+='<span class="sy-suelto-date">'+fdd(dt)+'</span>';
+        h+='<span class="sy-list-tag '+t+'">'+tagLabel+'</span>';
+        h+='</div></div>';
       });
     }
     h+='</div>';
@@ -446,9 +455,15 @@ function bindSummaryEvents(){
   });
   // Tabs
   var tabWork=document.getElementById('syTabWork');
+  var tabPuentes=document.getElementById('syTabPuentes');
   var tabTimeOff=document.getElementById('syTabTimeOff');
   if(tabWork)tabWork.addEventListener('click',function(){
     SUMMARY_TAB='work';
+    document.getElementById('summaryContent').innerHTML=renderSummaryContent();
+    bindSummaryEvents();
+  });
+  if(tabPuentes)tabPuentes.addEventListener('click',function(){
+    SUMMARY_TAB='puentes';
     document.getElementById('summaryContent').innerHTML=renderSummaryContent();
     bindSummaryEvents();
   });
