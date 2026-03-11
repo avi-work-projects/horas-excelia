@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v32 — filtros anual + vista fiestas + logo popup + nav active';
+var APP_VERSION = 'v33 — VIP próximos + nav flechas + ⋯ sec + eventos upcoming + bday edit';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -348,7 +348,7 @@ function bindNavBar(current,closeFn){
   document.querySelectorAll('.overlay-nav-bar .nav-bar-btn[data-nav]').forEach(function(btn){
     var key=btn.dataset.nav;
     if(key===current)return;
-    btn.addEventListener('click',function(){
+    btn.addEventListener('click',function(e){
       var doNav=function(){
         if(key==='home'){/* overlay ya cerrado */}
         else if(key==='summary')openSummary();
@@ -365,8 +365,7 @@ function bindNavBar(current,closeFn){
       } else {
         NAV_BACK=null;
       }
-      // menu: actuar sin cerrar overlay; todo lo demás (incl. alarm): cerrar primero
-      if(closeFn&&key!=='menu'){closeFn();setTimeout(doNav,330);}
+      if(closeFn){closeFn();setTimeout(doNav,330);}
       else doNav();
     });
   });
