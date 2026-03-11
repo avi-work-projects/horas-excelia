@@ -136,13 +136,6 @@ try{
     <button class="nav-btn" id="nextBtn">&#9654;</button>
     <button class="today-btn" id="todayBtn">Hoy</button>
   </nav>
-  <div class="logo-popup" id="logoPopup">
-    <div class="logo-popup-box" id="logoPopupBox">
-      <img src="logo.png" class="logo-popup-img" alt="Gestify">
-      <div class="logo-popup-name">Gestify</div>
-      <div class="logo-popup-sub">Excelia</div>
-    </div>
-  </div>
   <div class="hours-control">
     <button class="default-hours-btn" id="editHoursBtn">
       &#9998;&nbsp;Jornada:&nbsp;<span class="dh-val">9h</span>&nbsp;&#xB7;&nbsp;Editar
@@ -271,5 +264,13 @@ if('serviceWorker' in navigator){
 }
 </script>
 
+<!-- ── LOGO POPUP (outside header to avoid backdrop-filter containment) ── -->
+<div class="logo-popup" id="logoPopup">
+  <div class="logo-popup-box" id="logoPopupBox">
+    <img src="logo.png" class="logo-popup-img" alt="Gestify">
+    <div class="logo-popup-name">Gestify</div>
+    <div class="logo-popup-sub">Excelia</div>
+  </div>
+</div>
 </body>
 </html>

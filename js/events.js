@@ -190,7 +190,7 @@ function renderEvCalMonth(){
       h+='<div class="'+cls+'" data-ds="'+ds+'"><div class="ev-num">'+d.getDate()+'</div>';
       evs.forEach(function(ev){
         if(multiIds[ev.id])return;
-        h+='<div class="ev-badge" data-id="'+ev.id+'" style="color:'+ev.color+';border-color:'+ev.color+';background:'+ev.color+'22">'+escHtml(ev.title)+'</div>';
+        h+='<div class="ev-badge" data-id="'+ev.id+'" style="color:'+ev.color+';border-color:'+ev.color+';background:'+ev.color+'22;box-shadow:0 0 6px '+ev.color+'88">'+escHtml(ev.title)+'</div>';
       });
       h+='</div>';
     }
@@ -488,7 +488,14 @@ function renderEvAnnual(){
             dotsHtml+='</div>';
           }
         }
-        h+='<div class="'+cls+'"'+sty+dsAttr+'>'+dotsHtml+'</div>';
+        var vipStarHtml='';
+        if(inM&&typeof BDAYS!=='undefined'&&Array.isArray(BDAYS)){
+          var dd2=d.getDate(),dm2=d.getMonth()+1;
+          if(BDAYS.some(function(b){return b.vip&&b.day===dd2&&b.month===dm2;})){
+            vipStarHtml='<div class="ev-annual-vip-star">\u2b50</div>';
+          }
+        }
+        h+='<div class="'+cls+'"'+sty+dsAttr+'>'+dotsHtml+vipStarHtml+'</div>';
       }
       if(abspanStart>=0)abspans.push({s:abspanStart,e:6});
       // Barras multi-día con color único por evento (gradiente)
@@ -496,7 +503,7 @@ function renderEvAnnual(){
         h+='<div class="ev-annual-bars-row">';
         wMulti.forEach(function(it){
           var sc=it.starts&&it.ends?'':it.starts?' a-starts':it.ends?' a-ends':' a-mid';
-          h+='<div class="ev-annual-mbar'+sc+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';background:'+evSoftFillColor(it.ev)+'"></div>';
+          h+='<div class="ev-annual-mbar'+sc+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';background:'+evSoftFillColor(it.ev)+';box-shadow:inset 0 0 0 1px '+it.ev.color+'"></div>';
         });
         h+='</div>';
       }

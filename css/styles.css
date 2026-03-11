@@ -197,7 +197,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .full-overlay.open{transform:translateY(0)}
 
 /* ── SHARED OVERLAY HEADER ── */
-.sy-header{position:sticky;top:42px;z-index:10;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;gap:10px}
+.sy-header{position:sticky;top:52px;z-index:10;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;gap:10px}
 .sy-back{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
 .sy-back:active{background:var(--surface3)}
 .sy-year-nav{display:flex;align-items:center;gap:8px;flex:1;justify-content:center}
@@ -389,7 +389,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bday-cell.weekend{border:1.5px solid rgba(160,160,200,.22);background:rgba(160,160,200,.04)}
 .bday-cell.weekend .bday-num{color:#8888a8}
 .ev-cell.weekend{border:1.5px solid rgba(160,160,200,.25);background:rgba(160,160,200,.11)}
-.ev-cell.weekend .ev-num{color:#8888a8}
+.ev-cell.weekend .ev-num{color:inherit}
 /* Day types in events calendar — border-top + tinte de fondo */
 .ev-cell.ev-day-festivo{border-top:5px solid var(--festivo);background:rgba(255,107,107,.09)}
 .ev-cell.ev-day-vacaciones{border-top:5px solid var(--vacaciones);background:rgba(255,179,71,.09)}
@@ -429,6 +429,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-annual-day{aspect-ratio:1;border-radius:2px;background:var(--surface2);position:relative;overflow:hidden}
 .ev-annual-day.out-m{background:transparent}
 .ev-annual-day.ann-today{outline:1.5px solid var(--accent);outline-offset:-1px}
+.ev-annual-vip-star{position:absolute;top:0;right:0;width:50%;height:50%;display:flex;align-items:center;justify-content:center;font-size:.4rem;line-height:1;pointer-events:none;filter:drop-shadow(0 0 1px rgba(251,191,36,.9))}
 .ev-annual-dots{position:absolute;bottom:0;left:0;right:0;display:flex;pointer-events:none}
 .ev-annual-dots span{flex:1;height:3px;border-radius:0;flex-shrink:0}
 /* Aspas para eventos puntuales en vista anual — contenedor + spans individuales */
@@ -436,7 +437,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-annual-x{font-size:.44rem;font-weight:900;line-height:1;opacity:.95;-webkit-text-stroke:.6px currentColor}
 /* Barras multi-día en calendario anual */
 .ev-annual-bars-row{position:absolute;bottom:1px;left:0;right:0;height:4px;z-index:3;pointer-events:none;display:grid;grid-template-columns:repeat(7,1fr)}
-.ev-annual-mbar{height:4px;border-radius:2px;background:rgba(56,189,248,.2);box-shadow:inset 0 0 0 1px rgba(56,189,248,.8)}
+.ev-annual-mbar{height:4px;border-radius:2px;background:rgba(56,189,248,.2)}
 .ev-annual-mbar.a-starts{border-top-right-radius:0;border-bottom-right-radius:0}
 .ev-annual-mbar.a-ends{border-top-left-radius:0;border-bottom-left-radius:0}
 .ev-annual-mbar.a-mid{border-radius:0}
@@ -465,7 +466,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bday-hdr-sub{position:sticky;top:52px;z-index:15;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 .ev-hdr-sub{position:sticky;top:52px;z-index:15;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 /* sy-header pushed down when tabs bar is at level 2 */
-.sy-header.with-tabs{top:92px}
+.sy-header.with-tabs{top:98px}
 /* Summary tabs (level 2 for summary overlay) */
 .sy-tab-bar{position:sticky;top:52px;z-index:15;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;gap:6px;padding:6px 16px;border-bottom:1px solid var(--border);overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none}
 .sy-tab-bar::-webkit-scrollbar{display:none}
@@ -553,14 +554,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-week-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:0}
 /* Perímetro exterior que cubre todos los días de un puente en la vista mensual */
 .ev-puente-perimeter{position:absolute;inset:0;border:1.5px solid #f472b6;border-radius:5px;pointer-events:none;z-index:5}
-.ev-cell{min-height:68px;padding:6px 4px 4px;background:var(--surface);border-radius:var(--radius-sm);display:flex;flex-direction:column;gap:2px;overflow:hidden;cursor:pointer;transition:background .12s;-webkit-user-select:none;user-select:none}
+.ev-cell{min-height:68px;padding:1px 4px 4px;border-top:5px solid transparent;background:var(--surface);border-radius:var(--radius-sm);display:flex;flex-direction:column;gap:2px;overflow:hidden;cursor:pointer;transition:background .12s;-webkit-user-select:none;user-select:none}
 .ev-cell:active{background:var(--surface3)}
 .ev-cell.out-m{opacity:.35}
 .ev-cell.past-cal-day{opacity:.45}
 .ev-cell.today-ev{border:1.5px solid var(--accent)}
 .ev-cell.today-ev .ev-num{color:var(--accent-bright);font-weight:700}
 .ev-num{font-size:.72rem;font-family:var(--mono);line-height:1}
-.ev-badge{font-size:.56rem;border-radius:3px;padding:2px 4px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;border:1.5px solid currentColor;cursor:pointer}
+.ev-badge{font-size:.56rem;border-radius:10px;padding:2px 4px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;border:1.5px solid currentColor;cursor:pointer}
 /* Events list view */
 .ev-list-day{padding:12px 0 6px;border-bottom:1px solid var(--border);margin-bottom:6px}
 .ev-list-day-hdr{font-size:.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
@@ -618,7 +619,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 /* ── LOGO POPUP ── */
 .logo-popup{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .logo-popup.open{display:flex}
-.logo-popup-box{display:flex;flex-direction:column;align-items:center;gap:14px;padding:36px 40px;background:var(--surface);border-radius:24px;border:1px solid var(--border);max-width:280px;text-align:center}
+.logo-popup-box{display:flex;flex-direction:column;align-items:center;gap:14px;padding:28px 24px;background:var(--surface);border-radius:24px;border:1px solid var(--border);width:50vw;max-width:200px;text-align:center}
 .logo-popup-img{width:110px;height:110px;object-fit:contain;border-radius:20px}
 .logo-popup-name{font-size:1.5rem;font-weight:700;letter-spacing:-.02em;color:var(--text)}
 .logo-popup-sub{font-size:.95rem;color:var(--text-muted);font-weight:400}
