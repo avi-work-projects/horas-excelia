@@ -8,6 +8,38 @@ var BDAY_EDIT=null;
 var BDAY_SEARCH='';
 var BDAY_FILTER_VIP=false;
 var BDAY_EDIT_VIP=false;
+var _bdLpTimer=null;
+var _bdLpFired=false;
+
+function _showBdayInlineCtrl(el,b){
+  var prev=document.querySelector('.bday-inline-ctrl');
+  if(prev)prev.remove();
+  if(!b)return;
+  var idx=-1;
+  for(var i=0;i<BDAYS.length;i++){if(BDAYS[i].name===b.name&&BDAYS[i].day===b.day&&BDAYS[i].month===b.month){idx=i;break;}}
+  var isVip=(idx>=0&&BDAYS[idx].vip===true);
+  var div=document.createElement('div');
+  div.className='bday-inline-ctrl';
+  div.innerHTML='<button class="bday-ic-btn bday-ic-vip'+(isVip?' active':'')+'">&#11088; VIP</button>'
+    +'<button class="bday-ic-btn bday-ic-edit">&#9999;&#65039; Editar</button>'
+    +'<button class="bday-ic-btn bday-ic-close">&#10006;</button>';
+  el.after(div);
+  div.querySelector('.bday-ic-vip').addEventListener('click',function(e){
+    e.stopPropagation();
+    if(idx>=0){
+      if(BDAYS[idx].vip)delete BDAYS[idx].vip;else BDAYS[idx].vip=true;
+      localStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));
+      syncVipBdaysToEvents();updateBdayBtn();refreshBday();
+    }
+  });
+  div.querySelector('.bday-ic-edit').addEventListener('click',function(e){
+    e.stopPropagation();div.remove();
+    if(idx>=0)openBdayForm(BDAYS[idx]);else openBdayForm(b);
+  });
+  div.querySelector('.bday-ic-close').addEventListener('click',function(e){
+    e.stopPropagation();div.remove();
+  });
+}
 
 // Estado de alarmas configuradas para cumpleaños
 var BDAY_ALARM_SET_KEY='excelia-bday-alarm-set';
@@ -739,7 +771,20 @@ function bindBdayEvents(){
   });
   // Clicks en lista por meses → detail (o toggle VIP en modo edición)
   document.querySelectorAll('.bday-list-item[data-bday-name]').forEach(function(item){
+    item.addEventListener('touchstart',function(){
+      _bdLpFired=false;
+      var bidx=parseInt(item.dataset.bdayIdx,10);
+      var b2=(!isNaN(bidx)&&bidx>=0&&bidx<BDAYS.length)?BDAYS[bidx]:null;
+      if(!b2){var n=item.dataset.bdayName;var dd=parseInt(item.dataset.bdayDay,10);var dm=parseInt(item.dataset.bdayMonth,10);
+        for(var i2=0;i2<BDAYS.length;i2++){if(BDAYS[i2].name===n&&BDAYS[i2].day===dd&&BDAYS[i2].month===dm){b2=BDAYS[i2];break;}}
+        if(!b2)b2={name:n,day:dd,month:dm};}
+      var _self=item;
+      _bdLpTimer=setTimeout(function(){_bdLpTimer=null;_bdLpFired=true;_showBdayInlineCtrl(_self,b2);},500);
+    },{passive:true});
+    item.addEventListener('touchend',function(){if(_bdLpTimer){clearTimeout(_bdLpTimer);_bdLpTimer=null;}});
+    item.addEventListener('touchmove',function(){if(_bdLpTimer){clearTimeout(_bdLpTimer);_bdLpTimer=null;}});
     item.addEventListener('click',function(e){
+      if(_bdLpFired){_bdLpFired=false;return;}
       e.stopPropagation();
       var idx=parseInt(item.dataset.bdayIdx,10);
       if(BDAY_EDIT_VIP){
@@ -766,7 +811,21 @@ function bindBdayEvents(){
   });
   // Clicks en vista "Próximos" → ALARM panel
   document.querySelectorAll('.bday-upcoming-item[data-bday-name]').forEach(function(item){
+    item.addEventListener('touchstart',function(){
+      _bdLpFired=false;
+      var n=item.dataset.bdayName;var dd=parseInt(item.dataset.bdayDay,10);var dm=parseInt(item.dataset.bdayMonth,10);
+      var b2=null;
+      for(var i2=0;i2<BDAYS.length;i2++){if(BDAYS[i2].name===n&&BDAYS[i2].day===dd&&BDAYS[i2].month===dm){b2=BDAYS[i2];break;}}
+      if(!b2)b2={name:n,day:dd,month:dm};
+      var _self=item;
+      _bdLpTimer=setTimeout(function(){_bdLpTimer=null;_bdLpFired=true;_showBdayInlineCtrl(_self,b2);},500);
+    },{passive:true});
+    item.addEventListener('touchend',function(){if(_bdLpTimer){clearTimeout(_bdLpTimer);_bdLpTimer=null;}});
+    item.addEventListener('touchmove',function(){if(_bdLpTimer){clearTimeout(_bdLpTimer);_bdLpTimer=null;}});
     item.addEventListener('click',function(){
+      if(_bdLpFired){_bdLpFired=false;return;}
+      var prev=document.querySelector('.bday-inline-ctrl');
+      if(prev){prev.remove();return;}
       var name=item.dataset.bdayName;
       var day=parseInt(item.dataset.bdayDay,10);
       var month=parseInt(item.dataset.bdayMonth,10);

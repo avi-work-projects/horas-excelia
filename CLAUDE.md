@@ -135,6 +135,8 @@ Test local: `py -m http.server 8082` desde la raíz del proyecto.
 | **perimetro puente** | `ev-puente-perimeter`: borde rosa que rodea días de puente en el calendario mensual |
 | **chips de filtro** | `ev-filter-chip`: botones de filtro tipo/categoría en calendario anual |
 | **bottom sheet** | Panel deslizable desde abajo al pulsar un día en home (`#bottomSheet`) |
+| **arriba** | Posición física superior: un elemento queda en una fila/altura mayor (como piezas de Tetris). Ej: "el evento queda arriba del día" = ocupa espacio de layout propio, desplazando el resto hacia abajo. |
+| **encima** | Superposición en capas: un elemento se coloca sobre otro como una pegatina, sin desplazarlo. Ej: "el evento queda encima del día" = `position:absolute`, no afecta al flujo. |
 
 ## Patrones CSS relevantes
 - `.full-overlay` — base para todos los overlays deslizantes
