@@ -524,7 +524,7 @@ function renderEvAnnual(){
           var singleEvs=evs.filter(function(ev){return !multiIds[ev.id]&&annEvVisible(ev)&&ev.id.indexOf('ev-bday-vip-')!==0;});
           if(singleEvs.length){
             dotsHtml='<div class="ev-annual-xs">';
-            singleEvs.forEach(function(ev){dotsHtml+='<span class="ev-annual-x" style="color:'+ev.color+'">&#x2715;</span>';});
+            singleEvs.forEach(function(ev){dotsHtml+='<span class="ev-annual-x" style="color:'+ev.color+'"></span>';});
             dotsHtml+='</div>';
           }
         }
@@ -533,7 +533,8 @@ function renderEvAnnual(){
         if(inM&&!vipHidden&&typeof BDAYS!=='undefined'&&Array.isArray(BDAYS)){
           var dd2=d.getDate(),dm2=d.getMonth()+1;
           if(BDAYS.some(function(b){return b.vip&&b.day===dd2&&b.month===dm2;})){
-            vipStarHtml='<div class="ev-annual-vip-star">\u2b50</div>';
+            var starCls=!dotsHtml?'ev-annual-vip-star ev-annual-star-center':'ev-annual-vip-star';
+            vipStarHtml='<div class="'+starCls+'">\u2b50</div>';
           }
         }
         h+='<div class="'+cls+'"'+sty+dsAttr+'>'+dotsHtml+vipStarHtml+'</div>';
@@ -549,7 +550,7 @@ function renderEvAnnual(){
         h+='</div>';
       }
       // Perímetro de días puente en anual (bordes abiertos si el puente continúa)
-      if(abspans.length){
+      if(abspans.length&&EV_ANNUAL_VIEW==='puentes'){
         var nextMonA=new Date(wk[6]);nextMonA.setDate(nextMonA.getDate()+1);
         var prevSunA=new Date(wk[0]);prevSunA.setDate(prevSunA.getDate()-1);
         var nextMonADs=evDk(nextMonA),prevSunADs=evDk(prevSunA);

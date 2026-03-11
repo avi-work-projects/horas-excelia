@@ -565,18 +565,34 @@
       var lbl='Semana del '+String(lunes.getDate()).padStart(2,'0')+'/'+String(lunes.getMonth()+1).padStart(2,'0');
       items.push({type:'warn',text:'&#128221; '+lbl+' sin enviar'});
     }
-    // VIP cumpleaños próximos (14 días) sin alarma
-    if(typeof BDAYS!=='undefined'&&BDAYS.length&&typeof isBdayAlarmSet==='function'){
+    // Cumpleaños hoy o mañana (cualquier persona, VIP o no)
+    if(typeof BDAYS!=='undefined'&&BDAYS.length){
+      var _todayBdayKeys={};
       BDAYS.forEach(function(b){
-        if(!b.vip)return;
         var bd=new Date(today.getFullYear(),b.month-1,b.day);
         if(bd<today)bd.setFullYear(today.getFullYear()+1);
         var diff=Math.round((bd-today)/86400000);
-        if(diff>14)return;
-        if(isBdayAlarmSet(b))return;
-        var label=b.name+(diff===0?' (hoy!)':diff===1?' (ma\u00f1ana!)':' (en '+diff+'d)');
-        items.push({type:'vip',text:'&#11088; '+label+' \u2014 sin alarma'});
+        if(diff>1)return;
+        var label=b.name+(diff===0?' (\u00a1hoy!)':' (ma\u00f1ana!)');
+        var bkey=b.name+'_'+b.month+'_'+b.day;
+        _todayBdayKeys[bkey]=true;
+        items.push({type:'bday',text:'&#127874; '+label});
       });
+      // VIP próximos (≤7 días, sin alarma, no duplicar hoy/mañana)
+      if(typeof isBdayAlarmSet==='function'){
+        BDAYS.forEach(function(b){
+          if(!b.vip)return;
+          var bkey=b.name+'_'+b.month+'_'+b.day;
+          if(_todayBdayKeys[bkey])return; // ya incluido en el bloque anterior
+          var bd=new Date(today.getFullYear(),b.month-1,b.day);
+          if(bd<today)bd.setFullYear(today.getFullYear()+1);
+          var diff=Math.round((bd-today)/86400000);
+          if(diff>7)return;
+          if(isBdayAlarmSet(b))return;
+          var label=b.name+' (en '+diff+'d)';
+          items.push({type:'vip',text:'&#11088; '+label+' \u2014 sin alarma'});
+        });
+      }
     }
     if(!items.length)return;
     var content=document.getElementById('homePopupContent');

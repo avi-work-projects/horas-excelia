@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v36 — panel alarma: hora 9:20, días ordenados desde hoy con fecha, aviso alarma pasada';
+var APP_VERSION = 'v37 — popup cumpleaños hoy/mañana, FAB listo VIPs, X redondeadas anual, puentes solo en modo puentes, centrado único evento';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

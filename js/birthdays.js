@@ -251,6 +251,10 @@ function renderBdayList(){
     });
     h+='</div>';
   });
+  // Botón "Listo" pegajoso al fondo cuando estamos en modo edición VIP
+  if(BDAY_EDIT_VIP){
+    h+='<button class="bday-listo-fab" id="bdListoFab">\u2713 Listo</button>';
+  }
   return h;
 }
 
@@ -687,6 +691,11 @@ function bindBdayEvents(){
   var editVipEl=document.getElementById('bdEditVip');
   if(editVipEl)editVipEl.addEventListener('click',function(){
     BDAY_EDIT_VIP=!BDAY_EDIT_VIP;refreshBday();
+  });
+  // Botón "Listo" flotante en modo edición
+  var listoFabEl=document.getElementById('bdListoFab');
+  if(listoFabEl)listoFabEl.addEventListener('click',function(){
+    BDAY_EDIT_VIP=false;refreshBday();
   });
   // VIP checkboxes (edit mode)
   document.querySelectorAll('.bday-vip-chk').forEach(function(chk){
