@@ -295,7 +295,10 @@ function renderSummaryContent(){
         h+='<div class="sy-puente">';
         h+='<div class="sy-puente-hdr">';
         h+='<div class="sy-puente-range">'+fdd(first)+' &#8594; '+fdd(last)+'</div>';
+        h+='<div style="display:flex;align-items:center;gap:6px">';
         h+='<div class="sy-puente-count">'+nDays+' d\u00edas</div>';
+        h+='<button class="sy-puente-goto" data-ds="'+dk(first)+'">&#128197;</button>';
+        h+='</div>';
         h+='</div>';
         h+='<div class="sy-puente-comp">'+parts.join(' + ')+'</div>';
         h+='<div class="sy-puente-days-row">';
@@ -496,6 +499,21 @@ function bindSummaryEvents(){
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
       if(!ev)return;
       openEvDetail(ev,document.getElementById('summaryOverlay'));
+    });
+  });
+  // Ir al calendario de eventos desde botón en puente
+  document.querySelectorAll('.sy-puente-goto').forEach(function(btn){
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      var ds=btn.dataset.ds;
+      if(!ds)return;
+      var d=new Date(ds+'T00:00:00');
+      EV_VIEW='cal';EV_YEAR=d.getFullYear();EV_MONTH=d.getMonth();
+      document.getElementById('summaryOverlay').classList.remove('open');
+      setTimeout(function(){
+        document.getElementById('summaryOverlay').style.display='none';
+        if(typeof openEventsAt==='function')openEventsAt();
+      },50);
     });
   });
 }

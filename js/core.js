@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v40 — barras mensual redondeadas y bajas, z-orden 1d>multi, estrellas anual pequeñas+múltiples, notif dots';
+var APP_VERSION = 'v41 — calendario 4 meses, capas anual sd>multi>puente, goto puentes→eventos';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
