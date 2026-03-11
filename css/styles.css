@@ -430,31 +430,26 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-annual-cal{display:flex;flex-direction:column;gap:1px}
 .ev-annual-hdr-row{display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
 .ev-annual-hdr{font-size:.38rem;text-align:center;color:var(--text-dim);padding-bottom:1px}
-.ev-annual-week-outer{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;position:relative}
+.ev-annual-week-outer{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;position:relative;isolation:isolate}
 .ev-annual-day{aspect-ratio:1;border-radius:2px;background:var(--surface2);position:relative;overflow:hidden}
 .ev-annual-day.out-m{background:transparent}
 .ev-annual-day.ann-today{outline:1.5px solid var(--accent);outline-offset:-1px}
-/* Contenedor de estrellas VIP en calendario anual — soporta 1 o más estrellas */
-.ev-annual-stars{position:absolute;top:1px;right:1px;display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;max-width:48%;max-height:48%;gap:0;pointer-events:none;filter:drop-shadow(0 0 1px rgba(251,191,36,.9));line-height:1;overflow:hidden}
-.ev-annual-stars span{font-size:.26rem;line-height:1;flex-shrink:0}
-.ev-annual-stars.ev-annual-star-center{top:50%;left:50%;right:auto;transform:translate(-50%,-50%);max-width:60%;max-height:60%;justify-content:center}
-.ev-annual-dots{position:absolute;bottom:0;left:0;right:0;display:flex;pointer-events:none}
-.ev-annual-dots span{flex:1;height:3px;border-radius:0;flex-shrink:0}
-/* Aspas para eventos puntuales en vista anual — contenedor + spans individuales */
-.ev-annual-xs{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:2px;pointer-events:none;overflow:hidden}
-/* CSS-drawn rounded cross — ~1/4 of cell */
-.ev-annual-x{position:relative;width:4px;height:4px;flex-shrink:0}
-.ev-annual-x::before,.ev-annual-x::after{content:'';position:absolute;top:50%;left:50%;background:currentColor;border-radius:1px}
-.ev-annual-x::before{width:5px;height:1.5px;transform:translate(-50%,-50%) rotate(45deg)}
-.ev-annual-x::after{width:5px;height:1.5px;transform:translate(-50%,-50%) rotate(-45deg)}
-/* Barras multi-día en calendario anual */
-.ev-annual-bars-row{position:absolute;bottom:1px;left:0;right:0;height:4px;z-index:3;pointer-events:none;display:grid;grid-template-columns:repeat(7,1fr)}
-.ev-annual-mbar{height:4px;border-radius:2px}
+/* Eventos puntuales en anual (1 día): stack vertical, cada uno 1/4 de celda, encima de todo */
+.ev-annual-sd-stack{position:absolute;inset:0;display:flex;flex-direction:column;z-index:3;pointer-events:none;overflow:hidden}
+.ev-annual-sd-bar{flex:0 0 25%;border-radius:1px;border:1px solid;display:flex;align-items:center;justify-content:center;font-size:.22rem;line-height:1;overflow:hidden;flex-shrink:0}
+/* Barras multi-día en calendario anual: 80% celda centradas, z-index:2 */
+.ev-annual-bars-row{position:absolute;top:10%;left:0;right:0;height:80%;z-index:2;pointer-events:none;display:grid;grid-template-columns:repeat(7,1fr);gap:1px;grid-auto-rows:1fr}
+.ev-annual-mbar{border-radius:2px}
 .ev-annual-mbar.a-starts{border-top-right-radius:0;border-bottom-right-radius:0}
 .ev-annual-mbar.a-ends{border-top-left-radius:0;border-bottom-left-radius:0}
 .ev-annual-mbar.a-mid{border-radius:0}
-/* Perímetro de días puente en vista anual */
-.ev-annual-puente-perimeter{position:absolute;inset:0;border:1px solid #f472b6;border-radius:2px;pointer-events:none;z-index:4}
+/* Perímetro de días puente en vista anual: z-index:1, debajo de eventos */
+.ev-annual-puente-perimeter{position:absolute;inset:0;border:1px solid #f472b6;border-radius:2px;pointer-events:none;z-index:1}
+/* Calendario 4 meses: 2 columnas × 2 filas */
+.ev-quad-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;padding:4px 0}
+/* Botón ir al calendario mensual en puentes del resumen */
+.sy-puente-goto{border:none;background:transparent;color:var(--accent);font-size:.85rem;cursor:pointer;padding:2px 6px;border-radius:4px;line-height:1;transition:background .12s}
+.sy-puente-goto:active{background:var(--surface3)}
 .ev-annual-month{cursor:pointer;transition:opacity .15s}
 .ev-annual-pick-mode .ev-annual-day[data-ds]{cursor:crosshair}
 .ev-annual-pick-mode .ev-annual-day[data-ds]:hover{outline:1.5px solid rgba(255,255,255,.5);outline-offset:-1px}
