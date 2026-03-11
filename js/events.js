@@ -712,6 +712,23 @@ function openEvDetail(ev,container){
   document.getElementById('evDClose').addEventListener('click',closeEvDetail);
   document.getElementById('evDEdit').addEventListener('click',function(){
     closeEvDetail();
+    // VIP birthday → abrir formulario de cumpleaños en lugar del de eventos
+    if(ev.id.indexOf('ev-bday-vip-')===0&&typeof BDAYS!=='undefined'){
+      var evDay=parseInt(ev.start.slice(8,10),10);
+      var evMonth=parseInt(ev.start.slice(5,7),10);
+      var b=null;
+      for(var i=0;i<BDAYS.length;i++){
+        if(BDAYS[i].day===evDay&&BDAYS[i].month===evMonth){b=BDAYS[i];break;}
+      }
+      if(b){
+        if(!fromSummary)closeEvents();
+        setTimeout(function(){
+          openBday();
+          setTimeout(function(){openBdayForm(b);},350);
+        },330);
+        return;
+      }
+    }
     if(fromSummary){
       // Abrir el formulario directamente sobre el resumen (sin navegar a eventos)
       setTimeout(function(){openEvForm(ev,null,document.getElementById('summaryOverlay'));},300);
@@ -953,7 +970,7 @@ function bindEvFormEvents(){
 /* ── Apertura/cierre de la ventana ──────────────────────── */
 function openEvents(){
   NAV_BACK=null;
-  var now=new Date();EV_YEAR=now.getFullYear();EV_MONTH=now.getMonth();EV_VIEW='cal';
+  var now=new Date();EV_YEAR=now.getFullYear();EV_MONTH=now.getMonth();EV_VIEW='upcoming';
   var ov=document.getElementById('eventsOverlay');
   document.getElementById('eventsContent').innerHTML=renderEvContent();
   ov.style.display='block';

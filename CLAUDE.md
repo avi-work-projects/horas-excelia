@@ -91,6 +91,13 @@ Estructura de un evento:
 - **Navegador: Microsoft Edge** — la extensión de Claude Code está instalada en Edge, NO en Chrome. Usar siempre Edge para verificación visual y pruebas con MCP browser. No intentar conectar con Chrome.
 - Test local: `py -m http.server 8082` desde la raíz del proyecto (puerto 8082, comando `py` en Windows)
 
+## Dispositivo móvil del usuario
+- **Vivo X200 Ultra** — versión china (FuntouchOS / OriginOS)
+- Relevante para: alarmas vía MacroDroid, intents Android, ringtones
+- La app de Reloj de Vivo **ignora el extra `RINGTONE`** en el intent `SET_ALARM` (limitación confirmada del OEM)
+- Vivo solo acepta **mp3 y wav** como tonos personalizados (no opus, no ogg)
+- Para alarmas automáticas desde la PWA: MacroDroid webhook → Rhino (1.6) JS → intent `SET_ALARM`
+
 ## Despliegue
 Push a `main` → GitHub Actions → inject secrets → GitHub Pages.
 Test local: `py -m http.server 8082` desde la raíz del proyecto.
