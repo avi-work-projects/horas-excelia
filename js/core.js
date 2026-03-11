@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v39 — estrellas y X 1/4 cel, barras encima (absolute), long-press cumpleaños, popup centrado';
+var APP_VERSION = 'v40 — barras mensual redondeadas y bajas, z-orden 1d>multi, estrellas anual pequeñas+múltiples, notif dots';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
