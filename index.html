@@ -112,6 +112,7 @@ try{
           <button class="data-menu-item" id="exportAllBtn">&#8595;&nbsp;Exportar todo</button>
           <button class="data-menu-item" id="importAllBtn">&#8593;&nbsp;Importar todo</button>
           <button class="data-menu-item" id="cleanAlarmsBtn">&#128277;&nbsp;Limpiar alarmas</button>
+          <button class="data-menu-item" id="alarmsMgmtBtn">&#128221;&nbsp;Gestión de alarmas</button>
           <div class="macro-section">
             <div class="macro-section-lbl">&#128246; MacroDroid — URL base</div>
             <input class="macro-url-input" id="macroAlarmUrlMenu" type="url" placeholder="https://trigger.macrodroid.com/ID">
@@ -243,12 +244,23 @@ try{
   </div>
 </div>
 
+<!-- ── OVERLAY: Gestión de alarmas ── -->
+<div id="alarmsOverlay" class="full-overlay" style="display:none">
+  <div class="overlay-nav-bar">
+    <button class="sy-back" id="alarmsBack">&#8592;</button>
+    <span class="sy-title">&#128276; Gestión de alarmas</span>
+    <div class="nav-bar-spacer"></div>
+  </div>
+  <div class="alarms-mgmt-content" id="alarmsContent"></div>
+</div>
+
 <!-- ── SCRIPTS ── -->
 <script src="js/core.js"></script>
 <script src="js/summary.js"></script>
 <script src="js/economics.js"></script>
 <script src="js/birthdays.js"></script>
 <script src="js/events.js"></script>
+<script src="js/alarms.js"></script>
 <script src="js/init.js"></script>
 
 <script>

@@ -266,6 +266,9 @@
       if(useMacro){
         var url=macroBase+'/generar_alarma1?alarmH='+h+'&alarmM='+m+'&alarmMsg='+encodeURIComponent(msg);
         if(selDays.length)url+='&alarmDays='+selDays.join(',');
+        if(typeof addAlarm==='function'){
+          addAlarm({type:'other',label:msg,hour:h,minute:m,days:selDays.length?selDays.slice():null,targetDate:null});
+        }
         showToast('Enviando a MacroDroid\u2026','success');
         fetch(url,{mode:'no-cors'})
           .then(function(){showToast('\u23f0 Alarma enviada \u2014 '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),'success');})
@@ -370,6 +373,16 @@
       if(menu)menu.classList.remove('open');
     }
   });
+  /* ── Menú: Gestión de alarmas ── */
+  var _alarmsMgmtBtn=document.getElementById('alarmsMgmtBtn');
+  if(_alarmsMgmtBtn){
+    _alarmsMgmtBtn.addEventListener('click',function(e){
+      e.stopPropagation();
+      document.getElementById('dataMenu').classList.remove('open');
+      if(typeof openAlarms==='function')openAlarms();
+    });
+  }
+
   /* ── Menú: Limpiar alarmas (MacroDroid webhook) ── */
   document.getElementById('cleanAlarmsBtn').addEventListener('click',function(e){
     e.stopPropagation();
@@ -429,7 +442,8 @@
   document.getElementById('exportAllBtn').addEventListener('click',function(){
     var data={version:2,days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
       exclFest:EXCL_FEST,exclVac:EXCL_VAC,vacEntitlement:VAC_ENTITLEMENT,
-      birthdays:BDAYS,events:EVENTS};
+      birthdays:BDAYS,events:EVENTS,
+      alarms:typeof ALARMS!=='undefined'?ALARMS:[]};
     var a=document.createElement('a');
     a.href='data:application/json,'+encodeURIComponent(JSON.stringify(data,null,2));
     a.download='horas-excelia-backup.json';
@@ -454,6 +468,7 @@
         if(d.vacEntitlement){VAC_ENTITLEMENT=d.vacEntitlement;saveVacEntitlement(d.vacEntitlement);}
         if(d.birthdays&&Array.isArray(d.birthdays)){BDAYS=d.birthdays;localStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));}
         if(d.events&&Array.isArray(d.events)){EVENTS=d.events;saveEvents();}
+        if(d.alarms&&Array.isArray(d.alarms)&&typeof saveAlarms==='function'){ALARMS=d.alarms;saveAlarms();}
         save();render();
         updateBdayBtn();updateEventsBtn();
         showToast('Backup completo importado','success');

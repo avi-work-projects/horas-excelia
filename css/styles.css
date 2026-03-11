@@ -533,6 +533,23 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bd-alarm-time-sep{font-family:var(--mono);font-size:1rem;font-weight:700;color:var(--accent-bright);user-select:none}
 .bd-alarm-set-badge{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:var(--radius-sm);background:rgba(90,224,136,.1);border:1px solid rgba(90,224,136,.3);color:var(--sent-text);font-size:.8rem;font-weight:600;margin-bottom:8px}
 .bd-alarm-unmark-btn{background:var(--sent);border:1px solid var(--sent-border);border-radius:8px;padding:5px 12px;font-size:.72rem;color:var(--sent-text);cursor:pointer;margin-left:auto;flex-shrink:0;font-weight:600}
+/* ── ALARM MANAGEMENT OVERLAY ── */
+.alarms-mgmt-content{padding:16px 16px 40px}
+.alarms-section{margin-bottom:24px}
+.alarms-section-title{font-size:.78rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:10px}
+.alarms-sub-title{font-size:.72rem;font-weight:600;padding:6px 2px 5px;color:var(--text-muted)}
+.alarms-sub-future{color:var(--sent-text)}
+.alarms-sub-past{opacity:.5}
+.alarm-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border);margin-bottom:6px}
+.alarm-item-past{opacity:.4}
+.alarm-item-time{font-family:var(--mono);font-size:1rem;font-weight:700;color:var(--accent-bright);min-width:40px;flex-shrink:0}
+.alarm-item-info{flex:1;min-width:0}
+.alarm-item-label{font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.alarm-item-days{font-size:.68rem;color:var(--text-muted);font-family:var(--mono);margin-top:2px}
+.alarm-delete-btn{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:.78rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.alarm-delete-btn:active{background:rgba(255,107,107,.15);border-color:#ff6b6b;color:#ff6b6b}
+.alarms-empty{text-align:center;color:var(--text-muted);font-size:.8rem;padding:14px 0}
+.alarms-empty-all{text-align:center;color:var(--text-muted);font-size:.88rem;padding:48px 20px;line-height:1.7}
 /* ── HOME POPUP (semanas pendientes / VIP sin alarma) ── */
 .home-popup-overlay{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.6);display:flex;align-items:flex-start;justify-content:center;padding-top:80px}
 .home-popup{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px 20px;max-width:360px;width:calc(100% - 32px);max-height:70vh;overflow-y:auto;position:relative;box-shadow:0 16px 48px var(--shadow)}
