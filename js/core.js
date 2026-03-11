@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v47 — alarma: título simplificado, VIP logo en toggle, sin estrella en cabecera';
+var APP_VERSION = 'v48 — VIP logo doble tamaño en todos los lugares';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
