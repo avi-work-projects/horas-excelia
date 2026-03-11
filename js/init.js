@@ -21,10 +21,34 @@
   /* ── Logo popup ── */
   var _logoBtn=document.getElementById('appLogoBtn');
   var _logoPopup=document.getElementById('logoPopup');
+  var _logoCloseBtn=document.getElementById('logoPopupClose');
   if(_logoBtn&&_logoPopup){
     _logoBtn.addEventListener('click',function(){_logoPopup.classList.add('open');});
     _logoPopup.addEventListener('click',function(e){if(e.target===_logoPopup)_logoPopup.classList.remove('open');});
+    if(_logoCloseBtn)_logoCloseBtn.addEventListener('click',function(){_logoPopup.classList.remove('open');});
   }
+
+  /* ── Active state on header data-btn (highlights current open overlay) ── */
+  var _ovBtnMap={summaryOverlay:'summaryBtn',econOverlay:'econBtn',bdayOverlay:'bdayBtn',eventsOverlay:'eventsBtn'};
+  function _updateHeaderActive(){
+    var openKey=null;
+    Object.keys(_ovBtnMap).forEach(function(ovId){
+      var ov=document.getElementById(ovId);
+      if(ov&&ov.classList.contains('open'))openKey=_ovBtnMap[ovId];
+    });
+    ['summaryBtn','econBtn','bdayBtn','eventsBtn','homeBtn'].forEach(function(id){
+      var btn=document.getElementById(id);if(btn)btn.classList.remove('overlay-active');
+    });
+    var activeBtn=document.getElementById(openKey||'homeBtn');
+    if(activeBtn)activeBtn.classList.add('overlay-active');
+  }
+  if(typeof MutationObserver!=='undefined'){
+    Object.keys(_ovBtnMap).forEach(function(ovId){
+      var ov=document.getElementById(ovId);
+      if(ov)new MutationObserver(_updateHeaderActive).observe(ov,{attributes:true,attributeFilter:['class']});
+    });
+  }
+  _updateHeaderActive();
 
   /* ── Navegación de mes ── */
   document.getElementById('prevBtn').addEventListener('click',function(){
