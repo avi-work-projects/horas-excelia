@@ -166,25 +166,62 @@
       var urlIn=document.getElementById('alarmMacroUrl');
       if(cb){cb.checked=useMacro;}
       if(urlIn){urlIn.value=macroUrl;urlIn.disabled=!useMacro;}
-      // Restaurar días seleccionados
-      var savedDays=(localStorage.getItem('excelia-alarm-days')||'').split(',').filter(Boolean);
-      document.querySelectorAll('.alarm-day-btn').forEach(function(btn){
-        btn.classList.toggle('on',savedDays.indexOf(btn.dataset.day)>=0);
-      });
+      // Construir botones de días ordenados desde hoy con fecha debajo
+      buildAlarmDayBtns();
     }
     panel.classList.toggle('open');
   });
 
-  /* ── Alarma: botones días de semana ── */
-  document.querySelectorAll('.alarm-day-btn').forEach(function(btn){
-    btn.addEventListener('click',function(e){
-      e.stopPropagation();
-      btn.classList.toggle('on');
-      var sel=[];
-      document.querySelectorAll('.alarm-day-btn.on').forEach(function(b){sel.push(b.dataset.day);});
-      localStorage.setItem('excelia-alarm-days',sel.join(','));
+  /* ── Alarma: botones días de semana (generados dinámicamente, ordenados desde hoy) ── */
+  function buildAlarmDayBtns(){
+    var container=document.getElementById('alarmDaysBtns');
+    if(!container)return;
+    // Letras de día (JS getDay(): 0=Dom,1=Lun,...,6=Sáb)
+    var DN=['D','L','M','X','J','V','S'];
+    var today=new Date();
+    var todayJs=today.getDay();
+    var savedDays=(localStorage.getItem('excelia-alarm-days')||'').split(',').filter(Boolean);
+    var html='';
+    for(var i=0;i<7;i++){
+      var jsDay=(todayJs+i)%7;
+      var d=new Date(today);d.setDate(today.getDate()+i);
+      var ddmm=String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');
+      var androidDay=jsDay+1; // Android: 1=Dom,2=Lun,...,7=Sáb
+      var isOn=savedDays.indexOf(String(androidDay))>=0;
+      html+='<button class="alarm-day-btn'+(isOn?' on':'')+'" data-day="'+androidDay+'" type="button">'+DN[jsDay]+'<span class="alarm-day-date">'+ddmm+'</span></button>';
+    }
+    container.innerHTML=html;
+    container.querySelectorAll('.alarm-day-btn').forEach(function(btn){
+      btn.addEventListener('click',function(e){
+        e.stopPropagation();
+        btn.classList.toggle('on');
+        var sel=[];
+        container.querySelectorAll('.alarm-day-btn.on').forEach(function(b){sel.push(b.dataset.day);});
+        localStorage.setItem('excelia-alarm-days',sel.join(','));
+      });
     });
-  });
+  }
+
+  /* ── Alarma: confirmación si la hora ya pasó hoy ── */
+  function showAlarmPastConfirm(htmlMsg,onConfirm){
+    var existing=document.getElementById('alarmPastConfirm');
+    if(existing)existing.remove();
+    var dlg=document.createElement('div');
+    dlg.id='alarmPastConfirm';
+    dlg.className='alarm-past-confirm';
+    dlg.innerHTML='<div class="alarm-past-confirm-msg">'+htmlMsg+'</div>'
+      +'<div class="alarm-past-confirm-btns">'
+      +'<button class="alarm-past-btn-ok" id="alarmPastOk">Continuar</button>'
+      +'<button class="alarm-past-btn-cancel" id="alarmPastCancel">Cancelar</button>'
+      +'</div>';
+    document.getElementById('alarmPanel').appendChild(dlg);
+    document.getElementById('alarmPastOk').addEventListener('click',function(e){
+      e.stopPropagation();dlg.remove();onConfirm();
+    });
+    document.getElementById('alarmPastCancel').addEventListener('click',function(e){
+      e.stopPropagation();dlg.remove();
+    });
+  }
 
   /* ── Alarma: toggle MacroDroid ── */
   document.getElementById('alarmUseMacro').addEventListener('change',function(){
@@ -204,44 +241,67 @@
 
   document.getElementById('alarmCreateBtn').addEventListener('click',function(){
     var hRaw=parseInt(document.getElementById('alarmHour').value,10);
-    var h=isNaN(hRaw)?8:Math.min(23,Math.max(0,hRaw));
+    var h=isNaN(hRaw)?9:Math.min(23,Math.max(0,hRaw));
     var mRaw=parseInt(document.getElementById('alarmMin').value,10);
-    var m=isNaN(mRaw)?0:Math.min(59,Math.max(0,mRaw));
+    var m=isNaN(mRaw)?20:Math.min(59,Math.max(0,mRaw));
     var msg=(document.getElementById('alarmMsg').value.trim()||'Horas Excelia');
     var useMacro=document.getElementById('alarmUseMacro').checked;
-    // Días seleccionados (constantes Android: 1=Dom,2=Lun...7=Sáb)
     var selDays=[];
     document.querySelectorAll('.alarm-day-btn.on').forEach(function(b){selDays.push(+b.dataset.day);});
-    document.getElementById('alarmPanel').classList.remove('open');
-
+    var macroBase='';
     if(useMacro){
-      // MacroDroid webhook: URL remota (https://trigger.macrodroid.com/…)
-      var macroBase=normalizeMacroBase(document.getElementById('alarmMacroUrl').value||'');
-      if(!macroBase){
-        showToast('Pega la URL del webhook de MacroDroid','error');
-        document.getElementById('alarmPanel').classList.add('open');
-        return;
+      macroBase=normalizeMacroBase(document.getElementById('alarmMacroUrl').value||'');
+      if(!macroBase){showToast('Pega la URL del webhook de MacroDroid','error');return;}
+    }
+    // Detectar si la hora ya ha pasado hoy y hoy está seleccionado
+    var now=new Date();
+    var todayJs=now.getDay(); // 0=Dom...6=Sáb
+    var todayAndroid=todayJs+1; // Android: 1=Dom,2=Lun,...,7=Sáb
+    var nowMins=now.getHours()*60+now.getMinutes();
+    var alarmMins=h*60+m;
+    var todaySelected=selDays.indexOf(todayAndroid)>=0;
+    var needsConfirm=todaySelected&&nowMins>=alarmMins;
+    function proceed(){
+      document.getElementById('alarmPanel').classList.remove('open');
+      if(useMacro){
+        var url=macroBase+'/generar_alarma1?alarmH='+h+'&alarmM='+m+'&alarmMsg='+encodeURIComponent(msg);
+        if(selDays.length)url+='&alarmDays='+selDays.join(',');
+        showToast('Enviando a MacroDroid\u2026','success');
+        fetch(url,{mode:'no-cors'})
+          .then(function(){showToast('\u23f0 Alarma enviada \u2014 '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),'success');})
+          .catch(function(){showToast('Error al contactar MacroDroid','error');});
+      } else {
+        var base=';action=android.intent.action.SET_ALARM'
+          +';S.android.intent.extra.alarm.MESSAGE='+encodeURIComponent(msg)
+          +';i.android.intent.extra.alarm.HOUR='+h
+          +';i.android.intent.extra.alarm.MINUTES='+m
+          +';b.android.intent.extra.alarm.SKIP_UI=false';
+        if(selDays.length)base+=';ia.android.intent.extra.alarm.DAYS='+selDays.join(',');
+        window.open('intent://alarm/#Intent'+base+';package=com.vivo.clock;end','_blank');
+        showToast('Abriendo reloj \u2014 '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),'success');
       }
-      var url=macroBase+'/generar_alarma1?alarmH='+h+'&alarmM='+m+'&alarmMsg='+encodeURIComponent(msg);
-      if(selDays.length)url+='&alarmDays='+selDays.join(',');
-      showToast('Enviando a MacroDroid\u2026','success');
-      fetch(url,{mode:'no-cors'})
-        .then(function(){
-          showToast('\u23f0 Alarma enviada \u2014 '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),'success');
-        })
-        .catch(function(){
-          showToast('Error al contactar MacroDroid','error');
-        });
+    }
+    if(needsConfirm){
+      // Calcular cuándo sonará por primera vez entre todos los días seleccionados
+      var DN_ES=['domingo','lunes','martes','mi\u00e9rcoles','jueves','viernes','s\u00e1bado'];
+      var minDiff=999,firstDay='',firstDate='';
+      selDays.forEach(function(ad){
+        var targetJs=ad-1;
+        var diff=(targetJs-todayJs+7)%7;
+        if(diff===0&&nowMins>=alarmMins)diff=7; // perdido hoy → siguiente semana
+        if(diff<minDiff){
+          minDiff=diff;
+          var dd=new Date(now);dd.setDate(now.getDate()+diff);
+          firstDay=DN_ES[dd.getDay()];
+          firstDate=dd.getDate()+'/'+(dd.getMonth()+1);
+        }
+      });
+      var timeStr=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+      var warnMsg='\u26a0\ufe0f La hora <strong>'+timeStr+'</strong> ya ha pasado hoy.<br>'
+        +'Esta alarma sonar\u00e1 por primera vez el pr\u00f3ximo <strong>'+firstDay+' '+firstDate+'</strong>.<br>\u00bfDeseas continuar?';
+      showAlarmPastConfirm(warnMsg,proceed);
     } else {
-      // Intento intent:// (puede funcionar en algunos dispositivos/versiones)
-      var base=';action=android.intent.action.SET_ALARM'
-        +';S.android.intent.extra.alarm.MESSAGE='+encodeURIComponent(msg)
-        +';i.android.intent.extra.alarm.HOUR='+h
-        +';i.android.intent.extra.alarm.MINUTES='+m
-        +';b.android.intent.extra.alarm.SKIP_UI=false';
-      if(selDays.length)base+=';ia.android.intent.extra.alarm.DAYS='+selDays.join(',');
-      window.open('intent://alarm/#Intent'+base+';package=com.vivo.clock;end','_blank');
-      showToast('Abriendo reloj \u2014 '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),'success');
+      proceed();
     }
   });
 
