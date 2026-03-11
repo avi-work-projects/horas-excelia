@@ -692,8 +692,15 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .alarm-days-row{padding:6px 12px 4px;border-top:1px solid var(--border)}
 .alarm-days-label{font-size:.65rem;color:var(--text-muted);margin-bottom:5px;text-align:center}
 .alarm-days-btns{display:flex;gap:4px}
-.alarm-day-btn{flex:1;padding:5px 0;font-size:.65rem;font-weight:700;border:1px solid var(--border);border-radius:5px;background:var(--surface2);color:var(--text-muted);cursor:pointer;font-family:var(--font);line-height:1}
+.alarm-day-btn{flex:1;padding:5px 2px;font-size:.65rem;font-weight:700;border:1px solid var(--border);border-radius:5px;background:var(--surface2);color:var(--text-muted);cursor:pointer;font-family:var(--font);line-height:1.2;text-align:center;display:flex;flex-direction:column;align-items:center;gap:1px}
 .alarm-day-btn.on{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
+.alarm-day-date{font-size:.5rem;font-weight:400;opacity:.7;line-height:1;white-space:nowrap}
+/* ── Confirmación alarma en el pasado ── */
+.alarm-past-confirm{padding:10px 12px 8px;border-top:1px solid var(--border);background:rgba(255,107,107,.06)}
+.alarm-past-confirm-msg{font-size:.72rem;color:var(--text-muted);line-height:1.55;margin-bottom:8px}
+.alarm-past-confirm-btns{display:flex;gap:6px}
+.alarm-past-btn-ok{flex:1;padding:7px 4px;border:1px solid var(--accent);border-radius:6px;background:var(--accent-glow);color:var(--accent-bright);font-size:.72rem;font-weight:600;cursor:pointer}
+.alarm-past-btn-cancel{flex:1;padding:7px 4px;border:1px solid var(--border);border-radius:6px;background:none;color:var(--text-muted);font-size:.72rem;cursor:pointer}
 .alarm-macro-row{display:flex;align-items:center;gap:8px;padding:5px 12px;font-size:.74rem;color:var(--text-muted);border-top:1px solid var(--border);cursor:pointer}
 .alarm-macro-row input[type=checkbox]{accent-color:var(--accent);width:14px;height:14px;cursor:pointer;flex-shrink:0}
 .alarm-macro-url{display:block;width:calc(100% - 24px);margin:0 12px 4px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text);font-size:.68rem;font-family:var(--mono);overflow:hidden;text-overflow:ellipsis}

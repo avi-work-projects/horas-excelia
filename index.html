@@ -87,19 +87,13 @@ try{
           <div class="alarm-time-row">
             <input class="alarm-h-input" id="alarmHour" type="number" min="0" max="23" value="9">
             <span class="alarm-colon">:</span>
-            <input class="alarm-m-input" id="alarmMin" type="text" inputmode="numeric" maxlength="2" value="02">
+            <input class="alarm-m-input" id="alarmMin" type="text" inputmode="numeric" maxlength="2" value="20">
           </div>
           <input class="alarm-msg-input" id="alarmMsg" type="text" maxlength="40" placeholder="Mensaje de la alarma" value="Horas Excelia">
           <div class="alarm-days-row">
             <div class="alarm-days-label">Repetir (vac&#237;o = una vez)</div>
-            <div class="alarm-days-btns">
-              <button class="alarm-day-btn" data-day="2" type="button">L</button>
-              <button class="alarm-day-btn" data-day="3" type="button">M</button>
-              <button class="alarm-day-btn" data-day="4" type="button">X</button>
-              <button class="alarm-day-btn" data-day="5" type="button">J</button>
-              <button class="alarm-day-btn" data-day="6" type="button">V</button>
-              <button class="alarm-day-btn" data-day="7" type="button">S</button>
-              <button class="alarm-day-btn" data-day="1" type="button">D</button>
+            <div class="alarm-days-btns" id="alarmDaysBtns">
+              <!-- generado dinámicamente al abrir (ordenado desde hoy) -->
             </div>
           </div>
           <label class="alarm-macro-row" id="alarmMacroRow">

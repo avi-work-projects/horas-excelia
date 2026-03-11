@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v35 — alarmas limpiar mejorado + popup logo + botones header + X anual + VIP edición + dropdown anual';
+var APP_VERSION = 'v36 — panel alarma: hora 9:20, días ordenados desde hoy con fecha, aviso alarma pasada';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
