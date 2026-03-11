@@ -138,10 +138,23 @@ Test local: `py -m http.server 8082` desde la raíz del proyecto.
 | **arriba** | Posición física superior: un elemento queda en una fila/altura mayor (como piezas de Tetris). Ej: "el evento queda arriba del día" = ocupa espacio de layout propio, desplazando el resto hacia abajo. |
 | **encima** | Superposición en capas: un elemento se coloca sobre otro como una pegatina, sin desplazarlo. Ej: "el evento queda encima del día" = `position:absolute`, no afecta al flujo. |
 
+## Regla de separación entre niveles (OBLIGATORIO en todas las ventanas)
+Los 3 niveles de cabecera de cada ventana secundaria deben cumplir:
+1. **Sin espacios visibles** entre niveles al hacer scroll (no "rendija/gap").
+2. **Sin solapamiento** de un nivel sobre el contenido del nivel de abajo.
+3. Los 3 niveles son siempre visibles (todos sticky).
+Implementación: usar `box-shadow:0 1px 0 var(--border)` en lugar de `border-bottom:1px solid` en todos los elementos sticky (overlay-nav-bar, sy-header, bday-hdr-sub, ev-hdr-sub, sy-tab-bar). Así no se altera la altura de layout y no aparece el gap.
+
+## Notificación en emojis de nivel 1 (OBLIGATORIO en TODAS las ventanas)
+Los puntos verdes de notificación (`.bday-active`, `.events-active`) deben aparecer en los botones de TODAS las ventanas (home + todas las ventanas secundarias), no solo en la home.
+- `updateEventsBtn()` y `updateBdayBtn()` usan `querySelectorAll('.nav-bar-btn[data-nav="events/bday"]')` para actualizar TODOS los botones de la nav bar simultáneamente.
+- El CSS `::after` del punto verde se aplica a `.data-btn.bday-active::after`, `.data-btn.events-active::after`, `.nav-bar-btn.bday-active::after`, `.nav-bar-btn.events-active::after`.
+- `.nav-bar-btn` tiene `position:relative` para que el `::after` absoluto funcione.
+
 ## Patrones CSS relevantes
 - `.full-overlay` — base para todos los overlays deslizantes
-- `.sy-header` — cabecera sticky de overlay (compartida)
-- `.data-btn.bday-active` — brillo naranja cuando hay cumpleaños próximos
-- `.data-btn.events-active` — brillo azul cuando hay eventos próximos
+- `.sy-header` — cabecera sticky de overlay (compartida); usa `box-shadow` NO `border-bottom`
+- `.data-btn.bday-active` / `.nav-bar-btn.bday-active` — brillo naranja + punto verde en todos los navbars
+- `.data-btn.events-active` / `.nav-bar-btn.events-active` — brillo azul + punto verde en todos los navbars
 - `.day-cell.h7/.h8/.h9` — colores por horas en celda del día (ámbar/azul/verde)
 - `.col-base/.col-iva/.col-irpf/.col-net` — colores en ventana económica

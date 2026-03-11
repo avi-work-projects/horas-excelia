@@ -130,7 +130,7 @@ function renderEconContent(){
 
   // IVA trimestral — cuadrícula única (4 col × 4 fila) para alineación perfecta
   h+='<div class="sy-section econ-quarter-section"><div class="sy-section-title">IVA trimestral a Hacienda (mod. 303)</div>';
-  h+='<div class="econ-quarter-grid">';
+  h+='<div class="econ-quarter-scroll"><div class="econ-quarter-grid">';
   // Fila 1: cobrado total por trimestre
   ['T1','T2','T3','T4'].forEach(function(q,i){
     h+='<div class="econ-qcell"><div class="sy-val-sm">'+fc(Math.round(e.qCobrado[i]*100)/100)+'</div>';
@@ -143,7 +143,7 @@ function renderEconContent(){
   });
   // Fila 3: IVA a pagar por trimestre
   ['T1','T2','T3','T4'].forEach(function(q,i){
-    h+='<div class="econ-qcell"><div class="sy-val-sm" style="color:var(--c-orange)">'+fc(Math.round(e.qIva[i]*100)/100)+'</div>';
+    h+='<div class="econ-qcell econ-qcell-iva"><div class="sy-val-sm" style="color:var(--c-orange)">'+fc(Math.round(e.qIva[i]*100)/100)+'</div>';
     h+='<div class="sy-lbl">'+q+' IVA Hacienda</div></div>';
   });
   // Fila 4: neto real tras pagar IVA
@@ -151,7 +151,7 @@ function renderEconContent(){
     h+='<div class="econ-qcell econ-qcell-neto"><div class="sy-val-sm" style="color:var(--c-green)">'+fc(e.qNeto[i])+'</div>';
     h+='<div class="sy-lbl">'+q+' neto real</div></div>';
   });
-  h+='</div></div>';
+  h+='</div></div></div>';
 
   // Gráfica neto mensual
   h+='<div class="sy-section"><div class="sy-section-title">Neto mensual (base &#8722; IRPF)</div>';

@@ -105,9 +105,12 @@ function hasUpcomingEvent(){
 }
 
 function updateEventsBtn(){
-  var btn=document.getElementById('eventsBtn');if(!btn)return;
-  if(hasUpcomingEvent()&&EVENTS.length)btn.classList.add('events-active');
-  else btn.classList.remove('events-active');
+  var isActive=hasUpcomingEvent()&&EVENTS.length>0;
+  var homeBtn=document.getElementById('eventsBtn');
+  if(homeBtn){if(isActive)homeBtn.classList.add('events-active');else homeBtn.classList.remove('events-active');}
+  document.querySelectorAll('.nav-bar-btn[data-nav="events"]').forEach(function(b){
+    if(isActive)b.classList.add('events-active');else b.classList.remove('events-active');
+  });
 }
 
 /* ── Helper: color único y estable por evento (hash del ID) ── */

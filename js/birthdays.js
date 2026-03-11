@@ -94,9 +94,12 @@ function hasUpcomingBday(){
 }
 
 function updateBdayBtn(){
-  var btn=document.getElementById('bdayBtn');if(!btn)return;
-  if(hasUpcomingBday()&&BDAYS.length)btn.classList.add('bday-active');
-  else btn.classList.remove('bday-active');
+  var isActive=hasUpcomingBday()&&BDAYS.length>0;
+  var homeBtn=document.getElementById('bdayBtn');
+  if(homeBtn){if(isActive)homeBtn.classList.add('bday-active');else homeBtn.classList.remove('bday-active');}
+  document.querySelectorAll('.nav-bar-btn[data-nav="bday"]').forEach(function(b){
+    if(isActive)b.classList.add('bday-active');else b.classList.remove('bday-active');
+  });
 }
 
 /* ── Alarm key helpers ──────────────────────────────────── */
