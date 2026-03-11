@@ -533,9 +533,12 @@ function renderEvAnnual(){
         var vipStarHtml='';
         if(inM&&!vipHidden&&typeof BDAYS!=='undefined'&&Array.isArray(BDAYS)){
           var dd2=d.getDate(),dm2=d.getMonth()+1;
-          if(BDAYS.some(function(b){return b.vip&&b.day===dd2&&b.month===dm2;})){
-            var starCls=!dotsHtml?'ev-annual-vip-star ev-annual-star-center':'ev-annual-vip-star';
-            vipStarHtml='<div class="'+starCls+'">\u2b50</div>';
+          var vipBdays=BDAYS.filter(function(b){return b.vip&&b.day===dd2&&b.month===dm2;});
+          if(vipBdays.length){
+            var starCls=!dotsHtml?'ev-annual-stars ev-annual-star-center':'ev-annual-stars';
+            vipStarHtml='<div class="'+starCls+'">';
+            for(var vi=0;vi<vipBdays.length;vi++){vipStarHtml+='<span>\u2b50</span>';}
+            vipStarHtml+='</div>';
           }
         }
         h+='<div class="'+cls+'"'+sty+dsAttr+'>'+dotsHtml+vipStarHtml+'</div>';
@@ -546,7 +549,7 @@ function renderEvAnnual(){
         h+='<div class="ev-annual-bars-row">';
         wMulti.forEach(function(it){
           var sc=it.starts&&it.ends?'':it.starts?' a-starts':it.ends?' a-ends':' a-mid';
-          h+='<div class="ev-annual-mbar'+sc+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';background:'+evSoftFillColor(it.ev)+';box-shadow:inset 0 0 0 1px '+it.ev.color+'"></div>';
+          h+='<div class="ev-annual-mbar'+sc+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';border:1px solid '+it.ev.color+';background:'+it.ev.color+'cc"></div>';
         });
         h+='</div>';
       }
