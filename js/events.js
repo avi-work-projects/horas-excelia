@@ -169,19 +169,6 @@ function renderEvCalMonth(){
     });
     var activeRows=0;wMulti.forEach(function(it){if(it.row>=0)activeRows=Math.max(activeRows,it.row+1);});
     h+='<div class="ev-week-outer">';
-    if(activeRows>0){
-      h+='<div class="ev-bars-row">';
-      wMulti.forEach(function(it){
-        if(it.row<0)return;
-        var ev=it.ev;
-        var sc=it.starts&&it.ends?'':it.starts?' starts':it.ends?' ends':' continues';
-        var showT=it.starts||(it.cs===0);
-        h+='<div class="ev-multi-bar'+sc+'" data-id="'+ev.id+'"'
-          +' style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';background:'+ev.color+';color:#fff">'
-          +(showT?escHtml(ev.title):'')+'</div>';
-      });
-      h+='</div>';
-    }
     h+='<div class="ev-week-grid">';
     var bspanStart=-1,bspans=[];
     for(var di=0;di<7;di++){
@@ -223,7 +210,21 @@ function renderEvCalMonth(){
       if(noR)bsty+='border-right:none;border-top-right-radius:0;border-bottom-right-radius:0;';
       h+='<div class="ev-puente-perimeter" style="'+bsty+'"></div>';
     });
-    h+='</div></div>'; // ev-week-grid + ev-week-outer
+    h+='</div>'; // ev-week-grid
+    if(activeRows>0){
+      h+='<div class="ev-bars-row">';
+      wMulti.forEach(function(it){
+        if(it.row<0)return;
+        var ev=it.ev;
+        var sc=it.starts&&it.ends?'':it.starts?' starts':it.ends?' ends':' continues';
+        var showT=it.starts||(it.cs===0);
+        h+='<div class="ev-multi-bar'+sc+'" data-id="'+ev.id+'"'
+          +' style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';border:1.5px solid '+ev.color+';background:'+ev.color+'cc;color:#fff">'
+          +(showT?escHtml(ev.title):'')+'</div>';
+      });
+      h+='</div>';
+    }
+    h+='</div>'; // ev-week-outer
     cur.setDate(cur.getDate()+7);
   }
   return h;
