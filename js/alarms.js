@@ -32,6 +32,34 @@ function isAlarmPast(alarm){
 function openAlarms(){
   var ov=document.getElementById('alarmsOverlay');
   if(!ov)return;
+  // Delegación de eventos: un solo listener en el container, sobrevive re-renders
+  var container=document.getElementById('alarmsContent');
+  if(container&&!container._delegated){
+    container._delegated=true;
+    container.addEventListener('click',function(e){
+      var btn=e.target.closest?e.target.closest('.alarm-delete-btn'):null;
+      if(!btn){
+        // fallback para browsers sin closest
+        var t=e.target;
+        while(t&&t!==container){if(t.classList&&t.classList.contains('alarm-delete-btn')){btn=t;break;}t=t.parentElement;}
+      }
+      if(!btn)return;
+      e.stopPropagation();
+      var id=btn.dataset.id;
+      var label=btn.dataset.label;
+      // 1. Borrar primero (siempre, sin depender de MacroDroid)
+      removeAlarm(id);
+      renderAlarms();
+      showToast('Alarma eliminada','success');
+      // 2. Llamar MacroDroid DISMISS (opcional, si falla no importa)
+      try{
+        var macroBase=normalizeMacroBase(localStorage.getItem('excelia-alarm-url')||'');
+        if(macroBase&&label){
+          fetch(macroBase+'/apagar_alarmas?names='+encodeURIComponent(label),{mode:'no-cors'}).catch(function(){});
+        }
+      }catch(_){}
+    });
+  }
   renderAlarms();
   ov.style.display='block';
   requestAnimationFrame(function(){requestAnimationFrame(function(){
@@ -120,21 +148,4 @@ function renderAlarms(){
   }
 
   container.innerHTML=html;
-
-  // Listeners de borrado
-  container.querySelectorAll('.alarm-delete-btn').forEach(function(btn){
-    btn.addEventListener('click',function(e){
-      e.stopPropagation();
-      var id=btn.dataset.id;
-      var label=btn.dataset.label;
-      // Llamar MacroDroid DISMISS si hay URL configurada
-      var macroBase=normalizeMacroBase(localStorage.getItem('excelia-alarm-url')||'');
-      if(macroBase&&label){
-        fetch(macroBase+'/apagar_alarmas?names='+encodeURIComponent(label),{mode:'no-cors'}).catch(function(){});
-      }
-      removeAlarm(id);
-      renderAlarms();
-      showToast('Alarma eliminada','success');
-    });
-  });
 }
