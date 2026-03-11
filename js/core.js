@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v42 — notif dots en todos los navbars, sy-header sin gap, IVA scroll+borde naranja';
+var APP_VERSION = 'v43 — aspas/estrellas anual+4m, barras 65% centradas, badges falso-translúcido';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

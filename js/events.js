@@ -191,16 +191,18 @@ function renderEvCalMonth(){
       else{if(bspanStart>=0){bspans.push({s:bspanStart,e:di-1});bspanStart=-1;}}
       var cls='ev-cell'+(inM?'':' out-m')+(isTod?' today-ev':'')+(past?' past-cal-day':'')+(edow===0||edow===6?' weekend':'')+(dt&&dt!=='normal'?' ev-day-'+dt:'')+(inPuente?' ev-puente':'');
       h+='<div class="'+cls+'" data-ds="'+ds+'"><div class="ev-num">'+d.getDate()+'</div>';
+      h+='<div class="ev-badges-wrap">';
       evs.forEach(function(ev){
         if(multiIds[ev.id])return;
         var _isVipBday=ev.id.indexOf('ev-bday-vip-')===0;
         var _rawName=ev.title.replace(/^\u2b50\s*/,'').replace(/^Cumple\s+/,'');
         var _bTitle=_isVipBday?escHtml(_rawName.split(/\s+/)[0]):escHtml(ev.title);
         var _bStyle=_isVipBday
-          ?'color:#fbbf24;border-color:#fbbf24;border-width:2px;background:rgba(251,191,36,.12);box-shadow:0 0 8px rgba(251,191,36,.55)'
-          :'color:'+ev.color+';border-color:'+ev.color+';background:'+ev.color+'22;box-shadow:0 0 6px '+ev.color+'88';
+          ?'color:#fff;border-color:#fbbf24;border-width:2px;background:#fbbf24cc;box-shadow:0 0 8px rgba(251,191,36,.55)'
+          :'color:#fff;border-color:'+ev.color+';background:'+ev.color+'cc';
         h+='<div class="ev-badge" data-id="'+ev.id+'" style="'+_bStyle+'">'+_bTitle+'</div>';
       });
+      h+='</div>';
       h+='</div>';
     }
     if(bspanStart>=0)bspans.push({s:bspanStart,e:6});
@@ -533,27 +535,20 @@ function renderEvAnnual(){
         }
         var sty=bg?' style="background:'+bg+'"':'';
         var dsAttr=inM?' data-ds="'+ds+'"':'';
-        // Stack de eventos puntuales: eventos 1 día + cumpleaños VIP (z-index:3, encima de barras)
+        // Eventos puntuales: ✕ aspas para regulares, ⭐ para VIP — todos centrados (z-index:3)
         var vipHidden=EV_ANNUAL_FILTER_HIDDEN.indexOf('Cumpleaños VIP')!==-1;
-        var sdItems=[];
-        if(inM&&evs.length){
-          evs.filter(function(ev){return !multiIds[ev.id]&&annEvVisible(ev)&&ev.id.indexOf('ev-bday-vip-')!==0;})
-             .forEach(function(ev){sdItems.push({color:ev.color,vip:false});});
+        var _annSd='';
+        if(inM){
+          var _singleEvs=evs.filter(function(ev){return !multiIds[ev.id]&&annEvVisible(ev)&&ev.id.indexOf('ev-bday-vip-')!==0;});
+          var _vipBdays=(!vipHidden&&typeof BDAYS!=='undefined'&&Array.isArray(BDAYS))?(function(){var dd2=d.getDate(),dm2=d.getMonth()+1;return BDAYS.filter(function(b){return b.vip&&b.day===dd2&&b.month===dm2;});})():[];
+          if(_singleEvs.length||_vipBdays.length){
+            _annSd='<div class="ev-annual-xs">';
+            _singleEvs.forEach(function(ev){_annSd+='<span class="ev-annual-x" style="color:'+ev.color+'"></span>';});
+            _vipBdays.forEach(function(){_annSd+='<span class="ev-annual-vip-star">\u2b50</span>';});
+            _annSd+='</div>';
+          }
         }
-        if(inM&&!vipHidden&&typeof BDAYS!=='undefined'&&Array.isArray(BDAYS)){
-          var dd2=d.getDate(),dm2=d.getMonth()+1;
-          BDAYS.filter(function(b){return b.vip&&b.day===dd2&&b.month===dm2;})
-               .forEach(function(){sdItems.push({color:'#fbbf24',vip:true});});
-        }
-        var sdHtml='';
-        if(sdItems.length){
-          sdHtml='<div class="ev-annual-sd-stack">';
-          sdItems.slice(0,4).forEach(function(item){
-            sdHtml+='<div class="ev-annual-sd-bar" style="border-color:'+item.color+';background:'+item.color+'cc">'+(item.vip?'\u2b50':'')+'</div>';
-          });
-          sdHtml+='</div>';
-        }
-        h+='<div class="'+cls+'"'+sty+dsAttr+'>'+sdHtml+'</div>';
+        h+='<div class="'+cls+'"'+sty+dsAttr+'>'+_annSd+'</div>';
       }
       if(abspanStart>=0)abspans.push({s:abspanStart,e:6});
       // Barras multi-día (z-index:2): 80% altura celda, centradas, sin solapamiento
@@ -701,26 +696,19 @@ function renderEvQuad(){
         }
         var sty=bg?' style="background:'+bg+'"':'';
         var dsAttr=inM?' data-ds="'+ds+'"':'';
-        // Stack eventos puntuales
-        var sdItems=[];
-        if(inM&&evs.length){
-          evs.filter(function(ev){return !multiIds[ev.id]&&annEvVisible(ev)&&ev.id.indexOf('ev-bday-vip-')!==0;})
-             .forEach(function(ev){sdItems.push({color:ev.color,vip:false});});
+        // Eventos puntuales: ✕ aspas para regulares, ⭐ para VIP — todos centrados (z-index:3)
+        var _quadSd='';
+        if(inM){
+          var _singleEvs=evs.filter(function(ev){return !multiIds[ev.id]&&annEvVisible(ev)&&ev.id.indexOf('ev-bday-vip-')!==0;});
+          var _vipBdays=(!vipHidden&&typeof BDAYS!=='undefined'&&Array.isArray(BDAYS))?(function(){var dd2=d.getDate(),dm2=d.getMonth()+1;return BDAYS.filter(function(b){return b.vip&&b.day===dd2&&b.month===dm2;});})():[];
+          if(_singleEvs.length||_vipBdays.length){
+            _quadSd='<div class="ev-annual-xs">';
+            _singleEvs.forEach(function(ev){_quadSd+='<span class="ev-annual-x" style="color:'+ev.color+'"></span>';});
+            _vipBdays.forEach(function(){_quadSd+='<span class="ev-annual-vip-star">\u2b50</span>';});
+            _quadSd+='</div>';
+          }
         }
-        if(inM&&!vipHidden&&typeof BDAYS!=='undefined'&&Array.isArray(BDAYS)){
-          var dd2=d.getDate(),dm2=d.getMonth()+1;
-          BDAYS.filter(function(b){return b.vip&&b.day===dd2&&b.month===dm2;})
-               .forEach(function(){sdItems.push({color:'#fbbf24',vip:true});});
-        }
-        var sdHtml='';
-        if(sdItems.length){
-          sdHtml='<div class="ev-annual-sd-stack">';
-          sdItems.slice(0,4).forEach(function(item){
-            sdHtml+='<div class="ev-annual-sd-bar" style="border-color:'+item.color+';background:'+item.color+'cc">'+(item.vip?'\u2b50':'')+'</div>';
-          });
-          sdHtml+='</div>';
-        }
-        h+='<div class="'+cls+'"'+sty+dsAttr+'>'+sdHtml+'</div>';
+        h+='<div class="'+cls+'"'+sty+dsAttr+'>'+_quadSd+'</div>';
       }
       if(abspanStart>=0)abspans.push({s:abspanStart,e:6});
       var activeRows=0;wMulti.forEach(function(it){if(it.row>=0)activeRows=Math.max(activeRows,it.row+1);});
