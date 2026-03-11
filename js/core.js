@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v44 — gestión alarmas, export/import alarmas, cumple 9:02';
+var APP_VERSION = 'v45 — gestión alarmas + fix borrado';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
