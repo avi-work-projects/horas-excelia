@@ -220,7 +220,7 @@ function renderBdayCalMonth(){
 function renderBdayList(){
   if(!BDAYS.length)return '<div class="sy-note">No hay cumplea\u00f1os cargados. Importa un archivo JSON o configura el secreto BIRTHDAYS en GitHub.</div>';
   var h='<div class="bday-vip-ctrl-bar">';
-  h+='<label class="bday-vip-filter-lbl"><input type="checkbox" id="bdFilterVip"'+(BDAY_FILTER_VIP?' checked':'')+' style="accent-color:#fbbf24"> Filtrar VIPs</label>';
+  h+='<label class="bday-vip-filter-lbl"><input type="checkbox" id="bdFilterVip"'+(BDAY_FILTER_VIP?' checked':'')+' style="accent-color:#fbbf24"> Filtrar VIPs <img src="./VIP.png" class="bday-vip-img" alt="VIP" style="width:18px;height:auto;vertical-align:middle;margin-left:3px"></label>';
   h+='<button class="bday-vip-edit-btn'+(BDAY_EDIT_VIP?' active':'')+'" id="bdEditVip">'+(BDAY_EDIT_VIP?'\u2713 Listo':'Editar VIPs')+'</button>';
   h+='</div>';
   h+='<div class="bday-search-wrap"><input class="bday-search-input" id="bdSearch" type="text" placeholder="Buscar persona\u2026" value="'+escHtml(BDAY_SEARCH)+'"></div>';
@@ -728,12 +728,22 @@ function bindBdayEvents(){
       openBdayDetail(b);
     });
   });
-  // Clicks en lista por meses → detail
+  // Clicks en lista por meses → detail (o toggle VIP en modo edición)
   document.querySelectorAll('.bday-list-item[data-bday-name]').forEach(function(item){
     item.addEventListener('click',function(e){
       e.stopPropagation();
-      var b=null;
       var idx=parseInt(item.dataset.bdayIdx,10);
+      if(BDAY_EDIT_VIP){
+        // En modo edición: clic en cualquier parte del ítem toglea VIP
+        if(!isNaN(idx)&&idx>=0&&idx<BDAYS.length){
+          if(BDAYS[idx].vip)delete BDAYS[idx].vip;else BDAYS[idx].vip=true;
+          localStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));
+          syncVipBdaysToEvents();updateBdayBtn();
+          refreshBday();
+        }
+        return;
+      }
+      var b=null;
       if(!isNaN(idx)&&idx>=0&&idx<BDAYS.length){b=BDAYS[idx];}
       if(!b){
         var name=item.dataset.bdayName;

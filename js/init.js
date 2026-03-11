@@ -316,8 +316,37 @@
     document.getElementById('dataMenu').classList.remove('open');
     var cleanBase=normalizeMacroBase(localStorage.getItem('excelia-alarm-url')||'');
     if(!cleanBase){showToast('Configura la URL base de MacroDroid en el men\u00fa','error');return;}
-    var cleanUrl=cleanBase+'/apagar_alarmas';
-    showToast('Limpiando alarmas\u2026','success');
+    // Calcular qué cumpleaños han pasado esta semana (antes de hoy) o la semana pasada
+    var today=new Date();today.setHours(0,0,0,0);
+    var dow=today.getDay();
+    var offToMon=dow===0?6:dow-1; // días desde el lunes de esta semana
+    var thisMonday=new Date(today);thisMonday.setDate(today.getDate()-offToMon);
+    var lastMonday=new Date(thisMonday);lastMonday.setDate(thisMonday.getDate()-7);
+    var lastSunday=new Date(thisMonday);lastSunday.setDate(thisMonday.getDate()-1);
+    var alarmNames=[];
+    if(typeof BDAYS!=='undefined'&&Array.isArray(BDAYS)&&typeof isBdayAlarmSet==='function'&&typeof tc==='function'){
+      BDAYS.forEach(function(b){
+        if(!isBdayAlarmSet(b))return;
+        var dd=String(b.day).padStart(2,'0');
+        var mm=String(b.month).padStart(2,'0');
+        // Comprobar en el año actual y el anterior (para cumpleaños de fin/inicio de año)
+        [today.getFullYear(),today.getFullYear()-1].forEach(function(yr){
+          var bdDate=new Date(yr,b.month-1,b.day);
+          var inLastWeek=bdDate>=lastMonday&&bdDate<=lastSunday;
+          var inCurWeekPast=bdDate>=thisMonday&&bdDate<today;
+          if(inLastWeek||inCurWeekPast){
+            alarmNames.push('\uD83C\uDF82 Cumple '+tc(b.name)+'! '+dd+'/'+mm);
+            alarmNames.push('\u23F0 Ma\u00f1ana cumple '+tc(b.name)+' '+dd+'/'+mm);
+          }
+        });
+      });
+    }
+    if(!alarmNames.length){
+      showToast('No hay alarmas de cumplea\u00f1os pasados para limpiar','success');
+      return;
+    }
+    var cleanUrl=cleanBase+'/apagar_alarmas?names='+encodeURIComponent(alarmNames.join(','));
+    showToast('Limpiando '+Math.ceil(alarmNames.length/2)+' alarma(s)\u2026','success');
     fetch(cleanUrl,{mode:'no-cors'})
       .then(function(){showToast('\u2705 Alarmas limpiadas','success');})
       .catch(function(){showToast('Error al contactar MacroDroid','error');});

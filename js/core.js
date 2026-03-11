@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v34 — logo popup + colores + cal mensual z-idx + cal anual fixes + festivos borde';
+var APP_VERSION = 'v35 — alarmas limpiar mejorado + popup logo + botones header + X anual + VIP edición + dropdown anual';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

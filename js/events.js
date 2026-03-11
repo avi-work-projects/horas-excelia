@@ -495,12 +495,14 @@ function renderEvAnnual(){
         else{if(abspanStart>=0){abspans.push({s:abspanStart,e:di-1});abspanStart=-1;}}
         var puenteCls='';
         if(inPuente){puenteCls=EV_ANNUAL_VIEW==='puentes'?' ev-annual-puente':'';}
-        else if(isSueltoFest){puenteCls=' ev-annual-suelto-fest';}
-        else if(isSueltoVac){puenteCls=' ev-annual-suelto-vac';}
+        else if(EV_ANNUAL_VIEW==='puentes'){
+          if(isSueltoFest)puenteCls=' ev-annual-suelto-fest';
+          else if(isSueltoVac)puenteCls=' ev-annual-suelto-vac';
+        }
         var fiestasCls='';
-        if(EV_ANNUAL_VIEW==='fiestas'&&inM){
-          if(dt==='festivo')fiestasCls=' ann-festivo';
-          else if(dt==='vacaciones')fiestasCls=' ann-vac';
+        if(inM){
+          if((EV_ANNUAL_VIEW==='fiestas'||EV_ANNUAL_VIEW==='festivos')&&dt==='festivo')fiestasCls=' ann-festivo';
+          else if((EV_ANNUAL_VIEW==='fiestas'||EV_ANNUAL_VIEW==='vacaciones')&&dt==='vacaciones')fiestasCls=' ann-vac';
         }
         var cls='ev-annual-day'+(inM?'':' out-m')+(isT?' ann-today':'')+puenteCls+fiestasCls;
         var bg='';
@@ -522,7 +524,7 @@ function renderEvAnnual(){
           var singleEvs=evs.filter(function(ev){return !multiIds[ev.id]&&annEvVisible(ev)&&ev.id.indexOf('ev-bday-vip-')!==0;});
           if(singleEvs.length){
             dotsHtml='<div class="ev-annual-xs">';
-            singleEvs.forEach(function(ev){dotsHtml+='<span class="ev-annual-x" style="color:'+ev.color+'">&#x2605;</span>';});
+            singleEvs.forEach(function(ev){dotsHtml+='<span class="ev-annual-x" style="color:'+ev.color+'">&#x2715;</span>';});
             dotsHtml+='</div>';
           }
         }
@@ -641,9 +643,17 @@ function renderEvContent(){
     var _typeShort={'Viaje':'Viaje','Asturias':'Asturias','Recordatorio de Gestiones':'Gestiones','Planes y Quedadas':'Planes','Otros':'Otros','Cumpleaños VIP':'\u2b50VIP'};
     var _typeColor={'Viaje':'#38bdf8','Asturias':'#1d4ed8','Recordatorio de Gestiones':'#34d399','Planes y Quedadas':'#fb923c','Otros':'#ff6b6b','Cumpleaños VIP':'#fbbf24'};
     h+='<div class="ev-annual-controls">';
+    var _vdLabels={'puentes':'\uD83C\uDF09 Puentes','fiestas':'\uD83D\uDCC5 Vac + Festivos','vacaciones':'\uD83C\uDFD6 Solo vacaciones','festivos':'\uD83C\uDF8C Solo festivos','none':'\u2715 Nada'};
+    var _curVdLabel=_vdLabels[EV_ANNUAL_VIEW]||_vdLabels['none'];
     h+='<div class="ev-annual-view-toggle">';
-    h+='<button class="ev-annual-vt-btn'+(EV_ANNUAL_VIEW==='puentes'?' active':'')+'" id="evAnnVPuentes">\uD83C\uDF09 Puentes</button>';
-    h+='<button class="ev-annual-vt-btn'+(EV_ANNUAL_VIEW==='fiestas'?' active':'')+'" id="evAnnVFiestas">\uD83D\uDCC5 Festivos/Vac</button>';
+    h+='<div class="ev-ann-vd-wrap" id="evAnnVdWrap">';
+    h+='<button class="ev-ann-vd-btn" id="evAnnVdBtn">\uD83D\uDC41 '+_curVdLabel+' \u25be</button>';
+    h+='<div class="ev-ann-vd-menu" id="evAnnVdMenu">';
+    [['puentes','\uD83C\uDF09 Solo puentes'],['fiestas','\uD83D\uDCC5 Vac + festivos'],['vacaciones','\uD83C\uDFD6 Solo vacaciones'],['festivos','\uD83C\uDF8C Solo festivos'],['none','\u2715 No ver nada']].forEach(function(opt){
+      var active=EV_ANNUAL_VIEW===opt[0];
+      h+='<button class="ev-ann-vd-opt'+(active?' active':'')+'" data-view="'+opt[0]+'">'+opt[1]+'</button>';
+    });
+    h+='</div></div>';
     h+='</div>';
     h+='<div class="ev-annual-filter-row">';
     _typeOrder.forEach(function(type){
@@ -1037,10 +1047,21 @@ function bindEvEvents(){
   document.getElementById('evViewCal').addEventListener('click',function(){EV_VIEW='cal';EV_ANNUAL_ADD=false;EV_PREV_VIEW=null;refreshEvents();});
   document.getElementById('evViewAnnual').addEventListener('click',function(){EV_VIEW='annual';EV_ANNUAL_ADD=false;refreshEvents();});
   document.getElementById('evViewMonths').addEventListener('click',function(){EV_VIEW='months';EV_ANNUAL_ADD=false;refreshEvents();});
-  var _annVP=document.getElementById('evAnnVPuentes');
-  if(_annVP)_annVP.addEventListener('click',function(){EV_ANNUAL_VIEW='puentes';refreshEvents();});
-  var _annVF=document.getElementById('evAnnVFiestas');
-  if(_annVF)_annVF.addEventListener('click',function(){EV_ANNUAL_VIEW='fiestas';refreshEvents();});
+  // Dropdown de vista anual (reemplaza los dos botones anteriores)
+  var _vdBtn=document.getElementById('evAnnVdBtn');
+  var _vdMenu=document.getElementById('evAnnVdMenu');
+  if(_vdBtn&&_vdMenu){
+    _vdBtn.addEventListener('click',function(e){e.stopPropagation();_vdMenu.classList.toggle('open');});
+    document.addEventListener('click',function _closeVd(){_vdMenu.classList.remove('open');});
+    _vdMenu.querySelectorAll('.ev-ann-vd-opt[data-view]').forEach(function(opt){
+      opt.addEventListener('click',function(e){
+        e.stopPropagation();
+        EV_ANNUAL_VIEW=opt.dataset.view;
+        _vdMenu.classList.remove('open');
+        refreshEvents();
+      });
+    });
+  }
   document.querySelectorAll('.ev-filter-chip[data-filter-type]').forEach(function(chip){
     chip.addEventListener('click',function(){
       var type=chip.dataset.filterType;
