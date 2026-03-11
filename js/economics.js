@@ -129,7 +129,7 @@ function renderEconContent(){
   h+='</div>';
 
   // IVA trimestral — cuadrícula única (4 col × 4 fila) para alineación perfecta
-  h+='<div class="sy-section"><div class="sy-section-title">IVA trimestral a Hacienda (mod. 303)</div>';
+  h+='<div class="sy-section econ-quarter-section"><div class="sy-section-title">IVA trimestral a Hacienda (mod. 303)</div>';
   h+='<div class="econ-quarter-grid">';
   // Fila 1: cobrado total por trimestre
   ['T1','T2','T3','T4'].forEach(function(q,i){
@@ -159,8 +159,8 @@ function renderEconContent(){
   h+='<div class="sy-chart">'+econBarChart(netoData,MN_SHORT,'#34d399')+'</div></div>';
 
   // Desglose mensual
-  h+='<div class="sy-section"><div class="sy-section-title">Desglose mensual</div>';
-  h+='<div style="overflow-x:auto"><table class="econ-month-table"><thead><tr>';
+  h+='<div class="sy-section econ-month-section"><div class="sy-section-title">Desglose mensual</div>';
+  h+='<div class="econ-month-wrap"><table class="econ-month-table"><thead><tr>';
   h+='<th>Mes</th><th>D&#237;as</th><th style="color:var(--c-blue)">Base</th><th style="color:var(--c-orange)">IVA</th><th style="color:var(--c-red)">IRPF</th><th>Ingresado</th></tr></thead><tbody>';
   var totD=0;
   e.months.forEach(function(mo){
@@ -225,4 +225,10 @@ function bindEconEvents(){
   var ecChkVac=document.getElementById('ecExclVacChk');
   if(ecChkFest)ecChkFest.addEventListener('change',function(){EXCL_FEST=this.checked;save();document.getElementById('econContent').innerHTML=renderEconContent();bindEconEvents();});
   if(ecChkVac)ecChkVac.addEventListener('change',function(){EXCL_VAC=this.checked;save();document.getElementById('econContent').innerHTML=renderEconContent();bindEconEvents();});
+  // Sincronizar ancho máximo de la tabla mensual con el ancho de la sección trimestral
+  setTimeout(function(){
+    var qs=document.querySelector('.econ-quarter-section');
+    var ms=document.querySelector('.econ-month-section');
+    if(qs&&ms)ms.style.maxWidth=qs.offsetWidth+'px';
+  },60);
 }
