@@ -9,6 +9,8 @@ var EV_VIEW = 'cal';  // 'cal' | 'months' | 'upcoming' | 'annual'
 var EV_EDIT = null;
 var EV_FORM_CONTAINER = null;  // overlay donde se renderiza el formulario (null = eventsOverlay)
 var EV_ANNUAL_ADD = false;
+var EV_ANNUAL_VIEW = 'puentes'; // 'puentes' | 'fiestas'
+var EV_ANNUAL_FILTER_HIDDEN = []; // type names hidden from annual calendar
 var EV_PREV_VIEW = null;       // para volver al anual al pulsar ←
 var EV_LIST_SUBTAB = 'months'; // 'months' | 'types'
 var EV_TYPES_FILTER = 'all';   // 'all' | nombre de tipo
@@ -190,7 +192,12 @@ function renderEvCalMonth(){
       h+='<div class="'+cls+'" data-ds="'+ds+'"><div class="ev-num">'+d.getDate()+'</div>';
       evs.forEach(function(ev){
         if(multiIds[ev.id])return;
-        h+='<div class="ev-badge" data-id="'+ev.id+'" style="color:'+ev.color+';border-color:'+ev.color+';background:'+ev.color+'22;box-shadow:0 0 6px '+ev.color+'88">'+escHtml(ev.title)+'</div>';
+        var _isVipBday=ev.id.indexOf('ev-bday-vip-')===0;
+        var _bTitle=_isVipBday?escHtml(ev.title.replace(/^\u2b50\s*/,'')):escHtml(ev.title);
+        var _bStyle=_isVipBday
+          ?'color:#fbbf24;border-color:#fbbf24;border-width:2px;background:rgba(251,191,36,.12);box-shadow:0 0 8px rgba(251,191,36,.55)'
+          :'color:'+ev.color+';border-color:'+ev.color+';background:'+ev.color+'22;box-shadow:0 0 6px '+ev.color+'88';
+        h+='<div class="ev-badge" data-id="'+ev.id+'" style="'+_bStyle+'">'+_bTitle+'</div>';
       });
       h+='</div>';
     }
@@ -417,8 +424,12 @@ function renderEvAnnual(){
     pData.festivosSueltos.forEach(function(dt){sueltoFestMap[evDk(dt)]=true;});
     pData.vacSueltos.forEach(function(dt){sueltoVacMap[evDk(dt)]=true;});
   }
-  // Eventos multi-día (sin repetición, end > start)
-  var multiEvs=EVENTS.filter(function(ev){return !ev.repeat&&ev.end&&ev.end>ev.start;});
+  // Eventos multi-día (sin repetición, end > start) — filtrar por tipos ocultos
+  function annEvVisible(ev){
+    if(!EV_ANNUAL_FILTER_HIDDEN.length)return true;
+    return EV_ANNUAL_FILTER_HIDDEN.indexOf(EV_COLOR_TYPES[ev.color]||'Otros')===-1;
+  }
+  var multiEvs=EVENTS.filter(function(ev){return !ev.repeat&&ev.end&&ev.end>ev.start&&annEvVisible(ev);});
   var multiIds={};multiEvs.forEach(function(ev){multiIds[ev.id]=true;});
   var MNS=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
   var addMode=EV_ANNUAL_ADD;
@@ -468,20 +479,33 @@ function renderEvAnnual(){
         var isSueltoVac=inM&&sueltoVacMap[ds];
         if(inPuente){if(abspanStart<0)abspanStart=di;}
         else{if(abspanStart>=0){abspans.push({s:abspanStart,e:di-1});abspanStart=-1;}}
-        var cls='ev-annual-day'+(inM?'':' out-m')+(isT?' ann-today':'')+(inPuente?' ev-annual-puente':isSueltoFest?' ev-annual-suelto-fest':isSueltoVac?' ev-annual-suelto-vac':'');
+        var puenteCls='';
+        if(inPuente){puenteCls=EV_ANNUAL_VIEW==='puentes'?' ev-annual-puente':'';}
+        else if(isSueltoFest){puenteCls=' ev-annual-suelto-fest';}
+        else if(isSueltoVac){puenteCls=' ev-annual-suelto-vac';}
+        var fiestasCls='';
+        if(EV_ANNUAL_VIEW==='fiestas'&&inM){
+          if(dt==='festivo')fiestasCls=' ann-festivo-stripe';
+          else if(dt==='vacaciones')fiestasCls=' ann-vac-stripe';
+        }
+        var cls='ev-annual-day'+(inM?'':' out-m')+(isT?' ann-today':'')+puenteCls+fiestasCls;
         var bg='';
         if(inM){
-          if(dt==='festivo')         bg='rgba(255,107,107,.65)';
-          else if(dt==='vacaciones') bg='rgba(255,179,71,.65)';
-          else if(dt==='ausencia')   bg='rgba(192,132,252,.65)';
-          else if(isWknd)            bg='rgba(160,160,200,.22)';
+          if(EV_ANNUAL_VIEW==='puentes'){
+            if(dt==='festivo')         bg='rgba(255,107,107,.55)';
+            else if(dt==='vacaciones') bg='rgba(255,179,71,.55)';
+            else if(dt==='ausencia')   bg='rgba(192,132,252,.55)';
+            else if(isWknd)            bg='rgba(160,160,200,.22)';
+          } else {
+            if(isWknd)bg='rgba(160,160,200,.22)';
+          }
         }
         var sty=bg?' style="background:'+bg+'"':'';
         var dsAttr=inM?' data-ds="'+ds+'"':'';
         // Aspas para eventos puntuales (todas, más pequeñas para que quepan varias)
         var dotsHtml='';
         if(inM&&evs.length){
-          var singleEvs=evs.filter(function(ev){return !multiIds[ev.id];});
+          var singleEvs=evs.filter(function(ev){return !multiIds[ev.id]&&annEvVisible(ev);});
           if(singleEvs.length){
             dotsHtml='<div class="ev-annual-xs">';
             singleEvs.forEach(function(ev){dotsHtml+='<span class="ev-annual-x" style="color:'+ev.color+'">&#x2715;</span>';});
@@ -597,6 +621,25 @@ function renderEvContent(){
   }
   h+='</div>';
   h+='<div class="sy-body">';
+  if(EV_VIEW==='annual'){
+    var _typeOrder=['Viaje','Asturias','Recordatorio de Gestiones','Planes y Quedadas','Otros'];
+    var _typeShort={'Viaje':'Viaje','Asturias':'Asturias','Recordatorio de Gestiones':'Gestiones','Planes y Quedadas':'Planes','Otros':'Otros'};
+    var _typeColor={'Viaje':'#38bdf8','Asturias':'#1d4ed8','Recordatorio de Gestiones':'#34d399','Planes y Quedadas':'#fb923c','Otros':'#ff6b6b'};
+    h+='<div class="ev-annual-controls">';
+    h+='<div class="ev-annual-view-toggle">';
+    h+='<button class="ev-annual-vt-btn'+(EV_ANNUAL_VIEW==='puentes'?' active':'')+'" id="evAnnVPuentes">\uD83C\uDF09 Puentes</button>';
+    h+='<button class="ev-annual-vt-btn'+(EV_ANNUAL_VIEW==='fiestas'?' active':'')+'" id="evAnnVFiestas">\uD83D\uDCC5 Festivos/Vac</button>';
+    h+='</div>';
+    h+='<div class="ev-annual-filter-row">';
+    _typeOrder.forEach(function(type){
+      var hidden=EV_ANNUAL_FILTER_HIDDEN.indexOf(type)!==-1;
+      var c=_typeColor[type];
+      var sty=hidden?'':'border-color:'+c+';color:'+c+';background:'+c+'18';
+      h+='<button class="ev-filter-chip'+(hidden?'':' chip-active')+'" data-filter-type="'+escHtml(type)+'" style="'+sty+'">'+_typeShort[type]+'</button>';
+    });
+    h+='</div>';
+    h+='</div>';
+  }
   if(EV_VIEW==='cal')h+=renderEvCalMonth();
   else if(EV_VIEW==='upcoming')h+=renderEvUpcoming();
   else if(EV_VIEW==='annual')h+=renderEvAnnual();
@@ -962,6 +1005,19 @@ function bindEvEvents(){
   document.getElementById('evViewCal').addEventListener('click',function(){EV_VIEW='cal';EV_ANNUAL_ADD=false;EV_PREV_VIEW=null;refreshEvents();});
   document.getElementById('evViewAnnual').addEventListener('click',function(){EV_VIEW='annual';EV_ANNUAL_ADD=false;refreshEvents();});
   document.getElementById('evViewMonths').addEventListener('click',function(){EV_VIEW='months';EV_ANNUAL_ADD=false;refreshEvents();});
+  var _annVP=document.getElementById('evAnnVPuentes');
+  if(_annVP)_annVP.addEventListener('click',function(){EV_ANNUAL_VIEW='puentes';refreshEvents();});
+  var _annVF=document.getElementById('evAnnVFiestas');
+  if(_annVF)_annVF.addEventListener('click',function(){EV_ANNUAL_VIEW='fiestas';refreshEvents();});
+  document.querySelectorAll('.ev-filter-chip[data-filter-type]').forEach(function(chip){
+    chip.addEventListener('click',function(){
+      var type=chip.dataset.filterType;
+      var idx=EV_ANNUAL_FILTER_HIDDEN.indexOf(type);
+      if(idx!==-1)EV_ANNUAL_FILTER_HIDDEN.splice(idx,1);
+      else EV_ANNUAL_FILTER_HIDDEN.push(type);
+      refreshEvents();
+    });
+  });
   document.getElementById('evAdd').addEventListener('click',function(){
     if(EV_VIEW==='annual'){EV_ANNUAL_ADD=!EV_ANNUAL_ADD;refreshEvents();}
     else{openEvForm(null);}

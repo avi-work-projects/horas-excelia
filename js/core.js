@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v31 — eventos anual VIP stars + badge glow + nav fixes';
+var APP_VERSION = 'v32 — filtros anual + vista fiestas + logo popup + nav active';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
