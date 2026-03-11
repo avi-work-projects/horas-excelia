@@ -110,6 +110,32 @@ Test local: `py -m http.server 8082` desde la raíz del proyecto.
 - **SIEMPRE** incluir al final de cada respuesta tras un push: `✅ Versión desplegada: vN — descripción`
 - Esto permite al usuario verificar que su PWA instalada está actualizada sin ambigüedad.
 
+## Vocabulario del usuario (términos ↔ código)
+
+| Término del usuario | Qué es en el código |
+|---|---|
+| **ventana home** | La pantalla principal (header + lista de semanas en `<main>`) |
+| **ventanas secundarias** | Overlays deslizantes (`full-overlay`): resumen, económico, cumpleaños, eventos |
+| **ventana resumen / Σ** | `#summaryOverlay` — js/summary.js |
+| **ventana económico / €** | `#econOverlay` — js/economics.js |
+| **ventana cumpleaños / 🎂** | `#bdayOverlay` — js/birthdays.js |
+| **ventana eventos / 📅** | `#eventsOverlay` — js/events.js |
+| **emojis de nivel 1** | Fila de botones en el `<header>`: 🏠📊💰🎂📅🔔⋯ (`data-btn` / `nav-bar-btn`) |
+| **emojis de nivel 2** | Tabs dentro de una ventana secundaria (`ev-view-toggle`, `bday-view-toggle`) |
+| **emojis de nivel 3** | Sub-controles dentro de una pestaña (filtros, chips, botones de acción) |
+| **calendario mensual (eventos)** | Vista "Calendario por Meses" en ventana eventos — `renderEvCalMonth()` |
+| **calendario anual (eventos)** | Vista "Calendario Anual" en ventana eventos — `renderEvAnnual()` |
+| **puentes** | Secuencias de festivos+fines de semana calculadas por `computePuentes()` |
+| **eventos puntuales** | Eventos con `start === end` (un solo día) |
+| **eventos de varios días / multi-día** | Eventos con `end > start` (barras horizontales en el calendar) |
+| **cumpleaños VIP** | `b.vip === true` en BDAYS; sincronizados como eventos `ev-bday-vip-*` |
+| **estrella / star VIP** | `⭐` mostrada en el calendario anual y en la pestaña Próximos cumpleaños |
+| **aspas / X / ✕** | Marcadores de eventos puntuales en días del calendario anual (`ev-annual-x`) |
+| **barra de evento** | `ev-multi-bar`: barra horizontal de evento multi-día en calendario mensual |
+| **perimetro puente** | `ev-puente-perimeter`: borde rosa que rodea días de puente en el calendario mensual |
+| **chips de filtro** | `ev-filter-chip`: botones de filtro tipo/categoría en calendario anual |
+| **bottom sheet** | Panel deslizable desde abajo al pulsar un día en home (`#bottomSheet`) |
+
 ## Patrones CSS relevantes
 - `.full-overlay` — base para todos los overlays deslizantes
 - `.sy-header` — cabecera sticky de overlay (compartida)

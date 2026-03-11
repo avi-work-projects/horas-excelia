@@ -15,7 +15,7 @@ var EV_PREV_VIEW = null;       // para volver al anual al pulsar ←
 var EV_LIST_SUBTAB = 'months'; // 'months' | 'types'
 var EV_TYPES_FILTER = 'all';   // 'all' | nombre de tipo
 var EV_TYPES_PAST = true;      // excluir eventos pasados en Por Tipos (por defecto)
-var EV_COLORS = ['#38bdf8','#1d4ed8','#34d399','#fb923c','#ff6b6b','#c084fc','#fbbf24'];
+var EV_COLORS = ['#38bdf8','#1d4ed8','#34d399','#fb923c','#ff6b6b','#c084fc','#a3e635'];
 var EV_COLOR_TYPES = {
   '#38bdf8':'Viaje',
   '#6c8cff':'Viaje',  // compat con eventos anteriores
@@ -24,13 +24,22 @@ var EV_COLOR_TYPES = {
   '#fb923c':'Planes y Quedadas',
   '#ff6b6b':'Otros',
   '#c084fc':'Otros',
-  '#fbbf24':'Otros'
+  '#a3e635':'Otros',
+  '#fbbf24':'Cumpleaños VIP'
 };
 
 var EVENTS = (function(){
   try{
     var stored=localStorage.getItem(EV_STORAGE_KEY);
-    if(stored){var arr=JSON.parse(stored);if(Array.isArray(arr))return arr;}
+    if(stored){var arr=JSON.parse(stored);if(Array.isArray(arr)){
+      // Migrar eventos amarillos de 'Otros' → lima (#a3e635). VIP bdays mantienen amarillo.
+      var changed=false;
+      arr.forEach(function(ev){
+        if(ev.color==='#fbbf24'&&(!ev.id||ev.id.indexOf('ev-bday-vip-')!==0)){ev.color='#a3e635';changed=true;}
+      });
+      if(changed)try{localStorage.setItem(EV_STORAGE_KEY,JSON.stringify(arr));}catch(e){}
+      return arr;
+    }}
   }catch(e){}
   return [];
 })();
@@ -168,7 +177,7 @@ function renderEvCalMonth(){
         var sc=it.starts&&it.ends?'':it.starts?' starts':it.ends?' ends':' continues';
         var showT=it.starts||(it.cs===0);
         h+='<div class="ev-multi-bar'+sc+'" data-id="'+ev.id+'"'
-          +' style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';background:'+evSoftFillColor(ev)+';border-color:#38bdf8;color:#38bdf8">'
+          +' style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';background:'+ev.color+';color:#fff">'
           +(showT?escHtml(ev.title):'')+'</div>';
       });
       h+='</div>';
@@ -193,7 +202,8 @@ function renderEvCalMonth(){
       evs.forEach(function(ev){
         if(multiIds[ev.id])return;
         var _isVipBday=ev.id.indexOf('ev-bday-vip-')===0;
-        var _bTitle=_isVipBday?escHtml(ev.title.replace(/^\u2b50\s*/,'')):escHtml(ev.title);
+        var _rawName=ev.title.replace(/^\u2b50\s*/,'').replace(/^Cumple\s+/,'');
+        var _bTitle=_isVipBday?escHtml(_rawName.split(/\s+/)[0]):escHtml(ev.title);
         var _bStyle=_isVipBday
           ?'color:#fbbf24;border-color:#fbbf24;border-width:2px;background:rgba(251,191,36,.12);box-shadow:0 0 8px rgba(251,191,36,.55)'
           :'color:'+ev.color+';border-color:'+ev.color+';background:'+ev.color+'22;box-shadow:0 0 6px '+ev.color+'88';
@@ -455,13 +465,17 @@ function renderEvAnnual(){
         cur.setDate(cur.getDate()+1);
       }
       var wStart=wk[0],wEnd=wk[6];
-      // Eventos multi-día que intersectan esta semana
+      // Eventos multi-día que intersectan esta semana (solo días del mes actual)
       var wMulti=[];
       multiEvs.forEach(function(ev){
         var es=new Date(ev.start+'T00:00:00'),ee=new Date(ev.end+'T00:00:00');
         if(ee<wStart||es>wEnd)return;
         var cs=Math.max(0,Math.round((es-wStart)/86400000));
         var ce=Math.min(6,Math.round((ee-wStart)/86400000));
+        // Recortar a solo días del mes m — evita que eventos de mayo aparezcan en abril
+        while(cs<=ce&&wk[cs]&&wk[cs].getMonth()!==m)cs++;
+        while(ce>=cs&&wk[ce]&&wk[ce].getMonth()!==m)ce--;
+        if(cs>ce)return;
         wMulti.push({ev:ev,cs:cs,ce:ce,starts:es>=wStart,ends:ee<=wEnd});
       });
       h+='<div class="ev-annual-week-outer">';
@@ -485,8 +499,8 @@ function renderEvAnnual(){
         else if(isSueltoVac){puenteCls=' ev-annual-suelto-vac';}
         var fiestasCls='';
         if(EV_ANNUAL_VIEW==='fiestas'&&inM){
-          if(dt==='festivo')fiestasCls=' ann-festivo-stripe';
-          else if(dt==='vacaciones')fiestasCls=' ann-vac-stripe';
+          if(dt==='festivo')fiestasCls=' ann-festivo';
+          else if(dt==='vacaciones')fiestasCls=' ann-vac';
         }
         var cls='ev-annual-day'+(inM?'':' out-m')+(isT?' ann-today':'')+puenteCls+fiestasCls;
         var bg='';
@@ -502,18 +516,19 @@ function renderEvAnnual(){
         }
         var sty=bg?' style="background:'+bg+'"':'';
         var dsAttr=inM?' data-ds="'+ds+'"':'';
-        // Aspas para eventos puntuales (todas, más pequeñas para que quepan varias)
+        // Aspas para eventos puntuales (excluir cumpleaños VIP — se muestran con estrella)
         var dotsHtml='';
         if(inM&&evs.length){
-          var singleEvs=evs.filter(function(ev){return !multiIds[ev.id]&&annEvVisible(ev);});
+          var singleEvs=evs.filter(function(ev){return !multiIds[ev.id]&&annEvVisible(ev)&&ev.id.indexOf('ev-bday-vip-')!==0;});
           if(singleEvs.length){
             dotsHtml='<div class="ev-annual-xs">';
-            singleEvs.forEach(function(ev){dotsHtml+='<span class="ev-annual-x" style="color:'+ev.color+'">&#x2715;</span>';});
+            singleEvs.forEach(function(ev){dotsHtml+='<span class="ev-annual-x" style="color:'+ev.color+'">&#x2605;</span>';});
             dotsHtml+='</div>';
           }
         }
+        var vipHidden=EV_ANNUAL_FILTER_HIDDEN.indexOf('Cumpleaños VIP')!==-1;
         var vipStarHtml='';
-        if(inM&&typeof BDAYS!=='undefined'&&Array.isArray(BDAYS)){
+        if(inM&&!vipHidden&&typeof BDAYS!=='undefined'&&Array.isArray(BDAYS)){
           var dd2=d.getDate(),dm2=d.getMonth()+1;
           if(BDAYS.some(function(b){return b.vip&&b.day===dd2&&b.month===dm2;})){
             vipStarHtml='<div class="ev-annual-vip-star">\u2b50</div>';
@@ -622,9 +637,9 @@ function renderEvContent(){
   h+='</div>';
   h+='<div class="sy-body">';
   if(EV_VIEW==='annual'){
-    var _typeOrder=['Viaje','Asturias','Recordatorio de Gestiones','Planes y Quedadas','Otros'];
-    var _typeShort={'Viaje':'Viaje','Asturias':'Asturias','Recordatorio de Gestiones':'Gestiones','Planes y Quedadas':'Planes','Otros':'Otros'};
-    var _typeColor={'Viaje':'#38bdf8','Asturias':'#1d4ed8','Recordatorio de Gestiones':'#34d399','Planes y Quedadas':'#fb923c','Otros':'#ff6b6b'};
+    var _typeOrder=['Viaje','Asturias','Recordatorio de Gestiones','Planes y Quedadas','Otros','Cumpleaños VIP'];
+    var _typeShort={'Viaje':'Viaje','Asturias':'Asturias','Recordatorio de Gestiones':'Gestiones','Planes y Quedadas':'Planes','Otros':'Otros','Cumpleaños VIP':'\u2b50VIP'};
+    var _typeColor={'Viaje':'#38bdf8','Asturias':'#1d4ed8','Recordatorio de Gestiones':'#34d399','Planes y Quedadas':'#fb923c','Otros':'#ff6b6b','Cumpleaños VIP':'#fbbf24'};
     h+='<div class="ev-annual-controls">';
     h+='<div class="ev-annual-view-toggle">';
     h+='<button class="ev-annual-vt-btn'+(EV_ANNUAL_VIEW==='puentes'?' active':'')+'" id="evAnnVPuentes">\uD83C\uDF09 Puentes</button>';
