@@ -185,7 +185,7 @@ function renderBdayUpcoming(){
       var vipCls=isVip?' bday-vip-item':'';
       var vipStar=isVip?' <img src="./VIP.png" class="bday-vip-img" alt="VIP">':'';
       s+='<div class="bday-upcoming-item'+vipCls+(isT?' bday-today-item':'')+'" data-bday-name="'+escHtml(x.b.name)+'" data-bday-day="'+x.b.day+'" data-bday-month="'+x.b.month+'">';
-      s+='<div class="bday-upcoming-icon" style="background:'+color+'22;border-color:'+color+'">'+(isVip?'\u2b50':'\uD83C\uDF82')+'</div>';
+      s+='<div class="bday-upcoming-icon" style="background:'+color+'22;border-color:'+color+'">'+(isVip?'<img src="./VIP.png" alt="VIP" style="height:22px;width:auto;max-width:30px">':'\uD83C\uDF82')+'</div>';
       s+='<div class="bday-upcoming-info">';
       s+='<div class="bday-upcoming-name" style="color:'+color+'">'+bdName(x.b.name)+vipStar+'</div>';
       s+='<div class="bday-upcoming-date">'+x.b.day+' de '+MN[x.b.month-1]+'</div>';
@@ -385,7 +385,7 @@ function renderBdayAlarmPanel(b){
   h+='</div>';
   // Alarm set badge
   if(isSet){
-    h+='<div class="bd-alarm-set-badge">&#128276;&#10003; Alarma ya marcada como configurada<button class="bd-alarm-unmark-btn" id="bdAlarmUnmark">Quitar</button></div>';
+    h+='<div class="bd-alarm-set-badge">&#128276; Alarma ya marcada como configurada<button class="bd-alarm-unmark-btn" id="bdAlarmUnmark">Quitar</button></div>';
   }
   // Count toggle
   h+='<div class="bd-alarm-count-row">';
@@ -412,7 +412,7 @@ function renderBdayAlarmPanel(b){
   // Action buttons
   h+='<div class="ev-form-actions">';
   h+='<button class="ev-btn primary" id="bdAlarmCreate">&#128276; Crear alarma'+(cnt===2?'s':'')+'</button>';
-  h+='<button class="ev-btn cancel" id="bdAlarmMark">'+(isSet?'&#10003; Marcada':'&#10003; Marcar config.')+'</button>';
+  h+='<button class="action-btn sent-toggle'+(isSet?' is-marked':'')+'" id="bdAlarmMark">'+(isSet?'\u21a9 Desmarcar':'\u2713 Marcar config.')+'</button>';
   h+='</div>';
   h+='</div></div>';
   return h;

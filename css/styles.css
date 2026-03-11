@@ -141,7 +141,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .action-btn.send{background:linear-gradient(135deg,#1a2a4a,#1a3a5a);border-color:#2a4a6a;color:#6cb8ff}
 .action-btn.send:active{background:#1a4a6a}
 .action-btn.sent-toggle{border-color:var(--sent-border);color:var(--sent-text)}
-.week-card.sent .action-btn.sent-toggle{background:var(--sent-border);color:#fff}
+.week-card.sent .action-btn.sent-toggle,.action-btn.sent-toggle.is-marked{background:var(--sent-border);color:#fff}
 
 /* ── BOTTOM SHEET (day type selector) ── */
 .overlay{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .2s}
