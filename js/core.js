@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v48 — VIP logo doble tamaño en todos los lugares';
+var APP_VERSION = 'v49 — VIP ⭐ próximos, campana glow, paleta sin amarillo, VIP #fbbf24 cal, botones lista arriba, tipo CumpVIP en eventos, barras OOM dim, barras 4m con título, bordes redondeados';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

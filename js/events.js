@@ -173,6 +173,8 @@ function renderEvCalMonth(){
       }
     });
     var activeRows=0;wMulti.forEach(function(it){if(it.row>=0)activeRows=Math.max(activeRows,it.row+1);});
+    // Pre-compute which columns are in-month (for bar dimming)
+    var inMCols=[];for(var ci=0;ci<7;ci++){inMCols.push(wk[ci].getMonth()===EV_MONTH);}
     h+='<div class="ev-week-outer">';
     h+='<div class="ev-week-grid">';
     var bspanStart=-1,bspans=[];
@@ -225,8 +227,10 @@ function renderEvCalMonth(){
         var ev=it.ev;
         var sc=it.starts&&it.ends?'':it.starts?' starts':it.ends?' ends':' continues';
         var showT=it.starts||(it.cs===0);
+        // Dim bars that fall entirely in out-of-month columns
+        var hasInM=false;for(var ci=it.cs;ci<=it.ce;ci++){if(inMCols[ci])hasInM=true;}
         h+='<div class="ev-multi-bar'+sc+'" data-id="'+ev.id+'"'
-          +' style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';border:1.5px solid '+ev.color+';background:'+ev.color+'cc;color:#fff">'
+          +' style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';border:1.5px solid '+ev.color+';background:'+ev.color+'cc;color:#fff'+(hasInM?'':';opacity:.35')+'">'
           +(showT?escHtml(ev.title):'')+'</div>';
       });
       h+='</div>';
@@ -717,7 +721,8 @@ function renderEvQuad(){
         wMulti.forEach(function(it){
           if(it.row<0)return;
           var sc=it.starts&&it.ends?'':it.starts?' a-starts':it.ends?' a-ends':' a-mid';
-          h+='<div class="ev-annual-mbar'+sc+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';border:1px solid '+it.ev.color+';background:'+it.ev.color+'cc"></div>';
+          var showQT=(it.starts||(it.cs===0));
+          h+='<div class="ev-annual-mbar'+sc+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';border:1px solid '+it.ev.color+';background:'+it.ev.color+'cc;font-size:.3rem;padding:0 3px">'+(showQT?escHtml(it.ev.title):'')+'</div>';
         });
         h+='</div>';
       }
@@ -746,7 +751,7 @@ function renderEvQuad(){
 /* ── Render: lista de eventos por tipos ─────────────────── */
 function renderEvByTypes(){
   var today=new Date();today.setHours(0,0,0,0);
-  var typeOrder=['Viaje','Asturias','Recordatorio de Gestiones','Planes y Quedadas','Otros'];
+  var typeOrder=['Viaje','Asturias','Recordatorio de Gestiones','Planes y Quedadas','Cumple\u00f1os VIP','Otros'];
   var h='<div class="ev-types-controls">';
   h+='<label class="ev-types-past-label"><input type="checkbox" id="evTypesPast"'+(EV_TYPES_PAST?' checked':'')+'> Excluir pasados</label>';
   h+='<select class="ev-types-select" id="evTypesFilter">';
