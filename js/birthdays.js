@@ -376,7 +376,7 @@ function renderBdayAlarmPanel(b){
   h+='<div class="bd-alarm-handle"></div>';
   h+='<div class="bd-alarm-hdr">';
   h+='<button class="sy-back" id="bdAlarmClose">&#8592;</button>';
-  h+='<div class="bd-alarm-title">&#128276; Alarma — '+(b.vip?'\u2b50 ':'')+bdName(b.name)+'</div>';
+  h+='<div class="bd-alarm-title">&#128276; Alarma Cumplea\u00f1os</div>';
   h+='<div style="width:36px"></div>';
   h+='</div>';
   h+='<div class="bd-alarm-info" style="border-color:'+color+'44;background:'+color+'11">';
@@ -394,7 +394,7 @@ function renderBdayAlarmPanel(b){
   h+='</div>';
   // VIP toggle
   h+='<div class="bd-alarm-vip-row">';
-  h+='<label class="bd-alarm-vip-lbl"><input type="checkbox" id="bdAlarmVip"'+(b.vip?' checked':'')+' style="accent-color:#fbbf24;width:16px;height:16px"> \u2b50 VIP</label>';
+  h+='<label class="bd-alarm-vip-lbl"><input type="checkbox" id="bdAlarmVip"'+(b.vip?' checked':'')+' style="accent-color:#fbbf24;width:16px;height:16px"> <img src="./VIP.png" class="bday-vip-img" alt="VIP" style="height:1.1em;margin-left:2px;vertical-align:middle"></label>';
   h+='</div>';
   // Alarm fields
   h+='<div id="bdAlarmFields">';

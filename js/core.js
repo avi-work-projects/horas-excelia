@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v46 — cumpleaños: VIP logo en icono, botón alarma sent-toggle, badge solo campana';
+var APP_VERSION = 'v47 — alarma: título simplificado, VIP logo en toggle, sin estrella en cabecera';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
