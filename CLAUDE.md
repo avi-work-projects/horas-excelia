@@ -12,6 +12,7 @@ js/summary.js       ← Resumen anual (VAC_ENTITLEMENT=23, barChart3, computePue
 js/economics.js     ← Cálculo económico (IVA 21%, IRPF 15%, DAILY_RATE=315)
 js/birthdays.js     ← Cumpleaños (BDAYS de localStorage o BDAYS_FROM_SECRET)
 js/events.js        ← Eventos con notas, colores, repetición (EVENTS en localStorage)
+js/alarms.js        ← Gestión de alarmas creadas desde el PWA (ALARMS en localStorage)
 js/init.js          ← Event listeners globales + arranque (IIFE)
 .github/workflows/deploy.yml  ← GitHub Actions: inyecta secrets y despliega en Pages
 manifest.json       ← PWA manifest
@@ -25,12 +26,15 @@ manifest.json       ← PWA manifest
 - `MONTH_H` — horas por defecto por mes `{'YYYY-MM': 7|8|9}`
 - `DAILY_RATE` — tarifa diaria (€, persiste en localStorage)
 - `ED` — día seleccionado en el bottom sheet
+- `ALARMS` — array de alarmas creadas desde el PWA (js/alarms.js, persiste en `excelia-alarms-v1`)
 
 ## Persistencia
 Todos los datos en `localStorage`. No hay servidor.
 - Datos principales: `excelia-horas-v3`
 - Cumpleaños importados: `excelia-bdays-v1` (override del secret de GitHub)
 - Eventos: `excelia-events-v1`
+- Alarmas: `excelia-alarms-v1`
+- URL base MacroDroid: `excelia-alarm-url` (base del webhook, sin nombre de macro)
 
 ## Secretos de GitHub
 Configurar en Settings → Secrets and variables → Actions:
@@ -54,6 +58,7 @@ Todas son `position:fixed;inset:0` con `transform:translateY(100%)` → `transla
 - `#econOverlay` — Económico (€)
 - `#bdayOverlay` — Cumpleaños (🎂)
 - `#eventsOverlay` — Eventos (📅)
+- `#alarmsOverlay` — Gestión de alarmas (botón "📋 Gestión de alarmas" en menú ⋮)
 
 Navegación cruzada: bdayOverlay ↔ eventsOverlay vía botones en la cabecera.
 
@@ -94,9 +99,80 @@ Estructura de un evento:
 ## Dispositivo móvil del usuario
 - **Vivo X200 Ultra** — versión china (FuntouchOS / OriginOS)
 - Relevante para: alarmas vía MacroDroid, intents Android, ringtones
-- La app de Reloj de Vivo **ignora el extra `RINGTONE`** en el intent `SET_ALARM` (limitación confirmada del OEM)
+- La app de Reloj de Vivo **ignora el extra `RINGTONE`** en el intent `SET_ALARM` (limitación confirmada del OEM, probado con RingtoneManager URI y MediaStore URI — ninguno funciona)
 - Vivo solo acepta **mp3 y wav** como tonos personalizados (no opus, no ogg)
 - Para alarmas automáticas desde la PWA: MacroDroid webhook → Rhino (1.6) JS → intent `SET_ALARM`
+- **ContentProvider de alarmas bloqueado**: `content://com.android.deskclock/alarms` lanza `java.lang.SecurityException: Permission` — MacroDroid no tiene `READ_ALARM` permission. No soluble sin root. URIs de Vivo (`com.vivo.deskclock`, `com.vivo.clock`, `com.bbk.clock`) devuelven null (no existen).
+- **Conclusión**: Es imposible leer alarmas existentes del sistema Android desde MacroDroid. El PWA lleva su propio registro en `excelia-alarms-v1`.
+
+## Alarmas (alarms.js)
+
+### Estructura de una alarma
+```json
+{
+  "id": "alrm-1234567890-123",
+  "type": "birthday|event|other",
+  "label": "Mensaje de la alarma",
+  "hour": 9,
+  "minute": 0,
+  "days": [1, 2] ,
+  "targetDate": "YYYY-MM-DD",
+  "createdAt": "ISO8601"
+}
+```
+- `days`: array de días de la semana (1=Lu...7=Do), null si no aplica
+- `targetDate`: fecha objetivo `YYYY-MM-DD`, null si es recurrente
+- Una alarma es "pasada" si `targetDate < hoy` (UTC midnight). Si `targetDate` es null, es recurrente y nunca pasada.
+
+### Funciones clave (alarms.js)
+- `addAlarm(alarm)` — genera id+createdAt, añade a ALARMS y guarda en localStorage
+- `removeAlarm(id)` — elimina por id y guarda
+- `isAlarmPast(alarm)` — true si targetDate < hoy
+- `openAlarms()` / `closeAlarms()` — overlay con event delegation (un listener en container, sobrevive re-renders)
+- `renderAlarms()` — pinta todas las alarmas clasificadas por tipo y por futuras/pasadas
+
+### Integración con otros módulos
+- `js/birthdays.js`: llama `addAlarm()` en `onBdAlarmSuccess()` (tipo `'birthday'`, dos alarmas: día anterior y día del cumpleaños)
+- `js/init.js` (`proceed()`): llama `addAlarm()` al crear alarma MacroDroid (tipo `'other'`)
+- Export/Import: `ALARMS` incluido en el objeto exportado/importado
+
+### normalizeMacroBase(url)
+Función en `core.js` que extrae la URL base del webhook MacroDroid eliminando el nombre de la macro.
+- Entrada: `https://trigger.macrodroid.com/ABC123/crear_alarma` → Salida: `https://trigger.macrodroid.com/ABC123`
+- Usada en `alarms.js` al llamar al webhook DISMISS: `macroBase + '/apagar_alarmas?names=' + encodeURIComponent(label)`
+
+## MacroDroid — Scripts Rhino JS
+
+### Stack tecnológico
+- Engine: **Rhino 1.6** (JavaScript dentro de MacroDroid)
+- Acceso Android: `android.app.ActivityThread.currentApplication()` para obtener contexto
+- Variables de webhook: `{v=nombreParam}` se sustituye en el script antes de ejecutarse
+
+### Crear alarma (SET_ALARM intent)
+```javascript
+var ctx = android.app.ActivityThread.currentApplication();
+var intent = new android.content.Intent('android.intent.action.SET_ALARM');
+intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+// ⚠️ CRÍTICO: usar new java.lang.Integer() — Rhino pasa JS numbers como double,
+// pero Vivo requiere int. Sin esto, la alarma se crea con la hora actual por defecto.
+intent.putExtra('android.intent.extra.alarm.HOUR', new java.lang.Integer(h));
+intent.putExtra('android.intent.extra.alarm.MINUTES', new java.lang.Integer(m));
+intent.putExtra('android.intent.extra.alarm.MESSAGE', msg);
+intent.putExtra('android.intent.extra.alarm.SKIP_UI', true);
+intent.putExtra('android.intent.extra.alarm.VIBRATE', true);
+// Para días de la semana:
+var days = new java.util.ArrayList();
+days.add(new java.lang.Integer(1)); // 1=Do, 2=Lu, ..., 7=Sá (Android Calendar constants)
+intent.putExtra('android.intent.extra.alarm.DAYS', days);
+ctx.startActivity(intent);
+```
+**Nota**: Los días en SET_ALARM usan constantes de `java.util.Calendar`: 1=Domingo, 2=Lunes, ..., 7=Sábado. Distinto del formato del PWA (1=Lu..7=Do).
+
+### Eliminar/desactivar alarma (DISMISS)
+MacroDroid no puede eliminar alarmas del sistema nativo. La "eliminación" desde el PWA:
+1. Borra del registro `excelia-alarms-v1` (siempre, inmediato)
+2. Llama al webhook MacroDroid `/apagar_alarmas?names=label` (opcional, best-effort)
+El macro MacroDroid `/apagar_alarmas` debe buscar la alarma por nombre y desactivarla manualmente.
 
 ## Despliegue
 Push a `main` → GitHub Actions → inject secrets → GitHub Pages.
@@ -109,6 +185,11 @@ Test local: `py -m http.server 8082` desde la raíz del proyecto.
 - El usuario ve la versión pulsando el botón `⋮` (arriba a la derecha) en cualquier overlay.
 - **SIEMPRE** incluir al final de cada respuesta tras un push: `✅ Versión desplegada: vN — descripción`
 - Esto permite al usuario verificar que su PWA instalada está actualizada sin ambigüedad.
+
+### ⚠️ CRÍTICO: sw.js DEBE cambiar en CADA push, incluso los más pequeños
+El navegador detecta actualizaciones del Service Worker comparando `sw.js` byte a byte.
+Si solo cambian archivos JS/CSS pero `sw.js` no cambia → el SW no se actualiza → el usuario NO ve el botón de actualizar → la app queda en la versión antigua sin avisar.
+**Regla**: En TODO commit que llegue a `main`, incluso hotfixes de una línea, SIEMPRE bumpar `CACHE_VER` en `sw.js`.
 
 ## Vocabulario del usuario (términos ↔ código)
 
@@ -134,6 +215,7 @@ Test local: `py -m http.server 8082` desde la raíz del proyecto.
 | **barra de evento** | `ev-multi-bar`: barra horizontal de evento multi-día en calendario mensual |
 | **perimetro puente** | `ev-puente-perimeter`: borde rosa que rodea días de puente en el calendario mensual |
 | **chips de filtro** | `ev-filter-chip`: botones de filtro tipo/categoría en calendario anual |
+| **ventana alarmas** | `#alarmsOverlay` — js/alarms.js — accesible desde menú ⋮ → "📋 Gestión de alarmas" |
 | **bottom sheet** | Panel deslizable desde abajo al pulsar un día en home (`#bottomSheet`) |
 | **arriba** | Posición física superior: un elemento queda en una fila/altura mayor (como piezas de Tetris). Ej: "el evento queda arriba del día" = ocupa espacio de layout propio, desplazando el resto hacia abajo. |
 | **encima** | Superposición en capas: un elemento se coloca sobre otro como una pegatina, sin desplazarlo. Ej: "el evento queda encima del día" = `position:absolute`, no afecta al flujo. |
