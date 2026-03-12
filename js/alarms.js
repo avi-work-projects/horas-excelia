@@ -61,7 +61,7 @@ function openAlarms(){
     });
   }
   renderAlarms();
-  ov.style.display='block';
+  ov.style.display='flex';
   requestAnimationFrame(function(){requestAnimationFrame(function(){
     ov.classList.add('open');
   });});

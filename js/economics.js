@@ -187,7 +187,7 @@ function openEcon(){
   ECON_YEAR=CY;
   var ov=document.getElementById('econOverlay');
   document.getElementById('econContent').innerHTML=renderEconContent();
-  ov.style.display='block';
+  ov.style.display='flex';
   requestAnimationFrame(function(){requestAnimationFrame(function(){ov.classList.add('open');bindEconEvents();});});
 }
 

@@ -197,8 +197,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .day-cell.h9 .day-hours{color:#34d399}.day-cell.h9{background:rgba(52,211,153,.06)}
 
 /* ── OVERLAY BASE (summary, econ, bday, events) ── */
-.full-overlay{position:fixed;inset:0;z-index:300;background:var(--bg);display:flex;flex-direction:column;transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1)}
+.full-overlay{position:fixed;inset:0;z-index:300;background:var(--bg);display:flex;flex-direction:column;overflow:hidden;transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1)}
 .full-overlay.open{transform:translateY(0)}
+#summaryContent,#econContent,#bdayContent,#eventsContent{display:flex;flex-direction:column;flex:1;min-height:0;}
 
 /* ── SHARED OVERLAY HEADER ── */
 .sy-header{background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 1px 0 var(--border);padding:14px 20px;display:flex;align-items:center;gap:10px;flex-shrink:0}

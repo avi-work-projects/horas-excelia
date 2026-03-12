@@ -426,7 +426,7 @@ function openSummary(){
   SUMMARY_YEAR=CY;
   var ov=document.getElementById('summaryOverlay');
   document.getElementById('summaryContent').innerHTML=renderSummaryContent();
-  ov.style.display='block';
+  ov.style.display='flex';
   requestAnimationFrame(function(){requestAnimationFrame(function(){ov.classList.add('open');bindSummaryEvents();});});
 }
 

@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v51 — layout flex column overlays: 3 niveles siempre visibles sin sticky ni gap';
+var APP_VERSION = 'v52 — fix overlays: overflow hidden + content wrapper flex + display flex en open';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

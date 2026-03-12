@@ -690,7 +690,7 @@ function openBday(){
   var now=new Date();BDAY_YEAR=now.getFullYear();BDAY_MONTH=now.getMonth();BDAY_VIEW='upcoming';
   var ov=document.getElementById('bdayOverlay');
   document.getElementById('bdayContent').innerHTML=renderBdayContent();
-  ov.style.display='block';
+  ov.style.display='flex';
   requestAnimationFrame(function(){requestAnimationFrame(function(){ov.classList.add('open');bindBdayEvents();});});
 }
 
