@@ -305,10 +305,6 @@ function renderBdayList(){
     });
     h+='</div>';
   });
-  // Botón "Listo" pegajoso al fondo cuando estamos en modo edición VIP
-  if(BDAY_EDIT_VIP){
-    h+='<button class="bday-listo-fab" id="bdListoFab">\u2713 Listo</button>';
-  }
   return h;
 }
 
@@ -344,7 +340,7 @@ function renderBdayContent(){
     h+='<button class="bday-vip-chip chip-vip'+(BDAY_FILTER_VIP==='vip'?' active':'')+'" id="bdVipOnly"><img src="./VIP.png" style="width:20px;height:auto;vertical-align:middle" alt="VIP"></button>';
     h+='<button class="bday-vip-chip chip-novip'+(BDAY_FILTER_VIP==='novip'?' active':'')+'" id="bdVipNone"><span class="vip-no-icon"><img src="./VIP.png" style="width:20px;height:auto;display:block" alt="no VIP"></span></button>';
     h+='</div>';
-    h+='<button class="bday-vip-edit-btn'+(BDAY_EDIT_VIP?' active':'')+'" id="bdEditVip">Editar VIPs</button>';
+    h+='<button class="bday-vip-edit-btn'+(BDAY_EDIT_VIP?' active':'')+'" id="bdEditVip">'+(BDAY_EDIT_VIP?'\u2713 Listo':'Editar VIPs')+'</button>';
     h+='</div>';
   }
   h+='<div class="sy-body">';
@@ -765,27 +761,26 @@ function bindBdayEvents(){
   if(bdVipOnlyEl)bdVipOnlyEl.addEventListener('click',function(){BDAY_FILTER_VIP='vip';BDAY_SEARCH='';refreshBday();});
   var bdVipNoneEl=document.getElementById('bdVipNone');
   if(bdVipNoneEl)bdVipNoneEl.addEventListener('click',function(){BDAY_FILTER_VIP='novip';BDAY_SEARCH='';refreshBday();});
-  // Edit VIPs toggle — entra/cancela modo edición (sin guardar)
+  // Botón "Editar VIPs" / "✓ Listo": entra en modo edición O guarda y sale
   var editVipEl=document.getElementById('bdEditVip');
   if(editVipEl)editVipEl.addEventListener('click',function(){
-    BDAY_EDIT_VIP=!BDAY_EDIT_VIP;
-    BDAY_VIP_PENDING=BDAY_EDIT_VIP?{}:null;
-    refreshBday();
-  });
-  // Botón "Listo" — aplica cambios pendientes y sale del modo edición
-  var listoFabEl=document.getElementById('bdListoFab');
-  if(listoFabEl)listoFabEl.addEventListener('click',function(){
-    if(BDAY_VIP_PENDING!==null){
-      Object.keys(BDAY_VIP_PENDING).forEach(function(k){
-        var i=parseInt(k,10);
-        if(i>=0&&i<BDAYS.length){
-          if(BDAY_VIP_PENDING[k])BDAYS[i].vip=true;else delete BDAYS[i].vip;
-        }
-      });
-      localStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));
-      syncVipBdaysToEvents();updateBdayBtn();
+    if(BDAY_EDIT_VIP){
+      // "✓ Listo" → aplica BDAY_VIP_PENDING, guarda y refresca
+      if(BDAY_VIP_PENDING!==null){
+        Object.keys(BDAY_VIP_PENDING).forEach(function(k){
+          var i=parseInt(k,10);
+          if(i>=0&&i<BDAYS.length){
+            if(BDAY_VIP_PENDING[k])BDAYS[i].vip=true;else delete BDAYS[i].vip;
+          }
+        });
+        localStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));
+        syncVipBdaysToEvents();updateBdayBtn();
+      }
+      BDAY_EDIT_VIP=false;BDAY_VIP_PENDING=null;refreshBday();
+    } else {
+      // Entra en modo edición (UN solo refresco para cambiar la etiqueta del botón)
+      BDAY_EDIT_VIP=true;BDAY_VIP_PENDING={};refreshBday();
     }
-    BDAY_EDIT_VIP=false;BDAY_VIP_PENDING=null;refreshBday();
   });
   var srch=document.getElementById('bdSearch');
   if(srch){
@@ -842,11 +837,28 @@ function bindBdayEvents(){
       e.stopPropagation();
       var idx=parseInt(item.dataset.bdayIdx,10);
       if(BDAY_EDIT_VIP){
-        // En modo edición: clic toglea VIP en estado pendiente (no guarda hasta Listo)
+        // En modo edición: toggle VIP visual (DOM directo, sin refreshBday para evitar scroll)
         if(!isNaN(idx)&&idx>=0&&idx<BDAYS.length&&BDAY_VIP_PENDING!==null){
           var curEff=BDAY_VIP_PENDING.hasOwnProperty(idx)?BDAY_VIP_PENDING[idx]:!!BDAYS[idx].vip;
-          BDAY_VIP_PENDING[idx]=!curEff;
-          refreshBday();
+          var newEff=!curEff;
+          BDAY_VIP_PENDING[idx]=newEff;
+          // Toggle CSS dim/active sin re-render
+          item.classList.remove(newEff?'bday-list-vip-dim':'bday-list-vip-active');
+          item.classList.add(newEff?'bday-list-vip-active':'bday-list-vip-dim');
+          // Añadir/quitar logo VIP dentro del span del nombre
+          var nameSpan=item.querySelector('.bday-list-name');
+          if(nameSpan){
+            var existingImg=nameSpan.querySelector('.bday-vip-img');
+            if(newEff){
+              if(!existingImg){
+                var vipImg=document.createElement('img');
+                vipImg.src='./VIP.png';vipImg.className='bday-vip-img';vipImg.alt='VIP';
+                nameSpan.appendChild(vipImg);
+              }
+            } else {
+              if(existingImg)existingImg.remove();
+            }
+          }
         }
         return;
       }
