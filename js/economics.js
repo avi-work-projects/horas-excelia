@@ -230,6 +230,5 @@ function bindEconEvents(){
     var qs=document.querySelector('.econ-quarter-section');
     var ms=document.querySelector('.econ-month-section');
     if(qs&&ms)ms.style.maxWidth=qs.offsetWidth+'px';
-    if(typeof fixStickyTops==='function')fixStickyTops();
   },60);
 }
