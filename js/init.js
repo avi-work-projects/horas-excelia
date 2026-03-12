@@ -174,10 +174,10 @@
       // Drum pickers: inicializar DESPUÉS de que el panel sea visible (display:none → flex)
       var _dH=parseInt(localStorage.getItem('excelia-alarm-h')||'9',10);
       var _dM=parseInt(localStorage.getItem('excelia-alarm-m')||'20',10);
-      requestAnimationFrame(function(){
+      requestAnimationFrame(function(){requestAnimationFrame(function(){
         buildDrumPicker('drumHour',24,_dH);
         buildDrumPicker('drumMin',60,_dM);
-      });
+      });});
     }
   });
 
