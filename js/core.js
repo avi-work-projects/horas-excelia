@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v68 — ventana económica: 3 pestañas + configuración fiscal';
+var APP_VERSION = 'v69 — ventana económica: 4 pestañas, análisis gastos, cascada ingresos';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
