@@ -90,6 +90,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .data-btn{width:44px;height:44px;border-radius:8px;border:none;background:transparent;color:var(--text-muted);font-size:1.35rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;position:relative}
 .data-btn:active{background:var(--surface3);transform:scale(.93)}
 .data-btn.overlay-active{background:rgba(255,255,255,.15)!important;color:var(--text)!important;border-radius:8px}
+.data-btn.active{background:rgba(108,140,255,.13)!important;color:var(--accent)!important;box-shadow:0 0 0 1.5px rgba(108,140,255,.8),0 0 8px rgba(108,140,255,.3);border-radius:8px}
 .data-btn.has-update::after{content:'';position:absolute;top:2px;right:2px;width:8px;height:8px;background:#34d399;border-radius:50%;border:1.5px solid var(--bg);animation:upd-pulse 1.4s ease-in-out infinite}
 @keyframes upd-pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.7}}
 /* Punto verde notificación en botones bday/events cuando hay items próximos */
@@ -338,7 +339,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .econ-section-sep{height:1px;background:var(--border);margin:6px 0}
 
 /* ── BIRTHDAYS ── */
-.data-btn.bday-active{color:var(--vacaciones)!important;box-shadow:0 0 0 1.5px rgba(255,179,71,.9),0 0 7px rgba(255,179,71,.5);border-radius:8px}
+.data-btn.bday-active{color:var(--vacaciones)!important;border-radius:8px}
 .bday-hdr-sub{display:flex;align-items:stretch;padding:5px 6px;gap:5px;box-shadow:0 1px 0 var(--border);overflow-x:hidden}
 .bday-view-toggle{flex:1;font-size:.62rem;padding:6px 3px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;text-align:center;line-height:1.3}
 .bday-view-toggle.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
@@ -368,8 +369,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bday-vip-edit-btn{flex-shrink:0;font-size:.7rem;padding:5px 10px;border-radius:12px;border:1px solid #fb923c;background:rgba(251,146,60,.1);color:#fb923c;cursor:pointer;transition:all .15s}
 .bday-vip-edit-btn.active{border-color:#fb923c;background:rgba(251,146,60,.3);color:#fff}
 /* Botón Cancelar fijo al fondo de pantalla en modo edición VIP */
-.bday-cancel-edit-btn{position:fixed;bottom:max(20px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:transparent;color:#ef4444;border:1.5px solid #ef4444;padding:8px 28px;border-radius:20px;font-size:.82rem;font-weight:600;cursor:pointer;z-index:200;white-space:nowrap;transition:background .15s,color .15s}
-.bday-cancel-edit-btn:active{background:rgba(239,68,68,.12)}
+.bday-cancel-edit-btn{position:fixed;bottom:max(20px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:var(--surface);color:#ef4444;border:3px solid #ef4444;padding:8px 28px;border-radius:20px;font-size:.82rem;font-weight:600;cursor:pointer;z-index:200;white-space:nowrap;transition:background .15s}
+.bday-cancel-edit-btn:active{background:var(--surface2)}
 /* VIP edit mode item states */
 .bday-list-item.bday-list-vip-dim{opacity:.38}
 .bday-list-item.bday-list-vip-active{opacity:1}
@@ -586,8 +587,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .nav-bar-btn.active[data-nav="summary"]{color:var(--c-green)!important;background:rgba(52,211,153,.13);box-shadow:0 0 0 1.5px rgba(52,211,153,.8),0 0 8px rgba(52,211,153,.3)}
 .nav-bar-btn.active[data-nav="econ"]{color:var(--c-yellow)!important;background:rgba(251,191,36,.13);box-shadow:0 0 0 1.5px rgba(251,191,36,.8),0 0 8px rgba(251,191,36,.3)}
 .nav-bar-btn.active[data-nav="alarm"]{color:var(--c-purple)!important;background:rgba(192,132,252,.13);box-shadow:0 0 0 1.5px rgba(192,132,252,.8),0 0 8px rgba(192,132,252,.3)}
-.nav-bar-btn.events-active{box-shadow:0 0 0 1.5px rgba(108,140,255,.9),0 0 7px rgba(108,140,255,.5);color:var(--c-blue)!important}
-.nav-bar-btn.bday-active{box-shadow:0 0 0 1.5px rgba(255,179,71,.9),0 0 7px rgba(255,179,71,.5);color:var(--vacaciones)!important}
+.nav-bar-btn.events-active{color:var(--c-blue)!important}
+.nav-bar-btn.bday-active{color:var(--vacaciones)!important}
 /* Birthday detail / form overlays */
 .bd-detail-overlay,.bd-form-overlay{position:fixed;inset:0;z-index:410;background:rgba(0,0,0,.6);display:none}
 .bd-detail-overlay.open,.bd-form-overlay.open{display:flex;align-items:center;justify-content:center}
@@ -599,7 +600,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bd-detail-lbl{font-size:.9rem;font-weight:600;padding:6px 14px;border-radius:16px;display:inline-block;margin-top:4px}
 
 /* ── EVENTS ── */
-.data-btn.events-active{color:var(--c-blue)!important;box-shadow:0 0 0 1.5px rgba(108,140,255,.9),0 0 7px rgba(108,140,255,.5);border-radius:8px}
+.data-btn.events-active{color:var(--c-blue)!important;border-radius:8px}
 .ev-hdr-sub{display:flex;align-items:stretch;padding:5px 6px;gap:5px;box-shadow:0 1px 0 var(--border);overflow-x:hidden}
 .ev-view-zone{flex:1;display:flex;flex-direction:column;gap:4px;}
 .ev-view-toggle{flex:1;font-size:.62rem;padding:6px 3px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;text-align:center;line-height:1.3;width:100%}

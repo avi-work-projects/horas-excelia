@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v65 — altura uniforme items, cancelar rediseño, nav activo, export cal';
+var APP_VERSION = 'v66 — cancelar con fondo tema, aros solo ventana activa, home activo';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
