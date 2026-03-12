@@ -343,7 +343,7 @@ function renderBdayContent(){
     h+='<button class="bday-vip-edit-btn'+(BDAY_EDIT_VIP?' active':'')+'" id="bdEditVip">'+(BDAY_EDIT_VIP?'\u2713 Listo':'Editar VIPs')+'</button>';
     h+='</div>';
   }
-  h+='<div class="sy-body">';
+  h+='<div class="sy-body"'+(BDAY_EDIT_VIP?' style="padding-bottom:72px"':'')+'>';
   if(BDAY_VIEW==='upcoming'){
     h+=renderBdayUpcoming();
   } else if(BDAY_VIEW==='cal'){
@@ -362,6 +362,9 @@ function renderBdayContent(){
     h+='</div>';
   }
   h+='</div>';
+  if(BDAY_EDIT_VIP){
+    h+='<button class="bday-cancel-edit-btn" id="bdCancelEdit">Cancelar</button>';
+  }
   return h;
 }
 
@@ -781,6 +784,11 @@ function bindBdayEvents(){
       // Entra en modo edición (UN solo refresco para cambiar la etiqueta del botón)
       BDAY_EDIT_VIP=true;BDAY_VIP_PENDING={};refreshBday();
     }
+  });
+  // Botón "Cancelar" — descarta cambios pendientes y sale del modo edición
+  var cancelEditEl=document.getElementById('bdCancelEdit');
+  if(cancelEditEl)cancelEditEl.addEventListener('click',function(){
+    BDAY_EDIT_VIP=false;BDAY_VIP_PENDING=null;refreshBday();
   });
   var srch=document.getElementById('bdSearch');
   if(srch){
