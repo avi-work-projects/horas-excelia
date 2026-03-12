@@ -883,6 +883,4 @@ function bindBdayEvents(){
     };
     r.readAsText(f);
   });
-  // Corregir tops de sticky headers tras render
-  setTimeout(function(){if(typeof fixStickyTops==='function')fixStickyTops();},60);
 }

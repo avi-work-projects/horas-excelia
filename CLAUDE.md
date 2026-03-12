@@ -62,6 +62,40 @@ Todas son `position:fixed;inset:0` con `transform:translateY(100%)` → `transla
 
 Navegación cruzada: bdayOverlay ↔ eventsOverlay vía botones en la cabecera.
 
+### Patrón de apertura/cierre de overlay (OBLIGATORIO para animación correcta)
+```javascript
+// ABRIR:
+ov.style.display = 'block';
+requestAnimationFrame(function(){ requestAnimationFrame(function(){
+  ov.classList.add('open');  // añade transform:translateY(0) con transición CSS
+}); });
+NAV_BACK = closeXxx;
+
+// CERRAR:
+ov.classList.remove('open');
+setTimeout(function(){ ov.style.display = 'none'; }, 320);  // 320ms = duración de la transición
+NAV_BACK = null;
+```
+El doble `requestAnimationFrame` es necesario para que el navegador pinte primero el estado inicial (`translateY(100%)`) y luego aplique la transición. Sin él, la animación no se ve — el overlay aparece instantáneamente.
+
+### Event delegation en overlays con contenido dinámico
+Cuando un overlay usa `innerHTML` para re-renderizar (ej. `alarmsContent`), los listeners por elemento se pierden. Patrón correcto:
+```javascript
+// Registrar UNA SOLA VEZ en el container (flag _delegated):
+if(container && !container._delegated){
+  container._delegated = true;
+  container.addEventListener('click', function(e){
+    var btn = e.target.closest('.mi-boton');
+    if(!btn) return;
+    e.stopPropagation();
+    // actuar con btn.dataset.id, btn.dataset.xxx...
+  });
+}
+// Después, hacer el render que sobreescribe innerHTML:
+renderContenido();
+```
+El listener en el container **sobrevive** a los `innerHTML` porque el container mismo no se reemplaza.
+
 ## Eventos (events.js)
 Estructura de un evento:
 ```json
@@ -85,6 +119,29 @@ Estructura de un evento:
 ## Colores de eventos
 `#6c8cff` azul, `#34d399` verde, `#fb923c` naranja, `#ff6b6b` rojo, `#c084fc` morado, `#fbbf24` amarillo
 
+## Sistema de capas (z-index) en los calendarios de eventos
+
+### Calendario anual — estructura de capas dentro de `ev-annual-week-outer`
+Cada semana del calendario anual apila 4 capas mediante `position:relative/absolute`:
+
+| Capa | z-index | Elemento CSS | Qué contiene |
+|------|---------|-------------|--------------|
+| 1 (base) | 1 | `.ev-annual-day` | Celdas de día (número, color de festivo/puente/vacación) |
+| 2 | 2 | `.ev-annual-bars-row` → `.ev-annual-mbar` | Barras de eventos multi-día (CSS grid: `grid-column` + `grid-row` para apilar sin solaparse) |
+| 3 | 3 | `.ev-annual-xs` → `.ev-annual-x` / `.ev-annual-vip-star` | ✕ de eventos puntuales y ⭐ VIP (centrados encima del día) |
+| 4 | 4 | `.ev-annual-puente-perimeter` | Borde rosa de puente (CSS grid: `grid-column` span del puente, `grid-row:1`) |
+
+**Regla crítica**: las capas 2, 3 y 4 son `position:absolute` dentro de `ev-annual-week-outer` que es `position:relative`. Modificar tamaños de celdas puede desalinear las barras.
+
+### Calendario mensual — estructura de capas dentro de cada celda día
+En el calendario por meses (`renderEvCalMonth`):
+- **Capa base**: celda día con número y colores
+- **Barras multi-día** (`ev-multi-bar`): CSS grid con `grid-column: cs+1 / ce+2` y `grid-row: fila+1` — el algoritmo de packing asigna filas para evitar solapamientos
+- **Perímetro puente** (`ev-puente-perimeter`): mismo sistema de grid-column/grid-row:1
+
+### Algoritmo de packing de barras multi-día
+Antes de renderizar, se ejecuta un algoritmo que asigna a cada evento una `row` (fila) tal que no coincidan en columna con otro evento de la misma fila. El número máximo de filas determina la altura visual de la semana.
+
 ## Horas por defecto
 - Julio/Agosto: 7h
 - Septiembre (1-15): 7h
@@ -102,8 +159,9 @@ Estructura de un evento:
 - La app de Reloj de Vivo **ignora el extra `RINGTONE`** en el intent `SET_ALARM` (limitación confirmada del OEM, probado con RingtoneManager URI y MediaStore URI — ninguno funciona)
 - Vivo solo acepta **mp3 y wav** como tonos personalizados (no opus, no ogg)
 - Para alarmas automáticas desde la PWA: MacroDroid webhook → Rhino (1.6) JS → intent `SET_ALARM`
-- **ContentProvider de alarmas bloqueado**: `content://com.android.deskclock/alarms` lanza `java.lang.SecurityException: Permission` — MacroDroid no tiene `READ_ALARM` permission. No soluble sin root. URIs de Vivo (`com.vivo.deskclock`, `com.vivo.clock`, `com.bbk.clock`) devuelven null (no existen).
-- **Conclusión**: Es imposible leer alarmas existentes del sistema Android desde MacroDroid. El PWA lleva su propio registro en `excelia-alarms-v1`.
+- **ContentProvider de alarmas bloqueado**: `content://com.android.deskclock/alarms` lanza `java.lang.SecurityException: Permission`. URIs de Vivo (`com.vivo.deskclock`, `com.vivo.clock`, `com.bbk.clock`) devuelven null. No se puede leer/listar alarmas existentes del sistema.
+- **DISMISS_ALARM sí funciona**: el intent `android.intent.action.DISMISS_ALARM` con `SEARCH_MODE=android.label` y `MESSAGE=nombre` **funciona en Vivo** para apagar/borrar alarmas por nombre. Confirmado en pruebas reales.
+- El PWA lleva su propio registro en `excelia-alarms-v1` (no depende de poder leer el sistema).
 
 ## Alarmas (alarms.js)
 
@@ -168,11 +226,29 @@ ctx.startActivity(intent);
 ```
 **Nota**: Los días en SET_ALARM usan constantes de `java.util.Calendar`: 1=Domingo, 2=Lunes, ..., 7=Sábado. Distinto del formato del PWA (1=Lu..7=Do).
 
-### Eliminar/desactivar alarma (DISMISS)
-MacroDroid no puede eliminar alarmas del sistema nativo. La "eliminación" desde el PWA:
+### Eliminar/desactivar alarma (DISMISS) — intent DISMISS_ALARM
+El intent `DISMISS_ALARM` con `SEARCH_MODE=android.label` **SÍ funciona en Vivo** para borrar alarmas por nombre. Confirmado en pruebas reales.
+
+```javascript
+// MacroDroid — Macro: apagar_alarmas
+// Parámetro recibido del PWA: {v=names} → label exacto de la alarma a borrar
+var nombre = '{v=names}';
+
+var intent = new android.content.Intent("android.intent.action.DISMISS_ALARM");
+intent.putExtra("android.intent.extra.alarm.SEARCH_MODE", "android.label");
+intent.putExtra("android.intent.extra.alarm.MESSAGE", nombre);
+intent.putExtra("android.intent.extra.alarm.SKIP_UI", true);
+intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+var ctx = android.app.ActivityThread.currentApplication();
+ctx.startActivity(intent);
+```
+
+**⚠️ Requisito**: el `MESSAGE` debe coincidir exactamente (case-sensitive) con el label con el que se creó la alarma.
+**Nota**: Esto solo descarta/apaga la alarma activa, no la elimina de la lista del reloj. Para eliminarla completamente puede requerirse interacción manual.
+
+La "eliminación" desde el PWA sigue siendo:
 1. Borra del registro `excelia-alarms-v1` (siempre, inmediato)
-2. Llama al webhook MacroDroid `/apagar_alarmas?names=label` (opcional, best-effort)
-El macro MacroDroid `/apagar_alarmas` debe buscar la alarma por nombre y desactivarla manualmente.
+2. Llama al webhook MacroDroid `/apagar_alarmas?names=label` → ejecuta el script DISMISS_ALARM
 
 ## Despliegue
 Push a `main` → GitHub Actions → inject secrets → GitHub Pages.
@@ -220,12 +296,37 @@ Si solo cambian archivos JS/CSS pero `sw.js` no cambia → el SW no se actualiza
 | **arriba** | Posición física superior: un elemento queda en una fila/altura mayor (como piezas de Tetris). Ej: "el evento queda arriba del día" = ocupa espacio de layout propio, desplazando el resto hacia abajo. |
 | **encima** | Superposición en capas: un elemento se coloca sobre otro como una pegatina, sin desplazarlo. Ej: "el evento queda encima del día" = `position:absolute`, no afecta al flujo. |
 
-## Regla de separación entre niveles (OBLIGATORIO en todas las ventanas)
-Los 3 niveles de cabecera de cada ventana secundaria deben cumplir:
-1. **Sin espacios visibles** entre niveles al hacer scroll (no "rendija/gap").
-2. **Sin solapamiento** de un nivel sobre el contenido del nivel de abajo.
-3. Los 3 niveles son siempre visibles (todos sticky).
-Implementación: usar `box-shadow:0 1px 0 var(--border)` en lugar de `border-bottom:1px solid` en todos los elementos sticky (overlay-nav-bar, sy-header, bday-hdr-sub, ev-hdr-sub, sy-tab-bar). Así no se altera la altura de layout y no aparece el gap.
+## Sistema de 3 niveles de cabecera (OBLIGATORIO en todas las ventanas)
+
+Cada ventana secundaria (overlay) tiene hasta 3 niveles de cabecera, apilados de arriba a abajo:
+
+| Nivel | Presencia | Elemento CSS | Contenido |
+|-------|-----------|-------------|-----------|
+| **Nivel 1** | Siempre (obligatorio) | `.overlay-nav-bar` | Emojis de navegación: 🏠📊💰🎂📅🔔⋯ |
+| **Nivel 2** | Opcional | `.bday-hdr-sub` / `.ev-hdr-sub` / `.sy-tab-bar` | Pestañas específicas de cada ventana |
+| **Nivel 3** | Opcional | `.sy-header` (con o sin `.with-tabs`) | Título del mes/año + flechas de navegación |
+
+**Normas obligatorias:**
+1. **Sin espacios visibles** entre niveles en ningún momento (ni al abrir, ni al hacer scroll, ni al cambiar de pestaña).
+2. **Sin solapamiento** de un nivel sobre el contenido del nivel inferior.
+3. Los 3 niveles son **siempre visibles** — no desaparecen al hacer scroll vertical ni al scroll horizontal del contenido.
+4. Esta norma aplica a **todas las ventanas** sin excepción.
+
+**Implementación correcta (desde v51): layout flex column**
+```
+.full-overlay {
+  display: flex;
+  flex-direction: column;
+  /* SIN overflow-y — el overflow va en sy-body */
+}
+.overlay-nav-bar { flex-shrink: 0 }   /* Nivel 1 */
+.bday-hdr-sub    { flex-shrink: 0 }   /* Nivel 2 (si aplica) */
+.sy-header       { flex-shrink: 0 }   /* Nivel 3 */
+.sy-body         { flex: 1; min-height: 0; overflow-y: auto }  /* Área scrollable */
+```
+**NO usar `position:sticky` con `top:Xpx` hardcodeado** — produce gaps porque la altura real del nivel superior varía según dispositivo. El layout flex column elimina el problema sin necesitar JS.
+
+El separador visual entre niveles: usar `box-shadow:0 1px 0 var(--border)` (no `border-bottom`) para no añadir px al layout.
 
 ## Notificación en emojis de nivel 1 (OBLIGATORIO en TODAS las ventanas)
 Los puntos verdes de notificación (`.bday-active`, `.events-active`) deben aparecer en los botones de TODAS las ventanas (home + todas las ventanas secundarias), no solo en la home.
@@ -234,8 +335,9 @@ Los puntos verdes de notificación (`.bday-active`, `.events-active`) deben apar
 - `.nav-bar-btn` tiene `position:relative` para que el `::after` absoluto funcione.
 
 ## Patrones CSS relevantes
-- `.full-overlay` — base para todos los overlays deslizantes
-- `.sy-header` — cabecera sticky de overlay (compartida); usa `box-shadow` NO `border-bottom`
+- `.full-overlay` — base para todos los overlays: `display:flex;flex-direction:column` (NO `overflow-y:auto`)
+- `.sy-body` — área scrollable: `flex:1;min-height:0;overflow-y:auto`
+- `.sy-header` — cabecera nivel 3: `flex-shrink:0`; usa `box-shadow` NO `border-bottom`
 - `.data-btn.bday-active` / `.nav-bar-btn.bday-active` — brillo naranja + punto verde en todos los navbars
 - `.data-btn.events-active` / `.nav-bar-btn.events-active` — brillo azul + punto verde en todos los navbars
 - `.day-cell.h7/.h8/.h9` — colores por horas en celda del día (ámbar/azul/verde)
