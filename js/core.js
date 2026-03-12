@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v67 — colores aros distintos, alineación texto lista cumpleaños';
+var APP_VERSION = 'v68 — ventana económica: 3 pestañas + configuración fiscal';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
