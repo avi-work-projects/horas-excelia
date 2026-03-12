@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v58 — económico media mensual: cifras alineadas derecha, separación col entre columnas';
+var APP_VERSION = 'v59 — económico grid 5 cols, cumpleaños chips VIP solo icono + tachado rojo';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

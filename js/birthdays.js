@@ -328,8 +328,8 @@ function renderBdayContent(){
     h+='<div class="bday-vip-ctrl-bar">';
     h+='<div class="bday-vip-filter-chips">';
     h+='<button class="bday-vip-chip'+(BDAY_FILTER_VIP==='all'?' active':'')+'" id="bdVipAll">Todos</button>';
-    h+='<button class="bday-vip-chip chip-vip'+(BDAY_FILTER_VIP==='vip'?' active':'')+'" id="bdVipOnly"><img src="./VIP.png" style="width:20px;height:auto;vertical-align:middle" alt="VIP"> Solo</button>';
-    h+='<button class="bday-vip-chip chip-novip'+(BDAY_FILTER_VIP==='novip'?' active':'')+'" id="bdVipNone">Sin <img src="./VIP.png" style="width:20px;height:auto;vertical-align:middle" alt="VIP"></button>';
+    h+='<button class="bday-vip-chip chip-vip'+(BDAY_FILTER_VIP==='vip'?' active':'')+'" id="bdVipOnly"><img src="./VIP.png" style="width:20px;height:auto;vertical-align:middle" alt="VIP"></button>';
+    h+='<button class="bday-vip-chip chip-novip'+(BDAY_FILTER_VIP==='novip'?' active':'')+'" id="bdVipNone"><span class="vip-no-icon"><img src="./VIP.png" style="width:20px;height:auto;display:block" alt="no VIP"></span></button>';
     h+='</div>';
     h+='<button class="bday-vip-edit-btn'+(BDAY_EDIT_VIP?' active':'')+'" id="bdEditVip">'+(BDAY_EDIT_VIP?'\u2713 Listo':'Editar VIPs')+'</button>';
     h+='</div>';

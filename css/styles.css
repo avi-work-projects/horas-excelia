@@ -299,8 +299,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .econ-annual{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;display:flex;flex-direction:column;gap:10px;margin-bottom:8px}
 .econ-avg-section{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:14px}
 .econ-avg-title{font-size:.62rem;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
-.econ-avg-grid{display:grid;grid-template-columns:repeat(2,1fr);row-gap:6px;column-gap:24px}
-.econ-avg-item{display:flex;justify-content:space-between;align-items:center;font-size:.75rem;gap:5px}
+.econ-avg-grid{display:grid;grid-template-columns:auto auto 1fr auto auto;row-gap:6px;column-gap:6px;align-items:center}
+.econ-avg-item{display:none}
 .econ-avg-lbl{color:var(--text-muted);white-space:nowrap;flex-shrink:0}
 .econ-avg-val{font-family:var(--mono);font-size:.72rem;font-weight:600;text-align:right}
 /* Ingresado box (formerly cobrado) — neutral */
@@ -363,6 +363,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bday-vip-chip.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
 .bday-vip-chip.chip-vip.active{border-color:#fbbf24;background:rgba(251,191,36,.15);color:#fbbf24}
 .bday-vip-chip.chip-novip.active{border-color:var(--text-muted);background:var(--surface3);color:var(--text)}
+.vip-no-icon{position:relative;display:inline-flex;align-items:center;justify-content:center}
+.vip-no-icon::after{content:'';position:absolute;inset:-3px;background:linear-gradient(to top right,transparent 40%,#ef4444 42%,#ef4444 58%,transparent 60%);pointer-events:none}
 .bday-vip-edit-btn{flex-shrink:0;font-size:.7rem;padding:5px 10px;border-radius:12px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s}
 .bday-vip-edit-btn.active{border-color:#fbbf24;background:rgba(251,191,36,.12);color:#fbbf24}
 /* VIP edit mode item states */
