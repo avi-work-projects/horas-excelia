@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v63 — editar VIPs: botón Cancelar rojo fijo al fondo';
+var APP_VERSION = 'v64 — altura items cumpleaños, ctrl-click fix, export/import eventos';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

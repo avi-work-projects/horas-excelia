@@ -11,6 +11,7 @@ var BDAY_EDIT_VIP=false;
 var BDAY_VIP_PENDING=null; // null=no edit mode, {}=pending changes (idx→bool)
 var _bdLpTimer=null;
 var _bdLpFired=false;
+var _bdCtrlDocListenerAdded=false;
 
 function _showBdayInlineCtrl(el,b){
   var prev=document.querySelector('.bday-inline-ctrl');
@@ -754,6 +755,16 @@ function bindBdayEvents(){
   if(todayBtn)todayBtn.addEventListener('click',function(){
     var n=new Date();BDAY_YEAR=n.getFullYear();BDAY_MONTH=n.getMonth();refreshBday();
   });
+  // Listener global para cerrar el minimenu al clicar fuera (se añade una sola vez)
+  if(!_bdCtrlDocListenerAdded){
+    _bdCtrlDocListenerAdded=true;
+    document.addEventListener('click',function(e){
+      if(!e.target.closest('.bday-inline-ctrl')){
+        var ctrl=document.querySelector('.bday-inline-ctrl');
+        if(ctrl)ctrl.remove();
+      }
+    });
+  }
   document.getElementById('bdViewUpcoming').addEventListener('click',function(){BDAY_SEARCH='';BDAY_FILTER_VIP='all';BDAY_EDIT_VIP=false;BDAY_VIP_PENDING=null;BDAY_VIEW='upcoming';refreshBday();});
   document.getElementById('bdViewCal').addEventListener('click',function(){BDAY_SEARCH='';BDAY_FILTER_VIP='all';BDAY_EDIT_VIP=false;BDAY_VIP_PENDING=null;BDAY_VIEW='cal';refreshBday();});
   document.getElementById('bdViewList').addEventListener('click',function(){BDAY_VIP_PENDING=null;BDAY_EDIT_VIP=false;BDAY_VIEW='list';refreshBday();});
@@ -870,6 +881,9 @@ function bindBdayEvents(){
         }
         return;
       }
+      // Si hay un minimenu abierto, cerrarlo sin abrir el detalle de B
+      var prevCtrl=document.querySelector('.bday-inline-ctrl');
+      if(prevCtrl){prevCtrl.remove();return;}
       var b=null;
       if(!isNaN(idx)&&idx>=0&&idx<BDAYS.length){b=BDAYS[idx];}
       if(!b){

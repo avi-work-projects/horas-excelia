@@ -884,9 +884,11 @@ function renderEvContent(){
   var _isPickView=EV_VIEW==='annual'||EV_VIEW==='quad';
   var addLabel=_isPickView&&EV_ANNUAL_ADD?'&#10006; Cancelar':'+ A\u00f1adir';
   h+='<button class="ev-io-btn'+(_isPickView&&EV_ANNUAL_ADD?' ev-add-pick-mode':'')+'" id="evAdd">'+addLabel+'</button>';
-  h+='<button class="ev-io-btn" id="evExport">&#8595; Exportar</button>';
-  h+='<button class="ev-io-btn" id="evImport">&#8593; Importar</button>';
-  h+='<input type="file" id="evImportFile" accept=".json" style="display:none">';
+  if(EV_VIEW==='upcoming'||EV_VIEW==='months'){
+    h+='<button class="ev-io-btn" id="evExport">&#8595; Exportar</button>';
+    h+='<button class="ev-io-btn" id="evImport">&#8593; Importar</button>';
+    h+='<input type="file" id="evImportFile" accept=".json" style="display:none">';
+  }
   h+='</div>';
   h+='</div>';
   return h;
@@ -1377,14 +1379,17 @@ function bindEvEvents(){
       showToast('Evento eliminado','success');
     });
   });
-  document.getElementById('evExport').addEventListener('click',function(){
+  var evExportEl=document.getElementById('evExport');
+  if(evExportEl)evExportEl.addEventListener('click',function(){
     if(!EVENTS.length){showToast('No hay eventos para exportar','error');return;}
     var a=document.createElement('a');
     a.href='data:application/json,'+encodeURIComponent(JSON.stringify(EVENTS,null,2));
     a.download='eventos.json';a.click();
   });
-  document.getElementById('evImport').addEventListener('click',function(){document.getElementById('evImportFile').click();});
-  document.getElementById('evImportFile').addEventListener('change',function(e){
+  var evImportEl=document.getElementById('evImport');
+  if(evImportEl)evImportEl.addEventListener('click',function(){document.getElementById('evImportFile').click();});
+  var evImportFileEl=document.getElementById('evImportFile');
+  if(evImportFileEl)evImportFileEl.addEventListener('change',function(e){
     var f=e.target.files[0];if(!f)return;
     var r=new FileReader();
     r.onload=function(evt){
