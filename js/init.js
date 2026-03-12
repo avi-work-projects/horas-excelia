@@ -174,10 +174,10 @@
       // Drum pickers: inicializar DESPUÉS de que el panel sea visible (display:none → flex)
       var _dH=parseInt(localStorage.getItem('excelia-alarm-h')||'9',10);
       var _dM=parseInt(localStorage.getItem('excelia-alarm-m')||'20',10);
-      requestAnimationFrame(function(){requestAnimationFrame(function(){
+      setTimeout(function(){
         buildDrumPicker('drumHour',24,_dH);
         buildDrumPicker('drumMin',60,_dM);
-      });});
+      },30);
     }
   });
 
@@ -192,7 +192,9 @@
       item.textContent=String(_i).padStart(2,'0');item.dataset.val=_i;drum.appendChild(item);
     }
     var padB=document.createElement('div');padB.style.height=DRUM_ITEM_H+'px';drum.appendChild(padB);
-    drum.scrollTop=Math.max(0,initVal)*DRUM_ITEM_H;
+    var _target=Math.max(0,initVal)*DRUM_ITEM_H;
+    if(drum.scrollTo)drum.scrollTo({top:_target,behavior:'instant'});
+    else drum.scrollTop=_target;
     updateDrumSelected(drum);
     if(!drum._drumEv){
       drum._drumEv=true;
