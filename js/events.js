@@ -230,7 +230,7 @@ function renderEvCalMonth(){
         // Dim bars that fall entirely in out-of-month columns
         var hasInM=false;for(var ci=it.cs;ci<=it.ce;ci++){if(inMCols[ci])hasInM=true;}
         h+='<div class="ev-multi-bar'+sc+'" data-id="'+ev.id+'"'
-          +' style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';border:1.5px solid '+ev.color+';background:'+ev.color+'cc;color:#fff'+(hasInM?'':';opacity:.35')+'">'
+          +' style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';border:1.5px solid '+ev.color+';background:'+fakeTrans(ev.color,0.65)+';color:#fff'+(hasInM?'':';opacity:.35')+'">'
           +(showT?escHtml(ev.title):'')+'</div>';
       });
       h+='</div>';
@@ -571,7 +571,7 @@ function renderEvAnnual(){
         wMulti.forEach(function(it){
           if(it.row<0)return;
           var sc=it.starts&&it.ends?'':it.starts?' a-starts':it.ends?' a-ends':' a-mid';
-          h+='<div class="ev-annual-mbar'+sc+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';border:1px solid '+it.ev.color+';background:'+it.ev.color+'cc"></div>';
+          h+='<div class="ev-annual-mbar'+sc+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';border:1px solid '+it.ev.color+';background:'+fakeTrans(it.ev.color,0.65)+'"></div>';
         });
         h+='</div>';
       }
@@ -731,7 +731,7 @@ function renderEvQuad(){
           if(it.row<0)return;
           var sc=it.starts&&it.ends?'':it.starts?' a-starts':it.ends?' a-ends':' a-mid';
           var showQT=(it.starts||(it.cs===0));
-          h+='<div class="ev-annual-mbar'+sc+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';border:1px solid '+it.ev.color+';background:'+it.ev.color+'cc;font-size:.3rem;padding:0 3px">'+(showQT?escHtml(it.ev.title):'')+'</div>';
+          h+='<div class="ev-annual-mbar'+sc+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';border:1px solid '+it.ev.color+';background:'+fakeTrans(it.ev.color,0.65)+';font-size:.3rem;padding:0 3px">'+(showQT?escHtml(it.ev.title):'')+'</div>';
         });
         h+='</div>';
       }

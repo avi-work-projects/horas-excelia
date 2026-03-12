@@ -334,6 +334,29 @@ Los puntos verdes de notificación (`.bday-active`, `.events-active`) deben apar
 - El CSS `::after` del punto verde se aplica a `.data-btn.bday-active::after`, `.data-btn.events-active::after`, `.nav-bar-btn.bday-active::after`, `.nav-bar-btn.events-active::after`.
 - `.nav-bar-btn` tiene `position:relative` para que el `::after` absoluto funcione.
 
+## Falso translúcido — concepto OBLIGATORIO para rellenos de eventos
+
+El término **"falso translúcido"** significa: el relleno de un evento debe *parecer* semi-transparente (mezclado con el fondo negro del calendario en tema oscuro), pero debe ser **opaco** — NO usa `rgba` ni `opacity` CSS, porque eso causaría sangrado de color desde las capas inferiores (eventos, puentes, celdas).
+
+### Comportamiento correcto
+- Evento A encima de evento B encima de puente C → A tapa completamente B y C (no sangran colores)
+- A se ve "más oscuro" / "mezcladado con negro" = parece translúcido, pero actúa como pegatina opaca
+- Equivale a un "agujero al fondo negro": se mezcla con el fondo, no con lo que está debajo
+
+### Implementación: función `fakeTrans(hex, alpha)` en `core.js`
+```javascript
+// alpha ∈ [0,1] — 0=negro puro, 1=color original
+// Mezcla el color con negro (#000000) de forma opaca
+fakeTrans('#6c8cff', 0.65)  // → '#46599f' — azul oscurecido al 65%
+```
+- Los bordes del evento se mantienen con el color original vibrante (`border: 1px solid ev.color`)
+- El `background` usa `fakeTrans(ev.color, alpha)` NO `ev.color+'cc'` (nunca rgba para rellenos)
+
+### Valores de alpha por tipo de calendario
+- **1 mes** (`ev-multi-bar`): alpha = 0.65 (texto blanco legible sobre fondo oscuro)
+- **Anual** (`ev-annual-mbar`): alpha = 0.65 (sin texto significativo, barra delgada)
+- **4 meses** (`ev-annual-mbar` en quad): alpha = 0.65 (texto pequeño, fondo oscuro suficiente)
+
 ## Patrones CSS relevantes
 - `.full-overlay` — base para todos los overlays: `display:flex;flex-direction:column` (NO `overflow-y:auto`)
 - `.sy-body` — área scrollable: `flex:1;min-height:0;overflow-y:auto`
