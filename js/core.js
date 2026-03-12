@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v56 — cumpleaños: tabs 2 líneas ancho completo; nivel 3 en todas las pestañas';
+var APP_VERSION = 'v57 — cumpleaños: tipografía uniforme, filtro 3 estados VIP, btn añadir azul, long-press solo logo';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

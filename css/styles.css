@@ -357,9 +357,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bday-month-hdr{font-size:.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:10px 0 6px;border-bottom:1px solid var(--border);margin-bottom:6px}
 .bday-list-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity .12s}
 /* VIP controls bar */
-.bday-vip-ctrl-bar{flex-shrink:0;display:flex;align-items:center;gap:10px;padding:8px 16px;border-bottom:1px solid var(--border);background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
-.bday-vip-filter-lbl{display:flex;align-items:center;gap:5px;font-size:.72rem;color:var(--text-muted);cursor:pointer;user-select:none}
-.bday-vip-edit-btn{margin-left:auto;font-size:.7rem;padding:4px 10px;border-radius:12px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s}
+.bday-vip-ctrl-bar{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:7px 12px;border-bottom:1px solid var(--border);background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.bday-vip-filter-chips{display:flex;gap:4px;flex:1}
+.bday-vip-chip{flex:1;font-size:.68rem;padding:5px 4px;border-radius:12px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;display:flex;align-items:center;justify-content:center;gap:3px;line-height:1}
+.bday-vip-chip.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
+.bday-vip-chip.chip-vip.active{border-color:#fbbf24;background:rgba(251,191,36,.15);color:#fbbf24}
+.bday-vip-chip.chip-novip.active{border-color:var(--text-muted);background:var(--surface3);color:var(--text)}
+.bday-vip-edit-btn{flex-shrink:0;font-size:.7rem;padding:5px 10px;border-radius:12px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s}
 .bday-vip-edit-btn.active{border-color:#fbbf24;background:rgba(251,191,36,.12);color:#fbbf24}
 /* VIP edit mode item states */
 .bday-list-item.bday-list-vip-dim{opacity:.38}
@@ -378,6 +382,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bday-io-row{display:flex;gap:8px;margin-top:8px}
 .bday-io-btn{flex:1;font-size:.75rem;padding:9px 8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;text-align:center;transition:all .15s}
 .bday-io-btn:active{background:var(--surface3)}
+.bday-io-btn-add{background:var(--c-blue)!important;color:#fff!important;border-color:var(--c-blue)!important;font-weight:600}
+.bday-io-btn-add:active{opacity:.85}
 /* Upcoming birthdays */
 .bday-upcoming-section{display:flex;flex-direction:column;gap:4px}
 .bday-upcoming-item{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .12s}
