@@ -355,7 +355,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bday-badge:active{opacity:.7}
 .bday-badge.bday-badge-vip{box-shadow:0 0 0 1.5px #fbbf24,0 0 6px rgba(251,191,36,.5);font-weight:700}
 .bday-month-hdr{font-size:.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:10px 0 6px;border-bottom:1px solid var(--border);margin-bottom:6px}
-.bday-list-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity .12s}
+.bday-list-item{display:flex;align-items:center;gap:10px;padding:9px 0;min-height:52px;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity .12s}
 /* VIP controls bar */
 .bday-vip-ctrl-bar{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:7px 12px;border-bottom:1px solid var(--border);background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 .bday-vip-filter-chips{display:flex;gap:4px;flex:1}
@@ -368,8 +368,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bday-vip-edit-btn{flex-shrink:0;font-size:.7rem;padding:5px 10px;border-radius:12px;border:1px solid #fb923c;background:rgba(251,146,60,.1);color:#fb923c;cursor:pointer;transition:all .15s}
 .bday-vip-edit-btn.active{border-color:#fb923c;background:rgba(251,146,60,.3);color:#fff}
 /* Botón Cancelar fijo al fondo de pantalla en modo edición VIP */
-.bday-cancel-edit-btn{position:fixed;bottom:0;left:0;right:0;background:#ef4444;color:#fff;border:none;padding:16px;padding-bottom:max(16px,env(safe-area-inset-bottom));font-size:.92rem;font-weight:700;cursor:pointer;z-index:200;letter-spacing:.02em;transition:background .15s}
-.bday-cancel-edit-btn:active{background:#dc2626}
+.bday-cancel-edit-btn{position:fixed;bottom:max(20px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:transparent;color:#ef4444;border:1.5px solid #ef4444;padding:8px 28px;border-radius:20px;font-size:.82rem;font-weight:600;cursor:pointer;z-index:200;white-space:nowrap;transition:background .15s,color .15s}
+.bday-cancel-edit-btn:active{background:rgba(239,68,68,.12)}
 /* VIP edit mode item states */
 .bday-list-item.bday-list-vip-dim{opacity:.38}
 .bday-list-item.bday-list-vip-active{opacity:1}
@@ -391,7 +391,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bday-io-btn-add:active{opacity:.85}
 /* Upcoming birthdays */
 .bday-upcoming-section{display:flex;flex-direction:column;gap:4px}
-.bday-upcoming-item{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .12s}
+.bday-upcoming-item{display:flex;align-items:center;gap:12px;padding:11px 14px;min-height:68px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .12s}
 .bday-upcoming-item:active{background:var(--surface3)}
 .bday-upcoming-item.bday-today-item{border-color:var(--sent-border);background:rgba(90,224,136,.07)}
 .bday-upcoming-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
@@ -519,7 +519,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .sy-puente-day-tag.vacaciones{background:rgba(255,179,71,.18);color:var(--vacaciones)}
 .sy-puente-day-tag.weekend{background:rgba(160,160,200,.15);color:var(--text-dim)}
 /* ── VIP BIRTHDAYS ── */
-.bday-vip-img{height:1.1em;width:auto;vertical-align:middle;margin-left:6px;display:inline;object-fit:contain}
+.bday-vip-img{height:2.6em;width:auto;vertical-align:middle;margin-left:6px;display:inline;object-fit:contain}
 .bday-upcoming-item.bday-vip-item{border-color:rgba(251,191,36,.45);background:rgba(251,191,36,.06)}
 .bday-alarm-set-icon{font-size:.72rem;margin-left:4px;flex-shrink:0;filter:drop-shadow(0 0 4px #fbbf24) drop-shadow(0 0 10px rgba(251,191,36,.6));animation:bell-pulse 2s ease-in-out infinite}
 @keyframes bell-pulse{0%,100%{filter:drop-shadow(0 0 4px #fbbf24) drop-shadow(0 0 10px rgba(251,191,36,.6))}50%{filter:drop-shadow(0 0 6px #fbbf24) drop-shadow(0 0 16px rgba(251,191,36,.9))}}
@@ -580,7 +580,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 /* ── Feat 4: Nav-bar emoji alignment ── */
 .nav-bar-btn{flex-shrink:0;width:44px;height:44px;border:none;border-radius:8px;background:transparent;color:var(--text-dim);font-size:1.35rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s;-webkit-user-select:none;user-select:none;line-height:1;position:relative}
 .nav-bar-btn:hover{background:rgba(255,255,255,.08);color:var(--text)}
-.nav-bar-btn.active{background:rgba(255,255,255,.1);color:var(--accent)}
+.nav-bar-btn.active{background:rgba(255,255,255,.14);color:var(--text)}
+.nav-bar-btn.active[data-nav="bday"]{color:var(--vacaciones)!important;background:rgba(255,179,71,.13);box-shadow:0 0 0 1.5px rgba(255,179,71,.8),0 0 8px rgba(255,179,71,.3)}
+.nav-bar-btn.active[data-nav="events"]{color:var(--c-blue)!important;background:rgba(108,140,255,.13);box-shadow:0 0 0 1.5px rgba(108,140,255,.8),0 0 8px rgba(108,140,255,.3)}
+.nav-bar-btn.active[data-nav="summary"]{color:var(--c-green)!important;background:rgba(52,211,153,.13);box-shadow:0 0 0 1.5px rgba(52,211,153,.8),0 0 8px rgba(52,211,153,.3)}
+.nav-bar-btn.active[data-nav="econ"]{color:var(--c-yellow)!important;background:rgba(251,191,36,.13);box-shadow:0 0 0 1.5px rgba(251,191,36,.8),0 0 8px rgba(251,191,36,.3)}
+.nav-bar-btn.active[data-nav="alarm"]{color:var(--c-purple)!important;background:rgba(192,132,252,.13);box-shadow:0 0 0 1.5px rgba(192,132,252,.8),0 0 8px rgba(192,132,252,.3)}
 .nav-bar-btn.events-active{box-shadow:0 0 0 1.5px rgba(108,140,255,.9),0 0 7px rgba(108,140,255,.5);color:var(--c-blue)!important}
 .nav-bar-btn.bday-active{box-shadow:0 0 0 1.5px rgba(255,179,71,.9),0 0 7px rgba(255,179,71,.5);color:var(--vacaciones)!important}
 /* Birthday detail / form overlays */

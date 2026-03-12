@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v64 — altura items cumpleaños, ctrl-click fix, export/import eventos';
+var APP_VERSION = 'v65 — altura uniforme items, cancelar rediseño, nav activo, export cal';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
