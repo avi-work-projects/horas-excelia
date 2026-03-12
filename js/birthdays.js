@@ -6,7 +6,7 @@ var BDAY_STORAGE_KEY='excelia-bdays-v1';
 var BDAY_YEAR=new Date().getFullYear(), BDAY_MONTH=new Date().getMonth(), BDAY_VIEW='upcoming';
 var BDAY_EDIT=null;
 var BDAY_SEARCH='';
-var BDAY_FILTER_VIP=false;
+var BDAY_FILTER_VIP='all'; // 'all' | 'vip' | 'novip'
 var BDAY_EDIT_VIP=false;
 var _bdLpTimer=null;
 var _bdLpFired=false;
@@ -20,7 +20,7 @@ function _showBdayInlineCtrl(el,b){
   var isVip=(idx>=0&&BDAYS[idx].vip===true);
   var div=document.createElement('div');
   div.className='bday-inline-ctrl';
-  div.innerHTML='<button class="bday-ic-btn bday-ic-vip'+(isVip?' active':'')+'"><img src="./VIP.png" style="width:22px;height:auto;vertical-align:middle;margin-right:3px" alt="VIP">VIP</button>'
+  div.innerHTML='<button class="bday-ic-btn bday-ic-vip'+(isVip?' active':'')+'"><img src="./VIP.png" style="width:26px;height:auto;vertical-align:middle" alt="VIP"></button>'
     +'<button class="bday-ic-btn bday-ic-edit">&#9999;&#65039; Editar</button>'
     +'<button class="bday-ic-btn bday-ic-close">&#10006;</button>';
   el.after(div);
@@ -258,7 +258,7 @@ function renderBdayList(){
   if(!BDAYS.length)return '<div class="sy-note">No hay cumplea\u00f1os cargados. Importa un archivo JSON o configura el secreto BIRTHDAYS en GitHub.</div>';
   // Botones arriba del todo en la lista
   var h='<div class="bday-io-row" style="margin-bottom:10px">';
-  h+='<button class="bday-io-btn" id="bdAdd">+ A\u00f1adir cumplea\u00f1os</button>';
+  h+='<button class="bday-io-btn bday-io-btn-add" id="bdAdd">+ A\u00f1adir cumplea\u00f1os</button>';
   h+='<button class="bday-io-btn" id="bdExport">&#8595; Exportar</button>';
   h+='<button class="bday-io-btn" id="bdImport">&#8593; Importar JSON</button>';
   h+='<input type="file" id="bdImportFile" accept=".json" style="display:none">';
@@ -267,7 +267,8 @@ function renderBdayList(){
   var byM=[];for(var m=0;m<12;m++)byM.push([]);
   BDAYS.forEach(function(b){if(b.month>=1&&b.month<=12)byM[b.month-1].push(b);});
   byM.forEach(function(list,m){
-    var filtered=BDAY_FILTER_VIP?list.filter(function(b){return !!b.vip;}):list;
+    var filtered=BDAY_FILTER_VIP==='vip'?list.filter(function(b){return !!b.vip;}):
+                 BDAY_FILTER_VIP==='novip'?list.filter(function(b){return !b.vip;}):list;
     if(!filtered.length)return;
     filtered.sort(function(a,b){return a.day-b.day;});
     h+='<div class="sy-section bday-month-section"><div class="bday-month-hdr">'+MN[m]+'</div>';
@@ -312,10 +313,9 @@ function renderBdayContent(){
   h+='<div class="sy-header with-tabs">';
   h+='<button class="sy-back" id="bdBack">&#8592;</button>';
   if(BDAY_VIEW==='upcoming'){
-    h+='<div style="flex:1;text-align:center;font-size:.9rem;font-weight:600">Pr\u00f3ximos</div>';
-    h+='<button class="bday-add-btn" id="bdAdd">+ A\u00f1adir</button>';
+    h+='<div class="sy-year-nav"><div class="sy-year">Pr\u00f3ximos</div></div>';
   } else if(BDAY_VIEW==='list'){
-    h+='<div style="flex:1;text-align:center;font-size:.9rem;font-weight:600">Cumplea\u00f1os</div>';
+    h+='<div class="sy-year-nav"><div class="sy-year">Cumplea\u00f1os</div></div>';
   } else {
     h+='<div class="sy-year-nav"><button class="sy-nav" id="bdPrev">&#9664;</button>';
     h+='<div class="sy-year">'+MN[BDAY_MONTH]+' '+BDAY_YEAR+'</div>';
@@ -326,7 +326,11 @@ function renderBdayContent(){
   // Para 'list': filtro VIP sticky justo bajo nivel 3 (flex-shrink:0, fuera del sy-body)
   if(BDAY_VIEW==='list'){
     h+='<div class="bday-vip-ctrl-bar">';
-    h+='<label class="bday-vip-filter-lbl"><input type="checkbox" id="bdFilterVip"'+(BDAY_FILTER_VIP?' checked':'')+' style="accent-color:#fbbf24"> Filtrar <img src="./VIP.png" class="bday-vip-img" alt="VIP" style="width:36px;height:auto;vertical-align:middle;margin-left:3px"></label>';
+    h+='<div class="bday-vip-filter-chips">';
+    h+='<button class="bday-vip-chip'+(BDAY_FILTER_VIP==='all'?' active':'')+'" id="bdVipAll">Todos</button>';
+    h+='<button class="bday-vip-chip chip-vip'+(BDAY_FILTER_VIP==='vip'?' active':'')+'" id="bdVipOnly"><img src="./VIP.png" style="width:20px;height:auto;vertical-align:middle" alt="VIP"> Solo</button>';
+    h+='<button class="bday-vip-chip chip-novip'+(BDAY_FILTER_VIP==='novip'?' active':'')+'" id="bdVipNone">Sin <img src="./VIP.png" style="width:20px;height:auto;vertical-align:middle" alt="VIP"></button>';
+    h+='</div>';
     h+='<button class="bday-vip-edit-btn'+(BDAY_EDIT_VIP?' active':'')+'" id="bdEditVip">'+(BDAY_EDIT_VIP?'\u2713 Listo':'Editar VIPs')+'</button>';
     h+='</div>';
   }
@@ -740,14 +744,16 @@ function bindBdayEvents(){
   if(todayBtn)todayBtn.addEventListener('click',function(){
     var n=new Date();BDAY_YEAR=n.getFullYear();BDAY_MONTH=n.getMonth();refreshBday();
   });
-  document.getElementById('bdViewUpcoming').addEventListener('click',function(){BDAY_SEARCH='';BDAY_FILTER_VIP=false;BDAY_EDIT_VIP=false;BDAY_VIEW='upcoming';refreshBday();});
-  document.getElementById('bdViewCal').addEventListener('click',function(){BDAY_SEARCH='';BDAY_FILTER_VIP=false;BDAY_EDIT_VIP=false;BDAY_VIEW='cal';refreshBday();});
+  document.getElementById('bdViewUpcoming').addEventListener('click',function(){BDAY_SEARCH='';BDAY_FILTER_VIP='all';BDAY_EDIT_VIP=false;BDAY_VIEW='upcoming';refreshBday();});
+  document.getElementById('bdViewCal').addEventListener('click',function(){BDAY_SEARCH='';BDAY_FILTER_VIP='all';BDAY_EDIT_VIP=false;BDAY_VIEW='cal';refreshBday();});
   document.getElementById('bdViewList').addEventListener('click',function(){BDAY_VIEW='list';refreshBday();});
-  // Filter VIPs toggle
-  var filterVipEl=document.getElementById('bdFilterVip');
-  if(filterVipEl)filterVipEl.addEventListener('change',function(){
-    BDAY_FILTER_VIP=this.checked;BDAY_SEARCH='';refreshBday();
-  });
+  // Filter chips: Todos / Solo VIP / Sin VIP
+  var bdVipAllEl=document.getElementById('bdVipAll');
+  if(bdVipAllEl)bdVipAllEl.addEventListener('click',function(){BDAY_FILTER_VIP='all';BDAY_SEARCH='';refreshBday();});
+  var bdVipOnlyEl=document.getElementById('bdVipOnly');
+  if(bdVipOnlyEl)bdVipOnlyEl.addEventListener('click',function(){BDAY_FILTER_VIP='vip';BDAY_SEARCH='';refreshBday();});
+  var bdVipNoneEl=document.getElementById('bdVipNone');
+  if(bdVipNoneEl)bdVipNoneEl.addEventListener('click',function(){BDAY_FILTER_VIP='novip';BDAY_SEARCH='';refreshBday();});
   // Edit VIPs toggle
   var editVipEl=document.getElementById('bdEditVip');
   if(editVipEl)editVipEl.addEventListener('click',function(){
