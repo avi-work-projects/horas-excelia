@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v59 — económico grid 5 cols, cumpleaños chips VIP solo icono + tachado rojo';
+var APP_VERSION = 'v60 — cumpleaños: crear desde calendario, editar VIPs sin checkbox';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

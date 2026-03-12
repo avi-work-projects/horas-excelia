@@ -365,8 +365,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bday-vip-chip.chip-novip.active{border-color:var(--text-muted);background:var(--surface3);color:var(--text)}
 .vip-no-icon{position:relative;display:inline-flex;align-items:center;justify-content:center}
 .vip-no-icon::after{content:'';position:absolute;inset:-3px;background:linear-gradient(to top right,transparent 40%,#ef4444 42%,#ef4444 58%,transparent 60%);pointer-events:none}
-.bday-vip-edit-btn{flex-shrink:0;font-size:.7rem;padding:5px 10px;border-radius:12px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s}
-.bday-vip-edit-btn.active{border-color:#fbbf24;background:rgba(251,191,36,.12);color:#fbbf24}
+.bday-vip-edit-btn{flex-shrink:0;font-size:.7rem;padding:5px 10px;border-radius:12px;border:1px solid #fb923c;background:rgba(251,146,60,.1);color:#fb923c;cursor:pointer;transition:all .15s}
+.bday-vip-edit-btn.active{border-color:#fb923c;background:rgba(251,146,60,.3);color:#fff}
 /* VIP edit mode item states */
 .bday-list-item.bday-list-vip-dim{opacity:.38}
 .bday-list-item.bday-list-vip-active{opacity:1}
