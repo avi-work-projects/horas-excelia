@@ -174,10 +174,8 @@
       // Drum pickers: inicializar DESPUÉS de que el panel sea visible (display:none → flex)
       var _dH=parseInt(localStorage.getItem('excelia-alarm-h')||'9',10);
       var _dM=parseInt(localStorage.getItem('excelia-alarm-m')||'20',10);
-      setTimeout(function(){
-        buildDrumPicker('drumHour',24,_dH);
-        buildDrumPicker('drumMin',60,_dM);
-      },30);
+      buildDrumPicker('drumHour',24,_dH);
+      buildDrumPicker('drumMin',60,_dM);
     }
   });
 
@@ -193,9 +191,13 @@
     }
     var padB=document.createElement('div');padB.style.height=DRUM_ITEM_H+'px';drum.appendChild(padB);
     var _target=Math.max(0,initVal)*DRUM_ITEM_H;
-    if(drum.scrollTo)drum.scrollTo({top:_target,behavior:'instant'});
-    else drum.scrollTop=_target;
-    updateDrumSelected(drum);
+    // Retrasar el scroll: scroll-snap hace reflow tras innerHTML y puede
+    // resetear la posición si se establece de forma sincrónica
+    setTimeout(function(){
+      if(drum.scrollTo)drum.scrollTo({top:_target,behavior:'instant'});
+      else drum.scrollTop=_target;
+      setTimeout(function(){updateDrumSelected(drum);},10);
+    },50);
     if(!drum._drumEv){
       drum._drumEv=true;
       drum.addEventListener('scroll',function(){updateDrumSelected(drum);},{passive:true});
