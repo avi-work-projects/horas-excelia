@@ -180,19 +180,21 @@
   });
 
   /* ── Drum picker: selector giratorio de hora/minuto ── */
-  var DRUM_ITEM_H=44;
+  var DRUM_ITEM_H=44,DRUM_CYCLES=3,_drumWrapTimer=null;
   function buildDrumPicker(id,count,initVal){
     var drum=document.getElementById(id);if(!drum)return;
+    drum._count=count;
     drum.innerHTML='';
     var padT=document.createElement('div');padT.style.height=DRUM_ITEM_H+'px';drum.appendChild(padT);
-    for(var _i=0;_i<count;_i++){
-      var item=document.createElement('div');item.className='drum-picker-item';
-      item.textContent=String(_i).padStart(2,'0');item.dataset.val=_i;drum.appendChild(item);
+    for(var c=0;c<DRUM_CYCLES;c++){
+      for(var _i=0;_i<count;_i++){
+        var item=document.createElement('div');item.className='drum-picker-item';
+        item.textContent=String(_i).padStart(2,'0');item.dataset.val=_i;drum.appendChild(item);
+      }
     }
     var padB=document.createElement('div');padB.style.height=DRUM_ITEM_H+'px';drum.appendChild(padB);
-    var _target=Math.max(0,initVal)*DRUM_ITEM_H;
-    // Retrasar el scroll: scroll-snap hace reflow tras innerHTML y puede
-    // resetear la posición si se establece de forma sincrónica
+    // Arrancar en el ciclo central para poder rotar en ambas direcciones
+    var _target=(Math.floor(DRUM_CYCLES/2)*count+Math.max(0,initVal))*DRUM_ITEM_H;
     setTimeout(function(){
       if(drum.scrollTo)drum.scrollTo({top:_target,behavior:'instant'});
       else drum.scrollTop=_target;
@@ -200,18 +202,53 @@
     },50);
     if(!drum._drumEv){
       drum._drumEv=true;
-      drum.addEventListener('scroll',function(){updateDrumSelected(drum);},{passive:true});
+      drum.addEventListener('scroll',function(){
+        updateDrumSelected(drum);
+        // Al rotar minutos: detectar wrap de ciclo y avanzar/retroceder hora
+        if(id==='drumMin'){clearTimeout(_drumWrapTimer);_drumWrapTimer=setTimeout(checkDrumMinuteWrap,200);}
+      },{passive:true});
     }
   }
   function updateDrumSelected(drum){
-    var val=Math.round(drum.scrollTop/DRUM_ITEM_H);
-    drum.querySelectorAll('.drum-picker-item[data-val]').forEach(function(it){
-      it.classList.toggle('drum-selected',+it.dataset.val===val);
-    });
+    // Resaltar por posición absoluta (no por data-val, ya que hay 3 ciclos con el mismo valor)
+    var total=Math.max(0,Math.round(drum.scrollTop/DRUM_ITEM_H));
+    var items=drum.querySelectorAll('.drum-picker-item');
+    items.forEach(function(it,idx){it.classList.toggle('drum-selected',idx===total);});
   }
   function getDrumValue(id){
     var drum=document.getElementById(id);if(!drum)return 0;
-    return Math.max(0,Math.round(drum.scrollTop/DRUM_ITEM_H));
+    var count=drum._count||60;
+    return Math.max(0,Math.round(drum.scrollTop/DRUM_ITEM_H))%count;
+  }
+  /* Detecta si los minutos salieron del ciclo central y ajusta la hora ±1 */
+  function checkDrumMinuteWrap(){
+    _drumWrapTimer=null;
+    var minDrum=document.getElementById('drumMin');
+    var hourDrum=document.getElementById('drumHour');
+    if(!minDrum||!hourDrum)return;
+    var minCount=minDrum._count||60;
+    var midMin=Math.floor(DRUM_CYCLES/2)*minCount; // índice del inicio del ciclo central
+    var total=Math.round(minDrum.scrollTop/DRUM_ITEM_H);
+    if(total>=midMin&&total<midMin+minCount)return; // ya en ciclo central, nada que hacer
+    // Cuántos ciclos completos fuera del centro (neg=atrás, pos=adelante)
+    var delta=Math.floor((total-midMin)/minCount);
+    // Ajustar hora
+    var hourCount=hourDrum._count||24;
+    var curHourTotal=Math.round(hourDrum.scrollTop/DRUM_ITEM_H);
+    var newHourTotal=Math.max(0,Math.min(DRUM_CYCLES*hourCount-1,curHourTotal+delta));
+    if(newHourTotal!==curHourTotal){
+      if(hourDrum.scrollTo)hourDrum.scrollTo({top:newHourTotal*DRUM_ITEM_H,behavior:'smooth'});
+      else hourDrum.scrollTop=newHourTotal*DRUM_ITEM_H;
+      updateDrumSelected(hourDrum);
+    }
+    // Re-centrar minutos en ciclo central (mismo valor, sin salto visual)
+    var minVal=((total%minCount)+minCount)%minCount;
+    var newMinTotal=midMin+minVal;
+    setTimeout(function(){
+      if(minDrum.scrollTo)minDrum.scrollTo({top:newMinTotal*DRUM_ITEM_H,behavior:'instant'});
+      else minDrum.scrollTop=newMinTotal*DRUM_ITEM_H;
+      updateDrumSelected(minDrum);
+    },50);
   }
 
   /* ── Alarma: botones días de semana (generados dinámicamente, ordenados desde hoy) ── */
@@ -302,8 +339,8 @@
     function proceed(){
       document.getElementById('alarmPanel').classList.remove('open');
       if(useMacro){
-        var url=macroBase+'/generar_alarma1?alarmH='+h+'&alarmM='+m+'&alarmMsg='+encodeURIComponent(msg);
-        if(selDays.length)url+='&alarmDays='+selDays.join(',');
+        // alarmDays siempre presente: valor vacío = sin días (alarma puntual), evita que MacroDroid no sustituya {v=alarmDays}
+        var url=macroBase+'/generar_alarma1?alarmH='+h+'&alarmM='+m+'&alarmMsg='+encodeURIComponent(msg)+'&alarmDays='+(selDays.length?selDays.join(','):'');
         if(typeof addAlarm==='function'){
           addAlarm({type:'other',label:msg,hour:h,minute:m,days:selDays.length?selDays.slice():null,targetDate:null});
         }

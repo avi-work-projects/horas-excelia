@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v74 — sync alarmas VIP bday\u2194eventos, campana pr\u00f3ximos bday, descripci\u00f3n+editar en panel';
+var APP_VERSION = 'v75 — drum c\u00edclico 3 ciclos + auto-avance hora, fix d\u00edas alarma';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
