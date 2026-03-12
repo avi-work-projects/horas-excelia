@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v77 \u2014 econ: Base\u221215%IRPF, sim opt-btns, gastos agrupados, descripci\u00f3n en pr\u00f3ximos';
+var APP_VERSION = 'v78 \u2014 econ: Ingresos extras, multiline btns, alarmas VIP, Limpiar alarmas deshabilitado';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

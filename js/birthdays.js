@@ -427,15 +427,17 @@ function renderBdayAlarmPanel(b){
   h+='</div>';
   // Alarm fields
   h+='<div id="bdAlarmFields">';
+  var _bdT2=typeof nextAlarmTime==='function'?nextAlarmTime(bdDate,9,2):{h:9,m:2};
+  var _bdT1=typeof nextAlarmTime==='function'?nextAlarmTime(prevDate,23,57):{h:23,m:57};
   if(cnt===2){
     h+='<div class="bd-alarm-row">';
     h+='<span class="bd-alarm-row-lbl">\uD83C\uDF19 V\u00edspera<br><span style="font-size:.65rem;opacity:.7">'+fmtDate(prevDate)+'</span></span>';
-    h+='<div class="bd-alarm-time"><input id="bdAlarmH1" type="number" min="0" max="23" value="23"><span class="bd-alarm-time-sep">:</span><input id="bdAlarmM1" type="number" min="0" max="59" value="57"></div>';
+    h+='<div class="bd-alarm-time"><input id="bdAlarmH1" type="number" min="0" max="23" value="'+_bdT1.h+'"><span class="bd-alarm-time-sep">:</span><input id="bdAlarmM1" type="number" min="0" max="59" value="'+String(_bdT1.m).padStart(2,'0')+'"></div>';
     h+='</div>';
   }
   h+='<div class="bd-alarm-row">';
   h+='<span class="bd-alarm-row-lbl">\uD83C\uDF89 Cumplea\u00f1os<br><span style="font-size:.65rem;opacity:.7">'+fmtDate(bdDate)+'</span></span>';
-  h+='<div class="bd-alarm-time"><input id="bdAlarmH2" type="number" min="0" max="23" value="9"><span class="bd-alarm-time-sep">:</span><input id="bdAlarmM2" type="number" min="0" max="59" value="02"></div>';
+  h+='<div class="bd-alarm-time"><input id="bdAlarmH2" type="number" min="0" max="23" value="'+_bdT2.h+'"><span class="bd-alarm-time-sep">:</span><input id="bdAlarmM2" type="number" min="0" max="59" value="'+String(_bdT2.m).padStart(2,'0')+'"></div>';
   h+='</div>';
   h+='</div>';
   // Action buttons

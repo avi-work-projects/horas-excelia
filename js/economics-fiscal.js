@@ -10,6 +10,41 @@ var DEFAULT_BRACKETS=[
 ];
 var FISCAL={irpfMode:'fixed',irpfPct:15,brackets:null};
 
+/* ── Ingresos regulares ───────────────────────────────────────── */
+var INGRESOS_SK='excelia-ingresos-v1';
+var INGRESOS_ITEMS=[];
+function loadIngresos(){
+  try{var r=localStorage.getItem(INGRESOS_SK);if(r){var d=JSON.parse(r);INGRESOS_ITEMS=d.items||[];}else{INGRESOS_ITEMS=[];}}catch(e){INGRESOS_ITEMS=[];}
+}
+function saveIngresos(){
+  try{localStorage.setItem(INGRESOS_SK,JSON.stringify({items:INGRESOS_ITEMS}));}catch(e){}
+}
+function findIngreso(id){
+  for(var i=0;i<INGRESOS_ITEMS.length;i++){if(INGRESOS_ITEMS[i].id===id)return INGRESOS_ITEMS[i];}
+  return null;
+}
+function ingresoAnual(id){
+  var g=findIngreso(id);
+  if(!g||!g.amount)return 0;
+  return g.period==='monthly'?Math.round(g.amount*12*100)/100:Math.round(g.amount*100)/100;
+}
+function renderIngresosList(){
+  var h='';
+  INGRESOS_ITEMS.forEach(function(g,i){
+    h+='<div class="fiscal-gasto-item" data-ii="'+i+'">';
+    h+='<input class="fiscal-gasto-lbl-input" data-ii="'+i+'" data-ifield="label" value="'+escHtml(g.label)+'" placeholder="Nombre...">';
+    h+='<input class="fiscal-gasto-amt" data-ii="'+i+'" data-ifield="amount" type="number" min="0" step="1" value="'+(g.amount||0)+'">';
+    h+='<div class="fiscal-gasto-period">';
+    h+='<button class="fiscal-period-btn'+(g.period==='monthly'?' active':'')+'" data-ii="'+i+'" data-ifield="period" data-val="monthly">/mes</button>';
+    h+='<button class="fiscal-period-btn'+(g.period==='annual'?' active':'')+'" data-ii="'+i+'" data-ifield="period" data-val="annual">/a\u00f1o</button>';
+    h+='</div>';
+    h+='<button class="fiscal-gasto-del fiscal-ingreso-del" data-ii="'+i+'">&#10005;</button>';
+    h+='</div>';
+  });
+  if(!INGRESOS_ITEMS.length)h+='<div style="font-size:.75rem;color:var(--text-dim);padding:6px 0">Sin ingresos regulares configurados.</div>';
+  return h;
+}
+
 /* ── Gastos regulares ─────────────────────────────────────────── */
 var GASTOS_SK='excelia-gastos-v1';
 var GASTOS_DIFICIL_PCT=5; // % gastos difícil justificación
@@ -112,6 +147,16 @@ function renderFiscalContent(){
   h+='<input class="econ-gastos-dificil-input" id="gastosDificilInput" type="number" min="0" max="15" step="0.5" value="'+GASTOS_DIFICIL_PCT+'">';
   h+='<span style="font-size:.82rem;color:var(--text-muted)">%</span>';
   h+='</div></div>';
+
+  /* § Ingresos regulares */
+  h+='<div class="fiscal-section">';
+  h+='<div class="fiscal-section-title">Ingresos Regulares (estimados)</div>';
+  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Ingresos recurrentes adicionales a tu actividad principal (alquileres, dividendos, etc.). Se a\u00f1aden al flujo tras las tasas semiobligatorias.</div>';
+  h+='<div id="fiscalIngresosList">';
+  h+=renderIngresosList();
+  h+='</div>';
+  h+='<button class="fiscal-add-btn" id="fiscalAddIngreso">+ A\u00f1adir ingreso</button>';
+  h+='</div>';
 
   /* § Gastos regulares */
   h+='<div class="fiscal-section">';
@@ -246,6 +291,41 @@ function bindFiscalEvents(){
     document.getElementById('fiscalGastosList').innerHTML=renderGastosList();
   });
 
+  // Ingresos: event delegation
+  var ingresosList=document.getElementById('fiscalIngresosList');
+  if(ingresosList&&!ingresosList._del){
+    ingresosList._del=true;
+    ingresosList.addEventListener('click',function(e){
+      var btn=e.target.closest('.fiscal-period-btn[data-ifield="period"]');
+      if(btn){
+        var ii=parseInt(btn.dataset.ii,10);
+        INGRESOS_ITEMS[ii].period=btn.dataset.val;
+        btn.closest('.fiscal-gasto-period').querySelectorAll('.fiscal-period-btn').forEach(function(b){b.classList.toggle('active',b.dataset.val===btn.dataset.val);});
+        return;
+      }
+      var del=e.target.closest('.fiscal-ingreso-del');
+      if(del){
+        var ii=parseInt(del.dataset.ii,10);
+        INGRESOS_ITEMS.splice(ii,1);
+        document.getElementById('fiscalIngresosList').innerHTML=renderIngresosList();
+      }
+    });
+    ingresosList.addEventListener('change',function(e){
+      var el=e.target;
+      var ii=parseInt(el.dataset.ii,10);
+      if(isNaN(ii))return;
+      var field=el.dataset.ifield;
+      if(field==='amount'){var v=parseFloat(el.value);INGRESOS_ITEMS[ii].amount=isNaN(v)?0:v;}
+      else if(field==='label'){INGRESOS_ITEMS[ii].label=el.value||'Ingreso';}
+    });
+  }
+
+  // Añadir ingreso
+  document.getElementById('fiscalAddIngreso').addEventListener('click',function(){
+    INGRESOS_ITEMS.push({id:'ingreso_'+Date.now(),label:'Nuevo ingreso',amount:0,period:'monthly'});
+    document.getElementById('fiscalIngresosList').innerHTML=renderIngresosList();
+  });
+
   // Tramos: restaurar
   document.getElementById('fiscalRestore').addEventListener('click',function(){
     FISCAL.brackets=null;
@@ -301,9 +381,10 @@ function bindFiscalEvents(){
     // Gastos difícil
     var gdV=parseFloat(document.getElementById('gastosDificilInput').value);
     if(!isNaN(gdV)&&gdV>=0&&gdV<=15)GASTOS_DIFICIL_PCT=gdV;
-    // Guardar ambos
+    // Guardar todos
     saveFiscal();
     saveGastos();
+    saveIngresos();
     showToast('Configuraci\u00f3n guardada','success');
     closeFiscal();
     var ec=document.getElementById('econContent');

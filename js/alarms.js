@@ -28,6 +28,18 @@ function isAlarmPast(alarm){
   return d<today;
 }
 
+// Devuelve {h, m} ajustado para evitar conflicto con alarmas existentes en la misma fecha+hora
+function nextAlarmTime(targetDate,defaultH,defaultM){
+  if(!targetDate)return{h:defaultH,m:defaultM};
+  var fmtDate=targetDate.getFullYear()+'-'+String(targetDate.getMonth()+1).padStart(2,'0')+'-'+String(targetDate.getDate()).padStart(2,'0');
+  var h=defaultH,m=defaultM,guard=0;
+  while(ALARMS.some(function(a){return a.targetDate===fmtDate&&a.hour===h&&a.minute===m;})&&guard<60){
+    m++;guard++;
+    if(m>=60){m=0;h=Math.min(23,h+1);}
+  }
+  return{h:h,m:m};
+}
+
 // ── Abrir/cerrar overlay ────────────────────────────────────
 function openAlarms(){
   var ov=document.getElementById('alarmsOverlay');

@@ -45,7 +45,7 @@ function renderEconSim(){
   /* Definición de "Neto" */
   h+='<div class="sim-field-group" style="margin-top:12px">';
   h+='<div class="sim-field-label">El neto objetivo es&hellip;</div>';
-  h+='<div class="econ-opt-row" id="simNetMode">';
+  h+='<div class="econ-opt-row multiline" id="simNetMode">';
   h+='<button class="econ-opt-btn'+(SIM_NET_MODE==='irpf15'?' active':'')+'" data-val="irpf15" data-opt="simNetMode">Base \u2212 15% IRPF</button>';
   h+='<button class="econ-opt-btn'+(SIM_NET_MODE==='ccss'?' active':'')+'" data-val="ccss" data-opt="simNetMode">Base \u2212 15% IRPF \u2212 CCSS</button>';
   h+='<button class="econ-opt-btn'+(SIM_NET_MODE==='decl'?' active':'')+'" data-val="decl" data-opt="simNetMode">Neto tras Dec. Renta</button>';
