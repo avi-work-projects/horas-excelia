@@ -481,7 +481,10 @@
     var data={version:2,days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
       exclFest:EXCL_FEST,exclVac:EXCL_VAC,vacEntitlement:VAC_ENTITLEMENT,
       birthdays:BDAYS,events:EVENTS,
-      alarms:typeof ALARMS!=='undefined'?ALARMS:[]};
+      alarms:typeof ALARMS!=='undefined'?ALARMS:[],
+      fiscal:typeof FISCAL!=='undefined'?FISCAL:null,
+      gastos:typeof GASTOS_ITEMS!=='undefined'?GASTOS_ITEMS:null,
+      gastosDificilPct:typeof GASTOS_DIFICIL_PCT!=='undefined'?GASTOS_DIFICIL_PCT:5};
     var a=document.createElement('a');
     a.href='data:application/json,'+encodeURIComponent(JSON.stringify(data,null,2));
     a.download='horas-excelia-backup.json';
@@ -507,6 +510,17 @@
         if(d.birthdays&&Array.isArray(d.birthdays)){BDAYS=d.birthdays;localStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));}
         if(d.events&&Array.isArray(d.events)){EVENTS=d.events;saveEvents();}
         if(d.alarms&&Array.isArray(d.alarms)&&typeof saveAlarms==='function'){ALARMS=d.alarms;saveAlarms();}
+        if(d.fiscal&&typeof FISCAL!=='undefined'&&typeof saveFiscal==='function'){
+          FISCAL.irpfMode=d.fiscal.irpfMode||'fixed';
+          FISCAL.irpfPct=d.fiscal.irpfPct||15;
+          FISCAL.brackets=d.fiscal.brackets||null;
+          saveFiscal();
+        }
+        if(d.gastos&&Array.isArray(d.gastos)&&typeof GASTOS_ITEMS!=='undefined'&&typeof saveGastos==='function'){
+          GASTOS_ITEMS=d.gastos;
+          if(typeof d.gastosDificilPct!=='undefined')GASTOS_DIFICIL_PCT=d.gastosDificilPct;
+          saveGastos();
+        }
         save();render();
         updateBdayBtn();updateEventsBtn();
         showToast('Backup completo importado','success');
