@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v75 — drum c\u00edclico 3 ciclos + auto-avance hora, fix d\u00edas alarma';
+var APP_VERSION = 'v76 — resumen econ\u00f3mico: 7 tarjetas, detalle anual, tabs renombrados, sim redise\u00f1ado';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
