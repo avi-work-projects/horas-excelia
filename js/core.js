@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v61 — fakeTrans, barras eventos opacas, anual/4m barras 55%, correcciones visual';
+var APP_VERSION = 'v62 — editar VIPs: toggle DOM directo sin scroll, botón cambia a Listo';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
