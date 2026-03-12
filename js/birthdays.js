@@ -344,7 +344,7 @@ function renderBdayContent(){
     h+='<button class="bday-vip-edit-btn'+(BDAY_EDIT_VIP?' active':'')+'" id="bdEditVip">'+(BDAY_EDIT_VIP?'\u2713 Listo':'Editar VIPs')+'</button>';
     h+='</div>';
   }
-  h+='<div class="sy-body"'+(BDAY_EDIT_VIP?' style="padding-bottom:72px"':'')+'>';
+  h+='<div class="sy-body"'+(BDAY_EDIT_VIP?' style="padding-bottom:56px"':'')+'>';
   if(BDAY_VIEW==='upcoming'){
     h+=renderBdayUpcoming();
   } else if(BDAY_VIEW==='cal'){
@@ -354,8 +354,7 @@ function renderBdayContent(){
     h+=renderBdayList();
   }
   // Lista: botones en la parte de arriba del renderBdayList(); resto de vistas: botones al fondo
-  if(BDAY_VIEW!=='list'){
-    // En calendario: no hay botón Añadir (se crea pulsando el día)
+  if(BDAY_VIEW==='upcoming'){
     h+='<div class="bday-io-row">';
     h+='<button class="bday-io-btn" id="bdExport">&#8595; Exportar</button>';
     h+='<button class="bday-io-btn" id="bdImport">&#8593; Importar JSON</button>';
