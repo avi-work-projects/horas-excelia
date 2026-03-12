@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v66 — cancelar con fondo tema, aros solo ventana activa, home activo';
+var APP_VERSION = 'v67 — colores aros distintos, alineación texto lista cumpleaños';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

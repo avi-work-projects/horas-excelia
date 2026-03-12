@@ -356,7 +356,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bday-badge:active{opacity:.7}
 .bday-badge.bday-badge-vip{box-shadow:0 0 0 1.5px #fbbf24,0 0 6px rgba(251,191,36,.5);font-weight:700}
 .bday-month-hdr{font-size:.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:10px 0 6px;border-bottom:1px solid var(--border);margin-bottom:6px}
-.bday-list-item{display:flex;align-items:center;gap:10px;padding:9px 0;min-height:52px;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity .12s}
+.bday-list-item{display:flex;align-items:center;gap:10px;padding:7px 0 11px;min-height:52px;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity .12s}
 /* VIP controls bar */
 .bday-vip-ctrl-bar{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:7px 12px;border-bottom:1px solid var(--border);background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 .bday-vip-filter-chips{display:flex;gap:4px;flex:1}
@@ -584,8 +584,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .nav-bar-btn.active{background:rgba(255,255,255,.14);color:var(--text)}
 .nav-bar-btn.active[data-nav="bday"]{color:var(--vacaciones)!important;background:rgba(255,179,71,.13);box-shadow:0 0 0 1.5px rgba(255,179,71,.8),0 0 8px rgba(255,179,71,.3)}
 .nav-bar-btn.active[data-nav="events"]{color:var(--c-blue)!important;background:rgba(108,140,255,.13);box-shadow:0 0 0 1.5px rgba(108,140,255,.8),0 0 8px rgba(108,140,255,.3)}
-.nav-bar-btn.active[data-nav="summary"]{color:var(--c-green)!important;background:rgba(52,211,153,.13);box-shadow:0 0 0 1.5px rgba(52,211,153,.8),0 0 8px rgba(52,211,153,.3)}
-.nav-bar-btn.active[data-nav="econ"]{color:var(--c-yellow)!important;background:rgba(251,191,36,.13);box-shadow:0 0 0 1.5px rgba(251,191,36,.8),0 0 8px rgba(251,191,36,.3)}
+.nav-bar-btn.active[data-nav="summary"]{color:#22d3ee!important;background:rgba(34,211,238,.13);box-shadow:0 0 0 1.5px rgba(34,211,238,.8),0 0 8px rgba(34,211,238,.3)}
+.nav-bar-btn.active[data-nav="econ"]{color:var(--c-green)!important;background:rgba(52,211,153,.13);box-shadow:0 0 0 1.5px rgba(52,211,153,.8),0 0 8px rgba(52,211,153,.3)}
 .nav-bar-btn.active[data-nav="alarm"]{color:var(--c-purple)!important;background:rgba(192,132,252,.13);box-shadow:0 0 0 1.5px rgba(192,132,252,.8),0 0 8px rgba(192,132,252,.3)}
 .nav-bar-btn.events-active{color:var(--c-blue)!important}
 .nav-bar-btn.bday-active{color:var(--vacaciones)!important}
