@@ -20,7 +20,7 @@ function _showBdayInlineCtrl(el,b){
   var isVip=(idx>=0&&BDAYS[idx].vip===true);
   var div=document.createElement('div');
   div.className='bday-inline-ctrl';
-  div.innerHTML='<button class="bday-ic-btn bday-ic-vip'+(isVip?' active':'')+'">&#11088; VIP</button>'
+  div.innerHTML='<button class="bday-ic-btn bday-ic-vip'+(isVip?' active':'')+'"><img src="./VIP.png" style="width:22px;height:auto;vertical-align:middle;margin-right:3px" alt="VIP">VIP</button>'
     +'<button class="bday-ic-btn bday-ic-edit">&#9999;&#65039; Editar</button>'
     +'<button class="bday-ic-btn bday-ic-close">&#10006;</button>';
   el.after(div);
@@ -305,8 +305,8 @@ function renderBdayContent(){
   // TABS en nivel 2 (justo bajo el nav bar)
   h+='<div class="bday-hdr-sub">';
   h+='<button class="bday-view-toggle'+(BDAY_VIEW==='upcoming'?' active':'')+'" id="bdViewUpcoming">Pr\u00f3ximos</button>';
+  h+='<button class="bday-view-toggle'+(BDAY_VIEW==='list'?' active':'')+'" id="bdViewList">Todos</button>';
   h+='<button class="bday-view-toggle'+(BDAY_VIEW==='cal'?' active':'')+'" id="bdViewCal">Calendario</button>';
-  h+='<button class="bday-view-toggle'+(BDAY_VIEW==='list'?' active':'')+'" id="bdViewList">Por meses</button>';
   h+='</div>';
   // Nivel 3: solo para 'upcoming' y 'cal' — 'list' no lo necesita
   if(BDAY_VIEW!=='list'){

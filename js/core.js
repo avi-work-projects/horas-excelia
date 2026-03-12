@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v54 — tabs eventos redondeados con separación; nav-bar home más espaciada';
+var APP_VERSION = 'v55 — cumpleaños: tab Todos 2ª posición; long-press VIP.png en lugar de estrella';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
