@@ -304,26 +304,26 @@ function renderBdayContent(){
   var h=renderNavBar('bday');
   // TABS en nivel 2 (justo bajo el nav bar)
   h+='<div class="bday-hdr-sub">';
-  h+='<button class="bday-view-toggle'+(BDAY_VIEW==='upcoming'?' active':'')+'" id="bdViewUpcoming">Pr\u00f3ximos</button>';
-  h+='<button class="bday-view-toggle'+(BDAY_VIEW==='list'?' active':'')+'" id="bdViewList">Todos</button>';
-  h+='<button class="bday-view-toggle'+(BDAY_VIEW==='cal'?' active':'')+'" id="bdViewCal">Calendario</button>';
+  h+='<button class="bday-view-toggle'+(BDAY_VIEW==='upcoming'?' active':'')+'" id="bdViewUpcoming">Pr\u00f3ximos<br>Cumplea\u00f1os</button>';
+  h+='<button class="bday-view-toggle'+(BDAY_VIEW==='list'?' active':'')+'" id="bdViewList">Lista<br>Cumplea\u00f1os</button>';
+  h+='<button class="bday-view-toggle'+(BDAY_VIEW==='cal'?' active':'')+'" id="bdViewCal">Calendario<br>Cumplea\u00f1os</button>';
   h+='</div>';
-  // Nivel 3: solo para 'upcoming' y 'cal' — 'list' no lo necesita
-  if(BDAY_VIEW!=='list'){
-    h+='<div class="sy-header with-tabs">';
-    h+='<button class="sy-back" id="bdBack">&#8592;</button>';
-    if(!isUpcoming){
-      h+='<div class="sy-year-nav"><button class="sy-nav" id="bdPrev">&#9664;</button>';
-      h+='<div class="sy-year">'+MN[BDAY_MONTH]+' '+BDAY_YEAR+'</div>';
-      h+='<button class="sy-nav" id="bdNext">&#9654;</button></div>';
-      h+='<button class="today-btn" id="bdToday" style="font-size:.7rem;padding:6px 12px">Hoy</button>';
-    } else {
-      h+='<div style="flex:1;text-align:center;font-size:.9rem;font-weight:600">Pr\u00f3ximos cumplea\u00f1os</div>';
-      h+='<button class="bday-add-btn" id="bdAdd">+ A\u00f1adir</button>';
-    }
-    h+='</div>';
+  // Nivel 3: para TODAS las vistas
+  h+='<div class="sy-header with-tabs">';
+  h+='<button class="sy-back" id="bdBack">&#8592;</button>';
+  if(BDAY_VIEW==='upcoming'){
+    h+='<div style="flex:1;text-align:center;font-size:.9rem;font-weight:600">Pr\u00f3ximos</div>';
+    h+='<button class="bday-add-btn" id="bdAdd">+ A\u00f1adir</button>';
+  } else if(BDAY_VIEW==='list'){
+    h+='<div style="flex:1;text-align:center;font-size:.9rem;font-weight:600">Cumplea\u00f1os</div>';
+  } else {
+    h+='<div class="sy-year-nav"><button class="sy-nav" id="bdPrev">&#9664;</button>';
+    h+='<div class="sy-year">'+MN[BDAY_MONTH]+' '+BDAY_YEAR+'</div>';
+    h+='<button class="sy-nav" id="bdNext">&#9654;</button></div>';
+    h+='<button class="today-btn" id="bdToday" style="font-size:.7rem;padding:6px 12px">Hoy</button>';
   }
-  // Para 'list': filtro VIP sticky justo bajo nivel 2 (flex-shrink:0, fuera del sy-body)
+  h+='</div>';
+  // Para 'list': filtro VIP sticky justo bajo nivel 3 (flex-shrink:0, fuera del sy-body)
   if(BDAY_VIEW==='list'){
     h+='<div class="bday-vip-ctrl-bar">';
     h+='<label class="bday-vip-filter-lbl"><input type="checkbox" id="bdFilterVip"'+(BDAY_FILTER_VIP?' checked':'')+' style="accent-color:#fbbf24"> Filtrar <img src="./VIP.png" class="bday-vip-img" alt="VIP" style="width:36px;height:auto;vertical-align:middle;margin-left:3px"></label>';

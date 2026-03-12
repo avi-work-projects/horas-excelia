@@ -339,8 +339,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 
 /* ── BIRTHDAYS ── */
 .data-btn.bday-active{color:var(--vacaciones)!important;box-shadow:0 0 0 1.5px rgba(255,179,71,.9),0 0 7px rgba(255,179,71,.5);border-radius:8px}
-.bday-hdr-sub{display:flex;align-items:center;gap:6px;padding:10px 20px;box-shadow:0 1px 0 var(--border);overflow-x:auto}
-.bday-view-toggle{font-size:.72rem;padding:5px 14px;border-radius:16px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;white-space:nowrap;flex-shrink:0}
+.bday-hdr-sub{display:flex;align-items:stretch;padding:5px 6px;gap:5px;box-shadow:0 1px 0 var(--border);overflow-x:hidden}
+.bday-view-toggle{flex:1;font-size:.62rem;padding:6px 3px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;text-align:center;line-height:1.3}
 .bday-view-toggle.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
 .bday-week-hdr{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:3px}
 .bday-week-hdr div{text-align:center;font-size:.62rem;color:var(--text-dim);text-transform:uppercase;padding:6px 0;font-weight:600}
