@@ -601,6 +601,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-upcoming-info{flex:1;min-width:0}
 .ev-upcoming-title{font-size:.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ev-upcoming-meta{font-size:.7rem;color:var(--text-muted);margin-top:2px}
+.ev-upcoming-note{font-size:.67rem;color:var(--text-dim);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-style:italic;opacity:.75}
 .ev-upcoming-lbl{font-size:.7rem;font-weight:600;color:var(--text-dim);flex-shrink:0;text-align:right}
 .ev-upcoming-lbl.near{color:var(--vacaciones)}
 .ev-upcoming-lbl.today-lbl{color:var(--sent-text)}

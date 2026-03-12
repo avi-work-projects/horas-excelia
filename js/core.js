@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v76 — resumen econ\u00f3mico: 7 tarjetas, detalle anual, tabs renombrados, sim redise\u00f1ado';
+var APP_VERSION = 'v77 \u2014 econ: Base\u221215%IRPF, sim opt-btns, gastos agrupados, descripci\u00f3n en pr\u00f3ximos';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

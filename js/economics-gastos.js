@@ -53,32 +53,64 @@ function renderEconGastos(){
   var declDiff=Math.round((decl.totalTax-e.totIrpf)*100)/100;
 
   if(declDiff>0){
-    var gdLabel='IRPF Dec. Renta <span style="font-size:.68rem;color:var(--text-dim)">(gastos dif\u00edcil just. '+gdPct+'% → '+decl.effectivePct.toFixed(1)+'% efectivo)</span>';
+    var gdLabel='IRPF Dec. Renta <span style="font-size:.68rem;color:var(--text-dim)">(gastos dif\u00edcil just. '+gdPct+'% \u2192 '+decl.effectivePct.toFixed(1)+'% efectivo)</span>';
     h+=gastosCascRow('irpf_decl',gdLabel,'\u2212',declDiff,'var(--c-red)',true);
     if(isTglOn('irpf_decl'))running=Math.round((running-declDiff)*100)/100;
+    h+=gastosResultRow('Tras Declaraci\u00f3n Renta',running,running>0?'var(--c-green)':'var(--c-red)');
   } else if(declDiff<0){
     var gdLabel='Devoluci\u00f3n IRPF Dec. Renta <span style="font-size:.68rem;color:var(--text-dim)">(gastos dif\u00edcil just. '+gdPct+'%)</span>';
     h+=gastosCascRow('irpf_decl',gdLabel,'+',Math.abs(declDiff),'var(--c-green)',true);
     if(isTglOn('irpf_decl'))running=Math.round((running+Math.abs(declDiff))*100)/100;
+    h+=gastosResultRow('Tras Declaraci\u00f3n Renta',running,running>0?'var(--c-green)':'var(--c-red)');
   }
 
-  // Gastos regulares
+  // Gastos regulares — por grupos
   var cotLabel='Cotizaciones sociales <span style="font-size:.68rem;color:var(--text-dim)">(aprox.)</span>';
   var asesorLabel='Asesor\u00eda <span style="font-size:.68rem;color:var(--text-dim)">(semiobligatorio)</span>';
   var segBajaLabel='Seguro baja laboral <span style="font-size:.68rem;color:var(--text-dim)">(aprox.)</span>';
-  var labelMap={'cot_social':cotLabel,'asesoria':asesorLabel,'seg_baja':segBajaLabel};
+  var segSaludLabel='Seguro de Salud <span style="font-size:.68rem;color:var(--text-dim)">(semiobligatorio)</span>';
+  var labelMap={'cot_social':cotLabel,'asesoria':asesorLabel,'seg_baja':segBajaLabel,'seg_salud':segSaludLabel};
 
-  GASTOS_ITEMS.forEach(function(g){
-    var anual=gastoAnual(g.id);
-    if(anual===0&&g.amount===0)return; // no mostrar si 0 (salvo si se configuró)
-    var lbl=labelMap[g.id]||escHtml(g.label);
-    var periodStr=g.period==='monthly'?'<span style="font-size:.68rem;color:var(--text-dim)">('+g.amount+'\u20ac/mes)</span>':'';
-    h+=gastosCascRow('gasto_'+g.id,lbl+' '+periodStr,'\u2212',anual,'#c084fc',true);
-    if(isTglOn('gasto_'+g.id))running=Math.round((running-anual)*100)/100;
-  });
+  var GROUP_SEMIOBL={'asesoria':true,'seg_baja':true,'seg_salud':true,'otros_seg':true};
+  var GROUP_CASA={'hipoteca':true,'comunidad':true,'seg_hogar':true,'luz':true,'gas':true,'agua':true,'digi':true};
+
+  function _gastosGroup(filterFn){
+    var shown=false;
+    GASTOS_ITEMS.forEach(function(g){
+      if(!filterFn(g))return;
+      var anual=gastoAnual(g.id);
+      if(anual===0&&g.amount===0)return;
+      shown=true;
+      var lbl=labelMap[g.id]||escHtml(g.label);
+      var periodStr=g.period==='monthly'?'<span style="font-size:.68rem;color:var(--text-dim)">('+g.amount+'\u20ac/mes)</span>':'';
+      h+=gastosCascRow('gasto_'+g.id,lbl+' '+periodStr,'\u2212',anual,'#c084fc',true);
+      if(isTglOn('gasto_'+g.id))running=Math.round((running-anual)*100)/100;
+    });
+    return shown;
+  }
+
+  // Grupo 1: CCSS
+  var hasCCSS=_gastosGroup(function(g){return g.id==='cot_social';});
+  if(hasCCSS)h+=gastosResultRow('Tras CCSS',running,running>0?'var(--c-green)':'var(--c-red)');
+
+  // Grupo 2: tasas semiobligatorias
+  var hasSemiObl=_gastosGroup(function(g){return !!GROUP_SEMIOBL[g.id];});
+  if(hasSemiObl)h+=gastosResultRow('Tras tasas semiobligatorias',running,running>0?'var(--c-green)':'var(--c-red)');
+
+  // Grupo 3: gastos casa
+  var hasCasa=_gastosGroup(function(g){return !!GROUP_CASA[g.id];});
+  if(hasCasa)h+=gastosResultRow('Tras gastos casa',running,running>0?'var(--c-green)':'var(--c-red)');
+
+  // Grupo 4: otros (custom items no reconocidos)
+  _gastosGroup(function(g){return g.id!=='cot_social'&&!GROUP_SEMIOBL[g.id]&&!GROUP_CASA[g.id];});
 
   h+=gastosResultRow('Neto disponible estimado',running,running>0?'var(--c-green)':'var(--c-red)');
   h+='</div></div>';
+
+  /* Nota configurabilidad */
+  h+='<div class="sy-section" style="padding:10px 14px">';
+  h+='<div style="font-size:.7rem;color:var(--text-dim);text-align:center">Parte de esta informaci\u00f3n es configurable desde el men\u00fa de configuraci\u00f3n de la ventana econ\u00f3mica \u2699\ufe0f</div>';
+  h+='</div>';
 
   /* §B Desglose IRPF por tramos (info) */
   if(gdPct>0||declDiff!==0){
