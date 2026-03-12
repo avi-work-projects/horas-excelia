@@ -3,7 +3,23 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v49 — VIP ⭐ próximos, campana glow, paleta sin amarillo, VIP #fbbf24 cal, botones lista arriba, tipo CumpVIP en eventos, barras OOM dim, barras 4m con título, bordes redondeados';
+var APP_VERSION = 'v50 — sticky gap fix, media mensual colores, filtrar label, fin semana altura alineada, VIP.png en eventos, pestañas sin scroll, Cumpleaños VIP en lista, Base mayúscula';
+
+// ── Sticky headers: medir alturas reales y corregir top values ────────────────
+function fixStickyTops(){
+  var nav=document.querySelector('.overlay-nav-bar');
+  if(!nav)return;
+  var h1=nav.offsetHeight;
+  var sub=document.querySelector('.bday-hdr-sub')||document.querySelector('.ev-hdr-sub')||document.querySelector('.sy-tab-bar');
+  if(sub){
+    sub.style.top=h1+'px';
+    var h2=sub.offsetHeight;
+    var syW=document.querySelector('.sy-header.with-tabs');
+    if(syW)syW.style.top=(h1+h2)+'px';
+  }
+  var syNoTab=document.querySelector('.sy-header:not(.with-tabs)');
+  if(syNoTab)syNoTab.style.top=h1+'px';
+}
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

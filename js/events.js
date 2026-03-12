@@ -288,10 +288,13 @@ function renderEvListItem(ev){
     else if(rt==='monthly-first'){repeatStr=' \u00b7 Mensual (d\u00eda 1)';}
     else if(rt==='yearly'){repeatStr=' \u00b7 Anual';}
   }
+  var _isVipBdayL=ev.id.indexOf('ev-bday-vip-')===0;
+  var _listTitle=_isVipBdayL?('<img src="./VIP.png" class="bday-vip-img" alt="VIP" style="height:1.3em;vertical-align:middle;margin-right:4px">'+escHtml(ev.title.replace(/^\u2b50\s*/,'')))
+    :escHtml(ev.title);
   var h='<div class="ev-list-item" data-id="'+ev.id+'">';
   h+='<div class="ev-list-color" style="background:'+ev.color+'"></div>';
   h+='<div class="ev-list-body">';
-  h+='<div class="ev-list-title">'+escHtml(ev.title)+'</div>';
+  h+='<div class="ev-list-title">'+_listTitle+'</div>';
   if(ev.note)h+='<div class="ev-list-note">'+escHtml(ev.note)+'</div>';
   h+='<div class="ev-list-meta">'+(EV_COLOR_TYPES[ev.color]||'Otros')+' \u00b7 '+dateStr+repeatStr+'</div>';
   h+='</div>';
@@ -395,10 +398,13 @@ function renderEvUpcoming(){
       var item=fallbackMap[id];var ev=item.ev;
       var type=EV_COLOR_TYPES[ev.color]||'Otros';
       var diffToday=Math.round((item.firstDate-today)/86400000);
+      var _isVipU=ev.id.indexOf('ev-bday-vip-')===0;
+      var _uTitle=_isVipU?('<img src="./VIP.png" class="bday-vip-img" alt="VIP" style="height:1.2em;vertical-align:middle;margin-right:3px">'+escHtml(ev.title.replace(/^\u2b50\s*/,'')))
+        :escHtml(ev.title);
       h+='<div class="ev-upcoming-item" data-id="'+ev.id+'">';
       h+='<div class="ev-upcoming-color" style="background:'+ev.color+'"></div>';
       h+='<div class="ev-upcoming-info">';
-      h+='<div class="ev-upcoming-title">'+escHtml(ev.title)+'</div>';
+      h+='<div class="ev-upcoming-title">'+_uTitle+'</div>';
       h+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+fd2(item.firstDate)+'</div>';
       h+='</div>';
       h+='<div class="ev-upcoming-lbl">En '+diffToday+'d</div>';
@@ -422,10 +428,13 @@ function renderEvUpcoming(){
       var isToday=diffToday===0;
       var lbl=isToday?'Hoy':diffToday===1?'Ma\u00f1ana':diffToday<0?'En curso':('En '+diffToday+'d');
       var lblCls='ev-upcoming-lbl'+(isToday?' today-lbl':diffToday===1?' near':diffToday<0?' ongoing':'');
+      var _isVipUp=ev.id.indexOf('ev-bday-vip-')===0;
+      var _upTitle=_isVipUp?('<img src="./VIP.png" class="bday-vip-img" alt="VIP" style="height:1.2em;vertical-align:middle;margin-right:3px">'+escHtml(ev.title.replace(/^\u2b50\s*/,'')))
+        :escHtml(ev.title);
       h+='<div class="ev-upcoming-item'+(isToday?' ev-upcoming-today':'')+'" data-id="'+ev.id+'">';
       h+='<div class="ev-upcoming-color" style="background:'+ev.color+'"></div>';
       h+='<div class="ev-upcoming-info">';
-      h+='<div class="ev-upcoming-title">'+escHtml(ev.title)+'</div>';
+      h+='<div class="ev-upcoming-title">'+_upTitle+'</div>';
       h+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+fd2(item.firstDate)+'</div>';
       h+='</div>';
       h+='<div class="'+lblCls+'">'+lbl+'</div>';
@@ -751,7 +760,7 @@ function renderEvQuad(){
 /* ── Render: lista de eventos por tipos ─────────────────── */
 function renderEvByTypes(){
   var today=new Date();today.setHours(0,0,0,0);
-  var typeOrder=['Viaje','Asturias','Recordatorio de Gestiones','Planes y Quedadas','Cumple\u00f1os VIP','Otros'];
+  var typeOrder=['Viaje','Asturias','Recordatorio de Gestiones','Planes y Quedadas','Cumplea\u00f1os VIP','Otros'];
   var h='<div class="ev-types-controls">';
   h+='<label class="ev-types-past-label"><input type="checkbox" id="evTypesPast"'+(EV_TYPES_PAST?' checked':'')+'> Excluir pasados</label>';
   h+='<select class="ev-types-select" id="evTypesFilter">';
@@ -793,11 +802,11 @@ function renderEvContent(){
   var h=renderNavBar('events');
   // Tabs a nivel 2 (sticky top:42px, justo bajo la nav bar)
   h+='<div class="ev-hdr-sub">';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='upcoming'?' active':'')+'" id="evViewUpcoming">Pr\u00f3ximos<br>Eventos</button>';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='cal'?' active':'')+'" id="evViewCal">Calendario<br>1 mes</button>';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='quad'?' active':'')+'" id="evViewQuad">Calendario<br>4 meses</button>';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='annual'?' active':'')+'" id="evViewAnnual">Calendario<br>Anual</button>';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='months'?' active':'')+'" id="evViewMonths">Lista de<br>Eventos</button>';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='upcoming'?' active':'')+'" id="evViewUpcoming">Pr\u00f3ximos</button>';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='cal'?' active':'')+'" id="evViewCal">1 mes</button>';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='quad'?' active':'')+'" id="evViewQuad">4 meses</button>';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='annual'?' active':'')+'" id="evViewAnnual">Anual</button>';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='months'?' active':'')+'" id="evViewMonths">Lista</button>';
   h+='</div>';
   // Header a nivel 3 (with-tabs → top:82px)
   h+='<div class="sy-header with-tabs">';
@@ -1376,4 +1385,6 @@ function bindEvEvents(){
     };
     r.readAsText(f);
   });
+  // Corregir tops de sticky headers tras render
+  setTimeout(function(){if(typeof fixStickyTops==='function')fixStickyTops();},60);
 }
