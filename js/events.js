@@ -1198,7 +1198,7 @@ function openEvents(){
   var now=new Date();EV_YEAR=now.getFullYear();EV_MONTH=now.getMonth();EV_VIEW='upcoming';
   var ov=document.getElementById('eventsOverlay');
   document.getElementById('eventsContent').innerHTML=renderEvContent();
-  ov.style.display='block';
+  ov.style.display='flex';
   requestAnimationFrame(function(){requestAnimationFrame(function(){ov.classList.add('open');bindEvEvents();});});
 }
 
@@ -1212,7 +1212,7 @@ function closeEvents(){
 function openEventsAt(){
   var ov=document.getElementById('eventsOverlay');
   document.getElementById('eventsContent').innerHTML=renderEvContent();
-  ov.style.display='block';
+  ov.style.display='flex';
   requestAnimationFrame(function(){requestAnimationFrame(function(){ov.classList.add('open');bindEvEvents();});});
 }
 
