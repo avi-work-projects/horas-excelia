@@ -112,10 +112,16 @@ function renderEconContent(){
   h+='<div class="econ-avg-section">';
   h+='<div class="econ-avg-title">Media mensual (a\u00f1o / 12)</div>';
   h+='<div class="econ-avg-grid">';
-  h+='<div class="econ-avg-item"><span class="econ-avg-lbl" style="color:var(--c-blue)">Base</span><span class="econ-avg-val" style="color:var(--c-blue)">'+fc(avgBase)+'</span></div>';
-  h+='<div class="econ-avg-item"><span class="econ-avg-lbl" style="color:var(--c-orange)">IVA</span><span class="econ-avg-val" style="color:var(--c-orange)">'+fc(avgIva)+'</span></div>';
-  h+='<div class="econ-avg-item"><span class="econ-avg-lbl" style="color:var(--c-red)">IRPF</span><span class="econ-avg-val" style="color:var(--c-red)">'+fc(avgIrpf)+'</span></div>';
-  h+='<div class="econ-avg-item"><span class="econ-avg-lbl" style="color:var(--c-green)">Neto</span><span class="econ-avg-val" style="color:var(--c-green)">'+fc(avgNeto)+'</span></div>';
+  h+='<span class="econ-avg-lbl" style="color:var(--c-blue)">Base</span>';
+  h+='<span class="econ-avg-val" style="color:var(--c-blue)">'+fc(avgBase)+'</span>';
+  h+='<span></span>';
+  h+='<span class="econ-avg-lbl" style="color:var(--c-orange)">IVA</span>';
+  h+='<span class="econ-avg-val" style="color:var(--c-orange)">'+fc(avgIva)+'</span>';
+  h+='<span class="econ-avg-lbl" style="color:var(--c-red)">IRPF</span>';
+  h+='<span class="econ-avg-val" style="color:var(--c-red)">'+fc(avgIrpf)+'</span>';
+  h+='<span></span>';
+  h+='<span class="econ-avg-lbl" style="color:var(--c-green)">Neto</span>';
+  h+='<span class="econ-avg-val" style="color:var(--c-green)">'+fc(avgNeto)+'</span>';
   h+='</div></div>';
 
   // Ingresado en cuenta (neutral)
