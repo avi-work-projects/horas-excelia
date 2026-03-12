@@ -168,13 +168,17 @@
       if(urlIn){urlIn.value=macroUrl;urlIn.disabled=!useMacro;}
       // Construir botones de días ordenados desde hoy con fecha debajo
       buildAlarmDayBtns();
-      // Inicializar drum pickers de hora/minuto
-      var _dH=parseInt(localStorage.getItem('excelia-alarm-h')||'9',10);
-      var _dM=parseInt(localStorage.getItem('excelia-alarm-m')||'20',10);
-      buildDrumPicker('drumHour',24,_dH);
-      buildDrumPicker('drumMin',60,_dM);
     }
     panel.classList.toggle('open');
+    if(opening){
+      // Drum pickers: inicializar DESPUÉS de que el panel sea visible (display:none → flex)
+      var _dH=parseInt(localStorage.getItem('excelia-alarm-h')||'9',10);
+      var _dM=parseInt(localStorage.getItem('excelia-alarm-m')||'20',10);
+      requestAnimationFrame(function(){
+        buildDrumPicker('drumHour',24,_dH);
+        buildDrumPicker('drumMin',60,_dM);
+      });
+    }
   });
 
   /* ── Drum picker: selector giratorio de hora/minuto ── */
