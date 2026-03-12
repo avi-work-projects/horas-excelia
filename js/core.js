@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v53 — events: 4 zonas pestañas iguales; cumpleaños por meses: sin nivel 3, filtro VIP sticky';
+var APP_VERSION = 'v54 — tabs eventos redondeados con separación; nav-bar home más espaciada';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
