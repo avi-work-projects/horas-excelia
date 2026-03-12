@@ -917,7 +917,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .drum-sel-lines{position:absolute;top:50%;left:6px;right:6px;height:44px;transform:translateY(-50%);border-top:1px solid var(--border);border-bottom:1px solid var(--border);z-index:3;pointer-events:none}
 .alarm-msg-input{display:block;width:calc(100% - 24px);margin:0 12px 6px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-family:var(--font);font-size:.78rem}
 .alarm-msg-input:focus{outline:none;border-color:var(--accent)}
-.alarm-create-btn{color:var(--accent-bright)!important;font-weight:600!important;width:100%;border-top:1px solid var(--border)!important;border-radius:0!important;padding:10px 12px!important;margin-top:2px}
+.alarm-create-btn{background:var(--accent)!important;color:#fff!important;font-weight:700!important;font-size:.84rem!important;width:100%;border-top:1px solid var(--accent)!important;border-radius:0!important;padding:13px 12px!important;margin-top:6px;display:flex!important;align-items:center!important;justify-content:center!important;gap:6px;letter-spacing:.01em}
+.alarm-create-btn:active{background:var(--accent-bright)!important}
 .alarm-ics-btn{color:var(--text-muted)!important;font-size:.72rem!important;padding:8px 12px!important;border-top:1px solid var(--border)!important;border-radius:0 0 var(--radius-sm) var(--radius-sm)!important;width:100%}
 .alarm-days-row{padding:6px 12px 4px;border-top:1px solid var(--border)}
 .alarm-days-label{font-size:.65rem;color:var(--text-muted);margin-bottom:5px;text-align:center}
