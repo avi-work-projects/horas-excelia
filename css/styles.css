@@ -338,6 +338,117 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .econ-month-table td.col-ingresado{color:var(--text-muted)!important}
 .econ-section-sep{height:1px;background:var(--border);margin:6px 0}
 
+/* ── ECONOMICS v2: tabs + nuevas secciones ── */
+.econ-hdr-sub{flex-shrink:0;display:flex;align-items:stretch;padding:5px 6px;gap:5px;box-shadow:0 1px 0 var(--border);overflow-x:hidden;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.econ-tab-btn{flex:1;font-size:.62rem;padding:6px 3px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;text-align:center;line-height:1.3}
+.econ-tab-btn.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
+.econ-gear-btn{flex-shrink:0;width:36px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text-muted);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-user-select:none;user-select:none;transition:all .15s}
+.econ-gear-btn:active{background:var(--surface3)}
+/* §1.1 Tarifa dual */
+.econ-rate-dual{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px}
+.econ-rate-field{flex:1;display:flex;flex-direction:column;gap:3px}
+.econ-rate-field label{font-size:.62rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.econ-rate-input{font-family:var(--mono);font-size:.92rem;font-weight:600;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:6px 8px;color:var(--text);width:100%;text-align:right;outline:none;transition:border-color .15s}
+.econ-rate-field.primary .econ-rate-input{border-color:var(--accent);background:var(--accent-glow)}
+.econ-rate-field.derived .econ-rate-input{color:var(--text-dim);border-style:dashed}
+.econ-rate-badge{font-size:.58rem;color:var(--text-dim);text-align:right;margin-top:1px}
+.econ-rate-field.primary .econ-rate-badge{color:var(--accent)}
+.econ-rate-sep{font-size:1rem;color:var(--text-dim);flex-shrink:0;padding:0 2px;padding-top:18px}
+.excl-row{display:flex;gap:16px;padding:6px 12px;flex-wrap:wrap}
+.excl-item{font-size:.8rem;display:flex;align-items:center;gap:5px;cursor:pointer;user-select:none}
+/* §1.3 Stats por hora/día */
+.econ-stats-table{width:100%;border-collapse:collapse;font-size:.8rem;margin-top:4px}
+.econ-stats-table th{text-align:right;padding:5px 8px;font-size:.65rem;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--border)}
+.econ-stats-table th:first-child{text-align:left}
+.econ-stats-table td{text-align:right;padding:6px 8px;font-family:var(--mono);font-size:.75rem;border-bottom:1px solid var(--border)}
+.econ-stats-table td:first-child{text-align:left;font-family:var(--font);font-size:.82rem;color:var(--text-muted);font-weight:500}
+.econ-stats-table tr:last-child td{border-bottom:none}
+/* §1.4 Toggles */
+.econ-toggle-btn{width:100%;text-align:left;padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-muted);font-size:.82rem;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .15s;-webkit-user-select:none;user-select:none;margin-top:6px}
+.econ-toggle-btn.active{background:var(--accent-glow);border-color:var(--accent);color:var(--accent-bright)}
+.econ-toggle-dot{width:16px;height:16px;border-radius:50%;border:2px solid currentColor;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.6rem}
+.econ-toggle-dot.on::before{content:'✓';font-weight:700}
+/* §1.5 Declaración IRPF */
+.econ-decl-section{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--c-red);border-radius:var(--radius-sm);padding:12px 16px;margin-top:8px;display:flex;flex-direction:column;gap:8px}
+.econ-decl-row{display:flex;justify-content:space-between;align-items:baseline;font-size:.84rem}
+.econ-decl-val{font-family:var(--mono);font-weight:600}
+.econ-decl-pos{color:var(--c-green)}
+.econ-decl-neg{color:var(--c-red)}
+.econ-bracket-table{width:100%;border-collapse:collapse;font-size:.76rem;margin-top:4px}
+.econ-bracket-table th{text-align:right;padding:4px 6px;color:var(--text-dim);font-size:.65rem;font-weight:600;border-bottom:1px solid var(--border)}
+.econ-bracket-table th:first-child{text-align:left}
+.econ-bracket-table td{text-align:right;padding:4px 6px;font-family:var(--mono);font-size:.72rem;border-bottom:1px solid var(--border)}
+.econ-bracket-table td:first-child{text-align:left;font-family:var(--font)}
+.econ-bracket-table tr:last-child td{border-bottom:none}
+.econ-bracket-table td.active-bracket{background:rgba(108,140,255,.08);color:var(--accent)}
+/* ── Tab 2: Comparador ── */
+.econ-comp-scenarios{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.econ-scenario-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.econ-sc-header{display:flex;align-items:center;justify-content:space-between}
+.econ-sc-label{font-size:.82rem;font-weight:700;font-family:var(--mono);color:var(--text)}
+.econ-sc-del{width:26px;height:26px;border:none;background:transparent;color:var(--text-dim);font-size:.9rem;cursor:pointer;border-radius:6px;display:flex;align-items:center;justify-content:center}
+.econ-sc-del:active{background:var(--surface3)}
+.econ-sc-fields{display:flex;gap:6px;flex-wrap:wrap}
+.econ-sc-type,.econ-sc-mode,.econ-sc-hours-mode{flex:1;min-width:100px;font-size:.75rem;padding:5px 8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text);outline:none;cursor:pointer}
+.econ-sc-val{font-family:var(--mono);font-size:.85rem;padding:5px 8px;border-radius:var(--radius-sm);border:1.5px solid var(--accent);background:var(--accent-glow);color:var(--text);width:90px;text-align:right;outline:none}
+.econ-add-sc-btn{width:100%;padding:8px;border:1.5px dashed var(--border);border-radius:var(--radius-sm);background:transparent;color:var(--text-muted);font-size:.82rem;cursor:pointer;transition:all .15s}
+.econ-add-sc-btn:active{background:var(--surface2)}
+.econ-comp-table-wrap{overflow-x:auto;margin-bottom:10px}
+.econ-comp-table{border-collapse:collapse;font-size:.76rem;min-width:340px;width:100%}
+.econ-comp-table th{padding:6px 8px;background:var(--surface2);font-size:.65rem;font-weight:600;color:var(--text-dim);text-transform:uppercase;text-align:right;white-space:nowrap;border-bottom:1px solid var(--border)}
+.econ-comp-table th:first-child{text-align:left}
+.econ-comp-table td{padding:6px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:.73rem;text-align:right;white-space:nowrap}
+.econ-comp-table td:first-child{text-align:left;font-family:var(--font);font-size:.8rem;color:var(--text-muted)}
+.econ-comp-table td.pos{color:var(--c-green);font-weight:600}
+.econ-comp-table td.neg{color:var(--c-red);font-weight:600}
+.econ-comp-table tr:last-child td{border-bottom:none}
+.econ-line-chart-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;margin-bottom:8px}
+.econ-line-chart-title{font-size:.65rem;color:var(--text-dim);font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between}
+.econ-chart-toggle{font-size:.65rem;padding:3px 8px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer}
+.econ-chart-toggle.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
+.econ-comp-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.econ-legend-item{display:flex;align-items:center;gap:4px;font-size:.68rem;color:var(--text-muted)}
+.econ-legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+/* ── Tab 3: Simulador ── */
+.econ-sim-form{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.econ-sim-row{display:flex;flex-direction:column;gap:4px}
+.econ-sim-row label{font-size:.7rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.econ-sim-input-row{display:flex;gap:6px;align-items:center}
+.econ-sim-input{font-family:var(--mono);font-size:.95rem;font-weight:600;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:7px 10px;color:var(--text);flex:1;outline:none;transition:border-color .15s}
+.econ-sim-input:focus{border-color:var(--accent)}
+.econ-sim-select{font-size:.78rem;padding:7px 8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text);outline:none;cursor:pointer;flex-shrink:0}
+.econ-sim-calc-btn{width:100%;padding:11px;background:var(--accent);border:none;border-radius:var(--radius-sm);color:#fff;font-size:.88rem;font-weight:700;cursor:pointer;transition:opacity .15s}
+.econ-sim-calc-btn:active{opacity:.8}
+.econ-sim-result{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--radius-sm);padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.econ-sim-result-main{display:flex;justify-content:space-between;align-items:baseline;font-size:.92rem;font-weight:700;color:var(--accent)}
+.econ-sim-result-main .econ-val{font-family:var(--mono);font-size:1.05rem}
+.econ-sim-result-row{display:flex;justify-content:space-between;align-items:baseline;font-size:.82rem}
+/* ── Fiscal config modal ── */
+.fiscal-section{margin-bottom:18px}
+.fiscal-section-title{font-size:.65rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.fiscal-radio-row{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.fiscal-radio-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius-sm);border:1px solid var(--border);cursor:pointer;font-size:.84rem;transition:all .15s;-webkit-user-select:none;user-select:none}
+.fiscal-radio-item.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
+.fiscal-radio-dot{width:14px;height:14px;border-radius:50%;border:2px solid currentColor;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.fiscal-radio-dot.on::before{content:'';display:block;width:6px;height:6px;border-radius:50%;background:currentColor}
+.fiscal-custom-row{display:flex;align-items:center;gap:8px;padding:0 10px 6px}
+.fiscal-pct-input{font-family:var(--mono);font-size:.95rem;width:68px;padding:5px 8px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text);text-align:right;outline:none}
+.fiscal-pct-input:focus{border-color:var(--accent)}
+.fiscal-bracket-table{width:100%;border-collapse:collapse;font-size:.78rem}
+.fiscal-bracket-table th{text-align:right;padding:5px 8px;color:var(--text-dim);font-size:.65rem;font-weight:600;border-bottom:1px solid var(--border);background:var(--surface2)}
+.fiscal-bracket-table th:first-child{text-align:left}
+.fiscal-bracket-table td{text-align:right;padding:6px 8px;border-bottom:1px solid var(--border)}
+.fiscal-bracket-table td:first-child{text-align:left}
+.fiscal-bracket-input{font-family:var(--mono);font-size:.78rem;width:80px;padding:3px 6px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text);text-align:right;outline:none}
+.fiscal-bracket-input:focus{border-color:var(--accent)}
+.fiscal-pct-small{width:52px}
+.fiscal-bracket-del{width:26px;height:26px;border:none;background:transparent;color:var(--c-red);font-size:.85rem;cursor:pointer;border-radius:6px;vertical-align:middle}
+.fiscal-add-btn{width:100%;margin-top:8px;padding:7px;border:1.5px dashed var(--border);border-radius:var(--radius-sm);background:transparent;color:var(--text-muted);font-size:.8rem;cursor:pointer;transition:all .15s}
+.fiscal-add-btn:active{background:var(--surface2)}
+.fiscal-save-btn{width:100%;padding:12px;background:var(--accent);border:none;border-radius:var(--radius-sm);color:#fff;font-size:.9rem;font-weight:700;cursor:pointer;margin-top:12px;transition:opacity .15s}
+.fiscal-save-btn:active{opacity:.8}
+.fiscal-error{color:var(--c-red);font-size:.78rem;padding:4px 0}
+
 /* ── BIRTHDAYS ── */
 .data-btn.bday-active{color:var(--vacaciones)!important;border-radius:8px}
 .bday-hdr-sub{display:flex;align-items:stretch;padding:5px 6px;gap:5px;box-shadow:0 1px 0 var(--border);overflow-x:hidden}
