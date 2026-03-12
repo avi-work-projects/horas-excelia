@@ -85,9 +85,15 @@ try{
         <div class="data-menu alarm-cfg" id="alarmPanel">
           <div class="alarm-panel-title">&#128276; Crear alarma</div>
           <div class="alarm-time-row">
-            <input class="alarm-h-input" id="alarmHour" type="number" min="0" max="23" value="9">
+            <div class="drum-wrap">
+              <div class="drum-picker" id="drumHour"></div>
+              <div class="drum-sel-lines"></div>
+            </div>
             <span class="alarm-colon">:</span>
-            <input class="alarm-m-input" id="alarmMin" type="text" inputmode="numeric" maxlength="2" value="20">
+            <div class="drum-wrap">
+              <div class="drum-picker" id="drumMin"></div>
+              <div class="drum-sel-lines"></div>
+            </div>
           </div>
           <input class="alarm-msg-input" id="alarmMsg" type="text" maxlength="40" placeholder="Mensaje de la alarma" value="Horas Excelia">
           <div class="alarm-days-row">
