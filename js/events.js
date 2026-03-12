@@ -27,8 +27,22 @@ var EV_COLOR_TYPES = {
   '#ff6b6b':'Otros',
   '#c084fc':'Otros',
   '#a3e635':'Otros',
-  '#fbbf24':'Cumpleaños VIP'
+  '#fbbf24':'Cumplea\u00f1os VIP'
 };
+
+// Paleta de azules para variedad de viajes (determinista según id del evento)
+var _VIAJE_BLUES=['#38bdf8','#0ea5e9','#60a5fa','#3b82f6','#7dd3fc','#2563eb','#22d3ee','#93c5fd','#0284c7','#06b6d4'];
+function evTravelColor(evId){
+  var h=0,id=String(evId||'');
+  for(var i=0;i<id.length;i++)h=(h*31+id.charCodeAt(i))&0x7fffffff;
+  return _VIAJE_BLUES[h%_VIAJE_BLUES.length];
+}
+// Devuelve el color de visualización (viajes → azul único por evento, resto → color guardado)
+function getEvDisplayColor(ev){
+  if(!ev)return'#888';
+  if(ev.color==='#38bdf8'||ev.color==='#6c8cff')return evTravelColor(ev.id);
+  return ev.color;
+}
 
 var EVENTS = (function(){
   try{
@@ -249,8 +263,9 @@ function renderEvCalMonth(){
         var showT=it.starts||(it.cs===0);
         // Dim bars that fall entirely in out-of-month columns
         var hasInM=false;for(var ci=it.cs;ci<=it.ce;ci++){if(inMCols[ci])hasInM=true;}
+        var _dc=getEvDisplayColor(ev);
         h+='<div class="ev-multi-bar'+sc+'" data-id="'+ev.id+'"'
-          +' style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';border:1.5px solid '+ev.color+';background:'+fakeTrans(ev.color,0.65)+';color:#fff'+(hasInM?'':';opacity:.35')+'">'
+          +' style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';border:1.5px solid '+_dc+';background:'+fakeTrans(_dc,0.65)+';color:#fff'+(hasInM?'':';opacity:.35')+'">'
           +(showT?escHtml(ev.title):'')+'</div>';
       });
       h+='</div>';
@@ -424,7 +439,7 @@ function renderEvUpcoming(){
         :escHtml(ev.title);
       var _bellSet=isEvAlarmSet(ev.id);
       h+='<div class="ev-upcoming-item" data-id="'+ev.id+'" data-first="'+evIsoDate(item.firstDate)+'">';
-      h+='<div class="ev-upcoming-color" style="background:'+ev.color+'"></div>';
+      h+='<div class="ev-upcoming-color" style="background:'+getEvDisplayColor(ev)+'"></div>';
       h+='<div class="ev-upcoming-info">';
       h+='<div class="ev-upcoming-title">'+_uTitle+'</div>';
       h+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+fd2(item.firstDate)+'</div>';
@@ -456,7 +471,7 @@ function renderEvUpcoming(){
         :escHtml(ev.title);
       var _bellSet=isEvAlarmSet(ev.id);
       h+='<div class="ev-upcoming-item'+(isToday?' ev-upcoming-today':'')+'" data-id="'+ev.id+'" data-first="'+evIsoDate(item.firstDate)+'">';
-      h+='<div class="ev-upcoming-color" style="background:'+ev.color+'"></div>';
+      h+='<div class="ev-upcoming-color" style="background:'+getEvDisplayColor(ev)+'"></div>';
       h+='<div class="ev-upcoming-info">';
       h+='<div class="ev-upcoming-title">'+_upTitle+'</div>';
       h+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+fd2(item.firstDate)+'</div>';
@@ -581,7 +596,7 @@ function renderEvAnnual(){
           var _vipBdays=(!vipHidden&&typeof BDAYS!=='undefined'&&Array.isArray(BDAYS))?(function(){var dd2=d.getDate(),dm2=d.getMonth()+1;return BDAYS.filter(function(b){return b.vip&&b.day===dd2&&b.month===dm2;});})():[];
           if(_singleEvs.length||_vipBdays.length){
             _annSd='<div class="ev-annual-xs">';
-            _singleEvs.forEach(function(ev){_annSd+='<span class="ev-annual-x" style="color:'+ev.color+'"></span>';});
+            _singleEvs.forEach(function(ev){_annSd+='<span class="ev-annual-x" style="color:'+getEvDisplayColor(ev)+'"></span>';});
             _vipBdays.forEach(function(){_annSd+='<span class="ev-annual-vip-star">\u2b50</span>';});
             _annSd+='</div>';
           }
@@ -596,7 +611,8 @@ function renderEvAnnual(){
         wMulti.forEach(function(it){
           if(it.row<0)return;
           var sc=it.starts&&it.ends?'':it.starts?' a-starts':it.ends?' a-ends':' a-mid';
-          h+='<div class="ev-annual-mbar'+sc+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';border:1px solid '+it.ev.color+';background:'+fakeTrans(it.ev.color,0.65)+'"></div>';
+          var _adc=getEvDisplayColor(it.ev);
+          h+='<div class="ev-annual-mbar'+sc+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';border:1px solid '+_adc+';background:'+fakeTrans(_adc,0.65)+'"></div>';
         });
         h+='</div>';
       }
@@ -741,7 +757,7 @@ function renderEvQuad(){
           var _vipBdays=(!vipHidden&&typeof BDAYS!=='undefined'&&Array.isArray(BDAYS))?(function(){var dd2=d.getDate(),dm2=d.getMonth()+1;return BDAYS.filter(function(b){return b.vip&&b.day===dd2&&b.month===dm2;});})():[];
           if(_singleEvs.length||_vipBdays.length){
             _quadSd='<div class="ev-annual-xs">';
-            _singleEvs.forEach(function(ev){_quadSd+='<span class="ev-annual-x" style="color:'+ev.color+'"></span>';});
+            _singleEvs.forEach(function(ev){_quadSd+='<span class="ev-annual-x" style="color:'+getEvDisplayColor(ev)+'"></span>';});
             _vipBdays.forEach(function(){_quadSd+='<span class="ev-annual-vip-star">\u2b50</span>';});
             _quadSd+='</div>';
           }
@@ -756,7 +772,8 @@ function renderEvQuad(){
           if(it.row<0)return;
           var sc=it.starts&&it.ends?'':it.starts?' a-starts':it.ends?' a-ends':' a-mid';
           var showQT=(it.starts||(it.cs===0));
-          h+='<div class="ev-annual-mbar'+sc+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';border:1px solid '+it.ev.color+';background:'+fakeTrans(it.ev.color,0.65)+';font-size:.3rem;padding:0 3px">'+(showQT?escHtml(it.ev.title):'')+'</div>';
+          var _qdc=getEvDisplayColor(it.ev);
+          h+='<div class="ev-annual-mbar'+sc+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';border:1px solid '+_qdc+';background:'+fakeTrans(_qdc,0.65)+';font-size:.3rem;padding:0 3px">'+(showQT?escHtml(it.ev.title):'')+'</div>';
         });
         h+='</div>';
       }
@@ -1318,16 +1335,16 @@ function bindEvAlarmEvents(ev,firstDate){
     var base=normalizeMacroBase(alarmUrl);
     var dayOfAlarm=firstDate.getDay()+1;
     var url=base+'/generar_alarma1?alarmH='+h+'&alarmM='+m+'&alarmMsg='+encodeURIComponent(msg)+'&alarmDays='+dayOfAlarm;
+    // Registrar localmente ANTES del fetch (alarma siempre guardada aunque MacroDroid falle)
+    var fmtD=function(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
+    if(typeof addAlarm==='function'){
+      addAlarm({type:'event',label:msg,hour:h,minute:m,days:[dayOfAlarm],targetDate:fmtD(firstDate)});
+    }
+    setEvAlarmState(ev.id,true);
     showToast('Enviando alarma a MacroDroid\u2026','success');
-    fetch(url,{mode:'no-cors'}).then(function(){
-      if(typeof addAlarm==='function'){
-        var fmtD=function(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
-        addAlarm({type:'event',label:msg,hour:h,minute:m,days:[dayOfAlarm],targetDate:fmtD(firstDate)});
-      }
-      setEvAlarmState(ev.id,true);
-      showToast('\u23f0 Alarma creada \u2014 '+escHtml(ev.title),'success');
-      closeEvAlarm();setTimeout(refreshEvents,320);
-    }).catch(function(){showToast('Error al contactar MacroDroid','error');});
+    fetch(url,{mode:'no-cors'})
+      .then(function(){showToast('\u23f0 Alarma creada \u2014 '+escHtml(ev.title),'success');closeEvAlarm();setTimeout(refreshEvents,320);})
+      .catch(function(){showToast('\u23f0 Alarma guardada (sin conexi\u00f3n a MacroDroid)','success');closeEvAlarm();setTimeout(refreshEvents,320);});
   });
   var mInp=document.getElementById('evAlarmM');
   if(mInp)mInp.addEventListener('blur',function(){

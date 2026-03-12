@@ -513,7 +513,7 @@ function bindBdayAlarmEvents(b){
   document.getElementById('bdAlarmCreate').addEventListener('click',function(){
     var alarmUrl=localStorage.getItem('excelia-alarm-url')||localStorage.getItem('excelia-macro-alarm-url')||'';
     if(!alarmUrl){
-      showToast('Configura la URL de MacroDroid en el men\u00fa \u22ee','error');
+      showToast('Configura la URL de MacroDroid en el men\u00fa \u22ef','error');
       return;
     }
     // Calculate dates
@@ -522,45 +522,45 @@ function bindBdayAlarmEvents(b){
     var bdDate2=new Date(bdYear2,b.month-1,b.day);
     if(bdDate2<today2)bdDate2.setFullYear(bdYear2+1);
     var prevDate2=new Date(bdDate2);prevDate2.setDate(prevDate2.getDate()-1);
+    // Leer valores del campo de cumpleaños (alarma del día)
     var h2r=parseInt(document.getElementById('bdAlarmH2').value,10);
     var h2=isNaN(h2r)?9:Math.min(23,Math.max(0,h2r));
     var m2r=parseInt(document.getElementById('bdAlarmM2').value,10);
     var m2=isNaN(m2r)?2:Math.min(59,Math.max(0,m2r));
     var msgDay='\uD83C\uDF82 Cumple '+tc(b.name)+'! '+String(b.day).padStart(2,'0')+'/'+String(b.month).padStart(2,'0');
     var base=normalizeMacroBase(alarmUrl);
-    // Android Calendar day: 1=Dom, 2=Lun, ..., 7=Sáb (= JS getDay()+1)
-    var dayBd=bdDate2.getDay()+1;
+    var dayBd=bdDate2.getDay()+1; // Android: 1=Dom...7=Sáb
     var url2=base+'/generar_alarma2?alarmH='+h2+'&alarmM='+m2+'&alarmMsg='+encodeURIComponent(msgDay)+'&alarmDays='+dayBd;
-    function onBdAlarmSuccess(){
-      if(typeof addAlarm==='function'){
-        var fmtD=function(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
-        if(BDAY_ALARM_COUNT===2){
-          addAlarm({type:'birthday',label:msgPrev,hour:h1,minute:m1,days:[dayPrev],targetDate:fmtD(prevDate2)});
-        }
-        addAlarm({type:'birthday',label:msgDay,hour:h2,minute:m2,days:[dayBd],targetDate:fmtD(bdDate2)});
-      }
-      setBdayAlarmState(b,true);
-      showToast('\u23f0 Alarma'+(BDAY_ALARM_COUNT===2?'s':'')+' creada'+(BDAY_ALARM_COUNT===2?'s':'')+' para '+tc(b.name),'success');
-      closeBdayAlarm();
-      setTimeout(refreshBday,320);
-    }
-    function onBdAlarmError(){showToast('Error al contactar MacroDroid','error');}
-    showToast('Enviando alarma'+( BDAY_ALARM_COUNT===2?'s':'')+' a MacroDroid\u2026','success');
+    // Leer valores de víspera (si aplica) ANTES del fetch
+    var h1=23,m1=57,msgPrev='',dayPrev=0,url1='';
     if(BDAY_ALARM_COUNT===2){
       var h1r=parseInt(document.getElementById('bdAlarmH1').value,10);
-      var h1=isNaN(h1r)?23:Math.min(23,Math.max(0,h1r));
+      h1=isNaN(h1r)?23:Math.min(23,Math.max(0,h1r));
       var m1r=parseInt(document.getElementById('bdAlarmM1').value,10);
-      var m1=isNaN(m1r)?57:Math.min(59,Math.max(0,m1r));
-      var msgPrev='\u23f0 Ma\u00f1ana cumple '+tc(b.name)+' '+String(b.day).padStart(2,'0')+'/'+String(b.month).padStart(2,'0');
-      var dayPrev=prevDate2.getDay()+1;
-      var url1=base+'/generar_alarma1?alarmH='+h1+'&alarmM='+m1+'&alarmMsg='+encodeURIComponent(msgPrev)+'&alarmDays='+dayPrev;
-      // 1 segundo de separación entre las dos peticiones
+      m1=isNaN(m1r)?57:Math.min(59,Math.max(0,m1r));
+      msgPrev='\u23f0 Ma\u00f1ana cumple '+tc(b.name)+' '+String(b.day).padStart(2,'0')+'/'+String(b.month).padStart(2,'0');
+      dayPrev=prevDate2.getDay()+1;
+      url1=base+'/generar_alarma1?alarmH='+h1+'&alarmM='+m1+'&alarmMsg='+encodeURIComponent(msgPrev)+'&alarmDays='+dayPrev;
+    }
+    // Registrar alarmas localmente ANTES del fetch (siempre guardadas aunque falle la red)
+    var fmtD=function(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
+    if(typeof addAlarm==='function'){
+      if(BDAY_ALARM_COUNT===2)addAlarm({type:'birthday',label:msgPrev,hour:h1,minute:m1,days:[dayPrev],targetDate:fmtD(prevDate2)});
+      addAlarm({type:'birthday',label:msgDay,hour:h2,minute:m2,days:[dayBd],targetDate:fmtD(bdDate2)});
+    }
+    setBdayAlarmState(b,true);
+    showToast('Enviando alarma'+(BDAY_ALARM_COUNT===2?'s':'')+' a MacroDroid\u2026','success');
+    var _cnt=BDAY_ALARM_COUNT;
+    var _name=tc(b.name);
+    function onOk(){showToast('\u23f0 Alarma'+(_cnt===2?'s':'')+' creada'+(_cnt===2?'s':'')+' para '+_name,'success');closeBdayAlarm();setTimeout(refreshBday,320);}
+    function onErr(){showToast('\u23f0 Alarma'+(_cnt===2?'s':'')+' guardada'+(_cnt===2?'s':'')+' (sin conexi\u00f3n a MacroDroid)','success');closeBdayAlarm();setTimeout(refreshBday,320);}
+    if(BDAY_ALARM_COUNT===2){
       fetch(url1,{mode:'no-cors'})
         .then(function(){return new Promise(function(r){setTimeout(r,1000);});})
         .then(function(){return fetch(url2,{mode:'no-cors'});})
-        .then(onBdAlarmSuccess).catch(onBdAlarmError);
+        .then(onOk).catch(onErr);
     } else {
-      fetch(url2,{mode:'no-cors'}).then(onBdAlarmSuccess).catch(onBdAlarmError);
+      fetch(url2,{mode:'no-cors'}).then(onOk).catch(onErr);
     }
   });
 
