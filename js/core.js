@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v62 — editar VIPs: toggle DOM directo sin scroll, botón cambia a Listo';
+var APP_VERSION = 'v63 — editar VIPs: botón Cancelar rojo fijo al fondo';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

@@ -367,6 +367,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .vip-no-icon::after{content:'';position:absolute;inset:15%;background:linear-gradient(to top right,transparent 44%,#ef4444 46%,#ef4444 54%,transparent 56%);pointer-events:none}
 .bday-vip-edit-btn{flex-shrink:0;font-size:.7rem;padding:5px 10px;border-radius:12px;border:1px solid #fb923c;background:rgba(251,146,60,.1);color:#fb923c;cursor:pointer;transition:all .15s}
 .bday-vip-edit-btn.active{border-color:#fb923c;background:rgba(251,146,60,.3);color:#fff}
+/* Botón Cancelar fijo al fondo de pantalla en modo edición VIP */
+.bday-cancel-edit-btn{position:fixed;bottom:0;left:0;right:0;background:#ef4444;color:#fff;border:none;padding:16px;padding-bottom:max(16px,env(safe-area-inset-bottom));font-size:.92rem;font-weight:700;cursor:pointer;z-index:200;letter-spacing:.02em;transition:background .15s}
+.bday-cancel-edit-btn:active{background:#dc2626}
 /* VIP edit mode item states */
 .bday-list-item.bday-list-vip-dim{opacity:.38}
 .bday-list-item.bday-list-vip-active{opacity:1}
