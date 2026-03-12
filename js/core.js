@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v71 — fix scroll ventana configuración fiscal';
+var APP_VERSION = 'v72 — export/import fiscal+gastos, logo VIP restaurado, separaci\u00f3n lista cumplea\u00f1os';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

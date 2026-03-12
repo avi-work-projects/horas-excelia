@@ -529,7 +529,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bday-badge:active{opacity:.7}
 .bday-badge.bday-badge-vip{box-shadow:0 0 0 1.5px #fbbf24,0 0 6px rgba(251,191,36,.5);font-weight:700}
 .bday-month-hdr{font-size:.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:10px 0 6px;border-bottom:1px solid var(--border);margin-bottom:6px}
-.bday-list-item{display:flex;align-items:center;gap:10px;padding:7px 0 11px;min-height:52px;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity .12s}
+.bday-list-item{display:flex;align-items:center;gap:10px;padding:11px 0 15px;min-height:52px;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity .12s}
 /* VIP controls bar */
 .bday-vip-ctrl-bar{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:7px 12px;border-bottom:1px solid var(--border);background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 .bday-vip-filter-chips{display:flex;gap:4px;flex:1}
@@ -549,8 +549,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bday-list-item.bday-list-vip-active{opacity:1}
 .bday-list-item:last-child{border-bottom:none}
 .bday-list-item:active{opacity:.7}
-/* Limitar altura del logo VIP dentro de filas de lista para no aumentar el grosor */
-.bday-list-item .bday-vip-img{height:1.15em;margin-left:4px;vertical-align:middle}
 .bday-list-day{font-family:var(--mono);font-size:.75rem;color:var(--text-muted);min-width:22px;flex-shrink:0}
 .bday-list-name{font-size:.85rem;color:var(--text);flex:1}
 .bday-list-left{font-size:.7rem;font-weight:600;color:var(--text-dim);flex-shrink:0}
