@@ -50,6 +50,14 @@ function saveEvents(){
   localStorage.setItem(EV_STORAGE_KEY,JSON.stringify(EVENTS));
 }
 
+/* ── Estado de alarmas por evento (próximos) ── */
+var EV_ALARM_SK='excelia-ev-alarm-v1';
+var EV_ALARMS_SET={};
+function loadEvAlarms(){try{var r=localStorage.getItem(EV_ALARM_SK);if(r)EV_ALARMS_SET=JSON.parse(r);}catch(e){}}
+function saveEvAlarms(){try{localStorage.setItem(EV_ALARM_SK,JSON.stringify(EV_ALARMS_SET));}catch(e){}}
+function isEvAlarmSet(evId){return !!EV_ALARMS_SET[evId];}
+function setEvAlarmState(evId,bool){if(bool)EV_ALARMS_SET[evId]=true;else delete EV_ALARMS_SET[evId];saveEvAlarms();}
+
 function evDk(d){
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
@@ -349,6 +357,7 @@ function getNextOccurrence(ev,today){
 }
 
 /* ── Render: próximos eventos (3 semanas) ───────────────── */
+function evIsoDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function renderEvUpcoming(){
   if(!EVENTS.length)return '<div class="sy-note">No hay eventos creados. Pulsa \"+ A\u00f1adir\" para crear uno.</div>';
   var today=new Date();today.setHours(0,0,0,0);
@@ -401,13 +410,14 @@ function renderEvUpcoming(){
       var _isVipU=ev.id.indexOf('ev-bday-vip-')===0;
       var _uTitle=_isVipU?('<img src="./VIP.png" class="bday-vip-img" alt="VIP" style="height:1.2em;vertical-align:middle;margin-right:3px">'+escHtml(ev.title.replace(/^\u2b50\s*/,'')))
         :escHtml(ev.title);
-      h+='<div class="ev-upcoming-item" data-id="'+ev.id+'">';
+      var _bellSet=isEvAlarmSet(ev.id);
+      h+='<div class="ev-upcoming-item" data-id="'+ev.id+'" data-first="'+evIsoDate(item.firstDate)+'">';
       h+='<div class="ev-upcoming-color" style="background:'+ev.color+'"></div>';
       h+='<div class="ev-upcoming-info">';
       h+='<div class="ev-upcoming-title">'+_uTitle+'</div>';
       h+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+fd2(item.firstDate)+'</div>';
       h+='</div>';
-      h+='<div class="ev-upcoming-lbl">En '+diffToday+'d</div>';
+      h+='<div class="ev-upcoming-right"><span class="ev-upcoming-bell'+(_bellSet?' set':'')+'">&#128276;</span><div class="ev-upcoming-lbl">En '+diffToday+'d</div></div>';
       h+='</div>';
     });
     h+='</div>';
@@ -431,13 +441,14 @@ function renderEvUpcoming(){
       var _isVipUp=ev.id.indexOf('ev-bday-vip-')===0;
       var _upTitle=_isVipUp?('<img src="./VIP.png" class="bday-vip-img" alt="VIP" style="height:1.2em;vertical-align:middle;margin-right:3px">'+escHtml(ev.title.replace(/^\u2b50\s*/,'')))
         :escHtml(ev.title);
-      h+='<div class="ev-upcoming-item'+(isToday?' ev-upcoming-today':'')+'" data-id="'+ev.id+'">';
+      var _bellSet=isEvAlarmSet(ev.id);
+      h+='<div class="ev-upcoming-item'+(isToday?' ev-upcoming-today':'')+'" data-id="'+ev.id+'" data-first="'+evIsoDate(item.firstDate)+'">';
       h+='<div class="ev-upcoming-color" style="background:'+ev.color+'"></div>';
       h+='<div class="ev-upcoming-info">';
       h+='<div class="ev-upcoming-title">'+_upTitle+'</div>';
       h+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+fd2(item.firstDate)+'</div>';
       h+='</div>';
-      h+='<div class="'+lblCls+'">'+lbl+'</div>';
+      h+='<div class="ev-upcoming-right"><span class="ev-upcoming-bell'+(_bellSet?' set':'')+'">&#128276;</span><div class="'+lblCls+'">'+lbl+'</div></div>';
       h+='</div>';
     });
     h+='</div>';
@@ -1207,8 +1218,105 @@ function bindEvFormEvents(){
 }
 
 /* ── Apertura/cierre de la ventana ──────────────────────── */
+/* ── Panel de alarma para eventos próximos ── */
+function renderEvAlarmPanel(ev,firstDate){
+  var isSet=isEvAlarmSet(ev.id);
+  var fd2=function(d){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');};
+  var today=new Date();today.setHours(0,0,0,0);
+  var diff=Math.round((firstDate-today)/86400000);
+  var diffLbl=diff===0?'\u00a1Hoy!':diff===1?'Ma\u00f1ana':diff>0?'en '+diff+' d\u00edas':'En curso';
+  var h='<div class="ev-alarm-overlay" id="evAlarmOv"><div class="bd-alarm-sheet">';
+  h+='<div class="bd-alarm-handle"></div>';
+  h+='<div class="bd-alarm-hdr"><button class="sy-back" id="evAlarmClose">&#8592;</button>';
+  h+='<div class="bd-alarm-title">&#128276; Alarma evento</div><div style="width:36px"></div></div>';
+  h+='<div class="bd-alarm-info" style="border-color:'+ev.color+'44;background:'+ev.color+'11">';
+  h+='<div class="bd-alarm-name" style="color:'+ev.color+'">'+escHtml(ev.title)+'</div>';
+  h+='<div class="bd-alarm-date">'+fd2(firstDate)+' \u00b7 '+diffLbl+'</div></div>';
+  if(isSet){h+='<div class="bd-alarm-set-badge">&#128276; Alarma ya marcada como configurada<button class="bd-alarm-unmark-btn" id="evAlarmUnmark">Quitar</button></div>';}
+  h+='<div class="bd-alarm-row" style="margin:16px 0">';
+  h+='<span class="bd-alarm-row-lbl">&#128276; Hora de la alarma<br><span style="font-size:.65rem;opacity:.7">D\u00eda del evento: '+fd2(firstDate)+'</span></span>';
+  h+='<div class="bd-alarm-time"><input id="evAlarmH" type="number" min="0" max="23" value="15"><span class="bd-alarm-time-sep">:</span><input id="evAlarmM" type="number" min="0" max="59" value="02"></div>';
+  h+='</div>';
+  h+='<div class="ev-form-actions">';
+  h+='<button class="ev-btn primary" id="evAlarmCreate">&#128276; Crear alarma</button>';
+  h+='<button class="action-btn sent-toggle'+(isSet?' is-marked':'')+'" id="evAlarmMark">'+(isSet?'\u21a9 Desmarcar':'\u2713 Marcar config.')+'</button>';
+  h+='</div></div></div>';
+  return h;
+}
+function openEvAlarm(ev,firstDate){
+  var ov=document.getElementById('eventsOverlay');
+  var wrap=document.createElement('div');wrap.id='evAlarmWrap';
+  wrap.innerHTML=renderEvAlarmPanel(ev,firstDate);
+  ov.appendChild(wrap);
+  requestAnimationFrame(function(){
+    var fo=document.getElementById('evAlarmOv');
+    if(fo){fo.classList.add('open');fo.addEventListener('click',function(e){if(e.target===fo)closeEvAlarm();});}
+  });
+  bindEvAlarmEvents(ev,firstDate);
+}
+function closeEvAlarm(){
+  var fo=document.getElementById('evAlarmOv');
+  if(fo)fo.classList.remove('open');
+  setTimeout(function(){var w=document.getElementById('evAlarmWrap');if(w)w.remove();},300);
+}
+/* Abre el panel de cumpleaños VIP desde la ventana de eventos */
+function openBdayAlarmFromEvents(b){
+  var ov=document.getElementById('eventsOverlay');
+  var wrap=document.createElement('div');wrap.id='bdAlarmWrap';
+  wrap.innerHTML=typeof renderBdayAlarmPanel==='function'?renderBdayAlarmPanel(b):'';
+  ov.appendChild(wrap);
+  requestAnimationFrame(function(){
+    var fo=document.getElementById('bdAlarmOv');
+    if(fo){fo.classList.add('open');fo.addEventListener('click',function(e){if(e.target===fo&&typeof closeBdayAlarm==='function')closeBdayAlarm();});}
+  });
+  if(typeof bindBdayAlarmEvents==='function')bindBdayAlarmEvents(b);
+}
+function bindEvAlarmEvents(ev,firstDate){
+  document.getElementById('evAlarmClose').addEventListener('click',closeEvAlarm);
+  var unmarkBtn=document.getElementById('evAlarmUnmark');
+  if(unmarkBtn)unmarkBtn.addEventListener('click',function(){
+    setEvAlarmState(ev.id,false);
+    showToast('Marca de alarma eliminada','success');
+    closeEvAlarm();setTimeout(refreshEvents,320);
+  });
+  document.getElementById('evAlarmMark').addEventListener('click',function(){
+    var isSet=isEvAlarmSet(ev.id);
+    setEvAlarmState(ev.id,!isSet);
+    showToast(isSet?'Marca eliminada':'Alarma marcada como configurada','success');
+    closeEvAlarm();setTimeout(refreshEvents,320);
+  });
+  document.getElementById('evAlarmCreate').addEventListener('click',function(){
+    var alarmUrl=localStorage.getItem('excelia-alarm-url')||'';
+    if(!alarmUrl){showToast('Configura la URL de MacroDroid en el men\u00fa \u22ef','error');return;}
+    var hr=parseInt(document.getElementById('evAlarmH').value,10);
+    var h=isNaN(hr)?15:Math.min(23,Math.max(0,hr));
+    var mr=parseInt(document.getElementById('evAlarmM').value,10);
+    var m=isNaN(mr)?2:Math.min(59,Math.max(0,mr));
+    var msg='\uD83D\uDCC5 '+ev.title+' '+String(firstDate.getDate()).padStart(2,'0')+'/'+String(firstDate.getMonth()+1).padStart(2,'0');
+    var base=normalizeMacroBase(alarmUrl);
+    var dayOfAlarm=firstDate.getDay()+1;
+    var url=base+'/generar_alarma1?alarmH='+h+'&alarmM='+m+'&alarmMsg='+encodeURIComponent(msg)+'&alarmDays='+dayOfAlarm;
+    showToast('Enviando alarma a MacroDroid\u2026','success');
+    fetch(url,{mode:'no-cors'}).then(function(){
+      if(typeof addAlarm==='function'){
+        var fmtD=function(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
+        addAlarm({type:'event',label:msg,hour:h,minute:m,days:[dayOfAlarm],targetDate:fmtD(firstDate)});
+      }
+      setEvAlarmState(ev.id,true);
+      showToast('\u23f0 Alarma creada \u2014 '+escHtml(ev.title),'success');
+      closeEvAlarm();setTimeout(refreshEvents,320);
+    }).catch(function(){showToast('Error al contactar MacroDroid','error');});
+  });
+  var mInp=document.getElementById('evAlarmM');
+  if(mInp)mInp.addEventListener('blur',function(){
+    var v=parseInt(this.value,10);
+    if(!isNaN(v))this.value=String(Math.min(59,Math.max(0,v))).padStart(2,'0');
+  });
+}
+
 function openEvents(){
   NAV_BACK=null;
+  loadEvAlarms();
   var now=new Date();EV_YEAR=now.getFullYear();EV_MONTH=now.getMonth();EV_VIEW='upcoming';
   var ov=document.getElementById('eventsOverlay');
   document.getElementById('eventsContent').innerHTML=renderEvContent();
@@ -1340,12 +1448,24 @@ function bindEvEvents(){
       openEvForm(null,cell.dataset.ds);
     });
   });
-  // Click en items de próximos → detail
+  // Click en items de próximos → panel de alarma (VIP bday → panel cumpleaños)
   document.querySelectorAll('.ev-upcoming-item[data-id]').forEach(function(item){
     item.addEventListener('click',function(){
       var id=item.dataset.id;var ev=null;
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
-      if(ev)openEvDetail(ev);
+      if(!ev)return;
+      // Cumpleaños VIP → panel de alarma de cumpleaños
+      if(ev.id.indexOf('ev-bday-vip-')===0&&typeof BDAYS!=='undefined'){
+        var parts=ev.id.replace('ev-bday-vip-','').split('-');
+        var bDay=parseInt(parts[0],10),bMonth=parseInt(parts[1],10);
+        var bday=null;
+        for(var j=0;j<BDAYS.length;j++){if(BDAYS[j].vip&&BDAYS[j].day===bDay&&BDAYS[j].month===bMonth){bday=BDAYS[j];break;}}
+        if(bday){openBdayAlarmFromEvents(bday);return;}
+      }
+      // Evento regular → panel de alarma de evento
+      var firstDs=item.dataset.first;
+      var firstDate=firstDs?new Date(firstDs+'T00:00:00'):new Date(ev.start+'T00:00:00');
+      openEvAlarm(ev,firstDate);
     });
   });
   // Click en item de lista → detail

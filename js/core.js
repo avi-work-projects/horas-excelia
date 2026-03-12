@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v72 — export/import fiscal+gastos, logo VIP restaurado, separaci\u00f3n lista cumplea\u00f1os';
+var APP_VERSION = 'v73 — alarma en eventos pr\u00f3ximos (evento regular + VIP bday)';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
