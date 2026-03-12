@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v60 — cumpleaños: crear desde calendario, editar VIPs sin checkbox';
+var APP_VERSION = 'v61 — fakeTrans, barras eventos opacas, anual/4m barras 55%, correcciones visual';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -56,6 +56,20 @@ function load(){
 }
 function save(){
   localStorage.setItem(SK,JSON.stringify({days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,exclFest:EXCL_FEST,exclVac:EXCL_VAC}));
+}
+
+// ── Falso translúcido: mezcla color con fondo negro (opaco) ─
+// En lugar de rgba (muestra capas inferiores), devuelve un color plano
+// que VISUALMENTE parece alpha% sobre negro (oscurece el color original).
+// Así las barras de eventos actúan como "pegatina": tapan lo de abajo
+// pero se ven más oscuras/mezcladad con el fondo, no hay sangrado de color.
+function fakeTrans(hex,alpha){
+  hex=hex.replace('#','');
+  if(hex.length===3)hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+  var r=('0'+Math.round(parseInt(hex.slice(0,2),16)*alpha).toString(16)).slice(-2);
+  var g=('0'+Math.round(parseInt(hex.slice(2,4),16)*alpha).toString(16)).slice(-2);
+  var b=('0'+Math.round(parseInt(hex.slice(4,6),16)*alpha).toString(16)).slice(-2);
+  return '#'+r+g+b;
 }
 
 // ── Utilidades HTML ─────────────────────────────────────────
