@@ -102,7 +102,7 @@ function renderEconContent(){
   h+='<div class="econ-row col-base"><span>Base imponible (bruto)</span><span class="econ-val">'+fc(e.totBase)+'</span></div>';
   h+='<div class="econ-row col-iva"><span>+ IVA a pagar (21%)</span><span class="econ-val">+'+fc(e.totIva)+'</span></div>';
   h+='<div class="econ-row col-irpf"><span>&#8722; IRPF retenido (15%)</span><span class="econ-val">&#8722;'+fc(e.totIrpf)+'</span></div>';
-  h+='<div class="econ-row col-net"><span>Neto efectivo:<br><span style="font-size:.8em;opacity:.8">(base &#8722; IRPF)</span></span><span class="econ-val">'+fc(e.netoReal)+'</span></div>';
+  h+='<div class="econ-row col-net"><span>Neto efectivo:<br><span style="font-size:.8em;opacity:.8">(Base &#8722; IRPF)</span></span><span class="econ-val">'+fc(e.netoReal)+'</span></div>';
   h+='</div>';
   // Media mensual (año/12)
   var avgBase=Math.round(e.totBase/12*100)/100;
@@ -112,10 +112,10 @@ function renderEconContent(){
   h+='<div class="econ-avg-section">';
   h+='<div class="econ-avg-title">Media mensual (a\u00f1o / 12)</div>';
   h+='<div class="econ-avg-grid">';
-  h+='<div class="econ-avg-item"><span class="econ-avg-lbl" style="color:var(--c-blue)">Base</span><span class="econ-avg-val">'+fc(avgBase)+'</span></div>';
-  h+='<div class="econ-avg-item"><span class="econ-avg-lbl" style="color:var(--c-orange)">IVA</span><span class="econ-avg-val">'+fc(avgIva)+'</span></div>';
-  h+='<div class="econ-avg-item"><span class="econ-avg-lbl" style="color:var(--c-red)">IRPF</span><span class="econ-avg-val">'+fc(avgIrpf)+'</span></div>';
-  h+='<div class="econ-avg-item"><span class="econ-avg-lbl" style="color:var(--c-green)">Neto</span><span class="econ-avg-val">'+fc(avgNeto)+'</span></div>';
+  h+='<div class="econ-avg-item"><span class="econ-avg-lbl" style="color:var(--c-blue)">Base</span><span class="econ-avg-val" style="color:var(--c-blue)">'+fc(avgBase)+'</span></div>';
+  h+='<div class="econ-avg-item"><span class="econ-avg-lbl" style="color:var(--c-orange)">IVA</span><span class="econ-avg-val" style="color:var(--c-orange)">'+fc(avgIva)+'</span></div>';
+  h+='<div class="econ-avg-item"><span class="econ-avg-lbl" style="color:var(--c-red)">IRPF</span><span class="econ-avg-val" style="color:var(--c-red)">'+fc(avgIrpf)+'</span></div>';
+  h+='<div class="econ-avg-item"><span class="econ-avg-lbl" style="color:var(--c-green)">Neto</span><span class="econ-avg-val" style="color:var(--c-green)">'+fc(avgNeto)+'</span></div>';
   h+='</div></div>';
 
   // Ingresado en cuenta (neutral)
@@ -154,7 +154,7 @@ function renderEconContent(){
   h+='</div></div></div>';
 
   // Gráfica neto mensual
-  h+='<div class="sy-section"><div class="sy-section-title">Neto mensual (base &#8722; IRPF)</div>';
+  h+='<div class="sy-section"><div class="sy-section-title">Neto mensual (Base &#8722; IRPF)</div>';
   var netoData=e.months.map(function(mo){return mo.neto;});
   h+='<div class="sy-chart">'+econBarChart(netoData,MN_SHORT,'#34d399')+'</div></div>';
 
@@ -230,5 +230,6 @@ function bindEconEvents(){
     var qs=document.querySelector('.econ-quarter-section');
     var ms=document.querySelector('.econ-month-section');
     if(qs&&ms)ms.style.maxWidth=qs.offsetWidth+'px';
+    if(typeof fixStickyTops==='function')fixStickyTops();
   },60);
 }
