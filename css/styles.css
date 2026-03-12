@@ -695,20 +695,19 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 /* ── VIP BIRTHDAYS ── */
 .bday-vip-img{height:2.6em;width:auto;vertical-align:middle;margin-left:6px;display:inline;object-fit:contain}
 .bday-upcoming-item.bday-vip-item{border-color:rgba(251,191,36,.45);background:rgba(251,191,36,.06)}
-.bday-alarm-set-icon{font-size:.72rem;margin-left:4px;flex-shrink:0;filter:drop-shadow(0 0 4px #fbbf24) drop-shadow(0 0 10px rgba(251,191,36,.6));animation:bell-pulse 2s ease-in-out infinite}
-@keyframes bell-pulse{0%,100%{filter:drop-shadow(0 0 4px #fbbf24) drop-shadow(0 0 10px rgba(251,191,36,.6))}50%{filter:drop-shadow(0 0 6px #fbbf24) drop-shadow(0 0 16px rgba(251,191,36,.9))}}
 /* ── BIRTHDAY + EVENT ALARM PANEL ── */
 .bd-alarm-overlay,.ev-alarm-overlay{position:absolute;inset:0;z-index:10;background:rgba(0,0,0,.6);display:none}
 .bd-alarm-overlay.open,.ev-alarm-overlay.open{display:flex;align-items:flex-end}
-/* Campana de alarma en items de próximos */
+/* Campana de alarma en items de próximos (bday + eventos) */
 .ev-upcoming-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
-.ev-upcoming-bell{font-size:.95rem;opacity:.22;transition:opacity .15s,filter .15s;line-height:1}
-.ev-upcoming-bell.set{opacity:1;filter:drop-shadow(0 0 4px var(--accent-bright))}
+.ev-upcoming-bell{font-size:.95rem;opacity:.12;transition:opacity .15s;line-height:1}
+.ev-upcoming-bell.set{opacity:1}
 .bd-alarm-sheet{width:100%;background:var(--surface);border-top-left-radius:20px;border-top-right-radius:20px;padding:8px 20px 32px;padding-bottom:calc(32px + env(safe-area-inset-bottom,0px));max-height:92vh;overflow-y:auto}
 .bd-alarm-handle{width:36px;height:4px;border-radius:2px;background:var(--border-light);margin:0 auto 14px}
 .bd-alarm-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .bd-alarm-title{flex:1;font-size:.88rem;font-weight:600;text-align:center}
 .bd-alarm-info{padding:10px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);margin-bottom:14px}
+.ev-alarm-note{font-size:.75rem;color:var(--text-muted);margin-top:6px;line-height:1.4}
 .bd-alarm-name{font-size:1rem;font-weight:700;margin-bottom:3px}
 .bd-alarm-date{font-size:.75rem;color:var(--text-muted);font-family:var(--mono)}
 .bd-alarm-count-row{display:flex;gap:8px;margin-bottom:14px}

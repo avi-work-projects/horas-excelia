@@ -55,8 +55,20 @@ var EV_ALARM_SK='excelia-ev-alarm-v1';
 var EV_ALARMS_SET={};
 function loadEvAlarms(){try{var r=localStorage.getItem(EV_ALARM_SK);if(r)EV_ALARMS_SET=JSON.parse(r);}catch(e){}}
 function saveEvAlarms(){try{localStorage.setItem(EV_ALARM_SK,JSON.stringify(EV_ALARMS_SET));}catch(e){}}
-function isEvAlarmSet(evId){return !!EV_ALARMS_SET[evId];}
-function setEvAlarmState(evId,bool){if(bool)EV_ALARMS_SET[evId]=true;else delete EV_ALARMS_SET[evId];saveEvAlarms();}
+function isEvAlarmSet(evId){
+  if(evId.indexOf('ev-bday-vip-')===0&&typeof isBdayAlarmSet==='function'&&typeof BDAYS!=='undefined'){
+    var _p=evId.replace('ev-bday-vip-','').split('-');var _bd=parseInt(_p[0],10),_bm=parseInt(_p[1],10);
+    for(var _i=0;_i<BDAYS.length;_i++){if(BDAYS[_i].vip&&BDAYS[_i].day===_bd&&BDAYS[_i].month===_bm)return isBdayAlarmSet(BDAYS[_i]);}
+  }
+  return !!EV_ALARMS_SET[evId];
+}
+function setEvAlarmState(evId,bool){
+  if(evId.indexOf('ev-bday-vip-')===0&&typeof setBdayAlarmState==='function'&&typeof BDAYS!=='undefined'){
+    var _p=evId.replace('ev-bday-vip-','').split('-');var _bd=parseInt(_p[0],10),_bm=parseInt(_p[1],10);
+    for(var _i=0;_i<BDAYS.length;_i++){if(BDAYS[_i].vip&&BDAYS[_i].day===_bd&&BDAYS[_i].month===_bm){setBdayAlarmState(BDAYS[_i],bool);return;}}
+  }
+  if(bool)EV_ALARMS_SET[evId]=true;else delete EV_ALARMS_SET[evId];saveEvAlarms();
+}
 
 function evDk(d){
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -1229,9 +1241,11 @@ function renderEvAlarmPanel(ev,firstDate){
   h+='<div class="bd-alarm-handle"></div>';
   h+='<div class="bd-alarm-hdr"><button class="sy-back" id="evAlarmClose">&#8592;</button>';
   h+='<div class="bd-alarm-title">&#128276; Alarma evento</div><div style="width:36px"></div></div>';
+  var note=ev.note&&ev.note.trim()?escHtml(ev.note):'<span style="opacity:.45;font-style:italic">Sin descripci\u00f3n</span>';
   h+='<div class="bd-alarm-info" style="border-color:'+ev.color+'44;background:'+ev.color+'11">';
   h+='<div class="bd-alarm-name" style="color:'+ev.color+'">'+escHtml(ev.title)+'</div>';
-  h+='<div class="bd-alarm-date">'+fd2(firstDate)+' \u00b7 '+diffLbl+'</div></div>';
+  h+='<div class="bd-alarm-date">'+fd2(firstDate)+' \u00b7 '+diffLbl+'</div>';
+  h+='<div class="ev-alarm-note">'+note+'</div></div>';
   if(isSet){h+='<div class="bd-alarm-set-badge">&#128276; Alarma ya marcada como configurada<button class="bd-alarm-unmark-btn" id="evAlarmUnmark">Quitar</button></div>';}
   h+='<div class="bd-alarm-row" style="margin:16px 0">';
   h+='<span class="bd-alarm-row-lbl">&#128276; Hora de la alarma<br><span style="font-size:.65rem;opacity:.7">D\u00eda del evento: '+fd2(firstDate)+'</span></span>';
@@ -1239,6 +1253,7 @@ function renderEvAlarmPanel(ev,firstDate){
   h+='</div>';
   h+='<div class="ev-form-actions">';
   h+='<button class="ev-btn primary" id="evAlarmCreate">&#128276; Crear alarma</button>';
+  h+='<button class="ev-btn" id="evAlarmEdit" style="background:var(--surface2);color:var(--text)">&#9998; Editar evento</button>';
   h+='<button class="action-btn sent-toggle'+(isSet?' is-marked':'')+'" id="evAlarmMark">'+(isSet?'\u21a9 Desmarcar':'\u2713 Marcar config.')+'</button>';
   h+='</div></div></div>';
   return h;
@@ -1284,6 +1299,10 @@ function bindEvAlarmEvents(ev,firstDate){
     setEvAlarmState(ev.id,!isSet);
     showToast(isSet?'Marca eliminada':'Alarma marcada como configurada','success');
     closeEvAlarm();setTimeout(refreshEvents,320);
+  });
+  var editBtn=document.getElementById('evAlarmEdit');
+  if(editBtn)editBtn.addEventListener('click',function(){
+    closeEvAlarm();setTimeout(function(){openEvForm(ev,null);},310);
   });
   document.getElementById('evAlarmCreate').addEventListener('click',function(){
     var alarmUrl=localStorage.getItem('excelia-alarm-url')||'';

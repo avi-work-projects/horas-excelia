@@ -184,7 +184,6 @@ function renderBdayUpcoming(){
       var lblCls='bday-upcoming-lbl'+(isT?' today-lbl':isPastDay?' past-lbl':(isCurWeek&&x.diff>0)?' this-week':isNearDay?' near':'');
       var isVip=!!x.b.vip;
       var alarmSet=isBdayAlarmSet(x.b);
-      var alarmIcon=alarmSet?'<span class="bday-alarm-set-icon" title="Alarma configurada">\uD83D\uDD14</span>':'';
       var vipCls=isVip?' bday-vip-item':'';
       var vipStar=isVip?' <img src="./VIP.png" class="bday-vip-img" alt="VIP">':'';
       s+='<div class="bday-upcoming-item'+vipCls+(isT?' bday-today-item':'')+'" data-bday-name="'+escHtml(x.b.name)+'" data-bday-day="'+x.b.day+'" data-bday-month="'+x.b.month+'">';
@@ -193,8 +192,7 @@ function renderBdayUpcoming(){
       s+='<div class="bday-upcoming-name" style="color:'+color+'">'+bdName(x.b.name)+vipStar+'</div>';
       s+='<div class="bday-upcoming-date">'+x.b.day+' de '+MN[x.b.month-1]+'</div>';
       s+='</div>';
-      s+=alarmIcon;
-      s+='<div class="'+lblCls+'">'+lbl+'</div>';
+      s+='<div class="ev-upcoming-right"><span class="ev-upcoming-bell'+(alarmSet?' set':'')+'">&#128276;</span><div class="'+lblCls+'">'+lbl+'</div></div>';
       s+='</div>';
     });
     return s;
@@ -395,7 +393,7 @@ function renderBdayAlarmPanel(b){
   var lbl=dl===0?'\u00a1Hoy!':dl===1?'Ma\u00f1ana':dl>0?'en '+dl+' d\u00edas':'Hace '+Math.abs(dl)+' d\u00edas';
   var color=getBdayColor(b);
   var isSet=isBdayAlarmSet(b);
-  var cnt=BDAY_ALARM_COUNT;
+  var cnt=b.vip?BDAY_ALARM_COUNT:1;
   // Default dates: day before (month/day) and day of
   var today=new Date();
   var bdYear=today.getFullYear();
