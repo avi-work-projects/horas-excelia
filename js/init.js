@@ -168,9 +168,43 @@
       if(urlIn){urlIn.value=macroUrl;urlIn.disabled=!useMacro;}
       // Construir botones de días ordenados desde hoy con fecha debajo
       buildAlarmDayBtns();
+      // Inicializar drum pickers de hora/minuto
+      var _dH=parseInt(localStorage.getItem('excelia-alarm-h')||'9',10);
+      var _dM=parseInt(localStorage.getItem('excelia-alarm-m')||'20',10);
+      buildDrumPicker('drumHour',24,_dH);
+      buildDrumPicker('drumMin',60,_dM);
     }
     panel.classList.toggle('open');
   });
+
+  /* ── Drum picker: selector giratorio de hora/minuto ── */
+  var DRUM_ITEM_H=44;
+  function buildDrumPicker(id,count,initVal){
+    var drum=document.getElementById(id);if(!drum)return;
+    drum.innerHTML='';
+    var padT=document.createElement('div');padT.style.height=DRUM_ITEM_H+'px';drum.appendChild(padT);
+    for(var _i=0;_i<count;_i++){
+      var item=document.createElement('div');item.className='drum-picker-item';
+      item.textContent=String(_i).padStart(2,'0');item.dataset.val=_i;drum.appendChild(item);
+    }
+    var padB=document.createElement('div');padB.style.height=DRUM_ITEM_H+'px';drum.appendChild(padB);
+    drum.scrollTop=Math.max(0,initVal)*DRUM_ITEM_H;
+    updateDrumSelected(drum);
+    if(!drum._drumEv){
+      drum._drumEv=true;
+      drum.addEventListener('scroll',function(){updateDrumSelected(drum);},{passive:true});
+    }
+  }
+  function updateDrumSelected(drum){
+    var val=Math.round(drum.scrollTop/DRUM_ITEM_H);
+    drum.querySelectorAll('.drum-picker-item[data-val]').forEach(function(it){
+      it.classList.toggle('drum-selected',+it.dataset.val===val);
+    });
+  }
+  function getDrumValue(id){
+    var drum=document.getElementById(id);if(!drum)return 0;
+    return Math.max(0,Math.round(drum.scrollTop/DRUM_ITEM_H));
+  }
 
   /* ── Alarma: botones días de semana (generados dinámicamente, ordenados desde hoy) ── */
   function buildAlarmDayBtns(){
@@ -234,16 +268,12 @@
     this.value=v;
     localStorage.setItem('excelia-alarm-url',v);
   });
-  document.getElementById('alarmMin').addEventListener('blur',function(){
-    var v=parseInt(this.value,10);
-    if(!isNaN(v)&&v>=0&&v<=59)this.value=String(v).padStart(2,'0');
-  });
 
   document.getElementById('alarmCreateBtn').addEventListener('click',function(){
-    var hRaw=parseInt(document.getElementById('alarmHour').value,10);
-    var h=isNaN(hRaw)?9:Math.min(23,Math.max(0,hRaw));
-    var mRaw=parseInt(document.getElementById('alarmMin').value,10);
-    var m=isNaN(mRaw)?20:Math.min(59,Math.max(0,mRaw));
+    var h=getDrumValue('drumHour');
+    var m=getDrumValue('drumMin');
+    localStorage.setItem('excelia-alarm-h',h);
+    localStorage.setItem('excelia-alarm-m',m);
     var msg=(document.getElementById('alarmMsg').value.trim()||'Horas Excelia');
     var useMacro=document.getElementById('alarmUseMacro').checked;
     var selDays=[];
@@ -310,10 +340,10 @@
 
   /* ── Alarma: fallback .ics (recordatorio de calendario, 100% fiable) ── */
   document.getElementById('alarmIcsBtn').addEventListener('click',function(){
-    var hRaw2=parseInt(document.getElementById('alarmHour').value,10);
-    var h=isNaN(hRaw2)?8:Math.min(23,Math.max(0,hRaw2));
-    var mRaw2=parseInt(document.getElementById('alarmMin').value,10);
-    var m=isNaN(mRaw2)?0:Math.min(59,Math.max(0,mRaw2));
+    var h=getDrumValue('drumHour');
+    var m=getDrumValue('drumMin');
+    localStorage.setItem('excelia-alarm-h',h);
+    localStorage.setItem('excelia-alarm-m',m);
     var msg=(document.getElementById('alarmMsg').value.trim()||'Horas Excelia');
     var selDays=[];
     document.querySelectorAll('.alarm-day-btn.on').forEach(function(b){selDays.push(+b.dataset.day);});

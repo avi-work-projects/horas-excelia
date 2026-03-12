@@ -760,7 +760,7 @@ function renderEvQuad(){
 /* ── Render: lista de eventos por tipos ─────────────────── */
 function renderEvByTypes(){
   var today=new Date();today.setHours(0,0,0,0);
-  var typeOrder=['Viaje','Asturias','Recordatorio de Gestiones','Planes y Quedadas','Cumplea\u00f1os VIP','Otros'];
+  var typeOrder=['Viaje','Asturias','Recordatorio de Gestiones','Planes y Quedadas','Otros','Cumplea\u00f1os VIP'];
   var h='<div class="ev-types-controls">';
   h+='<label class="ev-types-past-label"><input type="checkbox" id="evTypesPast"'+(EV_TYPES_PAST?' checked':'')+'> Excluir pasados</label>';
   h+='<select class="ev-types-select" id="evTypesFilter">';

@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v69 — ventana económica: 4 pestañas, análisis gastos, cascada ingresos';
+var APP_VERSION = 'v70 — drum picker alarma, aros de color nivel 1, orden eventos, grosor VIP';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
