@@ -117,9 +117,9 @@ function _econCards7(e,cotAnual,declDiff,factor,subSuffix){
   h+=_econCard('var(--c-blue)','Base',f(e.totBase),subSuffix);
   h+=_econCard('var(--c-orange)','IVA',f(e.totIva),'no toques');
   h+=_econCard('var(--c-red)','IRPF',f(e.totIrpf),'retenci\u00f3n '+e.irpfPct+'%');
-  h+=_econCard('var(--c-green)','Base \u2212 IRPF',f(e.netoReal),'base \u2212 IRPF');
+  h+=_econCard('var(--c-green)','Base \u2212 15% IRPF',f(e.netoReal),'base \u2212 15% IRPF');
   h+=_econCard('#c084fc','Cuota Aut\u00f3nomos',f(cotAnual),'CCSS');
-  h+=_econCard('var(--c-green)','Base \u2212 IRPF \u2212 CCSS',f(cotAnual>0?netoCCSS:e.netoReal),'tras CCSS');
+  h+=_econCard('var(--c-green)','Base \u2212 15% IRPF \u2212 CCSS',f(cotAnual>0?netoCCSS:e.netoReal),'tras CCSS');
   h+=_econCard('var(--accent-bright)','Neto tras Dec. Renta',f(cotAnual>0?netoDecl:Math.round((e.netoReal-declDiff)*100)/100),'tras declaraci\u00f3n');
   return h;
 }
@@ -197,12 +197,12 @@ function renderEconResumen(){
     h+='<div class="econ-qcell econ-qcell-iva"><div class="sy-val-sm" style="color:var(--c-orange)">'+fc(e.qIva[i])+'</div><div class="sy-lbl">'+q+' IVA Hacienda</div></div>';
   });
   ['T1','T2','T3','T4'].forEach(function(q,i){
-    h+='<div class="econ-qcell econ-qcell-neto"><div class="sy-val-sm" style="color:var(--c-green)">'+fc(e.qNeto[i])+'</div><div class="sy-lbl">'+q+' neto real</div></div>';
+    h+='<div class="econ-qcell econ-qcell-neto"><div class="sy-val-sm" style="color:var(--c-green)">'+fc(e.qNeto[i])+'</div><div class="sy-lbl">'+q+' Base \u2212 15% IRPF</div></div>';
   });
   h+='</div></div></div>';
 
-  /* §6 Gráfica Base − IRPF mensual */
-  h+='<div class="sy-section"><div class="sy-section-title">Base \u2212 IRPF mensual</div>';
+  /* §6 Gráfica Base − 15% IRPF mensual */
+  h+='<div class="sy-section"><div class="sy-section-title">Base \u2212 15% IRPF mensual</div>';
   h+='<div class="sy-chart">'+econBarChart(e.months.map(function(mo){return mo.neto;}),MN_SHORT,'#34d399')+'</div></div>';
 
   /* §7 Desglose mensual — 9 columnas con CCSS y Neto Dec. */
@@ -210,8 +210,8 @@ function renderEconResumen(){
   h+='<div class="sy-section econ-month-section"><div class="sy-section-title">Desglose Mensual</div>';
   h+='<div class="econ-month-wrap"><table class="econ-month-table"><thead><tr>';
   h+='<th>Mes</th><th>D\u00edas</th><th style="color:var(--c-blue)">Base</th><th style="color:var(--c-orange)">IVA</th><th style="color:var(--c-red)">IRPF</th><th>Ingresado</th>';
-  h+='<th style="color:var(--c-green)">Base\u2212IRPF</th>';
-  h+='<th style="color:var(--c-green)">Base\u2212IRPF\u2212CCSS</th>';
+  h+='<th style="color:var(--c-green)">Base\u221215%\u00a0IRPF</th>';
+  h+='<th style="color:var(--c-green)">Base\u221215%\u00a0IRPF\u2212CCSS</th>';
   h+='<th style="color:var(--accent-bright)">Neto Dec.</th>';
   h+='</tr></thead><tbody>';
   var totD=0;
@@ -252,7 +252,7 @@ function renderEconResumen(){
   if(cotAnual>0){
     var netoDisp=Math.round((e.netoReal-cotAnual)*100)/100;
     h+=cascRow('Cuota Aut\u00f3nomos (CCSS)','<span style="color:#c084fc">&minus;</span>',cotAnual,'#c084fc');
-    h+=cascRow('Base \u2212 IRPF \u2212 CCSS','=',netoDisp,'var(--c-green)','final');
+    h+=cascRow('Base \u2212 15% IRPF \u2212 CCSS','=',netoDisp,'var(--c-green)','final');
     if(declDiff>0){
       h+=cascRow('IRPF resto (Dec. Renta)','<span style="color:var(--c-red)">&minus;</span>',declDiff,'var(--c-red)','','a pagar en la declaraci\u00f3n');
       h+=cascRow('Neto tras Dec. Renta','=',Math.round((netoDisp-declDiff)*100)/100,'var(--accent-bright)','final');

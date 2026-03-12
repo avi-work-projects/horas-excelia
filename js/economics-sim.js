@@ -24,26 +24,30 @@ function renderEconSim(){
   h+='<div class="sim-target-input-wrap">';
   h+='<input class="sim-target-input" id="simTarget" type="text" inputmode="numeric" placeholder="25" value="'+(SIM_TARGET?Math.round(SIM_TARGET/1000):'')+'" autocomplete="off">';
   h+='<span class="sim-target-suffix">.000&nbsp;&#8364;</span>';
-  h+='</div>';
-  h+='<select class="econ-sim-select sim-period-sel" id="simPeriod">';
-  h+='<option value="annual"'+(SIM_PERIOD==='annual'?' selected':'')+'>Anual</option>';
-  h+='<option value="monthly"'+(SIM_PERIOD==='monthly'?' selected':'')+'>Mensual</option>';
-  h+='</select></div></div>';
+  h+='</div></div></div>';
+
+  /* Período */
+  h+='<div class="sim-field-group" style="margin-top:12px">';
+  h+='<div class="sim-field-label">Per&#237;odo</div>';
+  h+='<div class="econ-opt-row" id="simPeriod">';
+  h+='<button class="econ-opt-btn'+(SIM_PERIOD==='annual'?' active':'')+'" data-val="annual" data-opt="simPeriod">Anual</button>';
+  h+='<button class="econ-opt-btn'+(SIM_PERIOD==='monthly'?' active':'')+'" data-val="monthly" data-opt="simPeriod">Mensual</button>';
+  h+='</div></div>';
 
   /* Modo de horas */
   h+='<div class="sim-field-group" style="margin-top:12px">';
   h+='<div class="sim-field-label">Modo de horas</div>';
-  h+='<select class="econ-sim-select" id="simHoursMode">';
-  h+='<option value="real"'+(SIM_HOURS_MODE==='real'?' selected':'')+'>Horas reales del calendario</option>';
-  h+='<option value="8h"'+(SIM_HOURS_MODE==='8h'?' selected':'')+'>8h fijas por d&#237;a</option>';
-  h+='</select></div>';
+  h+='<div class="econ-opt-row" id="simHoursMode">';
+  h+='<button class="econ-opt-btn'+(SIM_HOURS_MODE==='real'?' active':'')+'" data-val="real" data-opt="simHoursMode">Horas reales</button>';
+  h+='<button class="econ-opt-btn'+(SIM_HOURS_MODE==='8h'?' active':'')+'" data-val="8h" data-opt="simHoursMode">8h fijas</button>';
+  h+='</div></div>';
 
   /* Definición de "Neto" */
   h+='<div class="sim-field-group" style="margin-top:12px">';
   h+='<div class="sim-field-label">El neto objetivo es&hellip;</div>';
   h+='<div class="econ-opt-row" id="simNetMode">';
   h+='<button class="econ-opt-btn'+(SIM_NET_MODE==='irpf15'?' active':'')+'" data-val="irpf15" data-opt="simNetMode">Base \u2212 15% IRPF</button>';
-  h+='<button class="econ-opt-btn'+(SIM_NET_MODE==='ccss'?' active':'')+'" data-val="ccss" data-opt="simNetMode">Base \u2212 IRPF \u2212 CCSS</button>';
+  h+='<button class="econ-opt-btn'+(SIM_NET_MODE==='ccss'?' active':'')+'" data-val="ccss" data-opt="simNetMode">Base \u2212 15% IRPF \u2212 CCSS</button>';
   h+='<button class="econ-opt-btn'+(SIM_NET_MODE==='decl'?' active':'')+'" data-val="decl" data-opt="simNetMode">Neto tras Dec. Renta</button>';
   h+='</div></div>';
 
@@ -69,10 +73,10 @@ function renderEconSim(){
     h+='<div class="econ-decl-row"><span>Base imponible</span><span class="econ-val col-base">'+fc(r.totBase)+'</span></div>';
     h+='<div class="econ-decl-row"><span>IVA generado (21%)</span><span class="econ-val col-iva">'+fc(r.totIva)+'</span></div>';
     h+='<div class="econ-decl-row"><span>IRPF retenido ('+r.irpfPct+'%)</span><span class="econ-val col-irpf">'+fc(r.totIrpf)+'</span></div>';
-    h+='<div class="econ-decl-row" style="font-weight:600"><span>Base \u2212 IRPF</span><span class="econ-val col-net">'+fc(r.netoReal)+'</span></div>';
+    h+='<div class="econ-decl-row" style="font-weight:600"><span>Base \u2212 15% IRPF</span><span class="econ-val col-net">'+fc(r.netoReal)+'</span></div>';
     if(cotAnual>0){
       h+='<div class="econ-decl-row" style="opacity:.75"><span>Cuota Aut\u00f3nomos</span><span class="econ-val" style="color:#c084fc">&minus;'+fc(cotAnual)+'</span></div>';
-      h+='<div class="econ-decl-row" style="font-weight:600"><span>Base \u2212 IRPF \u2212 CCSS</span><span class="econ-val col-net">'+fc(netoCCSS)+'</span></div>';
+      h+='<div class="econ-decl-row" style="font-weight:600"><span>Base \u2212 15% IRPF \u2212 CCSS</span><span class="econ-val col-net">'+fc(netoCCSS)+'</span></div>';
     }
     if(declDiff!==0){
       var declLbl=declDiff>0?'IRPF Dec. Renta (a pagar)':'Devoluci\u00f3n IRPF Dec.';
@@ -90,16 +94,16 @@ function renderEconSim(){
 }
 
 function bindEconSimEvents(){
-  var periodSel=document.getElementById('simPeriod');
-  var hoursSel=document.getElementById('simHoursMode');
-  if(periodSel)periodSel.addEventListener('change',function(){SIM_PERIOD=this.value;});
-  if(hoursSel)hoursSel.addEventListener('change',function(){SIM_HOURS_MODE=this.value;});
-
-  /* Modo de net opt-row */
-  document.querySelectorAll('#simNetMode .econ-opt-btn').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      SIM_NET_MODE=btn.dataset.val;
-      document.querySelectorAll('#simNetMode .econ-opt-btn').forEach(function(b){b.classList.toggle('active',b.dataset.val===SIM_NET_MODE);});
+  /* Opt-btn rows: período, horas y net mode */
+  ['simPeriod','simHoursMode','simNetMode'].forEach(function(rowId){
+    document.querySelectorAll('#'+rowId+' .econ-opt-btn').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var val=btn.dataset.val;
+        if(rowId==='simPeriod')SIM_PERIOD=val;
+        else if(rowId==='simHoursMode')SIM_HOURS_MODE=val;
+        else SIM_NET_MODE=val;
+        document.querySelectorAll('#'+rowId+' .econ-opt-btn').forEach(function(b){b.classList.toggle('active',b.dataset.val===val);});
+      });
     });
   });
 
@@ -128,10 +132,8 @@ function bindEconSimEvents(){
     if(!thousandsVal||thousandsVal<=0){showToast('Introduce un neto objetivo v\u00e1lido','error');return;}
 
     SIM_TARGET=thousandsVal*1000; // el input es en miles
-    var period=document.getElementById('simPeriod').value;
-    SIM_PERIOD=period;
-    var hoursMode=document.getElementById('simHoursMode').value;
-    SIM_HOURS_MODE=hoursMode;
+    var period=SIM_PERIOD;
+    var hoursMode=SIM_HOURS_MODE;
 
     var netObjective=period==='monthly'?SIM_TARGET*12:SIM_TARGET;
     var irpfPct=getIrpfPct();

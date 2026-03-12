@@ -428,6 +428,7 @@ function renderEvUpcoming(){
       h+='<div class="ev-upcoming-info">';
       h+='<div class="ev-upcoming-title">'+_uTitle+'</div>';
       h+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+fd2(item.firstDate)+'</div>';
+      if(ev.note&&ev.note.trim())h+='<div class="ev-upcoming-note">'+escHtml(ev.note.trim())+'</div>';
       h+='</div>';
       h+='<div class="ev-upcoming-right"><span class="ev-upcoming-bell'+(_bellSet?' set':'')+'">&#128276;</span><div class="ev-upcoming-lbl">En '+diffToday+'d</div></div>';
       h+='</div>';
@@ -459,6 +460,7 @@ function renderEvUpcoming(){
       h+='<div class="ev-upcoming-info">';
       h+='<div class="ev-upcoming-title">'+_upTitle+'</div>';
       h+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+fd2(item.firstDate)+'</div>';
+      if(ev.note&&ev.note.trim())h+='<div class="ev-upcoming-note">'+escHtml(ev.note.trim())+'</div>';
       h+='</div>';
       h+='<div class="ev-upcoming-right"><span class="ev-upcoming-bell'+(_bellSet?' set':'')+'">&#128276;</span><div class="'+lblCls+'">'+lbl+'</div></div>';
       h+='</div>';
