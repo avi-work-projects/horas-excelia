@@ -487,7 +487,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-filter-chip.chip-active{opacity:1}
 /* ── Barras multi-día en vista mensual (fila propia encima de las celdas) ── */
 /* Shared overlay nav bar — nivel 1, siempre visible en lo alto del overlay */
-.overlay-nav-bar{flex-shrink:0;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;gap:4px;padding:4px 12px;box-shadow:0 1px 0 var(--border);overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none}
+.overlay-nav-bar{flex-shrink:0;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;gap:6px;padding:4px 12px;box-shadow:0 1px 0 var(--border);overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none}
 .nav-bar-spacer{flex:1}
 .overlay-nav-bar::-webkit-scrollbar{display:none}
 /* ── TABS NIVEL 2 (birthdays/events/summary) — nivel 2, debajo del nav bar ── */
@@ -584,12 +584,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 
 /* ── EVENTS ── */
 .data-btn.events-active{color:var(--c-blue)!important;box-shadow:0 0 0 1.5px rgba(108,140,255,.9),0 0 7px rgba(108,140,255,.5);border-radius:8px}
-.ev-hdr-sub{display:flex;align-items:stretch;padding:0;gap:0;box-shadow:0 1px 0 var(--border);overflow-x:hidden}
-.ev-view-zone{flex:1;display:flex;flex-direction:column;border-right:1px solid var(--border)}
-.ev-view-zone:last-child{border-right:none}
-.ev-view-toggle{flex:1;font-size:.62rem;padding:6px 2px;border-radius:0;border:none;border-bottom:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;text-align:center;line-height:1.3;width:100%}
-.ev-view-toggle:last-child{border-bottom:none}
-.ev-view-toggle.active{background:var(--accent-glow);color:var(--accent-bright)}
+.ev-hdr-sub{display:flex;align-items:stretch;padding:5px 6px;gap:5px;box-shadow:0 1px 0 var(--border);overflow-x:hidden}
+.ev-view-zone{flex:1;display:flex;flex-direction:column;gap:4px;}
+.ev-view-toggle{flex:1;font-size:.62rem;padding:6px 3px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;text-align:center;line-height:1.3;width:100%}
+.ev-view-toggle.active{background:var(--accent-glow);color:var(--accent-bright);border-color:var(--accent)}
 /* ── Feat 2: Lista de Eventos subtabs ── */
 .ev-list-subtabs{display:flex;gap:6px;padding:8px 0 4px}
 .ev-list-subtab{flex:1;font-size:.72rem;padding:6px 12px;border-radius:14px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;text-align:center;transition:all .15s;-webkit-user-select:none;user-select:none}
@@ -693,18 +691,18 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 /* ── RESPONSIVE (mobile header) ── */
 @media(max-width:440px){
   .data-btn{width:40px;height:40px;font-size:1.2rem}
-  .data-actions{gap:4px}
+  .data-actions{gap:8px}
   .nav-bar-btn{width:40px;height:40px;font-size:1.2rem}
 }
 @media(max-width:400px){
   .data-btn{width:36px;height:36px;font-size:1.1rem}
-  .data-actions{gap:3px}
+  .data-actions{gap:7px}
   .header h1{font-size:.95rem}
   .nav-bar-btn{width:36px;height:36px;font-size:1.1rem}
 }
 @media(max-width:360px){
   .data-btn{width:34px;height:34px;font-size:1.05rem}
-  .data-actions{gap:2px}
+  .data-actions{gap:6px}
   .header h1{font-size:.9rem}
   .nav-bar-btn{width:34px;height:34px;font-size:1.05rem}
 }
