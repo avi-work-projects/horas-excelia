@@ -428,7 +428,7 @@ function renderEvUpcoming(){
       h+='<div class="ev-upcoming-info">';
       h+='<div class="ev-upcoming-title">'+_uTitle+'</div>';
       h+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+fd2(item.firstDate)+'</div>';
-      if(ev.note&&ev.note.trim())h+='<div class="ev-upcoming-note">'+escHtml(ev.note.trim())+'</div>';
+      if(ev.note&&ev.note.trim()&&!_isVipU)h+='<div class="ev-upcoming-note">'+escHtml(ev.note.trim())+'</div>';
       h+='</div>';
       h+='<div class="ev-upcoming-right"><span class="ev-upcoming-bell'+(_bellSet?' set':'')+'">&#128276;</span><div class="ev-upcoming-lbl">En '+diffToday+'d</div></div>';
       h+='</div>';
@@ -460,7 +460,7 @@ function renderEvUpcoming(){
       h+='<div class="ev-upcoming-info">';
       h+='<div class="ev-upcoming-title">'+_upTitle+'</div>';
       h+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+fd2(item.firstDate)+'</div>';
-      if(ev.note&&ev.note.trim())h+='<div class="ev-upcoming-note">'+escHtml(ev.note.trim())+'</div>';
+      if(ev.note&&ev.note.trim()&&!_isVipUp)h+='<div class="ev-upcoming-note">'+escHtml(ev.note.trim())+'</div>';
       h+='</div>';
       h+='<div class="ev-upcoming-right"><span class="ev-upcoming-bell'+(_bellSet?' set':'')+'">&#128276;</span><div class="'+lblCls+'">'+lbl+'</div></div>';
       h+='</div>';
@@ -1249,9 +1249,10 @@ function renderEvAlarmPanel(ev,firstDate){
   h+='<div class="bd-alarm-date">'+fd2(firstDate)+' \u00b7 '+diffLbl+'</div>';
   h+='<div class="ev-alarm-note">'+note+'</div></div>';
   if(isSet){h+='<div class="bd-alarm-set-badge">&#128276; Alarma ya marcada como configurada<button class="bd-alarm-unmark-btn" id="evAlarmUnmark">Quitar</button></div>';}
+  var _evT=typeof nextAlarmTime==='function'?nextAlarmTime(firstDate,15,2):{h:15,m:2};
   h+='<div class="bd-alarm-row" style="margin:16px 0">';
   h+='<span class="bd-alarm-row-lbl">&#128276; Hora de la alarma<br><span style="font-size:.65rem;opacity:.7">D\u00eda del evento: '+fd2(firstDate)+'</span></span>';
-  h+='<div class="bd-alarm-time"><input id="evAlarmH" type="number" min="0" max="23" value="15"><span class="bd-alarm-time-sep">:</span><input id="evAlarmM" type="number" min="0" max="59" value="02"></div>';
+  h+='<div class="bd-alarm-time"><input id="evAlarmH" type="number" min="0" max="23" value="'+_evT.h+'"><span class="bd-alarm-time-sep">:</span><input id="evAlarmM" type="number" min="0" max="59" value="'+String(_evT.m).padStart(2,'0')+'"></div>';
   h+='</div>';
   h+='<div class="ev-form-actions">';
   h+='<button class="ev-btn primary" id="evAlarmCreate">&#128276; Crear alarma</button>';

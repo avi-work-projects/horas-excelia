@@ -270,7 +270,7 @@ function renderEconContent(){
   var h=renderNavBar('econ');
   h+='<div class="econ-hdr-sub">';
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='resumen'?' active':'')+'" id="ecTabResumen">Resumen<br>Econ\u00f3mico</button>';
-  h+='<button class="econ-tab-btn'+(ECON_VIEW==='gastos'?' active':'')+'" id="ecTabGastos">Gastos e<br>Impuestos</button>';
+  h+='<button class="econ-tab-btn'+(ECON_VIEW==='gastos'?' active':'')+'" id="ecTabGastos">Ingresos<br>\u2212 Gastos</button>';
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='comparador'?' active':'')+'" id="ecTabComp">Comparar<br>Escenarios</button>';
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='simulador'?' active':'')+'" id="ecTabSim">Calcular<br>Tarifa</button>';
   h+='<button class="econ-gear-btn" id="ecGear">&#9965;</button>';
@@ -293,6 +293,7 @@ function openEcon(){
   ECON_YEAR=CY;
   if(typeof loadFiscal==='function')loadFiscal();
   if(typeof loadGastos==='function')loadGastos();
+  if(typeof loadIngresos==='function')loadIngresos();
   if(typeof loadEconComp==='function')loadEconComp();
   if(typeof loadGastosToggles==='function')loadGastosToggles();
   var ov=document.getElementById('econOverlay');

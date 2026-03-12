@@ -458,6 +458,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .econ-opt-row{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:4px}
 .econ-opt-btn{flex:1;padding:7px 8px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);font-size:.75rem;font-weight:500;cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;text-align:center;white-space:nowrap;min-width:60px}
 .econ-opt-btn.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright);font-weight:600}
+.econ-opt-row.multiline .econ-opt-btn{white-space:normal;line-height:1.25;min-height:38px;display:flex;align-items:center;justify-content:center;flex-basis:0}
 .econ-calc-btn{width:100%;padding:10px 14px;background:var(--accent);border:none;border-radius:var(--radius-sm);color:#fff;font-size:.88rem;font-weight:700;cursor:pointer;transition:opacity .15s;margin-top:8px;letter-spacing:.02em}
 .econ-calc-btn:active{opacity:.75}
 /* Cascade ingresos/gastos */

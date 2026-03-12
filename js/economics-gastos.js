@@ -97,6 +97,21 @@ function renderEconGastos(){
   var hasSemiObl=_gastosGroup(function(g){return !!GROUP_SEMIOBL[g.id];});
   if(hasSemiObl)h+=gastosResultRow('Tras tasas semiobligatorias',running,running>0?'var(--c-green)':'var(--c-red)');
 
+  // Grupo ingresos extras (suman al running)
+  var hasIngresos=false;
+  if(typeof INGRESOS_ITEMS!=='undefined'){
+    INGRESOS_ITEMS.forEach(function(g){
+      var anual=typeof ingresoAnual==='function'?ingresoAnual(g.id):0;
+      if(anual===0&&g.amount===0)return;
+      hasIngresos=true;
+      var lbl=escHtml(g.label);
+      var periodStr=g.period==='monthly'?'<span style="font-size:.68rem;color:var(--text-dim)">('+g.amount+'\u20ac/mes)</span>':'';
+      h+=gastosCascRow('ingreso_'+g.id,lbl+' '+periodStr,'+',anual,'var(--c-green)',true);
+      if(isTglOn('ingreso_'+g.id))running=Math.round((running+anual)*100)/100;
+    });
+  }
+  if(hasIngresos)h+=gastosResultRow('Tras ingresos extras',running,running>0?'var(--c-green)':'var(--c-red)');
+
   // Grupo 3: gastos casa
   var hasCasa=_gastosGroup(function(g){return !!GROUP_CASA[g.id];});
   if(hasCasa)h+=gastosResultRow('Tras gastos casa',running,running>0?'var(--c-green)':'var(--c-red)');
