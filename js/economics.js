@@ -101,11 +101,39 @@ function cascRow(lbl,sign,val,color,cls,note){
   h+='</div>';return h;
 }
 
+/* ── Helpers para tarjetas de resumen ───────────────────────── */
+function _econCard(color,lbl,val,sub){
+  return '<div class="econ-avg-card" style="border-left-color:'+color+'">'
+    +'<div class="econ-avg-card-lbl" style="color:'+color+'">'+lbl+'</div>'
+    +'<div class="econ-avg-card-val" style="color:'+color+'">'+fcPlain(val)+'</div>'
+    +'<div class="econ-avg-card-sub">'+sub+'</div></div>';
+}
+function _econCards7(e,cotAnual,declDiff,factor,subSuffix){
+  // factor=1 para anual, factor=1/12 para media mensual; subSuffix texto del sublabel
+  var f=function(v){return Math.round(v*factor*100)/100;};
+  var netoCCSS=Math.round((e.netoReal-cotAnual)*100)/100;
+  var netoDecl=Math.round((e.netoReal-cotAnual-declDiff)*100)/100;
+  var h='';
+  h+=_econCard('var(--c-blue)','Base',f(e.totBase),subSuffix);
+  h+=_econCard('var(--c-orange)','IVA',f(e.totIva),'no toques');
+  h+=_econCard('var(--c-red)','IRPF',f(e.totIrpf),'retenci\u00f3n '+e.irpfPct+'%');
+  h+=_econCard('var(--c-green)','Base \u2212 IRPF',f(e.netoReal),'base \u2212 IRPF');
+  h+=_econCard('#c084fc','Cuota Aut\u00f3nomos',f(cotAnual),'CCSS');
+  h+=_econCard('var(--c-green)','Base \u2212 IRPF \u2212 CCSS',f(cotAnual>0?netoCCSS:e.netoReal),'tras CCSS');
+  h+=_econCard('var(--accent-bright)','Neto tras Dec. Renta',f(cotAnual>0?netoDecl:Math.round((e.netoReal-declDiff)*100)/100),'tras declaraci\u00f3n');
+  return h;
+}
+
 /* ── Tab 1: Resumen ──────────────────────────────────────────── */
 function renderEconResumen(){
   var e=computeEconEx(ECON_YEAR);
   var avgHDay=e.avgHDay||8;
   var hourlyRate=Math.round(DAILY_RATE/avgHDay*100)/100;
+  var cotAnual=typeof gastoAnual==='function'?gastoAnual('cot_social'):0;
+  var gdPct=typeof GASTOS_DIFICIL_PCT!=='undefined'?GASTOS_DIFICIL_PCT:5;
+  var baseDecl=Math.max(0,Math.round((e.totBase*(1-gdPct/100))*100)/100);
+  var decl=computeIrpfBrackets(baseDecl);
+  var declDiff=Math.round((decl.totalTax-e.totIrpf)*100)/100; // pos=paga más, neg=devuelve
   var h='';
 
   /* §1 Tarifa + Calcular */
@@ -128,62 +156,13 @@ function renderEconResumen(){
   h+='<button class="econ-calc-btn" id="ecCalcular">Calcular</button>';
   h+='</div>';
 
-  /* §2 Resumen anual — cascade */
-  var totFact=Math.round((e.totBase+e.totIva)*100)/100;
-  h+='<div class="sy-section"><div class="sy-section-title">Resumen anual</div>';
-  h+='<div class="econ-cascade">';
-  h+=cascRow('Base imponible','',e.totBase,'var(--c-blue)');
-  h+=cascRow('+ IVA (21%)','<span style="color:var(--c-orange)">+</span>',e.totIva,'var(--c-orange)');
-  h+=cascRow('Total facturado','=',totFact,'','subtotal');
-  h+=cascRow('IRPF '+e.irpfPct+'% retenido','<span style="color:var(--c-red)">&minus;</span>',e.totIrpf,'var(--c-red)');
-  h+=cascRow('Cobrado en cuenta','=',e.totCobrado,'var(--text)','subtotal','base + IVA \u2212 IRPF');
-  h+=cascRow('IVA 21% a Hacienda (Mod.303)','<span style="color:var(--c-orange)">&minus;</span>',e.totIva,'var(--c-orange)');
-  h+=cascRow('Neto real (Base \u2212 IRPF)','=',e.netoReal,'var(--c-green)','final','lo que queda en tu bolsillo');
-  // Opcionales: cotizaciones + IRPF declaración
-  var cotAnual=typeof gastoAnual==='function'?gastoAnual('cot_social'):0;
-  if(cotAnual>0){
-    var netoDisp=Math.round((e.netoReal-cotAnual)*100)/100;
-    h+=cascRow('Cotizaciones sociales','<span style="color:#c084fc">&minus;</span>',cotAnual,'#c084fc');
-    h+=cascRow('Neto disponible','=',netoDisp,'var(--c-green)','final');
-    // IRPF declaración diff
-    var gdPct=typeof GASTOS_DIFICIL_PCT!=='undefined'?GASTOS_DIFICIL_PCT:5;
-    var baseDecl=Math.max(0,Math.round((e.totBase*(1-gdPct/100))*100)/100);
-    var decl=computeIrpfBrackets(baseDecl);
-    var declDiff=Math.round((decl.totalTax-e.totIrpf)*100)/100;
-    if(declDiff>0){
-      h+=cascRow('IRPF resto (Dec. Renta)','<span style="color:var(--c-red)">&minus;</span>',declDiff,'var(--c-red)','','a pagar en la declaraci\u00f3n');
-      h+=cascRow('Neto tras declaraci\u00f3n','=',Math.round((netoDisp-declDiff)*100)/100,'var(--c-green)','final');
-    } else if(declDiff<0){
-      h+=cascRow('Devoluci\u00f3n IRPF (Dec. Renta)','+',Math.abs(declDiff),'var(--c-green)');
-      h+=cascRow('Neto tras declaraci\u00f3n','=',Math.round((netoDisp+Math.abs(declDiff))*100)/100,'var(--c-green)','final');
-    }
-  }
-  h+='</div></div>';
+  /* §2 Resumen Anual — 7 tarjetas totales del año */
+  h+='<div class="sy-section"><div class="sy-section-title">Resumen Anual</div>';
+  h+='<div class="econ-avg-cards">'+_econCards7(e,cotAnual,declDiff,1,'a\u00f1o completo')+'</div></div>';
 
-  /* §3 Media mensual — cards */
-  var avgBase=Math.round(e.totBase/12*100)/100;
-  var avgIva=Math.round(e.totIva/12*100)/100;
-  var avgIrpf=Math.round(e.totIrpf/12*100)/100;
-  var avgNeto=Math.round(e.netoReal/12*100)/100;
-  h+='<div class="sy-section"><div class="sy-section-title">Media mensual</div>';
-  h+='<div class="econ-avg-cards">';
-  h+='<div class="econ-avg-card" style="border-left-color:var(--c-blue)">';
-  h+='<div class="econ-avg-card-lbl" style="color:var(--c-blue)">Base</div>';
-  h+='<div class="econ-avg-card-val" style="color:var(--c-blue)">'+fcPlain(avgBase)+'</div>';
-  h+='<div class="econ-avg-card-sub">ao\u00f1 / 12</div></div>';
-  h+='<div class="econ-avg-card" style="border-left-color:var(--c-orange)">';
-  h+='<div class="econ-avg-card-lbl" style="color:var(--c-orange)">IVA</div>';
-  h+='<div class="econ-avg-card-val" style="color:var(--c-orange)">'+fcPlain(avgIva)+'</div>';
-  h+='<div class="econ-avg-card-sub">no toques</div></div>';
-  h+='<div class="econ-avg-card" style="border-left-color:var(--c-red)">';
-  h+='<div class="econ-avg-card-lbl" style="color:var(--c-red)">IRPF</div>';
-  h+='<div class="econ-avg-card-val" style="color:var(--c-red)">'+fcPlain(avgIrpf)+'</div>';
-  h+='<div class="econ-avg-card-sub">retenci\u00f3n '+e.irpfPct+'%</div></div>';
-  h+='<div class="econ-avg-card" style="border-left-color:var(--c-green)">';
-  h+='<div class="econ-avg-card-lbl" style="color:var(--c-green)">Neto</div>';
-  h+='<div class="econ-avg-card-val" style="color:var(--c-green)">'+fcPlain(avgNeto)+'</div>';
-  h+='<div class="econ-avg-card-sub">base \u2212 IRPF</div></div>';
-  h+='</div></div>';
+  /* §3 Media mensual — 7 tarjetas /12 */
+  h+='<div class="sy-section"><div class="sy-section-title">Media Mensual</div>';
+  h+='<div class="econ-avg-cards">'+_econCards7(e,cotAnual,declDiff,1/12,'a\u00f1o / 12')+'</div></div>';
 
   /* §4 Estadísticas por hora/día (siempre con columna 8h) */
   var e8h=computeEconEx(ECON_YEAR,{hoursMode:'8h'});
@@ -222,27 +201,67 @@ function renderEconResumen(){
   });
   h+='</div></div></div>';
 
-  /* §6 Gráfica neto mensual */
-  h+='<div class="sy-section"><div class="sy-section-title">Neto mensual (Base &#8722; IRPF)</div>';
+  /* §6 Gráfica Base − IRPF mensual */
+  h+='<div class="sy-section"><div class="sy-section-title">Base \u2212 IRPF mensual</div>';
   h+='<div class="sy-chart">'+econBarChart(e.months.map(function(mo){return mo.neto;}),MN_SHORT,'#34d399')+'</div></div>';
 
-  /* §7 Desglose mensual + columna Neto */
-  h+='<div class="sy-section econ-month-section"><div class="sy-section-title">Desglose mensual</div>';
+  /* §7 Desglose mensual — 9 columnas con CCSS y Neto Dec. */
+  var cotMensual=cotAnual/12;
+  h+='<div class="sy-section econ-month-section"><div class="sy-section-title">Desglose Mensual</div>';
   h+='<div class="econ-month-wrap"><table class="econ-month-table"><thead><tr>';
-  h+='<th>Mes</th><th>D&#237;as</th><th style="color:var(--c-blue)">Base</th><th style="color:var(--c-orange)">IVA</th><th style="color:var(--c-red)">IRPF</th><th>Ingresado</th><th style="color:var(--c-green)">Neto</th></tr></thead><tbody>';
+  h+='<th>Mes</th><th>D\u00edas</th><th style="color:var(--c-blue)">Base</th><th style="color:var(--c-orange)">IVA</th><th style="color:var(--c-red)">IRPF</th><th>Ingresado</th>';
+  h+='<th style="color:var(--c-green)">Base\u2212IRPF</th>';
+  h+='<th style="color:var(--c-green)">Base\u2212IRPF\u2212CCSS</th>';
+  h+='<th style="color:var(--accent-bright)">Neto Dec.</th>';
+  h+='</tr></thead><tbody>';
   var totD=0;
   e.months.forEach(function(mo){
     totD+=mo.dias;
+    var moNetoCCSS=Math.round((mo.neto-cotMensual)*100)/100;
+    var moDeclDiff=declDiff/12;
+    var moNetoDecl=Math.round((mo.neto-cotMensual-moDeclDiff)*100)/100;
     h+='<tr><td>'+MN_SHORT[mo.m]+'</td><td>'+mo.dias+'d</td>';
     h+='<td class="col-base">'+fc(mo.base)+'</td><td class="col-iva">'+fc(mo.iva)+'</td>';
     h+='<td class="col-irpf">'+fc(mo.irpf)+'</td><td class="col-ingresado">'+fc(mo.cobrado)+'</td>';
-    h+='<td class="col-net">'+fc(mo.neto)+'</td></tr>';
+    h+='<td class="col-net">'+fc(mo.neto)+'</td>';
+    h+='<td class="col-net" style="opacity:.8">'+fc(cotAnual>0?moNetoCCSS:mo.neto)+'</td>';
+    h+='<td style="color:var(--accent-bright)">'+fc(cotAnual>0?moNetoDecl:(Math.round((mo.neto-moDeclDiff)*100)/100))+'</td>';
+    h+='</tr>';
   });
+  var totNetoCCSS=Math.round((e.netoReal-cotAnual)*100)/100;
+  var totNetoDecl=Math.round((e.netoReal-cotAnual-declDiff)*100)/100;
   h+='<tr class="econ-tr-total"><td>Total</td><td>'+totD+'d</td>';
   h+='<td class="col-base">'+fc(e.totBase)+'</td><td class="col-iva">'+fc(e.totIva)+'</td>';
   h+='<td class="col-irpf">'+fc(e.totIrpf)+'</td><td class="col-ingresado">'+fc(e.totCobrado)+'</td>';
-  h+='<td class="col-net">'+fc(e.netoReal)+'</td></tr>';
-  h+='</tbody></table></div></div>';
+  h+='<td class="col-net">'+fc(e.netoReal)+'</td>';
+  h+='<td class="col-net" style="opacity:.8">'+fc(cotAnual>0?totNetoCCSS:e.netoReal)+'</td>';
+  h+='<td style="color:var(--accent-bright)">'+fc(cotAnual>0?totNetoDecl:(Math.round((e.netoReal-declDiff)*100)/100))+'</td>';
+  h+='</tr></tbody></table></div></div>';
+
+  /* §8 Detalle Anual — cascade (movido al final) */
+  var totFact=Math.round((e.totBase+e.totIva)*100)/100;
+  h+='<div class="sy-section"><div class="sy-section-title">Detalle Anual</div>';
+  h+='<div class="econ-cascade">';
+  h+=cascRow('Base imponible','',e.totBase,'var(--c-blue)');
+  h+=cascRow('+ IVA (21%)','<span style="color:var(--c-orange)">+</span>',e.totIva,'var(--c-orange)');
+  h+=cascRow('Total facturado','=',totFact,'','subtotal');
+  h+=cascRow('IRPF '+e.irpfPct+'% retenido','<span style="color:var(--c-red)">&minus;</span>',e.totIrpf,'var(--c-red)');
+  h+=cascRow('Cobrado en cuenta','=',e.totCobrado,'var(--text)','subtotal','base + IVA \u2212 IRPF');
+  h+=cascRow('IVA 21% a Hacienda (Mod.303)','<span style="color:var(--c-orange)">&minus;</span>',e.totIva,'var(--c-orange)');
+  h+=cascRow('(Base \u2212 15% IRPF)','=',e.netoReal,'var(--c-green)','final','lo que queda tras retenci\u00f3n');
+  if(cotAnual>0){
+    var netoDisp=Math.round((e.netoReal-cotAnual)*100)/100;
+    h+=cascRow('Cuota Aut\u00f3nomos (CCSS)','<span style="color:#c084fc">&minus;</span>',cotAnual,'#c084fc');
+    h+=cascRow('Base \u2212 IRPF \u2212 CCSS','=',netoDisp,'var(--c-green)','final');
+    if(declDiff>0){
+      h+=cascRow('IRPF resto (Dec. Renta)','<span style="color:var(--c-red)">&minus;</span>',declDiff,'var(--c-red)','','a pagar en la declaraci\u00f3n');
+      h+=cascRow('Neto tras Dec. Renta','=',Math.round((netoDisp-declDiff)*100)/100,'var(--accent-bright)','final');
+    } else if(declDiff<0){
+      h+=cascRow('Devoluci\u00f3n IRPF (Dec. Renta)','+',Math.abs(declDiff),'var(--c-green)');
+      h+=cascRow('Neto tras Dec. Renta','=',Math.round((netoDisp+Math.abs(declDiff))*100)/100,'var(--accent-bright)','final');
+    }
+  }
+  h+='</div></div>';
   return h;
 }
 
@@ -250,10 +269,10 @@ function renderEconResumen(){
 function renderEconContent(){
   var h=renderNavBar('econ');
   h+='<div class="econ-hdr-sub">';
-  h+='<button class="econ-tab-btn'+(ECON_VIEW==='resumen'?' active':'')+'" id="ecTabResumen">Resumen<br>Anual</button>';
+  h+='<button class="econ-tab-btn'+(ECON_VIEW==='resumen'?' active':'')+'" id="ecTabResumen">Resumen<br>Econ\u00f3mico</button>';
+  h+='<button class="econ-tab-btn'+(ECON_VIEW==='gastos'?' active':'')+'" id="ecTabGastos">Gastos e<br>Impuestos</button>';
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='comparador'?' active':'')+'" id="ecTabComp">Comparar<br>Escenarios</button>';
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='simulador'?' active':'')+'" id="ecTabSim">Calcular<br>Tarifa</button>';
-  h+='<button class="econ-tab-btn'+(ECON_VIEW==='gastos'?' active':'')+'" id="ecTabGastos">An\u00e1lisis<br>Impuestos</button>';
   h+='<button class="econ-gear-btn" id="ecGear">&#9965;</button>';
   h+='</div>';
   h+='<div class="sy-header with-tabs">';

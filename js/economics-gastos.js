@@ -43,7 +43,7 @@ function renderEconGastos(){
 
   running=Math.round(running-e.totIva*100)/100; // IVA siempre se va
   h+=gastosCascRow('iva_hac','IVA 21% a Hacienda (Mod.303)','\u2212',e.totIva,'var(--c-orange)',false);
-  h+=gastosResultRow('Neto real (Base \u2212 IRPF)',Math.round((e.totBase-e.totIrpf)*100)/100,'var(--c-green)');
+  h+=gastosResultRow('(Base \u2212 15% IRPF)',Math.round((e.totBase-e.totIrpf)*100)/100,'var(--c-green)');
 
   running=Math.round((e.totBase-e.totIrpf)*100)/100; // reset a neto real
 

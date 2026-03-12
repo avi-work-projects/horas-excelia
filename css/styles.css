@@ -415,20 +415,19 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .econ-comp-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
 .econ-legend-item{display:flex;align-items:center;gap:4px;font-size:.68rem;color:var(--text-muted)}
 .econ-legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-/* ── Tab 3: Simulador ── */
-.econ-sim-form{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
-.econ-sim-row{display:flex;flex-direction:column;gap:4px}
-.econ-sim-row label{font-size:.7rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
-.econ-sim-input-row{display:flex;gap:6px;align-items:center}
-.econ-sim-input{font-family:var(--mono);font-size:.95rem;font-weight:600;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:7px 10px;color:var(--text);flex:1;outline:none;transition:border-color .15s}
-.econ-sim-input:focus{border-color:var(--accent)}
+/* ── Calcular Tarifa (sim) ── */
 .econ-sim-select{font-size:.78rem;padding:7px 8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text);outline:none;cursor:pointer;flex-shrink:0}
-.econ-sim-calc-btn{width:100%;padding:11px;background:var(--accent);border:none;border-radius:var(--radius-sm);color:#fff;font-size:.88rem;font-weight:700;cursor:pointer;transition:opacity .15s}
-.econ-sim-calc-btn:active{opacity:.8}
-.econ-sim-result{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--radius-sm);padding:14px 16px;display:flex;flex-direction:column;gap:8px}
-.econ-sim-result-main{display:flex;justify-content:space-between;align-items:baseline;font-size:.92rem;font-weight:700;color:var(--accent)}
-.econ-sim-result-main .econ-val{font-family:var(--mono);font-size:1.05rem}
-.econ-sim-result-row{display:flex;justify-content:space-between;align-items:baseline;font-size:.82rem}
+.sim-field-group{display:flex;flex-direction:column;gap:6px}
+.sim-field-label{font-size:.68rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em}
+.sim-target-row{display:flex;gap:8px;align-items:stretch}
+.sim-target-input-wrap{display:flex;align-items:center;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 10px;flex:1;transition:border-color .15s}
+.sim-target-input-wrap:focus-within{border-color:var(--accent)}
+.sim-target-input{background:transparent;border:none;outline:none;font-family:var(--mono);font-size:1.1rem;font-weight:700;color:var(--text);width:100%;padding:9px 0;text-align:right;min-width:0}
+.sim-target-suffix{font-family:var(--mono);font-size:.88rem;color:var(--text-dim);white-space:nowrap;padding-left:2px;flex-shrink:0}
+.sim-period-sel{align-self:stretch;height:auto}
+.econ-sim-result{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.econ-sim-main-rate{font-size:.95rem;font-weight:700;padding-bottom:4px}
+.sim-hr{border:none;border-top:1px solid var(--border);margin:4px 0}
 /* ── Fiscal config modal ── */
 .fiscal-section{margin-bottom:18px}
 .fiscal-section-title{font-size:.65rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)}
