@@ -263,10 +263,6 @@ function renderBdayList(){
   h+='<button class="bday-io-btn" id="bdImport">&#8593; Importar JSON</button>';
   h+='<input type="file" id="bdImportFile" accept=".json" style="display:none">';
   h+='</div>';
-  h+='<div class="bday-vip-ctrl-bar">';
-  h+='<label class="bday-vip-filter-lbl"><input type="checkbox" id="bdFilterVip"'+(BDAY_FILTER_VIP?' checked':'')+' style="accent-color:#fbbf24"> Filtrar <img src="./VIP.png" class="bday-vip-img" alt="VIP" style="width:36px;height:auto;vertical-align:middle;margin-left:3px"></label>';
-  h+='<button class="bday-vip-edit-btn'+(BDAY_EDIT_VIP?' active':'')+'" id="bdEditVip">'+(BDAY_EDIT_VIP?'\u2713 Listo':'Editar VIPs')+'</button>';
-  h+='</div>';
   h+='<div class="bday-search-wrap"><input class="bday-search-input" id="bdSearch" type="text" placeholder="Buscar persona\u2026" value="'+escHtml(BDAY_SEARCH)+'"></div>';
   var byM=[];for(var m=0;m<12;m++)byM.push([]);
   BDAYS.forEach(function(b){if(b.month>=1&&b.month<=12)byM[b.month-1].push(b);});
@@ -312,19 +308,28 @@ function renderBdayContent(){
   h+='<button class="bday-view-toggle'+(BDAY_VIEW==='cal'?' active':'')+'" id="bdViewCal">Calendario</button>';
   h+='<button class="bday-view-toggle'+(BDAY_VIEW==='list'?' active':'')+'" id="bdViewList">Por meses</button>';
   h+='</div>';
-  // SY-HEADER con clase with-tabs (nivel 3)
-  h+='<div class="sy-header with-tabs">';
-  h+='<button class="sy-back" id="bdBack">&#8592;</button>';
-  if(!isUpcoming){
-    h+='<div class="sy-year-nav"><button class="sy-nav" id="bdPrev">&#9664;</button>';
-    h+='<div class="sy-year">'+MN[BDAY_MONTH]+' '+BDAY_YEAR+'</div>';
-    h+='<button class="sy-nav" id="bdNext">&#9654;</button></div>';
-    h+='<button class="today-btn" id="bdToday" style="font-size:.7rem;padding:6px 12px">Hoy</button>';
-  } else {
-    h+='<div style="flex:1;text-align:center;font-size:.9rem;font-weight:600">Pr\u00f3ximos cumplea\u00f1os</div>';
-    h+='<button class="bday-add-btn" id="bdAdd">+ A\u00f1adir</button>';
+  // Nivel 3: solo para 'upcoming' y 'cal' — 'list' no lo necesita
+  if(BDAY_VIEW!=='list'){
+    h+='<div class="sy-header with-tabs">';
+    h+='<button class="sy-back" id="bdBack">&#8592;</button>';
+    if(!isUpcoming){
+      h+='<div class="sy-year-nav"><button class="sy-nav" id="bdPrev">&#9664;</button>';
+      h+='<div class="sy-year">'+MN[BDAY_MONTH]+' '+BDAY_YEAR+'</div>';
+      h+='<button class="sy-nav" id="bdNext">&#9654;</button></div>';
+      h+='<button class="today-btn" id="bdToday" style="font-size:.7rem;padding:6px 12px">Hoy</button>';
+    } else {
+      h+='<div style="flex:1;text-align:center;font-size:.9rem;font-weight:600">Pr\u00f3ximos cumplea\u00f1os</div>';
+      h+='<button class="bday-add-btn" id="bdAdd">+ A\u00f1adir</button>';
+    }
+    h+='</div>';
   }
-  h+='</div>';
+  // Para 'list': filtro VIP sticky justo bajo nivel 2 (flex-shrink:0, fuera del sy-body)
+  if(BDAY_VIEW==='list'){
+    h+='<div class="bday-vip-ctrl-bar">';
+    h+='<label class="bday-vip-filter-lbl"><input type="checkbox" id="bdFilterVip"'+(BDAY_FILTER_VIP?' checked':'')+' style="accent-color:#fbbf24"> Filtrar <img src="./VIP.png" class="bday-vip-img" alt="VIP" style="width:36px;height:auto;vertical-align:middle;margin-left:3px"></label>';
+    h+='<button class="bday-vip-edit-btn'+(BDAY_EDIT_VIP?' active':'')+'" id="bdEditVip">'+(BDAY_EDIT_VIP?'\u2713 Listo':'Editar VIPs')+'</button>';
+    h+='</div>';
+  }
   h+='<div class="sy-body">';
   if(BDAY_VIEW==='upcoming'){
     h+=renderBdayUpcoming();
@@ -718,7 +723,8 @@ function applyBdaySearch(q){
 }
 
 function bindBdayEvents(){
-  document.getElementById('bdBack').addEventListener('click',function(){
+  var bdBackEl=document.getElementById('bdBack');
+  if(bdBackEl)bdBackEl.addEventListener('click',function(){
     if(NAV_BACK){var fn=NAV_BACK;NAV_BACK=null;fn();}else{closeBday();}
   });
   bindNavBar('bday',closeBday);
@@ -859,15 +865,18 @@ function bindBdayEvents(){
     });
   });
   // Export
-  document.getElementById('bdExport').addEventListener('click',function(){
+  var bdExportEl=document.getElementById('bdExport');
+  if(bdExportEl)bdExportEl.addEventListener('click',function(){
     if(!BDAYS.length){showToast('No hay cumplea\u00f1os para exportar','error');return;}
     var a=document.createElement('a');
     a.href='data:application/json,'+encodeURIComponent(JSON.stringify(BDAYS,null,2));
     a.download='cumpleanos.json'; a.click();
   });
   // Import
-  document.getElementById('bdImport').addEventListener('click',function(){document.getElementById('bdImportFile').click();});
-  document.getElementById('bdImportFile').addEventListener('change',function(ev){
+  var bdImportEl=document.getElementById('bdImport');
+  if(bdImportEl)bdImportEl.addEventListener('click',function(){document.getElementById('bdImportFile').click();});
+  var bdImportFileEl=document.getElementById('bdImportFile');
+  if(bdImportFileEl)bdImportFileEl.addEventListener('change',function(ev){
     var f=ev.target.files[0];if(!f)return;
     var r=new FileReader();
     r.onload=function(e){

@@ -802,11 +802,23 @@ function renderEvContent(){
   var h=renderNavBar('events');
   // Tabs a nivel 2 (sticky top:42px, justo bajo la nav bar)
   h+='<div class="ev-hdr-sub">';
+  // Zona 1: Próximos (arriba) + Todos (abajo)
+  h+='<div class="ev-view-zone">';
   h+='<button class="ev-view-toggle'+(EV_VIEW==='upcoming'?' active':'')+'" id="evViewUpcoming">Pr\u00f3ximos</button>';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='cal'?' active':'')+'" id="evViewCal">1 mes</button>';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='quad'?' active':'')+'" id="evViewQuad">4 meses</button>';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='annual'?' active':'')+'" id="evViewAnnual">Anual</button>';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='months'?' active':'')+'" id="evViewMonths">Lista</button>';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='months'?' active':'')+'" id="evViewMonths">Todos</button>';
+  h+='</div>';
+  // Zona 2: Calendario 1 mes
+  h+='<div class="ev-view-zone">';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='cal'?' active':'')+'" id="evViewCal">Calendario<br>1 mes</button>';
+  h+='</div>';
+  // Zona 3: Calendario 4 meses
+  h+='<div class="ev-view-zone">';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='quad'?' active':'')+'" id="evViewQuad">Calendario<br>4 meses</button>';
+  h+='</div>';
+  // Zona 4: Calendario Anual
+  h+='<div class="ev-view-zone">';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='annual'?' active':'')+'" id="evViewAnnual">Calendario<br>Anual</button>';
+  h+='</div>';
   h+='</div>';
   // Header a nivel 3 (with-tabs → top:82px)
   h+='<div class="sy-header with-tabs">';
