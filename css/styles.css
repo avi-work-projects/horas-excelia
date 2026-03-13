@@ -602,6 +602,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .fiscal-despacho-input:focus{border-color:var(--accent)}
 .fiscal-despacho-unit{font-size:.78rem;color:var(--text-dim);flex-shrink:0}
 .fiscal-despacho-derived{font-size:.78rem;color:var(--accent-bright);padding:4px 8px;background:var(--accent-glow);border-radius:6px}
+.fiscal-despacho-money-fmt{font-size:.73rem;color:var(--accent-bright);font-family:var(--mono);min-height:1em}
 .fiscal-despacho-result{padding:12px 14px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border);margin-top:4px}
 .fiscal-despacho-result.active{border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.05)}
 .fiscal-despacho-result-title{font-size:.72rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}

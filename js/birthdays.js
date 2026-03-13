@@ -12,6 +12,7 @@ var BDAY_VIP_PENDING=null; // null=no edit mode, {}=pending changes (idx→bool)
 var _bdLpTimer=null;
 var _bdLpFired=false;
 var _bdCtrlDocListenerAdded=false;
+var _bdPendingRefresh=false;
 
 function _showBdayInlineCtrl(el,b){
   var prev=document.querySelector('.bday-inline-ctrl');
@@ -31,15 +32,20 @@ function _showBdayInlineCtrl(el,b){
     if(idx>=0){
       if(BDAYS[idx].vip)delete BDAYS[idx].vip;else BDAYS[idx].vip=true;
       localStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));
-      syncVipBdaysToEvents();updateBdayBtn();refreshBday();
+      syncVipBdaysToEvents();updateBdayBtn();
+      /* Actualizar el botón VIP del menú sin refrescar la lista todavía */
+      this.classList.toggle('active',!!BDAYS[idx].vip);
+      _bdPendingRefresh=true; /* refresco diferido — se ejecuta al cerrar el menú */
     }
   });
   div.querySelector('.bday-ic-edit').addEventListener('click',function(e){
     e.stopPropagation();div.remove();
+    _bdPendingRefresh=false; /* el formulario gestiona su propio refresco */
     if(idx>=0)openBdayForm(BDAYS[idx]);else openBdayForm(b);
   });
   div.querySelector('.bday-ic-close').addEventListener('click',function(e){
     e.stopPropagation();div.remove();
+    if(_bdPendingRefresh){_bdPendingRefresh=false;refreshBday();}
   });
 }
 
@@ -187,7 +193,8 @@ function renderBdayUpcoming(){
       var vipCls=isVip?' bday-vip-item':'';
       var vipStar=isVip?' <img src="./VIP.png" class="bday-vip-img" alt="VIP">':'';
       var bellHtml=isPastDay?'':'<span class="ev-upcoming-bell'+(alarmSet?' set':'')+'">&#128276;</span>';
-      s+='<div class="bday-upcoming-item'+vipCls+(isT?' bday-today-item':'')+'" data-bday-name="'+escHtml(x.b.name)+'" data-bday-day="'+x.b.day+'" data-bday-month="'+x.b.month+'" data-diff="'+x.diff+'">';
+      var bidxUp=BDAYS.indexOf(x.b);
+      s+='<div class="bday-upcoming-item'+vipCls+(isT?' bday-today-item':'')+'" data-bday-idx="'+bidxUp+'" data-bday-name="'+escHtml(x.b.name)+'" data-bday-day="'+x.b.day+'" data-bday-month="'+x.b.month+'" data-diff="'+x.diff+'">';
       s+='<div class="bday-upcoming-icon" style="background:'+color+'22;border-color:'+color+'">'+(isVip?'\u2b50':'\uD83C\uDF82')+'</div>';
       s+='<div class="bday-upcoming-info">';
       s+='<div class="bday-upcoming-name" style="color:'+color+'">'+bdName(x.b.name)+vipStar+'</div>';
@@ -487,7 +494,7 @@ function closeBdayAlarm(){
 function bindBdayAlarmEvents(b){
   document.getElementById('bdAlarmClose').addEventListener('click',closeBdayAlarm);
 
-  // VIP toggle inside alarm panel
+  // VIP toggle inside alarm panel — refresco inline sin animar el cierre/apertura
   var vipChk=document.getElementById('bdAlarmVip');
   if(vipChk){
     vipChk.addEventListener('change',function(e){
@@ -496,8 +503,21 @@ function bindBdayAlarmEvents(b){
       localStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));
       if(typeof syncVipBdaysToEvents==='function')syncVipBdaysToEvents();
       updateBdayBtn();
-      var fo=document.getElementById('bdAlarmOv');if(fo)fo.classList.remove('open');
-      setTimeout(function(){var w=document.getElementById('bdAlarmWrap');if(w)w.remove();openBdayAlarm(b);},310);
+      /* Bug 2 fix: sustituir el contenido del panel sin animación de cierre */
+      var wrap=document.getElementById('bdAlarmWrap');
+      var fo=document.getElementById('bdAlarmOv');
+      if(wrap&&fo){
+        wrap.innerHTML=renderBdayAlarmPanel(b);
+        /* Re-añadir la clase 'open' inmediatamente (sin transición) */
+        var newFo=document.getElementById('bdAlarmOv');
+        if(newFo){
+          newFo.style.transition='none';
+          newFo.classList.add('open');
+          newFo.addEventListener('click',function(ev){if(ev.target===newFo)closeBdayAlarm();});
+          requestAnimationFrame(function(){newFo.style.transition='';});
+        }
+        bindBdayAlarmEvents(b);
+      }
     });
   }
 
@@ -788,7 +808,10 @@ function bindBdayEvents(){
     document.addEventListener('click',function(e){
       if(!e.target.closest('.bday-inline-ctrl')){
         var ctrl=document.querySelector('.bday-inline-ctrl');
-        if(ctrl)ctrl.remove();
+        if(ctrl){
+          ctrl.remove();
+          if(_bdPendingRefresh){_bdPendingRefresh=false;refreshBday();}
+        }
       }
     });
   }
@@ -927,10 +950,13 @@ function bindBdayEvents(){
   document.querySelectorAll('.bday-upcoming-item[data-bday-name]').forEach(function(item){
     item.addEventListener('touchstart',function(){
       _bdLpFired=false;
-      var n=item.dataset.bdayName;var dd=parseInt(item.dataset.bdayDay,10);var dm=parseInt(item.dataset.bdayMonth,10);
-      var b2=null;
-      for(var i2=0;i2<BDAYS.length;i2++){if(BDAYS[i2].name===n&&BDAYS[i2].day===dd&&BDAYS[i2].month===dm){b2=BDAYS[i2];break;}}
-      if(!b2)b2={name:n,day:dd,month:dm};
+      var bidxUp2=parseInt(item.dataset.bdayIdx,10);
+      var b2=(!isNaN(bidxUp2)&&bidxUp2>=0&&bidxUp2<BDAYS.length)?BDAYS[bidxUp2]:null;
+      if(!b2){
+        var n=item.dataset.bdayName;var dd=parseInt(item.dataset.bdayDay,10);var dm=parseInt(item.dataset.bdayMonth,10);
+        for(var i2=0;i2<BDAYS.length;i2++){if(BDAYS[i2].name===n&&BDAYS[i2].day===dd&&BDAYS[i2].month===dm){b2=BDAYS[i2];break;}}
+        if(!b2)b2={name:n,day:dd,month:dm};
+      }
       var _self=item;
       _bdLpTimer=setTimeout(function(){_bdLpTimer=null;_bdLpFired=true;_showBdayInlineCtrl(_self,b2);},500);
     },{passive:true});
@@ -943,12 +969,17 @@ function bindBdayEvents(){
       // No alarm panel for past birthdays
       var diff=parseInt(item.dataset.diff,10);
       if(!isNaN(diff)&&diff<0)return;
-      var name=item.dataset.bdayName;
-      var day=parseInt(item.dataset.bdayDay,10);
-      var month=parseInt(item.dataset.bdayMonth,10);
+      /* Bug 1 fix: usar índice directo para evitar ambigüedad con dos VIPs el mismo día */
+      var bidxUp=parseInt(item.dataset.bdayIdx,10);
       var b=null;
-      for(var i=0;i<BDAYS.length;i++){if(BDAYS[i].name===name&&BDAYS[i].day===day&&BDAYS[i].month===month){b=BDAYS[i];break;}}
-      if(!b)b={name:name,day:day,month:month};
+      if(!isNaN(bidxUp)&&bidxUp>=0&&bidxUp<BDAYS.length){b=BDAYS[bidxUp];}
+      if(!b){
+        var name=item.dataset.bdayName;
+        var day=parseInt(item.dataset.bdayDay,10);
+        var month=parseInt(item.dataset.bdayMonth,10);
+        for(var i=0;i<BDAYS.length;i++){if(BDAYS[i].name===name&&BDAYS[i].day===day&&BDAYS[i].month===month){b=BDAYS[i];break;}}
+        if(!b)b={name:name,day:day,month:month};
+      }
       openBdayAlarm(b);
     });
   });
