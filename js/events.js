@@ -1302,10 +1302,7 @@ function closeEvAlarm(){
   setTimeout(function(){
     var w=document.getElementById('evAlarmWrap');if(w)w.remove();
     refreshEvents();
-    if(typeof refreshBday==='function'){
-      var bdOv=document.getElementById('bdayOverlay');
-      if(bdOv&&bdOv.classList.contains('open'))refreshBday();
-    }
+    if(typeof refreshBday==='function')refreshBday();
   },300);
 }
 /* Abre el panel de cumpleaños VIP desde la ventana de eventos */
@@ -1334,7 +1331,7 @@ function bindEvAlarmEvents(ev,firstDate){
     var ponerBtn=document.getElementById('evAlarmPoner');
     if(ponerBtn)ponerBtn.classList.remove('active');
     refreshEvents();
-    if(typeof refreshBday==='function'){var bdOv=document.getElementById('bdayOverlay');if(bdOv&&bdOv.classList.contains('open'))refreshBday();}
+    if(typeof refreshBday==='function')refreshBday();
   });
   // 3-zone marker: Poner
   var ponerBtn=document.getElementById('evAlarmPoner');
@@ -1348,7 +1345,7 @@ function bindEvAlarmEvents(ev,firstDate){
     var uBtn=document.getElementById('evAlarmUnmark');
     if(uBtn)uBtn.classList.remove('active');
     refreshEvents();
-    if(typeof refreshBday==='function'){var bdOv=document.getElementById('bdayOverlay');if(bdOv&&bdOv.classList.contains('open'))refreshBday();}
+    if(typeof refreshBday==='function')refreshBday();
   });
   var editBtn=document.getElementById('evAlarmEdit');
   if(editBtn)editBtn.addEventListener('click',function(){
