@@ -67,8 +67,9 @@ function renderEconGastos(){
   var segSaludLabel='Seguro de Salud <span style="font-size:.68rem;color:var(--text-dim)">(semiobligatorio)</span>';
   var labelMap={'cot_social':cotLabel,'asesoria':asesorLabel,'seg_baja':segBajaLabel,'seg_salud':segSaludLabel};
 
-  var GROUP_SEMIOBL={'asesoria':true,'seg_baja':true,'seg_salud':true,'otros_seg':true};
-  var GROUP_CASA={'hipoteca':true,'comunidad':true,'seg_hogar':true,'luz':true,'gas':true,'agua':true,'digi':true};
+  var GROUP_SEMIOBL={'asesoria':true,'seg_baja':true,'seg_salud':true};
+  var GROUP_CASA={'hipoteca':true,'comunidad':true,'seg_hogar':true,'ibi':true,'luz':true,'gas':true,'agua':true,'digi':true};
+  var GROUP_OTROS_IMP={'otros_seg':true,'seg_vida':true};
 
   function _gastosGroup(filterFn){
     var shown=false;
@@ -112,8 +113,12 @@ function renderEconGastos(){
   var hasCasa=_gastosGroup(function(g){return !!GROUP_CASA[g.id];});
   if(hasCasa)h+=gastosResultRow('Tras gastos casa',running,running>0?'var(--c-green)':'var(--c-red)');
 
+  // Grupo 3.5: otros gastos importantes (seguros, etc.)
+  var hasOtrosImp=_gastosGroup(function(g){return !!GROUP_OTROS_IMP[g.id];});
+  if(hasOtrosImp)h+=gastosResultRow('Tras otros gastos importantes',running,running>0?'var(--c-green)':'var(--c-red)');
+
   // Grupo 4: otros (custom items no reconocidos)
-  _gastosGroup(function(g){return g.id!=='cot_social'&&!GROUP_SEMIOBL[g.id]&&!GROUP_CASA[g.id];});
+  _gastosGroup(function(g){return g.id!=='cot_social'&&!GROUP_SEMIOBL[g.id]&&!GROUP_CASA[g.id]&&!GROUP_OTROS_IMP[g.id];});
 
   h+=gastosResultRow('Neto disponible estimado',running,running>0?'var(--c-green)':'var(--c-red)');
   h+='</div></div>';
@@ -225,8 +230,8 @@ function renderIncomeDistrib(e,dr){
       +'<div class="econ-distrib-bar-wrap"><div class="econ-distrib-bar" style="width:'+p+'%;background:'+color+'"></div></div>'
       +'</div>';
   }
-  var GROUP_S={'asesoria':true,'seg_baja':true,'seg_salud':true,'otros_seg':true};
-  var GROUP_C={'hipoteca':true,'comunidad':true,'seg_hogar':true,'luz':true,'gas':true,'agua':true,'digi':true};
+  var GROUP_S={'asesoria':true,'seg_baja':true,'seg_salud':true,'otros_seg':true,'seg_vida':true};
+  var GROUP_C={'hipoteca':true,'comunidad':true,'seg_hogar':true,'ibi':true,'luz':true,'gas':true,'agua':true,'digi':true};
   var ccss=0,semiobl=0,gasaCasa=0,otrosG=0;
   GASTOS_ITEMS.forEach(function(g){
     var a=gastoAnual(g.id);
