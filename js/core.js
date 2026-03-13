@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v86 \u2014 fix migraci\u00f3n gastos/desgrav, IVA soportado compras, despacho ON por defecto, botones OFF rojos';
+var APP_VERSION = 'v87 \u2014 bugs VIP cumplea\u00f1os, despacho reglas IRPF correctas, campo intereses hipoteca';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
