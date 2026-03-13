@@ -540,6 +540,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .fiscal-section-title.income{color:var(--c-green)}
 .fiscal-section-title.expense{color:var(--c-red)}
 .fiscal-add-btn.fiscal-add-btn-income{border-color:rgba(52,211,153,.35);color:var(--c-green)}
+.fiscal-add-btn.fiscal-add-btn-expense{border-color:rgba(239,68,68,.4);color:var(--c-red)}
+.fiscal-add-btn.fiscal-add-btn-expense:active{background:rgba(239,68,68,.08)}
 /* Fiscal: desgravaciones */
 .fiscal-desgrav-item{display:flex;align-items:flex-start;gap:8px;padding:9px 0;border-bottom:1px solid var(--border);transition:opacity .15s}
 .fiscal-desgrav-item:last-child{border-bottom:none}
@@ -558,6 +560,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .fiscal-desgrav-eff{font-size:.72rem;color:var(--c-green);font-family:var(--mono)}
 .fiscal-desgrav-eff.capped{color:var(--c-orange)}
 .fiscal-desgrav-total{padding:8px 10px;border-radius:var(--radius-sm);background:var(--accent-glow);border:1px solid rgba(108,140,255,.3);font-size:.82rem;color:var(--accent-bright);margin-bottom:10px}
+.fiscal-desgrav-group-title{font-size:.68rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;padding:10px 0 5px;border-top:1px solid var(--border);margin-top:4px}
+.fiscal-desgrav-group-title.quota{color:var(--c-orange)}
+.fiscal-desgrav-from-gasto{font-size:.75rem;color:var(--accent-bright);font-family:var(--mono);background:var(--accent-glow);border-radius:5px;padding:2px 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+.fiscal-desgrav-from-gasto.dim{color:var(--text-dim);background:transparent}
+.fiscal-desgrav-nota{font-size:.65rem;color:var(--text-dim);margin-top:4px;line-height:1.4;padding:4px 6px;background:var(--surface2);border-radius:4px;border-left:2px solid var(--c-orange)}
+/* Fiscal: compras profesionales */
+.fiscal-compras-item{align-items:center}
+.fiscal-compras-toggle{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--border);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.6rem;background:var(--surface2);transition:all .15s;-webkit-user-select:none;user-select:none}
+.fiscal-compras-toggle.on{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
+.fiscal-compras-total{margin-top:8px;padding:6px 10px;border-radius:var(--radius-sm);background:var(--accent-glow);font-size:.8rem;color:var(--accent-bright);text-align:right}
+.fiscal-gasto-period-static{font-size:.72rem;color:var(--text-dim);white-space:nowrap;flex-shrink:0;padding:0 4px}
 /* Fiscal: despacho en casa */
 .fiscal-despacho-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;margin-bottom:6px;border-bottom:1px solid var(--border)}
 .fiscal-despacho-toggle-lbl{font-size:.84rem;color:var(--text-muted)}
@@ -578,6 +591,22 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .fiscal-despacho-breakdown{margin-top:8px;border-top:1px solid var(--border);padding-top:8px;display:flex;flex-direction:column;gap:3px}
 .fiscal-despacho-comp{font-size:.68rem;color:var(--text-dim)}
 .fiscal-despacho-comp b{color:var(--text-muted)}
+/* Distribución de ingresos */
+.econ-distrib-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.econ-distrib-header{padding:10px 14px 8px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:2px}
+.econ-distrib-bruto{font-size:.85rem;color:var(--text)}
+.econ-distrib-base{font-size:.7rem;color:var(--text-dim)}
+.econ-distrib-group-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-dim);padding:8px 14px 2px;background:var(--surface2)}
+.econ-distrib-group-lbl.neto{color:var(--c-green)}
+.econ-distrib-row{padding:6px 14px}
+.econ-distrib-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:3px}
+.econ-distrib-lbl{font-size:.78rem;color:var(--text-muted);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.econ-distrib-sub-dot{color:var(--text-dim);margin-right:4px;font-size:.65rem}
+.econ-distrib-amounts{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.econ-distrib-amounts b{font-family:var(--mono);font-size:.82rem}
+.econ-distrib-pct{font-size:.68rem;color:var(--text-dim);font-family:var(--mono);background:var(--surface2);border-radius:3px;padding:1px 4px}
+.econ-distrib-bar-wrap{height:5px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.econ-distrib-bar{height:100%;border-radius:3px;transition:width .3s}
 /* Comparador: reorder buttons */
 .econ-sc-reorder{width:22px;height:22px;border:none;background:transparent;color:var(--text-dim);font-size:.9rem;cursor:pointer;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s}
 .econ-sc-reorder:active{background:var(--surface3)}
