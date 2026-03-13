@@ -123,7 +123,10 @@ function renderEconGastos(){
   h+='<div style="font-size:.7rem;color:var(--text-dim);text-align:center">Configurable desde el men\u00fa &#9965;\ufe0f de la ventana econ\u00f3mica</div>';
   h+='</div>';
 
-  /* §B Desglose IRPF por tramos — visual */
+  /* §B Distribuci\u00f3n del ingreso bruto */
+  h+=renderIncomeDistrib(e,dr);
+
+  /* §C Desglose IRPF por tramos — visual */
   h+=renderIrpfBreakdown(e,dr);
 
   return h;
@@ -143,8 +146,8 @@ function renderIrpfBreakdown(e,dr){
   if(dr.gdPct>0){
     h+='<div class="econ-irpf-flow-row econ-irpf-minus"><span class="econ-irpf-flow-lbl"><span class="econ-irpf-sign">&#8722;</span>Gastos dif\u00edcil just. ('+dr.gdPct+'%)</span><span class="econ-irpf-flow-val" style="color:var(--c-green)">'+fcPlain(dr.gdAmount)+'</span></div>';
   }
-  if(dr.totalDesgrav>0){
-    h+='<div class="econ-irpf-flow-row econ-irpf-minus"><span class="econ-irpf-flow-lbl"><span class="econ-irpf-sign">&#8722;</span>Desgravaciones IRPF</span><span class="econ-irpf-flow-val" style="color:var(--c-green)">'+fcPlain(dr.totalDesgrav)+'</span></div>';
+  if(dr.totalBaseDesgrav>0){
+    h+='<div class="econ-irpf-flow-row econ-irpf-minus"><span class="econ-irpf-flow-lbl"><span class="econ-irpf-sign">&#8722;</span>Desgravaciones (base)</span><span class="econ-irpf-flow-val" style="color:var(--c-green)">'+fcPlain(dr.totalBaseDesgrav)+'</span></div>';
   }
   h+='<div class="econ-irpf-flow-row econ-irpf-result"><span class="econ-irpf-flow-lbl">Base declaraci\u00f3n</span><span class="econ-irpf-flow-val" style="color:var(--text)">'+fcPlain(dr.baseDecl)+'</span></div>';
   h+='</div></div>';
@@ -185,6 +188,13 @@ function renderIrpfBreakdown(e,dr){
   h+='<div class="econ-irpf-summary-val" style="color:var(--text-muted)">'+fcPlain(e.totIrpf)+'</div>';
   h+='<div class="econ-irpf-summary-sub">'+e.irpfPct+'% en cada factura</div>';
   h+='</div>';
+  if(dr.totalQuotaDesgrav>0){
+    h+='<div class="econ-irpf-summary-item">';
+    h+='<div class="econ-irpf-summary-lbl">Deducciones en cuota</div>';
+    h+='<div class="econ-irpf-summary-val" style="color:var(--c-green)">\u2212'+fcPlain(dr.totalQuotaDesgrav)+'</div>';
+    h+='<div class="econ-irpf-summary-sub">vivienda, donativos\u2026</div>';
+    h+='</div>';
+  }
   var diffColor=dr.declDiff<0?'var(--c-green)':'var(--c-red)';
   var diffLabel=dr.declDiff<0?'\u2B07\uFE0F Devoluci\u00f3n estimada':'\u2B06\uFE0F A pagar estimado';
   var diffSign=dr.declDiff<0?'':'+';
@@ -195,6 +205,75 @@ function renderIrpfBreakdown(e,dr){
   h+='</div>';
   h+='</div></div>';
 
+  h+='</div></div>';
+  return h;
+}
+
+/* ── Distribución del ingreso bruto ─────────────────────────── */
+function renderIncomeDistrib(e,dr){
+  var bruto=Math.round((e.totBase+e.totIva)*100)/100;
+  if(bruto<=0)return '';
+  function pctOf(v){return bruto>0?Math.round(v/bruto*1000)/10:0;}
+  function distRow(label,amount,color,sub){
+    var p=pctOf(amount);
+    if(amount<=0)return '';
+    return '<div class="econ-distrib-row">'
+      +'<div class="econ-distrib-meta">'
+      +'<span class="econ-distrib-lbl">'+(sub?'<span class="econ-distrib-sub-dot">&#x25B8;</span>':'')+label+'</span>'
+      +'<span class="econ-distrib-amounts"><b style="color:'+color+'">'+fcPlain(amount)+'</b> <span class="econ-distrib-pct">'+p.toFixed(1)+'%</span></span>'
+      +'</div>'
+      +'<div class="econ-distrib-bar-wrap"><div class="econ-distrib-bar" style="width:'+p+'%;background:'+color+'"></div></div>'
+      +'</div>';
+  }
+  var GROUP_S={'asesoria':true,'seg_baja':true,'seg_salud':true,'otros_seg':true};
+  var GROUP_C={'hipoteca':true,'comunidad':true,'seg_hogar':true,'luz':true,'gas':true,'agua':true,'digi':true};
+  var ccss=0,semiobl=0,gasaCasa=0,otrosG=0;
+  GASTOS_ITEMS.forEach(function(g){
+    var a=gastoAnual(g.id);
+    if(g.id==='cot_social')ccss+=a;
+    else if(GROUP_S[g.id])semiobl+=a;
+    else if(GROUP_C[g.id])gasaCasa+=a;
+    else otrosG+=a;
+  });
+  var compras=typeof comprasTotal==='function'?comprasTotal():0;
+  /* Impuestos: IRPF retenido + ajuste declaración (si positivo) + IVA */
+  var irpfPagado=Math.round((e.totIrpf+Math.max(0,dr.declDiff))*100)/100;
+  var devolucion=Math.max(0,-dr.declDiff);
+  var totalImpuestos=Math.round((irpfPagado+e.totIva)*100)/100;
+  var totalGastos=Math.round((ccss+semiobl+gasaCasa+compras+otrosG)*100)/100;
+  var neto=Math.round((e.totBase-irpfPagado+devolucion-ccss-semiobl-gasaCasa-compras-otrosG)*100)/100;
+
+  var h='<div class="sy-section"><div class="sy-section-title">Distribuci\u00f3n del ingreso</div>';
+  h+='<div class="econ-distrib-card">';
+  h+='<div class="econ-distrib-header">';
+  h+='<span class="econ-distrib-bruto">Bruto anual: <b>'+fcPlain(bruto)+'</b></span>';
+  h+='<span class="econ-distrib-base">Base: <b>'+fcPlain(e.totBase)+'</b> + IVA: <b>'+fcPlain(e.totIva)+'</b></span>';
+  h+='</div>';
+  /* Impuestos */
+  if(totalImpuestos>0){
+    h+='<div class="econ-distrib-group-lbl">Impuestos</div>';
+    h+=distRow('IRPF (retenci\u00f3n + declaraci\u00f3n)',irpfPagado,'var(--c-red)',false);
+    if(devolucion>0)h+=distRow('Devoluci\u00f3n IRPF estimada',devolucion,'var(--c-green)',true);
+    h+=distRow('IVA a Hacienda (Mod.303)',e.totIva,'var(--c-orange)',false);
+  }
+  /* Gastos profesionales */
+  if(ccss>0||semiobl>0||compras>0){
+    h+='<div class="econ-distrib-group-lbl">Gastos profesionales</div>';
+    h+=distRow('Cuota aut\u00f3nomos SS',ccss,'#c084fc',false);
+    h+=distRow('Asesor\u00eda, seguros y similares',semiobl,'#a78bfa',false);
+    h+=distRow('Compras y gastos profesionales',compras,'#34d399',false);
+  }
+  /* Gastos del hogar */
+  if(gasaCasa>0){
+    h+='<div class="econ-distrib-group-lbl">Gastos del hogar</div>';
+    h+=distRow('Hipoteca, suministros, comunidad\u2026',gasaCasa,'#60a5fa',false);
+  }
+  if(otrosG>0){
+    h+=distRow('Otros gastos',otrosG,'var(--text-dim)',false);
+  }
+  /* Neto */
+  h+='<div class="econ-distrib-group-lbl neto">Resultado estimado</div>';
+  h+=distRow(neto>=0?'Neto disponible':'D\u00e9ficit estimado',Math.abs(neto),neto>=0?'var(--c-green)':'var(--c-red)',false);
   h+='</div></div>';
   return h;
 }

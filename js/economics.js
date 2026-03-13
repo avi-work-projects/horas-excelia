@@ -294,6 +294,7 @@ function openEcon(){
   if(typeof loadIngresos==='function')loadIngresos();
   if(typeof loadDesgrav==='function')loadDesgrav();
   if(typeof loadDespacho==='function')loadDespacho();
+  if(typeof loadCompras==='function')loadCompras();
   if(typeof loadEconComp==='function')loadEconComp();
   if(typeof loadGastosToggles==='function')loadGastosToggles();
   var ov=document.getElementById('econOverlay');

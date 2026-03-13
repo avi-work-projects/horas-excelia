@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v83 \u2014 sincronizaci\u00f3n bidireccional eventos\u2194cumplea\u00f1os';
+var APP_VERSION = 'v84 \u2014 config fiscal: compras aut\u00f3nomo, desgrav vinculadas, despacho bidireccional, distribuci\u00f3n ingresos';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
