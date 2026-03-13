@@ -472,10 +472,7 @@ function openBdayAlarm(b){
 
 function _bdRefreshBoth(){
   refreshBday();
-  if(typeof refreshEvents==='function'){
-    var evOv=document.getElementById('eventsOverlay');
-    if(evOv&&evOv.classList.contains('open'))refreshEvents();
-  }
+  if(typeof refreshEvents==='function')refreshEvents();
 }
 
 function closeBdayAlarm(){

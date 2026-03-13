@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v82 \u2014 ventana econ\u00f3mica: pesta\u00f1as fiscal, desgravaciones, despacho, IRPF visual';
+var APP_VERSION = 'v83 \u2014 sincronizaci\u00f3n bidireccional eventos\u2194cumplea\u00f1os';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
