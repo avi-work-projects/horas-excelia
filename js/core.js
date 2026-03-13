@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v85 \u2014 config fiscal: plan pens\u00f3n 5500\u20ac, IBI/seg.vida, tabla desgrav % deducibles, vivienda Madrid, quitar Detalle Anual';
+var APP_VERSION = 'v86 \u2014 fix migraci\u00f3n gastos/desgrav, IVA soportado compras, despacho ON por defecto, botones OFF rojos';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

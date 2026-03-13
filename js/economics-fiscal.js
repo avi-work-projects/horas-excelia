@@ -57,15 +57,15 @@ var DEFAULT_GASTOS=[
   {id:'seg_baja',label:'Seguro baja laboral',amount:0,period:'monthly'},
   {id:'seg_salud',label:'Seguro de Salud',amount:0,period:'monthly'},
   {id:'seg_vida',label:'Seguro de Vida',amount:0,period:'annual'},
-  {id:'otros_seg',label:'Otros seguros',amount:0,period:'annual'},
   {id:'hipoteca',label:'Hipoteca',amount:0,period:'monthly'},
   {id:'ibi',label:'IBI',amount:0,period:'annual'},
-  {id:'comunidad',label:'Comunidad propietarios',amount:0,period:'monthly'},
+  {id:'comunidad',label:'Com. Propietarios',amount:0,period:'monthly'},
   {id:'seg_hogar',label:'Seguro del Hogar',amount:0,period:'annual'},
   {id:'gas',label:'Factura Gas',amount:0,period:'monthly'},
   {id:'luz',label:'Factura Luz',amount:0,period:'monthly'},
   {id:'digi',label:'Factura Digi',amount:0,period:'monthly'},
-  {id:'agua',label:'Factura Agua',amount:0,period:'monthly'}
+  {id:'agua',label:'Factura Agua',amount:0,period:'monthly'},
+  {id:'otros_seg',label:'Otros seguros',amount:0,period:'annual'}
 ];
 var GASTOS_ITEMS=[];
 
@@ -84,8 +84,27 @@ function getBrackets(){return FISCAL.brackets||DEFAULT_BRACKETS;}
 function loadGastos(){
   try{
     var r=localStorage.getItem(GASTOS_SK);
-    if(r){var d=JSON.parse(r);GASTOS_DIFICIL_PCT=d.dificilPct!=null?d.dificilPct:5;GASTOS_ITEMS=d.items||JSON.parse(JSON.stringify(DEFAULT_GASTOS));}
-    else{GASTOS_ITEMS=JSON.parse(JSON.stringify(DEFAULT_GASTOS));}
+    if(r){
+      var d=JSON.parse(r);
+      GASTOS_DIFICIL_PCT=d.dificilPct!=null?d.dificilPct:5;
+      var saved=d.items||[];
+      /* Migración: reconstruir en el orden de DEFAULT_GASTOS preservando amounts/period del usuario */
+      var result=[];
+      DEFAULT_GASTOS.forEach(function(def){
+        var found=null;
+        for(var i=0;i<saved.length;i++){if(saved[i].id===def.id){found=saved[i];break;}}
+        var item=found?JSON.parse(JSON.stringify(found)):JSON.parse(JSON.stringify(def));
+        /* Actualizar etiquetas que hayan cambiado */
+        if(def.id==='comunidad')item.label='Com. Propietarios';
+        result.push(item);
+      });
+      /* Añadir items custom (no en DEFAULT_GASTOS) al final */
+      saved.forEach(function(s){
+        var isFixed=DEFAULT_GASTOS.some(function(dd){return dd.id===s.id;});
+        if(!isFixed)result.push(JSON.parse(JSON.stringify(s)));
+      });
+      GASTOS_ITEMS=result;
+    }else{GASTOS_ITEMS=JSON.parse(JSON.stringify(DEFAULT_GASTOS));}
   }catch(e){GASTOS_ITEMS=JSON.parse(JSON.stringify(DEFAULT_GASTOS));}
 }
 function saveGastos(){
@@ -103,26 +122,56 @@ function gastoAnual(id){
 
 /* ── Compras / Gastos profesionales autónomo ─────────────── */
 var COMPRAS_SK='excelia-compras-v1';
+var COMPRAS_IVA_ENABLED=false; // Activar desgravación de IVA soportado en compras
 var DEFAULT_COMPRAS=[
-  {id:'material_oficina',label:'Material de oficina',amount:0,enabled:true},
-  {id:'equipamiento_info',label:'Equipamiento inform\u00e1tico',amount:0,enabled:true},
-  {id:'formacion',label:'Formaci\u00f3n / cursos',amount:0,enabled:false},
-  {id:'suscripciones',label:'Suscripciones software',amount:0,enabled:false}
+  {id:'material_oficina',label:'Material de oficina',amount:0,enabled:true,ivaIncluded:false,ivaPct:21,quarter:null},
+  {id:'equipamiento_info',label:'Equipamiento inform\u00e1tico',amount:0,enabled:true,ivaIncluded:false,ivaPct:21,quarter:null},
+  {id:'formacion',label:'Formaci\u00f3n / cursos',amount:0,enabled:false,ivaIncluded:false,ivaPct:21,quarter:null},
+  {id:'suscripciones',label:'Suscripciones software',amount:0,enabled:false,ivaIncluded:false,ivaPct:21,quarter:null}
 ];
 var COMPRAS_ITEMS=[];
 function loadCompras(){
   try{
     var r=localStorage.getItem(COMPRAS_SK);
-    if(r){var d=JSON.parse(r);COMPRAS_ITEMS=d.items||JSON.parse(JSON.stringify(DEFAULT_COMPRAS));}
-    else{COMPRAS_ITEMS=JSON.parse(JSON.stringify(DEFAULT_COMPRAS));}
+    if(r){
+      var d=JSON.parse(r);
+      COMPRAS_IVA_ENABLED=!!d.ivaEnabled;
+      var items=d.items||JSON.parse(JSON.stringify(DEFAULT_COMPRAS));
+      /* Migración: asegurar campos IVA en items guardados */
+      items.forEach(function(c){
+        if(c.ivaIncluded===undefined)c.ivaIncluded=false;
+        if(c.ivaPct===undefined)c.ivaPct=21;
+        if(c.quarter===undefined)c.quarter=null;
+      });
+      COMPRAS_ITEMS=items;
+    }else{COMPRAS_ITEMS=JSON.parse(JSON.stringify(DEFAULT_COMPRAS));}
   }catch(e){COMPRAS_ITEMS=JSON.parse(JSON.stringify(DEFAULT_COMPRAS));}
 }
 function saveCompras(){
-  try{localStorage.setItem(COMPRAS_SK,JSON.stringify({items:COMPRAS_ITEMS}));}catch(e){}
+  try{localStorage.setItem(COMPRAS_SK,JSON.stringify({ivaEnabled:COMPRAS_IVA_ENABLED,items:COMPRAS_ITEMS}));}catch(e){}
 }
+/* Devuelve la BASE sin IVA de todas las compras habilitadas */
 function comprasTotal(){
   var t=0;
-  COMPRAS_ITEMS.forEach(function(c){if(c.enabled&&c.amount)t+=c.amount;});
+  COMPRAS_ITEMS.forEach(function(c){
+    if(!c.enabled||!c.amount)return;
+    if(c.ivaIncluded&&c.ivaPct>0){t+=Math.round(c.amount/(1+c.ivaPct/100)*100)/100;}
+    else{t+=c.amount;}
+  });
+  return Math.round(t*100)/100;
+}
+/* Devuelve el IVA soportado de compras para el trimestre q (1-4). Si q=null, total anual */
+function comprasIvaTotal(q){
+  if(!COMPRAS_IVA_ENABLED)return 0;
+  var t=0;
+  COMPRAS_ITEMS.forEach(function(c){
+    if(!c.enabled||!c.amount||!c.ivaIncluded||!c.ivaPct)return;
+    var base=Math.round(c.amount/(1+c.ivaPct/100)*100)/100;
+    var iva=Math.round((c.amount-base)*100)/100;
+    if(q===null||q===undefined){t+=iva;}
+    else if(c.quarter!=null){if(c.quarter===q)t+=iva;}
+    else{t+=Math.round(iva/4*100)/100;} /* distribuir uniformemente entre trimestres */
+  });
   return Math.round(t*100)/100;
 }
 
@@ -146,25 +195,27 @@ var DESGRAV_DEFAULT=[
 var DESGRAV_ITEMS=[];
 
 function loadDesgrav(){
+  var OBSOLETE_IDS=['seg_salud_conyuge','seg_salud_hijos','colegio_prof','donativos'];
   try{
     var r=localStorage.getItem(DESGRAV_SK);
     if(r){
       var d=JSON.parse(r);
       var saved=d.items||[];
-      /* Migración: añadir items nuevos que no estén en el array guardado */
-      var result=JSON.parse(JSON.stringify(saved));
+      /* Eliminar items obsoletos */
+      var result=saved.filter(function(it){return OBSOLETE_IDS.indexOf(it.id)===-1;});
+      /* Añadir items nuevos y actualizar campos */
       DESGRAV_DEFAULT.forEach(function(def){
         var exists=false;
         for(var i=0;i<result.length;i++){if(result[i].id===def.id){exists=true;break;}}
         if(!exists){result.push(JSON.parse(JSON.stringify(def)));return;}
-        /* Actualizar campos nuevos en items existentes */
-        var ex=result[result.indexOf(result.filter(function(x){return x.id===def.id;})[0])];
         for(var i=0;i<result.length;i++){
           if(result[i].id!==def.id)continue;
-          if(def.gastoLink&&result[i].gastoLink===undefined)result[i].gastoLink=def.gastoLink;
+          if(def.gastoLink&&(result[i].gastoLink===undefined||result[i].gastoLink===null))result[i].gastoLink=def.gastoLink;
           if(def.pct!==undefined&&result[i].pct===undefined)result[i].pct=def.pct;
           if(def.type&&!result[i].type)result[i].type=def.type;
           if(def.notaPct&&!result[i].notaPct)result[i].notaPct=def.notaPct;
+          /* Corregir límite del plan de pensiones (1500 → 5500) */
+          if(def.id==='plan_pension'&&def.limit&&(result[i].limit==null||result[i].limit<def.limit))result[i].limit=def.limit;
           break;
         }
       });
@@ -201,13 +252,15 @@ function computeTotalDesgrav(){
 
 /* ── Despacho en casa ─────────────────────────────────────── */
 var DESPACHO_SK='excelia-despacho-v1';
-var DESPACHO={enabled:false,m2Total:0,m2Despacho:0,pct:0,valorCatastral:0,valorCompra:0};
+var DESPACHO={enabled:true,m2Total:0,m2Despacho:0,pct:0,valorCatastral:0,valorCompra:0};
 
 function loadDespacho(){
   try{
     var r=localStorage.getItem(DESPACHO_SK);
     if(r){var d=JSON.parse(r);
-      DESPACHO.enabled=!!d.enabled;DESPACHO.m2Total=d.m2Total||0;DESPACHO.m2Despacho=d.m2Despacho||0;
+      /* Si nunca se guardó el campo enabled, activar por defecto */
+      DESPACHO.enabled=d.enabled!=null?!!d.enabled:true;
+      DESPACHO.m2Total=d.m2Total||0;DESPACHO.m2Despacho=d.m2Despacho||0;
       DESPACHO.pct=d.pct||0;
       DESPACHO.valorCatastral=d.valorCatastral||0;DESPACHO.valorCompra=d.valorCompra||0;
     }
@@ -382,7 +435,11 @@ function renderFiscalTabIngGas(){
   h+='<div class="fiscal-section">';
   h+='<div class="fiscal-section-title expense">Compras y Gastos Profesionales</div>';
   h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:6px">Gastos anuales deducibles como aut\u00f3nomo: equipamiento, material, formaci\u00f3n, software, etc.</div>';
-  h+='<div class="fiscal-compras-iva-note">&#9888; Introduce los importes <b>sin IVA</b>. Como aut\u00f3nomo puedes deducir el IVA soportado por separado en el Mod.303.</div>';
+  h+='<div class="fiscal-despacho-toggle-row" style="margin-bottom:8px;padding-bottom:8px">';
+  h+='<span class="fiscal-despacho-toggle-lbl">Activar desgravaci\u00f3n de IVA soportado</span>';
+  h+='<div class="fiscal-onoff'+(COMPRAS_IVA_ENABLED?' on':'')+'" id="comprasIvaToggle">'+(COMPRAS_IVA_ENABLED?'ON':'OFF')+'</div>';
+  h+='</div>';
+  h+='<div style="font-size:.7rem;color:var(--text-dim);margin-bottom:6px">Importes <b>sin IVA</b> por defecto. Activa \u201cCon IVA\u201d por item para que la app calcule autom\u00e1ticamente la base y el IVA soportado (Mod.303).</div>';
   h+='<div id="fiscalComprasList">'+renderComprasList()+'</div>';
   h+='<button class="fiscal-add-btn fiscal-add-btn-expense" id="fiscalAddCompra">+ A\u00f1adir compra</button>';
   h+='</div>';
@@ -392,10 +449,12 @@ function renderFiscalTabIngGas(){
 /* ── renderComprasList ────────────────────────────────────── */
 function renderComprasList(){
   var h='';
-  var total=0;
+  var totalBase=comprasTotal();
+  var totalIva=COMPRAS_IVA_ENABLED?comprasIvaTotal(null):0;
   COMPRAS_ITEMS.forEach(function(c,i){
-    if(c.enabled&&c.amount)total+=c.amount;
     var isFixed=DEFAULT_COMPRAS.some(function(d){return d.id===c.id;});
+    var base=(c.ivaIncluded&&c.ivaPct>0&&c.amount)?Math.round(c.amount/(1+c.ivaPct/100)*100)/100:c.amount||0;
+    var iva=c.ivaIncluded&&c.amount?Math.round((c.amount-base)*100)/100:0;
     h+='<div class="fiscal-gasto-item fiscal-compras-item" data-ci="'+i+'">';
     h+='<div class="fiscal-compras-toggle'+(c.enabled?' on':'')+'" data-ctgl="'+i+'">'+(c.enabled?'&#10003;':'')+'</div>';
     if(isFixed){
@@ -403,14 +462,34 @@ function renderComprasList(){
     }else{
       h+='<input class="fiscal-gasto-lbl-input" data-ci="'+i+'" data-cfield="label" value="'+escHtml(c.label)+'" placeholder="Nombre...">';
     }
-    h+='<input class="fiscal-gasto-amt" data-ci="'+i+'" data-cfield="amount" type="number" min="0" step="1" value="'+(c.amount||0)+'">';
+    h+='<input class="fiscal-gasto-amt" data-ci="'+i+'" data-cfield="amount" type="number" min="0" step="1" value="'+(c.amount||0)+'" placeholder="0">';
     h+='<span class="fiscal-gasto-period-static">/a\u00f1o</span>';
     if(!isFixed){h+='<button class="fiscal-gasto-del fiscal-compras-del" data-ci="'+i+'">&#10005;</button>';}
     else{h+='<span style="width:22px"></span>';}
     h+='</div>';
+    /* Sub-fila IVA (siempre visible para poder activar por item) */
+    h+='<div class="fiscal-compras-iva-row" data-ci="'+i+'">';
+    h+='<span class="fiscal-compras-iva-lbl">Con IVA incluido:</span>';
+    h+='<div class="fiscal-compras-iva-tgl'+(c.ivaIncluded?' on':'')+'" data-civtgl="'+i+'">'+(c.ivaIncluded?'S\u00ed':'No')+'</div>';
+    if(c.ivaIncluded){
+      h+='<select class="fiscal-compras-iva-pct" data-ci="'+i+'" data-cfield="ivaPct">';
+      [4,10,21].forEach(function(p){h+='<option value="'+p+'"'+(c.ivaPct===p?' selected':'')+'>'+p+'%</option>';});
+      h+='</select>';
+      h+='<select class="fiscal-compras-iva-qtr" data-ci="'+i+'" data-cfield="quarter">';
+      h+='<option value=""'+(c.quarter===null?' selected':'')+'>Anual</option>';
+      [1,2,3,4].forEach(function(q){h+='<option value="'+q+'"'+(c.quarter===q?' selected':'')+'>T'+q+'</option>';});
+      h+='</select>';
+      if(c.amount>0){
+        h+='<span class="fiscal-compras-iva-calc">Base: <b>'+fcPlain(base)+'</b> · IVA: <b style="color:var(--c-orange)">'+fcPlain(iva)+'</b></span>';
+      }
+    }
+    h+='</div>';
   });
-  if(total>0){
-    h+='<div class="fiscal-compras-total">Total deducible: <b>'+fcPlain(total)+'</b></div>';
+  if(totalBase>0){
+    var totH='<div class="fiscal-compras-total">Base deducible: <b>'+fcPlain(totalBase)+'</b>';
+    if(COMPRAS_IVA_ENABLED&&totalIva>0)totH+=' · IVA soportado anual: <b style="color:var(--c-orange)">'+fcPlain(totalIva)+'</b>';
+    totH+='</div>';
+    h+=totH;
   }
   if(!COMPRAS_ITEMS.length)h+='<div style="font-size:.75rem;color:var(--text-dim);padding:6px 0">Sin compras configuradas.</div>';
   return h;
@@ -783,15 +862,32 @@ function _bindTabIngGas(){
     INGRESOS_ITEMS.push({id:'ingreso_'+Date.now(),label:'Nuevo ingreso',amount:0,period:'monthly'});
     document.getElementById('fiscalIngresosList').innerHTML=renderIngresosList();
   });
+  /* Toggle global IVA compras */
+  var civTog=document.getElementById('comprasIvaToggle');
+  if(civTog)civTog.addEventListener('click',function(){
+    COMPRAS_IVA_ENABLED=!COMPRAS_IVA_ENABLED;
+    this.textContent=COMPRAS_IVA_ENABLED?'ON':'OFF';
+    this.classList.toggle('on',COMPRAS_IVA_ENABLED);
+    document.getElementById('fiscalComprasList').innerHTML=renderComprasList();
+    _rebindComprasDel();
+  });
   /* Compras: event delegation */
-  var comprasList=document.getElementById('fiscalComprasList');
-  if(comprasList&&!comprasList._del){
+  function _rebindComprasDel(){
+    var comprasList=document.getElementById('fiscalComprasList');
+    if(!comprasList||comprasList._del)return;
     comprasList._del=true;
     comprasList.addEventListener('click',function(e){
       var tgl=e.target.closest('[data-ctgl]');
       if(tgl){
         var ci=parseInt(tgl.dataset.ctgl,10);
         COMPRAS_ITEMS[ci].enabled=!COMPRAS_ITEMS[ci].enabled;
+        document.getElementById('fiscalComprasList').innerHTML=renderComprasList();
+        return;
+      }
+      var civtgl=e.target.closest('[data-civtgl]');
+      if(civtgl){
+        var ci=parseInt(civtgl.dataset.civtgl,10);
+        COMPRAS_ITEMS[ci].ivaIncluded=!COMPRAS_ITEMS[ci].ivaIncluded;
         document.getElementById('fiscalComprasList').innerHTML=renderComprasList();
         return;
       }
@@ -806,11 +902,15 @@ function _bindTabIngGas(){
       var field=el.dataset.cfield;
       if(field==='amount'){var v=parseFloat(el.value);COMPRAS_ITEMS[ci].amount=isNaN(v)?0:v;document.getElementById('fiscalComprasList').innerHTML=renderComprasList();}
       else if(field==='label'){COMPRAS_ITEMS[ci].label=el.value||'Compra';}
+      else if(field==='ivaPct'){var p=parseInt(el.value,10);COMPRAS_ITEMS[ci].ivaPct=isNaN(p)?21:p;document.getElementById('fiscalComprasList').innerHTML=renderComprasList();}
+      else if(field==='quarter'){var q=el.value===''?null:parseInt(el.value,10);COMPRAS_ITEMS[ci].quarter=isNaN(q)?null:q;document.getElementById('fiscalComprasList').innerHTML=renderComprasList();}
     });
   }
+  _rebindComprasDel();
   document.getElementById('fiscalAddCompra').addEventListener('click',function(){
-    COMPRAS_ITEMS.push({id:'compra_'+Date.now(),label:'Nueva compra',amount:0,enabled:true});
+    COMPRAS_ITEMS.push({id:'compra_'+Date.now(),label:'Nueva compra',amount:0,enabled:true,ivaIncluded:false,ivaPct:21,quarter:null});
     document.getElementById('fiscalComprasList').innerHTML=renderComprasList();
+    _rebindComprasDel();
   });
 }
 

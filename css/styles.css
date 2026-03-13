@@ -582,10 +582,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .fiscal-desgrav-despacho-total{margin-top:8px;padding:6px 10px;border-radius:var(--radius-sm);background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.3);font-size:.8rem;color:var(--c-green);text-align:right}
 /* Nota IVA compras */
 .fiscal-compras-iva-note{font-size:.7rem;color:var(--c-orange);background:rgba(251,146,60,.08);border:1px solid rgba(251,146,60,.25);border-radius:5px;padding:5px 8px;margin-bottom:8px;line-height:1.4}
+/* IVA por item en compras */
+.fiscal-compras-iva-row{display:flex;align-items:center;gap:6px;padding:3px 0 5px 26px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.fiscal-compras-iva-lbl{font-size:.68rem;color:var(--text-dim);flex-shrink:0}
+.fiscal-compras-iva-tgl{font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:12px;cursor:pointer;border:1px solid var(--c-red);background:rgba(239,68,68,.08);color:var(--c-red);-webkit-user-select:none;user-select:none;transition:all .12s;flex-shrink:0}
+.fiscal-compras-iva-tgl.on{border-color:var(--c-orange);background:rgba(251,146,60,.12);color:var(--c-orange)}
+.fiscal-compras-iva-pct,.fiscal-compras-iva-qtr{font-size:.7rem;background:var(--surface2);border:1px solid var(--border);border-radius:5px;color:var(--text);padding:2px 4px;max-width:64px}
+.fiscal-compras-iva-calc{font-size:.68rem;color:var(--text-muted);margin-left:4px;white-space:nowrap}
 /* Fiscal: despacho en casa */
 .fiscal-despacho-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;margin-bottom:6px;border-bottom:1px solid var(--border)}
 .fiscal-despacho-toggle-lbl{font-size:.84rem;color:var(--text-muted)}
-.fiscal-onoff{padding:5px 12px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:var(--surface2);color:var(--text-dim);-webkit-user-select:none;user-select:none;transition:all .15s}
+.fiscal-onoff{padding:5px 12px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;border:1.5px solid var(--c-red);background:rgba(239,68,68,.08);color:var(--c-red);-webkit-user-select:none;user-select:none;transition:all .15s}
 .fiscal-onoff.on{border-color:var(--c-green);background:rgba(52,211,153,.12);color:var(--c-green)}
 .fiscal-despacho-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
 .fiscal-despacho-field{display:flex;flex-direction:column;gap:4px}
