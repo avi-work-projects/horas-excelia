@@ -2,10 +2,9 @@
    ALARMS — Gestión de alarmas creadas desde el PWA
    ============================================================ */
 
-var ALARMS_KEY='excelia-alarms-v1';
-var ALARMS=(function(){try{return JSON.parse(localStorage.getItem(ALARMS_KEY)||'[]');}catch(e){return[];}})();
+var ALARMS=[];
 
-function saveAlarms(){localStorage.setItem(ALARMS_KEY,JSON.stringify(ALARMS));}
+function saveAlarms(){/* sin persistencia */}
 
 // Añadir una alarma al registro
 // alarm: { type:'birthday'|'event'|'other', label, hour, minute, days:[]|null, targetDate:'YYYY-MM-DD'|null }
@@ -28,16 +27,9 @@ function isAlarmPast(alarm){
   return d<today;
 }
 
-// Devuelve {h, m} ajustado para evitar conflicto con alarmas existentes en la misma fecha+hora
+// Devuelve {h, m} sin comprobar historial
 function nextAlarmTime(targetDate,defaultH,defaultM){
-  if(!targetDate)return{h:defaultH,m:defaultM};
-  var fmtDate=targetDate.getFullYear()+'-'+String(targetDate.getMonth()+1).padStart(2,'0')+'-'+String(targetDate.getDate()).padStart(2,'0');
-  var h=defaultH,m=defaultM,guard=0;
-  while(ALARMS.some(function(a){return a.targetDate===fmtDate&&a.hour===h&&a.minute===m;})&&guard<60){
-    m++;guard++;
-    if(m>=60){m=0;h=Math.min(23,h+1);}
-  }
-  return{h:h,m:m};
+  return{h:defaultH,m:defaultM};
 }
 
 // ── Abrir/cerrar overlay ────────────────────────────────────

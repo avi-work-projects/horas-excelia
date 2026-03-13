@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v79 \u2014 alarmas robustas, bot\u00f3n crear alarma visual, viajes multi-azul';
+var APP_VERSION = 'v80 \u2014 alarmas sin historial, botones tarifa multilínea';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
