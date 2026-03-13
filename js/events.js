@@ -1265,7 +1265,15 @@ function renderEvAlarmPanel(ev,firstDate){
   h+='<div class="bd-alarm-name" style="color:'+ev.color+'">'+escHtml(ev.title)+'</div>';
   h+='<div class="bd-alarm-date">'+fd2(firstDate)+' \u00b7 '+diffLbl+'</div>';
   h+='<div class="ev-alarm-note">'+note+'</div></div>';
-  if(isSet){h+='<div class="bd-alarm-set-badge">&#128276; Alarma ya marcada como configurada<button class="bd-alarm-unmark-btn" id="evAlarmUnmark">Quitar</button></div>';}
+  // Permanent 3-zone alarm marker
+  h+='<div class="bd-alarm-marker-row">';
+  h+='<div class="bd-alarm-marker-text">Marcar alarma como configurada</div>';
+  h+='<div class="bd-alarm-marker-bell">'+(isSet?'&#128276;':'&#128277;')+'</div>';
+  h+='<div class="bd-alarm-marker-btns">';
+  h+='<button class="bd-alarm-marker-btn quitar'+(isSet?'':' active')+'" id="evAlarmUnmark">Quitar</button>';
+  h+='<button class="bd-alarm-marker-btn poner'+(isSet?' active':'')+'" id="evAlarmPoner">Poner</button>';
+  h+='</div>';
+  h+='</div>';
   var _evT=typeof nextAlarmTime==='function'?nextAlarmTime(firstDate,15,2):{h:15,m:2};
   h+='<div class="bd-alarm-row" style="margin:16px 0">';
   h+='<span class="bd-alarm-row-lbl">&#128276; Hora de la alarma<br><span style="font-size:.65rem;opacity:.7">D\u00eda del evento: '+fd2(firstDate)+'</span></span>';
@@ -1274,7 +1282,6 @@ function renderEvAlarmPanel(ev,firstDate){
   h+='<div class="ev-form-actions">';
   h+='<button class="ev-btn primary" id="evAlarmCreate">&#128276; Crear alarma</button>';
   h+='<button class="ev-btn" id="evAlarmEdit" style="background:var(--surface2);color:var(--text)">&#9998; Editar evento</button>';
-  h+='<button class="action-btn sent-toggle'+(isSet?' is-marked':'')+'" id="evAlarmMark">'+(isSet?'\u21a9 Desmarcar':'\u2713 Marcar config.')+'</button>';
   h+='</div></div></div>';
   return h;
 }
@@ -1292,7 +1299,14 @@ function openEvAlarm(ev,firstDate){
 function closeEvAlarm(){
   var fo=document.getElementById('evAlarmOv');
   if(fo)fo.classList.remove('open');
-  setTimeout(function(){var w=document.getElementById('evAlarmWrap');if(w)w.remove();},300);
+  setTimeout(function(){
+    var w=document.getElementById('evAlarmWrap');if(w)w.remove();
+    refreshEvents();
+    if(typeof refreshBday==='function'){
+      var bdOv=document.getElementById('bdayOverlay');
+      if(bdOv&&bdOv.classList.contains('open'))refreshBday();
+    }
+  },300);
 }
 /* Abre el panel de cumpleaños VIP desde la ventana de eventos */
 function openBdayAlarmFromEvents(b){
@@ -1308,17 +1322,33 @@ function openBdayAlarmFromEvents(b){
 }
 function bindEvAlarmEvents(ev,firstDate){
   document.getElementById('evAlarmClose').addEventListener('click',closeEvAlarm);
+  // 3-zone marker: Quitar
   var unmarkBtn=document.getElementById('evAlarmUnmark');
-  if(unmarkBtn)unmarkBtn.addEventListener('click',function(){
+  if(unmarkBtn)unmarkBtn.addEventListener('click',function(e){
+    e.stopPropagation();
     setEvAlarmState(ev.id,false);
-    showToast('Marca de alarma eliminada','success');
-    closeEvAlarm();setTimeout(refreshEvents,320);
+    showToast('Marca eliminada','success');
+    var bellEl=document.querySelector('#evAlarmOv .bd-alarm-marker-bell');
+    if(bellEl)bellEl.innerHTML='&#128277;';
+    unmarkBtn.classList.add('active');
+    var ponerBtn=document.getElementById('evAlarmPoner');
+    if(ponerBtn)ponerBtn.classList.remove('active');
+    refreshEvents();
+    if(typeof refreshBday==='function'){var bdOv=document.getElementById('bdayOverlay');if(bdOv&&bdOv.classList.contains('open'))refreshBday();}
   });
-  document.getElementById('evAlarmMark').addEventListener('click',function(){
-    var isSet=isEvAlarmSet(ev.id);
-    setEvAlarmState(ev.id,!isSet);
-    showToast(isSet?'Marca eliminada':'Alarma marcada como configurada','success');
-    closeEvAlarm();setTimeout(refreshEvents,320);
+  // 3-zone marker: Poner
+  var ponerBtn=document.getElementById('evAlarmPoner');
+  if(ponerBtn)ponerBtn.addEventListener('click',function(e){
+    e.stopPropagation();
+    setEvAlarmState(ev.id,true);
+    showToast('\u2713 Alarma marcada como configurada','success');
+    var bellEl=document.querySelector('#evAlarmOv .bd-alarm-marker-bell');
+    if(bellEl)bellEl.innerHTML='&#128276;';
+    ponerBtn.classList.add('active');
+    var uBtn=document.getElementById('evAlarmUnmark');
+    if(uBtn)uBtn.classList.remove('active');
+    refreshEvents();
+    if(typeof refreshBday==='function'){var bdOv=document.getElementById('bdayOverlay');if(bdOv&&bdOv.classList.contains('open'))refreshBday();}
   });
   var editBtn=document.getElementById('evAlarmEdit');
   if(editBtn)editBtn.addEventListener('click',function(){

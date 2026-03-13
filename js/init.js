@@ -698,6 +698,31 @@
         });
       }
     }
+    // Eventos hoy o mañana (inicio) + fin de eventos largos (>7 días)
+    if(typeof EVENTS!=='undefined'&&EVENTS.length){
+      EVENTS.forEach(function(ev){
+        if(!ev.start)return;
+        if(ev.id&&ev.id.indexOf('ev-bday-vip-')===0)return; // ya cubiertos por BDAYS
+        var evStart=new Date(ev.start+'T00:00:00');
+        var diff=Math.round((evStart-today)/86400000);
+        if(diff===0||diff===1){
+          var lbl=escHtml(ev.title)+(diff===0?' (\u00a1hoy!)':' (ma\u00f1ana!)');
+          items.push({type:'event',text:'&#128197; '+lbl});
+        }
+        // Fin de eventos de más de 7 días
+        if(ev.end&&ev.end>ev.start){
+          var evEnd=new Date(ev.end+'T00:00:00');
+          var span=Math.round((evEnd-evStart)/86400000);
+          if(span>7){
+            var diffEnd=Math.round((evEnd-today)/86400000);
+            if(diffEnd===0||diffEnd===1){
+              var endLbl=escHtml(ev.title)+' \u2014 fin'+(diffEnd===0?' hoy':' ma\u00f1ana')+'!';
+              items.push({type:'event',text:'&#128197; '+endLbl});
+            }
+          }
+        }
+      });
+    }
     if(!items.length)return;
     var content=document.getElementById('homePopupContent');
     if(!content)return;

@@ -186,13 +186,14 @@ function renderBdayUpcoming(){
       var alarmSet=isBdayAlarmSet(x.b);
       var vipCls=isVip?' bday-vip-item':'';
       var vipStar=isVip?' <img src="./VIP.png" class="bday-vip-img" alt="VIP">':'';
-      s+='<div class="bday-upcoming-item'+vipCls+(isT?' bday-today-item':'')+'" data-bday-name="'+escHtml(x.b.name)+'" data-bday-day="'+x.b.day+'" data-bday-month="'+x.b.month+'">';
+      var bellHtml=isPastDay?'':'<span class="ev-upcoming-bell'+(alarmSet?' set':'')+'">&#128276;</span>';
+      s+='<div class="bday-upcoming-item'+vipCls+(isT?' bday-today-item':'')+'" data-bday-name="'+escHtml(x.b.name)+'" data-bday-day="'+x.b.day+'" data-bday-month="'+x.b.month+'" data-diff="'+x.diff+'">';
       s+='<div class="bday-upcoming-icon" style="background:'+color+'22;border-color:'+color+'">'+(isVip?'\u2b50':'\uD83C\uDF82')+'</div>';
       s+='<div class="bday-upcoming-info">';
       s+='<div class="bday-upcoming-name" style="color:'+color+'">'+bdName(x.b.name)+vipStar+'</div>';
       s+='<div class="bday-upcoming-date">'+x.b.day+' de '+MN[x.b.month-1]+'</div>';
       s+='</div>';
-      s+='<div class="ev-upcoming-right"><span class="ev-upcoming-bell'+(alarmSet?' set':'')+'">&#128276;</span><div class="'+lblCls+'">'+lbl+'</div></div>';
+      s+='<div class="ev-upcoming-right">'+bellHtml+'<div class="'+lblCls+'">'+lbl+'</div></div>';
       s+='</div>';
     });
     return s;
@@ -393,12 +394,12 @@ function renderBdayAlarmPanel(b){
   var lbl=dl===0?'\u00a1Hoy!':dl===1?'Ma\u00f1ana':dl>0?'en '+dl+' d\u00edas':'Hace '+Math.abs(dl)+' d\u00edas';
   var color=getBdayColor(b);
   var isSet=isBdayAlarmSet(b);
-  var cnt=b.vip?BDAY_ALARM_COUNT:1;
-  // Default dates: day before (month/day) and day of
+  var isToday=(dl===0);
+  var cnt=isToday?1:(b.vip?BDAY_ALARM_COUNT:1);
   var today=new Date();
   var bdYear=today.getFullYear();
   var bdDate=new Date(bdYear,b.month-1,b.day);
-  if(bdDate<today)bdDate.setFullYear(bdYear+1);
+  if(!isToday&&bdDate<today)bdDate.setFullYear(bdYear+1);
   var prevDate=new Date(bdDate);prevDate.setDate(prevDate.getDate()-1);
   function fmtDate(d){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');}
   var h='<div class="bd-alarm-overlay" id="bdAlarmOv"><div class="bd-alarm-sheet">';
@@ -412,14 +413,23 @@ function renderBdayAlarmPanel(b){
   h+='<div class="bd-alarm-name" style="color:'+color+'">'+(b.vip?'\u2b50 ':'')+bdName(b.name)+'</div>';
   h+='<div class="bd-alarm-date">'+b.day+' de '+MN[b.month-1]+' \u00b7 '+lbl+'</div>';
   h+='</div>';
-  // Alarm set badge
-  if(isSet){
-    h+='<div class="bd-alarm-set-badge">&#128276; Alarma ya marcada como configurada<button class="bd-alarm-unmark-btn" id="bdAlarmUnmark">Quitar</button></div>';
+  // Permanent 3-zone alarm marker
+  h+='<div class="bd-alarm-marker-row">';
+  h+='<div class="bd-alarm-marker-text">Marcar alarma como configurada</div>';
+  h+='<div class="bd-alarm-marker-bell">'+(isSet?'&#128276;':'&#128277;')+'</div>';
+  h+='<div class="bd-alarm-marker-btns">';
+  h+='<button class="bd-alarm-marker-btn quitar'+(isSet?'':' active')+'" id="bdAlarmUnmark">Quitar</button>';
+  h+='<button class="bd-alarm-marker-btn poner'+(isSet?' active':'')+'" id="bdAlarmPoner">Poner</button>';
+  h+='</div>';
+  h+='</div>';
+  // Count toggle + Create button in same row
+  var hasCount=!isToday&&b.vip;
+  h+='<div class="bd-alarm-count-row'+(hasCount?'':' bd-alarm-count-single')+'">';
+  if(hasCount){
+    h+='<button class="bd-alarm-count-btn'+(cnt===1?' active':'')+'" data-cnt="1" id="bdAlarmCount1">1 alarma</button>';
+    h+='<button class="bd-alarm-count-btn'+(cnt===2?' active':'')+'" data-cnt="2" id="bdAlarmCount2">2 alarmas</button>';
   }
-  // Count toggle
-  h+='<div class="bd-alarm-count-row">';
-  h+='<button class="bd-alarm-count-btn'+(cnt===1?' active':'')+'" data-cnt="1" id="bdAlarmCount1">1 alarma</button>';
-  h+='<button class="bd-alarm-count-btn'+(cnt===2?' active':'')+'" data-cnt="2" id="bdAlarmCount2">2 alarmas</button>';
+  h+='<button class="ev-btn primary bd-alarm-create-btn" id="bdAlarmCreate">&#128276; Crear alarma'+(hasCount&&cnt===2?'s':'')+'</button>';
   h+='</div>';
   // VIP toggle
   h+='<div class="bd-alarm-vip-row">';
@@ -427,23 +437,19 @@ function renderBdayAlarmPanel(b){
   h+='</div>';
   // Alarm fields
   h+='<div id="bdAlarmFields">';
-  var _bdT2=typeof nextAlarmTime==='function'?nextAlarmTime(bdDate,9,2):{h:9,m:2};
+  var defaultH=isToday?18:9;
+  var _bdT2=typeof nextAlarmTime==='function'?nextAlarmTime(isToday?today:bdDate,defaultH,2):{h:defaultH,m:2};
   var _bdT1=typeof nextAlarmTime==='function'?nextAlarmTime(prevDate,23,57):{h:23,m:57};
-  if(cnt===2){
+  if(!isToday&&cnt===2){
     h+='<div class="bd-alarm-row">';
     h+='<span class="bd-alarm-row-lbl">\uD83C\uDF19 V\u00edspera<br><span style="font-size:.65rem;opacity:.7">'+fmtDate(prevDate)+'</span></span>';
     h+='<div class="bd-alarm-time"><input id="bdAlarmH1" type="number" min="0" max="23" value="'+_bdT1.h+'"><span class="bd-alarm-time-sep">:</span><input id="bdAlarmM1" type="number" min="0" max="59" value="'+String(_bdT1.m).padStart(2,'0')+'"></div>';
     h+='</div>';
   }
   h+='<div class="bd-alarm-row">';
-  h+='<span class="bd-alarm-row-lbl">\uD83C\uDF89 Cumplea\u00f1os<br><span style="font-size:.65rem;opacity:.7">'+fmtDate(bdDate)+'</span></span>';
+  h+='<span class="bd-alarm-row-lbl">\uD83C\uDF89 Cumplea\u00f1os<br><span style="font-size:.65rem;opacity:.7">'+fmtDate(isToday?today:bdDate)+'</span></span>';
   h+='<div class="bd-alarm-time"><input id="bdAlarmH2" type="number" min="0" max="23" value="'+_bdT2.h+'"><span class="bd-alarm-time-sep">:</span><input id="bdAlarmM2" type="number" min="0" max="59" value="'+String(_bdT2.m).padStart(2,'0')+'"></div>';
   h+='</div>';
-  h+='</div>';
-  // Action buttons
-  h+='<div class="ev-form-actions">';
-  h+='<button class="ev-btn primary" id="bdAlarmCreate">&#128276; Crear alarma'+(cnt===2?'s':'')+'</button>';
-  h+='<button class="action-btn sent-toggle'+(isSet?' is-marked':'')+'" id="bdAlarmMark">'+(isSet?'\u21a9 Desmarcar':'\u2713 Marcar config.')+'</button>';
   h+='</div>';
   h+='</div></div>';
   return h;
@@ -464,10 +470,21 @@ function openBdayAlarm(b){
   bindBdayAlarmEvents(b);
 }
 
+function _bdRefreshBoth(){
+  refreshBday();
+  if(typeof refreshEvents==='function'){
+    var evOv=document.getElementById('eventsOverlay');
+    if(evOv&&evOv.classList.contains('open'))refreshEvents();
+  }
+}
+
 function closeBdayAlarm(){
   var fo=document.getElementById('bdAlarmOv');
   if(fo)fo.classList.remove('open');
-  setTimeout(function(){var w=document.getElementById('bdAlarmWrap');if(w)w.remove();},300);
+  setTimeout(function(){
+    var w=document.getElementById('bdAlarmWrap');if(w)w.remove();
+    _bdRefreshBoth();
+  },320);
 }
 
 function bindBdayAlarmEvents(b){
@@ -482,30 +499,54 @@ function bindBdayAlarmEvents(b){
       localStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));
       if(typeof syncVipBdaysToEvents==='function')syncVipBdaysToEvents();
       updateBdayBtn();
-      refreshBday();
+      var fo=document.getElementById('bdAlarmOv');if(fo)fo.classList.remove('open');
+      setTimeout(function(){var w=document.getElementById('bdAlarmWrap');if(w)w.remove();openBdayAlarm(b);},310);
     });
   }
 
-  // Alarm count toggle
+  // Alarm count toggle (only for future VIP)
   ['bdAlarmCount1','bdAlarmCount2'].forEach(function(id){
     var btn=document.getElementById(id);
     if(!btn)return;
     btn.addEventListener('click',function(){
       BDAY_ALARM_COUNT=parseInt(btn.dataset.cnt,10);
       localStorage.setItem(BDAY_ALARM_COUNT_KEY,String(BDAY_ALARM_COUNT));
-      closeBdayAlarm();
-      setTimeout(function(){openBdayAlarm(b);},310);
+      var fo=document.getElementById('bdAlarmOv');if(fo)fo.classList.remove('open');
+      setTimeout(function(){var w=document.getElementById('bdAlarmWrap');if(w)w.remove();openBdayAlarm(b);},310);
     });
   });
 
-  // Unmark alarm
+  // 3-zone marker: Quitar
   var unmarkBtn=document.getElementById('bdAlarmUnmark');
   if(unmarkBtn){
-    unmarkBtn.addEventListener('click',function(){
+    unmarkBtn.addEventListener('click',function(e){
+      e.stopPropagation();
       setBdayAlarmState(b,false);
-      showToast('Marca de alarma eliminada','success');
-      closeBdayAlarm();
-      setTimeout(refreshBday,320);
+      showToast('Marca eliminada','success');
+      // Update UI inline
+      var bellEl=document.querySelector('#bdAlarmOv .bd-alarm-marker-bell');
+      if(bellEl)bellEl.innerHTML='&#128277;';
+      unmarkBtn.classList.add('active');
+      var ponerBtn=document.getElementById('bdAlarmPoner');
+      if(ponerBtn)ponerBtn.classList.remove('active');
+      _bdRefreshBoth();
+    });
+  }
+
+  // 3-zone marker: Poner
+  var ponerBtn=document.getElementById('bdAlarmPoner');
+  if(ponerBtn){
+    ponerBtn.addEventListener('click',function(e){
+      e.stopPropagation();
+      setBdayAlarmState(b,true);
+      showToast('\u2713 Marcado como configurada','success');
+      // Update UI inline
+      var bellEl=document.querySelector('#bdAlarmOv .bd-alarm-marker-bell');
+      if(bellEl)bellEl.innerHTML='&#128276;';
+      ponerBtn.classList.add('active');
+      var uBtn=document.getElementById('bdAlarmUnmark');
+      if(uBtn)uBtn.classList.remove('active');
+      _bdRefreshBoth();
     });
   }
 
@@ -516,24 +557,25 @@ function bindBdayAlarmEvents(b){
       showToast('Configura la URL de MacroDroid en el men\u00fa \u22ef','error');
       return;
     }
+    var isToday=(daysUntil(b.month,b.day)===0);
+    var _cnt=isToday?1:(b.vip?BDAY_ALARM_COUNT:1);
     // Calculate dates
     var today2=new Date();
     var bdYear2=today2.getFullYear();
     var bdDate2=new Date(bdYear2,b.month-1,b.day);
-    if(bdDate2<today2)bdDate2.setFullYear(bdYear2+1);
+    if(!isToday&&bdDate2<today2)bdDate2.setFullYear(bdYear2+1);
     var prevDate2=new Date(bdDate2);prevDate2.setDate(prevDate2.getDate()-1);
-    // Leer valores del campo de cumpleaños (alarma del día)
+    // Read birthday alarm time
     var h2r=parseInt(document.getElementById('bdAlarmH2').value,10);
-    var h2=isNaN(h2r)?9:Math.min(23,Math.max(0,h2r));
+    var h2=isNaN(h2r)?(isToday?18:9):Math.min(23,Math.max(0,h2r));
     var m2r=parseInt(document.getElementById('bdAlarmM2').value,10);
     var m2=isNaN(m2r)?2:Math.min(59,Math.max(0,m2r));
     var msgDay='\uD83C\uDF82 Cumple '+tc(b.name)+'! '+String(b.day).padStart(2,'0')+'/'+String(b.month).padStart(2,'0');
     var base=normalizeMacroBase(alarmUrl);
-    var dayBd=bdDate2.getDay()+1; // Android: 1=Dom...7=Sáb
+    var dayBd=(isToday?today2:bdDate2).getDay()+1;
     var url2=base+'/generar_alarma2?alarmH='+h2+'&alarmM='+m2+'&alarmMsg='+encodeURIComponent(msgDay)+'&alarmDays='+dayBd;
-    // Leer valores de víspera (si aplica) ANTES del fetch
     var h1=23,m1=57,msgPrev='',dayPrev=0,url1='';
-    if(BDAY_ALARM_COUNT===2){
+    if(_cnt===2){
       var h1r=parseInt(document.getElementById('bdAlarmH1').value,10);
       h1=isNaN(h1r)?23:Math.min(23,Math.max(0,h1r));
       var m1r=parseInt(document.getElementById('bdAlarmM1').value,10);
@@ -542,19 +584,17 @@ function bindBdayAlarmEvents(b){
       dayPrev=prevDate2.getDay()+1;
       url1=base+'/generar_alarma1?alarmH='+h1+'&alarmM='+m1+'&alarmMsg='+encodeURIComponent(msgPrev)+'&alarmDays='+dayPrev;
     }
-    // Registrar alarmas localmente ANTES del fetch (siempre guardadas aunque falle la red)
     var fmtD=function(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
     if(typeof addAlarm==='function'){
-      if(BDAY_ALARM_COUNT===2)addAlarm({type:'birthday',label:msgPrev,hour:h1,minute:m1,days:[dayPrev],targetDate:fmtD(prevDate2)});
-      addAlarm({type:'birthday',label:msgDay,hour:h2,minute:m2,days:[dayBd],targetDate:fmtD(bdDate2)});
+      if(_cnt===2)addAlarm({type:'birthday',label:msgPrev,hour:h1,minute:m1,days:[dayPrev],targetDate:fmtD(prevDate2)});
+      addAlarm({type:'birthday',label:msgDay,hour:h2,minute:m2,days:[dayBd],targetDate:fmtD(isToday?today2:bdDate2)});
     }
     setBdayAlarmState(b,true);
-    showToast('Enviando alarma'+(BDAY_ALARM_COUNT===2?'s':'')+' a MacroDroid\u2026','success');
-    var _cnt=BDAY_ALARM_COUNT;
-    var _name=tc(b.name);
-    function onOk(){showToast('\u23f0 Alarma'+(_cnt===2?'s':'')+' creada'+(_cnt===2?'s':'')+' para '+_name,'success');closeBdayAlarm();setTimeout(refreshBday,320);}
-    function onErr(){showToast('\u23f0 Alarma'+(_cnt===2?'s':'')+' guardada'+(_cnt===2?'s':'')+' (sin conexi\u00f3n a MacroDroid)','success');closeBdayAlarm();setTimeout(refreshBday,320);}
-    if(BDAY_ALARM_COUNT===2){
+    showToast('Enviando alarma'+(_cnt===2?'s':'')+' a MacroDroid\u2026','success');
+    var _cntN=_cnt,_name=tc(b.name);
+    function onOk(){showToast('\u23f0 Alarma'+(_cntN===2?'s':'')+' creada'+(_cntN===2?'s':'')+' para '+_name,'success');closeBdayAlarm();}
+    function onErr(){showToast('\u23f0 Alarma guardada (sin conexi\u00f3n a MacroDroid)','success');closeBdayAlarm();}
+    if(_cnt===2){
       fetch(url1,{mode:'no-cors'})
         .then(function(){return new Promise(function(r){setTimeout(r,1000);});})
         .then(function(){return fetch(url2,{mode:'no-cors'});})
@@ -571,15 +611,6 @@ function bindBdayAlarmEvents(b){
       var v=parseInt(this.value,10);
       if(!isNaN(v)&&v>=0&&v<=59)this.value=String(v).padStart(2,'0');
     });
-  });
-
-  // Mark without creating
-  document.getElementById('bdAlarmMark').addEventListener('click',function(){
-    var nowSet=isBdayAlarmSet(b);
-    setBdayAlarmState(b,!nowSet);
-    showToast(nowSet?'Marca eliminada':'\u2713 Marcado como configurada','success');
-    closeBdayAlarm();
-    setTimeout(refreshBday,320);
   });
 }
 
@@ -912,6 +943,9 @@ function bindBdayEvents(){
       if(_bdLpFired){_bdLpFired=false;return;}
       var prev=document.querySelector('.bday-inline-ctrl');
       if(prev){prev.remove();return;}
+      // No alarm panel for past birthdays
+      var diff=parseInt(item.dataset.diff,10);
+      if(!isNaN(diff)&&diff<0)return;
       var name=item.dataset.bdayName;
       var day=parseInt(item.dataset.bdayDay,10);
       var month=parseInt(item.dataset.bdayMonth,10);

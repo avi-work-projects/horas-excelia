@@ -711,9 +711,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-alarm-note{font-size:.75rem;color:var(--text-muted);margin-top:6px;line-height:1.4}
 .bd-alarm-name{font-size:1rem;font-weight:700;margin-bottom:3px}
 .bd-alarm-date{font-size:.75rem;color:var(--text-muted);font-family:var(--mono)}
-.bd-alarm-count-row{display:flex;gap:8px;margin-bottom:14px}
-.bd-alarm-count-btn{flex:1;padding:9px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s;text-align:center;-webkit-user-select:none;user-select:none}
-.bd-alarm-count-btn.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
 .bd-alarm-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border);margin-bottom:8px}
 .bd-alarm-row-lbl{font-size:.72rem;color:var(--text-muted);flex:1}
 .bd-alarm-time{display:flex;align-items:center;gap:4px}
@@ -722,6 +719,19 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bd-alarm-time-sep{font-family:var(--mono);font-size:1rem;font-weight:700;color:var(--accent-bright);user-select:none}
 .bd-alarm-set-badge{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:var(--radius-sm);background:rgba(90,224,136,.1);border:1px solid rgba(90,224,136,.3);color:var(--sent-text);font-size:.8rem;font-weight:600;margin-bottom:8px}
 .bd-alarm-unmark-btn{background:var(--sent);border:1px solid var(--sent-border);border-radius:8px;padding:5px 12px;font-size:.72rem;color:var(--sent-text);cursor:pointer;margin-left:auto;flex-shrink:0;font-weight:600}
+/* ── 3-ZONE ALARM MARKER ── */
+.bd-alarm-marker-row{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border);margin-bottom:10px}
+.bd-alarm-marker-text{flex:1;font-size:.7rem;color:var(--text-muted);line-height:1.3}
+.bd-alarm-marker-bell{font-size:1.1rem;flex-shrink:0}
+.bd-alarm-marker-btns{display:flex;gap:4px;flex-shrink:0}
+.bd-alarm-marker-btn{padding:5px 10px;border-radius:8px;font-size:.72rem;font-weight:600;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);cursor:pointer;transition:all .15s}
+.bd-alarm-marker-btn.quitar.active{background:rgba(239,68,68,.15);border-color:var(--c-red);color:var(--c-red)}
+.bd-alarm-marker-btn.poner.active{background:rgba(52,211,153,.15);border-color:var(--c-green);color:var(--c-green)}
+.bd-alarm-count-row{display:flex;gap:8px;margin-bottom:14px;align-items:center}
+.bd-alarm-count-btn{flex:1;padding:9px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s;text-align:center;-webkit-user-select:none;user-select:none}
+.bd-alarm-count-btn.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
+.bd-alarm-create-btn{flex-shrink:0;white-space:nowrap}
+.bd-alarm-count-single .bd-alarm-create-btn{flex:1}
 /* ── ALARM MANAGEMENT OVERLAY ── */
 .alarms-mgmt-content{padding:16px 16px 40px}
 .alarms-section{margin-bottom:24px}
@@ -748,6 +758,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .home-popup-item.warn{border-color:var(--c-orange);background:rgba(251,146,60,.08);color:var(--c-orange)}
 .home-popup-item.vip{border-color:rgba(251,191,36,.45);background:rgba(251,191,36,.08);color:var(--c-yellow)}
 .home-popup-item.bday{border-color:rgba(52,211,153,.45);background:rgba(52,211,153,.08);color:var(--c-green)}
+.home-popup-item.event{border-color:rgba(56,189,248,.45);background:rgba(56,189,248,.08);color:#38bdf8}
 .home-popup-dismiss{width:100%;margin-top:8px;padding:9px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);font-size:.78rem;cursor:pointer}
 /* ── MACRO URL EN MENÚ ── */
 .macro-section{padding:6px 12px 4px;border-top:1px solid var(--border);margin-top:4px}
