@@ -279,14 +279,14 @@ function computeDespachoDeduccion(){
   if(!DESPACHO.enabled)return 0;
   var prop=_despachoGetPct();
   if(prop<=0)return 0;
-  /* Amortización: 3% × 80% (construcción) × min(valorCatastral, valorCompra) × prop */
+  /* Amortización: 3% × 80% (construcción) × max(valorCatastral, valorCompra) × prop */
   var vc=DESPACHO.valorCatastral||0, vcp=DESPACHO.valorCompra||0;
   var baseAmort=0;
-  if(vc>0&&vcp>0){baseAmort=Math.min(vc,vcp);}else if(vcp>0){baseAmort=vcp;}else if(vc>0){baseAmort=vc;}
+  if(vc>0&&vcp>0){baseAmort=Math.max(vc,vcp);}else if(vcp>0){baseAmort=vcp;}else if(vc>0){baseAmort=vc;}
   var amort=Math.round(baseAmort*0.80*0.03*prop*100)/100;
-  /* IBI: solo el 20% es deducible (aplica prop del despacho sobre ese 20%) */
+  /* IBI: 100% deducible × prop (el límite del 30% aplica solo a suministros) */
   var ibiReal=gastoAnual('ibi');
-  var ibi=ibiReal>0?Math.round(ibiReal*0.20*prop*100)/100:Math.round(DESPACHO.valorCatastral*0.011*0.20*prop*100)/100;
+  var ibi=ibiReal>0?Math.round(ibiReal*prop*100)/100:Math.round(DESPACHO.valorCatastral*0.011*prop*100)/100;
   /* Hipoteca: solo los intereses (campo separado hipotecaIntereses) */
   var hipInteres=Math.round((DESPACHO.hipotecaIntereses||0)*prop*100)/100;
   var GROUP_CASA=['comunidad','seg_hogar']; /* hipoteca excluida — usar hipotecaIntereses */
@@ -543,8 +543,8 @@ function renderDesgravDespachoInfo(){
   var GROUP_CASA_DESP=['comunidad','seg_hogar']; /* hipoteca excluida → usar hipotecaIntereses */
   var GROUP_UTIL_DESP=['luz','gas','agua','digi'];
   var ibiRealDesp=gastoAnual('ibi');
-  var ibiLabel=ibiRealDesp>0?'IBI (20% \u00d7 real)':'IBI estimado (20% \u00d7 est.)';
-  var ibiAmt=ibiRealDesp>0?Math.round(ibiRealDesp*0.20*prop*100)/100:Math.round(DESPACHO.valorCatastral*0.011*0.20*prop*100)/100;
+  var ibiLabel=ibiRealDesp>0?'IBI (real)':'IBI estimado';
+  var ibiAmt=ibiRealDesp>0?Math.round(ibiRealDesp*prop*100)/100:Math.round(DESPACHO.valorCatastral*0.011*prop*100)/100;
   var casaItems=[],utilItems=[];
   GASTOS_ITEMS.forEach(function(g){
     var a=gastoAnual(g.id);
@@ -554,7 +554,7 @@ function renderDesgravDespachoInfo(){
   });
   var vcInfo=DESPACHO.valorCatastral||0, vcpInfo=DESPACHO.valorCompra||0;
   var baseAmortInfo=0;
-  if(vcInfo>0&&vcpInfo>0){baseAmortInfo=Math.min(vcInfo,vcpInfo);}else if(vcpInfo>0){baseAmortInfo=vcpInfo;}else if(vcInfo>0){baseAmortInfo=vcInfo;}
+  if(vcInfo>0&&vcpInfo>0){baseAmortInfo=Math.max(vcInfo,vcpInfo);}else if(vcpInfo>0){baseAmortInfo=vcpInfo;}else if(vcInfo>0){baseAmortInfo=vcInfo;}
   var amort=Math.round(baseAmortInfo*0.80*0.03*prop*100)/100;
   var hipIntInfo=Math.round((DESPACHO.hipotecaIntereses||0)*prop*100)/100;
   var hasItems=ibiAmt>0||casaItems.length>0||utilItems.length>0||amort>0||hipIntInfo>0;
@@ -565,7 +565,7 @@ function renderDesgravDespachoInfo(){
   h+='<table class="fiscal-desgrav-info-table">';
   h+='<thead><tr><th>Gasto</th><th>Anual</th><th>% deducible</th><th>Deducible</th></tr></thead><tbody>';
   if(amort>0)h+='<tr><td>Amortizaci\u00f3n (80% construc.)</td><td>'+fcPlain(Math.round(baseAmortInfo*0.80*100)/100)+'</td><td>3% \u00d7 '+propPct.toFixed(1)+'%</td><td class="fiscal-desgrav-info-ded">'+fcPlain(amort)+'</td></tr>';
-  if(ibiAmt>0)h+='<tr><td>'+ibiLabel+'</td><td>'+(ibiRealDesp>0?fcPlain(ibiRealDesp):'est.')+'</td><td>20% \u00d7 '+propPct.toFixed(1)+'%</td><td class="fiscal-desgrav-info-ded">'+fcPlain(ibiAmt)+'</td></tr>';
+  if(ibiAmt>0)h+='<tr><td>'+ibiLabel+'</td><td>'+(ibiRealDesp>0?fcPlain(ibiRealDesp):'est.')+'</td><td>'+propPct.toFixed(1)+'%</td><td class="fiscal-desgrav-info-ded">'+fcPlain(ibiAmt)+'</td></tr>';
   if(hipIntInfo>0)h+='<tr><td>Intereses hipoteca</td><td>'+fcPlain(DESPACHO.hipotecaIntereses)+'</td><td>'+propPct.toFixed(1)+'%</td><td class="fiscal-desgrav-info-ded">'+fcPlain(hipIntInfo)+'</td></tr>';
   casaItems.forEach(function(it){h+='<tr><td>'+escHtml(it.label)+'</td><td>'+fcPlain(it.annual)+'</td><td>'+it.pctLabel+'</td><td class="fiscal-desgrav-info-ded">'+fcPlain(it.ded)+'</td></tr>';});
   utilItems.forEach(function(it){h+='<tr><td>'+escHtml(it.label)+'</td><td>'+fcPlain(it.annual)+'</td><td>'+it.pctLabel+'</td><td class="fiscal-desgrav-info-ded">'+fcPlain(it.ded)+'</td></tr>';});
@@ -672,11 +672,11 @@ function renderFiscalTabDespacho(){
     if(deduccion>0){
       var vcD=DESPACHO.valorCatastral||0,vcpD=DESPACHO.valorCompra||0;
       var baseAmortD=0;
-      if(vcD>0&&vcpD>0){baseAmortD=Math.min(vcD,vcpD);}else if(vcpD>0){baseAmortD=vcpD;}else if(vcD>0){baseAmortD=vcD;}
+      if(vcD>0&&vcpD>0){baseAmortD=Math.max(vcD,vcpD);}else if(vcpD>0){baseAmortD=vcpD;}else if(vcD>0){baseAmortD=vcD;}
       var amort=Math.round(baseAmortD*0.80*0.03*prop*100)/100;
       var ibiRealD=gastoAnual('ibi');
-      var ibi=ibiRealD>0?Math.round(ibiRealD*0.20*prop*100)/100:Math.round(DESPACHO.valorCatastral*0.011*0.20*prop*100)/100;
-      var ibiLabel=ibiRealD>0?'IBI (20% \u00d7 '+propPct.toFixed(1)+'%)':'IBI estimado (20% \u00d7 est. \u00d7 '+propPct.toFixed(1)+'%)';
+      var ibi=ibiRealD>0?Math.round(ibiRealD*prop*100)/100:Math.round(DESPACHO.valorCatastral*0.011*prop*100)/100;
+      var ibiLabel=ibiRealD>0?'IBI ('+propPct.toFixed(1)+'%)':'IBI estimado (est. \u00d7 '+propPct.toFixed(1)+'%)';
       var hipIntD=Math.round((DESPACHO.hipotecaIntereses||0)*prop*100)/100;
       var GROUP_CASA_D=['comunidad','seg_hogar'];
       var GROUP_UTIL_D=['luz','gas','agua','digi'];

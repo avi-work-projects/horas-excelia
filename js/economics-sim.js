@@ -5,7 +5,7 @@
 var SIM_TARGET='';
 var SIM_PERIOD='annual';   // 'annual' | 'monthly'
 var SIM_HOURS_MODE='real'; // 'real' | '8h'
-var SIM_NET_MODE='irpf15'; // 'irpf15' | 'ccss' | 'decl'
+var SIM_NET_MODE='irpf15'; // 'base' | 'irpf15' | 'ccss' | 'decl'
 var SIM_RESULT=null;
 
 /* ── Render Tab ─────────────────────────────────────────────── */
@@ -46,6 +46,7 @@ function renderEconSim(){
   h+='<div class="sim-field-group" style="margin-top:12px">';
   h+='<div class="sim-field-label">El neto objetivo es&hellip;</div>';
   h+='<div class="econ-opt-row multiline" id="simNetMode">';
+  h+='<button class="econ-opt-btn'+(SIM_NET_MODE==='base'?' active':'')+'" data-val="base" data-opt="simNetMode">Base</button>';
   h+='<button class="econ-opt-btn'+(SIM_NET_MODE==='irpf15'?' active':'')+'" data-val="irpf15" data-opt="simNetMode">Base<br>\u2212 15% IRPF</button>';
   h+='<button class="econ-opt-btn'+(SIM_NET_MODE==='ccss'?' active':'')+'" data-val="ccss" data-opt="simNetMode">Base<br>\u2212 15% IRPF<br>\u2212 CCSS</button>';
   h+='<button class="econ-opt-btn'+(SIM_NET_MODE==='decl'?' active':'')+'" data-val="decl" data-opt="simNetMode">Neto tras<br>Dec. Renta</button>';
@@ -146,7 +147,13 @@ function bindEconSimEvents(){
     /* Ajustar el neto objetivo según el modo */
     var cotAnual=typeof gastoAnual==='function'?gastoAnual('cot_social'):0;
     var netForCalc=netObjective;
-    if(SIM_NET_MODE==='ccss')netForCalc=netObjective+cotAnual;
+    if(SIM_NET_MODE==='base'){
+      /* Objetivo = Base imponible → dailyRate = netObjective / totalDays */
+      var requiredDailyRateBase=Math.round(netObjective/totalDays*100)/100;
+      SIM_RESULT=computeEconEx(ECON_YEAR,{rateType:'daily',rateValue:requiredDailyRateBase,hoursMode:hoursMode});
+      reRenderEcon();
+      return;
+    }else if(SIM_NET_MODE==='ccss')netForCalc=netObjective+cotAnual;
     else if(SIM_NET_MODE==='decl'){
       /* Aproximación: calculamos el declDiff con la tarifa base IRPF=15% primero */
       var approxBase=netObjective/(1-irpfPct/100);

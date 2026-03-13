@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v87 \u2014 bugs VIP cumplea\u00f1os, despacho reglas IRPF correctas, campo intereses hipoteca';
+var APP_VERSION = 'v88 \u2014 despacho reglas AEAT correctas, bot\u00f3n Base en calculadora tarifa';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
