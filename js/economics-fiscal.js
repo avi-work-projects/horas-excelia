@@ -56,8 +56,10 @@ var DEFAULT_GASTOS=[
   {id:'asesoria',label:'Asesor\u00eda',amount:0,period:'monthly'},
   {id:'seg_baja',label:'Seguro baja laboral',amount:0,period:'monthly'},
   {id:'seg_salud',label:'Seguro de Salud',amount:0,period:'monthly'},
+  {id:'seg_vida',label:'Seguro de Vida',amount:0,period:'annual'},
   {id:'otros_seg',label:'Otros seguros',amount:0,period:'annual'},
   {id:'hipoteca',label:'Hipoteca',amount:0,period:'monthly'},
+  {id:'ibi',label:'IBI',amount:0,period:'annual'},
   {id:'comunidad',label:'Comunidad propietarios',amount:0,period:'monthly'},
   {id:'seg_hogar',label:'Seguro del Hogar',amount:0,period:'annual'},
   {id:'gas',label:'Factura Gas',amount:0,period:'monthly'},
@@ -128,16 +130,18 @@ function comprasTotal(){
 var DESGRAV_SK='excelia-desgrav-v1';
 /* type: 'base' = reduce la base imponible | 'quota' = reduce directamente la cuota IRPF */
 var DESGRAV_DEFAULT=[
-  {id:'plan_pension',label:'Plan de pensiones',amount:0,limit:1500,enabled:true,type:'base'},
-  {id:'cuota_autonomos',label:'Cuota aut\u00f3nomos (SS)',gastoLink:'cot_social',pct:100,amount:0,limit:null,enabled:true,type:'base'},
-  {id:'asesoria_deduc',label:'Asesor\u00eda / gestor\u00eda',gastoLink:'asesoria',pct:100,amount:0,limit:null,enabled:true,type:'base'},
-  {id:'seg_salud_titular',label:'Seguro salud (titular)',gastoLink:'seg_salud',pct:100,amount:0,limit:500,enabled:true,type:'base'},
-  {id:'seg_salud_conyuge',label:'Seguro salud (c\u00f3nyuge)',amount:0,limit:500,enabled:false,type:'base'},
-  {id:'seg_salud_hijos',label:'Seguro salud (hijos)',amount:0,limit:500,enabled:false,type:'base'},
-  {id:'colegio_prof',label:'Cuota colegio profesional',amount:0,limit:500,enabled:false,type:'base'},
-  {id:'gastos_prof',label:'Compras / gastos profesionales',gastoLink:'_compras_total',pct:100,amount:0,limit:null,enabled:true,type:'base'},
-  {id:'vivienda_madrid',label:'Vivienda habitual (Madrid)',amount:0,limit:9015,enabled:false,type:'quota',notaPct:15},
-  {id:'donativos',label:'Donativos',amount:0,limit:null,enabled:false,type:'base'}
+  {id:'plan_pension',label:'Plan de pensiones',amount:0,limit:5500,enabled:true,type:'base',
+   note:'Hasta 5.500\u20ac/a\u00f1o para aut\u00f3nomos con plan de empleo simplificado (R\u00e9gimen General: 1.500\u20ac + 4.000\u20ac adicionales empresariales).'},
+  {id:'cuota_autonomos',label:'Cuota aut\u00f3nomos (SS)',gastoLink:'cot_social',pct:100,amount:0,limit:null,enabled:true,type:'base',
+   note:'100% deducible como gasto de la actividad econ\u00f3mica.'},
+  {id:'asesoria_deduc',label:'Asesor\u00eda / gestor\u00eda',gastoLink:'asesoria',pct:100,amount:0,limit:null,enabled:true,type:'base',
+   note:'100% deducible como gasto de la actividad econ\u00f3mica.'},
+  {id:'seg_salud_titular',label:'Seguro salud (titular)',gastoLink:'seg_salud',pct:100,amount:0,limit:500,enabled:true,type:'base',
+   note:'Deducci\u00f3n en cuota IRPF: hasta 500\u20ac/a\u00f1o por la prima pagada.'},
+  {id:'gastos_prof',label:'Compras / gastos profesionales',gastoLink:'_compras_total',pct:100,amount:0,limit:null,enabled:true,type:'base',
+   note:'100% deducibles como inversi\u00f3n en la actividad. Introduce siempre importes sin IVA.'},
+  {id:'vivienda_madrid',label:'Vivienda habitual (Madrid)',amount:0,limit:9015,enabled:false,type:'quota',notaPct:15,
+   note:'Solo r\u00e9gimen transitorio (compra \u2264 31/12/2012). 15% de lo pagado en hipoteca (capital + intereses), base m\u00e1x. 9.015\u20ac/a\u00f1o \u2192 hasta ~1.352\u20ac de deducci\u00f3n directa en la cuota IRPF. Las otras deducciones de despacho (IBI, comunidad, suministros) se calculan en la pesta\u00f1a Despacho.'}
 ];
 var DESGRAV_ITEMS=[];
 
@@ -222,7 +226,9 @@ function computeDespachoDeduccion(){
   var prop=_despachoGetPct();
   if(prop<=0)return 0;
   var amort=Math.round(DESPACHO.valorCompra*0.03*prop*100)/100;
-  var ibi=Math.round(DESPACHO.valorCatastral*0.011*prop*100)/100;
+  /* IBI: usar importe real de gastos si está configurado; si no, estimar desde catastral */
+  var ibiReal=gastoAnual('ibi');
+  var ibi=ibiReal>0?Math.round(ibiReal*prop*100)/100:Math.round(DESPACHO.valorCatastral*0.011*prop*100)/100;
   var GROUP_CASA=['hipoteca','comunidad','seg_hogar'];
   var GROUP_UTIL=['luz','gas','agua','digi'];
   var gastosCasa=0,gastosUtil=0;
@@ -375,7 +381,8 @@ function renderFiscalTabIngGas(){
   /* Compras / Gastos profesionales (rojo) */
   h+='<div class="fiscal-section">';
   h+='<div class="fiscal-section-title expense">Compras y Gastos Profesionales</div>';
-  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Gastos anuales deducibles como aut\u00f3nomo: equipamiento, material, formaci\u00f3n, software, etc. Se enlazan autom\u00e1ticamente a la desgravaci\u00f3n <em>Compras / gastos profesionales</em>.</div>';
+  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:6px">Gastos anuales deducibles como aut\u00f3nomo: equipamiento, material, formaci\u00f3n, software, etc.</div>';
+  h+='<div class="fiscal-compras-iva-note">&#9888; Introduce los importes <b>sin IVA</b>. Como aut\u00f3nomo puedes deducir el IVA soportado por separado en el Mod.303.</div>';
   h+='<div id="fiscalComprasList">'+renderComprasList()+'</div>';
   h+='<button class="fiscal-add-btn fiscal-add-btn-expense" id="fiscalAddCompra">+ A\u00f1adir compra</button>';
   h+='</div>';
@@ -439,6 +446,46 @@ function renderFiscalTabDesgrav(){
   }
   h+='<button class="fiscal-add-btn" id="fiscalAddDesgrav">+ A\u00f1adir desgravaci\u00f3n</button>';
   h+='</div>';
+  /* Sección informativa: gastos del hogar deducibles vía despacho */
+  h+=renderDesgravDespachoInfo();
+  return h;
+}
+
+function renderDesgravDespachoInfo(){
+  var prop=_despachoGetPct();
+  var propPct=Math.round(prop*1000)/10;
+  var GROUP_CASA_DESP=['hipoteca','comunidad','seg_hogar'];
+  var GROUP_UTIL_DESP=['luz','gas','agua','digi'];
+  var ibiRealDesp=gastoAnual('ibi');
+  var ibiLabel=ibiRealDesp>0?'IBI (real)':'IBI (estimado desde catastral)';
+  var ibiAmt=ibiRealDesp>0?Math.round(ibiRealDesp*prop*100)/100:Math.round(DESPACHO.valorCatastral*0.011*prop*100)/100;
+  var casaItems=[],utilItems=[];
+  GASTOS_ITEMS.forEach(function(g){
+    var a=gastoAnual(g.id);
+    if(a<=0)return;
+    if(GROUP_CASA_DESP.indexOf(g.id)!==-1)casaItems.push({label:g.label,annual:a,ded:Math.round(a*prop*100)/100,pctLabel:propPct.toFixed(1)+'%'});
+    else if(GROUP_UTIL_DESP.indexOf(g.id)!==-1)utilItems.push({label:g.label,annual:a,ded:Math.round(a*prop*0.30*100)/100,pctLabel:propPct.toFixed(1)+'% \u00d7 30%'});
+  });
+  var hasItems=ibiAmt>0||casaItems.length>0||utilItems.length>0||(DESPACHO.valorCompra>0&&prop>0);
+  if(!hasItems||prop<=0)return '';
+  var amort=Math.round(DESPACHO.valorCompra*0.03*prop*100)/100;
+  var h='<div class="fiscal-section fiscal-desgrav-despacho-section">';
+  h+='<div class="fiscal-desgrav-group-title" style="border-top:none;margin-top:0;padding-top:0">\uD83C\uDFE0 Gastos del hogar deducibles (% despacho = '+propPct.toFixed(1)+'%)</div>';
+  if(prop<=0){
+    h+='<div style="font-size:.72rem;color:var(--text-dim)">Configura el % del despacho en la pesta\u00f1a Despacho para ver el desglose.</div>';
+  }else{
+    h+='<div style="font-size:.7rem;color:var(--text-dim);margin-bottom:8px">Estas partidas se deducen autom\u00e1ticamente en proporci\u00f3n al % del despacho. El total aparece en la pesta\u00f1a Despacho.</div>';
+    h+='<table class="fiscal-desgrav-info-table">';
+    h+='<thead><tr><th>Gasto</th><th>Anual</th><th>% deducible</th><th>Deducible</th></tr></thead><tbody>';
+    if(amort>0)h+='<tr><td>Amortizaci\u00f3n vivienda</td><td>'+fcPlain(Math.round(DESPACHO.valorCompra*0.03*100)/100)+'</td><td>'+propPct.toFixed(1)+'% (3% \u00d7 compra)</td><td class="fiscal-desgrav-info-ded">'+fcPlain(amort)+'</td></tr>';
+    if(ibiAmt>0)h+='<tr><td>'+ibiLabel+'</td><td>'+(ibiRealDesp>0?fcPlain(ibiRealDesp):'est.')+'</td><td>'+propPct.toFixed(1)+'%</td><td class="fiscal-desgrav-info-ded">'+fcPlain(ibiAmt)+'</td></tr>';
+    casaItems.forEach(function(it){h+='<tr><td>'+escHtml(it.label)+'</td><td>'+fcPlain(it.annual)+'</td><td>'+it.pctLabel+'</td><td class="fiscal-desgrav-info-ded">'+fcPlain(it.ded)+'</td></tr>';});
+    utilItems.forEach(function(it){h+='<tr><td>'+escHtml(it.label)+'</td><td>'+fcPlain(it.annual)+'</td><td>'+it.pctLabel+'</td><td class="fiscal-desgrav-info-ded">'+fcPlain(it.ded)+'</td></tr>';});
+    h+='</tbody></table>';
+    var total=computeDespachoDeduccion();
+    if(total>0)h+='<div class="fiscal-desgrav-despacho-total">Total deducci\u00f3n estimada despacho: <b>'+fcPlain(total)+'</b></div>';
+  }
+  h+='</div>';
   return h;
 }
 
@@ -496,8 +543,8 @@ function renderDesgravList(items,listType){
       }
     }
     h+='</div>';
-    if(item.id==='vivienda_madrid'){
-      h+='<div class="fiscal-desgrav-nota">R\u00e9gimen transitorio (compra \u2264 31/12/2012). La deducci\u00f3n es el 15% de lo pagado, m\u00e1x. base 9.015\u20ac/a\u00f1o \u2192 m\u00e1x. 1.352\u20ac en cuota.</div>';
+    if(item.note){
+      h+='<div class="fiscal-desgrav-note">'+item.note+'</div>';
     }
     h+='</div>';
     if(!isFixed){h+='<button class="fiscal-gasto-del fiscal-desgrav-del" data-di="'+i+'">&#10005;</button>';}
@@ -536,7 +583,9 @@ function renderFiscalTabDespacho(){
     h+='<div class="fiscal-despacho-result-val">'+(DESPACHO.enabled&&deduccion>0?fcPlain(deduccion):'— (desactivado)')+'</div>';
     if(deduccion>0){
       var amort=Math.round(DESPACHO.valorCompra*0.03*prop*100)/100;
-      var ibi=Math.round(DESPACHO.valorCatastral*0.011*prop*100)/100;
+      var ibiRealD=gastoAnual('ibi');
+      var ibi=ibiRealD>0?Math.round(ibiRealD*prop*100)/100:Math.round(DESPACHO.valorCatastral*0.011*prop*100)/100;
+      var ibiLabel=ibiRealD>0?'IBI real ('+propPct.toFixed(1)+'%)':'IBI estimado (1.1% \u00d7 catastral \u00d7 '+propPct.toFixed(1)+'%)';
       var GROUP_CASA=['hipoteca','comunidad','seg_hogar'];
       var GROUP_UTIL=['luz','gas','agua','digi'];
       var gastosCasa=0,gastosUtil=0;
@@ -547,7 +596,7 @@ function renderFiscalTabDespacho(){
       });
       h+='<div class="fiscal-despacho-breakdown">';
       if(amort>0)h+='<div class="fiscal-despacho-comp">Amortizaci\u00f3n (3% \u00d7 compra \u00d7 '+propPct.toFixed(1)+'%): <b>'+fcPlain(amort)+'</b></div>';
-      if(ibi>0)h+='<div class="fiscal-despacho-comp">IBI estimado (1.1% \u00d7 catastral \u00d7 '+propPct.toFixed(1)+'%): <b>'+fcPlain(ibi)+'</b></div>';
+      if(ibi>0)h+='<div class="fiscal-despacho-comp">'+ibiLabel+': <b>'+fcPlain(ibi)+'</b></div>';
       if(gastosCasa>0)h+='<div class="fiscal-despacho-comp">Gastos casa ('+propPct.toFixed(1)+'%): <b>'+fcPlain(Math.round(gastosCasa*prop*100)/100)+'</b></div>';
       if(gastosUtil>0)h+='<div class="fiscal-despacho-comp">Suministros ('+propPct.toFixed(1)+'% \u00d7 30%): <b>'+fcPlain(Math.round(gastosUtil*prop*0.30*100)/100)+'</b></div>';
       h+='</div>';

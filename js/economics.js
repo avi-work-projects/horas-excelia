@@ -236,30 +236,6 @@ function renderEconResumen(){
   h+='<td style="color:var(--accent-bright)">'+fc(cotAnual>0?totNetoDecl:(Math.round((e.netoReal-declDiff)*100)/100))+'</td>';
   h+='</tr></tbody></table></div></div>';
 
-  /* §8 Detalle Anual — cascade (movido al final) */
-  var totFact=Math.round((e.totBase+e.totIva)*100)/100;
-  h+='<div class="sy-section"><div class="sy-section-title">Detalle Anual</div>';
-  h+='<div class="econ-cascade">';
-  h+=cascRow('Base imponible','',e.totBase,'var(--c-blue)');
-  h+=cascRow('+ IVA (21%)','<span style="color:var(--c-orange)">+</span>',e.totIva,'var(--c-orange)');
-  h+=cascRow('Total facturado','=',totFact,'','subtotal');
-  h+=cascRow('IRPF '+e.irpfPct+'% retenido','<span style="color:var(--c-red)">&minus;</span>',e.totIrpf,'var(--c-red)');
-  h+=cascRow('Cobrado en cuenta','=',e.totCobrado,'var(--text)','subtotal','base + IVA \u2212 IRPF');
-  h+=cascRow('IVA 21% a Hacienda (Mod.303)','<span style="color:var(--c-orange)">&minus;</span>',e.totIva,'var(--c-orange)');
-  h+=cascRow('(Base \u2212 15% IRPF)','=',e.netoReal,'var(--c-green)','final','lo que queda tras retenci\u00f3n');
-  if(cotAnual>0){
-    var netoDisp=Math.round((e.netoReal-cotAnual)*100)/100;
-    h+=cascRow('Cuota Aut\u00f3nomos (CCSS)','<span style="color:#c084fc">&minus;</span>',cotAnual,'#c084fc');
-    h+=cascRow('Base \u2212 15% IRPF \u2212 CCSS','=',netoDisp,'var(--c-green)','final');
-    if(declDiff>0){
-      h+=cascRow('IRPF resto (Dec. Renta)','<span style="color:var(--c-red)">&minus;</span>',declDiff,'var(--c-red)','','a pagar en la declaraci\u00f3n');
-      h+=cascRow('Neto tras Dec. Renta','=',Math.round((netoDisp-declDiff)*100)/100,'var(--accent-bright)','final');
-    } else if(declDiff<0){
-      h+=cascRow('Devoluci\u00f3n IRPF (Dec. Renta)','+',Math.abs(declDiff),'var(--c-green)');
-      h+=cascRow('Neto tras Dec. Renta','=',Math.round((netoDisp+Math.abs(declDiff))*100)/100,'var(--accent-bright)','final');
-    }
-  }
-  h+='</div></div>';
   return h;
 }
 
