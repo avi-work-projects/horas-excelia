@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v81 \u2014 panel alarma 3 zonas, cumplea\u00f1os pasados sin alarma, popup eventos';
+var APP_VERSION = 'v82 \u2014 ventana econ\u00f3mica: pesta\u00f1as fiscal, desgravaciones, despacho, IRPF visual';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

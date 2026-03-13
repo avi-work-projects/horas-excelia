@@ -130,10 +130,8 @@ function renderEconResumen(){
   var avgHDay=e.avgHDay||8;
   var hourlyRate=Math.round(DAILY_RATE/avgHDay*100)/100;
   var cotAnual=typeof gastoAnual==='function'?gastoAnual('cot_social'):0;
-  var gdPct=typeof GASTOS_DIFICIL_PCT!=='undefined'?GASTOS_DIFICIL_PCT:5;
-  var baseDecl=Math.max(0,Math.round((e.totBase*(1-gdPct/100))*100)/100);
-  var decl=computeIrpfBrackets(baseDecl);
-  var declDiff=Math.round((decl.totalTax-e.totIrpf)*100)/100; // pos=paga más, neg=devuelve
+  var dr=typeof computeDeclResult==='function'?computeDeclResult(e.totBase,e.totIrpf):{gdPct:5,totalDesgrav:0,baseDecl:Math.max(0,Math.round((e.totBase*0.95)*100)/100),decl:computeIrpfBrackets(Math.max(0,Math.round((e.totBase*0.95)*100)/100)),declDiff:0};
+  var declDiff=dr.declDiff; // pos=paga más, neg=devuelve
   var h='';
 
   /* §1 Tarifa + Calcular */
@@ -270,7 +268,7 @@ function renderEconContent(){
   var h=renderNavBar('econ');
   h+='<div class="econ-hdr-sub">';
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='resumen'?' active':'')+'" id="ecTabResumen">Resumen<br>Econ\u00f3mico</button>';
-  h+='<button class="econ-tab-btn'+(ECON_VIEW==='gastos'?' active':'')+'" id="ecTabGastos">Ingresos<br>\u2212 Gastos</button>';
+  h+='<button class="econ-tab-btn'+(ECON_VIEW==='gastos'?' active':'')+'" id="ecTabGastos">Ingresos<br>y Gastos</button>';
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='comparador'?' active':'')+'" id="ecTabComp">Comparar<br>Escenarios</button>';
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='simulador'?' active':'')+'" id="ecTabSim">Calcular<br>Tarifa</button>';
   h+='<button class="econ-gear-btn" id="ecGear">&#9965;</button>';
@@ -294,6 +292,8 @@ function openEcon(){
   if(typeof loadFiscal==='function')loadFiscal();
   if(typeof loadGastos==='function')loadGastos();
   if(typeof loadIngresos==='function')loadIngresos();
+  if(typeof loadDesgrav==='function')loadDesgrav();
+  if(typeof loadDespacho==='function')loadDespacho();
   if(typeof loadEconComp==='function')loadEconComp();
   if(typeof loadGastosToggles==='function')loadGastosToggles();
   var ov=document.getElementById('econOverlay');
