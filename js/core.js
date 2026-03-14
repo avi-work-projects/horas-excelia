@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v91 \u2014 tipo medio IRPF + ahorro desgrav, dim pasado en calendarios eventos';
+var APP_VERSION = 'v92 \u2014 fix campana VIP bday por safeKey, refactor _findBdayByEvId';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
