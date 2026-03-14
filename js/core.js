@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v95 \u2014 pr\u00f3ximos: solo VIP bdays 7 d\u00edas, compact quad btns';
+var APP_VERSION = 'v96 \u2014 editar naranja en alarmas, pill \u00ab\u00bb quad, quitar tipo medio resumen';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

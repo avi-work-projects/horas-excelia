@@ -458,6 +458,7 @@ function renderBdayAlarmPanel(b){
   h+='<div class="bd-alarm-time"><input id="bdAlarmH2" type="number" min="0" max="23" value="'+_bdT2.h+'"><span class="bd-alarm-time-sep">:</span><input id="bdAlarmM2" type="number" min="0" max="59" value="'+String(_bdT2.m).padStart(2,'0')+'"></div>';
   h+='</div>';
   h+='</div>';
+  h+='<div class="ev-form-actions" style="margin-top:12px"><button class="ev-btn ev-edit-orange" id="bdAlarmEdit">&#9998; Editar cumplea\u00f1os</button></div>';
   h+='</div></div>';
   return h;
 }
@@ -566,6 +567,12 @@ function bindBdayAlarmEvents(b){
       _bdRefreshBoth();
     });
   }
+
+  // Edit birthday
+  var editBdBtn=document.getElementById('bdAlarmEdit');
+  if(editBdBtn)editBdBtn.addEventListener('click',function(){
+    closeBdayAlarm();setTimeout(function(){openBdayForm(b);},320);
+  });
 
   // Create alarm via MacroDroid
   document.getElementById('bdAlarmCreate').addEventListener('click',function(){
