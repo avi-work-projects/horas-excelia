@@ -1524,8 +1524,17 @@ function bindEvEvents(){
       if(ev.id.indexOf('ev-bday-vip-')===0&&typeof BDAYS!=='undefined'){
         var parts=ev.id.replace('ev-bday-vip-','').split('-');
         var bDay=parseInt(parts[0],10),bMonth=parseInt(parts[1],10);
+        var safeKey=parts.slice(2).join('-');
         var bday=null;
-        for(var j=0;j<BDAYS.length;j++){if(BDAYS[j].vip&&BDAYS[j].day===bDay&&BDAYS[j].month===bMonth){bday=BDAYS[j];break;}}
+        for(var j=0;j<BDAYS.length;j++){
+          var b=BDAYS[j];
+          if(!b.vip||b.day!==bDay||b.month!==bMonth)continue;
+          var bKey=b.name.replace(/[^a-z0-9]/gi,'_').toLowerCase();
+          if(bKey===safeKey){bday=b;break;}
+        }
+        if(!bday){/* fallback: match by day+month only */
+          for(var j=0;j<BDAYS.length;j++){if(BDAYS[j].vip&&BDAYS[j].day===bDay&&BDAYS[j].month===bMonth){bday=BDAYS[j];break;}}
+        }
         if(bday){openBdayAlarmFromEvents(bday);return;}
       }
       // Evento regular → panel de alarma de evento

@@ -258,9 +258,13 @@ function renderEconContent(){
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='gastos'?' active':'')+'" id="ecTabGastos">Ingresos<br>y Gastos</button>';
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='comparador'?' active':'')+'" id="ecTabComp">Comparar<br>Escenarios</button>';
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='simulador'?' active':'')+'" id="ecTabSim">Calcular<br>Tarifa</button>';
-  h+='<button class="econ-gear-btn" id="ecGear">&#9965;</button>';
   h+='</div>';
   h+='<div class="sy-header with-tabs">';
+  if(ECON_VIEW==='resumen'||ECON_VIEW==='gastos'){
+    h+='<button class="econ-gear-btn" id="ecGear">&#9965;</button>';
+  } else {
+    h+='<div class="econ-hdr-note">Seg\u00fan horas y d\u00edas trabajados del a\u00f1o:</div>';
+  }
   h+='<div class="sy-year-nav"><button class="sy-nav" id="ecPrev">&#9664;</button><div class="sy-year">'+ECON_YEAR+'</div><button class="sy-nav" id="ecNext">&#9654;</button></div>';
   h+='<button class="sy-pdf" id="ecPdf">PDF</button>';
   h+='</div>';
@@ -314,7 +318,8 @@ function bindEconEvents(){
   });
   document.getElementById('ecTabSim').addEventListener('click',function(){ECON_VIEW='simulador';reRenderEcon();});
   document.getElementById('ecTabGastos').addEventListener('click',function(){ECON_VIEW='gastos';reRenderEcon();});
-  document.getElementById('ecGear').addEventListener('click',function(){
+  var gearBtn=document.getElementById('ecGear');
+  if(gearBtn)gearBtn.addEventListener('click',function(){
     NAV_BACK=function(){closeEcon();openEcon();};openFiscal();
   });
   document.getElementById('ecPrev').addEventListener('click',function(){ECON_YEAR--;reRenderEcon();});
