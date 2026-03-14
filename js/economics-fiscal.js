@@ -64,6 +64,7 @@ var DEFAULT_GASTOS=[
   {id:'seg_baja',label:'Seguro baja laboral',amount:0,period:'monthly'},
   {id:'seg_salud',label:'Seguro de Salud',amount:0,period:'monthly'},
   {id:'seg_vida',label:'Seguro de Vida',amount:0,period:'annual'},
+  {id:'donaciones',label:'Donaciones caritativas',amount:0,period:'annual'},
   {id:'hipoteca',label:'Hipoteca',amount:0,period:'monthly'},
   {id:'ibi',label:'IBI',amount:0,period:'annual'},
   {id:'comunidad',label:'Com. Propietarios',amount:0,period:'monthly'},
@@ -72,8 +73,7 @@ var DEFAULT_GASTOS=[
   {id:'luz',label:'Factura Luz',amount:0,period:'monthly'},
   {id:'digi',label:'Factura Digi',amount:0,period:'monthly'},
   {id:'agua',label:'Factura Agua',amount:0,period:'monthly'},
-  {id:'otros_seg',label:'Otros seguros',amount:0,period:'annual'},
-  {id:'donaciones',label:'Donaciones caritativas',amount:0,period:'annual'}
+  {id:'otros_seg',label:'Otros seguros',amount:0,period:'annual'}
 ];
 var GASTOS_ITEMS=[];
 

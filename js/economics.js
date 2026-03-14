@@ -3,8 +3,31 @@
    ============================================================ */
 
 var ECON_YEAR=new Date().getFullYear();
-var ECON_VIEW='resumen';    // 'resumen' | 'comparador' | 'simulador' | 'gastos'
-var ECON_RATE_MODE='daily'; // 'daily' | 'hourly'
+var ECON_VIEW='resumen';    // 'resumen' | 'gastos' | 'analisis' | 'estudio'
+var ECON_RATE_MODE='daily'; // 'daily' | 'hourly' | 'salary'
+var ECON_ESTUDIO_SUB='comparador'; // 'comparador' | 'simulador'
+window._ECON_SALARY=0; // salario bruto anual para modo nómina
+
+/* ── Nómina asalariado — modelo simplificado ───────────────── */
+var _SS_EMP_PCT=6.35;   // SS empleado: CC 4.70 + Desempleo 1.55 + FP 0.10
+var _SS_EMP_MAX=56646;  // Base máx cotización anual (~4720.50€/mes×12)
+var _SS_PAT_PCT=30.9;   // SS empleador: CC 23.60 + Desemp 5.50 + FP 0.60 + FOGASA 0.20 + AT/EP ~1.0
+
+function computeSalaryNet(brutAnual){
+  var ssBase=Math.min(brutAnual,_SS_EMP_MAX);
+  var ssEmpleado=Math.round(ssBase*_SS_EMP_PCT/100*100)/100;
+  var baseIrpf=Math.max(0,Math.round((brutAnual-ssEmpleado)*100)/100);
+  var irpf=computeIrpfBrackets(baseIrpf);
+  var irpfRetenido=irpf.totalTax;
+  var netoAnual=Math.round((brutAnual-ssEmpleado-irpfRetenido)*100)/100;
+  var netoMensual=Math.round(netoAnual/14*100)/100;  // 14 pagas
+  var ssEmpleador=Math.round(ssBase*_SS_PAT_PCT/100*100)/100;
+  var costeEmpresa=Math.round((brutAnual+ssEmpleador)*100)/100;
+  return{brutAnual:brutAnual,ssEmpleado:ssEmpleado,baseIrpf:baseIrpf,
+    irpfRetenido:irpfRetenido,irpfPct:irpf.effectivePct,
+    netoAnual:netoAnual,netoMensual:netoMensual,
+    ssEmpleador:ssEmpleador,costeEmpresa:costeEmpresa};
+}
 
 /* ── Formato moneda ─────────────────────────────────────────── */
 function fc(n){
@@ -136,24 +159,52 @@ function renderEconResumen(){
 
   /* §1 Tarifa + Calcular */
   h+='<div class="sy-section"><div class="sy-section-title">Tarifa</div>';
-  h+='<div class="econ-rate-dual">';
-  h+='<div class="econ-rate-field'+(ECON_RATE_MODE==='daily'?' primary':' derived')+'">';
-  h+='<label>&#8364;/d&#237;a</label>';
-  h+='<input class="econ-rate-input" id="rateDayInput" type="number" min="1" step="1" value="'+DAILY_RATE+'">';
-  h+='<span class="econ-rate-badge">media '+avgHDay.toFixed(1)+'h/d&#237;a</span>';
+  /* Selector de modo */
+  h+='<div class="econ-opt-row" style="margin-bottom:8px">';
+  h+='<button class="econ-opt-btn'+(ECON_RATE_MODE==='daily'||ECON_RATE_MODE==='hourly'?' active':'')+'" id="ecModeFreelance">Aut\u00f3nomo</button>';
+  h+='<button class="econ-opt-btn'+(ECON_RATE_MODE==='salary'?' active':'')+'" id="ecModeSalary">N\u00f3mina</button>';
   h+='</div>';
-  h+='<div class="econ-rate-sep">&#8596;</div>';
-  h+='<div class="econ-rate-field'+(ECON_RATE_MODE==='hourly'?' primary':' derived')+'">';
-  h+='<label>&#8364;/hora</label>';
-  h+='<input class="econ-rate-input" id="rateHourInput" type="number" min="0.01" step="0.01" value="'+hourlyRate.toFixed(2)+'">';
-  h+='</div></div>';
-  h+='<div class="excl-row">';
-  h+='<label class="excl-item" style="color:var(--festivo)"><input type="checkbox" class="excl-chk" id="ecExclFestChk" style="accent-color:var(--festivo)"'+(EXCL_FEST?' checked':'')+'>&#160;Quitar festivos</label>';
-  h+='<label class="excl-item" style="color:var(--vacaciones)"><input type="checkbox" class="excl-chk" id="ecExclVacChk" style="accent-color:var(--vacaciones)"'+(EXCL_VAC?' checked':'')+'>&#160;Quitar vacaciones</label>';
-  h+='</div>';
+  if(ECON_RATE_MODE==='salary'){
+    h+='<div class="econ-rate-dual" style="flex-direction:column;gap:6px">';
+    h+='<div class="econ-rate-field primary">';
+    h+='<label>Salario bruto anual &#8364;</label>';
+    h+='<input class="econ-rate-input" id="rateSalaryInput" type="number" min="1" step="100" value="'+(window._ECON_SALARY||0)+'">';
+    h+='</div></div>';
+  } else {
+    h+='<div class="econ-rate-dual">';
+    h+='<div class="econ-rate-field'+(ECON_RATE_MODE==='daily'?' primary':' derived')+'">';
+    h+='<label>&#8364;/d&#237;a</label>';
+    h+='<input class="econ-rate-input" id="rateDayInput" type="number" min="1" step="1" value="'+DAILY_RATE+'">';
+    h+='<span class="econ-rate-badge">media '+avgHDay.toFixed(1)+'h/d&#237;a</span>';
+    h+='</div>';
+    h+='<div class="econ-rate-sep">&#8596;</div>';
+    h+='<div class="econ-rate-field'+(ECON_RATE_MODE==='hourly'?' primary':' derived')+'">';
+    h+='<label>&#8364;/hora</label>';
+    h+='<input class="econ-rate-input" id="rateHourInput" type="number" min="0.01" step="0.01" value="'+hourlyRate.toFixed(2)+'">';
+    h+='</div></div>';
+    h+='<div class="excl-row">';
+    h+='<label class="excl-item" style="color:var(--festivo)"><input type="checkbox" class="excl-chk" id="ecExclFestChk" style="accent-color:var(--festivo)"'+(EXCL_FEST?' checked':'')+'>&#160;Quitar festivos</label>';
+    h+='<label class="excl-item" style="color:var(--vacaciones)"><input type="checkbox" class="excl-chk" id="ecExclVacChk" style="accent-color:var(--vacaciones)"'+(EXCL_VAC?' checked':'')+'>&#160;Quitar vacaciones</label>';
+    h+='</div>';
+  }
   h+='<button class="econ-calc-btn" id="ecCalcular">Calcular</button>';
   h+='</div>';
 
+  if(ECON_RATE_MODE==='salary'){
+    var sal=computeSalaryNet(window._ECON_SALARY||0);
+    /* §2 Resumen Anual (Nómina) */
+    h+='<div class="sy-section"><div class="sy-section-title">Resumen Anual (N\u00f3mina)</div>';
+    h+='<div class="econ-avg-cards">';
+    h+=_econCard('var(--col-base)','Bruto anual',sal.brutAnual,'');
+    h+=_econCard('var(--col-irpf)','SS empleado ('+_SS_EMP_PCT+'%)',sal.ssEmpleado,'');
+    h+=_econCard('var(--col-irpf)','IRPF ('+sal.irpfPct.toFixed(1)+'%)',sal.irpfRetenido,'');
+    h+=_econCard('var(--col-net)','Neto anual',sal.netoAnual,'');
+    h+=_econCard('var(--col-net)','Neto mensual (14p)',sal.netoMensual,'');
+    h+='</div>';
+    h+='<div style="font-size:.68rem;color:var(--text-dim);padding:6px 12px;border-top:1px solid var(--border);margin-top:4px">';
+    h+='SS empleador: '+fc(sal.ssEmpleador)+' ('+_SS_PAT_PCT+'%) &middot; Coste empresa: '+fc(sal.costeEmpresa);
+    h+='</div></div>';
+  } else {
   /* §2 Resumen Anual — 7 tarjetas totales del año */
   h+='<div class="sy-section"><div class="sy-section-title">Resumen Anual</div>';
   h+='<div class="econ-avg-cards">'+_econCards7(e,cotAnual,declDiff,1,'a\u00f1o completo')+'</div>';
@@ -162,6 +213,9 @@ function renderEconResumen(){
   /* §3 Media mensual — 7 tarjetas /12 */
   h+='<div class="sy-section"><div class="sy-section-title">Media Mensual</div>';
   h+='<div class="econ-avg-cards">'+_econCards7(e,cotAnual,declDiff,1/12,'a\u00f1o / 12')+'</div></div>';
+  }
+
+  if(ECON_RATE_MODE==='salary')return h;
 
   /* §4 Estadísticas por hora/día (siempre con columna 8h) */
   var e8h=computeEconEx(ECON_YEAR,{hoursMode:'8h'});
@@ -257,24 +311,43 @@ function renderEconContent(){
   h+='<div class="econ-hdr-sub">';
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='resumen'?' active':'')+'" id="ecTabResumen">Resumen<br>Econ\u00f3mico</button>';
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='gastos'?' active':'')+'" id="ecTabGastos">Ingresos<br>y Gastos</button>';
-  h+='<button class="econ-tab-btn'+(ECON_VIEW==='comparador'?' active':'')+'" id="ecTabComp">Comparar<br>Escenarios</button>';
-  h+='<button class="econ-tab-btn'+(ECON_VIEW==='simulador'?' active':'')+'" id="ecTabSim">Calcular<br>Tarifa</button>';
+  h+='<button class="econ-tab-btn'+(ECON_VIEW==='analisis'?' active':'')+'" id="ecTabAnalisis">An\u00e1lisis<br>Ec. Personal</button>';
+  h+='<button class="econ-tab-btn'+(ECON_VIEW==='estudio'?' active':'')+'" id="ecTabEstudio">Estudio<br>Cambio</button>';
   h+='</div>';
   h+='<div class="sy-header with-tabs">';
   if(ECON_VIEW==='resumen'||ECON_VIEW==='gastos'){
     h+='<button class="econ-gear-btn" id="ecGear">&#9965;</button>';
-  } else {
+  } else if(ECON_VIEW==='estudio'){
     h+='<div class="econ-hdr-note">Seg\u00fan horas y d\u00edas trabajados del a\u00f1o:</div>';
+  } else {
+    h+='<div style="width:42px"></div>';
   }
   h+='<div class="sy-year-nav"><button class="sy-nav" id="ecPrev">&#9664;</button><div class="sy-year">'+ECON_YEAR+'</div><button class="sy-nav" id="ecNext">&#9654;</button></div>';
   h+='<button class="sy-pdf" id="ecPdf">PDF</button>';
   h+='</div>';
   h+='<div class="sy-body">';
   if(ECON_VIEW==='resumen'){h+=renderEconResumen();}
-  else if(ECON_VIEW==='comparador'){h+=typeof renderEconComp==='function'?renderEconComp():'';}
-  else if(ECON_VIEW==='simulador'){h+=typeof renderEconSim==='function'?renderEconSim():'';}
   else if(ECON_VIEW==='gastos'){h+=typeof renderEconGastos==='function'?renderEconGastos():'';}
+  else if(ECON_VIEW==='analisis'){h+=renderEconAnalisis();}
+  else if(ECON_VIEW==='estudio'){h+=renderEconEstudio();}
   h+='</div>';
+  return h;
+}
+/* ── Análisis Economía Personal (vacío) ────────────────────── */
+function renderEconAnalisis(){
+  return '<div class="sy-section" style="text-align:center;padding:60px 20px;color:var(--text-dim)">'
+    +'<div style="font-size:2rem;margin-bottom:12px">&#128202;</div>'
+    +'<div style="font-size:.85rem;font-weight:600;margin-bottom:6px">An\u00e1lisis Econom\u00eda Personal</div>'
+    +'<div style="font-size:.72rem">Pr\u00f3ximamente</div></div>';
+}
+/* ── Estudio Cambio (sub-tabs) ─────────────────────────────── */
+function renderEconEstudio(){
+  var h='<div class="econ-sub-tabs">';
+  h+='<button class="econ-sub-tab'+(ECON_ESTUDIO_SUB==='comparador'?' active':'')+'" id="ecSubComp">Comparar Escenarios</button>';
+  h+='<button class="econ-sub-tab'+(ECON_ESTUDIO_SUB==='simulador'?' active':'')+'" id="ecSubSim">Calcular Tarifa</button>';
+  h+='</div>';
+  if(ECON_ESTUDIO_SUB==='comparador'){h+=typeof renderEconComp==='function'?renderEconComp():'';}
+  else if(ECON_ESTUDIO_SUB==='simulador'){h+=typeof renderEconSim==='function'?renderEconSim():'';}
   return h;
 }
 
@@ -309,16 +382,18 @@ function bindEconEvents(){
   bindNavBar('econ',closeEcon);
   // Tabs
   document.getElementById('ecTabResumen').addEventListener('click',function(){ECON_VIEW='resumen';reRenderEcon();});
-  document.getElementById('ecTabComp').addEventListener('click',function(){
-    // Sync A con tarifa actual de Resumen
-    var s=computeYearlySummary(ECON_YEAR);
-    var aRate=ECON_RATE_MODE==='hourly'?Math.round(DAILY_RATE/(s.avgHDay||8)*100)/100:DAILY_RATE;
-    ECON_SCENARIOS[0].rateType=ECON_RATE_MODE;
-    ECON_SCENARIOS[0].rateValue=aRate;
-    ECON_VIEW='comparador';reRenderEcon();
-  });
-  document.getElementById('ecTabSim').addEventListener('click',function(){ECON_VIEW='simulador';reRenderEcon();});
   document.getElementById('ecTabGastos').addEventListener('click',function(){ECON_VIEW='gastos';reRenderEcon();});
+  document.getElementById('ecTabAnalisis').addEventListener('click',function(){ECON_VIEW='analisis';reRenderEcon();});
+  document.getElementById('ecTabEstudio').addEventListener('click',function(){
+    // Sync A con tarifa actual de Resumen
+    if(ECON_RATE_MODE!=='salary'){
+      var s=computeYearlySummary(ECON_YEAR);
+      var aRate=ECON_RATE_MODE==='hourly'?Math.round(DAILY_RATE/(s.avgHDay||8)*100)/100:DAILY_RATE;
+      ECON_SCENARIOS[0].rateType=ECON_RATE_MODE;
+      ECON_SCENARIOS[0].rateValue=aRate;
+    }
+    ECON_VIEW='estudio';reRenderEcon();
+  });
   var gearBtn=document.getElementById('ecGear');
   if(gearBtn)gearBtn.addEventListener('click',function(){
     NAV_BACK=function(){closeEcon();openEcon();};openFiscal();
@@ -329,9 +404,8 @@ function bindEconEvents(){
     document.body.classList.add('print-econ');window.print();document.body.classList.remove('print-econ');
   });
   if(ECON_VIEW==='resumen')bindEconResumenEvents();
-  else if(ECON_VIEW==='comparador'&&typeof bindEconCompEvents==='function')bindEconCompEvents();
-  else if(ECON_VIEW==='simulador'&&typeof bindEconSimEvents==='function')bindEconSimEvents();
   else if(ECON_VIEW==='gastos'&&typeof bindEconGastosEvents==='function')bindEconGastosEvents();
+  else if(ECON_VIEW==='estudio')bindEconEstudioEvents();
   setTimeout(function(){
     var qs=document.querySelector('.econ-quarter-section');
     var ms=document.querySelector('.econ-month-section');
@@ -339,19 +413,38 @@ function bindEconEvents(){
   },60);
 }
 
+function bindEconEstudioEvents(){
+  var subComp=document.getElementById('ecSubComp');
+  var subSim=document.getElementById('ecSubSim');
+  if(subComp)subComp.addEventListener('click',function(){ECON_ESTUDIO_SUB='comparador';reRenderEcon();});
+  if(subSim)subSim.addEventListener('click',function(){ECON_ESTUDIO_SUB='simulador';reRenderEcon();});
+  if(ECON_ESTUDIO_SUB==='comparador'&&typeof bindEconCompEvents==='function')bindEconCompEvents();
+  else if(ECON_ESTUDIO_SUB==='simulador'&&typeof bindEconSimEvents==='function')bindEconSimEvents();
+}
+
 function bindEconResumenEvents(){
+  /* Modo Autónomo / Nómina */
+  var modeF=document.getElementById('ecModeFreelance');
+  var modeS=document.getElementById('ecModeSalary');
+  if(modeF)modeF.addEventListener('click',function(){if(ECON_RATE_MODE==='salary'){ECON_RATE_MODE='daily';reRenderEcon();}});
+  if(modeS)modeS.addEventListener('click',function(){if(ECON_RATE_MODE!=='salary'){ECON_RATE_MODE='salary';reRenderEcon();}});
+
   var ecChkFest=document.getElementById('ecExclFestChk');
   var ecChkVac=document.getElementById('ecExclVacChk');
   if(ecChkFest)ecChkFest.addEventListener('change',function(){EXCL_FEST=this.checked;save();reRenderEcon();});
   if(ecChkVac)ecChkVac.addEventListener('change',function(){EXCL_VAC=this.checked;save();reRenderEcon();});
-  // Calcular button aplica los valores de los inputs
+  // Calcular button
   var calcBtn=document.getElementById('ecCalcular');
   if(calcBtn)calcBtn.addEventListener('click',function(){
+    if(ECON_RATE_MODE==='salary'){
+      var salEl=document.getElementById('rateSalaryInput');
+      window._ECON_SALARY=parseFloat(salEl?salEl.value:'')||0;
+      reRenderEcon();return;
+    }
     var dayEl=document.getElementById('rateDayInput');
     var hourEl=document.getElementById('rateHourInput');
     var dayV=parseFloat(dayEl?dayEl.value:'');
     var hourV=parseFloat(hourEl?hourEl.value:'');
-    // Determinar qué campo fue el último en modificarse comparando con valores actuales
     var s=computeYearlySummary(ECON_YEAR);
     var curHourly=Math.round(DAILY_RATE/(s.avgHDay||8)*100)/100;
     if(hourEl&&Math.abs(hourV-curHourly)>0.005){
