@@ -4,8 +4,8 @@
 
 var ECON_COMP_SK='excelia-econ-comp-v1';
 var ECON_SCENARIOS=[
-  {label:'A',rateType:'daily',rateValue:315,hoursMode:'real'},
-  {label:'B',rateType:'daily',rateValue:350,hoursMode:'real'}
+  {label:'A',rateType:'daily',rateValue:0,hoursMode:'real'},
+  {label:'B',rateType:'daily',rateValue:0,hoursMode:'real'}
 ];
 var ECON_COMP_ACCUM=false;
 var ECON_COMP_DIFF=false;

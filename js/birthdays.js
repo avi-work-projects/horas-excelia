@@ -334,7 +334,7 @@ function renderBdayContent(){
     h+='<div class="sy-year-nav"><div class="sy-year">Cumplea\u00f1os</div></div>';
   } else {
     h+='<div class="sy-year-nav"><button class="sy-nav" id="bdPrev">&#9664;</button>';
-    h+='<div class="sy-year">'+MN[BDAY_MONTH]+' '+BDAY_YEAR+'</div>';
+    h+='<div class="sy-year sy-year-2line">'+MN[BDAY_MONTH]+'<span class="sy-year-sub">'+BDAY_YEAR+'</span></div>';
     h+='<button class="sy-nav" id="bdNext">&#9654;</button></div>';
     h+='<button class="today-btn" id="bdToday" style="font-size:.7rem;padding:6px 12px">Hoy</button>';
   }

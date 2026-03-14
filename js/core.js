@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v96 \u2014 editar naranja en alarmas, pill \u00ab\u00bb quad, quitar tipo medio resumen';
+var APP_VERSION = 'v97 \u2014 rate=0, mes/a\u00f1o 2 l\u00edneas, exports completos, scenario rates limpios';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -41,7 +41,7 @@ function updateThemeBtn(){
 }
 
 // ── Estado global ──────────────────────────────────────────
-var SK='excelia-horas-v3', CY, CM, ST={}, SW={}, ED=null, MONTH_H={}, DAILY_RATE=315, EXCL_FEST=true, EXCL_VAC=true;
+var SK='excelia-horas-v3', CY, CM, ST={}, SW={}, ED=null, MONTH_H={}, DAILY_RATE=0, EXCL_FEST=true, EXCL_VAC=true;
 var MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 var MN_SHORT=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 var DN=['D','L','M','X','J','V','S'];
@@ -51,8 +51,8 @@ var DF=['Domingo','Lunes','Martes','Mi\u00e9rcoles','Jueves','Viernes','S\u00e1b
 function load(){
   try{
     var r=localStorage.getItem(SK);
-    if(r){var d=JSON.parse(r);ST=d.days||{};SW=d.sent||{};MONTH_H=d.monthH||{};DAILY_RATE=d.rate||315;EXCL_FEST=d.exclFest!==false;EXCL_VAC=d.exclVac!==false;}
-  }catch(e){ST={};SW={};MONTH_H={};DAILY_RATE=315;EXCL_FEST=true;EXCL_VAC=true;}
+    if(r){var d=JSON.parse(r);ST=d.days||{};SW=d.sent||{};MONTH_H=d.monthH||{};DAILY_RATE=d.rate||0;EXCL_FEST=d.exclFest!==false;EXCL_VAC=d.exclVac!==false;}
+  }catch(e){ST={};SW={};MONTH_H={};DAILY_RATE=0;EXCL_FEST=true;EXCL_VAC=true;}
 }
 function save(){
   localStorage.setItem(SK,JSON.stringify({days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,exclFest:EXCL_FEST,exclVac:EXCL_VAC}));
