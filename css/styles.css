@@ -523,6 +523,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .econ-irpf-summary-lbl{font-size:.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
 .econ-irpf-summary-val{font-family:var(--mono);font-size:.95rem;font-weight:700;line-height:1.1}
 .econ-irpf-summary-sub{font-size:.6rem;color:var(--text-dim);margin-top:2px}
+/* Resumen fiscal al final de Ingresos y Gastos */
+.econ-fiscal-summary{display:flex;gap:12px;flex-wrap:wrap}
+.econ-fiscal-summary-item{flex:1;min-width:120px;padding:12px 14px;border-radius:var(--radius-sm);background:var(--surface);border:1px solid var(--border);text-align:center}
+.econ-fiscal-summary-val{font-family:var(--mono);font-size:1.1rem;font-weight:700;line-height:1.2}
+.econ-fiscal-summary-lbl{font-size:.65rem;color:var(--text-dim);margin-top:4px;text-transform:uppercase;letter-spacing:.03em}
 /* Fiscal config: gastos items */
 .fiscal-gasto-item{display:flex;align-items:center;gap:6px;padding:7px 0;border-bottom:1px solid var(--border)}
 .fiscal-gasto-item:last-child{border-bottom:none}
@@ -952,6 +957,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-multi-bar.past-bar{opacity:.4}
 .ev-annual-day.past-cal-day{opacity:.4}
 .ev-annual-mbar.past-bar{opacity:.4}
+.ev-annual-x.past-marker,.ev-annual-vip-star.past-marker{opacity:.4}
+/* Bright past: bombilla override */
+.ev-bright-past .past-cal-day,.ev-bright-past .past-bar,.ev-bright-past .past-marker{opacity:1 !important}
+.ev-bright-btn{font-size:.85rem;padding:4px 8px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;opacity:.45;transition:opacity .2s}
+.ev-bright-btn.on{opacity:1;background:#fbbf2433;border-color:#fbbf24}
+/* Quad label 3 lines */
+.ev-quad-label{display:flex;flex-direction:column;align-items:center;line-height:1.1;font-size:.72rem}
+.ev-quad-dash{font-size:.55rem;line-height:.7;color:var(--text-dim)}
 /* today-ev: border lateral 1.5px pero top sigue siendo 5px para alinear el número */
 .ev-cell.today-ev{border-left:1.5px solid var(--accent);border-right:1.5px solid var(--accent);border-bottom:1.5px solid var(--accent);border-top:5px solid var(--accent)}
 .ev-cell.today-ev .ev-num{color:var(--accent-bright);font-weight:700}

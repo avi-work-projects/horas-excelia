@@ -72,7 +72,8 @@ var DEFAULT_GASTOS=[
   {id:'luz',label:'Factura Luz',amount:0,period:'monthly'},
   {id:'digi',label:'Factura Digi',amount:0,period:'monthly'},
   {id:'agua',label:'Factura Agua',amount:0,period:'monthly'},
-  {id:'otros_seg',label:'Otros seguros',amount:0,period:'annual'}
+  {id:'otros_seg',label:'Otros seguros',amount:0,period:'annual'},
+  {id:'donaciones',label:'Donaciones caritativas',amount:0,period:'annual'}
 ];
 var GASTOS_ITEMS=[];
 
@@ -196,6 +197,8 @@ var DESGRAV_DEFAULT=[
    note:'Gasto deducible en base imponible: hasta 500\u20ac/a\u00f1o por persona (1.500\u20ac si discapacidad). Cubre titular, c\u00f3nyuge e hijos <25 dependientes.'},
   {id:'gastos_prof',label:'Compras / gastos profesionales',gastoLink:'_compras_total',pct:100,amount:0,limit:null,enabled:true,type:'base',
    note:'100% deducibles como inversi\u00f3n en la actividad. Introduce siempre importes sin IVA.'},
+  {id:'donaciones',label:'Donaciones caritativas',gastoLink:'donaciones',pct:100,amount:0,limit:null,enabled:true,type:'quota',notaPct:80,
+   note:'Deducci\u00f3n en cuota: 80% primeros 250\u20ac, 40% del exceso (Ley 49/2002). Simplificado al 80%.'},
 ];
 var DESGRAV_ITEMS=[];
 
@@ -516,16 +519,15 @@ function renderFiscalTabDesgrav(){
   var h='';
   h+='<div class="fiscal-section">';
   h+='<div class="fiscal-section-title">Desgravaciones IRPF \u2014 Declaraci\u00f3n de la Renta</div>';
-  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:10px">Partidas que reducen la base imponible en la declaraci\u00f3n. Los items marcados con <em>&#128279;</em> se calculan autom\u00e1ticamente desde tus gastos.</div>';
-  if(dg.base>0){
-    h+='<div class="fiscal-desgrav-total">Reducci\u00f3n de base: <b>'+fcPlain(dg.base)+'</b></div>';
-  }
-  var baseItems=DESGRAV_ITEMS.filter(function(it){return(it.type||'base')==='base';});
-  if(baseItems.length){
-    h+='<div class="fiscal-desgrav-group-title">Reducciones en base imponible</div>';
-    h+='<div id="fiscalDesgravList">'+renderDesgravList(baseItems,'base')+'</div>';
+  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:10px">Partidas que reducen la base imponible o la cuota IRPF. Los items con <em>&#128279;</em> se calculan desde tus gastos.</div>';
+  var _dgParts=[];
+  if(dg.base>0)_dgParts.push('Base: <b>'+fcPlain(dg.base)+'</b>');
+  if(dg.quota>0)_dgParts.push('Cuota: <b>'+fcPlain(dg.quota)+'</b>');
+  if(_dgParts.length){h+='<div class="fiscal-desgrav-total">'+_dgParts.join(' \u00b7 ')+'</div>';}
+  if(DESGRAV_ITEMS.length){
+    h+='<div id="fiscalDesgravList">'+renderDesgravList(DESGRAV_ITEMS,'all')+'</div>';
   } else {
-    h+='<div id="fiscalDesgravList">'+renderDesgravList([],'base')+'</div>';
+    h+='<div id="fiscalDesgravList">'+renderDesgravList([],'all')+'</div>';
   }
   h+='<button class="fiscal-add-btn" id="fiscalAddDesgrav">+ A\u00f1adir desgravaci\u00f3n</button>';
   h+='</div>';

@@ -9,6 +9,7 @@ var EV_VIEW = 'cal';  // 'cal' | 'months' | 'upcoming' | 'annual'
 var EV_EDIT = null;
 var EV_FORM_CONTAINER = null;  // overlay donde se renderiza el formulario (null = eventsOverlay)
 var EV_ANNUAL_ADD = false;
+var EV_BRIGHT_PAST = false;
 var EV_ANNUAL_VIEW = 'puentes'; // 'puentes' | 'fiestas'
 var EV_ANNUAL_FILTER_HIDDEN = []; // type names hidden from annual calendar
 var EV_PREV_VIEW = null;       // para volver al anual al pulsar ←
@@ -547,9 +548,10 @@ function renderEvAnnual(){
           var _singleEvs=evs.filter(function(ev){return !multiIds[ev.id]&&annEvVisible(ev)&&ev.id.indexOf('ev-bday-vip-')!==0;});
           var _vipBdays=(!vipHidden&&typeof BDAYS!=='undefined'&&Array.isArray(BDAYS))?(function(){var dd2=d.getDate(),dm2=d.getMonth()+1;return BDAYS.filter(function(b){return b.vip&&b.day===dd2&&b.month===dm2;});})():[];
           if(_singleEvs.length||_vipBdays.length){
+            var _pmk=past?' past-marker':'';
             _annSd='<div class="ev-annual-xs">';
-            _singleEvs.forEach(function(ev){_annSd+='<span class="ev-annual-x" style="color:'+getEvDisplayColor(ev)+'"></span>';});
-            _vipBdays.forEach(function(){_annSd+='<span class="ev-annual-vip-star">\u2b50</span>';});
+            _singleEvs.forEach(function(ev){_annSd+='<span class="ev-annual-x'+_pmk+'" style="color:'+getEvDisplayColor(ev)+'"></span>';});
+            _vipBdays.forEach(function(){_annSd+='<span class="ev-annual-vip-star'+_pmk+'">\u2b50</span>';});
             _annSd+='</div>';
           }
         }
@@ -710,9 +712,10 @@ function renderEvQuad(){
           var _singleEvs=evs.filter(function(ev){return !multiIds[ev.id]&&annEvVisible(ev)&&ev.id.indexOf('ev-bday-vip-')!==0;});
           var _vipBdays=(!vipHidden&&typeof BDAYS!=='undefined'&&Array.isArray(BDAYS))?(function(){var dd2=d.getDate(),dm2=d.getMonth()+1;return BDAYS.filter(function(b){return b.vip&&b.day===dd2&&b.month===dm2;});})():[];
           if(_singleEvs.length||_vipBdays.length){
+            var _qpmk=past?' past-marker':'';
             _quadSd='<div class="ev-annual-xs">';
-            _singleEvs.forEach(function(ev){_quadSd+='<span class="ev-annual-x" style="color:'+getEvDisplayColor(ev)+'"></span>';});
-            _vipBdays.forEach(function(){_quadSd+='<span class="ev-annual-vip-star">\u2b50</span>';});
+            _singleEvs.forEach(function(ev){_quadSd+='<span class="ev-annual-x'+_qpmk+'" style="color:'+getEvDisplayColor(ev)+'"></span>';});
+            _vipBdays.forEach(function(){_quadSd+='<span class="ev-annual-vip-star'+_qpmk+'">\u2b50</span>';});
             _quadSd+='</div>';
           }
         }
@@ -827,24 +830,27 @@ function renderEvContent(){
   } else if(EV_VIEW==='quad'){
     var _qMNS=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
     var _qm3=(EV_QUAD_MONTH+3)%12,_qy3=EV_QUAD_YEAR+Math.floor((EV_QUAD_MONTH+3)/12);
-    var _qLabel=_qMNS[EV_QUAD_MONTH]+' '+EV_QUAD_YEAR+' \u2014 '+_qMNS[_qm3]+' '+_qy3;
+    var _qLine1=_qMNS[EV_QUAD_MONTH]+' '+EV_QUAD_YEAR;
+    var _qLine3=_qMNS[_qm3]+' '+_qy3;
     h+='<div class="sy-year-nav">';
     h+='<button class="sy-nav" id="evQuadPrev2">\u00ab</button>';
     h+='<button class="sy-nav" id="evPrev">&#9664;</button>';
-    h+='<div class="sy-year" style="font-size:.72rem">'+_qLabel+'</div>';
+    h+='<div class="sy-year ev-quad-label">'+_qLine1+'<span class="ev-quad-dash">\u2014</span>'+_qLine3+'</div>';
     h+='<button class="sy-nav" id="evNext">&#9654;</button>';
     h+='<button class="sy-nav" id="evQuadNext2">\u00bb</button>';
     h+='</div>';
+    h+='<button class="ev-bright-btn'+(EV_BRIGHT_PAST?' on':'')+'" id="evBright">\uD83D\uDCA1</button>';
     h+='<button class="today-btn" id="evToday" style="font-size:.7rem;padding:6px 12px">Hoy</button>';
   } else {
     h+='<div class="sy-year-nav"><button class="sy-nav" id="evPrev">&#9664;</button>';
     if(EV_VIEW==='annual')h+='<div class="sy-year">'+EV_YEAR+'</div>';
     else h+='<div class="sy-year">'+MN[EV_MONTH]+' '+EV_YEAR+'</div>';
     h+='<button class="sy-nav" id="evNext">&#9654;</button></div>';
+    h+='<button class="ev-bright-btn'+(EV_BRIGHT_PAST?' on':'')+'" id="evBright">\uD83D\uDCA1</button>';
     h+='<button class="today-btn" id="evToday" style="font-size:.7rem;padding:6px 12px">Hoy</button>';
   }
   h+='</div>';
-  h+='<div class="sy-body">';
+  h+='<div class="sy-body'+(EV_BRIGHT_PAST?' ev-bright-past':'')+'">';
   if(EV_VIEW==='annual'||EV_VIEW==='quad'){
     var _typeOrder=['Viaje','Asturias','Recordatorio de Gestiones','Planes y Quedadas','Otros','Cumpleaños VIP'];
     var _typeShort={'Viaje':'Viaje','Asturias':'Asturias','Recordatorio de Gestiones':'Gestiones','Planes y Quedadas':'Planes','Otros':'Otros','Cumpleaños VIP':'\u2b50VIP'};
@@ -1403,6 +1409,10 @@ function bindEvEvents(){
     var n=new Date();EV_YEAR=n.getFullYear();EV_MONTH=n.getMonth();
     EV_QUAD_YEAR=n.getFullYear();EV_QUAD_MONTH=n.getMonth();
     refreshEvents();
+  });
+  var brightBtn=document.getElementById('evBright');
+  if(brightBtn)brightBtn.addEventListener('click',function(){
+    EV_BRIGHT_PAST=!EV_BRIGHT_PAST;refreshEvents();
   });
   document.getElementById('evViewUpcoming').addEventListener('click',function(){EV_VIEW='upcoming';EV_ANNUAL_ADD=false;refreshEvents();});
   document.getElementById('evViewCal').addEventListener('click',function(){EV_VIEW='cal';EV_ANNUAL_ADD=false;EV_PREV_VIEW=null;refreshEvents();});
