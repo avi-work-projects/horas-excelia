@@ -69,17 +69,27 @@ var EV_ALARM_SK='excelia-ev-alarm-v1';
 var EV_ALARMS_SET={};
 function loadEvAlarms(){try{var r=localStorage.getItem(EV_ALARM_SK);if(r)EV_ALARMS_SET=JSON.parse(r);}catch(e){}}
 function saveEvAlarms(){try{localStorage.setItem(EV_ALARM_SK,JSON.stringify(EV_ALARMS_SET));}catch(e){}}
+function _findBdayByEvId(evId){
+  if(evId.indexOf('ev-bday-vip-')!==0||typeof BDAYS==='undefined')return null;
+  var _p=evId.replace('ev-bday-vip-','').split('-');
+  var _bd=parseInt(_p[0],10),_bm=parseInt(_p[1],10),_sk=_p.slice(2).join('-');
+  for(var _i=0;_i<BDAYS.length;_i++){
+    var b=BDAYS[_i];if(!b.vip||b.day!==_bd||b.month!==_bm)continue;
+    if(b.name.replace(/[^a-z0-9]/gi,'_').toLowerCase()===_sk)return b;
+  }
+  /* fallback: day+month only */
+  for(var _i=0;_i<BDAYS.length;_i++){if(BDAYS[_i].vip&&BDAYS[_i].day===_bd&&BDAYS[_i].month===_bm)return BDAYS[_i];}
+  return null;
+}
 function isEvAlarmSet(evId){
-  if(evId.indexOf('ev-bday-vip-')===0&&typeof isBdayAlarmSet==='function'&&typeof BDAYS!=='undefined'){
-    var _p=evId.replace('ev-bday-vip-','').split('-');var _bd=parseInt(_p[0],10),_bm=parseInt(_p[1],10);
-    for(var _i=0;_i<BDAYS.length;_i++){if(BDAYS[_i].vip&&BDAYS[_i].day===_bd&&BDAYS[_i].month===_bm)return isBdayAlarmSet(BDAYS[_i]);}
+  if(evId.indexOf('ev-bday-vip-')===0&&typeof isBdayAlarmSet==='function'){
+    var b=_findBdayByEvId(evId);if(b)return isBdayAlarmSet(b);
   }
   return !!EV_ALARMS_SET[evId];
 }
 function setEvAlarmState(evId,bool){
-  if(evId.indexOf('ev-bday-vip-')===0&&typeof setBdayAlarmState==='function'&&typeof BDAYS!=='undefined'){
-    var _p=evId.replace('ev-bday-vip-','').split('-');var _bd=parseInt(_p[0],10),_bm=parseInt(_p[1],10);
-    for(var _i=0;_i<BDAYS.length;_i++){if(BDAYS[_i].vip&&BDAYS[_i].day===_bd&&BDAYS[_i].month===_bm){setBdayAlarmState(BDAYS[_i],bool);return;}}
+  if(evId.indexOf('ev-bday-vip-')===0&&typeof setBdayAlarmState==='function'){
+    var b=_findBdayByEvId(evId);if(b){setBdayAlarmState(b,bool);return;}
   }
   if(bool)EV_ALARMS_SET[evId]=true;else delete EV_ALARMS_SET[evId];saveEvAlarms();
 }
@@ -1526,20 +1536,8 @@ function bindEvEvents(){
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
       if(!ev)return;
       // Cumpleaños VIP → panel de alarma de cumpleaños
-      if(ev.id.indexOf('ev-bday-vip-')===0&&typeof BDAYS!=='undefined'){
-        var parts=ev.id.replace('ev-bday-vip-','').split('-');
-        var bDay=parseInt(parts[0],10),bMonth=parseInt(parts[1],10);
-        var safeKey=parts.slice(2).join('-');
-        var bday=null;
-        for(var j=0;j<BDAYS.length;j++){
-          var b=BDAYS[j];
-          if(!b.vip||b.day!==bDay||b.month!==bMonth)continue;
-          var bKey=b.name.replace(/[^a-z0-9]/gi,'_').toLowerCase();
-          if(bKey===safeKey){bday=b;break;}
-        }
-        if(!bday){/* fallback: match by day+month only */
-          for(var j=0;j<BDAYS.length;j++){if(BDAYS[j].vip&&BDAYS[j].day===bDay&&BDAYS[j].month===bMonth){bday=BDAYS[j];break;}}
-        }
+      if(ev.id.indexOf('ev-bday-vip-')===0){
+        var bday=_findBdayByEvId(ev.id);
         if(bday){openBdayAlarmFromEvents(bday);return;}
       }
       // Evento regular → panel de alarma de evento
