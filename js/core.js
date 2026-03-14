@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v97 \u2014 rate=0, mes/a\u00f1o 2 l\u00edneas, exports completos, scenario rates limpios';
+var APP_VERSION = 'v98 \u2014 donut distribuci\u00f3n, % en grupos, trabajado para Estado, gear grande';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

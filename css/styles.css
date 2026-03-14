@@ -350,7 +350,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .econ-hdr-sub{flex-shrink:0;display:flex;align-items:stretch;padding:5px 6px;gap:5px;box-shadow:0 1px 0 var(--border);overflow-x:hidden;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 .econ-tab-btn{flex:1;font-size:.56rem;padding:5px 2px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;text-align:center;line-height:1.35;white-space:normal;word-break:break-word}
 .econ-tab-btn.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
-.econ-gear-btn{flex-shrink:0;width:36px;border:1px solid #c084fc55;border-radius:8px;background:#c084fc18;color:#c084fc;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-user-select:none;user-select:none;transition:all .15s}
+.econ-gear-btn{flex-shrink:0;width:42px;height:42px;border:1px solid #c084fc55;border-radius:8px;background:#c084fc18;color:#c084fc;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-user-select:none;user-select:none;transition:all .15s}
 .econ-gear-btn:active{background:#c084fc33}
 .econ-hdr-note{flex-shrink:0;font-size:.62rem;color:var(--text-dim);max-width:80px;line-height:1.25;padding:0 2px;align-self:center}
 /* §1.1 Tarifa dual */
@@ -530,6 +530,18 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .econ-fiscal-summary-item{flex:1;min-width:120px;padding:12px 14px;border-radius:var(--radius-sm);background:var(--surface);border:1px solid var(--border);text-align:center}
 .econ-fiscal-summary-val{font-family:var(--mono);font-size:1.1rem;font-weight:700;line-height:1.2}
 .econ-fiscal-summary-lbl{font-size:.65rem;color:var(--text-dim);margin-top:4px;text-transform:uppercase;letter-spacing:.03em}
+.econ-fiscal-estado{font-size:.75rem;color:var(--text-muted);padding:12px 14px;line-height:1.6;margin-top:8px;border-top:1px solid var(--border);font-style:italic}
+.econ-fiscal-estado b{color:var(--text);font-style:normal}
+/* Donut chart */
+.econ-donut-wrap{text-align:center;margin:12px 0}
+.econ-donut-sector{cursor:pointer;transition:opacity .2s,transform .2s}
+.econ-donut-sector.dimmed{opacity:.4}
+.econ-donut-sector.selected{stroke-width:2;filter:brightness(1.2)}
+.econ-donut-summary{font-size:.75rem;color:var(--text-muted);padding:8px 14px;text-align:center;min-height:40px}
+.econ-donut-sel-total{font-family:var(--mono);font-weight:700;font-size:.9rem}
+.econ-donut-sel-names{font-size:.7rem;color:var(--text-dim);margin-top:2px}
+.econ-donut-hint{font-size:.68rem;color:var(--text-dim);font-style:italic}
+.econ-donut-total{font-size:.72rem;color:var(--text-muted);margin-top:4px;font-family:var(--mono)}
 /* Fiscal config: gastos items */
 .fiscal-gasto-item{display:flex;align-items:center;gap:6px;padding:7px 0;border-bottom:1px solid var(--border)}
 .fiscal-gasto-item:last-child{border-bottom:none}
@@ -628,8 +640,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .econ-distrib-header{padding:10px 14px 8px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:2px}
 .econ-distrib-bruto{font-size:.85rem;color:var(--text)}
 .econ-distrib-base{font-size:.7rem;color:var(--text-dim)}
-.econ-distrib-group-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-dim);padding:8px 14px 2px;background:var(--surface2)}
-.econ-distrib-group-lbl.neto{color:var(--c-green)}
+.econ-distrib-group-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-dim);padding:8px 14px 2px;background:var(--surface2);display:flex;justify-content:space-between;align-items:center}
+.econ-distrib-group-pct{font-family:var(--mono);font-weight:700;font-size:.7rem}
 .econ-distrib-row{padding:6px 14px}
 .econ-distrib-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:3px}
 .econ-distrib-lbl{font-size:.78rem;color:var(--text-muted);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

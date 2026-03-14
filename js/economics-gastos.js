@@ -131,6 +131,9 @@ function renderEconGastos(){
   /* §B Distribuci\u00f3n del ingreso bruto */
   h+=renderIncomeDistrib(e,dr);
 
+  /* §B.2 Donut chart distribuci\u00f3n */
+  h+=renderIncomeDonut(e,dr);
+
   /* §C Desglose IRPF por tramos — visual */
   h+=renderIrpfBreakdown(e,dr);
 
@@ -150,7 +153,20 @@ function renderEconGastos(){
       h+='<div class="econ-fiscal-summary-lbl">Ahorro por desgravaciones</div>';
       h+='</div>';
     }
-    h+='</div></div>';
+    h+='</div>';
+    /* §D.2 Trabajado para el Estado */
+    var _brF=Math.round((e.totBase+e.totIva)*100)/100;
+    var _irpfPag=Math.round((e.totIrpf+Math.max(0,dr.declDiff))*100)/100;
+    var _totImp=Math.round((_irpfPag+e.totIva)*100)/100;
+    if(_brF>0&&_totImp>0&&e.totalDays>0){
+      var _pE=_totImp/_brF;
+      var _dE=Math.round(e.totalDays*_pE);
+      var _mE=Math.floor(_dE/22);var _dR=_dE-_mE*22;
+      var _fE=new Date(ECON_YEAR,0,1);var _cE=0;
+      while(_cE<_dE){if(_fE.getDay()!==0&&_fE.getDay()!==6)_cE++;if(_cE<_dE)_fE.setDate(_fE.getDate()+1);}
+      h+='<div class="econ-fiscal-estado">Seg\u00fan los datos anteriores, teniendo en cuenta IVA e IRPF, usted ha trabajado <b>'+_mE+' meses y '+_dR+' d\u00edas</b> para el Estado. Equivalente a haber trabajado hasta el <b>'+_fE.getDate()+' de '+MN[_fE.getMonth()]+'</b> para el Estado.</div>';
+    }
+    h+='</div>';
   }
 
   return h;
@@ -273,33 +289,128 @@ function renderIncomeDistrib(e,dr){
   h+='<span class="econ-distrib-bruto">Bruto anual: <b>'+fcPlain(bruto)+'</b></span>';
   h+='<span class="econ-distrib-base">Base: <b>'+fcPlain(e.totBase)+'</b> + IVA: <b>'+fcPlain(e.totIva)+'</b></span>';
   h+='</div>';
+  var totalGastosProf=Math.round((ccss+semiobl+compras)*100)/100;
+  function grpLbl(name,amt,color){return '<div class="econ-distrib-group-lbl"><span>'+name+'</span><span class="econ-distrib-group-pct" style="color:'+color+'">'+pctOf(amt).toFixed(1)+'%</span></div>';}
   /* Impuestos */
   if(totalImpuestos>0){
-    h+='<div class="econ-distrib-group-lbl">Impuestos</div>';
+    h+=grpLbl('Impuestos',totalImpuestos,'var(--c-red)');
     h+=distRow('IRPF (retenci\u00f3n + declaraci\u00f3n)',irpfPagado,'var(--c-red)',false);
     if(devolucion>0)h+=distRow('Devoluci\u00f3n IRPF estimada',devolucion,'var(--c-green)',true);
     h+=distRow('IVA a Hacienda (Mod.303)',e.totIva,'var(--c-orange)',false);
   }
   /* Gastos profesionales */
-  if(ccss>0||semiobl>0||compras>0){
-    h+='<div class="econ-distrib-group-lbl">Gastos profesionales</div>';
+  if(totalGastosProf>0){
+    h+=grpLbl('Gastos profesionales',totalGastosProf,'#c084fc');
     h+=distRow('Cuota aut\u00f3nomos SS',ccss,'#c084fc',false);
     h+=distRow('Asesor\u00eda, seguros y similares',semiobl,'#a78bfa',false);
     h+=distRow('Compras y gastos profesionales',compras,'#34d399',false);
   }
   /* Gastos del hogar */
   if(gasaCasa>0){
-    h+='<div class="econ-distrib-group-lbl">Gastos del hogar</div>';
+    h+=grpLbl('Gastos del hogar',gasaCasa,'#60a5fa');
     h+=distRow('Hipoteca, suministros, comunidad\u2026',gasaCasa,'#60a5fa',false);
   }
   if(otrosG>0){
     h+=distRow('Otros gastos',otrosG,'var(--text-dim)',false);
   }
   /* Neto */
-  h+='<div class="econ-distrib-group-lbl neto">Resultado estimado</div>';
+  h+=grpLbl(neto>=0?'Resultado estimado':'D\u00e9ficit',Math.abs(neto),neto>=0?'var(--c-green)':'var(--c-red)');
   h+=distRow(neto>=0?'Neto disponible':'D\u00e9ficit estimado',Math.abs(neto),neto>=0?'var(--c-green)':'var(--c-red)',false);
   h+='</div></div>';
   return h;
+}
+
+/* ── Donut chart distribuci\u00f3n ────────────────────────────────── */
+var _DONUT_SEL={};
+function _sectorPath(cx,cy,r,ir,a1,a2){
+  var x1=cx+r*Math.sin(a1),y1=cy-r*Math.cos(a1);
+  var x2=cx+r*Math.sin(a2),y2=cy-r*Math.cos(a2);
+  var ix1=cx+ir*Math.sin(a1),iy1=cy-ir*Math.cos(a1);
+  var ix2=cx+ir*Math.sin(a2),iy2=cy-ir*Math.cos(a2);
+  var la=(a2-a1)>Math.PI?1:0;
+  return 'M'+x1.toFixed(2)+','+y1.toFixed(2)+' A'+r+','+r+' 0 '+la+',1 '+x2.toFixed(2)+','+y2.toFixed(2)+' L'+ix2.toFixed(2)+','+iy2.toFixed(2)+' A'+ir+','+ir+' 0 '+la+',0 '+ix1.toFixed(2)+','+iy1.toFixed(2)+' Z';
+}
+function _donutSummaryHtml(sectors,bruto){
+  var sel=Object.keys(_DONUT_SEL).filter(function(k){return _DONUT_SEL[k];});
+  if(!sel.length)return '<div class="econ-donut-hint">Toca un sector para ver el detalle</div><div class="econ-donut-total">Ingresos totales: <b>'+fcPlain(bruto)+'</b></div>';
+  var names=[],sum=0;
+  sel.forEach(function(k){var i=parseInt(k,10);if(sectors[i]){names.push(sectors[i].label);sum+=sectors[i].amount;}});
+  var pct=bruto>0?Math.round(sum/bruto*1000)/10:0;
+  return '<div class="econ-donut-sel-names">'+names.join(' + ')+'</div><div class="econ-donut-sel-total" style="color:var(--text)">'+fcPlain(sum)+' <span style="font-size:.7rem;color:var(--text-dim)">('+pct.toFixed(1)+'%)</span></div><div class="econ-donut-total">Ingresos totales: <b>'+fcPlain(bruto)+'</b></div>';
+}
+function renderIncomeDonut(e,dr){
+  var bruto=Math.round((e.totBase+e.totIva)*100)/100;
+  if(bruto<=0)return '';
+  var irpfPag=Math.round((e.totIrpf+Math.max(0,dr.declDiff))*100)/100;
+  var totalImp=Math.round((irpfPag+e.totIva)*100)/100;
+  var GROUP_S2={'asesoria':true,'seg_baja':true,'seg_salud':true,'otros_seg':true,'seg_vida':true};
+  var GROUP_C2={'hipoteca':true,'comunidad':true,'seg_hogar':true,'ibi':true,'luz':true,'gas':true,'agua':true,'digi':true};
+  var ccss2=0,semi2=0,casa2=0,otros2=0;
+  GASTOS_ITEMS.forEach(function(g){var a=gastoAnual(g.id);if(g.id==='cot_social')ccss2+=a;else if(GROUP_S2[g.id])semi2+=a;else if(GROUP_C2[g.id])casa2+=a;else otros2+=a;});
+  var compras2=typeof comprasTotal==='function'?comprasTotal():0;
+  var gProf=Math.round((ccss2+semi2+compras2)*100)/100;
+  var neto2=Math.round((e.totBase-irpfPag+Math.max(0,-dr.declDiff)-ccss2-semi2-casa2-compras2-otros2)*100)/100;
+  var sectors=[];
+  if(totalImp>0)sectors.push({label:'Impuestos',amount:totalImp,color:'#ef4444'});
+  if(gProf>0)sectors.push({label:'Gastos prof.',amount:gProf,color:'#c084fc'});
+  if(casa2>0)sectors.push({label:'Gastos hogar',amount:casa2,color:'#60a5fa'});
+  if(otros2>0)sectors.push({label:'Otros',amount:otros2,color:'#94a3b8'});
+  if(neto2>0)sectors.push({label:'Neto',amount:neto2,color:'#34d399'});
+  if(!sectors.length)return '';
+  var cx=200,cy=150,r=95,ir=52;
+  var hasSel=Object.keys(_DONUT_SEL).some(function(k){return _DONUT_SEL[k];});
+  var ang=0,svgPaths='',svgLabels='';
+  for(var i=0;i<sectors.length;i++){
+    var s=sectors[i];
+    var sweep=(s.amount/bruto)*Math.PI*2;
+    var a1=ang,a2=ang+sweep;
+    var mid=(a1+a2)/2;
+    var sel=!!_DONUT_SEL[i];
+    var dim=hasSel&&!sel;
+    var tx=sel?Math.sin(mid)*8:0,ty=sel?-Math.cos(mid)*8:0;
+    svgPaths+='<path class="econ-donut-sector'+(sel?' selected':'')+(dim?' dimmed':'')+'" d="'+_sectorPath(cx,cy,r,ir,a1,a2)+'" fill="'+s.color+'" stroke="var(--surface)" stroke-width="1.5" data-idx="'+i+'" style="transform:translate('+tx.toFixed(1)+'px,'+ty.toFixed(1)+'px)"/>';
+    /* Labels */
+    var lx=cx+(r+14)*Math.sin(mid),ly=cy-(r+14)*Math.cos(mid);
+    var lx2=cx+(r+38)*Math.sin(mid),ly2=cy-(r+38)*Math.cos(mid);
+    var isRight=Math.sin(mid)>=0;
+    var lx3=isRight?lx2+22:lx2-22;
+    var anchor=isRight?'start':'end';
+    var pct=bruto>0?Math.round(s.amount/bruto*1000)/10:0;
+    svgLabels+='<line x1="'+lx.toFixed(1)+'" y1="'+ly.toFixed(1)+'" x2="'+lx2.toFixed(1)+'" y2="'+ly2.toFixed(1)+'" stroke="'+s.color+'" stroke-width=".8" opacity="'+(dim?.35:1)+'"/>';
+    svgLabels+='<line x1="'+lx2.toFixed(1)+'" y1="'+ly2.toFixed(1)+'" x2="'+lx3.toFixed(1)+'" y2="'+ly2.toFixed(1)+'" stroke="'+s.color+'" stroke-width=".8" opacity="'+(dim?.35:1)+'"/>';
+    svgLabels+='<text x="'+(isRight?lx3+3:lx3-3).toFixed(1)+'" y="'+(ly2-2).toFixed(1)+'" text-anchor="'+anchor+'" font-size="8" fill="'+(dim?'var(--text-dim)':'var(--text-muted)')+'" font-family="var(--font)">'+s.label+'</text>';
+    svgLabels+='<text x="'+(isRight?lx3+3:lx3-3).toFixed(1)+'" y="'+(ly2+9).toFixed(1)+'" text-anchor="'+anchor+'" font-size="7.5" fill="'+s.color+'" font-family="var(--mono)" opacity="'+(dim?.4:1)+'">'+pct.toFixed(1)+'%</text>';
+    ang=a2;
+  }
+  var h='<div class="sy-section"><div class="sy-section-title">Distribuci\u00f3n (gr\u00e1fico)</div>';
+  h+='<div class="econ-donut-wrap" id="econDonutWrap">';
+  h+='<svg viewBox="0 0 400 300" style="width:100%;max-width:400px">';
+  h+=svgPaths+svgLabels;
+  h+='</svg>';
+  h+='<div class="econ-donut-summary" id="econDonutSummary">'+_donutSummaryHtml(sectors,bruto)+'</div>';
+  h+='</div></div>';
+  /* Store sectors for click handler */
+  window._DONUT_SECTORS=sectors;window._DONUT_BRUTO=bruto;
+  return h;
+}
+function _bindDonutClick(){
+  var wrap=document.getElementById('econDonutWrap');
+  if(!wrap||wrap._delegated)return;
+  wrap._delegated=true;
+  wrap.addEventListener('click',function(ev){
+    var path=ev.target.closest('.econ-donut-sector');
+    if(!path)return;
+    ev.stopPropagation();
+    var idx=parseInt(path.dataset.idx,10);
+    _DONUT_SEL[idx]=!_DONUT_SEL[idx];
+    /* Re-render just the donut section */
+    var e2=computeEconEx(ECON_YEAR);
+    var dr2=computeDeclResult(e2.totBase,e2.totIrpf);
+    var tmp=document.createElement('div');tmp.innerHTML=renderIncomeDonut(e2,dr2);
+    var oldW=document.getElementById('econDonutWrap');
+    var newW=tmp.querySelector('#econDonutWrap');
+    if(oldW&&newW){oldW.parentNode.replaceChild(newW,oldW);_bindDonutClick();}
+  });
 }
 
 /* ── Helpers de fila ─────────────────────────────────────────── */
@@ -344,4 +455,5 @@ function bindEconGastosEvents(){
       bindEconGastosEvents();
     });
   }
+  _bindDonutClick();
 }
