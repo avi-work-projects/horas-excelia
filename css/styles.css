@@ -478,6 +478,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .econ-avg-card-lbl{font-size:.6rem;text-transform:uppercase;letter-spacing:.05em;font-weight:600;margin-bottom:4px;opacity:.7}
 .econ-avg-card-val{font-family:var(--mono);font-size:.92rem;font-weight:700;line-height:1.2}
 .econ-avg-card-sub{font-size:.6rem;color:var(--text-dim);margin-top:2px}
+.econ-decl-info{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm)}
+.econ-decl-info-item{display:flex;align-items:center;gap:6px}
+.econ-decl-info-lbl{font-size:.72rem;color:var(--text-dim)}
+.econ-decl-info-val{font-size:.85rem;font-weight:700}
 /* Tab 4: Análisis */
 .econ-gastos-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-top:4px}
 .econ-gastos-row{display:flex;align-items:center;padding:9px 14px;gap:10px;border-bottom:1px solid var(--border)}
@@ -945,6 +949,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-cell:active{background:var(--surface3)}
 .ev-cell.out-m{opacity:.35}
 .ev-cell.past-cal-day{opacity:.45}
+.ev-multi-bar.past-bar{opacity:.4}
+.ev-annual-day.past-cal-day{opacity:.4}
+.ev-annual-mbar.past-bar{opacity:.4}
 /* today-ev: border lateral 1.5px pero top sigue siendo 5px para alinear el número */
 .ev-cell.today-ev{border-left:1.5px solid var(--accent);border-right:1.5px solid var(--accent);border-bottom:1.5px solid var(--accent);border-top:5px solid var(--accent)}
 .ev-cell.today-ev .ev-num{color:var(--accent-bright);font-weight:700}

@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v90 \u2014 gear en header, tema fiscal morado, quitar cuota desgrav, fix VIP bday';
+var APP_VERSION = 'v91 \u2014 tipo medio IRPF + ahorro desgrav, dim pasado en calendarios eventos';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
