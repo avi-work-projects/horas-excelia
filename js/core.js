@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v98 \u2014 donut distribuci\u00f3n, % en grupos, trabajado para Estado, gear grande';
+var APP_VERSION = 'v99 \u2014 paleta azules viajes: cielo, oc\u00e9ano, verde azulado, egeo, \u00e1rtico';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
