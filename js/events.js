@@ -899,11 +899,11 @@ function renderEvContent(){
     var _qLine1=_qMNS[EV_QUAD_MONTH]+' '+EV_QUAD_YEAR;
     var _qLine3=_qMNS[_qm3]+' '+_qy3;
     h+='<div class="sy-year-nav">';
-    h+='<button class="sy-nav sy-nav-sm" id="evQuadPrev2">\u00ab</button>';
+    h+='<button class="sy-nav sy-nav-pill" id="evQuadPrev2">\u00ab</button>';
     h+='<button class="sy-nav sy-nav-sm" id="evPrev">&#9664;</button>';
     h+='<div class="sy-year ev-quad-label">'+_qLine1+'<span class="ev-quad-dash">\u2014</span>'+_qLine3+'</div>';
     h+='<button class="sy-nav sy-nav-sm" id="evNext">&#9654;</button>';
-    h+='<button class="sy-nav sy-nav-sm" id="evQuadNext2">\u00bb</button>';
+    h+='<button class="sy-nav sy-nav-pill" id="evQuadNext2">\u00bb</button>';
     h+='</div>';
     h+='<button class="ev-bright-btn ev-bright-sm'+(EV_BRIGHT_PAST?' on':'')+'" id="evBright">\uD83D\uDCA1</button>';
     h+='<button class="today-btn" id="evToday" style="font-size:.65rem;padding:4px 8px">Hoy</button>';
@@ -1308,7 +1308,7 @@ function renderEvAlarmPanel(ev,firstDate){
   h+='</div>';
   h+='<div class="ev-form-actions">';
   h+='<button class="ev-btn primary" id="evAlarmCreate">&#128276; Crear alarma</button>';
-  h+='<button class="ev-btn" id="evAlarmEdit" style="background:var(--surface2);color:var(--text)">&#9998; Editar evento</button>';
+  h+='<button class="ev-btn ev-edit-orange" id="evAlarmEdit">&#9998; Editar evento</button>';
   h+='</div></div></div>';
   return h;
 }

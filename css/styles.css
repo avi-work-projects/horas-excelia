@@ -964,6 +964,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-bright-btn.on{opacity:1;background:#fbbf2433;border-color:#fbbf24}
 .ev-bright-sm{font-size:.7rem;padding:2px 5px;border-radius:6px}
 .sy-nav-sm{font-size:.7rem !important;min-width:24px !important;padding:4px 5px !important}
+.sy-nav-pill{width:20px !important;height:36px !important;border-radius:10px !important;padding:0 !important;font-size:.75rem !important}
 /* Quad label 3 lines */
 .ev-quad-label{display:flex;flex-direction:column;align-items:center;line-height:1.1;font-size:.72rem}
 .ev-quad-dash{font-size:.55rem;line-height:.7;color:var(--text-dim)}
@@ -1014,6 +1015,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-btn{flex:1;padding:12px;border-radius:var(--radius-sm);border:none;font-family:var(--font);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s}
 .ev-btn.primary{background:var(--accent);color:#fff}
 .ev-btn.primary:active{background:var(--accent-bright)}
+.ev-edit-orange{background:#fb923c !important;color:#fff !important;border-color:#fb923c !important}
+.ev-edit-orange:active{background:#f97316 !important}
 .ev-btn.cancel{background:var(--surface2);color:var(--text-muted);border:1px solid var(--border)}
 .ev-btn.cancel:active{background:var(--surface3)}
 .ev-btn.danger{background:#2a1a1a;color:var(--c-red);border:1px solid #3a2a2a}
