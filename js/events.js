@@ -394,105 +394,45 @@ function getNextOccurrence(ev,today){
   return null;
 }
 
-/* ── Render: próximos eventos (3 semanas) ───────────────── */
+/* ── Render: próximos cumpleaños VIP (7 días) ──────────── */
 function evIsoDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function renderEvUpcoming(){
-  if(!EVENTS.length)return '<div class="sy-note">No hay eventos creados. Pulsa \"+ A\u00f1adir\" para crear uno.</div>';
   var today=new Date();today.setHours(0,0,0,0);
-  var wd=today.getDay();var off=wd===0?6:wd-1;
-  var wk0=new Date(today);wk0.setDate(wk0.getDate()-off);
-  var weekLabels=['Esta semana','Pr\u00f3xima semana','En dos semanas'];
   var fd2=function(d){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');};
-  // Collect events per week (Map: id → {ev, firstDate})
-  var weeks=[{},{},{}];
-  for(var w=0;w<3;w++){
-    for(var d=0;d<7;d++){
-      var day=new Date(wk0.getTime()+(w*7+d)*86400000);
-      var ds=evDk(day);
-      var evs=getEventsOn(ds);
-      evs.forEach(function(ev){
-        if(!weeks[w][ev.id])weeks[w][ev.id]={ev:ev,firstDate:new Date(day)};
-      });
-    }
-  }
-  var anyEvents=weeks.some(function(wk){return Object.keys(wk).length>0;});
-  // Si no hay eventos en las 3 semanas actuales, buscar la primera semana futura con eventos
-  if(!anyEvents){
-    var fallbackMap=null,fallbackLabel=null;
-    for(var fw=3;fw<53;fw++){
-      var fwMap={};
-      for(var fd3=0;fd3<7;fd3++){
-        var fday=new Date(wk0.getTime()+(fw*7+fd3)*86400000);
-        var fds=evDk(fday);
-        var fevs=getEventsOn(fds);
-        fevs.forEach(function(ev){if(!fwMap[ev.id])fwMap[ev.id]={ev:ev,firstDate:new Date(fday)};});
-      }
-      if(Object.keys(fwMap).length>0){
-        fallbackMap=fwMap;
-        var fwStart=new Date(wk0.getTime()+fw*7*86400000);
-        var fwEnd=new Date(fwStart);fwEnd.setDate(fwEnd.getDate()+6);
-        fallbackLabel='Semana del '+fwStart.getDate()+'/'+(fwStart.getMonth()+1)+' al '+fwEnd.getDate()+'/'+(fwEnd.getMonth()+1);
-        break;
-      }
-    }
-    if(!fallbackMap)return '<div class="sy-note">No hay eventos pr\u00f3ximos programados.</div>';
-    var h='<div class="sy-note" style="margin-bottom:8px">Sin eventos en las pr\u00f3ximas 3 semanas. Primera semana con eventos:</div>';
-    var fids=Object.keys(fallbackMap);
-    fids.sort(function(a,b){return fallbackMap[a].firstDate-fallbackMap[b].firstDate;});
-    h+='<div class="sy-month-sep">'+fallbackLabel+'</div>';
-    h+='<div class="ev-upcoming-section">';
-    fids.forEach(function(id){
-      var item=fallbackMap[id];var ev=item.ev;
-      var type=EV_COLOR_TYPES[ev.color]||'Otros';
-      var diffToday=Math.round((item.firstDate-today)/86400000);
-      var _isVipU=ev.id.indexOf('ev-bday-vip-')===0;
-      var _uTitle=_isVipU?('<img src="./VIP.png" class="bday-vip-img" alt="VIP" style="height:1.2em;vertical-align:middle;margin-right:3px">'+escHtml(ev.title.replace(/^\u2b50\s*/,'')))
-        :escHtml(ev.title);
-      var _bellSet=isEvAlarmSet(ev.id);
-      h+='<div class="ev-upcoming-item" data-id="'+ev.id+'" data-first="'+evIsoDate(item.firstDate)+'">';
-      h+='<div class="ev-upcoming-color" style="background:'+getEvDisplayColor(ev)+'"></div>';
-      h+='<div class="ev-upcoming-info">';
-      h+='<div class="ev-upcoming-title">'+_uTitle+'</div>';
-      h+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+fd2(item.firstDate)+'</div>';
-      if(ev.note&&ev.note.trim()&&!_isVipU)h+='<div class="ev-upcoming-note">'+escHtml(ev.note.trim())+'</div>';
-      h+='</div>';
-      h+='<div class="ev-upcoming-right"><span class="ev-upcoming-bell'+(_bellSet?' set':'')+'">&#128276;</span><div class="ev-upcoming-lbl">En '+diffToday+'d</div></div>';
-      h+='</div>';
+  // Recoger solo cumpleaños VIP en los próximos 7 días
+  var items=[];
+  for(var d=0;d<7;d++){
+    var day=new Date(today);day.setDate(day.getDate()+d);
+    var ds=evDk(day);
+    var evs=getEventsOn(ds);
+    evs.forEach(function(ev){
+      if(ev.id.indexOf('ev-bday-vip-')!==0)return;
+      for(var j=0;j<items.length;j++){if(items[j].ev.id===ev.id)return;}
+      items.push({ev:ev,firstDate:new Date(day)});
     });
+  }
+  if(!items.length)return '<div class="sy-note">No hay cumplea\u00f1os VIP en los pr\u00f3ximos 7 d\u00edas.</div>';
+  items.sort(function(a,b){return a.firstDate-b.firstDate;});
+  var h='<div class="sy-month-sep">Cumplea\u00f1os VIP \u2014 pr\u00f3ximos 7 d\u00edas</div>';
+  h+='<div class="ev-upcoming-section">';
+  items.forEach(function(item){
+    var ev=item.ev;
+    var diffToday=Math.round((item.firstDate-today)/86400000);
+    var isToday=diffToday===0;
+    var lbl=isToday?'Hoy':diffToday===1?'Ma\u00f1ana':('En '+diffToday+'d');
+    var lblCls='ev-upcoming-lbl'+(isToday?' today-lbl':diffToday===1?' near':'');
+    var _upTitle='<img src="./VIP.png" class="bday-vip-img" alt="VIP" style="height:1.2em;vertical-align:middle;margin-right:3px">'+escHtml(ev.title.replace(/^\u2b50\s*/,''));
+    var _bellSet=isEvAlarmSet(ev.id);
+    h+='<div class="ev-upcoming-item'+(isToday?' ev-upcoming-today':'')+'" data-id="'+ev.id+'" data-first="'+evIsoDate(item.firstDate)+'">';
+    h+='<div class="ev-upcoming-color" style="background:'+getEvDisplayColor(ev)+'"></div>';
+    h+='<div class="ev-upcoming-info">';
+    h+='<div class="ev-upcoming-title">'+_upTitle+'</div>';
+    h+='<div class="ev-upcoming-meta">Cumplea\u00f1os VIP \u00b7 '+fd2(item.firstDate)+'</div>';
     h+='</div>';
-    return h;
-  }
-  var h='';
-  weeks.forEach(function(wkMap,wi){
-    var ids=Object.keys(wkMap);
-    if(!ids.length)return;
-    ids.sort(function(a,b){return wkMap[a].firstDate-wkMap[b].firstDate;});
-    h+='<div class="sy-month-sep">'+weekLabels[wi]+'</div>';
-    h+='<div class="ev-upcoming-section">';
-    ids.forEach(function(id){
-      var item=wkMap[id];
-      var ev=item.ev;
-      var type=EV_COLOR_TYPES[ev.color]||'Otros';
-      var diffToday=Math.round((item.firstDate-today)/86400000);
-      var isToday=diffToday===0;
-      var lbl=isToday?'Hoy':diffToday===1?'Ma\u00f1ana':diffToday<0?'En curso':('En '+diffToday+'d');
-      var lblCls='ev-upcoming-lbl'+(isToday?' today-lbl':diffToday===1?' near':diffToday<0?' ongoing':'');
-      var _isVipUp=ev.id.indexOf('ev-bday-vip-')===0;
-      var _upTitle=_isVipUp?('<img src="./VIP.png" class="bday-vip-img" alt="VIP" style="height:1.2em;vertical-align:middle;margin-right:3px">'+escHtml(ev.title.replace(/^\u2b50\s*/,'')))
-        :escHtml(ev.title);
-      var _bellSet=isEvAlarmSet(ev.id);
-      h+='<div class="ev-upcoming-item'+(isToday?' ev-upcoming-today':'')+'" data-id="'+ev.id+'" data-first="'+evIsoDate(item.firstDate)+'">';
-      h+='<div class="ev-upcoming-color" style="background:'+getEvDisplayColor(ev)+'"></div>';
-      h+='<div class="ev-upcoming-info">';
-      h+='<div class="ev-upcoming-title">'+_upTitle+'</div>';
-      h+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+fd2(item.firstDate)+'</div>';
-      if(ev.note&&ev.note.trim()&&!_isVipUp)h+='<div class="ev-upcoming-note">'+escHtml(ev.note.trim())+'</div>';
-      h+='</div>';
-      h+='<div class="ev-upcoming-right"><span class="ev-upcoming-bell'+(_bellSet?' set':'')+'">&#128276;</span><div class="'+lblCls+'">'+lbl+'</div></div>';
-      h+='</div>';
-    });
+    h+='<div class="ev-upcoming-right"><span class="ev-upcoming-bell'+(_bellSet?' set':'')+'">&#128276;</span><div class="'+lblCls+'">'+lbl+'</div></div>';
     h+='</div>';
   });
+  h+='</div>';
   return h;
 }
 
