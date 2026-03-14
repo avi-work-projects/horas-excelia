@@ -515,13 +515,21 @@
   }
 
   document.getElementById('exportAllBtn').addEventListener('click',function(){
-    var data={version:2,days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
+    var data={version:3,days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
       exclFest:EXCL_FEST,exclVac:EXCL_VAC,vacEntitlement:VAC_ENTITLEMENT,
       birthdays:BDAYS,events:EVENTS,
       alarms:typeof ALARMS!=='undefined'?ALARMS:[],
       fiscal:typeof FISCAL!=='undefined'?FISCAL:null,
       gastos:typeof GASTOS_ITEMS!=='undefined'?GASTOS_ITEMS:null,
-      gastosDificilPct:typeof GASTOS_DIFICIL_PCT!=='undefined'?GASTOS_DIFICIL_PCT:5};
+      gastosDificilPct:typeof GASTOS_DIFICIL_PCT!=='undefined'?GASTOS_DIFICIL_PCT:5,
+      ingresos:typeof INGRESOS_ITEMS!=='undefined'?INGRESOS_ITEMS:null,
+      compras:typeof COMPRAS_ITEMS!=='undefined'?COMPRAS_ITEMS:null,
+      desgrav:typeof DESGRAV_ITEMS!=='undefined'?DESGRAV_ITEMS:null,
+      despacho:typeof DESPACHO!=='undefined'?DESPACHO:null,
+      scenarios:typeof ECON_SCENARIOS!=='undefined'?ECON_SCENARIOS:null,
+      evAlarms:typeof EV_ALARMS_SET!=='undefined'?EV_ALARMS_SET:null,
+      bdayAlarms:typeof BDAY_ALARM_SET!=='undefined'?BDAY_ALARM_SET:null,
+      macroUrl:localStorage.getItem('excelia-alarm-url')||null};
     var a=document.createElement('a');
     a.href='data:application/json,'+encodeURIComponent(JSON.stringify(data,null,2));
     a.download='horas-excelia-backup.json';
@@ -558,6 +566,14 @@
           if(typeof d.gastosDificilPct!=='undefined')GASTOS_DIFICIL_PCT=d.gastosDificilPct;
           saveGastos();
         }
+        if(d.ingresos&&Array.isArray(d.ingresos)&&typeof saveIngresos==='function'){INGRESOS_ITEMS=d.ingresos;saveIngresos();}
+        if(d.compras&&Array.isArray(d.compras)&&typeof saveCompras==='function'){COMPRAS_ITEMS=d.compras;saveCompras();}
+        if(d.desgrav&&Array.isArray(d.desgrav)&&typeof saveDesgrav==='function'){DESGRAV_ITEMS=d.desgrav;saveDesgrav();}
+        if(d.despacho&&typeof saveDespacho==='function'){DESPACHO=d.despacho;saveDespacho();}
+        if(d.scenarios&&Array.isArray(d.scenarios)&&typeof saveEconComp==='function'){ECON_SCENARIOS=d.scenarios;saveEconComp();}
+        if(d.evAlarms&&typeof EV_ALARMS_SET!=='undefined'){EV_ALARMS_SET=d.evAlarms;if(typeof saveEvAlarms==='function')saveEvAlarms();}
+        if(d.bdayAlarms&&typeof BDAY_ALARM_SET!=='undefined'){BDAY_ALARM_SET=d.bdayAlarms;localStorage.setItem('excelia-bday-alarm-set',JSON.stringify(BDAY_ALARM_SET));}
+        if(d.macroUrl)localStorage.setItem('excelia-alarm-url',d.macroUrl);
         save();render();
         updateBdayBtn();updateEventsBtn();
         showToast('Backup completo importado','success');
