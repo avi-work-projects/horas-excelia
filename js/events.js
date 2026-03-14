@@ -32,7 +32,7 @@ var EV_COLOR_TYPES = {
 };
 
 // Paleta de azules para variedad de viajes (determinista según id del evento)
-var _VIAJE_BLUES=['#38bdf8','#0ea5e9','#60a5fa','#3b82f6','#7dd3fc','#2563eb','#22d3ee','#93c5fd','#0284c7','#06b6d4'];
+var _VIAJE_BLUES=['#5cc8f0','#007fa8','#00a8a0','#1caac9','#7eeaf2'];
 function evTravelColor(evId){
   var h=0,id=String(evId||'');
   for(var i=0;i<id.length;i++)h=(h*31+id.charCodeAt(i))&0x7fffffff;
