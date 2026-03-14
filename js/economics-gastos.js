@@ -134,6 +134,25 @@ function renderEconGastos(){
   /* §C Desglose IRPF por tramos — visual */
   h+=renderIrpfBreakdown(e,dr);
 
+  /* §D Tipo medio IRPF + ahorro desgravaciones */
+  if(dr.decl&&dr.decl.totalTax>0){
+    var sinDesgrav=typeof computeIrpfBrackets==='function'?computeIrpfBrackets(dr.baseAfterGD):null;
+    var ahorroDesgrav=sinDesgrav?Math.round((sinDesgrav.totalTax-dr.decl.totalTax+dr.totalQuotaDesgrav)*100)/100:0;
+    h+='<div class="sy-section"><div class="sy-section-title">Resumen fiscal</div>';
+    h+='<div class="econ-fiscal-summary">';
+    h+='<div class="econ-fiscal-summary-item">';
+    h+='<div class="econ-fiscal-summary-val" style="color:var(--c-red)">'+dr.decl.effectivePct.toFixed(2).replace('.',',')+'\u202f%</div>';
+    h+='<div class="econ-fiscal-summary-lbl">Tipo medio IRPF</div>';
+    h+='</div>';
+    if(ahorroDesgrav>0){
+      h+='<div class="econ-fiscal-summary-item">';
+      h+='<div class="econ-fiscal-summary-val" style="color:var(--c-green)">'+fcPlain(ahorroDesgrav)+'</div>';
+      h+='<div class="econ-fiscal-summary-lbl">Ahorro por desgravaciones</div>';
+      h+='</div>';
+    }
+    h+='</div></div>';
+  }
+
   return h;
 }
 

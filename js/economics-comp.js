@@ -8,6 +8,7 @@ var ECON_SCENARIOS=[
   {label:'B',rateType:'daily',rateValue:350,hoursMode:'real'}
 ];
 var ECON_COMP_ACCUM=false;
+var ECON_COMP_DIFF=false;
 var ECON_COMP_COLORS=['#34d399','#6c8cff','#fb923c','#c084fc'];
 var SC_LABELS=['A','B','C','D'];
 var ECON_COMP_CALC=false; // true = mostrar tabla (esperando Calcular)
@@ -133,10 +134,26 @@ function renderEconComp(){
   var chartData=results.map(function(r,i){
     return{label:ECON_SCENARIOS[i].label,color:ECON_COMP_COLORS[i],months:r.months.map(function(mo){return mo.neto;})};
   });
-  h+='<div class="econ-line-chart-wrap">'+econLineChart(chartData,ECON_COMP_ACCUM)+'</div>';
+  if(ECON_COMP_DIFF){
+    // Gráfica: diferencia acumulada de cada escenario vs A
+    var diffData=[];
+    var cumA=[];var cA=0;
+    for(var di=0;di<12;di++){cA+=results[0].months[di].neto;cumA.push(Math.round(cA*100)/100);}
+    for(var si=1;si<results.length;si++){
+      var dMonths=[];var cS=0;
+      for(var di2=0;di2<12;di2++){cS+=results[si].months[di2].neto;dMonths.push(Math.round((cS-cumA[di2])*100)/100);}
+      diffData.push({label:'\u0394'+ECON_SCENARIOS[si].label+' vs '+ECON_SCENARIOS[0].label,color:ECON_COMP_COLORS[si],months:dMonths});
+    }
+    h+='<div class="econ-line-chart-wrap">'+econLineChart(diffData,false)+'</div>';
+  } else {
+    h+='<div class="econ-line-chart-wrap">'+econLineChart(chartData,ECON_COMP_ACCUM)+'</div>';
+  }
+  var _mAct=!ECON_COMP_ACCUM&&!ECON_COMP_DIFF;
+  var _aAct=ECON_COMP_ACCUM&&!ECON_COMP_DIFF;
   h+='<div style="display:flex;gap:8px;margin-top:8px">';
-  h+='<button class="econ-opt-btn'+(ECON_COMP_ACCUM?'':' active')+'" id="ecChartMensual">Mensual</button>';
-  h+='<button class="econ-opt-btn'+(ECON_COMP_ACCUM?' active':'')+'" id="ecChartAcum">Acumulado</button>';
+  h+='<button class="econ-opt-btn'+(_mAct?' active':'')+'" id="ecChartMensual">Mensual</button>';
+  h+='<button class="econ-opt-btn'+(_aAct?' active':'')+'" id="ecChartAcum">Acumulado</button>';
+  h+='<button class="econ-opt-btn'+(ECON_COMP_DIFF?' active':'')+'" id="ecChartDiff">\u0394 vs '+ECON_SCENARIOS[0].label+'</button>';
   h+='</div></div>';
   return h;
 }
@@ -204,6 +221,8 @@ function bindEconCompEvents(){
   // Chart toggle
   var btnM=document.getElementById('ecChartMensual');
   var btnA=document.getElementById('ecChartAcum');
-  if(btnM)btnM.addEventListener('click',function(){ECON_COMP_ACCUM=false;reRenderEcon();});
-  if(btnA)btnA.addEventListener('click',function(){ECON_COMP_ACCUM=true;reRenderEcon();});
+  if(btnM)btnM.addEventListener('click',function(){ECON_COMP_ACCUM=false;ECON_COMP_DIFF=false;reRenderEcon();});
+  if(btnA)btnA.addEventListener('click',function(){ECON_COMP_ACCUM=true;ECON_COMP_DIFF=false;reRenderEcon();});
+  var btnD=document.getElementById('ecChartDiff');
+  if(btnD)btnD.addEventListener('click',function(){ECON_COMP_DIFF=!ECON_COMP_DIFF;if(ECON_COMP_DIFF)ECON_COMP_ACCUM=false;reRenderEcon();});
 }
