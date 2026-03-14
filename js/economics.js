@@ -156,7 +156,19 @@ function renderEconResumen(){
 
   /* §2 Resumen Anual — 7 tarjetas totales del año */
   h+='<div class="sy-section"><div class="sy-section-title">Resumen Anual</div>';
-  h+='<div class="econ-avg-cards">'+_econCards7(e,cotAnual,declDiff,1,'a\u00f1o completo')+'</div></div>';
+  h+='<div class="econ-avg-cards">'+_econCards7(e,cotAnual,declDiff,1,'a\u00f1o completo')+'</div>';
+  /* Info declaración: tipo medio + ahorro desgravaciones */
+  if(e.totBase>0){
+    var irpfSinDesgrav=typeof computeIrpfBrackets==='function'?computeIrpfBrackets(dr.baseAfterGD):null;
+    var ahorroDesgrav=irpfSinDesgrav?Math.round((irpfSinDesgrav.totalTax-dr.decl.totalTax+dr.totalQuotaDesgrav)*100)/100:0;
+    h+='<div class="econ-decl-info">';
+    h+='<div class="econ-decl-info-item"><span class="econ-decl-info-lbl">Tipo medio IRPF</span><span class="econ-decl-info-val" style="color:var(--c-red)">'+dr.decl.effectivePct.toFixed(1)+' %</span></div>';
+    if(ahorroDesgrav>0){
+      h+='<div class="econ-decl-info-item"><span class="econ-decl-info-lbl">Ahorro desgravaciones</span><span class="econ-decl-info-val" style="color:var(--c-green)">\u2212'+fcPlain(ahorroDesgrav)+'</span></div>';
+    }
+    h+='</div>';
+  }
+  h+='</div>';
 
   /* §3 Media mensual — 7 tarjetas /12 */
   h+='<div class="sy-section"><div class="sy-section-title">Media Mensual</div>';
