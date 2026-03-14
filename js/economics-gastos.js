@@ -69,7 +69,7 @@ function renderEconGastos(){
 
   var GROUP_SEMIOBL={'asesoria':true,'seg_baja':true,'seg_salud':true};
   var GROUP_CASA={'hipoteca':true,'comunidad':true,'seg_hogar':true,'ibi':true,'luz':true,'gas':true,'agua':true,'digi':true};
-  var GROUP_OTROS_IMP={'otros_seg':true,'seg_vida':true};
+  var GROUP_OTROS_IMP={'otros_seg':true,'seg_vida':true,'donaciones':true};
 
   function _gastosGroup(filterFn){
     var shown=false;
@@ -115,12 +115,12 @@ function renderEconGastos(){
 
   // Grupo 3.5: otros gastos importantes (seguros, etc.)
   var hasOtrosImp=_gastosGroup(function(g){return !!GROUP_OTROS_IMP[g.id];});
-  if(hasOtrosImp)h+=gastosResultRow('Tras otros gastos importantes',running,running>0?'var(--c-green)':'var(--c-red)');
+  if(hasOtrosImp)h+=gastosResultRow('Tras otros gastos desgravables',running,running>0?'var(--c-green)':'var(--c-red)');
 
   // Grupo 4: otros (custom items no reconocidos)
   _gastosGroup(function(g){return g.id!=='cot_social'&&!GROUP_SEMIOBL[g.id]&&!GROUP_CASA[g.id]&&!GROUP_OTROS_IMP[g.id];});
 
-  h+=gastosResultRow('Neto disponible estimado',running,running>0?'var(--c-green)':'var(--c-red)');
+  h+=gastosResultRow('Disponible para gastos personales',running,running>0?'var(--c-green)':'var(--c-red)');
   h+='</div></div>';
 
   /* Nota configurabilidad */
@@ -265,7 +265,7 @@ function renderIncomeDistrib(e,dr){
       +'<div class="econ-distrib-bar-wrap"><div class="econ-distrib-bar" style="width:'+p+'%;background:'+color+'"></div></div>'
       +'</div>';
   }
-  var GROUP_S={'asesoria':true,'seg_baja':true,'seg_salud':true,'otros_seg':true,'seg_vida':true};
+  var GROUP_S={'asesoria':true,'seg_baja':true,'seg_salud':true,'otros_seg':true,'seg_vida':true,'donaciones':true};
   var GROUP_C={'hipoteca':true,'comunidad':true,'seg_hogar':true,'ibi':true,'luz':true,'gas':true,'agua':true,'digi':true};
   var ccss=0,semiobl=0,gasaCasa=0,otrosG=0;
   GASTOS_ITEMS.forEach(function(g){
@@ -343,7 +343,7 @@ function renderIncomeDonut(e,dr){
   if(bruto<=0)return '';
   var irpfPag=Math.round((e.totIrpf+Math.max(0,dr.declDiff))*100)/100;
   var totalImp=Math.round((irpfPag+e.totIva)*100)/100;
-  var GROUP_S2={'asesoria':true,'seg_baja':true,'seg_salud':true,'otros_seg':true,'seg_vida':true};
+  var GROUP_S2={'asesoria':true,'seg_baja':true,'seg_salud':true,'otros_seg':true,'seg_vida':true,'donaciones':true};
   var GROUP_C2={'hipoteca':true,'comunidad':true,'seg_hogar':true,'ibi':true,'luz':true,'gas':true,'agua':true,'digi':true};
   var ccss2=0,semi2=0,casa2=0,otros2=0;
   GASTOS_ITEMS.forEach(function(g){var a=gastoAnual(g.id);if(g.id==='cot_social')ccss2+=a;else if(GROUP_S2[g.id])semi2+=a;else if(GROUP_C2[g.id])casa2+=a;else otros2+=a;});

@@ -13,6 +13,13 @@ var ECON_COMP_COLORS=['#34d399','#6c8cff','#fb923c','#c084fc'];
 var SC_LABELS=['A','B','C','D'];
 var ECON_COMP_CALC=false; // true = mostrar tabla (esperando Calcular)
 
+/* Genera array de 12 meses con neto uniforme para asalariado (14 pagas repartidas en 12) */
+function _salaryMonths(sal){
+  var monthly=Math.round(sal.netoAnual/12*100)/100;
+  var arr=[];for(var i=0;i<12;i++)arr.push({neto:monthly});
+  return arr;
+}
+
 function loadEconComp(){
   try{
     var r=localStorage.getItem(ECON_COMP_SK);
@@ -86,15 +93,19 @@ function renderEconComp(){
     h+='<div class="econ-opt-row" id="ecScType'+i+'">';
     h+='<button class="econ-opt-btn'+(sc.rateType==='daily'?' active':'')+'" data-sci="'+i+'" data-field="type" data-val="daily">&#8364;/d&#237;a</button>';
     h+='<button class="econ-opt-btn'+(sc.rateType==='hourly'?' active':'')+'" data-sci="'+i+'" data-field="type" data-val="hourly">&#8364;/hora</button>';
+    h+='<button class="econ-opt-btn'+(sc.rateType==='salary'?' active':'')+'" data-sci="'+i+'" data-field="type" data-val="salary">N\u00f3mina</button>';
     h+='</div>';
-    h+='<input class="econ-sc-val-input" data-sci="'+i+'" data-field="value" type="number" min="0.01" step="1" value="'+sc.rateValue+'" style="margin-top:5px">';
+    var _plh=sc.rateType==='salary'?'Salario bruto anual \u20ac':sc.rateType==='hourly'?'\u20ac/hora':'\u20ac/d\u00eda';
+    h+='<input class="econ-sc-val-input" data-sci="'+i+'" data-field="value" type="number" min="0.01" step="1" value="'+sc.rateValue+'" placeholder="'+_plh+'" style="margin-top:5px">';
     h+='</div>';
-    // Modo horas: opt buttons
+    // Modo horas: opt buttons (ocultar si nómina)
+    if(sc.rateType!=='salary'){
     h+='<div style="margin-top:6px">';
     h+='<div class="econ-opt-row" id="ecScMode'+i+'">';
     h+='<button class="econ-opt-btn'+(sc.hoursMode==='real'?' active':'')+'" data-sci="'+i+'" data-field="mode" data-val="real">Horas reales</button>';
     h+='<button class="econ-opt-btn'+(sc.hoursMode==='8h'?' active':'')+'" data-sci="'+i+'" data-field="mode" data-val="8h">8h fijas/d&#237;a</button>';
     h+='</div></div>';
+    }
     h+='</div>';
   });
   if(ECON_SCENARIOS.length<4){h+='<button class="econ-add-sc-btn" id="ecAddScenario">+ A&#241;adir escenario</button>';}
@@ -104,25 +115,39 @@ function renderEconComp(){
 
   if(!ECON_COMP_CALC){return h;}
 
-  // Calcular resultados
+  // Calcular resultados (autónomo o asalariado según rateType)
   var results=ECON_SCENARIOS.map(function(sc){
+    if(sc.rateType==='salary'){
+      var sal=computeSalaryNet(sc.rateValue||0);
+      // Adaptar a formato compatible con la tabla
+      return{netoReal:sal.netoAnual,totBase:sal.brutAnual,totIrpf:sal.irpfRetenido,
+        totIva:0,totCobrado:sal.netoAnual,ssEmpleado:sal.ssEmpleado,
+        ssEmpleador:sal.ssEmpleador,costeEmpresa:sal.costeEmpresa,
+        _salary:true,months:_salaryMonths(sal)};
+    }
     return computeEconEx(ECON_YEAR,{rateType:sc.rateType,rateValue:sc.rateValue,hoursMode:sc.hoursMode});
   });
 
   // Tabla comparativa
+  var hasSalary=results.some(function(r){return r._salary;});
   h+='<div class="sy-section"><div class="sy-section-title">Tabla comparativa (&#916; relativo a '+ECON_SCENARIOS[0].label+')</div>';
   h+='<div style="overflow-x:auto"><table class="econ-comp-table"><thead><tr>';
   h+='<th>Concepto</th>';
-  ECON_SCENARIOS.forEach(function(sc,i){h+='<th style="color:'+ECON_COMP_COLORS[i]+'">'+sc.label+'</th>';});
+  ECON_SCENARIOS.forEach(function(sc,i){h+='<th style="color:'+ECON_COMP_COLORS[i]+'">'+sc.label+(sc.rateType==='salary'?' \ud83d\udcbc':'')+'</th>';});
   for(var j=1;j<ECON_SCENARIOS.length;j++){
     h+='<th style="color:'+ECON_COMP_COLORS[j]+'">&#916;'+ECON_SCENARIOS[j].label+'</th>';
   }
   h+='</tr></thead><tbody>';
-  [{key:'netoReal',label:'Neto anual'},{key:'totBase',label:'Base imponible'},{key:'totIrpf',label:'IRPF retenido'},{key:'totIva',label:'IVA generado'},{key:'totCobrado',label:'Ingresado cuenta'}].forEach(function(row){
+  var _rows=[{key:'netoReal',label:'Neto anual'},{key:'totBase',label:'Bruto / Base'},{key:'totIrpf',label:'IRPF'}];
+  if(hasSalary)_rows.push({key:'ssEmpleado',label:'SS empleado'});
+  _rows.push({key:'totIva',label:'IVA'});
+  _rows.push({key:'totCobrado',label:'Ingresado cuenta'});
+  if(hasSalary)_rows.push({key:'ssEmpleador',label:'SS empleador (info)'},{key:'costeEmpresa',label:'Coste empresa (info)'});
+  _rows.forEach(function(row){
     h+='<tr><td>'+row.label+'</td>';
-    results.forEach(function(r){h+='<td>'+fc(r[row.key])+'</td>';});
+    results.forEach(function(r){var v=r[row.key]||0;h+='<td>'+fc(v)+'</td>';});
     for(var j=1;j<results.length;j++){
-      var diff=Math.round((results[j][row.key]-results[0][row.key])*100)/100;
+      var diff=Math.round(((results[j][row.key]||0)-(results[0][row.key]||0))*100)/100;
       h+='<td class="'+(diff>0?'pos':diff<0?'neg':'')+'">'+(diff>0?'+':'')+fc(diff)+'</td>';
     }
     h+='</tr>';
