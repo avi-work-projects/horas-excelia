@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v88 \u2014 despacho reglas AEAT correctas, bot\u00f3n Base en calculadora tarifa';
+var APP_VERSION = 'v90 \u2014 gear en header, tema fiscal morado, quitar cuota desgrav, fix VIP bday';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

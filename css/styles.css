@@ -348,8 +348,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .econ-hdr-sub{flex-shrink:0;display:flex;align-items:stretch;padding:5px 6px;gap:5px;box-shadow:0 1px 0 var(--border);overflow-x:hidden;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 .econ-tab-btn{flex:1;font-size:.56rem;padding:5px 2px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;text-align:center;line-height:1.35;white-space:normal;word-break:break-word}
 .econ-tab-btn.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
-.econ-gear-btn{flex-shrink:0;width:36px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text-muted);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-user-select:none;user-select:none;transition:all .15s}
-.econ-gear-btn:active{background:var(--surface3)}
+.econ-gear-btn{flex-shrink:0;width:36px;border:1px solid #c084fc55;border-radius:8px;background:#c084fc18;color:#c084fc;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-user-select:none;user-select:none;transition:all .15s}
+.econ-gear-btn:active{background:#c084fc33}
+.econ-hdr-note{flex-shrink:0;font-size:.62rem;color:var(--text-dim);max-width:80px;line-height:1.25;padding:0 2px;align-self:center}
 /* §1.1 Tarifa dual */
 .econ-rate-dual{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px}
 .econ-rate-field{flex:1;display:flex;flex-direction:column;gap:3px}
@@ -450,7 +451,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .fiscal-bracket-del{width:26px;height:26px;border:none;background:transparent;color:var(--c-red);font-size:.85rem;cursor:pointer;border-radius:6px;vertical-align:middle}
 .fiscal-add-btn{width:100%;margin-top:8px;padding:7px;border:1.5px dashed var(--border);border-radius:var(--radius-sm);background:transparent;color:var(--text-muted);font-size:.8rem;cursor:pointer;transition:all .15s}
 .fiscal-add-btn:active{background:var(--surface2)}
-.fiscal-save-btn{width:100%;padding:12px;background:var(--accent);border:none;border-radius:var(--radius-sm);color:#fff;font-size:.9rem;font-weight:700;cursor:pointer;margin-top:12px;transition:opacity .15s}
+.fiscal-save-btn{width:100%;padding:12px;background:#c084fc;border:none;border-radius:var(--radius-sm);color:#fff;font-size:.9rem;font-weight:700;cursor:pointer;margin-top:12px;transition:opacity .15s}
 .fiscal-save-btn:active{opacity:.8}
 .fiscal-error{color:var(--c-red);font-size:.78rem;padding:4px 0}
 
@@ -531,11 +532,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .fiscal-period-btn.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
 .fiscal-gasto-del{width:22px;height:22px;border:none;background:transparent;color:var(--c-red);font-size:.8rem;cursor:pointer;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 /* Fiscal: tab bar */
-.fiscal-tab-bar{flex-shrink:0;display:flex;align-items:stretch;padding:5px 6px;gap:5px;box-shadow:0 1px 0 var(--border);background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.fiscal-hdr{box-shadow:0 1px 0 #c084fc33;border-top:2px solid #c084fc}
+.fiscal-tab-bar{flex-shrink:0;display:flex;align-items:stretch;padding:5px 6px;gap:5px;box-shadow:0 1px 0 #c084fc33;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 .fiscal-tab-btn{flex:1;font-size:.56rem;padding:5px 2px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;text-align:center;line-height:1.35;white-space:normal;word-break:break-word}
-.fiscal-tab-btn.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
+.fiscal-tab-btn.active{border-color:#c084fc;background:#c084fc18;color:#c084fc}
 /* Fiscal: sticky save */
-.fiscal-sticky-save{flex-shrink:0;padding:10px 16px 14px;border-top:1px solid var(--border);background:var(--surface)}
+.fiscal-sticky-save{flex-shrink:0;padding:10px 16px 14px;border-top:1px solid #c084fc33;background:var(--surface)}
 /* Fiscal: section title income/expense colors */
 .fiscal-section-title.income{color:var(--c-green)}
 .fiscal-section-title.expense{color:var(--c-red)}

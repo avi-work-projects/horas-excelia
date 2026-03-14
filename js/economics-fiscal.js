@@ -3,10 +3,17 @@
    ============================================================ */
 
 var FISCAL_SK='excelia-fiscal-v1';
+/* Tramos combinados (estatal + auton\u00f3mico Madrid) 2025.
+   Los l\u00edmites de la escala estatal y la de Madrid no coinciden, por lo que se generan
+   sub-tramos en cada punto donde cambia alguno de los dos tipos.
+   Estatal: 0-12450 9.5% | 12450-20200 12% | 20200-35200 15% | 35200-60000 18.5% | 60000-300000 22.5% | 300000+ 24.5%
+   Madrid:  0-13362 8.5% | 13362-19005 10.7% | 19005-35426 12.8% | 35426-57320 17.4% | 57320+ 20.5% */
 var DEFAULT_BRACKETS=[
-  {from:0,to:12450,pct:19},{from:12450,to:20200,pct:24},
-  {from:20200,to:35200,pct:30},{from:35200,to:60000,pct:37},
-  {from:60000,to:300000,pct:45},{from:300000,to:Infinity,pct:47}
+  {from:0,to:12450,pct:18},{from:12450,to:13362,pct:20.5},
+  {from:13362,to:19005,pct:22.7},{from:19005,to:20200,pct:24.8},
+  {from:20200,to:35200,pct:27.8},{from:35200,to:35426,pct:31.3},
+  {from:35426,to:57320,pct:35.9},{from:57320,to:60000,pct:39},
+  {from:60000,to:300000,pct:43},{from:300000,to:Infinity,pct:45}
 ];
 var FISCAL={irpfMode:'fixed',irpfPct:15,brackets:null};
 
@@ -179,23 +186,21 @@ function comprasIvaTotal(q){
 var DESGRAV_SK='excelia-desgrav-v1';
 /* type: 'base' = reduce la base imponible | 'quota' = reduce directamente la cuota IRPF */
 var DESGRAV_DEFAULT=[
-  {id:'plan_pension',label:'Plan de pensiones',amount:0,limit:5500,enabled:true,type:'base',
-   note:'Hasta 5.500\u20ac/a\u00f1o para aut\u00f3nomos con plan de empleo simplificado (R\u00e9gimen General: 1.500\u20ac + 4.000\u20ac adicionales empresariales).'},
+  {id:'plan_pension',label:'Plan de pensiones',amount:0,limit:5750,enabled:true,type:'base',
+   note:'Hasta 5.750\u20ac/a\u00f1o para aut\u00f3nomos con plan de empleo simplificado (1.500\u20ac individuales + 4.250\u20ac adicionales).'},
   {id:'cuota_autonomos',label:'Cuota aut\u00f3nomos (SS)',gastoLink:'cot_social',pct:100,amount:0,limit:null,enabled:true,type:'base',
    note:'100% deducible como gasto de la actividad econ\u00f3mica.'},
   {id:'asesoria_deduc',label:'Asesor\u00eda / gestor\u00eda',gastoLink:'asesoria',pct:100,amount:0,limit:null,enabled:true,type:'base',
    note:'100% deducible como gasto de la actividad econ\u00f3mica.'},
   {id:'seg_salud_titular',label:'Seguro salud (titular)',gastoLink:'seg_salud',pct:100,amount:0,limit:500,enabled:true,type:'base',
-   note:'Deducci\u00f3n en cuota IRPF: hasta 500\u20ac/a\u00f1o por la prima pagada.'},
+   note:'Gasto deducible en base imponible: hasta 500\u20ac/a\u00f1o por persona (1.500\u20ac si discapacidad). Cubre titular, c\u00f3nyuge e hijos <25 dependientes.'},
   {id:'gastos_prof',label:'Compras / gastos profesionales',gastoLink:'_compras_total',pct:100,amount:0,limit:null,enabled:true,type:'base',
    note:'100% deducibles como inversi\u00f3n en la actividad. Introduce siempre importes sin IVA.'},
-  {id:'vivienda_madrid',label:'Vivienda habitual (Madrid)',amount:0,limit:9015,enabled:false,type:'quota',notaPct:15,
-   note:'Solo r\u00e9gimen transitorio (compra \u2264 31/12/2012). 15% de lo pagado en hipoteca (capital + intereses), base m\u00e1x. 9.015\u20ac/a\u00f1o \u2192 hasta ~1.352\u20ac de deducci\u00f3n directa en la cuota IRPF. Las otras deducciones de despacho (IBI, comunidad, suministros) se calculan en la pesta\u00f1a Despacho.'}
 ];
 var DESGRAV_ITEMS=[];
 
 function loadDesgrav(){
-  var OBSOLETE_IDS=['seg_salud_conyuge','seg_salud_hijos','colegio_prof','donativos'];
+  var OBSOLETE_IDS=['seg_salud_conyuge','seg_salud_hijos','colegio_prof','donativos','vivienda_madrid'];
   try{
     var r=localStorage.getItem(DESGRAV_SK);
     if(r){
@@ -214,8 +219,10 @@ function loadDesgrav(){
           if(def.pct!==undefined&&result[i].pct===undefined)result[i].pct=def.pct;
           if(def.type&&!result[i].type)result[i].type=def.type;
           if(def.notaPct&&!result[i].notaPct)result[i].notaPct=def.notaPct;
-          /* Corregir límite del plan de pensiones (1500 → 5500) */
-          if(def.id==='plan_pension'&&def.limit&&(result[i].limit==null||result[i].limit<def.limit))result[i].limit=def.limit;
+          /* Actualizar notas de items fijos */
+          if(def.note)result[i].note=def.note;
+          /* Corregir límite del plan de pensiones (→ 5750) */
+          if(def.id==='plan_pension'&&def.limit&&(result[i].limit==null||result[i].limit<def.limit)){result[i].limit=def.limit;result[i].note=def.note;}
           break;
         }
       });
@@ -305,8 +312,9 @@ function computeDespachoDeduccion(){
 /* ── computeDeclResult — cálculo unificado para declaración ── */
 function computeDeclResult(base,irpfTotal){
   var gdPct=typeof GASTOS_DIFICIL_PCT!=='undefined'?GASTOS_DIFICIL_PCT:5;
-  var baseAfterGD=Math.max(0,Math.round((base*(1-gdPct/100))*100)/100);
-  var gdAmount=Math.round((base-baseAfterGD)*100)/100;
+  var gdAmount=Math.round(base*gdPct/100*100)/100;
+  if(gdAmount>2000)gdAmount=2000; /* tope legal AEAT: máx 2.000€/año (est. directa simplificada) */
+  var baseAfterGD=Math.max(0,Math.round((base-gdAmount)*100)/100);
   var dg=computeTotalDesgrav();
   var totalBaseDesgrav=dg.base;
   var totalQuotaDesgrav=dg.quota;
@@ -352,9 +360,9 @@ function computeIrpfBrackets(base){
 /* ── renderFiscalContent — con tabs ──────────────────────── */
 function renderFiscalContent(){
   var h=renderNavBar('econ');
-  h+='<div class="sy-header with-tabs">';
+  h+='<div class="sy-header with-tabs fiscal-hdr">';
   h+='<button class="sy-back" id="fiscalBack">&#8592;</button>';
-  h+='<div class="sy-year" style="font-size:.9rem">&#9965; Configuraci\u00f3n Fiscal</div>';
+  h+='<div class="sy-year" style="font-size:.9rem;color:#c084fc">&#9965; Configuraci\u00f3n Fiscal</div>';
   h+='</div>';
   h+='<div class="fiscal-tab-bar">';
   h+='<button class="fiscal-tab-btn'+(FISCAL_TAB==='irpf'?' active':'')+'" id="fiscalTabIrpf">Configuraci\u00f3n<br>IRPF</button>';
@@ -394,7 +402,7 @@ function renderFiscalTabIrpf(){
   h+='</div></div>';
   h+='<div class="fiscal-section">';
   h+='<div class="fiscal-section-title">Gastos de dif&#237;cil justificaci\u00f3n</div>';
-  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Reducci\u00f3n sobre la base imponible para el c\u00e1lculo de la declaraci\u00f3n IRPF (est. directa simplificada).</div>';
+  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Reducci\u00f3n sobre la base imponible para el c\u00e1lculo de la declaraci\u00f3n IRPF (est. directa simplificada). Tope legal: 2.000\u20ac/a\u00f1o.</div>';
   h+='<div class="econ-gastos-dificil-row">';
   h+='<span style="font-size:.82rem;color:var(--text-muted);flex:1">% sobre base imponible:</span>';
   h+='<input class="econ-gastos-dificil-input" id="gastosDificilInput" type="number" min="0" max="15" step="0.5" value="'+GASTOS_DIFICIL_PCT+'">';
@@ -402,7 +410,7 @@ function renderFiscalTabIrpf(){
   h+='</div></div>';
   h+='<div class="fiscal-section">';
   h+='<div class="fiscal-section-title">Tramos IRPF \u2014 Declaraci\u00f3n de la renta</div>';
-  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Tramos estatales 2025 por defecto. Se aplican sobre la base reducida.</div>';
+  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Tramos combinados (estatal + Comunidad de Madrid) 2025. Los l\u00edmites de ambas escalas no coinciden, por lo que se generan sub-tramos en cada cambio de tipo. Se aplican sobre la base reducida.</div>';
   h+='<div style="overflow-x:auto"><table class="fiscal-bracket-table" id="fiscalBracketTable">';
   h+='<thead><tr><th style="text-align:left">Desde (&#8364;)</th><th>Hasta (&#8364;)</th><th>Tipo (%)</th><th></th></tr></thead><tbody>';
   for(var i=0;i<brackets.length;i++){
@@ -417,7 +425,7 @@ function renderFiscalTabIrpf(){
   h+='</tbody></table></div>';
   h+='<button class="fiscal-add-btn" id="fiscalAddBracket">+ A\u00f1adir tramo</button>';
   h+='</div>';
-  h+='<button class="econ-toggle-btn" id="fiscalRestore" style="margin-bottom:8px;color:var(--text-muted)">&#8635; Restaurar tramos 2025 por defecto</button>';
+  h+='<button class="econ-toggle-btn" id="fiscalRestore" style="margin-bottom:8px;color:var(--text-muted)">&#8635; Restaurar tramos Madrid 2025 por defecto</button>';
   return h;
 }
 
@@ -508,26 +516,15 @@ function renderFiscalTabDesgrav(){
   var h='';
   h+='<div class="fiscal-section">';
   h+='<div class="fiscal-section-title">Desgravaciones IRPF \u2014 Declaraci\u00f3n de la Renta</div>';
-  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:10px">Partidas que reducen la base imponible (o la cuota directamente) en la declaraci\u00f3n. Los items marcados con <em>&#128279;</em> se calculan autom\u00e1ticamente desde tus gastos.</div>';
-  if(dg.total>0){
-    h+='<div class="fiscal-desgrav-total">';
-    if(dg.base>0)h+='Reducci\u00f3n de base: <b>'+fcPlain(dg.base)+'</b>';
-    if(dg.base>0&&dg.quota>0)h+=' \u00b7 ';
-    if(dg.quota>0)h+='Deducci\u00f3n en cuota: <b>'+fcPlain(dg.quota)+'</b>';
-    h+='</div>';
+  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:10px">Partidas que reducen la base imponible en la declaraci\u00f3n. Los items marcados con <em>&#128279;</em> se calculan autom\u00e1ticamente desde tus gastos.</div>';
+  if(dg.base>0){
+    h+='<div class="fiscal-desgrav-total">Reducci\u00f3n de base: <b>'+fcPlain(dg.base)+'</b></div>';
   }
-  /* Items tipo 'base' */
   var baseItems=DESGRAV_ITEMS.filter(function(it){return(it.type||'base')==='base';});
-  var quotaItems=DESGRAV_ITEMS.filter(function(it){return it.type==='quota';});
   if(baseItems.length){
     h+='<div class="fiscal-desgrav-group-title">Reducciones en base imponible</div>';
     h+='<div id="fiscalDesgravList">'+renderDesgravList(baseItems,'base')+'</div>';
-  }
-  if(quotaItems.length){
-    h+='<div class="fiscal-desgrav-group-title quota">Deducciones en cuota (reducen el impuesto directamente)</div>';
-    h+='<div id="fiscalDesgravListQuota">'+renderDesgravList(quotaItems,'quota')+'</div>';
-  }
-  if(!baseItems.length&&!quotaItems.length){
+  } else {
     h+='<div id="fiscalDesgravList">'+renderDesgravList([],'base')+'</div>';
   }
   h+='<button class="fiscal-add-btn" id="fiscalAddDesgrav">+ A\u00f1adir desgravaci\u00f3n</button>';
