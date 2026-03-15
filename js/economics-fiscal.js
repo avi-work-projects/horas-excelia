@@ -29,6 +29,35 @@ function _yearKey(base,year){return base+'-'+year;}
 var PERSONAL_SK='excelia-personal-v1';
 var PERSONAL_DATA={gastosRecurrentes:[],gastosSemanales:[],inversiones:[],ingresos:[]};
 
+var DEFAULT_PERSONAL_GASTOS_REC=[
+  {id:'baile_def',label:'Baile',amount:0,period:'monthly'},
+  {id:'spotify_def',label:'Spotify',amount:0,period:'monthly'},
+  {id:'netflix_def',label:'Netflix',amount:0,period:'monthly'},
+  {id:'viajes_def',label:'Viajes',amount:0,period:'annual',_viaje:true,viajeFilter:'all'}
+];
+var DEFAULT_PERSONAL_INVERSIONES=[
+  {id:'fi_amundi_world',label:'F. Index. Amundi World',amount:0,period:'monthly'},
+  {id:'fi_amundi_emerg',label:'F. Index. Amundi Emergents',amount:0,period:'monthly'},
+  {id:'fi_amundi_sp500',label:'F. Index. Amundi SP-500',amount:0,period:'monthly'},
+  {id:'fi_renta_fija',label:'F. Index. Renta Fija',amount:0,period:'monthly'},
+  {id:'deposito_tr',label:'Dep\u00f3sito T.R. - 2%',amount:0,period:'monthly'}
+];
+function _ensureDefaults(data){
+  /* Ensure default gastosRecurrentes */
+  DEFAULT_PERSONAL_GASTOS_REC.forEach(function(def){
+    var exists=data.gastosRecurrentes.some(function(it){return it.id===def.id;});
+    if(!exists)data.gastosRecurrentes.push(JSON.parse(JSON.stringify(def)));
+  });
+  /* Ensure default inversiones */
+  DEFAULT_PERSONAL_INVERSIONES.forEach(function(def){
+    var exists=data.inversiones.some(function(it){return it.id===def.id;});
+    if(!exists)data.inversiones.push(JSON.parse(JSON.stringify(def)));
+  });
+  /* Ensure _viaje flag on viajes_def */
+  data.gastosRecurrentes.forEach(function(it){
+    if(it.id==='viajes_def'){it._viaje=true;if(!it.viajeFilter)it.viajeFilter='all';}
+  });
+}
 function loadPersonalYear(year){
   try{
     var k=_yearKey(PERSONAL_SK,year);
@@ -43,6 +72,7 @@ function loadPersonalYear(year){
       }
     }
   }catch(e){PERSONAL_DATA={gastosRecurrentes:[],gastosSemanales:[],inversiones:[],ingresos:[]};}
+  _ensureDefaults(PERSONAL_DATA);
 }
 function savePersonalYear(year){
   try{localStorage.setItem(_yearKey(PERSONAL_SK,year),JSON.stringify(PERSONAL_DATA));}catch(e){}
@@ -300,7 +330,7 @@ function computeTotalDesgrav(){
 var DESPACHO_SK='excelia-despacho-v1';
 var DESPACHO={enabled:true,m2Total:0,m2Despacho:0,pct:0,valorCatastral:0,valorCompra:0,hipotecaIntereses:0,compra:null};
 
-function _defaultCompra(){return{valorCompraTotal:0,itpMadrid:0,notariaRegistro:0,tasacion:0,reformas:0,importePrestamo:0,tipoInteres:0,plazoAnios:0};}
+function _defaultCompra(){return{valorCompraTotal:0,itpMadrid:0,notariaRegistro:0,tasacion:0,reformas:0,inmobiliaria:0,importePrestamo:0,tipoInteres:0,plazoAnios:0};}
 function loadDespacho(){
   try{
     var r=localStorage.getItem(DESPACHO_SK);
@@ -456,69 +486,101 @@ function _renderCopyYearBtn(){
 }
 
 /* ── Tab Economía Personal (per-year) ─────────────────────── */
-function _personalListHtml(arr,section,showPeriod){
+function _personalListHtml(arr,section,periodMode){
+  /* periodMode: 'weekly'=/sem|/mes, 'monthly'=/mes|/año, 'viaje'=special viaje selector */
   var h='';
   arr.forEach(function(item,i){
     h+='<div class="fiscal-gasto-item" data-ps="'+section+'" data-pi="'+i+'">';
     h+='<input class="fiscal-gasto-lbl-input" data-ps="'+section+'" data-pi="'+i+'" data-pf="label" value="'+escHtml(item.label)+'" placeholder="Nombre...">';
     h+='<input class="fiscal-gasto-amt" data-ps="'+section+'" data-pi="'+i+'" data-pf="amount" type="number" min="0" step="1" value="'+(item.amount||0)+'">';
-    if(showPeriod){
+    if(periodMode==='weekly'){
       h+='<div class="fiscal-gasto-period">';
+      h+='<button class="fiscal-period-btn'+(item.period==='weekly'||!item.period?' active':'')+'" data-ps="'+section+'" data-pi="'+i+'" data-pf="period" data-val="weekly">/sem</button>';
       h+='<button class="fiscal-period-btn'+(item.period==='monthly'?' active':'')+'" data-ps="'+section+'" data-pi="'+i+'" data-pf="period" data-val="monthly">/mes</button>';
+      h+='</div>';
+    }else if(periodMode==='monthly'){
+      h+='<div class="fiscal-gasto-period">';
+      h+='<button class="fiscal-period-btn'+(item.period==='monthly'||!item.period?' active':'')+'" data-ps="'+section+'" data-pi="'+i+'" data-pf="period" data-val="monthly">/mes</button>';
       h+='<button class="fiscal-period-btn'+(item.period==='annual'?' active':'')+'" data-ps="'+section+'" data-pi="'+i+'" data-pf="period" data-val="annual">/a\u00f1o</button>';
       h+='</div>';
-    }else{
-      h+='<span class="fiscal-gasto-period-static">/sem</span>';
     }
     h+='<button class="fiscal-gasto-del fiscal-personal-del" data-ps="'+section+'" data-pi="'+i+'">&#10005;</button>';
     h+='</div>';
+    /* Viaje event selector */
+    if(item._viaje){
+      var evList=typeof EVENTS!=='undefined'?EVENTS.filter(function(ev){return ev.title&&ev.title.length>0;}):[];
+      h+='<div class="fiscal-viaje-selector" data-ps="'+section+'" data-pi="'+i+'">';
+      h+='<select class="fiscal-viaje-select" data-ps="'+section+'" data-pi="'+i+'" data-pf="viajeFilter">';
+      h+='<option value="all"'+((!item.viajeFilter||item.viajeFilter==='all')?' selected':'')+'>Todos los viajes</option>';
+      evList.forEach(function(ev){
+        h+='<option value="'+ev.id+'"'+(item.viajeFilter===ev.id?' selected':'')+'>'+escHtml(ev.title)+'</option>';
+      });
+      h+='</select></div>';
+    }
   });
   return h;
 }
-function _personalTotal(arr,isWeekly){
+function _personalTotal(arr){
   var t=0;
   arr.forEach(function(item){
     if(!item.amount)return;
-    if(isWeekly)t+=item.amount*52;
-    else t+=item.period==='monthly'?item.amount*12:item.amount;
+    if(item.period==='weekly'||!item.period&&item._isWeeklySection)t+=item.amount*52;
+    else if(item.period==='annual')t+=item.amount;
+    else t+=item.amount*12; /* monthly default */
+  });
+  return Math.round(t*100)/100;
+}
+function _personalTotalWeekly(arr){
+  var t=0;
+  arr.forEach(function(item){
+    if(!item.amount)return;
+    if(item.period==='monthly')t+=item.amount*12;
+    else t+=item.amount*52; /* weekly default */
   });
   return Math.round(t*100)/100;
 }
 function renderFiscalTabPersonal(){
   var h=_renderYearSelector();
   h+=_renderCopyYearBtn();
-  /* 1. Gastos Recurrentes Personales */
+  /* 1. Gastos Recurrentes Personales (merged: semanales first, then recurrentes) */
   h+='<div class="fiscal-section">';
   h+='<div class="fiscal-section-title expense">Gastos Recurrentes Personales</div>';
-  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Alquiler, suscripciones, transporte, comida, seguros personales, etc.</div>';
-  h+='<div id="personalGastosRec">'+_personalListHtml(PERSONAL_DATA.gastosRecurrentes,'gastosRecurrentes',true)+'</div>';
+  /* 1a. Sub-sección: Ocio y gastos semanales */
+  h+='<div class="fiscal-subsection">';
+  h+='<div class="fiscal-subsection-title">Ocio y gastos semanales</div>';
+  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Ocio, restaurantes, compras peque\u00f1as. Selecciona /sem o /mes.</div>';
+  h+='<div id="personalGastosSem">'+_personalListHtml(PERSONAL_DATA.gastosSemanales,'gastosSemanales','weekly')+'</div>';
+  var tGS=_personalTotalWeekly(PERSONAL_DATA.gastosSemanales);
+  if(tGS>0)h+='<div class="fiscal-compras-total">Total anual: <b>'+fcPlain(tGS)+'</b> ('+fcPlain(Math.round(tGS/12*100)/100)+'/mes)</div>';
+  h+='<button class="fiscal-add-btn fiscal-add-btn-expense" data-padd="gastosSemanales">+ A\u00f1adir gasto semanal</button>';
+  h+='</div>';
+  /* 1b. Gastos recurrentes mensuales/anuales */
+  h+='<div class="fiscal-subsection">';
+  h+='<div class="fiscal-subsection-title">Suscripciones y otros</div>';
+  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Suscripciones, transporte, seguros personales, etc.</div>';
+  h+='<div id="personalGastosRec">'+_personalListHtml(PERSONAL_DATA.gastosRecurrentes,'gastosRecurrentes','monthly')+'</div>';
   var tGR=_personalTotal(PERSONAL_DATA.gastosRecurrentes);
   if(tGR>0)h+='<div class="fiscal-compras-total">Total anual: <b>'+fcPlain(tGR)+'</b></div>';
   h+='<button class="fiscal-add-btn fiscal-add-btn-expense" data-padd="gastosRecurrentes">+ A\u00f1adir gasto</button>';
   h+='</div>';
-  /* 2. Gastos Semanales */
-  h+='<div class="fiscal-section">';
-  h+='<div class="fiscal-section-title expense">Gastos Semanales</div>';
-  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Ocio, restaurantes, compras peque\u00f1as. Importe en \u20ac/semana.</div>';
-  h+='<div id="personalGastosSem">'+_personalListHtml(PERSONAL_DATA.gastosSemanales,'gastosSemanales',false)+'</div>';
-  var tGS=_personalTotal(PERSONAL_DATA.gastosSemanales,true);
-  if(tGS>0)h+='<div class="fiscal-compras-total">Total anual: <b>'+fcPlain(tGS)+'</b> ('+fcPlain(Math.round(tGS/12*100)/100)+'/mes)</div>';
-  h+='<button class="fiscal-add-btn fiscal-add-btn-expense" data-padd="gastosSemanales">+ A\u00f1adir gasto semanal</button>';
+  /* Total combinado */
+  var tCombined=tGS+tGR;
+  if(tCombined>0)h+='<div class="fiscal-compras-total" style="border-top:1px solid var(--border);padding-top:8px;margin-top:4px"><b>Total gastos recurrentes anual: '+fcPlain(tCombined)+'</b></div>';
   h+='</div>';
-  /* 3. Inversiones Recurrentes */
+  /* 2. Inversiones Recurrentes */
   h+='<div class="fiscal-section">';
   h+='<div class="fiscal-section-title income">Inversiones Recurrentes</div>';
-  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Planes de ahorro, fondos, DCA crypto, etc.</div>';
-  h+='<div id="personalInversiones">'+_personalListHtml(PERSONAL_DATA.inversiones,'inversiones',true)+'</div>';
+  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Planes de ahorro, fondos indexados, DCA crypto, etc.</div>';
+  h+='<div id="personalInversiones">'+_personalListHtml(PERSONAL_DATA.inversiones,'inversiones','monthly')+'</div>';
   var tInv=_personalTotal(PERSONAL_DATA.inversiones);
   if(tInv>0)h+='<div class="fiscal-compras-total">Total anual: <b>'+fcPlain(tInv)+'</b></div>';
   h+='<button class="fiscal-add-btn fiscal-add-btn-income" data-padd="inversiones">+ A\u00f1adir inversi\u00f3n</button>';
   h+='</div>';
-  /* 4. Ingresos (migrado) */
+  /* 3. Ingresos (migrado) */
   h+='<div class="fiscal-section">';
   h+='<div class="fiscal-section-title income">Ingresos Regulares</div>';
   h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Ingresos recurrentes: alquileres, dividendos, pensiones, etc.</div>';
-  h+='<div id="personalIngresos">'+_personalListHtml(PERSONAL_DATA.ingresos,'ingresos',true)+'</div>';
+  h+='<div id="personalIngresos">'+_personalListHtml(PERSONAL_DATA.ingresos,'ingresos','monthly')+'</div>';
   var tIng=_personalTotal(PERSONAL_DATA.ingresos);
   if(tIng>0)h+='<div class="fiscal-compras-total">Total anual: <b>'+fcPlain(tIng)+'</b></div>';
   h+='<button class="fiscal-add-btn fiscal-add-btn-income" data-padd="ingresos">+ A\u00f1adir ingreso</button>';
@@ -818,9 +880,10 @@ function renderFiscalTabDespacho(){
   h+=_despFieldMoney('compraNotaria','Notar\u00eda y registro',comp.notariaRegistro);
   h+=_despFieldMoney('compraTasacion','Tasaci\u00f3n',comp.tasacion);
   h+=_despFieldMoney('compraReformas','Reformas',comp.reformas);
+  h+=_despFieldMoney('compraInmobiliaria','Inmobiliaria (no afecta al ITP)',comp.inmobiliaria||0);
   h+='</div>';
   /* Info total inversión */
-  var totalCompra=(comp.valorCompraTotal||0)+(comp.itpMadrid||0)+(comp.notariaRegistro||0)+(comp.tasacion||0)+(comp.reformas||0);
+  var totalCompra=(comp.valorCompraTotal||0)+(comp.itpMadrid||0)+(comp.notariaRegistro||0)+(comp.tasacion||0)+(comp.reformas||0)+(comp.inmobiliaria||0);
   if(totalCompra>0){
     h+='<div class="fiscal-compras-total" style="margin-top:6px">Inversi\u00f3n total: <b>'+_fmtMiles(totalCompra)+' \u20ac</b></div>';
   }
@@ -983,22 +1046,26 @@ function _bindYearSelector(){
 }
 
 function _bindTabPersonal(){
-  /* Event delegation for all 4 sections */
+  /* Event delegation for all sections */
   var fCont=document.getElementById('fiscalContent');
   var body=fCont?fCont.querySelector('.sy-body'):null;
   if(!body||body._personalDel)return;
   body._personalDel=true;
-  /* Add buttons */
+  /* Add buttons — preserve scroll position */
   body.addEventListener('click',function(e){
     var addBtn=e.target.closest('[data-padd]');
     if(addBtn){
       var sec=addBtn.dataset.padd;
       var isWeekly=sec==='gastosSemanales';
       var newItem={id:sec+'_'+Date.now(),label:'',amount:0};
-      if(!isWeekly)newItem.period='monthly';
+      if(isWeekly)newItem.period='weekly';
+      else newItem.period='monthly';
       PERSONAL_DATA[sec].push(newItem);
+      var scrollTop=body.scrollTop;
       document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
       bindFiscalEvents();
+      var newBody=document.getElementById('fiscalContent').querySelector('.sy-body');
+      if(newBody)newBody.scrollTop=scrollTop;
       return;
     }
     /* Delete */
@@ -1006,8 +1073,11 @@ function _bindTabPersonal(){
     if(del){
       var sec=del.dataset.ps,pi=parseInt(del.dataset.pi,10);
       if(PERSONAL_DATA[sec])PERSONAL_DATA[sec].splice(pi,1);
+      var scrollTop=body.scrollTop;
       document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
       bindFiscalEvents();
+      var newBody=document.getElementById('fiscalContent').querySelector('.sy-body');
+      if(newBody)newBody.scrollTop=scrollTop;
       return;
     }
     /* Period toggle */
@@ -1026,6 +1096,7 @@ function _bindTabPersonal(){
     if(!sec||isNaN(pi)||!PERSONAL_DATA[sec]||!PERSONAL_DATA[sec][pi])return;
     if(field==='amount'){var v=parseFloat(el.value);PERSONAL_DATA[sec][pi].amount=isNaN(v)?0:v;}
     else if(field==='label'){PERSONAL_DATA[sec][pi].label=el.value||'';}
+    else if(field==='viajeFilter'){PERSONAL_DATA[sec][pi].viajeFilter=el.value||'all';}
   });
 }
 
@@ -1288,7 +1359,7 @@ function _bindTabDespacho(){
   if(!DESPACHO.compra)DESPACHO.compra=_defaultCompra();
   var _compraFieldMap={
     compraValor:'valorCompraTotal',compraItp:'itpMadrid',compraNotaria:'notariaRegistro',
-    compraTasacion:'tasacion',compraReformas:'reformas',compraImporte:'importePrestamo'
+    compraTasacion:'tasacion',compraReformas:'reformas',compraInmobiliaria:'inmobiliaria',compraImporte:'importePrestamo'
   };
   Object.keys(_compraFieldMap).forEach(function(domId){
     var el=document.getElementById('desp-'+domId);
@@ -1369,6 +1440,27 @@ function _saveFiscalAll(){
       });
       if(brackets.length>0)FISCAL.brackets=brackets;
     }
+  }
+  /* Leer valores despacho directamente del DOM (evita pérdida por re-render) */
+  if(FISCAL_TAB==='despacho'){
+    var _rv=function(id){var el=document.getElementById('desp-'+id);return el?parseFloat(el.value)||0:null;};
+    var v;
+    v=_rv('m2Total');if(v!==null)DESPACHO.m2Total=v;
+    v=_rv('m2Despacho');if(v!==null)DESPACHO.m2Despacho=v;
+    v=_rv('pct');if(v!==null)DESPACHO.pct=v;
+    v=_rv('valorCatastral');if(v!==null)DESPACHO.valorCatastral=v;
+    v=_rv('hipotecaIntereses');if(v!==null)DESPACHO.hipotecaIntereses=v;
+    if(!DESPACHO.compra)DESPACHO.compra=_defaultCompra();
+    v=_rv('compraValor');if(v!==null){DESPACHO.compra.valorCompraTotal=v;DESPACHO.valorCompra=v;}
+    v=_rv('compraItp');if(v!==null)DESPACHO.compra.itpMadrid=v;
+    v=_rv('compraNotaria');if(v!==null)DESPACHO.compra.notariaRegistro=v;
+    v=_rv('compraTasacion');if(v!==null)DESPACHO.compra.tasacion=v;
+    v=_rv('compraReformas');if(v!==null)DESPACHO.compra.reformas=v;
+    v=_rv('compraInmobiliaria');if(v!==null)DESPACHO.compra.inmobiliaria=v;
+    v=_rv('compraImporte');if(v!==null)DESPACHO.compra.importePrestamo=v;
+    v=_rv('compraTipo');if(v!==null)DESPACHO.compra.tipoInteres=v;
+    v=_rv('compraPlazo');if(v!==null)DESPACHO.compra.plazoAnios=v;
+    if(DESPACHO.m2Total>0&&DESPACHO.m2Despacho>0)DESPACHO.pct=Math.round(DESPACHO.m2Despacho/DESPACHO.m2Total*1000)/10;
   }
   saveFiscal();
   saveGastosYear(FISCAL_YEAR);
