@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v101 \u2014 fiscal: Econom\u00eda Personal, IRPF+Deducciones, Despacho compra, per-year';
+var APP_VERSION = 'v103 \u2014 an\u00e1lisis personal, escenarios zones, inmobiliaria, hipoteca comparativa';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

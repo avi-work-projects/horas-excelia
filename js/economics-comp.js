@@ -80,6 +80,7 @@ function renderEconComp(){
   h+='<div class="sy-section"><div class="sy-section-title">Escenarios</div>';
   h+='<div class="econ-comp-scenarios">';
   ECON_SCENARIOS.forEach(function(sc,i){
+    var _zoneKey=sc.rateType==='salary'?'salary':sc.rateType==='daily'?'daily':sc.hoursMode==='8h'?'hourly8h':'hourlyReal';
     h+='<div class="econ-scenario-card" style="border-left:3px solid '+ECON_COMP_COLORS[i]+'">';
     h+='<div class="econ-sc-header">';
     h+='<span style="color:'+ECON_COMP_COLORS[i]+';font-weight:700;font-size:.88rem">Escenario '+sc.label+'</span>';
@@ -88,24 +89,27 @@ function renderEconComp(){
     h+='<button class="econ-sc-reorder" data-sci="'+i+'" data-dir="down"'+(i===ECON_SCENARIOS.length-1?' disabled':'')+'>&#9660;</button>';
     if(ECON_SCENARIOS.length>2){h+='<button class="econ-sc-del" data-sci="'+i+'">&#10005;</button>';}
     h+='</div></div>';
-    // Tipo tarifa: opt buttons
-    h+='<div style="margin-top:6px">';
-    h+='<div class="econ-opt-row" id="ecScType'+i+'">';
-    h+='<button class="econ-opt-btn'+(sc.rateType==='daily'?' active':'')+'" data-sci="'+i+'" data-field="type" data-val="daily">&#8364;/d&#237;a</button>';
-    h+='<button class="econ-opt-btn'+(sc.rateType==='hourly'?' active':'')+'" data-sci="'+i+'" data-field="type" data-val="hourly">&#8364;/hora</button>';
-    h+='<button class="econ-opt-btn'+(sc.rateType==='salary'?' active':'')+'" data-sci="'+i+'" data-field="type" data-val="salary">N\u00f3mina</button>';
+    /* 3 zones */
+    h+='<div class="econ-sc-zones">';
+    /* Zone: Nómina */
+    h+='<div class="econ-sc-zone'+(_zoneKey==='salary'?' active':'')+'" data-sci="'+i+'" data-zone="salary">';
+    h+='<div class="econ-sc-zone-label">N\u00f3mina</div>';
+    h+='<input class="econ-sc-zone-input" data-sci="'+i+'" data-zone="salary" type="number" min="0" step="1000" placeholder="Bruto anual \u20ac" value="'+(sc.rateType==='salary'?sc.rateValue:'')+'">';
     h+='</div>';
-    var _plh=sc.rateType==='salary'?'Salario bruto anual \u20ac':sc.rateType==='hourly'?'\u20ac/hora':'\u20ac/d\u00eda';
-    h+='<input class="econ-sc-val-input" data-sci="'+i+'" data-field="value" type="number" min="0.01" step="1" value="'+sc.rateValue+'" placeholder="'+_plh+'" style="margin-top:5px">';
+    /* Zone: €/día */
+    h+='<div class="econ-sc-zone'+(_zoneKey==='daily'?' active':'')+'" data-sci="'+i+'" data-zone="daily">';
+    h+='<div class="econ-sc-zone-label">\u20ac/d\u00eda</div>';
+    h+='<input class="econ-sc-zone-input" data-sci="'+i+'" data-zone="daily" type="number" min="0" step="1" placeholder="\u20ac/d\u00eda" value="'+(sc.rateType==='daily'?sc.rateValue:'')+'">';
     h+='</div>';
-    // Modo horas: opt buttons (ocultar si nómina)
-    if(sc.rateType!=='salary'){
-    h+='<div style="margin-top:6px">';
-    h+='<div class="econ-opt-row" id="ecScMode'+i+'">';
-    h+='<button class="econ-opt-btn'+(sc.hoursMode==='real'?' active':'')+'" data-sci="'+i+'" data-field="mode" data-val="real">Horas reales</button>';
-    h+='<button class="econ-opt-btn'+(sc.hoursMode==='8h'?' active':'')+'" data-sci="'+i+'" data-field="mode" data-val="8h">8h fijas/d&#237;a</button>';
-    h+='</div></div>';
-    }
+    /* Zone: €/hora (2 sub-buttons) */
+    h+='<div class="econ-sc-zone'+(_zoneKey==='hourlyReal'||_zoneKey==='hourly8h'?' active':'')+'" data-sci="'+i+'" data-zone="hourly">';
+    h+='<div class="econ-sc-zone-btns">';
+    h+='<button class="econ-sc-zone-sub'+(_zoneKey==='hourlyReal'?' active':'')+'" data-sci="'+i+'" data-zone="hourlyReal">\u20ac/hora (trabajadas reales)</button>';
+    h+='<button class="econ-sc-zone-sub'+(_zoneKey==='hourly8h'?' active':'')+'" data-sci="'+i+'" data-zone="hourly8h">\u20ac/hora (si jornada 8h)</button>';
+    h+='</div>';
+    h+='<input class="econ-sc-zone-input" data-sci="'+i+'" data-zone="hourly" type="number" min="0" step="1" placeholder="\u20ac/hora" value="'+(sc.rateType==='hourly'?sc.rateValue:'')+'">';
+    h+='</div>';
+    h+='</div>';
     h+='</div>';
   });
   if(ECON_SCENARIOS.length<4){h+='<button class="econ-add-sc-btn" id="ecAddScenario">+ A&#241;adir escenario</button>';}
@@ -184,28 +188,60 @@ function renderEconComp(){
 }
 
 function bindEconCompEvents(){
-  // Opt buttons: tipo tarifa + modo horas
-  document.querySelectorAll('.econ-opt-btn[data-field]').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      var sci=parseInt(this.dataset.sci,10);
-      var field=this.dataset.field;
-      var val=this.dataset.val;
+  /* Zone clicks: select the active zone */
+  document.querySelectorAll('.econ-sc-zone').forEach(function(zone){
+    zone.addEventListener('click',function(e){
+      if(e.target.tagName==='INPUT'||e.target.tagName==='BUTTON')return;
+      var sci=parseInt(zone.dataset.sci,10);
+      var zoneType=zone.dataset.zone;
       if(isNaN(sci))return;
-      if(field==='type')ECON_SCENARIOS[sci].rateType=val;
-      else if(field==='mode')ECON_SCENARIOS[sci].hoursMode=val;
-      // Actualizar activos visualmente sin re-render completo
-      var row=this.parentNode;
-      row.querySelectorAll('.econ-opt-btn').forEach(function(b){b.classList.toggle('active',b.dataset.val===val);});
-      ECON_COMP_CALC=false; // requiere nuevo Calcular
-      saveEconComp();
+      _selectZone(sci,zoneType,zoneType==='hourly'?'real':null);
     });
   });
-  // Value inputs
-  document.querySelectorAll('.econ-sc-val-input').forEach(function(el){
+  /* Sub-buttons inside €/hora zone */
+  document.querySelectorAll('.econ-sc-zone-sub').forEach(function(btn){
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      var sci=parseInt(btn.dataset.sci,10);
+      var subZone=btn.dataset.zone; // 'hourlyReal' or 'hourly8h'
+      if(isNaN(sci))return;
+      _selectZone(sci,'hourly',subZone==='hourly8h'?'8h':'real');
+    });
+  });
+  function _selectZone(sci,zoneType,hoursMode){
+    if(zoneType==='salary'){ECON_SCENARIOS[sci].rateType='salary';}
+    else if(zoneType==='daily'){ECON_SCENARIOS[sci].rateType='daily';ECON_SCENARIOS[sci].hoursMode='real';}
+    else{ECON_SCENARIOS[sci].rateType='hourly';ECON_SCENARIOS[sci].hoursMode=hoursMode||'real';}
+    /* Read value from the selected zone's input */
+    var input=document.querySelector('.econ-sc-zone-input[data-sci="'+sci+'"][data-zone="'+zoneType+'"]');
+    if(input&&parseFloat(input.value)>0)ECON_SCENARIOS[sci].rateValue=parseFloat(input.value);
+    ECON_COMP_CALC=false;saveEconComp();reRenderEcon();
+  }
+  /* Zone inputs: update value on change */
+  document.querySelectorAll('.econ-sc-zone-input').forEach(function(el){
     el.addEventListener('change',function(){
       var sci=parseInt(this.dataset.sci,10);
       var v=parseFloat(this.value);
-      if(!isNaN(sci)&&v>0){ECON_SCENARIOS[sci].rateValue=v;ECON_COMP_CALC=false;saveEconComp();}
+      var zoneType=this.dataset.zone;
+      if(isNaN(sci))return;
+      /* Auto-select zone when typing into it */
+      var currentZone=ECON_SCENARIOS[sci].rateType==='salary'?'salary':ECON_SCENARIOS[sci].rateType==='daily'?'daily':'hourly';
+      if(currentZone!==zoneType){
+        if(zoneType==='salary')ECON_SCENARIOS[sci].rateType='salary';
+        else if(zoneType==='daily'){ECON_SCENARIOS[sci].rateType='daily';ECON_SCENARIOS[sci].hoursMode='real';}
+        else{ECON_SCENARIOS[sci].rateType='hourly';}
+      }
+      if(v>0)ECON_SCENARIOS[sci].rateValue=v;
+      ECON_COMP_CALC=false;saveEconComp();reRenderEcon();
+    });
+    /* Also auto-select on focus */
+    el.addEventListener('focus',function(){
+      var sci=parseInt(this.dataset.sci,10);
+      var zoneType=this.dataset.zone;
+      if(isNaN(sci))return;
+      var card=this.closest('.econ-scenario-card');
+      if(!card)return;
+      card.querySelectorAll('.econ-sc-zone').forEach(function(z){z.classList.toggle('active',z.dataset.zone===zoneType);});
     });
   });
   // Reorder

@@ -195,11 +195,6 @@ function renderSummaryContent(){
 
   if(SUMMARY_TAB==='work'){
     // ── Tab 1: Horas / Días Trabajados ──
-    // Checkboxes quitar festivos/vacaciones
-    h+='<div class="excl-row">';
-    h+='<label class="excl-item" style="color:var(--festivo)"><input type="checkbox" class="excl-chk" id="syExclFestChk" style="accent-color:var(--festivo)"'+(EXCL_FEST?' checked':'')+'>&#160;Quitar festivos</label>';
-    h+='<label class="excl-item" style="color:var(--vacaciones)"><input type="checkbox" class="excl-chk" id="syExclVacChk" style="accent-color:var(--vacaciones)"'+(EXCL_VAC?' checked':'')+'>&#160;Quitar vacaciones</label>';
-    h+='</div>';
 
     // Dias L-V
     h+='<div class="sy-section"><div class="sy-section-title">L\u2013V Totales</div><div class="sy-cards3">';
@@ -208,15 +203,19 @@ function renderSummaryContent(){
     h+='<div class="sy-card hi2"><div class="sy-val">'+fdY(s.lvTotal)+'</div><div class="sy-lbl">Totales</div></div>';
     h+='</div></div>';
 
-    // Dias trabajados (table)
-    h+='<div class="sy-section"><div class="sy-section-title">'+dtTitle+'</div>';
-    h+='<table class="sy-table"><thead><tr><th class="sy-td-lbl">Jornada</th><th>Pasados</th><th>Futuros</th><th>Total</th></tr></thead><tbody>';
-    h+='<tr><td class="sy-td-lbl">6,5h (Viernes)</td><td>'+s.d65P+'</td><td>'+s.d65F+'</td><td>'+(s.d65P+s.d65F)+'</td></tr>';
-    h+='<tr><td class="sy-td-lbl">7h</td><td>'+s.d7P+'</td><td>'+s.d7F+'</td><td>'+(s.d7P+s.d7F)+'</td></tr>';
-    h+='<tr><td class="sy-td-lbl">8h</td><td>'+s.d8P+'</td><td>'+s.d8F+'</td><td>'+(s.d8P+s.d8F)+'</td></tr>';
-    h+='<tr><td class="sy-td-lbl">9h</td><td>'+s.d9P+'</td><td>'+s.d9F+'</td><td>'+(s.d9P+s.d9F)+'</td></tr>';
-    h+='<tr class="sy-tr-total"><td class="sy-td-lbl">Total</td><td>'+s.worked+'</td><td>'+s.toWork+'</td><td>'+s.workedTotal+'</td></tr>';
-    h+='</tbody></table></div>';
+    // Horas trabajadas
+    h+='<div class="sy-section"><div class="sy-section-title">'+htTitle+'</div><div class="sy-cards3">';
+    h+='<div class="sy-card hi"><div class="sy-val">'+fhY(s.hoursWorked)+'</div><div class="sy-lbl">Trabajadas</div></div>';
+    h+='<div class="sy-card dim"><div class="sy-val">'+fhY(s.hoursToWork)+'</div><div class="sy-lbl">Por trabajar</div></div>';
+    h+='<div class="sy-card hi2"><div class="sy-val">'+fhY(s.hoursTotal)+'</div><div class="sy-lbl">Totales</div></div>';
+    h+='</div><div class="sy-cards4" style="margin-top:8px">';
+    h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.maxMh)+'</div><div class="sy-lbl">M\u00e1x./mes<br>'+MN_SHORT[s.maxMhi]+'</div></div>';
+    h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.minMh)+'</div><div class="sy-lbl">M\u00edn./mes<br>'+MN_SHORT[s.minMhi]+'</div></div>';
+    (function(){var totMin=Math.round(s.avgHDay*60);var avgHH=Math.floor(totMin/60);var avgHM=totMin%60;var sub=avgHM>0?'<div class="sy-sublbl">'+avgHH+'h '+avgHM+'min</div>':'';h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.avgHDay)+'</div>'+sub+'<div class="sy-lbl">Media/d\u00eda</div></div>';})();
+    h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.avgHMonth)+'</div><div class="sy-lbl">Media/mes</div></div>';
+    h+='</div>';
+    h+='<div class="sy-chart">'+barChart3(s.mHours,s.mHoursP,MN_SHORT,'#6c8cff',cm)+'</div>';
+    h+='</div>';
 
     // Ausencias
     h+='<div class="sy-section"><div class="sy-section-title">Ausencias</div>';
@@ -235,19 +234,21 @@ function renderSummaryContent(){
     if(festPend>0){h+='<div class="sy-note warn-fest">Faltan '+festPend+' d\u00eda'+(festPend===1?'':'s')+' festivos por marcar (en Espa\u00f1a: '+FEST_REQUIRED+' d\u00edas/a\u00f1o).</div>';}
     h+='</div>';
 
-    // Horas trabajadas
-    h+='<div class="sy-section"><div class="sy-section-title">'+htTitle+'</div><div class="sy-cards3">';
-    h+='<div class="sy-card hi"><div class="sy-val">'+fhY(s.hoursWorked)+'</div><div class="sy-lbl">Trabajadas</div></div>';
-    h+='<div class="sy-card dim"><div class="sy-val">'+fhY(s.hoursToWork)+'</div><div class="sy-lbl">Por trabajar</div></div>';
-    h+='<div class="sy-card hi2"><div class="sy-val">'+fhY(s.hoursTotal)+'</div><div class="sy-lbl">Totales</div></div>';
-    h+='</div><div class="sy-cards4" style="margin-top:8px">';
-    h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.maxMh)+'</div><div class="sy-lbl">M\u00e1x./mes<br>'+MN_SHORT[s.maxMhi]+'</div></div>';
-    h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.minMh)+'</div><div class="sy-lbl">M\u00edn./mes<br>'+MN_SHORT[s.minMhi]+'</div></div>';
-    (function(){var totMin=Math.round(s.avgHDay*60);var avgHH=Math.floor(totMin/60);var avgHM=totMin%60;var sub=avgHM>0?'<div class="sy-sublbl">'+avgHH+'h '+avgHM+'min</div>':'';h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.avgHDay)+'</div>'+sub+'<div class="sy-lbl">Media/d\u00eda</div></div>';})();
-    h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.avgHMonth)+'</div><div class="sy-lbl">Media/mes</div></div>';
+    // Checkboxes quitar festivos/vacaciones (justo encima de Días trabajados)
+    h+='<div class="excl-row">';
+    h+='<label class="excl-item" style="color:var(--festivo)"><input type="checkbox" class="excl-chk" id="syExclFestChk" style="accent-color:var(--festivo)"'+(EXCL_FEST?' checked':'')+'>&#160;Quitar festivos</label>';
+    h+='<label class="excl-item" style="color:var(--vacaciones)"><input type="checkbox" class="excl-chk" id="syExclVacChk" style="accent-color:var(--vacaciones)"'+(EXCL_VAC?' checked':'')+'>&#160;Quitar vacaciones</label>';
     h+='</div>';
-    h+='<div class="sy-chart">'+barChart3(s.mHours,s.mHoursP,MN_SHORT,'#6c8cff',cm)+'</div>';
-    h+='</div>';
+
+    // Dias trabajados (table)
+    h+='<div class="sy-section"><div class="sy-section-title">'+dtTitle+'</div>';
+    h+='<table class="sy-table"><thead><tr><th class="sy-td-lbl">Jornada</th><th>Pasados</th><th>Futuros</th><th>Total</th></tr></thead><tbody>';
+    h+='<tr><td class="sy-td-lbl">6,5h (Viernes)</td><td>'+s.d65P+'</td><td>'+s.d65F+'</td><td>'+(s.d65P+s.d65F)+'</td></tr>';
+    h+='<tr><td class="sy-td-lbl">7h</td><td>'+s.d7P+'</td><td>'+s.d7F+'</td><td>'+(s.d7P+s.d7F)+'</td></tr>';
+    h+='<tr><td class="sy-td-lbl">8h</td><td>'+s.d8P+'</td><td>'+s.d8F+'</td><td>'+(s.d8P+s.d8F)+'</td></tr>';
+    h+='<tr><td class="sy-td-lbl">9h</td><td>'+s.d9P+'</td><td>'+s.d9F+'</td><td>'+(s.d9P+s.d9F)+'</td></tr>';
+    h+='<tr class="sy-tr-total"><td class="sy-td-lbl">Total</td><td>'+s.worked+'</td><td>'+s.toWork+'</td><td>'+s.workedTotal+'</td></tr>';
+    h+='</tbody></table></div>';
 
     // Dias trabajados (bars)
     h+='<div class="sy-section"><div class="sy-section-title">'+dtTitle+'</div><div class="sy-cards3">';
