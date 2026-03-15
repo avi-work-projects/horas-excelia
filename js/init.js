@@ -514,8 +514,20 @@
     _mAlarmIn.addEventListener('click',function(e){e.stopPropagation();});
   }
 
+  /* Helper: export all per-year keys with a given prefix */
+  function _exportPerYearKeys(baseKey){
+    var result={};
+    for(var i=0;i<localStorage.length;i++){
+      var k=localStorage.key(i);
+      if(k&&k.indexOf(baseKey+'-')===0){
+        var y=k.substring(k.lastIndexOf('-')+1);
+        try{result[y]=JSON.parse(localStorage.getItem(k));}catch(e){}
+      }
+    }
+    return Object.keys(result).length?result:null;
+  }
   document.getElementById('exportAllBtn').addEventListener('click',function(){
-    var data={version:3,days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
+    var data={version:4,days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
       exclFest:EXCL_FEST,exclVac:EXCL_VAC,vacEntitlement:VAC_ENTITLEMENT,
       birthdays:BDAYS,events:EVENTS,
       alarms:typeof ALARMS!=='undefined'?ALARMS:[],
@@ -526,6 +538,9 @@
       compras:typeof COMPRAS_ITEMS!=='undefined'?COMPRAS_ITEMS:null,
       desgrav:typeof DESGRAV_ITEMS!=='undefined'?DESGRAV_ITEMS:null,
       despacho:typeof DESPACHO!=='undefined'?DESPACHO:null,
+      personalData:typeof PERSONAL_DATA!=='undefined'?PERSONAL_DATA:null,
+      gastosPerYear:_exportPerYearKeys('excelia-gastos-v1'),
+      personalPerYear:_exportPerYearKeys('excelia-personal-v1'),
       scenarios:typeof ECON_SCENARIOS!=='undefined'?ECON_SCENARIOS:null,
       evAlarms:typeof EV_ALARMS_SET!=='undefined'?EV_ALARMS_SET:null,
       bdayAlarms:typeof BDAY_ALARM_SET!=='undefined'?BDAY_ALARM_SET:null,
@@ -561,15 +576,19 @@
           FISCAL.brackets=d.fiscal.brackets||null;
           saveFiscal();
         }
-        if(d.gastos&&Array.isArray(d.gastos)&&typeof GASTOS_ITEMS!=='undefined'&&typeof saveGastos==='function'){
+        if(d.gastos&&Array.isArray(d.gastos)&&typeof GASTOS_ITEMS!=='undefined'&&typeof saveGastosYear==='function'){
           GASTOS_ITEMS=d.gastos;
           if(typeof d.gastosDificilPct!=='undefined')GASTOS_DIFICIL_PCT=d.gastosDificilPct;
-          saveGastos();
+          saveGastosYear(CY);
         }
         if(d.ingresos&&Array.isArray(d.ingresos)&&typeof saveIngresos==='function'){INGRESOS_ITEMS=d.ingresos;saveIngresos();}
         if(d.compras&&Array.isArray(d.compras)&&typeof saveCompras==='function'){COMPRAS_ITEMS=d.compras;saveCompras();}
         if(d.desgrav&&Array.isArray(d.desgrav)&&typeof saveDesgrav==='function'){DESGRAV_ITEMS=d.desgrav;saveDesgrav();}
-        if(d.despacho&&typeof saveDespacho==='function'){DESPACHO=d.despacho;saveDespacho();}
+        if(d.despacho&&typeof saveDespacho==='function'){DESPACHO=d.despacho;if(!DESPACHO.compra)DESPACHO.compra=_defaultCompra();saveDespacho();}
+        if(d.personalData&&typeof PERSONAL_DATA!=='undefined'&&typeof savePersonalYear==='function'){PERSONAL_DATA=d.personalData;savePersonalYear(CY);}
+        /* Per-year data */
+        if(d.gastosPerYear){Object.keys(d.gastosPerYear).forEach(function(y){try{localStorage.setItem('excelia-gastos-v1-'+y,JSON.stringify(d.gastosPerYear[y]));}catch(e){}});}
+        if(d.personalPerYear){Object.keys(d.personalPerYear).forEach(function(y){try{localStorage.setItem('excelia-personal-v1-'+y,JSON.stringify(d.personalPerYear[y]));}catch(e){}});}
         if(d.scenarios&&Array.isArray(d.scenarios)&&typeof saveEconComp==='function'){ECON_SCENARIOS=d.scenarios;saveEconComp();}
         if(d.evAlarms&&typeof EV_ALARMS_SET!=='undefined'){EV_ALARMS_SET=d.evAlarms;if(typeof saveEvAlarms==='function')saveEvAlarms();}
         if(d.bdayAlarms&&typeof BDAY_ALARM_SET!=='undefined'){BDAY_ALARM_SET=d.bdayAlarms;localStorage.setItem('excelia-bday-alarm-set',JSON.stringify(BDAY_ALARM_SET));}

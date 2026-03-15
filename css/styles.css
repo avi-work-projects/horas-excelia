@@ -353,6 +353,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .econ-sub-tabs{display:flex;gap:6px;padding:8px 10px;box-shadow:0 1px 0 var(--border)}
 .econ-sub-tab{flex:1;font-size:.68rem;padding:6px 4px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;text-align:center;-webkit-user-select:none;user-select:none}
 .econ-sub-tab.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
+/* Year selector for per-year fiscal tabs */
+.fiscal-year-selector{display:flex;align-items:center;justify-content:center;gap:12px;padding:8px 0 10px;margin-bottom:6px}
+.fiscal-year-arrow{background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text-muted);font-size:.9rem;padding:4px 10px;cursor:pointer;-webkit-user-select:none;user-select:none}
+.fiscal-year-arrow:active{background:var(--accent-glow)}
+.fiscal-year-label{font-size:.9rem;font-weight:700;color:var(--text-main);min-width:50px;text-align:center}
+.fiscal-copy-year-wrap{display:flex;align-items:center;gap:6px;padding:0 0 10px;flex-wrap:wrap}
+.fiscal-copy-year-btn{font-size:.7rem;padding:3px 8px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);color:var(--accent);cursor:pointer}
+.fiscal-copy-year-btn:active{background:var(--accent-glow)}
 .econ-gear-btn{flex-shrink:0;width:42px;height:42px;border:1px solid #c084fc55;border-radius:8px;background:#c084fc18;color:#c084fc;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-user-select:none;user-select:none;transition:all .15s}
 .econ-gear-btn:active{background:#c084fc33}
 .econ-hdr-note{flex-shrink:0;font-size:.62rem;color:var(--text-dim);max-width:80px;line-height:1.25;padding:0 2px;align-self:center}

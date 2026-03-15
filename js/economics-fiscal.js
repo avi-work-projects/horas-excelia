@@ -18,7 +18,35 @@ var DEFAULT_BRACKETS=[
 var FISCAL={irpfMode:'fixed',irpfPct:15,brackets:null};
 
 /* ── Tab activo en fiscal config ───────────────────────────── */
-var FISCAL_TAB='irpf'; // 'irpf' | 'ing_gas' | 'desgrav' | 'despacho'
+var FISCAL_TAB='personal'; // 'personal' | 'gastos_desg' | 'irpf_deduc' | 'despacho'
+var FISCAL_IRPF_SUB='irpf'; // 'irpf' | 'desgrav' — sub-tab dentro de IRPF y Deducciones
+var FISCAL_YEAR=CY; // año activo para datos per-year
+
+/* ── Per-year helpers ─────────────────────────────────────── */
+function _yearKey(base,year){return base+'-'+year;}
+
+/* ── Economía Personal (per-year) ─────────────────────────── */
+var PERSONAL_SK='excelia-personal-v1';
+var PERSONAL_DATA={gastosRecurrentes:[],gastosSemanales:[],inversiones:[],ingresos:[]};
+
+function loadPersonalYear(year){
+  try{
+    var k=_yearKey(PERSONAL_SK,year);
+    var r=localStorage.getItem(k);
+    if(r){PERSONAL_DATA=JSON.parse(r);}
+    else{
+      /* Migración: si no hay datos per-year, intentar migrar ingresos globales */
+      PERSONAL_DATA={gastosRecurrentes:[],gastosSemanales:[],inversiones:[],ingresos:[]};
+      if(year===CY){
+        var ig=localStorage.getItem(INGRESOS_SK);
+        if(ig){try{var d=JSON.parse(ig);PERSONAL_DATA.ingresos=d.items||[];}catch(e){}}
+      }
+    }
+  }catch(e){PERSONAL_DATA={gastosRecurrentes:[],gastosSemanales:[],inversiones:[],ingresos:[]};}
+}
+function savePersonalYear(year){
+  try{localStorage.setItem(_yearKey(PERSONAL_SK,year),JSON.stringify(PERSONAL_DATA));}catch(e){}
+}
 
 /* ── Ingresos regulares ───────────────────────────────────── */
 var INGRESOS_SK='excelia-ingresos-v1';
@@ -89,35 +117,43 @@ function saveFiscal(){
 function getIrpfPct(){return FISCAL.irpfMode==='custom'?FISCAL.irpfPct:15;}
 function getBrackets(){return FISCAL.brackets||DEFAULT_BRACKETS;}
 
-function loadGastos(){
+function _loadGastosFromRaw(raw){
+  var d=JSON.parse(raw);
+  GASTOS_DIFICIL_PCT=d.dificilPct!=null?d.dificilPct:5;
+  var saved=d.items||[];
+  var result=[];
+  DEFAULT_GASTOS.forEach(function(def){
+    var found=null;
+    for(var i=0;i<saved.length;i++){if(saved[i].id===def.id){found=saved[i];break;}}
+    var item=found?JSON.parse(JSON.stringify(found)):JSON.parse(JSON.stringify(def));
+    if(def.id==='comunidad')item.label='Com. Propietarios';
+    result.push(item);
+  });
+  saved.forEach(function(s){
+    var isFixed=DEFAULT_GASTOS.some(function(dd){return dd.id===s.id;});
+    if(!isFixed)result.push(JSON.parse(JSON.stringify(s)));
+  });
+  GASTOS_ITEMS=result;
+}
+function loadGastosYear(year){
   try{
-    var r=localStorage.getItem(GASTOS_SK);
-    if(r){
-      var d=JSON.parse(r);
-      GASTOS_DIFICIL_PCT=d.dificilPct!=null?d.dificilPct:5;
-      var saved=d.items||[];
-      /* Migración: reconstruir en el orden de DEFAULT_GASTOS preservando amounts/period del usuario */
-      var result=[];
-      DEFAULT_GASTOS.forEach(function(def){
-        var found=null;
-        for(var i=0;i<saved.length;i++){if(saved[i].id===def.id){found=saved[i];break;}}
-        var item=found?JSON.parse(JSON.stringify(found)):JSON.parse(JSON.stringify(def));
-        /* Actualizar etiquetas que hayan cambiado */
-        if(def.id==='comunidad')item.label='Com. Propietarios';
-        result.push(item);
-      });
-      /* Añadir items custom (no en DEFAULT_GASTOS) al final */
-      saved.forEach(function(s){
-        var isFixed=DEFAULT_GASTOS.some(function(dd){return dd.id===s.id;});
-        if(!isFixed)result.push(JSON.parse(JSON.stringify(s)));
-      });
-      GASTOS_ITEMS=result;
-    }else{GASTOS_ITEMS=JSON.parse(JSON.stringify(DEFAULT_GASTOS));}
+    var k=_yearKey(GASTOS_SK,year);
+    var r=localStorage.getItem(k);
+    if(r){_loadGastosFromRaw(r);}
+    else if(year===CY){
+      /* Migración: fallback a la key global */
+      var g=localStorage.getItem(GASTOS_SK);
+      if(g){_loadGastosFromRaw(g);}
+      else{GASTOS_ITEMS=JSON.parse(JSON.stringify(DEFAULT_GASTOS));}
+    }
+    else{GASTOS_ITEMS=JSON.parse(JSON.stringify(DEFAULT_GASTOS));GASTOS_DIFICIL_PCT=5;}
   }catch(e){GASTOS_ITEMS=JSON.parse(JSON.stringify(DEFAULT_GASTOS));}
 }
-function saveGastos(){
-  try{localStorage.setItem(GASTOS_SK,JSON.stringify({dificilPct:GASTOS_DIFICIL_PCT,items:GASTOS_ITEMS}));}catch(e){}
+function loadGastos(){loadGastosYear(FISCAL_YEAR);}
+function saveGastosYear(year){
+  try{localStorage.setItem(_yearKey(GASTOS_SK,year),JSON.stringify({dificilPct:GASTOS_DIFICIL_PCT,items:GASTOS_ITEMS}));}catch(e){}
 }
+function saveGastos(){saveGastosYear(FISCAL_YEAR);}
 function findGasto(id){
   for(var i=0;i<GASTOS_ITEMS.length;i++){if(GASTOS_ITEMS[i].id===id)return GASTOS_ITEMS[i];}
   return null;
@@ -262,20 +298,23 @@ function computeTotalDesgrav(){
 
 /* ── Despacho en casa ─────────────────────────────────────── */
 var DESPACHO_SK='excelia-despacho-v1';
-var DESPACHO={enabled:true,m2Total:0,m2Despacho:0,pct:0,valorCatastral:0,valorCompra:0,hipotecaIntereses:0};
+var DESPACHO={enabled:true,m2Total:0,m2Despacho:0,pct:0,valorCatastral:0,valorCompra:0,hipotecaIntereses:0,compra:null};
 
+function _defaultCompra(){return{valorCompraTotal:0,itpMadrid:0,notariaRegistro:0,tasacion:0,reformas:0,importePrestamo:0,tipoInteres:0,plazoAnios:0};}
 function loadDespacho(){
   try{
     var r=localStorage.getItem(DESPACHO_SK);
     if(r){var d=JSON.parse(r);
-      /* Si nunca se guardó el campo enabled, activar por defecto */
       DESPACHO.enabled=d.enabled!=null?!!d.enabled:true;
       DESPACHO.m2Total=d.m2Total||0;DESPACHO.m2Despacho=d.m2Despacho||0;
       DESPACHO.pct=d.pct||0;
       DESPACHO.valorCatastral=d.valorCatastral||0;DESPACHO.valorCompra=d.valorCompra||0;
       DESPACHO.hipotecaIntereses=d.hipotecaIntereses||0;
-    }
-  }catch(e){}
+      /* Migración: si no existe compra, crear con defaults y migrar valorCompra */
+      if(d.compra){DESPACHO.compra=d.compra;}
+      else{DESPACHO.compra=_defaultCompra();if(DESPACHO.valorCompra>0)DESPACHO.compra.valorCompraTotal=DESPACHO.valorCompra;}
+    }else{DESPACHO.compra=_defaultCompra();}
+  }catch(e){if(!DESPACHO.compra)DESPACHO.compra=_defaultCompra();}
 }
 function saveDespacho(){
   try{localStorage.setItem(DESPACHO_SK,JSON.stringify(DESPACHO));}catch(e){}
@@ -368,19 +407,121 @@ function renderFiscalContent(){
   h+='<div class="sy-year" style="font-size:.9rem;color:#c084fc">&#9965; Configuraci\u00f3n Fiscal</div>';
   h+='</div>';
   h+='<div class="fiscal-tab-bar">';
-  h+='<button class="fiscal-tab-btn'+(FISCAL_TAB==='irpf'?' active':'')+'" id="fiscalTabIrpf">Configuraci\u00f3n<br>IRPF</button>';
-  h+='<button class="fiscal-tab-btn'+(FISCAL_TAB==='ing_gas'?' active':'')+'" id="fiscalTabIngGas">Ingresos<br>y Gastos</button>';
-  h+='<button class="fiscal-tab-btn'+(FISCAL_TAB==='desgrav'?' active':'')+'" id="fiscalTabDesgrav">Desgrava-<br>ciones</button>';
-  h+='<button class="fiscal-tab-btn'+(FISCAL_TAB==='despacho'?' active':'')+'" id="fiscalTabDespacho">Despacho<br>en casa</button>';
+  h+='<button class="fiscal-tab-btn'+(FISCAL_TAB==='personal'?' active':'')+'" id="fiscalTabPersonal">Econom\u00eda<br>Personal</button>';
+  h+='<button class="fiscal-tab-btn'+(FISCAL_TAB==='gastos_desg'?' active':'')+'" id="fiscalTabGastosDesg">Gastos<br>Desgravables</button>';
+  h+='<button class="fiscal-tab-btn'+(FISCAL_TAB==='irpf_deduc'?' active':'')+'" id="fiscalTabIrpfDeduc">IRPF y<br>Deducciones</button>';
+  h+='<button class="fiscal-tab-btn'+(FISCAL_TAB==='despacho'?' active':'')+'" id="fiscalTabDespacho">Despacho e<br>Hipoteca</button>';
   h+='</div>';
   h+='<div class="sy-body" style="padding:16px">';
-  if(FISCAL_TAB==='irpf')h+=renderFiscalTabIrpf();
-  else if(FISCAL_TAB==='ing_gas')h+=renderFiscalTabIngGas();
-  else if(FISCAL_TAB==='desgrav')h+=renderFiscalTabDesgrav();
+  if(FISCAL_TAB==='personal')h+=renderFiscalTabPersonal();
+  else if(FISCAL_TAB==='gastos_desg')h+=renderFiscalTabGastosDesg();
+  else if(FISCAL_TAB==='irpf_deduc')h+=renderFiscalTabIrpfDeduc();
   else if(FISCAL_TAB==='despacho')h+=renderFiscalTabDespacho();
   h+='</div>';
   h+='<div class="fiscal-sticky-save">';
   h+='<button class="fiscal-save-btn" id="fiscalSave">Guardar configuraci\u00f3n</button>';
+  h+='</div>';
+  return h;
+}
+
+/* ── Year selector (shared by personal + gastos_desg) ────── */
+function _renderYearSelector(){
+  var h='<div class="fiscal-year-selector">';
+  h+='<button class="fiscal-year-arrow" id="fiscalYearPrev">&#8592;</button>';
+  h+='<span class="fiscal-year-label" id="fiscalYearLabel">'+FISCAL_YEAR+'</span>';
+  h+='<button class="fiscal-year-arrow" id="fiscalYearNext">&#8594;</button>';
+  h+='</div>';
+  return h;
+}
+function _renderCopyYearBtn(){
+  /* Buscar años que tengan datos para este tipo de tab */
+  var prefix=FISCAL_TAB==='personal'?PERSONAL_SK:GASTOS_SK;
+  var years=[];
+  for(var i=0;i<localStorage.length;i++){
+    var k=localStorage.key(i);
+    if(k&&k.indexOf(prefix+'-')===0){
+      var y=parseInt(k.substring(k.lastIndexOf('-')+1),10);
+      if(y&&y!==FISCAL_YEAR&&years.indexOf(y)===-1)years.push(y);
+    }
+  }
+  if(!years.length)return '';
+  years.sort();
+  var h='<div class="fiscal-copy-year-wrap">';
+  h+='<span style="font-size:.72rem;color:var(--text-dim)">Copiar datos de:</span>';
+  years.forEach(function(y){
+    h+='<button class="fiscal-copy-year-btn" data-copy-year="'+y+'">'+y+'</button>';
+  });
+  h+='</div>';
+  return h;
+}
+
+/* ── Tab Economía Personal (per-year) ─────────────────────── */
+function _personalListHtml(arr,section,showPeriod){
+  var h='';
+  arr.forEach(function(item,i){
+    h+='<div class="fiscal-gasto-item" data-ps="'+section+'" data-pi="'+i+'">';
+    h+='<input class="fiscal-gasto-lbl-input" data-ps="'+section+'" data-pi="'+i+'" data-pf="label" value="'+escHtml(item.label)+'" placeholder="Nombre...">';
+    h+='<input class="fiscal-gasto-amt" data-ps="'+section+'" data-pi="'+i+'" data-pf="amount" type="number" min="0" step="1" value="'+(item.amount||0)+'">';
+    if(showPeriod){
+      h+='<div class="fiscal-gasto-period">';
+      h+='<button class="fiscal-period-btn'+(item.period==='monthly'?' active':'')+'" data-ps="'+section+'" data-pi="'+i+'" data-pf="period" data-val="monthly">/mes</button>';
+      h+='<button class="fiscal-period-btn'+(item.period==='annual'?' active':'')+'" data-ps="'+section+'" data-pi="'+i+'" data-pf="period" data-val="annual">/a\u00f1o</button>';
+      h+='</div>';
+    }else{
+      h+='<span class="fiscal-gasto-period-static">/sem</span>';
+    }
+    h+='<button class="fiscal-gasto-del fiscal-personal-del" data-ps="'+section+'" data-pi="'+i+'">&#10005;</button>';
+    h+='</div>';
+  });
+  return h;
+}
+function _personalTotal(arr,isWeekly){
+  var t=0;
+  arr.forEach(function(item){
+    if(!item.amount)return;
+    if(isWeekly)t+=item.amount*52;
+    else t+=item.period==='monthly'?item.amount*12:item.amount;
+  });
+  return Math.round(t*100)/100;
+}
+function renderFiscalTabPersonal(){
+  var h=_renderYearSelector();
+  h+=_renderCopyYearBtn();
+  /* 1. Gastos Recurrentes Personales */
+  h+='<div class="fiscal-section">';
+  h+='<div class="fiscal-section-title expense">Gastos Recurrentes Personales</div>';
+  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Alquiler, suscripciones, transporte, comida, seguros personales, etc.</div>';
+  h+='<div id="personalGastosRec">'+_personalListHtml(PERSONAL_DATA.gastosRecurrentes,'gastosRecurrentes',true)+'</div>';
+  var tGR=_personalTotal(PERSONAL_DATA.gastosRecurrentes);
+  if(tGR>0)h+='<div class="fiscal-compras-total">Total anual: <b>'+fcPlain(tGR)+'</b></div>';
+  h+='<button class="fiscal-add-btn fiscal-add-btn-expense" data-padd="gastosRecurrentes">+ A\u00f1adir gasto</button>';
+  h+='</div>';
+  /* 2. Gastos Semanales */
+  h+='<div class="fiscal-section">';
+  h+='<div class="fiscal-section-title expense">Gastos Semanales</div>';
+  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Ocio, restaurantes, compras peque\u00f1as. Importe en \u20ac/semana.</div>';
+  h+='<div id="personalGastosSem">'+_personalListHtml(PERSONAL_DATA.gastosSemanales,'gastosSemanales',false)+'</div>';
+  var tGS=_personalTotal(PERSONAL_DATA.gastosSemanales,true);
+  if(tGS>0)h+='<div class="fiscal-compras-total">Total anual: <b>'+fcPlain(tGS)+'</b> ('+fcPlain(Math.round(tGS/12*100)/100)+'/mes)</div>';
+  h+='<button class="fiscal-add-btn fiscal-add-btn-expense" data-padd="gastosSemanales">+ A\u00f1adir gasto semanal</button>';
+  h+='</div>';
+  /* 3. Inversiones Recurrentes */
+  h+='<div class="fiscal-section">';
+  h+='<div class="fiscal-section-title income">Inversiones Recurrentes</div>';
+  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Planes de ahorro, fondos, DCA crypto, etc.</div>';
+  h+='<div id="personalInversiones">'+_personalListHtml(PERSONAL_DATA.inversiones,'inversiones',true)+'</div>';
+  var tInv=_personalTotal(PERSONAL_DATA.inversiones);
+  if(tInv>0)h+='<div class="fiscal-compras-total">Total anual: <b>'+fcPlain(tInv)+'</b></div>';
+  h+='<button class="fiscal-add-btn fiscal-add-btn-income" data-padd="inversiones">+ A\u00f1adir inversi\u00f3n</button>';
+  h+='</div>';
+  /* 4. Ingresos (migrado) */
+  h+='<div class="fiscal-section">';
+  h+='<div class="fiscal-section-title income">Ingresos Regulares</div>';
+  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Ingresos recurrentes: alquileres, dividendos, pensiones, etc.</div>';
+  h+='<div id="personalIngresos">'+_personalListHtml(PERSONAL_DATA.ingresos,'ingresos',true)+'</div>';
+  var tIng=_personalTotal(PERSONAL_DATA.ingresos);
+  if(tIng>0)h+='<div class="fiscal-compras-total">Total anual: <b>'+fcPlain(tIng)+'</b></div>';
+  h+='<button class="fiscal-add-btn fiscal-add-btn-income" data-padd="ingresos">+ A\u00f1adir ingreso</button>';
   h+='</div>';
   return h;
 }
@@ -432,16 +573,10 @@ function renderFiscalTabIrpf(){
   return h;
 }
 
-/* ── Tab Ingresos y Gastos ───────────────────────────────── */
-function renderFiscalTabIngGas(){
-  var h='';
-  /* Ingresos (verde) */
-  h+='<div class="fiscal-section">';
-  h+='<div class="fiscal-section-title income">Ingresos Regulares (estimados)</div>';
-  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Ingresos recurrentes adicionales: alquileres, dividendos, pensiones, etc.</div>';
-  h+='<div id="fiscalIngresosList">'+renderIngresosList()+'</div>';
-  h+='<button class="fiscal-add-btn fiscal-add-btn-income" id="fiscalAddIngreso">+ A\u00f1adir ingreso</button>';
-  h+='</div>';
+/* ── Tab Gastos Desgravables (antes "Ingresos y Gastos") ── */
+function renderFiscalTabGastosDesg(){
+  var h=_renderYearSelector();
+  h+=_renderCopyYearBtn();
   /* Gastos regulares (rojo) */
   h+='<div class="fiscal-section">';
   h+='<div class="fiscal-section-title expense">Gastos regulares</div>';
@@ -510,6 +645,17 @@ function renderComprasList(){
     h+=totH;
   }
   if(!COMPRAS_ITEMS.length)h+='<div style="font-size:.75rem;color:var(--text-dim);padding:6px 0">Sin compras configuradas.</div>';
+  return h;
+}
+
+/* ── Tab IRPF y Deducciones (con sub-tabs) ────────────────── */
+function renderFiscalTabIrpfDeduc(){
+  var h='<div class="econ-sub-tabs">';
+  h+='<button class="econ-sub-tab'+(FISCAL_IRPF_SUB==='irpf'?' active':'')+'" data-firsub="irpf">Configuraci\u00f3n IRPF</button>';
+  h+='<button class="econ-sub-tab'+(FISCAL_IRPF_SUB==='desgrav'?' active':'')+'" data-firsub="desgrav">Desgravaciones</button>';
+  h+='</div>';
+  if(FISCAL_IRPF_SUB==='irpf')h+=renderFiscalTabIrpf();
+  else h+=renderFiscalTabDesgrav();
   return h;
 }
 
@@ -639,16 +785,14 @@ function renderDesgravList(items,listType){
   return h;
 }
 
-/* ── Tab Despacho en casa ─────────────────────────────────── */
+/* ── Tab Despacho e Hipoteca ───────────────────────────────── */
 function renderFiscalTabDespacho(){
-  var prop=_despachoGetPct();
-  var propPct=Math.round(prop*1000)/10;
-  var deduccion=computeDespachoDeduccion();
-  /* Calcular pct actual para mostrar en el campo */
   var pctShow=DESPACHO.m2Total>0&&DESPACHO.m2Despacho>0
     ?Math.round(DESPACHO.m2Despacho/DESPACHO.m2Total*1000)/10
     :DESPACHO.pct;
+  var comp=DESPACHO.compra||_defaultCompra();
   var h='';
+  /* Sección despacho */
   h+='<div class="fiscal-section">';
   h+='<div class="fiscal-section-title">Despacho en casa \u2014 Deducci\u00f3n IRPF</div>';
   h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:12px">Configura el espacio dedicado al trabajo. Los m\u00b2 y el % se sincronizan autom\u00e1ticamente entre s\u00ed.</div>';
@@ -661,38 +805,45 @@ function renderFiscalTabDespacho(){
   h+=_despField('m2Despacho','M\u00b2 del despacho',DESPACHO.m2Despacho,'m\u00b2');
   h+=_despField('pct','% del despacho (se sincroniza con m\u00b2)',pctShow,'%');
   h+=_despFieldMoney('valorCatastral','Valor catastral del inmueble',DESPACHO.valorCatastral);
-  h+=_despFieldMoney('valorCompra','Valor de compra / escritura',DESPACHO.valorCompra);
   h+=_despFieldMoney('hipotecaIntereses','Intereses hipotecarios anuales (solo para despacho)',DESPACHO.hipotecaIntereses);
   h+='</div>';
-  if(prop>0){
-    h+='<div class="fiscal-despacho-result'+(DESPACHO.enabled?' active':'')+'">';
-    h+='<div class="fiscal-despacho-result-title">Deducci\u00f3n estimada anual</div>';
-    h+='<div class="fiscal-despacho-result-val">'+(DESPACHO.enabled&&deduccion>0?fcPlain(deduccion):'— (desactivado)')+'</div>';
-    if(deduccion>0){
-      var vcD=DESPACHO.valorCatastral||0,vcpD=DESPACHO.valorCompra||0;
-      var baseAmortD=0;
-      if(vcD>0&&vcpD>0){baseAmortD=Math.max(vcD,vcpD);}else if(vcpD>0){baseAmortD=vcpD;}else if(vcD>0){baseAmortD=vcD;}
-      var amort=Math.round(baseAmortD*0.80*0.03*prop*100)/100;
-      var ibiRealD=gastoAnual('ibi');
-      var ibi=ibiRealD>0?Math.round(ibiRealD*prop*100)/100:Math.round(DESPACHO.valorCatastral*0.011*prop*100)/100;
-      var ibiLabel=ibiRealD>0?'IBI ('+propPct.toFixed(1)+'%)':'IBI estimado (est. \u00d7 '+propPct.toFixed(1)+'%)';
-      var hipIntD=Math.round((DESPACHO.hipotecaIntereses||0)*prop*100)/100;
-      var GROUP_CASA_D=['comunidad','seg_hogar'];
-      var GROUP_UTIL_D=['luz','gas','agua','digi'];
-      var gastosCasaD=0,gastosUtilD=0;
-      GASTOS_ITEMS.forEach(function(g){
-        var a=gastoAnual(g.id);
-        if(GROUP_CASA_D.indexOf(g.id)!==-1)gastosCasaD+=a;
-        else if(GROUP_UTIL_D.indexOf(g.id)!==-1)gastosUtilD+=a;
-      });
-      h+='<div class="fiscal-despacho-breakdown">';
-      if(amort>0)h+='<div class="fiscal-despacho-comp">Amortizaci\u00f3n (80% construc. \u00d7 3% \u00d7 '+propPct.toFixed(1)+'%): <b>'+fcPlain(amort)+'</b></div>';
-      if(ibi>0)h+='<div class="fiscal-despacho-comp">'+ibiLabel+': <b>'+fcPlain(ibi)+'</b></div>';
-      if(hipIntD>0)h+='<div class="fiscal-despacho-comp">Intereses hipoteca ('+propPct.toFixed(1)+'%): <b>'+fcPlain(hipIntD)+'</b></div>';
-      if(gastosCasaD>0)h+='<div class="fiscal-despacho-comp">Gastos casa ('+propPct.toFixed(1)+'%): <b>'+fcPlain(Math.round(gastosCasaD*prop*100)/100)+'</b></div>';
-      if(gastosUtilD>0)h+='<div class="fiscal-despacho-comp">Suministros ('+propPct.toFixed(1)+'% \u00d7 30%): <b>'+fcPlain(Math.round(gastosUtilD*prop*0.30*100)/100)+'</b></div>';
-      h+='</div>';
-    }
+  h+='</div>';
+  /* Sección compra de vivienda */
+  h+='<div class="fiscal-section">';
+  h+='<div class="fiscal-section-title">Compra de vivienda</div>';
+  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:12px">Datos de la compra del inmueble: precios, impuestos y gastos asociados.</div>';
+  h+='<div class="fiscal-despacho-grid">';
+  h+=_despFieldMoney('compraValor','Valor de compra / escritura',comp.valorCompraTotal);
+  h+=_despFieldMoney('compraItp','ITP Comunidad de Madrid (6%)',comp.itpMadrid);
+  h+=_despFieldMoney('compraNotaria','Notar\u00eda y registro',comp.notariaRegistro);
+  h+=_despFieldMoney('compraTasacion','Tasaci\u00f3n',comp.tasacion);
+  h+=_despFieldMoney('compraReformas','Reformas',comp.reformas);
+  h+='</div>';
+  /* Info total inversión */
+  var totalCompra=(comp.valorCompraTotal||0)+(comp.itpMadrid||0)+(comp.notariaRegistro||0)+(comp.tasacion||0)+(comp.reformas||0);
+  if(totalCompra>0){
+    h+='<div class="fiscal-compras-total" style="margin-top:6px">Inversi\u00f3n total: <b>'+_fmtMiles(totalCompra)+' \u20ac</b></div>';
+  }
+  h+='</div>';
+  /* Sección hipoteca */
+  h+='<div class="fiscal-section">';
+  h+='<div class="fiscal-section-title">Hipoteca</div>';
+  h+='<div class="fiscal-despacho-grid">';
+  h+=_despFieldMoney('compraImporte','Importe del pr\u00e9stamo',comp.importePrestamo);
+  h+=_despField('compraTipo','Tipo de inter\u00e9s anual',comp.tipoInteres,'%');
+  h+=_despField('compraPlazo','Plazo',comp.plazoAnios,'a\u00f1os');
+  h+='</div>';
+  /* Cálculo cuota mensual estimada */
+  if(comp.importePrestamo>0&&comp.tipoInteres>0&&comp.plazoAnios>0){
+    var r=comp.tipoInteres/100/12;
+    var n=comp.plazoAnios*12;
+    var cuota=Math.round(comp.importePrestamo*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1)*100)/100;
+    var totalPagado=Math.round(cuota*n*100)/100;
+    var totalIntereses=Math.round((totalPagado-comp.importePrestamo)*100)/100;
+    h+='<div class="fiscal-despacho-breakdown" style="margin-top:8px">';
+    h+='<div class="fiscal-despacho-comp">Cuota mensual estimada: <b>'+fcPlain(cuota)+'</b></div>';
+    h+='<div class="fiscal-despacho-comp">Total a pagar: <b>'+_fmtMiles(totalPagado)+' \u20ac</b></div>';
+    h+='<div class="fiscal-despacho-comp">Total intereses: <b style="color:var(--c-orange)">'+_fmtMiles(totalIntereses)+' \u20ac</b></div>';
     h+='</div>';
   }
   h+='</div>';
@@ -750,6 +901,9 @@ function renderGastosList(){
 
 /* ── openFiscal / closeFiscal ─────────────────────────────── */
 function openFiscal(){
+  FISCAL_YEAR=CY;
+  loadPersonalYear(FISCAL_YEAR);
+  loadGastosYear(FISCAL_YEAR);
   var ov=document.getElementById('fiscalOverlay');
   document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
   ov.style.display='flex';
@@ -768,20 +922,111 @@ function bindFiscalEvents(){
 
   function _switchTab(tab){
     FISCAL_TAB=tab;
+    if(tab==='personal')loadPersonalYear(FISCAL_YEAR);
+    if(tab==='gastos_desg')loadGastosYear(FISCAL_YEAR);
     document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
     bindFiscalEvents();
   }
-  document.getElementById('fiscalTabIrpf').addEventListener('click',function(){_switchTab('irpf');});
-  document.getElementById('fiscalTabIngGas').addEventListener('click',function(){_switchTab('ing_gas');});
-  document.getElementById('fiscalTabDesgrav').addEventListener('click',function(){_switchTab('desgrav');});
+  document.getElementById('fiscalTabPersonal').addEventListener('click',function(){_switchTab('personal');});
+  document.getElementById('fiscalTabGastosDesg').addEventListener('click',function(){_switchTab('gastos_desg');});
+  document.getElementById('fiscalTabIrpfDeduc').addEventListener('click',function(){_switchTab('irpf_deduc');});
   document.getElementById('fiscalTabDespacho').addEventListener('click',function(){_switchTab('despacho');});
 
   document.getElementById('fiscalSave').addEventListener('click',function(){_saveFiscalAll();});
 
-  if(FISCAL_TAB==='irpf')_bindTabIrpf();
-  else if(FISCAL_TAB==='ing_gas')_bindTabIngGas();
-  else if(FISCAL_TAB==='desgrav')_bindTabDesgrav();
+  /* Year selector bindings (shared by personal + gastos_desg) */
+  if(FISCAL_TAB==='personal'||FISCAL_TAB==='gastos_desg')_bindYearSelector();
+
+  if(FISCAL_TAB==='personal')_bindTabPersonal();
+  else if(FISCAL_TAB==='gastos_desg')_bindTabGastosDesg();
+  else if(FISCAL_TAB==='irpf_deduc')_bindTabIrpfDeduc();
   else if(FISCAL_TAB==='despacho')_bindTabDespacho();
+}
+
+function _bindYearSelector(){
+  var prev=document.getElementById('fiscalYearPrev');
+  var next=document.getElementById('fiscalYearNext');
+  if(prev)prev.addEventListener('click',function(){
+    FISCAL_YEAR--;
+    if(FISCAL_TAB==='personal')loadPersonalYear(FISCAL_YEAR);
+    else loadGastosYear(FISCAL_YEAR);
+    document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
+    bindFiscalEvents();
+  });
+  if(next)next.addEventListener('click',function(){
+    FISCAL_YEAR++;
+    if(FISCAL_TAB==='personal')loadPersonalYear(FISCAL_YEAR);
+    else loadGastosYear(FISCAL_YEAR);
+    document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
+    bindFiscalEvents();
+  });
+  /* Copy year buttons */
+  document.querySelectorAll('.fiscal-copy-year-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var srcYear=parseInt(btn.dataset.copyYear,10);
+      if(!srcYear)return;
+      if(!confirm('¿Copiar datos de '+srcYear+' al año '+FISCAL_YEAR+'?'))return;
+      if(FISCAL_TAB==='personal'){
+        loadPersonalYear(srcYear);
+        savePersonalYear(FISCAL_YEAR);
+        loadPersonalYear(FISCAL_YEAR);
+      }else{
+        loadGastosYear(srcYear);
+        saveGastosYear(FISCAL_YEAR);
+        loadGastosYear(FISCAL_YEAR);
+      }
+      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
+      bindFiscalEvents();
+      showToast('Datos de '+srcYear+' copiados','success');
+    });
+  });
+}
+
+function _bindTabPersonal(){
+  /* Event delegation for all 4 sections */
+  var fCont=document.getElementById('fiscalContent');
+  var body=fCont?fCont.querySelector('.sy-body'):null;
+  if(!body||body._personalDel)return;
+  body._personalDel=true;
+  /* Add buttons */
+  body.addEventListener('click',function(e){
+    var addBtn=e.target.closest('[data-padd]');
+    if(addBtn){
+      var sec=addBtn.dataset.padd;
+      var isWeekly=sec==='gastosSemanales';
+      var newItem={id:sec+'_'+Date.now(),label:'',amount:0};
+      if(!isWeekly)newItem.period='monthly';
+      PERSONAL_DATA[sec].push(newItem);
+      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
+      bindFiscalEvents();
+      return;
+    }
+    /* Delete */
+    var del=e.target.closest('.fiscal-personal-del');
+    if(del){
+      var sec=del.dataset.ps,pi=parseInt(del.dataset.pi,10);
+      if(PERSONAL_DATA[sec])PERSONAL_DATA[sec].splice(pi,1);
+      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
+      bindFiscalEvents();
+      return;
+    }
+    /* Period toggle */
+    var per=e.target.closest('.fiscal-period-btn[data-pf="period"]');
+    if(per){
+      var sec=per.dataset.ps,pi=parseInt(per.dataset.pi,10);
+      if(PERSONAL_DATA[sec]&&PERSONAL_DATA[sec][pi]){
+        PERSONAL_DATA[sec][pi].period=per.dataset.val;
+        per.closest('.fiscal-gasto-period').querySelectorAll('.fiscal-period-btn').forEach(function(b){b.classList.toggle('active',b.dataset.val===per.dataset.val);});
+      }
+    }
+  });
+  body.addEventListener('change',function(e){
+    var el=e.target;
+    var sec=el.dataset.ps,pi=parseInt(el.dataset.pi,10),field=el.dataset.pf;
+    if(!sec||isNaN(pi)||!PERSONAL_DATA[sec]||!PERSONAL_DATA[sec][pi])return;
+    if(field==='amount'){var v=parseFloat(el.value);PERSONAL_DATA[sec][pi].amount=isNaN(v)?0:v;}
+    else if(field==='label'){PERSONAL_DATA[sec][pi].label=el.value||'';}
+  });
 }
 
 function _bindTabIrpf(){
@@ -832,7 +1077,7 @@ function _bindTabIrpf(){
   });
 }
 
-function _bindTabIngGas(){
+function _bindTabGastosDesg(){
   /* Gastos: event delegation */
   var gastosList=document.getElementById('fiscalGastosList');
   if(gastosList&&!gastosList._del){
@@ -861,35 +1106,6 @@ function _bindTabIngGas(){
   document.getElementById('fiscalAddGasto').addEventListener('click',function(){
     GASTOS_ITEMS.push({id:'custom_'+Date.now(),label:'Nuevo gasto',amount:0,period:'monthly'});
     document.getElementById('fiscalGastosList').innerHTML=renderGastosList();
-  });
-  /* Ingresos: event delegation */
-  var ingresosList=document.getElementById('fiscalIngresosList');
-  if(ingresosList&&!ingresosList._del){
-    ingresosList._del=true;
-    ingresosList.addEventListener('click',function(e){
-      var btn=e.target.closest('.fiscal-period-btn[data-ifield="period"]');
-      if(btn){
-        var ii=parseInt(btn.dataset.ii,10);
-        INGRESOS_ITEMS[ii].period=btn.dataset.val;
-        btn.closest('.fiscal-gasto-period').querySelectorAll('.fiscal-period-btn').forEach(function(b){b.classList.toggle('active',b.dataset.val===btn.dataset.val);});
-        return;
-      }
-      var del=e.target.closest('.fiscal-ingreso-del');
-      if(del){
-        INGRESOS_ITEMS.splice(parseInt(del.dataset.ii,10),1);
-        document.getElementById('fiscalIngresosList').innerHTML=renderIngresosList();
-      }
-    });
-    ingresosList.addEventListener('change',function(e){
-      var el=e.target;var ii=parseInt(el.dataset.ii,10);if(isNaN(ii))return;
-      var field=el.dataset.ifield;
-      if(field==='amount'){var v=parseFloat(el.value);INGRESOS_ITEMS[ii].amount=isNaN(v)?0:v;}
-      else if(field==='label'){INGRESOS_ITEMS[ii].label=el.value||'Ingreso';}
-    });
-  }
-  document.getElementById('fiscalAddIngreso').addEventListener('click',function(){
-    INGRESOS_ITEMS.push({id:'ingreso_'+Date.now(),label:'Nuevo ingreso',amount:0,period:'monthly'});
-    document.getElementById('fiscalIngresosList').innerHTML=renderIngresosList();
   });
   /* Toggle global IVA compras */
   var civTog=document.getElementById('comprasIvaToggle');
@@ -941,6 +1157,19 @@ function _bindTabIngGas(){
     document.getElementById('fiscalComprasList').innerHTML=renderComprasList();
     _rebindComprasDel();
   });
+}
+
+function _bindTabIrpfDeduc(){
+  /* Sub-tab clicks */
+  document.querySelectorAll('[data-firsub]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      FISCAL_IRPF_SUB=btn.dataset.firsub;
+      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
+      bindFiscalEvents();
+    });
+  });
+  if(FISCAL_IRPF_SUB==='irpf')_bindTabIrpf();
+  else _bindTabDesgrav();
 }
 
 function _bindTabDesgrav(){
@@ -1038,8 +1267,8 @@ function _bindTabDespacho(){
       bindFiscalEvents();
     });
   }
-  /* Campos monetarios (valorCatastral, valorCompra, hipotecaIntereses): step=1000 + formato miles */
-  ['valorCatastral','valorCompra','hipotecaIntereses'].forEach(function(field){
+  /* Campos monetarios despacho: step=1000 + formato miles */
+  ['valorCatastral','hipotecaIntereses'].forEach(function(field){
     var el=document.getElementById('desp-'+field);
     if(!el)return;
     function _updateFmt(){
@@ -1055,6 +1284,61 @@ function _bindTabDespacho(){
       bindFiscalEvents();
     });
   });
+  /* Campos compra vivienda */
+  if(!DESPACHO.compra)DESPACHO.compra=_defaultCompra();
+  var _compraFieldMap={
+    compraValor:'valorCompraTotal',compraItp:'itpMadrid',compraNotaria:'notariaRegistro',
+    compraTasacion:'tasacion',compraReformas:'reformas',compraImporte:'importePrestamo'
+  };
+  Object.keys(_compraFieldMap).forEach(function(domId){
+    var el=document.getElementById('desp-'+domId);
+    if(!el)return;
+    var prop=_compraFieldMap[domId];
+    function _updateFmt(){
+      var v=parseFloat(el.value)||0;
+      var fmtEl=document.getElementById('desp-fmt-'+domId);
+      if(fmtEl)fmtEl.textContent=v>0?_fmtMiles(v)+' \u20ac':'';
+    }
+    el.addEventListener('input',function(){
+      _updateFmt();
+      /* Auto-calc ITP when valor changes */
+      if(domId==='compraValor'){
+        var itpEl=document.getElementById('desp-compraItp');
+        if(itpEl){
+          var itpVal=Math.round(parseFloat(el.value||0)*0.06);
+          itpEl.value=itpVal;
+          var fmtItp=document.getElementById('desp-fmt-compraItp');
+          if(fmtItp)fmtItp.textContent=itpVal>0?_fmtMiles(itpVal)+' \u20ac':'';
+          DESPACHO.compra.itpMadrid=itpVal;
+        }
+      }
+    });
+    el.addEventListener('change',function(){
+      DESPACHO.compra[prop]=parseFloat(this.value)||0;
+      _updateFmt();
+      /* Sync valorCompra for amortización calculation */
+      if(domId==='compraValor')DESPACHO.valorCompra=DESPACHO.compra.valorCompraTotal;
+      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
+      bindFiscalEvents();
+    });
+  });
+  /* Campos compra: tipo interés y plazo (no monetarios) */
+  var tipoEl=document.getElementById('desp-compraTipo');
+  if(tipoEl){
+    tipoEl.addEventListener('change',function(){
+      DESPACHO.compra.tipoInteres=parseFloat(this.value)||0;
+      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
+      bindFiscalEvents();
+    });
+  }
+  var plazoEl=document.getElementById('desp-compraPlazo');
+  if(plazoEl){
+    plazoEl.addEventListener('change',function(){
+      DESPACHO.compra.plazoAnios=parseFloat(this.value)||0;
+      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
+      bindFiscalEvents();
+    });
+  }
 }
 
 /* ── _saveFiscalAll — guardar todo ────────────────────────── */
@@ -1071,7 +1355,7 @@ function _saveFiscalAll(){
       FISCAL.irpfPct=Math.round(pct*100)/100;
     }
   }
-  if(FISCAL_TAB==='irpf'){
+  if(FISCAL_TAB==='irpf_deduc'&&FISCAL_IRPF_SUB==='irpf'){
     var gdV=parseFloat((document.getElementById('gastosDificilInput')||{}).value);
     if(!isNaN(gdV)&&gdV>=0&&gdV<=15)GASTOS_DIFICIL_PCT=gdV;
     var rows=document.querySelectorAll('#fiscalBracketTable tbody tr');
@@ -1087,8 +1371,8 @@ function _saveFiscalAll(){
     }
   }
   saveFiscal();
-  saveGastos();
-  saveIngresos();
+  saveGastosYear(FISCAL_YEAR);
+  savePersonalYear(FISCAL_YEAR);
   saveDesgrav();
   saveDespacho();
   saveCompras();
