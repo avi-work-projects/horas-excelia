@@ -488,6 +488,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .analisis-mortgage-ahorro.pos{background:rgba(52,211,153,.12);color:#34d399}
 .analisis-mortgage-ahorro.neg{background:rgba(255,107,107,.12);color:#ff6b6b}
 .analisis-mortgage-chart{margin-top:4px}
+/* ── Fiscal config modal — purple theme override ── */
+#fiscalOverlay{--accent:#c084fc;--accent-glow:#c084fc22;--accent-bright:#d4a5ff}
 /* ── Fiscal config modal ── */
 .fiscal-section{margin-bottom:18px}
 .fiscal-section-title{font-size:.65rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)}
@@ -645,7 +647,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .fiscal-desgrav-amt:focus{border-color:var(--accent)}
 .fiscal-desgrav-eff{font-size:.72rem;color:var(--c-green);font-family:var(--mono)}
 .fiscal-desgrav-eff.capped{color:var(--c-orange)}
-.fiscal-desgrav-total{padding:8px 10px;border-radius:var(--radius-sm);background:var(--accent-glow);border:1px solid rgba(108,140,255,.3);font-size:.82rem;color:var(--accent-bright);margin-bottom:10px}
+.fiscal-desgrav-total{padding:8px 10px;border-radius:var(--radius-sm);background:var(--accent-glow);border:1px solid rgba(192,132,252,.3);font-size:.82rem;color:var(--accent-bright);margin-bottom:10px}
 .fiscal-desgrav-group-title{font-size:.68rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;padding:10px 0 5px;border-top:1px solid var(--border);margin-top:4px}
 .fiscal-desgrav-group-title.quota{color:var(--c-orange)}
 .fiscal-desgrav-from-gasto{font-size:.75rem;color:var(--accent-bright);font-family:var(--mono);background:var(--accent-glow);border-radius:5px;padding:2px 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
