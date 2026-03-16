@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v109 \u2014 probar color, paleta 6x8, fix tipos';
+var APP_VERSION = 'v110 \u2014 multi-tarifa por fechas, tarifa equivalente';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -72,9 +72,16 @@ function loadEconYear(y){
     EXCL_FEST=cfg.exclFest!==false;
     EXCL_VAC=cfg.exclVac!==false;
     ECON_MULTI_RATE=!!cfg.multiRate;
-    ECON_RATE_PERIODS=cfg.ratePeriods||[{from:0,to:11,rate:0}];
+    ECON_RATE_PERIODS=cfg.ratePeriods||[{startDate:y+'-01-01',rate:0,rateMode:'daily'}];
     if(cfg.salary!==undefined)window._ECON_SALARY=cfg.salary;
     if(cfg.rateMode)ECON_RATE_MODE=cfg.rateMode;
+  } else {
+    /* No config for this year — reset to defaults */
+    DAILY_RATE=0;EXCL_FEST=true;EXCL_VAC=true;
+    ECON_MULTI_RATE=false;
+    ECON_RATE_PERIODS=[{startDate:y+'-01-01',rate:0,rateMode:'daily'}];
+    ECON_RATE_MODE='daily';
+    window._ECON_SALARY=30000;
   }
 }
 function saveEconYear(y){

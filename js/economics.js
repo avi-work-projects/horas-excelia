@@ -6,7 +6,10 @@ var ECON_YEAR=new Date().getFullYear();
 var ECON_VIEW='resumen';    // 'resumen' | 'gastos' | 'analisis' | 'estudio'
 var ECON_RATE_MODE='daily'; // 'daily' | 'hourly' | 'salary'
 var ECON_MULTI_RATE=false;
-var ECON_RATE_PERIODS=[{from:0,to:11,rate:0}]; // rate=0 means use DAILY_RATE
+var ECON_RATE_PERIODS=[{from:0,to:11,rate:0}]; // legacy month-based (migrated to date-based)
+/* New date-based periods: [{startDate:'YYYY-MM-DD', rate:315, rateMode:'daily'}]
+   First period always starts Jan 1. The startDate of period N+1 = end+1 of period N.
+   Last period always ends Dec 31. */
 var ECON_ESTUDIO_SUB='comparador'; // 'comparador' | 'simulador'
 window._ECON_SALARY=30000; // salario bruto anual para modo nómina
 
@@ -45,6 +48,38 @@ function fcPlain(n){
 }
 
 /* ── computeEconEx ──────────────────────────────────────────── */
+/* Helper: given date-based rate periods for a year, returns the effective daily rate for a given date.
+   Periods: [{startDate:'YYYY-MM-DD', rate:315, rateMode:'daily'|'hourly'}] sorted by startDate.
+   Falls back to DAILY_RATE if no period matches. */
+function _rateForDate(datePeriods,dateStr,fallbackRate,avgHDay){
+  if(!datePeriods||!datePeriods.length)return fallbackRate;
+  var effectiveRate=fallbackRate;
+  for(var i=0;i<datePeriods.length;i++){
+    if(dateStr>=datePeriods[i].startDate){
+      var r=datePeriods[i].rate||0;
+      if(datePeriods[i].rateMode==='hourly'&&r>0){effectiveRate=Math.round(r*avgHDay*100)/100;}
+      else if(r>0){effectiveRate=r;}
+    }
+  }
+  return effectiveRate;
+}
+
+/* Build date-period boundaries for computeEconEx.
+   Converts legacy month-based periods to date-based if needed. */
+function _buildDatePeriods(year,ratePeriods){
+  if(!ratePeriods||!ratePeriods.length)return null;
+  // Check if already date-based (has startDate property)
+  if(ratePeriods[0].startDate)return ratePeriods;
+  // Legacy month-based → convert
+  var result=[];
+  for(var i=0;i<ratePeriods.length;i++){
+    var p=ratePeriods[i];
+    var mm=String(p.from+1).padStart(2,'0');
+    result.push({startDate:year+'-'+mm+'-01',rate:p.rate||0,rateMode:'daily'});
+  }
+  return result;
+}
+
 function computeEconEx(year,opts){
   opts=opts||{};
   var s=computeYearlySummary(year);
@@ -58,17 +93,27 @@ function computeEconEx(year,opts){
   var months=[],totBase=0,totIva=0,totIrpf=0,totCobrado=0;
   var qIva=[0,0,0,0],qCobrado=[0,0,0,0],qBase=[0,0,0,0];
   var totalDays=0,totalHours=0;
-  var ratePeriods=opts.ratePeriods||null;
+  var datePeriods=opts.ratePeriods?_buildDatePeriods(year,opts.ratePeriods):null;
   for(var m=0;m<12;m++){
     var dias=s.mDays[m]+s.mDaysP[m];
     var effHours=hoursMode==='8h'?dias*8:(s.mHours[m]+s.mHoursP[m]);
     var effectiveRate=dailyRate;
-    if(ratePeriods){
-      for(var rp=0;rp<ratePeriods.length;rp++){
-        if(m>=ratePeriods[rp].from&&m<=ratePeriods[rp].to&&ratePeriods[rp].rate>0){
-          effectiveRate=ratePeriods[rp].rate;break;
-        }
+    if(datePeriods&&datePeriods.length>0){
+      /* Weighted average rate for the month — iterate actual work days */
+      var mKey=year+'-'+String(m+1).padStart(2,'0');
+      var daysInMonth=new Date(year,m+1,0).getDate();
+      var rateSum=0,rateCount=0;
+      for(var d=1;d<=daysInMonth;d++){
+        var ds=mKey+'-'+String(d).padStart(2,'0');
+        var dayType=ST[ds];
+        if(!dayType&&(new Date(ds+'T00:00:00').getDay()===0||new Date(ds+'T00:00:00').getDay()===6))continue; // skip weekends unless marked
+        if(dayType&&dayType.type==='festivo')continue;
+        if(dayType&&dayType.type==='vacaciones')continue;
+        if(dayType&&dayType.type==='baja')continue;
+        var dayRate=_rateForDate(datePeriods,ds,dailyRate,avgHDay);
+        rateSum+=dayRate;rateCount++;
       }
+      effectiveRate=rateCount>0?Math.round(rateSum/rateCount*100)/100:dailyRate;
     }
     var base=opts.rateType==='hourly'&&opts.rateValue>0?Math.round(effHours*opts.rateValue*100)/100:Math.round(dias*effectiveRate*100)/100;
     var iva=Math.round(base*0.21*100)/100;
@@ -119,6 +164,52 @@ function econBarChart(data,labels,color){
     svg+='<text x="'+(x+bw/2)+'" y="'+(H+PB-2)+'" text-anchor="middle" font-size="7" fill="#5a5a70">'+labels[i]+'</text>';
   }
   svg+='</svg>';return svg;
+}
+
+/* ── Helpers: date-based multi-rate ─────────────────────────── */
+function _fmtDateEs(ds){
+  if(!ds)return'';
+  var parts=ds.split('-');
+  return parts[2]+'/'+parts[1]+'/'+parts[0];
+}
+function _prevDate(ds){
+  var d=new Date(ds+'T12:00:00');
+  d.setDate(d.getDate()-1);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+/* Ensure ECON_RATE_PERIODS is in date-based format for a given year.
+   Migrates legacy month-based format if needed. */
+function _ensureDatePeriods(year){
+  if(!ECON_RATE_PERIODS||!ECON_RATE_PERIODS.length){
+    ECON_RATE_PERIODS=[{startDate:year+'-01-01',rate:DAILY_RATE,rateMode:'daily'}];
+    return ECON_RATE_PERIODS;
+  }
+  if(ECON_RATE_PERIODS[0].startDate)return ECON_RATE_PERIODS;
+  // Legacy migration
+  var migrated=[];
+  for(var i=0;i<ECON_RATE_PERIODS.length;i++){
+    var p=ECON_RATE_PERIODS[i];
+    var mm=String((p.from||0)+1).padStart(2,'0');
+    migrated.push({startDate:year+'-'+mm+'-01',rate:p.rate||DAILY_RATE,rateMode:'daily'});
+  }
+  ECON_RATE_PERIODS=migrated;
+  return ECON_RATE_PERIODS;
+}
+/* Render a rate input pair (€/día ↔ €/hora) with a prefix for unique IDs */
+function _renderRateInputs(prefix,dailyVal,hourlyVal,avgH,mode){
+  var pfx=prefix||'';
+  var h='<div class="econ-rate-dual">';
+  h+='<div class="econ-rate-field'+(mode==='daily'||mode!=='hourly'?' primary':' derived')+'">';
+  h+='<label>&#8364;/d&#237;a</label>';
+  h+='<input class="econ-rate-input econ-mr-rate" id="rateDay'+pfx+'" data-pfx="'+pfx+'" data-rtype="daily" type="number" min="1" step="1" value="'+dailyVal+'">';
+  if(!prefix)h+='<span class="econ-rate-badge">media '+avgH.toFixed(1)+'h/d&#237;a</span>';
+  h+='</div>';
+  h+='<div class="econ-rate-sep">&#8596;</div>';
+  h+='<div class="econ-rate-field'+(mode==='hourly'?' primary':' derived')+'">';
+  h+='<label>&#8364;/hora</label>';
+  h+='<input class="econ-rate-input econ-mr-rate" id="rateHour'+pfx+'" data-pfx="'+pfx+'" data-rtype="hourly" type="number" min="0.01" step="0.01" value="'+hourlyVal.toFixed(2)+'">';
+  h+='</div></div>';
+  return h;
 }
 
 /* ── Helper: opt-button row ─────────────────────────────────── */
@@ -191,45 +282,54 @@ function renderEconResumen(){
     h+='<input class="econ-rate-input" id="rateSalaryInput" type="text" inputmode="numeric" value="'+_salFmt+'" placeholder="30.000" autocomplete="off">';
     h+='</div></div>';
   } else {
-    /* Multi-tarifa toggle (moved above rate inputs) */
+    /* Multi-tarifa toggle */
     h+='<div class="econ-opt-row" style="margin-bottom:8px">';
     h+='<button class="econ-opt-btn'+(!ECON_MULTI_RATE?' active':'')+'" id="ecRateSingle">Tarifa \u00fanica</button>';
     h+='<button class="econ-opt-btn'+(ECON_MULTI_RATE?' active':'')+'" id="ecRateMulti">M\u00faltiples tarifas</button>';
     h+='</div>';
-    /* Rate inputs */
-    h+='<div class="econ-rate-dual">';
-    h+='<div class="econ-rate-field'+(ECON_RATE_MODE==='daily'?' primary':' derived')+'">';
-    h+='<label>&#8364;/d&#237;a</label>';
-    h+='<input class="econ-rate-input" id="rateDayInput" type="number" min="1" step="1" value="'+DAILY_RATE+'">';
-    h+='<span class="econ-rate-badge">media '+avgHDay.toFixed(1)+'h/d&#237;a</span>';
-    h+='</div>';
-    h+='<div class="econ-rate-sep">&#8596;</div>';
-    h+='<div class="econ-rate-field'+(ECON_RATE_MODE==='hourly'?' primary':' derived')+'">';
-    h+='<label>&#8364;/hora</label>';
-    h+='<input class="econ-rate-input" id="rateHourInput" type="number" min="0.01" step="0.01" value="'+hourlyRate.toFixed(2)+'">';
-    h+='</div></div>';
-    if(ECON_MULTI_RATE){
-      var _mNames=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    if(!ECON_MULTI_RATE){
+      /* ── Tarifa única: €/día ↔ €/hora ── */
+      h+=_renderRateInputs('',DAILY_RATE,hourlyRate,avgHDay,ECON_RATE_MODE);
+    } else {
+      /* ── Múltiples tarifas: period cards ── */
+      var _datePeriods=_ensureDatePeriods(ECON_YEAR);
       h+='<div class="econ-multi-rate-cards">';
-      ECON_RATE_PERIODS.forEach(function(p,pi){
+      _datePeriods.forEach(function(p,pi){
+        var isFirst=(pi===0);
+        var isLast=(pi===_datePeriods.length-1);
+        var pRate=p.rate||DAILY_RATE;
+        var pHourly=Math.round(pRate/avgHDay*100)/100;
+        var pMode=p.rateMode||'daily';
+        var startLabel=isFirst?'01/01/'+ECON_YEAR:_fmtDateEs(p.startDate);
+        var endDate=isLast?ECON_YEAR+'-12-31':_prevDate(_datePeriods[pi+1].startDate);
+        var endLabel=_fmtDateEs(endDate);
         h+='<div class="econ-multi-rate-card">';
         h+='<div class="econ-multi-rate-hdr">';
         h+='<span class="econ-multi-rate-num">Per\u00edodo '+(pi+1)+'</span>';
-        if(ECON_RATE_PERIODS.length>1){h+='<button class="econ-multi-rate-del" data-mrdel="'+pi+'">\u2715</button>';}
+        h+='<span class="econ-multi-rate-range">'+startLabel+' \u2014 '+endLabel+'</span>';
+        if(_datePeriods.length>1){h+='<button class="econ-multi-rate-del" data-mrdel="'+pi+'">\u2715</button>';}
         h+='</div>';
-        h+='<div class="econ-multi-rate-row">';
-        h+='<div class="econ-multi-rate-field"><label>Desde</label><select class="econ-multi-rate-sel" data-mrfield="from" data-mri="'+pi+'">';
-        for(var mi=0;mi<12;mi++){h+='<option value="'+mi+'"'+(p.from===mi?' selected':'')+'>'+_mNames[mi]+'</option>';}
-        h+='</select></div>';
-        h+='<div class="econ-multi-rate-field"><label>Hasta</label><select class="econ-multi-rate-sel" data-mrfield="to" data-mri="'+pi+'">';
-        for(var mi2=0;mi2<12;mi2++){h+='<option value="'+mi2+'"'+(p.to===mi2?' selected':'')+'>'+_mNames[mi2]+'</option>';}
-        h+='</select></div>';
-        h+='<div class="econ-multi-rate-field"><label>\u20ac/d\u00eda</label><input class="econ-multi-rate-input" data-mrfield="rate" data-mri="'+pi+'" type="number" min="1" step="1" value="'+(p.rate||DAILY_RATE)+'"></div>';
-        h+='</div></div>';
+        if(!isFirst){
+          h+='<div class="econ-multi-rate-date-row">';
+          h+='<label>Inicio del per\u00edodo</label>';
+          h+='<input type="date" class="econ-mr-date" data-mri="'+pi+'" value="'+p.startDate+'" min="'+ECON_YEAR+'-01-02" max="'+ECON_YEAR+'-12-31">';
+          h+='</div>';
+        }
+        h+=_renderRateInputs('mr'+pi,pRate,pHourly,avgHDay,pMode);
+        h+='</div>';
       });
-      if(ECON_RATE_PERIODS.length<3){
+      if(_datePeriods.length<4){
         h+='<button class="econ-multi-rate-add" id="ecRateAddPeriod">+ A\u00f1adir per\u00edodo</button>';
       }
+      h+='</div>';
+      /* Tarifa equivalente */
+      var eqRate=e.totalDays>0?Math.round(e.totBase/e.totalDays*100)/100:DAILY_RATE;
+      var eqHourly=e.totalHours>0?Math.round(e.totBase/e.totalHours*100)/100:0;
+      h+='<div class="econ-equiv-rate">';
+      h+='<span class="econ-equiv-label">Tarifa equivalente</span>';
+      h+='<span class="econ-equiv-val">'+fc(eqRate)+'/d\u00eda</span>';
+      h+='<span class="econ-equiv-sep">\u00b7</span>';
+      h+='<span class="econ-equiv-val">'+fc(eqHourly)+'/hora</span>';
       h+='</div>';
     }
   }
@@ -897,35 +997,61 @@ function bindEconResumenEvents(){
       else save();
       reRenderEcon();return;
     }
-    var dayEl=document.getElementById('rateDayInput');
-    var hourEl=document.getElementById('rateHourInput');
-    var dayV=parseFloat(dayEl?dayEl.value:'');
-    var hourV=parseFloat(hourEl?hourEl.value:'');
     var s=computeYearlySummary(ECON_YEAR);
-    var curHourly=Math.round(DAILY_RATE/(s.avgHDay||8)*100)/100;
-    if(hourEl&&Math.abs(hourV-curHourly)>0.005){
-      ECON_RATE_MODE='hourly';
-      DAILY_RATE=Math.round(hourV*(s.avgHDay||8));
-    } else if(dayEl&&dayV>0){
-      ECON_RATE_MODE='daily';
-      DAILY_RATE=Math.round(dayV);
-    }
-    /* Read multi-rate period inputs before saving */
-    if(ECON_MULTI_RATE){
-      document.querySelectorAll('.econ-multi-rate-input').forEach(function(inp){
-        var i=parseInt(inp.dataset.mri,10);
-        if(ECON_RATE_PERIODS[i])ECON_RATE_PERIODS[i].rate=parseFloat(inp.value)||DAILY_RATE;
-      });
+    var avgH=s.avgHDay||8;
+    if(!ECON_MULTI_RATE){
+      /* Single rate — read €/día and €/hora */
+      var dayEl=document.getElementById('rateDay');
+      var hourEl=document.getElementById('rateHour');
+      var dayV=parseFloat(dayEl?dayEl.value:'');
+      var hourV=parseFloat(hourEl?hourEl.value:'');
+      var curHourly=Math.round(DAILY_RATE/avgH*100)/100;
+      if(hourEl&&Math.abs(hourV-curHourly)>0.005){
+        ECON_RATE_MODE='hourly';
+        DAILY_RATE=Math.round(hourV*avgH);
+      } else if(dayEl&&dayV>0){
+        ECON_RATE_MODE='daily';
+        DAILY_RATE=Math.round(dayV);
+      }
+    } else {
+      /* Multi rate — read each period's €/día or €/hora */
+      _ensureDatePeriods(ECON_YEAR);
+      for(var pi=0;pi<ECON_RATE_PERIODS.length;pi++){
+        var pfx='mr'+pi;
+        var dEl=document.getElementById('rateDay'+pfx);
+        var hEl=document.getElementById('rateHour'+pfx);
+        var dV=parseFloat(dEl?dEl.value:'');
+        var hV=parseFloat(hEl?hEl.value:'');
+        var pRate=ECON_RATE_PERIODS[pi].rate||DAILY_RATE;
+        var curPH=Math.round(pRate/avgH*100)/100;
+        if(hEl&&Math.abs(hV-curPH)>0.005){
+          ECON_RATE_PERIODS[pi].rate=Math.round(hV*avgH);
+          ECON_RATE_PERIODS[pi].rateMode='hourly';
+        } else if(dEl&&dV>0){
+          ECON_RATE_PERIODS[pi].rate=Math.round(dV);
+          ECON_RATE_PERIODS[pi].rateMode='daily';
+        }
+      }
+      /* Also update DAILY_RATE from first period for fallback */
+      if(ECON_RATE_PERIODS.length>0&&ECON_RATE_PERIODS[0].rate>0){
+        DAILY_RATE=ECON_RATE_PERIODS[0].rate;
+      }
     }
     if(typeof saveEconYear==='function')saveEconYear(ECON_YEAR);
     else save();
     reRenderEcon();
   });
-  // Click en inputs cambia el modo primario
-  var dayInput=document.getElementById('rateDayInput');
-  var hourInput=document.getElementById('rateHourInput');
-  if(dayInput)dayInput.addEventListener('focus',function(){ECON_RATE_MODE='daily';});
-  if(hourInput)hourInput.addEventListener('focus',function(){ECON_RATE_MODE='hourly';});
+  /* Focus on rate inputs: toggle primary/derived styling */
+  document.querySelectorAll('.econ-mr-rate').forEach(function(inp){
+    inp.addEventListener('focus',function(){
+      var pfx=this.dataset.pfx||'';
+      var rtype=this.dataset.rtype;
+      var dayF=document.getElementById('rateDay'+pfx);
+      var hourF=document.getElementById('rateHour'+pfx);
+      if(dayF){dayF.parentElement.className='econ-rate-field'+(rtype==='daily'?' primary':' derived');}
+      if(hourF){hourF.parentElement.className='econ-rate-field'+(rtype==='hourly'?' primary':' derived');}
+    });
+  });
   /* Salary input: thousands separator */
   var salInput=document.getElementById('rateSalaryInput');
   if(salInput)salInput.addEventListener('input',function(){
@@ -942,32 +1068,28 @@ function bindEconResumenEvents(){
   if(mrMulti)mrMulti.addEventListener('click',function(){
     if(!ECON_MULTI_RATE){
       ECON_MULTI_RATE=true;
-      if(!ECON_RATE_PERIODS.length||ECON_RATE_PERIODS[0].rate===0){
-        ECON_RATE_PERIODS=[{from:0,to:11,rate:DAILY_RATE}];
+      _ensureDatePeriods(ECON_YEAR);
+      if(ECON_RATE_PERIODS.length===1&&(!ECON_RATE_PERIODS[0].rate||ECON_RATE_PERIODS[0].rate===0)){
+        ECON_RATE_PERIODS[0].rate=DAILY_RATE;
       }
       if(typeof saveEconYear==='function')saveEconYear(ECON_YEAR);else save();
       reRenderEcon();
     }
   });
-  /* Multi-rate period controls */
+  /* Multi-rate period controls (date-based) */
   if(ECON_MULTI_RATE){
-    document.querySelectorAll('.econ-multi-rate-sel').forEach(function(sel){
-      sel.addEventListener('change',function(){
-        var i=parseInt(this.dataset.mri,10);
-        var field=this.dataset.mrfield;
-        ECON_RATE_PERIODS[i][field]=parseInt(this.value,10);
-        if(typeof saveEconYear==='function')saveEconYear(ECON_YEAR);else save();
-        reRenderEcon();
-      });
-    });
-    document.querySelectorAll('.econ-multi-rate-input').forEach(function(inp){
+    /* Date pickers for period start dates */
+    document.querySelectorAll('.econ-mr-date').forEach(function(inp){
       inp.addEventListener('change',function(){
         var i=parseInt(this.dataset.mri,10);
-        ECON_RATE_PERIODS[i].rate=parseFloat(this.value)||DAILY_RATE;
-        if(typeof saveEconYear==='function')saveEconYear(ECON_YEAR);else save();
-        reRenderEcon();
+        if(ECON_RATE_PERIODS[i]){
+          ECON_RATE_PERIODS[i].startDate=this.value;
+          if(typeof saveEconYear==='function')saveEconYear(ECON_YEAR);else save();
+          reRenderEcon();
+        }
       });
     });
+    /* Delete period */
     document.querySelectorAll('.econ-multi-rate-del').forEach(function(btn){
       btn.addEventListener('click',function(){
         var i=parseInt(this.dataset.mrdel,10);
@@ -976,11 +1098,21 @@ function bindEconResumenEvents(){
         reRenderEcon();
       });
     });
+    /* Add period */
     var addPeriodBtn=document.getElementById('ecRateAddPeriod');
     if(addPeriodBtn)addPeriodBtn.addEventListener('click',function(){
-      var lastTo=ECON_RATE_PERIODS.length>0?ECON_RATE_PERIODS[ECON_RATE_PERIODS.length-1].to:0;
-      var newFrom=Math.min(lastTo+1,11);
-      ECON_RATE_PERIODS.push({from:newFrom,to:11,rate:DAILY_RATE});
+      _ensureDatePeriods(ECON_YEAR);
+      var lastP=ECON_RATE_PERIODS[ECON_RATE_PERIODS.length-1];
+      /* Default: start on Jul 1 if only 1 period, else the month after last start */
+      var newStart;
+      if(ECON_RATE_PERIODS.length===1){
+        newStart=ECON_YEAR+'-07-01';
+      } else {
+        var lm=parseInt(lastP.startDate.slice(5,7),10);
+        var nm=Math.min(lm+1,12);
+        newStart=ECON_YEAR+'-'+String(nm).padStart(2,'0')+'-01';
+      }
+      ECON_RATE_PERIODS.push({startDate:newStart,rate:DAILY_RATE,rateMode:'daily'});
       if(typeof saveEconYear==='function')saveEconYear(ECON_YEAR);else save();
       reRenderEcon();
     });
