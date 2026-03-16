@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v107 \u2014 color picker avanzado, modo edici\u00f3n calendarios';
+var APP_VERSION = 'v108 \u2014 econ per-year, layout resumen';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -42,6 +42,7 @@ function updateThemeBtn(){
 
 // ── Estado global ──────────────────────────────────────────
 var SK='excelia-horas-v3', CY, CM, ST={}, SW={}, ED=null, MONTH_H={}, DAILY_RATE=0, EXCL_FEST=true, EXCL_VAC=true;
+var ECON_YEAR_CONFIG={}; // {year: {rate, exclFest, exclVac, multiRate, ratePeriods, salary, rateMode}}
 var MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 var MN_SHORT=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 var DN=['D','L','M','X','J','V','S'];
@@ -54,11 +55,31 @@ function load(){
     if(r){var d=JSON.parse(r);ST=d.days||{};SW=d.sent||{};MONTH_H=d.monthH||{};DAILY_RATE=d.rate||0;EXCL_FEST=d.exclFest!==false;EXCL_VAC=d.exclVac!==false;
       if(d.multiRate!==undefined)ECON_MULTI_RATE=!!d.multiRate;
       if(d.ratePeriods)ECON_RATE_PERIODS=d.ratePeriods;
+      if(d.econYearConfig)ECON_YEAR_CONFIG=d.econYearConfig;
+      /* Migrate: if globals set but no year config, seed current year */
+      if(!ECON_YEAR_CONFIG||typeof ECON_YEAR_CONFIG!=='object')ECON_YEAR_CONFIG={};
     }
   }catch(e){ST={};SW={};MONTH_H={};DAILY_RATE=0;EXCL_FEST=true;EXCL_VAC=true;}
 }
 function save(){
-  localStorage.setItem(SK,JSON.stringify({days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,exclFest:EXCL_FEST,exclVac:EXCL_VAC,multiRate:ECON_MULTI_RATE,ratePeriods:ECON_RATE_PERIODS}));
+  localStorage.setItem(SK,JSON.stringify({days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,exclFest:EXCL_FEST,exclVac:EXCL_VAC,multiRate:ECON_MULTI_RATE,ratePeriods:ECON_RATE_PERIODS,econYearConfig:ECON_YEAR_CONFIG}));
+}
+/* ── Per-year econ config helpers ──────────────────────────── */
+function loadEconYear(y){
+  var cfg=ECON_YEAR_CONFIG[y];
+  if(cfg){
+    DAILY_RATE=cfg.rate||0;
+    EXCL_FEST=cfg.exclFest!==false;
+    EXCL_VAC=cfg.exclVac!==false;
+    ECON_MULTI_RATE=!!cfg.multiRate;
+    ECON_RATE_PERIODS=cfg.ratePeriods||[{from:0,to:11,rate:0}];
+    if(cfg.salary!==undefined)window._ECON_SALARY=cfg.salary;
+    if(cfg.rateMode)ECON_RATE_MODE=cfg.rateMode;
+  }
+}
+function saveEconYear(y){
+  ECON_YEAR_CONFIG[y]={rate:DAILY_RATE,exclFest:EXCL_FEST,exclVac:EXCL_VAC,multiRate:ECON_MULTI_RATE,ratePeriods:ECON_RATE_PERIODS,salary:window._ECON_SALARY||0,rateMode:ECON_RATE_MODE||'daily'};
+  save();
 }
 
 // ── Falso translúcido: mezcla color con fondo negro (opaco) ─

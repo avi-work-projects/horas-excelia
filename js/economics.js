@@ -191,6 +191,12 @@ function renderEconResumen(){
     h+='<input class="econ-rate-input" id="rateSalaryInput" type="text" inputmode="numeric" value="'+_salFmt+'" placeholder="30.000" autocomplete="off">';
     h+='</div></div>';
   } else {
+    /* Multi-tarifa toggle (moved above rate inputs) */
+    h+='<div class="econ-opt-row" style="margin-bottom:8px">';
+    h+='<button class="econ-opt-btn'+(!ECON_MULTI_RATE?' active':'')+'" id="ecRateSingle">Tarifa \u00fanica</button>';
+    h+='<button class="econ-opt-btn'+(ECON_MULTI_RATE?' active':'')+'" id="ecRateMulti">M\u00faltiples tarifas</button>';
+    h+='</div>';
+    /* Rate inputs */
     h+='<div class="econ-rate-dual">';
     h+='<div class="econ-rate-field'+(ECON_RATE_MODE==='daily'?' primary':' derived')+'">';
     h+='<label>&#8364;/d&#237;a</label>';
@@ -202,15 +208,6 @@ function renderEconResumen(){
     h+='<label>&#8364;/hora</label>';
     h+='<input class="econ-rate-input" id="rateHourInput" type="number" min="0.01" step="0.01" value="'+hourlyRate.toFixed(2)+'">';
     h+='</div></div>';
-    h+='<div class="excl-row">';
-    h+='<label class="excl-item" style="color:var(--festivo)"><input type="checkbox" class="excl-chk" id="ecExclFestChk" style="accent-color:var(--festivo)"'+(EXCL_FEST?' checked':'')+'>&#160;Quitar festivos</label>';
-    h+='<label class="excl-item" style="color:var(--vacaciones)"><input type="checkbox" class="excl-chk" id="ecExclVacChk" style="accent-color:var(--vacaciones)"'+(EXCL_VAC?' checked':'')+'>&#160;Quitar vacaciones</label>';
-    h+='</div>';
-    /* Multi-tarifa toggle */
-    h+='<div class="econ-opt-row" style="margin-top:8px">';
-    h+='<button class="econ-opt-btn'+(!ECON_MULTI_RATE?' active':'')+'" id="ecRateSingle">Tarifa \u00fanica</button>';
-    h+='<button class="econ-opt-btn'+(ECON_MULTI_RATE?' active':'')+'" id="ecRateMulti">M\u00faltiples tarifas</button>';
-    h+='</div>';
     if(ECON_MULTI_RATE){
       var _mNames=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
       h+='<div class="econ-multi-rate-cards">';
@@ -237,6 +234,13 @@ function renderEconResumen(){
     }
   }
   h+='<button class="econ-calc-btn" id="ecCalcular">Calcular</button>';
+  /* Checkboxes below Calcular */
+  if(ECON_RATE_MODE!=='salary'){
+    h+='<div class="excl-row" style="margin-top:8px">';
+    h+='<label class="excl-item" style="color:var(--festivo)"><input type="checkbox" class="excl-chk" id="ecExclFestChk" style="accent-color:var(--festivo)"'+(EXCL_FEST?' checked':'')+'>&#160;Quitar festivos</label>';
+    h+='<label class="excl-item" style="color:var(--vacaciones)"><input type="checkbox" class="excl-chk" id="ecExclVacChk" style="accent-color:var(--vacaciones)"'+(EXCL_VAC?' checked':'')+'>&#160;Quitar vacaciones</label>';
+    h+='</div>';
+  }
   h+='</div>';
 
   if(ECON_RATE_MODE==='salary'){
@@ -357,6 +361,8 @@ function renderEconResumen(){
 
 /* ── renderEconContent — 4 tabs ─────────────────────────────── */
 function renderEconContent(){
+  /* Load per-year econ config before rendering any tab */
+  if(typeof loadEconYear==='function')loadEconYear(ECON_YEAR);
   var h=renderNavBar('econ');
   h+='<div class="econ-hdr-sub">';
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='resumen'?' active':'')+'" id="ecTabResumen">Resumen<br>Econ\u00f3mico</button>';
@@ -873,13 +879,13 @@ function bindEconResumenEvents(){
   /* Modo Autónomo / Nómina */
   var modeF=document.getElementById('ecModeFreelance');
   var modeS=document.getElementById('ecModeSalary');
-  if(modeF)modeF.addEventListener('click',function(){if(ECON_RATE_MODE==='salary'){ECON_RATE_MODE='daily';reRenderEcon();}});
-  if(modeS)modeS.addEventListener('click',function(){if(ECON_RATE_MODE!=='salary'){ECON_RATE_MODE='salary';reRenderEcon();}});
+  if(modeF)modeF.addEventListener('click',function(){if(ECON_RATE_MODE==='salary'){ECON_RATE_MODE='daily';if(typeof saveEconYear==='function')saveEconYear(ECON_YEAR);reRenderEcon();}});
+  if(modeS)modeS.addEventListener('click',function(){if(ECON_RATE_MODE!=='salary'){ECON_RATE_MODE='salary';if(typeof saveEconYear==='function')saveEconYear(ECON_YEAR);reRenderEcon();}});
 
   var ecChkFest=document.getElementById('ecExclFestChk');
   var ecChkVac=document.getElementById('ecExclVacChk');
-  if(ecChkFest)ecChkFest.addEventListener('change',function(){EXCL_FEST=this.checked;save();reRenderEcon();});
-  if(ecChkVac)ecChkVac.addEventListener('change',function(){EXCL_VAC=this.checked;save();reRenderEcon();});
+  if(ecChkFest)ecChkFest.addEventListener('change',function(){EXCL_FEST=this.checked;if(typeof saveEconYear==='function')saveEconYear(ECON_YEAR);else save();reRenderEcon();});
+  if(ecChkVac)ecChkVac.addEventListener('change',function(){EXCL_VAC=this.checked;if(typeof saveEconYear==='function')saveEconYear(ECON_YEAR);else save();reRenderEcon();});
   // Calcular button
   var calcBtn=document.getElementById('ecCalcular');
   if(calcBtn)calcBtn.addEventListener('click',function(){
@@ -887,6 +893,8 @@ function bindEconResumenEvents(){
       var salEl=document.getElementById('rateSalaryInput');
       var salRaw=(salEl?salEl.value:'').replace(/\./g,'');
       window._ECON_SALARY=parseFloat(salRaw)||0;
+      if(typeof saveEconYear==='function')saveEconYear(ECON_YEAR);
+      else save();
       reRenderEcon();return;
     }
     var dayEl=document.getElementById('rateDayInput');
@@ -902,7 +910,16 @@ function bindEconResumenEvents(){
       ECON_RATE_MODE='daily';
       DAILY_RATE=Math.round(dayV);
     }
-    save();reRenderEcon();
+    /* Read multi-rate period inputs before saving */
+    if(ECON_MULTI_RATE){
+      document.querySelectorAll('.econ-multi-rate-input').forEach(function(inp){
+        var i=parseInt(inp.dataset.mri,10);
+        if(ECON_RATE_PERIODS[i])ECON_RATE_PERIODS[i].rate=parseFloat(inp.value)||DAILY_RATE;
+      });
+    }
+    if(typeof saveEconYear==='function')saveEconYear(ECON_YEAR);
+    else save();
+    reRenderEcon();
   });
   // Click en inputs cambia el modo primario
   var dayInput=document.getElementById('rateDayInput');
@@ -921,13 +938,14 @@ function bindEconResumenEvents(){
   /* Multi-rate toggle */
   var mrSingle=document.getElementById('ecRateSingle');
   var mrMulti=document.getElementById('ecRateMulti');
-  if(mrSingle)mrSingle.addEventListener('click',function(){if(ECON_MULTI_RATE){ECON_MULTI_RATE=false;reRenderEcon();}});
+  if(mrSingle)mrSingle.addEventListener('click',function(){if(ECON_MULTI_RATE){ECON_MULTI_RATE=false;if(typeof saveEconYear==='function')saveEconYear(ECON_YEAR);else save();reRenderEcon();}});
   if(mrMulti)mrMulti.addEventListener('click',function(){
     if(!ECON_MULTI_RATE){
       ECON_MULTI_RATE=true;
       if(!ECON_RATE_PERIODS.length||ECON_RATE_PERIODS[0].rate===0){
         ECON_RATE_PERIODS=[{from:0,to:11,rate:DAILY_RATE}];
       }
+      if(typeof saveEconYear==='function')saveEconYear(ECON_YEAR);else save();
       reRenderEcon();
     }
   });
@@ -938,6 +956,7 @@ function bindEconResumenEvents(){
         var i=parseInt(this.dataset.mri,10);
         var field=this.dataset.mrfield;
         ECON_RATE_PERIODS[i][field]=parseInt(this.value,10);
+        if(typeof saveEconYear==='function')saveEconYear(ECON_YEAR);else save();
         reRenderEcon();
       });
     });
@@ -945,6 +964,7 @@ function bindEconResumenEvents(){
       inp.addEventListener('change',function(){
         var i=parseInt(this.dataset.mri,10);
         ECON_RATE_PERIODS[i].rate=parseFloat(this.value)||DAILY_RATE;
+        if(typeof saveEconYear==='function')saveEconYear(ECON_YEAR);else save();
         reRenderEcon();
       });
     });
@@ -952,6 +972,7 @@ function bindEconResumenEvents(){
       btn.addEventListener('click',function(){
         var i=parseInt(this.dataset.mrdel,10);
         ECON_RATE_PERIODS.splice(i,1);
+        if(typeof saveEconYear==='function')saveEconYear(ECON_YEAR);else save();
         reRenderEcon();
       });
     });
@@ -960,6 +981,7 @@ function bindEconResumenEvents(){
       var lastTo=ECON_RATE_PERIODS.length>0?ECON_RATE_PERIODS[ECON_RATE_PERIODS.length-1].to:0;
       var newFrom=Math.min(lastTo+1,11);
       ECON_RATE_PERIODS.push({from:newFrom,to:11,rate:DAILY_RATE});
+      if(typeof saveEconYear==='function')saveEconYear(ECON_YEAR);else save();
       reRenderEcon();
     });
   }
