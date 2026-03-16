@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v105 \u2014 resumen, eventos, econom\u00eda, fiscal improvements';
+var APP_VERSION = 'v106 \u2014 hipoteca completa, sub-tabs an\u00e1lisis, desgrav cards, multi-tarifa';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -51,11 +51,14 @@ var DF=['Domingo','Lunes','Martes','Mi\u00e9rcoles','Jueves','Viernes','S\u00e1b
 function load(){
   try{
     var r=localStorage.getItem(SK);
-    if(r){var d=JSON.parse(r);ST=d.days||{};SW=d.sent||{};MONTH_H=d.monthH||{};DAILY_RATE=d.rate||0;EXCL_FEST=d.exclFest!==false;EXCL_VAC=d.exclVac!==false;}
+    if(r){var d=JSON.parse(r);ST=d.days||{};SW=d.sent||{};MONTH_H=d.monthH||{};DAILY_RATE=d.rate||0;EXCL_FEST=d.exclFest!==false;EXCL_VAC=d.exclVac!==false;
+      if(d.multiRate!==undefined)ECON_MULTI_RATE=!!d.multiRate;
+      if(d.ratePeriods)ECON_RATE_PERIODS=d.ratePeriods;
+    }
   }catch(e){ST={};SW={};MONTH_H={};DAILY_RATE=0;EXCL_FEST=true;EXCL_VAC=true;}
 }
 function save(){
-  localStorage.setItem(SK,JSON.stringify({days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,exclFest:EXCL_FEST,exclVac:EXCL_VAC}));
+  localStorage.setItem(SK,JSON.stringify({days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,exclFest:EXCL_FEST,exclVac:EXCL_VAC,multiRate:ECON_MULTI_RATE,ratePeriods:ECON_RATE_PERIODS}));
 }
 
 // ── Falso translúcido: mezcla color con fondo negro (opaco) ─

@@ -20,7 +20,8 @@ function isTglOn(id){
 
 /* Calcula "Disponible para gastos personales" replicando el cascade de toggles */
 function computeDisponible(year){
-  var e=computeEconEx(year||ECON_YEAR);
+  var _mrOpts=typeof _getMultiRateOpts==='function'?_getMultiRateOpts():{};
+  var e=computeEconEx(year||ECON_YEAR,_mrOpts);
   var dr=typeof computeDeclResult==='function'?computeDeclResult(e.totBase,e.totIrpf):{gdPct:5,totalDesgrav:0,baseDecl:e.totBase,decl:{effectivePct:0},declDiff:0};
   var running=Math.round((e.totBase-e.totIrpf)*100)/100;
   if(dr.declDiff>0&&isTglOn('irpf_decl'))running=Math.round((running-dr.declDiff)*100)/100;

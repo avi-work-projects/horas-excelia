@@ -5,6 +5,8 @@
 var ECON_YEAR=new Date().getFullYear();
 var ECON_VIEW='resumen';    // 'resumen' | 'gastos' | 'analisis' | 'estudio'
 var ECON_RATE_MODE='daily'; // 'daily' | 'hourly' | 'salary'
+var ECON_MULTI_RATE=false;
+var ECON_RATE_PERIODS=[{from:0,to:11,rate:0}]; // rate=0 means use DAILY_RATE
 var ECON_ESTUDIO_SUB='comparador'; // 'comparador' | 'simulador'
 window._ECON_SALARY=30000; // salario bruto anual para modo nómina
 
@@ -56,10 +58,19 @@ function computeEconEx(year,opts){
   var months=[],totBase=0,totIva=0,totIrpf=0,totCobrado=0;
   var qIva=[0,0,0,0],qCobrado=[0,0,0,0],qBase=[0,0,0,0];
   var totalDays=0,totalHours=0;
+  var ratePeriods=opts.ratePeriods||null;
   for(var m=0;m<12;m++){
     var dias=s.mDays[m]+s.mDaysP[m];
     var effHours=hoursMode==='8h'?dias*8:(s.mHours[m]+s.mHoursP[m]);
-    var base=opts.rateType==='hourly'&&opts.rateValue>0?Math.round(effHours*opts.rateValue*100)/100:Math.round(dias*dailyRate*100)/100;
+    var effectiveRate=dailyRate;
+    if(ratePeriods){
+      for(var rp=0;rp<ratePeriods.length;rp++){
+        if(m>=ratePeriods[rp].from&&m<=ratePeriods[rp].to&&ratePeriods[rp].rate>0){
+          effectiveRate=ratePeriods[rp].rate;break;
+        }
+      }
+    }
+    var base=opts.rateType==='hourly'&&opts.rateValue>0?Math.round(effHours*opts.rateValue*100)/100:Math.round(dias*effectiveRate*100)/100;
     var iva=Math.round(base*0.21*100)/100;
     var irpf=Math.round(base*irpfPct/100*100)/100;
     var cobrado=Math.round((base+iva-irpf)*100)/100;
@@ -151,8 +162,13 @@ function _econCards7(e,cotAnual,declDiff,factor,subSuffix){
 }
 
 /* ── Tab 1: Resumen ──────────────────────────────────────────── */
+function _getMultiRateOpts(){
+  if(!ECON_MULTI_RATE)return{};
+  return{ratePeriods:ECON_RATE_PERIODS};
+}
 function renderEconResumen(){
-  var e=computeEconEx(ECON_YEAR);
+  var _mrOpts=_getMultiRateOpts();
+  var e=computeEconEx(ECON_YEAR,_mrOpts);
   var avgHDay=e.avgHDay||8;
   var hourlyRate=Math.round(DAILY_RATE/avgHDay*100)/100;
   var cotAnual=typeof gastoAnual==='function'?gastoAnual('cot_social'):0;
@@ -190,6 +206,35 @@ function renderEconResumen(){
     h+='<label class="excl-item" style="color:var(--festivo)"><input type="checkbox" class="excl-chk" id="ecExclFestChk" style="accent-color:var(--festivo)"'+(EXCL_FEST?' checked':'')+'>&#160;Quitar festivos</label>';
     h+='<label class="excl-item" style="color:var(--vacaciones)"><input type="checkbox" class="excl-chk" id="ecExclVacChk" style="accent-color:var(--vacaciones)"'+(EXCL_VAC?' checked':'')+'>&#160;Quitar vacaciones</label>';
     h+='</div>';
+    /* Multi-tarifa toggle */
+    h+='<div class="econ-opt-row" style="margin-top:8px">';
+    h+='<button class="econ-opt-btn'+(!ECON_MULTI_RATE?' active':'')+'" id="ecRateSingle">Tarifa \u00fanica</button>';
+    h+='<button class="econ-opt-btn'+(ECON_MULTI_RATE?' active':'')+'" id="ecRateMulti">M\u00faltiples tarifas</button>';
+    h+='</div>';
+    if(ECON_MULTI_RATE){
+      var _mNames=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+      h+='<div class="econ-multi-rate-cards">';
+      ECON_RATE_PERIODS.forEach(function(p,pi){
+        h+='<div class="econ-multi-rate-card">';
+        h+='<div class="econ-multi-rate-hdr">';
+        h+='<span class="econ-multi-rate-num">Per\u00edodo '+(pi+1)+'</span>';
+        if(ECON_RATE_PERIODS.length>1){h+='<button class="econ-multi-rate-del" data-mrdel="'+pi+'">\u2715</button>';}
+        h+='</div>';
+        h+='<div class="econ-multi-rate-row">';
+        h+='<div class="econ-multi-rate-field"><label>Desde</label><select class="econ-multi-rate-sel" data-mrfield="from" data-mri="'+pi+'">';
+        for(var mi=0;mi<12;mi++){h+='<option value="'+mi+'"'+(p.from===mi?' selected':'')+'>'+_mNames[mi]+'</option>';}
+        h+='</select></div>';
+        h+='<div class="econ-multi-rate-field"><label>Hasta</label><select class="econ-multi-rate-sel" data-mrfield="to" data-mri="'+pi+'">';
+        for(var mi2=0;mi2<12;mi2++){h+='<option value="'+mi2+'"'+(p.to===mi2?' selected':'')+'>'+_mNames[mi2]+'</option>';}
+        h+='</select></div>';
+        h+='<div class="econ-multi-rate-field"><label>\u20ac/d\u00eda</label><input class="econ-multi-rate-input" data-mrfield="rate" data-mri="'+pi+'" type="number" min="1" step="1" value="'+(p.rate||DAILY_RATE)+'"></div>';
+        h+='</div></div>';
+      });
+      if(ECON_RATE_PERIODS.length<3){
+        h+='<button class="econ-multi-rate-add" id="ecRateAddPeriod">+ A\u00f1adir per\u00edodo</button>';
+      }
+      h+='</div>';
+    }
   }
   h+='<button class="econ-calc-btn" id="ecCalcular">Calcular</button>';
   h+='</div>';
@@ -339,6 +384,7 @@ function renderEconContent(){
   return h;
 }
 /* ── Análisis Economía Personal ────────────────────────────── */
+var ANALISIS_SUB='gastos'; // 'gastos' | 'hipoteca'
 var ANALISIS_ALT_RATE=2.5;
 var ANALISIS_SWITCH_COST=0;
 var ANALISIS_CALC_HIP=false; // botón Calcular hipoteca
@@ -349,6 +395,18 @@ var ANALISIS_DESGRAV_DISCOUNT=false; // aplicar descuento del desgravamiento
 function renderEconAnalisis(){
   if(typeof loadPersonalYear==='function')loadPersonalYear(ECON_YEAR);
   if(typeof loadDespacho==='function')loadDespacho();
+  var h='';
+  /* Sub-tabs */
+  h+='<div class="econ-sub-tabs">';
+  h+='<button class="econ-sub-tab'+(ANALISIS_SUB==='gastos'?' active':'')+'" id="analisisSubGastos">Mis gastos</button>';
+  h+='<button class="econ-sub-tab'+(ANALISIS_SUB==='hipoteca'?' active':'')+'" id="analisisSubHipoteca">An\u00e1lisis Hipoteca</button>';
+  h+='</div>';
+  if(ANALISIS_SUB==='gastos'){h+=_renderAnalisisGastos();}
+  else{h+=_renderAnalisisHipoteca();}
+  return h;
+}
+
+function _renderAnalisisGastos(){
   var h='';
 
   /* A. Resumen mensual de flujo personal */
@@ -464,6 +522,17 @@ function renderEconAnalisis(){
     h+='</div>';
   }
 
+  /* Empty state if no personal data */
+  if(allGastos.length===0&&allInv.length===0&&tIng===0){
+    h+='<div class="sy-section" style="text-align:center;padding:20px;color:var(--text-dim)">';
+    h+='<div style="font-size:.75rem">Configura tus gastos e inversiones en <b>\u2699 Configuraci\u00f3n Fiscal \u2192 Econom\u00eda Personal</b></div>';
+    h+='</div>';
+  }
+  return h;
+}
+
+function _renderAnalisisHipoteca(){
+  var h='';
   /* D. Hipoteca — Comparativa tipo fijo */
   var comp=DESPACHO&&DESPACHO.compra?DESPACHO.compra:null;
   if(comp&&comp.importePrestamo>0&&comp.tipoInteres>0&&comp.plazoAnios>0){
@@ -533,12 +602,81 @@ function renderEconAnalisis(){
     h+='</div>';
   }
 
-  /* Empty state if no personal data */
-  if(allGastos.length===0&&allInv.length===0&&tIng===0){
-    h+='<div class="sy-section" style="text-align:center;padding:20px;color:var(--text-dim)">';
-    h+='<div style="font-size:.75rem">Configura tus gastos e inversiones en <b>\u2699 Configuraci\u00f3n Fiscal \u2192 Econom\u00eda Personal</b></div>';
-    h+='</div>';
+  /* Análisis subrogación */
+  if(comp&&comp.subrogacion){
+    h+=_renderSubrogacionAnalysis(comp);
   }
+  return h;
+}
+
+function _renderSubrogacionAnalysis(comp){
+  var sub=comp.subrogacion;
+  if(!sub||!sub.fecha||!sub.nuevoImporte||!sub.nuevoTipoInteres||!sub.nuevoPlazoAnios)return '';
+  if(!comp.fechaInicio||!comp.importePrestamo||!comp.tipoInteres||!comp.plazoAnios)return '';
+  var h='';
+  /* Calcular saldo vivo a fecha subrogación con condiciones originales */
+  var balanceAtSub=typeof _computeBalanceAtDate==='function'?_computeBalanceAtDate(comp,sub.fecha):0;
+  if(balanceAtSub<=0)return '';
+
+  /* Cuota original para el plazo restante */
+  var startP=comp.fechaInicio.split('-');
+  var subP=sub.fecha.split('-');
+  var mesesTranscurridos=((parseInt(subP[0],10)-parseInt(startP[0],10))*12)+(parseInt(subP[1],10)-parseInt(startP[1],10));
+  var mesesRestantesOrig=comp.plazoAnios*12-mesesTranscurridos;
+  if(mesesRestantesOrig<=0)return '';
+
+  var r1=comp.tipoInteres/100/12;
+  var cuotaOrig=balanceAtSub*r1*Math.pow(1+r1,mesesRestantesOrig)/(Math.pow(1+r1,mesesRestantesOrig)-1);
+  var totalOrig=cuotaOrig*mesesRestantesOrig;
+  var interesesOrig=totalOrig-balanceAtSub;
+
+  /* Cuota nueva */
+  var r2=sub.nuevoTipoInteres/100/12;
+  var mesesNuevo=sub.nuevoPlazoAnios*12;
+  var cuotaNueva=sub.nuevoImporte*r2*Math.pow(1+r2,mesesNuevo)/(Math.pow(1+r2,mesesNuevo)-1);
+  var totalNuevo=cuotaNueva*mesesNuevo;
+  var interesesNuevo=totalNuevo-sub.nuevoImporte;
+
+  /* Costes del cambio */
+  var costesCambio=(sub.comisionCancelacion||0)+(sub.notaria||0)+(sub.tasacion||0)+(sub.registro||0);
+
+  /* Ahorro */
+  var ahorroIntereses=Math.round((interesesOrig-interesesNuevo)*100)/100;
+  var ahorroTotal=Math.round((totalOrig-(totalNuevo+costesCambio))*100)/100;
+  var ahorroMes=Math.round((cuotaOrig-cuotaNueva)*100)/100;
+
+  h+='<div class="sy-section">';
+  h+='<div class="sy-section-title">An\u00e1lisis de la subrogaci\u00f3n</div>';
+
+  /* Cards resumen */
+  h+='<div class="analisis-cards">';
+  h+=_analisisCard('Ahorro cuota',ahorroMes,ahorroMes>=0?'var(--c-green)':'var(--c-red)');
+  h+=_analisisCard('Ahorro intereses',(ahorroIntereses/12/((mesesNuevo>mesesRestantesOrig?mesesNuevo:mesesRestantesOrig)/12)),ahorroIntereses>=0?'var(--c-green)':'var(--c-red)');
+  h+='</div>';
+
+  /* Detalle */
+  h+='<div style="padding:8px 0;font-size:.72rem;color:var(--text-muted)">';
+  h+='<div>Capital pendiente al subrogar: <b>'+fcPlain(balanceAtSub)+'</b></div>';
+  h+='<div>Costes del cambio: <b style="color:var(--c-orange)">'+fcPlain(costesCambio)+'</b></div>';
+  h+='<div style="margin-top:4px">Cuota original ('+comp.tipoInteres.toFixed(2)+'%, '+mesesRestantesOrig+' meses): <b>'+fcPlain(Math.round(cuotaOrig*100)/100)+'</b>/mes</div>';
+  h+='<div>Cuota nueva ('+sub.nuevoTipoInteres.toFixed(2)+'%, '+mesesNuevo+' meses): <b>'+fcPlain(Math.round(cuotaNueva*100)/100)+'</b>/mes</div>';
+  h+='<div style="margin-top:4px">Intereses originales restantes: <b style="color:var(--c-orange)">'+fcPlain(Math.round(interesesOrig))+'</b></div>';
+  h+='<div>Intereses nuevos: <b style="color:var(--c-orange)">'+fcPlain(Math.round(interesesNuevo))+'</b></div>';
+  h+='<div style="margin-top:4px;font-size:.78rem">Ahorro total: <b style="color:'+(ahorroTotal>=0?'var(--c-green)':'var(--c-red)')+'">'+fcPlain(Math.round(ahorroTotal))+'</b></div>';
+  h+='</div>';
+
+  /* Break-even */
+  if(costesCambio>0&&ahorroMes>0){
+    var breakEven=Math.ceil(costesCambio/ahorroMes);
+    h+='<div style="font-size:.72rem;color:var(--text-dim);padding:4px 0">Recuperas la inversi\u00f3n en <b>'+breakEven+' meses</b> ('+Math.round(breakEven/12*10)/10+' a\u00f1os)</div>';
+  }
+
+  /* Gráfica SVG comparativa */
+  var maxMeses=Math.max(mesesRestantesOrig,mesesNuevo);
+  var points=Math.min(Math.ceil(maxMeses/12),40);
+  h+=_mortgageComparisonChart(cuotaOrig,cuotaNueva,maxMeses,costesCambio,comp.tipoInteres,sub.nuevoTipoInteres);
+
+  h+='</div>';
   return h;
 }
 
@@ -615,27 +753,35 @@ function _mortgageComparisonChart(cuota1,cuota2,nMeses,switchCost,rate1,rate2){
 }
 
 function bindEconAnalisisEvents(){
-  var rateEl=document.getElementById('analisisAltRate');
-  var costEl=document.getElementById('analisisSwitchCost');
-  if(rateEl)rateEl.addEventListener('change',function(){
-    ANALISIS_ALT_RATE=parseFloat(this.value)||0;
-    reRenderEcon();
-  });
-  if(costEl)costEl.addEventListener('change',function(){
-    ANALISIS_SWITCH_COST=parseFloat(this.value)||0;
-    reRenderEcon();
-  });
-  var calcHipBtn=document.getElementById('analisisCalcHip');
-  if(calcHipBtn)calcHipBtn.addEventListener('click',function(){ANALISIS_CALC_HIP=true;reRenderEcon();});
-  /* Desgravable checkboxes */
-  document.querySelectorAll('.analisis-desgrav-chk').forEach(function(chk){
-    chk.addEventListener('change',function(){
-      ANALISIS_DESGRAV_IDS[this.dataset.did]=this.checked;
+  /* Sub-tab clicks */
+  var subG=document.getElementById('analisisSubGastos');
+  var subH=document.getElementById('analisisSubHipoteca');
+  if(subG)subG.addEventListener('click',function(){ANALISIS_SUB='gastos';reRenderEcon();});
+  if(subH)subH.addEventListener('click',function(){ANALISIS_SUB='hipoteca';reRenderEcon();});
+  if(ANALISIS_SUB==='gastos'){
+    /* Desgravable checkboxes */
+    document.querySelectorAll('.analisis-desgrav-chk').forEach(function(chk){
+      chk.addEventListener('change',function(){
+        ANALISIS_DESGRAV_IDS[this.dataset.did]=this.checked;
+        reRenderEcon();
+      });
+    });
+    var discountChk=document.getElementById('analisisDesgravDiscount');
+    if(discountChk)discountChk.addEventListener('change',function(){ANALISIS_DESGRAV_DISCOUNT=this.checked;reRenderEcon();});
+  } else {
+    var rateEl=document.getElementById('analisisAltRate');
+    var costEl=document.getElementById('analisisSwitchCost');
+    if(rateEl)rateEl.addEventListener('change',function(){
+      ANALISIS_ALT_RATE=parseFloat(this.value)||0;
       reRenderEcon();
     });
-  });
-  var discountChk=document.getElementById('analisisDesgravDiscount');
-  if(discountChk)discountChk.addEventListener('change',function(){ANALISIS_DESGRAV_DISCOUNT=this.checked;reRenderEcon();});
+    if(costEl)costEl.addEventListener('change',function(){
+      ANALISIS_SWITCH_COST=parseFloat(this.value)||0;
+      reRenderEcon();
+    });
+    var calcHipBtn=document.getElementById('analisisCalcHip');
+    if(calcHipBtn)calcHipBtn.addEventListener('click',function(){ANALISIS_CALC_HIP=true;reRenderEcon();});
+  }
 }
 /* ── Estudio Cambio (sub-tabs) ─────────────────────────────── */
 function renderEconEstudio(){
@@ -772,4 +918,49 @@ function bindEconResumenEvents(){
     if(isNaN(n)){this.value='';return;}
     this.value=n>999?String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'.'):String(n);
   });
+  /* Multi-rate toggle */
+  var mrSingle=document.getElementById('ecRateSingle');
+  var mrMulti=document.getElementById('ecRateMulti');
+  if(mrSingle)mrSingle.addEventListener('click',function(){if(ECON_MULTI_RATE){ECON_MULTI_RATE=false;reRenderEcon();}});
+  if(mrMulti)mrMulti.addEventListener('click',function(){
+    if(!ECON_MULTI_RATE){
+      ECON_MULTI_RATE=true;
+      if(!ECON_RATE_PERIODS.length||ECON_RATE_PERIODS[0].rate===0){
+        ECON_RATE_PERIODS=[{from:0,to:11,rate:DAILY_RATE}];
+      }
+      reRenderEcon();
+    }
+  });
+  /* Multi-rate period controls */
+  if(ECON_MULTI_RATE){
+    document.querySelectorAll('.econ-multi-rate-sel').forEach(function(sel){
+      sel.addEventListener('change',function(){
+        var i=parseInt(this.dataset.mri,10);
+        var field=this.dataset.mrfield;
+        ECON_RATE_PERIODS[i][field]=parseInt(this.value,10);
+        reRenderEcon();
+      });
+    });
+    document.querySelectorAll('.econ-multi-rate-input').forEach(function(inp){
+      inp.addEventListener('change',function(){
+        var i=parseInt(this.dataset.mri,10);
+        ECON_RATE_PERIODS[i].rate=parseFloat(this.value)||DAILY_RATE;
+        reRenderEcon();
+      });
+    });
+    document.querySelectorAll('.econ-multi-rate-del').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var i=parseInt(this.dataset.mrdel,10);
+        ECON_RATE_PERIODS.splice(i,1);
+        reRenderEcon();
+      });
+    });
+    var addPeriodBtn=document.getElementById('ecRateAddPeriod');
+    if(addPeriodBtn)addPeriodBtn.addEventListener('click',function(){
+      var lastTo=ECON_RATE_PERIODS.length>0?ECON_RATE_PERIODS[ECON_RATE_PERIODS.length-1].to:0;
+      var newFrom=Math.min(lastTo+1,11);
+      ECON_RATE_PERIODS.push({from:newFrom,to:11,rate:DAILY_RATE});
+      reRenderEcon();
+    });
+  }
 }

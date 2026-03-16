@@ -328,9 +328,10 @@ function computeTotalDesgrav(){
 
 /* ── Despacho en casa ─────────────────────────────────────── */
 var DESPACHO_SK='excelia-despacho-v1';
-var DESPACHO={enabled:true,m2Total:0,m2Despacho:0,pct:0,valorCatastral:0,valorCompra:0,hipotecaIntereses:0,compra:null};
+var DESPACHO={enabled:true,m2Total:0,m2Despacho:0,pct:0,valorCatastral:0,valorCompra:0,hipotecaIntereses:0,hipotecaInteresesManual:false,compra:null};
 
-function _defaultCompra(){return{valorCompraTotal:0,itpMadrid:0,notariaRegistro:0,tasacion:0,reformas:0,inmobiliaria:0,importePrestamo:0,tipoInteres:0,plazoAnios:0};}
+function _defaultCompra(){return{valorCompraTotal:0,itpMadrid:0,notariaRegistro:0,tasacion:0,reformas:0,inmobiliaria:0,importePrestamo:0,tipoInteres:0,plazoAnios:0,fechaInicio:null,vinculaciones:{nomina:{enabled:false,costeAnual:0},segHogar:{enabled:false,costeAnual:0},segSalud:{enabled:false,costeAnual:0}},subrogacion:null};}
+function _defaultSubrogacion(){return{fecha:null,comisionCancelacion:0,notaria:0,tasacion:0,registro:0,nuevoImporte:0,nuevoTipoInteres:0,nuevoPlazoAnios:0};}
 function loadDespacho(){
   try{
     var r=localStorage.getItem(DESPACHO_SK);
@@ -341,8 +342,15 @@ function loadDespacho(){
       DESPACHO.valorCatastral=d.valorCatastral||0;DESPACHO.valorCompra=d.valorCompra||0;
       DESPACHO.hipotecaIntereses=d.hipotecaIntereses||0;
       /* Migración: si no existe compra, crear con defaults y migrar valorCompra */
-      if(d.compra){DESPACHO.compra=d.compra;}
+      if(d.compra){
+        DESPACHO.compra=d.compra;
+        /* Migrar campos nuevos v106 */
+        if(!d.compra.fechaInicio&&d.compra.fechaInicio!==null)d.compra.fechaInicio=null;
+        if(!d.compra.vinculaciones)d.compra.vinculaciones={nomina:{enabled:false,costeAnual:0},segHogar:{enabled:false,costeAnual:0},segSalud:{enabled:false,costeAnual:0}};
+        if(d.compra.subrogacion===undefined)d.compra.subrogacion=null;
+      }
       else{DESPACHO.compra=_defaultCompra();if(DESPACHO.valorCompra>0)DESPACHO.compra.valorCompraTotal=DESPACHO.valorCompra;}
+      DESPACHO.hipotecaInteresesManual=d.hipotecaInteresesManual||false;
     }else{DESPACHO.compra=_defaultCompra();}
   }catch(e){if(!DESPACHO.compra)DESPACHO.compra=_defaultCompra();}
 }
@@ -767,17 +775,26 @@ function renderDesgravDespachoInfo(){
   var hipIntInfo=Math.round((DESPACHO.hipotecaIntereses||0)*prop*100)/100;
   var hasItems=ibiAmt>0||casaItems.length>0||utilItems.length>0||amort>0||hipIntInfo>0;
   if(!hasItems||prop<=0)return '';
+  function _dedCard(name,annual,pctLabel,ded,borderColor){
+    var c='<div class="fiscal-ded-card" style="border-left-color:'+borderColor+'">';
+    c+='<div class="fiscal-ded-card-name">'+name+'</div>';
+    c+='<div class="fiscal-ded-card-vals">';
+    c+='<span class="fiscal-ded-card-annual">'+annual+'</span>';
+    c+='<span class="fiscal-ded-card-pct">\u00d7 '+pctLabel+'</span>';
+    c+='<span class="fiscal-ded-card-amount">'+fcPlain(ded)+'</span>';
+    c+='</div></div>';
+    return c;
+  }
   var h='<div class="fiscal-section fiscal-desgrav-despacho-section">';
-  h+='<div class="fiscal-desgrav-group-title" style="border-top:none;margin-top:0;padding-top:0">\uD83C\uDFE0 Gastos del hogar deducibles (% despacho = '+propPct.toFixed(1)+'%)</div>';
-  h+='<div style="font-size:.7rem;color:var(--text-dim);margin-bottom:8px">Estas partidas se deducen autom\u00e1ticamente en proporci\u00f3n al % del despacho. El total aparece en la pesta\u00f1a Despacho.</div>';
-  h+='<table class="fiscal-desgrav-info-table">';
-  h+='<thead><tr><th>Gasto</th><th>Anual</th><th>% deducible</th><th>Deducible</th></tr></thead><tbody>';
-  if(amort>0)h+='<tr><td>Amortizaci\u00f3n (80% construc.)</td><td>'+fcPlain(Math.round(baseAmortInfo*0.80*100)/100)+'</td><td>3% \u00d7 '+propPct.toFixed(1)+'%</td><td class="fiscal-desgrav-info-ded">'+fcPlain(amort)+'</td></tr>';
-  if(ibiAmt>0)h+='<tr><td>'+ibiLabel+'</td><td>'+(ibiRealDesp>0?fcPlain(ibiRealDesp):'est.')+'</td><td>'+propPct.toFixed(1)+'%</td><td class="fiscal-desgrav-info-ded">'+fcPlain(ibiAmt)+'</td></tr>';
-  if(hipIntInfo>0)h+='<tr><td>Intereses hipoteca</td><td>'+fcPlain(DESPACHO.hipotecaIntereses)+'</td><td>'+propPct.toFixed(1)+'%</td><td class="fiscal-desgrav-info-ded">'+fcPlain(hipIntInfo)+'</td></tr>';
-  casaItems.forEach(function(it){h+='<tr><td>'+escHtml(it.label)+'</td><td>'+fcPlain(it.annual)+'</td><td>'+it.pctLabel+'</td><td class="fiscal-desgrav-info-ded">'+fcPlain(it.ded)+'</td></tr>';});
-  utilItems.forEach(function(it){h+='<tr><td>'+escHtml(it.label)+'</td><td>'+fcPlain(it.annual)+'</td><td>'+it.pctLabel+'</td><td class="fiscal-desgrav-info-ded">'+fcPlain(it.ded)+'</td></tr>';});
-  h+='</tbody></table>';
+  h+='<div class="fiscal-section-title">\uD83C\uDFE0 Deducciones por despacho en casa ('+propPct.toFixed(1)+'%)</div>';
+  h+='<div style="font-size:.7rem;color:var(--text-dim);margin-bottom:10px">Partidas deducibles en proporci\u00f3n al % del despacho sobre la vivienda.</div>';
+  h+='<div class="fiscal-ded-cards">';
+  if(amort>0)h+=_dedCard('Amortizaci\u00f3n (80% construc.)',fcPlain(Math.round(baseAmortInfo*0.80*100)/100),'3% \u00d7 '+propPct.toFixed(1)+'%',amort,'#c084fc');
+  if(ibiAmt>0)h+=_dedCard(ibiLabel,ibiRealDesp>0?fcPlain(ibiRealDesp):'est.',propPct.toFixed(1)+'%',ibiAmt,'#6c8cff');
+  if(hipIntInfo>0)h+=_dedCard('Intereses hipoteca',fcPlain(DESPACHO.hipotecaIntereses),propPct.toFixed(1)+'%',hipIntInfo,'#fb923c');
+  casaItems.forEach(function(it){h+=_dedCard(escHtml(it.label),fcPlain(it.annual),it.pctLabel,it.ded,'#34d399');});
+  utilItems.forEach(function(it){h+=_dedCard(escHtml(it.label),fcPlain(it.annual),it.pctLabel,it.ded,'#2dd4bf');});
+  h+='</div>';
   var total=computeDespachoDeduccion();
   if(total>0)h+='<div class="fiscal-desgrav-despacho-total">Total deducci\u00f3n estimada despacho: <b>'+fcPlain(total)+'</b></div>';
   h+='</div>';
@@ -848,6 +865,77 @@ function renderDesgravList(items,listType){
   return h;
 }
 
+/* ── Cálculo intereses hipotecarios por año ────────────────── */
+function _computeAnnualInterest(comp,year){
+  if(!comp||!comp.fechaInicio||!comp.importePrestamo||!comp.tipoInteres||!comp.plazoAnios)return 0;
+  var startParts=comp.fechaInicio.split('-');
+  var startY=parseInt(startParts[0],10),startM=parseInt(startParts[1],10)-1; // 0-based month
+  var r=comp.tipoInteres/100/12;
+  var nTotal=comp.plazoAnios*12;
+  var cuota=comp.importePrestamo*r*Math.pow(1+r,nTotal)/(Math.pow(1+r,nTotal)-1);
+  var balance=comp.importePrestamo;
+  var interesesYear=0;
+  /* Si hay subrogación, preparar datos */
+  var sub=comp.subrogacion;
+  var subMonth=-1; // mes absoluto de subrogación (meses desde inicio préstamo)
+  if(sub&&sub.fecha&&sub.nuevoImporte>0&&sub.nuevoTipoInteres>0&&sub.nuevoPlazoAnios>0){
+    var sp=sub.fecha.split('-');
+    var sY=parseInt(sp[0],10),sM=parseInt(sp[1],10)-1;
+    subMonth=(sY-startY)*12+(sM-startM);
+  }
+  var rNew=0,cuotaNew=0,balanceNew=0;
+  if(subMonth>=0){
+    rNew=sub.nuevoTipoInteres/100/12;
+    var nNew=sub.nuevoPlazoAnios*12;
+    cuotaNew=sub.nuevoImporte*rNew*Math.pow(1+rNew,nNew)/(Math.pow(1+rNew,nNew)-1);
+    balanceNew=sub.nuevoImporte;
+  }
+  var switched=false;
+  for(var m=0;m<nTotal+240;m++){ // 240 extra for subrogacion extending
+    var curY=startY+Math.floor((startM+m)/12);
+    var curM=(startM+m)%12;
+    if(curY>year)break;
+    if(!switched&&subMonth>=0&&m>=subMonth){
+      switched=true;
+      balance=balanceNew;
+      r=rNew;
+      cuota=cuotaNew;
+    }
+    if(balance<=0)break;
+    var interesMes=balance*r;
+    var capital=cuota-interesMes;
+    if(capital>balance){capital=balance;interesMes=cuota-capital;}
+    if(curY===year){
+      interesesYear+=interesMes;
+    }
+    balance-=capital;
+    if(balance<0.01)balance=0;
+  }
+  return Math.round(interesesYear*100)/100;
+}
+/* Obtener saldo vivo a una fecha dada */
+function _computeBalanceAtDate(comp,dateStr){
+  if(!comp||!comp.fechaInicio||!comp.importePrestamo||!comp.tipoInteres||!comp.plazoAnios||!dateStr)return 0;
+  var startParts=comp.fechaInicio.split('-');
+  var startY=parseInt(startParts[0],10),startM=parseInt(startParts[1],10)-1;
+  var dp=dateStr.split('-');
+  var dY=parseInt(dp[0],10),dM=parseInt(dp[1],10)-1;
+  var targetMonth=(dY-startY)*12+(dM-startM);
+  if(targetMonth<=0)return comp.importePrestamo;
+  var r=comp.tipoInteres/100/12;
+  var nTotal=comp.plazoAnios*12;
+  var cuota=comp.importePrestamo*r*Math.pow(1+r,nTotal)/(Math.pow(1+r,nTotal)-1);
+  var balance=comp.importePrestamo;
+  for(var m=0;m<targetMonth&&m<nTotal;m++){
+    var interes=balance*r;
+    var capital=cuota-interes;
+    if(capital>balance)capital=balance;
+    balance-=capital;
+    if(balance<0.01){balance=0;break;}
+  }
+  return Math.round(balance*100)/100;
+}
+
 /* ── Tab Despacho e Hipoteca ───────────────────────────────── */
 function renderFiscalTabDespacho(){
   var pctShow=DESPACHO.m2Total>0&&DESPACHO.m2Despacho>0
@@ -868,7 +956,17 @@ function renderFiscalTabDespacho(){
   h+=_despField('m2Despacho','M\u00b2 del despacho',DESPACHO.m2Despacho,'m\u00b2');
   h+=_despField('pct','% del despacho (se sincroniza con m\u00b2)',pctShow,'%');
   h+=_despFieldMoney('valorCatastral','Valor catastral del inmueble',DESPACHO.valorCatastral);
-  h+=_despFieldMoney('hipotecaIntereses','Intereses hipotecarios anuales (solo para despacho)',DESPACHO.hipotecaIntereses);
+  /* Auto-calcular intereses si hay datos suficientes */
+  var _autoInt=_computeAnnualInterest(comp,FISCAL_YEAR);
+  if(_autoInt>0&&!DESPACHO.hipotecaInteresesManual){DESPACHO.hipotecaIntereses=_autoInt;saveDespacho();}
+  var _intLabel='Intereses hipotecarios anuales ('+FISCAL_YEAR+')';
+  if(_autoInt>0){
+    _intLabel+=DESPACHO.hipotecaInteresesManual?' \u2014 <span style="font-size:.65rem;color:var(--c-orange)">manual</span>':' \u2014 <span style="font-size:.65rem;color:var(--c-green)">calculado</span>';
+  }
+  h+=_despFieldMoney('hipotecaIntereses',_intLabel,DESPACHO.hipotecaIntereses);
+  if(DESPACHO.hipotecaInteresesManual&&_autoInt>0){
+    h+='<div style="font-size:.66rem;color:var(--text-dim);padding:0 4px 4px"><button class="fiscal-link-btn" id="despRecalcInt" style="font-size:.66rem;color:var(--accent-bright);background:none;border:none;cursor:pointer;text-decoration:underline;padding:0">\u21bb Recalcular ('+fcPlain(_autoInt)+')</button></div>';
+  }
   h+='</div>';
   h+='</div>';
   /* Sección compra de vivienda */
@@ -891,11 +989,12 @@ function renderFiscalTabDespacho(){
   h+='</div>';
   /* Sección hipoteca */
   h+='<div class="fiscal-section">';
-  h+='<div class="fiscal-section-title">Hipoteca</div>';
+  h+='<div class="fiscal-section-title">Hipoteca \u2014 Pr\u00e9stamo original</div>';
   h+='<div class="fiscal-despacho-grid">';
   h+=_despFieldMoney('compraImporte','Importe del pr\u00e9stamo',comp.importePrestamo);
   h+=_despField('compraTipo','Tipo de inter\u00e9s anual',comp.tipoInteres,'%');
   h+=_despField('compraPlazo','Plazo',comp.plazoAnios,'a\u00f1os');
+  h+=_despFieldDate('compraFechaInicio','Fecha inicio del pr\u00e9stamo',comp.fechaInicio);
   h+='</div>';
   /* Cálculo cuota mensual estimada */
   if(comp.importePrestamo>0&&comp.tipoInteres>0&&comp.plazoAnios>0){
@@ -911,7 +1010,91 @@ function renderFiscalTabDespacho(){
     h+='</div>';
   }
   h+='</div>';
+  /* Sección vinculaciones */
+  var vinc=comp.vinculaciones||{nomina:{enabled:false,costeAnual:0},segHogar:{enabled:false,costeAnual:0},segSalud:{enabled:false,costeAnual:0}};
+  h+='<div class="fiscal-section">';
+  h+='<div class="fiscal-section-title">Vinculaciones del pr\u00e9stamo</div>';
+  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:10px">Requisitos asociados al pr\u00e9stamo hipotecario y sus costes anuales.</div>';
+  h+=_vincRow('vincNomina','N\u00f3mina domiciliada',vinc.nomina);
+  h+=_vincRow('vincSegHogar','Seguro hogar',vinc.segHogar);
+  h+=_vincRow('vincSegSalud','Seguro salud',vinc.segSalud);
+  var vincTotal=(vinc.nomina.enabled?vinc.nomina.costeAnual:0)+(vinc.segHogar.enabled?vinc.segHogar.costeAnual:0)+(vinc.segSalud.enabled?vinc.segSalud.costeAnual:0);
+  if(vincTotal>0){
+    h+='<div style="font-size:.72rem;color:var(--text-dim);text-align:right;padding:4px 0">Coste anual vinculaciones: <b style="color:var(--c-orange)">'+fcPlain(vincTotal)+'</b></div>';
+  }
+  h+='</div>';
+  /* Sección subrogación */
+  var sub=comp.subrogacion;
+  h+='<div class="fiscal-section">';
+  h+='<div class="fiscal-section-title">Subrogaci\u00f3n hipotecaria</div>';
+  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:10px">Si has cambiado de banco o renegociado las condiciones del pr\u00e9stamo.</div>';
+  h+='<div class="fiscal-despacho-toggle-row">';
+  h+='<span class="fiscal-despacho-toggle-lbl">Hipoteca subrogada</span>';
+  h+='<div class="fiscal-onoff'+(sub?' on':'')+'" id="subrogacionToggle">'+(sub?'ON':'OFF')+'</div>';
+  h+='</div>';
+  if(sub){
+    var sd=sub;
+    h+='<div class="fiscal-despacho-grid" style="margin-top:8px">';
+    h+=_despFieldDate('subFecha','Fecha de la subrogaci\u00f3n',sd.fecha);
+    h+='</div>';
+    h+='<div style="font-size:.7rem;color:var(--text-dim);margin:8px 0 4px;font-weight:600">Costes del cambio</div>';
+    h+='<div class="fiscal-despacho-grid">';
+    h+=_despFieldMoney('subComision','Comisi\u00f3n cancelaci\u00f3n',sd.comisionCancelacion);
+    h+=_despFieldMoney('subNotaria','Notar\u00eda',sd.notaria);
+    h+=_despFieldMoney('subTasacion','Tasaci\u00f3n',sd.tasacion);
+    h+=_despFieldMoney('subRegistro','Registro',sd.registro);
+    h+='</div>';
+    var totalCambio=(sd.comisionCancelacion||0)+(sd.notaria||0)+(sd.tasacion||0)+(sd.registro||0);
+    if(totalCambio>0){
+      h+='<div style="font-size:.72rem;color:var(--text-dim);text-align:right;padding:4px 0">Coste total del cambio: <b style="color:var(--c-orange)">'+fcPlain(totalCambio)+'</b></div>';
+    }
+    h+='<div style="font-size:.7rem;color:var(--text-dim);margin:8px 0 4px;font-weight:600">Nuevas condiciones</div>';
+    h+='<div class="fiscal-despacho-grid">';
+    h+=_despFieldMoney('subNuevoImporte','Capital pendiente (nuevo pr\u00e9stamo)',sd.nuevoImporte);
+    h+=_despField('subNuevoTipo','Nuevo tipo de inter\u00e9s anual',sd.nuevoTipoInteres,'%');
+    h+=_despField('subNuevoPlazo','Nuevo plazo',sd.nuevoPlazoAnios,'a\u00f1os');
+    h+='</div>';
+    /* Cálculo cuota nueva */
+    if(sd.nuevoImporte>0&&sd.nuevoTipoInteres>0&&sd.nuevoPlazoAnios>0){
+      var rn=sd.nuevoTipoInteres/100/12;
+      var nn=sd.nuevoPlazoAnios*12;
+      var cuotaN=Math.round(sd.nuevoImporte*rn*Math.pow(1+rn,nn)/(Math.pow(1+rn,nn)-1)*100)/100;
+      var totalN=Math.round(cuotaN*nn*100)/100;
+      var intN=Math.round((totalN-sd.nuevoImporte)*100)/100;
+      h+='<div class="fiscal-despacho-breakdown" style="margin-top:8px">';
+      h+='<div class="fiscal-despacho-comp">Nueva cuota mensual: <b>'+fcPlain(cuotaN)+'</b></div>';
+      h+='<div class="fiscal-despacho-comp">Total a pagar: <b>'+_fmtMiles(totalN)+' \u20ac</b></div>';
+      h+='<div class="fiscal-despacho-comp">Total intereses: <b style="color:var(--c-orange)">'+_fmtMiles(intN)+' \u20ac</b></div>';
+      h+='</div>';
+    }
+  }
+  h+='</div>';
   return h;
+}
+
+function _vincRow(id,label,data){
+  var h='<div class="fiscal-vinc-row">';
+  h+='<div class="fiscal-despacho-toggle-row" style="margin-bottom:0">';
+  h+='<span class="fiscal-despacho-toggle-lbl" style="font-size:.76rem">'+label+'</span>';
+  h+='<div class="fiscal-onoff'+(data.enabled?' on':'')+'" id="'+id+'Toggle">'+(data.enabled?'ON':'OFF')+'</div>';
+  h+='</div>';
+  if(data.enabled){
+    h+='<div class="fiscal-vinc-cost">';
+    h+='<label class="fiscal-despacho-label" style="font-size:.68rem">Coste anual \u20ac</label>';
+    h+='<input class="fiscal-despacho-input" id="'+id+'Coste" type="number" min="0" step="10" value="'+(data.costeAnual||0)+'" style="width:90px">';
+    h+='</div>';
+  }
+  h+='</div>';
+  return h;
+}
+
+function _despFieldDate(id,label,val){
+  return '<div class="fiscal-despacho-field">'
+    +'<label class="fiscal-despacho-label">'+label+'</label>'
+    +'<div class="fiscal-despacho-input-row">'
+    +'<input class="fiscal-despacho-input" id="desp-'+id+'" type="date" value="'+(val||'')+'" style="width:auto">'
+    +'</div>'
+    +'</div>';
 }
 
 function _despField(id,label,val,unit){
@@ -1409,6 +1592,106 @@ function _bindTabDespacho(){
   if(plazoEl){
     plazoEl.addEventListener('change',function(){
       DESPACHO.compra.plazoAnios=parseFloat(this.value)||0;
+      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
+      bindFiscalEvents();
+    });
+  }
+  /* Fecha inicio préstamo */
+  var fechaIniEl=document.getElementById('desp-compraFechaInicio');
+  if(fechaIniEl){
+    fechaIniEl.addEventListener('change',function(){
+      DESPACHO.compra.fechaInicio=this.value||null;
+      DESPACHO.hipotecaInteresesManual=false; // recalcular al cambiar fecha
+      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
+      bindFiscalEvents();
+    });
+  }
+  /* Recalcular intereses button */
+  var recalcBtn=document.getElementById('despRecalcInt');
+  if(recalcBtn){
+    recalcBtn.addEventListener('click',function(){
+      DESPACHO.hipotecaInteresesManual=false;
+      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
+      bindFiscalEvents();
+    });
+  }
+  /* Manual override: mark as manual when user edits hipotecaIntereses */
+  var hipIntEl=document.getElementById('desp-hipotecaIntereses');
+  if(hipIntEl){
+    var _origHipChange=null;
+    hipIntEl.addEventListener('change',function(){
+      var autoInt=_computeAnnualInterest(DESPACHO.compra,FISCAL_YEAR);
+      var newVal=parseFloat(this.value)||0;
+      if(autoInt>0&&Math.abs(newVal-autoInt)>0.5){
+        DESPACHO.hipotecaInteresesManual=true;
+      }
+    });
+  }
+  /* Vinculaciones toggles */
+  var _vincIds=['vincNomina','vincSegHogar','vincSegSalud'];
+  var _vincKeys=['nomina','segHogar','segSalud'];
+  _vincIds.forEach(function(vid,idx){
+    var tgl=document.getElementById(vid+'Toggle');
+    if(tgl)tgl.addEventListener('click',function(){
+      var vinc=DESPACHO.compra.vinculaciones;
+      if(!vinc)vinc=DESPACHO.compra.vinculaciones={nomina:{enabled:false,costeAnual:0},segHogar:{enabled:false,costeAnual:0},segSalud:{enabled:false,costeAnual:0}};
+      vinc[_vincKeys[idx]].enabled=!vinc[_vincKeys[idx]].enabled;
+      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
+      bindFiscalEvents();
+    });
+    var costeEl=document.getElementById(vid+'Coste');
+    if(costeEl)costeEl.addEventListener('change',function(){
+      DESPACHO.compra.vinculaciones[_vincKeys[idx]].costeAnual=parseFloat(this.value)||0;
+      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
+      bindFiscalEvents();
+    });
+  });
+  /* Subrogación toggle */
+  var subTgl=document.getElementById('subrogacionToggle');
+  if(subTgl)subTgl.addEventListener('click',function(){
+    if(DESPACHO.compra.subrogacion){
+      DESPACHO.compra.subrogacion=null;
+    } else {
+      DESPACHO.compra.subrogacion=_defaultSubrogacion();
+    }
+    DESPACHO.hipotecaInteresesManual=false; // recalcular
+    document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
+    bindFiscalEvents();
+  });
+  /* Subrogación fields */
+  if(DESPACHO.compra.subrogacion){
+    var subDateEl=document.getElementById('desp-subFecha');
+    if(subDateEl)subDateEl.addEventListener('change',function(){
+      DESPACHO.compra.subrogacion.fecha=this.value||null;
+      DESPACHO.hipotecaInteresesManual=false;
+      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
+      bindFiscalEvents();
+    });
+    var _subMoneyFields={subComision:'comisionCancelacion',subNotaria:'notaria',subTasacion:'tasacion',subRegistro:'registro',subNuevoImporte:'nuevoImporte'};
+    Object.keys(_subMoneyFields).forEach(function(domId){
+      var el=document.getElementById('desp-'+domId);
+      if(!el)return;
+      var prop=_subMoneyFields[domId];
+      function _uf(){var v=parseFloat(el.value)||0;var f=document.getElementById('desp-fmt-'+domId);if(f)f.textContent=v>0?_fmtMiles(v)+' \u20ac':'';}
+      el.addEventListener('input',_uf);
+      el.addEventListener('change',function(){
+        DESPACHO.compra.subrogacion[prop]=parseFloat(this.value)||0;_uf();
+        DESPACHO.hipotecaInteresesManual=false;
+        document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
+        bindFiscalEvents();
+      });
+    });
+    var subTipoEl=document.getElementById('desp-subNuevoTipo');
+    if(subTipoEl)subTipoEl.addEventListener('change',function(){
+      DESPACHO.compra.subrogacion.nuevoTipoInteres=parseFloat(this.value)||0;
+      DESPACHO.hipotecaInteresesManual=false;
+      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
+      bindFiscalEvents();
+    });
+    var subPlazoEl=document.getElementById('desp-subNuevoPlazo');
+    if(subPlazoEl)subPlazoEl.addEventListener('change',function(){
+      DESPACHO.compra.subrogacion.nuevoPlazoAnios=parseFloat(this.value)||0;
+      DESPACHO.hipotecaInteresesManual=false;
       document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
       bindFiscalEvents();
     });
