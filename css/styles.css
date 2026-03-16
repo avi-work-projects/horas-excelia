@@ -493,6 +493,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .analisis-mortgage-ahorro.pos{background:rgba(52,211,153,.12);color:#34d399}
 .analisis-mortgage-ahorro.neg{background:rgba(255,107,107,.12);color:#ff6b6b}
 .analisis-mortgage-chart{margin-top:4px}
+.analisis-insurance-table{border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.analisis-ins-header{display:grid;grid-template-columns:1fr 70px 80px 80px;gap:4px;padding:6px 8px;background:var(--surface2);font-size:.65rem;color:var(--text-dim);font-weight:600;text-align:right}
+.analisis-ins-header span:first-child{text-align:left}
+.analisis-ins-row{display:grid;grid-template-columns:1fr 70px 80px 80px;gap:4px;padding:5px 8px;border-top:1px solid var(--border);align-items:center}
+.analisis-ins-label{font-size:.72rem;color:var(--text-muted)}
+.analisis-ins-val{font-family:var(--mono);font-size:.72rem;text-align:right}
+.analisis-ins-total{background:var(--surface2);border-top:2px solid var(--border)}
 /* ── Fiscal config modal — purple theme override ── */
 #fiscalOverlay{--accent:#c084fc;--accent-glow:#c084fc22;--accent-bright:#d4a5ff}
 /* ── Fiscal config modal ── */

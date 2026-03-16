@@ -1232,6 +1232,9 @@ function renderEvForm(ev){
   var repType=repeat?repeat.type:'none';
   var wdays=(repeat&&repeat.type==='weekly')?repeat.weekDays:[];
   var wdNames=['Do','Lu','Ma','Mi','Ju','Vi','Sa'];
+  /* Determine current type from color */
+  var curType=EV_COLOR_TYPES[color]||'Otros';
+  var isViaje=(curType==='Viaje');
   var h='<div class="ev-form-overlay" id="evFormOv">';
   h+='<div class="ev-form-sheet">';
   h+='<div class="ev-form-handle"></div>';
@@ -1245,8 +1248,24 @@ function renderEvForm(ev){
   h+='<input class="ev-input" id="evFTitle" type="text" maxlength="80" placeholder="Nombre del evento" value="'+escHtml(title)+'"></div>';
   h+='<div class="ev-field"><label>Nota <span id="evCharCnt" style="font-weight:400;color:var(--text-dim)">'+note.length+'/200</span></label>';
   h+='<textarea class="ev-textarea" id="evFNote" maxlength="200" placeholder="Notas opcionales...">'+escHtml(note)+'</textarea></div>';
-  h+='<div class="ev-field"><label>Color</label>';
-  h+=_renderColorPicker(color,isEdit,isEdit&&ev.colorLocked,'evFCp');
+  /* Type selector (7 predefined types) */
+  h+='<div class="ev-field"><label>Tipo</label><div class="ev-type-picker">';
+  EV_COLORS.forEach(function(c){
+    var typeName=EV_COLOR_TYPES[c]||'Otros';
+    if(typeName==='Cumplea\u00f1os VIP')return; /* skip VIP */
+    var sel=(c===color||(isViaje&&(c==='#38bdf8'||c==='#6c8cff'))
+      ||(!EV_COLOR_TYPES[color]&&c==='#a3e635'))?' selected':'';
+    h+='<div class="ev-color-swatch'+sel+'" data-hex="'+c+'" style="color:'+c+'">';
+    h+='<div class="ev-type-dot" style="background:'+c+'"></div>';
+    h+='<span class="ev-type-name">'+typeName+'</span>';
+    h+='</div>';
+  });
+  h+='</div></div>';
+  /* Color picker section (only visible for Viaje, or custom colors not in type list) */
+  var showColorPicker=isViaje||(!EV_COLOR_TYPES[color]&&color!=='#a3e635');
+  h+='<div class="ev-field ev-form-color-section" id="evFColorSection" style="display:'+(showColorPicker?'block':'none')+'">';
+  h+='<label>\uD83C\uDFA8 Paleta de colores</label>';
+  h+=_renderColorPicker(color,true,isEdit&&ev.colorLocked,'evFCp');
   h+='</div>';
   h+='<div class="ev-field ev-date-row">';
   h+='<div><label>Inicio</label><input class="ev-input" id="evFStart" type="date" value="'+start+'"></div>';
@@ -1313,14 +1332,29 @@ function bindEvFormEvents(){
   var cntEl=document.getElementById('evCharCnt');
   noteEl.addEventListener('input',function(){cntEl.textContent=noteEl.value.length+'/200';});
   var _fCpWrap=document.getElementById('evFWrap')||document;
-  var _fCp=_bindColorPicker(_fCpWrap,'evFCp',function(hex){
-    /* Auto-fill title+note for Asturias if title is empty */
-    var titleEl=document.getElementById('evFTitle');
-    if(hex==='#1d4ed8'&&titleEl&&!titleEl.value.trim()){
-      titleEl.value='Asturias';
-      var noteEl2=document.getElementById('evFNote');
-      if(noteEl2&&!noteEl2.value.trim()){noteEl2.value='Asturias';cntEl.textContent='8/200';}
-    }
+  var _fCp=_bindColorPicker(_fCpWrap,'evFCp');
+  /* Track selected type hex (from the type picker) */
+  var _selectedTypeHex=null;
+  var _colorSection=document.getElementById('evFColorSection');
+  /* Type selector click handler */
+  document.querySelectorAll('.ev-color-swatch').forEach(function(sw){
+    sw.addEventListener('click',function(){
+      document.querySelectorAll('.ev-color-swatch').forEach(function(s){s.classList.remove('selected');});
+      sw.classList.add('selected');
+      var hex=sw.dataset.hex;
+      _selectedTypeHex=hex;
+      var typeName=EV_COLOR_TYPES[hex]||'Otros';
+      var isViaje=(typeName==='Viaje');
+      /* Show color picker only for Viaje */
+      if(_colorSection)_colorSection.style.display=isViaje?'block':'none';
+      /* Auto-fill title+note for Asturias */
+      var titleEl=document.getElementById('evFTitle');
+      if(hex==='#1d4ed8'&&titleEl&&!titleEl.value.trim()){
+        titleEl.value='Asturias';
+        var noteEl2=document.getElementById('evFNote');
+        if(noteEl2&&!noteEl2.value.trim()){noteEl2.value='Asturias';cntEl.textContent='8/200';}
+      }
+    });
   });
   document.getElementById('evFRepeat').addEventListener('change',function(){
     document.getElementById('evWdRow').style.display=this.value==='weekly'?'flex':'none';
@@ -1363,8 +1397,20 @@ function bindEvFormEvents(){
     var title=document.getElementById('evFTitle').value.trim();
     if(!title){showToast('El t\u00edtulo es obligatorio','error');return;}
     var note=document.getElementById('evFNote').value.trim();
-    var color=_fCp.getColor();
-    var colorLocked=_fCp.getLocked();
+    /* Determine color: use type hex, unless Viaje → use color picker */
+    var typeSel=document.querySelector('.ev-color-swatch.selected');
+    var typeHex=typeSel?typeSel.dataset.hex:EV_COLORS[0];
+    var typeLabel=EV_COLOR_TYPES[typeHex]||'Otros';
+    var color,colorLocked;
+    if(typeLabel==='Viaje'){
+      /* Viaje: use color picker color + lock */
+      color=_fCp.getColor();
+      colorLocked=_fCp.getLocked();
+    } else {
+      /* Other types: use the type's fixed color */
+      color=typeHex;
+      colorLocked=false;
+    }
     var start=document.getElementById('evFStart').value;
     var end=document.getElementById('evFEnd').value;
     if(!start){showToast('La fecha de inicio es obligatoria','error');return;}

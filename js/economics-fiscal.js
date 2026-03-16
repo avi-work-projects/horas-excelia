@@ -330,7 +330,7 @@ function computeTotalDesgrav(){
 var DESPACHO_SK='excelia-despacho-v1';
 var DESPACHO={enabled:true,m2Total:0,m2Despacho:0,pct:0,valorCatastral:0,valorCompra:0,hipotecaIntereses:0,hipotecaInteresesManual:false,compra:null};
 
-function _defaultCompra(){return{valorCompraTotal:0,itpMadrid:0,notariaRegistro:0,tasacion:0,reformas:0,inmobiliaria:0,importePrestamo:0,tipoInteres:0,plazoAnios:0,fechaInicio:null,vinculaciones:{nomina:{enabled:false,costeAnual:0},segHogar:{enabled:false,costeAnual:0},segSalud:{enabled:false,costeAnual:0}},subrogacion:null};}
+function _defaultCompra(){return{valorCompraTotal:0,itpMadrid:0,notariaRegistro:0,tasacion:0,reformas:0,inmobiliaria:0,importePrestamo:0,tipoInteres:0,plazoAnios:0,fechaInicio:null,entidadBanco:'',vinculaciones:{nomina:{enabled:false,costeAnual:0,reduccion:0},segHogar:{enabled:false,costeAnual:0,reduccion:0},segSalud:{enabled:false,costeAnual:0,reduccion:0},segVida:{enabled:false,costeAnual:0,reduccion:0}},subrogacion:null};}
 function _defaultSubrogacion(){return{fecha:null,comisionCancelacion:0,notaria:0,tasacion:0,registro:0,nuevoImporte:0,nuevoTipoInteres:0,nuevoPlazoAnios:0};}
 function loadDespacho(){
   try{
@@ -346,7 +346,8 @@ function loadDespacho(){
         DESPACHO.compra=d.compra;
         /* Migrar campos nuevos v106 */
         if(!d.compra.fechaInicio&&d.compra.fechaInicio!==null)d.compra.fechaInicio=null;
-        if(!d.compra.vinculaciones)d.compra.vinculaciones={nomina:{enabled:false,costeAnual:0},segHogar:{enabled:false,costeAnual:0},segSalud:{enabled:false,costeAnual:0}};
+        if(!d.compra.vinculaciones)d.compra.vinculaciones={nomina:{enabled:false,costeAnual:0,reduccion:0},segHogar:{enabled:false,costeAnual:0,reduccion:0},segSalud:{enabled:false,costeAnual:0,reduccion:0},segVida:{enabled:false,costeAnual:0,reduccion:0}};
+        else{var _vk=['nomina','segHogar','segSalud','segVida'];_vk.forEach(function(k){if(!d.compra.vinculaciones[k])d.compra.vinculaciones[k]={enabled:false,costeAnual:0,reduccion:0};else if(d.compra.vinculaciones[k].reduccion==null)d.compra.vinculaciones[k].reduccion=0;});}
         if(d.compra.subrogacion===undefined)d.compra.subrogacion=null;
       }
       else{DESPACHO.compra=_defaultCompra();if(DESPACHO.valorCompra>0)DESPACHO.compra.valorCompraTotal=DESPACHO.valorCompra;}
@@ -870,7 +871,11 @@ function _computeAnnualInterest(comp,year){
   if(!comp||!comp.fechaInicio||!comp.importePrestamo||!comp.tipoInteres||!comp.plazoAnios)return 0;
   var startParts=comp.fechaInicio.split('-');
   var startY=parseInt(startParts[0],10),startM=parseInt(startParts[1],10)-1; // 0-based month
-  var r=comp.tipoInteres/100/12;
+  /* Tipo efectivo = base - reducciones por vinculaciones */
+  var tipoEfectivo=comp.tipoInteres;
+  if(comp.vinculaciones){var _vks=['nomina','segHogar','segSalud','segVida'];_vks.forEach(function(k){if(comp.vinculaciones[k]&&comp.vinculaciones[k].enabled)tipoEfectivo-=(comp.vinculaciones[k].reduccion||0);});}
+  if(tipoEfectivo<0)tipoEfectivo=0;
+  var r=tipoEfectivo/100/12;
   var nTotal=comp.plazoAnios*12;
   var cuota=comp.importePrestamo*r*Math.pow(1+r,nTotal)/(Math.pow(1+r,nTotal)-1);
   var balance=comp.importePrestamo;
@@ -1010,17 +1015,37 @@ function renderFiscalTabDespacho(){
     h+='</div>';
   }
   h+='</div>';
+  /* Sección entidad bancaria */
+  h+='<div class="fiscal-section">';
+  h+='<div class="fiscal-section-title">Entidad bancaria</div>';
+  h+='<div class="fiscal-despacho-grid">';
+  h+='<div class="fiscal-despacho-field" style="flex:1 1 100%"><label class="fiscal-despacho-label">Banco del pr\u00e9stamo</label>';
+  h+='<input class="fiscal-despacho-input" id="desp-entidadBanco" type="text" value="'+escHtml(comp.entidadBanco||'')+'" placeholder="Ej: CaixaBank, Santander..." style="text-align:left">';
+  h+='</div></div></div>';
   /* Sección vinculaciones */
-  var vinc=comp.vinculaciones||{nomina:{enabled:false,costeAnual:0},segHogar:{enabled:false,costeAnual:0},segSalud:{enabled:false,costeAnual:0}};
+  var vinc=comp.vinculaciones||{nomina:{enabled:false,costeAnual:0,reduccion:0},segHogar:{enabled:false,costeAnual:0,reduccion:0},segSalud:{enabled:false,costeAnual:0,reduccion:0},segVida:{enabled:false,costeAnual:0,reduccion:0}};
+  if(!vinc.segVida)vinc.segVida={enabled:false,costeAnual:0,reduccion:0};
   h+='<div class="fiscal-section">';
   h+='<div class="fiscal-section-title">Vinculaciones del pr\u00e9stamo</div>';
-  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:10px">Requisitos asociados al pr\u00e9stamo hipotecario y sus costes anuales.</div>';
+  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:10px">Requisitos asociados al pr\u00e9stamo y sus costes anuales. La reducci\u00f3n indica cu\u00e1nto baja el tipo de inter\u00e9s por activar cada vinculaci\u00f3n.</div>';
   h+=_vincRow('vincNomina','N\u00f3mina domiciliada',vinc.nomina);
   h+=_vincRow('vincSegHogar','Seguro hogar',vinc.segHogar);
   h+=_vincRow('vincSegSalud','Seguro salud',vinc.segSalud);
-  var vincTotal=(vinc.nomina.enabled?vinc.nomina.costeAnual:0)+(vinc.segHogar.enabled?vinc.segHogar.costeAnual:0)+(vinc.segSalud.enabled?vinc.segSalud.costeAnual:0);
-  if(vincTotal>0){
-    h+='<div style="font-size:.72rem;color:var(--text-dim);text-align:right;padding:4px 0">Coste anual vinculaciones: <b style="color:var(--c-orange)">'+fcPlain(vincTotal)+'</b></div>';
+  h+=_vincRow('vincSegVida','Seguro de vida',vinc.segVida);
+  var _vincKeys2=['nomina','segHogar','segSalud','segVida'];
+  var vincTotal=0,vincReduccion=0;
+  _vincKeys2.forEach(function(k){if(vinc[k]&&vinc[k].enabled){vincTotal+=vinc[k].costeAnual||0;vincReduccion+=vinc[k].reduccion||0;}});
+  if(vincTotal>0||vincReduccion>0){
+    h+='<div style="font-size:.72rem;color:var(--text-dim);text-align:right;padding:4px 0">';
+    if(vincTotal>0)h+='Coste anual: <b style="color:var(--c-orange)">'+fcPlain(vincTotal)+'</b>';
+    if(vincReduccion>0){
+      h+=(vincTotal>0?' &middot; ':'')+' Reducci\u00f3n tipo: <b style="color:var(--c-green)">\u2212'+vincReduccion.toFixed(2)+'%</b>';
+      if(comp.tipoInteres>0){
+        var tipoEf=Math.max(0,comp.tipoInteres-vincReduccion);
+        h+='<br>Tipo efectivo: <b style="color:var(--c-green)">'+tipoEf.toFixed(2)+'%</b> <span style="font-size:.65rem">('+comp.tipoInteres.toFixed(2)+'% \u2212 '+vincReduccion.toFixed(2)+'%)</span>';
+      }
+    }
+    h+='</div>';
   }
   h+='</div>';
   /* Sección subrogación */
@@ -1073,6 +1098,7 @@ function renderFiscalTabDespacho(){
 }
 
 function _vincRow(id,label,data){
+  if(!data)data={enabled:false,costeAnual:0,reduccion:0};
   var h='<div class="fiscal-vinc-row">';
   h+='<div class="fiscal-despacho-toggle-row" style="margin-bottom:0">';
   h+='<span class="fiscal-despacho-toggle-lbl" style="font-size:.76rem">'+label+'</span>';
@@ -1080,9 +1106,12 @@ function _vincRow(id,label,data){
   h+='</div>';
   if(data.enabled){
     h+='<div class="fiscal-vinc-cost">';
-    h+='<label class="fiscal-despacho-label" style="font-size:.68rem">Coste anual \u20ac</label>';
-    h+='<input class="fiscal-despacho-input" id="'+id+'Coste" type="number" min="0" step="10" value="'+(data.costeAnual||0)+'" style="width:90px">';
-    h+='</div>';
+    h+='<div style="display:flex;gap:8px;align-items:flex-end">';
+    h+='<div><label class="fiscal-despacho-label" style="font-size:.68rem">Coste anual \u20ac</label>';
+    h+='<input class="fiscal-despacho-input" id="'+id+'Coste" type="number" min="0" step="10" value="'+(data.costeAnual||0)+'" style="width:90px"></div>';
+    h+='<div><label class="fiscal-despacho-label" style="font-size:.68rem">Reducci\u00f3n tipo %</label>';
+    h+='<input class="fiscal-despacho-input fiscal-vinc-reduccion" id="'+id+'Reduccion" type="number" min="0" step="0.05" value="'+(data.reduccion||0)+'" style="width:75px"></div>';
+    h+='</div></div>';
   }
   h+='</div>';
   return h;
@@ -1161,6 +1190,15 @@ function closeFiscal(){
   ov.classList.remove('open');
   setTimeout(function(){ov.style.display='none';},320);
 }
+/* Re-render fiscal overlay preserving scroll position */
+function reRenderFiscal(){
+  var body=document.querySelector('#fiscalOverlay .sy-body');
+  var scrollTop=body?body.scrollTop:0;
+  document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
+  bindFiscalEvents();
+  var newBody=document.querySelector('#fiscalOverlay .sy-body');
+  if(newBody)newBody.scrollTop=scrollTop;
+}
 
 /* ── bindFiscalEvents ─────────────────────────────────────── */
 function bindFiscalEvents(){
@@ -1171,8 +1209,7 @@ function bindFiscalEvents(){
     FISCAL_TAB=tab;
     if(tab==='personal')loadPersonalYear(FISCAL_YEAR);
     if(tab==='gastos_desg')loadGastosYear(FISCAL_YEAR);
-    document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-    bindFiscalEvents();
+    reRenderFiscal();
   }
   document.getElementById('fiscalTabPersonal').addEventListener('click',function(){_switchTab('personal');});
   document.getElementById('fiscalTabGastosDesg').addEventListener('click',function(){_switchTab('gastos_desg');});
@@ -1197,15 +1234,13 @@ function _bindYearSelector(){
     FISCAL_YEAR--;
     if(FISCAL_TAB==='personal')loadPersonalYear(FISCAL_YEAR);
     else loadGastosYear(FISCAL_YEAR);
-    document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-    bindFiscalEvents();
+    reRenderFiscal();
   });
   if(next)next.addEventListener('click',function(){
     FISCAL_YEAR++;
     if(FISCAL_TAB==='personal')loadPersonalYear(FISCAL_YEAR);
     else loadGastosYear(FISCAL_YEAR);
-    document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-    bindFiscalEvents();
+    reRenderFiscal();
   });
   /* Copy year buttons */
   document.querySelectorAll('.fiscal-copy-year-btn').forEach(function(btn){
@@ -1222,8 +1257,7 @@ function _bindYearSelector(){
         saveGastosYear(FISCAL_YEAR);
         loadGastosYear(FISCAL_YEAR);
       }
-      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-      bindFiscalEvents();
+      reRenderFiscal();
       showToast('Datos de '+srcYear+' copiados','success');
     });
   });
@@ -1247,11 +1281,7 @@ function _bindTabPersonal(){
       else newItem.period=isViaje?'annual':'monthly';
       if(isViaje){newItem._viaje=true;newItem.viajeFilter='all';}
       PERSONAL_DATA[sec].push(newItem);
-      var scrollTop=body.scrollTop;
-      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-      bindFiscalEvents();
-      var newBody=document.getElementById('fiscalContent').querySelector('.sy-body');
-      if(newBody)newBody.scrollTop=scrollTop;
+      reRenderFiscal();
       return;
     }
     /* Delete */
@@ -1259,11 +1289,7 @@ function _bindTabPersonal(){
     if(del){
       var sec=del.dataset.ps,pi=parseInt(del.dataset.pi,10);
       if(PERSONAL_DATA[sec])PERSONAL_DATA[sec].splice(pi,1);
-      var scrollTop=body.scrollTop;
-      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-      bindFiscalEvents();
-      var newBody=document.getElementById('fiscalContent').querySelector('.sy-body');
-      if(newBody)newBody.scrollTop=scrollTop;
+      reRenderFiscal();
       return;
     }
     /* Period toggle */
@@ -1310,16 +1336,14 @@ function _bindTabIrpf(){
   });
   document.getElementById('fiscalRestore').addEventListener('click',function(){
     FISCAL.brackets=null;
-    document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-    bindFiscalEvents();
+    reRenderFiscal();
   });
   document.getElementById('fiscalAddBracket').addEventListener('click',function(){
     var brackets=getBrackets().slice();
     var last=brackets[brackets.length-1];
     brackets.push({from:last.to===Infinity?300000:last.to,to:Infinity,pct:47});
     FISCAL.brackets=brackets;
-    document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-    bindFiscalEvents();
+    reRenderFiscal();
   });
   document.querySelectorAll('.fbi-del').forEach(function(btn){
     btn.addEventListener('click',function(){
@@ -1328,8 +1352,7 @@ function _bindTabIrpf(){
       if(brackets.length<=1){showToast('Debe haber al menos 1 tramo','error');return;}
       brackets.splice(bi,1);
       FISCAL.brackets=brackets;
-      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-      bindFiscalEvents();
+      reRenderFiscal();
     });
   });
 }
@@ -1421,8 +1444,7 @@ function _bindTabIrpfDeduc(){
   document.querySelectorAll('[data-firsub]').forEach(function(btn){
     btn.addEventListener('click',function(){
       FISCAL_IRPF_SUB=btn.dataset.firsub;
-      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-      bindFiscalEvents();
+      reRenderFiscal();
     });
   });
   if(FISCAL_IRPF_SUB==='irpf')_bindTabIrpf();
@@ -1440,16 +1462,14 @@ function _bindTabDesgrav(){
       if(tgl){
         var di=parseInt(tgl.dataset.dtgl,10);
         DESGRAV_ITEMS[di].enabled=!DESGRAV_ITEMS[di].enabled;
-        document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-        bindFiscalEvents();
+        reRenderFiscal();
         return;
       }
       var del=e.target.closest('.fiscal-desgrav-del');
       if(del){
         var di=parseInt(del.dataset.di,10);
         DESGRAV_ITEMS.splice(di,1);
-        document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-        bindFiscalEvents();
+        reRenderFiscal();
       }
     });
     list.addEventListener('change',function(e){
@@ -1458,8 +1478,7 @@ function _bindTabDesgrav(){
       var field=el.dataset.difield;
       if(el.classList.contains('fiscal-desgrav-amt')){
         var v=parseFloat(el.value);DESGRAV_ITEMS[di].amount=isNaN(v)?0:v;
-        document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-        bindFiscalEvents();
+        reRenderFiscal();
       }else if(field==='label'){DESGRAV_ITEMS[di].label=el.value||'Desgravaci\u00f3n';}
     });
   }
@@ -1467,8 +1486,7 @@ function _bindTabDesgrav(){
   _bindList('fiscalDesgravListQuota');
   document.getElementById('fiscalAddDesgrav').addEventListener('click',function(){
     DESGRAV_ITEMS.push({id:'desgrav_'+Date.now(),label:'Nueva desgravaci\u00f3n',amount:0,limit:null,enabled:true,type:'base'});
-    document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-    bindFiscalEvents();
+    reRenderFiscal();
   });
 }
 
@@ -1477,8 +1495,7 @@ function _bindTabDespacho(){
   var tog=document.getElementById('despachoToggle');
   if(tog)tog.addEventListener('click',function(){
     DESPACHO.enabled=!DESPACHO.enabled;
-    document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-    bindFiscalEvents();
+    reRenderFiscal();
   });
 
   /* Sincronización en tiempo real entre m²despacho ↔ % */
@@ -1502,8 +1519,7 @@ function _bindTabDespacho(){
     m2TotalEl.addEventListener('change',function(){
       DESPACHO.m2Total=parseFloat(this.value)||0;
       if(DESPACHO.m2Total>0&&DESPACHO.m2Despacho>0)DESPACHO.pct=Math.round(DESPACHO.m2Despacho/DESPACHO.m2Total*1000)/10;
-      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-      bindFiscalEvents();
+      reRenderFiscal();
     });
   }
   if(m2DespEl){
@@ -1511,8 +1527,7 @@ function _bindTabDespacho(){
     m2DespEl.addEventListener('change',function(){
       DESPACHO.m2Despacho=parseFloat(this.value)||0;
       if(DESPACHO.m2Total>0)DESPACHO.pct=Math.round(DESPACHO.m2Despacho/DESPACHO.m2Total*1000)/10;
-      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-      bindFiscalEvents();
+      reRenderFiscal();
     });
   }
   if(pctEl){
@@ -1520,8 +1535,7 @@ function _bindTabDespacho(){
     pctEl.addEventListener('change',function(){
       DESPACHO.pct=parseFloat(this.value)||0;
       if(DESPACHO.m2Total>0)DESPACHO.m2Despacho=Math.round(DESPACHO.pct*DESPACHO.m2Total/100*10)/10;
-      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-      bindFiscalEvents();
+      reRenderFiscal();
     });
   }
   /* Campos monetarios despacho: step=1000 + formato miles */
@@ -1537,8 +1551,7 @@ function _bindTabDespacho(){
     el.addEventListener('change',function(){
       DESPACHO[field]=parseFloat(this.value)||0;
       _updateFmt();
-      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-      bindFiscalEvents();
+      reRenderFiscal();
     });
   });
   /* Campos compra vivienda */
@@ -1575,8 +1588,7 @@ function _bindTabDespacho(){
       _updateFmt();
       /* Sync valorCompra for amortización calculation */
       if(domId==='compraValor')DESPACHO.valorCompra=DESPACHO.compra.valorCompraTotal;
-      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-      bindFiscalEvents();
+      reRenderFiscal();
     });
   });
   /* Campos compra: tipo interés y plazo (no monetarios) */
@@ -1584,16 +1596,14 @@ function _bindTabDespacho(){
   if(tipoEl){
     tipoEl.addEventListener('change',function(){
       DESPACHO.compra.tipoInteres=parseFloat(this.value)||0;
-      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-      bindFiscalEvents();
+      reRenderFiscal();
     });
   }
   var plazoEl=document.getElementById('desp-compraPlazo');
   if(plazoEl){
     plazoEl.addEventListener('change',function(){
       DESPACHO.compra.plazoAnios=parseFloat(this.value)||0;
-      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-      bindFiscalEvents();
+      reRenderFiscal();
     });
   }
   /* Fecha inicio préstamo */
@@ -1602,8 +1612,7 @@ function _bindTabDespacho(){
     fechaIniEl.addEventListener('change',function(){
       DESPACHO.compra.fechaInicio=this.value||null;
       DESPACHO.hipotecaInteresesManual=false; // recalcular al cambiar fecha
-      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-      bindFiscalEvents();
+      reRenderFiscal();
     });
   }
   /* Recalcular intereses button */
@@ -1611,8 +1620,7 @@ function _bindTabDespacho(){
   if(recalcBtn){
     recalcBtn.addEventListener('click',function(){
       DESPACHO.hipotecaInteresesManual=false;
-      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-      bindFiscalEvents();
+      reRenderFiscal();
     });
   }
   /* Manual override: mark as manual when user edits hipotecaIntereses */
@@ -1628,23 +1636,35 @@ function _bindTabDespacho(){
     });
   }
   /* Vinculaciones toggles */
-  var _vincIds=['vincNomina','vincSegHogar','vincSegSalud'];
-  var _vincKeys=['nomina','segHogar','segSalud'];
+  var _vincIds=['vincNomina','vincSegHogar','vincSegSalud','vincSegVida'];
+  var _vincKeys=['nomina','segHogar','segSalud','segVida'];
   _vincIds.forEach(function(vid,idx){
     var tgl=document.getElementById(vid+'Toggle');
     if(tgl)tgl.addEventListener('click',function(){
       var vinc=DESPACHO.compra.vinculaciones;
-      if(!vinc)vinc=DESPACHO.compra.vinculaciones={nomina:{enabled:false,costeAnual:0},segHogar:{enabled:false,costeAnual:0},segSalud:{enabled:false,costeAnual:0}};
+      if(!vinc)vinc=DESPACHO.compra.vinculaciones={nomina:{enabled:false,costeAnual:0,reduccion:0},segHogar:{enabled:false,costeAnual:0,reduccion:0},segSalud:{enabled:false,costeAnual:0,reduccion:0},segVida:{enabled:false,costeAnual:0,reduccion:0}};
+      if(!vinc[_vincKeys[idx]])vinc[_vincKeys[idx]]={enabled:false,costeAnual:0,reduccion:0};
       vinc[_vincKeys[idx]].enabled=!vinc[_vincKeys[idx]].enabled;
-      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-      bindFiscalEvents();
+      DESPACHO.hipotecaInteresesManual=false;
+      reRenderFiscal();
     });
     var costeEl=document.getElementById(vid+'Coste');
     if(costeEl)costeEl.addEventListener('change',function(){
       DESPACHO.compra.vinculaciones[_vincKeys[idx]].costeAnual=parseFloat(this.value)||0;
-      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-      bindFiscalEvents();
+      reRenderFiscal();
     });
+    var redEl=document.getElementById(vid+'Reduccion');
+    if(redEl)redEl.addEventListener('change',function(){
+      DESPACHO.compra.vinculaciones[_vincKeys[idx]].reduccion=parseFloat(this.value)||0;
+      DESPACHO.hipotecaInteresesManual=false;
+      reRenderFiscal();
+    });
+  });
+  /* Entidad bancaria */
+  var entBancoEl=document.getElementById('desp-entidadBanco');
+  if(entBancoEl)entBancoEl.addEventListener('change',function(){
+    DESPACHO.compra.entidadBanco=this.value||'';
+    saveDespacho();
   });
   /* Subrogación toggle */
   var subTgl=document.getElementById('subrogacionToggle');
@@ -1655,8 +1675,7 @@ function _bindTabDespacho(){
       DESPACHO.compra.subrogacion=_defaultSubrogacion();
     }
     DESPACHO.hipotecaInteresesManual=false; // recalcular
-    document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-    bindFiscalEvents();
+    reRenderFiscal();
   });
   /* Subrogación fields */
   if(DESPACHO.compra.subrogacion){
@@ -1664,8 +1683,7 @@ function _bindTabDespacho(){
     if(subDateEl)subDateEl.addEventListener('change',function(){
       DESPACHO.compra.subrogacion.fecha=this.value||null;
       DESPACHO.hipotecaInteresesManual=false;
-      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-      bindFiscalEvents();
+      reRenderFiscal();
     });
     var _subMoneyFields={subComision:'comisionCancelacion',subNotaria:'notaria',subTasacion:'tasacion',subRegistro:'registro',subNuevoImporte:'nuevoImporte'};
     Object.keys(_subMoneyFields).forEach(function(domId){
@@ -1677,23 +1695,20 @@ function _bindTabDespacho(){
       el.addEventListener('change',function(){
         DESPACHO.compra.subrogacion[prop]=parseFloat(this.value)||0;_uf();
         DESPACHO.hipotecaInteresesManual=false;
-        document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-        bindFiscalEvents();
+        reRenderFiscal();
       });
     });
     var subTipoEl=document.getElementById('desp-subNuevoTipo');
     if(subTipoEl)subTipoEl.addEventListener('change',function(){
       DESPACHO.compra.subrogacion.nuevoTipoInteres=parseFloat(this.value)||0;
       DESPACHO.hipotecaInteresesManual=false;
-      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-      bindFiscalEvents();
+      reRenderFiscal();
     });
     var subPlazoEl=document.getElementById('desp-subNuevoPlazo');
     if(subPlazoEl)subPlazoEl.addEventListener('change',function(){
       DESPACHO.compra.subrogacion.nuevoPlazoAnios=parseFloat(this.value)||0;
       DESPACHO.hipotecaInteresesManual=false;
-      document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
-      bindFiscalEvents();
+      reRenderFiscal();
     });
   }
 }
