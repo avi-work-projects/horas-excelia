@@ -25,7 +25,9 @@ var EV_COLOR_GRID=[
   '#22d3ee','#4ecdc4','#34d399','#56c596','#a3e635','#82c91e',
   '#fbbf24','#f0b45c','#fb923c','#ff922b','#fd7e14','#e8590c',
   '#868e96','#adb5bd','#dee2e6','#f8f9fa','#495057','#212529',
-  '#f06595','#da77f2','#748ffc','#66d9e8','#63e6be','#ffe066'
+  '#f06595','#da77f2','#748ffc','#66d9e8','#63e6be','#ffe066',
+  '#e03131','#f76707','#ae3ec9','#3b5bdb','#0ca678','#845ef7',
+  '#d6336c','#f08c00','#5f3dc4','#1971c2','#099268','#5c940d'
 ];
 var EV_COLOR_TYPES = {
   '#38bdf8':'Viaje',
@@ -33,8 +35,8 @@ var EV_COLOR_TYPES = {
   '#1d4ed8':'Asturias',
   '#34d399':'Recordatorio de Gestiones',
   '#fb923c':'Planes y Quedadas',
-  '#ff6b6b':'Otros',
-  '#c084fc':'Otros',
+  '#ff6b6b':'Festivo',
+  '#c084fc':'Puente',
   '#a3e635':'Otros',
   '#fbbf24':'Cumplea\u00f1os VIP'
 };
@@ -1086,6 +1088,7 @@ function renderEvDetail(ev,fromSummary){
   h+='<div style="font-size:.72rem;font-weight:600;color:'+_ddc+';opacity:.8;margin-bottom:4px">'+(EV_COLOR_TYPES[ev.color]||'Otros')+'</div>';
   h+='<div class="ev-detail-color-section" id="evDColorSection">';
   h+=_renderColorPicker(_ddc,false,false,'evDCp');
+  h+='<button class="econ-calc-btn" id="evDColorApply" style="margin-top:8px;font-size:.78rem;padding:8px 0">Probar color</button>';
   h+='</div>';
   h+='<div class="ev-detail-date">&#128197; '+dateStr+'</div>';
   if(repeatStr)h+='<div class="ev-detail-repeat">'+repeatStr+'</div>';
@@ -1120,16 +1123,25 @@ function openEvDetail(ev,container){
   if(_dColorBtn){
     var _dColorSec=document.getElementById('evDColorSection');
     var _dCpBound=false;
+    var _dCpRef=null;
     _dColorBtn.addEventListener('click',function(){
       _dColorSec.classList.toggle('open');
       if(!_dCpBound){
         _dCpBound=true;
-        _bindColorPicker(wrap,'evDCp',function(hex){
-          ev.color=hex;saveEvents();updateEventsBtn();
+        _dCpRef=_bindColorPicker(wrap,'evDCp',function(hex){
+          /* Solo actualiza preview local, NO guarda */
           var bar=document.getElementById('evDColorBar');if(bar)bar.style.background=hex;
           var ttl=document.getElementById('evDTitle');if(ttl)ttl.style.color=hex;
         });
       }
+    });
+    /* Probar color — aplica, guarda y refresca calendarios */
+    document.getElementById('evDColorApply').addEventListener('click',function(){
+      if(!_dCpRef)return;
+      var hex=_dCpRef.getColor();
+      ev.color=hex;saveEvents();updateEventsBtn();
+      refreshEvents();
+      showToast('Color aplicado','success');
     });
   }
   document.getElementById('evDEdit').addEventListener('click',function(){
