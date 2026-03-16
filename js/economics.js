@@ -88,11 +88,13 @@ function computeEcon(year){return computeEconEx(year);}
 function econBarChart(data,labels,color){
   var W=320,H=90,PB=18,PT=14,PL=32,n=12;
   var bW=W-PL;var maxV=Math.max.apply(null,data)||1;
-  var step=2500;while(maxV/step>5)step*=2;
+  var step=2500;while(maxV/step>5&&step<1e12)step*=2;
   var bw=Math.floor((bW-n*2)/n),gap=2;
   var today=new Date();var cm=ECON_YEAR===today.getFullYear()?today.getMonth():-1;
   var svg='<svg viewBox="0 0 '+W+' '+(H+PB)+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">';
+  var gridCount=0;
   for(var gv=step;gv<=maxV*1.05;gv+=step){
+    if(++gridCount>10)break;
     var gy=Math.round(H-(gv/maxV)*(H-PT));if(gy<PT)break;
     svg+='<line x1="'+PL+'" y1="'+gy+'" x2="'+W+'" y2="'+gy+'" stroke="#2a2a3e" stroke-width="1"/>';
     var lbl;if(gv>=1000000&&gv%1000000===0)lbl=(gv/1000000)+'M';else if(gv%1000===0)lbl=(gv/1000)+'k';else lbl=((gv/1000).toFixed(1).replace('.',','))+'k';
@@ -313,7 +315,7 @@ function renderEconContent(){
   var h=renderNavBar('econ');
   h+='<div class="econ-hdr-sub">';
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='resumen'?' active':'')+'" id="ecTabResumen">Resumen<br>Econ\u00f3mico</button>';
-  h+='<button class="econ-tab-btn'+(ECON_VIEW==='gastos'?' active':'')+'" id="ecTabGastos">Ingresos<br>y Gastos</button>';
+  h+='<button class="econ-tab-btn'+(ECON_VIEW==='gastos'?' active':'')+'" id="ecTabGastos">An\u00e1lisis Gastos<br>Dec. Renta</button>';
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='analisis'?' active':'')+'" id="ecTabAnalisis">An\u00e1lisis<br>Ec. Personal</button>';
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='estudio'?' active':'')+'" id="ecTabEstudio">Estudio<br>Cambio</button>';
   h+='</div>';
@@ -339,6 +341,10 @@ function renderEconContent(){
 /* ── Análisis Economía Personal ────────────────────────────── */
 var ANALISIS_ALT_RATE=2.5;
 var ANALISIS_SWITCH_COST=0;
+var ANALISIS_CALC_HIP=false; // botón Calcular hipoteca
+/* Desgravables para incluir en análisis personal (ids de GASTOS_ITEMS) */
+var ANALISIS_DESGRAV_IDS={hipoteca:false,comunidad:false,seg_hogar:false,gas:false,luz:false,digi:false,agua:false,otros_seg:false};
+var ANALISIS_DESGRAV_DISCOUNT=false; // aplicar descuento del desgravamiento
 
 function renderEconAnalisis(){
   if(typeof loadPersonalYear==='function')loadPersonalYear(ECON_YEAR);
@@ -362,7 +368,7 @@ function renderEconAnalisis(){
   h+=_analisisCard('Balance',balance/12,balance>=0?'var(--c-green)':'var(--c-red)');
   h+='</div></div>';
 
-  /* B. Distribución de gastos */
+  /* Compute all personal items upfront */
   var allGastos=[];
   (PERSONAL_DATA.gastosSemanales||[]).forEach(function(g){
     if(!g.amount)return;
@@ -375,6 +381,13 @@ function renderEconAnalisis(){
     allGastos.push({label:g.label,annual:annual});
   });
   allGastos.sort(function(a,b){return b.annual-a.annual;});
+  var allInv=[];
+  (PERSONAL_DATA.inversiones||[]).forEach(function(g){
+    if(!g.amount)return;
+    var annual=g.period==='annual'?g.amount:g.amount*12;
+    allInv.push({label:g.label,annual:annual});
+  });
+  allInv.sort(function(a,b){return b.annual-a.annual;});
 
   if(allGastos.length>0){
     h+='<div class="sy-section">';
@@ -385,15 +398,64 @@ function renderEconAnalisis(){
     h+='</div>';
   }
 
-  /* C. Inversiones breakdown */
-  var allInv=[];
-  (PERSONAL_DATA.inversiones||[]).forEach(function(g){
-    if(!g.amount)return;
-    var annual=g.period==='annual'?g.amount:g.amount*12;
-    allInv.push({label:g.label,annual:annual});
-  });
-  allInv.sort(function(a,b){return b.annual-a.annual;});
+  /* B2. % del Disponible para gastos personales */
+  var disponible=typeof computeDisponible==='function'?computeDisponible(ECON_YEAR):0;
+  if(disponible>0&&(allGastos.length>0||allInv.length>0)){
+    var pItems=[];
+    /* Personal gastos */
+    allGastos.forEach(function(g){pItems.push({label:g.label,annual:g.annual,cat:'gasto'});});
+    /* Personal inversiones */
+    allInv.forEach(function(g){pItems.push({label:g.label,annual:g.annual,cat:'inversion'});});
+    /* Desgravables opcionales */
+    if(typeof GASTOS_ITEMS!=='undefined'){
+      var DESGRAV_LABELS={hipoteca:'Hipoteca',comunidad:'Com. Propietarios',seg_hogar:'Seg. Hogar',gas:'Gas',luz:'Luz',digi:'Digi',agua:'Agua',otros_seg:'Otros seguros'};
+      var drInfo=typeof computeDeclResult==='function'?computeDeclResult(computeEconEx(ECON_YEAR).totBase,computeEconEx(ECON_YEAR).totIrpf):null;
+      var desgravPct=drInfo&&drInfo.decl?drInfo.decl.effectivePct||0:0;
+      Object.keys(ANALISIS_DESGRAV_IDS).forEach(function(gid){
+        if(!ANALISIS_DESGRAV_IDS[gid])return;
+        var g=null;for(var gi=0;gi<GASTOS_ITEMS.length;gi++){if(GASTOS_ITEMS[gi].id===gid){g=GASTOS_ITEMS[gi];break;}}
+        if(!g||!g.amount)return;
+        var anual=typeof gastoAnual==='function'?gastoAnual(gid):(g.period==='monthly'?g.amount*12:g.amount);
+        if(ANALISIS_DESGRAV_DISCOUNT&&desgravPct>0){
+          anual=Math.round(anual*(1-desgravPct/100)*100)/100;
+        }
+        pItems.push({label:(DESGRAV_LABELS[gid]||g.label)+(ANALISIS_DESGRAV_DISCOUNT?' (neto)':''),annual:anual,cat:'desgrav'});
+      });
+    }
+    pItems.sort(function(a,b){return b.annual-a.annual;});
+    var totalPartidas=0;pItems.forEach(function(p){totalPartidas+=p.annual;});
+    h+='<div class="sy-section">';
+    h+='<div class="sy-section-title">% del Disponible ('+fcPlain(disponible)+'/a\u00f1o)</div>';
+    h+='<div class="analisis-hbar-wrap">';
+    pItems.forEach(function(p){
+      var pct=disponible>0?Math.round(p.annual/disponible*1000)/10:0;
+      var color=p.cat==='gasto'?'#fb923c':p.cat==='inversion'?'var(--accent-bright)':'#c084fc';
+      h+='<div class="analisis-hbar-row">';
+      h+='<span class="analisis-hbar-label">'+escHtml(p.label)+'</span>';
+      h+='<div class="analisis-hbar-track"><div class="analisis-hbar-fill" style="width:'+Math.min(pct,100)+'%;background:'+color+'"></div></div>';
+      h+='<span class="analisis-hbar-val">'+pct+'% <span style="font-size:.6rem;color:var(--text-dim)">'+fcPlain(Math.round(p.annual))+'</span></span>';
+      h+='</div>';
+    });
+    h+='</div>';
+    var usedPct=disponible>0?Math.round(totalPartidas/disponible*1000)/10:0;
+    var restante=Math.round((disponible-totalPartidas)*100)/100;
+    h+='<div style="font-size:.72rem;color:var(--text-dim);margin-top:8px">Usado: <b>'+usedPct+'%</b> ('+fcPlain(totalPartidas)+') &middot; Libre: <b>'+fcPlain(restante)+'</b></div>';
+    /* Toggles para incluir gastos desgravables */
+    h+='<div style="margin-top:8px;padding:8px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)">';
+    h+='<div style="font-size:.68rem;color:var(--text-dim);margin-bottom:6px">Incluir gastos desgravables en el an\u00e1lisis:</div>';
+    var _dIds=['hipoteca','comunidad','seg_hogar','gas','luz','agua','digi','otros_seg'];
+    var _dLbls={hipoteca:'Hipoteca',comunidad:'Com. Propietarios',seg_hogar:'Seg. Hogar',gas:'Gas',luz:'Luz',agua:'Agua',digi:'Digi',otros_seg:'Otros seg.'};
+    h+='<div style="display:flex;flex-wrap:wrap;gap:4px">';
+    _dIds.forEach(function(did){
+      h+='<label style="display:flex;align-items:center;gap:3px;font-size:.68rem;color:var(--text-muted);cursor:pointer"><input type="checkbox" class="analisis-desgrav-chk" data-did="'+did+'"'+(ANALISIS_DESGRAV_IDS[did]?' checked':'')+' style="accent-color:#c084fc">'+_dLbls[did]+'</label>';
+    });
+    h+='</div>';
+    h+='<label style="display:flex;align-items:center;gap:4px;font-size:.68rem;color:#c084fc;margin-top:6px;cursor:pointer"><input type="checkbox" id="analisisDesgravDiscount"'+(ANALISIS_DESGRAV_DISCOUNT?' checked':'')+' style="accent-color:#c084fc">Aplicar descuento desgravamiento ('+desgravPct.toFixed(1)+'%)</label>';
+    h+='</div>';
+    h+='</div>';
+  }
 
+  /* C. Inversiones breakdown */
   if(allInv.length>0){
     h+='<div class="sy-section">';
     h+='<div class="sy-section-title">Inversiones recurrentes</div>';
@@ -432,9 +494,10 @@ function renderEconAnalisis(){
     h+='<div class="analisis-input-group"><label>Coste cambio banco \u20ac</label>';
     h+='<input class="analisis-input" id="analisisSwitchCost" type="number" min="0" step="100" value="'+ANALISIS_SWITCH_COST+'"></div>';
     h+='</div>';
+    h+='<button class="econ-calc-btn" id="analisisCalcHip" style="margin-top:6px">Calcular</button>';
 
     /* Calculate alternative */
-    if(ANALISIS_ALT_RATE>0){
+    if(ANALISIS_CALC_HIP&&ANALISIS_ALT_RATE>0){
       var r2=ANALISIS_ALT_RATE/100/12;
       var cuota2=comp.importePrestamo*r2*Math.pow(1+r2,n)/(Math.pow(1+r2,n)-1);
       var total2=cuota2*n+ANALISIS_SWITCH_COST;
@@ -562,6 +625,17 @@ function bindEconAnalisisEvents(){
     ANALISIS_SWITCH_COST=parseFloat(this.value)||0;
     reRenderEcon();
   });
+  var calcHipBtn=document.getElementById('analisisCalcHip');
+  if(calcHipBtn)calcHipBtn.addEventListener('click',function(){ANALISIS_CALC_HIP=true;reRenderEcon();});
+  /* Desgravable checkboxes */
+  document.querySelectorAll('.analisis-desgrav-chk').forEach(function(chk){
+    chk.addEventListener('change',function(){
+      ANALISIS_DESGRAV_IDS[this.dataset.did]=this.checked;
+      reRenderEcon();
+    });
+  });
+  var discountChk=document.getElementById('analisisDesgravDiscount');
+  if(discountChk)discountChk.addEventListener('change',function(){ANALISIS_DESGRAV_DISCOUNT=this.checked;reRenderEcon();});
 }
 /* ── Estudio Cambio (sub-tabs) ─────────────────────────────── */
 function renderEconEstudio(){
@@ -596,8 +670,11 @@ function closeEcon(){
   setTimeout(function(){ov.style.display='none';},320);
 }
 function reRenderEcon(){
+  var body=document.querySelector('#econOverlay .sy-body');
+  var scrollTop=body?body.scrollTop:0;
   document.getElementById('econContent').innerHTML=renderEconContent();
   bindEconEvents();
+  if(body)body.scrollTop=scrollTop;
 }
 
 /* ── bindEconEvents ─────────────────────────────────────────── */

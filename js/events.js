@@ -31,12 +31,17 @@ var EV_COLOR_TYPES = {
   '#fbbf24':'Cumplea\u00f1os VIP'
 };
 
-// Paleta de azules para variedad de viajes (determinista según id del evento)
-var _VIAJE_BLUES=['#5cc8f0','#007fa8','#00a8a0','#1caac9','#7eeaf2'];
+// Paleta variada para viajes (determinista según id del evento)
+var _VIAJE_BLUES=['#e879a8','#f0b45c','#4ecdc4','#a18cd1','#56c596'];
 function evTravelColor(evId){
   var h=0,id=String(evId||'');
   for(var i=0;i<id.length;i++)h=(h*31+id.charCodeAt(i))&0x7fffffff;
   return _VIAJE_BLUES[h%_VIAJE_BLUES.length];
+}
+// ¿Es viaje/asturias? (se renderizan siempre como barra, incluso 1 día)
+function isEvBarAlways(ev){
+  var t=EV_COLOR_TYPES[ev.color];
+  return t==='Viaje'||t==='Asturias';
 }
 // Devuelve el color de visualización (viajes → azul único por evento, resto → color guardado)
 function getEvDisplayColor(ev){
@@ -182,8 +187,8 @@ function renderEvCalMonth(){
       seq.forEach(function(x){puenteMap[evDk(x.date)]=true;});
     });
   }
-  // Multi-day events (non-repeating, end strictly after start)
-  var multiEvs=EVENTS.filter(function(ev){return !ev.repeat&&ev.end&&ev.end>ev.start;});
+  // Multi-day events (non-repeating, end strictly after start OR viaje/asturias always as bar)
+  var multiEvs=EVENTS.filter(function(ev){return !ev.repeat&&ev.end&&(ev.end>ev.start||isEvBarAlways(ev));});
   var multiIds={};multiEvs.forEach(function(ev){multiIds[ev.id]=true;});
   var DN7=['L','M','X','J','V','S','D'];
   var h='<div class="ev-week-hdr">';
@@ -518,7 +523,7 @@ function renderEvAnnual(){
     if(!EV_ANNUAL_FILTER_HIDDEN.length)return true;
     return EV_ANNUAL_FILTER_HIDDEN.indexOf(EV_COLOR_TYPES[ev.color]||'Otros')===-1;
   }
-  var multiEvs=EVENTS.filter(function(ev){return !ev.repeat&&ev.end&&ev.end>ev.start&&annEvVisible(ev);});
+  var multiEvs=EVENTS.filter(function(ev){return !ev.repeat&&ev.end&&(ev.end>ev.start||isEvBarAlways(ev))&&annEvVisible(ev);});
   var multiIds={};multiEvs.forEach(function(ev){multiIds[ev.id]=true;});
   var MNS=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
   var addMode=EV_ANNUAL_ADD;
@@ -689,7 +694,7 @@ function renderEvQuad(){
   var lastMo=months[3];
   var rangeEnd=new Date(lastMo.y,lastMo.m+1,0);
   var multiEvs=EVENTS.filter(function(ev){
-    if(ev.repeat||!ev.end||ev.end<=ev.start||!annEvVisible(ev))return false;
+    if(ev.repeat||!ev.end||(!isEvBarAlways(ev)&&ev.end<=ev.start)||!annEvVisible(ev))return false;
     var es=new Date(ev.start+'T00:00:00'),ee=new Date(ev.end+'T00:00:00');
     return ee>=rangeStart&&es<=rangeEnd;
   });
@@ -1197,6 +1202,14 @@ function bindEvFormEvents(){
     sw.addEventListener('click',function(){
       document.querySelectorAll('.ev-color-swatch').forEach(function(s){s.classList.remove('selected');});
       sw.classList.add('selected');
+      /* Auto-fill title+note for Asturias if title is empty */
+      var hex=sw.dataset.hex;
+      var titleEl=document.getElementById('evFTitle');
+      if(hex==='#1d4ed8'&&titleEl&&!titleEl.value.trim()){
+        titleEl.value='Asturias';
+        var noteEl2=document.getElementById('evFNote');
+        if(noteEl2&&!noteEl2.value.trim()){noteEl2.value='Asturias';cntEl.textContent='8/200';}
+      }
     });
   });
   document.getElementById('evFRepeat').addEventListener('change',function(){

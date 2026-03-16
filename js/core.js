@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v104 \u2014 fiscal purple theme, an\u00e1lisis personal, escenarios zones, inmobiliaria';
+var APP_VERSION = 'v105 \u2014 resumen, eventos, econom\u00eda, fiscal improvements';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

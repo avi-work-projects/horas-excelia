@@ -10,6 +10,7 @@ var VAC_ENTITLEMENT=(function(){
 })();
 var SUMMARY_YEAR=new Date().getFullYear();
 var SY_EXCL_PAST=true;
+var SY_PUENTES_LIBRES=false;
 var SUMMARY_TAB='work'; // 'work' | 'puentes' | 'time-off'
 
 function saveVacEntitlement(n){
@@ -203,20 +204,6 @@ function renderSummaryContent(){
     h+='<div class="sy-card hi2"><div class="sy-val">'+fdY(s.lvTotal)+'</div><div class="sy-lbl">Totales</div></div>';
     h+='</div></div>';
 
-    // Horas trabajadas
-    h+='<div class="sy-section"><div class="sy-section-title">'+htTitle+'</div><div class="sy-cards3">';
-    h+='<div class="sy-card hi"><div class="sy-val">'+fhY(s.hoursWorked)+'</div><div class="sy-lbl">Trabajadas</div></div>';
-    h+='<div class="sy-card dim"><div class="sy-val">'+fhY(s.hoursToWork)+'</div><div class="sy-lbl">Por trabajar</div></div>';
-    h+='<div class="sy-card hi2"><div class="sy-val">'+fhY(s.hoursTotal)+'</div><div class="sy-lbl">Totales</div></div>';
-    h+='</div><div class="sy-cards4" style="margin-top:8px">';
-    h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.maxMh)+'</div><div class="sy-lbl">M\u00e1x./mes<br>'+MN_SHORT[s.maxMhi]+'</div></div>';
-    h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.minMh)+'</div><div class="sy-lbl">M\u00edn./mes<br>'+MN_SHORT[s.minMhi]+'</div></div>';
-    (function(){var totMin=Math.round(s.avgHDay*60);var avgHH=Math.floor(totMin/60);var avgHM=totMin%60;var sub=avgHM>0?'<div class="sy-sublbl">'+avgHH+'h '+avgHM+'min</div>':'';h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.avgHDay)+'</div>'+sub+'<div class="sy-lbl">Media/d\u00eda</div></div>';})();
-    h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.avgHMonth)+'</div><div class="sy-lbl">Media/mes</div></div>';
-    h+='</div>';
-    h+='<div class="sy-chart">'+barChart3(s.mHours,s.mHoursP,MN_SHORT,'#6c8cff',cm)+'</div>';
-    h+='</div>';
-
     // Ausencias
     h+='<div class="sy-section"><div class="sy-section-title">Ausencias</div>';
     h+='<div class="vac-config-row">';
@@ -263,6 +250,20 @@ function renderSummaryContent(){
     h+='<div class="sy-chart">'+barChart3(s.mDays,s.mDaysP,MN_SHORT,'#34d399',cm)+'</div>';
     h+='</div>';
 
+    // Horas trabajadas (al final)
+    h+='<div class="sy-section"><div class="sy-section-title">'+htTitle+'</div><div class="sy-cards3">';
+    h+='<div class="sy-card hi"><div class="sy-val">'+fhY(s.hoursWorked)+'</div><div class="sy-lbl">Trabajadas</div></div>';
+    h+='<div class="sy-card dim"><div class="sy-val">'+fhY(s.hoursToWork)+'</div><div class="sy-lbl">Por trabajar</div></div>';
+    h+='<div class="sy-card hi2"><div class="sy-val">'+fhY(s.hoursTotal)+'</div><div class="sy-lbl">Totales</div></div>';
+    h+='</div><div class="sy-cards4" style="margin-top:8px">';
+    h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.maxMh)+'</div><div class="sy-lbl">M\u00e1x./mes<br>'+MN_SHORT[s.maxMhi]+'</div></div>';
+    h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.minMh)+'</div><div class="sy-lbl">M\u00edn./mes<br>'+MN_SHORT[s.minMhi]+'</div></div>';
+    (function(){var totMin=Math.round(s.avgHDay*60);var avgHH=Math.floor(totMin/60);var avgHM=totMin%60;var sub=avgHM>0?'<div class="sy-sublbl">'+avgHH+'h '+avgHM+'min</div>':'';h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.avgHDay)+'</div>'+sub+'<div class="sy-lbl">Media/d\u00eda</div></div>';})();
+    h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.avgHMonth)+'</div><div class="sy-lbl">Media/mes</div></div>';
+    h+='</div>';
+    h+='<div class="sy-chart">'+barChart3(s.mHours,s.mHoursP,MN_SHORT,'#6c8cff',cm)+'</div>';
+    h+='</div>';
+
   } else if(SUMMARY_TAB==='puentes'){
     // ── Tab 2: Puentes ──
     var p=computePuentes(SUMMARY_YEAR);
@@ -270,11 +271,27 @@ function renderSummaryContent(){
     var fdd=function(dt){return DF[dt.getDay()]+', '+fd(dt);};
     var syToday=new Date();syToday.setHours(0,0,0,0);
 
-    // Filtro "Excluir pasados"
-    h+='<div class="excl-row"><label class="excl-item"><input type="checkbox" id="syExclPastChk"'+(SY_EXCL_PAST?' checked':'')+'>&#160;Excluir pasados</label></div>';
+    // Filtros puentes
+    h+='<div class="excl-row">';
+    h+='<label class="excl-item"><input type="checkbox" id="syExclPastChk"'+(SY_EXCL_PAST?' checked':'')+'>&#160;Excluir pasados</label>';
+    h+='<label class="excl-item"><input type="checkbox" id="syPuentesLibresChk"'+(SY_PUENTES_LIBRES?' checked':'')+'>&#160;Solo libres</label>';
+    h+='</div>';
 
     // Puentes con celdas individuales + perímetro rosa
-    var puentesList=SY_EXCL_PAST?p.puentes.filter(function(seq){return seq[seq.length-1].date>=syToday;}):p.puentes;
+    var puentesList=p.puentes;
+    if(SY_EXCL_PAST)puentesList=puentesList.filter(function(seq){return seq[seq.length-1].date>=syToday;});
+    if(SY_PUENTES_LIBRES&&typeof getEventsOn==='function'){
+      puentesList=puentesList.filter(function(seq){
+        for(var qi=0;qi<seq.length;qi++){
+          var evs=getEventsOn(dk(seq[qi].date));
+          for(var qj=0;qj<evs.length;qj++){
+            var t=typeof EV_COLOR_TYPES!=='undefined'?EV_COLOR_TYPES[evs[qj].color]:'';
+            if(t==='Viaje'||t==='Asturias'||t==='Planes y Quedadas')return false;
+          }
+        }
+        return true;
+      });
+    }
     h+='<div class="sy-section"><div class="sy-section-title">Puentes (3+ d\u00edas seguidos)</div>';
     if(puentesList.length===0){h+='<div class="sy-note">No hay puentes marcados para este a\u00f1o.</div>';}
     else{
@@ -492,6 +509,8 @@ function bindSummaryEvents(){
   // Excluir pasados (solo en tab time-off)
   var syExclPastChk=document.getElementById('syExclPastChk');
   if(syExclPastChk)syExclPastChk.addEventListener('change',function(){SY_EXCL_PAST=this.checked;document.getElementById('summaryContent').innerHTML=renderSummaryContent();bindSummaryEvents();});
+  var syPuentesLibresChk=document.getElementById('syPuentesLibresChk');
+  if(syPuentesLibresChk)syPuentesLibresChk.addEventListener('change',function(){SY_PUENTES_LIBRES=this.checked;document.getElementById('summaryContent').innerHTML=renderSummaryContent();bindSummaryEvents();});
   // Eventos en puentes (solo en tab time-off)
   document.querySelectorAll('.sy-puente-ev[data-id]').forEach(function(el){
     el.addEventListener('click',function(){
