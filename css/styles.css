@@ -655,7 +655,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .fiscal-desgrav-total{padding:8px 10px;border-radius:var(--radius-sm);background:var(--accent-glow);border:1px solid rgba(192,132,252,.3);font-size:.82rem;color:var(--accent-bright);margin-bottom:10px}
 .fiscal-desgrav-group-title{font-size:.68rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;padding:10px 0 5px;border-top:1px solid var(--border);margin-top:4px}
 .fiscal-desgrav-group-title.quota{color:var(--c-orange)}
-.fiscal-desgrav-from-gasto{font-size:.75rem;color:var(--accent-bright);font-family:var(--mono);background:var(--accent-glow);border-radius:5px;padding:2px 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+.fiscal-desgrav-from-gasto{font-size:.75rem;color:var(--accent-bright);font-family:var(--mono);background:var(--accent-glow);border-radius:5px;padding:2px 7px;word-break:break-word}
 .fiscal-desgrav-from-gasto.dim{color:var(--text-dim);background:transparent}
 .fiscal-desgrav-nota{font-size:.65rem;color:var(--text-dim);margin-top:4px;line-height:1.4;padding:4px 6px;background:var(--surface2);border-radius:4px;border-left:2px solid var(--c-orange)}
 /* Fiscal: compras profesionales */
@@ -669,11 +669,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 /* Desgravaciones: notas + tabla despacho info */
 .fiscal-desgrav-note{font-size:.66rem;color:var(--text-dim);margin-top:4px;line-height:1.45;padding:4px 6px;background:var(--surface2);border-radius:4px;border-left:2px solid var(--border)}
 .fiscal-desgrav-despacho-section{margin-top:8px}
-.fiscal-desgrav-info-table{width:100%;border-collapse:collapse;font-size:.71rem;margin-top:6px}
-.fiscal-desgrav-info-table thead th{color:var(--text-dim);font-weight:600;text-align:left;padding:3px 5px;border-bottom:1px solid var(--border);font-size:.63rem;text-transform:uppercase;letter-spacing:.04em}
-.fiscal-desgrav-info-table tbody td{padding:4px 5px;border-bottom:1px solid var(--border);color:var(--text-muted);vertical-align:middle}
-.fiscal-desgrav-info-table tbody tr:last-child td{border-bottom:none}
-.fiscal-desgrav-info-ded{font-family:var(--mono);font-size:.74rem;color:var(--c-green);text-align:right;font-weight:600}
+.fiscal-ded-cards{display:flex;flex-direction:column;gap:6px}
+.fiscal-ded-card{padding:8px 10px;border-radius:var(--radius-sm);background:var(--surface2);border-left:3px solid var(--accent)}
+.fiscal-ded-card-name{font-size:.76rem;color:var(--text);font-weight:600;margin-bottom:3px}
+.fiscal-ded-card-vals{display:flex;align-items:center;gap:6px;font-size:.7rem;flex-wrap:wrap}
+.fiscal-ded-card-annual{color:var(--text-muted);font-family:var(--mono)}
+.fiscal-ded-card-pct{color:var(--text-dim);font-size:.65rem}
+.fiscal-ded-card-amount{margin-left:auto;font-family:var(--mono);font-weight:600;color:var(--c-green);font-size:.78rem}
 .fiscal-desgrav-despacho-total{margin-top:8px;padding:6px 10px;border-radius:var(--radius-sm);background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.3);font-size:.8rem;color:var(--c-green);text-align:right}
 /* Nota IVA compras */
 .fiscal-compras-iva-note{font-size:.7rem;color:var(--c-orange);background:rgba(251,146,60,.08);border:1px solid rgba(251,146,60,.25);border-radius:5px;padding:5px 8px;margin-bottom:8px;line-height:1.4}
@@ -698,6 +700,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .fiscal-despacho-unit{font-size:.78rem;color:var(--text-dim);flex-shrink:0}
 .fiscal-despacho-derived{font-size:.78rem;color:var(--accent-bright);padding:4px 8px;background:var(--accent-glow);border-radius:6px}
 .fiscal-despacho-money-fmt{font-size:.73rem;color:var(--accent-bright);font-family:var(--mono);min-height:1em}
+.fiscal-vinc-row{padding:6px 0;border-bottom:1px solid var(--border)}
+.fiscal-vinc-cost{display:flex;align-items:center;gap:8px;padding:4px 0 0 24px}
 .fiscal-despacho-result{padding:12px 14px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border);margin-top:4px}
 .fiscal-despacho-result.active{border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.05)}
 .fiscal-despacho-result-title{font-size:.72rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
@@ -705,6 +709,20 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .fiscal-despacho-breakdown{margin-top:8px;border-top:1px solid var(--border);padding-top:8px;display:flex;flex-direction:column;gap:3px}
 .fiscal-despacho-comp{font-size:.68rem;color:var(--text-dim)}
 .fiscal-despacho-comp b{color:var(--text-muted)}
+/* Multi-rate period cards */
+.econ-multi-rate-cards{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.econ-multi-rate-card{padding:8px 10px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border)}
+.econ-multi-rate-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.econ-multi-rate-num{font-size:.72rem;color:var(--text-muted);font-weight:600}
+.econ-multi-rate-del{background:none;border:none;color:var(--c-red);font-size:.78rem;cursor:pointer;padding:2px 6px}
+.econ-multi-rate-row{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
+.econ-multi-rate-field{display:flex;flex-direction:column;gap:2px;flex:1;min-width:70px}
+.econ-multi-rate-field label{font-size:.65rem;color:var(--text-dim)}
+.econ-multi-rate-sel{font-size:.78rem;padding:4px 6px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);color:var(--text);outline:none}
+.econ-multi-rate-sel:focus{border-color:var(--accent)}
+.econ-multi-rate-input{font-family:var(--mono);font-size:.84rem;width:70px;padding:4px 6px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);color:var(--text);outline:none}
+.econ-multi-rate-input:focus{border-color:var(--accent)}
+.econ-multi-rate-add{font-size:.72rem;color:var(--accent-bright);background:var(--accent-glow);border:1px dashed var(--accent);border-radius:var(--radius-sm);padding:6px;cursor:pointer;text-align:center;margin-top:4px}
 /* Distribución de ingresos */
 .econ-distrib-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
 .econ-distrib-header{padding:10px 14px 8px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:2px}
