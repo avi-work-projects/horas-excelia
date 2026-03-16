@@ -711,18 +711,20 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .fiscal-despacho-comp b{color:var(--text-muted)}
 /* Multi-rate period cards */
 .econ-multi-rate-cards{display:flex;flex-direction:column;gap:8px;margin-top:8px}
-.econ-multi-rate-card{padding:8px 10px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border)}
-.econ-multi-rate-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
-.econ-multi-rate-num{font-size:.72rem;color:var(--text-muted);font-weight:600}
-.econ-multi-rate-del{background:none;border:none;color:var(--c-red);font-size:.78rem;cursor:pointer;padding:2px 6px}
-.econ-multi-rate-row{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
-.econ-multi-rate-field{display:flex;flex-direction:column;gap:2px;flex:1;min-width:70px}
-.econ-multi-rate-field label{font-size:.65rem;color:var(--text-dim)}
-.econ-multi-rate-sel{font-size:.78rem;padding:4px 6px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);color:var(--text);outline:none}
-.econ-multi-rate-sel:focus{border-color:var(--accent)}
-.econ-multi-rate-input{font-family:var(--mono);font-size:.84rem;width:70px;padding:4px 6px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);color:var(--text);outline:none}
-.econ-multi-rate-input:focus{border-color:var(--accent)}
+.econ-multi-rate-card{padding:10px 12px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border)}
+.econ-multi-rate-hdr{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.econ-multi-rate-num{font-size:.72rem;color:var(--accent-bright);font-weight:700;flex-shrink:0}
+.econ-multi-rate-range{font-size:.68rem;color:var(--text-dim);flex:1;text-align:center}
+.econ-multi-rate-del{background:none;border:none;color:var(--c-red);font-size:.78rem;cursor:pointer;padding:2px 6px;flex-shrink:0}
+.econ-multi-rate-date-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.econ-multi-rate-date-row label{font-size:.65rem;color:var(--text-dim);flex-shrink:0}
+.econ-mr-date{font-size:.78rem;padding:5px 8px;border-radius:5px;border:1px solid var(--border);background:var(--surface);color:var(--text);outline:none;flex:1}
+.econ-mr-date:focus{border-color:var(--accent)}
 .econ-multi-rate-add{font-size:.72rem;color:var(--accent-bright);background:var(--accent-glow);border:1px dashed var(--accent);border-radius:var(--radius-sm);padding:6px;cursor:pointer;text-align:center;margin-top:4px}
+.econ-equiv-rate{display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 12px;margin-top:8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm)}
+.econ-equiv-label{font-size:.68rem;color:var(--text-dim);font-weight:600}
+.econ-equiv-val{font-family:var(--mono);font-size:.78rem;color:var(--accent-bright);font-weight:600}
+.econ-equiv-sep{color:var(--text-dim);font-size:.68rem}
 /* Distribución de ingresos */
 .econ-distrib-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
 .econ-distrib-header{padding:10px 14px 8px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:2px}
