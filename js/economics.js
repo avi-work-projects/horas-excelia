@@ -495,8 +495,10 @@ var ANALISIS_ALT_RATE=2.5;
 var ANALISIS_SWITCH_COST=0;
 var ANALISIS_CALC_HIP=false; // botón Calcular hipoteca
 /* Desgravables para incluir en análisis personal (ids de GASTOS_ITEMS) */
-var ANALISIS_DESGRAV_IDS={hipoteca:false,comunidad:false,seg_hogar:false,gas:false,luz:false,digi:false,agua:false,otros_seg:false};
-var ANALISIS_DESGRAV_DISCOUNT=false; // aplicar descuento del desgravamiento
+var ANALISIS_DESGRAV_IDS={hipoteca:true,comunidad:true,seg_hogar:true,gas:true,luz:true,digi:true,agua:true,otros_seg:true};
+var ANALISIS_DESGRAV_DISCOUNT=true; // aplicar descuento del desgravamiento
+/* Seguros normales (sin vinculación) para comparar sobrecostes */
+var ANALISIS_SEG_NORMAL={segSalud:0,segVida:0,segHogar:0};
 
 function renderEconAnalisis(){
   if(typeof loadPersonalYear==='function')loadPersonalYear(ECON_YEAR);
@@ -712,6 +714,10 @@ function _renderAnalisisHipoteca(){
   if(comp&&comp.subrogacion){
     h+=_renderSubrogacionAnalysis(comp);
   }
+
+  /* Análisis sobrecoste seguros vinculados */
+  h+=_renderInsuranceOvercost(comp);
+
   return h;
 }
 
@@ -812,6 +818,80 @@ function _analisisHBar(items,color){
   return h;
 }
 
+function _renderInsuranceOvercost(comp){
+  var h='';
+  var vinc=comp?comp.vinculaciones:null;
+  if(!vinc)return '';
+  /* Check if any insurance vinculación is enabled */
+  var _segKeys=[{key:'segSalud',label:'Seguro salud'},{key:'segVida',label:'Seguro de vida'},{key:'segHogar',label:'Seguro hogar'}];
+  var hasAny=false;
+  _segKeys.forEach(function(s){if(vinc[s.key]&&vinc[s.key].enabled)hasAny=true;});
+  if(!hasAny)return '';
+
+  h+='<div class="sy-section">';
+  h+='<div class="sy-section-title">Sobrecoste de seguros vinculados</div>';
+  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:10px">Compara lo que pagas en seguros vinculados a la hipoteca con lo que costar\u00edan sin vinculaci\u00f3n.</div>';
+
+  var totalVinc=0,totalNormal=0;
+  h+='<div class="analisis-insurance-table">';
+  h+='<div class="analisis-ins-header">';
+  h+='<span></span><span>Vinculado</span><span>Normal</span><span>Sobrecoste</span>';
+  h+='</div>';
+  _segKeys.forEach(function(s){
+    if(!vinc[s.key]||!vinc[s.key].enabled)return;
+    var costeVinc=vinc[s.key].costeAnual||0;
+    var costeNormal=ANALISIS_SEG_NORMAL[s.key]||0;
+    var diff=costeVinc-costeNormal;
+    totalVinc+=costeVinc;totalNormal+=costeNormal;
+    h+='<div class="analisis-ins-row">';
+    h+='<span class="analisis-ins-label">'+s.label+'</span>';
+    h+='<span class="analisis-ins-val" style="color:var(--c-orange)">'+fcPlain(costeVinc)+'</span>';
+    h+='<span class="analisis-ins-val"><input class="analisis-input analisis-seg-normal" data-seg="'+s.key+'" type="number" min="0" step="10" value="'+costeNormal+'" style="width:70px;font-size:.72rem;text-align:right"></span>';
+    h+='<span class="analisis-ins-val" style="color:'+(diff>0?'var(--c-red)':'var(--c-green)')+'">'+((diff>0?'+':'')+fcPlain(diff))+'</span>';
+    h+='</div>';
+  });
+  var totalDiff=totalVinc-totalNormal;
+  h+='<div class="analisis-ins-row analisis-ins-total">';
+  h+='<span class="analisis-ins-label"><b>Total anual</b></span>';
+  h+='<span class="analisis-ins-val" style="color:var(--c-orange)"><b>'+fcPlain(totalVinc)+'</b></span>';
+  h+='<span class="analisis-ins-val"><b>'+fcPlain(totalNormal)+'</b></span>';
+  h+='<span class="analisis-ins-val" style="color:'+(totalDiff>0?'var(--c-red)':'var(--c-green)')+'"><b>'+((totalDiff>0?'+':'')+fcPlain(totalDiff))+'</b></span>';
+  h+='</div>';
+  h+='</div>';
+
+  /* Resumen */
+  if(totalDiff>0){
+    h+='<div style="margin-top:8px;padding:8px 10px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border);font-size:.72rem">';
+    h+='Sobrecoste anual por seguros vinculados: <b style="color:var(--c-red)">+'+fcPlain(totalDiff)+'</b> ('+fcPlain(Math.round(totalDiff/12*100)/100)+'/mes)';
+    /* Check if vinculaciones reduction compensates */
+    var vincReduccion=0;
+    _segKeys.forEach(function(s){if(vinc[s.key]&&vinc[s.key].enabled)vincReduccion+=vinc[s.key].reduccion||0;});
+    if(vincReduccion>0&&comp.importePrestamo>0&&comp.tipoInteres>0&&comp.plazoAnios>0){
+      /* Calculate interest savings from reduction */
+      var r1=comp.tipoInteres/100/12;
+      var n=comp.plazoAnios*12;
+      var cuota1=comp.importePrestamo*r1*Math.pow(1+r1,n)/(Math.pow(1+r1,n)-1);
+      var tipoEf=Math.max(0,comp.tipoInteres-vincReduccion);
+      var r2=tipoEf/100/12;
+      var cuota2=r2>0?comp.importePrestamo*r2*Math.pow(1+r2,n)/(Math.pow(1+r2,n)-1):comp.importePrestamo/n;
+      var ahorroAnual=Math.round((cuota1-cuota2)*12*100)/100;
+      var balanceNeto=Math.round((ahorroAnual-totalDiff)*100)/100;
+      h+='<br>Ahorro anual por reducci\u00f3n tipo (\u2212'+vincReduccion.toFixed(2)+'%): <b style="color:var(--c-green)">'+fcPlain(ahorroAnual)+'</b>';
+      h+='<br><span style="font-size:.78rem">Balance neto: <b style="color:'+(balanceNeto>=0?'var(--c-green)':'var(--c-red)')+'">'+((balanceNeto>=0?'+':'')+fcPlain(balanceNeto))+'</b>/a\u00f1o</span>';
+      if(balanceNeto>=0){
+        h+='<br><span style="color:var(--c-green)">Las vinculaciones te compensan \u2714</span>';
+      } else {
+        h+='<br><span style="color:var(--c-red)">Las vinculaciones te cuestan '+fcPlain(-balanceNeto)+'/a\u00f1o extra</span>';
+      }
+    }
+    h+='</div>';
+  } else if(totalNormal>0){
+    h+='<div style="margin-top:8px;font-size:.72rem;color:var(--c-green)">Los seguros vinculados son m\u00e1s baratos o iguales que los normales \u2714</div>';
+  }
+  h+='</div>';
+  return h;
+}
+
 function _mortgageComparisonChart(cuota1,cuota2,nMeses,switchCost,rate1,rate2){
   var W=320,H=120,PB=18,PT=16,PL=42,PR=8;
   var W2=W-PL-PR,H2=H-PT;
@@ -887,6 +967,13 @@ function bindEconAnalisisEvents(){
     });
     var calcHipBtn=document.getElementById('analisisCalcHip');
     if(calcHipBtn)calcHipBtn.addEventListener('click',function(){ANALISIS_CALC_HIP=true;reRenderEcon();});
+    /* Normal insurance cost inputs */
+    document.querySelectorAll('.analisis-seg-normal').forEach(function(inp){
+      inp.addEventListener('change',function(){
+        ANALISIS_SEG_NORMAL[this.dataset.seg]=parseFloat(this.value)||0;
+        reRenderEcon();
+      });
+    });
   }
 }
 /* ── Estudio Cambio (sub-tabs) ─────────────────────────────── */

@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v110 \u2014 multi-tarifa por fechas, tarifa equivalente';
+var APP_VERSION = 'v111 \u2014 seguro vida, reducci\u00f3n tipo, sobrecoste seguros, tipo selector eventos';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
