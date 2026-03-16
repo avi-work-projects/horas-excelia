@@ -48,9 +48,14 @@ function evTravelColor(evId){
   for(var i=0;i<id.length;i++)h=(h*31+id.charCodeAt(i))&0x7fffffff;
   return _VIAJE_BLUES[h%_VIAJE_BLUES.length];
 }
+// Obtiene el tipo de un evento: ev.type (v111+) o fallback a EV_COLOR_TYPES[color]
+function getEvType(ev){
+  if(ev.type)return ev.type;
+  return EV_COLOR_TYPES[ev.color]||'Otros';
+}
 // ¿Es viaje/asturias? (se renderizan siempre como barra, incluso 1 día)
 function isEvBarAlways(ev){
-  var t=EV_COLOR_TYPES[ev.color];
+  var t=getEvType(ev);
   return t==='Viaje'||t==='Asturias';
 }
 // Devuelve el color de visualización (viajes → azul único por evento, resto → color guardado)
@@ -430,7 +435,7 @@ function renderEvListItem(ev){
   h+='<div class="ev-list-body">';
   h+='<div class="ev-list-title">'+_listTitle+'</div>';
   if(ev.note)h+='<div class="ev-list-note">'+escHtml(ev.note)+'</div>';
-  h+='<div class="ev-list-meta">'+(EV_COLOR_TYPES[ev.color]||'Otros')+' \u00b7 '+dateStr+repeatStr+'</div>';
+  h+='<div class="ev-list-meta">'+getEvType(ev)+' \u00b7 '+dateStr+repeatStr+'</div>';
   h+='</div>';
   h+='<div class="ev-list-actions"><button class="ev-list-btn del" data-id="'+ev.id+'">&#215;</button></div>';
   h+='</div>';
@@ -538,7 +543,7 @@ function renderEvUpcoming(){
     h+='<div class="ev-upcoming-section">';
     fids.forEach(function(id){
       var item=fallbackMap[id];var ev=item.ev;
-      var type=EV_COLOR_TYPES[ev.color]||'Otros';
+      var type=getEvType(ev);
       var diffToday=Math.round((item.firstDate-today)/86400000);
       var _isVipU=ev.id.indexOf('ev-bday-vip-')===0;
       var _uTitle=_isVipU?('<img src="./VIP.png" class="bday-vip-img" alt="VIP" style="height:1.2em;vertical-align:middle;margin-right:3px">'+escHtml(ev.title.replace(/^\u2b50\s*/,'')))
@@ -566,7 +571,7 @@ function renderEvUpcoming(){
     h+='<div class="ev-upcoming-section">';
     ids.forEach(function(id){
       var item=wkMap[id];var ev=item.ev;
-      var type=EV_COLOR_TYPES[ev.color]||'Otros';
+      var type=getEvType(ev);
       var diffToday=Math.round((item.firstDate-today)/86400000);
       var isToday=diffToday===0;
       var lbl=isToday?'Hoy':diffToday===1?'Ma\u00f1ana':diffToday<0?'En curso':('En '+diffToday+'d');
@@ -603,7 +608,7 @@ function renderEvAnnual(){
   // Eventos multi-día (sin repetición, end > start) — filtrar por tipos ocultos
   function annEvVisible(ev){
     if(!EV_ANNUAL_FILTER_HIDDEN.length)return true;
-    return EV_ANNUAL_FILTER_HIDDEN.indexOf(EV_COLOR_TYPES[ev.color]||'Otros')===-1;
+    return EV_ANNUAL_FILTER_HIDDEN.indexOf(getEvType(ev))===-1;
   }
   var multiEvs=EVENTS.filter(function(ev){return !ev.repeat&&ev.end&&(ev.end>ev.start||isEvBarAlways(ev))&&annEvVisible(ev);});
   var multiIds={};multiEvs.forEach(function(ev){multiIds[ev.id]=true;});
@@ -769,7 +774,7 @@ function renderEvQuad(){
   months.forEach(function(mo){_loadP(mo.y);});
   function annEvVisible(ev){
     if(!EV_ANNUAL_FILTER_HIDDEN.length)return true;
-    return EV_ANNUAL_FILTER_HIDDEN.indexOf(EV_COLOR_TYPES[ev.color]||'Otros')===-1;
+    return EV_ANNUAL_FILTER_HIDDEN.indexOf(getEvType(ev))===-1;
   }
   // Eventos multi-día para el rango de 4 meses
   var rangeStart=new Date(months[0].y,months[0].m,1);
@@ -927,7 +932,7 @@ function renderEvByTypes(){
   EVENTS.forEach(function(ev){
     var evEnd=ev.end?new Date(ev.end+'T00:00:00'):new Date(ev.start+'T00:00:00');
     if(EV_TYPES_PAST&&!ev.repeat&&evEnd<today)return;
-    var type=EV_COLOR_TYPES[ev.color]||'Otros';
+    var type=getEvType(ev);
     (byType[type]||byType['Otros']).push(ev);
   });
   var typesToShow=EV_TYPES_FILTER==='all'?typeOrder:[EV_TYPES_FILTER];
@@ -1085,7 +1090,7 @@ function renderEvDetail(ev,fromSummary){
     h+='<button class="ev-detail-color-btn" id="evDColorBtn">\uD83C\uDFA8</button>';
   }
   h+='</div>';
-  h+='<div style="font-size:.72rem;font-weight:600;color:'+_ddc+';opacity:.8;margin-bottom:4px">'+(EV_COLOR_TYPES[ev.color]||'Otros')+'</div>';
+  h+='<div style="font-size:.72rem;font-weight:600;color:'+_ddc+';opacity:.8;margin-bottom:4px">'+getEvType(ev)+'</div>';
   h+='<div class="ev-detail-color-section" id="evDColorSection">';
   h+=_renderColorPicker(_ddc,false,false,'evDCp');
   h+='<button class="econ-calc-btn" id="evDColorApply" style="margin-top:8px;font-size:.78rem;padding:8px 0">Probar color</button>';
@@ -1139,7 +1144,10 @@ function openEvDetail(ev,container){
     document.getElementById('evDColorApply').addEventListener('click',function(){
       if(!_dCpRef)return;
       var hex=_dCpRef.getColor();
-      ev.color=hex;saveEvents();updateEventsBtn();
+      ev.color=hex;
+      /* Preserve type — if it was Viaje, keep it as Viaje regardless of color */
+      if(!ev.type)ev.type=getEvType(ev);
+      saveEvents();updateEventsBtn();
       refreshEvents();
       showToast('Color aplicado','success');
     });
@@ -1232,8 +1240,8 @@ function renderEvForm(ev){
   var repType=repeat?repeat.type:'none';
   var wdays=(repeat&&repeat.type==='weekly')?repeat.weekDays:[];
   var wdNames=['Do','Lu','Ma','Mi','Ju','Vi','Sa'];
-  /* Determine current type from color */
-  var curType=EV_COLOR_TYPES[color]||'Otros';
+  /* Determine current type from stored type or color */
+  var curType=isEdit&&ev.type?ev.type:(EV_COLOR_TYPES[color]||'Otros');
   var isViaje=(curType==='Viaje');
   var h='<div class="ev-form-overlay" id="evFormOv">';
   h+='<div class="ev-form-sheet">';
@@ -1253,8 +1261,8 @@ function renderEvForm(ev){
   EV_COLORS.forEach(function(c){
     var typeName=EV_COLOR_TYPES[c]||'Otros';
     if(typeName==='Cumplea\u00f1os VIP')return; /* skip VIP */
-    var sel=(c===color||(isViaje&&(c==='#38bdf8'||c==='#6c8cff'))
-      ||(!EV_COLOR_TYPES[color]&&c==='#a3e635'))?' selected':'';
+    var sel=(c===color||(isViaje&&typeName==='Viaje')
+      ||(!isViaje&&!EV_COLOR_TYPES[color]&&c==='#a3e635'))?' selected':'';
     h+='<div class="ev-color-swatch'+sel+'" data-hex="'+c+'" style="color:'+c+'">';
     h+='<div class="ev-type-dot" style="background:'+c+'"></div>';
     h+='<span class="ev-type-name">'+typeName+'</span>';
@@ -1262,7 +1270,7 @@ function renderEvForm(ev){
   });
   h+='</div></div>';
   /* Color picker section (only visible for Viaje, or custom colors not in type list) */
-  var showColorPicker=isViaje||(!EV_COLOR_TYPES[color]&&color!=='#a3e635');
+  var showColorPicker=isViaje;
   h+='<div class="ev-field ev-form-color-section" id="evFColorSection" style="display:'+(showColorPicker?'block':'none')+'">';
   h+='<label>\uD83C\uDFA8 Paleta de colores</label>';
   h+=_renderColorPicker(color,true,isEdit&&ev.colorLocked,'evFCp');
@@ -1426,10 +1434,10 @@ function bindEvFormEvents(){
     if(EV_EDIT){
       var idx=-1;
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===EV_EDIT.id){idx=i;break;}}
-      if(idx!==-1)EVENTS[idx]={id:EV_EDIT.id,title:title,note:note,color:color,colorLocked:colorLocked,start:start,end:end,repeat:repeat};
+      if(idx!==-1)EVENTS[idx]={id:EV_EDIT.id,title:title,note:note,color:color,colorLocked:colorLocked,type:typeLabel,start:start,end:end,repeat:repeat};
       showToast('Evento actualizado','success');
     }else{
-      EVENTS.push({id:'ev-'+Date.now(),title:title,note:note,color:color,colorLocked:false,start:start,end:end,repeat:repeat});
+      EVENTS.push({id:'ev-'+Date.now(),title:title,note:note,color:color,colorLocked:false,type:typeLabel,start:start,end:end,repeat:repeat});
       showToast('Evento a\u00f1adido','success');
     }
     saveEvents();updateEventsBtn();
