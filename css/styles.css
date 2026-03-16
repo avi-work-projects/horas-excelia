@@ -450,8 +450,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .sim-combo-rate{font-family:var(--mono);font-weight:600}
 /* ── Scenario zones (Comparar Escenarios) ── */
 .econ-sc-zones{display:flex;flex-direction:column;gap:4px;margin-top:6px}
-.econ-sc-zone{padding:8px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);cursor:pointer;transition:all .15s;opacity:.55}
-.econ-sc-zone.active{border-color:var(--accent);background:var(--accent-glow);opacity:1}
+.econ-sc-zone{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);cursor:pointer;transition:all .15s}
+.econ-sc-zone:not(.active){opacity:.5}
+.econ-sc-zone.active{border-color:var(--accent);background:var(--accent-glow)}
+.econ-sc-zone-radio{width:16px;height:16px;border-radius:50%;border:2px solid var(--text-dim);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.econ-sc-zone.active .econ-sc-zone-radio{border-color:var(--accent)}
+.econ-sc-zone.active .econ-sc-zone-radio::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.econ-sc-zone-body{flex:1;min-width:0}
 .econ-sc-zone-label{font-size:.75rem;font-weight:600;color:var(--text-muted);margin-bottom:4px}
 .econ-sc-zone.active .econ-sc-zone-label{color:var(--accent-bright)}
 .econ-sc-zone-input{font-family:var(--mono);font-size:.88rem;font-weight:600;padding:5px 8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text);width:100%;text-align:right;outline:none;transition:border-color .15s}
@@ -658,6 +663,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .fiscal-compras-toggle{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--border);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.6rem;background:var(--surface2);transition:all .15s;-webkit-user-select:none;user-select:none}
 .fiscal-compras-toggle.on{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
 .fiscal-compras-total{margin-top:8px;padding:6px 10px;border-radius:var(--radius-sm);background:var(--accent-glow);font-size:.8rem;color:var(--accent-bright);text-align:right}
+.fiscal-gasto-amt-sm{width:56px}
+.fiscal-gasto-annual{font-size:.62rem;color:var(--text-dim);text-align:right;padding:0 26px 2px 0;font-family:var(--mono)}
 .fiscal-gasto-period-static{font-size:.72rem;color:var(--text-dim);white-space:nowrap;flex-shrink:0;padding:0 4px}
 /* Desgravaciones: notas + tabla despacho info */
 .fiscal-desgrav-note{font-size:.66rem;color:var(--text-dim);margin-top:4px;line-height:1.45;padding:4px 6px;background:var(--surface2);border-radius:4px;border-left:2px solid var(--border)}
@@ -839,8 +846,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-annual-xs{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:2px;pointer-events:none;overflow:hidden;z-index:3;flex-wrap:wrap}
 .ev-annual-x{position:relative;width:4px;height:4px;flex-shrink:0}
 .ev-annual-x::before,.ev-annual-x::after{content:'';position:absolute;top:50%;left:50%;background:currentColor;border-radius:1px}
-.ev-annual-x::before{width:5px;height:1.5px;transform:translate(-50%,-50%) rotate(45deg)}
-.ev-annual-x::after{width:5px;height:1.5px;transform:translate(-50%,-50%) rotate(-45deg)}
+.ev-annual-x::before{width:5px;height:1.5px;transform:translate(-50%,-50%) rotate(45deg);box-shadow:0 0 0 .5px #000}
+.ev-annual-x::after{width:5px;height:1.5px;transform:translate(-50%,-50%) rotate(-45deg);box-shadow:0 0 0 .5px #000}
 .ev-annual-vip-star{font-size:.26rem;line-height:1;flex-shrink:0;filter:drop-shadow(0 0 1px rgba(251,191,36,.9))}
 /* Barras multi-día en calendario anual/4meses: 55% celda centradas, z-index:2 (1-mes usa ev-multi-bar al 65%) */
 .ev-annual-bars-row{position:absolute;top:17.5%;left:0;right:0;height:55%;z-index:2;pointer-events:none;display:grid;grid-template-columns:repeat(7,1fr);gap:1px;grid-auto-rows:1fr}

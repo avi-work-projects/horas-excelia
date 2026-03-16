@@ -487,12 +487,19 @@ function _renderCopyYearBtn(){
 
 /* ── Tab Economía Personal (per-year) ─────────────────────── */
 function _personalListHtml(arr,section,periodMode){
-  /* periodMode: 'weekly'=/sem|/mes, 'monthly'=/mes|/año, 'viaje'=special viaje selector */
+  /* periodMode: 'weekly'=/sem|/mes, 'monthly'=/mes|/año */
   var h='';
   arr.forEach(function(item,i){
+    /* Compute annual for this item */
+    var annual=0;
+    if(item.amount){
+      if(item.period==='weekly'||(periodMode==='weekly'&&!item.period))annual=item.amount*52;
+      else if(item.period==='annual')annual=item.amount;
+      else annual=item.amount*12;
+    }
     h+='<div class="fiscal-gasto-item" data-ps="'+section+'" data-pi="'+i+'">';
     h+='<input class="fiscal-gasto-lbl-input" data-ps="'+section+'" data-pi="'+i+'" data-pf="label" value="'+escHtml(item.label)+'" placeholder="Nombre...">';
-    h+='<input class="fiscal-gasto-amt" data-ps="'+section+'" data-pi="'+i+'" data-pf="amount" type="number" min="0" step="1" value="'+(item.amount||0)+'">';
+    h+='<input class="fiscal-gasto-amt fiscal-gasto-amt-sm" data-ps="'+section+'" data-pi="'+i+'" data-pf="amount" type="number" min="0" step="1" value="'+(item.amount||0)+'">';
     if(periodMode==='weekly'){
       h+='<div class="fiscal-gasto-period">';
       h+='<button class="fiscal-period-btn'+(item.period==='weekly'||!item.period?' active':'')+'" data-ps="'+section+'" data-pi="'+i+'" data-pf="period" data-val="weekly">/sem</button>';
@@ -506,6 +513,8 @@ function _personalListHtml(arr,section,periodMode){
     }
     h+='<button class="fiscal-gasto-del fiscal-personal-del" data-ps="'+section+'" data-pi="'+i+'">&#10005;</button>';
     h+='</div>';
+    /* Annual amount indicator */
+    if(annual>0)h+='<div class="fiscal-gasto-annual">'+fcPlain(annual)+'/a\u00f1o</div>';
     /* Viaje event selector */
     if(item._viaje){
       var evList=typeof EVENTS!=='undefined'?EVENTS.filter(function(ev){return ev.title&&ev.title.length>0;}):[];
@@ -542,30 +551,22 @@ function _personalTotalWeekly(arr){
 function renderFiscalTabPersonal(){
   var h=_renderYearSelector();
   h+=_renderCopyYearBtn();
-  /* 1. Gastos Recurrentes Personales (merged: semanales first, then recurrentes) */
+  /* 1. Gastos Recurrentes Personales (todo en una sección) */
   h+='<div class="fiscal-section">';
   h+='<div class="fiscal-section-title expense">Gastos Recurrentes Personales</div>';
-  /* 1a. Sub-sección: Ocio y gastos semanales */
-  h+='<div class="fiscal-subsection">';
-  h+='<div class="fiscal-subsection-title">Ocio y gastos semanales</div>';
-  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Ocio, restaurantes, compras peque\u00f1as. Selecciona /sem o /mes.</div>';
+  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Gastos semanales, suscripciones, viajes, etc.</div>';
+  /* Gastos semanales primero */
   h+='<div id="personalGastosSem">'+_personalListHtml(PERSONAL_DATA.gastosSemanales,'gastosSemanales','weekly')+'</div>';
-  var tGS=_personalTotalWeekly(PERSONAL_DATA.gastosSemanales);
-  if(tGS>0)h+='<div class="fiscal-compras-total">Total anual: <b>'+fcPlain(tGS)+'</b> ('+fcPlain(Math.round(tGS/12*100)/100)+'/mes)</div>';
-  h+='<button class="fiscal-add-btn fiscal-add-btn-expense" data-padd="gastosSemanales">+ A\u00f1adir gasto semanal</button>';
-  h+='</div>';
-  /* 1b. Gastos recurrentes mensuales/anuales */
-  h+='<div class="fiscal-subsection">';
-  h+='<div class="fiscal-subsection-title">Suscripciones y otros</div>';
-  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Suscripciones, transporte, seguros personales, etc.</div>';
+  h+='<button class="fiscal-add-btn fiscal-add-btn-expense" data-padd="gastosSemanales" style="margin-bottom:6px">+ A\u00f1adir gasto semanal</button>';
+  /* Gastos recurrentes (suscripciones, etc.) a continuación */
   h+='<div id="personalGastosRec">'+_personalListHtml(PERSONAL_DATA.gastosRecurrentes,'gastosRecurrentes','monthly')+'</div>';
-  var tGR=_personalTotal(PERSONAL_DATA.gastosRecurrentes);
-  if(tGR>0)h+='<div class="fiscal-compras-total">Total anual: <b>'+fcPlain(tGR)+'</b></div>';
-  h+='<button class="fiscal-add-btn fiscal-add-btn-expense" data-padd="gastosRecurrentes">+ A\u00f1adir gasto</button>';
-  h+='</div>';
+  h+='<button class="fiscal-add-btn fiscal-add-btn-expense" data-padd="gastosRecurrentes" style="margin-bottom:4px">+ A\u00f1adir gasto</button>';
+  h+='<button class="fiscal-add-btn fiscal-add-btn-expense" data-padd="gastosRecurrentes" data-viaje="1">+ A\u00f1adir viaje</button>';
   /* Total combinado */
+  var tGS=_personalTotalWeekly(PERSONAL_DATA.gastosSemanales);
+  var tGR=_personalTotal(PERSONAL_DATA.gastosRecurrentes);
   var tCombined=tGS+tGR;
-  if(tCombined>0)h+='<div class="fiscal-compras-total" style="border-top:1px solid var(--border);padding-top:8px;margin-top:4px"><b>Total gastos recurrentes anual: '+fcPlain(tCombined)+'</b></div>';
+  if(tCombined>0)h+='<div class="fiscal-compras-total" style="margin-top:6px"><b>Total gastos anual: '+fcPlain(tCombined)+'</b> ('+fcPlain(Math.round(tCombined/12*100)/100)+'/mes)</div>';
   h+='</div>';
   /* 2. Inversiones Recurrentes */
   h+='<div class="fiscal-section">';
@@ -876,7 +877,7 @@ function renderFiscalTabDespacho(){
   h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:12px">Datos de la compra del inmueble: precios, impuestos y gastos asociados.</div>';
   h+='<div class="fiscal-despacho-grid">';
   h+=_despFieldMoney('compraValor','Valor de compra / escritura',comp.valorCompraTotal);
-  h+=_despFieldMoney('compraItp','ITP Comunidad de Madrid (6%)',comp.itpMadrid);
+  h+=_despFieldMoney('compraItp','ITP Comunidad de Madrid (6%) \u2014 <span style="font-size:.65rem;color:var(--accent-bright)">auto-calculado</span>',comp.itpMadrid);
   h+=_despFieldMoney('compraNotaria','Notar\u00eda y registro',comp.notariaRegistro);
   h+=_despFieldMoney('compraTasacion','Tasaci\u00f3n',comp.tasacion);
   h+=_despFieldMoney('compraReformas','Reformas',comp.reformas);
@@ -1057,9 +1058,11 @@ function _bindTabPersonal(){
     if(addBtn){
       var sec=addBtn.dataset.padd;
       var isWeekly=sec==='gastosSemanales';
-      var newItem={id:sec+'_'+Date.now(),label:'',amount:0};
+      var isViaje=addBtn.dataset.viaje==='1';
+      var newItem={id:sec+'_'+Date.now(),label:isViaje?'Viaje':'',amount:0};
       if(isWeekly)newItem.period='weekly';
-      else newItem.period='monthly';
+      else newItem.period=isViaje?'annual':'monthly';
+      if(isViaje){newItem._viaje=true;newItem.viajeFilter='all';}
       PERSONAL_DATA[sec].push(newItem);
       var scrollTop=body.scrollTop;
       document.getElementById('fiscalContent').innerHTML=renderFiscalContent();

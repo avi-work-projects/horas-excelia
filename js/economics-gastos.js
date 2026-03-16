@@ -18,6 +18,28 @@ function isTglOn(id){
   return GASTOS_TOGGLES[id]!==false; // por defecto ON
 }
 
+/* Calcula "Disponible para gastos personales" replicando el cascade de toggles */
+function computeDisponible(year){
+  var e=computeEconEx(year||ECON_YEAR);
+  var dr=typeof computeDeclResult==='function'?computeDeclResult(e.totBase,e.totIrpf):{gdPct:5,totalDesgrav:0,baseDecl:e.totBase,decl:{effectivePct:0},declDiff:0};
+  var running=Math.round((e.totBase-e.totIrpf)*100)/100;
+  if(dr.declDiff>0&&isTglOn('irpf_decl'))running=Math.round((running-dr.declDiff)*100)/100;
+  else if(dr.declDiff<0&&isTglOn('irpf_decl'))running=Math.round((running+Math.abs(dr.declDiff))*100)/100;
+  if(typeof GASTOS_ITEMS!=='undefined'){
+    GASTOS_ITEMS.forEach(function(g){
+      var anual=typeof gastoAnual==='function'?gastoAnual(g.id):0;
+      if(anual>0&&isTglOn('gasto_'+g.id))running=Math.round((running-anual)*100)/100;
+    });
+  }
+  if(typeof INGRESOS_ITEMS!=='undefined'){
+    INGRESOS_ITEMS.forEach(function(g){
+      var anual=typeof ingresoAnual==='function'?ingresoAnual(g.id):0;
+      if(anual>0&&isTglOn('ingreso_'+g.id))running=Math.round((running+anual)*100)/100;
+    });
+  }
+  return running;
+}
+
 /* ── Render Tab 4 ─────────────────────────────────────────────── */
 function renderEconGastos(){
   var e=computeEconEx(ECON_YEAR);
