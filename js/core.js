@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v106 \u2014 hipoteca completa, sub-tabs an\u00e1lisis, desgrav cards, multi-tarifa';
+var APP_VERSION = 'v107 \u2014 color picker avanzado, modo edici\u00f3n calendarios';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

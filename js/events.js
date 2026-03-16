@@ -8,7 +8,7 @@ var EV_MONTH = new Date().getMonth();
 var EV_VIEW = 'cal';  // 'cal' | 'months' | 'upcoming' | 'annual'
 var EV_EDIT = null;
 var EV_FORM_CONTAINER = null;  // overlay donde se renderiza el formulario (null = eventsOverlay)
-var EV_ANNUAL_ADD = false;
+var EV_EDIT_MODE = false;
 var EV_BRIGHT_PAST = false;
 var EV_ANNUAL_VIEW = 'puentes'; // 'puentes' | 'fiestas'
 var EV_ANNUAL_FILTER_HIDDEN = []; // type names hidden from annual calendar
@@ -19,6 +19,14 @@ var EV_LIST_SUBTAB = 'months'; // 'months' | 'types'
 var EV_TYPES_FILTER = 'all';   // 'all' | nombre de tipo
 var EV_TYPES_PAST = true;      // excluir eventos pasados en Por Tipos (por defecto)
 var EV_COLORS = ['#38bdf8','#1d4ed8','#34d399','#fb923c','#ff6b6b','#c084fc','#a3e635'];
+var EV_COLOR_GRID=[
+  '#ff6b6b','#ff8787','#e64980','#e879a8','#c084fc','#9775fa',
+  '#7950f2','#6741d9','#4c6ef5','#1d4ed8','#38bdf8','#6c8cff',
+  '#22d3ee','#4ecdc4','#34d399','#56c596','#a3e635','#82c91e',
+  '#fbbf24','#f0b45c','#fb923c','#ff922b','#fd7e14','#e8590c',
+  '#868e96','#adb5bd','#dee2e6','#f8f9fa','#495057','#212529',
+  '#f06595','#da77f2','#748ffc','#66d9e8','#63e6be','#ffe066'
+];
 var EV_COLOR_TYPES = {
   '#38bdf8':'Viaje',
   '#6c8cff':'Viaje',  // compat con eventos anteriores
@@ -46,8 +54,80 @@ function isEvBarAlways(ev){
 // Devuelve el color de visualización (viajes → azul único por evento, resto → color guardado)
 function getEvDisplayColor(ev){
   if(!ev)return'#888';
+  if(ev.colorLocked)return ev.color;
   if(ev.color==='#38bdf8'||ev.color==='#6c8cff')return evTravelColor(ev.id);
   return ev.color;
+}
+
+// Render color picker reutilizable (paleta 6×6 + color libre + preview)
+function _renderColorPicker(selHex,showLock,isLocked,prefix){
+  prefix=prefix||'evCp';
+  var h='<div class="ev-color-picker" id="'+prefix+'Wrap">';
+  h+='<div class="ev-color-grid">';
+  for(var i=0;i<EV_COLOR_GRID.length;i++){
+    var c=EV_COLOR_GRID[i];
+    var sel=c.toLowerCase()===selHex.toLowerCase()?' selected':'';
+    h+='<div class="ev-color-dot'+sel+'" data-hex="'+c+'" style="background:'+c+';border-color:'+c+'"></div>';
+  }
+  h+='</div>';
+  h+='<div class="ev-color-custom-row">';
+  h+='<input type="color" class="ev-color-native" id="'+prefix+'Native" value="'+selHex+'">';
+  h+='<input type="text" class="ev-color-hex-input" id="'+prefix+'Hex" value="'+selHex+'" maxlength="7" spellcheck="false">';
+  h+='</div>';
+  h+='<div class="ev-color-preview-row">';
+  h+='<div class="ev-color-preview-item"><span>Borde</span><div class="ev-color-preview-swatch" style="background:'+selHex+'"></div></div>';
+  h+='<div class="ev-color-preview-item"><span>Relleno</span><div class="ev-color-preview-swatch" style="background:'+fakeTrans(selHex,0.65)+'"></div></div>';
+  h+='<div class="ev-color-preview-hex" id="'+prefix+'Code">'+selHex+'</div>';
+  h+='</div>';
+  if(showLock){
+    h+='<div class="ev-color-lock-row">';
+    h+='<label class="ev-color-lock-label"><input type="checkbox" id="'+prefix+'Lock"'+(isLocked?' checked':'')+' class="ev-color-lock-cb"> \uD83D\uDD12 Bloquear color</label>';
+    h+='</div>';
+  }
+  h+='</div>';
+  return h;
+}
+// Bind color picker events; returns {getColor, getLocked}
+function _bindColorPicker(container,prefix,onChange){
+  prefix=prefix||'evCp';
+  var wrap=container.querySelector('#'+prefix+'Wrap');
+  if(!wrap)return{getColor:function(){return'#888';},getLocked:function(){return false;}};
+  var current=wrap.querySelector('.ev-color-dot.selected');
+  var curHex=current?current.dataset.hex:'#38bdf8';
+  function updatePreview(hex){
+    curHex=hex;
+    var dots=wrap.querySelectorAll('.ev-color-dot');
+    for(var i=0;i<dots.length;i++){
+      if(dots[i].dataset.hex.toLowerCase()===hex.toLowerCase())dots[i].classList.add('selected');
+      else dots[i].classList.remove('selected');
+    }
+    var native=container.querySelector('#'+prefix+'Native');
+    var hexInput=container.querySelector('#'+prefix+'Hex');
+    var code=container.querySelector('#'+prefix+'Code');
+    var previews=wrap.querySelectorAll('.ev-color-preview-swatch');
+    if(native)native.value=hex;
+    if(hexInput)hexInput.value=hex;
+    if(code)code.textContent=hex;
+    if(previews[0])previews[0].style.background=hex;
+    if(previews[1])previews[1].style.background=fakeTrans(hex,0.65);
+    if(onChange)onChange(hex);
+  }
+  wrap.addEventListener('click',function(e){
+    var dot=e.target.closest('.ev-color-dot');
+    if(dot&&dot.dataset.hex){updatePreview(dot.dataset.hex);}
+  });
+  var native=container.querySelector('#'+prefix+'Native');
+  if(native)native.addEventListener('input',function(){updatePreview(native.value);});
+  var hexInput=container.querySelector('#'+prefix+'Hex');
+  if(hexInput)hexInput.addEventListener('change',function(){
+    var v=hexInput.value.trim();
+    if(/^#[0-9a-fA-F]{6}$/.test(v))updatePreview(v);
+    else hexInput.value=curHex;
+  });
+  return{
+    getColor:function(){return curHex;},
+    getLocked:function(){var cb=container.querySelector('#'+prefix+'Lock');return cb?cb.checked:false;}
+  };
 }
 
 var EVENTS = (function(){
@@ -526,8 +606,8 @@ function renderEvAnnual(){
   var multiEvs=EVENTS.filter(function(ev){return !ev.repeat&&ev.end&&(ev.end>ev.start||isEvBarAlways(ev))&&annEvVisible(ev);});
   var multiIds={};multiEvs.forEach(function(ev){multiIds[ev.id]=true;});
   var MNS=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-  var addMode=EV_ANNUAL_ADD;
-  var h='<div class="ev-annual-grid'+(addMode?' ev-annual-pick-mode':'')+'">';
+  var addMode=EV_EDIT_MODE;
+  var h='<div class="ev-annual-grid'+(addMode?' ev-edit-mode':'')+'">';
   for(var m=0;m<12;m++){
     h+='<div class="ev-annual-month" data-month="'+m+'">';
     h+='<div class="ev-annual-mname">'+MNS[m]+'</div>';
@@ -621,8 +701,8 @@ function renderEvAnnual(){
           if(_singleEvs.length||_vipBdays.length){
             var _pmk=past?' past-marker':'';
             _annSd='<div class="ev-annual-xs">';
-            _singleEvs.forEach(function(ev){_annSd+='<span class="ev-annual-x'+_pmk+'" style="color:'+getEvDisplayColor(ev)+'"></span>';});
-            _vipBdays.forEach(function(){_annSd+='<span class="ev-annual-vip-star'+_pmk+'">\u2b50</span>';});
+            _singleEvs.forEach(function(ev){_annSd+='<span class="ev-annual-x'+_pmk+'" data-id="'+ev.id+'" style="color:'+getEvDisplayColor(ev)+'"></span>';});
+            _vipBdays.forEach(function(ev){_annSd+='<span class="ev-annual-vip-star'+_pmk+'" data-id="'+ev.id+'">\u2b50</span>';});
             _annSd+='</div>';
           }
         }
@@ -638,7 +718,7 @@ function renderEvAnnual(){
           var sc=it.starts&&it.ends?'':it.starts?' a-starts':it.ends?' a-ends':' a-mid';
           var _adc=getEvDisplayColor(it.ev);
           var _pastBar=wk[it.ce]<today?' past-bar':'';
-          h+='<div class="ev-annual-mbar'+sc+_pastBar+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';border:1px solid '+_adc+';background:'+fakeTrans(_adc,0.65)+'"></div>';
+          h+='<div class="ev-annual-mbar'+sc+_pastBar+'" data-id="'+it.ev.id+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';border:1px solid '+_adc+';background:'+fakeTrans(_adc,0.65)+'"></div>';
         });
         h+='</div>';
       }
@@ -700,9 +780,9 @@ function renderEvQuad(){
   });
   var multiIds={};multiEvs.forEach(function(ev){multiIds[ev.id]=true;});
   var MNS=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-  var addMode=EV_ANNUAL_ADD;
+  var addMode=EV_EDIT_MODE;
   var vipHidden=EV_ANNUAL_FILTER_HIDDEN.indexOf('Cumpleaños VIP')!==-1;
-  var h='<div class="ev-annual-grid ev-quad-grid'+(addMode?' ev-annual-pick-mode':'')+'">';
+  var h='<div class="ev-annual-grid ev-quad-grid'+(addMode?' ev-edit-mode':'')+'">';
   months.forEach(function(mObj){
     var m=mObj.m,yr=mObj.y;
     h+='<div class="ev-annual-month" data-month="'+m+'" data-year="'+yr+'">';
@@ -785,8 +865,8 @@ function renderEvQuad(){
           if(_singleEvs.length||_vipBdays.length){
             var _qpmk=past?' past-marker':'';
             _quadSd='<div class="ev-annual-xs">';
-            _singleEvs.forEach(function(ev){_quadSd+='<span class="ev-annual-x'+_qpmk+'" style="color:'+getEvDisplayColor(ev)+'"></span>';});
-            _vipBdays.forEach(function(){_quadSd+='<span class="ev-annual-vip-star'+_qpmk+'">\u2b50</span>';});
+            _singleEvs.forEach(function(ev){_quadSd+='<span class="ev-annual-x'+_qpmk+'" data-id="'+ev.id+'" style="color:'+getEvDisplayColor(ev)+'"></span>';});
+            _vipBdays.forEach(function(ev){_quadSd+='<span class="ev-annual-vip-star'+_qpmk+'" data-id="'+ev.id+'">\u2b50</span>';});
             _quadSd+='</div>';
           }
         }
@@ -802,7 +882,7 @@ function renderEvQuad(){
           var showQT=(it.starts||(it.cs===0));
           var _qdc=getEvDisplayColor(it.ev);
           var _pastBar=wk[it.ce]<today?' past-bar':'';
-          h+='<div class="ev-annual-mbar'+sc+_pastBar+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';border:1px solid '+_qdc+';background:'+fakeTrans(_qdc,0.65)+';font-size:.3rem;padding:0 3px">'+(showQT?escHtml(it.ev.title):'')+'</div>';
+          h+='<div class="ev-annual-mbar'+sc+_pastBar+'" data-id="'+it.ev.id+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';border:1px solid '+_qdc+';background:'+fakeTrans(_qdc,0.65)+';font-size:.3rem;padding:0 3px">'+(showQT?escHtml(it.ev.title):'')+'</div>';
         });
         h+='</div>';
       }
@@ -930,6 +1010,7 @@ function renderEvContent(){
     var _vdLabels={'puentes':'\uD83C\uDF09 Puentes','fiestas':'\uD83D\uDCC5 Vac + Festivos','vacaciones':'\uD83C\uDFD6 Solo vacaciones','festivos':'\uD83C\uDF8C Solo festivos','none':'\u2715 Nada'};
     var _curVdLabel=_vdLabels[EV_ANNUAL_VIEW]||_vdLabels['none'];
     h+='<div class="ev-annual-view-toggle">';
+    h+='<button class="ev-ann-edit-btn'+(EV_EDIT_MODE?' active':'')+'" id="evAnnEditBtn" title="Modo edici\u00f3n">&#9998;</button>';
     h+='<div class="ev-ann-vd-wrap" id="evAnnVdWrap">';
     h+='<button class="ev-ann-vd-btn" id="evAnnVdBtn">\uD83D\uDC41 '+_curVdLabel+' \u25be</button>';
     h+='<div class="ev-ann-vd-menu" id="evAnnVdMenu">';
@@ -956,8 +1037,8 @@ function renderEvContent(){
   else h+=renderEvMonthsView();
   h+='<div class="ev-io-row">';
   var _isPickView=EV_VIEW==='annual'||EV_VIEW==='quad';
-  var addLabel=_isPickView&&EV_ANNUAL_ADD?'&#10006; Cancelar':'+ A\u00f1adir';
-  h+='<button class="ev-io-btn'+(_isPickView&&EV_ANNUAL_ADD?' ev-add-pick-mode':'')+'" id="evAdd">'+addLabel+'</button>';
+  var addLabel=_isPickView&&EV_EDIT_MODE?'&#10006; Cancelar':'+ A\u00f1adir';
+  h+='<button class="ev-io-btn'+(_isPickView&&EV_EDIT_MODE?' ev-edit-pick-mode':'')+'" id="evAdd">'+addLabel+'</button>';
   if(EV_VIEW==='upcoming'||EV_VIEW==='months'){
     h+='<button class="ev-io-btn" id="evExport">&#8595; Exportar</button>';
     h+='<button class="ev-io-btn" id="evImport">&#8593; Importar</button>';
@@ -992,9 +1073,20 @@ function renderEvDetail(ev,fromSummary){
   h+='<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">Evento</div>';
   h+='<button class="ev-list-btn" id="evDEdit" style="font-size:.8rem;padding:6px 12px;border-color:'+ev.color+';color:'+ev.color+'">&#9998; Editar</button>';
   h+='</div>';
-  h+='<div class="ev-detail-color-bar" style="background:'+ev.color+'"></div>';
-  h+='<div class="ev-detail-title" style="color:'+ev.color+'">'+escHtml(ev.title)+'</div>';
-  h+='<div style="font-size:.72rem;font-weight:600;color:'+ev.color+';opacity:.8;margin-bottom:4px">'+(EV_COLOR_TYPES[ev.color]||'Otros')+'</div>';
+  var _ddc=getEvDisplayColor(ev);
+  h+='<div class="ev-detail-color-bar" style="background:'+_ddc+'" id="evDColorBar"></div>';
+  h+='<div style="display:flex;align-items:center;gap:8px">';
+  h+='<div class="ev-detail-title" style="color:'+_ddc+';flex:1" id="evDTitle">'+escHtml(ev.title)+'</div>';
+  if(ev.colorLocked){
+    h+='<button class="ev-detail-color-btn locked" disabled>\uD83D\uDD12</button>';
+  } else {
+    h+='<button class="ev-detail-color-btn" id="evDColorBtn">\uD83C\uDFA8</button>';
+  }
+  h+='</div>';
+  h+='<div style="font-size:.72rem;font-weight:600;color:'+_ddc+';opacity:.8;margin-bottom:4px">'+(EV_COLOR_TYPES[ev.color]||'Otros')+'</div>';
+  h+='<div class="ev-detail-color-section" id="evDColorSection">';
+  h+=_renderColorPicker(_ddc,false,false,'evDCp');
+  h+='</div>';
   h+='<div class="ev-detail-date">&#128197; '+dateStr+'</div>';
   if(repeatStr)h+='<div class="ev-detail-repeat">'+repeatStr+'</div>';
   if(ev.note)h+='<div class="ev-detail-note">'+escHtml(ev.note)+'</div>';
@@ -1023,6 +1115,23 @@ function openEvDetail(ev,container){
     }
   });
   document.getElementById('evDClose').addEventListener('click',closeEvDetail);
+  // Color picker en detalle
+  var _dColorBtn=document.getElementById('evDColorBtn');
+  if(_dColorBtn){
+    var _dColorSec=document.getElementById('evDColorSection');
+    var _dCpBound=false;
+    _dColorBtn.addEventListener('click',function(){
+      _dColorSec.classList.toggle('open');
+      if(!_dCpBound){
+        _dCpBound=true;
+        _bindColorPicker(wrap,'evDCp',function(hex){
+          ev.color=hex;saveEvents();updateEventsBtn();
+          var bar=document.getElementById('evDColorBar');if(bar)bar.style.background=hex;
+          var ttl=document.getElementById('evDTitle');if(ttl)ttl.style.color=hex;
+        });
+      }
+    });
+  }
   document.getElementById('evDEdit').addEventListener('click',function(){
     closeEvDetail();
     // VIP birthday → abrir formulario de cumpleaños en lugar del de eventos
@@ -1124,16 +1233,9 @@ function renderEvForm(ev){
   h+='<input class="ev-input" id="evFTitle" type="text" maxlength="80" placeholder="Nombre del evento" value="'+escHtml(title)+'"></div>';
   h+='<div class="ev-field"><label>Nota <span id="evCharCnt" style="font-weight:400;color:var(--text-dim)">'+note.length+'/200</span></label>';
   h+='<textarea class="ev-textarea" id="evFNote" maxlength="200" placeholder="Notas opcionales...">'+escHtml(note)+'</textarea></div>';
-  h+='<div class="ev-field"><label>Tipo</label><div class="ev-type-picker">';
-  EV_COLORS.forEach(function(c){
-    var typeName=EV_COLOR_TYPES[c]||'Otros';
-    var sel=c===color?' selected':'';
-    h+='<div class="ev-color-swatch'+sel+'" data-hex="'+c+'" style="color:'+c+'">';
-    h+='<div class="ev-type-dot" style="background:'+c+'"></div>';
-    h+='<span class="ev-type-name">'+typeName+'</span>';
-    h+='</div>';
-  });
-  h+='</div></div>';
+  h+='<div class="ev-field"><label>Color</label>';
+  h+=_renderColorPicker(color,isEdit,isEdit&&ev.colorLocked,'evFCp');
+  h+='</div>';
   h+='<div class="ev-field ev-date-row">';
   h+='<div><label>Inicio</label><input class="ev-input" id="evFStart" type="date" value="'+start+'"></div>';
   h+='<div><label>Fin</label><input class="ev-input" id="evFEnd" type="date" value="'+end+'"></div>';
@@ -1198,19 +1300,15 @@ function bindEvFormEvents(){
   var noteEl=document.getElementById('evFNote');
   var cntEl=document.getElementById('evCharCnt');
   noteEl.addEventListener('input',function(){cntEl.textContent=noteEl.value.length+'/200';});
-  document.querySelectorAll('.ev-color-swatch').forEach(function(sw){
-    sw.addEventListener('click',function(){
-      document.querySelectorAll('.ev-color-swatch').forEach(function(s){s.classList.remove('selected');});
-      sw.classList.add('selected');
-      /* Auto-fill title+note for Asturias if title is empty */
-      var hex=sw.dataset.hex;
-      var titleEl=document.getElementById('evFTitle');
-      if(hex==='#1d4ed8'&&titleEl&&!titleEl.value.trim()){
-        titleEl.value='Asturias';
-        var noteEl2=document.getElementById('evFNote');
-        if(noteEl2&&!noteEl2.value.trim()){noteEl2.value='Asturias';cntEl.textContent='8/200';}
-      }
-    });
+  var _fCpWrap=document.getElementById('evFWrap')||document;
+  var _fCp=_bindColorPicker(_fCpWrap,'evFCp',function(hex){
+    /* Auto-fill title+note for Asturias if title is empty */
+    var titleEl=document.getElementById('evFTitle');
+    if(hex==='#1d4ed8'&&titleEl&&!titleEl.value.trim()){
+      titleEl.value='Asturias';
+      var noteEl2=document.getElementById('evFNote');
+      if(noteEl2&&!noteEl2.value.trim()){noteEl2.value='Asturias';cntEl.textContent='8/200';}
+    }
   });
   document.getElementById('evFRepeat').addEventListener('change',function(){
     document.getElementById('evWdRow').style.display=this.value==='weekly'?'flex':'none';
@@ -1253,8 +1351,8 @@ function bindEvFormEvents(){
     var title=document.getElementById('evFTitle').value.trim();
     if(!title){showToast('El t\u00edtulo es obligatorio','error');return;}
     var note=document.getElementById('evFNote').value.trim();
-    var colorSel=document.querySelector('.ev-color-swatch.selected');
-    var color=colorSel?colorSel.dataset.hex:EV_COLORS[0];
+    var color=_fCp.getColor();
+    var colorLocked=_fCp.getLocked();
     var start=document.getElementById('evFStart').value;
     var end=document.getElementById('evFEnd').value;
     if(!start){showToast('La fecha de inicio es obligatoria','error');return;}
@@ -1270,10 +1368,10 @@ function bindEvFormEvents(){
     if(EV_EDIT){
       var idx=-1;
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===EV_EDIT.id){idx=i;break;}}
-      if(idx!==-1)EVENTS[idx]={id:EV_EDIT.id,title:title,note:note,color:color,start:start,end:end,repeat:repeat};
+      if(idx!==-1)EVENTS[idx]={id:EV_EDIT.id,title:title,note:note,color:color,colorLocked:colorLocked,start:start,end:end,repeat:repeat};
       showToast('Evento actualizado','success');
     }else{
-      EVENTS.push({id:'ev-'+Date.now(),title:title,note:note,color:color,start:start,end:end,repeat:repeat});
+      EVENTS.push({id:'ev-'+Date.now(),title:title,note:note,color:color,colorLocked:false,start:start,end:end,repeat:repeat});
       showToast('Evento a\u00f1adido','success');
     }
     saveEvents();updateEventsBtn();
@@ -1493,11 +1591,11 @@ function bindEvEvents(){
   if(brightBtn)brightBtn.addEventListener('click',function(){
     EV_BRIGHT_PAST=!EV_BRIGHT_PAST;refreshEvents();
   });
-  document.getElementById('evViewUpcoming').addEventListener('click',function(){EV_VIEW='upcoming';EV_ANNUAL_ADD=false;refreshEvents();});
-  document.getElementById('evViewCal').addEventListener('click',function(){EV_VIEW='cal';EV_ANNUAL_ADD=false;EV_PREV_VIEW=null;refreshEvents();});
-  document.getElementById('evViewQuad').addEventListener('click',function(){EV_VIEW='quad';EV_ANNUAL_ADD=false;refreshEvents();});
-  document.getElementById('evViewAnnual').addEventListener('click',function(){EV_VIEW='annual';EV_ANNUAL_ADD=false;refreshEvents();});
-  document.getElementById('evViewMonths').addEventListener('click',function(){EV_VIEW='months';EV_ANNUAL_ADD=false;refreshEvents();});
+  document.getElementById('evViewUpcoming').addEventListener('click',function(){EV_VIEW='upcoming';EV_EDIT_MODE=false;refreshEvents();});
+  document.getElementById('evViewCal').addEventListener('click',function(){EV_VIEW='cal';EV_EDIT_MODE=false;EV_PREV_VIEW=null;refreshEvents();});
+  document.getElementById('evViewQuad').addEventListener('click',function(){EV_VIEW='quad';EV_EDIT_MODE=false;refreshEvents();});
+  document.getElementById('evViewAnnual').addEventListener('click',function(){EV_VIEW='annual';EV_EDIT_MODE=false;refreshEvents();});
+  document.getElementById('evViewMonths').addEventListener('click',function(){EV_VIEW='months';EV_EDIT_MODE=false;refreshEvents();});
   // Dropdown de vista anual (reemplaza los dos botones anteriores)
   var _vdBtn=document.getElementById('evAnnVdBtn');
   var _vdMenu=document.getElementById('evAnnVdMenu');
@@ -1523,17 +1621,33 @@ function bindEvEvents(){
     });
   });
   document.getElementById('evAdd').addEventListener('click',function(){
-    if(EV_VIEW==='annual'||EV_VIEW==='quad'){EV_ANNUAL_ADD=!EV_ANNUAL_ADD;refreshEvents();}
+    if(EV_VIEW==='annual'||EV_VIEW==='quad'){EV_EDIT_MODE=!EV_EDIT_MODE;refreshEvents();}
     else{openEvForm(null);}
+  });
+  // Pencil edit button in annual/quad
+  var _editBtn=document.getElementById('evAnnEditBtn');
+  if(_editBtn){
+    _editBtn.addEventListener('click',function(){
+      EV_EDIT_MODE=!EV_EDIT_MODE;refreshEvents();
+    });
+  }
+  // Click en barras/marcas de eventos en annual/quad (edit mode)
+  document.querySelectorAll('.ev-annual-mbar[data-id],.ev-annual-x[data-id],.ev-annual-vip-star[data-id]').forEach(function(el){
+    el.addEventListener('click',function(e){
+      if(!EV_EDIT_MODE)return;
+      e.stopPropagation();
+      var id=el.dataset.id;var ev=null;
+      for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
+      if(ev)openEvDetail(ev);
+    });
   });
   // Click en mes del calendario anual/quad: navegar o seleccionar día (modo añadir)
   document.querySelectorAll('.ev-annual-month[data-month]').forEach(function(card){
     card.addEventListener('click',function(e){
-      if(EV_ANNUAL_ADD&&e.target.dataset.ds){
-        var ds=e.target.dataset.ds;
-        EV_ANNUAL_ADD=false;
-        openEvForm(null,ds);
-      } else if(!EV_ANNUAL_ADD){
+      // In edit mode, check for event click first (handled above), then day click
+      if(EV_EDIT_MODE&&e.target.dataset.ds){
+        openEvForm(null,e.target.dataset.ds);
+      } else if(!EV_EDIT_MODE){
         EV_MONTH=parseInt(card.dataset.month);
         if(card.dataset.year)EV_YEAR=parseInt(card.dataset.year);
         EV_PREV_VIEW=EV_VIEW==='quad'?'quad':'annual';
