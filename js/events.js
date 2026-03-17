@@ -414,7 +414,8 @@ function renderEvByMonths(){
 function renderEvListItem(ev){
   var s=new Date(ev.start+'T00:00:00');
   var e2=ev.end&&ev.end!==ev.start?new Date(ev.end+'T00:00:00'):null;
-  var fd2=function(dd){return String(dd.getDate()).padStart(2,'0')+'/'+String(dd.getMonth()+1).padStart(2,'0')+'/'+dd.getFullYear();};
+  var _wn=['Dom','Lun','Mar','Mi\u00e9','Jue','Vie','S\u00e1b'];
+  var fd2=function(dd){return _wn[dd.getDay()]+' '+String(dd.getDate()).padStart(2,'0')+'/'+String(dd.getMonth()+1).padStart(2,'0')+'/'+dd.getFullYear();};
   var dateStr=fd2(s);
   if(e2)dateStr+=' &#8212; '+fd2(e2);
   var repeatStr='';
@@ -500,7 +501,8 @@ function renderEvUpcoming(){
   var wd=today.getDay();var off=wd===0?6:wd-1;
   var wk0=new Date(today);wk0.setDate(wk0.getDate()-off);
   var weekLabels=['Esta semana','Pr\u00f3xima semana','En dos semanas'];
-  var fd2=function(d){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');};
+  var _wn=['Dom','Lun','Mar','Mi\u00e9','Jue','Vie','S\u00e1b'];
+  var fd2=function(d){return _wn[d.getDay()]+' '+String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');};
   var weeks=[{},{},{}];
   for(var w=0;w<3;w++){
     for(var d=0;d<7;d++){
@@ -553,7 +555,9 @@ function renderEvUpcoming(){
       h+='<div class="ev-upcoming-color" style="background:'+getEvDisplayColor(ev)+'"></div>';
       h+='<div class="ev-upcoming-info">';
       h+='<div class="ev-upcoming-title">'+_uTitle+'</div>';
-      h+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+fd2(item.firstDate)+'</div>';
+      var _metaDate=fd2(item.firstDate);
+      if(ev.end&&ev.end!==ev.start){var _eD=new Date(ev.end+'T00:00:00');_metaDate+=' <span style="font-size:.62rem;opacity:.7">&#8212; '+fd2(_eD)+'</span>';}
+      h+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+_metaDate+'</div>';
       if(ev.note&&ev.note.trim()&&!_isVipU)h+='<div class="ev-upcoming-note">'+escHtml(ev.note.trim())+'</div>';
       h+='</div>';
       h+='<div class="ev-upcoming-right"><span class="ev-upcoming-bell'+(_bellSet?' set':'')+'">&#128276;</span><div class="ev-upcoming-lbl">En '+diffToday+'d</div></div>';
@@ -584,7 +588,9 @@ function renderEvUpcoming(){
       h+='<div class="ev-upcoming-color" style="background:'+getEvDisplayColor(ev)+'"></div>';
       h+='<div class="ev-upcoming-info">';
       h+='<div class="ev-upcoming-title">'+_upTitle+'</div>';
-      h+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+fd2(item.firstDate)+'</div>';
+      var _metaDate2=fd2(item.firstDate);
+      if(ev.end&&ev.end!==ev.start){var _eD2=new Date(ev.end+'T00:00:00');_metaDate2+=' <span style="font-size:.62rem;opacity:.7">&#8212; '+fd2(_eD2)+'</span>';}
+      h+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+_metaDate2+'</div>';
       if(ev.note&&ev.note.trim()&&!_isVipUp)h+='<div class="ev-upcoming-note">'+escHtml(ev.note.trim())+'</div>';
       h+='</div>';
       h+='<div class="ev-upcoming-right"><span class="ev-upcoming-bell'+(_bellSet?' set':'')+'">&#128276;</span><div class="'+lblCls+'">'+lbl+'</div></div>';
