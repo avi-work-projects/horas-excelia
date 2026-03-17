@@ -789,6 +789,36 @@ function _renderSubrogacionAnalysis(comp){
   var points=Math.min(Math.ceil(maxMeses/12),40);
   h+=_mortgageComparisonChart(cuotaOrig,cuotaNueva,maxMeses,costesCambio,comp.tipoInteres,sub.nuevoTipoInteres);
 
+  /* Insurance cost comparison */
+  var segAnualOrig=0,segAnualNuevo=0;
+  var vinc=comp.vinculaciones;
+  if(vinc){
+    var _sk=['segSalud','segVida','segHogar'];
+    _sk.forEach(function(k){if(vinc[k]&&vinc[k].enabled)segAnualOrig+=vinc[k].costeAnual||0;});
+  }
+  var subVinc=sub.vinculaciones;
+  if(subVinc){
+    var _sk2=['segSalud','segVida','segHogar'];
+    _sk2.forEach(function(k){if(subVinc[k]&&subVinc[k].enabled)segAnualNuevo+=subVinc[k].costeAnual||0;});
+  }
+  var diffSegAnual=Math.round((segAnualOrig-segAnualNuevo)*100)/100;
+  if(segAnualOrig>0||segAnualNuevo>0){
+    h+='<div style="padding:8px 0;font-size:.72rem;color:var(--text-muted);margin-top:4px">';
+    h+='<div>Seguros originales: <b style="color:var(--c-orange)">'+fcPlain(segAnualOrig)+'</b>/a\u00f1o</div>';
+    h+='<div>Seguros nuevos: <b style="color:var(--c-orange)">'+fcPlain(segAnualNuevo)+'</b>/a\u00f1o</div>';
+    h+='<div>Diferencia seguros: <b style="color:'+(diffSegAnual>=0?'var(--c-green)':'var(--c-red)')+'">'+((diffSegAnual>=0?'+':'')+fcPlain(diffSegAnual))+'</b>/a\u00f1o</div>';
+    /* Recalculate total savings including insurance */
+    var maxM2=Math.max(mesesRestantesOrig,mesesNuevo);
+    var totalAhorroConSeg=Math.round(((cuotaOrig+segAnualOrig/12)*maxM2-(cuotaNueva+segAnualNuevo/12)*maxM2-costesCambio)*100)/100;
+    h+='<div style="margin-top:4px;font-size:.78rem">Ahorro total (cuotas + seguros): <b style="color:'+(totalAhorroConSeg>=0?'var(--c-green)':'var(--c-red)')+'">'+fcPlain(Math.round(totalAhorroConSeg))+'</b></div>';
+    h+='</div>';
+  }
+
+  /* Diff chart: evolution A vs B */
+  h+='<div style="margin-top:10px;font-size:.75rem;color:var(--text-muted);font-weight:600">Evoluci\u00f3n: quedarse vs subrogar</div>';
+  h+='<div style="font-size:.65rem;color:var(--text-dim);margin-bottom:2px">Incluye cuotas + seguros vinculados. Zona verde = el cambio compensa.</div>';
+  h+=_mortgageDiffChart(cuotaOrig,cuotaNueva,segAnualOrig,segAnualNuevo,mesesTranscurridos,maxMeses,costesCambio);
+
   h+='</div>';
   return h;
 }
@@ -935,6 +965,75 @@ function _mortgageComparisonChart(cuota1,cuota2,nMeses,switchCost,rate1,rate2){
   svg+='<text x="'+(PL+12)+'" y="7" font-size="6" fill="#fb923c">'+rate1.toFixed(2)+'%</text>';
   svg+='<rect x="'+(PL+55)+'" y="3" width="10" height="3" rx="1.5" fill="#34d399"/>';
   svg+='<text x="'+(PL+67)+'" y="7" font-size="6" fill="#34d399">'+rate2.toFixed(2)+'%</text>';
+  svg+='</svg>';
+  return '<div class="analisis-mortgage-chart">'+svg+'</div>';
+}
+
+/* ── Diff chart: evolution of A-B including insurance ────── */
+function _mortgageDiffChart(cuotaA,cuotaB,segAnualA,segAnualB,mesesPre,mesesPost,switchCost){
+  var totalMeses=mesesPre+mesesPost;
+  var years=Math.ceil(totalMeses/12);
+  var points=Math.min(years,40);
+  var diffs=[];var cum=0;
+  for(var y=0;y<=points;y++){
+    var m=y*12;
+    if(m<=mesesPre){
+      diffs.push(0);
+    } else {
+      if(y===Math.ceil(mesesPre/12)&&diffs[diffs.length-1]===0)cum=-switchCost;
+      var mInYear=12;
+      cum+=(cuotaA+segAnualA/12-cuotaB-segAnualB/12)*mInYear;
+      diffs.push(Math.round(cum));
+    }
+  }
+  var W=320,H=130,PB=18,PT=16,PL=42,PR=8;
+  var W2=W-PL-PR,H2=H-PT;
+  var minV=diffs[0],maxV=diffs[0];
+  diffs.forEach(function(v){if(v<minV)minV=v;if(v>maxV)maxV=v;});
+  var range=Math.max(Math.abs(minV),Math.abs(maxV))||1;
+  minV=Math.min(minV,-range*0.1);maxV=Math.max(maxV,range*0.1);
+  var spanV=maxV-minV||1;
+  function xPos(i){return Math.round(PL+(i/points)*W2);}
+  function yPos(v){return Math.round(PT+H2-(v-minV)/spanV*H2);}
+  var y0=yPos(0);
+  var svg='<svg viewBox="0 0 '+W+' '+(H+PB)+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;margin-top:10px">';
+  /* Zero line */
+  svg+='<line x1="'+PL+'" y1="'+y0+'" x2="'+(W-PR)+'" y2="'+y0+'" stroke="#5a5a70" stroke-width="1" stroke-dasharray="4,3"/>';
+  /* Grid */
+  var step=5000;while(spanV/step>6)step*=2;while(spanV/step<2&&step>1000)step=Math.round(step/2);
+  for(var gv=Math.ceil(minV/step)*step;gv<=maxV;gv+=step){
+    if(gv===0)continue;
+    var gy=yPos(gv);
+    svg+='<line x1="'+PL+'" y1="'+gy+'" x2="'+(W-PR)+'" y2="'+gy+'" stroke="#2a2a3e" stroke-width="1"/>';
+    var lbl=Math.abs(gv)>=1000?(gv/1000).toFixed(0)+'k':gv;
+    svg+='<text x="'+(PL-2)+'" y="'+(gy+3)+'" text-anchor="end" font-size="6" fill="#5a5a70">'+lbl+'</text>';
+  }
+  /* Fill areas: green above 0, red below 0 */
+  var posPath='',negPath='';
+  for(var i=0;i<=points;i++){
+    var x=xPos(i),yv=yPos(diffs[i]);
+    if(diffs[i]>=0){
+      if(!posPath)posPath='M'+x+','+y0;
+      posPath+=' L'+x+','+yv;
+    } else {
+      if(posPath){posPath+=' L'+x+','+y0+' Z';svg+='<path d="'+posPath+'" fill="rgba(52,211,153,.15)"/>';posPath='';}
+      if(!negPath)negPath='M'+x+','+y0;
+      negPath+=' L'+x+','+yv;
+    }
+    if(diffs[i]>=0&&negPath){negPath+=' L'+x+','+y0+' Z';svg+='<path d="'+negPath+'" fill="rgba(239,68,68,.15)"/>';negPath='';}
+  }
+  if(posPath){posPath+=' L'+xPos(points)+','+y0+' Z';svg+='<path d="'+posPath+'" fill="rgba(52,211,153,.15)"/>';}
+  if(negPath){negPath+=' L'+xPos(points)+','+y0+' Z';svg+='<path d="'+negPath+'" fill="rgba(239,68,68,.15)"/>';}
+  /* Line */
+  var pts=diffs.map(function(v,i){return xPos(i)+','+yPos(v);}).join(' ');
+  svg+='<polyline points="'+pts+'" fill="none" stroke="#6c8cff" stroke-width="2" stroke-linejoin="round"/>';
+  /* X labels */
+  for(var xi=0;xi<=points;xi+=Math.max(1,Math.round(points/6))){
+    svg+='<text x="'+xPos(xi)+'" y="'+(H+PB-2)+'" text-anchor="middle" font-size="6" fill="#5a5a70">'+xi+'a</text>';
+  }
+  /* Legend */
+  svg+='<text x="'+PL+'" y="7" font-size="6" fill="#5a5a70">verde = cambio compensa | rojo = cambio no compensa</text>';
+  svg+='<text x="'+(W-PR)+'" y="7" text-anchor="end" font-size="5" fill="#5a5a70">0\u20ac</text>';
   svg+='</svg>';
   return '<div class="analisis-mortgage-chart">'+svg+'</div>';
 }

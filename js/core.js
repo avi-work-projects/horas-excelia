@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v116 \u2014 fix ingresos desgrav save, viaje filter, year sticky';
+var APP_VERSION = 'v117 \u2014 year nivel 4, hipoteca reorg, IRPF colores, analisis seguros';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

@@ -455,6 +455,7 @@ function renderFiscalContent(){
   h+='<button class="fiscal-tab-btn'+(FISCAL_TAB==='irpf_deduc'?' active':'')+'" id="fiscalTabIrpfDeduc">IRPF y<br>Deducciones</button>';
   h+='<button class="fiscal-tab-btn'+(FISCAL_TAB==='despacho'?' active':'')+'" id="fiscalTabDespacho">Hipoteca</button>';
   h+='</div>';
+  if(FISCAL_TAB!=='despacho')h+=_renderYearSelector();
   h+='<div class="sy-body" style="padding:16px">';
   if(FISCAL_TAB==='personal')h+=renderFiscalTabPersonal();
   else if(FISCAL_TAB==='gastos_desg')h+=renderFiscalTabGastosDesg();
@@ -562,8 +563,7 @@ function _personalTotalWeekly(arr){
   return Math.round(t*100)/100;
 }
 function renderFiscalTabPersonal(){
-  var h=_renderYearSelector();
-  h+=_renderCopyYearBtn();
+  var h=_renderCopyYearBtn();
   /* 1. Gastos Recurrentes Personales (todo en una sección) */
   h+='<div class="fiscal-section">';
   h+='<div class="fiscal-section-title expense">Gastos Recurrentes Personales</div>';
@@ -651,8 +651,7 @@ function renderFiscalTabIrpf(){
 
 /* ── Tab Gastos Desgravables (antes "Ingresos y Gastos") ── */
 function renderFiscalTabGastosDesg(){
-  var h=_renderYearSelector();
-  h+=_renderCopyYearBtn();
+  var h=_renderCopyYearBtn();
   /* Ingresos desgravables (plan de pensiones, etc.) */
   h+='<div class="fiscal-section">';
   h+='<div class="fiscal-section-title income">Ingresos desgravables</div>';
@@ -732,8 +731,7 @@ function renderComprasList(){
 
 /* ── Tab IRPF y Deducciones (con sub-tabs) ────────────────── */
 function renderFiscalTabIrpfDeduc(){
-  var h=_renderYearSelector();
-  h+='<div class="econ-sub-tabs">';
+  var h='<div class="econ-sub-tabs">';
   h+='<button class="econ-sub-tab'+(FISCAL_IRPF_SUB==='desgrav'?' active':'')+'" data-firsub="desgrav">Desgravaciones</button>';
   h+='<button class="econ-sub-tab'+(FISCAL_IRPF_SUB==='irpf'?' active':'')+'" data-firsub="irpf">Config IRPF</button>';
   h+='<button class="econ-sub-tab'+(FISCAL_IRPF_SUB==='despacho'?' active':'')+'" data-firsub="despacho">Despacho</button>';
@@ -749,7 +747,7 @@ function renderFiscalTabDesgrav(){
   var dg=computeTotalDesgrav();
   var h='';
   h+='<div class="fiscal-section">';
-  h+='<div class="fiscal-section-title">Desgravaciones IRPF \u2014 Declaraci\u00f3n de la Renta</div>';
+  h+='<div class="fiscal-section-title" style="color:var(--c-green)">Desgravaciones IRPF \u2014 Declaraci\u00f3n de la Renta</div>';
   h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:10px">Partidas que reducen la base imponible o la cuota IRPF. Los items con <em>&#128279;</em> se calculan desde tus gastos.</div>';
   var _dgParts=[];
   if(dg.base>0)_dgParts.push('Base: <b>'+fcPlain(dg.base)+'</b>');
@@ -790,39 +788,33 @@ function renderDesgravDespachoInfo(){
   var hipIntInfo=Math.round((DESPACHO.hipotecaIntereses||0)*prop*100)/100;
   var hasItems=ibiAmt>0||casaItems.length>0||utilItems.length>0||amort>0||hipIntInfo>0;
   if(!hasItems||prop<=0)return '';
-  function _dedCard(name,annual,pctLabel,ded,borderColor,extra){
-    var c='<div class="fiscal-ded-card" style="border-left-color:'+borderColor+'">';
+  function _dedCard(name,annual,pctLabel,ded,borderColor,extra,toggleKey){
+    var on=!toggleKey||dd[toggleKey]!==false;
+    var c='<div class="fiscal-ded-card'+(on?'':' disabled')+'" style="border-left-color:'+borderColor+'">';
+    c+='<div class="fiscal-ded-card-header">';
+    if(toggleKey)c+='<div class="fiscal-ded-mini-toggle'+(on?' on':'')+'" data-dedtgl="'+toggleKey+'">'+(on?'&#10003;':'')+'</div>';
     c+='<div class="fiscal-ded-card-name">'+name+'</div>';
-    c+='<div class="fiscal-ded-card-vals">';
-    c+='<span class="fiscal-ded-card-annual">'+annual+'</span>';
-    c+='<span class="fiscal-ded-card-pct">\u00d7 '+pctLabel+'</span>';
-    c+='<span class="fiscal-ded-card-amount">'+fcPlain(ded)+'</span>';
     c+='</div>';
-    if(extra)c+='<div class="fiscal-ded-card-extra">'+extra+'</div>';
+    if(on){
+      c+='<div class="fiscal-ded-card-vals">';
+      c+='<span class="fiscal-ded-card-annual">'+annual+'</span>';
+      c+='<span class="fiscal-ded-card-pct">\u00d7 '+pctLabel+'</span>';
+      c+='<span class="fiscal-ded-card-amount">'+fcPlain(ded)+'</span>';
+      c+='</div>';
+      if(extra)c+='<div class="fiscal-ded-card-extra">'+extra+'</div>';
+    }
     c+='</div>';
     return c;
   }
-  function _dedToggle(key,label){
-    var on=dd[key]!==false;
-    return '<div class="fiscal-ded-toggle-row"><div class="fiscal-ded-mini-toggle'+(on?' on':'')+'" data-dedtgl="'+key+'">'+(on?'&#10003;':'')+'</div><span class="fiscal-ded-toggle-lbl">'+label+'</span></div>';
-  }
   var h='<div class="fiscal-section fiscal-desgrav-despacho-section">';
-  h+='<div class="fiscal-section-title">\uD83C\uDFE0 Deducciones por despacho en casa ('+propPct.toFixed(1)+'%)</div>';
+  h+='<div class="fiscal-section-title" style="color:var(--accent-bright)">\uD83C\uDFE0 Deducciones por despacho en casa ('+propPct.toFixed(1)+'%)</div>';
   h+='<div style="font-size:.7rem;color:var(--text-dim);margin-bottom:6px">Partidas deducibles en proporci\u00f3n al % del despacho sobre la vivienda.</div>';
-  /* Toggles */
-  h+='<div class="fiscal-ded-toggles">';
-  h+=_dedToggle('amortizacion','Amortizaci\u00f3n');
-  h+=_dedToggle('ibi','IBI');
-  h+=_dedToggle('hipotecaInt','Intereses hipoteca');
-  h+=_dedToggle('casa','Gastos casa');
-  h+=_dedToggle('suministros','Suministros');
-  h+='</div>';
   h+='<div class="fiscal-ded-cards">';
-  if(amort>0&&dd.amortizacion!==false)h+=_dedCard('Amortizaci\u00f3n (80% construc.)',fcPlain(Math.round(baseAmortInfo*0.80*100)/100),'3% \u00d7 '+propPct.toFixed(1)+'%',amort,'#c084fc','<button class="fiscal-link-btn fiscal-desp-link" data-link-tab="despacho-sub" style="font-size:.62rem;color:var(--accent-bright);background:none;border:none;cursor:pointer;padding:0">&#128279; Despacho</button><div style="font-size:.6rem;color:var(--text-dim);margin-top:2px">Gasto deducible como aut\u00f3nomo (proporci\u00f3n despacho).</div>');
-  if(ibiAmt>0&&dd.ibi!==false)h+=_dedCard(ibiLabel,ibiRealDesp>0?fcPlain(ibiRealDesp):'est.',propPct.toFixed(1)+'%',ibiAmt,'#6c8cff');
-  if(hipIntInfo>0&&dd.hipotecaInt!==false)h+=_dedCard('Intereses hipoteca',fcPlain(DESPACHO.hipotecaIntereses),propPct.toFixed(1)+'%',hipIntInfo,'#fb923c','<span style="font-size:.6rem;color:var(--text-dim)">Intereses del a\u00f1o '+FISCAL_YEAR+' de </span><button class="fiscal-link-btn fiscal-desp-link" data-link-tab="despacho-tab" style="font-size:.62rem;color:var(--accent-bright);background:none;border:none;cursor:pointer;padding:0">&#128279; Hipoteca</button><div style="font-size:.6rem;color:var(--text-dim);margin-top:2px">&lt;30 a\u00f1os Madrid (hipoteca \u22652023): ded. adicional 25% intereses totales, l\u00edm. 1.031\u20ac/a\u00f1o.</div>');
-  if(dd.casa!==false)casaItems.forEach(function(it){h+=_dedCard(escHtml(it.label),fcPlain(it.annual),it.pctLabel,it.ded,'#34d399');});
-  if(dd.suministros!==false)utilItems.forEach(function(it){h+=_dedCard(escHtml(it.label),fcPlain(it.annual),it.pctLabel,it.ded,'#2dd4bf');});
+  if(amort>0)h+=_dedCard('Amortizaci\u00f3n (80% construc.)',fcPlain(Math.round(baseAmortInfo*0.80*100)/100),'3% \u00d7 '+propPct.toFixed(1)+'%',amort,'#c084fc','<button class="fiscal-link-btn fiscal-desp-link" data-link-tab="despacho-sub" style="font-size:.62rem;color:var(--accent-bright);background:none;border:none;cursor:pointer;padding:0">&#128279; Despacho</button><div style="font-size:.6rem;color:var(--text-dim);margin-top:2px">Gasto deducible como aut\u00f3nomo (proporci\u00f3n despacho).</div>','amortizacion');
+  if(ibiAmt>0)h+=_dedCard(ibiLabel,ibiRealDesp>0?fcPlain(ibiRealDesp):'est.',propPct.toFixed(1)+'%',ibiAmt,'#6c8cff',null,'ibi');
+  if(hipIntInfo>0)h+=_dedCard('Intereses hipoteca',fcPlain(DESPACHO.hipotecaIntereses),propPct.toFixed(1)+'%',hipIntInfo,'#fb923c','<span style="font-size:.6rem;color:var(--text-dim)">Intereses del a\u00f1o '+FISCAL_YEAR+' de </span><button class="fiscal-link-btn fiscal-desp-link" data-link-tab="despacho-tab" style="font-size:.62rem;color:var(--accent-bright);background:none;border:none;cursor:pointer;padding:0">&#128279; Hipoteca</button><div style="font-size:.6rem;color:var(--text-dim);margin-top:2px">&lt;30 a\u00f1os Madrid (hipoteca \u22652023): ded. adicional 25% intereses totales, l\u00edm. 1.031\u20ac/a\u00f1o.</div>','hipotecaInt');
+  casaItems.forEach(function(it){h+=_dedCard(escHtml(it.label),fcPlain(it.annual),it.pctLabel,it.ded,'#34d399',null,'casa');});
+  utilItems.forEach(function(it){h+=_dedCard(escHtml(it.label),fcPlain(it.annual),it.pctLabel,it.ded,'#2dd4bf',null,'suministros');});
   h+='</div>';
   var total=computeDespachoDeduccion();
   if(total>0)h+='<div class="fiscal-desgrav-despacho-total">Total deducci\u00f3n estimada despacho: <b>'+fcPlain(total)+'</b></div>';
@@ -1126,6 +1118,34 @@ function renderFiscalTabDespacho(){
       h+='<div class="fiscal-despacho-comp">Total intereses: <b style="color:var(--c-orange)">'+_fmtMiles(intN)+' \u20ac</b></div>';
       h+='</div>';
     }
+    /* Entidad bancaria nueva */
+    h+='<div style="font-size:.7rem;color:var(--text-dim);margin:8px 0 4px;font-weight:600">Nueva entidad bancaria</div>';
+    h+='<div class="fiscal-despacho-grid">';
+    h+='<div class="fiscal-despacho-field" style="flex:1 1 100%"><label class="fiscal-despacho-label">Banco</label>';
+    h+='<input class="fiscal-despacho-input" id="desp-subEntidadBanco" type="text" value="'+escHtml(sd.entidadBanco||'')+'" placeholder="Ej: ING, Openbank..." style="text-align:left">';
+    h+='</div></div>';
+    /* Vinculaciones del nuevo préstamo */
+    var sv=sd.vinculaciones||{nomina:{enabled:false,reduccion:0},segVida:{enabled:false,costeAnual:0,reduccion:0},segSalud:{enabled:false,costeAnual:0,reduccion:0},segHogar:{enabled:false,costeAnual:0,reduccion:0}};
+    h+='<div style="font-size:.7rem;color:var(--text-dim);margin:8px 0 4px;font-weight:600">Vinculaciones del nuevo pr\u00e9stamo</div>';
+    h+=_vincRow('subVincNomina','N\u00f3mina domiciliada',sv.nomina);
+    h+=_vincRow('subVincSegVida','Seguro de vida',sv.segVida);
+    h+=_vincRow('subVincSegSalud','Seguro salud',sv.segSalud);
+    h+=_vincRow('subVincSegHogar','Seguro hogar',sv.segHogar);
+    var svKeys=['nomina','segVida','segSalud','segHogar'];
+    var svTotal=0,svReduc=0;
+    svKeys.forEach(function(k){if(sv[k]&&sv[k].enabled){svTotal+=sv[k].costeAnual||0;svReduc+=sv[k].reduccion||0;}});
+    if(svTotal>0||svReduc>0){
+      h+='<div style="font-size:.72rem;color:var(--text-dim);text-align:right;padding:4px 0">';
+      if(svTotal>0)h+='Coste anual: <b style="color:var(--c-orange)">'+fcPlain(svTotal)+'</b>';
+      if(svReduc>0){
+        h+=(svTotal>0?' &middot; ':'')+' Reducci\u00f3n tipo: <b style="color:var(--c-green)">\u2212'+svReduc.toFixed(2)+'%</b>';
+        if(sd.nuevoTipoInteres>0){
+          var tipoEfSub=Math.max(0,sd.nuevoTipoInteres-svReduc);
+          h+='<br>Tipo efectivo: <b style="color:var(--c-green)">'+tipoEfSub.toFixed(2)+'%</b>';
+        }
+      }
+      h+='</div>';
+    }
   }
   h+='</div>';
   return h;
@@ -1133,6 +1153,7 @@ function renderFiscalTabDespacho(){
 
 function _vincRow(id,label,data){
   if(!data)data={enabled:false,costeAnual:0,reduccion:0};
+  var isNomina=id.indexOf('Nomina')!==-1;
   var h='<div class="fiscal-vinc-row">';
   h+='<div class="fiscal-despacho-toggle-row" style="margin-bottom:0">';
   h+='<span class="fiscal-despacho-toggle-lbl" style="font-size:.76rem">'+label+'</span>';
@@ -1141,8 +1162,10 @@ function _vincRow(id,label,data){
   if(data.enabled){
     h+='<div class="fiscal-vinc-cost">';
     h+='<div style="display:flex;gap:8px;align-items:flex-end">';
-    h+='<div><label class="fiscal-despacho-label" style="font-size:.68rem">Coste anual \u20ac</label>';
-    h+='<input class="fiscal-despacho-input" id="'+id+'Coste" type="number" min="0" step="10" value="'+(data.costeAnual||0)+'" style="width:90px"></div>';
+    if(!isNomina){
+      h+='<div><label class="fiscal-despacho-label" style="font-size:.68rem">Coste anual \u20ac</label>';
+      h+='<input class="fiscal-despacho-input" id="'+id+'Coste" type="number" min="0" step="10" value="'+(data.costeAnual||0)+'" style="width:90px"></div>';
+    }
     h+='<div><label class="fiscal-despacho-label" style="font-size:.68rem">Reducci\u00f3n tipo %</label>';
     h+='<input class="fiscal-despacho-input fiscal-vinc-reduccion" id="'+id+'Reduccion" type="number" min="0" step="0.05" value="'+(data.reduccion||0)+'" style="width:75px"></div>';
     h+='</div></div>';
@@ -1805,6 +1828,36 @@ function _bindTabDespacho(){
       DESPACHO.compra.subrogacion.nuevoPlazoAnios=parseFloat(this.value)||0;
       DESPACHO.hipotecaInteresesManual=false;
       reRenderFiscal();
+    });
+    /* Subrogación: entidad bancaria */
+    var subBancoEl=document.getElementById('desp-subEntidadBanco');
+    if(subBancoEl)subBancoEl.addEventListener('change',function(){
+      DESPACHO.compra.subrogacion.entidadBanco=this.value||'';
+      saveDespacho();
+    });
+    /* Subrogación: vinculaciones nuevas */
+    var _svIds=['subVincNomina','subVincSegVida','subVincSegSalud','subVincSegHogar'];
+    var _svKeys=['nomina','segVida','segSalud','segHogar'];
+    if(!DESPACHO.compra.subrogacion.vinculaciones)DESPACHO.compra.subrogacion.vinculaciones={nomina:{enabled:false,reduccion:0},segVida:{enabled:false,costeAnual:0,reduccion:0},segSalud:{enabled:false,costeAnual:0,reduccion:0},segHogar:{enabled:false,costeAnual:0,reduccion:0}};
+    var svObj=DESPACHO.compra.subrogacion.vinculaciones;
+    _svIds.forEach(function(vid,idx){
+      var k=_svKeys[idx];
+      if(!svObj[k])svObj[k]={enabled:false,costeAnual:0,reduccion:0};
+      var tgl=document.getElementById(vid+'Toggle');
+      if(tgl)tgl.addEventListener('click',function(){
+        svObj[k].enabled=!svObj[k].enabled;
+        reRenderFiscal();
+      });
+      var costeEl=document.getElementById(vid+'Coste');
+      if(costeEl)costeEl.addEventListener('change',function(){
+        svObj[k].costeAnual=parseFloat(this.value)||0;
+        reRenderFiscal();
+      });
+      var redEl=document.getElementById(vid+'Reduccion');
+      if(redEl)redEl.addEventListener('change',function(){
+        svObj[k].reduccion=parseFloat(this.value)||0;
+        reRenderFiscal();
+      });
     });
   }
 }
