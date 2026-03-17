@@ -355,7 +355,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .econ-sub-tab{flex:1;font-size:.68rem;padding:6px 4px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;text-align:center;-webkit-user-select:none;user-select:none}
 .econ-sub-tab.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
 /* Year selector for per-year fiscal tabs */
-.fiscal-year-selector{display:flex;align-items:center;justify-content:center;gap:12px;padding:8px 0 10px;margin-bottom:6px}
+.fiscal-year-selector{display:flex;align-items:center;justify-content:center;gap:12px;padding:8px 0 10px;margin-bottom:6px;position:sticky;top:0;z-index:5;background:var(--bg)}
 .fiscal-year-arrow{background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text-muted);font-size:.9rem;padding:4px 10px;cursor:pointer;-webkit-user-select:none;user-select:none}
 .fiscal-year-arrow:active{background:var(--accent-glow)}
 .fiscal-year-label{font-size:.9rem;font-weight:700;color:var(--text-main);min-width:50px;text-align:center}

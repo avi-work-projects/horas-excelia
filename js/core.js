@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v115 \u2014 links deducciones, toggles, grupos gastos, cumples, tipos evento';
+var APP_VERSION = 'v116 \u2014 fix ingresos desgrav save, viaje filter, year sticky';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
