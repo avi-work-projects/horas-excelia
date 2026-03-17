@@ -19,7 +19,7 @@ var FISCAL={irpfMode:'fixed',irpfPct:15,brackets:null};
 
 /* ── Tab activo en fiscal config ───────────────────────────── */
 var FISCAL_TAB='personal'; // 'personal' | 'gastos_desg' | 'irpf_deduc' | 'despacho'
-var FISCAL_IRPF_SUB='irpf'; // 'irpf' | 'desgrav' — sub-tab dentro de IRPF y Deducciones
+var FISCAL_IRPF_SUB='desgrav'; // 'desgrav' | 'irpf' — sub-tab dentro de IRPF y Deducciones
 var FISCAL_YEAR=CY; // año activo para datos per-year
 
 /* ── Per-year helpers ─────────────────────────────────────── */
@@ -722,9 +722,10 @@ function renderComprasList(){
 
 /* ── Tab IRPF y Deducciones (con sub-tabs) ────────────────── */
 function renderFiscalTabIrpfDeduc(){
-  var h='<div class="econ-sub-tabs">';
-  h+='<button class="econ-sub-tab'+(FISCAL_IRPF_SUB==='irpf'?' active':'')+'" data-firsub="irpf">Configuraci\u00f3n IRPF</button>';
+  var h=_renderYearSelector();
+  h+='<div class="econ-sub-tabs">';
   h+='<button class="econ-sub-tab'+(FISCAL_IRPF_SUB==='desgrav'?' active':'')+'" data-firsub="desgrav">Desgravaciones</button>';
+  h+='<button class="econ-sub-tab'+(FISCAL_IRPF_SUB==='irpf'?' active':'')+'" data-firsub="irpf">Configuraci\u00f3n IRPF</button>';
   h+='</div>';
   if(FISCAL_IRPF_SUB==='irpf')h+=renderFiscalTabIrpf();
   else h+=renderFiscalTabDesgrav();
@@ -1233,13 +1234,13 @@ function _bindYearSelector(){
   if(prev)prev.addEventListener('click',function(){
     FISCAL_YEAR--;
     if(FISCAL_TAB==='personal')loadPersonalYear(FISCAL_YEAR);
-    else loadGastosYear(FISCAL_YEAR);
+    else{loadGastosYear(FISCAL_YEAR);if(typeof loadCompras==='function')loadCompras();}
     reRenderFiscal();
   });
   if(next)next.addEventListener('click',function(){
     FISCAL_YEAR++;
     if(FISCAL_TAB==='personal')loadPersonalYear(FISCAL_YEAR);
-    else loadGastosYear(FISCAL_YEAR);
+    else{loadGastosYear(FISCAL_YEAR);if(typeof loadCompras==='function')loadCompras();}
     reRenderFiscal();
   });
   /* Copy year buttons */

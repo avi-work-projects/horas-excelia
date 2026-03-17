@@ -502,6 +502,7 @@ var ANALISIS_SEG_NORMAL={segSalud:0,segVida:0,segHogar:0};
 
 function renderEconAnalisis(){
   if(typeof loadPersonalYear==='function')loadPersonalYear(ECON_YEAR);
+  if(typeof loadGastosYear==='function')loadGastosYear(ECON_YEAR);
   if(typeof loadDespacho==='function')loadDespacho();
   var h='';
   /* Sub-tabs */

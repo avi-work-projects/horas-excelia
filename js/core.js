@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v112 \u2014 tipo evento persistente, viaje mantiene tipo al cambiar color';
+var APP_VERSION = 'v113 \u2014 d\u00eda semana eventos, IRPF a\u00f1o+desgrav, gastos por a\u00f1o';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
