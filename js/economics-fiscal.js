@@ -530,7 +530,7 @@ function _personalListHtml(arr,section,periodMode){
     if(annual>0)h+='<div class="fiscal-gasto-annual">'+fcPlain(annual)+'/a\u00f1o</div>';
     /* Viaje event selector */
     if(item._viaje){
-      var evList=typeof EVENTS!=='undefined'?EVENTS.filter(function(ev){return ev.title&&ev.title.length>0;}):[];
+      var evList=typeof EVENTS!=='undefined'?EVENTS.filter(function(ev){return ev.title&&ev.title.length>0&&(getEvType(ev)==='Viaje'||getEvType(ev)==='Asturias');}):[];
       h+='<div class="fiscal-viaje-selector" data-ps="'+section+'" data-pi="'+i+'">';
       h+='<select class="fiscal-viaje-select" data-ps="'+section+'" data-pi="'+i+'" data-pf="viajeFilter">';
       h+='<option value="all"'+((!item.viajeFilter||item.viajeFilter==='all')?' selected':'')+'>Todos los viajes</option>';
@@ -1447,6 +1447,15 @@ function _bindTabGastosDesg(){
       var field=el.dataset.gfield;
       if(field==='amount'){var v=parseFloat(el.value);GASTOS_ITEMS[gi].amount=isNaN(v)?0:v;}
       else if(field==='label'){GASTOS_ITEMS[gi].label=el.value||'Gasto';}
+    });
+  }
+  /* Ingresos desgravables (plan_pension) */
+  var ingList=document.getElementById('fiscalIngresosDesgList');
+  if(ingList&&!ingList._del){
+    ingList._del=true;
+    ingList.addEventListener('change',function(e){
+      var el=e.target;var gi=parseInt(el.dataset.gi,10);if(isNaN(gi))return;
+      if(el.dataset.gfield==='amount'){var v=parseFloat(el.value);GASTOS_ITEMS[gi].amount=isNaN(v)?0:v;}
     });
   }
   document.getElementById('fiscalAddGasto').addEventListener('click',function(){
