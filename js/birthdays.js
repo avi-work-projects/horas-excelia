@@ -198,7 +198,9 @@ function renderBdayUpcoming(){
       s+='<div class="bday-upcoming-icon" style="background:'+color+'22;border-color:'+color+'">'+(isVip?'\u2b50':'\uD83C\uDF82')+'</div>';
       s+='<div class="bday-upcoming-info">';
       s+='<div class="bday-upcoming-name" style="color:'+color+'">'+bdName(x.b.name)+vipStar+'</div>';
-      s+='<div class="bday-upcoming-date">'+x.b.day+' de '+MN[x.b.month-1]+'</div>';
+      var _dwn=['Dom','Lun','Mar','Mi\u00e9','Jue','Vie','S\u00e1b'];
+      var _bd=new Date(today);_bd.setDate(_bd.getDate()+x.diff);
+      s+='<div class="bday-upcoming-date">'+_dwn[_bd.getDay()]+' '+x.b.day+' de '+MN[x.b.month-1]+'</div>';
       s+='</div>';
       s+='<div class="ev-upcoming-right">'+bellHtml+'<div class="'+lblCls+'">'+lbl+'</div></div>';
       s+='</div>';

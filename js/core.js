@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v114 \u2014 reorg config fiscal, despacho sub-tab, ingresos desgravables';
+var APP_VERSION = 'v115 \u2014 links deducciones, toggles, grupos gastos, cumples, tipos evento';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

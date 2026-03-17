@@ -683,7 +683,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .fiscal-ded-card-annual{color:var(--text-muted);font-family:var(--mono)}
 .fiscal-ded-card-pct{color:var(--text-dim);font-size:.65rem}
 .fiscal-ded-card-amount{margin-left:auto;font-family:var(--mono);font-weight:600;color:var(--c-green);font-size:.78rem}
+.fiscal-ded-toggles{display:flex;flex-wrap:wrap;gap:4px 10px;margin-bottom:8px}
+.fiscal-ded-toggle-row{display:flex;align-items:center;gap:4px}
+.fiscal-ded-mini-toggle{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--text-dim);display:flex;align-items:center;justify-content:center;font-size:.65rem;cursor:pointer;color:var(--text-dim);transition:all .15s;-webkit-user-select:none;user-select:none}
+.fiscal-ded-mini-toggle.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.fiscal-ded-toggle-lbl{font-size:.65rem;color:var(--text-dim)}
+.fiscal-ded-card-extra{margin-top:4px;line-height:1.35}
 .fiscal-desgrav-despacho-total{margin-top:8px;padding:6px 10px;border-radius:var(--radius-sm);background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.3);font-size:.8rem;color:var(--c-green);text-align:right}
+.fiscal-gastos-group-hdr{font-size:.7rem;color:var(--text-dim);padding:8px 0 3px 0;margin-top:4px;border-bottom:1px solid var(--border)}
 /* Nota IVA compras */
 .fiscal-compras-iva-note{font-size:.7rem;color:var(--c-orange);background:rgba(251,146,60,.08);border:1px solid rgba(251,146,60,.25);border-radius:5px;padding:5px 8px;margin-bottom:8px;line-height:1.4}
 /* IVA por item en compras */

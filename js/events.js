@@ -35,8 +35,8 @@ var EV_COLOR_TYPES = {
   '#1d4ed8':'Asturias',
   '#34d399':'Recordatorio de Gestiones',
   '#fb923c':'Planes y Quedadas',
-  '#ff6b6b':'Festivo',
-  '#c084fc':'Puente',
+  '#ff6b6b':'Otros',
+  '#c084fc':'Otros',
   '#a3e635':'Otros',
   '#fbbf24':'Cumplea\u00f1os VIP'
 };
@@ -50,8 +50,9 @@ function evTravelColor(evId){
 }
 // Obtiene el tipo de un evento: ev.type (v111+) o fallback a EV_COLOR_TYPES[color]
 function getEvType(ev){
-  if(ev.type)return ev.type;
-  return EV_COLOR_TYPES[ev.color]||'Otros';
+  var t=ev.type||EV_COLOR_TYPES[ev.color]||'Otros';
+  if(t==='Festivo'||t==='Puente')t='Otros';
+  return t;
 }
 // ¿Es viaje/asturias? (se renderizan siempre como barra, incluso 1 día)
 function isEvBarAlways(ev){
@@ -924,7 +925,7 @@ function renderEvQuad(){
 /* ── Render: lista de eventos por tipos ─────────────────── */
 function renderEvByTypes(){
   var today=new Date();today.setHours(0,0,0,0);
-  var typeOrder=['Viaje','Asturias','Recordatorio de Gestiones','Planes y Quedadas','Otros','Cumplea\u00f1os VIP'];
+  var typeOrder=['Viaje','Asturias','Recordatorio de Gestiones','Planes y Quedadas','Otros'];
   var h='<div class="ev-types-controls">';
   h+='<label class="ev-types-past-label"><input type="checkbox" id="evTypesPast"'+(EV_TYPES_PAST?' checked':'')+'> Excluir pasados</label>';
   h+='<select class="ev-types-select" id="evTypesFilter">';
@@ -936,6 +937,7 @@ function renderEvByTypes(){
   if(!EVENTS.length)return h+'<div class="sy-note">No hay eventos. Pulsa &quot;+ A\u00f1adir&quot; para crear uno.</div>';
   var byType={};typeOrder.forEach(function(t){byType[t]=[];});
   EVENTS.forEach(function(ev){
+    if(ev.id&&ev.id.indexOf('ev-bday-vip-')===0)return; /* VIP birthdays excluded from Todos */
     var evEnd=ev.end?new Date(ev.end+'T00:00:00'):new Date(ev.start+'T00:00:00');
     if(EV_TYPES_PAST&&!ev.repeat&&evEnd<today)return;
     var type=getEvType(ev);
@@ -1016,9 +1018,9 @@ function renderEvContent(){
   h+='</div>';
   h+='<div class="sy-body'+(EV_BRIGHT_PAST?' ev-bright-past':'')+'">';
   if(EV_VIEW==='annual'||EV_VIEW==='quad'){
-    var _typeOrder=['Viaje','Asturias','Recordatorio de Gestiones','Planes y Quedadas','Otros','Cumpleaños VIP'];
-    var _typeShort={'Viaje':'Viaje','Asturias':'Asturias','Recordatorio de Gestiones':'Gestiones','Planes y Quedadas':'Planes','Otros':'Otros','Cumpleaños VIP':'\u2b50VIP'};
-    var _typeColor={'Viaje':'#38bdf8','Asturias':'#1d4ed8','Recordatorio de Gestiones':'#34d399','Planes y Quedadas':'#fb923c','Otros':'#ff6b6b','Cumpleaños VIP':'#fbbf24'};
+    var _typeOrder=['Viaje','Asturias','Recordatorio de Gestiones','Planes y Quedadas','Otros'];
+    var _typeShort={'Viaje':'Viaje','Asturias':'Asturias','Recordatorio de Gestiones':'Gestiones','Planes y Quedadas':'Planes','Otros':'Otros'};
+    var _typeColor={'Viaje':'#38bdf8','Asturias':'#1d4ed8','Recordatorio de Gestiones':'#34d399','Planes y Quedadas':'#fb923c','Otros':'#ff6b6b'};
     h+='<div class="ev-annual-controls">';
     var _vdLabels={'puentes':'\uD83C\uDF09 Puentes','fiestas':'\uD83D\uDCC5 Vac + Festivos','vacaciones':'\uD83C\uDFD6 Solo vacaciones','festivos':'\uD83C\uDF8C Solo festivos','none':'\u2715 Nada'};
     var _curVdLabel=_vdLabels[EV_ANNUAL_VIEW]||_vdLabels['none'];
@@ -1264,9 +1266,12 @@ function renderEvForm(ev){
   h+='<textarea class="ev-textarea" id="evFNote" maxlength="200" placeholder="Notas opcionales...">'+escHtml(note)+'</textarea></div>';
   /* Type selector (7 predefined types) */
   h+='<div class="ev-field"><label>Tipo</label><div class="ev-type-picker">';
+  var _shownTypes={};
   EV_COLORS.forEach(function(c){
     var typeName=EV_COLOR_TYPES[c]||'Otros';
     if(typeName==='Cumplea\u00f1os VIP')return; /* skip VIP */
+    if(_shownTypes[typeName])return; /* skip duplicate type names */
+    _shownTypes[typeName]=true;
     var sel=(c===color||(isViaje&&typeName==='Viaje')
       ||(!isViaje&&!EV_COLOR_TYPES[color]&&c==='#a3e635'))?' selected':'';
     h+='<div class="ev-color-swatch'+sel+'" data-hex="'+c+'" style="color:'+c+'">';
