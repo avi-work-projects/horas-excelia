@@ -19,7 +19,7 @@ var FISCAL={irpfMode:'fixed',irpfPct:15,brackets:null};
 
 /* ── Tab activo en fiscal config ───────────────────────────── */
 var FISCAL_TAB='personal'; // 'personal' | 'gastos_desg' | 'irpf_deduc' | 'despacho'
-var FISCAL_IRPF_SUB='desgrav'; // 'desgrav' | 'irpf' — sub-tab dentro de IRPF y Deducciones
+var FISCAL_IRPF_SUB='desgrav'; // 'desgrav' | 'irpf' | 'despacho' — sub-tab dentro de IRPF y Deducciones
 var FISCAL_YEAR=CY; // año activo para datos per-year
 
 /* ── Per-year helpers ─────────────────────────────────────── */
@@ -131,7 +131,8 @@ var DEFAULT_GASTOS=[
   {id:'luz',label:'Factura Luz',amount:0,period:'monthly'},
   {id:'digi',label:'Factura Digi',amount:0,period:'monthly'},
   {id:'agua',label:'Factura Agua',amount:0,period:'monthly'},
-  {id:'otros_seg',label:'Otros seguros',amount:0,period:'annual'}
+  {id:'otros_seg',label:'Otros seguros',amount:0,period:'annual'},
+  {id:'plan_pension',label:'Plan de pensiones',amount:0,period:'annual'}
 ];
 var GASTOS_ITEMS=[];
 
@@ -253,7 +254,7 @@ function comprasIvaTotal(q){
 var DESGRAV_SK='excelia-desgrav-v1';
 /* type: 'base' = reduce la base imponible | 'quota' = reduce directamente la cuota IRPF */
 var DESGRAV_DEFAULT=[
-  {id:'plan_pension',label:'Plan de pensiones',amount:0,limit:5750,enabled:true,type:'base',
+  {id:'plan_pension',label:'Plan de pensiones',gastoLink:'plan_pension',pct:100,amount:0,limit:5750,enabled:true,type:'base',
    note:'Hasta 5.750\u20ac/a\u00f1o para aut\u00f3nomos con plan de empleo simplificado (1.500\u20ac individuales + 4.250\u20ac adicionales).'},
   {id:'cuota_autonomos',label:'Cuota aut\u00f3nomos (SS)',gastoLink:'cot_social',pct:100,amount:0,limit:null,enabled:true,type:'base',
    note:'100% deducible como gasto de la actividad econ\u00f3mica.'},
@@ -449,7 +450,7 @@ function renderFiscalContent(){
   h+='<button class="fiscal-tab-btn'+(FISCAL_TAB==='personal'?' active':'')+'" id="fiscalTabPersonal">Econom\u00eda<br>Personal</button>';
   h+='<button class="fiscal-tab-btn'+(FISCAL_TAB==='gastos_desg'?' active':'')+'" id="fiscalTabGastosDesg">Gastos<br>Desgravables</button>';
   h+='<button class="fiscal-tab-btn'+(FISCAL_TAB==='irpf_deduc'?' active':'')+'" id="fiscalTabIrpfDeduc">IRPF y<br>Deducciones</button>';
-  h+='<button class="fiscal-tab-btn'+(FISCAL_TAB==='despacho'?' active':'')+'" id="fiscalTabDespacho">Despacho e<br>Hipoteca</button>';
+  h+='<button class="fiscal-tab-btn'+(FISCAL_TAB==='despacho'?' active':'')+'" id="fiscalTabDespacho">Hipoteca</button>';
   h+='</div>';
   h+='<div class="sy-body" style="padding:16px">';
   if(FISCAL_TAB==='personal')h+=renderFiscalTabPersonal();
@@ -566,7 +567,7 @@ function renderFiscalTabPersonal(){
   h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Gastos semanales, suscripciones, viajes, etc.</div>';
   /* Gastos semanales primero */
   h+='<div id="personalGastosSem">'+_personalListHtml(PERSONAL_DATA.gastosSemanales,'gastosSemanales','weekly')+'</div>';
-  h+='<button class="fiscal-add-btn fiscal-add-btn-expense" data-padd="gastosSemanales" style="margin-bottom:6px">+ A\u00f1adir gasto semanal</button>';
+  if(PERSONAL_DATA.gastosSemanales.length<1){h+='<button class="fiscal-add-btn fiscal-add-btn-expense" data-padd="gastosSemanales" style="margin-bottom:6px">+ A\u00f1adir gasto semanal</button>';}
   /* Gastos recurrentes (suscripciones, etc.) a continuación */
   h+='<div id="personalGastosRec">'+_personalListHtml(PERSONAL_DATA.gastosRecurrentes,'gastosRecurrentes','monthly')+'</div>';
   h+='<button class="fiscal-add-btn fiscal-add-btn-expense" data-padd="gastosRecurrentes" style="margin-bottom:4px">+ A\u00f1adir gasto</button>';
@@ -649,9 +650,15 @@ function renderFiscalTabIrpf(){
 function renderFiscalTabGastosDesg(){
   var h=_renderYearSelector();
   h+=_renderCopyYearBtn();
-  /* Gastos regulares (rojo) */
+  /* Ingresos desgravables (plan de pensiones, etc.) */
   h+='<div class="fiscal-section">';
-  h+='<div class="fiscal-section-title expense">Gastos regulares</div>';
+  h+='<div class="fiscal-section-title income">Ingresos desgravables</div>';
+  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Plan de pensiones y similares — reducen la base imponible del IRPF.</div>';
+  h+='<div id="fiscalIngresosDesgList">'+_renderIngresosDesgList()+'</div>';
+  h+='</div>';
+  /* Gastos desgravables (rojo) */
+  h+='<div class="fiscal-section">';
+  h+='<div class="fiscal-section-title expense">Gastos Desgravables</div>';
   h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Gastos recurrentes: cotizaciones SS, asesor\u00eda, hipoteca, suministros, etc.</div>';
   h+='<div id="fiscalGastosList">'+renderGastosList()+'</div>';
   h+='<button class="fiscal-add-btn fiscal-add-btn-expense" id="fiscalAddGasto">+ A\u00f1adir gasto</button>';
@@ -725,9 +732,11 @@ function renderFiscalTabIrpfDeduc(){
   var h=_renderYearSelector();
   h+='<div class="econ-sub-tabs">';
   h+='<button class="econ-sub-tab'+(FISCAL_IRPF_SUB==='desgrav'?' active':'')+'" data-firsub="desgrav">Desgravaciones</button>';
-  h+='<button class="econ-sub-tab'+(FISCAL_IRPF_SUB==='irpf'?' active':'')+'" data-firsub="irpf">Configuraci\u00f3n IRPF</button>';
+  h+='<button class="econ-sub-tab'+(FISCAL_IRPF_SUB==='irpf'?' active':'')+'" data-firsub="irpf">Config IRPF</button>';
+  h+='<button class="econ-sub-tab'+(FISCAL_IRPF_SUB==='despacho'?' active':'')+'" data-firsub="despacho">Despacho</button>';
   h+='</div>';
   if(FISCAL_IRPF_SUB==='irpf')h+=renderFiscalTabIrpf();
+  else if(FISCAL_IRPF_SUB==='despacho')h+=renderFiscalTabDespachoOnly();
   else h+=renderFiscalTabDesgrav();
   return h;
 }
@@ -942,14 +951,13 @@ function _computeBalanceAtDate(comp,dateStr){
   return Math.round(balance*100)/100;
 }
 
-/* ── Tab Despacho e Hipoteca ───────────────────────────────── */
-function renderFiscalTabDespacho(){
+/* ── Tab Despacho (sub-tab dentro de IRPF y Deducciones) ──── */
+function renderFiscalTabDespachoOnly(){
   var pctShow=DESPACHO.m2Total>0&&DESPACHO.m2Despacho>0
     ?Math.round(DESPACHO.m2Despacho/DESPACHO.m2Total*1000)/10
     :DESPACHO.pct;
   var comp=DESPACHO.compra||_defaultCompra();
   var h='';
-  /* Sección despacho */
   h+='<div class="fiscal-section">';
   h+='<div class="fiscal-section-title">Despacho en casa \u2014 Deducci\u00f3n IRPF</div>';
   h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:12px">Configura el espacio dedicado al trabajo. Los m\u00b2 y el % se sincronizan autom\u00e1ticamente entre s\u00ed.</div>';
@@ -975,6 +983,13 @@ function renderFiscalTabDespacho(){
   }
   h+='</div>';
   h+='</div>';
+  return h;
+}
+
+/* ── Tab Hipoteca ─────────────────────────────────────────── */
+function renderFiscalTabDespacho(){
+  var comp=DESPACHO.compra||_defaultCompra();
+  var h='';
   /* Sección compra de vivienda */
   h+='<div class="fiscal-section">';
   h+='<div class="fiscal-section-title">Compra de vivienda</div>';
@@ -1154,9 +1169,23 @@ function _despFieldMoney(id,label,val){
 }
 
 /* ── renderGastosList ─────────────────────────────────────── */
+function _renderIngresosDesgList(){
+  var h='';
+  GASTOS_ITEMS.forEach(function(g,i){
+    if(g.id!=='plan_pension')return;
+    h+='<div class="fiscal-gasto-item" data-gi="'+i+'">';
+    h+='<span class="fiscal-gasto-lbl">'+g.label+'</span>';
+    h+='<input class="fiscal-gasto-amt" data-gi="'+i+'" data-gfield="amount" type="number" min="0" step="1" value="'+(g.amount||0)+'">';
+    h+='<span class="fiscal-gasto-period-static">/a\u00f1o</span>';
+    h+='<span style="width:22px"></span>';
+    h+='</div>';
+  });
+  return h;
+}
 function renderGastosList(){
   var h='';
   GASTOS_ITEMS.forEach(function(g,i){
+    if(g.id==='plan_pension')return; /* rendered in Ingresos desgravables */
     var isFixed=DEFAULT_GASTOS.some(function(d){return d.id===g.id;});
     h+='<div class="fiscal-gasto-item" data-gi="'+i+'">';
     if(isFixed){
@@ -1219,8 +1248,8 @@ function bindFiscalEvents(){
 
   document.getElementById('fiscalSave').addEventListener('click',function(){_saveFiscalAll();});
 
-  /* Year selector bindings (shared by personal + gastos_desg) */
-  if(FISCAL_TAB==='personal'||FISCAL_TAB==='gastos_desg')_bindYearSelector();
+  /* Year selector bindings (shared by personal + gastos_desg + irpf_deduc) */
+  if(FISCAL_TAB==='personal'||FISCAL_TAB==='gastos_desg'||FISCAL_TAB==='irpf_deduc')_bindYearSelector();
 
   if(FISCAL_TAB==='personal')_bindTabPersonal();
   else if(FISCAL_TAB==='gastos_desg')_bindTabGastosDesg();
@@ -1449,6 +1478,7 @@ function _bindTabIrpfDeduc(){
     });
   });
   if(FISCAL_IRPF_SUB==='irpf')_bindTabIrpf();
+  else if(FISCAL_IRPF_SUB==='despacho')_bindTabDespachoOnly();
   else _bindTabDesgrav();
 }
 
@@ -1491,20 +1521,18 @@ function _bindTabDesgrav(){
   });
 }
 
-function _bindTabDespacho(){
+function _bindTabDespachoOnly(){
   /* Toggle on/off */
   var tog=document.getElementById('despachoToggle');
   if(tog)tog.addEventListener('click',function(){
     DESPACHO.enabled=!DESPACHO.enabled;
     reRenderFiscal();
   });
-
   /* Sincronización en tiempo real entre m²despacho ↔ % */
   var m2TotalEl=document.getElementById('desp-m2Total');
   var m2DespEl=document.getElementById('desp-m2Despacho');
   var pctEl=document.getElementById('desp-pct');
-
-  function _syncLive(changed){
+  function _syncLiveD(changed){
     var m2T=parseFloat(m2TotalEl?m2TotalEl.value:0)||0;
     var m2D=parseFloat(m2DespEl?m2DespEl.value:0)||0;
     var p=parseFloat(pctEl?pctEl.value:0)||0;
@@ -1514,9 +1542,8 @@ function _bindTabDespacho(){
       if(m2T>0&&m2DespEl)m2DespEl.value=(Math.round(p*m2T/100*10)/10).toFixed(1);
     }
   }
-
   if(m2TotalEl){
-    m2TotalEl.addEventListener('input',function(){_syncLive('m2Total');});
+    m2TotalEl.addEventListener('input',function(){_syncLiveD('m2Total');});
     m2TotalEl.addEventListener('change',function(){
       DESPACHO.m2Total=parseFloat(this.value)||0;
       if(DESPACHO.m2Total>0&&DESPACHO.m2Despacho>0)DESPACHO.pct=Math.round(DESPACHO.m2Despacho/DESPACHO.m2Total*1000)/10;
@@ -1524,7 +1551,7 @@ function _bindTabDespacho(){
     });
   }
   if(m2DespEl){
-    m2DespEl.addEventListener('input',function(){_syncLive('m2Despacho');});
+    m2DespEl.addEventListener('input',function(){_syncLiveD('m2Despacho');});
     m2DespEl.addEventListener('change',function(){
       DESPACHO.m2Despacho=parseFloat(this.value)||0;
       if(DESPACHO.m2Total>0)DESPACHO.pct=Math.round(DESPACHO.m2Despacho/DESPACHO.m2Total*1000)/10;
@@ -1532,14 +1559,14 @@ function _bindTabDespacho(){
     });
   }
   if(pctEl){
-    pctEl.addEventListener('input',function(){_syncLive('pct');});
+    pctEl.addEventListener('input',function(){_syncLiveD('pct');});
     pctEl.addEventListener('change',function(){
       DESPACHO.pct=parseFloat(this.value)||0;
       if(DESPACHO.m2Total>0)DESPACHO.m2Despacho=Math.round(DESPACHO.pct*DESPACHO.m2Total/100*10)/10;
       reRenderFiscal();
     });
   }
-  /* Campos monetarios despacho: step=1000 + formato miles */
+  /* Campos monetarios despacho */
   ['valorCatastral','hipotecaIntereses'].forEach(function(field){
     var el=document.getElementById('desp-'+field);
     if(!el)return;
@@ -1555,6 +1582,28 @@ function _bindTabDespacho(){
       reRenderFiscal();
     });
   });
+  /* Recalcular intereses button */
+  var recalcBtn=document.getElementById('despRecalcInt');
+  if(recalcBtn){
+    recalcBtn.addEventListener('click',function(){
+      DESPACHO.hipotecaInteresesManual=false;
+      reRenderFiscal();
+    });
+  }
+  /* Manual override */
+  var hipIntEl=document.getElementById('desp-hipotecaIntereses');
+  if(hipIntEl){
+    hipIntEl.addEventListener('change',function(){
+      var autoInt=_computeAnnualInterest(DESPACHO.compra,FISCAL_YEAR);
+      var newVal=parseFloat(this.value)||0;
+      if(autoInt>0&&Math.abs(newVal-autoInt)>0.5){
+        DESPACHO.hipotecaInteresesManual=true;
+      }
+    });
+  }
+}
+
+function _bindTabDespacho(){
   /* Campos compra vivienda */
   if(!DESPACHO.compra)DESPACHO.compra=_defaultCompra();
   var _compraFieldMap={
@@ -1614,26 +1663,6 @@ function _bindTabDespacho(){
       DESPACHO.compra.fechaInicio=this.value||null;
       DESPACHO.hipotecaInteresesManual=false; // recalcular al cambiar fecha
       reRenderFiscal();
-    });
-  }
-  /* Recalcular intereses button */
-  var recalcBtn=document.getElementById('despRecalcInt');
-  if(recalcBtn){
-    recalcBtn.addEventListener('click',function(){
-      DESPACHO.hipotecaInteresesManual=false;
-      reRenderFiscal();
-    });
-  }
-  /* Manual override: mark as manual when user edits hipotecaIntereses */
-  var hipIntEl=document.getElementById('desp-hipotecaIntereses');
-  if(hipIntEl){
-    var _origHipChange=null;
-    hipIntEl.addEventListener('change',function(){
-      var autoInt=_computeAnnualInterest(DESPACHO.compra,FISCAL_YEAR);
-      var newVal=parseFloat(this.value)||0;
-      if(autoInt>0&&Math.abs(newVal-autoInt)>0.5){
-        DESPACHO.hipotecaInteresesManual=true;
-      }
     });
   }
   /* Vinculaciones toggles */
@@ -1744,14 +1773,19 @@ function _saveFiscalAll(){
     }
   }
   /* Leer valores despacho directamente del DOM (evita pérdida por re-render) */
-  if(FISCAL_TAB==='despacho'){
-    var _rv=function(id){var el=document.getElementById('desp-'+id);return el?parseFloat(el.value)||0:null;};
-    var v;
+  var _rv=function(id){var el=document.getElementById('desp-'+id);return el?parseFloat(el.value)||0:null;};
+  var v;
+  /* Despacho sub-tab (dentro de IRPF y Deducciones) */
+  if(FISCAL_TAB==='irpf_deduc'&&FISCAL_IRPF_SUB==='despacho'){
     v=_rv('m2Total');if(v!==null)DESPACHO.m2Total=v;
     v=_rv('m2Despacho');if(v!==null)DESPACHO.m2Despacho=v;
     v=_rv('pct');if(v!==null)DESPACHO.pct=v;
     v=_rv('valorCatastral');if(v!==null)DESPACHO.valorCatastral=v;
     v=_rv('hipotecaIntereses');if(v!==null)DESPACHO.hipotecaIntereses=v;
+    if(DESPACHO.m2Total>0&&DESPACHO.m2Despacho>0)DESPACHO.pct=Math.round(DESPACHO.m2Despacho/DESPACHO.m2Total*1000)/10;
+  }
+  /* Hipoteca tab */
+  if(FISCAL_TAB==='despacho'){
     if(!DESPACHO.compra)DESPACHO.compra=_defaultCompra();
     v=_rv('compraValor');if(v!==null){DESPACHO.compra.valorCompraTotal=v;DESPACHO.valorCompra=v;}
     v=_rv('compraItp');if(v!==null)DESPACHO.compra.itpMadrid=v;
@@ -1762,7 +1796,6 @@ function _saveFiscalAll(){
     v=_rv('compraImporte');if(v!==null)DESPACHO.compra.importePrestamo=v;
     v=_rv('compraTipo');if(v!==null)DESPACHO.compra.tipoInteres=v;
     v=_rv('compraPlazo');if(v!==null)DESPACHO.compra.plazoAnios=v;
-    if(DESPACHO.m2Total>0&&DESPACHO.m2Despacho>0)DESPACHO.pct=Math.round(DESPACHO.m2Despacho/DESPACHO.m2Total*1000)/10;
   }
   saveFiscal();
   saveGastosYear(FISCAL_YEAR);

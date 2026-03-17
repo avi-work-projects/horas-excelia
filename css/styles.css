@@ -670,7 +670,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .fiscal-compras-toggle{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--border);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.6rem;background:var(--surface2);transition:all .15s;-webkit-user-select:none;user-select:none}
 .fiscal-compras-toggle.on{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
 .fiscal-compras-total{margin-top:8px;padding:6px 10px;border-radius:var(--radius-sm);background:var(--accent-glow);font-size:.8rem;color:var(--accent-bright);text-align:right}
-.fiscal-gasto-amt-sm{width:56px}
+.fiscal-gasto-amt-sm{width:65px}
 .fiscal-gasto-annual{font-size:.62rem;color:var(--text-dim);text-align:right;padding:0 26px 2px 0;font-family:var(--mono)}
 .fiscal-gasto-period-static{font-size:.72rem;color:var(--text-dim);white-space:nowrap;flex-shrink:0;padding:0 4px}
 /* Desgravaciones: notas + tabla despacho info */
