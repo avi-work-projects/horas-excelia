@@ -663,7 +663,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .fiscal-desgrav-group-title{font-size:.68rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;padding:10px 0 5px;border-top:1px solid var(--border);margin-top:4px}
 .fiscal-desgrav-group-title.quota{color:var(--c-orange)}
 .fiscal-desgrav-from-gasto{font-size:.75rem;color:var(--accent-bright);font-family:var(--mono);background:var(--accent-glow);border-radius:5px;padding:2px 7px;word-break:break-word}
+.fiscal-desgrav-link{cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px}
+.fiscal-desgrav-link:active{opacity:.7}
 .fiscal-desgrav-from-gasto.dim{color:var(--text-dim);background:transparent}
+@keyframes fiscal-hl{0%{background:var(--accent-glow)}50%{background:rgba(108,140,255,.25)}100%{background:transparent}}
+.fiscal-highlight{animation:fiscal-hl 1.5s ease-out}
 .fiscal-desgrav-nota{font-size:.65rem;color:var(--text-dim);margin-top:4px;line-height:1.4;padding:4px 6px;background:var(--surface2);border-radius:4px;border-left:2px solid var(--c-orange)}
 /* Fiscal: compras profesionales */
 .fiscal-compras-item{align-items:center}
@@ -725,6 +729,29 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .fiscal-despacho-breakdown{margin-top:8px;border-top:1px solid var(--border);padding-top:8px;display:flex;flex-direction:column;gap:3px}
 .fiscal-despacho-comp{font-size:.68rem;color:var(--text-dim)}
 .fiscal-despacho-comp b{color:var(--text-muted)}
+/* Hipoteca — resumen visual */
+.hip-resumen{padding:14px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border);margin-bottom:12px}
+.hip-resumen-cuota{text-align:center;margin-bottom:12px}
+.hip-resumen-cuota-label{font-size:.7rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em}
+.hip-resumen-cuota-val{font-family:var(--mono);font-size:1.6rem;font-weight:700;color:var(--text);margin-top:2px}
+.hip-resumen-tipo-ef{font-size:.66rem;color:var(--c-green);margin-top:2px}
+.hip-bar-wrap{margin-bottom:8px}
+.hip-bar{display:flex;height:10px;border-radius:5px;overflow:hidden}
+.hip-bar-cap{background:var(--c-green)}
+.hip-bar-int{background:var(--c-orange)}
+.hip-bar-legend{display:flex;justify-content:space-between;margin-top:4px;font-size:.64rem}
+.hip-bar-leg-cap{color:var(--c-green)}
+.hip-bar-leg-int{color:var(--c-orange)}
+.hip-bar-total{text-align:center;font-size:.68rem;color:var(--text-dim);margin-top:2px}
+.hip-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.hip-stat{display:flex;flex-direction:column;align-items:center;padding:6px 4px;border-radius:6px;background:var(--surface);border:1px solid var(--border)}
+.hip-stat-val{font-family:var(--mono);font-size:.82rem;font-weight:700}
+.hip-stat-lbl{font-size:.6rem;color:var(--text-dim);text-align:center;margin-top:1px}
+.hip-grid-2col{display:grid!important;grid-template-columns:1fr 1fr;gap:10px!important;flex-direction:unset!important}
+.hip-section-total{font-size:.78rem;text-align:right;padding:6px 0;color:var(--accent-bright)}
+.hip-auto-tag{font-size:.58rem;color:var(--accent-bright);background:var(--accent-glow);border-radius:3px;padding:1px 4px;vertical-align:middle}
+.hip-vinc-summary{font-size:.72rem;color:var(--text-dim);text-align:right;padding:6px 0;border-top:1px solid var(--border);margin-top:4px}
+.hip-sub-heading{font-size:.72rem;color:var(--text-muted);font-weight:600;margin:10px 0 4px;padding-top:6px;border-top:1px solid var(--border)}
 /* Multi-rate period cards */
 .econ-multi-rate-cards{display:flex;flex-direction:column;gap:8px;margin-top:8px}
 .econ-multi-rate-card{padding:10px 12px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border)}
