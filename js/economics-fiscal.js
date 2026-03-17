@@ -353,7 +353,9 @@ function loadDespacho(){
       }
       else{DESPACHO.compra=_defaultCompra();if(DESPACHO.valorCompra>0)DESPACHO.compra.valorCompraTotal=DESPACHO.valorCompra;}
       DESPACHO.hipotecaInteresesManual=d.hipotecaInteresesManual||false;
-    }else{DESPACHO.compra=_defaultCompra();}
+      if(!d.deducciones)DESPACHO.deducciones={amortizacion:true,ibi:true,hipotecaInt:true,casa:true,suministros:true};
+      else DESPACHO.deducciones=d.deducciones;
+    }else{DESPACHO.compra=_defaultCompra();DESPACHO.deducciones={amortizacion:true,ibi:true,hipotecaInt:true,casa:true,suministros:true};}
   }catch(e){if(!DESPACHO.compra)DESPACHO.compra=_defaultCompra();}
 }
 function saveDespacho(){
@@ -368,16 +370,17 @@ function computeDespachoDeduccion(){
   if(!DESPACHO.enabled)return 0;
   var prop=_despachoGetPct();
   if(prop<=0)return 0;
+  var dd=DESPACHO.deducciones||{amortizacion:true,ibi:true,hipotecaInt:true,casa:true,suministros:true};
   /* Amortización: 3% × 80% (construcción) × max(valorCatastral, valorCompra) × prop */
   var vc=DESPACHO.valorCatastral||0, vcp=DESPACHO.valorCompra||0;
   var baseAmort=0;
   if(vc>0&&vcp>0){baseAmort=Math.max(vc,vcp);}else if(vcp>0){baseAmort=vcp;}else if(vc>0){baseAmort=vc;}
-  var amort=Math.round(baseAmort*0.80*0.03*prop*100)/100;
+  var amort=dd.amortizacion!==false?Math.round(baseAmort*0.80*0.03*prop*100)/100:0;
   /* IBI: 100% deducible × prop (el límite del 30% aplica solo a suministros) */
   var ibiReal=gastoAnual('ibi');
-  var ibi=ibiReal>0?Math.round(ibiReal*prop*100)/100:Math.round(DESPACHO.valorCatastral*0.011*prop*100)/100;
+  var ibi=dd.ibi!==false?(ibiReal>0?Math.round(ibiReal*prop*100)/100:Math.round(DESPACHO.valorCatastral*0.011*prop*100)/100):0;
   /* Hipoteca: solo los intereses (campo separado hipotecaIntereses) */
-  var hipInteres=Math.round((DESPACHO.hipotecaIntereses||0)*prop*100)/100;
+  var hipInteres=dd.hipotecaInt!==false?Math.round((DESPACHO.hipotecaIntereses||0)*prop*100)/100:0;
   var GROUP_CASA=['comunidad','seg_hogar']; /* hipoteca excluida — usar hipotecaIntereses */
   var GROUP_UTIL=['luz','gas','agua','digi'];
   var gastosCasa=0,gastosUtil=0;
@@ -386,8 +389,8 @@ function computeDespachoDeduccion(){
     if(GROUP_CASA.indexOf(g.id)!==-1)gastosCasa+=a;
     else if(GROUP_UTIL.indexOf(g.id)!==-1)gastosUtil+=a;
   });
-  var casaDeducible=Math.round(gastosCasa*prop*100)/100;
-  var utilDeducible=Math.round(gastosUtil*prop*0.30*100)/100;
+  var casaDeducible=dd.casa!==false?Math.round(gastosCasa*prop*100)/100:0;
+  var utilDeducible=dd.suministros!==false?Math.round(gastosUtil*prop*0.30*100)/100:0;
   return Math.round((amort+ibi+hipInteres+casaDeducible+utilDeducible)*100)/100;
 }
 
@@ -767,6 +770,7 @@ function renderFiscalTabDesgrav(){
 function renderDesgravDespachoInfo(){
   var prop=_despachoGetPct();
   var propPct=Math.round(prop*1000)/10;
+  var dd=DESPACHO.deducciones||{amortizacion:true,ibi:true,hipotecaInt:true,casa:true,suministros:true};
   var GROUP_CASA_DESP=['comunidad','seg_hogar']; /* hipoteca excluida → usar hipotecaIntereses */
   var GROUP_UTIL_DESP=['luz','gas','agua','digi'];
   var ibiRealDesp=gastoAnual('ibi');
@@ -786,25 +790,39 @@ function renderDesgravDespachoInfo(){
   var hipIntInfo=Math.round((DESPACHO.hipotecaIntereses||0)*prop*100)/100;
   var hasItems=ibiAmt>0||casaItems.length>0||utilItems.length>0||amort>0||hipIntInfo>0;
   if(!hasItems||prop<=0)return '';
-  function _dedCard(name,annual,pctLabel,ded,borderColor){
+  function _dedCard(name,annual,pctLabel,ded,borderColor,extra){
     var c='<div class="fiscal-ded-card" style="border-left-color:'+borderColor+'">';
     c+='<div class="fiscal-ded-card-name">'+name+'</div>';
     c+='<div class="fiscal-ded-card-vals">';
     c+='<span class="fiscal-ded-card-annual">'+annual+'</span>';
     c+='<span class="fiscal-ded-card-pct">\u00d7 '+pctLabel+'</span>';
     c+='<span class="fiscal-ded-card-amount">'+fcPlain(ded)+'</span>';
-    c+='</div></div>';
+    c+='</div>';
+    if(extra)c+='<div class="fiscal-ded-card-extra">'+extra+'</div>';
+    c+='</div>';
     return c;
+  }
+  function _dedToggle(key,label){
+    var on=dd[key]!==false;
+    return '<div class="fiscal-ded-toggle-row"><div class="fiscal-ded-mini-toggle'+(on?' on':'')+'" data-dedtgl="'+key+'">'+(on?'&#10003;':'')+'</div><span class="fiscal-ded-toggle-lbl">'+label+'</span></div>';
   }
   var h='<div class="fiscal-section fiscal-desgrav-despacho-section">';
   h+='<div class="fiscal-section-title">\uD83C\uDFE0 Deducciones por despacho en casa ('+propPct.toFixed(1)+'%)</div>';
-  h+='<div style="font-size:.7rem;color:var(--text-dim);margin-bottom:10px">Partidas deducibles en proporci\u00f3n al % del despacho sobre la vivienda.</div>';
+  h+='<div style="font-size:.7rem;color:var(--text-dim);margin-bottom:6px">Partidas deducibles en proporci\u00f3n al % del despacho sobre la vivienda.</div>';
+  /* Toggles */
+  h+='<div class="fiscal-ded-toggles">';
+  h+=_dedToggle('amortizacion','Amortizaci\u00f3n');
+  h+=_dedToggle('ibi','IBI');
+  h+=_dedToggle('hipotecaInt','Intereses hipoteca');
+  h+=_dedToggle('casa','Gastos casa');
+  h+=_dedToggle('suministros','Suministros');
+  h+='</div>';
   h+='<div class="fiscal-ded-cards">';
-  if(amort>0)h+=_dedCard('Amortizaci\u00f3n (80% construc.)',fcPlain(Math.round(baseAmortInfo*0.80*100)/100),'3% \u00d7 '+propPct.toFixed(1)+'%',amort,'#c084fc');
-  if(ibiAmt>0)h+=_dedCard(ibiLabel,ibiRealDesp>0?fcPlain(ibiRealDesp):'est.',propPct.toFixed(1)+'%',ibiAmt,'#6c8cff');
-  if(hipIntInfo>0)h+=_dedCard('Intereses hipoteca',fcPlain(DESPACHO.hipotecaIntereses),propPct.toFixed(1)+'%',hipIntInfo,'#fb923c');
-  casaItems.forEach(function(it){h+=_dedCard(escHtml(it.label),fcPlain(it.annual),it.pctLabel,it.ded,'#34d399');});
-  utilItems.forEach(function(it){h+=_dedCard(escHtml(it.label),fcPlain(it.annual),it.pctLabel,it.ded,'#2dd4bf');});
+  if(amort>0&&dd.amortizacion!==false)h+=_dedCard('Amortizaci\u00f3n (80% construc.)',fcPlain(Math.round(baseAmortInfo*0.80*100)/100),'3% \u00d7 '+propPct.toFixed(1)+'%',amort,'#c084fc','<button class="fiscal-link-btn fiscal-desp-link" data-link-tab="despacho-sub" style="font-size:.62rem;color:var(--accent-bright);background:none;border:none;cursor:pointer;padding:0">&#128279; Despacho</button><div style="font-size:.6rem;color:var(--text-dim);margin-top:2px">Gasto deducible como aut\u00f3nomo (proporci\u00f3n despacho).</div>');
+  if(ibiAmt>0&&dd.ibi!==false)h+=_dedCard(ibiLabel,ibiRealDesp>0?fcPlain(ibiRealDesp):'est.',propPct.toFixed(1)+'%',ibiAmt,'#6c8cff');
+  if(hipIntInfo>0&&dd.hipotecaInt!==false)h+=_dedCard('Intereses hipoteca',fcPlain(DESPACHO.hipotecaIntereses),propPct.toFixed(1)+'%',hipIntInfo,'#fb923c','<span style="font-size:.6rem;color:var(--text-dim)">Intereses del a\u00f1o '+FISCAL_YEAR+' de </span><button class="fiscal-link-btn fiscal-desp-link" data-link-tab="despacho-tab" style="font-size:.62rem;color:var(--accent-bright);background:none;border:none;cursor:pointer;padding:0">&#128279; Hipoteca</button><div style="font-size:.6rem;color:var(--text-dim);margin-top:2px">&lt;30 a\u00f1os Madrid (hipoteca \u22652023): ded. adicional 25% intereses totales, l\u00edm. 1.031\u20ac/a\u00f1o.</div>');
+  if(dd.casa!==false)casaItems.forEach(function(it){h+=_dedCard(escHtml(it.label),fcPlain(it.annual),it.pctLabel,it.ded,'#34d399');});
+  if(dd.suministros!==false)utilItems.forEach(function(it){h+=_dedCard(escHtml(it.label),fcPlain(it.annual),it.pctLabel,it.ded,'#2dd4bf');});
   h+='</div>';
   var total=computeDespachoDeduccion();
   if(total>0)h+='<div class="fiscal-desgrav-despacho-total">Total deducci\u00f3n estimada despacho: <b>'+fcPlain(total)+'</b></div>';
@@ -1182,26 +1200,44 @@ function _renderIngresosDesgList(){
   });
   return h;
 }
+var GASTOS_GROUPS=[
+  {label:'Aut\u00f3nomo',ids:['cot_social','asesoria']},
+  {label:'Seguros',ids:['seg_baja','seg_salud','seg_vida','otros_seg']},
+  {label:'Casa',ids:['hipoteca','ibi','comunidad','seg_hogar','gas','luz','digi','agua']},
+  {label:'Otros',ids:['donaciones']}
+];
+function _renderGastoItem(g,i){
+  var isFixed=DEFAULT_GASTOS.some(function(d){return d.id===g.id;});
+  var h='<div class="fiscal-gasto-item" data-gi="'+i+'">';
+  if(isFixed){h+='<span class="fiscal-gasto-lbl">'+g.label+'</span>';}
+  else{h+='<input class="fiscal-gasto-lbl-input" data-gi="'+i+'" data-gfield="label" value="'+escHtml(g.label)+'" placeholder="Nombre...">';}
+  h+='<input class="fiscal-gasto-amt" data-gi="'+i+'" data-gfield="amount" type="number" min="0" step="1" value="'+(g.amount||0)+'">';
+  h+='<div class="fiscal-gasto-period">';
+  h+='<button class="fiscal-period-btn'+(g.period==='monthly'?' active':'')+'" data-gi="'+i+'" data-gfield="period" data-val="monthly">/mes</button>';
+  h+='<button class="fiscal-period-btn'+(g.period==='annual'?' active':'')+'" data-gi="'+i+'" data-gfield="period" data-val="annual">/a\u00f1o</button>';
+  h+='</div>';
+  if(!isFixed){h+='<button class="fiscal-gasto-del" data-gi="'+i+'">&#10005;</button>';}
+  else{h+='<span style="width:22px"></span>';}
+  h+='</div>';
+  return h;
+}
 function renderGastosList(){
-  var h='';
-  GASTOS_ITEMS.forEach(function(g,i){
-    if(g.id==='plan_pension')return; /* rendered in Ingresos desgravables */
-    var isFixed=DEFAULT_GASTOS.some(function(d){return d.id===g.id;});
-    h+='<div class="fiscal-gasto-item" data-gi="'+i+'">';
-    if(isFixed){
-      h+='<span class="fiscal-gasto-lbl">'+g.label+'</span>';
-    }else{
-      h+='<input class="fiscal-gasto-lbl-input" data-gi="'+i+'" data-gfield="label" value="'+escHtml(g.label)+'" placeholder="Nombre...">';
-    }
-    h+='<input class="fiscal-gasto-amt" data-gi="'+i+'" data-gfield="amount" type="number" min="0" step="1" value="'+(g.amount||0)+'">';
-    h+='<div class="fiscal-gasto-period">';
-    h+='<button class="fiscal-period-btn'+(g.period==='monthly'?' active':'')+'" data-gi="'+i+'" data-gfield="period" data-val="monthly">/mes</button>';
-    h+='<button class="fiscal-period-btn'+(g.period==='annual'?' active':'')+'" data-gi="'+i+'" data-gfield="period" data-val="annual">/a\u00f1o</button>';
-    h+='</div>';
-    if(!isFixed){h+='<button class="fiscal-gasto-del" data-gi="'+i+'">&#10005;</button>';}
-    else{h+='<span style="width:22px"></span>';}
-    h+='</div>';
+  var h='';var rendered={};
+  GASTOS_GROUPS.forEach(function(grp){
+    var gh='';
+    grp.ids.forEach(function(id){
+      for(var i=0;i<GASTOS_ITEMS.length;i++){
+        if(GASTOS_ITEMS[i].id===id){gh+=_renderGastoItem(GASTOS_ITEMS[i],i);rendered[i]=true;break;}
+      }
+    });
+    if(gh)h+='<div class="fiscal-gastos-group-hdr">'+grp.label+'</div>'+gh;
   });
+  var custom='';
+  GASTOS_ITEMS.forEach(function(g,i){
+    if(g.id==='plan_pension'||rendered[i])return;
+    custom+=_renderGastoItem(g,i);
+  });
+  if(custom)h+='<div class="fiscal-gastos-group-hdr">Personalizado</div>'+custom;
   return h;
 }
 
@@ -1519,6 +1555,27 @@ function _bindTabDesgrav(){
     DESGRAV_ITEMS.push({id:'desgrav_'+Date.now(),label:'Nueva desgravaci\u00f3n',amount:0,limit:null,enabled:true,type:'base'});
     reRenderFiscal();
   });
+  /* Links from despacho deductions → other tabs */
+  var despSection=document.querySelector('.fiscal-desgrav-despacho-section');
+  if(despSection&&!despSection._linkDel){
+    despSection._linkDel=true;
+    despSection.addEventListener('click',function(e){
+      var link=e.target.closest('.fiscal-desp-link');
+      if(link){
+        if(link.dataset.linkTab==='despacho-sub'){FISCAL_IRPF_SUB='despacho';reRenderFiscal();}
+        else if(link.dataset.linkTab==='despacho-tab'){FISCAL_TAB='despacho';reRenderFiscal();}
+        return;
+      }
+      var tgl=e.target.closest('[data-dedtgl]');
+      if(tgl){
+        var key=tgl.dataset.dedtgl;
+        if(!DESPACHO.deducciones)DESPACHO.deducciones={amortizacion:true,ibi:true,hipotecaInt:true,casa:true,suministros:true};
+        DESPACHO.deducciones[key]=DESPACHO.deducciones[key]===false?true:false;
+        saveDespacho();
+        reRenderFiscal();
+      }
+    });
+  }
 }
 
 function _bindTabDespachoOnly(){
