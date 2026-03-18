@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v121 \u2014 hipoteca Resumen/Detalle, m\u00faltiples subrogaciones, modo lectura/edici\u00f3n';
+var APP_VERSION = 'v122 \u2014 an\u00e1lisis hipoteca organizado, comparar hipotecas en Estudio, gr\u00e1ficas nuevas';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
