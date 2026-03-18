@@ -748,10 +748,28 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .hip-stat-val{font-family:var(--mono);font-size:.82rem;font-weight:700}
 .hip-stat-lbl{font-size:.6rem;color:var(--text-dim);text-align:center;margin-top:1px}
 .hip-grid-2col{display:grid!important;grid-template-columns:1fr 1fr;gap:10px!important;flex-direction:unset!important}
-.hip-section-total{font-size:.78rem;text-align:right;padding:6px 0;color:var(--accent-bright)}
+.hip-section-total{font-size:.78rem;text-align:right;padding:4px 0;color:var(--accent-bright)}
 .hip-auto-tag{font-size:.58rem;color:var(--accent-bright);background:var(--accent-glow);border-radius:3px;padding:1px 4px;vertical-align:middle}
-.hip-vinc-summary{font-size:.72rem;color:var(--text-dim);text-align:right;padding:6px 0;border-top:1px solid var(--border);margin-top:4px}
-.hip-sub-heading{font-size:.72rem;color:var(--text-muted);font-weight:600;margin:10px 0 4px;padding-top:6px;border-top:1px solid var(--border)}
+.hip-vinc-summary{font-size:.68rem;color:var(--text-dim);text-align:right;padding:4px 0;border-top:1px solid var(--border);margin-top:2px}
+.hip-sub-heading{font-size:.72rem;color:var(--text-muted);font-weight:600;margin:8px 0 2px;padding-top:6px;border-top:1px solid var(--border)}
+/* Hipoteca — compact 2-col grid */
+.hip-g2{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}
+.hip-cf{display:flex;flex-direction:column;gap:1px;min-width:0}
+.hip-cf-wide{grid-column:1/-1}
+.hip-cf-lbl{font-size:.68rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hip-cf-row{display:flex;align-items:center;gap:4px}
+.hip-cf-row .fiscal-despacho-input{min-width:0;padding:4px 6px;font-size:.8rem}
+.hip-cf .fiscal-despacho-money-fmt{font-size:.62rem;min-height:0;line-height:1}
+/* Hipoteca — compact vinculaciones */
+.hip-vr{display:flex;align-items:center;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border);gap:6px}
+.hip-vr-lbl{font-size:.72rem;color:var(--text-muted);flex-shrink:0;min-width:60px}
+.hip-vr-right{display:flex;align-items:center;gap:6px}
+.hip-vr-inp{font-family:var(--mono);font-size:.72rem;width:58px;padding:3px 4px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);color:var(--text);outline:none;text-align:right}
+.hip-vr-inp:focus{border-color:var(--accent)}
+.hip-vr-pct{width:48px}
+.hip-vr-head{display:flex;align-items:center;justify-content:flex-end;gap:6px;padding:0 0 2px;font-size:.58rem;color:var(--text-dim)}
+.hip-vr-head .hip-vr-h{width:58px;text-align:center}
+.hip-vr-head .hip-vr-h:last-of-type{width:48px}
 /* Multi-rate period cards */
 .econ-multi-rate-cards{display:flex;flex-direction:column;gap:8px;margin-top:8px}
 .econ-multi-rate-card{padding:10px 12px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border)}

@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v119 \u2014 fix cuota subrogaci\u00f3n efectiva, an\u00e1lisis hipoteca por a\u00f1o';
+var APP_VERSION = 'v120 \u2014 hipoteca compact redesign, vinculaciones tabla, menos scroll';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
