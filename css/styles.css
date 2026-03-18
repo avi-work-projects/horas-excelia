@@ -356,6 +356,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .econ-sub-tab.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
 .econ-sub-tab.est-hip{color:var(--text-dim)}
 .econ-sub-tab.est-hip.active{border-color:#c084fc;background:rgba(192,132,252,.1);color:#c084fc}
+/* Estudio Cambio — grouped nav */
+.est-nav{display:flex;gap:8px;padding:8px 10px;box-shadow:0 1px 0 var(--border)}
+.est-group{display:flex;flex-direction:column;gap:4px;flex:1}
+.est-group-label{font-size:.58rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;text-align:center;margin-bottom:2px}
+.est-group-hip .est-btn{border-color:rgba(192,132,252,.3);color:var(--text-dim)}
+.est-group-hip .est-btn.active{border-color:#c084fc;background:rgba(192,132,252,.1);color:#c084fc}
+.est-btn{font-size:.66rem;padding:6px 4px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;text-align:center;-webkit-user-select:none;user-select:none}
+.est-btn.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
 /* Análisis hipoteca — secciones organizadas */
 .ah-section{padding:10px 0;border-bottom:1px solid var(--border)}
 .ah-section:last-child{border-bottom:none}
