@@ -1232,12 +1232,19 @@ function bindEconAnalisisEvents(){
 }
 /* ── Estudio Cambio (sub-tabs) ─────────────────────────────── */
 function renderEconEstudio(){
-  var h='<div class="econ-sub-tabs" style="flex-wrap:wrap">';
-  h+='<button class="econ-sub-tab'+(ECON_ESTUDIO_SUB==='comparador'?' active':'')+'" id="ecSubComp">Comparar<br>Escenarios</button>';
-  h+='<button class="econ-sub-tab'+(ECON_ESTUDIO_SUB==='simulador'?' active':'')+'" id="ecSubSim">Calcular<br>Tarifa</button>';
-  h+='<button class="econ-sub-tab est-hip'+(ECON_ESTUDIO_SUB==='hipoteca'?' active':'')+'" id="ecSubHip">Comparar<br>Hipotecas</button>';
-  h+='<button class="econ-sub-tab est-hip'+(ECON_ESTUDIO_SUB==='gas'?' active':'')+'" id="ecSubGas">Comparar<br>Gas</button>';
-  h+='<button class="econ-sub-tab est-hip'+(ECON_ESTUDIO_SUB==='elect'?' active':'')+'" id="ecSubElect">Comparar<br>Elect.</button>';
+  var h='<div class="est-nav">';
+  /* Group 1: Autónomo */
+  h+='<div class="est-group">';
+  h+='<div class="est-group-label">Aut\u00f3nomo</div>';
+  h+='<button class="est-btn'+(ECON_ESTUDIO_SUB==='comparador'?' active':'')+'" id="ecSubComp">Comparar Escenarios</button>';
+  h+='<button class="est-btn'+(ECON_ESTUDIO_SUB==='simulador'?' active':'')+'" id="ecSubSim">Calcular Tarifa</button>';
+  h+='</div>';
+  /* Group 2: Facturas/Hipoteca */
+  h+='<div class="est-group est-group-hip">';
+  h+='<button class="est-btn est-hip'+(ECON_ESTUDIO_SUB==='hipoteca'?' active':'')+'" id="ecSubHip">Comparar Hipotecas</button>';
+  h+='<button class="est-btn est-hip'+(ECON_ESTUDIO_SUB==='gas'?' active':'')+'" id="ecSubGas">Comparar Gas</button>';
+  h+='<button class="est-btn est-hip'+(ECON_ESTUDIO_SUB==='elect'?' active':'')+'" id="ecSubElect">Comparar Electricidad</button>';
+  h+='</div>';
   h+='</div>';
   if(ECON_ESTUDIO_SUB==='comparador'){h+=typeof renderEconComp==='function'?renderEconComp():'';}
   else if(ECON_ESTUDIO_SUB==='simulador'){h+=typeof renderEconSim==='function'?renderEconSim():'';}
