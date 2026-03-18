@@ -640,79 +640,140 @@ function _renderAnalisisGastos(){
   return h;
 }
 
+/* Helper: month name in Spanish (1-based) */
+function _monthName(m){
+  var names=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  return names[(m-1+12)%12]||'';
+}
+/* Helper: compute effective rate for a mortgage considering vinculaciones */
+function _hipTipoEfectivo(tipoNominal,vinc){
+  var r=tipoNominal;
+  if(vinc){['nomina','segHogar','segSalud','segVida'].forEach(function(k){if(vinc[k]&&vinc[k].enabled)r-=(vinc[k].reduccion||0);});}
+  return Math.max(0,r);
+}
+/* Helper: mortgage info box for analysis (shows cuota + details) */
+function _analisisMortgageBox(title,importe,tipoNominal,tipoEfectivo,plazo,banco){
+  var rEf=tipoEfectivo/100/12,n=plazo*12;
+  var cuota=rEf>0?importe*rEf*Math.pow(1+rEf,n)/(Math.pow(1+rEf,n)-1):importe/n;
+  cuota=Math.round(cuota*100)/100;
+  var total=Math.round(cuota*n*100)/100;
+  var intereses=Math.round((total-importe)*100)/100;
+  var h='<div class="analisis-mortgage-current" style="margin-bottom:8px">';
+  h+='<div class="analisis-mortgage-label">'+title+(banco?' ('+escHtml(banco)+')':'')+'</div>';
+  h+='<div class="analisis-mortgage-vals">';
+  h+='<span>Cuota: <b>'+fcPlain(cuota)+'</b>/mes</span>';
+  h+='<span>Total: <b>'+fcPlain(Math.round(total))+'</b></span>';
+  h+='<span>Intereses: <b style="color:var(--c-orange)">'+fcPlain(Math.round(intereses))+'</b></span>';
+  h+='</div>';
+  if(tipoNominal!==tipoEfectivo){
+    h+='<div style="font-size:.68rem;color:var(--text-dim);margin-top:2px">Tipo: '+tipoNominal.toFixed(2)+'% \u2192 efectivo <b style="color:var(--c-green)">'+tipoEfectivo.toFixed(2)+'%</b></div>';
+  } else {
+    h+='<div style="font-size:.68rem;color:var(--text-dim);margin-top:2px">Tipo: '+tipoNominal.toFixed(2)+'% fijo, '+plazo+' a\u00f1os</div>';
+  }
+  h+='</div>';
+  return h;
+}
+
 function _renderAnalisisHipoteca(){
   var h='';
-  /* D. Hipoteca — Comparativa tipo fijo */
   var comp=DESPACHO&&DESPACHO.compra?DESPACHO.compra:null;
-  if(comp&&comp.importePrestamo>0&&comp.tipoInteres>0&&comp.plazoAnios>0){
-    var r1=comp.tipoInteres/100/12;
-    var n=comp.plazoAnios*12;
-    var cuota1=comp.importePrestamo*r1*Math.pow(1+r1,n)/(Math.pow(1+r1,n)-1);
-    var total1=cuota1*n;
-    var intereses1=total1-comp.importePrestamo;
-
-    h+='<div class="sy-section">';
-    h+='<div class="sy-section-title">Hipoteca \u2014 Comparativa tipo fijo</div>';
-
-    /* Current mortgage info */
-    h+='<div class="analisis-mortgage-current">';
-    h+='<div class="analisis-mortgage-label">Hipoteca actual ('+comp.tipoInteres.toFixed(2)+'% fijo)</div>';
-    h+='<div class="analisis-mortgage-vals">';
-    h+='<span>Cuota: <b>'+fcPlain(Math.round(cuota1*100)/100)+'</b>/mes</span>';
-    h+='<span>Total: <b>'+fcPlain(Math.round(total1))+'</b></span>';
-    h+='<span>Intereses: <b style="color:var(--c-orange)">'+fcPlain(Math.round(intereses1))+'</b></span>';
-    h+='</div></div>';
-
-    /* Alternative rate input */
-    h+='<div class="analisis-mortgage-alt">';
-    h+='<div class="analisis-mortgage-label">Comparar con otro tipo fijo</div>';
-    h+='<div class="analisis-mortgage-inputs">';
-    h+='<div class="analisis-input-group"><label>Tipo alternativo %</label>';
-    h+='<input class="analisis-input" id="analisisAltRate" type="number" min="0" step="0.1" value="'+ANALISIS_ALT_RATE+'"></div>';
-    h+='<div class="analisis-input-group"><label>Coste cambio banco \u20ac</label>';
-    h+='<input class="analisis-input" id="analisisSwitchCost" type="number" min="0" step="100" value="'+ANALISIS_SWITCH_COST+'"></div>';
-    h+='</div>';
-    h+='<button class="econ-calc-btn" id="analisisCalcHip" style="margin-top:6px">Calcular</button>';
-
-    /* Calculate alternative */
-    if(ANALISIS_CALC_HIP&&ANALISIS_ALT_RATE>0){
-      var r2=ANALISIS_ALT_RATE/100/12;
-      var cuota2=comp.importePrestamo*r2*Math.pow(1+r2,n)/(Math.pow(1+r2,n)-1);
-      var total2=cuota2*n+ANALISIS_SWITCH_COST;
-      var intereses2=cuota2*n-comp.importePrestamo;
-      var ahorro=total1-total2;
-      var ahorroMes=Math.round((cuota1-cuota2)*100)/100;
-
-      h+='<div class="analisis-mortgage-result">';
-      h+='<div class="analisis-mortgage-vals">';
-      h+='<span>Cuota: <b>'+fcPlain(Math.round(cuota2*100)/100)+'</b>/mes</span>';
-      h+='<span>Total: <b>'+fcPlain(Math.round(total2))+'</b></span>';
-      h+='<span>Intereses: <b style="color:var(--c-orange)">'+fcPlain(Math.round(intereses2))+'</b></span>';
-      h+='</div>';
-      h+='<div class="analisis-mortgage-ahorro '+(ahorro>=0?'pos':'neg')+'">';
-      h+=(ahorro>=0?'Ahorras: <b>'+fcPlain(Math.round(ahorro))+'</b>':'Pagas m\u00e1s: <b>'+fcPlain(Math.round(-ahorro))+'</b>');
-      h+=' ('+fcPlain(Math.abs(ahorroMes))+'/mes)';
-      h+='</div>';
-
-      /* Break-even */
-      if(ANALISIS_SWITCH_COST>0&&ahorroMes>0){
-        var breakEven=Math.ceil(ANALISIS_SWITCH_COST/ahorroMes);
-        h+='<div style="font-size:.72rem;color:var(--text-dim)">Break-even en <b>'+breakEven+' meses</b> ('+Math.round(breakEven/12*10)/10+' a\u00f1os)</div>';
-      }
-      h+='</div>';
-
-      /* SVG chart: accumulated payments */
-      h+=_mortgageComparisonChart(cuota1,cuota2,n,ANALISIS_SWITCH_COST,comp.tipoInteres,ANALISIS_ALT_RATE);
-    }
-    h+='</div></div>';
-  } else {
+  if(!comp||!comp.importePrestamo||!comp.tipoInteres||!comp.plazoAnios){
     h+='<div class="sy-section" style="text-align:center;padding:30px 20px;color:var(--text-dim)">';
-    h+='<div style="font-size:.75rem">Configura los datos de hipoteca en <b>\u2699 Configuraci\u00f3n Fiscal \u2192 Despacho e Hipoteca</b> para ver la comparativa.</div>';
+    h+='<div style="font-size:.75rem">Configura los datos de hipoteca en <b>\u2699 Configuraci\u00f3n Fiscal \u2192 Hipoteca</b> para ver el an\u00e1lisis.</div>';
     h+='</div>';
+    return h;
   }
 
+  /* Determine which mortgage applies to ECON_YEAR */
+  var sub=comp.subrogacion;
+  var subYear=null,subMonth=null;
+  if(sub&&sub.fecha&&sub.nuevoImporte>0&&sub.nuevoTipoInteres>0&&sub.nuevoPlazoAnios>0){
+    var sp=sub.fecha.split('-');
+    subYear=parseInt(sp[0],10);
+    subMonth=parseInt(sp[1],10);
+  }
+
+  /* yearMode: 'original' | 'subrogated' | 'mixed' */
+  var yearMode='original';
+  if(subYear!==null){
+    if(ECON_YEAR>subYear||(ECON_YEAR===subYear&&subMonth===1)){yearMode='subrogated';}
+    else if(ECON_YEAR===subYear){yearMode='mixed';}
+  }
+
+  /* Effective rates */
+  var tipoEfOrig=_hipTipoEfectivo(comp.tipoInteres,comp.vinculaciones);
+  var tipoEfSub=sub?_hipTipoEfectivo(sub.nuevoTipoInteres,sub.vinculaciones):0;
+
+  /* ── Hipoteca vigente en ECON_YEAR ── */
+  h+='<div class="sy-section">';
+  h+='<div class="sy-section-title">Hipoteca en '+ECON_YEAR+'</div>';
+
+  if(yearMode==='original'){
+    h+=_analisisMortgageBox('Hipoteca original',comp.importePrestamo,comp.tipoInteres,tipoEfOrig,comp.plazoAnios,comp.entidadBanco);
+  } else if(yearMode==='subrogated'){
+    h+=_analisisMortgageBox('Hipoteca subrogada',sub.nuevoImporte,sub.nuevoTipoInteres,tipoEfSub,sub.nuevoPlazoAnios,sub.entidadBanco);
+  } else { /* mixed */
+    var mesesA=subMonth-1;
+    var mesesB=12-mesesA;
+    h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:6px">Subrogaci\u00f3n en '+_monthName(subMonth)+' '+subYear+': dos per\u00edodos en este a\u00f1o.</div>';
+    h+='<div style="font-size:.7rem;color:var(--accent-bright);font-weight:600;margin-bottom:4px">Ene\u2013'+_monthName(subMonth-1)+' ('+mesesA+' meses) \u2014 Hipoteca original</div>';
+    h+=_analisisMortgageBox(comp.entidadBanco||'Original',comp.importePrestamo,comp.tipoInteres,tipoEfOrig,comp.plazoAnios,null);
+    h+='<div style="font-size:.7rem;color:var(--c-green);font-weight:600;margin:6px 0 4px">'+_monthName(subMonth)+'\u2013Dic ('+mesesB+' meses) \u2014 Hipoteca subrogada</div>';
+    h+=_analisisMortgageBox(sub.entidadBanco||'Subrogada',sub.nuevoImporte,sub.nuevoTipoInteres,tipoEfSub,sub.nuevoPlazoAnios,null);
+  }
+  h+='</div>';
+
+  /* ── Comparativa tipo fijo (using current active mortgage) ── */
+  var actImporte,actTipo,actTipoEf,actPlazo;
+  if(yearMode==='subrogated'||yearMode==='mixed'){
+    actImporte=sub.nuevoImporte;actTipo=sub.nuevoTipoInteres;actTipoEf=tipoEfSub;actPlazo=sub.nuevoPlazoAnios;
+  } else {
+    actImporte=comp.importePrestamo;actTipo=comp.tipoInteres;actTipoEf=tipoEfOrig;actPlazo=comp.plazoAnios;
+  }
+  var rAct=actTipoEf/100/12,nAct=actPlazo*12;
+  var cuotaAct=rAct>0?actImporte*rAct*Math.pow(1+rAct,nAct)/(Math.pow(1+rAct,nAct)-1):actImporte/nAct;
+  var totalAct=cuotaAct*nAct;
+
+  h+='<div class="sy-section">';
+  h+='<div class="sy-section-title">Comparativa tipo fijo</div>';
+  h+='<div class="analisis-mortgage-alt">';
+  h+='<div class="analisis-mortgage-inputs">';
+  h+='<div class="analisis-input-group"><label>Tipo alternativo %</label>';
+  h+='<input class="analisis-input" id="analisisAltRate" type="number" min="0" step="0.1" value="'+ANALISIS_ALT_RATE+'"></div>';
+  h+='<div class="analisis-input-group"><label>Coste cambio banco \u20ac</label>';
+  h+='<input class="analisis-input" id="analisisSwitchCost" type="number" min="0" step="100" value="'+ANALISIS_SWITCH_COST+'"></div>';
+  h+='</div>';
+  h+='<button class="econ-calc-btn" id="analisisCalcHip" style="margin-top:6px">Calcular</button>';
+
+  if(ANALISIS_CALC_HIP&&ANALISIS_ALT_RATE>0){
+    var rAlt=ANALISIS_ALT_RATE/100/12;
+    var cuotaAlt=actImporte*rAlt*Math.pow(1+rAlt,nAct)/(Math.pow(1+rAlt,nAct)-1);
+    var totalAlt=cuotaAlt*nAct+ANALISIS_SWITCH_COST;
+    var interesesAlt=cuotaAlt*nAct-actImporte;
+    var ahorro=totalAct-totalAlt;
+    var ahorroMes=Math.round((cuotaAct-cuotaAlt)*100)/100;
+
+    h+='<div class="analisis-mortgage-result">';
+    h+='<div class="analisis-mortgage-vals">';
+    h+='<span>Cuota: <b>'+fcPlain(Math.round(cuotaAlt*100)/100)+'</b>/mes</span>';
+    h+='<span>Total: <b>'+fcPlain(Math.round(totalAlt))+'</b></span>';
+    h+='<span>Intereses: <b style="color:var(--c-orange)">'+fcPlain(Math.round(interesesAlt))+'</b></span>';
+    h+='</div>';
+    h+='<div class="analisis-mortgage-ahorro '+(ahorro>=0?'pos':'neg')+'">';
+    h+=(ahorro>=0?'Ahorras: <b>'+fcPlain(Math.round(ahorro))+'</b>':'Pagas m\u00e1s: <b>'+fcPlain(Math.round(-ahorro))+'</b>');
+    h+=' ('+fcPlain(Math.abs(ahorroMes))+'/mes)';
+    h+='</div>';
+    if(ANALISIS_SWITCH_COST>0&&ahorroMes>0){
+      var breakEven=Math.ceil(ANALISIS_SWITCH_COST/ahorroMes);
+      h+='<div style="font-size:.72rem;color:var(--text-dim)">Break-even en <b>'+breakEven+' meses</b> ('+Math.round(breakEven/12*10)/10+' a\u00f1os)</div>';
+    }
+    h+='</div>';
+    h+=_mortgageComparisonChart(cuotaAct,cuotaAlt,nAct,ANALISIS_SWITCH_COST,actTipoEf,ANALISIS_ALT_RATE);
+  }
+  h+='</div></div>';
+
   /* Análisis subrogación */
-  if(comp&&comp.subrogacion){
+  if(comp.subrogacion){
     h+=_renderSubrogacionAnalysis(comp);
   }
 

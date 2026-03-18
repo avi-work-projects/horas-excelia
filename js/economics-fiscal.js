@@ -1147,7 +1147,12 @@ function renderFiscalTabDespacho(){
     h+=_despField('subNuevoPlazo','Plazo',sd.nuevoPlazoAnios,'a\u00f1os');
     h+='</div>';
     if(sd.nuevoImporte>0&&sd.nuevoTipoInteres>0&&sd.nuevoPlazoAnios>0){
-      var rn=sd.nuevoTipoInteres/100/12;
+      /* Calcular tipo efectivo con vinculaciones del nuevo préstamo */
+      var _sv2=sd.vinculaciones||{};
+      var tipoEfN=sd.nuevoTipoInteres;
+      ['nomina','segVida','segSalud','segHogar'].forEach(function(k){if(_sv2[k]&&_sv2[k].enabled)tipoEfN-=(_sv2[k].reduccion||0);});
+      if(tipoEfN<0)tipoEfN=0;
+      var rn=tipoEfN/100/12;
       var nn=sd.nuevoPlazoAnios*12;
       var cuotaN=Math.round(sd.nuevoImporte*rn*Math.pow(1+rn,nn)/(Math.pow(1+rn,nn)-1)*100)/100;
       var totalN=Math.round(cuotaN*nn*100)/100;
@@ -1156,6 +1161,7 @@ function renderFiscalTabDespacho(){
       h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--text-muted)">'+fcPlain(cuotaN)+'</span><span class="hip-stat-lbl">Nueva cuota</span></div>';
       h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--text-muted)">'+_fmtMiles(totalN)+' \u20ac</span><span class="hip-stat-lbl">Total</span></div>';
       h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-orange)">'+_fmtMiles(intN)+' \u20ac</span><span class="hip-stat-lbl">Intereses</span></div>';
+      if(tipoEfN!==sd.nuevoTipoInteres)h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-green)">'+tipoEfN.toFixed(2)+'%</span><span class="hip-stat-lbl">Tipo efectivo</span></div>';
       h+='</div>';
     }
     /* Banco + vinculaciones subrogadas */
