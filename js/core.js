@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v123 \u2014 mis gastos reorganizado, presupuesto tabla, donut distribuci\u00f3n, ratios';
+var APP_VERSION = 'v124 \u2014 hipoteca y facturas, detalle gas/elect, comparadores, seguros normales';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
