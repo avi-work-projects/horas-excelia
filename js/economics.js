@@ -684,25 +684,30 @@ function _renderAnalisisHipoteca(){
     return h;
   }
 
-  /* Determine which mortgage applies to ECON_YEAR */
-  var sub=comp.subrogacion;
-  var subYear=null,subMonth=null;
-  if(sub&&sub.fecha&&sub.nuevoImporte>0&&sub.nuevoTipoInteres>0&&sub.nuevoPlazoAnios>0){
-    var sp=sub.fecha.split('-');
-    subYear=parseInt(sp[0],10);
-    subMonth=parseInt(sp[1],10);
+  /* Determine which mortgage applies to ECON_YEAR — support subrogaciones array */
+  var subs=comp.subrogaciones||[];
+  /* compat: old single subrogacion */
+  if(!subs.length&&comp.subrogacion)subs=[comp.subrogacion];
+  /* Find the last subrogation that started <= ECON_YEAR */
+  var activeSub=null,activeSubYear=null,activeSubMonth=null;
+  for(var si=subs.length-1;si>=0;si--){
+    var _s=subs[si];
+    if(_s&&_s.fecha&&_s.nuevoImporte>0&&_s.nuevoTipoInteres>0&&_s.nuevoPlazoAnios>0){
+      var _sp=_s.fecha.split('-');
+      var _sY=parseInt(_sp[0],10),_sM=parseInt(_sp[1],10);
+      if(_sY<ECON_YEAR||(_sY===ECON_YEAR&&_sM===1)){activeSub=_s;activeSubYear=_sY;activeSubMonth=_sM;break;}
+      if(_sY===ECON_YEAR){activeSub=_s;activeSubYear=_sY;activeSubMonth=_sM;break;}
+    }
   }
-
-  /* yearMode: 'original' | 'subrogated' | 'mixed' */
   var yearMode='original';
-  if(subYear!==null){
-    if(ECON_YEAR>subYear||(ECON_YEAR===subYear&&subMonth===1)){yearMode='subrogated';}
-    else if(ECON_YEAR===subYear){yearMode='mixed';}
+  if(activeSub){
+    if(ECON_YEAR>activeSubYear||(ECON_YEAR===activeSubYear&&activeSubMonth===1)){yearMode='subrogated';}
+    else if(ECON_YEAR===activeSubYear){yearMode='mixed';}
   }
 
   /* Effective rates */
-  var tipoEfOrig=_hipTipoEfectivo(comp.tipoInteres,comp.vinculaciones);
-  var tipoEfSub=sub?_hipTipoEfectivo(sub.nuevoTipoInteres,sub.vinculaciones):0;
+  var tipoEfOrig=typeof _hipEffRate==='function'?_hipEffRate(comp.tipoInteres,comp.vinculaciones):comp.tipoInteres;
+  var tipoEfSub=activeSub?(typeof _hipEffRate==='function'?_hipEffRate(activeSub.nuevoTipoInteres,activeSub.vinculaciones):activeSub.nuevoTipoInteres):0;
 
   /* ── Hipoteca vigente en ECON_YEAR ── */
   h+='<div class="sy-section">';
@@ -711,22 +716,22 @@ function _renderAnalisisHipoteca(){
   if(yearMode==='original'){
     h+=_analisisMortgageBox('Hipoteca original',comp.importePrestamo,comp.tipoInteres,tipoEfOrig,comp.plazoAnios,comp.entidadBanco);
   } else if(yearMode==='subrogated'){
-    h+=_analisisMortgageBox('Hipoteca subrogada',sub.nuevoImporte,sub.nuevoTipoInteres,tipoEfSub,sub.nuevoPlazoAnios,sub.entidadBanco);
+    h+=_analisisMortgageBox('Hipoteca subrogada',activeSub.nuevoImporte,activeSub.nuevoTipoInteres,tipoEfSub,activeSub.nuevoPlazoAnios,activeSub.entidadBanco);
   } else { /* mixed */
-    var mesesA=subMonth-1;
+    var mesesA=activeSubMonth-1;
     var mesesB=12-mesesA;
-    h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:6px">Subrogaci\u00f3n en '+_monthName(subMonth)+' '+subYear+': dos per\u00edodos en este a\u00f1o.</div>';
-    h+='<div style="font-size:.7rem;color:var(--accent-bright);font-weight:600;margin-bottom:4px">Ene\u2013'+_monthName(subMonth-1)+' ('+mesesA+' meses) \u2014 Hipoteca original</div>';
+    h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:6px">Subrogaci\u00f3n en '+_monthName(activeSubMonth)+' '+activeSubYear+': dos per\u00edodos.</div>';
+    h+='<div style="font-size:.7rem;color:var(--accent-bright);font-weight:600;margin-bottom:4px">Ene\u2013'+_monthName(activeSubMonth-1)+' ('+mesesA+' meses)</div>';
     h+=_analisisMortgageBox(comp.entidadBanco||'Original',comp.importePrestamo,comp.tipoInteres,tipoEfOrig,comp.plazoAnios,null);
-    h+='<div style="font-size:.7rem;color:var(--c-green);font-weight:600;margin:6px 0 4px">'+_monthName(subMonth)+'\u2013Dic ('+mesesB+' meses) \u2014 Hipoteca subrogada</div>';
-    h+=_analisisMortgageBox(sub.entidadBanco||'Subrogada',sub.nuevoImporte,sub.nuevoTipoInteres,tipoEfSub,sub.nuevoPlazoAnios,null);
+    h+='<div style="font-size:.7rem;color:var(--c-green);font-weight:600;margin:6px 0 4px">'+_monthName(activeSubMonth)+'\u2013Dic ('+mesesB+' meses)</div>';
+    h+=_analisisMortgageBox(activeSub.entidadBanco||'Subrogada',activeSub.nuevoImporte,activeSub.nuevoTipoInteres,tipoEfSub,activeSub.nuevoPlazoAnios,null);
   }
   h+='</div>';
 
   /* ── Comparativa tipo fijo (using current active mortgage) ── */
   var actImporte,actTipo,actTipoEf,actPlazo;
-  if(yearMode==='subrogated'||yearMode==='mixed'){
-    actImporte=sub.nuevoImporte;actTipo=sub.nuevoTipoInteres;actTipoEf=tipoEfSub;actPlazo=sub.nuevoPlazoAnios;
+  if(activeSub&&(yearMode==='subrogated'||yearMode==='mixed')){
+    actImporte=activeSub.nuevoImporte;actTipo=activeSub.nuevoTipoInteres;actTipoEf=tipoEfSub;actPlazo=activeSub.nuevoPlazoAnios;
   } else {
     actImporte=comp.importePrestamo;actTipo=comp.tipoInteres;actTipoEf=tipoEfOrig;actPlazo=comp.plazoAnios;
   }
@@ -772,9 +777,10 @@ function _renderAnalisisHipoteca(){
   }
   h+='</div></div>';
 
-  /* Análisis subrogación */
-  if(comp.subrogacion){
-    h+=_renderSubrogacionAnalysis(comp);
+  /* Análisis subrogación (last subrogation) */
+  var _lastSub=subs.length>0?subs[subs.length-1]:null;
+  if(_lastSub){
+    h+=_renderSubrogacionAnalysis(comp,_lastSub);
   }
 
   /* Análisis sobrecoste seguros vinculados */
@@ -783,8 +789,8 @@ function _renderAnalisisHipoteca(){
   return h;
 }
 
-function _renderSubrogacionAnalysis(comp){
-  var sub=comp.subrogacion;
+function _renderSubrogacionAnalysis(comp,sub){
+  if(!sub)sub=(comp.subrogaciones||[])[0]||comp.subrogacion;
   if(!sub||!sub.fecha||!sub.nuevoImporte||!sub.nuevoTipoInteres||!sub.nuevoPlazoAnios)return '';
   if(!comp.fechaInicio||!comp.importePrestamo||!comp.tipoInteres||!comp.plazoAnios)return '';
   var h='';

@@ -770,6 +770,34 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .hip-vr-head{display:flex;align-items:center;justify-content:flex-end;gap:6px;padding:0 0 2px;font-size:.58rem;color:var(--text-dim)}
 .hip-vr-head .hip-vr-h{width:58px;text-align:center}
 .hip-vr-head .hip-vr-h:last-of-type{width:48px}
+/* Hipoteca — read-only fields */
+.hip-ro-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0;font-size:.74rem}
+.hip-ro-lbl{color:var(--text-dim)}
+.hip-ro-val{color:var(--text);font-family:var(--mono);font-weight:500}
+.hip-ro-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 12px}
+.hip-ro-vinc{display:flex;align-items:center;justify-content:space-between;padding:2px 0;font-size:.7rem}
+.hip-ro-vinc-lbl{color:var(--text-dim)}
+.hip-ro-vinc-vals{display:flex;gap:8px;color:var(--text-muted);font-family:var(--mono);font-size:.68rem}
+.hip-ro-vinc-off{color:var(--text-dim);font-size:.62rem;font-style:italic}
+/* Hipoteca — edit/detail buttons */
+.hip-edit-btn{font-size:.66rem;padding:3px 10px;border-radius:6px;border:1px solid var(--c-orange);background:transparent;color:var(--c-orange);cursor:pointer;transition:all .12s}
+.hip-edit-btn:active{background:var(--c-orange);color:#000}
+.hip-edit-actions{display:flex;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.hip-save-btn{flex:1;padding:8px;border-radius:6px;border:none;background:var(--c-green);color:#000;font-weight:600;font-size:.76rem;cursor:pointer}
+.hip-cancel-btn{flex:1;padding:8px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:.76rem;cursor:pointer}
+/* Hipoteca — period summary card */
+.hip-period-card{background:var(--surface2);border-radius:10px;padding:10px 12px;margin-bottom:8px;border:1px solid var(--border)}
+.hip-period-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.hip-period-title{font-size:.76rem;font-weight:600;color:var(--accent-bright)}
+.hip-period-badge{font-size:.58rem;padding:2px 6px;border-radius:4px;border:1px solid var(--border);color:var(--text-dim)}
+.hip-period-badge.active{border-color:var(--c-green);color:var(--c-green);background:rgba(52,211,153,.08)}
+.hip-period-cuota{display:flex;align-items:baseline;gap:4px;margin-bottom:4px}
+.hip-period-cuota-val{font-family:var(--mono);font-size:1.1rem;font-weight:700;color:var(--text)}
+.hip-period-cuota-lbl{font-size:.68rem;color:var(--text-dim)}
+.hip-period-info{font-size:.66rem;color:var(--text-dim)}
+.hip-period-btn{font-size:.66rem;padding:4px 10px;border-radius:5px;border:1px solid var(--accent);background:var(--accent-glow);color:var(--accent-bright);cursor:pointer;margin-top:6px}
+.hip-section-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.hip-add-sub-btn{display:block;width:100%;padding:10px;border-radius:8px;border:1px dashed var(--accent);background:var(--accent-glow);color:var(--accent-bright);font-size:.74rem;cursor:pointer;text-align:center;margin-top:8px}
 /* Multi-rate period cards */
 .econ-multi-rate-cards{display:flex;flex-direction:column;gap:8px;margin-top:8px}
 .econ-multi-rate-card{padding:10px 12px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border)}
