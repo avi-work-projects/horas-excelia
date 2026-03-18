@@ -1056,139 +1056,153 @@ function _hipResumenCard(comp){
   h+='</div>';
   return h;
 }
+/* Compact money field: label + input on same row, no extra format line */
+function _hipMoney(id,label,val){
+  return '<div class="hip-cf"><label class="hip-cf-lbl">'+label+'</label>'
+    +'<div class="hip-cf-row"><input class="fiscal-despacho-input" id="desp-'+id+'" type="number" min="0" step="1000" value="'+(val||0)+'"><span class="fiscal-despacho-unit">\u20ac</span></div>'
+    +'<div class="fiscal-despacho-money-fmt" id="desp-fmt-'+id+'">'+(val&&val>0?_fmtMiles(val)+' \u20ac':'')+'</div></div>';
+}
+function _hipNum(id,label,val,unit){
+  var step=unit==='%'?'0.05':'1';
+  return '<div class="hip-cf"><label class="hip-cf-lbl">'+label+'</label>'
+    +'<div class="hip-cf-row"><input class="fiscal-despacho-input" id="desp-'+id+'" type="number" min="0" step="'+step+'" value="'+(val||0)+'"><span class="fiscal-despacho-unit">'+unit+'</span></div></div>';
+}
+function _hipDate(id,label,val){
+  return '<div class="hip-cf"><label class="hip-cf-lbl">'+label+'</label>'
+    +'<div class="hip-cf-row"><input class="fiscal-despacho-input" id="desp-'+id+'" type="date" value="'+(val||'')+'"></div></div>';
+}
+function _hipText(id,label,val,ph){
+  return '<div class="hip-cf hip-cf-wide"><label class="hip-cf-lbl">'+label+'</label>'
+    +'<input class="fiscal-despacho-input" id="desp-'+id+'" type="text" value="'+escHtml(val||'')+'" placeholder="'+(ph||'')+'" style="text-align:left"></div>';
+}
+/* Compact vinculación: single row with toggle + inline inputs */
+function _hipVinc(id,label,data){
+  if(!data)data={enabled:false,costeAnual:0,reduccion:0};
+  var isNom=id.indexOf('Nomina')!==-1;
+  var h='<div class="hip-vr">';
+  h+='<span class="hip-vr-lbl">'+label+'</span>';
+  h+='<div class="hip-vr-right">';
+  if(data.enabled){
+    if(!isNom)h+='<input class="hip-vr-inp" id="'+id+'Coste" type="number" min="0" step="10" value="'+(data.costeAnual||0)+'" title="\u20ac/a\u00f1o">';
+    h+='<input class="hip-vr-inp hip-vr-pct" id="'+id+'Reduccion" type="number" min="0" step="0.05" value="'+(data.reduccion||0)+'" title="\u2212 tipo %">';
+  }
+  h+='<div class="fiscal-onoff'+(data.enabled?' on':'')+'" id="'+id+'Toggle">'+(data.enabled?'ON':'OFF')+'</div>';
+  h+='</div></div>';
+  return h;
+}
+/* Vinculaciones summary */
+function _hipVincSum(vinc,tipoBase){
+  var total=0,reduc=0;
+  ['nomina','segHogar','segSalud','segVida'].forEach(function(k){if(vinc[k]&&vinc[k].enabled){total+=vinc[k].costeAnual||0;reduc+=vinc[k].reduccion||0;}});
+  if(!total&&!reduc)return '';
+  var h='<div class="hip-vinc-summary">';
+  if(total>0)h+='Coste: <b style="color:var(--c-orange)">'+fcPlain(total)+'</b>/a';
+  if(reduc>0){
+    h+=(total>0?' \u00b7 ':'')+'<b style="color:var(--c-green)">\u2212'+reduc.toFixed(2)+'%</b>';
+    if(tipoBase>0)h+=' \u2192 <b style="color:var(--c-green)">'+Math.max(0,tipoBase-reduc).toFixed(2)+'%</b>';
+  }
+  h+='</div>';
+  return h;
+}
+
 function renderFiscalTabDespacho(){
   var comp=DESPACHO.compra||_defaultCompra();
   var h='';
   /* Tarjeta resumen visual */
   h+=_hipResumenCard(comp);
-  /* Sección compra de vivienda */
+
+  /* ── Compra de vivienda ── */
   h+='<div class="fiscal-section">';
   h+='<div class="fiscal-section-title">\uD83C\uDFE0 Compra de vivienda</div>';
-  h+='<div class="fiscal-despacho-grid hip-grid-2col">';
-  h+=_despFieldMoney('compraValor','Valor escritura',comp.valorCompraTotal);
-  h+=_despFieldMoney('compraItp','ITP Madrid (6%) <span class="hip-auto-tag">auto</span>',comp.itpMadrid);
-  h+=_despFieldMoney('compraNotaria','Notar\u00eda y registro',comp.notariaRegistro);
-  h+=_despFieldMoney('compraTasacion','Tasaci\u00f3n',comp.tasacion);
-  h+=_despFieldMoney('compraReformas','Reformas',comp.reformas);
-  h+=_despFieldMoney('compraInmobiliaria','Inmobiliaria',comp.inmobiliaria||0);
+  h+='<div class="hip-g2">';
+  h+=_hipMoney('compraValor','Valor escritura',comp.valorCompraTotal);
+  h+=_hipMoney('compraItp','ITP Madrid (6%)',comp.itpMadrid);
+  h+=_hipMoney('compraNotaria','Notar\u00eda y registro',comp.notariaRegistro);
+  h+=_hipMoney('compraTasacion','Tasaci\u00f3n',comp.tasacion);
+  h+=_hipMoney('compraReformas','Reformas',comp.reformas);
+  h+=_hipMoney('compraInmobiliaria','Inmobiliaria',comp.inmobiliaria||0);
   h+='</div>';
   var totalCompra=(comp.valorCompraTotal||0)+(comp.itpMadrid||0)+(comp.notariaRegistro||0)+(comp.tasacion||0)+(comp.reformas||0)+(comp.inmobiliaria||0);
-  if(totalCompra>0){
-    h+='<div class="hip-section-total">Inversi\u00f3n total: <b>'+_fmtMiles(totalCompra)+' \u20ac</b></div>';
-  }
+  if(totalCompra>0)h+='<div class="hip-section-total">Inversi\u00f3n total: <b>'+_fmtMiles(totalCompra)+' \u20ac</b></div>';
   h+='</div>';
-  /* Sección préstamo */
+
+  /* ── Préstamo original ── */
   h+='<div class="fiscal-section">';
-  h+='<div class="fiscal-section-title">\uD83C\uDFE6 Pr\u00e9stamo original</div>';
-  h+='<div class="fiscal-despacho-grid hip-grid-2col">';
-  h+=_despFieldMoney('compraImporte','Importe',comp.importePrestamo);
-  h+=_despField('compraTipo','Tipo inter\u00e9s',comp.tipoInteres,'%');
-  h+=_despField('compraPlazo','Plazo',comp.plazoAnios,'a\u00f1os');
-  h+=_despFieldDate('compraFechaInicio','Fecha inicio',comp.fechaInicio);
-  h+='</div>';
-  /* Banco inline */
-  h+='<div class="fiscal-despacho-field" style="margin-top:8px"><label class="fiscal-despacho-label">Banco</label>';
-  h+='<input class="fiscal-despacho-input" id="desp-entidadBanco" type="text" value="'+escHtml(comp.entidadBanco||'')+'" placeholder="Ej: CaixaBank, Santander..." style="text-align:left">';
+  h+='<div class="fiscal-section-title">\uD83C\uDFE6 Pr\u00e9stamo</div>';
+  h+='<div class="hip-g2">';
+  h+=_hipMoney('compraImporte','Importe',comp.importePrestamo);
+  h+=_hipDate('compraFechaInicio','Fecha inicio',comp.fechaInicio);
+  h+=_hipNum('compraTipo','Tipo inter\u00e9s',comp.tipoInteres,'%');
+  h+=_hipNum('compraPlazo','Plazo',comp.plazoAnios,'a\u00f1os');
+  h+=_hipText('entidadBanco','Banco',comp.entidadBanco,'Ej: CaixaBank...');
   h+='</div>';
   h+='</div>';
-  /* Sección vinculaciones */
+
+  /* ── Vinculaciones ── */
   var vinc=comp.vinculaciones||{nomina:{enabled:false,costeAnual:0,reduccion:0},segHogar:{enabled:false,costeAnual:0,reduccion:0},segSalud:{enabled:false,costeAnual:0,reduccion:0},segVida:{enabled:false,costeAnual:0,reduccion:0}};
   if(!vinc.segVida)vinc.segVida={enabled:false,costeAnual:0,reduccion:0};
   h+='<div class="fiscal-section">';
   h+='<div class="fiscal-section-title">\uD83D\uDD17 Vinculaciones</div>';
-  h+=_vincRow('vincNomina','N\u00f3mina domiciliada',vinc.nomina);
-  h+=_vincRow('vincSegHogar','Seguro hogar',vinc.segHogar);
-  h+=_vincRow('vincSegSalud','Seguro salud',vinc.segSalud);
-  h+=_vincRow('vincSegVida','Seguro de vida',vinc.segVida);
-  var _vincKeys2=['nomina','segHogar','segSalud','segVida'];
-  var vincTotal=0,vincReduccion=0;
-  _vincKeys2.forEach(function(k){if(vinc[k]&&vinc[k].enabled){vincTotal+=vinc[k].costeAnual||0;vincReduccion+=vinc[k].reduccion||0;}});
-  if(vincTotal>0||vincReduccion>0){
-    h+='<div class="hip-vinc-summary">';
-    if(vincTotal>0)h+='Coste: <b style="color:var(--c-orange)">'+fcPlain(vincTotal)+'</b>/a\u00f1o';
-    if(vincReduccion>0){
-      h+=(vincTotal>0?' &middot; ':'')+'Reducci\u00f3n: <b style="color:var(--c-green)">\u2212'+vincReduccion.toFixed(2)+'%</b>';
-      if(comp.tipoInteres>0){
-        var tipoEf=Math.max(0,comp.tipoInteres-vincReduccion);
-        h+=' \u2192 <b style="color:var(--c-green)">'+tipoEf.toFixed(2)+'%</b>';
-      }
-    }
-    h+='</div>';
-  }
+  h+='<div class="hip-vr-head"><span></span><span class="hip-vr-h">\u20ac/a\u00f1o</span><span class="hip-vr-h">\u2212tipo%</span><span></span></div>';
+  h+=_hipVinc('vincNomina','N\u00f3mina',vinc.nomina);
+  h+=_hipVinc('vincSegHogar','Seg. hogar',vinc.segHogar);
+  h+=_hipVinc('vincSegSalud','Seg. salud',vinc.segSalud);
+  h+=_hipVinc('vincSegVida','Seg. vida',vinc.segVida);
+  h+=_hipVincSum(vinc,comp.tipoInteres);
   h+='</div>';
-  /* Sección subrogación */
+
+  /* ── Subrogación ── */
   var sub=comp.subrogacion;
   h+='<div class="fiscal-section">';
-  h+='<div class="fiscal-section-title">\uD83D\uDD04 Subrogaci\u00f3n hipotecaria</div>';
+  h+='<div class="fiscal-section-title">\uD83D\uDD04 Subrogaci\u00f3n</div>';
   h+='<div class="fiscal-despacho-toggle-row">';
   h+='<span class="fiscal-despacho-toggle-lbl">Hipoteca subrogada</span>';
   h+='<div class="fiscal-onoff'+(sub?' on':'')+'" id="subrogacionToggle">'+(sub?'ON':'OFF')+'</div>';
   h+='</div>';
   if(sub){
     var sd=sub;
-    h+='<div class="fiscal-despacho-grid" style="margin-top:8px">';
-    h+=_despFieldDate('subFecha','Fecha de la subrogaci\u00f3n',sd.fecha);
-    h+='</div>';
-    h+='<div class="hip-sub-heading">Costes del cambio</div>';
-    h+='<div class="fiscal-despacho-grid hip-grid-2col">';
-    h+=_despFieldMoney('subComision','Comisi\u00f3n',sd.comisionCancelacion);
-    h+=_despFieldMoney('subNotaria','Notar\u00eda',sd.notaria);
-    h+=_despFieldMoney('subTasacion','Tasaci\u00f3n',sd.tasacion);
-    h+=_despFieldMoney('subRegistro','Registro',sd.registro);
+    h+='<div class="hip-g2">';
+    h+=_hipDate('subFecha','Fecha subrogaci\u00f3n',sd.fecha);
+    h+='<div></div>';
+    h+=_hipMoney('subComision','Com. cancelaci\u00f3n',sd.comisionCancelacion);
+    h+=_hipMoney('subNotaria','Notar\u00eda',sd.notaria);
+    h+=_hipMoney('subTasacion','Tasaci\u00f3n',sd.tasacion);
+    h+=_hipMoney('subRegistro','Registro',sd.registro);
     h+='</div>';
     var totalCambio=(sd.comisionCancelacion||0)+(sd.notaria||0)+(sd.tasacion||0)+(sd.registro||0);
-    if(totalCambio>0){
-      h+='<div class="hip-section-total" style="color:var(--c-orange)">Coste del cambio: <b>'+fcPlain(totalCambio)+'</b></div>';
-    }
+    if(totalCambio>0)h+='<div class="hip-section-total" style="color:var(--c-orange)">Coste cambio: <b>'+fcPlain(totalCambio)+'</b></div>';
     h+='<div class="hip-sub-heading">Nuevas condiciones</div>';
-    h+='<div class="fiscal-despacho-grid hip-grid-2col">';
-    h+=_despFieldMoney('subNuevoImporte','Capital pendiente',sd.nuevoImporte);
-    h+=_despField('subNuevoTipo','Tipo inter\u00e9s',sd.nuevoTipoInteres,'%');
-    h+=_despField('subNuevoPlazo','Plazo',sd.nuevoPlazoAnios,'a\u00f1os');
+    h+='<div class="hip-g2">';
+    h+=_hipMoney('subNuevoImporte','Capital pendiente',sd.nuevoImporte);
+    h+='<div></div>';
+    h+=_hipNum('subNuevoTipo','Tipo inter\u00e9s',sd.nuevoTipoInteres,'%');
+    h+=_hipNum('subNuevoPlazo','Plazo',sd.nuevoPlazoAnios,'a\u00f1os');
+    h+=_hipText('subEntidadBanco','Nuevo banco',sd.entidadBanco||'','Ej: ING...');
     h+='</div>';
     if(sd.nuevoImporte>0&&sd.nuevoTipoInteres>0&&sd.nuevoPlazoAnios>0){
-      /* Calcular tipo efectivo con vinculaciones del nuevo préstamo */
       var _sv2=sd.vinculaciones||{};
       var tipoEfN=sd.nuevoTipoInteres;
       ['nomina','segVida','segSalud','segHogar'].forEach(function(k){if(_sv2[k]&&_sv2[k].enabled)tipoEfN-=(_sv2[k].reduccion||0);});
       if(tipoEfN<0)tipoEfN=0;
-      var rn=tipoEfN/100/12;
-      var nn=sd.nuevoPlazoAnios*12;
+      var rn=tipoEfN/100/12,nn=sd.nuevoPlazoAnios*12;
       var cuotaN=Math.round(sd.nuevoImporte*rn*Math.pow(1+rn,nn)/(Math.pow(1+rn,nn)-1)*100)/100;
       var totalN=Math.round(cuotaN*nn*100)/100;
       var intN=Math.round((totalN-sd.nuevoImporte)*100)/100;
-      h+='<div class="hip-stats" style="margin-top:8px">';
+      h+='<div class="hip-stats" style="margin-top:6px">';
       h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--text-muted)">'+fcPlain(cuotaN)+'</span><span class="hip-stat-lbl">Nueva cuota</span></div>';
-      h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--text-muted)">'+_fmtMiles(totalN)+' \u20ac</span><span class="hip-stat-lbl">Total</span></div>';
       h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-orange)">'+_fmtMiles(intN)+' \u20ac</span><span class="hip-stat-lbl">Intereses</span></div>';
       if(tipoEfN!==sd.nuevoTipoInteres)h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-green)">'+tipoEfN.toFixed(2)+'%</span><span class="hip-stat-lbl">Tipo efectivo</span></div>';
       h+='</div>';
     }
-    /* Banco + vinculaciones subrogadas */
-    h+='<div class="fiscal-despacho-field" style="margin-top:8px"><label class="fiscal-despacho-label">Nuevo banco</label>';
-    h+='<input class="fiscal-despacho-input" id="desp-subEntidadBanco" type="text" value="'+escHtml(sd.entidadBanco||'')+'" placeholder="Ej: ING, Openbank..." style="text-align:left">';
-    h+='</div>';
+    /* Vinculaciones nuevas */
     var sv=sd.vinculaciones||{nomina:{enabled:false,reduccion:0},segVida:{enabled:false,costeAnual:0,reduccion:0},segSalud:{enabled:false,costeAnual:0,reduccion:0},segHogar:{enabled:false,costeAnual:0,reduccion:0}};
     h+='<div class="hip-sub-heading">Vinculaciones nuevas</div>';
-    h+=_vincRow('subVincNomina','N\u00f3mina domiciliada',sv.nomina);
-    h+=_vincRow('subVincSegVida','Seguro de vida',sv.segVida);
-    h+=_vincRow('subVincSegSalud','Seguro salud',sv.segSalud);
-    h+=_vincRow('subVincSegHogar','Seguro hogar',sv.segHogar);
-    var svKeys=['nomina','segVida','segSalud','segHogar'];
-    var svTotal=0,svReduc=0;
-    svKeys.forEach(function(k){if(sv[k]&&sv[k].enabled){svTotal+=sv[k].costeAnual||0;svReduc+=sv[k].reduccion||0;}});
-    if(svTotal>0||svReduc>0){
-      h+='<div class="hip-vinc-summary">';
-      if(svTotal>0)h+='Coste: <b style="color:var(--c-orange)">'+fcPlain(svTotal)+'</b>/a\u00f1o';
-      if(svReduc>0){
-        h+=(svTotal>0?' &middot; ':'')+'Reducci\u00f3n: <b style="color:var(--c-green)">\u2212'+svReduc.toFixed(2)+'%</b>';
-        if(sd.nuevoTipoInteres>0){
-          var tipoEfSub=Math.max(0,sd.nuevoTipoInteres-svReduc);
-          h+=' \u2192 <b style="color:var(--c-green)">'+tipoEfSub.toFixed(2)+'%</b>';
-        }
-      }
-      h+='</div>';
-    }
+    h+='<div class="hip-vr-head"><span></span><span class="hip-vr-h">\u20ac/a\u00f1o</span><span class="hip-vr-h">\u2212tipo%</span><span></span></div>';
+    h+=_hipVinc('subVincNomina','N\u00f3mina',sv.nomina);
+    h+=_hipVinc('subVincSegVida','Seg. vida',sv.segVida);
+    h+=_hipVinc('subVincSegSalud','Seg. salud',sv.segSalud);
+    h+=_hipVinc('subVincSegHogar','Seg. hogar',sv.segHogar);
+    h+=_hipVincSum(sv,sd.nuevoTipoInteres);
   }
   h+='</div>';
   return h;
