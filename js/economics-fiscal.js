@@ -1215,6 +1215,11 @@ function _renderHipDetalle(){
   }
   /* Add subrogation button */
   h+='<button class="hip-add-sub-btn" id="hipAddSub">+ A\u00f1adir subrogaci\u00f3n</button>';
+  /* Sobrecoste seguros vinculados */
+  if(typeof _renderInsuranceOvercost==='function'){
+    var insHtml=_renderInsuranceOvercost(comp);
+    if(insHtml)h+='<div class="fiscal-section" style="margin-top:8px">'+insHtml+'</div>';
+  }
   return h;
 }
 

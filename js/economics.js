@@ -684,109 +684,174 @@ function _renderAnalisisHipoteca(){
     return h;
   }
 
-  /* Determine which mortgage applies to ECON_YEAR — support subrogaciones array */
   var subs=comp.subrogaciones||[];
-  /* compat: old single subrogacion */
   if(!subs.length&&comp.subrogacion)subs=[comp.subrogacion];
-  /* Find the last subrogation that started <= ECON_YEAR */
-  var activeSub=null,activeSubYear=null,activeSubMonth=null;
-  for(var si=subs.length-1;si>=0;si--){
-    var _s=subs[si];
-    if(_s&&_s.fecha&&_s.nuevoImporte>0&&_s.nuevoTipoInteres>0&&_s.nuevoPlazoAnios>0){
-      var _sp=_s.fecha.split('-');
-      var _sY=parseInt(_sp[0],10),_sM=parseInt(_sp[1],10);
-      if(_sY<ECON_YEAR||(_sY===ECON_YEAR&&_sM===1)){activeSub=_s;activeSubYear=_sY;activeSubMonth=_sM;break;}
-      if(_sY===ECON_YEAR){activeSub=_s;activeSubYear=_sY;activeSubMonth=_sM;break;}
-    }
+  /* Get active mortgage for current calculations */
+  var act=typeof _getActiveMortgage==='function'?_getActiveMortgage(comp):{importe:comp.importePrestamo,tipo:comp.tipoInteres,plazo:comp.plazoAnios,fecha:comp.fechaInicio,banco:comp.entidadBanco,vinc:comp.vinculaciones,idx:-1};
+  var tipoEfAct=typeof _hipEffRate==='function'?_hipEffRate(act.tipo,act.vinc):act.tipo;
+  var rAct=tipoEfAct/100/12,nAct=act.plazo*12;
+  var cuotaAct=rAct>0?act.importe*rAct*Math.pow(1+rAct,nAct)/(Math.pow(1+rAct,nAct)-1):act.importe/nAct;
+  cuotaAct=Math.round(cuotaAct*100)/100;
+
+  /* ── Sección 1: Situación actual ── */
+  h+='<div class="ah-section">';
+  h+='<div class="ah-section-title">Situaci\u00f3n actual'+(act.banco?' \u2014 '+escHtml(act.banco):'')+'</div>';
+  h+='<div class="ah-cuota-hero"><div class="ah-cuota-val">'+fcPlain(cuotaAct)+'\u20ac</div>';
+  h+='<div class="ah-cuota-sub">Cuota mensual \u00b7 '+tipoEfAct.toFixed(2)+'%'+(tipoEfAct!==act.tipo?' (nominal '+act.tipo.toFixed(2)+'%)':' fijo')+' \u00b7 '+act.plazo+' a\u00f1os</div></div>';
+
+  /* Stats: saldo vivo, intereses, tiempo */
+  var hoy=new Date();
+  var todayStr=hoy.getFullYear()+'-'+String(hoy.getMonth()+1).padStart(2,'0')+'-01';
+  var saldoVivo=typeof _computeBalanceAtDate==='function'?_computeBalanceAtDate(comp,todayStr):0;
+  var intAnual=typeof _computeAnnualInterest==='function'?_computeAnnualInterest(comp,ECON_YEAR):0;
+  var mPagados=0,mRestantes=0;
+  if(act.fecha){
+    var fp=act.fecha.split('-');
+    mPagados=Math.max(0,(hoy.getFullYear()-parseInt(fp[0],10))*12+(hoy.getMonth()-(parseInt(fp[1],10)-1)));
+    mRestantes=Math.max(0,nAct-mPagados);
   }
-  var yearMode='original';
-  if(activeSub){
-    if(ECON_YEAR>activeSubYear||(ECON_YEAR===activeSubYear&&activeSubMonth===1)){yearMode='subrogated';}
-    else if(ECON_YEAR===activeSubYear){yearMode='mixed';}
+  h+='<div class="hip-stats">';
+  if(saldoVivo>0){var pctA=Math.round((1-saldoVivo/act.importe)*100);h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-green)">'+_fmtMiles(saldoVivo)+'\u20ac</span><span class="hip-stat-lbl">Saldo vivo ('+pctA+'%)</span></div>';}
+  if(intAnual>0)h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-orange)">'+fcPlain(intAnual)+'</span><span class="hip-stat-lbl">Intereses '+ECON_YEAR+'</span></div>';
+  if(mPagados>0){var aP=Math.floor(mPagados/12),mR2=mPagados%12;h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--accent-bright)">'+(aP>0?aP+'a ':'')+(mR2>0?mR2+'m':'')+'</span><span class="hip-stat-lbl">Pagado</span></div>';}
+  if(mRestantes>0){var aQ=Math.floor(mRestantes/12),mQ=mRestantes%12;h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--text-muted)">'+(aQ>0?aQ+'a ':'')+(mQ>0?mQ+'m':'')+'</span><span class="hip-stat-lbl">Restante</span></div>';}
+  h+='</div>';
+
+  /* Donut: capital amortizado vs pendiente */
+  if(saldoVivo>0&&act.importe>0){
+    var pctAmort=Math.round((1-saldoVivo/act.importe)*100);
+    h+=_donutChart(pctAmort,'Amortizado','Pendiente');
   }
 
-  /* Effective rates */
-  var tipoEfOrig=typeof _hipEffRate==='function'?_hipEffRate(comp.tipoInteres,comp.vinculaciones):comp.tipoInteres;
-  var tipoEfSub=activeSub?(typeof _hipEffRate==='function'?_hipEffRate(activeSub.nuevoTipoInteres,activeSub.vinculaciones):activeSub.nuevoTipoInteres):0;
-
-  /* ── Hipoteca vigente en ECON_YEAR ── */
-  h+='<div class="sy-section">';
-  h+='<div class="sy-section-title">Hipoteca en '+ECON_YEAR+'</div>';
-
-  if(yearMode==='original'){
-    h+=_analisisMortgageBox('Hipoteca original',comp.importePrestamo,comp.tipoInteres,tipoEfOrig,comp.plazoAnios,comp.entidadBanco);
-  } else if(yearMode==='subrogated'){
-    h+=_analisisMortgageBox('Hipoteca subrogada',activeSub.nuevoImporte,activeSub.nuevoTipoInteres,tipoEfSub,activeSub.nuevoPlazoAnios,activeSub.entidadBanco);
-  } else { /* mixed */
-    var mesesA=activeSubMonth-1;
-    var mesesB=12-mesesA;
-    h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:6px">Subrogaci\u00f3n en '+_monthName(activeSubMonth)+' '+activeSubYear+': dos per\u00edodos.</div>';
-    h+='<div style="font-size:.7rem;color:var(--accent-bright);font-weight:600;margin-bottom:4px">Ene\u2013'+_monthName(activeSubMonth-1)+' ('+mesesA+' meses)</div>';
-    h+=_analisisMortgageBox(comp.entidadBanco||'Original',comp.importePrestamo,comp.tipoInteres,tipoEfOrig,comp.plazoAnios,null);
-    h+='<div style="font-size:.7rem;color:var(--c-green);font-weight:600;margin:6px 0 4px">'+_monthName(activeSubMonth)+'\u2013Dic ('+mesesB+' meses)</div>';
-    h+=_analisisMortgageBox(activeSub.entidadBanco||'Subrogada',activeSub.nuevoImporte,activeSub.nuevoTipoInteres,tipoEfSub,activeSub.nuevoPlazoAnios,null);
+  /* Desglose cuota actual: capital vs intereses */
+  if(saldoVivo>0){
+    var intMes=Math.round(saldoVivo*rAct*100)/100;
+    var capMes=Math.round((cuotaAct-intMes)*100)/100;
+    var pctCap=Math.round(capMes/cuotaAct*100);
+    h+='<div style="font-size:.68rem;color:var(--text-dim);margin-top:8px;font-weight:600">Desglose cuota actual</div>';
+    h+='<div class="hip-bar-wrap" style="margin-top:4px"><div class="hip-bar"><div class="hip-bar-cap" style="width:'+pctCap+'%"></div><div class="hip-bar-int" style="width:'+(100-pctCap)+'%"></div></div>';
+    h+='<div class="hip-bar-legend"><span class="hip-bar-leg-cap">Capital '+pctCap+'% \u00b7 '+fcPlain(capMes)+'</span><span class="hip-bar-leg-int">Intereses '+(100-pctCap)+'% \u00b7 '+fcPlain(intMes)+'</span></div></div>';
   }
   h+='</div>';
 
-  /* ── Comparativa tipo fijo (using current active mortgage) ── */
-  var actImporte,actTipo,actTipoEf,actPlazo;
-  if(activeSub&&(yearMode==='subrogated'||yearMode==='mixed')){
-    actImporte=activeSub.nuevoImporte;actTipo=activeSub.nuevoTipoInteres;actTipoEf=tipoEfSub;actPlazo=activeSub.nuevoPlazoAnios;
-  } else {
-    actImporte=comp.importePrestamo;actTipo=comp.tipoInteres;actTipoEf=tipoEfOrig;actPlazo=comp.plazoAnios;
-  }
-  var rAct=actTipoEf/100/12,nAct=actPlazo*12;
-  var cuotaAct=rAct>0?actImporte*rAct*Math.pow(1+rAct,nAct)/(Math.pow(1+rAct,nAct)-1):actImporte/nAct;
-  var totalAct=cuotaAct*nAct;
-
-  h+='<div class="sy-section">';
-  h+='<div class="sy-section-title">Comparativa tipo fijo</div>';
-  h+='<div class="analisis-mortgage-alt">';
-  h+='<div class="analisis-mortgage-inputs">';
-  h+='<div class="analisis-input-group"><label>Tipo alternativo %</label>';
-  h+='<input class="analisis-input" id="analisisAltRate" type="number" min="0" step="0.1" value="'+ANALISIS_ALT_RATE+'"></div>';
-  h+='<div class="analisis-input-group"><label>Coste cambio banco \u20ac</label>';
-  h+='<input class="analisis-input" id="analisisSwitchCost" type="number" min="0" step="100" value="'+ANALISIS_SWITCH_COST+'"></div>';
+  /* ── Sección 2: Evolución del préstamo ── */
+  h+='<div class="ah-section">';
+  h+='<div class="ah-section-title">Evoluci\u00f3n del pr\u00e9stamo</div>';
+  h+=_balanceEvolutionChart(comp);
   h+='</div>';
-  h+='<button class="econ-calc-btn" id="analisisCalcHip" style="margin-top:6px">Calcular</button>';
 
-  if(ANALISIS_CALC_HIP&&ANALISIS_ALT_RATE>0){
-    var rAlt=ANALISIS_ALT_RATE/100/12;
-    var cuotaAlt=actImporte*rAlt*Math.pow(1+rAlt,nAct)/(Math.pow(1+rAlt,nAct)-1);
-    var totalAlt=cuotaAlt*nAct+ANALISIS_SWITCH_COST;
-    var interesesAlt=cuotaAlt*nAct-actImporte;
-    var ahorro=totalAct-totalAlt;
-    var ahorroMes=Math.round((cuotaAct-cuotaAlt)*100)/100;
-
-    h+='<div class="analisis-mortgage-result">';
-    h+='<div class="analisis-mortgage-vals">';
-    h+='<span>Cuota: <b>'+fcPlain(Math.round(cuotaAlt*100)/100)+'</b>/mes</span>';
-    h+='<span>Total: <b>'+fcPlain(Math.round(totalAlt))+'</b></span>';
-    h+='<span>Intereses: <b style="color:var(--c-orange)">'+fcPlain(Math.round(interesesAlt))+'</b></span>';
-    h+='</div>';
-    h+='<div class="analisis-mortgage-ahorro '+(ahorro>=0?'pos':'neg')+'">';
-    h+=(ahorro>=0?'Ahorras: <b>'+fcPlain(Math.round(ahorro))+'</b>':'Pagas m\u00e1s: <b>'+fcPlain(Math.round(-ahorro))+'</b>');
-    h+=' ('+fcPlain(Math.abs(ahorroMes))+'/mes)';
-    h+='</div>';
-    if(ANALISIS_SWITCH_COST>0&&ahorroMes>0){
-      var breakEven=Math.ceil(ANALISIS_SWITCH_COST/ahorroMes);
-      h+='<div style="font-size:.72rem;color:var(--text-dim)">Break-even en <b>'+breakEven+' meses</b> ('+Math.round(breakEven/12*10)/10+' a\u00f1os)</div>';
-    }
-    h+='</div>';
-    h+=_mortgageComparisonChart(cuotaAct,cuotaAlt,nAct,ANALISIS_SWITCH_COST,actTipoEf,ANALISIS_ALT_RATE);
-  }
-  h+='</div></div>';
-
-  /* Análisis subrogación (last subrogation) */
+  /* ── Sección 3: Análisis de la subrogación ── */
   var _lastSub=subs.length>0?subs[subs.length-1]:null;
   if(_lastSub){
     h+=_renderSubrogacionAnalysis(comp,_lastSub);
   }
 
-  /* Análisis sobrecoste seguros vinculados */
-  h+=_renderInsuranceOvercost(comp);
+  /* ── Sección 4: Coste total de la hipoteca ── */
+  h+='<div class="ah-section">';
+  h+='<div class="ah-section-title">Coste total de la hipoteca</div>';
+  var totalCuotas=Math.round(cuotaAct*nAct);
+  var totalInt=totalCuotas-act.importe;
+  var totalCambio=0;
+  subs.forEach(function(s){totalCambio+=(s.comisionCancelacion||0)+(s.notaria||0)+(s.tasacion||0)+(s.registro||0);});
+  var vincAnual=0;
+  if(act.vinc){['segHogar','segSalud','segVida'].forEach(function(k){if(act.vinc[k]&&act.vinc[k].enabled)vincAnual+=act.vinc[k].costeAnual||0;});}
+  var totalVinc=Math.round(vincAnual*act.plazo);
+  h+='<div class="ah-total-row">'+_ahRow('Capital prestado',_fmtMiles(act.importe)+' \u20ac')+'</div>';
+  h+='<div class="ah-total-row">'+_ahRow('Total intereses',_fmtMiles(totalInt)+' \u20ac','var(--c-orange)')+'</div>';
+  if(totalCambio>0)h+='<div class="ah-total-row">'+_ahRow('Costes subrogaci\u00f3n',_fmtMiles(totalCambio)+' \u20ac','var(--c-orange)')+'</div>';
+  if(totalVinc>0)h+='<div class="ah-total-row">'+_ahRow('Seguros vinculados (~'+act.plazo+'a)',_fmtMiles(totalVinc)+' \u20ac','var(--c-orange)')+'</div>';
+  h+='<div class="ah-total-row highlight">'+_ahRow('TOTAL',_fmtMiles(totalCuotas+totalCambio+totalVinc)+' \u20ac')+'</div>';
+  h+='</div>';
 
   return h;
+}
+function _ahRow(lbl,val,color){
+  return '<span class="hip-ro-lbl">'+lbl+'</span><span class="hip-ro-val"'+(color?' style="color:'+color+'"':'')+'>'+val+'</span>';
+}
+
+/* ── Donut chart SVG ──────────────────────────────────────── */
+function _donutChart(pct,labelA,labelB){
+  var r=30,cx=40,cy=40,sw=8;
+  var circ=2*Math.PI*r;
+  var dashA=Math.round(circ*pct/100);
+  var dashB=circ-dashA;
+  var svg='<svg width="80" height="80" viewBox="0 0 80 80">';
+  svg+='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#2a2a3e" stroke-width="'+sw+'"/>';
+  svg+='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#34d399" stroke-width="'+sw+'" stroke-dasharray="'+dashA+' '+dashB+'" stroke-dashoffset="'+(circ/4)+'" stroke-linecap="round"/>';
+  svg+='<text x="'+cx+'" y="'+(cy+3)+'" text-anchor="middle" font-size="12" font-weight="700" fill="var(--text)">'+pct+'%</text>';
+  svg+='</svg>';
+  var h='<div class="ah-donut-wrap">'+svg;
+  h+='<div class="ah-donut-legend"><span style="color:var(--c-green)">\u25CF '+labelA+': '+pct+'%</span><span style="color:var(--text-dim)">\u25CF '+labelB+': '+(100-pct)+'%</span></div></div>';
+  return h;
+}
+
+/* ── Balance evolution chart ──────────────────────────────── */
+function _balanceEvolutionChart(comp){
+  if(!comp.fechaInicio)return '';
+  var startParts=comp.fechaInicio.split('-');
+  var startY=parseInt(startParts[0],10),startM=parseInt(startParts[1],10)-1;
+  var tipoEf=typeof _hipEffRate==='function'?_hipEffRate(comp.tipoInteres,comp.vinculaciones):comp.tipoInteres;
+  var r=tipoEf/100/12,nTotal=comp.plazoAnios*12;
+  var cuota=r>0?comp.importePrestamo*r*Math.pow(1+r,nTotal)/(Math.pow(1+r,nTotal)-1):comp.importePrestamo/nTotal;
+  var balance=comp.importePrestamo;
+  var switches=typeof _buildMortgageSwitches==='function'?_buildMortgageSwitches(comp):[];
+  var switchIdx=0;
+  var years=Math.ceil(nTotal/12);
+  var points=Math.min(years,40);
+  var balances=[balance];
+  var switchYears=[];
+  switches.forEach(function(s){switchYears.push(Math.round(s.monthOffset/12*10)/10);});
+  for(var y=1;y<=points;y++){
+    for(var mi=0;mi<12;mi++){
+      var m=(y-1)*12+mi;
+      while(switchIdx<switches.length&&m>=switches[switchIdx].monthOffset){
+        balance=switches[switchIdx].balance;r=switches[switchIdx].rate;cuota=switches[switchIdx].cuota;switchIdx++;
+      }
+      if(balance<=0)break;
+      var interes=balance*r;
+      var capital=cuota-interes;
+      if(capital>balance)capital=balance;
+      balance-=capital;
+      if(balance<0.01){balance=0;break;}
+    }
+    balances.push(Math.round(balance));
+  }
+  var W=320,H=110,PB=18,PT=10,PL=45,PR=8;
+  var W2=W-PL-PR,H2=H-PT;
+  var maxV=comp.importePrestamo;
+  function xPos(i){return Math.round(PL+(i/points)*W2);}
+  function yPos(v){return Math.round(PT+H2-v/maxV*H2);}
+  var svg='<svg viewBox="0 0 '+W+' '+(H+PB)+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;margin-top:6px">';
+  /* Grid */
+  var step=50000;while(maxV/step>4)step*=2;while(maxV/step<1.5&&step>10000)step=Math.round(step/2);
+  for(var gv=0;gv<=maxV;gv+=step){
+    var gy=yPos(gv);
+    svg+='<line x1="'+PL+'" y1="'+gy+'" x2="'+(W-PR)+'" y2="'+gy+'" stroke="#2a2a3e" stroke-width="1"/>';
+    var lbl=gv>=1000?Math.round(gv/1000)+'k':'0';
+    svg+='<text x="'+(PL-2)+'" y="'+(gy+3)+'" text-anchor="end" font-size="6" fill="#5a5a70">'+lbl+'</text>';
+  }
+  /* Area fill */
+  var areaPath='M'+xPos(0)+','+yPos(0);
+  for(var i=1;i<balances.length;i++)areaPath+=' L'+xPos(i)+','+yPos(balances[i]);
+  areaPath+=' L'+xPos(balances.length-1)+','+yPos(0)+' Z';
+  svg+='<path d="'+areaPath+'" fill="rgba(108,140,255,.12)"/>';
+  /* Line */
+  var linePts=balances.map(function(v,i){return xPos(i)+','+yPos(v);}).join(' ');
+  svg+='<polyline points="'+linePts+'" fill="none" stroke="#6c8cff" stroke-width="2" stroke-linejoin="round"/>';
+  /* Switch points */
+  switchYears.forEach(function(sy){
+    if(sy>0&&sy<=points){
+      var sx=xPos(sy);
+      svg+='<line x1="'+sx+'" y1="'+PT+'" x2="'+sx+'" y2="'+yPos(0)+'" stroke="#c084fc" stroke-width="1" stroke-dasharray="3,3"/>';
+      svg+='<text x="'+sx+'" y="'+(PT-1)+'" text-anchor="middle" font-size="5" fill="#c084fc">Sub.</text>';
+    }
+  });
+  /* X labels */
+  for(var xi=0;xi<=points;xi+=Math.max(1,Math.round(points/6))){
+    svg+='<text x="'+xPos(xi)+'" y="'+(H+PB-2)+'" text-anchor="middle" font-size="6" fill="#5a5a70">'+xi+'a</text>';
+  }
+  svg+='</svg>';
+  return '<div class="analisis-mortgage-chart">'+svg+'</div>';
 }
 
 function _renderSubrogacionAnalysis(comp,sub){
@@ -1038,20 +1103,17 @@ function _mortgageComparisonChart(cuota1,cuota2,nMeses,switchCost,rate1,rate2){
 
 /* ── Diff chart: evolution of A-B including insurance ────── */
 function _mortgageDiffChart(cuotaA,cuotaB,segAnualA,segAnualB,mesesPre,mesesPost,switchCost){
-  var totalMeses=mesesPre+mesesPost;
-  var years=Math.ceil(totalMeses/12);
+  /* X-axis starts at subrogation moment (year 0 = switch), NOT loan start */
+  var years=Math.ceil(mesesPost/12);
   var points=Math.min(years,40);
-  var diffs=[];var cum=0;
-  for(var y=0;y<=points;y++){
-    var m=y*12;
-    if(m<=mesesPre){
-      diffs.push(0);
-    } else {
-      if(y===Math.ceil(mesesPre/12)&&diffs[diffs.length-1]===0)cum=-switchCost;
-      var mInYear=12;
-      cum+=(cuotaA+segAnualA/12-cuotaB-segAnualB/12)*mInYear;
-      diffs.push(Math.round(cum));
-    }
+  var diffs=[];var cum=-switchCost; /* Start negative (switch cost) */
+  diffs.push(Math.round(cum));
+  var savingsPerMonth=(cuotaA+segAnualA/12)-(cuotaB+segAnualB/12);
+  var breakEvenYear=-1;
+  for(var y=1;y<=points;y++){
+    cum+=savingsPerMonth*12;
+    diffs.push(Math.round(cum));
+    if(breakEvenYear<0&&cum>=0)breakEvenYear=y;
   }
   var W=320,H=130,PB=18,PT=16,PL=42,PR=8;
   var W2=W-PL-PR,H2=H-PT;
@@ -1094,13 +1156,18 @@ function _mortgageDiffChart(cuotaA,cuotaB,segAnualA,segAnualB,mesesPre,mesesPost
   /* Line */
   var pts=diffs.map(function(v,i){return xPos(i)+','+yPos(v);}).join(' ');
   svg+='<polyline points="'+pts+'" fill="none" stroke="#6c8cff" stroke-width="2" stroke-linejoin="round"/>';
-  /* X labels */
+  /* Break-even marker */
+  if(breakEvenYear>0&&breakEvenYear<=points){
+    var bx=xPos(breakEvenYear);
+    svg+='<line x1="'+bx+'" y1="'+PT+'" x2="'+bx+'" y2="'+yPos(0)+'" stroke="#34d399" stroke-width="1" stroke-dasharray="3,2"/>';
+    svg+='<text x="'+bx+'" y="'+(PT-1)+'" text-anchor="middle" font-size="5" fill="#34d399">Break-even '+breakEvenYear+'a</text>';
+  }
+  /* X labels (relative to switch: "0a" = moment of change) */
   for(var xi=0;xi<=points;xi+=Math.max(1,Math.round(points/6))){
     svg+='<text x="'+xPos(xi)+'" y="'+(H+PB-2)+'" text-anchor="middle" font-size="6" fill="#5a5a70">'+xi+'a</text>';
   }
   /* Legend */
-  svg+='<text x="'+PL+'" y="7" font-size="6" fill="#5a5a70">verde = cambio compensa | rojo = cambio no compensa</text>';
-  svg+='<text x="'+(W-PR)+'" y="7" text-anchor="end" font-size="5" fill="#5a5a70">0\u20ac</text>';
+  svg+='<text x="'+PL+'" y="7" font-size="6" fill="#5a5a70">Desde el cambio: \u25B2verde=compensa \u25BCrojo=no</text>';
   svg+='</svg>';
   return '<div class="analisis-mortgage-chart">'+svg+'</div>';
 }
@@ -1121,36 +1188,92 @@ function bindEconAnalisisEvents(){
     });
     var discountChk=document.getElementById('analisisDesgravDiscount');
     if(discountChk)discountChk.addEventListener('change',function(){ANALISIS_DESGRAV_DISCOUNT=this.checked;reRenderEcon();});
-  } else {
-    var rateEl=document.getElementById('analisisAltRate');
-    var costEl=document.getElementById('analisisSwitchCost');
-    if(rateEl)rateEl.addEventListener('change',function(){
-      ANALISIS_ALT_RATE=parseFloat(this.value)||0;
-      reRenderEcon();
-    });
-    if(costEl)costEl.addEventListener('change',function(){
-      ANALISIS_SWITCH_COST=parseFloat(this.value)||0;
-      reRenderEcon();
-    });
-    var calcHipBtn=document.getElementById('analisisCalcHip');
-    if(calcHipBtn)calcHipBtn.addEventListener('click',function(){ANALISIS_CALC_HIP=true;reRenderEcon();});
-    /* Normal insurance cost inputs */
-    document.querySelectorAll('.analisis-seg-normal').forEach(function(inp){
-      inp.addEventListener('change',function(){
-        ANALISIS_SEG_NORMAL[this.dataset.seg]=parseFloat(this.value)||0;
-        reRenderEcon();
-      });
-    });
   }
+  /* No bindings needed for hipoteca analysis (all data-driven, no inputs) */
 }
 /* ── Estudio Cambio (sub-tabs) ─────────────────────────────── */
 function renderEconEstudio(){
   var h='<div class="econ-sub-tabs">';
-  h+='<button class="econ-sub-tab'+(ECON_ESTUDIO_SUB==='comparador'?' active':'')+'" id="ecSubComp">Comparar Escenarios</button>';
-  h+='<button class="econ-sub-tab'+(ECON_ESTUDIO_SUB==='simulador'?' active':'')+'" id="ecSubSim">Calcular Tarifa</button>';
+  h+='<button class="econ-sub-tab'+(ECON_ESTUDIO_SUB==='comparador'?' active':'')+'" id="ecSubComp">Comparar<br>Escenarios</button>';
+  h+='<button class="econ-sub-tab'+(ECON_ESTUDIO_SUB==='simulador'?' active':'')+'" id="ecSubSim">Calcular<br>Tarifa</button>';
+  h+='<button class="econ-sub-tab est-hip'+(ECON_ESTUDIO_SUB==='hipoteca'?' active':'')+'" id="ecSubHip">Comparar<br>Hipotecas</button>';
   h+='</div>';
   if(ECON_ESTUDIO_SUB==='comparador'){h+=typeof renderEconComp==='function'?renderEconComp():'';}
   else if(ECON_ESTUDIO_SUB==='simulador'){h+=typeof renderEconSim==='function'?renderEconSim():'';}
+  else if(ECON_ESTUDIO_SUB==='hipoteca'){h+=_renderEstudioHipotecaComp();}
+  return h;
+}
+
+/* ── Estudio Cambio: Comparar Hipotecas ──────────────────── */
+var ESTUDIO_HIP_ALT={importe:0,tipo:0,plazo:0,costeCambio:0,vincCoste:0,vincReduc:0};
+var ESTUDIO_HIP_CALC=false;
+
+function _renderEstudioHipotecaComp(){
+  var h='';
+  var comp=DESPACHO&&DESPACHO.compra?DESPACHO.compra:null;
+  if(!comp||!comp.importePrestamo||!comp.tipoInteres||!comp.plazoAnios){
+    h+='<div class="sy-section" style="text-align:center;padding:30px 20px;color:var(--text-dim)">';
+    h+='<div style="font-size:.75rem">Configura los datos de hipoteca en <b>\u2699 Configuraci\u00f3n Fiscal \u2192 Hipoteca</b> para comparar.</div>';
+    h+='</div>';
+    return h;
+  }
+  /* Current mortgage summary */
+  var act=typeof _getActiveMortgage==='function'?_getActiveMortgage(comp):{importe:comp.importePrestamo,tipo:comp.tipoInteres,plazo:comp.plazoAnios,vinc:comp.vinculaciones};
+  var tipoEfAct=typeof _hipEffRate==='function'?_hipEffRate(act.tipo,act.vinc):act.tipo;
+  var rAct=tipoEfAct/100/12,nAct=act.plazo*12;
+  var cuotaAct=rAct>0?act.importe*rAct*Math.pow(1+rAct,nAct)/(Math.pow(1+rAct,nAct)-1):act.importe/nAct;
+
+  h+='<div class="sy-section">';
+  h+='<div class="sy-section-title">Tu hipoteca actual</div>';
+  h+='<div class="analisis-mortgage-current">';
+  h+='<div style="font-size:.72rem;color:var(--text-dim)">'+escHtml(act.banco||'')+' \u00b7 '+tipoEfAct.toFixed(2)+'% \u00b7 '+act.plazo+'a \u00b7 '+_fmtMiles(act.importe)+'\u20ac</div>';
+  h+='<div style="font-family:var(--mono);font-size:1rem;font-weight:700;margin-top:4px">'+fcPlain(Math.round(cuotaAct*100)/100)+'\u20ac<span style="font-size:.68rem;color:var(--text-dim)">/mes</span></div>';
+  h+='</div></div>';
+
+  /* Alternative mortgage inputs */
+  h+='<div class="sy-section">';
+  h+='<div class="sy-section-title">Hipoteca alternativa</div>';
+  if(!ESTUDIO_HIP_ALT.importe)ESTUDIO_HIP_ALT.importe=act.importe;
+  if(!ESTUDIO_HIP_ALT.plazo)ESTUDIO_HIP_ALT.plazo=act.plazo;
+  h+='<div class="analisis-mortgage-alt">';
+  h+='<div class="analisis-mortgage-inputs" style="flex-wrap:wrap">';
+  h+='<div class="analisis-input-group"><label>Capital \u20ac</label><input class="analisis-input" id="estHipImporte" type="number" min="0" step="1000" value="'+ESTUDIO_HIP_ALT.importe+'"></div>';
+  h+='<div class="analisis-input-group"><label>Tipo inter\u00e9s %</label><input class="analisis-input" id="estHipTipo" type="number" min="0" step="0.1" value="'+ESTUDIO_HIP_ALT.tipo+'"></div>';
+  h+='<div class="analisis-input-group"><label>Plazo (a\u00f1os)</label><input class="analisis-input" id="estHipPlazo" type="number" min="1" step="1" value="'+ESTUDIO_HIP_ALT.plazo+'"></div>';
+  h+='<div class="analisis-input-group"><label>Coste cambio \u20ac</label><input class="analisis-input" id="estHipCoste" type="number" min="0" step="100" value="'+ESTUDIO_HIP_ALT.costeCambio+'"></div>';
+  h+='<div class="analisis-input-group"><label>Vinc. coste/a\u00f1o \u20ac</label><input class="analisis-input" id="estHipVincCoste" type="number" min="0" step="50" value="'+ESTUDIO_HIP_ALT.vincCoste+'"></div>';
+  h+='<div class="analisis-input-group"><label>Vinc. reducci\u00f3n %</label><input class="analisis-input" id="estHipVincReduc" type="number" min="0" step="0.05" value="'+ESTUDIO_HIP_ALT.vincReduc+'"></div>';
+  h+='</div>';
+  h+='<button class="econ-calc-btn" id="estHipCalc" style="margin-top:6px">Comparar</button>';
+  h+='</div>';
+
+  if(ESTUDIO_HIP_CALC&&ESTUDIO_HIP_ALT.tipo>0){
+    var tipoEfAlt=Math.max(0,ESTUDIO_HIP_ALT.tipo-ESTUDIO_HIP_ALT.vincReduc);
+    var rAlt=tipoEfAlt/100/12,nAlt=ESTUDIO_HIP_ALT.plazo*12;
+    var cuotaAlt=rAlt>0?ESTUDIO_HIP_ALT.importe*rAlt*Math.pow(1+rAlt,nAlt)/(Math.pow(1+rAlt,nAlt)-1):ESTUDIO_HIP_ALT.importe/nAlt;
+    var totalAct2=cuotaAct*nAct;
+    var totalAlt=cuotaAlt*nAlt+ESTUDIO_HIP_ALT.costeCambio;
+    var ahorro=Math.round(totalAct2-totalAlt);
+    var ahorroMes=Math.round((cuotaAct-cuotaAlt)*100)/100;
+
+    h+='<div class="sy-section">';
+    h+='<div class="sy-section-title">Resultado</div>';
+    h+='<div class="ah-vs">';
+    h+='<div class="ah-vs-card"><div class="ah-vs-card-title">Actual ('+tipoEfAct.toFixed(2)+'%)</div><div class="ah-vs-card-val">'+fcPlain(Math.round(cuotaAct*100)/100)+'<span style="font-size:.6rem;color:var(--text-dim)">/mes</span></div></div>';
+    h+='<div class="ah-vs-card"><div class="ah-vs-card-title">Alternativa ('+tipoEfAlt.toFixed(2)+'%)</div><div class="ah-vs-card-val">'+fcPlain(Math.round(cuotaAlt*100)/100)+'<span style="font-size:.6rem;color:var(--text-dim)">/mes</span></div></div>';
+    h+='</div>';
+    h+='<div class="analisis-mortgage-ahorro '+(ahorro>=0?'pos':'neg')+'" style="margin-top:8px">';
+    h+=(ahorro>=0?'Ahorras: <b>'+fcPlain(ahorro)+'\u20ac</b>':'Pagas m\u00e1s: <b>'+fcPlain(-ahorro)+'\u20ac</b>');
+    h+=' ('+fcPlain(Math.abs(ahorroMes))+'/mes)';
+    h+='</div>';
+    if(ESTUDIO_HIP_ALT.costeCambio>0&&ahorroMes>0){
+      var be=Math.ceil(ESTUDIO_HIP_ALT.costeCambio/ahorroMes);
+      h+='<div style="font-size:.72rem;color:var(--text-dim);margin-top:4px">Break-even en <b>'+be+' meses</b> ('+Math.round(be/12*10)/10+' a\u00f1os)</div>';
+    }
+    h+=_mortgageComparisonChart(cuotaAct,cuotaAlt,Math.max(nAct,nAlt),ESTUDIO_HIP_ALT.costeCambio,tipoEfAct,tipoEfAlt);
+    h+='</div>';
+  }
+  h+='</div>';
   return h;
 }
 
@@ -1223,10 +1346,26 @@ function bindEconEvents(){
 function bindEconEstudioEvents(){
   var subComp=document.getElementById('ecSubComp');
   var subSim=document.getElementById('ecSubSim');
+  var subHip=document.getElementById('ecSubHip');
   if(subComp)subComp.addEventListener('click',function(){ECON_ESTUDIO_SUB='comparador';reRenderEcon();});
   if(subSim)subSim.addEventListener('click',function(){ECON_ESTUDIO_SUB='simulador';reRenderEcon();});
+  if(subHip)subHip.addEventListener('click',function(){ECON_ESTUDIO_SUB='hipoteca';reRenderEcon();});
   if(ECON_ESTUDIO_SUB==='comparador'&&typeof bindEconCompEvents==='function')bindEconCompEvents();
   else if(ECON_ESTUDIO_SUB==='simulador'&&typeof bindEconSimEvents==='function')bindEconSimEvents();
+  else if(ECON_ESTUDIO_SUB==='hipoteca')_bindEstudioHipoteca();
+}
+function _bindEstudioHipoteca(){
+  var calcBtn=document.getElementById('estHipCalc');
+  if(calcBtn)calcBtn.addEventListener('click',function(){
+    ESTUDIO_HIP_ALT.importe=parseFloat(document.getElementById('estHipImporte').value)||0;
+    ESTUDIO_HIP_ALT.tipo=parseFloat(document.getElementById('estHipTipo').value)||0;
+    ESTUDIO_HIP_ALT.plazo=parseFloat(document.getElementById('estHipPlazo').value)||0;
+    ESTUDIO_HIP_ALT.costeCambio=parseFloat(document.getElementById('estHipCoste').value)||0;
+    ESTUDIO_HIP_ALT.vincCoste=parseFloat(document.getElementById('estHipVincCoste').value)||0;
+    ESTUDIO_HIP_ALT.vincReduc=parseFloat(document.getElementById('estHipVincReduc').value)||0;
+    ESTUDIO_HIP_CALC=true;
+    reRenderEcon();
+  });
 }
 
 function bindEconResumenEvents(){

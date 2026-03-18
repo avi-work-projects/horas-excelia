@@ -354,6 +354,25 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .econ-sub-tabs{display:flex;gap:6px;padding:8px 10px;box-shadow:0 1px 0 var(--border)}
 .econ-sub-tab{flex:1;font-size:.68rem;padding:6px 4px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;text-align:center;-webkit-user-select:none;user-select:none}
 .econ-sub-tab.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
+.econ-sub-tab.est-hip{color:var(--text-dim)}
+.econ-sub-tab.est-hip.active{border-color:#c084fc;background:rgba(192,132,252,.1);color:#c084fc}
+/* Análisis hipoteca — secciones organizadas */
+.ah-section{padding:10px 0;border-bottom:1px solid var(--border)}
+.ah-section:last-child{border-bottom:none}
+.ah-section-title{font-size:.78rem;font-weight:700;color:var(--text-muted);margin-bottom:8px}
+.ah-cuota-hero{text-align:center;padding:10px 0}
+.ah-cuota-val{font-family:var(--mono);font-size:1.5rem;font-weight:700;color:var(--text)}
+.ah-cuota-sub{font-size:.68rem;color:var(--text-dim);margin-top:2px}
+.ah-vs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ah-vs-card{padding:8px;border-radius:8px;background:var(--surface);border:1px solid var(--border)}
+.ah-vs-card-title{font-size:.66rem;color:var(--text-dim);font-weight:600;margin-bottom:4px}
+.ah-vs-card-val{font-family:var(--mono);font-size:.82rem;font-weight:700}
+.ah-total-row{display:flex;justify-content:space-between;font-size:.72rem;padding:3px 0;color:var(--text-dim)}
+.ah-total-row b{color:var(--text)}
+.ah-total-row.highlight{font-size:.78rem;border-top:1px solid var(--border);padding-top:6px;margin-top:4px}
+.ah-donut-wrap{display:flex;align-items:center;justify-content:center;gap:12px;margin:8px 0}
+.ah-donut-legend{font-size:.66rem;color:var(--text-dim)}
+.ah-donut-legend span{display:block;margin:3px 0}
 /* Year selector for per-year fiscal tabs */
 .fiscal-year-selector{display:flex;align-items:center;justify-content:center;gap:12px;padding:8px 0 10px;flex-shrink:0;background:var(--bg);box-shadow:0 1px 0 var(--border)}
 .fiscal-year-arrow{background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text-muted);font-size:.9rem;padding:4px 10px;cursor:pointer;-webkit-user-select:none;user-select:none}
