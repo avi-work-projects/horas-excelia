@@ -366,7 +366,28 @@ function loadDespacho(){
       DESPACHO.hipotecaInteresesManual=d.hipotecaInteresesManual||false;
       if(!d.deducciones)DESPACHO.deducciones={amortizacion:true,ibi:true,hipotecaInt:true,casa:true,suministros:true};
       else DESPACHO.deducciones=d.deducciones;
-    }else{DESPACHO.compra=_defaultCompra();DESPACHO.deducciones={amortizacion:true,ibi:true,hipotecaInt:true,casa:true,suministros:true};}
+      /* Migración v123→v124: gas, electricidad, seguros normales */
+      DESPACHO.gas=d.gas||{modo:'consumo',precioKwh:0,cuotaFija:0,terminoFijo:0,comercializadora:''};
+      DESPACHO.elect=d.elect||{modoPotencia:'doble',potenciaP1:3.3,potenciaP2:3.3,potenciaTotal:6.6,precioKwh:0,terminoFijo:0,comercializadora:''};
+      DESPACHO.segurosNormales=d.segurosNormales||{segSalud:0,segVida:0,segHogar:0};
+      DESPACHO.gasComparaciones=d.gasComparaciones||[];
+      DESPACHO.electComparaciones=d.electComparaciones||[];
+      /* Migrar ANALISIS_SEG_NORMAL a DESPACHO.segurosNormales */
+      if(typeof ANALISIS_SEG_NORMAL!=='undefined'){
+        var sn=DESPACHO.segurosNormales;
+        if(!sn.segSalud&&ANALISIS_SEG_NORMAL.segSalud)sn.segSalud=ANALISIS_SEG_NORMAL.segSalud;
+        if(!sn.segVida&&ANALISIS_SEG_NORMAL.segVida)sn.segVida=ANALISIS_SEG_NORMAL.segVida;
+        if(!sn.segHogar&&ANALISIS_SEG_NORMAL.segHogar)sn.segHogar=ANALISIS_SEG_NORMAL.segHogar;
+      }
+    }else{
+      DESPACHO.compra=_defaultCompra();
+      DESPACHO.deducciones={amortizacion:true,ibi:true,hipotecaInt:true,casa:true,suministros:true};
+      DESPACHO.gas={modo:'consumo',precioKwh:0,cuotaFija:0,terminoFijo:0,comercializadora:''};
+      DESPACHO.elect={modoPotencia:'doble',potenciaP1:3.3,potenciaP2:3.3,potenciaTotal:6.6,precioKwh:0,terminoFijo:0,comercializadora:''};
+      DESPACHO.segurosNormales={segSalud:0,segVida:0,segHogar:0};
+      DESPACHO.gasComparaciones=[];
+      DESPACHO.electComparaciones=[];
+    }
   }catch(e){if(!DESPACHO.compra)DESPACHO.compra=_defaultCompra();}
 }
 function saveDespacho(){
@@ -464,7 +485,7 @@ function renderFiscalContent(){
   h+='<button class="fiscal-tab-btn'+(FISCAL_TAB==='personal'?' active':'')+'" id="fiscalTabPersonal">Econom\u00eda<br>Personal</button>';
   h+='<button class="fiscal-tab-btn'+(FISCAL_TAB==='gastos_desg'?' active':'')+'" id="fiscalTabGastosDesg">Gastos<br>Desgravables</button>';
   h+='<button class="fiscal-tab-btn'+(FISCAL_TAB==='irpf_deduc'?' active':'')+'" id="fiscalTabIrpfDeduc">IRPF y<br>Deducciones</button>';
-  h+='<button class="fiscal-tab-btn'+(FISCAL_TAB==='despacho'?' active':'')+'" id="fiscalTabDespacho">Hipoteca</button>';
+  h+='<button class="fiscal-tab-btn'+(FISCAL_TAB==='despacho'?' active':'')+'" id="fiscalTabDespacho">Hipoteca<br>y Facturas</button>';
   h+='</div>';
   if(FISCAL_TAB!=='despacho')h+=_renderYearSelector();
   h+='<div class="sy-body" style="padding:16px">';
@@ -1189,6 +1210,29 @@ function _renderHipResumen(){
     h+=_hipPeriodCard(comp,periods[p].subIdx,periods[p].isActive,periods[p].start,periods[p].end);
   }
   /* Ver análisis button */
+  /* Gas/Electricidad summary cards */
+  var gas=DESPACHO.gas||{};
+  var elc=DESPACHO.elect||{};
+  if(gas.precioKwh||gas.cuotaFija||elc.precioKwh){
+    h+='<div style="font-size:.72rem;color:var(--text-dim);margin:12px 0 6px;font-weight:600">\uD83D\uDCE6 Facturas</div>';
+    if(gas.precioKwh||gas.cuotaFija){
+      h+='<div class="hip-period-card">';
+      h+='<div class="hip-period-hdr"><span class="hip-period-title">\uD83D\uDD25 Gas'+(gas.comercializadora?' \u2014 '+escHtml(gas.comercializadora):'')+'</span></div>';
+      if(gas.modo==='fijo')h+='<div class="hip-period-info">Cuota fija: <b>'+fcPlain(gas.cuotaFija)+'\u20ac/mes</b></div>';
+      else h+='<div class="hip-period-info">Precio: <b>'+(gas.precioKwh||0).toFixed(4)+' \u20ac/kWh</b></div>';
+      if(gas.terminoFijo)h+='<div class="hip-period-info">T\u00e9rmino fijo: '+fcPlain(gas.terminoFijo)+'\u20ac/mes</div>';
+      h+='<button class="hip-period-btn" data-hipsub="gas">Ver Detalle</button></div>';
+    }
+    if(elc.precioKwh){
+      h+='<div class="hip-period-card">';
+      h+='<div class="hip-period-hdr"><span class="hip-period-title">\u26A1 Electricidad'+(elc.comercializadora?' \u2014 '+escHtml(elc.comercializadora):'')+'</span></div>';
+      var potTxt=elc.modoPotencia==='doble'?'P1: '+elc.potenciaP1+'kW + P2: '+elc.potenciaP2+'kW':elc.potenciaTotal+'kW';
+      h+='<div class="hip-period-info">Potencia: <b>'+potTxt+'</b></div>';
+      h+='<div class="hip-period-info">Precio: <b>'+(elc.precioKwh||0).toFixed(4)+' \u20ac/kWh</b></div>';
+      if(elc.terminoFijo)h+='<div class="hip-period-info">T\u00e9rmino fijo: '+fcPlain(elc.terminoFijo)+'\u20ac/mes</div>';
+      h+='<button class="hip-period-btn" data-hipsub="elect">Ver Detalle</button></div>';
+    }
+  }
   h+='<button class="hip-add-sub-btn" id="hipGoAnalisis" style="border-style:solid;margin-top:4px">\uD83D\uDCC8 Ver An\u00e1lisis Hipoteca</button>';
   return h;
 }
@@ -1382,13 +1426,114 @@ function _renderSubSection(comp,sub,idx,isEditing){
 /* ── Main tab dispatcher ──────────────────────────────────── */
 function renderFiscalTabDespacho(){
   var h='';
-  /* Sub-tabs */
-  h+='<div class="econ-sub-tabs">';
+  h+='<div class="econ-sub-tabs" style="flex-wrap:wrap">';
   h+='<button class="econ-sub-tab'+(FISCAL_HIP_SUB==='resumen'?' active':'')+'" data-hipsub="resumen">Resumen</button>';
-  h+='<button class="econ-sub-tab'+(FISCAL_HIP_SUB==='detalle'?' active':'')+'" data-hipsub="detalle">Detalle</button>';
+  h+='<button class="econ-sub-tab'+(FISCAL_HIP_SUB==='detalle'?' active':'')+'" data-hipsub="detalle">Detalle<br>Hipoteca</button>';
+  h+='<button class="econ-sub-tab est-hip'+(FISCAL_HIP_SUB==='gas'?' active':'')+'" data-hipsub="gas">Detalle<br>Gas</button>';
+  h+='<button class="econ-sub-tab est-hip'+(FISCAL_HIP_SUB==='elect'?' active':'')+'" data-hipsub="elect">Detalle<br>Elect.</button>';
   h+='</div>';
   if(FISCAL_HIP_SUB==='resumen')h+=_renderHipResumen();
-  else h+=_renderHipDetalle();
+  else if(FISCAL_HIP_SUB==='detalle')h+=_renderHipDetalle();
+  else if(FISCAL_HIP_SUB==='gas')h+=_renderGasDetalle();
+  else if(FISCAL_HIP_SUB==='elect')h+=_renderElectDetalle();
+  return h;
+}
+
+/* ── Gas detail sub-tab ──────────────────────────────────── */
+var FISCAL_GAS_EDITING=false;
+function _renderGasDetalle(){
+  var g=DESPACHO.gas||{modo:'consumo',precioKwh:0,cuotaFija:0,terminoFijo:0,comercializadora:''};
+  var h='<div class="fiscal-section">';
+  h+='<div class="hip-section-hdr"><span class="fiscal-section-title">\uD83D\uDD25 Tarifa de Gas</span>';
+  if(!FISCAL_GAS_EDITING)h+='<button class="hip-edit-btn" id="gasEditBtn">Editar</button>';
+  h+='</div>';
+  if(FISCAL_GAS_EDITING){
+    h+='<div style="margin-bottom:8px"><span class="hip-cf-lbl">Modo de pago</span>';
+    h+='<div style="display:flex;gap:6px;margin-top:4px">';
+    h+='<button class="fiscal-onoff'+(g.modo==='consumo'?' on':'')+'" id="gasModoConsumo">Consumo</button>';
+    h+='<button class="fiscal-onoff'+(g.modo==='fijo'?' on':'')+'" id="gasModoFijo">Fijo mensual</button>';
+    h+='</div></div>';
+    h+='<div class="hip-g2">';
+    if(g.modo==='consumo'){
+      h+=_hipNum('gasPrecioKwh','Precio kWh',g.precioKwh,'\u20ac/kWh');
+    } else {
+      h+=_hipMoney('gasCuotaFija','Cuota fija mensual',g.cuotaFija);
+    }
+    h+=_hipMoney('gasTerminoFijo','T\u00e9rmino fijo/mes',g.terminoFijo);
+    h+=_hipText('gasComerc','Comercializadora',g.comercializadora,'Ej: Naturgy...');
+    h+='</div>';
+    h+='<div class="hip-edit-actions"><button class="hip-save-btn" id="gasSaveBtn">Guardar cambios</button><button class="hip-cancel-btn" id="gasCancelBtn">Cancelar</button></div>';
+  } else {
+    h+=_hipRO('Modo',g.modo==='consumo'?'Pago por consumo':'Cuota fija mensual');
+    if(g.modo==='consumo'){
+      h+=_hipRO('Precio kWh',g.precioKwh?g.precioKwh.toFixed(4)+' \u20ac/kWh':'\u2014');
+    } else {
+      h+=_hipROmoney('Cuota fija/mes',g.cuotaFija);
+    }
+    h+=_hipROmoney('T\u00e9rmino fijo/mes',g.terminoFijo);
+    h+=_hipRO('Comercializadora',g.comercializadora||'\u2014');
+  }
+  h+='</div>';
+  /* Precios normales seguros */
+  h+=_renderSegurosNormales();
+  return h;
+}
+
+/* ── Electricidad detail sub-tab ─────────────────────────── */
+var FISCAL_ELECT_EDITING=false;
+function _renderElectDetalle(){
+  var e=DESPACHO.elect||{modoPotencia:'doble',potenciaP1:3.3,potenciaP2:3.3,potenciaTotal:6.6,precioKwh:0,terminoFijo:0,comercializadora:''};
+  var h='<div class="fiscal-section">';
+  h+='<div class="hip-section-hdr"><span class="fiscal-section-title">\u26A1 Tarifa de Electricidad</span>';
+  if(!FISCAL_ELECT_EDITING)h+='<button class="hip-edit-btn" id="electEditBtn">Editar</button>';
+  h+='</div>';
+  if(FISCAL_ELECT_EDITING){
+    h+='<div style="margin-bottom:8px"><span class="hip-cf-lbl">Modo potencia</span>';
+    h+='<div style="display:flex;gap:6px;margin-top:4px">';
+    h+='<button class="fiscal-onoff'+(e.modoPotencia==='doble'?' on':'')+'" id="electModoDoble">P1 + P2</button>';
+    h+='<button class="fiscal-onoff'+(e.modoPotencia==='simple'?' on':'')+'" id="electModoSimple">Total</button>';
+    h+='</div></div>';
+    h+='<div class="hip-g2">';
+    if(e.modoPotencia==='doble'){
+      h+=_hipNum('electP1','Potencia punta (P1)',e.potenciaP1,'kW');
+      h+=_hipNum('electP2','Potencia valle (P2)',e.potenciaP2,'kW');
+      h+=_hipNum('electTotal','Total (auto)',e.potenciaTotal,'kW');
+    } else {
+      h+=_hipNum('electTotal','Potencia contratada',e.potenciaTotal,'kW');
+    }
+    h+=_hipNum('electPrecioKwh','Precio kWh',e.precioKwh,'\u20ac/kWh');
+    h+=_hipMoney('electTerminoFijo','T\u00e9rmino fijo/mes',e.terminoFijo);
+    h+=_hipText('electComerc','Comercializadora',e.comercializadora,'Ej: Endesa...');
+    h+='</div>';
+    h+='<div class="hip-edit-actions"><button class="hip-save-btn" id="electSaveBtn">Guardar cambios</button><button class="hip-cancel-btn" id="electCancelBtn">Cancelar</button></div>';
+  } else {
+    if(e.modoPotencia==='doble'){
+      h+=_hipRO('Potencia P1 (punta)',e.potenciaP1?e.potenciaP1+' kW':'\u2014');
+      h+=_hipRO('Potencia P2 (valle)',e.potenciaP2?e.potenciaP2+' kW':'\u2014');
+      h+=_hipRO('Potencia total',(e.potenciaP1+e.potenciaP2).toFixed(1)+' kW');
+    } else {
+      h+=_hipRO('Potencia contratada',e.potenciaTotal?e.potenciaTotal+' kW':'\u2014');
+    }
+    h+=_hipRO('Precio kWh',e.precioKwh?e.precioKwh.toFixed(4)+' \u20ac/kWh':'\u2014');
+    h+=_hipROmoney('T\u00e9rmino fijo/mes',e.terminoFijo);
+    h+=_hipRO('Comercializadora',e.comercializadora||'\u2014');
+  }
+  h+='</div>';
+  return h;
+}
+
+/* ── Precios normales de seguros (config) ────────────────── */
+function _renderSegurosNormales(){
+  var sn=DESPACHO.segurosNormales||{segSalud:0,segVida:0,segHogar:0};
+  var h='<div class="fiscal-section">';
+  h+='<div class="fiscal-section-title">\uD83D\uDCCB Precios referencia seguros</div>';
+  h+='<div style="font-size:.68rem;color:var(--text-dim);margin-bottom:6px">Precio que consideras normal para comparar con seguros vinculados a la hipoteca.</div>';
+  h+='<div class="hip-g2">';
+  h+=_hipMoney('segNormalSalud','Seg. salud (anual)',sn.segSalud);
+  h+=_hipMoney('segNormalVida','Seg. vida (anual)',sn.segVida);
+  h+=_hipMoney('segNormalHogar','Seg. hogar (anual)',sn.segHogar);
+  h+='</div>';
+  h+='</div>';
   return h;
 }
 
@@ -1966,9 +2111,102 @@ function _bindTabDespacho(){
   });
   if(FISCAL_HIP_SUB==='resumen'){
     _bindHipResumen();
-  } else {
+  } else if(FISCAL_HIP_SUB==='detalle'){
     _bindHipDetalle();
+  } else if(FISCAL_HIP_SUB==='gas'){
+    _bindGasDetalle();
+  } else if(FISCAL_HIP_SUB==='elect'){
+    _bindElectDetalle();
   }
+}
+
+/* ── Gas detail bindings ─────────────────────────────────── */
+function _bindGasDetalle(){
+  var editBtn=document.getElementById('gasEditBtn');
+  if(editBtn)editBtn.addEventListener('click',function(){FISCAL_GAS_EDITING=true;reRenderFiscal();});
+  var saveBtn=document.getElementById('gasSaveBtn');
+  if(saveBtn)saveBtn.addEventListener('click',function(){
+    var g=DESPACHO.gas;
+    if(g.modo==='consumo')g.precioKwh=parseFloat(document.getElementById('desp-gasPrecioKwh').value)||0;
+    else g.cuotaFija=parseFloat(document.getElementById('desp-gasCuotaFija').value)||0;
+    g.terminoFijo=parseFloat(document.getElementById('desp-gasTerminoFijo').value)||0;
+    g.comercializadora=(document.getElementById('desp-gasComerc').value||'').trim();
+    saveDespacho();FISCAL_GAS_EDITING=false;reRenderFiscal();
+  });
+  var cancelBtn=document.getElementById('gasCancelBtn');
+  if(cancelBtn)cancelBtn.addEventListener('click',function(){loadDespacho();FISCAL_GAS_EDITING=false;reRenderFiscal();});
+  /* Modo toggles */
+  var modoC=document.getElementById('gasModoConsumo');
+  var modoF=document.getElementById('gasModoFijo');
+  if(modoC)modoC.addEventListener('click',function(){DESPACHO.gas.modo='consumo';reRenderFiscal();});
+  if(modoF)modoF.addEventListener('click',function(){DESPACHO.gas.modo='fijo';reRenderFiscal();});
+  /* Seguros normales inputs */
+  _bindSegurosNormales();
+}
+
+/* ── Electricidad detail bindings ─────────────────────────── */
+function _bindElectDetalle(){
+  var editBtn=document.getElementById('electEditBtn');
+  if(editBtn)editBtn.addEventListener('click',function(){FISCAL_ELECT_EDITING=true;reRenderFiscal();});
+  var saveBtn=document.getElementById('electSaveBtn');
+  if(saveBtn)saveBtn.addEventListener('click',function(){
+    var e=DESPACHO.elect;
+    if(e.modoPotencia==='doble'){
+      e.potenciaP1=parseFloat(document.getElementById('desp-electP1').value)||0;
+      e.potenciaP2=parseFloat(document.getElementById('desp-electP2').value)||0;
+      e.potenciaTotal=Math.round((e.potenciaP1+e.potenciaP2)*10)/10;
+    } else {
+      e.potenciaTotal=parseFloat(document.getElementById('desp-electTotal').value)||0;
+      e.potenciaP1=Math.round(e.potenciaTotal/2*10)/10;
+      e.potenciaP2=e.potenciaP1;
+    }
+    e.precioKwh=parseFloat(document.getElementById('desp-electPrecioKwh').value)||0;
+    e.terminoFijo=parseFloat(document.getElementById('desp-electTerminoFijo').value)||0;
+    e.comercializadora=(document.getElementById('desp-electComerc').value||'').trim();
+    saveDespacho();FISCAL_ELECT_EDITING=false;reRenderFiscal();
+  });
+  var cancelBtn=document.getElementById('electCancelBtn');
+  if(cancelBtn)cancelBtn.addEventListener('click',function(){loadDespacho();FISCAL_ELECT_EDITING=false;reRenderFiscal();});
+  /* Modo toggles */
+  var modoD=document.getElementById('electModoDoble');
+  var modoS=document.getElementById('electModoSimple');
+  if(modoD)modoD.addEventListener('click',function(){DESPACHO.elect.modoPotencia='doble';reRenderFiscal();});
+  if(modoS)modoS.addEventListener('click',function(){DESPACHO.elect.modoPotencia='simple';reRenderFiscal();});
+  /* Bidirectional P1+P2 ↔ Total */
+  var p1=document.getElementById('desp-electP1');
+  var p2=document.getElementById('desp-electP2');
+  var tot=document.getElementById('desp-electTotal');
+  if(p1)p1.addEventListener('input',function(){
+    var v1=parseFloat(p1.value)||0,v2=parseFloat(p2.value)||0;
+    if(tot)tot.value=Math.round((v1+v2)*10)/10;
+  });
+  if(p2)p2.addEventListener('input',function(){
+    var v1=parseFloat(p1.value)||0,v2=parseFloat(p2.value)||0;
+    if(tot)tot.value=Math.round((v1+v2)*10)/10;
+  });
+  if(tot&&DESPACHO.elect.modoPotencia==='doble')tot.addEventListener('input',function(){
+    var t=parseFloat(tot.value)||0;
+    if(p1)p1.value=Math.round(t/2*10)/10;
+    if(p2)p2.value=Math.round(t/2*10)/10;
+  });
+}
+
+/* ── Seguros normales bindings ───────────────────────────── */
+function _bindSegurosNormales(){
+  var fields={segNormalSalud:'segSalud',segNormalVida:'segVida',segNormalHogar:'segHogar'};
+  Object.keys(fields).forEach(function(domId){
+    var el=document.getElementById('desp-'+domId);
+    if(!el)return;
+    var prop=fields[domId];
+    el.addEventListener('change',function(){
+      if(!DESPACHO.segurosNormales)DESPACHO.segurosNormales={segSalud:0,segVida:0,segHogar:0};
+      DESPACHO.segurosNormales[prop]=parseFloat(this.value)||0;
+      saveDespacho();
+    });
+    /* Money format */
+    var fmtEl=document.getElementById('desp-fmt-'+domId);
+    if(fmtEl)el.addEventListener('input',function(){var v=parseFloat(el.value)||0;fmtEl.textContent=v>0?_fmtMiles(v)+' \u20ac':'';});
+  });
 }
 function _bindHipResumen(){
   /* "Ver Detalle" buttons */

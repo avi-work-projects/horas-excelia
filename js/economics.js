@@ -1220,14 +1220,18 @@ function bindEconAnalisisEvents(){
 }
 /* ── Estudio Cambio (sub-tabs) ─────────────────────────────── */
 function renderEconEstudio(){
-  var h='<div class="econ-sub-tabs">';
+  var h='<div class="econ-sub-tabs" style="flex-wrap:wrap">';
   h+='<button class="econ-sub-tab'+(ECON_ESTUDIO_SUB==='comparador'?' active':'')+'" id="ecSubComp">Comparar<br>Escenarios</button>';
   h+='<button class="econ-sub-tab'+(ECON_ESTUDIO_SUB==='simulador'?' active':'')+'" id="ecSubSim">Calcular<br>Tarifa</button>';
   h+='<button class="econ-sub-tab est-hip'+(ECON_ESTUDIO_SUB==='hipoteca'?' active':'')+'" id="ecSubHip">Comparar<br>Hipotecas</button>';
+  h+='<button class="econ-sub-tab est-hip'+(ECON_ESTUDIO_SUB==='gas'?' active':'')+'" id="ecSubGas">Comparar<br>Gas</button>';
+  h+='<button class="econ-sub-tab est-hip'+(ECON_ESTUDIO_SUB==='elect'?' active':'')+'" id="ecSubElect">Comparar<br>Elect.</button>';
   h+='</div>';
   if(ECON_ESTUDIO_SUB==='comparador'){h+=typeof renderEconComp==='function'?renderEconComp():'';}
   else if(ECON_ESTUDIO_SUB==='simulador'){h+=typeof renderEconSim==='function'?renderEconSim():'';}
   else if(ECON_ESTUDIO_SUB==='hipoteca'){h+=_renderEstudioHipotecaComp();}
+  else if(ECON_ESTUDIO_SUB==='gas'){h+=_renderEstudioGasComp();}
+  else if(ECON_ESTUDIO_SUB==='elect'){h+=_renderEstudioElectComp();}
   return h;
 }
 
@@ -1371,15 +1375,16 @@ function bindEconEvents(){
 }
 
 function bindEconEstudioEvents(){
-  var subComp=document.getElementById('ecSubComp');
-  var subSim=document.getElementById('ecSubSim');
-  var subHip=document.getElementById('ecSubHip');
-  if(subComp)subComp.addEventListener('click',function(){ECON_ESTUDIO_SUB='comparador';reRenderEcon();});
-  if(subSim)subSim.addEventListener('click',function(){ECON_ESTUDIO_SUB='simulador';reRenderEcon();});
-  if(subHip)subHip.addEventListener('click',function(){ECON_ESTUDIO_SUB='hipoteca';reRenderEcon();});
+  var _estTabs={ecSubComp:'comparador',ecSubSim:'simulador',ecSubHip:'hipoteca',ecSubGas:'gas',ecSubElect:'elect'};
+  Object.keys(_estTabs).forEach(function(id){
+    var el=document.getElementById(id);
+    if(el)el.addEventListener('click',function(){ECON_ESTUDIO_SUB=_estTabs[id];reRenderEcon();});
+  });
   if(ECON_ESTUDIO_SUB==='comparador'&&typeof bindEconCompEvents==='function')bindEconCompEvents();
   else if(ECON_ESTUDIO_SUB==='simulador'&&typeof bindEconSimEvents==='function')bindEconSimEvents();
   else if(ECON_ESTUDIO_SUB==='hipoteca')_bindEstudioHipoteca();
+  else if(ECON_ESTUDIO_SUB==='gas')_bindEstudioGas();
+  else if(ECON_ESTUDIO_SUB==='elect')_bindEstudioElect();
 }
 function _bindEstudioHipoteca(){
   var calcBtn=document.getElementById('estHipCalc');
@@ -1392,6 +1397,150 @@ function _bindEstudioHipoteca(){
     ESTUDIO_HIP_ALT.vincReduc=parseFloat(document.getElementById('estHipVincReduc').value)||0;
     ESTUDIO_HIP_CALC=true;
     reRenderEcon();
+  });
+}
+
+/* ── Estudio: Comparar Gas ────────────────────────────────── */
+var ESTUDIO_GAS={consumoKwh:0,dias:30};
+function _renderEstudioGasComp(){
+  if(typeof loadDespacho==='function')loadDespacho();
+  var g=DESPACHO&&DESPACHO.gas?DESPACHO.gas:{modo:'consumo',precioKwh:0,cuotaFija:0,terminoFijo:0};
+  var comps=DESPACHO&&DESPACHO.gasComparaciones?DESPACHO.gasComparaciones:[];
+  var h='';
+  /* Current tariff */
+  h+='<div class="sy-section">';
+  h+='<div class="sy-section-title">\uD83D\uDD25 Tu tarifa actual</div>';
+  if(g.modo==='fijo')h+='<div style="font-size:.72rem;color:var(--text-dim)">Cuota fija: <b>'+fcPlain(g.cuotaFija)+'\u20ac/mes</b> + T\u00e9rmino fijo: '+fcPlain(g.terminoFijo)+'\u20ac/mes</div>';
+  else h+='<div style="font-size:.72rem;color:var(--text-dim)">Precio: <b>'+(g.precioKwh||0).toFixed(4)+' \u20ac/kWh</b> + T\u00e9rmino fijo: '+fcPlain(g.terminoFijo)+'\u20ac/mes</div>';
+  h+='</div>';
+  /* Consumption input */
+  h+='<div class="sy-section">';
+  h+='<div class="sy-section-title">Consumo a comparar</div>';
+  h+='<div class="analisis-mortgage-inputs">';
+  h+='<div class="analisis-input-group"><label>Consumo (kWh)</label><input class="analisis-input" id="estGasKwh" type="number" min="0" step="10" value="'+ESTUDIO_GAS.consumoKwh+'"></div>';
+  h+='<div class="analisis-input-group"><label>D\u00edas</label><input class="analisis-input" id="estGasDias" type="number" min="1" step="1" value="'+ESTUDIO_GAS.dias+'"></div>';
+  h+='</div></div>';
+  /* Comparisons table */
+  h+='<div class="sy-section">';
+  h+='<div class="sy-section-title">Tarifas a comparar (max 5)</div>';
+  h+=_renderSupplyCompTable(comps,g,ESTUDIO_GAS,'gas');
+  if(comps.length<5)h+='<button class="hip-add-sub-btn" id="estGasAdd">+ A\u00f1adir tarifa</button>';
+  h+='</div>';
+  return h;
+}
+
+/* ── Estudio: Comparar Electricidad ──────────────────────── */
+var ESTUDIO_ELECT={consumoKwh:0,dias:30};
+function _renderEstudioElectComp(){
+  if(typeof loadDespacho==='function')loadDespacho();
+  var e=DESPACHO&&DESPACHO.elect?DESPACHO.elect:{precioKwh:0,terminoFijo:0,potenciaTotal:3.3};
+  var comps=DESPACHO&&DESPACHO.electComparaciones?DESPACHO.electComparaciones:[];
+  var h='';
+  h+='<div class="sy-section">';
+  h+='<div class="sy-section-title">\u26A1 Tu tarifa actual</div>';
+  var potTxt=e.modoPotencia==='doble'?'P1:'+e.potenciaP1+' + P2:'+e.potenciaP2+' kW':e.potenciaTotal+' kW';
+  h+='<div style="font-size:.72rem;color:var(--text-dim)">Potencia: <b>'+potTxt+'</b> \u00b7 Precio: <b>'+(e.precioKwh||0).toFixed(4)+' \u20ac/kWh</b> + T\u00e9rmino fijo: '+fcPlain(e.terminoFijo)+'\u20ac/mes</div>';
+  h+='</div>';
+  h+='<div class="sy-section">';
+  h+='<div class="sy-section-title">Consumo a comparar</div>';
+  h+='<div class="analisis-mortgage-inputs">';
+  h+='<div class="analisis-input-group"><label>Consumo (kWh)</label><input class="analisis-input" id="estElectKwh" type="number" min="0" step="10" value="'+ESTUDIO_ELECT.consumoKwh+'"></div>';
+  h+='<div class="analisis-input-group"><label>D\u00edas</label><input class="analisis-input" id="estElectDias" type="number" min="1" step="1" value="'+ESTUDIO_ELECT.dias+'"></div>';
+  h+='</div></div>';
+  h+='<div class="sy-section">';
+  h+='<div class="sy-section-title">Tarifas a comparar (max 5)</div>';
+  h+=_renderSupplyCompTable(comps,e,ESTUDIO_ELECT,'elect');
+  if(comps.length<5)h+='<button class="hip-add-sub-btn" id="estElectAdd">+ A\u00f1adir tarifa</button>';
+  h+='</div>';
+  return h;
+}
+
+/* Shared supply comparison table */
+function _renderSupplyCompTable(comps,current,consumo,tipo){
+  var kwh=consumo.consumoKwh||0,dias=consumo.dias||30;
+  /* Current cost */
+  var costActual=0;
+  if(tipo==='gas'){
+    if(current.modo==='fijo')costActual=current.cuotaFija*(dias/30);
+    else costActual=kwh*(current.precioKwh||0);
+    costActual+=(current.terminoFijo||0)*(dias/30);
+  } else {
+    costActual=kwh*(current.precioKwh||0)+(current.terminoFijo||0)*(dias/30);
+  }
+  var h='<div class="mg-budget-table" style="margin-top:6px">';
+  h+='<div class="mg-budget-hdr" style="grid-template-columns:1fr 70px 60px 60px"><span>Tarifa</span><span>Coste</span><span>/d\u00eda</span><span>Dif.</span></div>';
+  /* Current row */
+  h+='<div class="mg-budget-row" style="grid-template-columns:1fr 70px 60px 60px;background:var(--surface2)">';
+  h+='<span class="mg-budget-lbl"><span class="mg-cat-dot" style="background:var(--c-green)"></span>Actual</span>';
+  h+='<span class="mg-budget-val">'+fcPlain(Math.round(costActual*100)/100)+'</span>';
+  h+='<span class="mg-budget-val">'+fcPlain(Math.round(costActual/dias*100)/100)+'</span>';
+  h+='<span class="mg-budget-val">\u2014</span></div>';
+  /* Comparison rows */
+  comps.forEach(function(c,i){
+    var costAlt=0;
+    if(tipo==='gas'){
+      if(c.modo==='fijo')costAlt=(c.cuotaFija||0)*(dias/30);
+      else costAlt=kwh*(c.precioKwh||0);
+      costAlt+=(c.terminoFijo||0)*(dias/30);
+    } else {
+      costAlt=kwh*(c.precioKwh||0)+(c.terminoFijo||0)*(dias/30);
+    }
+    var diff=Math.round((costAlt-costActual)*100)/100;
+    h+='<div class="mg-budget-row" style="grid-template-columns:1fr 70px 60px 60px">';
+    h+='<span class="mg-budget-lbl"><input class="analisis-input est-comp-name" data-tipo="'+tipo+'" data-idx="'+i+'" type="text" value="'+escHtml(c.nombre||'')+'" placeholder="Tarifa '+(i+1)+'" style="font-size:.68rem;padding:2px 4px;width:100%"></span>';
+    h+='<span class="mg-budget-val">'+fcPlain(Math.round(costAlt*100)/100)+'</span>';
+    h+='<span class="mg-budget-val">'+fcPlain(Math.round(costAlt/dias*100)/100)+'</span>';
+    h+='<span class="mg-budget-val" style="color:'+(diff<=0?'var(--c-green)':'var(--c-red)')+'">'+(diff<=0?'':'+')+ fcPlain(diff)+'</span></div>';
+    /* Editable fields for this comparison */
+    h+='<div class="mg-budget-row" style="grid-template-columns:1fr 1fr 30px;border-top:none;padding:2px 8px">';
+    h+='<span style="font-size:.62rem;color:var(--text-dim)"><input class="analisis-input est-comp-precio" data-tipo="'+tipo+'" data-idx="'+i+'" type="number" min="0" step="0.0001" value="'+(c.precioKwh||0)+'" style="font-size:.66rem;padding:2px 4px;width:70px"> \u20ac/kWh</span>';
+    h+='<span style="font-size:.62rem;color:var(--text-dim)"><input class="analisis-input est-comp-tfijo" data-tipo="'+tipo+'" data-idx="'+i+'" type="number" min="0" step="1" value="'+(c.terminoFijo||0)+'" style="font-size:.66rem;padding:2px 4px;width:55px"> \u20ac/mes</span>';
+    h+='<button class="est-comp-del" data-tipo="'+tipo+'" data-idx="'+i+'" style="background:none;border:none;color:var(--c-red);font-size:.78rem;cursor:pointer">\u2715</button></div>';
+  });
+  h+='</div>';
+  return h;
+}
+
+function _bindEstudioGas(){
+  var kwhEl=document.getElementById('estGasKwh');
+  var diasEl=document.getElementById('estGasDias');
+  if(kwhEl)kwhEl.addEventListener('change',function(){ESTUDIO_GAS.consumoKwh=parseFloat(this.value)||0;reRenderEcon();});
+  if(diasEl)diasEl.addEventListener('change',function(){ESTUDIO_GAS.dias=parseInt(this.value)||30;reRenderEcon();});
+  var addBtn=document.getElementById('estGasAdd');
+  if(addBtn)addBtn.addEventListener('click',function(){
+    if(!DESPACHO.gasComparaciones)DESPACHO.gasComparaciones=[];
+    if(DESPACHO.gasComparaciones.length>=5)return;
+    DESPACHO.gasComparaciones.push({nombre:'',precioKwh:0,terminoFijo:0,modo:'consumo',cuotaFija:0});
+    saveDespacho();reRenderEcon();
+  });
+  _bindCompInputs('gas','gasComparaciones');
+}
+function _bindEstudioElect(){
+  var kwhEl=document.getElementById('estElectKwh');
+  var diasEl=document.getElementById('estElectDias');
+  if(kwhEl)kwhEl.addEventListener('change',function(){ESTUDIO_ELECT.consumoKwh=parseFloat(this.value)||0;reRenderEcon();});
+  if(diasEl)diasEl.addEventListener('change',function(){ESTUDIO_ELECT.dias=parseInt(this.value)||30;reRenderEcon();});
+  var addBtn=document.getElementById('estElectAdd');
+  if(addBtn)addBtn.addEventListener('click',function(){
+    if(!DESPACHO.electComparaciones)DESPACHO.electComparaciones=[];
+    if(DESPACHO.electComparaciones.length>=5)return;
+    DESPACHO.electComparaciones.push({nombre:'',precioKwh:0,terminoFijo:0});
+    saveDespacho();reRenderEcon();
+  });
+  _bindCompInputs('elect','electComparaciones');
+}
+function _bindCompInputs(tipo,despKey){
+  document.querySelectorAll('.est-comp-name[data-tipo="'+tipo+'"]').forEach(function(el){
+    el.addEventListener('change',function(){DESPACHO[despKey][parseInt(el.dataset.idx)].nombre=el.value;saveDespacho();});
+  });
+  document.querySelectorAll('.est-comp-precio[data-tipo="'+tipo+'"]').forEach(function(el){
+    el.addEventListener('change',function(){DESPACHO[despKey][parseInt(el.dataset.idx)].precioKwh=parseFloat(el.value)||0;saveDespacho();reRenderEcon();});
+  });
+  document.querySelectorAll('.est-comp-tfijo[data-tipo="'+tipo+'"]').forEach(function(el){
+    el.addEventListener('change',function(){DESPACHO[despKey][parseInt(el.dataset.idx)].terminoFijo=parseFloat(el.value)||0;saveDespacho();reRenderEcon();});
+  });
+  document.querySelectorAll('.est-comp-del[data-tipo="'+tipo+'"]').forEach(function(btn){
+    btn.addEventListener('click',function(){DESPACHO[despKey].splice(parseInt(btn.dataset.idx),1);saveDespacho();reRenderEcon();});
   });
 }
 
