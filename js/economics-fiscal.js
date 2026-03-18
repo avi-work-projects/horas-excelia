@@ -1042,6 +1042,26 @@ function renderFiscalTabDespachoOnly(){
   if(DESPACHO.hipotecaInteresesManual&&_autoInt>0){
     h+='<div style="font-size:.66rem;color:var(--text-dim);padding:0 4px 4px"><button class="fiscal-link-btn" id="despRecalcInt" style="font-size:.66rem;color:var(--accent-bright);background:none;border:none;cursor:pointer;text-decoration:underline;padding:0">\u21bb Recalcular ('+fcPlain(_autoInt)+')</button></div>';
   }
+  /* Explanation: how interest is calculated + monthly avg */
+  if(_autoInt>0){
+    var intMes=Math.round(_autoInt/12*100)/100;
+    var tipoEfCalc=_hipEffRate(comp.tipoInteres,comp.vinculaciones);
+    var subs=comp.subrogaciones||[];
+    var lastSub=subs.length>0?subs[subs.length-1]:null;
+    h+='<div style="font-size:.64rem;color:var(--text-dim);padding:4px;background:var(--surface2);border-radius:var(--radius-sm);margin-top:4px">';
+    h+='<div>\uD83D\uDCA1 <b>Media mensual intereses: '+fcPlain(intMes)+'\u20ac/mes</b></div>';
+    h+='<div style="margin-top:2px">C\u00e1lculo: simulaci\u00f3n mes a mes del pr\u00e9stamo (amortizaci\u00f3n francesa), sumando los intereses de cada cuota mensual del a\u00f1o '+FISCAL_YEAR+'.</div>';
+    if(lastSub&&lastSub.fecha){
+      var sp=lastSub.fecha.split('-');
+      var sY=parseInt(sp[0],10);
+      if(sY<=FISCAL_YEAR){
+        h+='<div style="margin-top:2px">Incluye subrogaci\u00f3n ('+lastSub.fecha.split('-').reverse().join('/')+') con tipo efectivo '+_hipEffRate(lastSub.nuevoTipoInteres,lastSub.vinculaciones).toFixed(2)+'%.</div>';
+      }
+    } else {
+      h+='<div style="margin-top:2px">Tipo efectivo: '+tipoEfCalc.toFixed(2)+'%'+(tipoEfCalc!==comp.tipoInteres?' (nominal '+comp.tipoInteres.toFixed(2)+'% \u2212 vinculaciones)':'')+'</div>';
+    }
+    h+='</div>';
+  }
   h+='</div>';
   h+='</div>';
   return h;
