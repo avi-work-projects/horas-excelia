@@ -285,8 +285,10 @@ function renderSummaryContent(){
         for(var qi=0;qi<seq.length;qi++){
           var evs=getEventsOn(dk(seq[qi].date));
           for(var qj=0;qj<evs.length;qj++){
-            var t=typeof EV_COLOR_TYPES!=='undefined'?EV_COLOR_TYPES[evs[qj].color]:'';
-            if(t==='Viaje'||t==='Asturias'||t==='Planes y Quedadas')return false;
+            var ev=evs[qj];
+            var t=typeof EV_COLOR_TYPES!=='undefined'?EV_COLOR_TYPES[ev.color]:'';
+            if(t==='Viaje'||t==='Asturias')return false;
+            if(t==='Planes y Quedadas'&&ev.start!==ev.end)return false;
           }
         }
         return true;
