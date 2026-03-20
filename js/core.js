@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v126 \u2014 gas dos escenarios, seguros en hipoteca, estudio tabs agrupados';
+var APP_VERSION = 'v127 \u2014 exportar a\u00f1o completo en PDF desde home';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
