@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v134 \u2014 Web Share API para CSV y PDF';
+var APP_VERSION = 'v135 \u2014 fix Web Share CSV: MIME type compatible';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -105,17 +105,22 @@ function fakeTrans(hex,alpha){
 
 // ── Compartir / descargar archivo ────────────────────────────
 function shareOrDownload(blob,filename){
-  var file=new File([blob],filename,{type:blob.type});
-  if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
-    navigator.share({files:[file],title:filename}).catch(function(){});
-  } else {
-    var url=URL.createObjectURL(blob);
-    var a=document.createElement('a');
-    a.href=url;a.download=filename;
-    document.body.appendChild(a);a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+  if(navigator.share&&navigator.canShare){
+    var file=new File([blob],filename,{type:blob.type});
+    if(!navigator.canShare({files:[file]})){
+      file=new File([blob],filename,{type:'application/octet-stream'});
+    }
+    if(navigator.canShare({files:[file]})){
+      navigator.share({files:[file],title:filename}).catch(function(){});
+      return;
+    }
   }
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;a.download=filename;
+  document.body.appendChild(a);a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 // ── Utilidades HTML ─────────────────────────────────────────
