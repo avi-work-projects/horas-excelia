@@ -282,16 +282,19 @@ function renderSummaryContent(){
     if(SY_EXCL_PAST)puentesList=puentesList.filter(function(seq){return seq[seq.length-1].date>=syToday;});
     if(SY_PUENTES_LIBRES&&typeof getEventsOn==='function'){
       puentesList=puentesList.filter(function(seq){
+        var freeDays=0;
         for(var qi=0;qi<seq.length;qi++){
           var evs=getEventsOn(dk(seq[qi].date));
+          var occupied=false;
           for(var qj=0;qj<evs.length;qj++){
             var ev=evs[qj];
             var t=typeof EV_COLOR_TYPES!=='undefined'?EV_COLOR_TYPES[ev.color]:'';
-            if(t==='Viaje'||t==='Asturias')return false;
-            if(t==='Planes y Quedadas'&&ev.start!==ev.end)return false;
+            if(t==='Viaje'||t==='Asturias'){occupied=true;break;}
+            if(t==='Planes y Quedadas'&&ev.start!==ev.end){occupied=true;break;}
           }
+          if(!occupied)freeDays++;
         }
-        return true;
+        return freeDays>=2;
       });
     }
     h+='<div class="sy-section"><div class="sy-section-title">Puentes (3+ d\u00edas seguidos)</div>';
