@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v132 \u2014 fix PDF: jsPDF local, puentes libres min 2 d\u00edas';
+var APP_VERSION = 'v133 \u2014 bot\u00f3n CSV exportar d\u00edas trabajados';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
