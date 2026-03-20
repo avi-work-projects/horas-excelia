@@ -143,6 +143,9 @@ try{
     <button class="default-hours-btn" id="editHoursBtn">
       &#9998;&nbsp;Jornada:&nbsp;<span class="dh-val">9h</span>&nbsp;&#xB7;&nbsp;Editar
     </button>
+    <button class="default-hours-btn pdf-export-btn" id="pdfExportBtn">
+      &#128196;&nbsp;PDF
+    </button>
     <div class="default-hours-panel" id="hoursPanel">
       <span class="hours-label">h/d&#237;a (mes):</span>
       <div class="hours-chips">
@@ -266,6 +269,8 @@ try{
 </div>
 
 <!-- ── SCRIPTS ── -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"></script>
 <script src="js/core.js"></script>
 <script src="js/summary.js"></script>
 <script src="js/economics.js"></script>

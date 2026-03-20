@@ -111,6 +111,223 @@
     });
   });
 
+  /* ── Exportar PDF del año ── */
+  document.getElementById('pdfExportBtn').addEventListener('click',function(){
+    if(typeof jspdf==='undefined'&&typeof window.jspdf==='undefined'){
+      showToast('Error: librería jsPDF no cargada','error');return;
+    }
+    var jsPDF=(window.jspdf||jspdf).jsPDF;
+    var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    var year=CY;
+    var pageW=doc.internal.pageSize.getWidth();
+    var marginL=12,marginR=12,usableW=pageW-marginL-marginR;
+
+    // ── Colores ──
+    var cAccent=[90,130,255];   // azul accent
+    var cFestivo=[255,107,107]; // rojo festivo
+    var cVac=[52,211,153];      // verde vacaciones
+    var cAus=[251,191,36];      // amarillo ausencia
+    var cGray=[140,140,160];
+    var cDark=[30,30,40];
+    var cWhite=[255,255,255];
+    var cSent=[90,130,255];
+
+    // ── Título ──
+    doc.setFontSize(18);
+    doc.setTextColor.apply(doc,cAccent);
+    doc.text('Registro de Horas '+year,pageW/2,18,{align:'center'});
+    doc.setFontSize(8);
+    doc.setTextColor.apply(doc,cGray);
+    doc.text('Generado: '+new Date().toLocaleDateString('es-ES'),pageW/2,24,{align:'center'});
+
+    // ── Resumen anual ──
+    var s=computeYearlySummary(year);
+    var yOff=32;
+    doc.setFontSize(11);
+    doc.setTextColor.apply(doc,cDark);
+    doc.text('Resumen Anual',marginL,yOff);
+    yOff+=2;
+
+    doc.autoTable({
+      startY:yOff,
+      margin:{left:marginL,right:marginR},
+      theme:'grid',
+      headStyles:{fillColor:cAccent,textColor:cWhite,fontSize:7,halign:'center',cellPadding:1.5},
+      bodyStyles:{fontSize:7,halign:'center',cellPadding:1.5},
+      columnStyles:{0:{halign:'left',fontStyle:'bold'}},
+      head:[['','Pasados','Futuros','Total']],
+      body:[
+        ['Días trabajados',String(s.worked),String(s.toWork),String(s.workedTotal)],
+        ['Horas trabajadas',s.hoursWorked.toFixed(1),s.hoursToWork.toFixed(1),s.hoursTotal.toFixed(1)],
+        ['Vacaciones',String(s.vacTaken),String(s.vacFuture),String(s.vacTotal)],
+        ['Festivos',String(s.festTaken),String(s.festFuture),String(s.festTotal)],
+        ['Ausencias',String(s.ausTaken),String(s.ausFuture),String(s.ausTotal)]
+      ]
+    });
+
+    yOff=doc.lastAutoTable.finalY+8;
+
+    // ── Tabla resumen por meses ──
+    doc.setFontSize(11);
+    doc.setTextColor.apply(doc,cDark);
+    doc.text('Resumen por Meses',marginL,yOff);
+    yOff+=2;
+
+    var mBody=[];
+    for(var mi=0;mi<12;mi++){
+      var mh=s.mHours[mi]+s.mHoursP[mi];
+      var md=s.mDays[mi]+s.mDaysP[mi];
+      mBody.push([MN[mi],String(md),mh.toFixed(1)]);
+    }
+    mBody.push(['TOTAL',String(s.workedTotal),s.hoursTotal.toFixed(1)]);
+
+    doc.autoTable({
+      startY:yOff,
+      margin:{left:marginL,right:marginR},
+      theme:'grid',
+      headStyles:{fillColor:cAccent,textColor:cWhite,fontSize:7,halign:'center',cellPadding:1.5},
+      bodyStyles:{fontSize:7,halign:'center',cellPadding:1.5},
+      columnStyles:{0:{halign:'left',fontStyle:'bold'}},
+      head:[['Mes','Días','Horas']],
+      body:mBody,
+      didParseCell:function(data){
+        if(data.section==='body'&&data.row.index===12){
+          data.cell.styles.fontStyle='bold';
+          data.cell.styles.fillColor=[240,240,250];
+        }
+      }
+    });
+
+    // ── Detalle mensual: cada mes en una página ──
+    var dayNames=['','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+    var typeLabels={normal:'Normal',festivo:'Festivo',vacaciones:'Vacaciones',ausencia:'Ausencia'};
+
+    for(var m=0;m<12;m++){
+      doc.addPage();
+      var py=14;
+
+      // Título del mes
+      doc.setFontSize(14);
+      doc.setTextColor.apply(doc,cAccent);
+      doc.text(MN[m]+' '+year,pageW/2,py,{align:'center'});
+      py+=3;
+
+      // Jornada del mes
+      doc.setFontSize(7);
+      doc.setTextColor.apply(doc,cGray);
+      var mhDef=getMonthH(year,m,1);
+      doc.text('Jornada por defecto: '+mhDef+'h/día  |  Viernes: 6,5h',pageW/2,py+4,{align:'center'});
+      py+=8;
+
+      // Construir tabla de días del mes
+      var daysInMonth=new Date(year,m+1,0).getDate();
+      var rows=[];
+      var monthHours=0,monthDays=0;
+
+      for(var dd=1;dd<=daysInMonth;dd++){
+        var dt=new Date(year,m,dd);
+        var w=dt.getDay();
+        if(w===0||w===6) continue; // skip weekends
+
+        var k=dk(dt);
+        var tipo=dayT(dt);
+        var hrs=dayH(dt);
+        var wkey=dk(ad(dt,-(w-1))); // monday of this week
+        // Check if week is sent (find monday)
+        var monday=new Date(dt);
+        monday.setDate(monday.getDate()-(w===0?6:w-1));
+        var isSent=!!SW[dk(monday)];
+
+        var tipoStr=typeLabels[tipo]||tipo;
+        var hrsStr=hrs>0?(hrs%1===0?hrs+'h':hrs.toFixed(1)+'h'):'—';
+        var sentStr=isSent?'✓':'';
+
+        if(tipo==='normal'&&hrs>0){monthHours+=hrs;monthDays++;}
+
+        rows.push([
+          String(dd).padStart(2,'0')+'/'+String(m+1).padStart(2,'0'),
+          dayNames[w],
+          tipoStr,
+          hrsStr,
+          sentStr
+        ]);
+      }
+
+      // Fila total
+      rows.push([
+        'TOTAL','',String(monthDays)+' días',
+        (monthHours%1===0?monthHours+'h':monthHours.toFixed(1)+'h'),
+        ''
+      ]);
+
+      doc.autoTable({
+        startY:py,
+        margin:{left:marginL,right:marginR},
+        theme:'grid',
+        headStyles:{fillColor:cAccent,textColor:cWhite,fontSize:7,halign:'center',cellPadding:1.5},
+        bodyStyles:{fontSize:7,cellPadding:1.5},
+        columnStyles:{
+          0:{halign:'center',cellWidth:20},
+          1:{halign:'left',cellWidth:22},
+          2:{halign:'center',cellWidth:22},
+          3:{halign:'center',cellWidth:16},
+          4:{halign:'center',cellWidth:14}
+        },
+        head:[['Fecha','Día','Tipo','Horas','Enviada']],
+        body:rows,
+        didParseCell:function(data){
+          if(data.section!=='body')return;
+          var isLast=data.row.index===rows.length-1;
+          if(isLast){
+            data.cell.styles.fontStyle='bold';
+            data.cell.styles.fillColor=[240,240,250];
+            return;
+          }
+          var tipo=data.row.raw[2];
+          if(tipo==='Festivo'){
+            data.cell.styles.textColor=cFestivo;
+          } else if(tipo==='Vacaciones'){
+            data.cell.styles.textColor=cVac;
+          } else if(tipo==='Ausencia'){
+            data.cell.styles.textColor=cAus;
+          }
+          // Sent badge
+          if(data.column.index===4&&data.cell.raw==='✓'){
+            data.cell.styles.textColor=cSent;
+            data.cell.styles.fontStyle='bold';
+          }
+        }
+      });
+
+      py=doc.lastAutoTable.finalY+6;
+
+      // Resumen del mes abajo
+      doc.setFontSize(8);
+      doc.setTextColor.apply(doc,cGray);
+      var festM=0,vacM=0,ausM=0;
+      for(var dd2=1;dd2<=daysInMonth;dd2++){
+        var dt2=new Date(year,m,dd2);
+        var w2=dt2.getDay();
+        if(w2===0||w2===6)continue;
+        var t2=dayT(dt2);
+        if(t2==='festivo')festM++;
+        else if(t2==='vacaciones')vacM++;
+        else if(t2==='ausencia')ausM++;
+      }
+      var parts=[];
+      if(festM)parts.push(festM+' festivo'+(festM>1?'s':''));
+      if(vacM)parts.push(vacM+' vacaciones');
+      if(ausM)parts.push(ausM+' ausencia'+(ausM>1?'s':''));
+      if(parts.length){
+        doc.text(parts.join('  |  '),pageW/2,py,{align:'center'});
+      }
+    }
+
+    // ── Guardar ──
+    doc.save('horas-'+year+'.pdf');
+    showToast('PDF exportado: horas-'+year+'.pdf','success');
+  });
+
   /* ── Botones del header (overlays) ── */
   document.getElementById('summaryBtn').addEventListener('click',openSummary);
   document.getElementById('econBtn').addEventListener('click',openEcon);
