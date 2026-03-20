@@ -288,9 +288,8 @@ function renderSummaryContent(){
           var occupied=false;
           for(var qj=0;qj<evs.length;qj++){
             var ev=evs[qj];
-            var t=typeof EV_COLOR_TYPES!=='undefined'?EV_COLOR_TYPES[ev.color]:'';
-            if(t==='Viaje'||t==='Asturias'){occupied=true;break;}
-            if(t==='Planes y Quedadas'&&ev.start!==ev.end){occupied=true;break;}
+            // Cualquier evento multi-día ocupa el día
+            if(ev.start!==ev.end){occupied=true;break;}
           }
           if(!occupied)freeDays++;
         }
