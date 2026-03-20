@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v133 \u2014 bot\u00f3n CSV exportar d\u00edas trabajados';
+var APP_VERSION = 'v134 \u2014 Web Share API para CSV y PDF';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -101,6 +101,21 @@ function fakeTrans(hex,alpha){
   var g=('0'+Math.round(parseInt(hex.slice(2,4),16)*alpha).toString(16)).slice(-2);
   var b=('0'+Math.round(parseInt(hex.slice(4,6),16)*alpha).toString(16)).slice(-2);
   return '#'+r+g+b;
+}
+
+// ── Compartir / descargar archivo ────────────────────────────
+function shareOrDownload(blob,filename){
+  var file=new File([blob],filename,{type:blob.type});
+  if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+    navigator.share({files:[file],title:filename}).catch(function(){});
+  } else {
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    a.href=url;a.download=filename;
+    document.body.appendChild(a);a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
 }
 
 // ── Utilidades HTML ─────────────────────────────────────────

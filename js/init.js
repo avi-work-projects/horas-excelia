@@ -137,14 +137,8 @@
     }
     var csv=lines.join('\n');
     var blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
-    var url=URL.createObjectURL(blob);
-    var a=document.createElement('a');
-    a.href=url;
-    a.download='dias_trabajados_'+year+'_'+ts+'.csv';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    var fname='dias_trabajados_'+year+'_'+ts+'.csv';
+    shareOrDownload(blob,fname);
     showToast('CSV exportado','success');
   });
 
@@ -361,7 +355,8 @@
     }
 
     // ── Guardar ──
-    doc.save('horas-'+year+'.pdf');
+    var pdfBlob=doc.output('blob');
+    shareOrDownload(pdfBlob,'horas-'+year+'.pdf');
     showToast('PDF exportado: horas-'+year+'.pdf','success');
   });
 
