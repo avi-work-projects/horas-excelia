@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v131 \u2014 puentes libres: mostrar si al menos 2 d\u00edas libres';
+var APP_VERSION = 'v132 \u2014 fix PDF: jsPDF local, puentes libres min 2 d\u00edas';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
