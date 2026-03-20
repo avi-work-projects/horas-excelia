@@ -4,7 +4,7 @@
    → Cambiar CACHE_VER en cada deploy para forzar actualización
    ============================================================ */
 
-var CACHE_VER = 'v128';
+var CACHE_VER = 'v129';
 var CACHE_NAME = 'horas-excelia-' + CACHE_VER;
 
 var ASSETS = [
@@ -24,9 +24,7 @@ var ASSETS = [
   './js/events.js',
   './js/alarms.js',
   './js/init.js',
-  './VIP.png',
-  'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js'
+  './VIP.png'
 ];
 
 /* ── Instalar: cachear todos los assets ── */
