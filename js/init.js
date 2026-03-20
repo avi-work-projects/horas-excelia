@@ -111,6 +111,43 @@
     });
   });
 
+  /* ── Exportar CSV del año ── */
+  document.getElementById('csvExportBtn').addEventListener('click',function(){
+    var year=CY;
+    var now=new Date();
+    var ts=now.getFullYear()+
+      String(now.getMonth()+1).padStart(2,'0')+
+      String(now.getDate()).padStart(2,'0')+'_'+
+      String(now.getHours()).padStart(2,'0')+
+      String(now.getMinutes()).padStart(2,'0')+
+      String(now.getSeconds()).padStart(2,'0');
+    var lines=['Fecha,Estado'];
+    var d=new Date(year,0,1);
+    while(d.getFullYear()===year){
+      var w=d.getDay();
+      if(w>=1&&w<=5){
+        var t=dayT(d);
+        var estado;
+        if(t==='ausencia') estado='baja';
+        else if(t==='festivo'||t==='vacaciones') estado='festivo/vacaciones';
+        else estado='trabajado';
+        lines.push(dk(d)+','+estado);
+      }
+      d.setDate(d.getDate()+1);
+    }
+    var csv=lines.join('\n');
+    var blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    a.href=url;
+    a.download='dias_trabajados_'+year+'_'+ts+'.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('CSV exportado','success');
+  });
+
   /* ── Exportar PDF del año ── */
   document.getElementById('pdfExportBtn').addEventListener('click',function(){
     if(typeof jspdf==='undefined'&&typeof window.jspdf==='undefined'){

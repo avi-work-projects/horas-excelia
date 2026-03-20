@@ -66,7 +66,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .hours-control{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
 .default-hours-btn{font-size:.72rem;font-weight:500;padding:6px 14px;border-radius:16px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;display:flex;align-items:center;gap:5px}
 .default-hours-btn:active{background:var(--surface3)}
-.pdf-export-btn{border-color:rgba(90,130,255,.3);color:var(--accent-bright)!important;margin-left:auto}
+.csv-export-btn{border-color:rgba(52,211,153,.3);color:#34d399!important;margin-left:auto}
+.csv-export-btn:active{background:rgba(52,211,153,.1)}
+.pdf-export-btn{border-color:rgba(90,130,255,.3);color:var(--accent-bright)!important}
 .pdf-export-btn:active{background:var(--accent-glow)}
 .default-hours-btn .dh-val{color:var(--accent-bright);font-family:var(--mono);font-weight:600}
 .default-hours-panel{display:none;align-items:center;gap:8px;flex-wrap:wrap;animation:fadeUp .15s ease both}
