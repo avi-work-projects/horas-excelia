@@ -899,14 +899,12 @@
       if(sessionStorage.getItem('excelia-popup-dismissed'))return;
     }catch(e){}
     var items=[];
-    // Semanas pasadas sin enviar (hasta 8 semanas atrás)
+    // Semanas sin enviar: 2 anteriores + actual + 2 siguientes
     var today=new Date();today.setHours(0,0,0,0);
-    for(var w=1;w<=8;w++){
-      var d=new Date(today);
-      var dow=d.getDay();var off=dow===0?6:dow-1;
-      d.setDate(d.getDate()-off-(w*7)); // Lunes de la semana w
-      var fri=new Date(d);fri.setDate(fri.getDate()+4);
-      if(fri>=today)continue; // Viernes no ha pasado aún
+    var dow=today.getDay();var off=dow===0?6:dow-1;
+    var thisMon=new Date(today);thisMon.setDate(thisMon.getDate()-off);
+    for(var w=-2;w<=2;w++){
+      var d=new Date(thisMon);d.setDate(d.getDate()+w*7);
       var key=dk(d);
       if(SW[key])continue; // Ya enviada
       // ¿Tiene días laborables no-festivos?
@@ -917,8 +915,7 @@
         if(t==='normal'||t==='vacaciones'||t==='ausencia'){hasWork=true;break;}
       }
       if(!hasWork)continue;
-      var lunes=d;
-      var lbl='Semana del '+String(lunes.getDate()).padStart(2,'0')+'/'+String(lunes.getMonth()+1).padStart(2,'0');
+      var lbl='Semana del '+String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');
       items.push({type:'warn',text:'&#128221; '+lbl+' sin enviar'});
     }
     // Cumpleaños hoy o mañana (cualquier persona, VIP o no)
