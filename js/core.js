@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v129 \u2014 fix SW update, PDF bot\u00f3n a la derecha';
+var APP_VERSION = 'v130 \u2014 puentes libres: planes solo excluye si multi-d\u00eda';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
