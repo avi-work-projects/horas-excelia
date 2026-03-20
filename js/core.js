@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v128 \u2014 notificaciones semanas: ventana de 5 semanas';
+var APP_VERSION = 'v129 \u2014 fix SW update, PDF bot\u00f3n a la derecha';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
