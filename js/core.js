@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v130 \u2014 puentes libres: planes solo excluye si multi-d\u00eda';
+var APP_VERSION = 'v131 \u2014 puentes libres: mostrar si al menos 2 d\u00edas libres';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
