@@ -136,7 +136,7 @@
       d.setDate(d.getDate()+1);
     }
     var csv=lines.join('\n');
-    var blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+    var blob=new Blob(['\uFEFF'+csv],{type:'text/csv'});
     var fname='dias_trabajados_'+year+'_'+ts+'.csv';
     shareOrDownload(blob,fname);
     showToast('CSV exportado','success');
