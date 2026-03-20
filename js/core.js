@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v135 \u2014 fix Web Share CSV: MIME type compatible';
+var APP_VERSION = 'v136 \u2014 puentes libres: cualquier evento multi-d\u00eda ocupa';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
