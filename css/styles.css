@@ -92,6 +92,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ms-hrs{font-family:var(--mono);font-size:.78rem;color:var(--text-dim)}
 .data-actions{display:flex;gap:12px;flex-wrap:wrap}
 .data-btn{width:44px;height:44px;border-radius:8px;border:none;background:transparent;color:var(--text-muted);font-size:1.35rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;position:relative}
+.btn-icon{width:28px;height:28px;object-fit:contain;pointer-events:none}
 .data-btn:active{background:var(--surface3);transform:scale(.93)}
 .data-btn.overlay-active{background:rgba(255,255,255,.15)!important;color:var(--text)!important;border-radius:8px}
 /* Aro de color único por botón (nivel 1) — igual que nav-bar-btn.active[data-nav] */
@@ -1314,18 +1315,21 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
   .data-btn{width:40px;height:40px;font-size:1.2rem}
   .data-actions{gap:8px}
   .nav-bar-btn{width:40px;height:40px;font-size:1.2rem}
+  .btn-icon{width:24px;height:24px}
 }
 @media(max-width:400px){
   .data-btn{width:36px;height:36px;font-size:1.1rem}
   .data-actions{gap:7px}
   .header h1{font-size:.95rem}
   .nav-bar-btn{width:36px;height:36px;font-size:1.1rem}
+  .btn-icon{width:22px;height:22px}
 }
 @media(max-width:360px){
   .data-btn{width:34px;height:34px;font-size:1.05rem}
   .data-actions{gap:6px}
   .header h1{font-size:.9rem}
   .nav-bar-btn{width:34px;height:34px;font-size:1.05rem}
+  .btn-icon{width:20px;height:20px}
 }
 
 /* ── ALARM PANEL ── */
