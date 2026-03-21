@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v140 \u2014 fix recorte diagonal iconos, aro selecci\u00f3n estudio+home, quitar config fiscal';
+var APP_VERSION = 'v141 \u2014 recorte diagonal iconos, galer\u00eda scroll-snap, aro estudio+home';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
