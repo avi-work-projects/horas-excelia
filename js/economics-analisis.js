@@ -83,7 +83,22 @@ function _renderAnalisisGastos(){
   h+='<div class="hip-stats">';
   var rentaNeta=disponible-tIngExtra;
   h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-green)">'+fcPlain(Math.round(rentaNeta/12*100)/100)+'</span><span class="hip-stat-lbl">Renta neta/mes</span></div>';
-  if(tIngExtra>0)h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--accent-bright)">'+fcPlain(Math.round(tIngExtra/12*100)/100)+'</span><span class="hip-stat-lbl">Ingresos extra/mes</span></div>';
+  if(tIngExtra>0)h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-green)">'+fcPlain(Math.round(tIngExtra/12*100)/100)+'</span><span class="hip-stat-lbl">Ingresos extra/mes</span></div>';
+  /* Hipoteca card */
+  if(typeof DESPACHO!=='undefined'&&DESPACHO.compra&&DESPACHO.compra.importePrestamo>0){
+    var _hVinc=DESPACHO.compra.vinculaciones||{};
+    var _hSubs=DESPACHO.compra.subrogaciones||[];
+    var _hTipo=_hSubs.length>0?_hSubs[_hSubs.length-1].nuevoTipoInteres:DESPACHO.compra.tipoInteres;
+    var _hImporte=_hSubs.length>0?_hSubs[_hSubs.length-1].nuevoImporte:DESPACHO.compra.importePrestamo;
+    var _hPlazo=_hSubs.length>0?_hSubs[_hSubs.length-1].nuevoPlazoAnios:DESPACHO.compra.plazoAnios;
+    var _hVinc2=_hSubs.length>0?(_hSubs[_hSubs.length-1].vinculaciones||{}):_hVinc;
+    if(_hTipo>0&&_hPlazo>0){
+      var _hTipoEf=typeof _hipEffRate==='function'?_hipEffRate(_hTipo,_hVinc2):_hTipo;
+      var _hR=_hTipoEf/100/12,_hN=_hPlazo*12;
+      var _hCuota=_hR>0?Math.round(_hImporte*_hR*Math.pow(1+_hR,_hN)/(Math.pow(1+_hR,_hN)-1)*100)/100:0;
+      h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-red)">'+fcPlain(_hCuota)+'</span><span class="hip-stat-lbl">Hipoteca/mes</span></div>';
+    }
+  }
   h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-orange)">'+fcPlain(Math.round(tGastos/12*100)/100)+'</span><span class="hip-stat-lbl">Gastos/mes</span></div>';
   if(tInv>0)h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--accent-bright)">'+fcPlain(Math.round(tInv/12*100)/100)+'</span><span class="hip-stat-lbl">Inversiones/mes</span></div>';
   h+='</div>';
@@ -155,14 +170,19 @@ function _renderAnalisisGastos(){
 
   /* ── Sección 4: Presupuesto vs Disponible (tabla compacta) ── */
   if(disponible>0&&allItems.length>0){
-    /* Mark desgravable items (already deducted from disponible) */
-    var _dIds={};
-    if(typeof GASTOS_ITEMS!=='undefined')GASTOS_ITEMS.forEach(function(g){if(g.label)_dIds[g.label.toLowerCase()]=true;});
     var pItems=[];
     allItems.forEach(function(i){
-      var isDesgrav=_dIds[i.label.toLowerCase()]||false;
-      pItems.push({label:i.label,annual:i.annual,cat:i.cat,desgrav:isDesgrav,_weekly:i._weekly,_viaje:i._viaje});
+      pItems.push({label:i.label,annual:i.annual,cat:i.cat,desgrav:false,_weekly:i._weekly,_viaje:i._viaje});
     });
+    /* Add desgravable items (already deducted from disponible but shown in table) */
+    var _dLbls={hipoteca:'Hipoteca',comunidad:'Comunidad',seg_hogar:'Seg. Hogar',gas:'Gas',luz:'Luz',digi:'Internet',agua:'Agua',otros_seg:'Otros seg.'};
+    if(typeof GASTOS_ITEMS!=='undefined'){
+      GASTOS_ITEMS.forEach(function(g){
+        if(!g.amount)return;
+        var anual=typeof gastoAnual==='function'?gastoAnual(g.id):(g.period==='monthly'?g.amount*12:g.amount);
+        pItems.push({label:(_dLbls[g.id]||g.label),annual:anual,cat:'desgrav',desgrav:true});
+      });
+    }
     /* Apply sort */
     if(ANALISIS_SORT==='asc')pItems.sort(function(a,b){return a.annual-b.annual;});
     else if(ANALISIS_SORT==='cat')pItems.sort(function(a,b){return a.cat<b.cat?-1:a.cat>b.cat?1:b.annual-a.annual;});
@@ -186,21 +206,21 @@ function _renderAnalisisGastos(){
     /* Filters */
     h+='<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;align-items:center">';
     h+='<input type="text" id="analisisFilterText" placeholder="Buscar concepto..." value="'+escHtml(ANALISIS_FILTER_TEXT)+'" style="flex:1;min-width:100px;font-size:.65rem;padding:3px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface2);color:var(--text)">';
-    var _fc=['all','gasto','inversion'];
-    var _fl={all:'Todos',gasto:'Gastos',inversion:'Inversiones'};
+    var _fc=['all','gasto','inversion','desgrav'];
+    var _fl={all:'Todos',gasto:'Gastos',inversion:'Inversiones',desgrav:'Desgravables'};
     _fc.forEach(function(c){h+='<button class="fiscal-period-btn'+(ANALISIS_FILTER_CAT===c?' active':'')+'" data-afc="'+c+'" style="font-size:.58rem;padding:2px 6px">'+_fl[c]+'</button>';});
     h+='</div>';
     /* Table */
     h+='<div class="mg-budget-table">';
     h+='<div class="mg-budget-hdr mg-budget-hdr4"><span>Concepto</span><span class="mg-sort-btn" data-asort="month">/mes \u25BC</span><span>/a\u00f1o</span><span>%</span></div>';
-    var _catC={gasto:'#fb923c',inversion:'#6c8cff'};
+    var _catC={gasto:'#fb923c',inversion:'#6c8cff',desgrav:'#c084fc'};
     fItems.forEach(function(p){
       var pct=Math.round(p.annual/disponible*1000)/10;
       var lbl=escHtml(p.label);
       if(p.desgrav)lbl+=' <span style="color:#c084fc;font-size:.55rem">- Ya desgravado</span>';
       h+='<div class="mg-budget-row mg-budget-row4"><span class="mg-budget-lbl"><span class="mg-cat-dot" style="background:'+(_catC[p.cat]||'#999')+'"></span>'+lbl+'</span>';
-      h+='<span class="mg-budget-val">'+fcPlain(Math.round(p.annual/12*100)/100)+'</span>';
-      h+='<span class="mg-budget-val">'+fcPlain(Math.round(p.annual))+'</span>';
+      h+='<span class="mg-budget-val">'+Math.ceil(p.annual/12)+'\u20ac</span>';
+      h+='<span class="mg-budget-val">'+Math.ceil(p.annual)+'\u20ac</span>';
       h+='<span class="mg-budget-pct">'+pct+'%</span></div>';
     });
     h+='</div>';
@@ -208,7 +228,7 @@ function _renderAnalisisGastos(){
     h+='<div style="font-size:.58rem;color:var(--text-dim);margin-top:6px;line-height:1.4">';
     h+='\u26A0 Los gastos semanales se reducen un 18% (redondeando al euro superior) porque parte se dedica a pagar otros conceptos ya incluidos en esta lista.<br>';
     h+='\u26A0 Los viajes se prorratean: se restan los gastos semanales proporcionales a los d\u00edas de viaje, ya que durante esos d\u00edas no se incurren gastos semanales habituales.<br>';
-    h+='\u26A0 El disponible ya incluye la deducci\u00f3n de gastos profesionales desgravables (hipoteca, facturas, seguros).';
+    h+='\u26A0 Los gastos desgravables (marcados en morado) ya est\u00e1n descontados del disponible.';
     h+='</div>';
     h+='</div>';
   }
