@@ -989,7 +989,8 @@ function renderEvContent(){
   h+='</div>';
   h+='</div>';
   // Header a nivel 3 (with-tabs → top:82px)
-  h+='<div class="sy-header with-tabs">';
+  var _hdrCenterCls=(EV_VIEW==='annual'||EV_VIEW==='cal')?' sy-header-center':'';
+  h+='<div class="sy-header with-tabs'+_hdrCenterCls+'">';
   h+='<button class="sy-back" id="evBack">&#8592;</button>';
   if(EV_VIEW==='upcoming'){
     h+='<div class="sy-year-nav"><div class="sy-year">Pr\u00f3ximos</div></div>';

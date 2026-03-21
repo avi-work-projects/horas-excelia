@@ -467,16 +467,12 @@ function renderEconContent(){
   var h=renderNavBar('econ');
   h+='<div class="econ-hdr-sub">';
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='resumen'?' active':'')+'" id="ecTabResumen">Resumen<br>Econ\u00f3mico</button>';
-  h+='<button class="econ-tab-btn'+(ECON_VIEW==='dias'?' active':'')+'" id="ecTabDias">Resumen<br>D\u00edas</button>';
+  h+='<button class="econ-tab-btn'+(ECON_VIEW==='dias'?' active':'')+'" id="ecTabDias">Resumen<br>Horas/D\u00edas</button>';
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='gastos'?' active':'')+'" id="ecTabGastos">An\u00e1lisis Gastos<br>Dec. Renta</button>';
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='analisis'?' active':'')+'" id="ecTabAnalisis">An\u00e1lisis<br>Ec. Personal</button>';
   h+='</div>';
   h+='<div class="sy-header with-tabs">';
-  if(ECON_VIEW==='resumen'||ECON_VIEW==='gastos'||ECON_VIEW==='analisis'){
-    h+='<button class="econ-gear-btn" id="ecGear">&#9965;</button>';
-  } else {
-    h+='<div style="width:42px"></div>';
-  }
+  h+='<button class="econ-gear-btn" id="ecGear">&#9965;</button>';
   h+='<div class="sy-year-nav"><button class="sy-nav" id="ecPrev">&#9664;</button><div class="sy-year">'+ECON_YEAR+'</div><button class="sy-nav" id="ecNext">&#9654;</button></div>';
   h+='<button class="sy-pdf" id="ecPdf">PDF</button>';
   h+='</div>';
@@ -1748,7 +1744,7 @@ function renderEstudioContent(){
   h+='<div class="sy-header with-tabs">';
   h+='<button class="sy-back" id="estBack">&#8592;</button>';
   h+='<div class="sy-year-nav"><button class="sy-nav" id="estPrev">&#9664;</button><div class="sy-year">'+ESTUDIO_YEAR+'</div><button class="sy-nav" id="estNext">&#9654;</button></div>';
-  h+='<div class="econ-hdr-note" style="font-size:.55rem;white-space:nowrap">Seg\u00fan horas y d\u00edas<br>trabajados del a\u00f1o</div>';
+  h+='<button class="econ-gear-btn" id="estGearFiscal">&#9965;</button>';
   h+='</div>';
   h+='<div class="sy-body">';
   h+=renderEconEstudio();
@@ -1784,5 +1780,7 @@ function bindEstudioEvents(){
   bindNavBar('estudio',closeEstudio);
   document.getElementById('estPrev').addEventListener('click',function(){ESTUDIO_YEAR--;reRenderEstudio();});
   document.getElementById('estNext').addEventListener('click',function(){ESTUDIO_YEAR++;reRenderEstudio();});
+  var estGear=document.getElementById('estGearFiscal');
+  if(estGear)estGear.addEventListener('click',function(){FISCAL_TAB='despacho';if(typeof openFiscal==='function')openFiscal();});
   bindEconEstudioEvents();
 }

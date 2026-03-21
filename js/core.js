@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v145 \u2014 iconos recortados, aro estudio rosa';
+var APP_VERSION = 'v146 \u2014 centrar nav eventos, engranaje fiscal, Horas/D\u00edas';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
