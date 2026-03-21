@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v146 \u2014 centrar nav eventos, engranaje fiscal, Horas/D\u00edas';
+var APP_VERSION = 'v147 \u2014 iconos grandes, fiscal gas/elect IVA, sobrecoste seguros';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

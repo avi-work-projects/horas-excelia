@@ -1134,6 +1134,11 @@ function _hipPeriodCard(comp,subIdx,isActive,startDate,endDate){
     if(intAnual>0)h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-orange)">'+fcPlain(intAnual)+'</span><span class="hip-stat-lbl">Intereses '+FISCAL_YEAR+'</span></div>';
     h+='</div>';
   }
+  /* Sobrecoste seguros vinculados */
+  if(vinc){
+    var oc=_calcInsOvercost(vinc);
+    if(oc!==null)h+='<div class="hip-period-info" style="color:'+(oc>0?'var(--c-red)':'var(--c-green)')+'">Sobrecoste seguros: '+((oc>0?'+':'')+fcPlain(oc))+'\u20ac/a\u00f1o</div>';
+  }
   h+='<button class="hip-period-btn" data-gotosection="'+(subIdx<0?'prestamo':'sub-'+subIdx)+'">Ver Detalle</button>';
   h+='</div>';
   return h;
@@ -1202,6 +1207,35 @@ function _hipROvinc(label,data){
   return h;
 }
 
+function _calcInsOvercost(vinc){
+  var sn=DESPACHO.segurosNormales||{};
+  var _sk=[{key:'segSalud',label:'Seg. salud'},{key:'segVida',label:'Seg. vida'},{key:'segHogar',label:'Seg. hogar'}];
+  var total=0,hasAny=false;
+  _sk.forEach(function(s){
+    if(!vinc[s.key]||!vinc[s.key].enabled)return;
+    hasAny=true;
+    total+=(vinc[s.key].costeAnual||0)-(sn[s.key]||0);
+  });
+  return hasAny?total:null;
+}
+function _renderInlineOvercost(vinc){
+  var sn=DESPACHO.segurosNormales||{};
+  var _sk=[{key:'segSalud',label:'Seg. salud'},{key:'segVida',label:'Seg. vida'},{key:'segHogar',label:'Seg. hogar'}];
+  var hasAny=false,totalVinc=0,totalRef=0;
+  _sk.forEach(function(s){if(vinc[s.key]&&vinc[s.key].enabled)hasAny=true;});
+  if(!hasAny)return '';
+  var h='<div style="font-size:.66rem;color:var(--text-dim);margin-top:6px;font-weight:600">Sobrecoste seguros vinculados</div>';
+  _sk.forEach(function(s){
+    if(!vinc[s.key]||!vinc[s.key].enabled)return;
+    var cv=vinc[s.key].costeAnual||0,cn=sn[s.key]||0,diff=cv-cn;
+    totalVinc+=cv;totalRef+=cn;
+    h+='<div class="hip-ro-row"><span class="hip-ro-lbl">'+s.label+'</span><span class="hip-ro-val" style="color:'+(diff>0?'var(--c-red)':'var(--c-green)')+'">'+((diff>0?'+':'')+fcPlain(diff))+'\u20ac/a\u00f1o</span></div>';
+  });
+  var totalDiff=totalVinc-totalRef;
+  h+='<div class="hip-ro-row" style="border-top:1px solid var(--border);padding-top:3px"><span class="hip-ro-lbl"><b>Total sobrecoste</b></span><span class="hip-ro-val" style="font-weight:700;color:'+(totalDiff>0?'var(--c-red)':'var(--c-green)')+'">'+((totalDiff>0?'+':'')+fcPlain(totalDiff))+'\u20ac/a\u00f1o</span></div>';
+  return h;
+}
+
 /* ── Resumen sub-tab ──────────────────────────────────────── */
 function _renderHipResumen(){
   var comp=DESPACHO.compra||_defaultCompra();
@@ -1232,15 +1266,23 @@ function _renderHipResumen(){
   /* Ver análisis button */
   /* Gas/Electricidad summary cards */
   var gas=DESPACHO.gas||{};
+  _ensureGasScenarios();
+  var gasActivo=gas.activo||'consumo';
+  var gasData=gasActivo==='fijo'?(gas.fijo||{}):(gas.consumo||{});
   var elc=DESPACHO.elect||{};
-  if(gas.precioKwh||gas.cuotaFija||elc.precioKwh){
+  var hasGas=gasActivo==='fijo'?gasData.cuotaFija:gasData.precioKwh;
+  if(hasGas||elc.precioKwh){
     h+='<div style="font-size:.72rem;color:var(--text-dim);margin:12px 0 6px;font-weight:600">\uD83D\uDCE6 Facturas</div>';
-    if(gas.precioKwh||gas.cuotaFija){
+    if(hasGas){
       h+='<div class="hip-period-card">';
-      h+='<div class="hip-period-hdr"><span class="hip-period-title">\uD83D\uDD25 Gas'+(gas.comercializadora?' \u2014 '+escHtml(gas.comercializadora):'')+'</span></div>';
-      if(gas.modo==='fijo')h+='<div class="hip-period-info">Cuota fija: <b>'+fcPlain(gas.cuotaFija)+'\u20ac/mes</b></div>';
-      else h+='<div class="hip-period-info">Precio: <b>'+(gas.precioKwh||0).toFixed(4)+' \u20ac/kWh</b></div>';
-      if(gas.terminoFijo)h+='<div class="hip-period-info">T\u00e9rmino fijo: '+fcPlain(gas.terminoFijo)+'\u20ac/mes</div>';
+      h+='<div class="hip-period-hdr"><span class="hip-period-title">\uD83D\uDD25 Gas'+(gasData.comercializadora?' \u2014 '+escHtml(gasData.comercializadora):'')+'</span></div>';
+      if(gasActivo==='fijo')h+='<div class="hip-period-info">Cuota fija: <b>'+fcPlain(gasData.cuotaFija)+'\u20ac/mes</b></div>';
+      else{
+        h+='<div class="hip-period-info">Precio: <b>'+(gasData.precioKwh||0).toFixed(4)+' \u20ac/kWh</b></div>';
+        if(gasData.terminoFijoDia)h+='<div class="hip-period-info">T\u00e9rmino fijo: '+fcPlain(gasData.terminoFijoDia)+'\u20ac/d\u00eda</div>';
+        if(gasData.terminoFijo)h+='<div class="hip-period-info">T\u00e9rmino fijo: '+fcPlain(gasData.terminoFijo)+'\u20ac/factura</div>';
+      }
+      if(gas.ivaGas)h+='<div class="hip-period-info">IVA: '+gas.ivaGas+'%</div>';
       h+='<button class="hip-period-btn" data-hipsub="gas">Ver Detalle</button></div>';
     }
     if(elc.precioKwh){
@@ -1280,11 +1322,6 @@ function _renderHipDetalle(){
   }
   /* Add subrogation button */
   h+='<button class="hip-add-sub-btn" id="hipAddSub">+ A\u00f1adir subrogaci\u00f3n</button>';
-  /* Sobrecoste seguros vinculados */
-  if(typeof _renderInsuranceOvercost==='function'){
-    var insHtml=_renderInsuranceOvercost(comp);
-    if(insHtml)h+='<div class="fiscal-section" style="margin-top:8px">'+insHtml+'</div>';
-  }
   /* Precios referencia seguros */
   h+=_renderSegurosNormales();
   return h;
@@ -1373,6 +1410,7 @@ function _renderPrestamoSection(comp,isEditing){
     h+=_hipROvinc('Seg. salud',vinc.segSalud);
     h+=_hipROvinc('Seg. vida',vinc.segVida);
     h+=_hipVincSum(vinc,comp.tipoInteres);
+    h+=_renderInlineOvercost(vinc);
   }
   return h;
 }
@@ -1442,6 +1480,7 @@ function _renderSubSection(comp,sub,idx,isEditing){
     h+=_hipROvinc('Seg. salud',sv3.segSalud);
     h+=_hipROvinc('Seg. hogar',sv3.segHogar);
     h+=_hipVincSum(sv3,sub.nuevoTipoInteres);
+    h+=_renderInlineOvercost(sv3);
   }
   return h;
 }
@@ -1466,9 +1505,10 @@ function renderFiscalTabDespacho(){
 var FISCAL_GAS_EDITING=null; /* null | 'consumo' | 'fijo' */
 function _ensureGasScenarios(){
   var g=DESPACHO.gas;
-  if(!g.consumo)g.consumo={precioKwh:g.precioKwh||0,terminoFijo:g.terminoFijo||0,comercializadora:g.comercializadora||''};
-  if(!g.fijo)g.fijo={cuotaFija:g.cuotaFija||0,terminoFijo:g.terminoFijo||0,comercializadora:g.comercializadora||''};
+  if(!g.consumo)g.consumo={precioKwh:g.precioKwh||0,terminoFijoDia:0,terminoFijo:g.terminoFijo||0,comercializadora:g.comercializadora||''};
+  if(!g.fijo)g.fijo={cuotaFija:g.cuotaFija||0,comercializadora:g.comercializadora||''};
   if(!g.activo)g.activo=g.modo||'consumo';
+  if(g.ivaGas===undefined)g.ivaGas=21;
 }
 function _renderGasDetalle(){
   _ensureGasScenarios();
@@ -1490,13 +1530,17 @@ function _renderGasDetalle(){
   if(FISCAL_GAS_EDITING==='consumo'){
     h+='<div class="hip-g2">';
     h+=_hipNum('gasConsPrecio','Precio kWh',sc.precioKwh,'\u20ac/kWh');
-    h+=_hipMoney('gasConsTfijo','T\u00e9rmino fijo/mes',sc.terminoFijo);
+    h+=_hipNum('gasConsTfijoDia','T\u00e9rmino fijo/d\u00eda',sc.terminoFijoDia||0,'\u20ac/d\u00eda');
+    h+=_hipMoney('gasConsTfijo','T\u00e9rmino fijo/factura',sc.terminoFijo);
+    h+=_hipNum('gasIva','IVA',g.ivaGas,'%');
     h+=_hipText('gasConsComerc','Comercializadora',sc.comercializadora,'Ej: Naturgy...');
     h+='</div>';
     h+='<div class="hip-edit-actions"><button class="hip-save-btn" data-gassave="consumo">Guardar</button><button class="hip-cancel-btn" data-gascancel="consumo">Cancelar</button></div>';
   } else {
     h+=_hipRO('Precio kWh',sc.precioKwh?(sc.precioKwh).toFixed(4)+' \u20ac/kWh':'\u2014');
-    h+=_hipROmoney('T\u00e9rmino fijo/mes',sc.terminoFijo);
+    if(sc.terminoFijoDia)h+=_hipRO('T\u00e9rmino fijo/d\u00eda',(sc.terminoFijoDia).toFixed(4)+' \u20ac/d\u00eda');
+    h+=_hipROmoney('T\u00e9rmino fijo/factura',sc.terminoFijo);
+    h+=_hipRO('IVA',(g.ivaGas||21)+'%');
     h+=_hipRO('Comercializadora',sc.comercializadora||'\u2014');
   }
   h+='</div>';
@@ -1509,13 +1553,13 @@ function _renderGasDetalle(){
   if(FISCAL_GAS_EDITING==='fijo'){
     h+='<div class="hip-g2">';
     h+=_hipMoney('gasFijoCuota','Cuota fija/mes',sf.cuotaFija);
-    h+=_hipMoney('gasFijoTfijo','T\u00e9rmino fijo/mes',sf.terminoFijo);
+    h+=_hipNum('gasIvaFijo','IVA',g.ivaGas,'%');
     h+=_hipText('gasFijoComerc','Comercializadora',sf.comercializadora,'Ej: Naturgy...');
     h+='</div>';
     h+='<div class="hip-edit-actions"><button class="hip-save-btn" data-gassave="fijo">Guardar</button><button class="hip-cancel-btn" data-gascancel="fijo">Cancelar</button></div>';
   } else {
     h+=_hipROmoney('Cuota fija/mes',sf.cuotaFija);
-    h+=_hipROmoney('T\u00e9rmino fijo/mes',sf.terminoFijo);
+    h+=_hipRO('IVA',(g.ivaGas||21)+'%');
     h+=_hipRO('Comercializadora',sf.comercializadora||'\u2014');
   }
   h+='</div>';
@@ -1526,6 +1570,7 @@ function _renderGasDetalle(){
 var FISCAL_ELECT_EDITING=false;
 function _renderElectDetalle(){
   var e=DESPACHO.elect||{modoPotencia:'doble',potenciaP1:3.3,potenciaP2:3.3,potenciaTotal:6.6,precioPotP1:0,precioPotP2:0,precioKwh:0,terminoFijo:0,comercializadora:''};
+  if(e.ivaElect===undefined)e.ivaElect=21;
   var h='<div class="fiscal-section">';
   h+='<div class="hip-section-hdr"><span class="fiscal-section-title">\u26A1 Tarifa de Electricidad</span>';
   if(!FISCAL_ELECT_EDITING)h+='<button class="hip-edit-btn" id="electEditBtn">Editar</button>';
@@ -1542,6 +1587,8 @@ function _renderElectDetalle(){
       h+=_hipNum('electPrecioPotP1','Precio potencia P1',e.precioPotP1||0,'\u20ac/kW/d\u00eda');
       h+=_hipNum('electP2','Potencia valle (P2)',e.potenciaP2,'kW');
       h+=_hipNum('electPrecioPotP2','Precio potencia P2',e.precioPotP2||0,'\u20ac/kW/d\u00eda');
+      var mediaPot=((e.potenciaP1||0)+(e.potenciaP2||0))/2;
+      h+=_hipNum('electMediaPot','Media potencias (auto)',parseFloat(mediaPot.toFixed(2)),'kW');
       var sumPrecios=((e.precioPotP1||0)+(e.precioPotP2||0)).toFixed(6);
       h+=_hipNum('electTotalPrecio','Suma precios (auto)',parseFloat(sumPrecios),'\u20ac/kW/d\u00eda');
     } else {
@@ -1550,6 +1597,7 @@ function _renderElectDetalle(){
     }
     h+=_hipNum('electPrecioKwh','Precio kWh',e.precioKwh,'\u20ac/kWh');
     h+=_hipMoney('electTerminoFijo','T\u00e9rmino fijo/mes',e.terminoFijo);
+    h+=_hipNum('electIva','IVA',e.ivaElect,'%');
     h+=_hipText('electComerc','Comercializadora',e.comercializadora,'Ej: Endesa...');
     h+='</div>';
     h+='<div class="hip-edit-actions"><button class="hip-save-btn" id="electSaveBtn">Guardar cambios</button><button class="hip-cancel-btn" id="electCancelBtn">Cancelar</button></div>';
@@ -1559,6 +1607,7 @@ function _renderElectDetalle(){
       h+=_hipRO('Precio P1',(e.precioPotP1||0).toFixed(6)+' \u20ac/kW/d\u00eda');
       h+=_hipRO('Potencia P2 (valle)',e.potenciaP2?e.potenciaP2+' kW':'\u2014');
       h+=_hipRO('Precio P2',(e.precioPotP2||0).toFixed(6)+' \u20ac/kW/d\u00eda');
+      h+=_hipRO('Media potencias',(((e.potenciaP1||0)+(e.potenciaP2||0))/2).toFixed(2)+' kW');
       h+=_hipRO('Suma precios potencia',((e.precioPotP1||0)+(e.precioPotP2||0)).toFixed(6)+' \u20ac/kW/d\u00eda');
     } else {
       h+=_hipRO('Potencia contratada',e.potenciaTotal?e.potenciaTotal+' kW':'\u2014');
@@ -1566,6 +1615,7 @@ function _renderElectDetalle(){
     }
     h+=_hipRO('Precio kWh',e.precioKwh?e.precioKwh.toFixed(4)+' \u20ac/kWh':'\u2014');
     h+=_hipROmoney('T\u00e9rmino fijo/mes',e.terminoFijo);
+    h+=_hipRO('IVA',(e.ivaElect||21)+'%');
     h+=_hipRO('Comercializadora',e.comercializadora||'\u2014');
   }
   h+='</div>';
@@ -2189,12 +2239,14 @@ function _bindGasDetalle(){
       var g=DESPACHO.gas;
       if(sc==='consumo'){
         g.consumo.precioKwh=parseFloat(document.getElementById('desp-gasConsPrecio').value)||0;
+        g.consumo.terminoFijoDia=parseFloat(document.getElementById('desp-gasConsTfijoDia').value)||0;
         g.consumo.terminoFijo=parseFloat(document.getElementById('desp-gasConsTfijo').value)||0;
         g.consumo.comercializadora=(document.getElementById('desp-gasConsComerc').value||'').trim();
+        g.ivaGas=parseFloat(document.getElementById('desp-gasIva').value)||21;
       } else {
         g.fijo.cuotaFija=parseFloat(document.getElementById('desp-gasFijoCuota').value)||0;
-        g.fijo.terminoFijo=parseFloat(document.getElementById('desp-gasFijoTfijo').value)||0;
         g.fijo.comercializadora=(document.getElementById('desp-gasFijoComerc').value||'').trim();
+        g.ivaGas=parseFloat(document.getElementById('desp-gasIvaFijo').value)||21;
       }
       saveDespacho();FISCAL_GAS_EDITING=null;reRenderFiscal();
     });
@@ -2227,6 +2279,7 @@ function _bindElectDetalle(){
     }
     e.precioKwh=parseFloat(document.getElementById('desp-electPrecioKwh').value)||0;
     e.terminoFijo=parseFloat(document.getElementById('desp-electTerminoFijo').value)||0;
+    e.ivaElect=parseFloat(document.getElementById('desp-electIva').value)||21;
     e.comercializadora=(document.getElementById('desp-electComerc').value||'').trim();
     saveDespacho();FISCAL_ELECT_EDITING=false;reRenderFiscal();
   });
