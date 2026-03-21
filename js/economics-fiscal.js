@@ -603,6 +603,16 @@ function renderFiscalTabPersonal(){
   /* Gastos semanales primero */
   h+='<div id="personalGastosSem">'+_personalListHtml(PERSONAL_DATA.gastosSemanales,'gastosSemanales','weekly')+'</div>';
   if(PERSONAL_DATA.gastosSemanales.length<1){h+='<button class="fiscal-add-btn fiscal-add-btn-expense" data-padd="gastosSemanales" style="margin-bottom:6px">+ A\u00f1adir gasto semanal</button>';}
+  /* Limpieza Casa */
+  var lc=PERSONAL_DATA.limpiezaCasa||(PERSONAL_DATA.limpiezaCasa={amount:0,period:'weekly'});
+  h+='<div style="font-size:.7rem;color:var(--text-dim);font-weight:600;margin:8px 0 4px">Limpieza Casa</div>';
+  h+='<div class="fiscal-gasto-item">';
+  h+='<span style="font-size:.68rem;color:var(--text-muted);flex:1">Limpieza</span>';
+  h+='<input class="fiscal-gasto-amt fiscal-gasto-amt-sm" id="limpiezaAmount" type="number" min="0" step="1" value="'+(lc.amount||0)+'">';
+  h+='<div class="fiscal-gasto-period">';
+  h+='<button class="fiscal-period-btn'+(lc.period==='weekly'?' active':'')+'" id="limpiezaPeriodW">/sem</button>';
+  h+='<button class="fiscal-period-btn'+(lc.period==='monthly'?' active':'')+'" id="limpiezaPeriodM">/mes</button>';
+  h+='</div></div>';
   /* Gastos recurrentes (suscripciones, etc.) a continuación */
   h+='<div id="personalGastosRec">'+_personalListHtml(PERSONAL_DATA.gastosRecurrentes,'gastosRecurrentes','monthly')+'</div>';
   h+='<button class="fiscal-add-btn fiscal-add-btn-expense" data-padd="gastosRecurrentes" style="margin-bottom:4px">+ A\u00f1adir gasto</button>';
@@ -610,7 +620,9 @@ function renderFiscalTabPersonal(){
   /* Total combinado */
   var tGS=_personalTotalWeekly(PERSONAL_DATA.gastosSemanales);
   var tGR=_personalTotal(PERSONAL_DATA.gastosRecurrentes);
-  var tCombined=tGS+tGR;
+  var lcData=PERSONAL_DATA.limpiezaCasa||{amount:0,period:'weekly'};
+  var tLC=lcData.amount?(lcData.period==='monthly'?lcData.amount*12:lcData.amount*52):0;
+  var tCombined=tGS+tGR+tLC;
   if(tCombined>0)h+='<div class="fiscal-compras-total" style="margin-top:6px"><b>Total gastos anual: '+fcPlain(tCombined)+'</b> ('+fcPlain(Math.round(tCombined/12*100)/100)+'/mes)</div>';
   h+='</div>';
   /* 2. Inversiones Recurrentes */
@@ -1884,6 +1896,21 @@ function _bindTabPersonal(){
     if(field==='amount'){var v=parseFloat(el.value);PERSONAL_DATA[sec][pi].amount=isNaN(v)?0:v;}
     else if(field==='label'){PERSONAL_DATA[sec][pi].label=el.value||'';}
     else if(field==='viajeFilter'){PERSONAL_DATA[sec][pi].viajeFilter=el.value||'all';}
+  });
+  /* Limpieza Casa bindings */
+  var lcAmt=document.getElementById('limpiezaAmount');
+  if(lcAmt)lcAmt.addEventListener('change',function(){
+    if(!PERSONAL_DATA.limpiezaCasa)PERSONAL_DATA.limpiezaCasa={amount:0,period:'weekly'};
+    PERSONAL_DATA.limpiezaCasa.amount=parseFloat(this.value)||0;
+  });
+  var lcW=document.getElementById('limpiezaPeriodW'),lcM=document.getElementById('limpiezaPeriodM');
+  if(lcW)lcW.addEventListener('click',function(){
+    if(!PERSONAL_DATA.limpiezaCasa)PERSONAL_DATA.limpiezaCasa={amount:0,period:'weekly'};
+    PERSONAL_DATA.limpiezaCasa.period='weekly';lcW.classList.add('active');if(lcM)lcM.classList.remove('active');
+  });
+  if(lcM)lcM.addEventListener('click',function(){
+    if(!PERSONAL_DATA.limpiezaCasa)PERSONAL_DATA.limpiezaCasa={amount:0,period:'weekly'};
+    PERSONAL_DATA.limpiezaCasa.period='monthly';lcM.classList.add('active');if(lcW)lcW.classList.remove('active');
   });
 }
 

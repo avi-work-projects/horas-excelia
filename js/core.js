@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v147 \u2014 iconos grandes, fiscal gas/elect IVA, sobrecoste seguros';
+var APP_VERSION = 'v148 \u2014 an\u00e1lisis gastos: fix doble deducci\u00f3n, tabla sortable, viajes prorrateo';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

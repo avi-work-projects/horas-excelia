@@ -488,6 +488,9 @@ function renderEconContent(){
 var ANALISIS_SUB='gastos'; // 'gastos' | 'hipoteca'
 var ANALISIS_ALT_RATE=2.5;
 var ANALISIS_SWITCH_COST=0;
+var ANALISIS_SORT='desc'; // 'asc' | 'desc' | 'cat'
+var ANALISIS_FILTER_TEXT='';
+var ANALISIS_FILTER_CAT='all'; // 'all' | 'gasto' | 'inversion'
 var ANALISIS_CALC_HIP=false; // botón Calcular hipoteca
 /* Desgravables para incluir en análisis personal (ids de GASTOS_ITEMS) */
 var ANALISIS_DESGRAV_IDS={hipoteca:true,comunidad:true,seg_hogar:true,gas:true,luz:true,digi:true,agua:true,otros_seg:true};
@@ -518,9 +521,29 @@ function _renderAnalisisGastos(){
 
   /* Collect personal gastos with categories */
   var allItems=[];
-  var catMap={};/* label → cat */
-  (PERSONAL_DATA.gastosSemanales||[]).forEach(function(g){if(!g.amount)return;var a=g.period==='monthly'?g.amount*12:g.amount*52;allItems.push({label:g.label,annual:a,cat:'gasto'});});
-  (PERSONAL_DATA.gastosRecurrentes||[]).forEach(function(g){if(!g.amount)return;var a=g.period==='annual'?g.amount:g.period==='weekly'?g.amount*52:g.amount*12;allItems.push({label:g.label,annual:a,cat:'gasto'});});
+  /* Gastos semanales: reducidos 18% (parte se dedica a otros conceptos ya listados) */
+  var totalSemAnual=0;
+  (PERSONAL_DATA.gastosSemanales||[]).forEach(function(g){if(!g.amount)return;var a=g.period==='monthly'?g.amount*12:Math.ceil(g.amount*52*0.82);totalSemAnual+=a;allItems.push({label:g.label,annual:a,cat:'gasto',_weekly:true});});
+  /* Limpieza Casa */
+  var lc=PERSONAL_DATA.limpiezaCasa;
+  if(lc&&lc.amount>0){var lcA=lc.period==='monthly'?lc.amount*12:Math.ceil(lc.amount*52*0.82);totalSemAnual+=lcA;allItems.push({label:'Limpieza Casa',annual:lcA,cat:'gasto',_weekly:true});}
+  /* Gastos recurrentes (incluye viajes con prorrateo) */
+  var gastoSemDiario=totalSemAnual/365;
+  (PERSONAL_DATA.gastosRecurrentes||[]).forEach(function(g){if(!g.amount)return;var a=g.period==='annual'?g.amount:g.period==='weekly'?g.amount*52:g.amount*12;
+    /* Prorrateo viajes: restar gastos semanales de los días de viaje */
+    if(g._viaje&&typeof EVENTS!=='undefined'){
+      var diasViaje=0;
+      EVENTS.forEach(function(ev){
+        if(g.viajeFilter&&g.viajeFilter!=='all'&&ev.id!==g.viajeFilter)return;
+        var evY=parseInt((ev.start||'').substring(0,4),10);
+        if(evY!==ECON_YEAR)return;
+        if(ev.start&&ev.end){var d1=new Date(ev.start),d2=new Date(ev.end);diasViaje+=Math.max(1,Math.round((d2-d1)/(86400000))+1);}
+        else diasViaje+=1;
+      });
+      if(diasViaje>0){var descuento=Math.round(gastoSemDiario*diasViaje);a=Math.max(0,a-descuento);}
+    }
+    allItems.push({label:g.label,annual:a,cat:'gasto',_viaje:!!g._viaje});
+  });
   (PERSONAL_DATA.inversiones||[]).forEach(function(g){if(!g.amount)return;var a=g.period==='annual'?g.amount:g.amount*12;allItems.push({label:g.label,annual:a,cat:'inversion'});});
   allItems.sort(function(a,b){return b.annual-a.annual;});
 
@@ -540,10 +563,12 @@ function _renderAnalisisGastos(){
   /* ── Sección 1: Resumen mensual (hero) ── */
   h+='<div class="ah-section">';
   h+='<div class="ah-section-title">Resumen mensual ('+ECON_YEAR+')</div>';
-  h+='<div class="ah-cuota-hero"><div class="ah-cuota-val" style="color:'+(balance>=0?'var(--c-green)':'var(--c-red)')+'">'+fcPlain(Math.round(balance/12*100)/100)+'\u20ac</div>';
+  h+='<div class="ah-cuota-hero"><div class="ah-cuota-val" style="color:'+(balance>=0?'var(--c-green)':'var(--c-red)')+'">'+fcPlain(Math.round(balance/12*100)/100)+'</div>';
   h+='<div class="ah-cuota-sub">Libre mensual (disponible \u2212 gastos \u2212 inversiones)</div></div>';
   h+='<div class="hip-stats">';
-  h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-green)">'+fcPlain(Math.round(disponible/12*100)/100)+'</span><span class="hip-stat-lbl">Disponible/mes</span></div>';
+  var rentaNeta=disponible-tIngExtra;
+  h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-green)">'+fcPlain(Math.round(rentaNeta/12*100)/100)+'</span><span class="hip-stat-lbl">Renta neta/mes</span></div>';
+  if(tIngExtra>0)h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--accent-bright)">'+fcPlain(Math.round(tIngExtra/12*100)/100)+'</span><span class="hip-stat-lbl">Ingresos extra/mes</span></div>';
   h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-orange)">'+fcPlain(Math.round(tGastos/12*100)/100)+'</span><span class="hip-stat-lbl">Gastos/mes</span></div>';
   if(tInv>0)h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--accent-bright)">'+fcPlain(Math.round(tInv/12*100)/100)+'</span><span class="hip-stat-lbl">Inversiones/mes</span></div>';
   h+='</div>';
@@ -615,22 +640,23 @@ function _renderAnalisisGastos(){
 
   /* ── Sección 4: Presupuesto vs Disponible (tabla compacta) ── */
   if(disponible>0&&allItems.length>0){
-    /* Add desgravables if toggle on */
+    /* Mark desgravable items (already deducted from disponible) */
+    var _dIds={};
+    if(typeof GASTOS_ITEMS!=='undefined')GASTOS_ITEMS.forEach(function(g){if(g.label)_dIds[g.label.toLowerCase()]=true;});
     var pItems=[];
-    allItems.forEach(function(i){pItems.push({label:i.label,annual:i.annual,cat:i.cat});});
-    var desgravPct=0;
-    if(ANALISIS_DESGRAV_DISCOUNT&&typeof GASTOS_ITEMS!=='undefined'){
-      var drInfo=typeof computeDeclResult==='function'&&typeof computeEconEx==='function'?computeDeclResult(computeEconEx(ECON_YEAR).totBase,computeEconEx(ECON_YEAR).totIrpf):null;
-      desgravPct=drInfo&&drInfo.decl?drInfo.decl.effectivePct||0:0;
-      var _dLbls={hipoteca:'Hipoteca',comunidad:'Comunidad',seg_hogar:'Seg. Hogar',gas:'Gas',luz:'Luz',digi:'Internet',agua:'Agua',otros_seg:'Otros seg.'};
-      GASTOS_ITEMS.forEach(function(g){
-        if(!g.amount)return;
-        var anual=typeof gastoAnual==='function'?gastoAnual(g.id):(g.period==='monthly'?g.amount*12:g.amount);
-        if(desgravPct>0)anual=Math.round(anual*(1-desgravPct/100)*100)/100;
-        pItems.push({label:(_dLbls[g.id]||g.label)+' (neto)',annual:anual,cat:'desgrav'});
-      });
-    }
-    pItems.sort(function(a,b){return b.annual-a.annual;});
+    allItems.forEach(function(i){
+      var isDesgrav=_dIds[i.label.toLowerCase()]||false;
+      pItems.push({label:i.label,annual:i.annual,cat:i.cat,desgrav:isDesgrav,_weekly:i._weekly,_viaje:i._viaje});
+    });
+    /* Apply sort */
+    if(ANALISIS_SORT==='asc')pItems.sort(function(a,b){return a.annual-b.annual;});
+    else if(ANALISIS_SORT==='cat')pItems.sort(function(a,b){return a.cat<b.cat?-1:a.cat>b.cat?1:b.annual-a.annual;});
+    else pItems.sort(function(a,b){return b.annual-a.annual;});
+    /* Apply filters */
+    var fItems=pItems;
+    if(ANALISIS_FILTER_CAT!=='all')fItems=fItems.filter(function(p){return p.cat===ANALISIS_FILTER_CAT;});
+    if(ANALISIS_FILTER_TEXT)fItems=fItems.filter(function(p){return p.label.toLowerCase().indexOf(ANALISIS_FILTER_TEXT.toLowerCase())!==-1;});
+
     var totalPartidas=0;pItems.forEach(function(p){totalPartidas+=p.annual;});
     var usedPct=Math.round(totalPartidas/disponible*1000)/10;
     var restante=Math.round((disponible-totalPartidas)*100)/100;
@@ -642,16 +668,33 @@ function _renderAnalisisGastos(){
     h+='<div class="hip-bar-int" style="width:'+Math.max(0,100-usedPct)+'%;background:var(--surface)"></div>';
     h+='</div>';
     h+='<div class="hip-bar-legend"><span style="color:'+(usedPct>90?'var(--c-red)':'var(--text-muted)')+'">Usado: '+usedPct+'%</span><span style="color:var(--c-green)">Libre: '+fcPlain(Math.round(restante/12*100)/100)+'/mes</span></div></div>';
+    /* Filters */
+    h+='<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;align-items:center">';
+    h+='<input type="text" id="analisisFilterText" placeholder="Buscar concepto..." value="'+escHtml(ANALISIS_FILTER_TEXT)+'" style="flex:1;min-width:100px;font-size:.65rem;padding:3px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface2);color:var(--text)">';
+    var _fc=['all','gasto','inversion'];
+    var _fl={all:'Todos',gasto:'Gastos',inversion:'Inversiones'};
+    _fc.forEach(function(c){h+='<button class="fiscal-period-btn'+(ANALISIS_FILTER_CAT===c?' active':'')+'" data-afc="'+c+'" style="font-size:.58rem;padding:2px 6px">'+_fl[c]+'</button>';});
+    h+='</div>';
+    /* Table */
     h+='<div class="mg-budget-table">';
-    h+='<div class="mg-budget-hdr"><span>Concepto</span><span>/mes</span><span>%</span></div>';
-    var _catC={gasto:'#fb923c',inversion:'#6c8cff',desgrav:'#c084fc'};
-    pItems.forEach(function(p){
+    h+='<div class="mg-budget-hdr mg-budget-hdr4"><span>Concepto</span><span class="mg-sort-btn" data-asort="month">/mes \u25BC</span><span>/a\u00f1o</span><span>%</span></div>';
+    var _catC={gasto:'#fb923c',inversion:'#6c8cff'};
+    fItems.forEach(function(p){
       var pct=Math.round(p.annual/disponible*1000)/10;
-      h+='<div class="mg-budget-row"><span class="mg-budget-lbl"><span class="mg-cat-dot" style="background:'+_catC[p.cat]+'"></span>'+escHtml(p.label)+'</span>';
-      h+='<span class="mg-budget-val">'+fcPlain(Math.round(p.annual/12*100)/100)+'</span><span class="mg-budget-pct">'+pct+'%</span></div>';
+      var lbl=escHtml(p.label);
+      if(p.desgrav)lbl+=' <span style="color:#c084fc;font-size:.55rem">- Ya desgravado</span>';
+      h+='<div class="mg-budget-row mg-budget-row4"><span class="mg-budget-lbl"><span class="mg-cat-dot" style="background:'+(_catC[p.cat]||'#999')+'"></span>'+lbl+'</span>';
+      h+='<span class="mg-budget-val">'+fcPlain(Math.round(p.annual/12*100)/100)+'</span>';
+      h+='<span class="mg-budget-val">'+fcPlain(Math.round(p.annual))+'</span>';
+      h+='<span class="mg-budget-pct">'+pct+'%</span></div>';
     });
     h+='</div>';
-    h+='<label class="mg-desgrav-toggle"><input type="checkbox" id="analisisDesgravDiscount"'+(ANALISIS_DESGRAV_DISCOUNT?' checked':'')+' style="accent-color:#c084fc">Incluir gastos desgravables'+(desgravPct>0?' (neto '+desgravPct.toFixed(1)+'% desc.)':'')+'</label>';
+    /* Notes */
+    h+='<div style="font-size:.58rem;color:var(--text-dim);margin-top:6px;line-height:1.4">';
+    h+='\u26A0 Los gastos semanales se reducen un 18% (redondeando al euro superior) porque parte se dedica a pagar otros conceptos ya incluidos en esta lista.<br>';
+    h+='\u26A0 Los viajes se prorratean: se restan los gastos semanales proporcionales a los d\u00edas de viaje, ya que durante esos d\u00edas no se incurren gastos semanales habituales.<br>';
+    h+='\u26A0 El disponible ya incluye la deducci\u00f3n de gastos profesionales desgravables (hipoteca, facturas, seguros).';
+    h+='</div>';
     h+='</div>';
   }
 
@@ -737,7 +780,7 @@ function _renderAnalisisHipoteca(){
   /* ── Sección 1: Situación actual ── */
   h+='<div class="ah-section">';
   h+='<div class="ah-section-title">Situaci\u00f3n actual'+(act.banco?' \u2014 '+escHtml(act.banco):'')+'</div>';
-  h+='<div class="ah-cuota-hero"><div class="ah-cuota-val">'+fcPlain(cuotaAct)+'\u20ac</div>';
+  h+='<div class="ah-cuota-hero"><div class="ah-cuota-val">'+fcPlain(cuotaAct)+'</div>';
   h+='<div class="ah-cuota-sub">Cuota mensual \u00b7 '+tipoEfAct.toFixed(2)+'%'+(tipoEfAct!==act.tipo?' (nominal '+act.tipo.toFixed(2)+'%)':' fijo')+' \u00b7 '+act.plazo+' a\u00f1os</div></div>';
 
   /* Stats: saldo vivo, intereses, tiempo */
@@ -1044,7 +1087,8 @@ function _renderInsuranceOvercost(comp){
   _segKeys.forEach(function(s){
     if(!vinc[s.key]||!vinc[s.key].enabled)return;
     var costeVinc=vinc[s.key].costeAnual||0;
-    var costeNormal=ANALISIS_SEG_NORMAL[s.key]||0;
+    var _sn=typeof DESPACHO!=='undefined'&&DESPACHO.segurosNormales?DESPACHO.segurosNormales:{};
+    var costeNormal=_sn[s.key]||ANALISIS_SEG_NORMAL[s.key]||0;
     var diff=costeVinc-costeNormal;
     totalVinc+=costeVinc;totalNormal+=costeNormal;
     h+='<div class="analisis-ins-row">';
@@ -1220,9 +1264,17 @@ function bindEconAnalisisEvents(){
   if(subG)subG.addEventListener('click',function(){ANALISIS_SUB='gastos';reRenderEcon();});
   if(subH)subH.addEventListener('click',function(){ANALISIS_SUB='hipoteca';reRenderEcon();});
   if(ANALISIS_SUB==='gastos'){
-    /* Single toggle for desgravables inclusion */
-    var discountChk=document.getElementById('analisisDesgravDiscount');
-    if(discountChk)discountChk.addEventListener('change',function(){ANALISIS_DESGRAV_DISCOUNT=this.checked;reRenderEcon();});
+    /* Filter text input */
+    var filterInput=document.getElementById('analisisFilterText');
+    if(filterInput)filterInput.addEventListener('input',function(){ANALISIS_FILTER_TEXT=this.value;reRenderEcon();});
+    /* Filter category buttons */
+    document.querySelectorAll('[data-afc]').forEach(function(btn){
+      btn.addEventListener('click',function(){ANALISIS_FILTER_CAT=btn.dataset.afc;reRenderEcon();});
+    });
+    /* Sort header click */
+    document.querySelectorAll('[data-asort]').forEach(function(btn){
+      btn.addEventListener('click',function(){ANALISIS_SORT=ANALISIS_SORT==='desc'?'asc':ANALISIS_SORT==='asc'?'cat':'desc';reRenderEcon();});
+    });
   }
 }
 /* ── Estudio Cambio (sub-tabs) ─────────────────────────────── */
@@ -1278,7 +1330,7 @@ function _renderEstudioHipotecaComp(){
   h+='<div class="sy-section-title">Tu hipoteca actual (tipo bonificado + seguros)</div>';
   h+='<div class="analisis-mortgage-current">';
   h+='<div style="font-size:.72rem;color:var(--text-dim)">'+escHtml(act.banco||'')+' \u00b7 '+tipoEfAct.toFixed(2)+'% (bonificado) \u00b7 '+act.plazo+'a \u00b7 '+_fmtMiles(act.importe)+'\u20ac</div>';
-  h+='<div style="font-family:var(--mono);font-size:1rem;font-weight:700;margin-top:4px">'+fcPlain(Math.round(cuotaAct*100)/100)+'\u20ac<span style="font-size:.68rem;color:var(--text-dim)">/mes</span>';
+  h+='<div style="font-family:var(--mono);font-size:1rem;font-weight:700;margin-top:4px">'+fcPlain(Math.round(cuotaAct*100)/100)+'<span style="font-size:.68rem;color:var(--text-dim)">/mes</span>';
   if(vincAnual>0)h+='<span style="font-size:.62rem;color:var(--c-orange);margin-left:6px">+ '+fcPlain(Math.round(vincAnual/12*100)/100)+' seguros = '+fcPlain(cuotaActConSeg)+'/mes</span>';
   h+='</div>';
   h+='</div></div>';
@@ -1316,7 +1368,7 @@ function _renderEstudioHipotecaComp(){
     h+='<div class="ah-vs-card"><div class="ah-vs-card-title">Alternativa ('+tipoEfAlt.toFixed(2)+'%)</div><div class="ah-vs-card-val">'+fcPlain(Math.round(cuotaAlt*100)/100)+'<span style="font-size:.6rem;color:var(--text-dim)">/mes</span></div></div>';
     h+='</div>';
     h+='<div class="analisis-mortgage-ahorro '+(ahorro>=0?'pos':'neg')+'" style="margin-top:8px">';
-    h+=(ahorro>=0?'Ahorras: <b>'+fcPlain(ahorro)+'\u20ac</b>':'Pagas m\u00e1s: <b>'+fcPlain(-ahorro)+'\u20ac</b>');
+    h+=(ahorro>=0?'Ahorras: <b>'+fcPlain(ahorro)+'</b>':'Pagas m\u00e1s: <b>'+fcPlain(-ahorro)+'</b>');
     h+=' ('+fcPlain(Math.abs(ahorroMes))+'/mes)';
     h+='</div>';
     if(ESTUDIO_HIP_ALT.costeCambio>0&&ahorroMes>0){
@@ -1428,8 +1480,8 @@ function _renderEstudioGasComp(){
   /* Current tariff */
   h+='<div class="sy-section">';
   h+='<div class="sy-section-title">\uD83D\uDD25 Tu tarifa actual</div>';
-  if(g.modo==='fijo')h+='<div style="font-size:.72rem;color:var(--text-dim)">Cuota fija: <b>'+fcPlain(g.cuotaFija)+'\u20ac/mes</b> + T\u00e9rmino fijo: '+fcPlain(g.terminoFijo)+'\u20ac/mes</div>';
-  else h+='<div style="font-size:.72rem;color:var(--text-dim)">Precio: <b>'+(g.precioKwh||0).toFixed(4)+' \u20ac/kWh</b> + T\u00e9rmino fijo: '+fcPlain(g.terminoFijo)+'\u20ac/mes</div>';
+  if(g.modo==='fijo')h+='<div style="font-size:.72rem;color:var(--text-dim)">Cuota fija: <b>'+fcPlain(g.cuotaFija)+'/mes</b> + T\u00e9rmino fijo: '+fcPlain(g.terminoFijo)+'/mes</div>';
+  else h+='<div style="font-size:.72rem;color:var(--text-dim)">Precio: <b>'+(g.precioKwh||0).toFixed(4)+' \u20ac/kWh</b> + T\u00e9rmino fijo: '+fcPlain(g.terminoFijo)+'/mes</div>';
   h+='</div>';
   /* Consumption input */
   h+='<div class="sy-section">';
@@ -1465,7 +1517,7 @@ function _renderEstudioElectComp(){
     potPrecioTxt=(e.precioPotP1||0).toFixed(6)+' \u20ac/kW/d\u00eda';
   }
   h+='<div style="font-size:.72rem;color:var(--text-dim)">Potencia: <b>'+potTxt+'</b> \u00b7 Precio pot.: <b>'+potPrecioTxt+'</b></div>';
-  h+='<div style="font-size:.72rem;color:var(--text-dim)">Energ\u00eda: <b>'+(e.precioKwh||0).toFixed(4)+' \u20ac/kWh</b>'+(e.terminoFijo?' + T. fijo: '+fcPlain(e.terminoFijo)+'\u20ac/mes':'')+'</div>';
+  h+='<div style="font-size:.72rem;color:var(--text-dim)">Energ\u00eda: <b>'+(e.precioKwh||0).toFixed(4)+' \u20ac/kWh</b>'+(e.terminoFijo?' + T. fijo: '+fcPlain(e.terminoFijo)+'/mes':'')+'</div>';
   h+='</div>';
   h+='<div class="sy-section">';
   h+='<div class="sy-section-title">Consumo a comparar</div>';
