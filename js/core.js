@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v136 \u2014 puentes libres: cualquier evento multi-d\u00eda ocupa';
+var APP_VERSION = 'v137 \u2014 reorganizar ventanas: eliminar Resumen, redistribuir pesta\u00f1as, Estudio independiente';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -389,10 +389,10 @@ function renderNavBar(current){
   var bdActive=typeof BDAYS!=='undefined'&&BDAYS.length>0&&typeof hasUpcomingBday==='function'&&hasUpcomingBday();
   var btns=[
     {icon:'&#127968;',key:'home',title:'Inicio'},
-    {icon:'&#128202;',key:'summary',title:'Resumen anual'},
     {icon:'&#128176;',key:'econ',title:'Econ\u00f3mico'},
     {icon:'&#127874;',key:'bday',title:'Cumplea\u00f1os'},
     {icon:'&#128197;',key:'events',title:'Eventos'},
+    {icon:'&#128300;',key:'estudio',title:'Estudio Cambio'},
     {icon:'&#128276;',key:'alarm',title:'Test alarma'},
     {icon:'&#8943;',key:'menu',title:'M\u00e1s opciones'}
   ];
@@ -409,17 +409,17 @@ function renderNavBar(current){
 
 function bindNavBar(current,closeFn){
   // Map para reabrir el overlay actual (para NAV_BACK)
-  var reopenFns={summary:openSummary,econ:openEcon,bday:openBday,events:openEvents};
+  var reopenFns={econ:openEcon,bday:openBday,events:openEvents,estudio:openEstudio};
   document.querySelectorAll('.overlay-nav-bar .nav-bar-btn[data-nav]').forEach(function(btn){
     var key=btn.dataset.nav;
     if(key===current)return;
     btn.addEventListener('click',function(e){
       var doNav=function(){
         if(key==='home'){/* overlay ya cerrado */}
-        else if(key==='summary')openSummary();
         else if(key==='econ')openEcon();
         else if(key==='bday')openBday();
         else if(key==='events')openEvents();
+        else if(key==='estudio')openEstudio();
         else if(key==='alarm')document.getElementById('alarmTestBtn').click();
         else if(key==='menu'){var m=document.getElementById('dataMenu');if(m)m.classList.toggle('open');}
       };

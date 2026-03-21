@@ -1190,7 +1190,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 /* ── EVENTS ── */
 .data-btn.events-active{color:var(--c-blue)!important;border-radius:8px}
 .ev-hdr-sub{display:flex;align-items:stretch;padding:5px 6px;gap:5px;box-shadow:0 1px 0 var(--border);overflow-x:hidden}
-.ev-view-zone{flex:1;display:flex;flex-direction:column;gap:4px;}
+.ev-view-zone{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:4px;}
 .ev-view-toggle{flex:1;font-size:.62rem;padding:6px 3px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;text-align:center;line-height:1.3;width:100%}
 .ev-view-toggle.active{background:var(--accent-glow);color:var(--accent-bright);border-color:var(--accent)}
 /* ── Feat 2: Lista de Eventos subtabs ── */

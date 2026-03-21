@@ -197,6 +197,6 @@ function bindEconSimEvents(){
     if(!thousandsVal||thousandsVal<=0){showToast('Introduce un neto objetivo v\u00e1lido','error');return;}
 
     SIM_TARGET=thousandsVal*1000;
-    reRenderEcon();
+    _estudioReRender();
   });
 }

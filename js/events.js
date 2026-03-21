@@ -977,13 +977,15 @@ function renderEvContent(){
   h+='<div class="ev-view-zone">';
   h+='<button class="ev-view-toggle'+(EV_VIEW==='cal'?' active':'')+'" id="evViewCal">Calendario<br>1 mes</button>';
   h+='</div>';
-  // Zona 3: Calendario 4 meses
+  // Zona 3: Calendario 4 meses + Calendario Anual (50% cada uno, apilados)
   h+='<div class="ev-view-zone">';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='quad'?' active':'')+'" id="evViewQuad">Calendario<br>4 meses</button>';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='quad'?' active':'')+'" id="evViewQuad">Cal.<br>4 meses</button>';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='annual'?' active':'')+'" id="evViewAnnual">Cal.<br>Anual</button>';
   h+='</div>';
-  // Zona 4: Calendario Anual
+  // Zona 4: Puentes + Vacaciones y Festivos (apilados)
   h+='<div class="ev-view-zone">';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='annual'?' active':'')+'" id="evViewAnnual">Calendario<br>Anual</button>';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='puentes'?' active':'')+'" id="evViewPuentes">Puentes</button>';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='time-off'?' active':'')+'" id="evViewTimeOff">Vac. y<br>Festivos</button>';
   h+='</div>';
   h+='</div>';
   // Header a nivel 3 (with-tabs → top:82px)
@@ -993,6 +995,9 @@ function renderEvContent(){
     h+='<div class="sy-year-nav"><div class="sy-year">Pr\u00f3ximos</div></div>';
   } else if(EV_VIEW==='months'){
     h+='<div class="sy-year-nav"><div class="sy-year">Eventos</div></div>';
+  } else if(EV_VIEW==='puentes'||EV_VIEW==='time-off'){
+    h+='<div class="sy-year-nav"><button class="sy-nav" id="evPrev">&#9664;</button><div class="sy-year">'+EV_YEAR+'</div><button class="sy-nav" id="evNext">&#9654;</button></div>';
+    h+='<button class="sy-pdf" id="evSyPdf">PDF</button>';
   } else if(EV_VIEW==='quad'){
     var _qMNS=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
     var _qm3=(EV_QUAD_MONTH+3)%12,_qy3=EV_QUAD_YEAR+Math.floor((EV_QUAD_MONTH+3)/12);
@@ -1049,17 +1054,21 @@ function renderEvContent(){
   else if(EV_VIEW==='upcoming')h+=renderEvUpcoming();
   else if(EV_VIEW==='annual')h+=renderEvAnnual();
   else if(EV_VIEW==='quad')h+=renderEvQuad();
+  else if(EV_VIEW==='puentes')h+=renderSummaryPuentesBody(EV_YEAR);
+  else if(EV_VIEW==='time-off')h+=renderSummaryTimeOffBody(EV_YEAR);
   else h+=renderEvMonthsView();
-  h+='<div class="ev-io-row">';
-  var _isPickView=EV_VIEW==='annual'||EV_VIEW==='quad';
-  var addLabel=_isPickView&&EV_EDIT_MODE?'&#10006; Cancelar':'+ A\u00f1adir';
-  h+='<button class="ev-io-btn'+(_isPickView&&EV_EDIT_MODE?' ev-edit-pick-mode':'')+'" id="evAdd">'+addLabel+'</button>';
-  if(EV_VIEW==='upcoming'||EV_VIEW==='months'){
-    h+='<button class="ev-io-btn" id="evExport">&#8595; Exportar</button>';
-    h+='<button class="ev-io-btn" id="evImport">&#8593; Importar</button>';
-    h+='<input type="file" id="evImportFile" accept=".json" style="display:none">';
+  if(EV_VIEW!=='puentes'&&EV_VIEW!=='time-off'){
+    h+='<div class="ev-io-row">';
+    var _isPickView=EV_VIEW==='annual'||EV_VIEW==='quad';
+    var addLabel=_isPickView&&EV_EDIT_MODE?'&#10006; Cancelar':'+ A\u00f1adir';
+    h+='<button class="ev-io-btn'+(_isPickView&&EV_EDIT_MODE?' ev-edit-pick-mode':'')+'" id="evAdd">'+addLabel+'</button>';
+    if(EV_VIEW==='upcoming'||EV_VIEW==='months'){
+      h+='<button class="ev-io-btn" id="evExport">&#8595; Exportar</button>';
+      h+='<button class="ev-io-btn" id="evImport">&#8593; Importar</button>';
+      h+='<input type="file" id="evImportFile" accept=".json" style="display:none">';
+    }
+    h+='</div>';
   }
-  h+='</div>';
   h+='</div>';
   return h;
 }
@@ -1117,7 +1126,7 @@ function renderEvDetail(ev,fromSummary){
 /* ── Apertura/cierre del detalle ────────────────────────── */
 function openEvDetail(ev,container){
   var ov=container||document.getElementById('eventsOverlay');
-  var fromSummary=(ov.id==='summaryOverlay');
+  var fromSummary=(EV_VIEW==='puentes'||EV_VIEW==='time-off');
   ov.scrollTop=0;
   var wrap=document.createElement('div');
   wrap.id='evDWrap';
@@ -1171,7 +1180,7 @@ function openEvDetail(ev,container){
         if(BDAYS[i].day===evDay&&BDAYS[i].month===evMonth){b=BDAYS[i];break;}
       }
       if(b){
-        if(!fromSummary)closeEvents();
+        closeEvents();
         setTimeout(function(){
           openBday();
           setTimeout(function(){openBdayForm(b);},350);
@@ -1179,24 +1188,15 @@ function openEvDetail(ev,container){
         return;
       }
     }
-    if(fromSummary){
-      // Abrir el formulario directamente sobre el resumen (sin navegar a eventos)
-      setTimeout(function(){openEvForm(ev,null,document.getElementById('summaryOverlay'));},300);
-    } else {
-      setTimeout(function(){openEvForm(ev);},300);
-    }
+    setTimeout(function(){openEvForm(ev);},300);
   });
   if(fromSummary){
     document.getElementById('evDGoCal').addEventListener('click',function(){
       var evYear=parseInt(ev.start.slice(0,4),10);
       var evMonth=parseInt(ev.start.slice(5,7),10)-1;
       closeEvDetail();
-      closeSummary();
-      NAV_BACK=function(){closeEvents();setTimeout(openSummary,330);};
-      setTimeout(function(){
-        EV_YEAR=evYear;EV_MONTH=evMonth;EV_VIEW='cal';
-        openEventsAt();
-      },350);
+      EV_YEAR=evYear;EV_MONTH=evMonth;EV_VIEW='cal';
+      refreshEvents();
     });
   }
   document.getElementById('evDDel').addEventListener('click',function(){
@@ -1206,26 +1206,13 @@ function openEvDetail(ev,container){
     EVENTS=EVENTS.filter(function(e){return e.id!==deleted.id;});
     saveEvents();updateEventsBtn();
     closeEvDetail();
-    if(fromSummary){
-      setTimeout(function(){
-        document.getElementById('summaryContent').innerHTML=renderSummaryContent();
-        bindSummaryEvents();
-        showToast('Evento eliminado','success',function(){
-          if(deletedIdx>=0){EVENTS.splice(deletedIdx,0,deleted);}else{EVENTS.push(deleted);}
-          saveEvents();updateEventsBtn();
-          document.getElementById('summaryContent').innerHTML=renderSummaryContent();
-          bindSummaryEvents();
-        });
-      },320);
-    } else {
-      setTimeout(function(){
-        refreshEvents();
-        showToast('Evento eliminado','success',function(){
-          if(deletedIdx>=0){EVENTS.splice(deletedIdx,0,deleted);}else{EVENTS.push(deleted);}
-          saveEvents();updateEventsBtn();refreshEvents();
-        });
-      },320);
-    }
+    setTimeout(function(){
+      refreshEvents();
+      showToast('Evento eliminado','success',function(){
+        if(deletedIdx>=0){EVENTS.splice(deletedIdx,0,deleted);}else{EVENTS.push(deleted);}
+        saveEvents();updateEventsBtn();refreshEvents();
+      });
+    },320);
   });
 }
 
@@ -1390,25 +1377,13 @@ function bindEvFormEvents(){
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===deleted.id){deletedIdx=i;break;}}
       EVENTS=EVENTS.filter(function(e){return e.id!==deleted.id;});
       saveEvents();updateEventsBtn();
-      var fromSummaryForm=(EV_FORM_CONTAINER&&EV_FORM_CONTAINER.id==='summaryOverlay');
       closeEvForm();
       setTimeout(function(){
-        if(fromSummaryForm){
-          document.getElementById('summaryContent').innerHTML=renderSummaryContent();
-          bindSummaryEvents();
-          showToast('Evento eliminado','success',function(){
-            if(deletedIdx>=0){EVENTS.splice(deletedIdx,0,deleted);}else{EVENTS.push(deleted);}
-            saveEvents();updateEventsBtn();
-            document.getElementById('summaryContent').innerHTML=renderSummaryContent();
-            bindSummaryEvents();
-          });
-        }else{
-          refreshEvents();
-          showToast('Evento eliminado','success',function(){
-            if(deletedIdx>=0){EVENTS.splice(deletedIdx,0,deleted);}else{EVENTS.push(deleted);}
-            saveEvents();updateEventsBtn();refreshEvents();
-          });
-        }
+        refreshEvents();
+        showToast('Evento eliminado','success',function(){
+          if(deletedIdx>=0){EVENTS.splice(deletedIdx,0,deleted);}else{EVENTS.push(deleted);}
+          saveEvents();updateEventsBtn();refreshEvents();
+        });
       },320);
     });
   }
@@ -1452,14 +1427,8 @@ function bindEvFormEvents(){
       showToast('Evento a\u00f1adido','success');
     }
     saveEvents();updateEventsBtn();
-    var fromSummaryForm=(EV_FORM_CONTAINER&&EV_FORM_CONTAINER.id==='summaryOverlay');
     closeEvForm();
-    setTimeout(function(){
-      if(fromSummaryForm){
-        document.getElementById('summaryContent').innerHTML=renderSummaryContent();
-        bindSummaryEvents();
-      }else{refreshEvents();}
-    },320);
+    setTimeout(function(){refreshEvents();},320);
   });
 }
 
@@ -1634,14 +1603,14 @@ function bindEvEvents(){
   bindNavBar('events',closeEvents);
   var prevBtn=document.getElementById('evPrev');
   if(prevBtn)prevBtn.addEventListener('click',function(){
-    if(EV_VIEW==='annual'){EV_YEAR--;}
+    if(EV_VIEW==='annual'||EV_VIEW==='puentes'||EV_VIEW==='time-off'){EV_YEAR--;}
     else if(EV_VIEW==='quad'){EV_QUAD_MONTH--;if(EV_QUAD_MONTH<0){EV_QUAD_MONTH=11;EV_QUAD_YEAR--;}}
     else{EV_MONTH--;if(EV_MONTH<0){EV_MONTH=11;EV_YEAR--;}}
     refreshEvents();
   });
   var nextBtn=document.getElementById('evNext');
   if(nextBtn)nextBtn.addEventListener('click',function(){
-    if(EV_VIEW==='annual'){EV_YEAR++;}
+    if(EV_VIEW==='annual'||EV_VIEW==='puentes'||EV_VIEW==='time-off'){EV_YEAR++;}
     else if(EV_VIEW==='quad'){EV_QUAD_MONTH++;if(EV_QUAD_MONTH>11){EV_QUAD_MONTH=0;EV_QUAD_YEAR++;}}
     else{EV_MONTH++;if(EV_MONTH>11){EV_MONTH=0;EV_YEAR++;}}
     refreshEvents();
@@ -1673,6 +1642,8 @@ function bindEvEvents(){
   document.getElementById('evViewQuad').addEventListener('click',function(){EV_VIEW='quad';EV_EDIT_MODE=false;refreshEvents();});
   document.getElementById('evViewAnnual').addEventListener('click',function(){EV_VIEW='annual';EV_EDIT_MODE=false;refreshEvents();});
   document.getElementById('evViewMonths').addEventListener('click',function(){EV_VIEW='months';EV_EDIT_MODE=false;refreshEvents();});
+  document.getElementById('evViewPuentes').addEventListener('click',function(){EV_VIEW='puentes';EV_EDIT_MODE=false;refreshEvents();});
+  document.getElementById('evViewTimeOff').addEventListener('click',function(){EV_VIEW='time-off';EV_EDIT_MODE=false;refreshEvents();});
   // Dropdown de vista anual (reemplaza los dos botones anteriores)
   var _vdBtn=document.getElementById('evAnnVdBtn');
   var _vdMenu=document.getElementById('evAnnVdMenu');
@@ -1697,10 +1668,17 @@ function bindEvEvents(){
       refreshEvents();
     });
   });
-  document.getElementById('evAdd').addEventListener('click',function(){
+  var _evAddBtn=document.getElementById('evAdd');
+  if(_evAddBtn)_evAddBtn.addEventListener('click',function(){
     if(EV_VIEW==='annual'||EV_VIEW==='quad'){EV_EDIT_MODE=!EV_EDIT_MODE;refreshEvents();}
     else{openEvForm(null);}
   });
+  // Bind puentes/time-off summary body events
+  if(EV_VIEW==='puentes')bindSummaryPuentesBodyEvents(refreshEvents,'eventsOverlay');
+  else if(EV_VIEW==='time-off')bindSummaryTimeOffBodyEvents(refreshEvents);
+  // PDF button for puentes/time-off
+  var _evSyPdfBtn=document.getElementById('evSyPdf');
+  if(_evSyPdfBtn)_evSyPdfBtn.addEventListener('click',function(){document.body.classList.add('print-summary');window.print();document.body.classList.remove('print-summary');});
   // Pencil edit button in annual/quad
   var _editBtn=document.getElementById('evAnnEditBtn');
   if(_editBtn){

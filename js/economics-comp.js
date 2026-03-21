@@ -221,7 +221,7 @@ function bindEconCompEvents(){
     /* Read value from the selected zone's input */
     var input=document.querySelector('.econ-sc-zone-input[data-sci="'+sci+'"][data-zone="'+zoneType+'"]');
     if(input&&parseFloat(input.value)>0)ECON_SCENARIOS[sci].rateValue=parseFloat(input.value);
-    ECON_COMP_CALC=false;saveEconComp();reRenderEcon();
+    ECON_COMP_CALC=false;saveEconComp();_estudioReRender();
   }
   /* Zone inputs: update value on change */
   document.querySelectorAll('.econ-sc-zone-input').forEach(function(el){
@@ -238,7 +238,7 @@ function bindEconCompEvents(){
         else{ECON_SCENARIOS[sci].rateType='hourly';}
       }
       if(v>0)ECON_SCENARIOS[sci].rateValue=v;
-      ECON_COMP_CALC=false;saveEconComp();reRenderEcon();
+      ECON_COMP_CALC=false;saveEconComp();_estudioReRender();
     });
     /* Also auto-select on focus */
     el.addEventListener('focus',function(){
@@ -259,7 +259,7 @@ function bindEconCompEvents(){
       if(j<0||j>=ECON_SCENARIOS.length)return;
       var tmp=ECON_SCENARIOS[i];ECON_SCENARIOS[i]=ECON_SCENARIOS[j];ECON_SCENARIOS[j]=tmp;
       ECON_SCENARIOS.forEach(function(sc,k){sc.label=SC_LABELS[k];});
-      ECON_COMP_CALC=false;saveEconComp();reRenderEcon();
+      ECON_COMP_CALC=false;saveEconComp();_estudioReRender();
     });
   });
   // Eliminar
@@ -269,7 +269,7 @@ function bindEconCompEvents(){
       if(ECON_SCENARIOS.length>2){
         ECON_SCENARIOS.splice(i,1);
         ECON_SCENARIOS.forEach(function(sc,j){sc.label=SC_LABELS[j];});
-        ECON_COMP_CALC=false;saveEconComp();reRenderEcon();
+        ECON_COMP_CALC=false;saveEconComp();_estudioReRender();
       }
     });
   });
@@ -279,17 +279,17 @@ function bindEconCompEvents(){
     if(ECON_SCENARIOS.length<4){
       var prev=ECON_SCENARIOS[ECON_SCENARIOS.length-1];
       ECON_SCENARIOS.push({label:SC_LABELS[ECON_SCENARIOS.length],rateType:prev.rateType,rateValue:prev.rateValue,hoursMode:prev.hoursMode});
-      ECON_COMP_CALC=false;saveEconComp();reRenderEcon();
+      ECON_COMP_CALC=false;saveEconComp();_estudioReRender();
     }
   });
   // Calcular
   var calcBtn=document.getElementById('ecCompCalcular');
-  if(calcBtn)calcBtn.addEventListener('click',function(){ECON_COMP_CALC=true;reRenderEcon();});
+  if(calcBtn)calcBtn.addEventListener('click',function(){ECON_COMP_CALC=true;_estudioReRender();});
   // Chart toggle
   var btnM=document.getElementById('ecChartMensual');
   var btnA=document.getElementById('ecChartAcum');
-  if(btnM)btnM.addEventListener('click',function(){ECON_COMP_ACCUM=false;ECON_COMP_DIFF=false;reRenderEcon();});
-  if(btnA)btnA.addEventListener('click',function(){ECON_COMP_ACCUM=true;ECON_COMP_DIFF=false;reRenderEcon();});
+  if(btnM)btnM.addEventListener('click',function(){ECON_COMP_ACCUM=false;ECON_COMP_DIFF=false;_estudioReRender();});
+  if(btnA)btnA.addEventListener('click',function(){ECON_COMP_ACCUM=true;ECON_COMP_DIFF=false;_estudioReRender();});
   var btnD=document.getElementById('ecChartDiff');
-  if(btnD)btnD.addEventListener('click',function(){ECON_COMP_DIFF=!ECON_COMP_DIFF;if(ECON_COMP_DIFF)ECON_COMP_ACCUM=false;reRenderEcon();});
+  if(btnD)btnD.addEventListener('click',function(){ECON_COMP_DIFF=!ECON_COMP_DIFF;if(ECON_COMP_DIFF)ECON_COMP_ACCUM=false;_estudioReRender();});
 }

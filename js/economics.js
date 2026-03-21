@@ -11,6 +11,7 @@ var ECON_RATE_PERIODS=[{from:0,to:11,rate:0}]; // legacy month-based (migrated t
    First period always starts Jan 1. The startDate of period N+1 = end+1 of period N.
    Last period always ends Dec 31. */
 var ECON_ESTUDIO_SUB='comparador'; // 'comparador' | 'simulador'
+var ESTUDIO_YEAR=new Date().getFullYear();
 window._ECON_SALARY=30000; // salario bruto anual para modo nómina
 
 /* ── Nómina asalariado — modelo simplificado ───────────────── */
@@ -466,15 +467,13 @@ function renderEconContent(){
   var h=renderNavBar('econ');
   h+='<div class="econ-hdr-sub">';
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='resumen'?' active':'')+'" id="ecTabResumen">Resumen<br>Econ\u00f3mico</button>';
+  h+='<button class="econ-tab-btn'+(ECON_VIEW==='dias'?' active':'')+'" id="ecTabDias">Resumen<br>D\u00edas</button>';
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='gastos'?' active':'')+'" id="ecTabGastos">An\u00e1lisis Gastos<br>Dec. Renta</button>';
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='analisis'?' active':'')+'" id="ecTabAnalisis">An\u00e1lisis<br>Ec. Personal</button>';
-  h+='<button class="econ-tab-btn'+(ECON_VIEW==='estudio'?' active':'')+'" id="ecTabEstudio">Estudio<br>Cambio</button>';
   h+='</div>';
   h+='<div class="sy-header with-tabs">';
   if(ECON_VIEW==='resumen'||ECON_VIEW==='gastos'||ECON_VIEW==='analisis'){
     h+='<button class="econ-gear-btn" id="ecGear">&#9965;</button>';
-  } else if(ECON_VIEW==='estudio'){
-    h+='<div class="econ-hdr-note">Seg\u00fan horas y d\u00edas trabajados del a\u00f1o:</div>';
   } else {
     h+='<div style="width:42px"></div>';
   }
@@ -483,9 +482,9 @@ function renderEconContent(){
   h+='</div>';
   h+='<div class="sy-body">';
   if(ECON_VIEW==='resumen'){h+=renderEconResumen();}
+  else if(ECON_VIEW==='dias'){h+=renderSummaryWorkBody(ECON_YEAR);}
   else if(ECON_VIEW==='gastos'){h+=typeof renderEconGastos==='function'?renderEconGastos():'';}
   else if(ECON_VIEW==='analisis'){h+=renderEconAnalisis();}
-  else if(ECON_VIEW==='estudio'){h+=renderEconEstudio();}
   h+='</div>';
   return h;
 }
@@ -1368,18 +1367,9 @@ function bindEconEvents(){
   bindNavBar('econ',closeEcon);
   // Tabs
   document.getElementById('ecTabResumen').addEventListener('click',function(){ECON_VIEW='resumen';reRenderEcon();});
+  document.getElementById('ecTabDias').addEventListener('click',function(){ECON_VIEW='dias';reRenderEcon();});
   document.getElementById('ecTabGastos').addEventListener('click',function(){ECON_VIEW='gastos';reRenderEcon();});
   document.getElementById('ecTabAnalisis').addEventListener('click',function(){ECON_VIEW='analisis';reRenderEcon();});
-  document.getElementById('ecTabEstudio').addEventListener('click',function(){
-    // Sync A con tarifa actual de Resumen
-    if(ECON_RATE_MODE!=='salary'){
-      var s=computeYearlySummary(ECON_YEAR);
-      var aRate=ECON_RATE_MODE==='hourly'?Math.round(DAILY_RATE/(s.avgHDay||8)*100)/100:DAILY_RATE;
-      ECON_SCENARIOS[0].rateType=ECON_RATE_MODE;
-      ECON_SCENARIOS[0].rateValue=aRate;
-    }
-    ECON_VIEW='estudio';reRenderEcon();
-  });
   var gearBtn=document.getElementById('ecGear');
   if(gearBtn)gearBtn.addEventListener('click',function(){
     NAV_BACK=function(){closeEcon();openEcon();};openFiscal();
@@ -1390,9 +1380,9 @@ function bindEconEvents(){
     document.body.classList.add('print-econ');window.print();document.body.classList.remove('print-econ');
   });
   if(ECON_VIEW==='resumen')bindEconResumenEvents();
+  else if(ECON_VIEW==='dias')bindSummaryWorkBodyEvents(reRenderEcon);
   else if(ECON_VIEW==='gastos'&&typeof bindEconGastosEvents==='function')bindEconGastosEvents();
   else if(ECON_VIEW==='analisis')bindEconAnalisisEvents();
-  else if(ECON_VIEW==='estudio')bindEconEstudioEvents();
   setTimeout(function(){
     var qs=document.querySelector('.econ-quarter-section');
     var ms=document.querySelector('.econ-month-section');
@@ -1401,16 +1391,21 @@ function bindEconEvents(){
 }
 
 function bindEconEstudioEvents(){
+  var _reRender=document.getElementById('estudioOverlay')&&document.getElementById('estudioOverlay').classList.contains('open')?reRenderEstudio:reRenderEcon;
   var _estTabs={ecSubComp:'comparador',ecSubSim:'simulador',ecSubHip:'hipoteca',ecSubGas:'gas',ecSubElect:'elect'};
   Object.keys(_estTabs).forEach(function(id){
     var el=document.getElementById(id);
-    if(el)el.addEventListener('click',function(){ECON_ESTUDIO_SUB=_estTabs[id];reRenderEcon();});
+    if(el)el.addEventListener('click',function(){ECON_ESTUDIO_SUB=_estTabs[id];_reRender();});
   });
   if(ECON_ESTUDIO_SUB==='comparador'&&typeof bindEconCompEvents==='function')bindEconCompEvents();
   else if(ECON_ESTUDIO_SUB==='simulador'&&typeof bindEconSimEvents==='function')bindEconSimEvents();
   else if(ECON_ESTUDIO_SUB==='hipoteca')_bindEstudioHipoteca();
   else if(ECON_ESTUDIO_SUB==='gas')_bindEstudioGas();
   else if(ECON_ESTUDIO_SUB==='elect')_bindEstudioElect();
+}
+function _estudioReRender(){
+  var ov=document.getElementById('estudioOverlay');
+  if(ov&&ov.style.display==='flex')reRenderEstudio();else reRenderEcon();
 }
 function _bindEstudioHipoteca(){
   var calcBtn=document.getElementById('estHipCalc');
@@ -1422,7 +1417,7 @@ function _bindEstudioHipoteca(){
     ESTUDIO_HIP_ALT.vincCoste=parseFloat(document.getElementById('estHipVincCoste').value)||0;
     ESTUDIO_HIP_ALT.vincReduc=parseFloat(document.getElementById('estHipVincReduc').value)||0;
     ESTUDIO_HIP_CALC=true;
-    reRenderEcon();
+    _estudioReRender();
   });
 }
 
@@ -1530,28 +1525,28 @@ function _renderSupplyCompTable(comps,current,consumo,tipo){
 function _bindEstudioGas(){
   var kwhEl=document.getElementById('estGasKwh');
   var diasEl=document.getElementById('estGasDias');
-  if(kwhEl)kwhEl.addEventListener('change',function(){ESTUDIO_GAS.consumoKwh=parseFloat(this.value)||0;reRenderEcon();});
-  if(diasEl)diasEl.addEventListener('change',function(){ESTUDIO_GAS.dias=parseInt(this.value)||30;reRenderEcon();});
+  if(kwhEl)kwhEl.addEventListener('change',function(){ESTUDIO_GAS.consumoKwh=parseFloat(this.value)||0;_estudioReRender();});
+  if(diasEl)diasEl.addEventListener('change',function(){ESTUDIO_GAS.dias=parseInt(this.value)||30;_estudioReRender();});
   var addBtn=document.getElementById('estGasAdd');
   if(addBtn)addBtn.addEventListener('click',function(){
     if(!DESPACHO.gasComparaciones)DESPACHO.gasComparaciones=[];
     if(DESPACHO.gasComparaciones.length>=5)return;
     DESPACHO.gasComparaciones.push({nombre:'',precioKwh:0,terminoFijo:0,modo:'consumo',cuotaFija:0});
-    saveDespacho();reRenderEcon();
+    saveDespacho();_estudioReRender();
   });
   _bindCompInputs('gas','gasComparaciones');
 }
 function _bindEstudioElect(){
   var kwhEl=document.getElementById('estElectKwh');
   var diasEl=document.getElementById('estElectDias');
-  if(kwhEl)kwhEl.addEventListener('change',function(){ESTUDIO_ELECT.consumoKwh=parseFloat(this.value)||0;reRenderEcon();});
-  if(diasEl)diasEl.addEventListener('change',function(){ESTUDIO_ELECT.dias=parseInt(this.value)||30;reRenderEcon();});
+  if(kwhEl)kwhEl.addEventListener('change',function(){ESTUDIO_ELECT.consumoKwh=parseFloat(this.value)||0;_estudioReRender();});
+  if(diasEl)diasEl.addEventListener('change',function(){ESTUDIO_ELECT.dias=parseInt(this.value)||30;_estudioReRender();});
   var addBtn=document.getElementById('estElectAdd');
   if(addBtn)addBtn.addEventListener('click',function(){
     if(!DESPACHO.electComparaciones)DESPACHO.electComparaciones=[];
     if(DESPACHO.electComparaciones.length>=5)return;
     DESPACHO.electComparaciones.push({nombre:'',precioKwh:0,terminoFijo:0});
-    saveDespacho();reRenderEcon();
+    saveDespacho();_estudioReRender();
   });
   _bindCompInputs('elect','electComparaciones');
 }
@@ -1560,13 +1555,13 @@ function _bindCompInputs(tipo,despKey){
     el.addEventListener('change',function(){DESPACHO[despKey][parseInt(el.dataset.idx)].nombre=el.value;saveDespacho();});
   });
   document.querySelectorAll('.est-comp-precio[data-tipo="'+tipo+'"]').forEach(function(el){
-    el.addEventListener('change',function(){DESPACHO[despKey][parseInt(el.dataset.idx)].precioKwh=parseFloat(el.value)||0;saveDespacho();reRenderEcon();});
+    el.addEventListener('change',function(){DESPACHO[despKey][parseInt(el.dataset.idx)].precioKwh=parseFloat(el.value)||0;saveDespacho();_estudioReRender();});
   });
   document.querySelectorAll('.est-comp-tfijo[data-tipo="'+tipo+'"]').forEach(function(el){
-    el.addEventListener('change',function(){DESPACHO[despKey][parseInt(el.dataset.idx)].terminoFijo=parseFloat(el.value)||0;saveDespacho();reRenderEcon();});
+    el.addEventListener('change',function(){DESPACHO[despKey][parseInt(el.dataset.idx)].terminoFijo=parseFloat(el.value)||0;saveDespacho();_estudioReRender();});
   });
   document.querySelectorAll('.est-comp-del[data-tipo="'+tipo+'"]').forEach(function(btn){
-    btn.addEventListener('click',function(){DESPACHO[despKey].splice(parseInt(btn.dataset.idx),1);saveDespacho();reRenderEcon();});
+    btn.addEventListener('click',function(){DESPACHO[despKey].splice(parseInt(btn.dataset.idx),1);saveDespacho();_estudioReRender();});
   });
 }
 
@@ -1712,4 +1707,53 @@ function bindEconResumenEvents(){
       reRenderEcon();
     });
   }
+}
+
+/* ============================================================
+   ESTUDIO CAMBIO — Ventana independiente
+   ============================================================ */
+function renderEstudioContent(){
+  ECON_YEAR=ESTUDIO_YEAR; // sync for sub-functions that use ECON_YEAR
+  if(typeof loadEconYear==='function')loadEconYear(ECON_YEAR);
+  var h=renderNavBar('estudio');
+  h+='<div class="sy-header with-tabs">';
+  h+='<button class="sy-back" id="estBack">&#8592;</button>';
+  h+='<div class="sy-year-nav"><button class="sy-nav" id="estPrev">&#9664;</button><div class="sy-year">'+ESTUDIO_YEAR+'</div><button class="sy-nav" id="estNext">&#9654;</button></div>';
+  h+='<div class="econ-hdr-note" style="font-size:.55rem;white-space:nowrap">Seg\u00fan horas y d\u00edas<br>trabajados del a\u00f1o</div>';
+  h+='</div>';
+  h+='<div class="sy-body">';
+  h+=renderEconEstudio();
+  h+='</div>';
+  return h;
+}
+function openEstudio(){
+  NAV_BACK=null;
+  ESTUDIO_YEAR=CY;
+  if(typeof loadDespacho==='function')loadDespacho();
+  if(typeof loadEconComp==='function')loadEconComp();
+  var ov=document.getElementById('estudioOverlay');
+  document.getElementById('estudioContent').innerHTML=renderEstudioContent();
+  ov.style.display='flex';
+  requestAnimationFrame(function(){requestAnimationFrame(function(){ov.classList.add('open');bindEstudioEvents();});});
+}
+function closeEstudio(){
+  var ov=document.getElementById('estudioOverlay');
+  ov.classList.remove('open');
+  setTimeout(function(){ov.style.display='none';},320);
+}
+function reRenderEstudio(){
+  var body=document.querySelector('#estudioOverlay .sy-body');
+  var scrollTop=body?body.scrollTop:0;
+  document.getElementById('estudioContent').innerHTML=renderEstudioContent();
+  bindEstudioEvents();
+  if(body)body.scrollTop=scrollTop;
+}
+function bindEstudioEvents(){
+  document.getElementById('estBack').addEventListener('click',function(){
+    if(NAV_BACK){var fn=NAV_BACK;NAV_BACK=null;fn();}else{closeEstudio();}
+  });
+  bindNavBar('estudio',closeEstudio);
+  document.getElementById('estPrev').addEventListener('click',function(){ESTUDIO_YEAR--;reRenderEstudio();});
+  document.getElementById('estNext').addEventListener('click',function(){ESTUDIO_YEAR++;reRenderEstudio();});
+  bindEconEstudioEvents();
 }
