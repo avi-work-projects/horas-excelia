@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v142 \u2014 iconos nivel 1 recortados por usuario';
+var APP_VERSION = 'v143 \u2014 iconos: flood-fill bg removal sin da\u00f1ar rellenos';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
