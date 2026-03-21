@@ -1244,7 +1244,6 @@ function renderEconEstudio(){
   h+='<button class="est-btn est-casa'+(ECON_ESTUDIO_SUB==='hipoteca'?' active':'')+'" id="ecSubHip">Comparar Hipotecas</button>';
   h+='<button class="est-btn est-casa'+(ECON_ESTUDIO_SUB==='gas'?' active':'')+'" id="ecSubGas">Comparar Gas</button>';
   h+='<button class="est-btn est-casa'+(ECON_ESTUDIO_SUB==='elect'?' active':'')+'" id="ecSubElect">Comparar Electricidad</button>';
-  h+='<button class="est-btn est-casa est-goto-fiscal" id="ecSubGotoFiscal">\u2699 Config. Fiscal</button>';
   h+='</div>';
   h+='</div>';
   if(ECON_ESTUDIO_SUB==='comparador'){h+=typeof renderEconComp==='function'?renderEconComp():'';}
@@ -1404,12 +1403,6 @@ function bindEconEstudioEvents(){
   else if(ECON_ESTUDIO_SUB==='hipoteca')_bindEstudioHipoteca();
   else if(ECON_ESTUDIO_SUB==='gas')_bindEstudioGas();
   else if(ECON_ESTUDIO_SUB==='elect')_bindEstudioElect();
-  /* Botón ir a Config Fiscal → Hipoteca y Facturas */
-  var gotoFiscal=document.getElementById('ecSubGotoFiscal');
-  if(gotoFiscal)gotoFiscal.addEventListener('click',function(){
-    if(typeof FISCAL_TAB!=='undefined')FISCAL_TAB='despacho';
-    if(typeof openFiscal==='function')openFiscal();
-  });
 }
 function _estudioReRender(){
   var ov=document.getElementById('estudioOverlay');
