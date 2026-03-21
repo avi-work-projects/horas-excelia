@@ -42,9 +42,6 @@ function _renderAnalisisGastos(){
   /* Gastos semanales: reducidos 18% (parte se dedica a otros conceptos ya listados) */
   var totalSemAnual=0;
   (PERSONAL_DATA.gastosSemanales||[]).forEach(function(g){if(!g.amount)return;var a=g.period==='monthly'?g.amount*12:Math.ceil(g.amount*52*0.82);totalSemAnual+=a;allItems.push({label:g.label,annual:a,cat:'gasto',_weekly:true});});
-  /* Limpieza Casa */
-  var lc=PERSONAL_DATA.limpiezaCasa;
-  if(lc&&lc.amount>0){var lcA=lc.period==='monthly'?lc.amount*12:Math.ceil(lc.amount*52*0.82);totalSemAnual+=lcA;allItems.push({label:'Limpieza Casa',annual:lcA,cat:'gasto',_weekly:true});}
   /* Gastos recurrentes (incluye viajes con prorrateo) */
   var gastoSemDiario=totalSemAnual/365;
   (PERSONAL_DATA.gastosRecurrentes||[]).forEach(function(g){if(!g.amount)return;var a=g.period==='annual'?g.amount:g.period==='weekly'?g.amount*52:g.amount*12;
