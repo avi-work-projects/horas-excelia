@@ -95,7 +95,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .data-btn:has(.btn-icon){width:66px;height:66px;border-radius:12px}
 #homeBtn{width:73px!important;height:73px!important;border-radius:14px!important}
 .btn-icon{width:42px;height:42px;object-fit:contain;pointer-events:none}
-#econBtn .btn-icon,#estudioBtn .btn-icon{width:43px;height:43px}
 #homeBtn .btn-icon{width:46px;height:46px}
 .data-btn:active{background:var(--surface3);transform:scale(.93)}
 .data-btn.overlay-active{background:rgba(255,255,255,.15)!important;color:var(--text)!important;border-radius:8px}
@@ -363,7 +362,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .econ-hdr-sub{flex-shrink:0;display:flex;align-items:stretch;padding:5px 6px;gap:5px;box-shadow:0 1px 0 var(--border);overflow-x:hidden;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 .econ-tab-btn{flex:1;font-size:.56rem;padding:5px 2px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;text-align:center;line-height:1.35;white-space:normal;word-break:break-word}
 .econ-tab-btn.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
-.econ-sub-tabs{display:flex;gap:6px;padding:4px 10px;box-shadow:0 1px 0 var(--border);align-items:center;position:sticky;top:0;z-index:5;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.econ-sub-tabs{display:flex;gap:6px;padding:4px 10px;box-shadow:0 1px 0 var(--border);align-items:center;position:sticky;top:0;z-index:5;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);margin:-16px -16px 0;padding-left:16px;padding-right:16px}
 .econ-sub-tab{flex:1;font-size:.68rem;padding:6px 4px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;text-align:center;-webkit-user-select:none;user-select:none}
 .econ-sub-tab.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
 .econ-sub-tab.est-casa{color:var(--text-dim)}
