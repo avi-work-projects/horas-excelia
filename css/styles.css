@@ -90,13 +90,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .month-stat.off .ms-num{color:var(--text-muted)}
 .ms-label{font-size:.82rem;color:var(--text-muted)}
 .ms-hrs{font-family:var(--mono);font-size:.78rem;color:var(--text-dim)}
-.data-actions{display:flex;gap:12px;flex-wrap:wrap}
+.data-actions{display:flex;gap:8px;flex-wrap:wrap}
 .data-btn{width:44px;height:44px;border-radius:8px;border:none;background:transparent;color:var(--text-muted);font-size:1.35rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;position:relative}
 .data-btn:has(.btn-icon){width:66px;height:66px;border-radius:12px}
-#econBtn,#estudioBtn{width:74px!important;height:74px!important;border-radius:13px!important}
 #homeBtn{width:73px!important;height:73px!important;border-radius:14px!important}
 .btn-icon{width:42px;height:42px;object-fit:contain;pointer-events:none}
-#econBtn .btn-icon,#estudioBtn .btn-icon{width:47px;height:47px}
+#econBtn .btn-icon,#estudioBtn .btn-icon{width:43px;height:43px}
 #homeBtn .btn-icon{width:46px;height:46px}
 .data-btn:active{background:var(--surface3);transform:scale(.93)}
 .data-btn.overlay-active{background:rgba(255,255,255,.15)!important;color:var(--text)!important;border-radius:8px}
@@ -1327,7 +1326,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .logo-gallery{width:100%;min-width:0;display:flex;flex-shrink:0;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;-webkit-user-select:none;user-select:none;scrollbar-width:none}
 .logo-gallery::-webkit-scrollbar{display:none}
 .logo-gallery-slide{flex:0 0 100%;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:160px;padding:10px;scroll-snap-align:start}
-.logo-gallery-slide img{width:180px;height:180px;object-fit:contain;border-radius:16px}
+.logo-gallery-slide img{width:140px;height:140px;object-fit:contain;border-radius:16px}
 .logo-gallery-label{font-size:.85rem;color:var(--text-dim);margin-top:10px}
 .logo-gallery-dots{display:flex;gap:6px;justify-content:center;margin-top:8px}
 .logo-gallery-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:background .2s,transform .2s}
