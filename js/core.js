@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v138 \u2014 iconos PNG personalizados en botones de nivel 1';
+var APP_VERSION = 'v139 \u2014 botones grandes reordenados, estudio scroll+casa, potencia \u20ac/kW/d\u00eda, galer\u00eda logos';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -388,11 +388,11 @@ function renderNavBar(current){
   var evActive=typeof EVENTS!=='undefined'&&EVENTS.length>0&&typeof hasUpcomingEvent==='function'&&hasUpcomingEvent();
   var bdActive=typeof BDAYS!=='undefined'&&BDAYS.length>0&&typeof hasUpcomingBday==='function'&&hasUpcomingBday();
   var btns=[
-    {icon:'<img src="icon-home.png" class="btn-icon" alt="">',key:'home',title:'Inicio'},
     {icon:'<img src="icon-econ.png" class="btn-icon" alt="">',key:'econ',title:'Econ\u00f3mico'},
-    {icon:'<img src="icon-bday.png" class="btn-icon" alt="">',key:'bday',title:'Cumplea\u00f1os'},
-    {icon:'<img src="icon-events.png" class="btn-icon" alt="">',key:'events',title:'Eventos'},
     {icon:'<img src="icon-estudio.png" class="btn-icon" alt="">',key:'estudio',title:'Estudio Cambio'},
+    {icon:'<img src="icon-home.png" class="btn-icon" alt="">',key:'home',title:'Inicio'},
+    {icon:'<img src="icon-events.png" class="btn-icon" alt="">',key:'events',title:'Eventos'},
+    {icon:'<img src="icon-bday.png" class="btn-icon" alt="">',key:'bday',title:'Cumplea\u00f1os'},
     {icon:'&#128276;',key:'alarm',title:'Test alarma'},
     {icon:'&#8943;',key:'menu',title:'M\u00e1s opciones'}
   ];

@@ -979,13 +979,13 @@ function renderEvContent(){
   h+='</div>';
   // Zona 3: Calendario 4 meses + Calendario Anual (50% cada uno, apilados)
   h+='<div class="ev-view-zone">';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='quad'?' active':'')+'" id="evViewQuad">Cal.<br>4 meses</button>';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='annual'?' active':'')+'" id="evViewAnnual">Cal.<br>Anual</button>';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='quad'?' active':'')+'" id="evViewQuad">Calendario<br>4 meses</button>';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='annual'?' active':'')+'" id="evViewAnnual">Calendario<br>Anual</button>';
   h+='</div>';
   // Zona 4: Puentes + Vacaciones y Festivos (apilados)
   h+='<div class="ev-view-zone">';
   h+='<button class="ev-view-toggle'+(EV_VIEW==='puentes'?' active':'')+'" id="evViewPuentes">Puentes</button>';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='time-off'?' active':'')+'" id="evViewTimeOff">Vac. y<br>Festivos</button>';
+  h+='<button class="ev-view-toggle'+(EV_VIEW==='time-off'?' active':'')+'" id="evViewTimeOff">Vacaciones<br>Festivos</button>';
   h+='</div>';
   h+='</div>';
   // Header a nivel 3 (with-tabs → top:82px)
