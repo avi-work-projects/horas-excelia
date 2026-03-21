@@ -104,7 +104,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 #econBtn.overlay-active{color:var(--c-green)!important;background:rgba(52,211,153,.13)!important;box-shadow:0 0 0 1.5px rgba(52,211,153,.8),0 0 8px rgba(52,211,153,.3)!important;border-radius:8px}
 #bdayBtn.overlay-active{color:var(--vacaciones)!important;background:rgba(255,179,71,.13)!important;box-shadow:0 0 0 1.5px rgba(255,179,71,.8),0 0 8px rgba(255,179,71,.3)!important;border-radius:8px}
 #eventsBtn.overlay-active{color:var(--c-blue)!important;background:rgba(108,140,255,.13)!important;box-shadow:0 0 0 1.5px rgba(108,140,255,.8),0 0 8px rgba(108,140,255,.3)!important;border-radius:8px}
-.data-btn.active{background:rgba(108,140,255,.13)!important;color:var(--accent)!important;box-shadow:0 0 0 1.5px rgba(108,140,255,.8),0 0 8px rgba(108,140,255,.3);border-radius:8px}
+#estudioBtn.overlay-active{color:#14b8a6!important;background:rgba(20,184,166,.13)!important;box-shadow:0 0 0 1.5px rgba(20,184,166,.8),0 0 8px rgba(20,184,166,.3)!important;border-radius:8px}
 .data-btn.has-update::after{content:'';position:absolute;top:2px;right:2px;width:8px;height:8px;background:#34d399;border-radius:50%;border:1.5px solid var(--bg);animation:upd-pulse 1.4s ease-in-out infinite}
 @keyframes upd-pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.7}}
 /* Punto verde notificación en botones bday/events cuando hay items próximos */
@@ -370,7 +370,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .est-group-label{font-size:.58rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;text-align:center;margin-bottom:2px}
 .est-group-casa .est-btn{border-color:rgba(20,184,166,.3);color:var(--text-dim)}
 .est-group-casa .est-btn.active{border-color:#14b8a6;background:rgba(20,184,166,.1);color:#14b8a6}
-.est-goto-fiscal{font-size:.6rem!important;opacity:.8}
 .est-btn{font-size:.66rem;padding:6px 4px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;text-align:center;-webkit-user-select:none;user-select:none}
 .est-btn.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
 /* Análisis hipoteca — secciones organizadas */
@@ -1183,6 +1182,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .nav-bar-btn.active[data-nav="summary"]{color:#22d3ee!important;background:rgba(34,211,238,.13);box-shadow:0 0 0 1.5px rgba(34,211,238,.8),0 0 8px rgba(34,211,238,.3)}
 .nav-bar-btn.active[data-nav="econ"]{color:var(--c-green)!important;background:rgba(52,211,153,.13);box-shadow:0 0 0 1.5px rgba(52,211,153,.8),0 0 8px rgba(52,211,153,.3)}
 .nav-bar-btn.active[data-nav="alarm"]{color:var(--c-purple)!important;background:rgba(192,132,252,.13);box-shadow:0 0 0 1.5px rgba(192,132,252,.8),0 0 8px rgba(192,132,252,.3)}
+.nav-bar-btn.active[data-nav="estudio"]{color:#14b8a6!important;background:rgba(20,184,166,.13);box-shadow:0 0 0 1.5px rgba(20,184,166,.8),0 0 8px rgba(20,184,166,.3)}
+.nav-bar-btn.active[data-nav="home"]{color:var(--text)!important;background:rgba(255,255,255,.18);box-shadow:0 0 0 1.5px rgba(255,255,255,.5),0 0 8px rgba(255,255,255,.12)}
 .nav-bar-btn.events-active{color:var(--c-blue)!important}
 .nav-bar-btn.bday-active{color:var(--vacaciones)!important}
 /* Birthday detail / form overlays */
