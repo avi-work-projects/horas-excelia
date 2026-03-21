@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v149 \u2014 iconos ajustados, galer\u00eda uniforme, backup test';
+var APP_VERSION = 'v150 \u2014 refactor: split economics + fiscal en m\u00f3dulos';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
