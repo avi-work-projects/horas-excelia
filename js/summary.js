@@ -163,10 +163,11 @@ function computePuentes(year){
     puentes:sequences,festivosSueltos:festivosSueltos,vacSueltos:vacSueltos};
 }
 
-function renderSummaryContent(){
-  var s=computeYearlySummary(SUMMARY_YEAR);
+/* ── Standalone body renderers (used by economics & events overlays) ── */
+function renderSummaryWorkBody(year){
+  var s=computeYearlySummary(year);
   var festPend=Math.max(0,FEST_REQUIRED-s.festTotal);
-  var cm=SUMMARY_YEAR===new Date().getFullYear()?new Date().getMonth():-1;
+  var cm=year===new Date().getFullYear()?new Date().getMonth():-1;
   var hTitleParts=['Horas trabajadas'];
   if(!EXCL_FEST)hTitleParts.push('festivos');
   if(!EXCL_VAC)hTitleParts.push('vacaciones');
@@ -175,27 +176,8 @@ function renderSummaryContent(){
   if(!EXCL_FEST)dTitleParts.push('festivos');
   if(!EXCL_VAC)dTitleParts.push('vacaciones');
   var dtTitle=dTitleParts.join(' + ');
-
-  var h=renderNavBar('summary');
-
-  // Barra de tabs a nivel 2 (justo bajo la nav bar, sticky top:42px)
-  h+='<div class="sy-tab-bar">';
-  h+='<button class="sy-tab-btn'+(SUMMARY_TAB==='work'?' active':'')+'" id="syTabWork">Horas/D\u00edas<br>Trabajados</button>';
-  h+='<button class="sy-tab-btn'+(SUMMARY_TAB==='puentes'?' active':'')+'" id="syTabPuentes">Puentes</button>';
-  h+='<button class="sy-tab-btn'+(SUMMARY_TAB==='time-off'?' active':'')+'" id="syTabTimeOff">Vacaciones y<br>Festivos</button>';
-  h+='</div>';
-
-  // Header a nivel 3 (with-tabs → top:82px)
-  h+='<div class="sy-header with-tabs">';
-  h+='<button class="sy-back" id="syBack">&#8592;</button>';
-  h+='<div class="sy-year-nav"><button class="sy-nav" id="syPrev">&#9664;</button><div class="sy-year">'+SUMMARY_YEAR+'</div><button class="sy-nav" id="syNext">&#9654;</button></div>';
-  h+='<button class="sy-pdf" id="syPdf">PDF</button>';
-  h+='</div>';
-
-  h+='<div class="sy-body">';
-
-  if(SUMMARY_TAB==='work'){
-    // ── Tab 1: Horas / Días Trabajados ──
+  var h='';
+    // ── Horas / Días Trabajados ──
 
     // Dias L-V
     h+='<div class="sy-section"><div class="sy-section-title">L\u2013V Totales</div><div class="sy-cards3">';
@@ -264,9 +246,14 @@ function renderSummaryContent(){
     h+='<div class="sy-chart">'+barChart3(s.mHours,s.mHoursP,MN_SHORT,'#6c8cff',cm)+'</div>';
     h+='</div>';
 
-  } else if(SUMMARY_TAB==='puentes'){
-    // ── Tab 2: Puentes ──
-    var p=computePuentes(SUMMARY_YEAR);
+  return h;
+}
+function renderSummaryPuentesBody(year){
+  var s=computeYearlySummary(year);
+  var festPend=Math.max(0,FEST_REQUIRED-s.festTotal);
+  var h='';
+    // ── Puentes ──
+    var p=computePuentes(year);
     var DN7S=['D','L','M','X','J','V','S'];
     var fdd=function(dt){return DF[dt.getDay()]+', '+fd(dt);};
     var syToday=new Date();syToday.setHours(0,0,0,0);
@@ -353,9 +340,14 @@ function renderSummaryContent(){
     }
     h+='</div>';
 
-  } else {
-    // ── Tab 3: Vacaciones y Festivos ──
-    var p=computePuentes(SUMMARY_YEAR);
+  return h;
+}
+function renderSummaryTimeOffBody(year){
+  var s=computeYearlySummary(year);
+  var festPend=Math.max(0,FEST_REQUIRED-s.festTotal);
+  var h='';
+    // ── Vacaciones y Festivos ──
+    var p=computePuentes(year);
     var fdd=function(dt){return DF[dt.getDay()]+', '+fd(dt);};
     var syToday=new Date();syToday.setHours(0,0,0,0);
 
@@ -437,8 +429,69 @@ function renderSummaryContent(){
       }
     }
     h+='</div>';
-  }
 
+  return h;
+}
+
+/* ── Bind helpers for standalone body renderers ── */
+function bindSummaryWorkBodyEvents(reRenderFn){
+  var vacInput=document.getElementById('vacInput');
+  if(vacInput)vacInput.addEventListener('change',function(){
+    var v=parseInt(this.value,10);if(v>0){saveVacEntitlement(v);reRenderFn();}
+  });
+  var chkFest=document.getElementById('syExclFestChk');
+  var chkVac=document.getElementById('syExclVacChk');
+  if(chkFest)chkFest.addEventListener('change',function(){EXCL_FEST=this.checked;save();reRenderFn();});
+  if(chkVac)chkVac.addEventListener('change',function(){EXCL_VAC=this.checked;save();reRenderFn();});
+}
+function bindSummaryPuentesBodyEvents(reRenderFn,overlayId){
+  var syExclPastChk=document.getElementById('syExclPastChk');
+  if(syExclPastChk)syExclPastChk.addEventListener('change',function(){SY_EXCL_PAST=this.checked;reRenderFn();});
+  var syPuentesLibresChk=document.getElementById('syPuentesLibresChk');
+  if(syPuentesLibresChk)syPuentesLibresChk.addEventListener('change',function(){SY_PUENTES_LIBRES=this.checked;reRenderFn();});
+  document.querySelectorAll('.sy-puente-ev[data-id]').forEach(function(el){
+    el.addEventListener('click',function(){
+      var id=el.dataset.id;var ev=null;
+      for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
+      if(!ev)return;
+      openEvDetail(ev,document.getElementById(overlayId));
+    });
+  });
+  document.querySelectorAll('.sy-puente-goto').forEach(function(btn){
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      var ds=btn.dataset.ds;if(!ds)return;
+      var d=new Date(ds+'T00:00:00');
+      EV_VIEW='cal';EV_YEAR=d.getFullYear();EV_MONTH=d.getMonth();
+      var ov=document.getElementById(overlayId);
+      ov.classList.remove('open');
+      setTimeout(function(){ov.style.display='none';if(typeof openEventsAt==='function')openEventsAt();},50);
+    });
+  });
+}
+function bindSummaryTimeOffBodyEvents(reRenderFn){
+  var syExclPastChk=document.getElementById('syExclPastChk');
+  if(syExclPastChk)syExclPastChk.addEventListener('change',function(){SY_EXCL_PAST=this.checked;reRenderFn();});
+}
+
+/* ── Legacy overlay (kept for compatibility but no longer navigable) ── */
+function renderSummaryContent(){
+  SUMMARY_TAB=SUMMARY_TAB||'work';
+  var h=renderNavBar('summary');
+  h+='<div class="sy-tab-bar">';
+  h+='<button class="sy-tab-btn'+(SUMMARY_TAB==='work'?' active':'')+'" id="syTabWork">Horas/D\u00edas<br>Trabajados</button>';
+  h+='<button class="sy-tab-btn'+(SUMMARY_TAB==='puentes'?' active':'')+'" id="syTabPuentes">Puentes</button>';
+  h+='<button class="sy-tab-btn'+(SUMMARY_TAB==='time-off'?' active':'')+'" id="syTabTimeOff">Vacaciones y<br>Festivos</button>';
+  h+='</div>';
+  h+='<div class="sy-header with-tabs">';
+  h+='<button class="sy-back" id="syBack">&#8592;</button>';
+  h+='<div class="sy-year-nav"><button class="sy-nav" id="syPrev">&#9664;</button><div class="sy-year">'+SUMMARY_YEAR+'</div><button class="sy-nav" id="syNext">&#9654;</button></div>';
+  h+='<button class="sy-pdf" id="syPdf">PDF</button>';
+  h+='</div>';
+  h+='<div class="sy-body">';
+  if(SUMMARY_TAB==='work')h+=renderSummaryWorkBody(SUMMARY_YEAR);
+  else if(SUMMARY_TAB==='puentes')h+=renderSummaryPuentesBody(SUMMARY_YEAR);
+  else h+=renderSummaryTimeOffBody(SUMMARY_YEAR);
   h+='</div>';
   return h;
 }

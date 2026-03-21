@@ -29,14 +29,14 @@
   }
 
   /* ── Active state on header data-btn (highlights current open overlay) ── */
-  var _ovBtnMap={summaryOverlay:'summaryBtn',econOverlay:'econBtn',bdayOverlay:'bdayBtn',eventsOverlay:'eventsBtn'};
+  var _ovBtnMap={econOverlay:'econBtn',bdayOverlay:'bdayBtn',eventsOverlay:'eventsBtn',estudioOverlay:'estudioBtn'};
   function _updateHeaderActive(){
     var openKey=null;
     Object.keys(_ovBtnMap).forEach(function(ovId){
       var ov=document.getElementById(ovId);
       if(ov&&ov.classList.contains('open'))openKey=_ovBtnMap[ovId];
     });
-    ['summaryBtn','econBtn','bdayBtn','eventsBtn','homeBtn'].forEach(function(id){
+    ['econBtn','bdayBtn','eventsBtn','estudioBtn','homeBtn'].forEach(function(id){
       var btn=document.getElementById(id);if(btn)btn.classList.remove('overlay-active');
     });
     var activeBtn=document.getElementById(openKey||'homeBtn');
@@ -361,10 +361,10 @@
   });
 
   /* ── Botones del header (overlays) ── */
-  document.getElementById('summaryBtn').addEventListener('click',openSummary);
   document.getElementById('econBtn').addEventListener('click',openEcon);
   document.getElementById('bdayBtn').addEventListener('click',openBday);
   document.getElementById('eventsBtn').addEventListener('click',openEvents);
+  document.getElementById('estudioBtn').addEventListener('click',openEstudio);
 
   /* ── Exportar datos (solo días/semanas/jornada) ── */
   var _expBtn=document.getElementById('exportBtn');
