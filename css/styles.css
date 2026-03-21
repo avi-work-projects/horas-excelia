@@ -1316,9 +1316,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .logo-popup-name{font-size:2rem;font-weight:700;letter-spacing:-.02em;color:var(--text)}
 .logo-popup-sub{font-size:1.2rem;color:var(--text-muted);font-weight:400}
 /* Gallery */
-.logo-gallery{width:100%;overflow:hidden;touch-action:pan-y;-webkit-user-select:none;user-select:none}
-.logo-gallery-track{display:flex;transition:transform .3s ease;will-change:transform}
-.logo-gallery-slide{flex:0 0 100%;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:160px;padding:10px}
+.logo-gallery{width:100%;min-width:0;display:flex;flex-shrink:0;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;-webkit-user-select:none;user-select:none;scrollbar-width:none}
+.logo-gallery::-webkit-scrollbar{display:none}
+.logo-gallery-slide{flex:0 0 100%;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:160px;padding:10px;scroll-snap-align:start}
 .logo-gallery-slide img{max-width:70%;max-height:180px;object-fit:contain;border-radius:16px}
 .logo-gallery-label{font-size:.85rem;color:var(--text-dim);margin-top:10px}
 .logo-gallery-dots{display:flex;gap:6px;justify-content:center;margin-top:8px}
