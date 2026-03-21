@@ -1238,11 +1238,13 @@ function renderEconEstudio(){
   h+='<button class="est-btn'+(ECON_ESTUDIO_SUB==='comparador'?' active':'')+'" id="ecSubComp">Comparar Escenarios</button>';
   h+='<button class="est-btn'+(ECON_ESTUDIO_SUB==='simulador'?' active':'')+'" id="ecSubSim">Calcular Tarifa</button>';
   h+='</div>';
-  /* Group 2: Facturas/Hipoteca */
-  h+='<div class="est-group est-group-hip">';
-  h+='<button class="est-btn est-hip'+(ECON_ESTUDIO_SUB==='hipoteca'?' active':'')+'" id="ecSubHip">Comparar Hipotecas</button>';
-  h+='<button class="est-btn est-hip'+(ECON_ESTUDIO_SUB==='gas'?' active':'')+'" id="ecSubGas">Comparar Gas</button>';
-  h+='<button class="est-btn est-hip'+(ECON_ESTUDIO_SUB==='elect'?' active':'')+'" id="ecSubElect">Comparar Electricidad</button>';
+  /* Group 2: Casa */
+  h+='<div class="est-group est-group-casa">';
+  h+='<div class="est-group-label">Casa</div>';
+  h+='<button class="est-btn est-casa'+(ECON_ESTUDIO_SUB==='hipoteca'?' active':'')+'" id="ecSubHip">Comparar Hipotecas</button>';
+  h+='<button class="est-btn est-casa'+(ECON_ESTUDIO_SUB==='gas'?' active':'')+'" id="ecSubGas">Comparar Gas</button>';
+  h+='<button class="est-btn est-casa'+(ECON_ESTUDIO_SUB==='elect'?' active':'')+'" id="ecSubElect">Comparar Electricidad</button>';
+  h+='<button class="est-btn est-casa est-goto-fiscal" id="ecSubGotoFiscal">\u2699 Config. Fiscal</button>';
   h+='</div>';
   h+='</div>';
   if(ECON_ESTUDIO_SUB==='comparador'){h+=typeof renderEconComp==='function'?renderEconComp():'';}
@@ -1402,6 +1404,12 @@ function bindEconEstudioEvents(){
   else if(ECON_ESTUDIO_SUB==='hipoteca')_bindEstudioHipoteca();
   else if(ECON_ESTUDIO_SUB==='gas')_bindEstudioGas();
   else if(ECON_ESTUDIO_SUB==='elect')_bindEstudioElect();
+  /* Botón ir a Config Fiscal → Hipoteca y Facturas */
+  var gotoFiscal=document.getElementById('ecSubGotoFiscal');
+  if(gotoFiscal)gotoFiscal.addEventListener('click',function(){
+    if(typeof FISCAL_TAB!=='undefined')FISCAL_TAB='despacho';
+    if(typeof openFiscal==='function')openFiscal();
+  });
 }
 function _estudioReRender(){
   var ov=document.getElementById('estudioOverlay');
@@ -1459,8 +1467,16 @@ function _renderEstudioElectComp(){
   var h='';
   h+='<div class="sy-section">';
   h+='<div class="sy-section-title">\u26A1 Tu tarifa actual</div>';
-  var potTxt=e.modoPotencia==='doble'?'P1:'+e.potenciaP1+' + P2:'+e.potenciaP2+' kW':e.potenciaTotal+' kW';
-  h+='<div style="font-size:.72rem;color:var(--text-dim)">Potencia: <b>'+potTxt+'</b> \u00b7 Precio: <b>'+(e.precioKwh||0).toFixed(4)+' \u20ac/kWh</b> + T\u00e9rmino fijo: '+fcPlain(e.terminoFijo)+'\u20ac/mes</div>';
+  var potTxt,potPrecioTxt;
+  if(e.modoPotencia==='doble'){
+    potTxt='P1:'+e.potenciaP1+'kW + P2:'+e.potenciaP2+'kW';
+    potPrecioTxt='P1:'+(e.precioPotP1||0).toFixed(6)+' + P2:'+(e.precioPotP2||0).toFixed(6)+' = '+((e.precioPotP1||0)+(e.precioPotP2||0)).toFixed(6)+' \u20ac/kW/d\u00eda';
+  } else {
+    potTxt=e.potenciaTotal+' kW';
+    potPrecioTxt=(e.precioPotP1||0).toFixed(6)+' \u20ac/kW/d\u00eda';
+  }
+  h+='<div style="font-size:.72rem;color:var(--text-dim)">Potencia: <b>'+potTxt+'</b> \u00b7 Precio pot.: <b>'+potPrecioTxt+'</b></div>';
+  h+='<div style="font-size:.72rem;color:var(--text-dim)">Energ\u00eda: <b>'+(e.precioKwh||0).toFixed(4)+' \u20ac/kWh</b>'+(e.terminoFijo?' + T. fijo: '+fcPlain(e.terminoFijo)+'\u20ac/mes':'')+'</div>';
   h+='</div>';
   h+='<div class="sy-section">';
   h+='<div class="sy-section-title">Consumo a comparar</div>';
@@ -1486,7 +1502,14 @@ function _renderSupplyCompTable(comps,current,consumo,tipo){
     else costActual=kwh*(current.precioKwh||0);
     costActual+=(current.terminoFijo||0)*(dias/30);
   } else {
-    costActual=kwh*(current.precioKwh||0)+(current.terminoFijo||0)*(dias/30);
+    /* Electricidad: energía + potencia por kW/día + término fijo */
+    var potCostAct=0;
+    if(current.modoPotencia==='doble'){
+      potCostAct=((current.precioPotP1||0)*(current.potenciaP1||0)+(current.precioPotP2||0)*(current.potenciaP2||0))*dias;
+    } else {
+      potCostAct=(current.precioPotP1||0)*(current.potenciaTotal||0)*dias;
+    }
+    costActual=kwh*(current.precioKwh||0)+potCostAct+(current.terminoFijo||0)*(dias/30);
   }
   var h='<div class="mg-budget-table" style="margin-top:6px">';
   h+='<div class="mg-budget-hdr" style="grid-template-columns:1fr 70px 60px 60px"><span>Tarifa</span><span>Coste</span><span>/d\u00eda</span><span>Dif.</span></div>';
@@ -1504,7 +1527,9 @@ function _renderSupplyCompTable(comps,current,consumo,tipo){
       else costAlt=kwh*(c.precioKwh||0);
       costAlt+=(c.terminoFijo||0)*(dias/30);
     } else {
-      costAlt=kwh*(c.precioKwh||0)+(c.terminoFijo||0)*(dias/30);
+      /* Electricidad: energía + potencia por kW/día + término fijo */
+      var potKw=current.potenciaTotal||0;
+      costAlt=kwh*(c.precioKwh||0)+(c.precioPot||0)*potKw*dias+(c.terminoFijo||0)*(dias/30);
     }
     var diff=Math.round((costAlt-costActual)*100)/100;
     h+='<div class="mg-budget-row" style="grid-template-columns:1fr 70px 60px 60px">';
@@ -1513,10 +1538,18 @@ function _renderSupplyCompTable(comps,current,consumo,tipo){
     h+='<span class="mg-budget-val">'+fcPlain(Math.round(costAlt/dias*100)/100)+'</span>';
     h+='<span class="mg-budget-val" style="color:'+(diff<=0?'var(--c-green)':'var(--c-red)')+'">'+(diff<=0?'':'+')+ fcPlain(diff)+'</span></div>';
     /* Editable fields for this comparison */
-    h+='<div class="mg-budget-row" style="grid-template-columns:1fr 1fr 30px;border-top:none;padding:2px 8px">';
-    h+='<span style="font-size:.62rem;color:var(--text-dim)"><input class="analisis-input est-comp-precio" data-tipo="'+tipo+'" data-idx="'+i+'" type="number" min="0" step="0.0001" value="'+(c.precioKwh||0)+'" style="font-size:.66rem;padding:2px 4px;width:70px"> \u20ac/kWh</span>';
-    h+='<span style="font-size:.62rem;color:var(--text-dim)"><input class="analisis-input est-comp-tfijo" data-tipo="'+tipo+'" data-idx="'+i+'" type="number" min="0" step="1" value="'+(c.terminoFijo||0)+'" style="font-size:.66rem;padding:2px 4px;width:55px"> \u20ac/mes</span>';
-    h+='<button class="est-comp-del" data-tipo="'+tipo+'" data-idx="'+i+'" style="background:none;border:none;color:var(--c-red);font-size:.78rem;cursor:pointer">\u2715</button></div>';
+    if(tipo==='elect'){
+      h+='<div class="mg-budget-row" style="grid-template-columns:1fr 1fr 1fr 30px;border-top:none;padding:2px 8px">';
+      h+='<span style="font-size:.62rem;color:var(--text-dim)"><input class="analisis-input est-comp-precio" data-tipo="'+tipo+'" data-idx="'+i+'" type="number" min="0" step="0.0001" value="'+(c.precioKwh||0)+'" style="font-size:.66rem;padding:2px 4px;width:55px"> \u20ac/kWh</span>';
+      h+='<span style="font-size:.62rem;color:var(--text-dim)"><input class="analisis-input est-comp-pot" data-tipo="'+tipo+'" data-idx="'+i+'" type="number" min="0" step="0.000001" value="'+(c.precioPot||0)+'" style="font-size:.66rem;padding:2px 4px;width:55px"> \u20ac/kW/d</span>';
+      h+='<span style="font-size:.62rem;color:var(--text-dim)"><input class="analisis-input est-comp-tfijo" data-tipo="'+tipo+'" data-idx="'+i+'" type="number" min="0" step="1" value="'+(c.terminoFijo||0)+'" style="font-size:.66rem;padding:2px 4px;width:45px"> \u20ac/m</span>';
+      h+='<button class="est-comp-del" data-tipo="'+tipo+'" data-idx="'+i+'" style="background:none;border:none;color:var(--c-red);font-size:.78rem;cursor:pointer">\u2715</button></div>';
+    } else {
+      h+='<div class="mg-budget-row" style="grid-template-columns:1fr 1fr 30px;border-top:none;padding:2px 8px">';
+      h+='<span style="font-size:.62rem;color:var(--text-dim)"><input class="analisis-input est-comp-precio" data-tipo="'+tipo+'" data-idx="'+i+'" type="number" min="0" step="0.0001" value="'+(c.precioKwh||0)+'" style="font-size:.66rem;padding:2px 4px;width:70px"> \u20ac/kWh</span>';
+      h+='<span style="font-size:.62rem;color:var(--text-dim)"><input class="analisis-input est-comp-tfijo" data-tipo="'+tipo+'" data-idx="'+i+'" type="number" min="0" step="1" value="'+(c.terminoFijo||0)+'" style="font-size:.66rem;padding:2px 4px;width:55px"> \u20ac/mes</span>';
+      h+='<button class="est-comp-del" data-tipo="'+tipo+'" data-idx="'+i+'" style="background:none;border:none;color:var(--c-red);font-size:.78rem;cursor:pointer">\u2715</button></div>';
+    }
   });
   h+='</div>';
   return h;
@@ -1545,7 +1578,7 @@ function _bindEstudioElect(){
   if(addBtn)addBtn.addEventListener('click',function(){
     if(!DESPACHO.electComparaciones)DESPACHO.electComparaciones=[];
     if(DESPACHO.electComparaciones.length>=5)return;
-    DESPACHO.electComparaciones.push({nombre:'',precioKwh:0,terminoFijo:0});
+    DESPACHO.electComparaciones.push({nombre:'',precioKwh:0,precioPot:0,terminoFijo:0});
     saveDespacho();_estudioReRender();
   });
   _bindCompInputs('elect','electComparaciones');
@@ -1556,6 +1589,9 @@ function _bindCompInputs(tipo,despKey){
   });
   document.querySelectorAll('.est-comp-precio[data-tipo="'+tipo+'"]').forEach(function(el){
     el.addEventListener('change',function(){DESPACHO[despKey][parseInt(el.dataset.idx)].precioKwh=parseFloat(el.value)||0;saveDespacho();_estudioReRender();});
+  });
+  document.querySelectorAll('.est-comp-pot[data-tipo="'+tipo+'"]').forEach(function(el){
+    el.addEventListener('change',function(){DESPACHO[despKey][parseInt(el.dataset.idx)].precioPot=parseFloat(el.value)||0;saveDespacho();_estudioReRender();});
   });
   document.querySelectorAll('.est-comp-tfijo[data-tipo="'+tipo+'"]').forEach(function(el){
     el.addEventListener('change',function(){DESPACHO[despKey][parseInt(el.dataset.idx)].terminoFijo=parseFloat(el.value)||0;saveDespacho();_estudioReRender();});

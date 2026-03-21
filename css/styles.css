@@ -92,7 +92,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ms-hrs{font-family:var(--mono);font-size:.78rem;color:var(--text-dim)}
 .data-actions{display:flex;gap:12px;flex-wrap:wrap}
 .data-btn{width:44px;height:44px;border-radius:8px;border:none;background:transparent;color:var(--text-muted);font-size:1.35rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;position:relative}
-.btn-icon{width:28px;height:28px;object-fit:contain;pointer-events:none}
+.data-btn:has(.btn-icon){width:66px;height:66px;border-radius:12px}
+#homeBtn{width:73px!important;height:73px!important;border-radius:14px!important}
+.btn-icon{width:42px;height:42px;object-fit:contain;pointer-events:none}
+#homeBtn .btn-icon{width:46px;height:46px}
 .data-btn:active{background:var(--surface3);transform:scale(.93)}
 .data-btn.overlay-active{background:rgba(255,255,255,.15)!important;color:var(--text)!important;border-radius:8px}
 /* Aro de color único por botón (nivel 1) — igual que nav-bar-btn.active[data-nav] */
@@ -211,7 +214,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 /* ── OVERLAY BASE (summary, econ, bday, events) ── */
 .full-overlay{position:fixed;inset:0;z-index:300;background:var(--bg);display:flex;flex-direction:column;overflow:hidden;transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1)}
 .full-overlay.open{transform:translateY(0)}
-#summaryContent,#econContent,#bdayContent,#eventsContent,#fiscalContent{display:flex;flex-direction:column;flex:1;min-height:0;}
+#summaryContent,#econContent,#bdayContent,#eventsContent,#fiscalContent,#estudioContent{display:flex;flex-direction:column;flex:1;min-height:0;}
 
 /* ── SHARED OVERLAY HEADER ── */
 .sy-header{background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 1px 0 var(--border);padding:14px 20px;display:flex;align-items:center;gap:10px;flex-shrink:0}
@@ -359,14 +362,15 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .econ-sub-tabs{display:flex;gap:6px;padding:8px 10px;box-shadow:0 1px 0 var(--border)}
 .econ-sub-tab{flex:1;font-size:.68rem;padding:6px 4px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;text-align:center;-webkit-user-select:none;user-select:none}
 .econ-sub-tab.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
-.econ-sub-tab.est-hip{color:var(--text-dim)}
-.econ-sub-tab.est-hip.active{border-color:#c084fc;background:rgba(192,132,252,.1);color:#c084fc}
+.econ-sub-tab.est-casa{color:var(--text-dim)}
+.econ-sub-tab.est-casa.active{border-color:#14b8a6;background:rgba(20,184,166,.1);color:#14b8a6}
 /* Estudio Cambio — grouped nav */
 .est-nav{display:flex;gap:8px;padding:8px 10px;box-shadow:0 1px 0 var(--border)}
 .est-group{display:flex;flex-direction:column;gap:4px;flex:1}
 .est-group-label{font-size:.58rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;text-align:center;margin-bottom:2px}
-.est-group-hip .est-btn{border-color:rgba(192,132,252,.3);color:var(--text-dim)}
-.est-group-hip .est-btn.active{border-color:#c084fc;background:rgba(192,132,252,.1);color:#c084fc}
+.est-group-casa .est-btn{border-color:rgba(20,184,166,.3);color:var(--text-dim)}
+.est-group-casa .est-btn.active{border-color:#14b8a6;background:rgba(20,184,166,.1);color:#14b8a6}
+.est-goto-fiscal{font-size:.6rem!important;opacity:.8}
 .est-btn{font-size:.66rem;padding:6px 4px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;text-align:center;-webkit-user-select:none;user-select:none}
 .est-btn.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
 /* Análisis hipoteca — secciones organizadas */
@@ -1169,6 +1173,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .macro-url-input:focus{border-color:var(--accent)}
 /* ── Feat 4: Nav-bar emoji alignment ── */
 .nav-bar-btn{flex-shrink:0;width:44px;height:44px;border:none;border-radius:8px;background:transparent;color:var(--text-dim);font-size:1.35rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s;-webkit-user-select:none;user-select:none;line-height:1;position:relative}
+.nav-bar-btn:has(.btn-icon){width:66px;height:66px;border-radius:12px}
+.nav-bar-btn[data-nav="home"]{width:73px!important;height:73px!important;border-radius:14px!important}
+.nav-bar-btn[data-nav="home"] .btn-icon{width:46px;height:46px}
 .nav-bar-btn:hover{background:rgba(255,255,255,.08);color:var(--text)}
 .nav-bar-btn.active{background:rgba(255,255,255,.14);color:var(--text)}
 .nav-bar-btn.active[data-nav="bday"]{color:var(--vacaciones)!important;background:rgba(255,179,71,.13);box-shadow:0 0 0 1.5px rgba(255,179,71,.8),0 0 8px rgba(255,179,71,.3)}
@@ -1307,29 +1314,66 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .logo-popup-img{width:80%;height:auto;object-fit:contain;border-radius:20px}
 .logo-popup-name{font-size:2rem;font-weight:700;letter-spacing:-.02em;color:var(--text)}
 .logo-popup-sub{font-size:1.2rem;color:var(--text-muted);font-weight:400}
+/* Gallery */
+.logo-gallery{width:100%;overflow:hidden;touch-action:pan-y;-webkit-user-select:none;user-select:none}
+.logo-gallery-track{display:flex;transition:transform .3s ease;will-change:transform}
+.logo-gallery-slide{flex:0 0 100%;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:160px;padding:10px}
+.logo-gallery-slide img{max-width:70%;max-height:180px;object-fit:contain;border-radius:16px}
+.logo-gallery-label{font-size:.85rem;color:var(--text-dim);margin-top:10px}
+.logo-gallery-dots{display:flex;gap:6px;justify-content:center;margin-top:8px}
+.logo-gallery-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:background .2s,transform .2s}
+.logo-gallery-dot.active{background:var(--accent);transform:scale(1.3)}
 /* ── BD ALARM VIP TOGGLE ── */
 .bd-alarm-vip-row{display:flex;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border)}
 .bd-alarm-vip-lbl{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--text);cursor:pointer;-webkit-user-select:none;user-select:none}
 /* ── RESPONSIVE (mobile header) ── */
+@media(max-width:520px){
+  .data-btn:has(.btn-icon){width:56px;height:56px}
+  #homeBtn{width:62px!important;height:62px!important}
+  .btn-icon{width:36px;height:36px}
+  #homeBtn .btn-icon{width:40px;height:40px}
+  .data-actions{gap:6px}
+  .nav-bar-btn:has(.btn-icon){width:56px;height:56px}
+  .nav-bar-btn[data-nav="home"]{width:62px!important;height:62px!important}
+  .nav-bar-btn[data-nav="home"] .btn-icon{width:40px;height:40px}
+}
 @media(max-width:440px){
   .data-btn{width:40px;height:40px;font-size:1.2rem}
-  .data-actions{gap:8px}
+  .data-btn:has(.btn-icon){width:50px;height:50px}
+  #homeBtn{width:56px!important;height:56px!important}
+  .btn-icon{width:32px;height:32px}
+  #homeBtn .btn-icon{width:36px;height:36px}
+  .data-actions{gap:5px}
   .nav-bar-btn{width:40px;height:40px;font-size:1.2rem}
-  .btn-icon{width:24px;height:24px}
+  .nav-bar-btn:has(.btn-icon){width:50px;height:50px}
+  .nav-bar-btn[data-nav="home"]{width:56px!important;height:56px!important}
+  .nav-bar-btn[data-nav="home"] .btn-icon{width:36px;height:36px}
 }
 @media(max-width:400px){
   .data-btn{width:36px;height:36px;font-size:1.1rem}
-  .data-actions{gap:7px}
+  .data-btn:has(.btn-icon){width:46px;height:46px}
+  #homeBtn{width:50px!important;height:50px!important}
+  .btn-icon{width:28px;height:28px}
+  #homeBtn .btn-icon{width:32px;height:32px}
+  .data-actions{gap:4px}
   .header h1{font-size:.95rem}
   .nav-bar-btn{width:36px;height:36px;font-size:1.1rem}
-  .btn-icon{width:22px;height:22px}
+  .nav-bar-btn:has(.btn-icon){width:46px;height:46px}
+  .nav-bar-btn[data-nav="home"]{width:50px!important;height:50px!important}
+  .nav-bar-btn[data-nav="home"] .btn-icon{width:32px;height:32px}
 }
 @media(max-width:360px){
   .data-btn{width:34px;height:34px;font-size:1.05rem}
-  .data-actions{gap:6px}
+  .data-btn:has(.btn-icon){width:42px;height:42px}
+  #homeBtn{width:46px!important;height:46px!important}
+  .btn-icon{width:26px;height:26px}
+  #homeBtn .btn-icon{width:30px;height:30px}
+  .data-actions{gap:3px}
   .header h1{font-size:.9rem}
   .nav-bar-btn{width:34px;height:34px;font-size:1.05rem}
-  .btn-icon{width:20px;height:20px}
+  .nav-bar-btn:has(.btn-icon){width:42px;height:42px}
+  .nav-bar-btn[data-nav="home"]{width:46px!important;height:46px!important}
+  .nav-bar-btn[data-nav="home"] .btn-icon{width:30px;height:30px}
 }
 
 /* ── ALARM PANEL ── */

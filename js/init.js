@@ -18,14 +18,55 @@
   /* ── Sincronizar cumpleaños VIP con calendario de eventos ── */
   if(typeof syncVipBdaysToEvents==='function') syncVipBdaysToEvents();
 
-  /* ── Logo popup ── */
+  /* ── Logo gallery popup ── */
   var _logoBtn=document.getElementById('appLogoBtn');
   var _logoPopup=document.getElementById('logoPopup');
   var _logoCloseBtn=document.getElementById('logoPopupClose');
+  var _logoTrack=document.getElementById('logoTrack');
+  var _logoDots=document.getElementById('logoGalleryDots');
+  var _logoIdx=0;
+  var _logoCount=_logoTrack?_logoTrack.children.length:0;
+  function _logoUpdateDots(){
+    if(!_logoDots)return;
+    var h='';
+    for(var i=0;i<_logoCount;i++)h+='<span class="logo-gallery-dot'+(i===_logoIdx?' active':'')+'"></span>';
+    _logoDots.innerHTML=h;
+  }
+  function _logoGoTo(idx){
+    _logoIdx=Math.max(0,Math.min(idx,_logoCount-1));
+    if(_logoTrack)_logoTrack.style.transform='translateX('+(-_logoIdx*100/_logoCount)+'%)';
+    _logoUpdateDots();
+  }
   if(_logoBtn&&_logoPopup){
-    _logoBtn.addEventListener('click',function(){_logoPopup.classList.add('open');});
+    _logoBtn.addEventListener('click',function(){_logoIdx=0;_logoGoTo(0);_logoPopup.classList.add('open');});
     _logoPopup.addEventListener('click',function(e){if(e.target===_logoPopup)_logoPopup.classList.remove('open');});
     if(_logoCloseBtn)_logoCloseBtn.addEventListener('click',function(){_logoPopup.classList.remove('open');});
+    /* Swipe touch */
+    var _sx=0,_dx=0,_swiping=false;
+    if(_logoTrack){
+      _logoTrack.addEventListener('touchstart',function(e){_sx=e.touches[0].clientX;_dx=0;_swiping=true;_logoTrack.style.transition='none';});
+      _logoTrack.addEventListener('touchmove',function(e){
+        if(!_swiping)return;
+        _dx=e.touches[0].clientX-_sx;
+        _logoTrack.style.transform='translateX(calc(-'+(_logoIdx*100)+'% + '+_dx+'px))';
+      });
+      _logoTrack.addEventListener('touchend',function(){
+        _swiping=false;_logoTrack.style.transition='transform .3s ease';
+        if(Math.abs(_dx)>50){
+          if(_dx<0&&_logoIdx<_logoCount-1)_logoGoTo(_logoIdx+1);
+          else if(_dx>0&&_logoIdx>0)_logoGoTo(_logoIdx-1);
+          else _logoGoTo(_logoIdx);
+        } else _logoGoTo(_logoIdx);
+        _dx=0;
+      });
+      /* Dot clicks */
+      _logoDots.addEventListener('click',function(e){
+        var dot=e.target.closest('.logo-gallery-dot');
+        if(!dot)return;
+        var dots=_logoDots.querySelectorAll('.logo-gallery-dot');
+        for(var i=0;i<dots.length;i++){if(dots[i]===dot){_logoGoTo(i);break;}}
+      });
+    }
   }
 
   /* ── Active state on header data-btn (highlights current open overlay) ── */

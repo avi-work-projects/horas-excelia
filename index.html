@@ -75,11 +75,11 @@ try{
 <!-- ── HEADER ── -->
 <header class="header">
   <div class="data-actions">
-      <button class="data-btn active" id="homeBtn" title="Inicio" style="pointer-events:none"><img src="icon-home.png" class="btn-icon" alt="Inicio"></button>
       <button class="data-btn" id="econBtn" title="Económico"><img src="icon-econ.png" class="btn-icon" alt="Económico"></button>
-      <button class="data-btn" id="bdayBtn" title="Cumpleaños"><img src="icon-bday.png" class="btn-icon" alt="Cumpleaños"></button>
-      <button class="data-btn" id="eventsBtn" title="Eventos"><img src="icon-events.png" class="btn-icon" alt="Eventos"></button>
       <button class="data-btn" id="estudioBtn" title="Estudio Cambio"><img src="icon-estudio.png" class="btn-icon" alt="Estudio"></button>
+      <button class="data-btn active" id="homeBtn" title="Inicio" style="pointer-events:none"><img src="icon-home.png" class="btn-icon" alt="Inicio"></button>
+      <button class="data-btn" id="eventsBtn" title="Eventos"><img src="icon-events.png" class="btn-icon" alt="Eventos"></button>
+      <button class="data-btn" id="bdayBtn" title="Cumpleaños"><img src="icon-bday.png" class="btn-icon" alt="Cumpleaños"></button>
       <div class="data-menu-wrap" id="alarmWrap">
         <button class="data-btn" id="alarmTestBtn" title="Crear alarma">&#128276;</button>
         <div class="data-menu alarm-cfg" id="alarmPanel">
@@ -251,15 +251,7 @@ try{
   <div id="eventsContent"></div>
 </div>
 
-<!-- ── LOGO POPUP ── -->
-<div class="logo-popup" id="logoPopup">
-  <div class="logo-popup-box">
-    <button class="logo-popup-close" id="logoPopupClose">&#215;</button>
-    <img src="logo.png" alt="Gestify" class="logo-popup-img">
-    <div class="logo-popup-name">Gestify</div>
-    <div class="logo-popup-sub">Excelia Hours Tracker</div>
-  </div>
-</div>
+
 
 <!-- ── OVERLAY: Gestión de alarmas ── -->
 <div id="alarmsOverlay" class="full-overlay" style="display:none">
@@ -275,6 +267,27 @@ try{
 <script src="js/lib/jspdf.umd.min.js"></script>
 <script src="js/lib/jspdf.plugin.autotable.min.js"></script>
 <script src="js/core.js"></script>
+<!-- ── LOGO GALLERY (before scripts so init.js can find it) ── -->
+<div class="logo-popup" id="logoPopup">
+  <div class="logo-popup-box" id="logoPopupBox">
+    <button class="logo-popup-close" id="logoPopupClose">&#10005;</button>
+    <div class="logo-gallery" id="logoGallery">
+      <div class="logo-gallery-track" id="logoTrack">
+        <div class="logo-gallery-slide"><img src="logo.png" alt="Gestify"><div class="logo-gallery-label">Gestify</div></div>
+        <div class="logo-gallery-slide"><img src="icon-econ.png" alt="Económico"><div class="logo-gallery-label">Económico</div></div>
+        <div class="logo-gallery-slide"><img src="icon-estudio.png" alt="Estudio"><div class="logo-gallery-label">Estudio Cambio</div></div>
+        <div class="logo-gallery-slide"><img src="icon-home.png" alt="Inicio"><div class="logo-gallery-label">Inicio</div></div>
+        <div class="logo-gallery-slide"><img src="icon-events.png" alt="Eventos"><div class="logo-gallery-label">Eventos</div></div>
+        <div class="logo-gallery-slide"><img src="icon-bday.png" alt="Cumpleaños"><div class="logo-gallery-label">Cumpleaños</div></div>
+        <div class="logo-gallery-slide"><img src="VIP.png" alt="VIP"><div class="logo-gallery-label">VIP</div></div>
+      </div>
+    </div>
+    <div class="logo-gallery-dots" id="logoGalleryDots"></div>
+    <div class="logo-popup-name">Gestify</div>
+    <div class="logo-popup-sub">Excelia</div>
+  </div>
+</div>
+
 <script src="js/summary.js"></script>
 <script src="js/economics.js"></script>
 <script src="js/economics-fiscal.js"></script>
@@ -305,14 +318,5 @@ if('serviceWorker' in navigator){
 }
 </script>
 
-<!-- ── LOGO POPUP (outside header to avoid backdrop-filter containment) ── -->
-<div class="logo-popup" id="logoPopup">
-  <div class="logo-popup-box" id="logoPopupBox">
-    <button class="logo-popup-close" id="logoPopupClose">&#10005;</button>
-    <img src="logo.png" class="logo-popup-img" alt="Gestify">
-    <div class="logo-popup-name">Gestify</div>
-    <div class="logo-popup-sub">Excelia</div>
-  </div>
-</div>
 </body>
 </html>
