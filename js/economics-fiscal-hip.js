@@ -275,7 +275,7 @@ function renderFiscalTabDespachoOnly(){
     var subs=comp.subrogaciones||[];
     var lastSub=subs.length>0?subs[subs.length-1]:null;
     h+='<div style="font-size:.64rem;color:var(--text-dim);padding:4px;background:var(--surface2);border-radius:var(--radius-sm);margin-top:4px">';
-    h+='<div>\uD83D\uDCA1 <b>Media mensual intereses: '+fcPlain(intMes)+'\u20ac/mes</b></div>';
+    h+='<div>\uD83D\uDCA1 <b>Media mensual intereses: '+fcPlain(intMes)+'/mes</b></div>';
     h+='<div style="margin-top:2px">C\u00e1lculo: simulaci\u00f3n mes a mes del pr\u00e9stamo (amortizaci\u00f3n francesa), sumando los intereses de cada cuota mensual del a\u00f1o '+FISCAL_YEAR+'.</div>';
     if(lastSub&&lastSub.fecha){
       var sp=lastSub.fecha.split('-');
@@ -344,7 +344,7 @@ function _hipPeriodCard(comp,subIdx,isActive,startDate,endDate){
   var h='<div class="hip-period-card">';
   h+='<div class="hip-period-hdr"><span class="hip-period-title">'+label+(banco?' \u2014 '+escHtml(banco):'')+'</span>';
   h+='<span class="hip-period-badge'+(isActive?' active':'')+'">'+( isActive?'Vigente':'Finalizada')+'</span></div>';
-  h+='<div class="hip-period-cuota"><span class="hip-period-cuota-val">'+fcPlain(cuota)+'</span><span class="hip-period-cuota-lbl">\u20ac/mes</span></div>';
+  h+='<div class="hip-period-cuota"><span class="hip-period-cuota-val">'+fcPlain(cuota)+'</span><span class="hip-period-cuota-lbl">/mes</span></div>';
   h+='<div class="hip-period-info">'+tipoEf.toFixed(2)+'% '+(tipoEf!==tipo?'(nominal '+tipo.toFixed(2)+'%)':' fijo')+' \u00b7 '+plazo+' a\u00f1os \u00b7 '+_fmtMiles(importe)+' \u20ac</div>';
   if(startDate){
     h+='<div class="hip-period-info">';
@@ -363,7 +363,7 @@ function _hipPeriodCard(comp,subIdx,isActive,startDate,endDate){
   /* Sobrecoste seguros vinculados */
   if(vinc){
     var oc=_calcInsOvercost(vinc);
-    if(oc!==null)h+='<div class="hip-period-info" style="color:'+(oc>0?'var(--c-red)':'var(--c-green)')+'">Sobrecoste seguros: '+((oc>0?'+':'')+fcPlain(oc))+'\u20ac/a\u00f1o</div>';
+    if(oc!==null)h+='<div class="hip-period-info" style="color:'+(oc>0?'var(--c-red)':'var(--c-green)')+'">Sobrecoste seguros: '+((oc>0?'+':'')+Math.round(oc))+'\u20ac/a\u00f1o</div>';
   }
   h+='<button class="hip-period-btn" data-gotosection="'+(subIdx<0?'prestamo':'sub-'+subIdx)+'">Ver Detalle</button>';
   h+='</div>';
@@ -455,10 +455,10 @@ function _renderInlineOvercost(vinc){
     if(!vinc[s.key]||!vinc[s.key].enabled)return;
     var cv=vinc[s.key].costeAnual||0,cn=sn[s.key]||0,diff=cv-cn;
     totalVinc+=cv;totalRef+=cn;
-    h+='<div class="hip-ro-row"><span class="hip-ro-lbl">'+s.label+'</span><span class="hip-ro-val" style="color:'+(diff>0?'var(--c-red)':'var(--c-green)')+'">'+((diff>0?'+':'')+fcPlain(diff))+'\u20ac/a\u00f1o</span></div>';
+    h+='<div class="hip-ro-row"><span class="hip-ro-lbl">'+s.label+'</span><span class="hip-ro-val" style="color:'+(diff>0?'var(--c-red)':'var(--c-green)')+'">'+((diff>0?'+':'')+Math.round(diff))+'\u20ac/a\u00f1o</span></div>';
   });
   var totalDiff=totalVinc-totalRef;
-  h+='<div class="hip-ro-row" style="border-top:1px solid var(--border);padding-top:3px"><span class="hip-ro-lbl"><b>Total sobrecoste</b></span><span class="hip-ro-val" style="font-weight:700;color:'+(totalDiff>0?'var(--c-red)':'var(--c-green)')+'">'+((totalDiff>0?'+':'')+fcPlain(totalDiff))+'\u20ac/a\u00f1o</span></div>';
+  h+='<div class="hip-ro-row" style="border-top:1px solid var(--border);padding-top:3px"><span class="hip-ro-lbl"><b>Total sobrecoste</b></span><span class="hip-ro-val" style="font-weight:700;color:'+(totalDiff>0?'var(--c-red)':'var(--c-green)')+'">'+((totalDiff>0?'+':'')+Math.round(totalDiff))+'\u20ac/a\u00f1o</span></div>';
   return h;
 }
 
@@ -510,8 +510,20 @@ function _renderHipResumen(){
   if(_sobrMes>0){
     var _hipEq=Math.round((_actCuota+_sobrMes)*100)/100;
     h+='<div style="font-size:.72rem;color:var(--text-dim);margin:8px 0 4px;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)">';
-    h+='<b style="color:var(--accent-bright)">Hipoteca equivalente: '+fcPlain(_hipEq)+'\u20ac/mes</b>';
-    h+='<div style="font-size:.62rem;margin-top:2px">Cuota '+fcPlain(Math.round(_actCuota*100)/100)+' + sobrecoste seguros '+fcPlain(Math.round(_sobrMes*100)/100)+'/mes</div></div>';
+    var _tipoEqNum=_actTipoEf;/* tipo equivalente: buscar tipo que produce la cuota equivalente */
+    var _hipEqR=_hipEq/(_actImporte>0?_actImporte:1);/* aprox */
+    /* Solve for equivalent rate: cuota_eq = I*r*(1+r)^n/((1+r)^n-1) => iterative */
+    var _eqTipo=_actTipoEf;
+    if(_actImporte>0&&_actN>0){
+      for(var _it=0;_it<50;_it++){
+        var _tr=_eqTipo/100/12;
+        var _tc=_tr>0?_actImporte*_tr*Math.pow(1+_tr,_actN)/(Math.pow(1+_tr,_actN)-1):_actImporte/_actN;
+        if(Math.abs(_tc-_hipEq)<0.01)break;
+        _eqTipo+=(_hipEq-_tc)*0.001;
+      }
+    }
+    h+='<b style="color:var(--accent-bright)">Hipoteca equivalente: '+fcPlain(_hipEq)+'/mes</b>';
+    h+='<div style="font-size:.62rem;margin-top:2px">Tipo equivalente: <b>'+_eqTipo.toFixed(2)+'%</b> (cuota '+fcPlain(Math.round(_actCuota*100)/100)+' + sobrecoste '+Math.round(_sobrMes)+'\u20ac/mes)</div></div>';
   }
   /* Gas/Electricidad summary cards */
   var gas=DESPACHO.gas||{};
@@ -525,11 +537,11 @@ function _renderHipResumen(){
     if(hasGas){
       h+='<div class="hip-period-card">';
       h+='<div class="hip-period-hdr"><span class="hip-period-title">\uD83D\uDD25 Gas'+(gasData.comercializadora?' \u2014 '+escHtml(gasData.comercializadora):'')+'</span></div>';
-      if(gasActivo==='fijo')h+='<div class="hip-period-info">Cuota fija: <b>'+fcPlain(gasData.cuotaFija)+'\u20ac/mes</b></div>';
+      if(gasActivo==='fijo')h+='<div class="hip-period-info">Cuota fija: <b>'+fcPlain(gasData.cuotaFija)+'/mes</b></div>';
       else{
         h+='<div class="hip-period-info">Precio: <b>'+(gasData.precioKwh||0).toFixed(4)+' \u20ac/kWh</b></div>';
-        if(gasData.terminoFijoDia)h+='<div class="hip-period-info">T\u00e9rmino fijo: '+fcPlain(gasData.terminoFijoDia)+'\u20ac/d\u00eda</div>';
-        if(gasData.terminoFijo)h+='<div class="hip-period-info">T\u00e9rmino fijo: '+fcPlain(gasData.terminoFijo)+'\u20ac/factura</div>';
+        if(gasData.terminoFijoDia)h+='<div class="hip-period-info">T\u00e9rmino fijo: '+fcPlain(gasData.terminoFijoDia)+'/d\u00eda</div>';
+        if(gasData.terminoFijo)h+='<div class="hip-period-info">T\u00e9rmino fijo: '+fcPlain(gasData.terminoFijo)+'/factura</div>';
       }
       if(gas.ivaGas)h+='<div class="hip-period-info">IVA: '+gas.ivaGas+'%</div>';
       h+='<button class="hip-period-btn" data-hipsub="gas">Ver Detalle</button></div>';
@@ -541,7 +553,7 @@ function _renderHipResumen(){
       h+='<div class="hip-period-info">Potencia: <b>'+potTxt+'</b> \u20ac/kW/d\u00eda</div>';
       if(elc.modoPotencia==='doble')h+='<div class="hip-period-info">Suma precios: <b>'+((elc.precioPotP1||0)+(elc.precioPotP2||0)).toFixed(6)+' \u20ac/kW/d\u00eda</b></div>';
       h+='<div class="hip-period-info">Precio: <b>'+(elc.precioKwh||0).toFixed(4)+' \u20ac/kWh</b></div>';
-      if(elc.terminoFijo)h+='<div class="hip-period-info">T\u00e9rmino fijo: '+fcPlain(elc.terminoFijo)+'\u20ac/mes</div>';
+      if(elc.terminoFijo)h+='<div class="hip-period-info">T\u00e9rmino fijo: '+fcPlain(elc.terminoFijo)+'/mes</div>';
       h+='<button class="hip-period-btn" data-hipsub="elect">Ver Detalle</button></div>';
     }
   }
