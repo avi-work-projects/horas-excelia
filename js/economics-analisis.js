@@ -100,7 +100,7 @@ function _renderAnalisisGastos(){
       h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-red)">'+fcPlain(_hCuota)+'</span><span class="hip-stat-lbl">Hipoteca/mes</span></div>';
     }
   }
-  h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-orange)">'+fcPlain(Math.ceil(tGastos/12))+'</span><span class="hip-stat-lbl">Gastos/mes -18%*</span></div>';
+  h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-orange)">'+fcPlain(Math.ceil(tGastos*0.82/12))+'</span><span class="hip-stat-lbl">Gastos/mes -18%*</span></div>';
   if(tInv>0)h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--accent-bright)">'+fcPlain(Math.round(tInv/12*100)/100)+'</span><span class="hip-stat-lbl">Inversiones/mes</span></div>';
   h+='</div>';
   h+='<div style="font-size:.62rem;color:var(--text-dim);margin-top:4px">Disponible = post decl. renta'+(tIngExtra>0?' + ingresos extra':'')+' \u2212 gastos profesionales</div>';
@@ -190,7 +190,9 @@ function _renderAnalisisGastos(){
     if(ANALISIS_FILTER_CAT!=='all')fItems=fItems.filter(function(p){return p.cat===ANALISIS_FILTER_CAT;});
     if(ANALISIS_FILTER_TEXT)fItems=fItems.filter(function(p){return p.label.toLowerCase().indexOf(ANALISIS_FILTER_TEXT.toLowerCase())!==-1;});
 
-    var totalPartidas=0;pItems.forEach(function(p){totalPartidas+=p.annual;});
+    /* Para el presupuesto: solo contar gastos personales (no desgravables,
+       ya que computeDisponible() ya los resta del disponible) */
+    var totalPartidas=0;pItems.forEach(function(p){if(!p.desgrav)totalPartidas+=p.annual;});
     var totalDisp=disponible+tIngExtra;
     var usedPct=totalDisp>0?Math.round(totalPartidas/totalDisp*1000)/10:0;
     var restante=Math.round((totalDisp-totalPartidas)*100)/100;
