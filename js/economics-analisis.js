@@ -154,7 +154,13 @@ function _renderAnalisisGastos(){
     h+='</div>';
   }
 
-  /* (Sección "Detalle de gastos" y Top 3 eliminados por petición del usuario) */
+  /* ── Sección 3: Detalle de gastos e inversiones ── */
+  if(allItems.length>0){
+    h+='<div class="ah-section">';
+    h+='<div class="ah-section-title">Detalle de gastos e inversiones</div>';
+    h+=_analisisHBar(allItems,'multi');
+    h+='</div>';
+  }
 
   /* ── Sección 4: Presupuesto vs Disponible (tabla compacta) ── */
   if(disponible>0&&allItems.length>0){
