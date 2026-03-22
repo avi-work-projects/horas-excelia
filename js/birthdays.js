@@ -149,25 +149,21 @@ function renderBdayUpcoming(){
   if(!BDAYS.length)return '<div class="sy-note">No hay cumplea\u00f1os cargados. Importa un archivo JSON o configura el secreto BIRTHDAYS en GitHub.</div>';
 
   var today=new Date();today.setHours(0,0,0,0);
-  var dow=today.getDay(),off=dow===0?-6:1-dow;
-  var weekStart=new Date(today);weekStart.setDate(weekStart.getDate()+off);
-  var prevWeekStart=new Date(weekStart);prevWeekStart.setDate(prevWeekStart.getDate()-7);
-  var nextWeekStart=new Date(weekStart);nextWeekStart.setDate(nextWeekStart.getDate()+7);
 
-  function getBdaysInRange(start,days){
+  function getBdaysInRange(startOffset,days){
     var items=[];
     for(var i=0;i<days;i++){
-      var d=new Date(start);d.setDate(d.getDate()+i);
+      var d=new Date(today);d.setDate(d.getDate()+startOffset+i);
       var bds=getBdaysOn(d.getMonth()+1,d.getDate());
-      var diff=Math.round((d-today)/86400000);
+      var diff=startOffset+i;
       bds.forEach(function(b){items.push({b:b,diff:diff});});
     }
     return items;
   }
 
-  var prevItems=getBdaysInRange(prevWeekStart,7);
-  var curItems=getBdaysInRange(weekStart,7);
-  var nxtItems=getBdaysInRange(nextWeekStart,7);
+  var prevItems=getBdaysInRange(-4,4);   /* 4 días anteriores */
+  var todayItems=getBdaysInRange(0,1);   /* hoy */
+  var nxtItems=getBdaysInRange(1,9);     /* próximos 9 días */
 
   function bdayLabel(diff){
     if(diff===0)return '\u00a1Hoy!';
@@ -211,14 +207,14 @@ function renderBdayUpcoming(){
   var h='';
   if(prevItems.length){
     h+='<div class="bday-upcoming-section">';
-    h+=renderGroup('Semana anterior',prevItems);
-    h+='</div><div style="margin-top:8px">';
-  } else {
-    h+='<div>';
+    h+=renderGroup('Pasados',prevItems);
+    h+='</div>';
   }
-  h+=renderGroup('Esta semana',curItems,true);
-  h+='</div><div class="bday-upcoming-section" style="margin-top:8px">';
-  h+=renderGroup('La pr\u00f3xima semana',nxtItems);
+  h+='<div class="bday-upcoming-section" style="margin-top:8px">';
+  h+=renderGroup('Hoy',todayItems,true);
+  h+='</div>';
+  h+='<div class="bday-upcoming-section" style="margin-top:8px">';
+  h+=renderGroup('Pr\u00f3ximos',nxtItems);
   h+='</div>';
   return h;
 }

@@ -65,7 +65,8 @@ function _renderAnalisisGastos(){
   var tGastos=0,tInv=0;
   allItems.forEach(function(i){if(i.cat==='inversion')tInv+=i.annual;else tGastos+=i.annual;});
   var totalOut=tGastos+tInv;
-  var balance=disponible-totalOut;
+  var totalDisponible=disponible+tIngExtra;
+  var balance=totalDisponible-totalOut;
 
   /* Empty state */
   if(allItems.length===0&&disponible<=0){
@@ -78,11 +79,10 @@ function _renderAnalisisGastos(){
   /* ── Sección 1: Resumen mensual (hero) ── */
   h+='<div class="ah-section">';
   h+='<div class="ah-section-title">Resumen mensual ('+ECON_YEAR+')</div>';
-  h+='<div class="ah-cuota-hero"><div class="ah-cuota-val" style="color:'+(balance>=0?'var(--c-green)':'var(--c-red)')+'">'+fcPlain(Math.round(balance/12*100)/100)+'</div>';
+  h+='<div class="ah-cuota-hero"><div class="ah-cuota-val" style="color:'+(balance>=0?'var(--c-green)':'var(--c-red)')+'">'+fcPlain(Math.ceil(balance/12))+'</div>';
   h+='<div class="ah-cuota-sub">Libre mensual (disponible \u2212 gastos \u2212 inversiones)</div></div>';
   h+='<div class="hip-stats">';
-  var rentaNeta=disponible-tIngExtra;
-  h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-green)">'+fcPlain(Math.round(rentaNeta/12*100)/100)+'</span><span class="hip-stat-lbl">Renta neta/mes</span></div>';
+  h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-green)">'+fcPlain(Math.round(disponible/12*100)/100)+'</span><span class="hip-stat-lbl">Renta neta/mes</span></div>';
   if(tIngExtra>0)h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-green)">'+fcPlain(Math.round(tIngExtra/12*100)/100)+'</span><span class="hip-stat-lbl">Ingresos extra/mes</span></div>';
   /* Hipoteca card */
   if(typeof DESPACHO!=='undefined'&&DESPACHO.compra&&DESPACHO.compra.importePrestamo>0){
@@ -217,7 +217,7 @@ function _renderAnalisisGastos(){
     fItems.forEach(function(p){
       var pct=Math.round(p.annual/disponible*1000)/10;
       var lbl=escHtml(p.label);
-      if(p.desgrav)lbl+=' <span style="color:#c084fc;font-size:.55rem">- Ya desgravado</span>';
+      if(p.desgrav)lbl+=' <span style="color:#c084fc;font-size:.55rem">(desgr)</span>';
       h+='<div class="mg-budget-row mg-budget-row4"><span class="mg-budget-lbl"><span class="mg-cat-dot" style="background:'+(_catC[p.cat]||'#999')+'"></span>'+lbl+'</span>';
       h+='<span class="mg-budget-val">'+Math.ceil(p.annual/12)+'\u20ac</span>';
       h+='<span class="mg-budget-val">'+Math.ceil(p.annual)+'\u20ac</span>';
@@ -799,16 +799,17 @@ function bindEconAnalisisEvents(){
   if(subG)subG.addEventListener('click',function(){ANALISIS_SUB='gastos';reRenderEcon();});
   if(subH)subH.addEventListener('click',function(){ANALISIS_SUB='hipoteca';reRenderEcon();});
   if(ANALISIS_SUB==='gastos'){
+    function _reRenderKeepScroll(){var sb=document.querySelector('#econOverlay .sy-body');var st=sb?sb.scrollTop:0;reRenderEcon();var sb2=document.querySelector('#econOverlay .sy-body');if(sb2)sb2.scrollTop=st;}
     /* Filter text input */
     var filterInput=document.getElementById('analisisFilterText');
-    if(filterInput)filterInput.addEventListener('input',function(){ANALISIS_FILTER_TEXT=this.value;reRenderEcon();});
+    if(filterInput)filterInput.addEventListener('input',function(){ANALISIS_FILTER_TEXT=this.value;_reRenderKeepScroll();});
     /* Filter category buttons */
     document.querySelectorAll('[data-afc]').forEach(function(btn){
-      btn.addEventListener('click',function(){ANALISIS_FILTER_CAT=btn.dataset.afc;reRenderEcon();});
+      btn.addEventListener('click',function(){ANALISIS_FILTER_CAT=btn.dataset.afc;_reRenderKeepScroll();});
     });
     /* Sort header click */
     document.querySelectorAll('[data-asort]').forEach(function(btn){
-      btn.addEventListener('click',function(){ANALISIS_SORT=ANALISIS_SORT==='desc'?'asc':ANALISIS_SORT==='asc'?'cat':'desc';reRenderEcon();});
+      btn.addEventListener('click',function(){ANALISIS_SORT=ANALISIS_SORT==='desc'?'asc':ANALISIS_SORT==='asc'?'cat':'desc';_reRenderKeepScroll();});
     });
   }
 }
