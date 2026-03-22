@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v152 \u2014 an\u00e1lisis: desgravables en tabla, barras alineadas, hipoteca card';
+var APP_VERSION = 'v153 \u2014 fix renta neta, cumplea\u00f1os 4d+hoy+9d, filtros sin scroll';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
