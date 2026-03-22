@@ -4,7 +4,8 @@
 
 var FISCAL_ELECT_EDITING=false;
 function _renderElectDetalle(){
-  var e=DESPACHO.elect||{modoPotencia:'doble',potenciaP1:3.3,potenciaP2:3.3,potenciaTotal:6.6,precioPotP1:0,precioPotP2:0,precioKwh:0,terminoFijo:0,comercializadora:''};
+  if(!DESPACHO.elect)DESPACHO.elect={modoPotencia:'doble',potenciaP1:3.3,potenciaP2:3.3,potenciaTotal:6.6,precioPotP1:0,precioPotP2:0,precioKwh:0,terminoFijo:0,comercializadora:''};
+  var e=DESPACHO.elect;
   if(e.ivaElect===undefined)e.ivaElect=21;
   var h='<div class="fiscal-section">';
   h+='<div class="hip-section-hdr"><span class="fiscal-section-title">\u26A1 Tarifa de Electricidad</span>';
@@ -72,7 +73,8 @@ function _renderElectDetalle(){
 
 /* ── Precios normales de seguros (config) ────────────────── */
 function _renderSegurosNormales(){
-  var sn=DESPACHO.segurosNormales||{segSalud:0,segVida:0,segHogar:0};
+  if(!DESPACHO.segurosNormales)DESPACHO.segurosNormales={segSalud:0,segVida:0,segHogar:0};
+  var sn=DESPACHO.segurosNormales;
   var h='<div class="fiscal-section">';
   h+='<div class="fiscal-section-title">\uD83D\uDCCB Precios referencia seguros</div>';
   h+='<div style="font-size:.68rem;color:var(--text-dim);margin-bottom:6px">Precio que consideras normal para comparar con seguros vinculados a la hipoteca.</div>';

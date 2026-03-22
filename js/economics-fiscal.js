@@ -783,6 +783,7 @@ function openFiscal(){
   FISCAL_YEAR=CY;
   loadPersonalYear(FISCAL_YEAR);
   loadGastosYear(FISCAL_YEAR);
+  if(typeof loadDespacho==='function')loadDespacho();
   var ov=document.getElementById('fiscalOverlay');
   document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
   ov.style.display='flex';
