@@ -4,6 +4,7 @@
 
 var FISCAL_GAS_EDITING=null; /* null | 'consumo' | 'fijo' */
 function _ensureGasScenarios(){
+  if(!DESPACHO.gas)DESPACHO.gas={modo:'consumo',precioKwh:0,cuotaFija:0,terminoFijo:0,comercializadora:''};
   var g=DESPACHO.gas;
   if(!g.consumo)g.consumo={precioKwh:g.precioKwh||0,terminoFijoDia:0,terminoFijo:g.terminoFijo||0,comercializadora:g.comercializadora||''};
   if(!g.fijo)g.fijo={cuotaFija:g.cuotaFija||0,comercializadora:g.comercializadora||''};
@@ -38,7 +39,7 @@ function _renderGasDetalle(){
     h+='<div class="hip-edit-actions"><button class="hip-save-btn" data-gassave="consumo">Guardar</button><button class="hip-cancel-btn" data-gascancel="consumo">Cancelar</button></div>';
   } else {
     h+=_hipRO('Precio kWh',sc.precioKwh?(sc.precioKwh).toFixed(4)+' \u20ac/kWh':'\u2014');
-    if(sc.terminoFijoDia)h+=_hipRO('T\u00e9rmino fijo/d\u00eda',(sc.terminoFijoDia).toFixed(4)+' \u20ac/d\u00eda');
+    h+=_hipRO('T\u00e9rmino fijo/d\u00eda',sc.terminoFijoDia?(sc.terminoFijoDia).toFixed(4)+' \u20ac/d\u00eda':'\u2014');
     h+=_hipROmoney('T\u00e9rmino fijo/factura',sc.terminoFijo);
     h+=_hipRO('IVA',(g.ivaGas||21)+'%');
     h+=_hipRO('Comercializadora',sc.comercializadora||'\u2014');
