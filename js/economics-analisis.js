@@ -34,15 +34,8 @@ function renderEconAnalisis(){
 
 function _renderAnalisisGastos(){
   var h='';
-  /* Renta neta = post-declaration income (sin restar gastos desgravables ni ingresos extras,
-     porque se muestran por separado en la tabla). */
-  var _mrOpts=typeof _getMultiRateOpts==='function'?_getMultiRateOpts():{};
-  var _ecAn=typeof computeEconEx==='function'?computeEconEx(ECON_YEAR,_mrOpts):{totBase:0,totIrpf:0};
-  var _drAn=typeof computeDeclResult==='function'?computeDeclResult(_ecAn.totBase,_ecAn.totIrpf):{declDiff:0};
-  var rentaNeta=Math.round((_ecAn.totBase-_ecAn.totIrpf)*100)/100;
-  if(_drAn.declDiff>0&&typeof isTglOn==='function'&&isTglOn('irpf_decl'))rentaNeta=Math.round((rentaNeta-_drAn.declDiff)*100)/100;
-  else if(_drAn.declDiff<0&&typeof isTglOn==='function'&&isTglOn('irpf_decl'))rentaNeta=Math.round((rentaNeta+Math.abs(_drAn.declDiff))*100)/100;
-  var disponible=rentaNeta;
+  /* Real income = disponible (post decl. renta + ingresos extras), NOT personal ingresos */
+  var disponible=typeof computeDisponible==='function'?computeDisponible(ECON_YEAR):0;
   var tIngExtra=typeof _personalTotal==='function'?_personalTotal(PERSONAL_DATA.ingresos):0;
 
   /* Collect personal gastos with categories */
@@ -90,7 +83,7 @@ function _renderAnalisisGastos(){
   h+='<div class="ah-cuota-hero"><div class="ah-cuota-val" style="color:'+(balance>=0?'var(--c-green)':'var(--c-red)')+'">'+fcPlain(Math.ceil(balance/12))+'</div>';
   h+='<div class="ah-cuota-sub">Libre mensual (disponible \u2212 gastos \u2212 inversiones)</div></div>';
   h+='<div class="hip-stats">';
-  h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-green)">'+fcPlain(Math.round(rentaNeta/12*100)/100)+'</span><span class="hip-stat-lbl">Renta neta/mes</span></div>';
+  h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-green)">'+fcPlain(Math.round(disponible/12*100)/100)+'</span><span class="hip-stat-lbl">Renta neta/mes</span></div>';
   if(tIngExtra>0)h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-green)">'+fcPlain(Math.round(tIngExtra/12*100)/100)+'</span><span class="hip-stat-lbl">Ingresos extra/mes</span></div>';
   /* Hipoteca card */
   if(typeof DESPACHO!=='undefined'&&DESPACHO.compra&&DESPACHO.compra.importePrestamo>0){
@@ -198,21 +191,23 @@ function _renderAnalisisGastos(){
     if(ANALISIS_FILTER_TEXT)fItems=fItems.filter(function(p){return p.label.toLowerCase().indexOf(ANALISIS_FILTER_TEXT.toLowerCase())!==-1;});
 
     var totalPartidas=0;pItems.forEach(function(p){totalPartidas+=p.annual;});
-    var totalBudget=disponible+tIngExtra;
-    var usedPct=totalBudget>0?Math.round(totalPartidas/totalBudget*1000)/10:0;
-    var restante=Math.round((totalBudget-totalPartidas)*100)/100;
+    var totalDisp=disponible+tIngExtra;
+    var usedPct=totalDisp>0?Math.round(totalPartidas/totalDisp*1000)/10:0;
+    var restante=Math.round((totalDisp-totalPartidas)*100)/100;
 
     h+='<div class="ah-section">';
-    h+='<div class="ah-section-title">Presupuesto vs Disponible ('+fcPlain(Math.round(totalBudget))+'/a\u00f1o)</div>';
+    h+='<div class="ah-section-title">Presupuesto vs Disponible ('+fcPlain(Math.round(totalDisp))+'/a\u00f1o)</div>';
     h+='<div class="hip-bar-wrap"><div class="hip-bar">';
     h+='<div class="hip-bar-cap" style="width:'+Math.min(usedPct,100)+'%;background:'+(usedPct>90?'var(--c-red)':usedPct>70?'var(--c-orange)':'var(--c-green)')+'"></div>';
     h+='<div class="hip-bar-int" style="width:'+Math.max(0,100-usedPct)+'%;background:var(--surface)"></div>';
     h+='</div>';
     h+='<div class="hip-bar-legend"><span style="color:'+(usedPct>90?'var(--c-red)':'var(--text-muted)')+'">Usado: '+usedPct+'%</span><span style="color:var(--c-green)">Libre: '+fcPlain(Math.round(restante/12*100)/100)+'/mes</span></div></div>';
-    /* Filters */
-    h+='<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;align-items:center">';
+    /* Filters: search bar on first row, category buttons on second row */
+    h+='<div style="display:flex;gap:4px;margin-bottom:4px;align-items:center">';
     h+='<input type="text" id="analisisFilterText" placeholder="Buscar concepto..." value="'+escHtml(ANALISIS_FILTER_TEXT)+'" style="flex:1;min-width:80px;font-size:.65rem;padding:3px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface2);color:var(--text)">';
     h+='<button class="fiscal-period-btn" id="analisisFilterBtn" style="font-size:.58rem;padding:2px 6px">\uD83D\uDD0D Buscar</button>';
+    h+='</div>';
+    h+='<div style="display:flex;gap:4px;margin-bottom:6px">';
     var _fc=['all','gasto','inversion','desgrav'];
     var _fl={all:'Todos',gasto:'Gastos',inversion:'Inversiones',desgrav:'Desgravables'};
     _fc.forEach(function(c){h+='<button class="fiscal-period-btn'+(ANALISIS_FILTER_CAT===c?' active':'')+'" data-afc="'+c+'" style="font-size:.58rem;padding:2px 6px">'+_fl[c]+'</button>';});
@@ -222,7 +217,7 @@ function _renderAnalisisGastos(){
     h+='<div class="mg-budget-hdr mg-budget-hdr4"><span>Concepto</span><span class="mg-sort-btn" data-asort="month">/mes \u25BC</span><span>/a\u00f1o</span><span>%</span></div>';
     var _catC={gasto:'#fb923c',inversion:'#6c8cff',desgrav:'#c084fc'};
     fItems.forEach(function(p){
-      var pct=totalBudget>0?Math.round(p.annual/totalBudget*1000)/10:0;
+      var pct=totalDisp>0?Math.round(p.annual/totalDisp*1000)/10:0;
       var lbl=escHtml(p.label);
       if(p.desgrav)lbl+=' <span style="color:#c084fc;font-size:.55rem">(desgr)</span>';
       h+='<div class="mg-budget-row mg-budget-row4"><span class="mg-budget-lbl"><span class="mg-cat-dot" style="background:'+(_catC[p.cat]||'#999')+'"></span>'+lbl+'</span>';
