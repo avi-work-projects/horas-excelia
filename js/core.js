@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v164 \u2014 revert renta neta, filtros en dos filas';
+var APP_VERSION = 'v165 \u2014 fix gastos/mes -18%, presupuesto sin doble conteo desgravables';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
