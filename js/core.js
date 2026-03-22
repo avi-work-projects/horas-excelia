@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v162 \u2014 renta neta corregida, categor\u00edas mes/a\u00f1o, quitar top3+detalle, presupuesto fix';
+var APP_VERSION = 'v163 \u2014 categor\u00eda: quitar leyenda duplicada, fix sufijo /m vs /a';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

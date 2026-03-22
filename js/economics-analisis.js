@@ -157,14 +157,7 @@ function _renderAnalisisGastos(){
     var catDiv=ANALISIS_CAT_MODE==='month'?12:1;
     catKeys.forEach(function(k){if(cats[k].total>0)catBars.push({label:cats[k].label,annual:Math.round(cats[k].total/catDiv)});});
     catBars.sort(function(a,b){return b.annual-a.annual;});
-    h+=_analisisHBar(catBars,'multi');
-    h+='<div style="font-size:.66rem;color:var(--text-dim);margin-top:6px">';
-    catKeys.forEach(function(k){
-      if(cats[k].total<=0)return;
-      var val=ANALISIS_CAT_MODE==='month'?Math.round(cats[k].total/12*100)/100:Math.round(cats[k].total);
-      h+='<span style="margin-right:10px"><span style="color:'+catColorsMap[k]+'">\u25CF</span> '+cats[k].label.replace(/^[^\s]+ /,'')+': <b>'+fcPlain(val)+'/'+(ANALISIS_CAT_MODE==='month'?'mes':'a\u00f1o')+'</b></span>';
-    });
-    h+='</div>';
+    h+=_analisisHBar(catBars,'multi',ANALISIS_CAT_MODE==='month'?'/m':'/a');
     h+='</div>';
   }
 
@@ -610,7 +603,8 @@ function _analisisCard(label,val,color){
     +'<div class="analisis-card-value" style="color:'+color+'">'+sign+fcPlain(abs)+'/mes</div></div>';
 }
 
-function _analisisHBar(items,color){
+function _analisisHBar(items,color,suffix){
+  var sfx=suffix||'/a';
   var maxVal=items[0]?items[0].annual:1;
   var h='<div class="analisis-hbar-wrap">';
   var barColors=['#fb923c','#f59e0b','#fbbf24','#34d399','#6c8cff','#c084fc','#ff6b6b','#a78bfa'];
@@ -621,7 +615,7 @@ function _analisisHBar(items,color){
     h+='<div class="analisis-hbar-row">';
     h+='<div class="analisis-hbar-label">'+item.label+'</div>';
     h+='<div class="analisis-hbar-track"><div class="analisis-hbar-fill" style="width:'+Math.max(pct,4)+'%;background:'+bc+'"></div></div>';
-    h+='<div class="analisis-hbar-val">'+fcPlain(Math.round(item.annual))+'/a</div>';
+    h+='<div class="analisis-hbar-val">'+fcPlain(Math.round(item.annual))+sfx+'</div>';
     h+='</div>';
   });
   h+='</div>';
