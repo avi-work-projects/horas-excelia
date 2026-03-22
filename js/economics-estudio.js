@@ -229,6 +229,7 @@ function _readEstHipVincAt(ai){
 /* ── Estudio: Comparar Gas ────────────────────────────────── */
 var ESTUDIO_GAS_SCENARIOS=[{nombre:'Invierno',consumoKwh:1300,dias:30},{nombre:'Resto del a\u00f1o',consumoKwh:500,dias:60}];
 var ESTUDIO_GAS_CALC=false;
+var ESTUDIO_GAS_IVA=null; // null=load from DESPACHO, else override
 
 function _calcGasCost(t,kwh,dias){
   if(t.modo==='fijo')return(t.cuotaFija||0)*(dias/30);
@@ -278,6 +279,11 @@ function _renderEstudioGasComp(){
     h+='</div></div>';
   });
   if(ESTUDIO_GAS_SCENARIOS.length<3)h+='<button class="hip-add-sub-btn" id="estGasAddSc" style="font-size:.66rem;padding:4px">+ A\u00f1adir escenario</button>';
+  /* IVA */
+  var gasIva=ESTUDIO_GAS_IVA!=null?ESTUDIO_GAS_IVA:(DESPACHO&&DESPACHO.gas&&DESPACHO.gas.ivaGas!=null?DESPACHO.gas.ivaGas:21);
+  h+='<div class="analisis-mortgage-inputs" style="margin-top:6px">';
+  h+='<div class="analisis-input-group"><label>IVA %</label><input class="analisis-input" id="estGasIva" type="number" min="0" step="1" value="'+gasIva+'"></div>';
+  h+='</div>';
   h+='</div>';
   /* Alternative tariff cards */
   h+='<div class="sy-section">';
@@ -288,9 +294,10 @@ function _renderEstudioGasComp(){
   h+='</div>';
   /* Results */
   if(ESTUDIO_GAS_CALC&&comps.length>0){
+    var gasIvaCalc=ESTUDIO_GAS_IVA!=null?ESTUDIO_GAS_IVA:(DESPACHO&&DESPACHO.gas&&DESPACHO.gas.ivaGas!=null?DESPACHO.gas.ivaGas:21);
     h+='<div class="sy-section">';
-    h+='<div class="sy-section-title">Resultado</div>';
-    h+=_renderMultiScenarioResult(ESTUDIO_GAS_SCENARIOS,comps,'gas',cur);
+    h+='<div class="sy-section-title">Resultado <span style="font-size:.62rem;font-weight:400;color:var(--text-dim)">(IVA '+gasIvaCalc+'% incluido)</span></div>';
+    h+=_renderMultiScenarioResult(ESTUDIO_GAS_SCENARIOS,comps,'gas',cur,gasIvaCalc);
     h+='</div>';
   }
   return h;
@@ -326,6 +333,7 @@ function _renderGasCompCard(c,i){
 /* ── Estudio: Comparar Electricidad ──────────────────────── */
 var ESTUDIO_ELECT_SCENARIOS=[{nombre:'Luis Cabrera',consumoKwh:150,dias:30}];
 var ESTUDIO_ELECT_CALC=false;
+var ESTUDIO_ELECT_IVA=null;
 
 function _calcElectCost(t,e,kwh,dias){
   var potCost=0;
@@ -378,6 +386,11 @@ function _renderEstudioElectComp(){
     h+='</div></div>';
   });
   if(ESTUDIO_ELECT_SCENARIOS.length<3)h+='<button class="hip-add-sub-btn" id="estElectAddSc" style="font-size:.66rem;padding:4px">+ A\u00f1adir escenario</button>';
+  /* IVA */
+  var electIva=ESTUDIO_ELECT_IVA!=null?ESTUDIO_ELECT_IVA:(DESPACHO&&DESPACHO.elect&&DESPACHO.elect.ivaElect!=null?DESPACHO.elect.ivaElect:21);
+  h+='<div class="analisis-mortgage-inputs" style="margin-top:6px">';
+  h+='<div class="analisis-input-group"><label>IVA %</label><input class="analisis-input" id="estElectIva" type="number" min="0" step="1" value="'+electIva+'"></div>';
+  h+='</div>';
   h+='</div>';
   /* Alternative tariff cards */
   h+='<div class="sy-section">';
@@ -388,9 +401,10 @@ function _renderEstudioElectComp(){
   h+='</div>';
   /* Results */
   if(ESTUDIO_ELECT_CALC&&comps.length>0){
+    var electIvaCalc=ESTUDIO_ELECT_IVA!=null?ESTUDIO_ELECT_IVA:(DESPACHO&&DESPACHO.elect&&DESPACHO.elect.ivaElect!=null?DESPACHO.elect.ivaElect:21);
     h+='<div class="sy-section">';
-    h+='<div class="sy-section-title">Resultado</div>';
-    h+=_renderMultiScenarioResult(ESTUDIO_ELECT_SCENARIOS,comps,'elect',e);
+    h+='<div class="sy-section-title">Resultado <span style="font-size:.62rem;font-weight:400;color:var(--text-dim)">(IVA '+electIvaCalc+'% incluido)</span></div>';
+    h+=_renderMultiScenarioResult(ESTUDIO_ELECT_SCENARIOS,comps,'elect',e,electIvaCalc);
     h+='</div>';
   }
   return h;
@@ -425,14 +439,16 @@ function _renderElectCompCard(c,i,e){
 }
 
 /* ── Multi-scenario result table ─────────────────────────── */
-function _renderMultiScenarioResult(scenarios,comps,tipo,currentTariff){
+function _renderMultiScenarioResult(scenarios,comps,tipo,currentTariff,ivaPct){
   var _colors=['#6c8cff','#fb923c','#c084fc','#fbbf24','#34d399'];
+  var ivaFactor=1+(ivaPct||0)/100;
   var h='';
   scenarios.forEach(function(sc,si){
     var kwh=sc.consumoKwh||0,dias=sc.dias||30;
     var costActual=0;
     if(tipo==='gas')costActual=_calcGasCost(currentTariff,kwh,dias);
     else costActual=_calcElectCost(currentTariff,currentTariff,kwh,dias);
+    costActual=costActual*ivaFactor;
     h+='<div style="font-size:.7rem;font-weight:600;color:var(--accent-bright);margin:'+(si>0?'10px':'0')+' 0 4px">'+escHtml(sc.nombre||'Escenario '+(si+1))+' ('+kwh+' kWh, '+dias+' d\u00edas)</div>';
     h+='<div class="mg-budget-table" style="margin-top:4px">';
     h+='<div class="mg-budget-hdr" style="grid-template-columns:1fr 70px 60px 70px"><span>Tarifa</span><span>Coste</span><span>/d\u00eda</span><span>Dif.</span></div>';
@@ -445,6 +461,7 @@ function _renderMultiScenarioResult(scenarios,comps,tipo,currentTariff){
       var costAlt=0;
       if(tipo==='gas')costAlt=_calcGasCost(c,kwh,dias);
       else costAlt=_calcElectCost(c,currentTariff,kwh,dias);
+      costAlt=costAlt*ivaFactor;
       var diff=Math.round((costAlt-costActual)*100)/100;
       h+='<div class="mg-budget-row" style="grid-template-columns:1fr 70px 60px 70px">';
       h+='<span class="mg-budget-lbl"><span class="mg-cat-dot" style="background:'+_colors[i%5]+'"></span>'+escHtml(c.nombre||c.comercializadora||'Tarifa '+(i+1))+'</span>';
@@ -458,8 +475,10 @@ function _renderMultiScenarioResult(scenarios,comps,tipo,currentTariff){
   if(scenarios.length>1){
     var grandActual=0;
     scenarios.forEach(function(sc){
-      if(tipo==='gas')grandActual+=_calcGasCost(currentTariff,sc.consumoKwh||0,sc.dias||30);
-      else grandActual+=_calcElectCost(currentTariff,currentTariff,sc.consumoKwh||0,sc.dias||30);
+      var c0=0;
+      if(tipo==='gas')c0=_calcGasCost(currentTariff,sc.consumoKwh||0,sc.dias||30);
+      else c0=_calcElectCost(currentTariff,currentTariff,sc.consumoKwh||0,sc.dias||30);
+      grandActual+=c0*ivaFactor;
     });
     h+='<div style="font-size:.7rem;font-weight:600;color:var(--text-muted);margin:10px 0 4px">Total combinado</div>';
     h+='<div class="mg-budget-table" style="margin-top:4px">';
@@ -471,8 +490,10 @@ function _renderMultiScenarioResult(scenarios,comps,tipo,currentTariff){
     comps.forEach(function(c,i){
       var grandAlt=0;
       scenarios.forEach(function(sc){
-        if(tipo==='gas')grandAlt+=_calcGasCost(c,sc.consumoKwh||0,sc.dias||30);
-        else grandAlt+=_calcElectCost(c,currentTariff,sc.consumoKwh||0,sc.dias||30);
+        var ca=0;
+        if(tipo==='gas')ca=_calcGasCost(c,sc.consumoKwh||0,sc.dias||30);
+        else ca=_calcElectCost(c,currentTariff,sc.consumoKwh||0,sc.dias||30);
+        grandAlt+=ca*ivaFactor;
       });
       var diff=Math.round((grandAlt-grandActual)*100)/100;
       h+='<div class="mg-budget-row" style="grid-template-columns:1fr 80px 80px">';
@@ -508,6 +529,8 @@ function _bindEstudioGas(){
   if(calcBtn)calcBtn.addEventListener('click',function(){
     _saveCompFields('gas','gasComparaciones');
     _readScenarios('gas',ESTUDIO_GAS_SCENARIOS);
+    var ivaEl=document.getElementById('estGasIva');
+    ESTUDIO_GAS_IVA=ivaEl?parseFloat(ivaEl.value)||0:21;
     ESTUDIO_GAS_CALC=true;
     _estudioReRender();
   });
@@ -536,6 +559,8 @@ function _bindEstudioElect(){
   if(calcBtn)calcBtn.addEventListener('click',function(){
     _saveCompFields('elect','electComparaciones');
     _readScenarios('elect',ESTUDIO_ELECT_SCENARIOS);
+    var ivaEl=document.getElementById('estElectIva');
+    ESTUDIO_ELECT_IVA=ivaEl?parseFloat(ivaEl.value)||0:21;
     ESTUDIO_ELECT_CALC=true;
     _estudioReRender();
   });
