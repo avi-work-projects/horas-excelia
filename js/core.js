@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v166 \u2014 desgravables: descuento proporcional al ahorro real dec. renta';
+var APP_VERSION = 'v167 \u2014 hip equivalente en cada tarjeta pr\u00e9stamo/subrogaci\u00f3n';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
