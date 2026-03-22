@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v174 \u2014 estudio: escenarios consumo, 3 hip alternativas, fix scroll/vinc/tfijo';
+var APP_VERSION = 'v175 \u2014 estudio: IVA configurable en comparaciones gas/elect, aplicado a resultados';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
