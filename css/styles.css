@@ -844,6 +844,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .hip-vr-head{display:flex;align-items:center;justify-content:flex-end;gap:6px;padding:0 0 2px;font-size:.58rem;color:var(--text-dim)}
 .hip-vr-head .hip-vr-h{width:58px;text-align:center}
 .hip-vr-head .hip-vr-h:last-of-type{width:48px}
+.hip-vr-head .hip-vr-h-toggle{width:42px}
 /* Hipoteca — read-only fields */
 .hip-ro-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0;font-size:.74rem}
 .hip-ro-lbl{color:var(--text-dim)}
