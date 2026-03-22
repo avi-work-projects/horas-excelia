@@ -99,7 +99,7 @@ function _renderAnalisisGastos(){
       h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-red)">'+fcPlain(_hCuota)+'</span><span class="hip-stat-lbl">Hipoteca/mes</span></div>';
     }
   }
-  h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-orange)">'+fcPlain(Math.round(tGastos/12*100)/100)+'</span><span class="hip-stat-lbl">Gastos/mes</span></div>';
+  h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-orange)">'+fcPlain(Math.ceil(tGastos*0.82/12))+'</span><span class="hip-stat-lbl">Gastos/mes -18%*</span></div>';
   if(tInv>0)h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--accent-bright)">'+fcPlain(Math.round(tInv/12*100)/100)+'</span><span class="hip-stat-lbl">Inversiones/mes</span></div>';
   h+='</div>';
   h+='<div style="font-size:.62rem;color:var(--text-dim);margin-top:4px">Disponible = post decl. renta'+(tIngExtra>0?' + ingresos extra':'')+' \u2212 gastos profesionales</div>';
@@ -215,7 +215,8 @@ function _renderAnalisisGastos(){
     h+='<div class="hip-bar-legend"><span style="color:'+(usedPct>90?'var(--c-red)':'var(--text-muted)')+'">Usado: '+usedPct+'%</span><span style="color:var(--c-green)">Libre: '+fcPlain(Math.round(restante/12*100)/100)+'/mes</span></div></div>';
     /* Filters */
     h+='<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;align-items:center">';
-    h+='<input type="text" id="analisisFilterText" placeholder="Buscar concepto..." value="'+escHtml(ANALISIS_FILTER_TEXT)+'" style="flex:1;min-width:100px;font-size:.65rem;padding:3px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface2);color:var(--text)">';
+    h+='<input type="text" id="analisisFilterText" placeholder="Buscar concepto..." value="'+escHtml(ANALISIS_FILTER_TEXT)+'" style="flex:1;min-width:80px;font-size:.65rem;padding:3px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface2);color:var(--text)">';
+    h+='<button class="fiscal-period-btn" id="analisisFilterBtn" style="font-size:.58rem;padding:2px 6px">\uD83D\uDD0D Buscar</button>';
     var _fc=['all','gasto','inversion','desgrav'];
     var _fl={all:'Todos',gasto:'Gastos',inversion:'Inversiones',desgrav:'Desgravables'};
     _fc.forEach(function(c){h+='<button class="fiscal-period-btn'+(ANALISIS_FILTER_CAT===c?' active':'')+'" data-afc="'+c+'" style="font-size:.58rem;padding:2px 6px">'+_fl[c]+'</button>';});
@@ -824,9 +825,11 @@ function bindEconAnalisisEvents(){
   if(subH)subH.addEventListener('click',function(){ANALISIS_SUB='hipoteca';reRenderEcon();});
   if(ANALISIS_SUB==='gastos'){
     function _reRenderKeepScroll(){var sb=document.querySelector('#econOverlay .sy-body');var st=sb?sb.scrollTop:0;reRenderEcon();var sb2=document.querySelector('#econOverlay .sy-body');if(sb2)sb2.scrollTop=st;}
-    /* Filter text input */
+    /* Filter text — only on button click, not on every keystroke */
     var filterInput=document.getElementById('analisisFilterText');
-    if(filterInput)filterInput.addEventListener('input',function(){ANALISIS_FILTER_TEXT=this.value;_reRenderKeepScroll();});
+    var filterBtn=document.getElementById('analisisFilterBtn');
+    if(filterBtn&&filterInput)filterBtn.addEventListener('click',function(){ANALISIS_FILTER_TEXT=filterInput.value;_reRenderKeepScroll();});
+    if(filterInput)filterInput.addEventListener('keydown',function(e){if(e.key==='Enter'){ANALISIS_FILTER_TEXT=this.value;_reRenderKeepScroll();}});
     /* Filter category buttons */
     document.querySelectorAll('[data-afc]').forEach(function(btn){
       btn.addEventListener('click',function(){ANALISIS_FILTER_CAT=btn.dataset.afc;_reRenderKeepScroll();});
