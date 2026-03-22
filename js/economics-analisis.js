@@ -592,35 +592,47 @@ function _renderSubrogacionAnalysis(comp,sub){
   var points=Math.min(Math.ceil(maxMeses/12),40);
   h+=_mortgageComparisonChart(cuotaOrig,cuotaNueva,maxMeses,costesCambio,comp.tipoInteres,sub.nuevoTipoInteres);
 
-  /* Insurance cost comparison */
+  /* Insurance cost comparison: bruto vs equivalente (restando ref.) */
+  var _segRef2=DESPACHO&&DESPACHO.segurosNormales?DESPACHO.segurosNormales:{};
   var segAnualOrig=0,segAnualNuevo=0;
+  var sobrecosteOrig=0,sobrecosteNuevo=0;
   var vinc=comp.vinculaciones;
   if(vinc){
-    var _sk=['segSalud','segVida','segHogar'];
-    _sk.forEach(function(k){if(vinc[k]&&vinc[k].enabled)segAnualOrig+=vinc[k].costeAnual||0;});
+    ['segSalud','segVida','segHogar'].forEach(function(k){
+      if(vinc[k]&&vinc[k].enabled){
+        var c=vinc[k].costeAnual||0;segAnualOrig+=c;
+        sobrecosteOrig+=Math.max(0,c-(_segRef2[k]||0));
+      }
+    });
   }
   var subVinc=sub.vinculaciones;
   if(subVinc){
-    var _sk2=['segSalud','segVida','segHogar'];
-    _sk2.forEach(function(k){if(subVinc[k]&&subVinc[k].enabled)segAnualNuevo+=subVinc[k].costeAnual||0;});
+    ['segSalud','segVida','segHogar'].forEach(function(k){
+      if(subVinc[k]&&subVinc[k].enabled){
+        var c=subVinc[k].costeAnual||0;segAnualNuevo+=c;
+        sobrecosteNuevo+=Math.max(0,c-(_segRef2[k]||0));
+      }
+    });
   }
-  var diffSegAnual=Math.round((segAnualOrig-segAnualNuevo)*100)/100;
+  var diffBruto=Math.round((segAnualOrig-segAnualNuevo)*100)/100;
+  var diffEquiv=Math.round((sobrecosteOrig-sobrecosteNuevo)*100)/100;
   if(segAnualOrig>0||segAnualNuevo>0){
     h+='<div style="padding:8px 0;font-size:.72rem;color:var(--text-muted);margin-top:4px">';
-    h+='<div>Seguros originales: <b style="color:var(--c-orange)">'+fcPlain(segAnualOrig)+'</b>/a\u00f1o</div>';
-    h+='<div>Seguros nuevos: <b style="color:var(--c-orange)">'+fcPlain(segAnualNuevo)+'</b>/a\u00f1o</div>';
-    h+='<div>Diferencia seguros: <b style="color:'+(diffSegAnual>=0?'var(--c-green)':'var(--c-red)')+'">'+((diffSegAnual>=0?'+':'')+fcPlain(diffSegAnual))+'</b>/a\u00f1o</div>';
-    /* Recalculate total savings including insurance */
+    h+='<div>Seguros originales: <b style="color:var(--c-orange)">'+fcPlain(segAnualOrig)+'</b>/a\u00f1o (sobrecoste: '+fcPlain(sobrecosteOrig)+')</div>';
+    h+='<div>Seguros nuevos: <b style="color:var(--c-orange)">'+fcPlain(segAnualNuevo)+'</b>/a\u00f1o (sobrecoste: '+fcPlain(sobrecosteNuevo)+')</div>';
+    h+='<div>Diferencia seguros (bruto): <b style="color:'+(diffBruto>=0?'var(--c-green)':'var(--c-red)')+'">'+((diffBruto>=0?'+':'')+fcPlain(diffBruto))+'</b>/a\u00f1o</div>';
+    h+='<div>Diferencia seguros (equivalente, vs ref.): <b style="color:'+(diffEquiv>=0?'var(--c-green)':'var(--c-red)')+'">'+((diffEquiv>=0?'+':'')+fcPlain(diffEquiv))+'</b>/a\u00f1o</div>';
+    /* Total savings using equivalente (overcost-based) */
     var maxM2=Math.max(mesesRestantesOrig,mesesNuevo);
-    var totalAhorroConSeg=Math.round(((cuotaOrig+segAnualOrig/12)*maxM2-(cuotaNueva+segAnualNuevo/12)*maxM2-costesCambio)*100)/100;
-    h+='<div style="margin-top:4px;font-size:.78rem">Ahorro total (cuotas + seguros): <b style="color:'+(totalAhorroConSeg>=0?'var(--c-green)':'var(--c-red)')+'">'+fcPlain(Math.round(totalAhorroConSeg))+'</b></div>';
+    var totalAhorroConSeg=Math.round(((cuotaOrig+sobrecosteOrig/12)*maxM2-(cuotaNueva+sobrecosteNuevo/12)*maxM2-costesCambio)*100)/100;
+    h+='<div style="margin-top:4px;font-size:.78rem">Ahorro total (cuotas + sobrecoste seguros): <b style="color:'+(totalAhorroConSeg>=0?'var(--c-green)':'var(--c-red)')+'">'+fcPlain(Math.round(totalAhorroConSeg))+'</b></div>';
     h+='</div>';
   }
 
   /* Diff chart: evolution A vs B */
   h+='<div style="margin-top:10px;font-size:.75rem;color:var(--text-muted);font-weight:600">Evoluci\u00f3n: quedarse vs subrogar</div>';
-  h+='<div style="font-size:.65rem;color:var(--text-dim);margin-bottom:2px">Incluye cuotas + seguros vinculados. Zona verde = el cambio compensa.</div>';
-  h+=_mortgageDiffChart(cuotaOrig,cuotaNueva,segAnualOrig,segAnualNuevo,mesesTranscurridos,maxMeses,costesCambio);
+  h+='<div style="font-size:.65rem;color:var(--text-dim);margin-bottom:2px">Incluye cuotas + sobrecoste seguros (vs ref.). Zona verde = el cambio compensa.</div>';
+  h+=_mortgageDiffChart(cuotaOrig,cuotaNueva,sobrecosteOrig,sobrecosteNuevo,mesesTranscurridos,maxMeses,costesCambio);
 
   h+='</div>';
   return h;
