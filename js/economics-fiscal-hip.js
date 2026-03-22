@@ -360,10 +360,36 @@ function _hipPeriodCard(comp,subIdx,isActive,startDate,endDate){
     if(intAnual>0)h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-orange)">'+fcPlain(intAnual)+'</span><span class="hip-stat-lbl">Intereses '+FISCAL_YEAR+'</span></div>';
     h+='</div>';
   }
-  /* Sobrecoste seguros vinculados */
+  /* Sobrecoste seguros vinculados + hipoteca equivalente */
   if(vinc){
     var oc=_calcInsOvercost(vinc);
-    if(oc!==null)h+='<div class="hip-period-info" style="color:'+(oc>0?'var(--c-red)':'var(--c-green)')+'">Sobrecoste seguros: '+((oc>0?'+':'')+Math.round(oc))+'\u20ac/a\u00f1o</div>';
+    if(oc!==null&&oc>0){
+      h+='<div class="hip-period-info" style="color:var(--c-red)">Sobrecoste seguros: +'+Math.round(oc)+'\u20ac/a\u00f1o</div>';
+      /* Hipoteca equivalente: cuota + sobrecoste/mes */
+      var _sRef=DESPACHO.segurosNormales||{};
+      var _sMes=0;
+      ['segHogar','segSalud','segVida'].forEach(function(k){
+        if(vinc[k]&&vinc[k].enabled){_sMes+=Math.max(0,(vinc[k].costeAnual||0)-(_sRef[k]||0))/12;}
+      });
+      var _hEq=Math.round((cuota+_sMes)*100)/100;
+      /* Tipo equivalente: iterar para encontrar el tipo que produce _hEq */
+      var _tEq=tipoEf;
+      if(importe>0&&n>0){
+        for(var _it=0;_it<50;_it++){
+          var _tR=_tEq/100/12;
+          var _tC=_tR>0?importe*_tR*Math.pow(1+_tR,n)/(Math.pow(1+_tR,n)-1):importe/n;
+          if(Math.abs(_tC-_hEq)<0.01)break;
+          _tEq+=(_hEq-_tC)*0.001;
+        }
+      }
+      h+='<div style="font-size:.68rem;margin-top:4px;padding:6px 8px;background:var(--surface2);border-radius:var(--radius-sm)">';
+      h+='<b style="color:var(--accent-bright)">Hipoteca equivalente: '+fcPlain(_hEq)+'/mes</b>';
+      h+='<div style="font-size:.6rem;color:var(--text-dim);margin-top:2px">Tipo equivalente: <b>'+_tEq.toFixed(2)+'%</b> (cuota '+fcPlain(cuota)+' + sobrecoste '+Math.round(_sMes)+'\u20ac/mes)</div></div>';
+    } else {
+      h+='<div style="font-size:.65rem;margin-top:4px;padding:5px 8px;color:var(--c-green);background:var(--surface2);border-radius:var(--radius-sm)">\u2714 Sin sobrecoste: tipo e hipoteca efectivos coinciden con los bonificados ('+tipoEf.toFixed(2)+'% \u2192 '+fcPlain(cuota)+'/mes)</div>';
+    }
+  } else {
+    h+='<div style="font-size:.65rem;margin-top:4px;padding:5px 8px;color:var(--c-green);background:var(--surface2);border-radius:var(--radius-sm)">\u2714 Sin vinculaciones: tipo e hipoteca son los nominales ('+tipo.toFixed(2)+'% \u2192 '+fcPlain(cuota)+'/mes)</div>';
   }
   h+='<button class="hip-period-btn" data-gotosection="'+(subIdx<0?'prestamo':'sub-'+subIdx)+'">Ver Detalle</button>';
   h+='</div>';
