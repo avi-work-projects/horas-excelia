@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v168 \u2014 an\u00e1lisis hip: tipos bonificados expl\u00edcitos, sobrecoste vs ref, hip equivalente';
+var APP_VERSION = 'v169 \u2014 restaurar detalle gastos e inversiones (sin top3)';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
