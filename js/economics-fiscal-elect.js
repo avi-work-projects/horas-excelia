@@ -16,8 +16,13 @@ function _renderElectDetalle(){
     h+='<button class="fiscal-onoff'+(e.modoPotencia==='doble'?' on':'')+'" id="electModoDoble">2 tramos (P1+P2)</button>';
     h+='<button class="fiscal-onoff'+(e.modoPotencia==='simple'?' on':'')+'" id="electModoSimple">Precio \u00fanico</button>';
     h+='</div></div>';
-    h+='<div class="hip-g2">';
+    /* Nivel 1: Potencia */
+    h+='<div class="hip-g2" style="margin-bottom:0">';
     h+=_hipNum('electPotencia','Potencia contratada',e.potenciaP1||e.potenciaTotal||0,'kW');
+    h+='</div>';
+    h+='<div style="border-top:1px solid var(--border);margin:6px 0"></div>';
+    /* Nivel 2: Precios potencia */
+    h+='<div class="hip-g2" style="margin-bottom:0">';
     if(e.modoPotencia==='doble'){
       h+=_hipNum('electPrecioPotP1','Precio potencia P1 (punta)',e.precioPotP1||0,'\u20ac/kW/d\u00eda');
       h+=_hipNum('electPrecioPotP2','Precio potencia P2 (valle)',e.precioPotP2||0,'\u20ac/kW/d\u00eda');
@@ -26,14 +31,25 @@ function _renderElectDetalle(){
     } else {
       h+=_hipNum('electPrecioPotP1','Precio potencia',e.precioPotP1||0,'\u20ac/kW/d\u00eda');
     }
+    h+='</div>';
+    h+='<div style="border-top:1px solid var(--border);margin:6px 0"></div>';
+    /* Nivel 3: Energía */
+    h+='<div class="hip-g2" style="margin-bottom:0">';
     h+=_hipNum('electPrecioKwh','Precio kWh',e.precioKwh,'\u20ac/kWh');
+    h+='</div>';
+    h+='<div style="border-top:1px solid var(--border);margin:6px 0"></div>';
+    /* Nivel 4: Fijos + IVA */
+    h+='<div class="hip-g2">';
     h+=_hipMoney('electTerminoFijo','T\u00e9rmino fijo/mes',e.terminoFijo);
     h+=_hipNum('electIva','IVA',e.ivaElect,'%');
     h+=_hipText('electComerc','Comercializadora',e.comercializadora,'Ej: Endesa...');
     h+='</div>';
     h+='<div class="hip-edit-actions"><button class="hip-save-btn" id="electSaveBtn">Guardar cambios</button><button class="hip-cancel-btn" id="electCancelBtn">Cancelar</button></div>';
   } else {
+    /* Nivel 1 */
     h+=_hipRO('Potencia contratada',(e.potenciaP1||e.potenciaTotal||0)+' kW');
+    h+='<div style="border-top:1px solid var(--border);margin:4px 0"></div>';
+    /* Nivel 2 */
     if(e.modoPotencia==='doble'){
       h+=_hipRO('Precio P1 (punta)',(e.precioPotP1||0).toFixed(6)+' \u20ac/kW/d\u00eda');
       h+=_hipRO('Precio P2 (valle)',(e.precioPotP2||0).toFixed(6)+' \u20ac/kW/d\u00eda');
@@ -41,7 +57,11 @@ function _renderElectDetalle(){
     } else {
       h+=_hipRO('Precio potencia',(e.precioPotP1||0).toFixed(6)+' \u20ac/kW/d\u00eda');
     }
+    h+='<div style="border-top:1px solid var(--border);margin:4px 0"></div>';
+    /* Nivel 3 */
     h+=_hipRO('Precio kWh',e.precioKwh?e.precioKwh.toFixed(4)+' \u20ac/kWh':'\u2014');
+    h+='<div style="border-top:1px solid var(--border);margin:4px 0"></div>';
+    /* Nivel 4 */
     h+=_hipROmoney('T\u00e9rmino fijo/mes',e.terminoFijo);
     h+=_hipRO('IVA',(e.ivaElect||21)+'%');
     h+=_hipRO('Comercializadora',e.comercializadora||'\u2014');
