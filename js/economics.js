@@ -506,7 +506,8 @@ function reRenderEcon(){
   var scrollTop=body?body.scrollTop:0;
   document.getElementById('econContent').innerHTML=renderEconContent();
   bindEconEvents();
-  if(body)body.scrollTop=scrollTop;
+  var body2=document.querySelector('#econOverlay .sy-body');
+  if(body2)body2.scrollTop=scrollTop;
 }
 
 /* ── bindEconEvents ─────────────────────────────────────────── */
