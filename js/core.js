@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v165 \u2014 fix gastos/mes -18%, presupuesto sin doble conteo desgravables';
+var APP_VERSION = 'v166 \u2014 desgravables: descuento proporcional al ahorro real dec. renta';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
