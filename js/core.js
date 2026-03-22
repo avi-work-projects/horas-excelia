@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v172 \u2014 estudio: tarjetas gas/elect con campos completos, vinculaciones hip, bot\u00f3n Comparar';
+var APP_VERSION = 'v173 \u2014 econ: sin asignar, filtro mes/a\u00f1o detalle+resumen, quitar IVA soportado/neto';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

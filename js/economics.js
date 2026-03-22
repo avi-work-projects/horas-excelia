@@ -4,6 +4,7 @@
 
 var ECON_YEAR=new Date().getFullYear();
 var ECON_VIEW='resumen';    // 'resumen' | 'gastos' | 'analisis' | 'estudio'
+var ECON_RESUMEN_MODE='anual'; // 'anual' | 'mensual'
 var ECON_RATE_MODE='daily'; // 'daily' | 'hourly' | 'salary'
 var ECON_MULTI_RATE=false;
 var ECON_RATE_PERIODS=[{from:0,to:11,rate:0}]; // legacy month-based (migrated to date-based)
@@ -360,14 +361,19 @@ function renderEconResumen(){
     h+='SS empleador: '+fc(sal.ssEmpleador)+' ('+_SS_PAT_PCT+'%) &middot; Coste empresa: '+fc(sal.costeEmpresa);
     h+='</div></div>';
   } else {
-  /* §2 Resumen Anual — 7 tarjetas totales del año */
-  h+='<div class="sy-section"><div class="sy-section-title">Resumen Anual</div>';
-  h+='<div class="econ-avg-cards">'+_econCards7(e,cotAnual,declDiff,1,'a\u00f1o completo')+'</div>';
+  /* §2 Resumen Anual / Media Mensual — toggle */
+  h+='<div class="sy-section">';
+  h+='<div class="sy-section-title" style="display:flex;align-items:center;justify-content:space-between">'+(ECON_RESUMEN_MODE==='anual'?'Resumen Anual':'Media Mensual');
+  h+='<div style="display:flex;gap:4px">';
+  h+='<button class="fiscal-period-btn'+(ECON_RESUMEN_MODE==='anual'?' active':'')+'" data-erm="anual" style="font-size:.55rem;padding:2px 5px">Anual</button>';
+  h+='<button class="fiscal-period-btn'+(ECON_RESUMEN_MODE==='mensual'?' active':'')+'" data-erm="mensual" style="font-size:.55rem;padding:2px 5px">Mensual</button>';
+  h+='</div></div>';
+  if(ECON_RESUMEN_MODE==='anual'){
+    h+='<div class="econ-avg-cards">'+_econCards7(e,cotAnual,declDiff,1,'a\u00f1o completo')+'</div>';
+  } else {
+    h+='<div class="econ-avg-cards">'+_econCards7(e,cotAnual,declDiff,1/12,'a\u00f1o / 12')+'</div>';
+  }
   h+='</div>';
-
-  /* §3 Media mensual — 7 tarjetas /12 */
-  h+='<div class="sy-section"><div class="sy-section-title">Media Mensual</div>';
-  h+='<div class="econ-avg-cards">'+_econCards7(e,cotAnual,declDiff,1/12,'a\u00f1o / 12')+'</div></div>';
   }
 
   if(ECON_RATE_MODE==='salary')return h;
@@ -396,8 +402,7 @@ function renderEconResumen(){
   h+='</tbody></table></div></div>';
 
   /* §5 IVA trimestral — sin fila Base */
-  var hasComprasIva=typeof COMPRAS_IVA_ENABLED!=='undefined'&&COMPRAS_IVA_ENABLED&&typeof comprasIvaTotal==='function';
-  h+='<div class="sy-section econ-quarter-section"><div class="sy-section-title">IVA trimestral a Hacienda (mod. 303)'+(hasComprasIva?' \u2014 con IVA soportado compras':'')+'</div>';
+  h+='<div class="sy-section econ-quarter-section"><div class="sy-section-title">IVA trimestral a Hacienda (mod. 303)</div>';
   h+='<div class="econ-quarter-scroll"><div class="econ-quarter-grid">';
   ['T1','T2','T3','T4'].forEach(function(q,i){
     h+='<div class="econ-qcell"><div class="sy-val-sm">'+fc(e.qCobrado[i])+'</div><div class="sy-lbl">'+q+' Cobrado</div></div>';
@@ -405,16 +410,6 @@ function renderEconResumen(){
   ['T1','T2','T3','T4'].forEach(function(q,i){
     h+='<div class="econ-qcell econ-qcell-iva"><div class="sy-val-sm" style="color:var(--c-orange)">'+fc(e.qIva[i])+'</div><div class="sy-lbl">'+q+' IVA facturado</div></div>';
   });
-  if(hasComprasIva){
-    ['T1','T2','T3','T4'].forEach(function(q,i){
-      var ivaComp=comprasIvaTotal(i+1);
-      h+='<div class="econ-qcell econ-qcell-iva"><div class="sy-val-sm" style="color:var(--c-green)">'+fc(ivaComp)+'</div><div class="sy-lbl">'+q+' IVA soportado</div></div>';
-    });
-    ['T1','T2','T3','T4'].forEach(function(q,i){
-      var ivaNeto=Math.round((e.qIva[i]-comprasIvaTotal(i+1))*100)/100;
-      h+='<div class="econ-qcell econ-qcell-iva"><div class="sy-val-sm" style="color:var(--c-orange);font-weight:700">'+fc(Math.max(0,ivaNeto))+'</div><div class="sy-lbl">'+q+' IVA neto Hac.</div></div>';
-    });
-  }
   ['T1','T2','T3','T4'].forEach(function(q,i){
     h+='<div class="econ-qcell econ-qcell-neto"><div class="sy-val-sm" style="color:var(--c-green)">'+fc(e.qNeto[i])+'</div><div class="sy-lbl">'+q+' Base \u2212 15% IRPF</div></div>';
   });
@@ -685,6 +680,10 @@ function bindEconResumenEvents(){
       reRenderEcon();
     });
   }
+  /* Resumen mode: anual/mensual toggle */
+  document.querySelectorAll('[data-erm]').forEach(function(btn){
+    btn.addEventListener('click',function(){ECON_RESUMEN_MODE=btn.dataset.erm;reRenderEcon();});
+  });
 }
 
 /* ============================================================
