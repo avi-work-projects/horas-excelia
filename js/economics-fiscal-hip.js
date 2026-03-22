@@ -718,7 +718,7 @@ function renderFiscalTabDespacho(){
   h+='<button class="econ-sub-tab'+(FISCAL_HIP_SUB==='resumen'?' active':'')+'" data-hipsub="resumen">Resumen</button>';
   h+='<button class="econ-sub-tab'+(FISCAL_HIP_SUB==='detalle'?' active':'')+'" data-hipsub="detalle">Detalle<br>Hipoteca</button>';
   h+='<button class="econ-sub-tab est-hip'+(FISCAL_HIP_SUB==='gas'?' active':'')+'" data-hipsub="gas">Detalle<br>Gas</button>';
-  h+='<button class="econ-sub-tab est-hip'+(FISCAL_HIP_SUB==='elect'?' active':'')+'" data-hipsub="elect">Detalle<br>Elect.</button>';
+  h+='<button class="econ-sub-tab est-hip'+(FISCAL_HIP_SUB==='elect'?' active':'')+'" data-hipsub="elect">Detalle<br>Electricidad</button>';
   h+='</div>';
   if(FISCAL_HIP_SUB==='resumen')h+=_renderHipResumen();
   else if(FISCAL_HIP_SUB==='detalle')h+=_renderHipDetalle();

@@ -365,8 +365,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .econ-sub-tabs{display:flex;gap:6px;padding:10px 16px;box-shadow:0 1px 0 var(--border);align-items:center;position:sticky;top:0;z-index:5;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 .econ-sub-tabs::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:rgba(192,132,252,.2);z-index:10}
 .sy-body:has(> .econ-sub-tabs:first-child){padding-top:0!important}
-.econ-sub-tab{flex:1;font-size:.68rem;padding:6px 4px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;text-align:center;-webkit-user-select:none;user-select:none}
-.econ-sub-tab.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
+.econ-sub-tab{flex:1;font-size:.62rem;padding:5px 4px;border-radius:0;border:none;border-bottom:2px solid transparent;background:transparent;color:var(--text-dim);cursor:pointer;transition:all .15s;text-align:center;-webkit-user-select:none;user-select:none}
+.econ-sub-tab.active{border-bottom-color:var(--accent);color:var(--accent-bright);font-weight:600}
 .econ-sub-tab.est-casa{color:var(--text-dim)}
 .econ-sub-tab.est-casa.active{border-color:#14b8a6;background:rgba(20,184,166,.1);color:#14b8a6}
 /* Estudio Cambio — grouped nav */
