@@ -166,21 +166,33 @@ function _renderAnalisisGastos(){
        The "real cost" of a desgravable expense = expense × (1 - marginal_tax_rate)
        because deducting it from the tax base saves marginal_tax_rate × expense. */
     var _dLbls={hipoteca:'Hipoteca',comunidad:'Comunidad',seg_hogar:'Seg. Hogar',gas:'Gas',luz:'Luz',digi:'Internet',agua:'Agua',otros_seg:'Otros seg.'};
-    var _marginalPct=0;
-    if(typeof computeDeclResult==='function'&&typeof computeEconEx==='function'){
+    /* Calcular ahorro real por desgravaciones (mismo cálculo que en Analisis dec. renta)
+       y distribuirlo proporcionalmente entre cada gasto desgravable */
+    var _ahorroTotal=0;
+    if(typeof computeDeclResult==='function'&&typeof computeEconEx==='function'&&typeof computeIrpfBrackets==='function'){
       var _mrOpts2=typeof _getMultiRateOpts==='function'?_getMultiRateOpts():{};
       var _ec2=computeEconEx(ECON_YEAR,_mrOpts2);
       var _dr2=computeDeclResult(_ec2.totBase,_ec2.totIrpf);
-      _marginalPct=_dr2.decl&&_dr2.decl.breakdown&&_dr2.decl.breakdown.length>0?_dr2.decl.breakdown[_dr2.decl.breakdown.length-1].pct:0;
+      var _sinDesgrav=computeIrpfBrackets(_dr2.baseAfterGD);
+      _ahorroTotal=Math.round((_sinDesgrav.totalTax-_dr2.decl.totalTax+(_dr2.totalQuotaDesgrav||0))*100)/100;
     }
+    /* Recoger gastos desgravables y calcular total bruto para prorrateo */
+    var _desgItems=[];
+    var _totalBrutoDesg=0;
     if(typeof GASTOS_ITEMS!=='undefined'){
       GASTOS_ITEMS.forEach(function(g){
         if(!g.amount)return;
         var anual=typeof gastoAnual==='function'?gastoAnual(g.id):(g.period==='monthly'?g.amount*12:g.amount);
-        var efectivo=_marginalPct>0?Math.ceil(anual*(1-_marginalPct/100)):anual;
-        pItems.push({label:(_dLbls[g.id]||g.label),annual:efectivo,annualBruto:anual,cat:'desgrav',desgrav:true});
+        _desgItems.push({id:g.id,label:g.label,anual:anual});
+        _totalBrutoDesg+=anual;
       });
     }
+    _desgItems.forEach(function(d){
+      /* Descuento proporcional: ahorro_total × (gasto / total_gastos_desgravables) */
+      var descuento=_totalBrutoDesg>0&&_ahorroTotal>0?Math.round(_ahorroTotal*d.anual/_totalBrutoDesg*100)/100:0;
+      var efectivo=Math.ceil(d.anual-descuento);
+      pItems.push({label:(_dLbls[d.id]||d.label),annual:efectivo,annualBruto:d.anual,descuento:descuento,cat:'desgrav',desgrav:true});
+    });
     /* Apply sort */
     if(ANALISIS_SORT==='asc')pItems.sort(function(a,b){return a.annual-b.annual;});
     else if(ANALISIS_SORT==='cat')pItems.sort(function(a,b){return a.cat<b.cat?-1:a.cat>b.cat?1:b.annual-a.annual;});
@@ -232,7 +244,7 @@ function _renderAnalisisGastos(){
     h+='<div style="font-size:.58rem;color:var(--text-dim);margin-top:6px;line-height:1.4">';
     h+='\u26A0 Los gastos semanales se reducen un 18% (redondeando al euro superior) porque parte se dedica a pagar otros conceptos ya incluidos en esta lista.<br>';
     h+='\u26A0 Los viajes se prorratean: se restan los gastos semanales proporcionales a los d\u00edas de viaje, ya que durante esos d\u00edas no se incurren gastos semanales habituales.<br>';
-    h+='\u26A0 Los gastos desgravables (marcados en morado) muestran su coste efectivo: se descuenta el ahorro fiscal del tipo marginal IRPF ('+(_marginalPct||0)+'%), ya que desgravar reduce la cuota de la declaraci\u00f3n.';
+    h+='\u26A0 Los gastos desgravables (marcados en morado) muestran su coste efectivo: el ahorro total por desgravaciones ('+fcPlain(_ahorroTotal)+') se reparte proporcionalmente entre cada gasto.';
     h+='</div>';
     h+='</div>';
   }
