@@ -210,9 +210,11 @@ function renderBdayUpcoming(){
     h+=renderGroup('Pasados',prevItems);
     h+='</div>';
   }
-  h+='<div class="bday-upcoming-section" style="margin-top:8px">';
-  h+=renderGroup('Hoy',todayItems,true);
-  h+='</div>';
+  if(todayItems.length){
+    h+='<div class="bday-upcoming-section" style="margin-top:8px">';
+    h+=renderGroup('Hoy',todayItems,true);
+    h+='</div>';
+  }
   h+='<div class="bday-upcoming-section" style="margin-top:8px">';
   h+=renderGroup('Pr\u00f3ximos',nxtItems);
   h+='</div>';
