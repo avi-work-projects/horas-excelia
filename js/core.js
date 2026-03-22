@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v159 \u2014 gastos -18%, buscar con bot\u00f3n, ocultar Hoy sin cumplea\u00f1os';
+var APP_VERSION = 'v160 \u2014 elect 2 tramos/\u00fanico, gas t\u00e9rmino fijo/d\u00eda, guard gas init';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
