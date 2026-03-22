@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v170 \u2014 seguros bruto vs equivalente (vs ref), ahorro con sobrecoste real';
+var APP_VERSION = 'v171 \u2014 fix guardar elect/seguros: inicializar DESPACHO.elect/.segurosNormales';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
