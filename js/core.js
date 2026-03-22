@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v157 \u2014 subpesta\u00f1as estilo underline, jerarqu\u00eda visual clara';
+var APP_VERSION = 'v158 \u2014 hip bonificada+sobrecoste, desgrav descuento fiscal, elect 1 potencia, export completo';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

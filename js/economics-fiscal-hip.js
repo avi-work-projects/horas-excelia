@@ -489,7 +489,30 @@ function _renderHipResumen(){
   for(var p=0;p<periods.length;p++){
     h+=_hipPeriodCard(comp,periods[p].subIdx,periods[p].isActive,periods[p].start,periods[p].end);
   }
-  /* Ver análisis button */
+  /* Hipoteca equivalente = cuota + sobrecoste seguros/mes */
+  var _actP=periods[periods.length-1];
+  var _actVinc=_actP.subIdx>=0?(subs[_actP.subIdx].vinculaciones||{}):(comp.vinculaciones||{});
+  var _actTipo=_actP.subIdx>=0?subs[_actP.subIdx].nuevoTipoInteres:comp.tipoInteres;
+  var _actImporte=_actP.subIdx>=0?subs[_actP.subIdx].nuevoImporte:comp.importePrestamo;
+  var _actPlazo=_actP.subIdx>=0?subs[_actP.subIdx].nuevoPlazoAnios:comp.plazoAnios;
+  var _actTipoEf=_hipEffRate(_actTipo,_actVinc);
+  var _actR=_actTipoEf/100/12,_actN=_actPlazo*12;
+  var _actCuota=_actR>0?_actImporte*_actR*Math.pow(1+_actR,_actN)/(Math.pow(1+_actR,_actN)-1):_actImporte/_actN;
+  var _segRef=DESPACHO.segurosNormales||{};
+  var _sobrMes=0;
+  ['segHogar','segSalud','segVida'].forEach(function(k){
+    if(_actVinc[k]&&_actVinc[k].enabled){
+      var costeVinc=_actVinc[k].costeAnual||0;
+      var costeRef=_segRef[k]||0;
+      _sobrMes+=Math.max(0,costeVinc-costeRef)/12;
+    }
+  });
+  if(_sobrMes>0){
+    var _hipEq=Math.round((_actCuota+_sobrMes)*100)/100;
+    h+='<div style="font-size:.72rem;color:var(--text-dim);margin:8px 0 4px;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)">';
+    h+='<b style="color:var(--accent-bright)">Hipoteca equivalente: '+fcPlain(_hipEq)+'\u20ac/mes</b>';
+    h+='<div style="font-size:.62rem;margin-top:2px">Cuota '+fcPlain(Math.round(_actCuota*100)/100)+' + sobrecoste seguros '+fcPlain(Math.round(_sobrMes*100)/100)+'/mes</div></div>';
+  }
   /* Gas/Electricidad summary cards */
   var gas=DESPACHO.gas||{};
   _ensureGasScenarios();
