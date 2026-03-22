@@ -174,13 +174,23 @@ function _renderAnalisisGastos(){
     allItems.forEach(function(i){
       pItems.push({label:i.label,annual:i.annual,cat:i.cat,desgrav:false,_weekly:i._weekly,_viaje:i._viaje});
     });
-    /* Add desgravable items (already deducted from disponible but shown in table) */
+    /* Add desgravable items with tax deduction discount applied.
+       The "real cost" of a desgravable expense = expense × (1 - marginal_tax_rate)
+       because deducting it from the tax base saves marginal_tax_rate × expense. */
     var _dLbls={hipoteca:'Hipoteca',comunidad:'Comunidad',seg_hogar:'Seg. Hogar',gas:'Gas',luz:'Luz',digi:'Internet',agua:'Agua',otros_seg:'Otros seg.'};
+    var _marginalPct=0;
+    if(typeof computeDeclResult==='function'&&typeof computeEconEx==='function'){
+      var _mrOpts2=typeof _getMultiRateOpts==='function'?_getMultiRateOpts():{};
+      var _ec2=computeEconEx(ECON_YEAR,_mrOpts2);
+      var _dr2=computeDeclResult(_ec2.totBase,_ec2.totIrpf);
+      _marginalPct=_dr2.decl&&_dr2.decl.breakdown&&_dr2.decl.breakdown.length>0?_dr2.decl.breakdown[_dr2.decl.breakdown.length-1].pct:0;
+    }
     if(typeof GASTOS_ITEMS!=='undefined'){
       GASTOS_ITEMS.forEach(function(g){
         if(!g.amount)return;
         var anual=typeof gastoAnual==='function'?gastoAnual(g.id):(g.period==='monthly'?g.amount*12:g.amount);
-        pItems.push({label:(_dLbls[g.id]||g.label),annual:anual,cat:'desgrav',desgrav:true});
+        var efectivo=_marginalPct>0?Math.ceil(anual*(1-_marginalPct/100)):anual;
+        pItems.push({label:(_dLbls[g.id]||g.label),annual:efectivo,annualBruto:anual,cat:'desgrav',desgrav:true});
       });
     }
     /* Apply sort */
@@ -228,7 +238,7 @@ function _renderAnalisisGastos(){
     h+='<div style="font-size:.58rem;color:var(--text-dim);margin-top:6px;line-height:1.4">';
     h+='\u26A0 Los gastos semanales se reducen un 18% (redondeando al euro superior) porque parte se dedica a pagar otros conceptos ya incluidos en esta lista.<br>';
     h+='\u26A0 Los viajes se prorratean: se restan los gastos semanales proporcionales a los d\u00edas de viaje, ya que durante esos d\u00edas no se incurren gastos semanales habituales.<br>';
-    h+='\u26A0 Los gastos desgravables (marcados en morado) ya est\u00e1n descontados del disponible.';
+    h+='\u26A0 Los gastos desgravables (marcados en morado) muestran su coste efectivo: se descuenta el ahorro fiscal del tipo marginal IRPF ('+(_marginalPct||0)+'%), ya que desgravar reduce la cuota de la declaraci\u00f3n.';
     h+='</div>';
     h+='</div>';
   }
@@ -373,13 +383,25 @@ function _renderAnalisisHipoteca(){
   var totalCambio=0;
   subs.forEach(function(s){totalCambio+=(s.comisionCancelacion||0)+(s.notaria||0)+(s.tasacion||0)+(s.registro||0);});
   var vincAnual=0;
-  if(act.vinc){['segHogar','segSalud','segVida'].forEach(function(k){if(act.vinc[k]&&act.vinc[k].enabled)vincAnual+=act.vinc[k].costeAnual||0;});}
+  var segRef=DESPACHO&&DESPACHO.segurosNormales?DESPACHO.segurosNormales:{};
+  var refMap={segHogar:'segHogar',segSalud:'segSalud',segVida:'segVida'};
+  var sobrecosteAnual=0;
+  if(act.vinc){['segHogar','segSalud','segVida'].forEach(function(k){
+    if(act.vinc[k]&&act.vinc[k].enabled){
+      var costeVinc=act.vinc[k].costeAnual||0;
+      var costeRef=segRef[refMap[k]]||0;
+      vincAnual+=costeVinc;
+      sobrecosteAnual+=Math.max(0,costeVinc-costeRef);
+    }
+  });}
   var totalVinc=Math.round(vincAnual*act.plazo);
+  var totalSobrecoste=Math.round(sobrecosteAnual*act.plazo);
   h+='<div class="ah-total-row">'+_ahRow('Capital prestado',_fmtMiles(act.importe)+' \u20ac')+'</div>';
   h+='<div class="ah-total-row">'+_ahRow('Total intereses',_fmtMiles(totalInt)+' \u20ac','var(--c-orange)')+'</div>';
   if(totalCambio>0)h+='<div class="ah-total-row">'+_ahRow('Costes subrogaci\u00f3n',_fmtMiles(totalCambio)+' \u20ac','var(--c-orange)')+'</div>';
   if(totalVinc>0)h+='<div class="ah-total-row">'+_ahRow('Seguros vinculados (~'+act.plazo+'a)',_fmtMiles(totalVinc)+' \u20ac','var(--c-orange)')+'</div>';
-  h+='<div class="ah-total-row highlight">'+_ahRow('TOTAL',_fmtMiles(totalCuotas+totalCambio+totalVinc)+' \u20ac')+'</div>';
+  if(totalSobrecoste>0)h+='<div class="ah-total-row">'+_ahRow('Sobrecoste seguros (vs ref.)',_fmtMiles(totalSobrecoste)+' \u20ac','var(--c-red)')+'</div>';
+  h+='<div class="ah-total-row highlight">'+_ahRow('TOTAL',_fmtMiles(totalCuotas+totalCambio+totalSobrecoste)+' \u20ac')+'</div>';
   h+='</div>';
 
   return h;
@@ -489,13 +511,15 @@ function _renderSubrogacionAnalysis(comp,sub){
   var mesesRestantesOrig=comp.plazoAnios*12-mesesTranscurridos;
   if(mesesRestantesOrig<=0)return '';
 
-  var r1=comp.tipoInteres/100/12;
+  var tipoEfOrig=typeof _hipEffRate==='function'?_hipEffRate(comp.tipoInteres,comp.vinculaciones):comp.tipoInteres;
+  var r1=tipoEfOrig/100/12;
   var cuotaOrig=balanceAtSub*r1*Math.pow(1+r1,mesesRestantesOrig)/(Math.pow(1+r1,mesesRestantesOrig)-1);
   var totalOrig=cuotaOrig*mesesRestantesOrig;
   var interesesOrig=totalOrig-balanceAtSub;
 
-  /* Cuota nueva */
-  var r2=sub.nuevoTipoInteres/100/12;
+  /* Cuota nueva (bonificada) */
+  var tipoEfNuevo=typeof _hipEffRate==='function'?_hipEffRate(sub.nuevoTipoInteres,sub.vinculaciones):sub.nuevoTipoInteres;
+  var r2=tipoEfNuevo/100/12;
   var mesesNuevo=sub.nuevoPlazoAnios*12;
   var cuotaNueva=sub.nuevoImporte*r2*Math.pow(1+r2,mesesNuevo)/(Math.pow(1+r2,mesesNuevo)-1);
   var totalNuevo=cuotaNueva*mesesNuevo;

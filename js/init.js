@@ -828,7 +828,12 @@
       scenarios:typeof ECON_SCENARIOS!=='undefined'?ECON_SCENARIOS:null,
       evAlarms:typeof EV_ALARMS_SET!=='undefined'?EV_ALARMS_SET:null,
       bdayAlarms:typeof BDAY_ALARM_SET!=='undefined'?BDAY_ALARM_SET:null,
-      macroUrl:localStorage.getItem('excelia-alarm-url')||null};
+      macroUrl:localStorage.getItem('excelia-alarm-url')||null,
+      alarmMacroEnabled:localStorage.getItem('excelia-alarm-macro')||null,
+      alarmHour:localStorage.getItem('excelia-alarm-h')||null,
+      alarmMinute:localStorage.getItem('excelia-alarm-m')||null,
+      alarmDays:localStorage.getItem('excelia-alarm-days')||null,
+      theme:localStorage.getItem('excelia-theme-v1')||null};
     var a=document.createElement('a');
     a.href='data:application/json,'+encodeURIComponent(JSON.stringify(data,null,2));
     a.download='horas-excelia-backup.json';
@@ -877,6 +882,11 @@
         if(d.evAlarms&&typeof EV_ALARMS_SET!=='undefined'){EV_ALARMS_SET=d.evAlarms;if(typeof saveEvAlarms==='function')saveEvAlarms();}
         if(d.bdayAlarms&&typeof BDAY_ALARM_SET!=='undefined'){BDAY_ALARM_SET=d.bdayAlarms;localStorage.setItem('excelia-bday-alarm-set',JSON.stringify(BDAY_ALARM_SET));}
         if(d.macroUrl)localStorage.setItem('excelia-alarm-url',d.macroUrl);
+        if(d.alarmMacroEnabled)localStorage.setItem('excelia-alarm-macro',d.alarmMacroEnabled);
+        if(d.alarmHour)localStorage.setItem('excelia-alarm-h',d.alarmHour);
+        if(d.alarmMinute)localStorage.setItem('excelia-alarm-m',d.alarmMinute);
+        if(d.alarmDays)localStorage.setItem('excelia-alarm-days',d.alarmDays);
+        if(d.theme)localStorage.setItem('excelia-theme-v1',d.theme);
         save();render();
         updateBdayBtn();updateEventsBtn();
         showToast('Backup completo importado','success');

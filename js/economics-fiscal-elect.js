@@ -18,12 +18,9 @@ function _renderElectDetalle(){
     h+='</div></div>';
     h+='<div class="hip-g2">';
     if(e.modoPotencia==='doble'){
-      h+=_hipNum('electP1','Potencia punta (P1)',e.potenciaP1,'kW');
+      h+=_hipNum('electPotencia','Potencia contratada',e.potenciaP1||e.potenciaTotal||0,'kW');
       h+=_hipNum('electPrecioPotP1','Precio potencia P1',e.precioPotP1||0,'\u20ac/kW/d\u00eda');
-      h+=_hipNum('electP2','Potencia valle (P2)',e.potenciaP2,'kW');
       h+=_hipNum('electPrecioPotP2','Precio potencia P2',e.precioPotP2||0,'\u20ac/kW/d\u00eda');
-      var mediaPot=((e.potenciaP1||0)+(e.potenciaP2||0))/2;
-      h+=_hipNum('electMediaPot','Media potencias (auto)',parseFloat(mediaPot.toFixed(2)),'kW');
       var sumPrecios=((e.precioPotP1||0)+(e.precioPotP2||0)).toFixed(6);
       h+=_hipNum('electTotalPrecio','Suma precios (auto)',parseFloat(sumPrecios),'\u20ac/kW/d\u00eda');
     } else {
@@ -38,11 +35,9 @@ function _renderElectDetalle(){
     h+='<div class="hip-edit-actions"><button class="hip-save-btn" id="electSaveBtn">Guardar cambios</button><button class="hip-cancel-btn" id="electCancelBtn">Cancelar</button></div>';
   } else {
     if(e.modoPotencia==='doble'){
-      h+=_hipRO('Potencia P1 (punta)',e.potenciaP1?e.potenciaP1+' kW':'\u2014');
+      h+=_hipRO('Potencia contratada',(e.potenciaP1||e.potenciaTotal||0)+' kW');
       h+=_hipRO('Precio P1',(e.precioPotP1||0).toFixed(6)+' \u20ac/kW/d\u00eda');
-      h+=_hipRO('Potencia P2 (valle)',e.potenciaP2?e.potenciaP2+' kW':'\u2014');
       h+=_hipRO('Precio P2',(e.precioPotP2||0).toFixed(6)+' \u20ac/kW/d\u00eda');
-      h+=_hipRO('Media potencias',(((e.potenciaP1||0)+(e.potenciaP2||0))/2).toFixed(2)+' kW');
       h+=_hipRO('Suma precios potencia',((e.precioPotP1||0)+(e.precioPotP2||0)).toFixed(6)+' \u20ac/kW/d\u00eda');
     } else {
       h+=_hipRO('Potencia contratada',e.potenciaTotal?e.potenciaTotal+' kW':'\u2014');
@@ -194,9 +189,8 @@ function _bindElectDetalle(){
   if(saveBtn)saveBtn.addEventListener('click',function(){
     var e=DESPACHO.elect;
     if(e.modoPotencia==='doble'){
-      e.potenciaP1=parseFloat(document.getElementById('desp-electP1').value)||0;
-      e.potenciaP2=parseFloat(document.getElementById('desp-electP2').value)||0;
-      e.potenciaTotal=Math.round((e.potenciaP1+e.potenciaP2)*10)/10;
+      var pot=parseFloat(document.getElementById('desp-electPotencia').value)||0;
+      e.potenciaP1=pot;e.potenciaP2=pot;e.potenciaTotal=pot;
       e.precioPotP1=parseFloat(document.getElementById('desp-electPrecioPotP1').value)||0;
       e.precioPotP2=parseFloat(document.getElementById('desp-electPrecioPotP2').value)||0;
     } else {
@@ -219,14 +213,6 @@ function _bindElectDetalle(){
   var modoS=document.getElementById('electModoSimple');
   if(modoD)modoD.addEventListener('click',function(){DESPACHO.elect.modoPotencia='doble';reRenderFiscal();});
   if(modoS)modoS.addEventListener('click',function(){DESPACHO.elect.modoPotencia='simple';reRenderFiscal();});
-  /* Bidirectional P1+P2 ↔ Total (kW) */
-  var p1=document.getElementById('desp-electP1');
-  var p2=document.getElementById('desp-electP2');
-  if(p1&&p2){
-    var syncKw=function(){/* no total field in double mode now */};
-    p1.addEventListener('input',syncKw);
-    p2.addEventListener('input',syncKw);
-  }
   /* Bidirectional precio P1+P2 → Suma precios (auto) */
   var pp1=document.getElementById('desp-electPrecioPotP1');
   var pp2=document.getElementById('desp-electPrecioPotP2');
