@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v161 \u2014 fix \u20ac\u20ac, hip equivalente+tipo, elect 4 niveles, sobrecoste sin decimales';
+var APP_VERSION = 'v162 \u2014 renta neta corregida, categor\u00edas mes/a\u00f1o, quitar top3+detalle, presupuesto fix';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
