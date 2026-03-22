@@ -377,6 +377,27 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .est-group-casa .est-btn.active{border-color:#14b8a6;background:rgba(20,184,166,.1);color:#14b8a6}
 .est-btn{font-size:.66rem;padding:6px 4px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;text-align:center;-webkit-user-select:none;user-select:none}
 .est-btn.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
+/* Estudio — tariff comparison cards */
+.est-section-hdr{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.est-detail-btn{font-size:.66rem;padding:4px 10px;border-radius:6px;border:1px solid var(--accent);background:var(--accent-glow);color:var(--accent-bright);cursor:pointer;white-space:nowrap}
+.est-tariff-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px}
+.est-tariff-card.est-current{border-color:var(--accent);background:var(--accent-glow)}
+.est-card-hdr{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.est-card-name{flex:1;font-size:.74rem;font-weight:600;padding:4px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface2);color:var(--text)}
+.est-card-del{background:none;border:none;color:var(--c-red);font-size:.88rem;cursor:pointer;padding:2px 4px;line-height:1}
+.est-modo-row{display:flex;gap:6px;margin-bottom:6px}
+.est-tariff-row{display:flex;justify-content:space-between;align-items:center;font-size:.7rem;padding:2px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.est-tariff-row:last-child{border-bottom:none}
+.est-tariff-lbl{color:var(--text-dim)}
+.est-tariff-val{color:var(--text);font-family:var(--mono);font-size:.68rem}
+.est-fields-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px}
+.est-field{flex:1;min-width:80px}
+.est-field-wide{min-width:100%;flex-basis:100%}
+.est-field label{display:block;font-size:.62rem;color:var(--text-dim);margin-bottom:2px}
+.est-field-inp{display:flex;align-items:center;gap:2px}
+.est-field-inp .fiscal-despacho-input{flex:1;font-size:.7rem;padding:3px 4px}
+.est-field-inp .fiscal-despacho-unit{font-size:.58rem}
+.est-field .fiscal-despacho-input{font-size:.7rem;padding:3px 4px;width:100%}
 /* Análisis hipoteca — secciones organizadas */
 .ah-section{padding:10px 0;border-bottom:1px solid var(--border)}
 .ah-section:last-child{border-bottom:none}

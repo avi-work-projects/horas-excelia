@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v171 \u2014 fix guardar elect/seguros: inicializar DESPACHO.elect/.segurosNormales';
+var APP_VERSION = 'v172 \u2014 estudio: tarjetas gas/elect con campos completos, vinculaciones hip, bot\u00f3n Comparar';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
