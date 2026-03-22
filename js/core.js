@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v169 \u2014 restaurar detalle gastos e inversiones (sin top3)';
+var APP_VERSION = 'v170 \u2014 seguros bruto vs equivalente (vs ref), ahorro con sobrecoste real';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
