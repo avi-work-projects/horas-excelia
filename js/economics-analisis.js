@@ -332,7 +332,7 @@ function _renderAnalisisHipoteca(){
   h+='<div class="ah-section">';
   h+='<div class="ah-section-title">Situaci\u00f3n actual'+(act.banco?' \u2014 '+escHtml(act.banco):'')+'</div>';
   h+='<div class="ah-cuota-hero"><div class="ah-cuota-val">'+fcPlain(cuotaAct)+'</div>';
-  h+='<div class="ah-cuota-sub">Cuota mensual \u00b7 '+tipoEfAct.toFixed(2)+'%'+(tipoEfAct!==act.tipo?' (nominal '+act.tipo.toFixed(2)+'%)':' fijo')+' \u00b7 '+act.plazo+' a\u00f1os</div></div>';
+  h+='<div class="ah-cuota-sub">Cuota mensual \u00b7 '+tipoEfAct.toFixed(2)+'% bonificado'+(tipoEfAct!==act.tipo?' (nominal '+act.tipo.toFixed(2)+'%)':'')+' \u00b7 '+act.plazo+' a\u00f1os</div></div>';
 
   /* Stats: saldo vivo, intereses, tiempo */
   var hoy=new Date();
@@ -403,11 +403,27 @@ function _renderAnalisisHipoteca(){
   var totalVinc=Math.round(vincAnual*act.plazo);
   var totalSobrecoste=Math.round(sobrecosteAnual*act.plazo);
   h+='<div class="ah-total-row">'+_ahRow('Capital prestado',_fmtMiles(act.importe)+' \u20ac')+'</div>';
-  h+='<div class="ah-total-row">'+_ahRow('Total intereses',_fmtMiles(totalInt)+' \u20ac','var(--c-orange)')+'</div>';
+  h+='<div class="ah-total-row">'+_ahRow('Total intereses ('+tipoEfAct.toFixed(2)+'% bonif.)',_fmtMiles(totalInt)+' \u20ac','var(--c-orange)')+'</div>';
   if(totalCambio>0)h+='<div class="ah-total-row">'+_ahRow('Costes subrogaci\u00f3n',_fmtMiles(totalCambio)+' \u20ac','var(--c-orange)')+'</div>';
-  if(totalVinc>0)h+='<div class="ah-total-row">'+_ahRow('Seguros vinculados (~'+act.plazo+'a)',_fmtMiles(totalVinc)+' \u20ac','var(--c-orange)')+'</div>';
-  if(totalSobrecoste>0)h+='<div class="ah-total-row">'+_ahRow('Sobrecoste seguros (vs ref.)',_fmtMiles(totalSobrecoste)+' \u20ac','var(--c-red)')+'</div>';
+  if(totalSobrecoste>0)h+='<div class="ah-total-row">'+_ahRow('Sobrecoste seguros (vs ref. ~'+act.plazo+'a)',_fmtMiles(totalSobrecoste)+' \u20ac','var(--c-red)')+'</div>';
   h+='<div class="ah-total-row highlight">'+_ahRow('TOTAL',_fmtMiles(totalCuotas+totalCambio+totalSobrecoste)+' \u20ac')+'</div>';
+  /* Hipoteca equivalente (con sobrecoste incluido) */
+  if(sobrecosteAnual>0){
+    var _sobrMesAn=sobrecosteAnual/12;
+    var _hipEqAn=Math.round((cuotaAct+_sobrMesAn)*100)/100;
+    var _eqTipoAn=tipoEfAct;
+    if(act.importe>0&&nAct>0){
+      for(var _it2=0;_it2<50;_it2++){
+        var _tr2=_eqTipoAn/100/12;
+        var _tc2=_tr2>0?act.importe*_tr2*Math.pow(1+_tr2,nAct)/(Math.pow(1+_tr2,nAct)-1):act.importe/nAct;
+        if(Math.abs(_tc2-_hipEqAn)<0.01)break;
+        _eqTipoAn+=(_hipEqAn-_tc2)*0.001;
+      }
+    }
+    h+='<div style="font-size:.7rem;margin-top:6px;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)">';
+    h+='<b style="color:var(--accent-bright)">Hipoteca equivalente: '+fcPlain(_hipEqAn)+'/mes</b>';
+    h+='<div style="font-size:.6rem;color:var(--text-dim);margin-top:2px">Tipo equivalente: <b>'+_eqTipoAn.toFixed(2)+'%</b> (cuota '+fcPlain(cuotaAct)+' + sobrecoste '+Math.round(_sobrMesAn)+'\u20ac/mes)</div></div>';
+  }
   h+='</div>';
 
   return h;
@@ -552,8 +568,8 @@ function _renderSubrogacionAnalysis(comp,sub){
   h+='<div style="padding:8px 0;font-size:.72rem;color:var(--text-muted)">';
   h+='<div>Capital pendiente al subrogar: <b>'+fcPlain(balanceAtSub)+'</b></div>';
   h+='<div>Costes del cambio: <b style="color:var(--c-orange)">'+fcPlain(costesCambio)+'</b></div>';
-  h+='<div style="margin-top:4px">Cuota original ('+comp.tipoInteres.toFixed(2)+'%, '+mesesRestantesOrig+' meses): <b>'+fcPlain(Math.round(cuotaOrig*100)/100)+'</b>/mes</div>';
-  h+='<div>Cuota nueva ('+sub.nuevoTipoInteres.toFixed(2)+'%, '+mesesNuevo+' meses): <b>'+fcPlain(Math.round(cuotaNueva*100)/100)+'</b>/mes</div>';
+  h+='<div style="margin-top:4px">Cuota original ('+tipoEfOrig.toFixed(2)+'% bonif.'+(tipoEfOrig!==comp.tipoInteres?' \u2190 '+comp.tipoInteres.toFixed(2)+'% nom.':'')+', '+mesesRestantesOrig+' meses): <b>'+fcPlain(Math.round(cuotaOrig*100)/100)+'</b>/mes</div>';
+  h+='<div>Cuota nueva ('+tipoEfNuevo.toFixed(2)+'% bonif.'+(tipoEfNuevo!==sub.nuevoTipoInteres?' \u2190 '+sub.nuevoTipoInteres.toFixed(2)+'% nom.':'')+', '+mesesNuevo+' meses): <b>'+fcPlain(Math.round(cuotaNueva*100)/100)+'</b>/mes</div>';
   h+='<div style="margin-top:4px">Intereses originales restantes: <b style="color:var(--c-orange)">'+fcPlain(Math.round(interesesOrig))+'</b></div>';
   h+='<div>Intereses nuevos: <b style="color:var(--c-orange)">'+fcPlain(Math.round(interesesNuevo))+'</b></div>';
   h+='<div style="margin-top:4px;font-size:.78rem">Ahorro total: <b style="color:'+(ahorroTotal>=0?'var(--c-green)':'var(--c-red)')+'">'+fcPlain(Math.round(ahorroTotal))+'</b></div>';
