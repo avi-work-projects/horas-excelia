@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v154 \u2014 subpesta\u00f1as flush nivel 4, fix padding con :has()';
+var APP_VERSION = 'v155 \u2014 subpesta\u00f1as flush con raya morada, m\u00e1s altas';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
