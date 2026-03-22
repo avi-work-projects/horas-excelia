@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v167 \u2014 hip equivalente en cada tarjeta pr\u00e9stamo/subrogaci\u00f3n';
+var APP_VERSION = 'v168 \u2014 an\u00e1lisis hip: tipos bonificados expl\u00edcitos, sobrecoste vs ref, hip equivalente';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
