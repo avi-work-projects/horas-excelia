@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v176 \u2014 eventos: t\u00edtulos centrados en todas las pesta\u00f1as, bombilla sin solapamiento';
+var APP_VERSION = 'v177 \u2014 eventos: chip filtro VIP en vistas anual y 4 meses';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
