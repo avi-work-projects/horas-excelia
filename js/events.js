@@ -989,7 +989,7 @@ function renderEvContent(){
   h+='</div>';
   h+='</div>';
   // Header a nivel 3 (with-tabs → top:82px)
-  var _hdrCenterCls=(EV_VIEW==='annual'||EV_VIEW==='cal')?' sy-header-center':'';
+  var _hdrCenterCls=' sy-header-center';
   h+='<div class="sy-header with-tabs'+_hdrCenterCls+'">';
   h+='<button class="sy-back" id="evBack">&#8592;</button>';
   if(EV_VIEW==='upcoming'){
@@ -998,7 +998,7 @@ function renderEvContent(){
     h+='<div class="sy-year-nav"><div class="sy-year">Eventos</div></div>';
   } else if(EV_VIEW==='puentes'||EV_VIEW==='time-off'){
     h+='<div class="sy-year-nav"><button class="sy-nav" id="evPrev">&#9664;</button><div class="sy-year">'+EV_YEAR+'</div><button class="sy-nav" id="evNext">&#9654;</button></div>';
-    h+='<button class="sy-pdf" id="evSyPdf">PDF</button>';
+    h+='<div class="sy-hdr-right"><button class="sy-pdf" id="evSyPdf">PDF</button></div>';
   } else if(EV_VIEW==='quad'){
     var _qMNS=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
     var _qm3=(EV_QUAD_MONTH+3)%12,_qy3=EV_QUAD_YEAR+Math.floor((EV_QUAD_MONTH+3)/12);
@@ -1011,15 +1011,19 @@ function renderEvContent(){
     h+='<button class="sy-nav sy-nav-sm" id="evNext">&#9654;</button>';
     h+='<button class="sy-nav sy-nav-pill" id="evQuadNext2">\u00bb</button>';
     h+='</div>';
+    h+='<div class="sy-hdr-right">';
     h+='<button class="ev-bright-btn ev-bright-sm'+(EV_BRIGHT_PAST?' on':'')+'" id="evBright">\uD83D\uDCA1</button>';
     h+='<button class="today-btn" id="evToday" style="font-size:.65rem;padding:4px 8px">Hoy</button>';
+    h+='</div>';
   } else {
     h+='<div class="sy-year-nav"><button class="sy-nav" id="evPrev">&#9664;</button>';
     if(EV_VIEW==='annual')h+='<div class="sy-year">'+EV_YEAR+'</div>';
     else h+='<div class="sy-year sy-year-2line">'+MN[EV_MONTH]+'<span class="sy-year-sub">'+EV_YEAR+'</span></div>';
     h+='<button class="sy-nav" id="evNext">&#9654;</button></div>';
+    h+='<div class="sy-hdr-right">';
     h+='<button class="ev-bright-btn ev-bright-sm'+(EV_BRIGHT_PAST?' on':'')+'" id="evBright">\uD83D\uDCA1</button>';
     h+='<button class="today-btn" id="evToday" style="font-size:.65rem;padding:4px 10px">Hoy</button>';
+    h+='</div>';
   }
   h+='</div>';
   h+='<div class="sy-body'+(EV_BRIGHT_PAST?' ev-bright-past':'')+'">';
