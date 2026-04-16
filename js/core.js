@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v178 \u2014 fiscal: fix base imponible multi-tarifa, plan pens\u00f3n, seg.baja, amortizaciones';
+var APP_VERSION = 'v179 \u2014 fiscal: fix loadGastosYear a\u00f1os anteriores, sync gastos todos los tabs';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
