@@ -459,6 +459,7 @@ function renderEconResumen(){
 function renderEconContent(){
   /* Load per-year econ config before rendering any tab */
   if(typeof loadEconYear==='function')loadEconYear(ECON_YEAR);
+  if(typeof loadGastosYear==='function')loadGastosYear(ECON_YEAR);
   var h=renderNavBar('econ');
   h+='<div class="econ-hdr-sub">';
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='resumen'?' active':'')+'" id="ecTabResumen">Resumen<br>Econ\u00f3mico</button>';

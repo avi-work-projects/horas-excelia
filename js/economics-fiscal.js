@@ -176,13 +176,12 @@ function loadGastosYear(year){
     var k=_yearKey(GASTOS_SK,year);
     var r=localStorage.getItem(k);
     if(r){_loadGastosFromRaw(r);}
-    else if(year===CY){
-      /* Migración: fallback a la key global */
+    else{
+      /* Fallback: clave global (migración o sin datos específicos del año) */
       var g=localStorage.getItem(GASTOS_SK);
       if(g){_loadGastosFromRaw(g);}
-      else{GASTOS_ITEMS=JSON.parse(JSON.stringify(DEFAULT_GASTOS));}
+      else{GASTOS_ITEMS=JSON.parse(JSON.stringify(DEFAULT_GASTOS));GASTOS_DIFICIL_PCT=5;}
     }
-    else{GASTOS_ITEMS=JSON.parse(JSON.stringify(DEFAULT_GASTOS));GASTOS_DIFICIL_PCT=5;}
   }catch(e){GASTOS_ITEMS=JSON.parse(JSON.stringify(DEFAULT_GASTOS));}
 }
 function loadGastos(){loadGastosYear(FISCAL_YEAR);}
