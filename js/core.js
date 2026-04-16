@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v177 \u2014 eventos: chip filtro VIP en vistas anual y 4 meses';
+var APP_VERSION = 'v178 \u2014 fiscal: fix base imponible multi-tarifa, plan pens\u00f3n, seg.baja, amortizaciones';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

@@ -45,7 +45,8 @@ function computeDisponible(year){
 function renderEconGastos(){
   /* Ensure gastos are loaded for the current ECON_YEAR */
   if(typeof loadGastosYear==='function')loadGastosYear(ECON_YEAR);
-  var e=computeEconEx(ECON_YEAR);
+  var _mrOpts2=typeof _getMultiRateOpts==='function'?_getMultiRateOpts():{};
+  var e=computeEconEx(ECON_YEAR,_mrOpts2);
   var dr=typeof computeDeclResult==='function'?computeDeclResult(e.totBase,e.totIrpf):{gdPct:5,gdAmount:0,baseAfterGD:e.totBase,totalDesgrav:0,baseDecl:e.totBase,decl:{totalTax:e.totIrpf,effectivePct:0,breakdown:[]},declDiff:0};
   var h='';
 

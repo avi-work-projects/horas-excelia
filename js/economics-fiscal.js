@@ -269,6 +269,10 @@ var DESGRAV_DEFAULT=[
    note:'Gasto deducible en base imponible: hasta 500\u20ac/a\u00f1o por persona (1.500\u20ac si discapacidad). Cubre titular, c\u00f3nyuge e hijos <25 dependientes.'},
   {id:'gastos_prof',label:'Compras / gastos profesionales',gastoLink:'_compras_total',pct:100,amount:0,limit:null,enabled:true,type:'base',
    note:'100% deducibles como inversi\u00f3n en la actividad. Introduce siempre importes sin IVA.'},
+  {id:'seg_baja_deduc',label:'Seguro baja laboral / IT',gastoLink:'seg_baja',pct:100,amount:0,limit:null,enabled:true,type:'base',
+   note:'100% deducible como gasto de la actividad econ\u00f3mica. Introduce el importe anual en Gastos \u2192 Seguro baja laboral.'},
+  {id:'amortizaciones',label:'Amortizaci\u00f3n de activos',gastoLink:null,pct:100,amount:0,limit:null,enabled:true,type:'base',
+   note:'M\u00f3viles/port\u00e1tiles de trabajo: 25%/a\u00f1o. Calcula el total deducible del a\u00f1o e int\u00f3ducelo aqu\u00ed directamente (ej: si coste 872\u20ac al 25% = 218\u20ac).'},
   {id:'donaciones',label:'Donaciones caritativas',gastoLink:'donaciones',pct:100,amount:0,limit:null,enabled:true,type:'quota',notaPct:80,
    note:'Deducci\u00f3n en cuota: 80% primeros 250\u20ac, 40% del exceso (Ley 49/2002). Simplificado al 80%.'},
 ];
@@ -315,6 +319,8 @@ function desgravAnual(item){
     var ga=item.gastoLink==='_compras_total'?comprasTotal():gastoAnual(item.gastoLink);
     var p=(item.pct!=null?item.pct:100)/100;
     amt=Math.round(ga*p*100)/100;
+    /* Fallback: si el gasto vinculado está a 0 pero item tiene amount propio, usarlo */
+    if(!amt&&item.amount)amt=item.amount;
   }else{
     amt=item.amount||0;
   }
