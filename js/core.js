@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v183 \u2014 fix: texto barras multi-d\u00eda, borde estrella VIP';
+var APP_VERSION = 'v184 \u2014 agenda: chip completo por d\u00eda, sin hueco en cabecera';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
