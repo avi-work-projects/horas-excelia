@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v181 \u2014 eventos: sin texto en barras, vista Agenda Semanal';
+var APP_VERSION = 'v182 \u2014 agenda: barra lateral por tramos, sep mes sin hueco';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
