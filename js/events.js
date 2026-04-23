@@ -974,6 +974,8 @@ function renderEvWeek(){
   var today=new Date();today.setHours(0,0,0,0);
   var todayStr=evDk(today);
   var _wn=['D','L','M','X','J','V','S'];
+  // Helper: hex color → rgba (works correctly on both light and dark themes)
+  function hexA(hex,a){var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return 'rgba('+r+','+g+','+b+','+a+')';}
   // Pass 1: pre-compute dates each multi-day event appears in this 6-month window
   var evDaySet={};
   for(var i0=0;i0<6;i0++){
@@ -1001,25 +1003,34 @@ function renderEvWeek(){
       var isPast=day<today;
       var dow=day.getDay();
       var isWknd=dow===0||dow===6;
-      var rowCls='ev-wk-day'+(isToday?' ev-wk-today':'')+(isPast?' ev-wk-past':'')+(isWknd?' ev-wk-wknd':'');
-      h+='<div class="'+rowCls+'"'+(isToday?' id="ev-wk-today-row"':'')+'>';
-      h+='<div class="ev-wk-date"><span class="ev-wk-dow">'+_wn[dow]+'</span><span class="ev-wk-num">'+d+'</span></div>';
-      h+='<div class="ev-wk-events">';
+      // Separate continuation events from starting/single-day events
+      var contEvs=[],startEvs=[];
       evs.forEach(function(ev){
-        var _dc=getEvDisplayColor(ev);
         var isMulti=ev.end&&ev.end!==ev.start;
         if(isMulti){
-          // Check if previous day also has this event (continuation)
           var prevDt=new Date(ds+'T00:00:00');prevDt.setDate(prevDt.getDate()-1);
-          var isCont=evDaySet[ev.id]&&evDaySet[ev.id][evDk(prevDt)];
-          if(isCont){
-            h+='<div class="ev-wk-event ev-wk-ev-cont" data-id="'+ev.id+'" style="border-left:3px solid '+_dc+';background:'+fakeTrans(_dc,0.15)+'"></div>';
-            return;
-          }
-        }
+          if(evDaySet[ev.id]&&evDaySet[ev.id][evDk(prevDt)])contEvs.push(ev);
+          else startEvs.push(ev);
+        } else startEvs.push(ev);
+      });
+      // Row background: tint from first continuation event
+      var rowStyle='';
+      if(contEvs.length&&!isToday){var _cb=getEvDisplayColor(contEvs[0]);rowStyle=' style="background:'+hexA(_cb,0.09)+'"';}
+      var rowCls='ev-wk-day'+(isToday?' ev-wk-today':'')+(isPast?' ev-wk-past':'')+(isWknd?' ev-wk-wknd':'');
+      h+='<div class="'+rowCls+'"'+(isToday?' id="ev-wk-today-row"':'')+rowStyle+'>';
+      h+='<div class="ev-wk-date"><span class="ev-wk-dow">'+_wn[dow]+'</span><span class="ev-wk-num">'+d+'</span></div>';
+      h+='<div class="ev-wk-events">';
+      // Continuation strips (thin, no text, one per event)
+      contEvs.forEach(function(ev){
+        var _dc=getEvDisplayColor(ev);
+        h+='<div class="ev-wk-ev-cont" data-id="'+ev.id+'" style="border-left:3px solid '+_dc+';background:'+hexA(_dc,0.18)+'"></div>';
+      });
+      // Starting / single-day event chips
+      startEvs.forEach(function(ev){
+        var _dc=getEvDisplayColor(ev);
         var _isVip=ev.id.indexOf('ev-bday-vip-')===0;
         var _t=_isVip?escHtml(ev.title.replace(/^\u2b50\s*/,'').replace(/^Cumple\s+/,'')):escHtml(ev.title);
-        h+='<div class="ev-wk-event" data-id="'+ev.id+'" style="border-left:3px solid '+_dc+';background:'+fakeTrans(_dc,0.2)+'">';
+        h+='<div class="ev-wk-event" data-id="'+ev.id+'" style="border-left:3px solid '+_dc+';background:'+hexA(_dc,0.15)+'">';
         h+='<span class="ev-wk-event-title" style="color:'+_dc+'">'+_t+'</span>';
         h+='</div>';
       });
