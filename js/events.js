@@ -504,29 +504,18 @@ function renderEvUpcoming(){
   var weekLabels=['Esta semana','Pr\u00f3xima semana','En dos semanas'];
   var _wn=['Dom','Lun','Mar','Mi\u00e9','Jue','Vie','S\u00e1b'];
   var fd2=function(d){return _wn[d.getDay()]+' '+String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');};
-  function evPastLbl(diff){
-    if(diff===-1)return 'Ayer';
-    if(diff===-2)return 'Anteayer';
-    return 'Hace '+Math.abs(diff)+'\u202fd';
-  }
-  function renderEvItem(ev,item,diffToday,isPast){
+  function renderEvItem(ev,item,diffToday){
     var type=getEvType(ev);
     var isToday=diffToday===0;
-    var lbl,lblCls;
-    if(isPast){
-      lbl=evPastLbl(diffToday);
-      lblCls='ev-upcoming-lbl past-lbl';
-    } else {
-      lbl=isToday?'Hoy':diffToday===1?'Ma\u00f1ana':diffToday<0?'En curso':('En '+diffToday+'d');
-      lblCls='ev-upcoming-lbl'+(isToday?' today-lbl':diffToday===1?' near':diffToday<0?' ongoing':'');
-    }
+    var lbl=isToday?'Hoy':diffToday===1?'Ma\u00f1ana':diffToday<0?'En curso':('En '+diffToday+'d');
+    var lblCls='ev-upcoming-lbl'+(isToday?' today-lbl':diffToday===1?' near':diffToday<0?' ongoing':'');
     var _isVip=ev.id.indexOf('ev-bday-vip-')===0;
     var title=_isVip?('<img src="./VIP.png" class="bday-vip-img" alt="VIP" style="height:1.2em;vertical-align:middle;margin-right:3px">'+escHtml(ev.title.replace(/^\u2b50\s*/,'')))
       :escHtml(ev.title);
     var _bellSet=isEvAlarmSet(ev.id);
     var metaDate=fd2(item.firstDate);
     if(ev.end&&ev.end!==ev.start){var _eD=new Date(ev.end+'T00:00:00');metaDate+=' <span style="font-size:.62rem;opacity:.7">&#8212; '+fd2(_eD)+'</span>';}
-    var s='<div class="ev-upcoming-item'+(isPast?' ev-upcoming-past':isToday?' ev-upcoming-today':'')+'" data-id="'+ev.id+'" data-first="'+evIsoDate(item.firstDate)+'">';
+    var s='<div class="ev-upcoming-item'+(isToday?' ev-upcoming-today':'')+'" data-id="'+ev.id+'" data-first="'+evIsoDate(item.firstDate)+'">';
     s+='<div class="ev-upcoming-color" style="background:'+getEvDisplayColor(ev)+'"></div>';
     s+='<div class="ev-upcoming-info">';
     s+='<div class="ev-upcoming-title">'+title+'</div>';
@@ -534,21 +523,11 @@ function renderEvUpcoming(){
     if(ev.note&&ev.note.trim()&&!_isVip)s+='<div class="ev-upcoming-note">'+escHtml(ev.note.trim())+'</div>';
     s+='</div>';
     s+='<div class="ev-upcoming-right">';
-    if(!isPast)s+='<span class="ev-upcoming-bell'+(_bellSet?' set':'')+'">&#128276;</span>';
+    s+='<span class="ev-upcoming-bell'+(_bellSet?' set':'')+'">&#128276;</span>';
     s+='<div class="'+lblCls+'">'+lbl+'</div>';
     s+='</div>';
     s+='</div>';
     return s;
-  }
-  /* ── Sección pasados: últimos 4 días ── */
-  var pastMap={};
-  for(var pd=1;pd<=4;pd++){
-    var pday=new Date(today.getTime()-pd*86400000);
-    var pds=evDk(pday);
-    getEventsOn(pds).forEach(function(ev){
-      if(ev.id.indexOf('ev-bday-vip-')===0)return;
-      if(!pastMap[ev.id])pastMap[ev.id]={ev:ev,firstDate:new Date(pday),diff:-pd};
-    });
   }
   /* ── Semanas hacia adelante ── */
   var weeks=[{},{},{}];
@@ -563,20 +542,15 @@ function renderEvUpcoming(){
       });
     }
   }
-  var anyEvents=weeks.some(function(wk){return Object.keys(wk).length>0;});
-  var h='';
-  /* ── Render pasados ── */
-  var pids=Object.keys(pastMap);
-  if(pids.length){
-    pids.sort(function(a,b){return pastMap[b].firstDate-pastMap[a].firstDate;});
-    h+='<div class="sy-month-sep ev-sep-past">Pasados</div>';
-    h+='<div class="ev-upcoming-section ev-upcoming-section-past">';
-    pids.forEach(function(id){
-      var item=pastMap[id];
-      h+=renderEvItem(item.ev,item,item.diff,true);
+  var todayStr=evDk(today);
+  var anyEvents=weeks.some(function(wk){
+    return Object.keys(wk).some(function(id){
+      var item=wk[id];var ev=item.ev;
+      var evEndStr=ev.end&&ev.end!==ev.start?ev.end:ev.start;
+      return evEndStr>=todayStr;
     });
-    h+='</div>';
-  }
+  });
+  var h='';
   if(!anyEvents){
     var fallbackMap=null,fallbackLabel=null;
     for(var fw=3;fw<53;fw++){
@@ -598,10 +572,7 @@ function renderEvUpcoming(){
         break;
       }
     }
-    if(!fallbackMap){
-      if(!pids.length)return '<div class="sy-note">No hay eventos programados.</div>';
-      return h;
-    }
+    if(!fallbackMap)return '<div class="sy-note">No hay eventos programados.</div>';
     h+='<div class="sy-note" style="margin-bottom:8px">Sin eventos en las pr\u00f3ximas 3 semanas. Primera semana con eventos:</div>';
     var fids=Object.keys(fallbackMap);
     fids.sort(function(a,b){return fallbackMap[a].firstDate-fallbackMap[b].firstDate;});
@@ -610,7 +581,7 @@ function renderEvUpcoming(){
     fids.forEach(function(id){
       var item=fallbackMap[id];
       var diffToday=Math.round((item.firstDate-today)/86400000);
-      h+=renderEvItem(item.ev,item,diffToday,false);
+      h+=renderEvItem(item.ev,item,diffToday);
     });
     h+='</div>';
     return h;
@@ -619,14 +590,20 @@ function renderEvUpcoming(){
     var ids=Object.keys(wkMap);
     if(!ids.length)return;
     ids.sort(function(a,b){return wkMap[a].firstDate-wkMap[b].firstDate;});
-    h+='<div class="sy-month-sep">'+weekLabels[wi]+'</div>';
-    h+='<div class="ev-upcoming-section">';
+    var secH='';
     ids.forEach(function(id){
-      var item=wkMap[id];
+      var item=wkMap[id];var ev=item.ev;
       var diffToday=Math.round((item.firstDate-today)/86400000);
-      h+=renderEvItem(item.ev,item,diffToday,false);
+      // Skip past single-day events (multi-day events spanning today show as "En curso")
+      if(diffToday<0){
+        var evEndStr=ev.end&&ev.end!==ev.start?ev.end:ev.start;
+        if(evEndStr<todayStr)return;
+      }
+      secH+=renderEvItem(ev,item,diffToday);
     });
-    h+='</div>';
+    if(!secH)return;
+    h+='<div class="sy-month-sep">'+weekLabels[wi]+'</div>';
+    h+='<div class="ev-upcoming-section">'+secH+'</div>';
   });
   return h;
 }
