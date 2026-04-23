@@ -970,7 +970,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bday-upcoming-item{display:flex;align-items:center;gap:12px;padding:11px 14px;min-height:68px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .12s}
 .bday-upcoming-item:active{background:var(--surface3)}
 .bday-upcoming-item.bday-today-item{border-color:var(--sent-border);background:rgba(90,224,136,.07)}
-.bday-upcoming-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.bday-upcoming-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;-webkit-text-stroke:.5px rgba(0,0,0,.6)}
 .bday-upcoming-info{flex:1;min-width:0}
 .bday-upcoming-name{font-size:.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bday-upcoming-date{font-size:.7rem;color:var(--text-muted);margin-top:2px}
@@ -1082,7 +1082,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-annual-x::before,.ev-annual-x::after{content:'';position:absolute;top:50%;left:50%;background:currentColor;border-radius:1px}
 .ev-annual-x::before{width:5px;height:1.5px;transform:translate(-50%,-50%) rotate(45deg);box-shadow:0 0 0 .5px #000}
 .ev-annual-x::after{width:5px;height:1.5px;transform:translate(-50%,-50%) rotate(-45deg);box-shadow:0 0 0 .5px #000}
-.ev-annual-vip-star{font-size:.26rem;line-height:1;flex-shrink:0;filter:drop-shadow(0 0 1px rgba(251,191,36,.9))}
+.ev-annual-vip-star{font-size:.26rem;line-height:1;flex-shrink:0;filter:drop-shadow(0 0 1px rgba(251,191,36,.9));-webkit-text-stroke:.4px rgba(0,0,0,.7)}
 /* Barras multi-día en calendario anual/4meses: 55% celda centradas, z-index:2 (1-mes usa ev-multi-bar al 65%) */
 .ev-annual-bars-row{position:absolute;top:17.5%;left:0;right:0;height:55%;z-index:2;pointer-events:none;display:grid;grid-template-columns:repeat(7,1fr);gap:1px;grid-auto-rows:1fr}
 .ev-annual-mbar{display:flex;align-items:center;border-radius:6px;overflow:hidden;white-space:nowrap;color:#fff}
