@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v180 \u2014 eventos: secci\u00f3n pasados (4 d\u00edas) en vista pr\u00f3ximos';
+var APP_VERSION = 'v181 \u2014 eventos: sin texto en barras, vista Agenda Semanal';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
