@@ -1003,7 +1003,7 @@ function renderEvWeek(){
       var isPast=day<today;
       var dow=day.getDay();
       var isWknd=dow===0||dow===6;
-      // Separate continuation events from starting/single-day events
+      // Classify events: continuation (multi-day, didn't start today) vs starting/single
       var contEvs=[],startEvs=[];
       evs.forEach(function(ev){
         var isMulti=ev.end&&ev.end!==ev.start;
@@ -1013,28 +1013,46 @@ function renderEvWeek(){
           else startEvs.push(ev);
         } else startEvs.push(ev);
       });
-      // Row background: tint from first continuation event
-      var rowStyle='';
-      if(contEvs.length&&!isToday){var _cb=getEvDisplayColor(contEvs[0]);rowStyle=' style="background:'+hexA(_cb,0.09)+'"';}
+      var isContOnly=contEvs.length>0&&startEvs.length===0;
+      // Check if any starting event spans into tomorrow (need seamless border)
+      var nextDt2=new Date(ds+'T00:00:00');nextDt2.setDate(nextDt2.getDate()+1);
+      var nextDs2=evDk(nextDt2);
+      var seamlessDown=isContOnly||startEvs.some(function(ev){
+        return ev.end&&ev.end!==ev.start&&evDaySet[ev.id]&&evDaySet[ev.id][nextDs2];
+      });
+      var seamlessUp=contEvs.length>0;
       var rowCls='ev-wk-day'+(isToday?' ev-wk-today':'')+(isPast?' ev-wk-past':'')+(isWknd?' ev-wk-wknd':'');
-      h+='<div class="'+rowCls+'"'+(isToday?' id="ev-wk-today-row"':'')+rowStyle+'>';
+      h+='<div class="'+rowCls+'"'+(isToday?' id="ev-wk-today-row"':'')+'>';
       h+='<div class="ev-wk-date"><span class="ev-wk-dow">'+_wn[dow]+'</span><span class="ev-wk-num">'+d+'</span></div>';
-      h+='<div class="ev-wk-events">';
-      // Continuation strips (thin, no text, one per event)
-      contEvs.forEach(function(ev){
-        var _dc=getEvDisplayColor(ev);
-        h+='<div class="ev-wk-ev-cont" data-id="'+ev.id+'" style="border-left:3px solid '+_dc+';background:'+hexA(_dc,0.18)+'"></div>';
-      });
-      // Starting / single-day event chips
-      startEvs.forEach(function(ev){
-        var _dc=getEvDisplayColor(ev);
-        var _isVip=ev.id.indexOf('ev-bday-vip-')===0;
-        var _t=_isVip?escHtml(ev.title.replace(/^\u2b50\s*/,'').replace(/^Cumple\s+/,'')):escHtml(ev.title);
-        h+='<div class="ev-wk-event" data-id="'+ev.id+'" style="border-left:3px solid '+_dc+';background:'+hexA(_dc,0.15)+'">';
-        h+='<span class="ev-wk-event-title" style="color:'+_dc+'">'+_t+'</span>';
+      if(isContOnly){
+        // Continuation-only day: single colored block per spanning event, box-shadow bridges the border gaps
+        h+='<div class="ev-wk-events ev-wk-events-cont">';
+        contEvs.forEach(function(ev){
+          var _dc=getEvDisplayColor(ev);
+          var _bg=hexA(_dc,0.18);
+          var _sh='0 1px 0 '+_bg+(seamlessDown?'':'')+',0 -1px 0 '+_bg;
+          h+='<div class="ev-wk-ev-cont" data-id="'+ev.id+'" style="background:'+_bg+';border-left:3px solid '+_dc+';box-shadow:'+_sh+'"></div>';
+        });
         h+='</div>';
-      });
-      h+='</div>';
+      } else {
+        h+='<div class="ev-wk-events">';
+        // Starting/single events: full chip with title
+        startEvs.forEach(function(ev){
+          var _dc=getEvDisplayColor(ev);
+          var _isVip=ev.id.indexOf('ev-bday-vip-')===0;
+          var _t=_isVip?escHtml(ev.title.replace(/^\u2b50\s*/,'').replace(/^Cumple\s+/,'')):escHtml(ev.title);
+          h+='<div class="ev-wk-event" data-id="'+ev.id+'" style="border-left:3px solid '+_dc+';background:'+hexA(_dc,0.15)+'">';
+          h+='<span class="ev-wk-event-title" style="color:'+_dc+'">'+_t+'</span>';
+          h+='</div>';
+        });
+        // Mixed day: thin indicators for simultaneously-continuing events
+        contEvs.forEach(function(ev){
+          var _dc=getEvDisplayColor(ev);
+          var _bg=hexA(_dc,0.18);
+          h+='<div class="ev-wk-ev-cont" data-id="'+ev.id+'" style="background:'+_bg+';border-left:3px solid '+_dc+';box-shadow:0 1px 0 '+_bg+',0 -1px 0 '+_bg+'"></div>';
+        });
+        h+='</div>';
+      }
       h+='</div>';
     }
   }
@@ -1096,7 +1114,6 @@ function renderEvContent(){
     h+='<button class="sy-nav sy-nav-pill" id="evQuadNext2">\u00bb</button>';
     h+='</div>';
     h+='<div class="sy-hdr-right">';
-    h+='<button class="ev-bright-btn ev-bright-sm'+(EV_BRIGHT_PAST?' on':'')+'" id="evBright">\uD83D\uDCA1</button>';
     h+='<button class="today-btn" id="evToday" style="font-size:.65rem;padding:4px 8px">Hoy</button>';
     h+='</div>';
   } else {
@@ -1105,7 +1122,7 @@ function renderEvContent(){
     else h+='<div class="sy-year sy-year-2line">'+MN[EV_MONTH]+'<span class="sy-year-sub">'+EV_YEAR+'</span></div>';
     h+='<button class="sy-nav" id="evNext">&#9654;</button></div>';
     h+='<div class="sy-hdr-right">';
-    h+='<button class="ev-bright-btn ev-bright-sm'+(EV_BRIGHT_PAST?' on':'')+'" id="evBright">\uD83D\uDCA1</button>';
+    if(EV_VIEW!=='annual')h+='<button class="ev-bright-btn ev-bright-sm'+(EV_BRIGHT_PAST?' on':'')+'" id="evBright">\uD83D\uDCA1</button>';
     h+='<button class="today-btn" id="evToday" style="font-size:.65rem;padding:4px 10px">Hoy</button>';
     h+='</div>';
   }
@@ -1136,6 +1153,7 @@ function renderEvContent(){
       var sty=hidden?'':'border-color:'+c+';color:'+c+';background:'+c+'18';
       h+='<button class="ev-filter-chip'+(hidden?'':' chip-active')+'" data-filter-type="'+escHtml(type)+'" style="'+sty+'">'+_typeShort[type]+'</button>';
     });
+    h+='<button class="ev-bright-btn ev-bright-sm'+(EV_BRIGHT_PAST?' on':'')+'" id="evBright">\uD83D\uDCA1</button>';
     h+='</div>';
     h+='</div>';
   }
