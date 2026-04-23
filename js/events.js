@@ -972,12 +972,24 @@ function renderEvMonthsView(){
 /* ── Render: vista semanal (agenda por días) ─────────────── */
 function renderEvWeek(){
   var today=new Date();today.setHours(0,0,0,0);
+  var todayStr=evDk(today);
   var _wn=['D','L','M','X','J','V','S'];
+  // Pass 1: pre-compute dates each multi-day event appears in this 6-month window
+  var evDaySet={};
+  for(var i0=0;i0<6;i0++){
+    var mTot0=EV_MONTH+i0,mIdx0=mTot0%12,yIdx0=EV_YEAR+Math.floor(mTot0/12);
+    var dim0=new Date(yIdx0,mIdx0+1,0).getDate();
+    for(var d0=1;d0<=dim0;d0++){
+      var ds0=evDk(new Date(yIdx0,mIdx0,d0));
+      getEventsOn(ds0).forEach(function(ev){
+        if(ev.end&&ev.end!==ev.start){if(!evDaySet[ev.id])evDaySet[ev.id]={};evDaySet[ev.id][ds0]=true;}
+      });
+    }
+  }
+  // Pass 2: render
   var h='';
   for(var i=0;i<6;i++){
-    var mTot=EV_MONTH+i;
-    var mIdx=mTot%12;
-    var yIdx=EV_YEAR+Math.floor(mTot/12);
+    var mTot=EV_MONTH+i,mIdx=mTot%12,yIdx=EV_YEAR+Math.floor(mTot/12);
     var monthKey=yIdx+'-'+String(mIdx+1).padStart(2,'0');
     h+='<div class="ev-wk-month-sep" id="ev-wk-month-'+monthKey+'">'+MN[mIdx]+' '+yIdx+'</div>';
     var daysInM=new Date(yIdx,mIdx+1,0).getDate();
@@ -985,7 +997,7 @@ function renderEvWeek(){
       var day=new Date(yIdx,mIdx,d);
       var ds=evDk(day);
       var evs=getEventsOn(ds);
-      var isToday=day.getTime()===today.getTime();
+      var isToday=ds===todayStr;
       var isPast=day<today;
       var dow=day.getDay();
       var isWknd=dow===0||dow===6;
@@ -995,6 +1007,16 @@ function renderEvWeek(){
       h+='<div class="ev-wk-events">';
       evs.forEach(function(ev){
         var _dc=getEvDisplayColor(ev);
+        var isMulti=ev.end&&ev.end!==ev.start;
+        if(isMulti){
+          // Check if previous day also has this event (continuation)
+          var prevDt=new Date(ds+'T00:00:00');prevDt.setDate(prevDt.getDate()-1);
+          var isCont=evDaySet[ev.id]&&evDaySet[ev.id][evDk(prevDt)];
+          if(isCont){
+            h+='<div class="ev-wk-event ev-wk-ev-cont" data-id="'+ev.id+'" style="border-left:3px solid '+_dc+';background:'+fakeTrans(_dc,0.15)+'"></div>';
+            return;
+          }
+        }
         var _isVip=ev.id.indexOf('ev-bday-vip-')===0;
         var _t=_isVip?escHtml(ev.title.replace(/^\u2b50\s*/,'').replace(/^Cumple\s+/,'')):escHtml(ev.title);
         h+='<div class="ev-wk-event" data-id="'+ev.id+'" style="border-left:3px solid '+_dc+';background:'+fakeTrans(_dc,0.2)+'">';
@@ -1080,17 +1102,17 @@ function renderEvContent(){
   h+='<div class="sy-body'+(EV_BRIGHT_PAST?' ev-bright-past':'')+(EV_VIEW==='week'?' ev-wk-body':'')+'">';
   if(EV_VIEW==='annual'||EV_VIEW==='quad'){
     var _typeOrder=['Viaje','Asturias','Recordatorio de Gestiones','Planes y Quedadas','Otros','Cumplea\u00f1os VIP'];
-    var _typeShort={'Viaje':'Viaje','Asturias':'Asturias','Recordatorio de Gestiones':'Gestiones','Planes y Quedadas':'Planes','Otros':'Otros','Cumplea\u00f1os VIP':'\u2b50 VIP'};
+    var _typeShort={'Viaje':'Viaje','Asturias':'Asturias','Recordatorio de Gestiones':'Gestiones','Planes y Quedadas':'Planes','Otros':'Otros','Cumplea\u00f1os VIP':'\u2b50'};
     var _typeColor={'Viaje':'#38bdf8','Asturias':'#1d4ed8','Recordatorio de Gestiones':'#34d399','Planes y Quedadas':'#fb923c','Otros':'#ff6b6b','Cumplea\u00f1os VIP':'#fbbf24'};
     h+='<div class="ev-annual-controls">';
-    var _vdLabels={'puentes':'\uD83C\uDF09 Puentes','fiestas':'\uD83D\uDCC5 Vac + Festivos','vacaciones':'\uD83C\uDFD6 Solo vacaciones','festivos':'\uD83C\uDF8C Solo festivos','none':'\u2715 Nada'};
+    var _vdLabels={'puentes':'\uD83D\uDDD3 Puentes','fiestas':'\uD83D\uDCC5 Vac + Festivos','vacaciones':'\uD83C\uDFD6 Solo vacaciones','festivos':'\uD83C\uDF8C Solo festivos','none':'\u2715 Nada'};
     var _curVdLabel=_vdLabels[EV_ANNUAL_VIEW]||_vdLabels['none'];
     h+='<div class="ev-annual-view-toggle">';
     h+='<button class="ev-ann-edit-btn'+(EV_EDIT_MODE?' active':'')+'" id="evAnnEditBtn" title="Modo edici\u00f3n">&#9998;</button>';
     h+='<div class="ev-ann-vd-wrap" id="evAnnVdWrap">';
-    h+='<button class="ev-ann-vd-btn" id="evAnnVdBtn">\uD83D\uDC41 '+_curVdLabel+' \u25be</button>';
+    h+='<button class="ev-ann-vd-btn" id="evAnnVdBtn">'+_curVdLabel+' \u25be</button>';
     h+='<div class="ev-ann-vd-menu" id="evAnnVdMenu">';
-    [['puentes','\uD83C\uDF09 Solo puentes'],['fiestas','\uD83D\uDCC5 Vac + festivos'],['vacaciones','\uD83C\uDFD6 Solo vacaciones'],['festivos','\uD83C\uDF8C Solo festivos'],['none','\u2715 No ver nada']].forEach(function(opt){
+    [['puentes','\uD83D\uDDD3 Solo puentes'],['fiestas','\uD83D\uDCC5 Vac + festivos'],['vacaciones','\uD83C\uDFD6 Solo vacaciones'],['festivos','\uD83C\uDF8C Solo festivos'],['none','\u2715 No ver nada']].forEach(function(opt){
       var active=EV_ANNUAL_VIEW===opt[0];
       h+='<button class="ev-ann-vd-opt'+(active?' active':'')+'" data-view="'+opt[0]+'">'+opt[1]+'</button>';
     });
