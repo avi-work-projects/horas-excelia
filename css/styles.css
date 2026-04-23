@@ -1015,22 +1015,35 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-sep-past{opacity:.7}
 /* ── Vista semanal (Agenda) ── */
 .sy-body.ev-wk-body{padding:0;gap:0}
-.ev-wk-month-sep{font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-bright);background:var(--bg);padding:5px 12px;border-bottom:1px solid var(--border);border-top:1px solid var(--border);position:sticky;top:0;z-index:2}
-.ev-wk-day{display:flex;align-items:stretch;min-height:28px;border-bottom:1px solid var(--border)}
-.ev-wk-day.ev-wk-past{opacity:.45}
-.ev-wk-day.ev-wk-today{background:rgba(90,224,136,.07)}
-.ev-wk-day.ev-wk-wknd .ev-wk-date{background:rgba(255,255,255,.03)}
-.ev-wk-date{width:48px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 2px;gap:1px;border-right:1px solid var(--border)}
+.ev-wk-month-sep{font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-bright);background:var(--bg);padding:5px 12px;border-bottom:1px solid var(--border);border-top:1px solid var(--border);position:sticky;top:0;z-index:5}
+/* Grid del mes: col fecha (48px) + col eventos (1fr) */
+.ev-wk-mgrid{display:grid;grid-template-columns:48px 1fr;position:relative}
+/* Columna fecha (col 1) */
+.ev-wk-date{grid-column:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 2px;gap:1px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);min-height:30px;position:relative;z-index:3;background:var(--bg)}
+.ev-wk-date.ev-wk-past{opacity:.45}
+.ev-wk-date.ev-wk-today{background:rgba(90,224,136,.10)}
+.ev-wk-date.ev-wk-wknd:not(.ev-wk-today){background:rgba(255,255,255,.03)}
 .ev-wk-dow{font-size:.6rem;color:var(--text-dim);text-transform:uppercase;line-height:1}
 .ev-wk-num{font-size:.85rem;font-weight:600;font-family:var(--mono);line-height:1}
-.ev-wk-today .ev-wk-num{color:var(--sent-text);font-weight:700}
-.ev-wk-today .ev-wk-dow{color:var(--sent-text)}
-.ev-wk-events{flex:1;padding:3px 6px;display:flex;flex-direction:column;gap:2px;justify-content:flex-start}
-.ev-wk-event{display:flex;align-items:center;padding:2px 6px;border-radius:3px;cursor:pointer;transition:opacity .1s;min-height:18px;gap:0}
-.ev-wk-event:active{opacity:.6}
-.ev-wk-event-title{font-size:.73rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
-.ev-wk-ev-cont{min-height:20px;padding:0 6px;border-radius:0;position:relative;z-index:1}
-.ev-wk-events-cont{padding:0;gap:0}
+.ev-wk-date.ev-wk-today .ev-wk-num{color:var(--sent-text);font-weight:700}
+.ev-wk-date.ev-wk-today .ev-wk-dow{color:var(--sent-text)}
+/* Caja del multi-día: UN ÚNICO grid item que abarca varias filas → se ve como una unidad */
+.ev-wk-multi{align-self:stretch;justify-self:stretch;border:1.5px solid;border-radius:6px;margin:2px 4px;padding:5px 8px;cursor:pointer;position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;transition:opacity .12s}
+.ev-wk-multi:active{opacity:.7}
+.ev-wk-multi.wk-multi-cont-top{border-top-style:dashed;border-top-left-radius:0;border-top-right-radius:0;margin-top:0}
+.ev-wk-multi.wk-multi-cont-bot{border-bottom-style:dashed;border-bottom-left-radius:0;border-bottom-right-radius:0;margin-bottom:0}
+.ev-wk-multi-title{font-size:.78rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;line-height:1.2;position:sticky;top:32px}
+/* Contenedor de chips puntuales — se monta ENCIMA del multi-día por z-index */
+.ev-wk-chips{display:flex;flex-direction:column;gap:3px;justify-content:flex-start;align-items:stretch;padding:3px 6px;border-bottom:1px solid var(--border);min-height:30px;position:relative;z-index:2;pointer-events:none}
+.ev-wk-chips.ev-wk-past{opacity:.45}
+.ev-wk-chips.ev-wk-today{background:rgba(90,224,136,.07)}
+/* Cuando el día está dentro de un viaje: padding extra y fondo transparente para que el viaje se vea continuo */
+.ev-wk-chips.ev-wk-chips-nested{padding:3px 10px 3px 18px;background:transparent;border-bottom:none}
+.ev-wk-chips.ev-wk-chips-nested.ev-wk-today{background:transparent}
+/* Chip puntual: opaco con sombra para destacar sobre el viaje translúcido */
+.ev-wk-chip{display:flex;align-items:center;padding:3px 8px;border-radius:4px;cursor:pointer;transition:opacity .1s;min-height:20px;gap:0;pointer-events:auto;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.ev-wk-chip:active{opacity:.6}
+.ev-wk-chip-title{font-size:.73rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;color:#fff}
 /* Event color type picker */
 .ev-type-picker{display:flex;flex-direction:column;gap:5px}
 .ev-type-picker .ev-color-swatch{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--radius-sm);background:var(--surface);border:1.5px solid var(--border);cursor:pointer;transition:all .12s;outline:none;-webkit-tap-highlight-color:transparent}
