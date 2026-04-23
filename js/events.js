@@ -997,7 +997,6 @@ function renderEvWeek(){
   var today=new Date();today.setHours(0,0,0,0);
   var _wn=['D','L','M','X','J','V','S'];
   var h='';
-  /* Mostrar 6 meses desde EV_MONTH/EV_YEAR */
   for(var i=0;i<6;i++){
     var mTot=EV_MONTH+i;
     var mIdx=mTot%12;
@@ -1013,17 +1012,23 @@ function renderEvWeek(){
       var isPast=day<today;
       var dow=day.getDay();
       var isWknd=dow===0||dow===6;
-      var rowCls='ev-wk-day'+(isToday?' ev-wk-today':'')+(isPast?' ev-wk-past':'')+(isWknd?' ev-wk-wknd':'')+(evs.length?' ev-wk-has-ev':'');
+      /* Clasificar cada evento: only|start|mid|end */
+      var infos=evs.map(function(ev){
+        var isMulti=ev.end&&ev.end!==ev.start&&!ev.repeat;
+        var sp=isMulti?(ds===ev.start?'start':ds===ev.end?'end':'mid'):'only';
+        return{ev:ev,sp:sp,showTitle:sp==='only'||sp==='start'};
+      });
+      var rowCls='ev-wk-day'+(isToday?' ev-wk-today':'')+(isPast?' ev-wk-past':'')+(isWknd?' ev-wk-wknd':'');
       h+='<div class="'+rowCls+'"'+(isToday?' id="ev-wk-today-row"':'')+'>';
       h+='<div class="ev-wk-date"><span class="ev-wk-dow">'+_wn[dow]+'</span><span class="ev-wk-num">'+d+'</span></div>';
       h+='<div class="ev-wk-events">';
-      evs.forEach(function(ev){
-        var _dc=getEvDisplayColor(ev);
+      infos.forEach(function(info){
+        var ev=info.ev;var _dc=getEvDisplayColor(ev);
         var _isVip=ev.id.indexOf('ev-bday-vip-')===0;
         var _t=_isVip?escHtml(ev.title.replace(/^\u2b50\s*/,'').replace(/^Cumple\s+/,'')):escHtml(ev.title);
-        h+='<div class="ev-wk-event" data-id="'+ev.id+'" style="border-left:3px solid '+_dc+';background:'+fakeTrans(_dc,0.2)+'">';
-        h+='<span class="ev-wk-event-dot" style="background:'+_dc+'"></span>';
-        h+='<span class="ev-wk-event-title">'+_t+'</span>';
+        h+='<div class="ev-wk-event ev-wk-sp-'+info.sp+'" data-id="'+ev.id+'">';
+        h+='<div class="ev-wk-bar ev-wk-bar-'+info.sp+'" style="background:'+_dc+'"></div>';
+        if(info.showTitle)h+='<span class="ev-wk-event-title" style="color:'+_dc+'">'+_t+'</span>';
         h+='</div>';
       });
       h+='</div>';
