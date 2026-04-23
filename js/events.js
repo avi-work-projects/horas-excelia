@@ -970,91 +970,105 @@ function renderEvMonthsView(){
 }
 
 /* ── Render: vista semanal (agenda por días) ─────────────── */
+/* Arquitectura: cada mes es un CSS grid con 2 columnas (fecha 48px | eventos 1fr)
+   - Cada día ocupa una fila explícita (grid-row:N)
+   - Eventos multi-día: UN único grid item que abarca varias filas (grid-row:start/end+1)
+   - Eventos puntuales: grid items en grid-row del día, encima del multi-día (z-index)
+   - Resultado: un viaje se ve como UNA SOLA caja continua; eventos de 1 día caen DENTRO */
 function renderEvWeek(){
   var today=new Date();today.setHours(0,0,0,0);
   var todayStr=evDk(today);
   var _wn=['D','L','M','X','J','V','S'];
-  // Helper: hex color → rgba (works correctly on both light and dark themes)
   function hexA(hex,a){var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return 'rgba('+r+','+g+','+b+','+a+')';}
-  // Pass 1: pre-compute dates each multi-day event appears in this 6-month window
-  var evDaySet={};
-  for(var i0=0;i0<6;i0++){
-    var mTot0=EV_MONTH+i0,mIdx0=mTot0%12,yIdx0=EV_YEAR+Math.floor(mTot0/12);
-    var dim0=new Date(yIdx0,mIdx0+1,0).getDate();
-    for(var d0=1;d0<=dim0;d0++){
-      var ds0=evDk(new Date(yIdx0,mIdx0,d0));
-      getEventsOn(ds0).forEach(function(ev){
-        if(ev.end&&ev.end!==ev.start){if(!evDaySet[ev.id])evDaySet[ev.id]={};evDaySet[ev.id][ds0]=true;}
-      });
-    }
-  }
-  // Pass 2: render
+
   var h='';
   for(var i=0;i<6;i++){
     var mTot=EV_MONTH+i,mIdx=mTot%12,yIdx=EV_YEAR+Math.floor(mTot/12);
     var monthKey=yIdx+'-'+String(mIdx+1).padStart(2,'0');
-    h+='<div class="ev-wk-month-sep" id="ev-wk-month-'+monthKey+'">'+MN[mIdx]+' '+yIdx+'</div>';
     var daysInM=new Date(yIdx,mIdx+1,0).getDate();
+    h+='<div class="ev-wk-month-sep" id="ev-wk-month-'+monthKey+'">'+MN[mIdx]+' '+yIdx+'</div>';
+
+    // Recolectar eventos del mes
+    var singleByDay={};      // d → [ev]  (eventos de 1 día)
+    var multiSegs=[];        // {ev, sd, ed, isFirstSeg, isLastSeg}
+    var multiSeen={};
+
     for(var d=1;d<=daysInM;d++){
       var day=new Date(yIdx,mIdx,d);
       var ds=evDk(day);
-      var evs=getEventsOn(ds);
+      getEventsOn(ds).forEach(function(ev){
+        if(ev.end&&ev.end!==ev.start){
+          if(!multiSeen[ev.id]){
+            multiSeen[ev.id]={ev:ev,sd:d,ed:d};
+            multiSegs.push(multiSeen[ev.id]);
+          } else {
+            multiSeen[ev.id].ed=d;
+          }
+        } else {
+          if(!singleByDay[d])singleByDay[d]=[];
+          singleByDay[d].push(ev);
+        }
+      });
+    }
+
+    // Marcar si la cabecera (título) del multi-día va aquí (primer mes del evento)
+    multiSegs.forEach(function(seg){
+      var sDt=new Date(seg.ev.start+'T00:00:00');
+      var eDt=new Date(seg.ev.end+'T00:00:00');
+      seg.isFirstSeg=(sDt.getFullYear()===yIdx&&sDt.getMonth()===mIdx);
+      seg.isLastSeg=(eDt.getFullYear()===yIdx&&eDt.getMonth()===mIdx);
+    });
+
+    h+='<div class="ev-wk-mgrid">';
+
+    // 1) Capa fondo: multi-días (z-index bajo, abarcan varias filas como UNA UNIDAD)
+    multiSegs.forEach(function(seg){
+      var ev=seg.ev;
+      var _dc=getEvDisplayColor(ev);
+      var _isVip=ev.id.indexOf('ev-bday-vip-')===0;
+      var _t=_isVip?escHtml(ev.title.replace(/^\u2b50\s*/,'').replace(/^Cumple\s+/,'')):escHtml(ev.title);
+      var _ic=_isVip?'\u2b50 ':'';
+      var rTopCls=seg.isFirstSeg?'':' wk-multi-cont-top';
+      var rBotCls=seg.isLastSeg?'':' wk-multi-cont-bot';
+      h+='<div class="ev-wk-multi'+rTopCls+rBotCls+'" data-id="'+ev.id+'" '
+        +'style="grid-row:'+seg.sd+' / '+(seg.ed+1)+';grid-column:2;'
+        +'background:'+hexA(_dc,0.18)+';border-color:'+_dc+'">';
+      if(seg.isFirstSeg){
+        h+='<div class="ev-wk-multi-title" style="color:'+_dc+'">'+_ic+_t+'</div>';
+      }
+      h+='</div>';
+    });
+
+    // 2) Capa contenido: para cada día, columna fecha + chips puntuales
+    for(var d=1;d<=daysInM;d++){
+      var day=new Date(yIdx,mIdx,d);
+      var ds=evDk(day);
       var isToday=ds===todayStr;
       var isPast=day<today;
       var dow=day.getDay();
       var isWknd=dow===0||dow===6;
-      // Classify events: continuation (multi-day, didn't start today) vs starting/single
-      var contEvs=[],startEvs=[];
-      evs.forEach(function(ev){
-        var isMulti=ev.end&&ev.end!==ev.start;
-        if(isMulti){
-          var prevDt=new Date(ds+'T00:00:00');prevDt.setDate(prevDt.getDate()-1);
-          if(evDaySet[ev.id]&&evDaySet[ev.id][evDk(prevDt)])contEvs.push(ev);
-          else startEvs.push(ev);
-        } else startEvs.push(ev);
-      });
-      var isContOnly=contEvs.length>0&&startEvs.length===0;
-      // Check if any starting event spans into tomorrow (need seamless border)
-      var nextDt2=new Date(ds+'T00:00:00');nextDt2.setDate(nextDt2.getDate()+1);
-      var nextDs2=evDk(nextDt2);
-      var seamlessDown=isContOnly||startEvs.some(function(ev){
-        return ev.end&&ev.end!==ev.start&&evDaySet[ev.id]&&evDaySet[ev.id][nextDs2];
-      });
-      var seamlessUp=contEvs.length>0;
-      var rowCls='ev-wk-day'+(isToday?' ev-wk-today':'')+(isPast?' ev-wk-past':'')+(isWknd?' ev-wk-wknd':'');
-      h+='<div class="'+rowCls+'"'+(isToday?' id="ev-wk-today-row"':'')+'>';
-      h+='<div class="ev-wk-date"><span class="ev-wk-dow">'+_wn[dow]+'</span><span class="ev-wk-num">'+d+'</span></div>';
-      if(isContOnly){
-        // Continuation-only day: single colored block per spanning event, box-shadow bridges the border gaps
-        h+='<div class="ev-wk-events ev-wk-events-cont">';
-        contEvs.forEach(function(ev){
-          var _dc=getEvDisplayColor(ev);
-          var _bg=hexA(_dc,0.18);
-          var _sh='0 1px 0 '+_bg+(seamlessDown?'':'')+',0 -1px 0 '+_bg;
-          h+='<div class="ev-wk-ev-cont" data-id="'+ev.id+'" style="background:'+_bg+';border-left:3px solid '+_dc+';box-shadow:'+_sh+'"></div>';
-        });
+      var dCls='ev-wk-date'+(isToday?' ev-wk-today':'')+(isPast?' ev-wk-past':'')+(isWknd?' ev-wk-wknd':'');
+      h+='<div class="'+dCls+'" style="grid-row:'+d+'"'+(isToday?' id="ev-wk-today-row"':'')+'>';
+      h+='<span class="ev-wk-dow">'+_wn[dow]+'</span><span class="ev-wk-num">'+d+'</span>';
+      h+='</div>';
+
+      var chips=singleByDay[d]||[];
+      var hasMulti=multiSegs.some(function(s){return d>=s.sd&&d<=s.ed;});
+      var eCls='ev-wk-chips'+(isToday?' ev-wk-today':'')+(isPast?' ev-wk-past':'')+(isWknd?' ev-wk-wknd':'')+(hasMulti?' ev-wk-chips-nested':'');
+      h+='<div class="'+eCls+'" style="grid-row:'+d+';grid-column:2">';
+      chips.forEach(function(ev){
+        var _dc=getEvDisplayColor(ev);
+        var _isVip=ev.id.indexOf('ev-bday-vip-')===0;
+        var _t=_isVip?escHtml(ev.title.replace(/^\u2b50\s*/,'').replace(/^Cumple\s+/,'')):escHtml(ev.title);
+        var _ic=_isVip?'\u2b50 ':'';
+        h+='<div class="ev-wk-chip" data-id="'+ev.id+'" style="border-left:3px solid '+_dc+';background:'+hexA(_dc,0.95)+'">';
+        h+='<span class="ev-wk-chip-title">'+_ic+_t+'</span>';
         h+='</div>';
-      } else {
-        h+='<div class="ev-wk-events">';
-        // Starting/single events: full chip with title
-        startEvs.forEach(function(ev){
-          var _dc=getEvDisplayColor(ev);
-          var _isVip=ev.id.indexOf('ev-bday-vip-')===0;
-          var _t=_isVip?escHtml(ev.title.replace(/^\u2b50\s*/,'').replace(/^Cumple\s+/,'')):escHtml(ev.title);
-          h+='<div class="ev-wk-event" data-id="'+ev.id+'" style="border-left:3px solid '+_dc+';background:'+hexA(_dc,0.15)+'">';
-          h+='<span class="ev-wk-event-title" style="color:'+_dc+'">'+_t+'</span>';
-          h+='</div>';
-        });
-        // Mixed day: thin indicators for simultaneously-continuing events
-        contEvs.forEach(function(ev){
-          var _dc=getEvDisplayColor(ev);
-          var _bg=hexA(_dc,0.18);
-          h+='<div class="ev-wk-ev-cont" data-id="'+ev.id+'" style="background:'+_bg+';border-left:3px solid '+_dc+';box-shadow:0 1px 0 '+_bg+',0 -1px 0 '+_bg+'"></div>';
-        });
-        h+='</div>';
-      }
+      });
       h+='</div>';
     }
+
+    h+='</div>';
   }
   return h;
 }
@@ -1887,6 +1901,15 @@ function bindEvEvents(){
     bar.addEventListener('click',function(e){
       e.stopPropagation();
       var id=bar.dataset.id;var ev=null;
+      for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
+      if(ev)openEvDetail(ev);
+    });
+  });
+  // Click en eventos de la agenda semanal (multi-día y chips puntuales)
+  document.querySelectorAll('.ev-wk-multi[data-id],.ev-wk-chip[data-id]').forEach(function(el){
+    el.addEventListener('click',function(e){
+      e.stopPropagation();
+      var id=el.dataset.id;var ev=null;
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
       if(ev)openEvDetail(ev);
     });

@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v191 \u2014 flechas dobles reducidas, max-width quad nav ampliado';
+var APP_VERSION = 'v192 \u2014 agenda semanal refactor CSS Grid (viajes como unidad), VIP cumple refresco inmediato';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

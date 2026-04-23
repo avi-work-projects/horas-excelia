@@ -33,9 +33,8 @@ function _showBdayInlineCtrl(el,b){
       if(BDAYS[idx].vip)delete BDAYS[idx].vip;else BDAYS[idx].vip=true;
       localStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));
       syncVipBdaysToEvents();updateBdayBtn();
-      /* Actualizar el botón VIP del menú sin refrescar la lista todavía */
-      this.classList.toggle('active',!!BDAYS[idx].vip);
-      _bdPendingRefresh=true; /* refresco diferido — se ejecuta al cerrar el menú */
+      _bdPendingRefresh=false;
+      refreshBday(); /* refresco inmediato: la lista se reordena y la estrella aparece al instante */
     }
   });
   div.querySelector('.bday-ic-edit').addEventListener('click',function(e){
