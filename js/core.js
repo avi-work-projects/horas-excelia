@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v179 \u2014 fiscal: fix loadGastosYear a\u00f1os anteriores, sync gastos todos los tabs';
+var APP_VERSION = 'v180 \u2014 eventos: secci\u00f3n pasados (4 d\u00edas) en vista pr\u00f3ximos';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

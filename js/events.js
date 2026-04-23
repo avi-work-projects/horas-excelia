@@ -504,6 +504,53 @@ function renderEvUpcoming(){
   var weekLabels=['Esta semana','Pr\u00f3xima semana','En dos semanas'];
   var _wn=['Dom','Lun','Mar','Mi\u00e9','Jue','Vie','S\u00e1b'];
   var fd2=function(d){return _wn[d.getDay()]+' '+String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');};
+  function evPastLbl(diff){
+    if(diff===-1)return 'Ayer';
+    if(diff===-2)return 'Anteayer';
+    return 'Hace '+Math.abs(diff)+'\u202fd';
+  }
+  function renderEvItem(ev,item,diffToday,isPast){
+    var type=getEvType(ev);
+    var isToday=diffToday===0;
+    var lbl,lblCls;
+    if(isPast){
+      lbl=evPastLbl(diffToday);
+      lblCls='ev-upcoming-lbl past-lbl';
+    } else {
+      lbl=isToday?'Hoy':diffToday===1?'Ma\u00f1ana':diffToday<0?'En curso':('En '+diffToday+'d');
+      lblCls='ev-upcoming-lbl'+(isToday?' today-lbl':diffToday===1?' near':diffToday<0?' ongoing':'');
+    }
+    var _isVip=ev.id.indexOf('ev-bday-vip-')===0;
+    var title=_isVip?('<img src="./VIP.png" class="bday-vip-img" alt="VIP" style="height:1.2em;vertical-align:middle;margin-right:3px">'+escHtml(ev.title.replace(/^\u2b50\s*/,'')))
+      :escHtml(ev.title);
+    var _bellSet=isEvAlarmSet(ev.id);
+    var metaDate=fd2(item.firstDate);
+    if(ev.end&&ev.end!==ev.start){var _eD=new Date(ev.end+'T00:00:00');metaDate+=' <span style="font-size:.62rem;opacity:.7">&#8212; '+fd2(_eD)+'</span>';}
+    var s='<div class="ev-upcoming-item'+(isPast?' ev-upcoming-past':isToday?' ev-upcoming-today':'')+'" data-id="'+ev.id+'" data-first="'+evIsoDate(item.firstDate)+'">';
+    s+='<div class="ev-upcoming-color" style="background:'+getEvDisplayColor(ev)+'"></div>';
+    s+='<div class="ev-upcoming-info">';
+    s+='<div class="ev-upcoming-title">'+title+'</div>';
+    s+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+metaDate+'</div>';
+    if(ev.note&&ev.note.trim()&&!_isVip)s+='<div class="ev-upcoming-note">'+escHtml(ev.note.trim())+'</div>';
+    s+='</div>';
+    s+='<div class="ev-upcoming-right">';
+    if(!isPast)s+='<span class="ev-upcoming-bell'+(_bellSet?' set':'')+'">&#128276;</span>';
+    s+='<div class="'+lblCls+'">'+lbl+'</div>';
+    s+='</div>';
+    s+='</div>';
+    return s;
+  }
+  /* ── Sección pasados: últimos 4 días ── */
+  var pastMap={};
+  for(var pd=1;pd<=4;pd++){
+    var pday=new Date(today.getTime()-pd*86400000);
+    var pds=evDk(pday);
+    getEventsOn(pds).forEach(function(ev){
+      if(ev.id.indexOf('ev-bday-vip-')===0)return;
+      if(!pastMap[ev.id])pastMap[ev.id]={ev:ev,firstDate:new Date(pday),diff:-pd};
+    });
+  }
+  /* ── Semanas hacia adelante ── */
   var weeks=[{},{},{}];
   for(var w=0;w<3;w++){
     for(var d=0;d<7;d++){
@@ -517,6 +564,19 @@ function renderEvUpcoming(){
     }
   }
   var anyEvents=weeks.some(function(wk){return Object.keys(wk).length>0;});
+  var h='';
+  /* ── Render pasados ── */
+  var pids=Object.keys(pastMap);
+  if(pids.length){
+    pids.sort(function(a,b){return pastMap[b].firstDate-pastMap[a].firstDate;});
+    h+='<div class="sy-month-sep ev-sep-past">Pasados</div>';
+    h+='<div class="ev-upcoming-section ev-upcoming-section-past">';
+    pids.forEach(function(id){
+      var item=pastMap[id];
+      h+=renderEvItem(item.ev,item,item.diff,true);
+    });
+    h+='</div>';
+  }
   if(!anyEvents){
     var fallbackMap=null,fallbackLabel=null;
     for(var fw=3;fw<53;fw++){
@@ -526,7 +586,7 @@ function renderEvUpcoming(){
         var fds=evDk(fday);
         var fevs=getEventsOn(fds);
         fevs.forEach(function(ev){
-          if(ev.id.indexOf('ev-bday-vip-')===0)return; /* VIP bdays no en fallback */
+          if(ev.id.indexOf('ev-bday-vip-')===0)return;
           if(!fwMap[ev.id])fwMap[ev.id]={ev:ev,firstDate:new Date(fday)};
         });
       }
@@ -538,36 +598,23 @@ function renderEvUpcoming(){
         break;
       }
     }
-    if(!fallbackMap)return '<div class="sy-note">No hay eventos pr\u00f3ximos programados.</div>';
-    var h='<div class="sy-note" style="margin-bottom:8px">Sin eventos en las pr\u00f3ximas 3 semanas. Primera semana con eventos:</div>';
+    if(!fallbackMap){
+      if(!pids.length)return '<div class="sy-note">No hay eventos programados.</div>';
+      return h;
+    }
+    h+='<div class="sy-note" style="margin-bottom:8px">Sin eventos en las pr\u00f3ximas 3 semanas. Primera semana con eventos:</div>';
     var fids=Object.keys(fallbackMap);
     fids.sort(function(a,b){return fallbackMap[a].firstDate-fallbackMap[b].firstDate;});
     h+='<div class="sy-month-sep">'+fallbackLabel+'</div>';
     h+='<div class="ev-upcoming-section">';
     fids.forEach(function(id){
-      var item=fallbackMap[id];var ev=item.ev;
-      var type=getEvType(ev);
+      var item=fallbackMap[id];
       var diffToday=Math.round((item.firstDate-today)/86400000);
-      var _isVipU=ev.id.indexOf('ev-bday-vip-')===0;
-      var _uTitle=_isVipU?('<img src="./VIP.png" class="bday-vip-img" alt="VIP" style="height:1.2em;vertical-align:middle;margin-right:3px">'+escHtml(ev.title.replace(/^\u2b50\s*/,'')))
-        :escHtml(ev.title);
-      var _bellSet=isEvAlarmSet(ev.id);
-      h+='<div class="ev-upcoming-item" data-id="'+ev.id+'" data-first="'+evIsoDate(item.firstDate)+'">';
-      h+='<div class="ev-upcoming-color" style="background:'+getEvDisplayColor(ev)+'"></div>';
-      h+='<div class="ev-upcoming-info">';
-      h+='<div class="ev-upcoming-title">'+_uTitle+'</div>';
-      var _metaDate=fd2(item.firstDate);
-      if(ev.end&&ev.end!==ev.start){var _eD=new Date(ev.end+'T00:00:00');_metaDate+=' <span style="font-size:.62rem;opacity:.7">&#8212; '+fd2(_eD)+'</span>';}
-      h+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+_metaDate+'</div>';
-      if(ev.note&&ev.note.trim()&&!_isVipU)h+='<div class="ev-upcoming-note">'+escHtml(ev.note.trim())+'</div>';
-      h+='</div>';
-      h+='<div class="ev-upcoming-right"><span class="ev-upcoming-bell'+(_bellSet?' set':'')+'">&#128276;</span><div class="ev-upcoming-lbl">En '+diffToday+'d</div></div>';
-      h+='</div>';
+      h+=renderEvItem(item.ev,item,diffToday,false);
     });
     h+='</div>';
     return h;
   }
-  var h='';
   weeks.forEach(function(wkMap,wi){
     var ids=Object.keys(wkMap);
     if(!ids.length)return;
@@ -575,27 +622,9 @@ function renderEvUpcoming(){
     h+='<div class="sy-month-sep">'+weekLabels[wi]+'</div>';
     h+='<div class="ev-upcoming-section">';
     ids.forEach(function(id){
-      var item=wkMap[id];var ev=item.ev;
-      var type=getEvType(ev);
+      var item=wkMap[id];
       var diffToday=Math.round((item.firstDate-today)/86400000);
-      var isToday=diffToday===0;
-      var lbl=isToday?'Hoy':diffToday===1?'Ma\u00f1ana':diffToday<0?'En curso':('En '+diffToday+'d');
-      var lblCls='ev-upcoming-lbl'+(isToday?' today-lbl':diffToday===1?' near':diffToday<0?' ongoing':'');
-      var _isVipUp=ev.id.indexOf('ev-bday-vip-')===0;
-      var _upTitle=_isVipUp?('<img src="./VIP.png" class="bday-vip-img" alt="VIP" style="height:1.2em;vertical-align:middle;margin-right:3px">'+escHtml(ev.title.replace(/^\u2b50\s*/,'')))
-        :escHtml(ev.title);
-      var _bellSet=isEvAlarmSet(ev.id);
-      h+='<div class="ev-upcoming-item'+(isToday?' ev-upcoming-today':'')+'" data-id="'+ev.id+'" data-first="'+evIsoDate(item.firstDate)+'">';
-      h+='<div class="ev-upcoming-color" style="background:'+getEvDisplayColor(ev)+'"></div>';
-      h+='<div class="ev-upcoming-info">';
-      h+='<div class="ev-upcoming-title">'+_upTitle+'</div>';
-      var _metaDate2=fd2(item.firstDate);
-      if(ev.end&&ev.end!==ev.start){var _eD2=new Date(ev.end+'T00:00:00');_metaDate2+=' <span style="font-size:.62rem;opacity:.7">&#8212; '+fd2(_eD2)+'</span>';}
-      h+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+_metaDate2+'</div>';
-      if(ev.note&&ev.note.trim()&&!_isVipUp)h+='<div class="ev-upcoming-note">'+escHtml(ev.note.trim())+'</div>';
-      h+='</div>';
-      h+='<div class="ev-upcoming-right"><span class="ev-upcoming-bell'+(_bellSet?' set':'')+'">&#128276;</span><div class="'+lblCls+'">'+lbl+'</div></div>';
-      h+='</div>';
+      h+=renderEvItem(item.ev,item,diffToday,false);
     });
     h+='</div>';
   });

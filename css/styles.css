@@ -1009,6 +1009,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-upcoming-lbl.near{color:var(--vacaciones)}
 .ev-upcoming-lbl.today-lbl{color:var(--sent-text)}
 .ev-upcoming-lbl.ongoing{color:var(--accent-bright)}
+.ev-upcoming-lbl.past-lbl{color:var(--text-dim);opacity:.7}
+.ev-upcoming-past{opacity:.55}
+.ev-upcoming-past .ev-upcoming-title{color:var(--text-muted)}
+.ev-sep-past{opacity:.7}
 /* Event color type picker */
 .ev-type-picker{display:flex;flex-direction:column;gap:5px}
 .ev-type-picker .ev-color-swatch{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--radius-sm);background:var(--surface);border:1.5px solid var(--border);cursor:pointer;transition:all .12s;outline:none;-webkit-tap-highlight-color:transparent}
