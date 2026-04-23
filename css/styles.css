@@ -220,14 +220,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .sy-header{background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 1px 0 var(--border);padding:14px 20px;display:flex;align-items:center;gap:10px;flex-shrink:0;position:relative}
 .sy-back{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
 .sy-back:active{background:var(--surface3)}
-.sy-year-nav{display:flex;align-items:center;gap:5px;flex:1;justify-content:center}
-.sy-header.sy-header-center .sy-year-nav{position:absolute;left:50%;transform:translateX(-50%);max-width:calc(100% - 220px)}
+.sy-year-nav{display:flex;align-items:center;gap:10px;flex:1;justify-content:center}
+.sy-header.sy-header-center .sy-year-nav{position:absolute;left:50%;transform:translateX(-50%);max-width:calc(100% - 200px)}
 .sy-header.sy-header-center .sy-back{position:relative;z-index:1}
 .sy-hdr-right{position:absolute;right:20px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:8px;z-index:2}
 .sy-year{font-size:1.05rem;font-weight:600;min-width:60px;text-align:center;color:var(--text)}
-.sy-year-2line{display:flex;flex-direction:column;align-items:center;line-height:1.15}
+.sy-year-2line{display:flex;flex-direction:column;align-items:center;line-height:1.15;min-width:110px}
 .sy-year-sub{font-size:.7rem;font-weight:400;color:var(--text-dim)}
-.sy-nav{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:.85rem;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.sy-nav{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:.85rem;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;line-height:1}
 .sy-nav:active{background:var(--surface3)}
 .sy-pdf{font-size:.72rem;padding:6px 12px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);cursor:pointer;white-space:nowrap;flex-shrink:0}
 .sy-pdf:active{background:var(--surface3)}
@@ -1253,6 +1253,15 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-view-zone{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:4px;}
 .ev-view-toggle{flex:1;font-size:.62rem;padding:6px 3px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;text-align:center;line-height:1.3;width:100%}
 .ev-view-toggle.active{background:var(--accent-glow);color:var(--accent-bright);border-color:var(--accent)}
+/* Zone A: upcoming/list views — subtle blue tint */
+.ev-zone-a .ev-view-toggle:not(.active){background:rgba(96,165,250,.07);border-color:rgba(96,165,250,.25);color:rgba(96,165,250,.85)}
+/* Zone B: calendar grid views — subtle teal tint */
+.ev-zone-b .ev-view-toggle:not(.active){background:rgba(52,211,153,.07);border-color:rgba(52,211,153,.25);color:rgba(52,211,153,.85)}
+/* Zone C: Puentes — pink; Vac/Festivos — orange+red gradient */
+.ev-btn-puentes:not(.active){background:rgba(244,114,182,.1);border-color:rgba(244,114,182,.35);color:#f472b6}
+.ev-btn-puentes.active{background:rgba(244,114,182,.22) !important;border-color:#f472b6 !important;color:#f472b6 !important}
+.ev-btn-timeoff:not(.active){background:linear-gradient(170deg,rgba(255,179,71,.1),rgba(255,107,107,.1));border-color:rgba(255,179,71,.35);color:var(--vacaciones)}
+.ev-btn-timeoff.active{background:linear-gradient(170deg,rgba(255,179,71,.28),rgba(255,107,107,.28)) !important;border-color:var(--vacaciones) !important;color:var(--vacaciones) !important}
 /* ── Feat 2: Lista de Eventos subtabs ── */
 .ev-list-subtabs{display:flex;gap:6px;padding:8px 0 4px}
 .ev-list-subtab{flex:1;font-size:.72rem;padding:6px 12px;border-radius:14px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;text-align:center;transition:all .15s;-webkit-user-select:none;user-select:none}

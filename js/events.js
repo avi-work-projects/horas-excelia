@@ -1035,25 +1035,25 @@ function renderEvContent(){
   var h=renderNavBar('events');
   // Tabs a nivel 2 (sticky top:42px, justo bajo la nav bar)
   h+='<div class="ev-hdr-sub">';
-  // Zona 1: Próximos (arriba) + Todos (abajo)
-  h+='<div class="ev-view-zone">';
+  // Zona A: Próximos + Todos
+  h+='<div class="ev-view-zone ev-zone-a">';
   h+='<button class="ev-view-toggle'+(EV_VIEW==='upcoming'?' active':'')+'" id="evViewUpcoming">Pr\u00f3ximos</button>';
   h+='<button class="ev-view-toggle'+(EV_VIEW==='months'?' active':'')+'" id="evViewMonths">Todos</button>';
   h+='</div>';
-  // Zona 2: Calendario 1 mes + Semanal
-  h+='<div class="ev-view-zone">';
+  // Zona B: Calendarios visuales (1 mes + Semanal)
+  h+='<div class="ev-view-zone ev-zone-b">';
   h+='<button class="ev-view-toggle'+(EV_VIEW==='cal'?' active':'')+'" id="evViewCal">Calendario<br>1 mes</button>';
   h+='<button class="ev-view-toggle'+(EV_VIEW==='week'?' active':'')+'" id="evViewWeek">Agenda<br>Semanal</button>';
   h+='</div>';
-  // Zona 3: Calendario 4 meses + Calendario Anual (50% cada uno, apilados)
-  h+='<div class="ev-view-zone">';
+  // Zona B: Calendarios visuales (4 meses + Anual)
+  h+='<div class="ev-view-zone ev-zone-b">';
   h+='<button class="ev-view-toggle'+(EV_VIEW==='quad'?' active':'')+'" id="evViewQuad">Calendario<br>4 meses</button>';
   h+='<button class="ev-view-toggle'+(EV_VIEW==='annual'?' active':'')+'" id="evViewAnnual">Calendario<br>Anual</button>';
   h+='</div>';
-  // Zona 4: Puentes + Vacaciones y Festivos (apilados)
-  h+='<div class="ev-view-zone">';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='puentes'?' active':'')+'" id="evViewPuentes">Puentes</button>';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='time-off'?' active':'')+'" id="evViewTimeOff">Vacaciones<br>Festivos</button>';
+  // Zona C: Puentes + Vacaciones/Festivos
+  h+='<div class="ev-view-zone ev-zone-c">';
+  h+='<button class="ev-view-toggle ev-btn-puentes'+(EV_VIEW==='puentes'?' active':'')+'" id="evViewPuentes">Puentes</button>';
+  h+='<button class="ev-view-toggle ev-btn-timeoff'+(EV_VIEW==='time-off'?' active':'')+'" id="evViewTimeOff">Vacaciones<br>Festivos</button>';
   h+='</div>';
   h+='</div>';
   // Header a nivel 3 (with-tabs → top:82px)
