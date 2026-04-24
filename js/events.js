@@ -1136,7 +1136,7 @@ function renderEvContent(){
     else h+='<div class="sy-year sy-year-2line">'+MN[EV_MONTH]+'<span class="sy-year-sub">'+EV_YEAR+'</span></div>';
     h+='<button class="sy-nav" id="evNext">&#9654;</button></div>';
     h+='<div class="sy-hdr-right">';
-    if(EV_VIEW!=='annual')h+='<button class="ev-bright-btn ev-bright-sm'+(EV_BRIGHT_PAST?' on':'')+'" id="evBright">\uD83D\uDCA1</button>';
+    if(EV_VIEW!=='annual')h+='<button class="ev-bright-btn ev-bright-sm'+(EV_BRIGHT_PAST?' on':'')+'" id="evBright" style="margin-left:6px">\uD83D\uDCA1</button>';
     h+='<button class="today-btn" id="evToday" style="font-size:.65rem;padding:4px 10px">Hoy</button>';
     h+='</div>';
   }
@@ -1159,6 +1159,8 @@ function renderEvContent(){
       h+='<button class="ev-ann-vd-opt'+(active?' active':'')+'" data-view="'+opt[0]+'">'+opt[1]+'</button>';
     });
     h+='</div></div>';
+    // Bombilla simétrica al lápiz: a la derecha del filtro (fuera del dropdown)
+    h+='<button class="ev-bright-btn ev-bright-round'+(EV_BRIGHT_PAST?' on':'')+'" id="evBright">\uD83D\uDCA1</button>';
     h+='</div>';
     h+='<div class="ev-annual-filter-row">';
     _typeOrder.forEach(function(type){
@@ -1167,7 +1169,6 @@ function renderEvContent(){
       var sty=hidden?'':'border-color:'+c+';color:'+c+';background:'+c+'18';
       h+='<button class="ev-filter-chip'+(hidden?'':' chip-active')+'" data-filter-type="'+escHtml(type)+'" style="'+sty+'">'+_typeShort[type]+'</button>';
     });
-    h+='<button class="ev-bright-btn ev-bright-sm'+(EV_BRIGHT_PAST?' on':'')+'" id="evBright">\uD83D\uDCA1</button>';
     h+='</div>';
     h+='</div>';
   }
