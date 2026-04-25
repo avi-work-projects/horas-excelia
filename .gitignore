@@ -1,1 +1,8 @@
+# Backups locales del PWA — pueden contener datos personales (cumpleaños, hipoteca, etc.)
 horas-excelia-backup-test.json
+horas-excelia-backup*.json
+*-backup-*.json
+
+# Sistema
+.DS_Store
+Thumbs.db
