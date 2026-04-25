@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v201 — Botón Hoy→día exacto en Agenda Semanal + colores nivel-2 en Cumpleaños y Estudio';
+var APP_VERSION = 'v202 — Hoy en Agenda Semanal: scrollIntoView para alturas variables de grid';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
