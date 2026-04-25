@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v204 — Fix Hoy Agenda Semanal (rect+sticky más scroll-margin-top), X gorda/fina como SVG con doble stroke (borde uniforme sin solapamiento), grises al final de la paleta, multi-día no consecutivos y selector 6 formas para Otros';
+var APP_VERSION = 'v205 — Otros pulido: selector de formas sin texto (solo previews + tooltip), \"Selección Multidía\" como nombre, Inicio/Fin se deshabilitan visualmente cuando hay multidía activa, y la forma+color de Otros también se aplica en Calendario 1 mes';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

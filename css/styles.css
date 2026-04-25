@@ -1126,7 +1126,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 /* === Selector de formas en el formulario de evento (Otros) === */
 .ev-otros-extras{padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-top:8px}
 .ev-shape-picker{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
-.ev-shape-opt{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px 4px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;color:var(--text);font-size:.65rem;transition:all .15s}
+.ev-shape-opt{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:10px 4px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;color:var(--text);font-size:.65rem;transition:all .15s;min-height:38px}
 .ev-shape-opt:hover{border-color:var(--accent)}
 .ev-shape-opt.selected{border-color:var(--accent-bright);background:var(--accent-glow);box-shadow:0 0 0 1px var(--accent-bright)}
 .ev-shape-preview{display:inline-block;width:14px;height:14px;flex-shrink:0;position:relative}
@@ -1139,8 +1139,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-shape-preview.ev-shape-x-thin{background:transparent;border:none}
 .ev-shape-preview.ev-shape-x-thick svg,
 .ev-shape-preview.ev-shape-x-thin svg{display:block;width:100%;height:100%;overflow:visible}
-.ev-shape-lbl{font-size:.62rem;color:var(--text-muted);line-height:1}
-.ev-shape-opt.selected .ev-shape-lbl{color:var(--accent-bright);font-weight:600}
+.ev-shape-lbl{display:none}
+/* Tamaños "lg" para shapes en Calendario 1 mes (más grandes que en anual) */
+.ev-annual-marker.ev-marker-lg{width:11px;height:11px}
+.ev-annual-marker.ev-marker-lg.ev-shape-diamond{width:9px;height:9px}
+.ev-annual-marker.ev-marker-lg.ev-shape-rounded{width:14px;height:9px;border-radius:3px}
+.ev-annual-marker.ev-marker-lg.ev-shape-x-thick{width:14px;height:14px}
+.ev-annual-marker.ev-marker-lg.ev-shape-x-thin{width:13px;height:13px}
+/* Inicio/Fin bloqueados cuando hay Selección Multidía */
+.ev-dates-locked input{opacity:.45;cursor:not-allowed;background:var(--surface2)!important}
+.ev-dates-locked label{opacity:.55}
+.ev-dates-locked-note{grid-column:1/-1;font-size:.62rem;color:var(--c-orange);background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.3);border-radius:6px;padding:6px 10px;margin-top:6px;line-height:1.4}
 
 /* === Mini-overlay para elegir días específicos (Otros) === */
 .dp-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1500;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
