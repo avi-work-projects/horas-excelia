@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v209 — Deducciones de cuota: el texto \"vivienda, donativos…\" (que era engañoso, vivienda ya no existe) se sustituye por un desglose dinámico de los items reales que contribuyen (ej: Donaciones cariativas 250€ × 80% = -200€)';
+var APP_VERSION = 'v210 — Resultado declaración reorganizado como flujo vertical: Cuota IRPF → Deducciones cuota → Cuota líquida → Ya retenido → A pagar/Devolución. Nota encadena con desgravaciones base mostrando que la base declaración ya las incluye';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

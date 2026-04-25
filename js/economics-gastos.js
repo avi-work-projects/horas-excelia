@@ -236,34 +236,30 @@ function renderIrpfBreakdown(e,dr){
     h+='</div></div>';
   }
 
-  /* — Bloque 3: Resumen resultado — */
-  h+='<div class="econ-irpf-block econ-irpf-summary-block">';
-  h+='<div class="econ-irpf-summary-grid">';
-  h+='<div class="econ-irpf-summary-item">';
-  h+='<div class="econ-irpf-summary-lbl">Cuota IRPF total</div>';
-  h+='<div class="econ-irpf-summary-val" style="color:var(--c-red)">'+fcPlain(dr.decl.totalTax)+'</div>';
-  h+='<div class="econ-irpf-summary-sub">'+dr.decl.effectivePct.toFixed(2).replace('.',',')+'\u202f% efectivo</div>';
-  h+='</div>';
-  h+='<div class="econ-irpf-summary-item">';
-  h+='<div class="econ-irpf-summary-lbl">Ya retenido (facturas)</div>';
-  h+='<div class="econ-irpf-summary-val" style="color:var(--text-muted)">'+fcPlain(e.totIrpf)+'</div>';
-  h+='<div class="econ-irpf-summary-sub">'+e.irpfPct+'% en cada factura</div>';
-  h+='</div>';
+  /* — Bloque 3: Resultado declaraci\u00f3n — flujo vertical encadenado.
+     Camino completo desde Cuota IRPF total hasta A pagar/Devoluci\u00f3n,
+     con las deducciones en cuota como paso intermedio claramente visible. */
   var diffColor=dr.declDiff<0?'var(--c-green)':'var(--c-red)';
   var diffLabel=dr.declDiff<0?'\u2B07\uFE0F Devoluci\u00f3n estimada':'\u2B06\uFE0F A pagar estimado';
   var diffSign=dr.declDiff<0?'':'+';
-  h+='<div class="econ-irpf-summary-item econ-irpf-summary-highlight econ-irpf-summary-wide" style="border-color:'+diffColor+'">';
-  h+='<div class="econ-irpf-summary-lbl">'+diffLabel+'</div>';
-  h+='<div class="econ-irpf-summary-val" style="color:'+diffColor+'">'+diffSign+fcPlain(Math.abs(dr.declDiff))+'</div>';
-  h+='<div class="econ-irpf-summary-sub">en la declaraci\u00f3n de la renta</div>';
-  /* Deducciones en cuota integradas como sub-l\u00ednea, con desglose din\u00e1mico
-     de los items que realmente contribuyen (vienen de DESGRAV_ITEMS con type='quota') */
+  var cuotaLiquida=Math.round((dr.decl.totalTax-dr.totalQuotaDesgrav)*100)/100;
+  h+='<div class="econ-irpf-block econ-irpf-summary-block">';
+  h+='<div class="econ-irpf-block-title">Resultado declaraci\u00f3n</div>';
+  h+='<div class="econ-irpf-flow-summary">';
+  /* Paso 1: Cuota IRPF total */
+  h+='<div class="econ-irpf-flow-line">';
+  h+='<span class="econ-irpf-flow-name">Cuota IRPF total</span>';
+  h+='<span class="econ-irpf-flow-amt" style="color:var(--c-red)">'+fcPlain(dr.decl.totalTax)+'</span>';
+  h+='</div>';
+  h+='<div class="econ-irpf-flow-note">'+dr.decl.effectivePct.toFixed(2).replace('.',',')+'\u202f% efectivo sobre <b>'+fcPlain(dr.baseDecl)+'</b> de base declaraci\u00f3n';
+  if(dr.totalBaseDesgrav>0)h+=' (ya descontadas <b>'+fcPlain(dr.totalBaseDesgrav)+'</b> de desgravaciones base)';
+  h+='</div>';
+  /* Paso 2: Deducciones en cuota (si las hay) -> cuota l\u00edquida */
   if(dr.totalQuotaDesgrav>0){
-    h+='<div class="econ-irpf-summary-deduc">';
-    h+='<span class="econ-irpf-summary-deduc-lbl">Ya incluye deducciones de cuota</span>';
-    h+='<span class="econ-irpf-summary-deduc-val">\u2212'+fcPlain(dr.totalQuotaDesgrav)+'</span>';
+    h+='<div class="econ-irpf-flow-line econ-irpf-flow-minus">';
+    h+='<span class="econ-irpf-flow-name"><span class="econ-irpf-flow-sgn">\u2212</span>Deducciones en cuota</span>';
+    h+='<span class="econ-irpf-flow-amt" style="color:var(--c-green)">\u2212'+fcPlain(dr.totalQuotaDesgrav)+'</span>';
     h+='</div>';
-    /* Listado din\u00e1mico de items que aportan (importe \u00d7 % aplicado = neto) */
     var _quotaContribs=[];
     if(typeof DESGRAV_ITEMS!=='undefined'){
       DESGRAV_ITEMS.forEach(function(item){
@@ -275,12 +271,26 @@ function renderIrpfBreakdown(e,dr){
         _quotaContribs.push(escHtml(item.label)+' '+fcPlain(d)+' \u00d7 '+pct+'% = \u2212'+fcPlain(net));
       });
     }
-    if(_quotaContribs.length){
-      h+='<div class="econ-irpf-summary-deduc-note">'+_quotaContribs.join(' \u00b7 ')+'</div>';
-    }
+    if(_quotaContribs.length)h+='<div class="econ-irpf-flow-note econ-irpf-flow-note-detail">'+_quotaContribs.join(' \u00b7 ')+'</div>';
+    h+='<div class="econ-irpf-flow-subtotal">';
+    h+='<span class="econ-irpf-flow-name">= Cuota l\u00edquida IRPF</span>';
+    h+='<span class="econ-irpf-flow-amt">'+fcPlain(cuotaLiquida)+'</span>';
+    h+='</div>';
   }
+  /* Paso 3: Retenciones */
+  h+='<div class="econ-irpf-flow-line econ-irpf-flow-minus">';
+  h+='<span class="econ-irpf-flow-name"><span class="econ-irpf-flow-sgn">\u2212</span>Ya retenido en facturas</span>';
+  h+='<span class="econ-irpf-flow-amt" style="color:var(--text-muted)">\u2212'+fcPlain(e.totIrpf)+'</span>';
   h+='</div>';
-  h+='</div></div>';
+  h+='<div class="econ-irpf-flow-note">'+e.irpfPct+'\u202f% retenido en cada factura emitida</div>';
+  /* Paso 4: Resultado final destacado */
+  h+='<div class="econ-irpf-flow-result" style="border-color:'+diffColor+'">';
+  h+='<div class="econ-irpf-flow-result-lbl">'+diffLabel+'</div>';
+  h+='<div class="econ-irpf-flow-result-val" style="color:'+diffColor+'">'+diffSign+fcPlain(Math.abs(dr.declDiff))+'</div>';
+  h+='<div class="econ-irpf-flow-result-sub">en la declaraci\u00f3n de la renta</div>';
+  h+='</div>';
+  h+='</div>';
+  h+='</div>';
 
   h+='</div></div>';
   return h;
