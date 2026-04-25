@@ -688,6 +688,25 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .econ-irpf-summary-deduc-lbl{color:var(--text-muted)}
 .econ-irpf-summary-deduc-val{font-family:var(--mono);font-weight:600;color:var(--text)}
 .econ-irpf-summary-deduc-note{font-size:.6rem;color:var(--text-dim);margin-top:2px;font-style:italic}
+/* === Flujo vertical del Resultado declaración (v210): muestra el camino completo
+   desde Cuota IRPF total → cuota líquida (tras deducciones cuota) → A pagar (tras retenciones).
+   Cada paso lleva su nota explicativa abajo, y al final una tarjeta destacada. === */
+.econ-irpf-flow-summary{display:flex;flex-direction:column;gap:0;padding:4px 2px}
+.econ-irpf-flow-line{display:flex;justify-content:space-between;align-items:baseline;padding:8px 4px 2px;font-size:.84rem;font-weight:600;color:var(--text)}
+.econ-irpf-flow-line.econ-irpf-flow-minus{color:var(--text-muted);font-weight:500}
+.econ-irpf-flow-name{flex:1;min-width:0;display:flex;align-items:baseline;gap:4px}
+.econ-irpf-flow-sgn{color:var(--text-dim);font-weight:400;margin-right:2px}
+.econ-irpf-flow-amt{font-family:var(--mono);font-weight:700;white-space:nowrap;font-size:.95rem}
+.econ-irpf-flow-note{font-size:.65rem;color:var(--text-dim);padding:0 4px 4px 18px;line-height:1.4}
+.econ-irpf-flow-note b{color:var(--text-muted);font-weight:600}
+.econ-irpf-flow-note-detail{font-style:italic;color:var(--text-muted);padding-left:18px;padding-bottom:6px;border-left:2px solid var(--border-light);margin-left:6px}
+.econ-irpf-flow-subtotal{display:flex;justify-content:space-between;align-items:baseline;padding:6px 4px;margin-top:2px;border-top:1px dashed var(--border);border-bottom:1px solid var(--border);font-size:.82rem;color:var(--text);background:var(--surface)}
+.econ-irpf-flow-subtotal .econ-irpf-flow-name{font-weight:600;color:var(--text-muted)}
+.econ-irpf-flow-subtotal .econ-irpf-flow-amt{color:var(--text);font-weight:700}
+.econ-irpf-flow-result{margin-top:14px;padding:14px 16px;border-radius:var(--radius-sm);background:var(--surface);border:2px solid;text-align:center}
+.econ-irpf-flow-result-lbl{font-size:.7rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.econ-irpf-flow-result-val{font-family:var(--mono);font-size:1.45rem;font-weight:800;line-height:1.1}
+.econ-irpf-flow-result-sub{font-size:.62rem;color:var(--text-dim);margin-top:4px;font-style:italic}
 /* Resumen fiscal al final de Ingresos y Gastos */
 .econ-fiscal-summary{display:flex;gap:12px;flex-wrap:wrap}
 .econ-fiscal-summary-item{flex:1;min-width:120px;padding:12px 14px;border-radius:var(--radius-sm);background:var(--surface);border:1px solid var(--border);text-align:center}
