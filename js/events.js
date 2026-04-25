@@ -1105,6 +1105,7 @@ function renderEvContent(){
     h+='<div class="sy-year-nav"><button class="sy-nav" id="evPrev">&#9664;</button>';
     h+='<div class="sy-year sy-year-2line">'+MN[EV_MONTH]+'<span class="sy-year-sub">'+EV_YEAR+'</span></div>';
     h+='<button class="sy-nav" id="evNext">&#9654;</button></div>';
+    h+='<button class="ev-bright-btn ev-bright-mid'+(EV_BRIGHT_PAST?' on':'')+'" id="evBright">\uD83D\uDCA1</button>';
     h+='<div class="sy-hdr-right"><button class="today-btn" id="evToday" style="font-size:.65rem;padding:4px 10px">Hoy</button></div>';
   } else if(EV_VIEW==='months'){
     h+='<div class="sy-year-nav"><div class="sy-year">Eventos</div></div>';
@@ -1131,8 +1132,8 @@ function renderEvContent(){
     if(EV_VIEW==='annual')h+='<div class="sy-year">'+EV_YEAR+'</div>';
     else h+='<div class="sy-year sy-year-2line">'+MN[EV_MONTH]+'<span class="sy-year-sub">'+EV_YEAR+'</span></div>';
     h+='<button class="sy-nav" id="evNext">&#9654;</button></div>';
+    if(EV_VIEW!=='annual')h+='<button class="ev-bright-btn ev-bright-mid'+(EV_BRIGHT_PAST?' on':'')+'" id="evBright">\uD83D\uDCA1</button>';
     h+='<div class="sy-hdr-right">';
-    if(EV_VIEW!=='annual')h+='<button class="ev-bright-btn ev-bright-sm'+(EV_BRIGHT_PAST?' on':'')+'" id="evBright" style="margin-left:6px">\uD83D\uDCA1</button>';
     h+='<button class="today-btn" id="evToday" style="font-size:.65rem;padding:4px 10px">Hoy</button>';
     h+='</div>';
   }
