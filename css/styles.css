@@ -681,6 +681,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .econ-irpf-summary-lbl{font-size:.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
 .econ-irpf-summary-val{font-family:var(--mono);font-size:.95rem;font-weight:700;line-height:1.1}
 .econ-irpf-summary-sub{font-size:.6rem;color:var(--text-dim);margin-top:2px}
+/* Card "A pagar / Devolución" más ancha cuando lleva sub-líneas integradas */
+.econ-irpf-summary-wide{padding:10px 12px}
+/* Sub-línea de deducciones integrada (antes era una tarjeta verde suelta) */
+.econ-irpf-summary-deduc{display:flex;justify-content:space-between;align-items:baseline;margin-top:8px;padding-top:8px;border-top:1px dashed var(--border);font-size:.7rem;color:var(--text-muted)}
+.econ-irpf-summary-deduc-lbl{color:var(--text-muted)}
+.econ-irpf-summary-deduc-val{font-family:var(--mono);font-weight:600;color:var(--text)}
+.econ-irpf-summary-deduc-note{font-size:.6rem;color:var(--text-dim);margin-top:2px;font-style:italic}
 /* Resumen fiscal al final de Ingresos y Gastos */
 .econ-fiscal-summary{display:flex;gap:12px;flex-wrap:wrap}
 .econ-fiscal-summary-item{flex:1;min-width:120px;padding:12px 14px;border-radius:var(--radius-sm);background:var(--surface);border:1px solid var(--border);text-align:center}
@@ -698,6 +705,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .econ-donut-sel-names{font-size:.7rem;color:var(--text-dim);margin-top:2px}
 .econ-donut-hint{font-size:.68rem;color:var(--text-dim);font-style:italic}
 .econ-donut-total{font-size:.72rem;color:var(--text-muted);margin-top:4px;font-family:var(--mono)}
+/* Breakdown del sector seleccionado (IRPF/IVA dentro de Impuestos, etc.) */
+.econ-donut-bd-group{margin-top:8px;padding:8px 10px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border);text-align:left}
+.econ-donut-bd-title{font-size:.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+.econ-donut-bd-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:3px 0;font-size:.7rem}
+.econ-donut-bd-lbl{color:var(--text-muted);flex:1;min-width:0}
+.econ-donut-bd-amt{font-family:var(--mono);white-space:nowrap}
+.econ-donut-bd-pct{font-size:.62rem;color:var(--text-dim);margin-left:4px}
 /* Fiscal config: gastos items */
 .fiscal-gasto-item{display:flex;align-items:center;gap:6px;padding:7px 0;border-bottom:1px solid var(--border)}
 .fiscal-gasto-item:last-child{border-bottom:none}
