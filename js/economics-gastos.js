@@ -168,17 +168,24 @@ function renderEconGastos(){
       h+='</div>';
     }
     h+='</div>';
-    /* §D.2 Trabajado para el Estado */
+    /* §D.2 Trabajado para el Estado — desglose explícito IRPF + IVA */
     var _brF=Math.round((e.totBase+e.totIva)*100)/100;
-    var _irpfPag=Math.round((e.totIrpf+Math.max(0,dr.declDiff))*100)/100;
-    var _totImp=Math.round((_irpfPag+e.totIva)*100)/100;
+    /* IRPF total realmente pagado = retenci\u00f3n + diferencia declaraci\u00f3n (con signo) */
+    var _irpfPag=Math.round((e.totIrpf+dr.declDiff)*100)/100;
+    var _ivaPag=Math.round(e.totIva*100)/100;
+    var _totImp=Math.round((_irpfPag+_ivaPag)*100)/100;
     if(_brF>0&&_totImp>0&&e.totalDays>0){
       var _pE=_totImp/_brF;
       var _dE=Math.round(e.totalDays*_pE);
       var _mE=Math.floor(_dE/22);var _dR=_dE-_mE*22;
       var _fE=new Date(ECON_YEAR,0,1);var _cE=0;
       while(_cE<_dE){if(_fE.getDay()!==0&&_fE.getDay()!==6)_cE++;if(_cE<_dE)_fE.setDate(_fE.getDate()+1);}
-      h+='<div class="econ-fiscal-estado">Seg\u00fan los datos anteriores, teniendo en cuenta IVA e IRPF, usted ha trabajado <b>'+_mE+' meses y '+_dR+' d\u00edas</b> para el Estado. Equivalente a haber trabajado hasta el <b>'+_fE.getDate()+' de '+MN[_fE.getMonth()]+'</b> para el Estado.</div>';
+      var _dIrpf=Math.round(e.totalDays*(_irpfPag/_brF));
+      var _dIva =Math.round(e.totalDays*(_ivaPag /_brF));
+      h+='<div class="econ-fiscal-estado">';
+      h+='Seg\u00fan los datos anteriores, has pagado <b style="color:var(--c-red);font-style:normal">'+fcPlain(_irpfPag)+' en IRPF</b> y <b style="color:var(--c-orange);font-style:normal">'+fcPlain(_ivaPag)+' en IVA</b> (total <b style="font-style:normal">'+fcPlain(_totImp)+'</b>, '+(_pE*100).toFixed(1).replace(".",",")+' % de tus ingresos brutos). ';
+      h+='Equivale a haber trabajado <b>'+_mE+' meses y '+_dR+' d\u00edas</b> para el Estado <span style="font-size:.7rem;font-style:normal;color:var(--text-dim)">(\u2248 '+_dIrpf+' d IRPF + '+_dIva+' d IVA)</span>, hasta el <b>'+_fE.getDate()+' de '+MN[_fE.getMonth()]+'</b>.';
+      h+='</div>';
     }
     h+='</div>';
   }
@@ -387,7 +394,7 @@ function renderIncomeDonut(e,dr){
   var gProf=Math.round((ccss2+semi2+compras2)*100)/100;
   var neto2=Math.round((e.totBase-irpfPag+Math.max(0,-dr.declDiff)-ccss2-semi2-casa2-compras2-otros2)*100)/100;
   var sectors=[];
-  if(totalImp>0)sectors.push({label:'Impuestos',amount:totalImp,color:'#ef4444',breakdown:[
+  if(totalImp>0)sectors.push({label:'Impuestos',amount:totalImp,color:'#ef4444',fill:'url(#stripesIrpfIva)',breakdown:[
     {label:'IRPF (retención + ajuste declaración)',amount:irpfPag,color:'#ef4444'},
     {label:'IVA a Hacienda (Mod.303)',amount:e.totIva,color:'#fb923c'}
   ]});
@@ -411,7 +418,7 @@ function renderIncomeDonut(e,dr){
     var sel=!!_DONUT_SEL[i];
     var dim=hasSel&&!sel;
     var tx=sel?Math.sin(mid)*8:0,ty=sel?-Math.cos(mid)*8:0;
-    svgPaths+='<path class="econ-donut-sector'+(sel?' selected':'')+(dim?' dimmed':'')+'" d="'+_sectorPath(cx,cy,r,ir,a1,a2)+'" fill="'+s.color+'" stroke="var(--surface)" stroke-width="1.5" data-idx="'+i+'" style="transform:translate('+tx.toFixed(1)+'px,'+ty.toFixed(1)+'px)"/>';
+    svgPaths+='<path class="econ-donut-sector'+(sel?' selected':'')+(dim?' dimmed':'')+'" d="'+_sectorPath(cx,cy,r,ir,a1,a2)+'" fill="'+(s.fill||s.color)+'" stroke="var(--surface)" stroke-width="1.5" data-idx="'+i+'" style="transform:translate('+tx.toFixed(1)+'px,'+ty.toFixed(1)+'px)"/>';
     /* Labels */
     var lx=cx+(r+14)*Math.sin(mid),ly=cy-(r+14)*Math.cos(mid);
     var lx2=cx+(r+38)*Math.sin(mid),ly2=cy-(r+38)*Math.cos(mid);
@@ -428,6 +435,10 @@ function renderIncomeDonut(e,dr){
   var h='<div class="sy-section"><div class="sy-section-title">Distribuci\u00f3n (gr\u00e1fico)</div>';
   h+='<div class="econ-donut-wrap" id="econDonutWrap">';
   h+='<svg viewBox="0 0 400 300" style="width:100%;max-width:400px">';
+  /* Patr\u00f3n de rayas diagonales rojo (IRPF) + naranja (IVA) para el sector Impuestos */
+  h+='<defs><pattern id="stripesIrpfIva" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(45)">'
+   +'<rect width="5" height="10" fill="#ef4444"/><rect x="5" width="5" height="10" fill="#fb923c"/>'
+   +'</pattern></defs>';
   h+=svgPaths+svgLabels;
   h+='</svg>';
   h+='<div class="econ-donut-summary" id="econDonutSummary">'+_donutSummaryHtml(sectors,bruto)+'</div>';

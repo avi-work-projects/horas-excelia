@@ -5,6 +5,26 @@
 var EV_STORAGE_KEY = 'excelia-events-v1';
 var EV_YEAR = new Date().getFullYear();
 var EV_MONTH = new Date().getMonth();
+/* Estado por vista — cada calendario guarda su propio año/mes para que sean
+   independientes (1-mes recuerda dónde estabas aunque hayas movido Agenda Semanal,
+   y viceversa). EV_YEAR/EV_MONTH son siempre los de la vista activa actualmente. */
+var EV_VIEW_STATE = {
+  cal:    {year: new Date().getFullYear(), month: new Date().getMonth()},
+  week:   {year: new Date().getFullYear(), month: new Date().getMonth()},
+  annual: {year: new Date().getFullYear()}
+};
+function _switchEvView(newView){
+  /* Guardar el estado de la vista que dejamos */
+  if(EV_VIEW==='cal'||EV_VIEW==='week')EV_VIEW_STATE[EV_VIEW]={year:EV_YEAR,month:EV_MONTH};
+  else if(EV_VIEW==='annual')EV_VIEW_STATE[EV_VIEW]={year:EV_YEAR};
+  EV_VIEW=newView;
+  EV_EDIT_MODE=false;
+  /* Cargar el estado de la vista a la que entramos */
+  if(EV_VIEW_STATE[newView]){
+    if(EV_VIEW_STATE[newView].year!=null)EV_YEAR=EV_VIEW_STATE[newView].year;
+    if(EV_VIEW_STATE[newView].month!=null)EV_MONTH=EV_VIEW_STATE[newView].month;
+  }
+}
 var EV_VIEW = 'cal';  // 'cal' | 'months' | 'upcoming' | 'annual'
 var EV_EDIT = null;
 var EV_FORM_CONTAINER = null;  // overlay donde se renderiza el formulario (null = eventsOverlay)
@@ -1095,7 +1115,10 @@ function renderEvWeek(){
 
       var chips=singleByDay[d]||[];
       var hasMulti=multiSegs.some(function(s){return d>=s.sd&&d<=s.ed;});
-      var eCls='ev-wk-chips'+(isToday?' ev-wk-today':'')+(isPast?' ev-wk-past':'')+(isWknd?' ev-wk-wknd':'')+(hasMulti?' ev-wk-chips-nested':'');
+      /* Si este día es el PRIMER día de un multi-día (donde se pinta el título), añadimos
+         padding-top extra a los chips para que no se solapen con el texto del título. */
+      var isFirstOfMulti=multiSegs.some(function(s){return s.isFirstSeg&&d===s.sd;});
+      var eCls='ev-wk-chips'+(isToday?' ev-wk-today':'')+(isPast?' ev-wk-past':'')+(isWknd?' ev-wk-wknd':'')+(hasMulti?' ev-wk-chips-nested':'')+(isFirstOfMulti?' ev-wk-chips-first-of-multi':'');
       h+='<div class="'+eCls+'" style="grid-row:'+d+';grid-column:2">';
       chips.forEach(function(ev){
         var _dc=getEvDisplayColor(ev);
@@ -1360,7 +1383,8 @@ function openEvDetail(ev,container){
       var evYear=parseInt(ev.start.slice(0,4),10);
       var evMonth=parseInt(ev.start.slice(5,7),10)-1;
       closeEvDetail();
-      EV_YEAR=evYear;EV_MONTH=evMonth;EV_VIEW='cal';
+      _switchEvView('cal');EV_YEAR=evYear;EV_MONTH=evMonth;
+      EV_VIEW_STATE.cal={year:evYear,month:evMonth};
       refreshEvents();
     });
   }
@@ -2052,28 +2076,38 @@ function bindEvEvents(){
   }
   var todayBtn=document.getElementById('evToday');
   if(todayBtn)todayBtn.addEventListener('click',function(){
-    var n=new Date();EV_YEAR=n.getFullYear();EV_MONTH=n.getMonth();
-    EV_QUAD_YEAR=n.getFullYear();EV_QUAD_MONTH=n.getMonth();
+    /* "Hoy" solo afecta a la vista activa, no a las demás */
+    var n=new Date();
+    if(EV_VIEW==='quad'){
+      EV_QUAD_YEAR=n.getFullYear();EV_QUAD_MONTH=n.getMonth();
+    } else {
+      EV_YEAR=n.getFullYear();EV_MONTH=n.getMonth();
+      /* También sincronizamos el estado guardado de la vista */
+      if(EV_VIEW==='cal'||EV_VIEW==='week')EV_VIEW_STATE[EV_VIEW]={year:EV_YEAR,month:EV_MONTH};
+      else if(EV_VIEW==='annual')EV_VIEW_STATE[EV_VIEW]={year:EV_YEAR};
+    }
     refreshEvents();
     if(EV_VIEW==='week')_scrollWeekToToday();
   });
   var weekViewBtn=document.getElementById('evViewWeek');
   if(weekViewBtn)weekViewBtn.addEventListener('click',function(){
-    var n=new Date();EV_YEAR=n.getFullYear();EV_MONTH=n.getMonth();
-    EV_VIEW='week';EV_EDIT_MODE=false;refreshEvents();
-    _scrollWeekToToday();
+    /* Cambiar a Agenda Semanal preservando el último mes en el que estuvo */
+    _switchEvView('week');refreshEvents();
+    /* Solo scrollear a hoy si la vista cargada coincide con el mes actual */
+    var n=new Date();
+    if(EV_YEAR===n.getFullYear()&&EV_MONTH===n.getMonth())_scrollWeekToToday();
   });
   var brightBtn=document.getElementById('evBright');
   if(brightBtn)brightBtn.addEventListener('click',function(){
     EV_BRIGHT_PAST=!EV_BRIGHT_PAST;refreshEvents();
   });
-  document.getElementById('evViewUpcoming').addEventListener('click',function(){EV_VIEW='upcoming';EV_EDIT_MODE=false;refreshEvents();});
-  document.getElementById('evViewCal').addEventListener('click',function(){EV_VIEW='cal';EV_EDIT_MODE=false;EV_PREV_VIEW=null;refreshEvents();});
-  document.getElementById('evViewQuad').addEventListener('click',function(){EV_VIEW='quad';EV_EDIT_MODE=false;refreshEvents();});
-  document.getElementById('evViewAnnual').addEventListener('click',function(){EV_VIEW='annual';EV_EDIT_MODE=false;refreshEvents();});
-  document.getElementById('evViewMonths').addEventListener('click',function(){EV_VIEW='months';EV_EDIT_MODE=false;refreshEvents();});
-  document.getElementById('evViewPuentes').addEventListener('click',function(){EV_VIEW='puentes';EV_EDIT_MODE=false;refreshEvents();});
-  document.getElementById('evViewTimeOff').addEventListener('click',function(){EV_VIEW='time-off';EV_EDIT_MODE=false;refreshEvents();});
+  document.getElementById('evViewUpcoming').addEventListener('click',function(){_switchEvView('upcoming');refreshEvents();});
+  document.getElementById('evViewCal').addEventListener('click',function(){_switchEvView('cal');EV_PREV_VIEW=null;refreshEvents();});
+  document.getElementById('evViewQuad').addEventListener('click',function(){_switchEvView('quad');refreshEvents();});
+  document.getElementById('evViewAnnual').addEventListener('click',function(){_switchEvView('annual');refreshEvents();});
+  document.getElementById('evViewMonths').addEventListener('click',function(){_switchEvView('months');refreshEvents();});
+  document.getElementById('evViewPuentes').addEventListener('click',function(){_switchEvView('puentes');refreshEvents();});
+  document.getElementById('evViewTimeOff').addEventListener('click',function(){_switchEvView('time-off');refreshEvents();});
   // Dropdown de vista anual (reemplaza los dos botones anteriores)
   var _vdBtn=document.getElementById('evAnnVdBtn');
   var _vdMenu=document.getElementById('evAnnVdMenu');
@@ -2133,10 +2167,12 @@ function bindEvEvents(){
       if(EV_EDIT_MODE&&e.target.dataset.ds){
         openEvForm(null,e.target.dataset.ds);
       } else if(!EV_EDIT_MODE){
-        EV_MONTH=parseInt(card.dataset.month);
-        if(card.dataset.year)EV_YEAR=parseInt(card.dataset.year);
+        var _navMonth=parseInt(card.dataset.month);
+        var _navYear=card.dataset.year?parseInt(card.dataset.year):EV_YEAR;
         EV_PREV_VIEW=EV_VIEW==='quad'?'quad':'annual';
-        EV_VIEW='cal';
+        _switchEvView('cal');
+        EV_YEAR=_navYear;EV_MONTH=_navMonth;
+        EV_VIEW_STATE.cal={year:_navYear,month:_navMonth};
         refreshEvents();
       }
     });
