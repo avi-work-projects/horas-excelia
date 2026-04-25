@@ -707,6 +707,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .econ-irpf-flow-result-lbl{font-size:.7rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
 .econ-irpf-flow-result-val{font-family:var(--mono);font-size:1.45rem;font-weight:800;line-height:1.1}
 .econ-irpf-flow-result-sub{font-size:.62rem;color:var(--text-dim);margin-top:4px;font-style:italic}
+/* Anotación inline en Cálculo de base mostrando el ahorro real en IRPF que produce cada reducción */
+.econ-irpf-base-saving{font-size:.62rem;color:var(--c-green);font-weight:600;font-style:italic;white-space:nowrap}
 /* Resumen fiscal al final de Ingresos y Gastos */
 .econ-fiscal-summary{display:flex;gap:12px;flex-wrap:wrap}
 .econ-fiscal-summary-item{flex:1;min-width:120px;padding:12px 14px;border-radius:var(--radius-sm);background:var(--surface);border:1px solid var(--border);text-align:center}
@@ -1149,8 +1151,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-annual-x::after{width:5px;height:1.5px;transform:translate(-50%,-50%) rotate(-45deg);box-shadow:0 0 0 .5px #000}
 /* Badge punto: estilo "1 mes" reducido para anual/4-meses (reemplaza la X) */
 .ev-annual-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;border:1px solid currentColor;background:currentColor;box-shadow:0 0 0 .5px rgba(0,0,0,.6)}
-/* Marcadores con forma personalizada (eventos "Otros") — 6 formas, todas con borde negro fino */
-.ev-annual-marker{position:relative;width:6px;height:6px;flex-shrink:0;display:inline-block}
+/* Marcadores con forma personalizada (eventos "Otros") — 6 formas, todas con borde negro fino.
+   z-index:4 para que en el calendario 1-mes no queden tapados detrás de las barras
+   multi-día (.ev-multi-bar tiene z-index:3 absolute encima de las celdas). */
+.ev-annual-marker{position:relative;width:6px;height:6px;flex-shrink:0;display:inline-block;z-index:4}
 .ev-annual-marker.ev-shape-circle{border-radius:50%;background:currentColor;border:1px solid currentColor;box-shadow:0 0 0 .5px #000}
 .ev-annual-marker.ev-shape-square{background:currentColor;border:1px solid #000;box-shadow:0 0 0 .5px currentColor inset}
 .ev-annual-marker.ev-shape-diamond{background:currentColor;border:1px solid #000;transform:rotate(45deg);width:5px;height:5px}
