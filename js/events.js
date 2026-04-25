@@ -1762,14 +1762,14 @@ function bindEvEvents(){
   });
   /* Scroll fiable a la fila del día actual en agenda semanal usando getBoundingClientRect */
   function _scrollWeekToToday(){
-    requestAnimationFrame(function(){requestAnimationFrame(function(){
+    setTimeout(function(){
       var r=document.getElementById('ev-wk-today-row');
       var b=document.querySelector('.sy-body');
       if(!r||!b)return;
-      var rTop=r.getBoundingClientRect().top;
-      var bTop=b.getBoundingClientRect().top;
-      b.scrollTop=b.scrollTop+(rTop-bTop)-70;
-    });});
+      var offset=0,el=r;
+      while(el&&el!==b){offset+=el.offsetTop;el=el.offsetParent;}
+      b.scrollTop=offset-70;
+    },30);
   }
   var todayBtn=document.getElementById('evToday');
   if(todayBtn)todayBtn.addEventListener('click',function(){

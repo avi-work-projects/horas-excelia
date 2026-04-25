@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v200 — Bombilla centrada exacta entre ▶ y Hoy en vista 1-mes del calendario de eventos';
+var APP_VERSION = 'v201 — Botón Hoy→día exacto en Agenda Semanal + colores nivel-2 en Cumpleaños y Estudio';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
