@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v197 \u2014 Subrogaci\u00f3n reorganizada en secciones (Capital/Cuotas/Intereses/Seguros/Ahorro total/Recuperaci\u00f3n); break-even unificado cuotas+seguros; eliminada gr\u00e1fica de 2 l\u00edneas; tipos renombrados (Rec. Gestiones, Plan/Quedada)';
+var APP_VERSION = 'v198 \u2014 Fix export: la subrogaci\u00f3n y dem\u00e1s config econ\u00f3mica no se exportaban si el usuario no hab\u00eda abierto el overlay econ\u00f3mico antes (load* solo se ejecutaba al abrir). Ahora el bot\u00f3n exportar fuerza la carga de toda la configuraci\u00f3n.';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
