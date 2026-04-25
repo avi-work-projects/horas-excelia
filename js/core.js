@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v199 \u2014 Swipe horizontal: home (mes), eventos (tiempo), cumplea\u00f1os (mes), econ\u00f3mica/fiscal/estudio (pestañas)';
+var APP_VERSION = 'v200 — Bombilla centrada exacta entre ▶ y Hoy en vista 1-mes del calendario de eventos';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
