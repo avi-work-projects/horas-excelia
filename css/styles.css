@@ -1325,7 +1325,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-bright-round.on{opacity:1;background:#fbbf2433;border-color:#fbbf24}
 .ev-bright-sm{font-size:.7rem;padding:2px 5px;border-radius:6px}
 /* Bombilla en 1-mes y agenda semanal: posicionada en el centro entre el ▶ y "Hoy" */
-.ev-bright-mid{position:absolute;right:84px;top:50%;transform:translateY(-50%);z-index:3;font-size:.7rem;padding:2px 5px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;opacity:.45;transition:opacity .2s}
+.ev-bright-mid{position:absolute;right:78px;top:50%;transform:translateY(-50%);z-index:3;font-size:.7rem;padding:2px 5px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;opacity:.45;transition:opacity .2s}
 .ev-bright-mid.on{opacity:1;background:#fbbf2433;border-color:#fbbf24}
 .sy-nav-sm{font-size:.7rem !important;min-width:24px !important;padding:4px 5px !important}
 .sy-nav-pill{width:32px !important;height:36px !important;border-radius:10px !important;padding:0 !important;font-size:.75rem !important}
