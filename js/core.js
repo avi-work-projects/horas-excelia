@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v206 — Paleta de colores reordenada por familias de tono (rojos→púrpuras→azules→verdes→amarillos→naranjas→grises) y los tipos Viaje/Otros del selector usan ahora un dot multicolor con borde neutro para señalizar que no tienen color fijo asignado';
+var APP_VERSION = 'v207 — Análisis declaración: deducciones de cuota integradas dentro de la tarjeta \"A pagar/Devolución\" (antes tarjeta verde suelta), y el donut ahora muestra desglose IRPF/IVA dentro de Impuestos al hacer click (también CCSS/asesoría/compras dentro de Gastos profesionales)';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

@@ -242,20 +242,21 @@ function renderIrpfBreakdown(e,dr){
   h+='<div class="econ-irpf-summary-val" style="color:var(--text-muted)">'+fcPlain(e.totIrpf)+'</div>';
   h+='<div class="econ-irpf-summary-sub">'+e.irpfPct+'% en cada factura</div>';
   h+='</div>';
-  if(dr.totalQuotaDesgrav>0){
-    h+='<div class="econ-irpf-summary-item">';
-    h+='<div class="econ-irpf-summary-lbl">Deducciones en cuota</div>';
-    h+='<div class="econ-irpf-summary-val" style="color:var(--c-green)">\u2212'+fcPlain(dr.totalQuotaDesgrav)+'</div>';
-    h+='<div class="econ-irpf-summary-sub">vivienda, donativos\u2026</div>';
-    h+='</div>';
-  }
   var diffColor=dr.declDiff<0?'var(--c-green)':'var(--c-red)';
   var diffLabel=dr.declDiff<0?'\u2B07\uFE0F Devoluci\u00f3n estimada':'\u2B06\uFE0F A pagar estimado';
   var diffSign=dr.declDiff<0?'':'+';
-  h+='<div class="econ-irpf-summary-item econ-irpf-summary-highlight" style="border-color:'+diffColor+'">';
+  h+='<div class="econ-irpf-summary-item econ-irpf-summary-highlight econ-irpf-summary-wide" style="border-color:'+diffColor+'">';
   h+='<div class="econ-irpf-summary-lbl">'+diffLabel+'</div>';
   h+='<div class="econ-irpf-summary-val" style="color:'+diffColor+'">'+diffSign+fcPlain(Math.abs(dr.declDiff))+'</div>';
   h+='<div class="econ-irpf-summary-sub">en la declaraci\u00f3n de la renta</div>';
+  /* Deducciones en cuota integradas como sub-l\u00ednea (antes era una tarjeta suelta de color verde) */
+  if(dr.totalQuotaDesgrav>0){
+    h+='<div class="econ-irpf-summary-deduc">';
+    h+='<span class="econ-irpf-summary-deduc-lbl">Ya incluye deducciones de cuota</span>';
+    h+='<span class="econ-irpf-summary-deduc-val">\u2212'+fcPlain(dr.totalQuotaDesgrav)+'</span>';
+    h+='</div>';
+    h+='<div class="econ-irpf-summary-deduc-note">vivienda, donativos\u2026</div>';
+  }
   h+='</div>';
   h+='</div></div>';
 
@@ -347,10 +348,31 @@ function _sectorPath(cx,cy,r,ir,a1,a2){
 function _donutSummaryHtml(sectors,bruto){
   var sel=Object.keys(_DONUT_SEL).filter(function(k){return _DONUT_SEL[k];});
   if(!sel.length)return '<div class="econ-donut-hint">Toca un sector para ver el detalle</div><div class="econ-donut-total">Ingresos totales: <b>'+fcPlain(bruto)+'</b></div>';
-  var names=[],sum=0;
-  sel.forEach(function(k){var i=parseInt(k,10);if(sectors[i]){names.push(sectors[i].label);sum+=sectors[i].amount;}});
+  var names=[],sum=0,breakdownHtml='';
+  sel.forEach(function(k){
+    var i=parseInt(k,10);
+    if(!sectors[i])return;
+    names.push(sectors[i].label);
+    sum+=sectors[i].amount;
+    /* Si el sector tiene desglose, lo añadimos */
+    if(sectors[i].breakdown&&sectors[i].breakdown.length){
+      breakdownHtml+='<div class="econ-donut-bd-group"><div class="econ-donut-bd-title">'+sectors[i].label+' — desglose:</div>';
+      sectors[i].breakdown.forEach(function(b){
+        if(b.amount<=0)return;
+        var pct=sectors[i].amount>0?(b.amount/sectors[i].amount*100):0;
+        breakdownHtml+='<div class="econ-donut-bd-row">'
+          +'<span class="econ-donut-bd-lbl">'+b.label+'</span>'
+          +'<span class="econ-donut-bd-amt"><b style="color:'+b.color+'">'+fcPlain(b.amount)+'</b> <span class="econ-donut-bd-pct">'+pct.toFixed(1)+'%</span></span>'
+          +'</div>';
+      });
+      breakdownHtml+='</div>';
+    }
+  });
   var pct=bruto>0?Math.round(sum/bruto*1000)/10:0;
-  return '<div class="econ-donut-sel-names">'+names.join(' + ')+'</div><div class="econ-donut-sel-total" style="color:var(--text)">'+fcPlain(sum)+' <span style="font-size:.7rem;color:var(--text-dim)">('+pct.toFixed(1)+'%)</span></div><div class="econ-donut-total">Ingresos totales: <b>'+fcPlain(bruto)+'</b></div>';
+  return '<div class="econ-donut-sel-names">'+names.join(' + ')+'</div>'
+    +'<div class="econ-donut-sel-total" style="color:var(--text)">'+fcPlain(sum)+' <span style="font-size:.7rem;color:var(--text-dim)">('+pct.toFixed(1)+'%)</span></div>'
+    +breakdownHtml
+    +'<div class="econ-donut-total">Ingresos totales: <b>'+fcPlain(bruto)+'</b></div>';
 }
 function renderIncomeDonut(e,dr){
   var bruto=Math.round((e.totBase+e.totIva)*100)/100;
@@ -365,8 +387,15 @@ function renderIncomeDonut(e,dr){
   var gProf=Math.round((ccss2+semi2+compras2)*100)/100;
   var neto2=Math.round((e.totBase-irpfPag+Math.max(0,-dr.declDiff)-ccss2-semi2-casa2-compras2-otros2)*100)/100;
   var sectors=[];
-  if(totalImp>0)sectors.push({label:'Impuestos',amount:totalImp,color:'#ef4444'});
-  if(gProf>0)sectors.push({label:'Gastos prof.',amount:gProf,color:'#c084fc'});
+  if(totalImp>0)sectors.push({label:'Impuestos',amount:totalImp,color:'#ef4444',breakdown:[
+    {label:'IRPF (retención + ajuste declaración)',amount:irpfPag,color:'#ef4444'},
+    {label:'IVA a Hacienda (Mod.303)',amount:e.totIva,color:'#fb923c'}
+  ]});
+  if(gProf>0)sectors.push({label:'Gastos prof.',amount:gProf,color:'#c084fc',breakdown:[
+    {label:'Cuota autónomos SS',amount:ccss2,color:'#c084fc'},
+    {label:'Asesoría, seguros y similares',amount:semi2,color:'#a78bfa'},
+    {label:'Compras y gastos profesionales',amount:compras2,color:'#34d399'}
+  ].filter(function(b){return b.amount>0;})});
   if(casa2>0)sectors.push({label:'Gastos hogar',amount:casa2,color:'#60a5fa'});
   if(otros2>0)sectors.push({label:'Otros',amount:otros2,color:'#94a3b8'});
   if(neto2>0)sectors.push({label:'Neto',amount:neto2,color:'#34d399'});
