@@ -20,14 +20,23 @@ var EV_TYPES_FILTER = 'all';   // 'all' | nombre de tipo
 var EV_TYPES_PAST = true;      // excluir eventos pasados en Por Tipos (por defecto)
 var EV_COLORS = ['#38bdf8','#1d4ed8','#34d399','#fb923c','#ff6b6b','#c084fc','#a3e635'];
 var EV_COLOR_GRID=[
-  '#ff6b6b','#ff8787','#e64980','#e879a8','#c084fc','#9775fa',
-  '#7950f2','#6741d9','#4c6ef5','#1d4ed8','#38bdf8','#6c8cff',
-  '#22d3ee','#4ecdc4','#34d399','#56c596','#a3e635','#82c91e',
-  '#fbbf24','#f0b45c','#fb923c','#ff922b','#fd7e14','#e8590c',
-  '#f06595','#da77f2','#748ffc','#66d9e8','#63e6be','#ffe066',
-  '#e03131','#f76707','#ae3ec9','#3b5bdb','#0ca678','#845ef7',
-  '#d6336c','#f08c00','#5f3dc4','#1971c2','#099268','#5c940d',
-  '#868e96','#adb5bd','#dee2e6','#f8f9fa','#495057','#212529'
+  /* Paleta ordenada por familias de tono — fila a fila el ojo recorre el círculo cromático */
+  /* Rojos y rosas */
+  '#ff8787','#ff6b6b','#e03131','#f06595','#e64980','#d6336c',
+  /* Magentas y púrpuras claros */
+  '#e879a8','#da77f2','#c084fc','#ae3ec9','#9775fa','#845ef7',
+  /* Violetas e índigos */
+  '#748ffc','#7950f2','#4c6ef5','#6741d9','#3b5bdb','#5f3dc4',
+  /* Azules y cyans */
+  '#6c8cff','#38bdf8','#1971c2','#1d4ed8','#22d3ee','#66d9e8',
+  /* Mints y verdes */
+  '#4ecdc4','#63e6be','#34d399','#56c596','#0ca678','#099268',
+  /* Verdes lima → amarillos */
+  '#a3e635','#82c91e','#5c940d','#ffe066','#fbbf24','#f0b45c',
+  /* Naranjas */
+  '#fb923c','#ff922b','#f08c00','#fd7e14','#f76707','#e8590c',
+  /* Grises (claro→oscuro) */
+  '#f8f9fa','#dee2e6','#adb5bd','#868e96','#495057','#212529'
 ];
 var EV_COLOR_TYPES = {
   '#38bdf8':'Viaje',
@@ -1417,8 +1426,17 @@ function renderEvForm(ev){
     _shownTypes[typeName]=true;
     var sel=(c===color||(isViaje&&typeName==='Viaje')
       ||(!isViaje&&!EV_COLOR_TYPES[color]&&c==='#a3e635'))?' selected':'';
-    h+='<div class="ev-color-swatch'+sel+'" data-hex="'+c+'" style="color:'+c+'">';
-    h+='<div class="ev-type-dot" style="background:'+c+'"></div>';
+    /* Viaje y Otros no tienen color fijo: dot multicolor para se\u00f1alizar
+       que el color se elige libremente abajo, y borde neutro al seleccionar */
+    var isMulti=(typeName==='Viaje'||typeName==='Otros');
+    var swatchCls='ev-color-swatch'+sel+(isMulti?' ev-color-swatch-multi':'');
+    var swatchStyle=isMulti?'':' style="color:'+c+'"';
+    h+='<div class="'+swatchCls+'" data-hex="'+c+'"'+swatchStyle+'>';
+    if(isMulti){
+      h+='<div class="ev-type-dot ev-type-dot-multi"></div>';
+    } else {
+      h+='<div class="ev-type-dot" style="background:'+c+'"></div>';
+    }
     h+='<span class="ev-type-name">'+typeName+'</span>';
     h+='</div>';
   });

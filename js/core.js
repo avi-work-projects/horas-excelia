@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v205 — Otros pulido: selector de formas sin texto (solo previews + tooltip), \"Selección Multidía\" como nombre, Inicio/Fin se deshabilitan visualmente cuando hay multidía activa, y la forma+color de Otros también se aplica en Calendario 1 mes';
+var APP_VERSION = 'v206 — Paleta de colores reordenada por familias de tono (rojos→púrpuras→azules→verdes→amarillos→naranjas→grises) y los tipos Viaje/Otros del selector usan ahora un dot multicolor con borde neutro para señalizar que no tienen color fijo asignado';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
