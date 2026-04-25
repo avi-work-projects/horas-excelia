@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v208 — Donut sector Impuestos con rayas diagonales rojo+naranja (IRPF+IVA), texto Estado con desglose explícito IRPF/IVA y días equivalentes por concepto, botones lapiz/bombilla unificados con el estilo de 1-mes, fix solapamiento texto en Agenda Semanal cuando hay multi-día, calendarios independientes (cada vista recuerda su propio mes/año)';
+var APP_VERSION = 'v209 — Deducciones de cuota: el texto \"vivienda, donativos…\" (que era engañoso, vivienda ya no existe) se sustituye por un desglose dinámico de los items reales que contribuyen (ej: Donaciones cariativas 250€ × 80% = -200€)';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
