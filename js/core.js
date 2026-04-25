@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v211 — Resultado declaración: añadidos Cuota IRPF teórica y Ahorro por desgravaciones base como resta visible al inicio del flujo (teórica - ahorro = cuota real). Así se ven AMBAS deducciones (base y cuota) como restas explícitas en la cadena';
+var APP_VERSION = 'v212 — Fix marker Otros tapado por Viajes en 1-mes (z-index:4 al .ev-annual-marker), y "Resultado declaración" muestra los DOS ahorros (gastos difícil just. + desgravaciones base) como restas explícitas, más anotación inline en Cálculo de base con el ahorro real en IRPF de cada reducción';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
