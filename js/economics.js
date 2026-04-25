@@ -537,6 +537,16 @@ function bindEconEvents(){
     var ms=document.querySelector('.econ-month-section');
     if(qs&&ms)ms.style.maxWidth=qs.offsetWidth+'px';
   },60);
+  /* Swipe: cambiar entre pestañas de la ventana económica */
+  var _econTabOrder=['resumen','dias','gastos','analisis'];
+  var _econTabIds={resumen:'ecTabResumen',dias:'ecTabDias',gastos:'ecTabGastos',analisis:'ecTabAnalisis'};
+  addSwipe(document.getElementById('econOverlay'),function(){
+    var i=_econTabOrder.indexOf(ECON_VIEW);
+    if(i>=0&&i<_econTabOrder.length-1){var b=document.getElementById(_econTabIds[_econTabOrder[i+1]]);if(b)b.click();}
+  },function(){
+    var i=_econTabOrder.indexOf(ECON_VIEW);
+    if(i>0){var b=document.getElementById(_econTabIds[_econTabOrder[i-1]]);if(b)b.click();}
+  });
 }
 
 

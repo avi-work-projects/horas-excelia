@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v198 \u2014 Fix export: la subrogaci\u00f3n y dem\u00e1s config econ\u00f3mica no se exportaban si el usuario no hab\u00eda abierto el overlay econ\u00f3mico antes (load* solo se ejecutaba al abrir). Ahora el bot\u00f3n exportar fuerza la carga de toda la configuraci\u00f3n.';
+var APP_VERSION = 'v199 \u2014 Swipe horizontal: home (mes), eventos (tiempo), cumplea\u00f1os (mes), econ\u00f3mica/fiscal/estudio (pestañas)';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -12,6 +12,22 @@ function normalizeMacroBase(url){
   if(m)return m[1];
   url=url.replace(/\/(generar_alarma1|generar_alarma2|apagar_alarmas)$/,'');
   return url;
+}
+
+// ── Swipe horizontal (umbral 50px, ignora si el gesto es más vertical) ─────
+function addSwipe(el, onLeft, onRight){
+  if(!el||el._swipeAdded)return;
+  el._swipeAdded=true;
+  var _sx=0,_sy=0;
+  el.addEventListener('touchstart',function(e){
+    _sx=e.touches[0].clientX;_sy=e.touches[0].clientY;
+  },{passive:true});
+  el.addEventListener('touchend',function(e){
+    var dx=e.changedTouches[0].clientX-_sx;
+    var dy=e.changedTouches[0].clientY-_sy;
+    if(Math.abs(dx)<50||Math.abs(dx)<=Math.abs(dy))return;
+    if(dx<0)onLeft();else onRight();
+  },{passive:true});
 }
 
 // ── Historial de navegación entre overlays ────────────────────

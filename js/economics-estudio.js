@@ -690,4 +690,14 @@ function bindEstudioEvents(){
   var estGear=document.getElementById('estGearFiscal');
   if(estGear)estGear.addEventListener('click',function(){FISCAL_TAB='despacho';if(typeof openFiscal==='function')openFiscal();});
   bindEconEstudioEvents();
+  /* Swipe: cambiar entre pestañas del análisis estudio */
+  var _estTabOrder=['comparador','simulador','hipoteca','gas','elect'];
+  var _estTabIds={comparador:'ecSubComp',simulador:'ecSubSim',hipoteca:'ecSubHip',gas:'ecSubGas',elect:'ecSubElect'};
+  addSwipe(document.getElementById('estudioOverlay'),function(){
+    var i=_estTabOrder.indexOf(ECON_ESTUDIO_SUB);
+    if(i>=0&&i<_estTabOrder.length-1){var b=document.getElementById(_estTabIds[_estTabOrder[i+1]]);if(b)b.click();}
+  },function(){
+    var i=_estTabOrder.indexOf(ECON_ESTUDIO_SUB);
+    if(i>0){var b=document.getElementById(_estTabIds[_estTabOrder[i-1]]);if(b)b.click();}
+  });
 }

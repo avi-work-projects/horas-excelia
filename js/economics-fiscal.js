@@ -825,6 +825,17 @@ function bindFiscalEvents(){
   document.getElementById('fiscalTabIrpfDeduc').addEventListener('click',function(){_switchTab('irpf_deduc');});
   document.getElementById('fiscalTabDespacho').addEventListener('click',function(){_switchTab('despacho');});
 
+  /* Swipe: cambiar entre pestañas de configuración económica */
+  var _fiscalTabOrder=['personal','gastos_desg','irpf_deduc','despacho'];
+  var _fiscalTabIds={personal:'fiscalTabPersonal',gastos_desg:'fiscalTabGastosDesg',irpf_deduc:'fiscalTabIrpfDeduc',despacho:'fiscalTabDespacho'};
+  addSwipe(document.getElementById('fiscalOverlay'),function(){
+    var i=_fiscalTabOrder.indexOf(FISCAL_TAB);
+    if(i>=0&&i<_fiscalTabOrder.length-1){var b=document.getElementById(_fiscalTabIds[_fiscalTabOrder[i+1]]);if(b)b.click();}
+  },function(){
+    var i=_fiscalTabOrder.indexOf(FISCAL_TAB);
+    if(i>0){var b=document.getElementById(_fiscalTabIds[_fiscalTabOrder[i-1]]);if(b)b.click();}
+  });
+
   document.getElementById('fiscalSave').addEventListener('click',function(){_saveFiscalAll();});
 
   /* Year selector bindings (shared by personal + gastos_desg + irpf_deduc) */
