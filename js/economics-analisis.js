@@ -89,8 +89,6 @@ function _renderAnalisisGastos(){
   h+='<button class="fiscal-period-btn'+(ANALISIS_RES_MODE==='month'?' active':'')+'" data-arm="month" style="font-size:.55rem;padding:2px 5px">/mes</button>';
   h+='<button class="fiscal-period-btn'+(ANALISIS_RES_MODE==='year'?' active':'')+'" data-arm="year" style="font-size:.55rem;padding:2px 5px">/a\u00f1o</button>';
   h+='</div></div>';
-  h+='<div class="ah-cuota-hero"><div class="ah-cuota-val" style="color:'+(balance>=0?'var(--c-green)':'var(--c-red)')+'">'+fcPlain(Math.ceil(balance/resDiv))+'</div>';
-  h+='<div class="ah-cuota-sub">Libre '+(ANALISIS_RES_MODE==='month'?'mensual':'anual')+' (disponible \u2212 gastos \u2212 inversiones)</div></div>';
   h+='<div class="hip-stats">';
   h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-green)">'+fcPlain(Math.round(disponible/resDiv*100)/100)+'</span><span class="hip-stat-lbl">Renta neta'+resSuffix+'</span></div>';
   if(tIngExtra>0)h+='<div class="hip-stat"><span class="hip-stat-val" style="color:#22d3ee">'+fcPlain(Math.round(tIngExtra/resDiv*100)/100)+'</span><span class="hip-stat-lbl">Ingresos extra'+resSuffix+'</span></div>';
@@ -112,7 +110,7 @@ function _renderAnalisisGastos(){
   }
   h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-orange)">'+fcPlain(Math.ceil(tGastos*0.82/resDiv))+'</span><span class="hip-stat-lbl">Gastos'+resSuffix+' -18%*</span></div>';
   if(tInv>0)h+='<div class="hip-stat"><span class="hip-stat-val" style="color:#c084fc">'+fcPlain(Math.round(tInv/resDiv*100)/100)+'</span><span class="hip-stat-lbl">Inversiones'+resSuffix+'</span></div>';
-  h+='<div class="hip-stat"><span class="hip-stat-val" style="color:'+(balance>=0?'#fbbf24':'var(--c-red)')+'">'+fcPlain(Math.ceil(balance/resDiv))+'</span><span class="hip-stat-lbl">Sin asignar'+resSuffix+'</span></div>';
+  h+='<div class="hip-stat" style="border:2px solid '+(balance>=0?'#fbbf24':'var(--c-red)')+';box-shadow:0 0 8px '+(balance>=0?'#fbbf2455':'rgba(255,107,107,.33)')+'"><span class="hip-stat-val" style="color:'+(balance>=0?'#fbbf24':'var(--c-red)')+'">'+fcPlain(Math.ceil(balance/resDiv))+'</span><span class="hip-stat-lbl">Sin asignar'+resSuffix+'</span></div>';
   h+='</div>';
   h+='<div style="font-size:.62rem;color:var(--text-dim);margin-top:4px">Disponible = post decl. renta'+(tIngExtra>0?' + ingresos extra':'')+' \u2212 gastos profesionales</div>';
   /* Key ratios */

@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v195 \u2014 bombilla 1-mes centrada entre \u25b6 y Hoy + bombilla a\u00f1adida a Agenda semanal';
+var APP_VERSION = 'v196 \u2014 Resumen mensual sin hero Libre, recuadro amarillo en Sin asignar; bombilla 1-mes/agenda semanal exactamente centrada (offset 0.3px)';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
