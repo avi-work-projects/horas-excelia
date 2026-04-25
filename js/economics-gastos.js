@@ -243,17 +243,39 @@ function renderIrpfBreakdown(e,dr){
   var diffLabel=dr.declDiff<0?'\u2B07\uFE0F Devoluci\u00f3n estimada':'\u2B06\uFE0F A pagar estimado';
   var diffSign=dr.declDiff<0?'':'+';
   var cuotaLiquida=Math.round((dr.decl.totalTax-dr.totalQuotaDesgrav)*100)/100;
+  /* Cuota te\u00f3rica SIN aplicar desgravaciones base, para mostrar el ahorro como resta */
+  var sinDesgravBase=typeof computeIrpfBrackets==='function'?computeIrpfBrackets(dr.baseAfterGD):null;
+  var cuotaSinBase=sinDesgravBase?sinDesgravBase.totalTax:dr.decl.totalTax;
+  var ahorroBase=Math.round((cuotaSinBase-dr.decl.totalTax)*100)/100;
   h+='<div class="econ-irpf-block econ-irpf-summary-block">';
   h+='<div class="econ-irpf-block-title">Resultado declaraci\u00f3n</div>';
   h+='<div class="econ-irpf-flow-summary">';
-  /* Paso 1: Cuota IRPF total */
-  h+='<div class="econ-irpf-flow-line">';
-  h+='<span class="econ-irpf-flow-name">Cuota IRPF total</span>';
-  h+='<span class="econ-irpf-flow-amt" style="color:var(--c-red)">'+fcPlain(dr.decl.totalTax)+'</span>';
-  h+='</div>';
-  h+='<div class="econ-irpf-flow-note">'+dr.decl.effectivePct.toFixed(2).replace('.',',')+'\u202f% efectivo sobre <b>'+fcPlain(dr.baseDecl)+'</b> de base declaraci\u00f3n';
-  if(dr.totalBaseDesgrav>0)h+=' (ya descontadas <b>'+fcPlain(dr.totalBaseDesgrav)+'</b> de desgravaciones base)';
-  h+='</div>';
+  if(ahorroBase>0&&dr.totalBaseDesgrav>0){
+    /* Paso 0: Cuota te\u00f3rica + Ahorro por desgrav base como resta */
+    h+='<div class="econ-irpf-flow-line">';
+    h+='<span class="econ-irpf-flow-name">Cuota IRPF te\u00f3rica <span style="font-weight:400;font-size:.7rem;color:var(--text-dim)">(sin desgravaciones)</span></span>';
+    h+='<span class="econ-irpf-flow-amt" style="color:var(--text-muted)">'+fcPlain(cuotaSinBase)+'</span>';
+    h+='</div>';
+    h+='<div class="econ-irpf-flow-note">Lo que pagar\u00edas si no aplicaras las <b>'+fcPlain(dr.totalBaseDesgrav)+'</b> de desgravaciones base (CCSS, despacho, seguros\u2026)</div>';
+    h+='<div class="econ-irpf-flow-line econ-irpf-flow-minus">';
+    h+='<span class="econ-irpf-flow-name"><span class="econ-irpf-flow-sgn">\u2212</span>Ahorro por desgravaciones base</span>';
+    h+='<span class="econ-irpf-flow-amt" style="color:var(--c-green)">\u2212'+fcPlain(ahorroBase)+'</span>';
+    h+='</div>';
+    var efectMargin=(ahorroBase/dr.totalBaseDesgrav*100).toFixed(1).replace('.',',');
+    h+='<div class="econ-irpf-flow-note econ-irpf-flow-note-detail">'+fcPlain(dr.totalBaseDesgrav)+' \u00d7 ~'+efectMargin+'% (tipo marginal medio aprox.) = ahorro real en cuota</div>';
+    h+='<div class="econ-irpf-flow-subtotal">';
+    h+='<span class="econ-irpf-flow-name">= Cuota IRPF total</span>';
+    h+='<span class="econ-irpf-flow-amt" style="color:var(--c-red)">'+fcPlain(dr.decl.totalTax)+'</span>';
+    h+='</div>';
+    h+='<div class="econ-irpf-flow-note">'+dr.decl.effectivePct.toFixed(2).replace('.',',')+'\u202f% efectivo sobre <b>'+fcPlain(dr.baseDecl)+'</b> de base declaraci\u00f3n</div>';
+  } else {
+    /* Sin desgravaciones base: mostramos directamente la cuota total */
+    h+='<div class="econ-irpf-flow-line">';
+    h+='<span class="econ-irpf-flow-name">Cuota IRPF total</span>';
+    h+='<span class="econ-irpf-flow-amt" style="color:var(--c-red)">'+fcPlain(dr.decl.totalTax)+'</span>';
+    h+='</div>';
+    h+='<div class="econ-irpf-flow-note">'+dr.decl.effectivePct.toFixed(2).replace('.',',')+'\u202f% efectivo sobre <b>'+fcPlain(dr.baseDecl)+'</b> de base declaraci\u00f3n</div>';
+  }
   /* Paso 2: Deducciones en cuota (si las hay) -> cuota l\u00edquida */
   if(dr.totalQuotaDesgrav>0){
     h+='<div class="econ-irpf-flow-line econ-irpf-flow-minus">';

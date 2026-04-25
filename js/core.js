@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v210 — Resultado declaración reorganizado como flujo vertical: Cuota IRPF → Deducciones cuota → Cuota líquida → Ya retenido → A pagar/Devolución. Nota encadena con desgravaciones base mostrando que la base declaración ya las incluye';
+var APP_VERSION = 'v211 — Resultado declaración: añadidos Cuota IRPF teórica y Ahorro por desgravaciones base como resta visible al inicio del flujo (teórica - ahorro = cuota real). Así se ven AMBAS deducciones (base y cuota) como restas explícitas en la cadena';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
