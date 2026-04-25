@@ -1107,6 +1107,69 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-annual-x::after{width:5px;height:1.5px;transform:translate(-50%,-50%) rotate(-45deg);box-shadow:0 0 0 .5px #000}
 /* Badge punto: estilo "1 mes" reducido para anual/4-meses (reemplaza la X) */
 .ev-annual-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;border:1px solid currentColor;background:currentColor;box-shadow:0 0 0 .5px rgba(0,0,0,.6)}
+/* Marcadores con forma personalizada (eventos "Otros") — 6 formas, todas con borde negro fino */
+.ev-annual-marker{position:relative;width:6px;height:6px;flex-shrink:0;display:inline-block}
+.ev-annual-marker.ev-shape-circle{border-radius:50%;background:currentColor;border:1px solid currentColor;box-shadow:0 0 0 .5px #000}
+.ev-annual-marker.ev-shape-square{background:currentColor;border:1px solid #000;box-shadow:0 0 0 .5px currentColor inset}
+.ev-annual-marker.ev-shape-diamond{background:currentColor;border:1px solid #000;transform:rotate(45deg);width:5px;height:5px}
+.ev-annual-marker.ev-shape-rounded{background:currentColor;border:1px solid #000;border-radius:2px;width:7px;height:5px}
+.ev-annual-marker.ev-shape-x-thick{background:transparent;border:none;width:7px;height:7px}
+.ev-annual-marker.ev-shape-x-thick::before,.ev-annual-marker.ev-shape-x-thick::after{content:'';position:absolute;top:50%;left:50%;width:8px;height:2.5px;background:currentColor;border-radius:1px;box-shadow:0 0 0 .6px #000}
+.ev-annual-marker.ev-shape-x-thick::before{transform:translate(-50%,-50%) rotate(45deg)}
+.ev-annual-marker.ev-shape-x-thick::after{transform:translate(-50%,-50%) rotate(-45deg)}
+.ev-annual-marker.ev-shape-x-thin{background:transparent;border:none;width:6px;height:6px}
+.ev-annual-marker.ev-shape-x-thin::before,.ev-annual-marker.ev-shape-x-thin::after{content:'';position:absolute;top:50%;left:50%;width:7px;height:1.2px;background:currentColor;border-radius:1px;box-shadow:0 0 0 .4px #000}
+.ev-annual-marker.ev-shape-x-thin::before{transform:translate(-50%,-50%) rotate(45deg)}
+.ev-annual-marker.ev-shape-x-thin::after{transform:translate(-50%,-50%) rotate(-45deg)}
+.ev-annual-marker.past-marker{opacity:.5}
+
+/* === Selector de formas en el formulario de evento (Otros) === */
+.ev-otros-extras{padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-top:8px}
+.ev-shape-picker{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
+.ev-shape-opt{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px 4px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;color:var(--text);font-size:.65rem;transition:all .15s}
+.ev-shape-opt:hover{border-color:var(--accent)}
+.ev-shape-opt.selected{border-color:var(--accent-bright);background:var(--accent-glow);box-shadow:0 0 0 1px var(--accent-bright)}
+.ev-shape-preview{display:inline-block;width:14px;height:14px;flex-shrink:0;position:relative}
+.ev-shape-preview.ev-shape-circle{border-radius:50%;background:currentColor;border:1.5px solid #000}
+.ev-shape-preview.ev-shape-square{background:currentColor;border:1.5px solid #000}
+.ev-shape-preview.ev-shape-diamond{background:currentColor;border:1.5px solid #000;transform:rotate(45deg);width:11px;height:11px;margin:1.5px}
+.ev-shape-preview.ev-shape-rounded{background:currentColor;border:1.5px solid #000;border-radius:4px;width:18px;height:11px;margin:1.5px 0}
+.ev-shape-preview.ev-shape-x-thick{background:transparent;border:none}
+.ev-shape-preview.ev-shape-x-thick::before,.ev-shape-preview.ev-shape-x-thick::after{content:'';position:absolute;top:50%;left:50%;width:18px;height:5px;background:currentColor;border-radius:2px;box-shadow:0 0 0 1.2px #000}
+.ev-shape-preview.ev-shape-x-thick::before{transform:translate(-50%,-50%) rotate(45deg)}
+.ev-shape-preview.ev-shape-x-thick::after{transform:translate(-50%,-50%) rotate(-45deg)}
+.ev-shape-preview.ev-shape-x-thin{background:transparent;border:none}
+.ev-shape-preview.ev-shape-x-thin::before,.ev-shape-preview.ev-shape-x-thin::after{content:'';position:absolute;top:50%;left:50%;width:18px;height:2.4px;background:currentColor;border-radius:1.5px;box-shadow:0 0 0 .8px #000}
+.ev-shape-preview.ev-shape-x-thin::before{transform:translate(-50%,-50%) rotate(45deg)}
+.ev-shape-preview.ev-shape-x-thin::after{transform:translate(-50%,-50%) rotate(-45deg)}
+.ev-shape-lbl{font-size:.62rem;color:var(--text-muted);line-height:1}
+.ev-shape-opt.selected .ev-shape-lbl{color:var(--accent-bright);font-weight:600}
+
+/* === Mini-overlay para elegir días específicos (Otros) === */
+.dp-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1500;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.dp-overlay.open{opacity:1;pointer-events:auto}
+.dp-sheet{background:var(--surface);border-top-left-radius:18px;border-top-right-radius:18px;width:100%;max-width:520px;max-height:92vh;display:flex;flex-direction:column;padding:8px 12px 12px;transform:translateY(100%);transition:transform .25s ease;box-shadow:0 -8px 24px rgba(0,0,0,.4)}
+.dp-overlay.open .dp-sheet{transform:translateY(0)}
+.dp-handle{width:38px;height:4px;background:var(--border);border-radius:2px;margin:4px auto 8px}
+.dp-hdr{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.dp-title{flex:1;font-size:.9rem;font-weight:600;text-align:center}
+.dp-yearnav{display:flex;align-items:center;justify-content:center;gap:14px;margin:4px 0 6px;font-size:.95rem;font-weight:600}
+.dp-yearnav button{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-size:.85rem;padding:3px 10px;border-radius:6px;cursor:pointer}
+.dp-counter{text-align:center;font-size:.7rem;color:var(--text-muted);margin-bottom:8px}
+.dp-counter b{color:var(--accent-bright);font-size:.85rem}
+.dp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;overflow-y:auto;flex:1;min-height:0;padding:2px}
+.dp-month{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px}
+.dp-mname{font-size:.65rem;font-weight:600;color:var(--text);text-align:center;margin-bottom:3px}
+.dp-mhdr{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;margin-bottom:1px}
+.dp-mhdr-c{font-size:.5rem;color:var(--text-dim);text-align:center}
+.dp-days{display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
+.dp-day{font-size:.55rem;text-align:center;padding:3px 0;border:1px solid transparent;border-radius:3px;color:var(--text);background:var(--surface);cursor:pointer;line-height:1;user-select:none}
+.dp-day.out{visibility:hidden}
+.dp-day.wk{color:var(--text-dim)}
+.dp-day:hover{border-color:var(--accent)}
+.dp-day.sel{font-weight:700}
+.dp-actions{display:flex;gap:8px;margin-top:10px}
+.dp-actions .ev-btn{flex:1}
 .ev-annual-vip-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:#fbbf24;border:1px solid #fbbf24;box-shadow:0 0 4px rgba(251,191,36,.7),0 0 0 .5px rgba(0,0,0,.5)}
 .ev-annual-vip-star{font-size:.26rem;line-height:1;flex-shrink:0;filter:drop-shadow(0 0 1px rgba(251,191,36,.9));-webkit-text-stroke:.4px rgba(0,0,0,.7)}
 /* Barras multi-día en calendario anual/4meses: 55% celda centradas, z-index:2 (1-mes usa ev-multi-bar al 65%) */
