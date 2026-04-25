@@ -811,6 +811,18 @@
     return Object.keys(result).length?result:null;
   }
   document.getElementById('exportAllBtn').addEventListener('click',function(){
+    /* Garantizar que toda la config económica esté cargada en memoria.
+       loadDespacho/loadFiscal/etc. solo se ejecutan al abrir el overlay
+       económico — si el usuario nunca lo abrió, DESPACHO.compra queda en null
+       (valor inicial) y la subrogación no se exporta. */
+    if(typeof loadDespacho==='function')loadDespacho();
+    if(typeof loadFiscal==='function')loadFiscal();
+    if(typeof loadGastosYear==='function')loadGastosYear(CY);
+    if(typeof loadIngresos==='function')loadIngresos();
+    if(typeof loadCompras==='function')loadCompras();
+    if(typeof loadDesgrav==='function')loadDesgrav();
+    if(typeof loadPersonalYear==='function')loadPersonalYear(CY);
+    if(typeof loadEconComp==='function')loadEconComp();
     var data={version:4,days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
       exclFest:EXCL_FEST,exclVac:EXCL_VAC,vacEntitlement:VAC_ENTITLEMENT,
       birthdays:BDAYS,events:EVENTS,
