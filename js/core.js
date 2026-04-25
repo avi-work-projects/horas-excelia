@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v207 — Análisis declaración: deducciones de cuota integradas dentro de la tarjeta \"A pagar/Devolución\" (antes tarjeta verde suelta), y el donut ahora muestra desglose IRPF/IVA dentro de Impuestos al hacer click (también CCSS/asesoría/compras dentro de Gastos profesionales)';
+var APP_VERSION = 'v208 — Donut sector Impuestos con rayas diagonales rojo+naranja (IRPF+IVA), texto Estado con desglose explícito IRPF/IVA y días equivalentes por concepto, botones lapiz/bombilla unificados con el estilo de 1-mes, fix solapamiento texto en Agenda Semanal cuando hay multi-día, calendarios independientes (cada vista recuerda su propio mes/año)';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
