@@ -267,10 +267,11 @@ function evUniqueColor(ev){
    (solo eventos "Otros" pueden tener shape personalizada).
    Shapes válidas: circle | square | diamond | x-thick | x-thin | rounded.
    Defaults: dot circular (= comportamiento previo). */
-function evMarkerHtml(ev,pastClass){
+function evMarkerHtml(ev,pastClass,sizeClass){
   var color=getEvDisplayColor(ev);
   var shape=ev.shape||'circle';
   var pmk=pastClass||'';
+  var sz=sizeClass?(' '+sizeClass):'';
   /* X-shapes se renderizan con SVG de doble stroke (negro debajo + color encima)
      para que el borde sea uniforme y los dos brazos no muestren dobles bordes. */
   if(shape==='x-thick'||shape==='x-thin'){
@@ -280,9 +281,9 @@ function evMarkerHtml(ev,pastClass){
       +'<path d="M-7,-7 L7,7 M-7,7 L7,-7" stroke="#000" stroke-width="'+swOut+'" stroke-linecap="round" fill="none"/>'
       +'<path d="M-7,-7 L7,7 M-7,7 L7,-7" stroke="'+color+'" stroke-width="'+swIn+'" stroke-linecap="round" fill="none"/>'
       +'</svg>';
-    return '<span class="ev-annual-marker ev-shape-'+shape+pmk+'" data-id="'+ev.id+'">'+svg+'</span>';
+    return '<span class="ev-annual-marker ev-shape-'+shape+pmk+sz+'" data-id="'+ev.id+'">'+svg+'</span>';
   }
-  return '<span class="ev-annual-marker ev-shape-'+shape+pmk+'" data-id="'+ev.id+'" style="color:'+color+'"></span>';
+  return '<span class="ev-annual-marker ev-shape-'+shape+pmk+sz+'" data-id="'+ev.id+'" style="color:'+color+'"></span>';
 }
 /* ── Helper: relleno suave y estable por evento ── */
 function evSoftFillColor(ev){
@@ -361,6 +362,11 @@ function renderEvCalMonth(){
       evs.forEach(function(ev){
         if(multiIds[ev.id])return;
         var _isVipBday=ev.id.indexOf('ev-bday-vip-')===0;
+        /* Otros con shape personalizada: renderizar como marker en lugar del badge pill */
+        if(!_isVipBday && ev.shape && (ev.type==='Otros' || (typeof getEvType==='function' && getEvType(ev)==='Otros'))){
+          h+=evMarkerHtml(ev, past?' past-marker':'', 'ev-marker-lg');
+          return;
+        }
         var _rawName=ev.title.replace(/^\u2b50\s*/,'').replace(/^Cumple\s+/,'');
         var _bTitle=_isVipBday?escHtml(_rawName.split(/\s+/)[0]):escHtml(ev.title);
         var _bStyle=_isVipBday
@@ -1428,7 +1434,7 @@ function renderEvForm(ev){
   var curShape=isEdit&&ev.shape?ev.shape:'circle';
   var curDates=isEdit&&Array.isArray(ev.dates)?ev.dates.slice():[];
   h+='<div class="ev-field ev-otros-extras" id="evFOtrosExtras" style="display:'+(isOtros?'block':'none')+'">';
-  h+='<label>\u25B8 Forma del marcador (anual y 4 meses)</label>';
+  h+='<label>\u25B8 Forma del marcador</label>';
   h+='<div class="ev-shape-picker" id="evFShapePicker">';
   var _shapes=[
     {k:'circle',  label:'C\u00edrculo'},
@@ -1441,7 +1447,7 @@ function renderEvForm(ev){
   _shapes.forEach(function(s){
     var sel=(s.k===curShape)?' selected':'';
     var prevColor=color||EV_COLORS[0];
-    h+='<button type="button" class="ev-shape-opt'+sel+'" data-shape="'+s.k+'">';
+    h+='<button type="button" class="ev-shape-opt'+sel+'" data-shape="'+s.k+'" title="'+s.label+'" aria-label="'+s.label+'">';
     if(s.k==='x-thick'||s.k==='x-thin'){
       /* SVG con doble stroke (negro+color) — borde uniforme */
       var swOut=s.k==='x-thick'?9:5.5;
@@ -1455,21 +1461,23 @@ function renderEvForm(ev){
     } else {
       h+='<span class="ev-shape-preview ev-shape-'+s.k+'" style="color:'+prevColor+'"></span>';
     }
-    h+='<span class="ev-shape-lbl">'+s.label+'</span>';
     h+='</button>';
   });
   h+='</div>';
   h+='<div style="margin-top:12px">';
-  h+='<label>\uD83D\uDDD3 D\u00edas espec\u00edficos (no consecutivos)</label>';
+  h+='<label>\uD83D\uDDD3 Selecci\u00f3n Multid\u00eda</label>';
   h+='<button type="button" class="ev-btn" id="evFPickDates" style="width:100%;margin-top:4px;font-size:.78rem;padding:8px 10px">';
-  h+='<span id="evFPickDatesLbl">'+(curDates.length>1?(curDates.length+' d\u00edas seleccionados \u2014 pulsa para editar'):'\uD83D\uDDD3 Elegir d\u00edas espec\u00edficos\u2026')+'</span>';
+  h+='<span id="evFPickDatesLbl">'+(curDates.length>1?(curDates.length+' d\u00edas seleccionados \u2014 pulsa para editar'):'\uD83D\uDDD3 Selecci\u00f3n Multid\u00eda\u2026')+'</span>';
   h+='</button>';
   h+='<div style="font-size:.62rem;color:var(--text-dim);margin-top:4px;line-height:1.4">Si seleccionas <b>m\u00e1s de un d\u00eda</b>, el evento aparecer\u00e1 en cada uno de esos d\u00edas e ignorar\u00e1 las fechas de inicio/fin de abajo.</div>';
   h+='</div>';
   h+='</div>';
-  h+='<div class="ev-field ev-date-row">';
-  h+='<div><label>Inicio</label><input class="ev-input" id="evFStart" type="date" value="'+start+'"></div>';
-  h+='<div><label>Fin</label><input class="ev-input" id="evFEnd" type="date" value="'+end+'"></div>';
+  /* Inicio/Fin: deshabilitados si hay multid\u00eda activo */
+  var _multiActive=curDates.length>1;
+  h+='<div class="ev-field ev-date-row'+(_multiActive?' ev-dates-locked':'')+'" id="evFDateRow">';
+  h+='<div><label>Inicio</label><input class="ev-input" id="evFStart" type="date" value="'+start+'"'+(_multiActive?' disabled':'')+'></div>';
+  h+='<div><label>Fin</label><input class="ev-input" id="evFEnd" type="date" value="'+end+'"'+(_multiActive?' disabled':'')+'></div>';
+  h+='<div class="ev-dates-locked-note" id="evFDatesLockedNote" style="display:'+(_multiActive?'block':'none')+'">Estas fechas se ignoran porque hay <b>Selecci\u00f3n Multid\u00eda</b> activa.</div>';
   h+='</div>';
   h+='<div class="ev-field"><label>Repetici\u00f3n</label>';
   h+='<select class="ev-input" id="evFRepeat">';
@@ -1540,7 +1548,7 @@ function openOtrosDatePicker(initialDates,color,year,onAccept){
     h+='<div class="dp-handle"></div>';
     h+='<div class="dp-hdr">';
     h+='<button class="sy-back" id="dpClose">&#8592;</button>';
-    h+='<div class="dp-title">D\u00edas espec\u00edficos</div>';
+    h+='<div class="dp-title">Selecci\u00f3n Multid\u00eda</div>';
     h+='<div style="width:36px"></div>';
     h+='</div>';
     h+='<div class="dp-yearnav"><button id="dpYrPrev">&#9664;</button><span>'+curYear+'</span><button id="dpYrNext">&#9654;</button></div>';
@@ -1652,9 +1660,20 @@ function bindEvFormEvents(){
   }
   function _refreshPickDatesLabel(){
     var lbl=document.getElementById('evFPickDatesLbl');
-    if(!lbl)return;
-    if(_otrosDates.length>1)lbl.textContent=_otrosDates.length+' d\u00edas seleccionados \u2014 pulsa para editar';
-    else lbl.textContent='\uD83D\uDDD3 Elegir d\u00edas espec\u00edficos\u2026';
+    if(lbl){
+      if(_otrosDates.length>1)lbl.textContent=_otrosDates.length+' d\u00edas seleccionados \u2014 pulsa para editar';
+      else lbl.textContent='\uD83D\uDDD3 Selecci\u00f3n Multid\u00eda\u2026';
+    }
+    /* Bloqueo visual de Inicio/Fin cuando hay multid\u00eda */
+    var locked=_otrosDates.length>1;
+    var row=document.getElementById('evFDateRow');
+    var startEl=document.getElementById('evFStart');
+    var endEl=document.getElementById('evFEnd');
+    var note=document.getElementById('evFDatesLockedNote');
+    if(row)row.classList.toggle('ev-dates-locked',locked);
+    if(startEl)startEl.disabled=locked;
+    if(endEl)endEl.disabled=locked;
+    if(note)note.style.display=locked?'block':'none';
   }
   /* Type selector click handler */
   document.querySelectorAll('.ev-color-swatch').forEach(function(sw){
@@ -2104,8 +2123,8 @@ function bindEvEvents(){
       }
     });
   });
-  // Click en badges del calendario → detail (no edit)
-  document.querySelectorAll('.ev-badge[data-id]').forEach(function(badge){
+  // Click en badges/markers del calendario 1-mes → detail (no edit)
+  document.querySelectorAll('.ev-badge[data-id], .ev-cell .ev-annual-marker[data-id]').forEach(function(badge){
     badge.addEventListener('click',function(e){
       e.stopPropagation();
       var id=badge.dataset.id;var ev=null;
@@ -2117,6 +2136,7 @@ function bindEvEvents(){
   document.querySelectorAll('.ev-cell[data-ds]').forEach(function(cell){
     cell.addEventListener('click',function(e){
       if(e.target.classList.contains('ev-badge'))return;
+      if(e.target.closest && e.target.closest('.ev-annual-marker'))return;
       openEvForm(null,cell.dataset.ds);
     });
   });
