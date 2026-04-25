@@ -373,8 +373,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .est-nav{display:flex;gap:8px;padding:8px 10px;box-shadow:0 1px 0 var(--border)}
 .est-group{display:flex;flex-direction:column;gap:4px;flex:1}
 .est-group-label{font-size:.58rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;text-align:center;margin-bottom:2px}
-.est-group-casa .est-btn{border-color:rgba(20,184,166,.3);color:var(--text-dim)}
-.est-group-casa .est-btn.active{border-color:#14b8a6;background:rgba(20,184,166,.1);color:#14b8a6}
+.est-btn:not(.est-casa):not(.active){background:rgba(96,165,250,.07);border-color:rgba(96,165,250,.25);color:rgba(96,165,250,.85)}
+.est-group-casa .est-btn:not(.active){background:rgba(20,184,166,.07);border-color:rgba(20,184,166,.25);color:rgba(20,184,166,.85)}
+.est-group-casa .est-btn.active{border-color:#14b8a6!important;background:rgba(20,184,166,.22)!important;color:#14b8a6!important}
 .est-btn{font-size:.66rem;padding:6px 4px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;text-align:center;-webkit-user-select:none;user-select:none}
 .est-btn.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
 /* Estudio — tariff comparison cards */
@@ -927,7 +928,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .data-btn.bday-active{color:var(--vacaciones)!important;border-radius:8px}
 .bday-hdr-sub{display:flex;align-items:stretch;padding:5px 6px;gap:5px;box-shadow:0 1px 0 var(--border);overflow-x:hidden}
 .bday-view-toggle{flex:1;font-size:.62rem;padding:6px 3px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;text-align:center;line-height:1.3}
-.bday-view-toggle.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
+.bday-view-toggle:not(.active){background:rgba(251,146,60,.07);border-color:rgba(251,146,60,.25);color:rgba(251,146,60,.85)}
+.bday-view-toggle.active{background:rgba(251,146,60,.22)!important;border-color:#fb923c!important;color:#f97316!important}
 .bday-week-hdr{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:3px}
 .bday-week-hdr div{text-align:center;font-size:.62rem;color:var(--text-dim);text-transform:uppercase;padding:6px 0;font-weight:600}
 .bday-week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:2px}
