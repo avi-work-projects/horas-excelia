@@ -62,13 +62,15 @@ function isEvBarAlways(ev){
 // Devuelve el color de visualización (viajes → azul único por evento, resto → color guardado)
 function getEvDisplayColor(ev){
   if(!ev)return'#888';
-  if(ev.colorLocked)return ev.color;
+  /* Si el evento es Viaje y conserva un color personalizado distinto al base de Viaje,
+     lo respetamos. Sólo los colores base (#38bdf8/#6c8cff) se reemplazan por el azul
+     determinista por hash, para que cada viaje tenga matiz distinto. */
   if(ev.color==='#38bdf8'||ev.color==='#6c8cff')return evTravelColor(ev.id);
   return ev.color;
 }
 
 // Render color picker reutilizable (paleta 6×6 + color libre + preview)
-function _renderColorPicker(selHex,showLock,isLocked,prefix){
+function _renderColorPicker(selHex,_unusedShowLock,_unusedIsLocked,prefix){
   prefix=prefix||'evCp';
   var h='<div class="ev-color-picker" id="'+prefix+'Wrap">';
   h+='<div class="ev-color-grid">';
@@ -87,19 +89,14 @@ function _renderColorPicker(selHex,showLock,isLocked,prefix){
   h+='<div class="ev-color-preview-item"><span>Relleno</span><div class="ev-color-preview-swatch" style="background:'+fakeTrans(selHex,0.65)+'"></div></div>';
   h+='<div class="ev-color-preview-hex" id="'+prefix+'Code">'+selHex+'</div>';
   h+='</div>';
-  if(showLock){
-    h+='<div class="ev-color-lock-row">';
-    h+='<label class="ev-color-lock-label"><input type="checkbox" id="'+prefix+'Lock"'+(isLocked?' checked':'')+' class="ev-color-lock-cb"> \uD83D\uDD12 Bloquear color</label>';
-    h+='</div>';
-  }
   h+='</div>';
   return h;
 }
-// Bind color picker events; returns {getColor, getLocked}
+// Bind color picker events; returns {getColor}
 function _bindColorPicker(container,prefix,onChange){
   prefix=prefix||'evCp';
   var wrap=container.querySelector('#'+prefix+'Wrap');
-  if(!wrap)return{getColor:function(){return'#888';},getLocked:function(){return false;}};
+  if(!wrap)return{getColor:function(){return'#888';}};
   var current=wrap.querySelector('.ev-color-dot.selected');
   var curHex=current?current.dataset.hex:'#38bdf8';
   function updatePreview(hex){
@@ -133,8 +130,7 @@ function _bindColorPicker(container,prefix,onChange){
     else hexInput.value=curHex;
   });
   return{
-    getColor:function(){return curHex;},
-    getLocked:function(){var cb=container.querySelector('#'+prefix+'Lock');return cb?cb.checked:false;}
+    getColor:function(){return curHex;}
   };
 }
 
@@ -721,7 +717,7 @@ function renderEvAnnual(){
           if(_singleEvs.length||_vipBdays.length){
             var _pmk=past?' past-marker':'';
             _annSd='<div class="ev-annual-xs">';
-            _singleEvs.forEach(function(ev){_annSd+='<span class="ev-annual-x'+_pmk+'" data-id="'+ev.id+'" style="color:'+getEvDisplayColor(ev)+'"></span>';});
+            _singleEvs.forEach(function(ev){_annSd+='<span class="ev-annual-dot'+_pmk+'" data-id="'+ev.id+'" style="color:'+getEvDisplayColor(ev)+'"></span>';});
             _vipBdays.forEach(function(ev){_annSd+='<span class="ev-annual-vip-star'+_pmk+'" data-id="'+ev.id+'">\u2b50</span>';});
             _annSd+='</div>';
           }
@@ -885,7 +881,7 @@ function renderEvQuad(){
           if(_singleEvs.length||_vipBdays.length){
             var _qpmk=past?' past-marker':'';
             _quadSd='<div class="ev-annual-xs">';
-            _singleEvs.forEach(function(ev){_quadSd+='<span class="ev-annual-x'+_qpmk+'" data-id="'+ev.id+'" style="color:'+getEvDisplayColor(ev)+'"></span>';});
+            _singleEvs.forEach(function(ev){_quadSd+='<span class="ev-annual-dot'+_qpmk+'" data-id="'+ev.id+'" style="color:'+getEvDisplayColor(ev)+'"></span>';});
             _vipBdays.forEach(function(ev){_quadSd+='<span class="ev-annual-vip-star'+_qpmk+'" data-id="'+ev.id+'">\u2b50</span>';});
             _quadSd+='</div>';
           }
@@ -1224,9 +1220,9 @@ function renderEvDetail(ev,fromSummary){
   h+='<div class="ev-detail-color-bar" style="background:'+_ddc+'" id="evDColorBar"></div>';
   h+='<div style="display:flex;align-items:center;gap:8px">';
   h+='<div class="ev-detail-title" style="color:'+_ddc+';flex:1" id="evDTitle">'+escHtml(ev.title)+'</div>';
-  if(ev.colorLocked){
-    h+='<button class="ev-detail-color-btn locked" disabled>\uD83D\uDD12</button>';
-  } else {
+  /* Paleta de color sólo en tipos Viaje y Otros */
+  var _evType=getEvType(ev);
+  if(_evType==='Viaje'||_evType==='Otros'){
     h+='<button class="ev-detail-color-btn" id="evDColorBtn">\uD83C\uDFA8</button>';
   }
   h+='</div>';
@@ -1390,11 +1386,12 @@ function renderEvForm(ev){
     h+='</div>';
   });
   h+='</div></div>';
-  /* Color picker section (only visible for Viaje, or custom colors not in type list) */
-  var showColorPicker=isViaje;
+  /* Color picker section: visible para Viaje y Otros */
+  var isOtros=(curType==='Otros');
+  var showColorPicker=isViaje||isOtros;
   h+='<div class="ev-field ev-form-color-section" id="evFColorSection" style="display:'+(showColorPicker?'block':'none')+'">';
   h+='<label>\uD83C\uDFA8 Paleta de colores</label>';
-  h+=_renderColorPicker(color,true,isEdit&&ev.colorLocked,'evFCp');
+  h+=_renderColorPicker(color,false,false,'evFCp');
   h+='</div>';
   h+='<div class="ev-field ev-date-row">';
   h+='<div><label>Inicio</label><input class="ev-input" id="evFStart" type="date" value="'+start+'"></div>';
@@ -1474,8 +1471,9 @@ function bindEvFormEvents(){
       _selectedTypeHex=hex;
       var typeName=EV_COLOR_TYPES[hex]||'Otros';
       var isViaje=(typeName==='Viaje');
-      /* Show color picker only for Viaje */
-      if(_colorSection)_colorSection.style.display=isViaje?'block':'none';
+      var isOtros=(typeName==='Otros');
+      /* Color picker visible para Viaje y Otros */
+      if(_colorSection)_colorSection.style.display=(isViaje||isOtros)?'block':'none';
       /* Auto-fill title+note for Asturias */
       var titleEl=document.getElementById('evFTitle');
       if(hex==='#1d4ed8'&&titleEl&&!titleEl.value.trim()){
@@ -1518,15 +1516,13 @@ function bindEvFormEvents(){
     var typeSel=document.querySelector('.ev-color-swatch.selected');
     var typeHex=typeSel?typeSel.dataset.hex:EV_COLORS[0];
     var typeLabel=EV_COLOR_TYPES[typeHex]||'Otros';
-    var color,colorLocked;
-    if(typeLabel==='Viaje'){
-      /* Viaje: use color picker color + lock */
+    var color;
+    if(typeLabel==='Viaje'||typeLabel==='Otros'){
+      /* Viaje/Otros: usar color del picker */
       color=_fCp.getColor();
-      colorLocked=_fCp.getLocked();
     } else {
-      /* Other types: use the type's fixed color */
+      /* Otros tipos: usar el color fijo del tipo */
       color=typeHex;
-      colorLocked=false;
     }
     var start=document.getElementById('evFStart').value;
     var end=document.getElementById('evFEnd').value;
@@ -1543,10 +1539,10 @@ function bindEvFormEvents(){
     if(EV_EDIT){
       var idx=-1;
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===EV_EDIT.id){idx=i;break;}}
-      if(idx!==-1)EVENTS[idx]={id:EV_EDIT.id,title:title,note:note,color:color,colorLocked:colorLocked,type:typeLabel,start:start,end:end,repeat:repeat};
+      if(idx!==-1)EVENTS[idx]={id:EV_EDIT.id,title:title,note:note,color:color,type:typeLabel,start:start,end:end,repeat:repeat};
       showToast('Evento actualizado','success');
     }else{
-      EVENTS.push({id:'ev-'+Date.now(),title:title,note:note,color:color,colorLocked:false,type:typeLabel,start:start,end:end,repeat:repeat});
+      EVENTS.push({id:'ev-'+Date.now(),title:title,note:note,color:color,type:typeLabel,start:start,end:end,repeat:repeat});
       showToast('Evento a\u00f1adido','success');
     }
     saveEvents();updateEventsBtn();
@@ -1760,18 +1756,29 @@ function bindEvEvents(){
     qi++;if(qi>2){qi=0;EV_QUAD_YEAR++;}
     EV_QUAD_MONTH=[0,4,8][qi];refreshEvents();
   });
+  /* Scroll fiable a la fila del día actual en agenda semanal usando getBoundingClientRect */
+  function _scrollWeekToToday(){
+    requestAnimationFrame(function(){requestAnimationFrame(function(){
+      var r=document.getElementById('ev-wk-today-row');
+      var b=document.querySelector('.sy-body');
+      if(!r||!b)return;
+      var rTop=r.getBoundingClientRect().top;
+      var bTop=b.getBoundingClientRect().top;
+      b.scrollTop=b.scrollTop+(rTop-bTop)-70;
+    });});
+  }
   var todayBtn=document.getElementById('evToday');
   if(todayBtn)todayBtn.addEventListener('click',function(){
     var n=new Date();EV_YEAR=n.getFullYear();EV_MONTH=n.getMonth();
     EV_QUAD_YEAR=n.getFullYear();EV_QUAD_MONTH=n.getMonth();
     refreshEvents();
-    if(EV_VIEW==='week'){setTimeout(function(){var r=document.getElementById('ev-wk-today-row');var b=document.querySelector('.sy-body');if(r&&b)b.scrollTop=r.offsetTop-60;},30);}
+    if(EV_VIEW==='week')_scrollWeekToToday();
   });
   var weekViewBtn=document.getElementById('evViewWeek');
   if(weekViewBtn)weekViewBtn.addEventListener('click',function(){
     var n=new Date();EV_YEAR=n.getFullYear();EV_MONTH=n.getMonth();
     EV_VIEW='week';EV_EDIT_MODE=false;refreshEvents();
-    setTimeout(function(){var r=document.getElementById('ev-wk-today-row');var b=document.querySelector('.sy-body');if(r&&b)b.scrollTop=r.offsetTop-60;},30);
+    _scrollWeekToToday();
   });
   var brightBtn=document.getElementById('evBright');
   if(brightBtn)brightBtn.addEventListener('click',function(){
@@ -1827,7 +1834,7 @@ function bindEvEvents(){
     });
   }
   // Click en barras/marcas de eventos en annual/quad (edit mode)
-  document.querySelectorAll('.ev-annual-mbar[data-id],.ev-annual-x[data-id],.ev-annual-vip-star[data-id]').forEach(function(el){
+  document.querySelectorAll('.ev-annual-mbar[data-id],.ev-annual-x[data-id],.ev-annual-dot[data-id],.ev-annual-vip-star[data-id],.ev-annual-vip-dot[data-id]').forEach(function(el){
     el.addEventListener('click',function(e){
       if(!EV_EDIT_MODE)return;
       e.stopPropagation();

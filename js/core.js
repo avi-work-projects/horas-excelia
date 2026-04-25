@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v193 \u2014 bombilla anual/cuad sim\u00e9trica al l\u00e1piz, bombilla 1 mes centrada';
+var APP_VERSION = 'v194 \u2014 paleta solo Viaje/Otros, sin lock color, Hoy agenda a fila d\u00eda, diagonales puentes continuas, Resumen mensual colores+toggle /mes\u2194/a\u00f1o, Subrogaci\u00f3n diff cuotas mes/a\u00f1o + ahorro seguros equiv, eventos puntuales como punto en anual/4m';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
