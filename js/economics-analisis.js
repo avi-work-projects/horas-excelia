@@ -583,41 +583,8 @@ function _renderSubrogacionAnalysis(comp,sub){
   var ahorroTotal=Math.round((totalOrig-(totalNuevo+costesCambio))*100)/100;
   var ahorroMes=Math.round((cuotaOrig-cuotaNueva)*100)/100;
 
-  h+='<div class="sy-section">';
-  h+='<div class="sy-section-title">An\u00e1lisis de la subrogaci\u00f3n</div>';
-
-  /* Cards resumen */
-  h+='<div class="analisis-cards">';
-  h+=_analisisCard('Ahorro cuota',ahorroMes,ahorroMes>=0?'var(--c-green)':'var(--c-red)');
-  h+=_analisisCard('Ahorro intereses',(ahorroIntereses/12/((mesesNuevo>mesesRestantesOrig?mesesNuevo:mesesRestantesOrig)/12)),ahorroIntereses>=0?'var(--c-green)':'var(--c-red)');
-  h+='</div>';
-
-  /* Detalle */
-  h+='<div style="padding:8px 0;font-size:.72rem;color:var(--text-muted)">';
-  h+='<div>Capital pendiente al subrogar: <b>'+fcPlain(balanceAtSub)+'</b></div>';
-  h+='<div>Costes del cambio: <b style="color:var(--c-orange)">'+fcPlain(costesCambio)+'</b></div>';
-  h+='<div style="margin-top:4px">Cuota original ('+tipoEfOrig.toFixed(2)+'% bonif.'+(tipoEfOrig!==comp.tipoInteres?' \u2190 '+comp.tipoInteres.toFixed(2)+'% nom.':'')+', '+mesesRestantesOrig+' meses): <b>'+fcPlain(Math.round(cuotaOrig*100)/100)+'</b>/mes</div>';
-  h+='<div>Cuota nueva ('+tipoEfNuevo.toFixed(2)+'% bonif.'+(tipoEfNuevo!==sub.nuevoTipoInteres?' \u2190 '+sub.nuevoTipoInteres.toFixed(2)+'% nom.':'')+', '+mesesNuevo+' meses): <b>'+fcPlain(Math.round(cuotaNueva*100)/100)+'</b>/mes</div>';
-  h+='<div style="margin-top:4px">Intereses originales restantes: <b style="color:var(--c-orange)">'+fcPlain(Math.round(interesesOrig))+'</b></div>';
-  h+='<div>Intereses nuevos: <b style="color:var(--c-orange)">'+fcPlain(Math.round(interesesNuevo))+'</b></div>';
-  var ahorroAnio=Math.round(ahorroMes*12*100)/100;
-  h+='<div style="margin-top:4px">Diferencia cuotas/mes: <b style="color:'+(ahorroMes>=0?'var(--c-green)':'var(--c-red)')+'">'+((ahorroMes>=0?'+':'')+fcPlain(ahorroMes))+'</b></div>';
-  h+='<div>Diferencia cuotas/a\u00f1o: <b style="color:'+(ahorroAnio>=0?'var(--c-green)':'var(--c-red)')+'">'+((ahorroAnio>=0?'+':'')+fcPlain(ahorroAnio))+'</b></div>';
-  h+='<div style="margin-top:4px;font-size:.78rem">Ahorro total por diferencia de cuotas: <b style="color:'+(ahorroTotal>=0?'var(--c-green)':'var(--c-red)')+'">'+fcPlain(Math.round(ahorroTotal))+'</b></div>';
-  h+='</div>';
-
-  /* Break-even */
-  if(costesCambio>0&&ahorroMes>0){
-    var breakEven=Math.ceil(costesCambio/ahorroMes);
-    h+='<div style="font-size:.72rem;color:var(--text-dim);padding:4px 0">Recuperas la inversi\u00f3n en <b>'+breakEven+' meses</b> ('+Math.round(breakEven/12*10)/10+' a\u00f1os)</div>';
-  }
-
-  /* Gráfica SVG comparativa */
-  var maxMeses=Math.max(mesesRestantesOrig,mesesNuevo);
-  var points=Math.min(Math.ceil(maxMeses/12),40);
-  h+=_mortgageComparisonChart(cuotaOrig,cuotaNueva,maxMeses,costesCambio,comp.tipoInteres,sub.nuevoTipoInteres);
-
-  /* Insurance cost comparison: bruto vs equivalente (restando ref.) */
+  /* Insurance cost comparison: bruto vs equivalente (restando ref.) — calculado primero
+     porque break-even unificado lo necesita. */
   var _segRef2=DESPACHO&&DESPACHO.segurosNormales?DESPACHO.segurosNormales:{};
   var segAnualOrig=0,segAnualNuevo=0;
   var sobrecosteOrig=0,sobrecosteNuevo=0;
@@ -641,27 +608,90 @@ function _renderSubrogacionAnalysis(comp,sub){
   }
   var diffBruto=Math.round((segAnualOrig-segAnualNuevo)*100)/100;
   var diffEquiv=Math.round((sobrecosteOrig-sobrecosteNuevo)*100)/100;
-  if(segAnualOrig>0||segAnualNuevo>0){
-    h+='<div style="padding:8px 0;font-size:.72rem;color:var(--text-muted);margin-top:4px">';
-    h+='<div>Seguros originales: <b style="color:var(--c-orange)">'+fcPlain(segAnualOrig)+'</b>/a\u00f1o (sobrecoste: '+fcPlain(sobrecosteOrig)+')</div>';
-    h+='<div>Seguros nuevos: <b style="color:var(--c-orange)">'+fcPlain(segAnualNuevo)+'</b>/a\u00f1o (sobrecoste: '+fcPlain(sobrecosteNuevo)+')</div>';
-    h+='<div>Diferencia seguros (bruto): <b style="color:'+(diffBruto>=0?'var(--c-green)':'var(--c-red)')+'">'+((diffBruto>=0?'+':'')+fcPlain(diffBruto))+'</b>/a\u00f1o</div>';
-    h+='<div>Diferencia seguros (equivalente, vs ref.): <b style="color:'+(diffEquiv>=0?'var(--c-green)':'var(--c-red)')+'">'+((diffEquiv>=0?'+':'')+fcPlain(diffEquiv))+'</b>/a\u00f1o</div>';
-    /* Total savings using equivalente (overcost-based) */
-    var maxM2=Math.max(mesesRestantesOrig,mesesNuevo);
-    var totalAhorroConSeg=Math.round(((cuotaOrig+sobrecosteOrig/12)*maxM2-(cuotaNueva+sobrecosteNuevo/12)*maxM2-costesCambio)*100)/100;
-    /* Ahorro total diferencia seguros (equivalente) extrapolado al plazo restante */
-    var ahorroSegEquiv=Math.round((diffEquiv*(maxM2/12))*100)/100;
-    h+='<div style="margin-top:4px;font-size:.78rem">Ahorro total diferencia seguros (equivalente): <b style="color:'+(ahorroSegEquiv>=0?'var(--c-green)':'var(--c-red)')+'">'+((ahorroSegEquiv>=0?'+':'')+fcPlain(ahorroSegEquiv))+'</b></div>';
-    h+='<div style="font-size:.78rem">Ahorro total por diferencia de cuotas: <b style="color:'+(ahorroTotal>=0?'var(--c-green)':'var(--c-red)')+'">'+fcPlain(Math.round(ahorroTotal))+'</b></div>';
-    h+='<div style="margin-top:4px;font-size:.78rem">Ahorro total (cuotas + sobrecoste seguros): <b style="color:'+(totalAhorroConSeg>=0?'var(--c-green)':'var(--c-red)')+'">'+fcPlain(Math.round(totalAhorroConSeg))+'</b></div>';
+  var hasSeg=(segAnualOrig>0||segAnualNuevo>0);
+
+  /* Variables comunes */
+  var maxMeses=Math.max(mesesRestantesOrig,mesesNuevo);
+  var ahorroAnio=Math.round(ahorroMes*12*100)/100;
+  /* Break-even UNIFICADO: cuotas + sobrecoste seguros equivalente.
+     Misma fórmula que la gráfica diff. */
+  var ahorroMensualUnif=ahorroMes+(sobrecosteOrig-sobrecosteNuevo)/12;
+  var totalAhorroConSeg=Math.round(((cuotaOrig+sobrecosteOrig/12)*maxMeses-(cuotaNueva+sobrecosteNuevo/12)*maxMeses-costesCambio)*100)/100;
+  var ahorroSegEquiv=Math.round((diffEquiv*(maxMeses/12))*100)/100;
+
+  h+='<div class="sy-section">';
+  h+='<div class="sy-section-title">An\u00e1lisis de la subrogaci\u00f3n</div>';
+
+  /* Cards resumen — siempre visibles */
+  h+='<div class="analisis-cards">';
+  h+=_analisisCard('Ahorro cuota',ahorroMes,ahorroMes>=0?'var(--c-green)':'var(--c-red)');
+  h+=_analisisCard('Ahorro intereses',(ahorroIntereses/12/((mesesNuevo>mesesRestantesOrig?mesesNuevo:mesesRestantesOrig)/12)),ahorroIntereses>=0?'var(--c-green)':'var(--c-red)');
+  h+='</div>';
+
+  /* ── SECCIÓN 1: Capital y costes del cambio ── */
+  h+='<div class="sub-block">';
+  h+='<div class="sub-block-title">Capital y costes</div>';
+  h+='<div class="sub-row"><span>Capital pendiente al subrogar</span><b>'+fcPlain(balanceAtSub)+'</b></div>';
+  h+='<div class="sub-row"><span>Costes del cambio</span><b style="color:var(--c-orange)">'+fcPlain(costesCambio)+'</b></div>';
+  h+='</div>';
+
+  /* ── SECCIÓN 2: Cuotas mensuales ── */
+  h+='<div class="sub-block">';
+  h+='<div class="sub-block-title">Cuotas mensuales</div>';
+  h+='<div class="sub-row"><span>Cuota original ('+tipoEfOrig.toFixed(2)+'% bonif.'+(tipoEfOrig!==comp.tipoInteres?' \u2190 '+comp.tipoInteres.toFixed(2)+'% nom.':'')+', '+mesesRestantesOrig+' m)</span><b>'+fcPlain(Math.round(cuotaOrig*100)/100)+'/mes</b></div>';
+  h+='<div class="sub-row"><span>Cuota nueva ('+tipoEfNuevo.toFixed(2)+'% bonif.'+(tipoEfNuevo!==sub.nuevoTipoInteres?' \u2190 '+sub.nuevoTipoInteres.toFixed(2)+'% nom.':'')+', '+mesesNuevo+' m)</span><b>'+fcPlain(Math.round(cuotaNueva*100)/100)+'/mes</b></div>';
+  h+='<div class="sub-row sub-row-emph"><span>Diferencia /mes</span><b style="color:'+(ahorroMes>=0?'var(--c-green)':'var(--c-red)')+'">'+((ahorroMes>=0?'+':'')+fcPlain(ahorroMes))+'</b></div>';
+  h+='<div class="sub-row sub-row-emph"><span>Diferencia /a\u00f1o</span><b style="color:'+(ahorroAnio>=0?'var(--c-green)':'var(--c-red)')+'">'+((ahorroAnio>=0?'+':'')+fcPlain(ahorroAnio))+'</b></div>';
+  h+='</div>';
+
+  /* ── SECCIÓN 3: Intereses ── */
+  h+='<div class="sub-block">';
+  h+='<div class="sub-block-title">Intereses</div>';
+  h+='<div class="sub-row"><span>Intereses originales restantes</span><b style="color:var(--c-orange)">'+fcPlain(Math.round(interesesOrig))+'</b></div>';
+  h+='<div class="sub-row"><span>Intereses nuevos</span><b style="color:var(--c-orange)">'+fcPlain(Math.round(interesesNuevo))+'</b></div>';
+  h+='<div class="sub-row sub-row-emph"><span>Ahorro intereses</span><b style="color:'+(ahorroIntereses>=0?'var(--c-green)':'var(--c-red)')+'">'+((ahorroIntereses>=0?'+':'')+fcPlain(Math.round(ahorroIntereses)))+'</b></div>';
+  h+='</div>';
+
+  /* ── SECCIÓN 4: Seguros vinculados (opcional) ── */
+  if(hasSeg){
+    h+='<div class="sub-block">';
+    h+='<div class="sub-block-title">Seguros vinculados</div>';
+    h+='<div class="sub-row"><span>Seguros originales</span><b style="color:var(--c-orange)">'+fcPlain(segAnualOrig)+'/a\u00f1o</b></div>';
+    h+='<div class="sub-row sub-row-sub"><span>\u2937 sobrecoste vs ref.</span><span>'+fcPlain(sobrecosteOrig)+'/a\u00f1o</span></div>';
+    h+='<div class="sub-row"><span>Seguros nuevos</span><b style="color:var(--c-orange)">'+fcPlain(segAnualNuevo)+'/a\u00f1o</b></div>';
+    h+='<div class="sub-row sub-row-sub"><span>\u2937 sobrecoste vs ref.</span><span>'+fcPlain(sobrecosteNuevo)+'/a\u00f1o</span></div>';
+    h+='<div class="sub-row sub-row-emph"><span>Diferencia bruto /a\u00f1o</span><b style="color:'+(diffBruto>=0?'var(--c-green)':'var(--c-red)')+'">'+((diffBruto>=0?'+':'')+fcPlain(diffBruto))+'</b></div>';
+    h+='<div class="sub-row sub-row-emph"><span>Diferencia equivalente /a\u00f1o</span><b style="color:'+(diffEquiv>=0?'var(--c-green)':'var(--c-red)')+'">'+((diffEquiv>=0?'+':'')+fcPlain(diffEquiv))+'</b></div>';
     h+='</div>';
   }
 
-  /* Diff chart: evolution A vs B */
-  h+='<div style="margin-top:10px;font-size:.75rem;color:var(--text-muted);font-weight:600">Evoluci\u00f3n: quedarse vs subrogar</div>';
-  h+='<div style="font-size:.65rem;color:var(--text-dim);margin-bottom:2px">Incluye cuotas + sobrecoste seguros (vs ref.). Zona verde = el cambio compensa.</div>';
+  /* ── SECCIÓN 5: Ahorro total acumulado al final del plazo ── */
+  h+='<div class="sub-block">';
+  h+='<div class="sub-block-title">Ahorro total acumulado (al final del plazo)</div>';
+  h+='<div class="sub-row"><span>Por diferencia de cuotas</span><b style="color:'+(ahorroTotal>=0?'var(--c-green)':'var(--c-red)')+'">'+fcPlain(Math.round(ahorroTotal))+'</b></div>';
+  if(hasSeg){
+    h+='<div class="sub-row"><span>Por diferencia seguros (equivalente)</span><b style="color:'+(ahorroSegEquiv>=0?'var(--c-green)':'var(--c-red)')+'">'+((ahorroSegEquiv>=0?'+':'')+fcPlain(ahorroSegEquiv))+'</b></div>';
+    h+='<div class="sub-row sub-row-emph"><span>Total combinado (cuotas + sobrecoste)</span><b style="color:'+(totalAhorroConSeg>=0?'var(--c-green)':'var(--c-red)')+'">'+fcPlain(Math.round(totalAhorroConSeg))+'</b></div>';
+  }
+  h+='</div>';
+
+  /* ── SECCIÓN 6: Recuperación de la inversión + gráfica diff ── */
+  h+='<div class="sub-block">';
+  h+='<div class="sub-block-title">Recuperaci\u00f3n de la inversi\u00f3n</div>';
+  if(costesCambio>0&&ahorroMensualUnif>0){
+    var breakEvenMeses=Math.ceil(costesCambio/ahorroMensualUnif);
+    var breakEvenAnios=Math.round(breakEvenMeses/12*10)/10;
+    h+='<div class="sub-row"><span>Ahorro mensual neto (cuotas + seguros)</span><b style="color:var(--c-green)">+'+fcPlain(Math.round(ahorroMensualUnif*100)/100)+'/mes</b></div>';
+    h+='<div class="sub-row sub-row-emph"><span>Recuperas la inversi\u00f3n en</span><b style="color:var(--c-green)">'+breakEvenMeses+' meses ('+breakEvenAnios+' a\u00f1os)</b></div>';
+  } else if(costesCambio>0){
+    h+='<div class="sub-row"><span>Ahorro mensual neto</span><b style="color:var(--c-red)">'+fcPlain(Math.round(ahorroMensualUnif*100)/100)+'/mes</b></div>';
+    h+='<div class="sub-row sub-row-emph"><span colspan="2" style="color:var(--c-red)">No se recupera la inversi\u00f3n con el ahorro actual</span></div>';
+  } else {
+    h+='<div class="sub-row"><span>Sin costes de cambio: ahorro \u00edntegro desde el primer mes</span></div>';
+  }
+  h+='<div style="margin-top:10px;font-size:.7rem;color:var(--text-dim)">Evoluci\u00f3n acumulada: quedarse vs subrogar (incluye cuotas + sobrecoste seguros). Zona verde = el cambio compensa.</div>';
   h+=_mortgageDiffChart(cuotaOrig,cuotaNueva,sobrecosteOrig,sobrecosteNuevo,mesesTranscurridos,maxMeses,costesCambio);
+  h+='</div>';
 
   h+='</div>';
   return h;
@@ -767,52 +797,6 @@ function _renderInsuranceOvercost(comp){
   }
   h+='</div>';
   return h;
-}
-
-function _mortgageComparisonChart(cuota1,cuota2,nMeses,switchCost,rate1,rate2){
-  var W=320,H=120,PB=18,PT=16,PL=42,PR=8;
-  var W2=W-PL-PR,H2=H-PT;
-  var years=Math.ceil(nMeses/12);
-  var points=Math.min(years,40);
-  var cum1=[],cum2=[];
-  var c1=0,c2=switchCost;
-  for(var y=0;y<=points;y++){
-    cum1.push(Math.round(c1));
-    cum2.push(Math.round(c2));
-    c1+=cuota1*12;c2+=cuota2*12;
-  }
-  var maxV=Math.max(cum1[points],cum2[points])||1;
-  function xPos(i){return Math.round(PL+(i/points)*W2);}
-  function yPos(v){return Math.round(PT+H2-v/maxV*H2);}
-
-  var svg='<svg viewBox="0 0 '+W+' '+(H+PB)+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;margin-top:10px">';
-  /* Grid */
-  var step=50000;
-  while(maxV/step>5)step*=2;
-  while(maxV/step<2&&step>10000)step=Math.round(step/2);
-  for(var gv=0;gv<=maxV;gv+=step){
-    var gy=yPos(gv);
-    svg+='<line x1="'+PL+'" y1="'+gy+'" x2="'+(W-PR)+'" y2="'+gy+'" stroke="#2a2a3e" stroke-width="1"/>';
-    var lbl=gv>=1000000?(gv/1000000).toFixed(1)+'M':gv>=1000?Math.round(gv/1000)+'k':'0';
-    svg+='<text x="'+(PL-2)+'" y="'+(gy+3)+'" text-anchor="end" font-size="6" fill="#5a5a70">'+lbl+'</text>';
-  }
-  /* Line 1: current */
-  var pts1=cum1.map(function(v,i){return xPos(i)+','+yPos(v);}).join(' ');
-  svg+='<polyline points="'+pts1+'" fill="none" stroke="#fb923c" stroke-width="2" stroke-linejoin="round"/>';
-  /* Line 2: alternative */
-  var pts2=cum2.map(function(v,i){return xPos(i)+','+yPos(v);}).join(' ');
-  svg+='<polyline points="'+pts2+'" fill="none" stroke="#34d399" stroke-width="2" stroke-linejoin="round"/>';
-  /* X labels (every 5 years) */
-  for(var xi=0;xi<=points;xi+=Math.max(1,Math.round(points/6))){
-    svg+='<text x="'+xPos(xi)+'" y="'+(H+PB-2)+'" text-anchor="middle" font-size="6" fill="#5a5a70">'+xi+'a</text>';
-  }
-  /* Legend */
-  svg+='<rect x="'+PL+'" y="3" width="10" height="3" rx="1.5" fill="#fb923c"/>';
-  svg+='<text x="'+(PL+12)+'" y="7" font-size="6" fill="#fb923c">'+rate1.toFixed(2)+'%</text>';
-  svg+='<rect x="'+(PL+55)+'" y="3" width="10" height="3" rx="1.5" fill="#34d399"/>';
-  svg+='<text x="'+(PL+67)+'" y="7" font-size="6" fill="#34d399">'+rate2.toFixed(2)+'%</text>';
-  svg+='</svg>';
-  return '<div class="analisis-mortgage-chart">'+svg+'</div>';
 }
 
 /* ── Diff chart: evolution of A-B including insurance ────── */

@@ -541,6 +541,16 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .econ-sc-zone-sub.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright);font-weight:600}
 /* ── Análisis Ec. Personal ── */
 .analisis-cards{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+/* Bloques de la Subrogación */
+.sub-block{margin-top:12px;padding:8px 10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm)}
+.sub-block-title{font-size:.68rem;font-weight:700;color:var(--accent-bright);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.sub-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:3px 0;font-size:.72rem;color:var(--text-muted);line-height:1.3}
+.sub-row span{flex:1;min-width:0}
+.sub-row b{font-family:var(--mono);font-weight:700;color:var(--text);white-space:nowrap}
+.sub-row-emph{padding:5px 0;border-top:1px dashed var(--border);margin-top:3px;font-size:.76rem}
+.sub-row-emph span{color:var(--text)}
+.sub-row-sub{padding-left:10px;font-size:.66rem;color:var(--text-dim)}
+.sub-row-sub span,.sub-row-sub b{color:var(--text-dim);font-weight:400}
 .analisis-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid;border-radius:var(--radius-sm);padding:10px 12px}
 .analisis-card-label{font-size:.68rem;color:var(--text-muted);margin-bottom:2px}
 .analisis-card-value{font-family:var(--mono);font-size:.88rem;font-weight:700}

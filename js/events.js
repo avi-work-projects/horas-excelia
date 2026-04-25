@@ -33,8 +33,8 @@ var EV_COLOR_TYPES = {
   '#38bdf8':'Viaje',
   '#6c8cff':'Viaje',  // compat con eventos anteriores
   '#1d4ed8':'Asturias',
-  '#34d399':'Recordatorio de Gestiones',
-  '#fb923c':'Planes y Quedadas',
+  '#34d399':'Rec. Gestiones',
+  '#fb923c':'Plan/Quedada',
   '#ff6b6b':'Otros',
   '#c084fc':'Otros',
   '#a3e635':'Otros',
@@ -139,9 +139,12 @@ var EVENTS = (function(){
     var stored=localStorage.getItem(EV_STORAGE_KEY);
     if(stored){var arr=JSON.parse(stored);if(Array.isArray(arr)){
       // Migrar eventos amarillos de 'Otros' → lima (#a3e635). VIP bdays mantienen amarillo.
+      // Migrar nombres antiguos de tipo: 'Recordatorio de Gestiones' → 'Rec. Gestiones'; 'Planes y Quedadas' → 'Plan/Quedada'
       var changed=false;
       arr.forEach(function(ev){
         if(ev.color==='#fbbf24'&&(!ev.id||ev.id.indexOf('ev-bday-vip-')!==0)){ev.color='#a3e635';changed=true;}
+        if(ev.type==='Recordatorio de Gestiones'){ev.type='Rec. Gestiones';changed=true;}
+        if(ev.type==='Planes y Quedadas'){ev.type='Plan/Quedada';changed=true;}
       });
       if(changed)try{localStorage.setItem(EV_STORAGE_KEY,JSON.stringify(arr));}catch(e){}
       return arr;
@@ -927,7 +930,7 @@ function renderEvQuad(){
 /* ── Render: lista de eventos por tipos ─────────────────── */
 function renderEvByTypes(){
   var today=new Date();today.setHours(0,0,0,0);
-  var typeOrder=['Viaje','Asturias','Recordatorio de Gestiones','Planes y Quedadas','Otros'];
+  var typeOrder=['Viaje','Asturias','Rec. Gestiones','Plan/Quedada','Otros'];
   var h='<div class="ev-types-controls">';
   h+='<label class="ev-types-past-label"><input type="checkbox" id="evTypesPast"'+(EV_TYPES_PAST?' checked':'')+'> Excluir pasados</label>';
   h+='<select class="ev-types-select" id="evTypesFilter">';
@@ -1140,9 +1143,9 @@ function renderEvContent(){
   h+='</div>';
   h+='<div class="sy-body'+(EV_BRIGHT_PAST?' ev-bright-past':'')+(EV_VIEW==='week'?' ev-wk-body':'')+'">';
   if(EV_VIEW==='annual'||EV_VIEW==='quad'){
-    var _typeOrder=['Viaje','Asturias','Recordatorio de Gestiones','Planes y Quedadas','Otros','Cumplea\u00f1os VIP'];
-    var _typeShort={'Viaje':'Viaje','Asturias':'Asturias','Recordatorio de Gestiones':'Gestiones','Planes y Quedadas':'Planes','Otros':'Otros','Cumplea\u00f1os VIP':'\u2b50'};
-    var _typeColor={'Viaje':'#38bdf8','Asturias':'#1d4ed8','Recordatorio de Gestiones':'#34d399','Planes y Quedadas':'#fb923c','Otros':'#ff6b6b','Cumplea\u00f1os VIP':'#fbbf24'};
+    var _typeOrder=['Viaje','Asturias','Rec. Gestiones','Plan/Quedada','Otros','Cumplea\u00f1os VIP'];
+    var _typeShort={'Viaje':'Viaje','Asturias':'Asturias','Rec. Gestiones':'Gestiones','Plan/Quedada':'Planes','Otros':'Otros','Cumplea\u00f1os VIP':'\u2b50'};
+    var _typeColor={'Viaje':'#38bdf8','Asturias':'#1d4ed8','Rec. Gestiones':'#34d399','Plan/Quedada':'#fb923c','Otros':'#ff6b6b','Cumplea\u00f1os VIP':'#fbbf24'};
     h+='<div class="ev-annual-controls">';
     var _vdLabels={'puentes':'\uD83D\uDDD3 Puentes','fiestas':'\uD83D\uDCC5 Vac + Festivos','vacaciones':'\uD83C\uDFD6 Solo vacaciones','festivos':'\uD83C\uDF8C Solo festivos','none':'\u2715 Nada'};
     var _curVdLabel=_vdLabels[EV_ANNUAL_VIEW]||_vdLabels['none'];

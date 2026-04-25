@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v196 \u2014 Resumen mensual sin hero Libre, recuadro amarillo en Sin asignar; bombilla 1-mes/agenda semanal exactamente centrada (offset 0.3px)';
+var APP_VERSION = 'v197 \u2014 Subrogaci\u00f3n reorganizada en secciones (Capital/Cuotas/Intereses/Seguros/Ahorro total/Recuperaci\u00f3n); break-even unificado cuotas+seguros; eliminada gr\u00e1fica de 2 l\u00edneas; tipos renombrados (Rec. Gestiones, Plan/Quedada)';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
