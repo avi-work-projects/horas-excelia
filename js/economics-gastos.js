@@ -256,13 +256,28 @@ function renderIrpfBreakdown(e,dr){
   h+='<div class="econ-irpf-summary-lbl">'+diffLabel+'</div>';
   h+='<div class="econ-irpf-summary-val" style="color:'+diffColor+'">'+diffSign+fcPlain(Math.abs(dr.declDiff))+'</div>';
   h+='<div class="econ-irpf-summary-sub">en la declaraci\u00f3n de la renta</div>';
-  /* Deducciones en cuota integradas como sub-l\u00ednea (antes era una tarjeta suelta de color verde) */
+  /* Deducciones en cuota integradas como sub-l\u00ednea, con desglose din\u00e1mico
+     de los items que realmente contribuyen (vienen de DESGRAV_ITEMS con type='quota') */
   if(dr.totalQuotaDesgrav>0){
     h+='<div class="econ-irpf-summary-deduc">';
     h+='<span class="econ-irpf-summary-deduc-lbl">Ya incluye deducciones de cuota</span>';
     h+='<span class="econ-irpf-summary-deduc-val">\u2212'+fcPlain(dr.totalQuotaDesgrav)+'</span>';
     h+='</div>';
-    h+='<div class="econ-irpf-summary-deduc-note">vivienda, donativos\u2026</div>';
+    /* Listado din\u00e1mico de items que aportan (importe \u00d7 % aplicado = neto) */
+    var _quotaContribs=[];
+    if(typeof DESGRAV_ITEMS!=='undefined'){
+      DESGRAV_ITEMS.forEach(function(item){
+        if(!item.enabled||(item.type||'base')!=='quota')return;
+        var d=typeof desgravAnual==='function'?desgravAnual(item):0;
+        if(d<=0)return;
+        var pct=item.notaPct!=null?item.notaPct:100;
+        var net=Math.round(d*pct/100*100)/100;
+        _quotaContribs.push(escHtml(item.label)+' '+fcPlain(d)+' \u00d7 '+pct+'% = \u2212'+fcPlain(net));
+      });
+    }
+    if(_quotaContribs.length){
+      h+='<div class="econ-irpf-summary-deduc-note">'+_quotaContribs.join(' \u00b7 ')+'</div>';
+    }
   }
   h+='</div>';
   h+='</div></div>';
