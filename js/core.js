@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v199 — Otros: selector multi-día no consecutivos (botón abre mini-overlay con calendario anual cliqueable) y selector de 6 formas para el marcador en anual/4-meses (círculo, cuadrado, rombo, X gorda, X fina, redondeado), todas con borde negro. Nuevos campos opcionales ev.dates y ev.shape.';
+var APP_VERSION = 'v204 — Fix Hoy Agenda Semanal (rect+sticky más scroll-margin-top), X gorda/fina como SVG con doble stroke (borde uniforme sin solapamiento), grises al final de la paleta, multi-día no consecutivos y selector 6 formas para Otros';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

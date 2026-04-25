@@ -24,10 +24,10 @@ var EV_COLOR_GRID=[
   '#7950f2','#6741d9','#4c6ef5','#1d4ed8','#38bdf8','#6c8cff',
   '#22d3ee','#4ecdc4','#34d399','#56c596','#a3e635','#82c91e',
   '#fbbf24','#f0b45c','#fb923c','#ff922b','#fd7e14','#e8590c',
-  '#868e96','#adb5bd','#dee2e6','#f8f9fa','#495057','#212529',
   '#f06595','#da77f2','#748ffc','#66d9e8','#63e6be','#ffe066',
   '#e03131','#f76707','#ae3ec9','#3b5bdb','#0ca678','#845ef7',
-  '#d6336c','#f08c00','#5f3dc4','#1971c2','#099268','#5c940d'
+  '#d6336c','#f08c00','#5f3dc4','#1971c2','#099268','#5c940d',
+  '#868e96','#adb5bd','#dee2e6','#f8f9fa','#495057','#212529'
 ];
 var EV_COLOR_TYPES = {
   '#38bdf8':'Viaje',
@@ -271,6 +271,17 @@ function evMarkerHtml(ev,pastClass){
   var color=getEvDisplayColor(ev);
   var shape=ev.shape||'circle';
   var pmk=pastClass||'';
+  /* X-shapes se renderizan con SVG de doble stroke (negro debajo + color encima)
+     para que el borde sea uniforme y los dos brazos no muestren dobles bordes. */
+  if(shape==='x-thick'||shape==='x-thin'){
+    var swOut=shape==='x-thick'?9:5.5;
+    var swIn =shape==='x-thick'?5:2.6;
+    var svg='<svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">'
+      +'<path d="M-7,-7 L7,7 M-7,7 L7,-7" stroke="#000" stroke-width="'+swOut+'" stroke-linecap="round" fill="none"/>'
+      +'<path d="M-7,-7 L7,7 M-7,7 L7,-7" stroke="'+color+'" stroke-width="'+swIn+'" stroke-linecap="round" fill="none"/>'
+      +'</svg>';
+    return '<span class="ev-annual-marker ev-shape-'+shape+pmk+'" data-id="'+ev.id+'">'+svg+'</span>';
+  }
   return '<span class="ev-annual-marker ev-shape-'+shape+pmk+'" data-id="'+ev.id+'" style="color:'+color+'"></span>';
 }
 /* ── Helper: relleno suave y estable por evento ── */
@@ -1429,8 +1440,21 @@ function renderEvForm(ev){
   ];
   _shapes.forEach(function(s){
     var sel=(s.k===curShape)?' selected':'';
+    var prevColor=color||EV_COLORS[0];
     h+='<button type="button" class="ev-shape-opt'+sel+'" data-shape="'+s.k+'">';
-    h+='<span class="ev-shape-preview ev-shape-'+s.k+'" style="color:'+(color||EV_COLORS[0])+'"></span>';
+    if(s.k==='x-thick'||s.k==='x-thin'){
+      /* SVG con doble stroke (negro+color) — borde uniforme */
+      var swOut=s.k==='x-thick'?9:5.5;
+      var swIn =s.k==='x-thick'?5:2.6;
+      h+='<span class="ev-shape-preview ev-shape-'+s.k+'">';
+      h+='<svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">';
+      h+='<path d="M-7,-7 L7,7 M-7,7 L7,-7" stroke="#000" stroke-width="'+swOut+'" stroke-linecap="round" fill="none"/>';
+      h+='<path d="M-7,-7 L7,7 M-7,7 L7,-7" stroke="'+prevColor+'" stroke-width="'+swIn+'" stroke-linecap="round" fill="none" class="ev-shape-x-color"/>';
+      h+='</svg>';
+      h+='</span>';
+    } else {
+      h+='<span class="ev-shape-preview ev-shape-'+s.k+'" style="color:'+prevColor+'"></span>';
+    }
     h+='<span class="ev-shape-lbl">'+s.label+'</span>';
     h+='</button>';
   });
@@ -1623,6 +1647,8 @@ function bindEvFormEvents(){
   function _refreshShapePreviews(){
     var col=_fCp&&_fCp.getColor?_fCp.getColor():(EV_EDIT?EV_EDIT.color:EV_COLORS[0]);
     document.querySelectorAll('#evFShapePicker .ev-shape-preview').forEach(function(p){p.style.color=col;});
+    /* X-shapes: actualizar el stroke del path color (no usan currentColor) */
+    document.querySelectorAll('#evFShapePicker .ev-shape-x-color').forEach(function(path){path.setAttribute('stroke',col);});
   }
   function _refreshPickDatesLabel(){
     var lbl=document.getElementById('evFPickDatesLbl');
@@ -1963,15 +1989,29 @@ function bindEvEvents(){
     qi++;if(qi>2){qi=0;EV_QUAD_YEAR++;}
     EV_QUAD_MONTH=[0,4,8][qi];refreshEvents();
   });
-  /* scrollIntoView maneja alturas variables del grid CSS sin depender de offsetTop */
+  /* Posicionamiento exacto del día Hoy en Agenda Semanal:
+     usa getBoundingClientRect (más fiable que offsetTop con grid CSS y sticky)
+     y descuenta dinámicamente la altura del separador de mes sticky.
+     El CSS scroll-margin-top en #ev-wk-today-row hace de fallback. */
   function _scrollWeekToToday(){
-    setTimeout(function(){
+    /* doble rAF para asegurar que el grid ha completado su layout */
+    requestAnimationFrame(function(){requestAnimationFrame(function(){
       var r=document.getElementById('ev-wk-today-row');
       var b=document.querySelector('.sy-body');
       if(!r||!b)return;
-      r.scrollIntoView({block:'start'});
-      b.scrollTop=Math.max(0,b.scrollTop-70);
-    },60);
+      var rRect=r.getBoundingClientRect();
+      var bRect=b.getBoundingClientRect();
+      /* Detectar el sticky month separator activo (puede que haya varios; el visible es el último ≤ rRect.top) */
+      var seps=b.querySelectorAll('.ev-wk-month-sep');
+      var stickyH=0;
+      seps.forEach(function(s){
+        var sRect=s.getBoundingClientRect();
+        if(sRect.top<=bRect.top+1)stickyH=Math.max(stickyH,s.offsetHeight);
+      });
+      var BUFFER=8; /* aire entre el separador y el día Hoy */
+      var delta=(rRect.top-bRect.top)-stickyH-BUFFER;
+      b.scrollTop=Math.max(0,b.scrollTop+delta);
+    });});
   }
   var todayBtn=document.getElementById('evToday');
   if(todayBtn)todayBtn.addEventListener('click',function(){

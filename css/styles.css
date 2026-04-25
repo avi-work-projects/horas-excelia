@@ -1030,6 +1030,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 /* ── Vista semanal (Agenda) ── */
 .sy-body.ev-wk-body{padding:0;gap:0}
 .ev-wk-month-sep{font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-bright);background:var(--bg);padding:5px 12px;border-bottom:1px solid var(--border);border-top:1px solid var(--border);position:sticky;top:0;z-index:5}
+/* Fallback declarativo para scrollIntoView cuando el JS aún no ha medido el sticky */
+#ev-wk-today-row{scroll-margin-top:48px}
 /* Grid del mes: col fecha (48px) + col eventos (1fr) */
 .ev-wk-mgrid{display:grid;grid-template-columns:48px 1fr;position:relative}
 /* Columna fecha (col 1) */
@@ -1113,14 +1115,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-annual-marker.ev-shape-square{background:currentColor;border:1px solid #000;box-shadow:0 0 0 .5px currentColor inset}
 .ev-annual-marker.ev-shape-diamond{background:currentColor;border:1px solid #000;transform:rotate(45deg);width:5px;height:5px}
 .ev-annual-marker.ev-shape-rounded{background:currentColor;border:1px solid #000;border-radius:2px;width:7px;height:5px}
-.ev-annual-marker.ev-shape-x-thick{background:transparent;border:none;width:7px;height:7px}
-.ev-annual-marker.ev-shape-x-thick::before,.ev-annual-marker.ev-shape-x-thick::after{content:'';position:absolute;top:50%;left:50%;width:8px;height:2.5px;background:currentColor;border-radius:1px;box-shadow:0 0 0 .6px #000}
-.ev-annual-marker.ev-shape-x-thick::before{transform:translate(-50%,-50%) rotate(45deg)}
-.ev-annual-marker.ev-shape-x-thick::after{transform:translate(-50%,-50%) rotate(-45deg)}
-.ev-annual-marker.ev-shape-x-thin{background:transparent;border:none;width:6px;height:6px}
-.ev-annual-marker.ev-shape-x-thin::before,.ev-annual-marker.ev-shape-x-thin::after{content:'';position:absolute;top:50%;left:50%;width:7px;height:1.2px;background:currentColor;border-radius:1px;box-shadow:0 0 0 .4px #000}
-.ev-annual-marker.ev-shape-x-thin::before{transform:translate(-50%,-50%) rotate(45deg)}
-.ev-annual-marker.ev-shape-x-thin::after{transform:translate(-50%,-50%) rotate(-45deg)}
+/* X-shapes se renderizan como SVG inline (doble stroke negro+color) para evitar
+   que los bordes de los dos brazos se solapen. */
+.ev-annual-marker.ev-shape-x-thick{background:transparent;border:none;width:9px;height:9px}
+.ev-annual-marker.ev-shape-x-thin{background:transparent;border:none;width:8px;height:8px}
+.ev-annual-marker.ev-shape-x-thick svg,
+.ev-annual-marker.ev-shape-x-thin svg{display:block;width:100%;height:100%;overflow:visible}
 .ev-annual-marker.past-marker{opacity:.5}
 
 /* === Selector de formas en el formulario de evento (Otros) === */
@@ -1134,14 +1134,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-shape-preview.ev-shape-square{background:currentColor;border:1.5px solid #000}
 .ev-shape-preview.ev-shape-diamond{background:currentColor;border:1.5px solid #000;transform:rotate(45deg);width:11px;height:11px;margin:1.5px}
 .ev-shape-preview.ev-shape-rounded{background:currentColor;border:1.5px solid #000;border-radius:4px;width:18px;height:11px;margin:1.5px 0}
-.ev-shape-preview.ev-shape-x-thick{background:transparent;border:none}
-.ev-shape-preview.ev-shape-x-thick::before,.ev-shape-preview.ev-shape-x-thick::after{content:'';position:absolute;top:50%;left:50%;width:18px;height:5px;background:currentColor;border-radius:2px;box-shadow:0 0 0 1.2px #000}
-.ev-shape-preview.ev-shape-x-thick::before{transform:translate(-50%,-50%) rotate(45deg)}
-.ev-shape-preview.ev-shape-x-thick::after{transform:translate(-50%,-50%) rotate(-45deg)}
+/* Previews X (form): SVG con doble stroke para borde uniforme */
+.ev-shape-preview.ev-shape-x-thick,
 .ev-shape-preview.ev-shape-x-thin{background:transparent;border:none}
-.ev-shape-preview.ev-shape-x-thin::before,.ev-shape-preview.ev-shape-x-thin::after{content:'';position:absolute;top:50%;left:50%;width:18px;height:2.4px;background:currentColor;border-radius:1.5px;box-shadow:0 0 0 .8px #000}
-.ev-shape-preview.ev-shape-x-thin::before{transform:translate(-50%,-50%) rotate(45deg)}
-.ev-shape-preview.ev-shape-x-thin::after{transform:translate(-50%,-50%) rotate(-45deg)}
+.ev-shape-preview.ev-shape-x-thick svg,
+.ev-shape-preview.ev-shape-x-thin svg{display:block;width:100%;height:100%;overflow:visible}
 .ev-shape-lbl{font-size:.62rem;color:var(--text-muted);line-height:1}
 .ev-shape-opt.selected .ev-shape-lbl{color:var(--accent-bright);font-weight:600}
 
