@@ -1760,16 +1760,15 @@ function bindEvEvents(){
     qi++;if(qi>2){qi=0;EV_QUAD_YEAR++;}
     EV_QUAD_MONTH=[0,4,8][qi];refreshEvents();
   });
-  /* Scroll fiable a la fila del día actual en agenda semanal usando getBoundingClientRect */
+  /* scrollIntoView maneja alturas variables del grid CSS sin depender de offsetTop */
   function _scrollWeekToToday(){
     setTimeout(function(){
       var r=document.getElementById('ev-wk-today-row');
       var b=document.querySelector('.sy-body');
       if(!r||!b)return;
-      var offset=0,el=r;
-      while(el&&el!==b){offset+=el.offsetTop;el=el.offsetParent;}
-      b.scrollTop=offset-70;
-    },30);
+      r.scrollIntoView({block:'start'});
+      b.scrollTop=Math.max(0,b.scrollTop-70);
+    },60);
   }
   var todayBtn=document.getElementById('evToday');
   if(todayBtn)todayBtn.addEventListener('click',function(){
