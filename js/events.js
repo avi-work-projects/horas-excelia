@@ -1964,4 +1964,20 @@ function bindEvEvents(){
   },function(){
     var b=document.getElementById('evPrev');if(b)b.click();
   });
+  requestAnimationFrame(function(){ _positionEvBright(); });
+}
+
+function _positionEvBright(){
+  var bright=document.getElementById('evBright');
+  var nextBtn=document.getElementById('evNext');
+  var todayBtn=document.getElementById('evToday');
+  if(!bright||!nextBtn||!todayBtn)return;
+  if(!bright.classList.contains('ev-bright-mid'))return;
+  var hdr=nextBtn.closest('.sy-header');
+  if(!hdr)return;
+  var hdrL=hdr.getBoundingClientRect().left;
+  var nR=nextBtn.getBoundingClientRect().right-hdrL;
+  var tL=todayBtn.getBoundingClientRect().left-hdrL;
+  bright.style.left=(((nR+tL)/2)-(bright.offsetWidth/2))+'px';
+  bright.style.right='auto';
 }
