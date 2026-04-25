@@ -1017,4 +1017,10 @@ function bindBdayEvents(){
     };
     r.readAsText(f);
   });
+  /* Swipe: navegar mes anterior/siguiente (bdPrev/bdNext solo existen en vista cal) */
+  addSwipe(document.getElementById('bdayOverlay'),function(){
+    var b=document.getElementById('bdNext');if(b)b.click();
+  },function(){
+    var b=document.getElementById('bdPrev');if(b)b.click();
+  });
 }

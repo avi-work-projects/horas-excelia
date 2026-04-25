@@ -96,6 +96,13 @@
     var n=new Date();CY=n.getFullYear();CM=n.getMonth();render();
   });
 
+  /* ── Swipe horizontal en la home (mes anterior/siguiente) ── */
+  addSwipe(document.getElementById('weeksContainer'),function(){
+    document.getElementById('nextBtn').click();
+  },function(){
+    document.getElementById('prevBtn').click();
+  });
+
   /* ── Botón "Editar jornada" ── */
   document.getElementById('editHoursBtn').addEventListener('click',function(){
     var panel=document.getElementById('hoursPanel');

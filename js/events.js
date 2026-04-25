@@ -1958,4 +1958,10 @@ function bindEvEvents(){
     };
     r.readAsText(f);
   });
+  /* Swipe: navegar en el tiempo (el botón evPrev/evNext solo existe en vistas con nav) */
+  addSwipe(document.getElementById('eventsOverlay'),function(){
+    var b=document.getElementById('evNext');if(b)b.click();
+  },function(){
+    var b=document.getElementById('evPrev');if(b)b.click();
+  });
 }
