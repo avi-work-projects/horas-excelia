@@ -2057,28 +2057,29 @@ function bindEvEvents(){
     qi++;if(qi>2){qi=0;EV_QUAD_YEAR++;}
     EV_QUAD_MONTH=[0,4,8][qi];refreshEvents();
   });
-  /* Posicionamiento del día Hoy en Agenda Semanal — refactor v214:
-     usa offsetTop directo (no requiere que el layout esté pintado, fuerza un
-     synchronous layout y devuelve la posición real del elemento en el flujo).
-     Tras un primer scroll inmediato, hace 2 correcciones a 80ms y 250ms para
-     compensar cualquier reflow tardío (fuentes, imágenes, bars-row absolute). */
+  /* Posicionamiento del día Hoy en Agenda Semanal — refactor v215:
+     usa getBoundingClientRect (independiente de position:static/relative).
+     Calcula delta entre row.top y body.top (en coords de viewport) y lo aplica
+     al scrollTop actual. Tras 1 llamada inmediata, hace 3 correcciones a
+     50/150/350ms para compensar reflows tardíos (fonts, bars-row, images). */
   function _scrollWeekToToday(){
     function doScroll(){
       var r=document.getElementById('ev-wk-today-row');
       var b=document.querySelector('.sy-body');
-      if(!r||!b)return false;
-      /* Sumar offsetTop hasta llegar a .sy-body */
-      var offset=0,el=r;
-      while(el&&el!==b){offset+=el.offsetTop;el=el.offsetParent;if(!el)break;}
+      if(!r||!b)return;
+      var rRect=r.getBoundingClientRect();
+      var bRect=b.getBoundingClientRect();
       var sep=b.querySelector('.ev-wk-month-sep');
       var stickyH=sep?sep.offsetHeight:26;
-      b.scrollTop=Math.max(0,offset-stickyH-8);
-      return true;
+      var BUFFER=8;
+      /* Delta entre row y body en viewport, sumamos al scrollTop actual */
+      var delta=(rRect.top-bRect.top)-stickyH-BUFFER;
+      b.scrollTop=Math.max(0,b.scrollTop+delta);
     }
-    /* Inmediato + 2 correcciones por seguridad (reflow asíncrono) */
     doScroll();
-    setTimeout(doScroll,80);
-    setTimeout(doScroll,300);
+    setTimeout(doScroll,50);
+    setTimeout(doScroll,150);
+    setTimeout(doScroll,350);
   }
   var todayBtn=document.getElementById('evToday');
   if(todayBtn)todayBtn.addEventListener('click',function(){

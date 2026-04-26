@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v214 — Calendario 1-mes refactor: diagonales puente alineadas perfecto (gap:0 + sin border-radius + separador via box-shadow inset que solo aplica a no-puentes), festivo/vacaciones/today con box-shadow inset (no border-top, evita desplazar layout), eventos Otros en esquina superior derecha apilados verticalmente, badges 1-día al fondo de la celda (no se tapan con texto multi-día); Hoy en Agenda Semanal refactorizado con offsetTop directo + 2 correcciones';
+var APP_VERSION = 'v215 — Fix v214 que rompió visualmente: pattern de puentes ahora aplicado SOLO a celdas puente (no al grid, que manchaba weekend/festivo por su bg semi-transparente); Hoy en Agenda Semanal usa getBoundingClientRect en lugar de offsetTop (.sy-body es position:static)';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

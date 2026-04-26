@@ -1042,17 +1042,16 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-cell.ev-day-ausencia{background:rgba(192,132,252,.09);box-shadow:inset 0 5px 0 0 var(--ausencia),inset -1px -1px 0 0 var(--bg)}
 /* Diagonales rosas: background-attachment:fixed → patrón anclado al viewport,
    continuo entre celdas adyacentes (no se reinicia en cada div) */
-/* Puentes (1-mes): el pattern se aplica al GRID de la semana (.ev-week-grid)
-   y las celdas puente quedan transparentes para mostrarlo. Las celdas normales
-   tienen fondo opaco que enmascara el pattern → así las rayas son CONTINUAS
-   entre días puente adyacentes, sin depender de background-attachment:fixed
-   (que falla con stacking contexts en mobile). */
-.ev-week-grid{background-image:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 3px,transparent 3px,transparent 8px)}
-/* Puente: bg transparent + sin separador inset → pattern fluye continuo entre días */
-.ev-cell.ev-puente{background:transparent;box-shadow:none}
-.ev-cell.ev-puente.ev-day-festivo{background:transparent;box-shadow:inset 0 5px 0 0 var(--festivo)}
-.ev-cell.ev-puente.ev-day-vacaciones{background:transparent;box-shadow:inset 0 5px 0 0 var(--vacaciones)}
-.ev-cell.ev-puente.ev-day-ausencia{background:transparent;box-shadow:inset 0 5px 0 0 var(--ausencia)}
+/* Puentes (1-mes): pattern aplicado SOLO a las celdas puente individualmente.
+   Sin background-attachment:fixed (rompe con stacking contexts), sin pattern
+   en grid (mancharía celdas con bg semi-transparente). Cada celda dibuja su
+   propio tramo del pattern; pueden no alinearse perfectamente entre días pero
+   el pattern queda restringido SOLO a los días puente, que es lo correcto. */
+.ev-cell.ev-puente{background:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 3px,transparent 3px,transparent 8px),var(--surface)}
+.ev-cell.ev-puente.weekend{background:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 3px,transparent 3px,transparent 8px),rgba(160,160,200,.18)}
+.ev-cell.ev-puente.ev-day-festivo{background:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 3px,transparent 3px,transparent 8px),rgba(255,107,107,.15)}
+.ev-cell.ev-puente.ev-day-vacaciones{background:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 3px,transparent 3px,transparent 8px),rgba(255,179,71,.15)}
+.ev-cell.ev-puente.ev-day-ausencia{background:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 3px,transparent 3px,transparent 8px),rgba(192,132,252,.15)}
 /* Events in puentes (summary) — one per line */
 .sy-puente-evs{display:flex;flex-direction:column;gap:3px;margin-top:6px}
 .sy-puente-ev{display:flex;justify-content:space-between;align-items:baseline;padding:4px 8px;border-radius:6px;background:var(--surface3);color:var(--text-muted);border:1px solid var(--border-light);font-size:.72rem;gap:6px}
