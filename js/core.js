@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v216 — Fix anual/4-meses puentes (mismo bug que 1-mes: pattern en grid manchaba celdas con bg semi-transparente → ahora pattern solo en celdas puente individualmente); 1-mes con esquinas redondeadas (border-radius:8px) + gap:2px restaurado para mejor separación visual';
+var APP_VERSION = 'v217 — Nuevo tema \"Gris\" (intermedio entre Oscuro y Claro): fondo gris pizarra cálido (#2c2e36), texto suave, mismos accents pero con saturación algo más baja para encajar en el gris medio. Sustituye al tema AMOLED en el ciclo (migración automática para usuarios actuales con amoled)';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -35,10 +35,15 @@ var NAV_BACK=null; // función para "volver atrás" al pulsar ← en cualquier o
 
 // ── Tema visual ──────────────────────────────────────────────
 var THEME_STORAGE_KEY='excelia-theme-v1';
-var THEME=(function(){try{var t=localStorage.getItem('excelia-theme-v1');if(t&&['dark','light','amoled'].indexOf(t)!==-1)return t;}catch(e){}return 'dark';})();
-var THEME_LABELS={dark:'\uD83C\uDF19\u00a0Oscuro',light:'\u2600\uFE0F\u00a0Claro',amoled:'\u26AB\u00a0AMOLED'};
-var THEME_META={dark:'#0a0a0f',light:'#f4f4fa',amoled:'#000000'};
-var THEME_SEQUENCE=['dark','light','amoled'];
+var THEME=(function(){try{
+  var t=localStorage.getItem('excelia-theme-v1');
+  /* Migraci\u00f3n v217: amoled (eliminado) \u2192 grey (nuevo intermedio gris pizarra) */
+  if(t==='amoled'){t='grey';try{localStorage.setItem('excelia-theme-v1','grey');}catch(e){}}
+  if(t&&['dark','light','grey'].indexOf(t)!==-1)return t;
+}catch(e){}return 'dark';})();
+var THEME_LABELS={dark:'\uD83C\uDF19\u00a0Oscuro',light:'\u2600\uFE0F\u00a0Claro',grey:'\uD83C\uDF2B\uFE0F\u00a0Gris'};
+var THEME_META={dark:'#0a0a0f',light:'#f4f4fa',grey:'#2c2e36'};
+var THEME_SEQUENCE=['dark','light','grey'];
 function applyTheme(t){
   THEME=t;
   document.documentElement.setAttribute('data-theme',t);

@@ -32,19 +32,21 @@
 [data-theme="light"] .data-menu{box-shadow:0 8px 24px var(--shadow)}
 [data-theme="light"] .week-card{box-shadow:0 2px 8px var(--shadow)}
 [data-theme="light"] .overlay{background:rgba(0,0,0,.3)}
-/* ── TEMA AMOLED (negro puro, OLED) ── */
-[data-theme="amoled"]{
---bg:#000000;--surface:#0c0c14;--surface2:#121220;--surface3:#1a1a2c;
---border:#1c1c2e;--border-light:#262638;
---text:#f2f2ff;--text-muted:#9090c0;--text-dim:#505068;
---accent:#7a8fff;--accent-glow:#7a8fff30;--accent-bright:#9cb0ff;
---sent:#00150a;--sent-border:#003020;--sent-text:#40ef80;
---festivo:#ff5050;--vacaciones:#ffaa30;--ausencia:#d060ff;--normal:#7a8fff;
---c-orange:#ff7020;--c-red:#ff5050;--c-green:#40ef80;--c-blue:#7a8fff;--c-purple:#d060ff;--c-yellow:#ffcc00;
+/* ── TEMA GRIS (intermedio entre oscuro y claro, gris pizarra cálido) ── */
+[data-theme="grey"]{
+--bg:#2c2e36;--surface:#373a45;--surface2:#414452;--surface3:#4d5060;
+--border:#5a5d6a;--border-light:#6f7280;
+--text:#e8eaf0;--text-muted:#a8abb8;--text-dim:#7a7d8a;
+--accent:#7a98ff;--accent-glow:#7a98ff2c;--accent-bright:#9bb2ff;
+--sent:#2e4a3a;--sent-border:#456858;--sent-text:#7adf9c;
+--festivo:#ff7878;--vacaciones:#ffbe5e;--ausencia:#cf94fc;--normal:#7a98ff;
+--c-orange:#fda36a;--c-red:#ff7878;--c-green:#48dba4;--c-blue:#7a98ff;--c-purple:#cf94fc;--c-yellow:#fbcb52;
 --radius:14px;--radius-sm:10px;
 --font:'DM Sans',sans-serif;--mono:'JetBrains Mono',monospace;
---hdr-bg:rgba(0,0,0,.96);--shadow:rgba(0,0,0,.8);
+--hdr-bg:rgba(44,46,54,.94);--shadow:rgba(0,0,0,.3);
 }
+[data-theme="grey"] .header{background:var(--hdr-bg)}
+[data-theme="grey"] .week-card{box-shadow:0 2px 8px var(--shadow)}
 html{font-size:16px;-webkit-tap-highlight-color:transparent}
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100dvh;padding-bottom:env(safe-area-inset-bottom,20px);overflow-x:hidden}
 
