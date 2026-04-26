@@ -1031,15 +1031,15 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 /* Weekend frame — gris lavanda suave */
 .bday-cell.weekend{border:1.5px solid rgba(160,160,200,.22);background:rgba(160,160,200,.04)}
 .bday-cell.weekend .bday-num{color:#8888a8}
-.ev-cell.weekend{background:rgba(160,160,200,.11);box-shadow:inset 0 -1.5px 0 0 rgba(160,160,200,.25),inset 1.5px 0 0 0 rgba(160,160,200,.25),inset -1.5px 0 0 0 rgba(160,160,200,.25),inset -1px -1px 0 0 var(--bg)}
+.ev-cell.weekend{background:rgba(160,160,200,.11);box-shadow:inset 0 -1.5px 0 0 rgba(160,160,200,.25),inset 1.5px 0 0 0 rgba(160,160,200,.25),inset -1.5px 0 0 0 rgba(160,160,200,.25)}
 .ev-cell.weekend .ev-num{color:inherit}
 /* Day types in events calendar — border-top + tinte de fondo */
 /* Festivo/vacaciones/ausencia: indicador como box-shadow inset top (NO border-top)
    para que no desplace el layout y el pattern de puente coincida en la misma
    posición vertical que las celdas normales. Compone con el separador inset. */
-.ev-cell.ev-day-festivo{background:rgba(255,107,107,.09);box-shadow:inset 0 5px 0 0 var(--festivo),inset -1px -1px 0 0 var(--bg)}
-.ev-cell.ev-day-vacaciones{background:rgba(255,179,71,.09);box-shadow:inset 0 5px 0 0 var(--vacaciones),inset -1px -1px 0 0 var(--bg)}
-.ev-cell.ev-day-ausencia{background:rgba(192,132,252,.09);box-shadow:inset 0 5px 0 0 var(--ausencia),inset -1px -1px 0 0 var(--bg)}
+.ev-cell.ev-day-festivo{background:rgba(255,107,107,.09);box-shadow:inset 0 5px 0 0 var(--festivo)}
+.ev-cell.ev-day-vacaciones{background:rgba(255,179,71,.09);box-shadow:inset 0 5px 0 0 var(--vacaciones)}
+.ev-cell.ev-day-ausencia{background:rgba(192,132,252,.09);box-shadow:inset 0 5px 0 0 var(--ausencia)}
 /* Diagonales rosas: background-attachment:fixed → patrón anclado al viewport,
    continuo entre celdas adyacentes (no se reinicia en cada div) */
 /* Puentes (1-mes): pattern aplicado SOLO a las celdas puente individualmente.
@@ -1263,14 +1263,16 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-ann-edit-btn.active{border-color:var(--accent);background:var(--accent);color:#fff}
 /* ── Feat 6: Puentes rallados en anual ── */
 /* Diagonales en anual/quad: attachment:fixed para que el patrón sea continuo entre celdas */
-/* Puentes (anual y 4-meses): mismo enfoque que 1-mes — pattern en el contenedor
-   de la semana (.ev-annual-week-outer) y celdas puente transparentes para
-   mostrarlo. MISMO pattern que 1-mes para que coincidan visualmente entre las
-   3 vistas (1 mes / 4 meses / anual). */
-.ev-annual-week-outer{background-image:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 3px,transparent 3px,transparent 8px)}
-.ev-annual-day.ev-annual-puente{background:transparent!important}
-.ev-annual-day.ev-annual-suelto-fest{background:repeating-linear-gradient(-45deg,rgba(255,107,107,.85),rgba(255,107,107,.85) 2px,transparent 2px,transparent 5px)!important}
-.ev-annual-day.ev-annual-suelto-vac{background:repeating-linear-gradient(45deg,rgba(255,179,71,.45),rgba(255,179,71,.45) 2px,transparent 2px,transparent 5px)!important}
+/* Puentes (anual y 4-meses): pattern aplicado SOLO a celdas puente
+   individualmente (no al .ev-annual-week-outer, que manchaba weekend/festivo
+   por su bg semi-transparente). Mismo enfoque que 1-mes: layered backgrounds
+   con el pattern + el color base de cada estado. */
+.ev-annual-week-outer{background-image:none}
+.ev-annual-day.ev-annual-puente{background:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 2px,transparent 2px,transparent 5px),var(--surface2)!important}
+.ev-annual-day.ev-annual-puente.ann-festivo{background:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 2px,transparent 2px,transparent 5px),rgba(255,107,107,.18)!important}
+.ev-annual-day.ev-annual-puente.ann-vac{background:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 2px,transparent 2px,transparent 5px),rgba(255,179,71,.18)!important}
+.ev-annual-day.ev-annual-suelto-fest{background:repeating-linear-gradient(-45deg,rgba(255,107,107,.85),rgba(255,107,107,.85) 2px,transparent 2px,transparent 5px),var(--surface2)!important}
+.ev-annual-day.ev-annual-suelto-vac{background:repeating-linear-gradient(45deg,rgba(255,179,71,.45),rgba(255,179,71,.45) 2px,transparent 2px,transparent 5px),var(--surface2)!important}
 /* Festivos/vac en vista anual: borde brillante + relleno suave por día individual */
 .ev-annual-day.ann-festivo{background:rgba(255,107,107,.15)!important;outline:1.5px solid rgba(255,107,107,.85);outline-offset:-1.5px}
 .ev-annual-day.ann-vac{background:rgba(255,179,71,.15)!important;outline:1.5px solid rgba(255,179,71,.85);outline-offset:-1.5px}
@@ -1453,16 +1455,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-multi-bar.ends{border-top-left-radius:0;border-bottom-left-radius:0}
 .ev-multi-bar.continues{border-radius:0}
 /* Sin z-index propio para no crear stacking context — permite que ev-badge (z-index:4) quede encima de ev-bars-row (z-index:3) */
-/* Sin gap:0 entre celdas — así el pattern del fondo (diagonales puente) fluye
-   sin interrupciones entre días adyacentes. Separación visual via box-shadow
-   inset en cada celda (igual color que el bg de la página, simula gap). */
-.ev-week-grid{position:relative;display:grid;grid-template-columns:repeat(7,1fr);gap:0;margin-bottom:0}
+.ev-week-grid{position:relative;display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:0}
 /* Perímetro puente: capa inferior a eventos */
 .ev-puente-perimeter{position:absolute;inset:0;border:1.5px solid #f472b6;border-radius:5px;pointer-events:none;z-index:1}
 /* Separación visual via inset box-shadow en var(--bg) (simula gap sin
    interrumpir el pattern del puente entre celdas adyacentes). Las celdas
    puente quitan ese shadow para que el pattern fluya continuo. */
-.ev-cell{min-height:73px;padding:6px 4px 4px;background:var(--surface);border-radius:0;display:flex;flex-direction:column;gap:2px;overflow:hidden;cursor:pointer;transition:background .12s;-webkit-user-select:none;user-select:none;position:relative;box-shadow:inset -1px -1px 0 0 var(--bg)}
+.ev-cell{min-height:73px;padding:6px 4px 4px;background:var(--surface);border-radius:8px;display:flex;flex-direction:column;gap:2px;overflow:hidden;cursor:pointer;transition:background .12s;-webkit-user-select:none;user-select:none;position:relative}
 .ev-cell:active{background:var(--surface3)}
 .ev-cell.out-m{opacity:.35}
 .ev-cell.past-cal-day{opacity:.45}
