@@ -387,13 +387,19 @@ function renderEvCalMonth(){
       else{if(bspanStart>=0){bspans.push({s:bspanStart,e:di-1});bspanStart=-1;}}
       var cls='ev-cell'+(inM?'':' out-m')+(isTod?' today-ev':'')+(past?' past-cal-day':'')+(edow===0||edow===6?' weekend':'')+(dt&&dt!=='normal'?' ev-day-'+dt:'')+(inPuente?' ev-puente':'');
       h+='<div class="'+cls+'" data-ds="'+ds+'"><div class="ev-num">'+d.getDate()+'</div>';
-      h+='<div class="ev-badges-wrap">';
+      /* Separar eventos en 2 grupos: Otros (esquina superior derecha) y resto (centro/abajo) */
+      var _otrosCorner='',_otrosRest='';
       evs.forEach(function(ev){
         if(multiIds[ev.id])return;
         var _isVipBday=ev.id.indexOf('ev-bday-vip-')===0;
-        /* Otros con shape personalizada: renderizar como marker en lugar del badge pill */
-        if(!_isVipBday && ev.shape && (ev.type==='Otros' || (typeof getEvType==='function' && getEvType(ev)==='Otros'))){
-          h+=evMarkerHtml(ev, past?' past-marker':'', 'ev-marker-lg');
+        var _isOtros=!_isVipBday&&(ev.type==='Otros'||(typeof getEvType==='function'&&getEvType(ev)==='Otros'));
+        if(_isOtros){
+          /* Otros: esquina superior derecha (apilados verticalmente). Si tiene shape, usar marker; si no, usar dot peque\u00f1o con color */
+          if(ev.shape){
+            _otrosCorner+=evMarkerHtml(ev, past?' past-marker':'', 'ev-marker-lg');
+          } else {
+            _otrosCorner+='<span class="ev-annual-marker ev-shape-circle ev-marker-lg'+(past?' past-marker':'')+'" data-id="'+ev.id+'" style="color:'+ev.color+'"></span>';
+          }
           return;
         }
         var _rawName=ev.title.replace(/^\u2b50\s*/,'').replace(/^Cumple\s+/,'');
@@ -401,9 +407,10 @@ function renderEvCalMonth(){
         var _bStyle=_isVipBday
           ?'color:#fff;border-color:#fbbf24;border-width:2px;background:#fbbf24cc;box-shadow:0 0 8px rgba(251,191,36,.55)'
           :'color:#fff;border-color:'+ev.color+';background:'+ev.color+'cc';
-        h+='<div class="ev-badge" data-id="'+ev.id+'" style="'+_bStyle+'"></div>';
+        _otrosRest+='<div class="ev-badge" data-id="'+ev.id+'" style="'+_bStyle+'"></div>';
       });
-      h+='</div>';
+      if(_otrosCorner)h+='<div class="ev-otros-corner">'+_otrosCorner+'</div>';
+      h+='<div class="ev-badges-wrap">'+_otrosRest+'</div>';
       h+='</div>';
     }
     if(bspanStart>=0)bspans.push({s:bspanStart,e:6});
@@ -2050,41 +2057,28 @@ function bindEvEvents(){
     qi++;if(qi>2){qi=0;EV_QUAD_YEAR++;}
     EV_QUAD_MONTH=[0,4,8][qi];refreshEvents();
   });
-  /* Posicionamiento exacto del día Hoy en Agenda Semanal:
-     usa getBoundingClientRect + detección dinámica del separador sticky.
-     Polling con reintentos: el contenido (6 meses con eventos) puede tardar
-     varios frames en hacer layout; si el scroll es clampeado por scrollHeight
-     insuficiente, reintentamos hasta que cuadre. */
+  /* Posicionamiento del día Hoy en Agenda Semanal — refactor v214:
+     usa offsetTop directo (no requiere que el layout esté pintado, fuerza un
+     synchronous layout y devuelve la posición real del elemento en el flujo).
+     Tras un primer scroll inmediato, hace 2 correcciones a 80ms y 250ms para
+     compensar cualquier reflow tardío (fuentes, imágenes, bars-row absolute). */
   function _scrollWeekToToday(){
-    var attempts=0,MAX=12;
-    function tryScroll(){
-      attempts++;
+    function doScroll(){
       var r=document.getElementById('ev-wk-today-row');
       var b=document.querySelector('.sy-body');
-      if(!r||!b){if(attempts<MAX)setTimeout(tryScroll,50);return;}
-      /* Si el body aún no tiene scroll posible (contenido no completo) → reintentar */
-      if(b.scrollHeight<=b.clientHeight+5){if(attempts<MAX)setTimeout(tryScroll,60);return;}
-      var rRect=r.getBoundingClientRect();
-      var bRect=b.getBoundingClientRect();
-      /* Sticky month separator activo (último cuyo top ≤ container top) */
-      var seps=b.querySelectorAll('.ev-wk-month-sep');
-      var stickyH=0;
-      seps.forEach(function(s){var sR=s.getBoundingClientRect();if(sR.top<=bRect.top+1)stickyH=Math.max(stickyH,s.offsetHeight);});
-      var BUFFER=8;
-      var delta=(rRect.top-bRect.top)-stickyH-BUFFER;
-      var target=Math.max(0,b.scrollTop+delta);
-      b.scrollTop=target;
-      /* Si el scroll fue clampeado (porque el contenido todavía está creciendo)
-         o el row sigue lejos del top esperado → reintentar */
-      var actualDelta=Math.abs(b.scrollTop-target);
-      var rRect2=r.getBoundingClientRect();
-      var newRowTop=rRect2.top-b.getBoundingClientRect().top;
-      var expectedRowTop=stickyH+BUFFER;
-      if(attempts<MAX&&(actualDelta>5||Math.abs(newRowTop-expectedRowTop)>10)){
-        setTimeout(tryScroll,80);
-      }
+      if(!r||!b)return false;
+      /* Sumar offsetTop hasta llegar a .sy-body */
+      var offset=0,el=r;
+      while(el&&el!==b){offset+=el.offsetTop;el=el.offsetParent;if(!el)break;}
+      var sep=b.querySelector('.ev-wk-month-sep');
+      var stickyH=sep?sep.offsetHeight:26;
+      b.scrollTop=Math.max(0,offset-stickyH-8);
+      return true;
     }
-    setTimeout(tryScroll,40);
+    /* Inmediato + 2 correcciones por seguridad (reflow asíncrono) */
+    doScroll();
+    setTimeout(doScroll,80);
+    setTimeout(doScroll,300);
   }
   var todayBtn=document.getElementById('evToday');
   if(todayBtn)todayBtn.addEventListener('click',function(){

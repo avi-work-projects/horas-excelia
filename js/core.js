@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v213 — Fix botón Hoy en Agenda Semanal con polling de scroll (refreshEvents reemplaza el .sy-body, los rAF iniciales no llegaban a tiempo); diagonales rosas de puentes ahora se aplican al contenedor de la semana en los 3 calendarios (1-mes/4-meses/anual) con MISMO pattern, lo que garantiza continuidad entre días adyacentes y consistencia entre vistas';
+var APP_VERSION = 'v214 — Calendario 1-mes refactor: diagonales puente alineadas perfecto (gap:0 + sin border-radius + separador via box-shadow inset que solo aplica a no-puentes), festivo/vacaciones/today con box-shadow inset (no border-top, evita desplazar layout), eventos Otros en esquina superior derecha apilados verticalmente, badges 1-día al fondo de la celda (no se tapan con texto multi-día); Hoy en Agenda Semanal refactorizado con offsetTop directo + 2 correcciones';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
