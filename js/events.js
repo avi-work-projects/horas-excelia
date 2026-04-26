@@ -2051,28 +2051,40 @@ function bindEvEvents(){
     EV_QUAD_MONTH=[0,4,8][qi];refreshEvents();
   });
   /* Posicionamiento exacto del día Hoy en Agenda Semanal:
-     usa getBoundingClientRect (más fiable que offsetTop con grid CSS y sticky)
-     y descuenta dinámicamente la altura del separador de mes sticky.
-     El CSS scroll-margin-top en #ev-wk-today-row hace de fallback. */
+     usa getBoundingClientRect + detección dinámica del separador sticky.
+     Polling con reintentos: el contenido (6 meses con eventos) puede tardar
+     varios frames en hacer layout; si el scroll es clampeado por scrollHeight
+     insuficiente, reintentamos hasta que cuadre. */
   function _scrollWeekToToday(){
-    /* doble rAF para asegurar que el grid ha completado su layout */
-    requestAnimationFrame(function(){requestAnimationFrame(function(){
+    var attempts=0,MAX=12;
+    function tryScroll(){
+      attempts++;
       var r=document.getElementById('ev-wk-today-row');
       var b=document.querySelector('.sy-body');
-      if(!r||!b)return;
+      if(!r||!b){if(attempts<MAX)setTimeout(tryScroll,50);return;}
+      /* Si el body aún no tiene scroll posible (contenido no completo) → reintentar */
+      if(b.scrollHeight<=b.clientHeight+5){if(attempts<MAX)setTimeout(tryScroll,60);return;}
       var rRect=r.getBoundingClientRect();
       var bRect=b.getBoundingClientRect();
-      /* Detectar el sticky month separator activo (puede que haya varios; el visible es el último ≤ rRect.top) */
+      /* Sticky month separator activo (último cuyo top ≤ container top) */
       var seps=b.querySelectorAll('.ev-wk-month-sep');
       var stickyH=0;
-      seps.forEach(function(s){
-        var sRect=s.getBoundingClientRect();
-        if(sRect.top<=bRect.top+1)stickyH=Math.max(stickyH,s.offsetHeight);
-      });
-      var BUFFER=8; /* aire entre el separador y el día Hoy */
+      seps.forEach(function(s){var sR=s.getBoundingClientRect();if(sR.top<=bRect.top+1)stickyH=Math.max(stickyH,s.offsetHeight);});
+      var BUFFER=8;
       var delta=(rRect.top-bRect.top)-stickyH-BUFFER;
-      b.scrollTop=Math.max(0,b.scrollTop+delta);
-    });});
+      var target=Math.max(0,b.scrollTop+delta);
+      b.scrollTop=target;
+      /* Si el scroll fue clampeado (porque el contenido todavía está creciendo)
+         o el row sigue lejos del top esperado → reintentar */
+      var actualDelta=Math.abs(b.scrollTop-target);
+      var rRect2=r.getBoundingClientRect();
+      var newRowTop=rRect2.top-b.getBoundingClientRect().top;
+      var expectedRowTop=stickyH+BUFFER;
+      if(attempts<MAX&&(actualDelta>5||Math.abs(newRowTop-expectedRowTop)>10)){
+        setTimeout(tryScroll,80);
+      }
+    }
+    setTimeout(tryScroll,40);
   }
   var todayBtn=document.getElementById('evToday');
   if(todayBtn)todayBtn.addEventListener('click',function(){

@@ -1039,7 +1039,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-cell.ev-day-ausencia{border-top:5px solid var(--ausencia);background:rgba(192,132,252,.09)}
 /* Diagonales rosas: background-attachment:fixed → patrón anclado al viewport,
    continuo entre celdas adyacentes (no se reinicia en cada div) */
-.ev-cell.ev-puente{background:repeating-linear-gradient(45deg,rgba(244,114,182,.22),rgba(244,114,182,.22) 3px,transparent 3px,transparent 9px);background-attachment:fixed}
+/* Puentes (1-mes): el pattern se aplica al GRID de la semana (.ev-week-grid)
+   y las celdas puente quedan transparentes para mostrarlo. Las celdas normales
+   tienen fondo opaco que enmascara el pattern → así las rayas son CONTINUAS
+   entre días puente adyacentes, sin depender de background-attachment:fixed
+   (que falla con stacking contexts en mobile). */
+.ev-week-grid{background-image:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 3px,transparent 3px,transparent 8px)}
+.ev-cell.ev-puente{background:transparent}
 /* Events in puentes (summary) — one per line */
 .sy-puente-evs{display:flex;flex-direction:column;gap:3px;margin-top:6px}
 .sy-puente-ev{display:flex;justify-content:space-between;align-items:baseline;padding:4px 8px;border-radius:6px;background:var(--surface3);color:var(--text-muted);border:1px solid var(--border-light);font-size:.72rem;gap:6px}
@@ -1251,9 +1257,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-ann-edit-btn.active{border-color:var(--accent);background:var(--accent);color:#fff}
 /* ── Feat 6: Puentes rallados en anual ── */
 /* Diagonales en anual/quad: attachment:fixed para que el patrón sea continuo entre celdas */
-.ev-annual-day.ev-annual-puente{background:repeating-linear-gradient(45deg,rgba(244,114,182,.35),rgba(244,114,182,.35) 2px,transparent 2px,transparent 5px)!important;background-attachment:fixed!important}
-.ev-annual-day.ev-annual-suelto-fest{background:repeating-linear-gradient(-45deg,rgba(255,107,107,.85),rgba(255,107,107,.85) 2px,transparent 2px,transparent 5px)!important;background-attachment:fixed!important}
-.ev-annual-day.ev-annual-suelto-vac{background:repeating-linear-gradient(45deg,rgba(255,179,71,.45),rgba(255,179,71,.45) 2px,transparent 2px,transparent 5px)!important;background-attachment:fixed!important}
+/* Puentes (anual y 4-meses): mismo enfoque que 1-mes — pattern en el contenedor
+   de la semana (.ev-annual-week-outer) y celdas puente transparentes para
+   mostrarlo. MISMO pattern que 1-mes para que coincidan visualmente entre las
+   3 vistas (1 mes / 4 meses / anual). */
+.ev-annual-week-outer{background-image:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 3px,transparent 3px,transparent 8px)}
+.ev-annual-day.ev-annual-puente{background:transparent!important}
+.ev-annual-day.ev-annual-suelto-fest{background:repeating-linear-gradient(-45deg,rgba(255,107,107,.85),rgba(255,107,107,.85) 2px,transparent 2px,transparent 5px)!important}
+.ev-annual-day.ev-annual-suelto-vac{background:repeating-linear-gradient(45deg,rgba(255,179,71,.45),rgba(255,179,71,.45) 2px,transparent 2px,transparent 5px)!important}
 /* Festivos/vac en vista anual: borde brillante + relleno suave por día individual */
 .ev-annual-day.ann-festivo{background:rgba(255,107,107,.15)!important;outline:1.5px solid rgba(255,107,107,.85);outline-offset:-1.5px}
 .ev-annual-day.ann-vac{background:rgba(255,179,71,.15)!important;outline:1.5px solid rgba(255,179,71,.85);outline-offset:-1.5px}

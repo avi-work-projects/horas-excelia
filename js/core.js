@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v212 — Fix marker Otros tapado por Viajes en 1-mes (z-index:4 al .ev-annual-marker), y "Resultado declaración" muestra los DOS ahorros (gastos difícil just. + desgravaciones base) como restas explícitas, más anotación inline en Cálculo de base con el ahorro real en IRPF de cada reducción';
+var APP_VERSION = 'v213 — Fix botón Hoy en Agenda Semanal con polling de scroll (refreshEvents reemplaza el .sy-body, los rAF iniciales no llegaban a tiempo); diagonales rosas de puentes ahora se aplican al contenedor de la semana en los 3 calendarios (1-mes/4-meses/anual) con MISMO pattern, lo que garantiza continuidad entre días adyacentes y consistencia entre vistas';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
