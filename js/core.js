@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v215 — Fix v214 que rompió visualmente: pattern de puentes ahora aplicado SOLO a celdas puente (no al grid, que manchaba weekend/festivo por su bg semi-transparente); Hoy en Agenda Semanal usa getBoundingClientRect en lugar de offsetTop (.sy-body es position:static)';
+var APP_VERSION = 'v216 — Fix anual/4-meses puentes (mismo bug que 1-mes: pattern en grid manchaba celdas con bg semi-transparente → ahora pattern solo en celdas puente individualmente); 1-mes con esquinas redondeadas (border-radius:8px) + gap:2px restaurado para mejor separación visual';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
