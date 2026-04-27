@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v222 — Fix amortización despacho: precio adquisición incluye gastos de compra (ITP+notaría+tasación+inmobiliaria), no solo el precio puro. Antes la fórmula sólo usaba DESPACHO.valorCompra; ahora suma DESPACHO.compra.itpMadrid + notariaRegistro + tasacion + inmobiliaria al valorCompraTotal según regla AEAT';
+var APP_VERSION = 'v223 — openFiscal() ahora hereda el año del overlay económico (ECON_YEAR) en vez de saltar siempre al año actual. Si estás mirando Análisis Gastos en 2025 y abres el engranaje, Configuración Fiscal abre en 2025 (no en 2026)';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
