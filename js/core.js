@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v221 — Fix import: FISCAL.minPersonal (v219) ahora se importa correctamente del backup; DESGRAV_ITEMS al importar se mergea con DESGRAV_DEFAULT vía loadDesgrav (añade items nuevos que un backup antiguo no tenía, ej. madrid_intereses_jovenes_30 v218); DESPACHO.valorCatastralConstruccion (v220) por defecto 0 si no viene en el backup';
+var APP_VERSION = 'v222 — Fix amortización despacho: precio adquisición incluye gastos de compra (ITP+notaría+tasación+inmobiliaria), no solo el precio puro. Antes la fórmula sólo usaba DESPACHO.valorCompra; ahora suma DESPACHO.compra.itpMadrid + notariaRegistro + tasacion + inmobiliaria al valorCompraTotal según regla AEAT';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

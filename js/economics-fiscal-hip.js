@@ -73,21 +73,32 @@ function computeDespachoDeduccion(){
   if(prop<=0)return 0;
   var dd=DESPACHO.deducciones||{amortizacion:true,ibi:true,hipotecaInt:true,casa:true,suministros:true};
   /* Amortización del inmueble afecto al despacho (regla AEAT):
-       3% × precio_adquisición × (VC_construcción / VC_total) × prop_despacho
-     El RATIO construcción/total se saca del valor catastral (ratio real del
-     inmueble, no asumir 80%). Si el usuario no ha rellenado VC_construcción,
-     fallback al método antiguo (80% asumido) — pero advertir en la nota. */
-  var vc=DESPACHO.valorCatastral||0, vcp=DESPACHO.valorCompra||0, vcc=DESPACHO.valorCatastralConstruccion||0;
+       3% × precio_adquisición_REAL × (VC_construcción / VC_total) × prop_despacho
+     "Precio de adquisición REAL" según AEAT = precio compra + gastos
+     inherentes a la adquisición (ITP/IVA + notaría + registro + tasación +
+     inmobiliaria). Las reformas posteriores NO se incluyen aquí (van como
+     mejora del activo, amortización aparte si aplica).
+     RATIO construcción/total se saca del valor catastral (ratio real del
+     inmueble, no asumir 80%). */
+  var vc=DESPACHO.valorCatastral||0, vcc=DESPACHO.valorCatastralConstruccion||0;
+  /* Precio adquisición = compra.valorCompraTotal + gastos compra (excluyendo reformas).
+     Si no hay compra detallada, fallback a DESPACHO.valorCompra. */
+  var precioAdq=DESPACHO.valorCompra||0;
+  if(DESPACHO.compra){
+    var c=DESPACHO.compra;
+    var totalGastosCompra=(c.itpMadrid||0)+(c.notariaRegistro||0)+(c.tasacion||0)+(c.inmobiliaria||0);
+    precioAdq=(c.valorCompraTotal||DESPACHO.valorCompra||0)+totalGastosCompra;
+  }
   var amort=0;
   if(dd.amortizacion!==false){
-    if(vc>0&&vcc>0&&vcp>0){
-      /* Método correcto AEAT: ratio real construcción × precio adquisición */
+    if(vc>0&&vcc>0&&precioAdq>0){
+      /* Método correcto AEAT: ratio real construcción × precio adquisición real */
       var ratioConstruccion=vcc/vc;
-      amort=Math.round(vcp*ratioConstruccion*0.03*prop*100)/100;
+      amort=Math.round(precioAdq*ratioConstruccion*0.03*prop*100)/100;
     } else {
       /* Fallback: asume 80% es construcción (sobreestima si el ratio real es menor) */
       var baseAmort=0;
-      if(vc>0&&vcp>0){baseAmort=Math.max(vc,vcp);}else if(vcp>0){baseAmort=vcp;}else if(vc>0){baseAmort=vc;}
+      if(vc>0&&precioAdq>0){baseAmort=Math.max(vc,precioAdq);}else if(precioAdq>0){baseAmort=precioAdq;}else if(vc>0){baseAmort=vc;}
       amort=Math.round(baseAmort*0.80*0.03*prop*100)/100;
     }
   }
