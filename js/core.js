@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v220 — Corrección importante: la amortización del despacho usaba 80% asumido para construcción (sobreestima fuerte). Ahora usa el ratio REAL del valor catastral (construcción / total). Nuevo campo \"Valor catastral de la construcción\" en config Despacho. Fórmula: 3% × precio_adq × ratio_construcción × % despacho. Si no se rellena VC construcción, fallback al 80% con aviso';
+var APP_VERSION = 'v221 — Fix import: FISCAL.minPersonal (v219) ahora se importa correctamente del backup; DESGRAV_ITEMS al importar se mergea con DESGRAV_DEFAULT vía loadDesgrav (añade items nuevos que un backup antiguo no tenía, ej. madrid_intereses_jovenes_30 v218); DESPACHO.valorCatastralConstruccion (v220) por defecto 0 si no viene en el backup';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
