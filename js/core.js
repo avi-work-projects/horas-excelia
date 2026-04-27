@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v223 — openFiscal() ahora hereda el año del overlay económico (ECON_YEAR) en vez de saltar siempre al año actual. Si estás mirando Análisis Gastos en 2025 y abres el engranaje, Configuración Fiscal abre en 2025 (no en 2026)';
+var APP_VERSION = 'v224 — BUG CRÍTICO arreglado en desgravAnual: si un item tenía gastoLink Y un amount manual, cuando el gasto del año era 0 caía al amount (ej. plan_pension con amount=5750 seguía deduciendo 5750€ en 2026 aunque ese año no habías cotizado plan). Causaba que la cuota a pagar se subestimara en ~2000€/año. Ahora si gastoLink existe y el gasto es 0, la deducción es 0';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

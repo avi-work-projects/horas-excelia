@@ -322,8 +322,13 @@ function desgravAnual(item){
     var ga=item.gastoLink==='_compras_total'?comprasTotal():gastoAnual(item.gastoLink);
     var p=(item.pct!=null?item.pct:100)/100;
     amt=Math.round(ga*p*100)/100;
-    /* Fallback: si el gasto vinculado está a 0 pero item tiene amount propio, usarlo */
-    if(!amt&&item.amount)amt=item.amount;
+    /* SI tiene gastoLink, NO aplicamos fallback al item.amount cuando el gasto
+       vinculado es 0. Antes había un fallback que aplicaba item.amount cuando
+       el gasto era 0, pero esto causaba un bug grave: si el usuario tenía
+       Plan de Pensiones en 2025 (gasto=5750) y NO en 2026 (gasto=0), la
+       app seguía deduciendo los 5750 en 2026 (cayendo al item.amount=5750).
+       Si quieres deducir, métele el importe en gastosPerYear[año], no aquí.
+       Solo items SIN gastoLink (ej. amortizaciones manuales) usan amount. */
   }else{
     amt=item.amount||0;
   }
