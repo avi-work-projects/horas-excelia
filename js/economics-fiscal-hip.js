@@ -118,12 +118,33 @@ function computeDeclResult(base,irpfTotal){
   if(DESPACHO.enabled)totalBaseDesgrav=Math.round((totalBaseDesgrav+computeDespachoDeduccion())*100)/100;
   var baseDecl=Math.max(0,Math.round((baseAfterGD-totalBaseDesgrav)*100)/100);
   var decl=computeIrpfBrackets(baseDecl);
-  var declDiff=Math.round((decl.totalTax-irpfTotal-quotaEffective)*100)/100;
+  /* Mínimo personal y familiar: la AEAT NO grava los primeros X€ de la base.
+     Calcula la cuota correspondiente al mínimo personal con los mismos tramos
+     y la RESTA de la cuota total. Para soltero <65 años sin hijos: 5.550€
+     estatal. Madrid añade 5.956,65€ autonómico. Como los tramos en la app son
+     combinados estatal+autonómico, usamos un mínimo combinado configurable
+     (default ≈ media entre 5.550 estatal y 5.956 Madrid = 5.742€) para que la
+     cuota correspondiente coincida con la suma de descuentos del PDF real. */
+  var minPersonal=(typeof FISCAL!=='undefined'&&FISCAL.minPersonal!=null)?FISCAL.minPersonal:5742;
+  var cuotaMinPersonal=minPersonal>0?computeIrpfBrackets(minPersonal).totalTax:0;
+  var totalTaxBruto=decl.totalTax;
+  var totalTaxNeto=Math.max(0,Math.round((totalTaxBruto-cuotaMinPersonal)*100)/100);
+  /* Reescribimos decl con la cuota neta (la que va a la declaración) y guardamos
+     también la bruta + el descuento por mínimo personal para mostrarlo en la UI */
+  var declAdj={
+    totalTax:totalTaxNeto,
+    totalTaxBruto:totalTaxBruto,
+    cuotaMinPersonal:Math.round(cuotaMinPersonal*100)/100,
+    minPersonal:minPersonal,
+    breakdown:decl.breakdown,
+    effectivePct:baseDecl>0?Math.round(totalTaxNeto/baseDecl*10000)/100:0
+  };
+  var declDiff=Math.round((declAdj.totalTax-irpfTotal-quotaEffective)*100)/100;
   return{
     gdPct:gdPct,gdAmount:gdAmount,baseAfterGD:baseAfterGD,
     totalDesgrav:Math.round((totalBaseDesgrav+totalQuotaDesgrav)*100)/100,
     totalBaseDesgrav:totalBaseDesgrav,totalQuotaDesgrav:quotaEffective,
-    baseDecl:baseDecl,decl:decl,declDiff:declDiff
+    baseDecl:baseDecl,decl:declAdj,declDiff:declDiff
   };
 }
 

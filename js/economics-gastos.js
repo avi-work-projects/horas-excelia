@@ -283,17 +283,42 @@ function renderIrpfBreakdown(e,dr){
       var _bdMarg=(ahorroBaseFlow/dr.totalBaseDesgrav*100).toFixed(1).replace('.',',');
       h+='<div class="econ-irpf-flow-note econ-irpf-flow-note-detail">'+fcPlain(dr.totalBaseDesgrav)+' deducidos en base \u00d7 ~'+_bdMarg+'% (tipo marginal aprox.) = ahorro real en cuota</div>';
     }
+    /* Resta: Cuota correspondiente al M\u00cdNIMO PERSONAL Y FAMILIAR
+       (los primeros minPersonal \u20ac no tributan; AEAT calcula su cuota y la resta) */
+    if(dr.decl.cuotaMinPersonal>0){
+      h+='<div class="econ-irpf-flow-line econ-irpf-flow-minus">';
+      h+='<span class="econ-irpf-flow-name"><span class="econ-irpf-flow-sgn">\u2212</span>M\u00ednimo personal y familiar</span>';
+      h+='<span class="econ-irpf-flow-amt" style="color:var(--c-green)">\u2212'+fcPlain(dr.decl.cuotaMinPersonal)+'</span>';
+      h+='</div>';
+      h+='<div class="econ-irpf-flow-note econ-irpf-flow-note-detail">Los primeros <b>'+fcPlain(dr.decl.minPersonal)+'</b> de tu base no tributan (m\u00ednimo personal estatal+auton\u00f3mico). Cuota correspondiente que se descuenta.</div>';
+    }
     h+='<div class="econ-irpf-flow-subtotal">';
     h+='<span class="econ-irpf-flow-name">= Cuota IRPF total</span>';
     h+='<span class="econ-irpf-flow-amt" style="color:var(--c-red)">'+fcPlain(dr.decl.totalTax)+'</span>';
     h+='</div>';
     h+='<div class="econ-irpf-flow-note">'+dr.decl.effectivePct.toFixed(2).replace('.',',')+'\u202f% efectivo sobre <b>'+fcPlain(dr.baseDecl)+'</b> de base declaraci\u00f3n</div>';
   } else {
-    /* Sin reducciones aplicables: cuota total directa */
-    h+='<div class="econ-irpf-flow-line">';
-    h+='<span class="econ-irpf-flow-name">Cuota IRPF total</span>';
-    h+='<span class="econ-irpf-flow-amt" style="color:var(--c-red)">'+fcPlain(dr.decl.totalTax)+'</span>';
-    h+='</div>';
+    /* Sin GD/desgrav base: a\u00fan puede haber min personal a restar */
+    if(dr.decl.cuotaMinPersonal>0&&dr.decl.totalTaxBruto>0){
+      h+='<div class="econ-irpf-flow-line">';
+      h+='<span class="econ-irpf-flow-name">Cuota IRPF bruta <span style="font-weight:400;font-size:.7rem;color:var(--text-dim)">(antes de m\u00ednimo personal)</span></span>';
+      h+='<span class="econ-irpf-flow-amt" style="color:var(--text-muted)">'+fcPlain(dr.decl.totalTaxBruto)+'</span>';
+      h+='</div>';
+      h+='<div class="econ-irpf-flow-line econ-irpf-flow-minus">';
+      h+='<span class="econ-irpf-flow-name"><span class="econ-irpf-flow-sgn">\u2212</span>M\u00ednimo personal y familiar</span>';
+      h+='<span class="econ-irpf-flow-amt" style="color:var(--c-green)">\u2212'+fcPlain(dr.decl.cuotaMinPersonal)+'</span>';
+      h+='</div>';
+      h+='<div class="econ-irpf-flow-note econ-irpf-flow-note-detail">Los primeros <b>'+fcPlain(dr.decl.minPersonal)+'</b> de tu base no tributan</div>';
+      h+='<div class="econ-irpf-flow-subtotal">';
+      h+='<span class="econ-irpf-flow-name">= Cuota IRPF total</span>';
+      h+='<span class="econ-irpf-flow-amt" style="color:var(--c-red)">'+fcPlain(dr.decl.totalTax)+'</span>';
+      h+='</div>';
+    } else {
+      h+='<div class="econ-irpf-flow-line">';
+      h+='<span class="econ-irpf-flow-name">Cuota IRPF total</span>';
+      h+='<span class="econ-irpf-flow-amt" style="color:var(--c-red)">'+fcPlain(dr.decl.totalTax)+'</span>';
+      h+='</div>';
+    }
     h+='<div class="econ-irpf-flow-note">'+dr.decl.effectivePct.toFixed(2).replace('.',',')+'\u202f% efectivo sobre <b>'+fcPlain(dr.baseDecl)+'</b> de base declaraci\u00f3n</div>';
   }
   /* Paso 2: Deducciones en cuota (si las hay) -> cuota l\u00edquida */

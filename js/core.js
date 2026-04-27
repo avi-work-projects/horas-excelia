@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v218 — Añadida deducción Comunidad de Madrid: intereses hipoteca <30 años (25% sobre intereses, máx 1.031,67€). Item nuevo en DESGRAV_DEFAULT (deshabilitado por defecto, hay que habilitarlo + introducir total intereses pagados).';
+var APP_VERSION = 'v219 — Añadido cálculo del MÍNIMO PERSONAL Y FAMILIAR (los primeros 5.742€ de la base no tributan; AEAT calcula su cuota correspondiente y la resta). FISCAL.minPersonal configurable (default 5.742). Tramos Madrid ya estaban OK. Reduce la cuota total ~1.033€/año, acerca el cálculo al PDF real';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

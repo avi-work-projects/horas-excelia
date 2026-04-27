@@ -15,7 +15,7 @@ var DEFAULT_BRACKETS=[
   {from:35426,to:57320,pct:35.9},{from:57320,to:60000,pct:39},
   {from:60000,to:300000,pct:43},{from:300000,to:Infinity,pct:45}
 ];
-var FISCAL={irpfMode:'fixed',irpfPct:15,brackets:null};
+var FISCAL={irpfMode:'fixed',irpfPct:15,brackets:null,minPersonal:5742};
 
 /* ── Tab activo en fiscal config ───────────────────────────── */
 var FISCAL_TAB='personal'; // 'personal' | 'gastos_desg' | 'irpf_deduc' | 'despacho'
@@ -144,11 +144,13 @@ var GASTOS_ITEMS=[];
 function loadFiscal(){
   try{
     var r=localStorage.getItem(FISCAL_SK);
-    if(r){var d=JSON.parse(r);FISCAL.irpfMode=d.irpfMode||'fixed';FISCAL.irpfPct=d.irpfPct||15;FISCAL.brackets=d.brackets||null;}
+    if(r){var d=JSON.parse(r);FISCAL.irpfMode=d.irpfMode||'fixed';FISCAL.irpfPct=d.irpfPct||15;FISCAL.brackets=d.brackets||null;
+      if(d.minPersonal!=null)FISCAL.minPersonal=d.minPersonal;
+    }
   }catch(e){}
 }
 function saveFiscal(){
-  localStorage.setItem(FISCAL_SK,JSON.stringify({irpfMode:FISCAL.irpfMode,irpfPct:FISCAL.irpfPct,brackets:FISCAL.brackets}));
+  localStorage.setItem(FISCAL_SK,JSON.stringify({irpfMode:FISCAL.irpfMode,irpfPct:FISCAL.irpfPct,brackets:FISCAL.brackets,minPersonal:FISCAL.minPersonal}));
 }
 function getIrpfPct(){return FISCAL.irpfMode==='custom'?FISCAL.irpfPct:15;}
 function getBrackets(){return FISCAL.brackets||DEFAULT_BRACKETS;}
