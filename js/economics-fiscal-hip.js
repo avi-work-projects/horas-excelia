@@ -3,7 +3,7 @@
    ============================================================ */
 
 var DESPACHO_SK='excelia-despacho-v1';
-var DESPACHO={enabled:true,m2Total:0,m2Despacho:0,pct:0,valorCatastral:0,valorCompra:0,hipotecaIntereses:0,hipotecaInteresesManual:false,compra:null};
+var DESPACHO={enabled:true,m2Total:0,m2Despacho:0,pct:0,valorCatastral:0,valorCatastralConstruccion:0,valorCompra:0,hipotecaIntereses:0,hipotecaInteresesManual:false,compra:null};
 
 function _defaultCompra(){return{valorCompraTotal:0,itpMadrid:0,notariaRegistro:0,tasacion:0,reformas:0,inmobiliaria:0,importePrestamo:0,tipoInteres:0,plazoAnios:0,fechaInicio:null,entidadBanco:'',vinculaciones:{nomina:{enabled:false,costeAnual:0,reduccion:0},segHogar:{enabled:false,costeAnual:0,reduccion:0},segSalud:{enabled:false,costeAnual:0,reduccion:0},segVida:{enabled:false,costeAnual:0,reduccion:0}},subrogaciones:[]};}
 function _defaultSubrogacion(){return{fecha:null,comisionCancelacion:0,notaria:0,tasacion:0,registro:0,nuevoImporte:0,nuevoTipoInteres:0,nuevoPlazoAnios:0,entidadBanco:'',vinculaciones:null};}
@@ -14,7 +14,7 @@ function loadDespacho(){
       DESPACHO.enabled=d.enabled!=null?!!d.enabled:true;
       DESPACHO.m2Total=d.m2Total||0;DESPACHO.m2Despacho=d.m2Despacho||0;
       DESPACHO.pct=d.pct||0;
-      DESPACHO.valorCatastral=d.valorCatastral||0;DESPACHO.valorCompra=d.valorCompra||0;
+      DESPACHO.valorCatastral=d.valorCatastral||0;DESPACHO.valorCatastralConstruccion=d.valorCatastralConstruccion||0;DESPACHO.valorCompra=d.valorCompra||0;
       DESPACHO.hipotecaIntereses=d.hipotecaIntereses||0;
       /* Migración: si no existe compra, crear con defaults y migrar valorCompra */
       if(d.compra){
@@ -72,11 +72,25 @@ function computeDespachoDeduccion(){
   var prop=_despachoGetPct();
   if(prop<=0)return 0;
   var dd=DESPACHO.deducciones||{amortizacion:true,ibi:true,hipotecaInt:true,casa:true,suministros:true};
-  /* Amortización: 3% × 80% (construcción) × max(valorCatastral, valorCompra) × prop */
-  var vc=DESPACHO.valorCatastral||0, vcp=DESPACHO.valorCompra||0;
-  var baseAmort=0;
-  if(vc>0&&vcp>0){baseAmort=Math.max(vc,vcp);}else if(vcp>0){baseAmort=vcp;}else if(vc>0){baseAmort=vc;}
-  var amort=dd.amortizacion!==false?Math.round(baseAmort*0.80*0.03*prop*100)/100:0;
+  /* Amortización del inmueble afecto al despacho (regla AEAT):
+       3% × precio_adquisición × (VC_construcción / VC_total) × prop_despacho
+     El RATIO construcción/total se saca del valor catastral (ratio real del
+     inmueble, no asumir 80%). Si el usuario no ha rellenado VC_construcción,
+     fallback al método antiguo (80% asumido) — pero advertir en la nota. */
+  var vc=DESPACHO.valorCatastral||0, vcp=DESPACHO.valorCompra||0, vcc=DESPACHO.valorCatastralConstruccion||0;
+  var amort=0;
+  if(dd.amortizacion!==false){
+    if(vc>0&&vcc>0&&vcp>0){
+      /* Método correcto AEAT: ratio real construcción × precio adquisición */
+      var ratioConstruccion=vcc/vc;
+      amort=Math.round(vcp*ratioConstruccion*0.03*prop*100)/100;
+    } else {
+      /* Fallback: asume 80% es construcción (sobreestima si el ratio real es menor) */
+      var baseAmort=0;
+      if(vc>0&&vcp>0){baseAmort=Math.max(vc,vcp);}else if(vcp>0){baseAmort=vcp;}else if(vc>0){baseAmort=vc;}
+      amort=Math.round(baseAmort*0.80*0.03*prop*100)/100;
+    }
+  }
   /* IBI: 100% deducible × prop (el límite del 30% aplica solo a suministros) */
   var ibiReal=gastoAnual('ibi');
   var ibi=dd.ibi!==false?(ibiReal>0?Math.round(ibiReal*prop*100)/100:Math.round(DESPACHO.valorCatastral*0.011*prop*100)/100):0;
@@ -278,6 +292,14 @@ function renderFiscalTabDespachoOnly(){
   h+=_despField('m2Despacho','M\u00b2 del despacho',DESPACHO.m2Despacho,'m\u00b2');
   h+=_despField('pct','% del despacho (se sincroniza con m\u00b2)',pctShow,'%');
   h+=_despFieldMoney('valorCatastral','Valor catastral del inmueble',DESPACHO.valorCatastral);
+  h+=_despFieldMoney('valorCatastralConstruccion','Valor catastral de la construcción',DESPACHO.valorCatastralConstruccion);
+  /* Si está rellenado VC construcción + total, mostramos el ratio calculado */
+  if(DESPACHO.valorCatastral>0&&DESPACHO.valorCatastralConstruccion>0){
+    var _ratioConst=Math.round(DESPACHO.valorCatastralConstruccion/DESPACHO.valorCatastral*10000)/100;
+    h+='<div style="grid-column:1/-1;font-size:.66rem;color:var(--text-dim);padding:0 4px 6px;line-height:1.4">Ratio construcción/total: <b style="color:var(--c-green)">'+_ratioConst.toFixed(2).replace('.',',')+'%</b> — usado para amortización del despacho (3% × precio adquisición × ratio × % despacho). Si no se rellena, se asume 80% (puede sobrestimar).</div>';
+  } else {
+    h+='<div style="grid-column:1/-1;font-size:.66rem;color:var(--c-orange);padding:0 4px 6px;line-height:1.4">⚠ Sin VC construcción → la app asume 80% para amortización (puede sobrestimar). Mira tu recibo del IBI: distingue VC suelo + VC construcción.</div>';
+  }
   /* Auto-calcular intereses si hay datos suficientes */
   var _autoInt=_computeAnnualInterest(comp,FISCAL_YEAR);
   if(_autoInt>0&&!DESPACHO.hipotecaInteresesManual){DESPACHO.hipotecaIntereses=_autoInt;saveDespacho();}
