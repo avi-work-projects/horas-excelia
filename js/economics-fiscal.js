@@ -274,6 +274,8 @@ var DESGRAV_DEFAULT=[
    note:'M\u00f3viles/port\u00e1tiles de trabajo: 25%/a\u00f1o. Calcula el total deducible del a\u00f1o e int\u00f3ducelo aqu\u00ed directamente (ej: si coste 872\u20ac al 25% = 218\u20ac).'},
   {id:'donaciones',label:'Donaciones caritativas',gastoLink:'donaciones',pct:100,amount:0,limit:null,enabled:true,type:'quota',notaPct:80,
    note:'Deducci\u00f3n en cuota: 80% primeros 250\u20ac, 40% del exceso (Ley 49/2002). Simplificado al 80%.'},
+  {id:'madrid_intereses_jovenes_30',label:'Madrid: Intereses hipoteca <30 a\u00f1os',gastoLink:null,pct:100,amount:0,limit:4126.68,enabled:false,type:'quota',notaPct:25,
+   note:'Deducci\u00f3n autonomica Comunidad de Madrid (Decreto Legislativo 1/2010): 25% de los intereses hipotecarios para adquisici\u00f3n de vivienda habitual. Solo para residentes en Madrid menores de 30 a\u00f1os. Deducci\u00f3n m\u00e1xima: 1.031,67\u20ac/a\u00f1o (25% sobre 4.126,68\u20ac de base). Introduce el TOTAL de intereses pagados durante el a\u00f1o (NO la parte del despacho).'},
 ];
 var DESGRAV_ITEMS=[];
 
