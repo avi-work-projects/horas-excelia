@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v219 — Añadido cálculo del MÍNIMO PERSONAL Y FAMILIAR (los primeros 5.742€ de la base no tributan; AEAT calcula su cuota correspondiente y la resta). FISCAL.minPersonal configurable (default 5.742). Tramos Madrid ya estaban OK. Reduce la cuota total ~1.033€/año, acerca el cálculo al PDF real';
+var APP_VERSION = 'v220 — Corrección importante: la amortización del despacho usaba 80% asumido para construcción (sobreestima fuerte). Ahora usa el ratio REAL del valor catastral (construcción / total). Nuevo campo \"Valor catastral de la construcción\" en config Despacho. Fórmula: 3% × precio_adq × ratio_construcción × % despacho. Si no se rellena VC construcción, fallback al 80% con aviso';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

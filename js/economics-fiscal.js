@@ -1212,7 +1212,7 @@ function _bindTabDespachoOnly(){
     });
   }
   /* Campos monetarios despacho */
-  ['valorCatastral','hipotecaIntereses'].forEach(function(field){
+  ['valorCatastral','valorCatastralConstruccion','hipotecaIntereses'].forEach(function(field){
     var el=document.getElementById('desp-'+field);
     if(!el)return;
     function _updateFmt(){
@@ -1286,6 +1286,7 @@ function _saveFiscalAll(){
     v=_rv('m2Despacho');if(v!==null)DESPACHO.m2Despacho=v;
     v=_rv('pct');if(v!==null)DESPACHO.pct=v;
     v=_rv('valorCatastral');if(v!==null)DESPACHO.valorCatastral=v;
+    v=_rv('valorCatastralConstruccion');if(v!==null)DESPACHO.valorCatastralConstruccion=v;
     v=_rv('hipotecaIntereses');if(v!==null)DESPACHO.hipotecaIntereses=v;
     if(DESPACHO.m2Total>0&&DESPACHO.m2Despacho>0)DESPACHO.pct=Math.round(DESPACHO.m2Despacho/DESPACHO.m2Total*1000)/10;
   }
