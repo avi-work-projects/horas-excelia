@@ -788,8 +788,11 @@ function renderDesgravList(items,listType){
 
 /* ── Helper: effective rate considering vinculaciones ──────── */
 
-function openFiscal(){
-  FISCAL_YEAR=CY;
+function openFiscal(year){
+  /* Si se pasa un año explícito, lo usa; si no, hereda el año del overlay
+     económico activo (ECON_YEAR) para mantener contexto entre vistas; si
+     tampoco existe, cae al año actual. */
+  FISCAL_YEAR=year||(typeof ECON_YEAR!=='undefined'?ECON_YEAR:CY);
   loadPersonalYear(FISCAL_YEAR);
   loadGastosYear(FISCAL_YEAR);
   if(typeof loadDespacho==='function')loadDespacho();
