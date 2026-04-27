@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v218 — Fix definitivo botón Hoy en Agenda Semanal: causa raíz era que si EV_VIEW_STATE.week tenía un mes ≠ today (porque el usuario navego ayer y el JS sigue en memoria), el today row NO se renderizaba al entrar y el scroll no encontraba la id. Ahora _scrollWeekToToday FUERZA EV_MONTH=today + refreshEvents antes de medir, y usa scrollIntoView (API moderna) en lugar de cálculo manual con getBoundingClientRect';
+var APP_VERSION = 'v218 — Añadida deducción Comunidad de Madrid: intereses hipoteca <30 años (25% sobre intereses, máx 1.031,67€). Item nuevo en DESGRAV_DEFAULT (deshabilitado por defecto, hay que habilitarlo + introducir total intereses pagados).';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
