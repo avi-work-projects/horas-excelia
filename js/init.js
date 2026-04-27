@@ -882,6 +882,8 @@
           FISCAL.irpfMode=d.fiscal.irpfMode||'fixed';
           FISCAL.irpfPct=d.fiscal.irpfPct||15;
           FISCAL.brackets=d.fiscal.brackets||null;
+          /* Mínimo personal y familiar (v219) — preserva si viene en el backup */
+          if(d.fiscal.minPersonal!=null)FISCAL.minPersonal=d.fiscal.minPersonal;
           saveFiscal();
         }
         if(d.gastos&&Array.isArray(d.gastos)&&typeof GASTOS_ITEMS!=='undefined'&&typeof saveGastosYear==='function'){
@@ -891,8 +893,19 @@
         }
         if(d.ingresos&&Array.isArray(d.ingresos)&&typeof saveIngresos==='function'){INGRESOS_ITEMS=d.ingresos;saveIngresos();}
         if(d.compras&&Array.isArray(d.compras)&&typeof saveCompras==='function'){COMPRAS_ITEMS=d.compras;saveCompras();}
-        if(d.desgrav&&Array.isArray(d.desgrav)&&typeof saveDesgrav==='function'){DESGRAV_ITEMS=d.desgrav;saveDesgrav();}
-        if(d.despacho&&typeof saveDespacho==='function'){DESPACHO=d.despacho;if(!DESPACHO.compra)DESPACHO.compra=_defaultCompra();saveDespacho();}
+        if(d.desgrav&&Array.isArray(d.desgrav)&&typeof saveDesgrav==='function'){
+          DESGRAV_ITEMS=d.desgrav;saveDesgrav();
+          /* Re-cargar via loadDesgrav para que mergee con DESGRAV_DEFAULT y añada
+             items nuevos (ej. madrid_intereses_jovenes_30 v218) que el backup
+             antiguo no tendría. */
+          if(typeof loadDesgrav==='function')loadDesgrav();
+        }
+        if(d.despacho&&typeof saveDespacho==='function'){
+          DESPACHO=d.despacho;if(!DESPACHO.compra)DESPACHO.compra=_defaultCompra();
+          /* Asegurar campos nuevos no presentes en backups antiguos (v220+) */
+          if(DESPACHO.valorCatastralConstruccion==null)DESPACHO.valorCatastralConstruccion=0;
+          saveDespacho();
+        }
         if(d.personalData&&typeof PERSONAL_DATA!=='undefined'&&typeof savePersonalYear==='function'){PERSONAL_DATA=d.personalData;savePersonalYear(CY);}
         /* Per-year data */
         if(d.gastosPerYear){Object.keys(d.gastosPerYear).forEach(function(y){try{localStorage.setItem('excelia-gastos-v1-'+y,JSON.stringify(d.gastosPerYear[y]));}catch(e){}});}
