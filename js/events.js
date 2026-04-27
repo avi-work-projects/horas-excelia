@@ -2057,44 +2057,67 @@ function bindEvEvents(){
     qi++;if(qi>2){qi=0;EV_QUAD_YEAR++;}
     EV_QUAD_MONTH=[0,4,8][qi];refreshEvents();
   });
-  /* Posicionamiento del día Hoy en Agenda Semanal — refactor v215:
-     usa getBoundingClientRect (independiente de position:static/relative).
-     Calcula delta entre row.top y body.top (en coords de viewport) y lo aplica
-     al scrollTop actual. Tras 1 llamada inmediata, hace 3 correcciones a
-     50/150/350ms para compensar reflows tardíos (fonts, bars-row, images). */
+  /* Posicionamiento del día Hoy en Agenda Semanal — refactor v218:
+     Causa raíz del bug "funciona hoy pero no mañana": la lógica anterior
+     dependía de que la id="ev-wk-today-row" estuviese en el DOM al medir
+     coordenadas. Si EV_VIEW_STATE.week tenía un mes ≠ today (porque el
+     usuario navegó a otro mes en sesión previa y el JS sigue cargado de
+     ayer), el today row NO se renderizaba en el viewport actual al
+     entrar — y el scroll nunca encontraba el elemento.
+     Solución: SIEMPRE forzar EV_MONTH=today antes de medir, y usar la
+     API moderna scrollIntoView (con CSS scroll-margin-top:48px declarado
+     en #ev-wk-today-row), que es independiente de position:static y
+     posiciona el elemento exactamente debajo del separador sticky. */
   function _scrollWeekToToday(){
+    /* Forzar el estado a HOY antes de medir (re-evalúa Date() en cada
+       llamada para evitar valores cacheados al cargar el JS) */
+    var now=new Date();
+    var todayY=now.getFullYear(),todayM=now.getMonth();
+    if(EV_YEAR!==todayY||EV_MONTH!==todayM){
+      EV_YEAR=todayY;EV_MONTH=todayM;
+      EV_VIEW_STATE.week={year:todayY,month:todayM};
+      refreshEvents();
+    }
     function doScroll(){
       var r=document.getElementById('ev-wk-today-row');
-      var b=document.querySelector('.sy-body');
-      if(!r||!b)return;
-      var rRect=r.getBoundingClientRect();
-      var bRect=b.getBoundingClientRect();
-      var sep=b.querySelector('.ev-wk-month-sep');
-      var stickyH=sep?sep.offsetHeight:26;
-      var BUFFER=8;
-      /* Delta entre row y body en viewport, sumamos al scrollTop actual */
-      var delta=(rRect.top-bRect.top)-stickyH-BUFFER;
-      b.scrollTop=Math.max(0,b.scrollTop+delta);
+      if(!r)return false;
+      try{r.scrollIntoView({block:'start',behavior:'auto'});}catch(e){
+        /* Fallback antiguo si scrollIntoView falla (browsers raros) */
+        var b=document.querySelector('.sy-body');
+        if(!b)return false;
+        var rRect=r.getBoundingClientRect(),bRect=b.getBoundingClientRect();
+        b.scrollTop=Math.max(0,b.scrollTop+rRect.top-bRect.top-34);
+      }
+      return true;
     }
+    /* Múltiples attempts: el primer scroll puede ocurrir antes de que el
+       layout esté pintado tras refreshEvents. Reintentos agresivos. */
     doScroll();
-    setTimeout(doScroll,50);
-    setTimeout(doScroll,150);
-    setTimeout(doScroll,350);
+    requestAnimationFrame(function(){
+      doScroll();
+      setTimeout(doScroll,80);
+      setTimeout(doScroll,250);
+      setTimeout(doScroll,600);
+    });
   }
   var todayBtn=document.getElementById('evToday');
   if(todayBtn)todayBtn.addEventListener('click',function(){
-    /* "Hoy" solo afecta a la vista activa, no a las demás */
+    /* Re-evalúa Date() FRESCO en cada click — clave para que funcione
+       el día siguiente sin importar cuándo se cargó el JS originalmente */
     var n=new Date();
     if(EV_VIEW==='quad'){
       EV_QUAD_YEAR=n.getFullYear();EV_QUAD_MONTH=n.getMonth();
+      refreshEvents();
+    } else if(EV_VIEW==='week'){
+      /* Para week, _scrollWeekToToday se encarga de actualizar el estado
+         y refresh; así nos aseguramos de que la id today-row exista */
+      _scrollWeekToToday();
     } else {
       EV_YEAR=n.getFullYear();EV_MONTH=n.getMonth();
-      /* También sincronizamos el estado guardado de la vista */
-      if(EV_VIEW==='cal'||EV_VIEW==='week')EV_VIEW_STATE[EV_VIEW]={year:EV_YEAR,month:EV_MONTH};
+      if(EV_VIEW==='cal')EV_VIEW_STATE[EV_VIEW]={year:EV_YEAR,month:EV_MONTH};
       else if(EV_VIEW==='annual')EV_VIEW_STATE[EV_VIEW]={year:EV_YEAR};
+      refreshEvents();
     }
-    refreshEvents();
-    if(EV_VIEW==='week')_scrollWeekToToday();
   });
   var weekViewBtn=document.getElementById('evViewWeek');
   if(weekViewBtn)weekViewBtn.addEventListener('click',function(){
