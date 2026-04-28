@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v228 — Fix: elimina duplicado Distribución/donut (solo aparecen al final)';
+var APP_VERSION = 'v229 — Refactor: defer scripts + economics-helpers.js + 4 nuevos archivos extraídos de events.js/init.js';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

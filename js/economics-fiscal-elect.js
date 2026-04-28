@@ -128,11 +128,6 @@ function _despField(id,label,val,unit){
     +'</div>'
     +'</div>';
 }
-/* Campo monetario con step=1000 y display del valor formateado con puntos (estilo español) */
-function _fmtMiles(n){
-  if(!n||n===0)return '0';
-  return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,'.');
-}
 function _despFieldMoney(id,label,val){
   var formatted=val&&val>0?_fmtMiles(val):'0';
   return '<div class="fiscal-despacho-field">'
