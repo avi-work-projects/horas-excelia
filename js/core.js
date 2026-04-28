@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v226 — Tramos IRPF movidos debajo de tarjetas Resumen fiscal + nuevo bloque IRPF resultante en Cálculo de base';
+var APP_VERSION = 'v227 — Desglose ahorro no trunca labels + % efectivo en IRPF resultante + Distribución/donut al fondo';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
