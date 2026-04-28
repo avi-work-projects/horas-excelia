@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v227 — Desglose ahorro no trunca labels + % efectivo en IRPF resultante + Distribución/donut al fondo';
+var APP_VERSION = 'v228 — Fix: elimina duplicado Distribución/donut (solo aparecen al final)';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
