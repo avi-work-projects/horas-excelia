@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v225 — Resultado declaración separado a sección propia (entre donut y desglose IRPF), con desglose item-por-item del Ahorro por desgravaciones ordenado por mayor ahorro real en €. UI Despacho ya no muestra 80% asumido si tienes VC construcción; usa el ratio real (17.92% en tu caso) y precio adq con gastos compra. Nota explicativa + link de despacho → Resultado declaración';
+var APP_VERSION = 'v226 — Tramos IRPF movidos debajo de tarjetas Resumen fiscal + nuevo bloque IRPF resultante en Cálculo de base';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
