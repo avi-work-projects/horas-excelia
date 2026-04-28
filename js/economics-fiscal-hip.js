@@ -449,60 +449,6 @@ function _hipPeriodCard(comp,subIdx,isActive,startDate,endDate){
   h+='</div>';
   return h;
 }
-/* ── Hip edit field helpers (reused in edit mode) ────────── */
-function _hipMoney(id,label,val){
-  return '<div class="hip-cf"><label class="hip-cf-lbl">'+label+'</label>'
-    +'<div class="hip-cf-row"><input class="fiscal-despacho-input" id="desp-'+id+'" type="number" min="0" step="1000" value="'+(val||0)+'"><span class="fiscal-despacho-unit">\u20ac</span></div>'
-    +'<div class="fiscal-despacho-money-fmt" id="desp-fmt-'+id+'">'+(val&&val>0?_fmtMiles(val)+' \u20ac':'')+'</div></div>';
-}
-function _hipNum(id,label,val,unit){
-  var step=unit==='%'?'0.05':'1';
-  return '<div class="hip-cf"><label class="hip-cf-lbl">'+label+'</label>'
-    +'<div class="hip-cf-row"><input class="fiscal-despacho-input" id="desp-'+id+'" type="number" min="0" step="'+step+'" value="'+(val||0)+'"><span class="fiscal-despacho-unit">'+unit+'</span></div></div>';
-}
-function _hipDate(id,label,val){
-  return '<div class="hip-cf"><label class="hip-cf-lbl">'+label+'</label>'
-    +'<div class="hip-cf-row"><input class="fiscal-despacho-input" id="desp-'+id+'" type="date" value="'+(val||'')+'"></div></div>';
-}
-function _hipText(id,label,val,ph){
-  return '<div class="hip-cf hip-cf-wide"><label class="hip-cf-lbl">'+label+'</label>'
-    +'<input class="fiscal-despacho-input" id="desp-'+id+'" type="text" value="'+escHtml(val||'')+'" placeholder="'+(ph||'')+'" style="text-align:left"></div>';
-}
-function _hipVinc(id,label,data){
-  if(!data)data={enabled:false,costeAnual:0,reduccion:0};
-  var isNom=id.indexOf('Nomina')!==-1;
-  var h='<div class="hip-vr">';
-  h+='<span class="hip-vr-lbl">'+label+'</span>';
-  h+='<div class="hip-vr-right">';
-  if(data.enabled){
-    if(!isNom)h+='<input class="hip-vr-inp" id="'+id+'Coste" type="number" min="0" step="10" value="'+(data.costeAnual||0)+'" title="\u20ac/a\u00f1o">';
-    h+='<input class="hip-vr-inp hip-vr-pct" id="'+id+'Reduccion" type="number" min="0" step="0.05" value="'+(data.reduccion||0)+'" title="\u2212 tipo %">';
-  }
-  h+='<div class="fiscal-onoff'+(data.enabled?' on':'')+'" id="'+id+'Toggle">'+(data.enabled?'ON':'OFF')+'</div>';
-  h+='</div></div>';
-  return h;
-}
-function _hipVincSum(vinc,tipoBase){
-  var total=0,reduc=0;
-  if(!vinc)return '';
-  ['nomina','segHogar','segSalud','segVida'].forEach(function(k){if(vinc[k]&&vinc[k].enabled){total+=vinc[k].costeAnual||0;reduc+=vinc[k].reduccion||0;}});
-  if(!total&&!reduc)return '';
-  var h='<div class="hip-vinc-summary">';
-  if(total>0)h+='Coste: <b style="color:var(--c-orange)">'+fcPlain(total)+'</b>/a';
-  if(reduc>0){
-    h+=(total>0?' \u00b7 ':'')+'<b style="color:var(--c-green)">\u2212'+reduc.toFixed(2)+'%</b>';
-    if(tipoBase>0)h+=' \u2192 <b style="color:var(--c-green)">'+Math.max(0,tipoBase-reduc).toFixed(2)+'%</b>';
-  }
-  h+='</div>';
-  return h;
-}
-/* ── Read-only helpers ─────────────────────────────────────── */
-function _hipRO(label,val,unit){
-  return '<div class="hip-ro-row"><span class="hip-ro-lbl">'+label+'</span><span class="hip-ro-val">'+(val!=null?val:'')+(unit?' '+unit:'')+'</span></div>';
-}
-function _hipROmoney(label,val){
-  return _hipRO(label,val&&val>0?_fmtMiles(val)+' \u20ac':'\u2014');
-}
 function _hipROvinc(label,data){
   if(!data||!data.enabled)return '<div class="hip-ro-vinc"><span class="hip-ro-vinc-lbl">'+label+'</span><span class="hip-ro-vinc-off">OFF</span></div>';
   var isNom=label.indexOf('\u00f3mina')!==-1;
