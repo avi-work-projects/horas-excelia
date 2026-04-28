@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v224 — BUG CRÍTICO arreglado en desgravAnual: si un item tenía gastoLink Y un amount manual, cuando el gasto del año era 0 caía al amount (ej. plan_pension con amount=5750 seguía deduciendo 5750€ en 2026 aunque ese año no habías cotizado plan). Causaba que la cuota a pagar se subestimara en ~2000€/año. Ahora si gastoLink existe y el gasto es 0, la deducción es 0';
+var APP_VERSION = 'v225 — Resultado declaración separado a sección propia (entre donut y desglose IRPF), con desglose item-por-item del Ahorro por desgravaciones ordenado por mayor ahorro real en €. UI Despacho ya no muestra 80% asumido si tienes VC construcción; usa el ratio real (17.92% en tu caso) y precio adq con gastos compra. Nota explicativa + link de despacho → Resultado declaración';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
