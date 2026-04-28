@@ -686,10 +686,28 @@ function renderDesgravDespachoInfo(){
     if(GROUP_CASA_DESP.indexOf(g.id)!==-1)casaItems.push({label:g.label,annual:a,ded:Math.round(a*prop*100)/100,pctLabel:propPct.toFixed(1)+'%'});
     else if(GROUP_UTIL_DESP.indexOf(g.id)!==-1)utilItems.push({label:g.label,annual:a,ded:Math.round(a*prop*0.30*100)/100,pctLabel:propPct.toFixed(1)+'% \u00d7 30%'});
   });
-  var vcInfo=DESPACHO.valorCatastral||0, vcpInfo=DESPACHO.valorCompra||0;
-  var baseAmortInfo=0;
-  if(vcInfo>0&&vcpInfo>0){baseAmortInfo=Math.max(vcInfo,vcpInfo);}else if(vcpInfo>0){baseAmortInfo=vcpInfo;}else if(vcInfo>0){baseAmortInfo=vcInfo;}
-  var amort=Math.round(baseAmortInfo*0.80*0.03*prop*100)/100;
+  /* Cálculo amortización inmueble: replica computeDespachoDeduccion para que UI cuadre */
+  var vcInfo=DESPACHO.valorCatastral||0, vccInfo=DESPACHO.valorCatastralConstruccion||0;
+  var precioAdqInfo=DESPACHO.valorCompra||0;
+  if(DESPACHO.compra){
+    var _c=DESPACHO.compra;
+    precioAdqInfo=(_c.valorCompraTotal||DESPACHO.valorCompra||0)+(_c.itpMadrid||0)+(_c.notariaRegistro||0)+(_c.tasacion||0)+(_c.inmobiliaria||0);
+  }
+  var amort=0;
+  var amortBase=0;
+  var amortLabel='';
+  if(vcInfo>0&&vccInfo>0&&precioAdqInfo>0){
+    /* Método AEAT: ratio real construcción × precio adquisición (incluye gastos) */
+    var ratioConstr=vccInfo/vcInfo;
+    amortBase=Math.round(precioAdqInfo*ratioConstr*100)/100;
+    amort=Math.round(amortBase*0.03*prop*100)/100;
+    amortLabel='Amortización inmueble ('+(ratioConstr*100).toFixed(1).replace('.',',')+'% construc.)';
+  } else if(precioAdqInfo>0){
+    /* Fallback 80% asumido — aviso visible al usuario */
+    amortBase=Math.round(precioAdqInfo*0.80*100)/100;
+    amort=Math.round(amortBase*0.03*prop*100)/100;
+    amortLabel='Amortización inmueble (80% asumido — falta VC construc.)';
+  }
   var hipIntInfo=Math.round((DESPACHO.hipotecaIntereses||0)*prop*100)/100;
   var hasItems=ibiAmt>0||casaItems.length>0||utilItems.length>0||amort>0||hipIntInfo>0;
   if(!hasItems||prop<=0)return '';
@@ -714,8 +732,9 @@ function renderDesgravDespachoInfo(){
   var h='<div class="fiscal-section fiscal-desgrav-despacho-section">';
   h+='<div class="fiscal-section-title" style="color:var(--accent-bright)">\uD83C\uDFE0 Deducciones por despacho en casa ('+propPct.toFixed(1)+'%)</div>';
   h+='<div style="font-size:.7rem;color:var(--text-dim);margin-bottom:6px">Partidas deducibles en proporci\u00f3n al % del despacho sobre la vivienda.</div>';
+  h+='<div style="font-size:.66rem;color:var(--c-orange);background:rgba(251,146,60,.08);border:1px solid rgba(251,146,60,.25);border-radius:6px;padding:6px 8px;margin-bottom:8px;line-height:1.4">\u26a0 Estos importes son lo que se <b>deduce de la BASE imponible</b> (\u2248 ingresos \u2212 gastos), no euros sonantes que te ahorras. Para ver el ahorro REAL en \u20ac sobre tu cuota IRPF, ve a <button class="fiscal-link-btn" id="despFiscalGotoAhorro" style="font-size:.66rem;color:var(--accent-bright);background:none;border:none;cursor:pointer;padding:0;text-decoration:underline">An\u00e1lisis Gastos \u2192 Resultado declaraci\u00f3n</button> donde ver\u00e1s el desglose por partida.</div>';
   h+='<div class="fiscal-ded-cards">';
-  if(amort>0)h+=_dedCard('Amortizaci\u00f3n (80% construc.)',fcPlain(Math.round(baseAmortInfo*0.80*100)/100),'3% \u00d7 '+propPct.toFixed(1)+'%',amort,'#c084fc','<button class="fiscal-link-btn fiscal-desp-link" data-link-tab="despacho-sub" style="font-size:.62rem;color:var(--accent-bright);background:none;border:none;cursor:pointer;padding:0">&#128279; Despacho</button><div style="font-size:.6rem;color:var(--text-dim);margin-top:2px">Gasto deducible como aut\u00f3nomo (proporci\u00f3n despacho).</div>','amortizacion');
+  if(amort>0)h+=_dedCard(amortLabel,fcPlain(amortBase),'3% \u00d7 '+propPct.toFixed(1)+'%',amort,'#c084fc','<button class="fiscal-link-btn fiscal-desp-link" data-link-tab="despacho-sub" style="font-size:.62rem;color:var(--accent-bright);background:none;border:none;cursor:pointer;padding:0">&#128279; Despacho</button><div style="font-size:.6rem;color:var(--text-dim);margin-top:2px">Gasto deducible como aut\u00f3nomo (proporci\u00f3n despacho).</div>','amortizacion');
   if(ibiAmt>0)h+=_dedCard(ibiLabel,ibiRealDesp>0?fcPlain(ibiRealDesp):'est.',propPct.toFixed(1)+'%',ibiAmt,'#6c8cff',null,'ibi');
   if(hipIntInfo>0)h+=_dedCard('Intereses hipoteca',fcPlain(DESPACHO.hipotecaIntereses),propPct.toFixed(1)+'%',hipIntInfo,'#fb923c','<span style="font-size:.6rem;color:var(--text-dim)">Intereses del a\u00f1o '+FISCAL_YEAR+' de </span><button class="fiscal-link-btn fiscal-desp-link" data-link-tab="despacho-tab" style="font-size:.62rem;color:var(--accent-bright);background:none;border:none;cursor:pointer;padding:0">&#128279; Hipoteca</button><div style="font-size:.6rem;color:var(--text-dim);margin-top:2px">&lt;30 a\u00f1os Madrid (hipoteca \u22652023): ded. adicional 25% intereses totales, l\u00edm. 1.031\u20ac/a\u00f1o.</div>','hipotecaInt');
   casaItems.forEach(function(it){h+=_dedCard(escHtml(it.label),fcPlain(it.annual),it.pctLabel,it.ded,'#34d399',null,'casa');});
@@ -1160,6 +1179,22 @@ function _bindTabDesgrav(){
       if(link){
         if(link.dataset.linkTab==='despacho-sub'){FISCAL_IRPF_SUB='despacho';reRenderFiscal();}
         else if(link.dataset.linkTab==='despacho-tab'){FISCAL_TAB='despacho';reRenderFiscal();}
+        return;
+      }
+      /* Link "ir a Resultado declaración": cierra fiscal, abre econ → gastos → scroll a #resultadoDeclaracion */
+      if(e.target.id==='despFiscalGotoAhorro'){
+        e.stopPropagation();
+        if(typeof closeFiscal==='function')closeFiscal();
+        setTimeout(function(){
+          if(typeof openEcon==='function'){openEcon();}
+          setTimeout(function(){
+            if(typeof ECON_VIEW!=='undefined'){ECON_VIEW='gastos';if(typeof reRenderEcon==='function')reRenderEcon();}
+            setTimeout(function(){
+              var el=document.getElementById('resultadoDeclaracion');
+              if(el)el.scrollIntoView({block:'start',behavior:'smooth'});
+            },200);
+          },200);
+        },350);
         return;
       }
       var tgl=e.target.closest('[data-dedtgl]');

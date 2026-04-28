@@ -148,7 +148,10 @@ function renderEconGastos(){
   /* §B.2 Donut chart distribuci\u00f3n */
   h+=renderIncomeDonut(e,dr);
 
-  /* §C Desglose IRPF por tramos — visual */
+  /* §B.3 Resultado declaraci\u00f3n (secci\u00f3n destacada con flow + desglose ahorro) */
+  h+=renderResultadoDeclaracion(e,dr);
+
+  /* §C Detalle del c\u00e1lculo IRPF (base, tramos) */
   h+=renderIrpfBreakdown(e,dr);
 
   /* §D Tipo medio IRPF + ahorro desgravaciones */
@@ -193,10 +196,194 @@ function renderEconGastos(){
   return h;
 }
 
+/* ── Resultado declaración (sección destacada con flow + desglose ahorro real) ── */
+function renderResultadoDeclaracion(e,dr){
+  if(!dr||!dr.decl)return '';
+  /* Cuotas teóricas para mostrar AMBOS ahorros (GD y desgrav base) como restas */
+  var _cuotaSinNada=typeof computeIrpfBrackets==='function'?computeIrpfBrackets(e.totBase).totalTax:dr.decl.totalTax;
+  var _cuotaTrasGD=typeof computeIrpfBrackets==='function'?computeIrpfBrackets(dr.baseAfterGD).totalTax:dr.decl.totalTax;
+  var _ahorroGD=Math.round((_cuotaSinNada-_cuotaTrasGD)*100)/100;
+  var _ahorroBaseDg=Math.round((_cuotaTrasGD-(dr.decl.totalTaxBruto||dr.decl.totalTax))*100)/100;
+  if(_ahorroBaseDg<0)_ahorroBaseDg=0;
+  var diffColor=dr.declDiff<0?'var(--c-green)':'var(--c-red)';
+  var diffLabel=dr.declDiff<0?'\u2B07\uFE0F Devolución estimada':'\u2B06\uFE0F A pagar estimado';
+  var diffSign=dr.declDiff<0?'':'+';
+  var cuotaLiquida=Math.round((dr.decl.totalTax-dr.totalQuotaDesgrav)*100)/100;
+  var hasAnyAhorro=(_ahorroGD>0&&dr.gdAmount>0)||(_ahorroBaseDg>0&&dr.totalBaseDesgrav>0);
+  var h='<div class="sy-section" id="resultadoDeclaracion"><div class="sy-section-title">Resultado declaración</div>';
+  h+='<div class="econ-irpf-card">';
+  h+='<div class="econ-irpf-block econ-irpf-summary-block">';
+  h+='<div class="econ-irpf-flow-summary">';
+  if(hasAnyAhorro){
+    h+='<div class="econ-irpf-flow-line">';
+    h+='<span class="econ-irpf-flow-name">Cuota IRPF teórica <span style="font-weight:400;font-size:.7rem;color:var(--text-dim)">(sin reducciones)</span></span>';
+    h+='<span class="econ-irpf-flow-amt" style="color:var(--text-muted)">'+fcPlain(_cuotaSinNada)+'</span>';
+    h+='</div>';
+    h+='<div class="econ-irpf-flow-note">Lo que pagarías sobre la base imponible bruta de <b>'+fcPlain(e.totBase)+'</b> sin aplicar reducciones</div>';
+    if(_ahorroGD>0&&dr.gdAmount>0){
+      h+='<div class="econ-irpf-flow-line econ-irpf-flow-minus">';
+      h+='<span class="econ-irpf-flow-name"><span class="econ-irpf-flow-sgn">\u2212</span>Ahorro por gastos difícil just. ('+dr.gdPct+'%)</span>';
+      h+='<span class="econ-irpf-flow-amt" style="color:var(--c-green)">\u2212'+fcPlain(_ahorroGD)+'</span>';
+      h+='</div>';
+      var _gdMarg=(_ahorroGD/dr.gdAmount*100).toFixed(1).replace('.',',');
+      h+='<div class="econ-irpf-flow-note econ-irpf-flow-note-detail">'+fcPlain(dr.gdAmount)+' deducidos en base \u00d7 ~'+_gdMarg+'% (tipo marginal aprox.) = ahorro real en cuota</div>';
+    }
+    if(_ahorroBaseDg>0&&dr.totalBaseDesgrav>0){
+      h+='<div class="econ-irpf-flow-line econ-irpf-flow-minus">';
+      h+='<span class="econ-irpf-flow-name"><span class="econ-irpf-flow-sgn">\u2212</span>Ahorro por desgravaciones base</span>';
+      h+='<span class="econ-irpf-flow-amt" style="color:var(--c-green)">\u2212'+fcPlain(_ahorroBaseDg)+'</span>';
+      h+='</div>';
+      var _bdMarg=(_ahorroBaseDg/dr.totalBaseDesgrav*100).toFixed(1).replace('.',',');
+      h+='<div class="econ-irpf-flow-note econ-irpf-flow-note-detail">'+fcPlain(dr.totalBaseDesgrav)+' deducidos en base \u00d7 ~'+_bdMarg+'% (tipo marginal aprox.) = ahorro real en cuota</div>';
+      /* Desglose item por item del Ahorro por desgravaciones base */
+      h+=_renderDesgloseAhorroPartida(dr,_ahorroBaseDg/dr.totalBaseDesgrav);
+    }
+    if(dr.decl.cuotaMinPersonal>0){
+      h+='<div class="econ-irpf-flow-line econ-irpf-flow-minus">';
+      h+='<span class="econ-irpf-flow-name"><span class="econ-irpf-flow-sgn">\u2212</span>Mínimo personal y familiar</span>';
+      h+='<span class="econ-irpf-flow-amt" style="color:var(--c-green)">\u2212'+fcPlain(dr.decl.cuotaMinPersonal)+'</span>';
+      h+='</div>';
+      h+='<div class="econ-irpf-flow-note econ-irpf-flow-note-detail">Los primeros <b>'+fcPlain(dr.decl.minPersonal)+'</b> de tu base no tributan (mínimo personal estatal+autonómico).</div>';
+    }
+    h+='<div class="econ-irpf-flow-subtotal">';
+    h+='<span class="econ-irpf-flow-name">= Cuota IRPF total</span>';
+    h+='<span class="econ-irpf-flow-amt" style="color:var(--c-red)">'+fcPlain(dr.decl.totalTax)+'</span>';
+    h+='</div>';
+    h+='<div class="econ-irpf-flow-note">'+dr.decl.effectivePct.toFixed(2).replace('.',',')+'\u202f% efectivo sobre <b>'+fcPlain(dr.baseDecl)+'</b> de base declaración</div>';
+  } else {
+    if(dr.decl.cuotaMinPersonal>0&&dr.decl.totalTaxBruto>0){
+      h+='<div class="econ-irpf-flow-line">';
+      h+='<span class="econ-irpf-flow-name">Cuota IRPF bruta</span>';
+      h+='<span class="econ-irpf-flow-amt" style="color:var(--text-muted)">'+fcPlain(dr.decl.totalTaxBruto)+'</span>';
+      h+='</div>';
+      h+='<div class="econ-irpf-flow-line econ-irpf-flow-minus">';
+      h+='<span class="econ-irpf-flow-name"><span class="econ-irpf-flow-sgn">\u2212</span>Mínimo personal y familiar</span>';
+      h+='<span class="econ-irpf-flow-amt" style="color:var(--c-green)">\u2212'+fcPlain(dr.decl.cuotaMinPersonal)+'</span>';
+      h+='</div>';
+    }
+    h+='<div class="econ-irpf-flow-line">';
+    h+='<span class="econ-irpf-flow-name">Cuota IRPF total</span>';
+    h+='<span class="econ-irpf-flow-amt" style="color:var(--c-red)">'+fcPlain(dr.decl.totalTax)+'</span>';
+    h+='</div>';
+    h+='<div class="econ-irpf-flow-note">'+dr.decl.effectivePct.toFixed(2).replace('.',',')+'\u202f% efectivo sobre <b>'+fcPlain(dr.baseDecl)+'</b> de base declaración</div>';
+  }
+  /* Deducciones en cuota → cuota líquida */
+  if(dr.totalQuotaDesgrav>0){
+    h+='<div class="econ-irpf-flow-line econ-irpf-flow-minus">';
+    h+='<span class="econ-irpf-flow-name"><span class="econ-irpf-flow-sgn">\u2212</span>Deducciones en cuota</span>';
+    h+='<span class="econ-irpf-flow-amt" style="color:var(--c-green)">\u2212'+fcPlain(dr.totalQuotaDesgrav)+'</span>';
+    h+='</div>';
+    var _quotaContribs=[];
+    if(typeof DESGRAV_ITEMS!=='undefined'){
+      DESGRAV_ITEMS.forEach(function(item){
+        if(!item.enabled||(item.type||'base')!=='quota')return;
+        var d=typeof desgravAnual==='function'?desgravAnual(item):0;
+        if(d<=0)return;
+        var pct=item.notaPct!=null?item.notaPct:100;
+        var net=Math.round(d*pct/100*100)/100;
+        _quotaContribs.push(escHtml(item.label)+' '+fcPlain(d)+' \u00d7 '+pct+'% = \u2212'+fcPlain(net));
+      });
+    }
+    if(_quotaContribs.length)h+='<div class="econ-irpf-flow-note econ-irpf-flow-note-detail">'+_quotaContribs.join(' \u00b7 ')+'</div>';
+    h+='<div class="econ-irpf-flow-subtotal">';
+    h+='<span class="econ-irpf-flow-name">= Cuota líquida IRPF</span>';
+    h+='<span class="econ-irpf-flow-amt">'+fcPlain(cuotaLiquida)+'</span>';
+    h+='</div>';
+  }
+  /* Retenciones */
+  h+='<div class="econ-irpf-flow-line econ-irpf-flow-minus">';
+  h+='<span class="econ-irpf-flow-name"><span class="econ-irpf-flow-sgn">\u2212</span>Ya retenido en facturas</span>';
+  h+='<span class="econ-irpf-flow-amt" style="color:var(--text-muted)">\u2212'+fcPlain(e.totIrpf)+'</span>';
+  h+='</div>';
+  h+='<div class="econ-irpf-flow-note">'+e.irpfPct+'\u202f% retenido en cada factura emitida</div>';
+  /* Resultado final destacado */
+  h+='<div class="econ-irpf-flow-result" style="border-color:'+diffColor+'">';
+  h+='<div class="econ-irpf-flow-result-lbl">'+diffLabel+'</div>';
+  h+='<div class="econ-irpf-flow-result-val" style="color:'+diffColor+'">'+diffSign+fcPlain(Math.abs(dr.declDiff))+'</div>';
+  h+='<div class="econ-irpf-flow-result-sub">en la declaración de la renta</div>';
+  h+='</div>';
+  h+='</div></div>';
+  h+='</div></div>';
+  return h;
+}
+
+/* Desglose item-por-item del "Ahorro por desgravaciones base", ordenado desc.
+   tipoMarginal = ahorroBaseTotal / desgravBaseTotal (tipo medio efectivo).
+   Devuelve HTML con tabla de partidas (concepto / deducido en base / ahorro real €). */
+function _renderDesgloseAhorroPartida(dr,tipoMarginal){
+  var fuentes=[];
+  if(typeof DESGRAV_ITEMS!=='undefined'){
+    DESGRAV_ITEMS.forEach(function(item){
+      if(!item.enabled||(item.type||'base')!=='base')return;
+      var d=typeof desgravAnual==='function'?desgravAnual(item):0;
+      if(d<=0)return;
+      fuentes.push({label:escHtml(item.label),deducido:d,ahorro:Math.round(d*tipoMarginal*100)/100});
+    });
+  }
+  /* Componentes del despacho desglosados */
+  if(typeof DESPACHO!=='undefined'&&DESPACHO.enabled){
+    var prop=typeof _despachoGetPct==='function'?_despachoGetPct():0;
+    if(prop>0){
+      var dd=DESPACHO.deducciones||{amortizacion:true,ibi:true,hipotecaInt:true,casa:true,suministros:true};
+      /* Amortización inmueble */
+      if(dd.amortizacion!==false){
+        var vc=DESPACHO.valorCatastral||0,vcc=DESPACHO.valorCatastralConstruccion||0;
+        var precioAdq=DESPACHO.valorCompra||0;
+        if(DESPACHO.compra){var c=DESPACHO.compra;precioAdq=(c.valorCompraTotal||0)+(c.itpMadrid||0)+(c.notariaRegistro||0)+(c.tasacion||0)+(c.inmobiliaria||0);}
+        var amortDesp=0;
+        if(vc>0&&vcc>0&&precioAdq>0){amortDesp=Math.round(precioAdq*(vcc/vc)*0.03*prop*100)/100;}
+        else if(precioAdq>0){amortDesp=Math.round(precioAdq*0.80*0.03*prop*100)/100;}
+        if(amortDesp>0)fuentes.push({label:'Despacho: amortización inmueble',deducido:amortDesp,ahorro:Math.round(amortDesp*tipoMarginal*100)/100});
+      }
+      /* IBI despacho */
+      if(dd.ibi!==false){
+        var ibiReal=typeof gastoAnual==='function'?gastoAnual('ibi'):0;
+        var ibiDesp=ibiReal>0?Math.round(ibiReal*prop*100)/100:Math.round((DESPACHO.valorCatastral||0)*0.011*prop*100)/100;
+        if(ibiDesp>0)fuentes.push({label:'Despacho: IBI',deducido:ibiDesp,ahorro:Math.round(ibiDesp*tipoMarginal*100)/100});
+      }
+      /* Intereses hipoteca despacho */
+      if(dd.hipotecaInt!==false){
+        var hipDesp=Math.round((DESPACHO.hipotecaIntereses||0)*prop*100)/100;
+        if(hipDesp>0)fuentes.push({label:'Despacho: intereses hipoteca',deducido:hipDesp,ahorro:Math.round(hipDesp*tipoMarginal*100)/100});
+      }
+      /* Gastos casa (comunidad+seg_hogar) */
+      if(dd.casa!==false&&typeof GASTOS_ITEMS!=='undefined'){
+        var casa=0;
+        ['comunidad','seg_hogar'].forEach(function(id){if(typeof gastoAnual==='function')casa+=gastoAnual(id);});
+        var casaDesp=Math.round(casa*prop*100)/100;
+        if(casaDesp>0)fuentes.push({label:'Despacho: comunidad + seguro hogar',deducido:casaDesp,ahorro:Math.round(casaDesp*tipoMarginal*100)/100});
+      }
+      /* Suministros (luz+gas+agua+digi) */
+      if(dd.suministros!==false&&typeof GASTOS_ITEMS!=='undefined'){
+        var sums=0;
+        ['luz','gas','agua','digi'].forEach(function(id){if(typeof gastoAnual==='function')sums+=gastoAnual(id);});
+        var sumsDesp=Math.round(sums*prop*0.30*100)/100;
+        if(sumsDesp>0)fuentes.push({label:'Despacho: suministros (luz+gas+agua+wifi)',deducido:sumsDesp,ahorro:Math.round(sumsDesp*tipoMarginal*100)/100});
+      }
+    }
+  }
+  if(!fuentes.length)return '';
+  /* Ordenar desc por ahorro */
+  fuentes.sort(function(a,b){return b.ahorro-a.ahorro;});
+  var h='<div class="econ-ahorro-desglose">';
+  h+='<div class="econ-ahorro-desglose-title">Desglose: ahorro real por partida</div>';
+  h+='<div class="econ-ahorro-desglose-rows">';
+  fuentes.forEach(function(f){
+    h+='<div class="econ-ahorro-desglose-row">';
+    h+='<span class="econ-ahorro-desglose-lbl">'+f.label+'</span>';
+    h+='<span class="econ-ahorro-desglose-ded">'+fcPlain(f.deducido)+' deducidos</span>';
+    h+='<span class="econ-ahorro-desglose-amt" style="color:var(--c-green)">\u2212'+fcPlain(f.ahorro)+'</span>';
+    h+='</div>';
+  });
+  h+='</div>';
+  h+='</div>';
+  return h;
+}
+
 /* ── Desglose IRPF — diseño visual mejorado ─────────────────── */
 function renderIrpfBreakdown(e,dr){
   if(dr.gdPct===0&&dr.declDiff===0&&dr.totalDesgrav===0)return '';
-  var h='<div class="sy-section"><div class="sy-section-title">IRPF Declaraci\u00f3n \u2014 Desglose</div>';
+  var h='<div class="sy-section"><div class="sy-section-title">C\u00e1lculo IRPF detallado (base + tramos)</div>';
   h+='<div class="econ-irpf-card">';
 
   /* — Bloque 1: Flujo de base — incluye anotaci\u00f3n con el ahorro real en IRPF
@@ -242,122 +429,6 @@ function renderIrpfBreakdown(e,dr){
     });
     h+='</div></div>';
   }
-
-  /* — Bloque 3: Resultado declaraci\u00f3n — flujo vertical encadenado.
-     Camino completo desde Cuota IRPF total hasta A pagar/Devoluci\u00f3n,
-     con las deducciones en cuota como paso intermedio claramente visible. */
-  var diffColor=dr.declDiff<0?'var(--c-green)':'var(--c-red)';
-  var diffLabel=dr.declDiff<0?'\u2B07\uFE0F Devoluci\u00f3n estimada':'\u2B06\uFE0F A pagar estimado';
-  var diffSign=dr.declDiff<0?'':'+';
-  var cuotaLiquida=Math.round((dr.decl.totalTax-dr.totalQuotaDesgrav)*100)/100;
-  /* Cuotas te\u00f3ricas para mostrar AMBOS ahorros (GD y desgrav base) como restas */
-  var ahorroGDFlow=_ahorroGD;
-  var ahorroBaseFlow=_ahorroBaseDg;
-  var cuotaSinNadaFlow=_cuotaSinNada;
-  var hasAnyAhorro=(ahorroGDFlow>0&&dr.gdAmount>0)||(ahorroBaseFlow>0&&dr.totalBaseDesgrav>0);
-  h+='<div class="econ-irpf-block econ-irpf-summary-block">';
-  h+='<div class="econ-irpf-block-title">Resultado declaraci\u00f3n</div>';
-  h+='<div class="econ-irpf-flow-summary">';
-  if(hasAnyAhorro){
-    /* Cuota te\u00f3rica COMPLETA (sobre base imponible bruta, sin GD ni desgrav) */
-    h+='<div class="econ-irpf-flow-line">';
-    h+='<span class="econ-irpf-flow-name">Cuota IRPF te\u00f3rica <span style="font-weight:400;font-size:.7rem;color:var(--text-dim)">(sin reducciones)</span></span>';
-    h+='<span class="econ-irpf-flow-amt" style="color:var(--text-muted)">'+fcPlain(cuotaSinNadaFlow)+'</span>';
-    h+='</div>';
-    h+='<div class="econ-irpf-flow-note">Lo que pagar\u00edas sobre la base imponible bruta de <b>'+fcPlain(e.totBase)+'</b> sin aplicar reducciones</div>';
-    /* Resta: Ahorro por GD */
-    if(ahorroGDFlow>0&&dr.gdAmount>0){
-      h+='<div class="econ-irpf-flow-line econ-irpf-flow-minus">';
-      h+='<span class="econ-irpf-flow-name"><span class="econ-irpf-flow-sgn">\u2212</span>Ahorro por gastos dif\u00edcil just. ('+dr.gdPct+'%)</span>';
-      h+='<span class="econ-irpf-flow-amt" style="color:var(--c-green)">\u2212'+fcPlain(ahorroGDFlow)+'</span>';
-      h+='</div>';
-      var _gdMarg=(ahorroGDFlow/dr.gdAmount*100).toFixed(1).replace('.',',');
-      h+='<div class="econ-irpf-flow-note econ-irpf-flow-note-detail">'+fcPlain(dr.gdAmount)+' deducidos en base \u00d7 ~'+_gdMarg+'% (tipo marginal aprox.) = ahorro real en cuota</div>';
-    }
-    /* Resta: Ahorro por desgravaciones base */
-    if(ahorroBaseFlow>0&&dr.totalBaseDesgrav>0){
-      h+='<div class="econ-irpf-flow-line econ-irpf-flow-minus">';
-      h+='<span class="econ-irpf-flow-name"><span class="econ-irpf-flow-sgn">\u2212</span>Ahorro por desgravaciones base</span>';
-      h+='<span class="econ-irpf-flow-amt" style="color:var(--c-green)">\u2212'+fcPlain(ahorroBaseFlow)+'</span>';
-      h+='</div>';
-      var _bdMarg=(ahorroBaseFlow/dr.totalBaseDesgrav*100).toFixed(1).replace('.',',');
-      h+='<div class="econ-irpf-flow-note econ-irpf-flow-note-detail">'+fcPlain(dr.totalBaseDesgrav)+' deducidos en base \u00d7 ~'+_bdMarg+'% (tipo marginal aprox.) = ahorro real en cuota</div>';
-    }
-    /* Resta: Cuota correspondiente al M\u00cdNIMO PERSONAL Y FAMILIAR
-       (los primeros minPersonal \u20ac no tributan; AEAT calcula su cuota y la resta) */
-    if(dr.decl.cuotaMinPersonal>0){
-      h+='<div class="econ-irpf-flow-line econ-irpf-flow-minus">';
-      h+='<span class="econ-irpf-flow-name"><span class="econ-irpf-flow-sgn">\u2212</span>M\u00ednimo personal y familiar</span>';
-      h+='<span class="econ-irpf-flow-amt" style="color:var(--c-green)">\u2212'+fcPlain(dr.decl.cuotaMinPersonal)+'</span>';
-      h+='</div>';
-      h+='<div class="econ-irpf-flow-note econ-irpf-flow-note-detail">Los primeros <b>'+fcPlain(dr.decl.minPersonal)+'</b> de tu base no tributan (m\u00ednimo personal estatal+auton\u00f3mico). Cuota correspondiente que se descuenta.</div>';
-    }
-    h+='<div class="econ-irpf-flow-subtotal">';
-    h+='<span class="econ-irpf-flow-name">= Cuota IRPF total</span>';
-    h+='<span class="econ-irpf-flow-amt" style="color:var(--c-red)">'+fcPlain(dr.decl.totalTax)+'</span>';
-    h+='</div>';
-    h+='<div class="econ-irpf-flow-note">'+dr.decl.effectivePct.toFixed(2).replace('.',',')+'\u202f% efectivo sobre <b>'+fcPlain(dr.baseDecl)+'</b> de base declaraci\u00f3n</div>';
-  } else {
-    /* Sin GD/desgrav base: a\u00fan puede haber min personal a restar */
-    if(dr.decl.cuotaMinPersonal>0&&dr.decl.totalTaxBruto>0){
-      h+='<div class="econ-irpf-flow-line">';
-      h+='<span class="econ-irpf-flow-name">Cuota IRPF bruta <span style="font-weight:400;font-size:.7rem;color:var(--text-dim)">(antes de m\u00ednimo personal)</span></span>';
-      h+='<span class="econ-irpf-flow-amt" style="color:var(--text-muted)">'+fcPlain(dr.decl.totalTaxBruto)+'</span>';
-      h+='</div>';
-      h+='<div class="econ-irpf-flow-line econ-irpf-flow-minus">';
-      h+='<span class="econ-irpf-flow-name"><span class="econ-irpf-flow-sgn">\u2212</span>M\u00ednimo personal y familiar</span>';
-      h+='<span class="econ-irpf-flow-amt" style="color:var(--c-green)">\u2212'+fcPlain(dr.decl.cuotaMinPersonal)+'</span>';
-      h+='</div>';
-      h+='<div class="econ-irpf-flow-note econ-irpf-flow-note-detail">Los primeros <b>'+fcPlain(dr.decl.minPersonal)+'</b> de tu base no tributan</div>';
-      h+='<div class="econ-irpf-flow-subtotal">';
-      h+='<span class="econ-irpf-flow-name">= Cuota IRPF total</span>';
-      h+='<span class="econ-irpf-flow-amt" style="color:var(--c-red)">'+fcPlain(dr.decl.totalTax)+'</span>';
-      h+='</div>';
-    } else {
-      h+='<div class="econ-irpf-flow-line">';
-      h+='<span class="econ-irpf-flow-name">Cuota IRPF total</span>';
-      h+='<span class="econ-irpf-flow-amt" style="color:var(--c-red)">'+fcPlain(dr.decl.totalTax)+'</span>';
-      h+='</div>';
-    }
-    h+='<div class="econ-irpf-flow-note">'+dr.decl.effectivePct.toFixed(2).replace('.',',')+'\u202f% efectivo sobre <b>'+fcPlain(dr.baseDecl)+'</b> de base declaraci\u00f3n</div>';
-  }
-  /* Paso 2: Deducciones en cuota (si las hay) -> cuota l\u00edquida */
-  if(dr.totalQuotaDesgrav>0){
-    h+='<div class="econ-irpf-flow-line econ-irpf-flow-minus">';
-    h+='<span class="econ-irpf-flow-name"><span class="econ-irpf-flow-sgn">\u2212</span>Deducciones en cuota</span>';
-    h+='<span class="econ-irpf-flow-amt" style="color:var(--c-green)">\u2212'+fcPlain(dr.totalQuotaDesgrav)+'</span>';
-    h+='</div>';
-    var _quotaContribs=[];
-    if(typeof DESGRAV_ITEMS!=='undefined'){
-      DESGRAV_ITEMS.forEach(function(item){
-        if(!item.enabled||(item.type||'base')!=='quota')return;
-        var d=typeof desgravAnual==='function'?desgravAnual(item):0;
-        if(d<=0)return;
-        var pct=item.notaPct!=null?item.notaPct:100;
-        var net=Math.round(d*pct/100*100)/100;
-        _quotaContribs.push(escHtml(item.label)+' '+fcPlain(d)+' \u00d7 '+pct+'% = \u2212'+fcPlain(net));
-      });
-    }
-    if(_quotaContribs.length)h+='<div class="econ-irpf-flow-note econ-irpf-flow-note-detail">'+_quotaContribs.join(' \u00b7 ')+'</div>';
-    h+='<div class="econ-irpf-flow-subtotal">';
-    h+='<span class="econ-irpf-flow-name">= Cuota l\u00edquida IRPF</span>';
-    h+='<span class="econ-irpf-flow-amt">'+fcPlain(cuotaLiquida)+'</span>';
-    h+='</div>';
-  }
-  /* Paso 3: Retenciones */
-  h+='<div class="econ-irpf-flow-line econ-irpf-flow-minus">';
-  h+='<span class="econ-irpf-flow-name"><span class="econ-irpf-flow-sgn">\u2212</span>Ya retenido en facturas</span>';
-  h+='<span class="econ-irpf-flow-amt" style="color:var(--text-muted)">\u2212'+fcPlain(e.totIrpf)+'</span>';
-  h+='</div>';
-  h+='<div class="econ-irpf-flow-note">'+e.irpfPct+'\u202f% retenido en cada factura emitida</div>';
-  /* Paso 4: Resultado final destacado */
-  h+='<div class="econ-irpf-flow-result" style="border-color:'+diffColor+'">';
-  h+='<div class="econ-irpf-flow-result-lbl">'+diffLabel+'</div>';
-  h+='<div class="econ-irpf-flow-result-val" style="color:'+diffColor+'">'+diffSign+fcPlain(Math.abs(dr.declDiff))+'</div>';
-  h+='<div class="econ-irpf-flow-result-sub">en la declaraci\u00f3n de la renta</div>';
-  h+='</div>';
-  h+='</div>';
-  h+='</div>';
 
   h+='</div></div>';
   return h;

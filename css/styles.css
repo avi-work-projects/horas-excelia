@@ -709,6 +709,15 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .econ-irpf-flow-result-lbl{font-size:.7rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
 .econ-irpf-flow-result-val{font-family:var(--mono);font-size:1.45rem;font-weight:800;line-height:1.1}
 .econ-irpf-flow-result-sub{font-size:.62rem;color:var(--text-dim);margin-top:4px;font-style:italic}
+/* Desglose item-por-item del Ahorro por desgravaciones (ordenado desc) */
+.econ-ahorro-desglose{margin:6px 0 12px 18px;padding:8px 10px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border-light)}
+.econ-ahorro-desglose-title{font-size:.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;font-weight:600}
+.econ-ahorro-desglose-rows{display:flex;flex-direction:column;gap:4px}
+.econ-ahorro-desglose-row{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:baseline;font-size:.7rem;padding:3px 0;border-bottom:1px dotted var(--border-light)}
+.econ-ahorro-desglose-row:last-child{border-bottom:none}
+.econ-ahorro-desglose-lbl{color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.econ-ahorro-desglose-ded{font-family:var(--mono);font-size:.62rem;color:var(--text-dim);white-space:nowrap}
+.econ-ahorro-desglose-amt{font-family:var(--mono);font-weight:700;white-space:nowrap;min-width:60px;text-align:right}
 /* Anotación inline en Cálculo de base mostrando el ahorro real en IRPF que produce cada reducción */
 .econ-irpf-base-saving{font-size:.62rem;color:var(--c-green);font-weight:600;font-style:italic;white-space:nowrap}
 /* Resumen fiscal al final de Ingresos y Gastos */
