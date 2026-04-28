@@ -171,6 +171,8 @@ function renderEconGastos(){
       h+='</div>';
     }
     h+='</div>';
+    /* Tramos IRPF aplicados — justo debajo de las dos tarjetas */
+    h+=typeof _renderIrpfTramos==='function'?_renderIrpfTramos(dr):'';
     /* §D.2 Trabajado para el Estado — desglose explícito IRPF + IVA */
     var _brF=Math.round((e.totBase+e.totIva)*100)/100;
     /* IRPF total realmente pagado = retenci\u00f3n + diferencia declaraci\u00f3n (con signo) */
@@ -383,54 +385,72 @@ function _renderDesgloseAhorroPartida(dr,tipoMarginal){
 /* ── Desglose IRPF — diseño visual mejorado ─────────────────── */
 function renderIrpfBreakdown(e,dr){
   if(dr.gdPct===0&&dr.declDiff===0&&dr.totalDesgrav===0)return '';
-  var h='<div class="sy-section"><div class="sy-section-title">C\u00e1lculo IRPF detallado (base + tramos)</div>';
+  var h='<div class="sy-section"><div class="sy-section-title">Cálculo IRPF detallado</div>';
   h+='<div class="econ-irpf-card">';
 
-  /* — Bloque 1: Flujo de base — incluye anotaci\u00f3n con el ahorro real en IRPF
-     que produce cada reducci\u00f3n de base (calculado por diferencia de cuotas). */
+  /* — Bloque 1: Flujo de base */
   var _cuotaSinNada=typeof computeIrpfBrackets==='function'?computeIrpfBrackets(e.totBase).totalTax:dr.decl.totalTax;
   var _cuotaTrasGD=typeof computeIrpfBrackets==='function'?computeIrpfBrackets(dr.baseAfterGD).totalTax:dr.decl.totalTax;
   var _ahorroGD=Math.round((_cuotaSinNada-_cuotaTrasGD)*100)/100;
   var _ahorroBaseDg=Math.round((_cuotaTrasGD-dr.decl.totalTax)*100)/100;
   h+='<div class="econ-irpf-block">';
-  h+='<div class="econ-irpf-block-title">C\u00e1lculo de base</div>';
+  h+='<div class="econ-irpf-block-title">Cálculo de base</div>';
   h+='<div class="econ-irpf-flow">';
   h+='<div class="econ-irpf-flow-row"><span class="econ-irpf-flow-lbl">Base imponible</span><span class="econ-irpf-flow-val" style="color:var(--c-blue)">'+fcPlain(e.totBase)+'</span></div>';
   if(dr.gdPct>0){
-    var _gdNote=_ahorroGD>0?' <span class="econ-irpf-base-saving">(\u2248 '+fcPlain(_ahorroGD)+' menos en IRPF)</span>':'';
-    h+='<div class="econ-irpf-flow-row econ-irpf-minus"><span class="econ-irpf-flow-lbl"><span class="econ-irpf-sign">&#8722;</span>Gastos dif\u00edcil just. ('+dr.gdPct+'%)'+_gdNote+'</span><span class="econ-irpf-flow-val" style="color:var(--c-green)">'+fcPlain(dr.gdAmount)+'</span></div>';
+    var _gdNote=_ahorroGD>0?' <span class="econ-irpf-base-saving">(≈ '+fcPlain(_ahorroGD)+' menos en IRPF)</span>':'';
+    h+='<div class="econ-irpf-flow-row econ-irpf-minus"><span class="econ-irpf-flow-lbl"><span class="econ-irpf-sign">&#8722;</span>Gastos difícil just. ('+dr.gdPct+'%)'+_gdNote+'</span><span class="econ-irpf-flow-val" style="color:var(--c-green)">'+fcPlain(dr.gdAmount)+'</span></div>';
   }
   if(dr.totalBaseDesgrav>0){
-    var _bdNote=_ahorroBaseDg>0?' <span class="econ-irpf-base-saving">(\u2248 '+fcPlain(_ahorroBaseDg)+' menos en IRPF)</span>':'';
+    var _bdNote=_ahorroBaseDg>0?' <span class="econ-irpf-base-saving">(≈ '+fcPlain(_ahorroBaseDg)+' menos en IRPF)</span>':'';
     h+='<div class="econ-irpf-flow-row econ-irpf-minus"><span class="econ-irpf-flow-lbl"><span class="econ-irpf-sign">&#8722;</span>Desgravaciones (base)'+_bdNote+'</span><span class="econ-irpf-flow-val" style="color:var(--c-green)">'+fcPlain(dr.totalBaseDesgrav)+'</span></div>';
   }
-  h+='<div class="econ-irpf-flow-row econ-irpf-result"><span class="econ-irpf-flow-lbl">Base declaraci\u00f3n</span><span class="econ-irpf-flow-val" style="color:var(--text)">'+fcPlain(dr.baseDecl)+'</span></div>';
+  h+='<div class="econ-irpf-flow-row econ-irpf-result"><span class="econ-irpf-flow-lbl">Base declaración</span><span class="econ-irpf-flow-val" style="color:var(--text)">'+fcPlain(dr.baseDecl)+'</span></div>';
   h+='</div></div>';
 
-  /* — Bloque 2: Tramos — */
-  if(dr.decl.breakdown.length>0){
-    var maxTax=Math.max.apply(null,dr.decl.breakdown.map(function(t){return t.tax;}));
-    h+='<div class="econ-irpf-block">';
-    h+='<div class="econ-irpf-block-title">Tramos IRPF aplicados</div>';
-    h+='<div class="econ-irpf-brackets">';
-    dr.decl.breakdown.forEach(function(tr){
-      var barW=maxTax>0?Math.round(tr.tax/maxTax*100):0;
-      var toStr=tr.to===Infinity?'\u221e':fcPlain(tr.to);
-      h+='<div class="econ-irpf-bracket-row">';
-      h+='<div class="econ-irpf-bracket-info">';
-      h+='<span class="econ-irpf-bracket-range">'+fcPlain(tr.from)+' \u2013 '+toStr+'</span>';
-      h+='<span class="econ-irpf-bracket-pct">'+tr.pct+'%</span>';
-      h+='</div>';
-      h+='<div class="econ-irpf-bracket-bar-row">';
-      h+='<div class="econ-irpf-bracket-bar" style="width:'+barW+'%"></div>';
-      h+='<span class="econ-irpf-bracket-tax">'+fcPlain(tr.tax)+'</span>';
-      h+='</div>';
-      h+='</div>';
-    });
-    h+='</div></div>';
+  /* — Bloque 2: IRPF resultante (segunda forma de cálculo desde la base) — */
+  var _cuotaLiq=Math.round((dr.decl.totalTax-(dr.totalQuotaDesgrav||0))*100)/100;
+  var _diffCol=dr.declDiff<=0?'var(--c-green)':'var(--c-red)';
+  var _diffLbl=dr.declDiff<=0?'⬇️ Devolución estimada':'⬆️ A pagar estimado';
+  h+='<div class="econ-irpf-block">';
+  h+='<div class="econ-irpf-block-title">IRPF resultante</div>';
+  h+='<div class="econ-irpf-flow">';
+  h+='<div class="econ-irpf-flow-row"><span class="econ-irpf-flow-lbl">IRPF sobre base declaración</span><span class="econ-irpf-flow-val" style="color:var(--c-red)">'+fcPlain(dr.decl.totalTax)+'</span></div>';
+  if((dr.totalQuotaDesgrav||0)>0){
+    h+='<div class="econ-irpf-flow-row econ-irpf-minus"><span class="econ-irpf-flow-lbl"><span class="econ-irpf-sign">&#8722;</span>Deducciones en cuota</span><span class="econ-irpf-flow-val" style="color:var(--c-green)">'+fcPlain(dr.totalQuotaDesgrav)+'</span></div>';
+    h+='<div class="econ-irpf-flow-row econ-irpf-result"><span class="econ-irpf-flow-lbl">Cuota líquida</span><span class="econ-irpf-flow-val" style="color:var(--c-red)">'+fcPlain(_cuotaLiq)+'</span></div>';
   }
+  h+='<div class="econ-irpf-flow-row econ-irpf-minus"><span class="econ-irpf-flow-lbl"><span class="econ-irpf-sign">&#8722;</span>Ya adelantado en facturas ('+e.irpfPct+'%)</span><span class="econ-irpf-flow-val" style="color:var(--text-muted)">'+fcPlain(e.totIrpf)+'</span></div>';
+  h+='<div class="econ-irpf-flow-row econ-irpf-result" style="border-top:1px solid var(--border);margin-top:2px;padding-top:4px"><span class="econ-irpf-flow-lbl" style="font-weight:700">'+_diffLbl+'</span><span class="econ-irpf-flow-val" style="color:'+_diffCol+';font-weight:700">'+(dr.declDiff>0?'+':'')+fcPlain(Math.abs(dr.declDiff))+'</span></div>';
+  h+='</div></div>';
 
   h+='</div></div>';
+  return h;
+}
+
+/* ── Tramos IRPF (bloque reutilizable) ──────────────────── */
+function _renderIrpfTramos(dr){
+  if(!dr.decl||!dr.decl.breakdown||!dr.decl.breakdown.length)return '';
+  var maxTax=Math.max.apply(null,dr.decl.breakdown.map(function(t){return t.tax;}));
+  var h='<div class="econ-irpf-card" style="margin-top:8px">';
+  h+='<div class="econ-irpf-block">';
+  h+='<div class="econ-irpf-block-title">Tramos IRPF aplicados</div>';
+  h+='<div class="econ-irpf-brackets">';
+  dr.decl.breakdown.forEach(function(tr){
+    var barW=maxTax>0?Math.round(tr.tax/maxTax*100):0;
+    var toStr=tr.to===Infinity?'∞':fcPlain(tr.to);
+    h+='<div class="econ-irpf-bracket-row">';
+    h+='<div class="econ-irpf-bracket-info">';
+    h+='<span class="econ-irpf-bracket-range">'+fcPlain(tr.from)+' – '+toStr+'</span>';
+    h+='<span class="econ-irpf-bracket-pct">'+tr.pct+'%</span>';
+    h+='</div>';
+    h+='<div class="econ-irpf-bracket-bar-row">';
+    h+='<div class="econ-irpf-bracket-bar" style="width:'+barW+'%"></div>';
+    h+='<span class="econ-irpf-bracket-tax">'+fcPlain(tr.tax)+'</span>';
+    h+='</div>';
+    h+='</div>';
+  });
+  h+='</div></div></div>';
   return h;
 }
 
