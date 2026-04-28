@@ -142,13 +142,7 @@ function renderEconGastos(){
   h+='<div style="font-size:.7rem;color:var(--text-dim);text-align:center">Configurable desde el men\u00fa &#9965;\ufe0f de la ventana econ\u00f3mica</div>';
   h+='</div>';
 
-  /* §B Distribuci\u00f3n del ingreso bruto */
-  h+=renderIncomeDistrib(e,dr);
-
-  /* §B.2 Donut chart distribuci\u00f3n */
-  h+=renderIncomeDonut(e,dr);
-
-  /* §B.3 Resultado declaraci\u00f3n (secci\u00f3n destacada con flow + desglose ahorro) */
+/* §B.3 Resultado declaraci\u00f3n (secci\u00f3n destacada con flow + desglose ahorro) */
   h+=renderResultadoDeclaracion(e,dr);
 
   /* §C Detalle del c\u00e1lculo IRPF (base, tramos) */
