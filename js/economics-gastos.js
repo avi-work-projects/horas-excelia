@@ -173,7 +173,11 @@ function renderEconGastos(){
     h+='</div>';
     /* Tramos IRPF aplicados — justo debajo de las dos tarjetas */
     h+=typeof _renderIrpfTramos==='function'?_renderIrpfTramos(dr):'';
-    /* §D.2 Trabajado para el Estado — desglose explícito IRPF + IVA */
+    h+='</div>';
+  }
+  h+=renderIncomeDistrib(e,dr);
+  h+=renderIncomeDonut(e,dr);
+  if(dr.decl&&dr.decl.totalTax>0){
     var _brF=Math.round((e.totBase+e.totIva)*100)/100;
     /* IRPF total realmente pagado = retenci\u00f3n + diferencia declaraci\u00f3n (con signo) */
     var _irpfPag=Math.round((e.totIrpf+dr.declDiff)*100)/100;
@@ -192,7 +196,6 @@ function renderEconGastos(){
       h+='Equivale a haber trabajado <b>'+_mE+' meses y '+_dR+' d\u00edas</b> para el Estado <span style="font-size:.7rem;font-style:normal;color:var(--text-dim)">(\u2248 '+_dIrpf+' d IRPF + '+_dIva+' d IVA)</span>, hasta el <b>'+_fE.getDate()+' de '+MN[_fE.getMonth()]+'</b>.';
       h+='</div>';
     }
-    h+='</div>';
   }
 
   return h;
@@ -416,6 +419,7 @@ function renderIrpfBreakdown(e,dr){
   h+='<div class="econ-irpf-block-title">IRPF resultante</div>';
   h+='<div class="econ-irpf-flow">';
   h+='<div class="econ-irpf-flow-row"><span class="econ-irpf-flow-lbl">IRPF sobre base declaración</span><span class="econ-irpf-flow-val" style="color:var(--c-red)">'+fcPlain(dr.decl.totalTax)+'</span></div>';
+  h+='<div class="econ-irpf-flow-note">'+dr.decl.effectivePct.toFixed(2).replace('.',',')+' % efectivo sobre <b>'+fcPlain(dr.baseDecl)+'</b> de base declaración</div>';
   if((dr.totalQuotaDesgrav||0)>0){
     h+='<div class="econ-irpf-flow-row econ-irpf-minus"><span class="econ-irpf-flow-lbl"><span class="econ-irpf-sign">&#8722;</span>Deducciones en cuota</span><span class="econ-irpf-flow-val" style="color:var(--c-green)">'+fcPlain(dr.totalQuotaDesgrav)+'</span></div>';
     h+='<div class="econ-irpf-flow-row econ-irpf-result"><span class="econ-irpf-flow-lbl">Cuota líquida</span><span class="econ-irpf-flow-val" style="color:var(--c-red)">'+fcPlain(_cuotaLiq)+'</span></div>';
