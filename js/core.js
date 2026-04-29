@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v230 — Animación overlays: slide-up → fade puro (opacity 0→1, 250ms)';
+var APP_VERSION = 'v231 — Revert v230: vuelve a slide-up (el fade dejaba ver la home detrás durante la transición)';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
