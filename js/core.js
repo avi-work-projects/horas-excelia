@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v229 — Refactor: defer scripts + economics-helpers.js + 4 nuevos archivos extraídos de events.js/init.js';
+var APP_VERSION = 'v230 — Animación overlays: slide-up → fade puro (opacity 0→1, 250ms)';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
