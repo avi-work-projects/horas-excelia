@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v231 — Revert v230: vuelve a slide-up (el fade dejaba ver la home detrás durante la transición)';
+var APP_VERSION = 'v232 — Home footer: horas por categoría (vacac./festivos/bajas) + total mensual';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -325,26 +325,36 @@ function render(){
 
   // Resumen mensual
   var diasTrabajados=0,horasTotales=0,diasNoLaborables=0,diasFest=0,diasVac=0,diasAus=0;
+  var horasFest=0,horasVac=0,horasAus=0;
   wks.forEach(function(wk){
     for(var i=0;i<5;i++){
       var d=wk[i]; if(d.getMonth()!==CM)continue;
       var t=dayT(d),h=dayH(d);
       if(t==='normal'){diasTrabajados++;horasTotales+=h;}
-      else{diasNoLaborables++;if(t==='festivo')diasFest++;else if(t==='vacaciones')diasVac++;else if(t==='ausencia')diasAus++;}
+      else{
+        diasNoLaborables++;
+        var dh=defH(d);
+        if(t==='festivo'){diasFest++;horasFest+=dh;}
+        else if(t==='vacaciones'){diasVac++;horasVac+=dh;}
+        else if(t==='ausencia'){diasAus++;horasAus+=dh;}
+      }
     }
   });
-  var hStr=(horasTotales%1===0?String(horasTotales):horasTotales.toFixed(1).replace('.',','));
+  var fmtH=function(h){return (h%1===0?String(h):h.toFixed(1).replace('.',','));};
+  var hStr=fmtH(horasTotales);
+  var horasTotal=horasTotales+horasFest+horasVac+horasAus;
   var dsglose='';
   if(diasNoLaborables>0){
     var dparts=[];
-    if(diasFest)dparts.push('<span style="color:var(--festivo)">'+diasFest+' festivo'+(diasFest>1?'s':'')+'</span>');
-    if(diasVac)dparts.push('<span style="color:var(--vacaciones)">'+diasVac+' vacac.</span>');
-    if(diasAus)dparts.push('<span style="color:var(--ausencia)">'+diasAus+' baja'+(diasAus>1?'s':'')+'</span>');
+    if(diasFest)dparts.push('<span style="color:var(--festivo)">'+diasFest+' festivo'+(diasFest>1?'s':'')+' ('+fmtH(horasFest)+'h)</span>');
+    if(diasVac)dparts.push('<span style="color:var(--vacaciones)">'+diasVac+' vacac. ('+fmtH(horasVac)+'h)</span>');
+    if(diasAus)dparts.push('<span style="color:var(--ausencia)">'+diasAus+' baja'+(diasAus>1?'s':'')+' ('+fmtH(horasAus)+'h)</span>');
     if(dparts.length)dsglose='<div class="ms-breakdown">'+dparts.join('<span class="ms-sep"> / </span>')+'</div>';
   }
   var footer=document.createElement('div'); footer.className='month-summary';
   footer.innerHTML='<div class="month-stat worked"><span class="ms-num">'+diasTrabajados+'</span><span class="ms-label"> d\u00edas trabajados</span><span class="ms-hrs"> ('+hStr+'h)</span></div>'+
-    '<div class="month-stat off"><span class="ms-num">'+diasNoLaborables+'</span><span class="ms-label"> d\u00edas no trabajados</span></div>'+dsglose;
+    '<div class="month-stat off"><span class="ms-num">'+diasNoLaborables+'</span><span class="ms-label"> d\u00edas no trabajados</span></div>'+dsglose+
+    '<div class="month-stat total"><span class="ms-num">'+fmtH(horasTotal)+'h</span><span class="ms-label"> total mensual</span></div>';
   c.appendChild(footer);
 }
 
