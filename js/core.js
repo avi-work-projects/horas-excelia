@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v234 — Resumen: comparación con español medio (1760h); Home: horas también en días no trabajados';
+var APP_VERSION = 'v235 — Calendario anual: 3 filas de barras multi-día + packing aún más denso en puntuales (3 niveles)';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
