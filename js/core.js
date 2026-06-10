@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v233 — VIP logo en Próximos, estrellas SVG, markers compactos, no-Otros como rectángulo, click día vacío en agenda semanal, multilínea en Próximos eventos';
+var APP_VERSION = 'v234 — Resumen: comparación con español medio (1760h); Home: horas también en días no trabajados';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -342,7 +342,8 @@ function render(){
   });
   var fmtH=function(h){return (h%1===0?String(h):h.toFixed(1).replace('.',','));};
   var hStr=fmtH(horasTotales);
-  var horasTotal=horasTotales+horasFest+horasVac+horasAus;
+  var horasNoLab=horasFest+horasVac+horasAus;
+  var horasTotal=horasTotales+horasNoLab;
   var dsglose='';
   if(diasNoLaborables>0){
     var dparts=[];
@@ -352,8 +353,9 @@ function render(){
     if(dparts.length)dsglose='<div class="ms-breakdown">'+dparts.join('<span class="ms-sep"> / </span>')+'</div>';
   }
   var footer=document.createElement('div'); footer.className='month-summary';
+  var noLabHrsStr=diasNoLaborables>0?'<span class="ms-hrs"> ('+fmtH(horasNoLab)+'h)</span>':'';
   footer.innerHTML='<div class="month-stat worked"><span class="ms-num">'+diasTrabajados+'</span><span class="ms-label"> d\u00edas trabajados</span><span class="ms-hrs"> ('+hStr+'h)</span></div>'+
-    '<div class="month-stat off"><span class="ms-num">'+diasNoLaborables+'</span><span class="ms-label"> d\u00edas no trabajados</span></div>'+dsglose+
+    '<div class="month-stat off"><span class="ms-num">'+diasNoLaborables+'</span><span class="ms-label"> d\u00edas no trabajados</span>'+noLabHrsStr+'</div>'+dsglose+
     '<div class="month-stat total"><span class="ms-num">'+fmtH(horasTotal)+'h</span><span class="ms-label"> total mensual</span></div>';
   c.appendChild(footer);
 }
