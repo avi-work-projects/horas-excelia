@@ -246,6 +246,23 @@ function renderSummaryWorkBody(year){
     h+='<div class="sy-chart">'+barChart3(s.mHours,s.mHoursP,MN_SHORT,'#6c8cff',cm)+'</div>';
     h+='</div>';
 
+    // ── Comparación con español medio (1760h/año) ──
+    var SPAIN_AVG=1760;
+    var extraH=Math.round((s.hoursTotal-SPAIN_AVG)*10)/10;
+    var extraDays=s.avgHDay>0?Math.round((extraH/s.avgHDay)*10)/10:0;
+    var extraPct=Math.round((extraH/SPAIN_AVG)*1000)/10;
+    var extraHMonth=Math.round((extraH/12)*10)/10;
+    var fmtSigned=function(n,suf){var sign=n>0?'+':'';return sign+(n%1===0?String(n):n.toFixed(1).replace('.',','))+suf;};
+    var sign=extraH>0?'over':extraH<0?'under':'eq';
+    h+='<div class="sy-section"><div class="sy-section-title">Comparación con español medio (1760 h/año)</div>';
+    h+='<div class="sy-spain-note">Total previsto del año: <b>'+fhY(s.hoursTotal)+'</b> · Referencia: <b>1760 h</b></div>';
+    h+='<div class="sy-cards4 sy-spain-cards sy-spain-'+sign+'">';
+    h+='<div class="sy-card"><div class="sy-val-sm">'+fmtSigned(extraH,'h')+'</div><div class="sy-lbl">Horas extra<br>al año</div></div>';
+    h+='<div class="sy-card"><div class="sy-val-sm">'+fmtSigned(extraDays,'d')+'</div><div class="sy-lbl">Días extra<br>equivalentes</div></div>';
+    h+='<div class="sy-card"><div class="sy-val-sm">'+fmtSigned(extraPct,'%')+'</div><div class="sy-lbl">vs media<br>española</div></div>';
+    h+='<div class="sy-card"><div class="sy-val-sm">'+fmtSigned(extraHMonth,'h')+'</div><div class="sy-lbl">Extra/mes<br>de media</div></div>';
+    h+='</div></div>';
+
   return h;
 }
 function renderSummaryPuentesBody(year){

@@ -244,6 +244,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .sy-section-title{font-size:.68rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em}
 .sy-cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .sy-cards4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.sy-spain-note{font-size:.78rem;color:var(--text-muted);margin-bottom:8px;line-height:1.4}
+.sy-spain-note b{color:var(--text)}
+.sy-spain-cards.sy-spain-over .sy-card{border-color:rgba(255,179,71,.45);background:rgba(255,179,71,.07)}
+.sy-spain-cards.sy-spain-over .sy-card .sy-val-sm{color:var(--vacaciones)}
+.sy-spain-cards.sy-spain-under .sy-card{border-color:rgba(90,224,136,.4);background:rgba(90,224,136,.06)}
+.sy-spain-cards.sy-spain-under .sy-card .sy-val-sm{color:var(--sent-text)}
 .sy-card{padding:12px 8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);text-align:center}
 .sy-card.hi{border-color:var(--accent);background:var(--accent-glow)}
 .sy-card.hi2{border-color:#2a4a2a;background:#1a2a1a}
