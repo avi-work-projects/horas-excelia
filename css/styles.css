@@ -1028,9 +1028,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bday-upcoming-item{display:flex;align-items:center;gap:12px;padding:11px 14px;min-height:68px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .12s}
 .bday-upcoming-item:active{background:var(--surface3)}
 .bday-upcoming-item.bday-today-item{border-color:var(--sent-border);background:rgba(90,224,136,.07)}
-.bday-upcoming-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;-webkit-text-stroke:.5px rgba(0,0,0,.6)}
+.bday-upcoming-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;-webkit-text-stroke:.5px rgba(0,0,0,.6);overflow:hidden}
+.bday-upcoming-vip-img{width:34px;height:auto;display:block;-webkit-text-stroke:0}
 .bday-upcoming-info{flex:1;min-width:0}
-.bday-upcoming-name{font-size:.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bday-upcoming-name{font-size:.88rem;font-weight:600;word-wrap:break-word;overflow-wrap:break-word;line-height:1.2}
 .bday-upcoming-date{font-size:.7rem;color:var(--text-muted);margin-top:2px}
 .bday-upcoming-lbl{font-size:.7rem;font-weight:600;color:var(--text-dim);flex-shrink:0;text-align:right}
 .bday-upcoming-lbl.near{color:var(--vacaciones)}
@@ -1074,9 +1075,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-upcoming-item.ev-upcoming-today{border-color:var(--sent-border);background:rgba(90,224,136,.06)}
 .ev-upcoming-color{width:14px;height:14px;border-radius:3px;flex-shrink:0}
 .ev-upcoming-info{flex:1;min-width:0}
-.ev-upcoming-title{font-size:.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev-upcoming-title{font-size:.88rem;font-weight:600;word-wrap:break-word;overflow-wrap:break-word;line-height:1.2}
 .ev-upcoming-meta{font-size:.7rem;color:var(--text-muted);margin-top:2px}
-.ev-upcoming-note{font-size:.67rem;color:var(--text-dim);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-style:italic;opacity:.75}
+.ev-upcoming-note{font-size:.67rem;color:var(--text-dim);margin-top:2px;font-style:italic;opacity:.75;word-wrap:break-word;overflow-wrap:break-word;line-height:1.3;white-space:normal}
 .ev-upcoming-lbl{font-size:.7rem;font-weight:600;color:var(--text-dim);flex-shrink:0;text-align:right}
 .ev-upcoming-lbl.near{color:var(--vacaciones)}
 .ev-upcoming-lbl.today-lbl{color:var(--sent-text)}
@@ -1245,6 +1246,25 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .dp-actions .ev-btn{flex:1}
 .ev-annual-vip-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:#fbbf24;border:1px solid #fbbf24;box-shadow:0 0 4px rgba(251,191,36,.7),0 0 0 .5px rgba(0,0,0,.5)}
 .ev-annual-vip-star{font-size:.26rem;line-height:1;flex-shrink:0;filter:drop-shadow(0 0 1px rgba(251,191,36,.9));-webkit-text-stroke:.4px rgba(0,0,0,.7)}
+/* Estrella VIP vectorial (SVG): tamaño homogéneo con el resto de markers */
+.ev-annual-vip-star-svg{display:inline-block;width:8px;height:8px;flex-shrink:0;z-index:4;line-height:0;filter:drop-shadow(0 0 1px rgba(251,191,36,.55))}
+.ev-annual-vip-star-svg svg{display:block;width:100%;height:100%;overflow:visible}
+.ev-annual-vip-star-svg.past-marker{opacity:.5}
+/* Compactación de markers cuando hay >2 en el mismo día */
+.ev-annual-xs.ev-xs-many{gap:0;padding:0;align-content:center}
+.ev-annual-xs.ev-xs-many .ev-annual-marker,
+.ev-annual-xs.ev-xs-many .ev-annual-vip-star-svg{width:4.5px;height:4.5px}
+.ev-annual-xs.ev-xs-many .ev-annual-marker.ev-shape-rounded{width:6px;height:4px}
+.ev-annual-xs.ev-xs-many .ev-annual-marker.ev-shape-diamond{width:4px;height:4px}
+.ev-annual-xs.ev-xs-many .ev-annual-marker.ev-shape-x-thick{width:6.5px;height:6.5px}
+.ev-annual-xs.ev-xs-many .ev-annual-marker.ev-shape-x-thin{width:6px;height:6px}
+.ev-annual-xs.ev-xs-vmany{gap:0;padding:0;align-content:center}
+.ev-annual-xs.ev-xs-vmany .ev-annual-marker,
+.ev-annual-xs.ev-xs-vmany .ev-annual-vip-star-svg{width:3.5px;height:3.5px}
+.ev-annual-xs.ev-xs-vmany .ev-annual-marker.ev-shape-rounded{width:5px;height:3px}
+.ev-annual-xs.ev-xs-vmany .ev-annual-marker.ev-shape-diamond{width:3px;height:3px}
+.ev-annual-xs.ev-xs-vmany .ev-annual-marker.ev-shape-x-thick{width:5px;height:5px}
+.ev-annual-xs.ev-xs-vmany .ev-annual-marker.ev-shape-x-thin{width:4.5px;height:4.5px}
 /* Barras multi-día en calendario anual/4meses: 55% celda centradas, z-index:2 (1-mes usa ev-multi-bar al 65%) */
 .ev-annual-bars-row{position:absolute;top:17.5%;left:0;right:0;height:55%;z-index:2;pointer-events:none;display:grid;grid-template-columns:repeat(7,1fr);gap:1px;grid-auto-rows:1fr}
 .ev-annual-mbar{display:flex;align-items:center;border-radius:6px;overflow:hidden;white-space:nowrap;color:#fff}

@@ -186,13 +186,15 @@ function renderBdayUpcoming(){
       var isVip=!!x.b.vip;
       var alarmSet=isBdayAlarmSet(x.b);
       var vipCls=isVip?' bday-vip-item':'';
-      var vipStar=isVip?' <img src="./VIP.png" class="bday-vip-img" alt="VIP">':'';
       var bellHtml=isPastDay?'':'<span class="ev-upcoming-bell'+(alarmSet?' set':'')+'">&#128276;</span>';
       var bidxUp=BDAYS.indexOf(x.b);
+      var iconHtml=isVip
+        ?'<img src="./VIP.png" class="bday-upcoming-vip-img" alt="VIP">'
+        :'\uD83C\uDF82';
       s+='<div class="bday-upcoming-item'+vipCls+(isT?' bday-today-item':'')+'" data-bday-idx="'+bidxUp+'" data-bday-name="'+escHtml(x.b.name)+'" data-bday-day="'+x.b.day+'" data-bday-month="'+x.b.month+'" data-diff="'+x.diff+'">';
-      s+='<div class="bday-upcoming-icon" style="background:'+color+'22;border-color:'+color+'">'+(isVip?'\u2b50':'\uD83C\uDF82')+'</div>';
+      s+='<div class="bday-upcoming-icon" style="background:'+color+'22;border-color:'+color+'">'+iconHtml+'</div>';
       s+='<div class="bday-upcoming-info">';
-      s+='<div class="bday-upcoming-name" style="color:'+color+'">'+bdName(x.b.name)+vipStar+'</div>';
+      s+='<div class="bday-upcoming-name" style="color:'+color+'">'+bdName(x.b.name)+'</div>';
       var _dwn=['Dom','Lun','Mar','Mi\u00e9','Jue','Vie','S\u00e1b'];
       var _bd=new Date(today);_bd.setDate(_bd.getDate()+x.diff);
       s+='<div class="bday-upcoming-date">'+_dwn[_bd.getDay()]+' '+x.b.day+' de '+MN[x.b.month-1]+'</div>';
