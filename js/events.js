@@ -172,9 +172,9 @@ function evUniqueColor(ev){
    (solo eventos "Otros" pueden tener shape personalizada).
    Shapes válidas: circle | square | diamond | x-thick | x-thin | rounded.
    Defaults: dot circular (= comportamiento previo). */
-function evMarkerHtml(ev,pastClass,sizeClass){
+function evMarkerHtml(ev,pastClass,sizeClass,defaultShape){
   var color=getEvDisplayColor(ev);
-  var shape=ev.shape||'circle';
+  var shape=ev.shape||defaultShape||'circle';
   var pmk=pastClass||'';
   var sz=sizeClass?(' '+sizeClass):'';
   /* X-shapes se renderizan con SVG de doble stroke (negro debajo + color encima)
@@ -189,6 +189,18 @@ function evMarkerHtml(ev,pastClass,sizeClass){
     return '<span class="ev-annual-marker ev-shape-'+shape+pmk+sz+'" data-id="'+ev.id+'">'+svg+'</span>';
   }
   return '<span class="ev-annual-marker ev-shape-'+shape+pmk+sz+'" data-id="'+ev.id+'" style="color:'+color+'"></span>';
+}
+/* ── Helper: estrella VIP como SVG (relleno dorado + borde negro)
+   Sustituye al emoji ⭐ que dependía del render del SO y no casaba con
+   el tamaño del resto de markers. ── */
+function vipStarSvgHtml(id,pastClass,sizeClass){
+  var pmk=pastClass||'';
+  var sz=sizeClass?(' '+sizeClass):'';
+  var svg='<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">'
+    +'<polygon points="12,2 14.9,8.6 22,9.3 16.5,14.1 18.2,21 12,17.3 5.8,21 7.5,14.1 2,9.3 9.1,8.6" '
+    +'fill="#fbbf24" stroke="#000" stroke-width="1.4" stroke-linejoin="round"/>'
+    +'</svg>';
+  return '<span class="ev-annual-vip-star-svg'+pmk+sz+'" data-id="'+id+'">'+svg+'</span>';
 }
 /* ── Helper: relleno suave y estable por evento ── */
 function evSoftFillColor(ev){
@@ -473,8 +485,12 @@ function renderEvUpcoming(){
     s+='</div>';
     return s;
   }
-  /* ── Semanas hacia adelante ── */
+  /* ── Semanas hacia adelante ──
+     Dedupe: cada evento se asigna solo a la PRIMERA semana donde aparece,
+     usando ev.start como fecha mostrada (no el primer día activo en esa
+     semana, que daría duraciones distintas entre secciones). */
   var weeks=[{},{},{}];
+  var _seenEv={};
   for(var w=0;w<3;w++){
     for(var d=0;d<7;d++){
       var day=new Date(wk0.getTime()+(w*7+d)*86400000);
@@ -482,7 +498,10 @@ function renderEvUpcoming(){
       var evs=getEventsOn(ds);
       evs.forEach(function(ev){
         if(_isVipBdayTooFar(ev,day,today))return;
-        if(!weeks[w][ev.id])weeks[w][ev.id]={ev:ev,firstDate:new Date(day)};
+        if(_seenEv[ev.id])return;
+        _seenEv[ev.id]=true;
+        var _startD=new Date(ev.start+'T00:00:00');
+        weeks[w][ev.id]={ev:ev,firstDate:_startD};
       });
     }
   }
@@ -664,9 +683,14 @@ function renderEvAnnual(){
           var _vipBdays=(!vipHidden&&typeof BDAYS!=='undefined'&&Array.isArray(BDAYS))?(function(){var dd2=d.getDate(),dm2=d.getMonth()+1;return BDAYS.filter(function(b){return b.vip&&b.day===dd2&&b.month===dm2;});})():[];
           if(_singleEvs.length||_vipBdays.length){
             var _pmk=past?' past-marker':'';
-            _annSd='<div class="ev-annual-xs">';
-            _singleEvs.forEach(function(ev){_annSd+=evMarkerHtml(ev,_pmk);});
-            _vipBdays.forEach(function(ev){_annSd+='<span class="ev-annual-vip-star'+_pmk+'" data-id="'+ev.id+'">\u2b50</span>';});
+            var _tot=_singleEvs.length+_vipBdays.length;
+            var _dense=_tot>4?' ev-xs-vmany':_tot>2?' ev-xs-many':'';
+            _annSd='<div class="ev-annual-xs'+_dense+'">';
+            _singleEvs.forEach(function(ev){
+              var _typeOtros=typeof getEvType==='function'&&getEvType(ev)==='Otros';
+              _annSd+=evMarkerHtml(ev,_pmk,'',_typeOtros?'circle':'rounded');
+            });
+            _vipBdays.forEach(function(ev){_annSd+=vipStarSvgHtml(ev.id,_pmk);});
             _annSd+='</div>';
           }
         }
@@ -828,9 +852,14 @@ function renderEvQuad(){
           var _vipBdays=(!vipHidden&&typeof BDAYS!=='undefined'&&Array.isArray(BDAYS))?(function(){var dd2=d.getDate(),dm2=d.getMonth()+1;return BDAYS.filter(function(b){return b.vip&&b.day===dd2&&b.month===dm2;});})():[];
           if(_singleEvs.length||_vipBdays.length){
             var _qpmk=past?' past-marker':'';
-            _quadSd='<div class="ev-annual-xs">';
-            _singleEvs.forEach(function(ev){_quadSd+=evMarkerHtml(ev,_qpmk);});
-            _vipBdays.forEach(function(ev){_quadSd+='<span class="ev-annual-vip-star'+_qpmk+'" data-id="'+ev.id+'">\u2b50</span>';});
+            var _qtot=_singleEvs.length+_vipBdays.length;
+            var _qdense=_qtot>4?' ev-xs-vmany':_qtot>2?' ev-xs-many':'';
+            _quadSd='<div class="ev-annual-xs'+_qdense+'">';
+            _singleEvs.forEach(function(ev){
+              var _typeOtros=typeof getEvType==='function'&&getEvType(ev)==='Otros';
+              _quadSd+=evMarkerHtml(ev,_qpmk,'',_typeOtros?'circle':'rounded');
+            });
+            _vipBdays.forEach(function(ev){_quadSd+=vipStarSvgHtml(ev.id,_qpmk);});
             _quadSd+='</div>';
           }
         }
@@ -992,7 +1021,7 @@ function renderEvWeek(){
       var dow=day.getDay();
       var isWknd=dow===0||dow===6;
       var dCls='ev-wk-date'+(isToday?' ev-wk-today':'')+(isPast?' ev-wk-past':'')+(isWknd?' ev-wk-wknd':'');
-      h+='<div class="'+dCls+'" style="grid-row:'+d+'"'+(isToday?' id="ev-wk-today-row"':'')+'>';
+      h+='<div class="'+dCls+'" data-ds="'+ds+'" style="grid-row:'+d+'"'+(isToday?' id="ev-wk-today-row"':'')+'>';
       h+='<span class="ev-wk-dow">'+_wn[dow]+'</span><span class="ev-wk-num">'+d+'</span>';
       h+='</div>';
 
@@ -1002,7 +1031,7 @@ function renderEvWeek(){
          padding-top extra a los chips para que no se solapen con el texto del título. */
       var isFirstOfMulti=multiSegs.some(function(s){return s.isFirstSeg&&d===s.sd;});
       var eCls='ev-wk-chips'+(isToday?' ev-wk-today':'')+(isPast?' ev-wk-past':'')+(isWknd?' ev-wk-wknd':'')+(hasMulti?' ev-wk-chips-nested':'')+(isFirstOfMulti?' ev-wk-chips-first-of-multi':'');
-      h+='<div class="'+eCls+'" style="grid-row:'+d+';grid-column:2">';
+      h+='<div class="'+eCls+'" data-ds="'+ds+'" style="grid-row:'+d+';grid-column:2">';
       chips.forEach(function(ev){
         var _dc=getEvDisplayColor(ev);
         var _isVip=ev.id.indexOf('ev-bday-vip-')===0;
@@ -1953,7 +1982,7 @@ function bindEvEvents(){
     });
   }
   // Click en barras/marcas de eventos en annual/quad (edit mode)
-  document.querySelectorAll('.ev-annual-mbar[data-id],.ev-annual-x[data-id],.ev-annual-dot[data-id],.ev-annual-marker[data-id],.ev-annual-vip-star[data-id],.ev-annual-vip-dot[data-id]').forEach(function(el){
+  document.querySelectorAll('.ev-annual-mbar[data-id],.ev-annual-x[data-id],.ev-annual-dot[data-id],.ev-annual-marker[data-id],.ev-annual-vip-star[data-id],.ev-annual-vip-star-svg[data-id],.ev-annual-vip-dot[data-id]').forEach(function(el){
     el.addEventListener('click',function(e){
       if(!EV_EDIT_MODE)return;
       e.stopPropagation();
@@ -2042,6 +2071,14 @@ function bindEvEvents(){
       var id=el.dataset.id;var ev=null;
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
       if(ev)openEvDetail(ev);
+    });
+  });
+  // Click en celda de día (fecha o zona de chips) en Agenda Semanal → crear evento prefilled
+  document.querySelectorAll('.ev-wk-date[data-ds],.ev-wk-chips[data-ds]').forEach(function(cell){
+    cell.addEventListener('click',function(e){
+      if(e.target.closest('.ev-wk-chip,.ev-wk-multi'))return;
+      var ds=cell.dataset.ds;
+      if(ds)openEvForm(null,ds);
     });
   });
   document.querySelectorAll('.ev-list-btn.del').forEach(function(btn){

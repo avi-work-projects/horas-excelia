@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v232 — Home footer: horas por categoría (vacac./festivos/bajas) + total mensual';
+var APP_VERSION = 'v233 — VIP logo en Próximos, estrellas SVG, markers compactos, no-Otros como rectángulo, click día vacío en agenda semanal, multilínea en Próximos eventos';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
