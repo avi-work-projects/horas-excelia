@@ -625,10 +625,10 @@ function renderEvAnnual(){
         if(cs>ce)return;
         wMulti.push({ev:ev,cs:cs,ce:ce,starts:es>=wStart,ends:ee<=wEnd,row:-1});
       });
-      // Greedy row assignment (max 2 filas, sin solapamiento)
-      var rowOcc=[[],[]];
+      // Greedy row assignment (max 3 filas, sin solapamiento)
+      var rowOcc=[[],[],[]];
       wMulti.forEach(function(it){
-        for(var r=0;r<2;r++){
+        for(var r=0;r<3;r++){
           var ok=true;
           for(var j=0;j<rowOcc[r].length;j++){if(it.cs<=rowOcc[r][j][1]&&it.ce>=rowOcc[r][j][0]){ok=false;break;}}
           if(ok){it.row=r;rowOcc[r].push([it.cs,it.ce]);break;}
@@ -684,7 +684,7 @@ function renderEvAnnual(){
           if(_singleEvs.length||_vipBdays.length){
             var _pmk=past?' past-marker':'';
             var _tot=_singleEvs.length+_vipBdays.length;
-            var _dense=_tot>4?' ev-xs-vmany':_tot>2?' ev-xs-many':'';
+            var _dense=_tot>=7?' ev-xs-vvmany':_tot>=5?' ev-xs-vmany':_tot>=3?' ev-xs-many':'';
             _annSd='<div class="ev-annual-xs'+_dense+'">';
             _singleEvs.forEach(function(ev){
               var _typeOtros=typeof getEvType==='function'&&getEvType(ev)==='Otros';
@@ -700,7 +700,8 @@ function renderEvAnnual(){
       // Barras multi-día (z-index:2): 80% altura celda, centradas, sin solapamiento
       var activeRows=0;wMulti.forEach(function(it){if(it.row>=0)activeRows=Math.max(activeRows,it.row+1);});
       if(activeRows>0){
-        h+='<div class="ev-annual-bars-row">';
+        var _annRowsCls=activeRows>=3?' ev-bars-3rows':activeRows===2?' ev-bars-2rows':'';
+        h+='<div class="ev-annual-bars-row'+_annRowsCls+'">';
         wMulti.forEach(function(it){
           if(it.row<0)return;
           var sc=it.starts&&it.ends?'':it.starts?' a-starts':it.ends?' a-ends':' a-mid';
@@ -798,9 +799,9 @@ function renderEvQuad(){
         if(cs>ce)return;
         wMulti.push({ev:ev,cs:cs,ce:ce,starts:es>=wStart,ends:ee<=wEnd,row:-1});
       });
-      var rowOcc=[[],[]];
+      var rowOcc=[[],[],[]];
       wMulti.forEach(function(it){
-        for(var r=0;r<2;r++){
+        for(var r=0;r<3;r++){
           var ok=true;
           for(var j=0;j<rowOcc[r].length;j++){if(it.cs<=rowOcc[r][j][1]&&it.ce>=rowOcc[r][j][0]){ok=false;break;}}
           if(ok){it.row=r;rowOcc[r].push([it.cs,it.ce]);break;}
@@ -853,7 +854,7 @@ function renderEvQuad(){
           if(_singleEvs.length||_vipBdays.length){
             var _qpmk=past?' past-marker':'';
             var _qtot=_singleEvs.length+_vipBdays.length;
-            var _qdense=_qtot>4?' ev-xs-vmany':_qtot>2?' ev-xs-many':'';
+            var _qdense=_qtot>=7?' ev-xs-vvmany':_qtot>=5?' ev-xs-vmany':_qtot>=3?' ev-xs-many':'';
             _quadSd='<div class="ev-annual-xs'+_qdense+'">';
             _singleEvs.forEach(function(ev){
               var _typeOtros=typeof getEvType==='function'&&getEvType(ev)==='Otros';
@@ -868,7 +869,8 @@ function renderEvQuad(){
       if(abspanStart>=0)abspans.push({s:abspanStart,e:6});
       var activeRows=0;wMulti.forEach(function(it){if(it.row>=0)activeRows=Math.max(activeRows,it.row+1);});
       if(activeRows>0){
-        h+='<div class="ev-annual-bars-row">';
+        var _qRowsCls=activeRows>=3?' ev-bars-3rows':activeRows===2?' ev-bars-2rows':'';
+        h+='<div class="ev-annual-bars-row'+_qRowsCls+'">';
         wMulti.forEach(function(it){
           if(it.row<0)return;
           var sc=it.starts&&it.ends?'':it.starts?' a-starts':it.ends?' a-ends':' a-mid';
