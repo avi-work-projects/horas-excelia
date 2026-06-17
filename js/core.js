@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v235 — Calendario anual: 3 filas de barras multi-día + packing aún más denso en puntuales (3 niveles)';
+var APP_VERSION = 'v236 — Económico: swipe entre pestañas no interfiere con scroll horizontal del Desglose Mensual';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -18,11 +18,25 @@ function normalizeMacroBase(url){
 function addSwipe(el, onLeft, onRight){
   if(!el||el._swipeAdded)return;
   el._swipeAdded=true;
-  var _sx=0,_sy=0;
+  var _sx=0,_sy=0,_skip=false;
+  /* ¿el gesto empezó dentro de un contenedor con scroll horizontal propio?
+     Si es así, el swipe es para mover la tabla, no para cambiar de pestaña. */
+  function startedInScrollX(node){
+    while(node&&node!==el){
+      if(node.nodeType===1&&node.scrollWidth>node.clientWidth+1){
+        var ox=getComputedStyle(node).overflowX;
+        if(ox==='auto'||ox==='scroll')return true;
+      }
+      node=node.parentNode;
+    }
+    return false;
+  }
   el.addEventListener('touchstart',function(e){
     _sx=e.touches[0].clientX;_sy=e.touches[0].clientY;
+    _skip=startedInScrollX(e.target);
   },{passive:true});
   el.addEventListener('touchend',function(e){
+    if(_skip)return;
     var dx=e.changedTouches[0].clientX-_sx;
     var dy=e.changedTouches[0].clientY-_sy;
     if(Math.abs(dx)<50||Math.abs(dx)<=Math.abs(dy))return;
