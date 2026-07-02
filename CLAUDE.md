@@ -207,24 +207,48 @@ Función en `core.js` que extrae la URL base del webhook MacroDroid eliminando e
 - Variables de webhook: `{v=nombreParam}` se sustituye en el script antes de ejecutarse
 
 ### Crear alarma (SET_ALARM intent)
+Script real en producción (macro `generar_alarma1`, recibe `alarmH`/`alarmM`/`alarmMsg`/`alarmDays` del webhook):
 ```javascript
-var ctx = android.app.ActivityThread.currentApplication();
-var intent = new android.content.Intent('android.intent.action.SET_ALARM');
-intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+var hStr    = "{v=alarmH}";
+var mStr    = "{v=alarmM}";
+var msg     = "{v=alarmMsg}";
+var daysStr = "{v=alarmDays}";
+
+var h = (!hStr || hStr.indexOf('{') >= 0) ? 9 : parseInt(hStr, 10);
+var m = (!mStr || mStr.indexOf('{') >= 0) ? 0 : parseInt(mStr, 10);
+if (isNaN(h) || h < 0 || h > 23) h = 9;
+if (isNaN(m) || m < 0 || m > 59) m = 0;
+
+var intent = new android.content.Intent("android.intent.action.SET_ALARM");
 // ⚠️ CRÍTICO: usar new java.lang.Integer() — Rhino pasa JS numbers como double,
 // pero Vivo requiere int. Sin esto, la alarma se crea con la hora actual por defecto.
-intent.putExtra('android.intent.extra.alarm.HOUR', new java.lang.Integer(h));
-intent.putExtra('android.intent.extra.alarm.MINUTES', new java.lang.Integer(m));
-intent.putExtra('android.intent.extra.alarm.MESSAGE', msg);
-intent.putExtra('android.intent.extra.alarm.SKIP_UI', true);
-intent.putExtra('android.intent.extra.alarm.VIBRATE', true);
-// Para días de la semana:
-var days = new java.util.ArrayList();
-days.add(new java.lang.Integer(1)); // 1=Do, 2=Lu, ..., 7=Sá (Android Calendar constants)
-intent.putExtra('android.intent.extra.alarm.DAYS', days);
+intent.putExtra("android.intent.extra.alarm.HOUR",    new java.lang.Integer(h));
+intent.putExtra("android.intent.extra.alarm.MINUTES", new java.lang.Integer(m));
+intent.putExtra("android.intent.extra.alarm.MESSAGE", msg);
+intent.putExtra("android.intent.extra.alarm.SKIP_UI", true);
+intent.putExtra("android.intent.extra.alarm.VIBRATE", true);
+intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+
+// Días de la semana (alarmDays llega como "2,4" etc. — 1=Domingo...7=Sábado,
+// mismas constantes que java.util.Calendar, no hace falta remapear desde el PWA)
+if (daysStr && daysStr.indexOf('{') < 0 && daysStr.length > 0) {
+  var dayParts = daysStr.split(',');
+  var days = new java.util.ArrayList();
+  for (var i = 0; i < dayParts.length; i++) {
+    var dv = parseInt(dayParts[i], 10);
+    if (!isNaN(dv) && dv >= 1 && dv <= 7) days.add(new java.lang.Integer(dv));
+  }
+  if (days.size() > 0) intent.putExtra("android.intent.extra.alarm.DAYS", days);
+}
+
+// ⚠️ CRÍTICO: sin startActivity() el intent se construye pero NUNCA se lanza —
+// no da error (por eso el log de MacroDroid parece "correcto"), simplemente no
+// pasa nada. Bug real detectado en 2026-07: el script en producción llegó a
+// perder estas dos líneas finales, dejando de crear alarmas nuevas silenciosamente.
+var ctx = android.app.ActivityThread.currentApplication();
 ctx.startActivity(intent);
 ```
-**Nota**: Los días en SET_ALARM usan constantes de `java.util.Calendar`: 1=Domingo, 2=Lunes, ..., 7=Sábado. Distinto del formato del PWA (1=Lu..7=Do).
+**Nota**: Los días en SET_ALARM usan constantes de `java.util.Calendar`: 1=Domingo, 2=Lunes, ..., 7=Sábado. Distinto del formato del PWA (1=Lu..7=Do), pero `androidDay=jsDay+1` en `js/init.js` ya genera directamente el valor correcto — el script de MacroDroid NO debe remapear.
 
 ### Eliminar/desactivar alarma (DISMISS) — intent DISMISS_ALARM
 El intent `DISMISS_ALARM` con `SEARCH_MODE=android.label` **SÍ funciona en Vivo** para borrar alarmas por nombre. Confirmado en pruebas reales.
