@@ -151,7 +151,8 @@ function renderEconGastos(){
   /* §D Tipo medio IRPF + ahorro desgravaciones */
   if(dr.decl&&dr.decl.totalTax>0){
     var sinDesgrav=typeof computeIrpfBrackets==='function'?computeIrpfBrackets(dr.baseAfterGD):null;
-    var ahorroDesgrav=sinDesgrav?Math.round((sinDesgrav.totalTax-dr.decl.totalTax+dr.totalQuotaDesgrav)*100)/100:0;
+    /* Comparar cuota BRUTA con bruta: totalTax es neta (ya descuenta el mínimo personal) */
+    var ahorroDesgrav=sinDesgrav?Math.round((sinDesgrav.totalTax-(dr.decl.totalTaxBruto||dr.decl.totalTax)+dr.totalQuotaDesgrav)*100)/100:0;
     h+='<div class="sy-section"><div class="sy-section-title">Resumen fiscal</div>';
     h+='<div class="econ-fiscal-summary">';
     h+='<div class="econ-fiscal-summary-item">';
@@ -389,7 +390,7 @@ function renderIrpfBreakdown(e,dr){
   var _cuotaSinNada=typeof computeIrpfBrackets==='function'?computeIrpfBrackets(e.totBase).totalTax:dr.decl.totalTax;
   var _cuotaTrasGD=typeof computeIrpfBrackets==='function'?computeIrpfBrackets(dr.baseAfterGD).totalTax:dr.decl.totalTax;
   var _ahorroGD=Math.round((_cuotaSinNada-_cuotaTrasGD)*100)/100;
-  var _ahorroBaseDg=Math.round((_cuotaTrasGD-dr.decl.totalTax)*100)/100;
+  var _ahorroBaseDg=Math.round((_cuotaTrasGD-(dr.decl.totalTaxBruto||dr.decl.totalTax))*100)/100;
   h+='<div class="econ-irpf-block">';
   h+='<div class="econ-irpf-block-title">Cálculo de base</div>';
   h+='<div class="econ-irpf-flow">';
@@ -588,12 +589,17 @@ function renderIncomeDonut(e,dr){
   if(otros2>0)sectors.push({label:'Otros',amount:otros2,color:'#94a3b8'});
   if(neto2>0)sectors.push({label:'Neto',amount:neto2,color:'#34d399'});
   if(!sectors.length)return '';
+  /* Normalizar por la suma real de sectores: con devolución de IRPF (declDiff<0)
+     neto2 incluye la devolución y la suma supera al bruto → los ángulos se
+     solaparían si se dividiera por bruto */
+  var donutDenom=0;sectors.forEach(function(s){donutDenom+=s.amount;});
+  if(donutDenom<=0)donutDenom=bruto;
   var cx=200,cy=150,r=95,ir=52;
   var hasSel=Object.keys(_DONUT_SEL).some(function(k){return _DONUT_SEL[k];});
   var ang=0,svgPaths='',svgLabels='';
   for(var i=0;i<sectors.length;i++){
     var s=sectors[i];
-    var sweep=(s.amount/bruto)*Math.PI*2;
+    var sweep=(s.amount/donutDenom)*Math.PI*2;
     var a1=ang,a2=ang+sweep;
     var mid=(a1+a2)/2;
     var sel=!!_DONUT_SEL[i];
@@ -606,7 +612,7 @@ function renderIncomeDonut(e,dr){
     var isRight=Math.sin(mid)>=0;
     var lx3=isRight?lx2+22:lx2-22;
     var anchor=isRight?'start':'end';
-    var pct=bruto>0?Math.round(s.amount/bruto*1000)/10:0;
+    var pct=Math.round(s.amount/donutDenom*1000)/10;
     svgLabels+='<line x1="'+lx.toFixed(1)+'" y1="'+ly.toFixed(1)+'" x2="'+lx2.toFixed(1)+'" y2="'+ly2.toFixed(1)+'" stroke="'+s.color+'" stroke-width=".8" opacity="'+(dim?.35:1)+'"/>';
     svgLabels+='<line x1="'+lx2.toFixed(1)+'" y1="'+ly2.toFixed(1)+'" x2="'+lx3.toFixed(1)+'" y2="'+ly2.toFixed(1)+'" stroke="'+s.color+'" stroke-width=".8" opacity="'+(dim?.35:1)+'"/>';
     svgLabels+='<text x="'+(isRight?lx3+3:lx3-3).toFixed(1)+'" y="'+(ly2-2).toFixed(1)+'" text-anchor="'+anchor+'" font-size="8" fill="'+(dim?'var(--text-dim)':'var(--text-muted)')+'" font-family="var(--font)">'+s.label+'</text>';
@@ -639,7 +645,7 @@ function _bindDonutClick(){
     var idx=parseInt(path.dataset.idx,10);
     _DONUT_SEL[idx]=!_DONUT_SEL[idx];
     /* Re-render just the donut section */
-    var e2=computeEconEx(ECON_YEAR);
+    var e2=computeEconEx(ECON_YEAR,typeof _getMultiRateOpts==='function'?_getMultiRateOpts():{});
     var dr2=computeDeclResult(e2.totBase,e2.totIrpf);
     var tmp=document.createElement('div');tmp.innerHTML=renderIncomeDonut(e2,dr2);
     var oldW=document.getElementById('econDonutWrap');

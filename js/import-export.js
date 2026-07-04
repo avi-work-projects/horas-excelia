@@ -278,7 +278,7 @@ document.getElementById('importFile').addEventListener('change',function(ev){
       if(d.days)ST=d.days;
       if(d.sent)SW=d.sent;
       if(d.monthH)MONTH_H=d.monthH;
-      if(d.rate)DAILY_RATE=d.rate;
+      if(typeof d.rate!=='undefined')DAILY_RATE=d.rate;
       if(typeof d.exclFest!=='undefined')EXCL_FEST=d.exclFest;
       if(typeof d.exclVac!=='undefined')EXCL_VAC=d.exclVac;
       save();render();
@@ -355,7 +355,7 @@ document.getElementById('importAllFile').addEventListener('change',function(ev){
       if(d.days)ST=d.days;
       if(d.sent)SW=d.sent;
       if(d.monthH)MONTH_H=d.monthH;
-      if(d.rate)DAILY_RATE=d.rate;
+      if(typeof d.rate!=='undefined')DAILY_RATE=d.rate;
       if(typeof d.exclFest!=='undefined')EXCL_FEST=d.exclFest;
       if(typeof d.exclVac!=='undefined')EXCL_VAC=d.exclVac;
       if(d.vacEntitlement){VAC_ENTITLEMENT=d.vacEntitlement;saveVacEntitlement(d.vacEntitlement);}

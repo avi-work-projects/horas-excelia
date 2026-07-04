@@ -24,6 +24,9 @@ function _switchEvView(newView){
     if(EV_VIEW_STATE[newView].year!=null)EV_YEAR=EV_VIEW_STATE[newView].year;
     if(EV_VIEW_STATE[newView].month!=null)EV_MONTH=EV_VIEW_STATE[newView].month;
   }
+  /* La nueva pestaña siempre empieza arriba (no heredar el scroll de la anterior) */
+  var _sb=document.querySelector('#eventsOverlay .sy-body');
+  if(_sb)_sb.scrollTop=0;
 }
 var EV_VIEW = 'cal';  // 'cal' | 'months' | 'upcoming' | 'annual'
 var EV_EDIT = null;
@@ -97,6 +100,14 @@ function evDk(d){
 }
 
 /* ── Lógica de repetición ────────────────────────────────── */
+/* Fecha con día clampado al último del mes: evita el rollover de JS
+   (new Date(2027,1,29) → 1-mar) que hacía que un anual del 29-feb
+   apareciera el 1-mar y que un mensual del 29/30/31 desapareciera
+   en los meses cortos. */
+function _evClampDate(y,m,day){
+  var last=new Date(y,m+1,0).getDate();
+  return new Date(y,m,Math.min(day,last));
+}
 function eventOccursOn(ev,ds){
   /* Eventos "Otros" con días específicos no consecutivos: solo coincide
      si la fecha está exactamente en el array ev.dates */
@@ -118,8 +129,8 @@ function eventOccursOn(ev,ds){
     return false;
   }
   if(r.type==='monthly-date'){
-    var oS=new Date(d.getFullYear(),d.getMonth(),start.getDate());
-    if(isNaN(oS.getTime())||oS<start)return false;
+    var oS=_evClampDate(d.getFullYear(),d.getMonth(),start.getDate());
+    if(oS<start)return false;
     var oE=new Date(oS);oE.setDate(oE.getDate()+span);
     return d>=oS&&d<=oE;
   }
@@ -130,8 +141,8 @@ function eventOccursOn(ev,ds){
     return d>=oS&&d<=oE;
   }
   if(r.type==='yearly'){
-    var oS=new Date(d.getFullYear(),start.getMonth(),start.getDate());
-    if(isNaN(oS.getTime())||oS<start)return false;
+    var oS=_evClampDate(d.getFullYear(),start.getMonth(),start.getDate());
+    if(oS<start)return false;
     var oE=new Date(oS);oE.setDate(oE.getDate()+span);
     return d>=oS&&d<=oE;
   }
@@ -411,22 +422,18 @@ function getNextOccurrence(ev,today){
   }
   var r=ev.repeat;
   if(r.type==='yearly'){
-    var t=new Date(today.getFullYear(),start.getMonth(),start.getDate());
-    if(isNaN(t.getTime()))return null;
+    var t=_evClampDate(today.getFullYear(),start.getMonth(),start.getDate());
     var te=new Date(t);te.setDate(te.getDate()+span);
     if(te>=today)return t>=today?t:today;
-    t=new Date(today.getFullYear()+1,start.getMonth(),start.getDate());
-    return isNaN(t.getTime())?null:t;
+    return _evClampDate(today.getFullYear()+1,start.getMonth(),start.getDate());
   }
   if(r.type==='monthly-date'){
-    var t=new Date(today.getFullYear(),today.getMonth(),start.getDate());
-    if(!isNaN(t.getTime())){
-      var te=new Date(t);te.setDate(te.getDate()+span);
-      if(te>=today)return t>=today?t:today;
-    }
+    var t=_evClampDate(today.getFullYear(),today.getMonth(),start.getDate());
+    var te=new Date(t);te.setDate(te.getDate()+span);
+    if(te>=today)return t>=today?t:today;
     var nm=today.getMonth()+1,ny=today.getFullYear();
     if(nm>11){nm=0;ny++;}
-    return new Date(ny,nm,start.getDate());
+    return _evClampDate(ny,nm,start.getDate());
   }
   if(r.type==='monthly-first'){
     var t=new Date(today.getFullYear(),today.getMonth(),1);
@@ -493,14 +500,17 @@ function renderEvUpcoming(){
   var _seenEv={};
   for(var w=0;w<3;w++){
     for(var d=0;d<7;d++){
-      var day=new Date(wk0.getTime()+(w*7+d)*86400000);
+      var day=new Date(wk0);day.setDate(day.getDate()+(w*7+d));
       var ds=evDk(day);
       var evs=getEventsOn(ds);
       evs.forEach(function(ev){
         if(_isVipBdayTooFar(ev,day,today))return;
         if(_seenEv[ev.id])return;
+        /* Recurrentes: ignorar ocurrencias ya pasadas de esta semana,
+           el evento se asigna a su PRÓXIMA ocurrencia (day >= hoy). */
+        if(ev.repeat&&day<today)return;
         _seenEv[ev.id]=true;
-        var _startD=new Date(ev.start+'T00:00:00');
+        var _startD=ev.repeat?new Date(day):new Date(ev.start+'T00:00:00');
         weeks[w][ev.id]={ev:ev,firstDate:_startD};
       });
     }
@@ -509,6 +519,7 @@ function renderEvUpcoming(){
   var anyEvents=weeks.some(function(wk){
     return Object.keys(wk).some(function(id){
       var item=wk[id];var ev=item.ev;
+      if(ev.repeat)return true; /* firstDate ya es la próxima ocurrencia */
       var evEndStr=ev.end&&ev.end!==ev.start?ev.end:ev.start;
       return evEndStr>=todayStr;
     });
@@ -519,7 +530,7 @@ function renderEvUpcoming(){
     for(var fw=3;fw<53;fw++){
       var fwMap={};
       for(var fd3=0;fd3<7;fd3++){
-        var fday=new Date(wk0.getTime()+(fw*7+fd3)*86400000);
+        var fday=new Date(wk0);fday.setDate(fday.getDate()+(fw*7+fd3));
         var fds=evDk(fday);
         var fevs=getEventsOn(fds);
         fevs.forEach(function(ev){
@@ -529,7 +540,7 @@ function renderEvUpcoming(){
       }
       if(Object.keys(fwMap).length>0){
         fallbackMap=fwMap;
-        var fwStart=new Date(wk0.getTime()+fw*7*86400000);
+        var fwStart=new Date(wk0);fwStart.setDate(fwStart.getDate()+fw*7);
         var fwEnd=new Date(fwStart);fwEnd.setDate(fwEnd.getDate()+6);
         fallbackLabel='Semana del '+fwStart.getDate()+'/'+(fwStart.getMonth()+1)+' al '+fwEnd.getDate()+'/'+(fwEnd.getMonth()+1);
         break;
@@ -557,8 +568,9 @@ function renderEvUpcoming(){
     ids.forEach(function(id){
       var item=wkMap[id];var ev=item.ev;
       var diffToday=Math.round((item.firstDate-today)/86400000);
-      // Skip past single-day events (multi-day events spanning today show as "En curso")
-      if(diffToday<0){
+      // Skip past single-day events (multi-day events spanning today show as "En curso";
+      // recurrentes nunca entran aquí: su firstDate es la próxima ocurrencia)
+      if(diffToday<0&&!ev.repeat){
         var evEndStr=ev.end&&ev.end!==ev.start?ev.end:ev.start;
         if(evEndStr<todayStr)return;
       }
@@ -1946,7 +1958,15 @@ function bindEvEvents(){
   var _vdMenu=document.getElementById('evAnnVdMenu');
   if(_vdBtn&&_vdMenu){
     _vdBtn.addEventListener('click',function(e){e.stopPropagation();_vdMenu.classList.toggle('open');});
-    document.addEventListener('click',function _closeVd(){_vdMenu.classList.remove('open');});
+    /* Un solo listener global (bindEvEvents se ejecuta en cada re-render; sin el
+       flag se acumularían listeners en document con referencias a menús muertos) */
+    if(!document._evVdCloser){
+      document._evVdCloser=true;
+      document.addEventListener('click',function(){
+        var m=document.getElementById('evAnnVdMenu');
+        if(m)m.classList.remove('open');
+      });
+    }
     _vdMenu.querySelectorAll('.ev-ann-vd-opt[data-view]').forEach(function(opt){
       opt.addEventListener('click',function(e){
         e.stopPropagation();

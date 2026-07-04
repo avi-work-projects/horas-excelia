@@ -2,9 +2,18 @@
    ALARMS — Gestión de alarmas creadas desde el PWA
    ============================================================ */
 
-var ALARMS=[];
+var ALARMS_SK='excelia-alarms-v1';
+var ALARMS=(function(){
+  try{
+    var r=localStorage.getItem(ALARMS_SK);
+    if(r){var a=JSON.parse(r);if(Array.isArray(a))return a;}
+  }catch(e){}
+  return [];
+})();
 
-function saveAlarms(){/* sin persistencia */}
+function saveAlarms(){
+  try{localStorage.setItem(ALARMS_SK,JSON.stringify(ALARMS));}catch(e){}
+}
 
 // Añadir una alarma al registro
 // alarm: { type:'birthday'|'event'|'other', label, hour, minute, days:[]|null, targetDate:'YYYY-MM-DD'|null }
