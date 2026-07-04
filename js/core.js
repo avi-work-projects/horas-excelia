@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v237 — Fixes: persistencia de alarmas, recurrentes en Próximos, horas custom en resumen anual, cálculos fiscales + UX pestañas';
+var APP_VERSION = 'v238 — Tema claro: colores de horas (6,5h/7h/8h/9h) con contraste correcto en la home';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

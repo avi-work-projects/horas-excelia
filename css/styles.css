@@ -212,6 +212,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .day-cell.h7 .day-hours{color:#fbbf24}.day-cell.h7{background:rgba(251,191,36,.06)}
 .day-cell.h8 .day-hours{color:#60a5fa}.day-cell.h8{background:rgba(96,165,250,.06)}
 .day-cell.h9 .day-hours{color:#34d399}.day-cell.h9{background:rgba(52,211,153,.06)}
+/* Tema claro: los tonos anteriores son para fondo oscuro y apenas contrastan
+   sobre blanco. Mismo matiz por hora, más profundo, y fondo tintado más
+   presente para que la celda se distinga. */
+[data-theme="light"] .day-cell.h65 .day-hours{color:#c2410c}
+[data-theme="light"] .day-cell.h65{background:rgba(234,88,12,.12)}
+[data-theme="light"] .day-cell.h7 .day-hours{color:#d97706}
+[data-theme="light"] .day-cell.h7{background:rgba(217,119,6,.13)}
+[data-theme="light"] .day-cell.h8 .day-hours{color:#2563eb}
+[data-theme="light"] .day-cell.h8{background:rgba(37,99,235,.10)}
+[data-theme="light"] .day-cell.h9 .day-hours{color:#059669}
+[data-theme="light"] .day-cell.h9{background:rgba(5,150,105,.10)}
 
 /* ── OVERLAY BASE (summary, econ, bday, events) ── */
 .full-overlay{position:fixed;inset:0;z-index:300;background:var(--bg);display:flex;flex-direction:column;overflow:hidden;transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1)}
