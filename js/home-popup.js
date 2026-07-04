@@ -35,7 +35,7 @@
       if(bd<today)bd.setFullYear(today.getFullYear()+1);
       var diff=Math.round((bd-today)/86400000);
       if(diff>1)return;
-      var label=b.name+(diff===0?' (\u00a1hoy!)':' (ma\u00f1ana!)');
+      var label=escHtml(b.name)+(diff===0?' (\u00a1hoy!)':' (ma\u00f1ana!)');
       var bkey=b.name+'_'+b.month+'_'+b.day;
       _todayBdayKeys[bkey]=true;
       items.push({type:'bday',text:'&#127874; '+label});
@@ -51,7 +51,7 @@
         var diff=Math.round((bd-today)/86400000);
         if(diff>7)return;
         if(isBdayAlarmSet(b))return;
-        var label=b.name+' (en '+diff+'d)';
+        var label=escHtml(b.name)+' (en '+diff+'d)';
         items.push({type:'vip',text:'&#11088; '+label+' \u2014 sin alarma'});
       });
     }

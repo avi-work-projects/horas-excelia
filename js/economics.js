@@ -148,7 +148,8 @@ function econBarChart(data,labels,color){
   var bW=W-PL;var maxV=Math.max.apply(null,data)||1;
   var step=2500;while(maxV/step>5&&step<1e12)step*=2;
   var bw=Math.floor((bW-n*2)/n),gap=2;
-  var today=new Date();var cm=ECON_YEAR===today.getFullYear()?today.getMonth():-1;
+  /* cm=12 en años pasados → todos los meses con opacidad "pasado" (.45), no "futuro" (.25) */
+  var today=new Date();var cm=ECON_YEAR<today.getFullYear()?12:(ECON_YEAR===today.getFullYear()?today.getMonth():-1);
   var svg='<svg viewBox="0 0 '+W+' '+(H+PB)+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">';
   var gridCount=0;
   for(var gv=step;gv<=maxV*1.05;gv+=step){
@@ -502,9 +503,11 @@ function closeEcon(){
   ov.classList.remove('open');
   setTimeout(function(){ov.style.display='none';},320);
 }
-function reRenderEcon(){
+function reRenderEcon(resetScroll){
+  /* resetScroll=true al cambiar de pestaña: la nueva pestaña empieza arriba.
+     En acciones dentro de la misma pestaña se conserva la posición. */
   var body=document.querySelector('#econOverlay .sy-body');
-  var scrollTop=body?body.scrollTop:0;
+  var scrollTop=(body&&!resetScroll)?body.scrollTop:0;
   document.getElementById('econContent').innerHTML=renderEconContent();
   bindEconEvents();
   var body2=document.querySelector('#econOverlay .sy-body');
@@ -515,10 +518,10 @@ function reRenderEcon(){
 function bindEconEvents(){
   bindNavBar('econ',closeEcon);
   // Tabs
-  document.getElementById('ecTabResumen').addEventListener('click',function(){ECON_VIEW='resumen';reRenderEcon();});
-  document.getElementById('ecTabDias').addEventListener('click',function(){ECON_VIEW='dias';reRenderEcon();});
-  document.getElementById('ecTabGastos').addEventListener('click',function(){ECON_VIEW='gastos';reRenderEcon();});
-  document.getElementById('ecTabAnalisis').addEventListener('click',function(){ECON_VIEW='analisis';reRenderEcon();});
+  document.getElementById('ecTabResumen').addEventListener('click',function(){ECON_VIEW='resumen';reRenderEcon(true);});
+  document.getElementById('ecTabDias').addEventListener('click',function(){ECON_VIEW='dias';reRenderEcon(true);});
+  document.getElementById('ecTabGastos').addEventListener('click',function(){ECON_VIEW='gastos';reRenderEcon(true);});
+  document.getElementById('ecTabAnalisis').addEventListener('click',function(){ECON_VIEW='analisis';reRenderEcon(true);});
   var gearBtn=document.getElementById('ecGear');
   if(gearBtn)gearBtn.addEventListener('click',function(){
     NAV_BACK=function(){closeEcon();openEcon();};openFiscal();

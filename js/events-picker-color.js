@@ -91,7 +91,11 @@ function _bindColorPicker(container,prefix,onChange){
   var wrap=container.querySelector('#'+prefix+'Wrap');
   if(!wrap)return{getColor:function(){return'#888';}};
   var current=wrap.querySelector('.ev-color-dot.selected');
-  var curHex=current?current.dataset.hex:'#38bdf8';
+  /* Colores personalizados no están en la rejilla (ningún dot .selected):
+     recuperar el color real del input hex, que siempre se pinta con selHex */
+  var _hxInit=container.querySelector('#'+prefix+'Hex');
+  var curHex=current?current.dataset.hex
+    :(_hxInit&&/^#[0-9a-fA-F]{6}$/.test(_hxInit.value)?_hxInit.value:'#38bdf8');
   function updatePreview(hex){
     curHex=hex;
     var dots=wrap.querySelectorAll('.ev-color-dot');

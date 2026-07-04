@@ -108,7 +108,9 @@ function _renderAnalisisGastos(){
       h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-red)">'+fcPlain(_hCuota)+'</span><span class="hip-stat-lbl">Hipoteca'+resSuffix+'</span></div>';
     }
   }
-  h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-orange)">'+fcPlain(Math.ceil(tGastos*0.82/resDiv))+'</span><span class="hip-stat-lbl">Gastos'+resSuffix+' -18%*</span></div>';
+  /* tGastos ya lleva el -18% aplicado por item a los semanales (línea 47); no volver a aplicarlo aquí
+     para que esta tarjeta cuadre con el balance "Sin asignar" */
+  h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-orange)">'+fcPlain(Math.round(tGastos/resDiv*100)/100)+'</span><span class="hip-stat-lbl">Gastos'+resSuffix+'*</span></div>';
   if(tInv>0)h+='<div class="hip-stat"><span class="hip-stat-val" style="color:#c084fc">'+fcPlain(Math.round(tInv/resDiv*100)/100)+'</span><span class="hip-stat-lbl">Inversiones'+resSuffix+'</span></div>';
   h+='<div class="hip-stat" style="border:2px solid '+(balance>=0?'#fbbf24':'var(--c-red)')+';box-shadow:0 0 8px '+(balance>=0?'#fbbf2455':'rgba(255,107,107,.33)')+'"><span class="hip-stat-val" style="color:'+(balance>=0?'#fbbf24':'var(--c-red)')+'">'+fcPlain(Math.ceil(balance/resDiv))+'</span><span class="hip-stat-lbl">Sin asignar'+resSuffix+'</span></div>';
   h+='</div>';
@@ -202,7 +204,8 @@ function _renderAnalisisGastos(){
       var _ec2=computeEconEx(ECON_YEAR,_mrOpts2);
       var _dr2=computeDeclResult(_ec2.totBase,_ec2.totIrpf);
       var _sinDesgrav=computeIrpfBrackets(_dr2.baseAfterGD);
-      _ahorroTotal=Math.round((_sinDesgrav.totalTax-_dr2.decl.totalTax+(_dr2.totalQuotaDesgrav||0))*100)/100;
+      /* Comparar bruta con bruta: decl.totalTax es neta (descuenta el mínimo personal) */
+      _ahorroTotal=Math.round((_sinDesgrav.totalTax-(_dr2.decl.totalTaxBruto||_dr2.decl.totalTax)+(_dr2.totalQuotaDesgrav||0))*100)/100;
     }
     /* Recoger gastos desgravables y calcular total bruto para prorrateo */
     var _desgItems=[];

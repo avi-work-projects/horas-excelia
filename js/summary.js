@@ -50,9 +50,11 @@ function computeYearlySummary(year){
       } else {
         lvFuture++;
         if(t==='normal'){
-          toWork++;hoursToWork+=eh;mHoursP[m]+=eh;mDaysP[m]++;
+          /* dayH respeta las horas personalizadas (ST[k].hours), igual que la home */
+          var fh2=dayH(d);
+          toWork++;hoursToWork+=fh2;mHoursP[m]+=fh2;mDaysP[m]++;
           if(w===5)d65F++;
-          else{var gh=getMonthH(d.getFullYear(),m,d.getDate());if(gh===7)d7F++;else if(gh===8)d8F++;else d9F++;}
+          else{if(fh2===7)d7F++;else if(fh2===8)d8F++;else d9F++;}
         } else if(t==='vacaciones'){
           vacFuture++;
           if(!EXCL_VAC){toWork++;hoursToWork+=eh;mHoursP[m]+=eh;mDaysP[m]++;if(w===5)d65F++;else{var gh2=getMonthH(d.getFullYear(),m,d.getDate());if(gh2===7)d7F++;else if(gh2===8)d8F++;else d9F++;}}

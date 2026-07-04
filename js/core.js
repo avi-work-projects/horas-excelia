@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v236 — Económico: swipe entre pestañas no interfiere con scroll horizontal del Desglose Mensual';
+var APP_VERSION = 'v237 — Fixes: persistencia de alarmas, recurrentes en Próximos, horas custom en resumen anual, cálculos fiscales + UX pestañas';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

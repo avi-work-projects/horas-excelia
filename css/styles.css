@@ -1623,6 +1623,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bd-alarm-vip-lbl{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--text);cursor:pointer;-webkit-user-select:none;user-select:none}
 /* ── RESPONSIVE (mobile header) ── */
 @media(max-width:520px){
+  /* IVA trimestral: compactar celdas para que los 4 trimestres quepan sin scroll horizontal */
+  .econ-quarter-grid{min-width:0}
+  .econ-qcell{padding:8px 3px}
+  .econ-qcell .sy-val-sm{font-size:.68rem}
+  .econ-qcell .sy-lbl{font-size:.52rem}
   .data-btn:has(.btn-icon){width:56px;height:56px}
   #homeBtn{width:62px!important;height:62px!important}
   .btn-icon{width:36px;height:36px}
