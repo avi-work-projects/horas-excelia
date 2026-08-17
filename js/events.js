@@ -153,6 +153,40 @@ function getEventsOn(ds){
   return EVENTS.filter(function(ev){return eventOccursOn(ev,ds);});
 }
 
+/* ── Norma general: máximo EV_MAX_DAY_EVENTS eventos en un mismo día ──
+   Devuelve la primera fecha 'YYYY-MM-DD' que se pasaría del límite al
+   guardar newEv (null = se puede guardar). excludeId: id del evento que se
+   está editando (no cuenta contra sí mismo). */
+function _fmtDayEs(ds){return ds.slice(8,10)+'/'+ds.slice(5,7)+'/'+ds.slice(0,4);}
+function evDayLimitExceeded(newEv,excludeId){
+  var days=[],i,g;
+  if(newEv.dates&&newEv.dates.length){
+    days=newEv.dates.slice(0,400);
+  }else{
+    var s=new Date(newEv.start+'T00:00:00');
+    var e=new Date((newEv.end||newEv.start)+'T00:00:00');
+    for(var d=new Date(s),g=0;d<=e&&g<400;d.setDate(d.getDate()+1),g++)days.push(evDk(d));
+  }
+  if(newEv.repeat){
+    /* Recurrentes: comprobar el próximo año de ocurrencias */
+    var t=new Date();t.setHours(0,0,0,0);
+    for(i=0;i<366;i++){
+      var dd=new Date(t);dd.setDate(dd.getDate()+i);
+      var ds2=evDk(dd);
+      if(eventOccursOn(newEv,ds2)&&days.indexOf(ds2)===-1)days.push(ds2);
+    }
+  }
+  for(i=0;i<days.length;i++){
+    var n=0;
+    for(var j=0;j<EVENTS.length;j++){
+      if(excludeId&&EVENTS[j].id===excludeId)continue;
+      if(eventOccursOn(EVENTS[j],days[i]))n++;
+    }
+    if(n>=EV_MAX_DAY_EVENTS)return days[i];
+  }
+  return null;
+}
+
 function hasUpcomingEvent(){
   var t=new Date();t.setHours(0,0,0,0);
   for(var i=0;i<7;i++){
@@ -188,18 +222,26 @@ function evMarkerHtml(ev,pastClass,sizeClass,defaultShape){
   var shape=ev.shape||defaultShape||'circle';
   var pmk=pastClass||'';
   var sz=sizeClass?(' '+sizeClass):'';
-  /* X-shapes se renderizan con SVG de doble stroke (negro debajo + color encima)
-     para que el borde sea uniforme y los dos brazos no muestren dobles bordes. */
-  if(shape==='x-thick'||shape==='x-thin'){
-    var swOut=shape==='x-thick'?9:5.5;
-    var swIn =shape==='x-thick'?5:2.6;
-    var svg='<svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">'
-      +'<path d="M-7,-7 L7,7 M-7,7 L7,-7" stroke="#000" stroke-width="'+swOut+'" stroke-linecap="round" fill="none"/>'
-      +'<path d="M-7,-7 L7,7 M-7,7 L7,-7" stroke="'+color+'" stroke-width="'+swIn+'" stroke-linecap="round" fill="none"/>'
-      +'</svg>';
-    return '<span class="ev-annual-marker ev-shape-'+shape+pmk+sz+'" data-id="'+ev.id+'">'+svg+'</span>';
-  }
-  return '<span class="ev-annual-marker ev-shape-'+shape+pmk+sz+'" data-id="'+ev.id+'" style="color:'+color+'"></span>';
+  /* Todas las formas se dibujan con evShapeSvg() → mismo grosor de borde
+     (EV_SHAPE_BW) y escalado automático al tamaño del contenedor. */
+  return '<span class="ev-annual-marker ev-shape-'+shape+pmk+sz+'" data-id="'+ev.id+'" style="color:'+color+'">'+evShapeSvg(shape)+'</span>';
+}
+/* Marcador "+" (hay más eventos de los que caben en el día) */
+function evMorePlusHtml(extraClass){
+  return '<span class="ev-annual-marker ev-marker-more'+(extraClass?' '+extraClass:'')+'">'+evMorePlusSvg()+'</span>';
+}
+/* Distribución de marcadores puntuales en anual/4-meses:
+   1 → cuadrado entero · 2 → izquierda/derecha · 3 → pirámide · 4 → cubo 2×2
+   >4 → 3 marcadores + "+" en la 4ª posición. */
+var EV_MAX_DAY_EVENTS = 8;   /* norma general: máximo 8 eventos en un mismo día */
+var EV_CAL_BADGE_STACK = 5;  /* 1-mes: badges apilados desde abajo; los que sobran van bajo el número del día */
+var EV_CAL_CORNER_STACK = 4; /* 1-mes: marcadores (Otros/VIP) en la esquina sup. dcha; los que sobran, ídem */
+function evAnnualXsHtml(items){
+  if(!items.length)return '';
+  var n=items.length;
+  var shown=items;
+  if(n>4)shown=items.slice(0,3).concat([evMorePlusHtml()]);
+  return '<div class="ev-annual-xs ev-xs-n'+Math.min(n,4)+'">'+shown.join('')+'</div>';
 }
 /* ── Helper: estrella VIP como SVG (relleno dorado + borde negro)
    Sustituye al emoji ⭐ que dependía del render del SO y no casaba con
@@ -234,7 +276,10 @@ function renderEvCalMonth(){
   var multiEvs=EVENTS.filter(function(ev){return !ev.repeat&&!(ev.dates&&ev.dates.length)&&ev.end&&(ev.end>ev.start||isEvBarAlways(ev));});
   var multiIds={};multiEvs.forEach(function(ev){multiIds[ev.id]=true;});
   var DN7=['L','M','X','J','V','S','D'];
-  var h='<div class="ev-week-hdr">';
+  /* Contenedor propio: evita el gap:16px de .sy-body entre semanas (así caben
+     las 6 semanas de meses como agosto 2026) y acota el sticky de la cabecera */
+  var h='<div class="ev-month-wrap">';
+  h+='<div class="ev-week-hdr">';
   DN7.forEach(function(n){h+='<div>'+n+'</div>';});
   h+='</div>';
   var first=new Date(EV_YEAR,EV_MONTH,1);
@@ -286,30 +331,40 @@ function renderEvCalMonth(){
       else{if(bspanStart>=0){bspans.push({s:bspanStart,e:di-1});bspanStart=-1;}}
       var cls='ev-cell'+(inM?'':' out-m')+(isTod?' today-ev':'')+(past?' past-cal-day':'')+(edow===0||edow===6?' weekend':'')+(dt&&dt!=='normal'?' ev-day-'+dt:'')+(inPuente?' ev-puente':'');
       h+='<div class="'+cls+'" data-ds="'+ds+'"><div class="ev-num">'+d.getDate()+'</div>';
-      /* Separar eventos en 2 grupos: Otros (esquina superior derecha) y resto (centro/abajo) */
-      var _otrosCorner='',_otrosRest='';
+      /* Separar eventos en 2 grupos:
+         - Otros y cumplea\u00f1os VIP (\u2b50) \u2192 columna en la esquina superior derecha
+         - resto \u2192 badges apilados desde abajo
+         Lo que no cabe en cada pila (a partir del 6\u00ba evento del d\u00eda) se dibuja
+         en una fila justo DEBAJO del n\u00famero del d\u00eda, no continuando la pila. */
+      var _corner=[],_badges=[];
       evs.forEach(function(ev){
         if(multiIds[ev.id])return;
         var _isVipBday=ev.id.indexOf('ev-bday-vip-')===0;
-        var _isOtros=!_isVipBday&&(ev.type==='Otros'||(typeof getEvType==='function'&&getEvType(ev)==='Otros'));
-        if(_isOtros){
-          /* Otros: esquina superior derecha (apilados verticalmente). Si tiene shape, usar marker; si no, usar dot peque\u00f1o con color */
-          if(ev.shape){
-            _otrosCorner+=evMarkerHtml(ev, past?' past-marker':'', 'ev-marker-lg');
-          } else {
-            _otrosCorner+='<span class="ev-annual-marker ev-shape-circle ev-marker-lg'+(past?' past-marker':'')+'" data-id="'+ev.id+'" style="color:'+ev.color+'"></span>';
-          }
+        if(_isVipBday){
+          /* En 1-mes los cumplea\u00f1os VIP se marcan con estrella (en anual/4-meses
+             es la casilla del d\u00eda la que se pinta de amarillo) */
+          _corner.push({vip:true,id:ev.id});
           return;
         }
-        var _rawName=ev.title.replace(/^\u2b50\s*/,'').replace(/^Cumple\s+/,'');
-        var _bTitle=_isVipBday?escHtml(_rawName.split(/\s+/)[0]):escHtml(ev.title);
-        var _bStyle=_isVipBday
-          ?'color:#fff;border-color:#fbbf24;border-width:2px;background:#fbbf24cc;box-shadow:0 0 8px rgba(251,191,36,.55)'
-          :'color:#fff;border-color:'+ev.color+';background:'+ev.color+'cc';
-        _otrosRest+='<div class="ev-badge" data-id="'+ev.id+'" style="'+_bStyle+'"></div>';
+        var _isOtros=(ev.type==='Otros'||(typeof getEvType==='function'&&getEvType(ev)==='Otros'));
+        if(_isOtros){_corner.push({vip:false,ev:ev});return;}
+        _badges.push('<div class="ev-badge" data-id="'+ev.id+'" style="color:#fff;border-color:'+ev.color+';background:'+ev.color+'cc"></div>');
       });
-      if(_otrosCorner)h+='<div class="ev-otros-corner">'+_otrosCorner+'</div>';
-      h+='<div class="ev-badges-wrap">'+_otrosRest+'</div>';
+      var _pmkM=past?' past-marker':'';
+      function _cornerHtml(it,szCls){
+        return it.vip?vipStarSvgHtml(it.id,_pmkM,szCls)
+                     :evMarkerHtml(it.ev,_pmkM,szCls,'circle');
+      }
+      var _ovf='';
+      _corner.slice(EV_CAL_CORNER_STACK).forEach(function(it){_ovf+=_cornerHtml(it,'ev-marker-ovf');});
+      _ovf+=_badges.slice(EV_CAL_BADGE_STACK).join('');
+      if(_corner.length){
+        h+='<div class="ev-otros-corner">';
+        _corner.slice(0,EV_CAL_CORNER_STACK).forEach(function(it){h+=_cornerHtml(it,'ev-marker-lg');});
+        h+='</div>';
+      }
+      if(_ovf)h+='<div class="ev-day-overflow'+(_corner.length?' with-corner':'')+'">'+_ovf+'</div>';
+      h+='<div class="ev-badges-wrap">'+_badges.slice(0,EV_CAL_BADGE_STACK).join('')+'</div>';
       h+='</div>';
     }
     if(bspanStart>=0)bspans.push({s:bspanStart,e:6});
@@ -345,6 +400,7 @@ function renderEvCalMonth(){
     h+='</div>'; // ev-week-outer
     cur.setDate(cur.getDate()+7);
   }
+  h+='</div>'; // ev-month-wrap
   return h;
 }
 
@@ -673,7 +729,11 @@ function renderEvAnnual(){
           else if((EV_ANNUAL_VIEW==='fiestas'||EV_ANNUAL_VIEW==='vacaciones')&&dt==='vacaciones')fiestasCls=' ann-vac';
         }
         var past=inM&&d<today;
-        var cls='ev-annual-day'+(inM?'':' out-m')+(isT?' ann-today':'')+(past?' past-cal-day':'')+puenteCls+fiestasCls;
+        /* Cumpleaños VIP: la propia casilla del día se pinta de amarillo con
+           borde amarillo oscuro (ya no se dibuja la estrella en anual/4-meses) */
+        var vipHidden0=EV_ANNUAL_FILTER_HIDDEN.indexOf('Cumpleaños VIP')!==-1;
+        var _vipDay=inM&&!vipHidden0&&typeof BDAYS!=='undefined'&&Array.isArray(BDAYS)&&BDAYS.some(function(b){return b.vip&&b.day===d.getDate()&&b.month===d.getMonth()+1;});
+        var cls='ev-annual-day'+(inM?'':' out-m')+(isT?' ann-today':'')+(past?' past-cal-day':'')+puenteCls+fiestasCls+(_vipDay?' ann-vip-bday':'');
         var bg='';
         if(inM){
           if(EV_ANNUAL_VIEW==='puentes'){
@@ -687,23 +747,17 @@ function renderEvAnnual(){
         }
         var sty=bg?' style="background:'+bg+'"':'';
         var dsAttr=inM?' data-ds="'+ds+'"':'';
-        // Eventos puntuales: ✕ aspas para regulares, ⭐ para VIP — todos centrados (z-index:3)
-        var vipHidden=EV_ANNUAL_FILTER_HIDDEN.indexOf('Cumpleaños VIP')!==-1;
+        // Eventos puntuales: marcadores centrados en rejilla 2×2 (z-index:3)
         var _annSd='';
         if(inM){
           var _singleEvs=evs.filter(function(ev){return !multiIds[ev.id]&&annEvVisible(ev)&&ev.id.indexOf('ev-bday-vip-')!==0;});
-          var _vipBdays=(!vipHidden&&typeof BDAYS!=='undefined'&&Array.isArray(BDAYS))?(function(){var dd2=d.getDate(),dm2=d.getMonth()+1;return BDAYS.filter(function(b){return b.vip&&b.day===dd2&&b.month===dm2;});})():[];
-          if(_singleEvs.length||_vipBdays.length){
+          if(_singleEvs.length){
             var _pmk=past?' past-marker':'';
-            var _tot=_singleEvs.length+_vipBdays.length;
-            var _dense=_tot>=7?' ev-xs-vvmany':_tot>=5?' ev-xs-vmany':_tot>=3?' ev-xs-many':'';
-            _annSd='<div class="ev-annual-xs'+_dense+'">';
-            _singleEvs.forEach(function(ev){
+            var _annItems=_singleEvs.map(function(ev){
               var _typeOtros=typeof getEvType==='function'&&getEvType(ev)==='Otros';
-              _annSd+=evMarkerHtml(ev,_pmk,'',_typeOtros?'circle':'rounded');
+              return evMarkerHtml(ev,_pmk,'',_typeOtros?'circle':'rounded');
             });
-            _vipBdays.forEach(function(ev){_annSd+=vipStarSvgHtml(ev.id,_pmk);});
-            _annSd+='</div>';
+            _annSd=evAnnualXsHtml(_annItems);
           }
         }
         h+='<div class="'+cls+'"'+sty+dsAttr+'>'+_annSd+'</div>';
@@ -846,7 +900,9 @@ function renderEvQuad(){
           else if((EV_ANNUAL_VIEW==='fiestas'||EV_ANNUAL_VIEW==='vacaciones')&&dt==='vacaciones')fiestasCls=' ann-vac';
         }
         var past=inM&&d<today;
-        var cls='ev-annual-day'+(inM?'':' out-m')+(isT?' ann-today':'')+(past?' past-cal-day':'')+puenteCls+fiestasCls;
+        /* Cumpleaños VIP: casilla amarilla con borde amarillo oscuro (sin estrella) */
+        var _vipDay=inM&&!vipHidden&&typeof BDAYS!=='undefined'&&Array.isArray(BDAYS)&&BDAYS.some(function(b){return b.vip&&b.day===d.getDate()&&b.month===d.getMonth()+1;});
+        var cls='ev-annual-day'+(inM?'':' out-m')+(isT?' ann-today':'')+(past?' past-cal-day':'')+puenteCls+fiestasCls+(_vipDay?' ann-vip-bday':'');
         var bg='';
         if(inM){
           if(EV_ANNUAL_VIEW==='puentes'){
@@ -858,22 +914,17 @@ function renderEvQuad(){
         }
         var sty=bg?' style="background:'+bg+'"':'';
         var dsAttr=inM?' data-ds="'+ds+'"':'';
-        // Eventos puntuales: ✕ aspas para regulares, ⭐ para VIP — todos centrados (z-index:3)
+        // Eventos puntuales: marcadores centrados en rejilla 2×2 (z-index:3)
         var _quadSd='';
         if(inM){
           var _singleEvs=evs.filter(function(ev){return !multiIds[ev.id]&&annEvVisible(ev)&&ev.id.indexOf('ev-bday-vip-')!==0;});
-          var _vipBdays=(!vipHidden&&typeof BDAYS!=='undefined'&&Array.isArray(BDAYS))?(function(){var dd2=d.getDate(),dm2=d.getMonth()+1;return BDAYS.filter(function(b){return b.vip&&b.day===dd2&&b.month===dm2;});})():[];
-          if(_singleEvs.length||_vipBdays.length){
+          if(_singleEvs.length){
             var _qpmk=past?' past-marker':'';
-            var _qtot=_singleEvs.length+_vipBdays.length;
-            var _qdense=_qtot>=7?' ev-xs-vvmany':_qtot>=5?' ev-xs-vmany':_qtot>=3?' ev-xs-many':'';
-            _quadSd='<div class="ev-annual-xs'+_qdense+'">';
-            _singleEvs.forEach(function(ev){
+            var _quadItems=_singleEvs.map(function(ev){
               var _typeOtros=typeof getEvType==='function'&&getEvType(ev)==='Otros';
-              _quadSd+=evMarkerHtml(ev,_qpmk,'',_typeOtros?'circle':'rounded');
+              return evMarkerHtml(ev,_qpmk,'',_typeOtros?'circle':'rounded');
             });
-            _vipBdays.forEach(function(ev){_quadSd+=vipStarSvgHtml(ev.id,_qpmk);});
-            _quadSd+='</div>';
+            _quadSd=evAnnualXsHtml(_quadItems);
           }
         }
         h+='<div class="'+cls+'"'+sty+dsAttr+'>'+_quadSd+'</div>';
@@ -1350,8 +1401,12 @@ function renderEvForm(ev){
   var repType=repeat?repeat.type:'none';
   var wdays=(repeat&&repeat.type==='weekly')?repeat.weekDays:[];
   var wdNames=['Do','Lu','Ma','Mi','Ju','Vi','Sa'];
-  /* Determine current type from stored type or color */
-  var curType=isEdit&&ev.type?ev.type:(EV_COLOR_TYPES[color]||'Otros');
+  /* Tipo actual: SIEMPRE el tipo guardado del evento (getEvType ya hace el
+     fallback por color para eventos antiguos sin ev.type). Antes la selección
+     del picker se decidía por color y un evento con color personalizado no
+     casaba con ningún swatch → al guardar caía en EV_COLORS[0] = Viaje. */
+  var curType=isEdit?getEvType(ev):'Viaje';
+  if(curType==='Cumpleaños VIP')curType='Otros'; /* el swatch VIP no se muestra */
   var isViaje=(curType==='Viaje');
   var h='<div class="ev-form-overlay" id="evFormOv">';
   h+='<div class="ev-form-sheet">';
@@ -1367,21 +1422,21 @@ function renderEvForm(ev){
   h+='<div class="ev-field"><label>Nota <span id="evCharCnt" style="font-weight:400;color:var(--text-dim)">'+note.length+'/200</span></label>';
   h+='<textarea class="ev-textarea" id="evFNote" maxlength="200" placeholder="Notas opcionales...">'+escHtml(note)+'</textarea></div>';
   /* Type selector (7 predefined types) */
-  h+='<div class="ev-field"><label>Tipo</label><div class="ev-type-picker">';
+  h+='<div class="ev-field"><label>Tipo</label><div class="ev-type-picker" data-cur-type="'+escHtml(curType)+'">';
   var _shownTypes={};
   EV_COLORS.forEach(function(c){
     var typeName=EV_COLOR_TYPES[c]||'Otros';
     if(typeName==='Cumplea\u00f1os VIP')return; /* skip VIP */
     if(_shownTypes[typeName])return; /* skip duplicate type names */
     _shownTypes[typeName]=true;
-    var sel=(c===color||(isViaje&&typeName==='Viaje')
-      ||(!isViaje&&!EV_COLOR_TYPES[color]&&c==='#a3e635'))?' selected':'';
+    /* Selecci\u00f3n por NOMBRE DE TIPO (no por color) \u2014 el color puede ser libre */
+    var sel=(typeName===curType)?' selected':'';
     /* Viaje y Otros no tienen color fijo: dot multicolor para se\u00f1alizar
        que el color se elige libremente abajo, y borde neutro al seleccionar */
     var isMulti=(typeName==='Viaje'||typeName==='Otros');
     var swatchCls='ev-color-swatch'+sel+(isMulti?' ev-color-swatch-multi':'');
     var swatchStyle=isMulti?'':' style="color:'+c+'"';
-    h+='<div class="'+swatchCls+'" data-hex="'+c+'"'+swatchStyle+'>';
+    h+='<div class="'+swatchCls+'" data-hex="'+c+'" data-type="'+escHtml(typeName)+'"'+swatchStyle+'>';
     if(isMulti){
       h+='<div class="ev-type-dot ev-type-dot-multi"></div>';
     } else {
@@ -1416,19 +1471,8 @@ function renderEvForm(ev){
     var sel=(s.k===curShape)?' selected':'';
     var prevColor=color||EV_COLORS[0];
     h+='<button type="button" class="ev-shape-opt'+sel+'" data-shape="'+s.k+'" title="'+s.label+'" aria-label="'+s.label+'">';
-    if(s.k==='x-thick'||s.k==='x-thin'){
-      /* SVG con doble stroke (negro+color) — borde uniforme */
-      var swOut=s.k==='x-thick'?9:5.5;
-      var swIn =s.k==='x-thick'?5:2.6;
-      h+='<span class="ev-shape-preview ev-shape-'+s.k+'">';
-      h+='<svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">';
-      h+='<path d="M-7,-7 L7,7 M-7,7 L7,-7" stroke="#000" stroke-width="'+swOut+'" stroke-linecap="round" fill="none"/>';
-      h+='<path d="M-7,-7 L7,7 M-7,7 L7,-7" stroke="'+prevColor+'" stroke-width="'+swIn+'" stroke-linecap="round" fill="none" class="ev-shape-x-color"/>';
-      h+='</svg>';
-      h+='</span>';
-    } else {
-      h+='<span class="ev-shape-preview ev-shape-'+s.k+'" style="color:'+prevColor+'"></span>';
-    }
+    /* Todas las formas: mismo SVG que en los calendarios → mismo grosor de borde */
+    h+='<span class="ev-shape-preview ev-shape-'+s.k+'" style="color:'+prevColor+'">'+evShapeSvg(s.k)+'</span>';
     h+='</button>';
   });
   h+='</div>';
@@ -1518,9 +1562,8 @@ function bindEvFormEvents(){
   var _otrosDates=(EV_EDIT&&Array.isArray(EV_EDIT.dates))?EV_EDIT.dates.slice():[];
   function _refreshShapePreviews(){
     var col=_fCp&&_fCp.getColor?_fCp.getColor():(EV_EDIT?EV_EDIT.color:EV_COLORS[0]);
+    /* Los SVG de las formas usan currentColor → basta con cambiar el color del span */
     document.querySelectorAll('#evFShapePicker .ev-shape-preview').forEach(function(p){p.style.color=col;});
-    /* X-shapes: actualizar el stroke del path color (no usan currentColor) */
-    document.querySelectorAll('#evFShapePicker .ev-shape-x-color').forEach(function(path){path.setAttribute('stroke',col);});
   }
   function _refreshPickDatesLabel(){
     var lbl=document.getElementById('evFPickDatesLbl');
@@ -1546,7 +1589,7 @@ function bindEvFormEvents(){
       sw.classList.add('selected');
       var hex=sw.dataset.hex;
       _selectedTypeHex=hex;
-      var typeName=EV_COLOR_TYPES[hex]||'Otros';
+      var typeName=sw.dataset.type||EV_COLOR_TYPES[hex]||'Otros';
       var isViaje=(typeName==='Viaje');
       var isOtros=(typeName==='Otros');
       if(_colorSection)_colorSection.style.display=(isViaje||isOtros)?'block':'none';
@@ -1614,10 +1657,13 @@ function bindEvFormEvents(){
     var title=document.getElementById('evFTitle').value.trim();
     if(!title){showToast('El t\u00edtulo es obligatorio','error');return;}
     var note=document.getElementById('evFNote').value.trim();
-    /* Determine color: use type hex, unless Viaje → use color picker */
+    /* Tipo: el swatch seleccionado; si por lo que sea no hay ninguno, se
+       conserva el tipo con el que se abrió el formulario (nunca cae a Viaje) */
     var typeSel=document.querySelector('.ev-color-swatch.selected');
+    var _typePickerEl=document.querySelector('.ev-type-picker');
+    var typeLabel=typeSel?(typeSel.dataset.type||EV_COLOR_TYPES[typeSel.dataset.hex]||'Otros')
+      :((_typePickerEl&&_typePickerEl.dataset.curType)||'Otros');
     var typeHex=typeSel?typeSel.dataset.hex:EV_COLORS[0];
-    var typeLabel=EV_COLOR_TYPES[typeHex]||'Otros';
     var color;
     if(typeLabel==='Viaje'||typeLabel==='Otros'){
       /* Viaje/Otros: usar color del picker */
@@ -1651,6 +1697,8 @@ function bindEvFormEvents(){
         var _newEv={id:EV_EDIT.id,title:title,note:note,color:color,type:typeLabel,start:start,end:end,repeat:repeat};
         if(_saveDates)_newEv.dates=_saveDates;
         if(_saveShape)_newEv.shape=_saveShape;
+        var _full=evDayLimitExceeded(_newEv,EV_EDIT.id);
+        if(_full){showToast('El '+_fmtDayEs(_full)+' ya tiene '+EV_MAX_DAY_EVENTS+' eventos (m\u00e1ximo)','error');return;}
         EVENTS[idx]=_newEv;
       }
       showToast('Evento actualizado','success');
@@ -1658,6 +1706,8 @@ function bindEvFormEvents(){
       var _newEv2={id:'ev-'+Date.now(),title:title,note:note,color:color,type:typeLabel,start:start,end:end,repeat:repeat};
       if(_saveDates)_newEv2.dates=_saveDates;
       if(_saveShape)_newEv2.shape=_saveShape;
+      var _full2=evDayLimitExceeded(_newEv2,null);
+      if(_full2){showToast('El '+_fmtDayEs(_full2)+' ya tiene '+EV_MAX_DAY_EVENTS+' eventos (m\u00e1ximo)','error');return;}
       EVENTS.push(_newEv2);
       showToast('Evento a\u00f1adido','success');
     }
@@ -2031,7 +2081,7 @@ function bindEvEvents(){
     });
   });
   // Click en badges/markers del calendario 1-mes → detail (no edit)
-  document.querySelectorAll('.ev-badge[data-id], .ev-cell .ev-annual-marker[data-id]').forEach(function(badge){
+  document.querySelectorAll('.ev-badge[data-id], .ev-cell .ev-annual-marker[data-id], .ev-cell .ev-annual-vip-star-svg[data-id]').forEach(function(badge){
     badge.addEventListener('click',function(e){
       e.stopPropagation();
       var id=badge.dataset.id;var ev=null;
@@ -2043,7 +2093,7 @@ function bindEvEvents(){
   document.querySelectorAll('.ev-cell[data-ds]').forEach(function(cell){
     cell.addEventListener('click',function(e){
       if(e.target.classList.contains('ev-badge'))return;
-      if(e.target.closest && e.target.closest('.ev-annual-marker'))return;
+      if(e.target.closest && e.target.closest('.ev-annual-marker,.ev-annual-vip-star-svg'))return;
       openEvForm(null,cell.dataset.ds);
     });
   });
@@ -2126,12 +2176,28 @@ function bindEvEvents(){
     var f=e.target.files[0];if(!f)return;
     var r=new FileReader();
     r.onload=function(evt){
+      var arr;
       try{
-        var arr=JSON.parse(evt.target.result);
+        arr=JSON.parse(evt.target.result);
         if(!Array.isArray(arr))throw new Error();
-        EVENTS=arr;saveEvents();updateEventsBtn();refreshEvents();
+      }catch(err){showToast('Error al importar el archivo','error');return;}
+      var apply=function(mode){
+        if(mode==='merge'){
+          /* Incremental: se conservan los eventos actuales; los del archivo con
+             el mismo id actualizan al existente, el resto se añaden */
+          var idx={};
+          EVENTS.forEach(function(e2,i){idx[e2.id]=i;});
+          arr.forEach(function(e2){
+            if(!e2||!e2.id)return;
+            if(idx[e2.id]!==undefined)EVENTS[idx[e2.id]]=e2;
+            else{idx[e2.id]=EVENTS.length;EVENTS.push(e2);}
+          });
+        }else{EVENTS=arr;}
+        saveEvents();updateEventsBtn();refreshEvents();
         showToast('Eventos importados: '+EVENTS.length,'success');
-      }catch(err){showToast('Error al importar el archivo','error');}
+      };
+      if(typeof askImportMode==='function')askImportMode('Eventos: '+f.name+' ('+arr.length+')',apply);
+      else apply('replace');
     };
     r.readAsText(f);
   });

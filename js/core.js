@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v238 — Tema claro: colores de horas (6,5h/7h/8h/9h) con contraste correcto en la home';
+var APP_VERSION = 'v239 — Eventos: tipo persistente al editar, formas con borde uniforme, rejilla 2×2 de puntuales, VIP amarillo en anual/4-meses e importación incremental';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

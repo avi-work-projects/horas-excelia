@@ -1184,28 +1184,31 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-annual-day{aspect-ratio:1;border-radius:2px;background:var(--surface2);position:relative;overflow:hidden}
 .ev-annual-day.out-m{background:transparent}
 .ev-annual-day.ann-today{outline:1.5px solid var(--accent);outline-offset:-1px}
-/* Eventos puntuales en anual/4meses: ✕ aspas para regulares, ⭐ para VIP — centrados, z-index:3 */
-.ev-annual-xs{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:2px;pointer-events:none;overflow:hidden;z-index:3;flex-wrap:wrap}
+/* Eventos puntuales en anual/4meses — rejilla 2×2 dentro de la casilla del día:
+   1 → ocupa el cuadrado entero · 2 → izquierda/derecha · 3 → pirámide (1 arriba,
+   2 abajo) · 4 → cubo 2×2 · >4 → 3 marcadores + "+" en la 4ª posición.
+   Los markers son SVG con preserveAspectRatio=meet: aunque el hueco no sea
+   cuadrado (caso de 2), la forma se dibuja cuadrada y centrada. */
+.ev-annual-xs{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;overflow:hidden;z-index:3}
+.ev-annual-xs.ev-xs-n1{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
+.ev-annual-xs.ev-xs-n2{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:minmax(0,1fr)}
+.ev-annual-xs.ev-xs-n3,
+.ev-annual-xs.ev-xs-n4{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}
+.ev-annual-xs.ev-xs-n3>*:first-child{grid-column:1/3}
+.ev-annual-xs>.ev-annual-marker{width:100%;height:100%;max-width:100%;max-height:100%}
 .ev-annual-x{position:relative;width:4px;height:4px;flex-shrink:0}
 .ev-annual-x::before,.ev-annual-x::after{content:'';position:absolute;top:50%;left:50%;background:currentColor;border-radius:1px}
 .ev-annual-x::before{width:5px;height:1.5px;transform:translate(-50%,-50%) rotate(45deg);box-shadow:0 0 0 .5px #000}
 .ev-annual-x::after{width:5px;height:1.5px;transform:translate(-50%,-50%) rotate(-45deg);box-shadow:0 0 0 .5px #000}
 /* Badge punto: estilo "1 mes" reducido para anual/4-meses (reemplaza la X) */
 .ev-annual-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;border:1px solid currentColor;background:currentColor;box-shadow:0 0 0 .5px rgba(0,0,0,.6)}
-/* Marcadores con forma personalizada (eventos "Otros") — 6 formas, todas con borde negro fino.
+/* Marcadores con forma (eventos "Otros" y puntuales) — TODAS las formas son SVG
+   inline generado por evShapeSvg() con el mismo grosor de borde (EV_SHAPE_BW),
+   por lo que aquí solo se define el tamaño de la caja.
    z-index:4 para que en el calendario 1-mes no queden tapados detrás de las barras
    multi-día (.ev-multi-bar tiene z-index:3 absolute encima de las celdas). */
-.ev-annual-marker{position:relative;width:6px;height:6px;flex-shrink:0;display:inline-block;z-index:4}
-.ev-annual-marker.ev-shape-circle{border-radius:50%;background:currentColor;border:1px solid currentColor;box-shadow:0 0 0 .5px #000}
-.ev-annual-marker.ev-shape-square{background:currentColor;border:1px solid #000;box-shadow:0 0 0 .5px currentColor inset}
-.ev-annual-marker.ev-shape-diamond{background:currentColor;border:1px solid #000;transform:rotate(45deg);width:5px;height:5px}
-.ev-annual-marker.ev-shape-rounded{background:currentColor;border:1px solid #000;border-radius:2px;width:7px;height:5px}
-/* X-shapes se renderizan como SVG inline (doble stroke negro+color) para evitar
-   que los bordes de los dos brazos se solapen. */
-.ev-annual-marker.ev-shape-x-thick{background:transparent;border:none;width:9px;height:9px}
-.ev-annual-marker.ev-shape-x-thin{background:transparent;border:none;width:8px;height:8px}
-.ev-annual-marker.ev-shape-x-thick svg,
-.ev-annual-marker.ev-shape-x-thin svg{display:block;width:100%;height:100%;overflow:visible}
+.ev-annual-marker{position:relative;width:7px;height:7px;flex-shrink:0;display:inline-block;z-index:4;line-height:0}
+.ev-annual-marker svg{display:block;width:100%;height:100%;overflow:visible}
 .ev-annual-marker.past-marker{opacity:.5}
 
 /* === Selector de formas en el formulario de evento (Otros) === */
@@ -1214,23 +1217,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-shape-opt{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:10px 4px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;color:var(--text);font-size:.65rem;transition:all .15s;min-height:38px}
 .ev-shape-opt:hover{border-color:var(--accent)}
 .ev-shape-opt.selected{border-color:var(--accent-bright);background:var(--accent-glow);box-shadow:0 0 0 1px var(--accent-bright)}
-.ev-shape-preview{display:inline-block;width:14px;height:14px;flex-shrink:0;position:relative}
-.ev-shape-preview.ev-shape-circle{border-radius:50%;background:currentColor;border:1.5px solid #000}
-.ev-shape-preview.ev-shape-square{background:currentColor;border:1.5px solid #000}
-.ev-shape-preview.ev-shape-diamond{background:currentColor;border:1.5px solid #000;transform:rotate(45deg);width:11px;height:11px;margin:1.5px}
-.ev-shape-preview.ev-shape-rounded{background:currentColor;border:1.5px solid #000;border-radius:4px;width:18px;height:11px;margin:1.5px 0}
-/* Previews X (form): SVG con doble stroke para borde uniforme */
-.ev-shape-preview.ev-shape-x-thick,
-.ev-shape-preview.ev-shape-x-thin{background:transparent;border:none}
-.ev-shape-preview.ev-shape-x-thick svg,
-.ev-shape-preview.ev-shape-x-thin svg{display:block;width:100%;height:100%;overflow:visible}
+/* Previews del formulario: mismo SVG que los calendarios (borde uniforme) */
+.ev-shape-preview{display:inline-block;width:20px;height:20px;flex-shrink:0;position:relative;line-height:0}
+.ev-shape-preview svg{display:block;width:100%;height:100%;overflow:visible}
 .ev-shape-lbl{display:none}
-/* Tamaños "lg" para shapes en Calendario 1 mes (más grandes que en anual) */
-.ev-annual-marker.ev-marker-lg{width:11px;height:11px}
-.ev-annual-marker.ev-marker-lg.ev-shape-diamond{width:9px;height:9px}
-.ev-annual-marker.ev-marker-lg.ev-shape-rounded{width:14px;height:9px;border-radius:3px}
-.ev-annual-marker.ev-marker-lg.ev-shape-x-thick{width:14px;height:14px}
-.ev-annual-marker.ev-marker-lg.ev-shape-x-thin{width:13px;height:13px}
+/* Tamaños en Calendario 1 mes: "lg" en la esquina, "ovf" en la fila de desborde */
+.ev-annual-marker.ev-marker-lg,.ev-annual-vip-star-svg.ev-marker-lg{width:12px;height:12px}
+.ev-annual-marker.ev-marker-ovf,.ev-annual-vip-star-svg.ev-marker-ovf{width:9px;height:9px}
 /* Inicio/Fin bloqueados cuando hay Selección Multidía */
 .ev-dates-locked input{opacity:.45;cursor:not-allowed;background:var(--surface2)!important}
 .ev-dates-locked label{opacity:.55}
@@ -1267,29 +1260,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-annual-vip-star-svg{display:inline-block;width:8px;height:8px;flex-shrink:0;z-index:4;line-height:0;filter:drop-shadow(0 0 1px rgba(251,191,36,.55))}
 .ev-annual-vip-star-svg svg{display:block;width:100%;height:100%;overflow:visible}
 .ev-annual-vip-star-svg.past-marker{opacity:.5}
-/* Compactación de markers cuando hay >2 en el mismo día.
-   Tres niveles según cuántos hay para que SIEMPRE quepan en una celda ~17px. */
-.ev-annual-xs.ev-xs-many,
-.ev-annual-xs.ev-xs-vmany,
-.ev-annual-xs.ev-xs-vvmany{gap:0;padding:0;align-content:center;justify-content:center}
-.ev-annual-xs.ev-xs-many .ev-annual-marker,
-.ev-annual-xs.ev-xs-many .ev-annual-vip-star-svg{width:4px;height:4px}
-.ev-annual-xs.ev-xs-many .ev-annual-marker.ev-shape-rounded{width:5.5px;height:3.5px}
-.ev-annual-xs.ev-xs-many .ev-annual-marker.ev-shape-diamond{width:3.5px;height:3.5px}
-.ev-annual-xs.ev-xs-many .ev-annual-marker.ev-shape-x-thick{width:5.5px;height:5.5px}
-.ev-annual-xs.ev-xs-many .ev-annual-marker.ev-shape-x-thin{width:5px;height:5px}
-.ev-annual-xs.ev-xs-vmany .ev-annual-marker,
-.ev-annual-xs.ev-xs-vmany .ev-annual-vip-star-svg{width:3px;height:3px}
-.ev-annual-xs.ev-xs-vmany .ev-annual-marker.ev-shape-rounded{width:4.5px;height:2.5px}
-.ev-annual-xs.ev-xs-vmany .ev-annual-marker.ev-shape-diamond{width:2.5px;height:2.5px}
-.ev-annual-xs.ev-xs-vmany .ev-annual-marker.ev-shape-x-thick{width:4.5px;height:4.5px}
-.ev-annual-xs.ev-xs-vmany .ev-annual-marker.ev-shape-x-thin{width:4px;height:4px}
-.ev-annual-xs.ev-xs-vvmany .ev-annual-marker,
-.ev-annual-xs.ev-xs-vvmany .ev-annual-vip-star-svg{width:2.5px;height:2.5px}
-.ev-annual-xs.ev-xs-vvmany .ev-annual-marker.ev-shape-rounded{width:3.5px;height:2px}
-.ev-annual-xs.ev-xs-vvmany .ev-annual-marker.ev-shape-diamond{width:2px;height:2px}
-.ev-annual-xs.ev-xs-vvmany .ev-annual-marker.ev-shape-x-thick{width:3.5px;height:3.5px}
-.ev-annual-xs.ev-xs-vvmany .ev-annual-marker.ev-shape-x-thin{width:3px;height:3px}
+/* Marcador "+" (más de 4 eventos puntuales en el mismo día) */
+.ev-annual-marker.ev-marker-more{color:#fff}
 /* Barras multi-día en calendario anual/4meses: ocupa una franja vertical y se divide en filas con grid */
 .ev-annual-bars-row{position:absolute;top:17.5%;left:0;right:0;height:55%;z-index:2;pointer-events:none;display:grid;grid-template-columns:repeat(7,1fr);gap:1px;grid-auto-rows:1fr}
 /* Cuando hay 2 filas: ampliar a 64% para que cada barra sea ~32% (visible) */
@@ -1333,6 +1305,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-annual-day.ev-annual-puente.ann-vac{background:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 2px,transparent 2px,transparent 5px),rgba(255,179,71,.18)!important}
 .ev-annual-day.ev-annual-suelto-fest{background:repeating-linear-gradient(-45deg,rgba(255,107,107,.85),rgba(255,107,107,.85) 2px,transparent 2px,transparent 5px),var(--surface2)!important}
 .ev-annual-day.ev-annual-suelto-vac{background:repeating-linear-gradient(45deg,rgba(255,179,71,.45),rgba(255,179,71,.45) 2px,transparent 2px,transparent 5px),var(--surface2)!important}
+/* Cumpleaños VIP en anual/4-meses: casilla amarilla con borde amarillo oscuro
+   (sustituye a la estrella; en 1-mes sí se sigue usando la estrella) */
+.ev-annual-day.ann-vip-bday{background:rgba(251,191,36,.8)!important;outline:1.5px solid #a16207;outline-offset:-1.5px}
 /* Festivos/vac en vista anual: borde brillante + relleno suave por día individual */
 .ev-annual-day.ann-festivo{background:rgba(255,107,107,.15)!important;outline:1.5px solid rgba(255,107,107,.85);outline-offset:-1.5px}
 .ev-annual-day.ann-vac{background:rgba(255,179,71,.15)!important;outline:1.5px solid rgba(255,179,71,.85);outline-offset:-1.5px}
@@ -1496,8 +1471,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-types-controls{display:flex;align-items:center;gap:10px;padding:4px 0 8px;flex-wrap:wrap}
 .ev-types-past-label{font-size:.75rem;color:var(--text-muted);display:flex;align-items:center;gap:5px;cursor:pointer;flex-shrink:0}
 .ev-types-select{font-size:.75rem;padding:5px 8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;flex:1;min-width:0;outline:none}
-.ev-week-hdr{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:3px}
-.ev-week-hdr div{text-align:center;font-size:.62rem;color:var(--text-dim);text-transform:uppercase;padding:6px 0;font-weight:600}
+/* Contenedor del calendario 1-mes: bloque propio para que .sy-body no meta su
+   gap:16px entre semanas (así entran las 6 semanas de meses como agosto 2026) */
+.ev-month-wrap{display:block}
+/* Cabecera L M X J V S D: compacta y pegada (sticky) al header del mes, con
+   fondo opaco para que el contenido no se vea por detrás al hacer scroll */
+.ev-week-hdr{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin:0 0 2px;position:sticky;top:0;z-index:6;background:var(--bg);box-shadow:0 1px 0 var(--border)}
+.ev-week-hdr div{text-align:center;font-size:.55rem;color:var(--text-dim);text-transform:uppercase;padding:2px 0 3px;font-weight:600;line-height:1}
 /* Contenedor semana: barras multi-día ENCIMA (position:absolute) de las celdas */
 .ev-week-outer{margin-bottom:3px;position:relative;isolation:isolate}
 /* Barras multi-día: 65% de la celda, centradas verticalmente, encima de números */
@@ -1506,7 +1486,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 /* Contenedor de badges 1-día: centrado verticalmente en la celda */
 /* Badges (eventos no-Otros): empujados hacia el FONDO de la celda para no
    solaparse con el texto centrado de las barras multi-día (Viajes, etc.) */
-.ev-badges-wrap{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;overflow:hidden;min-height:0;padding-bottom:1px}
+.ev-badges-wrap{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:1.5px;overflow:hidden;min-height:0;padding-bottom:1px}
+/* Eventos que no caben en sus pilas (a partir del 6º del día): fila horizontal
+   justo DEBAJO del número del día, en vez de seguir alargando la pila */
+.ev-day-overflow{position:absolute;top:17px;left:4px;right:4px;display:flex;align-items:center;gap:1px;z-index:5;pointer-events:none}
+/* Si hay columna de marcadores en la esquina, la fila se queda a su izquierda */
+.ev-day-overflow.with-corner{right:20px}
+.ev-day-overflow > *{pointer-events:auto;flex:0 1 auto;min-width:0}
+.ev-day-overflow .ev-badge{flex:1 1 auto}
 /* Otros: contenedor en esquina superior DERECHA del día (apilados verticalmente).
    Posicionados absolutamente para no afectar al layout del resto. */
 .ev-otros-corner{position:absolute;top:5px;right:4px;display:flex;flex-direction:column;align-items:flex-end;gap:3px;z-index:5;pointer-events:none;max-width:60%}
@@ -1554,7 +1541,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 /* ev-num con altura fija para alinear perfectamente todos los números de la misma semana */
 .ev-num{font-size:.72rem;font-family:var(--mono);line-height:1;height:13px;display:flex;align-items:center}
 /* ev-badge: z-index:4 > ev-bars-row z-index:3 → los badges 1-día quedan encima de barras multi-día */
-.ev-badge{font-size:.56rem;border-radius:10px;padding:0 4px;min-height:8px;height:8px;line-height:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;border:1.5px solid currentColor;cursor:pointer;position:relative;z-index:4}
+.ev-badge{font-size:.56rem;border-radius:10px;padding:0 4px;min-height:7px;height:7px;line-height:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;border:1.5px solid currentColor;cursor:pointer;position:relative;z-index:4}
 /* Events list view */
 .ev-list-day{padding:12px 0 6px;border-bottom:1px solid var(--border);margin-bottom:6px}
 .ev-list-day-hdr{font-size:.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
@@ -1734,6 +1721,19 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bday-ic-vip.active{border-color:#fbbf24;background:rgba(251,191,36,.12);color:#fbbf24}
 .bday-ic-edit{border-color:var(--accent);color:var(--accent-bright)}
 .bday-ic-close{flex:0 0 36px;color:var(--text-dim)}
+
+/* ── Diálogo: modo de importación (añadir vs reemplazar) ── */
+.imp-mode-ov{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.imp-mode-ov.open{opacity:1;pointer-events:auto}
+.imp-mode-sheet{width:100%;max-width:520px;background:var(--surface);border-top-left-radius:18px;border-top-right-radius:18px;padding:16px 18px calc(24px + env(safe-area-inset-bottom,0px));transform:translateY(100%);transition:transform .22s ease;display:flex;flex-direction:column;gap:8px}
+.imp-mode-ov.open .imp-mode-sheet{transform:translateY(0)}
+.imp-mode-title{font-size:.95rem;font-weight:700;text-align:center;color:var(--text)}
+.imp-mode-sub{font-size:.7rem;color:var(--text-dim);text-align:center;margin-bottom:6px;word-break:break-all}
+.imp-mode-btn{display:flex;flex-direction:column;gap:3px;text-align:left;padding:11px 14px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;font-size:.8rem}
+.imp-mode-btn span{font-size:.68rem;color:var(--text-dim);font-weight:400;line-height:1.35}
+.imp-mode-btn.merge{border-color:var(--c-green,#34d399);color:var(--c-green,#34d399)}
+.imp-mode-btn.repl{border-color:var(--c-orange,#fb923c);color:var(--c-orange,#fb923c)}
+.imp-mode-btn.cancel{text-align:center;align-items:center;color:var(--text-muted);font-size:.78rem;padding:9px}
 
 /* ── PRINT ── */
 @media print{
