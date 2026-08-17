@@ -273,21 +273,80 @@ document.getElementById('importFile').addEventListener('change',function(ev){
   var f=ev.target.files[0];if(!f)return;
   var r=new FileReader();
   r.onload=function(e){
-    try{
-      var d=JSON.parse(e.target.result);
-      if(d.days)ST=d.days;
-      if(d.sent)SW=d.sent;
-      if(d.monthH)MONTH_H=d.monthH;
-      if(typeof d.rate!=='undefined')DAILY_RATE=d.rate;
-      if(typeof d.exclFest!=='undefined')EXCL_FEST=d.exclFest;
-      if(typeof d.exclVac!=='undefined')EXCL_VAC=d.exclVac;
-      save();render();
-      showToast('Datos importados correctamente','success');
-    }catch(err){showToast('Error al importar: archivo inv\u00e1lido','error');}
+    var d;
+    try{d=JSON.parse(e.target.result);}
+    catch(err){showToast('Error al importar: archivo inv\u00e1lido','error');return;}
+    askImportMode('D\u00edas y jornada: '+f.name,function(mode){
+      var merge=(mode==='merge');
+      try{
+        if(d.days)ST=merge?_mergeMap(ST,d.days):d.days;
+        if(d.sent)SW=merge?_mergeMap(SW,d.sent):d.sent;
+        if(d.monthH)MONTH_H=merge?_mergeMap(MONTH_H,d.monthH):d.monthH;
+        if(typeof d.rate!=='undefined')DAILY_RATE=d.rate;
+        if(typeof d.exclFest!=='undefined')EXCL_FEST=d.exclFest;
+        if(typeof d.exclVac!=='undefined')EXCL_VAC=d.exclVac;
+        save();render();
+        showToast(merge?'Datos fusionados con los actuales':'Datos importados correctamente','success');
+      }catch(err2){showToast('Error al importar: archivo inv\u00e1lido','error');}
+    });
   };
   r.readAsText(f);
   ev.target.value='';
 });
+
+/* ── Modo de importación: añadir (incremental) o reemplazar ──────────
+   Devuelve 'merge' | 'replace' al callback (o nada si se cancela). */
+function askImportMode(subtitle,cb){
+  var ov=document.createElement('div');
+  ov.className='imp-mode-ov';
+  ov.innerHTML='<div class="imp-mode-sheet">'
+    +'<div class="imp-mode-title">&#8593; Importar datos</div>'
+    +'<div class="imp-mode-sub">'+escHtml(subtitle||'')+'</div>'
+    +'<button class="imp-mode-btn merge" data-mode="merge"><b>&#10133; A&#241;adir a lo que ya hay</b><span>Fusiona: no se borra nada de lo actual. Lo que venga en el archivo actualiza lo que coincida.</span></button>'
+    +'<button class="imp-mode-btn repl" data-mode="replace"><b>&#9851; Reemplazar todo</b><span>Sustituye los datos actuales por los del archivo.</span></button>'
+    +'<button class="imp-mode-btn cancel" data-mode="">Cancelar</button>'
+    +'</div>';
+  document.body.appendChild(ov);
+  requestAnimationFrame(function(){ov.classList.add('open');});
+  function close(){ov.classList.remove('open');setTimeout(function(){ov.remove();},220);}
+  ov.addEventListener('click',function(e){
+    if(e.target===ov){close();return;}
+    var b=e.target.closest('.imp-mode-btn');
+    if(!b)return;
+    var mode=b.dataset.mode;
+    close();
+    if(mode)cb(mode);
+  });
+}
+window.askImportMode=askImportMode;
+/* ── Helpers de fusión ── */
+/* Objetos tipo mapa (ST, SW, MONTH_H, sets de alarmas…): las claves del archivo
+   pisan a las actuales, las que no vengan en el archivo se conservan. */
+function _mergeMap(cur,inc){
+  var out={},k;
+  if(cur)for(k in cur)if(Object.prototype.hasOwnProperty.call(cur,k))out[k]=cur[k];
+  if(inc)for(k in inc)if(Object.prototype.hasOwnProperty.call(inc,k))out[k]=inc[k];
+  return out;
+}
+/* Listas con identidad: se concatenan deduplicando por keyFn (gana el importado) */
+function _mergeList(cur,inc,keyFn){
+  if(!Array.isArray(cur))return Array.isArray(inc)?inc.slice():[];
+  if(!Array.isArray(inc))return cur.slice();
+  var out=cur.slice(),idx={};
+  out.forEach(function(it,i){idx[keyFn(it)]=i;});
+  inc.forEach(function(it){
+    var k=keyFn(it);
+    if(idx[k]!==undefined)out[idx[k]]=it;
+    else{idx[k]=out.length;out.push(it);}
+  });
+  return out;
+}
+function _keyId(it){return String(it&&it.id!=null?it.id:JSON.stringify(it));}
+function _keyBday(b){return (b&&b.name?String(b.name).toLowerCase():'')+'|'+(b?b.day:'')+'|'+(b?b.month:'');}
+function _keyGasto(it){
+  if(it&&it.id!=null)return String(it.id);
+  return JSON.stringify(it);
+}
 
 /* Helper: export all per-year keys with a given prefix */
 function _exportPerYearKeys(baseKey){
@@ -350,18 +409,27 @@ document.getElementById('importAllFile').addEventListener('change',function(ev){
   var f=ev.target.files[0];if(!f)return;
   var r=new FileReader();
   r.onload=function(e){
+    var d;
+    try{d=JSON.parse(e.target.result);}
+    catch(err){showToast('Error al importar: archivo inválido','error');return;}
+    askImportMode('Backup completo: '+f.name,function(mode){_applyFullImport(d,mode);});
+  };
+  r.readAsText(f);
+  ev.target.value='';
+});
+function _applyFullImport(d,mode){
+    var merge=(mode==='merge');
     try{
-      var d=JSON.parse(e.target.result);
-      if(d.days)ST=d.days;
-      if(d.sent)SW=d.sent;
-      if(d.monthH)MONTH_H=d.monthH;
+      if(d.days)ST=merge?_mergeMap(ST,d.days):d.days;
+      if(d.sent)SW=merge?_mergeMap(SW,d.sent):d.sent;
+      if(d.monthH)MONTH_H=merge?_mergeMap(MONTH_H,d.monthH):d.monthH;
       if(typeof d.rate!=='undefined')DAILY_RATE=d.rate;
       if(typeof d.exclFest!=='undefined')EXCL_FEST=d.exclFest;
       if(typeof d.exclVac!=='undefined')EXCL_VAC=d.exclVac;
       if(d.vacEntitlement){VAC_ENTITLEMENT=d.vacEntitlement;saveVacEntitlement(d.vacEntitlement);}
-      if(d.birthdays&&Array.isArray(d.birthdays)){BDAYS=d.birthdays;localStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));}
-      if(d.events&&Array.isArray(d.events)){EVENTS=d.events;saveEvents();}
-      if(d.alarms&&Array.isArray(d.alarms)&&typeof saveAlarms==='function'){ALARMS=d.alarms;saveAlarms();}
+      if(d.birthdays&&Array.isArray(d.birthdays)){BDAYS=merge?_mergeList(BDAYS,d.birthdays,_keyBday):d.birthdays;localStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));}
+      if(d.events&&Array.isArray(d.events)){EVENTS=merge?_mergeList(EVENTS,d.events,_keyId):d.events;saveEvents();}
+      if(d.alarms&&Array.isArray(d.alarms)&&typeof saveAlarms==='function'){ALARMS=merge?_mergeList(ALARMS,d.alarms,_keyId):d.alarms;saveAlarms();}
       if(d.fiscal&&typeof FISCAL!=='undefined'&&typeof saveFiscal==='function'){
         FISCAL.irpfMode=d.fiscal.irpfMode||'fixed';
         FISCAL.irpfPct=d.fiscal.irpfPct||15;
@@ -371,12 +439,12 @@ document.getElementById('importAllFile').addEventListener('change',function(ev){
         saveFiscal();
       }
       if(d.gastos&&Array.isArray(d.gastos)&&typeof GASTOS_ITEMS!=='undefined'&&typeof saveGastosYear==='function'){
-        GASTOS_ITEMS=d.gastos;
+        GASTOS_ITEMS=merge?_mergeList(GASTOS_ITEMS,d.gastos,_keyGasto):d.gastos;
         if(typeof d.gastosDificilPct!=='undefined')GASTOS_DIFICIL_PCT=d.gastosDificilPct;
         saveGastosYear(CY);
       }
-      if(d.ingresos&&Array.isArray(d.ingresos)&&typeof saveIngresos==='function'){INGRESOS_ITEMS=d.ingresos;saveIngresos();}
-      if(d.compras&&Array.isArray(d.compras)&&typeof saveCompras==='function'){COMPRAS_ITEMS=d.compras;saveCompras();}
+      if(d.ingresos&&Array.isArray(d.ingresos)&&typeof saveIngresos==='function'){INGRESOS_ITEMS=merge?_mergeList(INGRESOS_ITEMS,d.ingresos,_keyGasto):d.ingresos;saveIngresos();}
+      if(d.compras&&Array.isArray(d.compras)&&typeof saveCompras==='function'){COMPRAS_ITEMS=merge?_mergeList(COMPRAS_ITEMS,d.compras,_keyGasto):d.compras;saveCompras();}
       if(d.desgrav&&Array.isArray(d.desgrav)&&typeof saveDesgrav==='function'){
         DESGRAV_ITEMS=d.desgrav;saveDesgrav();
         /* Re-cargar via loadDesgrav para que mergee con DESGRAV_DEFAULT y añada
@@ -392,11 +460,29 @@ document.getElementById('importAllFile').addEventListener('change',function(ev){
       }
       if(d.personalData&&typeof PERSONAL_DATA!=='undefined'&&typeof savePersonalYear==='function'){PERSONAL_DATA=d.personalData;savePersonalYear(CY);}
       /* Per-year data */
-      if(d.gastosPerYear){Object.keys(d.gastosPerYear).forEach(function(y){try{localStorage.setItem('excelia-gastos-v1-'+y,JSON.stringify(d.gastosPerYear[y]));}catch(e){}});}
-      if(d.personalPerYear){Object.keys(d.personalPerYear).forEach(function(y){try{localStorage.setItem('excelia-personal-v1-'+y,JSON.stringify(d.personalPerYear[y]));}catch(e){}});}
-      if(d.scenarios&&Array.isArray(d.scenarios)&&typeof saveEconComp==='function'){ECON_SCENARIOS=d.scenarios;saveEconComp();}
-      if(d.evAlarms&&typeof EV_ALARMS_SET!=='undefined'){EV_ALARMS_SET=d.evAlarms;if(typeof saveEvAlarms==='function')saveEvAlarms();}
-      if(d.bdayAlarms&&typeof BDAY_ALARM_SET!=='undefined'){BDAY_ALARM_SET=d.bdayAlarms;localStorage.setItem('excelia-bday-alarm-set',JSON.stringify(BDAY_ALARM_SET));}
+      if(d.gastosPerYear){Object.keys(d.gastosPerYear).forEach(function(y){
+        try{
+          var k='excelia-gastos-v1-'+y,val=d.gastosPerYear[y];
+          if(merge&&Array.isArray(val)){
+            var prev=null;try{prev=JSON.parse(localStorage.getItem(k));}catch(e2){}
+            if(Array.isArray(prev))val=_mergeList(prev,val,_keyGasto);
+          }
+          localStorage.setItem(k,JSON.stringify(val));
+        }catch(e){}
+      });}
+      if(d.personalPerYear){Object.keys(d.personalPerYear).forEach(function(y){
+        try{
+          var k2='excelia-personal-v1-'+y,val2=d.personalPerYear[y];
+          if(merge&&val2&&typeof val2==='object'&&!Array.isArray(val2)){
+            var prev2=null;try{prev2=JSON.parse(localStorage.getItem(k2));}catch(e3){}
+            if(prev2&&typeof prev2==='object')val2=_mergeMap(prev2,val2);
+          }
+          localStorage.setItem(k2,JSON.stringify(val2));
+        }catch(e){}
+      });}
+      if(d.scenarios&&Array.isArray(d.scenarios)&&typeof saveEconComp==='function'){ECON_SCENARIOS=merge?_mergeList(ECON_SCENARIOS,d.scenarios,_keyGasto):d.scenarios;saveEconComp();}
+      if(d.evAlarms&&typeof EV_ALARMS_SET!=='undefined'){EV_ALARMS_SET=merge?_mergeMap(EV_ALARMS_SET,d.evAlarms):d.evAlarms;if(typeof saveEvAlarms==='function')saveEvAlarms();}
+      if(d.bdayAlarms&&typeof BDAY_ALARM_SET!=='undefined'){BDAY_ALARM_SET=merge?_mergeMap(BDAY_ALARM_SET,d.bdayAlarms):d.bdayAlarms;localStorage.setItem('excelia-bday-alarm-set',JSON.stringify(BDAY_ALARM_SET));}
       if(d.macroUrl)localStorage.setItem('excelia-alarm-url',d.macroUrl);
       if(d.alarmMacroEnabled)localStorage.setItem('excelia-alarm-macro',d.alarmMacroEnabled);
       if(d.alarmHour)localStorage.setItem('excelia-alarm-h',d.alarmHour);
@@ -405,11 +491,8 @@ document.getElementById('importAllFile').addEventListener('change',function(ev){
       if(d.theme)localStorage.setItem('excelia-theme-v1',d.theme);
       save();render();
       updateBdayBtn();updateEventsBtn();
-      showToast('Backup completo importado','success');
+      showToast(merge?'Backup fusionado con los datos actuales':'Backup completo importado','success');
     }catch(err){showToast('Error al importar: archivo inv\u00e1lido','error');}
-  };
-  r.readAsText(f);
-  ev.target.value='';
-});
+}
 
 })();

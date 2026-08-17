@@ -34,6 +34,41 @@ var EV_COLOR_TYPES = {
   '#fbbf24':'Cumplea\u00f1os VIP'
 };
 
+/* ── Formas de marcador (SVG) ───────────────────────────────
+   TODAS las formas se dibujan como SVG en un viewBox -10..10 con el MISMO
+   grosor de borde (EV_SHAPE_BW), tomado del borde negro de la "aspa gorda".
+   Ventajas: grosor uniforme en los 3 calendarios y escalado automático al
+   tamaño del contenedor (el layout de anual/4-meses dimensiona por CSS grid).
+   El color del relleno/trazo es currentColor → se controla con style="color:…". */
+var EV_SHAPE_BW = 2;
+function evShapeSvg(shape){
+  var bw=EV_SHAPE_BW,inner;
+  if(shape==='x-thick'||shape==='x-thin'){
+    var swIn=shape==='x-thick'?5:2.6;
+    var swOut=swIn+bw*2;
+    var d='M-6,-6 L6,6 M-6,6 L6,-6';
+    inner='<path d="'+d+'" stroke="#000" stroke-width="'+swOut+'" stroke-linecap="round" fill="none"/>'
+        + '<path d="'+d+'" stroke="currentColor" stroke-width="'+swIn+'" stroke-linecap="round" fill="none" class="ev-shape-x-color"/>';
+  } else if(shape==='circle'){
+    inner='<circle cx="0" cy="0" r="'+(9-bw/2)+'" fill="currentColor" stroke="#000" stroke-width="'+bw+'"/>';
+  } else if(shape==='square'){
+    inner='<rect x="-8" y="-8" width="16" height="16" fill="currentColor" stroke="#000" stroke-width="'+bw+'"/>';
+  } else if(shape==='diamond'){
+    inner='<polygon points="0,-8.5 8.5,0 0,8.5 -8.5,0" fill="currentColor" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/>';
+  } else { /* rounded */
+    inner='<rect x="-9" y="-6" width="18" height="12" rx="4" fill="currentColor" stroke="#000" stroke-width="'+bw+'"/>';
+  }
+  return '<svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">'+inner+'</svg>';
+}
+/* Marcador "+N" (4ª posición cuando hay más de 4 eventos puntuales en un día):
+   círculo blanco con borde negro y un + negro. Mismo grosor de borde. */
+function evMorePlusSvg(){
+  return '<svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">'
+    +'<circle cx="0" cy="0" r="'+(9-EV_SHAPE_BW/2)+'" fill="#fff" stroke="#000" stroke-width="'+EV_SHAPE_BW+'"/>'
+    +'<path d="M-4.6,0 H4.6 M0,-4.6 V4.6" stroke="#000" stroke-width="'+(EV_SHAPE_BW+.6)+'" stroke-linecap="round"/>'
+    +'</svg>';
+}
+
 // Paleta variada para viajes (determinista según id del evento)
 var _VIAJE_BLUES=['#e879a8','#f0b45c','#4ecdc4','#a18cd1','#56c596'];
 function evTravelColor(evId){
