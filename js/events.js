@@ -355,15 +355,17 @@ function renderEvCalMonth(){
         return it.vip?vipStarSvgHtml(it.id,_pmkM,szCls)
                      :evMarkerHtml(it.ev,_pmkM,szCls,'circle');
       }
-      var _ovf='';
-      _corner.slice(EV_CAL_CORNER_STACK).forEach(function(it){_ovf+=_cornerHtml(it,'ev-marker-ovf');});
-      _ovf+=_badges.slice(EV_CAL_BADGE_STACK).join('');
+      /* Desborde: los marcadores forman una SEGUNDA COLUMNA (uno debajo de otro)
+         bajo el número del día; los badges sobrantes, una fila bajo el número. */
+      var _ovfMarks='',_ovfBadges=_badges.slice(EV_CAL_BADGE_STACK).join('');
+      _corner.slice(EV_CAL_CORNER_STACK).forEach(function(it){_ovfMarks+=_cornerHtml(it,'ev-marker-ovf');});
       if(_corner.length){
         h+='<div class="ev-otros-corner">';
         _corner.slice(0,EV_CAL_CORNER_STACK).forEach(function(it){h+=_cornerHtml(it,'ev-marker-lg');});
         h+='</div>';
       }
-      if(_ovf)h+='<div class="ev-day-overflow'+(_corner.length?' with-corner':'')+'">'+_ovf+'</div>';
+      if(_ovfMarks)h+='<div class="ev-day-overflow ovf-col">'+_ovfMarks+'</div>';
+      if(_ovfBadges)h+='<div class="ev-day-overflow'+(_corner.length?' with-corner':'')+'">'+_ovfBadges+'</div>';
       h+='<div class="ev-badges-wrap">'+_badges.slice(0,EV_CAL_BADGE_STACK).join('')+'</div>';
       h+='</div>';
     }
