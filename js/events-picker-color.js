@@ -34,6 +34,45 @@ var EV_COLOR_TYPES = {
   '#fbbf24':'Cumplea\u00f1os VIP'
 };
 
+/* \u2500\u2500 Clases de evento (v241) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+   Dos "kinds" con categor\u00edas propias. OJO: "Otros" existe en los dos, as\u00ed que
+   la identidad de una categor\u00eda es el par (kind, type), no el nombre suelto.
+   - puntual: se dibuja UN MARCADOR POR D\u00cdA (aunque abarque varios d\u00edas)
+   - grande:  se dibuja como BARRA continua (formato actual de Viaje/Asturias) */
+var EV_KINDS = {
+  puntual:{label:'Puntual', types:['Rec. Gestiones','Plan/Quedada','Ensayos boda','Otros']},
+  grande: {label:'Grande',  types:['Viaje','Asturias','Casa Rural','Otros']}
+};
+/* Color por defecto de cada categor\u00eda (par kind|type) */
+var EV_TYPE_COLORS = {
+  'puntual|Rec. Gestiones':'#34d399',
+  'puntual|Plan/Quedada'  :'#fb923c',
+  'puntual|Ensayos boda'  :'#c084fc',
+  'puntual|Otros'         :'#a3e635',
+  'grande|Viaje'          :'#38bdf8',
+  'grande|Asturias'       :'#1d4ed8',
+  'grande|Casa Rural'     :'#8b5e34',   /* marr\u00f3n */
+  'grande|Otros'          :'#ff6b6b'
+};
+/* Categor\u00edas con color libre (paleta) y con selector de forma */
+var EV_FREE_COLOR = {'grande|Viaje':1,'grande|Otros':1,'puntual|Otros':1,'grande|Casa Rural':1};
+var EV_FREE_SHAPE = {'puntual|Otros':1};
+/* Categorias con "Seleccion Multidia" (varios dias sueltos). En Ensayos boda
+   sirve para dar de alta muchas clases de golpe desde el calendario 1 mes. */
+var EV_FREE_DATES = {'puntual|Otros':1,'puntual|Ensayos boda':1};
+function evTypeKey(kind,type){return kind+'|'+type;}
+function evTypeColor(kind,type){return EV_TYPE_COLORS[evTypeKey(kind,type)]||'#a3e635';}
+/* Clase de un evento: ev.kind si existe; si no, se deduce del tipo/duraci\u00f3n
+   (migraci\u00f3n de eventos anteriores a v241 \u2014 ver migrateEvKinds en events.js) */
+function getEvKind(ev){
+  if(!ev)return 'puntual';
+  if(ev.kind==='puntual'||ev.kind==='grande')return ev.kind;
+  var t=ev.type||EV_COLOR_TYPES[ev.color]||'Otros';
+  if(t==='Viaje'||t==='Asturias'||t==='Casa Rural')return 'grande';
+  if(t==='Otros'&&ev.end&&ev.start&&ev.end>ev.start&&!(ev.dates&&ev.dates.length))return 'grande';
+  return 'puntual';
+}
+
 /* ── Formas de marcador (SVG) ───────────────────────────────
    TODAS las formas se dibujan como SVG en un viewBox -10..10 con el MISMO
    grosor de borde (EV_SHAPE_BW), tomado del borde negro de la "aspa gorda".
@@ -82,11 +121,10 @@ function getEvType(ev){
   if(t==='Festivo'||t==='Puente')t='Otros';
   return t;
 }
-// ¿Es viaje/asturias? (se renderizan siempre como barra, incluso 1 día)
-function isEvBarAlways(ev){
-  var t=getEvType(ev);
-  return t==='Viaje'||t==='Asturias';
-}
+// ¿Se dibuja como BARRA? Desde v241 lo decide la clase: todos los "grandes"
+// (Viaje, Asturias, Casa Rural, Otros-grande) son barra, duren 1 día o varios.
+// Los "puntuales" nunca son barra: un marcador por cada día que ocupan.
+function isEvBarAlways(ev){return getEvKind(ev)==='grande';}
 // Devuelve el color de visualización (viajes → azul único por evento, resto → color guardado)
 function getEvDisplayColor(ev){
   if(!ev)return'#888';

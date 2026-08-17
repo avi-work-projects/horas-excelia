@@ -376,6 +376,7 @@ document.getElementById('exportAllBtn').addEventListener('click',function(){
   var data={version:4,days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
     exclFest:EXCL_FEST,exclVac:EXCL_VAC,vacEntitlement:VAC_ENTITLEMENT,
     birthdays:BDAYS,events:EVENTS,
+    bodas:typeof BODA_COUPLES!=='undefined'?BODA_COUPLES:null,
     alarms:typeof ALARMS!=='undefined'?ALARMS:[],
     fiscal:typeof FISCAL!=='undefined'?FISCAL:null,
     gastos:typeof GASTOS_ITEMS!=='undefined'?GASTOS_ITEMS:null,
@@ -430,6 +431,7 @@ function _applyFullImport(d,mode){
       if(d.birthdays&&Array.isArray(d.birthdays)){BDAYS=merge?_mergeList(BDAYS,d.birthdays,_keyBday):d.birthdays;localStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));}
       if(d.events&&Array.isArray(d.events)){EVENTS=merge?_mergeList(EVENTS,d.events,_keyId):d.events;saveEvents();}
       if(d.alarms&&Array.isArray(d.alarms)&&typeof saveAlarms==='function'){ALARMS=merge?_mergeList(ALARMS,d.alarms,_keyId):d.alarms;saveAlarms();}
+      if(d.bodas&&Array.isArray(d.bodas)&&typeof saveBodas==='function'){BODA_COUPLES=merge?_mergeList(BODA_COUPLES,d.bodas,_keyId):d.bodas;saveBodas();}
       if(d.fiscal&&typeof FISCAL!=='undefined'&&typeof saveFiscal==='function'){
         FISCAL.irpfMode=d.fiscal.irpfMode||'fixed';
         FISCAL.irpfPct=d.fiscal.irpfPct||15;

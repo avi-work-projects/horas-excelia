@@ -30,6 +30,7 @@ function _switchEvView(newView){
 }
 var EV_VIEW = 'cal';  // 'cal' | 'months' | 'upcoming' | 'annual'
 var EV_EDIT = null;
+var EV_EDIT_DS = null;   /* dia concreto desde el que se abrio el detalle/formulario */
 var EV_FORM_CONTAINER = null;  // overlay donde se renderiza el formulario (null = eventsOverlay)
 var EV_EDIT_MODE = false;
 var EV_BRIGHT_PAST = false;
@@ -38,6 +39,7 @@ var EV_ANNUAL_FILTER_HIDDEN = []; // type names hidden from annual calendar
 var EV_PREV_VIEW = null;       // para volver al anual al pulsar ←
 var EV_QUAD_YEAR = new Date().getFullYear();  // año de inicio del bloque 4 meses
 var EV_QUAD_MONTH = new Date().getMonth();    // mes de inicio del bloque 4 meses (0-based)
+var EV_TO_SUBTAB = 'puentes';  /* subpestana activa dentro de "Vacaciones Festivos" */
 var EV_LIST_SUBTAB = 'months'; // 'months' | 'types'
 var EV_TYPES_FILTER = 'all';   // 'all' | nombre de tipo
 var EV_TYPES_PAST = true;      // excluir eventos pasados en Por Tipos (por defecto)
@@ -53,6 +55,9 @@ var EVENTS = (function(){
         if(ev.color==='#fbbf24'&&(!ev.id||ev.id.indexOf('ev-bday-vip-')!==0)){ev.color='#a3e635';changed=true;}
         if(ev.type==='Recordatorio de Gestiones'){ev.type='Rec. Gestiones';changed=true;}
         if(ev.type==='Planes y Quedadas'){ev.type='Plan/Quedada';changed=true;}
+        /* v241: clasificar en puntual/grande. Los "Otros" se reparten por
+           duracion (1 dia -> puntual con forma; varios dias -> grande con barra) */
+        if(ev.kind!=='puntual'&&ev.kind!=='grande'){ev.kind=getEvKind(ev);changed=true;}
       });
       if(changed)try{localStorage.setItem(EV_STORAGE_KEY,JSON.stringify(arr));}catch(e){}
       return arr;
@@ -217,14 +222,24 @@ function evUniqueColor(ev){
    (solo eventos "Otros" pueden tener shape personalizada).
    Shapes válidas: circle | square | diamond | x-thick | x-thin | rounded.
    Defaults: dot circular (= comportamiento previo). */
-function evMarkerHtml(ev,pastClass,sizeClass,defaultShape){
+function evDefaultShape(ev){
+  var t=getEvType(ev);
+  if(t==='Ensayos boda')return 'x-boda';   /* aspa bicolor: pareja + franja horaria */
+  if(t==='Otros')return 'circle';
+  return 'rounded';
+}
+function evMarkerHtml(ev,pastClass,sizeClass,defaultShape,ds){
   var color=getEvDisplayColor(ev);
-  var shape=ev.shape||defaultShape||'circle';
+  var shape=(getEvType(ev)==='Ensayos boda')?'x-boda':(ev.shape||defaultShape||'circle');
   var pmk=pastClass||'';
   var sz=sizeClass?(' '+sizeClass):'';
+  var dsAttr=ds?(' data-ds="'+ds+'"'):'';
+  if(shape==='x-boda'&&typeof evBodaSvg==='function'){
+    return '<span class="ev-annual-marker ev-shape-x-boda'+pmk+sz+'" data-id="'+ev.id+'"'+dsAttr+'>'+evBodaSvg(ev)+'</span>';
+  }
   /* Todas las formas se dibujan con evShapeSvg() → mismo grosor de borde
      (EV_SHAPE_BW) y escalado automático al tamaño del contenedor. */
-  return '<span class="ev-annual-marker ev-shape-'+shape+pmk+sz+'" data-id="'+ev.id+'" style="color:'+color+'">'+evShapeSvg(shape)+'</span>';
+  return '<span class="ev-annual-marker ev-shape-'+shape+pmk+sz+'" data-id="'+ev.id+'"'+dsAttr+' style="color:'+color+'">'+evShapeSvg(shape)+'</span>';
 }
 /* Marcador "+" (hay más eventos de los que caben en el día) */
 function evMorePlusHtml(extraClass){
@@ -273,7 +288,7 @@ function renderEvCalMonth(){
     });
   }
   // Multi-day events (non-repeating, end strictly after start OR viaje/asturias always as bar)
-  var multiEvs=EVENTS.filter(function(ev){return !ev.repeat&&!(ev.dates&&ev.dates.length)&&ev.end&&(ev.end>ev.start||isEvBarAlways(ev));});
+  var multiEvs=EVENTS.filter(function(ev){return !ev.repeat&&!(ev.dates&&ev.dates.length)&&ev.end&&isEvBarAlways(ev);});
   var multiIds={};multiEvs.forEach(function(ev){multiIds[ev.id]=true;});
   var DN7=['L','M','X','J','V','S','D'];
   /* Contenedor propio: evita el gap:16px de .sy-body entre semanas (así caben
@@ -331,42 +346,31 @@ function renderEvCalMonth(){
       else{if(bspanStart>=0){bspans.push({s:bspanStart,e:di-1});bspanStart=-1;}}
       var cls='ev-cell'+(inM?'':' out-m')+(isTod?' today-ev':'')+(past?' past-cal-day':'')+(edow===0||edow===6?' weekend':'')+(dt&&dt!=='normal'?' ev-day-'+dt:'')+(inPuente?' ev-puente':'');
       h+='<div class="'+cls+'" data-ds="'+ds+'"><div class="ev-num">'+d.getDate()+'</div>';
-      /* Separar eventos en 2 grupos:
-         - Otros y cumplea\u00f1os VIP (\u2b50) \u2192 columna en la esquina superior derecha
-         - resto \u2192 badges apilados desde abajo
-         Lo que no cabe en cada pila (a partir del 6\u00ba evento del d\u00eda) se dibuja
-         en una fila justo DEBAJO del n\u00famero del d\u00eda, no continuando la pila. */
-      var _corner=[],_badges=[];
+      /* v241: TODOS los eventos puntuales (Rec. Gestiones, Plan/Quedada,
+         Ensayos boda, Otros) y los cumpleanos VIP se dibujan con la misma forma
+         que en anual/4-meses, en una columna en la esquina superior derecha.
+         Los que no caben pasan a una SEGUNDA COLUMNA bajo el numero del dia. */
+      var _corner=[];
       evs.forEach(function(ev){
         if(multiIds[ev.id])return;
-        var _isVipBday=ev.id.indexOf('ev-bday-vip-')===0;
-        if(_isVipBday){
-          /* En 1-mes los cumplea\u00f1os VIP se marcan con estrella (en anual/4-meses
-             es la casilla del d\u00eda la que se pinta de amarillo) */
-          _corner.push({vip:true,id:ev.id});
-          return;
-        }
-        var _isOtros=(ev.type==='Otros'||(typeof getEvType==='function'&&getEvType(ev)==='Otros'));
-        if(_isOtros){_corner.push({vip:false,ev:ev});return;}
-        _badges.push('<div class="ev-badge" data-id="'+ev.id+'" style="color:#fff;border-color:'+ev.color+';background:'+ev.color+'cc"></div>');
+        if(ev.id.indexOf('ev-bday-vip-')===0){_corner.push({vip:true,id:ev.id});return;}
+        _corner.push({vip:false,ev:ev});
       });
       var _pmkM=past?' past-marker':'';
       function _cornerHtml(it,szCls){
-        return it.vip?vipStarSvgHtml(it.id,_pmkM,szCls)
-                     :evMarkerHtml(it.ev,_pmkM,szCls,'circle');
+        if(it.vip)return vipStarSvgHtml(it.id,_pmkM,szCls);
+        return evMarkerHtml(it.ev,_pmkM,szCls,evDefaultShape(it.ev),ds);
       }
-      /* Desborde: los marcadores forman una SEGUNDA COLUMNA (uno debajo de otro)
-         bajo el número del día; los badges sobrantes, una fila bajo el número. */
-      var _ovfMarks='',_ovfBadges=_badges.slice(EV_CAL_BADGE_STACK).join('');
-      _corner.slice(EV_CAL_CORNER_STACK).forEach(function(it){_ovfMarks+=_cornerHtml(it,'ev-marker-ovf');});
       if(_corner.length){
         h+='<div class="ev-otros-corner">';
         _corner.slice(0,EV_CAL_CORNER_STACK).forEach(function(it){h+=_cornerHtml(it,'ev-marker-lg');});
         h+='</div>';
       }
-      if(_ovfMarks)h+='<div class="ev-day-overflow ovf-col">'+_ovfMarks+'</div>';
-      if(_ovfBadges)h+='<div class="ev-day-overflow'+(_corner.length?' with-corner':'')+'">'+_ovfBadges+'</div>';
-      h+='<div class="ev-badges-wrap">'+_badges.slice(0,EV_CAL_BADGE_STACK).join('')+'</div>';
+      if(_corner.length>EV_CAL_CORNER_STACK){
+        h+='<div class="ev-day-overflow ovf-col">';
+        _corner.slice(EV_CAL_CORNER_STACK).forEach(function(it){h+=_cornerHtml(it,'ev-marker-ovf');});
+        h+='</div>';
+      }
       h+='</div>';
     }
     if(bspanStart>=0)bspans.push({s:bspanStart,e:6});
@@ -656,7 +660,7 @@ function renderEvAnnual(){
     if(!EV_ANNUAL_FILTER_HIDDEN.length)return true;
     return EV_ANNUAL_FILTER_HIDDEN.indexOf(getEvType(ev))===-1;
   }
-  var multiEvs=EVENTS.filter(function(ev){return !ev.repeat&&!(ev.dates&&ev.dates.length)&&ev.end&&(ev.end>ev.start||isEvBarAlways(ev))&&annEvVisible(ev);});
+  var multiEvs=EVENTS.filter(function(ev){return !ev.repeat&&!(ev.dates&&ev.dates.length)&&ev.end&&isEvBarAlways(ev)&&annEvVisible(ev);});
   var multiIds={};multiEvs.forEach(function(ev){multiIds[ev.id]=true;});
   var MNS=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
   var addMode=EV_EDIT_MODE;
@@ -756,8 +760,7 @@ function renderEvAnnual(){
           if(_singleEvs.length){
             var _pmk=past?' past-marker':'';
             var _annItems=_singleEvs.map(function(ev){
-              var _typeOtros=typeof getEvType==='function'&&getEvType(ev)==='Otros';
-              return evMarkerHtml(ev,_pmk,'',_typeOtros?'circle':'rounded');
+              return evMarkerHtml(ev,_pmk,'',evDefaultShape(ev),ds);
             });
             _annSd=evAnnualXsHtml(_annItems);
           }
@@ -831,7 +834,7 @@ function renderEvQuad(){
   var lastMo=months[3];
   var rangeEnd=new Date(lastMo.y,lastMo.m+1,0);
   var multiEvs=EVENTS.filter(function(ev){
-    if(ev.repeat||(ev.dates&&ev.dates.length)||!ev.end||(!isEvBarAlways(ev)&&ev.end<=ev.start)||!annEvVisible(ev))return false;
+    if(ev.repeat||(ev.dates&&ev.dates.length)||!ev.end||!isEvBarAlways(ev)||!annEvVisible(ev))return false;
     var es=new Date(ev.start+'T00:00:00'),ee=new Date(ev.end+'T00:00:00');
     return ee>=rangeStart&&es<=rangeEnd;
   });
@@ -923,8 +926,7 @@ function renderEvQuad(){
           if(_singleEvs.length){
             var _qpmk=past?' past-marker':'';
             var _quadItems=_singleEvs.map(function(ev){
-              var _typeOtros=typeof getEvType==='function'&&getEvType(ev)==='Otros';
-              return evMarkerHtml(ev,_qpmk,'',_typeOtros?'circle':'rounded');
+              return evMarkerHtml(ev,_qpmk,'',evDefaultShape(ev),ds);
             });
             _quadSd=evAnnualXsHtml(_quadItems);
           }
@@ -1037,7 +1039,9 @@ function renderEvWeek(){
       var day=new Date(yIdx,mIdx,d);
       var ds=evDk(day);
       getEventsOn(ds).forEach(function(ev){
-        if(ev.end&&ev.end!==ev.start){
+        /* Solo los "grandes" se agrupan en una caja continua; los puntuales
+           caen como chip en cada dia que ocupan (v241) */
+        if(isEvBarAlways(ev)&&ev.end&&ev.end!==ev.start){
           if(!multiSeen[ev.id]){
             multiSeen[ev.id]={ev:ev,sd:d,ed:d};
             multiSegs.push(multiSeen[ev.id]);
@@ -1136,10 +1140,11 @@ function renderEvContent(){
   h+='<button class="ev-view-toggle'+(EV_VIEW==='quad'?' active':'')+'" id="evViewQuad">Calendario<br>4 meses</button>';
   h+='<button class="ev-view-toggle'+(EV_VIEW==='annual'?' active':'')+'" id="evViewAnnual">Calendario<br>Anual</button>';
   h+='</div>';
-  // Zona C: Puentes + Vacaciones/Festivos
+  // Zona C: Bodas + Vacaciones/Festivos (esta ultima agrupa Puentes y Vac/Festivos en subpestanas)
   h+='<div class="ev-view-zone ev-zone-c">';
-  h+='<button class="ev-view-toggle ev-btn-puentes'+(EV_VIEW==='puentes'?' active':'')+'" id="evViewPuentes">Puentes</button>';
-  h+='<button class="ev-view-toggle ev-btn-timeoff'+(EV_VIEW==='time-off'?' active':'')+'" id="evViewTimeOff">Vacaciones<br>Festivos</button>';
+  h+='<button class="ev-view-toggle ev-btn-bodas'+(EV_VIEW==='bodas'?' active':'')+'" id="evViewBodas">Bodas</button>';
+  var _toActive=(EV_VIEW==='puentes'||EV_VIEW==='time-off');
+  h+='<button class="ev-view-toggle ev-btn-timeoff ev-btn-split'+(_toActive?' active':'')+'" id="evViewTimeOff">Vacaciones<br>Festivos</button>';
   h+='</div>';
   h+='</div>';
   // Header a nivel 3 (with-tabs → top:82px)
@@ -1156,6 +1161,8 @@ function renderEvContent(){
     h+='<div class="sy-hdr-right"><button class="today-btn" id="evToday" style="font-size:.65rem;padding:4px 10px">Hoy</button></div>';
   } else if(EV_VIEW==='months'){
     h+='<div class="sy-year-nav"><div class="sy-year">Eventos</div></div>';
+  } else if(EV_VIEW==='bodas'){
+    h+='<div class="sy-year-nav"><div class="sy-year">Bodas</div></div>';
   } else if(EV_VIEW==='puentes'||EV_VIEW==='time-off'){
     h+='<div class="sy-year-nav"><button class="sy-nav" id="evPrev">&#9664;</button><div class="sy-year">'+EV_YEAR+'</div><button class="sy-nav" id="evNext">&#9654;</button></div>';
     h+='<div class="sy-hdr-right"><button class="sy-pdf" id="evSyPdf">PDF</button></div>';
@@ -1216,15 +1223,23 @@ function renderEvContent(){
     h+='</div>';
     h+='</div>';
   }
+  if(EV_VIEW==='puentes'||EV_VIEW==='time-off'){
+    /* Pestana unica "Vacaciones Festivos" con dos subpestanas */
+    h+='<div class="ev-to-subtabs">';
+    h+='<button class="ev-to-subtab'+(EV_VIEW==='puentes'?' active':'')+'" id="evSubPuentes">Puentes</button>';
+    h+='<button class="ev-to-subtab'+(EV_VIEW==='time-off'?' active':'')+'" id="evSubTimeOff">Vacaciones y festivos</button>';
+    h+='</div>';
+  }
   if(EV_VIEW==='cal')h+=renderEvCalMonth();
   else if(EV_VIEW==='upcoming')h+=renderEvUpcoming();
   else if(EV_VIEW==='week')h+=renderEvWeek();
   else if(EV_VIEW==='annual')h+=renderEvAnnual();
   else if(EV_VIEW==='quad')h+=renderEvQuad();
+  else if(EV_VIEW==='bodas')h+=renderBodasBody();
   else if(EV_VIEW==='puentes')h+=renderSummaryPuentesBody(EV_YEAR);
   else if(EV_VIEW==='time-off')h+=renderSummaryTimeOffBody(EV_YEAR);
   else h+=renderEvMonthsView();
-  if(EV_VIEW!=='puentes'&&EV_VIEW!=='time-off'){
+  if(EV_VIEW!=='puentes'&&EV_VIEW!=='time-off'&&EV_VIEW!=='bodas'){
     h+='<div class="ev-io-row">';
     var _isPickView=EV_VIEW==='annual'||EV_VIEW==='quad';
     var addLabel=_isPickView&&EV_EDIT_MODE?'&#10006; Cancelar':'+ A\u00f1adir';
@@ -1282,6 +1297,18 @@ function renderEvDetail(ev,fromSummary){
   h+='<div class="ev-detail-date">&#128197; '+dateStr+'</div>';
   if(repeatStr)h+='<div class="ev-detail-repeat">'+repeatStr+'</div>';
   if(ev.note)h+='<div class="ev-detail-note">'+escHtml(ev.note)+'</div>';
+  /* Nota especifica del dia desde el que se abrio (puntuales de varios dias) */
+  if(EV_EDIT_DS&&ev.dayNotes&&ev.dayNotes[EV_EDIT_DS]){
+    h+='<div class="ev-detail-note ev-detail-daynote"><span class="ev-note-scope">'
+      +EV_EDIT_DS.slice(8)+'/'+EV_EDIT_DS.slice(5,7)+'</span> '+escHtml(ev.dayNotes[EV_EDIT_DS])+'</div>';
+  }
+  /* Datos de la clase de boda */
+  if(getEvType(ev)==='Ensayos boda'&&typeof bodaCouple==='function'){
+    var _b=ev.boda||{};var _c=bodaCouple(_b.coupleId);
+    h+='<div class="ev-detail-repeat">&#128141; '+(_c?escHtml(_c.name):'Sin pareja asignada')
+      +' &#183; '+(_b.time?_b.time+' (1 h)':'sin hora')
+      +' &#183; '+escHtml(BODA_PLACE_SHORT[_b.place||(_c&&_c.place)||'casa'])+'</div>';
+  }
   h+='<div class="ev-detail-actions">';
   if(fromSummary)h+='<button class="ev-btn" id="evDGoCal" style="border-color:var(--c-blue);color:var(--c-blue)">&#128197; Ver en Calendario</button>';
   h+='<button class="ev-btn danger" id="evDDel">Eliminar</button>';
@@ -1390,12 +1417,35 @@ function closeEvDetail(){
   setTimeout(function(){var w=document.getElementById('evDWrap');if(w)w.remove();},300);
 }
 
+/* Dias que ocupa un evento puntual (para las notas por dia y el conteo) */
+function evPuntualDays(ev){
+  if(!ev)return [];
+  if(ev.dates&&ev.dates.length)return ev.dates.slice();
+  var out=[],s0=new Date(ev.start+'T00:00:00'),e0=new Date((ev.end||ev.start)+'T00:00:00'),g=0;
+  for(var d=new Date(s0);d<=e0&&g<400;d.setDate(d.getDate()+1),g++)out.push(evDk(d));
+  return out;
+}
+/* Swatches de categoria de la clase indicada */
+function _renderEvTypeSwatches(kind,selType){
+  var h='';
+  EV_KINDS[kind].types.forEach(function(t){
+    var key=evTypeKey(kind,t);
+    var c=evTypeColor(kind,t);
+    var isMulti=!!EV_FREE_COLOR[key];
+    var sel=(t===selType)?' selected':'';
+    h+='<div class="ev-color-swatch'+sel+(isMulti?' ev-color-swatch-multi':'')+'" data-hex="'+c+'" data-type="'+escHtml(t)+'" data-kind="'+kind+'"'+(isMulti?'':' style="color:'+c+'"')+'>';
+    h+=isMulti?'<div class="ev-type-dot ev-type-dot-multi"></div>':'<div class="ev-type-dot" style="background:'+c+'"></div>';
+    h+='<span class="ev-type-name">'+escHtml(t)+'</span></div>';
+  });
+  return h;
+}
+
 /* ── Render: formulario de evento ───────────────────────── */
 function renderEvForm(ev){
   var isEdit=!!ev;
   var title=isEdit?ev.title:'';
   var note=isEdit?(ev.note||''):'';
-  var color=isEdit?ev.color:EV_COLORS[0];
+  var color=isEdit?ev.color:evTypeColor('puntual','Rec. Gestiones');
   var today=evDk(new Date());
   var start=isEdit?ev.start:today;
   var end=isEdit?(ev.end||ev.start):today;
@@ -1407,9 +1457,18 @@ function renderEvForm(ev){
      fallback por color para eventos antiguos sin ev.type). Antes la selección
      del picker se decidía por color y un evento con color personalizado no
      casaba con ningún swatch → al guardar caía en EV_COLORS[0] = Viaje. */
-  var curType=isEdit?getEvType(ev):'Viaje';
-  if(curType==='Cumpleaños VIP')curType='Otros'; /* el swatch VIP no se muestra */
-  var isViaje=(curType==='Viaje');
+  /* Clase y categoria actuales (v241). getEvKind/getEvType hacen el fallback
+     para eventos anteriores, que no tenian ni kind ni type. */
+  var curKind=isEdit?getEvKind(ev):'puntual';
+  var curType=isEdit?getEvType(ev):'Rec. Gestiones';
+  if(curType==='Cumplea\u00f1os VIP'){curKind='puntual';curType='Otros';}
+  if(EV_KINDS[curKind].types.indexOf(curType)===-1)curType=EV_KINDS[curKind].types[0];
+  var curKey=evTypeKey(curKind,curType);
+  /* Nota especifica del dia: solo si es puntual, ocupa varios dias y se ha
+     entrado desde un dia concreto del calendario */
+  var _dayList=evPuntualDays(ev);
+  var showDayNote=isEdit&&curKind==='puntual'&&EV_EDIT_DS&&_dayList.length>1&&_dayList.indexOf(EV_EDIT_DS)!==-1;
+  var dayNote=showDayNote?((ev.dayNotes&&ev.dayNotes[EV_EDIT_DS])||''):'';
   var h='<div class="ev-form-overlay" id="evFormOv">';
   h+='<div class="ev-form-sheet">';
   h+='<div class="ev-form-handle"></div>';
@@ -1421,36 +1480,31 @@ function renderEvForm(ev){
   h+='</div>';
   h+='<div class="ev-field"><label>T\u00edtulo</label>';
   h+='<input class="ev-input" id="evFTitle" type="text" maxlength="80" placeholder="Nombre del evento" value="'+escHtml(title)+'"></div>';
-  h+='<div class="ev-field"><label>Nota <span id="evCharCnt" style="font-weight:400;color:var(--text-dim)">'+note.length+'/200</span></label>';
+  /* Nota general (todos los dias del evento) */
+  h+='<div class="ev-field"><label>'+(showDayNote?'Nota general <span class="ev-note-scope">(todos los d\u00edas)</span> ':'Nota ')
+    +'<span id="evCharCnt" style="font-weight:400;color:var(--text-dim)">'+note.length+'/200</span></label>';
   h+='<textarea class="ev-textarea" id="evFNote" maxlength="200" placeholder="Notas opcionales...">'+escHtml(note)+'</textarea></div>';
-  /* Type selector (7 predefined types) */
-  h+='<div class="ev-field"><label>Tipo</label><div class="ev-type-picker" data-cur-type="'+escHtml(curType)+'">';
-  var _shownTypes={};
-  EV_COLORS.forEach(function(c){
-    var typeName=EV_COLOR_TYPES[c]||'Otros';
-    if(typeName==='Cumplea\u00f1os VIP')return; /* skip VIP */
-    if(_shownTypes[typeName])return; /* skip duplicate type names */
-    _shownTypes[typeName]=true;
-    /* Selecci\u00f3n por NOMBRE DE TIPO (no por color) \u2014 el color puede ser libre */
-    var sel=(typeName===curType)?' selected':'';
-    /* Viaje y Otros no tienen color fijo: dot multicolor para se\u00f1alizar
-       que el color se elige libremente abajo, y borde neutro al seleccionar */
-    var isMulti=(typeName==='Viaje'||typeName==='Otros');
-    var swatchCls='ev-color-swatch'+sel+(isMulti?' ev-color-swatch-multi':'');
-    var swatchStyle=isMulti?'':' style="color:'+c+'"';
-    h+='<div class="'+swatchCls+'" data-hex="'+c+'" data-type="'+escHtml(typeName)+'"'+swatchStyle+'>';
-    if(isMulti){
-      h+='<div class="ev-type-dot ev-type-dot-multi"></div>';
-    } else {
-      h+='<div class="ev-type-dot" style="background:'+c+'"></div>';
-    }
-    h+='<span class="ev-type-name">'+typeName+'</span>';
-    h+='</div>';
+  /* Nota especifica de ESTE dia */
+  if(showDayNote){
+    h+='<div class="ev-field ev-daynote-field"><label>Nota de este d\u00eda <span class="ev-note-scope">('+EV_EDIT_DS.slice(8)+'/'+EV_EDIT_DS.slice(5,7)+')</span> '
+      +'<span id="evDayCnt" style="font-weight:400;color:var(--text-dim)">'+dayNote.length+'/200</span></label>';
+    h+='<textarea class="ev-textarea" id="evFDayNote" maxlength="200" placeholder="Solo para este d\u00eda...">'+escHtml(dayNote)+'</textarea></div>';
+  }
+  /* Selector de clase + categoria */
+  h+='<div class="ev-field"><label>Clase de evento</label>';
+  h+='<div class="ev-kind-picker" data-cur-kind="'+curKind+'" data-cur-type="'+escHtml(curType)+'">';
+  ['puntual','grande'].forEach(function(k){
+    h+='<button type="button" class="ev-kind-btn'+(k===curKind?' selected':'')+'" data-kind="'+k+'">'
+      +(k==='puntual'?'\u2726 Puntual':'\u25ac Grande')
+      +'<span>'+(k==='puntual'?'un marcador por d\u00eda':'barra de varios d\u00edas')+'</span></button>';
   });
   h+='</div></div>';
+  h+='<div class="ev-field"><label>Categor\u00eda</label><div class="ev-type-picker" id="evFTypePicker">';
+  h+=_renderEvTypeSwatches(curKind,curType);
+  h+='</div></div>';
   /* Color picker section: visible para Viaje y Otros */
-  var isOtros=(curType==='Otros');
-  var showColorPicker=isViaje||isOtros;
+  var isOtros=!!EV_FREE_SHAPE[curKey];
+  var showColorPicker=!!EV_FREE_COLOR[curKey];
   h+='<div class="ev-field ev-form-color-section" id="evFColorSection" style="display:'+(showColorPicker?'block':'none')+'">';
   h+='<label>\uD83C\uDFA8 Paleta de colores</label>';
   h+=_renderColorPicker(color,false,false,'evFCp');
@@ -1458,7 +1512,9 @@ function renderEvForm(ev){
   /* Secci\u00f3n extra para Otros: forma del marcador + selector multi-d\u00eda */
   var curShape=isEdit&&ev.shape?ev.shape:'circle';
   var curDates=isEdit&&Array.isArray(ev.dates)?ev.dates.slice():[];
-  h+='<div class="ev-field ev-otros-extras" id="evFOtrosExtras" style="display:'+(isOtros?'block':'none')+'">';
+  var showDates=!!EV_FREE_DATES[curKey];
+  h+='<div class="ev-field ev-otros-extras" id="evFOtrosExtras" style="display:'+((isOtros||showDates)?'block':'none')+'">';
+  h+='<div id="evFShapeBlock" style="display:'+(isOtros?'block':'none')+'">';
   h+='<label>\u25B8 Forma del marcador</label>';
   h+='<div class="ev-shape-picker" id="evFShapePicker">';
   var _shapes=[
@@ -1477,13 +1533,17 @@ function renderEvForm(ev){
     h+='<span class="ev-shape-preview ev-shape-'+s.k+'" style="color:'+prevColor+'">'+evShapeSvg(s.k)+'</span>';
     h+='</button>';
   });
-  h+='</div>';
-  h+='<div style="margin-top:12px">';
+  h+='</div></div>';
+  h+='<div id="evFDatesBlock" style="display:'+(showDates?'block':'none')+';margin-top:12px">';
   h+='<label>\uD83D\uDDD3 Selecci\u00f3n Multid\u00eda</label>';
   h+='<button type="button" class="ev-btn" id="evFPickDates" style="width:100%;margin-top:4px;font-size:.78rem;padding:8px 10px">';
   h+='<span id="evFPickDatesLbl">'+(curDates.length>1?(curDates.length+' d\u00edas seleccionados \u2014 pulsa para editar'):'\uD83D\uDDD3 Selecci\u00f3n Multid\u00eda\u2026')+'</span>';
   h+='</button>';
-  h+='<div style="font-size:.62rem;color:var(--text-dim);margin-top:4px;line-height:1.4">Si seleccionas <b>m\u00e1s de un d\u00eda</b>, el evento aparecer\u00e1 en cada uno de esos d\u00edas e ignorar\u00e1 las fechas de inicio/fin de abajo.</div>';
+  h+='<div style="font-size:.62rem;color:var(--text-dim);margin-top:4px;line-height:1.4">'
+    +(curType==='Ensayos boda'
+      ? 'Marca todos los d\u00edas con clase: se crear\u00e1 <b>una clase por d\u00eda</b>, sin hora ni pareja. Luego las asignas desde la pesta\u00f1a <b>Bodas</b>.'
+      : 'Si seleccionas <b>m\u00e1s de un d\u00eda</b>, el evento aparecer\u00e1 en cada uno de esos d\u00edas e ignorar\u00e1 las fechas de inicio/fin de abajo.')
+    +'</div>';
   h+='</div>';
   h+='</div>';
   /* Inicio/Fin: deshabilitados si hay multid\u00eda activo */
@@ -1515,9 +1575,15 @@ function renderEvForm(ev){
 /* ── Apertura/cierre del formulario ─────────────────────── */
 function openEvForm(ev,prefillDate,container){
   EV_EDIT=ev||null;
+  if(!ev)EV_EDIT_DS=null;   /* las notas por dia solo aplican al editar */
   EV_FORM_CONTAINER=container||null;
   var ov=container||document.getElementById('eventsOverlay');
   ov.scrollTop=0;
+  /* Si quedaba un formulario anterior a medio cerrar, quitarlo: si no,
+     bindEvFormEvents() engancharia sus listeners al form viejo (mismos ids)
+     y una sola pulsacion de Guardar dispararia dos veces. */
+  var _oldW=document.getElementById('evFWrap');
+  if(_oldW)_oldW.remove();
   var wrap=document.createElement('div');
   wrap.id='evFWrap';
   wrap.innerHTML=renderEvForm(ev);
@@ -1544,6 +1610,7 @@ function closeEvForm(){
     var w=document.getElementById('evFWrap');
     if(w)w.remove();
     EV_EDIT=null;
+    EV_EDIT_DS=null;
     EV_FORM_CONTAINER=null;
   },300);
 }
@@ -1553,6 +1620,8 @@ function bindEvFormEvents(){
   var noteEl=document.getElementById('evFNote');
   var cntEl=document.getElementById('evCharCnt');
   noteEl.addEventListener('input',function(){cntEl.textContent=noteEl.value.length+'/200';});
+  var dayNoteEl=document.getElementById('evFDayNote'),dayCntEl=document.getElementById('evDayCnt');
+  if(dayNoteEl&&dayCntEl)dayNoteEl.addEventListener('input',function(){dayCntEl.textContent=dayNoteEl.value.length+'/200';});
   var _fCpWrap=document.getElementById('evFWrap')||document;
   var _fCp=_bindColorPicker(_fCpWrap,'evFCp');
   /* Track selected type hex (from the type picker) */
@@ -1584,24 +1653,53 @@ function bindEvFormEvents(){
     if(endEl)endEl.disabled=locked;
     if(note)note.style.display=locked?'block':'none';
   }
-  /* Type selector click handler */
-  document.querySelectorAll('.ev-color-swatch').forEach(function(sw){
-    sw.addEventListener('click',function(){
-      document.querySelectorAll('.ev-color-swatch').forEach(function(s){s.classList.remove('selected');});
-      sw.classList.add('selected');
-      var hex=sw.dataset.hex;
-      _selectedTypeHex=hex;
-      var typeName=sw.dataset.type||EV_COLOR_TYPES[hex]||'Otros';
-      var isViaje=(typeName==='Viaje');
-      var isOtros=(typeName==='Otros');
-      if(_colorSection)_colorSection.style.display=(isViaje||isOtros)?'block':'none';
-      if(_otrosExtras)_otrosExtras.style.display=isOtros?'block':'none';
-      var titleEl=document.getElementById('evFTitle');
-      if(hex==='#1d4ed8'&&titleEl&&!titleEl.value.trim()){
-        titleEl.value='Asturias';
-        var noteEl2=document.getElementById('evFNote');
-        if(noteEl2&&!noteEl2.value.trim()){noteEl2.value='Asturias';cntEl.textContent='8/200';}
-      }
+  /* Selector de CLASE (puntual / grande): re-pinta las categorias */
+  var _kindPicker=document.querySelector('.ev-kind-picker');
+  function _curKind(){return (_kindPicker&&_kindPicker.dataset.curKind)||'puntual';}
+  function _applyTypeUI(kind,typeName){
+    var key=evTypeKey(kind,typeName);
+    if(_kindPicker){_kindPicker.dataset.curKind=kind;_kindPicker.dataset.curType=typeName;}
+    if(_colorSection)_colorSection.style.display=EV_FREE_COLOR[key]?'block':'none';
+    var _shp=!!EV_FREE_SHAPE[key],_dts=!!EV_FREE_DATES[key];
+    if(_otrosExtras)_otrosExtras.style.display=(_shp||_dts)?'block':'none';
+    var _sb=document.getElementById('evFShapeBlock');
+    if(_sb)_sb.style.display=_shp?'block':'none';
+    var _db=document.getElementById('evFDatesBlock');
+    if(_db)_db.style.display=_dts?'block':'none';
+  }
+  function _bindTypeSwatches(){
+    document.querySelectorAll('#evFTypePicker .ev-color-swatch').forEach(function(sw){
+      sw.addEventListener('click',function(){
+        document.querySelectorAll('#evFTypePicker .ev-color-swatch').forEach(function(x){x.classList.remove('selected');});
+        sw.classList.add('selected');
+        _selectedTypeHex=sw.dataset.hex;
+        var typeName=sw.dataset.type||'Otros';
+        _applyTypeUI(sw.dataset.kind||_curKind(),typeName);
+        var titleEl=document.getElementById('evFTitle');
+        if(titleEl&&!titleEl.value.trim()){
+          if(typeName==='Asturias'){
+            titleEl.value='Asturias';
+            var noteEl2=document.getElementById('evFNote');
+            if(noteEl2&&!noteEl2.value.trim()){noteEl2.value='Asturias';cntEl.textContent='8/200';}
+          } else if(typeName==='Ensayos boda'){titleEl.value='Ensayo boda';}
+        }
+      });
+    });
+  }
+  _bindTypeSwatches();
+  document.querySelectorAll('.ev-kind-btn[data-kind]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var kind=b.dataset.kind;
+      document.querySelectorAll('.ev-kind-btn').forEach(function(x){x.classList.remove('selected');});
+      b.classList.add('selected');
+      /* Al cambiar de clase se conserva la categoria si existe en la nueva
+         (el caso de "Otros"); si no, la primera de la lista */
+      var prev=(_kindPicker&&_kindPicker.dataset.curType)||'';
+      var t=EV_KINDS[kind].types.indexOf(prev)!==-1?prev:EV_KINDS[kind].types[0];
+      var tp=document.getElementById('evFTypePicker');
+      if(tp)tp.innerHTML=_renderEvTypeSwatches(kind,t);
+      _bindTypeSwatches();
+      _applyTypeUI(kind,t);
     });
   });
   /* Shape picker (Otros) */
@@ -1659,21 +1757,15 @@ function bindEvFormEvents(){
     var title=document.getElementById('evFTitle').value.trim();
     if(!title){showToast('El t\u00edtulo es obligatorio','error');return;}
     var note=document.getElementById('evFNote').value.trim();
-    /* Tipo: el swatch seleccionado; si por lo que sea no hay ninguno, se
-       conserva el tipo con el que se abrió el formulario (nunca cae a Viaje) */
-    var typeSel=document.querySelector('.ev-color-swatch.selected');
-    var _typePickerEl=document.querySelector('.ev-type-picker');
-    var typeLabel=typeSel?(typeSel.dataset.type||EV_COLOR_TYPES[typeSel.dataset.hex]||'Otros')
-      :((_typePickerEl&&_typePickerEl.dataset.curType)||'Otros');
-    var typeHex=typeSel?typeSel.dataset.hex:EV_COLORS[0];
-    var color;
-    if(typeLabel==='Viaje'||typeLabel==='Otros'){
-      /* Viaje/Otros: usar color del picker */
-      color=_fCp.getColor();
-    } else {
-      /* Otros tipos: usar el color fijo del tipo */
-      color=typeHex;
-    }
+    /* Clase + categoria: del swatch seleccionado; si no hubiera ninguno se
+       conserva lo que traia el formulario (nunca cae a Viaje) */
+    var typeSel=document.querySelector('#evFTypePicker .ev-color-swatch.selected');
+    var _kp=document.querySelector('.ev-kind-picker');
+    var kindLabel=(typeSel&&typeSel.dataset.kind)||(_kp&&_kp.dataset.curKind)||'puntual';
+    var typeLabel=(typeSel&&typeSel.dataset.type)||(_kp&&_kp.dataset.curType)||'Otros';
+    var typeKey=evTypeKey(kindLabel,typeLabel);
+    /* Color: libre (paleta) en las categorias marcadas; fijo en el resto */
+    var color=EV_FREE_COLOR[typeKey]?_fCp.getColor():evTypeColor(kindLabel,typeLabel);
     var start=document.getElementById('evFStart').value;
     var end=document.getElementById('evFEnd').value;
     if(!start){showToast('La fecha de inicio es obligatoria','error');return;}
@@ -1686,31 +1778,49 @@ function bindEvFormEvents(){
       if(!wdays.length){showToast('Selecciona al menos un d\u00eda','error');return;}
       repeat={type:'weekly',weekDays:wdays};
     }else if(repType!=='none'){repeat={type:repType};}
-    /* Otros: incluir dates (>1) y shape personalizada */
+    /* dates[] y forma personalizada: solo donde aplica */
     var _saveDates=null,_saveShape=null;
-    if(typeLabel==='Otros'){
-      if(typeof _otrosDates!=='undefined'&&_otrosDates&&_otrosDates.length>1)_saveDates=_otrosDates.slice().sort();
-      if(typeof _otrosShape!=='undefined'&&_otrosShape)_saveShape=_otrosShape;
+    if(EV_FREE_DATES[typeKey]&&typeof _otrosDates!=='undefined'&&_otrosDates&&_otrosDates.length>1)_saveDates=_otrosDates.slice().sort();
+    if(EV_FREE_SHAPE[typeKey]&&typeof _otrosShape!=='undefined'&&_otrosShape)_saveShape=_otrosShape;
+    /* Ensayos boda: cada dia marcado es una CLASE independiente (sin hora ni
+       pareja). Se asignan luego desde la pestana Bodas. */
+    if(typeLabel==='Ensayos boda'&&!EV_EDIT){
+      var _dias=_saveDates?_saveDates.slice():[start];
+      if(!_saveDates&&end>start){
+        _dias=[];
+        var _d0=new Date(start+'T00:00:00'),_d1=new Date(end+'T00:00:00'),_g=0;
+        for(var _dd=new Date(_d0);_dd<=_d1&&_g<400;_dd.setDate(_dd.getDate()+1),_g++)_dias.push(evDk(_dd));
+      }
+      var _n=typeof bodaBulkCreate==='function'?bodaBulkCreate(_dias):0;
+      updateEventsBtn();closeEvForm();
+      setTimeout(function(){refreshEvents();},320);
+      showToast(_n===1?'1 clase creada':(_n+' clases creadas \u2014 as\u00edgnalas en la pesta\u00f1a Bodas'),
+        _n?'success':'error');
+      return;
     }
+    var _newEv={id:EV_EDIT?EV_EDIT.id:('ev-'+Date.now()),title:title,note:note,color:color,
+      kind:kindLabel,type:typeLabel,start:start,end:end,repeat:repeat};
+    if(_saveDates)_newEv.dates=_saveDates;
+    if(_saveShape)_newEv.shape=_saveShape;
+    /* Notas por dia: se conservan las que ya hubiera y se actualiza la del dia
+       desde el que se entro (vacia = se borra esa entrada) */
+    if(EV_EDIT&&EV_EDIT.dayNotes)_newEv.dayNotes=JSON.parse(JSON.stringify(EV_EDIT.dayNotes));
+    var _dnEl=document.getElementById('evFDayNote');
+    if(_dnEl&&EV_EDIT_DS){
+      var _dnVal=_dnEl.value.trim();
+      if(_dnVal){_newEv.dayNotes=_newEv.dayNotes||{};_newEv.dayNotes[EV_EDIT_DS]=_dnVal;}
+      else if(_newEv.dayNotes)delete _newEv.dayNotes[EV_EDIT_DS];
+    }
+    if(EV_EDIT&&EV_EDIT.boda)_newEv.boda=EV_EDIT.boda;
+    var _full=evDayLimitExceeded(_newEv,EV_EDIT?EV_EDIT.id:null);
+    if(_full){showToast('El '+_fmtDayEs(_full)+' ya tiene '+EV_MAX_DAY_EVENTS+' eventos (m\u00e1ximo)','error');return;}
     if(EV_EDIT){
       var idx=-1;
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===EV_EDIT.id){idx=i;break;}}
-      if(idx!==-1){
-        var _newEv={id:EV_EDIT.id,title:title,note:note,color:color,type:typeLabel,start:start,end:end,repeat:repeat};
-        if(_saveDates)_newEv.dates=_saveDates;
-        if(_saveShape)_newEv.shape=_saveShape;
-        var _full=evDayLimitExceeded(_newEv,EV_EDIT.id);
-        if(_full){showToast('El '+_fmtDayEs(_full)+' ya tiene '+EV_MAX_DAY_EVENTS+' eventos (m\u00e1ximo)','error');return;}
-        EVENTS[idx]=_newEv;
-      }
+      if(idx!==-1)EVENTS[idx]=_newEv;
       showToast('Evento actualizado','success');
     }else{
-      var _newEv2={id:'ev-'+Date.now(),title:title,note:note,color:color,type:typeLabel,start:start,end:end,repeat:repeat};
-      if(_saveDates)_newEv2.dates=_saveDates;
-      if(_saveShape)_newEv2.shape=_saveShape;
-      var _full2=evDayLimitExceeded(_newEv2,null);
-      if(_full2){showToast('El '+_fmtDayEs(_full2)+' ya tiene '+EV_MAX_DAY_EVENTS+' eventos (m\u00e1ximo)','error');return;}
-      EVENTS.push(_newEv2);
+      EVENTS.push(_newEv);
       showToast('Evento a\u00f1adido','success');
     }
     saveEvents();updateEventsBtn();
@@ -2003,8 +2113,17 @@ function bindEvEvents(){
   document.getElementById('evViewQuad').addEventListener('click',function(){_switchEvView('quad');refreshEvents();});
   document.getElementById('evViewAnnual').addEventListener('click',function(){_switchEvView('annual');refreshEvents();});
   document.getElementById('evViewMonths').addEventListener('click',function(){_switchEvView('months');refreshEvents();});
-  document.getElementById('evViewPuentes').addEventListener('click',function(){_switchEvView('puentes');refreshEvents();});
-  document.getElementById('evViewTimeOff').addEventListener('click',function(){_switchEvView('time-off');refreshEvents();});
+  var _bodasBtn=document.getElementById('evViewBodas');
+  if(_bodasBtn)_bodasBtn.addEventListener('click',function(){_switchEvView('bodas');refreshEvents();});
+  document.getElementById('evViewTimeOff').addEventListener('click',function(){
+    /* La pestana recuerda en cual de sus dos subpestanas estabas */
+    _switchEvView(EV_TO_SUBTAB==='time-off'?'time-off':'puentes');refreshEvents();
+  });
+  var _subP=document.getElementById('evSubPuentes');
+  if(_subP)_subP.addEventListener('click',function(){EV_TO_SUBTAB='puentes';_switchEvView('puentes');refreshEvents();});
+  var _subT=document.getElementById('evSubTimeOff');
+  if(_subT)_subT.addEventListener('click',function(){EV_TO_SUBTAB='time-off';_switchEvView('time-off');refreshEvents();});
+  if(EV_VIEW==='bodas'&&typeof bindBodasEvents==='function')bindBodasEvents();
   // Dropdown de vista anual (reemplaza los dos botones anteriores)
   var _vdBtn=document.getElementById('evAnnVdBtn');
   var _vdMenu=document.getElementById('evAnnVdMenu');
@@ -2062,6 +2181,7 @@ function bindEvEvents(){
       e.stopPropagation();
       var id=el.dataset.id;var ev=null;
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
+      EV_EDIT_DS=el.dataset.ds||null;
       if(ev)openEvDetail(ev);
     });
   });
@@ -2088,6 +2208,8 @@ function bindEvEvents(){
       e.stopPropagation();
       var id=badge.dataset.id;var ev=null;
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
+      var _cell=badge.closest('[data-ds]');
+      EV_EDIT_DS=badge.dataset.ds||(_cell?_cell.dataset.ds:null);
       if(ev)openEvDetail(ev);
     });
   });
