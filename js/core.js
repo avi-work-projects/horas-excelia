@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v239 — Eventos: tipo persistente al editar, formas con borde uniforme, rejilla 2×2 de puntuales, VIP amarillo en anual/4-meses e importación incremental';
+var APP_VERSION = 'v240 — Correcciones de eventos (tamaño de marcador único, columna de desborde, cabecera sticky opaca, VIP a rayas) + CODEMAP';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
