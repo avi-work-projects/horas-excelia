@@ -1196,6 +1196,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-annual-xs.ev-xs-n4{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}
 .ev-annual-xs.ev-xs-n3>*:first-child{grid-column:1/3}
 .ev-annual-xs>.ev-annual-marker{width:100%;height:100%;max-width:100%;max-height:100%}
+/* Un solo evento en el día: tamaño fijo (como antes de la rejilla), no la casilla entera */
+.ev-annual-xs.ev-xs-n1>.ev-annual-marker{max-width:8px;max-height:8px}
 .ev-annual-x{position:relative;width:4px;height:4px;flex-shrink:0}
 .ev-annual-x::before,.ev-annual-x::after{content:'';position:absolute;top:50%;left:50%;background:currentColor;border-radius:1px}
 .ev-annual-x::before{width:5px;height:1.5px;transform:translate(-50%,-50%) rotate(45deg);box-shadow:0 0 0 .5px #000}
@@ -1305,9 +1307,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-annual-day.ev-annual-puente.ann-vac{background:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 2px,transparent 2px,transparent 5px),rgba(255,179,71,.18)!important}
 .ev-annual-day.ev-annual-suelto-fest{background:repeating-linear-gradient(-45deg,rgba(255,107,107,.85),rgba(255,107,107,.85) 2px,transparent 2px,transparent 5px),var(--surface2)!important}
 .ev-annual-day.ev-annual-suelto-vac{background:repeating-linear-gradient(45deg,rgba(255,179,71,.45),rgba(255,179,71,.45) 2px,transparent 2px,transparent 5px),var(--surface2)!important}
-/* Cumpleaños VIP en anual/4-meses: casilla amarilla con borde amarillo oscuro
-   (sustituye a la estrella; en 1-mes sí se sigue usando la estrella) */
-.ev-annual-day.ann-vip-bday{background:rgba(251,191,36,.8)!important;outline:1.5px solid #a16207;outline-offset:-1.5px}
+/* Cumpleaños VIP en anual/4-meses: rayas diagonales amarillas (en 1-mes se usa
+   la estrella). Se pintan como capa ::after con el patrón DESFASADO respecto al
+   de puente (rosa 0→2px, amarillo 2→5px) para que, si el día es puente, las
+   rayas amarillas rellenen justo los huecos entre las rosas. */
+.ev-annual-day.ann-vip-bday::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:repeating-linear-gradient(45deg,transparent 0,transparent 2px,rgba(251,191,36,.6) 2px,rgba(251,191,36,.6) 5px)}
 /* Festivos/vac en vista anual: borde brillante + relleno suave por día individual */
 .ev-annual-day.ann-festivo{background:rgba(255,107,107,.15)!important;outline:1.5px solid rgba(255,107,107,.85);outline-offset:-1.5px}
 .ev-annual-day.ann-vac{background:rgba(255,179,71,.15)!important;outline:1.5px solid rgba(255,179,71,.85);outline-offset:-1.5px}
@@ -1474,9 +1479,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 /* Contenedor del calendario 1-mes: bloque propio para que .sy-body no meta su
    gap:16px entre semanas (así entran las 6 semanas de meses como agosto 2026) */
 .ev-month-wrap{display:block}
-/* Cabecera L M X J V S D: compacta y pegada (sticky) al header del mes, con
-   fondo opaco para que el contenido no se vea por detrás al hacer scroll */
-.ev-week-hdr{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin:0 0 2px;position:sticky;top:0;z-index:6;background:var(--bg);box-shadow:0 1px 0 var(--border)}
+/* Cabecera L M X J V S D: compacta y pegada (sticky) al header del mes.
+   top:-16px (y no 0) porque la línea de anclaje del sticky va al borde del
+   PADDING de .sy-body (padding:16px) — con top:0 quedaba una banda de 16px por
+   la que se veían pasar los días al hacer scroll. Los márgenes negativos la
+   hacen a sangre para que tape también los laterales. */
+.ev-week-hdr{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin:0 -16px 2px;padding:0 16px;position:sticky;top:-16px;z-index:6;background:var(--bg);box-shadow:0 1px 0 var(--border)}
 .ev-week-hdr div{text-align:center;font-size:.55rem;color:var(--text-dim);text-transform:uppercase;padding:2px 0 3px;font-weight:600;line-height:1}
 /* Contenedor semana: barras multi-día ENCIMA (position:absolute) de las celdas */
 .ev-week-outer{margin-bottom:3px;position:relative;isolation:isolate}
@@ -1494,6 +1502,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-day-overflow.with-corner{right:20px}
 .ev-day-overflow > *{pointer-events:auto;flex:0 1 auto;min-width:0}
 .ev-day-overflow .ev-badge{flex:1 1 auto}
+/* Marcadores desbordados: SEGUNDA COLUMNA (uno debajo de otro), no en fila */
+.ev-day-overflow.ovf-col{flex-direction:column;align-items:flex-start;right:auto;width:11px;gap:2px}
+.ev-day-overflow.ovf-col > *{flex:0 0 auto}
 /* Otros: contenedor en esquina superior DERECHA del día (apilados verticalmente).
    Posicionados absolutamente para no afectar al layout del resto. */
 .ev-otros-corner{position:absolute;top:5px;right:4px;display:flex;flex-direction:column;align-items:flex-end;gap:3px;z-index:5;pointer-events:none;max-width:60%}

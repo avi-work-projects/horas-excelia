@@ -3,6 +3,16 @@
 ## ¿Qué es?
 PWA de registro y envío semanal de horas trabajadas por proyecto. Desplegada en GitHub Pages mediante GitHub Actions. Un único `index.html` más archivos CSS/JS externos. No hay backend.
 
+## ⚡ Índice de código — LEER ANTES DE EXPLORAR
+`CODEMAP.md` (raíz) es un índice generado con todas las funciones, el estado global y
+las secciones CSS del proyecto, en formato `nombre:línea`.
+
+**Flujo obligatorio antes de tocar código:**
+1. `grep` sobre `CODEMAP.md` para localizar el símbolo → te da fichero y línea.
+2. Abrir ese fichero con `offset`/`limit` alrededor de esa línea. **No leer ficheros
+   enteros** (`events.js` son 2.200 líneas, `economics-fiscal.js` 1.400).
+3. Tras cambios grandes (funciones nuevas/renombradas): `node tools/codemap.js`.
+
 ## Estructura de archivos
 ```
 index.html          ← Shell HTML + config inline (secrets inyectados por CI)
