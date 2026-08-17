@@ -1733,6 +1733,73 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bday-ic-edit{border-color:var(--accent);color:var(--accent-bright)}
 .bday-ic-close{flex:0 0 36px;color:var(--text-dim)}
 
+/* ============================================================
+   v241 — Clases de evento (Puntual / Grande), pestana Bodas y
+   subpestanas de Vacaciones/Festivos
+   ============================================================ */
+/* Selector de clase en el formulario */
+.ev-kind-picker{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.ev-kind-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 6px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text-muted);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s}
+.ev-kind-btn span{font-size:.62rem;font-weight:400;color:var(--text-dim);text-align:center;line-height:1.2}
+.ev-kind-btn.selected{border-color:var(--accent-bright);background:var(--accent-glow);color:var(--accent-bright)}
+.ev-kind-btn.selected span{color:var(--accent-bright);opacity:.8}
+/* Notas: general vs de un dia concreto */
+.ev-note-scope{font-weight:400;font-size:.62rem;color:var(--accent-bright);opacity:.85}
+.ev-daynote-field{border-left:2px solid var(--accent);padding-left:8px}
+.ev-detail-daynote{border-left:2px solid var(--accent);padding-left:8px;margin-top:6px}
+/* Pestana Bodas y pestana partida Vacaciones/Festivos */
+.ev-btn-bodas:not(.active){background:rgba(232,121,168,.1);border-color:rgba(232,121,168,.35);color:#e879a8}
+.ev-btn-bodas.active{background:rgba(232,121,168,.24) !important;border-color:#e879a8 !important;color:#e879a8 !important}
+/* Mitad marron (vacaciones/festivos) + mitad rosa (puentes), sin linea visible */
+.ev-btn-split:not(.active){background:linear-gradient(to bottom,rgba(255,179,71,.13) 0%,rgba(255,179,71,.13) 50%,rgba(244,114,182,.13) 50%,rgba(244,114,182,.13) 100%);border-color:rgba(255,179,71,.35);color:var(--vacaciones)}
+.ev-btn-split.active{background:linear-gradient(to bottom,rgba(255,179,71,.3) 0%,rgba(255,179,71,.3) 50%,rgba(244,114,182,.3) 50%,rgba(244,114,182,.3) 100%) !important;border-color:var(--vacaciones) !important;color:var(--text) !important}
+/* Subpestanas dentro de Vacaciones/Festivos */
+.ev-to-subtabs{display:flex;gap:6px;padding:2px 0 6px}
+.ev-to-subtab{flex:1;font-size:.74rem;padding:7px 10px;border-radius:14px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s}
+.ev-to-subtab.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright);font-weight:600}
+/* ── Pestana Bodas ── */
+.boda-subtabs{display:flex;gap:6px;padding:2px 0 8px}
+.boda-subtab{flex:1;font-size:.78rem;padding:8px 10px;border-radius:14px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s}
+.boda-subtab.active{border-color:#e879a8;background:rgba(232,121,168,.16);color:#e879a8;font-weight:600}
+.boda-sec{display:flex;flex-direction:column;gap:8px}
+.boda-summary{display:flex;gap:8px}
+.boda-sum-item{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 4px;text-align:center;display:flex;flex-direction:column}
+.boda-sum-item b{font-size:1.1rem;color:var(--text)}
+.boda-sum-item span{font-size:.62rem;color:var(--text-dim)}
+.boda-sum-item.warn b{color:var(--c-orange,#fb923c)}
+.boda-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.boda-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.boda-card-hd{display:flex;align-items:center;gap:8px}
+.boda-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;border:1.5px solid rgba(0,0,0,.5)}
+.boda-name{flex:1;font-size:.85rem;font-weight:600;color:var(--text)}
+.boda-place-tag{font-size:.6rem;color:var(--text-dim);border:1px solid var(--border);border-radius:8px;padding:1px 6px}
+.boda-prog{height:6px;border-radius:3px;background:var(--surface3,var(--surface2));overflow:hidden}
+.boda-prog-bar{height:100%;border-radius:3px;transition:width .2s}
+.boda-card-ft{display:flex;justify-content:space-between;font-size:.68rem;color:var(--text-muted)}
+.boda-card-note{font-size:.7rem;color:var(--text-dim);line-height:1.35;border-top:1px solid var(--border);padding-top:5px}
+.boda-falta{color:var(--c-orange,#fb923c);font-weight:600}
+.boda-ok{color:var(--c-green,#34d399);font-weight:600}
+.boda-sobra{color:var(--c-red,#ff6b6b);font-weight:600}
+.boda-day{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 8px}
+.boda-day-hd{display:flex;align-items:center;gap:8px;font-size:.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.03em;padding-bottom:4px}
+.boda-day-n{flex:1;font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-dim);font-size:.65rem}
+.boda-class{display:flex;align-items:center;gap:4px;padding:4px 0;border-top:1px solid var(--border)}
+.boda-class-mark{width:18px;height:18px;flex-shrink:0;line-height:0}
+.boda-class-mark svg{width:100%;height:100%;display:block;overflow:visible}
+.boda-inp{font-size:.68rem;padding:4px 3px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text);min-width:0;outline:none}
+.boda-time{width:66px;flex:0 0 auto}
+.boda-couple{flex:1 1 auto}
+.boda-place{width:74px;flex:0 0 auto}
+.boda-mini-btn{border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);border-radius:6px;font-size:.72rem;width:22px;height:22px;line-height:1;cursor:pointer;flex-shrink:0;padding:0}
+.boda-mini-btn:hover{border-color:var(--accent);color:var(--accent-bright)}
+.boda-actions{display:flex;gap:8px;align-items:center}
+.boda-date-inp{flex:1;font-size:.75rem;padding:6px 8px}
+.boda-add-btn{width:100%}
+.boda-legend{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:.62rem;color:var(--text-dim);padding-top:4px}
+.boda-legend-t{width:100%;color:var(--text-muted)}
+.boda-legend-i{display:flex;align-items:center;gap:3px}
+.boda-legend-i i{width:10px;height:10px;border-radius:2px;border:1px solid rgba(0,0,0,.6);display:inline-block}
+
 /* ── Diálogo: modo de importación (añadir vs reemplazar) ── */
 .imp-mode-ov{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
 .imp-mode-ov.open{opacity:1;pointer-events:auto}

@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v240 — Correcciones de eventos (tamaño de marcador único, columna de desborde, cabecera sticky opaca, VIP a rayas) + CODEMAP';
+var APP_VERSION = 'v241 - Eventos Puntuales/Grandes, pestana Bodas (parejas y clases) y notas por dia';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

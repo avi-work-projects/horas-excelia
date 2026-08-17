@@ -106,6 +106,36 @@ renderContenido();
 ```
 El listener en el container **sobrevive** a los `innerHTML` porque el container mismo no se reemplaza.
 
+## Clases de evento (v241) — `js/events-picker-color.js`
+Cada evento tiene un `kind` y un `type`. **La identidad de una categoría es el par
+`kind|type`**, porque "Otros" existe en las dos clases.
+
+| kind | categorías | representación |
+|---|---|---|
+| `puntual` | Rec. Gestiones · Plan/Quedada · Ensayos boda · Otros | **un marcador por cada día** que ocupa (misma forma en los 3 calendarios) |
+| `grande` | Viaje · Asturias · Casa Rural · Otros | **barra continua**, dure 1 día o varios |
+
+- `getEvKind(ev)` deduce la clase de eventos antiguos (los `Otros` de varios días → grande).
+- `EV_TYPE_COLORS['kind|type']` — color por defecto (Casa Rural = `#8b5e34` marrón).
+- `EV_FREE_COLOR` — categorías con paleta libre · `EV_FREE_SHAPE` — con selector de forma
+  (solo `puntual|Otros`) · `EV_FREE_DATES` — con Selección Multidía.
+- `isEvBarAlways(ev)` = `getEvKind(ev)==='grande'`; es lo único que decide barra vs marcador.
+- **Notas**: `ev.note` es la nota general (todos los días) y `ev.dayNotes['YYYY-MM-DD']` la
+  nota propia de un día. El formulario muestra las dos cajas solo si el evento es puntual,
+  ocupa varios días y se entró desde un día concreto (`EV_EDIT_DS`).
+
+## Bodas (js/bodas.js)
+Pestaña `EV_VIEW==='bodas'` con dos subpestañas (`BODA_SUBTAB`): **Clases** y **Parejas**.
+- Parejas en `localStorage['excelia-bodas-v1']` (`BODA_COUPLES`):
+  `{id,name,color,contracted,place:'casa'|'sala'|'otro',note}`.
+- Una **clase** es un evento normal `puntual|Ensayos boda` con `ev.boda={coupleId,time,place}`.
+  Duración fija de 1 hora; `time` en saltos de 15 min.
+- Marcador: **aspa bicolor** (`evBodaSvg`) — brazos de arriba con el color de la pareja,
+  los de abajo con el de la franja (`BODA_SLOTS`: 9-14 blanco, 14-18 gris claro,
+  18-20 gris oscuro, 20-23 negro; gris neutro si no tiene hora).
+- Alta masiva: en el formulario, categoría "Ensayos boda" + rango o Selección Multidía →
+  `bodaBulkCreate()` crea **una clase por día**, sin hora ni pareja.
+
 ## Eventos (events.js)
 Estructura de un evento:
 ```json
