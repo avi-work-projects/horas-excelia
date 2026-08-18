@@ -391,15 +391,9 @@ function renderEvCalMonth(){
       var ce=Math.min(6,Math.round((ee-wStart)/86400000));
       wMulti.push({ev:ev,cs:cs,ce:ce,starts:es>=wStart,ends:ee<=wEnd,row:-1});
     });
-    // Greedy row assignment (max 3)
-    var rowOcc=[[],[],[]];
-    wMulti.forEach(function(it){
-      for(var r=0;r<3;r++){
-        var ok=true;
-        for(var j=0;j<rowOcc[r].length;j++){if(it.cs<=rowOcc[r][j][1]&&it.ce>=rowOcc[r][j][0]){ok=false;break;}}
-        if(ok){it.row=r;rowOcc[r].push([it.cs,it.ce]);break;}
-      }
-    });
+    /* Reparto en filas por grosor — ver _evAssignRow */
+    var rowOcc=_evRowOcc();
+    wMulti.forEach(function(it){_evAssignRow(it,rowOcc);});
     var activeRows=0;wMulti.forEach(function(it){if(it.row>=0)activeRows=Math.max(activeRows,it.row+1);});
     // Pre-compute which columns are in-month (for bar dimming)
     var inMCols=[];for(var ci=0;ci<7;ci++){inMCols.push(wk[ci].getMonth()===EV_MONTH);}
@@ -473,7 +467,7 @@ function renderEvCalMonth(){
         var _dc=getEvDisplayColor(ev);
         var _pastBar=wk[it.ce]<today?' past-bar':'';
         h+='<div class="ev-multi-bar '+evBarSizeCls(ev)+sc+_pastBar+'" data-id="'+ev.id+'"'
-          +' style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';border:1.5px solid '+_dc+';background:'+fakeTrans(_dc,0.65)+';color:#fff'+(hasInM?'':';opacity:.35')+'">'
+          +' style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';z-index:'+evBarZ(ev)+';border:1.5px solid '+_dc+';background:'+fakeTrans(_dc,0.65)+';color:#fff'+(hasInM?'':';opacity:.35')+'">'
           +(showT?escHtml(ev.title):'')+'</div>';
       });
       h+='</div>';
@@ -720,6 +714,27 @@ function renderEvUpcoming(){
   return h;
 }
 
+/* ── Reparto de barras en filas y orden de capas ───────────────────
+   Las barras de eventos grandes se apilan asi (de arriba a abajo):
+     marcadores puntuales > barra fina > media > gruesa > perimetro de puente
+   Por eso el reparto en filas se hace POR GROSOR: dos barras del mismo grosor
+   que se solapan van a filas distintas (y la franja se estrecha para que
+   quepan), mientras que dos de grosor distinto comparten fila y se superponen,
+   quedando la mas fina visible encima de la mas gruesa. */
+var EV_BAR_Z = {sm:3, md:2, lg:1};
+function _evRowOcc(){return {lg:[[],[],[]], md:[[],[],[]], sm:[[],[],[]]};}
+function _evAssignRow(it,rowOcc){
+  var occ=rowOcc[evBarSize(it.ev)]||rowOcc.md;
+  for(var r=0;r<3;r++){
+    var ok=true;
+    for(var j=0;j<occ[r].length;j++){
+      if(it.cs<=occ[r][j][1]&&it.ce>=occ[r][j][0]){ok=false;break;}
+    }
+    if(ok){it.row=r;occ[r].push([it.cs,it.ce]);break;}
+  }
+}
+function evBarZ(ev){return EV_BAR_Z[evBarSize(ev)]||2;}
+
 /* ── Render: tarjeta de un mes (compartida por Anual y 4 meses) ────
    Anual y 4-meses pintan EXACTAMENTE la misma tarjeta de mes; solo cambian
    tres detalles, que llegan en `o`:
@@ -792,15 +807,11 @@ function _renderEvMonthCard(m,yr,o){
       if(cs>ce)return;
       wMulti.push({ev:ev,cs:cs,ce:ce,starts:es>=wStart,ends:ee<=wEnd,row:-1});
     });
-    /* Reparto en filas (max 3) sin solapamiento */
-    var rowOcc=[[],[],[]];
-    wMulti.forEach(function(it){
-      for(var r=0;r<3;r++){
-        var ok=true;
-        for(var j=0;j<rowOcc[r].length;j++){if(it.cs<=rowOcc[r][j][1]&&it.ce>=rowOcc[r][j][0]){ok=false;break;}}
-        if(ok){it.row=r;rowOcc[r].push([it.cs,it.ce]);break;}
-      }
-    });
+    /* Reparto en filas (max 3) POR GROSOR: dos barras del mismo grosor que
+       chocan van a filas distintas (se estrechan); dos de grosor distinto
+       comparten fila y se superponen, con la mas fina encima (z-index). */
+    var rowOcc=_evRowOcc();
+    wMulti.forEach(function(it){_evAssignRow(it,rowOcc);});
     h+='<div class="ev-annual-week-outer">';
     var abspanStart=-1,abspans=[];
     for(var di=0;di<7;di++){
@@ -872,6 +883,7 @@ function _renderEvMonthCard(m,yr,o){
         var txt=(o.barTitles&&(it.starts||it.cs===0))?escHtml(it.ev.title):'';
         h+='<div class="ev-annual-mbar '+evBarSizeCls(it.ev)+sc+pastBar+'" data-id="'+it.ev.id+'"'
           +' style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)
+          +';z-index:'+evBarZ(it.ev)
           +';border:1px solid '+dc+';background:'+fakeTrans(dc,0.65)+extra+'">'+txt+'</div>';
       });
       h+='</div>';

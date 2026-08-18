@@ -218,6 +218,11 @@ Cada evento tiene un `kind` y un `type`. **La identidad de una categoría es el 
 - `EV_FREE_COLOR` — categorías con paleta libre · `EV_FREE_SHAPE` — con selector de forma
   (solo `puntual|Otros`) · `EV_FREE_DATES` — con Selección Multidía.
 - `isEvBarAlways(ev)` = `getEvKind(ev)==='grande'`; es lo único que decide barra vs marcador.
+- **Orden de capas de las barras** (`EV_BAR_Z`, `_evAssignRow`): de arriba a abajo →
+  marcadores puntuales · barra fina · media · gruesa · perímetro de puente. El reparto en
+  filas se hace **por grosor**: dos barras del mismo grosor que chocan van a filas distintas
+  (la franja se ensancha y cada una se estrecha), y dos de grosor distinto comparten fila y
+  se superponen quedando la fina encima.
 - **Grosor de la barra** (`evBarSize`/`evBarSizeCls`): Viaje y Asturias `lg`; el resto de
   grandes `md`; solo `grande|Otros` puede elegir entre `lg`/`md`/`sm` (se guarda en
   `ev.barSize` y se pinta con las clases `.ev-bar-lg|md|sm`).
