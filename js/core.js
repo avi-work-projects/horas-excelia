@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v247 - Bodas: cabecera fija, avisos accionables y subpestana de estadisticas';
+var APP_VERSION = 'v248 - Fix: cambiar un evento multidia a Ensayos boda crea una clase por dia';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

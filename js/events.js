@@ -84,6 +84,8 @@ var EVENTS = (function(){
            duracion (1 dia -> puntual con forma; varios dias -> grande con barra) */
         if(ev.kind!=='puntual'&&ev.kind!=='grande'){ev.kind=getEvKind(ev);changed=true;}
       });
+      /* v248: una clase de boda por dia (ver bodaNormalizeClasses) */
+      if(typeof bodaNormalizeClasses==='function'&&bodaNormalizeClasses(arr))changed=true;
       if(changed)try{localStorage.setItem(EV_STORAGE_KEY,JSON.stringify(arr));}catch(e){}
       return arr;
     }}
@@ -1769,24 +1771,42 @@ function bindEvFormEvents(){
     if(EV_FREE_SHAPE[typeKey]&&typeof _otrosShape!=='undefined'&&_otrosShape)_saveShape=_otrosShape;
     /* Ensayos boda: cada dia marcado es una CLASE independiente (sin hora ni
        pareja). Se asignan luego desde la pestana Bodas. */
-    if(typeLabel==='Ensayos boda'&&!EV_EDIT){
+    /* Ensayos boda: CADA DIA es una clase independiente (tiene su hora, su
+       pareja y su lugar). Si el evento abarca varios dias hay que partirlo en
+       N clases — tambien al EDITAR, que antes se saltaba este paso y dejaba un
+       unico evento con dates[] que la pestana Bodas contaba como una sola. */
+    if(typeLabel==='Ensayos boda'){
       var _dias=_saveDates?_saveDates.slice():[start];
       if(!_saveDates&&end>start){
         _dias=[];
         var _d0=new Date(start+'T00:00:00'),_d1=new Date(end+'T00:00:00'),_g=0;
         for(var _dd=new Date(_d0);_dd<=_d1&&_g<400;_dd.setDate(_dd.getDate()+1),_g++)_dias.push(evDk(_dd));
       }
-      var _n=typeof bodaBulkCreate==='function'?bodaBulkCreate(_dias):0;
-      updateEventsBtn();closeEvForm();
-      setTimeout(function(){refreshEvents();},320);
-      showToast(_n===1?'1 clase creada':(_n+' clases creadas \u2014 as\u00edgnalas en la pesta\u00f1a Bodas'),
-        _n?'success':'error');
-      return;
+      if(_dias.length>1){
+        var _prevEv=EV_EDIT?JSON.parse(JSON.stringify(EV_EDIT)):null;
+        if(EV_EDIT)EVENTS=EVENTS.filter(function(e){return e.id!==EV_EDIT.id;});
+        var _n=typeof bodaBulkCreate==='function'?bodaBulkCreate(_dias):0;
+        updateEventsBtn();closeEvForm();
+        setTimeout(function(){refreshEvents();},320);
+        showToast(_n===1?'1 clase creada':(_n+' clases creadas \u2014 as\u00edgnalas en la pesta\u00f1a Bodas'),
+          _n?'success':'error',
+          _prevEv?function(){
+            EVENTS=EVENTS.filter(function(e){return !(getEvType(e)==='Ensayos boda'&&_dias.indexOf(e.start)!==-1&&!(e.boda&&e.boda.coupleId));});
+            EVENTS.push(_prevEv);saveEvents();updateEventsBtn();refreshEvents();
+          }:null);
+        return;
+      }
     }
     var _newEv={id:EV_EDIT?EV_EDIT.id:('ev-'+Date.now()),title:title,note:note,color:color,
       kind:kindLabel,type:typeLabel,start:start,end:end,repeat:repeat};
     if(_saveDates)_newEv.dates=_saveDates;
     if(_saveShape)_newEv.shape=_saveShape;
+    /* Una clase de boda de un solo dia siempre lleva su bloque boda */
+    if(typeLabel==='Ensayos boda'){
+      delete _newEv.dates;
+      _newEv.boda=(EV_EDIT&&EV_EDIT.boda)?EV_EDIT.boda
+        :{coupleId:null,time:null,place:(typeof BODA_PLACE_DEFAULT!=='undefined')?BODA_PLACE_DEFAULT:'casa'};
+    }
     if(EV_FREE_BARSIZE[typeKey]){
       var _bsel=document.querySelector('#evFBarPicker .ev-barsize-opt.selected');
       var _bs=_bsel?_bsel.dataset.bar:(typeof _barSize!=='undefined'&&_barSize);
