@@ -17,19 +17,36 @@ function list(dir, ext){
     .map(function(f){ return dir + '/' + f; });
 }
 
-/* ── JS: funciones y variables globales en MAYÚSCULAS ── */
+/* ── JS: funciones y variables globales en MAYÚSCULAS ──
+   Las funciones de primer nivel llevan tambien su tamano aproximado; las que
+   pasan de LARGA_MIN lineas se marcan con (!) porque suelen ser candidatas a
+   partirse o a compartirse con otra vista. */
+var LARGA_MIN = 80;
 function scanJs(file){
-  var lines = read(file), fns = [], vars = [];
+  var lines = read(file), fns = [], vars = [], tops = [];
   lines.forEach(function(l, i){
     var n = i + 1;
-    var mf = l.match(/^\s*function\s+([A-Za-z_$][\w$]*)\s*\(/);
-    if (mf){ fns.push(mf[1] + ':' + n); return; }
+    var mf = l.match(/^function\s+([A-Za-z_$][\w$]*)\s*\(/);
+    if (mf) tops.push({ name: mf[1], line: n });
+    var mf2 = l.match(/^\s*function\s+([A-Za-z_$][\w$]*)\s*\(/);
+    if (mf2){ fns.push({ name: mf2[1], line: n, top: !!mf }); return; }
     var ma = l.match(/^\s*(?:var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*function\s*\(/);
-    if (ma){ fns.push(ma[1] + ':' + n); return; }
+    if (ma){ fns.push({ name: ma[1], line: n, top: false }); return; }
     var mv = l.match(/^\s*(?:var|let|const)\s+([A-Z][A-Z0-9_]{2,})\s*=/);
     if (mv) vars.push(mv[1] + ':' + n);
   });
-  return { file: file, lines: lines.length, fns: fns, vars: vars };
+  /* Tamano de cada funcion de primer nivel = hasta la siguiente o el final */
+  var size = {};
+  tops.forEach(function(t, k){
+    var end = (k + 1 < tops.length) ? tops[k + 1].line : lines.length;
+    size[t.name + ':' + t.line] = end - t.line;
+  });
+  var out = fns.map(function(f){
+    var key = f.name + ':' + f.line;
+    var sz = f.top ? size[key] : 0;
+    return key + (sz >= LARGA_MIN ? ' (!' + sz + ')' : '');
+  });
+  return { file: file, lines: lines.length, fns: out, vars: vars };
 }
 
 /* ── CSS: cabeceras de sección + rangos por prefijo de clase ── */

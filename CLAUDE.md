@@ -13,6 +13,101 @@ las secciones CSS del proyecto, en formato `nombre:línea`.
    enteros** (`events.js` son 2.200 líneas, `economics-fiscal.js` 1.400).
 3. Tras cambios grandes (funciones nuevas/renombradas): `node tools/codemap.js`.
 
+Las funciones de primer nivel llevan su tamaño cuando pasan de 80 líneas: `nombre:línea (!362)`.
+Ese `(!)` es una señal de "esto ya pide partirse o compartirse con otra vista" — mirar ahí
+primero cuando algo cueste de tocar.
+
+## 🧭 Guía de arquitectura — LEER ANTES DE CREAR ALGO NUEVO
+
+Objetivo: que añadir una pantalla o un control sea *ensamblar piezas que ya existen*,
+no escribir HTML/CSS nuevo. Antes de crear nada, buscar en el **catálogo de componentes**
+de más abajo; si algo se parece en un 80 %, se reutiliza y se parametriza.
+
+### Anatomía de una ventana (overlay)
+Todas las ventanas secundarias tienen la misma estructura. De arriba a abajo:
+
+```
+#xxxOverlay .full-overlay          display:flex; flex-direction:column
+├── .overlay-nav-bar               NIVEL 1 · emojis de navegación (renderNavBar)
+├── .ev-hdr-sub / .bday-hdr-sub    NIVEL 2 · pestañas de la ventana        (opcional)
+├── .sy-header.with-tabs           NIVEL 3 · título + flechas ◀ ▶ + "Hoy"  (opcional)
+└── .sy-body                       flex:1; min-height:0; overflow-y:auto
+    ├── .econ-sub-tabs             SUBPESTAÑAS (sticky) — debe ser el 1.er hijo
+    ├── …contenido…
+    └── .ev-io-row                 botonera inferior (+ Añadir, Exportar…)
+```
+
+Reglas duras (romperlas se nota a simple vista):
+- El scroll vive **solo** en `.sy-body`. Nunca en `.full-overlay`.
+- Los niveles 1-3 son `flex-shrink:0` y **nunca** se ocultan al hacer scroll.
+- Separadores con `box-shadow:0 1px 0 var(--border)`, no `border-bottom` (no suma px).
+- Las subpestañas usan `.econ-sub-tabs`/`.econ-sub-tab` y van como **primer hijo** de
+  `.sy-body` (hay una regla `:has()` que le quita el padding superior para que peguen).
+
+### Catálogo de componentes reutilizables
+Antes de escribir uno nuevo, comprobar aquí:
+
+| Necesito… | Uso | Dónde |
+|---|---|---|
+| Barra de navegación (nivel 1) | `renderNavBar('events')` + `bindNavBar('events',closeFn)` | core.js |
+| Subpestañas sticky | `.econ-sub-tabs` / `.econ-sub-tab` | styles.css |
+| Aviso corto | `showToast(msg,'success'\|'error',undoFn)` — con `undoFn` sale "Deshacer" | core.js |
+| Elegir color | `_renderColorPicker(hex,_,_,'prefijo')` + `_bindColorPicker(wrap,'prefijo')` → `{getColor,setColor}` | events-picker-color.js |
+| Elegir hora (ruedas) | `.drum-wrap`/`.drum-picker`/`.drum-sel-lines` + `openBodaTimePicker` como referencia | styles.css / bodas.js |
+| Elegir varios días | `openOtrosDatePicker(dates,color,año,cb)` | events-picker-date.js |
+| Panel deslizante (sheet) | `.ev-form-overlay`+`.ev-form-sheet` (formularios) · `.ev-detail-overlay`+`.ev-detail-sheet` (detalles) | styles.css |
+| Deslizar para cambiar de mes | `addSwipe(el,onLeft,onRight)` | core.js |
+| Preguntar añadir/reemplazar al importar | `askImportMode(subtitulo,cb)` | import-export.js |
+| Fusionar sin duplicar al importar | `evMergeIncoming(lista)` · `_mergeList(cur,inc,keyFn,sigFn)` | events.js / import-export.js |
+| Marcador de evento (formas) | `evShapeSvg(shape)` · `evMarkerHtml(ev,past,size,shapeDef,ds)` | events-picker-color.js / events.js |
+| Relleno "falso translúcido" | `fakeTrans(hex,alpha)` | core.js |
+| Chips de filtro | `.ev-filter-chip` (calendarios) · `.boda-chip` (parejas) | styles.css |
+| Tarjeta de mes de calendario | `_renderEvMonthCard(m,año,ctx)` — la usan Anual y 4 meses | events.js |
+
+### Cómo se añade una pantalla o subpestaña nueva
+1. **Estado**: una variable global `XXX_VIEW` / `XXX_SUBTAB` arriba del módulo, con
+   comentario de los valores posibles. Nada de estado escondido en el DOM.
+2. **Render puro**: `renderXxx()` devuelve **string HTML**, no toca el DOM. Así se puede
+   comparar la salida antes/después al refactorizar (ver "verificación" abajo).
+3. **Binds aparte**: `bindXxxEvents()` se llama *después* de volcar el `innerHTML`.
+   Si el contenedor se re-renderiza, usar delegación con el flag `_delegated`.
+4. **Abrir/cerrar**: seguir el patrón de doble `requestAnimationFrame` documentado abajo.
+5. **Persistencia**: una clave `excelia-*` propia, con `loadXxx()`/`saveXxx()`, y
+   **añadirla al backup** en `import-export.js` (exportAll + `_applyFullImport`).
+6. **Documentar**: una fila en la tabla de vocabulario y, si es un módulo nuevo, su
+   sección en este fichero. Regenerar `CODEMAP.md`.
+
+### Convenciones de nombres
+- `renderXxx()` devuelve HTML · `openXxx()`/`closeXxx()` manejan overlays ·
+  `bindXxxEvents()` engancha listeners · `_xxx()` = privado del módulo.
+- Estado global en MAYÚSCULAS (`EV_VIEW`, `BODA_SUBTAB`): así sale listado aparte en
+  `CODEMAP.md` y se ve de un vistazo qué recuerda cada pantalla.
+- Clases CSS con prefijo del módulo (`ev-`, `boda-`, `bday-`, `econ-`, `sy-`).
+
+### Antipatrones que ya nos han mordido
+- **Duplicar un render "porque es casi igual"**: Anual y 4 meses fueron dos copias de
+  ~160 líneas y cada ajuste había que hacerlo dos veces (y una se olvidaba). Hoy ambos
+  llaman a `_renderEvMonthCard`. Si dos vistas comparten el 80 %, se parametriza.
+- **Identificar datos solo por `id`**: al importar desde otro dispositivo los ids no
+  coinciden y se duplicaba todo. Usar además una **firma de contenido** (`evSignature`).
+- **Buscar elementos por id con varios formularios abiertos**: `openEvForm` elimina el
+  formulario anterior antes de abrir el nuevo; si no, los listeners se enganchan al
+  viejo y "Guardar" se ejecuta dos veces.
+- **Tintar el fondo con rgba sobre otra capa de color**: da colores embarrados (pasó con
+  la jornada sobre las semanas enviadas). Para eventos usar `fakeTrans`; para estados,
+  franja de color o borde, no relleno translúcido.
+
+### Verificación al refactorizar
+Como los `renderXxx()` son funciones puras que devuelven string, un refactor se valida
+comparando la salida vieja y la nueva:
+```js
+const nuevo = renderEvAnnual();          // con el código nuevo cargado
+(0,eval)(await (await fetch('js/_old.js')).text());   // carga temporal del viejo
+const viejo = renderEvAnnual();
+nuevo === viejo   // debe ser true
+```
+Es como se validó la unificación Anual/4 meses (idéntico byte a byte en 4 escenarios).
+
 ## Estructura de archivos
 ```
 index.html          ← Shell HTML + config inline (secrets inyectados por CI)
