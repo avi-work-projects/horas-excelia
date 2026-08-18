@@ -1196,8 +1196,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-annual-xs.ev-xs-n4{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}
 .ev-annual-xs.ev-xs-n3>*:first-child{grid-column:1/3}
 .ev-annual-xs>.ev-annual-marker{width:100%;height:100%;max-width:100%;max-height:100%}
-/* Un solo evento en el día: tamaño fijo (como antes de la rejilla), no la casilla entera */
-.ev-annual-xs.ev-xs-n1>.ev-annual-marker{max-width:8px;max-height:8px}
+/* Tope de tamano comun: haya 1 o 4 eventos, el simbolo nunca supera este
+   tamano (si el hueco de la rejilla es menor, manda el hueco) */
+.ev-annual-xs>.ev-annual-marker{max-width:8px;max-height:8px}
 .ev-annual-x{position:relative;width:4px;height:4px;flex-shrink:0}
 .ev-annual-x::before,.ev-annual-x::after{content:'';position:absolute;top:50%;left:50%;background:currentColor;border-radius:1px}
 .ev-annual-x::before{width:5px;height:1.5px;transform:translate(-50%,-50%) rotate(45deg);box-shadow:0 0 0 .5px #000}
@@ -1748,20 +1749,19 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-daynote-field{border-left:2px solid var(--accent);padding-left:8px}
 .ev-detail-daynote{border-left:2px solid var(--accent);padding-left:8px;margin-top:6px}
 /* Pestana Bodas y pestana partida Vacaciones/Festivos */
-.ev-btn-bodas:not(.active){background:rgba(232,121,168,.1);border-color:rgba(232,121,168,.35);color:#e879a8}
-.ev-btn-bodas.active{background:rgba(232,121,168,.24) !important;border-color:#e879a8 !important;color:#e879a8 !important}
+.ev-btn-bodas:not(.active){background:rgba(139,94,52,.14);border-color:rgba(139,94,52,.5);color:#c08a5a}
+.ev-btn-bodas.active{background:rgba(139,94,52,.34) !important;border-color:#8b5e34 !important;color:#e0b088 !important}
 /* Mitad marron (vacaciones/festivos) + mitad rosa (puentes), sin linea visible */
 .ev-btn-split:not(.active){background:linear-gradient(to bottom,rgba(255,179,71,.13) 0%,rgba(255,179,71,.13) 50%,rgba(244,114,182,.13) 50%,rgba(244,114,182,.13) 100%);border-color:rgba(255,179,71,.35);color:var(--vacaciones)}
 .ev-btn-split.active{background:linear-gradient(to bottom,rgba(255,179,71,.3) 0%,rgba(255,179,71,.3) 50%,rgba(244,114,182,.3) 50%,rgba(244,114,182,.3) 100%) !important;border-color:var(--vacaciones) !important;color:var(--text) !important}
-/* Subpestanas dentro de Vacaciones/Festivos */
-.ev-to-subtabs{display:flex;gap:6px;padding:2px 0 6px}
-.ev-to-subtab{flex:1;font-size:.74rem;padding:7px 10px;border-radius:14px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s}
-.ev-to-subtab.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright);font-weight:600}
-/* ── Pestana Bodas ── */
-.boda-subtabs{display:flex;gap:6px;padding:2px 0 8px}
-.boda-subtab{flex:1;font-size:.78rem;padding:8px 10px;border-radius:14px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s}
-.boda-subtab.active{border-color:#e879a8;background:rgba(232,121,168,.16);color:#e879a8;font-weight:600}
+/* Subpestanas (Puentes/Vac-Festivos y Clases/Parejas): usan .econ-sub-tabs, el
+   mismo componente sticky que "Mis gastos" / "Analisis hipoteca" */
+.sy-body:has(> .econ-sub-tabs:first-child){padding-top:0!important}
+/* -- Pestana Bodas -- */
 .boda-sec{display:flex;flex-direction:column;gap:8px}
+.boda-mode-row{display:flex;gap:6px}
+.boda-mode-btn{flex:1;font-size:.72rem;padding:6px 10px;border-radius:12px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s}
+.boda-mode-btn.active{border-color:#8b5e34;background:rgba(139,94,52,.2);color:#e0b088;font-weight:600}
 .boda-summary{display:flex;gap:8px}
 .boda-sum-item{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 4px;text-align:center;display:flex;flex-direction:column}
 .boda-sum-item b{font-size:1.1rem;color:var(--text)}
@@ -1769,28 +1769,35 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .boda-sum-item.warn b{color:var(--c-orange,#fb923c)}
 .boda-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .boda-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.boda-card-tap{cursor:pointer;transition:border-color .12s}
+.boda-card-tap:active{border-color:var(--accent)}
 .boda-card-hd{display:flex;align-items:center;gap:8px}
 .boda-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;border:1.5px solid rgba(0,0,0,.5)}
 .boda-name{flex:1;font-size:.85rem;font-weight:600;color:var(--text)}
-.boda-place-tag{font-size:.6rem;color:var(--text-dim);border:1px solid var(--border);border-radius:8px;padding:1px 6px}
+.boda-wed-tag{font-size:.6rem;color:var(--text-dim);border:1px solid var(--border);border-radius:8px;padding:1px 6px;white-space:nowrap}
 .boda-prog{height:6px;border-radius:3px;background:var(--surface3,var(--surface2));overflow:hidden}
 .boda-prog-bar{height:100%;border-radius:3px;transition:width .2s}
 .boda-card-ft{display:flex;justify-content:space-between;font-size:.68rem;color:var(--text-muted)}
 .boda-card-note{font-size:.7rem;color:var(--text-dim);line-height:1.35;border-top:1px solid var(--border);padding-top:5px}
 .boda-falta{color:var(--c-orange,#fb923c);font-weight:600}
 .boda-ok{color:var(--c-green,#34d399);font-weight:600}
-.boda-sobra{color:var(--c-red,#ff6b6b);font-weight:600}
+.boda-sobra{color:#c084fc;font-weight:600}
 .boda-day{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 8px}
 .boda-day-hd{display:flex;align-items:center;gap:8px;font-size:.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.03em;padding-bottom:4px}
 .boda-day-n{flex:1;font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-dim);font-size:.65rem}
 .boda-class{display:flex;align-items:center;gap:4px;padding:4px 0;border-top:1px solid var(--border)}
 .boda-class-mark{width:18px;height:18px;flex-shrink:0;line-height:0}
 .boda-class-mark svg{width:100%;height:100%;display:block;overflow:visible}
-.boda-inp{font-size:.68rem;padding:4px 3px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text);min-width:0;outline:none}
-.boda-time{width:66px;flex:0 0 auto}
-.boda-couple{flex:1 1 auto}
-.boda-place{width:74px;flex:0 0 auto}
-.boda-mini-btn{border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);border-radius:6px;font-size:.72rem;width:22px;height:22px;line-height:1;cursor:pointer;flex-shrink:0;padding:0}
+.boda-inp{font-size:.68rem;padding:5px 4px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text);min-width:0;outline:none;text-align:center}
+.boda-time-btn{width:60px;flex:0 0 auto;font-family:var(--mono);cursor:pointer}
+.boda-couple-btn{flex:1 1 auto;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.boda-place{width:92px;flex:0 0 auto}
+.boda-class-ro{gap:8px}
+.boda-ro-time{font-family:var(--mono);font-size:.72rem;color:var(--text);width:46px;flex:0 0 auto}
+.boda-ro-time.none{color:var(--text-dim)}
+.boda-ro-couple{flex:1;font-size:.74rem;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.boda-ro-place{font-size:.62rem;color:var(--text-dim);border:1px solid var(--border);border-radius:8px;padding:1px 6px;white-space:nowrap}
+.boda-mini-btn{border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);border-radius:6px;font-size:.72rem;width:24px;height:24px;line-height:1;cursor:pointer;flex-shrink:0;padding:0}
 .boda-mini-btn:hover{border-color:var(--accent);color:var(--accent-bright)}
 .boda-actions{display:flex;gap:8px;align-items:center}
 .boda-date-inp{flex:1;font-size:.75rem;padding:6px 8px}
@@ -1799,6 +1806,43 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .boda-legend-t{width:100%;color:var(--text-muted)}
 .boda-legend-i{display:flex;align-items:center;gap:3px}
 .boda-legend-i i{width:10px;height:10px;border-radius:2px;border:1px solid rgba(0,0,0,.6);display:inline-block}
+.boda-det-meta{font-size:.72rem;color:var(--text-muted);margin:2px 0 8px}
+.boda-det-list-t{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-dim);margin:12px 0 4px}
+.boda-det-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)}
+.boda-det-day{flex:1;font-size:.75rem;color:var(--text)}
+.boda-cpk-t{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-dim);margin:10px 0 4px}
+.boda-cpk-t span{font-weight:400;text-transform:none;letter-spacing:0}
+.boda-cpk-row{display:flex;align-items:center;gap:8px;width:100%;padding:9px 10px;margin-bottom:5px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);cursor:pointer;text-align:left}
+.boda-cpk-row.sel{border-color:var(--accent-bright);background:var(--accent-glow)}
+.boda-cpk-name{flex:1;font-size:.8rem}
+.boda-cpk-n{font-size:.66rem;color:var(--text-dim);font-family:var(--mono)}
+.boda-asg-info{font-size:.74rem;color:var(--text-muted);text-align:center;margin-bottom:8px}
+.boda-asg-nav{display:flex;align-items:center;justify-content:center;gap:14px;margin:8px 0 6px}
+.boda-asg-month{font-size:.85rem;font-weight:600;color:var(--text);min-width:130px;text-align:center}
+.boda-asg-grid-hdr{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:2px}
+.boda-asg-grid-hdr div{text-align:center;font-size:.58rem;color:var(--text-dim);text-transform:uppercase}
+.boda-asg-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.boda-asg-day{position:relative;aspect-ratio:1;border-radius:7px;border:1.5px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-user-select:none;user-select:none}
+.boda-asg-day.out{visibility:hidden}
+.boda-asg-day.off{opacity:.32;cursor:default;border-style:dashed}
+.boda-asg-day.libre{border-color:#8b5e34;background:rgba(139,94,52,.18)}
+.boda-asg-day.ajena{border-color:var(--border);background:repeating-linear-gradient(45deg,rgba(160,160,200,.18),rgba(160,160,200,.18) 2px,transparent 2px,transparent 5px),var(--surface2);opacity:.6}
+.boda-asg-day.hoy{box-shadow:inset 0 0 0 1.5px var(--accent)}
+.boda-asg-day.fixed{opacity:.85;cursor:not-allowed}
+.boda-asg-num{font-size:.7rem;font-family:var(--mono);color:var(--text)}
+.boda-asg-tick{position:absolute;top:1px;right:3px;font-size:.6rem;font-weight:700}
+.boda-asg-badge{position:absolute;top:0;right:0;min-width:13px;height:13px;border-radius:7px;color:#fff;font-size:.55rem;display:flex;align-items:center;justify-content:center;font-weight:700}
+.boda-asg-free{position:absolute;bottom:1px;right:3px;font-size:.52rem;color:#c08a5a;font-weight:700}
+.boda-asg-wed{position:absolute;bottom:0;left:2px;font-size:.6rem}
+.boda-asg-legend{display:flex;flex-wrap:wrap;gap:10px;font-size:.6rem;color:var(--text-dim);margin-top:8px}
+.boda-asg-legend span{display:flex;align-items:center;gap:4px}
+.boda-asg-legend i{width:11px;height:11px;border-radius:3px;display:inline-block;border:1.5px solid var(--border)}
+.boda-asg-legend i.lg-libre{border-color:#8b5e34;background:rgba(139,94,52,.3)}
+.boda-asg-legend i.lg-ajena{background:repeating-linear-gradient(45deg,rgba(160,160,200,.35),rgba(160,160,200,.35) 2px,transparent 2px,transparent 5px)}
+.boda-tp-drums{display:flex;align-items:center;justify-content:center;gap:10px;margin:6px 0 12px}
+.boda-tp-sep{font-size:1.6rem;font-weight:700;color:var(--text-dim)}
+.boda-tp-manual{display:flex;align-items:center;justify-content:center;gap:6px;font-size:.72rem;color:var(--text-muted)}
+.boda-tp-manual input{width:56px;text-align:center;font-family:var(--mono);font-size:.9rem;padding:5px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text)}
 
 /* ── Diálogo: modo de importación (añadir vs reemplazar) ── */
 .imp-mode-ov{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}

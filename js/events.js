@@ -1225,9 +1225,9 @@ function renderEvContent(){
   }
   if(EV_VIEW==='puentes'||EV_VIEW==='time-off'){
     /* Pestana unica "Vacaciones Festivos" con dos subpestanas */
-    h+='<div class="ev-to-subtabs">';
-    h+='<button class="ev-to-subtab'+(EV_VIEW==='puentes'?' active':'')+'" id="evSubPuentes">Puentes</button>';
-    h+='<button class="ev-to-subtab'+(EV_VIEW==='time-off'?' active':'')+'" id="evSubTimeOff">Vacaciones y festivos</button>';
+    h+='<div class="econ-sub-tabs">';
+    h+='<button class="econ-sub-tab'+(EV_VIEW==='puentes'?' active':'')+'" id="evSubPuentes">Puentes</button>';
+    h+='<button class="econ-sub-tab'+(EV_VIEW==='time-off'?' active':'')+'" id="evSubTimeOff">Vacaciones y festivos</button>';
     h+='</div>';
   }
   if(EV_VIEW==='cal')h+=renderEvCalMonth();
@@ -1818,10 +1818,19 @@ function bindEvFormEvents(){
       var idx=-1;
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===EV_EDIT.id){idx=i;break;}}
       if(idx!==-1)EVENTS[idx]=_newEv;
-      showToast('Evento actualizado','success');
+      /* Deshacer: restaura el evento tal y como estaba antes de editarlo */
+      var _prev=JSON.parse(JSON.stringify(EV_EDIT));
+      showToast('Evento actualizado','success',function(){
+        for(var j=0;j<EVENTS.length;j++){if(EVENTS[j].id===_prev.id){EVENTS[j]=_prev;break;}}
+        saveEvents();updateEventsBtn();refreshEvents();
+      });
     }else{
       EVENTS.push(_newEv);
-      showToast('Evento a\u00f1adido','success');
+      var _newId=_newEv.id;
+      showToast('Evento creado','success',function(){
+        EVENTS=EVENTS.filter(function(e){return e.id!==_newId;});
+        saveEvents();updateEventsBtn();refreshEvents();
+      });
     }
     saveEvents();updateEventsBtn();
     closeEvForm();

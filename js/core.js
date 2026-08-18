@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v241 - Eventos Puntuales/Grandes, pestana Bodas (parejas y clases) y notas por dia';
+var APP_VERSION = 'v242 - Bodas: asignacion por calendario, clases extra, vista consulta/edicion y selector de hora';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

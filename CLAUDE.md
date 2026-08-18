@@ -127,7 +127,20 @@ Cada evento tiene un `kind` y un `type`. **La identidad de una categoría es el 
 ## Bodas (js/bodas.js)
 Pestaña `EV_VIEW==='bodas'` con dos subpestañas (`BODA_SUBTAB`): **Clases** y **Parejas**.
 - Parejas en `localStorage['excelia-bodas-v1']` (`BODA_COUPLES`):
-  `{id,name,color,contracted,place:'casa'|'sala'|'otro',note}`.
+  `{id,name,color,contracted,note,weddingDate}`. Al crearlas: 4 clases por defecto y
+  color automatico no repetido (`bodaNextColor`). `weddingDate` solo se ve al asignar
+  ensayos, nunca en el calendario personal.
+- Subpestanas `Clases` / `Parejas` con el componente `.econ-sub-tabs` (sticky), igual
+  que en economico. En `Clases` hay dos modos (`BODA_CLASS_MODE`): `ver` (consulta, sin
+  controles) y `editar`. En `Parejas` se filtra por `BODA_PAREJAS_FILTER` (por defecto
+  las que tienen clases sin asignar).
+- `openBodaAssign(pareja, extraMode)` — calendario de asignacion: dias con clase libre
+  resaltados, los de la pareja marcados (fijos si `extraMode`), y modo "Todos los dias"
+  para crear clases en cualquier fecha. Guardar asigna, crea o libera clases.
+- `openBodaTimePicker` — ruedas de hora y minutos (:00/:15/:30/:45, por defecto 18:00)
+  reutilizando el CSS del drum de alarmas, mas entrada manual.
+- Lugar de la clase (`BODA_PLACE_LIST`): Sala / Casa (por defecto) / Casa (pareja) / Otro.
+  Al anadir otra clase el mismo dia hereda el lugar de la anterior.
 - Una **clase** es un evento normal `puntual|Ensayos boda` con `ev.boda={coupleId,time,place}`.
   Duración fija de 1 hora; `time` en saltos de 15 min.
 - Marcador: **aspa bicolor** (`evBodaSvg`) — brazos de arriba con el color de la pareja,
