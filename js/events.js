@@ -14,6 +14,7 @@ var EV_VIEW_STATE = {
   annual: {year: new Date().getFullYear()}
 };
 function _switchEvView(newView){
+  EV_SCROLL_RESET=true;   /* el proximo refresh empieza arriba */
   /* Guardar el estado de la vista que dejamos */
   if(EV_VIEW==='cal'||EV_VIEW==='week')EV_VIEW_STATE[EV_VIEW]={year:EV_YEAR,month:EV_MONTH};
   else if(EV_VIEW==='annual')EV_VIEW_STATE[EV_VIEW]={year:EV_YEAR};
@@ -28,6 +29,7 @@ function _switchEvView(newView){
   var _sb=document.querySelector('#eventsOverlay .sy-body');
   if(_sb)_sb.scrollTop=0;
 }
+var EV_SCROLL_RESET = false;  /* fuerza que el proximo refreshEvents no conserve el scroll */
 var EV_VIEW = 'cal';  // 'cal' | 'months' | 'upcoming' | 'annual'
 var EV_EDIT = null;
 var EV_EDIT_DS = null;   /* dia concreto desde el que se abrio el detalle/formulario */
@@ -2016,9 +2018,20 @@ function openEventsAt(){
   requestAnimationFrame(function(){requestAnimationFrame(function(){ov.classList.add('open');bindEvEvents();});});
 }
 
-function refreshEvents(){
+function refreshEvents(keepScroll){
+  /* El re-render recrea .sy-body y con el se pierde el scroll: la vista
+     saltaba cada vez que se tocaba cualquier control. Por defecto se conserva
+     la posicion; pasar false para volver arriba a proposito (cambio de vista). */
+  var _old=document.querySelector('#eventsOverlay .sy-body');
+  var _reset=(keepScroll===false)||EV_SCROLL_RESET;
+  EV_SCROLL_RESET=false;
+  var _top=(_reset||!_old)?null:_old.scrollTop;
   document.getElementById('eventsContent').innerHTML=renderEvContent();
   bindEvEvents();
+  if(_top){
+    var _new=document.querySelector('#eventsOverlay .sy-body');
+    if(_new)_new.scrollTop=_top;
+  }
 }
 
 function bindEvEvents(){

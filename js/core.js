@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v250 - Barras media y fina apoyadas en la misma base que la gruesa';
+var APP_VERSION = 'v251 - Bodas: dias cerrados, filtros nuevos y edicion con boton Guardar sin perder el scroll';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

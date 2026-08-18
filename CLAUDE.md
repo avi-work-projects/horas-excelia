@@ -56,6 +56,7 @@ Antes de escribir uno nuevo, comprobar aquí:
 | Elegir hora (ruedas) | `.drum-wrap`/`.drum-picker`/`.drum-sel-lines` + `openBodaTimePicker` como referencia | styles.css / bodas.js |
 | Elegir varios días | `openOtrosDatePicker(dates,color,año,cb)` | events-picker-date.js |
 | Panel deslizante (sheet) | `.ev-form-overlay`+`.ev-form-sheet` (formularios) · `.ev-detail-overlay`+`.ev-detail-sheet` (detalles) | styles.css |
+| Conservar el scroll al re-renderizar | `refreshEvents()` (pasar `false` para volver arriba) | events.js |
 | Deslizar para cambiar de mes | `addSwipe(el,onLeft,onRight)` | core.js |
 | Preguntar añadir/reemplazar al importar | `askImportMode(subtitulo,cb)` | import-export.js |
 | Fusionar sin duplicar al importar | `evMergeIncoming(lista)` · `_mergeList(cur,inc,keyFn,sigFn)` | events.js / import-export.js |
@@ -252,6 +253,13 @@ Pestaña `EV_VIEW==='bodas'` con cuatro subpestañas (`BODA_SUBTAB`): **Clases**
   que en economico. En `Clases` hay dos modos (`BODA_CLASS_MODE`): `ver` (consulta, sin
   controles) y `editar`. En `Parejas` se filtra por `BODA_PAREJAS_FILTER` (por defecto
   las que tienen clases sin asignar).
+- **Dias cerrados** (`BODA_CLOSED`, clave `excelia-bodas-closed-v1`): un dia marcado como
+  cerrado no admite mas clases (`bodaDayFull` lo tiene en cuenta) y se puede ocultar con el
+  chip "Ocultar cerrados".
+- **Edicion sin re-render**: en modo Edicion los cambios de hora/pareja/lugar van a
+  `BODA_PENDING` y solo se repinta esa fila (`bodaRefreshRow`); se confirman con la barra
+  fija de abajo (Guardar/Descartar) y se auto-guardan al cambiar de subpestana o de modo.
+  Altas, bajas y cierres de dia si son inmediatos.
 - `openBodaAssign(pareja, extraMode)` — calendario de asignacion: dias con clase libre
   resaltados, los de la pareja marcados (fijos si `extraMode`), y modo "Todos los dias"
   para crear clases en cualquier fecha. Guardar asigna, crea o libera clases.

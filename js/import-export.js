@@ -396,6 +396,7 @@ document.getElementById('exportAllBtn').addEventListener('click',function(){
     exclFest:EXCL_FEST,exclVac:EXCL_VAC,vacEntitlement:VAC_ENTITLEMENT,
     birthdays:BDAYS,events:EVENTS,
     bodas:typeof BODA_COUPLES!=='undefined'?BODA_COUPLES:null,
+    bodasClosed:typeof BODA_CLOSED!=='undefined'?BODA_CLOSED:null,
     alarms:typeof ALARMS!=='undefined'?ALARMS:[],
     fiscal:typeof FISCAL!=='undefined'?FISCAL:null,
     gastos:typeof GASTOS_ITEMS!=='undefined'?GASTOS_ITEMS:null,
@@ -459,6 +460,8 @@ function _applyFullImport(d,mode){
       }
       if(d.alarms&&Array.isArray(d.alarms)&&typeof saveAlarms==='function'){ALARMS=merge?_mergeList(ALARMS,d.alarms,_keyId,_sigAlarm):d.alarms;saveAlarms();}
       if(d.bodas&&Array.isArray(d.bodas)&&typeof saveBodas==='function'){BODA_COUPLES=merge?_mergeList(BODA_COUPLES,d.bodas,_keyId,_sigCouple):d.bodas;saveBodas();}
+      if(d.bodasClosed&&typeof BODA_CLOSED!=='undefined'&&typeof saveBodaClosed==='function'){
+        BODA_CLOSED=merge?_mergeMap(BODA_CLOSED,d.bodasClosed):d.bodasClosed;saveBodaClosed();}
       if(d.fiscal&&typeof FISCAL!=='undefined'&&typeof saveFiscal==='function'){
         FISCAL.irpfMode=d.fiscal.irpfMode||'fixed';
         FISCAL.irpfPct=d.fiscal.irpfPct||15;
