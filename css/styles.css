@@ -207,22 +207,33 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .build-badge{position:fixed;bottom:10px;right:10px;z-index:999;display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:.6rem;color:var(--text-dim);opacity:.7}
 .build-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 
-/* ── DAY HOUR COLORS ── */
-.day-cell.h65 .day-hours{color:#fb923c}.day-cell.h65{background:rgba(251,146,60,.06)}
-.day-cell.h7 .day-hours{color:#fbbf24}.day-cell.h7{background:rgba(251,191,36,.06)}
-.day-cell.h8 .day-hours{color:#60a5fa}.day-cell.h8{background:rgba(96,165,250,.06)}
-.day-cell.h9 .day-hours{color:#34d399}.day-cell.h9{background:rgba(52,211,153,.06)}
-/* Tema claro: los tonos anteriores son para fondo oscuro y apenas contrastan
-   sobre blanco. Mismo matiz por hora, más profundo, y fondo tintado más
-   presente para que la celda se distinga. */
-[data-theme="light"] .day-cell.h65 .day-hours{color:#c2410c}
-[data-theme="light"] .day-cell.h65{background:rgba(234,88,12,.12)}
-[data-theme="light"] .day-cell.h7 .day-hours{color:#d97706}
-[data-theme="light"] .day-cell.h7{background:rgba(217,119,6,.13)}
-[data-theme="light"] .day-cell.h8 .day-hours{color:#2563eb}
-[data-theme="light"] .day-cell.h8{background:rgba(37,99,235,.10)}
-[data-theme="light"] .day-cell.h9 .day-hours{color:#059669}
-[data-theme="light"] .day-cell.h9{background:rgba(5,150,105,.10)}
+/* -- DAY HOUR COLORS --
+   La jornada NO se pinta como fondo de la celda: al tintar el fondo con un
+   color semitransparente sobre una semana enviada (verde) salia un color
+   embarrado y el numero perdia contraste. Ahora la celda mantiene su fondo
+   limpio (blanco / verde si esta enviada) y la jornada se indica con una
+   franja de color arriba + el numero en ese mismo color. */
+.day-cell.h65,.day-cell.h7,.day-cell.h8,.day-cell.h9{background:var(--surface)}
+.week-card.sent .day-cell.h65,.week-card.sent .day-cell.h7,
+.week-card.sent .day-cell.h8,.week-card.sent .day-cell.h9{background:var(--sent)}
+.day-cell.h65::before,.day-cell.h7::before,
+.day-cell.h8::before,.day-cell.h9::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;background:currentColor;opacity:.9}
+.day-cell.h65{color:#fb923c}.day-cell.h65 .day-hours{color:#fb923c}
+.day-cell.h7 {color:#fbbf24}.day-cell.h7  .day-hours{color:#fbbf24}
+.day-cell.h8 {color:#60a5fa}.day-cell.h8  .day-hours{color:#60a5fa}
+.day-cell.h9 {color:#34d399}.day-cell.h9  .day-hours{color:#34d399}
+/* Tema claro: mismo matiz por jornada pero mas profundo, que sobre blanco (o
+   sobre el verde de "enviada") los tonos claros no contrastan. */
+[data-theme="light"] .day-cell.h65,[data-theme="light"] .day-cell.h65 .day-hours{color:#c2410c}
+[data-theme="light"] .day-cell.h7, [data-theme="light"] .day-cell.h7  .day-hours{color:#b45309}
+[data-theme="light"] .day-cell.h8, [data-theme="light"] .day-cell.h8  .day-hours{color:#1d4ed8}
+[data-theme="light"] .day-cell.h9, [data-theme="light"] .day-cell.h9  .day-hours{color:#047857}
+/* Los dias marcados (festivo/vacaciones/ausencia) mandan sobre la jornada */
+.day-cell.festivo .day-hours{color:var(--festivo)!important}
+.day-cell.vacaciones .day-hours{color:var(--vacaciones)!important}
+.day-cell.ausencia .day-hours{color:var(--ausencia)!important}
+.day-cell.festivo::before,.day-cell.vacaciones::before,.day-cell.ausencia::before{opacity:.35}
 
 /* ── OVERLAY BASE (summary, econ, bday, events) ── */
 .full-overlay{position:fixed;inset:0;z-index:300;background:var(--bg);display:flex;flex-direction:column;overflow:hidden;transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1)}
@@ -1751,6 +1762,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 /* Pestana Bodas y pestana partida Vacaciones/Festivos */
 .ev-btn-bodas:not(.active){background:rgba(139,94,52,.14);border-color:rgba(139,94,52,.5);color:#c08a5a}
 .ev-btn-bodas.active{background:rgba(139,94,52,.34) !important;border-color:#8b5e34 !important;color:#e0b088 !important}
+[data-theme="light"] .ev-btn-bodas:not(.active){background:rgba(139,94,52,.1);border-color:rgba(139,94,52,.45);color:#7a4f2a}
+[data-theme="light"] .ev-btn-bodas.active{background:#8b5e34 !important;border-color:#6d4826 !important;color:#fff !important}
 /* Mitad marron (vacaciones/festivos) + mitad rosa (puentes), sin linea visible */
 .ev-btn-split:not(.active){background:linear-gradient(to bottom,rgba(255,179,71,.13) 0%,rgba(255,179,71,.13) 50%,rgba(244,114,182,.13) 50%,rgba(244,114,182,.13) 100%);border-color:rgba(255,179,71,.35);color:var(--vacaciones)}
 .ev-btn-split.active{background:linear-gradient(to bottom,rgba(255,179,71,.3) 0%,rgba(255,179,71,.3) 50%,rgba(244,114,182,.3) 50%,rgba(244,114,182,.3) 100%) !important;border-color:var(--vacaciones) !important;color:var(--text) !important}
@@ -1762,12 +1775,19 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .boda-mode-row{display:flex;gap:6px}
 .boda-mode-btn{flex:1;font-size:.72rem;padding:6px 10px;border-radius:12px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s}
 .boda-mode-btn.active{border-color:#8b5e34;background:rgba(139,94,52,.2);color:#e0b088;font-weight:600}
+[data-theme="light"] .boda-mode-btn.active{background:#8b5e34;border-color:#6d4826;color:#fff}
 .boda-summary{display:flex;gap:8px}
 .boda-sum-item{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 4px;text-align:center;display:flex;flex-direction:column}
 .boda-sum-item b{font-size:1.1rem;color:var(--text)}
 .boda-sum-item span{font-size:.62rem;color:var(--text-dim)}
 .boda-sum-item.warn b{color:var(--c-orange,#fb923c)}
 .boda-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+/* Filtros de Parejas como chips pulsables */
+.boda-chips{display:flex;gap:6px;flex-wrap:wrap}
+.boda-chip{flex:1;min-width:0;font-size:.68rem;padding:7px 8px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;white-space:nowrap;text-align:center}
+.boda-chip b{font-family:var(--mono);font-size:.66rem;opacity:.8;margin-left:3px}
+.boda-chip.active{border-color:#8b5e34;background:rgba(139,94,52,.22);color:#e0b088;font-weight:600}
+[data-theme="light"] .boda-chip.active{background:#8b5e34;border-color:#6d4826;color:#fff}
 .boda-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;display:flex;flex-direction:column;gap:6px}
 .boda-card-tap{cursor:pointer;transition:border-color .12s}
 .boda-card-tap:active{border-color:var(--accent)}
@@ -1807,6 +1827,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .boda-legend-i{display:flex;align-items:center;gap:3px}
 .boda-legend-i i{width:10px;height:10px;border-radius:2px;border:1px solid rgba(0,0,0,.6);display:inline-block}
 .boda-det-meta{font-size:.72rem;color:var(--text-muted);margin:2px 0 8px}
+/* Los tres botones del detalle de pareja comparten aspecto */
+.boda-det-btn{border-color:var(--border);color:var(--text)}
+.boda-det-actions{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.boda-det-actions .ev-btn{width:100%}
 .boda-det-list-t{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-dim);margin:12px 0 4px}
 .boda-det-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)}
 .boda-det-day{flex:1;font-size:.75rem;color:var(--text)}
@@ -1839,6 +1863,24 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .boda-asg-legend i{width:11px;height:11px;border-radius:3px;display:inline-block;border:1.5px solid var(--border)}
 .boda-asg-legend i.lg-libre{border-color:#8b5e34;background:rgba(139,94,52,.3)}
 .boda-asg-legend i.lg-ajena{background:repeating-linear-gradient(45deg,rgba(160,160,200,.35),rgba(160,160,200,.35) 2px,transparent 2px,transparent 5px)}
+/* Subpestana Calendario de bodas */
+.boda-cal-nav{display:flex;align-items:center;justify-content:center;gap:14px;margin:2px 0 8px}
+.boda-cal-month{font-size:.9rem;font-weight:600;color:var(--text);min-width:150px;text-align:center}
+.boda-cal-hdr{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:2px}
+.boda-cal-hdr div{text-align:center;font-size:.58rem;color:var(--text-dim);text-transform:uppercase}
+.boda-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.boda-cal-day{position:relative;min-height:44px;border-radius:7px;border:1px solid var(--border);background:var(--surface);padding:2px;display:flex;flex-direction:column;gap:1px}
+.boda-cal-day.out{visibility:hidden}
+.boda-cal-day.hoy{box-shadow:inset 0 0 0 1.5px var(--accent)}
+.boda-cal-day.wed{border-color:#e879a8;background:rgba(232,121,168,.12)}
+.boda-cal-num{font-size:.6rem;font-family:var(--mono);color:var(--text-dim);line-height:1}
+.boda-cal-cls{display:flex;align-items:center;gap:2px;font-size:.5rem;line-height:1.1;border-radius:3px;padding:1px 2px;overflow:hidden}
+.boda-cal-cls i{width:6px;height:6px;border-radius:50%;flex-shrink:0;display:inline-block}
+.boda-cal-cls span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.boda-cal-wed{font-size:.55rem;line-height:1.1;color:#e879a8;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.boda-cal-legend{display:flex;flex-wrap:wrap;gap:8px;font-size:.62rem;color:var(--text-dim);margin-top:8px}
+.boda-cal-legend span{display:flex;align-items:center;gap:4px}
+.boda-cal-legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
 .boda-tp-drums{display:flex;align-items:center;justify-content:center;gap:10px;margin:6px 0 12px}
 .boda-tp-sep{font-size:1.6rem;font-weight:700;color:var(--text-dim)}
 .boda-tp-manual{display:flex;align-items:center;justify-content:center;gap:6px;font-size:.72rem;color:var(--text-muted)}

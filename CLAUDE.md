@@ -143,6 +143,13 @@ Pestaña `EV_VIEW==='bodas'` con dos subpestañas (`BODA_SUBTAB`): **Clases** y 
   Al anadir otra clase el mismo dia hereda el lugar de la anterior.
 - Una **clase** es un evento normal `puntual|Ensayos boda` con `ev.boda={coupleId,time,place}`.
   Duración fija de 1 hora; `time` en saltos de 15 min.
+- Subpestana **Calendario** (`BODA_SUBTAB==='calendario'`): mes con un punto por clase
+  (color de la pareja + hora) y el dia de la boda resaltado con anillo.
+- Filtros de Parejas: chips (`BODA_PAREJAS_FILTER`) con el contador de cada grupo.
+- Franjas (`BODA_SLOTS`): cada brazo de abajo tiene su propio color, y la progresion
+  entra por la derecha — blanco|blanco (9-14), blanco|gris (14-18), gris|negro (18-20),
+  negro|negro (20-23). Los brazos de la pareja se pintan los ultimos para que
+  predominen en el centro.
 - Marcador: **aspa bicolor** (`evBodaSvg`) — brazos de arriba con el color de la pareja,
   los de abajo con el de la franja (`BODA_SLOTS`: 9-14 blanco, 14-18 gris claro,
   18-20 gris oscuro, 20-23 negro; gris neutro si no tiene hora).
