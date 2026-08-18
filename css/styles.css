@@ -1855,6 +1855,33 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .boda-sum-item span{font-size:.62rem;color:var(--text-dim)}
 .boda-sum-item.warn b{color:var(--c-orange,#fb923c)}
 .boda-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+/* Filtros de la lista de clases: un desplegable con forma de chip + dos
+   interruptores del mismo estilo que los chips de Parejas */
+.boda-filters{display:flex;flex-direction:column;gap:6px}
+.boda-fsel{position:relative;display:flex;align-items:center;gap:6px;border:1.5px solid var(--border);background:var(--surface2);border-radius:14px;padding:0 10px}
+.boda-fsel-ico{font-size:.72rem;opacity:.75;flex-shrink:0}
+.boda-fsel select{flex:1;min-width:0;border:none;background:transparent;color:var(--text);font-size:.74rem;padding:7px 0;outline:none;font-family:var(--font);cursor:pointer;-webkit-appearance:none;appearance:none}
+.boda-fsel::after{content:'\25be';position:absolute;right:10px;color:var(--text-dim);font-size:.7rem;pointer-events:none}
+.boda-ftoggles{display:flex;gap:6px}
+.boda-ftoggles .boda-chip{flex:1}
+/* Dia cerrado: no admite mas clases */
+.boda-day.cerrado{border-style:dashed;opacity:.72;background:var(--surface2)}
+.boda-day.cerrado .boda-day-hd{color:var(--text-dim)}
+.boda-day-hd b{color:var(--c-red);font-weight:700}
+.boda-day-lock.on{border-color:var(--c-red);color:var(--c-red)}
+/* Fila con cambios sin guardar */
+.boda-class.pend{background:var(--accent-glow);border-radius:6px}
+.boda-class.pend .boda-inp{border-color:var(--accent)}
+/* Barra de guardado, siempre visible al fondo de la lista */
+/* bottom:-40px compensa el padding inferior de .sy-body: el anclaje del
+   sticky va al borde del CONTENIDO, no al del padding, y la barra quedaba
+   flotando 40px por encima del fondo con filas asomando por debajo. */
+.boda-savebar{position:sticky;bottom:-40px;z-index:8;display:flex;gap:8px;padding:10px 0 14px;margin-top:4px;
+  background:var(--bg);box-shadow:0 -8px 14px -8px var(--shadow),0 -1px 0 var(--border);transition:opacity .15s}
+.boda-savebar.vacia{opacity:.45}
+.boda-savebar.vacia .boda-save-ok{background:var(--surface3,var(--surface2));color:var(--text-dim);border-color:var(--border)}
+.boda-save-ok{flex:2;padding:11px 0;border-radius:var(--radius-sm);border:1.5px solid var(--accent);background:var(--accent);color:#fff;font-size:.8rem;font-weight:600;cursor:pointer;font-family:var(--font)}
+.boda-save-cancel{flex:1;padding:11px 0;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text-muted);font-size:.78rem;cursor:pointer;font-family:var(--font)}
 /* Filtros de Parejas como chips pulsables */
 .boda-chips{display:flex;gap:6px;flex-wrap:wrap}
 .boda-chip{flex:1;min-width:0;font-size:.68rem;padding:7px 8px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;white-space:nowrap;text-align:center}
