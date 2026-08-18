@@ -265,6 +265,10 @@ Pestaña `EV_VIEW==='bodas'` con cuatro subpestañas (`BODA_SUBTAB`): **Clases**
 - Marcador: **aspa bicolor** (`evBodaSvg`) — brazos de arriba con el color de la pareja,
   los de abajo con el de la franja (`BODA_SLOTS`: 9-14 blanco, 14-18 gris claro,
   18-20 gris oscuro, 20-23 negro; gris neutro si no tiene hora).
+- **Invariante: una clase = un evento de UN SOLO día.** Nunca un evento `Ensayos boda`
+  con `dates[]` o con `end>start`; si aparece uno (p.ej. al cambiar de categoría un evento
+  multidía) hay que partirlo. Lo hace `bodaNormalizeClasses()` al cargar y el propio
+  formulario al guardar. Si no se parte, la pestaña Bodas lo cuenta como una sola clase.
 - Alta masiva: en el formulario, categoría "Ensayos boda" + rango o Selección Multidía →
   `bodaBulkCreate()` crea **una clase por día**, sin hora ni pareja.
 

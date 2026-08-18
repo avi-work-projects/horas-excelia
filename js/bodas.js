@@ -126,6 +126,45 @@ function bodaNewClass(ds,time,coupleId,place){
     boda:{coupleId:coupleId||null, time:time||null, place:place||BODA_PLACE_DEFAULT}
   };
 }
+/* Normaliza las clases guardadas: UNA CLASE POR DIA y siempre con bloque
+   ev.boda. Repara los eventos "Ensayos boda" que quedaron como un unico
+   evento multidia (pasaba al cambiar de categoria un evento con varios dias:
+   el alta masiva solo corria al crear, no al editar). Devuelve true si toco
+   algo, para que quien lo llame vuelva a guardar. */
+function bodaNormalizeClasses(arr){
+  var cambiado=false, salida=[];
+  arr.forEach(function(ev){
+    if(!ev||getEvType(ev)!=='Ensayos boda'){salida.push(ev);return;}
+    /* Dias que ocupa el evento */
+    var dias=[];
+    if(ev.dates&&ev.dates.length)dias=ev.dates.slice();
+    else if(ev.end&&ev.end>ev.start){
+      var d0=new Date(ev.start+'T00:00:00'),d1=new Date(ev.end+'T00:00:00'),g=0;
+      for(var d=new Date(d0);d<=d1&&g<400;d.setDate(d.getDate()+1),g++)dias.push(evDk(d));
+    }
+    if(dias.length>1){
+      /* Se parte en una clase por dia conservando lo que hubiera */
+      dias.sort().forEach(function(ds,i){
+        var c=bodaNewClass(ds,(ev.boda&&ev.boda.time)||null,(ev.boda&&ev.boda.coupleId)||null,
+          (ev.boda&&ev.boda.place)||BODA_PLACE_DEFAULT);
+        if(i===0)c.id=ev.id;          /* la primera hereda el id original */
+        if(ev.title)c.title=ev.title;
+        if(ev.note)c.note=ev.note;
+        salida.push(c);
+      });
+      cambiado=true;
+      return;
+    }
+    /* Un solo dia: quitar restos de multidia y asegurar el bloque boda */
+    if(ev.dates){delete ev.dates;cambiado=true;}
+    if(ev.end&&ev.end!==ev.start){ev.end=ev.start;cambiado=true;}
+    if(!ev.boda){ev.boda={coupleId:null,time:null,place:BODA_PLACE_DEFAULT};cambiado=true;}
+    salida.push(ev);
+  });
+  if(cambiado){arr.length=0;salida.forEach(function(e){arr.push(e);});}
+  return cambiado;
+}
+
 /* Lugar por defecto al crear otra clase el mismo dia: el de la clase de arriba */
 function bodaPlaceForNewOn(ds){
   var same=bodaClassesOnDay(ds);
