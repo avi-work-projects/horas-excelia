@@ -215,6 +215,9 @@ Cada evento tiene un `kind` y un `type`. **La identidad de una categoría es el 
 - `EV_FREE_COLOR` — categorías con paleta libre · `EV_FREE_SHAPE` — con selector de forma
   (solo `puntual|Otros`) · `EV_FREE_DATES` — con Selección Multidía.
 - `isEvBarAlways(ev)` = `getEvKind(ev)==='grande'`; es lo único que decide barra vs marcador.
+- **Grosor de la barra** (`evBarSize`/`evBarSizeCls`): Viaje y Asturias `lg`; el resto de
+  grandes `md`; solo `grande|Otros` puede elegir entre `lg`/`md`/`sm` (se guarda en
+  `ev.barSize` y se pinta con las clases `.ev-bar-lg|md|sm`).
 - **Notas**: `ev.note` es la nota general (todos los días) y `ev.dayNotes['YYYY-MM-DD']` la
   nota propia de un día. El formulario muestra las dos cajas solo si el evento es puntual,
   ocupa varios días y se entró desde un día concreto (`EV_EDIT_DS`).

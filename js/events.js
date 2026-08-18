@@ -44,10 +44,14 @@ var EV_ANNUAL_FILTER_HIDDEN = []; // grupos ocultos en el calendario anual/4 mes
      Bodas     -> puntual|Ensayos boda
      Resto     -> el resto de puntuales (Plan/Quedada, Otros...) */
 var EV_FILTER_GROUPS = ['Grandes','Asturias','Rec. Gestiones','Bodas','Resto','Cumplea\u00f1os VIP'];
-var EV_FILTER_SHORT  = {'Grandes':'Grandes','Asturias':'Asturias','Rec. Gestiones':'Gestiones',
-  'Bodas':'Bodas','Resto':'Resto','Cumplea\u00f1os VIP':'\u2b50'};
+/* Etiquetas en SINGULAR: con el plural la estrella de VIP se caia a una
+   segunda fila en pantallas estrechas */
+var EV_FILTER_SHORT  = {'Grandes':'Grande','Asturias':'Asturias','Rec. Gestiones':'Gesti&oacute;n',
+  'Bodas':'Boda','Resto':'Resto','Cumplea\u00f1os VIP':'\u2b50'};
 var EV_FILTER_COLOR  = {'Grandes':'#38bdf8','Asturias':'#1d4ed8','Rec. Gestiones':'#34d399',
   'Bodas':'#c08a5a','Resto':'#ff6b6b','Cumplea\u00f1os VIP':'#fbbf24'};
+/* Tras que grupo va la linea que separa eventos grandes de puntuales */
+var EV_FILTER_SEP_AFTER = 'Asturias';
 function evFilterGroup(ev){
   var t=getEvType(ev);
   if(t==='Cumplea\u00f1os VIP')return 'Cumplea\u00f1os VIP';
@@ -466,7 +470,7 @@ function renderEvCalMonth(){
         var hasInM=false;for(var ci=it.cs;ci<=it.ce;ci++){if(inMCols[ci])hasInM=true;}
         var _dc=getEvDisplayColor(ev);
         var _pastBar=wk[it.ce]<today?' past-bar':'';
-        h+='<div class="ev-multi-bar'+sc+_pastBar+'" data-id="'+ev.id+'"'
+        h+='<div class="ev-multi-bar '+evBarSizeCls(ev)+sc+_pastBar+'" data-id="'+ev.id+'"'
           +' style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';border:1.5px solid '+_dc+';background:'+fakeTrans(_dc,0.65)+';color:#fff'+(hasInM?'':';opacity:.35')+'">'
           +(showT?escHtml(ev.title):'')+'</div>';
       });
@@ -864,7 +868,7 @@ function _renderEvMonthCard(m,yr,o){
         var pastBar=wk[it.ce]<today?' past-bar':'';
         var extra=o.barTitles?';font-size:.3rem;padding:0 3px':'';
         var txt=(o.barTitles&&(it.starts||it.cs===0))?escHtml(it.ev.title):'';
-        h+='<div class="ev-annual-mbar'+sc+pastBar+'" data-id="'+it.ev.id+'"'
+        h+='<div class="ev-annual-mbar '+evBarSizeCls(it.ev)+sc+pastBar+'" data-id="'+it.ev.id+'"'
           +' style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)
           +';border:1px solid '+dc+';background:'+fakeTrans(dc,0.65)+extra+'">'+txt+'</div>';
       });
@@ -1170,6 +1174,7 @@ function renderEvContent(){
       var c=_typeColor[type];
       var sty=hidden?'':'border-color:'+c+';color:'+c+';background:'+c+'18';
       h+='<button class="ev-filter-chip'+(hidden?'':' chip-active')+'" data-filter-type="'+escHtml(type)+'" style="'+sty+'">'+_typeShort[type]+'</button>';
+      if(type===EV_FILTER_SEP_AFTER)h+='<span class="ev-filter-sep" aria-hidden="true"></span>';
     });
     h+='</div>';
     h+='</div>';
@@ -1464,7 +1469,8 @@ function renderEvForm(ev){
   var curShape=isEdit&&ev.shape?ev.shape:'circle';
   var curDates=isEdit&&Array.isArray(ev.dates)?ev.dates.slice():[];
   var showDates=!!EV_FREE_DATES[curKey];
-  h+='<div class="ev-field ev-otros-extras" id="evFOtrosExtras" style="display:'+((isOtros||showDates)?'block':'none')+'">';
+  var _extras=(isOtros||showDates||!!EV_FREE_BARSIZE[curKey]);
+  h+='<div class="ev-field ev-otros-extras" id="evFOtrosExtras" style="display:'+(_extras?'block':'none')+'">';
   h+='<div id="evFShapeBlock" style="display:'+(isOtros?'block':'none')+'">';
   h+='<label>\u25B8 Forma del marcador</label>';
   h+='<div class="ev-shape-picker" id="evFShapePicker">';
@@ -1483,6 +1489,18 @@ function renderEvForm(ev){
     /* Todas las formas: mismo SVG que en los calendarios → mismo grosor de borde */
     h+='<span class="ev-shape-preview ev-shape-'+s.k+'" style="color:'+prevColor+'">'+evShapeSvg(s.k)+'</span>';
     h+='</button>';
+  });
+  h+='</div></div>';
+  /* Grosor de la barra (solo eventos grandes "Otros") */
+  var showBar=!!EV_FREE_BARSIZE[curKey];
+  var curBar=evBarSize(isEdit?ev:{kind:curKind,type:curType,barSize:null});
+  h+='<div id="evFBarBlock" style="display:'+(showBar?'block':'none')+'">';
+  h+='<label>▬ Grosor de la barra</label>';
+  h+='<div class="ev-barsize-picker" id="evFBarPicker">';
+  EV_BAR_SIZES.forEach(function(b){
+    h+='<button type="button" class="ev-barsize-opt'+(b.k===curBar?' selected':'')+'" data-bar="'+b.k+'">'
+      +'<span class="ev-barsize-demo ev-bar-'+b.k+'"></span>'
+      +'<span class="ev-barsize-lbl">'+b.label+'</span></button>';
   });
   h+='</div></div>';
   h+='<div id="evFDatesBlock" style="display:'+(showDates?'block':'none')+';margin-top:12px">';
@@ -1611,8 +1629,10 @@ function bindEvFormEvents(){
     var key=evTypeKey(kind,typeName);
     if(_kindPicker){_kindPicker.dataset.curKind=kind;_kindPicker.dataset.curType=typeName;}
     if(_colorSection)_colorSection.style.display=EV_FREE_COLOR[key]?'block':'none';
-    var _shp=!!EV_FREE_SHAPE[key],_dts=!!EV_FREE_DATES[key];
-    if(_otrosExtras)_otrosExtras.style.display=(_shp||_dts)?'block':'none';
+    var _shp=!!EV_FREE_SHAPE[key],_dts=!!EV_FREE_DATES[key],_bar=!!EV_FREE_BARSIZE[key];
+    if(_otrosExtras)_otrosExtras.style.display=(_shp||_dts||_bar)?'block':'none';
+    var _bb=document.getElementById('evFBarBlock');
+    if(_bb)_bb.style.display=_bar?'block':'none';
     var _sb=document.getElementById('evFShapeBlock');
     if(_sb)_sb.style.display=_shp?'block':'none';
     var _db=document.getElementById('evFDatesBlock');
@@ -1656,6 +1676,15 @@ function bindEvFormEvents(){
       if(tp)tp.innerHTML=_renderEvTypeSwatches(kind,t);
       _bindTypeSwatches();
       _applyTypeUI(kind,t);
+    });
+  });
+  /* Selector de grosor de barra (grande|Otros) */
+  var _barSize=(EV_EDIT&&EV_EDIT.barSize)?EV_EDIT.barSize:null;
+  document.querySelectorAll('#evFBarPicker .ev-barsize-opt').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#evFBarPicker .ev-barsize-opt').forEach(function(x){x.classList.remove('selected');});
+      b.classList.add('selected');
+      _barSize=b.dataset.bar;
     });
   });
   /* Shape picker (Otros) */
@@ -1758,6 +1787,11 @@ function bindEvFormEvents(){
       kind:kindLabel,type:typeLabel,start:start,end:end,repeat:repeat};
     if(_saveDates)_newEv.dates=_saveDates;
     if(_saveShape)_newEv.shape=_saveShape;
+    if(EV_FREE_BARSIZE[typeKey]){
+      var _bsel=document.querySelector('#evFBarPicker .ev-barsize-opt.selected');
+      var _bs=_bsel?_bsel.dataset.bar:(typeof _barSize!=='undefined'&&_barSize);
+      if(_bs)_newEv.barSize=_bs;
+    }
     /* Notas por dia: se conservan las que ya hubiera y se actualiza la del dia
        desde el que se entro (vacia = se borra esa entrada) */
     if(EV_EDIT&&EV_EDIT.dayNotes)_newEv.dayNotes=JSON.parse(JSON.stringify(EV_EDIT.dayNotes));

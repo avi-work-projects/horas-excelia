@@ -60,6 +60,17 @@ var EV_FREE_SHAPE = {'puntual|Otros':1};
 /* Categorias con "Seleccion Multidia" (varios dias sueltos). En Ensayos boda
    sirve para dar de alta muchas clases de golpe desde el calendario 1 mes. */
 var EV_FREE_DATES = {'puntual|Otros':1,'puntual|Ensayos boda':1};
+/* Grosor de la barra de los eventos grandes. Viaje y Asturias van gruesas; el
+   resto de grandes, mas estrechas. Solo "Otros" deja elegir entre los tres. */
+var EV_BAR_SIZES = [{k:'lg',label:'Gruesa'},{k:'md',label:'Media'},{k:'sm',label:'Fina'}];
+var EV_FREE_BARSIZE = {'grande|Otros':1};
+function evBarSize(ev){
+  var t=getEvType(ev);
+  if(t==='Viaje'||t==='Asturias')return 'lg';
+  if(ev&&(ev.barSize==='lg'||ev.barSize==='md'||ev.barSize==='sm'))return ev.barSize;
+  return 'md';
+}
+function evBarSizeCls(ev){return 'ev-bar-'+evBarSize(ev);}
 function evTypeKey(kind,type){return kind+'|'+type;}
 function evTypeColor(kind,type){return EV_TYPE_COLORS[evTypeKey(kind,type)]||'#a3e635';}
 /* Clase de un evento: ev.kind si existe; si no, se deduce del tipo/duraci\u00f3n

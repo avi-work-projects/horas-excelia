@@ -1227,6 +1227,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 
 /* === Selector de formas en el formulario de evento (Otros) === */
 .ev-otros-extras{padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-top:8px}
+/* Selector de grosor de barra (grande | Otros) */
+.ev-barsize-picker{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
+.ev-barsize-opt{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:10px 4px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s}
+.ev-barsize-opt.selected{border-color:var(--accent-bright);background:var(--accent-glow);box-shadow:0 0 0 1px var(--accent-bright)}
+.ev-barsize-lbl{font-size:.62rem;color:var(--text-muted)}
+.ev-barsize-opt.selected .ev-barsize-lbl{color:var(--accent-bright)}
+.ev-barsize-demo{width:100%;border-radius:20px;background:var(--text-muted);display:block}
+.ev-barsize-demo.ev-bar-lg{height:13px}
+.ev-barsize-demo.ev-bar-md{height:8px}
+.ev-barsize-demo.ev-bar-sm{height:4px}
+.ev-barsize-opt.selected .ev-barsize-demo{background:var(--accent-bright)}
 .ev-shape-picker{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
 .ev-shape-opt{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:10px 4px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;color:var(--text);font-size:.65rem;transition:all .15s;min-height:38px}
 .ev-shape-opt:hover{border-color:var(--accent)}
@@ -1342,6 +1353,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-ann-vd-opt:last-child{border-bottom:none}
 .ev-ann-vd-opt:active,.ev-ann-vd-opt:hover{background:var(--surface2)}
 .ev-ann-vd-opt.active{color:var(--accent-bright);font-weight:600;background:var(--accent-glow)}
+/* Linea que separa los chips de eventos grandes de los puntuales */
+.ev-filter-sep{width:1px;align-self:stretch;margin:2px 3px;background:var(--border-light);flex:0 0 auto}
 .ev-annual-filter-row{display:flex;gap:4px;flex-wrap:wrap;padding-bottom:2px}
 .ev-filter-chip{height:22px;padding:0 7px;border:1px solid var(--border);border-radius:11px;background:transparent;color:var(--text-dim);font-size:.65rem;cursor:pointer;transition:opacity .15s;opacity:.4}
 .ev-filter-chip.chip-active{opacity:1}
@@ -1503,6 +1516,16 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-week-outer{margin-bottom:3px;position:relative;isolation:isolate}
 /* Barras multi-día: 65% de la celda, centradas verticalmente, encima de números */
 .ev-bars-row{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;position:absolute;top:19px;left:0;right:0;bottom:4px;z-index:3;pointer-events:none;grid-auto-rows:1fr;align-items:center}
+/* Grosor de la barra segun el evento (evBarSize):
+   lg = Viaje / Asturias · md = Casa Rural y demas grandes · sm = el mas fino.
+   Solo "grande | Otros" deja elegir entre los tres desde el formulario. */
+.ev-multi-bar.ev-bar-lg{height:65%}
+.ev-multi-bar.ev-bar-md{height:42%}
+.ev-multi-bar.ev-bar-sm{height:26%;min-height:5px}
+.ev-annual-mbar{align-self:center}
+.ev-annual-mbar.ev-bar-lg{height:100%}
+.ev-annual-mbar.ev-bar-md{height:62%}
+.ev-annual-mbar.ev-bar-sm{height:38%}
 .ev-multi-bar{height:65%;min-height:8px;border-radius:20px;font-size:.52rem;font-weight:600;display:flex;align-items:center;padding:0 6px;overflow:hidden;white-space:nowrap;cursor:pointer;color:#fff;pointer-events:auto}
 /* Contenedor de badges 1-día: centrado verticalmente en la celda */
 /* Badges (eventos no-Otros): empujados hacia el FONDO de la celda para no
