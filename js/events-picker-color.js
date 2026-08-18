@@ -200,7 +200,10 @@ function _bindColorPicker(container,prefix,onChange){
     else hexInput.value=curHex;
   });
   return{
-    getColor:function(){return curHex;}
+    getColor:function(){return curHex;},
+    /* Permite fijar el color desde fuera (ej: al cambiar de categoria, la
+       paleta salta al color propio de esa categoria) */
+    setColor:function(hex){if(/^#[0-9a-fA-F]{6}$/.test(hex))updatePreview(hex);}
   };
 }
 

@@ -45,7 +45,7 @@ var BODA_SLOTS = [
   {from:20, to:23, left:BODA_BLACK, right:BODA_BLACK, label:'20-23 h'}
 ];
 var BODA_NO_TIME_COLOR   = '#8b8f9a';
-var BODA_NO_COUPLE_COLOR = '#8b8f9a';
+var BODA_NO_COUPLE_COLOR = '#ffffff';  /* sin pareja: brazos de arriba en blanco */
 var BODA_DEFAULT_TIME    = '18:00';
 /* Paleta para asignar color automaticamente a cada pareja nueva (sin repetir
    mientras queden libres) */
@@ -157,6 +157,7 @@ var BODA_CLASS_MODE = 'ver';       /* 'ver' (consulta) | 'editar' */
 var BODA_FILTER_COUPLE = 'all';
 var BODA_HIDE_PAST = true;
 var BODA_PAREJAS_FILTER = 'incompletas';  /* 'incompletas' | 'todas' | 'completas' */
+var BODA_CAL_HL = null;   /* id de la pareja resaltada en el calendario */
 var BODA_CAL_YEAR = new Date().getFullYear();
 var BODA_CAL_MONTH = new Date().getMonth();
 
@@ -171,21 +172,30 @@ function _bodaLegendHtml(){
   return h;
 }
 
-/* ── Subpestaña CALENDARIO: ensayos de cada boda + los casamientos ── */
+/* -- Subpestana CALENDARIO: ensayos de cada boda + los casamientos -- */
 function _renderBodaCalendario(){
   var MN2=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
   var y=BODA_CAL_YEAR,m=BODA_CAL_MONTH;
+  var mesPre=y+'-'+String(m+1).padStart(2,'0');
   /* Clases y bodas del mes */
-  var porDia={},bodasDia={};
+  var porDia={},bodasDia={},enMes={};
   bodaClasses().forEach(function(ev){
     if(!porDia[ev.start])porDia[ev.start]=[];
     porDia[ev.start].push(ev);
+    if(ev.start.indexOf(mesPre)===0&&ev.boda&&ev.boda.coupleId)enMes[ev.boda.coupleId]=true;
   });
   BODA_COUPLES.forEach(function(c){
     if(!c.weddingDate)return;
     if(!bodasDia[c.weddingDate])bodasDia[c.weddingDate]=[];
     bodasDia[c.weddingDate].push(c);
+    if(c.weddingDate.indexOf(mesPre)===0)enMes[c.id]=true;
   });
+  /* La leyenda solo lista las parejas con ensayo o boda este mes; si la pareja
+     resaltada ya no esta, se limpia el resaltado */
+  var leyenda=BODA_COUPLES.filter(function(c){return enMes[c.id];});
+  if(BODA_CAL_HL&&!enMes[BODA_CAL_HL])BODA_CAL_HL=null;
+  var hlC=BODA_CAL_HL?bodaCouple(BODA_CAL_HL):null;
+
   var h='<div class="boda-cal-nav">';
   h+='<button class="sy-nav" id="bodaCalPrev">&#9664;</button>';
   h+='<div class="boda-cal-month">'+MN2[m]+' '+y+'</div>';
@@ -193,7 +203,7 @@ function _renderBodaCalendario(){
   h+='</div>';
   h+='<div class="boda-cal-hdr">';
   ['L','M','X','J','V','S','D'].forEach(function(d){h+='<div>'+d+'</div>';});
-  h+='</div><div class="boda-cal-grid">';
+  h+='</div><div class="boda-cal-grid" id="bodaCalGrid">';
   var first=new Date(y,m,1);
   var dow=first.getDay(),off=dow===0?6:dow-1;
   var cur=new Date(first);cur.setDate(cur.getDate()-off);
@@ -202,13 +212,25 @@ function _renderBodaCalendario(){
   while(cur<=last||cur.getDay()!==1){
     var ds=evDk(cur);
     var inM=cur.getMonth()===m;
-    var cls='boda-cal-day'+(inM?'':' out')+(ds===todayDs?' hoy':'')+(bodasDia[ds]?' wed':'');
-    h+='<div class="'+cls+'" data-ds="'+ds+'">';
+    var clsDia=bodaSortClasses(porDia[ds]||[]);
+    var wedDia=bodasDia[ds]||[];
+    /* Resaltado: dia con ensayo o boda de la pareja seleccionada */
+    var esHl=false;
+    if(hlC){
+      esHl=clsDia.some(function(ev){return ev.boda&&ev.boda.coupleId===hlC.id;})
+        || wedDia.some(function(c){return c.id===hlC.id;});
+    }
+    var cls='boda-cal-day'+(inM?'':' out')+(ds===todayDs?' hoy':'')
+      +(wedDia.length&&!hlC?' wed':'')
+      +(hlC?(esHl?' hl':' dim'):'');
+    var sty='';
+    if(hlC&&esHl)sty=' style="border-color:'+hlC.color+';background:'+hlC.color+'22"';
+    h+='<div class="'+cls+'" data-ds="'+ds+'"'+sty+'>';
     h+='<span class="boda-cal-num">'+cur.getDate()+'</span>';
-    (bodasDia[ds]||[]).forEach(function(c){
-      h+='<span class="boda-cal-wed">&#128141; '+escHtml(_bodaFirstWord(c.name))+'</span>';
+    wedDia.forEach(function(c){
+      h+='<span class="boda-cal-wed" style="color:'+c.color+'">&#128141; <b>Boda</b></span>';
     });
-    bodaSortClasses(porDia[ds]||[]).forEach(function(ev){
+    clsDia.forEach(function(ev){
       var c=bodaCouple(ev.boda&&ev.boda.coupleId);
       var col=c?c.color:BODA_NO_COUPLE_COLOR;
       h+='<span class="boda-cal-cls" title="'+escHtml((c?c.name:'sin asignar'))+'">'
@@ -219,13 +241,18 @@ function _renderBodaCalendario(){
     cur.setDate(cur.getDate()+1);
   }
   h+='</div>';
-  /* Leyenda de parejas */
+  /* Leyenda: una pareja por linea, pulsable */
   h+='<div class="boda-cal-legend">';
-  BODA_COUPLES.forEach(function(c){
-    h+='<span><i style="background:'+c.color+'"></i>'+escHtml(c.name)
-      +(c.weddingDate?(' &#128141; '+_bodaFmt(c.weddingDate)):'')+'</span>';
+  if(!leyenda.length)h+='<div class="sy-note">Sin ensayos ni bodas este mes.</div>';
+  leyenda.forEach(function(c){
+    var on=(BODA_CAL_HL===c.id);
+    h+='<button class="boda-cal-lg'+(on?' on':'')+'" data-hl="'+c.id+'"'
+      +(on?' style="border-color:'+c.color+';background:'+c.color+'1f"':'')+'>'
+      +'<i style="background:'+c.color+'"></i>'
+      +'<b>'+escHtml(c.name)+'</b>'
+      +'<em>('+(c.weddingDate?('boda '+_bodaFmt(c.weddingDate)):'sin fecha de boda')+')</em>'
+      +'</button>';
   });
-  h+='<span><i style="background:'+BODA_NO_COUPLE_COLOR+'"></i>sin asignar</span>';
   h+='</div>';
   return h;
 }
@@ -564,6 +591,11 @@ function bindBodaAssign(){
   document.querySelectorAll('.boda-mode-btn[data-asgmode]').forEach(function(b){
     b.addEventListener('click',function(){A.open=(b.dataset.asgmode==='abierto');renderBodaAssign();});
   });
+  /* Deslizar sobre la rejilla para cambiar de mes */
+  var _ag=document.querySelector('.boda-asg-grid');
+  if(_ag&&typeof addSwipe==='function')addSwipe(_ag,
+    function(){A.month++;if(A.month>11){A.month=0;A.year++;}renderBodaAssign();},
+    function(){A.month--;if(A.month<0){A.month=11;A.year--;}renderBodaAssign();});
   document.querySelectorAll('.boda-asg-day[data-ds]').forEach(function(d){
     d.addEventListener('click',function(){
       var ds=d.dataset.ds;
@@ -844,13 +876,25 @@ function bindBodasEvents(){
   document.querySelectorAll('.econ-sub-tab[data-bsub]').forEach(function(b){
     b.addEventListener('click',function(){BODA_SUBTAB=b.dataset.bsub;refreshEvents();});
   });
+  function _bodaCalMove(d){
+    BODA_CAL_MONTH+=d;
+    if(BODA_CAL_MONTH<0){BODA_CAL_MONTH=11;BODA_CAL_YEAR--;}
+    if(BODA_CAL_MONTH>11){BODA_CAL_MONTH=0;BODA_CAL_YEAR++;}
+    refreshEvents();
+  }
   var cp=document.getElementById('bodaCalPrev');
-  if(cp)cp.addEventListener('click',function(){
-    BODA_CAL_MONTH--;if(BODA_CAL_MONTH<0){BODA_CAL_MONTH=11;BODA_CAL_YEAR--;}refreshEvents();
-  });
+  if(cp)cp.addEventListener('click',function(){_bodaCalMove(-1);});
   var cn=document.getElementById('bodaCalNext');
-  if(cn)cn.addEventListener('click',function(){
-    BODA_CAL_MONTH++;if(BODA_CAL_MONTH>11){BODA_CAL_MONTH=0;BODA_CAL_YEAR++;}refreshEvents();
+  if(cn)cn.addEventListener('click',function(){_bodaCalMove(1);});
+  /* Deslizar sobre la rejilla para cambiar de mes */
+  var cg=document.getElementById('bodaCalGrid');
+  if(cg&&typeof addSwipe==='function')addSwipe(cg,function(){_bodaCalMove(1);},function(){_bodaCalMove(-1);});
+  /* Leyenda: resaltar los dias de una pareja (se mantiene al cambiar de mes) */
+  document.querySelectorAll('.boda-cal-lg[data-hl]').forEach(function(b){
+    b.addEventListener('click',function(){
+      BODA_CAL_HL=(BODA_CAL_HL===b.dataset.hl)?null:b.dataset.hl;
+      refreshEvents();
+    });
   });
   document.querySelectorAll('.boda-mode-btn[data-bmode]').forEach(function(b){
     b.addEventListener('click',function(){BODA_CLASS_MODE=b.dataset.bmode;refreshEvents();});

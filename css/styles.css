@@ -1324,7 +1324,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
    de puente (rosa 0→2px, amarillo 2→5px) para que, si el día es puente, las
    rayas amarillas rellenen justo los huecos entre las rosas. */
 .ev-annual-day.ann-vip-bday::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
-  background:repeating-linear-gradient(45deg,transparent 0,transparent 2px,rgba(251,191,36,.6) 2px,rgba(251,191,36,.6) 5px)}
+  background:repeating-linear-gradient(45deg,transparent 0,transparent 2px,rgba(255,214,10,.95) 2px,rgba(255,214,10,.95) 5px);
+  filter:saturate(1.25)}
 /* Festivos/vac en vista anual: borde brillante + relleno suave por día individual */
 .ev-annual-day.ann-festivo{background:rgba(255,107,107,.15)!important;outline:1.5px solid rgba(255,107,107,.85);outline-offset:-1.5px}
 .ev-annual-day.ann-vac{background:rgba(255,179,71,.15)!important;outline:1.5px solid rgba(255,179,71,.85);outline-offset:-1.5px}
@@ -1760,13 +1761,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-daynote-field{border-left:2px solid var(--accent);padding-left:8px}
 .ev-detail-daynote{border-left:2px solid var(--accent);padding-left:8px;margin-top:6px}
 /* Pestana Bodas y pestana partida Vacaciones/Festivos */
-.ev-btn-bodas:not(.active){background:rgba(139,94,52,.14);border-color:rgba(139,94,52,.5);color:#c08a5a}
-.ev-btn-bodas.active{background:rgba(139,94,52,.34) !important;border-color:#8b5e34 !important;color:#e0b088 !important}
-[data-theme="light"] .ev-btn-bodas:not(.active){background:rgba(139,94,52,.1);border-color:rgba(139,94,52,.45);color:#7a4f2a}
-[data-theme="light"] .ev-btn-bodas.active{background:#8b5e34 !important;border-color:#6d4826 !important;color:#fff !important}
+.ev-btn-bodas:not(.active){background:rgba(192,138,90,.07);border-color:rgba(192,138,90,.25);color:rgba(192,138,90,.85)}
+.ev-btn-bodas.active{background:rgba(192,138,90,.22) !important;border-color:#c08a5a !important;color:#d9a878 !important}
+[data-theme="light"] .ev-btn-bodas:not(.active){background:rgba(139,94,52,.07);border-color:rgba(139,94,52,.28);color:#8b5e34}
+[data-theme="light"] .ev-btn-bodas.active{background:rgba(139,94,52,.18) !important;border-color:#8b5e34 !important;color:#6d4826 !important}
 /* Mitad marron (vacaciones/festivos) + mitad rosa (puentes), sin linea visible */
 .ev-btn-split:not(.active){background:linear-gradient(to bottom,rgba(255,179,71,.13) 0%,rgba(255,179,71,.13) 50%,rgba(244,114,182,.13) 50%,rgba(244,114,182,.13) 100%);border-color:rgba(255,179,71,.35);color:var(--vacaciones)}
-.ev-btn-split.active{background:linear-gradient(to bottom,rgba(255,179,71,.3) 0%,rgba(255,179,71,.3) 50%,rgba(244,114,182,.3) 50%,rgba(244,114,182,.3) 100%) !important;border-color:var(--vacaciones) !important;color:var(--text) !important}
+.ev-btn-split.active{background:linear-gradient(to bottom,rgba(255,179,71,.3) 0%,rgba(255,179,71,.3) 50%,rgba(244,114,182,.3) 50%,rgba(244,114,182,.3) 100%) !important;border-color:var(--vacaciones) !important;color:var(--vacaciones) !important}
 /* Subpestanas (Puentes/Vac-Festivos y Clases/Parejas): usan .econ-sub-tabs, el
    mismo componente sticky que "Mis gastos" / "Analisis hipoteca" */
 .sy-body:has(> .econ-sub-tabs:first-child){padding-top:0!important}
@@ -1877,10 +1878,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .boda-cal-cls{display:flex;align-items:center;gap:2px;font-size:.5rem;line-height:1.1;border-radius:3px;padding:1px 2px;overflow:hidden}
 .boda-cal-cls i{width:6px;height:6px;border-radius:50%;flex-shrink:0;display:inline-block}
 .boda-cal-cls span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.boda-cal-wed{font-size:.55rem;line-height:1.1;color:#e879a8;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.boda-cal-legend{display:flex;flex-wrap:wrap;gap:8px;font-size:.62rem;color:var(--text-dim);margin-top:8px}
-.boda-cal-legend span{display:flex;align-items:center;gap:4px}
-.boda-cal-legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
+/* Leyenda: una pareja por linea y pulsable para resaltar sus dias */
+.boda-cal-legend{display:flex;flex-direction:column;gap:5px;font-size:.68rem;color:var(--text-muted);margin-top:10px}
+.boda-cal-lg{display:flex;align-items:center;gap:7px;width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text-muted);cursor:pointer;text-align:left;transition:all .15s}
+.boda-cal-lg i{width:11px;height:11px;border-radius:50%;display:inline-block;flex-shrink:0;border:1px solid rgba(0,0,0,.4)}
+.boda-cal-lg b{font-weight:600;color:var(--text)}
+.boda-cal-lg em{font-style:normal;color:var(--text-dim);font-size:.64rem}
+.boda-cal-lg.on{border-width:2px;font-weight:600}
+/* Dia resaltado al pulsar una pareja en la leyenda */
+.boda-cal-day.hl{border-width:2px}
+.boda-cal-day.dim{opacity:.35}
+.boda-cal-wed{font-size:.55rem;line-height:1.1;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .boda-tp-drums{display:flex;align-items:center;justify-content:center;gap:10px;margin:6px 0 12px}
 .boda-tp-sep{font-size:1.6rem;font-weight:700;color:var(--text-dim)}
 .boda-tp-manual{display:flex;align-items:center;justify-content:center;gap:6px;font-size:.72rem;color:var(--text-muted)}

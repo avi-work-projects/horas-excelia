@@ -35,7 +35,28 @@ var EV_FORM_CONTAINER = null;  // overlay donde se renderiza el formulario (null
 var EV_EDIT_MODE = false;
 var EV_BRIGHT_PAST = false;
 var EV_ANNUAL_VIEW = 'puentes'; // 'puentes' | 'fiestas'
-var EV_ANNUAL_FILTER_HIDDEN = []; // type names hidden from annual calendar
+var EV_ANNUAL_FILTER_HIDDEN = []; // grupos ocultos en el calendario anual/4 meses
+/* Grupos de filtro (v244). No son los tipos sueltos: agrupan varias categorias
+   para que los chips quepan y sean utiles.
+     Grandes   -> todo kind 'grande' menos Asturias
+     Asturias  -> aparte, por lo mucho que se usa
+     Gestiones -> puntual|Rec. Gestiones
+     Bodas     -> puntual|Ensayos boda
+     Resto     -> el resto de puntuales (Plan/Quedada, Otros...) */
+var EV_FILTER_GROUPS = ['Grandes','Asturias','Rec. Gestiones','Bodas','Resto','Cumplea\u00f1os VIP'];
+var EV_FILTER_SHORT  = {'Grandes':'Grandes','Asturias':'Asturias','Rec. Gestiones':'Gestiones',
+  'Bodas':'Bodas','Resto':'Resto','Cumplea\u00f1os VIP':'\u2b50'};
+var EV_FILTER_COLOR  = {'Grandes':'#38bdf8','Asturias':'#1d4ed8','Rec. Gestiones':'#34d399',
+  'Bodas':'#c08a5a','Resto':'#ff6b6b','Cumplea\u00f1os VIP':'#fbbf24'};
+function evFilterGroup(ev){
+  var t=getEvType(ev);
+  if(t==='Cumplea\u00f1os VIP')return 'Cumplea\u00f1os VIP';
+  if(t==='Asturias')return 'Asturias';
+  if(getEvKind(ev)==='grande')return 'Grandes';
+  if(t==='Ensayos boda')return 'Bodas';
+  if(t==='Rec. Gestiones')return 'Rec. Gestiones';
+  return 'Resto';
+}
 var EV_PREV_VIEW = null;       // para volver al anual al pulsar ←
 var EV_QUAD_YEAR = new Date().getFullYear();  // año de inicio del bloque 4 meses
 var EV_QUAD_MONTH = new Date().getMonth();    // mes de inicio del bloque 4 meses (0-based)
@@ -658,7 +679,7 @@ function renderEvAnnual(){
   // Eventos multi-día (sin repetición, end > start) — filtrar por tipos ocultos
   function annEvVisible(ev){
     if(!EV_ANNUAL_FILTER_HIDDEN.length)return true;
-    return EV_ANNUAL_FILTER_HIDDEN.indexOf(getEvType(ev))===-1;
+    return EV_ANNUAL_FILTER_HIDDEN.indexOf(evFilterGroup(ev))===-1;
   }
   var multiEvs=EVENTS.filter(function(ev){return !ev.repeat&&!(ev.dates&&ev.dates.length)&&ev.end&&isEvBarAlways(ev)&&annEvVisible(ev);});
   var multiIds={};multiEvs.forEach(function(ev){multiIds[ev.id]=true;});
@@ -827,7 +848,7 @@ function renderEvQuad(){
   months.forEach(function(mo){_loadP(mo.y);});
   function annEvVisible(ev){
     if(!EV_ANNUAL_FILTER_HIDDEN.length)return true;
-    return EV_ANNUAL_FILTER_HIDDEN.indexOf(getEvType(ev))===-1;
+    return EV_ANNUAL_FILTER_HIDDEN.indexOf(evFilterGroup(ev))===-1;
   }
   // Eventos multi-día para el rango de 4 meses
   var rangeStart=new Date(months[0].y,months[0].m,1);
@@ -1194,9 +1215,9 @@ function renderEvContent(){
   h+='</div>';
   h+='<div class="sy-body'+(EV_BRIGHT_PAST?' ev-bright-past':'')+(EV_VIEW==='week'?' ev-wk-body':'')+'">';
   if(EV_VIEW==='annual'||EV_VIEW==='quad'){
-    var _typeOrder=['Viaje','Asturias','Rec. Gestiones','Plan/Quedada','Otros','Cumplea\u00f1os VIP'];
-    var _typeShort={'Viaje':'Viaje','Asturias':'Asturias','Rec. Gestiones':'Gestiones','Plan/Quedada':'Planes','Otros':'Otros','Cumplea\u00f1os VIP':'\u2b50'};
-    var _typeColor={'Viaje':'#38bdf8','Asturias':'#1d4ed8','Rec. Gestiones':'#34d399','Plan/Quedada':'#fb923c','Otros':'#ff6b6b','Cumplea\u00f1os VIP':'#fbbf24'};
+    var _typeOrder=EV_FILTER_GROUPS;
+    var _typeShort=EV_FILTER_SHORT;
+    var _typeColor=EV_FILTER_COLOR;
     h+='<div class="ev-annual-controls">';
     var _vdLabels={'puentes':'\uD83D\uDDD3 Puentes','fiestas':'\uD83D\uDCC5 Vac + Festivos','vacaciones':'\uD83C\uDFD6 Solo vacaciones','festivos':'\uD83C\uDF8C Solo festivos','none':'\u2715 Nada'};
     var _curVdLabel=_vdLabels[EV_ANNUAL_VIEW]||_vdLabels['none'];
@@ -1675,6 +1696,10 @@ function bindEvFormEvents(){
         _selectedTypeHex=sw.dataset.hex;
         var typeName=sw.dataset.type||'Otros';
         _applyTypeUI(sw.dataset.kind||_curKind(),typeName);
+        /* Al cambiar de categoria, la paleta arranca en el color propio de esa
+           categoria (asi "Casa Rural" sale marron por defecto). */
+        var _k2=evTypeKey(sw.dataset.kind||_curKind(),typeName);
+        if(EV_FREE_COLOR[_k2]&&_fCp&&_fCp.setColor)_fCp.setColor(evTypeColor(sw.dataset.kind||_curKind(),typeName));
         var titleEl=document.getElementById('evFTitle');
         if(titleEl&&!titleEl.value.trim()){
           if(typeName==='Asturias'){
@@ -1682,6 +1707,7 @@ function bindEvFormEvents(){
             var noteEl2=document.getElementById('evFNote');
             if(noteEl2&&!noteEl2.value.trim()){noteEl2.value='Asturias';cntEl.textContent='8/200';}
           } else if(typeName==='Ensayos boda'){titleEl.value='Ensayo boda';}
+          else if(typeName==='Casa Rural'){titleEl.value='Casa rural';}
         }
       });
     });

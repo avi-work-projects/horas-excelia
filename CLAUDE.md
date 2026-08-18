@@ -124,6 +124,12 @@ Cada evento tiene un `kind` y un `type`. **La identidad de una categoría es el 
   nota propia de un día. El formulario muestra las dos cajas solo si el evento es puntual,
   ocupa varios días y se entró desde un día concreto (`EV_EDIT_DS`).
 
+## Filtros del calendario anual / 4 meses (v244)
+Los chips NO filtran por tipo suelto sino por **grupo** (`evFilterGroup`, events.js):
+`Grandes` (todo kind grande menos Asturias) · `Asturias` · `Gestiones` · `Bodas`
+(puntual|Ensayos boda) · `Resto` (el resto de puntuales: Plan/Quedada, Otros...) ·
+`Cumpleanos VIP`. `EV_ANNUAL_FILTER_HIDDEN` guarda los grupos ocultos.
+
 ## Bodas (js/bodas.js)
 Pestaña `EV_VIEW==='bodas'` con dos subpestañas (`BODA_SUBTAB`): **Clases** y **Parejas**.
 - Parejas en `localStorage['excelia-bodas-v1']` (`BODA_COUPLES`):
