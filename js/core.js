@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v242 - Bodas: asignacion por calendario, clases extra, vista consulta/edicion y selector de hora';
+var APP_VERSION = 'v243 - Tema claro en home y Bodas, calendario de bodas, chips de filtro y aspas por franja';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

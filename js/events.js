@@ -2298,8 +2298,13 @@ function bindEvEvents(){
   var evExportEl=document.getElementById('evExport');
   if(evExportEl)evExportEl.addEventListener('click',function(){
     if(!EVENTS.length){showToast('No hay eventos para exportar','error');return;}
+    /* Se exporta un objeto con eventos + parejas de bodas (las clases van
+       dentro de EVENTS). El importador sigue aceptando el array pelado
+       de versiones anteriores. */
+    var _payload={version:2,events:EVENTS,
+      bodas:(typeof BODA_COUPLES!=='undefined')?BODA_COUPLES:[]};
     var a=document.createElement('a');
-    a.href='data:application/json,'+encodeURIComponent(JSON.stringify(EVENTS,null,2));
+    a.href='data:application/json,'+encodeURIComponent(JSON.stringify(_payload,null,2));
     a.download='eventos.json';a.click();
   });
   var evImportEl=document.getElementById('evImport');
@@ -2309,10 +2314,14 @@ function bindEvEvents(){
     var f=e.target.files[0];if(!f)return;
     var r=new FileReader();
     r.onload=function(evt){
-      var arr;
+      var arr,incBodas=null;
       try{
-        arr=JSON.parse(evt.target.result);
-        if(!Array.isArray(arr))throw new Error();
+        var _raw=JSON.parse(evt.target.result);
+        if(Array.isArray(_raw))arr=_raw;                       /* formato antiguo */
+        else if(_raw&&Array.isArray(_raw.events)){             /* formato v243 */
+          arr=_raw.events;
+          if(Array.isArray(_raw.bodas))incBodas=_raw.bodas;
+        } else throw new Error();
       }catch(err){showToast('Error al importar el archivo','error');return;}
       var apply=function(mode){
         if(mode==='merge'){
@@ -2326,8 +2335,21 @@ function bindEvEvents(){
             else{idx[e2.id]=EVENTS.length;EVENTS.push(e2);}
           });
         }else{EVENTS=arr;}
+        /* Parejas de bodas: fusionar por id o reemplazar, igual que los eventos */
+        if(incBodas&&typeof BODA_COUPLES!=='undefined'&&typeof saveBodas==='function'){
+          if(mode==='merge'){
+            var bidx={};
+            BODA_COUPLES.forEach(function(c,i){bidx[c.id]=i;});
+            incBodas.forEach(function(c){
+              if(!c||!c.id)return;
+              if(bidx[c.id]!==undefined)BODA_COUPLES[bidx[c.id]]=c;
+              else{bidx[c.id]=BODA_COUPLES.length;BODA_COUPLES.push(c);}
+            });
+          }else{BODA_COUPLES=incBodas;}
+          saveBodas();
+        }
         saveEvents();updateEventsBtn();refreshEvents();
-        showToast('Eventos importados: '+EVENTS.length,'success');
+        showToast('Eventos importados: '+EVENTS.length+(incBodas?(' · parejas: '+BODA_COUPLES.length):''),'success');
       };
       if(typeof askImportMode==='function')askImportMode('Eventos: '+f.name+' ('+arr.length+')',apply);
       else apply('replace');

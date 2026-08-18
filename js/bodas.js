@@ -32,12 +32,17 @@ function bodaPlaceOf(ev){
   return BODA_PLACE_SHORT[p]?p:BODA_PLACE_DEFAULT;
 }
 
-/* Franjas horarias → color de las dos aspas de ABAJO */
+/* Franjas horarias -> color de CADA brazo de abajo (izquierda, derecha).
+   La progresion se lee como un reloj: cuanto mas tarde, mas oscuro, y el
+   cambio entra primero por la derecha:
+     manana  blanco|blanco  ·  tarde  blanco|gris
+     tarde-noche gris|negro ·  noche  negro|negro */
+var BODA_WHITE='#ffffff', BODA_GREY='#9aa0ae', BODA_BLACK='#111318';
 var BODA_SLOTS = [
-  {from: 9, to:14, color:'#ffffff', label:'09-14 h'},
-  {from:14, to:18, color:'#b8bcc8', label:'14-18 h'},
-  {from:18, to:20, color:'#4b5563', label:'18-20 h'},
-  {from:20, to:23, color:'#000000', label:'20-23 h'}
+  {from: 9, to:14, left:BODA_WHITE, right:BODA_WHITE, label:'09-14 h'},
+  {from:14, to:18, left:BODA_WHITE, right:BODA_GREY,  label:'14-18 h'},
+  {from:18, to:20, left:BODA_GREY,  right:BODA_BLACK, label:'18-20 h'},
+  {from:20, to:23, left:BODA_BLACK, right:BODA_BLACK, label:'20-23 h'}
 ];
 var BODA_NO_TIME_COLOR   = '#8b8f9a';
 var BODA_NO_COUPLE_COLOR = '#8b8f9a';
@@ -58,27 +63,36 @@ function bodaCouple(id){
   for(var i=0;i<BODA_COUPLES.length;i++)if(BODA_COUPLES[i].id===id)return BODA_COUPLES[i];
   return null;
 }
-function bodaSlotColor(time){
-  if(!time)return BODA_NO_TIME_COLOR;
+function bodaSlot(time){
+  if(!time)return null;
   var h=parseInt(String(time).slice(0,2),10);
-  if(isNaN(h))return BODA_NO_TIME_COLOR;
+  if(isNaN(h))return null;
   for(var i=0;i<BODA_SLOTS.length;i++){
-    if(h>=BODA_SLOTS[i].from&&h<BODA_SLOTS[i].to)return BODA_SLOTS[i].color;
+    if(h>=BODA_SLOTS[i].from&&h<BODA_SLOTS[i].to)return BODA_SLOTS[i];
   }
-  return BODA_NO_TIME_COLOR;
+  return null;
 }
+/* Color de los dos brazos de abajo: [izquierda, derecha] */
+function bodaSlotColors(time){
+  var sl=bodaSlot(time);
+  return sl?[sl.left,sl.right]:[BODA_NO_TIME_COLOR,BODA_NO_TIME_COLOR];
+}
+function bodaSlotColor(time){return bodaSlotColors(time)[1];}
 /* Aspa bicolor: brazos de arriba con el color de la pareja, los de abajo con
    el de la franja horaria. Mismo grosor de borde que el resto de formas. */
 function evBodaSvg(ev){
   var b=(ev&&ev.boda)||{};
   var c=bodaCouple(b.coupleId);
   var top=c?c.color:BODA_NO_COUPLE_COLOR;
-  var bot=bodaSlotColor(b.time);
+  var bot=bodaSlotColors(b.time);
   var swIn=5, swOut=swIn+EV_SHAPE_BW*2;
+  /* Los brazos de ABAJO se dibujan primero para que en el centro predominen
+     los de arriba (el color de la pareja), no la franja horaria. */
   return '<svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">'
     +'<path d="M-6,-6 L6,6 M-6,6 L6,-6" stroke="#000" stroke-width="'+swOut+'" stroke-linecap="round" fill="none"/>'
+    +'<path d="M0,0 L-6,6" stroke="'+bot[0]+'" stroke-width="'+swIn+'" stroke-linecap="round" fill="none"/>'
+    +'<path d="M0,0 L6,6"  stroke="'+bot[1]+'" stroke-width="'+swIn+'" stroke-linecap="round" fill="none"/>'
     +'<path d="M0,0 L-6,-6 M0,0 L6,-6" stroke="'+top+'" stroke-width="'+swIn+'" stroke-linecap="round" fill="none"/>'
-    +'<path d="M0,0 L-6,6 M0,0 L6,6" stroke="'+bot+'" stroke-width="'+swIn+'" stroke-linecap="round" fill="none"/>'
     +'</svg>';
 }
 
@@ -143,27 +157,104 @@ var BODA_CLASS_MODE = 'ver';       /* 'ver' (consulta) | 'editar' */
 var BODA_FILTER_COUPLE = 'all';
 var BODA_HIDE_PAST = true;
 var BODA_PAREJAS_FILTER = 'incompletas';  /* 'incompletas' | 'todas' | 'completas' */
+var BODA_CAL_YEAR = new Date().getFullYear();
+var BODA_CAL_MONTH = new Date().getMonth();
+
+/* Leyenda de franjas: dos cuadraditos por franja (brazo izquierdo y derecho) */
+function _bodaLegendHtml(){
+  var h='<div class="boda-legend"><span class="boda-legend-t">Brazos de abajo del aspa (franja horaria):</span>';
+  BODA_SLOTS.forEach(function(s){
+    h+='<span class="boda-legend-i"><i style="background:'+s.left+'"></i><i style="background:'+s.right+'"></i>'+s.label+'</span>';
+  });
+  h+='<span class="boda-legend-i"><i style="background:'+BODA_NO_TIME_COLOR+'"></i>sin hora</span>';
+  h+='</div>';
+  return h;
+}
+
+/* ── Subpestaña CALENDARIO: ensayos de cada boda + los casamientos ── */
+function _renderBodaCalendario(){
+  var MN2=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var y=BODA_CAL_YEAR,m=BODA_CAL_MONTH;
+  /* Clases y bodas del mes */
+  var porDia={},bodasDia={};
+  bodaClasses().forEach(function(ev){
+    if(!porDia[ev.start])porDia[ev.start]=[];
+    porDia[ev.start].push(ev);
+  });
+  BODA_COUPLES.forEach(function(c){
+    if(!c.weddingDate)return;
+    if(!bodasDia[c.weddingDate])bodasDia[c.weddingDate]=[];
+    bodasDia[c.weddingDate].push(c);
+  });
+  var h='<div class="boda-cal-nav">';
+  h+='<button class="sy-nav" id="bodaCalPrev">&#9664;</button>';
+  h+='<div class="boda-cal-month">'+MN2[m]+' '+y+'</div>';
+  h+='<button class="sy-nav" id="bodaCalNext">&#9654;</button>';
+  h+='</div>';
+  h+='<div class="boda-cal-hdr">';
+  ['L','M','X','J','V','S','D'].forEach(function(d){h+='<div>'+d+'</div>';});
+  h+='</div><div class="boda-cal-grid">';
+  var first=new Date(y,m,1);
+  var dow=first.getDay(),off=dow===0?6:dow-1;
+  var cur=new Date(first);cur.setDate(cur.getDate()-off);
+  var last=new Date(y,m+1,0);
+  var todayDs=evDk(new Date());
+  while(cur<=last||cur.getDay()!==1){
+    var ds=evDk(cur);
+    var inM=cur.getMonth()===m;
+    var cls='boda-cal-day'+(inM?'':' out')+(ds===todayDs?' hoy':'')+(bodasDia[ds]?' wed':'');
+    h+='<div class="'+cls+'" data-ds="'+ds+'">';
+    h+='<span class="boda-cal-num">'+cur.getDate()+'</span>';
+    (bodasDia[ds]||[]).forEach(function(c){
+      h+='<span class="boda-cal-wed">&#128141; '+escHtml(_bodaFirstWord(c.name))+'</span>';
+    });
+    bodaSortClasses(porDia[ds]||[]).forEach(function(ev){
+      var c=bodaCouple(ev.boda&&ev.boda.coupleId);
+      var col=c?c.color:BODA_NO_COUPLE_COLOR;
+      h+='<span class="boda-cal-cls" title="'+escHtml((c?c.name:'sin asignar'))+'">'
+        +'<i style="background:'+col+'"></i>'
+        +'<span>'+((ev.boda&&ev.boda.time)?ev.boda.time:'--:--')+'</span></span>';
+    });
+    h+='</div>';
+    cur.setDate(cur.getDate()+1);
+  }
+  h+='</div>';
+  /* Leyenda de parejas */
+  h+='<div class="boda-cal-legend">';
+  BODA_COUPLES.forEach(function(c){
+    h+='<span><i style="background:'+c.color+'"></i>'+escHtml(c.name)
+      +(c.weddingDate?(' &#128141; '+_bodaFmt(c.weddingDate)):'')+'</span>';
+  });
+  h+='<span><i style="background:'+BODA_NO_COUPLE_COLOR+'"></i>sin asignar</span>';
+  h+='</div>';
+  return h;
+}
+function _bodaFirstWord(n){return String(n||'').split(/\s+/)[0];}
 
 /* ── Render: pestaña Bodas ── */
 function renderBodasBody(){
   var h='<div class="econ-sub-tabs">';
-  h+='<button class="econ-sub-tab'+(BODA_SUBTAB==='clases'?' active':'')+'" data-bsub="clases">Clases</button>';
-  h+='<button class="econ-sub-tab'+(BODA_SUBTAB==='parejas'?' active':'')+'" data-bsub="parejas">Parejas</button>';
+  [['clases','Clases'],['parejas','Parejas'],['calendario','Calendario']].forEach(function(t){
+    h+='<button class="econ-sub-tab'+(BODA_SUBTAB===t[0]?' active':'')+'" data-bsub="'+t[0]+'">'+t[1]+'</button>';
+  });
   h+='</div>';
   h+='<div class="boda-sec">';
-  h+=(BODA_SUBTAB==='parejas')?_renderBodaParejas():_renderBodaClases();
+  h+=(BODA_SUBTAB==='parejas')?_renderBodaParejas()
+    :(BODA_SUBTAB==='calendario')?_renderBodaCalendario():_renderBodaClases();
   h+='</div>';
   return h;
 }
 
 /* ── Subpestaña PAREJAS ── */
 function _renderBodaParejas(){
-  var h='<div class="boda-controls">';
-  h+='<select class="ev-types-select" id="bodaParejasFilter">';
-  [['incompletas','Con clases por asignar'],['todas','Todas las parejas'],['completas','Ya completas']].forEach(function(o){
-    h+='<option value="'+o[0]+'"'+(BODA_PAREJAS_FILTER===o[0]?' selected':'')+'>'+o[1]+'</option>';
+  var _nInc=0,_nCom=0;
+  BODA_COUPLES.forEach(function(c){if(bodaProgress(c).falta>0)_nInc++;else _nCom++;});
+  var h='<div class="boda-chips">';
+  [['incompletas','Por asignar',_nInc],['todas','Todas',BODA_COUPLES.length],['completas','Completas',_nCom]].forEach(function(o){
+    h+='<button class="boda-chip'+(BODA_PAREJAS_FILTER===o[0]?' active':'')+'" data-pfilter="'+o[0]+'">'
+      +o[1]+'<b>'+o[2]+'</b></button>';
   });
-  h+='</select></div>';
+  h+='</div>';
   var list=BODA_COUPLES.filter(function(c){
     var p=bodaProgress(c);
     if(BODA_PAREJAS_FILTER==='incompletas')return p.falta>0;
@@ -281,12 +372,7 @@ function _renderBodaClases(){
     h+='<input type="date" class="ev-input boda-date-inp" id="bodaAddDate">';
     h+='</div>';
   }
-  h+='<div class="boda-legend"><span class="boda-legend-t">Color de las aspas de abajo:</span>';
-  BODA_SLOTS.forEach(function(s){
-    h+='<span class="boda-legend-i"><i style="background:'+s.color+'"></i>'+s.label+'</span>';
-  });
-  h+='<span class="boda-legend-i"><i style="background:'+BODA_NO_TIME_COLOR+'"></i>sin hora</span>';
-  h+='</div>';
+  h+=_bodaLegendHtml();
   return h;
 }
 
@@ -300,7 +386,7 @@ function openBodaCoupleDetail(c){
   h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">';
   h+='<button class="sy-back" id="bodaDetClose">&#8592;</button>';
   h+='<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">Pareja</div>';
-  h+='<button class="ev-list-btn" id="bodaDetEdit" style="font-size:.8rem;padding:6px 12px;border-color:'+c.color+';color:'+c.color+'">&#9998; Editar</button>';
+  h+='<button class="ev-list-btn boda-det-btn" id="bodaDetEdit" style="font-size:.8rem;padding:6px 12px">&#9998; Editar</button>';
   h+='</div>';
   h+='<div class="ev-detail-color-bar" style="background:'+c.color+'"></div>';
   h+='<div class="ev-detail-title" style="color:'+c.color+'">'+escHtml(c.name)+'</div>';
@@ -320,9 +406,9 @@ function openBodaCoupleDetail(c){
     h+='<span class="boda-ro-place">'+escHtml(BODA_PLACE_SHORT[bodaPlaceOf(ev)])+'</span>';
     h+='</div>';
   });
-  h+='<div class="ev-detail-actions">';
-  h+='<button class="ev-btn" id="bodaDetAssign" style="border-color:'+c.color+';color:'+c.color+'">&#128197; Asignar clases</button>';
-  h+='<button class="ev-btn" id="bodaDetExtra">&#10133; Clase extra</button>';
+  h+='<div class="boda-det-actions">';
+  h+='<button class="ev-btn boda-det-btn" id="bodaDetAssign">&#128197; Asignar clases</button>';
+  h+='<button class="ev-btn boda-det-btn" id="bodaDetExtra">&#10133; Clase extra</button>';
   h+='</div>';
   h+='</div></div>';
   var ov=document.getElementById('eventsOverlay');
@@ -758,11 +844,20 @@ function bindBodasEvents(){
   document.querySelectorAll('.econ-sub-tab[data-bsub]').forEach(function(b){
     b.addEventListener('click',function(){BODA_SUBTAB=b.dataset.bsub;refreshEvents();});
   });
+  var cp=document.getElementById('bodaCalPrev');
+  if(cp)cp.addEventListener('click',function(){
+    BODA_CAL_MONTH--;if(BODA_CAL_MONTH<0){BODA_CAL_MONTH=11;BODA_CAL_YEAR--;}refreshEvents();
+  });
+  var cn=document.getElementById('bodaCalNext');
+  if(cn)cn.addEventListener('click',function(){
+    BODA_CAL_MONTH++;if(BODA_CAL_MONTH>11){BODA_CAL_MONTH=0;BODA_CAL_YEAR++;}refreshEvents();
+  });
   document.querySelectorAll('.boda-mode-btn[data-bmode]').forEach(function(b){
     b.addEventListener('click',function(){BODA_CLASS_MODE=b.dataset.bmode;refreshEvents();});
   });
-  var pf=document.getElementById('bodaParejasFilter');
-  if(pf)pf.addEventListener('change',function(){BODA_PAREJAS_FILTER=this.value;refreshEvents();});
+  document.querySelectorAll('.boda-chip[data-pfilter]').forEach(function(b){
+    b.addEventListener('click',function(){BODA_PAREJAS_FILTER=b.dataset.pfilter;refreshEvents();});
+  });
   var addC=document.getElementById('bodaAddCouple');
   if(addC)addC.addEventListener('click',function(){openBodaCoupleForm(null);});
   /* Tarjeta de pareja: abre su detalle. El boton de calendario, la asignacion. */
