@@ -328,19 +328,38 @@ function _mergeMap(cur,inc){
   if(inc)for(k in inc)if(Object.prototype.hasOwnProperty.call(inc,k))out[k]=inc[k];
   return out;
 }
-/* Listas con identidad: se concatenan deduplicando por keyFn (gana el importado) */
-function _mergeList(cur,inc,keyFn){
+/* Listas con identidad: se concatenan deduplicando (gana el importado).
+   keyFn da la clave principal (normalmente el id) y sigFn una FIRMA DE
+   CONTENIDO opcional: si el elemento que llega trae otro id pero la misma
+   firma que uno que ya existe, se considera el mismo y se actualiza en vez de
+   duplicarse (caso tipico: exportar desde otro dispositivo). */
+function _mergeList(cur,inc,keyFn,sigFn){
   if(!Array.isArray(cur))return Array.isArray(inc)?inc.slice():[];
   if(!Array.isArray(inc))return cur.slice();
-  var out=cur.slice(),idx={};
-  out.forEach(function(it,i){idx[keyFn(it)]=i;});
+  var out=cur.slice(),idx={},sig={};
+  out.forEach(function(it,i){
+    idx[keyFn(it)]=i;
+    if(sigFn)sig[sigFn(it)]=i;
+  });
   inc.forEach(function(it){
     var k=keyFn(it);
-    if(idx[k]!==undefined)out[idx[k]]=it;
-    else{idx[k]=out.length;out.push(it);}
+    if(idx[k]!==undefined){out[idx[k]]=it;if(sigFn)sig[sigFn(it)]=idx[k];return;}
+    if(sigFn){
+      var sg=sigFn(it),j=sig[sg];
+      if(j!==undefined){out[j]=it;return;}
+      sig[sg]=out.length;
+    }
+    idx[k]=out.length;out.push(it);
   });
   return out;
 }
+/* Firmas de contenido por tipo de dato */
+function _sigEvent(ev){return (typeof evSignature==='function')?evSignature(ev)
+  :[ev.type,ev.title,ev.start,ev.end].join('|');}
+function _sigCouple(c){return String(c&&c.name||'').trim().toLowerCase();}
+function _sigAlarm(a){return [a&&a.label,a&&a.hour,a&&a.minute,a&&a.targetDate].join('|');}
+function _sigGasto(g){return [g&&(g.fecha||g.date||''),String(g&&(g.concepto||g.nombre||g.name||'')).trim().toLowerCase(),
+  g&&(g.importe!==undefined?g.importe:g.amount)].join('|');}
 function _keyId(it){return String(it&&it.id!=null?it.id:JSON.stringify(it));}
 function _keyBday(b){return (b&&b.name?String(b.name).toLowerCase():'')+'|'+(b?b.day:'')+'|'+(b?b.month:'');}
 function _keyGasto(it){
@@ -420,6 +439,7 @@ document.getElementById('importAllFile').addEventListener('change',function(ev){
 });
 function _applyFullImport(d,mode){
     var merge=(mode==='merge');
+    var _impRes=null;
     try{
       if(d.days)ST=merge?_mergeMap(ST,d.days):d.days;
       if(d.sent)SW=merge?_mergeMap(SW,d.sent):d.sent;
@@ -429,9 +449,16 @@ function _applyFullImport(d,mode){
       if(typeof d.exclVac!=='undefined')EXCL_VAC=d.exclVac;
       if(d.vacEntitlement){VAC_ENTITLEMENT=d.vacEntitlement;saveVacEntitlement(d.vacEntitlement);}
       if(d.birthdays&&Array.isArray(d.birthdays)){BDAYS=merge?_mergeList(BDAYS,d.birthdays,_keyBday):d.birthdays;localStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));}
-      if(d.events&&Array.isArray(d.events)){EVENTS=merge?_mergeList(EVENTS,d.events,_keyId):d.events;saveEvents();}
-      if(d.alarms&&Array.isArray(d.alarms)&&typeof saveAlarms==='function'){ALARMS=merge?_mergeList(ALARMS,d.alarms,_keyId):d.alarms;saveAlarms();}
-      if(d.bodas&&Array.isArray(d.bodas)&&typeof saveBodas==='function'){BODA_COUPLES=merge?_mergeList(BODA_COUPLES,d.bodas,_keyId):d.bodas;saveBodas();}
+      if(d.events&&Array.isArray(d.events)){
+        /* Los eventos se fusionan con firma de contenido: mismo titulo, tipo y
+           fechas = mismo evento aunque venga con otro id */
+        if(merge&&typeof evMergeIncoming==='function')_impRes=evMergeIncoming(d.events);
+        else if(merge)EVENTS=_mergeList(EVENTS,d.events,_keyId,_sigEvent);
+        else EVENTS=d.events;
+        saveEvents();
+      }
+      if(d.alarms&&Array.isArray(d.alarms)&&typeof saveAlarms==='function'){ALARMS=merge?_mergeList(ALARMS,d.alarms,_keyId,_sigAlarm):d.alarms;saveAlarms();}
+      if(d.bodas&&Array.isArray(d.bodas)&&typeof saveBodas==='function'){BODA_COUPLES=merge?_mergeList(BODA_COUPLES,d.bodas,_keyId,_sigCouple):d.bodas;saveBodas();}
       if(d.fiscal&&typeof FISCAL!=='undefined'&&typeof saveFiscal==='function'){
         FISCAL.irpfMode=d.fiscal.irpfMode||'fixed';
         FISCAL.irpfPct=d.fiscal.irpfPct||15;
@@ -441,12 +468,12 @@ function _applyFullImport(d,mode){
         saveFiscal();
       }
       if(d.gastos&&Array.isArray(d.gastos)&&typeof GASTOS_ITEMS!=='undefined'&&typeof saveGastosYear==='function'){
-        GASTOS_ITEMS=merge?_mergeList(GASTOS_ITEMS,d.gastos,_keyGasto):d.gastos;
+        GASTOS_ITEMS=merge?_mergeList(GASTOS_ITEMS,d.gastos,_keyGasto,_sigGasto):d.gastos;
         if(typeof d.gastosDificilPct!=='undefined')GASTOS_DIFICIL_PCT=d.gastosDificilPct;
         saveGastosYear(CY);
       }
-      if(d.ingresos&&Array.isArray(d.ingresos)&&typeof saveIngresos==='function'){INGRESOS_ITEMS=merge?_mergeList(INGRESOS_ITEMS,d.ingresos,_keyGasto):d.ingresos;saveIngresos();}
-      if(d.compras&&Array.isArray(d.compras)&&typeof saveCompras==='function'){COMPRAS_ITEMS=merge?_mergeList(COMPRAS_ITEMS,d.compras,_keyGasto):d.compras;saveCompras();}
+      if(d.ingresos&&Array.isArray(d.ingresos)&&typeof saveIngresos==='function'){INGRESOS_ITEMS=merge?_mergeList(INGRESOS_ITEMS,d.ingresos,_keyGasto,_sigGasto):d.ingresos;saveIngresos();}
+      if(d.compras&&Array.isArray(d.compras)&&typeof saveCompras==='function'){COMPRAS_ITEMS=merge?_mergeList(COMPRAS_ITEMS,d.compras,_keyGasto,_sigGasto):d.compras;saveCompras();}
       if(d.desgrav&&Array.isArray(d.desgrav)&&typeof saveDesgrav==='function'){
         DESGRAV_ITEMS=d.desgrav;saveDesgrav();
         /* Re-cargar via loadDesgrav para que mergee con DESGRAV_DEFAULT y añada
@@ -493,7 +520,8 @@ function _applyFullImport(d,mode){
       if(d.theme)localStorage.setItem('excelia-theme-v1',d.theme);
       save();render();
       updateBdayBtn();updateEventsBtn();
-      showToast(merge?'Backup fusionado con los datos actuales':'Backup completo importado','success');
+      showToast(merge?('Backup fusionado'+(_impRes?(' · eventos: '+evMergeMsg(_impRes)):''))
+        :'Backup completo importado','success');
     }catch(err){showToast('Error al importar: archivo inv\u00e1lido','error');}
 }
 
