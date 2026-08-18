@@ -220,8 +220,10 @@ function _renderBodaCalendario(){
       esHl=clsDia.some(function(ev){return ev.boda&&ev.boda.coupleId===hlC.id;})
         || wedDia.some(function(c){return c.id===hlC.id;});
     }
+    /* El dia de la boda NO se pinta por defecto: puede haber dos bodas el
+       mismo dia y el fondo solo podria representar a una. Se pinta solo al
+       pulsar una pareja en la leyenda. */
     var cls='boda-cal-day'+(inM?'':' out')+(ds===todayDs?' hoy':'')
-      +(wedDia.length&&!hlC?' wed':'')
       +(hlC?(esHl?' hl':' dim'):'');
     var sty='';
     if(hlC&&esHl)sty=' style="border-color:'+hlC.color+';background:'+hlC.color+'22"';

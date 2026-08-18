@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v245 - Importar sin duplicados, unificacion de los calendarios anual/4 meses y guia de arquitectura';
+var APP_VERSION = 'v246 - Grosor de barra por tipo, chips en singular y bodas del mismo dia sin pintar';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
