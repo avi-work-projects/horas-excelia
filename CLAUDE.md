@@ -61,6 +61,9 @@ Antes de escribir uno nuevo, comprobar aquí:
 | Fusionar sin duplicar al importar | `evMergeIncoming(lista)` · `_mergeList(cur,inc,keyFn,sigFn)` | events.js / import-export.js |
 | Marcador de evento (formas) | `evShapeSvg(shape)` · `evMarkerHtml(ev,past,size,shapeDef,ds)` | events-picker-color.js / events.js |
 | Relleno "falso translúcido" | `fakeTrans(hex,alpha)` | core.js |
+| Grafico de barras (N barras) | `simpleBarChart(values,labels,color,{height,highlight})` | core.js |
+| Barras horizontales de reparto | `hBarRows([{label,value,color}],{suffix})` | core.js |
+| Panel deslizante de Bodas | `bodaOpenSheet(wrapId,ovId,html,onClose)` + `bodaCloseSheet(...)` | bodas.js |
 | Chips de filtro | `.ev-filter-chip` (calendarios) · `.boda-chip` (parejas) | styles.css |
 | Tarjeta de mes de calendario | `_renderEvMonthCard(m,año,ctx)` — la usan Anual y 4 meses | events.js |
 
@@ -229,7 +232,12 @@ Los chips NO filtran por tipo suelto sino por **grupo** (`evFilterGroup`, events
 `Cumpleanos VIP`. `EV_ANNUAL_FILTER_HIDDEN` guarda los grupos ocultos.
 
 ## Bodas (js/bodas.js)
-Pestaña `EV_VIEW==='bodas'` con dos subpestañas (`BODA_SUBTAB`): **Clases** y **Parejas**.
+Pestaña `EV_VIEW==='bodas'` con cuatro subpestañas (`BODA_SUBTAB`): **Clases**, **Parejas**,
+**Calendario** y **Estadísticas**. Las subpestañas y el conmutador Consulta/Edición van en un
+único bloque `.boda-sticky-hd` para que ambos queden fijos al hacer scroll.
+- `bodaIssues()` calcula los avisos de TODO el calendario (solo los recorta "Ocultar pasadas"):
+  huecos sin asignar, parejas pendientes e info incompleta. Cada tarjeta abre `openBodaIssue(kind)`
+  con las acciones para resolverlo.
 - Parejas en `localStorage['excelia-bodas-v1']` (`BODA_COUPLES`):
   `{id,name,color,contracted,note,weddingDate}`. Al crearlas: 4 clases por defecto y
   color automatico no repetido (`bodaNextColor`). `weddingDate` solo se ve al asignar

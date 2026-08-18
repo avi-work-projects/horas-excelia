@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v246 - Grosor de barra por tipo, chips en singular y bodas del mismo dia sin pintar';
+var APP_VERSION = 'v247 - Bodas: cabecera fija, avisos accionables y subpestana de estadisticas';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -136,6 +136,54 @@ function fakeTrans(hex,alpha){
   var g=('0'+Math.round(parseInt(hex.slice(2,4),16)*alpha).toString(16)).slice(-2);
   var b=('0'+Math.round(parseInt(hex.slice(4,6),16)*alpha).toString(16)).slice(-2);
   return '#'+r+g+b;
+}
+
+// ── Grafico de barras generico ───────────────────────────────
+// Devuelve un SVG con una barra por valor. Para series de 12 meses con
+// reparto pasado/futuro sigue estando barChart3() en summary.js; este es el
+// generico (N barras, una serie) que usan las pantallas nuevas.
+//   values  array de numeros
+//   labels  array de etiquetas (misma longitud)
+//   color   color de la barra
+//   opts    {height, highlight:idx, unit}
+function simpleBarChart(values,labels,color,opts){
+  opts=opts||{};
+  var n=values.length;
+  if(!n)return '<div class="sy-note">Sin datos.</div>';
+  var W=320,H=opts.height||86,PB=16,PT=12;
+  var maxV=Math.max.apply(null,values.concat([1]));
+  var gap=n>16?1:2;
+  var bw=Math.max(2,(W-(n-1)*gap)/n);
+  var svg='<svg viewBox="0 0 '+W+' '+(H+PB)+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">';
+  for(var i=0;i<n;i++){
+    var x=i*(bw+gap);
+    var v=values[i]||0;
+    var bh=v>0?Math.max(2,Math.round((v/maxV)*(H-PT))):0;
+    var op=(opts.highlight===i)?'1':'.55';
+    if(bh>0)svg+='<rect x="'+x.toFixed(1)+'" y="'+(H-bh)+'" width="'+bw.toFixed(1)+'" height="'+bh+'" rx="2" fill="'+color+'" opacity="'+op+'"/>';
+    if(v>0&&bw>=9)svg+='<text x="'+(x+bw/2).toFixed(1)+'" y="'+(H-bh-3)+'" text-anchor="middle" font-size="7" fill="#8888a0">'+v+'</text>';
+    if(labels[i]!==undefined&&(n<=16||i%2===0))
+      svg+='<text x="'+(x+bw/2).toFixed(1)+'" y="'+(H+PB-3)+'" text-anchor="middle" font-size="6.5" fill="#7a7a92">'+escHtml(String(labels[i]))+'</text>';
+  }
+  svg+='</svg>';
+  return svg;
+}
+
+// ── Barra horizontal de reparto (una fila por categoria) ─────
+function hBarRows(rows,opts){
+  opts=opts||{};
+  var max=1;
+  rows.forEach(function(r){if(r.value>max)max=r.value;});
+  var h='<div class="hbar-rows">';
+  rows.forEach(function(r){
+    var pct=Math.round((r.value/max)*100);
+    h+='<div class="hbar-row">';
+    h+='<span class="hbar-lbl">'+escHtml(r.label)+'</span>';
+    h+='<span class="hbar-track"><i style="width:'+pct+'%;background:'+(r.color||'var(--accent)')+'"></i></span>';
+    h+='<span class="hbar-val">'+r.value+(opts.suffix||'')+'</span>';
+    h+='</div>';
+  });
+  return h+'</div>';
 }
 
 // ── Compartir / descargar archivo ────────────────────────────
