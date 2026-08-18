@@ -1518,14 +1518,24 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-bars-row{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;position:absolute;top:19px;left:0;right:0;bottom:4px;z-index:3;pointer-events:none;grid-auto-rows:1fr;align-items:center}
 /* Grosor de la barra segun el evento (evBarSize):
    lg = Viaje / Asturias · md = Casa Rural y demas grandes · sm = el mas fino.
-   Solo "grande | Otros" deja elegir entre los tres desde el formulario. */
+   Solo "grande | Otros" deja elegir entre los tres desde el formulario.
+
+   TODAS se apoyan en la MISMA BASE (la del grosor lg), no centradas: al
+   solaparse quedan escalonadas desde abajo en vez de concentricas.
+   · Anual/4-meses: la lg ocupa el 100% de su fila, asi que su base ES la base
+     de la fila -> a las otras les basta align-self:end.
+   · 1-mes: la lg mide el 65% centrada, o sea que su base queda a un 17,5% de
+     la altura de la fila por encima del suelo. Se sube a las otras justo ese
+     hueco con translateY, que en transform SI es porcentaje de la propia
+     altura del elemento: 17,5/42 = 41,7% para la media y 17,5/26 = 67,3%
+     para la fina. */
 .ev-multi-bar.ev-bar-lg{height:65%}
-.ev-multi-bar.ev-bar-md{height:42%}
-.ev-multi-bar.ev-bar-sm{height:26%;min-height:5px}
+.ev-multi-bar.ev-bar-md{height:42%;align-self:end;transform:translateY(-41.7%)}
+.ev-multi-bar.ev-bar-sm{height:26%;min-height:5px;align-self:end;transform:translateY(-67.3%)}
 .ev-annual-mbar{align-self:center}
 .ev-annual-mbar.ev-bar-lg{height:100%}
-.ev-annual-mbar.ev-bar-md{height:62%}
-.ev-annual-mbar.ev-bar-sm{height:38%}
+.ev-annual-mbar.ev-bar-md{height:62%;align-self:end}
+.ev-annual-mbar.ev-bar-sm{height:38%;align-self:end}
 .ev-multi-bar{height:65%;min-height:8px;border-radius:20px;font-size:.52rem;font-weight:600;display:flex;align-items:center;padding:0 6px;overflow:hidden;white-space:nowrap;cursor:pointer;color:#fff;pointer-events:auto}
 /* Contenedor de badges 1-día: centrado verticalmente en la celda */
 /* Badges (eventos no-Otros): empujados hacia el FONDO de la celda para no

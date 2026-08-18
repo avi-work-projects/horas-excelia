@@ -222,7 +222,8 @@ Cada evento tiene un `kind` y un `type`. **La identidad de una categoría es el 
   marcadores puntuales · barra fina · media · gruesa · perímetro de puente. El reparto en
   filas se hace **por grosor**: dos barras del mismo grosor que chocan van a filas distintas
   (la franja se ensancha y cada una se estrecha), y dos de grosor distinto comparten fila y
-  se superponen quedando la fina encima.
+  se superponen quedando la fina encima. Todas comparten BASE (la de la barra gruesa),
+  no van centradas: al solaparse quedan escalonadas desde abajo.
 - **Grosor de la barra** (`evBarSize`/`evBarSizeCls`): Viaje y Asturias `lg`; el resto de
   grandes `md`; solo `grande|Otros` puede elegir entre `lg`/`md`/`sm` (se guarda en
   `ev.barSize` y se pinta con las clases `.ev-bar-lg|md|sm`).

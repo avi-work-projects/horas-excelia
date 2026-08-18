@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v249 - Orden de capas de las barras: fina sobre media sobre gruesa';
+var APP_VERSION = 'v250 - Barras media y fina apoyadas en la misma base que la gruesa';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
