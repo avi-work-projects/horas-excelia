@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v253 - Agenda semanal sin scroll horizontal y en rojo; hora y sala en Proximos';
+var APP_VERSION = 'v254 - Los marcadores de Rec. Gestiones van siempre los primeros del dia';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

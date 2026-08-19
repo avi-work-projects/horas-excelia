@@ -228,6 +228,9 @@ Cada evento tiene un `kind` y un `type`. **La identidad de una categoría es el 
 - **Grosor de la barra** (`evBarSize`/`evBarSizeCls`): Viaje y Asturias `lg`; el resto de
   grandes `md`; solo `grande|Otros` puede elegir entre `lg`/`md`/`sm` (se guarda en
   `ev.barSize` y se pinta con las clases `.ev-bar-lg|md|sm`).
+- **Orden de los marcadores en un dia** (`EV_MARK_ORDER`/`evSortMarks`): `Rec. Gestiones`
+  siempre primero; en anual/4-meses solo se dibujan los 3 primeros antes del "+", asi que
+  el orden decide que se ve. Para priorizar otra categoria, anadirla a `EV_MARK_ORDER`.
 - **Notas**: `ev.note` es la nota general (todos los días) y `ev.dayNotes['YYYY-MM-DD']` la
   nota propia de un día. El formulario muestra las dos cajas solo si el evento es puntual,
   ocupa varios días y se entró desde un día concreto (`EV_EDIT_DS`).
