@@ -1917,6 +1917,15 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .boda-ro-time.none{color:var(--text-dim)}
 .boda-ro-couple{flex:1;font-size:.74rem;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .boda-ro-place{font-size:.62rem;color:var(--text-dim);border:1px solid var(--border);border-radius:8px;padding:1px 6px;white-space:nowrap}
+/* Sala sin asignar: se marca en naranja para que cante en la lista */
+.boda-ro-place.vacio{color:var(--c-orange);border-color:var(--c-orange);border-style:dashed}
+.boda-place.vacio{color:var(--c-orange);border-color:var(--c-orange);border-style:dashed}
+/* Nota propia del dia en la lista de Proximos */
+.ev-upcoming-daynote{border-left:2px solid var(--accent);padding-left:6px;margin-top:3px}
+/* Agenda semanal: hora y sala de los ensayos + continuacion de un mes anterior */
+.ev-wk-chip-meta{font-size:.62rem;opacity:.85;margin-left:6px;font-family:var(--mono);white-space:nowrap}
+.ev-wk-multi-cont{opacity:.85}
+.ev-wk-multi-from{font-size:.62rem;opacity:.75;margin-left:5px;font-weight:400}
 .boda-mini-btn{border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);border-radius:6px;font-size:.72rem;width:24px;height:24px;line-height:1;cursor:pointer;flex-shrink:0;padding:0}
 .boda-mini-btn:hover{border-color:var(--accent);color:var(--accent-bright)}
 .boda-actions{display:flex;gap:8px;align-items:center}

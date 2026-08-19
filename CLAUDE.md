@@ -265,7 +265,9 @@ Pestaña `EV_VIEW==='bodas'` con cuatro subpestañas (`BODA_SUBTAB`): **Clases**
   para crear clases en cualquier fecha. Guardar asigna, crea o libera clases.
 - `openBodaTimePicker` — ruedas de hora y minutos (:00/:15/:30/:45, por defecto 18:00)
   reutilizando el CSS del drum de alarmas, mas entrada manual.
-- Lugar de la clase (`BODA_PLACE_LIST`): Sala / Casa (por defecto) / Casa (pareja) / Otro.
+- Lugar de la clase (`BODA_PLACE_LIST`): Sala / Casa (por defecto) / Casa (pareja) / Otro,
+  mas **sin asignar** (`place:''`, distinto de "campo ausente", que sigue cayendo en Casa).
+  Una clase con pareja pero sin hora o sin sala cuenta como incompleta en los avisos.
   Al anadir otra clase el mismo dia hereda el lugar de la anterior.
 - Una **clase** es un evento normal `puntual|Ensayos boda` con `ev.boda={coupleId,time,place}`.
   Duración fija de 1 hora; `time` en saltos de 15 min.

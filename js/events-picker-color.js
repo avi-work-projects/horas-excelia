@@ -64,6 +64,10 @@ var EV_FREE_DATES = {'puntual|Otros':1,'puntual|Ensayos boda':1};
    resto de grandes, mas estrechas. Solo "Otros" deja elegir entre los tres. */
 var EV_BAR_SIZES = [{k:'lg',label:'Gruesa'},{k:'md',label:'Media'},{k:'sm',label:'Fina'}];
 var EV_FREE_BARSIZE = {'grande|Otros':1};
+/* Categorias con paleta libre pero que en el selector muestran SU color, no el
+   punto multicolor: tienen un color propio muy identificativo (Casa Rural es
+   marron) aunque se pueda cambiar puntualmente. */
+var EV_DOT_SOLID = {'grande|Casa Rural':1};
 function evBarSize(ev){
   var t=getEvType(ev);
   if(t==='Viaje'||t==='Asturias')return 'lg';

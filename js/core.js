@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v251 - Bodas: dias cerrados, filtros nuevos y edicion con boton Guardar sin perder el scroll';
+var APP_VERSION = 'v252 - Sala sin asignar, notas por dia en Proximos y agenda semanal con hora, sala y continuacion';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
