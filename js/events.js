@@ -617,6 +617,12 @@ function renderEvUpcoming(){
     s+='<div class="ev-upcoming-title">'+title+'</div>';
     s+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+metaDate+'</div>';
     if(ev.note&&ev.note.trim()&&!_isVip)s+='<div class="ev-upcoming-note">'+escHtml(ev.note.trim())+'</div>';
+    /* Nota propia del dia que se muestra (eventos puntuales de varios dias) */
+    var _dsN=evIsoDate(item.firstDate);
+    if(!_isVip&&ev.dayNotes&&ev.dayNotes[_dsN]&&ev.dayNotes[_dsN].trim()){
+      s+='<div class="ev-upcoming-note ev-upcoming-daynote"><span class="ev-note-scope">'
+        +_dsN.slice(8)+'/'+_dsN.slice(5,7)+'</span> '+escHtml(ev.dayNotes[_dsN].trim())+'</div>';
+    }
     s+='</div>';
     s+='<div class="ev-upcoming-right">';
     s+='<span class="ev-upcoming-bell'+(_bellSet?' set':'')+'">&#128276;</span>';
@@ -1048,8 +1054,16 @@ function renderEvWeek(){
       h+='<div class="ev-wk-multi'+rTopCls+rBotCls+'" data-id="'+ev.id+'" '
         +'style="grid-row:'+seg.sd+' / '+(seg.ed+1)+';grid-column:2;'
         +'background:'+hexA(_dc,0.18)+';border-color:'+_dc+'">';
+      /* El titulo se pinta SIEMPRE: si el evento empezo en un mes anterior,
+         antes salia la caja de color sin nombre y no se sabia de que era.
+         En ese caso lleva flecha y la fecha real de inicio. */
       if(seg.isFirstSeg){
         h+='<div class="ev-wk-multi-title" style="color:'+_dc+'">'+_ic+_t+'</div>';
+      } else {
+        var _sD=new Date(ev.start+'T00:00:00');
+        var _desde=String(_sD.getDate()).padStart(2,'0')+'/'+String(_sD.getMonth()+1).padStart(2,'0');
+        h+='<div class="ev-wk-multi-title ev-wk-multi-cont" style="color:'+_dc+'">'
+          +'\u2191 '+_ic+_t+'<span class="ev-wk-multi-from">\u00b7 desde '+_desde+'</span></div>';
       }
       h+='</div>';
     });
@@ -1081,6 +1095,13 @@ function renderEvWeek(){
         var _ic=_isVip?'\u2b50 ':'';
         h+='<div class="ev-wk-chip" data-id="'+ev.id+'" style="border-left:3px solid '+_dc+';background:'+hexA(_dc,0.95)+'">';
         h+='<span class="ev-wk-chip-title">'+_ic+_t+'</span>';
+        /* Ensayos de boda: hora y sala junto al nombre */
+        if(getEvType(ev)==='Ensayos boda'&&typeof bodaPlaceOf==='function'){
+          var _b=ev.boda||{};
+          var _pl=bodaPlaceOf(ev);
+          h+='<span class="ev-wk-chip-meta">'+(_b.time||'--:--')
+            +' \u00b7 '+escHtml(_pl?BODA_PLACE_SHORT[_pl]:'sin sala')+'</span>';
+        }
         h+='</div>';
       });
       h+='</div>';
@@ -1403,7 +1424,9 @@ function _renderEvTypeSwatches(kind,selType){
   EV_KINDS[kind].types.forEach(function(t){
     var key=evTypeKey(kind,t);
     var c=evTypeColor(kind,t);
-    var isMulti=!!EV_FREE_COLOR[key];
+    /* Multicolor = "elige tu color"; Casa Rural muestra su marron aunque
+       tambien tenga paleta (EV_DOT_SOLID) */
+    var isMulti=!!EV_FREE_COLOR[key]&&!EV_DOT_SOLID[key];
     var sel=(t===selType)?' selected':'';
     h+='<div class="ev-color-swatch'+sel+(isMulti?' ev-color-swatch-multi':'')+'" data-hex="'+c+'" data-type="'+escHtml(t)+'" data-kind="'+kind+'"'+(isMulti?'':' style="color:'+c+'"')+'>';
     h+=isMulti?'<div class="ev-type-dot ev-type-dot-multi"></div>':'<div class="ev-type-dot" style="background:'+c+'"></div>';
