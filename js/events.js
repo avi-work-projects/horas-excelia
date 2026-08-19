@@ -322,6 +322,24 @@ function evMarkerHtml(ev,pastClass,sizeClass,defaultShape,ds){
 function evMorePlusHtml(extraClass){
   return '<span class="ev-annual-marker ev-marker-more'+(extraClass?' '+extraClass:'')+'">'+evMorePlusSvg()+'</span>';
 }
+/* Orden de los marcadores dentro de un mismo día: las gestiones SIEMPRE
+   primero. Importa por dos motivos: es lo que mas urge ver de un vistazo, y en
+   anual/4-meses solo se dibujan los tres primeros antes del "+", asi que ser
+   el primero garantiza que se vea. El resto conserva su orden.
+   Para dar prioridad a otra categoria basta con anadirla aqui. */
+var EV_MARK_ORDER = {'Rec. Gestiones':0};
+function evMarkPriority(ev){
+  if(!ev)return 9;                       /* cumpleanos VIP y demas: al final */
+  var p=EV_MARK_ORDER[getEvType(ev)];
+  return (p===undefined)?9:p;
+}
+/* Ordena conservando el orden original dentro de cada prioridad.
+   getEv permite pasar listas de objetos que envuelven al evento. */
+function evSortMarks(list,getEv){
+  return list.map(function(x,i){return {x:x,i:i,p:evMarkPriority(getEv?getEv(x):x)};})
+    .sort(function(a,b){return (a.p-b.p)||(a.i-b.i);})
+    .map(function(o){return o.x;});
+}
 /* Distribución de marcadores puntuales en anual/4-meses:
    1 → cuadrado entero · 2 → izquierda/derecha · 3 → pirámide · 4 → cubo 2×2
    >4 → 3 marcadores + "+" en la 4ª posición. */
@@ -427,6 +445,7 @@ function renderEvCalMonth(){
         if(ev.id.indexOf('ev-bday-vip-')===0){_corner.push({vip:true,id:ev.id});return;}
         _corner.push({vip:false,ev:ev});
       });
+      _corner=evSortMarks(_corner,function(it){return it.vip?null:it.ev;});
       var _pmkM=past?' past-marker':'';
       function _cornerHtml(it,szCls){
         if(it.vip)return vipStarSvgHtml(it.id,_pmkM,szCls);
@@ -870,9 +889,9 @@ function _renderEvMonthCard(m,yr,o){
       /* Eventos puntuales: marcadores en rejilla 2x2 (z-index:3) */
       var marcadores='';
       if(inM){
-        var single=evs.filter(function(ev){
+        var single=evSortMarks(evs.filter(function(ev){
           return !o.multiIds[ev.id]&&o.visible(ev)&&ev.id.indexOf('ev-bday-vip-')!==0;
-        });
+        }));
         if(single.length){
           var pmk=past?' past-marker':'';
           marcadores=evAnnualXsHtml(single.map(function(ev){
