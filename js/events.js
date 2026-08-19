@@ -623,6 +623,12 @@ function renderEvUpcoming(){
       s+='<div class="ev-upcoming-note ev-upcoming-daynote"><span class="ev-note-scope">'
         +_dsN.slice(8)+'/'+_dsN.slice(5,7)+'</span> '+escHtml(ev.dayNotes[_dsN].trim())+'</div>';
     }
+    /* Ensayos de boda: hora y sala al pie de la tarjeta */
+    if(getEvType(ev)==='Ensayos boda'&&typeof bodaPlaceOf==='function'){
+      var _bd=ev.boda||{}, _bpl=bodaPlaceOf(ev);
+      s+='<div class="ev-upcoming-boda">&#128337; '+(_bd.time||'sin hora')
+        +' \u00b7 &#127968; '+escHtml(_bpl?BODA_PLACE_SHORT[_bpl]:'sin sala')+'</div>';
+    }
     s+='</div>';
     s+='<div class="ev-upcoming-right">';
     s+='<span class="ev-upcoming-bell'+(_bellSet?' set':'')+'">&#128276;</span>';
@@ -1125,7 +1131,7 @@ function renderEvContent(){
   // Zona B: Calendarios visuales (1 mes + Semanal)
   h+='<div class="ev-view-zone ev-zone-b">';
   h+='<button class="ev-view-toggle'+(EV_VIEW==='cal'?' active':'')+'" id="evViewCal">Calendario<br>1 mes</button>';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='week'?' active':'')+'" id="evViewWeek">Agenda<br>Semanal</button>';
+  h+='<button class="ev-view-toggle ev-btn-week'+(EV_VIEW==='week'?' active':'')+'" id="evViewWeek">Agenda<br>Semanal</button>';
   h+='</div>';
   // Zona B: Calendarios visuales (4 meses + Anual)
   h+='<div class="ev-view-zone ev-zone-b">';

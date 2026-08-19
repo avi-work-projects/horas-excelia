@@ -1115,7 +1115,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-upcoming-past .ev-upcoming-title{color:var(--text-muted)}
 .ev-sep-past{opacity:.7}
 /* ── Vista semanal (Agenda) ── */
-.sy-body.ev-wk-body{padding:0;gap:0}
+/* Agenda semanal: SOLO scroll vertical. Los hijos del grid heredan
+   min-width:auto, asi que un chip largo (titulo + hora/sala) ensanchaba la
+   columna y aparecia un scroll horizontal de unos pocos px, molesto al
+   deslizar. Se corta aqui y se deja que los textos se recorten con "...". */
+.sy-body.ev-wk-body{padding:0;gap:0;overflow-x:hidden}
+.ev-wk-mgrid,.ev-wk-chips,.ev-wk-multi,.ev-wk-chip{min-width:0}
 .ev-wk-month-sep{font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-bright);background:var(--bg);padding:5px 12px;border-bottom:1px solid var(--border);border-top:1px solid var(--border);position:sticky;top:0;z-index:5}
 /* Fallback declarativo para scrollIntoView cuando el JS aún no ha medido el sticky */
 #ev-wk-today-row{scroll-margin-top:48px}
@@ -1149,7 +1154,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 /* Chip puntual: opaco con sombra para destacar sobre el viaje translúcido */
 .ev-wk-chip{display:flex;align-items:center;padding:3px 8px;border-radius:4px;cursor:pointer;transition:opacity .1s;min-height:20px;gap:0;pointer-events:auto;box-shadow:0 1px 2px rgba(0,0,0,.25)}
 .ev-wk-chip:active{opacity:.6}
-.ev-wk-chip-title{font-size:.73rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;color:#fff}
+.ev-wk-chip-title{font-size:.73rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;color:#fff;flex:1;min-width:0}
 /* Event color type picker */
 .ev-type-picker{display:flex;flex-direction:column;gap:5px}
 .ev-type-picker .ev-color-swatch{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--radius-sm);background:var(--surface);border:1.5px solid var(--border);cursor:pointer;transition:all .12s;outline:none;-webkit-tap-highlight-color:transparent}
@@ -1490,6 +1495,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 /* Zone B: calendar grid views — subtle teal tint, active = green */
 .ev-zone-b .ev-view-toggle:not(.active){background:rgba(52,211,153,.07);border-color:rgba(52,211,153,.25);color:rgba(52,211,153,.85)}
 .ev-zone-b .ev-view-toggle.active{background:rgba(52,211,153,.22) !important;border-color:#34d399 !important;color:#10b981 !important}
+/* Agenda Semanal: mismo patron que el resto pero en rojo, para distinguirla
+   de los tres calendarios (que comparten el verde de la zona B) */
+.ev-zone-b .ev-btn-week:not(.active){background:rgba(255,107,107,.08);border-color:rgba(255,107,107,.3);color:rgba(255,107,107,.9)}
+.ev-zone-b .ev-btn-week.active{background:rgba(255,107,107,.24) !important;border-color:#ff6b6b !important;color:#ff8787 !important}
+[data-theme="light"] .ev-zone-b .ev-btn-week:not(.active){background:rgba(216,48,48,.07);border-color:rgba(216,48,48,.3);color:#c02626}
+[data-theme="light"] .ev-zone-b .ev-btn-week.active{background:rgba(216,48,48,.16) !important;border-color:#d83030 !important;color:#a81f1f !important}
 /* Zone C: Puentes — pink; Vac/Festivos — orange+red gradient */
 .ev-btn-puentes:not(.active){background:rgba(244,114,182,.1);border-color:rgba(244,114,182,.35);color:#f472b6}
 .ev-btn-puentes.active{background:rgba(244,114,182,.22) !important;border-color:#f472b6 !important;color:#f472b6 !important}
@@ -1922,8 +1933,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .boda-place.vacio{color:var(--c-orange);border-color:var(--c-orange);border-style:dashed}
 /* Nota propia del dia en la lista de Proximos */
 .ev-upcoming-daynote{border-left:2px solid var(--accent);padding-left:6px;margin-top:3px}
+/* Hora y sala de un ensayo, al pie de la tarjeta de Proximos */
+.ev-upcoming-boda{font-size:.62rem;color:var(--text-dim);margin-top:3px;font-family:var(--mono);white-space:nowrap}
 /* Agenda semanal: hora y sala de los ensayos + continuacion de un mes anterior */
-.ev-wk-chip-meta{font-size:.62rem;opacity:.85;margin-left:6px;font-family:var(--mono);white-space:nowrap}
+.ev-wk-chip-meta{font-size:.62rem;opacity:.85;margin-left:6px;font-family:var(--mono);white-space:nowrap;flex:0 0 auto;color:#fff}
 .ev-wk-multi-cont{opacity:.85}
 .ev-wk-multi-from{font-size:.62rem;opacity:.75;margin-left:5px;font-weight:400}
 .boda-mini-btn{border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);border-radius:6px;font-size:.72rem;width:24px;height:24px;line-height:1;cursor:pointer;flex-shrink:0;padding:0}
