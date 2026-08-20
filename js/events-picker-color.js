@@ -4,22 +4,24 @@
    ============================================================ */
 
 var EV_COLOR_GRID=[
-  /* Paleta ordenada por familias de tono — fila a fila el ojo recorre el círculo cromático */
-  /* Rojos y rosas */
-  '#ff8787','#ff6b6b','#e03131','#f06595','#e64980','#d6336c',
-  /* Magentas y púrpuras claros */
-  '#e879a8','#da77f2','#c084fc','#ae3ec9','#9775fa','#845ef7',
-  /* Violetas e índigos */
-  '#748ffc','#7950f2','#4c6ef5','#6741d9','#3b5bdb','#5f3dc4',
+  /* Paleta 6x7 ordenada por familias: fila a fila el ojo recorre el circulo
+     cromatico y acaba en tierras y grises. Se quitaron 12 tonos que eran
+     practicamente el mismo color que su vecino (dos rojos casi iguales, tres
+     violetas oscuros, cinco naranjas...) y se anadio una fila de marrones,
+     beige y color carne, que no existian. */
+  /* Rojos, rosas y magentas */
+  '#ff6b6b','#e03131','#f06595','#d6336c','#e879a8','#da77f2',
+  /* Purpuras y violetas */
+  '#c084fc','#ae3ec9','#9775fa','#7950f2','#5f3dc4','#4c6ef5',
   /* Azules y cyans */
-  '#6c8cff','#38bdf8','#1971c2','#1d4ed8','#22d3ee','#66d9e8',
-  /* Mints y verdes */
-  '#4ecdc4','#63e6be','#34d399','#56c596','#0ca678','#099268',
-  /* Verdes lima → amarillos */
-  '#a3e635','#82c91e','#5c940d','#ffe066','#fbbf24','#f0b45c',
-  /* Naranjas */
-  '#fb923c','#ff922b','#f08c00','#fd7e14','#f76707','#e8590c',
-  /* Grises (claro→oscuro) */
+  '#6c8cff','#1d4ed8','#1971c2','#38bdf8','#22d3ee','#4ecdc4',
+  /* Verdes y limas */
+  '#34d399','#56c596','#0ca678','#a3e635','#82c91e','#5c940d',
+  /* Amarillos y naranjas */
+  '#ffe066','#fbbf24','#f0b45c','#fb923c','#f08c00','#e8590c',
+  /* Tierras: beige, carne y marrones (claro -> oscuro) */
+  '#e8d5b7','#f0c8a0','#d9a066','#b0714a','#8b5e34','#5c4033',
+  /* Grises (claro -> oscuro) */
   '#f8f9fa','#dee2e6','#adb5bd','#868e96','#495057','#212529'
 ];
 var EV_COLOR_TYPES = {

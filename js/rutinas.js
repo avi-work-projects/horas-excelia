@@ -26,14 +26,91 @@ function saveRutinas(){try{localStorage.setItem(RUT_SK,JSON.stringify(RUTINAS));
 
 /* Sugerencias al crear la primera rutina */
 var RUT_SUGERENCIAS = [
-  {name:'Gimnasio', color:'#34d399', weekDays:[1,3,5]},
-  {name:'Baile',    color:'#e879a8', weekDays:[2,4]},
-  {name:'Pádel',    color:'#38bdf8', weekDays:[6]}
+  {name:'Gimnasio', color:'#fb923c', weekDays:[1,3,5], icon:'gym'},
+  {name:'Baile',    color:'#e03131', weekDays:[2,4],   icon:'baile'},
+  {name:'Pádel',    color:'#a3e635', weekDays:[6],     icon:'padel'}
 ];
 var RUT_DUR_DEFAULT = 60;
 var RUT_TIME_DEFAULT = '18:00';
 var RUT_DN = ['D','L','M','X','J','V','S'];
 var RUT_DN_LARGO = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+
+/* ── Iconos de rutina ──────────────────────────────────────
+   Dibujos monocromos: la silueta va en el color de la rutina y los detalles
+   en un tono más oscuro del MISMO color (fakeTrans). Para que se recorten
+   igual que el resto de marcadores del calendario, la silueta se pinta dos
+   veces: primero con un trazo negro grueso (contorno de la unión) y luego
+   rellena. Viewbox 0 0 24 24 en todos. */
+var RUT_ICONS = ['gym','padel','baile','gen'];
+var RUT_ICON_LABEL = {gym:'Gimnasio', padel:'Pádel', baile:'Baile', gen:'Otra'};
+function _rutIconShapes(kind){
+  if(kind==='gym'){
+    /* Mancuerna. El brazo flexionado se probó y NO se lee a 13 px: el contorno
+       negro cierra el hueco entre bíceps y puño y queda una mancha. */
+    return '<rect x="0.6" y="8.2" width="4.2" height="7.6" rx="1.8"/>'
+         + '<rect x="4.4" y="10.1" width="2.8" height="3.8" rx="1"/>'
+         + '<rect x="6.8" y="10.7" width="10.4" height="2.6" rx="1.3"/>'
+         + '<rect x="16.8" y="10.1" width="2.8" height="3.8" rx="1"/>'
+         + '<rect x="19.2" y="8.2" width="4.2" height="7.6" rx="1.8"/>';
+  }
+  if(kind==='padel'){
+    /* Pala de pádel: cabeza ovalada + mango */
+    return '<ellipse cx="12" cy="8.6" rx="6.8" ry="7.2"/>'
+         + '<rect x="10.7" y="14" width="2.6" height="8.4" rx="1.3"/>';
+  }
+  if(kind==='baile'){
+    /* Bailarín: cabeza + torso inclinado + piernas + brazo en alto */
+    return '<circle cx="12.6" cy="3.6" r="2.6"/>'
+         + '<path d="M12.2,7.2 C10.4,8.8 9.9,10.8 10.6,12.6 L6.6,17.8" fill="none" stroke-width="2.6" stroke-linecap="round"/>'
+         + '<path d="M10.6,12.6 L14.8,14.8 L15.6,21.4" fill="none" stroke-width="2.6" stroke-linecap="round"/>'
+         + '<path d="M12.4,8.4 L18.4,5.4" fill="none" stroke-width="2.5" stroke-linecap="round"/>';
+  }
+  /* genérico: rombo con centro */
+  return '<polygon points="12,3 20,12 12,21 4,12"/>';
+}
+function _rutIconDetails(kind,dark){
+  if(kind==='padel'){
+    var o='';
+    [[10,7],[14,7],[12,10],[10,12.6],[14,12.6]].forEach(function(p){
+      o+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="1.15" fill="'+dark+'"/>';
+    });
+    o+='<rect x="10.9" y="16.2" width="2.2" height="4.4" rx="1.1" fill="'+dark+'"/>';
+    return o;
+  }
+  if(kind==='gym'){
+    /* Barra en el tono oscuro para que se distinga de los discos */
+    return '<rect x="6.8" y="10.7" width="10.4" height="2.6" rx="1.3" fill="'+dark+'"/>';
+  }
+  if(kind==='baile'){
+    return '<circle cx="18.6" cy="5.2" r="1.9" fill="'+dark+'"/>';
+  }
+  return '<circle cx="12" cy="12" r="3.1" fill="'+dark+'"/>';
+}
+/* Deduce el icono por el nombre cuando la rutina no lo trae guardado */
+function rutIconOf(r){
+  if(r&&r.icon&&RUT_ICON_LABEL[r.icon])return r.icon;
+  var n=(r&&r.name?r.name:'').toLowerCase();
+  if(/gim|gym|pesa|mancuerna|crossfit|musc/.test(n))return 'gym';
+  if(/p[aá]del|tenis|raqueta|squash|b[aá]dminton/.test(n))return 'padel';
+  if(/bail|danz|salsa|bachata|zumba/.test(n))return 'baile';
+  return 'gen';
+}
+function rutIconSvg(kind,color){
+  var dark=(typeof fakeTrans==='function')?fakeTrans(color,0.52):color;
+  var shapes=_rutIconShapes(kind);
+  return '<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">'
+    + '<g fill="'+color+'" stroke="#000" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round">'+shapes+'</g>'
+    + '<g fill="'+color+'" stroke="'+color+'" stroke-width="2.7" stroke-linejoin="round" stroke-linecap="round">'+shapes+'</g>'
+    + _rutIconDetails(kind,dark)
+    + '</svg>';
+}
+/* Marcador de una sesión de rutina para el calendario de 1 mes */
+function rutMarkerHtml(ev,pastClass,ds){
+  var r=ev._rut||{};
+  var cls='ev-rut-mark'+(pastClass||'')+(ev._rutSkip?' rut-skip':'');
+  return '<span class="'+cls+'" data-id="'+ev.id+'" data-ds="'+(ds||ev.start)+'" title="'+escHtml(r.name||'')+'">'
+    + rutIconSvg(rutIconOf(r),r.color||'#888')+'</span>';
+}
 
 function rutById(id){
   for(var i=0;i<RUTINAS.length;i++)if(RUTINAS[i].id===id)return RUTINAS[i];
@@ -305,6 +382,13 @@ function renderRutForm(r){
   h+='<div><label>Duración (min)</label><input class="ev-input" id="rutFDur" type="number" min="15" max="480" step="15" value="'+(isEdit?(r.dur||RUT_DUR_DEFAULT):RUT_DUR_DEFAULT)+'"></div>';
   h+='</div>';
   h+='<div class="ev-field"><label>Desde</label><input class="ev-input" id="rutFStart" type="date" value="'+(isEdit&&r.start?r.start:evDk(new Date()))+'"></div>';
+  var _ic=isEdit?rutIconOf(r):'gen';
+  h+='<div class="ev-field"><label>Icono</label><div class="rut-icon-row" id="rutFIcons">';
+  RUT_ICONS.forEach(function(k){
+    h+='<button type="button" class="rut-icon-opt'+(k===_ic?' on':'')+'" data-icon="'+k+'">'
+      +rutIconSvg(k,col)+'<span>'+RUT_ICON_LABEL[k]+'</span></button>';
+  });
+  h+='</div></div>';
   h+='<div class="ev-field"><label>🎨 Color</label>'+_renderColorPicker(col,false,false,'rutCp')+'</div>';
   if(isEdit){
     var susp=r.suspend&&r.suspend.from;
@@ -332,6 +416,24 @@ function openRutForm(r){
     var fo=document.getElementById('rutFormOv');if(fo)fo.classList.add('open');
   });
   var cp=_bindColorPicker(wrap,'rutCp');
+  /* Los iconos se repintan con el color elegido para verlos como quedaran */
+  function _rutRepaintIcons(){
+    var c=cp.getColor();
+    document.querySelectorAll('#rutFIcons .rut-icon-opt').forEach(function(b){
+      var svg=rutIconSvg(b.dataset.icon,c);
+      b.innerHTML=svg+'<span>'+RUT_ICON_LABEL[b.dataset.icon]+'</span>';
+    });
+  }
+  document.querySelectorAll('#rutFIcons .rut-icon-opt').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#rutFIcons .rut-icon-opt').forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on');
+    });
+  });
+  var _cpWrap=document.getElementById('rutCpWrap');
+  if(_cpWrap)_cpWrap.addEventListener('click',function(){setTimeout(_rutRepaintIcons,0);});
+  var _cpHex=document.getElementById('rutCpHex');
+  if(_cpHex)_cpHex.addEventListener('input',function(){setTimeout(_rutRepaintIcons,0);});
   document.getElementById('rutFClose').addEventListener('click',closeRutForm);
   document.querySelectorAll('#rutFDays .rut-day-btn').forEach(function(b){
     b.addEventListener('click',function(){b.classList.toggle('on');});
@@ -367,6 +469,7 @@ function openRutForm(r){
       time:document.getElementById('rutFTime').value||RUT_TIME_DEFAULT,
       dur:dur,
       start:document.getElementById('rutFStart').value||evDk(new Date()),
+      icon:(document.querySelector('#rutFIcons .rut-icon-opt.on')||{dataset:{}}).dataset.icon||'gen',
       color:cp.getColor()};
     var sf=document.getElementById('rutFSuspFrom');
     if(sf){
@@ -525,6 +628,7 @@ function bindRutinasEvents(){
     b.addEventListener('click',function(){
       var s=RUT_SUGERENCIAS[+b.dataset.sug];
       RUTINAS.push({id:'rut-'+Date.now(),createdAt:Date.now(),name:s.name,color:s.color,
+        icon:s.icon||'gen',
         weekDays:s.weekDays.slice(),time:RUT_TIME_DEFAULT,dur:RUT_DUR_DEFAULT,
         start:evDk(new Date()),suspend:null,weeks:{},skips:{}});
       saveRutinas();refreshEvents();

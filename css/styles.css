@@ -97,6 +97,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .data-btn:has(.btn-icon){width:66px;height:66px;border-radius:12px}
 #homeBtn{width:73px!important;height:73px!important;border-radius:14px!important}
 .btn-icon{width:42px;height:42px;object-fit:contain;pointer-events:none}
+/* La campana va un 10% mas pequena que el resto de iconos del header.
+   Con scale y no con width para que valga en todos los breakpoints. */
+#alarmTestBtn .btn-icon,.nav-bar-btn[data-nav="alarm"] .btn-icon{transform:scale(.9)}
+/* Barra vertical que separa la campana del bloque de navegacion */
+#alarmWrap,.nav-bar-btn[data-nav="alarm"]{position:relative}
+#alarmWrap::before,.nav-bar-btn[data-nav="alarm"]::before{content:'';position:absolute;left:-5px;top:50%;transform:translateY(-50%);width:1px;height:60%;background:var(--border-light);opacity:.8;pointer-events:none}
 #homeBtn .btn-icon{width:46px;height:46px}
 .data-btn:active{background:var(--surface3);transform:scale(.93)}
 .data-btn.overlay-active{background:rgba(255,255,255,.15)!important;color:var(--text)!important;border-radius:8px}
@@ -189,6 +195,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .toast.error{border-color:#5a2a2a;background:#2a1a1a;color:var(--festivo)}
 .toast.success{border-color:var(--sent-border);background:var(--sent);color:var(--sent-text)}
 .toast.info{border-color:#2a3a6a;background:#0d1a3a;color:#93b4ff}
+/* Tema claro: el fondo oscuro con letra de color no se leia bien */
+[data-theme="light"] .toast.error{border-color:#f5a3a3;background:#fdeaea;color:#a4161a}
+[data-theme="light"] .toast.info{border-color:#a8c4f5;background:#e8f0fe;color:#1a4a9a}
+[data-theme="light"] .toast.success{border-color:#8fd4a8;background:#e6f6ec;color:#14713c}
 /* ── SW UPDATE BUTTON (en menú ⋯) ── */
 .sw-upd-menu-btn{color:#93b4ff!important;border-top:1px solid var(--border)!important;margin-top:2px}
 [data-theme="light"] .sw-upd-menu-btn{color:#1a4a9a!important}
@@ -1098,6 +1108,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .sy-puente-ev-date{font-size:.65rem;color:var(--text-dim);flex-shrink:0}
 /* Events upcoming view */
 .ev-upcoming-section{display:flex;flex-direction:column;gap:6px}
+/* Minicabecera de día dentro de un panel de Próximos */
+.ev-up-daysep{font-size:.66rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;padding:6px 2px 1px;display:flex;align-items:center;gap:7px}
+.ev-up-daysep::after{content:'';flex:1;height:1px;background:var(--border)}
+.ev-up-daysep:first-child{padding-top:0}
+.ev-up-daysep.today{color:var(--accent-bright)}
+.ev-up-daysep.today::after{background:var(--accent);opacity:.45}
+.ev-up-daysep span{font-size:.6rem;font-weight:800;background:var(--accent);color:#fff;border-radius:8px;padding:1px 6px;letter-spacing:.02em}
 .ev-upcoming-item{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .12s}
 .ev-upcoming-item:active{background:var(--surface3)}
 .ev-upcoming-item.ev-upcoming-today{border-color:var(--sent-border);background:rgba(90,224,136,.06)}
@@ -1565,6 +1582,29 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 /* Otros: contenedor en esquina superior DERECHA del día (apilados verticalmente).
    Posicionados absolutamente para no afectar al layout del resto. */
 .ev-otros-corner{position:absolute;top:5px;right:4px;display:flex;flex-direction:column;align-items:flex-end;gap:3px;z-index:5;pointer-events:none;max-width:60%}
+/* Carrusel del dia (estrellas VIP / "+" del calendario de 1 mes) */
+.ev-car-count{font-size:.68rem;font-weight:700;color:var(--text-muted);min-width:44px;text-align:right;font-family:var(--mono)}
+.ev-car-body{min-height:120px}
+.ev-car-card{display:flex;flex-direction:column;gap:6px}
+.ev-car-title{font-size:1.05rem;font-weight:700;line-height:1.2}
+.ev-car-type{font-size:.72rem;font-weight:600;color:var(--text-muted)}
+.ev-car-nav{display:flex;align-items:center;gap:10px;margin:12px 0 4px}
+.ev-car-arrow{flex:0 0 auto;padding:6px 16px;font-size:.8rem}
+.ev-car-dots{flex:1;display:flex;justify-content:center;align-items:center;gap:6px}
+.ev-car-dot{width:6px;height:6px;border-radius:50%;background:var(--border-light)}
+.ev-car-dot.on{background:var(--accent);transform:scale(1.35)}
+&
+.ev-day-left{position:absolute;top:18px;left:3px;display:flex;flex-direction:column;align-items:flex-start;gap:3px;z-index:5;pointer-events:none;max-width:72%}
+.ev-day-left > *{pointer-events:auto}
+/* Los cumpleaños VIP se solapan al 75% (12px de marcador -> -9px) */
+.ev-day-vips{display:flex;align-items:center;cursor:pointer}
+.ev-day-vips .ev-annual-vip-star-svg + .ev-annual-vip-star-svg{margin-left:-9px}
+.ev-day-ruts{display:flex;align-items:center;gap:2px;flex-wrap:wrap}
+.ev-rut-mark{display:inline-block;width:13px;height:13px;flex-shrink:0;line-height:0;cursor:pointer}
+.ev-rut-mark svg{display:block;width:100%;height:100%;overflow:visible}
+.ev-rut-mark.rut-skip{opacity:.38}
+.ev-rut-mark.past-marker{opacity:.5}
+.ev-day-more{display:inline-block;line-height:0;cursor:pointer}
 .ev-otros-corner > *{pointer-events:auto;flex-shrink:0}
 .ev-multi-bar.starts{border-top-right-radius:0;border-bottom-right-radius:0}
 .ev-multi-bar.ends{border-top-left-radius:0;border-bottom-left-radius:0}
@@ -2028,6 +2068,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-btn-rutinas.active{background:rgba(96,165,250,.22) !important;border-color:#60a5fa !important;color:#93c5fd !important}
 [data-theme="light"] .ev-btn-rutinas:not(.active){background:rgba(37,99,235,.07);border-color:rgba(37,99,235,.28);color:#1d4ed8}
 [data-theme="light"] .ev-btn-rutinas.active{background:rgba(37,99,235,.16) !important;border-color:#2563eb !important;color:#1e3a8a !important}
+/* Selector de icono de rutina */
+.rut-icon-row{display:flex;gap:6px}
+.rut-icon-opt{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 2px 5px;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;color:var(--text-muted)}
+.rut-icon-opt svg{width:26px;height:26px}
+.rut-icon-opt span{font-size:.58rem;font-weight:600}
+.rut-icon-opt.on{border-color:var(--accent);background:var(--accent-glow);color:var(--text)}
 .rut-sec{display:flex;flex-direction:column;gap:8px}
 .rut-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;display:flex;flex-direction:column;gap:7px}
 .rut-card.susp{opacity:.6;border-style:dashed}

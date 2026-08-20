@@ -290,7 +290,7 @@ function renderSummaryPuentesBody(year){
       puentesList=puentesList.filter(function(seq){
         var freeDays=0;
         for(var qi=0;qi<seq.length;qi++){
-          var evs=getEventsOn(dk(seq[qi].date));
+          var evs=getEventsOn(dk(seq[qi].date),{rutinas:false});
           var occupied=false;
           for(var qj=0;qj<evs.length;qj++){
             var ev=evs[qj];
@@ -315,7 +315,7 @@ function renderSummaryPuentesBody(year){
         var evItems=[];
         if(typeof getEventsOn==='function'){
           seq.forEach(function(x){
-            getEventsOn(dk(x.date)).forEach(function(ev){
+            getEventsOn(dk(x.date),{rutinas:false}).forEach(function(ev){
               if(!evItems.some(function(e){return e.id===ev.id;}))evItems.push(ev);
             });
           });

@@ -64,6 +64,7 @@ Antes de escribir uno nuevo, comprobar aquí:
 | Marcador de evento (formas) | `evShapeSvg(shape)` · `evMarkerHtml(ev,past,size,shapeDef,ds)` | events-picker-color.js / events.js |
 | Relleno "falso translúcido" | `fakeTrans(hex,alpha)` | core.js |
 | Grafico de barras (N barras) | `simpleBarChart(values,labels,color,{height,highlight})` | core.js |
+| Recorrer los eventos de un dia | `openEvDayCarousel(ds,idInicial)` — flechas + swipe | events.js |
 | Barras horizontales de reparto | `hBarRows([{label,value,color}],{suffix})` | core.js |
 | Panel deslizante de Bodas | `bodaOpenSheet(wrapId,ovId,html,onClose)` + `bodaCloseSheet(...)` | bodas.js |
 | Chips de filtro | `.ev-filter-chip` (calendarios) · `.boda-chip` (parejas) | styles.css |
@@ -248,6 +249,21 @@ Los chips NO filtran por tipo suelto sino por **grupo** (`evFilterGroup`, events
 (puntual|Ensayos boda) · `Resto` (el resto de puntuales: Plan/Quedada, Otros...) ·
 `Cumpleanos VIP`. `EV_ANNUAL_FILTER_HIDDEN` guarda los grupos ocultos.
 
+## Calendario de 1 mes: el dia en dos columnas (v258)
+Cada celda reparte lo que ocupa el dia en dos columnas:
+
+| Columna | Donde | Que lleva | Tope |
+|---|---|---|---|
+| Derecha (`.ev-otros-corner`) | a la altura del numero | eventos **puntuales** | `EV_CAL_CORNER_STACK`=5; si hay mas, el 5.º hueco es el `+` |
+| Izquierda (`.ev-day-left`) | empieza bajo el numero | 1.º cumpleanos **VIP**, 2.º sesiones de **rutina** | `EV_CAL_VIP_MAX`=3 VIP |
+
+- Las estrellas VIP se solapan al 75 % (`margin-left:-9px` sobre marcadores de 12 px).
+  Al superar el tope, el conmutador VIP de la ventana de cumpleanos avisa y no deja.
+- Pulsar las estrellas o el `+` abre `openEvDayCarousel(ds,id)`: una ficha por evento
+  del dia, con flechas, puntos y swipe, y un boton que salta al panel de siempre
+  (detalle de evento, alarma de cumpleanos o sesion de rutina).
+- El resto de calendarios sigue con el reparto de siempre.
+
 ## Rutinas (js/rutinas.js) — v257
 Pestana `EV_VIEW==='rutinas'` (ocupa el hueco que dejo "Todos"), con dos subpestanas
 (`RUT_SUBTAB`): **Rutinas** y **Estadisticas**.
@@ -265,9 +281,18 @@ Una rutina es una actividad semanal (gimnasio, baile, padel...) guardada en
 ```
 
 - **Sesiones virtuales**: `rutEventsOn(ds)` devuelve eventos `puntual|Rutina` con id
-  `rut-<idRutina>-<ds>` y los inyecta `getEventsOn()`, asi que TODOS los calendarios
-  (1 mes, 4 meses, anual, agenda semanal) las pintan sin tocar su codigo. No estan en
-  `EVENTS` y no se guardan: se recalculan siempre desde la rutina.
+  `rut-<idRutina>-<ds>` y los inyecta `getEventsOn()`. No estan en `EVENTS` y no se
+  guardan: se recalculan siempre desde la rutina.
+- **Donde se pintan (v258)**: SOLO en el calendario de 1 mes. El resto de vistas
+  (anual, 4 meses, agenda semanal, Proximos, home y resumen) llaman a
+  `getEventsOn(ds,EV_NO_RUT)`. Para que vuelvan a salir en alguna, basta con quitar
+  ese segundo argumento en su llamada.
+- **Icono** (`rut.icon`): `gym` (mancuerna) · `padel` (pala) · `baile` (bailarin) ·
+  `gen`. `rutIconOf(r)` lo deduce del nombre si la rutina no lo trae. `rutIconSvg(kind,color)`
+  dibuja la silueta en el color de la rutina y los detalles en `fakeTrans(color,.52)`.
+  Se pinta dos veces (trazo negro grueso + relleno) para tener contorno de la union.
+  OJO: a 13 px el contorno cierra los huecos, asi que las siluetas finas no valen
+  (un biceps se probo y quedaba en una mancha; por eso el gimnasio es una mancuerna).
 - Al pulsar una sesion se abre `openRutSesion(rutina,ds)` (marcar hecha / saltada).
   El id se deshace con `rutEventFromId(id)`.
 - **Prioridad de configuracion** en `rutOccursOn`: suspension > override de la semana

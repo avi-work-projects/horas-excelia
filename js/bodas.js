@@ -30,6 +30,12 @@ var BODA_PLACE_DEFAULT = 'casa';
 var BODA_PLACE_NONE = '';
 var BODA_PLACE_SHORT = (function(){var o={};BODA_PLACE_LIST.forEach(function(p){o[p.k]=p.s;});return o;})();
 var BODA_PLACES      = (function(){var o={};BODA_PLACE_LIST.forEach(function(p){o[p.k]=p.l;});return o;})();
+/* Emoji del lugar: de un vistazo se distingue casa de sala */
+var BODA_PLACE_EMOJI = {sala:'\ud83c\udfe2', casa:'\ud83c\udfe0', pareja:'\ud83c\udfe1', otro:'\ud83d\udccd'};
+function bodaPlaceEmoji(k){
+  if(k===BODA_PLACE_NONE||k==null)return '\u2753';
+  return BODA_PLACE_EMOJI[k]||'\ud83d\udccd';
+}
 function bodaPlaceOf(ev){
   var p=(ev&&ev.boda)?ev.boda.place:undefined;
   if(p===BODA_PLACE_NONE)return BODA_PLACE_NONE;   /* elegido "sin asignar" */

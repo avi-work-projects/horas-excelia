@@ -185,13 +185,17 @@ function eventOccursOn(ev,ds){
   return false;
 }
 
-function getEventsOn(ds){
+/* opts.rutinas===false -> sin sesiones de rutina.
+   De momento las rutinas SOLO se pintan en el calendario de 1 mes; el resto
+   de vistas (anual, 4 meses, agenda semanal, home y resumen) las excluyen. */
+function getEventsOn(ds,opts){
   var out=EVENTS.filter(function(ev){return eventOccursOn(ev,ds);});
   /* Las rutinas no se guardan como eventos: generan sesiones "virtuales" que
-     se cuelan aqui para que TODOS los calendarios las pinten sin cambios. */
-  if(typeof rutEventsOn==='function')out=out.concat(rutEventsOn(ds));
+     se cuelan aqui para que los calendarios las pinten sin cambios. */
+  if((!opts||opts.rutinas!==false)&&typeof rutEventsOn==='function')out=out.concat(rutEventsOn(ds));
   return out;
 }
+var EV_NO_RUT = {rutinas:false};
 
 /* ── Identidad de un evento para IMPORTAR sin duplicar ────────────
    Dos exportaciones del mismo evento hechas en dispositivos distintos tienen
@@ -374,7 +378,11 @@ function evSortMarks(list,getEv){
    >4 → 3 marcadores + "+" en la 4ª posición. */
 var EV_MAX_DAY_EVENTS = 8;   /* norma general: máximo 8 eventos en un mismo día */
 var EV_CAL_BADGE_STACK = 5;  /* 1-mes: badges apilados desde abajo; los que sobran van bajo el número del día */
-var EV_CAL_CORNER_STACK = 4; /* 1-mes: marcadores (Otros/VIP) en la esquina sup. dcha; los que sobran, ídem */
+/* 1-mes: huecos de la columna derecha (eventos puntuales). Si hay mas, el
+   ultimo hueco se convierte en el "+" que abre el carrusel del dia. */
+var EV_CAL_CORNER_STACK = 5;
+/* Cumpleanos VIP que caben el mismo dia en la columna izquierda */
+var EV_CAL_VIP_MAX = 3;
 function evAnnualXsHtml(items){
   if(!items.length)return '';
   var n=items.length;
@@ -464,30 +472,46 @@ function renderEvCalMonth(){
       else{if(bspanStart>=0){bspans.push({s:bspanStart,e:di-1});bspanStart=-1;}}
       var cls='ev-cell'+(inM?'':' out-m')+(isTod?' today-ev':'')+(past?' past-cal-day':'')+(edow===0||edow===6?' weekend':'')+(dt&&dt!=='normal'?' ev-day-'+dt:'')+(inPuente?' ev-puente':'');
       h+='<div class="'+cls+'" data-ds="'+ds+'"><div class="ev-num">'+d.getDate()+'</div>';
-      /* v241: TODOS los eventos puntuales (Rec. Gestiones, Plan/Quedada,
-         Ensayos boda, Otros) y los cumpleanos VIP se dibujan con la misma forma
-         que en anual/4-meses, en una columna en la esquina superior derecha.
-         Los que no caben pasan a una SEGUNDA COLUMNA bajo el numero del dia. */
-      var _corner=[];
+      /* Reparto del dia en DOS COLUMNAS (v258):
+           - derecha (a la altura del numero): hasta EV_CAL_CORNER_STACK
+             marcadores de eventos puntuales; si sobran, el ultimo hueco pasa
+             a ser el "+" que abre el carrusel del dia.
+           - izquierda (empieza bajo el numero): primero los cumpleanos VIP
+             (solapados, maximo EV_CAL_VIP_MAX) y debajo las sesiones de
+             rutina con su icono. */
+      var _corner=[],_vips=[],_ruts=[];
       evs.forEach(function(ev){
         if(multiIds[ev.id])return;
-        if(ev.id.indexOf('ev-bday-vip-')===0){_corner.push({vip:true,id:ev.id});return;}
+        if(ev.id.indexOf('ev-bday-vip-')===0){_vips.push(ev.id);return;}
+        if(ev._rut){_ruts.push(ev);return;}
         _corner.push({vip:false,ev:ev});
       });
-      _corner=evSortMarks(_corner,function(it){return it.vip?null:it.ev;});
+      _corner=evSortMarks(_corner,function(it){return it.ev;});
       var _pmkM=past?' past-marker':'';
-      function _cornerHtml(it,szCls){
-        if(it.vip)return vipStarSvgHtml(it.id,_pmkM,szCls);
-        return evMarkerHtml(it.ev,_pmkM,szCls,evDefaultShape(it.ev),ds);
-      }
       if(_corner.length){
+        var _cut=_corner.length>EV_CAL_CORNER_STACK?EV_CAL_CORNER_STACK-1:_corner.length;
         h+='<div class="ev-otros-corner">';
-        _corner.slice(0,EV_CAL_CORNER_STACK).forEach(function(it){h+=_cornerHtml(it,'ev-marker-lg');});
+        _corner.slice(0,_cut).forEach(function(it){
+          h+=evMarkerHtml(it.ev,_pmkM,'ev-marker-lg',evDefaultShape(it.ev),ds);
+        });
+        if(_corner.length>EV_CAL_CORNER_STACK)
+          h+='<span class="ev-day-more" data-ds="'+ds+'">'+evMorePlusHtml('ev-marker-lg')+'</span>';
         h+='</div>';
       }
-      if(_corner.length>EV_CAL_CORNER_STACK){
-        h+='<div class="ev-day-overflow ovf-col">';
-        _corner.slice(EV_CAL_CORNER_STACK).forEach(function(it){h+=_cornerHtml(it,'ev-marker-ovf');});
+      if(_vips.length||_ruts.length){
+        h+='<div class="ev-day-left">';
+        if(_vips.length){
+          h+='<div class="ev-day-vips" data-ds="'+ds+'">';
+          _vips.slice(0,EV_CAL_VIP_MAX).forEach(function(vid){
+            h+=vipStarSvgHtml(vid,_pmkM,'ev-marker-lg');
+          });
+          h+='</div>';
+        }
+        if(_ruts.length){
+          h+='<div class="ev-day-ruts">';
+          _ruts.forEach(function(rev){h+=rutMarkerHtml(rev,_pmkM,ds);});
+          h+='</div>';
+        }
         h+='</div>';
       }
       h+='</div>';
@@ -716,7 +740,7 @@ function renderEvUpcoming(){
     if(getEvType(ev)==='Ensayos boda'&&typeof bodaPlaceOf==='function'){
       var _bd=ev.boda||{}, _bpl=bodaPlaceOf(ev);
       s+='<div class="ev-upcoming-boda">&#128337; '+(_bd.time||'sin hora')
-        +' \u00b7 &#127968; '+escHtml(_bpl?BODA_PLACE_SHORT[_bpl]:'sin sala')+'</div>';
+        +' \u00b7 '+bodaPlaceEmoji(_bpl)+' '+escHtml(_bpl?BODA_PLACE_SHORT[_bpl]:'sin sala')+'</div>';
     }
     s+='</div>';
     s+='<div class="ev-upcoming-right">';
@@ -725,6 +749,35 @@ function renderEvUpcoming(){
     s+='</div>';
     s+='</div>';
     return s;
+  }
+  /* Un panel de Proximos se pinta en dos bloques:
+       1) los eventos GRANDES, siempre arriba y sin minicabecera
+       2) el resto, agrupado por dia con una minicabecera (ej: "Dom 23/08")
+          que sale una sola vez aunque el dia tenga varios eventos. */
+  function renderEvPanel(ids,map){
+    var grandes=[],sueltos=[];
+    ids.forEach(function(id){
+      var it=map[id];
+      if(typeof getEvKind==='function'&&getEvKind(it.ev)==='grande')grandes.push(id);
+      else sueltos.push(id);
+    });
+    var out='';
+    grandes.forEach(function(id){
+      var it=map[id];
+      out+=renderEvItem(it.ev,it,Math.round((it.firstDate-today)/86400000));
+    });
+    var prevDs=null;
+    sueltos.forEach(function(id){
+      var it=map[id];
+      var ds=evIsoDate(it.firstDate);
+      if(ds!==prevDs){
+        prevDs=ds;
+        var _hoy=(it.firstDate.getTime()===today.getTime());
+        out+='<div class="ev-up-daysep'+(_hoy?' today':'')+'">'+fd2(it.firstDate)+(_hoy?' <span>Hoy</span>':'')+'</div>';
+      }
+      out+=renderEvItem(it.ev,it,Math.round((it.firstDate-today)/86400000));
+    });
+    return out;
   }
   /* ── Semanas hacia adelante ──
      Dedupe: cada evento se asigna solo a la PRIMERA semana donde aparece,
@@ -736,7 +789,7 @@ function renderEvUpcoming(){
     for(var d=0;d<7;d++){
       var day=new Date(wk0);day.setDate(day.getDate()+(w*7+d));
       var ds=evDk(day);
-      var evs=getEventsOn(ds);
+      var evs=getEventsOn(ds,EV_NO_RUT);
       evs.forEach(function(ev){
         if(_isVipBdayTooFar(ev,day,today))return;
         if(_seenEv[ev.id])return;
@@ -766,7 +819,7 @@ function renderEvUpcoming(){
       for(var fd3=0;fd3<7;fd3++){
         var fday=new Date(wk0);fday.setDate(fday.getDate()+(fw*7+fd3));
         var fds=evDk(fday);
-        var fevs=getEventsOn(fds);
+        var fevs=getEventsOn(fds,EV_NO_RUT);
         fevs.forEach(function(ev){
           if(ev.id.indexOf('ev-bday-vip-')===0)return;
           if(!fwMap[ev.id])fwMap[ev.id]={ev:ev,firstDate:new Date(fday)};
@@ -788,13 +841,7 @@ function renderEvUpcoming(){
         ||(evBodaMinutes(fallbackMap[a].ev)-evBodaMinutes(fallbackMap[b].ev));
     });
     h+='<div class="sy-month-sep">'+fallbackLabel+'</div>';
-    h+='<div class="ev-upcoming-section">';
-    fids.forEach(function(id){
-      var item=fallbackMap[id];
-      var diffToday=Math.round((item.firstDate-today)/86400000);
-      h+=renderEvItem(item.ev,item,diffToday);
-    });
-    h+='</div>';
+    h+='<div class="ev-upcoming-section">'+renderEvPanel(fids,fallbackMap)+'</div>';
     return h;
   }
   weeks.forEach(function(wkMap,wi){
@@ -804,18 +851,19 @@ function renderEvUpcoming(){
       return (wkMap[a].firstDate-wkMap[b].firstDate)
         ||(evBodaMinutes(wkMap[a].ev)-evBodaMinutes(wkMap[b].ev));
     });
-    var secH='';
-    ids.forEach(function(id){
+    /* Se descartan los puntuales ya pasados (los de varios días que cruzan hoy
+       salen como "En curso"; los recurrentes nunca entran aquí: su firstDate
+       es la próxima ocurrencia) */
+    var vivos=ids.filter(function(id){
       var item=wkMap[id];var ev=item.ev;
       var diffToday=Math.round((item.firstDate-today)/86400000);
-      // Skip past single-day events (multi-day events spanning today show as "En curso";
-      // recurrentes nunca entran aquí: su firstDate es la próxima ocurrencia)
       if(diffToday<0&&!ev.repeat){
         var evEndStr=ev.end&&ev.end!==ev.start?ev.end:ev.start;
-        if(evEndStr<todayStr)return;
+        if(evEndStr<todayStr)return false;
       }
-      secH+=renderEvItem(ev,item,diffToday);
+      return true;
     });
+    var secH=renderEvPanel(vivos,wkMap);
     if(!secH)return;
     h+='<div class="sy-month-sep">'+weekLabels[wi]+'</div>';
     h+='<div class="ev-upcoming-section">'+secH+'</div>';
@@ -927,7 +975,7 @@ function _renderEvMonthCard(m,yr,o){
       var d=wk[di];
       var inM=d.getMonth()===m;
       var ds=evDk(d);
-      var evs=inM?getEventsOn(ds):[];
+      var evs=inM?getEventsOn(ds,EV_NO_RUT):[];
       var isT=inM&&d.getTime()===today.getTime();
       var isWknd=d.getDay()===0||d.getDay()===6;
       var dt=inM&&typeof dayT==='function'?dayT(d):'';
@@ -1151,7 +1199,7 @@ function renderEvWeek(){
     for(var d=1;d<=daysInM;d++){
       var day=new Date(yIdx,mIdx,d);
       var ds=evDk(day);
-      getEventsOn(ds).forEach(function(ev){
+      getEventsOn(ds,EV_NO_RUT).forEach(function(ev){
         /* Solo los "grandes" se agrupan en una caja continua; los puntuales
            caen como chip en cada dia que ocupan (v241) */
         if(isEvBarAlways(ev)&&ev.end&&ev.end!==ev.start){
@@ -1423,7 +1471,7 @@ function renderEvDetail(ev,fromSummary){
   h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">';
   h+='<button class="sy-back" id="evDClose">&#8592;</button>';
   h+='<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">Evento</div>';
-  h+='<button class="ev-list-btn" id="evDEdit" style="font-size:.8rem;padding:6px 12px;border-color:'+ev.color+';color:'+ev.color+'">&#9998; Editar</button>';
+  h+='<div style="width:36px"></div>';
   h+='</div>';
   var _ddc=getEvDisplayColor(ev);
   h+='<div class="ev-detail-color-bar" style="background:'+_ddc+'" id="evDColorBar"></div>';
@@ -1457,12 +1505,137 @@ function renderEvDetail(ev,fromSummary){
   }
   h+='<div class="ev-detail-actions">';
   if(fromSummary)h+='<button class="ev-btn" id="evDGoCal" style="border-color:var(--c-blue);color:var(--c-blue)">&#128197; Ver en Calendario</button>';
+  /* Mismo boton que en el panel de alarma de Proximos */
+  h+='<button class="ev-btn ev-edit-orange" id="evDEdit">&#9998; Editar evento</button>';
   h+='<button class="ev-btn danger" id="evDDel">Eliminar</button>';
   h+='</div>';
   h+='</div></div>';
   return h;
 }
 
+/* == Carrusel del dia ==================================================
+   Se abre desde las estrellas VIP o desde el "+" de un dia con muchos
+   eventos: muestra una ficha por evento y se pasa de una a otra deslizando
+   o con las flechas. Desde cada ficha se salta a su panel de siempre. */
+var EV_CAR = {ds:null, items:[], i:0};
+function evDayCarItems(ds){
+  var vips=[],ruts=[],punt=[],grandes=[];
+  getEventsOn(ds).forEach(function(ev){
+    if(ev.id.indexOf('ev-bday-vip-')===0){vips.push(ev);return;}
+    if(ev._rut){ruts.push(ev);return;}
+    if(typeof isEvBarAlways==='function'&&isEvBarAlways(ev)){grandes.push(ev);return;}
+    punt.push(ev);
+  });
+  punt=evSortMarks(punt.map(function(e){return {ev:e};}),function(it){return it.ev;})
+        .map(function(it){return it.ev;});
+  return vips.concat(ruts,punt,grandes);
+}
+function _evCarCard(ev,ds){
+  var col=getEvDisplayColor(ev);
+  var isVip=ev.id.indexOf('ev-bday-vip-')===0;
+  var titulo=isVip?escHtml(ev.title.replace(/^\u2b50\s*/,'')):escHtml(ev.title);
+  var s='<div class="ev-car-card">';
+  s+='<div class="ev-detail-color-bar" style="background:'+col+'"></div>';
+  s+='<div class="ev-car-title" style="color:'+col+'">'+titulo+'</div>';
+  s+='<div class="ev-car-type">'+escHtml(getEvType(ev))+'</div>';
+  if(ev._rut&&ev._rutTime){
+    s+='<div class="ev-detail-repeat">\ud83d\udd52 '+escHtml(ev._rutTime)+'\u2013'
+      +escHtml(rutFin(ev._rutTime,ev._rut.dur))+(ev._rutSkip?' \u00b7 saltada':'')+'</div>';
+  }
+  if(getEvType(ev)==='Ensayos boda'&&typeof bodaPlaceOf==='function'){
+    var _b=ev.boda||{},_pl=bodaPlaceOf(ev);
+    var _c=(typeof bodaCouple==='function')?bodaCouple(_b.coupleId):null;
+    s+='<div class="ev-detail-repeat">\ud83d\udc8d '+(_c?escHtml(_c.name):'Sin pareja')
+      +' \u00b7 \ud83d\udd52 '+(_b.time||'sin hora')
+      +' \u00b7 '+bodaPlaceEmoji(_pl)+' '+escHtml(_pl?BODA_PLACE_SHORT[_pl]:'sin sala')+'</div>';
+  }
+  /* En las rutinas la nota repite la hora que ya sale arriba */
+  if(ev.note&&ev.note.trim()&&!isVip&&!ev._rut)s+='<div class="ev-detail-note">'+escHtml(ev.note.trim())+'</div>';
+  if(ev.dayNotes&&ev.dayNotes[ds]&&ev.dayNotes[ds].trim()){
+    s+='<div class="ev-detail-note ev-detail-daynote"><span class="ev-note-scope">'
+      +ds.slice(8)+'/'+ds.slice(5,7)+'</span> '+escHtml(ev.dayNotes[ds].trim())+'</div>';
+  }
+  s+='</div>';
+  return s;
+}
+function _evCarRender(){
+  var ev=EV_CAR.items[EV_CAR.i];
+  var body=document.getElementById('evCarBody');
+  if(!ev||!body)return;
+  body.innerHTML=_evCarCard(ev,EV_CAR.ds);
+  var c=document.getElementById('evCarCount');
+  if(c)c.textContent=(EV_CAR.i+1)+' / '+EV_CAR.items.length;
+  var dots=document.getElementById('evCarDots');
+  if(dots){
+    var dh='';
+    for(var i=0;i<EV_CAR.items.length;i++)dh+='<span class="ev-car-dot'+(i===EV_CAR.i?' on':'')+'"></span>';
+    dots.innerHTML=dh;
+  }
+}
+function evCarGo(step){
+  var n=EV_CAR.items.length;
+  if(n<2)return;
+  EV_CAR.i=(EV_CAR.i+step+n)%n;
+  _evCarRender();
+}
+function openEvDayCarousel(ds,startId){
+  var items=evDayCarItems(ds);
+  if(!items.length)return;
+  EV_CAR={ds:ds,items:items,i:0};
+  for(var i=0;i<items.length;i++)if(items[i].id===startId){EV_CAR.i=i;break;}
+  var ov=document.getElementById('eventsOverlay');
+  var old=document.getElementById('evCarWrap');if(old)old.remove();
+  var _wn=['Dom','Lun','Mar','Mi\u00e9','Jue','Vie','S\u00e1b'];
+  var _d=new Date(ds+'T00:00:00');
+  var lbl=_wn[_d.getDay()]+' '+ds.slice(8)+'/'+ds.slice(5,7)+'/'+ds.slice(0,4);
+  var h='<div class="ev-detail-overlay" id="evCarOv"><div class="ev-detail-sheet">';
+  h+='<div class="ev-detail-handle"></div>';
+  h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">';
+  h+='<button class="sy-back" id="evCarClose">&#8592;</button>';
+  h+='<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">'+lbl+'</div>';
+  h+='<div class="ev-car-count" id="evCarCount"></div>';
+  h+='</div>';
+  h+='<div class="ev-car-body" id="evCarBody"></div>';
+  h+='<div class="ev-car-nav">';
+  h+='<button class="ev-btn ev-car-arrow" id="evCarPrev">&#9664;</button>';
+  h+='<div class="ev-car-dots" id="evCarDots"></div>';
+  h+='<button class="ev-btn ev-car-arrow" id="evCarNext">&#9654;</button>';
+  h+='</div>';
+  h+='<div class="ev-detail-actions"><button class="ev-btn primary" id="evCarOpen">Abrir ficha</button></div>';
+  h+='</div></div>';
+  var wrap=document.createElement('div');wrap.id='evCarWrap';wrap.innerHTML=h;
+  ov.appendChild(wrap);
+  _evCarRender();
+  requestAnimationFrame(function(){
+    var fo=document.getElementById('evCarOv');
+    if(fo){fo.classList.add('open');fo.addEventListener('click',function(e){if(e.target===fo)closeEvDayCarousel();});}
+  });
+  document.getElementById('evCarClose').addEventListener('click',closeEvDayCarousel);
+  document.getElementById('evCarPrev').addEventListener('click',function(){evCarGo(-1);});
+  document.getElementById('evCarNext').addEventListener('click',function(){evCarGo(1);});
+  addSwipe(document.getElementById('evCarBody'),function(){evCarGo(1);},function(){evCarGo(-1);});
+  document.getElementById('evCarOpen').addEventListener('click',function(){
+    var ev=EV_CAR.items[EV_CAR.i];
+    var _ds=EV_CAR.ds;
+    closeEvDayCarousel();
+    setTimeout(function(){
+      if(ev._rut){openRutSesion(ev._rut,_ds);return;}
+      if(ev.id.indexOf('ev-bday-vip-')===0){
+        if(typeof openBdayAlarmFromEvents==='function')openBdayAlarmFromEvents(ev,new Date(_ds+'T00:00:00'));
+        return;
+      }
+      EV_EDIT_DS=_ds;
+      openEvDetail(ev);
+    },310);
+  });
+  NAV_BACK=closeEvDayCarousel;
+}
+function closeEvDayCarousel(){
+  var fo=document.getElementById('evCarOv');
+  if(fo)fo.classList.remove('open');
+  setTimeout(function(){var w=document.getElementById('evCarWrap');if(w)w.remove();},300);
+  NAV_BACK=null;
+}
 /* ── Apertura/cierre del detalle ────────────────────────── */
 function openEvDetail(ev,container){
   var ov=container||document.getElementById('eventsOverlay');
@@ -2500,9 +2673,28 @@ function bindEvEvents(){
       }
     });
   });
+  /* Estrellas VIP y "+" del 1-mes: abren el carrusel del dia */
+  document.querySelectorAll('.ev-cell .ev-day-vips[data-ds], .ev-cell .ev-day-more[data-ds]').forEach(function(el){
+    el.addEventListener('click',function(e){
+      e.stopPropagation();
+      var star=e.target.closest?e.target.closest('.ev-annual-vip-star-svg'):null;
+      openEvDayCarousel(el.dataset.ds,star?star.dataset.id:null);
+    });
+  });
+  /* Sesion de rutina en el 1-mes */
+  document.querySelectorAll('.ev-cell .ev-rut-mark[data-id]').forEach(function(el){
+    el.addEventListener('click',function(e){
+      e.stopPropagation();
+      var rs=(typeof rutEventFromId==='function')?rutEventFromId(el.dataset.id):null;
+      if(rs)openRutSesion(rs.rutina,rs.ds);
+    });
+  });
   // Click en badges/markers del calendario 1-mes → detail (no edit)
   document.querySelectorAll('.ev-badge[data-id], .ev-cell .ev-annual-marker[data-id], .ev-cell .ev-annual-vip-star-svg[data-id]').forEach(function(badge){
     badge.addEventListener('click',function(e){
+      /* Las estrellas de la columna izquierda las lleva el carrusel: hay que
+         dejar que el click siga subiendo hasta .ev-day-vips */
+      if(badge.closest('.ev-day-vips'))return;
       e.stopPropagation();
       var id=badge.dataset.id;var ev=null;
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
@@ -2518,7 +2710,7 @@ function bindEvEvents(){
   document.querySelectorAll('.ev-cell[data-ds]').forEach(function(cell){
     cell.addEventListener('click',function(e){
       if(e.target.classList.contains('ev-badge'))return;
-      if(e.target.closest && e.target.closest('.ev-annual-marker,.ev-annual-vip-star-svg'))return;
+      if(e.target.closest && e.target.closest('.ev-annual-marker,.ev-annual-vip-star-svg,.ev-rut-mark,.ev-day-more,.ev-day-vips'))return;
       openEvForm(null,cell.dataset.ds);
     });
   });
