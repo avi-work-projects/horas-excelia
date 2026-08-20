@@ -1395,11 +1395,13 @@ function renderEvContent(){
   var h=renderNavBar('events');
   // Tabs a nivel 2 (sticky top:42px, justo bajo la nav bar)
   h+='<div class="ev-hdr-sub">';
-  // Zona A: Próximos + Todos
+  // Zona A: Proximos + Vacaciones/Festivos (esta ultima agrupa Puentes y
+  // Vac/Festivos en subpestanas)
   h+='<div class="ev-view-zone ev-zone-a">';
   var _upActive=(EV_VIEW==='upcoming'||EV_VIEW==='months');
   h+='<button class="ev-view-toggle'+(_upActive?' active':'')+'" id="evViewUpcoming">Pr\u00f3ximos</button>';
-  h+='<button class="ev-view-toggle ev-btn-rutinas'+(EV_VIEW==='rutinas'?' active':'')+'" id="evViewRutinas">Rutinas</button>';
+  var _toActive=(EV_VIEW==='puentes'||EV_VIEW==='time-off');
+  h+='<button class="ev-view-toggle ev-btn-timeoff ev-btn-split'+(_toActive?' active':'')+'" id="evViewTimeOff">Vacaciones<br>Festivos</button>';
   h+='</div>';
   // Zona B: Calendarios visuales (1 mes + Semanal)
   h+='<div class="ev-view-zone ev-zone-b">';
@@ -1411,11 +1413,10 @@ function renderEvContent(){
   h+='<button class="ev-view-toggle'+(EV_VIEW==='quad'?' active':'')+'" id="evViewQuad">Calendario<br>4 meses</button>';
   h+='<button class="ev-view-toggle'+(EV_VIEW==='annual'?' active':'')+'" id="evViewAnnual">Calendario<br>Anual</button>';
   h+='</div>';
-  // Zona C: Bodas + Vacaciones/Festivos (esta ultima agrupa Puentes y Vac/Festivos en subpestanas)
+  // Zona C: Bodas + Rutinas
   h+='<div class="ev-view-zone ev-zone-c">';
   h+='<button class="ev-view-toggle ev-btn-bodas'+(EV_VIEW==='bodas'?' active':'')+'" id="evViewBodas">Bodas</button>';
-  var _toActive=(EV_VIEW==='puentes'||EV_VIEW==='time-off');
-  h+='<button class="ev-view-toggle ev-btn-timeoff ev-btn-split'+(_toActive?' active':'')+'" id="evViewTimeOff">Vacaciones<br>Festivos</button>';
+  h+='<button class="ev-view-toggle ev-btn-rutinas'+(EV_VIEW==='rutinas'?' active':'')+'" id="evViewRutinas">Rutinas</button>';
   h+='</div>';
   h+='</div>';
   // Header a nivel 3 (with-tabs → top:82px)

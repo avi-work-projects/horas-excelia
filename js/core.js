@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v264 - Buscador y orden de parejas, y menos repeticiones';
+var APP_VERSION = 'v265 - Rutinas y Vacaciones Festivos intercambian sitio';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

@@ -1569,8 +1569,8 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 /* Zone C: Puentes — pink; Vac/Festivos — orange+red gradient */
 .ev-btn-puentes:not(.active){background:rgba(244,114,182,.1);border-color:rgba(244,114,182,.35);color:#f472b6}
 .ev-btn-puentes.active{background:rgba(244,114,182,.22) !important;border-color:#f472b6 !important;color:#f472b6 !important}
-.ev-btn-timeoff:not(.active){background:linear-gradient(170deg,rgba(255,179,71,.1),rgba(255,107,107,.1));border-color:rgba(255,179,71,.35);color:var(--vacaciones)}
-.ev-btn-timeoff.active{background:linear-gradient(170deg,rgba(255,179,71,.28),rgba(255,107,107,.28)) !important;border-color:var(--vacaciones) !important;color:var(--vacaciones) !important}
+.ev-zone-a .ev-btn-timeoff:not(.active){background:linear-gradient(170deg,rgba(255,179,71,.1),rgba(255,107,107,.1));border-color:rgba(255,179,71,.35);color:var(--vacaciones)}
+.ev-zone-a .ev-btn-timeoff.active{background:linear-gradient(170deg,rgba(255,179,71,.28),rgba(255,107,107,.28)) !important;border-color:var(--vacaciones) !important;color:var(--vacaciones) !important}
 /* ── Feat 2: Lista de Eventos subtabs ── */
 .ev-list-subtabs{display:flex;gap:6px;padding:8px 0 4px}
 .ev-list-subtab{flex:1;font-size:.72rem;padding:6px 12px;border-radius:14px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;text-align:center;transition:all .15s;-webkit-user-select:none;user-select:none}
@@ -2125,10 +2125,10 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 /* Rutinas: el mismo patron que Agenda Semanal o Bodas (tinte + borde, nunca
    relleno), pero sin color: blanco en tema oscuro y negro en tema claro.
    Lleva el prefijo de zona porque si no .ev-zone-a lo pintaba de azul. */
-.ev-zone-a .ev-btn-rutinas:not(.active){background:rgba(236,240,248,.07);border-color:rgba(236,240,248,.3);color:rgba(236,240,248,.85)}
-.ev-zone-a .ev-btn-rutinas.active{background:rgba(236,240,248,.22) !important;border-color:#eaeef7 !important;color:#fbfcff !important}
-[data-theme="light"] .ev-zone-a .ev-btn-rutinas:not(.active){background:rgba(17,24,39,.05);border-color:rgba(17,24,39,.3);color:rgba(31,41,55,.9)}
-[data-theme="light"] .ev-zone-a .ev-btn-rutinas.active{background:rgba(17,24,39,.14) !important;border-color:#1f2937 !important;color:#111827 !important}
+.ev-zone-c .ev-btn-rutinas:not(.active){background:rgba(236,240,248,.07);border-color:rgba(236,240,248,.3);color:rgba(236,240,248,.85)}
+.ev-zone-c .ev-btn-rutinas.active{background:rgba(236,240,248,.22) !important;border-color:#eaeef7 !important;color:#fbfcff !important}
+[data-theme="light"] .ev-zone-c .ev-btn-rutinas:not(.active){background:rgba(17,24,39,.05);border-color:rgba(17,24,39,.3);color:rgba(31,41,55,.9)}
+[data-theme="light"] .ev-zone-c .ev-btn-rutinas.active{background:rgba(17,24,39,.14) !important;border-color:#1f2937 !important;color:#111827 !important}
 /* Paso 1 de "cambiar una semana": mes de solo lectura para senalar cual */
 .rut-wpick{margin:10px 0 4px;-webkit-user-select:none;user-select:none}
 .rut-wpick-hdr{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px}
