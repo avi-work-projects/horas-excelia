@@ -98,6 +98,10 @@ function getEvKind(ev){
    El color del relleno/trazo es currentColor → se controla con style="color:…". */
 var EV_SHAPE_BW = 2;
 function evShapeSvg(shape){
+  /* Las siluetas de rutina (mancuerna, pala, bailarin) tambien se pueden
+     elegir como forma para un evento puntual de tipo Otros. */
+  if(typeof RUT_ICON_LABEL!=='undefined'&&RUT_ICON_LABEL[shape]&&typeof rutIconSvg==='function')
+    return rutIconSvg(shape,'currentColor');
   var bw=EV_SHAPE_BW,inner;
   if(shape==='x-thick'||shape==='x-thin'){
     var swIn=shape==='x-thick'?5:2.6;

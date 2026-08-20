@@ -45,13 +45,14 @@ var EV_ANNUAL_FILTER_HIDDEN = []; // grupos ocultos en el calendario anual/4 mes
      Gestiones -> puntual|Rec. Gestiones
      Bodas     -> puntual|Ensayos boda
      Resto     -> el resto de puntuales (Plan/Quedada, Otros...) */
-var EV_FILTER_GROUPS = ['Grandes','Asturias','Rec. Gestiones','Bodas','Resto','Cumplea\u00f1os VIP'];
+var EV_FILTER_GROUPS = ['Grandes','Asturias','Rec. Gestiones','WM + Rut','Resto','Cumplea\u00f1os VIP'];
 /* Etiquetas en SINGULAR: con el plural la estrella de VIP se caia a una
    segunda fila en pantallas estrechas */
+/* WM = Wedding Moves (las clases de baile de boda) + Rut = rutinas */
 var EV_FILTER_SHORT  = {'Grandes':'Grande','Asturias':'Asturias','Rec. Gestiones':'Gesti&oacute;n',
-  'Bodas':'Boda','Resto':'Resto','Cumplea\u00f1os VIP':'\u2b50'};
+  'WM + Rut':'WM + Rut','Resto':'Resto','Cumplea\u00f1os VIP':'\u2b50'};
 var EV_FILTER_COLOR  = {'Grandes':'#38bdf8','Asturias':'#1d4ed8','Rec. Gestiones':'#34d399',
-  'Bodas':'#c08a5a','Resto':'#ff6b6b','Cumplea\u00f1os VIP':'#fbbf24'};
+  'WM + Rut':'#c08a5a','Resto':'#ff6b6b','Cumplea\u00f1os VIP':'#fbbf24'};
 /* Tras que grupo va la linea que separa eventos grandes de puntuales */
 var EV_FILTER_SEP_AFTER = 'Asturias';
 function evFilterGroup(ev){
@@ -59,7 +60,7 @@ function evFilterGroup(ev){
   if(t==='Cumplea\u00f1os VIP')return 'Cumplea\u00f1os VIP';
   if(t==='Asturias')return 'Asturias';
   if(getEvKind(ev)==='grande')return 'Grandes';
-  if(t==='Ensayos boda')return 'Bodas';
+  if(t==='Ensayos boda'||t==='Rutina')return 'WM + Rut';
   if(t==='Rec. Gestiones')return 'Rec. Gestiones';
   return 'Resto';
 }
@@ -621,6 +622,7 @@ function renderEvListItem(ev){
 
 /* ── Borrar un evento: hoja de confirmacion (se llega con pulsacion larga) ── */
 function openEvDeleteSheet(ev){
+  _evCancelRemove('evDelWrap');
   var old=document.getElementById('evDelWrap');if(old)old.remove();
   var h='<div class="ev-detail-overlay" id="evDelOv"><div class="ev-detail-sheet">';
   h+='<div class="ev-detail-handle"></div>';
@@ -657,7 +659,7 @@ function openEvDeleteSheet(ev){
 function closeEvDeleteSheet(){
   var fo=document.getElementById('evDelOv');
   if(fo)fo.classList.remove('open');
-  setTimeout(function(){var w=document.getElementById('evDelWrap');if(w)w.remove();},300);
+  _evScheduleRemove('evDelWrap');
 }
 
 /* ── Próxima ocurrencia de un evento ────────────────────── */
@@ -751,6 +753,15 @@ function renderEvUpcoming(){
     if(!_isVip&&ev.dayNotes&&ev.dayNotes[_dsN]&&ev.dayNotes[_dsN].trim()){
       s+='<div class="ev-upcoming-note ev-upcoming-daynote"><span class="ev-note-scope">'
         +_dsN.slice(8)+'/'+_dsN.slice(5,7)+'</span> '+escHtml(ev.dayNotes[_dsN].trim())+'</div>';
+    }
+    /* Hora del evento y, en los grandes, los trayectos de ida y vuelta */
+    var _evT=evTimeLabel(ev);
+    if(_evT&&!ev._rut&&getEvType(ev)!=='Ensayos boda')
+      s+='<div class="ev-upcoming-boda">\ud83d\udd52 '+_evT+'</div>';
+    var _trs=evTramos(ev);
+    if(_trs.length){
+      s+='<div class="ev-upcoming-boda">'
+        +_trs.map(function(tr){return evTramoTexto(tr);}).join(' \u00b7 ')+'</div>';
     }
     /* Ensayos de boda: hora y sala al pie de la tarjeta */
     if(getEvType(ev)==='Ensayos boda'&&typeof bodaPlaceOf==='function'){
@@ -858,7 +869,7 @@ function renderEvUpcoming(){
       return (fallbackMap[a].firstDate-fallbackMap[b].firstDate)
         ||(evBodaMinutes(fallbackMap[a].ev)-evBodaMinutes(fallbackMap[b].ev));
     });
-    h+='<div class="sy-month-sep">'+fallbackLabel+'</div>';
+    h+='<div class="ev-week-sep">'+fallbackLabel+'</div>';
     h+='<div class="ev-upcoming-section">'+renderEvPanel(fids,fallbackMap)+'</div>';
     return h;
   }
@@ -883,7 +894,7 @@ function renderEvUpcoming(){
     });
     var secH=renderEvPanel(vivos,wkMap);
     if(!secH)return;
-    h+='<div class="sy-month-sep">'+weekLabels[wi]+'</div>';
+    h+='<div class="ev-week-sep'+(wi===0?' now':'')+'">'+weekLabels[wi]+'</div>';
     h+='<div class="ev-upcoming-section">'+secH+'</div>';
   });
   return h;
@@ -993,7 +1004,7 @@ function _renderEvMonthCard(m,yr,o){
       var d=wk[di];
       var inM=d.getMonth()===m;
       var ds=evDk(d);
-      var evs=inM?getEventsOn(ds,EV_NO_RUT):[];
+      var evs=inM?getEventsOn(ds):[];
       var isT=inM&&d.getTime()===today.getTime();
       var isWknd=d.getDay()===0||d.getDay()===6;
       var dt=inM&&typeof dayT==='function'?dayT(d):'';
@@ -1032,13 +1043,23 @@ function _renderEvMonthCard(m,yr,o){
       var marcadores='';
       if(inM){
         var single=evSortMarks(evs.filter(function(ev){
-          return !o.multiIds[ev.id]&&o.visible(ev)&&ev.id.indexOf('ev-bday-vip-')!==0;
+          return !o.multiIds[ev.id]&&o.visible(ev)&&ev.id.indexOf('ev-bday-vip-')!==0&&!ev._rut;
         }));
         if(single.length){
           var pmk=past?' past-marker':'';
           marcadores=evAnnualXsHtml(single.map(function(ev){
             return evMarkerHtml(ev,pmk,'',evDefaultShape(ev),ds);
           }));
+        }
+        /* Las sesiones de rutina no llevan silueta aqui: no cabria. Van como
+           puntitos en fila arriba del dia, uno por sesion. */
+        var _ruts=evs.filter(function(ev){return ev._rut&&o.visible(ev);});
+        if(_ruts.length){
+          var _rh='<div class="ev-ann-ruts">';
+          _ruts.forEach(function(rev){
+            _rh+='<span class="ev-ann-rut" style="background:'+(rev.color||'#888')+'"></span>';
+          });
+          marcadores=_rh+'</div>'+marcadores;
         }
       }
       h+='<div class="'+cls+'"'+sty+dsAttr+'>'+marcadores+'</div>';
@@ -1259,8 +1280,12 @@ function renderEvWeek(){
       /* El titulo se pinta SIEMPRE: si el evento empezo en un mes anterior,
          antes salia la caja de color sin nombre y no se sabia de que era.
          En ese caso lleva flecha y la fecha real de inicio. */
+      var _wtr=evTramos(ev);
+      var _wtrHtml=_wtr.length
+        ? '<div class="ev-wk-multi-trans">'+_wtr.map(function(tr){return evTramoTexto(tr);}).join(' \u00b7 ')+'</div>'
+        : '';
       if(seg.isFirstSeg){
-        h+='<div class="ev-wk-multi-title" style="color:'+_dc+'">'+_ic+_t+'</div>';
+        h+='<div class="ev-wk-multi-title" style="color:'+_dc+'">'+_ic+_t+'</div>'+_wtrHtml;
       } else {
         var _sD=new Date(ev.start+'T00:00:00');
         var _desde=String(_sD.getDate()).padStart(2,'0')+'/'+String(_sD.getMonth()+1).padStart(2,'0');
@@ -1297,6 +1322,9 @@ function renderEvWeek(){
         var _ic=_isVip?'\u2b50 ':'';
         h+='<div class="ev-wk-chip" data-id="'+ev.id+'" style="border-left:3px solid '+_dc+';background:'+hexA(_dc,0.95)+'">';
         h+='<span class="ev-wk-chip-title">'+_ic+_t+'</span>';
+        /* Hora del evento puntual, si la tiene */
+        var _wt=(!ev._rut&&getEvType(ev)!=='Ensayos boda')?evTimeLabel(ev):'';
+        if(_wt)h+='<span class="ev-wk-chip-meta">'+escHtml(_wt)+'</span>';
         /* Sesion de rutina: hora de inicio y fin junto al nombre */
         if(ev._rut&&ev._rutTime){
           h+='<span class="ev-wk-chip-meta">'+escHtml(ev._rutTime)
@@ -1513,6 +1541,11 @@ function renderEvDetail(ev,fromSummary){
   h+='<button class="econ-calc-btn" id="evDColorApply" style="margin-top:8px;font-size:.78rem;padding:8px 0">Probar color</button>';
   h+='</div>';
   h+='<div class="ev-detail-date">&#128197; '+dateStr+'</div>';
+  var _dt=evTimeLabel(ev);
+  if(_dt)h+='<div class="ev-detail-repeat">\ud83d\udd52 '+_dt+'</div>';
+  evTramos(ev).forEach(function(tr){
+    h+='<div class="ev-detail-repeat">'+evTramoTexto(tr)+'</div>';
+  });
   if(repeatStr)h+='<div class="ev-detail-repeat">'+repeatStr+'</div>';
   if(ev.note)h+='<div class="ev-detail-note">'+escHtml(ev.note)+'</div>';
   /* Nota especifica del dia desde el que se abrio (puntuales de varios dias) */
@@ -1566,6 +1599,11 @@ function _evCarCard(ev,ds){
     s+='<div class="ev-detail-repeat">\ud83d\udd52 '+escHtml(ev._rutTime)+'\u2013'
       +escHtml(rutFin(ev._rutTime,ev._rut.dur))+(ev._rutSkip?' \u00b7 saltada':'')+'</div>';
   }
+  var _ct=(!ev._rut)?evTimeLabel(ev):'';
+  if(_ct&&getEvType(ev)!=='Ensayos boda')s+='<div class="ev-detail-repeat">\ud83d\udd52 '+_ct+'</div>';
+  evTramos(ev).forEach(function(tr){
+    s+='<div class="ev-detail-repeat">'+evTramoTexto(tr)+'</div>';
+  });
   if(getEvType(ev)==='Ensayos boda'&&typeof bodaPlaceOf==='function'){
     var _b=ev.boda||{},_pl=bodaPlaceOf(ev);
     var _c=(typeof bodaCouple==='function')?bodaCouple(_b.coupleId):null;
@@ -1608,6 +1646,7 @@ function openEvDayCarousel(ds,startId){
   EV_CAR={ds:ds,items:items,i:0};
   for(var i=0;i<items.length;i++)if(items[i].id===startId){EV_CAR.i=i;break;}
   var ov=document.getElementById('eventsOverlay');
+  _evCancelRemove('evCarWrap');
   var old=document.getElementById('evCarWrap');if(old)old.remove();
   var _wn=['Dom','Lun','Mar','Mi\u00e9','Jue','Vie','S\u00e1b'];
   var _d=new Date(ds+'T00:00:00');
@@ -1657,14 +1696,29 @@ function openEvDayCarousel(ds,startId){
 function closeEvDayCarousel(){
   var fo=document.getElementById('evCarOv');
   if(fo)fo.classList.remove('open');
-  setTimeout(function(){var w=document.getElementById('evCarWrap');if(w)w.remove();},300);
+  _evScheduleRemove('evCarWrap');
   NAV_BACK=null;
 }
+/* == Cierre de paneles ==================================================
+   Los paneles se quitan del DOM 300 ms despues de cerrarse, cuando termina la
+   animacion. Si en ese rato se abre otro, el temporizador del cierre anterior
+   se llevaba por delante el panel NUEVO (mismo id). Por eso el temporizador se
+   guarda y se cancela al abrir. */
+var _EV_CLOSE_T = {};
+function _evScheduleRemove(id,extra){
+  clearTimeout(_EV_CLOSE_T[id]);
+  _EV_CLOSE_T[id]=setTimeout(function(){
+    var w=document.getElementById(id);if(w)w.remove();
+    if(extra)extra();
+  },300);
+}
+function _evCancelRemove(id){clearTimeout(_EV_CLOSE_T[id]);}
 /* ── Apertura/cierre del detalle ────────────────────────── */
 function openEvDetail(ev,container){
   var ov=container||document.getElementById('eventsOverlay');
   var fromSummary=(EV_VIEW==='puentes'||EV_VIEW==='time-off');
   ov.scrollTop=0;
+  _evCancelRemove('evDWrap');
   var _oldD=document.getElementById('evDWrap');if(_oldD)_oldD.remove();
   var wrap=document.createElement('div');
   wrap.id='evDWrap';
@@ -1758,7 +1812,7 @@ function openEvDetail(ev,container){
 function closeEvDetail(){
   var fo=document.getElementById('evDetailOv');
   if(fo)fo.classList.remove('open');
-  setTimeout(function(){var w=document.getElementById('evDWrap');if(w)w.remove();},300);
+  _evScheduleRemove('evDWrap');
 }
 
 /* Dias que ocupa un evento puntual (para las notas por dia y el conteo) */
@@ -1784,6 +1838,69 @@ function _renderEvTypeSwatches(kind,selType){
     h+='<span class="ev-type-name">'+escHtml(t)+'</span></div>';
   });
   return h;
+}
+
+
+/* == Horas de un evento y transporte de ida/vuelta ======================
+   - Puntual (menos las clases de boda, que tienen su propia hora en
+     ev.boda.time): ev.time y ev.endTime, las dos opcionales; el fin solo se
+     puede poner si hay inicio.
+   - Grande: ev.viaje = {ida:{time,modo,conductor}, vuelta:{...}}, cada tramo
+     opcional. La hora es la de SALIDA, que es de lo que uno quiere avisarse.
+   Las rutinas y las clases de boda mantienen su hora donde estaba; estas
+   funciones leen de donde corresponda para que el resto del codigo no tenga
+   que saberlo. */
+var EV_TRANSPORTES = [
+  {k:'tren',  l:'Tren',    e:'\ud83d\ude86'},
+  {k:'bus',   l:'Autobús', e:'\ud83d\ude8c'},
+  {k:'coche', l:'Coche',   e:'\ud83d\ude97'},
+  {k:'avion', l:'Avión',   e:'\u2708'}
+];
+var EV_TRANS_LBL = (function(){var o={};EV_TRANSPORTES.forEach(function(t){o[t.k]=t.l;});return o;})();
+var EV_TRANS_EMOJI = (function(){var o={};EV_TRANSPORTES.forEach(function(t){o[t.k]=t.e;});return o;})();
+/* Hora de inicio de un evento, venga de donde venga */
+function evStartTime(ev){
+  if(!ev)return null;
+  if(ev._rutTime)return ev._rutTime;
+  if(getEvType(ev)==='Ensayos boda')return (ev.boda&&ev.boda.time)||null;
+  return ev.time||null;
+}
+function evEndTime(ev){
+  if(!ev)return null;
+  if(ev._rut)return (typeof rutFin==='function')?rutFin(ev._rutTime,ev._rut.dur):null;
+  if(getEvType(ev)==='Ensayos boda')return null;   /* duran 1 h fija */
+  return (ev.time&&ev.endTime)?ev.endTime:null;
+}
+/* Texto corto "09:30 – 11:00" para las tarjetas */
+function evTimeLabel(ev){
+  var t=evStartTime(ev);
+  if(!t)return '';
+  var f=evEndTime(ev);
+  return t+(f?('\u2013'+f):'');
+}
+/* Tramos de transporte de un evento grande, ya normalizados */
+function evTramos(ev){
+  var out=[];
+  if(!ev||!ev.viaje)return out;
+  if(ev.viaje.ida&&ev.viaje.ida.time)
+    out.push({k:'ida',lbl:'Ida',t:ev.viaje.ida,ds:ev.start});
+  if(ev.viaje.vuelta&&ev.viaje.vuelta.time)
+    out.push({k:'vuelta',lbl:'Vuelta',t:ev.viaje.vuelta,ds:ev.end||ev.start});
+  return out;
+}
+function evTramoTexto(tr){
+  var m=tr.t.modo?EV_TRANS_EMOJI[tr.t.modo]:'';
+  var s=tr.lbl+' \u00b7 '+(m?m+' ':'')+tr.t.time;
+  if(tr.t.modo==='coche'&&tr.t.conductor)s+=' ('+escHtml(tr.t.conductor)+')';
+  return s;
+}
+/* Minutos desde medianoche de una hora HH:MM */
+function evMinutosDe(hhmm){
+  if(!hhmm)return null;
+  var p=String(hhmm).split(':');
+  var h=parseInt(p[0],10),m=parseInt(p[1],10);
+  if(isNaN(h)||isNaN(m))return null;
+  return h*60+m;
 }
 
 /* ── Render: formulario de evento ───────────────────────── */
@@ -1870,7 +1987,11 @@ function renderEvForm(ev){
     {k:'diamond', label:'Rombo'},
     {k:'x-thick', label:'X gorda'},
     {k:'x-thin',  label:'X fina'},
-    {k:'rounded', label:'Redondeado'}
+    {k:'rounded', label:'Redondeado'},
+    /* Las mismas siluetas que usan las rutinas */
+    {k:'gym',     label:'Mancuerna'},
+    {k:'padel',   label:'Pala'},
+    {k:'baile',   label:'Bailar\u00edn'}
   ];
   _shapes.forEach(function(s){
     var sel=(s.k===curShape)?' selected':'';
@@ -1911,6 +2032,45 @@ function renderEvForm(ev){
   h+='<div><label>Inicio</label><input class="ev-input" id="evFStart" type="date" value="'+start+'"'+(_multiActive?' disabled':'')+'></div>';
   h+='<div><label>Fin</label><input class="ev-input" id="evFEnd" type="date" value="'+end+'"'+(_multiActive?' disabled':'')+'></div>';
   h+='<div class="ev-dates-locked-note" id="evFDatesLockedNote" style="display:'+(_multiActive?'block':'none')+'">Estas fechas se ignoran porque hay <b>Selecci\u00f3n Multid\u00eda</b> activa.</div>';
+  h+='</div>';
+  /* ── Horas del evento ────────────────────────────────────────────
+     Puntual: hora de inicio y fin (el fin solo se activa con inicio puesto).
+     Las clases de boda no la llevan aqui: tienen la suya en la pestana Bodas.
+     Grande: hora de salida de ida y de vuelta, con medio de transporte. */
+  var _esBoda=(curType==='Ensayos boda');
+  var _horaIni=(isEdit&&ev.time)?ev.time:'';
+  var _horaFin=(isEdit&&ev.endTime)?ev.endTime:'';
+  h+='<div class="ev-field ev-date-row ev-hora-row" id="evFHoraRow"'
+    +((curKind==='puntual'&&!_esBoda)?'':' style="display:none"')+'>';
+  h+='<div><label>Hora inicio <span class="ev-note-scope">(opcional)</span></label>'
+    +'<input class="ev-input" id="evFTime" type="time" step="300" value="'+_horaIni+'"></div>';
+  h+='<div><label>Hora fin</label>'
+    +'<input class="ev-input" id="evFEndTime" type="time" step="300" value="'+_horaFin+'"'
+    +(_horaIni?'':' disabled')+'></div>';
+  h+='</div>';
+  var _vj=(isEdit&&ev.viaje)?ev.viaje:{};
+  h+='<div class="ev-field ev-viaje-box" id="evFViajeBox" style="display:'
+    +(curKind==='grande'?'block':'none')+'">';
+  h+='<label>\ud83d\ude86 Ida y vuelta <span class="ev-note-scope">(opcional)</span></label>';
+  [['ida','Ida'],['vuelta','Vuelta']].forEach(function(tr){
+    var d=_vj[tr[0]]||{};
+    var on=!!d.time;
+    h+='<div class="ev-viaje-tramo'+(on?' on':'')+'" data-tramo="'+tr[0]+'">';
+    h+='<label class="excl-item ev-viaje-hd"><input type="checkbox" class="ev-viaje-chk" data-tramo="'
+      +tr[0]+'"'+(on?' checked':'')+'> <b>'+tr[1]+'</b></label>';
+    h+='<div class="ev-viaje-campos" style="display:'+(on?'flex':'none')+'">';
+    h+='<input class="ev-input ev-viaje-time" data-tramo="'+tr[0]+'" type="time" step="300" value="'+(d.time||'')+'">';
+    h+='<select class="ev-input ev-viaje-modo" data-tramo="'+tr[0]+'">';
+    EV_TRANSPORTES.forEach(function(m){
+      h+='<option value="'+m.k+'"'+((d.modo||'tren')===m.k?' selected':'')+'>'+m.e+' '+m.l+'</option>';
+    });
+    h+='</select>';
+    h+='</div>';
+    h+='<input class="ev-input ev-viaje-cond" data-tramo="'+tr[0]+'" type="text" maxlength="30" placeholder="Quien conduce" value="'
+      +escHtml(d.conductor||'')+'" style="display:'+((on&&d.modo==='coche')?'block':'none')+'">';
+    h+='</div>';
+  });
+  h+='<div class="ev-viaje-note">La hora es la de <b>salida</b>: desde Pr\u00f3ximos podr\u00e1s crear una alarma para cada trayecto.</div>';
   h+='</div>';
   h+='<div class="ev-field"><label>Repetici\u00f3n</label>';
   h+='<select class="ev-input" id="evFRepeat">';
@@ -2027,6 +2187,12 @@ function bindEvFormEvents(){
     if(_sb)_sb.style.display=_shp?'block':'none';
     var _db=document.getElementById('evFDatesBlock');
     if(_db)_db.style.display=_dts?'block':'none';
+    /* Horas: los puntuales llevan inicio/fin y los grandes ida/vuelta.
+       Las clases de boda no: su hora vive en la pestana Bodas. */
+    var _hr=document.getElementById('evFHoraRow');
+    if(_hr)_hr.style.display=(kind==='puntual'&&typeName!=='Ensayos boda')?'':'none';
+    var _vb=document.getElementById('evFViajeBox');
+    if(_vb)_vb.style.display=(kind==='grande')?'block':'none';
   }
   function _bindTypeSwatches(){
     document.querySelectorAll('#evFTypePicker .ev-color-swatch').forEach(function(sw){
@@ -2109,6 +2275,41 @@ function bindEvFormEvents(){
   document.querySelectorAll('.ev-wd-btn').forEach(function(btn){
     btn.addEventListener('click',function(){btn.classList.toggle('on');});
   });
+  /* La hora de fin solo tiene sentido con hora de inicio */
+  var _tIni=document.getElementById('evFTime'),_tFin=document.getElementById('evFEndTime');
+  if(_tIni&&_tFin){
+    _tIni.addEventListener('input',function(){
+      _tFin.disabled=!_tIni.value;
+      if(!_tIni.value)_tFin.value='';
+    });
+  }
+  /* Transporte: cada tramo se activa con su casilla; el conductor solo aparece
+     cuando el medio es el coche */
+  function _viajeSync(tramo){
+    var box=document.querySelector('.ev-viaje-tramo[data-tramo="'+tramo+'"]');
+    if(!box)return;
+    var chk=box.querySelector('.ev-viaje-chk');
+    var campos=box.querySelector('.ev-viaje-campos');
+    var modo=box.querySelector('.ev-viaje-modo');
+    var cond=box.querySelector('.ev-viaje-cond');
+    var on=chk&&chk.checked;
+    box.classList.toggle('on',!!on);
+    if(campos)campos.style.display=on?'flex':'none';
+    if(cond)cond.style.display=(on&&modo&&modo.value==='coche')?'block':'none';
+  }
+  document.querySelectorAll('.ev-viaje-chk').forEach(function(c){
+    c.addEventListener('change',function(){
+      var box=c.closest('.ev-viaje-tramo');
+      if(c.checked){
+        var t=box.querySelector('.ev-viaje-time');
+        if(t&&!t.value)t.value='09:00';
+      }
+      _viajeSync(c.dataset.tramo);
+    });
+  });
+  document.querySelectorAll('.ev-viaje-modo').forEach(function(m){
+    m.addEventListener('change',function(){_viajeSync(m.dataset.tramo);});
+  });
   var delBtn=document.getElementById('evFDel');
   if(delBtn){
     delBtn.addEventListener('click',function(){
@@ -2189,6 +2390,33 @@ function bindEvFormEvents(){
       kind:kindLabel,type:typeLabel,start:start,end:end,repeat:repeat};
     if(_saveDates)_newEv.dates=_saveDates;
     if(_saveShape)_newEv.shape=_saveShape;
+    /* Horas del evento */
+    if(kindLabel==='puntual'&&typeLabel!=='Ensayos boda'){
+      var _ti=document.getElementById('evFTime'),_tf=document.getElementById('evFEndTime');
+      var _tiv=_ti?_ti.value:'';
+      if(_tiv){
+        _newEv.time=_tiv;
+        var _tfv=_tf?_tf.value:'';
+        if(_tfv&&_tfv>_tiv)_newEv.endTime=_tfv;
+      }
+    }
+    if(kindLabel==='grande'){
+      var _viaje={};
+      ['ida','vuelta'].forEach(function(tr){
+        var box=document.querySelector('.ev-viaje-tramo[data-tramo="'+tr+'"]');
+        if(!box)return;
+        var chk=box.querySelector('.ev-viaje-chk');
+        if(!chk||!chk.checked)return;
+        var tv=box.querySelector('.ev-viaje-time');
+        if(!tv||!tv.value)return;
+        var modo=box.querySelector('.ev-viaje-modo');
+        var cond=box.querySelector('.ev-viaje-cond');
+        var d={time:tv.value,modo:modo?modo.value:'tren'};
+        if(d.modo==='coche'&&cond&&cond.value.trim())d.conductor=cond.value.trim();
+        _viaje[tr]=d;
+      });
+      if(_viaje.ida||_viaje.vuelta)_newEv.viaje=_viaje;
+    }
     /* Una clase de boda de un solo dia siempre lleva su bloque boda */
     if(typeLabel==='Ensayos boda'){
       delete _newEv.dates;
@@ -2263,29 +2491,50 @@ function renderEvAlarmPanel(ev,firstDate){
   h+='<button class="bd-alarm-marker-btn poner'+(isSet?' active':'')+'" id="evAlarmPoner">Poner</button>';
   h+='</div>';
   h+='</div>';
-  /* Clases de boda: atajos "1 h antes" y "30 min antes" de la hora del ensayo.
-     Se pueden marcar los dos y se crean dos alarmas. */
-  var _cls=(getEvType(ev)==='Ensayos boda')?(ev.boda||{}):null;
-  var _clsMin=(_cls&&_cls.time)?evBodaMinutes(ev):null;
+  /* Atajos "1 h antes" / "30 min antes". Sirven para cualquier evento con
+     hora: clases de boda, puntuales con hora de inicio y, en los eventos
+     grandes, para CADA trayecto (ida y vuelta) por separado. Se pueden marcar
+     varios y se crea una alarma por cada uno. */
+  var _bloques=[];
+  var _tramos=evTramos(ev);
+  if(_tramos.length){
+    var _hoyDs=evDk(new Date());
+    _tramos.forEach(function(tr){
+      /* Si el viaje ya ha empezado, la ida no tiene sentido */
+      if(tr.k==='ida'&&tr.ds<_hoyDs)return;
+      _bloques.push({titulo:evTramoTexto(tr),min:evMinutosDe(tr.t.time),ds:tr.ds,suf:tr.lbl.toLowerCase()});
+    });
+  } else {
+    var _t0=evStartTime(ev);
+    if(_t0){
+      var _esClase=(getEvType(ev)==='Ensayos boda');
+      _bloques.push({titulo:(_esClase?'Ensayo':'Empieza')+' a las <b>'+_t0+'</b>',
+        min:evMinutosDe(_t0),ds:evIsoDate(firstDate),suf:''});
+    }
+  }
   var _evT;
-  if(_clsMin!=null){
-    var _pre=Math.max(0,_clsMin-60);
+  if(_bloques.length&&_bloques[0].min!=null){
+    var _pre=Math.max(0,_bloques[0].min-60);
     _evT={h:Math.floor(_pre/60),m:_pre%60};
   } else {
     _evT=typeof nextAlarmTime==='function'?nextAlarmTime(firstDate,15,2):{h:15,m:2};
   }
-  if(_clsMin!=null){
+  _bloques.forEach(function(bl,bi){
+    if(bl.min==null)return;
     h+='<div class="ev-alarm-pre">';
-    h+='<div class="ev-alarm-pre-t">Ensayo a las <b>'+_cls.time+'</b> — avisarme:</div>';
+    h+='<div class="ev-alarm-pre-t">'+bl.titulo+' — avisarme:</div>';
     h+='<div class="ev-alarm-pre-row">';
     [[60,'1 hora antes'],[30,'30 min antes']].forEach(function(o){
-      var mm=Math.max(0,_clsMin-o[0]);
+      var mm=Math.max(0,bl.min-o[0]);
       var lbl=String(Math.floor(mm/60)).padStart(2,'0')+':'+String(mm%60).padStart(2,'0');
-      h+='<button class="ev-alarm-pre-btn'+(o[0]===60?' on':'')+'" data-pre="'+o[0]+'" data-hh="'+Math.floor(mm/60)+'" data-mm="'+(mm%60)+'">'
+      var sufTxt=(bl.suf?bl.suf+', ':'')+(o[0]===60?'1 h':'30 min')+' antes';
+      h+='<button class="ev-alarm-pre-btn'+((bi===0&&o[0]===60)?' on':'')+'" data-pre="'+o[0]
+        +'" data-hh="'+Math.floor(mm/60)+'" data-mm="'+(mm%60)+'"'
+        +' data-ds="'+bl.ds+'" data-suf="'+escHtml(sufTxt)+'">'
         +o[1]+'<span>'+lbl+'</span></button>';
     });
     h+='</div></div>';
-  }
+  });
   h+='<div class="bd-alarm-row" style="margin:16px 0">';
   h+='<span class="bd-alarm-row-lbl">&#128276; Hora de la alarma<br><span style="font-size:.65rem;opacity:.7">D\u00eda del evento: '+fd2(firstDate)+'</span></span>';
   h+='<div class="bd-alarm-time"><input id="evAlarmH" type="number" min="0" max="23" value="'+_evT.h+'"><span class="bd-alarm-time-sep">:</span><input id="evAlarmM" type="number" min="0" max="59" value="'+String(_evT.m).padStart(2,'0')+'"></div>';
@@ -2300,6 +2549,7 @@ function openEvAlarm(ev,firstDate){
   var ov=document.getElementById('eventsOverlay');
   /* Si quedaba un panel anterior (se borra con 300ms de retardo por la
      animacion), sus ids duplicados capturarian los getElementById del nuevo */
+  _evCancelRemove('evAlarmWrap');
   var _oldA=document.getElementById('evAlarmWrap');if(_oldA)_oldA.remove();
   var wrap=document.createElement('div');wrap.id='evAlarmWrap';
   wrap.innerHTML=renderEvAlarmPanel(ev,firstDate);
@@ -2313,11 +2563,10 @@ function openEvAlarm(ev,firstDate){
 function closeEvAlarm(){
   var fo=document.getElementById('evAlarmOv');
   if(fo)fo.classList.remove('open');
-  setTimeout(function(){
-    var w=document.getElementById('evAlarmWrap');if(w)w.remove();
+  _evScheduleRemove('evAlarmWrap',function(){
     refreshEvents();
     if(typeof refreshBday==='function')refreshBday();
-  },300);
+  });
 }
 /* Abre el panel de cumpleaños VIP desde la ventana de eventos */
 function openBdayAlarmFromEvents(b){
@@ -2406,22 +2655,29 @@ function bindEvAlarmEvents(ev,firstDate){
     var alarmas=[];
     if(marcados.length){
       marcados.forEach(function(b){
+        /* Cada atajo puede apuntar a SU dia (la vuelta de un viaje cae en el
+           dia de fin, no en el de inicio) y traer su propia coletilla */
+        var _d=b.dataset.ds?new Date(b.dataset.ds+'T00:00:00'):firstDate;
+        var _sf=b.dataset.suf||((b.dataset.pre==='60'?'1 h':'30 min')+' antes');
         alarmas.push({h:parseInt(b.dataset.hh,10),m:parseInt(b.dataset.mm,10),
-          suf:' ('+(b.dataset.pre==='60'?'1 h':'30 min')+' antes)'});
+          suf:' ('+_sf+')',fecha:_d});
       });
     } else {
       var hr=parseInt(document.getElementById('evAlarmH').value,10);
       var mr=parseInt(document.getElementById('evAlarmM').value,10);
       alarmas.push({h:isNaN(hr)?15:Math.min(23,Math.max(0,hr)),
-        m:isNaN(mr)?2:Math.min(59,Math.max(0,mr)),suf:''});
+        m:isNaN(mr)?2:Math.min(59,Math.max(0,mr)),suf:'',fecha:firstDate});
     }
     alarmas.forEach(function(a){
-      var msg='\uD83D\uDCC5 '+ev.title+' '+fecha+a.suf;
+      var _f=a.fecha||firstDate;
+      var _fTxt=String(_f.getDate()).padStart(2,'0')+'/'+String(_f.getMonth()+1).padStart(2,'0');
+      var _dow=_f.getDay()+1;
+      var msg='\uD83D\uDCC5 '+ev.title+' '+_fTxt+a.suf;
       if(typeof addAlarm==='function'){
-        addAlarm({type:'event',label:msg,hour:a.h,minute:a.m,days:[dayOfAlarm],targetDate:fmtD(firstDate)});
+        addAlarm({type:'event',label:msg,hour:a.h,minute:a.m,days:[_dow],targetDate:fmtD(_f)});
       }
       var url=base+'/generar_alarma1?alarmH='+a.h+'&alarmM='+a.m
-        +'&alarmMsg='+encodeURIComponent(msg)+'&alarmDays='+dayOfAlarm;
+        +'&alarmMsg='+encodeURIComponent(msg)+'&alarmDays='+_dow;
       fetch(url,{mode:'no-cors'}).catch(function(){});
     });
     setEvAlarmState(ev.id,true);
@@ -2714,8 +2970,8 @@ function bindEvEvents(){
   document.querySelectorAll('.ev-cell .ev-rut-mark[data-id]').forEach(function(el){
     el.addEventListener('click',function(e){
       e.stopPropagation();
-      var rs=(typeof rutEventFromId==='function')?rutEventFromId(el.dataset.id):null;
-      if(rs)openRutSesion(rs.rutina,rs.ds);
+      var _c=el.closest('[data-ds]');
+      openEvDayCarousel(el.dataset.ds||(_c?_c.dataset.ds:null),el.dataset.id);
     });
   });
   // Click en badges/markers del calendario 1-mes → detail (no edit)
@@ -2725,14 +2981,16 @@ function bindEvEvents(){
          dejar que el click siga subiendo hasta .ev-day-vips */
       if(badge.closest('.ev-day-vips'))return;
       e.stopPropagation();
-      var id=badge.dataset.id;var ev=null;
-      for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
+      var id=badge.dataset.id;
       var _cell=badge.closest('[data-ds]');
-      EV_EDIT_DS=badge.dataset.ds||(_cell?_cell.dataset.ds:null);
-      if(ev){openEvDetail(ev);return;}
-      /* Sesion de una rutina (evento virtual) */
-      var _rs=(typeof rutEventFromId==='function')?rutEventFromId(id):null;
-      if(_rs)openRutSesion(_rs.rutina,_rs.ds);
+      var _ds=badge.dataset.ds||(_cell?_cell.dataset.ds:null);
+      EV_EDIT_DS=_ds;
+      /* Se abre el carrusel del dia posicionado en el evento pulsado, para
+         poder pasar al resto de eventos de ese dia deslizando. */
+      if(_ds){openEvDayCarousel(_ds,id);return;}
+      var ev=null;
+      for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
+      if(ev)openEvDetail(ev);
     });
   });
   // Click en celda vacía → crear evento con fecha

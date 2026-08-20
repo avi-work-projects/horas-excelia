@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v259 - Checks nuevos, marcadores reales en Proximos y limpieza de copias';
+var APP_VERSION = 'v260 - Horas de evento y transporte de ida y vuelta';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -384,20 +384,10 @@ function render(){
       cell.className='day-cell'+(dt!=='normal'?' '+dt:hCls);
       if(!inM)cell.style.opacity='0.4';
       var ts=isToday(d)?'color:var(--accent-bright)':'';
-      // Event dots
-      var evDotsHtml='';
-      if(typeof getEventsOn==='function'){
-        var evs=getEventsOn(dk(d),{rutinas:false});
-        if(evs.length){
-          evDotsHtml='<div class="ev-dots-row">';
-          evs.slice(0,3).forEach(function(ev){evDotsHtml+='<span class="ev-dot" style="background:'+ev.color+'"></span>';});
-          evDotsHtml+='</div>';
-        }
-      }
       cell.innerHTML=(dt!=='normal'?'<div class="day-status-dot"></div>':'')+
         '<div class="day-name" style="'+ts+'">'+DN[d.getDay()]+'</div>'+
         '<div class="day-date">'+fd(d)+'</div>'+
-        '<div class="day-hours">'+fh(hrs)+'</div>'+evDotsHtml;
+        '<div class="day-hours">'+fh(hrs)+'</div>';
       // Bloquear clic si semana enviada
       (function(dd,isSent){
         cell.addEventListener('click',function(){
