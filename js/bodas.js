@@ -270,6 +270,7 @@ var BODA_CLASS_MODE = 'ver';       /* 'ver' (consulta) | 'editar' */
 var BODA_FILTER_COUPLE = 'all';
 var BODA_HIDE_PAST = true;
 var BODA_HIDE_CLOSED = false;
+var BODA_CARD_OPEN = null;   /* id de la pareja desplegada en su tarjeta */
 var BODA_PAREJAS_FILTER = 'incompletas';  /* 'incompletas' | 'todas' | 'completas' */
 var BODA_CAL_HL = null;   /* id de la pareja resaltada en el calendario */
 var BODA_CAL_YEAR = new Date().getFullYear();
@@ -427,7 +428,7 @@ function _renderBodaParejas(){
     var pct=p.total?Math.min(100,Math.round(p.done*100/p.total)):0;
     var falta=p.falta>0?('<span class="boda-falta">faltan '+p.falta+'</span>')
       :(p.total&&p.done>p.total?'<span class="boda-sobra">+'+(p.done-p.total)+' extra</span>':'<span class="boda-ok">completa</span>');
-    h+='<div class="boda-card boda-card-tap" data-cid="'+c.id+'">';
+    h+='<div class="boda-card boda-card-tap'+(BODA_CARD_OPEN===c.id?' abierta':'')+'" data-cid="'+c.id+'">';
     h+='<div class="boda-card-hd">';
     h+='<span class="boda-dot" style="background:'+c.color+'"></span>';
     h+='<span class="boda-name">'+escHtml(c.name)+'</span>';
@@ -437,6 +438,28 @@ function _renderBodaParejas(){
     h+='<div class="boda-prog"><div class="boda-prog-bar" style="width:'+pct+'%;background:'+c.color+'"></div></div>';
     h+='<div class="boda-card-ft"><span>'+p.done+' / '+(p.total||0)+' clases</span>'+falta+'</div>';
     if(c.note)h+='<div class="boda-card-note">'+escHtml(c.note)+'</div>';
+    /* Desplegada: aqui dentro va lo que antes abria un modal aparte */
+    if(BODA_CARD_OPEN===c.id){
+      var cls=bodaClassesOfCouple(c.id);
+      h+='<div class="boda-card-open">';
+      h+='<div class="boda-det-list-t">Clases asignadas</div>';
+      if(!cls.length)h+='<div class="sy-note" style="margin:0">Todav\u00eda no tiene clases asignadas.</div>';
+      cls.forEach(function(ev){
+        var b=ev.boda||{};
+        h+='<div class="boda-det-row">';
+        h+='<span class="boda-class-mark">'+evBodaSvg(ev)+'</span>';
+        h+='<span class="boda-det-day">'+_bodaFmtCorto(ev.start)+'</span>';
+        h+='<span class="boda-ro-time'+(b.time?'':' none')+'">'+(b.time||'--:--')+'</span>';
+        h+='<span class="boda-ro-place'+(bodaPlaceOf(ev)?'':' vacio')+'">'+escHtml(bodaPlaceLabel(bodaPlaceOf(ev)))+'</span>';
+        h+='</div>';
+      });
+      h+='<div class="boda-det-actions">';
+      h+='<button class="ev-btn boda-det-btn boda-c-edit" data-cid="'+c.id+'">&#9998; Editar</button>';
+      h+='<button class="ev-btn boda-det-btn boda-c-asig" data-cid="'+c.id+'">&#128197; Asignar clases</button>';
+      h+='<button class="ev-btn boda-det-btn boda-c-extra" data-cid="'+c.id+'">&#10133; Clase extra</button>';
+      h+='</div>';
+      h+='</div>';
+    }
     h+='</div>';
   });
   h+='<button class="ev-io-btn boda-add-btn" id="bodaAddCouple">+ Nueva pareja</button>';
@@ -789,53 +812,8 @@ function _renderBodaStats(){
 }
 
 /* ══ Modal: detalle de pareja (días y horas asignados) ══ */
-function openBodaCoupleDetail(c){
-  if(!c)return;
-  var cls=bodaClassesOfCouple(c.id);
-  var p=bodaProgress(c);
-  var h='<div class="ev-detail-overlay" id="bodaDetOv"><div class="ev-detail-sheet">';
-  h+='<div class="ev-detail-handle"></div>';
-  h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">';
-  h+='<button class="sy-back" id="bodaDetClose">&#8592;</button>';
-  h+='<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">Pareja</div>';
-  h+='<button class="ev-list-btn boda-det-btn" id="bodaDetEdit" style="font-size:.8rem;padding:6px 12px">&#9998; Editar</button>';
-  h+='</div>';
-  h+='<div class="ev-detail-color-bar" style="background:'+c.color+'"></div>';
-  h+='<div class="ev-detail-title" style="color:'+c.color+'">'+escHtml(c.name)+'</div>';
-  h+='<div class="boda-det-meta">'+p.done+' / '+p.total+' clases'
-    +(p.falta>0?(' · <span class="boda-falta">faltan '+p.falta+'</span>')
-      :(p.done>p.total?(' · <span class="boda-sobra">+'+(p.done-p.total)+' extra</span>'):' · <span class="boda-ok">completa</span>'))+'</div>';
-  if(c.weddingDate)h+='<div class="ev-detail-date">&#128141; Boda: '+_bodaFmt(c.weddingDate)+'</div>';
-  if(c.note)h+='<div class="ev-detail-note">'+escHtml(c.note)+'</div>';
-  h+='<div class="boda-det-list-t">Clases asignadas</div>';
-  if(!cls.length)h+='<div class="sy-note">Todavía no tiene clases asignadas.</div>';
-  cls.forEach(function(ev){
-    var b=ev.boda||{};
-    h+='<div class="boda-det-row">';
-    h+='<span class="boda-class-mark">'+evBodaSvg(ev)+'</span>';
-    h+='<span class="boda-det-day">'+_bodaFmtCorto(ev.start)+'</span>';
-    h+='<span class="boda-ro-time'+(b.time?'':' none')+'">'+(b.time||'--:--')+'</span>';
-    h+='<span class="boda-ro-place'+(bodaPlaceOf(ev)?'':' vacio')+'">'+escHtml(bodaPlaceLabel(bodaPlaceOf(ev)))+'</span>';
-    h+='</div>';
-  });
-  h+='<div class="boda-det-actions">';
-  h+='<button class="ev-btn boda-det-btn" id="bodaDetAssign">&#128197; Asignar clases</button>';
-  h+='<button class="ev-btn boda-det-btn" id="bodaDetExtra">&#10133; Clase extra</button>';
-  h+='</div>';
-  h+='</div></div>';
-  bodaOpenSheet('bodaDetWrap','bodaDetOv',h,closeBodaCoupleDetail);
-  document.getElementById('bodaDetClose').addEventListener('click',closeBodaCoupleDetail);
-  document.getElementById('bodaDetEdit').addEventListener('click',function(){
-    closeBodaCoupleDetail();setTimeout(function(){openBodaCoupleForm(c);},310);
-  });
-  document.getElementById('bodaDetAssign').addEventListener('click',function(){
-    closeBodaCoupleDetail();setTimeout(function(){openBodaAssign(c,false);},310);
-  });
-  document.getElementById('bodaDetExtra').addEventListener('click',function(){
-    closeBodaCoupleDetail();setTimeout(function(){openBodaAssign(c,true);},310);
-  });
-}
-function closeBodaCoupleDetail(){bodaCloseSheet('bodaDetWrap','bodaDetOv');}
+/* El detalle de una pareja ya no es un modal: se despliega dentro de su
+   tarjeta en la subpestana Parejas (ver _renderBodaParejas). */
 
 /* ══ Modal: calendario de asignación ══
    - Días con clase YA de esta pareja: marcados (y fijos si extraMode)
@@ -1314,12 +1292,23 @@ function bindBodasEvents(){
   });
   var addC=document.getElementById('bodaAddCouple');
   if(addC)addC.addEventListener('click',function(){openBodaCoupleForm(null);});
-  /* Tarjeta de pareja: abre su detalle. El boton de calendario, la asignacion. */
+  /* Tarjeta de pareja: se despliega en su sitio y se vuelve a plegar al
+     pulsarla otra vez. El boton de calendario sigue yendo a la asignacion. */
   document.querySelectorAll('.boda-card-tap[data-cid]').forEach(function(card){
     card.addEventListener('click',function(e){
-      if(e.target.closest('.boda-assign'))return;
-      openBodaCoupleDetail(bodaCouple(card.dataset.cid));
+      if(e.target.closest('.boda-assign,.boda-det-actions'))return;
+      BODA_CARD_OPEN=(BODA_CARD_OPEN===card.dataset.cid)?null:card.dataset.cid;
+      refreshEvents();
     });
+  });
+  document.querySelectorAll('.boda-c-edit[data-cid]').forEach(function(b){
+    b.addEventListener('click',function(e){e.stopPropagation();openBodaCoupleForm(bodaCouple(b.dataset.cid));});
+  });
+  document.querySelectorAll('.boda-c-asig[data-cid]').forEach(function(b){
+    b.addEventListener('click',function(e){e.stopPropagation();openBodaAssign(bodaCouple(b.dataset.cid),false);});
+  });
+  document.querySelectorAll('.boda-c-extra[data-cid]').forEach(function(b){
+    b.addEventListener('click',function(e){e.stopPropagation();openBodaAssign(bodaCouple(b.dataset.cid),true);});
   });
   document.querySelectorAll('.boda-assign[data-cid]').forEach(function(b){
     b.addEventListener('click',function(e){

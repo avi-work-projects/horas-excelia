@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v262 - Barras a mitades, chips en una fila y horario por dia';
+var APP_VERSION = 'v263 - Pareja desplegable, ficha de alto fijo y avisos de clase';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -31,9 +31,25 @@ function addSwipe(el, onLeft, onRight){
     }
     return false;
   }
+  /* Si el gesto empieza dentro de un panel abierto (o dentro de otro elemento
+     que ya tiene su propio swipe), manda el de dentro: si no, deslizar en el
+     carrusel de un dia cambiaba ademas el mes de fondo. */
+  function startedInPanel(node){
+    while(node&&node!==el){
+      if(node.nodeType===1){
+        if(node._swipeAdded)return true;
+        var cl=node.classList;
+        if(cl&&(cl.contains('ev-detail-overlay')||cl.contains('ev-form-overlay')
+              ||cl.contains('ev-alarm-overlay')||cl.contains('bd-alarm-overlay')
+              ||cl.contains('dp-overlay')||cl.contains('imp-mode-ov')))return true;
+      }
+      node=node.parentNode;
+    }
+    return false;
+  }
   el.addEventListener('touchstart',function(e){
     _sx=e.touches[0].clientX;_sy=e.touches[0].clientY;
-    _skip=startedInScrollX(e.target);
+    _skip=startedInScrollX(e.target)||startedInPanel(e.target);
   },{passive:true});
   el.addEventListener('touchend',function(e){
     if(_skip)return;

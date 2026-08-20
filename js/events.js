@@ -1562,7 +1562,7 @@ function renderEvDetail(ev,fromSummary,car){
     else if(rt==='monthly-first'){repeatStr='\ud83d\udd01 Mensual (d\u00eda 1)';}
     else if(rt==='yearly'){repeatStr='\ud83d\udd01 Anual';}
   }
-  var h='<div class="ev-detail-overlay" id="evDetailOv"><div class="ev-detail-sheet">';
+  var h='<div class="ev-detail-overlay" id="evDetailOv"><div class="ev-detail-sheet'+(car?' ev-car-sheet':'')+'">';
   h+='<div class="ev-detail-handle"></div>';
   h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">';
   h+='<button class="sy-back" id="evDClose">&#8592;</button>';
@@ -1608,18 +1608,33 @@ function renderEvDetail(ev,fromSummary,car){
     h+='<div class="ev-detail-repeat">'+evTramoTexto(tr)+'</div>';
   });
   if(repeatStr)h+='<div class="ev-detail-repeat">'+repeatStr+'</div>';
-  if(ev.note)h+='<div class="ev-detail-note">'+escHtml(ev.note)+'</div>';
+  /* En una rutina la nota repite la hora que ya sale arriba */
+  if(ev.note&&!ev._rut)h+='<div class="ev-detail-note">'+escHtml(ev.note)+'</div>';
   /* Nota especifica del dia desde el que se abrio (puntuales de varios dias) */
   if(EV_EDIT_DS&&ev.dayNotes&&ev.dayNotes[EV_EDIT_DS]){
     h+='<div class="ev-detail-note ev-detail-daynote"><span class="ev-note-scope">'
       +EV_EDIT_DS.slice(8)+'/'+EV_EDIT_DS.slice(5,7)+'</span> '+escHtml(ev.dayNotes[EV_EDIT_DS])+'</div>';
   }
-  /* Datos de la clase de boda */
+  /* Datos de la clase de boda. Van siempre las tres pastillas (hora, sala y
+     pareja): si falta el dato sale el aviso, asi la ficha no cambia de alto
+     segun lo completa que este la clase. */
   if(getEvType(ev)==='Ensayos boda'&&typeof bodaCouple==='function'){
     var _b=ev.boda||{};var _c=bodaCouple(_b.coupleId);
-    h+='<div class="ev-detail-repeat">&#128141; '+(_c?escHtml(_c.name):'Sin pareja asignada')
-      +' &#183; '+(_b.time?_b.time+' (1 h)':'sin hora')
-      +' &#183; '+escHtml(BODA_PLACE_SHORT[_b.place||(_c&&_c.place)||'casa'])+'</div>';
+    var _pl=(typeof bodaPlaceOf==='function')?bodaPlaceOf(ev):null;
+    h+='<div class="ev-bchips">';
+    h+=_b.time
+      ? '<span class="ev-bchip">\ud83d\udd52 '+_b.time+' (1 h)</span>'
+      : '<span class="ev-bchip warn">\u26a0 Sin hora</span>';
+    h+=_pl
+      ? '<span class="ev-bchip">'+bodaPlaceEmoji(_pl)+' '+escHtml(BODA_PLACE_SHORT[_pl])+'</span>'
+      : '<span class="ev-bchip warn">\u26a0 Sin sala</span>';
+    h+='</div>';
+    h+='<div class="ev-bpareja">';
+    h+=_c
+      ? '<span class="ev-bchip" style="border-color:'+_c.color+';color:'+_c.color+'">&#128141; '+escHtml(_c.name)+'</span>'
+      : '<span class="ev-bchip warn">\u26a0 Sin pareja</span>';
+    if(_c)h+='<button class="ev-btn ev-bver" id="evDVerPareja" data-cid="'+_c.id+'">Ver pareja</button>';
+    h+='</div>';
   }
   h+='<div class="ev-detail-actions">';
   if(ev._rut){
@@ -1753,6 +1768,26 @@ function openEvDetail(ev,container,car){
   if(_re)_re.addEventListener('click',function(){
     closeEvDetail();
     setTimeout(function(){if(typeof openRutForm==='function')openRutForm(ev._rut);},310);
+  });
+  var _vp=document.getElementById('evDVerPareja');
+  if(_vp)_vp.addEventListener('click',function(){
+    var cid=_vp.dataset.cid;
+    if(car)closeEvDayCarousel();else closeEvDetail();
+    setTimeout(function(){
+      /* Bodas > Parejas, sin filtro y con esa pareja ya desplegada */
+      if(typeof BODA_SUBTAB!=='undefined'){
+        BODA_SUBTAB='parejas';
+        BODA_PAREJAS_FILTER='todas';
+        BODA_CARD_OPEN=cid;
+      }
+      _switchEvView('bodas');
+      refreshEvents(false);
+      setTimeout(function(){
+        var card=document.querySelector('.boda-card-tap[data-cid="'+cid+'"]');
+        var body=document.querySelector('#eventsOverlay .sy-body');
+        if(card&&body)body.scrollTop=Math.max(0,card.offsetTop-body.offsetTop-8);
+      },30);
+    },310);
   });
   var _ba=document.getElementById('evDBdayAlarm');
   if(_ba)_ba.addEventListener('click',function(){
