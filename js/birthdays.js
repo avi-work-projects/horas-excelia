@@ -30,6 +30,19 @@ function _showBdayInlineCtrl(el,b){
   div.querySelector('.bday-ic-vip').addEventListener('click',function(e){
     e.stopPropagation();
     if(idx>=0){
+      /* El calendario de 1 mes solo tiene sitio para EV_CAL_VIP_MAX estrellas
+         el mismo dia; mas alla de ahi no se verian. */
+      if(!BDAYS[idx].vip){
+        var _tope=(typeof EV_CAL_VIP_MAX!=='undefined')?EV_CAL_VIP_MAX:3;
+        var _yaVip=0;
+        BDAYS.forEach(function(x,j){
+          if(j!==idx&&x.vip&&x.day===BDAYS[idx].day&&x.month===BDAYS[idx].month)_yaVip++;
+        });
+        if(_yaVip>=_tope){
+          showToast('Maximo '+_tope+' cumpleanos VIP el mismo dia','error');
+          return;
+        }
+      }
       if(BDAYS[idx].vip)delete BDAYS[idx].vip;else BDAYS[idx].vip=true;
       localStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));
       syncVipBdaysToEvents();updateBdayBtn();

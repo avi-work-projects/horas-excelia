@@ -119,6 +119,9 @@
     e.stopPropagation();
     var panel=document.getElementById('alarmPanel');
     var opening=!panel.classList.contains('open');
+    /* Solo puede haber un desplegable abierto: al abrir este, cerrar el otro */
+    var _dm=document.getElementById('dataMenu');
+    if(_dm)_dm.classList.remove('open');
     if(opening){
       // Restaurar estado MacroDroid guardado
       var useMacro=localStorage.getItem('excelia-alarm-macro')==='1';
@@ -390,6 +393,9 @@
     e.stopPropagation();
     var menu=document.getElementById('dataMenu');
     var opening=!menu.classList.contains('open');
+    /* Solo puede haber un desplegable abierto: al abrir este, cerrar el otro */
+    var _ap=document.getElementById('alarmPanel');
+    if(_ap)_ap.classList.remove('open');
     if(opening){
       // Poblar inputs con los valores guardados en localStorage
       var mAlarm=document.getElementById('macroAlarmUrlMenu');

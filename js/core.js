@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v257 - Rutinas semanales, Todos dentro de Proximos y borrado con pulsacion larga';
+var APP_VERSION = 'v258 - Dia en dos columnas, cabeceras por dia en Proximos y paleta 6x7';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -387,7 +387,7 @@ function render(){
       // Event dots
       var evDotsHtml='';
       if(typeof getEventsOn==='function'){
-        var evs=getEventsOn(dk(d));
+        var evs=getEventsOn(dk(d),{rutinas:false});
         if(evs.length){
           evDotsHtml='<div class="ev-dots-row">';
           evs.slice(0,3).forEach(function(ev){evDotsHtml+='<span class="ev-dot" style="background:'+ev.color+'"></span>';});
