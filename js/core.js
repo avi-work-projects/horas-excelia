@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v261 - Ficha del dia unificada y elegir semana sobre el mes';
+var APP_VERSION = 'v262 - Barras a mitades, chips en una fila y horario por dia';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

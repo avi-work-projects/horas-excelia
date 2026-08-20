@@ -49,8 +49,10 @@ var EV_FILTER_GROUPS = ['Grandes','Asturias','Rec. Gestiones','WM + Rut','Resto'
 /* Etiquetas en SINGULAR: con el plural la estrella de VIP se caia a una
    segunda fila en pantallas estrechas */
 /* WM = Wedding Moves (las clases de baile de boda) + Rut = rutinas */
-var EV_FILTER_SHORT  = {'Grandes':'Grande','Asturias':'Asturias','Rec. Gestiones':'Gesti&oacute;n',
-  'WM + Rut':'WM + Rut','Resto':'Resto','Cumplea\u00f1os VIP':'\u2b50'};
+/* Etiquetas cortas a proposito: con los nombres largos los chips se caian
+   a una segunda fila en pantallas estrechas. Asturias va con su bandera. */
+var EV_FILTER_SHORT  = {'Grandes':'Grande','Asturias':'<svg class="ev-chip-flag" viewBox="0 0 26 16" aria-label="Asturias"><rect width="26" height="16" rx="2.5" fill="#1454c4"/><path d="M11.9,2.4 L14.1,2.4 L13.75,6 L17.7,5.5 L17.7,8.3 L13.75,7.8 L14.3,13.6 L11.7,13.6 L12.25,7.8 L8.3,8.3 L8.3,5.5 L12.25,6 Z" fill="#ffd83d"/></svg>','Rec. Gestiones':'Gesti&oacute;n',
+  'WM + Rut':'WM/Rut','Resto':'Resto','Cumplea\u00f1os VIP':'\u2b50'};
 var EV_FILTER_COLOR  = {'Grandes':'#38bdf8','Asturias':'#1d4ed8','Rec. Gestiones':'#34d399',
   'WM + Rut':'#c08a5a','Resto':'#ff6b6b','Cumplea\u00f1os VIP':'#fbbf24'};
 /* Tras que grupo va la linea que separa eventos grandes de puntuales */
@@ -455,6 +457,7 @@ function renderEvCalMonth(){
     /* Reparto en filas por grosor — ver _evAssignRow */
     var rowOcc=_evRowOcc();
     wMulti.forEach(function(it){_evAssignRow(it,rowOcc);});
+    _evMarcarMitades(wMulti);
     var activeRows=0;wMulti.forEach(function(it){if(it.row>=0)activeRows=Math.max(activeRows,it.row+1);});
     // Pre-compute which columns are in-month (for bar dimming)
     var inMCols=[];for(var ci=0;ci<7;ci++){inMCols.push(wk[ci].getMonth()===EV_MONTH);}
@@ -545,7 +548,7 @@ function renderEvCalMonth(){
         var _dc=getEvDisplayColor(ev);
         var _pastBar=wk[it.ce]<today?' past-bar':'';
         h+='<div class="ev-multi-bar '+evBarSizeCls(ev)+sc+_pastBar+'" data-id="'+ev.id+'"'
-          +' style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';z-index:'+evBarZ(ev)+';border:1.5px solid '+_dc+';background:'+fakeTrans(_dc,0.65)+';color:#fff'+(hasInM?'':';opacity:.35')+'">'
+          +' style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';z-index:'+evBarZ(ev)+';border:1.5px solid '+_dc+';background:'+fakeTrans(_dc,0.65)+';color:#fff'+(hasInM?'':';opacity:.35')+_evMitadesStyle(it)+'">'
           +(showT?escHtml(ev.title):'')+'</div>';
       });
       h+='</div>';
@@ -909,15 +912,52 @@ function renderEvUpcoming(){
    quedando la mas fina visible encima de la mas gruesa. */
 var EV_BAR_Z = {sm:3, md:2, lg:1};
 function _evRowOcc(){return {lg:[[],[],[]], md:[[],[],[]], sm:[[],[],[]]};}
+/* ¿Chocan de verdad dos tramos, o solo se rozan?
+   "Rozarse" es que una barra ACABE justo el dia en que la otra EMPIEZA: ahi no
+   hay conflicto real, caben las dos en la misma fila repartiendose la casilla
+   de ese dia a mitades. Solo cuenta si las dos duran mas de un dia; con una
+   barra de un solo dia no se sabria que mitad le toca. */
+function _evSoloSeRozan(aS,aE,bS,bE){
+  if(aE<bS||aS>bE)return false;                 /* ni se tocan */
+  if(Math.max(aS,bS)!==Math.min(aE,bE))return false;  /* pisan mas de un dia */
+  if(aS===aE||bS===bE)return false;             /* alguna es de un solo dia */
+  return (aE===bS)||(bE===aS);
+}
 function _evAssignRow(it,rowOcc){
   var occ=rowOcc[evBarSize(it.ev)]||rowOcc.md;
   for(var r=0;r<3;r++){
     var ok=true;
     for(var j=0;j<occ[r].length;j++){
-      if(it.cs<=occ[r][j][1]&&it.ce>=occ[r][j][0]){ok=false;break;}
+      var o=occ[r][j];
+      if(it.cs<=o[1]&&it.ce>=o[0]&&!_evSoloSeRozan(it.cs,it.ce,o[0],o[1])){ok=false;break;}
     }
     if(ok){it.row=r;occ[r].push([it.cs,it.ce]);break;}
   }
+}
+/* Marca que barras tienen que ceder media casilla en su primer o ultimo dia.
+   Se mira contra TODAS las barras de la semana, no solo las de su fila: si el
+   dia se comparte, se comparte se pinte donde se pinte. */
+function _evMarcarMitades(lista){
+  lista.forEach(function(a){
+    a.halfL=false;a.halfR=false;
+    if(a.row<0)return;
+    lista.forEach(function(b){
+      if(a===b||b.row<0)return;
+      if(!_evSoloSeRozan(a.cs,a.ce,b.cs,b.ce))return;
+      if(b.ce===a.cs)a.halfL=true;   /* la otra acaba donde esta empieza */
+      if(b.cs===a.ce)a.halfR=true;   /* la otra empieza donde esta acaba */
+    });
+  });
+}
+/* Margen en linea para ceder media casilla. El porcentaje de un margen en un
+   elemento de rejilla se mide sobre el ancho de SU area, asi que media casilla
+   de una barra de N dias es 50%/N. */
+function _evMitadesStyle(it){
+  var n=(it.ce-it.cs+1)||1;
+  var s='';
+  if(it.halfL)s+=';margin-left:calc(50% / '+n+')';
+  if(it.halfR)s+=';margin-right:calc(50% / '+n+')';
+  return s;
 }
 function evBarZ(ev){return EV_BAR_Z[evBarSize(ev)]||2;}
 
@@ -998,6 +1038,7 @@ function _renderEvMonthCard(m,yr,o){
        comparten fila y se superponen, con la mas fina encima (z-index). */
     var rowOcc=_evRowOcc();
     wMulti.forEach(function(it){_evAssignRow(it,rowOcc);});
+    _evMarcarMitades(wMulti);
     h+='<div class="ev-annual-week-outer">';
     var abspanStart=-1,abspans=[];
     for(var di=0;di<7;di++){
@@ -1080,7 +1121,7 @@ function _renderEvMonthCard(m,yr,o){
         h+='<div class="ev-annual-mbar '+evBarSizeCls(it.ev)+sc+pastBar+'" data-id="'+it.ev.id+'"'
           +' style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)
           +';z-index:'+evBarZ(it.ev)
-          +';border:1px solid '+dc+';background:'+fakeTrans(dc,0.65)+extra+'">'+txt+'</div>';
+          +';border:1px solid '+dc+';background:'+fakeTrans(dc,0.65)+extra+_evMitadesStyle(it)+'">'+txt+'</div>';
       });
       h+='</div>';
     }
