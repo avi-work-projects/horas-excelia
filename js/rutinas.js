@@ -391,9 +391,12 @@ function renderRutForm(r){
   h+='<div class="ev-field"><label>Desde</label><input class="ev-input" id="rutFStart" type="date" value="'+(isEdit&&r.start?r.start:evDk(new Date()))+'"></div>';
   var _ic=isEdit?rutIconOf(r):'gen';
   h+='<div class="ev-field"><label>Icono</label><div class="rut-icon-row" id="rutFIcons">';
+  /* Cada icono se ve con SU color (el gimnasio naranja, el padel verde...),
+     no todos con el color de la rutina que se esta editando. Solo "Otra"
+     acompana al color elegido, que es el unico que se puede cambiar. */
   RUT_ICONS.forEach(function(k){
     h+='<button type="button" class="rut-icon-opt'+(k===_ic?' on':'')+'" data-icon="'+k+'">'
-      +rutIconSvg(k,col)+'<span>'+RUT_ICON_LABEL[k]+'</span></button>';
+      +rutIconSvg(k,RUT_FIXED_COLOR[k]||col)+'<span>'+RUT_ICON_LABEL[k]+'</span></button>';
   });
   h+='</div></div>';
   h+='<div class="ev-field" id="rutFColorField"'+(_ic==='gen'?'':' style="display:none"')+'>'
@@ -425,11 +428,13 @@ function openRutForm(r){
   });
   var cp=_bindColorPicker(wrap,'rutCp');
   /* Los iconos se repintan con el color elegido para verlos como quedaran */
+  /* Solo hay que repintar "Otra": el resto llevan color fijo */
   function _rutRepaintIcons(){
     var c=cp.getColor();
     document.querySelectorAll('#rutFIcons .rut-icon-opt').forEach(function(b){
-      var svg=rutIconSvg(b.dataset.icon,c);
-      b.innerHTML=svg+'<span>'+RUT_ICON_LABEL[b.dataset.icon]+'</span>';
+      var k=b.dataset.icon;
+      if(RUT_FIXED_COLOR[k])return;
+      b.innerHTML=rutIconSvg(k,c)+'<span>'+RUT_ICON_LABEL[k]+'</span>';
     });
   }
   document.querySelectorAll('#rutFIcons .rut-icon-opt').forEach(function(b){
@@ -508,11 +513,90 @@ function closeRutForm(){
   setTimeout(function(){var w=document.getElementById('rutFWrap');if(w)w.remove();},300);
 }
 
-/* ══ Cambiar los días/hora de UNA semana concreta ══ */
+/* == Cambiar los dias/hora de UNA semana concreta ==
+   Dos pasos: primero un mes de solo lectura para senalar QUE semana, y al
+   pulsar cualquiera de sus dias se abre el editor de esa semana. */
 var RUT_WEEK_SEL = null;
+var RUT_WEEK_CAL = null;   /* mes que se esta mirando en el paso 1 */
 function openRutWeek(r){
-  RUT_WEEK_SEL=rutWeekKey(evDk(new Date()));
-  _rutWeekRender(r);
+  var hoy=new Date();
+  RUT_WEEK_CAL={y:hoy.getFullYear(),m:hoy.getMonth()};
+  _rutWeekPick(r);
+}
+/* Paso 1: elegir semana sobre el calendario del mes */
+function _rutWeekPick(r){
+  var y=RUT_WEEK_CAL.y,m=RUT_WEEK_CAL.m;
+  var hoyDs=evDk(new Date());
+  var h='<div class="ev-detail-overlay" id="rutWkOv"><div class="ev-detail-sheet">';
+  h+='<div class="ev-detail-handle"></div>';
+  h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">';
+  h+='<button class="sy-back" id="rutWkClose">&#8592;</button>';
+  h+='<div style="flex:1;font-size:.88rem;font-weight:600;text-align:center;color:'+r.color+'">'
+    +escHtml(r.name)+' \u2014 elige la semana</div>';
+  h+='<div style="width:36px"></div></div>';
+  h+='<div class="boda-asg-nav">';
+  h+='<button class="sy-nav" id="rutWkMPrev">&#9664;</button>';
+  h+='<div class="boda-asg-month">'+MN[m]+' '+y+'</div>';
+  h+='<button class="sy-nav" id="rutWkMNext">&#9654;</button>';
+  h+='</div>';
+  h+='<div class="rut-wpick">';
+  h+='<div class="rut-wpick-hdr">';
+  ['L','M','X','J','V','S','D'].forEach(function(n){h+='<div>'+n+'</div>';});
+  h+='</div>';
+  var first=new Date(y,m,1), last=new Date(y,m+1,0);
+  var cur=new Date(first);
+  var dow=cur.getDay(); var off=dow===0?6:dow-1;
+  cur.setDate(cur.getDate()-off);
+  while(cur<=last){
+    var wkKey=rutWeekKey(evDk(cur));
+    var tiene=!!(r.weeks&&r.weeks[wkKey]);
+    h+='<div class="rut-wpick-week'+(tiene?' cambiada':'')+'" data-week="'+wkKey+'">';
+    for(var i=0;i<7;i++){
+      var d=new Date(cur.getFullYear(),cur.getMonth(),cur.getDate()+i);
+      var ds=evDk(d);
+      var fuera=d.getMonth()!==m;
+      var toca=rutOccursOn(r,ds);
+      h+='<div class="rut-wpick-day'+(fuera?' out':'')+(ds===hoyDs?' hoy':'')+'">'
+        +'<span>'+d.getDate()+'</span>'
+        +(toca?'<i style="background:'+r.color+'"></i>':'')
+        +'</div>';
+    }
+    h+='</div>';
+    cur.setDate(cur.getDate()+7);
+  }
+  h+='</div>';
+  h+='<div class="sy-note" style="font-size:.68rem">Pulsa cualquier d\u00eda para editar esa semana. '
+    +'Los puntos marcan los d\u00edas en los que toca ahora mismo; una semana con borde '
+    +'es que ya tiene un cambio guardado.</div>';
+  h+='</div></div>';
+  var ov=document.getElementById('eventsOverlay');
+  var old=document.getElementById('rutWkWrap');if(old)old.remove();
+  var wrap=document.createElement('div');wrap.id='rutWkWrap';wrap.innerHTML=h;
+  ov.appendChild(wrap);
+  requestAnimationFrame(function(){
+    var fo=document.getElementById('rutWkOv');
+    if(fo){fo.classList.add('open');fo.addEventListener('click',function(e){if(e.target===fo)closeRutWeek();});}
+  });
+  document.getElementById('rutWkClose').addEventListener('click',closeRutWeek);
+  document.getElementById('rutWkMPrev').addEventListener('click',function(){
+    RUT_WEEK_CAL.m--; if(RUT_WEEK_CAL.m<0){RUT_WEEK_CAL.m=11;RUT_WEEK_CAL.y--;}
+    _rutWeekPick(r);
+  });
+  document.getElementById('rutWkMNext').addEventListener('click',function(){
+    RUT_WEEK_CAL.m++; if(RUT_WEEK_CAL.m>11){RUT_WEEK_CAL.m=0;RUT_WEEK_CAL.y++;}
+    _rutWeekPick(r);
+  });
+  document.querySelectorAll('#rutWkOv .rut-wpick-week').forEach(function(w){
+    w.addEventListener('click',function(){
+      RUT_WEEK_SEL=w.dataset.week;
+      _rutWeekRender(r);
+    });
+  });
+  if(typeof addSwipe==='function'){
+    var _cal=document.querySelector('#rutWkOv .rut-wpick');
+    addSwipe(_cal,function(){document.getElementById('rutWkMNext').click();},
+                  function(){document.getElementById('rutWkMPrev').click();});
+  }
 }
 function _rutWeekRender(r){
   var wk=RUT_WEEK_SEL;
@@ -553,7 +637,7 @@ function _rutWeekRender(r){
     var fo=document.getElementById('rutWkOv');
     if(fo){fo.classList.add('open');fo.addEventListener('click',function(e){if(e.target===fo)closeRutWeek();});}
   });
-  document.getElementById('rutWkClose').addEventListener('click',closeRutWeek);
+  document.getElementById('rutWkClose').addEventListener('click',function(){_rutWeekPick(r);});
   document.querySelectorAll('#rutWkDays .rut-day-btn').forEach(function(b){
     b.addEventListener('click',function(){b.classList.toggle('on');});
   });
