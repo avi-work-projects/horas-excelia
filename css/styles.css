@@ -2023,6 +2023,60 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .boda-tp-manual{display:flex;align-items:center;justify-content:center;gap:6px;font-size:.72rem;color:var(--text-muted)}
 .boda-tp-manual input{width:56px;text-align:center;font-family:var(--mono);font-size:.9rem;padding:5px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text)}
 
+/* ── Rutinas semanales ── */
+.ev-btn-rutinas:not(.active){background:rgba(96,165,250,.07);border-color:rgba(96,165,250,.25);color:rgba(96,165,250,.85)}
+.ev-btn-rutinas.active{background:rgba(96,165,250,.22) !important;border-color:#60a5fa !important;color:#93c5fd !important}
+[data-theme="light"] .ev-btn-rutinas:not(.active){background:rgba(37,99,235,.07);border-color:rgba(37,99,235,.28);color:#1d4ed8}
+[data-theme="light"] .ev-btn-rutinas.active{background:rgba(37,99,235,.16) !important;border-color:#2563eb !important;color:#1e3a8a !important}
+.rut-sec{display:flex;flex-direction:column;gap:8px}
+.rut-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;display:flex;flex-direction:column;gap:7px}
+.rut-card.susp{opacity:.6;border-style:dashed}
+.rut-card-hd{display:flex;align-items:center;gap:8px}
+.rut-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;border:1.5px solid rgba(0,0,0,.4)}
+.rut-name{flex:1;font-size:.85rem;font-weight:600;color:var(--text)}
+.rut-tag{font-size:.6rem;border-radius:8px;padding:1px 6px;white-space:nowrap}
+.rut-tag.susp{color:var(--c-orange);border:1px solid var(--c-orange)}
+.rut-days{display:flex;align-items:center;gap:3px}
+.rut-day{width:20px;height:20px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.58rem;color:var(--text-dim)}
+.rut-day.on{font-weight:700}
+.rut-hora{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--text-muted)}
+.rut-prox{display:flex;flex-wrap:wrap;gap:4px}
+.rut-prox-i{font-size:.62rem;color:var(--text-muted);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:2px 7px;cursor:pointer}
+.rut-prox-i.skip{text-decoration:line-through;color:var(--c-orange);border-color:var(--c-orange)}
+.rut-vacio{font-size:.62rem;color:var(--text-dim);font-style:italic}
+.rut-card-ft{display:flex;justify-content:space-between;font-size:.68rem;color:var(--text-muted);border-top:1px solid var(--border);padding-top:5px}
+.rut-pct{font-family:var(--mono);font-weight:600;color:var(--c-green)}
+.rut-add{width:100%}
+.rut-sug{display:flex;flex-direction:column;gap:6px}
+.rut-sug-btn{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px dashed var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-size:.8rem;cursor:pointer;text-align:left;font-family:var(--font)}
+.rut-sug-btn i{width:12px;height:12px;border-radius:50%;display:inline-block;flex-shrink:0}
+.rut-sug-btn span{margin-left:auto;font-size:.64rem;color:var(--text-dim);font-family:var(--mono)}
+.rut-days-pick{display:flex;gap:5px;margin-top:4px}
+.rut-day-btn{flex:1;padding:9px 0;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text-muted);font-size:.72rem;cursor:pointer;font-family:var(--font)}
+.rut-day-btn.on{border-color:var(--accent-bright);background:var(--accent-glow);color:var(--accent-bright);font-weight:700}
+.rut-susp-box{border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;background:var(--surface)}
+.rut-stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-top:8px}
+.rut-stat-line{font-size:.7rem;color:var(--text-muted);margin-top:4px}
+.rut-stat-line em{font-style:normal;color:var(--text-dim)}
+.rut-hist{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}
+.rut-hist-i{font-size:.6rem;font-family:var(--mono);padding:3px 6px;border-radius:6px;border:1px solid var(--c-green);background:rgba(52,211,153,.12);color:var(--c-green);cursor:pointer}
+.rut-hist-i.skip{border-color:var(--c-orange);background:rgba(251,146,60,.12);color:var(--c-orange);text-decoration:line-through}
+.rut-hist-lbl{font-size:.58rem;color:var(--text-dim);margin-top:4px}
+/* ── Lista "Todos": buscador, orden y borrado con pulsacion larga ── */
+.ev-list-tools{display:flex;flex-direction:column;gap:7px;padding-bottom:4px}
+.ev-search{display:flex;align-items:center;gap:6px;border:1.5px solid var(--border);background:var(--surface2);border-radius:14px;padding:0 10px}
+.ev-search-ico{font-size:.72rem;opacity:.6;flex-shrink:0}
+.ev-search input{flex:1;min-width:0;border:none;background:transparent;color:var(--text);font-size:.78rem;padding:8px 0;outline:none;font-family:var(--font);-webkit-appearance:none;appearance:none}
+.ev-search input::-webkit-search-cancel-button{display:none}
+.ev-search-x{border:none;background:transparent;color:var(--text-dim);font-size:1rem;cursor:pointer;padding:0 2px;line-height:1}
+.ev-sort-row{display:flex;gap:6px}
+.ev-sort-row .boda-chip{flex:1}
+.ev-list-count{font-size:.62rem;color:var(--text-dim);padding:2px 0 4px}
+.ev-list-hint{color:var(--text-dim);opacity:.35;font-size:.9rem;letter-spacing:-1px}
+.ev-list-item{-webkit-touch-callout:none}
+.ev-del-title{font-size:1rem;font-weight:600;text-align:center;color:var(--text);margin-top:4px}
+.ev-del-sub{font-size:.72rem;color:var(--text-dim);text-align:center;margin-bottom:6px}
+
 /* ── Diálogo: modo de importación (añadir vs reemplazar) ── */
 .imp-mode-ov{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
 .imp-mode-ov.open{opacity:1;pointer-events:auto}

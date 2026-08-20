@@ -69,7 +69,9 @@ var EV_QUAD_MONTH = new Date().getMonth();    // mes de inicio del bloque 4 mese
 var EV_TO_SUBTAB = 'puentes';  /* subpestana activa dentro de "Vacaciones Festivos" */
 var EV_LIST_SUBTAB = 'months'; // 'months' | 'types'
 var EV_TYPES_FILTER = 'all';   // 'all' | nombre de tipo
-var EV_TYPES_PAST = true;      // excluir eventos pasados en Por Tipos (por defecto)
+var EV_TYPES_PAST = true;
+var EV_LIST_SORT = 'fecha';     /* 'fecha' | 'fecha-desc' | 'categoria' */
+var EV_LIST_SEARCH = '';        /* busqueda por titulo o descripcion en "Todos" */      // excluir eventos pasados en Por Tipos (por defecto)
 var EV_COLORS = ['#38bdf8','#1d4ed8','#34d399','#fb923c','#ff6b6b','#c084fc','#a3e635'];
 var EVENTS = (function(){
   try{
@@ -184,7 +186,11 @@ function eventOccursOn(ev,ds){
 }
 
 function getEventsOn(ds){
-  return EVENTS.filter(function(ev){return eventOccursOn(ev,ds);});
+  var out=EVENTS.filter(function(ev){return eventOccursOn(ev,ds);});
+  /* Las rutinas no se guardan como eventos: generan sesiones "virtuales" que
+     se cuelan aqui para que TODOS los calendarios las pinten sin cambios. */
+  if(typeof rutEventsOn==='function')out=out.concat(rutEventsOn(ds));
+  return out;
 }
 
 /* ── Identidad de un evento para IMPORTAR sin duplicar ────────────
@@ -264,6 +270,7 @@ function evDayLimitExceeded(newEv,excludeId){
       if(excludeId&&EVENTS[j].id===excludeId)continue;
       if(eventOccursOn(EVENTS[j],days[i]))n++;
     }
+    if(typeof rutEventsOn==='function')n+=rutEventsOn(days[i]).length;
     if(n>=EV_MAX_DAY_EVENTS)return days[i];
   }
   return null;
@@ -580,9 +587,50 @@ function renderEvListItem(ev){
   if(ev.note)h+='<div class="ev-list-note">'+escHtml(ev.note)+'</div>';
   h+='<div class="ev-list-meta">'+getEvType(ev)+' \u00b7 '+dateStr+repeatStr+'</div>';
   h+='</div>';
-  h+='<div class="ev-list-actions"><button class="ev-list-btn del" data-id="'+ev.id+'">&#215;</button></div>';
+  h+='<div class="ev-list-actions"><span class="ev-list-hint">&#8942;</span></div>';
   h+='</div>';
   return h;
+}
+
+/* ── Borrar un evento: hoja de confirmacion (se llega con pulsacion larga) ── */
+function openEvDeleteSheet(ev){
+  var old=document.getElementById('evDelWrap');if(old)old.remove();
+  var h='<div class="ev-detail-overlay" id="evDelOv"><div class="ev-detail-sheet">';
+  h+='<div class="ev-detail-handle"></div>';
+  h+='<div class="ev-del-title">'+escHtml(ev.title)+'</div>';
+  h+='<div class="ev-del-sub">'+getEvType(ev)+' \u00b7 '+_fmtDayEs(ev.start)+'</div>';
+  h+='<div class="ev-detail-actions">';
+  h+='<button class="ev-btn" id="evDelEdit">&#9998; Editar</button>';
+  h+='<button class="ev-btn danger" id="evDelGo">&#128465; Eliminar</button>';
+  h+='</div></div></div>';
+  var ov=document.getElementById('eventsOverlay');
+  var wrap=document.createElement('div');wrap.id='evDelWrap';wrap.innerHTML=h;
+  ov.appendChild(wrap);
+  requestAnimationFrame(function(){
+    var fo=document.getElementById('evDelOv');
+    if(fo){fo.classList.add('open');fo.addEventListener('click',function(e){if(e.target===fo)closeEvDeleteSheet();});}
+  });
+  document.getElementById('evDelEdit').addEventListener('click',function(){
+    closeEvDeleteSheet();setTimeout(function(){openEvForm(ev);},310);
+  });
+  document.getElementById('evDelGo').addEventListener('click',function(){
+    var idx=-1;
+    for(var i=0;i<EVENTS.length;i++)if(EVENTS[i].id===ev.id){idx=i;break;}
+    var copia=EVENTS[idx];
+    EVENTS=EVENTS.filter(function(e){return e.id!==ev.id;});
+    saveEvents();updateEventsBtn();
+    closeEvDeleteSheet();
+    setTimeout(function(){refreshEvents();},310);
+    showToast('Evento eliminado','success',function(){
+      if(idx>=0)EVENTS.splice(idx,0,copia);else EVENTS.push(copia);
+      saveEvents();updateEventsBtn();refreshEvents();
+    });
+  });
+}
+function closeEvDeleteSheet(){
+  var fo=document.getElementById('evDelOv');
+  if(fo)fo.classList.remove('open');
+  setTimeout(function(){var w=document.getElementById('evDelWrap');if(w)w.remove();},300);
 }
 
 /* ── Próxima ocurrencia de un evento ────────────────────── */
@@ -1003,36 +1051,71 @@ function renderEvQuad(){
 /* ── Render: lista de eventos por tipos ─────────────────── */
 function renderEvByTypes(){
   var today=new Date();today.setHours(0,0,0,0);
-  var typeOrder=['Viaje','Asturias','Rec. Gestiones','Plan/Quedada','Otros'];
-  var h='<div class="ev-types-controls">';
+  var typeOrder=['Viaje','Asturias','Casa Rural','Rec. Gestiones','Plan/Quedada','Ensayos boda','Otros'];
+  /* Controles: buscador + orden + filtros */
+  var h='<div class="ev-list-tools">';
+  h+='<div class="ev-search"><span class="ev-search-ico">&#128269;</span>'
+    +'<input type="search" id="evListSearch" placeholder="Buscar por título o descripción" value="'+escHtml(EV_LIST_SEARCH)+'">'
+    +(EV_LIST_SEARCH?'<button class="ev-search-x" id="evListSearchX">&#215;</button>':'')+'</div>';
+  h+='<div class="ev-sort-row">';
+  [['fecha','Fecha ↑'],['fecha-desc','Fecha ↓'],['categoria','Categoría']].forEach(function(o){
+    h+='<button class="boda-chip'+(EV_LIST_SORT===o[0]?' active':'')+'" data-sort="'+o[0]+'">'+o[1]+'</button>';
+  });
+  h+='</div>';
+  h+='<div class="ev-types-controls">';
   h+='<label class="ev-types-past-label"><input type="checkbox" id="evTypesPast"'+(EV_TYPES_PAST?' checked':'')+'> Excluir pasados</label>';
   h+='<select class="ev-types-select" id="evTypesFilter">';
   h+='<option value="all"'+(EV_TYPES_FILTER==='all'?' selected':'')+'>Todos los tipos</option>';
   typeOrder.forEach(function(t){
     h+='<option value="'+escHtml(t)+'"'+(EV_TYPES_FILTER===t?' selected':'')+'>'+escHtml(t)+'</option>';
   });
-  h+='</select></div>';
+  h+='</select></div></div>';
   if(!EVENTS.length)return h+'<div class="sy-note">No hay eventos. Pulsa &quot;+ A\u00f1adir&quot; para crear uno.</div>';
-  var byType={};typeOrder.forEach(function(t){byType[t]=[];});
-  EVENTS.forEach(function(ev){
-    if(ev.id&&ev.id.indexOf('ev-bday-vip-')===0)return; /* VIP birthdays excluded from Todos */
+  /* Filtrado comun */
+  var q=EV_LIST_SEARCH.trim().toLowerCase();
+  function coincide(ev){
+    if(!q)return true;
+    var txt=(ev.title||'')+' '+(ev.note||'');
+    if(ev.dayNotes)for(var k in ev.dayNotes)txt+=' '+ev.dayNotes[k];
+    return txt.toLowerCase().indexOf(q)!==-1;
+  }
+  var lista=EVENTS.filter(function(ev){
+    if(ev.id&&ev.id.indexOf('ev-bday-vip-')===0)return false;  /* los VIP tienen su ventana */
     var evEnd=ev.end?new Date(ev.end+'T00:00:00'):new Date(ev.start+'T00:00:00');
-    if(EV_TYPES_PAST&&!ev.repeat&&evEnd<today)return;
-    var type=getEvType(ev);
-    (byType[type]||byType['Otros']).push(ev);
+    if(EV_TYPES_PAST&&!ev.repeat&&evEnd<today)return false;
+    if(EV_TYPES_FILTER!=='all'&&getEvType(ev)!==EV_TYPES_FILTER)return false;
+    return coincide(ev);
   });
-  var typesToShow=EV_TYPES_FILTER==='all'?typeOrder:[EV_TYPES_FILTER];
-  var anyShown=false;
-  typesToShow.forEach(function(type){
-    var list=byType[type]||[];
-    if(!list.length)return;
-    anyShown=true;
-    list.sort(function(a,b){return a.start<b.start?-1:1;});
-    h+='<div class="sy-section"><div class="bday-month-hdr">'+escHtml(type)+'</div>';
-    list.forEach(function(ev){h+=renderEvListItem(ev);});
+  if(!lista.length){
+    return h+'<div class="sy-note">'+(q?('Sin resultados para "'+escHtml(EV_LIST_SEARCH)+'".')
+      :('No hay eventos'+(EV_TYPES_PAST?' futuros':'')+' de este tipo.'))+'</div>';
+  }
+  h+='<div class="ev-list-count">'+lista.length+' evento'+(lista.length>1?'s':'')+'</div>';
+  if(EV_LIST_SORT==='categoria'){
+    /* Agrupado por categoria, como estaba */
+    var byType={};
+    lista.forEach(function(ev){
+      var t=getEvType(ev);
+      (byType[t]=byType[t]||[]).push(ev);
+    });
+    typeOrder.forEach(function(type){
+      var l=byType[type];
+      if(!l||!l.length)return;
+      l.sort(function(a,b){return a.start<b.start?-1:1;});
+      h+='<div class="sy-section"><div class="bday-month-hdr">'+escHtml(type)+'</div>';
+      l.forEach(function(ev){h+=renderEvListItem(ev);});
+      h+='</div>';
+    });
+  } else {
+    var desc=(EV_LIST_SORT==='fecha-desc');
+    lista.sort(function(a,b){
+      if(a.start===b.start)return 0;
+      return (a.start<b.start?-1:1)*(desc?-1:1);
+    });
+    h+='<div class="sy-section">';
+    lista.forEach(function(ev){h+=renderEvListItem(ev);});
     h+='</div>';
-  });
-  if(!anyShown)h+='<div class="sy-note">No hay eventos'+(EV_TYPES_PAST?' futuros':'')+' de este tipo.</div>';
+  }
   return h;
 }
 
@@ -1148,6 +1231,12 @@ function renderEvWeek(){
         var _ic=_isVip?'\u2b50 ':'';
         h+='<div class="ev-wk-chip" data-id="'+ev.id+'" style="border-left:3px solid '+_dc+';background:'+hexA(_dc,0.95)+'">';
         h+='<span class="ev-wk-chip-title">'+_ic+_t+'</span>';
+        /* Sesion de rutina: hora de inicio y fin junto al nombre */
+        if(ev._rut&&ev._rutTime){
+          h+='<span class="ev-wk-chip-meta">'+escHtml(ev._rutTime)
+            +'–'+escHtml(rutFin(ev._rutTime,ev._rut.dur))
+            +(ev._rutSkip?' · saltada':'')+'</span>';
+        }
         /* Ensayos de boda: hora y sala junto al nombre */
         if(getEvType(ev)==='Ensayos boda'&&typeof bodaPlaceOf==='function'){
           var _b=ev.boda||{};
@@ -1172,8 +1261,9 @@ function renderEvContent(){
   h+='<div class="ev-hdr-sub">';
   // Zona A: Próximos + Todos
   h+='<div class="ev-view-zone ev-zone-a">';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='upcoming'?' active':'')+'" id="evViewUpcoming">Pr\u00f3ximos</button>';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='months'?' active':'')+'" id="evViewMonths">Todos</button>';
+  var _upActive=(EV_VIEW==='upcoming'||EV_VIEW==='months');
+  h+='<button class="ev-view-toggle'+(_upActive?' active':'')+'" id="evViewUpcoming">Pr\u00f3ximos</button>';
+  h+='<button class="ev-view-toggle ev-btn-rutinas'+(EV_VIEW==='rutinas'?' active':'')+'" id="evViewRutinas">Rutinas</button>';
   h+='</div>';
   // Zona B: Calendarios visuales (1 mes + Semanal)
   h+='<div class="ev-view-zone ev-zone-b">';
@@ -1205,7 +1295,9 @@ function renderEvContent(){
     h+='<button class="ev-bright-btn ev-bright-mid'+(EV_BRIGHT_PAST?' on':'')+'" id="evBright">\uD83D\uDCA1</button>';
     h+='<div class="sy-hdr-right"><button class="today-btn" id="evToday" style="font-size:.65rem;padding:4px 10px">Hoy</button></div>';
   } else if(EV_VIEW==='months'){
-    h+='<div class="sy-year-nav"><div class="sy-year">Eventos</div></div>';
+    h+='<div class="sy-year-nav"><div class="sy-year">Próximos</div></div>';
+  } else if(EV_VIEW==='rutinas'){
+    h+='<div class="sy-year-nav"><div class="sy-year">Rutinas</div></div>';
   } else if(EV_VIEW==='bodas'){
     h+='<div class="sy-year-nav"><div class="sy-year">Bodas</div></div>';
   } else if(EV_VIEW==='puentes'||EV_VIEW==='time-off'){
@@ -1269,6 +1361,13 @@ function renderEvContent(){
     h+='</div>';
     h+='</div>';
   }
+  if(EV_VIEW==='upcoming'||EV_VIEW==='months'){
+    /* Pestana "Proximos" con dos subpestanas: la agenda corta y la lista completa */
+    h+='<div class="econ-sub-tabs">';
+    h+='<button class="econ-sub-tab'+(EV_VIEW==='upcoming'?' active':'')+'" id="evSubUpcoming">Próximos</button>';
+    h+='<button class="econ-sub-tab'+(EV_VIEW==='months'?' active':'')+'" id="evSubTodos">Todos</button>';
+    h+='</div>';
+  }
   if(EV_VIEW==='puentes'||EV_VIEW==='time-off'){
     /* Pestana unica "Vacaciones Festivos" con dos subpestanas */
     h+='<div class="econ-sub-tabs">';
@@ -1282,10 +1381,11 @@ function renderEvContent(){
   else if(EV_VIEW==='annual')h+=renderEvAnnual();
   else if(EV_VIEW==='quad')h+=renderEvQuad();
   else if(EV_VIEW==='bodas')h+=renderBodasBody();
+  else if(EV_VIEW==='rutinas')h+=renderRutinasBody();
   else if(EV_VIEW==='puentes')h+=renderSummaryPuentesBody(EV_YEAR);
   else if(EV_VIEW==='time-off')h+=renderSummaryTimeOffBody(EV_YEAR);
   else h+=renderEvMonthsView();
-  if(EV_VIEW!=='puentes'&&EV_VIEW!=='time-off'&&EV_VIEW!=='bodas'){
+  if(EV_VIEW!=='puentes'&&EV_VIEW!=='time-off'&&EV_VIEW!=='bodas'&&EV_VIEW!=='rutinas'){
     h+='<div class="ev-io-row">';
     var _isPickView=EV_VIEW==='annual'||EV_VIEW==='quad';
     var addLabel=_isPickView&&EV_EDIT_MODE?'&#10006; Cancelar':'+ A\u00f1adir';
@@ -2296,11 +2396,19 @@ function bindEvEvents(){
   if(brightBtn)brightBtn.addEventListener('click',function(){
     EV_BRIGHT_PAST=!EV_BRIGHT_PAST;refreshEvents();
   });
-  document.getElementById('evViewUpcoming').addEventListener('click',function(){_switchEvView('upcoming');refreshEvents();});
+  document.getElementById('evViewUpcoming').addEventListener('click',function(){
+    _switchEvView(EV_VIEW==='months'?'months':'upcoming');refreshEvents();
+  });
   document.getElementById('evViewCal').addEventListener('click',function(){_switchEvView('cal');EV_PREV_VIEW=null;refreshEvents();});
   document.getElementById('evViewQuad').addEventListener('click',function(){_switchEvView('quad');refreshEvents();});
   document.getElementById('evViewAnnual').addEventListener('click',function(){_switchEvView('annual');refreshEvents();});
-  document.getElementById('evViewMonths').addEventListener('click',function(){_switchEvView('months');refreshEvents();});
+  var _rutBtn=document.getElementById('evViewRutinas');
+  if(_rutBtn)_rutBtn.addEventListener('click',function(){_switchEvView('rutinas');refreshEvents();});
+  var _subUp=document.getElementById('evSubUpcoming');
+  if(_subUp)_subUp.addEventListener('click',function(){_switchEvView('upcoming');refreshEvents(false);});
+  var _subTd=document.getElementById('evSubTodos');
+  if(_subTd)_subTd.addEventListener('click',function(){_switchEvView('months');refreshEvents(false);});
+  if(EV_VIEW==='rutinas'&&typeof bindRutinasEvents==='function')bindRutinasEvents();
   var _bodasBtn=document.getElementById('evViewBodas');
   if(_bodasBtn)_bodasBtn.addEventListener('click',function(){_switchEvView('bodas');refreshEvents();});
   document.getElementById('evViewTimeOff').addEventListener('click',function(){
@@ -2370,7 +2478,9 @@ function bindEvEvents(){
       var id=el.dataset.id;var ev=null;
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
       EV_EDIT_DS=el.dataset.ds||null;
-      if(ev)openEvDetail(ev);
+      if(ev){openEvDetail(ev);return;}
+      var _rs2=(typeof rutEventFromId==='function')?rutEventFromId(id):null;
+      if(_rs2)openRutSesion(_rs2.rutina,_rs2.ds);
     });
   });
   // Click en mes del calendario anual/quad: navegar o seleccionar día (modo añadir)
@@ -2398,7 +2508,10 @@ function bindEvEvents(){
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
       var _cell=badge.closest('[data-ds]');
       EV_EDIT_DS=badge.dataset.ds||(_cell?_cell.dataset.ds:null);
-      if(ev)openEvDetail(ev);
+      if(ev){openEvDetail(ev);return;}
+      /* Sesion de una rutina (evento virtual) */
+      var _rs=(typeof rutEventFromId==='function')?rutEventFromId(id):null;
+      if(_rs)openRutSesion(_rs.rutina,_rs.ds);
     });
   });
   // Click en celda vacía → crear evento con fecha
@@ -2430,10 +2543,29 @@ function bindEvEvents(){
   document.querySelectorAll('.ev-list-item').forEach(function(item){
     item.addEventListener('click',function(e){
       if(e.target.classList.contains('ev-list-btn'))return;
+      /* Si venimos de una pulsacion larga, ya se abrio la hoja de borrado */
+      if(item._lpFired&&Date.now()-item._lpFired<800)return;
       var id=item.dataset.id;var ev=null;
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
       if(ev)openEvDetail(ev);
     });
+  });
+  var _srch=document.getElementById('evListSearch');
+  if(_srch){
+    _srch.addEventListener('input',function(){
+      EV_LIST_SEARCH=this.value;
+      clearTimeout(window._evSrchT);
+      window._evSrchT=setTimeout(function(){
+        refreshEvents();
+        var el=document.getElementById('evListSearch');
+        if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length);}
+      },250);
+    });
+  }
+  var _srchX=document.getElementById('evListSearchX');
+  if(_srchX)_srchX.addEventListener('click',function(){EV_LIST_SEARCH='';refreshEvents();});
+  document.querySelectorAll('.ev-sort-row .boda-chip[data-sort]').forEach(function(b){
+    b.addEventListener('click',function(){EV_LIST_SORT=b.dataset.sort;refreshEvents();});
   });
   var pastChk=document.getElementById('evTypesPast');
   if(pastChk)pastChk.addEventListener('change',function(){EV_TYPES_PAST=this.checked;refreshEvents();});
@@ -2454,7 +2586,9 @@ function bindEvEvents(){
       e.stopPropagation();
       var id=el.dataset.id;var ev=null;
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
-      if(ev)openEvDetail(ev);
+      if(ev){openEvDetail(ev);return;}
+      var _rs3=(typeof rutEventFromId==='function')?rutEventFromId(id):null;
+      if(_rs3)openRutSesion(_rs3.rutina,_rs3.ds);
     });
   });
   // Click en celda de día (fecha o zona de chips) en Agenda Semanal → crear evento prefilled
@@ -2465,13 +2599,14 @@ function bindEvEvents(){
       if(ds)openEvForm(null,ds);
     });
   });
-  document.querySelectorAll('.ev-list-btn.del').forEach(function(btn){
-    btn.addEventListener('click',function(e){
-      e.stopPropagation();
-      var id=btn.dataset.id;
-      EVENTS=EVENTS.filter(function(e){return e.id!==id;});
-      saveEvents();updateEventsBtn();refreshEvents();
-      showToast('Evento eliminado','success');
+  /* Borrar un evento de la lista: solo con PULSACION LARGA, y con deshacer */
+  document.querySelectorAll('.ev-list-item[data-id]').forEach(function(item){
+    if(typeof addLongPress!=='function')return;
+    addLongPress(item,function(){
+      var id=item.dataset.id;
+      var ev=null;
+      for(var i=0;i<EVENTS.length;i++)if(EVENTS[i].id===id){ev=EVENTS[i];break;}
+      if(ev)openEvDeleteSheet(ev);
     });
   });
   var evExportEl=document.getElementById('evExport');
