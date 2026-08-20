@@ -152,6 +152,12 @@ function getEvDisplayColor(ev){
      cada dia, asi que el matiz por hash las pintaria de un color distinto
      cada sesion. */
   if(getEvType(ev)==='Rutina')return ev.color;
+  /* Una clase de boda se tine con el color de SU pareja: el morado del tipo
+     solo se usa mientras no hay pareja asignada. */
+  if(getEvType(ev)==='Ensayos boda'&&ev.boda&&ev.boda.coupleId&&typeof bodaCouple==='function'){
+    var _bc=bodaCouple(ev.boda.coupleId);
+    if(_bc&&_bc.color)return _bc.color;
+  }
   if(ev.color==='#38bdf8'||ev.color==='#6c8cff')return evTravelColor(ev.id);
   return ev.color;
 }

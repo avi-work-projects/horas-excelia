@@ -207,8 +207,8 @@ function renderSummaryWorkBody(year){
 
     // Checkboxes quitar festivos/vacaciones (justo encima de Días trabajados)
     h+='<div class="excl-row">';
-    h+='<label class="excl-item" style="color:var(--festivo)"><input type="checkbox" class="excl-chk" id="syExclFestChk" style="accent-color:var(--festivo)"'+(EXCL_FEST?' checked':'')+'>&#160;Quitar festivos</label>';
-    h+='<label class="excl-item" style="color:var(--vacaciones)"><input type="checkbox" class="excl-chk" id="syExclVacChk" style="accent-color:var(--vacaciones)"'+(EXCL_VAC?' checked':'')+'>&#160;Quitar vacaciones</label>';
+    h+='<label class="excl-item" style="color:var(--festivo)"><input type="checkbox" class="excl-chk" id="syExclFestChk" style="--chk:var(--festivo)"'+(EXCL_FEST?' checked':'')+'>&#160;Quitar festivos</label>';
+    h+='<label class="excl-item" style="color:var(--vacaciones)"><input type="checkbox" class="excl-chk" id="syExclVacChk" style="--chk:var(--vacaciones)"'+(EXCL_VAC?' checked':'')+'>&#160;Quitar vacaciones</label>';
     h+='</div>';
 
     // Dias trabajados (table)

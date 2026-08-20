@@ -325,8 +325,25 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .vac-config-input{font-family:var(--mono);font-size:.95rem;font-weight:600;color:var(--text);background:var(--surface2);border:1px solid var(--accent);border-radius:var(--radius-sm);padding:5px 10px;width:64px;text-align:center;outline:none}
 /* Quitar festivos/vacaciones checkboxes */
 .excl-row{display:flex;gap:20px;padding:4px 0}
-.excl-item{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--text-muted);cursor:pointer;-webkit-user-select:none;user-select:none}
-.excl-item input{cursor:pointer;accent-color:var(--accent);width:15px;height:15px;flex-shrink:0}
+/* ── Checkbox único de toda la app ──────────────────────────────────
+   Antes cada pantalla tenía el suyo (accent-color y tamaños distintos, del
+   nativo feo al de 18px). Ahora todos son este: caja redondeada que se rellena
+   al marcarse. El color se cambia con --chk en el propio input. */
+input[type="checkbox"]{
+  -webkit-appearance:none;appearance:none;flex-shrink:0;margin:0;
+  width:18px;height:18px;border-radius:6px;position:relative;cursor:pointer;
+  border:1.5px solid var(--border-light);background:var(--surface2);
+  transition:background .15s,border-color .15s,transform .1s;
+}
+input[type="checkbox"]:checked{background:var(--chk,var(--accent));border-color:var(--chk,var(--accent))}
+input[type="checkbox"]:checked::after{
+  content:'';position:absolute;left:5px;top:1.5px;width:4px;height:9px;
+  border:solid #fff;border-width:0 2.2px 2.2px 0;transform:rotate(43deg);
+}
+input[type="checkbox"]:active{transform:scale(.92)}
+input[type="checkbox"]:disabled{opacity:.4;cursor:default}
+[data-theme="light"] input[type="checkbox"]{background:#fff;border-color:#c3c7d4}
+.excl-item{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--text-muted);cursor:pointer;-webkit-user-select:none;user-select:none}
 /* Month summary breakdown */
 .ms-breakdown{font-size:.72rem;color:var(--text-dim);margin-top:2px;line-height:1.6}
 .ms-sep{color:var(--border-light)}
@@ -1017,13 +1034,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .bday-week-hdr{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:3px}
 .bday-week-hdr div{text-align:center;font-size:.62rem;color:var(--text-dim);text-transform:uppercase;padding:6px 0;font-weight:600}
 .bday-week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:2px}
-.bday-cell{min-height:58px;padding:6px 4px 4px;background:var(--surface);border-radius:var(--radius-sm);display:flex;flex-direction:column;gap:2px;overflow:hidden;cursor:pointer;transition:background .12s}
+.bday-cell{min-height:86px;padding:5px 3px 4px;background:var(--surface);border-radius:var(--radius-sm);display:flex;flex-direction:column;gap:2px;overflow:hidden;cursor:pointer;transition:background .12s}
 .bday-cell.out-m{opacity:.3}
 .bday-cell.past-cal-day{opacity:.45}
 .bday-cell.today-bday{border:1.5px solid var(--accent)}
 .bday-cell.today-bday .bday-num{color:var(--accent-bright);font-weight:700}
 .bday-num{font-size:.72rem;font-family:var(--mono);line-height:1}
-.bday-badge{font-size:.56rem;border-radius:3px;padding:2px 4px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border:1.5px solid currentColor;font-weight:500;cursor:pointer;transition:opacity .1s}
+/* Cabe el nombre entero, hasta en tres lineas */
+.bday-badge{font-size:.5rem;letter-spacing:-.02em;border-radius:4px;padding:2px 2px;line-height:1.22;white-space:normal;overflow-wrap:anywhere;hyphens:auto;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;border:1.5px solid currentColor;font-weight:500;cursor:pointer;transition:opacity .1s;text-align:center}
 .bday-badge:active{opacity:.7}
 .bday-badge.bday-badge-vip{box-shadow:0 0 0 1.5px #fbbf24,0 0 6px rgba(251,191,36,.5);font-weight:700}
 .bday-month-hdr{font-size:.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:10px 0 6px;border-bottom:1px solid var(--border);margin-bottom:6px}
@@ -1118,6 +1136,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-upcoming-item{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .12s}
 .ev-upcoming-item:active{background:var(--surface3)}
 .ev-upcoming-item.ev-upcoming-today{border-color:var(--sent-border);background:rgba(90,224,136,.06)}
+/* Marcador de la tarjeta de Proximos: la forma real del evento */
+.ev-up-mark{width:20px;height:20px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.ev-annual-marker.ev-marker-up,.ev-annual-vip-star-svg.ev-marker-up,.ev-rut-mark.ev-marker-up{width:19px;height:19px}
+.ev-up-bar{width:15px;height:8px;border-radius:3px;display:block;border:1px solid rgba(0,0,0,.35)}
+.ev-up-filters{padding:2px 2px 8px}
 .ev-upcoming-color{width:14px;height:14px;border-radius:3px;flex-shrink:0}
 .ev-upcoming-info{flex:1;min-width:0}
 .ev-upcoming-title{font-size:.88rem;font-weight:600;word-wrap:break-word;overflow-wrap:break-word;line-height:1.2}
@@ -1199,7 +1222,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-color-preview-hex{margin-left:auto;font-family:var(--mono);font-size:.72rem;color:var(--text-dim)}
 .ev-color-lock-row{margin-top:6px;padding-top:6px;border-top:1px solid var(--border)}
 .ev-color-lock-label{display:flex;align-items:center;gap:6px;font-size:.76rem;color:var(--text-muted);cursor:pointer}
-.ev-color-lock-cb{width:14px;height:14px;accent-color:var(--accent)}
+.ev-color-lock-cb{width:16px;height:16px}
 /* Detail color picker toggle */
 .ev-detail-color-btn{padding:4px 10px;font-size:.75rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);cursor:pointer;color:var(--text-muted);transition:border-color .15s}
 .ev-detail-color-btn:hover{border-color:var(--accent)}
@@ -1681,7 +1704,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-date-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .ev-toggle-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
 .ev-toggle-label{font-size:.82rem;color:var(--text-muted);flex:1}
-.ev-checkbox{width:18px;height:18px;cursor:pointer;accent-color:var(--accent)}
+.ev-checkbox{cursor:pointer}
 .ev-repeat-select{font-family:var(--font);font-size:.85rem;padding:9px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text);outline:none;width:100%}
 .ev-weekday-row{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
 .ev-wd-btn{font-size:.7rem;padding:5px 8px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;-webkit-user-select:none;user-select:none;transition:all .12s}
@@ -1694,7 +1717,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-edit-orange:active{background:#f97316 !important}
 .ev-btn.cancel{background:var(--surface2);color:var(--text-muted);border:1px solid var(--border)}
 .ev-btn.cancel:active{background:var(--surface3)}
-.ev-btn.danger{background:#2a1a1a;color:var(--c-red);border:1px solid #3a2a2a}
+/* Relleno, para que haga pareja con el naranja de "Editar evento" */
+.ev-btn.danger{background:#c0392f;color:#fff;border:1px solid #c0392f}
+.ev-btn.danger:active{background:#9d2c24}
+[data-theme="light"] .ev-btn.danger{background:#d64541;border-color:#d64541}
 .ev-io-row{display:flex;gap:8px;margin-top:8px}
 .ev-io-btn{flex:1;font-size:.75rem;padding:9px 8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;text-align:center;transition:all .15s}
 .ev-io-btn:active{background:var(--surface3)}
@@ -1814,7 +1840,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .alarm-past-btn-ok{flex:1;padding:7px 4px;border:1px solid var(--accent);border-radius:6px;background:var(--accent-glow);color:var(--accent-bright);font-size:.72rem;font-weight:600;cursor:pointer}
 .alarm-past-btn-cancel{flex:1;padding:7px 4px;border:1px solid var(--border);border-radius:6px;background:none;color:var(--text-muted);font-size:.72rem;cursor:pointer}
 .alarm-macro-row{display:flex;align-items:center;gap:8px;padding:5px 12px;font-size:.74rem;color:var(--text-muted);border-top:1px solid var(--border);cursor:pointer}
-.alarm-macro-row input[type=checkbox]{accent-color:var(--accent);width:14px;height:14px;cursor:pointer;flex-shrink:0}
+.alarm-macro-row input[type=checkbox]{width:16px;height:16px}
 .alarm-macro-url{display:block;width:calc(100% - 24px);margin:0 12px 4px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text);font-size:.68rem;font-family:var(--mono);overflow:hidden;text-overflow:ellipsis}
 .alarm-macro-url::placeholder{color:var(--text-muted);opacity:.6}
 .alarm-macro-url:disabled{opacity:.35;cursor:not-allowed}
@@ -1898,8 +1924,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .hbar-val{width:28px;text-align:right;font-family:var(--mono);font-size:.66rem;color:var(--text)}
 .boda-mode-row{display:flex;gap:6px}
 .boda-mode-btn{flex:1;font-size:.72rem;padding:6px 10px;border-radius:12px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s}
-.boda-mode-btn.active{border-color:#8b5e34;background:rgba(139,94,52,.2);color:#e0b088;font-weight:600}
-[data-theme="light"] .boda-mode-btn.active{background:#8b5e34;border-color:#6d4826;color:#fff}
+.boda-mode-btn.active{border-color:#b0714a;background:rgba(176,113,74,.16);color:#e8bd95;font-weight:600}
+/* El marron macizo quedaba demasiado oscuro: ahora es un tinte suave */
+[data-theme="light"] .boda-mode-btn.active{background:rgba(176,113,74,.15);border-color:#b0714a;color:#7a5230}
 .boda-summary{display:flex;gap:8px}
 .boda-sum-item{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 4px;text-align:center;display:flex;flex-direction:column}
 .boda-sum-item b{font-size:1.1rem;color:var(--text)}
@@ -1937,8 +1964,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .boda-chips{display:flex;gap:6px;flex-wrap:wrap}
 .boda-chip{flex:1;min-width:0;font-size:.68rem;padding:7px 8px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;white-space:nowrap;text-align:center}
 .boda-chip b{font-family:var(--mono);font-size:.66rem;opacity:.8;margin-left:3px}
-.boda-chip.active{border-color:#8b5e34;background:rgba(139,94,52,.22);color:#e0b088;font-weight:600}
-[data-theme="light"] .boda-chip.active{background:#8b5e34;border-color:#6d4826;color:#fff}
+.boda-chip.active{border-color:#b0714a;background:rgba(176,113,74,.17);color:#e8bd95;font-weight:600}
+[data-theme="light"] .boda-chip.active{background:rgba(176,113,74,.16);border-color:#b0714a;color:#7a5230}
 .boda-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;display:flex;flex-direction:column;gap:6px}
 .boda-card-tap{cursor:pointer;transition:border-color .12s}
 .boda-card-tap:active{border-color:var(--accent)}
@@ -2064,10 +2091,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .boda-tp-manual input{width:56px;text-align:center;font-family:var(--mono);font-size:.9rem;padding:5px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text)}
 
 /* ── Rutinas semanales ── */
-.ev-btn-rutinas:not(.active){background:rgba(96,165,250,.07);border-color:rgba(96,165,250,.25);color:rgba(96,165,250,.85)}
-.ev-btn-rutinas.active{background:rgba(96,165,250,.22) !important;border-color:#60a5fa !important;color:#93c5fd !important}
-[data-theme="light"] .ev-btn-rutinas:not(.active){background:rgba(37,99,235,.07);border-color:rgba(37,99,235,.28);color:#1d4ed8}
-[data-theme="light"] .ev-btn-rutinas.active{background:rgba(37,99,235,.16) !important;border-color:#2563eb !important;color:#1e3a8a !important}
+/* Negro en tema claro; en oscuro el negro no se veria, asi que va su
+   equivalente neutro claro (mismo papel: el color sin color). */
+.ev-btn-rutinas:not(.active){background:rgba(226,232,240,.07);border-color:rgba(226,232,240,.28);color:#c3c8d4}
+.ev-btn-rutinas.active{background:rgba(226,232,240,.2) !important;border-color:#e2e8f0 !important;color:#f4f6fa !important}
+[data-theme="light"] .ev-btn-rutinas:not(.active){background:rgba(17,24,39,.05);border-color:rgba(17,24,39,.32);color:#1f2937}
+[data-theme="light"] .ev-btn-rutinas.active{background:#1f2937 !important;border-color:#111827 !important;color:#fff !important}
 /* Selector de icono de rutina */
 .rut-icon-row{display:flex;gap:6px}
 .rut-icon-opt{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 2px 5px;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;color:var(--text-muted)}
