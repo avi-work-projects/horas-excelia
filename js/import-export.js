@@ -397,6 +397,9 @@ document.getElementById('exportAllBtn').addEventListener('click',function(){
     birthdays:BDAYS,events:EVENTS,
     bodas:typeof BODA_COUPLES!=='undefined'?BODA_COUPLES:null,
     bodasClosed:typeof BODA_CLOSED!=='undefined'?BODA_CLOSED:null,
+    rutinas:typeof RUTINAS!=='undefined'?RUTINAS:null,
+    bdayAlarmCount:typeof BDAY_ALARM_COUNT!=='undefined'?BDAY_ALARM_COUNT:null,
+    gastosToggles:(function(){try{return JSON.parse(localStorage.getItem('excelia-gastos-tgl-v1'));}catch(e){return null;}})(),
     alarms:typeof ALARMS!=='undefined'?ALARMS:[],
     fiscal:typeof FISCAL!=='undefined'?FISCAL:null,
     gastos:typeof GASTOS_ITEMS!=='undefined'?GASTOS_ITEMS:null,
@@ -462,6 +465,20 @@ function _applyFullImport(d,mode){
       if(d.bodas&&Array.isArray(d.bodas)&&typeof saveBodas==='function'){BODA_COUPLES=merge?_mergeList(BODA_COUPLES,d.bodas,_keyId,_sigCouple):d.bodas;saveBodas();}
       if(d.bodasClosed&&typeof BODA_CLOSED!=='undefined'&&typeof saveBodaClosed==='function'){
         BODA_CLOSED=merge?_mergeMap(BODA_CLOSED,d.bodasClosed):d.bodasClosed;saveBodaClosed();}
+      /* Rutinas semanales: se fusionan por id, con el nombre como firma */
+      if(d.rutinas&&Array.isArray(d.rutinas)&&typeof saveRutinas==='function'){
+        RUTINAS=merge?_mergeList(RUTINAS,d.rutinas,_keyId,function(r){return String(r&&r.name||'').trim().toLowerCase();}):d.rutinas;
+        saveRutinas();}
+      if(d.bdayAlarmCount&&typeof BDAY_ALARM_COUNT!=='undefined'){
+        BDAY_ALARM_COUNT=merge?_mergeMap(BDAY_ALARM_COUNT,d.bdayAlarmCount):d.bdayAlarmCount;
+        try{localStorage.setItem('excelia-bday-alarm-count',JSON.stringify(BDAY_ALARM_COUNT));}catch(e){}}
+      if(d.gastosToggles){
+        try{
+          var _gt=d.gastosToggles;
+          if(merge){var _prevGt=null;try{_prevGt=JSON.parse(localStorage.getItem('excelia-gastos-tgl-v1'));}catch(e2){}
+            if(_prevGt&&typeof _prevGt==='object'&&!Array.isArray(_prevGt))_gt=_mergeMap(_prevGt,_gt);}
+          localStorage.setItem('excelia-gastos-tgl-v1',JSON.stringify(_gt));
+        }catch(e){}}
       if(d.fiscal&&typeof FISCAL!=='undefined'&&typeof saveFiscal==='function'){
         FISCAL.irpfMode=d.fiscal.irpfMode||'fixed';
         FISCAL.irpfPct=d.fiscal.irpfPct||15;

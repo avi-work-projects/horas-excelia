@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v256 - Icono propio para la campana de alarmas y limpieza de imagenes sin usar';
+var APP_VERSION = 'v257 - Rutinas semanales, Todos dentro de Proximos y borrado con pulsacion larga';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -42,6 +42,43 @@ function addSwipe(el, onLeft, onRight){
     if(Math.abs(dx)<50||Math.abs(dx)<=Math.abs(dy))return;
     if(dx<0)onLeft();else onRight();
   },{passive:true});
+}
+
+// ── Pulsación larga (500 ms) ─────────────────────────────────
+// Para acciones destructivas que no deben quedar a un toque de distancia.
+// Funciona con dedo y con ratón, y cancela si el dedo se mueve (scroll).
+function addLongPress(el, cb, ms){
+  if(!el||el._lpAdded)return;
+  el._lpAdded=true;
+  var t=null,sx=0,sy=0,movido=false;
+  function start(x,y){
+    movido=false;sx=x;sy=y;
+    clearTimeout(t);
+    t=setTimeout(function(){
+      t=null;
+      if(!movido){
+        if(navigator.vibrate)try{navigator.vibrate(15);}catch(e){}
+        /* Marca para que el click posterior (el dedo al levantarse) no
+           dispare tambien la accion normal del elemento. */
+        el._lpFired=Date.now();
+        cb(el);
+      }
+    },ms||500);
+  }
+  function move(x,y){
+    if(Math.abs(x-sx)>8||Math.abs(y-sy)>8){movido=true;clearTimeout(t);t=null;}
+  }
+  function end(){clearTimeout(t);t=null;}
+  el.addEventListener('touchstart',function(e){start(e.touches[0].clientX,e.touches[0].clientY);},{passive:true});
+  el.addEventListener('touchmove',function(e){move(e.touches[0].clientX,e.touches[0].clientY);},{passive:true});
+  el.addEventListener('touchend',end);
+  el.addEventListener('touchcancel',end);
+  el.addEventListener('mousedown',function(e){start(e.clientX,e.clientY);});
+  el.addEventListener('mousemove',function(e){move(e.clientX,e.clientY);});
+  el.addEventListener('mouseup',end);
+  el.addEventListener('mouseleave',end);
+  /* Sin menu contextual del navegador al mantener pulsado */
+  el.addEventListener('contextmenu',function(e){e.preventDefault();});
 }
 
 // ── Historial de navegación entre overlays ────────────────────

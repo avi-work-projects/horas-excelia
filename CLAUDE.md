@@ -58,6 +58,7 @@ Antes de escribir uno nuevo, comprobar aquí:
 | Panel deslizante (sheet) | `.ev-form-overlay`+`.ev-form-sheet` (formularios) · `.ev-detail-overlay`+`.ev-detail-sheet` (detalles) | styles.css |
 | Conservar el scroll al re-renderizar | `refreshEvents()` (pasar `false` para volver arriba) | events.js |
 | Deslizar para cambiar de mes | `addSwipe(el,onLeft,onRight)` | core.js |
+| Borrar solo con pulsacion larga | `addLongPress(el,cb,ms)` — marca `el._lpFired`, el click posterior debe ignorarse | core.js |
 | Preguntar añadir/reemplazar al importar | `askImportMode(subtitulo,cb)` | import-export.js |
 | Fusionar sin duplicar al importar | `evMergeIncoming(lista)` · `_mergeList(cur,inc,keyFn,sigFn)` | events.js / import-export.js |
 | Marcador de evento (formas) | `evShapeSvg(shape)` · `evMarkerHtml(ev,past,size,shapeDef,ds)` | events-picker-color.js / events.js |
@@ -122,6 +123,7 @@ js/economics.js     ← Cálculo económico (IVA 21%, IRPF 15%, DAILY_RATE=315)
 js/birthdays.js     ← Cumpleaños (BDAYS de localStorage o BDAYS_FROM_SECRET)
 js/events.js        ← Eventos con notas, colores, repetición (EVENTS en localStorage)
 js/alarms.js        ← Gestión de alarmas creadas desde el PWA (ALARMS en localStorage)
+js/rutinas.js       ← Rutinas semanales (RUTINAS en localStorage) — sesiones virtuales en los calendarios
 js/init.js          ← Event listeners globales + arranque (IIFE)
 .github/workflows/deploy.yml  ← GitHub Actions: inyecta secrets y despliega en Pages
 manifest.json       ← PWA manifest
@@ -136,6 +138,7 @@ manifest.json       ← PWA manifest
 - `DAILY_RATE` — tarifa diaria (€, persiste en localStorage)
 - `ED` — día seleccionado en el bottom sheet
 - `ALARMS` — array de alarmas creadas desde el PWA (js/alarms.js, persiste en `excelia-alarms-v1`)
+- `RUTINAS` — rutinas semanales (js/rutinas.js, persiste en `excelia-rutinas-v1`)
 
 ## Persistencia
 Todos los datos en `localStorage`. No hay servidor.
@@ -143,6 +146,7 @@ Todos los datos en `localStorage`. No hay servidor.
 - Cumpleaños importados: `excelia-bdays-v1` (override del secret de GitHub)
 - Eventos: `excelia-events-v1`
 - Alarmas: `excelia-alarms-v1`
+- Rutinas semanales: `excelia-rutinas-v1`
 - URL base MacroDroid: `excelia-alarm-url` (base del webhook, sin nombre de macro)
 
 ## Secretos de GitHub
@@ -243,6 +247,39 @@ Los chips NO filtran por tipo suelto sino por **grupo** (`evFilterGroup`, events
 `Grandes` (todo kind grande menos Asturias) · `Asturias` · `Gestiones` · `Bodas`
 (puntual|Ensayos boda) · `Resto` (el resto de puntuales: Plan/Quedada, Otros...) ·
 `Cumpleanos VIP`. `EV_ANNUAL_FILTER_HIDDEN` guarda los grupos ocultos.
+
+## Rutinas (js/rutinas.js) — v257
+Pestana `EV_VIEW==='rutinas'` (ocupa el hueco que dejo "Todos"), con dos subpestanas
+(`RUT_SUBTAB`): **Rutinas** y **Estadisticas**.
+
+Una rutina es una actividad semanal (gimnasio, baile, padel...) guardada en
+`localStorage['excelia-rutinas-v1']`:
+```json
+{"id":"rut-...","name":"Gimnasio","color":"#34d399",
+ "weekDays":[1,3,5],            // 0=Dom … 6=Sab
+ "time":"18:00","dur":60,       // RUT_TIME_DEFAULT / RUT_DUR_DEFAULT
+ "start":"YYYY-MM-DD",
+ "suspend":{"from":"YYYY-MM-DD","to":null},   // to null = indefinida
+ "weeks":{"YYYY-MM-DD":{"weekDays":[2,4],"time":"19:00"}},  // clave = lunes de esa semana
+ "skips":{"YYYY-MM-DD":1}}      // sesiones marcadas como saltadas
+```
+
+- **Sesiones virtuales**: `rutEventsOn(ds)` devuelve eventos `puntual|Rutina` con id
+  `rut-<idRutina>-<ds>` y los inyecta `getEventsOn()`, asi que TODOS los calendarios
+  (1 mes, 4 meses, anual, agenda semanal) las pintan sin tocar su codigo. No estan en
+  `EVENTS` y no se guardan: se recalculan siempre desde la rutina.
+- Al pulsar una sesion se abre `openRutSesion(rutina,ds)` (marcar hecha / saltada).
+  El id se deshace con `rutEventFromId(id)`.
+- **Prioridad de configuracion** en `rutOccursOn`: suspension > override de la semana
+  (`weeks[lunes]`) > configuracion base. Devuelve la hora o `null` si ese dia no toca.
+- **Estadisticas** (`rutStats`): las sesiones pasadas cuentan como *hechas* por defecto
+  (automatico) y `skips` permite corregirlas. Hoy no cuenta. Sin sesiones pasadas se
+  muestra "Aun sin sesiones pasadas", no un 0 %.
+- **Color**: `getEvDisplayColor` respeta `ev.color` tal cual para `type==='Rutina'`; sin
+  esa excepcion el matiz por hash de Viaje pintaria cada sesion de un color distinto
+  (el id cambia cada dia).
+- Las rutinas van en el backup completo (`rutinas` en exportAll / `_applyFullImport`,
+  fusion por id con el nombre como firma).
 
 ## Bodas (js/bodas.js)
 Pestaña `EV_VIEW==='bodas'` con cuatro subpestañas (`BODA_SUBTAB`): **Clases**, **Parejas**,
@@ -525,6 +562,7 @@ Si solo cambian archivos JS/CSS pero `sw.js` no cambia → el SW no se actualiza
 | **barra de evento** | `ev-multi-bar`: barra horizontal de evento multi-día en calendario mensual |
 | **perimetro puente** | `ev-puente-perimeter`: borde rosa que rodea días de puente en el calendario mensual |
 | **chips de filtro** | `ev-filter-chip`: botones de filtro tipo/categoría en calendario anual |
+| **pestana rutinas** | `EV_VIEW=='rutinas'` — js/rutinas.js — actividades semanales |
 | **ventana alarmas** | `#alarmsOverlay` — js/alarms.js — accesible desde menú ⋮ → "📋 Gestión de alarmas" |
 | **bottom sheet** | Panel deslizable desde abajo al pulsar un día en home (`#bottomSheet`) |
 | **arriba** | Posición física superior: un elemento queda en una fila/altura mayor (como piezas de Tetris). Ej: "el evento queda arriba del día" = ocupa espacio de layout propio, desplazando el resto hacia abajo. |

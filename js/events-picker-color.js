@@ -146,6 +146,10 @@ function getEvDisplayColor(ev){
   /* Si el evento es Viaje y conserva un color personalizado distinto al base de Viaje,
      lo respetamos. Sólo los colores base (#38bdf8/#6c8cff) se reemplazan por el azul
      determinista por hash, para que cada viaje tenga matiz distinto. */
+  /* Las sesiones de rutina llevan el color de su rutina tal cual: su id cambia
+     cada dia, asi que el matiz por hash las pintaria de un color distinto
+     cada sesion. */
+  if(getEvType(ev)==='Rutina')return ev.color;
   if(ev.color==='#38bdf8'||ev.color==='#6c8cff')return evTravelColor(ev.id);
   return ev.color;
 }
