@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v263 - Pareja desplegable, ficha de alto fijo y avisos de clase';
+var APP_VERSION = 'v264 - Buscador y orden de parejas, y menos repeticiones';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
