@@ -384,9 +384,9 @@ var EV_CAL_BADGE_STACK = 5;  /* 1-mes: badges apilados desde abajo; los que sobr
 var EV_CAL_CORNER_STACK = 5;
 /* Cumpleanos VIP que caben el mismo dia en la columna izquierda */
 var EV_CAL_VIP_MAX = 3;
-/* Checks de la subpestana Proximos */
-var EV_UP_HIDE_RUT = false;
-var EV_UP_HIDE_BODA = false;
+/* Checks de la subpestana Proximos, en positivo: marcados = se ven */
+var EV_UP_SHOW_RUT = true;
+var EV_UP_SHOW_BODA = true;
 function evAnnualXsHtml(items){
   if(!items.length)return '';
   var n=items.length;
@@ -816,10 +816,10 @@ function renderEvUpcoming(){
     for(var d=0;d<7;d++){
       var day=new Date(wk0);day.setDate(day.getDate()+(w*7+d));
       var ds=evDk(day);
-      var evs=getEventsOn(ds,EV_UP_HIDE_RUT?EV_NO_RUT:null);
+      var evs=getEventsOn(ds,EV_UP_SHOW_RUT?null:EV_NO_RUT);
       evs.forEach(function(ev){
         if(_isVipBdayTooFar(ev,day,today))return;
-        if(EV_UP_HIDE_BODA&&getEvType(ev)==='Ensayos boda')return;
+        if(!EV_UP_SHOW_BODA&&getEvType(ev)==='Ensayos boda')return;
         if(_seenEv[ev.id])return;
         /* Recurrentes: ignorar ocurrencias ya pasadas de esta semana,
            el evento se asigna a su PRÓXIMA ocurrencia (day >= hoy). */
@@ -847,10 +847,10 @@ function renderEvUpcoming(){
       for(var fd3=0;fd3<7;fd3++){
         var fday=new Date(wk0);fday.setDate(fday.getDate()+(fw*7+fd3));
         var fds=evDk(fday);
-        var fevs=getEventsOn(fds,EV_UP_HIDE_RUT?EV_NO_RUT:null);
+        var fevs=getEventsOn(fds,EV_UP_SHOW_RUT?null:EV_NO_RUT);
         fevs.forEach(function(ev){
           if(ev.id.indexOf('ev-bday-vip-')===0)return;
-          if(EV_UP_HIDE_BODA&&getEvType(ev)==='Ensayos boda')return;
+          if(!EV_UP_SHOW_BODA&&getEvType(ev)==='Ensayos boda')return;
           if(!fwMap[ev.id])fwMap[ev.id]={ev:ev,firstDate:new Date(fday)};
         });
       }
@@ -1463,8 +1463,8 @@ function renderEvContent(){
     h+='</div>';
     if(EV_VIEW==='upcoming'){
       h+='<div class="excl-row ev-up-filters">';
-      h+='<label class="excl-item"><input type="checkbox" id="evUpHideRut"'+(EV_UP_HIDE_RUT?' checked':'')+'> Ocultar rutinas</label>';
-      h+='<label class="excl-item"><input type="checkbox" id="evUpHideBoda"'+(EV_UP_HIDE_BODA?' checked':'')+'> Ocultar clases de boda</label>';
+      h+='<label class="excl-item"><input type="checkbox" id="evUpShowRut"'+(EV_UP_SHOW_RUT?' checked':'')+'> Mostrar rutinas</label>';
+      h+='<label class="excl-item"><input type="checkbox" id="evUpShowBoda"'+(EV_UP_SHOW_BODA?' checked':'')+'> Mostrar ensayos WM</label>';
       h+='</div>';
     }
   }
@@ -1502,7 +1502,10 @@ function renderEvContent(){
 }
 
 /* ── Render: detalle de evento ──────────────────────────── */
-function renderEvDetail(ev,fromSummary){
+/* car = {ds,i,n} cuando la ficha se abre como parte del carrusel de un dia:
+   entonces la cabecera lleva la fecha y el contador, y debajo van las flechas
+   y los puntos para pasar de un evento a otro. Es la MISMA ficha, no otra. */
+function renderEvDetail(ev,fromSummary,car){
   var s=new Date(ev.start+'T00:00:00');
   var e2=ev.end&&ev.end!==ev.start?new Date(ev.end+'T00:00:00'):null;
   var fd2=function(dd){return String(dd.getDate()).padStart(2,'0')+'/'+String(dd.getMonth()+1).padStart(2,'0')+'/'+dd.getFullYear();};
@@ -1522,9 +1525,26 @@ function renderEvDetail(ev,fromSummary){
   h+='<div class="ev-detail-handle"></div>';
   h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">';
   h+='<button class="sy-back" id="evDClose">&#8592;</button>';
-  h+='<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">Evento</div>';
-  h+='<div style="width:36px"></div>';
+  if(car){
+    var _wn=['Dom','Lun','Mar','Mi\u00e9','Jue','Vie','S\u00e1b'];
+    var _cd=new Date(car.ds+'T00:00:00');
+    h+='<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">'
+      +_wn[_cd.getDay()]+' '+car.ds.slice(8)+'/'+car.ds.slice(5,7)+'</div>';
+    h+='<div class="ev-car-count">'+(car.i+1)+' / '+car.n+'</div>';
+  } else {
+    h+='<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">Evento</div>';
+    h+='<div style="width:36px"></div>';
+  }
   h+='</div>';
+  if(car&&car.n>1){
+    h+='<div class="ev-car-nav">';
+    h+='<button class="ev-btn ev-car-arrow" id="evCarPrev">&#9664;</button>';
+    h+='<div class="ev-car-dots">';
+    for(var _ci=0;_ci<car.n;_ci++)h+='<span class="ev-car-dot'+(_ci===car.i?' on':'')+'"></span>';
+    h+='</div>';
+    h+='<button class="ev-btn ev-car-arrow" id="evCarNext">&#9654;</button>';
+    h+='</div>';
+  }
   var _ddc=getEvDisplayColor(ev);
   h+='<div class="ev-detail-color-bar" style="background:'+_ddc+'" id="evDColorBar"></div>';
   h+='<div style="display:flex;align-items:center;gap:8px">';
@@ -1561,10 +1581,19 @@ function renderEvDetail(ev,fromSummary){
       +' &#183; '+escHtml(BODA_PLACE_SHORT[_b.place||(_c&&_c.place)||'casa'])+'</div>';
   }
   h+='<div class="ev-detail-actions">';
-  if(fromSummary)h+='<button class="ev-btn" id="evDGoCal" style="border-color:var(--c-blue);color:var(--c-blue)">&#128197; Ver en Calendario</button>';
-  /* Mismo boton que en el panel de alarma de Proximos */
-  h+='<button class="ev-btn ev-edit-orange" id="evDEdit">&#9998; Editar evento</button>';
-  h+='<button class="ev-btn danger" id="evDDel">Eliminar</button>';
+  if(ev._rut){
+    /* Sesion de rutina: no es un evento guardado, asi que ni se edita ni se
+       borra desde aqui; lo que se hace es marcarla */
+    h+='<button class="ev-btn primary" id="evDRutSes">'+(ev._rutSkip?'Marcar como hecha':'Marcar como saltada')+'</button>';
+    h+='<button class="ev-btn ev-edit-orange" id="evDRutEdit">&#9998; Editar rutina</button>';
+  } else if(ev.id.indexOf('ev-bday-vip-')===0){
+    h+='<button class="ev-btn primary" id="evDBdayAlarm">&#128276; Alarma de cumplea'+'\u00f1'+'os</button>';
+  } else {
+    if(fromSummary)h+='<button class="ev-btn" id="evDGoCal" style="border-color:var(--c-blue);color:var(--c-blue)">&#128197; Ver en Calendario</button>';
+    /* Mismo boton que en el panel de alarma de Proximos */
+    h+='<button class="ev-btn ev-edit-orange" id="evDEdit">&#9998; Editar evento</button>';
+    h+='<button class="ev-btn danger" id="evDDel">Eliminar</button>';
+  }
   h+='</div>';
   h+='</div></div>';
   return h;
@@ -1587,116 +1616,30 @@ function evDayCarItems(ds){
         .map(function(it){return it.ev;});
   return vips.concat(ruts,punt,grandes);
 }
-function _evCarCard(ev,ds){
-  var col=getEvDisplayColor(ev);
-  var isVip=ev.id.indexOf('ev-bday-vip-')===0;
-  var titulo=isVip?escHtml(ev.title.replace(/^\u2b50\s*/,'')):escHtml(ev.title);
-  var s='<div class="ev-car-card">';
-  s+='<div class="ev-detail-color-bar" style="background:'+col+'"></div>';
-  s+='<div class="ev-car-title" style="color:'+col+'">'+titulo+'</div>';
-  s+='<div class="ev-car-type">'+escHtml(getEvType(ev))+'</div>';
-  if(ev._rut&&ev._rutTime){
-    s+='<div class="ev-detail-repeat">\ud83d\udd52 '+escHtml(ev._rutTime)+'\u2013'
-      +escHtml(rutFin(ev._rutTime,ev._rut.dur))+(ev._rutSkip?' \u00b7 saltada':'')+'</div>';
-  }
-  var _ct=(!ev._rut)?evTimeLabel(ev):'';
-  if(_ct&&getEvType(ev)!=='Ensayos boda')s+='<div class="ev-detail-repeat">\ud83d\udd52 '+_ct+'</div>';
-  evTramos(ev).forEach(function(tr){
-    s+='<div class="ev-detail-repeat">'+evTramoTexto(tr)+'</div>';
-  });
-  if(getEvType(ev)==='Ensayos boda'&&typeof bodaPlaceOf==='function'){
-    var _b=ev.boda||{},_pl=bodaPlaceOf(ev);
-    var _c=(typeof bodaCouple==='function')?bodaCouple(_b.coupleId):null;
-    s+='<div class="ev-detail-repeat">\ud83d\udc8d '+(_c?escHtml(_c.name):'Sin pareja')
-      +' \u00b7 \ud83d\udd52 '+(_b.time||'sin hora')
-      +' \u00b7 '+bodaPlaceEmoji(_pl)+' '+escHtml(_pl?BODA_PLACE_SHORT[_pl]:'sin sala')+'</div>';
-  }
-  /* En las rutinas la nota repite la hora que ya sale arriba */
-  if(ev.note&&ev.note.trim()&&!isVip&&!ev._rut)s+='<div class="ev-detail-note">'+escHtml(ev.note.trim())+'</div>';
-  if(ev.dayNotes&&ev.dayNotes[ds]&&ev.dayNotes[ds].trim()){
-    s+='<div class="ev-detail-note ev-detail-daynote"><span class="ev-note-scope">'
-      +ds.slice(8)+'/'+ds.slice(5,7)+'</span> '+escHtml(ev.dayNotes[ds].trim())+'</div>';
-  }
-  s+='</div>';
-  return s;
-}
-function _evCarRender(){
-  var ev=EV_CAR.items[EV_CAR.i];
-  var body=document.getElementById('evCarBody');
-  if(!ev||!body)return;
-  body.innerHTML=_evCarCard(ev,EV_CAR.ds);
-  var c=document.getElementById('evCarCount');
-  if(c)c.textContent=(EV_CAR.i+1)+' / '+EV_CAR.items.length;
-  var dots=document.getElementById('evCarDots');
-  if(dots){
-    var dh='';
-    for(var i=0;i<EV_CAR.items.length;i++)dh+='<span class="ev-car-dot'+(i===EV_CAR.i?' on':'')+'"></span>';
-    dots.innerHTML=dh;
-  }
-}
 function evCarGo(step){
   var n=EV_CAR.items.length;
   if(n<2)return;
   EV_CAR.i=(EV_CAR.i+step+n)%n;
-  _evCarRender();
+  _evCarShow();
+}
+/* Pinta el evento actual del carrusel EN LA MISMA ficha de detalle */
+function _evCarShow(){
+  var ev=EV_CAR.items[EV_CAR.i];
+  if(!ev)return;
+  EV_EDIT_DS=EV_CAR.ds;
+  openEvDetail(ev,null,{ds:EV_CAR.ds,i:EV_CAR.i,n:EV_CAR.items.length});
+  NAV_BACK=closeEvDayCarousel;
 }
 function openEvDayCarousel(ds,startId){
   var items=evDayCarItems(ds);
   if(!items.length)return;
   EV_CAR={ds:ds,items:items,i:0};
   for(var i=0;i<items.length;i++)if(items[i].id===startId){EV_CAR.i=i;break;}
-  var ov=document.getElementById('eventsOverlay');
-  _evCancelRemove('evCarWrap');
-  var old=document.getElementById('evCarWrap');if(old)old.remove();
-  var _wn=['Dom','Lun','Mar','Mi\u00e9','Jue','Vie','S\u00e1b'];
-  var _d=new Date(ds+'T00:00:00');
-  var lbl=_wn[_d.getDay()]+' '+ds.slice(8)+'/'+ds.slice(5,7)+'/'+ds.slice(0,4);
-  var h='<div class="ev-detail-overlay" id="evCarOv"><div class="ev-detail-sheet">';
-  h+='<div class="ev-detail-handle"></div>';
-  h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">';
-  h+='<button class="sy-back" id="evCarClose">&#8592;</button>';
-  h+='<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">'+lbl+'</div>';
-  h+='<div class="ev-car-count" id="evCarCount"></div>';
-  h+='</div>';
-  h+='<div class="ev-car-body" id="evCarBody"></div>';
-  h+='<div class="ev-car-nav">';
-  h+='<button class="ev-btn ev-car-arrow" id="evCarPrev">&#9664;</button>';
-  h+='<div class="ev-car-dots" id="evCarDots"></div>';
-  h+='<button class="ev-btn ev-car-arrow" id="evCarNext">&#9654;</button>';
-  h+='</div>';
-  h+='<div class="ev-detail-actions"><button class="ev-btn primary" id="evCarOpen">Abrir ficha</button></div>';
-  h+='</div></div>';
-  var wrap=document.createElement('div');wrap.id='evCarWrap';wrap.innerHTML=h;
-  ov.appendChild(wrap);
-  _evCarRender();
-  requestAnimationFrame(function(){
-    var fo=document.getElementById('evCarOv');
-    if(fo){fo.classList.add('open');fo.addEventListener('click',function(e){if(e.target===fo)closeEvDayCarousel();});}
-  });
-  document.getElementById('evCarClose').addEventListener('click',closeEvDayCarousel);
-  document.getElementById('evCarPrev').addEventListener('click',function(){evCarGo(-1);});
-  document.getElementById('evCarNext').addEventListener('click',function(){evCarGo(1);});
-  addSwipe(document.getElementById('evCarBody'),function(){evCarGo(1);},function(){evCarGo(-1);});
-  document.getElementById('evCarOpen').addEventListener('click',function(){
-    var ev=EV_CAR.items[EV_CAR.i];
-    var _ds=EV_CAR.ds;
-    closeEvDayCarousel();
-    setTimeout(function(){
-      if(ev._rut){openRutSesion(ev._rut,_ds);return;}
-      if(ev.id.indexOf('ev-bday-vip-')===0){
-        if(typeof openBdayAlarmFromEvents==='function')openBdayAlarmFromEvents(ev,new Date(_ds+'T00:00:00'));
-        return;
-      }
-      EV_EDIT_DS=_ds;
-      openEvDetail(ev);
-    },310);
-  });
-  NAV_BACK=closeEvDayCarousel;
+  _evCarShow();
 }
 function closeEvDayCarousel(){
-  var fo=document.getElementById('evCarOv');
-  if(fo)fo.classList.remove('open');
-  _evScheduleRemove('evCarWrap');
+  EV_CAR={ds:null,items:[],i:0};
+  closeEvDetail();
   NAV_BACK=null;
 }
 /* == Cierre de paneles ==================================================
@@ -1714,24 +1657,69 @@ function _evScheduleRemove(id,extra){
 }
 function _evCancelRemove(id){clearTimeout(_EV_CLOSE_T[id]);}
 /* ── Apertura/cierre del detalle ────────────────────────── */
-function openEvDetail(ev,container){
+function openEvDetail(ev,container,car){
   var ov=container||document.getElementById('eventsOverlay');
   var fromSummary=(EV_VIEW==='puentes'||EV_VIEW==='time-off');
   ov.scrollTop=0;
   _evCancelRemove('evDWrap');
-  var _oldD=document.getElementById('evDWrap');if(_oldD)_oldD.remove();
-  var wrap=document.createElement('div');
-  wrap.id='evDWrap';
-  wrap.innerHTML=renderEvDetail(ev,fromSummary);
-  ov.appendChild(wrap);
-  requestAnimationFrame(function(){
-    var fo=document.getElementById('evDetailOv');
-    if(fo){
-      fo.classList.add('open');
-      fo.addEventListener('click',function(e){if(e.target===fo)closeEvDetail();});
+  var wrap=document.getElementById('evDWrap');
+  /* Al deslizar dentro del carrusel se reaprovecha el panel abierto: si se
+     quitara y se volviera a poner, la animacion de entrada saldria en cada
+     evento y pareceria que se cierra y se abre otra ficha distinta. */
+  var _reusa=!!(wrap&&car);
+  if(!_reusa){
+    if(wrap)wrap.remove();
+    wrap=document.createElement('div');
+    wrap.id='evDWrap';
+    ov.appendChild(wrap);
+  }
+  wrap.innerHTML=renderEvDetail(ev,fromSummary,car);
+  if(_reusa){
+    var _fo2=document.getElementById('evDetailOv');
+    if(_fo2){
+      _fo2.classList.add('open');
+      _fo2.addEventListener('click',function(e){if(e.target===_fo2)closeEvDetail();});
     }
+  } else {
+    requestAnimationFrame(function(){
+      var fo=document.getElementById('evDetailOv');
+      if(fo){
+        fo.classList.add('open');
+        fo.addEventListener('click',function(e){if(e.target===fo)closeEvDetail();});
+      }
+    });
+  }
+  document.getElementById('evDClose').addEventListener('click',car?closeEvDayCarousel:closeEvDetail);
+  /* Flechas, puntos y deslizamiento del carrusel */
+  if(car){
+    var _p=document.getElementById('evCarPrev');
+    if(_p)_p.addEventListener('click',function(){evCarGo(-1);});
+    var _n=document.getElementById('evCarNext');
+    if(_n)_n.addEventListener('click',function(){evCarGo(1);});
+    if(typeof addSwipe==='function'){
+      var _sheet=document.querySelector('#evDetailOv .ev-detail-sheet');
+      addSwipe(_sheet,function(){evCarGo(1);},function(){evCarGo(-1);});
+    }
+  }
+  /* Acciones propias de una sesion de rutina */
+  var _rs=document.getElementById('evDRutSes');
+  if(_rs)_rs.addEventListener('click',function(){
+    if(typeof rutToggleSkip==='function')rutToggleSkip(ev._rut,(car&&car.ds)||ev.start);
+    closeEvDetail();
+    setTimeout(refreshEvents,320);
   });
-  document.getElementById('evDClose').addEventListener('click',closeEvDetail);
+  var _re=document.getElementById('evDRutEdit');
+  if(_re)_re.addEventListener('click',function(){
+    closeEvDetail();
+    setTimeout(function(){if(typeof openRutForm==='function')openRutForm(ev._rut);},310);
+  });
+  var _ba=document.getElementById('evDBdayAlarm');
+  if(_ba)_ba.addEventListener('click',function(){
+    closeEvDetail();
+    setTimeout(function(){
+      if(typeof openBdayAlarmFromEvents==='function')openBdayAlarmFromEvents(ev);
+    },310);
+  });
   // Color picker en detalle
   var _dColorBtn=document.getElementById('evDColorBtn');
   if(_dColorBtn){
@@ -1761,7 +1749,8 @@ function openEvDetail(ev,container){
       showToast('Color aplicado','success');
     });
   }
-  document.getElementById('evDEdit').addEventListener('click',function(){
+  var _dEdit=document.getElementById('evDEdit');
+  if(_dEdit)_dEdit.addEventListener('click',function(){
     closeEvDetail();
     // VIP birthday → abrir formulario de cumpleaños en lugar del de eventos
     if(ev.id.indexOf('ev-bday-vip-')===0&&typeof BDAYS!=='undefined'){
@@ -1792,7 +1781,8 @@ function openEvDetail(ev,container){
       refreshEvents();
     });
   }
-  document.getElementById('evDDel').addEventListener('click',function(){
+  var _dDel=document.getElementById('evDDel');
+  if(_dDel)_dDel.addEventListener('click',function(){
     var deleted=ev;
     var deletedIdx=-1;
     for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===deleted.id){deletedIdx=i;break;}}
@@ -2858,10 +2848,10 @@ function bindEvEvents(){
   document.getElementById('evViewAnnual').addEventListener('click',function(){_switchEvView('annual');refreshEvents();});
   var _rutBtn=document.getElementById('evViewRutinas');
   if(_rutBtn)_rutBtn.addEventListener('click',function(){_switchEvView('rutinas');refreshEvents();});
-  var _upR=document.getElementById('evUpHideRut');
-  if(_upR)_upR.addEventListener('change',function(){EV_UP_HIDE_RUT=this.checked;refreshEvents();});
-  var _upB=document.getElementById('evUpHideBoda');
-  if(_upB)_upB.addEventListener('change',function(){EV_UP_HIDE_BODA=this.checked;refreshEvents();});
+  var _upR=document.getElementById('evUpShowRut');
+  if(_upR)_upR.addEventListener('change',function(){EV_UP_SHOW_RUT=this.checked;refreshEvents();});
+  var _upB=document.getElementById('evUpShowBoda');
+  if(_upB)_upB.addEventListener('change',function(){EV_UP_SHOW_BODA=this.checked;refreshEvents();});
   var _subUp=document.getElementById('evSubUpcoming');
   if(_subUp)_subUp.addEventListener('click',function(){_switchEvView('upcoming');refreshEvents(false);});
   var _subTd=document.getElementById('evSubTodos');

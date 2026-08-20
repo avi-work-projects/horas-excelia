@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v260 - Horas de evento y transporte de ida y vuelta';
+var APP_VERSION = 'v261 - Ficha del dia unificada y elegir semana sobre el mes';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

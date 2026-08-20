@@ -65,7 +65,7 @@ Antes de escribir uno nuevo, comprobar aquí:
 | Marcador de evento (formas) | `evShapeSvg(shape)` · `evMarkerHtml(ev,past,size,shapeDef,ds)` | events-picker-color.js / events.js |
 | Relleno "falso translúcido" | `fakeTrans(hex,alpha)` | core.js |
 | Grafico de barras (N barras) | `simpleBarChart(values,labels,color,{height,highlight})` | core.js |
-| Recorrer los eventos de un dia | `openEvDayCarousel(ds,idInicial)` — flechas + swipe | events.js |
+| Recorrer los eventos de un dia | `openEvDayCarousel(ds,idInicial)` — es la propia ficha de detalle con flechas, puntos y swipe | events.js |
 | Barras horizontales de reparto | `hBarRows([{label,value,color}],{suffix})` | core.js |
 | Panel deslizante de Bodas | `bodaOpenSheet(wrapId,ovId,html,onClose)` + `bodaCloseSheet(...)` | bodas.js |
 | Chips de filtro | `.ev-filter-chip` (calendarios) · `.boda-chip` (parejas) | styles.css |
@@ -309,6 +309,31 @@ Los paneles se quitan del DOM 300 ms despues de cerrarse. Si en ese rato se
 abria otro con el mismo id, el temporizador del cierre anterior se llevaba por
 delante el panel NUEVO. Por eso hay `_evScheduleRemove(id,extra)` /
 `_evCancelRemove(id)`: todo `openXxx` cancela el borrado pendiente de su id.
+
+## La ficha del dia es la ficha de detalle (v261)
+No hay dos paneles. `renderEvDetail(ev,fromSummary,car)` recibe un tercer
+argumento `car = {ds,i,n}`: cuando viene, la cabecera muestra la fecha y el
+contador `i/n`, y debajo salen las flechas y los puntos. `openEvDetail(ev,
+container,car)` reaprovecha el panel ya abierto al deslizar (si lo quitara y lo
+volviera a poner, la animacion de entrada saldria en cada evento).
+
+Las acciones del pie cambian segun lo que sea el elemento:
+
+| Elemento | Botones |
+|---|---|
+| Evento normal | Editar evento · Eliminar |
+| Sesion de rutina (`ev._rut`) | Marcar hecha/saltada · Editar rutina |
+| Cumpleanos VIP | Alarma de cumpleanos |
+
+Por eso `openEvDetail` consulta con `if(...)` cada boton antes de engancharlo:
+en una rutina no existen `evDEdit` ni `evDDel`.
+
+## Cambiar una semana de una rutina: dos pasos (v261)
+`openRutWeek(r)` ya no abre el editor directamente. Primero `_rutWeekPick(r)`
+pinta el mes en modo consulta (`.rut-wpick`), con un punto en los dias en los
+que toca y borde en las semanas que ya tienen un cambio guardado; al pulsar
+cualquier dia se abre `_rutWeekRender(r)` para esa semana. La flecha atras del
+editor vuelve al selector, no cierra.
 
 ## Rutinas (js/rutinas.js) — v257
 Pestana `EV_VIEW==='rutinas'` (ocupa el hueco que dejo "Todos"), con dos subpestanas
