@@ -73,7 +73,7 @@ var EV_TO_SUBTAB = 'puentes';  /* subpestana activa dentro de "Vacaciones Festiv
 var EV_LIST_SUBTAB = 'months'; // 'months' | 'types'
 var EV_TYPES_FILTER = 'all';   // 'all' | nombre de tipo
 var EV_TYPES_PAST = true;
-var EV_LIST_SORT = 'fecha';     /* 'fecha' | 'fecha-desc' | 'categoria' */
+var EV_LIST_SORT = 'fecha';     /* 'fecha' (lo mas cercano primero) | 'categoria' */
 var EV_LIST_SEARCH = '';        /* busqueda por titulo o descripcion en "Todos" */      // excluir eventos pasados en Por Tipos (por defecto)
 var EV_COLORS = ['#38bdf8','#1d4ed8','#34d399','#fb923c','#ff6b6b','#c084fc','#a3e635'];
 var EVENTS = (function(){
@@ -1186,7 +1186,9 @@ function renderEvByTypes(){
     +'<input type="search" id="evListSearch" placeholder="Buscar por título o descripción" value="'+escHtml(EV_LIST_SEARCH)+'">'
     +(EV_LIST_SEARCH?'<button class="ev-search-x" id="evListSearchX">&#215;</button>':'')+'</div>';
   h+='<div class="ev-sort-row">';
-  [['fecha','Fecha ↑'],['fecha-desc','Fecha ↓'],['categoria','Categoría']].forEach(function(o){
+  /* Solo interesa lo mas cercano primero; el orden inverso se quito */
+  if(EV_LIST_SORT==='fecha-desc')EV_LIST_SORT='fecha';
+  [['fecha','Por fecha'],['categoria','Por categoría']].forEach(function(o){
     h+='<button class="boda-chip'+(EV_LIST_SORT===o[0]?' active':'')+'" data-sort="'+o[0]+'">'+o[1]+'</button>';
   });
   h+='</div>';
@@ -1235,10 +1237,9 @@ function renderEvByTypes(){
       h+='</div>';
     });
   } else {
-    var desc=(EV_LIST_SORT==='fecha-desc');
     lista.sort(function(a,b){
       if(a.start===b.start)return 0;
-      return (a.start<b.start?-1:1)*(desc?-1:1);
+      return a.start<b.start?-1:1;
     });
     h+='<div class="sy-section">';
     lista.forEach(function(ev){h+=renderEvListItem(ev);});
@@ -1422,7 +1423,7 @@ function renderEvContent(){
   h+='<div class="sy-header with-tabs'+_hdrCenterCls+'">';
   h+='<button class="sy-back" id="evBack">&#8592;</button>';
   if(EV_VIEW==='upcoming'){
-    h+='<div class="sy-year-nav"><div class="sy-year">Pr\u00f3ximos</div></div>';
+    h+='<div class="sy-year-nav"><div class="sy-year">Eventos</div></div>';
   } else if(EV_VIEW==='week'){
     h+='<div class="sy-year-nav"><button class="sy-nav" id="evPrev">&#9664;</button>';
     h+='<div class="sy-year sy-year-2line">'+MN[EV_MONTH]+'<span class="sy-year-sub">'+EV_YEAR+'</span></div>';
@@ -1430,7 +1431,7 @@ function renderEvContent(){
     h+='<button class="ev-bright-btn ev-bright-mid'+(EV_BRIGHT_PAST?' on':'')+'" id="evBright">\uD83D\uDCA1</button>';
     h+='<div class="sy-hdr-right"><button class="today-btn" id="evToday" style="font-size:.65rem;padding:4px 10px">Hoy</button></div>';
   } else if(EV_VIEW==='months'){
-    h+='<div class="sy-year-nav"><div class="sy-year">Próximos</div></div>';
+    h+='<div class="sy-year-nav"><div class="sy-year">Eventos</div></div>';
   } else if(EV_VIEW==='rutinas'){
     h+='<div class="sy-year-nav"><div class="sy-year">Rutinas</div></div>';
   } else if(EV_VIEW==='bodas'){
@@ -1602,7 +1603,8 @@ function renderEvDetail(ev,fromSummary,car){
   h+='<button class="econ-calc-btn" id="evDColorApply" style="margin-top:8px;font-size:.78rem;padding:8px 0">Probar color</button>';
   h+='</div>';
   h+='<div class="ev-detail-date">&#128197; '+dateStr+'</div>';
-  var _dt=evTimeLabel(ev);
+  /* En una clase de boda la hora sale abajo en su pastilla, no aqui */
+  var _dt=(getEvType(ev)==='Ensayos boda')?'':evTimeLabel(ev);
   if(_dt)h+='<div class="ev-detail-repeat">\ud83d\udd52 '+_dt+'</div>';
   evTramos(ev).forEach(function(tr){
     h+='<div class="ev-detail-repeat">'+evTramoTexto(tr)+'</div>';

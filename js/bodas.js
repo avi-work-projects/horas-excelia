@@ -271,6 +271,10 @@ var BODA_FILTER_COUPLE = 'all';
 var BODA_HIDE_PAST = true;
 var BODA_HIDE_CLOSED = false;
 var BODA_CARD_OPEN = null;   /* id de la pareja desplegada en su tarjeta */
+var BODA_PAREJAS_SEARCH = '';
+/* null = como siempre (las mas recientes arriba). Cada chip da la vuelta:
+   A-Z -> Z-A -> sin orden. Solo puede haber una regla a la vez. */
+var BODA_PAREJAS_SORT = null;   /* 'az' | 'za' | 'new' | 'old' | null */
 var BODA_PAREJAS_FILTER = 'incompletas';  /* 'incompletas' | 'todas' | 'completas' */
 var BODA_CAL_HL = null;   /* id de la pareja resaltada en el calendario */
 var BODA_CAL_YEAR = new Date().getFullYear();
@@ -412,12 +416,27 @@ function _renderBodaParejas(){
       +o[1]+'<b>'+o[2]+'</b></button>';
   });
   h+='</div>';
+  h+='<div class="bday-search-wrap boda-search"><input class="bday-search-input" id="bodaPSearch" type="text" '
+    +'placeholder="Buscar pareja\u2026" value="'+escHtml(BODA_PAREJAS_SEARCH)+'"></div>';
+  h+='<div class="boda-chips boda-sort-chips">';
+  var _sa=(BODA_PAREJAS_SORT==='az')?' A\u2191':(BODA_PAREJAS_SORT==='za')?' Z\u2193':'';
+  var _sf=(BODA_PAREJAS_SORT==='new')?' recientes' : (BODA_PAREJAS_SORT==='old')?' antiguas' : '';
+  h+='<button class="boda-chip'+(_sa?' active':'')+'" data-psort="alfa">Alfab\u00e9tico'+_sa+'</button>';
+  h+='<button class="boda-chip'+(_sf?' active':'')+'" data-psort="fecha">Creaci\u00f3n'+_sf+'</button>';
+  h+='</div>';
+  var _q=BODA_PAREJAS_SEARCH.trim().toLowerCase();
   var list=BODA_COUPLES.filter(function(c){
     var p=bodaProgress(c);
+    if(_q&&String(c.name||'').toLowerCase().indexOf(_q)===-1)return false;
     if(BODA_PAREJAS_FILTER==='incompletas')return p.falta>0;
     if(BODA_PAREJAS_FILTER==='completas')return p.falta===0;
     return true;
-  }).sort(function(a,b){return bodaCreatedAt(b)-bodaCreatedAt(a);});  /* mas recientes arriba */
+  }).sort(function(a,b){
+    if(BODA_PAREJAS_SORT==='az')return String(a.name||'').localeCompare(String(b.name||''),'es');
+    if(BODA_PAREJAS_SORT==='za')return String(b.name||'').localeCompare(String(a.name||''),'es');
+    if(BODA_PAREJAS_SORT==='old')return bodaCreatedAt(a)-bodaCreatedAt(b);
+    return bodaCreatedAt(b)-bodaCreatedAt(a);   /* por defecto, las mas recientes arriba */
+  });
   if(!BODA_COUPLES.length){
     h+='<div class="sy-note">Todavía no hay parejas. Crea una para poder asignarle clases.</div>';
   } else if(!list.length){
@@ -453,10 +472,10 @@ function _renderBodaParejas(){
         h+='<span class="boda-ro-place'+(bodaPlaceOf(ev)?'':' vacio')+'">'+escHtml(bodaPlaceLabel(bodaPlaceOf(ev)))+'</span>';
         h+='</div>';
       });
-      h+='<div class="boda-det-actions">';
-      h+='<button class="ev-btn boda-det-btn boda-c-edit" data-cid="'+c.id+'">&#9998; Editar</button>';
-      h+='<button class="ev-btn boda-det-btn boda-c-asig" data-cid="'+c.id+'">&#128197; Asignar clases</button>';
-      h+='<button class="ev-btn boda-det-btn boda-c-extra" data-cid="'+c.id+'">&#10133; Clase extra</button>';
+      h+='<div class="boda-det-actions boda-det-actions-row">';
+      h+='<button class="ev-btn ev-edit-orange boda-c-edit" data-cid="'+c.id+'">&#9998; Editar</button>';
+      h+='<button class="ev-btn boda-det-btn boda-c-asig" data-cid="'+c.id+'">&#128197; Asignar</button>';
+      h+='<button class="ev-btn boda-det-btn boda-c-extra" data-cid="'+c.id+'">&#10133; Extra</button>';
       h+='</div>';
       h+='</div>';
     }
@@ -1259,7 +1278,17 @@ function bindBodasEvents(){
     if(bodaPendingCount())showToast(bodaPendingApply(true)+' cambios guardados','success');
   }
   document.querySelectorAll('.econ-sub-tab[data-bsub]').forEach(function(b){
-    b.addEventListener('click',function(){_guardaPendientes();BODA_SUBTAB=b.dataset.bsub;refreshEvents(false);});
+    b.addEventListener('click',function(){
+      _guardaPendientes();
+      BODA_SUBTAB=b.dataset.bsub;
+      /* El filtro "Por asignar" solo tiene sentido si queda alguna; si no,
+         se entraba a una lista vacia */
+      if(BODA_SUBTAB==='parejas'){
+        var _hay=BODA_COUPLES.some(function(c){return bodaProgress(c).falta>0;});
+        if(!_hay&&BODA_PAREJAS_FILTER==='incompletas')BODA_PAREJAS_FILTER='todas';
+      }
+      refreshEvents(false);
+    });
   });
   function _bodaCalMove(d){
     BODA_CAL_MONTH+=d;
@@ -1289,6 +1318,24 @@ function bindBodasEvents(){
   });
   document.querySelectorAll('.boda-chip[data-pfilter]').forEach(function(b){
     b.addEventListener('click',function(){BODA_PAREJAS_FILTER=b.dataset.pfilter;refreshEvents();});
+  });
+  var _ps=document.getElementById('bodaPSearch');
+  if(_ps)_ps.addEventListener('input',function(){
+    BODA_PAREJAS_SEARCH=this.value;
+    clearTimeout(window._bodaPST);
+    window._bodaPST=setTimeout(function(){
+      refreshEvents();
+      var el=document.getElementById('bodaPSearch');
+      if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length);}
+    },250);
+  });
+  document.querySelectorAll('.boda-chip[data-psort]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var g=b.dataset.psort;
+      if(g==='alfa')BODA_PAREJAS_SORT=(BODA_PAREJAS_SORT==='az')?'za':(BODA_PAREJAS_SORT==='za')?null:'az';
+      else BODA_PAREJAS_SORT=(BODA_PAREJAS_SORT==='new')?'old':(BODA_PAREJAS_SORT==='old')?null:'new';
+      refreshEvents();
+    });
   });
   var addC=document.getElementById('bodaAddCouple');
   if(addC)addC.addEventListener('click',function(){openBodaCoupleForm(null);});
