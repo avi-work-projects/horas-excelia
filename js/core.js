@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v265 - Rutinas y Vacaciones Festivos intercambian sitio';
+var APP_VERSION = 'v266 - Vacaciones Festivos recupera sus dos mitades';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
