@@ -130,12 +130,27 @@ function rutWeekKey(ds){
   d.setDate(d.getDate()-off);
   return evDk(d);
 }
-/* Días y hora efectivos de una rutina esa semana (con el cambio puntual si lo hay) */
+/* Hora base de un dia de la semana concreto.
+   r.times = {'1':'18:00','5':'20:00'} guarda SOLO los dias que se salen de la
+   hora general; el resto caen en r.time. */
+function rutTimeOfDay(r,wd){
+  if(r.times&&r.times[wd])return r.times[wd];
+  return r.time||RUT_TIME_DEFAULT;
+}
+/* ¿Tiene horarios distintos segun el dia? */
+function rutTieneHorarios(r){
+  if(!r.times)return false;
+  for(var k in r.times)if(r.times[k]&&r.times[k]!==(r.time||RUT_TIME_DEFAULT))return true;
+  return false;
+}
+/* Días y hora efectivos de una rutina esa semana (con el cambio puntual si lo
+   hay). La hora del cambio de semana manda sobre la del dia. */
 function rutWeekCfg(r,ds){
   var o=r.weeks&&r.weeks[rutWeekKey(ds)];
+  var wd=new Date(ds+'T00:00:00').getDay();
   return {
     weekDays:(o&&o.weekDays)?o.weekDays:(r.weekDays||[]),
-    time:(o&&o.time)?o.time:(r.time||RUT_TIME_DEFAULT),
+    time:(o&&o.time)?o.time:rutTimeOfDay(r,wd),
     cambiada:!!o
   };
 }
@@ -272,7 +287,11 @@ function _renderRutLista(){
       var on=(r.weekDays||[]).indexOf(d)!==-1;
       h+='<span class="rut-day'+(on?' on':'')+'"'+(on?' style="background:'+r.color+'22;border-color:'+r.color+';color:'+r.color+'"':'')+'>'+RUT_DN[d]+'</span>';
     }
-    h+='<span class="rut-hora">'+(r.time||RUT_TIME_DEFAULT)+'–'+rutFin(r.time,r.dur)+'</span>';
+    if(rutTieneHorarios(r)){
+      h+='<span class="rut-hora rut-hora-varias">horario por d\u00eda</span>';
+    } else {
+      h+='<span class="rut-hora">'+(r.time||RUT_TIME_DEFAULT)+'\u2013'+rutFin(r.time,r.dur)+'</span>';
+    }
     h+='</div>';
     /* Proximas sesiones */
     if(prox.length){
@@ -388,6 +407,13 @@ function renderRutForm(r){
   h+='<div><label>Hora</label><input class="ev-input" id="rutFTime" type="time" step="900" value="'+(isEdit?(r.time||RUT_TIME_DEFAULT):RUT_TIME_DEFAULT)+'"></div>';
   h+='<div><label>Duración (min)</label><input class="ev-input" id="rutFDur" type="number" min="15" max="480" step="15" value="'+(isEdit?(r.dur||RUT_DUR_DEFAULT):RUT_DUR_DEFAULT)+'"></div>';
   h+='</div>';
+  /* Horario por dia: se despliega con el conmutador y pone una hora por cada
+     dia marcado. Los dias que coinciden con la hora general no se guardan. */
+  var _varias=isEdit&&rutTieneHorarios(r);
+  h+='<div class="ev-field rut-hpd">';
+  h+='<label class="excl-item"><input type="checkbox" id="rutFPorDia"'+(_varias?' checked':'')+'> Horario distinto seg\u00fan el d\u00eda</label>';
+  h+='<div class="rut-hpd-rows" id="rutFHoras" style="display:'+(_varias?'block':'none')+'"></div>';
+  h+='</div>';
   h+='<div class="ev-field"><label>Desde</label><input class="ev-input" id="rutFStart" type="date" value="'+(isEdit&&r.start?r.start:evDk(new Date()))+'"></div>';
   var _ic=isEdit?rutIconOf(r):'gen';
   h+='<div class="ev-field"><label>Icono</label><div class="rut-icon-row" id="rutFIcons">';
@@ -453,8 +479,37 @@ function openRutForm(r){
   var _cpHex=document.getElementById('rutCpHex');
   if(_cpHex)_cpHex.addEventListener('input',function(){setTimeout(_rutRepaintIcons,0);});
   document.getElementById('rutFClose').addEventListener('click',closeRutForm);
+  /* Una fila por dia marcado, con su hora. Se repinta al tocar los dias para
+     que no queden filas de dias que ya no tocan. */
+  function _rutPintaHoras(){
+    var cont=document.getElementById('rutFHoras');
+    if(!cont)return;
+    var base=(document.getElementById('rutFTime')||{}).value||RUT_TIME_DEFAULT;
+    var previas={};
+    cont.querySelectorAll('input[data-wd]').forEach(function(i){previas[i.dataset.wd]=i.value;});
+    var hh='';
+    for(var i=1;i<=7;i++){
+      var d=i%7;
+      var btn=document.querySelector('#rutFDays .rut-day-btn[data-wd="'+d+'"]');
+      if(!btn||!btn.classList.contains('on'))continue;
+      var v=previas[d]||(r&&r.times&&r.times[d])||base;
+      hh+='<div class="rut-hpd-row"><span>'+RUT_DN_LARGO[d]+'</span>'
+        +'<input class="ev-input" type="time" step="900" data-wd="'+d+'" value="'+v+'"></div>';
+    }
+    cont.innerHTML=hh||'<div class="rut-vacio">Marca antes los d\u00edas de la semana</div>';
+  }
+  var _porDia=document.getElementById('rutFPorDia');
+  if(_porDia)_porDia.addEventListener('change',function(){
+    var cont=document.getElementById('rutFHoras');
+    cont.style.display=this.checked?'block':'none';
+    if(this.checked)_rutPintaHoras();
+  });
+  if(_porDia&&_porDia.checked)_rutPintaHoras();
   document.querySelectorAll('#rutFDays .rut-day-btn').forEach(function(b){
-    b.addEventListener('click',function(){b.classList.toggle('on');});
+    b.addEventListener('click',function(){
+      b.classList.toggle('on');
+      if(_porDia&&_porDia.checked)_rutPintaHoras();
+    });
   });
   var del=document.getElementById('rutFDel');
   if(del)del.addEventListener('click',function(){
@@ -490,6 +545,17 @@ function openRutForm(r){
       icon:(document.querySelector('#rutFIcons .rut-icon-opt.on')||{dataset:{}}).dataset.icon||'gen',
       color:cp.getColor()};
     datos.color=rutColorOf(datos.icon,datos.color);
+    /* Horario por dia: solo se guardan los dias que se salen de la hora general */
+    var _pd=document.getElementById('rutFPorDia');
+    if(_pd&&_pd.checked){
+      var _t={};
+      document.querySelectorAll('#rutFHoras input[data-wd]').forEach(function(i){
+        if(i.value&&i.value!==datos.time&&dias.indexOf(+i.dataset.wd)!==-1)_t[i.dataset.wd]=i.value;
+      });
+      datos.times=_t;
+    } else {
+      datos.times=null;
+    }
     var sf=document.getElementById('rutFSuspFrom');
     if(sf){
       var from=sf.value, to=document.getElementById('rutFSuspTo').value;

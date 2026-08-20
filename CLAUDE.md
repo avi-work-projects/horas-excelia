@@ -335,6 +335,39 @@ que toca y borde en las semanas que ya tienen un cambio guardado; al pulsar
 cualquier dia se abre `_rutWeekRender(r)` para esa semana. La flecha atras del
 editor vuelve al selector, no cierra.
 
+## Barras que se rozan: media casilla cada una (v262)
+Cuando una barra ACABA el mismo dia en que otra EMPIEZA no hay conflicto real,
+asi que van en la **misma fila** y se reparten esa casilla a mitades.
+
+- `_evSoloSeRozan(aS,aE,bS,bE)` decide si es un roce (se pisan exactamente un
+  dia y ese dia es el final de una y el principio de la otra). Pide que las dos
+  duren mas de un dia: con una barra de un solo dia no se sabria que mitad le
+  toca, y se trata como choque de siempre.
+- `_evAssignRow` ya no cuenta el roce como colision.
+- `_evMarcarMitades(lista)` marca `halfL`/`halfR` mirando TODAS las barras de la
+  semana, no solo las de su fila.
+- `_evMitadesStyle(it)` devuelve el margen: `calc(50% / N)` con N = dias que
+  ocupa la barra. **El porcentaje de un margen en un elemento de rejilla se mide
+  sobre el ancho de SU area**, por eso hay que dividir entre N para obtener
+  media casilla. Vale igual en 1 mes y en anual/4 meses.
+
+## Chips de filtro en una sola fila (v262)
+Con los nombres largos la fila de chips se partia en dos en pantallas
+estrechas. `EV_FILTER_SHORT` usa ahora `WM/Rut` y, para Asturias, **la bandera
+en SVG en vez de texto** (campo azul + Cruz de la Victoria). El valor de
+`EV_FILTER_SHORT` se inserta como HTML, asi que admite marcado.
+
+## Rutinas con horario distinto segun el dia (v262)
+`r.times = {'1':'07:30','5':'20:45'}` guarda SOLO los dias que se salen de la
+hora general (`r.time`); el resto caen en ella. `rutTimeOfDay(r,wd)` resuelve la
+hora del dia y `rutWeekCfg` la usa, con esta prioridad:
+
+    suspension > cambio de esa semana (weeks[lunes].time) > hora del dia > hora general
+
+En el formulario lo activa el conmutador "Horario distinto segun el dia", que
+pinta una fila por cada dia marcado. `rutTieneHorarios(r)` es lo que hace que la
+tarjeta ponga "horario por dia" en vez de una hora suelta.
+
 ## Rutinas (js/rutinas.js) — v257
 Pestana `EV_VIEW==='rutinas'` (ocupa el hueco que dejo "Todos"), con dos subpestanas
 (`RUT_SUBTAB`): **Rutinas** y **Estadisticas**.
