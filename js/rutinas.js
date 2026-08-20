@@ -99,8 +99,11 @@ function rutIconOf(r){
   if(/bail|danz|salsa|bachata|zumba/.test(n))return 'baile';
   return 'gen';
 }
+/* color puede ser 'currentColor': entonces el detalle se oscurece con un
+   velo negro en vez de calcular la mezcla, que necesita un hex. */
 function rutIconSvg(kind,color){
-  var dark=(typeof fakeTrans==='function')?fakeTrans(color,0.52):color;
+  var dark=(color==='currentColor')?'rgba(0,0,0,.45)'
+          :((typeof fakeTrans==='function')?fakeTrans(color,0.52):color);
   var shapes=_rutIconShapes(kind);
   return '<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">'
     + '<g fill="'+color+'" stroke="#000" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round">'+shapes+'</g>'

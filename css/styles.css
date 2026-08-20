@@ -319,6 +319,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .sy-suelto-row{display:flex;align-items:center;gap:8px}
 .sy-suelto-date{font-family:var(--mono);font-size:.73rem;color:var(--text-muted)}
 .sy-month-sep{font-size:.68rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;padding:10px 0 4px;border-bottom:1px solid var(--border-light);margin-bottom:4px}
+/* En Proximos la cabecera de semana manda sobre las de dia: va en pastilla */
+.ev-week-sep{display:inline-block;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text);background:var(--surface3);border:1px solid var(--border-light);border-radius:999px;padding:5px 14px;margin:16px 0 8px}
+.ev-week-sep.now{background:var(--accent);border-color:var(--accent);color:#fff}
+[data-theme="light"] .ev-week-sep{background:#eceef5;color:#2a2d3a}
+[data-theme="light"] .ev-week-sep.now{background:var(--accent);color:#fff}
+.ev-upcoming-section + .ev-week-sep{margin-top:22px}
 /* Vacaciones config */
 .vac-config-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm)}
 .vac-config-label{font-size:.8rem;color:var(--text-muted);flex:1}
@@ -1141,6 +1147,18 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-annual-marker.ev-marker-up,.ev-annual-vip-star-svg.ev-marker-up,.ev-rut-mark.ev-marker-up{width:19px;height:19px}
 .ev-up-bar{width:15px;height:8px;border-radius:3px;display:block;border:1px solid rgba(0,0,0,.35)}
 .ev-up-filters{padding:2px 2px 8px}
+/* Horas del evento y transporte de ida/vuelta */
+.ev-hora-row{margin-top:2px}
+.ev-viaje-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px}
+.ev-viaje-tramo{border-top:1px solid var(--border);padding:8px 0 2px;margin-top:6px}
+.ev-viaje-tramo:first-of-type{border-top:none;margin-top:2px;padding-top:2px}
+.ev-viaje-hd{font-size:.78rem;color:var(--text)}
+.ev-viaje-campos{display:flex;gap:8px;margin-top:7px}
+.ev-viaje-campos .ev-viaje-time{flex:0 0 40%}
+.ev-viaje-campos .ev-viaje-modo{flex:1;min-width:0}
+.ev-viaje-cond{margin-top:7px}
+.ev-viaje-note{font-size:.62rem;color:var(--text-dim);margin-top:9px;line-height:1.4}
+.ev-wk-multi-trans{font-size:.58rem;color:var(--text-muted);margin-top:1px;font-family:var(--mono)}
 .ev-upcoming-color{width:14px;height:14px;border-radius:3px;flex-shrink:0}
 .ev-upcoming-info{flex:1;min-width:0}
 .ev-upcoming-title{font-size:.88rem;font-weight:600;word-wrap:break-word;overflow-wrap:break-word;line-height:1.2}
@@ -1617,6 +1635,9 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-car-dot{width:6px;height:6px;border-radius:50%;background:var(--border-light)}
 .ev-car-dot.on{background:var(--accent);transform:scale(1.35)}
 &
+/* Rutinas en anual y 4 meses: puntitos en fila arriba del dia */
+.ev-ann-ruts{position:absolute;top:1px;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:1.5px;z-index:6;pointer-events:none}
+.ev-ann-rut{width:4px;height:4px;border-radius:50%;flex-shrink:0;box-shadow:0 0 0 .5px rgba(0,0,0,.55)}
 .ev-day-left{position:absolute;top:18px;left:3px;display:flex;flex-direction:column;align-items:flex-start;gap:3px;z-index:5;pointer-events:none;max-width:72%}
 .ev-day-left > *{pointer-events:auto}
 /* Los cumpleaños VIP se solapan al 75% (12px de marcador -> -9px) */

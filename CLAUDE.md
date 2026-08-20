@@ -246,7 +246,8 @@ Cada evento tiene un `kind` y un `type`. **La identidad de una categoría es el 
 
 ## Filtros del calendario anual / 4 meses (v244)
 Los chips NO filtran por tipo suelto sino por **grupo** (`evFilterGroup`, events.js):
-`Grandes` (todo kind grande menos Asturias) · `Asturias` · `Gestiones` · `Bodas`
+`Grandes` (todo kind grande menos Asturias) · `Asturias` · `Gestiones` · `WM + Rut`
+(Wedding Moves + rutinas: clases de boda y sesiones de rutina)
 (puntual|Ensayos boda) · `Resto` (el resto de puntuales: Plan/Quedada, Otros...) ·
 `Cumpleanos VIP`. `EV_ANNUAL_FILTER_HIDDEN` guarda los grupos ocultos.
 
@@ -278,6 +279,37 @@ Cada celda reparte lo que ocupa el dia en dos columnas:
   (detalle de evento, alarma de cumpleanos o sesion de rutina).
 - El resto de calendarios sigue con el reparto de siempre.
 
+## Horas de un evento y transporte (v260)
+Cada clase de evento guarda su hora en un sitio distinto, pero se lee siempre
+con los mismos tres ayudantes (`events.js`), asi que el resto del codigo no
+tiene que saber de donde sale:
+
+| Funcion | Devuelve |
+|---|---|
+| `evStartTime(ev)` | hora de inicio: `ev._rutTime` (rutina) · `ev.boda.time` (clase) · `ev.time` (resto) |
+| `evEndTime(ev)` | hora de fin (las clases de boda duran 1 h fija y devuelven `null`) |
+| `evTimeLabel(ev)` | texto `09:30–11:00` para las tarjetas |
+| `evTramos(ev)` | tramos de viaje de un evento grande, ya normalizados |
+
+- **Puntual** (menos `Ensayos boda`): `ev.time` y `ev.endTime`, las dos
+  opcionales. El fin solo se activa si hay inicio.
+- **Grande**: `ev.viaje = {ida:{time,modo,conductor}, vuelta:{...}}`, cada
+  tramo opcional. `time` es la hora de **salida**. `modo` sale de
+  `EV_TRANSPORTES` (tren · bus · coche · avion) y `conductor` solo se guarda
+  con `modo==='coche'`.
+- **Alarmas desde Proximos**: los atajos "1 h antes" / "30 min antes" ya no son
+  solo de las clases de boda; salen para cualquier evento con hora y, en los
+  grandes, un bloque por tramo. Cada boton lleva `data-ds` (su dia: la vuelta
+  cae en `ev.end`) y `data-suf` (la coletilla del mensaje). Si el viaje ya
+  empezo, la ida no se ofrece.
+- La hora se ve en el detalle, en Proximos y en la agenda semanal.
+
+## Cierre de paneles: cancelar el temporizador (v260)
+Los paneles se quitan del DOM 300 ms despues de cerrarse. Si en ese rato se
+abria otro con el mismo id, el temporizador del cierre anterior se llevaba por
+delante el panel NUEVO. Por eso hay `_evScheduleRemove(id,extra)` /
+`_evCancelRemove(id)`: todo `openXxx` cancela el borrado pendiente de su id.
+
 ## Rutinas (js/rutinas.js) — v257
 Pestana `EV_VIEW==='rutinas'` (ocupa el hueco que dejo "Todos"), con dos subpestanas
 (`RUT_SUBTAB`): **Rutinas** y **Estadisticas**.
@@ -297,10 +329,11 @@ Una rutina es una actividad semanal (gimnasio, baile, padel...) guardada en
 - **Sesiones virtuales**: `rutEventsOn(ds)` devuelve eventos `puntual|Rutina` con id
   `rut-<idRutina>-<ds>` y los inyecta `getEventsOn()`. No estan en `EVENTS` y no se
   guardan: se recalculan siempre desde la rutina.
-- **Donde se pintan (v258)**: SOLO en el calendario de 1 mes. El resto de vistas
-  (anual, 4 meses, agenda semanal, Proximos, home y resumen) llaman a
-  `getEventsOn(ds,EV_NO_RUT)`. Para que vuelvan a salir en alguna, basta con quitar
-  ese segundo argumento en su llamada.
+- **Donde se pintan (v260)**: en 1 mes con su icono; en anual y 4 meses como un
+  puntito de 4 px (`.ev-ann-rut`) en fila arriba del dia; en Proximos y en la
+  agenda semanal como una tarjeta mas. Home y resumen las excluyen con
+  `getEventsOn(ds,EV_NO_RUT)`. En Proximos hay un check para esconderlas
+  (`EV_UP_HIDE_RUT`) y otro para las clases de boda (`EV_UP_HIDE_BODA`).
 - **Icono** (`rut.icon`): `gym` (mancuerna) · `padel` (pala) · `baile` (bailarin) ·
   `gen`. `rutIconOf(r)` lo deduce del nombre si la rutina no lo trae. `rutIconSvg(kind,color)`
   dibuja la silueta en el color de la rutina y los detalles en `fakeTrans(color,.52)`.
