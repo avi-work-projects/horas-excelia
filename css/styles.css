@@ -1566,11 +1566,6 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-zone-b .ev-btn-week.active{background:rgba(255,107,107,.24) !important;border-color:#ff6b6b !important;color:#ff8787 !important}
 [data-theme="light"] .ev-zone-b .ev-btn-week:not(.active){background:rgba(216,48,48,.07);border-color:rgba(216,48,48,.3);color:#c02626}
 [data-theme="light"] .ev-zone-b .ev-btn-week.active{background:rgba(216,48,48,.16) !important;border-color:#d83030 !important;color:#a81f1f !important}
-/* Zone C: Puentes — pink; Vac/Festivos — orange+red gradient */
-.ev-btn-puentes:not(.active){background:rgba(244,114,182,.1);border-color:rgba(244,114,182,.35);color:#f472b6}
-.ev-btn-puentes.active{background:rgba(244,114,182,.22) !important;border-color:#f472b6 !important;color:#f472b6 !important}
-.ev-zone-a .ev-btn-timeoff:not(.active){background:linear-gradient(170deg,rgba(255,179,71,.1),rgba(255,107,107,.1));border-color:rgba(255,179,71,.35);color:var(--vacaciones)}
-.ev-zone-a .ev-btn-timeoff.active{background:linear-gradient(170deg,rgba(255,179,71,.28),rgba(255,107,107,.28)) !important;border-color:var(--vacaciones) !important;color:var(--vacaciones) !important}
 /* ── Feat 2: Lista de Eventos subtabs ── */
 .ev-list-subtabs{display:flex;gap:6px;padding:8px 0 4px}
 .ev-list-subtab{flex:1;font-size:.72rem;padding:6px 12px;border-radius:14px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;text-align:center;transition:all .15s;-webkit-user-select:none;user-select:none}
@@ -1904,8 +1899,8 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 [data-theme="light"] .ev-btn-bodas:not(.active){background:rgba(139,94,52,.07);border-color:rgba(139,94,52,.28);color:#8b5e34}
 [data-theme="light"] .ev-btn-bodas.active{background:rgba(139,94,52,.18) !important;border-color:#8b5e34 !important;color:#6d4826 !important}
 /* Mitad marron (vacaciones/festivos) + mitad rosa (puentes), sin linea visible */
-.ev-btn-split:not(.active){background:linear-gradient(to bottom,rgba(255,179,71,.13) 0%,rgba(255,179,71,.13) 50%,rgba(244,114,182,.13) 50%,rgba(244,114,182,.13) 100%);border-color:rgba(255,179,71,.35);color:var(--vacaciones)}
-.ev-btn-split.active{background:linear-gradient(to bottom,rgba(255,179,71,.3) 0%,rgba(255,179,71,.3) 50%,rgba(244,114,182,.3) 50%,rgba(244,114,182,.3) 100%) !important;border-color:var(--vacaciones) !important;color:var(--vacaciones) !important}
+.ev-zone-a .ev-btn-split:not(.active){background:linear-gradient(to bottom,rgba(255,179,71,.13) 0%,rgba(255,179,71,.13) 50%,rgba(244,114,182,.13) 50%,rgba(244,114,182,.13) 100%);border-color:rgba(255,179,71,.35);color:var(--vacaciones)}
+.ev-zone-a .ev-btn-split.active{background:linear-gradient(to bottom,rgba(255,179,71,.3) 0%,rgba(255,179,71,.3) 50%,rgba(244,114,182,.3) 50%,rgba(244,114,182,.3) 100%) !important;border-color:var(--vacaciones) !important;color:var(--vacaciones) !important}
 /* Subpestanas (Puentes/Vac-Festivos y Clases/Parejas): usan .econ-sub-tabs, el
    mismo componente sticky que "Mis gastos" / "Analisis hipoteca" */
 .sy-body:has(> .econ-sub-tabs:first-child){padding-top:0!important}
