@@ -2053,7 +2053,8 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .boda-legend-i i{width:10px;height:10px;border-radius:2px;border:1px solid rgba(0,0,0,.6);display:inline-block}
 .boda-det-meta{font-size:.72rem;color:var(--text-muted);margin:2px 0 8px}
 /* Los tres botones del detalle de pareja comparten aspecto */
-.boda-det-btn{border-color:var(--border);color:var(--text)}
+.boda-det-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text)}
+.boda-det-btn:active{background:var(--surface3)}
 .boda-det-actions{display:flex;flex-direction:column;gap:8px;margin-top:14px}
 .boda-det-actions .ev-btn{width:100%}
 .boda-det-list-t{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-dim);margin:12px 0 4px}
@@ -2139,6 +2140,19 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .rut-wpick-day.out{opacity:.3}
 .rut-wpick-day.hoy{box-shadow:inset 0 0 0 1.5px var(--accent);font-weight:700}
 .rut-wpick-day i{width:5px;height:5px;border-radius:50%;display:block}
+/* Ficha del dia: alto fijo para que no baile al pasar de un evento a otro */
+.ev-detail-sheet.ev-car-sheet{min-height:56vh;display:flex;flex-direction:column}
+.ev-car-sheet .ev-detail-actions{margin-top:auto}
+/* Pastillas de una clase: hora, sala y pareja, con aviso si faltan */
+.ev-bchips,.ev-bpareja{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px}
+.ev-bchip{display:inline-flex;align-items:center;gap:4px;font-size:.72rem;font-weight:600;padding:5px 10px;border-radius:12px;border:1.5px solid var(--border-light);color:var(--text-muted);background:var(--surface2);white-space:nowrap}
+.ev-bchip.warn{border-color:#c98a1e;color:#e0a83c;background:rgba(201,138,30,.1)}
+[data-theme="light"] .ev-bchip.warn{border-color:#d4941f;color:#8a5c05;background:rgba(212,148,31,.14)}
+.ev-bver{flex:0 0 auto;padding:5px 12px;font-size:.72rem;border:1.5px solid var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
+/* Tarjeta de pareja desplegada en su sitio (antes era un modal) */
+.boda-card.abierta{border-color:var(--border-light);box-shadow:0 2px 10px var(--shadow)}
+.boda-card-open{margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+.boda-card-open .boda-det-actions{margin-top:10px}
 /* Horario distinto segun el dia */
 .rut-hpd-rows{margin-top:8px;display:flex;flex-direction:column;gap:6px}
 .rut-hpd-row{display:flex;align-items:center;gap:10px}

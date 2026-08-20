@@ -68,6 +68,7 @@ Antes de escribir uno nuevo, comprobar aquí:
 | Recorrer los eventos de un dia | `openEvDayCarousel(ds,idInicial)` — es la propia ficha de detalle con flechas, puntos y swipe | events.js |
 | Barras horizontales de reparto | `hBarRows([{label,value,color}],{suffix})` | core.js |
 | Panel deslizante de Bodas | `bodaOpenSheet(wrapId,ovId,html,onClose)` + `bodaCloseSheet(...)` | bodas.js |
+| Tarjeta que se despliega en su sitio | `BODA_CARD_OPEN` + `.boda-card.abierta` — patron a seguir antes que abrir otro modal | bodas.js |
 | Chips de filtro | `.ev-filter-chip` (calendarios) · `.boda-chip` (parejas) | styles.css |
 | Tarjeta de mes de calendario | `_renderEvMonthCard(m,año,ctx)` — la usan Anual y 4 meses | events.js |
 
@@ -309,6 +310,20 @@ Los paneles se quitan del DOM 300 ms despues de cerrarse. Si en ese rato se
 abria otro con el mismo id, el temporizador del cierre anterior se llevaba por
 delante el panel NUEVO. Por eso hay `_evScheduleRemove(id,extra)` /
 `_evCancelRemove(id)`: todo `openXxx` cancela el borrado pendiente de su id.
+
+## Swipe anidado: manda el de dentro (v263)
+`addSwipe` descarta el gesto si empieza dentro de un elemento que ya tiene su
+propio swipe (`_swipeAdded`) o dentro de un panel abierto (`.ev-detail-overlay`,
+`.ev-form-overlay`, `.ev-alarm-overlay`, `.bd-alarm-overlay`, `.dp-overlay`,
+`.imp-mode-ov`). Sin esto, deslizar en la ficha de un dia cambiaba **ademas** el
+mes de fondo, porque el gesto subia hasta el swipe de `#eventsOverlay`.
+
+## La ficha del dia no cambia de alto (v263)
+Con `car`, la hoja lleva la clase `.ev-car-sheet`: `min-height:56vh`, en columna
+y con las acciones pegadas abajo (`margin-top:auto`). Ademas, una clase de boda
+pinta SIEMPRE sus tres pastillas (hora, sala y pareja): si falta el dato sale
+`.ev-bchip.warn` con el aviso, en vez de desaparecer la linea. Asi la ficha mide
+lo mismo este la clase completa o vacia.
 
 ## La ficha del dia es la ficha de detalle (v261)
 No hay dos paneles. `renderEvDetail(ev,fromSummary,car)` recibe un tercer
