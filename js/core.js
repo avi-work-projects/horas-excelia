@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v258 - Dia en dos columnas, cabeceras por dia en Proximos y paleta 6x7';
+var APP_VERSION = 'v259 - Checks nuevos, marcadores reales en Proximos y limpieza de copias';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

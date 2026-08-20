@@ -94,11 +94,6 @@ function getBdayColor(b){
   return BDAY_PALETTE[idx%BDAY_PALETTE.length];
 }
 
-function shortName(name){
-  var first=name.split(' ')[0];
-  return first.length>10?first.substring(0,9)+'\u2026':first;
-}
-
 function getBdaysOn(m1,d){return BDAYS.filter(function(b){return b.month===m1&&b.day===d;});}
 
 function daysUntil(m1,d){
@@ -262,11 +257,11 @@ function renderBdayCalMonth(){
       h+='<div class="bday-num">'+d.getDate()+'</div>';
       bds.forEach(function(b){
         var color=b.vip?'#fbbf24':getBdayColor(b);
-        var sn=shortName(tc(b.name));
+        var sn=bdName(b.name);   /* nombre completo: el cajetin admite 3 lineas */
         var bidx=BDAYS.indexOf(b);
         var vipCls=b.vip?' bday-badge-vip':'';
         var vipXtra=b.vip?';border-width:2px;box-shadow:0 0 5px rgba(251,191,36,.55)':'';
-        h+='<div class="bday-badge'+vipCls+'" data-bday-idx="'+bidx+'" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" style="background:'+color+'22;color:'+color+';border-color:'+color+vipXtra+'" title="'+bdName(b.name)+(b.vip?' VIP':'')+'">'+escHtml(sn)+'</div>';
+        h+='<div class="bday-badge'+vipCls+'" data-bday-idx="'+bidx+'" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" style="background:'+color+'22;color:'+color+';border-color:'+color+vipXtra+'" title="'+bdName(b.name)+(b.vip?' VIP':'')+'">'+sn+'</div>';
       });
       h+='</div>';
       cur.setDate(cur.getDate()+1);
@@ -307,7 +302,7 @@ function renderBdayList(){
     }
     if(!filtered.length)return;
     filtered.sort(function(a,b){return a.day-b.day;});
-    h+='<div class="sy-section bday-month-section"><div class="bday-month-hdr">'+MN[m]+'</div>';
+    h+='<div class="sy-section bday-month-section" data-month="'+m+'"><div class="bday-month-hdr">'+MN[m]+'</div>';
     filtered.forEach(function(b){
       var dl=daysUntil(b.month,b.day);
       var lbl=dl===0?'\u00a1Hoy!':dl===1?'Ma\u00f1ana':'en '+dl+'d';
@@ -454,7 +449,7 @@ function renderBdayAlarmPanel(b){
   h+='</div>';
   // VIP toggle
   h+='<div class="bd-alarm-vip-row">';
-  h+='<label class="bd-alarm-vip-lbl"><input type="checkbox" id="bdAlarmVip"'+(b.vip?' checked':'')+' style="accent-color:#fbbf24;width:16px;height:16px"> <img src="./VIP.png" class="bday-vip-img" alt="VIP" style="height:2.2em;margin-left:2px;vertical-align:middle"></label>';
+  h+='<label class="bd-alarm-vip-lbl"><input type="checkbox" id="bdAlarmVip"'+(b.vip?' checked':'')+' style="--chk:#fbbf24"> <img src="./VIP.png" class="bday-vip-img" alt="VIP" style="height:2.2em;margin-left:2px;vertical-align:middle"></label>';
   h+='</div>';
   // Alarm fields
   h+='<div id="bdAlarmFields">';
@@ -678,7 +673,7 @@ function renderBdayForm(b,prefillDay,prefillMonth){
   // VIP toggle
   h+='<div class="ev-toggle-row">';
   h+='<label class="ev-toggle-label" for="bdFVip"><img src="./VIP.png" alt="VIP" style="height:1.6em;vertical-align:middle;margin-right:5px"> VIP (alarma prioritaria + sync eventos)</label>';
-  h+='<input type="checkbox" class="ev-checkbox" id="bdFVip"'+(vip?' checked':'')+' style="accent-color:#fbbf24">';
+  h+='<input type="checkbox" class="ev-checkbox" id="bdFVip"'+(vip?' checked':'')+' style="--chk:#fbbf24">';
   h+='</div>';
   h+='<div class="ev-form-actions"><button class="ev-btn primary" id="bdFSave">Guardar</button></div>';
   h+='</div></div>';
@@ -837,9 +832,17 @@ function bindBdayEvents(){
     });
   }
   function _bdResetScroll(){var b=document.querySelector('#bdayOverlay .sy-body');if(b)b.scrollTop=0;}
+  /* La lista arranca en el mes en curso; el resto queda a un scroll de distancia */
+  function _bdScrollToMonth(){
+    var body=document.querySelector('#bdayOverlay .sy-body');
+    if(!body)return;
+    var sec=body.querySelector('.bday-month-section[data-month="'+(new Date()).getMonth()+'"]');
+    if(!sec){body.scrollTop=0;return;}
+    body.scrollTop=Math.max(0,sec.offsetTop-body.offsetTop-8);
+  }
   document.getElementById('bdViewUpcoming').addEventListener('click',function(){BDAY_SEARCH='';BDAY_FILTER_VIP='all';BDAY_EDIT_VIP=false;BDAY_VIP_PENDING=null;BDAY_VIEW='upcoming';refreshBday();_bdResetScroll();});
   document.getElementById('bdViewCal').addEventListener('click',function(){BDAY_SEARCH='';BDAY_FILTER_VIP='all';BDAY_EDIT_VIP=false;BDAY_VIP_PENDING=null;BDAY_VIEW='cal';refreshBday();_bdResetScroll();});
-  document.getElementById('bdViewList').addEventListener('click',function(){BDAY_VIP_PENDING=null;BDAY_EDIT_VIP=false;BDAY_VIEW='list';refreshBday();_bdResetScroll();});
+  document.getElementById('bdViewList').addEventListener('click',function(){BDAY_VIP_PENDING=null;BDAY_EDIT_VIP=false;BDAY_VIEW='list';refreshBday();_bdScrollToMonth();});
   // Filter chips: Todos / Solo VIP / Sin VIP
   var bdVipAllEl=document.getElementById('bdVipAll');
   if(bdVipAllEl)bdVipAllEl.addEventListener('click',function(){BDAY_FILTER_VIP='all';BDAY_SEARCH='';refreshBday();});

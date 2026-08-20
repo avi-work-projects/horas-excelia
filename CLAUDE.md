@@ -52,6 +52,7 @@ Antes de escribir uno nuevo, comprobar aquí:
 | Barra de navegación (nivel 1) | `renderNavBar('events')` + `bindNavBar('events',closeFn)` | core.js |
 | Subpestañas sticky | `.econ-sub-tabs` / `.econ-sub-tab` | styles.css |
 | Aviso corto | `showToast(msg,'success'\|'error',undoFn)` — con `undoFn` sale "Deshacer" | core.js |
+| Casilla de verificacion | `<input type="checkbox">` a secas — hay un estilo unico global; el color se cambia con `style="--chk:#hex"` | styles.css |
 | Elegir color | `_renderColorPicker(hex,_,_,'prefijo')` + `_bindColorPicker(wrap,'prefijo')` → `{getColor,setColor}` | events-picker-color.js |
 | Elegir hora (ruedas) | `.drum-wrap`/`.drum-picker`/`.drum-sel-lines` + `openBodaTimePicker` como referencia | styles.css / bodas.js |
 | Elegir varios días | `openOtrosDatePicker(dates,color,año,cb)` | events-picker-date.js |
@@ -248,6 +249,19 @@ Los chips NO filtran por tipo suelto sino por **grupo** (`evFilterGroup`, events
 `Grandes` (todo kind grande menos Asturias) · `Asturias` · `Gestiones` · `Bodas`
 (puntual|Ensayos boda) · `Resto` (el resto de puntuales: Plan/Quedada, Otros...) ·
 `Cumpleanos VIP`. `EV_ANNUAL_FILTER_HIDDEN` guarda los grupos ocultos.
+
+### Color de un evento: quien manda (v259)
+`getEvDisplayColor(ev)` es la unica fuente de color para pintar. Por orden:
+1. `Rutina` → el color de la rutina tal cual (su id cambia cada dia).
+2. `Ensayos boda` con pareja → **el color de la pareja**; el morado del tipo
+   solo se ve mientras la clase no tiene pareja asignada.
+3. Viaje con color base → matiz determinista por id (`evTravelColor`).
+4. El resto → `ev.color`.
+Los paneles (detalle, alarma, Proximos) usan esta funcion, nunca `ev.color`.
+
+### Rutinas: el color lo manda el icono
+`RUT_FIXED_COLOR` fija naranja/verde/rojo para gimnasio, padel y baile; el
+selector de color del formulario solo aparece con el icono `gen` ("Otra").
 
 ## Calendario de 1 mes: el dia en dos columnas (v258)
 Cada celda reparte lo que ocupa el dia en dos columnas:

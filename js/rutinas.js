@@ -42,6 +42,10 @@ var RUT_DN_LARGO = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','
    veces: primero con un trazo negro grueso (contorno de la unión) y luego
    rellena. Viewbox 0 0 24 24 en todos. */
 var RUT_ICONS = ['gym','padel','baile','gen'];
+/* Las rutinas de siempre llevan su color de casa y no se tocan; solo
+   "Otra" deja elegir. Asi el gimnasio es naranja en todas partes. */
+var RUT_FIXED_COLOR = {gym:'#fb923c', padel:'#a3e635', baile:'#e03131'};
+function rutColorOf(icon,color){return RUT_FIXED_COLOR[icon]||color;}
 var RUT_ICON_LABEL = {gym:'Gimnasio', padel:'Pádel', baile:'Baile', gen:'Otra'};
 function _rutIconShapes(kind){
   if(kind==='gym'){
@@ -389,7 +393,8 @@ function renderRutForm(r){
       +rutIconSvg(k,col)+'<span>'+RUT_ICON_LABEL[k]+'</span></button>';
   });
   h+='</div></div>';
-  h+='<div class="ev-field"><label>🎨 Color</label>'+_renderColorPicker(col,false,false,'rutCp')+'</div>';
+  h+='<div class="ev-field" id="rutFColorField"'+(_ic==='gen'?'':' style="display:none"')+'>'
+    +'<label>🎨 Color</label>'+_renderColorPicker(col,false,false,'rutCp')+'</div>';
   if(isEdit){
     var susp=r.suspend&&r.suspend.from;
     h+='<div class="ev-field rut-susp-box">';
@@ -428,6 +433,11 @@ function openRutForm(r){
     b.addEventListener('click',function(){
       document.querySelectorAll('#rutFIcons .rut-icon-opt').forEach(function(x){x.classList.remove('on');});
       b.classList.add('on');
+      var k=b.dataset.icon;
+      var campo=document.getElementById('rutFColorField');
+      if(campo)campo.style.display=(k==='gen')?'':'none';
+      if(RUT_FIXED_COLOR[k])cp.setColor(RUT_FIXED_COLOR[k]);
+      _rutRepaintIcons();
     });
   });
   var _cpWrap=document.getElementById('rutCpWrap');
@@ -471,6 +481,7 @@ function openRutForm(r){
       start:document.getElementById('rutFStart').value||evDk(new Date()),
       icon:(document.querySelector('#rutFIcons .rut-icon-opt.on')||{dataset:{}}).dataset.icon||'gen',
       color:cp.getColor()};
+    datos.color=rutColorOf(datos.icon,datos.color);
     var sf=document.getElementById('rutFSuspFrom');
     if(sf){
       var from=sf.value, to=document.getElementById('rutFSuspTo').value;

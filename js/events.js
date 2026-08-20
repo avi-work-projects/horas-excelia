@@ -383,6 +383,9 @@ var EV_CAL_BADGE_STACK = 5;  /* 1-mes: badges apilados desde abajo; los que sobr
 var EV_CAL_CORNER_STACK = 5;
 /* Cumpleanos VIP que caben el mismo dia en la columna izquierda */
 var EV_CAL_VIP_MAX = 3;
+/* Checks de la subpestana Proximos */
+var EV_UP_HIDE_RUT = false;
+var EV_UP_HIDE_BODA = false;
 function evAnnualXsHtml(items){
   if(!items.length)return '';
   var n=items.length;
@@ -705,6 +708,19 @@ function _isVipBdayTooFar(ev,firstDate,today){
   if(ev.id.indexOf('ev-bday-vip-')!==0)return false;
   return Math.round((firstDate-today)/86400000)>=7;
 }
+/* Marcador de la tarjeta de Proximos: la misma forma y el mismo color que
+   se ve en el calendario. Los eventos grandes no tienen forma (son barras),
+   asi que conservan su pastilla de color. */
+function evUpcomingMarkHtml(ev){
+  if(ev.id.indexOf('ev-bday-vip-')===0)return vipStarSvgHtml(ev.id,'','ev-marker-up');
+  if(ev._rut&&typeof rutIconSvg==='function'){
+    var r=ev._rut;
+    return '<span class="ev-rut-mark ev-marker-up">'+rutIconSvg(rutIconOf(r),r.color||'#888')+'</span>';
+  }
+  if(typeof isEvBarAlways==='function'&&isEvBarAlways(ev))
+    return '<span class="ev-up-bar" style="background:'+getEvDisplayColor(ev)+'"></span>';
+  return evMarkerHtml(ev,'','ev-marker-up',evDefaultShape(ev),evIsoDate(new Date(ev.start+'T00:00:00')));
+}
 function renderEvUpcoming(){
   if(!EVENTS.length)return '<div class="sy-note">No hay eventos creados. Pulsa \"+ A\u00f1adir\" para crear uno.</div>';
   var today=new Date();today.setHours(0,0,0,0);
@@ -725,7 +741,7 @@ function renderEvUpcoming(){
     var metaDate=fd2(item.firstDate);
     if(ev.end&&ev.end!==ev.start){var _eD=new Date(ev.end+'T00:00:00');metaDate+=' <span style="font-size:.62rem;opacity:.7">&#8212; '+fd2(_eD)+'</span>';}
     var s='<div class="ev-upcoming-item'+(isToday?' ev-upcoming-today':'')+'" data-id="'+ev.id+'" data-first="'+evIsoDate(item.firstDate)+'">';
-    s+='<div class="ev-upcoming-color" style="background:'+getEvDisplayColor(ev)+'"></div>';
+    s+='<div class="ev-up-mark">'+evUpcomingMarkHtml(ev)+'</div>';
     s+='<div class="ev-upcoming-info">';
     s+='<div class="ev-upcoming-title">'+title+'</div>';
     s+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+metaDate+'</div>';
@@ -789,9 +805,10 @@ function renderEvUpcoming(){
     for(var d=0;d<7;d++){
       var day=new Date(wk0);day.setDate(day.getDate()+(w*7+d));
       var ds=evDk(day);
-      var evs=getEventsOn(ds,EV_NO_RUT);
+      var evs=getEventsOn(ds,EV_UP_HIDE_RUT?EV_NO_RUT:null);
       evs.forEach(function(ev){
         if(_isVipBdayTooFar(ev,day,today))return;
+        if(EV_UP_HIDE_BODA&&getEvType(ev)==='Ensayos boda')return;
         if(_seenEv[ev.id])return;
         /* Recurrentes: ignorar ocurrencias ya pasadas de esta semana,
            el evento se asigna a su PRÓXIMA ocurrencia (day >= hoy). */
@@ -819,9 +836,10 @@ function renderEvUpcoming(){
       for(var fd3=0;fd3<7;fd3++){
         var fday=new Date(wk0);fday.setDate(fday.getDate()+(fw*7+fd3));
         var fds=evDk(fday);
-        var fevs=getEventsOn(fds,EV_NO_RUT);
+        var fevs=getEventsOn(fds,EV_UP_HIDE_RUT?EV_NO_RUT:null);
         fevs.forEach(function(ev){
           if(ev.id.indexOf('ev-bday-vip-')===0)return;
+          if(EV_UP_HIDE_BODA&&getEvType(ev)==='Ensayos boda')return;
           if(!fwMap[ev.id])fwMap[ev.id]={ev:ev,firstDate:new Date(fday)};
         });
       }
@@ -1415,6 +1433,12 @@ function renderEvContent(){
     h+='<button class="econ-sub-tab'+(EV_VIEW==='upcoming'?' active':'')+'" id="evSubUpcoming">Próximos</button>';
     h+='<button class="econ-sub-tab'+(EV_VIEW==='months'?' active':'')+'" id="evSubTodos">Todos</button>';
     h+='</div>';
+    if(EV_VIEW==='upcoming'){
+      h+='<div class="excl-row ev-up-filters">';
+      h+='<label class="excl-item"><input type="checkbox" id="evUpHideRut"'+(EV_UP_HIDE_RUT?' checked':'')+'> Ocultar rutinas</label>';
+      h+='<label class="excl-item"><input type="checkbox" id="evUpHideBoda"'+(EV_UP_HIDE_BODA?' checked':'')+'> Ocultar clases de boda</label>';
+      h+='</div>';
+    }
   }
   if(EV_VIEW==='puentes'||EV_VIEW==='time-off'){
     /* Pestana unica "Vacaciones Festivos" con dos subpestanas */
@@ -2225,8 +2249,9 @@ function renderEvAlarmPanel(ev,firstDate){
   h+='<div class="bd-alarm-hdr"><button class="sy-back" id="evAlarmClose">&#8592;</button>';
   h+='<div class="bd-alarm-title">&#128276; Alarma evento</div><div style="width:36px"></div></div>';
   var note=ev.note&&ev.note.trim()?escHtml(ev.note):'<span style="opacity:.45;font-style:italic">Sin descripci\u00f3n</span>';
-  h+='<div class="bd-alarm-info" style="border-color:'+ev.color+'44;background:'+ev.color+'11">';
-  h+='<div class="bd-alarm-name" style="color:'+ev.color+'">'+escHtml(ev.title)+'</div>';
+  var _ac=getEvDisplayColor(ev);
+  h+='<div class="bd-alarm-info" style="border-color:'+_ac+'44;background:'+_ac+'11">';
+  h+='<div class="bd-alarm-name" style="color:'+_ac+'">'+escHtml(ev.title)+'</div>';
   h+='<div class="bd-alarm-date">'+fd2(firstDate)+' \u00b7 '+diffLbl+'</div>';
   h+='<div class="ev-alarm-note">'+note+'</div></div>';
   // Permanent 3-zone alarm marker
@@ -2577,6 +2602,10 @@ function bindEvEvents(){
   document.getElementById('evViewAnnual').addEventListener('click',function(){_switchEvView('annual');refreshEvents();});
   var _rutBtn=document.getElementById('evViewRutinas');
   if(_rutBtn)_rutBtn.addEventListener('click',function(){_switchEvView('rutinas');refreshEvents();});
+  var _upR=document.getElementById('evUpHideRut');
+  if(_upR)_upR.addEventListener('change',function(){EV_UP_HIDE_RUT=this.checked;refreshEvents();});
+  var _upB=document.getElementById('evUpHideBoda');
+  if(_upB)_upB.addEventListener('change',function(){EV_UP_HIDE_BODA=this.checked;refreshEvents();});
   var _subUp=document.getElementById('evSubUpcoming');
   if(_subUp)_subUp.addEventListener('click',function(){_switchEvView('upcoming');refreshEvents(false);});
   var _subTd=document.getElementById('evSubTodos');
