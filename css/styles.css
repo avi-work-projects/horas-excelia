@@ -1935,6 +1935,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ev-upcoming-daynote{border-left:2px solid var(--accent);padding-left:6px;margin-top:3px}
 /* Hora y sala de un ensayo, al pie de la tarjeta de Proximos */
 .ev-upcoming-boda{font-size:.62rem;color:var(--text-dim);margin-top:3px;font-family:var(--mono);white-space:nowrap}
+/* Atajos de alarma para un ensayo: 1 h / 30 min antes (se pueden marcar los dos) */
+.ev-alarm-pre{margin:14px 0 4px}
+.ev-alarm-pre-t{font-size:.72rem;color:var(--text-muted);margin-bottom:6px}
+.ev-alarm-pre-t b{color:var(--text)}
+.ev-alarm-pre-row{display:flex;gap:8px}
+.ev-alarm-pre-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 6px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text-muted);font-size:.74rem;cursor:pointer;font-family:var(--font);transition:all .15s}
+.ev-alarm-pre-btn span{font-size:.68rem;font-family:var(--mono);opacity:.8}
+.ev-alarm-pre-btn.on{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright);font-weight:600}
 /* Agenda semanal: hora y sala de los ensayos + continuacion de un mes anterior */
 .ev-wk-chip-meta{font-size:.62rem;opacity:.85;margin-left:6px;font-family:var(--mono);white-space:nowrap;flex:0 0 auto;color:#fff}
 .ev-wk-multi-cont{opacity:.85}
