@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v254 - Los marcadores de Rec. Gestiones van siempre los primeros del dia';
+var APP_VERSION = 'v255 - Clases de boda ordenadas por hora y alarmas de ensayo 1h/30min antes';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

@@ -228,6 +228,9 @@ Cada evento tiene un `kind` y un `type`. **La identidad de una categoría es el 
 - **Grosor de la barra** (`evBarSize`/`evBarSizeCls`): Viaje y Asturias `lg`; el resto de
   grandes `md`; solo `grande|Otros` puede elegir entre `lg`/`md`/`sm` (se guarda en
   `ev.barSize` y se pinta con las clases `.ev-bar-lg|md|sm`).
+- **Clases de boda ordenadas por hora** en todos los calendarios: `evSortMarks` reordena
+  entre sí las clases (`evBodaMinutes`) dejándolas en las mismas posiciones, para no alterar
+  el orden del resto de categorías. Las que no tienen hora van al final.
 - **Orden de los marcadores en un dia** (`EV_MARK_ORDER`/`evSortMarks`): `Rec. Gestiones`
   siempre primero; en anual/4-meses solo se dibujan los 3 primeros antes del "+", asi que
   el orden decide que se ve. Para priorizar otra categoria, anadirla a `EV_MARK_ORDER`.
@@ -288,6 +291,9 @@ Pestaña `EV_VIEW==='bodas'` con cuatro subpestañas (`BODA_SUBTAB`): **Clases**
   con `dates[]` o con `end>start`; si aparece uno (p.ej. al cambiar de categoría un evento
   multidía) hay que partirlo. Lo hace `bodaNormalizeClasses()` al cargar y el propio
   formulario al guardar. Si no se parte, la pestaña Bodas lo cuenta como una sola clase.
+- **Alarma de un ensayo**: desde Próximos, el panel de alarma de una clase ofrece los
+  atajos "1 hora antes" y "30 min antes" (se pueden marcar los dos → dos alarmas). La hora
+  de abajo sigue siendo editable; tocarla a mano desmarca los atajos.
 - Alta masiva: en el formulario, categoría "Ensayos boda" + rango o Selección Multidía →
   `bodaBulkCreate()` crea **una clase por día**, sin hora ni pareja.
 
@@ -394,7 +400,16 @@ Función en `core.js` que extrae la URL base del webhook MacroDroid eliminando e
 - Entrada: `https://trigger.macrodroid.com/ABC123/crear_alarma` → Salida: `https://trigger.macrodroid.com/ABC123`
 - Usada en `alarms.js` al llamar al webhook DISMISS: `macroBase + '/apagar_alarmas?names=' + encodeURIComponent(label)`
 
-## MacroDroid — Scripts Rhino JS
+## MacroDroid — creación de alarmas
+
+> **Estado (2026-08-19):** la creación de alarmas volvió a funcionar. La macro ya **no
+> ejecuta JavaScript (Rhino): el código se pasó a Java**. El PWA no cambia — sigue
+> llamando al webhook `…/generar_alarma1?alarmH=&alarmM=&alarmMsg=&alarmDays=` y
+> registrando la alarma en `excelia-alarms-v1` antes del fetch, así que lo de este lado
+> sigue siendo válido. Lo de abajo es la implementación **anterior en Rhino**, que se
+> conserva como referencia hasta documentar la de Java (pedir el script al usuario).
+
+### (Histórico) Scripts Rhino JS
 
 ### Stack tecnológico
 - Engine: **Rhino 1.6** (JavaScript dentro de MacroDroid)

@@ -333,12 +333,34 @@ function evMarkPriority(ev){
   var p=EV_MARK_ORDER[getEvType(ev)];
   return (p===undefined)?9:p;
 }
+/* Hora de una clase de boda en minutos (para ordenarlas); las que no tienen
+   hora van al final de su grupo. */
+function evBodaMinutes(ev){
+  var t=ev&&ev.boda&&ev.boda.time;
+  if(!t)return 99999;
+  var p=String(t).split(':');
+  return (parseInt(p[0],10)||0)*60+(parseInt(p[1],10)||0);
+}
 /* Ordena conservando el orden original dentro de cada prioridad.
-   getEv permite pasar listas de objetos que envuelven al evento. */
+   getEv permite pasar listas de objetos que envuelven al evento.
+   Ademas, las CLASES DE BODA se ordenan entre si por hora: se reordenan solo
+   entre ellas y ocupan las mismas posiciones que ya tenian, para no alterar el
+   orden del resto de categorias. */
 function evSortMarks(list,getEv){
-  return list.map(function(x,i){return {x:x,i:i,p:evMarkPriority(getEv?getEv(x):x)};})
+  function ev0(x){return getEv?getEv(x):x;}
+  var out=list.map(function(x,i){return {x:x,i:i,p:evMarkPriority(ev0(x))};})
     .sort(function(a,b){return (a.p-b.p)||(a.i-b.i);})
     .map(function(o){return o.x;});
+  var pos=[],clases=[];
+  out.forEach(function(x,i){
+    var e=ev0(x);
+    if(e&&getEvType(e)==='Ensayos boda'){pos.push(i);clases.push(x);}
+  });
+  if(clases.length>1){
+    clases.sort(function(a,b){return evBodaMinutes(ev0(a))-evBodaMinutes(ev0(b));});
+    pos.forEach(function(p,k){out[p]=clases[k];});
+  }
+  return out;
 }
 /* Distribución de marcadores puntuales en anual/4-meses:
    1 → cuadrado entero · 2 → izquierda/derecha · 3 → pirámide · 4 → cubo 2×2
@@ -713,7 +735,10 @@ function renderEvUpcoming(){
     if(!fallbackMap)return '<div class="sy-note">No hay eventos programados.</div>';
     h+='<div class="sy-note" style="margin-bottom:8px">Sin eventos en las pr\u00f3ximas 3 semanas. Primera semana con eventos:</div>';
     var fids=Object.keys(fallbackMap);
-    fids.sort(function(a,b){return fallbackMap[a].firstDate-fallbackMap[b].firstDate;});
+    fids.sort(function(a,b){
+      return (fallbackMap[a].firstDate-fallbackMap[b].firstDate)
+        ||(evBodaMinutes(fallbackMap[a].ev)-evBodaMinutes(fallbackMap[b].ev));
+    });
     h+='<div class="sy-month-sep">'+fallbackLabel+'</div>';
     h+='<div class="ev-upcoming-section">';
     fids.forEach(function(id){
@@ -727,7 +752,10 @@ function renderEvUpcoming(){
   weeks.forEach(function(wkMap,wi){
     var ids=Object.keys(wkMap);
     if(!ids.length)return;
-    ids.sort(function(a,b){return wkMap[a].firstDate-wkMap[b].firstDate;});
+    ids.sort(function(a,b){
+      return (wkMap[a].firstDate-wkMap[b].firstDate)
+        ||(evBodaMinutes(wkMap[a].ev)-evBodaMinutes(wkMap[b].ev));
+    });
     var secH='';
     ids.forEach(function(id){
       var item=wkMap[id];var ev=item.ev;
@@ -1106,7 +1134,7 @@ function renderEvWeek(){
       h+='<span class="ev-wk-dow">'+_wn[dow]+'</span><span class="ev-wk-num">'+d+'</span>';
       h+='</div>';
 
-      var chips=singleByDay[d]||[];
+      var chips=evSortMarks(singleByDay[d]||[]);
       var hasMulti=multiSegs.some(function(s){return d>=s.sd&&d<=s.ed;});
       /* Si este día es el PRIMER día de un multi-día (donde se pinta el título), añadimos
          padding-top extra a los chips para que no se solapen con el texto del título. */
@@ -1340,6 +1368,7 @@ function openEvDetail(ev,container){
   var ov=container||document.getElementById('eventsOverlay');
   var fromSummary=(EV_VIEW==='puentes'||EV_VIEW==='time-off');
   ov.scrollTop=0;
+  var _oldD=document.getElementById('evDWrap');if(_oldD)_oldD.remove();
   var wrap=document.createElement('div');
   wrap.id='evDWrap';
   wrap.innerHTML=renderEvDetail(ev,fromSummary);
@@ -1936,7 +1965,29 @@ function renderEvAlarmPanel(ev,firstDate){
   h+='<button class="bd-alarm-marker-btn poner'+(isSet?' active':'')+'" id="evAlarmPoner">Poner</button>';
   h+='</div>';
   h+='</div>';
-  var _evT=typeof nextAlarmTime==='function'?nextAlarmTime(firstDate,15,2):{h:15,m:2};
+  /* Clases de boda: atajos "1 h antes" y "30 min antes" de la hora del ensayo.
+     Se pueden marcar los dos y se crean dos alarmas. */
+  var _cls=(getEvType(ev)==='Ensayos boda')?(ev.boda||{}):null;
+  var _clsMin=(_cls&&_cls.time)?evBodaMinutes(ev):null;
+  var _evT;
+  if(_clsMin!=null){
+    var _pre=Math.max(0,_clsMin-60);
+    _evT={h:Math.floor(_pre/60),m:_pre%60};
+  } else {
+    _evT=typeof nextAlarmTime==='function'?nextAlarmTime(firstDate,15,2):{h:15,m:2};
+  }
+  if(_clsMin!=null){
+    h+='<div class="ev-alarm-pre">';
+    h+='<div class="ev-alarm-pre-t">Ensayo a las <b>'+_cls.time+'</b> — avisarme:</div>';
+    h+='<div class="ev-alarm-pre-row">';
+    [[60,'1 hora antes'],[30,'30 min antes']].forEach(function(o){
+      var mm=Math.max(0,_clsMin-o[0]);
+      var lbl=String(Math.floor(mm/60)).padStart(2,'0')+':'+String(mm%60).padStart(2,'0');
+      h+='<button class="ev-alarm-pre-btn'+(o[0]===60?' on':'')+'" data-pre="'+o[0]+'" data-hh="'+Math.floor(mm/60)+'" data-mm="'+(mm%60)+'">'
+        +o[1]+'<span>'+lbl+'</span></button>';
+    });
+    h+='</div></div>';
+  }
   h+='<div class="bd-alarm-row" style="margin:16px 0">';
   h+='<span class="bd-alarm-row-lbl">&#128276; Hora de la alarma<br><span style="font-size:.65rem;opacity:.7">D\u00eda del evento: '+fd2(firstDate)+'</span></span>';
   h+='<div class="bd-alarm-time"><input id="evAlarmH" type="number" min="0" max="23" value="'+_evT.h+'"><span class="bd-alarm-time-sep">:</span><input id="evAlarmM" type="number" min="0" max="59" value="'+String(_evT.m).padStart(2,'0')+'"></div>';
@@ -1949,6 +2000,9 @@ function renderEvAlarmPanel(ev,firstDate){
 }
 function openEvAlarm(ev,firstDate){
   var ov=document.getElementById('eventsOverlay');
+  /* Si quedaba un panel anterior (se borra con 300ms de retardo por la
+     animacion), sus ids duplicados capturarian los getElementById del nuevo */
+  var _oldA=document.getElementById('evAlarmWrap');if(_oldA)_oldA.remove();
   var wrap=document.createElement('div');wrap.id='evAlarmWrap';
   wrap.innerHTML=renderEvAlarmPanel(ev,firstDate);
   ov.appendChild(wrap);
@@ -1970,6 +2024,7 @@ function closeEvAlarm(){
 /* Abre el panel de cumpleaños VIP desde la ventana de eventos */
 function openBdayAlarmFromEvents(b){
   var ov=document.getElementById('eventsOverlay');
+  var _oldB=document.getElementById('bdAlarmWrap');if(_oldB)_oldB.remove();
   var wrap=document.createElement('div');wrap.id='bdAlarmWrap';
   wrap.innerHTML=typeof renderBdayAlarmPanel==='function'?renderBdayAlarmPanel(b):'';
   ov.appendChild(wrap);
@@ -2013,27 +2068,68 @@ function bindEvAlarmEvents(ev,firstDate){
   if(editBtn)editBtn.addEventListener('click',function(){
     closeEvAlarm();setTimeout(function(){openEvForm(ev,null);},310);
   });
+  /* Atajos "1 h / 30 min antes": son interruptores. Con uno marcado, la hora
+     de abajo lo refleja y sigue siendo editable (editarla a mano los desmarca).
+     Con los dos marcados se crean DOS alarmas. */
+  var _preBtns=[].slice.call(document.querySelectorAll('.ev-alarm-pre-btn'));
+  function _syncPre(){
+    var on=_preBtns.filter(function(b){return b.classList.contains('on');});
+    var hI=document.getElementById('evAlarmH'),mI=document.getElementById('evAlarmM');
+    var row=document.querySelector('.bd-alarm-row');
+    if(on.length===1&&hI&&mI){
+      hI.value=on[0].dataset.hh;
+      mI.value=String(on[0].dataset.mm).padStart(2,'0');
+    }
+    if(row)row.style.opacity=(on.length>1)?'.45':'1';
+    if(hI)hI.disabled=(on.length>1);
+    if(mI)mI.disabled=(on.length>1);
+  }
+  _preBtns.forEach(function(b){
+    b.addEventListener('click',function(){b.classList.toggle('on');_syncPre();});
+  });
+  if(_preBtns.length)_syncPre();
+  ['evAlarmH','evAlarmM'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el)el.addEventListener('input',function(){
+      /* Editar a mano = hora personalizada */
+      _preBtns.forEach(function(b){b.classList.remove('on');});
+      _syncPre();
+    });
+  });
   document.getElementById('evAlarmCreate').addEventListener('click',function(){
     var alarmUrl=localStorage.getItem('excelia-alarm-url')||'';
     if(!alarmUrl){showToast('Configura la URL de MacroDroid en el men\u00fa \u22ef','error');return;}
-    var hr=parseInt(document.getElementById('evAlarmH').value,10);
-    var h=isNaN(hr)?15:Math.min(23,Math.max(0,hr));
-    var mr=parseInt(document.getElementById('evAlarmM').value,10);
-    var m=isNaN(mr)?2:Math.min(59,Math.max(0,mr));
-    var msg='\uD83D\uDCC5 '+ev.title+' '+String(firstDate.getDate()).padStart(2,'0')+'/'+String(firstDate.getMonth()+1).padStart(2,'0');
     var base=normalizeMacroBase(alarmUrl);
     var dayOfAlarm=firstDate.getDay()+1;
-    var url=base+'/generar_alarma1?alarmH='+h+'&alarmM='+m+'&alarmMsg='+encodeURIComponent(msg)+'&alarmDays='+dayOfAlarm;
-    // Registrar localmente ANTES del fetch (alarma siempre guardada aunque MacroDroid falle)
+    var fecha=String(firstDate.getDate()).padStart(2,'0')+'/'+String(firstDate.getMonth()+1).padStart(2,'0');
     var fmtD=function(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
-    if(typeof addAlarm==='function'){
-      addAlarm({type:'event',label:msg,hour:h,minute:m,days:[dayOfAlarm],targetDate:fmtD(firstDate)});
+    /* Una alarma por atajo marcado; si no hay ninguno, la hora escrita abajo */
+    var marcados=_preBtns.filter(function(b){return b.classList.contains('on');});
+    var alarmas=[];
+    if(marcados.length){
+      marcados.forEach(function(b){
+        alarmas.push({h:parseInt(b.dataset.hh,10),m:parseInt(b.dataset.mm,10),
+          suf:' ('+(b.dataset.pre==='60'?'1 h':'30 min')+' antes)'});
+      });
+    } else {
+      var hr=parseInt(document.getElementById('evAlarmH').value,10);
+      var mr=parseInt(document.getElementById('evAlarmM').value,10);
+      alarmas.push({h:isNaN(hr)?15:Math.min(23,Math.max(0,hr)),
+        m:isNaN(mr)?2:Math.min(59,Math.max(0,mr)),suf:''});
     }
+    alarmas.forEach(function(a){
+      var msg='\uD83D\uDCC5 '+ev.title+' '+fecha+a.suf;
+      if(typeof addAlarm==='function'){
+        addAlarm({type:'event',label:msg,hour:a.h,minute:a.m,days:[dayOfAlarm],targetDate:fmtD(firstDate)});
+      }
+      var url=base+'/generar_alarma1?alarmH='+a.h+'&alarmM='+a.m
+        +'&alarmMsg='+encodeURIComponent(msg)+'&alarmDays='+dayOfAlarm;
+      fetch(url,{mode:'no-cors'}).catch(function(){});
+    });
     setEvAlarmState(ev.id,true);
-    showToast('Enviando alarma a MacroDroid\u2026','success');
-    fetch(url,{mode:'no-cors'})
-      .then(function(){showToast('\u23f0 Alarma creada \u2014 '+escHtml(ev.title),'success');closeEvAlarm();setTimeout(refreshEvents,320);})
-      .catch(function(){showToast('\u23f0 Alarma guardada (sin conexi\u00f3n a MacroDroid)','success');closeEvAlarm();setTimeout(refreshEvents,320);});
+    showToast(alarmas.length>1?('\u23f0 '+alarmas.length+' alarmas creadas')
+      :('\u23f0 Alarma creada \u2014 '+escHtml(ev.title)),'success');
+    closeEvAlarm();setTimeout(refreshEvents,320);
   });
   var mInp=document.getElementById('evAlarmM');
   if(mInp)mInp.addEventListener('blur',function(){
