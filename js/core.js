@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v255 - Clases de boda ordenadas por hora y alarmas de ensayo 1h/30min antes';
+var APP_VERSION = 'v256 - Icono propio para la campana de alarmas y limpieza de imagenes sin usar';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -488,7 +488,7 @@ function renderNavBar(current){
     {icon:'<img src="icon-home.png" class="btn-icon" alt="">',key:'home',title:'Inicio'},
     {icon:'<img src="icon-events.png" class="btn-icon" alt="">',key:'events',title:'Eventos'},
     {icon:'<img src="icon-bday.png" class="btn-icon" alt="">',key:'bday',title:'Cumplea\u00f1os'},
-    {icon:'&#128276;',key:'alarm',title:'Test alarma'},
+    {icon:'<img src="icon-alarm.png" class="btn-icon" alt="">',key:'alarm',title:'Test alarma'},
     {icon:'&#8943;',key:'menu',title:'M\u00e1s opciones'}
   ];
   var h='<div class="overlay-nav-bar">';
