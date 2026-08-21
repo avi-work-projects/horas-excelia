@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v267 - Aviso de cupo de vacaciones y ficha de ensayo';
+var APP_VERSION = 'v268 - Pruebas automaticas, events.js partido y limpieza';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -299,12 +299,6 @@ function weeks(y,m){
 }
 
 // ── Comprueba si hay semanas enviadas en el mes actual ────────
-function hasAnySentWeekInMonth(y,m){
-  var wks=weeks(y,m);
-  for(var i=0;i<wks.length;i++){if(SW[dk(wks[i][0])])return true;}
-  return false;
-}
-
 // ── Datos de semana para email ───────────────────────────────
 function getWD(wkey){
   var p=wkey.split('-'),mon=new Date(+p[0],+p[1]-1,+p[2]),days=[];

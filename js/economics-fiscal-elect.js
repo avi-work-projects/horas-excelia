@@ -87,38 +87,6 @@ function _renderSegurosNormales(){
   return h;
 }
 
-function _vincRow(id,label,data){
-  if(!data)data={enabled:false,costeAnual:0,reduccion:0};
-  var isNomina=id.indexOf('Nomina')!==-1;
-  var h='<div class="fiscal-vinc-row">';
-  h+='<div class="fiscal-despacho-toggle-row" style="margin-bottom:0">';
-  h+='<span class="fiscal-despacho-toggle-lbl" style="font-size:.76rem">'+label+'</span>';
-  h+='<div class="fiscal-onoff'+(data.enabled?' on':'')+'" id="'+id+'Toggle">'+(data.enabled?'ON':'OFF')+'</div>';
-  h+='</div>';
-  if(data.enabled){
-    h+='<div class="fiscal-vinc-cost">';
-    h+='<div style="display:flex;gap:8px;align-items:flex-end">';
-    if(!isNomina){
-      h+='<div><label class="fiscal-despacho-label" style="font-size:.68rem">Coste anual \u20ac</label>';
-      h+='<input class="fiscal-despacho-input" id="'+id+'Coste" type="number" min="0" step="10" value="'+(data.costeAnual||0)+'" style="width:90px"></div>';
-    }
-    h+='<div><label class="fiscal-despacho-label" style="font-size:.68rem">Reducci\u00f3n tipo %</label>';
-    h+='<input class="fiscal-despacho-input fiscal-vinc-reduccion" id="'+id+'Reduccion" type="number" min="0" step="0.05" value="'+(data.reduccion||0)+'" style="width:75px"></div>';
-    h+='</div></div>';
-  }
-  h+='</div>';
-  return h;
-}
-
-function _despFieldDate(id,label,val){
-  return '<div class="fiscal-despacho-field">'
-    +'<label class="fiscal-despacho-label">'+label+'</label>'
-    +'<div class="fiscal-despacho-input-row">'
-    +'<input class="fiscal-despacho-input" id="desp-'+id+'" type="date" value="'+(val||'')+'" style="width:auto">'
-    +'</div>'
-    +'</div>';
-}
-
 function _despField(id,label,val,unit){
   return '<div class="fiscal-despacho-field">'
     +'<label class="fiscal-despacho-label">'+label+'</label>'

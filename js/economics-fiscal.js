@@ -101,23 +101,6 @@ function ingresoAnual(id){
   if(!g||!g.amount)return 0;
   return g.period==='monthly'?Math.round(g.amount*12*100)/100:Math.round(g.amount*100)/100;
 }
-function renderIngresosList(){
-  var h='';
-  INGRESOS_ITEMS.forEach(function(g,i){
-    h+='<div class="fiscal-gasto-item" data-ii="'+i+'">';
-    h+='<input class="fiscal-gasto-lbl-input" data-ii="'+i+'" data-ifield="label" value="'+escHtml(g.label)+'" placeholder="Nombre...">';
-    h+='<input class="fiscal-gasto-amt" data-ii="'+i+'" data-ifield="amount" type="number" min="0" step="1" value="'+(g.amount||0)+'">';
-    h+='<div class="fiscal-gasto-period">';
-    h+='<button class="fiscal-period-btn'+(g.period==='monthly'?' active':'')+'" data-ii="'+i+'" data-ifield="period" data-val="monthly">/mes</button>';
-    h+='<button class="fiscal-period-btn'+(g.period==='annual'?' active':'')+'" data-ii="'+i+'" data-ifield="period" data-val="annual">/a\u00f1o</button>';
-    h+='</div>';
-    h+='<button class="fiscal-gasto-del fiscal-ingreso-del" data-ii="'+i+'">&#10005;</button>';
-    h+='</div>';
-  });
-  if(!INGRESOS_ITEMS.length)h+='<div style="font-size:.75rem;color:var(--text-dim);padding:6px 0">Sin ingresos regulares configurados.</div>';
-  return h;
-}
-
 /* ── Gastos regulares ─────────────────────────────────────── */
 var GASTOS_SK='excelia-gastos-v1';
 var GASTOS_DIFICIL_PCT=5;
@@ -190,7 +173,6 @@ function loadGastos(){loadGastosYear(FISCAL_YEAR);}
 function saveGastosYear(year){
   try{localStorage.setItem(_yearKey(GASTOS_SK,year),JSON.stringify({dificilPct:GASTOS_DIFICIL_PCT,items:GASTOS_ITEMS}));}catch(e){}
 }
-function saveGastos(){saveGastosYear(FISCAL_YEAR);}
 function findGasto(id){
   for(var i=0;i<GASTOS_ITEMS.length;i++){if(GASTOS_ITEMS[i].id===id)return GASTOS_ITEMS[i];}
   return null;

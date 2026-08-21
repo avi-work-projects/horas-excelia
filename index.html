@@ -117,8 +117,6 @@ try{
           <button class="data-menu-item" id="themeBtn">&#127769;&nbsp;Oscuro</button>
           <button class="data-menu-item" id="exportAllBtn">&#8595;&nbsp;Exportar todo</button>
           <button class="data-menu-item" id="importAllBtn">&#8593;&nbsp;Importar todo</button>
-          <button class="data-menu-item" id="cleanAlarmsBtn" disabled style="opacity:.35;pointer-events:none">&#128277;&nbsp;Limpiar alarmas</button>
-          <button class="data-menu-item" id="alarmsMgmtBtn" disabled style="opacity:.35;pointer-events:none">&#128221;&nbsp;Gestión de alarmas</button>
           <div class="macro-section">
             <div class="macro-section-lbl">&#128246; MacroDroid — URL base</div>
             <input class="macro-url-input" id="macroAlarmUrlMenu" type="url" placeholder="https://trigger.macrodroid.com/ID">
@@ -253,16 +251,6 @@ try{
 
 
 
-<!-- ── OVERLAY: Gestión de alarmas ── -->
-<div id="alarmsOverlay" class="full-overlay" style="display:none">
-  <div class="overlay-nav-bar">
-    <button class="sy-back" id="alarmsBack">&#8592;</button>
-    <span class="sy-title">&#128276; Gestión de alarmas</span>
-    <div class="nav-bar-spacer"></div>
-  </div>
-  <div class="alarms-mgmt-content" id="alarmsContent"></div>
-</div>
-
 <!-- ── SCRIPTS ── -->
 <script defer src="js/lib/jspdf.umd.min.js"></script>
 <script defer src="js/lib/jspdf.plugin.autotable.min.js"></script>
@@ -305,6 +293,10 @@ try{
 <script defer src="js/rutinas.js"></script>
 <script defer src="js/bodas.js"></script>
 <script defer src="js/events.js"></script>
+<script defer src="js/events-render.js"></script>
+<script defer src="js/events-form.js"></script>
+<script defer src="js/events-detail.js"></script>
+<script defer src="js/events-bind.js"></script>
 <script defer src="js/alarms.js"></script>
 <script defer src="js/init.js"></script>
 <script defer src="js/logo-popup.js"></script>

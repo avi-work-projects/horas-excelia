@@ -1,0 +1,247 @@
+<div class="ev-form-overlay" id="rutFormOv">
+<div class="ev-form-sheet">
+<div class="ev-form-handle">
+</div>
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+<button class="sy-back" id="rutFClose">&#8592;</button>
+<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">Editar rutina</div>
+<button class="ev-btn danger" id="rutFDel" style="flex:none;padding:6px 12px;font-size:.75rem">Eliminar</button>
+</div>
+<div class="ev-field">
+<label>Actividad</label>
+<input class="ev-input" id="rutFName" type="text" maxlength="40" placeholder="Ej: Gimnasio" value="Gimnasio">
+</div>
+<div class="ev-field">
+<label>Días de la semana</label>
+<div class="rut-days-pick" id="rutFDays">
+<button type="button" class="rut-day-btn on" data-wd="1">L</button>
+<button type="button" class="rut-day-btn" data-wd="2">M</button>
+<button type="button" class="rut-day-btn on" data-wd="3">X</button>
+<button type="button" class="rut-day-btn" data-wd="4">J</button>
+<button type="button" class="rut-day-btn on" data-wd="5">V</button>
+<button type="button" class="rut-day-btn" data-wd="6">S</button>
+<button type="button" class="rut-day-btn" data-wd="0">D</button>
+</div>
+</div>
+<div class="ev-date-row">
+<div>
+<label>Hora</label>
+<input class="ev-input" id="rutFTime" type="time" step="900" value="18:00">
+</div>
+<div>
+<label>Duración (min)</label>
+<input class="ev-input" id="rutFDur" type="number" min="15" max="480" step="15" value="60">
+</div>
+</div>
+<div class="ev-field rut-hpd">
+<label class="excl-item">
+<input type="checkbox" id="rutFPorDia" checked> Horario distinto según el día</label>
+<div class="rut-hpd-rows" id="rutFHoras" style="display:block">
+</div>
+</div>
+<div class="ev-field">
+<label>Desde</label>
+<input class="ev-input" id="rutFStart" type="date" value="2026-08-01">
+</div>
+<div class="ev-field">
+<label>Icono</label>
+<div class="rut-icon-row" id="rutFIcons">
+<button type="button" class="rut-icon-opt on" data-icon="gym">
+<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
+<g fill="#fb923c" stroke="#000" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round">
+<rect x="0.6" y="8.2" width="4.2" height="7.6" rx="1.8"/>
+<rect x="4.4" y="10.1" width="2.8" height="3.8" rx="1"/>
+<rect x="6.8" y="10.7" width="10.4" height="2.6" rx="1.3"/>
+<rect x="16.8" y="10.1" width="2.8" height="3.8" rx="1"/>
+<rect x="19.2" y="8.2" width="4.2" height="7.6" rx="1.8"/>
+</g>
+<g fill="#fb923c" stroke="#fb923c" stroke-width="2.7" stroke-linejoin="round" stroke-linecap="round">
+<rect x="0.6" y="8.2" width="4.2" height="7.6" rx="1.8"/>
+<rect x="4.4" y="10.1" width="2.8" height="3.8" rx="1"/>
+<rect x="6.8" y="10.7" width="10.4" height="2.6" rx="1.3"/>
+<rect x="16.8" y="10.1" width="2.8" height="3.8" rx="1"/>
+<rect x="19.2" y="8.2" width="4.2" height="7.6" rx="1.8"/>
+</g>
+<rect x="6.8" y="10.7" width="10.4" height="2.6" rx="1.3" fill="#834c1f"/>
+</svg>
+<span>Gimnasio</span>
+</button>
+<button type="button" class="rut-icon-opt" data-icon="padel">
+<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
+<g fill="#a3e635" stroke="#000" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round">
+<ellipse cx="12" cy="8.6" rx="6.8" ry="7.2"/>
+<rect x="10.7" y="14" width="2.6" height="8.4" rx="1.3"/>
+</g>
+<g fill="#a3e635" stroke="#a3e635" stroke-width="2.7" stroke-linejoin="round" stroke-linecap="round">
+<ellipse cx="12" cy="8.6" rx="6.8" ry="7.2"/>
+<rect x="10.7" y="14" width="2.6" height="8.4" rx="1.3"/>
+</g>
+<circle cx="10" cy="7" r="1.15" fill="#55781c"/>
+<circle cx="14" cy="7" r="1.15" fill="#55781c"/>
+<circle cx="12" cy="10" r="1.15" fill="#55781c"/>
+<circle cx="10" cy="12.6" r="1.15" fill="#55781c"/>
+<circle cx="14" cy="12.6" r="1.15" fill="#55781c"/>
+<rect x="10.9" y="16.2" width="2.2" height="4.4" rx="1.1" fill="#55781c"/>
+</svg>
+<span>Pádel</span>
+</button>
+<button type="button" class="rut-icon-opt" data-icon="baile">
+<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
+<g fill="#e03131" stroke="#000" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round">
+<circle cx="12.6" cy="3.6" r="2.6"/>
+<path d="M12.2,7.2 C10.4,8.8 9.9,10.8 10.6,12.6 L6.6,17.8" fill="none" stroke-width="2.6" stroke-linecap="round"/>
+<path d="M10.6,12.6 L14.8,14.8 L15.6,21.4" fill="none" stroke-width="2.6" stroke-linecap="round"/>
+<path d="M12.4,8.4 L18.4,5.4" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+</g>
+<g fill="#e03131" stroke="#e03131" stroke-width="2.7" stroke-linejoin="round" stroke-linecap="round">
+<circle cx="12.6" cy="3.6" r="2.6"/>
+<path d="M12.2,7.2 C10.4,8.8 9.9,10.8 10.6,12.6 L6.6,17.8" fill="none" stroke-width="2.6" stroke-linecap="round"/>
+<path d="M10.6,12.6 L14.8,14.8 L15.6,21.4" fill="none" stroke-width="2.6" stroke-linecap="round"/>
+<path d="M12.4,8.4 L18.4,5.4" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+</g>
+<circle cx="18.6" cy="5.2" r="1.9" fill="#741919"/>
+</svg>
+<span>Baile</span>
+</button>
+<button type="button" class="rut-icon-opt" data-icon="gen">
+<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
+<g fill="#fb923c" stroke="#000" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round">
+<polygon points="12,3 20,12 12,21 4,12"/>
+</g>
+<g fill="#fb923c" stroke="#fb923c" stroke-width="2.7" stroke-linejoin="round" stroke-linecap="round">
+<polygon points="12,3 20,12 12,21 4,12"/>
+</g>
+<circle cx="12" cy="12" r="3.1" fill="#834c1f"/>
+</svg>
+<span>Otra</span>
+</button>
+</div>
+</div>
+<div class="ev-field" id="rutFColorField" style="display:none">
+<label>🎨 Color</label>
+<div class="ev-color-picker" id="rutCpWrap">
+<div class="ev-color-grid">
+<div class="ev-color-dot" data-hex="#ff6b6b" style="background:#ff6b6b;border-color:#ff6b6b">
+</div>
+<div class="ev-color-dot" data-hex="#e03131" style="background:#e03131;border-color:#e03131">
+</div>
+<div class="ev-color-dot" data-hex="#f06595" style="background:#f06595;border-color:#f06595">
+</div>
+<div class="ev-color-dot" data-hex="#d6336c" style="background:#d6336c;border-color:#d6336c">
+</div>
+<div class="ev-color-dot" data-hex="#e879a8" style="background:#e879a8;border-color:#e879a8">
+</div>
+<div class="ev-color-dot" data-hex="#da77f2" style="background:#da77f2;border-color:#da77f2">
+</div>
+<div class="ev-color-dot" data-hex="#c084fc" style="background:#c084fc;border-color:#c084fc">
+</div>
+<div class="ev-color-dot" data-hex="#ae3ec9" style="background:#ae3ec9;border-color:#ae3ec9">
+</div>
+<div class="ev-color-dot" data-hex="#9775fa" style="background:#9775fa;border-color:#9775fa">
+</div>
+<div class="ev-color-dot" data-hex="#7950f2" style="background:#7950f2;border-color:#7950f2">
+</div>
+<div class="ev-color-dot" data-hex="#5f3dc4" style="background:#5f3dc4;border-color:#5f3dc4">
+</div>
+<div class="ev-color-dot" data-hex="#4c6ef5" style="background:#4c6ef5;border-color:#4c6ef5">
+</div>
+<div class="ev-color-dot" data-hex="#6c8cff" style="background:#6c8cff;border-color:#6c8cff">
+</div>
+<div class="ev-color-dot" data-hex="#1d4ed8" style="background:#1d4ed8;border-color:#1d4ed8">
+</div>
+<div class="ev-color-dot" data-hex="#1971c2" style="background:#1971c2;border-color:#1971c2">
+</div>
+<div class="ev-color-dot" data-hex="#38bdf8" style="background:#38bdf8;border-color:#38bdf8">
+</div>
+<div class="ev-color-dot" data-hex="#22d3ee" style="background:#22d3ee;border-color:#22d3ee">
+</div>
+<div class="ev-color-dot" data-hex="#4ecdc4" style="background:#4ecdc4;border-color:#4ecdc4">
+</div>
+<div class="ev-color-dot" data-hex="#34d399" style="background:#34d399;border-color:#34d399">
+</div>
+<div class="ev-color-dot" data-hex="#56c596" style="background:#56c596;border-color:#56c596">
+</div>
+<div class="ev-color-dot" data-hex="#0ca678" style="background:#0ca678;border-color:#0ca678">
+</div>
+<div class="ev-color-dot" data-hex="#a3e635" style="background:#a3e635;border-color:#a3e635">
+</div>
+<div class="ev-color-dot" data-hex="#82c91e" style="background:#82c91e;border-color:#82c91e">
+</div>
+<div class="ev-color-dot" data-hex="#5c940d" style="background:#5c940d;border-color:#5c940d">
+</div>
+<div class="ev-color-dot" data-hex="#ffe066" style="background:#ffe066;border-color:#ffe066">
+</div>
+<div class="ev-color-dot" data-hex="#fbbf24" style="background:#fbbf24;border-color:#fbbf24">
+</div>
+<div class="ev-color-dot" data-hex="#f0b45c" style="background:#f0b45c;border-color:#f0b45c">
+</div>
+<div class="ev-color-dot selected" data-hex="#fb923c" style="background:#fb923c;border-color:#fb923c">
+</div>
+<div class="ev-color-dot" data-hex="#f08c00" style="background:#f08c00;border-color:#f08c00">
+</div>
+<div class="ev-color-dot" data-hex="#e8590c" style="background:#e8590c;border-color:#e8590c">
+</div>
+<div class="ev-color-dot" data-hex="#e8d5b7" style="background:#e8d5b7;border-color:#e8d5b7">
+</div>
+<div class="ev-color-dot" data-hex="#f0c8a0" style="background:#f0c8a0;border-color:#f0c8a0">
+</div>
+<div class="ev-color-dot" data-hex="#d9a066" style="background:#d9a066;border-color:#d9a066">
+</div>
+<div class="ev-color-dot" data-hex="#b0714a" style="background:#b0714a;border-color:#b0714a">
+</div>
+<div class="ev-color-dot" data-hex="#8b5e34" style="background:#8b5e34;border-color:#8b5e34">
+</div>
+<div class="ev-color-dot" data-hex="#5c4033" style="background:#5c4033;border-color:#5c4033">
+</div>
+<div class="ev-color-dot" data-hex="#f8f9fa" style="background:#f8f9fa;border-color:#f8f9fa">
+</div>
+<div class="ev-color-dot" data-hex="#dee2e6" style="background:#dee2e6;border-color:#dee2e6">
+</div>
+<div class="ev-color-dot" data-hex="#adb5bd" style="background:#adb5bd;border-color:#adb5bd">
+</div>
+<div class="ev-color-dot" data-hex="#868e96" style="background:#868e96;border-color:#868e96">
+</div>
+<div class="ev-color-dot" data-hex="#495057" style="background:#495057;border-color:#495057">
+</div>
+<div class="ev-color-dot" data-hex="#212529" style="background:#212529;border-color:#212529">
+</div>
+</div>
+<div class="ev-color-custom-row">
+<input type="color" class="ev-color-native" id="rutCpNative" value="#fb923c">
+<input type="text" class="ev-color-hex-input" id="rutCpHex" value="#fb923c" maxlength="7" spellcheck="false">
+</div>
+<div class="ev-color-preview-row">
+<div class="ev-color-preview-item">
+<span>Borde</span>
+<div class="ev-color-preview-swatch" style="background:#fb923c">
+</div>
+</div>
+<div class="ev-color-preview-item">
+<span>Relleno</span>
+<div class="ev-color-preview-swatch" style="background:#a35f27">
+</div>
+</div>
+<div class="ev-color-preview-hex" id="rutCpCode">#fb923c</div>
+</div>
+</div>
+</div>
+<div class="ev-field rut-susp-box">
+<label>⏸ Pausar temporalmente</label>
+<div class="ev-date-row">
+<div>
+<label>Desde</label>
+<input class="ev-input" id="rutFSuspFrom" type="date" value="">
+</div>
+<div>
+<label>Hasta <span class="ev-note-scope">(vacío = indefinida)</span>
+</label>
+<input class="ev-input" id="rutFSuspTo" type="date" value="">
+</div>
+</div>
+</div>
+<button type="button" class="ev-btn" id="rutFWeek" style="width:100%;margin-bottom:12px">🗓 Cambiar una semana concreta</button>
+<div class="ev-form-actions">
+<button class="ev-btn primary" id="rutFSave">Guardar</button>
+</div>
+</div>
+</div>

@@ -211,13 +211,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .week-card:nth-child(3){animation-delay:.08s}
 .week-card:nth-child(4){animation-delay:.12s}
 .week-card:nth-child(5){animation-delay:.16s}
-.week-card:nth-child(6){animation-delay:.20s}
-
-/* ── BUILD BADGE ── */
-.build-badge{position:fixed;bottom:10px;right:10px;z-index:999;display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:.6rem;color:var(--text-dim);opacity:.7}
-.build-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-
-/* -- DAY HOUR COLORS --
+.week-card:nth-child(6){animation-delay:.20s}/* -- DAY HOUR COLORS --
    La jornada NO se pinta como fondo de la celda: al tintar el fondo con un
    color semitransparente sobre una semana enviada (verde) salia un color
    embarrado y el numero perdia contraste. Ahora la celda mantiene su fondo
@@ -268,7 +262,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .sy-nav-icon{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);font-size:.85rem;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s}
 .sy-nav-icon:active{background:var(--surface3)}
 .sy-nav-icon.active-glow{border-color:var(--vacaciones);color:var(--vacaciones);box-shadow:0 0 8px rgba(255,179,71,.35)}
-
 
 /* ── SHARED BODY ── */
 .sy-body{flex:1;min-height:0;overflow-y:auto;padding:16px 16px 40px;display:flex;flex-direction:column;gap:16px}
@@ -1110,15 +1103,12 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .bday-cell.weekend .bday-num{color:#8888a8}
 .ev-cell.weekend{background:rgba(160,160,200,.11);box-shadow:inset 0 -1.5px 0 0 rgba(160,160,200,.25),inset 1.5px 0 0 0 rgba(160,160,200,.25),inset -1.5px 0 0 0 rgba(160,160,200,.25)}
 .ev-cell.weekend .ev-num{color:inherit}
-/* Day types in events calendar — border-top + tinte de fondo */
 /* Festivo/vacaciones/ausencia: indicador como box-shadow inset top (NO border-top)
    para que no desplace el layout y el pattern de puente coincida en la misma
    posición vertical que las celdas normales. Compone con el separador inset. */
 .ev-cell.ev-day-festivo{background:rgba(255,107,107,.09);box-shadow:inset 0 5px 0 0 var(--festivo)}
 .ev-cell.ev-day-vacaciones{background:rgba(255,179,71,.09);box-shadow:inset 0 5px 0 0 var(--vacaciones)}
 .ev-cell.ev-day-ausencia{background:rgba(192,132,252,.09);box-shadow:inset 0 5px 0 0 var(--ausencia)}
-/* Diagonales rosas: background-attachment:fixed → patrón anclado al viewport,
-   continuo entre celdas adyacentes (no se reinicia en cada div) */
 /* Puentes (1-mes): pattern aplicado SOLO a las celdas puente individualmente.
    Sin background-attachment:fixed (rompe con stacking contexts), sin pattern
    en grid (mancharía celdas con bg semi-transparente). Cada celda dibuja su
@@ -1175,7 +1165,6 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-upcoming-past{opacity:.55}
 .ev-upcoming-past .ev-upcoming-title{color:var(--text-muted)}
 .ev-sep-past{opacity:.7}
-/* ── Vista semanal (Agenda) ── */
 /* Agenda semanal: SOLO scroll vertical. Los hijos del grid heredan
    min-width:auto, asi que un chip largo (titulo + hora/sala) ensanchaba la
    columna y aparecia un scroll horizontal de unos pocos px, molesto al
@@ -1379,12 +1368,10 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-edit-mode .ev-annual-x[data-id],.ev-edit-mode .ev-annual-dot[data-id],.ev-edit-mode .ev-annual-vip-star[data-id],.ev-edit-mode .ev-annual-vip-dot[data-id]{cursor:pointer}
 .ev-edit-mode .ev-annual-xs{pointer-events:auto}
 .ev-io-btn.ev-edit-pick-mode{border-color:var(--c-orange)!important;color:var(--c-orange)!important}
-/* Pencil edit button in annual/quad controls */
 /* Botón editar (lápiz) en Anual/Quad — mismo aspecto que la bombilla pequeña de 1-mes/Semanal */
 .ev-ann-edit-btn{font-size:.85rem;padding:4px 8px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;flex-shrink:0;display:flex;align-items:center;justify-content:center;height:28px;min-width:30px;line-height:1}
 .ev-ann-edit-btn:hover{border-color:var(--accent)}
 .ev-ann-edit-btn.active{border-color:var(--accent);background:var(--accent);color:#fff}
-/* ── Feat 6: Puentes rallados en anual ── */
 /* Diagonales en anual/quad: attachment:fixed para que el patrón sea continuo entre celdas */
 /* Puentes (anual y 4-meses): pattern aplicado SOLO a celdas puente
    individualmente (no al .ev-annual-week-outer, que manchaba weekend/festivo
@@ -1428,7 +1415,6 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-chip-flag{width:24px;height:15px;display:block;border-radius:2.5px}
 .ev-filter-chip:has(.ev-chip-flag){padding:0 5px}
 .ev-filter-chip.chip-active{opacity:1}
-/* ── Barras multi-día en vista mensual (fila propia encima de las celdas) ── */
 /* Shared overlay nav bar — nivel 1, siempre visible en lo alto del overlay */
 .overlay-nav-bar{flex-shrink:0;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;gap:6px;padding:4px 12px;box-shadow:0 1px 0 var(--border);overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none}
 .nav-bar-spacer{flex:1}
@@ -1490,22 +1476,6 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .bd-alarm-create-btn{flex-shrink:0;white-space:nowrap}
 .bd-alarm-count-single .bd-alarm-create-btn{flex:1}
 /* ── ALARM MANAGEMENT OVERLAY ── */
-.alarms-mgmt-content{padding:16px 16px 40px}
-.alarms-section{margin-bottom:24px}
-.alarms-section-title{font-size:.78rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:10px}
-.alarms-sub-title{font-size:.72rem;font-weight:600;padding:6px 2px 5px;color:var(--text-muted)}
-.alarms-sub-future{color:var(--sent-text)}
-.alarms-sub-past{opacity:.5}
-.alarm-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border);margin-bottom:6px}
-.alarm-item-past{opacity:.4}
-.alarm-item-time{font-family:var(--mono);font-size:1rem;font-weight:700;color:var(--accent-bright);min-width:40px;flex-shrink:0}
-.alarm-item-info{flex:1;min-width:0}
-.alarm-item-label{font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.alarm-item-days{font-size:.68rem;color:var(--text-muted);font-family:var(--mono);margin-top:2px}
-.alarm-delete-btn{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:.78rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
-.alarm-delete-btn:active{background:rgba(255,107,107,.15);border-color:#ff6b6b;color:#ff6b6b}
-.alarms-empty{text-align:center;color:var(--text-muted);font-size:.8rem;padding:14px 0}
-.alarms-empty-all{text-align:center;color:var(--text-muted);font-size:.88rem;padding:48px 20px;line-height:1.7}
 /* ── HOME POPUP (semanas pendientes / VIP sin alarma) ── */
 .home-popup-overlay{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.6);display:flex;align-items:flex-start;justify-content:center;padding-top:80px}
 .home-popup{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px 20px;max-width:360px;width:calc(100% - 32px);max-height:70vh;overflow-y:auto;position:relative;box-shadow:0 16px 48px var(--shadow)}
@@ -1608,7 +1578,6 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-annual-mbar.ev-bar-md{height:62%;align-self:end}
 .ev-annual-mbar.ev-bar-sm{height:38%;align-self:end}
 .ev-multi-bar{height:65%;min-height:8px;border-radius:20px;font-size:.52rem;font-weight:600;display:flex;align-items:center;padding:0 6px;overflow:hidden;white-space:nowrap;cursor:pointer;color:#fff;pointer-events:auto}
-/* Contenedor de badges 1-día: centrado verticalmente en la celda */
 /* Badges (eventos no-Otros): empujados hacia el FONDO de la celda para no
    solaparse con el texto centrado de las barras multi-día (Viajes, etc.) */
 .ev-badges-wrap{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:1.5px;overflow:hidden;min-height:0;padding-bottom:1px}
@@ -1678,7 +1647,6 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-bright-past .past-cal-day,.ev-bright-past .past-bar,.ev-bright-past .past-marker{opacity:1 !important}
 .ev-bright-btn{font-size:.85rem;padding:4px 8px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;opacity:.45;transition:opacity .2s}
 .ev-bright-btn.on{opacity:1;background:#fbbf2433;border-color:#fbbf24}
-/* Bombilla redonda (simétrica al lápiz) en la fila de la vista anual/cuad */
 /* Bombilla en Anual/Quad — mismo estilo que la pequeña inline del 1-mes/Semanal */
 .ev-bright-round{font-size:.85rem;padding:4px 8px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;height:28px;min-width:30px;opacity:.55;transition:all .15s;line-height:1}
 .ev-bright-round:hover{border-color:#fbbf24;opacity:.8}
@@ -1883,10 +1851,6 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .bday-ic-edit{border-color:var(--accent);color:var(--accent-bright)}
 .bday-ic-close{flex:0 0 36px;color:var(--text-dim)}
 
-/* ============================================================
-   v241 — Clases de evento (Puntual / Grande), pestana Bodas y
-   subpestanas de Vacaciones/Festivos
-   ============================================================ */
 /* Selector de clase en el formulario */
 .ev-kind-picker{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
 .ev-kind-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 6px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text-muted);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s}
@@ -1908,7 +1872,6 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 /* Subpestanas (Puentes/Vac-Festivos y Clases/Parejas): usan .econ-sub-tabs, el
    mismo componente sticky que "Mis gastos" / "Analisis hipoteca" */
 .sy-body:has(> .econ-sub-tabs:first-child){padding-top:0!important}
-/* -- Pestana Bodas -- */
 /* Cabecera fija de la pestana Bodas: subpestanas + Consulta/Edicion pegados
    arriba como un unico bloque (asi no hay que hardcodear el top del segundo) */
 .boda-sticky-hd{position:sticky;top:0;z-index:7;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 1px 0 var(--border)}
@@ -1977,7 +1940,6 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 /* Fila con cambios sin guardar */
 .boda-class.pend{background:var(--accent-glow);border-radius:6px}
 .boda-class.pend .boda-inp{border-color:var(--accent)}
-/* Barra de guardado, siempre visible al fondo de la lista */
 /* bottom:-40px compensa el padding inferior de .sy-body: el anclaje del
    sticky va al borde del CONTENIDO, no al del padding, y la barra quedaba
    flotando 40px por encima del fondo con filas asomando por debajo. */
@@ -2118,7 +2080,6 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .boda-tp-manual{display:flex;align-items:center;justify-content:center;gap:6px;font-size:.72rem;color:var(--text-muted)}
 .boda-tp-manual input{width:56px;text-align:center;font-family:var(--mono);font-size:.9rem;padding:5px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text)}
 
-/* ── Rutinas semanales ── */
 /* Negro en tema claro; en oscuro el negro no se veria, asi que va su
    equivalente neutro claro (mismo papel: el color sin color). */
 /* Rutinas: el mismo patron que Agenda Semanal o Bodas (tinte + borde, nunca

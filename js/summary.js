@@ -515,15 +515,6 @@ function renderSummaryContent(){
   return h;
 }
 
-function openSummary(){
-  NAV_BACK=null;
-  SUMMARY_YEAR=CY;
-  var ov=document.getElementById('summaryOverlay');
-  document.getElementById('summaryContent').innerHTML=renderSummaryContent();
-  ov.style.display='flex';
-  requestAnimationFrame(function(){requestAnimationFrame(function(){ov.classList.add('open');bindSummaryEvents();});});
-}
-
 function closeSummary(){
   var ov=document.getElementById('summaryOverlay');
   ov.classList.remove('open');

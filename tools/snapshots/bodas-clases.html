@@ -1,0 +1,120 @@
+<div class="boda-sticky-hd">
+<div class="econ-sub-tabs">
+<button class="econ-sub-tab active" data-bsub="clases">Clases</button>
+<button class="econ-sub-tab" data-bsub="parejas">Parejas</button>
+<button class="econ-sub-tab" data-bsub="calendario">Calendario</button>
+<button class="econ-sub-tab" data-bsub="stats">Estadísticas</button>
+</div>
+<div class="boda-mode-row">
+<button class="boda-mode-btn active" data-bmode="ver">&#128065; Consulta</button>
+<button class="boda-mode-btn" data-bmode="editar">&#9998; Edición</button>
+</div>
+</div>
+<div class="boda-sec">
+<div class="boda-issues">
+<button class="boda-issue tono-azul" data-issue="huecos">
+<b>1</b>
+<span>huecos sin asignar</span>
+<em>pulsa para asignarlos o borrarlos</em>
+</button>
+<button class="boda-issue tono-rojo" data-issue="pendientes">
+<b>3</b>
+<span>parejas pendientes</span>
+<em>10 clases por programar</em>
+</button>
+<button class="boda-issue tono-naranja" data-issue="incompletas">
+<b>1</b>
+<span>info incompleta</span>
+<em>1 sin hora</em>
+</button>
+</div>
+<div class="boda-filters">
+<div class="boda-fsel">
+<span class="boda-fsel-ico">&#128101;</span>
+<select id="bodaFilterCouple">
+<option value="all" selected>Todas las parejas</option>
+<option value="none">Sin asignar</option>
+<option value="fx-pareja-1">Pareja Uno</option>
+<option value="fx-pareja-2">Pareja Dos</option>
+<option value="fx-pareja-3">Pareja Tres</option>
+</select>
+</div>
+<div class="boda-ftoggles">
+<button class="boda-chip active" data-btoggle="past">&#9745; Ocultar pasadas</button>
+<button class="boda-chip" data-btoggle="closed">&#9744; Ocultar cerrados</button>
+</div>
+</div>
+<div class="boda-day" data-day="2026-08-24">
+<div class="boda-day-hd">Lun 24/08<span class="boda-day-n">2 clases</span>
+</div>
+<div class="boda-class boda-class-ro" data-id="fx-boda-ok">
+<span class="boda-class-mark">
+<svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">
+<path d="M-6,-6 L6,6 M-6,6 L6,-6" stroke="#000" stroke-width="9" stroke-linecap="round" fill="none"/>
+<path d="M0,0 L-6,6" stroke="#9aa0ae" stroke-width="5" stroke-linecap="round" fill="none"/>
+<path d="M0,0 L6,6"  stroke="#111318" stroke-width="5" stroke-linecap="round" fill="none"/>
+<path d="M0,0 L-6,-6 M0,0 L6,-6" stroke="#0ca678" stroke-width="5" stroke-linecap="round" fill="none"/>
+</svg>
+</span>
+<span class="boda-ro-time">18:00</span>
+<span class="boda-ro-couple" style="color:#0ca678">Pareja Uno</span>
+<span class="boda-ro-place">Sala</span>
+</div>
+<div class="boda-class boda-class-ro" data-id="fx-boda-sinhora">
+<span class="boda-class-mark">
+<svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">
+<path d="M-6,-6 L6,6 M-6,6 L6,-6" stroke="#000" stroke-width="9" stroke-linecap="round" fill="none"/>
+<path d="M0,0 L-6,6" stroke="#8b8f9a" stroke-width="5" stroke-linecap="round" fill="none"/>
+<path d="M0,0 L6,6"  stroke="#8b8f9a" stroke-width="5" stroke-linecap="round" fill="none"/>
+<path d="M0,0 L-6,-6 M0,0 L6,-6" stroke="#e64980" stroke-width="5" stroke-linecap="round" fill="none"/>
+</svg>
+</span>
+<span class="boda-ro-time none">--:--</span>
+<span class="boda-ro-couple" style="color:#e64980">Pareja Dos</span>
+<span class="boda-ro-place">Casa</span>
+</div>
+</div>
+<div class="boda-day" data-day="2026-08-31">
+<div class="boda-day-hd">Lun 31/08<span class="boda-day-n">1 clase</span>
+</div>
+<div class="boda-class boda-class-ro" data-id="fx-boda-vacia">
+<span class="boda-class-mark">
+<svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">
+<path d="M-6,-6 L6,6 M-6,6 L6,-6" stroke="#000" stroke-width="9" stroke-linecap="round" fill="none"/>
+<path d="M0,0 L-6,6" stroke="#8b8f9a" stroke-width="5" stroke-linecap="round" fill="none"/>
+<path d="M0,0 L6,6"  stroke="#8b8f9a" stroke-width="5" stroke-linecap="round" fill="none"/>
+<path d="M0,0 L-6,-6 M0,0 L6,-6" stroke="#ffffff" stroke-width="5" stroke-linecap="round" fill="none"/>
+</svg>
+</span>
+<span class="boda-ro-time none">--:--</span>
+<span class="boda-ro-couple">sin asignar</span>
+<span class="boda-ro-place vacio">Sin sala</span>
+</div>
+</div>
+<div class="boda-legend">
+<span class="boda-legend-t">Brazos de abajo del aspa (franja horaria):</span>
+<span class="boda-legend-i">
+<i style="background:#ffffff">
+</i>
+<i style="background:#ffffff">
+</i>09-14 h</span>
+<span class="boda-legend-i">
+<i style="background:#ffffff">
+</i>
+<i style="background:#9aa0ae">
+</i>14-18 h</span>
+<span class="boda-legend-i">
+<i style="background:#9aa0ae">
+</i>
+<i style="background:#111318">
+</i>18-20 h</span>
+<span class="boda-legend-i">
+<i style="background:#111318">
+</i>
+<i style="background:#111318">
+</i>20-23 h</span>
+<span class="boda-legend-i">
+<i style="background:#8b8f9a">
+</i>sin hora</span>
+</div>
+</div>
