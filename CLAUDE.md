@@ -299,6 +299,32 @@ Los paneles (detalle, alarma, Proximos) usan esta funcion, nunca `ev.color`.
 `RUT_FIXED_COLOR` fija naranja/verde/rojo para gimnasio, padel y baile; el
 selector de color del formulario solo aparece con el icono `gen` ("Otra").
 
+## Topes de un mismo dia (v269)
+Cada columna del calendario de 1 mes tiene el suyo, en vez del unico tope de 8
+que habia antes para todo junto (las rutinas y los cumpleanos se comian el
+sitio de los eventos de verdad).
+
+| Tope | Cuanto | Que cuenta | Donde se aplica |
+|---|---|---|---|
+| `EV_MAX_PUNT_DIA` | 5 | eventos **puntuales**; ni VIP, ni rutinas, ni grandes | `evDayLimitExceeded` (al guardar un evento y al crear clases de boda) |
+| `EV_MAX_RUT_DIA` | 3 | sesiones de rutina | `rutDiaLleno` (al guardar una rutina o crearla desde una sugerencia) |
+| `EV_MAX_VIP_DIA` | 3 | cumpleanos VIP | conmutador VIP de la ventana de cumpleanos |
+
+Los tres **bloquean** con un aviso. Coinciden a proposito con los huecos que
+pinta el calendario (`EV_CAL_CORNER_STACK` = 5 a la derecha, VIP y rutinas a la
+izquierda), asi que lo que se puede crear es justo lo que se puede ver. El
+marcador `+` de la columna derecha sigue en el codigo para los dias que ya
+tuvieran mas de 5 de antes.
+
+## Avisos de cupo anual (v267/v269)
+Dos avisos al marcar un dia en la home, los dos con `confirm()` y los dos
+dejando seguir:
+
+| Tipo | Tope | Cuenta | Funcion |
+|---|---|---|---|
+| Vacaciones | `VAC_ENTITLEMENT` (23) | solo laborables: son los que gastan jornada | `confirmarCupoVacaciones` |
+| Festivos | `FESTIVOS_ANIO` (12) | **todos** los dias: los 12 festivos son del calendario | `confirmarCupoFestivos` |
+
 ## Calendario de 1 mes: el dia en dos columnas (v258)
 Cada celda reparte lo que ocupa el dia en dos columnas:
 
@@ -427,12 +453,6 @@ guardado llevan `.rut-wk-cambiada`.
 
 Este patron —reutilizar un render entero y desactivarlo con `pointer-events`—
 sirve para cualquier "elige aqui" que deba parecerse a una vista existente.
-
-## Cupo de vacaciones (v267)
-`confirmarCupoVacaciones(k)` en core.js avisa con un `confirm()` si marcar ese
-dia pasa de `VAC_ENTITLEMENT`. Solo aplica a **vacaciones** (los festivos no
-consumen cupo) y solo a dias laborables. `contarVacaciones(year,excluirK)`
-cuenta sobre `ST`, con el mismo criterio que el resumen anual.
 
 ## Rutinas (js/rutinas.js) — v257
 Pestana `EV_VIEW==='rutinas'` (ocupa el hueco que dejo "Todos"), con dos subpestanas

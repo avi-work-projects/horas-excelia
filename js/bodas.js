@@ -964,7 +964,7 @@ function bindBodaAssign(){
       if(A.fixed[ds]){showToast('Esa clase ya estaba fijada','error');return;}
       if(A.sel[ds])delete A.sel[ds];
       else{
-        if(bodaDayFull(ds)){showToast('Ese día ya tiene '+EV_MAX_DAY_EVENTS+' eventos (máximo)','error');return;}
+        if(bodaDayFull(ds)){showToast('Ese día ya tiene '+EV_MAX_PUNT_DIA+' eventos puntuales (el máximo)','error');return;}
         A.sel[ds]=1;
       }
       renderBodaAssign();
@@ -1417,7 +1417,7 @@ function bindBodasEvents(){
   document.querySelectorAll('.boda-day-add[data-ds]').forEach(function(b){
     b.addEventListener('click',function(){
       var ds=b.dataset.ds;
-      if(bodaDayFull(ds)){showToast('Ese día ya tiene '+EV_MAX_DAY_EVENTS+' eventos (máximo)','error');return;}
+      if(bodaDayFull(ds)){showToast('Ese día ya tiene '+EV_MAX_PUNT_DIA+' eventos puntuales (el máximo)','error');return;}
       var cid=(BODA_FILTER_COUPLE!=='all'&&BODA_FILTER_COUPLE!=='none')?BODA_FILTER_COUPLE:null;
       EVENTS.push(bodaNewClass(ds,cid?BODA_DEFAULT_TIME:null,cid,bodaPlaceForNewOn(ds)));
       saveEvents();refreshEvents();
@@ -1427,7 +1427,7 @@ function bindBodasEvents(){
   if(addCl)addCl.addEventListener('click',function(){
     var dInp=document.getElementById('bodaAddDate');
     var ds=dInp&&dInp.value?dInp.value:evDk(new Date());
-    if(bodaDayFull(ds)){showToast('Ese día ya tiene '+EV_MAX_DAY_EVENTS+' eventos (máximo)','error');return;}
+    if(bodaDayFull(ds)){showToast('Ese día ya tiene '+EV_MAX_PUNT_DIA+' eventos puntuales (el máximo)','error');return;}
     var cid=(BODA_FILTER_COUPLE!=='all'&&BODA_FILTER_COUPLE!=='none')?BODA_FILTER_COUPLE:null;
     EVENTS.push(bodaNewClass(ds,cid?BODA_DEFAULT_TIME:null,cid,bodaPlaceForNewOn(ds)));
     saveEvents();refreshEvents();
