@@ -383,6 +383,23 @@ En el formulario lo activa el conmutador "Horario distinto segun el dia", que
 pinta una fila por cada dia marcado. `rutTieneHorarios(r)` es lo que hace que la
 tarjeta ponga "horario por dia" en vez de una hora suelta.
 
+## Elegir semana de una rutina = el calendario de verdad (v267)
+`_rutWeekPick(r)` ya no dibuja un mes propio: presta `EV_YEAR`/`EV_MONTH`, llama
+a **`renderEvCalMonth()`** y los devuelve. Asi se ve exactamente lo mismo que en
+la pestana de 1 mes (eventos, rutinas, puentes, hoy). El calendario queda inerte
+con `.rut-wpick-real *{pointer-events:none}` y solo `.ev-week-outer` vuelve a
+`auto`: lo unico pulsable es la fila de la semana. Las que ya tienen un cambio
+guardado llevan `.rut-wk-cambiada`.
+
+Este patron —reutilizar un render entero y desactivarlo con `pointer-events`—
+sirve para cualquier "elige aqui" que deba parecerse a una vista existente.
+
+## Cupo de vacaciones (v267)
+`confirmarCupoVacaciones(k)` en core.js avisa con un `confirm()` si marcar ese
+dia pasa de `VAC_ENTITLEMENT`. Solo aplica a **vacaciones** (los festivos no
+consumen cupo) y solo a dias laborables. `contarVacaciones(year,excluirK)`
+cuenta sobre `ST`, con el mismo criterio que el resumen anual.
+
 ## Rutinas (js/rutinas.js) — v257
 Pestana `EV_VIEW==='rutinas'` (ocupa el hueco que dejo "Todos"), con dos subpestanas
 (`RUT_SUBTAB`): **Rutinas** y **Estadisticas**.

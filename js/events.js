@@ -497,7 +497,9 @@ function renderEvCalMonth(){
       var _pmkM=past?' past-marker':'';
       if(_corner.length){
         var _cut=_corner.length>EV_CAL_CORNER_STACK?EV_CAL_CORNER_STACK-1:_corner.length;
-        h+='<div class="ev-otros-corner">';
+        /* Con la pila llena los marcadores se encogen un pelin: a 12 px con
+           5 huecos el ultimo se salia de la casilla y se veia cortado. */
+        h+='<div class="ev-otros-corner'+(_corner.length>=EV_CAL_CORNER_STACK?' llena':'')+'">';
         _corner.slice(0,_cut).forEach(function(it){
           h+=evMarkerHtml(it.ev,_pmkM,'ev-marker-lg',evDefaultShape(it.ev),ds);
         });
@@ -1548,6 +1550,12 @@ function renderEvContent(){
 /* car = {ds,i,n} cuando la ficha se abre como parte del carrusel de un dia:
    entonces la cabecera lleva la fecha y el contador, y debajo van las flechas
    y los puntos para pasar de un evento a otro. Es la MISMA ficha, no otra. */
+/* Las clases de boda duran una hora fija */
+function _bodaMasUnaHora(t){
+  var p=String(t||'00:00').split(':');
+  var m=((parseInt(p[0],10)||0)*60+(parseInt(p[1],10)||0)+60)%1440;
+  return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+}
 function renderEvDetail(ev,fromSummary,car){
   var s=new Date(ev.start+'T00:00:00');
   var e2=ev.end&&ev.end!==ev.start?new Date(ev.end+'T00:00:00'):null;
@@ -1624,19 +1632,23 @@ function renderEvDetail(ev,fromSummary,car){
   if(getEvType(ev)==='Ensayos boda'&&typeof bodaCouple==='function'){
     var _b=ev.boda||{};var _c=bodaCouple(_b.coupleId);
     var _pl=(typeof bodaPlaceOf==='function')?bodaPlaceOf(ev):null;
-    h+='<div class="ev-bchips">';
-    h+=_b.time
-      ? '<span class="ev-bchip">\ud83d\udd52 '+_b.time+' (1 h)</span>'
-      : '<span class="ev-bchip warn">\u26a0 Sin hora</span>';
-    h+=_pl
-      ? '<span class="ev-bchip">'+bodaPlaceEmoji(_pl)+' '+escHtml(BODA_PLACE_SHORT[_pl])+'</span>'
-      : '<span class="ev-bchip warn">\u26a0 Sin sala</span>';
-    h+='</div>';
-    h+='<div class="ev-bpareja">';
-    h+=_c
-      ? '<span class="ev-bchip" style="border-color:'+_c.color+';color:'+_c.color+'">&#128141; '+escHtml(_c.name)+'</span>'
-      : '<span class="ev-bchip warn">\u26a0 Sin pareja</span>';
-    if(_c)h+='<button class="ev-btn ev-bver" id="evDVerPareja" data-cid="'+_c.id+'">Ver pareja</button>';
+    /* Una ficha con las tres filas SIEMPRE presentes (etiqueta a la izquierda,
+       dato a la derecha). Lo que falta se marca en ambar en su propia fila en
+       vez de desaparecer, asi la ficha no cambia de alto ni de forma. */
+    var _fila=function(icono,etiqueta,valor,falta,extra){
+      return '<div class="ev-bfila'+(falta?' warn':'')+'">'
+        +'<span class="ev-bfila-lbl">'+icono+' '+etiqueta+'</span>'
+        +'<span class="ev-bfila-val">'+(falta?('\u26a0 '+valor):valor)+'</span>'
+        +(extra||'')+'</div>';
+    };
+    h+='<div class="ev-bficha">';
+    h+=_fila('\ud83d\udd52','Hora',
+      _b.time?(_b.time+' \u2013 '+_bodaMasUnaHora(_b.time)):'Sin asignar',!_b.time);
+    h+=_fila(_pl?bodaPlaceEmoji(_pl):'\ud83c\udfe0','Sala',
+      _pl?escHtml(BODA_PLACE_SHORT[_pl]):'Sin asignar',!_pl);
+    h+=_fila('\ud83d\udc8d','Pareja',
+      _c?('<span style="color:'+_c.color+'">'+escHtml(_c.name)+'</span>'):'Sin asignar',!_c,
+      _c?('<button class="ev-bver" id="evDVerPareja" data-cid="'+_c.id+'">Ver</button>'):'');
     h+='</div>';
   }
   h+='<div class="ev-detail-actions">';

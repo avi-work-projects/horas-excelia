@@ -1652,6 +1652,10 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-rut-mark.past-marker{opacity:.5}
 .ev-day-more{display:inline-block;line-height:0;cursor:pointer}
 .ev-otros-corner > *{pointer-events:auto;flex-shrink:0}
+/* Con la pila llena (5) los marcadores se encogen un pelin: a 12 px el
+   ultimo se salia de la casilla y se veia cortado. */
+.ev-otros-corner.llena{gap:2px}
+.ev-otros-corner.llena > *{width:11px;height:11px}
 .ev-multi-bar.starts{border-top-right-radius:0;border-bottom-right-radius:0}
 .ev-multi-bar.ends{border-top-left-radius:0;border-bottom-left-radius:0}
 .ev-multi-bar.continues{border-radius:0}
@@ -2124,26 +2128,29 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-zone-c .ev-btn-rutinas.active{background:rgba(236,240,248,.22) !important;border-color:#eaeef7 !important;color:#fbfcff !important}
 [data-theme="light"] .ev-zone-c .ev-btn-rutinas:not(.active){background:rgba(17,24,39,.05);border-color:rgba(17,24,39,.3);color:rgba(31,41,55,.9)}
 [data-theme="light"] .ev-zone-c .ev-btn-rutinas.active{background:rgba(17,24,39,.14) !important;border-color:#1f2937 !important;color:#111827 !important}
-/* Paso 1 de "cambiar una semana": mes de solo lectura para senalar cual */
-.rut-wpick{margin:10px 0 4px;-webkit-user-select:none;user-select:none}
-.rut-wpick-hdr{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px}
-.rut-wpick-hdr div{text-align:center;font-size:.6rem;font-weight:700;color:var(--text-dim)}
-.rut-wpick-week{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:2px;margin-bottom:3px;border:1.5px solid transparent;border-radius:9px;cursor:pointer;transition:background .12s,border-color .12s}
-.rut-wpick-week:active{background:var(--surface3)}
-.rut-wpick-week.cambiada{border-color:var(--accent)}
-.rut-wpick-day{position:relative;height:30px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:var(--surface2);border-radius:6px;font-size:.64rem;font-family:var(--mono);color:var(--text)}
-.rut-wpick-day.out{opacity:.3}
-.rut-wpick-day.hoy{box-shadow:inset 0 0 0 1.5px var(--accent);font-weight:700}
-.rut-wpick-day i{width:5px;height:5px;border-radius:50%;display:block}
+/* Paso 1 de "cambiar una semana": el calendario mensual de verdad, inerte.
+   Todo lleva pointer-events:none menos la fila de la semana, que es lo unico
+   que se puede pulsar. */
+.rut-wpick-real{margin:8px 0 4px;-webkit-user-select:none;user-select:none}
+.rut-wpick-real *{pointer-events:none}
+.rut-wpick-real .ev-week-outer{pointer-events:auto;cursor:pointer;border-radius:10px;outline:1.5px solid transparent;outline-offset:-1px;transition:outline-color .12s,background .12s}
+.rut-wpick-real .ev-week-outer:active{background:var(--surface3)}
+.rut-wpick-real .ev-week-outer.rut-wk-cambiada{outline-color:var(--accent)}
+.rut-wpick-real .ev-io-row{display:none}
 /* Ficha del dia: alto fijo para que no baile al pasar de un evento a otro */
 .ev-detail-sheet.ev-car-sheet{min-height:56vh;display:flex;flex-direction:column}
 .ev-car-sheet .ev-detail-actions{margin-top:auto}
-/* Pastillas de una clase: hora, sala y pareja, con aviso si faltan */
-.ev-bchips,.ev-bpareja{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px}
-.ev-bchip{display:inline-flex;align-items:center;gap:4px;font-size:.72rem;font-weight:600;padding:5px 10px;border-radius:12px;border:1.5px solid var(--border-light);color:var(--text-muted);background:var(--surface2);white-space:nowrap}
-.ev-bchip.warn{border-color:#c98a1e;color:#e0a83c;background:rgba(201,138,30,.1)}
-[data-theme="light"] .ev-bchip.warn{border-color:#d4941f;color:#8a5c05;background:rgba(212,148,31,.14)}
-.ev-bver{flex:0 0 auto;padding:5px 12px;font-size:.72rem;border:1.5px solid var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
+/* Ficha de una clase: tres filas fijas (hora, sala y pareja) */
+.ev-bficha{margin-top:10px;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--surface2)}
+.ev-bfila{display:flex;align-items:center;gap:8px;padding:9px 12px;font-size:.78rem}
+.ev-bfila + .ev-bfila{border-top:1px solid var(--border)}
+.ev-bfila-lbl{flex:0 0 38%;color:var(--text-muted);font-weight:600;display:flex;align-items:center;gap:6px}
+.ev-bfila-val{flex:1;min-width:0;font-weight:700;color:var(--text);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ev-bfila.warn{background:rgba(201,138,30,.08)}
+.ev-bfila.warn .ev-bfila-val{color:#e0a83c;font-weight:600}
+[data-theme="light"] .ev-bfila.warn{background:rgba(212,148,31,.12)}
+[data-theme="light"] .ev-bfila.warn .ev-bfila-val{color:#8a5c05}
+.ev-bver{flex:0 0 auto;margin-left:8px;padding:4px 11px;border-radius:11px;font-size:.68rem;font-weight:700;cursor:pointer;border:1.5px solid var(--accent);background:var(--accent-glow);color:var(--accent-bright);font-family:var(--font)}
 /* Los tres botones de la pareja, en una sola linea */
 .boda-det-actions-row{flex-direction:row;gap:6px}
 .boda-det-actions-row .ev-btn{width:auto;flex:1;min-width:0;padding:10px 4px;font-size:.72rem;white-space:nowrap}
