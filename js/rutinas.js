@@ -589,10 +589,12 @@ function openRutWeek(r){
   RUT_WEEK_CAL={y:hoy.getFullYear(),m:hoy.getMonth()};
   _rutWeekPick(r);
 }
-/* Paso 1: elegir semana sobre el calendario del mes */
+/* Paso 1: elegir semana sobre el calendario mensual DE VERDAD.
+   Se reutiliza renderEvCalMonth() tal cual (mismos eventos, mismos colores,
+   mismos puentes) y se deja inerte con pointer-events: lo unico que se puede
+   pulsar es la semana. Asi se localiza de un vistazo la que se busca. */
 function _rutWeekPick(r){
   var y=RUT_WEEK_CAL.y,m=RUT_WEEK_CAL.m;
-  var hoyDs=evDk(new Date());
   var h='<div class="ev-detail-overlay" id="rutWkOv"><div class="ev-detail-sheet">';
   h+='<div class="ev-detail-handle"></div>';
   h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">';
@@ -605,35 +607,15 @@ function _rutWeekPick(r){
   h+='<div class="boda-asg-month">'+MN[m]+' '+y+'</div>';
   h+='<button class="sy-nav" id="rutWkMNext">&#9654;</button>';
   h+='</div>';
-  h+='<div class="rut-wpick">';
-  h+='<div class="rut-wpick-hdr">';
-  ['L','M','X','J','V','S','D'].forEach(function(n){h+='<div>'+n+'</div>';});
-  h+='</div>';
-  var first=new Date(y,m,1), last=new Date(y,m+1,0);
-  var cur=new Date(first);
-  var dow=cur.getDay(); var off=dow===0?6:dow-1;
-  cur.setDate(cur.getDate()-off);
-  while(cur<=last){
-    var wkKey=rutWeekKey(evDk(cur));
-    var tiene=!!(r.weeks&&r.weeks[wkKey]);
-    h+='<div class="rut-wpick-week'+(tiene?' cambiada':'')+'" data-week="'+wkKey+'">';
-    for(var i=0;i<7;i++){
-      var d=new Date(cur.getFullYear(),cur.getMonth(),cur.getDate()+i);
-      var ds=evDk(d);
-      var fuera=d.getMonth()!==m;
-      var toca=rutOccursOn(r,ds);
-      h+='<div class="rut-wpick-day'+(fuera?' out':'')+(ds===hoyDs?' hoy':'')+'">'
-        +'<span>'+d.getDate()+'</span>'
-        +(toca?'<i style="background:'+r.color+'"></i>':'')
-        +'</div>';
-    }
-    h+='</div>';
-    cur.setDate(cur.getDate()+7);
-  }
-  h+='</div>';
-  h+='<div class="sy-note" style="font-size:.68rem">Pulsa cualquier d\u00eda para editar esa semana. '
-    +'Los puntos marcan los d\u00edas en los que toca ahora mismo; una semana con borde '
-    +'es que ya tiene un cambio guardado.</div>';
+  /* El calendario real se pinta con los globales del mes; se prestan y se
+     devuelven para no mover la vista que el usuario tenga detras. */
+  var _y0=EV_YEAR,_m0=EV_MONTH;
+  EV_YEAR=y;EV_MONTH=m;
+  var cal=renderEvCalMonth();
+  EV_YEAR=_y0;EV_MONTH=_m0;
+  h+='<div class="rut-wpick-real">'+cal+'</div>';
+  h+='<div class="sy-note" style="font-size:.68rem">Pulsa cualquier semana para cambiarla. '
+    +'Las que ya tienen un cambio guardado salen recuadradas.</div>';
   h+='</div></div>';
   var ov=document.getElementById('eventsOverlay');
   var old=document.getElementById('rutWkWrap');if(old)old.remove();
@@ -642,6 +624,18 @@ function _rutWeekPick(r){
   requestAnimationFrame(function(){
     var fo=document.getElementById('rutWkOv');
     if(fo){fo.classList.add('open');fo.addEventListener('click',function(e){if(e.target===fo)closeRutWeek();});}
+  });
+  /* Cada fila de semana se vuelve pulsable y se marca si ya tiene cambio */
+  document.querySelectorAll('#rutWkOv .ev-week-outer').forEach(function(w){
+    var celda=w.querySelector('.ev-cell[data-ds]');
+    if(!celda)return;
+    var wk=rutWeekKey(celda.dataset.ds);
+    w.dataset.week=wk;
+    if(r.weeks&&r.weeks[wk])w.classList.add('rut-wk-cambiada');
+    w.addEventListener('click',function(){
+      RUT_WEEK_SEL=wk;
+      _rutWeekRender(r);
+    });
   });
   document.getElementById('rutWkClose').addEventListener('click',closeRutWeek);
   document.getElementById('rutWkMPrev').addEventListener('click',function(){
@@ -652,14 +646,8 @@ function _rutWeekPick(r){
     RUT_WEEK_CAL.m++; if(RUT_WEEK_CAL.m>11){RUT_WEEK_CAL.m=0;RUT_WEEK_CAL.y++;}
     _rutWeekPick(r);
   });
-  document.querySelectorAll('#rutWkOv .rut-wpick-week').forEach(function(w){
-    w.addEventListener('click',function(){
-      RUT_WEEK_SEL=w.dataset.week;
-      _rutWeekRender(r);
-    });
-  });
   if(typeof addSwipe==='function'){
-    var _cal=document.querySelector('#rutWkOv .rut-wpick');
+    var _cal=document.querySelector('#rutWkOv .rut-wpick-real');
     addSwipe(_cal,function(){document.getElementById('rutWkMNext').click();},
                   function(){document.getElementById('rutWkMPrev').click();});
   }

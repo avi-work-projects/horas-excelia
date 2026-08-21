@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v266 - Vacaciones Festivos recupera sus dos mitades';
+var APP_VERSION = 'v267 - Aviso de cupo de vacaciones y ficha de ensayo';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -514,11 +514,40 @@ function selectType(t){
       save(); render(); closeSheet();
     }
   } else {
+    /* Vacaciones: avisar si se pasa del cupo anual antes de marcarlo */
+    if(t==='vacaciones'&&!confirmarCupoVacaciones(k))return;
     delete ST[k]; ST[k]={type:t};
     save(); closeSheet(); render();
   }
 }
 
+/* Dias de vacaciones ya marcados ese anio (laborables, que son los que
+   consumen). Se cuenta sobre ST, igual que hace el resumen. */
+function contarVacaciones(year,excluirK){
+  var n=0;
+  for(var k in ST){
+    if(!ST.hasOwnProperty(k))continue;
+    if(k===excluirK)continue;
+    if(!ST[k]||ST[k].type!=='vacaciones')continue;
+    if(parseInt(k.slice(0,4),10)!==year)continue;
+    var w=new Date(k+'T00:00:00').getDay();
+    if(w>=1&&w<=5)n++;
+  }
+  return n;
+}
+/* true = seguir adelante. Avisa si marcar ese dia se pasa del cupo anual. */
+function confirmarCupoVacaciones(k){
+  if(typeof VAC_ENTITLEMENT==='undefined')return true;
+  var year=parseInt(k.slice(0,4),10);
+  var w=new Date(k+'T00:00:00').getDay();
+  if(w<1||w>5)return true;                 /* fin de semana: no consume */
+  var usados=contarVacaciones(year,k)+1;
+  if(usados<=VAC_ENTITLEMENT)return true;
+  return confirm('Te pasas de los d\u00edas de vacaciones de '+year+'.\n\n'
+    +'Cupo anual: '+VAC_ENTITLEMENT+' d\u00edas\n'
+    +'Con este ser\u00edan: '+usados+' ('+(usados-VAC_ENTITLEMENT)+' de m\u00e1s)\n\n'
+    +'\u00bfMarcarlo de todas formas?');
+}
 function togSent(k){if(SW[k])delete SW[k]; else SW[k]=true; save(); render();}
 
 // ── Barra de navegación compartida entre overlays ────────────
