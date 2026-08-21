@@ -111,10 +111,39 @@ const REGLAS = [
     const antes = app.contarVacaciones(2026);
     return antes >= 0 && app.confirmarCupoVacaciones('2026-09-21') === true;
   }],
-  ['el tope de eventos por dia se respeta', () => {
-    const nuevo = { start: '2026-08-26', end: '2026-08-26', repeat: null };
-    /* el 26 tiene 6 puntuales + 3 VIP + rutina: por encima del tope */
-    return app.evDayLimitExceeded(nuevo, null) === '2026-08-26';
+  ['el tope de puntuales cuenta SOLO la columna derecha', () => {
+    /* el 26 tiene 6 puntuales, 3 VIP y ninguna rutina: se pasa por los 6 */
+    const lleno = { start: '2026-08-26', end: '2026-08-26', repeat: null };
+    /* el 24 tiene 2 ensayos y 3 VIP: los VIP no cuentan, asi que cabe */
+    const cabe = { start: '2026-08-24', end: '2026-08-24', repeat: null };
+    return app.evDayLimitExceeded(lleno, null) === '2026-08-26'
+        && app.evDayLimitExceeded(cabe, null) === null;
+  }],
+  ['un evento grande no gasta hueco de la columna derecha', () => {
+    /* el 10/09 tiene dos barras que se rozan y ningun puntual */
+    const p = { start: '2026-09-10', end: '2026-09-10', repeat: null };
+    return app.evDayLimitExceeded(p, null) === null;
+  }],
+  ['los tres topes son 5 puntuales, 3 rutinas y 3 VIP', () =>
+    app.EV_MAX_PUNT_DIA === 5 && app.EV_MAX_RUT_DIA === 3 && app.EV_MAX_VIP_DIA === 3],
+  ['una cuarta rutina el mismo dia no cabe', () => {
+    /* lunes: ya hay gimnasio. Tres mas en lunes deberian toparse */
+    const antes = app.RUTINAS.slice();
+    for (let i = 0; i < 2; i++) {
+      app.RUTINAS.push({ id: 'tmp-' + i, name: 'X' + i, color: '#888', icon: 'gen',
+        weekDays: [1], time: '10:00', dur: 60, start: '2026-08-01',
+        suspend: null, weeks: {}, skips: {}, createdAt: 9 + i });
+    }
+    const lleno = app.rutDiaLleno([1], '2026-08-31', null);
+    app.RUTINAS = antes;
+    return typeof lleno === 'string';
+  }],
+  ['con hueco libre, una rutina nueva entra', () =>
+    app.rutDiaLleno([0], '2026-08-31', null) === null],
+  ['pasar de 12 festivos avisa pero deja seguir', () => {
+    const antes = app.contarFestivos(2026);
+    return antes >= 0 && app.FESTIVOS_ANIO === 12
+        && app.confirmarCupoFestivos('2026-12-31') === true;
   }],
   ['dos eventos iguales con distinto id se detectan como el mismo', () => {
     const a = app.EVENTS.find(e => e.id === 'fx-p1');

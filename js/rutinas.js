@@ -160,6 +160,22 @@ function rutSuspendedOn(r,ds){
   if(ds<s.from)return false;
   return !s.to||ds<=s.to;   /* sin "to" = suspensión indefinida */
 }
+/* Primer dia (mirando 8 semanas hacia delante) en el que esta rutina ya no
+   cabria: la columna izquierda del calendario solo pinta EV_MAX_RUT_DIA
+   sesiones. Devuelve la fecha, o null si cabe en todos. */
+function rutDiaLleno(dias,desde,excluirId){
+  var tope=(typeof EV_MAX_RUT_DIA!=='undefined')?EV_MAX_RUT_DIA:3;
+  var d=new Date((desde||evDk(new Date()))+'T00:00:00');
+  var hoy=new Date();hoy.setHours(0,0,0,0);
+  if(d<hoy)d=hoy;
+  for(var i=0;i<56;i++){
+    var ds=evDk(d);
+    if(dias.indexOf(d.getDay())!==-1&&
+       (typeof rutDayCount==='function')&&rutDayCount(ds,excluirId)>=tope)return ds;
+    d.setDate(d.getDate()+1);
+  }
+  return null;
+}
 /* ¿Toca sesión ese día? Devuelve la hora, o null */
 function rutOccursOn(r,ds){
   if(r.start&&ds<r.start)return null;
@@ -561,6 +577,11 @@ function openRutForm(r){
       var from=sf.value, to=document.getElementById('rutFSuspTo').value;
       datos.suspend=from?{from:from,to:to||null}:null;
     }
+    var _lleno=rutDiaLleno(dias,datos.start,r?r.id:null);
+    if(_lleno){
+      showToast('El '+_rutFmt(_lleno)+' ya tiene '+EV_MAX_RUT_DIA+' rutinas (el m\u00e1ximo)','error');
+      return;
+    }
     if(r){for(var k in datos)r[k]=datos[k];}
     else{
       datos.id='rut-'+Date.now();
@@ -779,6 +800,11 @@ function bindRutinasEvents(){
   document.querySelectorAll('.rut-sug-btn[data-sug]').forEach(function(b){
     b.addEventListener('click',function(){
       var s=RUT_SUGERENCIAS[+b.dataset.sug];
+      var _ll=rutDiaLleno(s.weekDays,evDk(new Date()),null);
+      if(_ll){
+        showToast('El '+_rutFmt(_ll)+' ya tiene '+EV_MAX_RUT_DIA+' rutinas (el m\u00e1ximo)','error');
+        return;
+      }
       RUTINAS.push({id:'rut-'+Date.now(),createdAt:Date.now(),name:s.name,color:s.color,
         icon:s.icon||'gen',
         weekDays:s.weekDays.slice(),time:RUT_TIME_DEFAULT,dur:RUT_DUR_DEFAULT,

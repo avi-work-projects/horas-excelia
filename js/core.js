@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v268 - Pruebas automaticas, events.js partido y limpieza';
+var APP_VERSION = 'v269 - Topes por partes y aviso de 12 festivos';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -508,8 +508,9 @@ function selectType(t){
       save(); render(); closeSheet();
     }
   } else {
-    /* Vacaciones: avisar si se pasa del cupo anual antes de marcarlo */
+    /* Avisar antes de marcar si se pasa del cupo anual */
     if(t==='vacaciones'&&!confirmarCupoVacaciones(k))return;
+    if(t==='festivo'&&!confirmarCupoFestivos(k))return;
     delete ST[k]; ST[k]={type:t};
     save(); closeSheet(); render();
   }
@@ -540,6 +541,31 @@ function confirmarCupoVacaciones(k){
   return confirm('Te pasas de los d\u00edas de vacaciones de '+year+'.\n\n'
     +'Cupo anual: '+VAC_ENTITLEMENT+' d\u00edas\n'
     +'Con este ser\u00edan: '+usados+' ('+(usados-VAC_ENTITLEMENT)+' de m\u00e1s)\n\n'
+    +'\u00bfMarcarlo de todas formas?');
+}
+/* Festivos ya marcados ese anio. A diferencia de las vacaciones cuentan
+   TODOS los dias, caigan en laborable o en fin de semana: los 12 festivos son
+   del calendario, no de la jornada. */
+function contarFestivos(year,excluirK){
+  var n=0;
+  for(var k in ST){
+    if(!ST.hasOwnProperty(k))continue;
+    if(k===excluirK)continue;
+    if(!ST[k]||ST[k].type!=='festivo')continue;
+    if(parseInt(k.slice(0,4),10)===year)n++;
+  }
+  return n;
+}
+/* true = seguir adelante. Avisa al pasar de FESTIVOS_ANIO, pero no impide
+   nada: hay anios con festivos de sobra segun la comunidad. */
+var FESTIVOS_ANIO = 12;
+function confirmarCupoFestivos(k){
+  var year=parseInt(k.slice(0,4),10);
+  var usados=contarFestivos(year,k)+1;
+  if(usados<=FESTIVOS_ANIO)return true;
+  return confirm('Llevas m\u00e1s festivos de los normales en '+year+'.\n\n'
+    +'Lo habitual: '+FESTIVOS_ANIO+' al a\u00f1o\n'
+    +'Con este ser\u00edan: '+usados+' ('+(usados-FESTIVOS_ANIO)+' de m\u00e1s)\n\n'
     +'\u00bfMarcarlo de todas formas?');
 }
 function togSent(k){if(SW[k])delete SW[k]; else SW[k]=true; save(); render();}

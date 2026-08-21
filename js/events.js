@@ -231,7 +231,7 @@ function evMergeMsg(r){
   return p.length?p.join(' · '):'sin cambios';
 }
 
-/* ── Norma general: máximo EV_MAX_DAY_EVENTS eventos en un mismo día ──
+/* ── Tope de la columna derecha: EV_MAX_PUNT_DIA puntuales por dia ──
    Devuelve la primera fecha 'YYYY-MM-DD' que se pasaría del límite al
    guardar newEv (null = se puede guardar). excludeId: id del evento que se
    está editando (no cuenta contra sí mismo). */
@@ -254,16 +254,28 @@ function evDayLimitExceeded(newEv,excludeId){
       if(eventOccursOn(newEv,ds2)&&days.indexOf(ds2)===-1)days.push(ds2);
     }
   }
+  /* Solo cuentan los que compiten por la columna derecha: ni los cumpleanos
+     VIP ni las sesiones de rutina (que van a la izquierda y tienen su propio
+     tope), ni los eventos grandes (que son barras, no marcadores). */
   for(i=0;i<days.length;i++){
     var n=0;
     for(var j=0;j<EVENTS.length;j++){
-      if(excludeId&&EVENTS[j].id===excludeId)continue;
-      if(eventOccursOn(EVENTS[j],days[i]))n++;
+      var ex=EVENTS[j];
+      if(excludeId&&ex.id===excludeId)continue;
+      if(ex.id.indexOf('ev-bday-vip-')===0)continue;
+      if(typeof getEvKind==='function'&&getEvKind(ex)==='grande')continue;
+      if(eventOccursOn(ex,days[i]))n++;
     }
-    if(typeof rutEventsOn==='function')n+=rutEventsOn(days[i]).length;
-    if(n>=EV_MAX_DAY_EVENTS)return days[i];
+    if(n>=EV_MAX_PUNT_DIA)return days[i];
   }
   return null;
+}
+/* Cuantas sesiones de rutina hay ya ese dia (sin contar una rutina concreta) */
+function rutDayCount(ds,excluirId){
+  if(typeof rutEventsOn!=='function')return 0;
+  return rutEventsOn(ds).filter(function(ev){
+    return !(excluirId&&ev._rut&&ev._rut.id===excluirId);
+  }).length;
 }
 
 function hasUpcomingEvent(){
@@ -355,12 +367,17 @@ function evSortMarks(list,getEv){
 /* Distribución de marcadores puntuales en anual/4-meses:
    1 → cuadrado entero · 2 → izquierda/derecha · 3 → pirámide · 4 → cubo 2×2
    >4 → 3 marcadores + "+" en la 4ª posición. */
-var EV_MAX_DAY_EVENTS = 8;   /* norma general: máximo 8 eventos en un mismo día */
+/* Topes de un mismo dia, uno por columna del calendario de 1 mes. Antes
+   habia un unico tope de 8 para todo junto, y las rutinas y los cumpleanos
+   VIP se comian el sitio de los eventos de verdad. */
+var EV_MAX_PUNT_DIA = 5;     /* columna derecha: eventos puntuales */
+var EV_MAX_RUT_DIA  = 3;     /* columna izquierda: sesiones de rutina */
 /* 1-mes: huecos de la columna derecha (eventos puntuales). Si hay mas, el
    ultimo hueco se convierte en el "+" que abre el carrusel del dia. */
 var EV_CAL_CORNER_STACK = 5;
 /* Cumpleanos VIP que caben el mismo dia en la columna izquierda */
-var EV_CAL_VIP_MAX = 3;
+var EV_MAX_VIP_DIA = 3;
+var EV_CAL_VIP_MAX = EV_MAX_VIP_DIA;   /* nombre antiguo, lo usa el render */
 /* Checks de la subpestana Proximos, en positivo: marcados = se ven */
 var EV_UP_SHOW_RUT = true;
 var EV_UP_SHOW_BODA = true;
