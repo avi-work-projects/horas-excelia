@@ -29,7 +29,6 @@ var BODA_PLACE_DEFAULT = 'casa';
    "el campo no existe" (clases antiguas), que sigue cayendo en Casa. */
 var BODA_PLACE_NONE = '';
 var BODA_PLACE_SHORT = (function(){var o={};BODA_PLACE_LIST.forEach(function(p){o[p.k]=p.s;});return o;})();
-var BODA_PLACES      = (function(){var o={};BODA_PLACE_LIST.forEach(function(p){o[p.k]=p.l;});return o;})();
 /* Emoji del lugar: de un vistazo se distingue casa de sala */
 var BODA_PLACE_EMOJI = {sala:'\ud83c\udfe2', casa:'\ud83c\udfe0', pareja:'\ud83c\udfe1', otro:'\ud83d\udccd'};
 function bodaPlaceEmoji(k){
@@ -88,7 +87,6 @@ function bodaSlotColors(time){
   var sl=bodaSlot(time);
   return sl?[sl.left,sl.right]:[BODA_NO_TIME_COLOR,BODA_NO_TIME_COLOR];
 }
-function bodaSlotColor(time){return bodaSlotColors(time)[1];}
 /* Aspa de una clase teniendo en cuenta los cambios aun sin guardar */
 function bodaMarkFor(ev){
   var e=(typeof bodaEff==='function')?bodaEff(ev):(ev.boda||{});
@@ -377,8 +375,6 @@ function _renderBodaCalendario(){
   h+='</div>';
   return h;
 }
-function _bodaFirstWord(n){return String(n||'').split(/\s+/)[0];}
-
 /* ── Render: pestaña Bodas ── */
 function renderBodasBody(){
   /* Subpestanas y el conmutador Consulta/Edicion viven en el MISMO bloque

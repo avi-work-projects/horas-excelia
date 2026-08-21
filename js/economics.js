@@ -140,8 +140,6 @@ function computeEconEx(year,opts){
     totalDays:totalDays,totalHours:totalHours,dailyRate:dailyRate,hourlyRate:hourlyRate,
     avgHDay:avgHDay,irpfPct:irpfPct};
 }
-function computeEcon(year){return computeEconEx(year);}
-
 /* ── Gráfica de barras ──────────────────────────────────────── */
 function econBarChart(data,labels,color){
   var W=320,H=90,PB=18,PT=14,PL=32,n=12;
@@ -213,23 +211,6 @@ function _renderRateInputs(prefix,dailyVal,hourlyVal,avgH,mode){
   h+='<input class="econ-rate-input econ-mr-rate" id="rateHour'+pfx+'" data-pfx="'+pfx+'" data-rtype="hourly" type="number" min="0.01" step="0.01" value="'+hourlyVal.toFixed(2)+'">';
   h+='</div></div>';
   return h;
-}
-
-/* ── Helper: opt-button row ─────────────────────────────────── */
-function renderOptRow(id,opts,cur){
-  var h='<div class="econ-opt-row" id="'+id+'">';
-  opts.forEach(function(o){h+='<button class="econ-opt-btn'+(o.v===cur?' active':'')+'" data-val="'+o.v+'" data-opt="'+id+'">'+o.l+'</button>';});
-  h+='</div>';return h;
-}
-
-/* ── Cascade row helper ─────────────────────────────────────── */
-function cascRow(lbl,sign,val,color,cls,note){
-  var rowCls='econ-casc-row'+(cls?' '+cls:'');
-  var h='<div class="'+rowCls+'">';
-  h+='<span class="econ-casc-lbl">'+lbl+(note?'<br><span style="font-size:.68rem;color:var(--text-dim)">'+note+'</span>':'')+'</span>';
-  h+='<span class="econ-casc-sign">'+sign+'</span>';
-  h+='<span class="econ-casc-val"'+(color?' style="color:'+color+'"':'')+'>'+fc(val)+'</span>';
-  h+='</div>';return h;
 }
 
 /* ── Helpers para tarjetas de resumen ───────────────────────── */

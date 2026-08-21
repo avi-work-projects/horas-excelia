@@ -1,0 +1,380 @@
+<div class="ev-form-overlay" id="evFormOv">
+<div class="ev-form-sheet">
+<div class="ev-form-handle">
+</div>
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+<button class="sy-back" id="evFClose">&#8592;</button>
+<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">Editar evento</div>
+<button class="ev-btn danger" id="evFDel" style="flex:none;padding:6px 12px;font-size:.75rem">Eliminar</button>
+</div>
+<div class="ev-field">
+<label>Título</label>
+<input class="ev-input" id="evFTitle" type="text" maxlength="80" placeholder="Nombre del evento" value="Viaje que acaba">
+</div>
+<div class="ev-field">
+<label>Nota <span id="evCharCnt" style="font-weight:400;color:var(--text-dim)">0/200</span>
+</label>
+<textarea class="ev-textarea" id="evFNote" maxlength="200" placeholder="Notas opcionales...">
+</textarea>
+</div>
+<div class="ev-field">
+<label>Clase de evento</label>
+<div class="ev-kind-picker" data-cur-kind="grande" data-cur-type="Viaje">
+<button type="button" class="ev-kind-btn" data-kind="puntual">✦ Puntual<span>un marcador por día</span>
+</button>
+<button type="button" class="ev-kind-btn selected" data-kind="grande">▬ Grande<span>barra de varios días</span>
+</button>
+</div>
+</div>
+<div class="ev-field">
+<label>Categoría</label>
+<div class="ev-type-picker" id="evFTypePicker">
+<div class="ev-color-swatch selected ev-color-swatch-multi" data-hex="#38bdf8" data-type="Viaje" data-kind="grande">
+<div class="ev-type-dot ev-type-dot-multi">
+</div>
+<span class="ev-type-name">Viaje</span>
+</div>
+<div class="ev-color-swatch" data-hex="#1d4ed8" data-type="Asturias" data-kind="grande" style="color:#1d4ed8">
+<div class="ev-type-dot" style="background:#1d4ed8">
+</div>
+<span class="ev-type-name">Asturias</span>
+</div>
+<div class="ev-color-swatch" data-hex="#8b5e34" data-type="Casa Rural" data-kind="grande" style="color:#8b5e34">
+<div class="ev-type-dot" style="background:#8b5e34">
+</div>
+<span class="ev-type-name">Casa Rural</span>
+</div>
+<div class="ev-color-swatch ev-color-swatch-multi" data-hex="#ff6b6b" data-type="Otros" data-kind="grande">
+<div class="ev-type-dot ev-type-dot-multi">
+</div>
+<span class="ev-type-name">Otros</span>
+</div>
+</div>
+</div>
+<div class="ev-field ev-form-color-section" id="evFColorSection" style="display:block">
+<label>🎨 Paleta de colores</label>
+<div class="ev-color-picker" id="evFCpWrap">
+<div class="ev-color-grid">
+<div class="ev-color-dot" data-hex="#ff6b6b" style="background:#ff6b6b;border-color:#ff6b6b">
+</div>
+<div class="ev-color-dot" data-hex="#e03131" style="background:#e03131;border-color:#e03131">
+</div>
+<div class="ev-color-dot" data-hex="#f06595" style="background:#f06595;border-color:#f06595">
+</div>
+<div class="ev-color-dot" data-hex="#d6336c" style="background:#d6336c;border-color:#d6336c">
+</div>
+<div class="ev-color-dot" data-hex="#e879a8" style="background:#e879a8;border-color:#e879a8">
+</div>
+<div class="ev-color-dot" data-hex="#da77f2" style="background:#da77f2;border-color:#da77f2">
+</div>
+<div class="ev-color-dot" data-hex="#c084fc" style="background:#c084fc;border-color:#c084fc">
+</div>
+<div class="ev-color-dot" data-hex="#ae3ec9" style="background:#ae3ec9;border-color:#ae3ec9">
+</div>
+<div class="ev-color-dot" data-hex="#9775fa" style="background:#9775fa;border-color:#9775fa">
+</div>
+<div class="ev-color-dot" data-hex="#7950f2" style="background:#7950f2;border-color:#7950f2">
+</div>
+<div class="ev-color-dot" data-hex="#5f3dc4" style="background:#5f3dc4;border-color:#5f3dc4">
+</div>
+<div class="ev-color-dot" data-hex="#4c6ef5" style="background:#4c6ef5;border-color:#4c6ef5">
+</div>
+<div class="ev-color-dot" data-hex="#6c8cff" style="background:#6c8cff;border-color:#6c8cff">
+</div>
+<div class="ev-color-dot" data-hex="#1d4ed8" style="background:#1d4ed8;border-color:#1d4ed8">
+</div>
+<div class="ev-color-dot" data-hex="#1971c2" style="background:#1971c2;border-color:#1971c2">
+</div>
+<div class="ev-color-dot selected" data-hex="#38bdf8" style="background:#38bdf8;border-color:#38bdf8">
+</div>
+<div class="ev-color-dot" data-hex="#22d3ee" style="background:#22d3ee;border-color:#22d3ee">
+</div>
+<div class="ev-color-dot" data-hex="#4ecdc4" style="background:#4ecdc4;border-color:#4ecdc4">
+</div>
+<div class="ev-color-dot" data-hex="#34d399" style="background:#34d399;border-color:#34d399">
+</div>
+<div class="ev-color-dot" data-hex="#56c596" style="background:#56c596;border-color:#56c596">
+</div>
+<div class="ev-color-dot" data-hex="#0ca678" style="background:#0ca678;border-color:#0ca678">
+</div>
+<div class="ev-color-dot" data-hex="#a3e635" style="background:#a3e635;border-color:#a3e635">
+</div>
+<div class="ev-color-dot" data-hex="#82c91e" style="background:#82c91e;border-color:#82c91e">
+</div>
+<div class="ev-color-dot" data-hex="#5c940d" style="background:#5c940d;border-color:#5c940d">
+</div>
+<div class="ev-color-dot" data-hex="#ffe066" style="background:#ffe066;border-color:#ffe066">
+</div>
+<div class="ev-color-dot" data-hex="#fbbf24" style="background:#fbbf24;border-color:#fbbf24">
+</div>
+<div class="ev-color-dot" data-hex="#f0b45c" style="background:#f0b45c;border-color:#f0b45c">
+</div>
+<div class="ev-color-dot" data-hex="#fb923c" style="background:#fb923c;border-color:#fb923c">
+</div>
+<div class="ev-color-dot" data-hex="#f08c00" style="background:#f08c00;border-color:#f08c00">
+</div>
+<div class="ev-color-dot" data-hex="#e8590c" style="background:#e8590c;border-color:#e8590c">
+</div>
+<div class="ev-color-dot" data-hex="#e8d5b7" style="background:#e8d5b7;border-color:#e8d5b7">
+</div>
+<div class="ev-color-dot" data-hex="#f0c8a0" style="background:#f0c8a0;border-color:#f0c8a0">
+</div>
+<div class="ev-color-dot" data-hex="#d9a066" style="background:#d9a066;border-color:#d9a066">
+</div>
+<div class="ev-color-dot" data-hex="#b0714a" style="background:#b0714a;border-color:#b0714a">
+</div>
+<div class="ev-color-dot" data-hex="#8b5e34" style="background:#8b5e34;border-color:#8b5e34">
+</div>
+<div class="ev-color-dot" data-hex="#5c4033" style="background:#5c4033;border-color:#5c4033">
+</div>
+<div class="ev-color-dot" data-hex="#f8f9fa" style="background:#f8f9fa;border-color:#f8f9fa">
+</div>
+<div class="ev-color-dot" data-hex="#dee2e6" style="background:#dee2e6;border-color:#dee2e6">
+</div>
+<div class="ev-color-dot" data-hex="#adb5bd" style="background:#adb5bd;border-color:#adb5bd">
+</div>
+<div class="ev-color-dot" data-hex="#868e96" style="background:#868e96;border-color:#868e96">
+</div>
+<div class="ev-color-dot" data-hex="#495057" style="background:#495057;border-color:#495057">
+</div>
+<div class="ev-color-dot" data-hex="#212529" style="background:#212529;border-color:#212529">
+</div>
+</div>
+<div class="ev-color-custom-row">
+<input type="color" class="ev-color-native" id="evFCpNative" value="#38bdf8">
+<input type="text" class="ev-color-hex-input" id="evFCpHex" value="#38bdf8" maxlength="7" spellcheck="false">
+</div>
+<div class="ev-color-preview-row">
+<div class="ev-color-preview-item">
+<span>Borde</span>
+<div class="ev-color-preview-swatch" style="background:#38bdf8">
+</div>
+</div>
+<div class="ev-color-preview-item">
+<span>Relleno</span>
+<div class="ev-color-preview-swatch" style="background:#247ba1">
+</div>
+</div>
+<div class="ev-color-preview-hex" id="evFCpCode">#38bdf8</div>
+</div>
+</div>
+</div>
+<div class="ev-field ev-otros-extras" id="evFOtrosExtras" style="display:none">
+<div id="evFShapeBlock" style="display:none">
+<label>▸ Forma del marcador</label>
+<div class="ev-shape-picker" id="evFShapePicker">
+<button type="button" class="ev-shape-opt selected" data-shape="circle" title="Círculo" aria-label="Círculo">
+<span class="ev-shape-preview ev-shape-circle" style="color:#38bdf8">
+<svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">
+<circle cx="0" cy="0" r="8" fill="currentColor" stroke="#000" stroke-width="2"/>
+</svg>
+</span>
+</button>
+<button type="button" class="ev-shape-opt" data-shape="square" title="Cuadrado" aria-label="Cuadrado">
+<span class="ev-shape-preview ev-shape-square" style="color:#38bdf8">
+<svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">
+<rect x="-8" y="-8" width="16" height="16" fill="currentColor" stroke="#000" stroke-width="2"/>
+</svg>
+</span>
+</button>
+<button type="button" class="ev-shape-opt" data-shape="diamond" title="Rombo" aria-label="Rombo">
+<span class="ev-shape-preview ev-shape-diamond" style="color:#38bdf8">
+<svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">
+<polygon points="0,-8.5 8.5,0 0,8.5 -8.5,0" fill="currentColor" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+</svg>
+</span>
+</button>
+<button type="button" class="ev-shape-opt" data-shape="x-thick" title="X gorda" aria-label="X gorda">
+<span class="ev-shape-preview ev-shape-x-thick" style="color:#38bdf8">
+<svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">
+<path d="M-6,-6 L6,6 M-6,6 L6,-6" stroke="#000" stroke-width="9" stroke-linecap="round" fill="none"/>
+<path d="M-6,-6 L6,6 M-6,6 L6,-6" stroke="currentColor" stroke-width="5" stroke-linecap="round" fill="none" class="ev-shape-x-color"/>
+</svg>
+</span>
+</button>
+<button type="button" class="ev-shape-opt" data-shape="x-thin" title="X fina" aria-label="X fina">
+<span class="ev-shape-preview ev-shape-x-thin" style="color:#38bdf8">
+<svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">
+<path d="M-6,-6 L6,6 M-6,6 L6,-6" stroke="#000" stroke-width="6.6" stroke-linecap="round" fill="none"/>
+<path d="M-6,-6 L6,6 M-6,6 L6,-6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" fill="none" class="ev-shape-x-color"/>
+</svg>
+</span>
+</button>
+<button type="button" class="ev-shape-opt" data-shape="rounded" title="Redondeado" aria-label="Redondeado">
+<span class="ev-shape-preview ev-shape-rounded" style="color:#38bdf8">
+<svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">
+<rect x="-9" y="-6" width="18" height="12" rx="4" fill="currentColor" stroke="#000" stroke-width="2"/>
+</svg>
+</span>
+</button>
+<button type="button" class="ev-shape-opt" data-shape="gym" title="Mancuerna" aria-label="Mancuerna">
+<span class="ev-shape-preview ev-shape-gym" style="color:#38bdf8">
+<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
+<g fill="currentColor" stroke="#000" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round">
+<rect x="0.6" y="8.2" width="4.2" height="7.6" rx="1.8"/>
+<rect x="4.4" y="10.1" width="2.8" height="3.8" rx="1"/>
+<rect x="6.8" y="10.7" width="10.4" height="2.6" rx="1.3"/>
+<rect x="16.8" y="10.1" width="2.8" height="3.8" rx="1"/>
+<rect x="19.2" y="8.2" width="4.2" height="7.6" rx="1.8"/>
+</g>
+<g fill="currentColor" stroke="currentColor" stroke-width="2.7" stroke-linejoin="round" stroke-linecap="round">
+<rect x="0.6" y="8.2" width="4.2" height="7.6" rx="1.8"/>
+<rect x="4.4" y="10.1" width="2.8" height="3.8" rx="1"/>
+<rect x="6.8" y="10.7" width="10.4" height="2.6" rx="1.3"/>
+<rect x="16.8" y="10.1" width="2.8" height="3.8" rx="1"/>
+<rect x="19.2" y="8.2" width="4.2" height="7.6" rx="1.8"/>
+</g>
+<rect x="6.8" y="10.7" width="10.4" height="2.6" rx="1.3" fill="rgba(0,0,0,.45)"/>
+</svg>
+</span>
+</button>
+<button type="button" class="ev-shape-opt" data-shape="padel" title="Pala" aria-label="Pala">
+<span class="ev-shape-preview ev-shape-padel" style="color:#38bdf8">
+<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
+<g fill="currentColor" stroke="#000" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round">
+<ellipse cx="12" cy="8.6" rx="6.8" ry="7.2"/>
+<rect x="10.7" y="14" width="2.6" height="8.4" rx="1.3"/>
+</g>
+<g fill="currentColor" stroke="currentColor" stroke-width="2.7" stroke-linejoin="round" stroke-linecap="round">
+<ellipse cx="12" cy="8.6" rx="6.8" ry="7.2"/>
+<rect x="10.7" y="14" width="2.6" height="8.4" rx="1.3"/>
+</g>
+<circle cx="10" cy="7" r="1.15" fill="rgba(0,0,0,.45)"/>
+<circle cx="14" cy="7" r="1.15" fill="rgba(0,0,0,.45)"/>
+<circle cx="12" cy="10" r="1.15" fill="rgba(0,0,0,.45)"/>
+<circle cx="10" cy="12.6" r="1.15" fill="rgba(0,0,0,.45)"/>
+<circle cx="14" cy="12.6" r="1.15" fill="rgba(0,0,0,.45)"/>
+<rect x="10.9" y="16.2" width="2.2" height="4.4" rx="1.1" fill="rgba(0,0,0,.45)"/>
+</svg>
+</span>
+</button>
+<button type="button" class="ev-shape-opt" data-shape="baile" title="Bailarín" aria-label="Bailarín">
+<span class="ev-shape-preview ev-shape-baile" style="color:#38bdf8">
+<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
+<g fill="currentColor" stroke="#000" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round">
+<circle cx="12.6" cy="3.6" r="2.6"/>
+<path d="M12.2,7.2 C10.4,8.8 9.9,10.8 10.6,12.6 L6.6,17.8" fill="none" stroke-width="2.6" stroke-linecap="round"/>
+<path d="M10.6,12.6 L14.8,14.8 L15.6,21.4" fill="none" stroke-width="2.6" stroke-linecap="round"/>
+<path d="M12.4,8.4 L18.4,5.4" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+</g>
+<g fill="currentColor" stroke="currentColor" stroke-width="2.7" stroke-linejoin="round" stroke-linecap="round">
+<circle cx="12.6" cy="3.6" r="2.6"/>
+<path d="M12.2,7.2 C10.4,8.8 9.9,10.8 10.6,12.6 L6.6,17.8" fill="none" stroke-width="2.6" stroke-linecap="round"/>
+<path d="M10.6,12.6 L14.8,14.8 L15.6,21.4" fill="none" stroke-width="2.6" stroke-linecap="round"/>
+<path d="M12.4,8.4 L18.4,5.4" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+</g>
+<circle cx="18.6" cy="5.2" r="1.9" fill="rgba(0,0,0,.45)"/>
+</svg>
+</span>
+</button>
+</div>
+</div>
+<div id="evFBarBlock" style="display:none">
+<label>▬ Grosor de la barra</label>
+<div class="ev-barsize-picker" id="evFBarPicker">
+<button type="button" class="ev-barsize-opt selected" data-bar="lg">
+<span class="ev-barsize-demo ev-bar-lg">
+</span>
+<span class="ev-barsize-lbl">Gruesa</span>
+</button>
+<button type="button" class="ev-barsize-opt" data-bar="md">
+<span class="ev-barsize-demo ev-bar-md">
+</span>
+<span class="ev-barsize-lbl">Media</span>
+</button>
+<button type="button" class="ev-barsize-opt" data-bar="sm">
+<span class="ev-barsize-demo ev-bar-sm">
+</span>
+<span class="ev-barsize-lbl">Fina</span>
+</button>
+</div>
+</div>
+<div id="evFDatesBlock" style="display:none;margin-top:12px">
+<label>🗓 Selección Multidía</label>
+<button type="button" class="ev-btn" id="evFPickDates" style="width:100%;margin-top:4px;font-size:.78rem;padding:8px 10px">
+<span id="evFPickDatesLbl">🗓 Selección Multidía…</span>
+</button>
+<div style="font-size:.62rem;color:var(--text-dim);margin-top:4px;line-height:1.4">Si seleccionas <b>más de un día</b>, el evento aparecerá en cada uno de esos días e ignorará las fechas de inicio/fin de abajo.</div>
+</div>
+</div>
+<div class="ev-field ev-date-row" id="evFDateRow">
+<div>
+<label>Inicio</label>
+<input class="ev-input" id="evFStart" type="date" value="2026-09-07">
+</div>
+<div>
+<label>Fin</label>
+<input class="ev-input" id="evFEnd" type="date" value="2026-09-10">
+</div>
+<div class="ev-dates-locked-note" id="evFDatesLockedNote" style="display:none">Estas fechas se ignoran porque hay <b>Selección Multidía</b> activa.</div>
+</div>
+<div class="ev-field ev-date-row ev-hora-row" id="evFHoraRow" style="display:none">
+<div>
+<label>Hora inicio <span class="ev-note-scope">(opcional)</span>
+</label>
+<input class="ev-input" id="evFTime" type="time" step="300" value="">
+</div>
+<div>
+<label>Hora fin</label>
+<input class="ev-input" id="evFEndTime" type="time" step="300" value="" disabled>
+</div>
+</div>
+<div class="ev-field ev-viaje-box" id="evFViajeBox" style="display:block">
+<label>🚆 Ida y vuelta <span class="ev-note-scope">(opcional)</span>
+</label>
+<div class="ev-viaje-tramo" data-tramo="ida">
+<label class="excl-item ev-viaje-hd">
+<input type="checkbox" class="ev-viaje-chk" data-tramo="ida"> <b>Ida</b>
+</label>
+<div class="ev-viaje-campos" style="display:none">
+<input class="ev-input ev-viaje-time" data-tramo="ida" type="time" step="300" value="">
+<select class="ev-input ev-viaje-modo" data-tramo="ida">
+<option value="tren" selected>🚆 Tren</option>
+<option value="bus">🚌 Autobús</option>
+<option value="coche">🚗 Coche</option>
+<option value="avion">✈ Avión</option>
+</select>
+</div>
+<input class="ev-input ev-viaje-cond" data-tramo="ida" type="text" maxlength="30" placeholder="Quien conduce" value="" style="display:none">
+</div>
+<div class="ev-viaje-tramo" data-tramo="vuelta">
+<label class="excl-item ev-viaje-hd">
+<input type="checkbox" class="ev-viaje-chk" data-tramo="vuelta"> <b>Vuelta</b>
+</label>
+<div class="ev-viaje-campos" style="display:none">
+<input class="ev-input ev-viaje-time" data-tramo="vuelta" type="time" step="300" value="">
+<select class="ev-input ev-viaje-modo" data-tramo="vuelta">
+<option value="tren" selected>🚆 Tren</option>
+<option value="bus">🚌 Autobús</option>
+<option value="coche">🚗 Coche</option>
+<option value="avion">✈ Avión</option>
+</select>
+</div>
+<input class="ev-input ev-viaje-cond" data-tramo="vuelta" type="text" maxlength="30" placeholder="Quien conduce" value="" style="display:none">
+</div>
+<div class="ev-viaje-note">La hora es la de <b>salida</b>: desde Próximos podrás crear una alarma para cada trayecto.</div>
+</div>
+<div class="ev-field">
+<label>Repetición</label>
+<select class="ev-input" id="evFRepeat">
+<option value="none" selected>Sin repetición</option>
+<option value="weekly">Semanal</option>
+<option value="monthly-date">Mensual (mismo día)</option>
+<option value="monthly-first">Mensual (día 1)</option>
+<option value="yearly">Anual</option>
+</select>
+</div>
+<div class="ev-weekday-row" id="evWdRow" style="display:none">
+<button class="ev-wd-btn" data-wd="0">Do</button>
+<button class="ev-wd-btn" data-wd="1">Lu</button>
+<button class="ev-wd-btn" data-wd="2">Ma</button>
+<button class="ev-wd-btn" data-wd="3">Mi</button>
+<button class="ev-wd-btn" data-wd="4">Ju</button>
+<button class="ev-wd-btn" data-wd="5">Vi</button>
+<button class="ev-wd-btn" data-wd="6">Sa</button>
+</div>
+<div class="ev-form-actions">
+<button class="ev-btn primary" id="evFSave">Guardar</button>
+</div>
+</div>
+</div>

@@ -5,8 +5,6 @@
 var SIM_TARGET=40000;
 var SIM_PERIOD='annual';   // 'annual' | 'monthly'
 var SIM_NET_MODE='irpf15'; // 'base' | 'irpf15' | 'ccss' | 'decl'
-var SIM_RESULT=null;
-var SIM_RESULT_SAL=null;
 
 /* ── Compute all rate combinations ───────────────────────── */
 function _simComputeAll(){

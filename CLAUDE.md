@@ -17,6 +17,36 @@ Las funciones de primer nivel llevan su tamaño cuando pasan de 80 líneas: `nom
 Ese `(!)` es una señal de "esto ya pide partirse o compartirse con otra vista" — mirar ahí
 primero cuando algo cueste de tocar.
 
+## ✅ Pruebas automáticas — PASARLAS ANTES DE CADA PUSH
+
+```bash
+node tools/test.js
+```
+
+Dos redes en una:
+
+- **26 instantáneas.** Cada `renderXxx()` se pinta con un fixture fijo y su HTML
+  se compara con el de `tools/snapshots/`. No dicen si la vista está *bien*
+  (eso se mira), dicen si ha cambiado **sin querer**.
+- **12 reglas de lógica** para lo que un string no deja ver: barras que se
+  rozan, prioridad de horas de una rutina, color de una clase por su pareja,
+  tope de eventos por día, firma de un evento al importar…
+
+| Fichero | Qué es |
+|---|---|
+| `tools/entorno.js` | Un navegador de mentira (localStorage, `document` inerte) y un **Date congelado** al 21/08/2026, para que la salida no cambie según el día |
+| `tools/fixture.json` | Datos **inventados** que tocan los casos que más se han roto. No hay nada personal: nunca meter aquí un backup de verdad |
+| `tools/snapshots/*.html` | La última salida buena de cada vista, una etiqueta por línea para que el diff se lea |
+
+Si un cambio es intencionado: `node tools/test.js --update`, se mira el diff en
+git y se commitea **junto** al cambio. Un `--update` a ciegas convierte la red
+en decoración.
+
+`node tools/test.js --solo=cal` limita la ejecución a las vistas que casen.
+
+**Lo que NO cubren**: nada de listeners ni de CSS. La capa de `bindXxxEvents` y
+el aspecto siguen necesitando abrir el navegador y mirar.
+
 ## 🧭 Guía de arquitectura — LEER ANTES DE CREAR ALGO NUEVO
 
 Objetivo: que añadir una pantalla o un control sea *ensamblar piezas que ya existen*,
@@ -124,8 +154,12 @@ js/core.js          ← Estado global, utilidades, render principal, bottom shee
 js/summary.js       ← Resumen anual (VAC_ENTITLEMENT=23, barChart3, computePuentes)
 js/economics.js     ← Cálculo económico (IVA 21%, IRPF 15%, DAILY_RATE=315)
 js/birthdays.js     ← Cumpleaños (BDAYS de localStorage o BDAYS_FROM_SECRET)
-js/events.js        ← Eventos con notas, colores, repetición (EVENTS en localStorage)
-js/alarms.js        ← Gestión de alarmas creadas desde el PWA (ALARMS en localStorage)
+js/events.js        ← Eventos: estado, ocurrencias, marcadores, reparto de barras
+js/events-render.js ← Las vistas (calendarios, Próximos, Todos) — funciones puras
+js/events-form.js  ← Alta y edición de un evento
+js/events-detail.js ← Ficha del día (= carrusel), hoja de borrado y panel de alarma
+js/events-bind.js  ← Apertura de la ventana y enganche de listeners (carga el último)
+js/alarms.js        ← Registro de alarmas creadas desde el PWA (ALARMS en localStorage)
 js/rutinas.js       ← Rutinas semanales (RUTINAS en localStorage) — sesiones virtuales en los calendarios
 js/init.js          ← Event listeners globales + arranque (IIFE)
 .github/workflows/deploy.yml  ← GitHub Actions: inyecta secrets y despliega en Pages
@@ -558,7 +592,7 @@ Antes de renderizar, se ejecuta un algoritmo que asigna a cada evento una `row` 
 - Relevante para: alarmas vía MacroDroid, intents Android, ringtones
 - La app de Reloj de Vivo **ignora el extra `RINGTONE`** en el intent `SET_ALARM` (limitación confirmada del OEM, probado con RingtoneManager URI y MediaStore URI — ninguno funciona)
 - Vivo solo acepta **mp3 y wav** como tonos personalizados (no opus, no ogg)
-- Para alarmas automáticas desde la PWA: MacroDroid webhook → Rhino (1.6) JS → intent `SET_ALARM`
+- Para alarmas automáticas desde la PWA: MacroDroid webhook → script **Java** → intent `SET_ALARM`
 - **ContentProvider de alarmas bloqueado**: `content://com.android.deskclock/alarms` lanza `java.lang.SecurityException: Permission`. URIs de Vivo (`com.vivo.deskclock`, `com.vivo.clock`, `com.bbk.clock`) devuelven null. No se puede leer/listar alarmas existentes del sistema.
 - **DISMISS_ALARM sí funciona**: el intent `android.intent.action.DISMISS_ALARM` con `SEARCH_MODE=android.label` y `MESSAGE=nombre` **funciona en Vivo** para apagar/borrar alarmas por nombre. Confirmado en pruebas reales.
 - El PWA lleva su propio registro en `excelia-alarms-v1` (no depende de poder leer el sistema).
@@ -601,63 +635,93 @@ Función en `core.js` que extrae la URL base del webhook MacroDroid eliminando e
 
 ## MacroDroid — creación de alarmas
 
-> **Estado (2026-08-19):** la creación de alarmas volvió a funcionar. La macro ya **no
-> ejecuta JavaScript (Rhino): el código se pasó a Java**. El PWA no cambia — sigue
-> llamando al webhook `…/generar_alarma1?alarmH=&alarmM=&alarmMsg=&alarmDays=` y
-> registrando la alarma en `excelia-alarms-v1` antes del fetch, así que lo de este lado
-> sigue siendo válido. Lo de abajo es la implementación **anterior en Rhino**, que se
-> conserva como referencia hasta documentar la de Java (pedir el script al usuario).
+> **Estado (2026-08-21):** funcionando. La macro ejecuta **Java**, no
+> JavaScript (Rhino). El PWA no cambia: sigue llamando al webhook
+> `…/generar_alarma1?alarmH=&alarmM=&alarmMsg=&alarmDays=` y registrando la
+> alarma en `excelia-alarms-v1` antes del fetch.
 
-### (Histórico) Scripts Rhino JS
+### Crear alarma — script Java en producción (macro `generar_alarma1`)
 
-### Stack tecnológico
-- Engine: **Rhino 1.6** (JavaScript dentro de MacroDroid)
-- Acceso Android: `android.app.ActivityThread.currentApplication()` para obtener contexto
-- Variables de webhook: `{v=nombreParam}` se sustituye en el script antes de ejecutarse
+```java
+String hStr    = "{v=alarmH}";
+String mStr    = "{v=alarmM}";
+String msg     = "{v=alarmMsg}";
+String daysStr = "{v=alarmDays}";
 
-### Crear alarma (SET_ALARM intent)
-Script real en producción (macro `generar_alarma1`, recibe `alarmH`/`alarmM`/`alarmMsg`/`alarmDays` del webhook):
-```javascript
-var hStr    = "{v=alarmH}";
-var mStr    = "{v=alarmM}";
-var msg     = "{v=alarmMsg}";
-var daysStr = "{v=alarmDays}";
+int h = 9;
+int m = 0;
+try { h = Integer.parseInt(hStr.trim()); } catch (Exception e) { h = 9; }
+try { m = Integer.parseInt(mStr.trim()); } catch (Exception e) { m = 0; }
+if (h < 0 || h > 23) h = 9;
+if (m < 0 || m > 59) m = 0;
+if (msg == null || msg.length() == 0 || msg.indexOf('{') >= 0) msg = "Alarma";
 
-var h = (!hStr || hStr.indexOf('{') >= 0) ? 9 : parseInt(hStr, 10);
-var m = (!mStr || mStr.indexOf('{') >= 0) ? 0 : parseInt(mStr, 10);
-if (isNaN(h) || h < 0 || h > 23) h = 9;
-if (isNaN(m) || m < 0 || m > 59) m = 0;
+final android.content.Context ctx = android.app.ActivityThread.currentApplication();
 
-var intent = new android.content.Intent("android.intent.action.SET_ALARM");
-// ⚠️ CRÍTICO: usar new java.lang.Integer() — Rhino pasa JS numbers como double,
-// pero Vivo requiere int. Sin esto, la alarma se crea con la hora actual por defecto.
-intent.putExtra("android.intent.extra.alarm.HOUR",    new java.lang.Integer(h));
-intent.putExtra("android.intent.extra.alarm.MINUTES", new java.lang.Integer(m));
-intent.putExtra("android.intent.extra.alarm.MESSAGE", msg);
-intent.putExtra("android.intent.extra.alarm.SKIP_UI", true);
-intent.putExtra("android.intent.extra.alarm.VIBRATE", true);
-intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+android.content.Intent it = new android.content.Intent("android.intent.action.SET_ALARM");
+it.putExtra("android.intent.extra.alarm.HOUR", h);
+it.putExtra("android.intent.extra.alarm.MINUTES", m);
+it.putExtra("android.intent.extra.alarm.MESSAGE", msg);
+it.putExtra("android.intent.extra.alarm.SKIP_UI", true);
+it.putExtra("android.intent.extra.alarm.VIBRATE", true);
 
-// Días de la semana (alarmDays llega como "2,4" etc. — 1=Domingo...7=Sábado,
-// mismas constantes que java.util.Calendar, no hace falta remapear desde el PWA)
-if (daysStr && daysStr.indexOf('{') < 0 && daysStr.length > 0) {
-  var dayParts = daysStr.split(',');
-  var days = new java.util.ArrayList();
-  for (var i = 0; i < dayParts.length; i++) {
-    var dv = parseInt(dayParts[i], 10);
-    if (!isNaN(dv) && dv >= 1 && dv <= 7) days.add(new java.lang.Integer(dv));
+if (daysStr != null && daysStr.length() > 0 && daysStr.indexOf('{') < 0) {
+  java.util.ArrayList<Integer> dias = new java.util.ArrayList<Integer>();
+  String[] partes = daysStr.split(",");
+  for (int i = 0; i < partes.length; i++) {
+    try {
+      int dv = Integer.parseInt(partes[i].trim());
+      if (dv >= 1 && dv <= 7) dias.add(Integer.valueOf(dv));
+    } catch (Exception e) { }
   }
-  if (days.size() > 0) intent.putExtra("android.intent.extra.alarm.DAYS", days);
+  if (dias.size() > 0) it.putIntegerArrayListExtra("android.intent.extra.alarm.DAYS", dias);
 }
 
-// ⚠️ CRÍTICO: sin startActivity() el intent se construye pero NUNCA se lanza —
-// no da error (por eso el log de MacroDroid parece "correcto"), simplemente no
-// pasa nada. Bug real detectado en 2026-07: el script en producción llegó a
-// perder estas dos líneas finales, dejando de crear alarmas nuevas silenciosamente.
-var ctx = android.app.ActivityThread.currentApplication();
-ctx.startActivity(intent);
+it.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+
+String res;
+try {
+  ctx.startActivity(it);
+  res = "Alarma " + h + ":" + (m < 10 ? "0" + m : "" + m) + " (implicito)";
+} catch (Exception e1) {
+  res = "FALLO: ningun reloj acepto SET_ALARM (" + h + ":" + m + ")";
+  String[] pkgs = { "com.android.BBKClock", "com.vivo.alarmclock",
+                    "com.google.android.deskclock", "com.android.deskclock" };
+  for (int i = 0; i < pkgs.length; i++) {
+    try {
+      it.setPackage(pkgs[i]);
+      ctx.startActivity(it);
+      res = "Alarma " + h + ":" + (m < 10 ? "0" + m : "" + m) + " -> " + pkgs[i];
+      break;
+    } catch (Exception e2) { }
+  }
+}
+
+final String txt = res;
+try {
+  new android.os.Handler(android.os.Looper.getMainLooper()).post(new Runnable() {
+    public void run() {
+      android.widget.Toast.makeText(ctx, txt, android.widget.Toast.LENGTH_LONG).show();
+    }
+  });
+} catch (Exception e) { }
+
+System.out.println(res);
 ```
-**Nota**: Los días en SET_ALARM usan constantes de `java.util.Calendar`: 1=Domingo, 2=Lunes, ..., 7=Sábado. Distinto del formato del PWA (1=Lu..7=Do), pero `androidDay=jsDay+1` en `js/init.js` ya genera directamente el valor correcto — el script de MacroDroid NO debe remapear.
+
+Tres cosas que hacen que funcione y que es fácil cargarse:
+
+1. **`putExtra` con `int` de Java**, no con un número suelto: Vivo exige `int`.
+   Este es el mismo problema que en Rhino obligaba a `new java.lang.Integer()`.
+2. **`startActivity(it)`**: sin esa línea el intent se construye y no se lanza,
+   y el log de MacroDroid parece correcto. Ya pasó una vez.
+3. **Plan B por paquete**: si el intent implícito no lo coge nadie, prueba uno a
+   uno con los relojes de Vivo y de Google. Y avisa con un Toast, que es lo que
+   permite depurar sin cable.
+
+Los días van con las constantes de `java.util.Calendar` (1=Domingo … 7=Sábado).
+`androidDay=jsDay+1` en `js/init.js` ya manda ese valor: el script **no** debe
+volver a convertirlo.
 
 ### Eliminar/desactivar alarma (DISMISS) — intent DISMISS_ALARM
 El intent `DISMISS_ALARM` con `SEARCH_MODE=android.label` **SÍ funciona en Vivo** para borrar alarmas por nombre. Confirmado en pruebas reales.
@@ -725,7 +789,6 @@ Si solo cambian archivos JS/CSS pero `sw.js` no cambia → el SW no se actualiza
 | **perimetro puente** | `ev-puente-perimeter`: borde rosa que rodea días de puente en el calendario mensual |
 | **chips de filtro** | `ev-filter-chip`: botones de filtro tipo/categoría en calendario anual |
 | **pestana rutinas** | `EV_VIEW=='rutinas'` — js/rutinas.js — actividades semanales |
-| **ventana alarmas** | `#alarmsOverlay` — js/alarms.js — accesible desde menú ⋮ → "📋 Gestión de alarmas" |
 | **bottom sheet** | Panel deslizable desde abajo al pulsar un día en home (`#bottomSheet`) |
 | **arriba** | Posición física superior: un elemento queda en una fila/altura mayor (como piezas de Tetris). Ej: "el evento queda arriba del día" = ocupa espacio de layout propio, desplazando el resto hacia abajo. |
 | **encima** | Superposición en capas: un elemento se coloca sobre otro como una pegatina, sin desplazarlo. Ej: "el evento queda encima del día" = `position:absolute`, no afecta al flujo. |
