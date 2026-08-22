@@ -601,26 +601,9 @@ function _renderBodaClases(){
    de retardo por la animacion): si no, los listeners y los querySelector del
    panel nuevo se mezclaban con los del viejo. */
 function bodaOpenSheet(wrapId,ovId,html,onClose){
-  var prev=document.getElementById(wrapId);
-  if(prev)prev.remove();
-  var ov=document.getElementById('eventsOverlay');
-  var wrap=document.createElement('div');
-  wrap.id=wrapId;wrap.innerHTML=html;
-  ov.appendChild(wrap);
-  requestAnimationFrame(function(){
-    var fo=document.getElementById(ovId);
-    if(fo){
-      fo.classList.add('open');
-      fo.addEventListener('click',function(e){if(e.target===fo)(onClose||function(){bodaCloseSheet(wrapId,ovId);})();});
-    }
-  });
-  return wrap;
+  return abrirPanel(wrapId,html,{overlay:ovId,alCerrar:onClose});
 }
-function bodaCloseSheet(wrapId,ovId){
-  var fo=document.getElementById(ovId);
-  if(fo)fo.classList.remove('open');
-  setTimeout(function(){var w=document.getElementById(wrapId);if(w)w.remove();},300);
-}
+function bodaCloseSheet(wrapId,ovId){cerrarPanel(wrapId,ovId);}
 
 /* ══ Avisos accionables (subpestaña Clases) ══
    Los recuentos son de TODO el calendario, no del mes en curso; lo unico que
@@ -1352,14 +1335,8 @@ function renderBodaCoupleForm(c){
   return h;
 }
 function openBodaCoupleForm(c){
-  var ov=document.getElementById('eventsOverlay');
-  var old=document.getElementById('bodaCWrap');if(old)old.remove();
-  var wrap=document.createElement('div');wrap.id='bodaCWrap';
-  wrap.innerHTML=renderBodaCoupleForm(c);
-  ov.appendChild(wrap);
-  requestAnimationFrame(function(){
-    var fo=document.getElementById('bodaCFormOv');if(fo)fo.classList.add('open');
-  });
+  var wrap=abrirPanel('bodaCWrap',renderBodaCoupleForm(c),
+    {overlay:'bodaCFormOv',alCerrar:closeBodaCoupleForm});
   var cp=_bindColorPicker(wrap,'bodaCp');
   var noteEl=document.getElementById('bodaCNote'),cnt=document.getElementById('bodaCCnt');
   noteEl.addEventListener('input',function(){cnt.textContent=noteEl.value.length+'/200';});
@@ -1394,11 +1371,7 @@ function openBodaCoupleForm(c){
     setTimeout(function(){refreshEvents();showToast(c?'Pareja actualizada':'Pareja creada','success');},310);
   });
 }
-function closeBodaCoupleForm(){
-  var fo=document.getElementById('bodaCFormOv');
-  if(fo)fo.classList.remove('open');
-  setTimeout(function(){var w=document.getElementById('bodaCWrap');if(w)w.remove();},300);
-}
+function closeBodaCoupleForm(){cerrarPanel('bodaCWrap','bodaCFormOv');}
 
 /* Repinta SOLO la fila de una clase y el contador de la barra de guardado.
    Evita el re-render completo (que perdia el scroll) al tocar un campo. */

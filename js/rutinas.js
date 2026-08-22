@@ -460,14 +460,8 @@ function renderRutForm(r){
   return h;
 }
 function openRutForm(r){
-  var ov=document.getElementById('eventsOverlay');
-  var old=document.getElementById('rutFWrap');if(old)old.remove();
-  var wrap=document.createElement('div');wrap.id='rutFWrap';
-  wrap.innerHTML=renderRutForm(r);
-  ov.appendChild(wrap);
-  requestAnimationFrame(function(){
-    var fo=document.getElementById('rutFormOv');if(fo)fo.classList.add('open');
-  });
+  var wrap=abrirPanel('rutFWrap',renderRutForm(r),
+    {overlay:'rutFormOv',alCerrar:closeRutForm});
   var cp=_bindColorPicker(wrap,'rutCp');
   /* Los iconos se repintan con el color elegido para verlos como quedaran */
   /* Solo hay que repintar "Otra": el resto llevan color fijo */
@@ -594,11 +588,7 @@ function openRutForm(r){
     showToast(r?'Rutina actualizada':'Rutina creada','success');
   });
 }
-function closeRutForm(){
-  var fo=document.getElementById('rutFormOv');
-  if(fo)fo.classList.remove('open');
-  setTimeout(function(){var w=document.getElementById('rutFWrap');if(w)w.remove();},300);
-}
+function closeRutForm(){cerrarPanel('rutFWrap','rutFormOv');}
 
 /* == Cambiar los dias/hora de UNA semana concreta ==
    Dos pasos: primero un mes de solo lectura para senalar QUE semana, y al
@@ -638,14 +628,7 @@ function _rutWeekPick(r){
   h+='<div class="sy-note" style="font-size:.68rem">Pulsa cualquier semana para cambiarla. '
     +'Las que ya tienen un cambio guardado salen recuadradas.</div>';
   h+='</div></div>';
-  var ov=document.getElementById('eventsOverlay');
-  var old=document.getElementById('rutWkWrap');if(old)old.remove();
-  var wrap=document.createElement('div');wrap.id='rutWkWrap';wrap.innerHTML=h;
-  ov.appendChild(wrap);
-  requestAnimationFrame(function(){
-    var fo=document.getElementById('rutWkOv');
-    if(fo){fo.classList.add('open');fo.addEventListener('click',function(e){if(e.target===fo)closeRutWeek();});}
-  });
+  abrirPanel('rutWkWrap',h,{overlay:'rutWkOv',alCerrar:closeRutWeek});
   /* Cada fila de semana se vuelve pulsable y se marca si ya tiene cambio */
   document.querySelectorAll('#rutWkOv .ev-week-outer').forEach(function(w){
     var celda=w.querySelector('.ev-cell[data-ds]');
@@ -704,14 +687,7 @@ function _rutWeekRender(r){
   if(o)h+='<button class="ev-btn" id="rutWkReset">Quitar el cambio</button>';
   h+='<button class="ev-btn primary" id="rutWkSave">Guardar semana</button>';
   h+='</div></div></div>';
-  var ov=document.getElementById('eventsOverlay');
-  var old=document.getElementById('rutWkWrap');if(old)old.remove();
-  var wrap=document.createElement('div');wrap.id='rutWkWrap';wrap.innerHTML=h;
-  ov.appendChild(wrap);
-  requestAnimationFrame(function(){
-    var fo=document.getElementById('rutWkOv');
-    if(fo){fo.classList.add('open');fo.addEventListener('click',function(e){if(e.target===fo)closeRutWeek();});}
-  });
+  abrirPanel('rutWkWrap',h,{overlay:'rutWkOv',alCerrar:closeRutWeek});
   document.getElementById('rutWkClose').addEventListener('click',function(){_rutWeekPick(r);});
   document.querySelectorAll('#rutWkDays .rut-day-btn').forEach(function(b){
     b.addEventListener('click',function(){b.classList.toggle('on');});
@@ -741,11 +717,7 @@ function _rutWeekRender(r){
     showToast('Semana del '+_rutFmt(RUT_WEEK_SEL).slice(0,5)+' actualizada','success');
   });
 }
-function closeRutWeek(){
-  var fo=document.getElementById('rutWkOv');
-  if(fo)fo.classList.remove('open');
-  setTimeout(function(){var w=document.getElementById('rutWkWrap');if(w)w.remove();},300);
-}
+function closeRutWeek(){cerrarPanel('rutWkWrap','rutWkOv');}
 
 /* ══ Detalle de una sesión (al pulsarla en un calendario) ══ */
 function openRutSesion(r,ds){
@@ -765,14 +737,7 @@ function openRutSesion(r,ds){
   h+='<div class="ev-detail-actions">';
   h+='<button class="ev-btn" id="rutSesSkip">'+(skip?'&#10003; Marcar como hecha':'&#10007; Marcar como saltada')+'</button>';
   h+='</div></div></div>';
-  var ov=document.getElementById('eventsOverlay');
-  var old=document.getElementById('rutSesWrap');if(old)old.remove();
-  var wrap=document.createElement('div');wrap.id='rutSesWrap';wrap.innerHTML=h;
-  ov.appendChild(wrap);
-  requestAnimationFrame(function(){
-    var fo=document.getElementById('rutSesOv');
-    if(fo){fo.classList.add('open');fo.addEventListener('click',function(e){if(e.target===fo)closeRutSesion();});}
-  });
+  abrirPanel('rutSesWrap',h,{overlay:'rutSesOv',alCerrar:closeRutSesion});
   document.getElementById('rutSesClose').addEventListener('click',closeRutSesion);
   document.getElementById('rutSesEdit').addEventListener('click',function(){
     closeRutSesion();setTimeout(function(){openRutForm(r);},310);
@@ -784,11 +749,7 @@ function openRutSesion(r,ds){
       function(){rutToggleSkip(r,ds);refreshEvents();});
   });
 }
-function closeRutSesion(){
-  var fo=document.getElementById('rutSesOv');
-  if(fo)fo.classList.remove('open');
-  setTimeout(function(){var w=document.getElementById('rutSesWrap');if(w)w.remove();},300);
-}
+function closeRutSesion(){cerrarPanel('rutSesWrap','rutSesOv');}
 
 /* ══ Binds de la pestaña ══ */
 function bindRutinasEvents(){

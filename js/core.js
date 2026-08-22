@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v272 - Una sola URL de MacroDroid y clicks que no se cuelan';
+var APP_VERSION = 'v273 - Todos los paneles por la misma puerta';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -569,6 +569,87 @@ function confirmarCupoFestivos(k){
     +'\u00bfMarcarlo de todas formas?');
 }
 function togSent(k){if(SW[k])delete SW[k]; else SW[k]=true; save(); render();}
+
+/* ══ Paneles deslizantes: una sola puerta de entrada ═══════════════════
+   Abrir un panel eran seis pasos que estaban copiados en 27 sitios: crear el
+   contenedor, volcar el HTML, colgarlo del overlay, dos requestAnimationFrame
+   para que la animacion se vea, enganchar el cierre y programar el borrado con
+   300 ms de retardo. Cada copia era una ocasion de olvidarse de un detalle, y
+   ya nos ha pasado tres veces (el temporizador de cierre borrando el panel
+   siguiente, el swipe colandose al calendario de fondo y el click de cerrar
+   activando lo de debajo). Aqui esta hecho una vez.
+
+     abrirPanel('evDWrap', html, {
+       overlay:'evDetailOv',        // el div con la clase .ev-detail-overlay
+       contenedor:elemento,          // donde colgarlo (por defecto #eventsOverlay)
+       alCerrar:fn,                  // que hacer al cerrarse
+       reutilizar:true               // repintar el que ya hay, sin animacion
+     })
+
+   Devuelve el contenedor recien creado (o el que habia, si reutilizar). */
+var _PANEL_T = {};          /* temporizadores de borrado, por id */
+
+function _panelBorrarLuego(id, extra){
+  clearTimeout(_PANEL_T[id]);
+  _PANEL_T[id] = setTimeout(function(){
+    var w = document.getElementById(id);
+    if (w) w.remove();
+    if (extra) extra();
+  }, 300);
+}
+/* Cancela un borrado pendiente: si se vuelve a abrir el mismo panel antes de
+   que pasen los 300 ms, el temporizador viejo se llevaria por delante el
+   panel NUEVO. */
+function _panelCancelarBorrado(id){ clearTimeout(_PANEL_T[id]); }
+
+function abrirPanel(id, html, opciones){
+  var o = opciones || {};
+  var cont = o.contenedor || document.getElementById('eventsOverlay');
+  if (!cont) return null;
+  _panelCancelarBorrado(id);
+  var wrap = document.getElementById(id);
+  var reutiliza = !!(wrap && o.reutilizar);
+  if (!reutiliza) {
+    if (wrap) wrap.remove();
+    wrap = document.createElement('div');
+    wrap.id = id;
+    cont.appendChild(wrap);
+  }
+  wrap.innerHTML = html;
+  var cerrar = o.alCerrar || function(){ cerrarPanel(id, o.overlay); };
+  function engancharFondo(){
+    var fo = o.overlay ? document.getElementById(o.overlay) : wrap.firstElementChild;
+    if (!fo) return;
+    fo.classList.add('open');
+    /* Tocar el fondo cierra, y ahi se queda: el click no sigue hacia abajo */
+    fo.addEventListener('click', function(e){
+      if (e.target !== fo) return;
+      e.stopPropagation();
+      cerrar();
+    });
+  }
+  if (reutiliza) { engancharFondo(); return wrap; }
+  /* El doble requestAnimationFrame es lo que hace que la animacion se vea: el
+     navegador pinta primero el estado inicial y despues aplica la transicion.
+     Pero rAF no corre si la pestana no esta pintando, y entonces el panel se
+     quedaba creado y sin abrir. Por eso va tambien un temporizador de
+     respaldo, y gana el que llegue antes. */
+  var abierto = false;
+  function abrirUnaVez(){ if (abierto) return; abierto = true; engancharFondo(); }
+  requestAnimationFrame(function(){ requestAnimationFrame(abrirUnaVez); });
+  setTimeout(abrirUnaVez, 60);
+  return wrap;
+}
+
+function cerrarPanel(id, overlayId, alTerminar){
+  var fo = overlayId ? document.getElementById(overlayId) : null;
+  if (!fo) {
+    var w = document.getElementById(id);
+    fo = w ? w.firstElementChild : null;
+  }
+  if (fo) fo.classList.remove('open');
+  _panelBorrarLuego(id, alTerminar);
+}
 
 // ── Barra de navegación compartida entre overlays ────────────
 function renderNavBar(current){

@@ -232,12 +232,8 @@ function openEvForm(ev,prefillDate,container){
   /* Si quedaba un formulario anterior a medio cerrar, quitarlo: si no,
      bindEvFormEvents() engancharia sus listeners al form viejo (mismos ids)
      y una sola pulsacion de Guardar dispararia dos veces. */
-  var _oldW=document.getElementById('evFWrap');
-  if(_oldW)_oldW.remove();
-  var wrap=document.createElement('div');
-  wrap.id='evFWrap';
-  wrap.innerHTML=renderEvForm(ev);
-  ov.appendChild(wrap);
+  var wrap=abrirPanel('evFWrap',renderEvForm(ev),
+    {contenedor:ov,overlay:'evFormOv',alCerrar:closeEvForm});
   if(prefillDate&&!ev){
     setTimeout(function(){
       var si=document.getElementById('evFStart');
