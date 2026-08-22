@@ -125,11 +125,8 @@
     if(opening){
       // Restaurar estado MacroDroid guardado
       var useMacro=localStorage.getItem('excelia-alarm-macro')==='1';
-      var macroUrl=localStorage.getItem('excelia-alarm-url')||'';
       var cb=document.getElementById('alarmUseMacro');
-      var urlIn=document.getElementById('alarmMacroUrl');
       if(cb){cb.checked=useMacro;}
-      if(urlIn){urlIn.value=macroUrl;urlIn.disabled=!useMacro;}
       // Construir botones de días ordenados desde hoy con fecha debajo
       buildAlarmDayBtns();
     }
@@ -268,14 +265,7 @@
 
   /* ── Alarma: toggle MacroDroid ── */
   document.getElementById('alarmUseMacro').addEventListener('change',function(){
-    var checked=this.checked;
-    document.getElementById('alarmMacroUrl').disabled=!checked;
-    localStorage.setItem('excelia-alarm-macro',checked?'1':'0');
-  });
-  document.getElementById('alarmMacroUrl').addEventListener('change',function(){
-    var v=normalizeMacroBase(this.value);
-    this.value=v;
-    localStorage.setItem('excelia-alarm-url',v);
+    localStorage.setItem('excelia-alarm-macro',this.checked?'1':'0');
   });
 
   document.getElementById('alarmCreateBtn').addEventListener('click',function(){
@@ -289,8 +279,11 @@
     document.querySelectorAll('.alarm-day-btn.on').forEach(function(b){selDays.push(+b.dataset.day);});
     var macroBase='';
     if(useMacro){
-      macroBase=normalizeMacroBase(document.getElementById('alarmMacroUrl').value||'');
-      if(!macroBase){showToast('Pega la URL del webhook de MacroDroid','error');return;}
+      /* La URL vive en un unico sitio: el menu de ajustes (clave
+         excelia-alarm-url). Antes habia una copia aqui y las dos escribian en
+         la misma clave, asi que una sobraba. */
+      macroBase=normalizeMacroBase(localStorage.getItem('excelia-alarm-url')||'');
+      if(!macroBase){showToast('Configura la URL de MacroDroid en el menú ⋯','error');return;}
     }
     // Detectar si la hora ya ha pasado hoy y hoy está seleccionado
     var now=new Date();
@@ -348,45 +341,6 @@
   });
 
   /* ── Alarma: fallback .ics (recordatorio de calendario, 100% fiable) ── */
-  document.getElementById('alarmIcsBtn').addEventListener('click',function(){
-    var h=getDrumValue('drumHour');
-    var m=getDrumValue('drumMin');
-    localStorage.setItem('excelia-alarm-h',h);
-    localStorage.setItem('excelia-alarm-m',m);
-    var msg=(document.getElementById('alarmMsg').value.trim()||'Horas Excelia');
-    var selDays=[];
-    document.querySelectorAll('.alarm-day-btn.on').forEach(function(b){selDays.push(+b.dataset.day);});
-    var now=new Date();
-    var alarm=new Date(now);
-    alarm.setHours(h,m,0,0);
-    if(alarm<=now)alarm.setDate(alarm.getDate()+1); // si la hora ya pasó hoy, programar mañana
-    var end=new Date(alarm.getTime()+15*60000);
-    var fmt=function(d){
-      return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0')
-        +'T'+String(d.getHours()).padStart(2,'0')+String(d.getMinutes()).padStart(2,'0')+'00';
-    };
-    // Mapeo Android Calendar (1=Dom...7=Sáb) → BYDAY iCal (SU,MO,TU,WE,TH,FR,SA)
-    var dayMap={1:'SU',2:'MO',3:'TU',4:'WE',5:'TH',6:'FR',7:'SA'};
-    var ics='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Horas Excelia//ES\r\n'
-      +'BEGIN:VEVENT\r\n'
-      +'DTSTART:'+fmt(alarm)+'\r\n'
-      +'DTEND:'+fmt(end)+'\r\n'
-      +'SUMMARY:'+msg+'\r\n';
-    if(selDays.length){
-      var byday=selDays.map(function(d){return dayMap[d];}).join(',');
-      ics+='RRULE:FREQ=WEEKLY;BYDAY='+byday+'\r\n';
-    }
-    ics+='BEGIN:VALARM\r\nTRIGGER:PT0S\r\nACTION:AUDIO\r\nEND:VALARM\r\n'
-      +'END:VEVENT\r\nEND:VCALENDAR';
-    var blob=new Blob([ics],{type:'text/calendar'});
-    var a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);
-    a.download='alarma.ics';
-    a.click();
-    URL.revokeObjectURL(a.href);
-    document.getElementById('alarmPanel').classList.remove('open');
-    showToast('Recordatorio generado \u2014 \u00e1brelo para importar al calendario','success');
-  });
 
   /* ── Menú 3 puntos: exportar/importar TODO + MacroDroid URLs ── */
   document.getElementById('menuBtn').addEventListener('click',function(e){
@@ -403,18 +357,26 @@
     }
     menu.classList.toggle('open');
   });
+  /* Click fuera de un desplegable abierto: lo cierra y se queda ahi. Va en
+     fase de CAPTURA y corta el evento, porque si no el mismo toque activaba
+     ademas lo que hubiera debajo (tocabas fuera del panel de alarma para
+     cerrarlo y de paso marcabas una semana como enviada). */
   document.addEventListener('click',function(e){
+    var panel=document.getElementById('alarmPanel');
+    var menu=document.getElementById('dataMenu');
+    var alarmAbierto=panel&&panel.classList.contains('open');
+    var menuAbierto=menu&&menu.classList.contains('open');
+    if(!alarmAbierto&&!menuAbierto)return;
     var alarmWrap=document.getElementById('alarmWrap');
-    if(!alarmWrap||!alarmWrap.contains(e.target)){
-      var alarmPanel=document.getElementById('alarmPanel');
-      if(alarmPanel)alarmPanel.classList.remove('open');
-    }
     var menuWrap=document.querySelector('.data-menu-wrap:last-child');
-    if(!menuWrap||!menuWrap.contains(e.target)){
-      var menu=document.getElementById('dataMenu');
-      if(menu)menu.classList.remove('open');
-    }
-  });
+    var dentroAlarma=alarmWrap&&alarmWrap.contains(e.target);
+    var dentroMenu=menuWrap&&menuWrap.contains(e.target);
+    if(dentroAlarma||dentroMenu)return;      /* el click es del propio panel */
+    if(alarmAbierto)panel.classList.remove('open');
+    if(menuAbierto)menu.classList.remove('open');
+    e.stopPropagation();
+    e.preventDefault();
+  },true);
   /* ── Menú: URL MacroDroid crear alarma ── */
   var _mAlarmIn=document.getElementById('macroAlarmUrlMenu');
   if(_mAlarmIn){
@@ -422,9 +384,6 @@
       var v=normalizeMacroBase(this.value);
       this.value=v;
       localStorage.setItem('excelia-alarm-url',v);
-      // Sincronizar con el panel de alarma del header
-      var panelIn=document.getElementById('alarmMacroUrl');
-      if(panelIn)panelIn.value=v;
     });
     _mAlarmIn.addEventListener('click',function(e){e.stopPropagation();});
   }
