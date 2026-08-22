@@ -274,14 +274,10 @@ function renderBdayCalMonth(){
 /* ── Lista por meses ──────────────────────────────────────── */
 function renderBdayList(){
   if(!BDAYS.length)return '<div class="sy-note">No hay cumplea\u00f1os cargados. Importa un archivo JSON o configura el secreto BIRTHDAYS en GitHub.</div>';
-  // Botones arriba del todo en la lista
-  var h='<div class="bday-io-row" style="margin-bottom:10px">';
-  h+='<button class="bday-io-btn bday-io-btn-add" id="bdAdd">+ A\u00f1adir cumplea\u00f1os</button>';
-  h+='<button class="bday-io-btn" id="bdExport">&#8595; Exportar</button>';
-  h+='<button class="bday-io-btn" id="bdImport">&#8593; Importar JSON</button>';
-  h+='<input type="file" id="bdImportFile" accept=".json" style="display:none">';
-  h+='</div>';
-  h+='<div class="bday-search-wrap"><input class="bday-search-input" id="bdSearch" type="text" placeholder="Buscar persona\u2026" value="'+escHtml(BDAY_SEARCH)+'"></div>';
+  /* El buscador y el boton de anadir viven en la barra fija de arriba
+     (renderBdayContent), fuera del .sy-body, para que no se muevan al hacer
+     scroll ni dejen ver nada por detras. */
+  var h='';
   // Helper: effective VIP state (considers pending changes)
   function getEffVip(b,idx){
     if(BDAY_VIP_PENDING!==null&&BDAY_VIP_PENDING.hasOwnProperty(idx))return BDAY_VIP_PENDING[idx];
@@ -339,8 +335,10 @@ function renderBdayContent(){
   h+='<button class="sy-back" id="bdBack">&#8592;</button>';
   if(BDAY_VIEW==='upcoming'){
     h+='<div class="sy-year-nav"><div class="sy-year">Pr\u00f3ximos</div></div>';
+    h+='<div class="sy-hdr-right"><button class="sy-pdf" id="bdExport">&#8595; Exportar</button></div>';
   } else if(BDAY_VIEW==='list'){
     h+='<div class="sy-year-nav"><div class="sy-year">Cumplea\u00f1os</div></div>';
+    h+='<div class="sy-hdr-right"><button class="sy-pdf" id="bdExport">&#8595; Exportar</button></div>';
   } else {
     h+='<div class="sy-year-nav"><button class="sy-nav" id="bdPrev">&#9664;</button>';
     h+='<div class="sy-year sy-year-2line">'+MN[BDAY_MONTH]+'<span class="sy-year-sub">'+BDAY_YEAR+'</span></div>';
@@ -359,6 +357,13 @@ function renderBdayContent(){
     h+='<button class="bday-vip-edit-btn'+(BDAY_EDIT_VIP?' active':'')+'" id="bdEditVip">'+(BDAY_EDIT_VIP?'\u2713 Listo':'Editar VIPs')+'</button>';
     h+='</div>';
   }
+  if(BDAY_VIEW==='list'&&BDAYS.length){
+    h+='<div class="bday-buscar-bar">';
+    h+='<div class="bday-search-wrap"><input class="bday-search-input" id="bdSearch" type="text" '
+      +'placeholder="Buscar persona\u2026" value="'+escHtml(BDAY_SEARCH)+'"></div>';
+    h+='<button class="bday-io-btn bday-io-btn-add" id="bdAdd">+ A\u00f1adir</button>';
+    h+='</div>';
+  }
   h+='<div class="sy-body"'+(BDAY_EDIT_VIP?' style="padding-bottom:56px"':'')+'>';
   if(BDAY_VIEW==='upcoming'){
     h+=renderBdayUpcoming();
@@ -371,9 +376,7 @@ function renderBdayContent(){
   // Lista: botones en la parte de arriba del renderBdayList(); resto de vistas: botones al fondo
   if(BDAY_VIEW==='upcoming'){
     h+='<div class="bday-io-row">';
-    h+='<button class="bday-io-btn" id="bdExport">&#8595; Exportar</button>';
-    h+='<button class="bday-io-btn" id="bdImport">&#8593; Importar JSON</button>';
-    h+='<input type="file" id="bdImportFile" accept=".json" style="display:none">';
+    h+='<button class="bday-io-btn bday-io-btn-add" id="bdAdd">+ A\u00f1adir cumplea\u00f1os</button>';
     h+='</div>';
   }
   h+='</div>';
@@ -1017,8 +1020,6 @@ function bindBdayEvents(){
     a.download='cumpleanos.json'; a.click();
   });
   // Import
-  var bdImportEl=document.getElementById('bdImport');
-  if(bdImportEl)bdImportEl.addEventListener('click',function(){document.getElementById('bdImportFile').click();});
   var bdImportFileEl=document.getElementById('bdImportFile');
   if(bdImportFileEl)bdImportFileEl.addEventListener('change',function(ev){
     var f=ev.target.files[0];if(!f)return;

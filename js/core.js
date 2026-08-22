@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v270 - Ficha de ensayo editable y sin solapes';
+var APP_VERSION = 'v271 - Ficha de clase, orden de parejas y cumpleanos';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
