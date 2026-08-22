@@ -15,13 +15,7 @@ function openEvDeleteSheet(ev){
   h+='<button class="ev-btn" id="evDelEdit">&#9998; Editar</button>';
   h+='<button class="ev-btn danger" id="evDelGo">&#128465; Eliminar</button>';
   h+='</div></div></div>';
-  var ov=document.getElementById('eventsOverlay');
-  var wrap=document.createElement('div');wrap.id='evDelWrap';wrap.innerHTML=h;
-  ov.appendChild(wrap);
-  requestAnimationFrame(function(){
-    var fo=document.getElementById('evDelOv');
-    if(fo){fo.classList.add('open');fo.addEventListener('click',function(e){if(e.target===fo)closeEvDeleteSheet();});}
-  });
+  abrirPanel('evDelWrap',h,{overlay:'evDelOv',alCerrar:closeEvDeleteSheet});
   document.getElementById('evDelEdit').addEventListener('click',function(){
     closeEvDeleteSheet();setTimeout(function(){openEvForm(ev);},310);
   });
@@ -40,11 +34,7 @@ function openEvDeleteSheet(ev){
   });
 }
 
-function closeEvDeleteSheet(){
-  var fo=document.getElementById('evDelOv');
-  if(fo)fo.classList.remove('open');
-  _evScheduleRemove('evDelWrap');
-}
+function closeEvDeleteSheet(){cerrarPanel('evDelWrap','evDelOv');}
 
 
 function renderEvDetail(ev,fromSummary,car){
@@ -212,34 +202,13 @@ function openEvDetail(ev,container,car){
   var ov=container||document.getElementById('eventsOverlay');
   var fromSummary=(EV_VIEW==='puentes'||EV_VIEW==='time-off');
   ov.scrollTop=0;
-  _evCancelRemove('evDWrap');
-  var wrap=document.getElementById('evDWrap');
   /* Al deslizar dentro del carrusel se reaprovecha el panel abierto: si se
      quitara y se volviera a poner, la animacion de entrada saldria en cada
      evento y pareceria que se cierra y se abre otra ficha distinta. */
-  var _reusa=!!(wrap&&car);
-  if(!_reusa){
-    if(wrap)wrap.remove();
-    wrap=document.createElement('div');
-    wrap.id='evDWrap';
-    ov.appendChild(wrap);
-  }
-  wrap.innerHTML=renderEvDetail(ev,fromSummary,car);
-  if(_reusa){
-    var _fo2=document.getElementById('evDetailOv');
-    if(_fo2){
-      _fo2.classList.add('open');
-      _fo2.addEventListener('click',function(e){if(e.target===_fo2)closeEvDetail();});
-    }
-  } else {
-    requestAnimationFrame(function(){
-      var fo=document.getElementById('evDetailOv');
-      if(fo){
-        fo.classList.add('open');
-        fo.addEventListener('click',function(e){if(e.target===fo)closeEvDetail();});
-      }
-    });
-  }
+  var wrap=abrirPanel('evDWrap',renderEvDetail(ev,fromSummary,car),{
+    contenedor:ov, overlay:'evDetailOv', alCerrar:closeEvDetail,
+    reutilizar:!!car
+  });
   document.getElementById('evDClose').addEventListener('click',car?closeEvDayCarousel:closeEvDetail);
   /* Flechas, puntos y deslizamiento del carrusel */
   if(car){
@@ -384,11 +353,7 @@ function openEvDetail(ev,container,car){
   });
 }
 
-function closeEvDetail(){
-  var fo=document.getElementById('evDetailOv');
-  if(fo)fo.classList.remove('open');
-  _evScheduleRemove('evDWrap');
-}
+function closeEvDetail(){cerrarPanel('evDWrap','evDetailOv');}
 
 /* ── Panel de alarma para eventos próximos ── */
 function renderEvAlarmPanel(ev,firstDate){
@@ -472,25 +437,13 @@ function renderEvAlarmPanel(ev,firstDate){
 }
 
 function openEvAlarm(ev,firstDate){
-  var ov=document.getElementById('eventsOverlay');
-  /* Si quedaba un panel anterior (se borra con 300ms de retardo por la
-     animacion), sus ids duplicados capturarian los getElementById del nuevo */
-  _evCancelRemove('evAlarmWrap');
-  var _oldA=document.getElementById('evAlarmWrap');if(_oldA)_oldA.remove();
-  var wrap=document.createElement('div');wrap.id='evAlarmWrap';
-  wrap.innerHTML=renderEvAlarmPanel(ev,firstDate);
-  ov.appendChild(wrap);
-  requestAnimationFrame(function(){
-    var fo=document.getElementById('evAlarmOv');
-    if(fo){fo.classList.add('open');fo.addEventListener('click',function(e){if(e.target===fo)closeEvAlarm();});}
-  });
+  abrirPanel('evAlarmWrap',renderEvAlarmPanel(ev,firstDate),
+    {overlay:'evAlarmOv',alCerrar:closeEvAlarm});
   bindEvAlarmEvents(ev,firstDate);
 }
 
 function closeEvAlarm(){
-  var fo=document.getElementById('evAlarmOv');
-  if(fo)fo.classList.remove('open');
-  _evScheduleRemove('evAlarmWrap',function(){
+  cerrarPanel('evAlarmWrap','evAlarmOv',function(){
     refreshEvents();
     if(typeof refreshBday==='function')refreshBday();
   });
@@ -498,15 +451,10 @@ function closeEvAlarm(){
 
 /* Abre el panel de cumpleaños VIP desde la ventana de eventos */
 function openBdayAlarmFromEvents(b){
-  var ov=document.getElementById('eventsOverlay');
-  var _oldB=document.getElementById('bdAlarmWrap');if(_oldB)_oldB.remove();
-  var wrap=document.createElement('div');wrap.id='bdAlarmWrap';
-  wrap.innerHTML=typeof renderBdayAlarmPanel==='function'?renderBdayAlarmPanel(b):'';
-  ov.appendChild(wrap);
-  requestAnimationFrame(function(){
-    var fo=document.getElementById('bdAlarmOv');
-    if(fo){fo.classList.add('open');fo.addEventListener('click',function(e){if(e.target===fo&&typeof closeBdayAlarm==='function')closeBdayAlarm();});}
-  });
+  abrirPanel('bdAlarmWrap',
+    typeof renderBdayAlarmPanel==='function'?renderBdayAlarmPanel(b):'',
+    {overlay:'bdAlarmOv',
+     alCerrar:function(){if(typeof closeBdayAlarm==='function')closeBdayAlarm();}});
   if(typeof bindBdayAlarmEvents==='function')bindBdayAlarmEvents(b);
 }
 

@@ -537,15 +537,9 @@ var EV_CAR = {ds:null, items:[], i:0};
    animacion. Si en ese rato se abre otro, el temporizador del cierre anterior
    se llevaba por delante el panel NUEVO (mismo id). Por eso el temporizador se
    guarda y se cancela al abrir. */
-var _EV_CLOSE_T = {};
-function _evScheduleRemove(id,extra){
-  clearTimeout(_EV_CLOSE_T[id]);
-  _EV_CLOSE_T[id]=setTimeout(function(){
-    var w=document.getElementById(id);if(w)w.remove();
-    if(extra)extra();
-  },300);
-}
-function _evCancelRemove(id){clearTimeout(_EV_CLOSE_T[id]);}
+/* Los mismos de core.js, con el nombre que ya usaba este modulo */
+function _evScheduleRemove(id,extra){_panelBorrarLuego(id,extra);}
+function _evCancelRemove(id){_panelCancelarBorrado(id);}
 
 /* == Horas de un evento y transporte de ida/vuelta ======================
    - Puntual (menos las clases de boda, que tienen su propia hora en

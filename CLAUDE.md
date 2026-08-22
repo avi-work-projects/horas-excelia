@@ -86,7 +86,7 @@ Antes de escribir uno nuevo, comprobar aquí:
 | Elegir color | `_renderColorPicker(hex,_,_,'prefijo')` + `_bindColorPicker(wrap,'prefijo')` → `{getColor,setColor}` | events-picker-color.js |
 | Elegir hora (ruedas) | `.drum-wrap`/`.drum-picker`/`.drum-sel-lines` + `openBodaTimePicker` como referencia | styles.css / bodas.js |
 | Elegir varios días | `openOtrosDatePicker(dates,color,año,cb)` | events-picker-date.js |
-| Panel deslizante (sheet) | `.ev-form-overlay`+`.ev-form-sheet` (formularios) · `.ev-detail-overlay`+`.ev-detail-sheet` (detalles) | styles.css |
+| Panel deslizante (sheet) | **`abrirPanel(id,html,{overlay,alCerrar,reutilizar})`** + `cerrarPanel(id,overlay)` | core.js |
 | Conservar el scroll al re-renderizar | `refreshEvents()` (pasar `false` para volver arriba) | events.js |
 | Deslizar para cambiar de mes | `addSwipe(el,onLeft,onRight)` | core.js |
 | Borrar solo con pulsacion larga | `addLongPress(el,cb,ms)` — marca `el._lpFired`, el click posterior debe ignorarse | core.js |
@@ -660,6 +660,35 @@ Antes de renderizar, se ejecuta un algoritmo que asigna a cada evento una `row` 
 - **ContentProvider de alarmas bloqueado**: `content://com.android.deskclock/alarms` lanza `java.lang.SecurityException: Permission`. URIs de Vivo (`com.vivo.deskclock`, `com.vivo.clock`, `com.bbk.clock`) devuelven null. No se puede leer/listar alarmas existentes del sistema.
 - **DISMISS_ALARM sí funciona**: el intent `android.intent.action.DISMISS_ALARM` con `SEARCH_MODE=android.label` y `MESSAGE=nombre` **funciona en Vivo** para apagar/borrar alarmas por nombre. Confirmado en pruebas reales.
 - El PWA lleva su propio registro en `excelia-alarms-v1` (no depende de poder leer el sistema).
+
+## Paneles deslizantes: `abrirPanel` (v273)
+**Todo panel nuevo se abre con esto.** Abrir uno eran seis pasos copiados en
+quince sitios y cada copia se olvidaba de algo distinto.
+
+```js
+abrirPanel('miWrap', html, {
+  overlay:'miOv',          // id del div con .ev-detail-overlay / .ev-form-overlay
+  contenedor:elemento,      // por defecto #eventsOverlay
+  alCerrar:fn,              // que hacer al tocar el fondo
+  reutilizar:true           // repintar el que ya hay, sin animacion de entrada
+});
+cerrarPanel('miWrap','miOv', alTerminar);
+```
+
+Lo que resuelve de una vez, y que antes habia que acordarse en cada sitio:
+
+- **Borrado con retardo cancelable.** El panel se quita 300 ms despues de
+  cerrarse; si se vuelve a abrir el mismo id antes, el temporizador viejo se
+  llevaba por delante el panel NUEVO.
+- **Tocar el fondo cierra y ahi se queda**: el click no sigue hacia abajo.
+- **La animacion se ve** (doble requestAnimationFrame) pero no depende de ella:
+  hay un temporizador de respaldo, porque rAF no corre si la pestana no esta
+  pintando y el panel se quedaba creado sin abrir.
+- **`reutilizar`** para repintar en sitio, que es lo que hace el carrusel del
+  dia al deslizar de un evento a otro.
+
+`bodaOpenSheet`/`bodaCloseSheet` y `_evScheduleRemove`/`_evCancelRemove` siguen
+existiendo como alias finos: son los nombres que ya usaban Bodas y Eventos.
 
 ## Un click fuera de un desplegable no se cuela (v272)
 Los dos desplegables del header (panel de alarma y menu ajustes) no tienen

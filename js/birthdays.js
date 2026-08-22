@@ -476,17 +476,9 @@ function renderBdayAlarmPanel(b){
 }
 
 function openBdayAlarm(b){
-  var ov=document.getElementById('bdayOverlay');
-  var wrap=document.createElement('div');wrap.id='bdAlarmWrap';
-  wrap.innerHTML=renderBdayAlarmPanel(b);
-  ov.appendChild(wrap);
-  requestAnimationFrame(function(){
-    var fo=document.getElementById('bdAlarmOv');
-    if(fo){
-      fo.classList.add('open');
-      fo.addEventListener('click',function(e){if(e.target===fo)closeBdayAlarm();});
-    }
-  });
+  abrirPanel('bdAlarmWrap',renderBdayAlarmPanel(b),{
+    contenedor:document.getElementById('bdayOverlay'),
+    overlay:'bdAlarmOv', alCerrar:closeBdayAlarm});
   bindBdayAlarmEvents(b);
 }
 
@@ -495,14 +487,7 @@ function _bdRefreshBoth(){
   if(typeof refreshEvents==='function')refreshEvents();
 }
 
-function closeBdayAlarm(){
-  var fo=document.getElementById('bdAlarmOv');
-  if(fo)fo.classList.remove('open');
-  setTimeout(function(){
-    var w=document.getElementById('bdAlarmWrap');if(w)w.remove();
-    _bdRefreshBoth();
-  },320);
-}
+function closeBdayAlarm(){cerrarPanel('bdAlarmWrap','bdAlarmOv',_bdRefreshBoth);}
 
 function bindBdayAlarmEvents(b){
   document.getElementById('bdAlarmClose').addEventListener('click',closeBdayAlarm);
@@ -685,49 +670,30 @@ function renderBdayForm(b,prefillDay,prefillMonth){
 
 /* ── Abrir/cerrar detail ──────────────────────────────────── */
 function openBdayDetail(b){
-  var ov=document.getElementById('bdayOverlay');
-  var wrap=document.createElement('div');wrap.id='bdDWrap';
-  wrap.innerHTML=renderBdayDetail(b);
-  ov.appendChild(wrap);
-  requestAnimationFrame(function(){
-    var fo=document.getElementById('bdDetailOv');
-    if(fo){
-      fo.classList.add('open');
-      fo.addEventListener('click',function(e){if(e.target===fo)closeBdayDetail();});
-    }
-  });
+  abrirPanel('bdDWrap',renderBdayDetail(b),{
+    contenedor:document.getElementById('bdayOverlay'),
+    overlay:'bdDetailOv', alCerrar:closeBdayDetail});
   document.getElementById('bdDClose').addEventListener('click',closeBdayDetail);
   document.getElementById('bdDEdit').addEventListener('click',function(){
     closeBdayDetail();setTimeout(function(){openBdayForm(b);},300);
   });
 }
 
-function closeBdayDetail(){
-  var fo=document.getElementById('bdDetailOv');
-  if(fo)fo.classList.remove('open');
-  setTimeout(function(){var w=document.getElementById('bdDWrap');if(w)w.remove();},300);
-}
+function closeBdayDetail(){cerrarPanel('bdDWrap','bdDetailOv');}
 
 /* ── Abrir/cerrar form ────────────────────────────────────── */
 function openBdayForm(b,prefillDay,prefillMonth){
   BDAY_EDIT=b||null;
-  var ov=document.getElementById('bdayOverlay');
-  var wrap=document.createElement('div');wrap.id='bdFWrap';
-  wrap.innerHTML=renderBdayForm(b,prefillDay,prefillMonth);
-  ov.appendChild(wrap);
-  requestAnimationFrame(function(){
-    var fo=document.getElementById('bdFormOv');
-    if(fo)fo.classList.add('open');
-    var inp=document.getElementById('bdFName');
-    if(inp)setTimeout(function(){inp.focus();},100);
-  });
+  abrirPanel('bdFWrap',renderBdayForm(b,prefillDay,prefillMonth),{
+    contenedor:document.getElementById('bdayOverlay'),
+    overlay:'bdFormOv', alCerrar:closeBdayForm});
+  var inp=document.getElementById('bdFName');
+  if(inp)setTimeout(function(){inp.focus();},100);
   bindBdayFormEvents();
 }
 
 function closeBdayForm(){
-  var fo=document.getElementById('bdFormOv');
-  if(fo)fo.classList.remove('open');
-  setTimeout(function(){var w=document.getElementById('bdFWrap');if(w)w.remove();BDAY_EDIT=null;},300);
+  cerrarPanel('bdFWrap','bdFormOv',function(){BDAY_EDIT=null;});
 }
 
 function bindBdayFormEvents(){

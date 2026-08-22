@@ -93,16 +93,10 @@ function openOtrosDatePicker(initialDates,color,year,onAccept){
   function _close(){
     var fo=document.getElementById('dpOv');
     if(fo)fo.classList.remove('open');
-    setTimeout(function(){var w=document.getElementById('dpWrap');if(w)w.remove();},300);
+    _panelBorrarLuego('dpWrap');
   }
   /* Insertar overlay encima del form */
   var host=document.getElementById('eventsOverlay')||document.body;
-  var wrap=document.createElement('div');wrap.id='dpWrap';
-  wrap.innerHTML=_render();
-  host.appendChild(wrap);
-  requestAnimationFrame(function(){
-    var fo=document.getElementById('dpOv');
-    if(fo)fo.classList.add('open');
-  });
+  abrirPanel('dpWrap',_render(),{contenedor:host,overlay:'dpOv',alCerrar:_close});
   _attach();
 }
