@@ -529,14 +529,16 @@ function _renderBodaClases(){
   /* Filtros: un desplegable con forma de chip para la pareja y dos
      interruptores del mismo estilo que los chips de Parejas */
   h+='<div class="boda-filters">';
+  h+='<div class="boda-buscar-bar">';
   h+='<div class="bday-search-wrap boda-search"><input class="bday-search-input" id="bodaClSearch" '
     +'type="text" placeholder="Buscar pareja\u2026" value="'+escHtml(BODA_CLASES_SEARCH)+'"></div>';
+  h+='<button class="bday-io-btn bday-io-btn-add" id="bodaAddClass">+ A\u00f1adir</button>';
+  h+='</div>';
   /* Mismo formato que "Excluir pasados" o "Solo libres" de Vacaciones Festivos */
   h+='<div class="excl-row">';
   h+='<label class="excl-item"><input type="checkbox" id="bodaShowPast"'+(BODA_HIDE_PAST?'':' checked')+'> Mostrar pasadas</label>';
   h+='<label class="excl-item"><input type="checkbox" id="bodaShowClosed"'+(BODA_HIDE_CLOSED?'':' checked')+'> Mostrar cerrados</label>';
   h+='</div>';
-  h+='<button class="ev-io-btn boda-add-class" id="bodaAddClass">+ A\u00f1adir clase</button>';
   h+='</div>';
   if(!list.length){
     h+='<div class="sy-note">No hay clases'+(BODA_HIDE_PAST?' futuras':'')+'. Créalas marcando días en el Calendario 1 mes, o con el botón de abajo.</div>';
@@ -1026,13 +1028,13 @@ function openBodaPlacePicker(ev,opts){
   document.getElementById('bodaPpkClose').addEventListener('click',closeBodaPlacePicker);
   document.querySelectorAll('#bodaPpkOv [data-place]').forEach(function(b){
     b.addEventListener('click',function(){
-      ev.boda=ev.boda||{};
-      ev.boda.place=b.dataset.place;
-      saveEvents();closeBodaPlacePicker();
-      setTimeout(function(){
-        refreshEvents();
-        if(opts&&opts.alGuardar)opts.alGuardar();
-      },310);
+      /* Igual que la hora y la pareja: en la pestana Bodas queda pendiente
+         hasta pulsar Guardar, y desde la ficha del dia se guarda ya. Antes
+         esta escribia siempre directa, asi que "Descartar" no deshacia un
+         cambio de sala. */
+      bodaAplicarCampo(ev,'place',b.dataset.place,opts);
+      closeBodaPlacePicker();
+      bodaTrasElegir(ev,opts);
     });
   });
 }

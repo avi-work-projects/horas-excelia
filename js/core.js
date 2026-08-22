@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v273 - Todos los paneles por la misma puerta';
+var APP_VERSION = 'v274 - Botones de bodas y cumpleanos, y la sala respeta Guardar';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
