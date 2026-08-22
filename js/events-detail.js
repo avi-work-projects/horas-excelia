@@ -46,12 +46,6 @@ function closeEvDeleteSheet(){
   _evScheduleRemove('evDelWrap');
 }
 
-/* Las clases de boda duran una hora fija */
-function _bodaMasUnaHora(t){
-  var p=String(t||'00:00').split(':');
-  var m=((parseInt(p[0],10)||0)*60+(parseInt(p[1],10)||0)+60)%1440;
-  return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
-}
 
 function renderEvDetail(ev,fromSummary,car){
   var s=new Date(ev.start+'T00:00:00');

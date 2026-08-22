@@ -378,6 +378,24 @@ propio swipe (`_swipeAdded`) o dentro de un panel abierto (`.ev-detail-overlay`,
 `.imp-mode-ov`). Sin esto, deslizar en la ficha de un dia cambiaba **ademas** el
 mes de fondo, porque el gesto subia hasta el swipe de `#eventsOverlay`.
 
+## Ficha de una clase: un solo sitio (v271)
+`openBodaClaseForm(ev,alTerminar)` crea o cambia UNA clase: dia, hora, pareja y
+sala. Se llega desde tres sitios y siempre es la misma ficha:
+
+- el lapiz de cada clase en **Consulta**
+- el lapiz de cada clase en una **pareja desplegada**
+- el boton **+ Anadir clase** (con `ev` a null)
+
+Mientras esta abierta trabaja sobre un evento de mentira (`BODA_FORM.tmp`), asi
+que los selectores pueden escribir a gusto; el evento de verdad solo se toca al
+pulsar Guardar. Por eso se le pueden pasar los mismos selectores de siempre en
+modo `{directo:true}`.
+
+## Repeticion: solo donde tiene sentido (v271)
+`evAdmiteRepeticion(kind,type)` = `puntual` y (`Rec. Gestiones` u `Otros`). El
+bloque `#evFRepBlock` se muestra u oculta desde `_applyTypeUI`, que ahora
+tambien corre al ABRIR el formulario, no solo al cambiar de categoria.
+
 ## La ficha de un ensayo se edita desde ella misma (v270)
 Las tres filas (Hora, Sala, Pareja) son botones: cada una abre el mismo
 selector que la pestana Bodas y lo que se elija queda guardado en el evento.

@@ -29,20 +29,16 @@
 </button>
 </div>
 <div class="boda-filters">
-<div class="boda-fsel">
-<span class="boda-fsel-ico">&#128101;</span>
-<select id="bodaFilterCouple">
-<option value="all" selected>Todas las parejas</option>
-<option value="none">Sin asignar</option>
-<option value="fx-pareja-1">Pareja Uno</option>
-<option value="fx-pareja-2">Pareja Dos</option>
-<option value="fx-pareja-3">Pareja Tres</option>
-</select>
+<div class="bday-search-wrap boda-search">
+<input class="bday-search-input" id="bodaClSearch" type="text" placeholder="Buscar pareja…" value="">
 </div>
-<div class="boda-ftoggles">
-<button class="boda-chip active" data-btoggle="past">&#9745; Ocultar pasadas</button>
-<button class="boda-chip" data-btoggle="closed">&#9744; Ocultar cerrados</button>
+<div class="excl-row">
+<label class="excl-item">
+<input type="checkbox" id="bodaShowPast"> Mostrar pasadas</label>
+<label class="excl-item">
+<input type="checkbox" id="bodaShowClosed" checked> Mostrar cerrados</label>
 </div>
+<button class="ev-io-btn boda-add-class" id="bodaAddClass">+ Añadir clase</button>
 </div>
 <div class="boda-day" data-day="2026-08-24">
 <div class="boda-day-hd">Lun 24/08<span class="boda-day-n">2 clases</span>
@@ -57,8 +53,13 @@
 </svg>
 </span>
 <span class="boda-ro-time">18:00</span>
-<span class="boda-ro-couple" style="color:#0ca678">Pareja Uno</span>
+<span class="boda-ro-couple">
+<span class="ev-bpunto" style="background:#0ca678">
+</span>
+<span>Pareja Uno</span>
+</span>
 <span class="boda-ro-place">Sala</span>
+<button class="boda-mini-btn boda-cl-edit" data-id="fx-boda-ok" title="Editar esta clase">&#9998;</button>
 </div>
 <div class="boda-class boda-class-ro" data-id="fx-boda-sinhora">
 <span class="boda-class-mark">
@@ -70,8 +71,13 @@
 </svg>
 </span>
 <span class="boda-ro-time none">--:--</span>
-<span class="boda-ro-couple" style="color:#e64980">Pareja Dos</span>
+<span class="boda-ro-couple">
+<span class="ev-bpunto" style="background:#e64980">
+</span>
+<span>Pareja Dos</span>
+</span>
 <span class="boda-ro-place">Casa</span>
+<button class="boda-mini-btn boda-cl-edit" data-id="fx-boda-sinhora" title="Editar esta clase">&#9998;</button>
 </div>
 </div>
 <div class="boda-day" data-day="2026-08-31">
@@ -87,8 +93,11 @@
 </svg>
 </span>
 <span class="boda-ro-time none">--:--</span>
-<span class="boda-ro-couple">sin asignar</span>
+<span class="boda-ro-couple">
+<span class="boda-ro-sin">sin asignar</span>
+</span>
 <span class="boda-ro-place vacio">Sin sala</span>
+<button class="boda-mini-btn boda-cl-edit" data-id="fx-boda-vacia" title="Editar esta clase">&#9998;</button>
 </div>
 </div>
 <div class="boda-legend">

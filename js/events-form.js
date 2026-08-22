@@ -29,6 +29,12 @@ function _renderEvTypeSwatches(kind,selType){
 }
 
 /* ── Render: formulario de evento ───────────────────────── */
+/* La repeticion solo tiene sentido en dos categorias: un recordatorio de
+   gestion y un "Otros" puntual. Ni los eventos grandes ni un plan ni un ensayo
+   se repiten, asi que ahi el campo ni se pinta. */
+function evAdmiteRepeticion(kind,type){
+  return kind==='puntual'&&(type==='Rec. Gestiones'||type==='Otros');
+}
 function renderEvForm(ev){
   var isEdit=!!ev;
   var title=isEdit?ev.title:'';
@@ -197,7 +203,7 @@ function renderEvForm(ev){
   });
   h+='<div class="ev-viaje-note">La hora es la de <b>salida</b>: desde Pr\u00f3ximos podr\u00e1s crear una alarma para cada trayecto.</div>';
   h+='</div>';
-  h+='<div class="ev-field"><label>Repetici\u00f3n</label>';
+  h+='<div class="ev-field" id="evFRepBlock"><label>Repetici\u00f3n</label>';
   h+='<select class="ev-input" id="evFRepeat">';
   h+='<option value="none"'+(repType==='none'?' selected':'')+'>Sin repetici\u00f3n</option>';
   h+='<option value="weekly"'+(repType==='weekly'?' selected':'')+'>Semanal</option>';
@@ -318,6 +324,16 @@ function bindEvFormEvents(){
     if(_hr)_hr.style.display=(kind==='puntual'&&typeName!=='Ensayos boda')?'':'none';
     var _vb=document.getElementById('evFViajeBox');
     if(_vb)_vb.style.display=(kind==='grande')?'block':'none';
+    /* Repeticion: solo en Rec. Gestiones y en Otros puntual */
+    var _rp=evAdmiteRepeticion(kind,typeName);
+    var _rb=document.getElementById('evFRepBlock');
+    if(_rb)_rb.style.display=_rp?'':'none';
+    if(!_rp){
+      var _sel=document.getElementById('evFRepeat');
+      if(_sel)_sel.value='none';
+      var _wd=document.getElementById('evWdRow');
+      if(_wd)_wd.style.display='none';
+    }
   }
   function _bindTypeSwatches(){
     document.querySelectorAll('#evFTypePicker .ev-color-swatch').forEach(function(sw){
@@ -344,6 +360,9 @@ function bindEvFormEvents(){
     });
   }
   _bindTypeSwatches();
+  /* Estado inicial: al abrir hay que aplicar ya lo que depende de la
+     categoria (horas, viaje, repeticion...), no solo al cambiarla */
+  _applyTypeUI(_curKind(),(document.querySelector('#evFTypePicker .ev-color-swatch.selected')||{dataset:{}}).dataset.type||'');
   document.querySelectorAll('.ev-kind-btn[data-kind]').forEach(function(b){
     b.addEventListener('click',function(){
       var kind=b.dataset.kind;
