@@ -1829,9 +1829,8 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .drum-sel-lines{position:absolute;top:50%;left:6px;right:6px;height:44px;transform:translateY(-50%);border-top:1px solid var(--border);border-bottom:1px solid var(--border);z-index:3;pointer-events:none}
 .alarm-msg-input{display:block;width:calc(100% - 24px);margin:0 12px 6px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-family:var(--font);font-size:.78rem}
 .alarm-msg-input:focus{outline:none;border-color:var(--accent)}
-.alarm-create-btn{background:var(--accent)!important;color:#fff!important;font-weight:700!important;font-size:.84rem!important;width:100%;border-top:1px solid var(--accent)!important;border-radius:0!important;padding:13px 12px!important;margin-top:6px;display:flex!important;align-items:center!important;justify-content:center!important;gap:6px;letter-spacing:.01em}
+.alarm-create-btn{border-radius:0 0 var(--radius-sm) var(--radius-sm);background:var(--accent)!important;color:#fff!important;font-weight:700!important;font-size:.84rem!important;width:100%;border-top:1px solid var(--accent)!important;border-radius:0!important;padding:13px 12px!important;margin-top:6px;display:flex!important;align-items:center!important;justify-content:center!important;gap:6px;letter-spacing:.01em}
 .alarm-create-btn:active{background:var(--accent-bright)!important}
-.alarm-ics-btn{color:var(--text-muted)!important;font-size:.72rem!important;padding:8px 12px!important;border-top:1px solid var(--border)!important;border-radius:0 0 var(--radius-sm) var(--radius-sm)!important;width:100%}
 .alarm-days-row{padding:6px 12px 4px;border-top:1px solid var(--border)}
 .alarm-days-label{font-size:.65rem;color:var(--text-muted);margin-bottom:5px;text-align:center}
 .alarm-days-btns{display:flex;gap:4px}
@@ -1846,10 +1845,6 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .alarm-past-btn-cancel{flex:1;padding:7px 4px;border:1px solid var(--border);border-radius:6px;background:none;color:var(--text-muted);font-size:.72rem;cursor:pointer}
 .alarm-macro-row{display:flex;align-items:center;gap:8px;padding:5px 12px;font-size:.74rem;color:var(--text-muted);border-top:1px solid var(--border);cursor:pointer}
 .alarm-macro-row input[type=checkbox]{width:16px;height:16px}
-.alarm-macro-url{display:block;width:calc(100% - 24px);margin:0 12px 4px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text);font-size:.68rem;font-family:var(--mono);overflow:hidden;text-overflow:ellipsis}
-.alarm-macro-url::placeholder{color:var(--text-muted);opacity:.6}
-.alarm-macro-url:disabled{opacity:.35;cursor:not-allowed}
-.alarm-macro-url:not(:disabled):focus{outline:none;border-color:var(--accent)}
 /* ── Botón flotante "Listo" en modo Editar VIPs ── */
 .bday-listo-fab{display:block;align-self:center;margin:12px auto 4px;padding:10px 32px;border-radius:24px;border:none;background:#fbbf24;color:#1a1a2e;font-size:.84rem;font-weight:700;cursor:pointer;position:sticky;bottom:16px;z-index:20;box-shadow:0 4px 16px rgba(0,0,0,.35);-webkit-user-select:none;user-select:none}
 

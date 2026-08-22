@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v271 - Ficha de clase, orden de parejas y cumpleanos';
+var APP_VERSION = 'v272 - Una sola URL de MacroDroid y clicks que no se cuelan';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

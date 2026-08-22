@@ -661,6 +661,23 @@ Antes de renderizar, se ejecuta un algoritmo que asigna a cada evento una `row` 
 - **DISMISS_ALARM sí funciona**: el intent `android.intent.action.DISMISS_ALARM` con `SEARCH_MODE=android.label` y `MESSAGE=nombre` **funciona en Vivo** para apagar/borrar alarmas por nombre. Confirmado en pruebas reales.
 - El PWA lleva su propio registro en `excelia-alarms-v1` (no depende de poder leer el sistema).
 
+## Un click fuera de un desplegable no se cuela (v272)
+Los dos desplegables del header (panel de alarma y menu ajustes) no tienen
+fondo que tape la pantalla, asi que el mismo toque que los cerraba activaba
+ademas lo que hubiera debajo (cerrar el panel tocando una semana enviada
+soltaba el aviso "Semana enviada..."). El cierre se hace ahora en **fase de
+captura** sobre `document` y corta el evento con `stopPropagation()` +
+`preventDefault()`, de modo que ese toque solo cierra.
+
+Los paneles deslizantes (`.ev-detail-overlay` y companeros) no tienen este
+problema: su fondo a pantalla completa ya se come el click.
+
+## La URL de MacroDroid vive en un unico sitio (v272)
+Solo en el menu ajustes (clave `excelia-alarm-url`). Habia una segunda copia
+dentro del panel de alarma y las dos escribian en la misma clave, con codigo
+para mantenerlas sincronizadas. El conmutador "MacroDroid webhook" sigue en el
+panel: decide el metodo (webhook o intent), y la URL la lee de la clave.
+
 ## Alarmas (alarms.js)
 
 ### Estructura de una alarma
