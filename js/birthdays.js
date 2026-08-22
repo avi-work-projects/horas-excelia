@@ -335,10 +335,12 @@ function renderBdayContent(){
   h+='<button class="sy-back" id="bdBack">&#8592;</button>';
   if(BDAY_VIEW==='upcoming'){
     h+='<div class="sy-year-nav"><div class="sy-year">Pr\u00f3ximos</div></div>';
-    h+='<div class="sy-hdr-right"><button class="sy-pdf" id="bdExport">&#8595; Exportar</button></div>';
+    h+='<div class="sy-hdr-right"><button class="sy-pdf bd-export-btn" id="bdExport" '
+      +'title="Exportar" aria-label="Exportar"><svg viewBox="0 0 24 24" class="ico-exportar" aria-hidden="true"><path d="M12 3v10m0 0 4-4m-4 4-4-4" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 15v4a1.5 1.5 0 0 0 1.5 1.5h13A1.5 1.5 0 0 0 20 19v-4" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></svg></button></div>';
   } else if(BDAY_VIEW==='list'){
     h+='<div class="sy-year-nav"><div class="sy-year">Cumplea\u00f1os</div></div>';
-    h+='<div class="sy-hdr-right"><button class="sy-pdf" id="bdExport">&#8595; Exportar</button></div>';
+    h+='<div class="sy-hdr-right"><button class="sy-pdf bd-export-btn" id="bdExport" '
+      +'title="Exportar" aria-label="Exportar"><svg viewBox="0 0 24 24" class="ico-exportar" aria-hidden="true"><path d="M12 3v10m0 0 4-4m-4 4-4-4" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 15v4a1.5 1.5 0 0 0 1.5 1.5h13A1.5 1.5 0 0 0 20 19v-4" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></svg></button></div>';
   } else {
     h+='<div class="sy-year-nav"><button class="sy-nav" id="bdPrev">&#9664;</button>';
     h+='<div class="sy-year sy-year-2line">'+MN[BDAY_MONTH]+'<span class="sy-year-sub">'+BDAY_YEAR+'</span></div>';
