@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v269 - Topes por partes y aviso de 12 festivos';
+var APP_VERSION = 'v270 - Ficha de ensayo editable y sin solapes';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

@@ -1600,8 +1600,11 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-car-card{display:flex;flex-direction:column;gap:6px}
 .ev-car-title{font-size:1.05rem;font-weight:700;line-height:1.2}
 .ev-car-type{font-size:.72rem;font-weight:600;color:var(--text-muted)}
-.ev-car-nav{display:flex;align-items:center;gap:10px;margin:12px 0 4px}
-.ev-car-arrow{flex:0 0 auto;padding:6px 16px;font-size:.8rem}
+/* Fila de flechas compacta: antes ocupaba 42 px de alto para dos botones
+   que solo pasan de evento */
+.ev-car-nav{display:flex;align-items:center;gap:8px;margin:6px 0 2px}
+.ev-car-arrow{flex:0 0 auto;width:34px;height:26px;padding:0;font-size:.62rem;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted)}
+.ev-car-arrow:active{background:var(--surface3)}
 .ev-car-dots{flex:1;display:flex;justify-content:center;align-items:center;gap:6px}
 .ev-car-dot{width:6px;height:6px;border-radius:50%;background:var(--border-light)}
 .ev-car-dot.on{background:var(--accent);transform:scale(1.35)}
@@ -2100,18 +2103,25 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .rut-wpick-real .ev-io-row{display:none}
 /* Ficha del dia: alto fijo para que no baile al pasar de un evento a otro */
 .ev-detail-sheet.ev-car-sheet{min-height:56vh;display:flex;flex-direction:column}
-.ev-car-sheet .ev-detail-actions{margin-top:auto}
-/* Ficha de una clase: tres filas fijas (hora, sala y pareja) */
+/* Sin esto los hijos se encogen y el texto se derrama sobre los botones */
+.ev-car-sheet > *{flex-shrink:0}
+.ev-car-sheet .ev-detail-actions{margin-top:auto;padding-top:10px}
+/* Ficha de una clase: tres filas fijas (hora, sala y pareja). Cada fila es
+   un boton: se pulsa para rellenar o cambiar ese dato. */
 .ev-bficha{margin-top:10px;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--surface2)}
-.ev-bfila{display:flex;align-items:center;gap:8px;padding:9px 12px;font-size:.78rem}
+.ev-bfila{display:flex;align-items:center;gap:8px;padding:9px 11px;font-size:.78rem;width:100%;background:none;border:0;font-family:var(--font);text-align:left;cursor:pointer;color:inherit}
+.ev-bfila:active{background:var(--surface3)}
 .ev-bfila + .ev-bfila{border-top:1px solid var(--border)}
-.ev-bfila-lbl{flex:0 0 38%;color:var(--text-muted);font-weight:600;display:flex;align-items:center;gap:6px}
-.ev-bfila-val{flex:1;min-width:0;font-weight:700;color:var(--text);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* etiqueta al minimo: el nombre de la pareja necesita el resto */
+.ev-bfila-lbl{flex:0 0 auto;min-width:74px;color:var(--text-muted);font-weight:600;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.ev-bfila-val{flex:1;min-width:0;font-weight:700;color:var(--text);text-align:right;display:flex;align-items:center;justify-content:flex-end;gap:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* el color de la pareja va en un punto, no tinendo el nombre */
+.ev-bpunto{width:9px;height:9px;border-radius:50%;flex:0 0 auto;border:1px solid rgba(0,0,0,.35)}
 .ev-bfila.warn{background:rgba(201,138,30,.08)}
 .ev-bfila.warn .ev-bfila-val{color:#e0a83c;font-weight:600}
 [data-theme="light"] .ev-bfila.warn{background:rgba(212,148,31,.12)}
 [data-theme="light"] .ev-bfila.warn .ev-bfila-val{color:#8a5c05}
-.ev-bver{flex:0 0 auto;margin-left:8px;padding:4px 11px;border-radius:11px;font-size:.68rem;font-weight:700;cursor:pointer;border:1.5px solid var(--accent);background:var(--accent-glow);color:var(--accent-bright);font-family:var(--font)}
+.ev-bver{flex:0 0 auto;margin-left:6px;padding:3px 9px;border-radius:10px;font-size:.66rem;font-weight:700;cursor:pointer;border:1.5px solid var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
 /* Los tres botones de la pareja, en una sola linea */
 .boda-det-actions-row{flex-direction:row;gap:6px}
 .boda-det-actions-row .ev-btn{width:auto;flex:1;min-width:0;padding:10px 4px;font-size:.72rem;white-space:nowrap}

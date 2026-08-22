@@ -378,6 +378,32 @@ propio swipe (`_swipeAdded`) o dentro de un panel abierto (`.ev-detail-overlay`,
 `.imp-mode-ov`). Sin esto, deslizar en la ficha de un dia cambiaba **ademas** el
 mes de fondo, porque el gesto subia hasta el swipe de `#eventsOverlay`.
 
+## La ficha de un ensayo se edita desde ella misma (v270)
+Las tres filas (Hora, Sala, Pareja) son botones: cada una abre el mismo
+selector que la pestana Bodas y lo que se elija queda guardado en el evento.
+
+El detalle esta en **como guardan esos selectores**. En la pestana Bodas
+escriben en `BODA_PENDING` y se confirman con la barra de guardado; desde la
+ficha no hay tal barra, asi que se les pasa un tercer argumento:
+
+    openBodaTimePicker(ev,{directo:true, alGuardar:fn})
+
+- `bodaAplicarCampo(ev,campo,valor,opts)` decide: con `directo` escribe en
+  `ev.boda` y hace `saveEvents()`; sin el, deja el cambio pendiente.
+- `bodaTrasElegir(ev,opts)` decide a quien avisar: con `directo` llama a
+  `refreshEvents()` y al `alGuardar` (que repinta la ficha); sin el, a
+  `bodaRefreshRow(ev)`.
+
+Si se anade un selector nuevo para una clase, tiene que seguir este patron o
+desde la ficha no guardara nada.
+
+## Por que los hijos de una hoja no se encogen (v270)
+`.ev-car-sheet` es `display:flex;flex-direction:column` con `max-height:90vh`.
+Los elementos de un contenedor flex se **encogen por defecto**, asi que cuando
+el contenido pasaba de ese alto el texto se salia de su caja y se comia los
+botones de abajo. Lo arregla `.ev-car-sheet > *{flex-shrink:0}`: los hijos
+mantienen su alto y lo que sobra se resuelve con el scroll de la hoja.
+
 ## La ficha del dia no cambia de alto (v263)
 Con `car`, la hoja lleva la clase `.ev-car-sheet`: `min-height:56vh`, en columna
 y con las acciones pegadas abajo (`margin-top:auto`). Ademas, una clase de boda

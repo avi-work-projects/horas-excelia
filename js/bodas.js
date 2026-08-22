@@ -1010,7 +1010,7 @@ function bindBodaAssign(){
 }
 
 /* ══ Modal: selector de sala para una clase ══ */
-function openBodaPlacePicker(ev){
+function openBodaPlacePicker(ev,opts){
   if(!ev)return;
   var cur=bodaPlaceOf(ev);
   var h='<div class="ev-detail-overlay" id="bodaPpkOv"><div class="ev-detail-sheet">';
@@ -1032,14 +1032,40 @@ function openBodaPlacePicker(ev){
       ev.boda=ev.boda||{};
       ev.boda.place=b.dataset.place;
       saveEvents();closeBodaPlacePicker();
-      setTimeout(function(){refreshEvents();},310);
+      setTimeout(function(){
+        refreshEvents();
+        if(opts&&opts.alGuardar)opts.alGuardar();
+      },310);
     });
   });
 }
 function closeBodaPlacePicker(){bodaCloseSheet('bodaPpkWrap','bodaPpkOv');}
 
+/* Guardar un dato de una clase: en la pestana Bodas queda pendiente hasta
+   pulsar Guardar; desde la ficha del dia (opts.directo) se guarda ya. */
+function bodaAplicarCampo(ev,campo,valor,opts){
+  if(opts&&opts.directo){
+    ev.boda=ev.boda||{};
+    ev.boda[campo]=valor;
+    saveEvents();
+    return true;
+  }
+  bodaSetPending(ev.id,campo,valor);
+  return false;
+}
+function bodaTrasElegir(ev,opts){
+  if(opts&&opts.directo){
+    setTimeout(function(){
+      refreshEvents();
+      if(opts.alGuardar)opts.alGuardar();
+    },310);
+  } else {
+    setTimeout(function(){bodaRefreshRow(ev);},310);
+  }
+}
+
 /* ══ Modal: selector de pareja para una clase ══ */
-function openBodaCouplePicker(ev){
+function openBodaCouplePicker(ev,opts){
   var cur=(typeof bodaEff==='function'?bodaEff(ev).coupleId:(ev.boda&&ev.boda.coupleId))||null;
   var h='<div class="ev-detail-overlay" id="bodaCpkOv"><div class="ev-detail-sheet">';
   h+='<div class="ev-detail-handle"></div>';
@@ -1069,10 +1095,10 @@ function openBodaCouplePicker(ev){
   function apply(cid){
     /* Queda pendiente hasta que se pulse Guardar (asi no se re-renderiza
        la lista entera y no se pierde el scroll) */
-    bodaSetPending(ev.id,'coupleId',cid);
-    if(cid&&!bodaEff(ev).time)bodaSetPending(ev.id,'time',BODA_DEFAULT_TIME);
+    bodaAplicarCampo(ev,'coupleId',cid,opts);
+    if(cid&&!bodaEff(ev).time)bodaAplicarCampo(ev,'time',BODA_DEFAULT_TIME,opts);
     closeBodaCouplePicker();
-    setTimeout(function(){bodaRefreshRow(ev);},310);
+    bodaTrasElegir(ev,opts);
   }
   document.getElementById('bodaCpkClose').addEventListener('click',closeBodaCouplePicker);
   document.getElementById('bodaCpkNone').addEventListener('click',function(){apply(null);});
@@ -1086,7 +1112,7 @@ function closeBodaCouplePicker(){bodaCloseSheet('bodaCpkWrap','bodaCpkOv');}
 var BODA_TIME_H = 18, BODA_TIME_M = 0;
 var _BODA_HOURS=[],_BODA_MINS=[0,15,30,45];
 (function(){for(var i=7;i<=23;i++)_BODA_HOURS.push(i);})();
-function openBodaTimePicker(ev){
+function openBodaTimePicker(ev,opts){
   var t=(typeof bodaEff==='function'?bodaEff(ev).time:(ev.boda&&ev.boda.time))||BODA_DEFAULT_TIME;
   BODA_TIME_H=parseInt(t.slice(0,2),10);BODA_TIME_M=parseInt(t.slice(3,5),10);
   if(isNaN(BODA_TIME_H))BODA_TIME_H=18;
@@ -1152,16 +1178,16 @@ function openBodaTimePicker(ev){
   }
   document.getElementById('bodaTpClose').addEventListener('click',closeBodaTimePicker);
   document.getElementById('bodaTpNone').addEventListener('click',function(){
-    bodaSetPending(ev.id,'time',null);
-    closeBodaTimePicker();setTimeout(function(){bodaRefreshRow(ev);},310);
+    bodaAplicarCampo(ev,'time',null,opts);
+    closeBodaTimePicker();bodaTrasElegir(ev,opts);
   });
   document.getElementById('bodaTpSave').addEventListener('click',function(){
     var hh,mm;
     if(manual){var r=readManual();hh=r[0];mm=r[1];}
     else{hh=drumVal('bodaTpH',_BODA_HOURS);mm=drumVal('bodaTpM',_BODA_MINS);}
-    bodaSetPending(ev.id,'time',String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0'));
+    bodaAplicarCampo(ev,'time',String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0'),opts);
     closeBodaTimePicker();
-    setTimeout(function(){bodaRefreshRow(ev);},310);
+    bodaTrasElegir(ev,opts);
   });
 }
 function closeBodaTimePicker(){bodaCloseSheet('bodaTpWrap','bodaTpOv');}
