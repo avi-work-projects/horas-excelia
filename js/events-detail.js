@@ -132,20 +132,23 @@ function renderEvDetail(ev,fromSummary,car){
     /* Una ficha con las tres filas SIEMPRE presentes (etiqueta a la izquierda,
        dato a la derecha). Lo que falta se marca en ambar en su propia fila en
        vez de desaparecer, asi la ficha no cambia de alto ni de forma. */
-    var _fila=function(icono,etiqueta,valor,falta,extra){
-      return '<div class="ev-bfila'+(falta?' warn':'')+'">'
+    /* Cada fila se pulsa para rellenar o cambiar ese dato: abre el mismo
+       selector que la pestana de Bodas, en modo directo, asi que lo que se
+       elija queda guardado en el evento y se ve en todas partes. */
+    var _fila=function(campo,icono,etiqueta,valor,falta,extra){
+      return '<button type="button" class="ev-bfila'+(falta?' warn':'')+'" data-bcampo="'+campo+'">'
         +'<span class="ev-bfila-lbl">'+icono+' '+etiqueta+'</span>'
         +'<span class="ev-bfila-val">'+(falta?('\u26a0 '+valor):valor)+'</span>'
-        +(extra||'')+'</div>';
+        +(extra||'')+'</button>';
     };
     h+='<div class="ev-bficha">';
-    h+=_fila('\ud83d\udd52','Hora',
+    h+=_fila('hora','\ud83d\udd52','Hora',
       _b.time?(_b.time+' \u2013 '+_bodaMasUnaHora(_b.time)):'Sin asignar',!_b.time);
-    h+=_fila(_pl?bodaPlaceEmoji(_pl):'\ud83c\udfe0','Sala',
+    h+=_fila('sala',_pl?bodaPlaceEmoji(_pl):'\ud83c\udfe0','Sala',
       _pl?escHtml(BODA_PLACE_SHORT[_pl]):'Sin asignar',!_pl);
-    h+=_fila('\ud83d\udc8d','Pareja',
-      _c?('<span style="color:'+_c.color+'">'+escHtml(_c.name)+'</span>'):'Sin asignar',!_c,
-      _c?('<button class="ev-bver" id="evDVerPareja" data-cid="'+_c.id+'">Ver</button>'):'');
+    h+=_fila('pareja','\ud83d\udc8d','Pareja',
+      _c?('<span class="ev-bpunto" style="background:'+_c.color+'"></span>'+escHtml(_c.name)):'Sin asignar',!_c,
+      _c?('<span class="ev-bver" data-cid="'+_c.id+'">Ver</span>'):'');
     h+='</div>';
   }
   h+='<div class="ev-detail-actions">';
@@ -267,8 +270,22 @@ function openEvDetail(ev,container,car){
     closeEvDetail();
     setTimeout(function(){if(typeof openRutForm==='function')openRutForm(ev._rut);},310);
   });
-  var _vp=document.getElementById('evDVerPareja');
-  if(_vp)_vp.addEventListener('click',function(){
+  /* Filas de la ficha de un ensayo: cada una abre su selector y, al volver,
+     se repinta la ficha con el dato ya guardado. */
+  document.querySelectorAll('#evDetailOv .ev-bfila[data-bcampo]').forEach(function(fila){
+    fila.addEventListener('click',function(e){
+      if(e.target.closest('.ev-bver'))return;      /* eso va a la pareja */
+      var repintar=function(){openEvDetail(ev,null,car);};
+      var opts={directo:true,alGuardar:repintar};
+      var campo=fila.dataset.bcampo;
+      if(campo==='hora'&&typeof openBodaTimePicker==='function')openBodaTimePicker(ev,opts);
+      else if(campo==='sala'&&typeof openBodaPlacePicker==='function')openBodaPlacePicker(ev,opts);
+      else if(campo==='pareja'&&typeof openBodaCouplePicker==='function')openBodaCouplePicker(ev,opts);
+    });
+  });
+  var _vp=document.querySelector('#evDetailOv .ev-bver[data-cid]');
+  if(_vp)_vp.addEventListener('click',function(e){
+    e.stopPropagation();
     var cid=_vp.dataset.cid;
     if(car)closeEvDayCarousel();else closeEvDetail();
     setTimeout(function(){
