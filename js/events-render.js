@@ -799,7 +799,7 @@ function renderEvContent(){
     h+='<div class="sy-year-nav"><button class="sy-nav" id="evPrev">&#9664;</button><div class="sy-year">'+EV_YEAR+'</div><button class="sy-nav" id="evNext">&#9654;</button></div>';
     h+='<div class="sy-hdr-right"><button class="sy-pdf" id="evSyPdf">PDF</button></div>';
   } else if(EV_VIEW==='quad'){
-    var _qMNS=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    var _qMNS=MN_SHORT;
     var _qm3=(EV_QUAD_MONTH+3)%12,_qy3=EV_QUAD_YEAR+Math.floor((EV_QUAD_MONTH+3)/12);
     var _qLine1=_qMNS[EV_QUAD_MONTH]+' '+EV_QUAD_YEAR;
     var _qLine3=_qMNS[_qm3]+' '+_qy3;
@@ -892,7 +892,8 @@ function renderEvContent(){
     var addLabel=_isPickView&&EV_EDIT_MODE?'&#10006; Cancelar':'+ A\u00f1adir';
     h+='<button class="ev-io-btn'+(_isPickView&&EV_EDIT_MODE?' ev-edit-pick-mode':'')+'" id="evAdd">'+addLabel+'</button>';
     if(EV_VIEW==='upcoming'||EV_VIEW==='months'){
-      h+='<button class="ev-io-btn" id="evExport">&#8595; Exportar</button>';
+      /* Exportar solo los eventos se quito: el backup completo del menu de
+         ajustes ya los lleva. Importar se queda para los ficheros antiguos. */
       h+='<button class="ev-io-btn" id="evImport">&#8593; Importar</button>';
       h+='<input type="file" id="evImportFile" accept=".json" style="display:none">';
     }

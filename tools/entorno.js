@@ -19,6 +19,13 @@ const RAIZ = path.join(__dirname, '..');
 const MODULOS = [
   'core.js',
   'summary.js',
+  /* El grupo economico: son los que hacen cuentas (IRPF, tramos, hipoteca,
+     subrogacion) y por tanto donde un error no se ve mirando la pantalla. */
+  'economics-helpers.js',
+  'economics.js',
+  'economics-fiscal.js',
+  'economics-fiscal-hip.js',
+  'economics-gastos.js',
   'events-picker-color.js',
   'events-picker-date.js',
   'events.js',
