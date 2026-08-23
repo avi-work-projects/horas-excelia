@@ -429,6 +429,11 @@ function renderEvAlarmPanel(ev,firstDate){
   h+='<span class="bd-alarm-row-lbl">&#128276; Hora de la alarma<br><span style="font-size:.65rem;opacity:.7">D\u00eda del evento: '+fd2(firstDate)+'</span></span>';
   h+='<div class="bd-alarm-time"><input id="evAlarmH" type="number" min="0" max="23" value="'+_evT.h+'"><span class="bd-alarm-time-sep">:</span><input id="evAlarmM" type="number" min="0" max="59" value="'+String(_evT.m).padStart(2,'0')+'"></div>';
   h+='</div>';
+  /* Atajo a la ficha del ensayo (hora, sala y pareja, editables ahi mismo).
+     Solo en los ensayos: en el resto de eventos la ficha no anade nada que
+     este panel no ensene ya. */
+  if(getEvType(ev)==='Ensayos boda')
+    h+='<button class="ev-alarm-info" id="evAlarmInfo">ℹ Ver ficha del ensayo</button>';
   h+='<div class="ev-form-actions">';
   h+='<button class="ev-btn primary" id="evAlarmCreate">&#128276; Crear alarma</button>';
   h+='<button class="ev-btn ev-edit-orange" id="evAlarmEdit">&#9998; Editar evento</button>';
@@ -571,6 +576,11 @@ function bindEvAlarmEvents(ev,firstDate){
     showToast(alarmas.length>1?('\u23f0 '+alarmas.length+' alarmas creadas')
       :('\u23f0 Alarma creada \u2014 '+escHtml(ev.title)),'success');
     closeEvAlarm();setTimeout(refreshEvents,320);
+  });
+  var _info=document.getElementById('evAlarmInfo');
+  if(_info)_info.addEventListener('click',function(){
+    closeEvAlarm();
+    setTimeout(function(){openEvDetail(ev);},320);
   });
   var mInp=document.getElementById('evAlarmM');
   if(mInp)mInp.addEventListener('blur',function(){

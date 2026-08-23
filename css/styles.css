@@ -9,6 +9,7 @@
 --text:#e8e8f0;--text-muted:#8888a0;--text-dim:#5a5a70;
 --accent:#6c8cff;--accent-glow:#6c8cff33;--accent-bright:#8ca8ff;
 --sent:#1a3a2a;--sent-border:#2a5a3a;--sent-text:#5ae088;
+--falta:#3a3320;--falta-border:#6a5a2a;
 --festivo:#ff6b6b;--vacaciones:#ffb347;--ausencia:#c084fc;--normal:#6c8cff;
 --c-orange:#fb923c;--c-red:#ff6b6b;--c-green:#34d399;--c-blue:#6c8cff;--c-purple:#c084fc;--c-yellow:#fbbf24;
 --radius:14px;--radius-sm:10px;
@@ -22,6 +23,7 @@
 --text:#1a1a2e;--text-muted:#5a5a7a;--text-dim:#9090aa;
 --accent:#4d6ae8;--accent-glow:#4d6ae818;--accent-bright:#3858d8;
 --sent:#e8f5ee;--sent-border:#90d4ac;--sent-text:#1a7040;
+--falta:#fdf6e0;--falta-border:#e0c878;
 --festivo:#d83030;--vacaciones:#c07800;--ausencia:#8030b8;--normal:#4d6ae8;
 --c-orange:#d05818;--c-red:#d83030;--c-green:#1a9060;--c-blue:#4d6ae8;--c-purple:#8030b8;--c-yellow:#a07000;
 --radius:14px;--radius-sm:10px;
@@ -39,6 +41,7 @@
 --text:#e8eaf0;--text-muted:#a8abb8;--text-dim:#7a7d8a;
 --accent:#7a98ff;--accent-glow:#7a98ff2c;--accent-bright:#9bb2ff;
 --sent:#2e4a3a;--sent-border:#456858;--sent-text:#7adf9c;
+--falta:#4a4330;--falta-border:#7a6a45;
 --festivo:#ff7878;--vacaciones:#ffbe5e;--ausencia:#cf94fc;--normal:#7a98ff;
 --c-orange:#fda36a;--c-red:#ff7878;--c-green:#48dba4;--c-blue:#7a98ff;--c-purple:#cf94fc;--c-yellow:#fbcb52;
 --radius:14px;--radius-sm:10px;
@@ -1468,14 +1471,13 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .bd-alarm-overlay,.ev-alarm-overlay{position:absolute;inset:0;z-index:10;background:rgba(0,0,0,.6);display:none}
 .bd-alarm-overlay.open,.ev-alarm-overlay.open{display:flex;align-items:flex-end}
 /* Campana de alarma en items de próximos (bday + eventos) */
-.ev-upcoming-right{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:4px;flex-shrink:0}
-.ev-up-right-top{display:flex;align-items:center;gap:6px}
-/* Puerta a la ficha de detalle desde Proximos. Discreto a proposito: el
-   gesto principal de la tarjeta sigue siendo abrir la alarma. */
-.ev-up-info{font-family:var(--font);font-size:.62rem;font-weight:600;line-height:1;
-  padding:3px 7px;border-radius:999px;border:1px solid var(--border);
-  background:var(--surface2);color:var(--text-muted);cursor:pointer;white-space:nowrap}
-.ev-up-info:active{background:var(--surface3);color:var(--text)}
+.ev-upcoming-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+/* Atajo a la ficha del ensayo desde el panel de alarma. A lo ancho y
+   discreto: es un atajo, no una de las dos acciones del pie. */
+.ev-alarm-info{display:block;width:100%;font-family:var(--font);font-size:.72rem;
+  font-weight:600;padding:8px;margin-bottom:8px;border-radius:var(--radius-sm);
+  border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer}
+.ev-alarm-info:active{background:var(--surface3);color:var(--text)}
 .ev-upcoming-bell{font-size:.95rem;opacity:.12;transition:opacity .15s;line-height:1}
 .ev-upcoming-bell.set{opacity:1}
 .bd-alarm-sheet{width:100%;background:var(--surface);border-top-left-radius:20px;border-top-right-radius:20px;padding:8px 20px 32px;padding-bottom:calc(32px + env(safe-area-inset-bottom,0px));max-height:92vh;overflow-y:auto}
@@ -1960,8 +1962,20 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .boda-ftoggles{display:flex;gap:6px}
 .boda-ftoggles .boda-chip{flex:1}
 /* Dia cerrado: no admite mas clases */
-.boda-day.cerrado{border-style:dashed;opacity:.72;background:var(--surface2)}
-.boda-day.cerrado .boda-day-hd{color:var(--text-dim)}
+/* Consulta: el estado del dia se lee por el color de la tarjeta.
+     cerrado  verde suave  — resuelto, no admite mas clases (check + candado)
+     pasado   gris         — ya no se puede hacer nada
+     abierto  neutro       — pendiente de decidir
+   El verde es el mismo de "semana enviada" (--sent): mismo idioma visual
+   para "esto esta resuelto". El gris del pasado gana al verde. */
+.boda-day.cerrado{background:var(--sent);border-color:var(--sent-border)}
+.boda-day.cerrado .boda-class{border-top-color:var(--sent-border)}
+.boda-day-cerr{font-size:.72rem;letter-spacing:-.05em;flex-shrink:0}
+.boda-day.pasado{background:var(--surface2);border-style:dashed;opacity:.7}
+.boda-day.pasado .boda-day-hd{color:var(--text-dim)}
+/* Una clase a la que le falta la hora o la sala se marca ella sola. */
+.boda-class-ro.incompleta{background:var(--falta);border-radius:6px;
+  box-shadow:inset 0 0 0 1px var(--falta-border);padding-left:6px;padding-right:6px}
 .boda-day-hd b{color:var(--c-red);font-weight:700}
 .boda-day-lock.on{border-color:var(--c-red);color:var(--c-red)}
 /* Fila con cambios sin guardar */
@@ -2078,7 +2092,10 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .boda-cpk-t span{font-weight:400;text-transform:none;letter-spacing:0}
 .boda-cpk-row{display:flex;align-items:center;gap:8px;width:100%;padding:9px 10px;margin-bottom:5px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);cursor:pointer;text-align:left}
 .boda-cpk-row.sel{border-color:var(--accent-bright);background:var(--accent-glow)}
-.boda-cpk-name{flex:1;font-size:.8rem}
+/* Fila del selector: el nombre manda y la aclaracion va detras en gris, sin
+   competir. El nombre es EL MISMO que se ve luego en la clase. */
+.boda-cpk-name{font-size:.8rem;flex:0 0 auto}
+.boda-cpk-desc{flex:1;font-size:.68rem;color:var(--text-dim);text-align:right}
 .boda-cpk-n{font-size:.66rem;color:var(--text-dim);font-family:var(--mono)}
 .boda-asg-info{font-size:.74rem;color:var(--text-muted);text-align:center;margin-bottom:8px}
 .boda-asg-nav{display:flex;align-items:center;justify-content:center;gap:14px;margin:8px 0 6px}

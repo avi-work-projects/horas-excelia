@@ -333,15 +333,6 @@ function bindEvEvents(){
   document.querySelectorAll('.ev-upcoming-item[data-id]').forEach(function(item){
     item.addEventListener('click',function(e){
       var id=item.dataset.id;var ev=null;
-      /* "+ info" abre la ficha de detalle en vez de la alarma. Se corta aqui
-         el click para que no haga las dos cosas. */
-      if(e.target.closest&&e.target.closest('.ev-up-info')){
-        e.stopPropagation();
-        var _rr=(typeof rutEventFromId==='function')?rutEventFromId(id):null;
-        if(_rr){openRutSesion(_rr.rutina,_rr.ds);return;}
-        for(var k=0;k<EVENTS.length;k++){if(EVENTS[k].id===id){openEvDetail(EVENTS[k]);break;}}
-        return;
-      }
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
       /* Una sesion de rutina no vive en EVENTS: se recalcula desde su id. */
       if(!ev&&typeof rutEventFromId==='function'){

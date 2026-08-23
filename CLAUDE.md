@@ -583,6 +583,37 @@ Una rutina es una actividad semanal (gimnasio, baile, padel...) guardada en
 - Las rutinas van en el backup completo (`rutinas` en exportAll / `_applyFullImport`,
   fusion por id con el nombre como firma).
 
+## Consulta: el estado del día es el color (v280)
+Un día **cerrado** no es un día pasado — es un día **resuelto**. Antes salía
+atenuado y con la palabra "cerrado" en rojo, y se leía como pasado.
+
+| Tarjeta | Tono | Qué dice |
+|---|---|---|
+| `.boda-day.cerrado` | verde suave (`--sent`) + ✔️🔒 | resuelto, no admite más clases |
+| `.boda-day.pasado` | gris, borde discontinuo | ya no se puede hacer nada |
+| `.boda-day` (a secas) | neutro | pendiente de decidir |
+| `.boda-class-ro.incompleta` | amarillo suave (`--falta`) | a ESA clase le falta hora o sala |
+
+El verde reutiliza `--sent`, el de "semana enviada": mismo idioma visual para
+"esto está resuelto". **El gris del pasado gana al verde**: un día que ya ha
+ocurrido no está pendiente de nada, lo hayan cerrado o no. La casilla
+"Ver días cerrados" se pinta del mismo verde con `style="--chk:var(--c-green)"`.
+
+El verbo de las casillas es **"Ver"**, no "Mostrar", en toda la PWA.
+
+## La sala se llama igual en todas partes (v280)
+`BODA_PLACE_LIST` tenía dos textos por sala: el largo solo en el selector y el
+corto en el resto, así que la misma opción se leía distinta según la pantalla.
+Ahora cada entrada tiene **`n`** (el nombre, que se ve SIEMPRE) y **`d`** (la
+aclaración, en gris y solo donde hay sitio). `BODA_PLACE_SHORT` sigue siendo el
+mapa de nombres, para no tocar los quince sitios que ya lo usaban, y
+`BODA_PLACE_DESC` el de aclaraciones.
+
+Los selectores rotulan con `_bodaFmtCorto(ev.start)`, y desde **Nueva clase** el
+evento es el de mentira (`BODA_FORM.tmp`): sin `start` salía
+"Sala — undefined NaN/NaN". El `tmp` lleva ahora su `start` y se mantiene al día
+con el campo de fecha.
+
 ## Bodas (js/bodas.js)
 Pestaña `EV_VIEW==='bodas'` con cuatro subpestañas (`BODA_SUBTAB`): **Clases**, **Parejas**,
 **Calendario** y **Estadísticas**. Las subpestañas y el conmutador Consulta/Edición van en un

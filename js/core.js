@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v279 — El aviso de nueva version actualiza al tocarlo';
+var APP_VERSION = 'v280 — Tonos de Consulta, salas con un solo nombre y ficha desde la alarma';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
