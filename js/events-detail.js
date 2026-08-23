@@ -548,13 +548,18 @@ function bindEvAlarmEvents(ev,firstDate){
     alarmas.forEach(function(a){
       var _f=a.fecha||firstDate;
       var _fTxt=String(_f.getDate()).padStart(2,'0')+'/'+String(_f.getMonth()+1).padStart(2,'0');
-      var _dow=_f.getDay()+1;
+      /* Si la alarma cae HOY no se manda dia de la semana: asi el reloj la crea
+         de una sola vez, en vez de repetirla ese dia todas las semanas para
+         siempre. Para una fecha futura el dia sigue siendo la unica forma de
+         que SET_ALARM la coloque en su dia. */
+      var _esHoy=(fmtD(_f)===fmtD(new Date()));
+      var _dow=_esHoy?null:(_f.getDay()+1);
       var msg='\uD83D\uDCC5 '+ev.title+' '+_fTxt+a.suf;
       if(typeof addAlarm==='function'){
-        addAlarm({type:'event',label:msg,hour:a.h,minute:a.m,days:[_dow],targetDate:fmtD(_f)});
+        addAlarm({type:'event',label:msg,hour:a.h,minute:a.m,days:_dow?[_dow]:null,targetDate:fmtD(_f)});
       }
       var url=base+'/generar_alarma1?alarmH='+a.h+'&alarmM='+a.m
-        +'&alarmMsg='+encodeURIComponent(msg)+'&alarmDays='+_dow;
+        +'&alarmMsg='+encodeURIComponent(msg)+'&alarmDays='+(_dow||'');
       fetch(url,{mode:'no-cors'}).catch(function(){});
     });
     setEvAlarmState(ev.id,true);
