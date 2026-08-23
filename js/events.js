@@ -488,7 +488,7 @@ function evBarZ(ev){return EV_BAR_Z[evBarSize(ev)]||2;}
      o.puenteMap / sueltoFestMap / sueltoVacMap / multiEvs / multiIds / visible
    Mantener el render en un unico sitio: antes eran dos copias de ~160 lineas y
    cada ajuste habia que aplicarlo dos veces. */
-var EV_MNS = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+var EV_MNS = MN_SHORT;   /* los meses viven en core.js */
 
 /* Contexto comun de los dos calendarios (filtro de grupos + eventos barra) */
 function _evAnnualCtx(evFilter){

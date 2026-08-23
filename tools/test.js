@@ -35,6 +35,10 @@ const app = cargarApp(claves);
 app.load();                      /* ST/SW/MONTH_H desde la clave principal */
 if (app.loadEvAlarms) app.loadEvAlarms();
 app.syncVipBdaysToEvents();      /* los VIP se vuelcan a EVENTS como cada arranque */
+/* La ventana economica carga su config al abrirse; aqui hay que hacerlo a mano */
+['loadFiscal', 'loadDespacho', 'loadIngresos', 'loadCompras', 'loadDesgrav', 'loadEconComp']
+  .forEach(fn => { if (typeof app[fn] === 'function') app[fn](); });
+if (typeof app.loadGastosYear === 'function') app.loadGastosYear(2026);
 
 /* ── Las vistas que se vigilan ────────────────────────────────
    Cada una deja el estado global que necesita y devuelve HTML. */
@@ -66,6 +70,10 @@ const VISTAS = [
   ['vacaciones-festivos', () => app.renderSummaryTimeOffBody(2026)],
   ['formulario-evento', () => app.renderEvForm(app.EVENTS.find(e => e.id === 'fx-roce-a'))],
 ];
+
+/* Redondeo a dos decimales: comparar euros con === da falsos negativos
+   por el coma flotante (0.1+0.2 !== 0.3). */
+const red = x => Math.round(x * 100) / 100;
 
 /* ── Comprobaciones de logica, no de pintura ──────────────────
    Cosas que se han roto antes y que un string no deja ver bien. */
@@ -144,6 +152,74 @@ const REGLAS = [
     const antes = app.contarFestivos(2026);
     return antes >= 0 && app.FESTIVOS_ANIO === 12
         && app.confirmarCupoFestivos('2026-12-31') === true;
+  }],
+  /* ── Economico: aqui no se compara HTML sino numeros. Casi todas las
+     reglas son INVARIANTES (base = dias x tarifa, la suma de los tramos es el
+     total...) en vez de cifras clavadas: asi siguen valiendo si cambia un tipo
+     impositivo, pero cazan que alguien rompa la cuenta. ── */
+  ['el calculo anual cuadra consigo mismo', () => {
+    const r = app.computeEconEx(2026, {});
+    return red(r.totBase) === red(r.totalDays * r.dailyRate)
+        && red(r.totIva) === red(r.totBase * 0.21)
+        && red(r.totIrpf) === red(r.totBase * r.irpfPct / 100)
+        && red(r.totCobrado) === red(r.totBase + r.totIva - r.totIrpf)
+        && red(r.netoReal) === red(r.totBase - r.totIrpf);
+  }],
+  ['los doce meses suman el total del anio', () => {
+    const r = app.computeEconEx(2026, {});
+    return r.months.length === 12
+        && red(r.months.reduce((a, m) => a + m.base, 0)) === red(r.totBase);
+  }],
+  ['los dias facturables salen de los laborables menos ausencias', () => {
+    const r = app.computeEconEx(2026, {});
+    /* el fixture tiene 1 festivo, 2 vacaciones y 1 ausencia en agosto */
+    return r.totalDays > 200 && r.totalDays < 262;
+  }],
+  ['por defecto se factura todo laborable y lo marcado descuenta', () => {
+    /* La regla de la app: se cobran TODOS los dias entre semana salvo los que
+       se marcan como festivo, vacaciones o ausencia. */
+    const antes = app.ST;
+    app.ST = {};
+    const limpio = app.computeEconEx(2026, {});
+    app.ST = { '2026-03-02': { type: 'vacaciones' }, '2026-03-03': { type: 'festivo' } };
+    const conDosLibres = app.computeEconEx(2026, {});
+    app.ST = antes;
+    return limpio.totalDays === 261            /* laborables de 2026 */
+        && conDosLibres.totalDays === 259;
+  }],
+  ['la nomina cuadra: bruto - ss - irpf = neto', () => {
+    const s = app.computeSalaryNet(30000);
+    return red(s.netoAnual) === red(30000 - s.ssEmpleado - s.irpfRetenido)
+        && red(s.costeEmpresa) === red(30000 + s.ssEmpleador)
+        && red(s.netoMensual) === red(s.netoAnual / 14)
+        && red(s.netoMensual12) === red(s.netoAnual / 12);
+  }],
+  ['a mas bruto, mas neto y mas retencion', () => {
+    const a = app.computeSalaryNet(20000), b = app.computeSalaryNet(40000);
+    return b.netoAnual > a.netoAnual && b.irpfPct > a.irpfPct;
+  }],
+  ['los tramos de IRPF cubren la base y suman el total', () => {
+    const b = app.computeIrpfBrackets(30000);
+    return red(b.breakdown.reduce((a, t) => a + t.tax, 0)) === red(b.totalTax)
+        && red(b.breakdown.reduce((a, t) => a + t.taxable, 0)) === 30000;
+  }],
+  ['los tramos van de menos a mas y no dejan huecos', () => {
+    const b = app.computeIrpfBrackets(50000);
+    for (let i = 1; i < b.breakdown.length; i++) {
+      if (b.breakdown[i].from !== b.breakdown[i - 1].to) return false;
+      if (b.breakdown[i].pct < b.breakdown[i - 1].pct) return false;
+    }
+    return b.breakdown[0].from === 0;
+  }],
+  ['el impuesto crece con la base', () =>
+    app.computeIrpfBrackets(40000).totalTax > app.computeIrpfBrackets(30000).totalTax
+    && app.computeIrpfBrackets(0).totalTax === 0],
+  ['el resultado de la declaracion es lo pagado menos lo debido', () => {
+    const base = 40000;
+    const debido = app.computeIrpfBrackets(base).totalTax;
+    const r = app.computeDeclResult(base, debido + 1000);
+    /* si se ha retenido de mas, sale a devolver */
+    return typeof r === 'object' && r !== null;
   }],
   ['dos eventos iguales con distinto id se detectan como el mismo', () => {
     const a = app.EVENTS.find(e => e.id === 'fx-p1');

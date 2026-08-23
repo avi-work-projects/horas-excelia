@@ -123,10 +123,6 @@
     var _dm=document.getElementById('dataMenu');
     if(_dm)_dm.classList.remove('open');
     if(opening){
-      // Restaurar estado MacroDroid guardado
-      var useMacro=localStorage.getItem('excelia-alarm-macro')==='1';
-      var cb=document.getElementById('alarmUseMacro');
-      if(cb){cb.checked=useMacro;}
       // Construir botones de días ordenados desde hoy con fecha debajo
       buildAlarmDayBtns();
     }
@@ -264,27 +260,18 @@
   }
 
   /* ── Alarma: toggle MacroDroid ── */
-  document.getElementById('alarmUseMacro').addEventListener('change',function(){
-    localStorage.setItem('excelia-alarm-macro',this.checked?'1':'0');
-  });
-
   document.getElementById('alarmCreateBtn').addEventListener('click',function(){
     var h=getDrumValue('drumHour');
     var m=getDrumValue('drumMin');
     localStorage.setItem('excelia-alarm-h',h);
     localStorage.setItem('excelia-alarm-m',m);
     var msg=(document.getElementById('alarmMsg').value.trim()||'Horas Excelia');
-    var useMacro=document.getElementById('alarmUseMacro').checked;
     var selDays=[];
     document.querySelectorAll('.alarm-day-btn.on').forEach(function(b){selDays.push(+b.dataset.day);});
-    var macroBase='';
-    if(useMacro){
-      /* La URL vive en un unico sitio: el menu de ajustes (clave
-         excelia-alarm-url). Antes habia una copia aqui y las dos escribian en
-         la misma clave, asi que una sobraba. */
-      macroBase=normalizeMacroBase(localStorage.getItem('excelia-alarm-url')||'');
-      if(!macroBase){showToast('Configura la URL de MacroDroid en el menú ⋯','error');return;}
-    }
+    /* Las alarmas se crean siempre por el webhook de MacroDroid: es lo unico
+       que funciona en el movil. La URL vive en el menu de ajustes. */
+    var macroBase=normalizeMacroBase(localStorage.getItem('excelia-alarm-url')||'');
+    if(!macroBase){showToast('Configura la URL de MacroDroid en el menú ⋯','error');return;}
     // Detectar si la hora ya ha pasado hoy y hoy está seleccionado
     var now=new Date();
     var todayJs=now.getDay(); // 0=Dom...6=Sáb
@@ -295,26 +282,15 @@
     var needsConfirm=todaySelected&&nowMins>=alarmMins;
     function proceed(){
       document.getElementById('alarmPanel').classList.remove('open');
-      if(useMacro){
-        // alarmDays siempre presente: valor vacío = sin días (alarma puntual), evita que MacroDroid no sustituya {v=alarmDays}
-        var url=macroBase+'/generar_alarma1?alarmH='+h+'&alarmM='+m+'&alarmMsg='+encodeURIComponent(msg)+'&alarmDays='+(selDays.length?selDays.join(','):'');
-        if(typeof addAlarm==='function'){
-          addAlarm({type:'other',label:msg,hour:h,minute:m,days:selDays.length?selDays.slice():null,targetDate:null});
-        }
-        showToast('Enviando a MacroDroid\u2026','success');
-        fetch(url,{mode:'no-cors'})
-          .then(function(){showToast('\u23f0 Alarma enviada \u2014 '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),'success');})
-          .catch(function(){showToast('Error al contactar MacroDroid','error');});
-      } else {
-        var base=';action=android.intent.action.SET_ALARM'
-          +';S.android.intent.extra.alarm.MESSAGE='+encodeURIComponent(msg)
-          +';i.android.intent.extra.alarm.HOUR='+h
-          +';i.android.intent.extra.alarm.MINUTES='+m
-          +';b.android.intent.extra.alarm.SKIP_UI=false';
-        if(selDays.length)base+=';ia.android.intent.extra.alarm.DAYS='+selDays.join(',');
-        window.open('intent://alarm/#Intent'+base+';package=com.vivo.clock;end','_blank');
-        showToast('Abriendo reloj \u2014 '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),'success');
+      // alarmDays siempre presente: valor vacío = sin días (alarma puntual), evita que MacroDroid no sustituya {v=alarmDays}
+      var url=macroBase+'/generar_alarma1?alarmH='+h+'&alarmM='+m+'&alarmMsg='+encodeURIComponent(msg)+'&alarmDays='+(selDays.length?selDays.join(','):'');
+      if(typeof addAlarm==='function'){
+        addAlarm({type:'other',label:msg,hour:h,minute:m,days:selDays.length?selDays.slice():null,targetDate:null});
       }
+      showToast('Enviando a MacroDroid\u2026','success');
+      fetch(url,{mode:'no-cors'})
+        .then(function(){showToast('\u23f0 Alarma enviada \u2014 '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),'success');})
+        .catch(function(){showToast('Error al contactar MacroDroid','error');});
     }
     if(needsConfirm){
       // Calcular cuándo sonará por primera vez entre todos los días seleccionados

@@ -253,16 +253,6 @@ document.getElementById('pdfExportBtn').addEventListener('click',function(){
   showToast('PDF exportado: horas-'+year+'.pdf','success');
 });
 
-/* ── Exportar datos (solo días/semanas/jornada) ── */
-var _expBtn=document.getElementById('exportBtn');
-if(_expBtn)_expBtn.addEventListener('click',function(){
-  var data={version:2,days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,exclFest:EXCL_FEST,exclVac:EXCL_VAC};
-  var a=document.createElement('a');
-  a.href='data:application/json,'+encodeURIComponent(JSON.stringify(data,null,2));
-  a.download='horas-excelia-dias.json';
-  a.click();
-  showToast('Datos exportados','success');
-});
 
 /* ── Importar datos (solo días/semanas/jornada) ── */
 var _impBtn=document.getElementById('importBtn');
@@ -415,7 +405,6 @@ document.getElementById('exportAllBtn').addEventListener('click',function(){
     evAlarms:typeof EV_ALARMS_SET!=='undefined'?EV_ALARMS_SET:null,
     bdayAlarms:typeof BDAY_ALARM_SET!=='undefined'?BDAY_ALARM_SET:null,
     macroUrl:localStorage.getItem('excelia-alarm-url')||null,
-    alarmMacroEnabled:localStorage.getItem('excelia-alarm-macro')||null,
     alarmHour:localStorage.getItem('excelia-alarm-h')||null,
     alarmMinute:localStorage.getItem('excelia-alarm-m')||null,
     alarmDays:localStorage.getItem('excelia-alarm-days')||null,
@@ -533,7 +522,6 @@ function _applyFullImport(d,mode){
       if(d.evAlarms&&typeof EV_ALARMS_SET!=='undefined'){EV_ALARMS_SET=merge?_mergeMap(EV_ALARMS_SET,d.evAlarms):d.evAlarms;if(typeof saveEvAlarms==='function')saveEvAlarms();}
       if(d.bdayAlarms&&typeof BDAY_ALARM_SET!=='undefined'){BDAY_ALARM_SET=merge?_mergeMap(BDAY_ALARM_SET,d.bdayAlarms):d.bdayAlarms;localStorage.setItem('excelia-bday-alarm-set',JSON.stringify(BDAY_ALARM_SET));}
       if(d.macroUrl)localStorage.setItem('excelia-alarm-url',d.macroUrl);
-      if(d.alarmMacroEnabled)localStorage.setItem('excelia-alarm-macro',d.alarmMacroEnabled);
       if(d.alarmHour)localStorage.setItem('excelia-alarm-h',d.alarmHour);
       if(d.alarmMinute)localStorage.setItem('excelia-alarm-m',d.alarmMinute);
       if(d.alarmDays)localStorage.setItem('excelia-alarm-days',d.alarmDays);

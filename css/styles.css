@@ -68,10 +68,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .hours-control{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
 .default-hours-btn{font-size:.72rem;font-weight:500;padding:6px 14px;border-radius:16px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;display:flex;align-items:center;gap:5px}
 .default-hours-btn:active{background:var(--surface3)}
-.csv-export-btn{border-color:rgba(52,211,153,.3);color:#34d399!important;margin-left:auto}
-.csv-export-btn:active{background:rgba(52,211,153,.1)}
-.pdf-export-btn{border-color:rgba(90,130,255,.3);color:var(--accent-bright)!important}
-.pdf-export-btn:active{background:var(--accent-glow)}
+/* CSV y PDF: la letra de color no aportaba nada y competia con el resto de
+   la barra. Se quedan neutros, con un icono de hoja al lado del texto. */
+.csv-export-btn{margin-left:auto}
+.csv-export-btn,.pdf-export-btn{padding:6px 12px;gap:6px}
+.ico-doc{width:14px;height:14px;opacity:.7;flex-shrink:0}
 .default-hours-btn .dh-val{color:var(--accent-bright);font-family:var(--mono);font-weight:600}
 .default-hours-panel{display:none;align-items:center;gap:8px;flex-wrap:wrap;animation:fadeUp .15s ease both}
 .default-hours-panel.open{display:flex}
@@ -1084,10 +1085,22 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .bday-search-input{width:100%;box-sizing:border-box;padding:8px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.82rem;outline:none;transition:border-color .15s}
 .bday-search-input:focus{border-color:var(--accent)}
 .bday-io-row{display:flex;gap:8px;margin-top:8px}
-.bday-io-btn{flex:1;font-size:.75rem;padding:9px 8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;text-align:center;transition:all .15s}
+/* ── Botones de accion: UN solo sistema con tres variantes ──────────
+   .ev-io-btn y .bday-io-btn eran dos estilos para el mismo papel y se
+   mezclaban en la misma pantalla. Ahora comparten base y se diferencian
+   por variante:
+     (sola)        neutra   — accion secundaria (Importar, Exportar...)
+     .io-primaria  azul     — la accion principal (Anadir)
+     .io-peligro   roja     — destructiva (Eliminar)
+   .bday-io-btn-add se mantiene como alias de .io-primaria porque ya
+   estaba repartido por varias pantallas. */
+.bday-io-btn,.ev-io-btn{flex:1;font-size:.75rem;padding:9px 8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;text-align:center;transition:all .15s;font-family:var(--font)}
+.bday-io-btn:active,.ev-io-btn:active{background:var(--surface3)}
+.io-primaria,.bday-io-btn-add{background:var(--c-blue)!important;color:#fff!important;border-color:var(--c-blue)!important;font-weight:600}
+.io-primaria:active,.bday-io-btn-add:active{opacity:.85}
+.io-peligro{background:#c0392f!important;color:#fff!important;border-color:#c0392f!important;font-weight:600}
+.io-peligro:active{background:#9d2c24!important}
 .bday-io-btn:active{background:var(--surface3)}
-.bday-io-btn-add{background:var(--c-blue)!important;color:#fff!important;border-color:var(--c-blue)!important;font-weight:600}
-.bday-io-btn-add:active{opacity:.85}
 /* Upcoming birthdays */
 .bday-upcoming-section{display:flex;flex-direction:column;gap:4px}
 .bday-upcoming-item{display:flex;align-items:center;gap:12px;padding:11px 14px;min-height:68px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .12s}
@@ -1729,7 +1742,6 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-btn.danger:active{background:#9d2c24}
 [data-theme="light"] .ev-btn.danger{background:#d64541;border-color:#d64541}
 .ev-io-row{display:flex;gap:8px;margin-top:8px}
-.ev-io-btn{flex:1;font-size:.75rem;padding:9px 8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;text-align:center;transition:all .15s}
 .ev-io-btn:active{background:var(--surface3)}
 /* Event detail */
 .ev-detail-color-bar{height:4px;border-radius:2px;margin-bottom:14px}
@@ -1845,8 +1857,6 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .alarm-past-confirm-btns{display:flex;gap:6px}
 .alarm-past-btn-ok{flex:1;padding:7px 4px;border:1px solid var(--accent);border-radius:6px;background:var(--accent-glow);color:var(--accent-bright);font-size:.72rem;font-weight:600;cursor:pointer}
 .alarm-past-btn-cancel{flex:1;padding:7px 4px;border:1px solid var(--border);border-radius:6px;background:none;color:var(--text-muted);font-size:.72rem;cursor:pointer}
-.alarm-macro-row{display:flex;align-items:center;gap:8px;padding:5px 12px;font-size:.74rem;color:var(--text-muted);border-top:1px solid var(--border);cursor:pointer}
-.alarm-macro-row input[type=checkbox]{width:16px;height:16px}
 /* ── Botón flotante "Listo" en modo Editar VIPs ── */
 .bday-listo-fab{display:block;align-self:center;margin:12px auto 4px;padding:10px 32px;border-radius:24px;border:none;background:#fbbf24;color:#1a1a2e;font-size:.84rem;font-weight:700;cursor:pointer;position:sticky;bottom:16px;z-index:20;box-shadow:0 4px 16px rgba(0,0,0,.35);-webkit-user-select:none;user-select:none}
 

@@ -7,7 +7,7 @@
 function openOtrosDatePicker(initialDates,color,year,onAccept){
   var sel={};(initialDates||[]).forEach(function(d){sel[d]=true;});
   var curYear=year||(new Date()).getFullYear();
-  var MNS=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  var MNS=MN_SHORT;   /* los meses viven en core.js */
   function _evDk(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
   function _count(){var n=0;for(var k in sel){if(sel[k])n++;}return n;}
   function _render(){

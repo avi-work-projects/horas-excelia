@@ -17,6 +17,20 @@ Las funciones de primer nivel llevan su tamaño cuando pasan de 80 líneas: `nom
 Ese `(!)` es una señal de "esto ya pide partirse o compartirse con otra vista" — mirar ahí
 primero cuando algo cueste de tocar.
 
+## Botones de accion: un sistema con tres variantes
+`.ev-io-btn` y `.bday-io-btn` comparten base y se diferencian por variante:
+`(sola)` neutra · `.io-primaria` azul (la accion principal) · `.io-peligro`
+roja (destructiva). `.bday-io-btn-add` sigue existiendo como alias de
+`.io-primaria` porque ya estaba repartido por varias pantallas.
+
+## Los nombres de los meses estan SOLO en core.js
+`MN` (largos) y `MN_SHORT` (cortos). Habia siete copias del mismo array.
+
+## Alarmas: siempre por MacroDroid
+Ya no hay conmutador ni camino alternativo. El `intent://` al reloj de Vivo se
+quito porque nunca llego a funcionar en el movil del usuario. La URL del
+webhook se configura en el menu de ajustes y es obligatoria.
+
 ## ✅ Pruebas automáticas — PASARLAS ANTES DE CADA PUSH
 
 ```bash

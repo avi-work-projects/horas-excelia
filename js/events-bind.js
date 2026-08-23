@@ -416,18 +416,6 @@ function bindEvEvents(){
       if(ev)openEvDeleteSheet(ev);
     });
   });
-  var evExportEl=document.getElementById('evExport');
-  if(evExportEl)evExportEl.addEventListener('click',function(){
-    if(!EVENTS.length){showToast('No hay eventos para exportar','error');return;}
-    /* Se exporta un objeto con eventos + parejas de bodas (las clases van
-       dentro de EVENTS). El importador sigue aceptando el array pelado
-       de versiones anteriores. */
-    var _payload={version:2,events:EVENTS,
-      bodas:(typeof BODA_COUPLES!=='undefined')?BODA_COUPLES:[]};
-    var a=document.createElement('a');
-    a.href='data:application/json,'+encodeURIComponent(JSON.stringify(_payload,null,2));
-    a.download='eventos.json';a.click();
-  });
   var evImportEl=document.getElementById('evImport');
   if(evImportEl)evImportEl.addEventListener('click',function(){document.getElementById('evImportFile').click();});
   var evImportFileEl=document.getElementById('evImportFile');

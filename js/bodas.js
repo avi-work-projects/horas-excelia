@@ -296,7 +296,7 @@ function _bodaLegendHtml(){
 
 /* -- Subpestana CALENDARIO: ensayos de cada boda + los casamientos -- */
 function _renderBodaCalendario(){
-  var MN2=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var MN2=MN;   /* los meses viven en core.js */
   var y=BODA_CAL_YEAR,m=BODA_CAL_MONTH;
   var mesPre=y+'-'+String(m+1).padStart(2,'0');
   /* Clases y bodas del mes */
@@ -862,7 +862,7 @@ function closeBodaAssign(){
 function renderBodaAssign(){
   var A=BODA_ASSIGN;if(!A)return;
   var sheet=document.getElementById('bodaAsgSheet');if(!sheet)return;
-  var c=A.couple, MN2=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var c=A.couple;
   var libres={},mias={},ajenas={};
   bodaClasses().forEach(function(ev){
     var cid=ev.boda&&ev.boda.coupleId;
