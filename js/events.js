@@ -431,16 +431,30 @@ function evUpcomingMarkHtml(ev){
    quedando la mas fina visible encima de la mas gruesa. */
 var EV_BAR_Z = {sm:3, md:2, lg:1};
 function _evRowOcc(){return {lg:[[],[],[]], md:[[],[],[]], sm:[[],[],[]]};}
-/* ¿Chocan de verdad dos tramos, o solo se rozan?
-   "Rozarse" es que una barra ACABE justo el dia en que la otra EMPIEZA: ahi no
-   hay conflicto real, caben las dos en la misma fila repartiendose la casilla
-   de ese dia a mitades. Solo cuenta si las dos duran mas de un dia; con una
-   barra de un solo dia no se sabria que mitad le toca. */
+/* Categorias que comparten dia. Es cosa de los viajes de verdad: se sale un
+   dia y se llega otro, asi que el dia del relevo es medio de cada uno. Un
+   "Otros" grande no significa eso, y ahi el reparto confunde mas que ayuda. */
+var EV_COMPARTE_DIA = {'Viaje':1, 'Asturias':1, 'Casa Rural':1};
+function evComparteDia(ev){
+  return getEvKind(ev)==='grande' && !!EV_COMPARTE_DIA[getEvType(ev)];
+}
+/* ¿Chocan de verdad dos TROZOS, o solo se rozan? Solo geometria: "rozarse" es
+   que uno ACABE justo en la columna en que el otro EMPIEZA. */
 function _evSoloSeRozan(aS,aE,bS,bE){
-  if(aE<bS||aS>bE)return false;                 /* ni se tocan */
+  if(aE<bS||aS>bE)return false;                       /* ni se tocan */
   if(Math.max(aS,bS)!==Math.min(aE,bE))return false;  /* pisan mas de un dia */
-  if(aS===aE||bS===bE)return false;             /* alguna es de un solo dia */
   return (aE===bS)||(bE===aS);
+}
+/* La decision completa, ya con el evento delante.
+   OJO con `unDia`: mira la duracion del EVENTO, no la del trozo. Un trozo de
+   una sola columna puede ser una barra larga cortada por el fin de semana o
+   por el cambio de mes; eso no la convierte en un evento de un dia. Cuando se
+   miraba el trozo, un evento que empezaba en domingo y seguia la semana
+   siguiente no compartia ese domingo. */
+function _evTrozosSeRozan(a,b){
+  if(a.unDia||b.unDia)return false;
+  if(!evComparteDia(a.ev)||!evComparteDia(b.ev))return false;
+  return _evSoloSeRozan(a.cs,a.ce,b.cs,b.ce);
 }
 function _evAssignRow(it,rowOcc){
   var occ=rowOcc[evBarSize(it.ev)]||rowOcc.md;
@@ -448,9 +462,9 @@ function _evAssignRow(it,rowOcc){
     var ok=true;
     for(var j=0;j<occ[r].length;j++){
       var o=occ[r][j];
-      if(it.cs<=o[1]&&it.ce>=o[0]&&!_evSoloSeRozan(it.cs,it.ce,o[0],o[1])){ok=false;break;}
+      if(it.cs<=o.ce&&it.ce>=o.cs&&!_evTrozosSeRozan(it,o)){ok=false;break;}
     }
-    if(ok){it.row=r;occ[r].push([it.cs,it.ce]);break;}
+    if(ok){it.row=r;occ[r].push(it);break;}
   }
 }
 /* Marca que barras tienen que ceder media casilla en su primer o ultimo dia.
@@ -462,7 +476,7 @@ function _evMarcarMitades(lista){
     if(a.row<0)return;
     lista.forEach(function(b){
       if(a===b||b.row<0)return;
-      if(!_evSoloSeRozan(a.cs,a.ce,b.cs,b.ce))return;
+      if(!_evTrozosSeRozan(a,b))return;
       if(b.ce===a.cs)a.halfL=true;   /* la otra acaba donde esta empieza */
       if(b.cs===a.ce)a.halfR=true;   /* la otra empieza donde esta acaba */
     });

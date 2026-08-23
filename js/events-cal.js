@@ -46,7 +46,10 @@ function renderEvCalMonth(){
       if(ee<wStart||es>wEnd)return;
       var cs=Math.max(0,Math.round((es-wStart)/86400000));
       var ce=Math.min(6,Math.round((ee-wStart)/86400000));
-      wMulti.push({ev:ev,cs:cs,ce:ce,starts:es>=wStart,ends:ee<=wEnd,row:-1});
+      /* unDia: la duracion del EVENTO, que es lo que decide si puede compartir
+         dia. El trozo puede ser de una columna por el corte de semana o mes. */
+      wMulti.push({ev:ev,cs:cs,ce:ce,unDia:(ev.start===(ev.end||ev.start)),
+        starts:es>=wStart,ends:ee<=wEnd,row:-1});
     });
     /* Reparto en filas por grosor — ver _evAssignRow */
     var rowOcc=_evRowOcc();
@@ -186,7 +189,10 @@ function _renderEvMonthCard(m,yr,o){
       while(cs<=ce&&wk[cs]&&wk[cs].getMonth()!==m)cs++;
       while(ce>=cs&&wk[ce]&&wk[ce].getMonth()!==m)ce--;
       if(cs>ce)return;
-      wMulti.push({ev:ev,cs:cs,ce:ce,starts:es>=wStart,ends:ee<=wEnd,row:-1});
+      /* unDia: la duracion del EVENTO, que es lo que decide si puede compartir
+         dia. El trozo puede ser de una columna por el corte de semana o mes. */
+      wMulti.push({ev:ev,cs:cs,ce:ce,unDia:(ev.start===(ev.end||ev.start)),
+        starts:es>=wStart,ends:ee<=wEnd,row:-1});
     });
     /* Reparto en filas (max 3) POR GROSOR: dos barras del mismo grosor que
        chocan van a filas distintas (se estrechan); dos de grosor distinto
@@ -251,7 +257,9 @@ function _renderEvMonthCard(m,yr,o){
            puntitos en fila arriba del dia, uno por sesion. */
         var _ruts=evs.filter(function(ev){return ev._rut&&o.visible(ev);});
         if(_ruts.length){
-          var _rh='<div class="ev-ann-ruts">';
+          /* El ancho de cada barrita: como mucho medio dia. Con una o con dos
+             sale a mitad; a partir de tres se reparten el hueco entre todas. */
+          var _rh='<div class="ev-ann-ruts" style="--rutn:'+Math.max(2,_ruts.length)+'">';
           _ruts.forEach(function(rev){
             _rh+='<span class="ev-ann-rut" style="background:'+(rev.color||'#888')+'"></span>';
           });

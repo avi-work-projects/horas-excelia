@@ -105,9 +105,15 @@ function rutIconSvg(kind,color){
   var dark=(color==='currentColor')?'rgba(0,0,0,.45)'
           :((typeof fakeTrans==='function')?fakeTrans(color,0.52):color);
   var shapes=_rutIconShapes(kind);
+  /* Dos pasadas: la negra ensancha la silueta y cierra la union de las
+     piezas, la de color la rellena por dentro. La diferencia entre las dos
+     ES el ribete, asi que se toma de EV_SHAPE_BW — el mismo borde que
+     llevan las aspas y los circulos de los eventos puntuales. Antes eran
+     2.8 y 2.7: el negro existia pero no se veia. */
+  var _sw=2.7, _bw=(typeof EV_SHAPE_BW!=='undefined'?EV_SHAPE_BW:2);
   return '<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">'
-    + '<g fill="'+color+'" stroke="#000" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round">'+shapes+'</g>'
-    + '<g fill="'+color+'" stroke="'+color+'" stroke-width="2.7" stroke-linejoin="round" stroke-linecap="round">'+shapes+'</g>'
+    + '<g fill="#000" stroke="#000" stroke-width="'+(_sw+_bw)+'" stroke-linejoin="round" stroke-linecap="round">'+shapes+'</g>'
+    + '<g fill="'+color+'" stroke="'+color+'" stroke-width="'+_sw+'" stroke-linejoin="round" stroke-linecap="round">'+shapes+'</g>'
     + _rutIconDetails(kind,dark)
     + '</svg>';
 }

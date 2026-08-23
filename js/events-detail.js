@@ -368,10 +368,23 @@ function renderEvAlarmPanel(ev,firstDate){
   h+='<div class="bd-alarm-title">&#128276; Alarma evento</div><div style="width:36px"></div></div>';
   var note=ev.note&&ev.note.trim()?escHtml(ev.note):'<span style="opacity:.45;font-style:italic">Sin descripci\u00f3n</span>';
   var _ac=getEvDisplayColor(ev);
+  /* El atajo a la ficha va PEGADO a la tarjeta del evento y con su mismo
+     alto: se lee como "mas sobre ESTE evento", que es lo que es. Al pie
+     pasaba desapercibido entre "Crear alarma" y "Editar evento".
+     Toma el color del propio evento, el mismo que la tarjeta usa ya para su
+     borde y su fondo: destaca sin salirse de la gama del panel.
+     Solo los ensayos tienen ficha que anada algo (hora, sala y pareja). */
+  var _conFicha=(getEvType(ev)==='Ensayos boda');
+  h+='<div class="bd-alarm-top'+(_conFicha?' con-ficha':'')+'">';
   h+='<div class="bd-alarm-info" style="border-color:'+_ac+'44;background:'+_ac+'11">';
   h+='<div class="bd-alarm-name" style="color:'+_ac+'">'+escHtml(ev.title)+'</div>';
   h+='<div class="bd-alarm-date">'+fd2(firstDate)+' \u00b7 '+diffLbl+'</div>';
   h+='<div class="ev-alarm-note">'+note+'</div></div>';
+  if(_conFicha)
+    h+='<button class="ev-alarm-info" id="evAlarmInfo" style="border-color:'+_ac+'88;'
+      +'background:'+_ac+'1c;color:'+_ac+'">'
+      +'<span class="ev-alarm-info-ico">ℹ</span>Ver<br>ficha</button>';
+  h+='</div>';
   // Permanent 3-zone alarm marker
   h+='<div class="bd-alarm-marker-row">';
   h+='<div class="bd-alarm-marker-text">Marcar alarma como configurada</div>';
@@ -429,11 +442,6 @@ function renderEvAlarmPanel(ev,firstDate){
   h+='<span class="bd-alarm-row-lbl">&#128276; Hora de la alarma<br><span style="font-size:.65rem;opacity:.7">D\u00eda del evento: '+fd2(firstDate)+'</span></span>';
   h+='<div class="bd-alarm-time"><input id="evAlarmH" type="number" min="0" max="23" value="'+_evT.h+'"><span class="bd-alarm-time-sep">:</span><input id="evAlarmM" type="number" min="0" max="59" value="'+String(_evT.m).padStart(2,'0')+'"></div>';
   h+='</div>';
-  /* Atajo a la ficha del ensayo (hora, sala y pareja, editables ahi mismo).
-     Solo en los ensayos: en el resto de eventos la ficha no anade nada que
-     este panel no ensene ya. */
-  if(getEvType(ev)==='Ensayos boda')
-    h+='<button class="ev-alarm-info" id="evAlarmInfo">ℹ Ver ficha del ensayo</button>';
   h+='<div class="ev-form-actions">';
   h+='<button class="ev-btn primary" id="evAlarmCreate">&#128276; Crear alarma</button>';
   h+='<button class="ev-btn ev-edit-orange" id="evAlarmEdit">&#9998; Editar evento</button>';
