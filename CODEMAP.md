@@ -41,6 +41,14 @@
 
 **Funciones:** renderEconEstudio:6 · _defaultVinc:28 · _defaultHipAlt:29 · _renderEstudioHipotecaComp:35 (!98) · bindEconEstudioEvents:133 · _estudioReRender:146 · _bindEstudioHipoteca:151 · _readEstHipAltAt:201 · _readEstHipVincAt:212 · _calcGasCost:234 · _currentGasTariff:238 · _renderEstudioGasComp:246 · _renderGasCompCard:306 · _calcElectCost:338 · _currentElectTariff:347 · _renderEstudioElectComp:352 · _renderElectCompCard:413 · _renderMultiScenarioResult:442 · _bindEstudioGas:510 · _bindEstudioElect:540 · _bindScenarios:570 · _readScenarios:589 · _bindCompFields:598 · _saveCompFields:631 · renderEstudioContent:646 · openEstudio:660 · closeEstudio:670 · reRenderEstudio:675 · bindEstudioEvents:683
 
+### js/economics-fiscal-bind.js  _(554 líneas)_
+**Funciones:** openFiscal:9 · closeFiscal:22 · reRenderFiscal:28 · bindFiscalEvents:38 · _switchTab:42 · _bindYearSelector:75 · _bindTabPersonal:112 · _bindTabIrpf:161 · _bindTabGastosDesg:206 (!91) · _rebindComprasDel:255 · _bindTabIrpfDeduc:297 · _bindTabDesgrav:310 (!96) · _bindList:312 · _bindTabDespachoOnly:406 (!83) · _syncLiveD:417 · _updateFmt:455 · _saveFiscalAll:489 · _rv:518
+
+### js/economics-fiscal-datos.js  _(337 líneas)_
+**Estado global:** FISCAL_SK:10 · DEFAULT_BRACKETS:16 · FISCAL:23 · FISCAL_TAB:26 · FISCAL_IRPF_SUB:27 · FISCAL_YEAR:28 · FISCAL_HIP_SUB:30 · FISCAL_HIP_EDITING:31 · FISCAL_HIP_EDIT_SNAPSHOT:32 · FISCAL_HIP_DETAIL_TARGET:33 · PERSONAL_SK:39 · PERSONAL_DATA:40 · DEFAULT_PERSONAL_GASTOS_REC:42 · DEFAULT_PERSONAL_INVERSIONES:48 · INGRESOS_SK:92 · INGRESOS_ITEMS:93 · GASTOS_SK:110 · GASTOS_DIFICIL_PCT:111 · DEFAULT_GASTOS:112 · GASTOS_ITEMS:130 · COMPRAS_SK:192 · COMPRAS_IVA_ENABLED:193 · DEFAULT_COMPRAS:194 · COMPRAS_ITEMS:200 · DESGRAV_SK:247 · DESGRAV_DEFAULT:249 · DESGRAV_ITEMS:269 · OBSOLETE_IDS:272
+
+**Funciones:** _yearKey:36 · _ensureDefaults:55 · loadPersonalYear:71 · savePersonalYear:87 · loadIngresos:94 · saveIngresos:97 · findIngreso:100 · ingresoAnual:104 · loadFiscal:132 · saveFiscal:140 · getIrpfPct:143 · getBrackets:144 · _loadGastosFromRaw:146 · loadGastosYear:164 · loadGastos:177 · saveGastosYear:178 · findGasto:181 · gastoAnual:185 · loadCompras:201 · saveCompras:218 · comprasTotal:222 · comprasIvaTotal:232 · loadDesgrav:271 · saveDesgrav:302 · desgravAnual:305 · computeTotalDesgrav:326
+
 ### js/economics-fiscal-elect.js  _(229 líneas)_
 **Estado global:** FISCAL_ELECT_EDITING:5 · GASTOS_GROUPS:125
 
@@ -56,10 +64,10 @@
 
 **Funciones:** _defaultCompra:8 · _defaultSubrogacion:9 · loadDespacho:10 · saveDespacho:62 · _despachoGetPct:65 · computeDespachoDeduccion:70 · computeDeclResult:124 · computeIrpfBrackets:177 · _hipEffRate:194 · _buildMortgageSwitches:200 · _computeAnnualInterest:221 · _computeBalanceAtDate:255 · renderFiscalTabDespachoOnly:288 · _getActiveMortgage:352 · _fmtDuration:359 · _hipPeriodCard:365 (!87) · _hipROvinc:452 · _calcInsOvercost:462 · _renderInlineOvercost:473 · _renderHipResumen:492 (!99) · _renderHipDetalle:591 · _renderHipSectionContent:617 · _renderCompraSection:629 · _renderPrestamoSection:658 · _renderSubSection:705 · renderFiscalTabDespacho:776 · _bindTabDespacho:793 · _bindHipResumen:817 · _bindHipDetalle:842 · _rerenderSection:913 · _readSectionInputs:922 · _rv:923 · _rv_s:924 · _bindEditingSection:982
 
-### js/economics-fiscal.js  _(1342 líneas)_
-**Estado global:** FISCAL_SK:5 · DEFAULT_BRACKETS:11 · FISCAL:18 · FISCAL_TAB:21 · FISCAL_IRPF_SUB:22 · FISCAL_YEAR:23 · FISCAL_HIP_SUB:25 · FISCAL_HIP_EDITING:26 · FISCAL_HIP_EDIT_SNAPSHOT:27 · FISCAL_HIP_DETAIL_TARGET:28 · PERSONAL_SK:34 · PERSONAL_DATA:35 · DEFAULT_PERSONAL_GASTOS_REC:37 · DEFAULT_PERSONAL_INVERSIONES:43 · INGRESOS_SK:87 · INGRESOS_ITEMS:88 · GASTOS_SK:105 · GASTOS_DIFICIL_PCT:106 · DEFAULT_GASTOS:107 · GASTOS_ITEMS:125 · COMPRAS_SK:187 · COMPRAS_IVA_ENABLED:188 · DEFAULT_COMPRAS:189 · COMPRAS_ITEMS:195 · DESGRAV_SK:242 · DESGRAV_DEFAULT:244 · DESGRAV_ITEMS:264 · OBSOLETE_IDS:267 · GROUP_CASA_DESP:659 · GROUP_UTIL_DESP:660
+### js/economics-fiscal.js  _(471 líneas)_
+**Estado global:** GROUP_CASA_DESP:334 · GROUP_UTIL_DESP:335
 
-**Funciones:** _yearKey:31 · _ensureDefaults:50 · loadPersonalYear:66 · savePersonalYear:82 · loadIngresos:89 · saveIngresos:92 · findIngreso:95 · ingresoAnual:99 · loadFiscal:127 · saveFiscal:135 · getIrpfPct:138 · getBrackets:139 · _loadGastosFromRaw:141 · loadGastosYear:159 · loadGastos:172 · saveGastosYear:173 · findGasto:176 · gastoAnual:180 · loadCompras:196 · saveCompras:213 · comprasTotal:217 · comprasIvaTotal:227 · loadDesgrav:266 · saveDesgrav:297 · desgravAnual:300 · computeTotalDesgrav:321 · renderFiscalContent:333 · _renderYearSelector:359 · _renderCopyYearBtn:367 · _personalListHtml:390 · _personalTotal:433 · _personalTotalWeekly:443 · renderFiscalTabPersonal:452 · renderFiscalTabIrpf:493 · renderFiscalTabGastosDesg:540 · renderComprasList:571 · renderFiscalTabIrpfDeduc:620 · renderFiscalTabDesgrav:633 · renderDesgravDespachoInfo:655 · _dedCard:696 · renderDesgravList:731 · openFiscal:797 · closeFiscal:810 · reRenderFiscal:816 · bindFiscalEvents:826 · _switchTab:830 · _bindYearSelector:863 · _bindTabPersonal:900 · _bindTabIrpf:949 · _bindTabGastosDesg:994 (!91) · _rebindComprasDel:1043 · _bindTabIrpfDeduc:1085 · _bindTabDesgrav:1098 (!96) · _bindList:1100 · _bindTabDespachoOnly:1194 (!83) · _syncLiveD:1205 · _updateFmt:1243 · _saveFiscalAll:1277 · _rv:1306
+**Funciones:** renderFiscalContent:8 · _renderYearSelector:34 · _renderCopyYearBtn:42 · _personalListHtml:65 · _personalTotal:108 · _personalTotalWeekly:118 · renderFiscalTabPersonal:127 · renderFiscalTabIrpf:168 · renderFiscalTabGastosDesg:215 · renderComprasList:246 · renderFiscalTabIrpfDeduc:295 · renderFiscalTabDesgrav:308 · renderDesgravDespachoInfo:330 · _dedCard:371 · renderDesgravList:406
 
 ### js/economics-gastos.js  _(701 líneas)_
 **Estado global:** GASTOS_TOGGLES_SK:5 · GASTOS_TOGGLES:6 · GROUP_SEMIOBL:96 · GROUP_CASA:97 · GROUP_OTROS_IMP:98 · GROUP_S:472 · GROUP_C:473 · GROUP_S2:571 · GROUP_C2:572
@@ -82,6 +90,11 @@
 ### js/events-bind.js  _(472 líneas)_
 **Funciones:** _switchEvView:6 · openEvents:23 · closeEvents:33 · openEventsAt:40 · refreshEvents:47 · bindEvEvents:63 (!409) · _scrollWeekToMonth:71 · _scrollWeekToToday:118 · doScroll:128 · apply:435
 
+### js/events-cal.js  _(333 líneas)_
+**Estado global:** DN7:25
+
+**Funciones:** renderEvCalMonth:14 (!145) · _renderEvMonthCard:159 (!146) · renderEvAnnual:305 · renderEvQuad:314
+
 ### js/events-detail.js  _(571 líneas)_
 **Funciones:** openEvDeleteSheet:7 · closeEvDeleteSheet:37 · renderEvDetail:40 (!117) · fd2:43 · _fila:122 · evDayCarItems:157 · evCarGo:170 · _evCarShow:178 · openEvDayCarousel:186 · closeEvDayCarousel:194 · openEvDetail:201 (!155) · repintar:241 · closeEvDetail:356 · renderEvAlarmPanel:359 (!80) · fd2:361 · openEvAlarm:439 · closeEvAlarm:445 · openBdayAlarmFromEvents:453 · bindEvAlarmEvents:461 (!110) · _syncPre:499 · fmtD:529
 
@@ -98,10 +111,8 @@
 
 **Funciones:** openOtrosDatePicker:7 (!96) · _evDk:11 · _count:12 · _render:13 · _attach:54 · _rerender:85 · _close:93
 
-### js/events-render.js  _(905 líneas)_
-**Estado global:** DN7:20
-
-**Funciones:** renderEvCalMonth:9 (!145) · renderEvListItem:154 · fd2:158 · renderEvUpcoming:186 (!177) · fd2:193 · renderEvItem:194 · renderEvPanel:244 · _renderEvMonthCard:363 (!146) · renderEvAnnual:509 · renderEvQuad:518 · renderEvByTypes:539 · coincide:565 · renderEvMonthsView:611 · renderEvWeek:620 (!132) · hexA:624 · renderEvContent:752 (!153)
+### js/events-render.js  _(587 líneas)_
+**Funciones:** renderEvListItem:11 · fd2:15 · renderEvUpcoming:43 (!178) · fd2:50 · renderEvItem:51 · renderEvPanel:101 · renderEvByTypes:221 · coincide:247 · renderEvMonthsView:293 · renderEvWeek:302 (!132) · hexA:306 · renderEvContent:434 (!153)
 
 ### js/events.js  _(621 líneas)_
 **Estado global:** EV_STORAGE_KEY:5 · EV_YEAR:6 · EV_MONTH:7 · EV_VIEW_STATE:11 · EV_SCROLL_RESET:16 · EV_VIEW:17 · EV_EDIT:18 · EV_EDIT_DS:19 · EV_FORM_CONTAINER:20 · EV_EDIT_MODE:21 · EV_BRIGHT_PAST:22 · EV_ANNUAL_VIEW:23 · EV_ANNUAL_FILTER_HIDDEN:24 · EV_FILTER_GROUPS:32 · EV_FILTER_SHORT:38 · EV_FILTER_COLOR:40 · EV_FILTER_SEP_AFTER:43 · EV_PREV_VIEW:53 · EV_QUAD_YEAR:54 · EV_QUAD_MONTH:55 · EV_TO_SUBTAB:56 · EV_TYPES_FILTER:57 · EV_TYPES_PAST:58 · EV_LIST_SORT:59 · EV_LIST_SEARCH:60 · EV_COLORS:61 · EVENTS:62 · EV_ALARM_SK:91 · EV_ALARMS_SET:92 · EV_NO_RUT:184 · EV_MARK_ORDER:332 · EV_MAX_PUNT_DIA:373 · EV_MAX_RUT_DIA:374 · EV_CAL_CORNER_STACK:377 · EV_MAX_VIP_DIA:379 · EV_CAL_VIP_MAX:380 · EV_UP_SHOW_RUT:382 · EV_UP_SHOW_BODA:383 · EV_BAR_Z:432 · EV_MNS:491 · EV_CAR:534 · EV_TRANSPORTES:553 · EV_TRANS_EMOJI:559

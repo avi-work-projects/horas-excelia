@@ -4,7 +4,7 @@
    → Cambiar CACHE_VER en cada deploy para forzar actualización
    ============================================================ */
 
-var CACHE_VER = 'v275';
+var CACHE_VER = 'v276';
 var CACHE_NAME = 'horas-excelia-' + CACHE_VER;
 
 var ASSETS = [
@@ -22,9 +22,11 @@ var ASSETS = [
   './js/economics-comp.js',
   './js/economics-sim.js',
   './js/economics-gastos.js',
+  './js/economics-fiscal-datos.js',
   './js/economics-fiscal.js',
   './js/economics-fiscal-hip.js',
   './js/economics-fiscal-gas.js',
+  './js/economics-fiscal-bind.js',
   './js/economics-fiscal-elect.js',
   './js/birthdays.js',
   './js/events-picker-color.js',
@@ -32,6 +34,7 @@ var ASSETS = [
   './js/rutinas.js',
   './js/bodas.js',
   './js/events.js',
+  './js/events-cal.js',
   './js/events-render.js',
   './js/events-form.js',
   './js/events-detail.js',
