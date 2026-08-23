@@ -254,6 +254,13 @@ var _g2=document.getElementById('pdfExportBtn'); if(_g2)_g2.addEventListener('cl
 });
 
 
+/* Lee una clave de localStorage ya parseada. Se usa al exportar para no
+   depender de que la variable en memoria este cargada. */
+function _lsJson(key,fallback){
+  try{var r=localStorage.getItem(key);if(r)return JSON.parse(r);}catch(e){}
+  return fallback;
+}
+
 /* ── Modo de importación: añadir (incremental) o reemplazar ──────────
    Devuelve 'merge' | 'replace' al callback (o nada si se cancela). */
 function askImportMode(subtitle,cb){
@@ -352,14 +359,15 @@ var _g4=document.getElementById('exportAllBtn'); if(_g4)_g4.addEventListener('cl
   if(typeof loadDesgrav==='function')loadDesgrav();
   if(typeof loadPersonalYear==='function')loadPersonalYear(CY);
   if(typeof loadEconComp==='function')loadEconComp();
-  var data={version:4,days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
+  if(typeof loadEvAlarms==='function')loadEvAlarms();
+  var data={version:5,days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
     exclFest:EXCL_FEST,exclVac:EXCL_VAC,vacEntitlement:VAC_ENTITLEMENT,
     birthdays:BDAYS,events:EVENTS,
     bodas:typeof BODA_COUPLES!=='undefined'?BODA_COUPLES:null,
     bodasClosed:typeof BODA_CLOSED!=='undefined'?BODA_CLOSED:null,
     rutinas:typeof RUTINAS!=='undefined'?RUTINAS:null,
     bdayAlarmCount:typeof BDAY_ALARM_COUNT!=='undefined'?BDAY_ALARM_COUNT:null,
-    gastosToggles:(function(){try{return JSON.parse(localStorage.getItem('excelia-gastos-tgl-v1'));}catch(e){return null;}})(),
+    gastosToggles:_lsJson('excelia-gastos-tgl-v1',null),
     alarms:typeof ALARMS!=='undefined'?ALARMS:[],
     fiscal:typeof FISCAL!=='undefined'?FISCAL:null,
     gastos:typeof GASTOS_ITEMS!=='undefined'?GASTOS_ITEMS:null,
@@ -372,8 +380,15 @@ var _g4=document.getElementById('exportAllBtn'); if(_g4)_g4.addEventListener('cl
     gastosPerYear:_exportPerYearKeys('excelia-gastos-v1'),
     personalPerYear:_exportPerYearKeys('excelia-personal-v1'),
     scenarios:typeof ECON_SCENARIOS!=='undefined'?ECON_SCENARIOS:null,
-    evAlarms:typeof EV_ALARMS_SET!=='undefined'?EV_ALARMS_SET:null,
-    bdayAlarms:typeof BDAY_ALARM_SET!=='undefined'?BDAY_ALARM_SET:null,
+    /* Estas tres se leen de localStorage y no de memoria: la variable puede
+       seguir vacia si el usuario no ha abierto la ventana que la carga. */
+    evAlarms:_lsJson('excelia-ev-alarm-v1',typeof EV_ALARMS_SET!=='undefined'?EV_ALARMS_SET:null),
+    bdayAlarms:_lsJson('excelia-bday-alarm-set',typeof BDAY_ALARM_SET!=='undefined'?BDAY_ALARM_SET:null),
+    /* Configuracion economica POR ANIO: vive dentro de excelia-horas-v3 y se
+       perdia entera al restaurar. */
+    multiRate:typeof ECON_MULTI_RATE!=='undefined'?ECON_MULTI_RATE:null,
+    ratePeriods:typeof ECON_RATE_PERIODS!=='undefined'?ECON_RATE_PERIODS:null,
+    econYearConfig:typeof ECON_YEAR_CONFIG!=='undefined'?ECON_YEAR_CONFIG:null,
     macroUrl:localStorage.getItem('excelia-alarm-url')||null,
     alarmHour:localStorage.getItem('excelia-alarm-h')||null,
     alarmMinute:localStorage.getItem('excelia-alarm-m')||null,
@@ -496,6 +511,12 @@ function _applyFullImport(d,mode){
       if(d.alarmMinute)localStorage.setItem('excelia-alarm-m',d.alarmMinute);
       if(d.alarmDays)localStorage.setItem('excelia-alarm-days',d.alarmDays);
       if(d.theme)localStorage.setItem('excelia-theme-v1',d.theme);
+      /* Va antes del save(): save() vuelca estas variables a excelia-horas-v3,
+         asi que si se asignan despues no llegan al disco. */
+      if(typeof d.multiRate!=='undefined'&&d.multiRate!==null&&typeof ECON_MULTI_RATE!=='undefined')ECON_MULTI_RATE=d.multiRate;
+      if(d.ratePeriods&&typeof ECON_RATE_PERIODS!=='undefined')ECON_RATE_PERIODS=d.ratePeriods;
+      if(d.econYearConfig&&typeof ECON_YEAR_CONFIG!=='undefined')
+        ECON_YEAR_CONFIG=merge?_mergeMap(ECON_YEAR_CONFIG,d.econYearConfig):d.econYearConfig;
       save();render();
       updateBdayBtn();updateEventsBtn();
       showToast(merge?('Backup fusionado'+(_impRes?(' · eventos: '+evMergeMsg(_impRes)):''))

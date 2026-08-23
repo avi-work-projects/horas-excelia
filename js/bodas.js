@@ -1144,7 +1144,9 @@ function _bodaFormRender(){
   var _mb=document.getElementById('bodaFormMulti');
   if(_mb)_mb.addEventListener('click',function(){
     F.ds=dia.value||F.ds;
-    var ini=(F.dates&&F.dates.length)?F.dates.slice():[F.ds];
+    /* En blanco a proposito: con el dia de hoy ya marcado, aceptar sin mirar
+       creaba una clase de hoy que nadie habia pedido. */
+    var ini=(F.dates&&F.dates.length)?F.dates.slice():[];
     var cc=bodaCouple(F.tmp.boda.coupleId);
     openOtrosDatePicker(ini,(cc&&cc.color)||EV_TYPE_COLORS['puntual|Ensayos boda'],
       parseInt(F.ds.slice(0,4),10),function(sel){

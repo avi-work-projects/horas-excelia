@@ -548,12 +548,17 @@ function bindEvAlarmEvents(ev,firstDate){
     alarmas.forEach(function(a){
       var _f=a.fecha||firstDate;
       var _fTxt=String(_f.getDate()).padStart(2,'0')+'/'+String(_f.getMonth()+1).padStart(2,'0');
-      /* Si la alarma cae HOY no se manda dia de la semana: asi el reloj la crea
-         de una sola vez, en vez de repetirla ese dia todas las semanas para
-         siempre. Para una fecha futura el dia sigue siendo la unica forma de
-         que SET_ALARM la coloque en su dia. */
-      var _esHoy=(fmtD(_f)===fmtD(new Date()));
-      var _dow=_esHoy?null:(_f.getDay()+1);
+      /* Dia de la semana = alarma que se REPITE esa fecha todas las semanas.
+         Solo hace falta cuando el aviso cae mas alla de manana: una alarma
+         sin DAYS suena en la siguiente vez que el reloj marque esa hora, o
+         sea, siempre dentro de las proximas 24 h. Asi que si el momento del
+         aviso esta en esa ventana, no se manda dia y queda de una sola vez.
+         El margen de 5 min descarta lo que ya ha pasado (sin DAYS saltaria
+         manana) y lo que esta tan cerca que no da tiempo a nada. */
+      var _cuando=new Date(_f.getFullYear(),_f.getMonth(),_f.getDate(),a.h,a.m,0,0);
+      var _faltan=_cuando-Date.now();
+      var _unaVez=(_faltan>=5*60000&&_faltan<=24*3600000);
+      var _dow=_unaVez?null:(_f.getDay()+1);
       var msg='\uD83D\uDCC5 '+ev.title+' '+_fTxt+a.suf;
       if(typeof addAlarm==='function'){
         addAlarm({type:'event',label:msg,hour:a.h,minute:a.m,days:_dow?[_dow]:null,targetDate:fmtD(_f)});

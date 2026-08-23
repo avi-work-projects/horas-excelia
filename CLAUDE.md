@@ -192,6 +192,33 @@ manifest.json       ← PWA manifest
 - `ALARMS` — array de alarmas creadas desde el PWA (js/alarms.js, persiste en `excelia-alarms-v1`)
 - `RUTINAS` — rutinas semanales (js/rutinas.js, persiste en `excelia-rutinas-v1`)
 
+## Copia de seguridad: el censo manda (v278)
+Dos agujeros encontrados haciendo la ida y vuelta completa (exportar → borrar
+todas las claves `excelia-*` → importar → comparar clave a clave):
+
+- **`EV_ALARMS_SET` se exportaba vacío** si no se había abierto la ventana de
+  eventos: la variable arranca en `{}` y solo la rellena `loadEvAlarms()`. Al
+  exportar, las claves que **no** dependen de haber abierto una ventana se leen
+  ahora directamente de localStorage con `_lsJson(clave,respaldo)`.
+- **La configuración económica por año** (`econYearConfig`, `multiRate`,
+  `ratePeriods`) vive dentro de `excelia-horas-v3` y no se exportaba. Al
+  importar hay que asignarla **antes** del `save()` final, porque es `save()`
+  quien la vuelca al disco.
+
+La regla `ninguna clave de localStorage se queda fuera del backup` de
+`tools/test.js` lleva un **censo** de todas las claves. Si aparece una nueva el
+test cae y hay que declararla ahí diciendo con qué campo del backup viaja (o
+`false` si a propósito no viaja). Es el momento en que uno se acuerda de tocar
+"Exportar todo".
+
+## Alarmas: cuándo se manda el día de la semana (v278)
+`alarmDays` hace que el reloj cree una alarma que se **repite** ese día todas
+las semanas. Una alarma sin `DAYS` suena en la próxima vez que el reloj marque
+esa hora, o sea siempre **dentro de las próximas 24 h**. Por eso: si faltan
+entre **5 min y 24 h** para el aviso, no se manda día y queda de una sola vez;
+fuera de esa ventana sí, que es la única forma de colocarla en su día. El
+suelo de 5 min descarta lo que ya ha pasado (sin `DAYS` saltaría mañana).
+
 ## Persistencia
 Todos los datos en `localStorage`. No hay servidor.
 - Datos principales: `excelia-horas-v3`

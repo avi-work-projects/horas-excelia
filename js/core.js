@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v277 — Arranque sin error, + info en Próximos y ensayos multidía';
+var APP_VERSION = 'v278 — Backup completo, alarmas de una sola vez y ensayos';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
