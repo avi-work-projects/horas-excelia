@@ -55,7 +55,13 @@ const VISTAS = [
   ['detalle-ensayo-completo', () => app.renderEvDetail(app.EVENTS.find(e => e.id === 'fx-boda-ok'), false)],
   ['detalle-ensayo-vacio', () => app.renderEvDetail(app.EVENTS.find(e => e.id === 'fx-boda-vacia'), false)],
   ['detalle-en-carrusel', () => app.renderEvDetail(app.EVENTS.find(e => e.id === 'fx-p1'), false, { ds: '2026-08-26', i: 1, n: 5 })],
-  ['bodas-clases', () => { app.BODA_SUBTAB = 'clases'; return app.renderBodasBody(); }],
+  ['bodas-clases', () => { app.BODA_SUBTAB = 'clases'; app.BODA_CLASS_MODE = 'ver'; return app.renderBodasBody(); }],
+  ['bodas-clases-edicion', () => {
+    app.BODA_SUBTAB = 'clases'; app.BODA_CLASS_MODE = 'editar';
+    const h = app.renderBodasBody();
+    app.BODA_CLASS_MODE = 'ver';
+    return h;
+  }],
   ['bodas-parejas', () => { app.BODA_SUBTAB = 'parejas'; app.BODA_PAREJAS_FILTER = 'todas'; app.BODA_CARD_OPEN = null; return app.renderBodasBody(); }],
   ['bodas-pareja-desplegada', () => { app.BODA_CARD_OPEN = 'fx-pareja-1'; const h = app.renderBodasBody(); app.BODA_CARD_OPEN = null; return h; }],
   ['bodas-calendario', () => { app.BODA_SUBTAB = 'calendario'; app.BODA_CAL_YEAR = 2026; app.BODA_CAL_MONTH = 7; return app.renderBodasBody(); }],
