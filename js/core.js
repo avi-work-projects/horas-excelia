@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v276 - events-render y economics-fiscal partidos en dos y tres';
+var APP_VERSION = 'v277 — Arranque sin error, + info en Próximos y ensayos multidía';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

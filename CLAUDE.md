@@ -884,6 +884,23 @@ Test local: `py -m http.server 8082` desde la raíz del proyecto.
 - **SIEMPRE** incluir al final de cada respuesta tras un push: `✅ Versión desplegada: vN — descripción`
 - Esto permite al usuario verificar que su PWA instalada está actualizada sin ambigüedad.
 
+### ⚠️ El HTML y los JS, SIEMPRE de la misma generación de caché (v277)
+El fallo que lo destapó: el SW servía el HTML **network-first** y los JS
+**cache-first**. En la primera carga tras un despliegue salía el `index.html`
+NUEVO con el `init.js` VIEJO. Si entre las dos versiones se había quitado un
+elemento del HTML, el JS viejo hacía `getElementById(...).addEventListener`
+sobre `null`, reventaba, y con él se caía **el resto del fichero** (el error
+"Cannot read properties of null (reading 'addEventListener')").
+
+Ahora todo sale de `CACHE_NAME`, HTML incluido: o se sirve todo lo nuevo o
+todo lo viejo, nunca mezclado. El documento se revalida en segundo plano, así
+que el despliegue entra en la carga siguiente.
+
+Como segunda red, los listeners que se enganchan **al cargar** (`init.js`,
+`import-export.js`) van todos guardados con `if(el)`. Los de dentro de un
+`openXxx` no: ahí un elemento ausente **es** un fallo del render y conviene
+que se note.
+
 ### ⚠️ CRÍTICO: sw.js DEBE cambiar en CADA push, incluso los más pequeños
 El navegador detecta actualizaciones del Service Worker comparando `sw.js` byte a byte.
 Si solo cambian archivos JS/CSS pero `sw.js` no cambia → el SW no se actualiza → el usuario NO ve el botón de actualizar → la app queda en la versión antigua sin avisar.

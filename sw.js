@@ -4,7 +4,7 @@
    → Cambiar CACHE_VER en cada deploy para forzar actualización
    ============================================================ */
 
-var CACHE_VER = 'v276';
+var CACHE_VER = 'v277';
 var CACHE_NAME = 'horas-excelia-' + CACHE_VER;
 
 var ASSETS = [
@@ -99,32 +99,28 @@ self.addEventListener('fetch', function(e) {
   // Solo interceptar peticiones al mismo origin
   if (url.origin !== self.location.origin) return;
 
-  // HTML → Network-first (para recibir secrets inyectados por CI)
-  if (e.request.destination === 'document' || url.pathname.endsWith('.html')) {
-    e.respondWith(
-      fetch(e.request)
-        .then(function(response) {
-          var clone = response.clone();
-          caches.open(CACHE_NAME).then(function(c) { c.put(e.request, clone); });
-          return response;
-        })
-        .catch(function() {
-          return caches.match(e.request);
-        })
-    );
-    return;
-  }
+  /* TODO desde la MISMA generacion de cache (la de CACHE_VER), HTML incluido.
+     Antes el HTML iba a red primero y los assets a cache primero: en la
+     primera carga tras un despliegue salia el index.html nuevo con el JS
+     viejo, y si entre versiones habia desaparecido algun elemento el JS viejo
+     petaba al engancharle un listener. Ahora o se sirve todo lo nuevo o todo
+     lo viejo, nunca mezclado; el cambio de generacion lo hace el activate. */
+  var esDocumento = (e.request.destination === 'document' || url.pathname.endsWith('.html'));
 
-  // Assets (CSS, JS, SVG) → Cache-first con fallback a network
   e.respondWith(
-    caches.match(e.request).then(function(cached) {
-      if (cached) return cached;
-      return fetch(e.request).then(function(response) {
-        if (response && response.status === 200) {
-          var clone = response.clone();
-          caches.open(CACHE_NAME).then(function(c) { c.put(e.request, clone); });
+    caches.open(CACHE_NAME).then(function(cache) {
+      return cache.match(e.request).then(function(cached) {
+        /* El documento se revalida en segundo plano: asi el despliegue de hoy
+           entra en la proxima carga sin dejar de servir algo coherente hoy. */
+        var red = fetch(e.request).then(function(response) {
+          if (response && response.status === 200) cache.put(e.request, response.clone());
+          return response;
+        }).catch(function() { return cached; });
+        if (cached) {
+          if (esDocumento) red;      /* revalidar sin esperar */
+          return cached;
         }
-        return response;
+        return red;
       });
     })
   );

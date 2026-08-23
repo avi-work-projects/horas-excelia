@@ -41,13 +41,13 @@
   _updateHeaderActive();
 
   /* ── Navegación de mes ── */
-  document.getElementById('prevBtn').addEventListener('click',function(){
+  var _g1=document.getElementById('prevBtn'); if(_g1)_g1.addEventListener('click',function(){
     CM--;if(CM<0){CM=11;CY--;}render();
   });
-  document.getElementById('nextBtn').addEventListener('click',function(){
+  var _g2=document.getElementById('nextBtn'); if(_g2)_g2.addEventListener('click',function(){
     CM++;if(CM>11){CM=0;CY++;}render();
   });
-  document.getElementById('todayBtn').addEventListener('click',function(){
+  var _g3=document.getElementById('todayBtn'); if(_g3)_g3.addEventListener('click',function(){
     var n=new Date();CY=n.getFullYear();CM=n.getMonth();render();
   });
 
@@ -59,7 +59,7 @@
   });
 
   /* ── Botón "Editar jornada" ── */
-  document.getElementById('editHoursBtn').addEventListener('click',function(){
+  var _g4=document.getElementById('editHoursBtn'); if(_g4)_g4.addEventListener('click',function(){
     var panel=document.getElementById('hoursPanel');
     var isOpen=panel.classList.contains('open');
     if(isOpen){
@@ -74,7 +74,7 @@
     }
   });
 
-  document.getElementById('closeHoursBtn').addEventListener('click',function(){
+  var _g5=document.getElementById('closeHoursBtn'); if(_g5)_g5.addEventListener('click',function(){
     document.getElementById('hoursPanel').classList.remove('open');
   });
 
@@ -109,13 +109,13 @@
   });
 
   /* ── Botones del header (overlays) ── */
-  document.getElementById('econBtn').addEventListener('click',openEcon);
-  document.getElementById('bdayBtn').addEventListener('click',openBday);
-  document.getElementById('eventsBtn').addEventListener('click',openEvents);
-  document.getElementById('estudioBtn').addEventListener('click',openEstudio);
+  var _g6=document.getElementById('econBtn'); if(_g6)_g6.addEventListener('click',openEcon);
+  var _g7=document.getElementById('bdayBtn'); if(_g7)_g7.addEventListener('click',openBday);
+  var _g8=document.getElementById('eventsBtn'); if(_g8)_g8.addEventListener('click',openEvents);
+  var _g9=document.getElementById('estudioBtn'); if(_g9)_g9.addEventListener('click',openEstudio);
 
   /* ── Alarma: panel configurable (Vivo X200 Ultra / Android) ── */
-  document.getElementById('alarmTestBtn').addEventListener('click',function(e){
+  var _g10=document.getElementById('alarmTestBtn'); if(_g10)_g10.addEventListener('click',function(e){
     e.stopPropagation();
     var panel=document.getElementById('alarmPanel');
     var opening=!panel.classList.contains('open');
@@ -251,16 +251,16 @@
       +'<button class="alarm-past-btn-cancel" id="alarmPastCancel">Cancelar</button>'
       +'</div>';
     document.getElementById('alarmPanel').appendChild(dlg);
-    document.getElementById('alarmPastOk').addEventListener('click',function(e){
+    var _g11=document.getElementById('alarmPastOk'); if(_g11)_g11.addEventListener('click',function(e){
       e.stopPropagation();dlg.remove();onConfirm();
     });
-    document.getElementById('alarmPastCancel').addEventListener('click',function(e){
+    var _g12=document.getElementById('alarmPastCancel'); if(_g12)_g12.addEventListener('click',function(e){
       e.stopPropagation();dlg.remove();
     });
   }
 
   /* ── Alarma: toggle MacroDroid ── */
-  document.getElementById('alarmCreateBtn').addEventListener('click',function(){
+  var _g13=document.getElementById('alarmCreateBtn'); if(_g13)_g13.addEventListener('click',function(){
     var h=getDrumValue('drumHour');
     var m=getDrumValue('drumMin');
     localStorage.setItem('excelia-alarm-h',h);
@@ -319,7 +319,7 @@
   /* ── Alarma: fallback .ics (recordatorio de calendario, 100% fiable) ── */
 
   /* ── Menú 3 puntos: exportar/importar TODO + MacroDroid URLs ── */
-  document.getElementById('menuBtn').addEventListener('click',function(e){
+  var _g14=document.getElementById('menuBtn'); if(_g14)_g14.addEventListener('click',function(e){
     e.stopPropagation();
     var menu=document.getElementById('dataMenu');
     var opening=!menu.classList.contains('open');
@@ -365,7 +365,7 @@
   }
 
   /* ── Bottom sheet: overlay de fondo ── */
-  document.getElementById('overlay').addEventListener('click',closeSheet);
+  var _g15=document.getElementById('overlay'); if(_g15)_g15.addEventListener('click',closeSheet);
 
   /* ── Bottom sheet: opciones de tipo de día ── */
   document.querySelectorAll('.sheet-option').forEach(function(opt){
@@ -385,7 +385,7 @@
   });
 
   /* ── Tema visual: botón en menú ── */
-  document.getElementById('themeBtn').addEventListener('click',function(e){
+  var _g16=document.getElementById('themeBtn'); if(_g16)_g16.addEventListener('click',function(e){
     e.stopPropagation();
     cycleTheme();
   });

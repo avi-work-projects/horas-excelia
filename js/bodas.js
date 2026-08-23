@@ -578,7 +578,8 @@ function _renderBodaClases(){
       h+='<span class="boda-class-mark">'+bodaMarkFor(ev)+'</span>';
       h+='<button class="boda-inp boda-time-btn" data-id="'+ev.id+'">'+(b.time||'--:--')+'</button>';
       h+='<button class="boda-inp boda-couple-btn" data-id="'+ev.id+'">'
-        +(c?('<span class="ev-bpunto" style="background:'+c.color+'"></span>'+escHtml(c.name)):'— asignar —')
+        +(c?('<span class="ev-bpunto" style="background:'+c.color+'"></span><span>'+escHtml(c.name)+'</span>')
+           :'<span class="boda-ro-sin">— asignar —</span>')
         +'</button>';
       h+='<button class="boda-inp boda-place-btn'+(b.place?'':' vacio')+'" data-id="'+ev.id+'">'
         +escHtml(b.place?BODA_PLACE_SHORT[b.place]:'Sin sala')+'</button>';
@@ -1102,8 +1103,18 @@ function _bodaFormRender(){
   h+='<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">'
     +(F.nuevo?'Nueva clase':'Editar clase')+'</div>';
   h+='<div style="width:36px"></div></div>';
-  h+='<div class="ev-field"><label>\ud83d\udcc5 Día del ensayo</label>'
-    +'<input class="ev-input" id="bodaFormDia" type="date" value="'+F.ds+'"></div>';
+  var _multi=(F.dates&&F.dates.length)?F.dates.slice().sort():null;
+  h+='<div class="ev-field"><label>\ud83d\udcc5 Día del ensayo</label>';
+  h+='<div class="boda-dia-row">';
+  h+='<input class="ev-input" id="bodaFormDia" type="date" value="'+F.ds+'"'+(_multi?' disabled':'')+'>';
+  if(F.nuevo)h+='<button type="button" class="boda-multi-btn'+(_multi?' on':'')+'" id="bodaFormMulti">'
+    +(_multi?(_multi.length+' días'):'Varios días')+'</button>';
+  h+='</div>';
+  if(_multi){
+    h+='<div class="boda-multi-lista">'+_multi.map(function(d){return _bodaFmtCorto(d);}).join(' \u00b7 ')
+      +' <button type="button" class="boda-multi-x" id="bodaFormMultiX">quitar</button></div>';
+  }
+  h+='</div>';
   h+='<div class="ev-bficha">';
   h+='<button type="button" class="ev-bfila'+(b.time?'':' warn')+'" data-fcampo="hora">'
     +'<span class="ev-bfila-lbl">\ud83d\udd52 Hora</span>'
@@ -1128,6 +1139,22 @@ function _bodaFormRender(){
   document.getElementById('bodaFormClose').addEventListener('click',closeBodaClaseForm);
   var dia=document.getElementById('bodaFormDia');
   dia.addEventListener('change',function(){F.ds=this.value||F.ds;});
+  /* Multidia: el mismo selector que usa la categoria "Otros" del formulario
+     de eventos. Solo al crear; cambiar una clase existente sigue siendo un dia. */
+  var _mb=document.getElementById('bodaFormMulti');
+  if(_mb)_mb.addEventListener('click',function(){
+    F.ds=dia.value||F.ds;
+    var ini=(F.dates&&F.dates.length)?F.dates.slice():[F.ds];
+    var cc=bodaCouple(F.tmp.boda.coupleId);
+    openOtrosDatePicker(ini,(cc&&cc.color)||EV_TYPE_COLORS['puntual|Ensayos boda'],
+      parseInt(F.ds.slice(0,4),10),function(sel){
+        F.dates=(sel&&sel.length>1)?sel.slice().sort():null;
+        if(sel&&sel.length===1)F.ds=sel[0];
+        _bodaFormRender();
+      });
+  });
+  var _mx=document.getElementById('bodaFormMultiX');
+  if(_mx)_mx.addEventListener('click',function(){F.dates=null;_bodaFormRender();});
   document.querySelectorAll('#bodaFormOv .ev-bfila[data-fcampo]').forEach(function(fila){
     fila.addEventListener('click',function(){
       F.ds=dia.value||F.ds;                      /* no perder la fecha tecleada */
@@ -1154,11 +1181,22 @@ function _bodaFormRender(){
     var ds=document.getElementById('bodaFormDia').value||F.ds;
     var b2=F.tmp.boda;
     if(F.nuevo){
-      if(bodaDayFull(ds)){
-        showToast('El '+_bodaFmt(ds)+' ya tiene '+EV_MAX_PUNT_DIA+' eventos puntuales (el máximo)','error');
+      /* Una clase por dia. El tope se mira dia a dia: si alguno esta lleno se
+         crean los demas y se dice cuales se han quedado fuera, que es mas util
+         que abortarlo todo por culpa de un dia. */
+      var dias=(F.dates&&F.dates.length)?F.dates.slice().sort():[ds];
+      var hechas=0,llenos=[];
+      dias.forEach(function(d){
+        if(bodaDayFull(d)){llenos.push(_bodaFmtCorto(d));return;}
+        EVENTS.push(bodaNewClass(d,b2.time,b2.coupleId,b2.place));
+        hechas++;
+      });
+      if(!hechas){
+        showToast(dias.length>1?('Ningún día admite más clases (máximo '+EV_MAX_PUNT_DIA+' por día)')
+          :('El '+_bodaFmt(ds)+' ya tiene '+EV_MAX_PUNT_DIA+' eventos puntuales (el máximo)'),'error');
         return;
       }
-      EVENTS.push(bodaNewClass(ds,b2.time,b2.coupleId,b2.place));
+      F._creadas=hechas;F._llenos=llenos;
     } else {
       var ev=F.ev;
       ev.start=ds;ev.end=ds;
@@ -1169,12 +1207,15 @@ function _bodaFormRender(){
       if(typeof BODA_PENDING!=='undefined'&&BODA_PENDING[ev.id])delete BODA_PENDING[ev.id];
     }
     saveEvents();
-    var terminar=F.alTerminar;
+    var terminar=F.alTerminar, _n=F.nuevo?(F._creadas||0):0, _ll=F._llenos||[];
     closeBodaClaseForm();
     setTimeout(function(){
       refreshEvents();
       if(terminar)terminar();
-      showToast(F&&F.nuevo?'Clase creada':'Clase actualizada','success');
+      if(!_n)showToast('Clase actualizada','success');
+      else if(_n===1&&!_ll.length)showToast('Clase creada','success');
+      else showToast(_n+' clases creadas'+(_ll.length?(' \u00b7 sin sitio el '+_ll.join(', ')):''),
+        _ll.length?'error':'success');
     },310);
   });
 }

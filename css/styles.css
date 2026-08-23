@@ -1465,7 +1465,14 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .bd-alarm-overlay,.ev-alarm-overlay{position:absolute;inset:0;z-index:10;background:rgba(0,0,0,.6);display:none}
 .bd-alarm-overlay.open,.ev-alarm-overlay.open{display:flex;align-items:flex-end}
 /* Campana de alarma en items de próximos (bday + eventos) */
-.ev-upcoming-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.ev-upcoming-right{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:4px;flex-shrink:0}
+.ev-up-right-top{display:flex;align-items:center;gap:6px}
+/* Puerta a la ficha de detalle desde Proximos. Discreto a proposito: el
+   gesto principal de la tarjeta sigue siendo abrir la alarma. */
+.ev-up-info{font-family:var(--font);font-size:.62rem;font-weight:600;line-height:1;
+  padding:3px 7px;border-radius:999px;border:1px solid var(--border);
+  background:var(--surface2);color:var(--text-muted);cursor:pointer;white-space:nowrap}
+.ev-up-info:active{background:var(--surface3);color:var(--text)}
 .ev-upcoming-bell{font-size:.95rem;opacity:.12;transition:opacity .15s;line-height:1}
 .ev-upcoming-bell.set{opacity:1}
 .bd-alarm-sheet{width:100%;background:var(--surface);border-top-left-radius:20px;border-top-right-radius:20px;padding:8px 20px 32px;padding-bottom:calc(32px + env(safe-area-inset-bottom,0px));max-height:92vh;overflow-y:auto}
@@ -1994,8 +2001,26 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .boda-class-mark svg{width:100%;height:100%;display:block;overflow:visible}
 .boda-inp{font-size:.68rem;padding:5px 4px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text);min-width:0;outline:none;text-align:center}
 .boda-time-btn{width:60px;flex:0 0 auto;font-family:var(--mono);cursor:pointer}
-.boda-couple-btn{flex:1 1 auto;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Mismo badge que en Consulta (.boda-ro-couple): hace falta que el boton sea
+   flex, porque .ev-bpunto es un <span> y en flujo en linea el navegador le
+   ignora el width — el punto salia como una raya. */
+.boda-couple-btn{flex:1 1 auto;cursor:pointer;overflow:hidden;min-width:0;
+  display:flex;align-items:center;gap:6px;text-align:left;font-size:.74rem}
+.boda-couple-btn>span:not(.ev-bpunto){overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .boda-place{width:92px;flex:0 0 auto}
+/* Ficha de Nueva clase: el dia y el boton de multidia comparten fila. Con
+   varios dias marcados el <input date> se deshabilita, porque la fecha ya
+   no la manda el, y se listan debajo los dias elegidos. */
+.boda-dia-row{display:flex;align-items:center;gap:8px}
+.boda-dia-row .ev-input{flex:1;min-width:0}
+.boda-dia-row .ev-input:disabled{opacity:.4}
+.boda-multi-btn{flex:0 0 auto;font-family:var(--font);font-size:.7rem;font-weight:600;
+  padding:8px 10px;border-radius:var(--radius-sm);border:1px solid var(--border);
+  background:var(--surface2);color:var(--text-muted);cursor:pointer;white-space:nowrap}
+.boda-multi-btn.on{background:var(--c-blue);border-color:var(--c-blue);color:#fff}
+.boda-multi-lista{margin-top:6px;font-size:.64rem;line-height:1.5;color:var(--text-muted)}
+.boda-multi-x{font-family:var(--font);font-size:.62rem;color:var(--c-orange);
+  background:none;border:none;padding:0 2px;cursor:pointer;text-decoration:underline}
 .boda-class-ro{gap:7px}
 .boda-cl-edit{flex:0 0 auto}
 .boda-ro-time{font-family:var(--mono);font-size:.68rem;color:var(--text);width:40px;flex:0 0 auto}

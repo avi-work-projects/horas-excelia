@@ -5,7 +5,7 @@
 (function(){
 
 /* ── Exportar CSV del año ── */
-document.getElementById('csvExportBtn').addEventListener('click',function(){
+var _g1=document.getElementById('csvExportBtn'); if(_g1)_g1.addEventListener('click',function(){
   var year=CY;
   var now=new Date();
   var ts=now.getFullYear()+
@@ -36,7 +36,7 @@ document.getElementById('csvExportBtn').addEventListener('click',function(){
 });
 
 /* ── Exportar PDF del año ── */
-document.getElementById('pdfExportBtn').addEventListener('click',function(){
+var _g2=document.getElementById('pdfExportBtn'); if(_g2)_g2.addEventListener('click',function(){
   if(typeof jspdf==='undefined'&&typeof window.jspdf==='undefined'){
     showToast('Error: librería jsPDF no cargada','error');return;
   }
@@ -254,36 +254,6 @@ document.getElementById('pdfExportBtn').addEventListener('click',function(){
 });
 
 
-/* ── Importar datos (solo días/semanas/jornada) ── */
-var _impBtn=document.getElementById('importBtn');
-if(_impBtn)_impBtn.addEventListener('click',function(){
-  document.getElementById('importFile').click();
-});
-document.getElementById('importFile').addEventListener('change',function(ev){
-  var f=ev.target.files[0];if(!f)return;
-  var r=new FileReader();
-  r.onload=function(e){
-    var d;
-    try{d=JSON.parse(e.target.result);}
-    catch(err){showToast('Error al importar: archivo inv\u00e1lido','error');return;}
-    askImportMode('D\u00edas y jornada: '+f.name,function(mode){
-      var merge=(mode==='merge');
-      try{
-        if(d.days)ST=merge?_mergeMap(ST,d.days):d.days;
-        if(d.sent)SW=merge?_mergeMap(SW,d.sent):d.sent;
-        if(d.monthH)MONTH_H=merge?_mergeMap(MONTH_H,d.monthH):d.monthH;
-        if(typeof d.rate!=='undefined')DAILY_RATE=d.rate;
-        if(typeof d.exclFest!=='undefined')EXCL_FEST=d.exclFest;
-        if(typeof d.exclVac!=='undefined')EXCL_VAC=d.exclVac;
-        save();render();
-        showToast(merge?'Datos fusionados con los actuales':'Datos importados correctamente','success');
-      }catch(err2){showToast('Error al importar: archivo inv\u00e1lido','error');}
-    });
-  };
-  r.readAsText(f);
-  ev.target.value='';
-});
-
 /* ── Modo de importación: añadir (incremental) o reemplazar ──────────
    Devuelve 'merge' | 'replace' al callback (o nada si se cancela). */
 function askImportMode(subtitle,cb){
@@ -369,7 +339,7 @@ function _exportPerYearKeys(baseKey){
   }
   return Object.keys(result).length?result:null;
 }
-document.getElementById('exportAllBtn').addEventListener('click',function(){
+var _g4=document.getElementById('exportAllBtn'); if(_g4)_g4.addEventListener('click',function(){
   /* Garantizar que toda la config económica esté cargada en memoria.
      loadDespacho/loadFiscal/etc. solo se ejecutan al abrir el overlay
      económico — si el usuario nunca lo abrió, DESPACHO.compra queda en null
@@ -415,10 +385,10 @@ document.getElementById('exportAllBtn').addEventListener('click',function(){
   a.click();
   showToast('Backup completo exportado','success');
 });
-document.getElementById('importAllBtn').addEventListener('click',function(){
+var _g5=document.getElementById('importAllBtn'); if(_g5)_g5.addEventListener('click',function(){
   document.getElementById('importAllFile').click();
 });
-document.getElementById('importAllFile').addEventListener('change',function(ev){
+var _g6=document.getElementById('importAllFile'); if(_g6)_g6.addEventListener('change',function(ev){
   var f=ev.target.files[0];if(!f)return;
   var r=new FileReader();
   r.onload=function(e){
