@@ -383,7 +383,7 @@ function renderEvAlarmPanel(ev,firstDate){
   if(_conFicha)
     h+='<button class="ev-alarm-info" id="evAlarmInfo" style="border-color:'+_ac+'88;'
       +'background:'+_ac+'1c;color:'+_ac+'">'
-      +'<span class="ev-alarm-info-ico">ℹ</span>Ver<br>ficha</button>';
+      +'Ver<br>ficha</button>';
   h+='</div>';
   // Permanent 3-zone alarm marker
   h+='<div class="bd-alarm-marker-row">';
