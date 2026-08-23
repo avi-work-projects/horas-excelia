@@ -92,9 +92,11 @@ function renderEvUpcoming(){
     s+='<span class="ev-upcoming-bell'+(_bellSet?' set':'')+'">&#128276;</span>';
     s+='<div class="'+lblCls+'">'+lbl+'</div>';
     s+='</div>';
-    /* La tarjeta abre la alarma; este boton es la unica via a la ficha de
-       detalle (editar, borrar y, en un ensayo, hora/sala/pareja). */
-    if(!_isVip)s+='<button type="button" class="ev-up-info" data-info="'+ev.id+'">+ info</button>';
+    /* Solo en los ensayos: son los unicos cuya ficha tiene algo que el resto
+       de la tarjeta no ensena ya (hora, sala y pareja, editables ahi mismo).
+       La tarjeta sigue abriendo la alarma. */
+    if(getEvType(ev)==='Ensayos boda')
+      s+='<button type="button" class="ev-up-info" data-info="'+ev.id+'">+ info</button>';
     s+='</div>';
     s+='</div>';
     return s;

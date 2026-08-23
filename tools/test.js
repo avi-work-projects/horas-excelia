@@ -226,6 +226,54 @@ const REGLAS = [
     const b = Object.assign({}, a, { id: 'otro-id' });
     return app.evSignature(a) === app.evSignature(b);
   }],
+  /* Censo de claves de localStorage. La regla compara lo que el codigo
+     ESCRIBE con esta lista: si aparece una clave nueva, el test cae y hay que
+     venir aqui a declarar como se respalda. Ese es el momento en que uno se
+     acuerda de tocar "Exportar todo". */
+  ['ninguna clave de localStorage se queda fuera del backup', () => {
+    const CENSO = {
+      'excelia-horas-v3':          'days/sent/monthH/rate/exclFest/exclVac/multiRate/ratePeriods/econYearConfig',
+      'excelia-vac-days':          'vacEntitlement',
+      'excelia-bdays-v1':          'birthdays',
+      'excelia-events-v1':         'events',
+      'excelia-alarms-v1':         'alarms',
+      'excelia-rutinas-v1':        'rutinas',
+      'excelia-bodas-v1':          'bodas',
+      'excelia-bodas-closed-v1':   'bodasClosed',
+      'excelia-ev-alarm-v1':       'evAlarms',
+      'excelia-bday-alarm-set':    'bdayAlarms',
+      'excelia-bday-alarm-count':  'bdayAlarmCount',
+      'excelia-fiscal-v1':         'fiscal',
+      'excelia-gastos-v1':         'gastos + gastosPerYear',
+      'excelia-gastos-tgl-v1':     'gastosToggles',
+      'excelia-ingresos-v1':       'ingresos',
+      'excelia-compras-v1':        'compras',
+      'excelia-desgrav-v1':        'desgrav',
+      'excelia-despacho-v1':       'despacho',
+      'excelia-personal-v1':       'personalData + personalPerYear',
+      'excelia-econ-comp-v1':      'scenarios',
+      'excelia-alarm-url':         'macroUrl',
+      'excelia-alarm-h':           'alarmHour',
+      'excelia-alarm-m':           'alarmMinute',
+      'excelia-alarm-days':        'alarmDays',
+      'excelia-theme-v1':          'theme',
+      /* A proposito FUERA del backup: */
+      'excelia-macro-alarm-url':   false,   /* clave antigua, solo se lee como respaldo */
+      'excelia-popup-dismissed':   false,   /* aviso de una sesion, no es un dato */
+    };
+    const dir = path.join(__dirname, '..', 'js');
+    const claves = new Set();
+    for (const f of fs.readdirSync(dir)) {
+      if (!f.endsWith('.js')) continue;
+      const txt = fs.readFileSync(path.join(dir, f), 'utf8');
+      for (const m of txt.matchAll(/'(excelia-[a-z0-9]+(?:-[a-z0-9]+)*)'/g)) claves.add(m[1]);
+    }
+    const sinDeclarar = [...claves].filter(k => !(k in CENSO));
+    const sobran = Object.keys(CENSO).filter(k => !claves.has(k));
+    if (sinDeclarar.length) console.log('     claves nuevas sin declarar en el censo: ' + sinDeclarar.join(', '));
+    if (sobran.length) console.log('     el censo nombra claves que ya no existen: ' + sobran.join(', '));
+    return !sinDeclarar.length && !sobran.length;
+  }],
 ];
 
 /* ── Ejecucion ──────────────────────────────────────────────── */
