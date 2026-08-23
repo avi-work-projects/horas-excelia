@@ -90,10 +90,10 @@
 ### js/events-bind.js  _(477 líneas)_
 **Funciones:** _switchEvView:6 · openEvents:23 · closeEvents:33 · openEventsAt:40 · refreshEvents:47 · bindEvEvents:63 (!414) · _scrollWeekToMonth:71 · _scrollWeekToToday:118 · doScroll:128 · apply:440
 
-### js/events-cal.js  _(341 líneas)_
+### js/events-cal.js  _(360 líneas)_
 **Estado global:** DN7:25
 
-**Funciones:** renderEvCalMonth:14 (!148) · _renderEvMonthCard:162 (!151) · renderEvAnnual:313 · renderEvQuad:322
+**Funciones:** renderEvCalMonth:14 (!167) · _renderEvMonthCard:181 (!151) · renderEvAnnual:332 · renderEvQuad:341
 
 ### js/events-detail.js  _(599 líneas)_
 **Funciones:** openEvDeleteSheet:7 · closeEvDeleteSheet:37 · renderEvDetail:40 (!117) · fd2:43 · _fila:122 · evDayCarItems:157 · evCarGo:170 · _evCarShow:178 · openEvDayCarousel:186 · closeEvDayCarousel:194 · openEvDetail:201 (!155) · repintar:241 · closeEvDetail:356 · renderEvAlarmPanel:359 (!93) · fd2:361 · openEvAlarm:452 · closeEvAlarm:458 · openBdayAlarmFromEvents:466 · bindEvAlarmEvents:474 (!125) · _syncPre:512 · fmtD:542

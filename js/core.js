@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v281 — Reparto de dia en el corte de semana, rutinas con contorno y retoques';
+var APP_VERSION = 'v282 — La barra se apaga solo en la parte que se sale del mes';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

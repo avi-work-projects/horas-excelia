@@ -627,6 +627,25 @@ evento es el de mentira (`BODA_FORM.tmp`): sin `start` salía
 "Sala — undefined NaN/NaN". El `tmp` lleva ahora su `start` y se mantiene al día
 con el campo de fecha.
 
+## Una barra se apaga solo en lo que se sale del mes (v282)
+El calendario de 1 mes enseña los días de relleno del mes vecino en gris. Una
+barra que cruza la frontera se pintaba entera a todo color por encima de esas
+casillas apagadas, y cantaba: parecía que octubre estuviera dentro de septiembre.
+
+En `renderEvCalMonth` la barra se **parte** por la frontera (`inMCols`) y cada
+trozo lleva la intensidad de las casillas que cubre. Se parte en vez de
+recortarse para no perder el aviso de que el viaje continúa. Al partir hay tres
+cosas que respetar, y las tres se ven a simple vista si se olvidan:
+
+- Las **esquinas redondeadas** (`starts`/`ends`) solo las lleva el trozo que
+  tiene el extremo de verdad; los cortes interiores van rectos.
+- El **título** se pinta una sola vez, en el primer trozo dentro del mes (si no
+  hay ninguno, en el primero: la barra entera está fuera).
+- Las **medias casillas** (`halfL`/`halfR`) van en el trozo que toca cada extremo,
+  y el `calc(50% / N)` se mide sobre los días de ESE trozo, no los del evento.
+
+Anual y 4 meses no lo necesitan: ahí las barras ya se recortan al mes.
+
 ## Rutinas: contorno y barritas (v281)
 - **Contorno**: `rutIconSvg` pinta la silueta dos veces — una negra que la
   ensancha y cierra la unión de las piezas, otra de color que la rellena. La

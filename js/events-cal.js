@@ -140,15 +140,34 @@ function renderEvCalMonth(){
       wMulti.forEach(function(it){
         if(it.row<0)return;
         var ev=it.ev;
-        var sc=it.starts&&it.ends?'':it.starts?' starts':it.ends?' ends':' continues';
         var showT=it.starts||(it.cs===0);
-        // Dim bars that fall entirely in out-of-month columns
-        var hasInM=false;for(var ci=it.cs;ci<=it.ce;ci++){if(inMCols[ci])hasInM=true;}
         var _dc=getEvDisplayColor(ev);
         var _pastBar=wk[it.ce]<today?' past-bar':'';
-        h+='<div class="ev-multi-bar '+evBarSizeCls(ev)+sc+_pastBar+'" data-id="'+ev.id+'"'
-          +' style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)+';z-index:'+evBarZ(ev)+';border:1.5px solid '+_dc+';background:'+fakeTrans(_dc,0.65)+';color:#fff'+(hasInM?'':';opacity:.35')+_evMitadesStyle(it)+'">'
-          +(showT?escHtml(ev.title):'')+'</div>';
+        /* Trozos contiguos segun caigan dentro o fuera del mes. La parte que
+           se sale se apaga como las casillas que cubre; si no se partiera, una
+           barra hasta el 4 de octubre se veria a todo color sobre unos dias en
+           gris. */
+        var trozos=[],ci;
+        for(ci=it.cs;ci<=it.ce;ci++){
+          var ult=trozos[trozos.length-1];
+          if(ult&&ult.dentro===inMCols[ci])ult.ce=ci;
+          else trozos.push({cs:ci,ce:ci,dentro:inMCols[ci]});
+        }
+        /* El titulo, una sola vez y en el primer trozo dentro del mes. */
+        var iTit=-1;
+        for(ci=0;ci<trozos.length;ci++){if(trozos[ci].dentro){iTit=ci;break;}}
+        if(iTit<0)iTit=0;
+        trozos.forEach(function(tr,i){
+          /* Las esquinas redondeadas solo en el extremo de verdad: los cortes
+             interiores del mes van rectos. */
+          var abre=it.starts&&tr.cs===it.cs, cierra=it.ends&&tr.ce===it.ce;
+          var sc=abre&&cierra?'':abre?' starts':cierra?' ends':' continues';
+          var med=_evMitadesStyle({cs:tr.cs,ce:tr.ce,
+            halfL:it.halfL&&tr.cs===it.cs, halfR:it.halfR&&tr.ce===it.ce});
+          h+='<div class="ev-multi-bar '+evBarSizeCls(ev)+sc+_pastBar+'" data-id="'+ev.id+'"'
+            +' style="grid-column:'+(tr.cs+1)+'/'+(tr.ce+2)+';grid-row:'+(it.row+1)+';z-index:'+evBarZ(ev)+';border:1.5px solid '+_dc+';background:'+fakeTrans(_dc,0.65)+';color:#fff'+(tr.dentro?'':';opacity:.35')+med+'">'
+            +(showT&&i===iTit?escHtml(ev.title):'')+'</div>';
+        });
       });
       h+='</div>';
     }
