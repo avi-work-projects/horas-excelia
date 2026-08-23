@@ -17,18 +17,23 @@ var BODA_COUPLES = (function(){
 })();
 function saveBodas(){try{localStorage.setItem(BODAS_SK,JSON.stringify(BODA_COUPLES));}catch(e){}}
 
-/* Lugar de la clase — el orden es el del desplegable */
+/* Lugar de la clase — el orden es el del desplegable.
+   `n` es el nombre y se ve IGUAL en todas partes (selector, fila de clase,
+   ficha, avisos). `d` es la aclaracion, que sale en gris solo donde hay sitio.
+   Antes habia dos textos por sala y la misma opcion se leia distinta segun
+   la pantalla. */
 var BODA_PLACE_LIST = [
-  {k:'sala',  l:'Sala de confianza', s:'Sala'},
-  {k:'casa',  l:'Casa (nuestra)',    s:'Casa'},
-  {k:'pareja',l:'Casa de la pareja', s:'Casa (pareja)'},
-  {k:'otro',  l:'Otro',              s:'Otro'}
+  {k:'sala',  n:'Sala',         d:'la sala de confianza'},
+  {k:'casa',  n:'Casa',         d:'en nuestra casa'},
+  {k:'pareja',n:'Casa (pareja)',d:'en casa de la pareja'},
+  {k:'otro',  n:'Otro',         d:'en otro sitio'}
 ];
 var BODA_PLACE_DEFAULT = 'casa';
 /* Sala SIN ASIGNAR: se guarda como cadena vacia para poder distinguirla de
    "el campo no existe" (clases antiguas), que sigue cayendo en Casa. */
 var BODA_PLACE_NONE = '';
-var BODA_PLACE_SHORT = (function(){var o={};BODA_PLACE_LIST.forEach(function(p){o[p.k]=p.s;});return o;})();
+var BODA_PLACE_SHORT = (function(){var o={};BODA_PLACE_LIST.forEach(function(p){o[p.k]=p.n;});return o;})();
+var BODA_PLACE_DESC  = (function(){var o={};BODA_PLACE_LIST.forEach(function(p){o[p.k]=p.d;});return o;})();
 /* Emoji del lugar: de un vistazo se distingue casa de sala */
 var BODA_PLACE_EMOJI = {sala:'\ud83c\udfe2', casa:'\ud83c\udfe0', pareja:'\ud83c\udfe1', otro:'\ud83d\udccd'};
 function bodaPlaceEmoji(k){
@@ -536,8 +541,10 @@ function _renderBodaClases(){
   h+='</div>';
   /* Mismo formato que "Excluir pasados" o "Solo libres" de Vacaciones Festivos */
   h+='<div class="excl-row">';
-  h+='<label class="excl-item"><input type="checkbox" id="bodaShowPast"'+(BODA_HIDE_PAST?'':' checked')+'> Mostrar pasadas</label>';
-  h+='<label class="excl-item"><input type="checkbox" id="bodaShowClosed"'+(BODA_HIDE_CLOSED?'':' checked')+'> Mostrar cerrados</label>';
+  h+='<label class="excl-item"><input type="checkbox" id="bodaShowPast"'+(BODA_HIDE_PAST?'':' checked')+'> Ver pasadas</label>';
+  /* La casilla se pinta del verde de las tarjetas que destapa. */
+  h+='<label class="excl-item"><input type="checkbox" style="--chk:var(--c-green)" id="bodaShowClosed"'
+    +(BODA_HIDE_CLOSED?'':' checked')+'> Ver días cerrados</label>';
   h+='</div>';
   h+='</div>';
   if(!list.length){
@@ -547,10 +554,17 @@ function _renderBodaClases(){
   list.forEach(function(ev){if(!byDay[ev.start]){byDay[ev.start]=[];order.push(ev.start);}byDay[ev.start].push(ev);});
   order.forEach(function(ds){
     var cerrado=bodaIsClosed(ds);
-    h+='<div class="boda-day'+(cerrado?' cerrado':'')+'" data-day="'+ds+'">';
+    var pasado=(ds<today);
+    /* Cerrado no es lo mismo que pasado: cerrado es un dia RESUELTO. Antes
+       salia atenuado y con la palabra en rojo, y se leia como pasado.
+       El gris del pasado manda sobre el verde del cerrado: un dia que ya ha
+       ocurrido no esta pendiente de nada, lo hayan cerrado o no. */
+    var tono=pasado?' pasado':(cerrado?' cerrado':'');
+    h+='<div class="boda-day'+tono+'" data-day="'+ds+'">';
     h+='<div class="boda-day-hd">'+_bodaFmtCorto(ds)
-      +'<span class="boda-day-n">'+byDay[ds].length+' clase'+(byDay[ds].length>1?'s':'')
-      +(cerrado?' · <b>cerrado</b>':'')+'</span>';
+      +'<span class="boda-day-n">'+byDay[ds].length+' clase'+(byDay[ds].length>1?'s':'')+'</span>'
+      +(cerrado?('<span class="boda-day-cerr" title="Día cerrado: no admite más clases">'
+        +'\u2714\ufe0f\ud83d\udd12</span>'):'');
     if(edit){
       h+='<button class="boda-mini-btn boda-day-lock'+(cerrado?' on':'')+'" data-lock="'+ds+'" title="'
         +(cerrado?'Reabrir el día':'Cerrar el día (no admite más clases)')+'">'
@@ -562,8 +576,10 @@ function _renderBodaClases(){
       var b=bodaEff(ev);
       var c=bodaCouple(b.coupleId);
       if(!edit){
-        /* Consulta: fila limpia, sin controles */
-        h+='<div class="boda-class boda-class-ro" data-id="'+ev.id+'">';
+        /* Consulta: fila limpia, sin controles. En amarillo si le falta la
+           hora o la sala — el mismo criterio que el aviso "info incompleta". */
+        var _falta=!!(b.coupleId&&(!b.time||!bodaPlaceOf(ev)));
+        h+='<div class="boda-class boda-class-ro'+(_falta?' incompleta':'')+'" data-id="'+ev.id+'">';
         h+='<span class="boda-class-mark">'+evBodaSvg(ev)+'</span>';
         h+='<span class="boda-ro-time'+(b.time?'':' none')+'">'+(b.time||'--:--')+'</span>';
         h+='<span class="boda-ro-couple">'
@@ -786,7 +802,7 @@ function _renderBodaStats(){
       value:all.filter(function(ev){var s2=bodaSlot(ev.boda&&ev.boda.time);return s2&&s2.label===sl.label;}).length};
   }).filter(function(r){return r.value>0;});
   var porLugar=BODA_PLACE_LIST.map(function(pl){
-    return {label:pl.s,value:all.filter(function(ev){return bodaPlaceOf(ev)===pl.k;}).length};
+    return {label:pl.n,value:all.filter(function(ev){return bodaPlaceOf(ev)===pl.k;}).length};
   }).filter(function(r){return r.value>0;});
   var DN2=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
   var porDia=DN2.map(function(n,idx){
@@ -1017,13 +1033,17 @@ function openBodaPlacePicker(ev,opts){
   h+='<div class="ev-detail-handle"></div>';
   h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">';
   h+='<button class="sy-back" id="bodaPpkClose">&#8592;</button>';
-  h+='<div style="flex:1;font-size:.88rem;font-weight:600;text-align:center">Sala — '+_bodaFmtCorto(ev.start)+'</div>';
+  h+='<div style="flex:1;font-size:.88rem;font-weight:600;text-align:center">Sala'
+    +(ev.start?(' — '+_bodaFmtCorto(ev.start)):'')+'</div>';
   h+='<div style="width:36px"></div></div>';
   BODA_PLACE_LIST.forEach(function(p){
     h+='<button class="boda-cpk-row'+(cur===p.k?' sel':'')+'" data-place="'+p.k+'">'
-      +'<span class="boda-cpk-name">'+escHtml(p.l)+'</span></button>';
+      +'<span class="boda-cpk-name">'+escHtml(p.n)+'</span>'
+      +'<span class="boda-cpk-desc">'+escHtml(p.d)+'</span></button>';
   });
-  h+='<button class="boda-cpk-row'+(cur?'':' sel')+'" data-place=""><span class="boda-cpk-name">Sin sala</span></button>';
+  h+='<button class="boda-cpk-row'+(cur?'':' sel')+'" data-place="">'
+    +'<span class="boda-cpk-name">Sin sala</span>'
+    +'<span class="boda-cpk-desc">todavía por decidir</span></button>';
   h+='</div></div>';
   bodaOpenSheet('bodaPpkWrap','bodaPpkOv',h,closeBodaPlacePicker);
   document.getElementById('bodaPpkClose').addEventListener('click',closeBodaPlacePicker);
@@ -1083,7 +1103,9 @@ function openBodaClaseForm(ev,alTerminar){
   BODA_FORM={
     ev:ev||null, nuevo:nuevo, alTerminar:alTerminar||null,
     ds:ev?ev.start:evDk(new Date()),
-    tmp:{id:'__boda_tmp__', boda:{
+    /* start: los selectores rotulan con el dia del evento; sin el salia
+       "Sala — undefined NaN/NaN". Se mantiene al dia desde el campo de fecha. */
+    tmp:{id:'__boda_tmp__', start:ev?ev.start:evDk(new Date()), boda:{
       time:nuevo?null:(base.time||null),
       coupleId:nuevo?null:(base.coupleId||null),
       place:nuevo?bodaPlaceForNewOn(evDk(new Date())):(base.place===undefined?BODA_PLACE_DEFAULT:base.place)
@@ -1138,7 +1160,7 @@ function _bodaFormRender(){
   bodaOpenSheet('bodaFormWrap','bodaFormOv',h,closeBodaClaseForm);
   document.getElementById('bodaFormClose').addEventListener('click',closeBodaClaseForm);
   var dia=document.getElementById('bodaFormDia');
-  dia.addEventListener('change',function(){F.ds=this.value||F.ds;});
+  dia.addEventListener('change',function(){F.ds=this.value||F.ds;F.tmp.start=F.ds;});
   /* Multidia: el mismo selector que usa la categoria "Otros" del formulario
      de eventos. Solo al crear; cambiar una clase existente sigue siendo un dia. */
   var _mb=document.getElementById('bodaFormMulti');
@@ -1160,6 +1182,7 @@ function _bodaFormRender(){
   document.querySelectorAll('#bodaFormOv .ev-bfila[data-fcampo]').forEach(function(fila){
     fila.addEventListener('click',function(){
       F.ds=dia.value||F.ds;                      /* no perder la fecha tecleada */
+      F.tmp.start=F.ds;
       var opts={directo:true,alGuardar:_bodaFormRender};
       var campo=fila.dataset.fcampo;
       if(campo==='hora')openBodaTimePicker(F.tmp,opts);
@@ -1233,7 +1256,8 @@ function openBodaCouplePicker(ev,opts){
   h+='<div class="ev-detail-handle"></div>';
   h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">';
   h+='<button class="sy-back" id="bodaCpkClose">&#8592;</button>';
-  h+='<div style="flex:1;font-size:.88rem;font-weight:600;text-align:center">Pareja — '+_bodaFmtCorto(ev.start)+'</div>';
+  h+='<div style="flex:1;font-size:.88rem;font-weight:600;text-align:center">Pareja'
+    +(ev.start?(' — '+_bodaFmtCorto(ev.start)):'')+'</div>';
   h+='<div style="width:36px"></div></div>';
   var incompletas=BODA_COUPLES.filter(function(c){return bodaProgress(c).falta>0;});
   var completas=BODA_COUPLES.filter(function(c){return bodaProgress(c).falta<=0;});

@@ -88,15 +88,8 @@ function renderEvUpcoming(){
     }
     s+='</div>';
     s+='<div class="ev-upcoming-right">';
-    s+='<div class="ev-up-right-top">';
     s+='<span class="ev-upcoming-bell'+(_bellSet?' set':'')+'">&#128276;</span>';
     s+='<div class="'+lblCls+'">'+lbl+'</div>';
-    s+='</div>';
-    /* Solo en los ensayos: son los unicos cuya ficha tiene algo que el resto
-       de la tarjeta no ensena ya (hora, sala y pareja, editables ahi mismo).
-       La tarjeta sigue abriendo la alarma. */
-    if(getEvType(ev)==='Ensayos boda')
-      s+='<button type="button" class="ev-up-info" data-info="'+ev.id+'">+ info</button>';
     s+='</div>';
     s+='</div>';
     return s;
@@ -553,8 +546,8 @@ function renderEvContent(){
     h+='</div>';
     if(EV_VIEW==='upcoming'){
       h+='<div class="excl-row ev-up-filters">';
-      h+='<label class="excl-item"><input type="checkbox" id="evUpShowRut"'+(EV_UP_SHOW_RUT?' checked':'')+'> Mostrar rutinas</label>';
-      h+='<label class="excl-item"><input type="checkbox" id="evUpShowBoda"'+(EV_UP_SHOW_BODA?' checked':'')+'> Mostrar ensayos WM</label>';
+      h+='<label class="excl-item"><input type="checkbox" id="evUpShowRut"'+(EV_UP_SHOW_RUT?' checked':'')+'> Ver rutinas</label>';
+      h+='<label class="excl-item"><input type="checkbox" id="evUpShowBoda"'+(EV_UP_SHOW_BODA?' checked':'')+'> Ver ensayos WM</label>';
       h+='</div>';
     }
   }
