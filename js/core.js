@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v280 — Tonos de Consulta, salas con un solo nombre y ficha desde la alarma';
+var APP_VERSION = 'v281 — Reparto de dia en el corte de semana, rutinas con contorno y retoques';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

@@ -496,21 +496,34 @@ que toca y borde en las semanas que ya tienen un cambio guardado; al pulsar
 cualquier dia se abre `_rutWeekRender(r)` para esa semana. La flecha atras del
 editor vuelve al selector, no cierra.
 
-## Barras que se rozan: media casilla cada una (v262)
-Cuando una barra ACABA el mismo dia en que otra EMPIEZA no hay conflicto real,
-asi que van en la **misma fila** y se reparten esa casilla a mitades.
+## Barras que se rozan: media casilla cada una (v262, revisado en v281)
+Cuando una barra ACABA el mismo día en que otra EMPIEZA no hay conflicto real,
+así que van en la **misma fila** y se reparten esa casilla a mitades.
 
-- `_evSoloSeRozan(aS,aE,bS,bE)` decide si es un roce (se pisan exactamente un
-  dia y ese dia es el final de una y el principio de la otra). Pide que las dos
-  duren mas de un dia: con una barra de un solo dia no se sabria que mitad le
-  toca, y se trata como choque de siempre.
-- `_evAssignRow` ya no cuenta el roce como colision.
+**Quién comparte día**: `evComparteDia(ev)` — solo los grandes de tipo **Viaje,
+Asturias y Casa Rural**. Es cosa de los viajes de verdad: se sale un día y se
+llega otro, así que el día del relevo es medio de cada uno. Un `grande|Otros`
+no significa eso y ahí el reparto confunde más que ayuda.
+
+**Geometría y política van separadas**:
+- `_evSoloSeRozan(aS,aE,bS,bE)` — solo la geometría del TROZO de semana.
+- `_evTrozosSeRozan(a,b)` — la decisión completa: además de la geometría, que los
+  dos sean de categoría que comparte día y que **ninguno sea un evento de un
+  solo día** (`it.unDia`).
+
+⚠️ **`unDia` mira el EVENTO, no el trozo.** Aquí estuvo el fallo hasta v281: la
+comprobación de "un solo día" se hacía sobre las columnas del trozo, y una barra
+que empieza en domingo y sigue la semana siguiente ocupa UNA columna en esa
+semana — así que ese domingo no se partía. Lo mismo en el corte de mes de anual
+y 4 meses, que además recortan por mes.
+
+- `_evAssignRow` no cuenta el roce como colisión.
 - `_evMarcarMitades(lista)` marca `halfL`/`halfR` mirando TODAS las barras de la
   semana, no solo las de su fila.
-- `_evMitadesStyle(it)` devuelve el margen: `calc(50% / N)` con N = dias que
-  ocupa la barra. **El porcentaje de un margen en un elemento de rejilla se mide
-  sobre el ancho de SU area**, por eso hay que dividir entre N para obtener
-  media casilla. Vale igual en 1 mes y en anual/4 meses.
+- `_evMitadesStyle(it)` devuelve el margen: `calc(50% / N)` con N = días que ocupa
+  la barra. **El porcentaje de un margen en un elemento de rejilla se mide sobre
+  el ancho de SU área**, por eso hay que dividir entre N para obtener media
+  casilla. Vale igual en 1 mes y en anual/4 meses.
 
 ## Chips de filtro en una sola fila (v262)
 Con los nombres largos la fila de chips se partia en dos en pantallas
@@ -613,6 +626,18 @@ Los selectores rotulan con `_bodaFmtCorto(ev.start)`, y desde **Nueva clase** el
 evento es el de mentira (`BODA_FORM.tmp`): sin `start` salía
 "Sala — undefined NaN/NaN". El `tmp` lleva ahora su `start` y se mantiene al día
 con el campo de fecha.
+
+## Rutinas: contorno y barritas (v281)
+- **Contorno**: `rutIconSvg` pinta la silueta dos veces — una negra que la
+  ensancha y cierra la unión de las piezas, otra de color que la rellena. La
+  diferencia entre las dos ES el ribete, y se toma de **`EV_SHAPE_BW`**, el mismo
+  borde que llevan las aspas y los círculos. Antes eran 2.8 y 2.7: el negro
+  existía pero no se veía, y los iconos quedaban planos al lado del resto.
+- **Anual y 4 meses**: barritas, no puntos. `.ev-ann-ruts` es una rejilla de
+  `--rutn` columnas con **mínimo 2**, así cada barrita ocupa como mucho medio día
+  haya una rutina o dos, y con tres o más se reparten el hueco. La primera cae
+  siempre arriba a la izquierda porque las columnas se llenan en orden. El alto
+  (2 px) no cambia.
 
 ## Bodas (js/bodas.js)
 Pestaña `EV_VIEW==='bodas'` con cuatro subpestañas (`BODA_SUBTAB`): **Clases**, **Parejas**,

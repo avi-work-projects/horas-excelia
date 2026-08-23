@@ -1472,19 +1472,27 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .bd-alarm-overlay.open,.ev-alarm-overlay.open{display:flex;align-items:flex-end}
 /* Campana de alarma en items de próximos (bday + eventos) */
 .ev-upcoming-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
-/* Atajo a la ficha del ensayo desde el panel de alarma. A lo ancho y
-   discreto: es un atajo, no una de las dos acciones del pie. */
-.ev-alarm-info{display:block;width:100%;font-family:var(--font);font-size:.72rem;
-  font-weight:600;padding:8px;margin-bottom:8px;border-radius:var(--radius-sm);
-  border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer}
-.ev-alarm-info:active{background:var(--surface3);color:var(--text)}
+
 .ev-upcoming-bell{font-size:.95rem;opacity:.12;transition:opacity .15s;line-height:1}
 .ev-upcoming-bell.set{opacity:1}
 .bd-alarm-sheet{width:100%;background:var(--surface);border-top-left-radius:20px;border-top-right-radius:20px;padding:8px 20px 32px;padding-bottom:calc(32px + env(safe-area-inset-bottom,0px));max-height:92vh;overflow-y:auto}
 .bd-alarm-handle{width:36px;height:4px;border-radius:2px;background:var(--border-light);margin:0 auto 14px}
 .bd-alarm-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .bd-alarm-title{flex:1;font-size:.88rem;font-weight:600;text-align:center}
+/* La tarjeta del evento y, a su derecha, el atajo a la ficha. Sin atajo la
+   tarjeta ocupa el ancho ella sola. */
+.bd-alarm-top{margin-bottom:14px}
+.bd-alarm-top.con-ficha{display:flex;align-items:stretch;gap:10px}
+.bd-alarm-top .bd-alarm-info{margin-bottom:0;flex:1;min-width:0}
 .bd-alarm-info{padding:10px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);margin-bottom:14px}
+/* Mismo alto que la tarjeta y el color del evento: destaca sin salirse de
+   la gama del panel. */
+.ev-alarm-info{flex:0 0 86px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:3px;font-family:var(--font);font-size:.75rem;
+  font-weight:700;line-height:1.15;text-align:center;padding:8px 6px;
+  border-radius:var(--radius-sm);border:1.5px solid var(--border);cursor:pointer}
+.ev-alarm-info-ico{font-size:1.2rem;line-height:1}
+.ev-alarm-info:active{filter:brightness(1.15)}
 .ev-alarm-note{font-size:.75rem;color:var(--text-muted);margin-top:6px;line-height:1.4}
 .bd-alarm-name{font-size:1rem;font-weight:700;margin-bottom:3px}
 .bd-alarm-date{font-size:.75rem;color:var(--text-muted);font-family:var(--mono)}
@@ -1644,8 +1652,13 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-car-dot.on{background:var(--accent);transform:scale(1.35)}
 &
 /* Rutinas en anual y 4 meses: puntitos en fila arriba del dia */
-.ev-ann-ruts{position:absolute;top:1px;left:1px;right:1px;display:flex;justify-content:flex-start;align-items:center;gap:1px;z-index:6;pointer-events:none}
-.ev-ann-rut{width:2px;height:2px;border-radius:50%;flex-shrink:0}
+/* Rutinas en anual y 4 meses: barritas, no puntos. Rejilla de --rutn columnas
+   (minimo 2), asi cada una ocupa como mucho medio dia haya una rutina o dos,
+   y con tres o mas se reparten el hueco. La primera cae siempre a la
+   izquierda porque las columnas se llenan en orden. */
+.ev-ann-ruts{position:absolute;top:1px;left:1px;right:1px;display:grid;
+  grid-template-columns:repeat(var(--rutn,2),1fr);gap:1px;z-index:6;pointer-events:none}
+.ev-ann-rut{height:2px;border-radius:1px;min-width:0}
 .ev-day-left{position:absolute;top:18px;left:3px;display:flex;flex-direction:column;align-items:flex-start;gap:3px;z-index:5;pointer-events:none;max-width:72%}
 .ev-day-left > *{pointer-events:auto}
 /* Los cumpleaños VIP se solapan al 75% (12px de marcador -> -9px) */
@@ -1855,7 +1868,14 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .drum-sel-lines{position:absolute;top:50%;left:6px;right:6px;height:44px;transform:translateY(-50%);border-top:1px solid var(--border);border-bottom:1px solid var(--border);z-index:3;pointer-events:none}
 .alarm-msg-input{display:block;width:calc(100% - 24px);margin:0 12px 6px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-family:var(--font);font-size:.78rem}
 .alarm-msg-input:focus{outline:none;border-color:var(--accent)}
-.alarm-create-btn{border-radius:0 0 var(--radius-sm) var(--radius-sm);background:var(--accent)!important;color:#fff!important;font-weight:700!important;font-size:.84rem!important;width:100%;border-top:1px solid var(--accent)!important;border-radius:0!important;padding:13px 12px!important;margin-top:6px;display:flex!important;align-items:center!important;justify-content:center!important;gap:6px;letter-spacing:.01em}
+/* Va metido dentro del panel, no a sangre: antes su borde inferior era el
+   del propio menu y no se distinguia donde acababa. */
+.alarm-create-btn{background:var(--accent)!important;color:#fff!important;
+  font-weight:700!important;font-size:.8rem!important;
+  border:1px solid var(--accent)!important;border-radius:var(--radius-sm)!important;
+  padding:10px 12px!important;margin:8px 4px 6px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:6px;letter-spacing:.01em}
 .alarm-create-btn:active{background:var(--accent-bright)!important}
 .alarm-days-row{padding:6px 12px 4px;border-top:1px solid var(--border)}
 .alarm-days-label{font-size:.65rem;color:var(--text-muted);margin-bottom:5px;text-align:center}
@@ -2069,7 +2089,12 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .boda-mini-btn{border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);border-radius:6px;font-size:.72rem;width:24px;height:24px;line-height:1;cursor:pointer;flex-shrink:0;padding:0}
 .boda-mini-btn:hover{border-color:var(--accent);color:var(--accent-bright)}
 /* Editar siempre en naranja, como en el resto de la app */
+/* Los dos lapices "Editar" (clase y pareja) comparten color naranja. Van
+   DESPUES de .boda-mini-btn: misma especificidad, gana el ultimo. */
 .boda-cl-edit{border-color:#fb923c;color:#fb923c;background:rgba(251,146,60,.1)}
+.boda-hd-edit{border-color:#fb923c;color:#fb923c;background:rgba(251,146,60,.1)}
+.boda-hd-edit:hover{border-color:#fb923c;color:#fb923c}
+.boda-hd-edit:active{background:rgba(251,146,60,.25)}
 .boda-cl-edit:hover{border-color:#fb923c;color:#fb923c}
 .boda-cl-edit:active{background:rgba(251,146,60,.25)}
 .boda-actions{display:flex;gap:8px;align-items:center}

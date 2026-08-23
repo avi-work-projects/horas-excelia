@@ -301,7 +301,6 @@ function _bodaLegendHtml(){
 
 /* -- Subpestana CALENDARIO: ensayos de cada boda + los casamientos -- */
 function _renderBodaCalendario(){
-  var MN2=MN;   /* los meses viven en core.js */
   var y=BODA_CAL_YEAR,m=BODA_CAL_MONTH;
   var mesPre=y+'-'+String(m+1).padStart(2,'0');
   /* Clases y bodas del mes */
@@ -325,7 +324,7 @@ function _renderBodaCalendario(){
 
   var h='<div class="boda-cal-nav">';
   h+='<button class="sy-nav" id="bodaCalPrev">&#9664;</button>';
-  h+='<div class="boda-cal-month">'+MN2[m]+' '+y+'</div>';
+  h+='<div class="boda-cal-month">'+MN[m]+' '+y+'</div>';
   h+='<button class="sy-nav" id="bodaCalNext">&#9654;</button>';
   h+='</div>';
   h+='<div class="boda-cal-hdr">';
@@ -476,7 +475,9 @@ function _renderBodaParejas(){
     h+='<span class="boda-dot" style="background:'+c.color+'"></span>';
     h+='<span class="boda-name">'+escHtml(c.name)+'</span>';
     if(c.weddingDate)h+='<span class="boda-wed-tag">&#128141; '+_bodaFmt(c.weddingDate)+'</span>';
-    h+='<button class="boda-mini-btn boda-assign" data-cid="'+c.id+'" title="Asignar clases">&#128197;</button>';
+    /* Editar, junto al nombre. El 📅 que habia aqui era el mismo "Asignar"
+       de la tarjeta desplegada; con dos puertas a lo mismo sobra una. */
+    h+='<button class="boda-mini-btn boda-c-edit boda-hd-edit" data-cid="'+c.id+'" title="Editar pareja">&#9998;</button>';
     h+='</div>';
     h+='<div class="boda-prog"><div class="boda-prog-bar" style="width:'+pct+'%;background:'+c.color+'"></div></div>';
     h+='<div class="boda-card-ft"><span>'+p.done+' / '+(p.total||0)+' clases</span>'+falta+'</div>';
@@ -498,7 +499,6 @@ function _renderBodaParejas(){
         h+='</div>';
       });
       h+='<div class="boda-det-actions boda-det-actions-row">';
-      h+='<button class="ev-btn ev-edit-orange boda-c-edit" data-cid="'+c.id+'">&#9998; Editar</button>';
       h+='<button class="ev-btn boda-det-btn boda-c-asig" data-cid="'+c.id+'">&#128197; Asignar</button>';
       h+='<button class="ev-btn boda-det-btn boda-c-extra" data-cid="'+c.id+'">&#10133; Extra</button>';
       h+='</div>';
@@ -905,7 +905,7 @@ function renderBodaAssign(){
   /* Navegacion de mes */
   h+='<div class="boda-asg-nav">';
   h+='<button class="sy-nav" id="bodaAsgPrev">&#9664;</button>';
-  h+='<div class="boda-asg-month">'+MN2[A.month]+' '+A.year+'</div>';
+  h+='<div class="boda-asg-month">'+MN[A.month]+' '+A.year+'</div>';
   h+='<button class="sy-nav" id="bodaAsgNext">&#9654;</button>';
   h+='</div>';
   /* Rejilla */
@@ -1540,10 +1540,10 @@ function bindBodasEvents(){
   var addC=document.getElementById('bodaAddCouple');
   if(addC)addC.addEventListener('click',function(){openBodaCoupleForm(null);});
   /* Tarjeta de pareja: se despliega en su sitio y se vuelve a plegar al
-     pulsarla otra vez. El boton de calendario sigue yendo a la asignacion. */
+     pulsarla otra vez. Los botones propios de la tarjeta no la pliegan. */
   document.querySelectorAll('.boda-card-tap[data-cid]').forEach(function(card){
     card.addEventListener('click',function(e){
-      if(e.target.closest('.boda-assign,.boda-det-actions'))return;
+      if(e.target.closest('.boda-hd-edit,.boda-det-actions'))return;
       BODA_CARD_OPEN=(BODA_CARD_OPEN===card.dataset.cid)?null:card.dataset.cid;
       refreshEvents();
     });
@@ -1556,11 +1556,6 @@ function bindBodasEvents(){
   });
   document.querySelectorAll('.boda-c-extra[data-cid]').forEach(function(b){
     b.addEventListener('click',function(e){e.stopPropagation();openBodaAssign(bodaCouple(b.dataset.cid),true);});
-  });
-  document.querySelectorAll('.boda-assign[data-cid]').forEach(function(b){
-    b.addEventListener('click',function(e){
-      e.stopPropagation();openBodaAssign(bodaCouple(b.dataset.cid),false);
-    });
   });
   var _cls=document.getElementById('bodaClSearch');
   if(_cls)_cls.addEventListener('input',function(){

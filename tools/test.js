@@ -84,8 +84,24 @@ const REGLAS = [
   }],
   ['dos barras que se pisan de verdad NO comparten fila', () =>
     app._evSoloSeRozan(0, 4, 3, 6) === false],
-  ['una barra de un solo dia nunca se reparte la casilla', () =>
-    app._evSoloSeRozan(3, 3, 3, 5) === false],
+  /* Un trozo de UNA columna puede ser una barra larga cortada por el fin de
+     semana o por el cambio de mes. Lo que decide es la duracion del EVENTO. */
+  ['un evento de un solo dia nunca se reparte la casilla', () => {
+    const uno = { ev: { kind: 'grande', type: 'Viaje', start: '2026-03-03', end: '2026-03-03' }, cs: 3, ce: 3, unDia: true };
+    const largo = { ev: { kind: 'grande', type: 'Viaje', start: '2026-03-03', end: '2026-03-05' }, cs: 3, ce: 5, unDia: false };
+    return app._evTrozosSeRozan(uno, largo) === false;
+  }],
+  ['una barra cortada por la semana SI comparte su unico dia', () => {
+    /* el domingo: una acaba ahi y otra empieza ahi y sigue la semana que viene */
+    const acaba = { ev: { kind: 'grande', type: 'Asturias', start: '2026-09-07', end: '2026-09-13' }, cs: 0, ce: 6, unDia: false };
+    const sigue = { ev: { kind: 'grande', type: 'Asturias', start: '2026-09-13', end: '2026-09-20' }, cs: 6, ce: 6, unDia: false };
+    return app._evTrozosSeRozan(acaba, sigue) === true;
+  }],
+  ['un grande de tipo Otros no comparte dia', () => {
+    const a = { ev: { kind: 'grande', type: 'Otros', start: '2026-03-01', end: '2026-03-03' }, cs: 0, ce: 2, unDia: false };
+    const b = { ev: { kind: 'grande', type: 'Otros', start: '2026-03-03', end: '2026-03-06' }, cs: 2, ce: 5, unDia: false };
+    return app._evTrozosSeRozan(a, b) === false;
+  }],
   ['la hora de una rutina depende del dia de la semana', () => {
     const r = app.RUTINAS[0];
     return app.rutOccursOn(r, '2026-08-31') === '07:30'    /* lunes */
