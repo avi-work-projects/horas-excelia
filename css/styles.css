@@ -1488,10 +1488,9 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 /* Mismo alto que la tarjeta y el color del evento: destaca sin salirse de
    la gama del panel. */
 .ev-alarm-info{flex:0 0 86px;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;gap:3px;font-family:var(--font);font-size:.75rem;
+  justify-content:center;gap:3px;font-family:var(--font);font-size:.82rem;
   font-weight:700;line-height:1.15;text-align:center;padding:8px 6px;
   border-radius:var(--radius-sm);border:1.5px solid var(--border);cursor:pointer}
-.ev-alarm-info-ico{font-size:1.2rem;line-height:1}
 .ev-alarm-info:active{filter:brightness(1.15)}
 .ev-alarm-note{font-size:.75rem;color:var(--text-muted);margin-top:6px;line-height:1.4}
 .bd-alarm-name{font-size:1rem;font-weight:700;margin-bottom:3px}
