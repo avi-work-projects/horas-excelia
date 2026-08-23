@@ -130,6 +130,10 @@ function bodaClassesOfCouple(id){
 function bodaFreeClasses(){
   return bodaSortClasses(bodaClasses().filter(function(ev){return !(ev.boda&&ev.boda.coupleId);}));
 }
+function bodaClaseById(id){
+  for(var i=0;i<EVENTS.length;i++)if(EVENTS[i].id===id)return EVENTS[i];
+  return null;
+}
 function bodaSortClasses(list){
   return list.slice().sort(function(a,b){
     if(a.start!==b.start)return a.start<b.start?-1:1;
@@ -572,7 +576,7 @@ function _renderBodaClases(){
       if(!cerrado)h+='<button class="boda-mini-btn boda-day-add" data-ds="'+ds+'" title="Añadir clase este día">+</button>';
     }
     h+='</div>';
-    byDay[ds].forEach(function(ev){
+    byDay[ds].forEach(function(ev,_iCl){
       var b=bodaEff(ev);
       var c=bodaCouple(b.coupleId);
       if(!edit){
@@ -601,6 +605,12 @@ function _renderBodaClases(){
         +escHtml(b.place?BODA_PLACE_SHORT[b.place]:'Sin sala')+'</button>';
       h+='<button class="boda-mini-btn boda-del" data-id="'+ev.id+'">×</button>';
       h+='</div>';
+      /* Entre dos clases seguidas, el intercambio de parejas. En un dia
+         cerrado no sale: un dia cerrado esta resuelto. */
+      if(!cerrado&&_iCl<byDay[ds].length-1){
+        h+='<div class="boda-swap-row"><button class="boda-swap" title="Intercambiar las parejas de estos dos huecos"'
+          +' data-a="'+ev.id+'" data-b="'+byDay[ds][_iCl+1].id+'">⇅</button></div>';
+      }
     });
     h+='</div>';
   });
@@ -1454,8 +1464,10 @@ function bodaRefreshRow(ev){
   var tb=fila.querySelector('.boda-time-btn');
   if(tb)tb.textContent=e.time||'--:--';
   var cb=fila.querySelector('.boda-couple-btn');
-  if(cb)cb.innerHTML=c?('<span class="ev-bpunto" style="background:'+c.color+'"></span>'+escHtml(c.name))
-                     :'— asignar —';
+  /* Mismo marcado que en el render: el nombre va en su propio <span> o
+     pierde el recorte con puntos suspensivos. */
+  if(cb)cb.innerHTML=c?('<span class="ev-bpunto" style="background:'+c.color+'"></span><span>'+escHtml(c.name)+'</span>')
+                     :'<span class="boda-ro-sin">— asignar —</span>';
   var pl=fila.querySelector('.boda-place-btn');
   if(pl){
     pl.textContent=e.place?BODA_PLACE_SHORT[e.place]:'Sin sala';
@@ -1550,6 +1562,20 @@ function bindBodasEvents(){
   });
   document.querySelectorAll('.boda-c-edit[data-cid]').forEach(function(b){
     b.addEventListener('click',function(e){e.stopPropagation();openBodaCoupleForm(bodaCouple(b.dataset.cid));});
+  });
+  /* Intercambio de parejas entre dos huecos seguidos. Se tocan las dos filas
+     y nada mas: ni re-render ni perder el scroll. */
+  document.querySelectorAll('.boda-swap[data-a][data-b]').forEach(function(btn){
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      var a=bodaClaseById(btn.dataset.a), b=bodaClaseById(btn.dataset.b);
+      if(!a||!b)return;
+      var ca=bodaEff(a).coupleId, cb=bodaEff(b).coupleId;
+      if(!ca&&!cb)return;                       /* dos huecos vacios: nada que cambiar */
+      bodaSetPending(a.id,'coupleId',cb);
+      bodaSetPending(b.id,'coupleId',ca);
+      bodaRefreshRow(a);bodaRefreshRow(b);
+    });
   });
   document.querySelectorAll('.boda-c-asig[data-cid]').forEach(function(b){
     b.addEventListener('click',function(e){e.stopPropagation();openBodaAssign(bodaCouple(b.dataset.cid),false);});

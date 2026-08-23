@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v282 — La barra se apaga solo en la parte que se sale del mes';
+var APP_VERSION = 'v283 — Intercambiar dos parejas de hueco con un click';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

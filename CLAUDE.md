@@ -596,6 +596,24 @@ Una rutina es una actividad semanal (gimnasio, baile, padel...) guardada en
 - Las rutinas van en el backup completo (`rutinas` en exportAll / `_applyFullImport`,
   fusion por id con el nombre como firma).
 
+## Intercambiar dos parejas de hueco (v283)
+En **Clases → Edición**, entre dos clases seguidas de un día **abierto** sale un
+chip `⇅` que intercambia sus parejas de un click. Con tres clases hay dos chips,
+y encadenando saltos se llega a cualquier orden.
+
+**Se cambia la pareja, no la hora.** Así las filas siguen ordenadas por hora y lo
+único que se mueve son los dos nombres, que es justo lo que se quiere ver. Si se
+cambiara la hora habría que reordenar las filas, y además `bodaSortClasses`
+ordena por la hora **guardada**: un cambio pendiente dejaría la lista descolocada
+hasta pulsar Guardar. La hora y la sala se quedan con el hueco.
+
+Va por `BODA_PENDING` como todo lo demás de Edición: se ve al momento, las dos
+filas se marcan `.pend`, "Descartar" lo deshace y "Guardar" lo confirma. En un
+botón de un solo click esa red importa. Solo se repintan las dos filas
+(`bodaRefreshRow`), sin re-render ni pérdida de scroll.
+
+No sale en días cerrados: un día cerrado está resuelto.
+
 ## Consulta: el estado del día es el color (v280)
 Un día **cerrado** no es un día pasado — es un día **resuelto**. Antes salía
 atenuado y con la palabra "cerrado" en rojo, y se leía como pasado.
