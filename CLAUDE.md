@@ -169,7 +169,8 @@ js/summary.js       ← Resumen anual (VAC_ENTITLEMENT=23, barChart3, computePue
 js/economics.js     ← Cálculo económico (IVA 21%, IRPF 15%, DAILY_RATE=315)
 js/birthdays.js     ← Cumpleaños (BDAYS de localStorage o BDAYS_FROM_SECRET)
 js/events.js        ← Eventos: estado, ocurrencias, marcadores, reparto de barras
-js/events-render.js ← Las vistas (calendarios, Próximos, Todos) — funciones puras
+js/events-cal.js    ← Los tres calendarios: 1 mes, anual y 4 meses
+js/events-render.js ← Proximos, Todos, agenda semanal y el armazon de la ventana
 js/events-form.js  ← Alta y edición de un evento
 js/events-detail.js ← Ficha del día (= carrusel), hoja de borrado y panel de alarma
 js/events-bind.js  ← Apertura de la ventana y enganche de listeners (carga el último)
