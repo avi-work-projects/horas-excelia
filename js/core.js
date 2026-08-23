@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v278 — Backup completo, alarmas de una sola vez y ensayos';
+var APP_VERSION = 'v279 — El aviso de nueva version actualiza al tocarlo';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -313,15 +313,26 @@ function getWD(wkey){
 }
 
 // ── Toast ────────────────────────────────────────────────────
-function showToast(msg,type,undoFn,btnTxt){
+/* todoPulsable: el aviso entero responde al toque, no solo su boton. Es una
+   opcion y no lo de siempre porque en un "Deshacer" un roce accidental
+   desharia lo que se acaba de hacer; en un "Actualizar" no se pierde nada. */
+function showToast(msg,type,undoFn,btnTxt,todoPulsable){
   var t=document.getElementById('toast');
   clearTimeout(t._timer);
+  if(t._tap){t.removeEventListener('click',t._tap);t._tap=null;}
   if(undoFn){
     t.innerHTML=escHtml(msg)+'<button class="toast-undo-btn" id="toastUndoBtn">'+(btnTxt||'Deshacer')+'</button>';
-    t.className='toast show has-undo'+(type?' '+type:'');
+    t.className='toast show has-undo'+(type?' '+type:'')+(todoPulsable?' pulsable':'');
     document.getElementById('toastUndoBtn').addEventListener('click',function(){
       undoFn(); t.className='toast';
     });
+    if(todoPulsable){
+      t._tap=function(e){
+        if(e.target.closest('.toast-undo-btn'))return;   /* ya lo lleva el boton */
+        t.className='toast'; undoFn();
+      };
+      t.addEventListener('click',t._tap);
+    }
     t._timer=setTimeout(function(){t.className='toast';},8000);
   } else {
     t.textContent=msg;

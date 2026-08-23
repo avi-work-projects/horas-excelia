@@ -4,7 +4,7 @@
    → Cambiar CACHE_VER en cada deploy para forzar actualización
    ============================================================ */
 
-var CACHE_VER = 'v278';
+var CACHE_VER = 'v279';
 var CACHE_NAME = 'horas-excelia-' + CACHE_VER;
 
 var ASSETS = [
@@ -92,36 +92,24 @@ self.addEventListener('activate', function(e) {
   );
 });
 
-/* ── Fetch: network-first para HTML, cache-first para assets ── */
+/* ── Fetch: cache-first dentro de la generacion, y punto ──────────────
+   Sin revalidacion en segundo plano a proposito. Revalidar fichero a fichero
+   mete ficheros nuevos en la generacion vieja y reaparece el problema que
+   esto venia a resolver: index.html nuevo con init.js viejo, que si entre
+   versiones ha desaparecido un elemento revienta al engancharle un listener.
+
+   La generacion solo avanza instalando otro service worker. Eso pasa cuando
+   cambia CACHE_VER — por eso hay que tocarlo en CADA push. */
 self.addEventListener('fetch', function(e) {
   var url = new URL(e.request.url);
-
-  // Solo interceptar peticiones al mismo origin
   if (url.origin !== self.location.origin) return;
 
-  /* TODO desde la MISMA generacion de cache (la de CACHE_VER), HTML incluido.
-     Antes el HTML iba a red primero y los assets a cache primero: en la
-     primera carga tras un despliegue salia el index.html nuevo con el JS
-     viejo, y si entre versiones habia desaparecido algun elemento el JS viejo
-     petaba al engancharle un listener. Ahora o se sirve todo lo nuevo o todo
-     lo viejo, nunca mezclado; el cambio de generacion lo hace el activate. */
-  var esDocumento = (e.request.destination === 'document' || url.pathname.endsWith('.html'));
-
   e.respondWith(
-    caches.open(CACHE_NAME).then(function(cache) {
-      return cache.match(e.request).then(function(cached) {
-        /* El documento se revalida en segundo plano: asi el despliegue de hoy
-           entra en la proxima carga sin dejar de servir algo coherente hoy. */
-        var red = fetch(e.request).then(function(response) {
-          if (response && response.status === 200) cache.put(e.request, response.clone());
-          return response;
-        }).catch(function() { return cached; });
-        if (cached) {
-          if (esDocumento) red;      /* revalidar sin esperar */
-          return cached;
-        }
-        return red;
-      });
+    caches.match(e.request, {cacheName: CACHE_NAME}).then(function(cached) {
+      if (cached) return cached;
+      /* Lo que no forma parte de la generacion (un fichero nuevo que aun no
+         esta en ASSETS, una imagen suelta) va a la red sin tocar la cache. */
+      return fetch(e.request);
     })
   );
 });

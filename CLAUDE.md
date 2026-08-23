@@ -911,22 +911,35 @@ Test local: `py -m http.server 8082` desde la raíz del proyecto.
 - **SIEMPRE** incluir al final de cada respuesta tras un push: `✅ Versión desplegada: vN — descripción`
 - Esto permite al usuario verificar que su PWA instalada está actualizada sin ambigüedad.
 
-### ⚠️ El HTML y los JS, SIEMPRE de la misma generación de caché (v277)
-El fallo que lo destapó: el SW servía el HTML **network-first** y los JS
-**cache-first**. En la primera carga tras un despliegue salía el `index.html`
-NUEVO con el `init.js` VIEJO. Si entre las dos versiones se había quitado un
-elemento del HTML, el JS viejo hacía `getElementById(...).addEventListener`
-sobre `null`, reventaba, y con él se caía **el resto del fichero** (el error
-"Cannot read properties of null (reading 'addEventListener')").
+### ⚠️ Una generación de caché es inmutable (v279)
+El SW sirve **cache-first y sin revalidar nada**. Lo que cacheó el `install`
+con `addAll` es lo que se sirve, entero y coherente. La generación solo avanza
+instalando otro service worker — o sea, cambiando `CACHE_VER`.
 
-Ahora todo sale de `CACHE_NAME`, HTML incluido: o se sirve todo lo nuevo o
-todo lo viejo, nunca mezclado. El documento se revalida en segundo plano, así
-que el despliegue entra en la carga siguiente.
+Se llegó aquí por dos fallos seguidos, y las dos formas de romperlo son fáciles
+de repetir:
 
-Como segunda red, los listeners que se enganchan **al cargar** (`init.js`,
-`import-export.js`) van todos guardados con `if(el)`. Los de dentro de un
-`openXxx` no: ahí un elemento ausente **es** un fallo del render y conviene
-que se note.
+- **HTML a red y assets a caché** (antes de v277): en la primera carga tras un
+  despliegue salía el `index.html` nuevo con el `init.js` viejo. Si entre
+  versiones había desaparecido un elemento, el JS viejo le enganchaba un
+  listener a `null` y se caía el fichero entero.
+- **Revalidar en segundo plano** (v277–v278): arregló lo anterior a medias pero
+  rompió el botón "Actualizar", porque recargar seguía sirviendo el HTML
+  cacheado y la versión nueva solo entraba en la carga SIGUIENTE. Y encima
+  metía ficheros nuevos, uno a uno, dentro de la generación vieja: la mezcla
+  otra vez.
+
+Con `skipWaiting()` en el `install` y `clients.claim()` en el `activate`, cuando
+aparece el aviso la generación nueva **ya está activa**: una sola recarga la
+pone en pantalla. Por eso `aplicarActualizacion()` no tiene que esperar a nadie.
+
+Los listeners que corren **al cargar** (`init.js`, `import-export.js`) van
+guardados con `if(el)` como segunda red. Los de dentro de un `openXxx` no: ahí
+un elemento ausente **es** un fallo del render y conviene que se note.
+
+Una PWA instalada puede pasar días abierta sin navegar, y el navegador solo
+comprueba `sw.js` al navegar; por eso `init.js` llama a `reg.update()` al
+arrancar y cada vez que la app vuelve a primer plano.
 
 ### ⚠️ CRÍTICO: sw.js DEBE cambiar en CADA push, incluso los más pequeños
 El navegador detecta actualizaciones del Service Worker comparando `sw.js` byte a byte.

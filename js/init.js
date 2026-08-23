@@ -395,15 +395,19 @@
   updateThemeBtn();
 
 
-  /* ── SW update: botón Actualizar en menú ⋯ ── */
-  var _swUpdBtn=document.getElementById('swUpdBtn');
-  if(_swUpdBtn)_swUpdBtn.addEventListener('click',function(){
+  /* ── SW update: un solo sitio que aplica la actualizacion ──────────
+     Cuando aparece el aviso, el service worker nuevo YA esta activo con su
+     generacion de cache completa (install hace skipWaiting y activate hace
+     claim). Asi que recargar basta: no hay que esperar a nadie. */
+  function aplicarActualizacion(){
     var mb=document.getElementById('menuBtn');
     if(mb)mb.classList.remove('has-update');
     window.location.reload();
-  });
+  }
+  var _swUpdBtn=document.getElementById('swUpdBtn');
+  if(_swUpdBtn)_swUpdBtn.addEventListener('click',aplicarActualizacion);
 
-  /* ── Service Worker: muestra botón Actualizar en menú cuando hay nueva versión ── */
+  /* ── Service Worker: avisar cuando hay version nueva ── */
   if('serviceWorker' in navigator){
     var _swShown=false;
     function _showUpdateBar(){
@@ -411,12 +415,14 @@
       _swShown=true;
       var btn=document.getElementById('swUpdBtn');
       if(btn)btn.style.display='';
-      // Badge visible en botón ⋯
       var mb=document.getElementById('menuBtn');
       if(mb)mb.classList.add('has-update');
-      // Toast de aviso
+      /* El aviso es la via rapida: se pulsa el toast entero, no hace falta
+         ir al menu. El boton del menu sigue ahi para cuando el toast ya se
+         ha ido solo. */
       if(typeof showToast==='function')
-        showToast('\uD83D\uDD04 Nueva versi\u00f3n disponible \u2014 abre \u22ef para actualizar','success');
+        showToast('\uD83D\uDD04 Nueva versión disponible',
+          'success',aplicarActualizacion,'Actualizar',true);
     }
     // Método 1: controllerchange — el más fiable (skipWaiting activó el nuevo SW)
     navigator.serviceWorker.addEventListener('controllerchange',_showUpdateBar);
@@ -430,6 +436,14 @@
             _showUpdateBar();
           }
         });
+      });
+      /* Una PWA instalada puede pasar dias abierta sin navegar, y el navegador
+         solo comprueba sw.js al navegar. Se le pregunta al abrir y cada vez
+         que la app vuelve a primer plano. */
+      function _buscar(){try{reg.update();}catch(e){}}
+      _buscar();
+      document.addEventListener('visibilitychange',function(){
+        if(!document.hidden)_buscar();
       });
     });
     // Método 3: mensaje del SW (compatibilidad)
