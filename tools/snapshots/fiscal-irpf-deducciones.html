@@ -1,0 +1,167 @@
+<div class="overlay-nav-bar">
+<button class="nav-bar-btn active" data-nav="econ" title="Económico">
+<img src="icon-econ.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn" data-nav="estudio" title="Estudio Cambio">
+<img src="icon-estudio.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn" data-nav="home" title="Inicio">
+<img src="icon-home.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn events-active" data-nav="events" title="Eventos">
+<img src="icon-events.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn bday-active" data-nav="bday" title="Cumpleaños">
+<img src="icon-bday.png" class="btn-icon" alt="">
+</button>
+<div class="nav-bar-spacer">
+</div>
+<button class="nav-bar-btn" data-nav="alarm" title="Test alarma">
+<img src="icon-alarm.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn" data-nav="menu" title="Más opciones">&#8943;</button>
+</div>
+<div class="sy-header with-tabs fiscal-hdr">
+<button class="sy-back" id="fiscalBack">&#8592;</button>
+<div class="sy-year" style="font-size:.9rem;color:#c084fc">&#9965; Configuración Fiscal</div>
+</div>
+<div class="fiscal-tab-bar">
+<button class="fiscal-tab-btn" id="fiscalTabPersonal">Economía<br>Personal</button>
+<button class="fiscal-tab-btn" id="fiscalTabGastosDesg">Gastos<br>Desgravables</button>
+<button class="fiscal-tab-btn active" id="fiscalTabIrpfDeduc">IRPF y<br>Deducciones</button>
+<button class="fiscal-tab-btn" id="fiscalTabDespacho">Hipoteca<br>y Facturas</button>
+</div>
+<div class="fiscal-year-selector">
+<button class="fiscal-year-arrow" id="fiscalYearPrev">&#8592;</button>
+<span class="fiscal-year-label" id="fiscalYearLabel">2026</span>
+<button class="fiscal-year-arrow" id="fiscalYearNext">&#8594;</button>
+</div>
+<div class="sy-body" style="padding:16px">
+<div class="econ-sub-tabs">
+<button class="econ-sub-tab active" data-firsub="desgrav">Desgravaciones</button>
+<button class="econ-sub-tab" data-firsub="irpf">Config IRPF</button>
+<button class="econ-sub-tab" data-firsub="despacho">Despacho</button>
+</div>
+<div class="fiscal-section">
+<div class="fiscal-section-title" style="color:var(--c-green)">Desgravaciones IRPF — Declaración de la Renta</div>
+<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:10px">Partidas que reducen la base imponible o la cuota IRPF. Los items con <em>&#128279;</em> se calculan desde tus gastos.</div>
+<div id="fiscalDesgravList">
+<div class="fiscal-desgrav-item on" data-di="0">
+<div class="fiscal-desgrav-toggle on" data-dtgl="0">&#10003;</div>
+<div class="fiscal-desgrav-body">
+<div class="fiscal-desgrav-row1">
+<span class="fiscal-desgrav-lbl">Plan de pensiones</span>
+<span class="fiscal-desgrav-limit">lím. 5750€</span>
+</div>
+<div class="fiscal-desgrav-row2">
+<span class="fiscal-desgrav-from-gasto dim fiscal-desgrav-link" data-link-gasto="plan_pension">&#128279; Plan de pensiones — sin importe en gastos</span>
+</div>
+<div class="fiscal-desgrav-note">Hasta 5.750€/año para autónomos con plan de empleo simplificado (1.500€ individuales + 4.250€ adicionales).</div>
+</div>
+</div>
+<div class="fiscal-desgrav-item on" data-di="1">
+<div class="fiscal-desgrav-toggle on" data-dtgl="1">&#10003;</div>
+<div class="fiscal-desgrav-body">
+<div class="fiscal-desgrav-row1">
+<span class="fiscal-desgrav-lbl">Cuota autónomos (SS)</span>
+</div>
+<div class="fiscal-desgrav-row2">
+<span class="fiscal-desgrav-from-gasto dim fiscal-desgrav-link" data-link-gasto="cot_social">&#128279; Cotizaciones sociales — sin importe en gastos</span>
+</div>
+<div class="fiscal-desgrav-note">100% deducible como gasto de la actividad económica.</div>
+</div>
+</div>
+<div class="fiscal-desgrav-item on" data-di="2">
+<div class="fiscal-desgrav-toggle on" data-dtgl="2">&#10003;</div>
+<div class="fiscal-desgrav-body">
+<div class="fiscal-desgrav-row1">
+<span class="fiscal-desgrav-lbl">Asesoría / gestoría</span>
+</div>
+<div class="fiscal-desgrav-row2">
+<span class="fiscal-desgrav-from-gasto dim fiscal-desgrav-link" data-link-gasto="asesoria">&#128279; Asesoría — sin importe en gastos</span>
+</div>
+<div class="fiscal-desgrav-note">100% deducible como gasto de la actividad económica.</div>
+</div>
+</div>
+<div class="fiscal-desgrav-item on" data-di="3">
+<div class="fiscal-desgrav-toggle on" data-dtgl="3">&#10003;</div>
+<div class="fiscal-desgrav-body">
+<div class="fiscal-desgrav-row1">
+<span class="fiscal-desgrav-lbl">Seguro salud (titular)</span>
+<span class="fiscal-desgrav-limit">lím. 500€</span>
+</div>
+<div class="fiscal-desgrav-row2">
+<span class="fiscal-desgrav-from-gasto dim fiscal-desgrav-link" data-link-gasto="seg_salud">&#128279; Seguro de Salud — sin importe en gastos</span>
+</div>
+<div class="fiscal-desgrav-note">Gasto deducible en base imponible: hasta 500€/año por persona (1.500€ si discapacidad). Cubre titular, cónyuge e hijos <25 dependientes.</div>
+</div>
+</div>
+<div class="fiscal-desgrav-item on" data-di="4">
+<div class="fiscal-desgrav-toggle on" data-dtgl="4">&#10003;</div>
+<div class="fiscal-desgrav-body">
+<div class="fiscal-desgrav-row1">
+<span class="fiscal-desgrav-lbl">Compras / gastos profesionales</span>
+</div>
+<div class="fiscal-desgrav-row2">
+<span class="fiscal-desgrav-from-gasto dim fiscal-desgrav-link" data-link-gasto="_compras_total">&#128279; Compras profesionales — sin importe en gastos</span>
+</div>
+<div class="fiscal-desgrav-note">100% deducibles como inversión en la actividad. Introduce siempre importes sin IVA.</div>
+</div>
+</div>
+<div class="fiscal-desgrav-item on" data-di="5">
+<div class="fiscal-desgrav-toggle on" data-dtgl="5">&#10003;</div>
+<div class="fiscal-desgrav-body">
+<div class="fiscal-desgrav-row1">
+<span class="fiscal-desgrav-lbl">Seguro baja laboral / IT</span>
+</div>
+<div class="fiscal-desgrav-row2">
+<span class="fiscal-desgrav-from-gasto dim fiscal-desgrav-link" data-link-gasto="seg_baja">&#128279; Seguro baja laboral — sin importe en gastos</span>
+</div>
+<div class="fiscal-desgrav-note">100% deducible como gasto de la actividad económica. Introduce el importe anual en Gastos → Seguro baja laboral.</div>
+</div>
+</div>
+<div class="fiscal-desgrav-item on" data-di="6">
+<div class="fiscal-desgrav-toggle on" data-dtgl="6">&#10003;</div>
+<div class="fiscal-desgrav-body">
+<div class="fiscal-desgrav-row1">
+<span class="fiscal-desgrav-lbl">Amortización de activos</span>
+</div>
+<div class="fiscal-desgrav-row2">
+<input class="fiscal-desgrav-amt" data-di="6" type="number" min="0" step="1" value="0" placeholder="€/año">
+</div>
+<div class="fiscal-desgrav-note">Móviles/portátiles de trabajo: 25%/año. Calcula el total deducible del año e intóducelo aquí directamente (ej: si coste 872€ al 25% = 218€).</div>
+</div>
+</div>
+<div class="fiscal-desgrav-item on" data-di="7">
+<div class="fiscal-desgrav-toggle on" data-dtgl="7">&#10003;</div>
+<div class="fiscal-desgrav-body">
+<div class="fiscal-desgrav-row1">
+<span class="fiscal-desgrav-lbl">Donaciones caritativas</span>
+</div>
+<div class="fiscal-desgrav-row2">
+<span class="fiscal-desgrav-from-gasto dim fiscal-desgrav-link" data-link-gasto="donaciones">&#128279; Donaciones caritativas — sin importe en gastos</span>
+</div>
+<div class="fiscal-desgrav-note">Deducción en cuota: 80% primeros 250€, 40% del exceso (Ley 49/2002). Simplificado al 80%.</div>
+</div>
+</div>
+<div class="fiscal-desgrav-item" data-di="8">
+<div class="fiscal-desgrav-toggle" data-dtgl="8">
+</div>
+<div class="fiscal-desgrav-body">
+<div class="fiscal-desgrav-row1">
+<span class="fiscal-desgrav-lbl">Madrid: Intereses hipoteca &lt;30 años</span>
+<span class="fiscal-desgrav-limit">lím. 4126.68€</span>
+</div>
+<div class="fiscal-desgrav-row2">
+<input class="fiscal-desgrav-amt" data-di="8" type="number" min="0" step="1" value="0" placeholder="€/año">
+</div>
+<div class="fiscal-desgrav-note">Deducción autonomica Comunidad de Madrid (Decreto Legislativo 1/2010): 25% de los intereses hipotecarios para adquisición de vivienda habitual. Solo para residentes en Madrid menores de 30 años. Deducción máxima: 1.031,67€/año (25% sobre 4.126,68€ de base). Introduce el TOTAL de intereses pagados durante el año (NO la parte del despacho).</div>
+</div>
+</div>
+</div>
+<button class="fiscal-add-btn" id="fiscalAddDesgrav">+ Añadir desgravación</button>
+</div>
+</div>
+<div class="fiscal-sticky-save">
+<button class="fiscal-save-btn" id="fiscalSave">Guardar configuración</button>
+</div>

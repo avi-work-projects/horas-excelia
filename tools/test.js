@@ -75,6 +75,59 @@ const VISTAS = [
   ['puentes', () => app.renderSummaryPuentesBody(2026)],
   ['vacaciones-festivos', () => app.renderSummaryTimeOffBody(2026)],
   ['formulario-evento', () => app.renderEvForm(app.EVENTS.find(e => e.id === 'fx-roce-a'))],
+
+  /* ── Ventana economica y Resumen ──────────────────────────────
+     Se vigilan por la puerta de arriba (renderEconContent y compania) en vez
+     de funcion a funcion: cada instantanea arrastra el armazon y el cuerpo de
+     esa pestana, y basta cambiar la variable de pestana. Son la parte con mas
+     numeros de la app, donde un error no se ve mirando. */
+  ['econ-resumen-anual', () => {
+    app.ECON_YEAR = 2026; app.ECON_VIEW = 'resumen'; app.ECON_RESUMEN_MODE = 'anual';
+    return app.renderEconContent();
+  }],
+  ['econ-resumen-mensual', () => {
+    app.ECON_YEAR = 2026; app.ECON_VIEW = 'resumen'; app.ECON_RESUMEN_MODE = 'mensual';
+    const h = app.renderEconContent(); app.ECON_RESUMEN_MODE = 'anual'; return h;
+  }],
+  ['econ-horas-dias', () => { app.ECON_YEAR = 2026; app.ECON_VIEW = 'dias'; return app.renderEconContent(); }],
+  ['econ-gastos', () => { app.ECON_YEAR = 2026; app.ECON_VIEW = 'gastos'; return app.renderEconContent(); }],
+  ['econ-analisis', () => { app.ECON_YEAR = 2026; app.ECON_VIEW = 'analisis'; return app.renderEconContent(); }],
+  ['fiscal-personal', () => { app.FISCAL_TAB = 'personal'; return app.renderFiscalContent(); }],
+  ['fiscal-gastos-desgrav', () => { app.FISCAL_TAB = 'gastos_desg'; return app.renderFiscalContent(); }],
+  ['fiscal-irpf-deducciones', () => { app.FISCAL_TAB = 'irpf_deduc'; return app.renderFiscalContent(); }],
+  ['fiscal-despacho', () => {
+    app.FISCAL_TAB = 'despacho'; const h = app.renderFiscalContent();
+    app.FISCAL_TAB = 'personal'; return h;
+  }],
+  ['resumen-horas-dias', () => {
+    app.SUMMARY_YEAR = 2026; app.SUMMARY_TAB = 'work'; return app.renderSummaryContent();
+  }],
+  ['resumen-puentes', () => {
+    app.SUMMARY_YEAR = 2026; app.SUMMARY_TAB = 'puentes'; return app.renderSummaryContent();
+  }],
+  ['resumen-vacaciones', () => {
+    app.SUMMARY_YEAR = 2026; app.SUMMARY_TAB = 'time-off';
+    const h = app.renderSummaryContent(); app.SUMMARY_TAB = 'work'; return h;
+  }],
+
+  /* ── Armazones y paneles que faltaban ── */
+  ['ventana-eventos', () => { app.EV_VIEW = 'cal'; app.EV_YEAR = 2026; app.EV_MONTH = 7; return app.renderEvContent(); }],
+  ['eventos-por-meses', () => { app.EV_YEAR = 2026; return app.renderEvMonthsView(); }],
+  ['panel-alarma-evento', () => {
+    const ev = app.EVENTS.find(e => e.id === 'fx-boda-ok');
+    return app.renderEvAlarmPanel(ev, new Date(ev.start + 'T00:00:00'));
+  }],
+  ['cumples-ventana', () => { app.BDAY_YEAR = 2026; app.BDAY_VIEW = 'upcoming'; return app.renderBdayContent(); }],
+  ['cumples-detalle', () => app.renderBdayDetail(app.BDAYS[0])],
+  ['cumples-formulario', () => app.renderBdayForm(app.BDAYS[0])],
+  ['cumples-panel-alarma', () => app.renderBdayAlarmPanel(app.BDAYS[0])],
+  ['bodas-formulario-pareja', () => app.renderBodaCoupleForm(app.BODA_COUPLES[0])],
+  ['econ-estudio', () => { app.ECON_YEAR = 2026; return app.renderEstudioContent(); }],
+  ['econ-estudio-comparador', () => { app.ECON_ESTUDIO_SUB = 'comparador'; return app.renderEconComp(); }],
+  ['econ-estudio-simulador', () => {
+    app.ECON_ESTUDIO_SUB = 'simulador'; const h = app.renderEconSim();
+    app.ECON_ESTUDIO_SUB = 'comparador'; return h;
+  }],
 ];
 
 /* Redondeo a dos decimales: comparar euros con === da falsos negativos

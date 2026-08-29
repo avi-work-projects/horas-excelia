@@ -1,0 +1,168 @@
+<div class="overlay-nav-bar">
+<button class="nav-bar-btn active" data-nav="econ" title="Económico">
+<img src="icon-econ.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn" data-nav="estudio" title="Estudio Cambio">
+<img src="icon-estudio.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn" data-nav="home" title="Inicio">
+<img src="icon-home.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn events-active" data-nav="events" title="Eventos">
+<img src="icon-events.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn bday-active" data-nav="bday" title="Cumpleaños">
+<img src="icon-bday.png" class="btn-icon" alt="">
+</button>
+<div class="nav-bar-spacer">
+</div>
+<button class="nav-bar-btn" data-nav="alarm" title="Test alarma">
+<img src="icon-alarm.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn" data-nav="menu" title="Más opciones">&#8943;</button>
+</div>
+<div class="econ-hdr-sub">
+<button class="econ-tab-btn" id="ecTabResumen">Resumen<br>Económico</button>
+<button class="econ-tab-btn" id="ecTabDias">Resumen<br>Horas/Días</button>
+<button class="econ-tab-btn active" id="ecTabGastos">Análisis Gastos<br>Dec. Renta</button>
+<button class="econ-tab-btn" id="ecTabAnalisis">Análisis<br>Ec. Personal</button>
+</div>
+<div class="sy-header with-tabs">
+<button class="econ-gear-btn" id="ecGear">&#9965;</button>
+<div class="sy-year-nav">
+<button class="sy-nav" id="ecPrev">&#9664;</button>
+<div class="sy-year">2026</div>
+<button class="sy-nav" id="ecNext">&#9654;</button>
+</div>
+<button class="sy-pdf" id="ecPdf">PDF</button>
+</div>
+<div class="sy-body">
+<div class="sy-section">
+<div class="sy-section-title">Flujo de ingresos y gastos</div>
+<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Marca/desmarca cada partida para incluirla en el cálculo del neto final.</div>
+<div class="econ-gastos-card">
+<div class="econ-gastos-row" style="">
+<div style="width:18px;flex-shrink:0">
+</div>
+<span class="econ-gastos-lbl">Base imponible</span>
+<span class="econ-gastos-val">
+<span style="color:var(--text-dim);margin-right:4px">
+</span>
+<span style="color:var(--c-blue)">0,00€</span>
+</span>
+</div>
+<div class="econ-gastos-row" style="">
+<div style="width:18px;flex-shrink:0">
+</div>
+<span class="econ-gastos-lbl">+ IVA (21%)</span>
+<span class="econ-gastos-val">
+<span style="color:var(--text-dim);margin-right:4px">+</span>
+<span style="color:var(--c-orange)">0,00€</span>
+</span>
+</div>
+<div class="econ-gastos-result-row">
+<span class="econ-gastos-result-lbl">Total facturado</span>
+<span class="econ-gastos-result-val" style="color:var(--text)">0,00€</span>
+</div>
+<div class="econ-gastos-row" data-gid="irpf_ret" style="">
+<div class="econ-gastos-chk on" data-tgl="irpf_ret">&#10003;</div>
+<span class="econ-gastos-lbl">IRPF 15% retenido en facturas</span>
+<span class="econ-gastos-val">
+<span style="color:var(--text-dim);margin-right:4px">−</span>
+<span style="color:var(--c-red)">0,00€</span>
+</span>
+</div>
+<div class="econ-gastos-result-row">
+<span class="econ-gastos-result-lbl">Cobrado en cuenta</span>
+<span class="econ-gastos-result-val" style="color:var(--text)">0,00€</span>
+</div>
+<div class="econ-gastos-row" data-gid="iva_hac" style="">
+<div style="width:18px;flex-shrink:0">
+</div>
+<span class="econ-gastos-lbl">IVA 21% a Hacienda (Mod.303)</span>
+<span class="econ-gastos-val">
+<span style="color:var(--text-dim);margin-right:4px">−</span>
+<span style="color:var(--c-orange)">0,00€</span>
+</span>
+</div>
+<div class="econ-gastos-result-row">
+<span class="econ-gastos-result-lbl">(Base − 15% IRPF)</span>
+<span class="econ-gastos-result-val" style="color:var(--c-green)">0,00€</span>
+</div>
+<div class="econ-gastos-result-row">
+<span class="econ-gastos-result-lbl">Disponible para gastos personales</span>
+<span class="econ-gastos-result-val" style="color:var(--c-red)">0,00€</span>
+</div>
+</div>
+</div>
+<div class="sy-section" style="padding:10px 14px">
+<div style="font-size:.7rem;color:var(--text-dim);text-align:center">Configurable desde el menú &#9965;️ de la ventana económica</div>
+</div>
+<div class="sy-section" id="resultadoDeclaracion">
+<div class="sy-section-title">Resultado declaración</div>
+<div class="econ-irpf-card">
+<div class="econ-irpf-block econ-irpf-summary-block">
+<div class="econ-irpf-flow-summary">
+<div class="econ-irpf-flow-line">
+<span class="econ-irpf-flow-name">Cuota IRPF total</span>
+<span class="econ-irpf-flow-amt" style="color:var(--c-red)">0,00€</span>
+</div>
+<div class="econ-irpf-flow-note">0,00 % efectivo sobre <b>0,00€</b> de base declaración</div>
+<div class="econ-irpf-flow-line econ-irpf-flow-minus">
+<span class="econ-irpf-flow-name">
+<span class="econ-irpf-flow-sgn">−</span>Ya retenido en facturas</span>
+<span class="econ-irpf-flow-amt" style="color:var(--text-muted)">−0,00€</span>
+</div>
+<div class="econ-irpf-flow-note">15 % retenido en cada factura emitida</div>
+<div class="econ-irpf-flow-result" style="border-color:var(--c-red)">
+<div class="econ-irpf-flow-result-lbl">⬆️ A pagar estimado</div>
+<div class="econ-irpf-flow-result-val" style="color:var(--c-red)">+0,00€</div>
+<div class="econ-irpf-flow-result-sub">en la declaración de la renta</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sy-section">
+<div class="sy-section-title">Cálculo IRPF detallado</div>
+<div class="econ-irpf-card">
+<div class="econ-irpf-block">
+<div class="econ-irpf-block-title">Cálculo de base</div>
+<div class="econ-irpf-flow">
+<div class="econ-irpf-flow-row">
+<span class="econ-irpf-flow-lbl">Base imponible</span>
+<span class="econ-irpf-flow-val" style="color:var(--c-blue)">0,00€</span>
+</div>
+<div class="econ-irpf-flow-row econ-irpf-minus">
+<span class="econ-irpf-flow-lbl">
+<span class="econ-irpf-sign">&#8722;</span>Gastos difícil just. (5%)</span>
+<span class="econ-irpf-flow-val" style="color:var(--c-green)">0,00€</span>
+</div>
+<div class="econ-irpf-flow-row econ-irpf-result">
+<span class="econ-irpf-flow-lbl">Base declaración</span>
+<span class="econ-irpf-flow-val" style="color:var(--text)">0,00€</span>
+</div>
+</div>
+</div>
+<div class="econ-irpf-block">
+<div class="econ-irpf-block-title">IRPF resultante</div>
+<div class="econ-irpf-flow">
+<div class="econ-irpf-flow-row">
+<span class="econ-irpf-flow-lbl">IRPF sobre base declaración</span>
+<span class="econ-irpf-flow-val" style="color:var(--c-red)">0,00€</span>
+</div>
+<div class="econ-irpf-flow-note">0,00 % efectivo sobre <b>0,00€</b> de base declaración</div>
+<div class="econ-irpf-flow-row econ-irpf-minus">
+<span class="econ-irpf-flow-lbl">
+<span class="econ-irpf-sign">&#8722;</span>Ya adelantado en facturas (15%)</span>
+<span class="econ-irpf-flow-val" style="color:var(--text-muted)">0,00€</span>
+</div>
+<div class="econ-irpf-flow-row econ-irpf-result" style="border-top:1px solid var(--border);margin-top:2px;padding-top:4px">
+<span class="econ-irpf-flow-lbl" style="font-weight:700">⬇️ Devolución estimada</span>
+<span class="econ-irpf-flow-val" style="color:var(--c-green);font-weight:700">0,00€</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>

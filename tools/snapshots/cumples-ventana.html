@@ -1,0 +1,105 @@
+<div class="overlay-nav-bar">
+<button class="nav-bar-btn" data-nav="econ" title="Económico">
+<img src="icon-econ.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn" data-nav="estudio" title="Estudio Cambio">
+<img src="icon-estudio.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn" data-nav="home" title="Inicio">
+<img src="icon-home.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn events-active" data-nav="events" title="Eventos">
+<img src="icon-events.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn active bday-active" data-nav="bday" title="Cumpleaños">
+<img src="icon-bday.png" class="btn-icon" alt="">
+</button>
+<div class="nav-bar-spacer">
+</div>
+<button class="nav-bar-btn" data-nav="alarm" title="Test alarma">
+<img src="icon-alarm.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn" data-nav="menu" title="Más opciones">&#8943;</button>
+</div>
+<div class="bday-hdr-sub">
+<button class="bday-view-toggle active" id="bdViewUpcoming">Próximos<br>Cumpleaños</button>
+<button class="bday-view-toggle" id="bdViewList">Lista<br>Cumpleaños</button>
+<button class="bday-view-toggle" id="bdViewCal">Calendario<br>Cumpleaños</button>
+</div>
+<div class="sy-header with-tabs">
+<button class="sy-back" id="bdBack">&#8592;</button>
+<div class="sy-year-nav">
+<div class="sy-year">Próximos</div>
+</div>
+<div class="sy-hdr-right">
+<button class="sy-pdf bd-export-btn" id="bdExport" title="Exportar" aria-label="Exportar">
+<svg viewBox="0 0 24 24" class="ico-exportar" aria-hidden="true">
+<path d="M12 3v10m0 0 4-4m-4 4-4-4" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M4 15v4a1.5 1.5 0 0 0 1.5 1.5h13A1.5 1.5 0 0 0 20 19v-4" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/>
+</svg>
+</button>
+</div>
+</div>
+<div class="sy-body">
+<div class="bday-upcoming-section" style="margin-top:8px">
+<div class="bday-month-hdr">Hoy</div>
+<div class="bday-upcoming-item bday-vip-item bday-today-item" data-bday-idx="4" data-bday-name="elsa pruebas" data-bday-day="21" data-bday-month="8" data-diff="0">
+<div class="bday-upcoming-icon" style="background:#c084fc22;border-color:#c084fc">
+<img src="./VIP.png" class="bday-upcoming-vip-img" alt="VIP">
+</div>
+<div class="bday-upcoming-info">
+<div class="bday-upcoming-name" style="color:#c084fc">Elsa Pruebas</div>
+<div class="bday-upcoming-date">Vie 21 de Agosto</div>
+</div>
+<div class="ev-upcoming-right">
+<span class="ev-upcoming-bell">&#128276;</span>
+<div class="bday-upcoming-lbl today-lbl">¡Hoy!</div>
+</div>
+</div>
+</div>
+<div class="bday-upcoming-section" style="margin-top:8px">
+<div class="bday-month-hdr">Próximos</div>
+<div class="bday-upcoming-item bday-vip-item" data-bday-idx="0" data-bday-name="ana pruebas" data-bday-day="26" data-bday-month="8" data-diff="5">
+<div class="bday-upcoming-icon" style="background:#6c8cff22;border-color:#6c8cff">
+<img src="./VIP.png" class="bday-upcoming-vip-img" alt="VIP">
+</div>
+<div class="bday-upcoming-info">
+<div class="bday-upcoming-name" style="color:#6c8cff">Ana Pruebas</div>
+<div class="bday-upcoming-date">Mié 26 de Agosto</div>
+</div>
+<div class="ev-upcoming-right">
+<span class="ev-upcoming-bell">&#128276;</span>
+<div class="bday-upcoming-lbl">en 5 días</div>
+</div>
+</div>
+<div class="bday-upcoming-item bday-vip-item" data-bday-idx="1" data-bday-name="beto pruebas" data-bday-day="26" data-bday-month="8" data-diff="5">
+<div class="bday-upcoming-icon" style="background:#34d39922;border-color:#34d399">
+<img src="./VIP.png" class="bday-upcoming-vip-img" alt="VIP">
+</div>
+<div class="bday-upcoming-info">
+<div class="bday-upcoming-name" style="color:#34d399">Beto Pruebas</div>
+<div class="bday-upcoming-date">Mié 26 de Agosto</div>
+</div>
+<div class="ev-upcoming-right">
+<span class="ev-upcoming-bell">&#128276;</span>
+<div class="bday-upcoming-lbl">en 5 días</div>
+</div>
+</div>
+<div class="bday-upcoming-item bday-vip-item" data-bday-idx="2" data-bday-name="carla pruebas" data-bday-day="26" data-bday-month="8" data-diff="5">
+<div class="bday-upcoming-icon" style="background:#fb923c22;border-color:#fb923c">
+<img src="./VIP.png" class="bday-upcoming-vip-img" alt="VIP">
+</div>
+<div class="bday-upcoming-info">
+<div class="bday-upcoming-name" style="color:#fb923c">Carla Pruebas</div>
+<div class="bday-upcoming-date">Mié 26 de Agosto</div>
+</div>
+<div class="ev-upcoming-right">
+<span class="ev-upcoming-bell">&#128276;</span>
+<div class="bday-upcoming-lbl">en 5 días</div>
+</div>
+</div>
+</div>
+<div class="bday-io-row">
+<button class="bday-io-btn bday-io-btn-add" id="bdAdd">+ Añadir cumpleaños</button>
+</div>
+</div>

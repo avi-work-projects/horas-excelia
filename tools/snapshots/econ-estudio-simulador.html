@@ -1,0 +1,88 @@
+<div class="sy-section">
+<div class="sy-section-title">Para obtener 40.000,00€/año de Base − 15% IRPF:</div>
+<div style="overflow-x:auto">
+<table class="econ-stats-table sim-combo-table">
+<thead>
+<tr>
+<th>Modalidad</th>
+<th>Tarifa</th>
+<th>Base anual</th>
+<th>Neto anual</th>
+</tr>
+</thead>
+<tbody>
+<tr class="sim-combo-highlight">
+<td>Tarifa / día</td>
+<td class="sim-combo-rate">184,54&#8364;/d</td>
+<td>47.057,70&#8364;</td>
+<td class="col-net">39.999,06&#8364;</td>
+</tr>
+<tr>
+<td>Tarifa / hora real</td>
+<td class="sim-combo-rate">22,50&#8364;/h</td>
+<td>47.057,70&#8364;</td>
+<td class="col-net">39.999,06&#8364;</td>
+</tr>
+<tr>
+<td>Tarifa / hora (8h fijas)</td>
+<td class="sim-combo-rate">23,07&#8364;/h</td>
+<td>47.057,70&#8364;</td>
+<td class="col-net">39.999,06&#8364;</td>
+</tr>
+<tr style="border-top:2px solid var(--border)">
+<td>Nómina asalariado</td>
+<td class="sim-combo-rate">59.022,00&#8364;/año</td>
+<td>—</td>
+<td class="col-net">39.999,33&#8364;</td>
+</tr>
+<tr style="opacity:.7">
+<td style="padding-left:16px">Neto mensual (12p)</td>
+<td>
+</td>
+<td>
+</td>
+<td class="col-net">3.333,28&#8364;</td>
+</tr>
+<tr style="opacity:.7">
+<td style="padding-left:16px">Neto mensual (14p)</td>
+<td>
+</td>
+<td>
+</td>
+<td class="col-net">2.857,10&#8364;</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div style="font-size:.68rem;color:var(--text-dim);margin-top:6px">255d trabajados · 2091.0h reales · Media 8.2h/d</div>
+</div>
+<div class="sy-section">
+<div class="sy-section-title">Calcular Tarifa</div>
+<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:14px">Calcula qué tarifa necesitas para alcanzar un neto objetivo.</div>
+<div class="sim-field-group">
+<div class="sim-field-label">Neto objetivo</div>
+<div class="sim-target-row">
+<div class="sim-target-input-wrap">
+<input class="sim-target-input" id="simTarget" type="text" inputmode="numeric" placeholder="40" value="40" autocomplete="off">
+<span class="sim-target-suffix">.000&nbsp;&#8364;</span>
+</div>
+</div>
+</div>
+<div class="sim-field-group" style="margin-top:12px">
+<div class="sim-field-label">Per&#237;odo</div>
+<div class="econ-opt-row" id="simPeriod">
+<button class="econ-opt-btn active" data-val="annual" data-opt="simPeriod">Anual</button>
+<button class="econ-opt-btn" data-val="monthly" data-opt="simPeriod">Mensual</button>
+</div>
+</div>
+<div class="sim-field-group" style="margin-top:12px">
+<div class="sim-field-label">El neto objetivo es&hellip;</div>
+<div class="econ-opt-row multiline" id="simNetMode">
+<button class="econ-opt-btn" data-val="base" data-opt="simNetMode">Base</button>
+<button class="econ-opt-btn active" data-val="irpf15" data-opt="simNetMode">Base<br>− 15% IRPF</button>
+<button class="econ-opt-btn" data-val="ccss" data-opt="simNetMode">Base<br>− 15% IRPF<br>− CCSS</button>
+<button class="econ-opt-btn" data-val="decl" data-opt="simNetMode">Neto tras<br>Dec. Renta</button>
+</div>
+</div>
+<button class="econ-calc-btn" id="simCalc" style="margin-top:16px">Calcular tarifa</button>
+</div>

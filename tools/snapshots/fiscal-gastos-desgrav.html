@@ -1,0 +1,279 @@
+<div class="overlay-nav-bar">
+<button class="nav-bar-btn active" data-nav="econ" title="Económico">
+<img src="icon-econ.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn" data-nav="estudio" title="Estudio Cambio">
+<img src="icon-estudio.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn" data-nav="home" title="Inicio">
+<img src="icon-home.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn events-active" data-nav="events" title="Eventos">
+<img src="icon-events.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn bday-active" data-nav="bday" title="Cumpleaños">
+<img src="icon-bday.png" class="btn-icon" alt="">
+</button>
+<div class="nav-bar-spacer">
+</div>
+<button class="nav-bar-btn" data-nav="alarm" title="Test alarma">
+<img src="icon-alarm.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn" data-nav="menu" title="Más opciones">&#8943;</button>
+</div>
+<div class="sy-header with-tabs fiscal-hdr">
+<button class="sy-back" id="fiscalBack">&#8592;</button>
+<div class="sy-year" style="font-size:.9rem;color:#c084fc">&#9965; Configuración Fiscal</div>
+</div>
+<div class="fiscal-tab-bar">
+<button class="fiscal-tab-btn" id="fiscalTabPersonal">Economía<br>Personal</button>
+<button class="fiscal-tab-btn active" id="fiscalTabGastosDesg">Gastos<br>Desgravables</button>
+<button class="fiscal-tab-btn" id="fiscalTabIrpfDeduc">IRPF y<br>Deducciones</button>
+<button class="fiscal-tab-btn" id="fiscalTabDespacho">Hipoteca<br>y Facturas</button>
+</div>
+<div class="fiscal-year-selector">
+<button class="fiscal-year-arrow" id="fiscalYearPrev">&#8592;</button>
+<span class="fiscal-year-label" id="fiscalYearLabel">2026</span>
+<button class="fiscal-year-arrow" id="fiscalYearNext">&#8594;</button>
+</div>
+<div class="sy-body" style="padding:16px">
+<div class="fiscal-section">
+<div class="fiscal-section-title income">Ingresos desgravables</div>
+<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Plan de pensiones y similares — reducen la base imponible del IRPF.</div>
+<div id="fiscalIngresosDesgList">
+<div class="fiscal-gasto-item" data-gi="15">
+<span class="fiscal-gasto-lbl">Plan de pensiones</span>
+<input class="fiscal-gasto-amt" data-gi="15" data-gfield="amount" type="number" min="0" step="1" value="0">
+<span class="fiscal-gasto-period-static">/año</span>
+<span style="width:22px">
+</span>
+</div>
+</div>
+</div>
+<div class="fiscal-section">
+<div class="fiscal-section-title expense">Gastos Desgravables</div>
+<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Gastos recurrentes: cotizaciones SS, asesoría, hipoteca, suministros, etc.</div>
+<div id="fiscalGastosList">
+<div class="fiscal-gastos-group-hdr">Autónomo</div>
+<div class="fiscal-gasto-item" data-gi="0">
+<span class="fiscal-gasto-lbl">Cotizaciones sociales</span>
+<input class="fiscal-gasto-amt" data-gi="0" data-gfield="amount" type="number" min="0" step="1" value="0">
+<div class="fiscal-gasto-period">
+<button class="fiscal-period-btn active" data-gi="0" data-gfield="period" data-val="monthly">/mes</button>
+<button class="fiscal-period-btn" data-gi="0" data-gfield="period" data-val="annual">/año</button>
+</div>
+<span style="width:22px">
+</span>
+</div>
+<div class="fiscal-gasto-item" data-gi="1">
+<span class="fiscal-gasto-lbl">Asesoría</span>
+<input class="fiscal-gasto-amt" data-gi="1" data-gfield="amount" type="number" min="0" step="1" value="0">
+<div class="fiscal-gasto-period">
+<button class="fiscal-period-btn active" data-gi="1" data-gfield="period" data-val="monthly">/mes</button>
+<button class="fiscal-period-btn" data-gi="1" data-gfield="period" data-val="annual">/año</button>
+</div>
+<span style="width:22px">
+</span>
+</div>
+<div class="fiscal-gastos-group-hdr">Seguros</div>
+<div class="fiscal-gasto-item" data-gi="2">
+<span class="fiscal-gasto-lbl">Seguro baja laboral</span>
+<input class="fiscal-gasto-amt" data-gi="2" data-gfield="amount" type="number" min="0" step="1" value="0">
+<div class="fiscal-gasto-period">
+<button class="fiscal-period-btn active" data-gi="2" data-gfield="period" data-val="monthly">/mes</button>
+<button class="fiscal-period-btn" data-gi="2" data-gfield="period" data-val="annual">/año</button>
+</div>
+<span style="width:22px">
+</span>
+</div>
+<div class="fiscal-gasto-item" data-gi="3">
+<span class="fiscal-gasto-lbl">Seguro de Salud</span>
+<input class="fiscal-gasto-amt" data-gi="3" data-gfield="amount" type="number" min="0" step="1" value="0">
+<div class="fiscal-gasto-period">
+<button class="fiscal-period-btn active" data-gi="3" data-gfield="period" data-val="monthly">/mes</button>
+<button class="fiscal-period-btn" data-gi="3" data-gfield="period" data-val="annual">/año</button>
+</div>
+<span style="width:22px">
+</span>
+</div>
+<div class="fiscal-gasto-item" data-gi="4">
+<span class="fiscal-gasto-lbl">Seguro de Vida</span>
+<input class="fiscal-gasto-amt" data-gi="4" data-gfield="amount" type="number" min="0" step="1" value="0">
+<div class="fiscal-gasto-period">
+<button class="fiscal-period-btn" data-gi="4" data-gfield="period" data-val="monthly">/mes</button>
+<button class="fiscal-period-btn active" data-gi="4" data-gfield="period" data-val="annual">/año</button>
+</div>
+<span style="width:22px">
+</span>
+</div>
+<div class="fiscal-gasto-item" data-gi="14">
+<span class="fiscal-gasto-lbl">Otros seguros</span>
+<input class="fiscal-gasto-amt" data-gi="14" data-gfield="amount" type="number" min="0" step="1" value="0">
+<div class="fiscal-gasto-period">
+<button class="fiscal-period-btn" data-gi="14" data-gfield="period" data-val="monthly">/mes</button>
+<button class="fiscal-period-btn active" data-gi="14" data-gfield="period" data-val="annual">/año</button>
+</div>
+<span style="width:22px">
+</span>
+</div>
+<div class="fiscal-gastos-group-hdr">Casa</div>
+<div class="fiscal-gasto-item" data-gi="6">
+<span class="fiscal-gasto-lbl">Hipoteca</span>
+<input class="fiscal-gasto-amt" data-gi="6" data-gfield="amount" type="number" min="0" step="1" value="0">
+<div class="fiscal-gasto-period">
+<button class="fiscal-period-btn active" data-gi="6" data-gfield="period" data-val="monthly">/mes</button>
+<button class="fiscal-period-btn" data-gi="6" data-gfield="period" data-val="annual">/año</button>
+</div>
+<span style="width:22px">
+</span>
+</div>
+<div class="fiscal-gasto-item" data-gi="7">
+<span class="fiscal-gasto-lbl">IBI</span>
+<input class="fiscal-gasto-amt" data-gi="7" data-gfield="amount" type="number" min="0" step="1" value="0">
+<div class="fiscal-gasto-period">
+<button class="fiscal-period-btn" data-gi="7" data-gfield="period" data-val="monthly">/mes</button>
+<button class="fiscal-period-btn active" data-gi="7" data-gfield="period" data-val="annual">/año</button>
+</div>
+<span style="width:22px">
+</span>
+</div>
+<div class="fiscal-gasto-item" data-gi="8">
+<span class="fiscal-gasto-lbl">Com. Propietarios</span>
+<input class="fiscal-gasto-amt" data-gi="8" data-gfield="amount" type="number" min="0" step="1" value="0">
+<div class="fiscal-gasto-period">
+<button class="fiscal-period-btn active" data-gi="8" data-gfield="period" data-val="monthly">/mes</button>
+<button class="fiscal-period-btn" data-gi="8" data-gfield="period" data-val="annual">/año</button>
+</div>
+<span style="width:22px">
+</span>
+</div>
+<div class="fiscal-gasto-item" data-gi="9">
+<span class="fiscal-gasto-lbl">Seguro del Hogar</span>
+<input class="fiscal-gasto-amt" data-gi="9" data-gfield="amount" type="number" min="0" step="1" value="0">
+<div class="fiscal-gasto-period">
+<button class="fiscal-period-btn" data-gi="9" data-gfield="period" data-val="monthly">/mes</button>
+<button class="fiscal-period-btn active" data-gi="9" data-gfield="period" data-val="annual">/año</button>
+</div>
+<span style="width:22px">
+</span>
+</div>
+<div class="fiscal-gasto-item" data-gi="10">
+<span class="fiscal-gasto-lbl">Factura Gas</span>
+<input class="fiscal-gasto-amt" data-gi="10" data-gfield="amount" type="number" min="0" step="1" value="0">
+<div class="fiscal-gasto-period">
+<button class="fiscal-period-btn active" data-gi="10" data-gfield="period" data-val="monthly">/mes</button>
+<button class="fiscal-period-btn" data-gi="10" data-gfield="period" data-val="annual">/año</button>
+</div>
+<span style="width:22px">
+</span>
+</div>
+<div class="fiscal-gasto-item" data-gi="11">
+<span class="fiscal-gasto-lbl">Factura Luz</span>
+<input class="fiscal-gasto-amt" data-gi="11" data-gfield="amount" type="number" min="0" step="1" value="0">
+<div class="fiscal-gasto-period">
+<button class="fiscal-period-btn active" data-gi="11" data-gfield="period" data-val="monthly">/mes</button>
+<button class="fiscal-period-btn" data-gi="11" data-gfield="period" data-val="annual">/año</button>
+</div>
+<span style="width:22px">
+</span>
+</div>
+<div class="fiscal-gasto-item" data-gi="12">
+<span class="fiscal-gasto-lbl">Factura Digi</span>
+<input class="fiscal-gasto-amt" data-gi="12" data-gfield="amount" type="number" min="0" step="1" value="0">
+<div class="fiscal-gasto-period">
+<button class="fiscal-period-btn active" data-gi="12" data-gfield="period" data-val="monthly">/mes</button>
+<button class="fiscal-period-btn" data-gi="12" data-gfield="period" data-val="annual">/año</button>
+</div>
+<span style="width:22px">
+</span>
+</div>
+<div class="fiscal-gasto-item" data-gi="13">
+<span class="fiscal-gasto-lbl">Factura Agua</span>
+<input class="fiscal-gasto-amt" data-gi="13" data-gfield="amount" type="number" min="0" step="1" value="0">
+<div class="fiscal-gasto-period">
+<button class="fiscal-period-btn active" data-gi="13" data-gfield="period" data-val="monthly">/mes</button>
+<button class="fiscal-period-btn" data-gi="13" data-gfield="period" data-val="annual">/año</button>
+</div>
+<span style="width:22px">
+</span>
+</div>
+<div class="fiscal-gastos-group-hdr">Otros</div>
+<div class="fiscal-gasto-item" data-gi="5">
+<span class="fiscal-gasto-lbl">Donaciones caritativas</span>
+<input class="fiscal-gasto-amt" data-gi="5" data-gfield="amount" type="number" min="0" step="1" value="0">
+<div class="fiscal-gasto-period">
+<button class="fiscal-period-btn" data-gi="5" data-gfield="period" data-val="monthly">/mes</button>
+<button class="fiscal-period-btn active" data-gi="5" data-gfield="period" data-val="annual">/año</button>
+</div>
+<span style="width:22px">
+</span>
+</div>
+</div>
+<button class="fiscal-add-btn fiscal-add-btn-expense" id="fiscalAddGasto">+ Añadir gasto</button>
+</div>
+<div class="fiscal-section">
+<div class="fiscal-section-title expense">Compras y Gastos Profesionales</div>
+<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:6px">Gastos anuales deducibles como autónomo: equipamiento, material, formación, software, etc.</div>
+<div class="fiscal-despacho-toggle-row" style="margin-bottom:8px;padding-bottom:8px">
+<span class="fiscal-despacho-toggle-lbl">Activar desgravación de IVA soportado</span>
+<div class="fiscal-onoff" id="comprasIvaToggle">OFF</div>
+</div>
+<div style="font-size:.7rem;color:var(--text-dim);margin-bottom:6px">Importes <b>sin IVA</b> por defecto. Activa “Con IVA” por item para que la app calcule automáticamente la base y el IVA soportado (Mod.303).</div>
+<div id="fiscalComprasList">
+<div class="fiscal-gasto-item fiscal-compras-item" data-ci="0">
+<div class="fiscal-compras-toggle on" data-ctgl="0">&#10003;</div>
+<span class="fiscal-gasto-lbl">Material de oficina</span>
+<input class="fiscal-gasto-amt" data-ci="0" data-cfield="amount" type="number" min="0" step="1" value="0" placeholder="0">
+<span class="fiscal-gasto-period-static">/año</span>
+<span style="width:22px">
+</span>
+</div>
+<div class="fiscal-compras-iva-row" data-ci="0">
+<span class="fiscal-compras-iva-lbl">Con IVA incluido:</span>
+<div class="fiscal-compras-iva-tgl" data-civtgl="0">No</div>
+</div>
+<div class="fiscal-gasto-item fiscal-compras-item" data-ci="1">
+<div class="fiscal-compras-toggle on" data-ctgl="1">&#10003;</div>
+<span class="fiscal-gasto-lbl">Equipamiento informático</span>
+<input class="fiscal-gasto-amt" data-ci="1" data-cfield="amount" type="number" min="0" step="1" value="0" placeholder="0">
+<span class="fiscal-gasto-period-static">/año</span>
+<span style="width:22px">
+</span>
+</div>
+<div class="fiscal-compras-iva-row" data-ci="1">
+<span class="fiscal-compras-iva-lbl">Con IVA incluido:</span>
+<div class="fiscal-compras-iva-tgl" data-civtgl="1">No</div>
+</div>
+<div class="fiscal-gasto-item fiscal-compras-item" data-ci="2">
+<div class="fiscal-compras-toggle" data-ctgl="2">
+</div>
+<span class="fiscal-gasto-lbl">Formación / cursos</span>
+<input class="fiscal-gasto-amt" data-ci="2" data-cfield="amount" type="number" min="0" step="1" value="0" placeholder="0">
+<span class="fiscal-gasto-period-static">/año</span>
+<span style="width:22px">
+</span>
+</div>
+<div class="fiscal-compras-iva-row" data-ci="2">
+<span class="fiscal-compras-iva-lbl">Con IVA incluido:</span>
+<div class="fiscal-compras-iva-tgl" data-civtgl="2">No</div>
+</div>
+<div class="fiscal-gasto-item fiscal-compras-item" data-ci="3">
+<div class="fiscal-compras-toggle" data-ctgl="3">
+</div>
+<span class="fiscal-gasto-lbl">Suscripciones software</span>
+<input class="fiscal-gasto-amt" data-ci="3" data-cfield="amount" type="number" min="0" step="1" value="0" placeholder="0">
+<span class="fiscal-gasto-period-static">/año</span>
+<span style="width:22px">
+</span>
+</div>
+<div class="fiscal-compras-iva-row" data-ci="3">
+<span class="fiscal-compras-iva-lbl">Con IVA incluido:</span>
+<div class="fiscal-compras-iva-tgl" data-civtgl="3">No</div>
+</div>
+</div>
+<button class="fiscal-add-btn fiscal-add-btn-expense" id="fiscalAddCompra">+ Añadir compra</button>
+</div>
+</div>
+<div class="fiscal-sticky-save">
+<button class="fiscal-save-btn" id="fiscalSave">Guardar configuración</button>
+</div>

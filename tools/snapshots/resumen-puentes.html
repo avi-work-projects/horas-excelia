@@ -1,0 +1,108 @@
+<div class="overlay-nav-bar">
+<button class="nav-bar-btn" data-nav="econ" title="Económico">
+<img src="icon-econ.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn" data-nav="estudio" title="Estudio Cambio">
+<img src="icon-estudio.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn" data-nav="home" title="Inicio">
+<img src="icon-home.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn events-active" data-nav="events" title="Eventos">
+<img src="icon-events.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn bday-active" data-nav="bday" title="Cumpleaños">
+<img src="icon-bday.png" class="btn-icon" alt="">
+</button>
+<div class="nav-bar-spacer">
+</div>
+<button class="nav-bar-btn" data-nav="alarm" title="Test alarma">
+<img src="icon-alarm.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn" data-nav="menu" title="Más opciones">&#8943;</button>
+</div>
+<div class="sy-tab-bar">
+<button class="sy-tab-btn" id="syTabWork">Horas/Días<br>Trabajados</button>
+<button class="sy-tab-btn active" id="syTabPuentes">Puentes</button>
+<button class="sy-tab-btn" id="syTabTimeOff">Vacaciones y<br>Festivos</button>
+</div>
+<div class="sy-header with-tabs">
+<button class="sy-back" id="syBack">&#8592;</button>
+<div class="sy-year-nav">
+<button class="sy-nav" id="syPrev">&#9664;</button>
+<div class="sy-year">2026</div>
+<button class="sy-nav" id="syNext">&#9654;</button>
+</div>
+<button class="sy-pdf" id="syPdf">PDF</button>
+</div>
+<div class="sy-body">
+<div class="excl-row">
+<label class="excl-item">
+<input type="checkbox" id="syExclPastChk" checked>&#160;Excluir pasados</label>
+<label class="excl-item">
+<input type="checkbox" id="syPuentesLibresChk">&#160;Solo libres</label>
+</div>
+<div class="sy-section">
+<div class="sy-section-title">Puentes (3+ días seguidos)</div>
+<div class="sy-puente">
+<div class="sy-puente-hdr">
+<div class="sy-puente-range">Sábado, 05/09 &#8594; Lunes, 07/09</div>
+<div style="display:flex;align-items:center;gap:6px">
+<div class="sy-puente-count">3 días</div>
+<button class="sy-puente-goto" data-ds="2026-09-05">&#128197;</button>
+</div>
+</div>
+<div class="sy-puente-comp">1 festivo + 2 fines semana</div>
+<div class="sy-puente-days-row">
+<div class="sy-puente-day-cell">
+<div class="sy-puente-day-dn">S</div>
+<div class="sy-puente-day-date">05/09</div>
+<span class="sy-puente-day-tag weekend">FS</span>
+</div>
+<div class="sy-puente-day-cell">
+<div class="sy-puente-day-dn">D</div>
+<div class="sy-puente-day-date">06/09</div>
+<span class="sy-puente-day-tag weekend">FS</span>
+</div>
+<div class="sy-puente-day-cell">
+<div class="sy-puente-day-dn">L</div>
+<div class="sy-puente-day-date">07/09</div>
+<span class="sy-puente-day-tag festivo">Fest</span>
+</div>
+</div>
+<div class="sy-puente-evs">
+<div class="sy-puente-ev" data-id="fx-roce-a" style="cursor:pointer">
+<span>&#128197;&nbsp;Viaje que acaba</span>
+<span class="sy-puente-ev-date">07/09 &#8594; 10/09</span>
+</div>
+</div>
+</div>
+<div class="sy-puente">
+<div class="sy-puente-hdr">
+<div class="sy-puente-range">Viernes, 25/12 &#8594; Domingo, 27/12</div>
+<div style="display:flex;align-items:center;gap:6px">
+<div class="sy-puente-count">3 días</div>
+<button class="sy-puente-goto" data-ds="2026-12-25">&#128197;</button>
+</div>
+</div>
+<div class="sy-puente-comp">1 festivo + 2 fines semana</div>
+<div class="sy-puente-days-row">
+<div class="sy-puente-day-cell">
+<div class="sy-puente-day-dn">V</div>
+<div class="sy-puente-day-date">25/12</div>
+<span class="sy-puente-day-tag festivo">Fest</span>
+</div>
+<div class="sy-puente-day-cell">
+<div class="sy-puente-day-dn">S</div>
+<div class="sy-puente-day-date">26/12</div>
+<span class="sy-puente-day-tag weekend">FS</span>
+</div>
+<div class="sy-puente-day-cell">
+<div class="sy-puente-day-dn">D</div>
+<div class="sy-puente-day-date">27/12</div>
+<span class="sy-puente-day-tag weekend">FS</span>
+</div>
+</div>
+</div>
+</div>
+</div>

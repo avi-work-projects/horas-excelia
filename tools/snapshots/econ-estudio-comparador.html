@@ -1,0 +1,83 @@
+<div class="sy-section">
+<div class="sy-section-title">Escenarios</div>
+<div class="econ-comp-scenarios">
+<div class="econ-scenario-card" style="border-left:3px solid #34d399">
+<div class="econ-sc-header">
+<span style="color:#34d399;font-weight:700;font-size:.88rem">Escenario A</span>
+<div style="display:flex;gap:2px;align-items:center">
+<button class="econ-sc-reorder" data-sci="0" data-dir="up" disabled>&#9650;</button>
+<button class="econ-sc-reorder" data-sci="0" data-dir="down">&#9660;</button>
+</div>
+</div>
+<div class="econ-sc-zones">
+<div class="econ-sc-zone" data-sci="0" data-zone="salary">
+<div class="econ-sc-zone-radio">
+</div>
+<div class="econ-sc-zone-body">
+<div class="econ-sc-zone-label">Nómina</div>
+<input class="econ-sc-zone-input" data-sci="0" data-zone="salary" type="number" min="0" step="1000" placeholder="Bruto anual €" value="">
+</div>
+</div>
+<div class="econ-sc-zone active" data-sci="0" data-zone="daily">
+<div class="econ-sc-zone-radio">
+</div>
+<div class="econ-sc-zone-body">
+<div class="econ-sc-zone-label">€/día</div>
+<input class="econ-sc-zone-input" data-sci="0" data-zone="daily" type="number" min="0" step="1" placeholder="€/día" value="0">
+</div>
+</div>
+<div class="econ-sc-zone" data-sci="0" data-zone="hourly">
+<div class="econ-sc-zone-radio">
+</div>
+<div class="econ-sc-zone-body">
+<div class="econ-sc-zone-btns">
+<button class="econ-sc-zone-sub" data-sci="0" data-zone="hourlyReal">€/hora (trabajadas reales)</button>
+<button class="econ-sc-zone-sub" data-sci="0" data-zone="hourly8h">€/hora (si jornada 8h)</button>
+</div>
+<input class="econ-sc-zone-input" data-sci="0" data-zone="hourly" type="number" min="0" step="1" placeholder="€/hora" value="">
+</div>
+</div>
+</div>
+</div>
+<div class="econ-scenario-card" style="border-left:3px solid #6c8cff">
+<div class="econ-sc-header">
+<span style="color:#6c8cff;font-weight:700;font-size:.88rem">Escenario B</span>
+<div style="display:flex;gap:2px;align-items:center">
+<button class="econ-sc-reorder" data-sci="1" data-dir="up">&#9650;</button>
+<button class="econ-sc-reorder" data-sci="1" data-dir="down" disabled>&#9660;</button>
+</div>
+</div>
+<div class="econ-sc-zones">
+<div class="econ-sc-zone" data-sci="1" data-zone="salary">
+<div class="econ-sc-zone-radio">
+</div>
+<div class="econ-sc-zone-body">
+<div class="econ-sc-zone-label">Nómina</div>
+<input class="econ-sc-zone-input" data-sci="1" data-zone="salary" type="number" min="0" step="1000" placeholder="Bruto anual €" value="">
+</div>
+</div>
+<div class="econ-sc-zone active" data-sci="1" data-zone="daily">
+<div class="econ-sc-zone-radio">
+</div>
+<div class="econ-sc-zone-body">
+<div class="econ-sc-zone-label">€/día</div>
+<input class="econ-sc-zone-input" data-sci="1" data-zone="daily" type="number" min="0" step="1" placeholder="€/día" value="0">
+</div>
+</div>
+<div class="econ-sc-zone" data-sci="1" data-zone="hourly">
+<div class="econ-sc-zone-radio">
+</div>
+<div class="econ-sc-zone-body">
+<div class="econ-sc-zone-btns">
+<button class="econ-sc-zone-sub" data-sci="1" data-zone="hourlyReal">€/hora (trabajadas reales)</button>
+<button class="econ-sc-zone-sub" data-sci="1" data-zone="hourly8h">€/hora (si jornada 8h)</button>
+</div>
+<input class="econ-sc-zone-input" data-sci="1" data-zone="hourly" type="number" min="0" step="1" placeholder="€/hora" value="">
+</div>
+</div>
+</div>
+</div>
+<button class="econ-add-sc-btn" id="ecAddScenario">+ A&#241;adir escenario</button>
+</div>
+<button class="econ-calc-btn" id="ecCompCalcular">Calcular comparativa</button>
+</div>

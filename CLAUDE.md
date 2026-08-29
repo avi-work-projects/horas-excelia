@@ -39,10 +39,10 @@ node tools/test.js
 
 Dos redes en una:
 
-- **26 instantáneas.** Cada `renderXxx()` se pinta con un fixture fijo y su HTML
+- **50 instantáneas.** Cada `renderXxx()` se pinta con un fixture fijo y su HTML
   se compara con el de `tools/snapshots/`. No dicen si la vista está *bien*
   (eso se mira), dicen si ha cambiado **sin querer**.
-- **12 reglas de lógica** para lo que un string no deja ver: barras que se
+- **32 reglas de lógica** para lo que un string no deja ver: barras que se
   rozan, prioridad de horas de una rutina, color de una clase por su pareja,
   tope de eventos por día, firma de un evento al importar…
 
@@ -1153,6 +1153,26 @@ fakeTrans('#6c8cff', 0.65)  // → '#46599f' — azul oscurecido al 65%
 - **1 mes** (`ev-multi-bar`): alpha = 0.65 (texto blanco legible sobre fondo oscuro)
 - **Anual** (`ev-annual-mbar`): alpha = 0.65 (sin texto significativo, barra delgada)
 - **4 meses** (`ev-annual-mbar` en quad): alpha = 0.65 (texto pequeño, fondo oscuro suficiente)
+
+## CSS: la variante va DESPUES de su base (v287)
+`css/styles.css` son 2.300 lineas en un solo fichero y no tiene red de pruebas
+(las instantaneas comparan HTML, no estilos). Lo que evita el fallo tipico es
+una regla de colocacion, porque las dos veces que nos ha mordido ha sido lo
+mismo: **dos selectores con la misma especificidad, y el que tenia que ganar
+estaba escrito antes**.
+
+| Cuando | Que paso |
+|---|---|
+| v265 | `.ev-btn-timeoff` con prefijo de zona gano a `.ev-btn-split` y el boton perdio sus dos colores |
+| v281 | `.boda-hd-edit` estaba antes que `.boda-mini-btn`, y el lapiz salia gris en vez de naranja |
+
+**Reglas:**
+1. Las variantes de un componente van **inmediatamente despues** de su base
+   (`.boda-mini-btn` → `.boda-cl-edit` → `.boda-hd-edit`), nunca en otra seccion.
+2. Antes de subir especificidad o poner `!important`, comprobar si el problema
+   es solo de orden. Casi siempre lo es.
+3. Si un estilo no se aplica y el selector parece correcto, mirar **que hay
+   despues** en el fichero antes que nada.
 
 ## Patrones CSS relevantes
 - `.full-overlay` — base para todos los overlays: `display:flex;flex-direction:column` (NO `overflow-y:auto`)

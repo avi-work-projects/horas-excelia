@@ -1,0 +1,331 @@
+<div class="overlay-nav-bar">
+<button class="nav-bar-btn active" data-nav="econ" title="Económico">
+<img src="icon-econ.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn" data-nav="estudio" title="Estudio Cambio">
+<img src="icon-estudio.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn" data-nav="home" title="Inicio">
+<img src="icon-home.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn events-active" data-nav="events" title="Eventos">
+<img src="icon-events.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn bday-active" data-nav="bday" title="Cumpleaños">
+<img src="icon-bday.png" class="btn-icon" alt="">
+</button>
+<div class="nav-bar-spacer">
+</div>
+<button class="nav-bar-btn" data-nav="alarm" title="Test alarma">
+<img src="icon-alarm.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn" data-nav="menu" title="Más opciones">&#8943;</button>
+</div>
+<div class="econ-hdr-sub">
+<button class="econ-tab-btn" id="ecTabResumen">Resumen<br>Económico</button>
+<button class="econ-tab-btn active" id="ecTabDias">Resumen<br>Horas/Días</button>
+<button class="econ-tab-btn" id="ecTabGastos">Análisis Gastos<br>Dec. Renta</button>
+<button class="econ-tab-btn" id="ecTabAnalisis">Análisis<br>Ec. Personal</button>
+</div>
+<div class="sy-header with-tabs">
+<button class="econ-gear-btn" id="ecGear">&#9965;</button>
+<div class="sy-year-nav">
+<button class="sy-nav" id="ecPrev">&#9664;</button>
+<div class="sy-year">2026</div>
+<button class="sy-nav" id="ecNext">&#9654;</button>
+</div>
+<button class="sy-pdf" id="ecPdf">PDF</button>
+</div>
+<div class="sy-body">
+<div class="sy-section">
+<div class="sy-section-title">L–V Totales</div>
+<div class="sy-cards3">
+<div class="sy-card hi">
+<div class="sy-val">167d</div>
+<div class="sy-lbl">Pasados</div>
+</div>
+<div class="sy-card dim">
+<div class="sy-val">94d</div>
+<div class="sy-lbl">Futuros</div>
+</div>
+<div class="sy-card hi2">
+<div class="sy-val">261d</div>
+<div class="sy-lbl">Totales</div>
+</div>
+</div>
+</div>
+<div class="sy-section">
+<div class="sy-section-title">Ausencias</div>
+<div class="vac-config-row">
+<span class="vac-config-label">Días de vacaciones anuales</span>
+<input class="vac-config-input" id="vacInput" type="number" min="1" max="60" value="23">
+</div>
+<table class="sy-table">
+<thead>
+<tr>
+<th class="sy-td-lbl">Tipo</th>
+<th>Pasados</th>
+<th>Futuros</th>
+<th>Total</th>
+<th>Quedan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="sy-td-lbl">Vacaciones</td>
+<td>2</td>
+<td>0</td>
+<td>2</td>
+<td>21</td>
+</tr>
+<tr>
+<td class="sy-td-lbl">Festivos</td>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+<td>9</td>
+</tr>
+<tr>
+<td class="sy-td-lbl">Bajas</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>&#8212;</td>
+</tr>
+<tr class="sy-tr-total">
+<td class="sy-td-lbl">Total</td>
+<td>4</td>
+<td>2</td>
+<td>6</td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="sy-note warn">Quedan 21 días de vacaciones por planificar.</div>
+<div class="sy-note warn-fest">Faltan 9 días festivos por marcar (en España: 12 días/año).</div>
+</div>
+<div class="excl-row">
+<label class="excl-item" style="color:var(--festivo)">
+<input type="checkbox" class="excl-chk" id="syExclFestChk" style="--chk:var(--festivo)" checked>&#160;Quitar festivos</label>
+<label class="excl-item" style="color:var(--vacaciones)">
+<input type="checkbox" class="excl-chk" id="syExclVacChk" style="--chk:var(--vacaciones)" checked>&#160;Quitar vacaciones</label>
+</div>
+<div class="sy-section">
+<div class="sy-section-title">Días trabajados</div>
+<table class="sy-table">
+<thead>
+<tr>
+<th class="sy-td-lbl">Jornada</th>
+<th>Pasados</th>
+<th>Futuros</th>
+<th>Total</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="sy-td-lbl">6,5h (Viernes)</td>
+<td>33</td>
+<td>17</td>
+<td>50</td>
+</tr>
+<tr>
+<td class="sy-td-lbl">7h</td>
+<td>27</td>
+<td>12</td>
+<td>39</td>
+</tr>
+<tr>
+<td class="sy-td-lbl">8h</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td class="sy-td-lbl">9h</td>
+<td>103</td>
+<td>62</td>
+<td>165</td>
+</tr>
+<tr class="sy-tr-total">
+<td class="sy-td-lbl">Total</td>
+<td>163</td>
+<td>92</td>
+<td>255</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sy-section">
+<div class="sy-section-title">Días trabajados</div>
+<div class="sy-cards3">
+<div class="sy-card hi">
+<div class="sy-val">163d</div>
+<div class="sy-lbl">Trabajados</div>
+</div>
+<div class="sy-card dim">
+<div class="sy-val">92d</div>
+<div class="sy-lbl">Por trabajar</div>
+</div>
+<div class="sy-card hi2">
+<div class="sy-val">255d</div>
+<div class="sy-lbl">Totales</div>
+</div>
+</div>
+<div class="sy-cards3" style="margin-top:8px">
+<div class="sy-card">
+<div class="sy-val-sm">23d</div>
+<div class="sy-lbl">Máx./mes<br>Jul</div>
+</div>
+<div class="sy-card">
+<div class="sy-val-sm">17d</div>
+<div class="sy-lbl">Mín./mes<br>Ago</div>
+</div>
+<div class="sy-card">
+<div class="sy-val-sm">21,3d</div>
+<div class="sy-lbl">Media/mes</div>
+</div>
+</div>
+<div class="sy-chart">
+<svg viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+<rect x="0" y="22" width="24" height="78" rx="2" fill="#34d399" opacity=".45"/>
+<text x="12" y="19" text-anchor="middle" font-size="7" fill="#8888a0">22</text>
+<text x="12" y="118" text-anchor="middle" font-size="7" fill="#5a5a70">Ene</text>
+<rect x="26" y="29" width="24" height="71" rx="2" fill="#34d399" opacity=".45"/>
+<text x="38" y="26" text-anchor="middle" font-size="7" fill="#8888a0">20</text>
+<text x="38" y="118" text-anchor="middle" font-size="7" fill="#5a5a70">Feb</text>
+<rect x="52" y="22" width="24" height="78" rx="2" fill="#34d399" opacity=".45"/>
+<text x="64" y="19" text-anchor="middle" font-size="7" fill="#8888a0">22</text>
+<text x="64" y="118" text-anchor="middle" font-size="7" fill="#5a5a70">Mar</text>
+<rect x="78" y="22" width="24" height="78" rx="2" fill="#34d399" opacity=".45"/>
+<text x="90" y="19" text-anchor="middle" font-size="7" fill="#8888a0">22</text>
+<text x="90" y="118" text-anchor="middle" font-size="7" fill="#5a5a70">Abr</text>
+<rect x="104" y="25" width="24" height="75" rx="2" fill="#34d399" opacity=".45"/>
+<text x="116" y="22" text-anchor="middle" font-size="7" fill="#8888a0">21</text>
+<text x="116" y="118" text-anchor="middle" font-size="7" fill="#5a5a70">May</text>
+<rect x="130" y="22" width="24" height="78" rx="2" fill="#34d399" opacity=".45"/>
+<text x="142" y="19" text-anchor="middle" font-size="7" fill="#8888a0">22</text>
+<text x="142" y="118" text-anchor="middle" font-size="7" fill="#5a5a70">Jun</text>
+<rect x="156" y="18" width="24" height="82" rx="2" fill="#34d399" opacity=".45"/>
+<text x="168" y="15" text-anchor="middle" font-size="7" fill="#8888a0">23</text>
+<text x="168" y="118" text-anchor="middle" font-size="7" fill="#5a5a70">Jul</text>
+<rect x="182" y="40" width="24" height="21" rx="2" fill="#34d399" opacity=".25"/>
+<rect x="182" y="61" width="24" height="39" rx="2" fill="#34d399" opacity="1"/>
+<text x="194" y="37" text-anchor="middle" font-size="7" fill="#8888a0">17</text>
+<text x="194" y="118" text-anchor="middle" font-size="7" fill="#5a5a70">Ago</text>
+<rect x="208" y="25" width="24" height="75" rx="2" fill="#34d399" opacity=".25"/>
+<text x="220" y="20" text-anchor="middle" font-size="7" fill="#8888a0">21</text>
+<text x="220" y="118" text-anchor="middle" font-size="7" fill="#5a5a70">Sep</text>
+<rect x="234" y="22" width="24" height="78" rx="2" fill="#34d399" opacity=".25"/>
+<text x="246" y="17" text-anchor="middle" font-size="7" fill="#8888a0">22</text>
+<text x="246" y="118" text-anchor="middle" font-size="7" fill="#5a5a70">Oct</text>
+<rect x="260" y="25" width="24" height="75" rx="2" fill="#34d399" opacity=".25"/>
+<text x="272" y="20" text-anchor="middle" font-size="7" fill="#8888a0">21</text>
+<text x="272" y="118" text-anchor="middle" font-size="7" fill="#5a5a70">Nov</text>
+<rect x="286" y="22" width="24" height="78" rx="2" fill="#34d399" opacity=".25"/>
+<text x="298" y="17" text-anchor="middle" font-size="7" fill="#8888a0">22</text>
+<text x="298" y="118" text-anchor="middle" font-size="7" fill="#5a5a70">Dic</text>
+</svg>
+</div>
+</div>
+<div class="sy-section">
+<div class="sy-section-title">Horas trabajadas</div>
+<div class="sy-cards3">
+<div class="sy-card hi">
+<div class="sy-val">1330,5 h</div>
+<div class="sy-lbl">Trabajadas</div>
+</div>
+<div class="sy-card dim">
+<div class="sy-val">760,5 h</div>
+<div class="sy-lbl">Por trabajar</div>
+</div>
+<div class="sy-card hi2">
+<div class="sy-val">2091h</div>
+<div class="sy-lbl">Totales</div>
+</div>
+</div>
+<div class="sy-cards4" style="margin-top:8px">
+<div class="sy-card">
+<div class="sy-val-sm">190,5 h</div>
+<div class="sy-lbl">Máx./mes<br>Dic</div>
+</div>
+<div class="sy-card">
+<div class="sy-val-sm">118,5 h</div>
+<div class="sy-lbl">Mín./mes<br>Ago</div>
+</div>
+<div class="sy-card">
+<div class="sy-val-sm">8,2 h</div>
+<div class="sy-sublbl">8h 12min</div>
+<div class="sy-lbl">Media/día</div>
+</div>
+<div class="sy-card">
+<div class="sy-val-sm">174h</div>
+<div class="sy-lbl">Media/mes</div>
+</div>
+</div>
+<div class="sy-chart">
+<svg viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+<rect x="0" y="20" width="24" height="80" rx="2" fill="#6c8cff" opacity=".45"/>
+<text x="12" y="17" text-anchor="middle" font-size="7" fill="#8888a0">185.5</text>
+<text x="12" y="118" text-anchor="middle" font-size="7" fill="#5a5a70">Ene</text>
+<rect x="26" y="27" width="24" height="73" rx="2" fill="#6c8cff" opacity=".45"/>
+<text x="38" y="24" text-anchor="middle" font-size="7" fill="#8888a0">170</text>
+<text x="38" y="118" text-anchor="middle" font-size="7" fill="#5a5a70">Feb</text>
+<rect x="52" y="19" width="24" height="81" rx="2" fill="#6c8cff" opacity=".45"/>
+<text x="64" y="16" text-anchor="middle" font-size="7" fill="#8888a0">188</text>
+<text x="64" y="118" text-anchor="middle" font-size="7" fill="#5a5a70">Mar</text>
+<rect x="78" y="19" width="24" height="81" rx="2" fill="#6c8cff" opacity=".45"/>
+<text x="90" y="16" text-anchor="middle" font-size="7" fill="#8888a0">188</text>
+<text x="90" y="118" text-anchor="middle" font-size="7" fill="#5a5a70">Abr</text>
+<rect x="104" y="24" width="24" height="76" rx="2" fill="#6c8cff" opacity=".45"/>
+<text x="116" y="21" text-anchor="middle" font-size="7" fill="#8888a0">176.5</text>
+<text x="116" y="118" text-anchor="middle" font-size="7" fill="#5a5a70">May</text>
+<rect x="130" y="19" width="24" height="81" rx="2" fill="#6c8cff" opacity=".45"/>
+<text x="142" y="16" text-anchor="middle" font-size="7" fill="#8888a0">188</text>
+<text x="142" y="118" text-anchor="middle" font-size="7" fill="#5a5a70">Jun</text>
+<rect x="156" y="32" width="24" height="68" rx="2" fill="#6c8cff" opacity=".45"/>
+<text x="168" y="29" text-anchor="middle" font-size="7" fill="#8888a0">158.5</text>
+<text x="168" y="118" text-anchor="middle" font-size="7" fill="#5a5a70">Jul</text>
+<rect x="182" y="49" width="24" height="18" rx="2" fill="#6c8cff" opacity=".25"/>
+<rect x="182" y="67" width="24" height="33" rx="2" fill="#6c8cff" opacity="1"/>
+<text x="194" y="46" text-anchor="middle" font-size="7" fill="#8888a0">118.5</text>
+<text x="194" y="118" text-anchor="middle" font-size="7" fill="#5a5a70">Ago</text>
+<rect x="208" y="30" width="24" height="70" rx="2" fill="#6c8cff" opacity=".25"/>
+<text x="220" y="25" text-anchor="middle" font-size="7" fill="#8888a0">163</text>
+<text x="220" y="118" text-anchor="middle" font-size="7" fill="#5a5a70">Sep</text>
+<rect x="234" y="20" width="24" height="80" rx="2" fill="#6c8cff" opacity=".25"/>
+<text x="246" y="15" text-anchor="middle" font-size="7" fill="#8888a0">185.5</text>
+<text x="246" y="118" text-anchor="middle" font-size="7" fill="#5a5a70">Oct</text>
+<rect x="260" y="23" width="24" height="77" rx="2" fill="#6c8cff" opacity=".25"/>
+<text x="272" y="18" text-anchor="middle" font-size="7" fill="#8888a0">179</text>
+<text x="272" y="118" text-anchor="middle" font-size="7" fill="#5a5a70">Nov</text>
+<rect x="286" y="18" width="24" height="82" rx="2" fill="#6c8cff" opacity=".25"/>
+<text x="298" y="13" text-anchor="middle" font-size="7" fill="#8888a0">190.5</text>
+<text x="298" y="118" text-anchor="middle" font-size="7" fill="#5a5a70">Dic</text>
+</svg>
+</div>
+</div>
+<div class="sy-section">
+<div class="sy-section-title">Comparación con español medio (1760 h/año)</div>
+<div class="sy-spain-note">Total previsto del año: <b>2091h</b> · Referencia: <b>1760 h</b>
+</div>
+<div class="sy-cards4 sy-spain-cards sy-spain-over">
+<div class="sy-card">
+<div class="sy-val-sm">+331h</div>
+<div class="sy-lbl">Horas extra<br>al año</div>
+</div>
+<div class="sy-card">
+<div class="sy-val-sm">+40,4d</div>
+<div class="sy-lbl">Días extra<br>equivalentes</div>
+</div>
+<div class="sy-card">
+<div class="sy-val-sm">+18,8%</div>
+<div class="sy-lbl">vs media<br>española</div>
+</div>
+<div class="sy-card">
+<div class="sy-val-sm">+27,6h</div>
+<div class="sy-lbl">Extra/mes<br>de media</div>
+</div>
+</div>
+</div>
+</div>
