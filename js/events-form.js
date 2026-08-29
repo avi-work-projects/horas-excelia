@@ -439,11 +439,8 @@ function bindEvFormEvents(){
   }
   document.querySelectorAll('.ev-viaje-chk').forEach(function(c){
     c.addEventListener('change',function(){
-      var box=c.closest('.ev-viaje-tramo');
-      if(c.checked){
-        var t=box.querySelector('.ev-viaje-time');
-        if(t&&!t.value)t.value='09:00';
-      }
+      /* Sin hora por defecto: un trayecto se puede anotar antes de saber a
+         que hora sale. */
       _viajeSync(c.dataset.tramo);
     });
   });
@@ -548,10 +545,11 @@ function bindEvFormEvents(){
         var chk=box.querySelector('.ev-viaje-chk');
         if(!chk||!chk.checked)return;
         var tv=box.querySelector('.ev-viaje-time');
-        if(!tv||!tv.value)return;
         var modo=box.querySelector('.ev-viaje-modo');
         var cond=box.querySelector('.ev-viaje-cond');
-        var d={time:tv.value,modo:modo?modo.value:'tren'};
+        /* La hora es opcional: antes un trayecto sin hora se descartaba entero
+           y se perdian tambien el medio y el conductor. */
+        var d={time:(tv&&tv.value)?tv.value:null,modo:modo?modo.value:'tren'};
         if(d.modo==='coche'&&cond&&cond.value.trim())d.conductor=cond.value.trim();
         _viaje[tr]=d;
       });

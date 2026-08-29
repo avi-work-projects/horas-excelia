@@ -407,6 +407,17 @@ tiene que saber de donde sale:
   empezo, la ida no se ofrece.
 - La hora se ve en el detalle, en Proximos y en la agenda semanal.
 
+## La hora de un trayecto es opcional (v285)
+Un tramo de viaje (`ev.viaje.ida` / `.vuelta`) vale con solo el medio y el
+conductor: `time` puede ser `null`. Antes había dos cosas que la hacían
+obligatoria sin decirlo — marcar la casilla del trayecto rellenaba `09:00`, y al
+guardar, un trayecto sin hora se **descartaba entero**, llevándose el medio y el
+conductor.
+
+`evTramos(ev)` devuelve ahora los trayectos tengan hora o no, y `evTramoTexto`
+escribe `sin hora`. Lo único que exige hora son los **atajos de alarma**
+("1 h antes"): sin hora no hay de qué restar, así que se saltan ese trayecto.
+
 ## Cierre de paneles: cancelar el temporizador (v260)
 Los paneles se quitan del DOM 300 ms despues de cerrarse. Si en ese rato se
 abria otro con el mismo id, el temporizador del cierre anterior se llevaba por
@@ -824,6 +835,20 @@ Lo que resuelve de una vez, y que antes habia que acordarse en cada sitio:
 
 `bodaOpenSheet`/`bodaCloseSheet` y `_evScheduleRemove`/`_evCancelRemove` siguen
 existiendo como alias finos: son los nombres que ya usaban Bodas y Eventos.
+
+## Repintar un panel abierto no lo recrea (v285)
+`abrirPanel` detecta si el panel de ese id **ya está abierto** (su fondo tiene
+la clase `open`) y entonces solo cambia el contenido, dejándolo donde está.
+
+Antes hacía falta pedirlo con `reutilizar`, y los sitios que repintan una ficha
+tras elegir hora/sala/pareja no lo pasaban (`openEvDetail` sin carrusel,
+`_bodaFormRender`). El panel se quitaba del DOM y se creaba de nuevo **sin** la
+clase `open`: caía fuera de pantalla y volvía a entrar deslizándose. Ese era el
+parpadeo al guardar un cambio desde cualquier sitio que no fueran las casillas
+de Edición (que van por `bodaRefreshRow` y no tocan el panel).
+
+`reutilizar` sigue existiendo para forzarlo cuando el panel aún **no** está
+abierto — el carrusel del día lo usa al deslizar.
 
 ## Un click fuera de un desplegable no se cuela (v272)
 Los dos desplegables del header (panel de alarma y menu ajustes) no tienen

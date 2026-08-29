@@ -381,9 +381,10 @@ function renderEvAlarmPanel(ev,firstDate){
   h+='<div class="bd-alarm-date">'+fd2(firstDate)+' \u00b7 '+diffLbl+'</div>';
   h+='<div class="ev-alarm-note">'+note+'</div></div>';
   if(_conFicha)
-    h+='<button class="ev-alarm-info" id="evAlarmInfo" style="border-color:'+_ac+'88;'
-      +'background:'+_ac+'1c;color:'+_ac+'">'
-      +'Ver<br>ficha</button>';
+    h+='<button class="ev-alarm-info" id="evAlarmInfo" style="border-color:'+_ac+';'
+      +'background:'+fakeTrans(_ac,0.72)+'">'
+      +'<span class="ev-alarm-info-t">Ver<br>ficha</span>'
+      +'<span class="ev-alarm-info-f">&#8250;</span></button>';
   h+='</div>';
   // Permanent 3-zone alarm marker
   h+='<div class="bd-alarm-marker-row">';
@@ -405,6 +406,8 @@ function renderEvAlarmPanel(ev,firstDate){
     _tramos.forEach(function(tr){
       /* Si el viaje ya ha empezado, la ida no tiene sentido */
       if(tr.k==='ida'&&tr.ds<_hoyDs)return;
+      /* Sin hora no hay de que restar la antelacion */
+      if(!tr.t.time)return;
       _bloques.push({titulo:evTramoTexto(tr),min:evMinutosDe(tr.t.time),ds:tr.ds,suf:tr.lbl.toLowerCase()});
     });
   } else {
