@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v286 — Regla que vigila los elementos que busca el arranque';
+var APP_VERSION = 'v287 — El Economico y el Resumen entran en las pruebas';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -129,7 +129,11 @@ function updateThemeBtn(){
 }
 
 // ── Estado global ──────────────────────────────────────────
-var SK='excelia-horas-v3', CY, CM, ST={}, SW={}, ED=null, MONTH_H={}, DAILY_RATE=0, EXCL_FEST=true, EXCL_VAC=true;
+/* CY/CM arrancan con el dia de hoy. Antes se declaraban vacios y solo los
+   rellenaba init.js, asi que cualquier modulo que se inicializara a partir de
+   CY (lo hacia FISCAL_YEAR) nacia con undefined. */
+var SK='excelia-horas-v3', CY=(new Date()).getFullYear(), CM=(new Date()).getMonth(),
+    ST={}, SW={}, ED=null, MONTH_H={}, DAILY_RATE=0, EXCL_FEST=true, EXCL_VAC=true;
 var ECON_YEAR_CONFIG={}; // {year: {rate, exclFest, exclVac, multiRate, ratePeriods, salary, rateMode}}
 var MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 var MN_SHORT=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];

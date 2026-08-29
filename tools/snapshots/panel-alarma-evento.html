@@ -1,0 +1,56 @@
+<div class="ev-alarm-overlay" id="evAlarmOv">
+<div class="bd-alarm-sheet">
+<div class="bd-alarm-handle">
+</div>
+<div class="bd-alarm-hdr">
+<button class="sy-back" id="evAlarmClose">&#8592;</button>
+<div class="bd-alarm-title">&#128276; Alarma evento</div>
+<div style="width:36px">
+</div>
+</div>
+<div class="bd-alarm-top con-ficha">
+<div class="bd-alarm-info" style="border-color:#0ca67844;background:#0ca67811">
+<div class="bd-alarm-name" style="color:#0ca678">Ensayo completo</div>
+<div class="bd-alarm-date">24/08 · en 3 días</div>
+<div class="ev-alarm-note">
+<span style="opacity:.45;font-style:italic">Sin descripción</span>
+</div>
+</div>
+<button class="ev-alarm-info" id="evAlarmInfo" style="border-color:#0ca678;background:#097856">
+<span class="ev-alarm-info-t">Ver<br>ficha</span>
+<span class="ev-alarm-info-f">&#8250;</span>
+</button>
+</div>
+<div class="bd-alarm-marker-row">
+<div class="bd-alarm-marker-text">Marcar alarma como configurada</div>
+<div class="bd-alarm-marker-bell">&#128277;</div>
+<div class="bd-alarm-marker-btns">
+<button class="bd-alarm-marker-btn quitar active" id="evAlarmUnmark">Quitar</button>
+<button class="bd-alarm-marker-btn poner" id="evAlarmPoner">Poner</button>
+</div>
+</div>
+<div class="ev-alarm-pre">
+<div class="ev-alarm-pre-t">Ensayo a las <b>18:00</b> — avisarme:</div>
+<div class="ev-alarm-pre-row">
+<button class="ev-alarm-pre-btn on" data-pre="60" data-hh="17" data-mm="0" data-ds="2026-08-24" data-suf="1 h antes">1 hora antes<span>17:00</span>
+</button>
+<button class="ev-alarm-pre-btn" data-pre="30" data-hh="17" data-mm="30" data-ds="2026-08-24" data-suf="30 min antes">30 min antes<span>17:30</span>
+</button>
+</div>
+</div>
+<div class="bd-alarm-row" style="margin:16px 0">
+<span class="bd-alarm-row-lbl">&#128276; Hora de la alarma<br>
+<span style="font-size:.65rem;opacity:.7">Día del evento: 24/08</span>
+</span>
+<div class="bd-alarm-time">
+<input id="evAlarmH" type="number" min="0" max="23" value="17">
+<span class="bd-alarm-time-sep">:</span>
+<input id="evAlarmM" type="number" min="0" max="59" value="00">
+</div>
+</div>
+<div class="ev-form-actions">
+<button class="ev-btn primary" id="evAlarmCreate">&#128276; Crear alarma</button>
+<button class="ev-btn ev-edit-orange" id="evAlarmEdit">&#9998; Editar evento</button>
+</div>
+</div>
+</div>

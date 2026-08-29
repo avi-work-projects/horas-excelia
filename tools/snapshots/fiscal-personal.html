@@ -1,0 +1,157 @@
+<div class="overlay-nav-bar">
+<button class="nav-bar-btn active" data-nav="econ" title="Económico">
+<img src="icon-econ.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn" data-nav="estudio" title="Estudio Cambio">
+<img src="icon-estudio.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn" data-nav="home" title="Inicio">
+<img src="icon-home.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn events-active" data-nav="events" title="Eventos">
+<img src="icon-events.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn bday-active" data-nav="bday" title="Cumpleaños">
+<img src="icon-bday.png" class="btn-icon" alt="">
+</button>
+<div class="nav-bar-spacer">
+</div>
+<button class="nav-bar-btn" data-nav="alarm" title="Test alarma">
+<img src="icon-alarm.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn" data-nav="menu" title="Más opciones">&#8943;</button>
+</div>
+<div class="sy-header with-tabs fiscal-hdr">
+<button class="sy-back" id="fiscalBack">&#8592;</button>
+<div class="sy-year" style="font-size:.9rem;color:#c084fc">&#9965; Configuración Fiscal</div>
+</div>
+<div class="fiscal-tab-bar">
+<button class="fiscal-tab-btn active" id="fiscalTabPersonal">Economía<br>Personal</button>
+<button class="fiscal-tab-btn" id="fiscalTabGastosDesg">Gastos<br>Desgravables</button>
+<button class="fiscal-tab-btn" id="fiscalTabIrpfDeduc">IRPF y<br>Deducciones</button>
+<button class="fiscal-tab-btn" id="fiscalTabDespacho">Hipoteca<br>y Facturas</button>
+</div>
+<div class="fiscal-year-selector">
+<button class="fiscal-year-arrow" id="fiscalYearPrev">&#8592;</button>
+<span class="fiscal-year-label" id="fiscalYearLabel">2026</span>
+<button class="fiscal-year-arrow" id="fiscalYearNext">&#8594;</button>
+</div>
+<div class="sy-body" style="padding:16px">
+<div class="fiscal-section">
+<div class="fiscal-section-title expense">Gastos Recurrentes Personales</div>
+<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Gastos semanales, suscripciones, viajes, etc.</div>
+<div id="personalGastosSem">
+</div>
+<button class="fiscal-add-btn fiscal-add-btn-expense" data-padd="gastosSemanales" style="margin-bottom:6px">+ Añadir gasto semanal</button>
+<div id="personalGastosRec">
+<div class="fiscal-gasto-item" data-ps="gastosRecurrentes" data-pi="0">
+<input class="fiscal-gasto-lbl-input" data-ps="gastosRecurrentes" data-pi="0" data-pf="label" value="Baile" placeholder="Nombre...">
+<input class="fiscal-gasto-amt fiscal-gasto-amt-sm" data-ps="gastosRecurrentes" data-pi="0" data-pf="amount" type="number" min="0" step="1" value="0">
+<div class="fiscal-gasto-period">
+<button class="fiscal-period-btn active" data-ps="gastosRecurrentes" data-pi="0" data-pf="period" data-val="monthly">/mes</button>
+<button class="fiscal-period-btn" data-ps="gastosRecurrentes" data-pi="0" data-pf="period" data-val="annual">/año</button>
+</div>
+<button class="fiscal-gasto-del fiscal-personal-del" data-ps="gastosRecurrentes" data-pi="0">&#10005;</button>
+</div>
+<div class="fiscal-gasto-item" data-ps="gastosRecurrentes" data-pi="1">
+<input class="fiscal-gasto-lbl-input" data-ps="gastosRecurrentes" data-pi="1" data-pf="label" value="Spotify" placeholder="Nombre...">
+<input class="fiscal-gasto-amt fiscal-gasto-amt-sm" data-ps="gastosRecurrentes" data-pi="1" data-pf="amount" type="number" min="0" step="1" value="0">
+<div class="fiscal-gasto-period">
+<button class="fiscal-period-btn active" data-ps="gastosRecurrentes" data-pi="1" data-pf="period" data-val="monthly">/mes</button>
+<button class="fiscal-period-btn" data-ps="gastosRecurrentes" data-pi="1" data-pf="period" data-val="annual">/año</button>
+</div>
+<button class="fiscal-gasto-del fiscal-personal-del" data-ps="gastosRecurrentes" data-pi="1">&#10005;</button>
+</div>
+<div class="fiscal-gasto-item" data-ps="gastosRecurrentes" data-pi="2">
+<input class="fiscal-gasto-lbl-input" data-ps="gastosRecurrentes" data-pi="2" data-pf="label" value="Netflix" placeholder="Nombre...">
+<input class="fiscal-gasto-amt fiscal-gasto-amt-sm" data-ps="gastosRecurrentes" data-pi="2" data-pf="amount" type="number" min="0" step="1" value="0">
+<div class="fiscal-gasto-period">
+<button class="fiscal-period-btn active" data-ps="gastosRecurrentes" data-pi="2" data-pf="period" data-val="monthly">/mes</button>
+<button class="fiscal-period-btn" data-ps="gastosRecurrentes" data-pi="2" data-pf="period" data-val="annual">/año</button>
+</div>
+<button class="fiscal-gasto-del fiscal-personal-del" data-ps="gastosRecurrentes" data-pi="2">&#10005;</button>
+</div>
+<div class="fiscal-gasto-item" data-ps="gastosRecurrentes" data-pi="3">
+<input class="fiscal-gasto-lbl-input" data-ps="gastosRecurrentes" data-pi="3" data-pf="label" value="Viajes" placeholder="Nombre...">
+<input class="fiscal-gasto-amt fiscal-gasto-amt-sm" data-ps="gastosRecurrentes" data-pi="3" data-pf="amount" type="number" min="0" step="1" value="0">
+<div class="fiscal-gasto-period">
+<button class="fiscal-period-btn" data-ps="gastosRecurrentes" data-pi="3" data-pf="period" data-val="monthly">/mes</button>
+<button class="fiscal-period-btn active" data-ps="gastosRecurrentes" data-pi="3" data-pf="period" data-val="annual">/año</button>
+</div>
+<button class="fiscal-gasto-del fiscal-personal-del" data-ps="gastosRecurrentes" data-pi="3">&#10005;</button>
+</div>
+<div class="fiscal-viaje-selector" data-ps="gastosRecurrentes" data-pi="3">
+<select class="fiscal-viaje-select" data-ps="gastosRecurrentes" data-pi="3" data-pf="viajeFilter">
+<option value="all" selected>Todos los viajes</option>
+<option value="fx-roce-a">Viaje que acaba</option>
+<option value="fx-lg">Asturias larga</option>
+<option value="fx-viaje-tramos">Viaje con tramos</option>
+</select>
+</div>
+</div>
+<button class="fiscal-add-btn fiscal-add-btn-expense" data-padd="gastosRecurrentes" style="margin-bottom:4px">+ Añadir gasto</button>
+<button class="fiscal-add-btn fiscal-add-btn-expense" data-padd="gastosRecurrentes" data-viaje="1">+ Añadir viaje</button>
+</div>
+<div class="fiscal-section">
+<div class="fiscal-section-title income">Inversiones Recurrentes</div>
+<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Planes de ahorro, fondos indexados, DCA crypto, etc.</div>
+<div id="personalInversiones">
+<div class="fiscal-gasto-item" data-ps="inversiones" data-pi="0">
+<input class="fiscal-gasto-lbl-input" data-ps="inversiones" data-pi="0" data-pf="label" value="F. Index. Amundi World" placeholder="Nombre...">
+<input class="fiscal-gasto-amt fiscal-gasto-amt-sm" data-ps="inversiones" data-pi="0" data-pf="amount" type="number" min="0" step="1" value="0">
+<div class="fiscal-gasto-period">
+<button class="fiscal-period-btn active" data-ps="inversiones" data-pi="0" data-pf="period" data-val="monthly">/mes</button>
+<button class="fiscal-period-btn" data-ps="inversiones" data-pi="0" data-pf="period" data-val="annual">/año</button>
+</div>
+<button class="fiscal-gasto-del fiscal-personal-del" data-ps="inversiones" data-pi="0">&#10005;</button>
+</div>
+<div class="fiscal-gasto-item" data-ps="inversiones" data-pi="1">
+<input class="fiscal-gasto-lbl-input" data-ps="inversiones" data-pi="1" data-pf="label" value="F. Index. Amundi Emergents" placeholder="Nombre...">
+<input class="fiscal-gasto-amt fiscal-gasto-amt-sm" data-ps="inversiones" data-pi="1" data-pf="amount" type="number" min="0" step="1" value="0">
+<div class="fiscal-gasto-period">
+<button class="fiscal-period-btn active" data-ps="inversiones" data-pi="1" data-pf="period" data-val="monthly">/mes</button>
+<button class="fiscal-period-btn" data-ps="inversiones" data-pi="1" data-pf="period" data-val="annual">/año</button>
+</div>
+<button class="fiscal-gasto-del fiscal-personal-del" data-ps="inversiones" data-pi="1">&#10005;</button>
+</div>
+<div class="fiscal-gasto-item" data-ps="inversiones" data-pi="2">
+<input class="fiscal-gasto-lbl-input" data-ps="inversiones" data-pi="2" data-pf="label" value="F. Index. Amundi SP-500" placeholder="Nombre...">
+<input class="fiscal-gasto-amt fiscal-gasto-amt-sm" data-ps="inversiones" data-pi="2" data-pf="amount" type="number" min="0" step="1" value="0">
+<div class="fiscal-gasto-period">
+<button class="fiscal-period-btn active" data-ps="inversiones" data-pi="2" data-pf="period" data-val="monthly">/mes</button>
+<button class="fiscal-period-btn" data-ps="inversiones" data-pi="2" data-pf="period" data-val="annual">/año</button>
+</div>
+<button class="fiscal-gasto-del fiscal-personal-del" data-ps="inversiones" data-pi="2">&#10005;</button>
+</div>
+<div class="fiscal-gasto-item" data-ps="inversiones" data-pi="3">
+<input class="fiscal-gasto-lbl-input" data-ps="inversiones" data-pi="3" data-pf="label" value="F. Index. Renta Fija" placeholder="Nombre...">
+<input class="fiscal-gasto-amt fiscal-gasto-amt-sm" data-ps="inversiones" data-pi="3" data-pf="amount" type="number" min="0" step="1" value="0">
+<div class="fiscal-gasto-period">
+<button class="fiscal-period-btn active" data-ps="inversiones" data-pi="3" data-pf="period" data-val="monthly">/mes</button>
+<button class="fiscal-period-btn" data-ps="inversiones" data-pi="3" data-pf="period" data-val="annual">/año</button>
+</div>
+<button class="fiscal-gasto-del fiscal-personal-del" data-ps="inversiones" data-pi="3">&#10005;</button>
+</div>
+<div class="fiscal-gasto-item" data-ps="inversiones" data-pi="4">
+<input class="fiscal-gasto-lbl-input" data-ps="inversiones" data-pi="4" data-pf="label" value="Depósito T.R. - 2%" placeholder="Nombre...">
+<input class="fiscal-gasto-amt fiscal-gasto-amt-sm" data-ps="inversiones" data-pi="4" data-pf="amount" type="number" min="0" step="1" value="0">
+<div class="fiscal-gasto-period">
+<button class="fiscal-period-btn active" data-ps="inversiones" data-pi="4" data-pf="period" data-val="monthly">/mes</button>
+<button class="fiscal-period-btn" data-ps="inversiones" data-pi="4" data-pf="period" data-val="annual">/año</button>
+</div>
+<button class="fiscal-gasto-del fiscal-personal-del" data-ps="inversiones" data-pi="4">&#10005;</button>
+</div>
+</div>
+<button class="fiscal-add-btn fiscal-add-btn-income" data-padd="inversiones">+ Añadir inversión</button>
+</div>
+<div class="fiscal-section">
+<div class="fiscal-section-title income">Ingresos Regulares</div>
+<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">Ingresos recurrentes: alquileres, dividendos, pensiones, etc.</div>
+<div id="personalIngresos">
+</div>
+<button class="fiscal-add-btn fiscal-add-btn-income" data-padd="ingresos">+ Añadir ingreso</button>
+</div>
+</div>
+<div class="fiscal-sticky-save">
+<button class="fiscal-save-btn" id="fiscalSave">Guardar configuración</button>
+</div>

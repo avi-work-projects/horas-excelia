@@ -1,0 +1,395 @@
+<div class="overlay-nav-bar">
+<button class="nav-bar-btn active" data-nav="econ" title="Económico">
+<img src="icon-econ.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn" data-nav="estudio" title="Estudio Cambio">
+<img src="icon-estudio.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn" data-nav="home" title="Inicio">
+<img src="icon-home.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn events-active" data-nav="events" title="Eventos">
+<img src="icon-events.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn bday-active" data-nav="bday" title="Cumpleaños">
+<img src="icon-bday.png" class="btn-icon" alt="">
+</button>
+<div class="nav-bar-spacer">
+</div>
+<button class="nav-bar-btn" data-nav="alarm" title="Test alarma">
+<img src="icon-alarm.png" class="btn-icon" alt="">
+</button>
+<button class="nav-bar-btn" data-nav="menu" title="Más opciones">&#8943;</button>
+</div>
+<div class="econ-hdr-sub">
+<button class="econ-tab-btn active" id="ecTabResumen">Resumen<br>Económico</button>
+<button class="econ-tab-btn" id="ecTabDias">Resumen<br>Horas/Días</button>
+<button class="econ-tab-btn" id="ecTabGastos">Análisis Gastos<br>Dec. Renta</button>
+<button class="econ-tab-btn" id="ecTabAnalisis">Análisis<br>Ec. Personal</button>
+</div>
+<div class="sy-header with-tabs">
+<button class="econ-gear-btn" id="ecGear">&#9965;</button>
+<div class="sy-year-nav">
+<button class="sy-nav" id="ecPrev">&#9664;</button>
+<div class="sy-year">2026</div>
+<button class="sy-nav" id="ecNext">&#9654;</button>
+</div>
+<button class="sy-pdf" id="ecPdf">PDF</button>
+</div>
+<div class="sy-body">
+<div class="sy-section">
+<div class="sy-section-title">Tarifa</div>
+<div class="econ-opt-row" style="margin-bottom:8px">
+<button class="econ-opt-btn active" id="ecModeFreelance">Autónomo</button>
+<button class="econ-opt-btn" id="ecModeSalary">Nómina</button>
+</div>
+<div class="econ-opt-row" style="margin-bottom:8px">
+<button class="econ-opt-btn active" id="ecRateSingle">Tarifa única</button>
+<button class="econ-opt-btn" id="ecRateMulti">Múltiples tarifas</button>
+</div>
+<div class="econ-rate-dual">
+<div class="econ-rate-field primary">
+<label>&#8364;/d&#237;a</label>
+<input class="econ-rate-input econ-mr-rate" id="rateDay" data-pfx="" data-rtype="daily" type="number" min="1" step="1" value="0">
+<span class="econ-rate-badge">media 8.2h/d&#237;a</span>
+</div>
+<div class="econ-rate-sep">&#8596;</div>
+<div class="econ-rate-field derived">
+<label>&#8364;/hora</label>
+<input class="econ-rate-input econ-mr-rate" id="rateHour" data-pfx="" data-rtype="hourly" type="number" min="0.01" step="0.01" value="0.00">
+</div>
+</div>
+<button class="econ-calc-btn" id="ecCalcular">Calcular</button>
+<div class="excl-row" style="margin-top:8px">
+<label class="excl-item" style="color:var(--festivo)">
+<input type="checkbox" class="excl-chk" id="ecExclFestChk" style="--chk:var(--festivo)" checked>&#160;Quitar festivos</label>
+<label class="excl-item" style="color:var(--vacaciones)">
+<input type="checkbox" class="excl-chk" id="ecExclVacChk" style="--chk:var(--vacaciones)" checked>&#160;Quitar vacaciones</label>
+</div>
+</div>
+<div class="sy-section">
+<div class="sy-section-title" style="display:flex;align-items:center;justify-content:space-between">Resumen Anual<div style="display:flex;gap:4px">
+<button class="fiscal-period-btn active" data-erm="anual" style="font-size:.55rem;padding:2px 5px">Anual</button>
+<button class="fiscal-period-btn" data-erm="mensual" style="font-size:.55rem;padding:2px 5px">Mensual</button>
+</div>
+</div>
+<div class="econ-avg-cards">
+<div class="econ-avg-card" style="border-left-color:var(--c-blue)">
+<div class="econ-avg-card-lbl" style="color:var(--c-blue)">Base</div>
+<div class="econ-avg-card-val" style="color:var(--c-blue)">0,00€</div>
+<div class="econ-avg-card-sub">año completo</div>
+</div>
+<div class="econ-avg-card" style="border-left-color:var(--c-orange)">
+<div class="econ-avg-card-lbl" style="color:var(--c-orange)">IVA</div>
+<div class="econ-avg-card-val" style="color:var(--c-orange)">0,00€</div>
+<div class="econ-avg-card-sub">no toques</div>
+</div>
+<div class="econ-avg-card" style="border-left-color:var(--c-green)">
+<div class="econ-avg-card-lbl" style="color:var(--c-green)">Base − 15% IRPF</div>
+<div class="econ-avg-card-val" style="color:var(--c-green)">0,00€</div>
+<div class="econ-avg-card-sub">base − 15% IRPF</div>
+</div>
+<div class="econ-avg-card" style="border-left-color:var(--c-red)">
+<div class="econ-avg-card-lbl" style="color:var(--c-red)">IRPF</div>
+<div class="econ-avg-card-val" style="color:var(--c-red)">0,00€</div>
+<div class="econ-avg-card-sub">retención 15%</div>
+</div>
+<div class="econ-avg-card" style="border-left-color:var(--c-green)">
+<div class="econ-avg-card-lbl" style="color:var(--c-green)">Base − 15% IRPF − CCSS</div>
+<div class="econ-avg-card-val" style="color:var(--c-green)">0,00€</div>
+<div class="econ-avg-card-sub">tras CCSS</div>
+</div>
+<div class="econ-avg-card" style="border-left-color:#c084fc">
+<div class="econ-avg-card-lbl" style="color:#c084fc">Cuota Autónomos</div>
+<div class="econ-avg-card-val" style="color:#c084fc">0,00€</div>
+<div class="econ-avg-card-sub">CCSS</div>
+</div>
+<div class="econ-avg-card" style="border-left-color:var(--accent-bright)">
+<div class="econ-avg-card-lbl" style="color:var(--accent-bright)">Neto tras Dec. Renta</div>
+<div class="econ-avg-card-val" style="color:var(--accent-bright)">0,00€</div>
+<div class="econ-avg-card-sub">tras declaración</div>
+</div>
+</div>
+</div>
+<div class="sy-section">
+<div class="sy-section-title">Estad&#237;sticas por hora y d&#237;a</div>
+<div style="overflow-x:auto">
+<table class="econ-stats-table">
+<thead>
+<tr>
+<th>
+</th>
+<th>Por hora</th>
+<th>Por d&#237;a</th>
+<th>Hora (8h fijas)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="col-base">
+<td>Base</td>
+<td>0,00&#8364;/h</td>
+<td>0,00&#8364;/d</td>
+<td>0,00&#8364;/h</td>
+</tr>
+<tr class="col-iva">
+<td>IVA</td>
+<td>0,00&#8364;/h</td>
+<td>0,00&#8364;/d</td>
+<td>0,00&#8364;/h</td>
+</tr>
+<tr class="col-irpf">
+<td>IRPF</td>
+<td>0,00&#8364;/h</td>
+<td>0,00&#8364;/d</td>
+<td>0,00&#8364;/h</td>
+</tr>
+<tr class="col-net">
+<td>Neto</td>
+<td>0,00&#8364;/h</td>
+<td>0,00&#8364;/d</td>
+<td>0,00&#8364;/h</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sy-section econ-quarter-section">
+<div class="sy-section-title">IVA trimestral a Hacienda (mod. 303)</div>
+<div class="econ-quarter-scroll">
+<div class="econ-quarter-grid">
+<div class="econ-qcell">
+<div class="sy-val-sm">0,00&#8364;</div>
+<div class="sy-lbl">T1 Cobrado</div>
+</div>
+<div class="econ-qcell">
+<div class="sy-val-sm">0,00&#8364;</div>
+<div class="sy-lbl">T2 Cobrado</div>
+</div>
+<div class="econ-qcell">
+<div class="sy-val-sm">0,00&#8364;</div>
+<div class="sy-lbl">T3 Cobrado</div>
+</div>
+<div class="econ-qcell">
+<div class="sy-val-sm">0,00&#8364;</div>
+<div class="sy-lbl">T4 Cobrado</div>
+</div>
+<div class="econ-qcell econ-qcell-iva">
+<div class="sy-val-sm" style="color:var(--c-orange)">0,00&#8364;</div>
+<div class="sy-lbl">T1 IVA facturado</div>
+</div>
+<div class="econ-qcell econ-qcell-iva">
+<div class="sy-val-sm" style="color:var(--c-orange)">0,00&#8364;</div>
+<div class="sy-lbl">T2 IVA facturado</div>
+</div>
+<div class="econ-qcell econ-qcell-iva">
+<div class="sy-val-sm" style="color:var(--c-orange)">0,00&#8364;</div>
+<div class="sy-lbl">T3 IVA facturado</div>
+</div>
+<div class="econ-qcell econ-qcell-iva">
+<div class="sy-val-sm" style="color:var(--c-orange)">0,00&#8364;</div>
+<div class="sy-lbl">T4 IVA facturado</div>
+</div>
+<div class="econ-qcell econ-qcell-neto">
+<div class="sy-val-sm" style="color:var(--c-green)">0,00&#8364;</div>
+<div class="sy-lbl">T1 Base − 15% IRPF</div>
+</div>
+<div class="econ-qcell econ-qcell-neto">
+<div class="sy-val-sm" style="color:var(--c-green)">0,00&#8364;</div>
+<div class="sy-lbl">T2 Base − 15% IRPF</div>
+</div>
+<div class="econ-qcell econ-qcell-neto">
+<div class="sy-val-sm" style="color:var(--c-green)">0,00&#8364;</div>
+<div class="sy-lbl">T3 Base − 15% IRPF</div>
+</div>
+<div class="econ-qcell econ-qcell-neto">
+<div class="sy-val-sm" style="color:var(--c-green)">0,00&#8364;</div>
+<div class="sy-lbl">T4 Base − 15% IRPF</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sy-section">
+<div class="sy-section-title">Base − 15% IRPF mensual</div>
+<div class="sy-chart">
+<svg viewBox="0 0 320 108" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+<text x="43" y="106" text-anchor="middle" font-size="7" fill="#5a5a70">Ene</text>
+<text x="67" y="106" text-anchor="middle" font-size="7" fill="#5a5a70">Feb</text>
+<text x="91" y="106" text-anchor="middle" font-size="7" fill="#5a5a70">Mar</text>
+<text x="115" y="106" text-anchor="middle" font-size="7" fill="#5a5a70">Abr</text>
+<text x="139" y="106" text-anchor="middle" font-size="7" fill="#5a5a70">May</text>
+<text x="163" y="106" text-anchor="middle" font-size="7" fill="#5a5a70">Jun</text>
+<text x="187" y="106" text-anchor="middle" font-size="7" fill="#5a5a70">Jul</text>
+<text x="211" y="106" text-anchor="middle" font-size="7" fill="#5a5a70">Ago</text>
+<text x="235" y="106" text-anchor="middle" font-size="7" fill="#5a5a70">Sep</text>
+<text x="259" y="106" text-anchor="middle" font-size="7" fill="#5a5a70">Oct</text>
+<text x="283" y="106" text-anchor="middle" font-size="7" fill="#5a5a70">Nov</text>
+<text x="307" y="106" text-anchor="middle" font-size="7" fill="#5a5a70">Dic</text>
+</svg>
+</div>
+</div>
+<div class="sy-section econ-month-section">
+<div class="sy-section-title">Desglose Mensual</div>
+<div class="econ-month-wrap">
+<table class="econ-month-table">
+<thead>
+<tr>
+<th>Mes</th>
+<th>Días</th>
+<th style="color:var(--c-blue)">Base</th>
+<th style="color:var(--c-orange)">IVA</th>
+<th style="color:var(--c-red)">IRPF</th>
+<th>Ingresado</th>
+<th style="color:var(--c-green)">Base−15% IRPF</th>
+<th style="color:var(--c-green)">Base−15% IRPF−CCSS</th>
+<th style="color:var(--accent-bright)">Neto Dec.</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ene</td>
+<td>22d</td>
+<td class="col-base">0,00&#8364;</td>
+<td class="col-iva">0,00&#8364;</td>
+<td class="col-irpf">0,00&#8364;</td>
+<td class="col-ingresado">0,00&#8364;</td>
+<td class="col-net">0,00&#8364;</td>
+<td class="col-net" style="opacity:.8">0,00&#8364;</td>
+<td style="color:var(--accent-bright)">0,00&#8364;</td>
+</tr>
+<tr>
+<td>Feb</td>
+<td>20d</td>
+<td class="col-base">0,00&#8364;</td>
+<td class="col-iva">0,00&#8364;</td>
+<td class="col-irpf">0,00&#8364;</td>
+<td class="col-ingresado">0,00&#8364;</td>
+<td class="col-net">0,00&#8364;</td>
+<td class="col-net" style="opacity:.8">0,00&#8364;</td>
+<td style="color:var(--accent-bright)">0,00&#8364;</td>
+</tr>
+<tr>
+<td>Mar</td>
+<td>22d</td>
+<td class="col-base">0,00&#8364;</td>
+<td class="col-iva">0,00&#8364;</td>
+<td class="col-irpf">0,00&#8364;</td>
+<td class="col-ingresado">0,00&#8364;</td>
+<td class="col-net">0,00&#8364;</td>
+<td class="col-net" style="opacity:.8">0,00&#8364;</td>
+<td style="color:var(--accent-bright)">0,00&#8364;</td>
+</tr>
+<tr>
+<td>Abr</td>
+<td>22d</td>
+<td class="col-base">0,00&#8364;</td>
+<td class="col-iva">0,00&#8364;</td>
+<td class="col-irpf">0,00&#8364;</td>
+<td class="col-ingresado">0,00&#8364;</td>
+<td class="col-net">0,00&#8364;</td>
+<td class="col-net" style="opacity:.8">0,00&#8364;</td>
+<td style="color:var(--accent-bright)">0,00&#8364;</td>
+</tr>
+<tr>
+<td>May</td>
+<td>21d</td>
+<td class="col-base">0,00&#8364;</td>
+<td class="col-iva">0,00&#8364;</td>
+<td class="col-irpf">0,00&#8364;</td>
+<td class="col-ingresado">0,00&#8364;</td>
+<td class="col-net">0,00&#8364;</td>
+<td class="col-net" style="opacity:.8">0,00&#8364;</td>
+<td style="color:var(--accent-bright)">0,00&#8364;</td>
+</tr>
+<tr>
+<td>Jun</td>
+<td>22d</td>
+<td class="col-base">0,00&#8364;</td>
+<td class="col-iva">0,00&#8364;</td>
+<td class="col-irpf">0,00&#8364;</td>
+<td class="col-ingresado">0,00&#8364;</td>
+<td class="col-net">0,00&#8364;</td>
+<td class="col-net" style="opacity:.8">0,00&#8364;</td>
+<td style="color:var(--accent-bright)">0,00&#8364;</td>
+</tr>
+<tr>
+<td>Jul</td>
+<td>23d</td>
+<td class="col-base">0,00&#8364;</td>
+<td class="col-iva">0,00&#8364;</td>
+<td class="col-irpf">0,00&#8364;</td>
+<td class="col-ingresado">0,00&#8364;</td>
+<td class="col-net">0,00&#8364;</td>
+<td class="col-net" style="opacity:.8">0,00&#8364;</td>
+<td style="color:var(--accent-bright)">0,00&#8364;</td>
+</tr>
+<tr>
+<td>Ago</td>
+<td>17d</td>
+<td class="col-base">0,00&#8364;</td>
+<td class="col-iva">0,00&#8364;</td>
+<td class="col-irpf">0,00&#8364;</td>
+<td class="col-ingresado">0,00&#8364;</td>
+<td class="col-net">0,00&#8364;</td>
+<td class="col-net" style="opacity:.8">0,00&#8364;</td>
+<td style="color:var(--accent-bright)">0,00&#8364;</td>
+</tr>
+<tr>
+<td>Sep</td>
+<td>21d</td>
+<td class="col-base">0,00&#8364;</td>
+<td class="col-iva">0,00&#8364;</td>
+<td class="col-irpf">0,00&#8364;</td>
+<td class="col-ingresado">0,00&#8364;</td>
+<td class="col-net">0,00&#8364;</td>
+<td class="col-net" style="opacity:.8">0,00&#8364;</td>
+<td style="color:var(--accent-bright)">0,00&#8364;</td>
+</tr>
+<tr>
+<td>Oct</td>
+<td>22d</td>
+<td class="col-base">0,00&#8364;</td>
+<td class="col-iva">0,00&#8364;</td>
+<td class="col-irpf">0,00&#8364;</td>
+<td class="col-ingresado">0,00&#8364;</td>
+<td class="col-net">0,00&#8364;</td>
+<td class="col-net" style="opacity:.8">0,00&#8364;</td>
+<td style="color:var(--accent-bright)">0,00&#8364;</td>
+</tr>
+<tr>
+<td>Nov</td>
+<td>21d</td>
+<td class="col-base">0,00&#8364;</td>
+<td class="col-iva">0,00&#8364;</td>
+<td class="col-irpf">0,00&#8364;</td>
+<td class="col-ingresado">0,00&#8364;</td>
+<td class="col-net">0,00&#8364;</td>
+<td class="col-net" style="opacity:.8">0,00&#8364;</td>
+<td style="color:var(--accent-bright)">0,00&#8364;</td>
+</tr>
+<tr>
+<td>Dic</td>
+<td>22d</td>
+<td class="col-base">0,00&#8364;</td>
+<td class="col-iva">0,00&#8364;</td>
+<td class="col-irpf">0,00&#8364;</td>
+<td class="col-ingresado">0,00&#8364;</td>
+<td class="col-net">0,00&#8364;</td>
+<td class="col-net" style="opacity:.8">0,00&#8364;</td>
+<td style="color:var(--accent-bright)">0,00&#8364;</td>
+</tr>
+<tr class="econ-tr-total">
+<td>Total</td>
+<td>255d</td>
+<td class="col-base">0,00&#8364;</td>
+<td class="col-iva">0,00&#8364;</td>
+<td class="col-irpf">0,00&#8364;</td>
+<td class="col-ingresado">0,00&#8364;</td>
+<td class="col-net">0,00&#8364;</td>
+<td class="col-net" style="opacity:.8">0,00&#8364;</td>
+<td style="color:var(--accent-bright)">0,00&#8364;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>

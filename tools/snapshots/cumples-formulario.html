@@ -1,0 +1,46 @@
+<div class="bd-form-overlay" id="bdFormOv">
+<div class="bd-form-sheet">
+<div class="bd-form-handle">
+</div>
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+<button class="sy-back" id="bdFClose">&#8592;</button>
+<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">Editar cumpleaños</div>
+<button class="ev-btn danger" id="bdFDel" style="flex:none;padding:6px 12px;font-size:.75rem">Eliminar</button>
+</div>
+<div class="ev-field">
+<label>Nombre</label>
+<input class="ev-input" id="bdFName" type="text" maxlength="60" placeholder="Nombre completo" value="ana pruebas">
+</div>
+<div class="ev-field ev-date-row">
+<div>
+<label>Día</label>
+<input class="ev-input" id="bdFDay" type="number" min="1" max="31" placeholder="1-31" value="26">
+</div>
+<div>
+<label>Mes</label>
+<select class="ev-input" id="bdFMonth">
+<option value="1">Enero</option>
+<option value="2">Febrero</option>
+<option value="3">Marzo</option>
+<option value="4">Abril</option>
+<option value="5">Mayo</option>
+<option value="6">Junio</option>
+<option value="7">Julio</option>
+<option value="8" selected>Agosto</option>
+<option value="9">Septiembre</option>
+<option value="10">Octubre</option>
+<option value="11">Noviembre</option>
+<option value="12">Diciembre</option>
+</select>
+</div>
+</div>
+<div class="ev-toggle-row">
+<label class="ev-toggle-label" for="bdFVip">
+<img src="./VIP.png" alt="VIP" style="height:1.6em;vertical-align:middle;margin-right:5px"> VIP (alarma prioritaria + sync eventos)</label>
+<input type="checkbox" class="ev-checkbox" id="bdFVip" checked style="--chk:#fbbf24">
+</div>
+<div class="ev-form-actions">
+<button class="ev-btn primary" id="bdFSave">Guardar</button>
+</div>
+</div>
+</div>
