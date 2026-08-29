@@ -60,7 +60,21 @@ function refreshEvents(keepScroll){
   }
 }
 
+/* bindEvEvents estaba en 414 lineas y era la funcion mas grande del proyecto.
+   Se parte por lo que uno busca cuando algo "no responde": si falla un boton de
+   la cabecera se mira _bindEvNav, si falla un dia del calendario _bindEvCal, si
+   falla una tarjeta _bindEvListas. Los cuatro trozos son independientes: ninguna
+   variable cruza de uno a otro. */
 function bindEvEvents(){
+  _bindEvNav();
+  _bindEvCal();
+  _bindEvListas();
+  _bindEvGestos();
+}
+
+/* Cabecera, pestanas y navegacion en el tiempo (flechas, Hoy, subpestanas,
+   desplegable del anual). Nada de esto depende de que vista este pintada. */
+function _bindEvNav(){
   document.getElementById('evBack').addEventListener('click',function(){
     if(EV_VIEW==='cal'&&(EV_PREV_VIEW==='annual'||EV_PREV_VIEW==='quad')){
       EV_VIEW=EV_PREV_VIEW;EV_PREV_VIEW=null;refreshEvents();
@@ -243,6 +257,11 @@ function bindEvEvents(){
     if(EV_VIEW==='annual'||EV_VIEW==='quad'){EV_EDIT_MODE=!EV_EDIT_MODE;refreshEvents();}
     else{openEvForm(null);}
   });
+}
+
+/* Los calendarios: marcas y barras del anual y de 4 meses, celdas del mes,
+   estrellas VIP, sesiones de rutina y los cuerpos de Puentes/Vacaciones. */
+function _bindEvCal(){
   // Bind puentes/time-off summary body events
   if(EV_VIEW==='puentes')bindSummaryPuentesBodyEvents(refreshEvents,'eventsOverlay');
   else if(EV_VIEW==='time-off')bindSummaryTimeOffBodyEvents(refreshEvents);
@@ -329,6 +348,11 @@ function bindEvEvents(){
       openEvForm(null,cell.dataset.ds);
     });
   });
+}
+
+/* Las listas: Proximos, Todos, la agenda semanal, la busqueda y el orden, y el
+   borrado por pulsacion larga. */
+function _bindEvListas(){
   // Click en items de próximos → panel de alarma (VIP bday → panel cumpleaños)
   document.querySelectorAll('.ev-upcoming-item[data-id]').forEach(function(item){
     item.addEventListener('click',function(e){
@@ -466,6 +490,10 @@ function bindEvEvents(){
     };
     r.readAsText(f);
   });
+}
+
+/* Gestos y remates: deslizar para cambiar de mes y colocar el resaltado. */
+function _bindEvGestos(){
   /* Swipe: navegar en el tiempo (el botón evPrev/evNext solo existe en vistas con nav) */
   addSwipe(document.getElementById('eventsOverlay'),function(){
     var b=document.getElementById('evNext');if(b)b.click();

@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v287 — El Economico y el Resumen entran en las pruebas';
+var APP_VERSION = 'v288 — bindEvEvents partida en cuatro';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
