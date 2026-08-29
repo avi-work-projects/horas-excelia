@@ -595,15 +595,17 @@ function evTimeLabel(ev){
 function evTramos(ev){
   var out=[];
   if(!ev||!ev.viaje)return out;
-  if(ev.viaje.ida&&ev.viaje.ida.time)
+  /* Un trayecto cuenta aunque no tenga hora: el medio y el conductor ya son
+     informacion. Quien necesite la hora (los atajos de alarma) la comprueba. */
+  if(ev.viaje.ida)
     out.push({k:'ida',lbl:'Ida',t:ev.viaje.ida,ds:ev.start});
-  if(ev.viaje.vuelta&&ev.viaje.vuelta.time)
+  if(ev.viaje.vuelta)
     out.push({k:'vuelta',lbl:'Vuelta',t:ev.viaje.vuelta,ds:ev.end||ev.start});
   return out;
 }
 function evTramoTexto(tr){
   var m=tr.t.modo?EV_TRANS_EMOJI[tr.t.modo]:'';
-  var s=tr.lbl+' \u00b7 '+(m?m+' ':'')+tr.t.time;
+  var s=tr.lbl+' \u00b7 '+(m?m+' ':'')+(tr.t.time||'sin hora');
   if(tr.t.modo==='coche'&&tr.t.conductor)s+=' ('+escHtml(tr.t.conductor)+')';
   return s;
 }

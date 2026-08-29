@@ -103,6 +103,18 @@ const REGLAS = [
     const sigue = { ev: { kind: 'grande', type: 'Asturias', start: '2026-09-13', end: '2026-09-20' }, cs: 6, ce: 6, unDia: false };
     return app._evTrozosSeRozan(acaba, sigue) === true;
   }],
+  /* La hora de un trayecto es opcional: antes, guardar sin hora tiraba el
+     trayecto entero y con el se perdian el medio y el conductor. */
+  ['un trayecto sin hora sobrevive, con su medio y su conductor', () => {
+    const ev = { start: '2026-03-01', end: '2026-03-05',
+      viaje: { ida: { time: '08:30', modo: 'tren' },
+               vuelta: { time: null, modo: 'coche', conductor: 'Marta' } } };
+    const t = app.evTramos(ev);
+    if (t.length !== 2) return false;
+    const vuelta = t.find(x => x.k === 'vuelta');
+    return vuelta.t.modo === 'coche' && vuelta.t.conductor === 'Marta'
+        && app.evTramoTexto(vuelta).indexOf('sin hora') !== -1;
+  }],
   ['un grande de tipo Otros no comparte dia', () => {
     const a = { ev: { kind: 'grande', type: 'Otros', start: '2026-03-01', end: '2026-03-03' }, cs: 0, ce: 2, unDia: false };
     const b = { ev: { kind: 'grande', type: 'Otros', start: '2026-03-03', end: '2026-03-06' }, cs: 2, ce: 5, unDia: false };

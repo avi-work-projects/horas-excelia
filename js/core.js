@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v284 — "Ver ficha" sin icono';
+var APP_VERSION = 'v285 — Sin parpadeo al repintar un panel, boton relleno y hora de trayecto opcional';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -619,7 +619,12 @@ function abrirPanel(id, html, opciones){
   if (!cont) return null;
   _panelCancelarBorrado(id);
   var wrap = document.getElementById(id);
-  var reutiliza = !!(wrap && o.reutilizar);
+  /* Si el panel ya esta ABIERTO, esta llamada es un repintado: se cambia el
+     contenido y se deja donde esta. Recrearlo lo sacaba de pantalla y lo hacia
+     entrar otra vez -- el parpadeo al guardar un cambio desde la ficha. */
+  var fondo0 = wrap && wrap.firstElementChild;
+  var yaAbierto = !!(fondo0 && fondo0.classList.contains('open'));
+  var reutiliza = !!(wrap && (o.reutilizar || yaAbierto));
   if (!reutiliza) {
     if (wrap) wrap.remove();
     wrap = document.createElement('div');
