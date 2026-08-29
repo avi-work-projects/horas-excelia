@@ -260,6 +260,33 @@ const REGLAS = [
     const b = Object.assign({}, a, { id: 'otro-id' });
     return app.evSignature(a) === app.evSignature(b);
   }],
+  /* El arranque no puede buscar un elemento que ya no esta en el HTML.
+     Es lo que paso al quitar el conmutador alarmUseMacro: el borrado fue
+     correcto, pero un init.js viejo servido contra el index.html nuevo le
+     engancho un listener a null y tiro el fichero entero. */
+  ['el arranque no busca elementos que no existen', () => {
+    const raiz = path.join(__dirname, '..');
+    const html = fs.readFileSync(path.join(raiz, 'index.html'), 'utf8');
+    const enHtml = new Set([...html.matchAll(/id="([^"]+)"/g)].map(m => m[1]));
+    /* Ficheros cuyo CUERPO corre al cargar la pagina */
+    const ARRANQUE = ['js/init.js', 'js/import-export.js', 'js/home-popup.js', 'js/logo-popup.js'];
+    const malos = [];
+    for (const f of ARRANQUE) {
+      const abs = path.join(raiz, f);
+      if (!fs.existsSync(abs)) continue;
+      const txt = fs.readFileSync(abs, 'utf8');
+      /* ids que el propio fichero crea sobre la marcha */
+      const creados = new Set([
+        ...[...txt.matchAll(/\.id\s*=\s*'([^']+)'/g)].map(m => m[1]),
+        ...[...txt.matchAll(/id="([^"]+)"/g)].map(m => m[1]),
+      ]);
+      for (const m of txt.matchAll(/getElementById\('([^']+)'\)/g)) {
+        if (!enHtml.has(m[1]) && !creados.has(m[1])) malos.push(f + ' -> ' + m[1]);
+      }
+    }
+    if (malos.length) { console.log('     ' + malos.join('\n     ')); return false; }
+    return true;
+  }],
   /* Censo de claves de localStorage. La regla compara lo que el codigo
      ESCRIBE con esta lista: si aparece una clave nueva, el test cae y hay que
      venir aqui a declarar como se respalda. Ese es el momento en que uno se

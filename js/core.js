@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v285 — Sin parpadeo al repintar un panel, boton relleno y hora de trayecto opcional';
+var APP_VERSION = 'v286 — Regla que vigila los elementos que busca el arranque';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
