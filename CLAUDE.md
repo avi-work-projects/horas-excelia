@@ -1154,6 +1154,24 @@ fakeTrans('#6c8cff', 0.65)  // → '#46599f' — azul oscurecido al 65%
 - **Anual** (`ev-annual-mbar`): alpha = 0.65 (sin texto significativo, barra delgada)
 - **4 meses** (`ev-annual-mbar` en quad): alpha = 0.65 (texto pequeño, fondo oscuro suficiente)
 
+## Los listeners de Eventos, en cuatro sitios (v288)
+`bindEvEvents` tenía 414 líneas y era la función más grande del proyecto.
+Encima es capa de listeners, que es justo lo que las instantáneas **no** cubren,
+así que cada vez que se tocaba Eventos se entraba ahí a ciegas.
+
+Ahora reparte en cuatro, por lo que uno busca cuando algo *no responde*:
+
+| Función | Qué engancha |
+|---|---|
+| `_bindEvNav` | cabecera, pestañas, flechas, Hoy, subpestañas, desplegable del anual |
+| `_bindEvCal` | marcas y barras del anual/4 meses, celdas del mes, VIP, rutinas, Puentes/Vacaciones |
+| `_bindEvListas` | Próximos, Todos, agenda semanal, búsqueda y orden, borrado por pulsación larga |
+| `_bindEvGestos` | deslizar para cambiar de mes y colocar el resaltado |
+
+Los cuatro trozos son independientes: **ninguna variable local cruza de uno a
+otro** (se comprobó antes de cortar). El corte fue mecánico y el cuerpo movido
+es idéntico línea a línea al original.
+
 ## CSS: la variante va DESPUES de su base (v287)
 `css/styles.css` son 2.300 lineas en un solo fichero y no tiene red de pruebas
 (las instantaneas comparan HTML, no estilos). Lo que evita el fallo tipico es
