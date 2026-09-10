@@ -304,13 +304,13 @@ function openBodaDurationPicker(){
 }
 
 function bodaTeachersLabel(t){
-  var names=[];if(t.angel)names.push(BODA_CONFIG.teacherNames.angel);if(t.celia)names.push(BODA_CONFIG.teacherNames.celia);if(t.substitute!=null)names.push('Sustituto');return escHtml(names.join(' y '));
+  var names=[];if(t.angel)names.push(bodaTeacherName('angel'));if(t.celia)names.push(bodaTeacherName('celia'));if(t.substitute!=null)names.push('Sustituto');return escHtml(names.join(' y '));
 }
 function openBodaTeachersPicker(){
   var F=BODA_FORM;if(!F)return;
   var draft=JSON.parse(JSON.stringify(F.tmp.boda.teachers));
   var h='<div class="ev-detail-overlay" id="bodaTeachersOv"><div class="ev-detail-sheet"><div class="ev-detail-handle"></div><div class="boda-config-head"><button class="sy-back" id="bodaTeachersClose">&#8592;</button><h3>Profesores del ensayo</h3></div><div class="ev-bficha">';
-  [['angel',BODA_CONFIG.teacherNames.angel],['celia',BODA_CONFIG.teacherNames.celia],['substitute','Sustituto']].forEach(function(t){h+='<label class="ev-bfila"><span class="ev-bfila-lbl">'+escHtml(t[1])+'</span><span class="ev-bfila-val"><input type="checkbox" data-teacher="'+t[0]+'"'+((t[0]==='substitute'?draft.substitute!=null:draft[t[0]])?' checked':'')+'></span></label>';});
+  [['angel',bodaTeacherName('angel')],['celia',bodaTeacherName('celia')],['substitute','Sustituto']].forEach(function(t){h+='<label class="ev-bfila"><span class="ev-bfila-lbl">'+escHtml(t[1])+'</span><span class="ev-bfila-val"><input type="checkbox" data-teacher="'+t[0]+'"'+((t[0]==='substitute'?draft.substitute!=null:draft[t[0]])?' checked':'')+'></span></label>';});
   h+='</div><input class="ev-input" id="bodaTeacherName" maxlength="80" placeholder="Nombre del sustituto" aria-label="Nombre del sustituto" value="'+escHtml(draft.substitute||'')+'"'+(draft.substitute!=null?'':' hidden')+'><div class="ev-form-actions"><button class="ev-btn primary" id="bodaTeachersSave">Aceptar</button></div></div></div>';
   var close=function(){cerrarPanel('bodaTeachersWrap','bodaTeachersOv');};
   var w=abrirPanel('bodaTeachersWrap',h,{overlay:'bodaTeachersOv',alCerrar:close});

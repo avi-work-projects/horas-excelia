@@ -13,7 +13,7 @@ function bodaLoadConfig(){
   bodaApplyConfig();
 }
 function bodaApplyConfig(){
-  BODA_CONFIG.teacherNames=BODA_CONFIG.teacherNames||{angel:'Ángel',celia:'Celia'};
+  BODA_CONFIG.teacherNames=BODA_CONFIG.teacherNames||{angel:'',celia:''};
   BODA_PLACE_LIST=BODA_CONFIG.places;
   BODA_PLACE_SHORT={};BODA_PLACE_DESC={};
   BODA_PLACE_LIST.forEach(function(p){BODA_PLACE_SHORT[p.k]=p.n;BODA_PLACE_DESC[p.k]=p.d;});
@@ -35,7 +35,7 @@ function validateBodaConfig(c){
     });
   });
   if(!c.durations.some(function(d){return d.id===c.defaultDurationId&&d.active!==false;}))throw new Error('Duración por defecto incorrecta');
-  if(c.teacherNames&&['angel','celia'].some(function(k){return typeof c.teacherNames[k]!=='string'||!c.teacherNames[k].trim()||c.teacherNames[k].length>40;}))throw new Error('Nombres de profesores incorrectos');
+  if(c.teacherNames&&['angel','celia'].some(function(k){return typeof c.teacherNames[k]!=='string'||c.teacherNames[k].length>40;}))throw new Error('Nombres de profesores incorrectos');
   if(c.defaultPlace&&!c.places.some(function(p){return p.k===c.defaultPlace&&p.active!==false;}))throw new Error('Sala por defecto incorrecta');
   return c;
 }
@@ -94,6 +94,7 @@ function bodaPackStats(){
     byPack[id].couples++;byPack[id].classes+=extra;
   });return {counts:counts,extras:extras,byPack:byPack};
 }
+function bodaTeacherName(id){return BODA_CONFIG.teacherNames[id]||(id==='angel'?'Profesor 1':'Profesor 2');}
 function bodaTeacherCount(t){return (t.celia?1:0)+(t.angel?1:0)+(t.substitute!=null?1:0);}
 function bodaTeacherStats(){
   var counts={substitute:0,celia:0,angel:0,both:0};
@@ -109,7 +110,7 @@ function renderBodaPackStats(){
   BODA_CONFIG.packs.forEach(function(p){var row=s.byPack[p.id]||{couples:0,classes:0};h+='<div class="boda-pack-stat"><b>'+escHtml(p.name)+'</b><span>'+row.couples+' parejas · '+row.classes+' extras</span></div>';});
   var teachers=bodaTeacherStats();
   h+='<div class="boda-stat-t">Clases dadas por profesores</div><div class="boda-stats-row boda-count-grid">';
-  [['both',BODA_CONFIG.teacherNames.angel+' y '+BODA_CONFIG.teacherNames.celia],['celia','Solo '+BODA_CONFIG.teacherNames.celia],['angel','Solo '+BODA_CONFIG.teacherNames.angel],['substitute','Con sustituto']].forEach(function(t){h+='<div class="boda-stat"><b>'+teachers[t[0]]+'</b><span>'+escHtml(t[1])+'</span></div>';});
+  [['both',bodaTeacherName('angel')+' y '+bodaTeacherName('celia')],['celia','Solo '+bodaTeacherName('celia')],['angel','Solo '+bodaTeacherName('angel')],['substitute','Con sustituto']].forEach(function(t){h+='<div class="boda-stat"><b>'+teachers[t[0]]+'</b><span>'+escHtml(t[1])+'</span></div>';});
   h+='</div><p class="boda-stat-note">Cada clase cuenta una vez. Con sustituto incluye tanto las clases en solitario como acompañado. Las clases sin selección guardada se cuentan con ambos profesores principales.</p>';
   return h;
 }
@@ -135,7 +136,7 @@ function renderBodaConfig(){
 function openBodaConfig(){BODA_SUBTAB='config';refreshEvents();}
 function bindBodaConfig(){
   var wrap=document.getElementById('bodaConfigContent');if(!wrap)return;
-  wrap.querySelector('#bodaSaveTeacherNames').onclick=function(){var names={};wrap.querySelectorAll('[data-teacher-name]').forEach(function(input){names[input.dataset.teacherName]=input.value.trim();});if(!names.angel||!names.celia){showToast('Escribe los dos nombres','error');return;}BODA_CONFIG.teacherNames=names;saveBodaConfig();showToast('Nombres guardados','success');};
+  wrap.querySelector('#bodaSaveTeacherNames').onclick=function(){var names={};wrap.querySelectorAll('[data-teacher-name]').forEach(function(input){names[input.dataset.teacherName]=input.value.trim();});BODA_CONFIG.teacherNames=names;saveBodaConfig();showToast('Nombres guardados','success');};
   wrap.querySelectorAll('[data-default-place]').forEach(function(input){input.onchange=function(){BODA_CONFIG.defaultPlace=input.dataset.defaultPlace;saveBodaConfig();openBodaConfig();};});
   wrap.querySelectorAll('[data-cfg-edit],[data-cfg-add]').forEach(function(b){b.onclick=function(){openBodaCatalogForm(b.dataset.cfgEdit||b.dataset.cfgAdd,b.dataset.id);};});
   wrap.querySelectorAll('[data-cfg-active]').forEach(function(b){b.onchange=function(){try{bodaSetCatalogItem(b.dataset.cfgActive,b.dataset.id,{active:b.checked});}catch(e){showToast(e.message,'error');}openBodaConfig();};});

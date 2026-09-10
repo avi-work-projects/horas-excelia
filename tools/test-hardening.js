@@ -60,3 +60,7 @@ assert.ok(!b.renderBodaPackStats().split('Clases dadas por profesores')[0].inclu
 const teaching=cargarApp({});teaching.EVENTS=[null,{celia:true,angel:false,substitute:null},{celia:false,angel:true,substitute:null},{celia:true,angel:false,substitute:'Otro'}].map((teachers,i)=>({id:'t'+i,type:'Ensayos boda',kind:'puntual',start:'2020-01-01',boda:{coupleId:'p',time:'18:00',teachers:teachers}}));
 assert.equal(JSON.stringify(teaching.bodaTeacherStats()),JSON.stringify({substitute:1,celia:1,angel:1,both:1}));
 assert.equal(teaching.bodaTeacherCount({celia:true,angel:true,substitute:null}),2);
+
+const emptyNames=cargarApp({});assert.equal(emptyNames.BODA_CONFIG.teacherNames.angel,'');assert.equal(emptyNames.BODA_CONFIG.teacherNames.celia,'');
+assert.equal(emptyNames.bodaTeacherName('angel'),'Profesor 1');emptyNames.validateBodaConfig(emptyNames.BODA_CONFIG);
+const roundtrip=JSON.parse(JSON.stringify(emptyNames.BODA_CONFIG));emptyNames.importBodaConfig(roundtrip,false);assert.equal(JSON.stringify(emptyNames.BODA_CONFIG),JSON.stringify(roundtrip));
