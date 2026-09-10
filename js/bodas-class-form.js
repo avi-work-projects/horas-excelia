@@ -41,12 +41,6 @@ function _bodaFormRender(){
       +' <button type="button" class="boda-multi-x" id="bodaFormMultiX">quitar</button></div>';
   }
   h+='</div>';
-  h+='<div class="ev-field"><label>Duracion</label><select class="ev-input" id="bodaFormDuration">';
-  var options=BODA_CONFIG.durations.filter(function(d){return d.active!==false||d.id===b.durationId;});
-  var current=options.find(function(d){return d.id===b.durationId&&d.minutes===b.duration;});
-  if(!current)h+='<option value="saved" selected>'+b.duration+' min (guardada)</option>';
-  options.forEach(function(d){h+='<option value="'+d.id+'"'+(current&&current.id===d.id?' selected':'')+'>'+d.minutes+' min'+(d.active===false?' (inactiva)':'')+'</option>';});
-  h+='</select></div>';
   h+='<div class="ev-bficha">';
   h+='<button type="button" class="ev-bfila'+(b.time?'':' warn')+'" data-fcampo="hora">'
     +'<span class="ev-bfila-lbl">\ud83d\udd52 Hora</span>'
@@ -62,6 +56,12 @@ function _bodaFormRender(){
     +(c?('<span class="ev-bpunto" style="background:'+c.color+'"></span>'+escHtml(c.name)):'\u26a0 Sin asignar')
     +'</span></button>';
   h+='</div>';
+  h+='<div class="ev-field"><label>Duración</label><select class="ev-input" id="bodaFormDuration">';
+  var options=BODA_CONFIG.durations.filter(function(d){return d.active!==false||d.id===b.durationId;});
+  var current=options.find(function(d){return d.id===b.durationId&&d.minutes===b.duration;});
+  if(!current)h+='<option value="saved" selected>'+b.duration+' min (guardada)</option>';
+  options.forEach(function(d){h+='<option value="'+d.id+'"'+(current&&current.id===d.id?' selected':'')+'>'+d.minutes+' min'+(d.active===false?' (inactiva)':'')+'</option>';});
+  h+='</select></div>';
   h+='<div class="ev-detail-actions">';
   if(!F.nuevo)h+='<button class="ev-btn danger" id="bodaFormDel">Eliminar</button>';
   h+='<button class="ev-btn primary" id="bodaFormSave">Guardar</button>';

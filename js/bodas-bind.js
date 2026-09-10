@@ -12,7 +12,7 @@ function renderBodaCoupleForm(c){
   h+='<div class="ev-field"><label>Pareja</label><input class="ev-input" id="bodaCName" type="text" maxlength="40" placeholder="Ej: Marta y Juan" value="'+(isEdit?escHtml(c.name):'')+'"></div>';
   var selected=isEdit?bodaPackOf(c):(BODA_CONFIG.packs.find(function(p){return p.active!==false&&p.classes===4;})||BODA_CONFIG.packs.find(function(p){return p.active!==false;}));
   h+='<div class="ev-field"><label>Pack contratado</label><select class="ev-input" id="bodaCPack">';
-  BODA_CONFIG.packs.filter(function(p){return p.active!==false||(selected&&p.id===selected.id);}).forEach(function(p){h+='<option value="'+p.id+'"'+(selected&&selected.id===p.id?' selected':'')+'>'+escHtml(p.name)+' · '+p.classes+' clases'+(p.active===false?' (inactivo)':'')+'</option>';});
+  BODA_CONFIG.packs.filter(function(p){return p.active!==false||(selected&&p.id===selected.id);}).forEach(function(p){h+='<option value="'+p.id+'"'+(selected&&selected.id===p.id?' selected':'')+'>'+p.classes+' clases'+(p.active===false?' (inactivo)':'')+'</option>';});
   h+='</select></div>';
   if(c)h+='<div class="boda-stat-note">Clases incluidas al contratar: '+(c.packClasses==null?c.contracted:c.packClasses)+'. Se conservan si mantienes el mismo pack.</div>';
   h+='<div class="ev-field"><label>&#128141; Día de la boda <span class="ev-note-scope">(solo se ve al asignar ensayos)</span></label>';

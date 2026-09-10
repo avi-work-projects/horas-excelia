@@ -450,7 +450,7 @@ function renderEconContent(){
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='analisis'?' active':'')+'" id="ecTabAnalisis">An\u00e1lisis<br>Ec. Personal</button>';
   h+='</div>';
   h+='<div class="sy-header with-tabs">';
-  h+='<button class="econ-gear-btn" id="ecGear">&#9965;</button>';
+  h+='<button class="econ-gear-btn" id="ecGear">&#9881;</button>';
   h+='<div class="sy-year-nav"><button class="sy-nav" id="ecPrev">&#9664;</button><div class="sy-year">'+ECON_YEAR+'</div><button class="sy-nav" id="ecNext">&#9654;</button></div>';
   h+='<button class="sy-pdf" id="ecPdf">PDF</button>';
   h+='</div>';
