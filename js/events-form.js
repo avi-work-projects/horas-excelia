@@ -559,7 +559,7 @@ function bindEvFormEvents(){
     if(typeLabel==='Ensayos boda'){
       delete _newEv.dates;
       _newEv.boda=(EV_EDIT&&EV_EDIT.boda)?EV_EDIT.boda
-        :{coupleId:null,time:null,place:(typeof BODA_PLACE_DEFAULT!=='undefined')?BODA_PLACE_DEFAULT:'casa'};
+        :{coupleId:null,time:null,duration:bodaDefaultDuration().minutes,durationId:bodaDefaultDuration().id,place:(typeof BODA_PLACE_DEFAULT!=='undefined')?BODA_PLACE_DEFAULT:'casa'};
     }
     if(EV_FREE_BARSIZE[typeKey]){
       var _bsel=document.querySelector('#evFBarPicker .ev-barsize-opt.selected');

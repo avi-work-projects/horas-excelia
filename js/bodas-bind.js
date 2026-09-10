@@ -10,7 +10,11 @@ function renderBodaCoupleForm(c){
   else h+='<div style="width:36px"></div>';
   h+='</div>';
   h+='<div class="ev-field"><label>Pareja</label><input class="ev-input" id="bodaCName" type="text" maxlength="40" placeholder="Ej: Marta y Juan" value="'+(isEdit?escHtml(c.name):'')+'"></div>';
-  h+='<div class="ev-field"><label>Clases contratadas</label><input class="ev-input" id="bodaCNum" type="number" min="0" max="60" value="'+(isEdit?(c.contracted||0):4)+'"></div>';
+  var selected=isEdit?bodaPackOf(c):(BODA_CONFIG.packs.find(function(p){return p.active!==false&&p.classes===4;})||BODA_CONFIG.packs.find(function(p){return p.active!==false;}));
+  h+='<div class="ev-field"><label>Pack contratado</label><select class="ev-input" id="bodaCPack">';
+  BODA_CONFIG.packs.filter(function(p){return p.active!==false||(selected&&p.id===selected.id);}).forEach(function(p){h+='<option value="'+p.id+'"'+(selected&&selected.id===p.id?' selected':'')+'>'+escHtml(p.name)+' · '+p.classes+' clases'+(p.active===false?' (inactivo)':'')+'</option>';});
+  h+='</select></div>';
+  if(c)h+='<div class="boda-stat-note">Clases incluidas al contratar: '+(c.packClasses==null?c.contracted:c.packClasses)+'. Se conservan si mantienes el mismo pack.</div>';
   h+='<div class="ev-field"><label>&#128141; Día de la boda <span class="ev-note-scope">(solo se ve al asignar ensayos)</span></label>';
   h+='<input class="ev-input" id="bodaCWed" type="date" value="'+(isEdit&&c.weddingDate?c.weddingDate:'')+'"></div>';
   h+='<div class="ev-field"><label>Notas <span id="bodaCCnt" style="font-weight:400;color:var(--text-dim)">'+((isEdit&&c.note?c.note.length:0))+'/200</span></label>';
@@ -42,9 +46,10 @@ function openBodaCoupleForm(c){
   document.getElementById('bodaCSave').addEventListener('click',function(){
     var name=document.getElementById('bodaCName').value.trim();
     if(!name){showToast('El nombre de la pareja es obligatorio','error');return;}
-    var num=parseInt(document.getElementById('bodaCNum').value,10);
-    if(isNaN(num)||num<0)num=0;
-    var data={name:name,contracted:num,
+    var pack=BODA_CONFIG.packs.find(function(p){return p.id===document.getElementById('bodaCPack').value;});
+    if(!pack){showToast('Activa o crea un pack en Configuracion de Bodas','error');return;}
+    var previous=c&&bodaPackOf(c),num=previous&&previous.id===pack.id?(c.packClasses==null?c.contracted:c.packClasses):pack.classes;
+    var data={name:name,contracted:num,packId:pack.id,packClasses:num,
       weddingDate:document.getElementById('bodaCWed').value||null,
       note:document.getElementById('bodaCNote').value.trim(),color:cp.getColor()};
     if(c){
@@ -93,6 +98,7 @@ function bodaRefreshRow(ev){
 
 /* ── Binds de la pestaña ── */
 function bindBodasEvents(){
+  var cfg=document.getElementById('bodaConfigBtn');if(cfg)cfg.onclick=function(){_guardaPendientes();openBodaConfig();};
   /* Al salir de la lista se guarda lo pendiente para no perderlo sin avisar */
   function _guardaPendientes(){
     if(bodaPendingCount())showToast(bodaPendingApply(true)+' cambios guardados','success');

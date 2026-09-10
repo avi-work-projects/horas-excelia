@@ -349,6 +349,7 @@ const REGLAS = [
      acuerda de tocar "Exportar todo". */
   ['ninguna clave de localStorage se queda fuera del backup', () => {
     const CENSO = {
+      'excelia-bodas-config-v1': 'bodaConfig',
       'excelia-horas-v3':          'days/sent/monthH/rate/exclFest/exclVac/multiRate/ratePeriods/econYearConfig',
       'excelia-vac-days':          'vacEntitlement',
       'excelia-bdays-v1':          'birthdays',

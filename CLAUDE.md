@@ -22,6 +22,7 @@ No hace falta cambiar de framework. Los renders devuelven HTML y no persisten ca
 | birthdays.js | datos y alarmas por fecha |
 | birthdays-render.js / birthdays-panels.js / birthdays-bind.js | vistas, paneles y acciones |
 | bodas.js | datos de parejas/clases y vistas principales |
+| bodas-config.js | catalogos de packs, duraciones, salas y estadisticas de extras |
 | bodas-assign.js | asignacion de fechas, incidencias y estadisticas |
 | bodas-class-form.js | formulario y selectores de una clase |
 | bodas-bind.js | pareja, acciones de vistas y contexto de render |
@@ -89,3 +90,19 @@ Una instalacion limpia requiere importar el backup/configurar el correo en Ajust
 
 ## Ideas
 FUTURO.md es el lugar para propuestas futuras. No mezclar ideas pendientes con reglas vigentes.
+
+## Catalogos de Bodas (v299)
+`BODA_CONFIG` / `excelia-bodas-config-v1` viaja en `bodaConfig` del backup.
+Packs, duraciones y salas tienen identificadores estables y estado `active`.
+Desactivar impide nuevas asignaciones; las existentes siguen siendo editables.
+No borrar una opcion con referencias; tampoco la duracion por defecto.
+`couple.packId` vincula el pack y `packClasses` conserva las clases incluidas al contratar.
+`event.boda.durationId` vincula el catalogo; `duration` conserva los minutos de esa clase.
+Los eventos antiguos sin duracion valen 60 min, nunca la nueva duracion predeterminada.
+El formulario compartido de clase edita la duracion. `bodaDuration` y `bodaEndAt` son
+la fuente del horario final; no sumar una hora en cada pantalla.
+Las extras cuentan clases finalizadas con pareja por encima de `packClasses`.
+Packs historicos sin id se reconocen por `contracted`, conservando cantidades distintas
+como opciones propias; no inferir un pack menor por el numero de clases que haya.
+Lugares: reutilizar `BODA_PLACE_LIST`, `bodaPlaceLabel` y descripciones; no hardcodear etiquetas.
+Todo boton con lapiz lleva `.action-edit` (naranja), conservando sus dimensiones.

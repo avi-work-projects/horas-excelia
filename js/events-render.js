@@ -536,7 +536,7 @@ function renderEvContent(){
     var _vdLabels={'puentes':'\uD83D\uDDD3 Puentes','fiestas':'\uD83D\uDCC5 Vac + Festivos','vacaciones':'\uD83C\uDFD6 Solo vacaciones','festivos':'\uD83C\uDF8C Solo festivos','none':'\u2715 Nada'};
     var _curVdLabel=_vdLabels[EV_ANNUAL_VIEW]||_vdLabels['none'];
     h+='<div class="ev-annual-view-toggle">';
-    h+='<button class="ev-ann-edit-btn'+(EV_EDIT_MODE?' active':'')+'" id="evAnnEditBtn" title="Modo edici\u00f3n">&#9998;</button>';
+    h+='<button class="action-edit ev-ann-edit-btn'+(EV_EDIT_MODE?' active':'')+'" id="evAnnEditBtn" title="Modo edici\u00f3n">&#9998;</button>';
     h+='<div class="ev-ann-vd-wrap" id="evAnnVdWrap">';
     h+='<button class="ev-ann-vd-btn" id="evAnnVdBtn">'+_curVdLabel+' \u25be</button>';
     h+='<div class="ev-ann-vd-menu" id="evAnnVdMenu">';

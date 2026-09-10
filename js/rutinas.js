@@ -290,7 +290,7 @@ function _renderRutLista(){
     h+='<span class="rut-dot" style="background:'+r.color+'"></span>';
     h+='<span class="rut-name">'+escHtml(r.name)+'</span>';
     if(susp)h+='<span class="rut-tag susp">en pausa'+(r.suspend&&r.suspend.to?(' hasta '+_rutFmt(r.suspend.to)):'')+'</span>';
-    h+='<button class="boda-mini-btn rut-edit" data-rid="'+r.id+'" title="Editar">&#9998;</button>';
+    h+='<button class="action-edit boda-mini-btn rut-edit" data-rid="'+r.id+'" title="Editar">&#9998;</button>';
     h+='</div>';
     /* Días de la semana */
     h+='<div class="rut-days">';
@@ -728,7 +728,7 @@ function openRutSesion(r,ds){
   h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">';
   h+='<button class="sy-back" id="rutSesClose">&#8592;</button>';
   h+='<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">Rutina</div>';
-  h+='<button class="ev-list-btn" id="rutSesEdit" style="font-size:.8rem;padding:6px 12px">&#9998; Editar</button>';
+  h+='<button class="action-edit ev-list-btn" id="rutSesEdit" style="font-size:.8rem;padding:6px 12px">&#9998; Editar</button>';
   h+='</div>';
   h+='<div class="ev-detail-color-bar" style="background:'+r.color+'"></div>';
   h+='<div class="ev-detail-title" style="color:'+r.color+'">'+escHtml(r.name)+'</div>';

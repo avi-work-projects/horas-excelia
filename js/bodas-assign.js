@@ -146,7 +146,7 @@ function _bodaWeekKey(d){
 function _renderBodaStats(){
   var todayDs=evDk(new Date());
   var all=bodaSortClasses(bodaClasses());
-  if(!all.length)return '<div class="sy-note">Todavía no hay clases registradas.</div>';
+  if(!all.length)return '<div class="sy-note">Todavía no hay clases registradas.</div>'+renderBodaPackStats();
   var dadas=all.filter(function(ev){return ev.start<todayDs;});
   var proximas=all.filter(function(ev){return ev.start>=todayDs;});
   /* Reparto por mes (ultimos 12 meses hasta hoy) */
@@ -170,12 +170,6 @@ function _renderBodaStats(){
   var primera=all[0].start, ultima=all[all.length-1].start;
   var dias=Math.max(1,Math.round((new Date(ultima+'T00:00:00')-new Date(primera+'T00:00:00'))/86400000)+1);
   var mediaSem=(all.length/(dias/7)), mediaMes=(all.length/(dias/30.44));
-  /* Reparto por pareja, franja, lugar y dia de la semana */
-  var porPareja=BODA_COUPLES.map(function(c){
-    return {label:c.name,value:bodaClassesOfCouple(c.id).length,color:c.color};
-  }).filter(function(r){return r.value>0;}).sort(function(a,b){return b.value-a.value;});
-  var sinP=all.filter(function(ev){return !(ev.boda&&ev.boda.coupleId);}).length;
-  if(sinP)porPareja.push({label:'sin asignar',value:sinP,color:BODA_NO_COUPLE_COLOR});
   var porFranja=BODA_SLOTS.map(function(sl){
     return {label:sl.label,color:sl.right,
       value:all.filter(function(ev){var s2=bodaSlot(ev.boda&&ev.boda.time);return s2&&s2.label===sl.label;}).length};
@@ -206,9 +200,7 @@ function _renderBodaStats(){
   h+='<div class="sy-chart">'+simpleBarChart(mVals,mLabels,'#c08a5a',{highlight:11})+'</div>';
   h+='<div class="boda-stat-t">Clases por semana <em>(últimas 10)</em></div>';
   h+='<div class="sy-chart">'+simpleBarChart(wVals,wLabels,'#e879a8',{highlight:9})+'</div>';
-  if(porPareja.length){
-    h+='<div class="boda-stat-t">Por pareja</div>'+hBarRows(porPareja);
-  }
+  h+=renderBodaPackStats();
   if(porFranja.length){
     h+='<div class="boda-stat-t">Por franja horaria</div>'+hBarRows(porFranja);
   }
@@ -415,7 +407,7 @@ function openBodaPlacePicker(ev,opts){
   h+='<div style="flex:1;font-size:.88rem;font-weight:600;text-align:center">Sala'
     +(ev.start?(' — '+_bodaFmtCorto(ev.start)):'')+'</div>';
   h+='<div style="width:36px"></div></div>';
-  BODA_PLACE_LIST.forEach(function(p){
+  BODA_PLACE_LIST.filter(function(p){return p.active!==false||p.k===cur;}).forEach(function(p){
     h+='<button class="boda-cpk-row'+(cur===p.k?' sel':'')+'" data-place="'+p.k+'">'
       +'<span class="boda-cpk-name">'+escHtml(p.n)+'</span>'
       +'<span class="boda-cpk-desc">'+escHtml(p.d)+'</span></button>';
@@ -464,9 +456,9 @@ function bodaTrasElegir(ev,opts){
 }
 
 /* Las clases de boda duran una hora fija */
-function _bodaMasUnaHora(t){
+function bodaEndAt(t,duration){
   var p=String(t||'00:00').split(':');
-  var m=((parseInt(p[0],10)||0)*60+(parseInt(p[1],10)||0)+60)%1440;
+  var m=((parseInt(p[0],10)||0)*60+(parseInt(p[1],10)||0)+(duration||60))%1440;
   return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
 }
 /* ══ Ficha de UNA clase: dia, hora, pareja y sala ══════════════════
