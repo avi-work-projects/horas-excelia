@@ -2372,3 +2372,16 @@ button.action-edit.active,button.action-edit:active{background:rgba(251,146,60,.
 .bday-jump-today{background:color-mix(in srgb,var(--c-green) 16%,var(--surface))}
 .boda-sticky-hd .boda-config-btn{width:auto;justify-self:stretch;height:auto;border:0;border-radius:0;background:transparent;color:#b98760;font-size:19px}
 .boda-sticky-hd .boda-config-btn.active{color:#b98760;border-bottom:2px solid #b98760}
+
+.boda-sticky-hd{--wm-tab:#cc9294}
+[data-theme="light"] .boda-sticky-hd{--wm-tab:#6b1f20}
+.boda-sticky-hd .econ-sub-tab,.boda-sticky-hd .boda-config-btn{color:var(--wm-tab)}
+.boda-sticky-hd .econ-sub-tab.active,.boda-sticky-hd .boda-config-btn.active{color:var(--wm-tab);border-bottom-color:var(--wm-tab)}
+.wm-logo-chip{width:30px;height:13px}
+.bday-next-distant{color:var(--text-muted);opacity:.75}
+.bday-next-distant .ev-week-sep{background:var(--surface2);color:var(--text-muted)}
+.boda-teachers{flex-wrap:wrap;gap:12px;margin:8px 0}
+.settings-details{border-top:1px solid var(--border);padding:8px 12px}
+.settings-details summary{cursor:pointer;color:var(--text-muted);font-size:.8rem}
+.settings-details .macro-section{padding:8px 0 0;border:0}
+.settings-edit-btn{color:var(--c-orange)!important;background:color-mix(in srgb,var(--c-orange) 12%,var(--surface))!important;border:1px solid var(--c-orange)!important;border-radius:8px}

@@ -8,6 +8,7 @@ function openBodaClaseForm(ev,alTerminar){
     /* start: los selectores rotulan con el dia del evento; sin el salia
        "Sala — undefined NaN/NaN". Se mantiene al dia desde el campo de fecha. */
     tmp:{id:'__boda_tmp__', start:ev?ev.start:evDk(new Date()), boda:{
+      teachers:JSON.parse(JSON.stringify((ev&&ev.boda&&ev.boda.teachers)||{celia:true,angel:true,substitute:null})),
       duration:nuevo?bodaDefaultDuration().minutes:bodaDuration(ev),
       durationId:nuevo?bodaDefaultDuration().id:((bodaDurationOf(ev)||{}).id||null),
       time:nuevo?null:(base.time||null),
@@ -56,6 +57,10 @@ function _bodaFormRender(){
     +(c?('<span class="ev-bpunto" style="background:'+c.color+'"></span>'+escHtml(c.name)):'\u26a0 Sin asignar')
     +'</span></button>';
   h+='</div>';
+  var teachers=b.teachers;
+  h+='<div class="ev-field"><label>Profesores</label><div class="boda-teachers excl-row">';
+  [['celia','Celia'],['angel','Ángel'],['substitute','Sustituto']].forEach(function(t){h+='<label class="excl-item"><input type="checkbox" data-teacher="'+t[0]+'"'+((t[0]==='substitute'?teachers.substitute!=null:teachers[t[0]])?' checked':'')+'> '+t[1]+'</label>';});
+  h+='</div><input class="ev-input" id="bodaTeacherName" maxlength="80" placeholder="Nombre del sustituto" aria-label="Nombre del sustituto" value="'+escHtml(teachers.substitute||'')+'"'+(teachers.substitute!=null?'':' hidden')+'></div>';
   h+='<div class="ev-field"><label>Duración</label><select class="ev-input" id="bodaFormDuration">';
   var options=BODA_CONFIG.durations.filter(function(d){return d.active!==false||d.id===b.durationId;});
   var current=options.find(function(d){return d.id===b.durationId&&d.minutes===b.duration;});
@@ -70,6 +75,9 @@ function _bodaFormRender(){
   bodaOpenSheet('bodaFormWrap','bodaFormOv',h,closeBodaClaseForm);
   document.getElementById('bodaFormClose').addEventListener('click',closeBodaClaseForm);
   var dia=document.getElementById('bodaFormDia');
+  document.querySelectorAll('[data-teacher]').forEach(function(input){input.onchange=function(){var k=input.dataset.teacher;if(k==='substitute'){var name=document.getElementById('bodaTeacherName');name.hidden=!input.checked;teachers.substitute=input.checked?name.value:null;}else teachers[k]=input.checked;};});
+  document.getElementById('bodaTeacherName').oninput=function(){teachers.substitute=this.value;};
+
   document.getElementById('bodaFormDuration').onchange=function(){var d=BODA_CONFIG.durations.find(function(x){return x.id===this.value;},this);if(d){F.ds=dia.value||F.ds;b.duration=d.minutes;b.durationId=d.id;_bodaFormRender();}};
   dia.addEventListener('change',function(){F.ds=this.value||F.ds;F.tmp.start=F.ds;});
   /* Multidia: el mismo selector que usa la categoria "Otros" del formulario
@@ -124,7 +132,7 @@ function _bodaFormRender(){
       var hechas=0,llenos=[];
       dias.forEach(function(d){
         if(bodaDayFull(d)){llenos.push(_bodaFmtCorto(d));return;}
-        EVENTS.push(bodaNewClass(d,b2.time,b2.coupleId,b2.place,b2.duration,b2.durationId));
+        var created=bodaNewClass(d,b2.time,b2.coupleId,b2.place,b2.duration,b2.durationId);created.boda.teachers=JSON.parse(JSON.stringify(b2.teachers));EVENTS.push(created);
         hechas++;
       });
       if(!hechas){
@@ -137,6 +145,7 @@ function _bodaFormRender(){
       var ev=F.ev;
       ev.start=ds;ev.end=ds;
       ev.boda=ev.boda||{};
+      ev.boda.teachers=JSON.parse(JSON.stringify(b2.teachers));
       ev.boda.duration=b2.duration;ev.boda.durationId=b2.durationId;ev.boda.time=b2.time;ev.boda.coupleId=b2.coupleId;ev.boda.place=b2.place;
       var cc=bodaCouple(b2.coupleId);
       ev.title=cc?('Ensayo — '+cc.name):'Ensayo boda';

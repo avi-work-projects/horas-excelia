@@ -36,7 +36,7 @@ var EV_FILTER_GROUPS = ['Grandes','Asturias','Rec. Gestiones','WM + Rut','Resto'
 /* Etiquetas cortas a proposito: con los nombres largos los chips se caian
    a una segunda fila en pantallas estrechas. Asturias va con su bandera. */
 var EV_FILTER_SHORT  = {'Grandes':'Grande','Asturias':'<img class="ev-chip-flag" src="css/asturias-cross.svg" alt="Asturias">','Rec. Gestiones':'Gesti&oacute;n',
-  'WM + Rut':'<span class="wm-logo wm-logo-chip" role="img" aria-label="WM"></span>/Rut','Resto':'Resto','Cumplea\u00f1os VIP':'\u2b50'};
+  'WM + Rut':'<span class="wm-logo wm-logo-chip" role="img" aria-label="WM"></span>','Resto':'Resto','Cumplea\u00f1os VIP':'\u2b50'};
 var EV_FILTER_COLOR  = {'Grandes':'#38bdf8','Asturias':'#1d4ed8','Rec. Gestiones':'#34d399',
   'WM + Rut':'#c08a5a','Resto':'#ff6b6b','Cumplea\u00f1os VIP':'#fbbf24'};
 /* Tras que grupo va la linea que separa eventos grandes de puntuales */
@@ -46,7 +46,8 @@ function evFilterGroup(ev){
   if(t==='Cumplea\u00f1os VIP')return 'Cumplea\u00f1os VIP';
   if(t==='Asturias')return 'Asturias';
   if(getEvKind(ev)==='grande')return 'Grandes';
-  if(t==='Ensayos boda'||t==='Rutina')return 'WM + Rut';
+  if(t==='Ensayos boda')return 'WM + Rut';
+  if(t==='Rutina')return 'Resto';
   if(t==='Rec. Gestiones')return 'Rec. Gestiones';
   return 'Resto';
 }

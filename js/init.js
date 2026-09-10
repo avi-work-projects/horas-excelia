@@ -328,6 +328,7 @@
     if(_ap)_ap.classList.remove('open');
     if(opening){
       setConnectionsEditing(false);
+      document.querySelectorAll('.settings-details').forEach(function(d){d.open=false;});
       // Poblar inputs con los valores guardados en localStorage
       var mAlarm=document.getElementById('macroAlarmUrlMenu');
       if(mAlarm)mAlarm.value=normalizeMacroBase(appStorage.getItem('excelia-alarm-url')||'');
@@ -356,6 +357,7 @@
     e.preventDefault();
   },true);
   function setConnectionsEditing(editing){
+    if(editing)document.querySelectorAll('.settings-details').forEach(function(d){d.open=true;});
     var values=[normalizeMacroBase(appStorage.getItem('excelia-alarm-url')||''),TO,CC.join(', '),AUTHOR_NAME];
     ['macroAlarmUrlMenu','mailToLocal','mailCcLocal','mailNameLocal'].forEach(function(id,i){
       var input=document.getElementById(id);input.readOnly=!editing;

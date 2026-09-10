@@ -175,6 +175,7 @@ function bodaNormalizeClasses(arr){
       dias.sort().forEach(function(ds,i){
         var c=bodaNewClass(ds,(ev.boda&&ev.boda.time)||null,(ev.boda&&ev.boda.coupleId)||null,
           (ev.boda&&ev.boda.place)||BODA_PLACE_DEFAULT);
+        if(ev.boda&&ev.boda.teachers)c.boda.teachers=JSON.parse(JSON.stringify(ev.boda.teachers));
         c.boda.duration=bodaDuration(ev);c.boda.durationId=(bodaDurationOf(ev)||{}).id||null;
         if(i===0)c.id=ev.id;          /* la primera hereda el id original */
         if(ev.title)c.title=ev.title;

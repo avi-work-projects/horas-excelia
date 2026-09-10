@@ -59,7 +59,7 @@ function renderBdayUpcoming(){
     return s+'</div>';
   }
 
-  var h='<div class="excl-row ev-up-filters"><label class="excl-item"><input type="checkbox" class="bday-up-vip"'+(BDAY_UP_VIP?' checked':'')+'> Solo <img class="bday-vip-img" src="./VIP.png" alt="VIP"></label></div>';
+  var h='<div class="excl-row ev-up-filters"><label class="excl-item"><input type="checkbox" class="bday-up-vip"'+(BDAY_UP_VIP?' checked':'')+'> <img class="bday-vip-img" src="./VIP.png" alt="VIP"></label></div>';
   if(prevItems.length){
     h+='<div class="bday-upcoming-section">';
     h+=renderGroup('Pasados',prevItems);
@@ -76,6 +76,10 @@ function renderBdayUpcoming(){
     if(list.length)h+=renderGroup(group[0],list);
   });
   if(!nxtItems.length)h+='<div class="sy-note">No hay cumplea\u00f1os en los pr\u00f3ximos 14 d\u00edas.</div>';
+  if(!nxtItems.length&&!todayItems.length){
+    var later=getBdaysInRange(15,352);
+    if(later.length){var first=later[0].diff;h+='<div class="bday-next-distant">'+renderGroup('Siguiente cumpleaños',later.filter(function(x){return x.diff===first;}))+'</div>';}
+  }
   h+='</div>';
   return h;
 }
