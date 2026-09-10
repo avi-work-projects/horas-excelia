@@ -327,6 +327,7 @@
     var _ap=document.getElementById('alarmPanel');
     if(_ap)_ap.classList.remove('open');
     if(opening){
+      setConnectionsEditing(false);
       // Poblar inputs con los valores guardados en localStorage
       var mAlarm=document.getElementById('macroAlarmUrlMenu');
       if(mAlarm)mAlarm.value=normalizeMacroBase(appStorage.getItem('excelia-alarm-url')||'');
@@ -354,16 +355,28 @@
     e.stopPropagation();
     e.preventDefault();
   },true);
-  /* ── Menú: URL MacroDroid crear alarma ── */
-  var _mAlarmIn=document.getElementById('macroAlarmUrlMenu');
-  if(_mAlarmIn){
-    _mAlarmIn.addEventListener('change',function(){
-      var v=normalizeMacroBase(this.value);
-      this.value=v;
-      appStorage.setItem('excelia-alarm-url',v);
+  function setConnectionsEditing(editing){
+    var values=[normalizeMacroBase(appStorage.getItem('excelia-alarm-url')||''),TO,CC.join(', '),AUTHOR_NAME];
+    ['macroAlarmUrlMenu','mailToLocal','mailCcLocal','mailNameLocal'].forEach(function(id,i){
+      var input=document.getElementById(id);input.readOnly=!editing;
+      if(!editing)input.value=values[i];
     });
-    _mAlarmIn.addEventListener('click',function(e){e.stopPropagation();});
+    var btn=document.getElementById('editConnectionsBtn');
+    btn.textContent=editing?'Guardar configuración':'Editar correo y MacroDroid';
+    btn.setAttribute('aria-pressed',String(editing));
   }
+  document.getElementById('editConnectionsBtn').addEventListener('click',function(){
+    var url=document.getElementById('macroAlarmUrlMenu'),to=document.getElementById('mailToLocal');
+    if(url.readOnly){setConnectionsEditing(true);return;}
+    if(!url.reportValidity()||!to.reportValidity())return;
+    var cfg={to:to.value.trim(),cc:document.getElementById('mailCcLocal').value.split(',').map(function(x){return x.trim();}).filter(Boolean),name:document.getElementById('mailNameLocal').value.trim()};
+    try{
+      appStorage.begin();appStorage.setItem(MAIL_CFG_SK,JSON.stringify(cfg));
+      appStorage.setItem('excelia-alarm-url',normalizeMacroBase(url.value));appStorage.commit();
+      loadMailConfig();setConnectionsEditing(false);showToast('Configuración guardada','success');
+    }catch(e){appStorage.cancel();showToast('No se pudo guardar la configuración','error');}
+  });
+  setConnectionsEditing(false);
 
   /* ── Bottom sheet: overlay de fondo ── */
   var _g15=document.getElementById('overlay'); if(_g15)_g15.addEventListener('click',closeSheet);
@@ -395,12 +408,6 @@
   applyTheme(THEME);
   updateThemeBtn();
 
-
-  [['mailToLocal',function(v){TO=v;}],['mailCcLocal',function(v){CC=v.split(',').map(function(x){return x.trim();}).filter(Boolean);} ],['mailNameLocal',function(v){AUTHOR_NAME=v;}]].forEach(function(pair,i){
-    var input=document.getElementById(pair[0]);if(!input)return;
-    input.value=i===0?TO:i===1?CC.join(', '):AUTHOR_NAME;
-    input.addEventListener('change',function(){pair[1](input.value.trim());saveMailConfig();});
-  });
 
   /* ── SW update: un solo sitio que aplica la actualizacion ──────────
      Cuando aparece el aviso, el service worker nuevo YA esta activo con su

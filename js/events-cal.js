@@ -149,7 +149,7 @@ function _renderEvCalMonth(){
            barra hasta el 4 de octubre se veria a todo color sobre unos dias en
            gris. */
         var trozos=_evBarSegments(it,wMulti,inMCols),ci;
-        if(trozos.some(function(tr){return tr.n>1||tr.n!==trozos[0].n||tr.lane!==trozos[0].lane;})){
+        if(trozos.some(function(tr){return tr.n>1||tr.n!==trozos[0].n||tr.lane!==trozos[0].lane||tr.overlap!==trozos[0].overlap;})){
           h+=_evSteppedBar(it,trozos,false,showT,_pastBar);
           return;
         }
@@ -164,7 +164,7 @@ function _renderEvCalMonth(){
           var sc=abre&&cierra?'':abre?' starts':cierra?' ends':' continues';
           var med=_evMitadesStyle({cs:tr.cs,ce:tr.ce,
             halfL:it.halfL&&tr.cs===it.cs, halfR:it.halfR&&tr.ce===it.ce});
-          h+='<div class="ev-multi-bar '+evBarSizeCls(ev)+sc+_pastBar+(it.labelTop?' ev-label-top':'')+'" data-id="'+ev.id+'"'
+          h+='<div class="ev-multi-bar '+evBarSizeCls(ev)+(!tr.overlap?' ev-bar-alone':'')+sc+_pastBar+(it.labelTop?' ev-label-top':'')+'" data-id="'+ev.id+'"'
             +' style="grid-column:'+(tr.cs+1)+'/'+(tr.ce+2)+';grid-row:'+(it.row+1)+';z-index:'+evBarZ(ev)+';border:1.5px solid '+_evBarMutedColor(_dc,tr.dentro)+';background:'+_evBarMutedColor(fakeTrans(_dc,0.65),tr.dentro)+';color:#fff'+med+_evBarSegmentStyle(ev,tr,false)+'">'
             +(showT&&i===iTit?'<span class="ev-bar-label" title="'+escHtml(ev.title)+'">'+escHtml(ev.title)+'</span>':'')+'</div>';
         });
@@ -298,17 +298,17 @@ function _renderEvMonthCard(m,yr,o){
         var pastBar=wk[it.ce]<today?' past-bar':'';
         var extra=o.barTitles?';font-size:.3rem;padding:0 3px':'';
         var parts=_evBarSegments(it,wMulti);
-        if(parts.some(function(tr){return tr.n>1||tr.n!==parts[0].n||tr.lane!==parts[0].lane;})){
-          h+=_evSteppedBar(it,parts,true,o.barTitles&&(it.starts||it.cs===0),pastBar);
+        if(parts.some(function(tr){return tr.n>1||tr.n!==parts[0].n||tr.lane!==parts[0].lane||tr.overlap!==parts[0].overlap;})){
+          h+=_evSteppedBar(it,parts,true,o.barTitles&&evBarSize(it.ev)!=='sm'&&(it.starts||it.cs===0),pastBar);
           return;
         }
         parts.forEach(function(tr,i){
           var abre=it.starts&&tr.cs===it.cs,cierra=it.ends&&tr.ce===it.ce;
           var sc=abre&&cierra?'':abre?' a-starts':cierra?' a-ends':' a-mid';
-          var txt=(i===0&&o.barTitles&&(it.starts||it.cs===0))?escHtml(it.ev.title):'';
+          var txt=(i===0&&o.barTitles&&evBarSize(it.ev)!=='sm'&&(it.starts||it.cs===0))?escHtml(it.ev.title):'';
           var med=_evMitadesStyle({cs:tr.cs,ce:tr.ce,
             halfL:it.halfL&&tr.cs===it.cs,halfR:it.halfR&&tr.ce===it.ce});
-          h+='<div class="ev-annual-mbar '+evBarSizeCls(it.ev)+sc+pastBar+(it.labelTop?' ev-label-top':'')+'" data-id="'+it.ev.id+'"'
+          h+='<div class="ev-annual-mbar '+evBarSizeCls(it.ev)+(!tr.overlap?' ev-bar-alone':'')+sc+pastBar+(it.labelTop?' ev-label-top':'')+'" data-id="'+it.ev.id+'"'
             +' style="grid-column:'+(tr.cs+1)+'/'+(tr.ce+2)+';grid-row:1'
             +';z-index:'+evBarZ(it.ev)
             +';border:1px solid '+dc+';background:'+fakeTrans(dc,0.65)+extra+med

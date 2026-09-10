@@ -73,7 +73,7 @@ La alarma guarda una fecha de ocurrencia, no un booleano permanente. Booleanos a
 no se consideran alarma vigente porque no permiten saber a que año correspondian.
 
 ## Alarmas y privacidad
-Solo MacroDroid. URL local en Ajustes, exportable. La macro del movil usa Java. Scripts y limitaciones del dispositivo: [docs/macrodroid.md](docs/macrodroid.md).
+Solo MacroDroid. URL local en Ajustes, exportable. Correo y MacroDroid se editan solo tras desbloquear el botón; Guardar confirma ambos de forma conjunta. La macro del movil usa Java. Scripts y limitaciones del dispositivo: [docs/macrodroid.md](docs/macrodroid.md).
 El PWA envia una solicitud: `no-cors` no demuestra que el reloj haya creado la alarma.
 Sin dia semanal cuando el aviso queda entre 5 min y 24 h; fuera de esa ventana requiere dia.
 Correo y cumpleaños no se incluyen en el HTML publicado. Se intenta rescatar configuracion
