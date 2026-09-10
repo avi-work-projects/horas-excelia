@@ -329,7 +329,7 @@ function _renderEvMonthCard(m,yr,o){
         var bsty='grid-column:'+(sp.s+1)+'/'+(sp.e+2)+';grid-row:1;';
         if(noL)bsty+='border-left:none;border-top-left-radius:0;border-bottom-left-radius:0;';
         if(noR)bsty+='border-right:none;border-top-right-radius:0;border-bottom-right-radius:0;';
-        h+='<div class="ev-annual-puente-perimeter" style="'+bsty+'"></div>';
+        h+='<div class="ev-annual-puente-perimeter'+(wk[sp.e]<today?' past-marker':'')+'" style="'+bsty+'"></div>';
       });
     }
     h+='</div>'; /* ev-annual-week-outer */
