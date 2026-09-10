@@ -2428,3 +2428,7 @@ button.action-edit.active,button.action-edit:active{background:rgba(251,146,60,.
 .bday-header-vip{display:flex;align-items:center;justify-content:flex-end;margin-left:auto;flex-shrink:0}
 .bday-header-vip .excl-item{gap:5px;margin:0}
 .bday-header-vip img{width:24px;height:auto}
+
+/* Las tres vistas de Cumpleaños comparten el naranja en ambos temas. */
+.bday-hdr-sub .ev-view-toggle:not(.active){color:var(--c-orange);border-color:color-mix(in srgb,var(--c-orange) 35%,transparent);background:color-mix(in srgb,var(--c-orange) 8%,transparent)}
+.bday-hdr-sub .ev-view-toggle.active{color:var(--c-orange)!important;border-color:var(--c-orange)!important;background:color-mix(in srgb,var(--c-orange) 17%,transparent)!important}
