@@ -555,6 +555,22 @@ REGLAS.push(['swipe proximos: orden, extremos y modal protegido',function(){
   swipe(100,panel);return ctx.EV_VIEW==='birthdays';
 }]);
 
+REGLAS.push(['parejas activas: hoy incluido, pasadas fuera y sin fecha al final',function(){
+  const ctx=cargarApp(claves);
+  ctx.BODA_COUPLES=[{id:'late',name:'Futura',weddingDate:'2026-09-01'},{id:'old',name:'Anterior',weddingDate:'2026-08-20'},{id:'today',name:'Actual',weddingDate:'2026-08-21'},{id:'unknown',name:'Sin fecha'}];
+  ctx.BODA_PAREJAS_FILTER='activas';ctx.BODA_PAREJAS_SORT='boda';
+  const html=ctx._renderBodaParejas();
+  if(html.includes('data-cid="old"')||html.indexOf('data-cid="today"')>html.indexOf('data-cid="late"')||html.indexOf('data-cid="late"')>html.indexOf('data-cid="unknown"'))return false;
+  ctx.BODA_PAREJAS_FILTER='pasadas';
+  const past=ctx._renderBodaParejas();return past.includes('data-cid="old"')&&!past.includes('data-cid="today"');
+}]);
+REGLAS.push(['cumpleanos: grupos sin duplicar en limites 1, 7 y 14 dias',function(){
+  const ctx=cargarApp(claves);
+  ctx.BDAYS=[{name:'Manana',month:8,day:22},{name:'Siete',month:8,day:28},{name:'Ocho',month:8,day:29},{name:'Catorce',month:9,day:4},{name:'Fuera',month:9,day:5}];
+  const html=ctx.renderBdayUpcoming();
+  return ['Manana','Siete','Ocho','Catorce'].every(name=>(html.match(new RegExp('data-bday-name="'+name+'"','g'))||[]).length===1)&&!html.includes('data-bday-name="Fuera"');
+}]);
+
 let okR = 0;
 for (const [nombre, fn] of REGLAS) {
   if (FILTRO) break;

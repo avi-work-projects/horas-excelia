@@ -286,8 +286,8 @@ var BODA_CARD_OPEN = null;   /* id de la pareja desplegada en su tarjeta */
 var BODA_PAREJAS_SEARCH = '';
 /* null = como siempre (las mas recientes arriba). Cada chip da la vuelta:
    A-Z -> Z-A -> sin orden. Solo puede haber una regla a la vez. */
-var BODA_PAREJAS_SORT = null;   /* 'az' | 'za' | 'new' | 'old' | null */
-var BODA_PAREJAS_FILTER = 'incompletas';  /* 'incompletas' | 'todas' | 'completas' */
+var BODA_PAREJAS_SORT = 'boda';   /* 'az' | 'za' | 'new' | 'old' | null */
+var BODA_PAREJAS_FILTER = 'activas';  /* 'incompletas' | 'todas' | 'completas' */
 var BODA_CAL_HL = null;   /* id de la pareja resaltada en el calendario */
 var BODA_CAL_YEAR = new Date().getFullYear();
 var BODA_CAL_MONTH = new Date().getMonth();
@@ -425,10 +425,12 @@ function _bodaCmpFecha(x,y,desc){
   return x<y?(desc?1:-1):x>y?(desc?-1:1):0;
 }
 function _renderBodaParejas(){
+  var _today=evDk(new Date());
+  var _nAct=BODA_COUPLES.filter(function(c){return !c.weddingDate||c.weddingDate>=_today;}).length;
   var _nInc=0,_nCom=0;
   BODA_COUPLES.forEach(function(c){if(bodaProgress(c).falta>0)_nInc++;else _nCom++;});
-  var h='<div class="boda-chips">';
-  [['incompletas','Por asignar',_nInc],['todas','Todas',BODA_COUPLES.length],['completas','Completas',_nCom]].forEach(function(o){
+  var h='<div class="boda-chips boda-pfilter-chips">';
+  [['activas','Activas',_nAct],['pasadas','Pasadas',BODA_COUPLES.length-_nAct],['todas','Todas',BODA_COUPLES.length],['incompletas','Clases por asignar',_nInc],['completas','Cerradas',_nCom]].forEach(function(o){
     h+='<button class="boda-chip'+(BODA_PAREJAS_FILTER===o[0]?' active':'')+'" data-pfilter="'+o[0]+'">'
       +o[1]+'<b>'+o[2]+'</b></button>';
   });
@@ -449,6 +451,8 @@ function _renderBodaParejas(){
   var list=BODA_COUPLES.filter(function(c){
     var p=bodaProgress(c);
     if(_q&&String(c.name||'').toLowerCase().indexOf(_q)===-1)return false;
+    if(BODA_PAREJAS_FILTER==='activas')return !c.weddingDate||c.weddingDate>=_today;
+    if(BODA_PAREJAS_FILTER==='pasadas')return !!c.weddingDate&&c.weddingDate<_today;
     if(BODA_PAREJAS_FILTER==='incompletas')return p.falta>0;
     if(BODA_PAREJAS_FILTER==='completas')return p.falta===0;
     return true;
@@ -1492,12 +1496,7 @@ function bindBodasEvents(){
     b.addEventListener('click',function(){
       _guardaPendientes();
       BODA_SUBTAB=b.dataset.bsub;
-      /* El filtro "Por asignar" solo tiene sentido si queda alguna; si no,
-         se entraba a una lista vacia */
-      if(BODA_SUBTAB==='parejas'){
-        var _hay=BODA_COUPLES.some(function(c){return bodaProgress(c).falta>0;});
-        if(!_hay&&BODA_PAREJAS_FILTER==='incompletas')BODA_PAREJAS_FILTER='todas';
-      }
+      if(BODA_SUBTAB==='parejas'){BODA_PAREJAS_FILTER='activas';BODA_PAREJAS_SORT='boda';}
       refreshEvents(false);
     });
   });

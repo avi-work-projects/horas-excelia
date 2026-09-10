@@ -1264,3 +1264,6 @@ Las barras finas tienen una banda inferior separada de las gruesas (`_evBarBand`
 
 ### Estilo compartido de Cumpleanos (v292)
 Las tres vistas usan `.ev-view-toggle` con zonas A (listas) y B (calendario), y `.sy-header-center`. Nombres de Proximos y numeros de Lista usan texto neutro. `_evSwipeUpcoming` recorre Proximos/Cumpleanos/Todos sin ciclo; `addSwipe` conserva la proteccion de paneles anidados. Los filtros de Todos usan `.ev-sort-chip` con acento general; el marron queda reservado a Bodas.
+
+### Parejas y cumpleanos (v293)
+Parejas abre Activas ordenadas por boda ascendente; incluye hoy y parejas sin fecha (al final). Pasadas exige fecha anterior a hoy. Cerradas conserva el criterio de todas las clases asignadas. Cumpleanos comparte grupos sin solapamiento: pasados, hoy, manana, dias 2-7 y 8-14. En Lista, Hoy limpia filtros y busca la siguiente fecha, y VIP/no VIP alternan a Todos al pulsarlos de nuevo. La edicion ofrece Deshacer. Actualizar del menu usa captura delegada para que no lo consuma el cierre del menu; comparte la accion con el toast y espera activacion si procede.

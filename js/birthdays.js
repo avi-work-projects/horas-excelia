@@ -225,7 +225,11 @@ function renderBdayUpcoming(){
     h+='</div>';
   }
   h+='<div class="bday-upcoming-section" style="margin-top:8px">';
-  h+=renderGroup('Pr\u00f3ximos',nxtItems);
+  [['Ma\u00f1ana',1,1],['Pr\u00f3ximos 7 d\u00edas',2,7],['Pr\u00f3ximos 14 d\u00edas',8,14]].forEach(function(group){
+    var list=nxtItems.filter(function(x){return x.diff>=group[1]&&x.diff<=group[2];});
+    if(list.length)h+=renderGroup(group[0],list);
+  });
+  if(!nxtItems.length)h+='<div class="sy-note">No hay cumplea\u00f1os en los pr\u00f3ximos 14 d\u00edas.</div>';
   h+='</div>';
   return h;
 }
@@ -328,7 +332,7 @@ function renderBdayContent(){
   h+='<div class="bday-hdr-sub">';
   h+='<div class="ev-view-zone ev-zone-a"><button class="ev-view-toggle'+(BDAY_VIEW==='upcoming'?' active':'')+'" id="bdViewUpcoming">Pr\u00f3ximos<br>Cumplea\u00f1os</button></div>';
   h+='<div class="ev-view-zone ev-zone-a"><button class="ev-view-toggle'+(BDAY_VIEW==='list'?' active':'')+'" id="bdViewList">Lista<br>Cumplea\u00f1os</button></div>';
-  h+='<div class="ev-view-zone ev-zone-b"><button class="ev-view-toggle'+(BDAY_VIEW==='cal'?' active':'')+'" id="bdViewCal">Calendario<br>Cumplea\u00f1os</button></div>';
+  h+='<div class="ev-view-zone ev-zone-a"><button class="ev-view-toggle'+(BDAY_VIEW==='cal'?' active':'')+'" id="bdViewCal">Calendario<br>Cumplea\u00f1os</button></div>';
   h+='</div>';
   // Nivel 3: para TODAS las vistas
   h+='<div class="sy-header with-tabs sy-header-center">';
@@ -352,7 +356,7 @@ function renderBdayContent(){
   if(BDAY_VIEW==='list'){
     h+='<div class="bday-vip-ctrl-bar">';
     h+='<div class="bday-vip-filter-chips">';
-    h+='<button class="bday-vip-chip'+(BDAY_FILTER_VIP==='all'?' active':'')+'" id="bdVipAll">Todos</button>';
+    h+='<button class="bday-vip-chip bday-jump-today" id="bdVipAll">Hoy</button>';
     h+='<button class="bday-vip-chip chip-vip'+(BDAY_FILTER_VIP==='vip'?' active':'')+'" id="bdVipOnly"><img src="./VIP.png" style="width:20px;height:auto;vertical-align:middle" alt="VIP"></button>';
     h+='<button class="bday-vip-chip chip-novip'+(BDAY_FILTER_VIP==='novip'?' active':'')+'" id="bdVipNone"><span class="vip-no-icon"><img src="./VIP.png" style="width:20px;height:auto;display:block" alt="no VIP"></span></button>';
     h+='</div>';
@@ -724,8 +728,17 @@ function bindBdayFormEvents(){
       for(var i=0;i<BDAYS.length;i++){
         if(BDAYS[i].name===BDAY_EDIT.name&&BDAYS[i].day===BDAY_EDIT.day&&BDAYS[i].month===BDAY_EDIT.month){idx=i;break;}
       }
-      if(idx!==-1)BDAYS[idx]={name:name,day:day,month:month,vip:vip||undefined};
-      showToast('Cumplea\u00f1os actualizado','success');
+      var previous=idx>=0?JSON.parse(JSON.stringify(BDAYS[idx])):null;
+      var updated={name:name,day:day,month:month,vip:vip||undefined};
+      if(idx!==-1)BDAYS[idx]=updated;
+      showToast('Cumplea\u00f1os actualizado','success',function(){
+        var current=BDAYS.indexOf(updated);
+        if(previous&&current>=0){
+          BDAYS[current]=previous;
+          localStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));
+          syncVipBdaysToEvents();updateBdayBtn();_bdRefreshBoth();
+        }
+      });
     } else {
       var newB={name:name,day:day,month:month};
       if(vip)newB.vip=true;
@@ -817,11 +830,17 @@ function bindBdayEvents(){
   document.getElementById('bdViewList').addEventListener('click',function(){BDAY_VIP_PENDING=null;BDAY_EDIT_VIP=false;BDAY_VIEW='list';refreshBday();_bdScrollToMonth();});
   // Filter chips: Todos / Solo VIP / Sin VIP
   var bdVipAllEl=document.getElementById('bdVipAll');
-  if(bdVipAllEl)bdVipAllEl.addEventListener('click',function(){BDAY_FILTER_VIP='all';BDAY_SEARCH='';refreshBday();});
+  if(bdVipAllEl)bdVipAllEl.addEventListener('click',function(){
+    BDAY_FILTER_VIP='all';BDAY_SEARCH='';refreshBday();
+    var now=new Date(),body=document.querySelector('#bdayOverlay .sy-body');
+    var rows=Array.from(body.querySelectorAll('.bday-list-item'));
+    var next=rows.find(function(row){return Number(row.dataset.bdayMonth)>now.getMonth()+1||(Number(row.dataset.bdayMonth)===now.getMonth()+1&&Number(row.dataset.bdayDay)>=now.getDate());})||rows[0];
+    if(next)body.scrollTop=Math.max(0,next.offsetTop-body.offsetTop-8);
+  });
   var bdVipOnlyEl=document.getElementById('bdVipOnly');
-  if(bdVipOnlyEl)bdVipOnlyEl.addEventListener('click',function(){BDAY_FILTER_VIP='vip';BDAY_SEARCH='';refreshBday();});
+  if(bdVipOnlyEl)bdVipOnlyEl.addEventListener('click',function(){BDAY_FILTER_VIP=BDAY_FILTER_VIP==='vip'?'all':'vip';BDAY_SEARCH='';refreshBday();});
   var bdVipNoneEl=document.getElementById('bdVipNone');
-  if(bdVipNoneEl)bdVipNoneEl.addEventListener('click',function(){BDAY_FILTER_VIP='novip';BDAY_SEARCH='';refreshBday();});
+  if(bdVipNoneEl)bdVipNoneEl.addEventListener('click',function(){BDAY_FILTER_VIP=BDAY_FILTER_VIP==='novip'?'all':'novip';BDAY_SEARCH='';refreshBday();});
   // Botón "Editar VIPs" / "✓ Listo": entra en modo edición O guarda y sale
   var editVipEl=document.getElementById('bdEditVip');
   if(editVipEl)editVipEl.addEventListener('click',function(){

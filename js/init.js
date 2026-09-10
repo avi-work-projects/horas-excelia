@@ -338,6 +338,7 @@
      ademas lo que hubiera debajo (tocabas fuera del panel de alarma para
      cerrarlo y de paso marcabas una semana como enviada). */
   document.addEventListener('click',function(e){
+    if(e.target.closest&&e.target.closest('#swUpdBtn'))return;
     var panel=document.getElementById('alarmPanel');
     var menu=document.getElementById('dataMenu');
     var alarmAbierto=panel&&panel.classList.contains('open');
@@ -399,13 +400,30 @@
      Cuando aparece el aviso, el service worker nuevo YA esta activo con su
      generacion de cache completa (install hace skipWaiting y activate hace
      claim). Asi que recargar basta: no hay que esperar a nadie. */
+  var _aplicandoActualizacion=false;
   function aplicarActualizacion(){
+    if(_aplicandoActualizacion)return;
+    _aplicandoActualizacion=true;
     var mb=document.getElementById('menuBtn');
     if(mb)mb.classList.remove('has-update');
-    window.location.reload();
+    var menu=document.getElementById('dataMenu');if(menu)menu.classList.remove('open');
+    function reload(){window.location.reload();}
+    if(!('serviceWorker' in navigator)){reload();return;}
+    navigator.serviceWorker.getRegistration().then(function(reg){
+      var next=reg&&(reg.installing||reg.waiting);
+      if(!next){reload();return;}
+      var timer=setTimeout(reload,5000);
+      next.addEventListener('statechange',function(){
+        if(next.state==='activated'){clearTimeout(timer);reload();}
+      });
+      next.postMessage({type:'SKIP_WAITING'});
+    }).catch(reload);
   }
-  var _swUpdBtn=document.getElementById('swUpdBtn');
-  if(_swUpdBtn)_swUpdBtn.addEventListener('click',aplicarActualizacion);
+  /* Delegado en captura: el cierre de menus no puede consumir este toque. */
+  document.addEventListener('click',function(e){
+    if(!e.target.closest||!e.target.closest('#swUpdBtn'))return;
+    e.preventDefault();e.stopImmediatePropagation();aplicarActualizacion();
+  },true);
 
   /* ── Service Worker: avisar cuando hay version nueva ── */
   if('serviceWorker' in navigator){
