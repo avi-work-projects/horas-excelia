@@ -255,7 +255,7 @@ function openEvDetail(ev,container,car){
       /* Bodas > Parejas, sin filtro y con esa pareja ya desplegada */
       if(typeof BODA_SUBTAB!=='undefined'){
         BODA_SUBTAB='parejas';
-        BODA_PAREJAS_FILTER='todas';
+        BODA_PAREJAS_FILTER='todas';BODA_PAREJAS_CLASSES=null;
         BODA_CARD_OPEN=cid;
       }
       _switchEvView('bodas');
