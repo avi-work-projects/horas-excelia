@@ -206,6 +206,12 @@ function _bindEvNav(){
   if(_upB)_upB.addEventListener('change',function(){EV_UP_SHOW_BODA=this.checked;refreshEvents();});
   var _subUp=document.getElementById('evSubUpcoming');
   if(_subUp)_subUp.addEventListener('click',function(){_switchEvView('upcoming');refreshEvents(false);});
+  var _subBd=document.getElementById('evSubBirthdays');
+  if(_subBd)_subBd.addEventListener('click',function(){_switchEvView('birthdays');refreshEvents(false);});
+  if(EV_VIEW==='birthdays'){
+    bindBdayUpcoming(document.getElementById('eventsContent'));
+    document.getElementById('evBdayAdd').addEventListener('click',function(){openBdayForm(null);});
+  }
   var _subTd=document.getElementById('evSubTodos');
   if(_subTd)_subTd.addEventListener('click',function(){_switchEvView('months');refreshEvents(false);});
   if(EV_VIEW==='rutinas'&&typeof bindRutinasEvents==='function')bindRutinasEvents();
