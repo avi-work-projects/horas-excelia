@@ -75,17 +75,17 @@ var BDAYS_FROM_SECRET=[];
           <button class="data-menu-item" id="themeBtn">&#127769;&nbsp;Oscuro</button>
           <button class="data-menu-item" id="exportAllBtn">&#8595;&nbsp;Exportar todo</button>
           <button class="data-menu-item" id="importAllBtn">&#8593;&nbsp;Importar todo</button>
-          <div class="macro-section">
-            <div class="macro-section-lbl">&#128246; MacroDroid — URL base</div>
+          <details class="settings-details"><summary>MacroDroid</summary><div class="macro-section">
+            <div class="macro-section-lbl">URL base</div>
             <input class="macro-url-input" id="macroAlarmUrlMenu" readonly type="url" placeholder="https://trigger.macrodroid.com/ID">
-          </div>
-          <button class="data-menu-item sw-upd-menu-btn" id="swUpdBtn" style="display:none">&#128260;&nbsp;Actualizar</button>
-          <div class="macro-section"><div class="macro-section-lbl">Correo de horas (solo en este dispositivo)</div>
+          </div></details>
+          <details class="settings-details"><summary>Correo de horas</summary><div class="macro-section">
 <input class="macro-url-input" id="mailToLocal" readonly type="email" placeholder="Destinatario">
 <input class="macro-url-input" id="mailCcLocal" readonly type="text" placeholder="CC (separados por comas)">
-<input class="macro-url-input" id="mailNameLocal" readonly type="text" placeholder="Tu nombre"></div>
+<input class="macro-url-input" id="mailNameLocal" readonly type="text" placeholder="Tu nombre"></div></details>
           <button class="data-menu-item settings-edit-btn" id="editConnectionsBtn">Editar correo y MacroDroid</button>
           <div class="app-version-label" id="appVersionLabel"></div>
+          <button class="data-menu-item sw-upd-menu-btn" id="swUpdBtn" style="display:none">&#128260;&nbsp;Actualizar</button>
         </div>
       </div>
       <input type="file" id="importAllFile" accept=".json" style="display:none">

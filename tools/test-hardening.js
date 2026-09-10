@@ -50,3 +50,9 @@ assert.equal(b.bodaEndAt('18:00',20),'18:20');assert.equal(b.bodaEndAt('23:50',2
 assert.throws(()=>b.validateBodaConfig({packs:[],durations:[],places:[],defaultDurationId:'no'}));
 b.bodaDeleteCatalogItem('places','otro');assert.ok(!b.BODA_CONFIG.places.some(x=>x.k==='otro'));
 console.log('Bodas: packs historicos, extras, duracion y referencias protegidas OK');
+
+const upcoming=cargarApp({});upcoming.BDAYS=[{name:'Cumple futuro',month:9,day:25}];
+assert.ok(upcoming.renderBdayUpcoming().includes('Siguiente cumpleaños'));
+assert.ok(upcoming.renderBdayUpcoming().includes('Cumple futuro'));
+assert.equal(upcoming.evFilterGroup({kind:'puntual',type:'Rutina'}),'Resto');
+assert.ok(!b.renderBodaPackStats().includes('<b>0</b>'));

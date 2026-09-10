@@ -41,6 +41,8 @@ test('migracion privada desde cache anterior sin sobrescribir datos locales',asy
 test('ajustes bloqueados, guardado explicito y backup con conexiones',async({page})=>{
  await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));await page.goto('/');
  await page.locator('#menuBtn').click();
+ await expect(page.locator('#mailToLocal')).not.toBeVisible();await expect(page.locator('#macroAlarmUrlMenu')).not.toBeVisible();
+ await page.locator('summary').filter({hasText:'Correo de horas'}).click();await expect(page.locator('#mailToLocal')).toBeVisible();
  for(const id of ['mailToLocal','mailCcLocal','mailNameLocal','macroAlarmUrlMenu'])await expect(page.locator('#'+id)).toHaveAttribute('readonly','');
  await page.locator('#editConnectionsBtn').click();
  await page.locator('#mailToLocal').fill('test@example.invalid');await page.locator('#mailNameLocal').fill('Prueba');
@@ -82,10 +84,12 @@ test('Bodas: configurar pack, duracion, salas y exportar catalogos',async({page}
  await page.locator('#bodaFormDia').fill('2030-01-05');await page.locator('#bodaFormSave').click();
  expect(await page.evaluate(()=>EVENTS.find(e=>e.start==='2030-01-05').boda.duration)).toBe(20);
  await page.evaluate(()=>openBodaClaseForm(EVENTS.find(e=>e.id==='cls1')));
+ await page.locator('[data-teacher=celia]').uncheck();await page.locator('[data-teacher=substitute]').check();await page.locator('#bodaTeacherName').fill('Profesora prueba');
  await page.locator('#bodaFormDuration').selectOption('dur-20');await expect(page.locator('#bodaFormOv')).toContainText('18:20');await page.locator('#bodaFormSave').click();
  expect(await page.evaluate(()=>EVENTS.find(e=>e.id==='cls1').boda.duration)).toBe(20);
  await page.locator('#eventsContent').getByRole('button',{name:'Inicio',exact:true}).click();await page.locator('#menuBtn').click();
  const [download]=await Promise.all([page.waitForEvent('download'),page.locator('#exportAllBtn').click()]);const data=JSON.parse(require('fs').readFileSync(await download.path(),'utf8'));
+ expect(data.events.find(e=>e.id==='cls1').boda.teachers).toEqual({celia:false,angel:true,substitute:'Profesora prueba'});
  expect(data.bodaConfig.defaultDurationId).toBe('dur-20');expect(data.bodaConfig.places.find(p=>p.k==='casa').n).toBe('Mi casa');
  await page.evaluate(d=>applyFullImport(d,'replace'),data);expect(await page.evaluate(()=>BODA_CONFIG.defaultDurationId)).toBe('dur-20');expect(errors).toEqual([]);
 });

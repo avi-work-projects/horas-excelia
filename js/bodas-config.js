@@ -92,7 +92,7 @@ function bodaPackStats(){
 function renderBodaPackStats(){
   var s=bodaPackStats(),h='<div class="boda-stat-t">Parejas por clases tomadas</div><p class="boda-stat-note">Clases ya finalizadas según fecha, hora y duración. No cuenta las futuras ni huecos sin pareja.</p>';
   var nums=[2,3,4,5,6,7,8];Object.keys(s.counts).forEach(function(n){if(nums.indexOf(+n)<0)nums.push(+n);});nums.sort(function(a,b){return a-b;});
-  h+='<div class="boda-stats-row boda-count-grid">'+nums.map(function(n){return '<div class="boda-stat"><b>'+(s.counts[n]||0)+'</b><span>'+n+' clases</span></div>';}).join('')+'</div>';
+  h+='<div class="boda-stats-row boda-count-grid">'+nums.filter(function(n){return s.counts[n]>0;}).map(function(n){return '<div class="boda-stat"><b>'+(s.counts[n]||0)+'</b><span>'+n+' clases</span></div>';}).join('')+'</div>';
   h+='<div class="boda-stat-t">'+s.extras+(s.extras===1?' pareja':' parejas')+' con clases extras</div><p class="boda-stat-note">Extras = clases tomadas por encima de las incluidas al contratar el pack.</p>';
   BODA_CONFIG.packs.forEach(function(p){var row=s.byPack[p.id]||{couples:0,classes:0};h+='<div class="boda-pack-stat"><b>'+escHtml(p.name)+'</b><span>'+row.couples+' parejas · '+row.classes+' extras</span></div>';});
   return h;
