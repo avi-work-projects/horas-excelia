@@ -100,7 +100,7 @@ function renderBodaPackStats(){
 function renderBodaConfig(){
   var h='<div id="bodaConfigContent"><h3>Configuración de Bodas</h3>';
   [['packs','Packs'],['durations','Duraciones'],['places','Salas']].forEach(function(pair){
-    var kind=pair[0];h+='<div class="boda-stat-t">'+pair[1]+'</div>';
+    var kind=pair[0];h+='<section class="boda-config-section"><div class="boda-stat-t">'+pair[1]+'</div>';
     BODA_CONFIG[kind].forEach(function(x){var id=x.id||x.k;
       h+='<div class="boda-catalog-row"><span><b>'+escHtml(x.name||x.n||x.minutes+' min')+'</b><small>'+escHtml(kind==='packs'?x.classes+' clases':kind==='places'?x.d:(id===BODA_CONFIG.defaultDurationId?'Predeterminada':''))+'</small></span>';
       h+='<button class="boda-mini-btn action-edit" data-cfg-edit="'+kind+'" data-id="'+id+'" aria-label="Editar '+escHtml(x.name||x.n||x.minutes+' min')+'">&#9998;</button>';
@@ -108,7 +108,7 @@ function renderBodaConfig(){
       if(kind==='durations'&&x.active!==false)h+='<label><input type="radio" name="bodaDefaultDuration" data-default="'+id+'"'+(id===BODA_CONFIG.defaultDurationId?' checked':'')+'> Por defecto</label>';
       if(!bodaConfigUsed(kind,id)&&!(kind==='durations'&&id===BODA_CONFIG.defaultDurationId))h+='<button class="ev-io-btn io-peligro" data-cfg-delete="'+kind+'" data-id="'+id+'">Eliminar</button>';
       h+='</div>';
-    });h+='<button class="ev-io-btn io-primaria" data-cfg-add="'+kind+'">+ Añadir '+({packs:'pack',durations:'duración',places:'sala'})[kind]+'</button>';
+    });h+='<button class="ev-io-btn io-primaria" data-cfg-add="'+kind+'">+ Añadir '+({packs:'pack',durations:'duración',places:'sala'})[kind]+'</button></section>';
   });
   h+='<p class="boda-stat-note">Desactivar oculta opciones para nuevas asignaciones y conserva las existentes. Cambiar un pack o duración no modifica las clases ya guardadas ni el número contratado por las parejas anteriores.</p></div>';
   return h;

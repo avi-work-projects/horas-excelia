@@ -11,7 +11,7 @@
 --sent:#1a3a2a;--sent-border:#2a5a3a;--sent-text:#5ae088;
 --falta:#3a3320;--falta-border:#6a5a2a;
 --festivo:#ff6b6b;--vacaciones:#ffb347;--ausencia:#c084fc;--normal:#6c8cff;
---c-orange:#fb923c;--c-red:#ff6b6b;--c-green:#34d399;--c-blue:#6c8cff;--c-purple:#c084fc;--c-yellow:#fbbf24;
+--wm-wine:#cc9294;--c-orange:#fb923c;--c-red:#ff6b6b;--c-green:#34d399;--c-blue:#6c8cff;--c-purple:#c084fc;--c-yellow:#fbbf24;
 --radius:14px;--radius-sm:10px;
 --font:'DM Sans',sans-serif;--mono:'JetBrains Mono',monospace;
 --hdr-bg:rgba(10,10,15,.92);--shadow:rgba(0,0,0,.5);
@@ -25,7 +25,7 @@
 --sent:#e8f5ee;--sent-border:#90d4ac;--sent-text:#1a7040;
 --falta:#fdf6e0;--falta-border:#e0c878;
 --festivo:#d83030;--vacaciones:#c07800;--ausencia:#8030b8;--normal:#4d6ae8;
---c-orange:#d05818;--c-red:#d83030;--c-green:#1a9060;--c-blue:#4d6ae8;--c-purple:#8030b8;--c-yellow:#a07000;
+--wm-wine:#6b1f20;--c-orange:#d05818;--c-red:#d83030;--c-green:#1a9060;--c-blue:#4d6ae8;--c-purple:#8030b8;--c-yellow:#a07000;
 --radius:14px;--radius-sm:10px;
 --font:'DM Sans',sans-serif;--mono:'JetBrains Mono',monospace;
 --hdr-bg:rgba(244,244,250,.95);--shadow:rgba(0,0,0,.12);
@@ -1972,13 +1972,12 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .boda-ftoggles .boda-chip{flex:1}
 /* Dia cerrado: no admite mas clases */
 /* Consulta: el estado del dia se lee por el color de la tarjeta.
-     cerrado  verde suave  — resuelto, no admite mas clases (check + candado)
+     cerrado  granate suave  — resuelto, no admite mas clases (check + candado)
      pasado   gris         — ya no se puede hacer nada
      abierto  neutro       — pendiente de decidir
-   El verde es el mismo de "semana enviada" (--sent): mismo idioma visual
-   para "esto esta resuelto". El gris del pasado gana al verde. */
-.boda-day.cerrado{background:var(--sent);border-color:var(--sent-border)}
-.boda-day.cerrado .boda-class{border-top-color:var(--sent-border)}
+   Marrón y granate son los tonos de Bodas. El gris del pasado prevalece. */
+.boda-day.cerrado{background:color-mix(in srgb,var(--wm-wine) 10%,var(--surface));border-color:color-mix(in srgb,var(--wm-wine) 40%,var(--border))}
+.boda-day.cerrado .boda-class{border-top-color:color-mix(in srgb,var(--wm-wine) 30%,var(--border))}
 .boda-day-cerr{font-size:.72rem;letter-spacing:-.05em;flex-shrink:0}
 .boda-day.pasado{background:var(--surface2);border-style:dashed;opacity:.7}
 .boda-day.pasado .boda-day-hd{color:var(--text-dim)}
@@ -1986,7 +1985,7 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .boda-class-ro.incompleta{background:var(--falta);border-radius:6px;
   box-shadow:inset 0 0 0 1px var(--falta-border);padding-left:6px;padding-right:6px}
 .boda-day-hd b{color:var(--c-red);font-weight:700}
-.boda-day-lock.on{border-color:var(--c-red);color:var(--c-red)}
+.boda-day-lock.on{border-color:var(--wm-wine);color:var(--wm-wine)}
 /* Fila con cambios sin guardar */
 .boda-class.pend{background:var(--accent-glow);border-radius:6px}
 .boda-class.pend .boda-inp{border-color:var(--accent)}
@@ -2385,3 +2384,21 @@ button.action-edit.active,button.action-edit:active{background:rgba(251,146,60,.
 .settings-details summary{cursor:pointer;color:var(--text-muted);font-size:.8rem}
 .settings-details .macro-section{padding:8px 0 0;border:0}
 .settings-edit-btn{color:var(--c-orange)!important;background:color-mix(in srgb,var(--c-orange) 12%,var(--surface))!important;border:1px solid var(--c-orange)!important;border-radius:8px}
+
+/* Geometría constante aunque una subpestaña tenga más contenido y scroll. */
+#eventsOverlay .sy-body:has(> .boda-sticky-hd){scrollbar-gutter:stable}
+.boda-sticky-hd{flex-shrink:0}
+.boda-sticky-hd .econ-sub-tabs{align-items:stretch}
+.boda-sticky-hd .econ-sub-tab,.boda-sticky-hd .boda-config-btn{display:flex;align-items:center;justify-content:center;align-self:stretch;height:34px;box-sizing:border-box;padding:4px 2px;line-height:1;font-weight:600;border-bottom:2px solid transparent;transition:color .15s,border-color .15s}
+.boda-sticky-hd .econ-sub-tab.active{border-bottom-color:var(--wm-wine)}
+.boda-day-cerr{color:var(--wm-wine)}
+.boda-field-row{cursor:default}
+.boda-field-controls{flex:1;min-width:0}
+.boda-field-row .ev-input{flex:1;min-width:0;font-size:.78rem}
+.boda-field-row .boda-teachers{margin:0;gap:8px;justify-content:flex-end}
+.boda-field-row .boda-teachers .excl-item{font-size:.72rem;white-space:nowrap}
+.boda-field-controls #bodaTeacherName{margin-top:8px}
+#bodaConfigContent>h3{margin:4px 0 24px}
+.boda-config-section{margin-bottom:30px}
+.boda-config-section .boda-stat-t{margin:0 0 12px}
+.boda-config-section>.ev-io-btn{margin-top:12px}
