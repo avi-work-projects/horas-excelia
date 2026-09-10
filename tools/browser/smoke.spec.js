@@ -98,7 +98,7 @@ test('Bodas: configurar pack, duracion, salas y exportar catalogos',async({page}
  expect(data.events.find(e=>e.id==='cls1').boda.teachers).toEqual({celia:false,angel:true,substitute:'Profesora prueba',lastSelected:'angel'});
  expect(data.bodaConfig.teacherNames).toEqual({angel:'Profesor A',celia:'Profesora B'});expect(data.bodaConfig.defaultPlace).toBe('sala');
  expect(data.bodaConfig.defaultDurationId).toBe('dur-20');expect(data.bodaConfig.places.find(p=>p.k==='casa').n).toBe('Mi casa');
- await page.evaluate(d=>applyFullImport(d,'replace'),data);expect(await page.evaluate(()=>BODA_CONFIG.defaultDurationId)).toBe('dur-20');expect(errors).toEqual([]);
+ await page.evaluate(d=>applyFullImport(d,'replace'),data);expect(await page.evaluate(()=>BODA_CONFIG)).toEqual(data.bodaConfig);expect(errors).toEqual([]);
 });
 
 test('Hoy apunta al mes y las cinco subpestanas de Bodas admiten swipe',async({page})=>{

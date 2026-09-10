@@ -2432,3 +2432,8 @@ button.action-edit.active,button.action-edit:active{background:rgba(251,146,60,.
 /* Las tres vistas de Cumpleaños comparten el naranja en ambos temas. */
 .bday-hdr-sub .ev-view-toggle:not(.active){color:var(--c-orange);border-color:color-mix(in srgb,var(--c-orange) 35%,transparent);background:color-mix(in srgb,var(--c-orange) 8%,transparent)}
 .bday-hdr-sub .ev-view-toggle.active{color:var(--c-orange)!important;border-color:var(--c-orange)!important;background:color-mix(in srgb,var(--c-orange) 17%,transparent)!important}
+
+.boda-date-ficha #bodaFormDia{margin-left:auto;flex:0 1 146px;width:146px;max-width:50%}
+.boda-date-ficha #bodaFormDia::-webkit-date-and-time-value{text-align:right}
+.boda-date-ficha #bodaFormDia::-webkit-datetime-edit{padding:0;text-align:right;display:inline-flex;justify-content:flex-end}
+.boda-date-ficha #bodaFormDia::-webkit-calendar-picker-indicator{margin-left:4px;padding:0}
