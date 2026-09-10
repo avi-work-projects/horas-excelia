@@ -2402,3 +2402,18 @@ button.action-edit.active,button.action-edit:active{background:rgba(251,146,60,.
 .boda-config-section{margin-bottom:30px}
 .boda-config-section .boda-stat-t{margin:0 0 12px}
 .boda-config-section>.ev-io-btn{margin-top:12px}
+
+/* Catálogos: cabecera de sección, ficha y controles siempre en el mismo orden. */
+.boda-cfg-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.boda-cfg-section-head h4{margin:0;font-size:.9rem}
+.boda-cfg-section-head p{margin:5px 0 0;font-size:.72rem;color:var(--text-muted)}
+#bodaConfigContent .boda-catalog-row{display:block;padding:12px;margin:0 0 10px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
+.boda-cfg-card-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.boda-cfg-card-head>span{flex:1;min-width:0}
+.boda-cfg-card-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border)}
+.boda-cfg-card-controls label{display:flex;align-items:center;gap:7px;font-size:.72rem;color:var(--text-muted)}
+
+.boda-sticky-hd .econ-sub-tabs{display:flex;justify-content:space-between;gap:0}
+.boda-sticky-hd .econ-sub-tab,.boda-sticky-hd .boda-config-btn{flex:0 0 auto;width:auto;padding-left:0;padding-right:0}
+
+.boda-cfg-section-head>.ev-io-btn{flex:0 0 auto}

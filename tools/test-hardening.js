@@ -55,4 +55,8 @@ const upcoming=cargarApp({});upcoming.BDAYS=[{name:'Cumple futuro',month:9,day:2
 assert.ok(upcoming.renderBdayUpcoming().includes('Siguiente cumpleaños'));
 assert.ok(upcoming.renderBdayUpcoming().includes('Cumple futuro'));
 assert.equal(upcoming.evFilterGroup({kind:'puntual',type:'Rutina'}),'Resto');
-assert.ok(!b.renderBodaPackStats().includes('<b>0</b>'));
+assert.ok(!b.renderBodaPackStats().split('Clases dadas por profesores')[0].includes('<b>0</b>'));
+
+const teaching=cargarApp({});teaching.EVENTS=[null,{celia:true,angel:false,substitute:null},{celia:false,angel:true,substitute:null},{celia:true,angel:false,substitute:'Otro'}].map((teachers,i)=>({id:'t'+i,type:'Ensayos boda',kind:'puntual',start:'2020-01-01',boda:{coupleId:'p',time:'18:00',teachers:teachers}}));
+assert.equal(JSON.stringify(teaching.bodaTeacherStats()),JSON.stringify({substitute:1,celia:1,angel:1,both:1}));
+assert.equal(teaching.bodaTeacherCount({celia:true,angel:true,substitute:null}),2);

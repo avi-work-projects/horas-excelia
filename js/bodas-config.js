@@ -89,26 +89,36 @@ function bodaPackStats(){
     byPack[id].couples++;byPack[id].classes+=extra;
   });return {counts:counts,extras:extras,byPack:byPack};
 }
+function bodaTeacherCount(t){return (t.celia?1:0)+(t.angel?1:0)+(t.substitute!=null?1:0);}
+function bodaTeacherStats(){
+  var counts={substitute:0,celia:0,angel:0,both:0};
+  bodaClasses().filter(bodaTaken).forEach(function(ev){var t=(ev.boda||{}).teachers||{celia:true,angel:true,substitute:null};
+    if(t.substitute!=null)counts.substitute++;else if(t.celia&&t.angel)counts.both++;else if(t.celia)counts.celia++;else if(t.angel)counts.angel++;
+  });return counts;
+}
 function renderBodaPackStats(){
   var s=bodaPackStats(),h='<div class="boda-stat-t">Parejas por clases tomadas</div><p class="boda-stat-note">Clases ya finalizadas según fecha, hora y duración. No cuenta las futuras ni huecos sin pareja.</p>';
   var nums=[2,3,4,5,6,7,8];Object.keys(s.counts).forEach(function(n){if(nums.indexOf(+n)<0)nums.push(+n);});nums.sort(function(a,b){return a-b;});
   h+='<div class="boda-stats-row boda-count-grid">'+nums.filter(function(n){return s.counts[n]>0;}).map(function(n){return '<div class="boda-stat"><b>'+(s.counts[n]||0)+'</b><span>'+n+' clases</span></div>';}).join('')+'</div>';
   h+='<div class="boda-stat-t">'+s.extras+(s.extras===1?' pareja':' parejas')+' con clases extras</div><p class="boda-stat-note">Extras = clases tomadas por encima de las incluidas al contratar el pack.</p>';
   BODA_CONFIG.packs.forEach(function(p){var row=s.byPack[p.id]||{couples:0,classes:0};h+='<div class="boda-pack-stat"><b>'+escHtml(p.name)+'</b><span>'+row.couples+' parejas · '+row.classes+' extras</span></div>';});
+  var teachers=bodaTeacherStats();
+  h+='<div class="boda-stat-t">Clases dadas por profesores</div><div class="boda-stats-row boda-count-grid">';
+  [['both','Ángel y Celia'],['celia','Solo Celia'],['angel','Solo Ángel'],['substitute','Con sustituto']].forEach(function(t){h+='<div class="boda-stat"><b>'+teachers[t[0]]+'</b><span>'+t[1]+'</span></div>';});
+  h+='</div><p class="boda-stat-note">Cada clase cuenta una vez. Con sustituto incluye tanto las clases en solitario como acompañado. Las clases sin selección guardada se cuentan como Ángel y Celia.</p>';
   return h;
 }
 function renderBodaConfig(){
   var h='<div id="bodaConfigContent"><h3>Configuración de Bodas</h3>';
   [['packs','Packs'],['durations','Duraciones'],['places','Salas']].forEach(function(pair){
-    var kind=pair[0];h+='<section class="boda-config-section"><div class="boda-stat-t">'+pair[1]+'</div>';
+    var kind=pair[0];h+='<section class="boda-config-section"><header class="boda-cfg-section-head"><div><h4>'+pair[1]+'</h4><p>'+({packs:'Clases incluidas por pareja',durations:'Tiempo de cada ensayo',places:'Lugares disponibles para enseñar'})[kind]+'</p></div><button class="ev-io-btn io-primaria" data-cfg-add="'+kind+'">+ Añadir</button></header>';
     BODA_CONFIG[kind].forEach(function(x){var id=x.id||x.k;
-      h+='<div class="boda-catalog-row"><span><b>'+escHtml(x.name||x.n||x.minutes+' min')+'</b><small>'+escHtml(kind==='packs'?x.classes+' clases':kind==='places'?x.d:(id===BODA_CONFIG.defaultDurationId?'Predeterminada':''))+'</small></span>';
+      h+='<div class="boda-catalog-row"><div class="boda-cfg-card-head"><span><b>'+escHtml(x.name||x.n||x.minutes+' min')+'</b><small>'+escHtml(kind==='packs'?x.classes+' clases':kind==='places'?x.d:(id===BODA_CONFIG.defaultDurationId?'Predeterminada':''))+'</small></span>';
       h+='<button class="boda-mini-btn action-edit" data-cfg-edit="'+kind+'" data-id="'+id+'" aria-label="Editar '+escHtml(x.name||x.n||x.minutes+' min')+'">&#9998;</button>';
-      h+='<label><input type="checkbox" data-cfg-active="'+kind+'" data-id="'+id+'"'+(x.active!==false?' checked':'')+'> Activo</label>';
+      h+='</div><div class="boda-cfg-card-controls"><label><input type="checkbox" data-cfg-active="'+kind+'" data-id="'+id+'"'+(x.active!==false?' checked':'')+'> Activo</label>';
       if(kind==='durations'&&x.active!==false)h+='<label><input type="radio" name="bodaDefaultDuration" data-default="'+id+'"'+(id===BODA_CONFIG.defaultDurationId?' checked':'')+'> Por defecto</label>';
-      if(!bodaConfigUsed(kind,id)&&!(kind==='durations'&&id===BODA_CONFIG.defaultDurationId))h+='<button class="ev-io-btn io-peligro" data-cfg-delete="'+kind+'" data-id="'+id+'">Eliminar</button>';
-      h+='</div>';
-    });h+='<button class="ev-io-btn io-primaria" data-cfg-add="'+kind+'">+ Añadir '+({packs:'pack',durations:'duración',places:'sala'})[kind]+'</button></section>';
+      h+='</div></div>';
+    });h+='</section>';
   });
   h+='<p class="boda-stat-note">Desactivar oculta opciones para nuevas asignaciones y conserva las existentes. Cambiar un pack o duración no modifica las clases ya guardadas ni el número contratado por las parejas anteriores.</p></div>';
   return h;
@@ -119,7 +129,6 @@ function bindBodaConfig(){
   wrap.querySelectorAll('[data-cfg-edit],[data-cfg-add]').forEach(function(b){b.onclick=function(){openBodaCatalogForm(b.dataset.cfgEdit||b.dataset.cfgAdd,b.dataset.id);};});
   wrap.querySelectorAll('[data-cfg-active]').forEach(function(b){b.onchange=function(){try{bodaSetCatalogItem(b.dataset.cfgActive,b.dataset.id,{active:b.checked});}catch(e){showToast(e.message,'error');}openBodaConfig();};});
   wrap.querySelectorAll('[data-default]').forEach(function(b){b.onchange=function(){BODA_CONFIG.defaultDurationId=b.dataset.default;saveBodaConfig();openBodaConfig();};});
-  wrap.querySelectorAll('[data-cfg-delete]').forEach(function(b){b.onclick=function(){if(!confirm('¿Eliminar esta opción sin referencias?'))return;try{bodaDeleteCatalogItem(b.dataset.cfgDelete,b.dataset.id);}catch(e){showToast(e.message,'error');}openBodaConfig();};});
 }
 
 function openBodaCatalogForm(kind,id){
@@ -128,8 +137,10 @@ function openBodaCatalogForm(kind,id){
   if(kind!=='durations')h+='<label class="ev-field">Nombre<input class="ev-input" id="bodaCatalogName" maxlength="60" value="'+escHtml(item.name||item.n||'')+'"></label>';
   if(kind==='places')h+='<label class="ev-field">Descripción<input class="ev-input" id="bodaCatalogDesc" maxlength="150" value="'+escHtml(item.d||'')+'"></label>';
   else h+='<label class="ev-field">'+(kind==='packs'?'Clases incluidas':'Minutos')+'<input class="ev-input" id="bodaCatalogNumber" type="number" min="1" max="'+(kind==='packs'?100:480)+'" value="'+(kind==='packs'?(item.classes||4):(item.minutes||60))+'"></label>';
+  if(id&&!bodaConfigUsed(kind,id)&&!(kind==='durations'&&id===BODA_CONFIG.defaultDurationId))h+='<button class="ev-io-btn io-peligro" id="bodaCatalogDelete">Eliminar opción</button>';
   h+='<div class="ev-form-actions"><button class="ev-btn" id="bodaCatalogCancel">Cancelar</button><button class="ev-btn primary" id="bodaCatalogSave">Guardar</button></div></div></div>';
   var w=abrirPanel('bodaCatalogWrap',h,{overlay:'bodaCatalogOv',alCerrar:function(){cerrarPanel('bodaCatalogWrap','bodaCatalogOv');}});
+  var del=w.querySelector('#bodaCatalogDelete');if(del)del.onclick=function(){if(!confirm('¿Eliminar esta opción sin referencias?'))return;try{bodaDeleteCatalogItem(kind,id);cerrarPanel('bodaCatalogWrap','bodaCatalogOv');openBodaConfig();}catch(e){showToast(e.message,'error');}};
   w.querySelector('#bodaCatalogCancel').onclick=function(){cerrarPanel('bodaCatalogWrap','bodaCatalogOv');};
   w.querySelector('#bodaCatalogSave').onclick=function(){
     var n=w.querySelector('#bodaCatalogNumber'),name=w.querySelector('#bodaCatalogName');

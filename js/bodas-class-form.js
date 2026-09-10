@@ -16,6 +16,7 @@ function openBodaClaseForm(ev,alTerminar){
       place:nuevo?bodaPlaceForNewOn(evDk(new Date())):(base.place===undefined?BODA_PLACE_DEFAULT:base.place)
     }}
   };
+  var count=bodaTeacherCount(BODA_FORM.tmp.boda.teachers);if(count<1||count>2)BODA_FORM.tmp.boda.teachers={celia:true,angel:true,substitute:null};
   _bodaFormRender();
 }
 function _bodaFormRender(){
@@ -60,12 +61,7 @@ function _bodaFormRender(){
   h+='<div class="ev-bfila boda-field-row"><span class="ev-bfila-lbl">Profesores</span><div class="boda-field-controls"><div class="boda-teachers excl-row">';
   [['celia','Celia'],['angel','Ángel'],['substitute','Sustituto']].forEach(function(t){h+='<label class="excl-item"><input type="checkbox" data-teacher="'+t[0]+'"'+((t[0]==='substitute'?teachers.substitute!=null:teachers[t[0]])?' checked':'')+'> '+t[1]+'</label>';});
   h+='</div><input class="ev-input" id="bodaTeacherName" maxlength="80" placeholder="Nombre del sustituto" aria-label="Nombre del sustituto" value="'+escHtml(teachers.substitute||'')+'"'+(teachers.substitute!=null?'':' hidden')+'></div></div>';
-  h+='<label class="ev-bfila boda-field-row"><span class="ev-bfila-lbl">Duración</span><select class="ev-input" id="bodaFormDuration">';
-  var options=BODA_CONFIG.durations.filter(function(d){return d.active!==false||d.id===b.durationId;});
-  var current=options.find(function(d){return d.id===b.durationId&&d.minutes===b.duration;});
-  if(!current)h+='<option value="saved" selected>'+b.duration+' min (guardada)</option>';
-  options.forEach(function(d){h+='<option value="'+d.id+'"'+(current&&current.id===d.id?' selected':'')+'>'+d.minutes+' min'+(d.active===false?' (inactiva)':'')+'</option>';});
-  h+='</select></label></div>';
+  h+='<button type="button" class="ev-bfila" id="bodaFormDuration"><span class="ev-bfila-lbl">Duración</span><span class="ev-bfila-val">'+b.duration+' min</span></button></div>';
   h+='<div class="ev-detail-actions">';
   if(!F.nuevo)h+='<button class="ev-btn danger" id="bodaFormDel">Eliminar</button>';
   h+='<button class="ev-btn primary" id="bodaFormSave">Guardar</button>';
@@ -74,10 +70,15 @@ function _bodaFormRender(){
   bodaOpenSheet('bodaFormWrap','bodaFormOv',h,closeBodaClaseForm);
   document.getElementById('bodaFormClose').addEventListener('click',closeBodaClaseForm);
   var dia=document.getElementById('bodaFormDia');
-  document.querySelectorAll('[data-teacher]').forEach(function(input){input.onchange=function(){var k=input.dataset.teacher;if(k==='substitute'){var name=document.getElementById('bodaTeacherName');name.hidden=!input.checked;teachers.substitute=input.checked?name.value:null;}else teachers[k]=input.checked;};});
+  document.querySelectorAll('[data-teacher]').forEach(function(input){input.onchange=function(){
+    var k=input.dataset.teacher,next=Object.assign({},teachers),name=document.getElementById('bodaTeacherName');
+    next[k]=k==='substitute'?(input.checked?name.value:null):input.checked;
+    var count=bodaTeacherCount(next);if(count<1||count>2){input.checked=!input.checked;showToast(count<1?'Debe haber al menos un profesor':'Como máximo pueden ir dos profesores','error');return;}
+    teachers[k]=next[k];if(k==='substitute')name.hidden=!input.checked;
+  };});
   document.getElementById('bodaTeacherName').oninput=function(){teachers.substitute=this.value;};
 
-  document.getElementById('bodaFormDuration').onchange=function(){var d=BODA_CONFIG.durations.find(function(x){return x.id===this.value;},this);if(d){F.ds=dia.value||F.ds;b.duration=d.minutes;b.durationId=d.id;_bodaFormRender();}};
+  document.getElementById('bodaFormDuration').onclick=function(){F.ds=dia.value||F.ds;openBodaDurationPicker();};
   dia.addEventListener('change',function(){F.ds=this.value||F.ds;F.tmp.start=F.ds;});
   /* Multidia: el mismo selector que usa la categoria "Otros" del formulario
      de eventos. Solo al crear; cambiar una clase existente sigue siendo un dia. */
@@ -123,6 +124,7 @@ function _bodaFormRender(){
   document.getElementById('bodaFormSave').addEventListener('click',function(){
     var ds=document.getElementById('bodaFormDia').value||F.ds;
     var b2=F.tmp.boda;
+    if(bodaTeacherCount(b2.teachers)<1||bodaTeacherCount(b2.teachers)>2){showToast('Selecciona uno o dos profesores','error');return;}
     if(F.nuevo){
       /* Una clase por dia. El tope se mira dia a dia: si alguno esta lleno se
          crean los demas y se dice cuales se han quedado fuera, que es mas util
@@ -165,7 +167,8 @@ function _bodaFormRender(){
 }
 function closeBodaClaseForm(){
   bodaCloseSheet('bodaFormWrap','bodaFormOv');
-  setTimeout(function(){BODA_FORM=null;},320);
+  var closing=BODA_FORM;
+  setTimeout(function(){if(BODA_FORM===closing)BODA_FORM=null;},320);
 }
 
 /* ══ Modal: selector de pareja para una clase ══ */
@@ -298,3 +301,13 @@ function openBodaTimePicker(ev,opts){
 function closeBodaTimePicker(){bodaCloseSheet('bodaTpWrap','bodaTpOv');}
 
 /* ── Formulario de pareja ── */
+
+function openBodaDurationPicker(){
+  if(!BODA_FORM)return;
+  var b=BODA_FORM.tmp.boda,h='<div class="ev-detail-overlay" id="bodaDurationOv"><div class="ev-detail-sheet"><div class="ev-detail-handle"></div><div class="boda-config-head"><button class="sy-back" id="bodaDurationClose">&#8592;</button><h3>Duración del ensayo</h3></div><div class="ev-bficha">';
+  BODA_CONFIG.durations.filter(function(d){return d.active!==false||d.id===b.durationId;}).forEach(function(d){h+='<button class="ev-bfila" data-duration="'+d.id+'"><span class="ev-bfila-lbl">'+d.minutes+' min</span><span class="ev-bfila-val">'+(d.id===b.durationId&&d.minutes===b.duration?'&#10003;':'')+'</span></button>';});
+  h+='</div></div></div>';
+  var close=function(){cerrarPanel('bodaDurationWrap','bodaDurationOv');};
+  var w=abrirPanel('bodaDurationWrap',h,{overlay:'bodaDurationOv',alCerrar:close});w.querySelector('#bodaDurationClose').onclick=close;
+  w.querySelectorAll('[data-duration]').forEach(function(btn){btn.onclick=function(){var d=BODA_CONFIG.durations.find(function(x){return x.id===btn.dataset.duration;});b.duration=d.minutes;b.durationId=d.id;close();_bodaFormRender();};});
+}
