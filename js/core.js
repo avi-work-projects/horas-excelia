@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v291 — cumpleanos a 14 dias y avisos semanales';
+var APP_VERSION = 'v292 — estilo de cumpleanos y swipe en proximos';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

@@ -202,7 +202,7 @@ function renderBdayUpcoming(){
       s+='<div class="bday-upcoming-item'+vipCls+(isT?' bday-today-item':'')+'" data-bday-idx="'+bidxUp+'" data-bday-name="'+escHtml(x.b.name)+'" data-bday-day="'+x.b.day+'" data-bday-month="'+x.b.month+'" data-diff="'+x.diff+'">';
       s+='<div class="bday-upcoming-icon" style="background:'+color+'22;border-color:'+color+'">'+iconHtml+'</div>';
       s+='<div class="bday-upcoming-info">';
-      s+='<div class="bday-upcoming-name" style="color:'+color+'">'+bdName(x.b.name)+'</div>';
+      s+='<div class="bday-upcoming-name">'+bdName(x.b.name)+'</div>';
       var _dwn=['Dom','Lun','Mar','Mi\u00e9','Jue','Vie','S\u00e1b'];
       var _bd=new Date(today);_bd.setDate(_bd.getDate()+x.diff);
       s+='<div class="bday-upcoming-date">'+_dwn[_bd.getDay()]+' '+x.b.day+' de '+MN[x.b.month-1]+'</div>';
@@ -310,7 +310,7 @@ function renderBdayList(){
       var editCls=BDAY_EDIT_VIP?(effVip?' bday-list-vip-active':' bday-list-vip-dim'):'';
       var vipStar=effVip?' <img src="./VIP.png" class="bday-vip-img" alt="VIP">':'';
       h+='<div class="bday-list-item'+editCls+'" data-bday-idx="'+lidx+'" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" data-sname="'+sname+'">';
-      h+='<span class="bday-list-day" style="color:'+color+'">'+b.day+'</span>';
+      h+='<span class="bday-list-day">'+b.day+'</span>';
       h+='<span class="bday-list-name">'+bdName(b.name)+vipStar+'</span>';
       h+='<span class="'+cls+'">'+lbl+'</span>';
       h+='</div>';
@@ -326,12 +326,12 @@ function renderBdayContent(){
   var h=renderNavBar('bday');
   // TABS en nivel 2 (justo bajo el nav bar)
   h+='<div class="bday-hdr-sub">';
-  h+='<button class="bday-view-toggle'+(BDAY_VIEW==='upcoming'?' active':'')+'" id="bdViewUpcoming">Pr\u00f3ximos<br>Cumplea\u00f1os</button>';
-  h+='<button class="bday-view-toggle'+(BDAY_VIEW==='list'?' active':'')+'" id="bdViewList">Lista<br>Cumplea\u00f1os</button>';
-  h+='<button class="bday-view-toggle'+(BDAY_VIEW==='cal'?' active':'')+'" id="bdViewCal">Calendario<br>Cumplea\u00f1os</button>';
+  h+='<div class="ev-view-zone ev-zone-a"><button class="ev-view-toggle'+(BDAY_VIEW==='upcoming'?' active':'')+'" id="bdViewUpcoming">Pr\u00f3ximos<br>Cumplea\u00f1os</button></div>';
+  h+='<div class="ev-view-zone ev-zone-a"><button class="ev-view-toggle'+(BDAY_VIEW==='list'?' active':'')+'" id="bdViewList">Lista<br>Cumplea\u00f1os</button></div>';
+  h+='<div class="ev-view-zone ev-zone-b"><button class="ev-view-toggle'+(BDAY_VIEW==='cal'?' active':'')+'" id="bdViewCal">Calendario<br>Cumplea\u00f1os</button></div>';
   h+='</div>';
   // Nivel 3: para TODAS las vistas
-  h+='<div class="sy-header with-tabs">';
+  h+='<div class="sy-header with-tabs sy-header-center">';
   h+='<button class="sy-back" id="bdBack">&#8592;</button>';
   if(BDAY_VIEW==='upcoming'){
     h+='<div class="sy-year-nav"><div class="sy-year">Pr\u00f3ximos</div></div>';
