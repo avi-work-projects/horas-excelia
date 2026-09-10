@@ -9,7 +9,7 @@ function renderFiscalContent(){
   var h=renderNavBar('econ');
   h+='<div class="sy-header with-tabs fiscal-hdr">';
   h+='<button class="sy-back" id="fiscalBack">&#8592;</button>';
-  h+='<div class="sy-year" style="font-size:.9rem;color:#c084fc">&#9965; Configuraci\u00f3n Fiscal</div>';
+  h+='<div class="sy-year" style="font-size:.9rem;color:#c084fc">&#9881; Configuraci\u00f3n Fiscal</div>';
   h+='</div>';
   h+='<div class="fiscal-tab-bar">';
   h+='<button class="fiscal-tab-btn'+(FISCAL_TAB==='personal'?' active':'')+'" id="fiscalTabPersonal">Econom\u00eda<br>Personal</button>';

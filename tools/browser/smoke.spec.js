@@ -78,6 +78,7 @@ test('Bodas: configurar pack, duracion, salas y exportar catalogos',async({page}
  await page.locator('[data-cfg-edit="places"][data-id="casa"]').click();await page.locator('#bodaCatalogName').fill('Mi casa');await page.locator('#bodaCatalogDesc').fill('Descripcion modificada');await page.locator('#bodaCatalogSave').click();
  await page.locator('#bodaConfigClose').click();await page.locator('[data-bsub="clases"]').click();await page.locator('#bodaAddClass').click();
  await expect(page.locator('#bodaFormDuration')).toHaveValue('dur-20');
+ expect(await page.locator('#bodaFormDuration').evaluate(el=>!!(document.querySelector('[data-fcampo=pareja]').compareDocumentPosition(el)&Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
  await page.locator('#bodaFormDia').fill('2030-01-05');await page.locator('#bodaFormSave').click();
  expect(await page.evaluate(()=>EVENTS.find(e=>e.start==='2030-01-05').boda.duration)).toBe(20);
  await page.evaluate(()=>openBodaClaseForm(EVENTS.find(e=>e.id==='cls1')));

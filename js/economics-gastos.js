@@ -139,7 +139,7 @@ function renderEconGastos(){
 
   /* Nota configurabilidad */
   h+='<div class="sy-section" style="padding:10px 14px">';
-  h+='<div style="font-size:.7rem;color:var(--text-dim);text-align:center">Configurable desde el men\u00fa &#9965;\ufe0f de la ventana econ\u00f3mica</div>';
+  h+='<div style="font-size:.7rem;color:var(--text-dim);text-align:center">Configurable desde el men\u00fa &#9881;\ufe0f de la ventana econ\u00f3mica</div>';
   h+='</div>';
 
 /* §B.3 Resultado declaraci\u00f3n (secci\u00f3n destacada con flow + desglose ahorro) */

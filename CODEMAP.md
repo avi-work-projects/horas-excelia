@@ -42,10 +42,10 @@
 
 **Funciones:** openBodaClaseForm:2 · _bodaFormRender:20 (!138) · closeBodaClaseForm:158 · openBodaCouplePicker:164 · row:175 · apply:192 · closeBodaCouplePicker:206 · openBodaTimePicker:212 · drum:217 · setDrum:240 · mark:245 · drumVal:249 · readManual:270 · closeBodaTimePicker:290
 
-### js/bodas-config.js  _(140 líneas)_
+### js/bodas-config.js  _(142 líneas)_
 **Estado global:** BODA_CONFIG_SK:2 · BODA_CONFIG:3
 
-**Funciones:** bodaLoadConfig:4 · bodaApplyConfig:13 · saveBodaConfig:19 · validateBodaConfig:20 · importBodaConfig:35 · bodaPackOf:51 · bodaDuration:52 · bodaDefaultDuration:53 · bodaDurationOf:54 · bodaConfigUsed:55 · bodaSetCatalogItem:59 · bodaDeleteCatalogItem:68 · bodaTaken:73 · bodaPackStats:78 · renderBodaPackStats:90 · openBodaConfig:98 · closeBodaConfig:119 · openBodaCatalogForm:120
+**Funciones:** bodaLoadConfig:4 · bodaApplyConfig:15 · saveBodaConfig:21 · validateBodaConfig:22 · importBodaConfig:37 · bodaPackOf:53 · bodaDuration:54 · bodaDefaultDuration:55 · bodaDurationOf:56 · bodaConfigUsed:57 · bodaSetCatalogItem:61 · bodaDeleteCatalogItem:70 · bodaTaken:75 · bodaPackStats:80 · renderBodaPackStats:92 · openBodaConfig:100 · closeBodaConfig:121 · openBodaCatalogForm:122
 
 ### js/bodas.js  _(638 líneas)_
 **Estado global:** BODAS_SK:13 · BODA_COUPLES:14 · BODA_PLACE_LIST:25 · BODA_PLACE_DEFAULT:31 · BODA_PLACE_NONE:34 · BODA_PLACE_SHORT:35 · BODA_PLACE_DESC:36 · BODA_PLACE_EMOJI:38 · BODA_WHITE:55 · BODA_SLOTS:56 · BODA_NO_TIME_COLOR:62 · BODA_NO_COUPLE_COLOR:63 · BODA_DEFAULT_TIME:64 · BODA_PALETTE:67 · BODA_CLOSED_SK:224 · BODA_CLOSED:225 · BODA_PENDING:240 · BODA_SUBTAB:282 · BODA_CLASS_MODE:283 · BODA_CLASES_SEARCH:284 · BODA_HIDE_PAST:285 · BODA_HIDE_CLOSED:286 · BODA_CARD_OPEN:287 · BODA_PAREJAS_SEARCH:288 · BODA_PAREJAS_SORT:291 · BODA_PAREJAS_CLASSES:292 · BODA_PAREJAS_FILTER:293 · BODA_CAL_HL:294 · BODA_CAL_YEAR:295 · BODA_CAL_MONTH:296

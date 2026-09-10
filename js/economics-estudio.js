@@ -650,7 +650,7 @@ function renderEstudioContent(){
   h+='<div class="sy-header with-tabs">';
   h+='<button class="sy-back" id="estBack">&#8592;</button>';
   h+='<div class="sy-year-nav"><button class="sy-nav" id="estPrev">&#9664;</button><div class="sy-year">'+ESTUDIO_YEAR+'</div><button class="sy-nav" id="estNext">&#9654;</button></div>';
-  h+='<button class="econ-gear-btn" id="estGearFiscal">&#9965;</button>';
+  h+='<button class="econ-gear-btn" id="estGearFiscal">&#9881;</button>';
   h+='</div>';
   h+='<div class="sy-body">';
   h+=renderEconEstudio();

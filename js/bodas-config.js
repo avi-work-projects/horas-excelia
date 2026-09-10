@@ -4,7 +4,9 @@ var BODA_CONFIG=null;
 function bodaLoadConfig(){
   var saved=null;
   try{saved=JSON.parse(appStorage.getItem(BODA_CONFIG_SK)||'null');}catch(e){}
-  BODA_CONFIG=saved||{packs:[2,4,6].map(function(n){return {id:'pack-'+n,name:'Pack '+n,classes:n,active:true};}),durations:[{id:'dur-60',minutes:60,active:true},{id:'dur-20',minutes:20,active:true}],defaultDurationId:'dur-60',places:BODA_PLACE_LIST.map(function(p){return Object.assign({active:true},p);})};
+  BODA_CONFIG=saved||{packs:[2,4,6].map(function(n){return {id:'pack-'+n,name:({2:'Esencia',4:'Latido',6:'Eternidad'})[n],classes:n,active:true};}),durations:[{id:'dur-60',minutes:60,active:true},{id:'dur-20',minutes:20,active:true}],defaultDurationId:'dur-60',places:BODA_PLACE_LIST.map(function(p){return Object.assign({active:true},p);})};
+  /* Renombra solo los nombres generados: conserva los personalizados y sus referencias. */
+  BODA_CONFIG.packs.forEach(function(p){var name=({2:'Esencia',4:'Latido',6:'Eternidad'})[p.classes];if(name&&p.id==='pack-'+p.classes&&p.name==='Pack '+p.classes)p.name=name;});
   BODA_COUPLES.forEach(function(c){
     if(!c.packId&&!BODA_CONFIG.packs.some(function(p){return p.classes===(c.contracted||0);})){var n=c.contracted||0;BODA_CONFIG.packs.push({id:'legacy-'+n,name:'Pack '+n,classes:n,active:true});}
   });

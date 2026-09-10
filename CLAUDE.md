@@ -106,3 +106,6 @@ Packs historicos sin id se reconocen por `contracted`, conservando cantidades di
 como opciones propias; no inferir un pack menor por el numero de clases que haya.
 Lugares: reutilizar `BODA_PLACE_LIST`, `bodaPlaceLabel` y descripciones; no hardcodear etiquetas.
 Todo boton con lapiz lleva `.action-edit` (naranja), conservando sus dimensiones.
+
+## Ajustes de Bodas (v300)
+Los packs iniciales se llaman Esencia (2), Latido (4) y Eternidad (6). El selector de pareja muestra solo el número de clases. Al cargar se migran los nombres automáticos antiguos sin cambiar IDs, cantidades ni nombres personalizados. La duración queda al final de la ficha del ensayo; las altas toman la duración predeterminada y las clases existentes conservan la guardada. Las cuatro subpestañas y la rueda de Bodas ocupan cinco columnas iguales. El lápiz de Home conserva su estilo propio; los demás usan action-edit naranja.
