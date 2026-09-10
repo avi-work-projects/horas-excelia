@@ -1219,6 +1219,7 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-wk-multi.wk-multi-cont-top{border-top-style:dashed;border-top-left-radius:0;border-top-right-radius:0;margin-top:0}
 .ev-wk-multi.wk-multi-cont-bot{border-bottom-style:dashed;border-bottom-left-radius:0;border-bottom-right-radius:0;margin-bottom:0}
 .ev-wk-multi-title{font-size:.78rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;line-height:1.2;position:sticky;top:32px}
+.ev-wk-multi.wk-shared .ev-wk-multi-title{font-size:.68rem;white-space:normal;overflow-wrap:anywhere;position:static}
 /* Contenedor de chips puntuales — se monta ENCIMA del multi-día por z-index */
 .ev-wk-chips{display:flex;flex-direction:column;gap:3px;justify-content:flex-start;align-items:stretch;padding:3px 6px;border-bottom:1px solid var(--border);min-height:30px;position:relative;z-index:2;pointer-events:none}
 .ev-wk-chips.ev-wk-past{opacity:.45}
@@ -1371,11 +1372,7 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 /* Marcador "+" (más de 4 eventos puntuales en el mismo día) */
 .ev-annual-marker.ev-marker-more{color:#fff}
 /* Barras multi-día en calendario anual/4meses: ocupa una franja vertical y se divide en filas con grid */
-.ev-annual-bars-row{position:absolute;top:17.5%;left:0;right:0;height:55%;z-index:2;pointer-events:none;display:grid;grid-template-columns:repeat(7,1fr);gap:1px;grid-auto-rows:1fr}
-/* Cuando hay 2 filas: ampliar a 64% para que cada barra sea ~32% (visible) */
-.ev-annual-bars-row.ev-bars-2rows{top:13%;height:64%;gap:1px}
-/* Cuando hay 3 filas: ampliar a 76% para que cada barra sea ~25% (sigue visible) */
-.ev-annual-bars-row.ev-bars-3rows{top:8%;height:76%;gap:.5px}
+.ev-annual-bars-row{position:absolute;top:0;left:0;right:0;height:100%;z-index:2;pointer-events:none;display:grid;grid-template-columns:repeat(7,1fr);gap:1px;grid-auto-rows:1fr}
 .ev-annual-mbar{display:flex;align-items:center;border-radius:6px;overflow:hidden;white-space:nowrap;color:#fff}
 .ev-annual-mbar.a-starts{border-top-right-radius:0;border-bottom-right-radius:0}
 .ev-annual-mbar.a-ends{border-top-left-radius:0;border-bottom-left-radius:0}
@@ -1603,26 +1600,9 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-week-outer{margin-bottom:3px;position:relative;isolation:isolate}
 /* Barras multi-día: 65% de la celda, centradas verticalmente, encima de números */
 .ev-bars-row{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;position:absolute;top:19px;left:0;right:0;bottom:4px;z-index:3;pointer-events:none;grid-auto-rows:1fr;align-items:center}
-/* Grosor de la barra segun el evento (evBarSize):
-   lg = Viaje / Asturias · md = Casa Rural y demas grandes · sm = el mas fino.
-   Solo "grande | Otros" deja elegir entre los tres desde el formulario.
-
-   TODAS se apoyan en la MISMA BASE (la del grosor lg), no centradas: al
-   solaparse quedan escalonadas desde abajo en vez de concentricas.
-   · Anual/4-meses: la lg ocupa el 100% de su fila, asi que su base ES la base
-     de la fila -> a las otras les basta align-self:end.
-   · 1-mes: la lg mide el 65% centrada, o sea que su base queda a un 17,5% de
-     la altura de la fila por encima del suelo. Se sube a las otras justo ese
-     hueco con translateY, que en transform SI es porcentaje de la propia
-     altura del elemento: 17,5/42 = 41,7% para la media y 17,5/26 = 67,3%
-     para la fina. */
-.ev-multi-bar.ev-bar-lg{height:65%}
-.ev-multi-bar.ev-bar-md{height:42%;align-self:end;transform:translateY(-41.7%)}
-.ev-multi-bar.ev-bar-sm{height:26%;min-height:5px;align-self:end;transform:translateY(-67.3%)}
-.ev-annual-mbar{align-self:center}
-.ev-annual-mbar.ev-bar-lg{height:100%}
-.ev-annual-mbar.ev-bar-md{height:62%;align-self:end}
-.ev-annual-mbar.ev-bar-sm{height:38%;align-self:end}
+/* La geometria de las barras se calcula por tramo en _evBarSegmentStyle:
+   gruesa centrada, media contenida y fina junto a la base del dia.
+   Una sola fila de rejilla: solo se estrechan los dias compartidos. */
 .ev-multi-bar{height:65%;min-height:8px;border-radius:20px;font-size:.52rem;font-weight:600;display:flex;align-items:center;padding:0 6px;overflow:hidden;white-space:nowrap;cursor:pointer;color:#fff;pointer-events:auto}
 /* Badges (eventos no-Otros): empujados hacia el FONDO de la celda para no
    solaparse con el texto centrado de las barras multi-día (Viajes, etc.) */
@@ -1682,6 +1662,12 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-multi-bar.starts{border-top-right-radius:0;border-bottom-right-radius:0}
 .ev-multi-bar.ends{border-top-left-radius:0;border-bottom-left-radius:0}
 .ev-multi-bar.continues{border-radius:0}
+.ev-bar-label{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1}
+.ev-multi-bar.ev-stepped-bar,.ev-annual-mbar.ev-stepped-bar{height:100%;min-height:0;position:relative;align-self:start;padding:0;border:0;border-radius:0;background:none;overflow:visible;pointer-events:none}
+.ev-stepped-bar svg{display:block;position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.ev-stepped-bar path{pointer-events:visiblePainted;cursor:pointer}
+.ev-stepped-bar span{position:absolute;display:block;align-content:center;box-sizing:border-box;padding:0 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1;pointer-events:none}
+.ev-annual-mbar.ev-stepped-bar span{font-size:.3rem;padding:0 3px}
 /* Sin z-index propio para no crear stacking context — permite que ev-badge (z-index:4) quede encima de ev-bars-row (z-index:3) */
 .ev-week-grid{position:relative;display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:0}
 /* Perímetro puente: capa inferior a eventos */
@@ -2335,3 +2321,7 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
   svg rect{opacity:1!important}
   .rate-input{border:none;background:transparent}
 }
+
+/* Separacion de siluetas incluso entre grosores distintos. */
+.ev-multi-bar:not(.ev-stepped-bar),.ev-annual-mbar:not(.ev-stepped-bar){box-shadow:0 0 0 1.5px var(--bg)}
+.ev-multi-bar.ev-label-top:not(.ev-stepped-bar),.ev-annual-mbar.ev-label-top:not(.ev-stepped-bar){align-items:flex-start;padding-top:1px}

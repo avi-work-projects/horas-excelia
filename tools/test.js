@@ -168,10 +168,13 @@ const REGLAS = [
     return vuelta.t.modo === 'coche' && vuelta.t.conductor === 'Marta'
         && app.evTramoTexto(vuelta).indexOf('sin hora') !== -1;
   }],
-  ['un grande de tipo Otros no comparte dia', () => {
-    const a = { ev: { kind: 'grande', type: 'Otros', start: '2026-03-01', end: '2026-03-03' }, cs: 0, ce: 2, unDia: false };
-    const b = { ev: { kind: 'grande', type: 'Otros', start: '2026-03-03', end: '2026-03-06' }, cs: 2, ce: 5, unDia: false };
-    return app._evTrozosSeRozan(a, b) === false;
+  ['Otros comparte el relevo solo con barras del mismo grosor', () => {
+    const a = { ev: { id:'a',kind: 'grande', type: 'Otros', start: '2026-03-01', end: '2026-03-03' }, cs: 0, ce: 2, unDia: false,row:0 };
+    const b = { ev: { id:'b',kind: 'grande', type: 'Otros', start: '2026-03-03', end: '2026-03-06' }, cs: 2, ce: 5, unDia: false,row:0 };
+    app._evMarcarMitades([a,b]);
+    if(!a.halfR||!b.halfL||!app._evBarSegments(a,[a,b]).every(t=>t.n===1))return false;
+    b.ev.barSize='sm';
+    return !app._evTrozosSeRozan(a,b);
   }],
   ['la hora de una rutina depende del dia de la semana', () => {
     const r = app.RUTINAS[0];
@@ -395,6 +398,18 @@ if (!fs.existsSync(DIR)) fs.mkdirSync(DIR, { recursive: true });
 
 let ok = 0, fallos = [], nuevas = 0, actualizadas = 0;
 
+/* Regresion visual: dos barras medias cruzan jueves/viernes; el contorno
+   debe ser unico, conservando ambos escalones y los extremos redondeados. */
+[false,true].forEach(annual=>{
+  VISTAS.push(['barras-continuas-'+(annual?'compacto':'mensual'),()=>{
+    const list=[
+      {ev:{id:'contorno-a',kind:'grande',type:'Otros',barSize:'md',color:'#b45309',title:'Media A',start:'2026-10-05',end:'2026-10-09'},cs:0,ce:4,starts:true,ends:true},
+      {ev:{id:'contorno-b',kind:'grande',type:'Otros',barSize:'md',color:'#65a30d',title:'Media B',start:'2026-10-08',end:'2026-10-12'},cs:3,ce:6,starts:true,ends:false}
+    ];
+    return list.map(it=>app._evSteppedBar(it,app._evBarSegments(it,list),annual,true,'')).join('');
+  }]);
+});
+
 for (const [nombre, fn] of VISTAS) {
   if (FILTRO && nombre.indexOf(FILTRO) === -1) continue;
   let html;
@@ -426,6 +441,89 @@ for (const [nombre, fn] of VISTAS) {
               '\n      antes: ' + String(a[i]).slice(0, 110) +
               '\n      ahora: ' + String(b[i]).slice(0, 110));
 }
+
+REGLAS.push(['barras: solo se estrechan las columnas compartidas', function(){
+  function item(id,start,end,cs,ce,size){return {ev:{id:id,kind:'grande',type:'Otros',barSize:size||'lg',start:start,end:end},cs:cs,ce:ce};}
+  var a=item('a','2026-09-21','2026-09-25',0,4);
+  var b=item('b','2026-09-24','2026-09-27',3,6);
+  var ta=app._evBarSegments(a,[a,b]),tb=app._evBarSegments(b,[a,b]);
+  return ta.length===2&&ta[0].cs===0&&ta[0].ce===2&&ta[0].n===1&&ta[1].n===2
+    &&tb.length===2&&tb[0].n===2&&tb[1].n===1&&ta[1].lane!==tb[0].lane;
+}]);
+REGLAS.push(['barras: cortes de semana no inventan relevos', function(){
+  var a={ev:{kind:'grande',type:'Viaje',start:'2026-09-01',end:'2026-09-10'},cs:0,ce:0};
+  var b={ev:{kind:'grande',type:'Asturias',start:'2026-09-05',end:'2026-09-12'},cs:0,ce:2};
+  return !app._evTrozosSeRozan(a,b)&&app._evBarSegments(a,[a,b])[0].n===2;
+}]);
+REGLAS.push(['barras: alturas distintas no se estrechan entre si', function(){
+  var a={ev:{id:'a',kind:'grande',type:'Viaje',start:'2026-09-01'},cs:0,ce:4};
+  var b={ev:{id:'b',kind:'grande',type:'Casa Rural',start:'2026-09-01'},cs:0,ce:4};
+  return app._evBarSegments(a,[a,b])[0].n===1&&app._evBarSegments(b,[a,b])[0].n===1;
+}]);
+
+REGLAS.push(['barras: relevo real conserva media casilla y altura completa', function(){
+  var a={ev:{id:'a',kind:'grande',type:'Viaje',start:'2026-09-01',end:'2026-09-06'},cs:0,ce:6,row:0};
+  var b={ev:{id:'b',kind:'grande',type:'Asturias',start:'2026-09-06',end:'2026-09-12'},cs:6,ce:6,row:0};
+  app._evMarcarMitades([a,b]);
+  return a.halfR&&b.halfL&&app._evBarSegments(a,[a,b]).every(t=>t.n===1);
+}]);
+REGLAS.push(['barras: tres coincidencias y corte de mes sin perder columnas', function(){
+  var list=['a','b','c'].map(id=>({ev:{id:id,kind:'grande',type:'Casa Rural',start:'2026-09-28',end:'2026-10-04'},cs:0,ce:6}));
+  var parts=app._evBarSegments(list[1],list,[true,true,true,false,false,false,false]);
+  return parts.length===2&&parts[0].ce===2&&parts[1].cs===3&&parts[1].ce===6
+    &&parts.every(t=>t.n===3&&t.lane===1)&&parts[0].dentro&&!parts[1].dentro;
+}]);
+
+REGLAS.push(['el espacio entre barras no mueve sus bordes exteriores',function(){
+  return [false,true].every(annual=>['lg','md'].every(size=>{
+    const ev={kind:'grande',type:'Otros',barSize:size};
+    const full=app._evBarExtent(ev,{n:1,lane:0},annual);
+    const upper=app._evBarExtent(ev,{n:2,lane:0},annual);
+    const lower=app._evBarExtent(ev,{n:2,lane:1},annual);
+    return Math.abs(full.bottom-lower.bottom)<1e-8&&full.top===upper.top&&upper.bottom<lower.top;
+  }));
+}]);
+REGLAS.push(['agenda: eventos coincidentes tienen carriles distintos sin duplicarse',function(){
+  const segs=[{ev:{id:'a'},sd:5,ed:7},{ev:{id:'b'},sd:6,ed:9},{ev:{id:'c'},sd:13,ed:15}];
+  app._evWeekLanes(segs);
+  return segs.length===3&&segs[0].lane!==segs[1].lane&&segs[0].lanes===2&&segs[1].lanes===2&&segs[2].lanes===1;
+}]);
+
+REGLAS.push(['barras: solo los extremos reales se redondean',function(){
+  const vertices=[[0,175],[1000,175],[1000,825],[0,825]];
+  return [[false,false,0],[true,false,2],[false,true,2],[true,true,4]].every(function(c){
+    const path=app._evRoundedOutline(vertices,20,60,4,c[0],c[1]);
+    return (path.match(/ A /g)||[]).length===c[2];
+  });
+}]);
+
+REGLAS.push(['barras finas: separacion respecto a la banda gruesa',function(){
+  return [false,true].every(function(annual){
+    const thin=app._evBarBand({kind:'grande',type:'Otros',barSize:'sm'},annual);
+    const thick=app._evBarBand({kind:'grande',type:'Otros',barSize:'lg'},annual);
+    return thin[0]>thick[0]+thick[1];
+  });
+}]);
+
+REGLAS.push(['grandes: limite por grosor, edicion y rangos largos',function(){
+  const saved=app.EVENTS;
+  const make=(id,size,start,end)=>({id,kind:'grande',type:'Otros',barSize:size,start,end});
+  try{
+    app.EVENTS=[make('a','lg','2026-10-01','2028-12-31'),make('b','lg','2028-10-01','2028-12-31')];
+    return app.evDayLimitExceeded(make('c','lg','2026-10-01','2028-12-31'),null)==='2028-10-01'
+      &&app.evDayLimitExceeded(app.EVENTS[0],'a')===null
+      &&app.evDayLimitExceeded(make('c','md','2026-10-01','2028-12-31'),null)===null;
+  }finally{app.EVENTS=saved;}
+}]);
+REGLAS.push(['finas: apiladas con altura original solo durante coincidencia',function(){
+  const ev={kind:'grande',type:'Otros',barSize:'sm'};
+  return [false,true].every(function(annual){
+    const full=app._evBarExtent(ev,{n:1,lane:0},annual);
+    const upper=app._evBarExtent(ev,{n:2,lane:0},annual);
+    const lower=app._evBarExtent(ev,{n:2,lane:1},annual);
+    return Math.abs((upper.bottom-upper.top)-(full.bottom-full.top))<1e-8&&upper.bottom<lower.top&&lower.bottom===full.bottom;
+  });
+}]);
 
 let okR = 0;
 for (const [nombre, fn] of REGLAS) {

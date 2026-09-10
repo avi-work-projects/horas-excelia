@@ -299,6 +299,25 @@ function renderEvMonthsView(){
    - Eventos multi-día: UN único grid item que abarca varias filas (grid-row:start/end+1)
    - Eventos puntuales: grid items en grid-row del día, encima del multi-día (z-index)
    - Resultado: un viaje se ve como UNA SOLA caja continua; eventos de 1 día caen DENTRO */
+/* Carriles estables por grupo de eventos conectados: cada caja conserva su
+   duracion y el ancho se reparte sin mezclar fondos. */
+function _evWeekLanes(segments){
+  var sorted=segments.slice().sort(function(a,b){return a.sd-b.sd||a.ed-b.ed||String(a.ev.id).localeCompare(String(b.ev.id));});
+  var group=[],until=0;
+  function assign(){
+    var ends=[];
+    group.forEach(function(seg){
+      var lane=0;while(lane<ends.length&&ends[lane]>=seg.sd)lane++;
+      ends[lane]=seg.ed;seg.lane=lane;
+    });
+    group.forEach(function(seg){seg.lanes=ends.length;});
+  }
+  sorted.forEach(function(seg){
+    if(group.length&&seg.sd>until){assign();group=[];until=0;}
+    group.push(seg);until=Math.max(until,seg.ed);
+  });
+  assign();
+}
 function renderEvWeek(){
   var today=new Date();today.setHours(0,0,0,0);
   var todayStr=evDk(today);
@@ -345,6 +364,8 @@ function renderEvWeek(){
       seg.isLastSeg=(eDt.getFullYear()===yIdx&&eDt.getMonth()===mIdx);
     });
 
+    _evWeekLanes(multiSegs);
+
     h+='<div class="ev-wk-mgrid">';
 
     // 1) Capa fondo: multi-días (z-index bajo, abarcan varias filas como UNA UNIDAD)
@@ -356,9 +377,9 @@ function renderEvWeek(){
       var _ic=_isVip?'\u2b50 ':'';
       var rTopCls=seg.isFirstSeg?'':' wk-multi-cont-top';
       var rBotCls=seg.isLastSeg?'':' wk-multi-cont-bot';
-      h+='<div class="ev-wk-multi'+rTopCls+rBotCls+'" data-id="'+ev.id+'" '
+      h+='<div class="ev-wk-multi'+rTopCls+rBotCls+(seg.lanes>1?' wk-shared':'')+'" data-id="'+ev.id+'" '
         +'style="grid-row:'+seg.sd+' / '+(seg.ed+1)+';grid-column:2;'
-        +'background:'+hexA(_dc,0.18)+';border-color:'+_dc+'">';
+        +'background:'+hexA(_dc,0.18)+';border-color:'+_dc+(seg.lanes>1?';margin-left:calc('+100*seg.lane/seg.lanes+'% + 3px);margin-right:calc('+100*(seg.lanes-seg.lane-1)/seg.lanes+'% + 3px)':'')+'">';
       /* El titulo se pinta SIEMPRE: si el evento empezo en un mes anterior,
          antes salia la caja de color sin nombre y no se sabia de que era.
          En ese caso lleva flecha y la fecha real de inicio. */
@@ -394,7 +415,7 @@ function renderEvWeek(){
       var hasMulti=multiSegs.some(function(s){return d>=s.sd&&d<=s.ed;});
       /* Si este día es el PRIMER día de un multi-día (donde se pinta el título), añadimos
          padding-top extra a los chips para que no se solapen con el texto del título. */
-      var isFirstOfMulti=multiSegs.some(function(s){return s.isFirstSeg&&d===s.sd;});
+      var isFirstOfMulti=multiSegs.some(function(s){return d===s.sd;});
       var eCls='ev-wk-chips'+(isToday?' ev-wk-today':'')+(isPast?' ev-wk-past':'')+(isWknd?' ev-wk-wknd':'')+(hasMulti?' ev-wk-chips-nested':'')+(isFirstOfMulti?' ev-wk-chips-first-of-multi':'');
       h+='<div class="'+eCls+'" data-ds="'+ds+'" style="grid-row:'+d+';grid-column:2">';
       chips.forEach(function(ev){

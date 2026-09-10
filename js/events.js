@@ -236,7 +236,19 @@ function evMergeMsg(r){
    guardar newEv (null = se puede guardar). excludeId: id del evento que se
    está editando (no cuenta contra sí mismo). */
 function _fmtDayEs(ds){return ds.slice(8,10)+'/'+ds.slice(5,7)+'/'+ds.slice(0,4);}
+var EV_MAX_BAR_DIA=2;
+function evBarLimitExceeded(ev,excludeId){
+  var size=evBarSize(ev),end=ev.end||ev.start;
+  var others=EVENTS.filter(function(ex){return ex.id!==excludeId&&isEvBarAlways(ex)&&evBarSize(ex)===size&&ex.start<=end&&(ex.end||ex.start)>=ev.start;});
+  var dates=[ev.start].concat(others.map(function(ex){return ex.start<ev.start?ev.start:ex.start;})).sort();
+  for(var i=0;i<dates.length;i++){
+    var day=dates[i];
+    if(others.filter(function(ex){return eventOccursOn(ex,day);}).length>=EV_MAX_BAR_DIA)return day;
+  }
+  return null;
+}
 function evDayLimitExceeded(newEv,excludeId){
+  if(isEvBarAlways(newEv))return evBarLimitExceeded(newEv,excludeId);
   var days=[],i,g;
   if(newEv.dates&&newEv.dates.length){
     days=newEv.dates.slice(0,400);
@@ -431,10 +443,9 @@ function evUpcomingMarkHtml(ev){
    quedando la mas fina visible encima de la mas gruesa. */
 var EV_BAR_Z = {sm:3, md:2, lg:1};
 function _evRowOcc(){return {lg:[[],[],[]], md:[[],[],[]], sm:[[],[],[]]};}
-/* Categorias que comparten dia. Es cosa de los viajes de verdad: se sale un
-   dia y se llega otro, asi que el dia del relevo es medio de cada uno. Un
-   "Otros" grande no significa eso, y ahi el reparto confunde mas que ayuda. */
-var EV_COMPARTE_DIA = {'Viaje':1, 'Asturias':1, 'Casa Rural':1};
+/* Categorias que comparten el dia de relevo. Otros tambien participa cuando
+   ambas barras tienen el mismo grosor (preferencia revisada por el usuario). */
+var EV_COMPARTE_DIA = {'Viaje':1, 'Asturias':1, 'Casa Rural':1, 'Otros':1};
 function evComparteDia(ev){
   return getEvKind(ev)==='grande' && !!EV_COMPARTE_DIA[getEvType(ev)];
 }
@@ -453,7 +464,10 @@ function _evSoloSeRozan(aS,aE,bS,bE){
    siguiente no compartia ese domingo. */
 function _evTrozosSeRozan(a,b){
   if(a.unDia||b.unDia)return false;
+  if(evBarSize(a.ev)==='sm'||evBarSize(b.ev)==='sm')return false;
   if(!evComparteDia(a.ev)||!evComparteDia(b.ev))return false;
+  if((getEvType(a.ev)==='Otros'||getEvType(b.ev)==='Otros')&&evBarSize(a.ev)!==evBarSize(b.ev))return false;
+  if(a.ev.end!==b.ev.start&&b.ev.end!==a.ev.start)return false;
   return _evSoloSeRozan(a.cs,a.ce,b.cs,b.ce);
 }
 function _evAssignRow(it,rowOcc){
@@ -493,6 +507,121 @@ function _evMitadesStyle(it){
   return s;
 }
 function evBarZ(ev){return EV_BAR_Z[evBarSize(ev)]||2;}
+
+/* Repartir SOLO las columnas compartidas. Los tramos consecutivos con igual
+   altura se fusionan; los cortes de semana/mes no alteran el criterio. */
+function _evBarSegments(it,lista,inMonth){
+  var out=[];
+  for(var day=it.cs;day<=it.ce;day++){
+    var active=lista.filter(function(b){
+      return b.cs<=day&&b.ce>=day&&evBarSize(b.ev)===evBarSize(it.ev);
+    }).sort(function(a,b){
+      return a.ev.start.localeCompare(b.ev.start)||String(a.ev.id).localeCompare(String(b.ev.id));
+    });
+    var lanes=[],lane=0;
+    active.forEach(function(b){
+      var k=0;
+      while(lanes[k]&&lanes[k].some(function(a){return !_evTrozosSeRozan(a,b);}))k++;
+      if(!lanes[k])lanes[k]=[];
+      lanes[k].push(b);
+      if(b===it)lane=k;
+    });
+    var n=lanes.length,inside=inMonth?inMonth[day]:true;
+    var prev=out[out.length-1];
+    if(prev&&prev.n===n&&prev.lane===lane&&prev.dentro===inside)prev.ce=day;
+    else out.push({cs:day,ce:day,n:n,lane:lane,dentro:inside});
+  }
+  return out;
+}
+function _evBarBand(ev,annual){
+  var size=evBarSize(ev);
+  var band=annual?{lg:[17.5,55],md:[34.4,34.1],sm:[77,20.9]}:
+    {lg:[17.5,65],md:[36.5,42],sm:[87,20]};
+  return band[size];
+}
+function _evBarSegmentStyle(ev,tr,annual){
+  var extent=_evBarExtent(ev,tr,annual);
+  return ';position:relative;align-self:start;transform:none;min-height:0;box-sizing:border-box'
+    +';top:'+extent.top+'%;height:'+(extent.bottom-extent.top)+'%';
+}
+function _evBarExtent(ev,tr,annual){
+  var b=_evBarBand(ev,annual),height=b[1]/tr.n,top=b[0]+height*tr.lane;
+  if(evBarSize(ev)==='sm'&&tr.n>1){
+    height=b[1];top=b[0]-(tr.n-1-tr.lane)*(height+2.4);
+    return {top:top,bottom:top+height};
+  }
+  return {top:top+(tr.lane>0?1.2:0),bottom:top+height-(tr.lane<tr.n-1?1.2:0)};
+}
+
+/* Un unico contorno para todos los escalones: sin bordes interiores ni gaps
+   de rejilla entre los tramos del mismo evento. El SVG escala sin pixelarse. */
+function _evRoundedOutline(vertices,rx,ry,days,roundStart,roundEnd){
+  var points=vertices.filter(function(p,i){
+    var prev=vertices[(i+vertices.length-1)%vertices.length];
+    return p[0]!==prev[0]||p[1]!==prev[1];
+  });
+  points=points.filter(function(p,i){
+    var prev=points[(i+points.length-1)%points.length],next=points[(i+1)%points.length];
+    return !((p[0]===prev[0]&&p[0]===next[0])||(p[1]===prev[1]&&p[1]===next[1]));
+  });
+  function near(p,q,rX,rY){
+    var dx=q[0]-p[0],dy=q[1]-p[1];
+    var f=Math.min(.5,dx?rX/Math.abs(dx):rY/Math.abs(dy));
+    return [p[0]+dx*f,p[1]+dy*f];
+  }
+  return points.map(function(p,i){
+    var prev=points[(i+points.length-1)%points.length],next=points[(i+1)%points.length];
+    var outer=p[0]===0||p[0]===1000;
+    if((p[0]===0&&!roundStart)||(p[0]===1000&&!roundEnd))return (i?' L ':'M ')+p.join(' ');
+    var cap=outer?Math.abs((prev[0]===p[0]?prev:next)[1]-p[1])/2:ry;
+    var rX=outer?cap/days:rx,rY=outer?cap:ry;
+    var entry=near(p,prev,rX,rY);
+    var exit=near(p,next,rX,rY);
+    var corner=outer?' A '+Math.abs(entry[0]-exit[0])+' '+Math.abs(entry[1]-exit[1])+' 0 0 1 '+exit.join(' '):
+      ' Q '+p.join(' ')+' '+exit.join(' ');
+    return (i?' L ':'M ')+entry.join(' ')+corner;
+  }).join('')+' Z';
+}
+/* Apagar el color sin transparencia: no deja ver las casillas o barras debajo. */
+function _evBarMutedColor(color,inside){
+  return inside?color:'color-mix(in srgb, '+color+' 35%, var(--bg) 65%)';
+}
+function _evSteppedBar(it,segments,annual,showTitle,pastClass){
+  var groups=[];
+  segments.forEach(function(tr){
+    var g=groups[groups.length-1];
+    if(!g||g[0].dentro!==tr.dentro){g=[];groups.push(g);}
+    g.push(tr);
+  });
+  var titleGroup=groups.findIndex(function(g){return g[0].dentro;});
+  if(titleGroup<0)titleGroup=0;
+  return groups.map(function(g,gi){
+    var first=g[0],last=g[g.length-1],days=last.ce-first.cs+1;
+    var dc=getEvDisplayColor(it.ev);
+    var stroke=_evBarMutedColor(dc,first.dentro),fill=_evBarMutedColor(fakeTrans(dc,.65),first.dentro);
+    var pts=g.map(function(tr){
+      var extent=_evBarExtent(it.ev,tr,annual);
+      return {x:1000*(tr.cs-first.cs)/days,end:1000*(tr.ce+1-first.cs)/days,
+        top:10*extent.top,bottom:10*extent.bottom};
+    });
+    var vertices=[];
+    pts.forEach(function(p){vertices.push([p.x,p.top],[p.end,p.top]);});
+    pts.slice().reverse().forEach(function(p){vertices.push([p.end,p.bottom],[p.x,p.bottom]);});
+    var path=_evRoundedOutline(vertices,60/days,annual?30:60,days,
+      it.starts&&first.cs===it.cs,it.ends&&last.ce===it.ce);
+    var med=_evMitadesStyle({cs:first.cs,ce:last.ce,
+      halfL:it.halfL&&first.cs===it.cs,halfR:it.halfR&&last.ce===it.ce});
+    var label=pts.reduce(function(best,p){return p.end-p.x>best.end-best.x?p:best;},pts[0]);
+    var commonTop=Math.max.apply(null,pts.map(function(p){return p.top;}));
+    var commonBottom=Math.min.apply(null,pts.map(function(p){return p.bottom;}));
+    /* El titulo aprovecha toda la longitud si existe una franja comun. */
+    if(commonBottom-commonTop>=70)label={x:0,end:1000,top:commonTop,bottom:commonBottom};
+    return '<div class="'+(annual?'ev-annual-mbar':'ev-multi-bar')+' ev-stepped-bar '+evBarSizeCls(it.ev)+(pastClass||'')+'" data-id="'+it.ev.id+'"'
+      +' style="grid-column:'+(first.cs+1)+'/'+(last.ce+2)+';grid-row:1;z-index:'+evBarZ(it.ev)+med+'">'
+      +'<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">'+('<path d="'+path+'" fill="none" stroke="var(--bg)" stroke-width="4" vector-effect="non-scaling-stroke"/>')+'<path d="'+path+'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+(annual?1:1.5)+'" vector-effect="non-scaling-stroke"/></svg>'
+      +(showTitle&&gi===titleGroup?'<span title="'+escHtml(it.ev.title)+'" style="left:'+label.x/10+'%;width:'+(label.end-label.x)/10+'%;top:'+label.top/10+'%;height:'+(label.bottom-label.top)/10+'%;'+(it.labelTop?'align-content:start;padding-top:1px;':'')+'">'+escHtml(it.ev.title)+'</span>':'')+'</div>';
+  }).join('');
+}
 
 /* ── Render: tarjeta de un mes (compartida por Anual y 4 meses) ────
    Anual y 4-meses pintan EXACTAMENTE la misma tarjeta de mes; solo cambian

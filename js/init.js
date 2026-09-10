@@ -344,7 +344,7 @@
     var menuAbierto=menu&&menu.classList.contains('open');
     if(!alarmAbierto&&!menuAbierto)return;
     var alarmWrap=document.getElementById('alarmWrap');
-    var menuWrap=document.querySelector('.data-menu-wrap:last-child');
+    var menuWrap=menu&&menu.closest('.data-menu-wrap');
     var dentroAlarma=alarmWrap&&alarmWrap.contains(e.target);
     var dentroMenu=menuWrap&&menuWrap.contains(e.target);
     if(dentroAlarma||dentroMenu)return;      /* el click es del propio panel */

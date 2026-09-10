@@ -49,11 +49,12 @@ function renderEvCalMonth(){
       /* unDia: la duracion del EVENTO, que es lo que decide si puede compartir
          dia. El trozo puede ser de una columna por el corte de semana o mes. */
       wMulti.push({ev:ev,cs:cs,ce:ce,unDia:(ev.start===(ev.end||ev.start)),
-        starts:es>=wStart,ends:ee<=wEnd,row:-1});
+        starts:ev.start===evDk(wk[cs]),ends:(ev.end||ev.start)===evDk(wk[ce]),row:-1});
     });
-    /* Reparto en filas por grosor — ver _evAssignRow */
-    var rowOcc=_evRowOcc();
-    wMulti.forEach(function(it){_evAssignRow(it,rowOcc);});
+    wMulti.forEach(function(it){
+      it.row=0;
+      it.labelTop=evBarSize(it.ev)==='lg'&&wMulti.some(function(other){return evBarSize(other.ev)==='md'&&other.cs<=it.ce&&other.ce>=it.cs;});
+    });
     _evMarcarMitades(wMulti);
     var activeRows=0;wMulti.forEach(function(it){if(it.row>=0)activeRows=Math.max(activeRows,it.row+1);});
     // Pre-compute which columns are in-month (for bar dimming)
@@ -147,11 +148,10 @@ function renderEvCalMonth(){
            se sale se apaga como las casillas que cubre; si no se partiera, una
            barra hasta el 4 de octubre se veria a todo color sobre unos dias en
            gris. */
-        var trozos=[],ci;
-        for(ci=it.cs;ci<=it.ce;ci++){
-          var ult=trozos[trozos.length-1];
-          if(ult&&ult.dentro===inMCols[ci])ult.ce=ci;
-          else trozos.push({cs:ci,ce:ci,dentro:inMCols[ci]});
+        var trozos=_evBarSegments(it,wMulti,inMCols),ci;
+        if(trozos.some(function(tr){return tr.n>1||tr.n!==trozos[0].n||tr.lane!==trozos[0].lane;})){
+          h+=_evSteppedBar(it,trozos,false,showT,_pastBar);
+          return;
         }
         /* El titulo, una sola vez y en el primer trozo dentro del mes. */
         var iTit=-1;
@@ -164,9 +164,9 @@ function renderEvCalMonth(){
           var sc=abre&&cierra?'':abre?' starts':cierra?' ends':' continues';
           var med=_evMitadesStyle({cs:tr.cs,ce:tr.ce,
             halfL:it.halfL&&tr.cs===it.cs, halfR:it.halfR&&tr.ce===it.ce});
-          h+='<div class="ev-multi-bar '+evBarSizeCls(ev)+sc+_pastBar+'" data-id="'+ev.id+'"'
-            +' style="grid-column:'+(tr.cs+1)+'/'+(tr.ce+2)+';grid-row:'+(it.row+1)+';z-index:'+evBarZ(ev)+';border:1.5px solid '+_dc+';background:'+fakeTrans(_dc,0.65)+';color:#fff'+(tr.dentro?'':';opacity:.35')+med+'">'
-            +(showT&&i===iTit?escHtml(ev.title):'')+'</div>';
+          h+='<div class="ev-multi-bar '+evBarSizeCls(ev)+sc+_pastBar+(it.labelTop?' ev-label-top':'')+'" data-id="'+ev.id+'"'
+            +' style="grid-column:'+(tr.cs+1)+'/'+(tr.ce+2)+';grid-row:'+(it.row+1)+';z-index:'+evBarZ(ev)+';border:1.5px solid '+_evBarMutedColor(_dc,tr.dentro)+';background:'+_evBarMutedColor(fakeTrans(_dc,0.65),tr.dentro)+';color:#fff'+med+_evBarSegmentStyle(ev,tr,false)+'">'
+            +(showT&&i===iTit?'<span class="ev-bar-label" title="'+escHtml(ev.title)+'">'+escHtml(ev.title)+'</span>':'')+'</div>';
         });
       });
       h+='</div>';
@@ -211,13 +211,12 @@ function _renderEvMonthCard(m,yr,o){
       /* unDia: la duracion del EVENTO, que es lo que decide si puede compartir
          dia. El trozo puede ser de una columna por el corte de semana o mes. */
       wMulti.push({ev:ev,cs:cs,ce:ce,unDia:(ev.start===(ev.end||ev.start)),
-        starts:es>=wStart,ends:ee<=wEnd,row:-1});
+        starts:ev.start===evDk(wk[cs]),ends:(ev.end||ev.start)===evDk(wk[ce]),row:-1});
     });
-    /* Reparto en filas (max 3) POR GROSOR: dos barras del mismo grosor que
-       chocan van a filas distintas (se estrechan); dos de grosor distinto
-       comparten fila y se superponen, con la mas fina encima (z-index). */
-    var rowOcc=_evRowOcc();
-    wMulti.forEach(function(it){_evAssignRow(it,rowOcc);});
+    wMulti.forEach(function(it){
+      it.row=0;
+      it.labelTop=evBarSize(it.ev)==='lg'&&wMulti.some(function(other){return evBarSize(other.ev)==='md'&&other.cs<=it.ce&&other.ce>=it.cs;});
+    });
     _evMarcarMitades(wMulti);
     h+='<div class="ev-annual-week-outer">';
     var abspanStart=-1,abspans=[];
@@ -291,19 +290,30 @@ function _renderEvMonthCard(m,yr,o){
     /* Barras (z-index:2) */
     var activeRows=0;wMulti.forEach(function(it){if(it.row>=0)activeRows=Math.max(activeRows,it.row+1);});
     if(activeRows>0){
-      var rowsCls=activeRows>=3?' ev-bars-3rows':activeRows===2?' ev-bars-2rows':'';
+      var rowsCls='';
       h+='<div class="ev-annual-bars-row'+rowsCls+'">';
       wMulti.forEach(function(it){
         if(it.row<0)return;
-        var sc=it.starts&&it.ends?'':it.starts?' a-starts':it.ends?' a-ends':' a-mid';
         var dc=getEvDisplayColor(it.ev);
         var pastBar=wk[it.ce]<today?' past-bar':'';
         var extra=o.barTitles?';font-size:.3rem;padding:0 3px':'';
-        var txt=(o.barTitles&&(it.starts||it.cs===0))?escHtml(it.ev.title):'';
-        h+='<div class="ev-annual-mbar '+evBarSizeCls(it.ev)+sc+pastBar+'" data-id="'+it.ev.id+'"'
-          +' style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:'+(it.row+1)
-          +';z-index:'+evBarZ(it.ev)
-          +';border:1px solid '+dc+';background:'+fakeTrans(dc,0.65)+extra+_evMitadesStyle(it)+'">'+txt+'</div>';
+        var parts=_evBarSegments(it,wMulti);
+        if(parts.some(function(tr){return tr.n>1||tr.n!==parts[0].n||tr.lane!==parts[0].lane;})){
+          h+=_evSteppedBar(it,parts,true,o.barTitles&&(it.starts||it.cs===0),pastBar);
+          return;
+        }
+        parts.forEach(function(tr,i){
+          var abre=it.starts&&tr.cs===it.cs,cierra=it.ends&&tr.ce===it.ce;
+          var sc=abre&&cierra?'':abre?' a-starts':cierra?' a-ends':' a-mid';
+          var txt=(i===0&&o.barTitles&&(it.starts||it.cs===0))?escHtml(it.ev.title):'';
+          var med=_evMitadesStyle({cs:tr.cs,ce:tr.ce,
+            halfL:it.halfL&&tr.cs===it.cs,halfR:it.halfR&&tr.ce===it.ce});
+          h+='<div class="ev-annual-mbar '+evBarSizeCls(it.ev)+sc+pastBar+(it.labelTop?' ev-label-top':'')+'" data-id="'+it.ev.id+'"'
+            +' style="grid-column:'+(tr.cs+1)+'/'+(tr.ce+2)+';grid-row:1'
+            +';z-index:'+evBarZ(it.ev)
+            +';border:1px solid '+dc+';background:'+fakeTrans(dc,0.65)+extra+med
+            +_evBarSegmentStyle(it.ev,tr,true)+'">'+txt+'</div>';
+        });
       });
       h+='</div>';
     }
