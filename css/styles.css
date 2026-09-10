@@ -2326,7 +2326,10 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-sort-chip.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright);font-weight:600}
 .bday-upcoming-name,.bday-list-day{color:var(--text)}
 
-.boda-pfilter-chips{display:grid;grid-template-columns:repeat(6,minmax(0,1fr))}
-.boda-pfilter-chips .boda-chip{grid-column:span 2}
-.boda-pfilter-chips .boda-chip:nth-child(n+4){grid-column:span 3}
 .bday-jump-today{color:var(--c-green);border-color:var(--c-green)}
+
+.boda-pfilters{padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
+.boda-filter-label{font-size:.65rem;font-weight:600;color:var(--text-muted);margin-bottom:6px}
+.boda-filter-label:not(:first-child){margin-top:12px}
+.boda-filter-label span{font-weight:400}
+.boda-pfilters .boda-chips{margin-bottom:0}

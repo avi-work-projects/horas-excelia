@@ -1267,3 +1267,6 @@ Las tres vistas usan `.ev-view-toggle` con zonas A (listas) y B (calendario), y 
 
 ### Parejas y cumpleanos (v293)
 Parejas abre Activas ordenadas por boda ascendente; incluye hoy y parejas sin fecha (al final). Pasadas exige fecha anterior a hoy. Cerradas conserva el criterio de todas las clases asignadas. Cumpleanos comparte grupos sin solapamiento: pasados, hoy, manana, dias 2-7 y 8-14. En Lista, Hoy limpia filtros y busca la siguiente fecha, y VIP/no VIP alternan a Todos al pulsarlos de nuevo. La edicion ofrece Deshacer. Actualizar del menu usa captura delegada para que no lo consuma el cierre del menu; comparte la accion con el toast y espera activacion si procede.
+
+### Filtros de Parejas y Proximos cumpleanos (v294)
+Parejas separa `BODA_PAREJAS_FILTER` (activas/pasadas/todas) de `BODA_PAREJAS_CLASSES` (null/incompletas/completas). Se combinan con AND; clases es opcional y se desmarca al pulsar de nuevo. Ver pareja limpia ambos filtros. `BDAY_UP_VIP` filtra el render compartido de Proximos cumpleanos, que usa `.ev-week-sep` para sus grupos y no ofrece exportar en la cabecera.

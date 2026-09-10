@@ -571,6 +571,16 @@ REGLAS.push(['cumpleanos: grupos sin duplicar en limites 1, 7 y 14 dias',functio
   return ['Manana','Siete','Ocho','Catorce'].every(name=>(html.match(new RegExp('data-bday-name="'+name+'"','g'))||[]).length===1)&&!html.includes('data-bday-name="Fuera"');
 }]);
 
+REGLAS.push(['cumpleanos: Solo VIP filtra sin cambiar grupos',function(){
+  const ctx=cargarApp(claves);ctx.BDAYS=[{name:'Normal',day:22,month:8},{name:'Vip',day:22,month:8,vip:true}];ctx.BDAY_UP_VIP=true;
+  const html=ctx.renderBdayUpcoming();return html.includes('data-bday-name="Vip"')&&!html.includes('data-bday-name="Normal"')&&html.includes('ev-week-sep');
+}]);
+REGLAS.push(['parejas: fecha y clases son filtros combinables',function(){
+  const ctx=cargarApp(claves),c={id:'test',weddingDate:'2026-09-01'};
+  ctx.bodaProgress=()=>({falta:2});
+  return ctx.bodaMatchesDate(c,'activas')&&ctx.bodaMatchesClasses(c,'incompletas')&&!ctx.bodaMatchesClasses(c,'completas')&&ctx.bodaMatchesClasses(c,null)&&!ctx.bodaMatchesDate(c,'pasadas');
+}]);
+
 let okR = 0;
 for (const [nombre, fn] of REGLAS) {
   if (FILTRO) break;

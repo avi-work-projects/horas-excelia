@@ -6,6 +6,7 @@ var BDAY_STORAGE_KEY='excelia-bdays-v1';
 var BDAY_YEAR=new Date().getFullYear(), BDAY_MONTH=new Date().getMonth(), BDAY_VIEW='upcoming';
 var BDAY_EDIT=null;
 var BDAY_SEARCH='';
+var BDAY_UP_VIP=false;
 var BDAY_FILTER_VIP='all'; // 'all' | 'vip' | 'novip'
 var BDAY_EDIT_VIP=false;
 var BDAY_VIP_PENDING=null; // null=no edit mode, {}=pending changes (idx→bool)
@@ -163,7 +164,7 @@ function renderBdayUpcoming(){
       var d=new Date(today);d.setDate(d.getDate()+startOffset+i);
       var bds=getBdaysOn(d.getMonth()+1,d.getDate());
       var diff=startOffset+i;
-      bds.forEach(function(b){items.push({b:b,diff:diff});});
+      bds.forEach(function(b){if(!BDAY_UP_VIP||b.vip)items.push({b:b,diff:diff});});
     }
     return items;
   }
@@ -183,7 +184,7 @@ function renderBdayUpcoming(){
 
   function renderGroup(title,list,isCurWeek){
     if(!list.length)return '<div class="sy-note">No hay cumplea\u00f1os '+title.toLowerCase()+'.</div>';
-    var s='<div class="bday-month-hdr">'+title+'</div>';
+    var s='<div class="ev-week-sep'+(list[0].diff===0?' now':'')+'">'+title+'</div><div class="ev-upcoming-section">';
     list.forEach(function(x){
       var lbl=bdayLabel(x.diff);
       var color=getBdayColor(x.b);
@@ -210,10 +211,10 @@ function renderBdayUpcoming(){
       s+='<div class="ev-upcoming-right">'+bellHtml+'<div class="'+lblCls+'">'+lbl+'</div></div>';
       s+='</div>';
     });
-    return s;
+    return s+'</div>';
   }
 
-  var h='';
+  var h='<div class="excl-row ev-up-filters"><label class="excl-item"><input type="checkbox" class="bday-up-vip"'+(BDAY_UP_VIP?' checked':'')+'> Solo <img class="bday-vip-img" src="./VIP.png" alt="VIP"></label></div>';
   if(prevItems.length){
     h+='<div class="bday-upcoming-section">';
     h+=renderGroup('Pasados',prevItems);
@@ -339,8 +340,6 @@ function renderBdayContent(){
   h+='<button class="sy-back" id="bdBack">&#8592;</button>';
   if(BDAY_VIEW==='upcoming'){
     h+='<div class="sy-year-nav"><div class="sy-year">Pr\u00f3ximos</div></div>';
-    h+='<div class="sy-hdr-right"><button class="sy-pdf bd-export-btn" id="bdExport" '
-      +'title="Exportar" aria-label="Exportar"><svg viewBox="0 0 24 24" class="ico-exportar" aria-hidden="true"><path d="M12 3v10m0 0 4-4m-4 4-4-4" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 15v4a1.5 1.5 0 0 0 1.5 1.5h13A1.5 1.5 0 0 0 20 19v-4" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></svg></button></div>';
   } else if(BDAY_VIEW==='list'){
     h+='<div class="sy-year-nav"><div class="sy-year">Cumplea\u00f1os</div></div>';
     h+='<div class="sy-hdr-right"><button class="sy-pdf bd-export-btn" id="bdExport" '
@@ -999,6 +998,8 @@ function bindBdayEvents(){
 
 /* Compartido por Cumpleanos y Eventos: mismos gestos y acciones. */
 function bindBdayUpcoming(root){
+  var vip=root.querySelector('.bday-up-vip');
+  if(vip)vip.addEventListener('change',function(){BDAY_UP_VIP=this.checked;_bdRefreshBoth();});
   // Clicks en vista "Próximos" → ALARM panel
   root.querySelectorAll('.bday-upcoming-item[data-bday-name]').forEach(function(item){
     item.addEventListener('touchstart',function(){
