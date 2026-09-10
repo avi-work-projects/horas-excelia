@@ -119,8 +119,8 @@
 
 **Funciones:** evFilterGroup:44 · saveEvents:86 · loadEvAlarms:93 · saveEvAlarms:94 · _findBdayByEvId:95 · isEvAlarmSet:107 · setEvAlarmState:113 · evDk:120 · _evClampDate:129 · eventOccursOn:133 · getEventsOn:177 · evSignature:192 · evMergeIncoming:202 · evMergeMsg:226 · _fmtDayEs:238 · evBarLimitExceeded:240 · evDayLimitExceeded:250 · rutDayCount:286 · hasUpcomingEvent:293 · updateEventsBtn:302 · evDefaultShape:316 · evMarkerHtml:322 · evMorePlusHtml:336 · evMarkPriority:345 · evBodaMinutes:352 · evSortMarks:363 · ev0:364 · evAnnualXsHtml:396 · vipStarSvgHtml:406 · evIsoDate:418 · _isVipBdayTooFar:419 · evUpcomingMarkHtml:426 · _evRowOcc:445 · evComparteDia:449 · _evSoloSeRozan:454 · _evTrozosSeRozan:465 · _evAssignRow:473 · _evMarcarMitades:487 · _evMitadesStyle:502 · evBarZ:509 · _evBarSegments:513 · _evBarBand:536 · _evBarSegmentStyle:542 · _evBarExtent:547 · _evRoundedOutline:558 · near:567 · _evBarMutedColor:586 · _evSteppedBar:589 · _evAnnualCtx:637 · visible:638 · _evLoadPuentes:656 · _evScheduleRemove:684 · _evCancelRemove:685 · evStartTime:704 · evEndTime:710 · evTimeLabel:717 · evTramos:724 · evTramoTexto:735 · evMinutosDe:742 · _positionEvBright:752
 
-### js/home-popup.js  _(102 líneas)_
-**Funciones:** dismissPopup:93
+### js/home-popup.js  _(84 líneas)_
+**Funciones:** dismissPopup:75
 
 ### js/import-export.js  _(529 líneas)_
 **Funciones:** _lsJson:259 · askImportMode:266 · close:278 · _mergeMap:292 · _mergeList:303 · _sigEvent:324 · _sigCouple:326 · _sigAlarm:327 · _sigGasto:328 · _keyId:330 · _keyBday:331 · _keyGasto:332 · _exportPerYearKeys:338 (!81) · _applyFullImport:419 (!110)

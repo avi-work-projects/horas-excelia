@@ -27,34 +27,16 @@
     var lbl='Semana del '+String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');
     items.push({type:'warn',text:'&#128221; '+lbl+' sin enviar'});
   }
-  // Cumpleaños hoy o mañana (cualquier persona, VIP o no)
+  // Todos los cumpleanos hasta dentro de 7 dias, solo si falta la alarma.
   if(typeof BDAYS!=='undefined'&&BDAYS.length){
-    var _todayBdayKeys={};
     BDAYS.forEach(function(b){
       var bd=new Date(today.getFullYear(),b.month-1,b.day);
       if(bd<today)bd.setFullYear(today.getFullYear()+1);
       var diff=Math.round((bd-today)/86400000);
-      if(diff>1)return;
-      var label=escHtml(b.name)+(diff===0?' (\u00a1hoy!)':' (ma\u00f1ana!)');
-      var bkey=b.name+'_'+b.month+'_'+b.day;
-      _todayBdayKeys[bkey]=true;
-      items.push({type:'bday',text:'&#127874; '+label});
+      if(diff>7||(typeof isBdayAlarmSet==='function'&&isBdayAlarmSet(b)))return;
+      var when=diff===0?' (hoy)':diff===1?' (ma\u00f1ana)':' (en '+diff+'d)';
+      items.push({type:b.vip?'vip':'bday',text:(b.vip?'&#11088; ':'&#127874; ')+escHtml(b.name)+when+' — sin alarma'});
     });
-    // VIP próximos (≤7 días, sin alarma, no duplicar hoy/mañana)
-    if(typeof isBdayAlarmSet==='function'){
-      BDAYS.forEach(function(b){
-        if(!b.vip)return;
-        var bkey=b.name+'_'+b.month+'_'+b.day;
-        if(_todayBdayKeys[bkey])return; // ya incluido en el bloque anterior
-        var bd=new Date(today.getFullYear(),b.month-1,b.day);
-        if(bd<today)bd.setFullYear(today.getFullYear()+1);
-        var diff=Math.round((bd-today)/86400000);
-        if(diff>7)return;
-        if(isBdayAlarmSet(b))return;
-        var label=escHtml(b.name)+' (en '+diff+'d)';
-        items.push({type:'vip',text:'&#11088; '+label+' \u2014 sin alarma'});
-      });
-    }
   }
   // Eventos hoy o mañana (inicio) + fin de eventos largos (>7 días)
   if(typeof EVENTS!=='undefined'&&EVENTS.length){
