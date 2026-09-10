@@ -554,7 +554,7 @@ function _renderBodaClases(){
   h+='<div class="excl-row">';
   h+='<label class="excl-item"><input type="checkbox" id="bodaShowPast"'+(BODA_HIDE_PAST?'':' checked')+'> Ver pasadas</label>';
   /* La casilla se pinta del verde de las tarjetas que destapa. */
-  h+='<label class="excl-item"><input type="checkbox" style="--chk:var(--c-green)" id="bodaShowClosed"'
+  h+='<label class="excl-item"><input type="checkbox" style="--chk:var(--wm-wine)" id="bodaShowClosed"'
     +(BODA_HIDE_CLOSED?'':' checked')+'> Ver días cerrados</label>';
   h+='</div>';
   h+='</div>';
@@ -568,14 +568,14 @@ function _renderBodaClases(){
     var pasado=(ds<today);
     /* Cerrado no es lo mismo que pasado: cerrado es un dia RESUELTO. Antes
        salia atenuado y con la palabra en rojo, y se leia como pasado.
-       El gris del pasado manda sobre el verde del cerrado: un dia que ya ha
+       El gris del pasado manda sobre el granate del cerrado: un dia que ya ha
        ocurrido no esta pendiente de nada, lo hayan cerrado o no. */
     var tono=pasado?' pasado':(cerrado?' cerrado':'');
     h+='<div class="boda-day'+tono+'" data-day="'+ds+'">';
     h+='<div class="boda-day-hd">'+_bodaFmtCorto(ds)
       +'<span class="boda-day-n">'+byDay[ds].length+' clase'+(byDay[ds].length>1?'s':'')+'</span>'
       +(cerrado?('<span class="boda-day-cerr" title="Día cerrado: no admite más clases">'
-        +'\u2714\ufe0f\ud83d\udd12</span>'):'');
+        +'&#10003; &#128274;</span>'):'');
     if(edit){
       h+='<button class="boda-mini-btn boda-day-lock'+(cerrado?' on':'')+'" data-lock="'+ds+'" title="'
         +(cerrado?'Reabrir el día':'Cerrar el día (no admite más clases)')+'">'

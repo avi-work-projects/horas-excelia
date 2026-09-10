@@ -56,17 +56,16 @@ function _bodaFormRender(){
     +'<span class="ev-bfila-val">'
     +(c?('<span class="ev-bpunto" style="background:'+c.color+'"></span>'+escHtml(c.name)):'\u26a0 Sin asignar')
     +'</span></button>';
-  h+='</div>';
   var teachers=b.teachers;
-  h+='<div class="ev-field"><label>Profesores</label><div class="boda-teachers excl-row">';
+  h+='<div class="ev-bfila boda-field-row"><span class="ev-bfila-lbl">Profesores</span><div class="boda-field-controls"><div class="boda-teachers excl-row">';
   [['celia','Celia'],['angel','Ángel'],['substitute','Sustituto']].forEach(function(t){h+='<label class="excl-item"><input type="checkbox" data-teacher="'+t[0]+'"'+((t[0]==='substitute'?teachers.substitute!=null:teachers[t[0]])?' checked':'')+'> '+t[1]+'</label>';});
-  h+='</div><input class="ev-input" id="bodaTeacherName" maxlength="80" placeholder="Nombre del sustituto" aria-label="Nombre del sustituto" value="'+escHtml(teachers.substitute||'')+'"'+(teachers.substitute!=null?'':' hidden')+'></div>';
-  h+='<div class="ev-field"><label>Duración</label><select class="ev-input" id="bodaFormDuration">';
+  h+='</div><input class="ev-input" id="bodaTeacherName" maxlength="80" placeholder="Nombre del sustituto" aria-label="Nombre del sustituto" value="'+escHtml(teachers.substitute||'')+'"'+(teachers.substitute!=null?'':' hidden')+'></div></div>';
+  h+='<label class="ev-bfila boda-field-row"><span class="ev-bfila-lbl">Duración</span><select class="ev-input" id="bodaFormDuration">';
   var options=BODA_CONFIG.durations.filter(function(d){return d.active!==false||d.id===b.durationId;});
   var current=options.find(function(d){return d.id===b.durationId&&d.minutes===b.duration;});
   if(!current)h+='<option value="saved" selected>'+b.duration+' min (guardada)</option>';
   options.forEach(function(d){h+='<option value="'+d.id+'"'+(current&&current.id===d.id?' selected':'')+'>'+d.minutes+' min'+(d.active===false?' (inactiva)':'')+'</option>';});
-  h+='</select></div>';
+  h+='</select></label></div>';
   h+='<div class="ev-detail-actions">';
   if(!F.nuevo)h+='<button class="ev-btn danger" id="bodaFormDel">Eliminar</button>';
   h+='<button class="ev-btn primary" id="bodaFormSave">Guardar</button>';
