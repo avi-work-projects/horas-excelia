@@ -35,7 +35,7 @@ var EV_FILTER_GROUPS = ['Grandes','Asturias','Rec. Gestiones','WM + Rut','Resto'
 /* WM = Wedding Moves (las clases de baile de boda) + Rut = rutinas */
 /* Etiquetas cortas a proposito: con los nombres largos los chips se caian
    a una segunda fila en pantallas estrechas. Asturias va con su bandera. */
-var EV_FILTER_SHORT  = {'Grandes':'Grande','Asturias':'<svg class="ev-chip-flag" viewBox="0 0 26 16" aria-label="Asturias"><rect width="26" height="16" rx="2.5" fill="#1454c4"/><path d="M11.9,2.4 L14.1,2.4 L13.75,6 L17.7,5.5 L17.7,8.3 L13.75,7.8 L14.3,13.6 L11.7,13.6 L12.25,7.8 L8.3,8.3 L8.3,5.5 L12.25,6 Z" fill="#ffd83d"/></svg>','Rec. Gestiones':'Gesti&oacute;n',
+var EV_FILTER_SHORT  = {'Grandes':'Grande','Asturias':'<img class="ev-chip-flag" src="css/asturias.svg" alt="Asturias">','Rec. Gestiones':'Gesti&oacute;n',
   'WM + Rut':'WM/Rut','Resto':'Resto','Cumplea\u00f1os VIP':'\u2b50'};
 var EV_FILTER_COLOR  = {'Grandes':'#38bdf8','Asturias':'#1d4ed8','Rec. Gestiones':'#34d399',
   'WM + Rut':'#c08a5a','Resto':'#ff6b6b','Cumplea\u00f1os VIP':'#fbbf24'};
@@ -528,9 +528,10 @@ function _evBarSegments(it,lista,inMonth){
       if(b===it)lane=k;
     });
     var n=lanes.length,inside=inMonth?inMonth[day]:true;
+    var overlap=lista.some(function(b){return b!==it&&b.cs<=day&&b.ce>=day;});
     var prev=out[out.length-1];
-    if(prev&&prev.n===n&&prev.lane===lane&&prev.dentro===inside)prev.ce=day;
-    else out.push({cs:day,ce:day,n:n,lane:lane,dentro:inside});
+    if(prev&&prev.n===n&&prev.lane===lane&&prev.dentro===inside&&prev.overlap===overlap)prev.ce=day;
+    else out.push({cs:day,ce:day,n:n,lane:lane,dentro:inside,overlap:overlap});
   }
   return out;
 }
@@ -617,9 +618,14 @@ function _evSteppedBar(it,segments,annual,showTitle,pastClass){
     var commonBottom=Math.min.apply(null,pts.map(function(p){return p.bottom;}));
     /* El titulo aprovecha toda la longitud si existe una franja comun. */
     if(commonBottom-commonTop>=70)label={x:0,end:1000,top:commonTop,bottom:commonBottom};
+    var halo='<path d="'+path+'" fill="none" stroke="var(--bg)" stroke-width="4" vector-effect="non-scaling-stroke"/>';
+    if(evBarSize(it.ev)==='lg')halo=g.filter(function(tr){return tr.overlap;}).map(function(tr){
+      var left=100*(tr.cs-first.cs)/days,right=100*(last.ce-tr.ce)/days;
+      return '<g style="clip-path:inset(0 '+right+'% 0 '+left+'%)">'+halo+'</g>';
+    }).join('');
     return '<div class="'+(annual?'ev-annual-mbar':'ev-multi-bar')+' ev-stepped-bar '+evBarSizeCls(it.ev)+(pastClass||'')+'" data-id="'+it.ev.id+'"'
       +' style="grid-column:'+(first.cs+1)+'/'+(last.ce+2)+';grid-row:1;z-index:'+evBarZ(it.ev)+med+'">'
-      +'<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">'+('<path d="'+path+'" fill="none" stroke="var(--bg)" stroke-width="4" vector-effect="non-scaling-stroke"/>')+'<path d="'+path+'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+(annual?1:1.5)+'" vector-effect="non-scaling-stroke"/></svg>'
+      +'<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">'+halo+'<path d="'+path+'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+(annual?1:1.5)+'" vector-effect="non-scaling-stroke"/></svg>'
       +(showTitle&&gi===titleGroup?'<span title="'+escHtml(it.ev.title)+'" style="left:'+label.x/10+'%;width:'+(label.end-label.x)/10+'%;top:'+label.top/10+'%;height:'+(label.bottom-label.top)/10+'%;'+(it.labelTop?'align-content:start;padding-top:1px;':'')+'">'+escHtml(it.ev.title)+'</span>':'')+'</div>';
   }).join('');
 }

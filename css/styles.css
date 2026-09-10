@@ -2340,6 +2340,9 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
   .ev-view-toggle,.boda-chip,.ev-sort-chip,.bday-vip-chip{min-height:34px}
   .boda-mini-btn,.bday-ic-btn{min-height:32px;min-width:32px}
 }
-[data-theme="light"] .ev-zone-a .ev-view-toggle:not(.active){color:#3864a3}
-[data-theme="light"] .ev-zone-b .ev-view-toggle:not(.active){color:#177454}
-[data-theme="light"] .bday-upcoming-bell{color:var(--text-muted)}
+
+.macro-url-input[readonly]{cursor:default;border-color:transparent;background:transparent;color:var(--text-muted)}
+.settings-edit-btn{color:var(--c-orange)}
+.ev-filter-chip:has(.ev-chip-flag){padding:0;width:34px;overflow:hidden;background:#06f!important;border-color:#06f!important}
+.ev-chip-flag{width:100%;height:100%;border-radius:0;object-fit:cover}
+.ev-multi-bar.ev-bar-lg.ev-bar-alone,.ev-annual-mbar.ev-bar-lg.ev-bar-alone{box-shadow:none}
