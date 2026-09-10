@@ -401,6 +401,7 @@ var _g4=document.getElementById('exportAllBtn'); if(_g4)_g4.addEventListener('cl
   showToast('Backup completo exportado','success');
 });
 var _g5=document.getElementById('importAllBtn'); if(_g5)_g5.addEventListener('click',function(){
+  document.getElementById('dataMenu').classList.remove('open');
   document.getElementById('importAllFile').click();
 });
 var _g6=document.getElementById('importAllFile'); if(_g6)_g6.addEventListener('change',function(ev){

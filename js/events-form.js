@@ -577,7 +577,7 @@ function bindEvFormEvents(){
     }
     if(EV_EDIT&&EV_EDIT.boda)_newEv.boda=EV_EDIT.boda;
     var _full=evDayLimitExceeded(_newEv,EV_EDIT?EV_EDIT.id:null);
-    if(_full){showToast('El '+_fmtDayEs(_full)+' ya tiene '+EV_MAX_PUNT_DIA+' eventos puntuales (el m\u00e1ximo)','error');return;}
+    if(_full){showToast('El '+_fmtDayEs(_full)+(isEvBarAlways(_newEv)?' ya tiene 2 eventos grandes de ese grosor':(' ya tiene '+EV_MAX_PUNT_DIA+' eventos puntuales (el m\u00e1ximo)')),'error');return;}
     if(EV_EDIT){
       var idx=-1;
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===EV_EDIT.id){idx=i;break;}}

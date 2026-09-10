@@ -1200,3 +1200,61 @@ estaba escrito antes**.
 - `.data-btn.events-active` / `.nav-bar-btn.events-active` — brillo azul + punto verde en todos los navbars
 - `.day-cell.h7/.h8/.h9` — colores por horas en celda del día (ámbar/azul/verde)
 - `.col-base/.col-iva/.col-irpf/.col-net` — colores en ventana económica
+
+
+## Barras por tramos: solapamiento local (revisión posterior a v288)
+Los tres calendarios usan `_evBarSegments(it, lista, inMonth)` y
+`_evBarSegmentStyle(ev, tramo, annual)` de events.js. La primera calcula
+ocupación por día y grosor, y agrupa columnas contiguas con el mismo reparto.
+La segunda coloca cada tramo en una banda: gruesa centrada, media contenida
+verticalmente y fina cerca de la base del día. Sustituye el reparto antiguo
+por filas de semana y la regla de apoyar todos los grosores en la misma base.
+
+Solo los días compartidos se estrechan; los extremos sin coincidencia conservan
+su altura. Los tramos se pintan en una única fila de rejilla. Conservan `data-id`
+para que cualquier parte abra el mismo evento. Un relevo de media casilla exige
+que coincidan las fechas reales de fin/inicio, no solo los extremos recortados.
+Los ejemplos privados de comprobación viven en `.local-preview/`, excluido de Git.
+
+### Contorno continuo en los escalones
+Cuando cambia la ocupación dentro de una semana, `_evSteppedBar` dibuja un
+único path SVG por evento (solo se corta aparte al cambiar de mes para apagar
+los días externos). Evita las costuras que producían los bordes y los gaps de
+varias cajas contiguas. `_evBarBand` comparte las alturas con las barras simples.
+El trazo usa `non-scaling-stroke`; solo la superficie pintada recibe clics,
+para que la caja transparente no intercepte los marcadores puntuales.
+
+### Revisión de relevos y agenda (preferencia actual)
+«Otros» grande también comparte media casilla en un relevo, siempre que el
+grosor coincida. Los demás tipos mantienen su política anterior. Un relevo
+compara fin/inicio reales: una coincidencia de varios días sigue siendo un
+solapamiento, aunque la semana solo deje ver una columna.
+
+Las siluetas compartidas de 1 mes usan contorno blanco fino, esquinas
+redondeadas (también en los escalones) y un título sobre la franja común a
+los tramos, aprovechando toda la longitud disponible. Si un nombre no cabe,
+se usa elipsis y la ficha conserva el título completo.
+
+En agenda semanal, los grandes que coinciden con otro durante el mes se
+muestran como tarjetas por día con borde de color y nombre completo; los
+fondos continuos se conservan para los que no coinciden. Se reutiliza el
+listener de `.ev-wk-chip[data-id]` para abrir la ficha.
+
+### Agenda: carriles continuos (sustituye las tarjetas por día)
+`_evWeekLanes` reparte en columnas estables los grandes conectados por un
+solapamiento. Cada evento sigue siendo una caja que abarca sus fechas reales;
+no se duplica como tarjeta diaria. Los chips de ensayos y rutinas mantienen su
+capa por encima. Los grupos sin coincidencias conservan el ancho completo.
+
+`_evBarExtent` es la única fuente de las alturas de cada tramo: el hueco se
+reserva solo en los bordes interiores, conservando techo y base exteriores.
+Los extremos exteriores del SVG usan arcos de media altura, como una pastilla;
+las esquinas de los escalones usan un radio pequeño.
+
+### Continuidad de barras al cambiar de semana o mes
+Los extremos se redondean solo en las fechas reales de inicio y fin. `_evRoundedOutline` recibe ambos indicadores; un corte de semana o de opacidad entre meses queda recto. Los calendarios calculan `starts`/`ends` comparando las fechas reales con la primera y ultima casilla del tramo, tambien tras recortar al mes.
+
+Las barras finas tienen una banda inferior separada de las gruesas (`_evBarBand`). Para los dias ajenos al mes, `_evBarMutedColor` mezcla con el fondo sin transparencia: asi no aparecen bordes de casillas ni colores de otras barras dentro de sus extremos.
+
+### Grandes: dos por grosor y dia
+`EV_MAX_BAR_DIA=2` y `evBarLimitExceeded` comprueban altas y ediciones (excluyendo el evento editado). Se revisan los inicios de los intervalos coincidentes, sin limite de 400 dias. La importacion conserva datos antiguos. Las finas se apilan con su altura original solo durante la coincidencia y no comparten media casilla. Las medianas quedan dentro de las gruesas, cerca de su base; `labelTop` sube el titulo grueso cuando coincide una mediana. Todas las siluetas tienen un borde exterior del color de fondo.
