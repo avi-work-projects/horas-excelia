@@ -304,22 +304,23 @@ function openBodaDurationPicker(){
 }
 
 function bodaTeachersLabel(t){
-  var names=[];if(t.angel)names.push('Ángel');if(t.celia)names.push('Celia');if(t.substitute!=null)names.push('Sustituto');return names.join(' y ');
+  var names=[];if(t.angel)names.push(BODA_CONFIG.teacherNames.angel);if(t.celia)names.push(BODA_CONFIG.teacherNames.celia);if(t.substitute!=null)names.push('Sustituto');return escHtml(names.join(' y '));
 }
 function openBodaTeachersPicker(){
   var F=BODA_FORM;if(!F)return;
   var draft=JSON.parse(JSON.stringify(F.tmp.boda.teachers));
   var h='<div class="ev-detail-overlay" id="bodaTeachersOv"><div class="ev-detail-sheet"><div class="ev-detail-handle"></div><div class="boda-config-head"><button class="sy-back" id="bodaTeachersClose">&#8592;</button><h3>Profesores del ensayo</h3></div><div class="ev-bficha">';
-  [['angel','Ángel'],['celia','Celia'],['substitute','Sustituto']].forEach(function(t){h+='<label class="ev-bfila"><span class="ev-bfila-lbl">'+t[1]+'</span><span class="ev-bfila-val"><input type="checkbox" data-teacher="'+t[0]+'"'+((t[0]==='substitute'?draft.substitute!=null:draft[t[0]])?' checked':'')+'></span></label>';});
+  [['angel',BODA_CONFIG.teacherNames.angel],['celia',BODA_CONFIG.teacherNames.celia],['substitute','Sustituto']].forEach(function(t){h+='<label class="ev-bfila"><span class="ev-bfila-lbl">'+escHtml(t[1])+'</span><span class="ev-bfila-val"><input type="checkbox" data-teacher="'+t[0]+'"'+((t[0]==='substitute'?draft.substitute!=null:draft[t[0]])?' checked':'')+'></span></label>';});
   h+='</div><input class="ev-input" id="bodaTeacherName" maxlength="80" placeholder="Nombre del sustituto" aria-label="Nombre del sustituto" value="'+escHtml(draft.substitute||'')+'"'+(draft.substitute!=null?'':' hidden')+'><div class="ev-form-actions"><button class="ev-btn primary" id="bodaTeachersSave">Aceptar</button></div></div></div>';
   var close=function(){cerrarPanel('bodaTeachersWrap','bodaTeachersOv');};
   var w=abrirPanel('bodaTeachersWrap',h,{overlay:'bodaTeachersOv',alCerrar:close});
   w.querySelector('#bodaTeachersClose').onclick=close;
   w.querySelectorAll('[data-teacher]').forEach(function(input){input.onchange=function(){
     var k=input.dataset.teacher,next=Object.assign({},draft),name=w.querySelector('#bodaTeacherName');next[k]=k==='substitute'?(input.checked?name.value:null):input.checked;
-    if(k==='substitute'&&input.checked&&bodaTeacherCount(next)>2)next.celia=false;
+    if(k==='substitute'&&input.checked&&bodaTeacherCount(next)>2)next[(draft.lastSelected||'celia')==='angel'?'celia':'angel']=false;
     var count=bodaTeacherCount(next);if(count<1||count>2){input.checked=!input.checked;showToast(count<1?'Debe haber al menos un profesor':'Como máximo pueden ir dos profesores','error');return;}
-    draft=next;w.querySelector('[data-teacher=celia]').checked=!!draft.celia;name.hidden=draft.substitute==null;
+    if(k!=='substitute'&&input.checked)next.lastSelected=k;
+    draft=next;w.querySelector('[data-teacher=celia]').checked=!!draft.celia;w.querySelector('[data-teacher=angel]').checked=!!draft.angel;name.hidden=draft.substitute==null;
   };});
   w.querySelector('#bodaTeacherName').oninput=function(){draft.substitute=this.value;};
   w.querySelector('#bodaTeachersSave').onclick=function(){F.tmp.boda.teachers=draft;close();if(BODA_FORM===F)_bodaFormRender();};

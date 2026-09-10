@@ -124,3 +124,6 @@ El grupo interno WM + Rut se conserva por compatibilidad pero ahora solo contien
 ## Edición de profesores y catálogos (v305)
 La fila Duración abre openBodaDurationPicker y guarda en el borrador de clase. bodaTeacherCount limita la selección a 1–2 profesores; las nuevas clases usan Ángel y Celia. bodaTeacherStats cuenta clases finalizadas en cuatro grupos exclusivos: ambos, solo Celia, solo Ángel y con sustituto. El cierre diferido de la ficha comprueba identidad del borrador para no borrar otra clase recién abierta.
 Los catálogos muestran fichas con cabecera (nombre/editar) y estado debajo; borrar se ofrece solo dentro del editor de una opción sin referencias. Las subpestañas de Bodas usan ancho de contenido y space-between para igualar espacios entre etiquetas, conservando altura y tipografía constantes.
+
+## Preferencias de Bodas (v307)
+BODA_CONFIG.teacherNames permite renombrar los dos profesores conservando los IDs angel/celia de las clases. teachers.lastSelected recuerda el ultimo titular marcado y lo conserva al introducir sustituto. defaultPlace elige la sala inicial entre activas (los datos antiguos siguen usando Casa). Ambos ajustes viajan en bodaConfig del backup y se validan al importar. renderBdayVipFilter se reutiliza en las cabeceras Proximos y Eventos; el cuerpo no duplica el control. El titulo WM usa el marron del boton.

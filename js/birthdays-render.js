@@ -1,3 +1,6 @@
+function renderBdayVipFilter(){
+  return '<div class="bday-header-vip"><label class="excl-item"><input type="checkbox" class="bday-up-vip"'+(BDAY_UP_VIP?' checked':'')+'> <img class="bday-vip-img" src="./VIP.png" alt="VIP"></label></div>';
+}
 function renderBdayUpcoming(){
   if(!BDAYS.length)return '<div class="sy-note">No hay cumplea\u00f1os cargados. Importa un archivo JSON o configura el secreto BIRTHDAYS en GitHub.</div>';
 
@@ -59,7 +62,7 @@ function renderBdayUpcoming(){
     return s+'</div>';
   }
 
-  var h='<div class="excl-row ev-up-filters"><label class="excl-item"><input type="checkbox" class="bday-up-vip"'+(BDAY_UP_VIP?' checked':'')+'> <img class="bday-vip-img" src="./VIP.png" alt="VIP"></label></div>';
+  var h='';
   if(prevItems.length){
     h+='<div class="bday-upcoming-section">';
     h+=renderGroup('Pasados',prevItems);
@@ -189,6 +192,7 @@ function renderBdayContent(){
   h+='<button class="sy-back" id="bdBack">&#8592;</button>';
   if(BDAY_VIEW==='upcoming'){
     h+='<div class="sy-year-nav"><div class="sy-year">Pr\u00f3ximos</div></div>';
+    h+=renderBdayVipFilter();
   } else if(BDAY_VIEW==='list'){
     h+='<div class="sy-year-nav"><div class="sy-year">Cumplea\u00f1os</div></div>';
     h+='<div class="sy-hdr-right"><button class="sy-pdf bd-export-btn" id="bdExport" '

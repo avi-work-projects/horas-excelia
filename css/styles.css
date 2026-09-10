@@ -2422,3 +2422,9 @@ button.action-edit.active,button.action-edit:active{background:rgba(251,146,60,.
 .boda-date-ficha #bodaFormDia::-webkit-datetime-edit{text-align:right}
 .boda-date-ficha .boda-multi-btn{margin:0 10px 10px;max-width:calc(100% - 20px)}
 #bodaTeachersOv #bodaTeacherName{margin-top:12px}
+
+.wm-logo-title{color:#b98760}
+[data-theme="light"] .wm-logo-title{color:#6d4826}
+.bday-header-vip{display:flex;align-items:center;justify-content:flex-end;margin-left:auto;flex-shrink:0}
+.bday-header-vip .excl-item{gap:5px;margin:0}
+.bday-header-vip img{width:24px;height:auto}

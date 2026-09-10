@@ -486,6 +486,7 @@ function renderEvContent(){
   h+='<button class="sy-back" id="evBack">&#8592;</button>';
   if(EV_VIEW==='upcoming'||EV_VIEW==='birthdays'){
     h+='<div class="sy-year-nav"><div class="sy-year">Eventos</div></div>';
+    if(EV_VIEW==='birthdays')h+=renderBdayVipFilter();
   } else if(EV_VIEW==='week'){
     h+='<div class="sy-year-nav"><button class="sy-nav" id="evPrev">&#9664;</button>';
     h+='<div class="sy-year sy-year-2line">'+MN[EV_MONTH]+'<span class="sy-year-sub">'+EV_YEAR+'</span></div>';
