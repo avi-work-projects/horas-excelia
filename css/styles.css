@@ -2344,6 +2344,6 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 
 .macro-url-input[readonly]{cursor:default;border-color:transparent;background:transparent;color:var(--text-muted)}
 .settings-edit-btn{color:var(--c-orange)}
-.ev-filter-chip:has(.ev-chip-flag){padding:0;width:34px;overflow:hidden;background:#06f!important;border-color:#06f!important}
+.ev-filter-chip:has(.ev-chip-flag){padding:0;width:34px;overflow:hidden;}
 .ev-chip-flag{width:100%;height:100%;border-radius:0;object-fit:cover}
 .ev-multi-bar.ev-bar-lg.ev-bar-alone,.ev-annual-mbar.ev-bar-lg.ev-bar-alone{box-shadow:none}
