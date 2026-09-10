@@ -80,13 +80,15 @@ test('Bodas: configurar pack, duracion, salas y exportar catalogos',async({page}
  await page.locator('[data-cfg-edit="places"][data-id="casa"]').click();await page.locator('#bodaCatalogName').fill('Mi casa');await page.locator('#bodaCatalogDesc').fill('Descripcion modificada');await page.locator('#bodaCatalogSave').click();
  await page.locator('[data-bsub="clases"]').click();await page.locator('#bodaAddClass').click();
  await expect(page.locator('#bodaFormDuration')).toContainText('20 min');
- await expect(page.locator('.ev-bficha #bodaFormDuration')).toHaveCount(1);await expect(page.locator('.ev-bficha [data-teacher]')).toHaveCount(3);
+ await expect(page.locator('.ev-bficha #bodaFormDuration')).toHaveCount(1);await expect(page.locator('#bodaFormOv .ev-bficha')).toHaveCount(3);await expect(page.locator('#bodaFormTeachers')).toContainText('Ángel y Celia');
  expect(await page.locator('#bodaFormDuration').evaluate(el=>!!(document.querySelector('[data-fcampo=pareja]').compareDocumentPosition(el)&Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
  await page.locator('#bodaFormDia').fill('2030-01-05');await page.locator('#bodaFormSave').click();
  expect(await page.evaluate(()=>EVENTS.find(e=>e.start==='2030-01-05').boda.duration)).toBe(20);
  await page.evaluate(()=>openBodaClaseForm(EVENTS.find(e=>e.id==='cls1')));
- await page.locator('[data-teacher=substitute]').click();await expect(page.locator('[data-teacher=substitute]')).not.toBeChecked();
- await page.locator('[data-teacher=celia]').uncheck();await page.locator('[data-teacher=angel]').click();await expect(page.locator('[data-teacher=angel]')).toBeChecked();await page.locator('[data-teacher=substitute]').check();await page.locator('#bodaTeacherName').fill('Profesora prueba');
+ await page.locator('#bodaFormTeachers').click();await page.locator('[data-teacher=substitute]').check();await expect(page.locator('[data-teacher=celia]')).not.toBeChecked();await expect(page.locator('[data-teacher=angel]')).toBeChecked();
+ await page.locator('[data-teacher=celia]').click();await expect(page.locator('[data-teacher=celia]')).not.toBeChecked();
+ await page.locator('[data-teacher=substitute]').uncheck();await page.locator('[data-teacher=angel]').click();await expect(page.locator('[data-teacher=angel]')).toBeChecked();await page.locator('[data-teacher=substitute]').check();await page.locator('#bodaTeacherName').fill('Profesora prueba');await page.locator('#bodaTeachersSave').click();
+ await expect(page.locator('#bodaFormTeachers')).toContainText('Ángel y Sustituto');
  await page.locator('#bodaFormDuration').click();await page.locator('[data-duration=dur-20]').click();await expect(page.locator('#bodaFormOv')).toContainText('18:20');await page.locator('#bodaFormSave').click();
  expect(await page.evaluate(()=>EVENTS.find(e=>e.id==='cls1').boda.duration)).toBe(20);
  await page.locator('#eventsContent').getByRole('button',{name:'Inicio',exact:true}).click();await page.locator('#menuBtn').click();

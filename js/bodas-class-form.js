@@ -32,12 +32,12 @@ function _bodaFormRender(){
     +(F.nuevo?'Nueva clase':'Editar clase')+'</div>';
   h+='<div style="width:36px"></div></div>';
   var _multi=(F.dates&&F.dates.length)?F.dates.slice().sort():null;
-  h+='<div class="ev-field"><label>\ud83d\udcc5 Día del ensayo</label>';
-  h+='<div class="boda-dia-row">';
+  h+='<div class="ev-bficha boda-date-ficha"><label class="ev-bfila"><span class="ev-bfila-lbl">\ud83d\udcc5 Día del ensayo</span>';
+
   h+='<input class="ev-input" id="bodaFormDia" type="date" value="'+F.ds+'"'+(_multi?' disabled':'')+'>';
+  h+='</label>';
   if(F.nuevo)h+='<button type="button" class="boda-multi-btn'+(_multi?' on':'')+'" id="bodaFormMulti">'
     +(_multi?(_multi.length+' días'):'Varios días')+'</button>';
-  h+='</div>';
   if(_multi){
     h+='<div class="boda-multi-lista">'+_multi.map(function(d){return _bodaFmtCorto(d);}).join(' \u00b7 ')
       +' <button type="button" class="boda-multi-x" id="bodaFormMultiX">quitar</button></div>';
@@ -57,10 +57,8 @@ function _bodaFormRender(){
     +'<span class="ev-bfila-val">'
     +(c?('<span class="ev-bpunto" style="background:'+c.color+'"></span>'+escHtml(c.name)):'\u26a0 Sin asignar')
     +'</span></button>';
-  var teachers=b.teachers;
-  h+='<div class="ev-bfila boda-field-row"><span class="ev-bfila-lbl">Profesores</span><div class="boda-field-controls"><div class="boda-teachers excl-row">';
-  [['celia','Celia'],['angel','Ángel'],['substitute','Sustituto']].forEach(function(t){h+='<label class="excl-item"><input type="checkbox" data-teacher="'+t[0]+'"'+((t[0]==='substitute'?teachers.substitute!=null:teachers[t[0]])?' checked':'')+'> '+t[1]+'</label>';});
-  h+='</div><input class="ev-input" id="bodaTeacherName" maxlength="80" placeholder="Nombre del sustituto" aria-label="Nombre del sustituto" value="'+escHtml(teachers.substitute||'')+'"'+(teachers.substitute!=null?'':' hidden')+'></div></div>';
+  h+='</div><div class="ev-bficha">';
+  h+='<button type="button" class="ev-bfila" id="bodaFormTeachers"><span class="ev-bfila-lbl">Profesores</span><span class="ev-bfila-val">'+bodaTeachersLabel(b.teachers)+'</span></button>';
   h+='<button type="button" class="ev-bfila" id="bodaFormDuration"><span class="ev-bfila-lbl">Duración</span><span class="ev-bfila-val">'+b.duration+' min</span></button></div>';
   h+='<div class="ev-detail-actions">';
   if(!F.nuevo)h+='<button class="ev-btn danger" id="bodaFormDel">Eliminar</button>';
@@ -70,14 +68,7 @@ function _bodaFormRender(){
   bodaOpenSheet('bodaFormWrap','bodaFormOv',h,closeBodaClaseForm);
   document.getElementById('bodaFormClose').addEventListener('click',closeBodaClaseForm);
   var dia=document.getElementById('bodaFormDia');
-  document.querySelectorAll('[data-teacher]').forEach(function(input){input.onchange=function(){
-    var k=input.dataset.teacher,next=Object.assign({},teachers),name=document.getElementById('bodaTeacherName');
-    next[k]=k==='substitute'?(input.checked?name.value:null):input.checked;
-    var count=bodaTeacherCount(next);if(count<1||count>2){input.checked=!input.checked;showToast(count<1?'Debe haber al menos un profesor':'Como máximo pueden ir dos profesores','error');return;}
-    teachers[k]=next[k];if(k==='substitute')name.hidden=!input.checked;
-  };});
-  document.getElementById('bodaTeacherName').oninput=function(){teachers.substitute=this.value;};
-
+  document.getElementById('bodaFormTeachers').onclick=function(){F.ds=dia.value||F.ds;openBodaTeachersPicker();};
   document.getElementById('bodaFormDuration').onclick=function(){F.ds=dia.value||F.ds;openBodaDurationPicker();};
   dia.addEventListener('change',function(){F.ds=this.value||F.ds;F.tmp.start=F.ds;});
   /* Multidia: el mismo selector que usa la categoria "Otros" del formulario
@@ -310,4 +301,26 @@ function openBodaDurationPicker(){
   var close=function(){cerrarPanel('bodaDurationWrap','bodaDurationOv');};
   var w=abrirPanel('bodaDurationWrap',h,{overlay:'bodaDurationOv',alCerrar:close});w.querySelector('#bodaDurationClose').onclick=close;
   w.querySelectorAll('[data-duration]').forEach(function(btn){btn.onclick=function(){var d=BODA_CONFIG.durations.find(function(x){return x.id===btn.dataset.duration;});b.duration=d.minutes;b.durationId=d.id;close();_bodaFormRender();};});
+}
+
+function bodaTeachersLabel(t){
+  var names=[];if(t.angel)names.push('Ángel');if(t.celia)names.push('Celia');if(t.substitute!=null)names.push('Sustituto');return names.join(' y ');
+}
+function openBodaTeachersPicker(){
+  var F=BODA_FORM;if(!F)return;
+  var draft=JSON.parse(JSON.stringify(F.tmp.boda.teachers));
+  var h='<div class="ev-detail-overlay" id="bodaTeachersOv"><div class="ev-detail-sheet"><div class="ev-detail-handle"></div><div class="boda-config-head"><button class="sy-back" id="bodaTeachersClose">&#8592;</button><h3>Profesores del ensayo</h3></div><div class="ev-bficha">';
+  [['angel','Ángel'],['celia','Celia'],['substitute','Sustituto']].forEach(function(t){h+='<label class="ev-bfila"><span class="ev-bfila-lbl">'+t[1]+'</span><span class="ev-bfila-val"><input type="checkbox" data-teacher="'+t[0]+'"'+((t[0]==='substitute'?draft.substitute!=null:draft[t[0]])?' checked':'')+'></span></label>';});
+  h+='</div><input class="ev-input" id="bodaTeacherName" maxlength="80" placeholder="Nombre del sustituto" aria-label="Nombre del sustituto" value="'+escHtml(draft.substitute||'')+'"'+(draft.substitute!=null?'':' hidden')+'><div class="ev-form-actions"><button class="ev-btn primary" id="bodaTeachersSave">Aceptar</button></div></div></div>';
+  var close=function(){cerrarPanel('bodaTeachersWrap','bodaTeachersOv');};
+  var w=abrirPanel('bodaTeachersWrap',h,{overlay:'bodaTeachersOv',alCerrar:close});
+  w.querySelector('#bodaTeachersClose').onclick=close;
+  w.querySelectorAll('[data-teacher]').forEach(function(input){input.onchange=function(){
+    var k=input.dataset.teacher,next=Object.assign({},draft),name=w.querySelector('#bodaTeacherName');next[k]=k==='substitute'?(input.checked?name.value:null):input.checked;
+    if(k==='substitute'&&input.checked&&bodaTeacherCount(next)>2)next.celia=false;
+    var count=bodaTeacherCount(next);if(count<1||count>2){input.checked=!input.checked;showToast(count<1?'Debe haber al menos un profesor':'Como máximo pueden ir dos profesores','error');return;}
+    draft=next;w.querySelector('[data-teacher=celia]').checked=!!draft.celia;name.hidden=draft.substitute==null;
+  };});
+  w.querySelector('#bodaTeacherName').oninput=function(){draft.substitute=this.value;};
+  w.querySelector('#bodaTeachersSave').onclick=function(){F.tmp.boda.teachers=draft;close();if(BODA_FORM===F)_bodaFormRender();};
 }
