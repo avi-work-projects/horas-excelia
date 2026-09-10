@@ -1261,3 +1261,6 @@ Las barras finas tienen una banda inferior separada de las gruesas (`_evBarBand`
 
 ### Cumpleanos dentro de Eventos (v290)
 `EV_VIEW='birthdays'` reutiliza `renderBdayUpcoming` y `bindBdayUpcoming(root)`. No duplicar su contenido ni sus gestos. `bdayPanelHost` elige la ventana visible para alarma y edicion. Alcance actual (v291): cuatro dias pasados, hoy y catorce siguientes. El resumen de inicio avisa de todos los cumpleanos entre hoy y dentro de siete dias, solo si no tienen alarma, sean VIP o no.
+
+### Estilo compartido de Cumpleanos (v292)
+Las tres vistas usan `.ev-view-toggle` con zonas A (listas) y B (calendario), y `.sy-header-center`. Nombres de Proximos y numeros de Lista usan texto neutro. `_evSwipeUpcoming` recorre Proximos/Cumpleanos/Todos sin ciclo; `addSwipe` conserva la proteccion de paneles anidados. Los filtros de Todos usan `.ev-sort-chip` con acento general; el marron queda reservado a Bodas.

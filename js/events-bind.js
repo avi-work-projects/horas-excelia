@@ -406,7 +406,7 @@ function _bindEvListas(){
   }
   var _srchX=document.getElementById('evListSearchX');
   if(_srchX)_srchX.addEventListener('click',function(){EV_LIST_SEARCH='';refreshEvents();});
-  document.querySelectorAll('.ev-sort-row .boda-chip[data-sort]').forEach(function(b){
+  document.querySelectorAll('.ev-sort-row .ev-sort-chip[data-sort]').forEach(function(b){
     b.addEventListener('click',function(){EV_LIST_SORT=b.dataset.sort;refreshEvents();});
   });
   var pastChk=document.getElementById('evTypesPast');
@@ -502,9 +502,19 @@ function _bindEvListas(){
 function _bindEvGestos(){
   /* Swipe: navegar en el tiempo (el botón evPrev/evNext solo existe en vistas con nav) */
   addSwipe(document.getElementById('eventsOverlay'),function(){
+    if(_evSwipeUpcoming(1))return;
     var b=document.getElementById('evNext');if(b)b.click();
   },function(){
+    if(_evSwipeUpcoming(-1))return;
     var b=document.getElementById('evPrev');if(b)b.click();
   });
   requestAnimationFrame(function(){ _positionEvBright(); });
+}
+
+/* Orden visual de las tres subpestanas; no se vuelve al inicio al llegar al borde. */
+function _evSwipeUpcoming(step){
+  var views=['upcoming','birthdays','months'],i=views.indexOf(EV_VIEW);
+  if(i<0)return false;
+  if(views[i+step]){_switchEvView(views[i+step]);refreshEvents(false);}
+  return true;
 }

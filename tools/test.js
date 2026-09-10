@@ -540,6 +540,21 @@ REGLAS.push(['inicio: todos los cumpleanos a 7 dias sin alarma',function(){
   return content.innerHTML.includes('Normal cercano')&&content.innerHTML.includes('VIP cercano')&&!content.innerHTML.includes('Ya avisado')&&!content.innerHTML.includes('Fuera plazo');
 }]);
 
+REGLAS.push(['swipe proximos: orden, extremos y modal protegido',function(){
+  const ctx=cargarApp(claves),handlers={},el={addEventListener:(name,fn)=>{handlers[name]=fn;}};
+  require('vm').runInContext(fs.readFileSync(path.join(RAIZ,'js/events-bind.js'),'utf8'),ctx);
+  ctx.document.getElementById=id=>id==='eventsOverlay'?el:null;
+  ctx.refreshEvents=()=>{};ctx._switchEvView=view=>{ctx.EV_VIEW=view;};
+  ctx.requestAnimationFrame=()=>{};ctx._bindEvGestos();ctx.EV_VIEW='upcoming';
+  function swipe(dx,target){handlers.touchstart({target:target||el,touches:[{clientX:150,clientY:100}]});handlers.touchend({changedTouches:[{clientX:150+dx,clientY:105}]});}
+  swipe(-100);if(ctx.EV_VIEW!=='birthdays')return false;
+  swipe(-100);if(ctx.EV_VIEW!=='months')return false;
+  swipe(-100);if(ctx.EV_VIEW!=='months')return false;
+  swipe(100);if(ctx.EV_VIEW!=='birthdays')return false;
+  const panel={nodeType:1,parentNode:el,classList:{contains:c=>c==='bd-alarm-overlay'}};
+  swipe(100,panel);return ctx.EV_VIEW==='birthdays';
+}]);
+
 let okR = 0;
 for (const [nombre, fn] of REGLAS) {
   if (FILTRO) break;

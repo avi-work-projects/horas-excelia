@@ -230,7 +230,7 @@ function renderEvByTypes(){
   /* Solo interesa lo mas cercano primero; el orden inverso se quito */
   if(EV_LIST_SORT==='fecha-desc')EV_LIST_SORT='fecha';
   [['fecha','Por fecha'],['categoria','Por categoría']].forEach(function(o){
-    h+='<button class="boda-chip'+(EV_LIST_SORT===o[0]?' active':'')+'" data-sort="'+o[0]+'">'+o[1]+'</button>';
+    h+='<button class="ev-sort-chip'+(EV_LIST_SORT===o[0]?' active':'')+'" data-sort="'+o[0]+'">'+o[1]+'</button>';
   });
   h+='</div>';
   h+='<div class="ev-types-controls">';
