@@ -7,12 +7,12 @@ var GASTOS_TOGGLES={}; // id → bool (true = incluido en cascade)
 
 function loadGastosToggles(){
   try{
-    var r=localStorage.getItem(GASTOS_TOGGLES_SK);
+    var r=appStorage.getItem(GASTOS_TOGGLES_SK);
     if(r)GASTOS_TOGGLES=JSON.parse(r);
   }catch(e){}
 }
 function saveGastosToggles(){
-  try{localStorage.setItem(GASTOS_TOGGLES_SK,JSON.stringify(GASTOS_TOGGLES));}catch(e){}
+  try{appStorage.setItem(GASTOS_TOGGLES_SK,JSON.stringify(GASTOS_TOGGLES));}catch(e){}
 }
 function isTglOn(id){
   return GASTOS_TOGGLES[id]!==false; // por defecto ON

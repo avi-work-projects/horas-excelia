@@ -257,7 +257,7 @@ var _g2=document.getElementById('pdfExportBtn'); if(_g2)_g2.addEventListener('cl
 /* Lee una clave de localStorage ya parseada. Se usa al exportar para no
    depender de que la variable en memoria este cargada. */
 function _lsJson(key,fallback){
-  try{var r=localStorage.getItem(key);if(r)return JSON.parse(r);}catch(e){}
+  try{var r=appStorage.getItem(key);if(r)return JSON.parse(r);}catch(e){}
   return fallback;
 }
 
@@ -301,22 +301,11 @@ function _mergeMap(cur,inc){
    firma que uno que ya existe, se considera el mismo y se actualiza en vez de
    duplicarse (caso tipico: exportar desde otro dispositivo). */
 function _mergeList(cur,inc,keyFn,sigFn){
-  if(!Array.isArray(cur))return Array.isArray(inc)?inc.slice():[];
-  if(!Array.isArray(inc))return cur.slice();
-  var out=cur.slice(),idx={},sig={};
-  out.forEach(function(it,i){
-    idx[keyFn(it)]=i;
-    if(sigFn)sig[sigFn(it)]=i;
-  });
-  inc.forEach(function(it){
-    var k=keyFn(it);
-    if(idx[k]!==undefined){out[idx[k]]=it;if(sigFn)sig[sigFn(it)]=idx[k];return;}
-    if(sigFn){
-      var sg=sigFn(it),j=sig[sg];
-      if(j!==undefined){out[j]=it;return;}
-      sig[sg]=out.length;
-    }
-    idx[k]=out.length;out.push(it);
+  var out=Array.isArray(cur)?cur.slice():[];
+  (Array.isArray(inc)?inc:[]).forEach(function(it){
+    var k=keyFn(it),i=out.findIndex(function(x){return keyFn(x)===k;});
+    if(i<0&&sigFn)i=out.findIndex(function(x){return sigFn(x)===sigFn(it);});
+    if(i<0)out.push(it);else{if(out[i].id)it.id=out[i].id;out[i]=it;}
   });
   return out;
 }
@@ -337,11 +326,11 @@ function _keyGasto(it){
 /* Helper: export all per-year keys with a given prefix */
 function _exportPerYearKeys(baseKey){
   var result={};
-  for(var i=0;i<localStorage.length;i++){
-    var k=localStorage.key(i);
+  for(var i=0;i<appStorage.length;i++){
+    var k=appStorage.key(i);
     if(k&&k.indexOf(baseKey+'-')===0){
       var y=k.substring(k.lastIndexOf('-')+1);
-      try{result[y]=JSON.parse(localStorage.getItem(k));}catch(e){}
+      try{result[y]=JSON.parse(appStorage.getItem(k));}catch(e){}
     }
   }
   return Object.keys(result).length?result:null;
@@ -360,7 +349,7 @@ var _g4=document.getElementById('exportAllBtn'); if(_g4)_g4.addEventListener('cl
   if(typeof loadPersonalYear==='function')loadPersonalYear(CY);
   if(typeof loadEconComp==='function')loadEconComp();
   if(typeof loadEvAlarms==='function')loadEvAlarms();
-  var data={version:5,days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
+  var data={version:6,mailConfig:_lsJson(MAIL_CFG_SK,null),days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
     exclFest:EXCL_FEST,exclVac:EXCL_VAC,vacEntitlement:VAC_ENTITLEMENT,
     birthdays:BDAYS,events:EVENTS,
     bodas:typeof BODA_COUPLES!=='undefined'?BODA_COUPLES:null,
@@ -389,11 +378,11 @@ var _g4=document.getElementById('exportAllBtn'); if(_g4)_g4.addEventListener('cl
     multiRate:typeof ECON_MULTI_RATE!=='undefined'?ECON_MULTI_RATE:null,
     ratePeriods:typeof ECON_RATE_PERIODS!=='undefined'?ECON_RATE_PERIODS:null,
     econYearConfig:typeof ECON_YEAR_CONFIG!=='undefined'?ECON_YEAR_CONFIG:null,
-    macroUrl:localStorage.getItem('excelia-alarm-url')||null,
-    alarmHour:localStorage.getItem('excelia-alarm-h')||null,
-    alarmMinute:localStorage.getItem('excelia-alarm-m')||null,
-    alarmDays:localStorage.getItem('excelia-alarm-days')||null,
-    theme:localStorage.getItem('excelia-theme-v1')||null};
+    macroUrl:appStorage.getItem('excelia-alarm-url')||null,
+    alarmHour:appStorage.getItem('excelia-alarm-h')||null,
+    alarmMinute:appStorage.getItem('excelia-alarm-m')||null,
+    alarmDays:appStorage.getItem('excelia-alarm-days')||null,
+    theme:appStorage.getItem('excelia-theme-v1')||null};
   var a=document.createElement('a');
   a.href='data:application/json,'+encodeURIComponent(JSON.stringify(data,null,2));
   a.download='horas-excelia-backup.json';
@@ -417,9 +406,13 @@ var _g6=document.getElementById('importAllFile'); if(_g6)_g6.addEventListener('c
   ev.target.value='';
 });
 function _applyFullImport(d,mode){
+    var memory={};
+    Object.keys(window).forEach(function(k){if(/^[A-Z][A-Z_0-9]*$/.test(k)){try{var v=window[k];if(v!==undefined&&typeof v!=='function')memory[k]=JSON.parse(JSON.stringify(v));}catch(e){}}});
     var merge=(mode==='merge');
     var _impRes=null;
     try{
+      d=prepareImportRelations(validateImport(d),merge);
+      appStorage.begin();
       if(d.days)ST=merge?_mergeMap(ST,d.days):d.days;
       if(d.sent)SW=merge?_mergeMap(SW,d.sent):d.sent;
       if(d.monthH)MONTH_H=merge?_mergeMap(MONTH_H,d.monthH):d.monthH;
@@ -427,7 +420,7 @@ function _applyFullImport(d,mode){
       if(typeof d.exclFest!=='undefined')EXCL_FEST=d.exclFest;
       if(typeof d.exclVac!=='undefined')EXCL_VAC=d.exclVac;
       if(d.vacEntitlement){VAC_ENTITLEMENT=d.vacEntitlement;saveVacEntitlement(d.vacEntitlement);}
-      if(d.birthdays&&Array.isArray(d.birthdays)){BDAYS=merge?_mergeList(BDAYS,d.birthdays,_keyBday):d.birthdays;localStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));}
+      if(d.birthdays&&Array.isArray(d.birthdays)){BDAYS=merge?_mergeList(BDAYS,d.birthdays,_keyBday):d.birthdays;appStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));}
       if(d.events&&Array.isArray(d.events)){
         /* Los eventos se fusionan con firma de contenido: mismo titulo, tipo y
            fechas = mismo evento aunque venga con otro id */
@@ -446,13 +439,13 @@ function _applyFullImport(d,mode){
         saveRutinas();}
       if(d.bdayAlarmCount&&typeof BDAY_ALARM_COUNT!=='undefined'){
         BDAY_ALARM_COUNT=merge?_mergeMap(BDAY_ALARM_COUNT,d.bdayAlarmCount):d.bdayAlarmCount;
-        try{localStorage.setItem('excelia-bday-alarm-count',JSON.stringify(BDAY_ALARM_COUNT));}catch(e){}}
+        try{appStorage.setItem('excelia-bday-alarm-count',JSON.stringify(BDAY_ALARM_COUNT));}catch(e){}}
       if(d.gastosToggles){
         try{
           var _gt=d.gastosToggles;
-          if(merge){var _prevGt=null;try{_prevGt=JSON.parse(localStorage.getItem('excelia-gastos-tgl-v1'));}catch(e2){}
+          if(merge){var _prevGt=null;try{_prevGt=JSON.parse(appStorage.getItem('excelia-gastos-tgl-v1'));}catch(e2){}
             if(_prevGt&&typeof _prevGt==='object'&&!Array.isArray(_prevGt))_gt=_mergeMap(_prevGt,_gt);}
-          localStorage.setItem('excelia-gastos-tgl-v1',JSON.stringify(_gt));
+          appStorage.setItem('excelia-gastos-tgl-v1',JSON.stringify(_gt));
         }catch(e){}}
       if(d.fiscal&&typeof FISCAL!=='undefined'&&typeof saveFiscal==='function'){
         FISCAL.irpfMode=d.fiscal.irpfMode||'fixed';
@@ -488,41 +481,43 @@ function _applyFullImport(d,mode){
         try{
           var k='excelia-gastos-v1-'+y,val=d.gastosPerYear[y];
           if(merge&&Array.isArray(val)){
-            var prev=null;try{prev=JSON.parse(localStorage.getItem(k));}catch(e2){}
+            var prev=null;try{prev=JSON.parse(appStorage.getItem(k));}catch(e2){}
             if(Array.isArray(prev))val=_mergeList(prev,val,_keyGasto);
           }
-          localStorage.setItem(k,JSON.stringify(val));
+          appStorage.setItem(k,JSON.stringify(val));
         }catch(e){}
       });}
       if(d.personalPerYear){Object.keys(d.personalPerYear).forEach(function(y){
         try{
           var k2='excelia-personal-v1-'+y,val2=d.personalPerYear[y];
           if(merge&&val2&&typeof val2==='object'&&!Array.isArray(val2)){
-            var prev2=null;try{prev2=JSON.parse(localStorage.getItem(k2));}catch(e3){}
+            var prev2=null;try{prev2=JSON.parse(appStorage.getItem(k2));}catch(e3){}
             if(prev2&&typeof prev2==='object')val2=_mergeMap(prev2,val2);
           }
-          localStorage.setItem(k2,JSON.stringify(val2));
+          appStorage.setItem(k2,JSON.stringify(val2));
         }catch(e){}
       });}
       if(d.scenarios&&Array.isArray(d.scenarios)&&typeof saveEconComp==='function'){ECON_SCENARIOS=merge?_mergeList(ECON_SCENARIOS,d.scenarios,_keyGasto):d.scenarios;saveEconComp();}
       if(d.evAlarms&&typeof EV_ALARMS_SET!=='undefined'){EV_ALARMS_SET=merge?_mergeMap(EV_ALARMS_SET,d.evAlarms):d.evAlarms;if(typeof saveEvAlarms==='function')saveEvAlarms();}
-      if(d.bdayAlarms&&typeof BDAY_ALARM_SET!=='undefined'){BDAY_ALARM_SET=merge?_mergeMap(BDAY_ALARM_SET,d.bdayAlarms):d.bdayAlarms;localStorage.setItem('excelia-bday-alarm-set',JSON.stringify(BDAY_ALARM_SET));}
-      if(d.macroUrl)localStorage.setItem('excelia-alarm-url',d.macroUrl);
-      if(d.alarmHour)localStorage.setItem('excelia-alarm-h',d.alarmHour);
-      if(d.alarmMinute)localStorage.setItem('excelia-alarm-m',d.alarmMinute);
-      if(d.alarmDays)localStorage.setItem('excelia-alarm-days',d.alarmDays);
-      if(d.theme)localStorage.setItem('excelia-theme-v1',d.theme);
+      if(d.bdayAlarms&&typeof BDAY_ALARM_SET!=='undefined'){BDAY_ALARM_SET=merge?_mergeMap(BDAY_ALARM_SET,d.bdayAlarms):d.bdayAlarms;appStorage.setItem('excelia-bday-alarm-set',JSON.stringify(BDAY_ALARM_SET));}
+      if(d.mailConfig){appStorage.setItem(MAIL_CFG_SK,JSON.stringify(d.mailConfig));loadMailConfig();}
+      if(d.macroUrl)appStorage.setItem('excelia-alarm-url',d.macroUrl);
+      if(d.alarmHour)appStorage.setItem('excelia-alarm-h',d.alarmHour);
+      if(d.alarmMinute)appStorage.setItem('excelia-alarm-m',d.alarmMinute);
+      if(d.alarmDays)appStorage.setItem('excelia-alarm-days',d.alarmDays);
+      if(d.theme)appStorage.setItem('excelia-theme-v1',d.theme);
       /* Va antes del save(): save() vuelca estas variables a excelia-horas-v3,
          asi que si se asignan despues no llegan al disco. */
       if(typeof d.multiRate!=='undefined'&&d.multiRate!==null&&typeof ECON_MULTI_RATE!=='undefined')ECON_MULTI_RATE=d.multiRate;
       if(d.ratePeriods&&typeof ECON_RATE_PERIODS!=='undefined')ECON_RATE_PERIODS=d.ratePeriods;
       if(d.econYearConfig&&typeof ECON_YEAR_CONFIG!=='undefined')
         ECON_YEAR_CONFIG=merge?_mergeMap(ECON_YEAR_CONFIG,d.econYearConfig):d.econYearConfig;
-      save();render();
+      save();appStorage.commit();render();
       updateBdayBtn();updateEventsBtn();
       showToast(merge?('Backup fusionado'+(_impRes?(' · eventos: '+evMergeMsg(_impRes)):''))
         :'Backup completo importado','success');
-    }catch(err){showToast('Error al importar: archivo inv\u00e1lido','error');}
+    }catch(err){appStorage.cancel();Object.keys(memory).forEach(function(k){window[k]=memory[k];});showToast('No se ha importado: '+err.message,'error');}
 }
 
+window.applyFullImport=_applyFullImport;
 })();

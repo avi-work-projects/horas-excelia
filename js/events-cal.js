@@ -11,7 +11,7 @@
    ============================================================ */
 
 /* ── Render: calendario mensual ─────────────────────────── */
-function renderEvCalMonth(){
+function _renderEvCalMonth(){
   var today=new Date();today.setHours(0,0,0,0);
   var puenteMap={};
   if(typeof computePuentes==='function'){
@@ -339,7 +339,7 @@ function _renderEvMonthCard(m,yr,o){
 }
 
 /* ── Render: calendario anual (12 tarjetas del mismo ano) ─────── */
-function renderEvAnnual(){
+function _renderEvAnnual(){
   var o=_evAnnualCtx();
   _evLoadPuentes(o,EV_YEAR);
   var h='<div class="ev-annual-grid'+(EV_EDIT_MODE?' ev-edit-mode':'')+'">';
@@ -348,7 +348,7 @@ function renderEvAnnual(){
 }
 
 /* ── Render: calendario 4 meses (puede cruzar de ano) ──────── */
-function renderEvQuad(){
+function _renderEvQuad(){
   var months=[];
   for(var mi=0;mi<4;mi++){
     var tm=EV_QUAD_MONTH+mi;
@@ -367,3 +367,7 @@ function renderEvQuad(){
   months.forEach(function(mo){h+=_renderEvMonthCard(mo.m,mo.y,o);});
   return h+'</div>';
 }
+
+function renderEvCalMonth(){return withEventDateIndex(new Date(EV_YEAR,EV_MONTH, -6),new Date(EV_YEAR,EV_MONTH+1,7),_renderEvCalMonth);}
+function renderEvAnnual(){return withEventDateIndex(new Date(EV_YEAR,0,1),new Date(EV_YEAR,11,31),_renderEvAnnual);}
+function renderEvQuad(){return withEventDateIndex(new Date(EV_QUAD_YEAR,EV_QUAD_MONTH,1),new Date(EV_QUAD_YEAR,EV_QUAD_MONTH+4,0),_renderEvQuad);}

@@ -9,7 +9,7 @@ function _defaultCompra(){return{valorCompraTotal:0,itpMadrid:0,notariaRegistro:
 function _defaultSubrogacion(){return{fecha:null,comisionCancelacion:0,notaria:0,tasacion:0,registro:0,nuevoImporte:0,nuevoTipoInteres:0,nuevoPlazoAnios:0,entidadBanco:'',vinculaciones:null};}
 function loadDespacho(){
   try{
-    var r=localStorage.getItem(DESPACHO_SK);
+    var r=appStorage.getItem(DESPACHO_SK);
     if(r){var d=JSON.parse(r);
       DESPACHO.enabled=d.enabled!=null?!!d.enabled:true;
       DESPACHO.m2Total=d.m2Total||0;DESPACHO.m2Despacho=d.m2Despacho||0;
@@ -60,7 +60,7 @@ function loadDespacho(){
   }catch(e){if(!DESPACHO.compra)DESPACHO.compra=_defaultCompra();}
 }
 function saveDespacho(){
-  try{localStorage.setItem(DESPACHO_SK,JSON.stringify(DESPACHO));}catch(e){}
+  try{appStorage.setItem(DESPACHO_SK,JSON.stringify(DESPACHO));}catch(e){}
 }
 function _despachoGetPct(){
   if(DESPACHO.m2Total>0&&DESPACHO.m2Despacho>0)return DESPACHO.m2Despacho/DESPACHO.m2Total;

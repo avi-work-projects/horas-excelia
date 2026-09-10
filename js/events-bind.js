@@ -468,28 +468,8 @@ function _bindEvListas(){
         } else throw new Error();
       }catch(err){showToast('Error al importar el archivo','error');return;}
       var apply=function(mode){
-        var _res=null;
-        if(mode==='merge'){
-          /* Incremental: no se borra nada y no se duplica — ver evMergeIncoming */
-          _res=evMergeIncoming(arr);
-        }else{EVENTS=arr;}
-        /* Parejas de bodas: fusionar por id o reemplazar, igual que los eventos */
-        if(incBodas&&typeof BODA_COUPLES!=='undefined'&&typeof saveBodas==='function'){
-          if(mode==='merge'){
-            var bidx={};
-            BODA_COUPLES.forEach(function(c,i){bidx[c.id]=i;});
-            incBodas.forEach(function(c){
-              if(!c||!c.id)return;
-              if(bidx[c.id]!==undefined)BODA_COUPLES[bidx[c.id]]=c;
-              else{bidx[c.id]=BODA_COUPLES.length;BODA_COUPLES.push(c);}
-            });
-          }else{BODA_COUPLES=incBodas;}
-          saveBodas();
-        }
-        saveEvents();updateEventsBtn();refreshEvents();
-        showToast(_res?('Eventos: '+evMergeMsg(_res))
-          :('Eventos importados: '+EVENTS.length)
-          +(incBodas?(' · parejas: '+BODA_COUPLES.length):''),'success');
+        var data={events:arr};if(incBodas)data.bodas=incBodas;
+        applyFullImport(data,mode);refreshEvents();
       };
       if(typeof askImportMode==='function')askImportMode('Eventos: '+f.name+' ('+arr.length+')',apply);
       else apply('replace');

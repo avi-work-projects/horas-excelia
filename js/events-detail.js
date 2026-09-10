@@ -537,7 +537,7 @@ function bindEvAlarmEvents(ev,firstDate){
     });
   });
   document.getElementById('evAlarmCreate').addEventListener('click',function(){
-    var alarmUrl=localStorage.getItem('excelia-alarm-url')||'';
+    var alarmUrl=appStorage.getItem('excelia-alarm-url')||'';
     if(!alarmUrl){showToast('Configura la URL de MacroDroid en el men\u00fa \u22ef','error');return;}
     var base=normalizeMacroBase(alarmUrl);
     var dayOfAlarm=firstDate.getDay()+1;

@@ -71,13 +71,13 @@ function _ensureDefaults(data){
 function loadPersonalYear(year){
   try{
     var k=_yearKey(PERSONAL_SK,year);
-    var r=localStorage.getItem(k);
+    var r=appStorage.getItem(k);
     if(r){PERSONAL_DATA=JSON.parse(r);}
     else{
       /* Migración: si no hay datos per-year, intentar migrar ingresos globales */
       PERSONAL_DATA={gastosRecurrentes:[],gastosSemanales:[],inversiones:[],ingresos:[]};
       if(year===CY){
-        var ig=localStorage.getItem(INGRESOS_SK);
+        var ig=appStorage.getItem(INGRESOS_SK);
         if(ig){try{var d=JSON.parse(ig);PERSONAL_DATA.ingresos=d.items||[];}catch(e){}}
       }
     }
@@ -85,17 +85,17 @@ function loadPersonalYear(year){
   _ensureDefaults(PERSONAL_DATA);
 }
 function savePersonalYear(year){
-  try{localStorage.setItem(_yearKey(PERSONAL_SK,year),JSON.stringify(PERSONAL_DATA));}catch(e){}
+  try{appStorage.setItem(_yearKey(PERSONAL_SK,year),JSON.stringify(PERSONAL_DATA));}catch(e){}
 }
 
 /* ── Ingresos regulares ───────────────────────────────────── */
 var INGRESOS_SK='excelia-ingresos-v1';
 var INGRESOS_ITEMS=[];
 function loadIngresos(){
-  try{var r=localStorage.getItem(INGRESOS_SK);if(r){var d=JSON.parse(r);INGRESOS_ITEMS=d.items||[];}else{INGRESOS_ITEMS=[];}}catch(e){INGRESOS_ITEMS=[];}
+  try{var r=appStorage.getItem(INGRESOS_SK);if(r){var d=JSON.parse(r);INGRESOS_ITEMS=d.items||[];}else{INGRESOS_ITEMS=[];}}catch(e){INGRESOS_ITEMS=[];}
 }
 function saveIngresos(){
-  try{localStorage.setItem(INGRESOS_SK,JSON.stringify({items:INGRESOS_ITEMS}));}catch(e){}
+  try{appStorage.setItem(INGRESOS_SK,JSON.stringify({items:INGRESOS_ITEMS}));}catch(e){}
 }
 function findIngreso(id){
   for(var i=0;i<INGRESOS_ITEMS.length;i++){if(INGRESOS_ITEMS[i].id===id)return INGRESOS_ITEMS[i];}
@@ -131,14 +131,14 @@ var GASTOS_ITEMS=[];
 
 function loadFiscal(){
   try{
-    var r=localStorage.getItem(FISCAL_SK);
+    var r=appStorage.getItem(FISCAL_SK);
     if(r){var d=JSON.parse(r);FISCAL.irpfMode=d.irpfMode||'fixed';FISCAL.irpfPct=d.irpfPct||15;FISCAL.brackets=d.brackets||null;
       if(d.minPersonal!=null)FISCAL.minPersonal=d.minPersonal;
     }
   }catch(e){}
 }
 function saveFiscal(){
-  localStorage.setItem(FISCAL_SK,JSON.stringify({irpfMode:FISCAL.irpfMode,irpfPct:FISCAL.irpfPct,brackets:FISCAL.brackets,minPersonal:FISCAL.minPersonal}));
+  appStorage.setItem(FISCAL_SK,JSON.stringify({irpfMode:FISCAL.irpfMode,irpfPct:FISCAL.irpfPct,brackets:FISCAL.brackets,minPersonal:FISCAL.minPersonal}));
 }
 function getIrpfPct(){return FISCAL.irpfMode==='custom'?FISCAL.irpfPct:15;}
 function getBrackets(){return FISCAL.brackets||DEFAULT_BRACKETS;}
@@ -164,11 +164,11 @@ function _loadGastosFromRaw(raw){
 function loadGastosYear(year){
   try{
     var k=_yearKey(GASTOS_SK,year);
-    var r=localStorage.getItem(k);
+    var r=appStorage.getItem(k);
     if(r){_loadGastosFromRaw(r);}
     else{
       /* Fallback: clave global (migración o sin datos específicos del año) */
-      var g=localStorage.getItem(GASTOS_SK);
+      var g=appStorage.getItem(GASTOS_SK);
       if(g){_loadGastosFromRaw(g);}
       else{GASTOS_ITEMS=JSON.parse(JSON.stringify(DEFAULT_GASTOS));GASTOS_DIFICIL_PCT=5;}
     }
@@ -176,7 +176,7 @@ function loadGastosYear(year){
 }
 function loadGastos(){loadGastosYear(FISCAL_YEAR);}
 function saveGastosYear(year){
-  try{localStorage.setItem(_yearKey(GASTOS_SK,year),JSON.stringify({dificilPct:GASTOS_DIFICIL_PCT,items:GASTOS_ITEMS}));}catch(e){}
+  try{appStorage.setItem(_yearKey(GASTOS_SK,year),JSON.stringify({dificilPct:GASTOS_DIFICIL_PCT,items:GASTOS_ITEMS}));}catch(e){}
 }
 function findGasto(id){
   for(var i=0;i<GASTOS_ITEMS.length;i++){if(GASTOS_ITEMS[i].id===id)return GASTOS_ITEMS[i];}
@@ -200,7 +200,7 @@ var DEFAULT_COMPRAS=[
 var COMPRAS_ITEMS=[];
 function loadCompras(){
   try{
-    var r=localStorage.getItem(COMPRAS_SK);
+    var r=appStorage.getItem(COMPRAS_SK);
     if(r){
       var d=JSON.parse(r);
       COMPRAS_IVA_ENABLED=!!d.ivaEnabled;
@@ -216,7 +216,7 @@ function loadCompras(){
   }catch(e){COMPRAS_ITEMS=JSON.parse(JSON.stringify(DEFAULT_COMPRAS));}
 }
 function saveCompras(){
-  try{localStorage.setItem(COMPRAS_SK,JSON.stringify({ivaEnabled:COMPRAS_IVA_ENABLED,items:COMPRAS_ITEMS}));}catch(e){}
+  try{appStorage.setItem(COMPRAS_SK,JSON.stringify({ivaEnabled:COMPRAS_IVA_ENABLED,items:COMPRAS_ITEMS}));}catch(e){}
 }
 /* Devuelve la BASE sin IVA de todas las compras habilitadas */
 function comprasTotal(){
@@ -271,7 +271,7 @@ var DESGRAV_ITEMS=[];
 function loadDesgrav(){
   var OBSOLETE_IDS=['seg_salud_conyuge','seg_salud_hijos','colegio_prof','donativos','vivienda_madrid'];
   try{
-    var r=localStorage.getItem(DESGRAV_SK);
+    var r=appStorage.getItem(DESGRAV_SK);
     if(r){
       var d=JSON.parse(r);
       var saved=d.items||[];
@@ -300,7 +300,7 @@ function loadDesgrav(){
   }catch(e){DESGRAV_ITEMS=JSON.parse(JSON.stringify(DESGRAV_DEFAULT));}
 }
 function saveDesgrav(){
-  try{localStorage.setItem(DESGRAV_SK,JSON.stringify({items:DESGRAV_ITEMS}));}catch(e){}
+  try{appStorage.setItem(DESGRAV_SK,JSON.stringify({items:DESGRAV_ITEMS}));}catch(e){}
 }
 function desgravAnual(item){
   if(!item.enabled)return 0;

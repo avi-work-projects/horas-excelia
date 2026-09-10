@@ -125,6 +125,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 #alarmWrap{margin-left:auto}
 .data-menu{position:absolute;top:calc(100% + 6px);right:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px;min-width:156px;z-index:400;display:none;flex-direction:column;gap:2px;box-shadow:0 8px 24px rgba(0,0,0,.5)}
 .data-menu.open{display:flex}
+.data-menu{width:min(270px,calc(100vw - 32px));max-height:calc(100dvh - 90px);overflow-y:auto}
 .data-menu-item{font-size:.75rem;padding:8px 12px;border-radius:8px;border:none;background:transparent;color:var(--text);cursor:pointer;text-align:left;transition:background .12s;white-space:nowrap;font-family:var(--font)}
 .data-menu-item:hover,.data-menu-item:active{background:var(--surface3)}
 .app-version-label{font-size:.62rem;color:var(--text-muted);padding:4px 12px 8px;opacity:.55;border-top:1px solid var(--border);margin-top:2px;letter-spacing:.02em}
@@ -2333,3 +2334,12 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .boda-filter-label:not(:first-child){margin-top:12px}
 .boda-filter-label span{font-weight:400}
 .boda-pfilters .boda-chips{margin-bottom:0}
+
+/* Controles tactiles: mismo minimo en filtros y navegacion, sin agrandar marcadores. */
+@media (pointer:coarse){
+  .ev-view-toggle,.boda-chip,.ev-sort-chip,.bday-vip-chip{min-height:34px}
+  .boda-mini-btn,.bday-ic-btn{min-height:32px;min-width:32px}
+}
+[data-theme="light"] .ev-zone-a .ev-view-toggle:not(.active){color:#3864a3}
+[data-theme="light"] .ev-zone-b .ev-view-toggle:not(.active){color:#177454}
+[data-theme="light"] .bday-upcoming-bell{color:var(--text-muted)}

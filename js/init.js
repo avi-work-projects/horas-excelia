@@ -129,8 +129,8 @@
     panel.classList.toggle('open');
     if(opening){
       // Drum pickers: inicializar DESPUÉS de que el panel sea visible (display:none → flex)
-      var _dH=parseInt(localStorage.getItem('excelia-alarm-h')||'9',10);
-      var _dM=parseInt(localStorage.getItem('excelia-alarm-m')||'20',10);
+      var _dH=parseInt(appStorage.getItem('excelia-alarm-h')||'9',10);
+      var _dM=parseInt(appStorage.getItem('excelia-alarm-m')||'20',10);
       buildDrumPicker('drumHour',24,_dH);
       buildDrumPicker('drumMin',60,_dM);
     }
@@ -216,7 +216,7 @@
     var DN=['D','L','M','X','J','V','S'];
     var today=new Date();
     var todayJs=today.getDay();
-    var savedDays=(localStorage.getItem('excelia-alarm-days')||'').split(',').filter(Boolean);
+    var savedDays=(appStorage.getItem('excelia-alarm-days')||'').split(',').filter(Boolean);
     var html='';
     for(var i=0;i<7;i++){
       var jsDay=(todayJs+i)%7;
@@ -233,7 +233,7 @@
         btn.classList.toggle('on');
         var sel=[];
         container.querySelectorAll('.alarm-day-btn.on').forEach(function(b){sel.push(b.dataset.day);});
-        localStorage.setItem('excelia-alarm-days',sel.join(','));
+        appStorage.setItem('excelia-alarm-days',sel.join(','));
       });
     });
   }
@@ -263,14 +263,14 @@
   var _g13=document.getElementById('alarmCreateBtn'); if(_g13)_g13.addEventListener('click',function(){
     var h=getDrumValue('drumHour');
     var m=getDrumValue('drumMin');
-    localStorage.setItem('excelia-alarm-h',h);
-    localStorage.setItem('excelia-alarm-m',m);
+    appStorage.setItem('excelia-alarm-h',h);
+    appStorage.setItem('excelia-alarm-m',m);
     var msg=(document.getElementById('alarmMsg').value.trim()||'Horas Excelia');
     var selDays=[];
     document.querySelectorAll('.alarm-day-btn.on').forEach(function(b){selDays.push(+b.dataset.day);});
     /* Las alarmas se crean siempre por el webhook de MacroDroid: es lo unico
        que funciona en el movil. La URL vive en el menu de ajustes. */
-    var macroBase=normalizeMacroBase(localStorage.getItem('excelia-alarm-url')||'');
+    var macroBase=normalizeMacroBase(appStorage.getItem('excelia-alarm-url')||'');
     if(!macroBase){showToast('Configura la URL de MacroDroid en el menú ⋯','error');return;}
     // Detectar si la hora ya ha pasado hoy y hoy está seleccionado
     var now=new Date();
@@ -329,7 +329,7 @@
     if(opening){
       // Poblar inputs con los valores guardados en localStorage
       var mAlarm=document.getElementById('macroAlarmUrlMenu');
-      if(mAlarm)mAlarm.value=normalizeMacroBase(localStorage.getItem('excelia-alarm-url')||'');
+      if(mAlarm)mAlarm.value=normalizeMacroBase(appStorage.getItem('excelia-alarm-url')||'');
     }
     menu.classList.toggle('open');
   });
@@ -360,7 +360,7 @@
     _mAlarmIn.addEventListener('change',function(){
       var v=normalizeMacroBase(this.value);
       this.value=v;
-      localStorage.setItem('excelia-alarm-url',v);
+      appStorage.setItem('excelia-alarm-url',v);
     });
     _mAlarmIn.addEventListener('click',function(e){e.stopPropagation();});
   }
@@ -395,6 +395,12 @@
   applyTheme(THEME);
   updateThemeBtn();
 
+
+  [['mailToLocal',function(v){TO=v;}],['mailCcLocal',function(v){CC=v.split(',').map(function(x){return x.trim();}).filter(Boolean);} ],['mailNameLocal',function(v){AUTHOR_NAME=v;}]].forEach(function(pair,i){
+    var input=document.getElementById(pair[0]);if(!input)return;
+    input.value=i===0?TO:i===1?CC.join(', '):AUTHOR_NAME;
+    input.addEventListener('change',function(){pair[1](input.value.trim());saveMailConfig();});
+  });
 
   /* ── SW update: un solo sitio que aplica la actualizacion ──────────
      Cuando aparece el aviso, el service worker nuevo YA esta activo con su

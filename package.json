@@ -1,0 +1,12 @@
+{
+  "name": "gestify",
+  "private": true,
+  "scripts": {
+    "test": "node tools/test.js && node tools/test-hardening.js",
+    "test:browser": "playwright test",
+    "build": "node tools/build.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
+  }
+}
