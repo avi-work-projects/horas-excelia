@@ -120,3 +120,7 @@ El grupo interno WM + Rut se conserva por compatibilidad pero ahora solo contien
 
 ## Consistencia visual de Bodas (v304)
 --wm-wine es el granate accesible por tema para días cerrados (tarjeta, casilla e indicadores); los pasados siguen grises. La ficha de clase integra Profesores y Duración dentro de ev-bficha, como filas editables, con Duración al final. Las subpestañas conservan altura, peso y borde constantes; scrollbar-gutter:stable evita desplazamientos según el contenido. La prueba de navegador compara sus posiciones al cambiar por las cinco vistas. La configuración usa secciones separadas boda-config-section.
+
+## Edición de profesores y catálogos (v305)
+La fila Duración abre openBodaDurationPicker y guarda en el borrador de clase. bodaTeacherCount limita la selección a 1–2 profesores; las nuevas clases usan Ángel y Celia. bodaTeacherStats cuenta clases finalizadas en cuatro grupos exclusivos: ambos, solo Celia, solo Ángel y con sustituto. El cierre diferido de la ficha comprueba identidad del borrador para no borrar otra clase recién abierta.
+Los catálogos muestran fichas con cabecera (nombre/editar) y estado debajo; borrar se ofrece solo dentro del editor de una opción sin referencias. Las subpestañas de Bodas usan ancho de contenido y space-between para igualar espacios entre etiquetas, conservando altura y tipografía constantes.
