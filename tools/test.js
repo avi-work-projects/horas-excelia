@@ -530,6 +530,16 @@ REGLAS.push(['finas: apiladas con altura original solo durante coincidencia',fun
   });
 }]);
 
+REGLAS.push(['inicio: todos los cumpleanos a 7 dias sin alarma',function(){
+  const ctx=cargarApp(claves),content={innerHTML:''};
+  ctx.BDAYS=[{name:'Normal cercano',month:8,day:28},{name:'VIP cercano',month:8,day:22,vip:true},{name:'Ya avisado',month:8,day:21},{name:'Fuera plazo',month:8,day:29}];
+  ctx.isBdayAlarmSet=b=>b.name==='Ya avisado';
+  ctx.sessionStorage={getItem:()=>null};
+  ctx.document.getElementById=id=>id==='homePopupContent'?content:id==='homePopup'?{style:{}}:null;
+  require('vm').runInContext(fs.readFileSync(path.join(RAIZ,'js/home-popup.js'),'utf8'),ctx);
+  return content.innerHTML.includes('Normal cercano')&&content.innerHTML.includes('VIP cercano')&&!content.innerHTML.includes('Ya avisado')&&!content.innerHTML.includes('Fuera plazo');
+}]);
+
 let okR = 0;
 for (const [nombre, fn] of REGLAS) {
   if (FILTRO) break;

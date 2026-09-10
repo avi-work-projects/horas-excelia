@@ -170,7 +170,7 @@ function renderBdayUpcoming(){
 
   var prevItems=getBdaysInRange(-4,4);   /* 4 días anteriores */
   var todayItems=getBdaysInRange(0,1);   /* hoy */
-  var nxtItems=getBdaysInRange(1,9);     /* próximos 9 días */
+  var nxtItems=getBdaysInRange(1,14);    /* proximos 14 dias */
 
   function bdayLabel(diff){
     if(diff===0)return '\u00a1Hoy!';
