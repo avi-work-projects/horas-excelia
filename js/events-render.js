@@ -476,7 +476,7 @@ function renderEvContent(){
   h+='</div>';
   // Zona C: Bodas + Rutinas
   h+='<div class="ev-view-zone ev-zone-c">';
-  h+='<button class="ev-view-toggle ev-btn-bodas'+(EV_VIEW==='bodas'?' active':'')+'" id="evViewBodas">Bodas</button>';
+  h+='<button class="ev-view-toggle ev-btn-bodas'+(EV_VIEW==='bodas'?' active':'')+'" id="evViewBodas" aria-label="Bodas"><span class="wm-logo" role="img" aria-label="Wedding Moves"></span></button>';
   h+='<button class="ev-view-toggle ev-btn-rutinas'+(EV_VIEW==='rutinas'?' active':'')+'" id="evViewRutinas">Rutinas</button>';
   h+='</div>';
   h+='</div>';
@@ -497,7 +497,7 @@ function renderEvContent(){
   } else if(EV_VIEW==='rutinas'){
     h+='<div class="sy-year-nav"><div class="sy-year">Rutinas</div></div>';
   } else if(EV_VIEW==='bodas'){
-    h+='<div class="sy-year-nav"><div class="sy-year">Bodas</div></div>';
+    h+='<div class="sy-year-nav"><div class="sy-year"><span class="wm-logo wm-logo-title" role="img" aria-label="Bodas · Wedding Moves"></span></div></div>';
   } else if(EV_VIEW==='puentes'||EV_VIEW==='time-off'){
     h+='<div class="sy-year-nav"><button class="sy-nav" id="evPrev">&#9664;</button><div class="sy-year">'+EV_YEAR+'</div><button class="sy-nav" id="evNext">&#9654;</button></div>';
     h+='<div class="sy-hdr-right"><button class="sy-pdf" id="evSyPdf">PDF</button></div>';

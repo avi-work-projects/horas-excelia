@@ -98,7 +98,7 @@ function bodaRefreshRow(ev){
 
 /* ── Binds de la pestaña ── */
 function bindBodasEvents(){
-  var cfg=document.getElementById('bodaConfigBtn');if(cfg)cfg.onclick=function(){_guardaPendientes();openBodaConfig();};
+  bindBodaConfig();
   /* Al salir de la lista se guarda lo pendiente para no perderlo sin avisar */
   function _guardaPendientes(){
     if(bodaPendingCount())showToast(bodaPendingApply(true)+' cambios guardados','success');

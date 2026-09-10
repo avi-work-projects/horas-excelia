@@ -109,3 +109,7 @@ Todo boton con lapiz lleva `.action-edit` (naranja), conservando sus dimensiones
 
 ## Ajustes de Bodas (v300)
 Los packs iniciales se llaman Esencia (2), Latido (4) y Eternidad (6). El selector de pareja muestra nombre y número de clases: Esencia (2 clases), Latido (4 clases) y Eternidad (6 clases). Al cargar se migran los nombres automáticos antiguos sin cambiar IDs, cantidades ni nombres personalizados. La duración queda al final de la ficha del ensayo; las altas toman la duración predeterminada y las clases existentes conservan la guardada. Las cuatro subpestañas y la rueda de Bodas ocupan cinco columnas iguales. El lápiz de Home conserva su estilo propio; los demás usan action-edit naranja.
+
+## Navegación y marca de Bodas (v302)
+BODA_SUBTAB incluye config: renderBodaConfig es puro y bindBodaConfig engancha sus controles dentro de la vista, sin overlay propio. El swipe general usa el mismo botón de subpestaña que el click (conserva el guardado de pendientes); el swipe anidado del calendario sigue navegando meses. Solo los botones de lápiz sin texto deben recibir action-edit por ese criterio; Edición conserva boda-mode-btn.
+Logo oficial: css/wedding-moves.png procede de https://weddingmoves.es/assets/img/logo-gold.png, descargado el 11/09/2026, ya con transparencia. Se representa con máscara CSS y currentColor para conservar contraste; el chip usa 18px de ancho. Hoy de lista de cumpleaños salta al encabezado del mes actual, no al siguiente cumpleaños.

@@ -71,12 +71,12 @@ test('Bodas: configurar pack, duracion, salas y exportar catalogos',async({page}
  await page.locator('[data-cfg-edit="packs"][data-id="pack-2"]').click();await page.locator('#bodaCatalogNumber').fill('6');await page.locator('#bodaCatalogSave').click();
  expect(await page.evaluate(()=>BODA_COUPLES[0].packClasses)).toBe(2);
  await page.locator('[data-cfg-add="packs"]').click();await page.locator('#bodaCatalogName').fill('Pack tres');await page.locator('#bodaCatalogNumber').fill('3');await page.locator('#bodaCatalogSave').click();
- await expect(page.locator('#bodaConfigOv')).toContainText('Pack tres');
+ await expect(page.locator('#bodaConfigContent')).toContainText('Pack tres');
  await page.locator('[data-cfg-add="places"]').click();await page.locator('#bodaCatalogName').fill('Sala nueva');await page.locator('#bodaCatalogDesc').fill('Sala de pruebas');await page.locator('#bodaCatalogSave').click();
- await expect(page.locator('#bodaConfigOv')).toContainText('Sala de pruebas');
+ await expect(page.locator('#bodaConfigContent')).toContainText('Sala de pruebas');
  await page.locator('[data-default="dur-20"]').check();
  await page.locator('[data-cfg-edit="places"][data-id="casa"]').click();await page.locator('#bodaCatalogName').fill('Mi casa');await page.locator('#bodaCatalogDesc').fill('Descripcion modificada');await page.locator('#bodaCatalogSave').click();
- await page.locator('#bodaConfigClose').click();await page.locator('[data-bsub="clases"]').click();await page.locator('#bodaAddClass').click();
+ await page.locator('[data-bsub="clases"]').click();await page.locator('#bodaAddClass').click();
  await expect(page.locator('#bodaFormDuration')).toHaveValue('dur-20');
  expect(await page.locator('#bodaFormDuration').evaluate(el=>!!(document.querySelector('[data-fcampo=pareja]').compareDocumentPosition(el)&Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
  await page.locator('#bodaFormDia').fill('2030-01-05');await page.locator('#bodaFormSave').click();
@@ -88,4 +88,20 @@ test('Bodas: configurar pack, duracion, salas y exportar catalogos',async({page}
  const [download]=await Promise.all([page.waitForEvent('download'),page.locator('#exportAllBtn').click()]);const data=JSON.parse(require('fs').readFileSync(await download.path(),'utf8'));
  expect(data.bodaConfig.defaultDurationId).toBe('dur-20');expect(data.bodaConfig.places.find(p=>p.k==='casa').n).toBe('Mi casa');
  await page.evaluate(d=>applyFullImport(d,'replace'),data);expect(await page.evaluate(()=>BODA_CONFIG.defaultDurationId)).toBe('dur-20');expect(errors).toEqual([]);
+});
+
+test('Hoy apunta al mes y las cinco subpestanas de Bodas admiten swipe',async({page})=>{
+ await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-bdays-v1',JSON.stringify(Array.from({length:60},(_,m)=>({name:'Persona '+m,day:1+Math.floor(m/12),month:m%12+1}))));});
+ await page.goto('/');await page.locator('#bdayBtn').click();await page.locator('#bdViewList').click();
+ await page.evaluate(()=>document.querySelector('#bdayOverlay .sy-body').scrollTop=0);
+ await page.locator('#bdVipAll').click();
+ expect(await page.evaluate(()=>{var body=document.querySelector('#bdayOverlay .sy-body'),sec=body.querySelector('[data-month="'+new Date().getMonth()+'"]');return Math.abs(sec.getBoundingClientRect().top-body.getBoundingClientRect().top-8)<2;})).toBe(true);
+ await page.locator('#bdayContent').getByRole('button',{name:'Eventos',exact:true}).click();await page.locator('#evViewBodas').click();await page.locator('[data-bsub="stats"]').click();
+ async function swipe(left){await page.locator('#eventsOverlay .boda-sec').evaluate((el,left)=>{el.dispatchEvent(new TouchEvent('touchstart',{bubbles:true,touches:[new Touch({identifier:1,target:el,clientX:left?300:80,clientY:400})]}));el.dispatchEvent(new TouchEvent('touchend',{bubbles:true,changedTouches:[new Touch({identifier:1,target:el,clientX:left?80:300,clientY:400})]}));},left);}
+ await swipe(true);await expect(page.locator('#bodaConfigContent')).toBeVisible();await expect(page.locator('#bodaConfigWrap')).toHaveCount(0);
+ await swipe(false);await expect(page.locator('[data-bsub="stats"]')).toHaveClass(/active/);
+ await swipe(false);await expect(page.locator('[data-bsub="calendario"]')).toHaveClass(/active/);
+ await swipe(false);await expect(page.locator('[data-bsub="parejas"]')).toHaveClass(/active/);
+ await swipe(false);await expect(page.locator('[data-bsub="clases"]')).toHaveClass(/active/);
+ await expect(page.locator('[data-bmode="editar"]')).not.toHaveClass(/action-edit/);
 });
