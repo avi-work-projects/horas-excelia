@@ -146,7 +146,7 @@ function renderBdayList(){
       filtered=BDAY_FILTER_VIP==='vip'?list.filter(function(b){return !!b.vip;}):
                BDAY_FILTER_VIP==='novip'?list.filter(function(b){return !b.vip;}):list;
     }
-    if(!filtered.length)return;
+    if(!filtered.length&&(m!==new Date().getMonth()||BDAY_FILTER_VIP!=='all'))return;
     filtered.sort(function(a,b){return a.day-b.day;});
     h+='<div class="sy-section bday-month-section" data-month="'+m+'"><div class="bday-month-hdr">'+MN[m]+'</div>';
     filtered.forEach(function(b){

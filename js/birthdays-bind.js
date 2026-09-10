@@ -120,7 +120,7 @@ function bindBdayEvents(){
     if(!body)return;
     var sec=body.querySelector('.bday-month-section[data-month="'+(new Date()).getMonth()+'"]');
     if(!sec){body.scrollTop=0;return;}
-    body.scrollTop=Math.max(0,sec.offsetTop-body.offsetTop-8);
+    body.scrollTop=Math.max(0,body.scrollTop+sec.getBoundingClientRect().top-body.getBoundingClientRect().top-8);
   }
   document.getElementById('bdViewUpcoming').addEventListener('click',function(){BDAY_SEARCH='';BDAY_FILTER_VIP='all';BDAY_EDIT_VIP=false;BDAY_VIP_PENDING=null;BDAY_VIEW='upcoming';refreshBday();_bdResetScroll();});
   document.getElementById('bdViewCal').addEventListener('click',function(){BDAY_SEARCH='';BDAY_FILTER_VIP='all';BDAY_EDIT_VIP=false;BDAY_VIP_PENDING=null;BDAY_VIEW='cal';refreshBday();_bdResetScroll();});
@@ -129,10 +129,7 @@ function bindBdayEvents(){
   var bdVipAllEl=document.getElementById('bdVipAll');
   if(bdVipAllEl)bdVipAllEl.addEventListener('click',function(){
     BDAY_FILTER_VIP='all';BDAY_SEARCH='';refreshBday();
-    var now=new Date(),body=document.querySelector('#bdayOverlay .sy-body');
-    var rows=Array.from(body.querySelectorAll('.bday-list-item'));
-    var next=rows.find(function(row){return Number(row.dataset.bdayMonth)>now.getMonth()+1||(Number(row.dataset.bdayMonth)===now.getMonth()+1&&Number(row.dataset.bdayDay)>=now.getDate());})||rows[0];
-    if(next)body.scrollTop=Math.max(0,next.offsetTop-body.offsetTop-8);
+    _bdScrollToMonth();
   });
   var bdVipOnlyEl=document.getElementById('bdVipOnly');
   if(bdVipOnlyEl)bdVipOnlyEl.addEventListener('click',function(){BDAY_FILTER_VIP=BDAY_FILTER_VIP==='vip'?'all':'vip';BDAY_SEARCH='';refreshBday();});

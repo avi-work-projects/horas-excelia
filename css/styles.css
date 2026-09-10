@@ -2364,3 +2364,11 @@ button.action-edit.active,button.action-edit:active{background:rgba(251,146,60,.
 .boda-pack-stat span{color:var(--text-muted)}
 
 .boda-catalog-row .ev-io-btn{flex:0 0 auto;padding:6px 9px;font-size:.7rem}
+
+/* Marca oficial con transparencia; conserva contraste en ambos temas. */
+.wm-logo{display:inline-block;width:44px;height:19px;background:currentColor;mask:url(wedding-moves.png) center/contain no-repeat;-webkit-mask:url(wedding-moves.png) center/contain no-repeat;vertical-align:middle;flex-shrink:0}
+.wm-logo-title{width:76px;height:28px;color:var(--text)}
+.wm-logo-chip{width:18px;height:12px}
+.bday-jump-today{background:color-mix(in srgb,var(--c-green) 16%,var(--surface))}
+.boda-sticky-hd .boda-config-btn{width:auto;justify-self:stretch;height:auto;border:0;border-radius:0;background:transparent;color:#b98760;font-size:19px}
+.boda-sticky-hd .boda-config-btn.active{color:#b98760;border-bottom:2px solid #b98760}

@@ -401,20 +401,20 @@ function _renderBodasBody(){
   [['clases','Clases'],['parejas','Parejas'],['calendario','Calendario'],['stats','Estadísticas']].forEach(function(t){
     h+='<button class="econ-sub-tab'+(BODA_SUBTAB===t[0]?' active':'')+'" data-bsub="'+t[0]+'">'+t[1]+'</button>';
   });
-  h+='<button class="boda-config-btn" id="bodaConfigBtn" aria-label="Configurar Bodas">&#9881;</button>';
+  h+='<button class="econ-sub-tab boda-config-btn'+(BODA_SUBTAB==='config'?' active':'')+'" data-bsub="config" id="bodaConfigBtn" aria-label="Configurar Bodas">&#9881;</button>';
   h+='</div>';
   if(BODA_SUBTAB==='clases'){
     var edit=(BODA_CLASS_MODE==='editar');
     h+='<div class="boda-mode-row">';
     h+='<button class="boda-mode-btn'+(edit?'':' active')+'" data-bmode="ver">&#128065; Consulta</button>';
-    h+='<button class="action-edit boda-mode-btn'+(edit?' active':'')+'" data-bmode="editar">&#9998; Edición</button>';
+    h+='<button class="boda-mode-btn'+(edit?' active':'')+'" data-bmode="editar">&#9998; Edición</button>';
     h+='</div>';
   }
   h+='</div>';
   h+='<div class="boda-sec">';
   h+=(BODA_SUBTAB==='parejas')?_renderBodaParejas()
     :(BODA_SUBTAB==='calendario')?_renderBodaCalendario()
-    :(BODA_SUBTAB==='stats')?_renderBodaStats():_renderBodaClases();
+    :(BODA_SUBTAB==='stats')?_renderBodaStats():(BODA_SUBTAB==='config')?renderBodaConfig():_renderBodaClases();
   h+='</div>';
   return h;
 }

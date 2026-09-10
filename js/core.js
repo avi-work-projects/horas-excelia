@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v301 — nombres de packs en el selector de parejas';
+var APP_VERSION = 'v302 — navegación de Bodas y marca Wedding Moves';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

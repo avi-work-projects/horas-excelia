@@ -482,10 +482,10 @@ function _bindEvListas(){
 function _bindEvGestos(){
   /* Swipe: navegar en el tiempo (el botón evPrev/evNext solo existe en vistas con nav) */
   addSwipe(document.getElementById('eventsOverlay'),function(){
-    if(_evSwipeUpcoming(1))return;
+    if(_evSwipeBodas(1)||_evSwipeUpcoming(1))return;
     var b=document.getElementById('evNext');if(b)b.click();
   },function(){
-    if(_evSwipeUpcoming(-1))return;
+    if(_evSwipeBodas(-1)||_evSwipeUpcoming(-1))return;
     var b=document.getElementById('evPrev');if(b)b.click();
   });
   requestAnimationFrame(function(){ _positionEvBright(); });
@@ -496,5 +496,12 @@ function _evSwipeUpcoming(step){
   var views=['upcoming','birthdays','months'],i=views.indexOf(EV_VIEW);
   if(i<0)return false;
   if(views[i+step]){_switchEvView(views[i+step]);refreshEvents(false);}
+  return true;
+}
+
+function _evSwipeBodas(step){
+  if(EV_VIEW!=='bodas')return false;
+  var tabs=['clases','parejas','calendario','stats','config'],next=tabs[tabs.indexOf(BODA_SUBTAB)+step];
+  if(next){var btn=document.querySelector('[data-bsub="'+next+'"]');if(btn)btn.click();}
   return true;
 }
