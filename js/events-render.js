@@ -553,6 +553,7 @@ function renderEvContent(){
       var hidden=EV_ANNUAL_FILTER_HIDDEN.indexOf(type)!==-1;
       var c=_typeColor[type];
       var sty=hidden?'':'border-color:'+c+';color:'+c+';background:'+c+'18';
+      if(type==='Asturias')sty='border-color:'+c+';background:'+fakeTrans(EV_TYPE_COLORS['grande|Asturias'],.65);
       h+='<button class="ev-filter-chip'+(hidden?'':' chip-active')+'" data-filter-type="'+escHtml(type)+'" style="'+sty+'">'+_typeShort[type]+'</button>';
       if(type===EV_FILTER_SEP_AFTER)h+='<span class="ev-filter-sep" aria-hidden="true"></span>';
     });
