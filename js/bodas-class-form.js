@@ -8,6 +8,8 @@ function openBodaClaseForm(ev,alTerminar){
     /* start: los selectores rotulan con el dia del evento; sin el salia
        "Sala — undefined NaN/NaN". Se mantiene al dia desde el campo de fecha. */
     tmp:{id:'__boda_tmp__', start:ev?ev.start:evDk(new Date()), boda:{
+      duration:nuevo?bodaDefaultDuration().minutes:bodaDuration(ev),
+      durationId:nuevo?bodaDefaultDuration().id:((bodaDurationOf(ev)||{}).id||null),
       time:nuevo?null:(base.time||null),
       coupleId:nuevo?null:(base.coupleId||null),
       place:nuevo?bodaPlaceForNewOn(evDk(new Date())):(base.place===undefined?BODA_PLACE_DEFAULT:base.place)
@@ -39,10 +41,16 @@ function _bodaFormRender(){
       +' <button type="button" class="boda-multi-x" id="bodaFormMultiX">quitar</button></div>';
   }
   h+='</div>';
+  h+='<div class="ev-field"><label>Duracion</label><select class="ev-input" id="bodaFormDuration">';
+  var options=BODA_CONFIG.durations.filter(function(d){return d.active!==false||d.id===b.durationId;});
+  var current=options.find(function(d){return d.id===b.durationId&&d.minutes===b.duration;});
+  if(!current)h+='<option value="saved" selected>'+b.duration+' min (guardada)</option>';
+  options.forEach(function(d){h+='<option value="'+d.id+'"'+(current&&current.id===d.id?' selected':'')+'>'+d.minutes+' min'+(d.active===false?' (inactiva)':'')+'</option>';});
+  h+='</select></div>';
   h+='<div class="ev-bficha">';
   h+='<button type="button" class="ev-bfila'+(b.time?'':' warn')+'" data-fcampo="hora">'
     +'<span class="ev-bfila-lbl">\ud83d\udd52 Hora</span>'
-    +'<span class="ev-bfila-val">'+(b.time?(b.time+' \u2013 '+_bodaMasUnaHora(b.time)):'\u26a0 Sin asignar')+'</span>'
+    +'<span class="ev-bfila-val">'+(b.time?(b.time+' \u2013 '+bodaEndAt(b.time,b.duration)):'\u26a0 Sin asignar')+'</span>'
     +'</button>';
   h+='<button type="button" class="ev-bfila'+(pl?'':' warn')+'" data-fcampo="sala">'
     +'<span class="ev-bfila-lbl">'+(pl?bodaPlaceEmoji(pl):'\ud83c\udfe0')+' Sala</span>'
@@ -62,6 +70,7 @@ function _bodaFormRender(){
   bodaOpenSheet('bodaFormWrap','bodaFormOv',h,closeBodaClaseForm);
   document.getElementById('bodaFormClose').addEventListener('click',closeBodaClaseForm);
   var dia=document.getElementById('bodaFormDia');
+  document.getElementById('bodaFormDuration').onchange=function(){var d=BODA_CONFIG.durations.find(function(x){return x.id===this.value;},this);if(d){F.ds=dia.value||F.ds;b.duration=d.minutes;b.durationId=d.id;_bodaFormRender();}};
   dia.addEventListener('change',function(){F.ds=this.value||F.ds;F.tmp.start=F.ds;});
   /* Multidia: el mismo selector que usa la categoria "Otros" del formulario
      de eventos. Solo al crear; cambiar una clase existente sigue siendo un dia. */
@@ -115,7 +124,7 @@ function _bodaFormRender(){
       var hechas=0,llenos=[];
       dias.forEach(function(d){
         if(bodaDayFull(d)){llenos.push(_bodaFmtCorto(d));return;}
-        EVENTS.push(bodaNewClass(d,b2.time,b2.coupleId,b2.place));
+        EVENTS.push(bodaNewClass(d,b2.time,b2.coupleId,b2.place,b2.duration,b2.durationId));
         hechas++;
       });
       if(!hechas){
@@ -128,7 +137,7 @@ function _bodaFormRender(){
       var ev=F.ev;
       ev.start=ds;ev.end=ds;
       ev.boda=ev.boda||{};
-      ev.boda.time=b2.time;ev.boda.coupleId=b2.coupleId;ev.boda.place=b2.place;
+      ev.boda.duration=b2.duration;ev.boda.durationId=b2.durationId;ev.boda.time=b2.time;ev.boda.coupleId=b2.coupleId;ev.boda.place=b2.place;
       var cc=bodaCouple(b2.coupleId);
       ev.title=cc?('Ensayo — '+cc.name):'Ensayo boda';
       if(typeof BODA_PENDING!=='undefined'&&BODA_PENDING[ev.id])delete BODA_PENDING[ev.id];

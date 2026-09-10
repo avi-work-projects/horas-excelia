@@ -349,7 +349,7 @@ var _g4=document.getElementById('exportAllBtn'); if(_g4)_g4.addEventListener('cl
   if(typeof loadPersonalYear==='function')loadPersonalYear(CY);
   if(typeof loadEconComp==='function')loadEconComp();
   if(typeof loadEvAlarms==='function')loadEvAlarms();
-  var data={version:6,mailConfig:_lsJson(MAIL_CFG_SK,null),days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
+  var data={version:7,bodaConfig:JSON.parse(JSON.stringify(BODA_CONFIG)),mailConfig:_lsJson(MAIL_CFG_SK,null),days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
     exclFest:EXCL_FEST,exclVac:EXCL_VAC,vacEntitlement:VAC_ENTITLEMENT,
     birthdays:BDAYS,events:EVENTS,
     bodas:typeof BODA_COUPLES!=='undefined'?BODA_COUPLES:null,
@@ -512,6 +512,7 @@ function _applyFullImport(d,mode){
       if(d.ratePeriods&&typeof ECON_RATE_PERIODS!=='undefined')ECON_RATE_PERIODS=d.ratePeriods;
       if(d.econYearConfig&&typeof ECON_YEAR_CONFIG!=='undefined')
         ECON_YEAR_CONFIG=merge?_mergeMap(ECON_YEAR_CONFIG,d.econYearConfig):d.econYearConfig;
+      importBodaConfig(d.bodaConfig,merge);
       save();appStorage.commit();render();
       updateBdayBtn();updateEventsBtn();
       showToast(merge?('Backup fusionado'+(_impRes?(' · eventos: '+evMergeMsg(_impRes)):''))

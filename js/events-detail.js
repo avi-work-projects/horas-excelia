@@ -12,7 +12,7 @@ function openEvDeleteSheet(ev){
   h+='<div class="ev-del-title">'+escHtml(ev.title)+'</div>';
   h+='<div class="ev-del-sub">'+getEvType(ev)+' \u00b7 '+_fmtDayEs(ev.start)+'</div>';
   h+='<div class="ev-detail-actions">';
-  h+='<button class="ev-btn" id="evDelEdit">&#9998; Editar</button>';
+  h+='<button class="action-edit ev-btn" id="evDelEdit">&#9998; Editar</button>';
   h+='<button class="ev-btn danger" id="evDelGo">&#128465; Eliminar</button>';
   h+='</div></div></div>';
   abrirPanel('evDelWrap',h,{overlay:'evDelOv',alCerrar:closeEvDeleteSheet});
@@ -127,7 +127,7 @@ function renderEvDetail(ev,fromSummary,car){
     };
     h+='<div class="ev-bficha">';
     h+=_fila('hora','\ud83d\udd52','Hora',
-      _b.time?(_b.time+' \u2013 '+_bodaMasUnaHora(_b.time)):'Sin asignar',!_b.time);
+      _b.time?(_b.time+' \u2013 '+bodaEndAt(_b.time,bodaDuration(ev))):'Sin asignar',!_b.time);
     h+=_fila('sala',_pl?bodaPlaceEmoji(_pl):'\ud83c\udfe0','Sala',
       _pl?escHtml(BODA_PLACE_SHORT[_pl]):'Sin asignar',!_pl);
     h+=_fila('pareja','\ud83d\udc8d','Pareja',
@@ -140,13 +140,13 @@ function renderEvDetail(ev,fromSummary,car){
     /* Sesion de rutina: no es un evento guardado, asi que ni se edita ni se
        borra desde aqui; lo que se hace es marcarla */
     h+='<button class="ev-btn primary" id="evDRutSes">'+(ev._rutSkip?'Marcar como hecha':'Marcar como saltada')+'</button>';
-    h+='<button class="ev-btn ev-edit-orange" id="evDRutEdit">&#9998; Editar rutina</button>';
+    h+='<button class="action-edit ev-btn ev-edit-orange" id="evDRutEdit">&#9998; Editar rutina</button>';
   } else if(ev.id.indexOf('ev-bday-vip-')===0){
     h+='<button class="ev-btn primary" id="evDBdayAlarm">&#128276; Alarma de cumplea'+'\u00f1'+'os</button>';
   } else {
     if(fromSummary)h+='<button class="ev-btn" id="evDGoCal" style="border-color:var(--c-blue);color:var(--c-blue)">&#128197; Ver en Calendario</button>';
     /* Mismo boton que en el panel de alarma de Proximos */
-    h+='<button class="ev-btn ev-edit-orange" id="evDEdit">&#9998; Editar evento</button>';
+    h+='<button class="action-edit ev-btn ev-edit-orange" id="evDEdit">&#9998; Editar evento</button>';
     h+='<button class="ev-btn danger" id="evDDel">Eliminar</button>';
   }
   h+='</div>';
@@ -447,7 +447,7 @@ function renderEvAlarmPanel(ev,firstDate){
   h+='</div>';
   h+='<div class="ev-form-actions">';
   h+='<button class="ev-btn primary" id="evAlarmCreate">&#128276; Crear alarma</button>';
-  h+='<button class="ev-btn ev-edit-orange" id="evAlarmEdit">&#9998; Editar evento</button>';
+  h+='<button class="action-edit ev-btn ev-edit-orange" id="evAlarmEdit">&#9998; Editar evento</button>';
   h+='</div></div></div>';
   return h;
 }

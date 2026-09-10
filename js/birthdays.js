@@ -25,7 +25,7 @@ function _showBdayInlineCtrl(el,b){
   var div=document.createElement('div');
   div.className='bday-inline-ctrl';
   div.innerHTML='<button class="bday-ic-btn bday-ic-vip'+(isVip?' active':'')+'"><img src="./VIP.png" style="width:26px;height:auto;vertical-align:middle" alt="VIP"></button>'
-    +'<button class="bday-ic-btn bday-ic-edit">&#9999;&#65039; Editar</button>'
+    +'<button class="action-edit bday-ic-btn bday-ic-edit">&#9998; Editar</button>'
     +'<button class="bday-ic-btn bday-ic-close">&#10006;</button>';
   el.after(div);
   div.querySelector('.bday-ic-vip').addEventListener('click',function(e){

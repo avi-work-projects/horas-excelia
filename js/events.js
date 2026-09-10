@@ -717,7 +717,7 @@ function evStartTime(ev){
 function evEndTime(ev){
   if(!ev)return null;
   if(ev._rut)return (typeof rutFin==='function')?rutFin(ev._rutTime,ev._rut.dur):null;
-  if(getEvType(ev)==='Ensayos boda')return null;   /* duran 1 h fija */
+  if(getEvType(ev)==='Ensayos boda')return ev.boda&&ev.boda.time?bodaEndAt(ev.boda.time,bodaDuration(ev)):null;
   return (ev.time&&ev.endTime)?ev.endTime:null;
 }
 /* Texto corto "09:30 – 11:00" para las tarjetas */

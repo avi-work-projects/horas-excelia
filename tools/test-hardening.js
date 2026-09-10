@@ -30,3 +30,18 @@ a.BDAY_ALARM_SET[a.getBdayAlarmKey(birthday)]={date:'2025-08-22'};assert.equal(a
 a.BDAYS=[1,2,3].map(i=>({name:'VIP'+i,day:22,month:8,vip:true}));assert.ok(a.birthdayValidation({...birthday,vip:true},null));assert.equal(a.validBirthday(29,2),true);assert.equal(a.validBirthday(31,2),false);
 a.RUTINAS=[1,2,3].map(i=>({id:'r'+i,start:'2030-01-01',weekDays:[1],time:'18:00'}));assert.ok(a.rutLimitExceeded({id:'new',start:'2026-08-21',weekDays:[1],time:'18:00'},null));
 console.log('Hardening: birthday expiry, VIP caps and distant routine limits OK');
+
+const b=cargarApp({});
+b.BODA_COUPLES=[{id:'p2',name:'Pack dos',contracted:2},{id:'p4',name:'Pack cuatro',contracted:4}];
+b.EVENTS=[];b.bodaLoadConfig();
+for(let i=0;i<3;i++)b.EVENTS.push({id:'cls'+i,kind:'puntual',type:'Ensayos boda',start:'2020-01-0'+(i+1),end:'2020-01-0'+(i+1),boda:{coupleId:'p2',time:'18:00',place:'casa'}});
+assert.equal(b.bodaPackStats().counts[3],1);assert.equal(b.bodaPackStats().extras,1);assert.equal(b.bodaPackStats().byPack['pack-2'].classes,1);
+assert.throws(()=>b.bodaDeleteCatalogItem('packs','pack-2'));assert.throws(()=>b.bodaDeleteCatalogItem('places','casa'));
+b.bodaSetCatalogItem('packs','pack-2',{classes:6});assert.equal(b.BODA_COUPLES[0].packClasses,2);assert.equal(b.bodaPackStats().extras,1);
+b.BODA_CONFIG.defaultDurationId='dur-20';assert.equal(b.bodaNewClass('2030-01-01','18:00',null,'').boda.duration,20);assert.equal(b.bodaDuration(b.EVENTS[0]),60);
+b.bodaSetCatalogItem('durations','dur-60',{minutes:90});assert.equal(b.bodaDuration(b.EVENTS[0]),60);assert.throws(()=>b.bodaDeleteCatalogItem('durations','dur-60'));
+b.bodaSetCatalogItem('places','casa',{active:false});assert.equal(b.bodaPlaceLabel(b.bodaPlaceOf(b.EVENTS[0])),'Casa');assert.notEqual(b.BODA_PLACE_DEFAULT,'casa');
+assert.equal(b.bodaEndAt('18:00',20),'18:20');assert.equal(b.bodaEndAt('23:50',20),'00:10');
+assert.throws(()=>b.validateBodaConfig({packs:[],durations:[],places:[],defaultDurationId:'no'}));
+b.bodaDeleteCatalogItem('places','otro');assert.ok(!b.BODA_CONFIG.places.some(x=>x.k==='otro'));
+console.log('Bodas: packs historicos, extras, duracion y referencias protegidas OK');
