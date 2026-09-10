@@ -410,6 +410,11 @@ let ok = 0, fallos = [], nuevas = 0, actualizadas = 0;
   }]);
 });
 
+VISTAS.push(['eventos-subpestana-cumpleanos',function(){
+  const previous=app.EV_VIEW;
+  try{app.EV_VIEW='birthdays';return app.renderEvContent();}finally{app.EV_VIEW=previous;}
+}]);
+
 for (const [nombre, fn] of VISTAS) {
   if (FILTRO && nombre.indexOf(FILTRO) === -1) continue;
   let html;

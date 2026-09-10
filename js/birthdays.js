@@ -479,7 +479,7 @@ function renderBdayAlarmPanel(b){
 
 function openBdayAlarm(b){
   abrirPanel('bdAlarmWrap',renderBdayAlarmPanel(b),{
-    contenedor:document.getElementById('bdayOverlay'),
+    contenedor:bdayPanelHost(),
     overlay:'bdAlarmOv', alCerrar:closeBdayAlarm});
   bindBdayAlarmEvents(b);
 }
@@ -673,7 +673,7 @@ function renderBdayForm(b,prefillDay,prefillMonth){
 /* ── Abrir/cerrar detail ──────────────────────────────────── */
 function openBdayDetail(b){
   abrirPanel('bdDWrap',renderBdayDetail(b),{
-    contenedor:document.getElementById('bdayOverlay'),
+    contenedor:bdayPanelHost(),
     overlay:'bdDetailOv', alCerrar:closeBdayDetail});
   document.getElementById('bdDClose').addEventListener('click',closeBdayDetail);
   document.getElementById('bdDEdit').addEventListener('click',function(){
@@ -687,7 +687,7 @@ function closeBdayDetail(){cerrarPanel('bdDWrap','bdDetailOv');}
 function openBdayForm(b,prefillDay,prefillMonth){
   BDAY_EDIT=b||null;
   abrirPanel('bdFWrap',renderBdayForm(b,prefillDay,prefillMonth),{
-    contenedor:document.getElementById('bdayOverlay'),
+    contenedor:bdayPanelHost(),
     overlay:'bdFormOv', alCerrar:closeBdayForm});
   var inp=document.getElementById('bdFName');
   if(inp)setTimeout(function(){inp.focus();},100);
@@ -757,6 +757,7 @@ function closeBday(){
 function refreshBday(){
   document.getElementById('bdayContent').innerHTML=renderBdayContent();
   bindBdayEvents();
+  if(typeof EV_VIEW!=='undefined'&&EV_VIEW==='birthdays')refreshEvents();
 }
 
 function applyBdaySearch(q){
@@ -942,8 +943,45 @@ function bindBdayEvents(){
       openBdayDetail(b);
     });
   });
+  bindBdayUpcoming(document.getElementById('bdayContent'));
+  // Export
+  var bdExportEl=document.getElementById('bdExport');
+  if(bdExportEl)bdExportEl.addEventListener('click',function(){
+    if(!BDAYS.length){showToast('No hay cumplea\u00f1os para exportar','error');return;}
+    var a=document.createElement('a');
+    a.href='data:application/json,'+encodeURIComponent(JSON.stringify(BDAYS,null,2));
+    a.download='cumpleanos.json'; a.click();
+  });
+  // Import
+  var bdImportFileEl=document.getElementById('bdImportFile');
+  if(bdImportFileEl)bdImportFileEl.addEventListener('change',function(ev){
+    var f=ev.target.files[0];if(!f)return;
+    var r=new FileReader();
+    r.onload=function(e){
+      try{
+        var arr=JSON.parse(e.target.result);
+        if(!Array.isArray(arr))throw new Error('not array');
+        BDAYS=arr;
+        localStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));
+        syncVipBdaysToEvents();
+        showToast('Cumplea\u00f1os importados: '+BDAYS.length,'success');
+        updateBdayBtn(); refreshBday();
+      }catch(err){showToast('Error al importar el archivo','error');}
+    };
+    r.readAsText(f);
+  });
+  /* Swipe: navegar mes anterior/siguiente (bdPrev/bdNext solo existen en vista cal) */
+  addSwipe(document.getElementById('bdayOverlay'),function(){
+    var b=document.getElementById('bdNext');if(b)b.click();
+  },function(){
+    var b=document.getElementById('bdPrev');if(b)b.click();
+  });
+}
+
+/* Compartido por Cumpleanos y Eventos: mismos gestos y acciones. */
+function bindBdayUpcoming(root){
   // Clicks en vista "Próximos" → ALARM panel
-  document.querySelectorAll('.bday-upcoming-item[data-bday-name]').forEach(function(item){
+  root.querySelectorAll('.bday-upcoming-item[data-bday-name]').forEach(function(item){
     item.addEventListener('touchstart',function(){
       _bdLpFired=false;
       var bidxUp2=parseInt(item.dataset.bdayIdx,10);
@@ -979,36 +1017,9 @@ function bindBdayEvents(){
       openBdayAlarm(b);
     });
   });
-  // Export
-  var bdExportEl=document.getElementById('bdExport');
-  if(bdExportEl)bdExportEl.addEventListener('click',function(){
-    if(!BDAYS.length){showToast('No hay cumplea\u00f1os para exportar','error');return;}
-    var a=document.createElement('a');
-    a.href='data:application/json,'+encodeURIComponent(JSON.stringify(BDAYS,null,2));
-    a.download='cumpleanos.json'; a.click();
-  });
-  // Import
-  var bdImportFileEl=document.getElementById('bdImportFile');
-  if(bdImportFileEl)bdImportFileEl.addEventListener('change',function(ev){
-    var f=ev.target.files[0];if(!f)return;
-    var r=new FileReader();
-    r.onload=function(e){
-      try{
-        var arr=JSON.parse(e.target.result);
-        if(!Array.isArray(arr))throw new Error('not array');
-        BDAYS=arr;
-        localStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));
-        syncVipBdaysToEvents();
-        showToast('Cumplea\u00f1os importados: '+BDAYS.length,'success');
-        updateBdayBtn(); refreshBday();
-      }catch(err){showToast('Error al importar el archivo','error');}
-    };
-    r.readAsText(f);
-  });
-  /* Swipe: navegar mes anterior/siguiente (bdPrev/bdNext solo existen en vista cal) */
-  addSwipe(document.getElementById('bdayOverlay'),function(){
-    var b=document.getElementById('bdNext');if(b)b.click();
-  },function(){
-    var b=document.getElementById('bdPrev');if(b)b.click();
-  });
+}
+
+function bdayPanelHost(){
+  var events=document.getElementById('eventsOverlay');
+  return typeof EV_VIEW!=='undefined'&&EV_VIEW==='birthdays'&&events&&events.classList.contains('open')?events:document.getElementById('bdayOverlay');
 }

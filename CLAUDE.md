@@ -1258,3 +1258,6 @@ Las barras finas tienen una banda inferior separada de las gruesas (`_evBarBand`
 
 ### Grandes: dos por grosor y dia
 `EV_MAX_BAR_DIA=2` y `evBarLimitExceeded` comprueban altas y ediciones (excluyendo el evento editado). Se revisan los inicios de los intervalos coincidentes, sin limite de 400 dias. La importacion conserva datos antiguos. Las finas se apilan con su altura original solo durante la coincidencia y no comparten media casilla. Las medianas quedan dentro de las gruesas, cerca de su base; `labelTop` sube el titulo grueso cuando coincide una mediana. Todas las siluetas tienen un borde exterior del color de fondo.
+
+### Cumpleanos dentro de Eventos (v290)
+`EV_VIEW='birthdays'` reutiliza `renderBdayUpcoming` y `bindBdayUpcoming(root)`. No duplicar su contenido ni sus gestos. `bdayPanelHost` elige la ventana visible para alarma y edicion. Alcance actual: cuatro dias pasados, hoy y nueve siguientes. El resumen de inicio ya incluye todos los cumpleanos hoy/manana, y VIP hasta siete dias sin alarma.

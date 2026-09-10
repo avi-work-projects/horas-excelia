@@ -459,7 +459,7 @@ function renderEvContent(){
   // Zona A: Proximos + Vacaciones/Festivos (esta ultima agrupa Puentes y
   // Vac/Festivos en subpestanas)
   h+='<div class="ev-view-zone ev-zone-a">';
-  var _upActive=(EV_VIEW==='upcoming'||EV_VIEW==='months');
+  var _upActive=(EV_VIEW==='upcoming'||EV_VIEW==='months'||EV_VIEW==='birthdays');
   h+='<button class="ev-view-toggle'+(_upActive?' active':'')+'" id="evViewUpcoming">Pr\u00f3ximos</button>';
   var _toActive=(EV_VIEW==='puentes'||EV_VIEW==='time-off');
   h+='<button class="ev-view-toggle ev-btn-timeoff ev-btn-split'+(_toActive?' active':'')+'" id="evViewTimeOff">Vacaciones<br>Festivos</button>';
@@ -484,7 +484,7 @@ function renderEvContent(){
   var _hdrCenterCls=' sy-header-center';
   h+='<div class="sy-header with-tabs'+_hdrCenterCls+'">';
   h+='<button class="sy-back" id="evBack">&#8592;</button>';
-  if(EV_VIEW==='upcoming'){
+  if(EV_VIEW==='upcoming'||EV_VIEW==='birthdays'){
     h+='<div class="sy-year-nav"><div class="sy-year">Eventos</div></div>';
   } else if(EV_VIEW==='week'){
     h+='<div class="sy-year-nav"><button class="sy-nav" id="evPrev">&#9664;</button>';
@@ -559,10 +559,11 @@ function renderEvContent(){
     h+='</div>';
     h+='</div>';
   }
-  if(EV_VIEW==='upcoming'||EV_VIEW==='months'){
+  if(EV_VIEW==='upcoming'||EV_VIEW==='months'||EV_VIEW==='birthdays'){
     /* Pestana "Proximos" con dos subpestanas: la agenda corta y la lista completa */
     h+='<div class="econ-sub-tabs">';
     h+='<button class="econ-sub-tab'+(EV_VIEW==='upcoming'?' active':'')+'" id="evSubUpcoming">Próximos</button>';
+    h+='<button class="econ-sub-tab'+(EV_VIEW==='birthdays'?' active':'')+'" id="evSubBirthdays">Cumplea&ntilde;os</button>';
     h+='<button class="econ-sub-tab'+(EV_VIEW==='months'?' active':'')+'" id="evSubTodos">Todos</button>';
     h+='</div>';
     if(EV_VIEW==='upcoming'){
@@ -581,6 +582,7 @@ function renderEvContent(){
   }
   if(EV_VIEW==='cal')h+=renderEvCalMonth();
   else if(EV_VIEW==='upcoming')h+=renderEvUpcoming();
+  else if(EV_VIEW==='birthdays')h+=renderBdayUpcoming()+'<div class="bday-io-row"><button class="bday-io-btn io-primaria" id="evBdayAdd">+ A&ntilde;adir cumplea&ntilde;os</button></div>';
   else if(EV_VIEW==='week')h+=renderEvWeek();
   else if(EV_VIEW==='annual')h+=renderEvAnnual();
   else if(EV_VIEW==='quad')h+=renderEvQuad();
@@ -589,12 +591,12 @@ function renderEvContent(){
   else if(EV_VIEW==='puentes')h+=renderSummaryPuentesBody(EV_YEAR);
   else if(EV_VIEW==='time-off')h+=renderSummaryTimeOffBody(EV_YEAR);
   else h+=renderEvMonthsView();
-  if(EV_VIEW!=='puentes'&&EV_VIEW!=='time-off'&&EV_VIEW!=='bodas'&&EV_VIEW!=='rutinas'){
+  if(EV_VIEW!=='birthdays'&&EV_VIEW!=='puentes'&&EV_VIEW!=='time-off'&&EV_VIEW!=='bodas'&&EV_VIEW!=='rutinas'){
     h+='<div class="ev-io-row">';
     var _isPickView=EV_VIEW==='annual'||EV_VIEW==='quad';
     var addLabel=_isPickView&&EV_EDIT_MODE?'&#10006; Cancelar':'+ A\u00f1adir';
     h+='<button class="ev-io-btn'+(_isPickView&&EV_EDIT_MODE?' ev-edit-pick-mode':'')+'" id="evAdd">'+addLabel+'</button>';
-    if(EV_VIEW==='upcoming'||EV_VIEW==='months'){
+    if(EV_VIEW==='upcoming'||EV_VIEW==='months'||EV_VIEW==='birthdays'){
       /* Exportar solo los eventos se quito: el backup completo del menu de
          ajustes ya los lleva. Importar se queda para los ficheros antiguos. */
       h+='<button class="ev-io-btn" id="evImport">&#8593; Importar</button>';
