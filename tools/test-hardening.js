@@ -37,7 +37,7 @@ b.EVENTS=[];b.bodaLoadConfig();
 assert.equal(b.BODA_CONFIG.packs.map(p=>p.name).join(','),'Esencia,Latido,Eternidad');
 b.BODA_CONFIG.packs[0].name='Pack 2';b.BODA_CONFIG.packs[1].name='Personalizado';b.saveBodaConfig();b.bodaLoadConfig();
 assert.equal(b.BODA_CONFIG.packs[0].name,'Esencia');assert.equal(b.BODA_CONFIG.packs[1].name,'Personalizado');
-assert.ok(b.renderBodaCoupleForm(null).includes('>4 clases</option>'));
+assert.ok(b.renderBodaCoupleForm(null).includes('>Personalizado (4 clases)</option>'));
 
 for(let i=0;i<3;i++)b.EVENTS.push({id:'cls'+i,kind:'puntual',type:'Ensayos boda',start:'2020-01-0'+(i+1),end:'2020-01-0'+(i+1),boda:{coupleId:'p2',time:'18:00',place:'casa'}});
 assert.equal(b.bodaPackStats().counts[3],1);assert.equal(b.bodaPackStats().extras,1);assert.equal(b.bodaPackStats().byPack['pack-2'].classes,1);
