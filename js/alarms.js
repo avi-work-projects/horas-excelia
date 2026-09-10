@@ -8,14 +8,14 @@
 var ALARMS_SK='excelia-alarms-v1';
 var ALARMS=(function(){
   try{
-    var r=localStorage.getItem(ALARMS_SK);
+    var r=appStorage.getItem(ALARMS_SK);
     if(r){var a=JSON.parse(r);if(Array.isArray(a))return a;}
   }catch(e){}
   return [];
 })();
 
 function saveAlarms(){
-  try{localStorage.setItem(ALARMS_SK,JSON.stringify(ALARMS));}catch(e){}
+  try{appStorage.setItem(ALARMS_SK,JSON.stringify(ALARMS));}catch(e){}
 }
 
 // Añadir una alarma al registro

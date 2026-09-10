@@ -4,7 +4,7 @@
    → Cambiar CACHE_VER en cada deploy para forzar actualización
    ============================================================ */
 
-var CACHE_VER = 'v294';
+var CACHE_VER = 'v295';
 var CACHE_NAME = 'horas-excelia-' + CACHE_VER;
 
 var ASSETS = [
@@ -13,6 +13,7 @@ var ASSETS = [
   './manifest.json',
   './logo.png',
   './css/styles.css',
+  './js/data-integrity.js',
   './js/core.js',
   './js/summary.js',
   './js/economics-helpers.js',
@@ -29,10 +30,16 @@ var ASSETS = [
   './js/economics-fiscal-bind.js',
   './js/economics-fiscal-elect.js',
   './js/birthdays.js',
+  './js/birthdays-render.js',
+  './js/birthdays-panels.js',
+  './js/birthdays-bind.js',
   './js/events-picker-color.js',
   './js/events-picker-date.js',
   './js/rutinas.js',
   './js/bodas.js',
+  './js/bodas-assign.js',
+  './js/bodas-class-form.js',
+  './js/bodas-bind.js',
   './js/events.js',
   './js/events-cal.js',
   './js/events-render.js',
@@ -73,8 +80,10 @@ self.addEventListener('install', function(e) {
 self.addEventListener('activate', function(e) {
   e.waitUntil(
     caches.keys().then(function(keys) {
+      var own=keys.filter(function(k){return k.indexOf('horas-excelia-')===0&&k!==CACHE_NAME;});
+      var previous=own[own.length-1]; /* una generacion para migrar defaults personales */
       return Promise.all(
-        keys.filter(function(k) { return k !== CACHE_NAME; })
+        own.filter(function(k) { return k !== previous; })
             .map(function(k) { return caches.delete(k); })
       );
     }).then(function() {

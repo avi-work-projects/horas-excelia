@@ -6,3 +6,8 @@ horas-excelia-backup*.json
 # Sistema
 .DS_Store
 Thumbs.db
+
+node_modules/
+dist/
+test-results/
+playwright-report/

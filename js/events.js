@@ -61,7 +61,7 @@ var EV_LIST_SEARCH = '';        /* busqueda por titulo o descripcion en "Todos" 
 var EV_COLORS = ['#38bdf8','#1d4ed8','#34d399','#fb923c','#ff6b6b','#c084fc','#a3e635'];
 var EVENTS = (function(){
   try{
-    var stored=localStorage.getItem(EV_STORAGE_KEY);
+    var stored=appStorage.getItem(EV_STORAGE_KEY);
     if(stored){var arr=JSON.parse(stored);if(Array.isArray(arr)){
       // Migrar eventos amarillos de 'Otros' → lima (#a3e635). VIP bdays mantienen amarillo.
       // Migrar nombres antiguos de tipo: 'Recordatorio de Gestiones' → 'Rec. Gestiones'; 'Planes y Quedadas' → 'Plan/Quedada'
@@ -76,7 +76,7 @@ var EVENTS = (function(){
       });
       /* v248: una clase de boda por dia (ver bodaNormalizeClasses) */
       if(typeof bodaNormalizeClasses==='function'&&bodaNormalizeClasses(arr))changed=true;
-      if(changed)try{localStorage.setItem(EV_STORAGE_KEY,JSON.stringify(arr));}catch(e){}
+      if(changed)try{appStorage.setItem(EV_STORAGE_KEY,JSON.stringify(arr));}catch(e){}
       return arr;
     }}
   }catch(e){}
@@ -84,14 +84,14 @@ var EVENTS = (function(){
 })();
 
 function saveEvents(){
-  localStorage.setItem(EV_STORAGE_KEY,JSON.stringify(EVENTS));
+  appStorage.setItem(EV_STORAGE_KEY,JSON.stringify(EVENTS));
 }
 
 /* ── Estado de alarmas por evento (próximos) ── */
 var EV_ALARM_SK='excelia-ev-alarm-v1';
 var EV_ALARMS_SET={};
-function loadEvAlarms(){try{var r=localStorage.getItem(EV_ALARM_SK);if(r)EV_ALARMS_SET=JSON.parse(r);}catch(e){}}
-function saveEvAlarms(){try{localStorage.setItem(EV_ALARM_SK,JSON.stringify(EV_ALARMS_SET));}catch(e){}}
+function loadEvAlarms(){try{var r=appStorage.getItem(EV_ALARM_SK);if(r)EV_ALARMS_SET=JSON.parse(r);}catch(e){}}
+function saveEvAlarms(){try{appStorage.setItem(EV_ALARM_SK,JSON.stringify(EV_ALARMS_SET));}catch(e){}}
 function _findBdayByEvId(evId){
   if(evId.indexOf('ev-bday-vip-')!==0||typeof BDAYS==='undefined')return null;
   var _p=evId.replace('ev-bday-vip-','').split('-');
@@ -175,7 +175,7 @@ function eventOccursOn(ev,ds){
    De momento las rutinas SOLO se pintan en el calendario de 1 mes; el resto
    de vistas (anual, 4 meses, agenda semanal, home y resumen) las excluyen. */
 function getEventsOn(ds,opts){
-  var out=EVENTS.filter(function(ev){return eventOccursOn(ev,ds);});
+  var out=EV_DATE_INDEX&&EV_DATE_INDEX[ds]?EV_DATE_INDEX[ds].slice():EVENTS.filter(function(ev){return eventOccursOn(ev,ds);});
   /* Las rutinas no se guardan como eventos: generan sesiones "virtuales" que
      se cuelan aqui para que los calendarios las pinten sin cambios. */
   if((!opts||opts.rutinas!==false)&&typeof rutEventsOn==='function')out=out.concat(rutEventsOn(ds));
@@ -195,7 +195,7 @@ function evSignature(ev){
     String(ev.title||'').trim().toLowerCase().replace(/\s+/g,' '),
     ev.start,ev.end||ev.start,
     (ev.dates&&ev.dates.length)?ev.dates.slice().sort().join(','):'',
-    rep].join('|');
+    rep,evStartTime(ev)||'',evEndTime(ev)||'',ev.boda&&ev.boda.coupleId||''].join('|');
 }
 /* Fusiona una lista de eventos entrantes sobre EVENTS sin crear duplicados.
    Devuelve el recuento para poder decirselo al usuario. */
@@ -209,6 +209,7 @@ function evMergeIncoming(incoming){
     if(ev.title)ev.title=String(ev.title).trim();   /* higiene al importar */
     var i=byId[ev.id];
     if(i!==undefined){                     /* mismo id: es el mismo evento */
+      var oldSignature=evSignature(EVENTS[i]);if(bySig[oldSignature]===i)delete bySig[oldSignature];
       EVENTS[i]=ev;bySig[evSignature(ev)]=i;r.actualizados++;return;
     }
     var sig=evSignature(ev);
@@ -762,4 +763,19 @@ function _positionEvBright(){
   var tL=todayBtn.getBoundingClientRect().left-hdrL;
   bright.style.left=(((nR+tL)/2)-(bright.offsetWidth/2))+'px';
   bright.style.right='auto';
+}
+
+var EV_DATE_INDEX=null;
+function withEventDateIndex(from,to,render){
+  var previous=EV_DATE_INDEX,map=Object.create(null),days=[];
+  for(var d=new Date(from);d<=to;d.setDate(d.getDate()+1)){var key=evDk(d);map[key]=[];days.push(key);}
+  EVENTS.forEach(function(ev){
+    if(ev.dates&&ev.dates.length){ev.dates.forEach(function(ds){if(map[ds])map[ds].push(ev);});return;}
+    if(!ev.repeat){
+      var start=ev.start,end=ev.end||start;
+      days.forEach(function(ds){if(ds>=start&&ds<=end)map[ds].push(ev);});
+    }else days.forEach(function(ds){if(eventOccursOn(ev,ds))map[ds].push(ev);});
+  });
+  EV_DATE_INDEX=map;
+  try{return render();}finally{EV_DATE_INDEX=previous;}
 }

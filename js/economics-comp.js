@@ -22,12 +22,12 @@ function _salaryMonths(sal){
 
 function loadEconComp(){
   try{
-    var r=localStorage.getItem(ECON_COMP_SK);
+    var r=appStorage.getItem(ECON_COMP_SK);
     if(r){var d=JSON.parse(r);if(Array.isArray(d)&&d.length>=2)ECON_SCENARIOS=d;}
   }catch(e){}
 }
 function saveEconComp(){
-  try{localStorage.setItem(ECON_COMP_SK,JSON.stringify(ECON_SCENARIOS));}catch(e){}
+  try{appStorage.setItem(ECON_COMP_SK,JSON.stringify(ECON_SCENARIOS));}catch(e){}
 }
 
 /* ── Gráfico SVG de líneas ───────────────────────────────────── */

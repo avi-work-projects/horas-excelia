@@ -31,45 +31,9 @@ window.onerror=function(msg,src,line){
 
 <!-- ── Config inline (reemplazado por deploy.yml) ── -->
 <script>
-var TO='{{TO}}';
-var CC='{{CC}}'.split(',').map(function(s){return s.trim();}).filter(Boolean);
-var AUTHOR_NAME='{{AUTHOR_NAME}}';
+var TO='',CC=[],AUTHOR_NAME='';
 var BUILD={sha:'local',ok:true};
-
-/*
-  BIRTHDAYS secret: el secreto puede contener el array base64-encoded en dos formatos:
-  1) JSON:  base64( [{"name":"Nombre","day":4,"month":1}, ...] )
-  2) CSV:   base64( "Nombre,dia,mes\nNombre2,dia2,mes2\n..." )
-  La app detecta automáticamente el formato tras decodificar.
-*/
-var BDAYS_RAW='{{BIRTHDAYS}}';
-try{
-  if(BDAYS_RAW&&BDAYS_RAW!=='{{BIRTHDAYS}}'){
-    var decoded=atob(BDAYS_RAW);
-    var BDAYS_FROM_SECRET;
-    // Intentar JSON primero
-    try{
-      var parsed=JSON.parse(decoded);
-      if(Array.isArray(parsed))BDAYS_FROM_SECRET=parsed;
-    }catch(je){
-      // Fallback: CSV formato "Nombre,dia,mes" por línea (sin cabecera)
-      var lines=decoded.trim().split(/\r?\n/);
-      BDAYS_FROM_SECRET=[];
-      lines.forEach(function(line){
-        line=line.trim();
-        if(!line)return;
-        var parts=line.split(',');
-        if(parts.length>=3){
-          var day=parseInt(parts[1],10);
-          var month=parseInt(parts[2],10);
-          if(day>0&&day<=31&&month>=1&&month<=12){
-            BDAYS_FROM_SECRET.push({name:parts[0].trim(),day:day,month:month});
-          }
-        }
-      });
-    }
-  }
-}catch(e){/* formato no válido, birthdays.js usará [] o localStorage */}
+var BDAYS_FROM_SECRET=[];
 </script>
 
 <!-- ── HEADER ── -->
@@ -116,6 +80,10 @@ try{
             <input class="macro-url-input" id="macroAlarmUrlMenu" type="url" placeholder="https://trigger.macrodroid.com/ID">
           </div>
           <button class="data-menu-item sw-upd-menu-btn" id="swUpdBtn" style="display:none">&#128260;&nbsp;Actualizar</button>
+          <div class="macro-section"><div class="macro-section-lbl">Correo de horas (solo en este dispositivo)</div>
+<input class="macro-url-input" id="mailToLocal" type="email" placeholder="Destinatario">
+<input class="macro-url-input" id="mailCcLocal" type="text" placeholder="CC (separados por comas)">
+<input class="macro-url-input" id="mailNameLocal" type="text" placeholder="Tu nombre"></div>
           <div class="app-version-label" id="appVersionLabel"></div>
         </div>
       </div>
@@ -243,6 +211,7 @@ try{
 <!-- ── SCRIPTS ── -->
 <script defer src="js/lib/jspdf.umd.min.js"></script>
 <script defer src="js/lib/jspdf.plugin.autotable.min.js"></script>
+<script defer src="js/data-integrity.js"></script>
 <script defer src="js/core.js"></script>
 <!-- ── LOGO GALLERY (before scripts so init.js can find it) ── -->
 <div class="logo-popup" id="logoPopup">
@@ -279,10 +248,16 @@ try{
 <script defer src="js/economics-fiscal-gas.js"></script>
 <script defer src="js/economics-fiscal-bind.js"></script>
 <script defer src="js/birthdays.js"></script>
+<script defer src="js/birthdays-render.js"></script>
+<script defer src="js/birthdays-panels.js"></script>
+<script defer src="js/birthdays-bind.js"></script>
 <script defer src="js/events-picker-color.js"></script>
 <script defer src="js/events-picker-date.js"></script>
 <script defer src="js/rutinas.js"></script>
 <script defer src="js/bodas.js"></script>
+<script defer src="js/bodas-assign.js"></script>
+<script defer src="js/bodas-class-form.js"></script>
+<script defer src="js/bodas-bind.js"></script>
 <script defer src="js/events.js"></script>
 <script defer src="js/events-cal.js"></script>
 <script defer src="js/events-render.js"></script>

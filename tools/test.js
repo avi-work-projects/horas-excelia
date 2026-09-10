@@ -369,6 +369,7 @@ const REGLAS = [
       'excelia-despacho-v1':       'despacho',
       'excelia-personal-v1':       'personalData + personalPerYear',
       'excelia-econ-comp-v1':      'scenarios',
+      'excelia-mail-config-v1': 'mailConfig',
       'excelia-alarm-url':         'macroUrl',
       'excelia-alarm-h':           'alarmHour',
       'excelia-alarm-m':           'alarmMinute',

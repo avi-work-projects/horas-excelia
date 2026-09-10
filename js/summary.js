@@ -5,7 +5,7 @@
 var FEST_REQUIRED=12;
 var VAC_STORAGE_KEY='excelia-vac-days';
 var VAC_ENTITLEMENT=(function(){
-  try{var v=localStorage.getItem(VAC_STORAGE_KEY);if(v)return parseInt(v,10);}catch(e){}
+  try{var v=appStorage.getItem(VAC_STORAGE_KEY);if(v)return parseInt(v,10);}catch(e){}
   return 23;
 })();
 var SUMMARY_YEAR=new Date().getFullYear();
@@ -15,7 +15,7 @@ var SUMMARY_TAB='work'; // 'work' | 'puentes' | 'time-off'
 
 function saveVacEntitlement(n){
   VAC_ENTITLEMENT=n;
-  try{localStorage.setItem(VAC_STORAGE_KEY,String(n));}catch(e){}
+  try{appStorage.setItem(VAC_STORAGE_KEY,String(n));}catch(e){}
 }
 
 function fhY(h){return h===0?'0h':fh(h);}

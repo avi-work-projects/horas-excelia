@@ -17,6 +17,7 @@ const RAIZ = path.join(__dirname, '..');
 /* Modulos que solo declaran cosas. init.js e import-export.js quedan fuera
    a proposito: enganchan listeners al cargar y necesitarian un DOM de verdad. */
 const MODULOS = [
+  'data-integrity.js',
   'core.js',
   'summary.js',
   /* El grupo economico: son los que hacen cuentas (IRPF, tramos, hipoteca,
@@ -42,8 +43,14 @@ const MODULOS = [
   'events-detail.js',
   'events-bind.js',
   'bodas.js',
+  'bodas-assign.js',
+  'bodas-class-form.js',
+  'bodas-bind.js',
   'rutinas.js',
   'birthdays.js',
+  'birthdays-render.js',
+  'birthdays-panels.js',
+  'birthdays-bind.js',
   'alarms.js',
 ];
 

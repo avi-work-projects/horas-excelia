@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v294 — filtros organizados y grupos de cumpleanos';
+var APP_VERSION = 'v295 — integridad, privacidad y pruebas automaticas';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -103,9 +103,9 @@ var NAV_BACK=null; // función para "volver atrás" al pulsar ← en cualquier o
 // ── Tema visual ──────────────────────────────────────────────
 var THEME_STORAGE_KEY='excelia-theme-v1';
 var THEME=(function(){try{
-  var t=localStorage.getItem('excelia-theme-v1');
+  var t=appStorage.getItem('excelia-theme-v1');
   /* Migraci\u00f3n v217: amoled (eliminado) \u2192 grey (nuevo intermedio gris pizarra) */
-  if(t==='amoled'){t='grey';try{localStorage.setItem('excelia-theme-v1','grey');}catch(e){}}
+  if(t==='amoled'){t='grey';try{appStorage.setItem('excelia-theme-v1','grey');}catch(e){}}
   if(t&&['dark','light','grey'].indexOf(t)!==-1)return t;
 }catch(e){}return 'dark';})();
 var THEME_LABELS={dark:'\uD83C\uDF19\u00a0Oscuro',light:'\u2600\uFE0F\u00a0Claro',grey:'\uD83C\uDF2B\uFE0F\u00a0Gris'};
@@ -116,7 +116,7 @@ function applyTheme(t){
   document.documentElement.setAttribute('data-theme',t);
   var meta=document.querySelector('meta[name="theme-color"]');
   if(meta)meta.content=THEME_META[t]||THEME_META.dark;
-  try{localStorage.setItem(THEME_STORAGE_KEY,t);}catch(e){}
+  try{appStorage.setItem(THEME_STORAGE_KEY,t);}catch(e){}
 }
 function cycleTheme(){
   var idx=(THEME_SEQUENCE.indexOf(THEME)+1)%THEME_SEQUENCE.length;
@@ -143,7 +143,7 @@ var DF=['Domingo','Lunes','Martes','Mi\u00e9rcoles','Jueves','Viernes','S\u00e1b
 // ── Persistencia ────────────────────────────────────────────
 function load(){
   try{
-    var r=localStorage.getItem(SK);
+    var r=appStorage.getItem(SK);
     if(r){var d=JSON.parse(r);ST=d.days||{};SW=d.sent||{};MONTH_H=d.monthH||{};DAILY_RATE=d.rate||0;EXCL_FEST=d.exclFest!==false;EXCL_VAC=d.exclVac!==false;
       if(d.multiRate!==undefined)ECON_MULTI_RATE=!!d.multiRate;
       if(d.ratePeriods)ECON_RATE_PERIODS=d.ratePeriods;
@@ -154,7 +154,7 @@ function load(){
   }catch(e){ST={};SW={};MONTH_H={};DAILY_RATE=0;EXCL_FEST=true;EXCL_VAC=true;}
 }
 function save(){
-  localStorage.setItem(SK,JSON.stringify({days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,exclFest:EXCL_FEST,exclVac:EXCL_VAC,multiRate:ECON_MULTI_RATE,ratePeriods:ECON_RATE_PERIODS,econYearConfig:ECON_YEAR_CONFIG}));
+  appStorage.setItem(SK,JSON.stringify({days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,exclFest:EXCL_FEST,exclVac:EXCL_VAC,multiRate:ECON_MULTI_RATE,ratePeriods:ECON_RATE_PERIODS,econYearConfig:ECON_YEAR_CONFIG}));
 }
 /* ── Per-year econ config helpers ──────────────────────────── */
 function loadEconYear(y){
@@ -321,6 +321,7 @@ function getWD(wkey){
    opcion y no lo de siempre porque en un "Deshacer" un roce accidental
    desharia lo que se acaba de hacer; en un "Actualizar" no se pierde nada. */
 function showToast(msg,type,undoFn,btnTxt,todoPulsable){
+  if(STORAGE_ERROR){msg=STORAGE_ERROR;type='error';undoFn=null;STORAGE_ERROR=null;}
   var t=document.getElementById('toast');
   clearTimeout(t._timer);
   if(t._tap){t.removeEventListener('click',t._tap);t._tap=null;}

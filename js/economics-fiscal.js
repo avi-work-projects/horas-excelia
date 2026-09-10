@@ -43,8 +43,8 @@ function _renderCopyYearBtn(){
   /* Buscar años que tengan datos para este tipo de tab */
   var prefix=FISCAL_TAB==='personal'?PERSONAL_SK:GASTOS_SK;
   var years=[];
-  for(var i=0;i<localStorage.length;i++){
-    var k=localStorage.key(i);
+  for(var i=0;i<appStorage.length;i++){
+    var k=appStorage.key(i);
     if(k&&k.indexOf(prefix+'-')===0){
       var y=parseInt(k.substring(k.lastIndexOf('-')+1),10);
       if(y&&y!==FISCAL_YEAR&&years.indexOf(y)===-1)years.push(y);

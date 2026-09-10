@@ -19,10 +19,10 @@
 
 var RUT_SK = 'excelia-rutinas-v1';
 var RUTINAS = (function(){
-  try{var r=localStorage.getItem(RUT_SK);if(r){var a=JSON.parse(r);if(Array.isArray(a))return a;}}catch(e){}
+  try{var r=appStorage.getItem(RUT_SK);if(r){var a=JSON.parse(r);if(Array.isArray(a))return a;}}catch(e){}
   return [];
 })();
-function saveRutinas(){try{localStorage.setItem(RUT_SK,JSON.stringify(RUTINAS));}catch(e){}}
+function saveRutinas(){try{appStorage.setItem(RUT_SK,JSON.stringify(RUTINAS));}catch(e){}}
 
 /* Sugerencias al crear la primera rutina */
 var RUT_SUGERENCIAS = [
@@ -170,17 +170,7 @@ function rutSuspendedOn(r,ds){
    cabria: la columna izquierda del calendario solo pinta EV_MAX_RUT_DIA
    sesiones. Devuelve la fecha, o null si cabe en todos. */
 function rutDiaLleno(dias,desde,excluirId){
-  var tope=(typeof EV_MAX_RUT_DIA!=='undefined')?EV_MAX_RUT_DIA:3;
-  var d=new Date((desde||evDk(new Date()))+'T00:00:00');
-  var hoy=new Date();hoy.setHours(0,0,0,0);
-  if(d<hoy)d=hoy;
-  for(var i=0;i<56;i++){
-    var ds=evDk(d);
-    if(dias.indexOf(d.getDay())!==-1&&
-       (typeof rutDayCount==='function')&&rutDayCount(ds,excluirId)>=tope)return ds;
-    d.setDate(d.getDate()+1);
-  }
-  return null;
+  return rutLimitExceeded({weekDays:dias,start:desde,time:'18:00'},excluirId);
 }
 /* ¿Toca sesión ese día? Devuelve la hora, o null */
 function rutOccursOn(r,ds){
@@ -577,7 +567,7 @@ function openRutForm(r){
       var from=sf.value, to=document.getElementById('rutFSuspTo').value;
       datos.suspend=from?{from:from,to:to||null}:null;
     }
-    var _lleno=rutDiaLleno(dias,datos.start,r?r.id:null);
+    var _lleno=rutLimitExceeded(Object.assign({},r||{},datos),r?r.id:null);
     if(_lleno){
       showToast('El '+_rutFmt(_lleno)+' ya tiene '+EV_MAX_RUT_DIA+' rutinas (el m\u00e1ximo)','error');
       return;
@@ -708,6 +698,8 @@ function _rutWeekRender(r){
   });
   var rs=document.getElementById('rutWkReset');
   if(rs)rs.addEventListener('click',function(){
+    var candidate=JSON.parse(JSON.stringify(r));if(candidate.weeks)delete candidate.weeks[RUT_WEEK_SEL];
+    if(rutLimitExceeded(candidate,r.id)){showToast('La semana superaria el maximo de 3 rutinas al dia','error');return;}
     if(r.weeks)delete r.weeks[RUT_WEEK_SEL];
     saveRutinas();closeRutWeek();
     setTimeout(function(){refreshEvents();},310);
@@ -716,8 +708,10 @@ function _rutWeekRender(r){
   document.getElementById('rutWkSave').addEventListener('click',function(){
     var dias=[];
     document.querySelectorAll('#rutWkDays .rut-day-btn.on').forEach(function(b){dias.push(+b.dataset.wd);});
-    r.weeks=r.weeks||{};
-    r.weeks[RUT_WEEK_SEL]={weekDays:dias.sort(),time:document.getElementById('rutWkTime').value||r.time};
+    var candidate=JSON.parse(JSON.stringify(r));candidate.weeks=candidate.weeks||{};
+    candidate.weeks[RUT_WEEK_SEL]={weekDays:dias.sort(),time:document.getElementById('rutWkTime').value||r.time};
+    var full=rutLimitExceeded(candidate,r.id);if(full){showToast('El '+full+' supera 3 rutinas','error');return;}
+    r.weeks=candidate.weeks;
     saveRutinas();closeRutWeek();
     setTimeout(function(){refreshEvents();},310);
     showToast('Semana del '+_rutFmt(RUT_WEEK_SEL).slice(0,5)+' actualizada','success');
