@@ -3,6 +3,12 @@
    ============================================================ */
 
 (function(){
+  /* Una recarga arranca en Home: no restaurar un scroll del documento anterior
+     que deje la primera semana oculta bajo la cabecera sticky. */
+  if('scrollRestoration' in history)history.scrollRestoration='manual';
+  window.addEventListener('pageshow',function(e){
+    if(!e.persisted)window.scrollTo({top:0,left:0,behavior:'instant'});
+  });
   var now=new Date();
   CY=now.getFullYear();
   CM=now.getMonth();

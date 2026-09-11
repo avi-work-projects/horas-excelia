@@ -2636,3 +2636,7 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .ev-wk-travel-footer > .ev-wk-travel{padding-bottom:0}
 
 .settings-menu-separator{border-top:1px solid var(--border);flex-shrink:0}
+
+/* Texto del trayecto alineado con el titulo, sin mover las tarjetas puntuales. */
+.ev-wk-travel-row{margin-left:-6.5px}
+.ev-bright-past .ev-wk-date.ev-wk-past,.ev-bright-past .ev-wk-chips.ev-wk-past{opacity:1}

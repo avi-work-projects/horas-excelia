@@ -408,3 +408,24 @@ test('cupos por ano, backup y ajustes visuales de resumen',async({page})=>{
  await chart.scrollIntoViewIfNeeded();await chart.screenshot({path:'.local-preview/econ-guide-lines.png',animations:'disabled'});
 
 });
+
+
+test('recarga de Home y linterna de agenda',async({page})=>{
+ await page.clock.setFixedTime(new Date('2026-09-11T10:00:00'));
+ await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-events-v1',JSON.stringify([
+ {id:'past-trip',kind:'grande',type:'Asturias',title:'Viaje anterior',start:'2026-09-06',end:'2026-09-12',color:'#1946a0',viaje:{ida:{time:'16:30',modo:'tren'}}},
+ {id:'past-point',kind:'puntual',type:'Otros',title:'Ensayo de prueba',start:'2026-09-06',end:'2026-09-06',color:'#c67da0'}]));});
+ await page.goto('/');await page.evaluate(()=>window.scrollTo(0,80));await page.reload();
+ await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBe(0);
+ const top=await page.locator('.week-card').first().boundingBox(),header=await page.locator('.header').boundingBox();expect(top.y).toBeGreaterThanOrEqual(header.y+header.height);
+ await page.locator('#eventsBtn').click();await page.locator('#evViewWeek').click();
+ const past=page.locator('.ev-wk-chips[data-ds="2026-09-06"]');await expect(past).toHaveCSS('opacity','0.45');
+ await page.locator('#evBright').click();await expect(past).toHaveCSS('opacity','1');
+ await page.evaluate(()=>applyTheme('light'));
+ // La agenda reintenta el posicionamiento inicial hasta los 600 ms.
+ await page.waitForTimeout(750);await past.scrollIntoViewIfNeeded();
+ const title=await page.locator('.ev-wk-sticky-title[data-id="past-trip"]').evaluate(el=>el.getBoundingClientRect().left+parseFloat(getComputedStyle(el).paddingLeft));
+ const ida=await past.locator('.ev-wk-multi-trans').boundingBox();expect(Math.abs(title-ida.x)).toBeLessThan(1);
+ await page.screenshot({path:'.local-preview/agenda-bright-aligned.png',animations:'disabled'});
+ await page.locator('#evBright').click();await expect(past).toHaveCSS('opacity','0.45');
+});
