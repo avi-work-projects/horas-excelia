@@ -2650,6 +2650,6 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .home-submission strong{display:block;font-size:.78rem;font-weight:600}
 .home-submission div > span{display:block;font-size:.68rem;line-height:1.4;margin-top:3px;color:var(--text-muted)}
 .home-submission-icon{font-size:1.1rem;flex-shrink:0}
-.home-submission.pending .home-submission-icon{animation:home-pending-pulse 1.8s ease-in-out infinite}
+.home-submission.pending .home-submission-icon,.home-submission.pending strong{animation:home-pending-pulse 1.8s ease-in-out infinite}
 @keyframes home-pending-pulse{0%,100%{opacity:1}50%{opacity:.3}}
-@media(prefers-reduced-motion:reduce){.home-submission.pending .home-submission-icon{animation:none}}
+@media(prefers-reduced-motion:reduce){.home-submission.pending .home-submission-icon,.home-submission.pending strong{animation:none}}
