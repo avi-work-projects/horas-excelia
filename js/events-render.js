@@ -318,6 +318,27 @@ function _evWeekLanes(segments){
   });
   assign();
 }
+/* Titulos y transporte participan en el flujo del dia, en el carril de su barra. */
+function evWeekTravelRow(segments,day,footer){
+  var items=segments.filter(function(seg){return footer?seg.isLastSeg&&seg.ed===day&&seg.ev.viaje&&seg.ev.viaje.vuelta:seg.sd===day;});
+  if(!items.length)return '';
+  var n=items[0].lanes||1;
+  var h='<div class="ev-wk-travel-row'+(footer?' ev-wk-travel-footer':'')+'" style="grid-template-columns:repeat('+n+',minmax(0,1fr))">';
+  items.forEach(function(seg){
+    var ev=seg.ev,col=getEvDisplayColor(ev);
+    h+='<button class="ev-wk-travel" data-id="'+escHtml(ev.id)+'" style="grid-column:'+(seg.lane+1)+';color:'+col+'">';
+    if(!footer){
+      h+='<span class="ev-wk-travel-title">'+(seg.isFirstSeg?'':'&#8593; ')+escHtml(ev.title)+'</span>';
+      if(!seg.isFirstSeg)h+='<span class="ev-wk-multi-from">desde '+ev.start.slice(8,10)+'/'+ev.start.slice(5,7)+'</span>';
+    }
+    evTramos(ev).forEach(function(tr){
+      if(footer?tr.k==='vuelta':seg.isFirstSeg&&tr.k==='ida')h+='<span class="ev-wk-multi-trans">'+evTramoTexto(tr)+'</span>';
+    });
+    h+='</button>';
+  });
+  return h+'</div>';
+}
+
 function renderEvWeek(){
   var today=new Date();today.setHours(0,0,0,0);
   var todayStr=evDk(today);
@@ -342,7 +363,7 @@ function renderEvWeek(){
       getEventsOn(ds).forEach(function(ev){
         /* Solo los "grandes" se agrupan en una caja continua; los puntuales
            caen como chip en cada dia que ocupan (v241) */
-        if(isEvBarAlways(ev)&&ev.end&&ev.end!==ev.start){
+        if(isEvBarAlways(ev)){
           if(!multiSeen[ev.id]){
             multiSeen[ev.id]={ev:ev,sd:d,ed:d};
             multiSegs.push(multiSeen[ev.id]);
@@ -359,7 +380,7 @@ function renderEvWeek(){
     // Marcar si la cabecera (título) del multi-día va aquí (primer mes del evento)
     multiSegs.forEach(function(seg){
       var sDt=new Date(seg.ev.start+'T00:00:00');
-      var eDt=new Date(seg.ev.end+'T00:00:00');
+      var eDt=new Date((seg.ev.end||seg.ev.start)+'T00:00:00');
       seg.isFirstSeg=(sDt.getFullYear()===yIdx&&sDt.getMonth()===mIdx);
       seg.isLastSeg=(eDt.getFullYear()===yIdx&&eDt.getMonth()===mIdx);
     });
@@ -372,29 +393,11 @@ function renderEvWeek(){
     multiSegs.forEach(function(seg){
       var ev=seg.ev;
       var _dc=getEvDisplayColor(ev);
-      var _isVip=ev.id.indexOf('ev-bday-vip-')===0;
-      var _t=_isVip?escHtml(ev.title.replace(/^\u2b50\s*/,'').replace(/^Cumple\s+/,'')):escHtml(ev.title);
-      var _ic=_isVip?'\u2b50 ':'';
       var rTopCls=seg.isFirstSeg?'':' wk-multi-cont-top';
       var rBotCls=seg.isLastSeg?'':' wk-multi-cont-bot';
       h+='<div class="ev-wk-multi'+rTopCls+rBotCls+(seg.lanes>1?' wk-shared':'')+'" data-id="'+ev.id+'" '
         +'style="grid-row:'+seg.sd+' / '+(seg.ed+1)+';grid-column:2;'
         +'background:'+hexA(_dc,0.18)+';border-color:'+_dc+(seg.lanes>1?';margin-left:calc('+100*seg.lane/seg.lanes+'% + 3px);margin-right:calc('+100*(seg.lanes-seg.lane-1)/seg.lanes+'% + 3px)':'')+'">';
-      /* El titulo se pinta SIEMPRE: si el evento empezo en un mes anterior,
-         antes salia la caja de color sin nombre y no se sabia de que era.
-         En ese caso lleva flecha y la fecha real de inicio. */
-      var _wtr=evTramos(ev);
-      var _wtrHtml=_wtr.length
-        ? '<div class="ev-wk-multi-trans">'+_wtr.map(function(tr){return evTramoTexto(tr);}).join(' \u00b7 ')+'</div>'
-        : '';
-      if(seg.isFirstSeg){
-        h+='<div class="ev-wk-multi-title" style="color:'+_dc+'">'+_ic+_t+'</div>'+_wtrHtml;
-      } else {
-        var _sD=new Date(ev.start+'T00:00:00');
-        var _desde=String(_sD.getDate()).padStart(2,'0')+'/'+String(_sD.getMonth()+1).padStart(2,'0');
-        h+='<div class="ev-wk-multi-title ev-wk-multi-cont" style="color:'+_dc+'">'
-          +'\u2191 '+_ic+_t+'<span class="ev-wk-multi-from">\u00b7 desde '+_desde+'</span></div>';
-      }
       h+='</div>';
     });
 
@@ -415,11 +418,9 @@ function renderEvWeek(){
 
       var chips=evSortMarks(singleByDay[d]||[]);
       var hasMulti=multiSegs.some(function(s){return d>=s.sd&&d<=s.ed;});
-      /* Si este día es el PRIMER día de un multi-día (donde se pinta el título), añadimos
-         padding-top extra a los chips para que no se solapen con el texto del título. */
-      var isFirstOfMulti=multiSegs.some(function(s){return d===s.sd;});
-      var eCls='ev-wk-chips'+(isToday?' ev-wk-today':'')+(isPast?' ev-wk-past':'')+(isWknd?' ev-wk-wknd':'')+(hasMulti?' ev-wk-chips-nested':'')+(isFirstOfMulti?' ev-wk-chips-first-of-multi':'');
+      var eCls='ev-wk-chips'+(isToday?' ev-wk-today':'')+(isPast?' ev-wk-past':'')+(isWknd?' ev-wk-wknd':'')+(hasMulti?' ev-wk-chips-nested':'');
       h+='<div class="'+eCls+'" data-ds="'+ds+'" style="grid-row:'+d+';grid-column:2">';
+      h+=evWeekTravelRow(multiSegs,d,false);
       chips.forEach(function(ev){
         var _dc=getEvDisplayColor(ev);
         var _isVip=ev.id.indexOf('ev-bday-vip-')===0;
@@ -445,6 +446,7 @@ function renderEvWeek(){
         }
         h+='</div>';
       });
+      h+=evWeekTravelRow(multiSegs,d,true);
       h+='</div>';
     }
 
@@ -454,6 +456,13 @@ function renderEvWeek(){
 }
 
 /* ── Render: contenido principal ────────────────────────── */
+var EV_CAL_TEST_COLOR='';
+function evCalendarTestStyle(){
+  if(!/^#[0-9a-f]{6}$/i.test(EV_CAL_TEST_COLOR))return '';
+  var c=EV_CAL_TEST_COLOR;
+  return '#eventsOverlay .ev-zone-b .ev-btn-calendar{color:'+c+'!important;border-color:'+c+'!important;background:'+('color-mix(in srgb,'+c+' 10%,var(--surface))')+'!important}'+
+    '#eventsOverlay .ev-zone-b .ev-btn-calendar.active{background:'+('color-mix(in srgb,'+c+' 25%,var(--surface))')+'!important}';
+}
 function renderEvContent(){
   var h=renderNavBar('events');
   // Tabs a nivel 2 (sticky top:42px, justo bajo la nav bar)
@@ -465,6 +474,7 @@ function renderEvContent(){
   h+='<button class="ev-view-toggle'+(_upActive?' active':'')+'" id="evViewUpcoming">Pr\u00f3ximos</button>';
   var _toActive=(EV_VIEW==='puentes'||EV_VIEW==='time-off');
   h+='<button class="ev-view-toggle ev-btn-timeoff ev-btn-split'+(_toActive?' active':'')+'" id="evViewTimeOff">Vacaciones<br>Festivos</button>';
+  h+='<style id="evCalendarTestStyle">'+evCalendarTestStyle()+'</style>';
   h+='</div>';
   // Zona B: Calendarios visuales (1 mes + Semanal)
   h+='<div class="ev-view-zone ev-zone-b">';

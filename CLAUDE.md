@@ -143,3 +143,7 @@ En Eventos, las casillas heredan el color de su etiqueta y el trazo interior usa
 
 ## Rutinas canceladas: representacion (v313)
 Las sesiones conservan `_rutSkip` y sus datos. `_renderEvMonthCard` las excluye en anual/4 meses; mensual usa `.rut-skip` (X roja), Proximos y agenda `.rut-cancelled` (tachado rojo y oscurecimiento). No filtrar en `rutEventsOn`: se perderian el historico y las otras vistas. La agenda alterna fondos `.ev-wk-day-bg` bajo las barras continuas.
+
+## Agenda: transporte en flujo (v315)
+`evWeekTravelRow` coloca cabecera/ida antes de los chips del primer dia y vuelta despues de los del ultimo. Respeta los carriles de las cajas continuas y repite titulo al cambiar de mes. No reservar un padding fijo: los textos largos deben aumentar el alto del dia.
+Selector TEMPORAL de color al pie de Rutinas: `EV_CAL_TEST_COLOR` solo en memoria, sin datos personales ni persistencia. Retirarlo cuando el usuario elija el color definitivo.

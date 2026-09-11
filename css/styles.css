@@ -2509,3 +2509,17 @@ button.action-edit.action-edit-text:active{background:#f97316!important}
 #rutFormOv .sy-note{margin:0 0 24px;line-height:1.5}
 #rutFormOv .rut-susp-box{padding:16px;margin-top:6px;gap:14px}
 #rutFormOv .ev-form-actions{margin-top:16px}
+
+/* Cancelaciones sutiles: el calendario mensual conserva el color original. */
+.ev-rut-mark.rut-skip{filter:none}
+.ev-rut-mark.rut-skip::before,.ev-rut-mark.rut-skip::after{height:1px;top:calc(50% - .5px)}
+.ev-up-mark .rut-skip::before,.ev-up-mark .rut-skip::after{display:none}
+.rut-cancelled .ev-upcoming-title,.rut-cancelled .ev-upcoming-note,.rut-cancelled .ev-upcoming-meta,.rut-cancelled .ev-wk-chip-title,.rut-cancelled .ev-wk-chip-meta{text-decoration-thickness:1px}
+.ev-wk-date{border:0}
+.ev-wk-travel-row{display:grid;gap:6px;flex-shrink:0}
+.ev-wk-travel{border:0;background:none;text-align:left;padding:3px 0 5px;min-width:0;cursor:pointer;pointer-events:auto;display:flex;flex-direction:column;gap:3px;font:inherit}
+.ev-wk-travel-title{font-size:.76rem;font-weight:700;overflow-wrap:anywhere;line-height:1.3}
+.ev-wk-travel .ev-wk-multi-trans{font-size:.62rem;line-height:1.4;overflow-wrap:anywhere}
+.ev-wk-travel-footer{margin-top:auto;padding-top:4px}
+.rut-color-trial{margin-top:28px;padding:16px;border:1px dashed var(--border);border-radius:12px;display:flex;flex-direction:column;gap:10px;font-size:.78rem}
+.rut-color-trial>div{display:flex;align-items:center;gap:12px}.rut-color-trial output{font-family:var(--mono);user-select:all}.rut-color-trial small{color:var(--text-muted);line-height:1.5}

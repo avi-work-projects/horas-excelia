@@ -423,7 +423,7 @@ function _bindEvListas(){
     });
   });
   // Click en eventos de la agenda semanal (multi-día y chips puntuales)
-  document.querySelectorAll('.ev-wk-multi[data-id],.ev-wk-chip[data-id]').forEach(function(el){
+  document.querySelectorAll('.ev-wk-multi[data-id],.ev-wk-chip[data-id],.ev-wk-travel[data-id]').forEach(function(el){
     el.addEventListener('click',function(e){
       e.stopPropagation();
       var id=el.dataset.id;var ev=null;
@@ -436,7 +436,7 @@ function _bindEvListas(){
   // Click en celda de día (fecha o zona de chips) en Agenda Semanal → crear evento prefilled
   document.querySelectorAll('.ev-wk-date[data-ds],.ev-wk-chips[data-ds]').forEach(function(cell){
     cell.addEventListener('click',function(e){
-      if(e.target.closest('.ev-wk-chip,.ev-wk-multi'))return;
+      if(e.target.closest('.ev-wk-chip,.ev-wk-multi,.ev-wk-travel'))return;
       var ds=cell.dataset.ds;
       if(ds)openEvForm(null,ds);
     });
