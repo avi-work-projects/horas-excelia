@@ -174,3 +174,24 @@ test('Eventos: casillas y etiquetas del mismo color en claro y oscuro',async({pa
   await expect(page.locator('.wm-logo-check')).toBeVisible();
  }
 });
+
+test('rutinas canceladas: ocultas en vistas compactas, tachadas en detalle',async({page})=>{
+ await page.clock.setFixedTime(new Date('2026-08-21T10:00:00'));
+ await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-rutinas-v1',JSON.stringify([{id:'cancel',name:'Actividad cancelada',icon:'baile',color:'#e03131',start:'2026-08-01',weekDays:[1],time:'18:00',dur:60,weeks:{},skips:{'2026-08-24':1}}]));});
+ await page.goto('/');await page.evaluate(()=>document.documentElement.setAttribute('data-theme','light'));await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();
+ await expect(page.locator('.ev-upcoming-item.rut-cancelled')).toHaveCount(1);
+ await expect(page.locator('.rut-cancelled .ev-upcoming-title')).toHaveCSS('text-decoration-line','line-through');
+ await expect(page.locator('.rut-cancelled .rut-skip')).toHaveCount(1);
+ await page.evaluate(()=>document.documentElement.setAttribute('data-theme','light'));
+ await page.screenshot({path:'.local-preview/cancel-upcoming.png'});
+ await page.locator('#evViewCal').click();await expect(page.locator('.ev-rut-mark.rut-skip')).toHaveCount(1);
+ await page.screenshot({path:'.local-preview/cancel-month.png'});
+ await page.evaluate(()=>{EV_QUAD_YEAR=2026;EV_QUAD_MONTH=7;});
+ await page.locator('#evViewQuad').click();await expect(page.locator('.ev-annual-day[data-ds="2026-08-24"] .ev-ann-rut')).toHaveCount(0);await expect(page.locator('.ev-annual-day[data-ds="2026-08-31"] .ev-ann-rut')).toHaveCount(1);
+ await page.locator('#evViewAnnual').click();await expect(page.locator('.ev-annual-day[data-ds="2026-08-24"] .ev-ann-rut')).toHaveCount(0);await expect(page.locator('.ev-annual-day[data-ds="2026-08-31"] .ev-ann-rut')).toHaveCount(1);
+ await page.locator('#evViewWeek').click();await expect(page.locator('.ev-wk-chip.rut-cancelled')).toHaveCount(1);
+ await expect(page.locator('.rut-cancelled .ev-wk-chip-title')).toHaveCSS('text-decoration-line','line-through');
+ const tones=await page.locator('.ev-wk-day-bg').evaluateAll(rows=>rows.slice(0,2).map(el=>getComputedStyle(el).backgroundColor));expect(tones[0]).not.toBe(tones[1]);
+ await page.locator('.ev-wk-chip.rut-cancelled').scrollIntoViewIfNeeded();
+ await page.screenshot({path:'.local-preview/cancel-week.png'});
+});

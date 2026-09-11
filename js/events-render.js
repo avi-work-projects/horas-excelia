@@ -41,7 +41,7 @@ function renderEvListItem(ev){
 }
 
 function renderEvUpcoming(){
-  if(!EVENTS.length)return '<div class="sy-note">No hay eventos creados. Pulsa \"+ A\u00f1adir\" para crear uno.</div>';
+  if(!EVENTS.length&&!(typeof RUTINAS!=='undefined'&&RUTINAS.length))return '<div class="sy-note">No hay eventos creados. Pulsa \"+ A\u00f1adir\" para crear uno.</div>';
   var today=new Date();today.setHours(0,0,0,0);
   var wd=today.getDay();var off=wd===0?6:wd-1;
   var wk0=new Date(today);wk0.setDate(wk0.getDate()-off);
@@ -59,7 +59,7 @@ function renderEvUpcoming(){
     var _bellSet=isEvAlarmSet(ev.id);
     var metaDate=fd2(item.firstDate);
     if(ev.end&&ev.end!==ev.start){var _eD=new Date(ev.end+'T00:00:00');metaDate+=' <span style="font-size:.62rem;opacity:.7">&#8212; '+fd2(_eD)+'</span>';}
-    var s='<div class="ev-upcoming-item'+(isToday?' ev-upcoming-today':'')+'" data-id="'+ev.id+'" data-first="'+evIsoDate(item.firstDate)+'">';
+    var s='<div class="ev-upcoming-item'+(ev._rutSkip?' rut-cancelled':'')+(isToday?' ev-upcoming-today':'')+'" data-id="'+ev.id+'" data-first="'+evIsoDate(item.firstDate)+'">';
     s+='<div class="ev-up-mark">'+evUpcomingMarkHtml(ev)+'</div>';
     s+='<div class="ev-upcoming-info">';
     s+='<div class="ev-upcoming-title">'+title+'</div>';
@@ -406,7 +406,9 @@ function renderEvWeek(){
       var isPast=day<today;
       var dow=day.getDay();
       var isWknd=dow===0||dow===6;
-      var dCls='ev-wk-date'+(isToday?' ev-wk-today':'')+(isPast?' ev-wk-past':'')+(isWknd?' ev-wk-wknd':'');
+      var tone=d%2?' odd':' even';
+      h+='<div class="ev-wk-day-bg'+tone+'" aria-hidden="true" style="grid-row:'+d+';grid-column:1 / -1"></div>';
+      var dCls='ev-wk-date'+tone+(isToday?' ev-wk-today':'')+(isPast?' ev-wk-past':'')+(isWknd?' ev-wk-wknd':'');
       h+='<div class="'+dCls+'" data-ds="'+ds+'" style="grid-row:'+d+'"'+(isToday?' id="ev-wk-today-row"':'')+'>';
       h+='<span class="ev-wk-dow">'+_wn[dow]+'</span><span class="ev-wk-num">'+d+'</span>';
       h+='</div>';
@@ -423,7 +425,7 @@ function renderEvWeek(){
         var _isVip=ev.id.indexOf('ev-bday-vip-')===0;
         var _t=_isVip?escHtml(ev.title.replace(/^\u2b50\s*/,'').replace(/^Cumple\s+/,'')):escHtml(ev.title);
         var _ic=_isVip?'\u2b50 ':'';
-        h+='<div class="ev-wk-chip" data-id="'+ev.id+'" style="border-left:3px solid '+_dc+';background:'+hexA(_dc,0.95)+'">';
+        h+='<div class="ev-wk-chip'+(ev._rutSkip?' rut-cancelled':'')+'" data-id="'+ev.id+'" style="border-left:3px solid '+_dc+';background:'+hexA(_dc,0.95)+'">';
         h+='<span class="ev-wk-chip-title">'+_ic+_t+'</span>';
         /* Hora del evento puntual, si la tiene */
         var _wt=(!ev._rut&&getEvType(ev)!=='Ensayos boda')?evTimeLabel(ev):'';
@@ -466,13 +468,13 @@ function renderEvContent(){
   h+='</div>';
   // Zona B: Calendarios visuales (1 mes + Semanal)
   h+='<div class="ev-view-zone ev-zone-b">';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='cal'?' active':'')+'" id="evViewCal">Calendario<br>1 mes</button>';
+  h+='<button class="ev-view-toggle ev-btn-calendar'+(EV_VIEW==='cal'?' active':'')+'" id="evViewCal">Calendario<br>1 mes</button>';
   h+='<button class="ev-view-toggle ev-btn-week'+(EV_VIEW==='week'?' active':'')+'" id="evViewWeek">Agenda<br>Semanal</button>';
   h+='</div>';
   // Zona B: Calendarios visuales (4 meses + Anual)
   h+='<div class="ev-view-zone ev-zone-b">';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='quad'?' active':'')+'" id="evViewQuad">Calendario<br>4 meses</button>';
-  h+='<button class="ev-view-toggle'+(EV_VIEW==='annual'?' active':'')+'" id="evViewAnnual">Calendario<br>Anual</button>';
+  h+='<button class="ev-view-toggle ev-btn-calendar'+(EV_VIEW==='quad'?' active':'')+'" id="evViewQuad">Calendario<br>4 meses</button>';
+  h+='<button class="ev-view-toggle ev-btn-calendar'+(EV_VIEW==='annual'?' active':'')+'" id="evViewAnnual">Calendario<br>Anual</button>';
   h+='</div>';
   // Zona C: Bodas + Rutinas
   h+='<div class="ev-view-zone ev-zone-c">';
