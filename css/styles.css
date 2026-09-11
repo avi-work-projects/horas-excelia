@@ -114,8 +114,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 #summaryBtn.overlay-active{color:#22d3ee!important;background:rgba(34,211,238,.13)!important;box-shadow:0 0 0 1.5px rgba(34,211,238,.8),0 0 8px rgba(34,211,238,.3)!important;border-radius:8px}
 .data-btn.has-update::after{content:'';position:absolute;top:2px;right:2px;width:8px;height:8px;background:#34d399;border-radius:50%;border:1.5px solid var(--bg);animation:upd-pulse 1.4s ease-in-out infinite}
 @keyframes upd-pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.7}}
-/* Punto verde notificación en botones bday/events cuando hay items próximos */
-.data-btn.bday-active::after,.data-btn.events-active::after,.nav-bar-btn.bday-active::after,.nav-bar-btn.events-active::after{content:'';position:absolute;top:3px;right:3px;width:7px;height:7px;background:#34d399;border-radius:50%;border:1.5px solid var(--bg)}
 .data-menu-wrap{position:relative}
 #alarmWrap{margin-left:auto}
 .data-menu{position:absolute;top:calc(100% + 6px);right:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px;min-width:156px;z-index:400;display:none;flex-direction:column;gap:2px;box-shadow:0 8px 24px rgba(0,0,0,.5)}
@@ -2591,3 +2589,7 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 [data-theme="light"] .week-card.sent{--sent:#f0f6f2;--sent-border:#c5dacf;--sent-text:#35684a}
 [data-theme="light"] .week-card.sent .week-total{background:#deece2;color:#35684a}
 [data-theme="light"] .week-card.sent .action-btn.sent-toggle{background:#d6e9dd;color:#35684a}
+
+/* Borde discreto para identificar semanas enviadas en ambos temas. */
+.week-card.sent{border:1.5px solid #427958}
+[data-theme="light"] .week-card.sent{border-color:#427958}
