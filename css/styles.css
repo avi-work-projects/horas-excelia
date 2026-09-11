@@ -2529,9 +2529,15 @@ button.action-edit.action-edit-text:active{background:#f97316!important}
 .ev-wk-sticky-title{box-sizing:border-box;padding-left:6px;padding-right:0;border-radius:0;background:var(--surface)}
 .ev-rut-mark.rut-skip::before,.ev-rut-mark.rut-skip::after{box-shadow:0 0 0 .45px #000}
 
-.ev-wk-chip .rut-skipped-label{background:var(--surface);border-radius:3px;padding:0 3px}
+.ev-wk-chip .rut-skipped-label{background:none;padding:0}
 
 /* Casillas vacias: mantener el tono de su etiqueta o su color explicito. */
 input[type="checkbox"]{color:inherit}
 input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 #eventsOverlay input[type="checkbox"]:not(:checked){border-color:currentColor}
+
+/* El titulo queda dentro del borde de 1.5px de su caja continua. */
+.ev-wk-title-track{padding-left:1.5px;padding-right:1.5px}
+.ev-wk-date.ev-wk-today{background:color-mix(in srgb,var(--accent) 20%,var(--surface));box-shadow:inset 3px 0 0 var(--accent)}
+.ev-wk-date.ev-wk-today .ev-wk-num,.ev-wk-date.ev-wk-today .ev-wk-dow{color:var(--accent);font-weight:800}
+.ev-wk-date.ev-wk-today .ev-wk-num{font-size:1.15rem}
