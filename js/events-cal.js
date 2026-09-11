@@ -273,7 +273,7 @@ function _renderEvMonthCard(m,yr,o){
         }
         /* Las sesiones de rutina no llevan silueta aqui: no cabria. Van como
            puntitos en fila arriba del dia, uno por sesion. */
-        var _ruts=evs.filter(function(ev){return ev._rut&&o.visible(ev);});
+        var _ruts=evs.filter(function(ev){return ev._rut&&!ev._rutSkip&&o.visible(ev);});
         if(_ruts.length){
           /* El ancho de cada barrita: como mucho medio dia. Con una o con dos
              sale a mitad; a partir de tres se reparten el hueco entre todas. */
