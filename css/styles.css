@@ -2444,3 +2444,39 @@ button.action-edit.action-edit-text:active{background:#f97316!important}
 .rut-icon-opt{min-width:0;flex-shrink:0}
 .rut-icon-opt svg{flex-shrink:0;display:block}
 .bday-month-hdr{font-size:.82rem;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-left:3px solid #fb923c;border-radius:8px;padding:10px 12px;margin:18px 0 9px;font-weight:750}
+
+/* Etiquetas y casillas comparten tono dentro de Eventos, tambien en sus hojas. */
+#eventsOverlay input[type="checkbox"]{color:inherit}
+#eventsOverlay input[type="checkbox"]:checked{background:currentColor!important;border-color:currentColor!important}
+#eventsOverlay input[type="checkbox"]:checked::after{border-color:var(--surface)}
+#eventsOverlay label:has(#evUpShowRut){color:var(--text)}
+#eventsOverlay label:has(#evUpShowBoda){color:#b98760}
+[data-theme="light"] #eventsOverlay label:has(#evUpShowBoda){color:#80542f}
+#eventsOverlay label:has(#syPuentesLibresChk){color:#d870a5}
+#eventsOverlay label:has(#evTypesPast),#eventsOverlay label:has(#syExclPastChk),#eventsOverlay label:has(#bodaShowPast){color:var(--text-muted)}
+#eventsOverlay label:has(#bodaShowClosed){color:var(--wm-wine)}
+#eventsOverlay label:has(.bday-up-vip),#eventsOverlay label:has(#bdAlarmVip),#eventsOverlay label:has(#bdFVip){color:var(--c-yellow)}
+.wm-logo-check{width:30px;height:15px}
+.rut-hpd{margin-top:12px}
+.rut-week-forward{margin:16px 0 10px}
+.rut-history-sheet{height:85vh;max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
+.rut-history-head{display:flex;align-items:center;gap:12px;flex-shrink:0;margin:8px 0 16px}
+.rut-history-head>div{display:flex;flex-direction:column;gap:4px;min-width:0}
+.rut-history-head strong{font-size:.95rem;overflow-wrap:anywhere}
+.rut-history-head span{color:var(--text-muted);font-size:.75rem}
+.rut-history-body{overflow-y:auto;min-height:0;padding:0 2px 12px}
+.rut-history-period{border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:12px;margin:14px 0;background:var(--surface)}
+.rut-history-period summary{cursor:pointer;padding:14px;list-style:none;display:flex;flex-direction:column;gap:8px}
+.rut-history-period summary::-webkit-details-marker{display:none}
+.rut-history-top{display:flex;justify-content:space-between;gap:8px;font-size:.72rem;color:var(--accent)}
+.rut-history-top em{font-style:normal;color:var(--text-muted)}
+.rut-history-hours{font-size:.85rem;line-height:1.55;color:var(--text)}
+.rut-history-range,.rut-history-counts{font-size:.68rem;color:var(--text-muted)}
+.rut-history-counts{padding-top:6px;border-top:1px solid var(--border)}
+.rut-history-session{display:flex;gap:10px;align-items:center;padding:12px;border-top:1px solid var(--border)}
+.rut-history-session>div:first-child{flex:1;display:flex;flex-direction:column;gap:4px;font-size:.75rem}
+.rut-history-session>div:first-child>span{font-size:.72rem;color:var(--text-muted)}
+.rut-history-session.cancelled>div:first-child{text-decoration:line-through;color:var(--text-muted)}
+.rut-history-status{font-size:.64rem;color:var(--text-muted);text-align:right}
+.rut-history-status small{display:block;color:var(--accent);margin-top:4px}
+.rut-history-more{display:block;width:calc(100% - 24px);margin:12px}

@@ -39,11 +39,7 @@
 <div class="rut-hpd-rows" id="rutFHoras" style="display:block">
 </div>
 </div>
-<div class="ev-field">
-<label>Aplicar cambios desde</label>
-<input class="ev-input" id="rutFStart" type="date" min="2026-08-21" value="2026-08-21">
-</div>
-<div class="sy-note">El nuevo horario sustituye los cambios semanales desde esa fecha. Se conservan las sesiones anteriores y las canceladas.</div>
+<div class="sy-note">Los cambios de horario se aplican desde ahora. Las sesiones pasadas y canceladas se conservan.</div>
 <div class="ev-field">
 <label>Icono</label>
 <div class="rut-icon-row" id="rutFIcons">
@@ -90,9 +86,9 @@
 <svg viewBox="-3 -3 30 30" preserveAspectRatio="xMidYMid meet">
 <g fill="#000" stroke="#000" stroke-width="4.7" stroke-linejoin="round" stroke-linecap="round">
 <circle cx="12.6" cy="3.6" r="2.6"/>
-<path d="M12.2,7.2 C10.4,8.8 9.9,10.8 10.6,12.6 L6.6,17.8" fill="none" stroke-width="2.6" stroke-linecap="round"/>
-<path d="M10.6,12.6 L14.8,14.8 L15.6,21.4" fill="none" stroke-width="2.6" stroke-linecap="round"/>
-<path d="M12.4,8.4 L18.4,5.4" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+<path d="M12.2,7.2 C10.4,8.8 9.9,10.8 10.6,12.6 L6.6,17.8" fill="none" stroke-width="4.6" stroke-linecap="round"/>
+<path d="M10.6,12.6 L14.8,14.8 L15.6,21.4" fill="none" stroke-width="4.6" stroke-linecap="round"/>
+<path d="M12.4,8.4 L18.4,5.4" fill="none" stroke-width="4.5" stroke-linecap="round"/>
 </g>
 <g fill="#e03131" stroke="#e03131" stroke-width="2.7" stroke-linejoin="round" stroke-linecap="round">
 <circle cx="12.6" cy="3.6" r="2.6"/>
@@ -240,7 +236,8 @@
 </div>
 </div>
 </div>
-<button type="button" class="ev-btn" id="rutFWeek" style="width:100%;margin-bottom:12px">🗓 Cambiar una semana concreta</button>
+<button type="button" class="ev-btn" id="rutFWeek" style="width:100%;margin-bottom:12px">🗓 Cambiar (desde) una semana concreta</button>
+<button type="button" class="ev-btn" id="rutFHistory" style="width:100%;margin-bottom:12px">Consultar histórico</button>
 <div class="ev-form-actions">
 <button class="ev-btn primary" id="rutFSave">Guardar</button>
 </div>

@@ -571,7 +571,7 @@ function renderEvContent(){
     if(EV_VIEW==='upcoming'){
       h+='<div class="excl-row ev-up-filters">';
       h+='<label class="excl-item"><input type="checkbox" id="evUpShowRut"'+(EV_UP_SHOW_RUT?' checked':'')+'> Ver rutinas</label>';
-      h+='<label class="excl-item"><input type="checkbox" id="evUpShowBoda"'+(EV_UP_SHOW_BODA?' checked':'')+'> Ver ensayos WM</label>';
+      h+='<label class="excl-item"><input type="checkbox" id="evUpShowBoda"'+(EV_UP_SHOW_BODA?' checked':'')+'> Ver ensayos <span class="wm-logo wm-logo-check" role="img" aria-label="Wedding Moves"></span></label>';
       h+='</div>';
     }
   }

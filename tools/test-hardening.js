@@ -97,3 +97,25 @@ assert.equal(routines.rutOccursOn(weekly,'2026-08-20'),null);
 assert.equal(routines.rutOccursOn(weekly,'2026-08-27'),'12:00');
 assert.equal(routines.rutOccursOn(weekly,'2026-09-01'),'19:00');
 assert.equal(routines.rutOccursOn(weekly,'2026-09-02'),'20:00');
+
+const stages=routines.rutHistoryPeriods(twice,'2026-12-31');assert.equal(stages.length,3);
+assert.equal(routines.rutHistoryPeriods(weekly,'2026-12-31').length,3,'weekly exceptions do not split the timeline');
+let forward=routines.rutNewSchedule(original,{weekDays:[2],time:'19:00'},'2026-08-24');
+assert.equal(routines.rutOccursOn(forward,'2026-08-17'),'17:00');assert.equal(routines.rutOccursOn(forward,'2026-08-25'),'19:00');
+assert.equal(routines.rutOccursOn(forward,'2026-08-31'),'17:00');
+const corrected=routines.rutEditSession(forward,'2026-08-17','16:30',45,false);
+assert.equal(routines.rutOccursOn(corrected,'2026-08-17'),'16:30');assert.equal(routines.rutOccursOn(corrected,'2026-08-10'),'17:00');
+assert.equal(routines.rutHistoryPeriods(corrected,'2026-12-31').length,2);
+assert.throws(()=>routines.rutEditSession(corrected,'2026-08-17','99:30',45,false));
+assert.equal(routines.validateImport({rutinas:[corrected]}).rutinas[0].keptSessions['2026-08-17'].dur,45);
+assert.ok(routines.rutIconSvg('baile','#123456').includes('stroke-width="4.6"'));
+console.log('Rutinas: etapas sin excepciones, edicion puntual e icono con contorno OK');
+
+const elapsed=routines.rutNewSchedule(original,{weekDays:[5],time:'00:00'},'2026-08-21');
+assert.equal(routines.rutOccursOn(elapsed,'2026-08-21'),null);
+assert.equal(routines.rutOccursOn(elapsed,'2026-08-28'),'00:00');routines.validateImport({rutinas:[elapsed]});
+assert.throws(()=>routines.validateImport({rutinas:[{...original,time:'bad" onclick="bad'}]}));
+
+routines.RUTINAS=[corrected].concat([0,1,2].map(i=>({id:'other'+i,start:'2026-08-01',weekDays:[1],time:'18:00',dur:60})));
+assert.throws(()=>routines.rutEditSession(corrected,'2026-08-31','17:00',60,false));
+assert.equal(routines.rutEditSession(corrected,'2026-08-17','16:00',45,false).keptSessions['2026-08-17'].time,'16:00');
