@@ -149,15 +149,12 @@ function econBarChart(data,labels,color){
   /* cm=12 en años pasados → todos los meses con opacidad "pasado" (.45), no "futuro" (.25) */
   var today=new Date();var cm=ECON_YEAR<today.getFullYear()?12:(ECON_YEAR===today.getFullYear()?today.getMonth():-1);
   var svg='<svg viewBox="0 0 '+W+' '+(H+PB)+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">';
-  var gridCount=0;
+  var gridCount=0,guides='';
   for(var gv=step;gv<=maxV*1.05;gv+=step){
     if(++gridCount>10)break;
     var gy=Math.round(H-(gv/maxV)*(H-PT));if(gy<PT)break;
-    /* Guias suaves solo en el espacio libre: nunca atraviesan las barras. */
-    for(var gi=0;gi<n;gi++){
-      var gx=PL+gi*(bw+gap),from=data[gi]>=gv?gx+bw:gx;
-      svg+='<line class="econ-chart-guide" x1="'+from+'" y1="'+gy+'" x2="'+(gx+bw+gap)+'" y2="'+gy+'" stroke="var(--text-muted)" stroke-opacity=".3" stroke-width=".6" stroke-dasharray="2 3"/>';
-    }
+    /* Se pintan al final para atravesar tambien la barra opaca del mes actual. */
+    guides+='<line class="econ-chart-guide" x1="'+PL+'" y1="'+gy+'" x2="'+W+'" y2="'+gy+'" stroke="var(--text-muted)" stroke-opacity=".3" stroke-width=".6" stroke-dasharray="2 3"/>';
     var lbl;if(gv>=1000000&&gv%1000000===0)lbl=(gv/1000000)+'M';else if(gv%1000===0)lbl=(gv/1000)+'k';else lbl=((gv/1000).toFixed(1).replace('.',','))+'k';
     svg+='<text x="'+(PL-2)+'" y="'+(gy+3)+'" text-anchor="end" font-size="6" fill="#5a5a70">'+lbl+'</text>';
   }
@@ -168,7 +165,7 @@ function econBarChart(data,labels,color){
     if(v>0)svg+='<rect x="'+x+'" y="'+(H-h2)+'" width="'+bw+'" height="'+h2+'" rx="2" fill="'+color+'" opacity="'+op+'"/>';
     svg+='<text x="'+(x+bw/2)+'" y="'+(H+PB-2)+'" text-anchor="middle" font-size="7" fill="#5a5a70">'+labels[i]+'</text>';
   }
-  svg+='</svg>';return svg;
+  svg+=guides+'</svg>';return svg;
 }
 
 /* ── Helpers: date-based multi-rate ─────────────────────────── */

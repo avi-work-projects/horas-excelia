@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v329 — agenda más espaciada y selector de tipos propio';
+var APP_VERSION = 'v330 — más espacio entre días y referencias sobre las barras';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
