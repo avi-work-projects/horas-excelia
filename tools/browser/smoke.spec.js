@@ -296,10 +296,10 @@ test('economia fiscal y escenarios: pestanas estables y columnas alineadas',asyn
 test('iconos alternativos: seleccion, navegacion, persistencia y backup',async({page})=>{
  await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));await page.goto('/');
  await expect(page.locator('#econBtn img')).toHaveCount(1);
- await page.locator('#menuBtn').click();await page.locator('#navIconStyle').selectOption('professional');await expect(page.locator('.data-actions .nav-pro-icon')).toHaveCount(6);
+ await page.locator('#menuBtn').click();await page.locator('#navIconStyle').click();await expect(page.locator('#navIconPickerOv')).toHaveClass(/open/);await page.screenshot({path:'.local-preview/icon-picker.png',animations:'disabled'});await page.locator('[data-icon-style="professional"]').click();await expect(page.locator('#navIconPickerWrap')).toHaveCount(0);await expect(page.locator('.data-actions .nav-pro-icon')).toHaveCount(6);
  const centers=await page.locator('.data-actions .nav-pro-icon').evaluateAll(icons=>icons.map(el=>{const r=el.getBoundingClientRect();return r.y+r.height/2;}));expect(Math.max(...centers)-Math.min(...centers)).toBeLessThan(1);
 
- const downloadPromise=page.waitForEvent('download');await page.locator('#exportAllBtn').click();const download=await downloadPromise;
+ const downloadPromise=page.waitForEvent('download');await page.locator('#menuBtn').click();await page.locator('#exportAllBtn').click();const download=await downloadPromise;
  const data=JSON.parse(require('fs').readFileSync(await download.path(),'utf8'));expect(data.navIconStyle).toBe('professional');
  await page.reload();await expect(page.locator('.data-actions .nav-pro-icon')).toHaveCount(6);
  for(const theme of ['light','dark']){
@@ -329,4 +329,18 @@ test('seleccion de ventanas: mismo fondo para iconos originales y profesionales'
  await page.evaluate(()=>applyTheme('light'));await page.locator('#bdayBtn').click();
  await expect(page.locator('#bdayOverlay')).toHaveClass(/open/);await page.screenshot({path:'.local-preview/birthday-selected-professional.png'});
  await page.evaluate(()=>applyNavIconStyle('original'));await page.screenshot({path:'.local-preview/birthday-selected-original.png'});
+});
+
+test('navegacion: margen superior comparable a Home con ambos iconos',async({page})=>{
+ await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));await page.goto('/');
+ for(const style of ['original','professional']){
+  await page.evaluate(s=>applyNavIconStyle(s),style);
+  const homeTop=await page.locator('#homeBtn').evaluate(el=>el.getBoundingClientRect().top);
+  await page.locator('#eventsBtn').click();await expect(page.locator('#eventsOverlay')).toHaveClass(/open/);
+  await page.addStyleTag({content:'.full-overlay{transition:none!important}'});
+  const top=await page.locator('#eventsOverlay [data-nav="events"]').evaluate(el=>el.getBoundingClientRect().top-el.closest('.full-overlay').getBoundingClientRect().top);
+  expect(top).toBeGreaterThanOrEqual(homeTop);expect(top-homeTop).toBeLessThanOrEqual(4);
+  await page.screenshot({path:'.local-preview/nav-spacing-'+style+'.png',animations:'disabled'});
+  await page.locator('#eventsOverlay [data-nav="home"]').click();await expect(page.locator('#eventsOverlay')).not.toBeVisible();
+ }
 });
