@@ -131,6 +131,8 @@ test('rutinas: horario inmediato, semana futura, historico editable y backup',as
   if(!localStorage.getItem('excelia-rutinas-v1'))localStorage.setItem('excelia-rutinas-v1',JSON.stringify([{id:'history',name:'Actividad prueba',icon:'gen',color:'#a78bfa',start:'2026-01-01',weekDays:[1],time:'17:00',dur:60,skips:{'2026-08-31':1},weeks:{}}]));
  });
  await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewRutinas').click();await page.locator('.rut-edit').click();
+ await expect(page.locator('#rutFormOv')).toHaveClass(/open/);
+ await page.screenshot({path:'.local-preview/routine-form-spacing.png',animations:'disabled'});
  await expect(page.locator('#rutFStart')).toHaveCount(0);
  await page.locator('#rutFTime').fill('18:00');await page.locator('#rutFSave').click();await expect(page.locator('#rutFWrap')).toHaveCount(0);
  expect(await page.evaluate(()=>['2026-08-17','2026-08-24'].map(ds=>rutOccursOn(RUTINAS[0],ds)))).toEqual(['17:00','18:00']);
