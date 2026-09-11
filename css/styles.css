@@ -2499,3 +2499,13 @@ button.action-edit.action-edit-text:active{background:#f97316!important}
 .ev-wk-date.odd:not(.ev-wk-today){background:var(--surface)}
 .ev-wk-date.even:not(.ev-wk-today){background:var(--surface2)}
 [data-theme="light"] .ev-wk-day-bg.even,[data-theme="light"] .ev-wk-date.even:not(.ev-wk-today){background:#eceef1}
+
+/* Formulario de rutina: ritmo y etiquetas comunes, sin alterar otros paneles. */
+#rutFormOv .ev-form-sheet > .ev-field{margin-bottom:22px;gap:8px}
+#rutFormOv .ev-form-sheet > .ev-date-row{margin-bottom:18px;gap:14px}
+#rutFormOv .ev-date-row > div{display:flex;flex-direction:column;gap:8px;min-width:0}
+#rutFormOv label:not(.excl-item){font-size:.78rem;font-weight:600;color:var(--text-muted);line-height:1.4}
+#rutFormOv .rut-hpd{margin-top:16px}
+#rutFormOv .sy-note{margin:0 0 24px;line-height:1.5}
+#rutFormOv .rut-susp-box{padding:16px;margin-top:6px;gap:14px}
+#rutFormOv .ev-form-actions{margin-top:16px}
