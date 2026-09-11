@@ -297,6 +297,8 @@ test('iconos alternativos: seleccion, navegacion, persistencia y backup',async({
  await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));await page.goto('/');
  await expect(page.locator('#econBtn img')).toHaveCount(1);
  await page.locator('#menuBtn').click();await page.locator('#navIconStyle').selectOption('professional');await expect(page.locator('.data-actions .nav-pro-icon')).toHaveCount(6);
+ const centers=await page.locator('.data-actions .nav-pro-icon').evaluateAll(icons=>icons.map(el=>{const r=el.getBoundingClientRect();return r.y+r.height/2;}));expect(Math.max(...centers)-Math.min(...centers)).toBeLessThan(1);
+
  const downloadPromise=page.waitForEvent('download');await page.locator('#exportAllBtn').click();const download=await downloadPromise;
  const data=JSON.parse(require('fs').readFileSync(await download.path(),'utf8'));expect(data.navIconStyle).toBe('professional');
  await page.reload();await expect(page.locator('.data-actions .nav-pro-icon')).toHaveCount(6);
