@@ -153,7 +153,11 @@ function econBarChart(data,labels,color){
   for(var gv=step;gv<=maxV*1.05;gv+=step){
     if(++gridCount>10)break;
     var gy=Math.round(H-(gv/maxV)*(H-PT));if(gy<PT)break;
-    svg+='<line x1="'+PL+'" y1="'+gy+'" x2="'+W+'" y2="'+gy+'" stroke="#2a2a3e" stroke-width="1"/>';
+    /* Guias suaves solo en el espacio libre: nunca atraviesan las barras. */
+    for(var gi=0;gi<n;gi++){
+      var gx=PL+gi*(bw+gap),from=data[gi]>=gv?gx+bw:gx;
+      svg+='<line class="econ-chart-guide" x1="'+from+'" y1="'+gy+'" x2="'+(gx+bw+gap)+'" y2="'+gy+'" stroke="var(--text-muted)" stroke-opacity=".3" stroke-width=".6" stroke-dasharray="2 3"/>';
+    }
     var lbl;if(gv>=1000000&&gv%1000000===0)lbl=(gv/1000000)+'M';else if(gv%1000===0)lbl=(gv/1000)+'k';else lbl=((gv/1000).toFixed(1).replace('.',','))+'k';
     svg+='<text x="'+(PL-2)+'" y="'+(gy+3)+'" text-anchor="end" font-size="6" fill="#5a5a70">'+lbl+'</text>';
   }

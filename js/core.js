@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v328 — vacaciones por año y ajustes de resúmenes';
+var APP_VERSION = 'v329 — agenda más espaciada y selector de tipos propio';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
