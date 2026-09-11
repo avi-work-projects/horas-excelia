@@ -151,7 +151,61 @@ function rutTieneHorarios(r){
 }
 /* Días y hora efectivos de una rutina esa semana (con el cambio puntual si lo
    hay). La hora del cambio de semana manda sobre la del dia. */
+/* Versiones efectivas: los periodos anteriores nunca se recalculan al editar. */
+function rutScheduleOn(r,ds){
+  var history=r.scheduleHistory||[];
+  for(var i=0;i<history.length;i++)if(ds<history[i].until)return history[i].schedule;
+  return r;
+}
+function rutScheduleCopy(r){
+  return JSON.parse(JSON.stringify({weekDays:r.weekDays||[],time:r.time,times:r.times||null,
+    dur:r.dur||RUT_DUR_DEFAULT,weeks:r.weeks||{},suspend:r.suspend||null}));
+}
+function rutDurationOn(r,ds){
+  var kept=r.keptSessions&&r.keptSessions[ds];
+  return kept?kept.dur:(rutScheduleOn(r,ds).dur||RUT_DUR_DEFAULT);
+}
+function rutChangeFrom(previous,candidate,from){
+  var today=evDk(new Date());
+  if(!validIsoDate(from)||from<today)throw new Error('El cambio debe empezar hoy o en una fecha futura');
+  var out=JSON.parse(JSON.stringify(candidate));
+  out.start=previous.start;
+  out.scheduleHistory=(previous.scheduleHistory||[]).filter(function(x){return x.until<from;});
+  var before=new Date(from+'T12:00:00');before.setDate(before.getDate()-1);
+  out.scheduleHistory.push({until:from,schedule:rutScheduleCopy(rutScheduleOn(previous,evDk(before)))});
+  out.keptSessions=JSON.parse(JSON.stringify(previous.keptSessions||{}));
+  Object.keys(previous.skips||{}).forEach(function(ds){
+    var time=rutOccursOn(previous,ds);
+    if(time)out.keptSessions[ds]={time:time,dur:rutDurationOn(previous,ds)};
+  });
+  var time=rutOccursOn(previous,today),now=new Date();
+  var clock=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  if(time&&time<=clock)out.keptSessions[today]={time:time,dur:rutDurationOn(previous,today)};
+  if(from===today&&(!time||time>clock)){
+    var next=rutOccursOn(out,today);
+    if(next&&next<=clock)throw new Error('Esa hora ya ha pasado hoy. Elige una fecha posterior');
+  }
+  return out;
+}
+/* Una excepcion semanal no adelanta ni borra otros cambios ya programados. */
+function rutChangeWeek(r,wk,value){
+  var today=evDk(new Date()),end=new Date(wk+'T12:00:00');end.setDate(end.getDate()+6);
+  if(evDk(end)<today)throw new Error('Esa semana ya ha pasado');
+  var from=wk>today?wk:today;
+  function update(schedule){
+    var out=rutScheduleCopy(schedule);
+    if(value)out.weeks[wk]=value;else delete out.weeks[wk];
+    return out;
+  }
+  var candidate=Object.assign({},r,update(r));
+  var out=rutChangeFrom(r,candidate,from);
+  (r.scheduleHistory||[]).forEach(function(x){
+    if(x.until>from)out.scheduleHistory.push({until:x.until,schedule:update(x.schedule)});
+  });
+  return out;
+}
 function rutWeekCfg(r,ds){
+  r=rutScheduleOn(r,ds);
   var o=r.weeks&&r.weeks[rutWeekKey(ds)];
   var wd=new Date(ds+'T00:00:00').getDay();
   return {
@@ -161,7 +215,7 @@ function rutWeekCfg(r,ds){
   };
 }
 function rutSuspendedOn(r,ds){
-  var s=r.suspend;
+  var s=rutScheduleOn(r,ds).suspend;
   if(!s||!s.from)return false;
   if(ds<s.from)return false;
   return !s.to||ds<=s.to;   /* sin "to" = suspensión indefinida */
@@ -174,6 +228,7 @@ function rutDiaLleno(dias,desde,excluirId){
 }
 /* ¿Toca sesión ese día? Devuelve la hora, o null */
 function rutOccursOn(r,ds){
+  if(r.keptSessions&&r.keptSessions[ds])return r.keptSessions[ds].time;
   if(r.start&&ds<r.start)return null;
   if(rutSuspendedOn(r,ds))return null;
   var cfg=rutWeekCfg(r,ds);
@@ -203,11 +258,11 @@ function rutEventsOn(ds){
     out.push({
       id:'rut-'+r.id+'-'+ds,
       title:r.name,
-      note:'Rutina semanal · '+t+'–'+rutFin(t,r.dur),
+      note:'Rutina semanal · '+t+'–'+rutFin(t,rutDurationOn(r,ds)),
       color:r.color,
       kind:'puntual', type:'Rutina',
       start:ds, end:ds, repeat:null,
-      _rut:r, _rutTime:t, _rutSkip:rutIsSkipped(r,ds)
+      _rut:r, _rutTime:t, _rutDur:rutDurationOn(r,ds), _rutSkip:rutIsSkipped(r,ds)
     });
   });
   return out;
@@ -352,20 +407,6 @@ function _renderRutStats(){
     var s=rutStats(r);
     return {label:r.name,value:s.hechas,color:r.color};
   }),{});
-  /* Sesiones por semana (ultimas 10) */
-  var wl=[],wv=[];
-  for(var w=9;w>=0;w--){
-    var d=new Date(hoy.getTime());d.setDate(d.getDate()-w*7);
-    var wk=rutWeekKey(evDk(d));
-    var fin=new Date(wk+'T00:00:00');fin.setDate(fin.getDate()+6);
-    var n=0;
-    RUTINAS.forEach(function(r){
-      rutSessions(r,wk,evDk(fin)).forEach(function(s){if(s.ds<=hoyDs&&!s.skip)n++;});
-    });
-    wl.push(wk.slice(8)+'/'+wk.slice(5,7));wv.push(n);
-  }
-  h+='<div class="boda-stat-t">Sesiones hechas por semana <em>(últimas 10)</em></div>';
-  h+='<div class="sy-chart">'+simpleBarChart(wv,wl,'#34d399',{highlight:9})+'</div>';
   /* Detalle por rutina */
   RUTINAS.forEach(function(r){
     var s=rutStats(r);
@@ -397,7 +438,7 @@ function _renderRutStats(){
 /* ══ Formulario de rutina ══ */
 function renderRutForm(r){
   var isEdit=!!r;
-  var col=isEdit?r.color:'#34d399';
+  var col=isEdit&&rutIconOf(r)==='gen'?r.color:'#a78bfa';
   var dias=isEdit?(r.weekDays||[]):[];
   var h='<div class="ev-form-overlay" id="rutFormOv"><div class="ev-form-sheet">';
   h+='<div class="ev-form-handle"></div>';
@@ -426,7 +467,8 @@ function renderRutForm(r){
   h+='<label class="excl-item"><input type="checkbox" id="rutFPorDia"'+(_varias?' checked':'')+'> Horario distinto seg\u00fan el d\u00eda</label>';
   h+='<div class="rut-hpd-rows" id="rutFHoras" style="display:'+(_varias?'block':'none')+'"></div>';
   h+='</div>';
-  h+='<div class="ev-field"><label>Desde</label><input class="ev-input" id="rutFStart" type="date" value="'+(isEdit&&r.start?r.start:evDk(new Date()))+'"></div>';
+  h+='<div class="ev-field"><label>'+(isEdit?'Aplicar cambios desde':'Desde')+'</label><input class="ev-input" id="rutFStart" type="date"'+(isEdit?' min="'+evDk(new Date())+'"':'')+' value="'+evDk(new Date())+'"></div>';
+  if(isEdit)h+='<div class="sy-note">El nuevo horario sustituye los cambios semanales desde esa fecha. Se conservan las sesiones anteriores y las canceladas.</div>';
   var _ic=isEdit?rutIconOf(r):'gen';
   h+='<div class="ev-field"><label>Icono</label><div class="rut-icon-row" id="rutFIcons">';
   /* Cada icono se ve con SU color (el gimnasio naranja, el padel verde...),
@@ -434,7 +476,7 @@ function renderRutForm(r){
      acompana al color elegido, que es el unico que se puede cambiar. */
   RUT_ICONS.forEach(function(k){
     h+='<button type="button" class="rut-icon-opt'+(k===_ic?' on':'')+'" data-icon="'+k+'">'
-      +rutIconSvg(k,RUT_FIXED_COLOR[k]||col)+'<span>'+RUT_ICON_LABEL[k]+'</span></button>';
+      +rutIconSvg(k,RUT_FIXED_COLOR[k]||col).replace('0 0 24 24','-3 -3 30 30')+'<span>'+RUT_ICON_LABEL[k]+'</span></button>';
   });
   h+='</div></div>';
   h+='<div class="ev-field" id="rutFColorField"'+(_ic==='gen'?'':' style="display:none"')+'>'
@@ -466,7 +508,7 @@ function openRutForm(r){
     document.querySelectorAll('#rutFIcons .rut-icon-opt').forEach(function(b){
       var k=b.dataset.icon;
       if(RUT_FIXED_COLOR[k])return;
-      b.innerHTML=rutIconSvg(k,c)+'<span>'+RUT_ICON_LABEL[k]+'</span>';
+      b.innerHTML=rutIconSvg(k,c).replace('0 0 24 24','-3 -3 30 30')+'<span>'+RUT_ICON_LABEL[k]+'</span>';
     });
   }
   document.querySelectorAll('#rutFIcons .rut-icon-opt').forEach(function(b){
@@ -476,7 +518,6 @@ function openRutForm(r){
       var k=b.dataset.icon;
       var campo=document.getElementById('rutFColorField');
       if(campo)campo.style.display=(k==='gen')?'':'none';
-      if(RUT_FIXED_COLOR[k])cp.setColor(RUT_FIXED_COLOR[k]);
       _rutRepaintIcons();
     });
   });
@@ -567,6 +608,20 @@ function openRutForm(r){
       var from=sf.value, to=document.getElementById('rutFSuspTo').value;
       datos.suspend=from?{from:from,to:to||null}:null;
     }
+    if(r){
+      try{
+        var candidate=Object.assign({},r,datos);
+        candidate.weeks=JSON.parse(JSON.stringify(r.weeks||{}));
+        var changed=JSON.stringify([r.weekDays,r.time,r.times||null,r.dur])!==JSON.stringify([datos.weekDays,datos.time,datos.times||null,datos.dur]);
+        if(changed)Object.keys(candidate.weeks).forEach(function(wk){
+          var end=new Date(wk+'T12:00:00');end.setDate(end.getDate()+6);
+          if(evDk(end)>=datos.start)delete candidate.weeks[wk];
+        });
+        var suspensionChanged=JSON.stringify(r.suspend||null)!==JSON.stringify(datos.suspend||null);
+        datos=(changed||suspensionChanged)?rutChangeFrom(r,candidate,datos.start):Object.assign({},r,{name:datos.name,icon:datos.icon,color:datos.color});
+      }
+      catch(e){showToast(e.message,'error');return;}
+    }
     var _lleno=rutLimitExceeded(Object.assign({},r||{},datos),r?r.id:null);
     if(_lleno){
       showToast('El '+_rutFmt(_lleno)+' ya tiene '+EV_MAX_RUT_DIA+' rutinas (el m\u00e1ximo)','error');
@@ -656,8 +711,9 @@ function _rutWeekRender(r){
   var wk=RUT_WEEK_SEL;
   var fin=new Date(wk+'T00:00:00');fin.setDate(fin.getDate()+6);
   var o=(r.weeks&&r.weeks[wk])||null;
-  var dias=o&&o.weekDays?o.weekDays:(r.weekDays||[]);
-  var hora=o&&o.time?o.time:(r.time||RUT_TIME_DEFAULT);
+  var effective=rutWeekCfg(r,wk);
+  var dias=effective.weekDays;
+  var hora=effective.time;
   var h='<div class="ev-detail-overlay" id="rutWkOv"><div class="ev-detail-sheet">';
   h+='<div class="ev-detail-handle"></div>';
   h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">';
@@ -698,9 +754,11 @@ function _rutWeekRender(r){
   });
   var rs=document.getElementById('rutWkReset');
   if(rs)rs.addEventListener('click',function(){
-    var candidate=JSON.parse(JSON.stringify(r));if(candidate.weeks)delete candidate.weeks[RUT_WEEK_SEL];
+    var candidate;
+    try{candidate=rutChangeWeek(r,RUT_WEEK_SEL,null);}
+    catch(e){showToast(e.message,'error');return;}
     if(rutLimitExceeded(candidate,r.id)){showToast('La semana superaria el maximo de 3 rutinas al dia','error');return;}
-    if(r.weeks)delete r.weeks[RUT_WEEK_SEL];
+    Object.assign(r,candidate);
     saveRutinas();closeRutWeek();
     setTimeout(function(){refreshEvents();},310);
     showToast('Semana sin cambios','success');
@@ -708,10 +766,11 @@ function _rutWeekRender(r){
   document.getElementById('rutWkSave').addEventListener('click',function(){
     var dias=[];
     document.querySelectorAll('#rutWkDays .rut-day-btn.on').forEach(function(b){dias.push(+b.dataset.wd);});
-    var candidate=JSON.parse(JSON.stringify(r));candidate.weeks=candidate.weeks||{};
-    candidate.weeks[RUT_WEEK_SEL]={weekDays:dias.sort(),time:document.getElementById('rutWkTime').value||r.time};
+    var candidate;
+    try{candidate=rutChangeWeek(r,RUT_WEEK_SEL,{weekDays:dias.sort(),time:document.getElementById('rutWkTime').value||r.time});}
+    catch(e){showToast(e.message,'error');return;}
     var full=rutLimitExceeded(candidate,r.id);if(full){showToast('El '+full+' supera 3 rutinas','error');return;}
-    r.weeks=candidate.weeks;
+    Object.assign(r,candidate);
     saveRutinas();closeRutWeek();
     setTimeout(function(){refreshEvents();},310);
     showToast('Semana del '+_rutFmt(RUT_WEEK_SEL).slice(0,5)+' actualizada','success');
@@ -728,11 +787,11 @@ function openRutSesion(r,ds){
   h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">';
   h+='<button class="sy-back" id="rutSesClose">&#8592;</button>';
   h+='<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">Rutina</div>';
-  h+='<button class="action-edit ev-list-btn" id="rutSesEdit" style="font-size:.8rem;padding:6px 12px">&#9998; Editar</button>';
+  h+='<button class="action-edit action-edit-text ev-list-btn" id="rutSesEdit" style="font-size:.8rem;padding:6px 12px">&#9998; Editar</button>';
   h+='</div>';
   h+='<div class="ev-detail-color-bar" style="background:'+r.color+'"></div>';
   h+='<div class="ev-detail-title" style="color:'+r.color+'">'+escHtml(r.name)+'</div>';
-  h+='<div class="ev-detail-date">&#128197; '+_rutFmtCorto(ds)+' &#183; '+t+'–'+rutFin(t,r.dur)+'</div>';
+  h+='<div class="ev-detail-date">&#128197; '+_rutFmtCorto(ds)+' &#183; '+t+'–'+rutFin(t,rutDurationOn(r,ds))+'</div>';
   if(skip)h+='<div class="ev-detail-note" style="color:var(--c-orange)">Sesión marcada como saltada</div>';
   h+='<div class="ev-detail-actions">';
   h+='<button class="ev-btn" id="rutSesSkip">'+(skip?'&#10003; Marcar como hecha':'&#10007; Marcar como saltada')+'</button>';

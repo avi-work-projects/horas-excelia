@@ -431,7 +431,7 @@ function renderEvWeek(){
         /* Sesion de rutina: hora de inicio y fin junto al nombre */
         if(ev._rut&&ev._rutTime){
           h+='<span class="ev-wk-chip-meta">'+escHtml(ev._rutTime)
-            +'–'+escHtml(rutFin(ev._rutTime,ev._rut.dur))
+            +'–'+escHtml(rutFin(ev._rutTime,ev._rutDur||rutDurationOn(ev._rut,ev.start)))
             +(ev._rutSkip?' · saltada':'')+'</span>';
         }
         /* Ensayos de boda: hora y sala junto al nombre */

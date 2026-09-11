@@ -64,3 +64,36 @@ assert.equal(teaching.bodaTeacherCount({celia:true,angel:true,substitute:null}),
 const emptyNames=cargarApp({});assert.equal(emptyNames.BODA_CONFIG.teacherNames.angel,'');assert.equal(emptyNames.BODA_CONFIG.teacherNames.celia,'');
 assert.equal(emptyNames.bodaTeacherName('angel'),'Profesor 1');emptyNames.validateBodaConfig(emptyNames.BODA_CONFIG);
 const roundtrip=JSON.parse(JSON.stringify(emptyNames.BODA_CONFIG));emptyNames.importBodaConfig(roundtrip,false);assert.equal(JSON.stringify(emptyNames.BODA_CONFIG),JSON.stringify(roundtrip));
+
+// An effective schedule change preserves old attendance and cancelled appointments.
+const routines=cargarApp({});
+const original={id:'schedule',name:'Actividad',start:'2026-01-01',weekDays:[1],time:'17:00',dur:60,weeks:{},skips:{'2026-08-31':1}};
+let revised=routines.rutChangeFrom(original,{...original,weekDays:[2],time:'19:00',dur:90},'2026-08-25');
+assert.equal(routines.rutOccursOn(revised,'2026-08-24'),'17:00');
+assert.equal(routines.rutOccursOn(revised,'2026-08-25'),'19:00');
+assert.equal(routines.rutOccursOn(revised,'2026-08-31'),'17:00');
+assert.equal(routines.rutIsSkipped(revised,'2026-08-31'),true);
+assert.equal(routines.rutDurationOn(revised,'2026-08-24'),60);
+assert.equal(routines.rutDurationOn(revised,'2026-08-25'),90);
+assert.equal(routines.rutDurationOn(revised,'2026-08-31'),60);
+assert.equal(routines.rutOccursOn(revised,'2026-09-07'),null);
+let twice=routines.rutChangeFrom(revised,{...revised,weekDays:[3],time:'20:00'},'2026-09-02');
+assert.equal(routines.rutOccursOn(twice,'2026-09-01'),'19:00');
+assert.equal(routines.rutOccursOn(twice,'2026-09-02'),'20:00');
+let sameBoundary=routines.rutChangeFrom(revised,{...revised,time:'20:00'},'2026-08-25');
+assert.equal(routines.rutOccursOn(sameBoundary,'2026-08-24'),'17:00');
+assert.equal(routines.rutOccursOn(sameBoundary,'2026-08-25'),'20:00');
+assert.throws(()=>routines.rutChangeFrom(original,revised,'2020-01-01'));
+const transferred=routines.validateImport(JSON.parse(JSON.stringify({rutinas:[twice]}))).rutinas[0];
+assert.equal(routines.rutOccursOn(transferred,'2026-08-24'),'17:00');
+assert.equal(routines.rutOccursOn(transferred,'2026-08-31'),'17:00');
+assert.equal(routines.rutOccursOn(transferred,'2026-09-02'),'20:00');
+assert.throws(()=>routines.validateImport({rutinas:[{...twice,scheduleHistory:[{until:'invalid',schedule:{}}]}]}));
+routines.RUTINAS=[twice];assert.equal(routines.rutEventsOn('2026-08-24')[0]._rutDur,60);
+console.log('Rutinas: historial, limites de fecha, cancelaciones y transferencia OK');
+
+const weekly=routines.rutChangeWeek(twice,'2026-08-24',{weekDays:[4],time:'12:00'});
+assert.equal(routines.rutOccursOn(weekly,'2026-08-20'),null);
+assert.equal(routines.rutOccursOn(weekly,'2026-08-27'),'12:00');
+assert.equal(routines.rutOccursOn(weekly,'2026-09-01'),'19:00');
+assert.equal(routines.rutOccursOn(weekly,'2026-09-02'),'20:00');

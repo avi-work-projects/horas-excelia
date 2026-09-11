@@ -8,7 +8,7 @@ function renderBdayDetail(b){
   h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">';
   h+='<button class="sy-back" id="bdDClose">&#8592;</button>';
   h+='<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">Cumplea\u00f1os</div>';
-  h+='<button class="action-edit ev-list-btn" id="bdDEdit" style="font-size:.8rem;padding:6px 12px">&#9998; Editar</button>';
+  h+='<button class="action-edit action-edit-text ev-list-btn" id="bdDEdit" style="font-size:.8rem;padding:6px 12px">&#9998; Editar</button>';
   h+='</div>';
   h+='<div class="bd-detail-color-bar" style="background:'+color+'"></div>';
   h+='<div class="bd-detail-name">'+bdName(b.name)+vipStar+'</div>';
@@ -81,7 +81,7 @@ function renderBdayAlarmPanel(b){
   h+='<div class="bd-alarm-time"><input id="bdAlarmH2" type="number" min="0" max="23" value="'+_bdT2.h+'"><span class="bd-alarm-time-sep">:</span><input id="bdAlarmM2" type="number" min="0" max="59" value="'+String(_bdT2.m).padStart(2,'0')+'"></div>';
   h+='</div>';
   h+='</div>';
-  h+='<div class="ev-form-actions" style="margin-top:12px"><button class="action-edit ev-btn ev-edit-orange" id="bdAlarmEdit">&#9998; Editar cumplea\u00f1os</button></div>';
+  h+='<div class="ev-form-actions" style="margin-top:12px"><button class="action-edit action-edit-text ev-btn ev-edit-orange" id="bdAlarmEdit">&#9998; Editar cumplea\u00f1os</button></div>';
   h+='</div></div>';
   return h;
 }

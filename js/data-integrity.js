@@ -39,7 +39,20 @@ function validateImport(data){
   });
   (data.events||[]).forEach(function(e){if(!validIsoDate(e.start)||(e.end&&(!validIsoDate(e.end)||e.end<e.start)))throw new Error('Fechas de evento no validas');if(e.dates&&(!Array.isArray(e.dates)||e.dates.some(function(d){return !validIsoDate(d);})))throw new Error('Seleccion de dias no valida');});
   (data.birthdays||[]).forEach(function(b){if(!validBirthday(b.day,b.month))throw new Error('Fecha de cumpleanos no valida');});
-  (data.rutinas||[]).forEach(function(r){if(!Array.isArray(r.weekDays)||r.weekDays.some(function(n){return !Number.isInteger(n)||n<0||n>6;}))throw new Error('Dias de rutina no validos');});
+  (data.rutinas||[]).forEach(function(r){
+    function schedule(s){if(!s||!Array.isArray(s.weekDays)||s.weekDays.some(function(n){return !Number.isInteger(n)||n<0||n>6;}))throw new Error('Dias de rutina no validos');}
+    schedule(r);
+    if(r.scheduleHistory){
+      if(!Array.isArray(r.scheduleHistory))throw new Error('Historial de rutina no valido');
+      var last='';r.scheduleHistory.forEach(function(x){
+        if(!x||!validIsoDate(x.until)||x.until<=last)throw new Error('Fechas de historial no validas');
+        schedule(x.schedule);last=x.until;
+      });
+    }
+    Object.keys(r.keptSessions||{}).forEach(function(ds){var session=r.keptSessions[ds];
+      if(!validIsoDate(ds)||!session||!/^([01]\d|2[0-3]):[0-5]\d$/.test(session.time)||!Number.isFinite(session.dur)||session.dur<=0)throw new Error('Sesion conservada no valida');
+    });
+  });
   return JSON.parse(JSON.stringify(data));
 }
 function validBirthday(day,month){return Number.isInteger(day)&&Number.isInteger(month)&&month>=1&&month<=12&&day>=1&&day<=new Date(2000,month,0).getDate();}
@@ -66,6 +79,7 @@ function rutLimitExceeded(candidate,excludeId){
   var bounds=[candidate.start||evDk(new Date())],seen=Object.create(null);
   RUTINAS.concat([candidate]).forEach(function(r){
     if(r.start)bounds.push(r.start);
+    (r.scheduleHistory||[]).forEach(function(x){bounds.push(x.until);Object.keys(x.schedule.weeks||{}).forEach(function(d){bounds.push(d);});});
     if(r.suspend){if(r.suspend.from)bounds.push(r.suspend.from);if(r.suspend.to)bounds.push(r.suspend.to);}
     Object.keys(r.weeks||{}).concat(Object.keys(r.skips||{})).forEach(function(d){bounds.push(d);});
   });

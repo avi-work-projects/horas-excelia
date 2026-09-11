@@ -482,10 +482,10 @@ function _bindEvListas(){
 function _bindEvGestos(){
   /* Swipe: navegar en el tiempo (el botón evPrev/evNext solo existe en vistas con nav) */
   addSwipe(document.getElementById('eventsOverlay'),function(){
-    if(_evSwipeBodas(1)||_evSwipeUpcoming(1))return;
+    if(_evSwipeRutinas(1)||_evSwipeBodas(1)||_evSwipeUpcoming(1))return;
     var b=document.getElementById('evNext');if(b)b.click();
   },function(){
-    if(_evSwipeBodas(-1)||_evSwipeUpcoming(-1))return;
+    if(_evSwipeRutinas(-1)||_evSwipeBodas(-1)||_evSwipeUpcoming(-1))return;
     var b=document.getElementById('evPrev');if(b)b.click();
   });
   requestAnimationFrame(function(){ _positionEvBright(); });
@@ -503,5 +503,12 @@ function _evSwipeBodas(step){
   if(EV_VIEW!=='bodas')return false;
   var tabs=['clases','parejas','calendario','stats','config'],next=tabs[tabs.indexOf(BODA_SUBTAB)+step];
   if(next){var btn=document.querySelector('[data-bsub="'+next+'"]');if(btn)btn.click();}
+  return true;
+}
+
+function _evSwipeRutinas(step){
+  if(EV_VIEW!=='rutinas')return false;
+  var tabs=['lista','stats'],next=tabs[tabs.indexOf(RUT_SUBTAB)+step];
+  if(next){RUT_SUBTAB=next;refreshEvents(false);}
   return true;
 }

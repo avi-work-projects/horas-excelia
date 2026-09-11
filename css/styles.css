@@ -2437,3 +2437,10 @@ button.action-edit.active,button.action-edit:active{background:rgba(251,146,60,.
 .boda-date-ficha #bodaFormDia::-webkit-date-and-time-value{text-align:right}
 .boda-date-ficha #bodaFormDia::-webkit-datetime-edit{padding:0;text-align:right;display:inline-flex;justify-content:flex-end}
 .boda-date-ficha #bodaFormDia::-webkit-calendar-picker-indicator{margin-left:4px;padding:0}
+
+/* Text edits retain the solid orange; only standalone pencils use a tint. */
+button.action-edit.action-edit-text,button.settings-edit-btn,button.hip-edit-btn,button.bday-vip-edit-btn:not(.active){background:#fb923c!important;color:#fff!important;border-color:#fb923c!important}
+button.action-edit.action-edit-text:active{background:#f97316!important}
+.rut-icon-opt{min-width:0;flex-shrink:0}
+.rut-icon-opt svg{flex-shrink:0;display:block}
+.bday-month-hdr{font-size:.82rem;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-left:3px solid #fb923c;border-radius:8px;padding:10px 12px;margin:18px 0 9px;font-weight:750}

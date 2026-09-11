@@ -717,7 +717,7 @@ function evStartTime(ev){
 }
 function evEndTime(ev){
   if(!ev)return null;
-  if(ev._rut)return (typeof rutFin==='function')?rutFin(ev._rutTime,ev._rut.dur):null;
+  if(ev._rut)return (typeof rutFin==='function')?rutFin(ev._rutTime,ev._rutDur||rutDurationOn(ev._rut,ev.start)):null;
   if(getEvType(ev)==='Ensayos boda')return ev.boda&&ev.boda.time?bodaEndAt(ev.boda.time,bodaDuration(ev)):null;
   return (ev.time&&ev.endTime)?ev.endTime:null;
 }

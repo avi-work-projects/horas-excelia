@@ -123,3 +123,42 @@ test('Hoy apunta al mes y las cinco subpestanas de Bodas admiten swipe',async({p
  for(const row of positions)row.forEach((r,i)=>r.forEach((v,j)=>expect(Math.abs(v-positions[0][i][j])).toBeLessThan(1)));
 
 });
+
+test('rutinas: cambio con fecha conserva sesiones, exporta historial y permite swipe',async({page})=>{
+ await page.clock.setFixedTime(new Date('2026-08-21T10:00:00'));
+ await page.addInitScript(()=>{
+  sessionStorage.setItem('excelia-popup-dismissed','1');
+  if(!localStorage.getItem('excelia-rutinas-v1'))localStorage.setItem('excelia-rutinas-v1',JSON.stringify([{id:'history',name:'Actividad prueba',icon:'gen',color:'#a78bfa',start:'2026-01-01',weekDays:[1],time:'17:00',dur:60,skips:{'2026-08-31':1},weeks:{}}]));
+ });
+ await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewRutinas').click();await page.locator('.rut-edit').click();
+ await expect(page.locator('#rutFStart')).toHaveValue('2026-08-21');
+ await page.locator('#rutFDays [data-wd="1"]').click();await page.locator('#rutFDays [data-wd="2"]').click();
+ await page.locator('#rutFTime').fill('19:00');await page.locator('#rutFStart').fill('2026-08-25');await page.locator('#rutFSave').click();
+ await expect(page.locator('#rutFWrap')).toHaveCount(0);
+ expect(await page.evaluate(()=>['2026-08-24','2026-08-25','2026-08-31','2026-09-07'].map(ds=>rutOccursOn(RUTINAS[0],ds)))).toEqual(['17:00','19:00','17:00',null]);
+ await page.locator('.rut-edit').click();await page.locator('#rutFName').fill('Actividad renombrada');await page.locator('#rutFSave').click();await expect(page.locator('#rutFWrap')).toHaveCount(0);
+ expect(await page.evaluate(()=>rutOccursOn(RUTINAS[0],'2026-08-24'))).toBe('17:00');
+ await page.reload();await page.locator('#eventsBtn').click();await page.locator('#evViewRutinas').click();
+ expect(await page.evaluate(()=>rutOccursOn(RUTINAS[0],'2026-08-24'))).toBe('17:00');
+ expect(await page.evaluate(()=>rutOccursOn(RUTINAS[0],'2026-08-25'))).toBe('19:00');
+ const download=page.waitForEvent('download');await page.locator('#eventsContent').getByRole('button',{name:'Inicio',exact:true}).click();await page.locator('#menuBtn').click();await page.locator('#exportAllBtn').click();
+ const file=await download;const fs=require('fs');const data=JSON.parse(fs.readFileSync(await file.path(),'utf8'));
+ expect(data.rutinas[0].scheduleHistory).toHaveLength(1);expect(data.rutinas[0].keptSessions['2026-08-31'].time).toBe('17:00');
+ await page.locator('#menuBtn').click();await page.locator('#eventsBtn').click();await page.locator('#evViewRutinas').click();
+ async function swipe(left){await page.locator('#eventsOverlay .rut-sec').evaluate((el,left)=>{
+  el.dispatchEvent(new TouchEvent('touchstart',{bubbles:true,touches:[new Touch({identifier:1,target:el,clientX:left?300:80,clientY:400})]}));
+  el.dispatchEvent(new TouchEvent('touchend',{bubbles:true,changedTouches:[new Touch({identifier:1,target:el,clientX:left?80:300,clientY:400})]}));
+ },left);}
+ await swipe(true);await expect(page.locator('[data-rsub="stats"]')).toHaveClass(/active/);
+ await expect(page.locator('.rut-sec')).not.toContainText('Sesiones hechas por semana');await swipe(false);await expect(page.locator('[data-rsub="lista"]')).toHaveClass(/active/);
+ await page.locator('#rutAdd').click();
+ await expect(page.locator('#rutFIcons [data-icon="gen"] svg')).toHaveAttribute('viewBox','-3 -3 30 30');
+ const colors=await page.locator('#rutFIcons').evaluate(el=>['padel','gen'].map(k=>el.querySelector('[data-icon="'+k+'"] svg g:nth-child(2)').getAttribute('fill')));expect(colors[0]).not.toBe(colors[1]);
+ await page.screenshot({path:'.local-preview/routine-form-check.png'});
+ await page.locator('#rutFClose').click();await expect(page.locator('#rutFWrap')).toHaveCount(0);
+ await page.evaluate(()=>openEvDetail({id:'visual-test',kind:'puntual',type:'Otros',title:'Evento de prueba',start:'2026-08-25',end:'2026-08-25',color:'#123456'}));
+ await expect(page.locator('#evDEdit')).toHaveCSS('background-color','rgb(251, 146, 60)');
+ await page.evaluate(()=>document.documentElement.setAttribute('data-theme','light'));
+ await expect(page.locator('#evDEdit')).toHaveCSS('background-color','rgb(251, 146, 60)');
+ await page.screenshot({path:'.local-preview/edit-orange-check.png'});
+});
