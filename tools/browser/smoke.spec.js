@@ -247,12 +247,17 @@ test('pestanas: tono estable y titulo de viaje que sigue al scroll',async({page}
   const br=bar.getBoundingClientRect(),tr=el.getBoundingClientRect();
   return getComputedStyle(el).backgroundImage.includes(expected)&&tr.left>=br.left+1&&tr.right<=br.right-1;
  })).toBe(true);
- await page.locator('#eventsOverlay .sy-body').evaluate(body=>{
-  const title=body.querySelector('.ev-wk-sticky-title'),row=body.querySelector('.ev-wk-chips[data-ds="2026-08-22"]');
-  const t=title.getBoundingClientRect();body.style.scrollBehavior='auto';body.scrollTop+=row.getBoundingClientRect().top-(t.top+t.height/2);
-  body.dispatchEvent(new Event('scroll'));
- });
- await expect.poll(()=>title.evaluate(el=>new Set(getComputedStyle(el).backgroundImage.match(/rgb\([^)]+\)/g)).size)).toBe(2);
+ await expect.poll(async()=>{
+  const aligned=await page.locator('#eventsOverlay .sy-body').evaluate(body=>{
+   const title=body.querySelector('.ev-wk-sticky-title');
+   const row=Array.from(title.closest('.ev-wk-mgrid').querySelectorAll('.ev-wk-day-bg')).find(el=>el.style.gridRow==='22');
+   const t=title.getBoundingClientRect(),delta=row.getBoundingClientRect().top-(t.top+t.height/2);
+   body.style.scrollBehavior='auto';
+   if(Math.abs(delta)>.5){body.scrollTop+=delta;body.dispatchEvent(new Event('scroll'));return false;}
+   return true;
+  });
+  return aligned?title.evaluate(el=>new Set(getComputedStyle(el).backgroundImage.match(/rgb\([^)]+\)/g)).size):0;
+ }).toBe(2);
  await page.screenshot({path:'.local-preview/sticky-trip.png'});
  await page.locator('#evViewBodas').click();await page.locator('#bodaConfigBtn').click();
  const label=page.locator('.boda-cfg-card-controls label').first();await expect(label).toHaveCSS('color','rgb(107, 31, 32)');

@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v325 — agenda sin huecos y semanas completadas suaves';
+var APP_VERSION = 'v326 — mes y año de Home en dos líneas';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -380,7 +380,7 @@ function buildMailtoBody(wd){
 
 // ── Render principal ─────────────────────────────────────────
 function render(){
-  document.getElementById('monthLabel').textContent=MN[CM]+' '+CY;
+  document.getElementById('monthLabel').innerHTML='<span>'+MN[CM]+'</span><span class="sy-year-sub">'+CY+'</span>';
   var curMonthH=getMonthH(CY,CM,1);
   document.querySelectorAll('.hours-chip').forEach(function(el){el.classList.toggle('active',+el.dataset.h===curMonthH);});
   // Actualizar texto del botón de jornada
