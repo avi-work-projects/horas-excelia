@@ -2552,3 +2552,8 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 #fiscalOverlay .econ-sub-tab{color:var(--c-purple)!important;border-color:var(--c-purple)!important}
 #econOverlay .econ-sub-tab.active,#estudioOverlay .econ-sub-tab.active{background:color-mix(in srgb,var(--accent) 18%,var(--surface))}
 #fiscalOverlay .econ-sub-tab.active{background:color-mix(in srgb,var(--c-purple) 18%,var(--surface))}
+
+.nav-pro-icon{width:34px;height:34px;display:block;box-sizing:border-box;padding:1px;color:var(--c-blue)}
+.nav-pro-econ{color:var(--c-green)}.nav-pro-estudio{color:var(--c-purple)}.nav-pro-events{color:#65a367}.nav-pro-bday{color:var(--c-orange)}.nav-pro-alarm{color:var(--c-yellow);width:31px;height:31px}
+.nav-style-setting{display:flex;flex-direction:column;gap:7px;padding:10px 14px;font-size:.76rem;color:var(--text-muted)}
+.nav-style-setting select{padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font:inherit}

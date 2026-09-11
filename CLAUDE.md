@@ -153,3 +153,7 @@ El titulo fijo de agenda usa `.ev-wk-title-track` sobre el tramo completo del vi
 En agenda, `_bindEvWeekTitleBackground` sincroniza el fondo del titulo sticky con la fila bajo su posicion, agrupando lecturas en requestAnimationFrame y usando un listener pasivo del contenedor de scroll. `.rut-skipped-title` separa el tachado del aviso `.rut-skipped-label` para que el estado nunca quede tachado.
 
 El fondo sticky mezcla RGB de la fila con RGBA de la barra y guarda RGB opaco: simula transparencia sin dejar ver texto inferior. Su caja respeta los 1.5px de borde lateral del evento.
+
+## Iconos alternativos (v321)
+`js/nav-icons.js` contiene seis SVG propios de trazo y conserva las imagenes originales. `navIconHtml` renderiza y `applyNavIconStyle` actualiza la navegacion sin reemplazar botones/listeners. Preferencia `excelia-nav-icons-v1` (`original`/`professional`), exportada como `navIconStyle`; selector en ajustes globales. VIP y Gestify no cambian.
+El fondo sticky usa un gradiente de franjas RGB opacas con limites medidos respecto al titulo: si cruza dos dias muestra ambos fondos, desplazandolos continuamente con el scroll.
