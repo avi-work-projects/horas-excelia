@@ -197,3 +197,26 @@ test('rutinas canceladas: ocultas en vistas compactas, tachadas en detalle',asyn
  await page.locator('.ev-wk-chip.rut-cancelled').scrollIntoViewIfNeeded();
  await page.screenshot({path:'.local-preview/cancel-week.png'});
 });
+
+test('agenda: transporte separado y selector temporal de calendarios',async({page})=>{
+ await page.clock.setFixedTime(new Date('2026-08-21T10:00:00'));
+ await page.addInitScript(()=>{
+  sessionStorage.setItem('excelia-popup-dismissed','1');
+  localStorage.setItem('excelia-events-v1',JSON.stringify([
+   {id:'trip',kind:'grande',type:'Asturias',title:'Viaje de prueba',color:'#1946a0',start:'2026-08-21',end:'2026-08-24',viaje:{ida:{time:'16:37',modo:'tren'},vuelta:{time:'15:57',modo:'tren'}}},
+   {id:'point',kind:'puntual',type:'Otros',title:'Actividad primer día',start:'2026-08-21',end:'2026-08-21',color:'#c67da0'},
+   {id:'end',kind:'puntual',type:'Otros',title:'Actividad último día',start:'2026-08-24',end:'2026-08-24',color:'#c67da0'}]));
+ });
+ await page.goto('/');await page.evaluate(()=>document.documentElement.setAttribute('data-theme','light'));
+ await page.locator('#eventsBtn').click();await page.locator('#evViewWeek').click();
+ const first=page.locator('.ev-wk-chips[data-ds="2026-08-21"]'),last=page.locator('.ev-wk-chips[data-ds="2026-08-24"]');
+ await expect(first).toContainText('Ida');await expect(first).not.toContainText('Vuelta');await expect(last).toContainText('Vuelta');
+ const ida=await first.locator('.ev-wk-travel-row').boundingBox(),point=await first.locator('.ev-wk-chip').boundingBox();expect(ida.y+ida.height).toBeLessThanOrEqual(point.y);
+ const vuelta=await last.locator('.ev-wk-travel-footer').boundingBox(),end=await last.locator('.ev-wk-chip').boundingBox();expect(end.y+end.height).toBeLessThanOrEqual(vuelta.y);
+ await first.scrollIntoViewIfNeeded();await page.screenshot({path:'.local-preview/agenda-transport.png'});
+ await page.locator('#evViewRutinas').click();await page.locator('#rutCalendarColor').fill('#9567ab');
+ await expect(page.locator('#rutCalendarHex')).toHaveText('#9567ab');
+ await expect(page.locator('#evViewCal')).toHaveCSS('color','rgb(149, 103, 171)');
+ await page.locator('#rutCalendarColor').scrollIntoViewIfNeeded();await page.screenshot({path:'.local-preview/calendar-color.png'});
+ await page.locator('#evViewCal').click();await expect(page.locator('#evViewCal')).toHaveCSS('color','rgb(149, 103, 171)');
+});
