@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v335 — aviso de semanas pendientes con texto intermitente';
+var APP_VERSION = 'v336 — aviso completo y resumen junto a Todo enviado';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -312,7 +312,7 @@ function renderHomeSubmissionStatus(year,month){
   var state=homeSubmissionStatus(year,month);
   var detail=state.missing?(state.missing+' semana'+(state.missing===1?'':'s')+' del mes sin enviar'):'';
   if(!state.extraSent)detail+=(detail?' · ':'')+'Falta la semana adicional del '+fd(state.extra)+' al '+fd(ad(state.extra,6));
-  return '<div class="home-submission '+(state.complete?'complete':'pending')+'" role="status"><span class="home-submission-icon" aria-hidden="true">'+(state.complete?'&#10003;':'&#9888;')+'</span><div><strong>'+(state.complete?'Todo en orden':'Semanas pendientes de enviar')+'</strong><span>'+(state.complete?'Mes completo y semana adicional enviados':detail)+'</span></div></div>';
+  return '<div class="home-submission '+(state.complete?'complete':'pending')+'" role="status"><span class="home-submission-icon" aria-hidden="true">'+(state.complete?'&#10003;':'&#9888;')+'</span><div class="home-submission-message"><strong>'+(state.complete?'Todo enviado':'Semanas pendientes de enviar')+'</strong>'+(state.complete?'':'<span>'+detail+'</span>')+'</div></div>';
 }
 
 // ── Comprueba si hay semanas enviadas en el mes actual ────────
@@ -486,6 +486,8 @@ function render(){
     '<div class="month-stat off"><span class="ms-num">'+diasNoLaborables+'</span><span class="ms-label"> d\u00edas no trabajados</span>'+noLabHrsStr+'</div>'+dsglose+
     '<div class="month-stat total"><span class="ms-num">'+fmtH(horasTotal)+'h</span><span class="ms-label"> total mensual</span></div>';
   c.appendChild(footer);
+  var complete=c.querySelector('.home-submission.complete');
+  if(complete){var compact=footer.cloneNode(true);compact.classList.add('home-summary-compact');complete.appendChild(compact);}
 }
 
 // ── Bottom sheet (selector de tipo de día) ───────────────────

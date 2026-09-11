@@ -2648,8 +2648,16 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .home-submission.pending{--status-tone:var(--c-orange)}
 .home-submission.complete{--status-tone:var(--c-green)}
 .home-submission strong{display:block;font-size:.78rem;font-weight:600}
-.home-submission div > span{display:block;font-size:.68rem;line-height:1.4;margin-top:3px;color:var(--text-muted)}
+.home-submission-message > span{display:block;font-size:.68rem;line-height:1.4;margin-top:3px;color:var(--text-muted)}
 .home-submission-icon{font-size:1.1rem;flex-shrink:0}
-.home-submission.pending .home-submission-icon,.home-submission.pending strong{animation:home-pending-pulse 1.8s ease-in-out infinite}
+.home-submission.pending{animation:home-pending-pulse 1.8s ease-in-out infinite}
 @keyframes home-pending-pulse{0%,100%{opacity:1}50%{opacity:.3}}
-@media(prefers-reduced-motion:reduce){.home-submission.pending .home-submission-icon,.home-submission.pending strong{animation:none}}
+@media(prefers-reduced-motion:reduce){.home-submission.pending{animation:none}}
+
+[data-theme="light"] #eventsOverlay .ev-hdr-sub #evViewUpcoming{--tab-tone:#397dbb}
+.home-submission.complete{display:grid;grid-template-columns:18px 70px minmax(0,1fr);gap:8px}
+.home-summary-compact{padding:0 0 0 12px;border:0;border-left:1px solid var(--border);border-radius:0;background:none;gap:5px;min-width:0}
+.home-summary-compact .month-stat{font-size:.65rem;line-height:1.35}
+.home-summary-compact .ms-num{font-size:.8rem}
+.home-summary-compact .ms-label,.home-summary-compact .ms-hrs{font-size:.62rem}
+.home-summary-compact .ms-breakdown{font-size:.6rem}
