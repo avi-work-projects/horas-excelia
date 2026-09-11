@@ -141,7 +141,7 @@ test('rutinas: cambio con fecha conserva sesiones, exporta historial y permite s
  await page.reload();await page.locator('#eventsBtn').click();await page.locator('#evViewRutinas').click();
  expect(await page.evaluate(()=>rutOccursOn(RUTINAS[0],'2026-08-24'))).toBe('17:00');
  expect(await page.evaluate(()=>rutOccursOn(RUTINAS[0],'2026-08-25'))).toBe('19:00');
- const download=page.waitForEvent('download');await page.locator('#eventsContent').getByRole('button',{name:'Inicio',exact:true}).click();await page.locator('#menuBtn').click();await page.locator('#exportAllBtn').click();
+ const download=page.waitForEvent('download');await page.locator('#eventsContent').getByRole('button',{name:'Inicio',exact:true}).click();await expect(page.locator('#eventsOverlay')).not.toBeVisible();await page.locator('#menuBtn').click();await page.locator('#exportAllBtn').click();
  const file=await download;const fs=require('fs');const data=JSON.parse(fs.readFileSync(await file.path(),'utf8'));
  expect(data.rutinas[0].scheduleHistory).toHaveLength(1);expect(data.rutinas[0].keptSessions['2026-08-31'].time).toBe('17:00');
  await page.locator('#menuBtn').click();await page.locator('#eventsBtn').click();await page.locator('#evViewRutinas').click();
