@@ -48,6 +48,7 @@ const MODULOS = [
   'bodas-bind.js',
   'bodas-config.js',
   'rutinas.js',
+  'rutinas-history.js',
   'birthdays.js',
   'birthdays-render.js',
   'birthdays-panels.js',

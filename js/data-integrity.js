@@ -40,7 +40,18 @@ function validateImport(data){
   (data.events||[]).forEach(function(e){if(!validIsoDate(e.start)||(e.end&&(!validIsoDate(e.end)||e.end<e.start)))throw new Error('Fechas de evento no validas');if(e.dates&&(!Array.isArray(e.dates)||e.dates.some(function(d){return !validIsoDate(d);})))throw new Error('Seleccion de dias no valida');});
   (data.birthdays||[]).forEach(function(b){if(!validBirthday(b.day,b.month))throw new Error('Fecha de cumpleanos no valida');});
   (data.rutinas||[]).forEach(function(r){
-    function schedule(s){if(!s||!Array.isArray(s.weekDays)||s.weekDays.some(function(n){return !Number.isInteger(n)||n<0||n>6;}))throw new Error('Dias de rutina no validos');}
+    function hour(t){return typeof t==='string'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(t);}
+    function days(v){return Array.isArray(v)&&v.every(function(n){return Number.isInteger(n)&&n>=0&&n<=6;});}
+    function schedule(s){
+      if(!s||!days(s.weekDays))throw new Error('Dias de rutina no validos');
+      if(s.time!=null&&!hour(s.time))throw new Error('Hora de rutina no valida');
+      if(s.dur!=null&&(!Number.isInteger(s.dur)||s.dur<15||s.dur>480))throw new Error('Duracion de rutina no valida');
+      Object.keys(s.times||{}).forEach(function(wd){if(!/^[0-6]$/.test(wd)||!hour(s.times[wd]))throw new Error('Horario por dia no valido');});
+      Object.keys(s.weeks||{}).forEach(function(wk){var w=s.weeks[wk];if(!validIsoDate(wk)||!w||(w.weekDays&&!days(w.weekDays))||(w.time&&!hour(w.time)))throw new Error('Excepcion semanal no valida');});
+      if(s.suspend&&(!validIsoDate(s.suspend.from)||(s.suspend.to&&!validIsoDate(s.suspend.to))))throw new Error('Suspension no valida');
+    }
+    if(r.start&&!validIsoDate(r.start))throw new Error('Inicio de rutina no valido');
+    Object.keys(r.skips||{}).forEach(function(ds){if(!validIsoDate(ds))throw new Error('Fecha de sesion no valida');});
     schedule(r);
     if(r.scheduleHistory){
       if(!Array.isArray(r.scheduleHistory))throw new Error('Historial de rutina no valido');
@@ -50,7 +61,7 @@ function validateImport(data){
       });
     }
     Object.keys(r.keptSessions||{}).forEach(function(ds){var session=r.keptSessions[ds];
-      if(!validIsoDate(ds)||!session||!/^([01]\d|2[0-3]):[0-5]\d$/.test(session.time)||!Number.isFinite(session.dur)||session.dur<=0)throw new Error('Sesion conservada no valida');
+      if(!validIsoDate(ds)||!session||(session.time!==null&&!/^([01]\d|2[0-3]):[0-5]\d$/.test(session.time))||!Number.isFinite(session.dur)||session.dur<=0)throw new Error('Sesion conservada no valida');
     });
   });
   return JSON.parse(JSON.stringify(data));

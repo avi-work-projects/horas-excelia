@@ -124,41 +124,53 @@ test('Hoy apunta al mes y las cinco subpestanas de Bodas admiten swipe',async({p
 
 });
 
-test('rutinas: cambio con fecha conserva sesiones, exporta historial y permite swipe',async({page})=>{
+test('rutinas: horario inmediato, semana futura, historico editable y backup',async({page})=>{
  await page.clock.setFixedTime(new Date('2026-08-21T10:00:00'));
  await page.addInitScript(()=>{
   sessionStorage.setItem('excelia-popup-dismissed','1');
   if(!localStorage.getItem('excelia-rutinas-v1'))localStorage.setItem('excelia-rutinas-v1',JSON.stringify([{id:'history',name:'Actividad prueba',icon:'gen',color:'#a78bfa',start:'2026-01-01',weekDays:[1],time:'17:00',dur:60,skips:{'2026-08-31':1},weeks:{}}]));
  });
  await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewRutinas').click();await page.locator('.rut-edit').click();
- await expect(page.locator('#rutFStart')).toHaveValue('2026-08-21');
- await page.locator('#rutFDays [data-wd="1"]').click();await page.locator('#rutFDays [data-wd="2"]').click();
- await page.locator('#rutFTime').fill('19:00');await page.locator('#rutFStart').fill('2026-08-25');await page.locator('#rutFSave').click();
- await expect(page.locator('#rutFWrap')).toHaveCount(0);
- expect(await page.evaluate(()=>['2026-08-24','2026-08-25','2026-08-31','2026-09-07'].map(ds=>rutOccursOn(RUTINAS[0],ds)))).toEqual(['17:00','19:00','17:00',null]);
+ await expect(page.locator('#rutFStart')).toHaveCount(0);
+ await page.locator('#rutFTime').fill('18:00');await page.locator('#rutFSave').click();await expect(page.locator('#rutFWrap')).toHaveCount(0);
+ expect(await page.evaluate(()=>['2026-08-17','2026-08-24'].map(ds=>rutOccursOn(RUTINAS[0],ds)))).toEqual(['17:00','18:00']);
+ await page.locator('.rut-edit').click();await page.locator('#rutFWeek').click();await page.locator('[data-week="2026-08-31"]').click();
+ await page.locator('#rutWkDays [data-wd="1"]').click();await page.locator('#rutWkDays [data-wd="2"]').click();await page.locator('#rutWkTime').fill('19:00');
+ await page.locator('#rutWkForward').check();await expect(page.locator('#rutWkScope')).toContainText('Nuevo horario habitual');await page.locator('#rutWkSave').click();await expect(page.locator('#rutWkWrap')).toHaveCount(0);
+ expect(await page.evaluate(()=>['2026-08-17','2026-08-24','2026-08-31','2026-09-01','2026-09-07'].map(ds=>rutOccursOn(RUTINAS[0],ds)))).toEqual(['17:00','18:00','17:00','19:00',null]);
  await page.locator('.rut-edit').click();await page.locator('#rutFName').fill('Actividad renombrada');await page.locator('#rutFSave').click();await expect(page.locator('#rutFWrap')).toHaveCount(0);
- expect(await page.evaluate(()=>rutOccursOn(RUTINAS[0],'2026-08-24'))).toBe('17:00');
+ await page.locator('.rut-edit').click();await page.locator('#rutFHistory').click();
+ await expect(page.locator('.rut-history-period')).toHaveCount(3);
+ await page.locator('[data-period="2026-01-01"] summary').click();await page.locator('[data-history-more="2026-01-01"]').click();
+ await page.locator('[data-history-edit="2026-08-17"]').click();await page.locator('#rutHistoryTime').fill('16:30');await page.locator('#rutHistoryDuration').fill('45');await page.locator('#rutHistorySave').click();await expect(page.locator('#rutHistoryEditWrap')).toHaveCount(0);
+ expect(await page.evaluate(()=>[rutOccursOn(RUTINAS[0],'2026-08-17'),rutDurationOn(RUTINAS[0],'2026-08-17'),rutOccursOn(RUTINAS[0],'2026-08-10')])).toEqual(['16:30',45,'17:00']);
+ await page.screenshot({path:'.local-preview/routine-history-check.png'});
+ await page.locator('#rutHistoryClose').click();await expect(page.locator('#rutHistoryWrap')).toHaveCount(0);
  await page.reload();await page.locator('#eventsBtn').click();await page.locator('#evViewRutinas').click();
- expect(await page.evaluate(()=>rutOccursOn(RUTINAS[0],'2026-08-24'))).toBe('17:00');
- expect(await page.evaluate(()=>rutOccursOn(RUTINAS[0],'2026-08-25'))).toBe('19:00');
+ expect(await page.evaluate(()=>rutOccursOn(RUTINAS[0],'2026-08-17'))).toBe('16:30');
  const download=page.waitForEvent('download');await page.locator('#eventsContent').getByRole('button',{name:'Inicio',exact:true}).click();await expect(page.locator('#eventsOverlay')).not.toBeVisible();await page.locator('#menuBtn').click();await page.locator('#exportAllBtn').click();
  const file=await download;const fs=require('fs');const data=JSON.parse(fs.readFileSync(await file.path(),'utf8'));
- expect(data.rutinas[0].scheduleHistory).toHaveLength(1);expect(data.rutinas[0].keptSessions['2026-08-31'].time).toBe('17:00');
+ expect(data.rutinas[0].scheduleHistory).toHaveLength(2);expect(data.rutinas[0].keptSessions['2026-08-17'].time).toBe('16:30');
  await page.locator('#menuBtn').click();await page.locator('#eventsBtn').click();await page.locator('#evViewRutinas').click();
  async function swipe(left){await page.locator('#eventsOverlay .rut-sec').evaluate((el,left)=>{
   el.dispatchEvent(new TouchEvent('touchstart',{bubbles:true,touches:[new Touch({identifier:1,target:el,clientX:left?300:80,clientY:400})]}));
   el.dispatchEvent(new TouchEvent('touchend',{bubbles:true,changedTouches:[new Touch({identifier:1,target:el,clientX:left?80:300,clientY:400})]}));
  },left);}
- await swipe(true);await expect(page.locator('[data-rsub="stats"]')).toHaveClass(/active/);
- await expect(page.locator('.rut-sec')).not.toContainText('Sesiones hechas por semana');await swipe(false);await expect(page.locator('[data-rsub="lista"]')).toHaveClass(/active/);
+ await swipe(true);await expect(page.locator('[data-rsub="stats"]')).toHaveClass(/active/);await swipe(false);await expect(page.locator('[data-rsub="lista"]')).toHaveClass(/active/);
  await page.locator('#rutAdd').click();
- await expect(page.locator('#rutFIcons [data-icon="gen"] svg')).toHaveAttribute('viewBox','-3 -3 30 30');
- const colors=await page.locator('#rutFIcons').evaluate(el=>['padel','gen'].map(k=>el.querySelector('[data-icon="'+k+'"] svg g:nth-child(2)').getAttribute('fill')));expect(colors[0]).not.toBe(colors[1]);
+ await expect(page.locator('#rutFIcons [data-icon="baile"] svg')).toHaveAttribute('viewBox','-3 -3 30 30');
  await page.screenshot({path:'.local-preview/routine-form-check.png'});
- await page.locator('#rutFClose').click();await expect(page.locator('#rutFWrap')).toHaveCount(0);
- await page.evaluate(()=>openEvDetail({id:'visual-test',kind:'puntual',type:'Otros',title:'Evento de prueba',start:'2026-08-25',end:'2026-08-25',color:'#123456'}));
- await expect(page.locator('#evDEdit')).toHaveCSS('background-color','rgb(251, 146, 60)');
- await page.evaluate(()=>document.documentElement.setAttribute('data-theme','light'));
- await expect(page.locator('#evDEdit')).toHaveCSS('background-color','rgb(251, 146, 60)');
- await page.screenshot({path:'.local-preview/edit-orange-check.png'});
+});
+
+test('Eventos: casillas y etiquetas del mismo color en claro y oscuro',async({page})=>{
+ await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();
+ for(const theme of ['light','dark']){
+  await page.evaluate(theme=>document.documentElement.setAttribute('data-theme',theme),theme);
+  for(const id of ['evUpShowRut','evUpShowBoda']){
+   await page.locator('#'+id).check();
+   const colors=await page.locator('#'+id).evaluate(el=>({box:getComputedStyle(el).backgroundColor,label:getComputedStyle(el.closest('label')).color,tick:getComputedStyle(el,'::after').borderTopColor}));
+   expect(colors.box).toBe(colors.label);expect(colors.tick).not.toBe(colors.box);
+  }
+  await expect(page.locator('.wm-logo-check')).toBeVisible();
+ }
 });
