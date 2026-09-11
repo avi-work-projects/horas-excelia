@@ -2634,3 +2634,5 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .ev-wk-travel-row:not(.ev-wk-travel-footer) > .ev-wk-travel{padding-bottom:1px}
 .ev-wk-chips:has(> .ev-wk-travel-footer){padding-bottom:4px}
 .ev-wk-travel-footer > .ev-wk-travel{padding-bottom:0}
+
+.settings-menu-separator{border-top:1px solid var(--border);flex-shrink:0}
