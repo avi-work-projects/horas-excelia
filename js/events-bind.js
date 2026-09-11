@@ -374,7 +374,14 @@ function _bindEvWeekTitleBackground(){
       var days=Array.from(month.querySelectorAll('.ev-wk-day-bg')).map(function(el){return {el:el,rect:el.getBoundingClientRect()};});
       titles.forEach(function(t){
         var row=days.find(function(d){return d.rect.top<=t.rect.top+1&&d.rect.bottom>t.rect.top+1;});
-        if(row)t.el.style.backgroundColor=getComputedStyle(row.el).backgroundColor;
+        if(row){
+          var bar=Array.from(month.querySelectorAll('.ev-wk-multi')).find(function(el){return el.dataset.id===t.el.dataset.id;});
+          if(!bar)return;
+          var base=getComputedStyle(row.el).backgroundColor.match(/[\d.]+/g).map(Number);
+          var tint=getComputedStyle(bar).backgroundColor.match(/[\d.]+/g).map(Number);
+          var alpha=tint.length>3?tint[3]:1;
+          t.el.style.backgroundColor='rgb('+base.slice(0,3).map(function(c,i){return Math.round(tint[i]*alpha+c*(1-alpha));}).join(',')+')';
+        }
       });
     });
   }

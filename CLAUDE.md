@@ -151,3 +151,5 @@ Color definitivo calendarios: `#65a367`. Las pestañas de Eventos usan `--tab-to
 El titulo fijo de agenda usa `.ev-wk-title-track` sobre el tramo completo del viaje y `.ev-wk-sticky-title`; el titulo en flujo reserva su espacio para evitar solapes con el transporte. El contenedor limita el sticky al final del tramo.
 
 En agenda, `_bindEvWeekTitleBackground` sincroniza el fondo del titulo sticky con la fila bajo su posicion, agrupando lecturas en requestAnimationFrame y usando un listener pasivo del contenedor de scroll. `.rut-skipped-title` separa el tachado del aviso `.rut-skipped-label` para que el estado nunca quede tachado.
+
+El fondo sticky mezcla RGB de la fila con RGBA de la barra y guarda RGB opaco: simula transparencia sin dejar ver texto inferior. Su caja respeta los 1.5px de borde lateral del evento.

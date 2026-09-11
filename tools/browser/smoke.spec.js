@@ -238,7 +238,12 @@ test('pestanas: tono estable y titulo de viaje que sigue al scroll',async({page}
  await expect.poll(async()=>title.evaluate(el=>{
   const y=el.getBoundingClientRect().top+1;
   const day=Array.from(el.closest('.ev-wk-mgrid').querySelectorAll('.ev-wk-day-bg')).find(d=>{const r=d.getBoundingClientRect();return r.top<=y&&r.bottom>y;});
-  return !!day&&getComputedStyle(day).backgroundColor===getComputedStyle(el).backgroundColor;
+  if(!day)return false;
+  const bar=Array.from(el.closest('.ev-wk-mgrid').querySelectorAll('.ev-wk-multi')).find(b=>b.dataset.id===el.dataset.id);
+  const base=getComputedStyle(day).backgroundColor.match(/[\d.]+/g).map(Number),tint=getComputedStyle(bar).backgroundColor.match(/[\d.]+/g).map(Number),a=tint.length>3?tint[3]:1;
+  const expected='rgb('+base.slice(0,3).map((c,i)=>Math.round(tint[i]*a+c*(1-a))).join(', ')+')';
+  const br=bar.getBoundingClientRect(),tr=el.getBoundingClientRect();
+  return getComputedStyle(el).backgroundColor===expected&&tr.left>=br.left+1&&tr.right<=br.right-1;
  })).toBe(true);
  await page.screenshot({path:'.local-preview/sticky-trip.png'});
  await page.locator('#evViewBodas').click();await page.locator('#bodaConfigBtn').click();
