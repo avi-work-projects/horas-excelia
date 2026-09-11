@@ -119,3 +119,14 @@ assert.throws(()=>routines.validateImport({rutinas:[{...original,time:'bad" oncl
 routines.RUTINAS=[corrected].concat([0,1,2].map(i=>({id:'other'+i,start:'2026-08-01',weekDays:[1],time:'18:00',dur:60})));
 assert.throws(()=>routines.rutEditSession(corrected,'2026-08-31','17:00',60,false));
 assert.equal(routines.rutEditSession(corrected,'2026-08-17','16:00',45,false).keptSessions['2026-08-17'].time,'16:00');
+
+// Cada ejercicio conserva su cupo al editar e importar otros anos.
+a.saveVacEntitlement(25,2026);a.saveVacEntitlement(28,2027);
+assert.equal(a.vacEntitlementForYear(2026),25);assert.equal(a.vacEntitlementForYear(2027),28);
+assert.equal(a.vacEntitlementForYear(2028),23);
+const quotas=JSON.parse(a.appStorage.getItem(a.VAC_YEAR_KEY));
+a.auditImport({vacByYear:{2028:30}},'merge');assert.equal(a.vacEntitlementForYear(2026),25);
+a.auditImport({vacByYear:quotas},'replace');assert.equal(a.vacEntitlementForYear(2027),28);assert.equal(a.vacEntitlementForYear(2028),23);
+assert.throws(()=>a.validateImport({vacByYear:{2026:90}}));
+a.auditImport({vacEntitlement:24},'replace');assert.equal(a.vacEntitlementForYear(2026),24);
+console.log('Vacaciones: cupo por ejercicio, importacion y compatibilidad OK');

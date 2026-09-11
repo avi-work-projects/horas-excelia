@@ -352,6 +352,7 @@ const REGLAS = [
       'excelia-bodas-config-v1': 'bodaConfig',
       'excelia-horas-v3':          'days/sent/monthH/rate/exclFest/exclVac/multiRate/ratePeriods/econYearConfig',
       'excelia-vac-days':          'vacEntitlement',
+      'excelia-vac-years':         'vacByYear',
       'excelia-bdays-v1':          'birthdays',
       'excelia-events-v1':         'events',
       'excelia-alarms-v1':         'alarms',

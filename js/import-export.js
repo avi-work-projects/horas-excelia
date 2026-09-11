@@ -350,7 +350,7 @@ var _g4=document.getElementById('exportAllBtn'); if(_g4)_g4.addEventListener('cl
   if(typeof loadEconComp==='function')loadEconComp();
   if(typeof loadEvAlarms==='function')loadEvAlarms();
   var data={version:7,bodaConfig:JSON.parse(JSON.stringify(BODA_CONFIG)),mailConfig:_lsJson(MAIL_CFG_SK,null),days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
-    exclFest:EXCL_FEST,exclVac:EXCL_VAC,vacEntitlement:VAC_ENTITLEMENT,
+    exclFest:EXCL_FEST,exclVac:EXCL_VAC,vacEntitlement:VAC_ENTITLEMENT,vacByYear:_lsJson(VAC_YEAR_KEY,VAC_BY_YEAR),
     birthdays:BDAYS,events:EVENTS,
     bodas:typeof BODA_COUPLES!=='undefined'?BODA_COUPLES:null,
     bodasClosed:typeof BODA_CLOSED!=='undefined'?BODA_CLOSED:null,
@@ -420,7 +420,9 @@ function _applyFullImport(d,mode){
       if(typeof d.rate!=='undefined')DAILY_RATE=d.rate;
       if(typeof d.exclFest!=='undefined')EXCL_FEST=d.exclFest;
       if(typeof d.exclVac!=='undefined')EXCL_VAC=d.exclVac;
-      if(d.vacEntitlement){VAC_ENTITLEMENT=d.vacEntitlement;saveVacEntitlement(d.vacEntitlement);}
+      if(d.vacEntitlement){VAC_ENTITLEMENT=Number(d.vacEntitlement);appStorage.setItem(VAC_STORAGE_KEY,String(VAC_ENTITLEMENT));}
+      if(d.vacByYear){VAC_BY_YEAR=merge?_mergeMap(VAC_BY_YEAR,d.vacByYear):d.vacByYear;appStorage.setItem(VAC_YEAR_KEY,JSON.stringify(VAC_BY_YEAR));}
+      else if(!merge&&d.vacEntitlement){VAC_BY_YEAR={};appStorage.setItem(VAC_YEAR_KEY,'{}');}
       if(d.birthdays&&Array.isArray(d.birthdays)){BDAYS=merge?_mergeList(BDAYS,d.birthdays,_keyBday):d.birthdays;appStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));}
       if(d.events&&Array.isArray(d.events)){
         /* Los eventos se fusionan con firma de contenido: mismo titulo, tipo y

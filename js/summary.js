@@ -13,9 +13,15 @@ var SY_EXCL_PAST=true;
 var SY_PUENTES_LIBRES=false;
 var SUMMARY_TAB='work'; // 'work' | 'puentes' | 'time-off'
 
-function saveVacEntitlement(n){
-  VAC_ENTITLEMENT=n;
-  try{appStorage.setItem(VAC_STORAGE_KEY,String(n));}catch(e){}
+var VAC_YEAR_KEY='excelia-vac-years';
+var VAC_BY_YEAR=(function(){try{return JSON.parse(appStorage.getItem(VAC_YEAR_KEY)||'{}');}catch(e){return {};}})();
+function vacEntitlementForYear(year){
+  return Object.prototype.hasOwnProperty.call(VAC_BY_YEAR,String(year))?VAC_BY_YEAR[String(year)]:VAC_ENTITLEMENT;
+}
+function saveVacEntitlement(n,year){
+  if(!Number.isInteger(n)||n<1||n>60)return;
+  var next=Object.assign({},VAC_BY_YEAR);next[String(year)]=n;
+  appStorage.setItem(VAC_YEAR_KEY,JSON.stringify(next));VAC_BY_YEAR=next;
 }
 
 function fhY(h){return h===0?'0h':fh(h);}
@@ -67,7 +73,7 @@ function computeYearlySummary(year){
     d.setDate(d.getDate()+1);
   }
   var lvTotal=lvPast+lvFuture;
-  var vacTotal=vacTaken+vacFuture,vacPend=Math.max(0,VAC_ENTITLEMENT-vacTotal);
+  var vacTotal=vacTaken+vacFuture,vacPend=Math.max(0,vacEntitlementForYear(year)-vacTotal);
   var hoursTotal=Math.round((hoursWorked+hoursToWork)*10)/10;
   var maxMh=0,minMh=Infinity,maxMhi=0,minMhi=0;
   for(var i=0;i<12;i++){var tot=mHours[i]+mHoursP[i];if(tot>maxMh){maxMh=tot;maxMhi=i;}if((mDays[i]+mDaysP[i])>0&&tot<minMh){minMh=tot;minMhi=i;}}
@@ -183,16 +189,16 @@ function renderSummaryWorkBody(year){
 
     // Dias L-V
     h+='<div class="sy-section"><div class="sy-section-title">L\u2013V Totales</div><div class="sy-cards3">';
-    h+='<div class="sy-card hi"><div class="sy-val">'+fdY(s.lvPast)+'</div><div class="sy-lbl">Pasados</div></div>';
-    h+='<div class="sy-card dim"><div class="sy-val">'+fdY(s.lvFuture)+'</div><div class="sy-lbl">Futuros</div></div>';
-    h+='<div class="sy-card hi2"><div class="sy-val">'+fdY(s.lvTotal)+'</div><div class="sy-lbl">Totales</div></div>';
+    h+='<div class="sy-card sy-period-past"><div class="sy-val">'+fdY(s.lvPast)+'</div><div class="sy-lbl">Pasados</div></div>';
+    h+='<div class="sy-card sy-period-future"><div class="sy-val">'+fdY(s.lvFuture)+'</div><div class="sy-lbl">Futuros</div></div>';
+    h+='<div class="sy-card sy-period-total"><div class="sy-val">'+fdY(s.lvTotal)+'</div><div class="sy-lbl">Totales</div></div>';
     h+='</div></div>';
 
     // Ausencias
     h+='<div class="sy-section"><div class="sy-section-title">Ausencias</div>';
     h+='<div class="vac-config-row">';
     h+='<span class="vac-config-label">D\u00edas de vacaciones anuales</span>';
-    h+='<input class="vac-config-input" id="vacInput" type="number" min="1" max="60" value="'+VAC_ENTITLEMENT+'">';
+    h+='<input class="vac-config-input" id="vacInput" data-year="'+year+'" type="number" min="1" max="60" value="'+vacEntitlementForYear(year)+'">';
     h+='</div>';
     h+='<table class="sy-table"><thead><tr><th class="sy-td-lbl">Tipo</th><th>Pasados</th><th>Futuros</th><th>Total</th><th>Quedan</th></tr></thead><tbody>';
     h+='<tr><td class="sy-td-lbl">Vacaciones</td><td>'+s.vacTaken+'</td><td>'+s.vacFuture+'</td><td>'+s.vacTotal+'</td><td>'+(s.vacPend>0?s.vacPend:'&#10003;')+'</td></tr>';
@@ -223,9 +229,9 @@ function renderSummaryWorkBody(year){
 
     // Dias trabajados (bars)
     h+='<div class="sy-section"><div class="sy-section-title">'+dtTitle+'</div><div class="sy-cards3">';
-    h+='<div class="sy-card hi"><div class="sy-val">'+fdY(s.worked)+'</div><div class="sy-lbl">Trabajados</div></div>';
-    h+='<div class="sy-card dim"><div class="sy-val">'+fdY(s.toWork)+'</div><div class="sy-lbl">Por trabajar</div></div>';
-    h+='<div class="sy-card hi2"><div class="sy-val">'+fdY(s.workedTotal)+'</div><div class="sy-lbl">Totales</div></div>';
+    h+='<div class="sy-card sy-period-past"><div class="sy-val">'+fdY(s.worked)+'</div><div class="sy-lbl">Trabajados</div></div>';
+    h+='<div class="sy-card sy-period-future"><div class="sy-val">'+fdY(s.toWork)+'</div><div class="sy-lbl">Por trabajar</div></div>';
+    h+='<div class="sy-card sy-period-total"><div class="sy-val">'+fdY(s.workedTotal)+'</div><div class="sy-lbl">Totales</div></div>';
     h+='</div><div class="sy-cards3" style="margin-top:8px">';
     h+='<div class="sy-card"><div class="sy-val-sm">'+fdY(s.maxMd)+'</div><div class="sy-lbl">M\u00e1x./mes<br>'+MN_SHORT[s.maxMdi]+'</div></div>';
     h+='<div class="sy-card"><div class="sy-val-sm">'+fdY(s.minMd)+'</div><div class="sy-lbl">M\u00edn./mes<br>'+MN_SHORT[s.minMdi]+'</div></div>';
@@ -236,9 +242,9 @@ function renderSummaryWorkBody(year){
 
     // Horas trabajadas (al final)
     h+='<div class="sy-section"><div class="sy-section-title">'+htTitle+'</div><div class="sy-cards3">';
-    h+='<div class="sy-card hi"><div class="sy-val">'+fhY(s.hoursWorked)+'</div><div class="sy-lbl">Trabajadas</div></div>';
-    h+='<div class="sy-card dim"><div class="sy-val">'+fhY(s.hoursToWork)+'</div><div class="sy-lbl">Por trabajar</div></div>';
-    h+='<div class="sy-card hi2"><div class="sy-val">'+fhY(s.hoursTotal)+'</div><div class="sy-lbl">Totales</div></div>';
+    h+='<div class="sy-card sy-period-past"><div class="sy-val">'+fhY(s.hoursWorked)+'</div><div class="sy-lbl">Trabajadas</div></div>';
+    h+='<div class="sy-card sy-period-future"><div class="sy-val">'+fhY(s.hoursToWork)+'</div><div class="sy-lbl">Por trabajar</div></div>';
+    h+='<div class="sy-card sy-period-total"><div class="sy-val">'+fhY(s.hoursTotal)+'</div><div class="sy-lbl">Totales</div></div>';
     h+='</div><div class="sy-cards4" style="margin-top:8px">';
     h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.maxMh)+'</div><div class="sy-lbl">M\u00e1x./mes<br>'+MN_SHORT[s.maxMhi]+'</div></div>';
     h+='<div class="sy-card"><div class="sy-val-sm">'+fhY(s.minMh)+'</div><div class="sy-lbl">M\u00edn./mes<br>'+MN_SHORT[s.minMhi]+'</div></div>';
@@ -456,7 +462,7 @@ function renderSummaryTimeOffBody(year){
 function bindSummaryWorkBodyEvents(reRenderFn){
   var vacInput=document.getElementById('vacInput');
   if(vacInput)vacInput.addEventListener('change',function(){
-    var v=parseInt(this.value,10);if(v>0){saveVacEntitlement(v);reRenderFn();}
+    var v=parseInt(this.value,10);if(v>0){saveVacEntitlement(v,Number(this.dataset.year));reRenderFn();}
   });
   var chkFest=document.getElementById('syExclFestChk');
   var chkVac=document.getElementById('syExclVacChk');
@@ -565,7 +571,7 @@ function bindSummaryEvents(){
   if(vacInput){
     vacInput.addEventListener('change',function(){
       var v=parseInt(this.value,10);
-      if(v>0){saveVacEntitlement(v);document.getElementById('summaryContent').innerHTML=renderSummaryContent();bindSummaryEvents();}
+      if(v>0){saveVacEntitlement(v,Number(this.dataset.year));document.getElementById('summaryContent').innerHTML=renderSummaryContent();bindSummaryEvents();}
     });
   }
   // Quitar festivos / vacaciones (solo en tab work)

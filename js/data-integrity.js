@@ -35,6 +35,10 @@ function validateImport(data){
   if(data.bodaConfig)validateBodaConfig(data.bodaConfig);
   ['days','sent','monthH','bodasClosed','evAlarms','bdayAlarms','econYearConfig','gastosPerYear','personalPerYear'].forEach(function(k){if(data[k]!=null&&(typeof data[k]!=='object'||Array.isArray(data[k])))throw new Error('Mapa no valido: '+k);});
   ['rate','vacEntitlement','alarmHour','alarmMinute'].forEach(function(k){if(data[k]!=null&&(!Number.isFinite(Number(data[k]))||Number(data[k])<0))throw new Error('Numero no valido: '+k);});
+  if(data.vacByYear!=null){
+    if(typeof data.vacByYear!=='object'||Array.isArray(data.vacByYear))throw new Error('Cupos anuales no validos');
+    Object.keys(data.vacByYear).forEach(function(year){var n=data.vacByYear[year];if(!/^\d{4}$/.test(year)||!Number.isInteger(n)||n<1||n>60)throw new Error('Cupo anual no valido');});
+  }
   ['events','birthdays','bodas','rutinas','alarms','gastos','ingresos','compras','desgrav','scenarios'].forEach(function(k){
     if(data[k]!=null&&(!Array.isArray(data[k])||data[k].some(function(x){return !x||typeof x!=='object'||Array.isArray(x);})))throw new Error('Lista no valida: '+k);
   });

@@ -222,10 +222,16 @@ function renderEvByTypes(){
   var today=new Date();today.setHours(0,0,0,0);
   var typeOrder=['Viaje','Asturias','Casa Rural','Rec. Gestiones','Plan/Quedada','Ensayos boda','Otros'];
   /* Controles: buscador + orden + filtros */
-  var h='<div class="ev-list-tools">';
+  var h='<div class="ev-list-tools"><div class="ev-list-search-row">';
   h+='<div class="ev-search"><span class="ev-search-ico">&#128269;</span>'
     +'<input type="search" id="evListSearch" placeholder="Buscar por título o descripción" value="'+escHtml(EV_LIST_SEARCH)+'">'
     +(EV_LIST_SEARCH?'<button class="ev-search-x" id="evListSearchX">&#215;</button>':'')+'</div>';
+  h+='<select class="ev-types-select" id="evTypesFilter">';
+  h+='<option value="all"'+(EV_TYPES_FILTER==='all'?' selected':'')+'>Todos los tipos</option>';
+  typeOrder.forEach(function(t){
+    h+='<option value="'+escHtml(t)+'"'+(EV_TYPES_FILTER===t?' selected':'')+'>'+escHtml(t)+'</option>';
+  });
+  h+='</select></div>';
   h+='<div class="ev-sort-row">';
   /* Solo interesa lo mas cercano primero; el orden inverso se quito */
   if(EV_LIST_SORT==='fecha-desc')EV_LIST_SORT='fecha';
@@ -235,12 +241,7 @@ function renderEvByTypes(){
   h+='</div>';
   h+='<div class="ev-types-controls">';
   h+='<label class="ev-types-past-label"><input type="checkbox" id="evTypesPast"'+(EV_TYPES_PAST?' checked':'')+'> Excluir pasados</label>';
-  h+='<select class="ev-types-select" id="evTypesFilter">';
-  h+='<option value="all"'+(EV_TYPES_FILTER==='all'?' selected':'')+'>Todos los tipos</option>';
-  typeOrder.forEach(function(t){
-    h+='<option value="'+escHtml(t)+'"'+(EV_TYPES_FILTER===t?' selected':'')+'>'+escHtml(t)+'</option>';
-  });
-  h+='</select></div></div>';
+  h+='</div></div>';
   if(!EVENTS.length)return h+'<div class="sy-note">No hay eventos. Pulsa &quot;+ A\u00f1adir&quot; para crear uno.</div>';
   /* Filtrado comun */
   var q=EV_LIST_SEARCH.trim().toLowerCase();

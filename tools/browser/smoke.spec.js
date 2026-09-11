@@ -367,3 +367,30 @@ test('home claro: semanas completadas con verde suave',async({page})=>{
  await expect(page.locator('.week-card.sent .week-total').first()).toHaveCSS('background-color','rgb(222, 236, 226)');
  await page.screenshot({path:'.local-preview/home-sent-light.png',animations:'disabled'});
 });
+
+
+test('cupos por ano, backup y ajustes visuales de resumen',async({page})=>{
+ await page.clock.setFixedTime(new Date('2026-09-11T10:00:00'));
+ await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));await page.goto('/');
+ await page.evaluate(()=>{applyTheme('light');render();});await page.locator('#econBtn').click();
+ await page.locator('#ecTabDias').click();await page.locator('#vacInput').fill('25');await page.locator('#vacInput').blur();
+ await page.locator('#ecNext').click();await expect(page.locator('#vacInput')).toHaveValue('23');
+ await page.locator('#vacInput').fill('28');await page.locator('#vacInput').blur();await page.locator('#ecPrev').click();
+ await expect(page.locator('#vacInput')).toHaveValue('25');await page.screenshot({path:'.local-preview/summary-year.png',animations:'disabled'});
+ await page.locator('#ecTabResumen').click();await page.locator('#ecRateMulti').click();await page.screenshot({path:'.local-preview/tariff-tones.png',animations:'disabled'});
+ await page.evaluate(()=>{openFiscal();FISCAL_TAB='despacho';document.getElementById('fiscalContent').innerHTML=renderFiscalContent();bindFiscalEvents();});
+ const tabs=await page.locator('[data-hipsub]').evaluateAll(els=>els.map(el=>el.getBoundingClientRect().bottom));expect(tabs.length).toBe(4);expect(Math.max(...tabs)-Math.min(...tabs)).toBeLessThan(1);
+ await page.screenshot({path:'.local-preview/fiscal-tabs-aligned.png',animations:'disabled'});
+ await page.evaluate(()=>closeFiscal());await expect(page.locator('#fiscalOverlay')).not.toBeVisible();
+ await page.evaluate(()=>closeEcon());await expect(page.locator('#econOverlay')).not.toBeVisible();
+ const downloadPromise=page.waitForEvent('download');await page.locator('#menuBtn').click();await page.locator('#exportAllBtn').click();
+ const download=await downloadPromise,data=JSON.parse(require('fs').readFileSync(await download.path(),'utf8'));
+ expect(data.vacByYear).toEqual({'2026':25,'2027':28});
+ if(await page.locator('#dataMenu').evaluate(el=>el.classList.contains('open')))await page.locator('#menuBtn').click();
+ await page.evaluate(d=>{VAC_BY_YEAR={};applyFullImport(d,'replace');},data);
+ expect(await page.evaluate(()=>vacEntitlementForYear(2027))).toBe(28);
+ await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await page.locator('#evSubTodos').click();
+ const search=await page.locator('.ev-search').boundingBox(),filter=await page.locator('#evTypesFilter').boundingBox();
+ expect(filter.x).toBeGreaterThan(search.x);expect(Math.abs(filter.y+filter.height/2-search.y-search.height/2)).toBeLessThan(1);
+ await page.screenshot({path:'.local-preview/todos-search-row.png',animations:'disabled'});
+});
