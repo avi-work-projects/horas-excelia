@@ -2413,7 +2413,7 @@ button.action-edit.active,button.action-edit:active{background:rgba(251,146,60,.
 .bday-header-vip img{width:24px;height:auto}
 
 /* Las tres vistas de Cumpleaños comparten el naranja en ambos temas. */
-.bday-hdr-sub .ev-view-toggle:not(.active){color:var(--c-orange);border-color:color-mix(in srgb,var(--c-orange) 35%,transparent);background:color-mix(in srgb,var(--c-orange) 8%,transparent)}
+.bday-hdr-sub .ev-view-toggle:not(.active){color:var(--c-orange);border-color:var(--c-orange);background:color-mix(in srgb,var(--c-orange) 8%,transparent)}
 .bday-hdr-sub .ev-view-toggle.active{color:var(--c-orange)!important;border-color:var(--c-orange)!important;background:color-mix(in srgb,var(--c-orange) 17%,transparent)!important}
 
 .boda-date-ficha #bodaFormDia{margin-left:auto;flex:0 1 146px;width:146px;max-width:50%}
@@ -2511,7 +2511,7 @@ button.action-edit.action-edit-text:active{background:#f97316!important}
 [data-theme="light"] #eventsOverlay .ev-hdr-sub .ev-btn-week{--tab-tone:#c02626}
 [data-theme="light"] #eventsOverlay .ev-hdr-sub .ev-btn-bodas{--tab-tone:#8b5e34}
 [data-theme="light"] #eventsOverlay .ev-hdr-sub .ev-btn-rutinas{--tab-tone:#1f2937}
-#eventsOverlay .ev-hdr-sub .ev-btn-split{--tab-tone:var(--vacaciones);--tab-alpha:13%;background:linear-gradient(to bottom,color-mix(in srgb,#ffb347 var(--tab-alpha),var(--surface)) 50%,color-mix(in srgb,#f472b6 var(--tab-alpha),var(--surface)) 50%)!important}
+#eventsOverlay .ev-hdr-sub .ev-view-toggle.ev-btn-split{--tab-tone:var(--vacaciones);--tab-alpha:13%;background:linear-gradient(to bottom,color-mix(in srgb,#ffb347 var(--tab-alpha),var(--surface)) 50%,color-mix(in srgb,#f472b6 var(--tab-alpha),var(--surface)) 50%)!important}
 #eventsOverlay .ev-hdr-sub .ev-btn-split.active{--tab-alpha:30%}
 #eventsOverlay .boda-cfg-card-controls label{color:var(--wm-wine)}
 .ev-rut-mark.rut-skip::before,.ev-rut-mark.rut-skip::after{height:1.5px;top:calc(50% - .75px)}
@@ -2530,3 +2530,8 @@ button.action-edit.action-edit-text:active{background:#f97316!important}
 .ev-rut-mark.rut-skip::before,.ev-rut-mark.rut-skip::after{box-shadow:0 0 0 .45px #000}
 
 .ev-wk-chip .rut-skipped-label{background:var(--surface);border-radius:3px;padding:0 3px}
+
+/* Casillas vacias: mantener el tono de su etiqueta o su color explicito. */
+input[type="checkbox"]{color:inherit}
+input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
+#eventsOverlay input[type="checkbox"]:not(:checked){border-color:currentColor}

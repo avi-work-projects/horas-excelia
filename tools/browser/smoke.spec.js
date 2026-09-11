@@ -244,3 +244,24 @@ test('pestanas: tono estable y titulo de viaje que sigue al scroll',async({page}
  await page.locator('#evViewBodas').click();await page.locator('#bodaConfigBtn').click();
  const label=page.locator('.boda-cfg-card-controls label').first();await expect(label).toHaveCSS('color','rgb(107, 31, 32)');
 });
+
+test('bicolor seleccionado, casillas vacias y pestanas de cumpleanos',async({page})=>{
+ await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));
+ await page.goto('/');await page.locator('#eventsBtn').click();
+ for(const theme of ['light','dark']){
+  await page.evaluate(t=>document.documentElement.setAttribute('data-theme',t),theme);
+  await page.locator('#evViewTimeOff').click();
+  await expect(page.locator('#evViewTimeOff')).toHaveCSS('background-image',/linear-gradient/);
+  await page.screenshot({path:'.local-preview/bicolor-'+theme+'.png'});
+  await page.locator('#evViewUpcoming').click();await page.locator('#evUpShowBoda').uncheck();
+  const chk=page.locator('#evUpShowBoda');await expect(chk).toHaveCSS('border-top-color',await chk.evaluate(el=>getComputedStyle(el.parentElement).color));
+  await page.screenshot({path:'.local-preview/checks-'+theme+'.png'});
+ }
+ await page.evaluate(()=>document.documentElement.setAttribute('data-theme','light'));
+ await page.locator('#eventsOverlay [data-nav="bday"]').click();
+ const tabs=page.locator('.bday-hdr-sub .ev-view-toggle');
+ for(let i=0;i<await tabs.count();i++){
+  const tab=tabs.nth(i);const before=await tab.evaluate(el=>[getComputedStyle(el).color,getComputedStyle(el).borderTopColor]);await tab.click();
+  expect(await tab.evaluate(el=>[getComputedStyle(el).color,getComputedStyle(el).borderTopColor])).toEqual(before);
+ }
+});
