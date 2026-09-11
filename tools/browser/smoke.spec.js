@@ -309,3 +309,24 @@ test('iconos alternativos: seleccion, navegacion, persistencia y backup',async({
  await page.evaluate(()=>applyFullImport({navIconStyle:'original'},'merge'));await expect(page.locator('.nav-pro-icon')).toHaveCount(0);
  await page.evaluate(()=>applyFullImport({navIconStyle:'professional'},'merge'));await expect(page.locator('#eventsOverlay .nav-pro-icon')).toHaveCount(6);
 });
+
+test('seleccion de ventanas: mismo fondo para iconos originales y profesionales',async({page})=>{
+ await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));await page.goto('/');await page.addStyleTag({content:'*{transition:none!important;animation:none!important}'});
+ for(const theme of ['light','dark']){
+  await page.evaluate(t=>applyTheme(t),theme);
+  for(const key of ['econ','estudio','home','events','bday','alarm']){
+   const colors=await page.evaluate(key=>{
+    const ids={econ:'econBtn',estudio:'estudioBtn',home:'homeBtn',events:'eventsBtn',bday:'bdayBtn',alarm:'alarmTestBtn'};
+    const btn=document.getElementById(ids[key]);btn.classList.add('overlay-active');
+    applyNavIconStyle('original');const original=getComputedStyle(btn).backgroundColor;
+    applyNavIconStyle('professional');const professional=getComputedStyle(btn).backgroundColor;
+    const iconColor=getComputedStyle(btn.querySelector('svg')).color,buttonColor=getComputedStyle(btn).color;
+    btn.classList.remove('overlay-active');return {original,professional,iconColor,buttonColor};
+   },key);
+   expect(colors.original).toBe(colors.professional);expect(colors.iconColor).toBe(colors.buttonColor);
+  }
+ }
+ await page.evaluate(()=>applyTheme('light'));await page.locator('#bdayBtn').click();
+ await expect(page.locator('#bdayOverlay')).toHaveClass(/open/);await page.screenshot({path:'.local-preview/birthday-selected-professional.png'});
+ await page.evaluate(()=>applyNavIconStyle('original'));await page.screenshot({path:'.local-preview/birthday-selected-original.png'});
+});
