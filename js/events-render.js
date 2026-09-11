@@ -399,6 +399,9 @@ function renderEvWeek(){
         +'style="grid-row:'+seg.sd+' / '+(seg.ed+1)+';grid-column:2;'
         +'background:'+hexA(_dc,0.18)+';border-color:'+_dc+(seg.lanes>1?';margin-left:calc('+100*seg.lane/seg.lanes+'% + 3px);margin-right:calc('+100*(seg.lanes-seg.lane-1)/seg.lanes+'% + 3px)':'')+'">';
       h+='</div>';
+      /* El contenedor abarca todo el viaje y limita hasta donde sigue su titulo. */
+      h+='<div class="ev-wk-title-track" style="grid-row:'+seg.sd+' / '+(seg.ed+1)+';grid-column:2;'+(seg.lanes>1?'margin-left:calc('+100*seg.lane/seg.lanes+'% + 3px);margin-right:calc('+100*(seg.lanes-seg.lane-1)/seg.lanes+'% + 3px)':'')+'">';
+      h+='<button class="ev-wk-travel ev-wk-sticky-title" data-id="'+escHtml(ev.id)+'" style="color:'+_dc+'">'+(seg.isFirstSeg?'':'&#8593; ')+escHtml(ev.title)+'</button></div>';
     });
 
     // 2) Capa contenido: para cada día, columna fecha + chips puntuales
@@ -456,13 +459,6 @@ function renderEvWeek(){
 }
 
 /* ── Render: contenido principal ────────────────────────── */
-var EV_CAL_TEST_COLOR='';
-function evCalendarTestStyle(){
-  if(!/^#[0-9a-f]{6}$/i.test(EV_CAL_TEST_COLOR))return '';
-  var c=EV_CAL_TEST_COLOR;
-  return '#eventsOverlay .ev-zone-b .ev-btn-calendar{color:'+c+'!important;border-color:'+c+'!important;background:'+('color-mix(in srgb,'+c+' 10%,var(--surface))')+'!important}'+
-    '#eventsOverlay .ev-zone-b .ev-btn-calendar.active{background:'+('color-mix(in srgb,'+c+' 25%,var(--surface))')+'!important}';
-}
 function renderEvContent(){
   var h=renderNavBar('events');
   // Tabs a nivel 2 (sticky top:42px, justo bajo la nav bar)
@@ -474,7 +470,6 @@ function renderEvContent(){
   h+='<button class="ev-view-toggle'+(_upActive?' active':'')+'" id="evViewUpcoming">Pr\u00f3ximos</button>';
   var _toActive=(EV_VIEW==='puentes'||EV_VIEW==='time-off');
   h+='<button class="ev-view-toggle ev-btn-timeoff ev-btn-split'+(_toActive?' active':'')+'" id="evViewTimeOff">Vacaciones<br>Festivos</button>';
-  h+='<style id="evCalendarTestStyle">'+evCalendarTestStyle()+'</style>';
   h+='</div>';
   // Zona B: Calendarios visuales (1 mes + Semanal)
   h+='<div class="ev-view-zone ev-zone-b">';

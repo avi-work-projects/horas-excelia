@@ -198,7 +198,7 @@ test('rutinas canceladas: ocultas en vistas compactas, tachadas en detalle',asyn
  await page.screenshot({path:'.local-preview/cancel-week.png'});
 });
 
-test('agenda: transporte separado y selector temporal de calendarios',async({page})=>{
+test('agenda: transporte separado sin solapes',async({page})=>{
  await page.clock.setFixedTime(new Date('2026-08-21T10:00:00'));
  await page.addInitScript(()=>{
   sessionStorage.setItem('excelia-popup-dismissed','1');
@@ -214,9 +214,28 @@ test('agenda: transporte separado y selector temporal de calendarios',async({pag
  const ida=await first.locator('.ev-wk-travel-row').boundingBox(),point=await first.locator('.ev-wk-chip').boundingBox();expect(ida.y+ida.height).toBeLessThanOrEqual(point.y);
  const vuelta=await last.locator('.ev-wk-travel-footer').boundingBox(),end=await last.locator('.ev-wk-chip').boundingBox();expect(end.y+end.height).toBeLessThanOrEqual(vuelta.y);
  await first.scrollIntoViewIfNeeded();await page.screenshot({path:'.local-preview/agenda-transport.png'});
- await page.locator('#evViewRutinas').click();await page.locator('#rutCalendarColor').fill('#9567ab');
- await expect(page.locator('#rutCalendarHex')).toHaveText('#9567ab');
- await expect(page.locator('#evViewCal')).toHaveCSS('color','rgb(149, 103, 171)');
- await page.locator('#rutCalendarColor').scrollIntoViewIfNeeded();await page.screenshot({path:'.local-preview/calendar-color.png'});
- await page.locator('#evViewCal').click();await expect(page.locator('#evViewCal')).toHaveCSS('color','rgb(149, 103, 171)');
+
+});
+
+test('pestanas: tono estable y titulo de viaje que sigue al scroll',async({page})=>{
+ await page.clock.setFixedTime(new Date('2026-08-21T10:00:00'));
+ await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-events-v1',JSON.stringify([{id:'sticky-trip',kind:'grande',type:'Asturias',title:'Viaje largo de prueba',start:'2026-08-01',end:'2026-08-30',color:'#1946a0',viaje:{ida:{modo:'tren',time:'09:00'},vuelta:{modo:'tren',time:'20:00'}}}]));});
+ await page.goto('/');await page.locator('#eventsBtn').click();
+ for(const theme of ['light','dark']){
+  await page.evaluate(t=>document.documentElement.setAttribute('data-theme',t),theme);
+  for(const id of ['evViewCal','evViewQuad','evViewAnnual','evViewWeek','evViewBodas','evViewRutinas','evViewTimeOff','evViewUpcoming']){
+   const button=page.locator('#'+id);const before=await button.evaluate(el=>{const s=getComputedStyle(el);return [s.color,s.borderTopColor];});
+   await button.click();const after=await button.evaluate(el=>{const s=getComputedStyle(el);return [s.color,s.borderTopColor];});expect(after).toEqual(before);
+  }
+ }
+ await page.evaluate(()=>document.documentElement.setAttribute('data-theme','light'));
+ await page.locator('#evViewWeek').click();
+ const title=page.locator('.ev-wk-sticky-title[data-id="sticky-trip"]');
+ await page.locator('.ev-wk-chips[data-ds="2026-08-15"]').scrollIntoViewIfNeeded();
+ const y=(await title.boundingBox()).y;
+ await page.locator('#eventsOverlay .sy-body').evaluate(el=>el.scrollTop+=30);
+ expect(Math.abs((await title.boundingBox()).y-y)).toBeLessThan(2);
+ await page.screenshot({path:'.local-preview/sticky-trip.png'});
+ await page.locator('#evViewBodas').click();await page.locator('#bodaConfigBtn').click();
+ const label=page.locator('.boda-cfg-card-controls label').first();await expect(label).toHaveCSS('color','rgb(107, 31, 32)');
 });

@@ -322,7 +322,6 @@ function renderRutinasBody(){
   });
   h+='</div><div class="rut-sec">';
   h+=(RUT_SUBTAB==='stats')?_renderRutStats():_renderRutLista();
-  if(RUT_SUBTAB==='lista')h+='<div class="rut-color-trial"><label for="rutCalendarColor">Probar color de los tres calendarios</label><div><input type="color" id="rutCalendarColor" value="'+(EV_CAL_TEST_COLOR||'#9096a0')+'"><output id="rutCalendarHex">'+(EV_CAL_TEST_COLOR||'#9096a0')+'</output></div><small>Selector temporal. Cuando te guste el tono, envíame su código.</small></div>';
 
   h+='</div>';
   return h;
@@ -830,13 +829,6 @@ function closeRutSesion(){cerrarPanel('rutSesWrap','rutSesOv');}
 
 /* ══ Binds de la pestaña ══ */
 function bindRutinasEvents(){
-  var trial=document.getElementById('rutCalendarColor');
-  if(trial)trial.addEventListener('input',function(){
-    EV_CAL_TEST_COLOR=trial.value;
-    document.getElementById('rutCalendarHex').textContent=trial.value;
-    document.getElementById('evCalendarTestStyle').textContent=evCalendarTestStyle();
-  });
-
   document.querySelectorAll('.econ-sub-tab[data-rsub]').forEach(function(b){
     b.addEventListener('click',function(){RUT_SUBTAB=b.dataset.rsub;refreshEvents(false);});
   });

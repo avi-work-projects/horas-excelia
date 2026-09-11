@@ -146,4 +146,6 @@ Las sesiones conservan `_rutSkip` y sus datos. `_renderEvMonthCard` las excluye 
 
 ## Agenda: transporte en flujo (v315)
 `evWeekTravelRow` coloca cabecera/ida antes de los chips del primer dia y vuelta despues de los del ultimo. Respeta los carriles de las cajas continuas y repite titulo al cambiar de mes. No reservar un padding fijo: los textos largos deben aumentar el alto del dia.
-Selector TEMPORAL de color al pie de Rutinas: `EV_CAL_TEST_COLOR` solo en memoria, sin datos personales ni persistencia. Retirarlo cuando el usuario elija el color definitivo.
+Color definitivo calendarios: `#65a367`. Las pestañas de Eventos usan `--tab-tone`: texto y borde constantes, solo cambia el fondo seleccionado. Selector temporal retirado en v316.
+
+El titulo fijo de agenda usa `.ev-wk-title-track` sobre el tramo completo del viaje y `.ev-wk-sticky-title`; el titulo en flujo reserva su espacio para evitar solapes con el transporte. El contenedor limita el sticky al final del tramo.
