@@ -392,6 +392,20 @@ function _bindEvWeekTitleBackground(){
   schedule();
 }
 
+function openEvTypeFilter(){
+  var h='<div class="ev-form-overlay" id="evTypeFilterOv"><div class="ev-form-sheet" role="dialog" aria-modal="true" aria-labelledby="evTypeFilterTitle"><div class="ev-form-handle"></div>';
+  h+='<div class="nav-icon-picker-head"><button class="sy-back" id="evTypeFilterClose" aria-label="Volver">&#8592;</button><h2 id="evTypeFilterTitle">Tipo de evento</h2></div><div class="ev-type-options">';
+  ['all'].concat(EV_LIST_TYPES).forEach(function(type){
+    var selected=EV_TYPES_FILTER===type;
+    h+='<button class="ev-type-option'+(selected?' selected':'')+'" data-type="'+escHtml(type)+'" aria-pressed="'+selected+'"><span>'+escHtml(type==='all'?'Todos':type)+'</span><span aria-hidden="true">'+(selected?'&#10003;':'')+'</span></button>';
+  });
+  h+='</div></div></div>';
+  var close=function(){cerrarPanel('evTypeFilterWrap','evTypeFilterOv');};
+  var wrap=abrirPanel('evTypeFilterWrap',h,{overlay:'evTypeFilterOv',alCerrar:close});
+  wrap.querySelector('#evTypeFilterClose').addEventListener('click',close);
+  wrap.querySelectorAll('[data-type]').forEach(function(button){button.addEventListener('click',function(){EV_TYPES_FILTER=button.dataset.type;close();refreshEvents();});});
+}
+
 function _bindEvListas(){
   _bindEvWeekTitleBackground();
   // Click en items de próximos → panel de alarma (VIP bday → panel cumpleaños)
@@ -447,7 +461,7 @@ function _bindEvListas(){
   var pastChk=document.getElementById('evTypesPast');
   if(pastChk)pastChk.addEventListener('change',function(){EV_TYPES_PAST=this.checked;refreshEvents();});
   var typeSel=document.getElementById('evTypesFilter');
-  if(typeSel)typeSel.addEventListener('change',function(){EV_TYPES_FILTER=this.value;refreshEvents();});
+  if(typeSel)typeSel.addEventListener('click',openEvTypeFilter);
   // Click en barras multi-día → detail
   document.querySelectorAll('.ev-multi-bar[data-id]').forEach(function(bar){
     bar.addEventListener('click',function(e){

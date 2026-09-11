@@ -2619,3 +2619,11 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .sy-period-past .sy-val,.sy-period-future .sy-val,.sy-period-total .sy-val{color:var(--period-tone)}
 
 .ev-wk-travel-row .ev-wk-travel-title{padding-top:4px;padding-bottom:3px}
+
+/* Aire entre dias; el hueco entre eventos del mismo dia se conserva. */
+.ev-wk-chips{padding-top:8px;padding-bottom:8px}
+.ev-list-search-row .ev-types-select{flex:0 0 76px;width:76px;display:flex;align-items:center;justify-content:space-between;gap:4px}
+.ev-types-select span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ev-type-options{display:flex;flex-direction:column;gap:8px;margin:16px 0 8px}
+.ev-type-option{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font:inherit;text-align:left;cursor:pointer}
+.ev-type-option.selected{border-color:var(--accent);background:var(--accent-glow);color:var(--accent)}

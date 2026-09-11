@@ -218,20 +218,15 @@ function renderEvUpcoming(){
 }
 
 /* ── Render: lista de eventos por tipos ─────────────────── */
+var EV_LIST_TYPES=['Viaje','Asturias','Casa Rural','Rec. Gestiones','Plan/Quedada','Ensayos boda','Otros'];
 function renderEvByTypes(){
   var today=new Date();today.setHours(0,0,0,0);
-  var typeOrder=['Viaje','Asturias','Casa Rural','Rec. Gestiones','Plan/Quedada','Ensayos boda','Otros'];
   /* Controles: buscador + orden + filtros */
   var h='<div class="ev-list-tools"><div class="ev-list-search-row">';
   h+='<div class="ev-search"><span class="ev-search-ico">&#128269;</span>'
-    +'<input type="search" id="evListSearch" placeholder="Buscar por título o descripción" value="'+escHtml(EV_LIST_SEARCH)+'">'
+    +'<input type="search" id="evListSearch" placeholder="Buscar por título/descripción" value="'+escHtml(EV_LIST_SEARCH)+'">'
     +(EV_LIST_SEARCH?'<button class="ev-search-x" id="evListSearchX">&#215;</button>':'')+'</div>';
-  h+='<select class="ev-types-select" id="evTypesFilter">';
-  h+='<option value="all"'+(EV_TYPES_FILTER==='all'?' selected':'')+'>Todos los tipos</option>';
-  typeOrder.forEach(function(t){
-    h+='<option value="'+escHtml(t)+'"'+(EV_TYPES_FILTER===t?' selected':'')+'>'+escHtml(t)+'</option>';
-  });
-  h+='</select></div>';
+  h+='<button type="button" class="ev-types-select" id="evTypesFilter" aria-haspopup="dialog" title="Filtrar por tipo: '+escHtml(EV_TYPES_FILTER==='all'?'Todos':EV_TYPES_FILTER)+'"><span>'+escHtml(EV_TYPES_FILTER==='all'?'Todos':EV_TYPES_FILTER)+'</span><span aria-hidden="true">&#9662;</span></button></div>';
   h+='<div class="ev-sort-row">';
   /* Solo interesa lo mas cercano primero; el orden inverso se quito */
   if(EV_LIST_SORT==='fecha-desc')EV_LIST_SORT='fecha';
@@ -270,7 +265,7 @@ function renderEvByTypes(){
       var t=getEvType(ev);
       (byType[t]=byType[t]||[]).push(ev);
     });
-    typeOrder.forEach(function(type){
+    EV_LIST_TYPES.forEach(function(type){
       var l=byType[type];
       if(!l||!l.length)return;
       l.sort(function(a,b){return a.start<b.start?-1:1;});

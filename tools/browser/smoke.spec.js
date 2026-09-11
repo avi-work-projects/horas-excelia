@@ -393,4 +393,16 @@ test('cupos por ano, backup y ajustes visuales de resumen',async({page})=>{
  const search=await page.locator('.ev-search').boundingBox(),filter=await page.locator('#evTypesFilter').boundingBox();
  expect(filter.x).toBeGreaterThan(search.x);expect(Math.abs(filter.y+filter.height/2-search.y-search.height/2)).toBeLessThan(1);
  await page.screenshot({path:'.local-preview/todos-search-row.png',animations:'disabled'});
+ await page.locator('#evTypesFilter').click();await expect(page.locator('#evTypeFilterOv')).toHaveClass(/open/);
+ await page.screenshot({path:'.local-preview/event-type-picker.png',animations:'disabled'});
+ await page.locator('.ev-type-option[data-type="Asturias"]').click();await expect(page.locator('#evTypesFilter')).toHaveText('Asturias▾');
+ await expect(page.locator('#evTypeFilterWrap')).toHaveCount(0);
+ await page.locator('#evTypesFilter').click();await page.locator('.ev-type-option[data-type="all"]').click();await expect(page.locator('#evTypesFilter')).toHaveText('Todos▾');
+ await expect(page.locator('#evTypeFilterWrap')).toHaveCount(0);
+ await page.evaluate(()=>{closeEvents();DAILY_RATE=315;ECON_MULTI_RATE=false;ECON_VIEW='resumen';});
+ await expect(page.locator('#eventsOverlay')).not.toBeVisible();await page.locator('#econBtn').click();
+ await page.evaluate(()=>{DAILY_RATE=315;ECON_MULTI_RATE=false;ECON_RATE_MODE='daily';ECON_VIEW='resumen';saveEconYear(ECON_YEAR);reRenderEcon();});
+ const chart=page.locator('.sy-chart').filter({has:page.locator('.econ-chart-guide')}).first();
+ await chart.scrollIntoViewIfNeeded();await chart.screenshot({path:'.local-preview/econ-guide-lines.png',animations:'disabled'});
+
 });
