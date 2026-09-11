@@ -130,3 +130,15 @@ a.auditImport({vacByYear:quotas},'replace');assert.equal(a.vacEntitlementForYear
 assert.throws(()=>a.validateImport({vacByYear:{2026:90}}));
 a.auditImport({vacEntitlement:24},'replace');assert.equal(a.vacEntitlementForYear(2026),24);
 console.log('Vacaciones: cupo por ejercicio, importacion y compatibilidad OK');
+
+// El mes mas una semana adicional: incluso al cruzar diciembre/enero.
+for(const [year,month] of [[2026,8],[2026,11],[2027,1]]){
+ a.SW={};const current=a.weeks(year,month);let state=a.homeSubmissionStatus(year,month);
+ assert.equal(state.missing,current.length);assert.equal(state.complete,false);
+ current.forEach(w=>a.SW[a.dk(w[0])]=true);state=a.homeSubmissionStatus(year,month);
+ assert.equal(state.missing,0);assert.equal(state.complete,false);
+ assert.equal(a.dk(state.extra),a.dk(a.ad(current[current.length-1][0],7)));
+ a.SW[a.dk(state.extra)]=true;assert.equal(a.homeSubmissionStatus(year,month).complete,true);
+ delete a.SW[a.dk(current[0][0])];assert.equal(a.homeSubmissionStatus(year,month).complete,false);
+}
+console.log('Home: mes enviado mas semana adicional sin duplicados OK');

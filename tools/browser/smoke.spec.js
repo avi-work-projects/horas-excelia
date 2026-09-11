@@ -429,3 +429,22 @@ test('recarga de Home y linterna de agenda',async({page})=>{
  await page.screenshot({path:'.local-preview/agenda-bright-aligned.png',animations:'disabled'});
  await page.locator('#evBright').click();await expect(past).toHaveCSS('opacity','0.45');
 });
+
+
+test('Home: aviso de semanas y estado completo, cabecera opaca',async({page})=>{
+ await page.clock.setFixedTime(new Date('2026-09-11T10:00:00'));
+ await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));await page.goto('/');
+ await page.evaluate(()=>{applyTheme('light');SW={};render();});
+ await expect(page.locator('.home-submission.pending')).toContainText('5 semanas del mes sin enviar');
+ await page.screenshot({path:'.local-preview/home-pending.png',animations:'disabled'});
+ await page.evaluate(()=>{weeks(CY,CM).forEach(w=>SW[dk(w[0])]=true);render();});
+ await expect(page.locator('.home-submission.pending')).toContainText('05/10 al 11/10');
+ await page.evaluate(()=>{SW[dk(homeSubmissionStatus(CY,CM).extra)]=true;render();});
+ await expect(page.locator('.home-submission.complete')).toContainText('Todo en orden');
+ await page.screenshot({path:'.local-preview/home-complete.png',animations:'disabled'});
+ for(const theme of ['light','dark','grey']){
+  await page.evaluate(t=>applyTheme(t),theme);
+  expect(await page.locator('.header').evaluate(el=>getComputedStyle(el).backgroundColor)).toBe(await page.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor));
+ }
+ await page.evaluate(()=>{delete SW[dk(weeks(CY,CM)[0][0])];render();});await expect(page.locator('.home-submission.pending')).toBeVisible();
+});

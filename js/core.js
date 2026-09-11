@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v333 — linterna de agenda y posición inicial de Home';
+var APP_VERSION = 'v334 — estado de semanas enviadas y cabecera opaca';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -302,6 +302,19 @@ function weeks(y,m){
   return ws;
 }
 
+/* Mes visible mas una semana adicional, sin contar dos veces la semana puente. */
+function homeSubmissionStatus(year,month){
+  var current=weeks(year,month),extra=ad(current[current.length-1][0],7);
+  var missing=current.filter(function(w){return !SW[dk(w[0])];});
+  return {missing:missing.length,extra:extra,extraSent:!!SW[dk(extra)],complete:missing.length===0&&!!SW[dk(extra)]};
+}
+function renderHomeSubmissionStatus(year,month){
+  var state=homeSubmissionStatus(year,month);
+  var detail=state.missing?(state.missing+' semana'+(state.missing===1?'':'s')+' del mes sin enviar'):'';
+  if(!state.extraSent)detail+=(detail?' · ':'')+'Falta la semana adicional del '+fd(state.extra)+' al '+fd(ad(state.extra,6));
+  return '<div class="home-submission '+(state.complete?'complete':'pending')+'" role="status"><span class="home-submission-icon" aria-hidden="true">'+(state.complete?'&#10003;':'&#9888;')+'</span><div><strong>'+(state.complete?'Todo en orden':'Semanas pendientes de enviar')+'</strong><span>'+(state.complete?'Mes completo y semana adicional enviados':detail)+'</span></div></div>';
+}
+
 // ── Comprueba si hay semanas enviadas en el mes actual ────────
 // ── Datos de semana para email ───────────────────────────────
 function getWD(wkey){
@@ -391,7 +404,7 @@ function render(){
   }
 
   var wks=weeks(CY,CM),c=document.getElementById('weeksContainer');
-  c.innerHTML='';
+  c.innerHTML=renderHomeSubmissionStatus(CY,CM);
 
   wks.forEach(function(wk){
     var mon=wk[0],sun=wk[6],wkey=dk(mon),sent=!!SW[wkey],dias=0;
