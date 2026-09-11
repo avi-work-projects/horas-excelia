@@ -243,8 +243,14 @@ test('pestanas: tono estable y titulo de viaje que sigue al scroll',async({page}
   const base=getComputedStyle(day).backgroundColor.match(/[\d.]+/g).map(Number),tint=getComputedStyle(bar).backgroundColor.match(/[\d.]+/g).map(Number),a=tint.length>3?tint[3]:1;
   const expected='rgb('+base.slice(0,3).map((c,i)=>Math.round(tint[i]*a+c*(1-a))).join(', ')+')';
   const br=bar.getBoundingClientRect(),tr=el.getBoundingClientRect();
-  return getComputedStyle(el).backgroundColor===expected&&tr.left>=br.left+1&&tr.right<=br.right-1;
+  return getComputedStyle(el).backgroundImage.includes(expected)&&tr.left>=br.left+1&&tr.right<=br.right-1;
  })).toBe(true);
+ await page.locator('#eventsOverlay .sy-body').evaluate(body=>{
+  const title=body.querySelector('.ev-wk-sticky-title'),row=body.querySelector('.ev-wk-chips[data-ds="2026-08-22"]');
+  const t=title.getBoundingClientRect();body.style.scrollBehavior='auto';body.scrollTop+=row.getBoundingClientRect().top-(t.top+t.height/2);
+  body.dispatchEvent(new Event('scroll'));
+ });
+ await expect.poll(()=>title.evaluate(el=>new Set(getComputedStyle(el).backgroundImage.match(/rgb\([^)]+\)/g)).size)).toBe(2);
  await page.screenshot({path:'.local-preview/sticky-trip.png'});
  await page.locator('#evViewBodas').click();await page.locator('#bodaConfigBtn').click();
  const label=page.locator('.boda-cfg-card-controls label').first();await expect(label).toHaveCSS('color','rgb(107, 31, 32)');
@@ -285,4 +291,19 @@ test('economia fiscal y escenarios: pestanas estables y columnas alineadas',asyn
  const groups=page.locator('.est-group');const a=await groups.nth(0).locator('button').first().boundingBox(),b=await groups.nth(0).locator('button').last().boundingBox(),c=await groups.nth(1).locator('button').first().boundingBox(),d=await groups.nth(1).locator('button').last().boundingBox();
  expect(Math.abs(a.y-c.y)).toBeLessThan(1);expect(Math.abs(b.y+b.height-d.y-d.height)).toBeLessThan(1);
  await page.screenshot({path:'.local-preview/scenarios-tabs.png'});
+});
+
+test('iconos alternativos: seleccion, navegacion, persistencia y backup',async({page})=>{
+ await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));await page.goto('/');
+ await expect(page.locator('#econBtn img')).toHaveCount(1);
+ await page.locator('#menuBtn').click();await page.locator('#navIconStyle').selectOption('professional');await expect(page.locator('.data-actions .nav-pro-icon')).toHaveCount(6);
+ const downloadPromise=page.waitForEvent('download');await page.locator('#exportAllBtn').click();const download=await downloadPromise;
+ const data=JSON.parse(require('fs').readFileSync(await download.path(),'utf8'));expect(data.navIconStyle).toBe('professional');
+ await page.reload();await expect(page.locator('.data-actions .nav-pro-icon')).toHaveCount(6);
+ for(const theme of ['light','dark']){
+  await page.evaluate(t=>{applyTheme(t);render();},theme);await page.screenshot({path:'.local-preview/icons-'+theme+'.png'});
+ }
+ await page.locator('#eventsBtn').click();await expect(page.locator('#eventsOverlay .nav-pro-icon')).toHaveCount(6);
+ await page.evaluate(()=>applyFullImport({navIconStyle:'original'},'merge'));await expect(page.locator('.nav-pro-icon')).toHaveCount(0);
+ await page.evaluate(()=>applyFullImport({navIconStyle:'professional'},'merge'));await expect(page.locator('#eventsOverlay .nav-pro-icon')).toHaveCount(6);
 });

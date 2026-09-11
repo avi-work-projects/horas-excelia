@@ -31,6 +31,7 @@ function validateImport(data){
     if(key==='color'&&typeof v==='string'&&!/^#[0-9a-f]{3,8}$/i.test(v))throw new Error('Color no valido');
   }
   visit(data,'');
+  if(data.navIconStyle!=null&&['original','professional'].indexOf(data.navIconStyle)===-1)throw new Error('Estilo de iconos no valido');
   if(data.bodaConfig)validateBodaConfig(data.bodaConfig);
   ['days','sent','monthH','bodasClosed','evAlarms','bdayAlarms','econYearConfig','gastosPerYear','personalPerYear'].forEach(function(k){if(data[k]!=null&&(typeof data[k]!=='object'||Array.isArray(data[k])))throw new Error('Mapa no valido: '+k);});
   ['rate','vacEntitlement','alarmHour','alarmMinute'].forEach(function(k){if(data[k]!=null&&(!Number.isFinite(Number(data[k]))||Number(data[k])<0))throw new Error('Numero no valido: '+k);});

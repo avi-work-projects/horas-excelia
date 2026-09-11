@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v320 — pestanas economicas y escenarios alineados';
+var APP_VERSION = 'v321 — iconos alternativos y franjas continuas en agenda';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -690,7 +690,7 @@ function renderNavBar(current){
     if(b.key==='alarm')h+='<div class="nav-bar-spacer"></div>';
     var active=b.key===current?' active':'';
     var extra=b.key==='events'&&evActive?' events-active':b.key==='bday'&&bdActive?' bday-active':'';
-    h+='<button class="nav-bar-btn'+active+extra+'" data-nav="'+b.key+'" title="'+b.title+'">'+b.icon+'</button>';
+    h+='<button class="nav-bar-btn'+active+extra+'" data-nav="'+b.key+'" title="'+b.title+'">'+(NAV_ICON_STYLE==='professional'&&b.key!=='menu'?navIconHtml(b.key):b.icon)+'</button>';
   });
   h+='</div>';
   return h;

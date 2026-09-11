@@ -18,6 +18,7 @@ const RAIZ = path.join(__dirname, '..');
    a proposito: enganchan listeners al cargar y necesitarian un DOM de verdad. */
 const MODULOS = [
   'data-integrity.js',
+  'nav-icons.js',
   'core.js',
   'summary.js',
   /* El grupo economico: son los que hacen cuentas (IRPF, tramos, hipoteca,

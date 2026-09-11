@@ -375,6 +375,7 @@ const REGLAS = [
       'excelia-alarm-h':           'alarmHour',
       'excelia-alarm-m':           'alarmMinute',
       'excelia-alarm-days':        'alarmDays',
+      'excelia-nav-icons-v1':      'navIconStyle',
       'excelia-theme-v1':          'theme',
       /* A proposito FUERA del backup: */
       'excelia-macro-alarm-url':   false,   /* clave antigua, solo se lee como respaldo */

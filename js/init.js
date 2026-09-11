@@ -407,6 +407,7 @@
   });
 
   /* ── Aplicar tema al inicio (y actualizar etiqueta del botón) ── */
+  bindNavIconStyle();
   applyTheme(THEME);
   updateThemeBtn();
 

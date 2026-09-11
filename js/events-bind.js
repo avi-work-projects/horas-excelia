@@ -373,15 +373,17 @@ function _bindEvWeekTitleBackground(){
       if(!titles.length)return;
       var days=Array.from(month.querySelectorAll('.ev-wk-day-bg')).map(function(el){return {el:el,rect:el.getBoundingClientRect()};});
       titles.forEach(function(t){
-        var row=days.find(function(d){return d.rect.top<=t.rect.top+1&&d.rect.bottom>t.rect.top+1;});
-        if(row){
-          var bar=Array.from(month.querySelectorAll('.ev-wk-multi')).find(function(el){return el.dataset.id===t.el.dataset.id;});
-          if(!bar)return;
+        var bar=Array.from(month.querySelectorAll('.ev-wk-multi')).find(function(el){return el.dataset.id===t.el.dataset.id;});
+        if(!bar)return;
+        var tint=getComputedStyle(bar).backgroundColor.match(/[\d.]+/g).map(Number);
+        var alpha=tint.length>3?tint[3]:1,stops=[];
+        days.filter(function(d){return d.rect.bottom>t.rect.top&&d.rect.top<t.rect.bottom;}).forEach(function(row){
           var base=getComputedStyle(row.el).backgroundColor.match(/[\d.]+/g).map(Number);
-          var tint=getComputedStyle(bar).backgroundColor.match(/[\d.]+/g).map(Number);
-          var alpha=tint.length>3?tint[3]:1;
-          t.el.style.backgroundColor='rgb('+base.slice(0,3).map(function(c,i){return Math.round(tint[i]*alpha+c*(1-alpha));}).join(',')+')';
-        }
+          var color='rgb('+base.slice(0,3).map(function(c,i){return Math.round(tint[i]*alpha+c*(1-alpha));}).join(',')+')';
+          var from=Math.max(0,row.rect.top-t.rect.top),to=Math.min(t.rect.height,row.rect.bottom-t.rect.top);
+          stops.push(color+' '+from+'px',color+' '+to+'px');
+        });
+        if(stops.length)t.el.style.background='linear-gradient(to bottom,'+stops.join(',')+')';
       });
     });
   }
