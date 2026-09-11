@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v337 — continuidad entre meses y resumen destacado';
+var APP_VERSION = 'v338 — resumen compacto con total separado';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -481,7 +481,7 @@ function render(){
     if(dparts.length)dsglose='<div class="ms-breakdown">'+dparts.join('<span class="ms-sep"> / </span>')+'</div>';
   }
   var footer=document.createElement('div'); footer.className='month-summary';
-  var noLabHrsStr=diasNoLaborables>0?'<span class="ms-hrs"> ('+fmtH(horasNoLab)+'h)</span>':'';
+  var noLabHrsStr='<span class="ms-hrs"> ('+fmtH(horasNoLab)+'h)</span>';
   footer.innerHTML='<div class="month-stat worked"><span class="ms-num">'+diasTrabajados+'</span><span class="ms-label"> d\u00edas trabajados</span><span class="ms-hrs"> ('+hStr+'h)</span></div>'+
     '<div class="month-stat off"><span class="ms-num">'+diasNoLaborables+'</span><span class="ms-label"> d\u00edas no trabajados</span>'+noLabHrsStr+'</div>'+dsglose+
     '<div class="month-stat total"><span class="ms-num">'+fmtH(horasTotal)+'h</span><span class="ms-label"> total mensual</span></div>';
