@@ -448,3 +448,27 @@ test('Home: aviso de semanas y estado completo, cabecera opaca',async({page})=>{
  }
  await page.evaluate(()=>{delete SW[dk(weeks(CY,CM)[0][0])];render();});await expect(page.locator('.home-submission.pending')).toBeVisible();
 });
+
+
+test('agenda: ancho continuo entre meses y años',async({page})=>{
+ await page.clock.setFixedTime(new Date('2026-10-01T10:00:00'));
+ await page.addInitScript(()=>{
+  sessionStorage.setItem('excelia-popup-dismissed','1');
+  localStorage.setItem('excelia-events-v1',JSON.stringify([
+   {id:'cross',kind:'grande',type:'Casa Rural',title:'Casa rural de prueba',color:'#8b5e34',start:'2026-10-31',end:'2026-11-02'},
+   {id:'overlap',kind:'grande',type:'Otros',title:'Visita de prueba',color:'#e5a746',start:'2026-11-02',end:'2026-11-06'},
+   {id:'year',kind:'grande',type:'Asturias',title:'Viaje de año nuevo',color:'#1946a0',start:'2026-12-30',end:'2027-01-03'},
+   {id:'year-overlap',kind:'grande',type:'Otros',title:'Otra visita',color:'#e5a746',start:'2027-01-02',end:'2027-01-04'}]));
+ });
+ await page.goto('/');await page.evaluate(()=>applyTheme('light'));
+ await page.locator('#eventsBtn').click();await page.locator('#evViewWeek').click();
+ for(const id of ['cross','year']){
+  const bars=page.locator('.ev-wk-multi[data-id="'+id+'"]');await expect(bars).toHaveCount(2);
+  const a=await bars.nth(0).boundingBox(),b=await bars.nth(1).boundingBox();
+  expect(Math.abs(a.width-b.width)).toBeLessThan(1);expect(Math.abs(a.x-b.x)).toBeLessThan(1);
+  expect(a.width).toBeLessThan(200);
+ }
+ await page.waitForTimeout(750);
+ await page.locator('.ev-wk-multi[data-id="cross"]').first().scrollIntoViewIfNeeded();
+ await page.screenshot({path:'.local-preview/agenda-month-continuity.png',animations:'disabled'});
+});
