@@ -2579,3 +2579,15 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .nav-icon-choice-note{font-size:.74rem;color:var(--text-muted)}
 
 #navIconPickerOv{position:fixed;z-index:1500}
+
+/* Mes y titulo fijo comparten una referencia de altura: sin franja abierta. */
+.ev-wk-month-sep{flex-shrink:0;height:32px;box-sizing:border-box;display:flex;align-items:center;background:#242c3d;padding-top:0;padding-bottom:0}
+[data-theme="light"] .ev-wk-month-sep{background:#dfe5f1;border-color:#c1ccde;color:#405778}
+.ev-wk-date.ev-wk-today{width:100%;margin:0;justify-self:stretch;background:color-mix(in srgb,var(--c-green) 18%,var(--surface));border:1.5px solid var(--c-green);box-shadow:none}
+.ev-wk-date.ev-wk-today .ev-wk-num,.ev-wk-date.ev-wk-today .ev-wk-dow{color:var(--c-green)}
+.ev-wk-day-bg.ev-wk-today{background:#162b25}
+[data-theme="light"] .ev-wk-day-bg.ev-wk-today{background:#edf6f0}
+/* Semanas enviadas en claro: verdes suaves, sin pastillas oscuras. */
+[data-theme="light"] .week-card.sent{--sent:#f0f6f2;--sent-border:#c5dacf;--sent-text:#35684a}
+[data-theme="light"] .week-card.sent .week-total{background:#deece2;color:#35684a}
+[data-theme="light"] .week-card.sent .action-btn.sent-toggle{background:#d6e9dd;color:#35684a}

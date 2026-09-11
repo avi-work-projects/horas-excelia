@@ -233,6 +233,8 @@ test('pestanas: tono estable y titulo de viaje que sigue al scroll',async({page}
  const title=page.locator('.ev-wk-sticky-title[data-id="sticky-trip"]');
  await page.locator('.ev-wk-chips[data-ds="2026-08-15"]').scrollIntoViewIfNeeded();
  const y=(await title.boundingBox()).y;
+ const sep=page.locator('.ev-wk-month-sep').first();expect(Math.abs(y-((await sep.boundingBox()).y+(await sep.boundingBox()).height))).toBeLessThan(1);
+
  await page.locator('#eventsOverlay .sy-body').evaluate(el=>el.scrollTop+=30);
  expect(Math.abs((await title.boundingBox()).y-y)).toBeLessThan(2);
  await expect.poll(async()=>title.evaluate(el=>{
@@ -343,4 +345,11 @@ test('navegacion: margen superior comparable a Home con ambos iconos',async({pag
   await page.screenshot({path:'.local-preview/nav-spacing-'+style+'.png',animations:'disabled'});
   await page.locator('#eventsOverlay [data-nav="home"]').click();await expect(page.locator('#eventsOverlay')).not.toBeVisible();
  }
+});
+
+test('home claro: semanas completadas con verde suave',async({page})=>{
+ await page.clock.setFixedTime(new Date('2026-09-11T10:00:00'));await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));await page.goto('/');
+ await page.evaluate(()=>{applyTheme('light');SW['2026-08-31']=true;SW['2026-09-07']=true;render();});
+ await expect(page.locator('.week-card.sent .week-total').first()).toHaveCSS('background-color','rgb(222, 236, 226)');
+ await page.screenshot({path:'.local-preview/home-sent-light.png',animations:'disabled'});
 });

@@ -413,7 +413,7 @@ function renderEvWeek(){
       var dow=day.getDay();
       var isWknd=dow===0||dow===6;
       var tone=d%2?' odd':' even';
-      h+='<div class="ev-wk-day-bg'+tone+'" aria-hidden="true" style="grid-row:'+d+';grid-column:1 / -1"></div>';
+      h+='<div class="ev-wk-day-bg'+tone+(isToday?' ev-wk-today':'')+'" aria-hidden="true" style="grid-row:'+d+';grid-column:1 / -1"></div>';
       var dCls='ev-wk-date'+tone+(isToday?' ev-wk-today':'')+(isPast?' ev-wk-past':'')+(isWknd?' ev-wk-wknd':'');
       h+='<div class="'+dCls+'" data-ds="'+ds+'" style="grid-row:'+d+'"'+(isToday?' id="ev-wk-today-row"':'')+'>';
       h+='<span class="ev-wk-dow">'+_wn[dow]+'</span><span class="ev-wk-num">'+d+'</span>';
