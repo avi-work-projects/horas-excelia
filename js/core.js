@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v334 — estado de semanas enviadas y cabecera opaca';
+var APP_VERSION = 'v335 — aviso de semanas pendientes con texto intermitente';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
