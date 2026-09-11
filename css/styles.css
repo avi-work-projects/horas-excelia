@@ -2413,8 +2413,8 @@ button.action-edit.active,button.action-edit:active{background:rgba(251,146,60,.
 .bday-header-vip img{width:24px;height:auto}
 
 /* Las tres vistas de Cumpleaños comparten el naranja en ambos temas. */
-.bday-hdr-sub .ev-view-toggle:not(.active){color:var(--c-orange);border-color:var(--c-orange);background:color-mix(in srgb,var(--c-orange) 8%,transparent)}
-.bday-hdr-sub .ev-view-toggle.active{color:var(--c-orange)!important;border-color:var(--c-orange)!important;background:color-mix(in srgb,var(--c-orange) 17%,transparent)!important}
+.bday-hdr-sub .ev-view-toggle:not(.active){color:var(--birthday-tone);border-color:var(--birthday-tone);background:color-mix(in srgb,var(--birthday-tone) 8%,transparent)}
+.bday-hdr-sub .ev-view-toggle.active{color:var(--birthday-tone)!important;border-color:var(--birthday-tone)!important;background:color-mix(in srgb,var(--birthday-tone) 17%,transparent)!important}
 
 .boda-date-ficha #bodaFormDia{margin-left:auto;flex:0 1 146px;width:146px;max-width:50%}
 .boda-date-ficha #bodaFormDia::-webkit-date-and-time-value{text-align:right}
@@ -2554,6 +2554,12 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 #fiscalOverlay .econ-sub-tab.active{background:color-mix(in srgb,var(--c-purple) 18%,var(--surface))}
 
 .nav-pro-icon{width:34px;height:34px;display:block;box-sizing:border-box;padding:1px;color:var(--c-blue)}
-.nav-pro-econ{color:var(--c-green)}.nav-pro-estudio{color:var(--c-purple)}.nav-pro-events{color:#65a367}.nav-pro-bday{color:var(--c-orange)}.nav-pro-alarm{color:var(--c-yellow);width:31px;height:31px}
+.nav-pro-econ{color:var(--c-blue)}.nav-pro-home{color:var(--c-red)}.nav-pro-estudio{color:var(--c-purple)}.nav-pro-events{color:#65a367}.nav-pro-bday{color:var(--birthday-tone)}.nav-pro-alarm{color:#e5b600;width:31px;height:31px}
 .nav-style-setting{display:flex;flex-direction:column;gap:7px;padding:10px 14px;font-size:.76rem;color:var(--text-muted)}
 .nav-style-setting select{padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font:inherit}
+
+:root{--birthday-tone:#ffb347}
+[data-theme="light"]{--birthday-tone:#df8b10}
+/* Los SVG comparten caja; Home solo es mas grande con los iconos originales. */
+.data-actions:has(.nav-pro-icon){align-items:center}
+.data-btn:has(.nav-pro-icon),.nav-bar-btn:has(.nav-pro-icon),#homeBtn:has(.nav-pro-icon),.nav-bar-btn[data-nav="home"]:has(.nav-pro-icon){width:44px!important;height:44px!important;flex-shrink:0;border-radius:8px!important}
