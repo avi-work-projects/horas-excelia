@@ -111,12 +111,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .data-btn:active{background:var(--surface3);transform:scale(.93)}
 .data-btn.overlay-active{background:rgba(255,255,255,.15)!important;color:var(--text)!important;border-radius:8px}
 /* Aro de color único por botón (nivel 1) — igual que nav-bar-btn.active[data-nav] */
-#homeBtn.overlay-active{color:var(--text)!important;background:rgba(255,255,255,.18)!important;box-shadow:0 0 0 1.5px rgba(255,255,255,.5),0 0 8px rgba(255,255,255,.12)!important;border-radius:8px}
 #summaryBtn.overlay-active{color:#22d3ee!important;background:rgba(34,211,238,.13)!important;box-shadow:0 0 0 1.5px rgba(34,211,238,.8),0 0 8px rgba(34,211,238,.3)!important;border-radius:8px}
-#econBtn.overlay-active{color:var(--c-green)!important;background:rgba(52,211,153,.13)!important;box-shadow:0 0 0 1.5px rgba(52,211,153,.8),0 0 8px rgba(52,211,153,.3)!important;border-radius:8px}
-#bdayBtn.overlay-active{color:var(--vacaciones)!important;background:rgba(255,179,71,.13)!important;box-shadow:0 0 0 1.5px rgba(255,179,71,.8),0 0 8px rgba(255,179,71,.3)!important;border-radius:8px}
-#eventsBtn.overlay-active{color:var(--c-blue)!important;background:rgba(108,140,255,.13)!important;box-shadow:0 0 0 1.5px rgba(108,140,255,.8),0 0 8px rgba(108,140,255,.3)!important;border-radius:8px}
-#estudioBtn.overlay-active{color:#f472b6!important;background:rgba(244,114,182,.13)!important;box-shadow:0 0 0 1.5px rgba(244,114,182,.8),0 0 8px rgba(244,114,182,.3)!important;border-radius:8px}
 .data-btn.has-update::after{content:'';position:absolute;top:2px;right:2px;width:8px;height:8px;background:#34d399;border-radius:50%;border:1.5px solid var(--bg);animation:upd-pulse 1.4s ease-in-out infinite}
 @keyframes upd-pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.7}}
 /* Punto verde notificación en botones bday/events cuando hay items próximos */
@@ -1541,13 +1536,7 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .nav-bar-btn[data-nav="home"] .btn-icon{width:46px;height:46px}
 .nav-bar-btn:hover{background:rgba(255,255,255,.08);color:var(--text)}
 .nav-bar-btn.active{background:rgba(255,255,255,.14);color:var(--text)}
-.nav-bar-btn.active[data-nav="bday"]{color:var(--vacaciones)!important;background:rgba(255,179,71,.13);box-shadow:0 0 0 1.5px rgba(255,179,71,.8),0 0 8px rgba(255,179,71,.3)}
-.nav-bar-btn.active[data-nav="events"]{color:var(--c-blue)!important;background:rgba(108,140,255,.13);box-shadow:0 0 0 1.5px rgba(108,140,255,.8),0 0 8px rgba(108,140,255,.3)}
 .nav-bar-btn.active[data-nav="summary"]{color:#22d3ee!important;background:rgba(34,211,238,.13);box-shadow:0 0 0 1.5px rgba(34,211,238,.8),0 0 8px rgba(34,211,238,.3)}
-.nav-bar-btn.active[data-nav="econ"]{color:var(--c-green)!important;background:rgba(52,211,153,.13);box-shadow:0 0 0 1.5px rgba(52,211,153,.8),0 0 8px rgba(52,211,153,.3)}
-.nav-bar-btn.active[data-nav="alarm"]{color:var(--c-purple)!important;background:rgba(192,132,252,.13);box-shadow:0 0 0 1.5px rgba(192,132,252,.8),0 0 8px rgba(192,132,252,.3)}
-.nav-bar-btn.active[data-nav="estudio"]{color:#f472b6!important;background:rgba(244,114,182,.13);box-shadow:0 0 0 1.5px rgba(244,114,182,.8),0 0 8px rgba(244,114,182,.3)}
-.nav-bar-btn.active[data-nav="home"]{color:var(--text)!important;background:rgba(255,255,255,.18);box-shadow:0 0 0 1.5px rgba(255,255,255,.5),0 0 8px rgba(255,255,255,.12)}
 .nav-bar-btn.events-active{color:var(--c-blue)!important}
 .nav-bar-btn.bday-active{color:var(--vacaciones)!important}
 /* Birthday detail / form overlays */
@@ -2563,3 +2552,16 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 /* Los SVG comparten caja; Home solo es mas grande con los iconos originales. */
 .data-actions:has(.nav-pro-icon){align-items:center}
 .data-btn:has(.nav-pro-icon),.nav-bar-btn:has(.nav-pro-icon),#homeBtn:has(.nav-pro-icon),.nav-bar-btn[data-nav="home"]:has(.nav-pro-icon){width:44px!important;height:44px!important;flex-shrink:0;border-radius:8px!important}
+
+/* Una identidad de color por ventana para ambos juegos de iconos. */
+#econBtn,.nav-bar-btn[data-nav="econ"]{--nav-tone:var(--c-blue)}
+#estudioBtn,.nav-bar-btn[data-nav="estudio"]{--nav-tone:var(--c-purple)}
+#homeBtn,.nav-bar-btn[data-nav="home"]{--nav-tone:var(--c-red)}
+#eventsBtn,.nav-bar-btn[data-nav="events"]{--nav-tone:#65a367}
+#bdayBtn,.nav-bar-btn[data-nav="bday"]{--nav-tone:var(--birthday-tone)}
+#alarmTestBtn,.nav-bar-btn[data-nav="alarm"]{--nav-tone:#e5b600}
+.data-btn.overlay-active,.nav-bar-btn.active,#alarmWrap:has(#alarmPanel.open) #alarmTestBtn{
+ color:var(--nav-tone,var(--accent))!important;
+ background:color-mix(in srgb,var(--nav-tone,var(--accent)) 15%,var(--surface))!important;
+ box-shadow:0 0 0 1.5px color-mix(in srgb,var(--nav-tone,var(--accent)) 75%,transparent),0 0 8px color-mix(in srgb,var(--nav-tone,var(--accent)) 20%,transparent)!important;
+}
