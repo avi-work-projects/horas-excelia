@@ -1434,7 +1434,7 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-filter-chip:has(.ev-chip-flag){padding:0 5px}
 .ev-filter-chip.chip-active{opacity:1}
 /* Shared overlay nav bar — nivel 1, siempre visible en lo alto del overlay */
-.overlay-nav-bar{flex-shrink:0;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;gap:6px;padding:4px 12px;box-shadow:0 1px 0 var(--border);overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none}
+.overlay-nav-bar{flex-shrink:0;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;gap:6px;padding:10px 12px 4px;box-shadow:0 1px 0 var(--border);overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none}
 .nav-bar-spacer{flex:1}
 .overlay-nav-bar::-webkit-scrollbar{display:none}
 /* ── TABS NIVEL 2 (birthdays/events/summary) — nivel 2, debajo del nav bar ── */
@@ -2544,8 +2544,6 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 
 .nav-pro-icon{width:34px;height:34px;display:block;box-sizing:border-box;padding:1px;color:var(--c-blue)}
 .nav-pro-econ{color:var(--c-blue)}.nav-pro-home{color:var(--c-red)}.nav-pro-estudio{color:var(--c-purple)}.nav-pro-events{color:#65a367}.nav-pro-bday{color:var(--birthday-tone)}.nav-pro-alarm{color:#e5b600;width:31px;height:31px}
-.nav-style-setting{display:flex;flex-direction:column;gap:7px;padding:10px 14px;font-size:.76rem;color:var(--text-muted)}
-.nav-style-setting select{padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font:inherit}
 
 :root{--birthday-tone:#ffb347}
 [data-theme="light"]{--birthday-tone:#df8b10}
@@ -2565,3 +2563,19 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
  background:color-mix(in srgb,var(--nav-tone,var(--accent)) 15%,var(--surface))!important;
  box-shadow:0 0 0 1.5px color-mix(in srgb,var(--nav-tone,var(--accent)) 75%,transparent),0 0 8px color-mix(in srgb,var(--nav-tone,var(--accent)) 20%,transparent)!important;
 }
+
+.nav-style-setting{display:flex;align-items:center;gap:8px}
+#navIconStyleValue{margin-left:auto;font-size:.7rem;color:var(--text-muted)}
+.nav-icon-picker-head{display:flex;align-items:center;gap:12px;margin:12px 0}
+.nav-icon-picker-head h2{font-size:1rem;font-weight:600}
+.nav-icon-picker-note{font-size:.78rem;color:var(--text-muted);line-height:1.5;margin-bottom:20px}
+.nav-icon-choice{display:flex;flex-direction:column;width:100%;gap:16px;text-align:left;padding:16px;margin:12px 0;border:1px solid var(--border);border-radius:14px;background:var(--surface2);color:var(--text);cursor:pointer;font:inherit}
+.nav-icon-choice.selected{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 7%,var(--surface))}
+.nav-icon-choice-head{display:flex;align-items:center;justify-content:space-between;font-size:.9rem}
+.nav-icon-choice-check{width:20px;height:20px;border:1px solid var(--border);border-radius:50%;text-align:center;font-size:.8rem;line-height:18px}
+.selected .nav-icon-choice-check{background:var(--accent);border-color:var(--accent);color:white}
+.nav-icon-choice-preview{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.nav-icon-choice-preview .btn-icon{width:34px;height:34px;object-fit:contain}
+.nav-icon-choice-note{font-size:.74rem;color:var(--text-muted)}
+
+#navIconPickerOv{position:fixed;z-index:1500}

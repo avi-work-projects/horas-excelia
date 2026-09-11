@@ -157,3 +157,5 @@ El fondo sticky mezcla RGB de la fila con RGBA de la barra y guarda RGB opaco: s
 ## Iconos alternativos (v321)
 `js/nav-icons.js` contiene seis SVG propios de trazo y conserva las imagenes originales. `navIconHtml` renderiza y `applyNavIconStyle` actualiza la navegacion sin reemplazar botones/listeners. Preferencia `excelia-nav-icons-v1` (`original`/`professional`), exportada como `navIconStyle`; selector en ajustes globales. VIP y Gestify no cambian.
 El fondo sticky usa un gradiente de franjas RGB opacas con limites medidos respecto al titulo: si cruza dos dias muestra ambos fondos, desplazandolos continuamente con el scroll.
+
+`openNavIconPicker` ofrece dos tarjetas con vista previa, usando `abrirPanel` con `contenedor:document.body` por tratarse de un ajuste global accesible desde Home. No montarlo en Events si esa ventana esta cerrada.

@@ -8,9 +8,9 @@ var NAV_ICON_PATHS={
  bday:'<path d="M4 13h16v7H4zM3 20h18M4 16c2 2 3-2 5 0s3-2 5 0 4-2 6 0M8 13V9m8 4V9m-4 4V7"/><path d="M8 6v.1M16 6v.1M12 4v.1"/>',
  alarm:'<path d="M5 17h14l-2-3V9a5 5 0 0 0-10 0v5zM10 20h4M12 2v2"/>'
 };
-function navIconHtml(key){
+function navIconHtml(key,style){
  if(!NAV_ICON_PATHS[key])return '';
- if(NAV_ICON_STYLE==='original')return '<img src="icon-'+key+'.png" class="btn-icon" alt="">';
+ if((style||NAV_ICON_STYLE)==='original')return '<img src="icon-'+key+'.png" class="btn-icon" alt="">';
  return '<svg class="nav-pro-icon nav-pro-'+key+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+NAV_ICON_PATHS[key]+'</svg>';
 }
 function applyNavIconStyle(style){
@@ -18,10 +18,28 @@ function applyNavIconStyle(style){
  var home={econ:'econBtn',estudio:'estudioBtn',home:'homeBtn',events:'eventsBtn',bday:'bdayBtn',alarm:'alarmTestBtn'};
  Object.keys(home).forEach(function(key){var el=document.getElementById(home[key]);if(el)el.innerHTML=navIconHtml(key);});
  document.querySelectorAll('.nav-bar-btn[data-nav]').forEach(function(el){if(NAV_ICON_PATHS[el.dataset.nav])el.innerHTML=navIconHtml(el.dataset.nav);});
- var select=document.getElementById('navIconStyle');if(select)select.value=NAV_ICON_STYLE;
+ var value=document.getElementById('navIconStyleValue');if(value)value.textContent=NAV_ICON_STYLE==='professional'?'Profesionales':'Originales';
 }
+function openNavIconPicker(){
+ var menu=document.getElementById('dataMenu');if(menu)menu.classList.remove('open');
+ var h='<div class="ev-form-overlay" id="navIconPickerOv"><div class="ev-form-sheet nav-icon-sheet" role="dialog" aria-modal="true" aria-labelledby="navIconPickerTitle"><div class="ev-form-handle"></div>';
+ h+='<div class="nav-icon-picker-head"><button class="sy-back" id="navIconPickerClose" aria-label="Cerrar">&#8592;</button><h2 id="navIconPickerTitle">Iconos de navegación</h2></div>';
+ h+='<p class="nav-icon-picker-note">Elige cómo quieres ver las ventanas de Gestify.</p>';
+ [['original','Originales','Ilustraciones con volumen y color'],['professional','Profesionales','Trazos limpios y colores por ventana']].forEach(function(option){
+  var selected=NAV_ICON_STYLE===option[0];
+  h+='<button class="nav-icon-choice'+(selected?' selected':'')+'" data-icon-style="'+option[0]+'" aria-pressed="'+selected+'"><span class="nav-icon-choice-head"><strong>'+option[1]+'</strong><span class="nav-icon-choice-check" aria-hidden="true">'+(selected?'&#10003;':'')+'</span></span>';
+  h+='<span class="nav-icon-choice-preview" aria-hidden="true">'+Object.keys(NAV_ICON_PATHS).map(function(key){return navIconHtml(key,option[0]);}).join('')+'</span><span class="nav-icon-choice-note">'+option[2]+'</span></button>';
+ });
+ h+='</div></div>';
+ var wrap=abrirPanel('navIconPickerWrap',h,{contenedor:document.body,overlay:'navIconPickerOv',alCerrar:closeNavIconPicker});
+ wrap.querySelector('#navIconPickerClose').addEventListener('click',closeNavIconPicker);
+ wrap.querySelectorAll('[data-icon-style]').forEach(function(button){button.addEventListener('click',function(){
+  var style=button.dataset.iconStyle;appStorage.setItem('excelia-nav-icons-v1',style);applyNavIconStyle(style);closeNavIconPicker();
+ });});
+}
+function closeNavIconPicker(){cerrarPanel('navIconPickerWrap','navIconPickerOv');}
 function bindNavIconStyle(){
  applyNavIconStyle(NAV_ICON_STYLE);
- var select=document.getElementById('navIconStyle');
- if(select)select.addEventListener('change',function(){appStorage.setItem('excelia-nav-icons-v1',select.value);applyNavIconStyle(select.value);});
+ var button=document.getElementById('navIconStyle');
+ if(button)button.addEventListener('click',function(e){e.stopPropagation();openNavIconPicker();});
 }
