@@ -270,3 +270,19 @@ test('bicolor seleccionado, casillas vacias y pestanas de cumpleanos',async({pag
   expect(await tab.evaluate(el=>[getComputedStyle(el).color,getComputedStyle(el).borderTopColor])).toEqual(before);
  }
 });
+
+test('economia fiscal y escenarios: pestanas estables y columnas alineadas',async({page})=>{
+ await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));await page.goto('/');await page.locator('#econBtn').click();
+ async function check(selector){
+  const tabs=page.locator(selector);
+  for(let i=0;i<await tabs.count();i++){
+   const tab=tabs.nth(i),before=await tab.evaluate(el=>[getComputedStyle(el).color,getComputedStyle(el).borderTopColor]);await tab.click();
+   expect(await tab.evaluate(el=>[getComputedStyle(el).color,getComputedStyle(el).borderTopColor])).toEqual(before);
+  }
+ }
+ await check('.econ-tab-btn');await page.evaluate(()=>openFiscal());await check('.fiscal-tab-btn');await page.evaluate(()=>closeFiscal());await expect(page.locator('#fiscalOverlay')).not.toBeVisible();
+ await page.evaluate(()=>openEstudio());await check('.est-nav .est-btn');
+ const groups=page.locator('.est-group');const a=await groups.nth(0).locator('button').first().boundingBox(),b=await groups.nth(0).locator('button').last().boundingBox(),c=await groups.nth(1).locator('button').first().boundingBox(),d=await groups.nth(1).locator('button').last().boundingBox();
+ expect(Math.abs(a.y-c.y)).toBeLessThan(1);expect(Math.abs(b.y+b.height-d.y-d.height)).toBeLessThan(1);
+ await page.screenshot({path:'.local-preview/scenarios-tabs.png'});
+});
