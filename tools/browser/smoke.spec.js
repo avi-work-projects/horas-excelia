@@ -440,7 +440,7 @@ test('Home: aviso de semanas y estado completo, cabecera opaca',async({page})=>{
  await page.evaluate(()=>{weeks(CY,CM).forEach(w=>SW[dk(w[0])]=true);render();});
  await expect(page.locator('.home-submission.pending')).toContainText('05/10 al 11/10');
  await page.evaluate(()=>{SW[dk(homeSubmissionStatus(CY,CM).extra)]=true;render();});
- await expect(page.locator('.home-submission.complete')).toContainText('Todo en orden');
+ await expect(page.locator('.home-submission.complete')).toContainText('Todo enviado');
  await page.screenshot({path:'.local-preview/home-complete.png',animations:'disabled'});
  for(const theme of ['light','dark','grey']){
   await page.evaluate(t=>applyTheme(t),theme);
