@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v319 — fondo opaco de viajes y hoy destacado';
+var APP_VERSION = 'v320 — pestanas economicas y escenarios alineados';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

@@ -2541,3 +2541,14 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .ev-wk-date.ev-wk-today{background:color-mix(in srgb,var(--accent) 20%,var(--surface));box-shadow:inset 3px 0 0 var(--accent)}
 .ev-wk-date.ev-wk-today .ev-wk-num,.ev-wk-date.ev-wk-today .ev-wk-dow{color:var(--accent);font-weight:800}
 .ev-wk-date.ev-wk-today .ev-wk-num{font-size:1.15rem}
+
+/* Economia, Fiscal y Escenarios: tono constante, seleccion por fondo. */
+.econ-tab-btn,.fiscal-tab-btn,.est-nav .est-btn{--tab-tone:var(--accent);color:var(--tab-tone)!important;border-color:var(--tab-tone)!important;background:color-mix(in srgb,var(--tab-tone) 8%,var(--surface))!important}
+.fiscal-tab-btn{--tab-tone:var(--c-purple)}
+.est-nav .est-btn{--tab-tone:#60a5fa;flex:1}
+.est-nav .est-btn.est-casa{--tab-tone:#14b8a6}
+.econ-tab-btn.active,.fiscal-tab-btn.active,.est-nav .est-btn.active{background:color-mix(in srgb,var(--tab-tone) 23%,var(--surface))!important}
+#econOverlay .econ-sub-tab,#fiscalOverlay .econ-sub-tab,#estudioOverlay .econ-sub-tab{color:var(--accent)!important;border-color:var(--accent)!important;font-weight:600}
+#fiscalOverlay .econ-sub-tab{color:var(--c-purple)!important;border-color:var(--c-purple)!important}
+#econOverlay .econ-sub-tab.active,#estudioOverlay .econ-sub-tab.active{background:color-mix(in srgb,var(--accent) 18%,var(--surface))}
+#fiscalOverlay .econ-sub-tab.active{background:color-mix(in srgb,var(--c-purple) 18%,var(--surface))}
