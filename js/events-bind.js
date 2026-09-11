@@ -358,7 +358,33 @@ function _bindEvCal(){
 
 /* Las listas: Proximos, Todos, la agenda semanal, la busqueda y el orden, y el
    borrado por pulsacion larga. */
+/* Reutiliza el fondo real de la fila bajo cada titulo sticky. Una lectura por
+   frame de scroll; sin modificar datos ni repintar el calendario. */
+function _bindEvWeekTitleBackground(){
+  var body=document.querySelector('#eventsOverlay .sy-body');
+  if(!body||!body.querySelector('.ev-wk-sticky-title'))return;
+  var pending=false;
+  function update(){
+    pending=false;
+    if(!body.isConnected)return;
+    var bounds=body.getBoundingClientRect();
+    body.querySelectorAll('.ev-wk-mgrid').forEach(function(month){
+      var titles=Array.from(month.querySelectorAll('.ev-wk-sticky-title')).map(function(el){return {el:el,rect:el.getBoundingClientRect()};}).filter(function(t){return t.rect.bottom>bounds.top&&t.rect.top<bounds.bottom;});
+      if(!titles.length)return;
+      var days=Array.from(month.querySelectorAll('.ev-wk-day-bg')).map(function(el){return {el:el,rect:el.getBoundingClientRect()};});
+      titles.forEach(function(t){
+        var row=days.find(function(d){return d.rect.top<=t.rect.top+1&&d.rect.bottom>t.rect.top+1;});
+        if(row)t.el.style.backgroundColor=getComputedStyle(row.el).backgroundColor;
+      });
+    });
+  }
+  function schedule(){if(!pending){pending=true;requestAnimationFrame(update);}}
+  body.addEventListener('scroll',schedule,{passive:true});
+  schedule();
+}
+
 function _bindEvListas(){
+  _bindEvWeekTitleBackground();
   // Click en items de próximos → panel de alarma (VIP bday → panel cumpleaños)
   document.querySelectorAll('.ev-upcoming-item[data-id]').forEach(function(item){
     item.addEventListener('click',function(e){

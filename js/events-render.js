@@ -62,7 +62,7 @@ function renderEvUpcoming(){
     var s='<div class="ev-upcoming-item'+(ev._rutSkip?' rut-cancelled':'')+(isToday?' ev-upcoming-today':'')+'" data-id="'+ev.id+'" data-first="'+evIsoDate(item.firstDate)+'">';
     s+='<div class="ev-up-mark">'+evUpcomingMarkHtml(ev)+'</div>';
     s+='<div class="ev-upcoming-info">';
-    s+='<div class="ev-upcoming-title">'+title+'</div>';
+    s+='<div class="ev-upcoming-title">'+(ev._rutSkip?'<span class="rut-skipped-title">'+title+'</span> <span class="rut-skipped-label">(saltada)</span>':title)+'</div>';
     s+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+metaDate+'</div>';
     if(ev.note&&ev.note.trim()&&!_isVip)s+='<div class="ev-upcoming-note">'+escHtml(ev.note.trim())+'</div>';
     /* Nota propia del dia que se muestra (eventos puntuales de varios dias) */
@@ -332,7 +332,7 @@ function evWeekTravelRow(segments,day,footer){
       if(!seg.isFirstSeg)h+='<span class="ev-wk-multi-from">desde '+ev.start.slice(8,10)+'/'+ev.start.slice(5,7)+'</span>';
     }
     evTramos(ev).forEach(function(tr){
-      if(footer?tr.k==='vuelta':seg.isFirstSeg&&tr.k==='ida')h+='<span class="ev-wk-multi-trans">'+evTramoTexto(tr)+'</span>';
+      if(footer?tr.k==='vuelta':seg.isFirstSeg&&tr.k==='ida')h+='<span class="ev-wk-multi-trans">'+escHtml(ev.title)+' - '+evTramoTexto(tr)+'</span>';
     });
     h+='</button>';
   });
@@ -430,7 +430,7 @@ function renderEvWeek(){
         var _t=_isVip?escHtml(ev.title.replace(/^\u2b50\s*/,'').replace(/^Cumple\s+/,'')):escHtml(ev.title);
         var _ic=_isVip?'\u2b50 ':'';
         h+='<div class="ev-wk-chip'+(ev._rutSkip?' rut-cancelled':'')+'" data-id="'+ev.id+'" style="border-left:3px solid '+_dc+';background:'+hexA(_dc,0.95)+'">';
-        h+='<span class="ev-wk-chip-title">'+_ic+_t+'</span>';
+        h+='<span class="ev-wk-chip-title">'+(ev._rutSkip?'<span class="rut-skipped-title">'+_ic+_t+'</span> <span class="rut-skipped-label">(saltada)</span>':_ic+_t)+'</span>';
         /* Hora del evento puntual, si la tiene */
         var _wt=(!ev._rut&&getEvType(ev)!=='Ensayos boda')?evTimeLabel(ev):'';
         if(_wt)h+='<span class="ev-wk-chip-meta">'+escHtml(_wt)+'</span>';
@@ -438,7 +438,7 @@ function renderEvWeek(){
         if(ev._rut&&ev._rutTime){
           h+='<span class="ev-wk-chip-meta">'+escHtml(ev._rutTime)
             +'–'+escHtml(rutFin(ev._rutTime,ev._rutDur||rutDurationOn(ev._rut,ev.start)))
-            +(ev._rutSkip?' · saltada':'')+'</span>';
+            +'</span>';
         }
         /* Ensayos de boda: hora y sala junto al nombre */
         if(getEvType(ev)==='Ensayos boda'&&typeof bodaPlaceOf==='function'){

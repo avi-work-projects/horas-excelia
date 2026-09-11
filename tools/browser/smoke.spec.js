@@ -182,7 +182,7 @@ test('rutinas canceladas: ocultas en vistas compactas, tachadas en detalle',asyn
  await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-rutinas-v1',JSON.stringify([{id:'cancel',name:'Actividad cancelada',icon:'baile',color:'#e03131',start:'2026-08-01',weekDays:[1],time:'18:00',dur:60,weeks:{},skips:{'2026-08-24':1}}]));});
  await page.goto('/');await page.evaluate(()=>document.documentElement.setAttribute('data-theme','light'));await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();
  await expect(page.locator('.ev-upcoming-item.rut-cancelled')).toHaveCount(1);
- await expect(page.locator('.rut-cancelled .ev-upcoming-title')).toHaveCSS('text-decoration-line','line-through');
+ await expect(page.locator('.rut-cancelled .ev-upcoming-title .rut-skipped-title')).toHaveCSS('text-decoration-line','line-through');
  await expect(page.locator('.rut-cancelled .rut-skip')).toHaveCount(1);
  await page.evaluate(()=>document.documentElement.setAttribute('data-theme','light'));
  await page.screenshot({path:'.local-preview/cancel-upcoming.png'});
@@ -192,7 +192,7 @@ test('rutinas canceladas: ocultas en vistas compactas, tachadas en detalle',asyn
  await page.locator('#evViewQuad').click();await expect(page.locator('.ev-annual-day[data-ds="2026-08-24"] .ev-ann-rut')).toHaveCount(0);await expect(page.locator('.ev-annual-day[data-ds="2026-08-31"] .ev-ann-rut')).toHaveCount(1);
  await page.locator('#evViewAnnual').click();await expect(page.locator('.ev-annual-day[data-ds="2026-08-24"] .ev-ann-rut')).toHaveCount(0);await expect(page.locator('.ev-annual-day[data-ds="2026-08-31"] .ev-ann-rut')).toHaveCount(1);
  await page.locator('#evViewWeek').click();await expect(page.locator('.ev-wk-chip.rut-cancelled')).toHaveCount(1);
- await expect(page.locator('.rut-cancelled .ev-wk-chip-title')).toHaveCSS('text-decoration-line','line-through');
+ await expect(page.locator('.rut-cancelled .ev-wk-chip-title .rut-skipped-title')).toHaveCSS('text-decoration-line','line-through');
  const tones=await page.locator('.ev-wk-day-bg').evaluateAll(rows=>rows.slice(0,2).map(el=>getComputedStyle(el).backgroundColor));expect(tones[0]).not.toBe(tones[1]);
  await page.locator('.ev-wk-chip.rut-cancelled').scrollIntoViewIfNeeded();
  await page.screenshot({path:'.local-preview/cancel-week.png'});
@@ -210,7 +210,7 @@ test('agenda: transporte separado sin solapes',async({page})=>{
  await page.goto('/');await page.evaluate(()=>document.documentElement.setAttribute('data-theme','light'));
  await page.locator('#eventsBtn').click();await page.locator('#evViewWeek').click();
  const first=page.locator('.ev-wk-chips[data-ds="2026-08-21"]'),last=page.locator('.ev-wk-chips[data-ds="2026-08-24"]');
- await expect(first).toContainText('Ida');await expect(first).not.toContainText('Vuelta');await expect(last).toContainText('Vuelta');
+ await expect(first).toContainText('Ida');await expect(first).not.toContainText('Vuelta');await expect(last).toContainText('Viaje de prueba - Vuelta');await expect(first).toContainText('Viaje de prueba - Ida');
  const ida=await first.locator('.ev-wk-travel-row').boundingBox(),point=await first.locator('.ev-wk-chip').boundingBox();expect(ida.y+ida.height).toBeLessThanOrEqual(point.y);
  const vuelta=await last.locator('.ev-wk-travel-footer').boundingBox(),end=await last.locator('.ev-wk-chip').boundingBox();expect(end.y+end.height).toBeLessThanOrEqual(vuelta.y);
  await first.scrollIntoViewIfNeeded();await page.screenshot({path:'.local-preview/agenda-transport.png'});
@@ -235,6 +235,11 @@ test('pestanas: tono estable y titulo de viaje que sigue al scroll',async({page}
  const y=(await title.boundingBox()).y;
  await page.locator('#eventsOverlay .sy-body').evaluate(el=>el.scrollTop+=30);
  expect(Math.abs((await title.boundingBox()).y-y)).toBeLessThan(2);
+ await expect.poll(async()=>title.evaluate(el=>{
+  const y=el.getBoundingClientRect().top+1;
+  const day=Array.from(el.closest('.ev-wk-mgrid').querySelectorAll('.ev-wk-day-bg')).find(d=>{const r=d.getBoundingClientRect();return r.top<=y&&r.bottom>y;});
+  return !!day&&getComputedStyle(day).backgroundColor===getComputedStyle(el).backgroundColor;
+ })).toBe(true);
  await page.screenshot({path:'.local-preview/sticky-trip.png'});
  await page.locator('#evViewBodas').click();await page.locator('#bodaConfigBtn').click();
  const label=page.locator('.boda-cfg-card-controls label').first();await expect(label).toHaveCSS('color','rgb(107, 31, 32)');
