@@ -2627,3 +2627,10 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .ev-type-options{display:flex;flex-direction:column;gap:8px;margin:16px 0 8px}
 .ev-type-option{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font:inherit;text-align:left;cursor:pointer}
 .ev-type-option.selected{border-color:var(--accent);background:var(--accent-glow);color:var(--accent)}
+
+/* La cabecera y el regreso del viaje tienen su propio margen compacto.
+   Los otros dias conservan los 14 px de aire entre grupos de eventos. */
+.ev-wk-chips:has(> .ev-wk-travel-row:not(.ev-wk-travel-footer)){padding-top:4px}
+.ev-wk-travel-row:not(.ev-wk-travel-footer) > .ev-wk-travel{padding-bottom:1px}
+.ev-wk-chips:has(> .ev-wk-travel-footer){padding-bottom:4px}
+.ev-wk-travel-footer > .ev-wk-travel{padding-bottom:0}

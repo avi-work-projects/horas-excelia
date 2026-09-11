@@ -211,6 +211,8 @@ test('agenda: transporte separado sin solapes',async({page})=>{
  await page.locator('#eventsBtn').click();await page.locator('#evViewWeek').click();
  const first=page.locator('.ev-wk-chips[data-ds="2026-08-21"]'),last=page.locator('.ev-wk-chips[data-ds="2026-08-24"]');
  await expect(first).toContainText('Ida');await expect(first).not.toContainText('Vuelta');await expect(last).toContainText('Viaje de prueba - Vuelta');await expect(first).toContainText('Viaje de prueba - Ida');
+ await expect(first).toHaveCSS('padding-top','4px');await expect(last).toHaveCSS('padding-bottom','4px');
+ await expect(page.locator('.ev-wk-chips[data-ds="2026-08-22"]')).toHaveCSS('padding-top','14px');
  const ida=await first.locator('.ev-wk-travel-row').boundingBox(),point=await first.locator('.ev-wk-chip').boundingBox();expect(ida.y+ida.height).toBeLessThanOrEqual(point.y);
  const vuelta=await last.locator('.ev-wk-travel-footer').boundingBox(),end=await last.locator('.ev-wk-chip').boundingBox();expect(end.y+end.height).toBeLessThanOrEqual(vuelta.y);
  await first.scrollIntoViewIfNeeded();await page.screenshot({path:'.local-preview/agenda-transport.png'});
