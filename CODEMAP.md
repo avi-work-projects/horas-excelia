@@ -118,10 +118,10 @@
 
 **Funciones:** _simComputeAll:10 · _inverseSalary:48 · renderEconSim:62 (!102) · bindEconSimEvents:164
 
-### js/economics.js  _(692 líneas)_
+### js/economics.js  _(689 líneas)_
 **Estado global:** ECON_YEAR:5 · ECON_VIEW:6 · ECON_RESUMEN_MODE:7 · ECON_RATE_MODE:8 · ECON_MULTI_RATE:9 · ECON_RATE_PERIODS:10 · ECON_ESTUDIO_SUB:14 · ESTUDIO_YEAR:15
 
-**Funciones:** computeSalaryNet:23 · fc:41 · fcPlain:46 · _rateForDate:56 · _buildDatePeriods:71 · computeEconEx:85 · econBarChart:144 · _fmtDateEs:175 · _prevDate:180 · _ensureDatePeriods:187 · _renderRateInputs:204 · _econCard:221 · _econCards7:227 · f:229 · _getMultiRateOpts:244 · renderEconResumen:248 (!197) · renderEconContent:445 · openEcon:470 · closeEcon:486 · reRenderEcon:491 · bindEconEvents:503 · bindEconResumenEvents:541 (!151)
+**Funciones:** computeSalaryNet:23 · fc:41 · fcPlain:46 · _rateForDate:56 · _buildDatePeriods:71 · computeEconEx:85 · econBarChart:144 · _fmtDateEs:172 · _prevDate:177 · _ensureDatePeriods:184 · _renderRateInputs:201 · _econCard:218 · _econCards7:224 · f:226 · _getMultiRateOpts:241 · renderEconResumen:245 (!197) · renderEconContent:442 · openEcon:467 · closeEcon:483 · reRenderEcon:488 · bindEconEvents:500 · bindEconResumenEvents:538 (!151)
 
 ### js/events-bind.js  _(564 líneas)_
 **Funciones:** _switchEvView:6 · openEvents:23 · closeEvents:33 · openEventsAt:40 · refreshEvents:47 · bindEvEvents:68 · _bindEvNav:77 (!193) · _scrollWeekToMonth:85 · _scrollWeekToToday:132 · doScroll:142 · _bindEvCal:270 (!93) · _bindEvWeekTitleBackground:363 · update:367 · schedule:390 · openEvTypeFilter:395 · close:403 · _bindEvListas:409 (!122) · apply:519 · _bindEvGestos:531 · _evSwipeUpcoming:544 · _evSwipeBodas:551 · _evSwipeRutinas:558

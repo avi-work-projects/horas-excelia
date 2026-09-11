@@ -2621,7 +2621,7 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .ev-wk-travel-row .ev-wk-travel-title{padding-top:4px;padding-bottom:3px}
 
 /* Aire entre dias; el hueco entre eventos del mismo dia se conserva. */
-.ev-wk-chips{padding-top:8px;padding-bottom:8px}
+.ev-wk-chips,.ev-wk-chips.ev-wk-chips-nested{padding-top:14px;padding-bottom:14px}
 .ev-list-search-row .ev-types-select{flex:0 0 76px;width:76px;display:flex;align-items:center;justify-content:space-between;gap:4px}
 .ev-types-select span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ev-type-options{display:flex;flex-direction:column;gap:8px;margin:16px 0 8px}
