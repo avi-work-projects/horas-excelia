@@ -169,3 +169,11 @@ para no confundir el ejercicio del resumen económico con el resumen independien
 El antiguo `VAC_ENTITLEMENT` / `excelia-vac-days` se conserva como respaldo para
 los años todavía no configurados y para backups antiguos. La importación incremental
 fusiona el mapa por año; reemplazar usa el mapa recibido. Se validan enteros de 1 a 60.
+
+
+## Estado de envios de Home (v334)
+`homeSubmissionStatus(year,month)` comprueba `SW` para todas las semanas de
+`weeks(year,month)` y el lunes inmediatamente posterior a la ultima. Asi la
+semana compartida entre meses nunca cuenta como la semana adicional.
+`renderHomeSubmissionStatus` muestra el aviso o el estado completo encima de
+las tarjetas. Se calcula al renderizar: no tiene persistencia independiente.

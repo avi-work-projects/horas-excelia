@@ -2640,3 +2640,16 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 /* Texto del trayecto alineado con el titulo, sin mover las tarjetas puntuales. */
 .ev-wk-travel-row{margin-left:-6.5px}
 .ev-bright-past .ev-wk-date.ev-wk-past,.ev-bright-past .ev-wk-chips.ev-wk-past{opacity:1}
+
+/* Cabecera de Home opaca, incluso sobre los botones oscuros de las semanas. */
+.header,[data-theme="light"] .header,[data-theme="grey"] .header{background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none}
+.ev-wk-travel-row:not(.ev-wk-travel-footer) > .ev-wk-travel{gap:0}
+.home-submission{display:flex;align-items:center;gap:10px;padding:11px 13px;border:1px solid var(--status-tone);border-radius:10px;background:color-mix(in srgb,var(--status-tone) 9%,var(--surface));color:var(--status-tone)}
+.home-submission.pending{--status-tone:var(--c-orange)}
+.home-submission.complete{--status-tone:var(--c-green)}
+.home-submission strong{display:block;font-size:.78rem;font-weight:600}
+.home-submission div > span{display:block;font-size:.68rem;line-height:1.4;margin-top:3px;color:var(--text-muted)}
+.home-submission-icon{font-size:1.1rem;flex-shrink:0}
+.home-submission.pending .home-submission-icon{animation:home-pending-pulse 1.8s ease-in-out infinite}
+@keyframes home-pending-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@media(prefers-reduced-motion:reduce){.home-submission.pending .home-submission-icon{animation:none}}
