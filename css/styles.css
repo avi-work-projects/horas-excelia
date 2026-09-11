@@ -2656,7 +2656,8 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 
 [data-theme="light"] #eventsOverlay .ev-hdr-sub #evViewUpcoming{--tab-tone:#397dbb}
 .home-submission.complete{display:grid;grid-template-columns:18px 70px minmax(0,1fr);gap:8px}
-.home-summary-compact{padding:0 0 0 12px;border:0;border-left:1px solid var(--border);border-radius:0;background:none;gap:5px;min-width:0}
+.home-summary-compact{justify-self:end;width:max-content;max-width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface);gap:5px;min-width:0}
+.home-summary-compact .month-stat{justify-content:flex-end;text-align:right;flex-wrap:wrap}
 .home-summary-compact .month-stat{font-size:.65rem;line-height:1.35}
 .home-summary-compact .ms-num{font-size:.8rem}
 .home-summary-compact .ms-label,.home-summary-compact .ms-hrs{font-size:.62rem}

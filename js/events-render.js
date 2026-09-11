@@ -341,6 +341,15 @@ function renderEvWeek(){
   var _wn=['D','L','M','X','J','V','S'];
   function hexA(hex,a){var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return 'rgba('+r+','+g+','+b+','+a+')';}
 
+  // Repartir sobre intervalos completos, antes de recortarlos por mes.
+  // Asi cada evento conserva su carril incluso si la colision cae en otro mes.
+  var fullSegments=EVENTS.filter(isEvBarAlways).map(function(ev){
+    return {ev:ev,sd:new Date(ev.start+'T00:00:00').getTime(),
+      ed:new Date((ev.end||ev.start)+'T00:00:00').getTime()};
+  });
+  _evWeekLanes(fullSegments);
+  var laneById={};
+  fullSegments.forEach(function(seg){laneById[seg.ev.id]=seg;});
   var h='';
   for(var i=0;i<6;i++){
     var mTot=EV_MONTH+i,mIdx=mTot%12,yIdx=EV_YEAR+Math.floor(mTot/12);
@@ -381,7 +390,10 @@ function renderEvWeek(){
       seg.isLastSeg=(eDt.getFullYear()===yIdx&&eDt.getMonth()===mIdx);
     });
 
-    _evWeekLanes(multiSegs);
+    multiSegs.forEach(function(seg){
+      var full=laneById[seg.ev.id];
+      seg.lane=full?full.lane:0;seg.lanes=full?full.lanes:1;
+    });
 
     h+='<div class="ev-wk-mgrid">';
 
