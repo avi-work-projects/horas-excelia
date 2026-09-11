@@ -1,15 +1,9 @@
 <div class="ev-list-tools">
+<div class="ev-list-search-row">
 <div class="ev-search">
 <span class="ev-search-ico">&#128269;</span>
 <input type="search" id="evListSearch" placeholder="Buscar por título o descripción" value="">
 </div>
-<div class="ev-sort-row">
-<button class="ev-sort-chip active" data-sort="fecha">Por fecha</button>
-<button class="ev-sort-chip" data-sort="categoria">Por categoría</button>
-</div>
-<div class="ev-types-controls">
-<label class="ev-types-past-label">
-<input type="checkbox" id="evTypesPast" checked> Excluir pasados</label>
 <select class="ev-types-select" id="evTypesFilter">
 <option value="all" selected>Todos los tipos</option>
 <option value="Viaje">Viaje</option>
@@ -20,6 +14,14 @@
 <option value="Ensayos boda">Ensayos boda</option>
 <option value="Otros">Otros</option>
 </select>
+</div>
+<div class="ev-sort-row">
+<button class="ev-sort-chip active" data-sort="fecha">Por fecha</button>
+<button class="ev-sort-chip" data-sort="categoria">Por categoría</button>
+</div>
+<div class="ev-types-controls">
+<label class="ev-types-past-label">
+<input type="checkbox" id="evTypesPast" checked> Excluir pasados</label>
 </div>
 </div>
 <div class="ev-list-count">17 eventos</div>

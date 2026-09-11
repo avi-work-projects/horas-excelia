@@ -252,7 +252,7 @@ function renderEconResumen(){
   var h='';
 
   /* §1 Tarifa + Calcular */
-  h+='<div class="sy-section"><div class="sy-section-title">Tarifa</div>';
+  h+='<div class="sy-section econ-tariff-settings"><div class="sy-section-title">Tarifa</div>';
   /* Selector de modo */
   h+='<div class="econ-opt-row" style="margin-bottom:8px">';
   h+='<button class="econ-opt-btn'+(ECON_RATE_MODE==='daily'||ECON_RATE_MODE==='hourly'?' active':'')+'" id="ecModeFreelance">Aut\u00f3nomo</button>';

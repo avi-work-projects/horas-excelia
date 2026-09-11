@@ -775,7 +775,7 @@ function _renderSubSection(comp,sub,idx,isEditing){
 /* ── Main tab dispatcher ──────────────────────────────────── */
 function renderFiscalTabDespacho(){
   var h='';
-  h+='<div class="econ-sub-tabs" style="flex-wrap:wrap">';
+  h+='<div class="econ-sub-tabs fiscal-hip-tabs">';
   h+='<button class="econ-sub-tab'+(FISCAL_HIP_SUB==='resumen'?' active':'')+'" data-hipsub="resumen">Resumen</button>';
   h+='<button class="econ-sub-tab'+(FISCAL_HIP_SUB==='detalle'?' active':'')+'" data-hipsub="detalle">Detalle<br>Hipoteca</button>';
   h+='<button class="econ-sub-tab est-hip'+(FISCAL_HIP_SUB==='gas'?' active':'')+'" data-hipsub="gas">Detalle<br>Gas</button>';

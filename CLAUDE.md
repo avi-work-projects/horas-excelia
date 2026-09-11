@@ -159,3 +159,13 @@ El fondo sticky mezcla RGB de la fila con RGBA de la barra y guarda RGB opaco: s
 El fondo sticky usa un gradiente de franjas RGB opacas con limites medidos respecto al titulo: si cruza dos dias muestra ambos fondos, desplazandolos continuamente con el scroll.
 
 `openNavIconPicker` ofrece dos tarjetas con vista previa, usando `abrirPanel` con `contenedor:document.body` por tratarse de un ajuste global accesible desde Home. No montarlo en Events si esa ventana esta cerrada.
+
+
+## Cupo de vacaciones por ejercicio (v328)
+`vacEntitlementForYear(year)` es la fuente del cupo para resumen y aviso de Home.
+`VAC_BY_YEAR` persiste en `excelia-vac-years` y se exporta como `vacByYear`.
+`saveVacEntitlement(n,year)` cambia solo ese ejercicio. El input lleva `data-year`
+para no confundir el ejercicio del resumen económico con el resumen independiente.
+El antiguo `VAC_ENTITLEMENT` / `excelia-vac-days` se conserva como respaldo para
+los años todavía no configurados y para backups antiguos. La importación incremental
+fusiona el mapa por año; reemplazar usa el mapa recibido. Se validan enteros de 1 a 60.

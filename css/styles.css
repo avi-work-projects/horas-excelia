@@ -2593,3 +2593,29 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 /* Borde discreto para identificar semanas enviadas en ambos temas. */
 .week-card.sent{border:1.5px solid #427958}
 [data-theme="light"] .week-card.sent{border-color:#427958}
+
+/* Filtros junto al buscador sin ensanchar la ventana movil. */
+.ev-list-search-row{display:flex;align-items:center;gap:8px}
+.ev-list-search-row .ev-search{flex:1;min-width:0;margin:0}
+.ev-list-search-row .ev-types-select{width:120px;min-width:0;max-width:35%;flex-shrink:0}
+.ev-wk-sticky-title{padding-top:4px;padding-bottom:3px}
+.ev-wk-date.ev-wk-today{margin-left:3px;width:calc(100% - 3px)}
+.fiscal-hip-tabs{align-items:stretch}
+.fiscal-hip-tabs .econ-sub-tab{display:flex;align-items:center;justify-content:center}
+/* Configuracion de tarifa: controles verdes y valores neutros. */
+.econ-tariff-settings{--tariff-tone:#538477}
+[data-theme="dark"] .econ-tariff-settings{--tariff-tone:#80b5a5}
+.econ-tariff-settings .econ-opt-btn.active{color:var(--tariff-tone);border-color:var(--tariff-tone);background:color-mix(in srgb,var(--tariff-tone) 12%,var(--surface))}
+.econ-tariff-settings .econ-rate-field.primary .econ-rate-input{border-color:var(--tariff-tone);background:color-mix(in srgb,var(--tariff-tone) 7%,var(--surface))}
+.econ-tariff-settings .econ-multi-rate-num,.econ-tariff-settings .econ-equiv-val{color:var(--text)}
+.econ-tariff-settings .econ-multi-rate-add{color:var(--tariff-tone);border-color:var(--tariff-tone);background:color-mix(in srgb,var(--tariff-tone) 7%,var(--surface))}
+.sy-period-past{--period-tone:#a0a5b0}
+.sy-period-future{--period-tone:#c6a16a}
+.sy-period-total{--period-tone:#75aa99}
+[data-theme="light"] .sy-period-past{--period-tone:#626c7b}
+[data-theme="light"] .sy-period-future{--period-tone:#9a743e}
+[data-theme="light"] .sy-period-total{--period-tone:#397e6b}
+.sy-period-past,.sy-period-future,.sy-period-total{border-color:var(--period-tone);background:color-mix(in srgb,var(--period-tone) 12%,var(--surface))}
+.sy-period-past .sy-val,.sy-period-future .sy-val,.sy-period-total .sy-val{color:var(--period-tone)}
+
+.ev-wk-travel-row .ev-wk-travel-title{padding-top:4px;padding-bottom:3px}

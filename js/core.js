@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v327 — previsualización de iconos y borde de semanas enviadas';
+var APP_VERSION = 'v328 — vacaciones por año y ajustes de resúmenes';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -548,15 +548,16 @@ function contarVacaciones(year,excluirK){
 }
 /* true = seguir adelante. Avisa si marcar ese dia se pasa del cupo anual. */
 function confirmarCupoVacaciones(k){
-  if(typeof VAC_ENTITLEMENT==='undefined')return true;
+  if(typeof vacEntitlementForYear==='undefined')return true;
   var year=parseInt(k.slice(0,4),10);
+  var entitlement=vacEntitlementForYear(year);
   var w=new Date(k+'T00:00:00').getDay();
   if(w<1||w>5)return true;                 /* fin de semana: no consume */
   var usados=contarVacaciones(year,k)+1;
-  if(usados<=VAC_ENTITLEMENT)return true;
+  if(usados<=entitlement)return true;
   return confirm('Te pasas de los d\u00edas de vacaciones de '+year+'.\n\n'
-    +'Cupo anual: '+VAC_ENTITLEMENT+' d\u00edas\n'
-    +'Con este ser\u00edan: '+usados+' ('+(usados-VAC_ENTITLEMENT)+' de m\u00e1s)\n\n'
+    +'Cupo anual: '+entitlement+' d\u00edas\n'
+    +'Con este ser\u00edan: '+usados+' ('+(usados-entitlement)+' de m\u00e1s)\n\n'
     +'\u00bfMarcarlo de todas formas?');
 }
 /* Festivos ya marcados ese anio. A diferencia de las vacaciones cuentan
