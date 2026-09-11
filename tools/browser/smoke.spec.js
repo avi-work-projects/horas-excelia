@@ -303,7 +303,16 @@ test('economia fiscal y escenarios: pestanas estables y columnas alineadas',asyn
 test('iconos alternativos: seleccion, navegacion, persistencia y backup',async({page})=>{
  await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));await page.goto('/');
  await expect(page.locator('#econBtn img')).toHaveCount(1);
- await page.locator('#menuBtn').click();await page.locator('#navIconStyle').click();await expect(page.locator('#navIconPickerOv')).toHaveClass(/open/);await page.screenshot({path:'.local-preview/icon-picker.png',animations:'disabled'});await page.locator('[data-icon-style="professional"]').click();await expect(page.locator('#navIconPickerWrap')).toHaveCount(0);await expect(page.locator('.data-actions .nav-pro-icon')).toHaveCount(6);
+ await page.locator('#menuBtn').click();await page.locator('#navIconStyle').click();await expect(page.locator('#navIconPickerOv')).toHaveClass(/open/);await page.screenshot({path:'.local-preview/icon-picker.png',animations:'disabled'});await page.locator('[data-icon-style="professional"]').click();await expect(page.locator('#navIconPickerOv')).toHaveClass(/open/);expect(await page.evaluate(()=>localStorage.getItem('excelia-nav-icons-v1'))).toBeNull();await page.locator('#navIconPickerClose').click();await expect(page.locator('#navIconPickerWrap')).toHaveCount(0);await expect(page.locator('.data-actions .nav-pro-icon')).toHaveCount(6);
+ await page.locator('#menuBtn').click();await page.locator('#navIconStyle').click();
+ await page.locator('[data-icon-style="original"]').click();
+ expect(await page.evaluate(()=>localStorage.getItem('excelia-nav-icons-v1'))).toBe('professional');
+ await page.screenshot({path:'.local-preview/icon-picker-preview.png',animations:'disabled'});
+ await page.locator('#navIconPickerOv').click({position:{x:5,y:5}});
+ await expect(page.locator('#navIconPickerWrap')).toHaveCount(0);
+ expect(await page.evaluate(()=>localStorage.getItem('excelia-nav-icons-v1'))).toBe('original');
+ await page.locator('#menuBtn').click();await page.locator('#navIconStyle').click();await page.locator('[data-icon-style="professional"]').click();await page.locator('#navIconPickerClose').click();
+ await expect(page.locator('#navIconPickerWrap')).toHaveCount(0);
  const centers=await page.locator('.data-actions .nav-pro-icon').evaluateAll(icons=>icons.map(el=>{const r=el.getBoundingClientRect();return r.y+r.height/2;}));expect(Math.max(...centers)-Math.min(...centers)).toBeLessThan(1);
 
  const downloadPromise=page.waitForEvent('download');await page.locator('#menuBtn').click();await page.locator('#exportAllBtn').click();const download=await downloadPromise;

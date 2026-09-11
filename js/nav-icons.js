@@ -24,7 +24,7 @@ function openNavIconPicker(){
  var menu=document.getElementById('dataMenu');if(menu)menu.classList.remove('open');
  var h='<div class="ev-form-overlay" id="navIconPickerOv"><div class="ev-form-sheet nav-icon-sheet" role="dialog" aria-modal="true" aria-labelledby="navIconPickerTitle"><div class="ev-form-handle"></div>';
  h+='<div class="nav-icon-picker-head"><button class="sy-back" id="navIconPickerClose" aria-label="Cerrar">&#8592;</button><h2 id="navIconPickerTitle">Iconos de navegación</h2></div>';
- h+='<p class="nav-icon-picker-note">Elige cómo quieres ver las ventanas de Gestify.</p>';
+ h+='<p class="nav-icon-picker-note">Prueba ambos estilos. La elección se guarda al volver atrás o tocar fuera.</p>';
  [['original','Originales','Ilustraciones con volumen y color'],['professional','Profesionales','Trazos limpios y colores por ventana']].forEach(function(option){
   var selected=NAV_ICON_STYLE===option[0];
   h+='<button class="nav-icon-choice'+(selected?' selected':'')+'" data-icon-style="'+option[0]+'" aria-pressed="'+selected+'"><span class="nav-icon-choice-head"><strong>'+option[1]+'</strong><span class="nav-icon-choice-check" aria-hidden="true">'+(selected?'&#10003;':'')+'</span></span>';
@@ -34,10 +34,15 @@ function openNavIconPicker(){
  var wrap=abrirPanel('navIconPickerWrap',h,{contenedor:document.body,overlay:'navIconPickerOv',alCerrar:closeNavIconPicker});
  wrap.querySelector('#navIconPickerClose').addEventListener('click',closeNavIconPicker);
  wrap.querySelectorAll('[data-icon-style]').forEach(function(button){button.addEventListener('click',function(){
-  var style=button.dataset.iconStyle;appStorage.setItem('excelia-nav-icons-v1',style);applyNavIconStyle(style);closeNavIconPicker();
+  applyNavIconStyle(button.dataset.iconStyle);
+  wrap.querySelectorAll('[data-icon-style]').forEach(function(choice){
+   var selected=choice.dataset.iconStyle===NAV_ICON_STYLE;
+   choice.classList.toggle('selected',selected);choice.setAttribute('aria-pressed',String(selected));
+   choice.querySelector('.nav-icon-choice-check').innerHTML=selected?'&#10003;':'';
+  });
  });});
 }
-function closeNavIconPicker(){cerrarPanel('navIconPickerWrap','navIconPickerOv');}
+function closeNavIconPicker(){appStorage.setItem('excelia-nav-icons-v1',NAV_ICON_STYLE);cerrarPanel('navIconPickerWrap','navIconPickerOv');}
 function bindNavIconStyle(){
  applyNavIconStyle(NAV_ICON_STYLE);
  var button=document.getElementById('navIconStyle');
