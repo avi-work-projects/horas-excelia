@@ -186,3 +186,10 @@ let cal=a._renderBodaCalendario();assert.equal((cal.match(/boda-cal-lg on/g)||[]
 a.BODA_CAL_DAY='2026-09-17';assert.equal((a._renderBodaCalendario().match(/boda-cal-lg on/g)||[]).length,0);
 a.BODA_CAL_DAY=null;a.BODA_CAL_HL='c1';assert(a._renderBodaCalendario().includes('boda-cal-day hl'));
 console.log('Calendario WM: seleccion de varias parejas por dia y seleccion inversa OK');
+
+a.BODA_CAL_HL=null;a.BODA_CAL_DAY='2026-09-17';
+a.BODA_COUPLES[0].weddingDate='2026-09-17';a.BODA_COUPLES[1].weddingDate='2026-09-17';
+assert.equal((a._renderBodaCalendario().match(/boda-cal-lg on/g)||[]).length,2);
+a.BODA_CAL_DAY='2026-09-15';a.BODA_COUPLES[2].weddingDate='2026-09-15';a.BODA_COUPLES[0].weddingDate='2026-09-15';
+assert.equal((a._renderBodaCalendario().match(/boda-cal-lg on/g)||[]).length,3);
+console.log('Calendario WM: bodas y ensayos del dia, sin duplicar parejas OK');

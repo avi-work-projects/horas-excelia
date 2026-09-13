@@ -331,6 +331,7 @@ function _renderBodaCalendario(){
   if(BODA_CAL_HL&&!enMes[BODA_CAL_HL])BODA_CAL_HL=null;
   var hlC=BODA_CAL_HL?bodaCouple(BODA_CAL_HL):null;
   var dayCouples={};
+  (bodasDia[BODA_CAL_DAY]||[]).forEach(function(c){dayCouples[c.id]=true;});
   (porDia[BODA_CAL_DAY]||[]).forEach(function(ev){if(ev.boda&&ev.boda.coupleId)dayCouples[ev.boda.coupleId]=true;});
 
   var h='<div class="boda-cal-nav">';
