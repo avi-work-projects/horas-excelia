@@ -456,6 +456,9 @@ test('Home: aviso de semanas y estado completo, cabecera opaca',async({page})=>{
  }
  await expect(page.locator('.month-summary:not(.home-summary-compact) .ms-breakdown > span')).toHaveCount(2);
  await page.screenshot({path:'.local-preview/home-may-breakdown.png',animations:'disabled'});
+ await page.locator('.month-summary:not(.home-summary-compact)').scrollIntoViewIfNeeded();
+ await page.screenshot({path:'.local-preview/home-footer-breakdown.png',animations:'disabled'});
+ await page.evaluate(()=>window.scrollTo(0,0));
 
  for(const theme of ['light','dark','grey']){
   await page.evaluate(t=>applyTheme(t),theme);
