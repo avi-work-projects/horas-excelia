@@ -430,8 +430,8 @@ function _bodaCmpFecha(x,y,desc){
   return x<y?(desc?1:-1):x>y?(desc?-1:1):0;
 }
 function _renderBodaParejas(){
-  var h='<div class="boda-pfilters"><div class="boda-filter-label">Fecha de la boda</div><div class="boda-chips">';
-  [['activas','Activas'],['pasadas','Pasadas'],['todas','Todas']].forEach(function(o){
+  var h='<div class="boda-pfilters"><div class="boda-filter-label">Estado de la pareja</div><div class="boda-chips">';
+  [['activas','Activas'],['futuras','Futuras'],['pasadas','Pasadas'],['todas','Todas']].forEach(function(o){
     var count=BODA_COUPLES.filter(function(c){return bodaMatchesDate(c,o[0]);}).length;
     h+='<button class="boda-chip'+(BODA_PAREJAS_FILTER===o[0]?' active':'')+'" data-pfilter="'+o[0]+'">'+o[1]+'<b>'+count+'</b></button>';
   });
@@ -441,8 +441,8 @@ function _renderBodaParejas(){
     h+='<button class="boda-chip'+(BODA_PAREJAS_CLASSES===o[0]?' active':'')+'" data-pclasses="'+o[0]+'" aria-pressed="'+(BODA_PAREJAS_CLASSES===o[0])+'">'+o[1]+'<b>'+count+'</b></button>';
   });
   h+='</div></div>';
-  h+='<div class="bday-search-wrap boda-search"><input class="bday-search-input" id="bodaPSearch" type="text" '
-    +'placeholder="Buscar pareja\u2026" value="'+escHtml(BODA_PAREJAS_SEARCH)+'"></div>';
+  h+='<div class="boda-buscar-bar"><div class="bday-search-wrap boda-search"><input class="bday-search-input" id="bodaPSearch" type="text" '
+    +'placeholder="Buscar pareja\u2026" value="'+escHtml(BODA_PAREJAS_SEARCH)+'"></div><button class="bday-io-btn io-primaria" id="bodaAddCouple">+ Añadir pareja</button></div>';
   h+='<div class="boda-chips boda-sort-chips">';
   var _sa=(BODA_PAREJAS_SORT==='az')?' A\u2191':(BODA_PAREJAS_SORT==='za')?' Z\u2193':'';
   var _sf=(BODA_PAREJAS_SORT==='new')?' recientes' : (BODA_PAREJAS_SORT==='old')?' antiguas' : '';
@@ -492,6 +492,7 @@ function _renderBodaParejas(){
     h+='</div>';
     h+='<div class="boda-prog"><div class="boda-prog-bar" style="width:'+pct+'%;background:'+c.color+'"></div></div>';
     h+='<div class="boda-card-ft"><span>'+p.done+' / '+(p.total||0)+' clases</span>'+falta+'</div>';
+    if(c.future)h+='<div class="boda-card-note">Futura · pendiente de concretar</div>';
     if(c.note)h+='<div class="boda-card-note">'+escHtml(c.note)+'</div>';
     /* Desplegada: aqui dentro va lo que antes abria un modal aparte */
     if(BODA_CARD_OPEN===c.id){
@@ -517,7 +518,7 @@ function _renderBodaParejas(){
     }
     h+='</div>';
   });
-  h+='<button class="ev-io-btn boda-add-btn" id="bodaAddCouple">+ Nueva pareja</button>';
+
   return h;
 }
 function _bodaFmt(ds){return ds?ds.slice(8)+'/'+ds.slice(5,7)+'/'+ds.slice(0,4):'';}

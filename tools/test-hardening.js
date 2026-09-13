@@ -169,3 +169,12 @@ assert(separate.includes('2026-09-17,trabajado\n'));
 a.csvRecordExport(2026,separate);a.ST['2026-09-14'].type='vacaciones';
 assert(a.csvPendingWarnings(new Date('2026-09-13')).some(w=>w.year===2026));
 console.log('CSV: tres estados no trabajados independientes y cambio entre ellos detectado OK');
+
+const futureCouple={id:'future-test',name:'Reserva de prueba',future:true,weddingDate:null,contracted:4,color:'#8b5e34'};
+assert.equal(a.bodaMatchesDate(futureCouple,'activas'),false);
+assert.equal(a.bodaMatchesDate(futureCouple,'futuras'),true);
+assert.equal(a.bodaMatchesDate(futureCouple,'todas'),true);
+assert.equal(a.bodaMatchesDate(futureCouple,'pasadas'),false);
+a.auditImport({bodas:[futureCouple]},'replace');assert.equal(a.BODA_COUPLES[0].future,true);
+a.BODA_COUPLES[0].future=false;assert.equal(a.bodaMatchesDate(a.BODA_COUPLES[0],'activas'),true);
+console.log('Parejas futuras: filtro independiente, fecha opcional e importacion OK');

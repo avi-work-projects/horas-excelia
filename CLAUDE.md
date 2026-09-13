@@ -192,3 +192,8 @@ Los avisos pendientes reaparecen al cargar incluso si los recordatorios se cerra
 Desde v342, el CSV conserva `Fecha,Estado`, con estados `trabajado`, `festivo`,
 `vacaciones`, `ausencia`. Sustituye `festivo/vacaciones` y `baja`; el consumidor
 externo debe admitir los nuevos valores. El PDF ya distingue los tres tipos.
+
+## Parejas futuras (v343)
+`couple.future` es una marca manual independiente de `weddingDate` (opcional).
+Se muestra en Futuras y Todas, nunca en Activas/Pasadas. Se edita en el formulario
+y viaja dentro de `bodas` en el backup. Las parejas antiguas siguen sin marcar.
