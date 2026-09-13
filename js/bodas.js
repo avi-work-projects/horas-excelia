@@ -292,6 +292,7 @@ var BODA_PAREJAS_SEARCH = '';
 var BODA_PAREJAS_SORT = 'boda';   /* 'az' | 'za' | 'new' | 'old' | null */
 var BODA_PAREJAS_CLASSES = null; /* null | incompletas | completas */
 var BODA_PAREJAS_FILTER = 'activas';  /* 'incompletas' | 'todas' | 'completas' */
+var BODA_CAL_DAY = null; /* dia seleccionado para resaltar sus parejas */
 var BODA_CAL_HL = null;   /* id de la pareja resaltada en el calendario */
 var BODA_CAL_YEAR = new Date().getFullYear();
 var BODA_CAL_MONTH = new Date().getMonth();
@@ -329,6 +330,8 @@ function _renderBodaCalendario(){
   var leyenda=BODA_COUPLES.filter(function(c){return enMes[c.id];});
   if(BODA_CAL_HL&&!enMes[BODA_CAL_HL])BODA_CAL_HL=null;
   var hlC=BODA_CAL_HL?bodaCouple(BODA_CAL_HL):null;
+  var dayCouples={};
+  (porDia[BODA_CAL_DAY]||[]).forEach(function(ev){if(ev.boda&&ev.boda.coupleId)dayCouples[ev.boda.coupleId]=true;});
 
   var h='<div class="boda-cal-nav">';
   h+='<button class="sy-nav" id="bodaCalPrev">&#9664;</button>';
@@ -358,10 +361,10 @@ function _renderBodaCalendario(){
        mismo dia y el fondo solo podria representar a una. Se pinta solo al
        pulsar una pareja en la leyenda. */
     var cls='boda-cal-day'+(inM?'':' out')+(ds===todayDs?' hoy':'')
-      +(hlC?(esHl?' hl':' dim'):'');
+      +(hlC?(esHl?' hl':' dim'):'')+(BODA_CAL_DAY===ds?' selected-day':'');
     var sty='';
     if(hlC&&esHl)sty=' style="border-color:'+hlC.color+';background:'+hlC.color+'22"';
-    h+='<div class="'+cls+'" data-ds="'+ds+'"'+sty+'>';
+    h+='<div class="'+cls+'" data-ds="'+ds+'" role="button" tabindex="0" aria-label="Ver parejas del '+_bodaFmt(ds)+'" aria-pressed="'+(BODA_CAL_DAY===ds)+'"'+sty+'>';
     h+='<span class="boda-cal-num">'+cur.getDate()+'</span>';
     wedDia.forEach(function(c){
       h+='<span class="boda-cal-wed" style="color:'+c.color+'">&#128141; <b>Boda</b></span>';
@@ -381,7 +384,7 @@ function _renderBodaCalendario(){
   h+='<div class="boda-cal-legend">';
   if(!leyenda.length)h+='<div class="sy-note">Sin ensayos ni bodas este mes.</div>';
   leyenda.forEach(function(c){
-    var on=(BODA_CAL_HL===c.id);
+    var on=BODA_CAL_DAY?!!dayCouples[c.id]:(BODA_CAL_HL===c.id);
     h+='<button class="boda-cal-lg'+(on?' on':'')+'" data-hl="'+c.id+'"'
       +(on?' style="border-color:'+c.color+';background:'+c.color+'1f"':'')+'>'
       +'<i style="background:'+c.color+'"></i>'

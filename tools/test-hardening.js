@@ -178,3 +178,11 @@ assert.equal(a.bodaMatchesDate(futureCouple,'pasadas'),false);
 a.auditImport({bodas:[futureCouple]},'replace');assert.equal(a.BODA_COUPLES[0].future,true);
 a.BODA_COUPLES[0].future=false;assert.equal(a.bodaMatchesDate(a.BODA_COUPLES[0],'activas'),true);
 console.log('Parejas futuras: filtro independiente, fecha opcional e importacion OK');
+
+a.BODA_COUPLES=[{id:'c1',name:'Uno',color:'#8b5e34'},{id:'c2',name:'Dos',color:'#1946a0'},{id:'c3',name:'Tres',color:'#e5a746'}];
+a.EVENTS=['c1','c2','c3'].map((id,i)=>({id:'cl'+i,kind:'puntual',type:'Ensayos boda',start:i===2?'2026-09-16':'2026-09-15',boda:{coupleId:id,time:'18:00'}}));
+a.BODA_CAL_YEAR=2026;a.BODA_CAL_MONTH=8;a.BODA_CAL_DAY='2026-09-15';a.BODA_CAL_HL=null;
+let cal=a._renderBodaCalendario();assert.equal((cal.match(/boda-cal-lg on/g)||[]).length,2);
+a.BODA_CAL_DAY='2026-09-17';assert.equal((a._renderBodaCalendario().match(/boda-cal-lg on/g)||[]).length,0);
+a.BODA_CAL_DAY=null;a.BODA_CAL_HL='c1';assert(a._renderBodaCalendario().includes('boda-cal-day hl'));
+console.log('Calendario WM: seleccion de varias parejas por dia y seleccion inversa OK');
