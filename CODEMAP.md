@@ -32,10 +32,10 @@
 
 **Funciones:** bodaOpenSheet:1 · bodaCloseSheet:4 · bodaCreatedAt:10 · bodaIssues:15 · _renderBodaIssueCards:31 · card:34 · openBodaIssue:55 (!81) · findEv:97 · closeBodaIssue:136 · _bodaWeekKey:139 · _renderBodaStats:146 (!80) · openBodaAssign:226 · closeBodaAssign:246 · renderBodaAssign:250 (!81) · bindBodaAssign:331 · openBodaPlacePicker:400 · closeBodaPlacePicker:433 · bodaAplicarCampo:437 · bodaTrasElegir:447 · bodaEndAt:459
 
-### js/bodas-bind.js  _(293 líneas)_
-**Estado global:** BODA_RENDER_CLASSES:288
+### js/bodas-bind.js  _(297 líneas)_
+**Estado global:** BODA_RENDER_CLASSES:292
 
-**Funciones:** renderBodaCoupleForm:1 · openBodaCoupleForm:29 · closeBodaCoupleForm:67 · bodaRefreshRow:71 · bindBodasEvents:100 (!179) · _guardaPendientes:103 · _bodaCalMove:114 · findClass:214 · bodaMatchesDate:279 · bodaMatchesClasses:283 · renderBodasBody:289
+**Funciones:** renderBodaCoupleForm:1 · openBodaCoupleForm:30 · closeBodaCoupleForm:69 · bodaRefreshRow:73 · bindBodasEvents:102 (!179) · _guardaPendientes:105 · _bodaCalMove:116 · findClass:216 · bodaMatchesDate:281 · bodaMatchesClasses:287 · renderBodasBody:293
 
 ### js/bodas-class-form.js  _(328 líneas)_
 **Estado global:** BODA_FORM:1 · BODA_TIME_H:211
@@ -47,10 +47,10 @@
 
 **Funciones:** bodaLoadConfig:4 · bodaApplyConfig:15 · saveBodaConfig:24 · validateBodaConfig:25 · importBodaConfig:42 · bodaPackOf:58 · bodaDuration:59 · bodaDefaultDuration:60 · bodaDurationOf:61 · bodaConfigUsed:62 · bodaSetCatalogItem:66 · bodaDeleteCatalogItem:75 · bodaTaken:80 · bodaPackStats:85 · bodaTeacherName:97 · bodaTeacherCount:98 · bodaTeacherStats:99 · renderBodaPackStats:105 · renderBodaConfig:117 · openBodaConfig:136 · bindBodaConfig:137 · openBodaCatalogForm:146
 
-### js/bodas.js  _(639 líneas)_
+### js/bodas.js  _(640 líneas)_
 **Estado global:** BODAS_SK:13 · BODA_COUPLES:14 · BODA_PLACE_LIST:25 · BODA_PLACE_DEFAULT:31 · BODA_PLACE_NONE:34 · BODA_PLACE_SHORT:35 · BODA_PLACE_DESC:36 · BODA_PLACE_EMOJI:38 · BODA_WHITE:55 · BODA_SLOTS:56 · BODA_NO_TIME_COLOR:62 · BODA_NO_COUPLE_COLOR:63 · BODA_DEFAULT_TIME:64 · BODA_PALETTE:67 · BODA_CLOSED_SK:225 · BODA_CLOSED:226 · BODA_PENDING:241 · BODA_SUBTAB:283 · BODA_CLASS_MODE:284 · BODA_CLASES_SEARCH:285 · BODA_HIDE_PAST:286 · BODA_HIDE_CLOSED:287 · BODA_CARD_OPEN:288 · BODA_PAREJAS_SEARCH:289 · BODA_PAREJAS_SORT:292 · BODA_PAREJAS_CLASSES:293 · BODA_PAREJAS_FILTER:294 · BODA_CAL_HL:295 · BODA_CAL_YEAR:296 · BODA_CAL_MONTH:297
 
-**Funciones:** saveBodas:18 · bodaPlaceEmoji:39 · bodaPlaceOf:43 · bodaPlaceLabel:48 · bodaNextColor:69 · bodaCouple:77 · bodaSlot:81 · bodaSlotColors:91 · bodaMarkFor:96 · evBodaSvg:102 · bodaClasses:119 · bodaPrimeraClase:123 · bodaClassesOfCouple:127 · bodaFreeClasses:130 · bodaClaseById:133 · bodaSortClasses:137 · bodaClassesOnDay:144 · bodaNewClass:147 · bodaNormalizeClasses:162 · bodaPlaceForNewOn:199 · bodaDayFull:204 · bodaBulkCreate:209 · bodaProgress:219 · saveBodaClosed:230 · bodaIsClosed:231 · bodaToggleClosed:232 · bodaPendingCount:242 · bodaEff:244 · bodaSetPending:253 · bodaPendingApply:257 · bodaPendingDiscard:280 · _bodaLegendHtml:300 · _renderBodaCalendario:311 (!85) · _renderBodasBody:396 · _bodaCmpFecha:426 · _renderBodaParejas:432 (!91) · _bodaFmt:523 · _bodaFmtCorto:524 · _renderBodaClases:531 (!108)
+**Funciones:** saveBodas:18 · bodaPlaceEmoji:39 · bodaPlaceOf:43 · bodaPlaceLabel:48 · bodaNextColor:69 · bodaCouple:77 · bodaSlot:81 · bodaSlotColors:91 · bodaMarkFor:96 · evBodaSvg:102 · bodaClasses:119 · bodaPrimeraClase:123 · bodaClassesOfCouple:127 · bodaFreeClasses:130 · bodaClaseById:133 · bodaSortClasses:137 · bodaClassesOnDay:144 · bodaNewClass:147 · bodaNormalizeClasses:162 · bodaPlaceForNewOn:199 · bodaDayFull:204 · bodaBulkCreate:209 · bodaProgress:219 · saveBodaClosed:230 · bodaIsClosed:231 · bodaToggleClosed:232 · bodaPendingCount:242 · bodaEff:244 · bodaSetPending:253 · bodaPendingApply:257 · bodaPendingDiscard:280 · _bodaLegendHtml:300 · _renderBodaCalendario:311 (!85) · _renderBodasBody:396 · _bodaCmpFecha:426 · _renderBodaParejas:432 (!92) · _bodaFmt:524 · _bodaFmtCorto:525 · _renderBodaClases:532 (!108)
 
 ### js/core.js  _(745 líneas)_
 **Estado global:** APP_VERSION:6 · NAV_BACK:101 · THEME_STORAGE_KEY:104 · THEME:105 · THEME_LABELS:111 · THEME_META:112 · THEME_SEQUENCE:113 · ECON_YEAR_CONFIG:137 · MN_SHORT:139 · DN5:376 · FESTIVOS_ANIO:595

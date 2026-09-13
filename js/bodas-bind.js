@@ -10,6 +10,7 @@ function renderBodaCoupleForm(c){
   else h+='<div style="width:36px"></div>';
   h+='</div>';
   h+='<div class="ev-field"><label>Pareja</label><input class="ev-input" id="bodaCName" type="text" maxlength="40" placeholder="Ej: Marta y Juan" value="'+(isEdit?escHtml(c.name):'')+'"></div>';
+  h+='<div class="ev-field"><label style="--chk:#8b5e34"><input type="checkbox" id="bodaCFuture"'+(c&&c.future?' checked':'')+'> Pareja futura</label><div class="sy-note">Reserva pendiente de concretar. No aparece en Activas hasta que desmarques esta opción.</div></div>';
   var selected=isEdit?bodaPackOf(c):(BODA_CONFIG.packs.find(function(p){return p.active!==false&&p.classes===4;})||BODA_CONFIG.packs.find(function(p){return p.active!==false;}));
   h+='<div class="ev-field"><label>Pack contratado</label><select class="ev-input" id="bodaCPack">';
   BODA_CONFIG.packs.filter(function(p){return p.active!==false||(selected&&p.id===selected.id);}).forEach(function(p){h+='<option value="'+p.id+'"'+(selected&&selected.id===p.id?' selected':'')+'>'+escHtml(p.name)+' ('+p.classes+' clases)'+(p.active===false?' (inactivo)':'')+'</option>';});
@@ -50,7 +51,7 @@ function openBodaCoupleForm(c){
     if(!pack){showToast('Activa o crea un pack en Configuracion de Bodas','error');return;}
     var previous=c&&bodaPackOf(c),num=previous&&previous.id===pack.id?(c.packClasses==null?c.contracted:c.packClasses):pack.classes;
     var data={name:name,contracted:num,packId:pack.id,packClasses:num,
-      weddingDate:document.getElementById('bodaCWed').value||null,
+      weddingDate:document.getElementById('bodaCWed').value||null,future:document.getElementById('bodaCFuture').checked,
       note:document.getElementById('bodaCNote').value.trim(),color:cp.getColor()};
     if(c){
       for(var k in data)c[k]=data[k];
@@ -61,6 +62,7 @@ function openBodaCoupleForm(c){
       data.id='bc-'+Date.now();data.createdAt=Date.now();BODA_COUPLES.push(data);
     }
     saveBodas();closeBodaCoupleForm();
+    BODA_PAREJAS_FILTER=data.future?'futuras':bodaMatchesDate(data,'activas')?'activas':'pasadas';BODA_PAREJAS_CLASSES=null;
     setTimeout(function(){refreshEvents();showToast(c?'Pareja actualizada':'Pareja creada','success');},310);
   });
 }
@@ -277,6 +279,8 @@ function bindBodasEvents(){
 }
 
 function bodaMatchesDate(c,filter){
+  if(filter==='futuras')return c.future===true;
+  if(c.future)return filter==='todas';
   var active=!c.weddingDate||c.weddingDate>=evDk(new Date());
   return filter==='activas'?active:filter==='pasadas'?!active:true;
 }
