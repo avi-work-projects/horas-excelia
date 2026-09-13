@@ -35,6 +35,13 @@ function validateImport(data){
   if(data.bodaConfig)validateBodaConfig(data.bodaConfig);
   ['days','sent','monthH','bodasClosed','evAlarms','bdayAlarms','econYearConfig','gastosPerYear','personalPerYear'].forEach(function(k){if(data[k]!=null&&(typeof data[k]!=='object'||Array.isArray(data[k])))throw new Error('Mapa no valido: '+k);});
   ['rate','vacEntitlement','alarmHour','alarmMinute'].forEach(function(k){if(data[k]!=null&&(!Number.isFinite(Number(data[k]))||Number(data[k])<0))throw new Error('Numero no valido: '+k);});
+  if(data.csvExports!=null){
+    if(typeof data.csvExports!=='object'||Array.isArray(data.csvExports))throw new Error('Registro CSV no valido');
+    Object.keys(data.csvExports).forEach(function(year){
+      var r=data.csvExports[year];
+      if(!/^\d{4}$/.test(year)||+year<1900||+year>9998||!r||typeof r.content!=='string'||r.content.length>20000||!r.content.startsWith('Fecha,Estado\n')||typeof r.exportedAt!=='string'||isNaN(Date.parse(r.exportedAt)))throw new Error('Registro CSV no valido');
+    });
+  }
   if(data.vacByYear!=null){
     if(typeof data.vacByYear!=='object'||Array.isArray(data.vacByYear))throw new Error('Cupos anuales no validos');
     Object.keys(data.vacByYear).forEach(function(year){var n=data.vacByYear[year];if(!/^\d{4}$/.test(year)||!Number.isInteger(n)||n<1||n>60)throw new Error('Cupo anual no valido');});

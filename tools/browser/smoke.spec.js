@@ -472,3 +472,35 @@ test('agenda: ancho continuo entre meses y años',async({page})=>{
  await page.locator('.ev-wk-multi[data-id="cross"]').first().scrollIntoViewIfNeeded();
  await page.screenshot({path:'.local-preview/agenda-month-continuity.png',animations:'disabled'});
 });
+
+
+test('CSV: aviso persistente y horas en recordatorios',async({page})=>{
+ await page.addInitScript(()=>Object.defineProperty(navigator,'canShare',{configurable:true,value:()=>false}));
+ await page.clock.setFixedTime(new Date('2026-09-13T10:00:00'));
+ await page.addInitScript(()=>localStorage.setItem('excelia-events-v1',JSON.stringify([
+  {id:'rem-time',kind:'puntual',type:'Otros',title:'Cita de prueba',start:'2026-09-13',time:'18:30',color:'#c67da0'},
+  {id:'rem-trip',kind:'grande',type:'Asturias',title:'Viaje de prueba',start:'2026-09-13',end:'2026-09-22',color:'#1946a0',viaje:{ida:{time:'09:15',modo:'tren'}}}
+ ])));
+ await page.goto('/');
+ await expect(page.locator('#homePopupContent')).toContainText('18:30');
+ await expect(page.locator('#homePopupContent')).toContainText('09:15');
+ await page.locator('#homePopupDismiss').click();
+ const download=page.waitForEvent('download');await page.locator('#csvExportBtn').click();await download;
+ await page.evaluate(()=>{ST['2026-09-14']={type:'festivo'};save();});
+ await expect(page.locator('#toast')).toContainText('CSV de 2026 desactualizado');
+ await page.reload();await expect(page.locator('#homePopupContent')).toContainText('CSV de 2026 desactualizado');
+ await page.locator('#homePopupDismiss').click();await page.reload();
+ await expect(page.locator('#homePopup')).toBeVisible();
+ await page.screenshot({path:'.local-preview/csv-reminders.png',animations:'disabled'});
+ await page.locator('#homePopupDismiss').click();
+ const second=page.waitForEvent('download');await page.locator('#csvExportBtn').click();await second;
+ await page.reload();await expect(page.locator('#homePopup')).toBeHidden();
+ // Cancelar compartir no sustituye el registro de lo exportado.
+ await page.evaluate(()=>{
+  ST['2026-09-15']={type:'festivo'};save();
+  Object.defineProperty(navigator,'canShare',{configurable:true,value:()=>true});
+  Object.defineProperty(navigator,'share',{configurable:true,value:()=>Promise.reject(new DOMException('Cancelado','AbortError'))});
+ });
+ await page.locator('#csvExportBtn').click();
+ expect(await page.evaluate(()=>csvPendingWarnings(new Date()).length)).toBe(1);
+});

@@ -14,25 +14,13 @@ var _g1=document.getElementById('csvExportBtn'); if(_g1)_g1.addEventListener('cl
     String(now.getHours()).padStart(2,'0')+
     String(now.getMinutes()).padStart(2,'0')+
     String(now.getSeconds()).padStart(2,'0');
-  var lines=['Fecha,Estado'];
-  var d=new Date(year,0,1);
-  while(d.getFullYear()===year){
-    var w=d.getDay();
-    if(w>=1&&w<=5){
-      var t=dayT(d);
-      var estado;
-      if(t==='ausencia') estado='baja';
-      else if(t==='festivo'||t==='vacaciones') estado='festivo/vacaciones';
-      else estado='trabajado';
-      lines.push(dk(d)+','+estado);
-    }
-    d.setDate(d.getDate()+1);
-  }
-  var csv=lines.join('\n');
+  var csv=csvYearContent(year);
   var blob=new Blob(['\uFEFF'+csv],{type:'text/csv'});
   var fname='dias_trabajados_'+year+'_'+ts+'.csv';
-  shareOrDownload(blob,fname);
-  showToast('CSV exportado','success');
+  shareOrDownload(blob,fname,function(){
+    csvRecordExport(year,csv);
+    showToast('CSV exportado','success');
+  });
 });
 
 /* ── Exportar PDF del año ── */
@@ -349,7 +337,7 @@ var _g4=document.getElementById('exportAllBtn'); if(_g4)_g4.addEventListener('cl
   if(typeof loadPersonalYear==='function')loadPersonalYear(CY);
   if(typeof loadEconComp==='function')loadEconComp();
   if(typeof loadEvAlarms==='function')loadEvAlarms();
-  var data={version:7,bodaConfig:JSON.parse(JSON.stringify(BODA_CONFIG)),mailConfig:_lsJson(MAIL_CFG_SK,null),days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
+  var data={version:7,csvExports:csvExportRecords(),bodaConfig:JSON.parse(JSON.stringify(BODA_CONFIG)),mailConfig:_lsJson(MAIL_CFG_SK,null),days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
     exclFest:EXCL_FEST,exclVac:EXCL_VAC,vacEntitlement:VAC_ENTITLEMENT,vacByYear:_lsJson(VAC_YEAR_KEY,VAC_BY_YEAR),
     birthdays:BDAYS,events:EVENTS,
     bodas:typeof BODA_COUPLES!=='undefined'?BODA_COUPLES:null,
@@ -414,6 +402,7 @@ function _applyFullImport(d,mode){
     try{
       d=prepareImportRelations(validateImport(d),merge);
       appStorage.begin();
+      if(d.csvExports||!merge)appStorage.setItem(CSV_EXPORT_KEY,JSON.stringify(merge?_mergeMap(csvExportRecords(),d.csvExports||{}):(d.csvExports||{})));
       if(d.days)ST=merge?_mergeMap(ST,d.days):d.days;
       if(d.sent)SW=merge?_mergeMap(SW,d.sent):d.sent;
       if(d.monthH)MONTH_H=merge?_mergeMap(MONTH_H,d.monthH):d.monthH;
