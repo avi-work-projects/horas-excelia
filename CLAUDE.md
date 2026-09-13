@@ -188,3 +188,7 @@ ha consumido el archivo: se registra la descarga solicitada o el compartir compl
 Cancelar compartir no actualiza el registro. Los CSV anteriores a esta version necesitan
 una nueva exportacion para establecer su referencia. En diciembre se pide el año siguiente.
 Los avisos pendientes reaparecen al cargar incluso si los recordatorios se cerraron antes.
+
+Desde v342, el CSV conserva `Fecha,Estado`, con estados `trabajado`, `festivo`,
+`vacaciones`, `ausencia`. Sustituye `festivo/vacaciones` y `baja`; el consumidor
+externo debe admitir los nuevos valores. El PDF ya distingue los tres tipos.

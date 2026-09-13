@@ -159,3 +159,13 @@ const csvRecords=a.csvExportRecords();a.auditImport({csvExports:csvRecords},'rep
 assert.equal(a.csvExportRecords()['2026'].content,baseline);
 assert.throws(()=>a.validateImport({csvExports:{2026:{content:'invalid'}}}));
 console.log('CSV: cambios, deshacer, independencia por año, diciembre e importacion OK');
+
+a.ST={'2026-09-14':{type:'festivo'},'2026-09-15':{type:'vacaciones'},'2026-09-16':{type:'ausencia'}};
+const separate=a.csvYearContent(2026);
+assert(separate.includes('2026-09-14,festivo\n'));
+assert(separate.includes('2026-09-15,vacaciones\n'));
+assert(separate.includes('2026-09-16,ausencia\n'));
+assert(separate.includes('2026-09-17,trabajado\n'));
+a.csvRecordExport(2026,separate);a.ST['2026-09-14'].type='vacaciones';
+assert(a.csvPendingWarnings(new Date('2026-09-13')).some(w=>w.year===2026));
+console.log('CSV: tres estados no trabajados independientes y cambio entre ellos detectado OK');

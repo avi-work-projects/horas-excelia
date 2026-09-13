@@ -6,7 +6,7 @@ function csvYearContent(year){
   while(d.getFullYear()===year){
     if(d.getDay()>=1&&d.getDay()<=5){
       var t=dayT(d);
-      lines.push(dk(d)+','+(t==='ausencia'?'baja':t==='festivo'||t==='vacaciones'?'festivo/vacaciones':'trabajado'));
+      lines.push(dk(d)+','+(t==='ausencia'||t==='festivo'||t==='vacaciones'?t:'trabajado'));
     }
     d.setDate(d.getDate()+1);
   }
