@@ -114,6 +114,7 @@ function bindBodasEvents(){
     });
   });
   function _bodaCalMove(d){
+    BODA_CAL_DAY=null;
     BODA_CAL_MONTH+=d;
     if(BODA_CAL_MONTH<0){BODA_CAL_MONTH=11;BODA_CAL_YEAR--;}
     if(BODA_CAL_MONTH>11){BODA_CAL_MONTH=0;BODA_CAL_YEAR++;}
@@ -126,9 +127,15 @@ function bindBodasEvents(){
   /* Deslizar sobre la rejilla para cambiar de mes */
   var cg=document.getElementById('bodaCalGrid');
   if(cg&&typeof addSwipe==='function')addSwipe(cg,function(){_bodaCalMove(1);},function(){_bodaCalMove(-1);});
+  if(cg)cg.querySelectorAll('.boda-cal-day[data-ds]').forEach(function(day){
+    function selectDay(){BODA_CAL_HL=null;BODA_CAL_DAY=BODA_CAL_DAY===day.dataset.ds?null:day.dataset.ds;refreshEvents();}
+    day.addEventListener('click',selectDay);
+    day.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();selectDay();}});
+  });
   /* Leyenda: resaltar los dias de una pareja (se mantiene al cambiar de mes) */
   document.querySelectorAll('.boda-cal-lg[data-hl]').forEach(function(b){
     b.addEventListener('click',function(){
+      BODA_CAL_DAY=null;
       BODA_CAL_HL=(BODA_CAL_HL===b.dataset.hl)?null:b.dataset.hl;
       refreshEvents();
     });
