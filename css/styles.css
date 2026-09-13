@@ -89,7 +89,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .hour-chips-row{display:flex;gap:8px;justify-content:center}
 .hour-chip-day{font-family:var(--mono);font-size:.85rem;font-weight:500;padding:9px 22px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;flex:1}
 .hour-chip-day.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
-.month-summary{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;display:flex;flex-direction:column;gap:10px}
+.month-summary{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;display:flex;flex-direction:column;gap:5px}
 .month-stat{display:flex;align-items:baseline;gap:4px}
 .ms-num{font-family:var(--mono);font-size:1.2rem;font-weight:500}
 .month-stat.worked .ms-num{color:var(--accent-bright)}
@@ -350,7 +350,7 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 /* Month summary breakdown */
 .ms-breakdown>span{display:block;padding-left:12px}
 .ms-breakdown>span::before{content:"– ";}
-.ms-breakdown{font-size:.72rem;color:var(--text-dim);margin-top:2px;line-height:1.6}
+.ms-breakdown{font-size:.72rem;color:var(--text-dim);margin-top:0;line-height:1.6}
 .ms-sep{color:var(--border-light)}
 /* Ausencia list tag */
 .sy-list-tag.ausencia{background:rgba(192,132,252,.15);color:var(--ausencia)}
@@ -2660,7 +2660,8 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .home-submission.complete{display:grid;grid-template-columns:18px 70px minmax(0,1fr);gap:8px}
 .home-summary-compact{justify-self:end;width:max-content;max-width:100%;box-sizing:border-box;padding:6px 7px;border:1px solid var(--border);border-radius:8px;background:var(--surface);gap:3px;min-width:0}
 .home-summary-compact .month-stat{justify-content:flex-start;text-align:left;gap:3px;flex-wrap:nowrap;white-space:nowrap}
-.home-summary-compact .month-stat.total{border-top:1px solid var(--border);padding-top:3px}
+.month-summary .month-stat.total{border-top:1px solid var(--border);padding-top:3px}
+.month-summary .month-stat.total .ms-num{font-weight:600}
 .home-summary-compact .month-stat.total .ms-num{font-size:.9rem;font-weight:600}
 .home-summary-compact .month-stat{font-size:.65rem;line-height:1.35}
 .home-summary-compact .ms-num{font-size:.8rem}
