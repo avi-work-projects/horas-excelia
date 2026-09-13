@@ -177,3 +177,14 @@ fusiona el mapa por año; reemplazar usa el mapa recibido. Se validan enteros de
 semana compartida entre meses nunca cuenta como la semana adicional.
 `renderHomeSubmissionStatus` muestra el aviso o el estado completo encima de
 las tarjetas. Se calcula al renderizar: no tiene persistencia independiente.
+
+
+## Seguimiento de CSV (v339)
+`js/csv-sync.js` centraliza `csvYearContent(year)` (el mismo contenido que se descarga)
+y registra contenido y fecha por año en `excelia-csv-exports-v1`. Viaja como `csvExports`
+en el backup. Comparar contenidos evita falsos avisos al deshacer o cambiar campos que
+no exporta el CSV (hora, semanas enviadas). No se puede comprobar si el programa externo
+ha consumido el archivo: se registra la descarga solicitada o el compartir completado.
+Cancelar compartir no actualiza el registro. Los CSV anteriores a esta version necesitan
+una nueva exportacion para establecer su referencia. En diciembre se pide el año siguiente.
+Los avisos pendientes reaparecen al cargar incluso si los recordatorios se cerraron antes.

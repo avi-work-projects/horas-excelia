@@ -3,11 +3,12 @@
    enviar, cumpleanos hoy/manana, VIP sin alarma, eventos hoy)
    ============================================================ */
 /* ── Home Popup: semanas sin marcar + VIP sin alarma ── */
-(function(){
+function openHomePopup(){
+  var csvWarnings=csvPendingWarnings(new Date());
   try{
-    if(sessionStorage.getItem('excelia-popup-dismissed'))return;
+    if(sessionStorage.getItem('excelia-popup-dismissed')&&!csvWarnings.length)return;
   }catch(e){}
-  var items=[];
+  var items=csvWarnings.map(function(it){return {type:'warn',text:'&#9888; '+escHtml(it.text)};});
   // Semanas sin enviar: 2 anteriores + actual + 2 siguientes
   var today=new Date();today.setHours(0,0,0,0);
   var dow=today.getDay();var off=dow===0?6:dow-1;
@@ -47,6 +48,9 @@
       var diff=Math.round((evStart-today)/86400000);
       if(diff===0||diff===1){
         var lbl=escHtml(ev.title)+(diff===0?' (\u00a1hoy!)':' (ma\u00f1ana!)');
+        var time=evTimeLabel(ev);
+        if(isEvBarAlways(ev)){var ida=evTramos(ev).filter(function(tr){return tr.k==='ida';})[0];time=ida&&ida.t.time||'';}
+        if(time)lbl+=' · '+escHtml(time);
         items.push({type:'event',text:'&#128197; '+lbl});
       }
       // Fin de eventos de más de 7 días
@@ -57,6 +61,8 @@
           var diffEnd=Math.round((evEnd-today)/86400000);
           if(diffEnd===0||diffEnd===1){
             var endLbl=escHtml(ev.title)+' \u2014 fin'+(diffEnd===0?' hoy':' ma\u00f1ana')+'!';
+            var vuelta=evTramos(ev).filter(function(tr){return tr.k==='vuelta';})[0];
+            if(vuelta&&vuelta.t.time)endLbl+=' · '+escHtml(vuelta.t.time);
             items.push({type:'event',text:'&#128197; '+endLbl});
           }
         }
@@ -78,6 +84,11 @@
   }
   var closeBtn=document.getElementById('homePopupClose');
   var dismissBtn=document.getElementById('homePopupDismiss');
-  if(closeBtn)closeBtn.addEventListener('click',dismissPopup);
-  if(dismissBtn)dismissBtn.addEventListener('click',dismissPopup);
-})();
+  if(closeBtn)closeBtn.onclick=dismissPopup;
+  if(dismissBtn)dismissBtn.onclick=dismissPopup;
+}
+openHomePopup();
+// Al volver a la PWA, los CSV pendientes siguen necesitando atencion.
+document.addEventListener('visibilitychange',function(){
+  if(document.visibilityState==='visible'&&csvPendingWarnings(new Date()).length)openHomePopup();
+});

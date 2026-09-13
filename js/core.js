@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v338 — resumen compacto con total separado';
+var APP_VERSION = 'v339 — recordatorios y seguimiento de CSV';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -155,6 +155,7 @@ function load(){
 }
 function save(){
   appStorage.setItem(SK,JSON.stringify({days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,exclFest:EXCL_FEST,exclVac:EXCL_VAC,multiRate:ECON_MULTI_RATE,ratePeriods:ECON_RATE_PERIODS,econYearConfig:ECON_YEAR_CONFIG}));
+  if(typeof csvCheckChanges==='function')csvCheckChanges();
 }
 /* ── Per-year econ config helpers ──────────────────────────── */
 function loadEconYear(y){
@@ -244,14 +245,14 @@ function hBarRows(rows,opts){
 }
 
 // ── Compartir / descargar archivo ────────────────────────────
-function shareOrDownload(blob,filename){
+function shareOrDownload(blob,filename,onSuccess){
   if(navigator.share&&navigator.canShare){
     var file=new File([blob],filename,{type:blob.type});
     if(!navigator.canShare({files:[file]})){
       file=new File([blob],filename,{type:'application/octet-stream'});
     }
     if(navigator.canShare({files:[file]})){
-      navigator.share({files:[file],title:filename}).catch(function(){});
+      navigator.share({files:[file],title:filename}).then(function(){if(onSuccess)onSuccess();}).catch(function(){});
       return;
     }
   }
@@ -261,6 +262,7 @@ function shareOrDownload(blob,filename){
   document.body.appendChild(a);a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+  if(onSuccess)onSuccess();
 }
 
 // ── Utilidades HTML ─────────────────────────────────────────

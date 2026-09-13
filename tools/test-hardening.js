@@ -142,3 +142,20 @@ for(const [year,month] of [[2026,8],[2026,11],[2027,1]]){
  delete a.SW[a.dk(current[0][0])];assert.equal(a.homeSubmissionStatus(year,month).complete,false);
 }
 console.log('Home: mes enviado mas semana adicional sin duplicados OK');
+
+// CSV: comparar datos exportados, no el numero de ediciones de la Home.
+a.ST={};a.appStorage.removeItem(a.CSV_EXPORT_KEY);
+const baseline=a.csvYearContent(2026);a.csvRecordExport(2026,baseline);
+assert.equal(a.csvPendingWarnings(new Date('2026-09-13')).length,0);
+a.ST['2026-09-14']={type:'festivo'};
+assert.equal(a.csvPendingWarnings(new Date('2026-09-13'))[0].year,2026);
+delete a.ST['2026-09-14'];assert.equal(a.csvPendingWarnings(new Date('2026-09-13')).length,0);
+a.ST['2026-09-14']={type:'normal',hours:4}; // las horas no viajan en este CSV
+assert.equal(a.csvPendingWarnings(new Date('2026-09-13')).length,0);
+a.ST['2027-01-04']={type:'festivo'};assert.equal(a.csvPendingWarnings(new Date('2026-09-13')).length,0);
+assert.equal(a.csvPendingWarnings(new Date('2026-12-01'))[0].year,2027);
+a.csvRecordExport(2027,a.csvYearContent(2027));assert.equal(a.csvPendingWarnings(new Date('2026-12-01')).length,0);
+const csvRecords=a.csvExportRecords();a.auditImport({csvExports:csvRecords},'replace');
+assert.equal(a.csvExportRecords()['2026'].content,baseline);
+assert.throws(()=>a.validateImport({csvExports:{2026:{content:'invalid'}}}));
+console.log('CSV: cambios, deshacer, independencia por año, diciembre e importacion OK');

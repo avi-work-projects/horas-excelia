@@ -20,6 +20,7 @@ const MODULOS = [
   'data-integrity.js',
   'nav-icons.js',
   'core.js',
+  'csv-sync.js',
   'summary.js',
   /* El grupo economico: son los que hacen cuentas (IRPF, tramos, hipoteca,
      subrogacion) y por tanto donde un error no se ve mirando la pantalla. */
