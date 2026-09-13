@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v339 — recordatorios y seguimiento de CSV';
+var APP_VERSION = 'v340 — resumen mensual con desglose claro';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -478,9 +478,9 @@ function render(){
   if(diasNoLaborables>0){
     var dparts=[];
     if(diasFest)dparts.push('<span style="color:var(--festivo)">'+diasFest+' festivo'+(diasFest>1?'s':'')+' ('+fmtH(horasFest)+'h)</span>');
-    if(diasVac)dparts.push('<span style="color:var(--vacaciones)">'+diasVac+' vacac. ('+fmtH(horasVac)+'h)</span>');
-    if(diasAus)dparts.push('<span style="color:var(--ausencia)">'+diasAus+' baja'+(diasAus>1?'s':'')+' ('+fmtH(horasAus)+'h)</span>');
-    if(dparts.length)dsglose='<div class="ms-breakdown">'+dparts.join('<span class="ms-sep"> / </span>')+'</div>';
+    if(diasVac)dparts.push('<span style="color:var(--vacaciones)">'+diasVac+' vacaciones ('+fmtH(horasVac)+'h)</span>');
+    if(diasAus)dparts.push('<span style="color:var(--ausencia)">'+diasAus+' ausencia'+(diasAus>1?'s':'')+' ('+fmtH(horasAus)+'h)</span>');
+    if(dparts.length)dsglose='<div class="ms-breakdown">'+dparts.join('')+'</div>';
   }
   var footer=document.createElement('div'); footer.className='month-summary';
   var noLabHrsStr='<span class="ms-hrs"> ('+fmtH(horasNoLab)+'h)</span>';

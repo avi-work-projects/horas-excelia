@@ -348,6 +348,8 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 [data-theme="light"] input[type="checkbox"]:checked{background:var(--chk,var(--accent));border-color:var(--chk,var(--accent))}
 .excl-item{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--text-muted);cursor:pointer;-webkit-user-select:none;user-select:none}
 /* Month summary breakdown */
+.ms-breakdown>span{display:block;padding-left:12px}
+.ms-breakdown>span::before{content:"– ";}
 .ms-breakdown{font-size:.72rem;color:var(--text-dim);margin-top:2px;line-height:1.6}
 .ms-sep{color:var(--border-light)}
 /* Ausencia list tag */
@@ -2656,8 +2658,8 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 
 [data-theme="light"] #eventsOverlay .ev-hdr-sub #evViewUpcoming{--tab-tone:#397dbb}
 .home-submission.complete{display:grid;grid-template-columns:18px 70px minmax(0,1fr);gap:8px}
-.home-summary-compact{justify-self:end;width:153px;max-width:100%;box-sizing:border-box;padding:6px 7px;border:1px solid var(--border);border-radius:8px;background:var(--surface);gap:3px;min-width:0}
-.home-summary-compact .month-stat{justify-content:flex-start;text-align:left;gap:3px;flex-wrap:wrap}
+.home-summary-compact{justify-self:end;width:max-content;max-width:100%;box-sizing:border-box;padding:6px 7px;border:1px solid var(--border);border-radius:8px;background:var(--surface);gap:3px;min-width:0}
+.home-summary-compact .month-stat{justify-content:flex-start;text-align:left;gap:3px;flex-wrap:nowrap;white-space:nowrap}
 .home-summary-compact .month-stat.total{border-top:1px solid var(--border);padding-top:3px}
 .home-summary-compact .month-stat.total .ms-num{font-size:.9rem;font-weight:600}
 .home-summary-compact .month-stat{font-size:.65rem;line-height:1.35}
