@@ -791,6 +791,7 @@ function renderFiscalTabDespacho(){
 /* ── Gas detail sub-tab (two scenarios: consumo + fijo) ──── */
 
 function _bindTabDespacho(){
+  bindEnergyHistory();
   if(!DESPACHO.compra)DESPACHO.compra=_defaultCompra();
   /* Sub-tab switching */
   document.querySelectorAll('[data-hipsub]').forEach(function(btn){

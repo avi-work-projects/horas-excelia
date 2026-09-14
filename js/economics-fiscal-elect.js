@@ -68,6 +68,7 @@ function _renderElectDetalle(){
     h+=_hipRO('Comercializadora',e.comercializadora||'\u2014');
   }
   h+='</div>';
+  h+=energyHistoryButton('luz');
   return h;
 }
 

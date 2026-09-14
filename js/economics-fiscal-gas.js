@@ -64,6 +64,7 @@ function _renderGasDetalle(){
     h+=_hipRO('Comercializadora',sf.comercializadora||'\u2014');
   }
   h+='</div>';
+  h+=energyHistoryButton('gas');
   return h;
 }
 
