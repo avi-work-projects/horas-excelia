@@ -32,6 +32,7 @@ function validateImport(data){
   }
   visit(data,'');
   if(data.energyContracts!=null)validateEnergyContracts(data.energyContracts);
+  if(data.energyBills!=null)validateEnergyBills(data.energyBills);
   if(data.navIconStyle!=null&&['original','professional'].indexOf(data.navIconStyle)===-1)throw new Error('Estilo de iconos no valido');
   if(data.bodaConfig)validateBodaConfig(data.bodaConfig);
   ['days','sent','monthH','bodasClosed','evAlarms','bdayAlarms','econYearConfig','gastosPerYear','personalPerYear'].forEach(function(k){if(data[k]!=null&&(typeof data[k]!=='object'||Array.isArray(data[k])))throw new Error('Mapa no valido: '+k);});

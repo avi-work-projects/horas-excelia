@@ -2758,3 +2758,13 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .energy-tax{border:1px solid var(--border);border-radius:10px;padding:12px;margin:18px 0}.energy-tax label{display:flex;align-items:center;gap:7px;margin:8px 0;font-size:13px}
 .energy-price-edit{display:grid;grid-template-columns:1.4fr .8fr 1fr 24px;gap:5px;margin:8px 0}.energy-price-edit input{padding:8px 5px;font-size:12px}
 .energy-price-edit button{border:0;background:none;color:var(--text);font-size:20px}.energy-history-open{margin:16px 0}
+
+/* Facturas: mismos componentes que los contratos, cifras sin desbordar. */
+.energy-caption{font-size:11px;line-height:1.45;color:var(--muted);overflow-wrap:anywhere;margin:6px 0}
+.energy-table-scroll{overflow-x:auto}.energy-table-scroll th,.energy-table-scroll td{padding:7px 6px;text-align:right;white-space:nowrap}
+.energy-contract h3{font-size:14px;margin:0 0 12px}.energy-contract>p{font-size:12px;margin:8px 0}
+.energy-contract summary{cursor:pointer;font-size:12px;color:var(--muted)}
+.energy-year-nav{display:flex;align-items:center;justify-content:center;gap:28px;margin:14px 0}.energy-year-nav .nav-btn{flex:0 0 34px;width:34px;height:34px}.energy-year-nav strong{font-size:19px}
+.energy-field textarea{box-sizing:border-box;width:100%;min-height:64px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:9px;padding:10px}
+
+.energy-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}.energy-fields .energy-field{margin:0;min-width:0}.energy-fields .energy-field:first-child{grid-column:1/-1}.energy-fields input{font-size:13px}.energy-price-view b{white-space:nowrap}
