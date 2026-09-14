@@ -220,7 +220,7 @@ assert.deepEqual(Array.from(recurringRows,r=>r.start),['2026-02-28','2026-03-31'
 assert.notEqual(recurringRows[0].key,recurringRows[1].key);
 console.log('ICS: identidad, exclusiones, repetición, fechas, medianoche y UTF-8 OK');
 
-// Reexportar es idempotente; cambiar, desmarcar y borrar conservan UID e incrementan revisión.
+// Reexportar es idempotente; solo las bajas explícitas cancelan; desmarcar o borrar no retira de Google.
 const syncEv={id:'sync-test',kind:'grande',type:'Casa Rural',title:'Casa inventada',start:'2026-10-01',end:'2026-10-03'};
 let syncRows=a.evIcsCandidates([syncEv],'2026-09-01','2026-12-31'),syncKey=syncRows[0].key,syncSelect={[syncKey]:true};
 let syncRecords=a.evIcsPrepare(syncRows,syncSelect,{},false);
@@ -231,15 +231,29 @@ syncRows=a.evIcsRememberedRows([syncEv],'2026-09-01','2026-12-31',syncRecords);
 assert.equal(syncRows.length,1);assert.equal(syncRows[0].start,'2027-05-01');
 syncRecords=a.evIcsPrepare(syncRows,syncSelect,syncRecords,false);
 assert.equal(syncRecords[syncKey].sequence,1);assert.equal(syncRecords[syncKey].cancelled,false);
-const cancelRecords=a.evIcsPrepare(syncRows,{},syncRecords,false);
+assert.equal(JSON.stringify(a.evIcsPrepare(syncRows,{},syncRecords,false)),JSON.stringify(syncRecords));
+const cancelRecords=a.evIcsPrepare(syncRows,{},syncRecords,false,{[syncKey]:true});
 assert.equal(cancelRecords[syncKey].sequence,2);assert.equal(cancelRecords[syncKey].cancelled,true);
 assert(a.evIcsFile(Object.values(cancelRecords),true).includes('STATUS:CANCELLED'));
 const deletedRows=a.evIcsRememberedRows([],'2026-09-01','2026-12-31',syncRecords);
 assert.equal(deletedRows[0].missing,true);
-assert.equal(a.evIcsPrepare(deletedRows,syncSelect,syncRecords,false)[syncKey].cancelled,true);
+assert.equal(a.evIcsPrepare(deletedRows,syncSelect,syncRecords,false)[syncKey].cancelled,false);
+assert.equal(a.evIcsPrepare(deletedRows,{},syncRecords,false,{[syncKey]:true})[syncKey].cancelled,true);
 const restored=a.evIcsPrepare(syncRows,syncSelect,cancelRecords,false);
 assert.equal(restored[syncKey].sequence,3);assert.equal(restored[syncKey].cancelled,false);
 a.auditImport({calendarExports:restored},'replace');assert.equal(a.evIcsRecords()[syncKey].sequence,3);
 a.auditImport({calendarExports:syncRecords},'merge');assert.equal(a.evIcsRecords()[syncKey].sequence,3);
 assert.throws(()=>a.validateImport({calendarExports:{bad:{}}}));
+assert.equal(a.evIcsExportRows(cancelRecords,{},{}).length,0); // no reenviar bajas históricas automáticamente
+assert.equal(a.evIcsExportRows(cancelRecords,{}, {[syncKey]:true}).length,1);
+assert.equal(a.evIcsExportRows(syncRecords,{},{}).length,0); // no reenviar eventos desmarcados
+assert.equal(a.evIcsExportRows(syncRecords,syncSelect,{}).length,1);
+const filterRows=a.evIcsCandidates([
+  {id:'g',kind:'grande',type:'Otros',title:'Grande inventado',start:'2026-10-01'},
+  {id:'p',kind:'puntual',type:'Otros',title:'Puntual inventado',start:'2026-10-01'}
+],'2026-10-01','2026-10-02');
+assert.equal(a.evIcsFilterRows(filterRows,'grande','Otros','inventado').length,1);
+assert.equal(a.evIcsFilterRows(filterRows,'puntual','Otros','inventado')[0].ev.id,'p');
+assert.equal(a.evIcsFilterRows(filterRows,'','', 'ausente').length,0);
+assert.equal(a.evIcsRememberedRows([],'2026-09-01','2026-12-31',cancelRecords).length,1); // baja repetible a petición
 console.log('ICS: cambios, bajas, reactivación, filtro sin bajas accidentales y backup OK');

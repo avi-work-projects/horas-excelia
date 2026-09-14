@@ -2671,22 +2671,36 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .home-summary-compact .ms-breakdown{font-size:.6rem}
 
 /* Selector de eventos para compartir por iCalendar */
-.ev-cal-export-sheet{display:flex;flex-direction:column;gap:12px}
-.ev-cal-export-sheet>.boda-config-head h3{font-size:1rem;margin:8px 0}
-.ev-cal-export-intro,.ev-cal-export-empty{font-size:.78rem;color:var(--text-muted);margin:0;line-height:1.5}
-.ev-cal-export-sheet .ev-date-row{display:flex;gap:12px}
+/* Selector de exportación: controles compactos y lista con espacio propio. */
+.ev-share-btn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:42px;padding:6px;border:1px solid #8b5e3445;border-radius:14px;color:#8b5e34;background:var(--surface);cursor:pointer}
+.ev-share-btn svg{width:30px;height:30px}.ev-share-btn:hover{background:var(--surface2)}
+.ev-cal-export-sheet{display:flex;flex-direction:column;gap:8px;height:92dvh;max-height:92dvh;overflow:hidden;padding:10px 14px 14px!important;box-sizing:border-box}
+.ev-cal-export-sheet>*{flex-shrink:0}.ev-cal-export-sheet .ev-detail-handle{margin:0 auto 2px}
+.ev-cal-export-sheet>.boda-config-head h3{font-size:1rem;margin:0}
+.ev-cal-export-sheet>.boda-config-head{margin:0}.ev-cal-export-sheet .sy-back{width:34px;height:34px}
+.ev-cal-export-intro,.ev-cal-export-empty{font-size:.74rem;color:var(--text-muted);margin:0;line-height:1.4}
+.ev-cal-export-sheet .ev-input{margin:0;padding:8px 10px;min-height:36px}
+.ev-cal-export-sheet .ev-date-row{display:flex;gap:10px;margin:8px 0}
 .ev-cal-export-sheet .ev-field{flex:1;min-width:0;margin:0;font-size:.75rem;color:var(--text-muted)}
+.ev-cal-export-filters{display:flex;gap:6px;overflow-x:auto;padding:2px 0;scrollbar-width:none}
+.ev-cal-export-filters .ev-filter-chip{opacity:1;min-height:30px;font-size:.72rem;flex-shrink:0;white-space:nowrap;padding:6px 10px;color:var(--text-muted);border:1px solid var(--border);background:var(--surface)}
+.ev-cal-export-filters .ev-filter-chip.active{color:#8b5e34;border-color:#8b5e34;background:var(--surface2)}
+.ev-cal-export-options{font-size:.74rem;color:var(--text-muted);max-height:25dvh;overflow:auto}
+.ev-cal-export-options summary{cursor:pointer;padding:4px 0}
 .ev-cal-export-tools{display:flex;gap:8px;justify-content:space-between}
-.ev-cal-export-tools .ev-io-btn{font-size:.72rem;padding:8px 10px}
-.ev-cal-export-list{min-height:90px;max-height:34dvh;overflow-y:auto;border:1px solid var(--border);border-radius:12px}
-.ev-cal-export-item{display:flex;align-items:center;gap:12px;padding:12px;border-bottom:1px solid var(--border);cursor:pointer}
+.ev-cal-export-tools .ev-io-btn{font-size:.7rem;padding:6px 8px}
+.ev-cal-export-list{scrollbar-color:var(--border) transparent;flex:1 1 160px;min-height:100px;overflow-y:auto;border:1px solid var(--border);border-radius:12px}
+.ev-cal-export-item{display:flex;align-items:center;gap:6px;padding:8px 10px;border-bottom:1px solid var(--border)}
 .ev-cal-export-item:last-child{border-bottom:0}
 .ev-cal-export-item:has(input:checked){background:var(--surface2)}
-.ev-cal-export-item span{min-width:0;flex:1}
-.ev-cal-export-item strong{display:block;font-size:.85rem;overflow-wrap:anywhere}
-.ev-cal-export-item small{display:block;font-size:.7rem;color:var(--text-muted);margin-top:5px}
-.ev-cal-export-empty{padding:14px}
-.ev-cal-export-notes{display:flex;align-items:center;gap:8px;font-size:.75rem}
-.ev-cal-export-footer p{font-size:.7rem;color:var(--text-muted);line-height:1.5;margin:0 0 12px}
-.ev-cal-export-footer .ev-io-btn{width:100%;padding:12px}
+.ev-cal-export-item label{display:flex;align-items:center;gap:9px;min-width:0;flex:1;cursor:pointer}
+.ev-cal-export-item input{flex-shrink:0}.ev-cal-export-item span{min-width:0;flex:1}
+.ev-cal-export-item strong{display:block;font-size:.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ev-cal-export-item small{display:block;font-size:.67rem;color:var(--text-muted);margin-top:3px}
+.ev-cal-export-remove{font:inherit;font-size:.67rem;color:var(--red,#c54444);background:transparent;border:1px solid currentColor;border-radius:8px;padding:6px;cursor:pointer}
+.ev-cal-export-item.removing{box-shadow:inset 3px 0 var(--red,#c54444)}
+.ev-cal-export-empty{padding:14px}.ev-cal-export-notes{display:flex;align-items:center;gap:8px;font-size:.75rem;margin:8px 0}
+.ev-cal-export-footer p{font-size:.68rem;color:var(--text-muted);line-height:1.4;margin:0 0 6px}
+.ev-cal-export-footer .ev-cal-export-warning{color:var(--red,#c54444);max-height:55px;overflow:auto}
+.ev-cal-export-footer .ev-io-btn{width:100%;padding:10px}
 .ev-cal-export-footer .ev-io-btn:disabled{opacity:.45;cursor:default}
