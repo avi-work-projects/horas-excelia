@@ -2697,10 +2697,13 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .ev-cal-export-item input{flex-shrink:0}.ev-cal-export-item span{min-width:0;flex:1}
 .ev-cal-export-item strong{display:block;font-size:.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ev-cal-export-item small{display:block;font-size:.67rem;color:var(--text-muted);margin-top:3px}
-.ev-cal-export-remove{font:inherit;font-size:.67rem;color:var(--red,#c54444);background:transparent;border:1px solid currentColor;border-radius:8px;padding:6px;cursor:pointer}
-.ev-cal-export-item.removing{box-shadow:inset 3px 0 var(--red,#c54444)}
 .ev-cal-export-empty{padding:14px}.ev-cal-export-notes{display:flex;align-items:center;gap:8px;font-size:.75rem;margin:8px 0}
 .ev-cal-export-footer p{font-size:.68rem;color:var(--text-muted);line-height:1.4;margin:0 0 6px}
 .ev-cal-export-footer .ev-cal-export-warning{color:var(--red,#c54444);max-height:55px;overflow:auto}
 .ev-cal-export-footer .ev-io-btn{width:100%;padding:10px}
 .ev-cal-export-footer .ev-io-btn:disabled{opacity:.45;cursor:default}
+
+.home-reminder-text{min-width:0;display:block;width:100%}
+.home-reminder-when{white-space:nowrap}
+.home-reminder-content{display:inline-block;max-width:100%;vertical-align:top}
+.ev-cal-export-status.changed{color:var(--c-orange)}

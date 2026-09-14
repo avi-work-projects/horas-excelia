@@ -3,6 +3,9 @@
    enviar, cumpleanos hoy/manana, VIP sin alarma, eventos hoy)
    ============================================================ */
 /* ── Home Popup: semanas sin marcar + VIP sin alarma ── */
+function homeReminderEventText(when,time,content){
+  return '<span class="home-reminder-text"><span class="home-reminder-when">&#128197; '+escHtml(when)+(time?' · '+escHtml(time):' · Sin hora')+'</span> <span class="home-reminder-content">'+escHtml(content)+'</span></span>';
+}
 function openHomePopup(){
   var csvWarnings=csvPendingWarnings(new Date());
   try{
@@ -37,7 +40,7 @@ function openHomePopup(){
       var diff=Math.round((bd-today)/86400000);
       if(diff>7||(typeof isBdayAlarmSet==='function'&&isBdayAlarmSet(b)))return;
       var when=diff===0?' (hoy)':diff===1?' (ma\u00f1ana)':' (en '+diff+'d)';
-      birthdays.push({days:diff,type:b.vip?'vip':'bday',text:(b.vip?'&#11088; ':'&#127874; ')+escHtml(b.name)+when+' — sin alarma'});
+      birthdays.push({days:diff,type:b.vip?'vip':'bday',text:(b.vip?'&#11088; ':'&#127874; ')+escHtml(b.name)+when+' → sin alarma'});
     });
   }
   if(typeof birthdays!=='undefined'){
@@ -53,15 +56,13 @@ function openHomePopup(){
       var evStart=new Date(ev.start+'T00:00:00');
       var diff=Math.round((evStart-today)/86400000);
       if(diff===0||diff===1){
-        var lbl=escHtml(ev.title)+(diff===0?' (\u00a1hoy!)':' (ma\u00f1ana!)');
-        var time=evTimeLabel(ev);
+        var time=evTimeLabel(ev),contenido=ev.title||getEvType(ev);
         if(isEvBarAlways(ev)){var ida=evTramos(ev).filter(function(tr){return tr.k==='ida';})[0];time=ida&&ida.t.time||'';}
         if(getEvType(ev)==='Ensayos boda'){
           var pareja=typeof bodaCouple==='function'&&ev.boda?bodaCouple(ev.boda.coupleId):null;
-          var contenido=pareja?'Ensayo — '+pareja.name:(ev.title||'Ensayo sin pareja asignada');
-          lbl=(diff===0?'Hoy':'Mañana')+' · '+(time?escHtml(time):'Sin hora')+' · '+escHtml(contenido);
-        }else if(time)lbl+=' · '+escHtml(time);
-        eventItems.push({days:diff,time:time||'',type:'event',text:'&#128197; '+lbl});
+          contenido=pareja?'Ensayo → '+pareja.name:(ev.title||'Ensayo sin pareja asignada');
+        }
+        eventItems.push({days:diff,time:time||'',type:'event',text:homeReminderEventText(diff===0?'Hoy':'Mañana',time,contenido)});
       }
       // Fin de eventos de más de 7 días
       if(ev.end&&ev.end>ev.start){
@@ -70,10 +71,9 @@ function openHomePopup(){
         if(span>7){
           var diffEnd=Math.round((evEnd-today)/86400000);
           if(diffEnd===0||diffEnd===1){
-            var endLbl=escHtml(ev.title)+' \u2014 fin'+(diffEnd===0?' hoy':' ma\u00f1ana')+'!';
             var vuelta=evTramos(ev).filter(function(tr){return tr.k==='vuelta';})[0];
-            if(vuelta&&vuelta.t.time)endLbl+=' · '+escHtml(vuelta.t.time);
-            eventItems.push({days:diffEnd,time:vuelta&&vuelta.t.time||'',type:'event',text:'&#128197; '+endLbl});
+            var endTime=vuelta&&vuelta.t.time||'';
+            eventItems.push({days:diffEnd,time:endTime,type:'event',text:homeReminderEventText(diffEnd===0?'Hoy':'Mañana',endTime,'Fin → '+ev.title)});
           }
         }
       }
