@@ -358,6 +358,7 @@ const REGLAS = [
       'excelia-calendar-notes-v1': 'calendarNotes',
       'excelia-calendar-uppercase-v1': 'calendarUppercase',
       'excelia-energy-history-v1': 'energyContracts',
+      'excelia-energy-bills-v1': 'energyBills',
       'excelia-vac-years':         'vacByYear',
       'excelia-bdays-v1':          'birthdays',
       'excelia-events-v1':         'events',
