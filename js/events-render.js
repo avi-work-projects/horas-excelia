@@ -514,7 +514,7 @@ function renderEvContent(){
     h+='<div class="sy-year-nav"><div class="sy-year">Rutinas</div></div>';
   } else if(EV_VIEW==='bodas'){
     h+='<div class="sy-year-nav"><div class="sy-year"><span class="wm-logo wm-logo-title" role="img" aria-label="Bodas · Wedding Moves"></span></div></div>';
-    h+='<div class="sy-hdr-right"><button class="sy-pdf bd-export-btn" id="evCalendarExport" title="Exportar eventos" aria-label="Exportar eventos"><svg viewBox="0 0 24 24" class="ico-exportar" aria-hidden="true"><path d="M12 3v10m0 0 4-4m-4 4-4-4M4 15v4a1.5 1.5 0 0 0 1.5 1.5h13A1.5 1.5 0 0 0 20 19v-4" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>';
+    h+='<div class="sy-hdr-right"><button class="ev-share-btn" id="evCalendarExport" title="Compartir eventos" aria-label="Compartir eventos"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 28C3 16 9 8 20 8V3L30 13L20 22V17C11 16 6 21 3 28Z" fill="currentColor" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></button></div>';
   } else if(EV_VIEW==='puentes'||EV_VIEW==='time-off'){
     h+='<div class="sy-year-nav"><button class="sy-nav" id="evPrev">&#9664;</button><div class="sy-year">'+EV_YEAR+'</div><button class="sy-nav" id="evNext">&#9654;</button></div>';
     h+='<div class="sy-hdr-right"><button class="sy-pdf" id="evSyPdf">PDF</button></div>';

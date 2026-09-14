@@ -199,7 +199,7 @@ Se muestra en Futuras y Todas, nunca en Activas/Pasadas. Se edita en el formular
 y viaja dentro de `bodas` en el backup. Las parejas antiguas siguen sin marcar.
 
 
-## Exportación selectiva a Google Calendar (v346)
+## Exportación selectiva a Google Calendar (v349)
 `js/events-calendar-export.js` añade el botón de exportar a la derecha del logo WM.
 Solo eventos guardados (sin ensayos, cumpleaños virtuales ni sesiones de rutina).
 Los grandes son continuos de día completo, con DTEND exclusivo; los puntuales con
@@ -209,15 +209,20 @@ hora usan Europe/Madrid. Repeticiones se expanden dentro del intervalo elegido
 El UID depende del id original; las ocurrencias múltiples añaden su fecha. Nunca
 regenerarlo por título, fechas del viaje o fecha de descarga. El registro
 `excelia-calendar-exports-v1` (`calendarExports` en el backup) conserva las filas,
-selecciones, revisión y bajas. Solo se guarda al completar compartir/solicitar descarga.
+revisión y bajas. Solo se guarda al completar compartir/solicitar descarga.
 No significa que Google haya recibido el archivo. Fusionar backups conserva la revisión
-más alta. Los ya compartidos siguen incluidos aunque se cambie el intervalo de búsqueda.
-Desmarcar o borrar genera STATUS:CANCELLED; conservar esas bajas permite reimportar.
-La UI enumera las bajas antes de descargar. Solo se exportan notas si se marca la opción.
+más alta. Los ya compartidos siguen disponibles aunque se cambie el intervalo de búsqueda.
+La selección empieza vacía. Desmarcar, filtrar o borrar en Gestify NO genera bajas.
+Solo «Retirar» marca una baja explícita (deshacible antes de exportar); la UI enumera sus nombres.
+`evIcsPrepare` conserva el registro histórico pero solo actualiza seleccionados/bajas explícitas.
+`evIcsExportRows` limita el archivo a esa selección; no reenvía históricos ni bajas antiguas
+por defecto. Estas siguen disponibles para repetir su baja explícitamente si faltó importarla.
+Los filtros de clase/subtipo y texto son independientes de las selecciones.
+ Solo se exportan notas si se marca la opción.
 
 Prueba real en Google Calendar (14/09/2026), con datos ficticios retirados al terminar:
 importar el mismo UID no duplicó el evento; una revisión posterior cambió título y fechas;
 STATUS:CANCELLED retiró el evento. Verificado también con archivos del serializador real.
 Es un intercambio manual: hay que importar el archivo más reciente en el MISMO calendario.
 No hay conexión automática, permisos OAuth, invitados ni modificaciones de ensayos.
-Al usar otro dispositivo se debe restaurar el backup para conservar selecciones y bajas.
+Al usar otro dispositivo se debe restaurar el backup para conservar identificadores, revisiones y bajas.
