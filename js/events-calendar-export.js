@@ -125,6 +125,7 @@ function renderEvCalendarExport(){
   return '<div class="ev-detail-overlay" id="evCalendarExportOv"><div class="ev-detail-sheet ev-cal-export-sheet">'
     +'<div class="ev-detail-handle"></div><div class="boda-config-head"><button class="sy-back" id="evCalendarExportClose" aria-label="Volver">&#8592;</button><h3>Compartir eventos</h3><span></span></div>'
     +'<p class="ev-cal-export-intro">Añade o actualiza tu selección en Google Calendar.</p>'
+    +'<div class="ev-cal-export-tabs"><button id="evIcsBrowse" aria-pressed="true">Buscar eventos</button><button id="evIcsSelected" aria-pressed="false">Seleccionados (0)</button></div>'
     +'<input class="ev-input" id="evIcsSearch" type="search" placeholder="Buscar evento" aria-label="Buscar evento para exportar">'
     +'<div id="evIcsKinds" class="ev-cal-export-filters" aria-label="Clase de evento"></div><div id="evIcsTypes" class="ev-cal-export-filters ev-cal-export-types" aria-label="Categoría de evento"></div>'
     +'<details class="ev-cal-export-options"><summary>Fechas y opciones</summary><div class="ev-date-row"><label class="ev-field">Desde<input class="ev-input" id="evIcsFrom" type="date" value="'+F.from+'"></label><label class="ev-field">Hasta<input class="ev-input" id="evIcsTo" type="date" value="'+F.to+'"></label></div>'
@@ -132,19 +133,20 @@ function renderEvCalendarExport(){
     +'<div class="ev-cal-export-tools"><button class="ev-io-btn" id="evIcsAll">Seleccionar visibles</button><button class="ev-io-btn" id="evIcsNone">Limpiar selección</button></div>'
     +'<div id="evIcsList" class="ev-cal-export-list"></div>'
     +'<div class="ev-cal-export-footer"><p id="evIcsChanges" aria-live="polite"></p><p>El archivo añade o actualiza. Nunca borra eventos. Los borrados se hacen manualmente en Google.</p>'
-    +'<button class="ev-io-btn io-primaria" id="evIcsDownload" disabled>Exportar selección</button></div></div></div>';
+    +'<button class="ev-io-btn io-primaria" id="evIcsDownload" disabled>Exportar selección</button><a id="evIcsRetry" class="ev-cal-export-retry" download="gestify-eventos.ics" hidden>Descargar archivo de nuevo</a></div></div></div>';
 }
 function openEvCalendarExport(){
   var today=new Date(),until=new Date(today);until.setFullYear(until.getFullYear()+1);
-  EV_CAL_EXPORT={from:evDk(today),to:evDk(until),kind:'',type:'',selected:Object.create(null),rows:[],visible:[],records:evIcsRecords()};
-  var close=function(){cerrarPanel('evCalendarExportWrap','evCalendarExportOv');};
+  EV_CAL_EXPORT={from:evDk(today),to:evDk(until),kind:'',type:'',view:'browse',selected:Object.create(null),rows:[],visible:[],records:evIcsRecords()};
+  var close=function(){var url=EV_CAL_EXPORT.downloadUrl;if(url)setTimeout(function(){URL.revokeObjectURL(url);},60000);cerrarPanel('evCalendarExportWrap','evCalendarExportOv');};
   var wrap=abrirPanel('evCalendarExportWrap',renderEvCalendarExport(),{overlay:'evCalendarExportOv',alCerrar:close});
   if(!wrap)return;
   var find=function(id){return wrap.querySelector('#'+id);},F=EV_CAL_EXPORT;
   function count(){
     var chosen=F.rows.filter(function(r){return F.selected[r.key]&&!r.missing;}),b=find('evIcsDownload');
     var repeat=chosen.filter(function(r){return F.status[r.key]==='repeat';}),changed=chosen.filter(function(r){return F.status[r.key]==='changed';});
-    b.disabled=!chosen.length;b.textContent='Exportar '+chosen.length+' evento'+(chosen.length===1?'':'s');
+    b.disabled=!chosen.length;b.textContent='Descargar .ics ('+chosen.length+')';
+    find('evIcsSelected').textContent='Seleccionados ('+chosen.length+')';
     find('evIcsChanges').textContent=changed.length?'⚠ Cambios desde la última exportación: '+changed.map(function(r){return r.ev.title;}).join(', ')+(repeat.length?' · '+repeat.length+' ya exportados sin cambios':'')
       :repeat.length?'↻ Ya exportados sin cambios: '+repeat.map(function(r){return r.ev.title;}).join(', '):chosen.length+' seleccionados · '+F.visible.length+' visibles';
     find('evIcsChanges').classList.toggle('ev-cal-export-warning',!!(repeat.length||changed.length));
@@ -157,16 +159,24 @@ function openEvCalendarExport(){
   }
   function list(){
     F.status={};F.rows.forEach(function(r){F.status[r.key]=evIcsExportStatus(r,F.records[r.key],find('evIcsNotes').checked);});
-    F.visible=evIcsFilterRows(F.rows,F.kind,F.type,find('evIcsSearch').value);
+    F.visible=F.view==='selected'?F.rows.filter(function(r){return F.selected[r.key]&&!r.missing;}):evIcsFilterRows(F.rows,F.kind,F.type,find('evIcsSearch').value);
+    ['evIcsSearch','evIcsKinds','evIcsTypes','evIcsAll'].forEach(function(id){find(id).hidden=F.view==='selected';});
+    find('evIcsBrowse').setAttribute('aria-pressed',F.view==='browse');find('evIcsSelected').setAttribute('aria-pressed',F.view==='selected');
     find('evIcsList').innerHTML=F.visible.length?F.visible.map(function(r,i){
       var old=F.records[r.key],status=F.status[r.key],date=_fmtDayEs(r.start)+(r.end!==r.start?' – '+_fmtDayEs(r.end):'');
       return '<div class="ev-cal-export-item"><label><input type="checkbox" data-ics-index="'+i+'"'+(F.selected[r.key]&&!r.missing?' checked':'')+(r.missing?' disabled':'')+'><span><strong>'+escHtml(r.ev.title||getEvType(r.ev))+'</strong><small>'+escHtml(date+' · '+getEvType(r.ev))+'</small>'
         +(old?'<small class="ev-cal-export-status'+(status==='repeat'?'':' changed')+'">'+(status==='missing'?'⚠ Eliminado en Gestify → revisa Google manualmente':status==='changed'?'⚠ Cambios desde la última exportación':'↻ Ya exportado · sin cambios')+'</small>':'')+'</span></label></div>';
-    }).join(''):'<p class="ev-cal-export-empty">No hay eventos con estos filtros. Puedes ampliar las fechas en «Fechas y opciones» (máximo dos años).</p>';
+    }).join(''):'<p class="ev-cal-export-empty">'+(F.view==='selected'?'Tu lista está vacía. Marca eventos en «Buscar eventos» para añadirlos aquí.':'No hay eventos con estos filtros. Puedes ampliar las fechas en «Fechas y opciones» (máximo dos años).')+'</p>';
     count();
   }
-  function dates(){F.from=find('evIcsFrom').value;F.to=find('evIcsTo').value;F.rows=evIcsRememberedRows(EVENTS,F.from,F.to,F.records);filters();list();}
+  function dates(){
+    F.from=find('evIcsFrom').value;F.to=find('evIcsTo').value;
+    var previous=F.rows;F.rows=evIcsRememberedRows(EVENTS,F.from,F.to,F.records);
+    previous.forEach(function(r){if(F.selected[r.key]&&!F.rows.some(function(next){return next.key===r.key;}))F.rows.push(r);});
+    F.rows.sort(function(a,b){return a.start.localeCompare(b.start);});filters();list();
+  }
   find('evCalendarExportClose').onclick=close;
+  find('evIcsBrowse').onclick=function(){F.view='browse';list();};find('evIcsSelected').onclick=function(){F.view='selected';list();};
   find('evIcsFrom').onchange=dates;find('evIcsTo').onchange=dates;find('evIcsSearch').oninput=list;find('evIcsNotes').onchange=list;
   find('evIcsKinds').onclick=function(e){var b=e.target.closest('[data-kind]');if(!b)return;F.kind=b.getAttribute('data-kind');F.type='';filters();list();};
   find('evIcsTypes').onclick=function(e){var b=e.target.closest('[data-type]');if(!b)return;F.type=b.getAttribute('data-type');filters();list();};
@@ -181,8 +191,11 @@ function openEvCalendarExport(){
     if(blob.size>1000000){showToast('Selecciona menos eventos: Google admite archivos de hasta 1 MB','error');return;}
     shareOrDownload(blob,'gestify-eventos.ics',function(){
       appStorage.setItem(EV_ICS_KEY,JSON.stringify(next));F.records=next;
-      showToast('Archivo preparado. Impórtalo en el mismo calendario de Google','success');dates();
-    });
+      showToast('Descarga iniciada. Busca gestify-eventos.ics en Descargas','success');dates();
+    },{download:true,onDownloadReady:function(url){
+      var previous=F.downloadUrl;if(previous)setTimeout(function(){URL.revokeObjectURL(previous);},60000);
+      F.downloadUrl=url;find('evIcsRetry').href=url;find('evIcsRetry').hidden=false;
+    }});
   };
   dates();
 }

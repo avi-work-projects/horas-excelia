@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v351 - guiones en los recordatorios';
+var APP_VERSION = 'v352 - selección de eventos y descargas';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -245,24 +245,34 @@ function hBarRows(rows,opts){
 }
 
 // ── Compartir / descargar archivo ────────────────────────────
-function shareOrDownload(blob,filename,onSuccess){
-  if(navigator.share&&navigator.canShare){
-    var file=new File([blob],filename,{type:blob.type});
-    if(!navigator.canShare({files:[file]})){
-      file=new File([blob],filename,{type:'application/octet-stream'});
-    }
-    if(navigator.canShare({files:[file]})){
-      navigator.share({files:[file],title:filename}).then(function(){if(onSuccess)onSuccess();}).catch(function(){});
-      return;
+function shareOrDownload(blob,filename,onSuccess,options){
+  options=options||{};
+  function download(){
+    var url=null,a=null;
+    try{
+      url=URL.createObjectURL(blob);a=document.createElement('a');
+      a.href=url;a.download=filename;if(options.onDownloadReady)options.onDownloadReady(url);document.body.appendChild(a);a.click();
+      if(onSuccess)onSuccess();
+    }catch(err){showToast('No se pudo descargar el archivo. Vuelve a intentarlo','error');}
+    finally{
+      if(a&&a.parentNode)a.parentNode.removeChild(a);
+      // Android puede resolver el enlace después del click: no revocar al instante.
+      if(url&&!options.onDownloadReady)setTimeout(function(){URL.revokeObjectURL(url);},60000);
     }
   }
-  var url=URL.createObjectURL(blob);
-  var a=document.createElement('a');
-  a.href=url;a.download=filename;
-  document.body.appendChild(a);a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  if(onSuccess)onSuccess();
+  if(!options.download&&navigator.share&&navigator.canShare){
+    try{
+      var file=new File([blob],filename,{type:blob.type});
+      if(!navigator.canShare({files:[file]}))file=new File([blob],filename,{type:'application/octet-stream'});
+      if(navigator.canShare({files:[file]})){
+        navigator.share({files:[file],title:filename}).then(function(){if(onSuccess)onSuccess();}).catch(function(err){
+          if(err&&err.name==='AbortError')return;
+          download();
+        });return;
+      }
+    }catch(err){} // API no disponible o formato no admitido: descargar.
+  }
+  download();
 }
 
 // ── Utilidades HTML ─────────────────────────────────────────

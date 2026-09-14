@@ -2707,3 +2707,18 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .home-reminder-when{white-space:nowrap}
 .home-reminder-content{display:inline-block;max-width:100%;vertical-align:top}
 .ev-cal-export-status.changed{color:var(--c-orange)}
+
+/* Colores por tramo, compartidos entre las dos vistas de próximos cumpleaños. */
+.ev-week-sep.bday-group-past{background:#66708525;color:var(--text-muted)}
+.ev-week-sep.bday-group-today{background:#39a66b30;color:var(--c-green)}
+.ev-week-sep.bday-group-tomorrow{background:#d9943030;color:var(--c-orange)}
+.ev-week-sep.bday-group-week{background:#4b94d430;color:var(--c-blue)}
+.ev-week-sep.bday-group-fortnight{background:#a078cf30;color:var(--c-purple)}
+.ev-week-sep.bday-group-later{background:#3babab25;color:var(--text-muted)}
+.ev-cal-export-tabs{display:flex;gap:6px}
+.ev-cal-export-tabs button{flex:1;padding:9px 5px;border:1px solid #8b5e3470;border-radius:10px;background:var(--surface);color:#8b5e34;font:inherit;font-size:.75rem;cursor:pointer}
+.ev-cal-export-tabs button[aria-pressed="true"]{background:#8b5e3425}
+.ev-cal-export-sheet [hidden]{display:none!important}
+
+[data-theme="light"] .ev-week-sep.bday-group-today,.ev-week-sep.bday-group-today{background:#39a66b30;color:var(--c-green);border-color:#39a66b60}
+.ev-cal-export-retry{display:block;text-align:center;font-size:.72rem;color:var(--accent);padding-top:8px}

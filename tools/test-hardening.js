@@ -261,3 +261,25 @@ assert.equal(a.evIcsFilterRows(filterRows,'puntual','Otros','inventado')[0].ev.i
 assert.equal(a.evIcsFilterRows(filterRows,'','', 'ausente').length,0);
 assert.equal(a.evIcsRememberedRows([],'2026-09-01','2026-12-31',cancelRecords).length,1); // historial antiguo sigue legible
 console.log('ICS: avisos de cambios/reexportación, cero cancelaciones y backup OK');
+
+// El diálogo nativo rechazado no puede tragarse una exportación; descarga directa en móvil.
+(async function testDownloads(){
+  function env(share,canShare){
+    const c=cargarApp({}),state={clicks:0,success:0,revoked:0,timers:[]};
+    c.navigator={share,canShare};c.File=function(parts,name,opts){this.name=name;this.type=opts.type;};
+    c.URL={createObjectURL:()=> 'blob:test',revokeObjectURL:()=>state.revoked++};
+    c.setTimeout=(fn,ms)=>{state.timers.push({fn,ms});};
+    c.document.body={appendChild(el){el.parentNode=this;},removeChild(el){el.parentNode=null;}};
+    c.document.createElement=()=>({click(){state.clicks++;}});c.showToast=()=>{};
+    return {c,state,run:opts=>c.shareOrDownload({type:'text/calendar'},'test.ics',()=>state.success++,opts)};
+  }
+  let x=env(()=>Promise.reject({name:'NotAllowedError'}),()=>true);x.run();
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(x.state.clicks,1);assert.equal(x.state.success,1);assert.equal(x.state.revoked,0);
+  assert(x.state.timers[0].ms>=1000);x.state.timers[0].fn();assert.equal(x.state.revoked,1);
+  x=env(()=>Promise.reject({name:'AbortError'}),()=>true);x.run();
+  await new Promise(resolve=>setImmediate(resolve));assert.equal(x.state.clicks,0);assert.equal(x.state.success,0);
+  x=env(()=>{throw Error('No debe abrir compartir');},()=>true);x.run({download:true});assert.equal(x.state.clicks,1);
+  x=env(()=>{},()=>{throw Error('Formato no admitido');});x.run();assert.equal(x.state.clicks,1);
+  console.log('Descargas: rechazo recuperable, cancelar, enlace diferido y descarga directa OK');
+})().catch(err=>{console.error(err);process.exitCode=1;});
