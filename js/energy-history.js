@@ -17,6 +17,7 @@ function validateEnergyContracts(list){
     ['start','end','commitment'].forEach(function(k){if(c[k]&&!validIsoDate(c[k]))throw new Error('Fecha de contrato no válida');});
     if(c.start&&c.end&&c.end<c.start)throw new Error('El fin no puede ser anterior al inicio');
     if(['incluidos','excluidos','desconocido'].indexOf(c.taxes)<0)throw new Error('Indica cómo están expresados los impuestos');
+    if(c.analysis!=null)energyValidateTariff(c.analysis);
     if(!Array.isArray(c.prices)||c.prices.length>50)throw new Error('Precios no válidos');
     c.prices.forEach(function(p){if(!p||typeof p.label!=='string'||!p.label.trim()||p.label.length>100||typeof p.unit!=='string'||!p.unit.trim()||p.unit.length>60||typeof p.value!=='number'||!Number.isFinite(p.value)||p.value<0)throw new Error('Revisa los conceptos y precios');});
   });
@@ -28,12 +29,12 @@ function energyMergeContracts(current,incoming){
   var result=JSON.parse(JSON.stringify(current));
   incoming.forEach(function(c){
     var i=result.findIndex(function(x){return x.id===c.id||energyContractSignature(x)===energyContractSignature(c);});
-    if(i<0)result.push(c);else result[i]=Object.assign({},c,{id:result[i].id});
+    if(i<0)result.push(c);else result[i]=Object.assign({},result[i],c,{id:result[i].id});
   });
   validateEnergyContracts(result);return result;
 }
 function energySaveContracts(list){validateEnergyContracts(list);appStorage.setItem(ENERGY_HISTORY_KEY,JSON.stringify(list));}
-function energyHistoryButton(kind){return '<button class="ev-io-btn energy-history-open" data-energy-kind="'+kind+'">Histórico de contratos</button> <button class="ev-io-btn energy-bills-open" data-energy-kind="'+kind+'">Facturas y consumo</button>';}
+function energyHistoryButton(kind){return '<button class="ev-io-btn io-primaria energy-analysis-open" data-energy-kind="'+kind+'">Consumo y tarifas</button> <button class="ev-io-btn energy-history-open" data-energy-kind="'+kind+'">Histórico de contratos</button> <button class="ev-io-btn energy-bills-open" data-energy-kind="'+kind+'">Facturas y consumo</button>';}
 function energyContractStatus(c){
   var today=dk(new Date());
   return c.end&&c.end<today?'Finalizado':c.start&&c.start>today?'Próximo':c.start?(c.end?'En vigencia':'Sin cierre registrado'):'Fechas pendientes';
@@ -59,11 +60,11 @@ function energyHistoryHtml(kind){
 }
 function openEnergyHistory(kind){
   var wrap=abrirPanel('energyHistoryWrap','<div class="ev-detail-overlay open" id="energyHistoryOverlay"><div class="ev-detail-sheet energy-sheet">'+energyHistoryHtml(kind)+'</div></div>',{overlay:'energyHistoryOverlay',contenedor:document.getElementById('fiscalOverlay')});
-  wrap.querySelector('#energyBack').onclick=function(){cerrarPanel('energyHistoryWrap','energyHistoryOverlay');};
+  wrap.querySelector('#energyBack').onclick=function(){cerrarPanel('energyHistoryWrap','energyHistoryOverlay');energyRefreshAnalysis(kind);};
   wrap.querySelector('#energyAdd').onclick=function(){openEnergyContract(kind);};
   wrap.querySelectorAll('[data-energy-edit]').forEach(function(b){b.onclick=function(){openEnergyContract(kind,b.dataset.energyEdit);};});
   wrap.querySelector('#energyExport').onclick=function(){
-    var data={version:7,energyContracts:energyContracts().filter(function(c){return c.kind===kind;})};
+    var data={version:7,energyTaxes:energyTaxes(),energyContracts:energyContracts().filter(function(c){return c.kind===kind;})};
     shareOrDownload(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),'gestify-contratos-'+kind+'.json',null,{download:true});
   };
   var input=wrap.querySelector('#energyFile');
@@ -110,4 +111,4 @@ function openEnergyContract(kind,id){
   };
   var del=wrap.querySelector('#energyDelete');if(del)del.onclick=function(){var prev=energyContracts();energySaveContracts(prev.filter(function(x){return x.id!==id;}));close();openEnergyHistory(kind);showToast('Contrato eliminado','success',function(){energySaveContracts(prev);openEnergyHistory(kind);});};
 }
-function bindEnergyHistory(){document.querySelectorAll('.energy-bills-open').forEach(function(b){b.onclick=function(){openEnergyBills(b.dataset.energyKind);};});document.querySelectorAll('.energy-history-open').forEach(function(b){b.onclick=function(){openEnergyHistory(b.dataset.energyKind);};});}
+function bindEnergyHistory(){document.querySelectorAll('.energy-analysis-open').forEach(function(b){b.onclick=function(){openEnergyAnalysis(b.dataset.energyKind);};});document.querySelectorAll('.energy-bills-open').forEach(function(b){b.onclick=function(){openEnergyBills(b.dataset.energyKind);};});document.querySelectorAll('.energy-history-open').forEach(function(b){b.onclick=function(){openEnergyHistory(b.dataset.energyKind);};});}

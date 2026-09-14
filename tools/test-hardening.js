@@ -368,3 +368,16 @@ energy.energyRestoreHistory(beforeEnergy);assert.equal(energy.energyBills().leng
 assert.throws(()=>energy.energyImportHistory({energyBills:[{...bill,gross:Infinity}]}));
 assert.equal(energy.energyBills().length,1);
 console.log('Facturas: importación, identidad, abonos, datos ausentes y agrupación por emisión OK');
+
+const energyTaxFixture=[{kind:'luz',start:'2025-01-01',rate:21}];
+a.auditImport({version:7,energyTaxes:energyTaxFixture},'merge');
+a.auditImport({version:7,energyTaxes:energyTaxFixture},'merge');
+assert.equal(a.energyTaxes().length,1);
+a.auditImport({version:7,days:{}},'merge');assert.equal(a.energyTaxes().length,1);
+const tariffFixture=a.energyTariffDefaults({energyMode:'tramos',periodPrices:[0.3,0.2,0.1],periodWeights:[20,30,50]});
+a.auditImport({version:7,energyContracts:[{...contract,analysis:tariffFixture}]},'merge');
+a.auditImport({version:7,energyContracts:[contract]},'merge');
+assert.equal(a.energyContracts()[0].analysis.periodWeights[2],50);
+assert.throws(()=>a.validateImport({despacho:{elect:{...tariffFixture,periodWeights:[0,0,0]}}}));
+a.auditImport({version:7,energyTaxes:[]},'replace');assert.equal(a.energyTaxes().length,0);
+console.log('Energía: backup de IVA, tarifas ponderadas e importación de archivos anteriores OK');

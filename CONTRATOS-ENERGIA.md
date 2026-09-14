@@ -49,3 +49,25 @@ Las gráficas agrupan por **mes de emisión**, también cuando el período cruza
 Los contratos mantienen precios/unidades originales y no se recalculan con un IVA actual: los impuestos pueden cambiar. Si no hay fecha acreditada de cambio de precio, se describen las observaciones por factura en lugar de inventar una fecha de vigencia. Para fechas documentadas, registrar etapas separadas.
 
 Pruebas añadidas: identidad entre dispositivos, importación repetida, campos ausentes, cero, abonos, consumo fraccionario, agrupación anual por emisión, importación general y restauración. La vista se revisa en Edge con un almacenamiento aislado de prueba.
+
+
+## Estudio de consumo y tarifas (v360)
+
+Acceso: Configuración fiscal → Hipoteca y facturas → Gas/Electricidad → Consumo y tarifas. Tres vistas: Consumo, Tarifas y Comparar; las facturas originales siguen aparte.
+
+- `energy-analysis.js`: motor puro compartido, validación de tarifas, IVA y prorrateo.
+- `energy-analysis-view.js`: vistas, navegación y editor de períodos de IVA.
+- `energy-tariff-editor.js`: formulario común para contratos y escenarios; copia explícita entre ambos, sin sustituir silenciosamente la tarifa actual.
+- `tools/test-energy.js`: invariantes numéricas y regresión de los cálculos anteriores.
+
+Cada contrato admite `analysis` opcional. Usa las mismas claves que los escenarios (`modo`, `precioKwh`, `cuotaFija`, `terminoFijo`, `terminoFijoDia`, precios y potencias P1/P2). `energyMode` distingue `unico`/`tramos`; `periodPrices` y `periodWeights` tienen tres números, los pesos suman 100 %. El editor calcula `precioKwh` para mantener compatibles las vistas antiguas; el motor usa siempre la ponderación original. `useOwnPower` permite que una alternativa configurada tenga su propia potencia; las antiguas conservan la potencia de la tarifa actual.
+
+`modo: fijo` sustituye energía, potencia y términos fijos por una cuota mensual. El estudio nuevo prorratea por días reales de cada mes; los escenarios existentes mantienen su convenio de 30 días. `otherTaxPct` y `otherTaxKwh` son aproximaciones opcionales anteriores al IVA; `promotion` es descuento mensual después de impuestos, desactivado por defecto y prorrateado en meses parciales. No es una reproducción fiscal exacta de una factura.
+
+El IVA se almacena en `excelia-energy-tax-v1` y viaja como `energyTaxes` en el backup general y en los exports específicos. Cada registro: `{kind: 'luz'|'gas', start: 'YYYY-MM-DD', rate: número}`. Vale desde su fecha hasta el siguiente cambio del mismo suministro. No se aplica un IVA actual al pasado ni se preinstala un calendario fiscal supuesto: los períodos deben proceder del suministro del usuario. Sin período conocido, la comparación con impuestos muestra Sin dato. En el estudio aproximado se aplica por fecha de consumo, no se reproduce la regla de devengo de cada factura.
+
+Los consumos e importes se distribuyen uniformemente entre las fechas de cada factura. Si dos recibos de consumo comparten exactamente la fecha límite, se asigna al siguiente para evitar contar dos veces ese día. Los importes y kWh totales se conservan. Se muestran cobertura y meses parciales; no se extrapola a meses completos. Solapamientos o consumo desconocido impiden simular ese mes. El campo opcional `noReading` de una factura indica consumo no acreditado para el estudio (p.ej. cero impreso sin nueva lectura): mantiene el dato documental, pero no lo interpreta como consumo doméstico cero.
+
+La comparación aplica un contrato elegido a los días con consumo, independientemente de su vigencia histórica: es el contrafactual de mantenerlo todo el período. La columna facturada usa el total con impuestos, antes de saldo externo. Diferencia positiva significa menor coste simulado. Los abonos negativos siguen en tablas, como en el gráfico compartido de facturas.
+
+Compatibilidad: al añadir un backup antiguo sin `analysis`, `noReading` o `energyTaxes`, se conservan los datos nuevos existentes. Reemplazar sigue la semántica del importador general. El importador específico fusiona IVA por suministro/fecha en la misma transacción que contratos y facturas; Deshacer restaura los tres bloques.

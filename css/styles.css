@@ -2768,3 +2768,6 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .energy-field textarea{box-sizing:border-box;width:100%;min-height:64px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:9px;padding:10px}
 
 .energy-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}.energy-fields .energy-field{margin:0;min-width:0}.energy-fields .energy-field:first-child{grid-column:1/-1}.energy-fields input{font-size:13px}.energy-price-view b{white-space:nowrap}
+
+/* Estudio energético: controles compactos y separación entre apartados. */
+.energy-choice-list{display:grid;gap:10px;margin:14px 0}.energy-choice-list label,.energy-promo{display:flex;align-items:center;gap:8px}.energy-promo{margin:14px 0}.energy-tax-row{display:grid;grid-template-columns:1fr 90px 36px;gap:10px;align-items:end;margin:12px 0}.energy-tax-row .energy-field{margin:0}.energy-sheet form>h3{margin:20px 0 10px}.energy-sheet [hidden]{display:none!important}.energy-sheet .econ-sub-tabs{flex-shrink:0}.energy-sheet th,.energy-sheet td{padding:7px 5px}.energy-sheet form>.ev-io-btn{width:100%;margin-top:16px}
