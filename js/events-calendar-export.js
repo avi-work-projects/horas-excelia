@@ -142,7 +142,7 @@ function renderEvCalendarExport(){
 }
 function openEvCalendarExport(){
   var today=new Date(),until=new Date(today);until.setFullYear(until.getFullYear()+1);
-  EV_CAL_EXPORT={from:evDk(today),to:evDk(until),kind:'grande',type:'',excluded:{'grande|Otros':true},view:'browse',selected:Object.create(null),rows:[],visible:[],records:evIcsRecords()};
+  EV_CAL_EXPORT={from:evDk(today),to:evDk(until),kind:'grande',type:'',excluded:{'grande|Otros':true,'puntual|Cumpleaños VIP':true},view:'browse',selected:Object.create(null),rows:[],visible:[],records:evIcsRecords()};
   var close=function(){var url=EV_CAL_EXPORT.downloadUrl;if(url)setTimeout(function(){URL.revokeObjectURL(url);},60000);cerrarPanel('evCalendarExportWrap','evCalendarExportOv');};
   var wrap=abrirPanel('evCalendarExportWrap',renderEvCalendarExport(),{overlay:'evCalendarExportOv',alCerrar:close});
   if(!wrap)return;
@@ -159,8 +159,8 @@ function openEvCalendarExport(){
   function filters(){
     find('evIcsKinds').innerHTML=[['','Todos'],['grande','Grandes'],['puntual','Puntuales']].map(function(k){return '<button type="button" class="ev-filter-chip'+(F.kind===k[0]?' active':'')+'" data-kind="'+k[0]+'" aria-pressed="'+(F.kind===k[0])+'">'+k[1]+'</button>';}).join('');
     var types=[];F.rows.forEach(function(r){var t=getEvType(r.ev),kind=getEvKind(r.ev),key=kind+'|'+t;if((!F.kind||kind===F.kind)&&!types.some(function(x){return x.key===key;}))types.push({key:key,title:t,kind:kind});});
-    types.sort(function(a,b){return a.title.localeCompare(b.title)||a.kind.localeCompare(b.kind);});
-    find('evIcsTypes').innerHTML=types.map(function(t){var on=!F.excluded[t.key],label=t.title+(!F.kind&&t.title==='Otros'?(t.kind==='grande'?' (grandes)':' (puntuales)'):'');return '<button type="button" class="ev-filter-chip'+(on?' active':' excluded')+'" data-type="'+escHtml(t.key)+'" aria-pressed="'+on+'" aria-label="'+escHtml((on?'Excluir ':'Incluir ')+label)+'">'+(on?'✓ ':'× ')+escHtml(label)+'</button>';}).join('');
+    types.sort(function(a,b){return (a.title==='Cumpleaños VIP')-(b.title==='Cumpleaños VIP')||a.title.localeCompare(b.title)||a.kind.localeCompare(b.kind);});
+    find('evIcsTypes').innerHTML=types.map(function(t){var on=!F.excluded[t.key],label=(t.title==='Cumpleaños VIP'?'VIP':t.title==='Rec. Gestiones'?'Rec. Gestion':t.title)+(!F.kind&&t.title==='Otros'?(t.kind==='grande'?' (grandes)':' (puntuales)'):'');return '<button type="button" class="ev-filter-chip'+(on?' active':' excluded')+'" data-type="'+escHtml(t.key)+'" aria-pressed="'+on+'" aria-label="'+escHtml((on?'Excluir ':'Incluir ')+label)+'">'+(on?'✓ ':'× ')+escHtml(label)+'</button>';}).join('');
   }
   function list(){
     F.status={};F.rows.forEach(function(r){F.status[r.key]=evIcsExportStatus(r,F.records[r.key],find('evIcsNotes').checked,find('evIcsAuthor').value);});
