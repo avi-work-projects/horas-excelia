@@ -356,6 +356,7 @@ const REGLAS = [
       'excelia-calendar-exports-v1': 'calendarExports',
       'excelia-calendar-author-v1': 'calendarAuthor',
       'excelia-calendar-notes-v1': 'calendarNotes',
+      'excelia-calendar-uppercase-v1': 'calendarUppercase',
       'excelia-vac-years':         'vacByYear',
       'excelia-bdays-v1':          'birthdays',
       'excelia-events-v1':         'events',

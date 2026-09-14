@@ -715,6 +715,7 @@ function evStartTime(ev){
   if(getEvType(ev)==='Ensayos boda')return (ev.boda&&ev.boda.time)||null;
   return ev.time||null;
 }
+function evCompareTime(a,b){return (evStartTime(a)||'').localeCompare(evStartTime(b)||'');}
 function evEndTime(ev){
   if(!ev)return null;
   if(ev._rut)return (typeof rutFin==='function')?rutFin(ev._rutTime,ev._rutDur||rutDurationOn(ev._rut,ev.start)):null;

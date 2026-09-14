@@ -301,3 +301,14 @@ assert.equal(a.evIcsAuthor(),'');
 assert.equal(a.validateImport({calendarAuthor:'PRUEBA'}).calendarAuthor,'PRUEBA');
 assert.throws(()=>a.validateImport({calendarAuthor:{}}));
 console.log('ICS: exclusiones por categoría, firma configurable y trayectos sin notas OK');
+
+const ordered=[{id:'ensayo',type:'Ensayos boda',boda:{time:'21:30'}},{id:'rut',_rutTime:'18:00'},{id:'cita',time:'16:35'},{id:'sin'}].sort(a.evCompareTime);
+assert.deepEqual(ordered.map(e=>e.id),['sin','cita','rut','ensayo']);
+const uppercaseRec=a.evIcsPrepare(travelRows,travelSelect,{},false,'Prueba',true);
+assert.equal(uppercaseRec[travelRows[0].key].ev.title,'VIAJE INVENTADO - PRUEBA');
+assert.equal(travel.title,'Viaje inventado');
+assert.equal(a.evIcsExportStatus(travelRows[0],uppercaseRec[travelRows[0].key],false,'Prueba',true),'repeat');
+assert.equal(a.evIcsExportStatus(travelRows[0],uppercaseRec[travelRows[0].key],false,'Prueba',false),'changed');
+assert.equal(a.validateImport({calendarUppercase:true}).calendarUppercase,true);
+assert.throws(()=>a.validateImport({calendarUppercase:'true'}));
+console.log('Exportación: mayúsculas sin modificar original y orden horario de todos los tipos OK');

@@ -2742,3 +2742,8 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 
 .ev-cal-export-settings{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface2)}
 .ev-cal-export-settings .ev-cal-export-intro{font-size:.65rem}
+
+.ev-cal-export-settings{padding:7px 9px}
+.ev-cal-export-settings .ev-cal-export-signature{display:flex;flex-direction:row;align-items:center;gap:10px;text-align:left}
+.ev-cal-export-signature .ev-input{flex:1;min-width:0;min-height:30px;padding:5px 8px}
+.ev-cal-export-settings .ev-cal-export-notes{margin:5px 0;font-size:.7rem}
