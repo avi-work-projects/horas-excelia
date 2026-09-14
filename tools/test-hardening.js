@@ -283,3 +283,21 @@ console.log('ICS: avisos de cambios/reexportación, cero cancelaciones y backup 
   x=env(()=>{},()=>{throw Error('Formato no admitido');});x.run();assert.equal(x.state.clicks,1);
   console.log('Descargas: rechazo recuperable, cancelar, enlace diferido y descarga directa OK');
 })().catch(err=>{console.error(err);process.exitCode=1;});
+
+// Exclusiones independientes de Otros grande y puntual; el reset no deja exclusiones.
+assert.equal(a.evIcsFilterRows(filterRows,'','', '',{'grande|Otros':true})[0].ev.id,'p');
+assert.equal(a.evIcsFilterRows(filterRows,'grande','', '',{'grande|Otros':true}).length,0);
+assert.equal(a.evIcsFilterRows(filterRows,'','', '',{}).length,2);
+const travel={id:'travel-test',kind:'grande',type:'Viaje',title:'Viaje inventado',start:'2026-10-01',end:'2026-10-04',note:'Privada',viaje:{ida:{time:'10:30',modo:'tren'},vuelta:{time:'18:45',modo:'avion'}}};
+const travelRows=a.evIcsCandidates([travel],travel.start,travel.end),travelSelect={};travelSelect[travelRows[0].key]=true;
+const travelRec=a.evIcsPrepare(travelRows,travelSelect,{},false,'Prueba');
+const travelText=a.evIcsFile(a.evIcsExportRows(travelRec,travelSelect),true);
+assert(travelText.includes('SUMMARY:Viaje inventado - PRUEBA'));
+assert(travelText.includes('10:30')&&travelText.includes('18:45')&&!travelText.includes('Privada'));
+assert.equal(a.evIcsExportStatus(travelRows[0],travelRec[travelRows[0].key],false,'Prueba'),'repeat');
+travel.viaje.ida.time='11:00';
+assert.equal(a.evIcsExportStatus(travelRows[0],travelRec[travelRows[0].key],false,'Prueba'),'changed');
+assert.equal(a.evIcsAuthor(),'');
+assert.equal(a.validateImport({calendarAuthor:'PRUEBA'}).calendarAuthor,'PRUEBA');
+assert.throws(()=>a.validateImport({calendarAuthor:{}}));
+console.log('ICS: exclusiones por categoría, firma configurable y trayectos sin notas OK');

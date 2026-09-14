@@ -2,6 +2,13 @@
    UID estable por evento/ocurrencia. Volver a importar aplica cambios. Los borrados se hacen manualmente en Google. */
 var EV_CAL_EXPORT=null;
 var EV_ICS_KEY='excelia-calendar-exports-v1';
+var EV_ICS_AUTHOR_KEY='excelia-calendar-author-v1';
+function evIcsAuthor(){return appStorage.getItem(EV_ICS_AUTHOR_KEY)||'';}
+function evIcsDescription(ev,notes,ds){
+  var parts=evTramos(ev).map(function(tr){return tr.lbl+' - '+_fmtDayEs(tr.ds)+' - '+(tr.t.time||'sin hora')+(tr.t.modo?' - '+tr.t.modo:'');});
+  if(notes)parts=parts.concat([ev.note,ev.dayNotes&&ev.dayNotes[ds]].filter(Boolean));
+  return parts.join('\n');
+}
 function evIcsText(value){
   return String(value||'').replace(/\\/g,'\\\\').replace(/\r\n|\r|\n/g,'\\n').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/g,'');
 }
@@ -56,10 +63,7 @@ function evIcsFile(rows,notes){
     }else{
       lines.push('DTSTART;VALUE=DATE:'+row.start.replace(/-/g,''),'DTEND;VALUE=DATE:'+evIcsNextDay(row.end).replace(/-/g,''));
     }
-    if(notes){
-      var note=[ev.note,ev.dayNotes&&ev.dayNotes[row.start]].filter(Boolean).join('\n');
-      lines.push('DESCRIPTION:'+evIcsText(note));
-    }else lines.push('DESCRIPTION:');
+    lines.push('DESCRIPTION:'+evIcsText(evIcsDescription(ev,notes,row.start)));
     lines.push('END:VEVENT');
   });
   lines.push('END:VCALENDAR');
@@ -90,15 +94,16 @@ function evIcsRememberedRows(events,from,to,records){
   });
   return rows.sort(function(a,b){return a.start.localeCompare(b.start);});
 }
-function evIcsPrepare(rows,selected,records,notes){
+function evIcsPrepare(rows,selected,records,notes,author){
+  author=String(author||'').trim().toLocaleUpperCase();
   var next=Object.create(null),stamp=new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');
   Object.keys(records).forEach(function(k){next[k]=JSON.parse(JSON.stringify(records[k]));});
   rows.forEach(function(row){
     var old=records[row.key],on=!!selected[row.key]&&!row.missing;
     if(!on)return;
-    var e=row.ev,note=notes?[e.note,e.dayNotes&&e.dayNotes[row.start]].filter(Boolean).join('\n'):'';
+    var e=row.ev,note=evIcsDescription(e,notes,row.start);
     var r={key:row.key,start:row.start,end:row.end,big:row.big,cancelled:false,
-      ev:{id:String(e.id),kind:row.big?'grande':'puntual',type:getEvType(e),title:e.title||getEvType(e),time:row.big?null:evStartTime(e),endTime:row.big?null:evEndTime(e),note:note}};
+      ev:{id:String(e.id),kind:row.big?'grande':'puntual',type:getEvType(e),title:(e.title||getEvType(e))+(author?' - '+author:''),time:row.big?null:evStartTime(e),endTime:row.big?null:evEndTime(e),note:note}};
     var signature=JSON.stringify([r.start,r.end,r.big,r.cancelled,r.ev]);
     r.signature=signature;r.sequence=old?old.sequence:0;r.modified=old?old.modified:stamp;
     if(!old||old.signature!==signature){r.sequence=old?old.sequence+1:0;r.modified=stamp;}
@@ -109,35 +114,35 @@ function evIcsPrepare(rows,selected,records,notes){
 function evIcsExportRows(records,selected){
   return Object.keys(records).filter(function(k){return selected[k]&&!records[k].cancelled;}).map(function(k){return records[k];});
 }
-function evIcsExportStatus(row,old,notes){
+function evIcsExportStatus(row,old,notes,author){
   if(row.missing)return 'missing';
   if(!old)return 'new';
   var selected={},records={};selected[row.key]=true;records[row.key]=old;
-  return evIcsPrepare([row],selected,records,notes)[row.key].signature===old.signature?'repeat':'changed';
+  return evIcsPrepare([row],selected,records,notes,author)[row.key].signature===old.signature?'repeat':'changed';
 }
-function evIcsFilterRows(rows,kind,type,query){
+function evIcsFilterRows(rows,kind,type,query,excluded){
   query=String(query||'').trim().toLocaleLowerCase();
-  return rows.filter(function(r){return (!kind||getEvKind(r.ev)===kind)&&(!type||getEvType(r.ev)===type)
+  return rows.filter(function(r){return (!kind||getEvKind(r.ev)===kind)&&(!type||getEvType(r.ev)===type)&&!(excluded&&excluded[getEvKind(r.ev)+'|'+getEvType(r.ev)])
     &&(String(r.ev.title||'')+' '+getEvType(r.ev)).toLocaleLowerCase().indexOf(query)!==-1;});
 }
 function renderEvCalendarExport(){
   var F=EV_CAL_EXPORT;
   return '<div class="ev-detail-overlay" id="evCalendarExportOv"><div class="ev-detail-sheet ev-cal-export-sheet">'
     +'<div class="ev-detail-handle"></div><div class="boda-config-head"><button class="sy-back" id="evCalendarExportClose" aria-label="Volver">&#8592;</button><h3>Compartir eventos</h3><span></span></div>'
-    +'<p class="ev-cal-export-intro">Añade o actualiza tu selección en Google Calendar.</p>'
+    +''
     +'<div class="ev-cal-export-tabs"><button id="evIcsBrowse" aria-pressed="true">Buscar eventos</button><button id="evIcsSelected" aria-pressed="false">Seleccionados (0)</button></div>'
     +'<input class="ev-input" id="evIcsSearch" type="search" placeholder="Buscar evento" aria-label="Buscar evento para exportar">'
-    +'<div id="evIcsKinds" class="ev-cal-export-filters" aria-label="Clase de evento"></div><div id="evIcsTypes" class="ev-cal-export-filters ev-cal-export-types" aria-label="Categoría de evento"></div>'
+    +'<div id="evIcsKinds" class="ev-cal-export-filters" aria-label="Clase de evento"></div><div id="evIcsCategoryBlock"><div class="ev-cal-export-filter-label">Categorías visibles <span>Toca para incluir o excluir</span></div><div id="evIcsTypes" class="ev-cal-export-filters ev-cal-export-types" aria-label="Categorías visibles"></div></div>'
     +'<details class="ev-cal-export-options"><summary>Fechas y opciones</summary><div class="ev-date-row"><label class="ev-field">Desde<input class="ev-input" id="evIcsFrom" type="date" value="'+F.from+'"></label><label class="ev-field">Hasta<input class="ev-input" id="evIcsTo" type="date" value="'+F.to+'"></label></div>'
-    +'<label class="ev-cal-export-notes"><input id="evIcsNotes" type="checkbox"> Incluir notas</label><p class="ev-cal-export-intro">Los ensayos no se exportan. Los eventos exportados anteriormente siguen disponibles fuera del intervalo.</p></details>'
-    +'<div class="ev-cal-export-tools"><button class="ev-io-btn" id="evIcsAll">Seleccionar visibles</button><button class="ev-io-btn" id="evIcsNone">Limpiar selección</button></div>'
+    +'<label class="ev-field">Firma de los títulos<input class="ev-input" id="evIcsAuthor" maxlength="60" placeholder="Nombre (opcional)" value="'+escHtml(evIcsAuthor())+'"></label><label class="ev-cal-export-notes"><input id="evIcsNotes" type="checkbox"> Incluir notas</label><p class="ev-cal-export-intro">Los ensayos no se exportan. El archivo añade o actualiza; los borrados se hacen manualmente en Google. Los eventos exportados anteriormente siguen disponibles fuera del intervalo.</p></details>'
+    +'<div class="ev-cal-export-tools"><button class="ev-io-btn" id="evIcsAll">Seleccionar visibles</button><button class="ev-io-btn" id="evIcsNone">Limpiar selección</button><button class="ev-io-btn" id="evIcsReset">Quitar filtros</button></div>'
     +'<div id="evIcsList" class="ev-cal-export-list"></div>'
-    +'<div class="ev-cal-export-footer"><p id="evIcsChanges" aria-live="polite"></p><p>El archivo añade o actualiza. Nunca borra eventos. Los borrados se hacen manualmente en Google.</p>'
+    +'<div class="ev-cal-export-footer"><p id="evIcsChanges" aria-live="polite"></p>'
     +'<button class="ev-io-btn io-primaria" id="evIcsDownload" disabled>Exportar selección</button><a id="evIcsRetry" class="ev-cal-export-retry" download="gestify-eventos.ics" hidden>Descargar archivo de nuevo</a></div></div></div>';
 }
 function openEvCalendarExport(){
   var today=new Date(),until=new Date(today);until.setFullYear(until.getFullYear()+1);
-  EV_CAL_EXPORT={from:evDk(today),to:evDk(until),kind:'',type:'',view:'browse',selected:Object.create(null),rows:[],visible:[],records:evIcsRecords()};
+  EV_CAL_EXPORT={from:evDk(today),to:evDk(until),kind:'grande',type:'',excluded:{'grande|Otros':true},view:'browse',selected:Object.create(null),rows:[],visible:[],records:evIcsRecords()};
   var close=function(){var url=EV_CAL_EXPORT.downloadUrl;if(url)setTimeout(function(){URL.revokeObjectURL(url);},60000);cerrarPanel('evCalendarExportWrap','evCalendarExportOv');};
   var wrap=abrirPanel('evCalendarExportWrap',renderEvCalendarExport(),{overlay:'evCalendarExportOv',alCerrar:close});
   if(!wrap)return;
@@ -153,14 +158,14 @@ function openEvCalendarExport(){
   }
   function filters(){
     find('evIcsKinds').innerHTML=[['','Todos'],['grande','Grandes'],['puntual','Puntuales']].map(function(k){return '<button type="button" class="ev-filter-chip'+(F.kind===k[0]?' active':'')+'" data-kind="'+k[0]+'" aria-pressed="'+(F.kind===k[0])+'">'+k[1]+'</button>';}).join('');
-    var types=[];F.rows.forEach(function(r){var t=getEvType(r.ev);if((!F.kind||getEvKind(r.ev)===F.kind)&&types.indexOf(t)<0)types.push(t);});
-    types.sort();if(F.type&&types.indexOf(F.type)<0)F.type='';
-    find('evIcsTypes').innerHTML=[''].concat(types).map(function(t){return '<button type="button" class="ev-filter-chip'+(F.type===t?' active':'')+'" data-type="'+escHtml(t)+'" aria-pressed="'+(F.type===t)+'">'+escHtml(t||'Todas las categorías')+'</button>';}).join('');
+    var types=[];F.rows.forEach(function(r){var t=getEvType(r.ev),kind=getEvKind(r.ev),key=kind+'|'+t;if((!F.kind||kind===F.kind)&&!types.some(function(x){return x.key===key;}))types.push({key:key,title:t,kind:kind});});
+    types.sort(function(a,b){return a.title.localeCompare(b.title)||a.kind.localeCompare(b.kind);});
+    find('evIcsTypes').innerHTML=types.map(function(t){var on=!F.excluded[t.key],label=t.title+(!F.kind&&t.title==='Otros'?(t.kind==='grande'?' (grandes)':' (puntuales)'):'');return '<button type="button" class="ev-filter-chip'+(on?' active':' excluded')+'" data-type="'+escHtml(t.key)+'" aria-pressed="'+on+'" aria-label="'+escHtml((on?'Excluir ':'Incluir ')+label)+'">'+(on?'✓ ':'× ')+escHtml(label)+'</button>';}).join('');
   }
   function list(){
-    F.status={};F.rows.forEach(function(r){F.status[r.key]=evIcsExportStatus(r,F.records[r.key],find('evIcsNotes').checked);});
-    F.visible=F.view==='selected'?F.rows.filter(function(r){return F.selected[r.key]&&!r.missing;}):evIcsFilterRows(F.rows,F.kind,F.type,find('evIcsSearch').value);
-    ['evIcsSearch','evIcsKinds','evIcsTypes','evIcsAll'].forEach(function(id){find(id).hidden=F.view==='selected';});
+    F.status={};F.rows.forEach(function(r){F.status[r.key]=evIcsExportStatus(r,F.records[r.key],find('evIcsNotes').checked,find('evIcsAuthor').value);});
+    F.visible=F.view==='selected'?F.rows.filter(function(r){return F.selected[r.key]&&!r.missing;}):evIcsFilterRows(F.rows,F.kind,F.type,find('evIcsSearch').value,F.excluded);
+    ['evIcsSearch','evIcsKinds','evIcsCategoryBlock','evIcsAll','evIcsReset'].forEach(function(id){find(id).hidden=F.view==='selected';});
     find('evIcsBrowse').setAttribute('aria-pressed',F.view==='browse');find('evIcsSelected').setAttribute('aria-pressed',F.view==='selected');
     find('evIcsList').innerHTML=F.visible.length?F.visible.map(function(r,i){
       var old=F.records[r.key],status=F.status[r.key],date=_fmtDayEs(r.start)+(r.end!==r.start?' – '+_fmtDayEs(r.end):'');
@@ -177,14 +182,16 @@ function openEvCalendarExport(){
   }
   find('evCalendarExportClose').onclick=close;
   find('evIcsBrowse').onclick=function(){F.view='browse';list();};find('evIcsSelected').onclick=function(){F.view='selected';list();};
+  find('evIcsAuthor').oninput=function(){appStorage.setItem(EV_ICS_AUTHOR_KEY,find('evIcsAuthor').value.trim().toLocaleUpperCase());list();};
   find('evIcsFrom').onchange=dates;find('evIcsTo').onchange=dates;find('evIcsSearch').oninput=list;find('evIcsNotes').onchange=list;
   find('evIcsKinds').onclick=function(e){var b=e.target.closest('[data-kind]');if(!b)return;F.kind=b.getAttribute('data-kind');F.type='';filters();list();};
-  find('evIcsTypes').onclick=function(e){var b=e.target.closest('[data-type]');if(!b)return;F.type=b.getAttribute('data-type');filters();list();};
+  find('evIcsTypes').onclick=function(e){var b=e.target.closest('[data-type]');if(!b)return;var key=b.getAttribute('data-type');F.excluded[key]=!F.excluded[key];filters();list();};
   find('evIcsList').onchange=function(e){var i=e.target.getAttribute('data-ics-index');if(i===null)return;var key=F.visible[+i].key;F.selected[key]=e.target.checked;list();};
   find('evIcsAll').onclick=function(){F.visible.forEach(function(r){if(!r.missing){F.selected[r.key]=true;}});list();};
+  find('evIcsReset').onclick=function(){F.kind='';F.type='';F.excluded={};find('evIcsSearch').value='';find('evIcsFrom').value=evDk(today);find('evIcsTo').value=evDk(until);dates();};
   find('evIcsNone').onclick=function(){F.selected=Object.create(null);list();};
   find('evIcsDownload').onclick=function(){
-    var next=evIcsPrepare(F.rows,F.selected,F.records,find('evIcsNotes').checked);
+    var next=evIcsPrepare(F.rows,F.selected,F.records,find('evIcsNotes').checked,find('evIcsAuthor').value);
     var selected=Object.create(null);F.rows.forEach(function(r){if(F.selected[r.key]&&!r.missing)selected[r.key]=true;});
     var payload=evIcsExportRows(next,selected);if(!payload.length)return;
     var blob=new Blob([evIcsFile(payload,true)],{type:'text/calendar;charset=utf-8'});

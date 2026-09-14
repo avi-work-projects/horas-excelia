@@ -2726,3 +2726,17 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .ev-field label.boda-future-check{display:flex;align-items:center;gap:8px}
 .boda-future-check input[type="checkbox"]{margin:0;flex-shrink:0}
 .ev-week-sep.bday-group-after-tomorrow{background:#c7aa3530;color:var(--c-orange)}
+
+/* Compartir: cabecera centrada, categorías completas y lista compacta. */
+.ev-cal-export-sheet>.boda-config-head{display:grid;grid-template-columns:34px minmax(0,1fr) 34px;align-items:center;gap:8px}
+.ev-cal-export-sheet>.boda-config-head h3{text-align:center}
+.ev-cal-export-filter-label{display:flex;justify-content:space-between;gap:6px;font-size:.7rem;color:var(--text-muted);margin:2px 0 4px}
+.ev-cal-export-filter-label span{font-size:.65rem;color:var(--text-dim)}
+.ev-cal-export-types{flex-wrap:wrap;overflow:visible;gap:4px}
+.ev-cal-export-types .ev-filter-chip{padding:4px 7px;min-height:27px;font-size:.68rem}
+.ev-cal-export-types .ev-filter-chip.excluded{border-style:dashed;color:var(--text-dim);background:var(--surface)}
+.ev-cal-export-tools{gap:5px;flex-wrap:wrap}
+.ev-cal-export-tools .ev-io-btn{padding:5px 7px;font-size:.66rem}
+.ev-cal-export-item{padding:6px 9px}
+.ev-cal-export-item small{margin-top:2px}
+.ev-cal-export-sheet{height:96dvh;max-height:96dvh;gap:6px}

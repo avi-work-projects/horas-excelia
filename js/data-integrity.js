@@ -35,6 +35,7 @@ function validateImport(data){
   if(data.bodaConfig)validateBodaConfig(data.bodaConfig);
   ['days','sent','monthH','bodasClosed','evAlarms','bdayAlarms','econYearConfig','gastosPerYear','personalPerYear'].forEach(function(k){if(data[k]!=null&&(typeof data[k]!=='object'||Array.isArray(data[k])))throw new Error('Mapa no valido: '+k);});
   ['rate','vacEntitlement','alarmHour','alarmMinute'].forEach(function(k){if(data[k]!=null&&(!Number.isFinite(Number(data[k]))||Number(data[k])<0))throw new Error('Numero no valido: '+k);});
+  if(data.calendarAuthor!=null&&(typeof data.calendarAuthor!=='string'||data.calendarAuthor.length>60))throw new Error('Firma de calendario no válida');
   if(data.calendarExports!=null){
     if(typeof data.calendarExports!=='object'||Array.isArray(data.calendarExports)||Object.keys(data.calendarExports).length>20000)throw new Error('Registro de calendario no válido');
     Object.keys(data.calendarExports).forEach(function(k){
