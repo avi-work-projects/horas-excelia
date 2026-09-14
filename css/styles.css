@@ -2722,3 +2722,7 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 
 [data-theme="light"] .ev-week-sep.bday-group-today,.ev-week-sep.bday-group-today{background:#39a66b30;color:var(--c-green);border-color:#39a66b60}
 .ev-cal-export-retry{display:block;text-align:center;font-size:.72rem;color:var(--accent);padding-top:8px}
+
+.ev-field label.boda-future-check{display:flex;align-items:center;gap:8px}
+.boda-future-check input[type="checkbox"]{margin:0;flex-shrink:0}
+.ev-week-sep.bday-group-after-tomorrow{background:#c7aa3530;color:var(--c-orange)}
