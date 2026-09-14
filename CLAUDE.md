@@ -199,7 +199,7 @@ Se muestra en Futuras y Todas, nunca en Activas/Pasadas. Se edita en el formular
 y viaja dentro de `bodas` en el backup. Las parejas antiguas siguen sin marcar.
 
 
-## Exportación selectiva a Google Calendar (v350)
+## Exportación selectiva a Google Calendar (v352)
 `js/events-calendar-export.js` añade el botón de exportar a la derecha del logo WM.
 Solo eventos guardados (sin ensayos, cumpleaños virtuales ni sesiones de rutina).
 Los grandes son continuos de día completo, con DTEND exclusivo; los puntuales con
@@ -220,6 +220,10 @@ antiguos y solo emite STATUS:CONFIRMED; no existe ninguna acción de cancelar.
 `evIcsExportStatus` compara el contenido que se exportaría con el último exportado:
 new/repeat/changed/missing. La fila y el resumen avisan de reexportaciones y cambios.
 Los filtros de clase/subtipo y texto son independientes de las selecciones.
+La vista Seleccionados reúne los marcados sin filtros; cambiar el intervalo conserva la selección.
+El botón descarga directamente el ICS (`shareOrDownload` con `download:true`) y deja un enlace
+al último archivo como respaldo. El URL vive hasta cerrar el panel; no revocarlo inmediatamente.
+El ayudante global recupera errores de compartir mediante descarga, salvo cancelación voluntaria.
 Solo se exportan notas si se marca la opción.
 
 Prueba real en Google Calendar (14/09/2026), con datos ficticios retirados al terminar:

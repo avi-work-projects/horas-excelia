@@ -32,7 +32,8 @@ function renderBdayUpcoming(){
 
   function renderGroup(title,list,isCurWeek){
     if(!list.length)return '<div class="sy-note">No hay cumplea\u00f1os '+title.toLowerCase()+'.</div>';
-    var s='<div class="ev-week-sep'+(list[0].diff===0?' now':'')+'">'+title+'</div><div class="ev-upcoming-section">';
+    var diff=list[0].diff,group=diff<0?'past':diff===0?'today':diff===1?'tomorrow':diff<=7?'week':diff<=14?'fortnight':'later';
+    var s='<div class="ev-week-sep bday-group-'+group+(list[0].diff===0?' now':'')+'">'+title+'</div><div class="ev-upcoming-section">';
     list.forEach(function(x){
       var lbl=bdayLabel(x.diff);
       var color=getBdayColor(x.b);
