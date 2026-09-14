@@ -9,11 +9,11 @@ function openHomePopup(){
     if(sessionStorage.getItem('excelia-popup-dismissed')&&!csvWarnings.length)return;
   }catch(e){}
   var items=csvWarnings.map(function(it){return {type:'warn',text:'&#9888; '+escHtml(it.text)};});
-  // Semanas sin enviar: 2 anteriores + actual + 2 siguientes
+  // Semanas sin enviar: 2 anteriores + actual + 3 siguientes
   var today=new Date();today.setHours(0,0,0,0);
   var dow=today.getDay();var off=dow===0?6:dow-1;
   var thisMon=new Date(today);thisMon.setDate(thisMon.getDate()-off);
-  for(var w=-2;w<=2;w++){
+  for(var w=-2;w<=3;w++){
     var d=new Date(thisMon);d.setDate(d.getDate()+w*7);
     var key=dk(d);
     if(SW[key])continue; // Ya enviada
@@ -30,17 +30,23 @@ function openHomePopup(){
   }
   // Todos los cumpleanos hasta dentro de 7 dias, solo si falta la alarma.
   if(typeof BDAYS!=='undefined'&&BDAYS.length){
+    var birthdays=[];
     BDAYS.forEach(function(b){
       var bd=new Date(today.getFullYear(),b.month-1,b.day);
       if(bd<today)bd.setFullYear(today.getFullYear()+1);
       var diff=Math.round((bd-today)/86400000);
       if(diff>7||(typeof isBdayAlarmSet==='function'&&isBdayAlarmSet(b)))return;
       var when=diff===0?' (hoy)':diff===1?' (ma\u00f1ana)':' (en '+diff+'d)';
-      items.push({type:b.vip?'vip':'bday',text:(b.vip?'&#11088; ':'&#127874; ')+escHtml(b.name)+when+' — sin alarma'});
+      birthdays.push({days:diff,type:b.vip?'vip':'bday',text:(b.vip?'&#11088; ':'&#127874; ')+escHtml(b.name)+when+' — sin alarma'});
     });
+  }
+  if(typeof birthdays!=='undefined'){
+    birthdays.sort(function(a,b){return (a.type==='vip'?0:1)-(b.type==='vip'?0:1)||a.days-b.days;});
+    items=items.concat(birthdays);
   }
   // Eventos hoy o mañana (inicio) + fin de eventos largos (>7 días)
   if(typeof EVENTS!=='undefined'&&EVENTS.length){
+    var eventItems=[];
     EVENTS.forEach(function(ev){
       if(!ev.start)return;
       if(ev.id&&ev.id.indexOf('ev-bday-vip-')===0)return; // ya cubiertos por BDAYS
@@ -55,7 +61,7 @@ function openHomePopup(){
           var contenido=pareja?'Ensayo — '+pareja.name:(ev.title||'Ensayo sin pareja asignada');
           lbl=(diff===0?'Hoy':'Mañana')+' · '+(time?escHtml(time):'Sin hora')+' · '+escHtml(contenido);
         }else if(time)lbl+=' · '+escHtml(time);
-        items.push({type:'event',text:'&#128197; '+lbl});
+        eventItems.push({days:diff,time:time||'',type:'event',text:'&#128197; '+lbl});
       }
       // Fin de eventos de más de 7 días
       if(ev.end&&ev.end>ev.start){
@@ -67,11 +73,16 @@ function openHomePopup(){
             var endLbl=escHtml(ev.title)+' \u2014 fin'+(diffEnd===0?' hoy':' ma\u00f1ana')+'!';
             var vuelta=evTramos(ev).filter(function(tr){return tr.k==='vuelta';})[0];
             if(vuelta&&vuelta.t.time)endLbl+=' · '+escHtml(vuelta.t.time);
-            items.push({type:'event',text:'&#128197; '+endLbl});
+            eventItems.push({days:diffEnd,time:vuelta&&vuelta.t.time||'',type:'event',text:'&#128197; '+endLbl});
           }
         }
       }
     });
+  }
+  if(typeof eventItems!=='undefined'){
+    // Sin hora primero; en cada grupo, fecha y hora de inicio (o vuelta).
+    eventItems.sort(function(a,b){return Number(!!a.time)-Number(!!b.time)||a.days-b.days||a.time.localeCompare(b.time);});
+    items=items.concat(eventItems);
   }
   if(!items.length)return;
   var content=document.getElementById('homePopupContent');
