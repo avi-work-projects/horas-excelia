@@ -354,6 +354,7 @@ const REGLAS = [
       'excelia-vac-days':          'vacEntitlement',
       'excelia-csv-exports-v1': 'csvExports',
       'excelia-calendar-exports-v1': 'calendarExports',
+      'excelia-calendar-author-v1': 'calendarAuthor',
       'excelia-vac-years':         'vacByYear',
       'excelia-bdays-v1':          'birthdays',
       'excelia-events-v1':         'events',
