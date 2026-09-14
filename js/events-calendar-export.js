@@ -2,6 +2,7 @@
    UID estable por evento/ocurrencia. Volver a importar aplica cambios. Los borrados se hacen manualmente en Google. */
 var EV_CAL_EXPORT=null;
 var EV_ICS_KEY='excelia-calendar-exports-v1';
+var EV_ICS_UPPER_KEY='excelia-calendar-uppercase-v1';
 var EV_ICS_NOTES_KEY='excelia-calendar-notes-v1';
 var EV_ICS_AUTHOR_KEY='excelia-calendar-author-v1';
 function evIcsAuthor(){return appStorage.getItem(EV_ICS_AUTHOR_KEY)||'';}
@@ -41,7 +42,7 @@ function evIcsCandidates(events,from,to){
       }
     }
   });
-  return rows.sort(function(a,b){return a.start.localeCompare(b.start)||String(a.ev.title||'').localeCompare(String(b.ev.title||''));});
+  return rows.sort(function(a,b){return a.start.localeCompare(b.start)||evCompareTime(a.ev,b.ev)||String(a.ev.title||'').localeCompare(String(b.ev.title||''));});
 }
 function evIcsFile(rows,notes){
   var lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Gestify//Selected Events//ES','CALSCALE:GREGORIAN',
@@ -93,9 +94,9 @@ function evIcsRememberedRows(events,from,to,records){
     if(!row){row=JSON.parse(JSON.stringify(old));row.missing=true;}
     rows.push(row);
   });
-  return rows.sort(function(a,b){return a.start.localeCompare(b.start);});
+  return rows.sort(function(a,b){return a.start.localeCompare(b.start)||evCompareTime(a.ev,b.ev);});
 }
-function evIcsPrepare(rows,selected,records,notes,author){
+function evIcsPrepare(rows,selected,records,notes,author,uppercase){
   author=String(author||'').trim().toLocaleUpperCase();
   var next=Object.create(null),stamp=new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');
   Object.keys(records).forEach(function(k){next[k]=JSON.parse(JSON.stringify(records[k]));});
@@ -104,7 +105,7 @@ function evIcsPrepare(rows,selected,records,notes,author){
     if(!on)return;
     var e=row.ev,note=evIcsDescription(e,notes,row.start);
     var r={key:row.key,start:row.start,end:row.end,big:row.big,cancelled:false,
-      ev:{id:String(e.id),kind:row.big?'grande':'puntual',type:getEvType(e),title:(e.title||getEvType(e))+(author?' - '+author:''),time:row.big?null:evStartTime(e),endTime:row.big?null:evEndTime(e),note:note}};
+      ev:{id:String(e.id),kind:row.big?'grande':'puntual',type:getEvType(e),title:(uppercase?String(e.title||getEvType(e)).toLocaleUpperCase():(e.title||getEvType(e)))+(author?' - '+author:''),time:row.big?null:evStartTime(e),endTime:row.big?null:evEndTime(e),note:note}};
     var signature=JSON.stringify([r.start,r.end,r.big,r.cancelled,r.ev]);
     r.signature=signature;r.sequence=old?old.sequence:0;r.modified=old?old.modified:stamp;
     if(!old||old.signature!==signature){r.sequence=old?old.sequence+1:0;r.modified=stamp;}
@@ -115,11 +116,11 @@ function evIcsPrepare(rows,selected,records,notes,author){
 function evIcsExportRows(records,selected){
   return Object.keys(records).filter(function(k){return selected[k]&&!records[k].cancelled;}).map(function(k){return records[k];});
 }
-function evIcsExportStatus(row,old,notes,author){
+function evIcsExportStatus(row,old,notes,author,uppercase){
   if(row.missing)return 'missing';
   if(!old)return 'new';
   var selected={},records={};selected[row.key]=true;records[row.key]=old;
-  return evIcsPrepare([row],selected,records,notes,author)[row.key].signature===old.signature?'repeat':'changed';
+  return evIcsPrepare([row],selected,records,notes,author,uppercase)[row.key].signature===old.signature?'repeat':'changed';
 }
 function evIcsFilterRows(rows,kind,type,query,excluded){
   query=String(query||'').trim().toLocaleLowerCase();
@@ -134,7 +135,7 @@ function renderEvCalendarExport(){
     +'<input class="ev-input" id="evIcsSearch" type="search" placeholder="Buscar evento" aria-label="Buscar evento para exportar">'
     +'<div id="evIcsKinds" class="ev-cal-export-filters" aria-label="Clase de evento"></div><div id="evIcsCategoryBlock"><div class="ev-cal-export-filter-label">Categorías visibles <span>Toca para incluir o excluir</span></div><div id="evIcsTypes" class="ev-cal-export-filters ev-cal-export-types" aria-label="Categorías visibles"></div></div>'
     +'<details id="evIcsDates" class="ev-cal-export-options"><summary>Fechas</summary><div class="ev-date-row"><label class="ev-field">Desde<input class="ev-input" id="evIcsFrom" type="date" value="'+F.from+'"></label><label class="ev-field">Hasta<input class="ev-input" id="evIcsTo" type="date" value="'+F.to+'"></label></div></details>'
-    +'<section id="evIcsOptions" class="ev-cal-export-settings" hidden><div class="ev-cal-export-filter-label">Opciones de exportación</div><label class="ev-field">Firma de los títulos<input class="ev-input" id="evIcsAuthor" maxlength="60" placeholder="Nombre (opcional)" value="'+escHtml(evIcsAuthor())+'"></label><label class="ev-cal-export-notes"><input id="evIcsNotes" type="checkbox"'+(appStorage.getItem(EV_ICS_NOTES_KEY)==='true'?' checked':'')+'> Incluir notas</label><p class="ev-cal-export-intro">Los ensayos no se exportan. El archivo añade o actualiza; los borrados se hacen manualmente en Google. Los eventos exportados anteriormente siguen disponibles fuera del intervalo.</p></section>'
+    +'<section id="evIcsOptions" class="ev-cal-export-settings" hidden><div class="ev-cal-export-filter-label">Opciones de exportación</div><label class="ev-field ev-cal-export-signature">Firma<input class="ev-input" id="evIcsAuthor" maxlength="60" placeholder="Nombre (opcional)" value="'+escHtml(evIcsAuthor())+'"></label><label class="ev-cal-export-notes"><input id="evIcsNotes" type="checkbox"'+(appStorage.getItem(EV_ICS_NOTES_KEY)==='true'?' checked':'')+'> Incluir notas</label><label class="ev-cal-export-notes"><input id="evIcsUpper" type="checkbox"'+(appStorage.getItem(EV_ICS_UPPER_KEY)==='true'?' checked':'')+'> Poner título en mayúsculas</label></section>'
     +'<div class="ev-cal-export-tools"><button class="ev-io-btn" id="evIcsAll">Seleccionar visibles</button><button class="ev-io-btn" id="evIcsNone">Limpiar selección</button><button class="ev-io-btn" id="evIcsReset">Quitar filtros</button></div>'
     +'<div id="evIcsList" class="ev-cal-export-list"></div>'
     +'<div class="ev-cal-export-footer"><p id="evIcsChanges" aria-live="polite"></p>'
@@ -163,7 +164,7 @@ function openEvCalendarExport(){
     find('evIcsTypes').innerHTML=types.map(function(t){var on=!F.excluded[t.key],label=(t.title==='Cumpleaños VIP'?'VIP':t.title==='Rec. Gestiones'?'Rec. Gestion':t.title)+(!F.kind&&t.title==='Otros'?(t.kind==='grande'?' (grandes)':' (puntuales)'):'');return '<button type="button" class="ev-filter-chip'+(on?' active':' excluded')+'" data-type="'+escHtml(t.key)+'" aria-pressed="'+on+'" aria-label="'+escHtml((on?'Excluir ':'Incluir ')+label)+'">'+(on?'✓ ':'× ')+escHtml(label)+'</button>';}).join('');
   }
   function list(){
-    F.status={};F.rows.forEach(function(r){F.status[r.key]=evIcsExportStatus(r,F.records[r.key],find('evIcsNotes').checked,find('evIcsAuthor').value);});
+    F.status={};F.rows.forEach(function(r){F.status[r.key]=evIcsExportStatus(r,F.records[r.key],find('evIcsNotes').checked,find('evIcsAuthor').value,find('evIcsUpper').checked);});
     F.visible=F.view==='selected'?F.rows.filter(function(r){return F.selected[r.key]&&!r.missing;}):evIcsFilterRows(F.rows,F.kind,F.type,find('evIcsSearch').value,F.excluded);
     ['evIcsSearch','evIcsKinds','evIcsCategoryBlock','evIcsAll','evIcsReset','evIcsDates','evIcsNext'].forEach(function(id){find(id).hidden=F.view==='selected';});
     ['evIcsOptions','evIcsDownload','evIcsChanges'].forEach(function(id){find(id).hidden=F.view!=='selected';});
@@ -179,10 +180,11 @@ function openEvCalendarExport(){
     F.from=find('evIcsFrom').value;F.to=find('evIcsTo').value;
     var previous=F.rows;F.rows=evIcsRememberedRows(EVENTS,F.from,F.to,F.records);
     previous.forEach(function(r){if(F.selected[r.key]&&!F.rows.some(function(next){return next.key===r.key;}))F.rows.push(r);});
-    F.rows.sort(function(a,b){return a.start.localeCompare(b.start);});filters();list();
+    F.rows.sort(function(a,b){return a.start.localeCompare(b.start)||evCompareTime(a.ev,b.ev);});filters();list();
   }
   find('evCalendarExportClose').onclick=close;
   find('evIcsBrowse').onclick=function(){F.view='browse';list();};find('evIcsNext').onclick=find('evIcsSelected').onclick=function(){F.view='selected';list();};
+  find('evIcsUpper').onchange=function(){appStorage.setItem(EV_ICS_UPPER_KEY,String(find('evIcsUpper').checked));list();};
   find('evIcsAuthor').oninput=function(){appStorage.setItem(EV_ICS_AUTHOR_KEY,find('evIcsAuthor').value.trim().toLocaleUpperCase());list();};
   find('evIcsFrom').onchange=dates;find('evIcsTo').onchange=dates;find('evIcsSearch').oninput=list;find('evIcsNotes').onchange=function(){appStorage.setItem(EV_ICS_NOTES_KEY,String(find('evIcsNotes').checked));list();};
   find('evIcsKinds').onclick=function(e){var b=e.target.closest('[data-kind]');if(!b)return;F.kind=b.getAttribute('data-kind');F.type='';filters();list();};
@@ -192,7 +194,7 @@ function openEvCalendarExport(){
   find('evIcsReset').onclick=function(){F.kind='';F.type='';F.excluded={};find('evIcsSearch').value='';find('evIcsFrom').value=evDk(today);find('evIcsTo').value=evDk(until);dates();};
   find('evIcsNone').onclick=function(){F.selected=Object.create(null);list();};
   find('evIcsDownload').onclick=function(){
-    var next=evIcsPrepare(F.rows,F.selected,F.records,find('evIcsNotes').checked,find('evIcsAuthor').value);
+    var next=evIcsPrepare(F.rows,F.selected,F.records,find('evIcsNotes').checked,find('evIcsAuthor').value,find('evIcsUpper').checked);
     var selected=Object.create(null);F.rows.forEach(function(r){if(F.selected[r.key]&&!r.missing)selected[r.key]=true;});
     var payload=evIcsExportRows(next,selected);if(!payload.length)return;
     var blob=new Blob([evIcsFile(payload,true)],{type:'text/calendar;charset=utf-8'});

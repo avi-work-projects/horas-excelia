@@ -184,7 +184,7 @@ function renderEvUpcoming(){
     var fids=Object.keys(fallbackMap);
     fids.sort(function(a,b){
       return (fallbackMap[a].firstDate-fallbackMap[b].firstDate)
-        ||(evBodaMinutes(fallbackMap[a].ev)-evBodaMinutes(fallbackMap[b].ev));
+        ||evCompareTime(fallbackMap[a].ev,fallbackMap[b].ev);
     });
     h+='<div class="ev-week-sep">'+fallbackLabel+'</div>';
     h+='<div class="ev-upcoming-section">'+renderEvPanel(fids,fallbackMap)+'</div>';
@@ -195,7 +195,7 @@ function renderEvUpcoming(){
     if(!ids.length)return;
     ids.sort(function(a,b){
       return (wkMap[a].firstDate-wkMap[b].firstDate)
-        ||(evBodaMinutes(wkMap[a].ev)-evBodaMinutes(wkMap[b].ev));
+        ||evCompareTime(wkMap[a].ev,wkMap[b].ev);
     });
     /* Se descartan los puntuales ya pasados (los de varios días que cruzan hoy
        salen como "En curso"; los recurrentes nunca entran aquí: su firstDate
@@ -268,15 +268,15 @@ function renderEvByTypes(){
     EV_LIST_TYPES.forEach(function(type){
       var l=byType[type];
       if(!l||!l.length)return;
-      l.sort(function(a,b){return a.start<b.start?-1:1;});
+      l.sort(function(a,b){return a.start.localeCompare(b.start)||evCompareTime(a,b);});
       h+='<div class="sy-section"><div class="bday-month-hdr">'+escHtml(type)+'</div>';
       l.forEach(function(ev){h+=renderEvListItem(ev);});
       h+='</div>';
     });
   } else {
     lista.sort(function(a,b){
-      if(a.start===b.start)return 0;
-      return a.start<b.start?-1:1;
+      if(a.start===b.start)return evCompareTime(a,b);
+      return a.start.localeCompare(b.start)||evCompareTime(a,b);
     });
     h+='<div class="sy-section">';
     lista.forEach(function(ev){h+=renderEvListItem(ev);});
