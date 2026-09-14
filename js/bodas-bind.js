@@ -10,7 +10,7 @@ function renderBodaCoupleForm(c){
   else h+='<div style="width:36px"></div>';
   h+='</div>';
   h+='<div class="ev-field"><label>Pareja</label><input class="ev-input" id="bodaCName" type="text" maxlength="40" placeholder="Ej: Marta y Juan" value="'+(isEdit?escHtml(c.name):'')+'"></div>';
-  h+='<div class="ev-field"><label style="--chk:#8b5e34"><input type="checkbox" id="bodaCFuture"'+(c&&c.future?' checked':'')+'> Pareja futura</label><div class="sy-note">Reserva pendiente de concretar. No aparece en Activas hasta que desmarques esta opción.</div></div>';
+  h+='<div class="ev-field"><label class="boda-future-check" style="--chk:#8b5e34"><input type="checkbox" id="bodaCFuture"'+(c&&c.future?' checked':'')+'> Pareja futura</label><div class="sy-note">Reserva pendiente de concretar. No aparece en Activas hasta que desmarques esta opción.</div></div>';
   var selected=isEdit?bodaPackOf(c):(BODA_CONFIG.packs.find(function(p){return p.active!==false&&p.classes===4;})||BODA_CONFIG.packs.find(function(p){return p.active!==false;}));
   h+='<div class="ev-field"><label>Pack contratado</label><select class="ev-input" id="bodaCPack">';
   BODA_CONFIG.packs.filter(function(p){return p.active!==false||(selected&&p.id===selected.id);}).forEach(function(p){h+='<option value="'+p.id+'"'+(selected&&selected.id===p.id?' selected':'')+'>'+escHtml(p.name)+' ('+p.classes+' clases)'+(p.active===false?' (inactivo)':'')+'</option>';});

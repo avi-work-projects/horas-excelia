@@ -32,7 +32,7 @@ function renderBdayUpcoming(){
 
   function renderGroup(title,list,isCurWeek){
     if(!list.length)return '<div class="sy-note">No hay cumplea\u00f1os '+title.toLowerCase()+'.</div>';
-    var diff=list[0].diff,group=diff<0?'past':diff===0?'today':diff===1?'tomorrow':diff<=7?'week':diff<=14?'fortnight':'later';
+    var diff=list[0].diff,group=diff<0?'past':diff===0?'today':diff===1?'tomorrow':diff===2?'after-tomorrow':diff<=7?'week':diff<=14?'fortnight':'later';
     var s='<div class="ev-week-sep bday-group-'+group+(list[0].diff===0?' now':'')+'">'+title+'</div><div class="ev-upcoming-section">';
     list.forEach(function(x){
       var lbl=bdayLabel(x.diff);
@@ -75,7 +75,7 @@ function renderBdayUpcoming(){
     h+='</div>';
   }
   h+='<div class="bday-upcoming-section" style="margin-top:8px">';
-  [['Ma\u00f1ana',1,1],['Pr\u00f3ximos 7 d\u00edas',2,7],['Pr\u00f3ximos 14 d\u00edas',8,14]].forEach(function(group){
+  [['Ma\u00f1ana',1,1],['Pasado ma\u00f1ana',2,2],['Pr\u00f3ximos 7 d\u00edas',3,7],['Pr\u00f3ximos 14 d\u00edas',8,14]].forEach(function(group){
     var list=nxtItems.filter(function(x){return x.diff>=group[1]&&x.diff<=group[2];});
     if(list.length)h+=renderGroup(group[0],list);
   });
