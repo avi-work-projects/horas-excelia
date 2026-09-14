@@ -562,6 +562,22 @@ REGLAS.push(['inicio: ensayo con fecha, hora y pareja actual; sin hora explicita
     &&!content.innerHTML.includes('Nombre antiguo');
 }]);
 
+REGLAS.push(['inicio: tres semanas futuras, VIP primero y eventos sin hora antes de horas',function(){
+  const ctx=cargarApp(claves),content={innerHTML:''};
+  ctx.SW={};ctx.dayT=()=> 'normal';ctx.csvPendingWarnings=()=>[];
+  ctx.BDAYS=[{name:'NormalHoy',month:8,day:21},{name:'VipLejano',month:8,day:28,vip:true},{name:'VipHoy',month:8,day:21,vip:true}];
+  ctx.isBdayAlarmSet=()=>false;
+  const event=(title,start,time)=>({id:title,kind:'puntual',type:'Otros',title,start,time});
+  ctx.EVENTS=[event('TardeHoy','2026-08-21','19:00'),event('TempranoManana','2026-08-22','08:00'),event('SinHoraManana','2026-08-22',null),event('TempranoHoy','2026-08-21','09:00'),event('SinHoraHoy','2026-08-21',null)];
+  ctx.sessionStorage={getItem:()=>null};
+  ctx.document.getElementById=id=>id==='homePopupContent'?content:id==='homePopup'?{style:{}}:null;
+  require('vm').runInContext(fs.readFileSync(path.join(RAIZ,'js/home-popup.js'),'utf8'),ctx);
+  const html=content.innerHTML,order=['VipHoy','VipLejano','NormalHoy','SinHoraHoy','SinHoraManana','TempranoHoy','TardeHoy','TempranoManana'];
+  return html.includes('Semana del 07/09 sin enviar')&&!html.includes('Semana del 14/09 sin enviar')
+    &&order.every((name,i)=>html.includes(name)&&(!i||html.indexOf(order[i-1])<html.indexOf(name)))
+    &&ctx.EVENTS[0].title==='TardeHoy'&&ctx.BDAYS[0].name==='NormalHoy';
+}]);
+
 REGLAS.push(['swipe proximos: orden, extremos y modal protegido',function(){
   const ctx=cargarApp(claves),handlers={},el={addEventListener:(name,fn)=>{handlers[name]=fn;}};
   require('vm').runInContext(fs.readFileSync(path.join(RAIZ,'js/events-bind.js'),'utf8'),ctx);
