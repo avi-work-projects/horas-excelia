@@ -41,7 +41,7 @@ function _renderGasDetalle(){
     h+=_hipRO('Precio kWh',sc.precioKwh?(sc.precioKwh).toFixed(4)+' \u20ac/kWh':'\u2014');
     h+=_hipRO('T\u00e9rmino fijo/d\u00eda',sc.terminoFijoDia?(sc.terminoFijoDia).toFixed(4)+' \u20ac/d\u00eda':'\u2014');
     h+=_hipROmoney('T\u00e9rmino fijo/factura',sc.terminoFijo);
-    h+=_hipRO('IVA',(g.ivaGas||21)+'%');
+    h+=_hipRO('IVA',(g.ivaGas==null?21:g.ivaGas)+'%');
     h+=_hipRO('Comercializadora',sc.comercializadora||'\u2014');
   }
   h+='</div>';
@@ -60,17 +60,21 @@ function _renderGasDetalle(){
     h+='<div class="hip-edit-actions"><button class="hip-save-btn" data-gassave="fijo">Guardar</button><button class="hip-cancel-btn" data-gascancel="fijo">Cancelar</button></div>';
   } else {
     h+=_hipROmoney('Cuota fija/mes',sf.cuotaFija);
-    h+=_hipRO('IVA',(g.ivaGas||21)+'%');
+    h+=_hipRO('IVA',(g.ivaGas==null?21:g.ivaGas)+'%');
     h+=_hipRO('Comercializadora',sf.comercializadora||'\u2014');
   }
   h+='</div>';
   h+=energyHistoryButton('gas');
+  h+='<button class="hip-edit-btn" id="energyLegacygas">Tramos / cuota fija</button>';
+
   return h;
 }
 
 /* ── Electricidad detail sub-tab ─────────────────────────── */
 
 function _bindGasDetalle(){
+  var energyPrice=document.getElementById('desp-gasConsPrecio');if(energyPrice&&DESPACHO.gas.consumo.energyMode==='tramos'){energyPrice.readOnly=true;energyPrice.title='Media ponderada: editar desde Tramos / cuota fija';}
+  var advanced=document.getElementById('energyLegacygas');if(advanced)advanced.onclick=function(){energyEditLegacyTariff('gas',null,document.getElementById('fiscalOverlay'),reRenderFiscal);};
   _ensureGasScenarios();
   /* Active scenario toggle */
   var actC=document.getElementById('gasActivoConsumo');
@@ -91,11 +95,11 @@ function _bindGasDetalle(){
         g.consumo.terminoFijoDia=parseFloat(document.getElementById('desp-gasConsTfijoDia').value)||0;
         g.consumo.terminoFijo=parseFloat(document.getElementById('desp-gasConsTfijo').value)||0;
         g.consumo.comercializadora=(document.getElementById('desp-gasConsComerc').value||'').trim();
-        g.ivaGas=parseFloat(document.getElementById('desp-gasIva').value)||21;
+        g.ivaGas=Number(document.getElementById('desp-gasIva').value);
       } else {
         g.fijo.cuotaFija=parseFloat(document.getElementById('desp-gasFijoCuota').value)||0;
         g.fijo.comercializadora=(document.getElementById('desp-gasFijoComerc').value||'').trim();
-        g.ivaGas=parseFloat(document.getElementById('desp-gasIvaFijo').value)||21;
+        g.ivaGas=Number(document.getElementById('desp-gasIvaFijo').value);
       }
       saveDespacho();FISCAL_GAS_EDITING=null;reRenderFiscal();
     });

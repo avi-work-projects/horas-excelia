@@ -8,6 +8,7 @@ function validateEnergyBills(list){
     if(!b||typeof b.id!=='string'||!/^[\w-]+$/.test(b.id)||ids[b.id])throw new Error('Identificador de factura no válido o repetido');
     ids[b.id]=true;
     if(['luz','gas'].indexOf(b.kind)<0)throw new Error('Suministro de factura no válido');
+    if(b.noReading!=null&&typeof b.noReading!=='boolean')throw new Error('Estado de lectura no válido');
     ['supplier','number','notes','source'].forEach(function(k){if(typeof b[k]!=='string'||b[k].length>10000)throw new Error('Campo de factura no válido: '+k);});
     if(!b.supplier.trim()||!b.number.trim())throw new Error('Indica compañía y número de factura');
     if(!validIsoDate(b.issued)||!validIsoDate(b.start)||!validIsoDate(b.end)||b.end<b.start)throw new Error('Fechas de factura no válidas');
@@ -18,7 +19,7 @@ function validateEnergyBills(list){
 function energyBillSignature(b){return JSON.stringify([b.kind,b.supplier.trim().toLowerCase(),b.number.trim().toLowerCase()]);}
 function energyMergeBills(current,incoming){
   validateEnergyBills(incoming);var result=JSON.parse(JSON.stringify(current));
-  incoming.forEach(function(b){var i=result.findIndex(function(x){return x.id===b.id||energyBillSignature(x)===energyBillSignature(b);});if(i<0)result.push(b);else result[i]=Object.assign({},b,{id:result[i].id});});
+  incoming.forEach(function(b){var i=result.findIndex(function(x){return x.id===b.id||energyBillSignature(x)===energyBillSignature(b);});if(i<0)result.push(b);else result[i]=Object.assign({},result[i],b,{id:result[i].id});});
   return validateEnergyBills(result);
 }
 function energySaveBills(list){appStorage.setItem(ENERGY_BILLS_KEY,JSON.stringify(validateEnergyBills(list)));}
@@ -28,10 +29,10 @@ function energyMonthlyBills(list,year){
 }
 function energyImportHistory(data){
   validateImport(data);
-  if(!Array.isArray(data.energyBills)&&!Array.isArray(data.energyContracts))throw new Error('El archivo no contiene contratos ni facturas');
-  var before={energyBills:energyBills(),energyContracts:energyContracts()};
+  if(!Array.isArray(data.energyBills)&&!Array.isArray(data.energyContracts)&&!Array.isArray(data.energyTaxes))throw new Error('El archivo no contiene contratos ni facturas');
+  var before={energyTaxes:energyTaxes(),energyBills:energyBills(),energyContracts:energyContracts()};
   var bills=data.energyBills?energyMergeBills(before.energyBills,data.energyBills):before.energyBills;
   var contracts=data.energyContracts?energyMergeContracts(before.energyContracts,data.energyContracts):before.energyContracts;
-  appStorage.begin();try{energySaveBills(bills);energySaveContracts(contracts);appStorage.commit();}catch(e){appStorage.cancel();throw e;}return before;
+  appStorage.begin();try{if(data.energyTaxes)energySaveTaxes(energyMergeTaxes(before.energyTaxes,data.energyTaxes));energySaveBills(bills);energySaveContracts(contracts);appStorage.commit();}catch(e){appStorage.cancel();throw e;}return before;
 }
-function energyRestoreHistory(data){appStorage.begin();try{energySaveBills(data.energyBills);energySaveContracts(data.energyContracts);appStorage.commit();}catch(e){appStorage.cancel();throw e;}}
+function energyRestoreHistory(data){appStorage.begin();try{if(data.energyTaxes)energySaveTaxes(data.energyTaxes);energySaveBills(data.energyBills);energySaveContracts(data.energyContracts);appStorage.commit();}catch(e){appStorage.cancel();throw e;}}

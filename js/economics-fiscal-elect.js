@@ -64,11 +64,14 @@ function _renderElectDetalle(){
     h+='<div style="border-top:1px solid var(--border);margin:4px 0"></div>';
     /* Nivel 4 */
     h+=_hipROmoney('T\u00e9rmino fijo/mes',e.terminoFijo);
-    h+=_hipRO('IVA',(e.ivaElect||21)+'%');
+    h+=_hipRO('IVA',(e.ivaElect==null?21:e.ivaElect)+'%');
     h+=_hipRO('Comercializadora',e.comercializadora||'\u2014');
   }
+  if(e.modo==='fijo')h+='<p class="energy-caption">Cuota fija activa: '+fcPlain(e.cuotaFija)+'/mes. Los precios de consumo y potencia quedan guardados para cambiar de modalidad.</p>';
   h+='</div>';
   h+=energyHistoryButton('luz');
+  h+='<button class="hip-edit-btn" id="energyLegacyluz">Tramos / cuota fija</button>';
+
   return h;
 }
 
@@ -167,6 +170,8 @@ function renderGastosList(){
 /* ── openFiscal / closeFiscal ─────────────────────────────── */
 
 function _bindElectDetalle(){
+  var energyPrice=document.getElementById('desp-electPrecioKwh');if(energyPrice&&DESPACHO.elect.energyMode==='tramos'){energyPrice.readOnly=true;energyPrice.title='Media ponderada: editar desde Tramos / cuota fija';}
+  var advanced=document.getElementById('energyLegacyluz');if(advanced)advanced.onclick=function(){energyEditLegacyTariff('luz',null,document.getElementById('fiscalOverlay'),reRenderFiscal);};
   var editBtn=document.getElementById('electEditBtn');
   if(editBtn)editBtn.addEventListener('click',function(){FISCAL_ELECT_EDITING=true;reRenderFiscal();});
   var saveBtn=document.getElementById('electSaveBtn');
@@ -185,7 +190,7 @@ function _bindElectDetalle(){
     }
     e.precioKwh=parseFloat(document.getElementById('desp-electPrecioKwh').value)||0;
     e.terminoFijo=parseFloat(document.getElementById('desp-electTerminoFijo').value)||0;
-    e.ivaElect=parseFloat(document.getElementById('desp-electIva').value)||21;
+    e.ivaElect=Number(document.getElementById('desp-electIva').value);
     e.comercializadora=(document.getElementById('desp-electComerc').value||'').trim();
     saveDespacho();FISCAL_ELECT_EDITING=false;reRenderFiscal();
   });

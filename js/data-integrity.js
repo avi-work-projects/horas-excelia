@@ -32,6 +32,11 @@ function validateImport(data){
   }
   visit(data,'');
   if(data.energyContracts!=null)validateEnergyContracts(data.energyContracts);
+  if(data.energyTaxes!=null)energyValidateTaxes(data.energyTaxes);
+  if(data.despacho){
+    var ed=data.despacho,eg=ed.gas||{};
+    [ed.elect,eg.consumo,eg.fijo].concat(ed.electComparaciones||[],ed.gasComparaciones||[]).forEach(function(t){if(t&&t.energyMode!=null)energyValidateTariff(t);});
+  }
   if(data.energyBills!=null)validateEnergyBills(data.energyBills);
   if(data.navIconStyle!=null&&['original','professional'].indexOf(data.navIconStyle)===-1)throw new Error('Estilo de iconos no valido');
   if(data.bodaConfig)validateBodaConfig(data.bodaConfig);

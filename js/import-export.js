@@ -337,7 +337,7 @@ var _g4=document.getElementById('exportAllBtn'); if(_g4)_g4.addEventListener('cl
   if(typeof loadPersonalYear==='function')loadPersonalYear(CY);
   if(typeof loadEconComp==='function')loadEconComp();
   if(typeof loadEvAlarms==='function')loadEvAlarms();
-  var data={version:7,energyBills:energyBills(),energyContracts:energyContracts(),calendarUppercase:appStorage.getItem(EV_ICS_UPPER_KEY)==='true',calendarNotes:appStorage.getItem(EV_ICS_NOTES_KEY)==='true',calendarAuthor:evIcsAuthor(),calendarExports:evIcsRecords(),csvExports:csvExportRecords(),bodaConfig:JSON.parse(JSON.stringify(BODA_CONFIG)),mailConfig:_lsJson(MAIL_CFG_SK,null),days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
+  var data={version:7,energyTaxes:energyTaxes(),energyBills:energyBills(),energyContracts:energyContracts(),calendarUppercase:appStorage.getItem(EV_ICS_UPPER_KEY)==='true',calendarNotes:appStorage.getItem(EV_ICS_NOTES_KEY)==='true',calendarAuthor:evIcsAuthor(),calendarExports:evIcsRecords(),csvExports:csvExportRecords(),bodaConfig:JSON.parse(JSON.stringify(BODA_CONFIG)),mailConfig:_lsJson(MAIL_CFG_SK,null),days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
     exclFest:EXCL_FEST,exclVac:EXCL_VAC,vacEntitlement:VAC_ENTITLEMENT,vacByYear:_lsJson(VAC_YEAR_KEY,VAC_BY_YEAR),
     birthdays:BDAYS,events:EVENTS,
     bodas:typeof BODA_COUPLES!=='undefined'?BODA_COUPLES:null,
@@ -402,6 +402,7 @@ function _applyFullImport(d,mode){
     try{
       d=prepareImportRelations(validateImport(d),merge);
       appStorage.begin();
+      if(d.energyTaxes)energySaveTaxes(merge?energyMergeTaxes(energyTaxes(),d.energyTaxes):d.energyTaxes);
       if(d.energyBills)energySaveBills(merge?energyMergeBills(energyBills(),d.energyBills):d.energyBills);
       if(d.energyContracts)energySaveContracts(merge?energyMergeContracts(energyContracts(),d.energyContracts):d.energyContracts);
       if(d.calendarUppercase!=null)appStorage.setItem(EV_ICS_UPPER_KEY,String(d.calendarUppercase));

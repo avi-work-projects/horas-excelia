@@ -231,16 +231,13 @@ var ESTUDIO_GAS_SCENARIOS=[{nombre:'Invierno',consumoKwh:1300,dias:30},{nombre:'
 var ESTUDIO_GAS_CALC=false;
 var ESTUDIO_GAS_IVA=null; // null=load from DESPACHO, else override
 
-function _calcGasCost(t,kwh,dias){
-  if(t.modo==='fijo')return(t.cuotaFija||0)*(dias/30);
-  return kwh*(t.precioKwh||0)+(t.terminoFijoDia||0)*dias+(t.terminoFijo||0)*(dias/30);
-}
+function _calcGasCost(t,kwh,dias){return energyTariffNet(t,'gas',kwh,dias,30);}
 function _currentGasTariff(){
   if(typeof _ensureGasScenarios==='function')_ensureGasScenarios();
   var g=DESPACHO&&DESPACHO.gas?DESPACHO.gas:{modo:'consumo',precioKwh:0,cuotaFija:0,terminoFijo:0};
   var activo=g.activo||'consumo';
   var d=activo==='fijo'?(g.fijo||{}):(g.consumo||{});
-  return{modo:activo,precioKwh:d.precioKwh||0,terminoFijoDia:d.terminoFijoDia||0,terminoFijo:d.terminoFijo||0,cuotaFija:d.cuotaFija||0,comercializadora:d.comercializadora||''};
+  return Object.assign({},d,{modo:activo,precioKwh:d.precioKwh||0,terminoFijoDia:d.terminoFijoDia||0,terminoFijo:d.terminoFijo||0,cuotaFija:d.cuotaFija||0,comercializadora:d.comercializadora||''});
 }
 
 function _renderEstudioGasComp(){
@@ -304,6 +301,7 @@ function _renderEstudioGasComp(){
 }
 
 function _renderGasCompCard(c,i){
+  if(c.energyMode==='tramos')c=Object.assign({},c,{precioKwh:energyWeightedPrice(c)});
   var h='<div class="est-tariff-card">';
   h+='<div class="est-card-hdr">';
   h+='<input class="est-card-name" data-tipo="gas" data-idx="'+i+'" data-field="nombre" type="text" value="'+escHtml(c.nombre||'')+'" placeholder="Tarifa '+(i+1)+'">';
@@ -327,6 +325,7 @@ function _renderGasCompCard(c,i){
   h+='<div class="est-fields-row">';
   h+='<div class="est-field est-field-wide"><label>Comercializadora</label><input class="fiscal-despacho-input est-comp-f" data-tipo="gas" data-idx="'+i+'" data-field="comercializadora" type="text" value="'+escHtml(c.comercializadora||'')+'" placeholder="Ej: Naturgy..." style="text-align:left"></div>';
   h+='</div></div>';
+  h+='<button class="hip-edit-btn" data-energy-legacy="'+i+'" data-energy-kind="gas">Tramos / cuota fija</button>';
   return h;
 }
 
@@ -335,15 +334,7 @@ var ESTUDIO_ELECT_SCENARIOS=[{nombre:'Luis Cabrera',consumoKwh:150,dias:30}];
 var ESTUDIO_ELECT_CALC=false;
 var ESTUDIO_ELECT_IVA=null;
 
-function _calcElectCost(t,e,kwh,dias){
-  var potCost=0;
-  if(t.modoPotencia==='doble'){
-    potCost=((t.precioPotP1||0)*(e.potenciaP1||e.potenciaTotal||0)+(t.precioPotP2||0)*(e.potenciaP2||e.potenciaTotal||0))*dias;
-  } else {
-    potCost=(t.precioPotP1||t.precioPot||0)*(e.potenciaTotal||0)*dias;
-  }
-  return kwh*(t.precioKwh||0)+potCost+(t.terminoFijo||0)*(dias/30);
-}
+function _calcElectCost(t,e,kwh,dias){return energyTariffNet(t,'luz',kwh,dias,30,t.useOwnPower?t:e);}
 function _currentElectTariff(){
   var e=DESPACHO&&DESPACHO.elect?DESPACHO.elect:{modoPotencia:'doble',potenciaP1:3.3,potenciaP2:3.3,potenciaTotal:6.6,precioPotP1:0,precioPotP2:0,precioKwh:0,terminoFijo:0,comercializadora:''};
   return e;
@@ -360,6 +351,8 @@ function _renderEstudioElectComp(){
   h+='<button class="est-detail-btn" id="estElectGoDetail">Ver Detalle \u2192</button></div>';
   h+='<div class="est-tariff-card est-current">';
   if(e.comercializadora)h+='<div style="font-size:.72rem;font-weight:600;color:var(--accent-bright)">'+escHtml(e.comercializadora)+'</div>';
+  if(e.modo==='fijo')h+='<p class="energy-caption">Cuota fija activa: '+fcPlain(e.cuotaFija)+'/mes. No se suman consumo ni potencia.</p>';
+  if(e.energyMode==='tramos')h+='<p class="energy-caption">Precio del consumo: media ponderada de P1/P2/P3.</p>';
   h+='<div class="est-tariff-row"><span class="est-tariff-lbl">Potencia</span><span class="est-tariff-val"><b>'+(e.potenciaTotal||e.potenciaP1||0)+'</b> kW</span></div>';
   if(e.modoPotencia==='doble'){
     h+='<div class="est-tariff-row"><span class="est-tariff-lbl">Precio P1 (punta)</span><span class="est-tariff-val">'+(e.precioPotP1||0).toFixed(6)+' \u20ac/kW/d</span></div>';
@@ -411,6 +404,8 @@ function _renderEstudioElectComp(){
 }
 
 function _renderElectCompCard(c,i,e){
+  if(c.energyMode==='tramos')c=Object.assign({},c,{precioKwh:energyWeightedPrice(c)});
+  if(c.modo==='fijo')return '<div class="est-tariff-card"><div class="est-card-hdr"><input class="est-card-name" data-tipo="elect" data-idx="'+i+'" value="'+escHtml(c.nombre||'')+'"><button class="est-card-del" data-tipo="elect" data-idx="'+i+'">×</button></div><p>Cuota fija: '+fcPlain(c.cuotaFija)+'/mes · sin IVA</p><button class="hip-edit-btn" data-energy-legacy="'+i+'" data-energy-kind="luz">Tramos / cuota fija</button></div>';
   if(c.precioPot&&!c.precioPotP1){c.precioPotP1=c.precioPot;if(!c.modoPotencia)c.modoPotencia='simple';}
   if(!c.modoPotencia)c.modoPotencia=e.modoPotencia||'doble';
   var h='<div class="est-tariff-card">';
@@ -435,6 +430,7 @@ function _renderElectCompCard(c,i,e){
   h+='<div class="est-fields-row">';
   h+='<div class="est-field est-field-wide"><label>Comercializadora</label><input class="fiscal-despacho-input est-comp-f" data-tipo="elect" data-idx="'+i+'" data-field="comercializadora" type="text" value="'+escHtml(c.comercializadora||'')+'" placeholder="Ej: Endesa..." style="text-align:left"></div>';
   h+='</div></div>';
+  h+='<button class="hip-edit-btn" data-energy-legacy="'+i+'" data-energy-kind="luz">Tramos / cuota fija</button>';
   return h;
 }
 
@@ -508,6 +504,7 @@ function _renderMultiScenarioResult(scenarios,comps,tipo,currentTariff,ivaPct){
 
 /* ── Shared bindings for gas/elect comparison ────────────── */
 function _bindEstudioGas(){
+  document.querySelectorAll('[data-energy-legacy][data-energy-kind="gas"]').forEach(function(b){b.onclick=function(){energyEditLegacyTariff('gas',+b.dataset.energyLegacy,document.getElementById('estudioOverlay'),_estudioReRender);};});
   var goDetail=document.getElementById('estGasGoDetail');
   if(goDetail)goDetail.addEventListener('click',function(){FISCAL_TAB='despacho';FISCAL_HIP_SUB='gas';if(typeof openFiscal==='function')openFiscal();});
   _bindScenarios('gas',ESTUDIO_GAS_SCENARIOS);
@@ -538,6 +535,7 @@ function _bindEstudioGas(){
 }
 
 function _bindEstudioElect(){
+  document.querySelectorAll('[data-energy-legacy][data-energy-kind="luz"]').forEach(function(b){b.onclick=function(){energyEditLegacyTariff('luz',+b.dataset.energyLegacy,document.getElementById('estudioOverlay'),_estudioReRender);};});
   var goDetail=document.getElementById('estElectGoDetail');
   if(goDetail)goDetail.addEventListener('click',function(){FISCAL_TAB='despacho';FISCAL_HIP_SUB='elect';if(typeof openFiscal==='function')openFiscal();});
   _bindScenarios('elect',ESTUDIO_ELECT_SCENARIOS);
@@ -596,6 +594,7 @@ function _readScenarios(tipo,arr){
 }
 
 function _bindCompFields(tipo,despKey){
+  document.querySelectorAll('.est-comp-f[data-tipo="'+tipo+'"][data-field="precioKwh"]').forEach(function(el){var t=DESPACHO[despKey][+el.dataset.idx];if(t&&t.energyMode==='tramos'){el.readOnly=true;el.title='Media ponderada: editar desde Tramos / cuota fija';}});
   document.querySelectorAll('.est-card-name[data-tipo="'+tipo+'"]').forEach(function(el){
     el.addEventListener('change',function(){
       var idx=parseInt(el.dataset.idx);
