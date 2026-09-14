@@ -100,6 +100,7 @@ function bodaRefreshRow(ev){
 
 /* ── Binds de la pestaña ── */
 function bindBodasEvents(){
+  var exp=document.getElementById('evCalendarExport');if(exp)exp.onclick=openEvCalendarExport;
   bindBodaConfig();
   /* Al salir de la lista se guarda lo pendiente para no perderlo sin avisar */
   function _guardaPendientes(){

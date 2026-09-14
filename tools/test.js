@@ -353,6 +353,7 @@ const REGLAS = [
       'excelia-horas-v3':          'days/sent/monthH/rate/exclFest/exclVac/multiRate/ratePeriods/econYearConfig',
       'excelia-vac-days':          'vacEntitlement',
       'excelia-csv-exports-v1': 'csvExports',
+      'excelia-calendar-exports-v1': 'calendarExports',
       'excelia-vac-years':         'vacByYear',
       'excelia-bdays-v1':          'birthdays',
       'excelia-events-v1':         'events',

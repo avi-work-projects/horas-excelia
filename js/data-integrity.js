@@ -35,6 +35,15 @@ function validateImport(data){
   if(data.bodaConfig)validateBodaConfig(data.bodaConfig);
   ['days','sent','monthH','bodasClosed','evAlarms','bdayAlarms','econYearConfig','gastosPerYear','personalPerYear'].forEach(function(k){if(data[k]!=null&&(typeof data[k]!=='object'||Array.isArray(data[k])))throw new Error('Mapa no valido: '+k);});
   ['rate','vacEntitlement','alarmHour','alarmMinute'].forEach(function(k){if(data[k]!=null&&(!Number.isFinite(Number(data[k]))||Number(data[k])<0))throw new Error('Numero no valido: '+k);});
+  if(data.calendarExports!=null){
+    if(typeof data.calendarExports!=='object'||Array.isArray(data.calendarExports)||Object.keys(data.calendarExports).length>20000)throw new Error('Registro de calendario no válido');
+    Object.keys(data.calendarExports).forEach(function(k){
+      var r=data.calendarExports[k],parts;try{parts=JSON.parse(k);}catch(e){throw new Error('Identidad de calendario no válida');}
+      if(!r||!Array.isArray(parts)||parts.length<1||parts.length>2||typeof parts[0]!=='string'||r.key!==k||!r.ev||String(r.ev.id)!==parts[0]||(parts.length===2&&!validIsoDate(parts[1]))||!validIsoDate(r.start)||!validIsoDate(r.end)||r.end<r.start||typeof r.big!=='boolean'||typeof r.cancelled!=='boolean'||!Number.isSafeInteger(r.sequence)||r.sequence<0||typeof r.modified!=='string'||!/^\d{8}T\d{6}Z$/.test(r.modified)||typeof r.signature!=='string'||typeof r.ev.title!=='string')throw new Error('Registro de calendario no válido');
+      ['time','endTime'].forEach(function(field){var t=r.ev[field];if(t!=null&&(typeof t!=='string'||!/^([01]\d|2[0-3]):[0-5]\d$/.test(t)))throw new Error('Hora exportada no válida');});
+      if(typeof r.ev.type!=='string'||typeof r.ev.note!=='string'||r.ev.title.length>10000||r.ev.note.length>100000||parts[0].length>512)throw new Error('Evento exportado no válido');
+    });
+  }
   if(data.csvExports!=null){
     if(typeof data.csvExports!=='object'||Array.isArray(data.csvExports))throw new Error('Registro CSV no valido');
     Object.keys(data.csvExports).forEach(function(year){
