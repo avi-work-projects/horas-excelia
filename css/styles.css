@@ -2721,7 +2721,6 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .ev-cal-export-sheet [hidden]{display:none!important}
 
 [data-theme="light"] .ev-week-sep.bday-group-today,.ev-week-sep.bday-group-today{background:#39a66b30;color:var(--c-green);border-color:#39a66b60}
-.ev-cal-export-retry{display:block;text-align:center;font-size:.72rem;color:var(--accent);padding-top:8px}
 
 .ev-field label.boda-future-check{display:flex;align-items:center;gap:8px}
 .boda-future-check input[type="checkbox"]{margin:0;flex-shrink:0}
@@ -2740,3 +2739,6 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .ev-cal-export-item{padding:6px 9px}
 .ev-cal-export-item small{margin-top:2px}
 .ev-cal-export-sheet{height:96dvh;max-height:96dvh;gap:6px}
+
+.ev-cal-export-settings{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface2)}
+.ev-cal-export-settings .ev-cal-export-intro{font-size:.65rem}
