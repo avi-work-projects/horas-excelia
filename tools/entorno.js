@@ -39,6 +39,7 @@ const MODULOS = [
   'events-picker-color.js',
   'events-picker-date.js',
   'events.js',
+  'events-calendar-export.js',
   'events-cal.js',
   'events-render.js',
   'events-form.js',

@@ -2669,3 +2669,24 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .home-summary-compact .ms-num{font-size:.8rem}
 .home-summary-compact .ms-label,.home-summary-compact .ms-hrs{font-size:.62rem}
 .home-summary-compact .ms-breakdown{font-size:.6rem}
+
+/* Selector de eventos para compartir por iCalendar */
+.ev-cal-export-sheet{display:flex;flex-direction:column;gap:12px}
+.ev-cal-export-sheet>.boda-config-head h3{font-size:1rem;margin:8px 0}
+.ev-cal-export-intro,.ev-cal-export-empty{font-size:.78rem;color:var(--text-muted);margin:0;line-height:1.5}
+.ev-cal-export-sheet .ev-date-row{display:flex;gap:12px}
+.ev-cal-export-sheet .ev-field{flex:1;min-width:0;margin:0;font-size:.75rem;color:var(--text-muted)}
+.ev-cal-export-tools{display:flex;gap:8px;justify-content:space-between}
+.ev-cal-export-tools .ev-io-btn{font-size:.72rem;padding:8px 10px}
+.ev-cal-export-list{min-height:90px;max-height:34dvh;overflow-y:auto;border:1px solid var(--border);border-radius:12px}
+.ev-cal-export-item{display:flex;align-items:center;gap:12px;padding:12px;border-bottom:1px solid var(--border);cursor:pointer}
+.ev-cal-export-item:last-child{border-bottom:0}
+.ev-cal-export-item:has(input:checked){background:var(--surface2)}
+.ev-cal-export-item span{min-width:0;flex:1}
+.ev-cal-export-item strong{display:block;font-size:.85rem;overflow-wrap:anywhere}
+.ev-cal-export-item small{display:block;font-size:.7rem;color:var(--text-muted);margin-top:5px}
+.ev-cal-export-empty{padding:14px}
+.ev-cal-export-notes{display:flex;align-items:center;gap:8px;font-size:.75rem}
+.ev-cal-export-footer p{font-size:.7rem;color:var(--text-muted);line-height:1.5;margin:0 0 12px}
+.ev-cal-export-footer .ev-io-btn{width:100%;padding:12px}
+.ev-cal-export-footer .ev-io-btn:disabled{opacity:.45;cursor:default}
