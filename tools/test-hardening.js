@@ -312,3 +312,28 @@ assert.equal(a.evIcsExportStatus(travelRows[0],uppercaseRec[travelRows[0].key],f
 assert.equal(a.validateImport({calendarUppercase:true}).calendarUppercase,true);
 assert.throws(()=>a.validateImport({calendarUppercase:'true'}));
 console.log('Exportación: mayúsculas sin modificar original y orden horario de todos los tipos OK');
+
+// Contratos: ida y vuelta, actualizaciones, aislamiento y datos no válidos.
+const energy=cargarApp({});
+const contract={id:'contract-test',kind:'luz',supplier:'Comercializadora de prueba',tariff:'Tarifa A',supply:'Vivienda prueba',start:'2025-01-01',end:'2025-12-31',commitment:'',taxes:'excluidos',notes:'Sin permanencia',source:'factura-test.pdf',prices:[{label:'Energía P1',value:0.123456,unit:'€/kWh'}]};
+energy.energySaveContracts([contract]);
+assert.equal(energy.energyContracts()[0].prices[0].value,0.123456);
+assert.equal(energy.energyMergeContracts(energy.energyContracts(),[{...contract,id:'another-device'}]).length,1);
+assert.equal(energy.energyMergeContracts(energy.energyContracts(),[{...contract,notes:'Actualizado'}])[0].notes,'Actualizado');
+assert.equal(energy.energyMergeContracts(energy.energyContracts(),[{...contract,id:'gas-test',kind:'gas'}]).length,2);
+assert.throws(()=>energy.validateEnergyContracts([{...contract,end:'2024-01-01'}]));
+assert.throws(()=>energy.validateEnergyContracts([{...contract,prices:[{label:'Precio',value:-1,unit:'€/kWh'}]}]));
+assert.throws(()=>energy.validateEnergyContracts([{...contract,start:'2025-02-30'}]));
+assert.ok(energy.energyHistoryHtml('luz').includes('Comercializadora de prueba'));
+assert.ok(!energy.energyHistoryHtml('gas').includes('Comercializadora de prueba'));
+assert.ok(energy._renderGasDetalle().includes('Histórico de contratos'));
+assert.ok(energy._renderElectDetalle().includes('Histórico de contratos'));
+a.auditImport({version:7,energyContracts:[contract]},'merge');
+assert.equal(a.energyContracts().length,1);
+a.auditImport({version:7,energyContracts:[contract]},'merge');
+assert.equal(a.energyContracts().length,1);
+a.auditImport({version:7,days:{}},'merge');
+assert.equal(a.energyContracts().length,1);
+a.auditImport({version:7,energyContracts:[]},'replace');
+assert.equal(a.energyContracts().length,0);
+console.log('Contratos: persistencia, importación idempotente, fechas y precios OK');

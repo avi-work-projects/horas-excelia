@@ -30,6 +30,7 @@ const MODULOS = [
   'economics-fiscal.js',
   'economics-fiscal-hip.js',
   'economics-fiscal-gas.js',
+  'energy-history.js',
   'economics-fiscal-elect.js',
   'economics-gastos.js',
   'economics-analisis.js',
