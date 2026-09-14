@@ -40,7 +40,7 @@ function openHomePopup(){
       var diff=Math.round((bd-today)/86400000);
       if(diff>7||(typeof isBdayAlarmSet==='function'&&isBdayAlarmSet(b)))return;
       var when=diff===0?' (hoy)':diff===1?' (ma\u00f1ana)':' (en '+diff+'d)';
-      birthdays.push({days:diff,type:b.vip?'vip':'bday',text:(b.vip?'&#11088; ':'&#127874; ')+escHtml(b.name)+when+' → sin alarma'});
+      birthdays.push({days:diff,type:b.vip?'vip':'bday',text:(b.vip?'&#11088; ':'&#127874; ')+escHtml(b.name)+when+' - sin alarma'});
     });
   }
   if(typeof birthdays!=='undefined'){
@@ -60,7 +60,7 @@ function openHomePopup(){
         if(isEvBarAlways(ev)){var ida=evTramos(ev).filter(function(tr){return tr.k==='ida';})[0];time=ida&&ida.t.time||'';}
         if(getEvType(ev)==='Ensayos boda'){
           var pareja=typeof bodaCouple==='function'&&ev.boda?bodaCouple(ev.boda.coupleId):null;
-          contenido=pareja?'Ensayo → '+pareja.name:(ev.title||'Ensayo sin pareja asignada');
+          contenido=pareja?'Ensayo - '+pareja.name:(ev.title||'Ensayo sin pareja asignada');
         }
         eventItems.push({days:diff,time:time||'',type:'event',text:homeReminderEventText(diff===0?'Hoy':'Mañana',time,contenido)});
       }
@@ -73,7 +73,7 @@ function openHomePopup(){
           if(diffEnd===0||diffEnd===1){
             var vuelta=evTramos(ev).filter(function(tr){return tr.k==='vuelta';})[0];
             var endTime=vuelta&&vuelta.t.time||'';
-            eventItems.push({days:diffEnd,time:endTime,type:'event',text:homeReminderEventText(diffEnd===0?'Hoy':'Mañana',endTime,'Fin → '+ev.title)});
+            eventItems.push({days:diffEnd,time:endTime,type:'event',text:homeReminderEventText(diffEnd===0?'Hoy':'Mañana',endTime,'Fin - '+ev.title)});
           }
         }
       }
