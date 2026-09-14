@@ -50,7 +50,11 @@ function openHomePopup(){
         var lbl=escHtml(ev.title)+(diff===0?' (\u00a1hoy!)':' (ma\u00f1ana!)');
         var time=evTimeLabel(ev);
         if(isEvBarAlways(ev)){var ida=evTramos(ev).filter(function(tr){return tr.k==='ida';})[0];time=ida&&ida.t.time||'';}
-        if(time)lbl+=' · '+escHtml(time);
+        if(getEvType(ev)==='Ensayos boda'){
+          var pareja=typeof bodaCouple==='function'&&ev.boda?bodaCouple(ev.boda.coupleId):null;
+          var contenido=pareja?'Ensayo — '+pareja.name:(ev.title||'Ensayo sin pareja asignada');
+          lbl=(diff===0?'Hoy':'Mañana')+' · '+(time?escHtml(time):'Sin hora')+' · '+escHtml(contenido);
+        }else if(time)lbl+=' · '+escHtml(time);
         items.push({type:'event',text:'&#128197; '+lbl});
       }
       // Fin de eventos de más de 7 días

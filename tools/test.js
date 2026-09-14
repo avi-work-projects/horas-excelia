@@ -546,6 +546,22 @@ REGLAS.push(['inicio: todos los cumpleanos a 7 dias sin alarma',function(){
   return content.innerHTML.includes('Normal cercano')&&content.innerHTML.includes('VIP cercano')&&!content.innerHTML.includes('Ya avisado')&&!content.innerHTML.includes('Fuera plazo');
 }]);
 
+REGLAS.push(['inicio: ensayo con fecha, hora y pareja actual; sin hora explicita',function(){
+  const ctx=cargarApp(claves),content={innerHTML:''};
+  ctx.BDAYS=[];
+  ctx.BODA_COUPLES=[{id:'popup-couple',name:'Pareja <actual>'}];
+  ctx.EVENTS=[
+    {id:'popup-1',kind:'puntual',type:'Ensayos boda',title:'Nombre antiguo',start:'2026-08-22',boda:{coupleId:'popup-couple',time:'18:00',duration:60}},
+    {id:'popup-2',kind:'puntual',type:'Ensayos boda',title:'Ensayo sin asignar',start:'2026-08-21',boda:{}}
+  ];
+  ctx.sessionStorage={getItem:()=>null};
+  ctx.document.getElementById=id=>id==='homePopupContent'?content:id==='homePopup'?{style:{}}:null;
+  require('vm').runInContext(fs.readFileSync(path.join(RAIZ,'js/home-popup.js'),'utf8'),ctx);
+  return content.innerHTML.includes('Mañana · 18:00–19:00 · Ensayo — Pareja &lt;actual&gt;')
+    &&content.innerHTML.includes('Hoy · Sin hora · Ensayo sin asignar')
+    &&!content.innerHTML.includes('Nombre antiguo');
+}]);
+
 REGLAS.push(['swipe proximos: orden, extremos y modal protegido',function(){
   const ctx=cargarApp(claves),handlers={},el={addEventListener:(name,fn)=>{handlers[name]=fn;}};
   require('vm').runInContext(fs.readFileSync(path.join(RAIZ,'js/events-bind.js'),'utf8'),ctx);
