@@ -1,5 +1,5 @@
 /* Exportación iCalendar: selección explícita, sin ensayos ni datos de parejas.
-   UID estable por evento/ocurrencia. Volver a importar aplica cambios/bajas; no hay sincronización automática. */
+   UID estable por evento/ocurrencia. Volver a importar aplica cambios. Los borrados se hacen manualmente en Google. */
 var EV_CAL_EXPORT=null;
 var EV_ICS_KEY='excelia-calendar-exports-v1';
 function evIcsText(value){
@@ -42,10 +42,10 @@ function evIcsFile(rows,notes){
   var seen=Object.create(null),stamp=new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');
   rows.forEach(function(row){
     var ev=row.ev;
-    if((getEvType(ev)==='Ensayos boda'&&!row.cancelled)||seen[row.key])return;
+    if(row.cancelled||getEvType(ev)==='Ensayos boda'||seen[row.key])return;
     seen[row.key]=true;
     var uid='gestify-'+encodeURIComponent(row.key)+'@gestify.invalid';
-    lines.push('BEGIN:VEVENT','UID:'+uid,'DTSTAMP:'+(row.modified||stamp),'LAST-MODIFIED:'+(row.modified||stamp),'SEQUENCE:'+(row.sequence||0),'STATUS:'+(row.cancelled?'CANCELLED':'CONFIRMED'),'SUMMARY:'+evIcsText(ev.title||getEvType(ev)));
+    lines.push('BEGIN:VEVENT','UID:'+uid,'DTSTAMP:'+(row.modified||stamp),'LAST-MODIFIED:'+(row.modified||stamp),'SEQUENCE:'+(row.sequence||0),'STATUS:CONFIRMED','SUMMARY:'+evIcsText(ev.title||getEvType(ev)));
     var time=row.big?null:evStartTime(ev),end=row.big?null:evEndTime(ev);
     if(time&&/^\d{2}:\d{2}$/.test(time)){
       lines.push('DTSTART;TZID=Europe/Madrid:'+row.start.replace(/-/g,'')+'T'+time.replace(':','')+'00');
@@ -90,15 +90,14 @@ function evIcsRememberedRows(events,from,to,records){
   });
   return rows.sort(function(a,b){return a.start.localeCompare(b.start);});
 }
-function evIcsPrepare(rows,selected,records,notes,removed){
-  removed=removed||{};
+function evIcsPrepare(rows,selected,records,notes){
   var next=Object.create(null),stamp=new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');
   Object.keys(records).forEach(function(k){next[k]=JSON.parse(JSON.stringify(records[k]));});
   rows.forEach(function(row){
-    var old=records[row.key],cancel=!!removed[row.key]&&!!old,on=!!selected[row.key]&&!row.missing;
-    if(!cancel&&!on)return;
+    var old=records[row.key],on=!!selected[row.key]&&!row.missing;
+    if(!on)return;
     var e=row.ev,note=notes?[e.note,e.dayNotes&&e.dayNotes[row.start]].filter(Boolean).join('\n'):'';
-    var r={key:row.key,start:row.start,end:row.end,big:row.big,cancelled:cancel,
+    var r={key:row.key,start:row.start,end:row.end,big:row.big,cancelled:false,
       ev:{id:String(e.id),kind:row.big?'grande':'puntual',type:getEvType(e),title:e.title||getEvType(e),time:row.big?null:evStartTime(e),endTime:row.big?null:evEndTime(e),note:note}};
     var signature=JSON.stringify([r.start,r.end,r.big,r.cancelled,r.ev]);
     r.signature=signature;r.sequence=old?old.sequence:0;r.modified=old?old.modified:stamp;
@@ -107,8 +106,14 @@ function evIcsPrepare(rows,selected,records,notes,removed){
   });
   return next;
 }
-function evIcsExportRows(records,selected,removed){
-  return Object.keys(records).filter(function(k){return removed[k]||(selected[k]&&!records[k].cancelled);}).map(function(k){return records[k];});
+function evIcsExportRows(records,selected){
+  return Object.keys(records).filter(function(k){return selected[k]&&!records[k].cancelled;}).map(function(k){return records[k];});
+}
+function evIcsExportStatus(row,old,notes){
+  if(row.missing)return 'missing';
+  if(!old)return 'new';
+  var selected={},records={};selected[row.key]=true;records[row.key]=old;
+  return evIcsPrepare([row],selected,records,notes)[row.key].signature===old.signature?'repeat':'changed';
 }
 function evIcsFilterRows(rows,kind,type,query){
   query=String(query||'').trim().toLocaleLowerCase();
@@ -126,22 +131,23 @@ function renderEvCalendarExport(){
     +'<label class="ev-cal-export-notes"><input id="evIcsNotes" type="checkbox"> Incluir notas</label><p class="ev-cal-export-intro">Los ensayos no se exportan. Los eventos exportados anteriormente siguen disponibles fuera del intervalo.</p></details>'
     +'<div class="ev-cal-export-tools"><button class="ev-io-btn" id="evIcsAll">Seleccionar visibles</button><button class="ev-io-btn" id="evIcsNone">Limpiar selección</button></div>'
     +'<div id="evIcsList" class="ev-cal-export-list"></div>'
-    +'<div class="ev-cal-export-footer"><p id="evIcsChanges" aria-live="polite"></p><p>Desmarcar no borra nada. Solo «Retirar» prepara una baja. Importa el archivo en el mismo calendario.</p>'
+    +'<div class="ev-cal-export-footer"><p id="evIcsChanges" aria-live="polite"></p><p>El archivo añade o actualiza. Nunca borra eventos. Los borrados se hacen manualmente en Google.</p>'
     +'<button class="ev-io-btn io-primaria" id="evIcsDownload" disabled>Exportar selección</button></div></div></div>';
 }
 function openEvCalendarExport(){
   var today=new Date(),until=new Date(today);until.setFullYear(until.getFullYear()+1);
-  EV_CAL_EXPORT={from:evDk(today),to:evDk(until),kind:'',type:'',selected:Object.create(null),removed:Object.create(null),rows:[],visible:[],records:evIcsRecords()};
+  EV_CAL_EXPORT={from:evDk(today),to:evDk(until),kind:'',type:'',selected:Object.create(null),rows:[],visible:[],records:evIcsRecords()};
   var close=function(){cerrarPanel('evCalendarExportWrap','evCalendarExportOv');};
   var wrap=abrirPanel('evCalendarExportWrap',renderEvCalendarExport(),{overlay:'evCalendarExportOv',alCerrar:close});
   if(!wrap)return;
   var find=function(id){return wrap.querySelector('#'+id);},F=EV_CAL_EXPORT;
   function count(){
-    var n=F.rows.filter(function(r){return F.selected[r.key]&&!r.missing&&!F.removed[r.key];}).length,b=find('evIcsDownload');
-    var removed=F.rows.filter(function(r){return F.removed[r.key];});
-    b.disabled=!n&&!removed.length;b.textContent='Exportar '+n+' evento'+(n===1?'':'s')+(removed.length?' y '+removed.length+' baja'+(removed.length===1?'':'s'):'');
-    find('evIcsChanges').textContent=removed.length?'Retirar de Google: '+removed.map(function(r){return r.ev.title;}).join(', '):n+' seleccionado'+(n===1?'':'s')+' · '+F.visible.length+' visible'+(F.visible.length===1?'':'s');
-    find('evIcsChanges').classList.toggle('ev-cal-export-warning',!!removed.length);
+    var chosen=F.rows.filter(function(r){return F.selected[r.key]&&!r.missing;}),b=find('evIcsDownload');
+    var repeat=chosen.filter(function(r){return F.status[r.key]==='repeat';}),changed=chosen.filter(function(r){return F.status[r.key]==='changed';});
+    b.disabled=!chosen.length;b.textContent='Exportar '+chosen.length+' evento'+(chosen.length===1?'':'s');
+    find('evIcsChanges').textContent=changed.length?'⚠ Cambios desde la última exportación: '+changed.map(function(r){return r.ev.title;}).join(', ')+(repeat.length?' · '+repeat.length+' ya exportados sin cambios':'')
+      :repeat.length?'↻ Ya exportados sin cambios: '+repeat.map(function(r){return r.ev.title;}).join(', '):chosen.length+' seleccionados · '+F.visible.length+' visibles';
+    find('evIcsChanges').classList.toggle('ev-cal-export-warning',!!(repeat.length||changed.length));
   }
   function filters(){
     find('evIcsKinds').innerHTML=[['','Todos'],['grande','Grandes'],['puntual','Puntuales']].map(function(k){return '<button type="button" class="ev-filter-chip'+(F.kind===k[0]?' active':'')+'" data-kind="'+k[0]+'" aria-pressed="'+(F.kind===k[0])+'">'+k[1]+'</button>';}).join('');
@@ -150,32 +156,31 @@ function openEvCalendarExport(){
     find('evIcsTypes').innerHTML=[''].concat(types).map(function(t){return '<button type="button" class="ev-filter-chip'+(F.type===t?' active':'')+'" data-type="'+escHtml(t)+'" aria-pressed="'+(F.type===t)+'">'+escHtml(t||'Todas las categorías')+'</button>';}).join('');
   }
   function list(){
+    F.status={};F.rows.forEach(function(r){F.status[r.key]=evIcsExportStatus(r,F.records[r.key],find('evIcsNotes').checked);});
     F.visible=evIcsFilterRows(F.rows,F.kind,F.type,find('evIcsSearch').value);
     find('evIcsList').innerHTML=F.visible.length?F.visible.map(function(r,i){
-      var old=F.records[r.key],remove=!!F.removed[r.key],date=_fmtDayEs(r.start)+(r.end!==r.start?' – '+_fmtDayEs(r.end):'');
-      return '<div class="ev-cal-export-item'+(remove?' removing':'')+'"><label><input type="checkbox" data-ics-index="'+i+'"'+(F.selected[r.key]&&!r.missing&&!remove?' checked':'')+(r.missing?' disabled':'')+'><span><strong>'+escHtml(r.ev.title||getEvType(r.ev))+'</strong><small>'+escHtml(date+' · '+getEvType(r.ev))+'</small>'
-        +(old?'<small class="ev-cal-export-status">'+(r.missing?'Ya no está en Gestify':old.cancelled?'Baja exportada anteriormente':'Exportado anteriormente')+'</small>':'')+'</span></label>'
-        +(old?'<button type="button" class="ev-cal-export-remove" data-remove="'+i+'" aria-pressed="'+remove+'" aria-label="'+escHtml((remove?'No retirar ':'Retirar de Google ')+(r.ev.title||''))+'">'+(remove?'Deshacer':'Retirar')+'</button>':'')+'</div>';
+      var old=F.records[r.key],status=F.status[r.key],date=_fmtDayEs(r.start)+(r.end!==r.start?' – '+_fmtDayEs(r.end):'');
+      return '<div class="ev-cal-export-item"><label><input type="checkbox" data-ics-index="'+i+'"'+(F.selected[r.key]&&!r.missing?' checked':'')+(r.missing?' disabled':'')+'><span><strong>'+escHtml(r.ev.title||getEvType(r.ev))+'</strong><small>'+escHtml(date+' · '+getEvType(r.ev))+'</small>'
+        +(old?'<small class="ev-cal-export-status'+(status==='repeat'?'':' changed')+'">'+(status==='missing'?'⚠ Eliminado en Gestify → revisa Google manualmente':status==='changed'?'⚠ Cambios desde la última exportación':'↻ Ya exportado · sin cambios')+'</small>':'')+'</span></label></div>';
     }).join(''):'<p class="ev-cal-export-empty">No hay eventos con estos filtros. Puedes ampliar las fechas en «Fechas y opciones» (máximo dos años).</p>';
     count();
   }
   function dates(){F.from=find('evIcsFrom').value;F.to=find('evIcsTo').value;F.rows=evIcsRememberedRows(EVENTS,F.from,F.to,F.records);filters();list();}
   find('evCalendarExportClose').onclick=close;
-  find('evIcsFrom').onchange=dates;find('evIcsTo').onchange=dates;find('evIcsSearch').oninput=list;
+  find('evIcsFrom').onchange=dates;find('evIcsTo').onchange=dates;find('evIcsSearch').oninput=list;find('evIcsNotes').onchange=list;
   find('evIcsKinds').onclick=function(e){var b=e.target.closest('[data-kind]');if(!b)return;F.kind=b.getAttribute('data-kind');F.type='';filters();list();};
   find('evIcsTypes').onclick=function(e){var b=e.target.closest('[data-type]');if(!b)return;F.type=b.getAttribute('data-type');filters();list();};
-  find('evIcsList').onchange=function(e){var i=e.target.getAttribute('data-ics-index');if(i===null)return;var key=F.visible[+i].key;F.selected[key]=e.target.checked;delete F.removed[key];list();};
-  find('evIcsList').onclick=function(e){var b=e.target.closest('[data-remove]');if(!b)return;var key=F.visible[+b.getAttribute('data-remove')].key;F.removed[key]=!F.removed[key];delete F.selected[key];list();};
-  find('evIcsAll').onclick=function(){F.visible.forEach(function(r){if(!r.missing){F.selected[r.key]=true;delete F.removed[r.key];}});list();};
-  find('evIcsNone').onclick=function(){F.selected=Object.create(null);F.removed=Object.create(null);list();};
+  find('evIcsList').onchange=function(e){var i=e.target.getAttribute('data-ics-index');if(i===null)return;var key=F.visible[+i].key;F.selected[key]=e.target.checked;list();};
+  find('evIcsAll').onclick=function(){F.visible.forEach(function(r){if(!r.missing){F.selected[r.key]=true;}});list();};
+  find('evIcsNone').onclick=function(){F.selected=Object.create(null);list();};
   find('evIcsDownload').onclick=function(){
-    var next=evIcsPrepare(F.rows,F.selected,F.records,find('evIcsNotes').checked,F.removed);
+    var next=evIcsPrepare(F.rows,F.selected,F.records,find('evIcsNotes').checked);
     var selected=Object.create(null);F.rows.forEach(function(r){if(F.selected[r.key]&&!r.missing)selected[r.key]=true;});
-    var payload=evIcsExportRows(next,selected,F.removed);if(!payload.length)return;
+    var payload=evIcsExportRows(next,selected);if(!payload.length)return;
     var blob=new Blob([evIcsFile(payload,true)],{type:'text/calendar;charset=utf-8'});
     if(blob.size>1000000){showToast('Selecciona menos eventos: Google admite archivos de hasta 1 MB','error');return;}
     shareOrDownload(blob,'gestify-eventos.ics',function(){
-      appStorage.setItem(EV_ICS_KEY,JSON.stringify(next));F.records=next;F.removed=Object.create(null);
+      appStorage.setItem(EV_ICS_KEY,JSON.stringify(next));F.records=next;
       showToast('Archivo preparado. Impórtalo en el mismo calendario de Google','success');dates();
     });
   };

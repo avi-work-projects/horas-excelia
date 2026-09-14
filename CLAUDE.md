@@ -199,7 +199,7 @@ Se muestra en Futuras y Todas, nunca en Activas/Pasadas. Se edita en el formular
 y viaja dentro de `bodas` en el backup. Las parejas antiguas siguen sin marcar.
 
 
-## Exportación selectiva a Google Calendar (v349)
+## Exportación selectiva a Google Calendar (v350)
 `js/events-calendar-export.js` añade el botón de exportar a la derecha del logo WM.
 Solo eventos guardados (sin ensayos, cumpleaños virtuales ni sesiones de rutina).
 Los grandes son continuos de día completo, con DTEND exclusivo; los puntuales con
@@ -213,16 +213,18 @@ revisión y bajas. Solo se guarda al completar compartir/solicitar descarga.
 No significa que Google haya recibido el archivo. Fusionar backups conserva la revisión
 más alta. Los ya compartidos siguen disponibles aunque se cambie el intervalo de búsqueda.
 La selección empieza vacía. Desmarcar, filtrar o borrar en Gestify NO genera bajas.
-Solo «Retirar» marca una baja explícita (deshacible antes de exportar); la UI enumera sus nombres.
-`evIcsPrepare` conserva el registro histórico pero solo actualiza seleccionados/bajas explícitas.
-`evIcsExportRows` limita el archivo a esa selección; no reenvía históricos ni bajas antiguas
-por defecto. Estas siguen disponibles para repetir su baja explícitamente si faltó importarla.
+Los borrados se hacen manualmente en Google. El serializador omite registros cancelados
+antiguos y solo emite STATUS:CONFIRMED; no existe ninguna acción de cancelar.
+`evIcsPrepare` conserva el registro histórico y actualiza solo seleccionados.
+`evIcsExportRows` limita el archivo a esa selección, sin reenviar históricos.
+`evIcsExportStatus` compara el contenido que se exportaría con el último exportado:
+new/repeat/changed/missing. La fila y el resumen avisan de reexportaciones y cambios.
 Los filtros de clase/subtipo y texto son independientes de las selecciones.
- Solo se exportan notas si se marca la opción.
+Solo se exportan notas si se marca la opción.
 
 Prueba real en Google Calendar (14/09/2026), con datos ficticios retirados al terminar:
 importar el mismo UID no duplicó el evento; una revisión posterior cambió título y fechas;
-STATUS:CANCELLED retiró el evento. Verificado también con archivos del serializador real.
+STATUS:CANCELLED retiró el evento en aquella prueba. Desde v350 ya no se generan bajas, por elección del usuario.
 Es un intercambio manual: hay que importar el archivo más reciente en el MISMO calendario.
 No hay conexión automática, permisos OAuth, invitados ni modificaciones de ensayos.
 Al usar otro dispositivo se debe restaurar el backup para conservar identificadores, revisiones y bajas.
