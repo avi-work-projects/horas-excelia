@@ -62,7 +62,7 @@ function openHomePopup(){
           var pareja=typeof bodaCouple==='function'&&ev.boda?bodaCouple(ev.boda.coupleId):null;
           contenido=pareja?'Ensayo - '+pareja.name:(ev.title||'Ensayo sin pareja asignada');
         }
-        eventItems.push({days:diff,time:time||'',type:'event',text:homeReminderEventText(diff===0?'Hoy':'Mañana',time,contenido)});
+        eventItems.push({days:diff,time:time||'',type:'event',text:homeReminderEventText(diff===0?'Hoy':'Mañana',time,contenido)+bodaUltimoEnsayoHtml(ev)});
       }
       // Fin de eventos de más de 7 días
       if(ev.end&&ev.end>ev.start){

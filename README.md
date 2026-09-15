@@ -19,3 +19,11 @@ No subir backups personales, .local-preview ni configuracion del dispositivo.
 ## Versiones
 Incrementar APP_VERSION y CACHE_VER antes de publicar. La PWA ofrece Actualizar en el menu
 y en el toast. Se conserva una generacion anterior de cache para la migracion local.
+
+## Último ensayo (v361)
+`bodaEsUltimoEnsayo(ev)` consulta todos los eventos de la pareja: marca las clases
+que coinciden con su última fecha programada, aunque haya filtros activos. Añadir,
+reprogramar o borrar una clase recalcula la marca sin guardar estado duplicado.
+`bodaUltimoEnsayoHtml` comparte el distintivo entre Próximos, Agenda y recordatorios.
+El calendario mensual añade `boda-last-marker`, con un pulso cada 4 segundos;
+con movimiento reducido se sustituye por un contorno fijo. Anual/4 meses no cambian.

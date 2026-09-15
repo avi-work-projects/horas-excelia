@@ -62,6 +62,7 @@ function renderEvUpcoming(){
     var s='<div class="ev-upcoming-item'+(ev._rutSkip?' rut-cancelled':'')+(isToday?' ev-upcoming-today':'')+'" data-id="'+ev.id+'" data-first="'+evIsoDate(item.firstDate)+'">';
     s+='<div class="ev-up-mark">'+evUpcomingMarkHtml(ev)+'</div>';
     s+='<div class="ev-upcoming-info">';
+    s+=bodaUltimoEnsayoHtml(ev);
     s+='<div class="ev-upcoming-title">'+(ev._rutSkip?'<span class="rut-skipped-title">'+title+'</span> <span class="rut-skipped-label">(saltada)</span>':title)+'</div>';
     s+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+metaDate+'</div>';
     if(ev.note&&ev.note.trim()&&!_isVip)s+='<div class="ev-upcoming-note">'+escHtml(ev.note.trim())+'</div>';
@@ -455,6 +456,7 @@ function renderEvWeek(){
           h+='<span class="ev-wk-chip-meta">'+(_b.time||'--:--')
             +' \u00b7 '+escHtml(_pl?BODA_PLACE_SHORT[_pl]:'sin sala')+'</span>';
         }
+        h+=bodaUltimoEnsayoHtml(ev);
         h+='</div>';
       });
       h+=evWeekTravelRow(multiSegs,d,true);
