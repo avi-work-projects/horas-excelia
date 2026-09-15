@@ -99,7 +99,7 @@ function _renderEvCalMonth(){
            5 huecos el ultimo se salia de la casilla y se veia cortado. */
         h+='<div class="ev-otros-corner'+(_corner.length>=EV_CAL_CORNER_STACK?' llena':'')+'">';
         _corner.slice(0,_cut).forEach(function(it){
-          h+=evMarkerHtml(it.ev,_pmkM,'ev-marker-lg',evDefaultShape(it.ev),ds);
+          h+=evMarkerHtml(it.ev,_pmkM,'ev-marker-lg'+(bodaEsUltimoEnsayo(it.ev)?' boda-last-marker':''),evDefaultShape(it.ev),ds);
         });
         if(_corner.length>EV_CAL_CORNER_STACK)
           h+='<span class="ev-day-more" data-ds="'+ds+'">'+evMorePlusHtml('ev-marker-lg')+'</span>';

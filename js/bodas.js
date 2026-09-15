@@ -127,6 +127,16 @@ function bodaPrimeraClase(cid){
 function bodaClassesOfCouple(id){
   return bodaSortClasses(bodaClasses().filter(function(ev){return ev.boda&&ev.boda.coupleId===id;}));
 }
+/* Ultimo dia programado, calculado sobre todos los ensayos, no sobre la vista. */
+function bodaEsUltimoEnsayo(ev){
+  if(getEvType(ev)!=='Ensayos boda'||!ev.boda||!ev.boda.coupleId||!ev.start)return false;
+  return !EVENTS.some(function(other){
+    return getEvType(other)==='Ensayos boda'&&other.boda&&other.boda.coupleId===ev.boda.coupleId&&other.start>ev.start;
+  });
+}
+function bodaUltimoEnsayoHtml(ev){
+  return bodaEsUltimoEnsayo(ev)?'<span class="boda-last-rehearsal">ÚLTIMO ENSAYO</span>':'';
+}
 function bodaFreeClasses(){
   return bodaSortClasses(bodaClasses().filter(function(ev){return !(ev.boda&&ev.boda.coupleId);}));
 }

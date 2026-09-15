@@ -2771,3 +2771,16 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 
 /* Estudio energético: controles compactos y separación entre apartados. */
 .energy-choice-list{display:grid;gap:10px;margin:14px 0}.energy-choice-list label,.energy-promo{display:flex;align-items:center;gap:8px}.energy-promo{margin:14px 0}.energy-tax-row{display:grid;grid-template-columns:1fr 90px 36px;gap:10px;align-items:end;margin:12px 0}.energy-tax-row .energy-field{margin:0}.energy-sheet form>h3{margin:20px 0 10px}.energy-sheet [hidden]{display:none!important}.energy-sheet .econ-sub-tabs{flex-shrink:0}.energy-sheet th,.energy-sheet td{padding:7px 5px}.energy-sheet form>.ev-io-btn{width:100%;margin-top:16px}
+
+/* Ultimo dia de ensayo: distintivo compartido y pulso solo en el mensual. */
+.boda-last-rehearsal{display:block;width:max-content;max-width:100%;font-size:.58rem;font-weight:800;letter-spacing:.045em;color:#92334d;background:#f8e8ed;border-radius:4px;padding:2px 5px;margin:2px 0 4px}
+.ev-wk-chip:has(.boda-last-rehearsal){flex-wrap:wrap}
+.ev-wk-chip>.boda-last-rehearsal{flex-basis:100%;width:auto;background:transparent;color:inherit;margin:2px 0 0;padding:0;font-size:.55rem}
+.home-popup-item .boda-last-rehearsal{margin:5px 0 0}
+.boda-last-marker{animation:boda-last-pulse 4s ease-in-out infinite}
+@keyframes boda-last-pulse{0%,72%,100%{opacity:1}84%{opacity:.25}}
+@media(prefers-reduced-motion:reduce){.boda-last-marker{animation:none;outline:1px solid #92334d;border-radius:4px}}
+.home-popup-item:has(.boda-last-rehearsal){flex-wrap:wrap}
+.home-popup-item:has(.boda-last-rehearsal)>.home-reminder-text{flex-basis:100%}
+.home-popup-item .boda-last-rehearsal{flex-shrink:0;white-space:nowrap}
+.ev-wk-chip>.boda-last-rehearsal{color:#fff}
