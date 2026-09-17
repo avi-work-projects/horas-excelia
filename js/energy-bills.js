@@ -8,6 +8,7 @@ function validateEnergyBills(list){
     if(!b||typeof b.id!=='string'||!/^[\w-]+$/.test(b.id)||ids[b.id])throw new Error('Identificador de factura no válido o repetido');
     ids[b.id]=true;
     if(['luz','gas'].indexOf(b.kind)<0)throw new Error('Suministro de factura no válido');
+    if(b.serviceOnly!=null&&typeof b.serviceOnly!=='boolean')throw new Error('Tipo de recibo no válido');
     if(b.noReading!=null&&typeof b.noReading!=='boolean')throw new Error('Estado de lectura no válido');
     ['supplier','number','notes','source'].forEach(function(k){if(typeof b[k]!=='string'||b[k].length>10000)throw new Error('Campo de factura no válido: '+k);});
     if(!b.supplier.trim()||!b.number.trim())throw new Error('Indica compañía y número de factura');

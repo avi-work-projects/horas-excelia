@@ -1,3 +1,4 @@
+function homeReminderColor(ev){return getEvType(ev)==='Ensayos boda'?'#92334d':evTypeColor(getEvKind(ev),getEvType(ev));}
 /* ============================================================
    HOME POPUP - Recordatorios al cargar la home (semanas sin
    enviar, cumpleanos hoy/manana, VIP sin alarma, eventos hoy)
@@ -62,7 +63,7 @@ function openHomePopup(){
           var pareja=typeof bodaCouple==='function'&&ev.boda?bodaCouple(ev.boda.coupleId):null;
           contenido=pareja?'Ensayo - '+pareja.name:(ev.title||'Ensayo sin pareja asignada');
         }
-        eventItems.push({days:diff,time:time||'',type:'event',text:homeReminderEventText(diff===0?'Hoy':'Mañana',time,contenido)+bodaUltimoEnsayoHtml(ev)});
+        eventItems.push({days:diff,time:time||'',type:'event',color:homeReminderColor(ev),text:homeReminderEventText(diff===0?'Hoy':'Mañana',time,contenido)+bodaUltimoEnsayoHtml(ev)});
       }
       // Fin de eventos de más de 7 días
       if(ev.end&&ev.end>ev.start){
@@ -73,7 +74,7 @@ function openHomePopup(){
           if(diffEnd===0||diffEnd===1){
             var vuelta=evTramos(ev).filter(function(tr){return tr.k==='vuelta';})[0];
             var endTime=vuelta&&vuelta.t.time||'';
-            eventItems.push({days:diffEnd,time:endTime,type:'event',text:homeReminderEventText(diffEnd===0?'Hoy':'Mañana',endTime,'Fin - '+ev.title)});
+            eventItems.push({days:diffEnd,time:endTime,type:'event',color:homeReminderColor(ev),text:homeReminderEventText(diffEnd===0?'Hoy':'Mañana',endTime,'Fin - '+ev.title)});
           }
         }
       }
@@ -89,7 +90,7 @@ function openHomePopup(){
   if(!content)return;
   var html='<div class="home-popup-title">&#128276; Recordatorios</div>';
   items.forEach(function(it){
-    html+='<div class="home-popup-item '+it.type+'">'+it.text+'</div>';
+    html+='<div class="home-popup-item '+it.type+'"'+(it.color?' style="--reminder-color:'+it.color+'"':'')+'>'+it.text+'</div>';
   });
   content.innerHTML=html;
   document.getElementById('homePopup').style.display='flex';

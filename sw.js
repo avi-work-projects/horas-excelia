@@ -4,7 +4,7 @@
    → Cambiar CACHE_VER en cada deploy para forzar actualización
    ============================================================ */
 
-var CACHE_VER = 'v361';
+var CACHE_VER = 'v362';
 var CACHE_NAME = 'horas-excelia-' + CACHE_VER;
 
 var ASSETS = [
@@ -34,7 +34,9 @@ var ASSETS = [
   './js/energy-history.js',
   './js/energy-bills.js',
   './js/energy-analysis.js',
+  './js/energy-costs.js',
   './js/energy-analysis-view.js',
+  './js/energy-analysis-bind.js',
   './js/energy-tariff-editor.js',
   './js/energy-bills-view.js',
   './js/economics-fiscal-bind.js',

@@ -54,3 +54,37 @@ assert.equal(a.DESPACHO.electComparaciones.length,1);
 near(a.DESPACHO.electComparaciones[0].precioKwh,0.17);
 near(a._calcElectCost(a.DESPACHO.electComparaciones[0],{},100,30),23);
 console.log('Energía: lectura no acreditada y copia idempotente a escenarios OK');
+
+// Reparto mensual por contrato, con consumo medio diario y escenarios aislados.
+const billCost={id:'cost',kind:'luz',supplier:'Prueba',number:'C1',issued:'2026-02-01',start:'2026-01-01',end:'2026-01-31',consumption:310,net:100,gross:121,paid:121,notes:'',source:''};
+const ca={id:'a',kind:'luz',supplier:'A',start:'2026-01-01',end:'2026-01-15',analysis:a.energyTariffDefaults({precioKwh:0.1})};
+const cb={id:'b',kind:'luz',supplier:'B',start:'2026-01-16',end:'',analysis:a.energyTariffDefaults({precioKwh:0.2})};
+const taxCost=[{kind:'luz',start:'2026-01-01',rate:21}];
+let cost=a.energyCostMonths([billCost],[ca,cb],taxCost,2026,'luz')[0];
+near(cost.gross,47*1.21);assert.equal(cost.groups[0].days,15);assert.equal(cost.groups[1].days,16);near(cost.groups[1].kwh,160);
+const scenarioCost={contractId:'b',tariff:a.energyTariffDefaults({precioKwh:0.3}),vatMode:'constant',vat:10};
+near(a.energyCostMonths([billCost],[ca,cb],taxCost,2026,'luz',scenarioCost)[0].gross,63*1.1);
+assert.equal(a.energyCostMonths([billCost],[ca],taxCost,2026,'luz')[0].gross,null);
+assert.equal(a.energyCostMonths([billCost],[ca,cb],[],2026,'luz')[0].gross,null);
+assert.equal(a.energyCostMonths([billCost],[ca,{...cb,start:'2026-01-10'}],taxCost,2026,'luz')[0].gross,null);
+near(a.energyCostMonths([billCost],[{...ca,end:'2026-01-16'},cb],taxCost,2026,'luz')[0].gross,47*1.21);
+const staged={...ca,end:'2026-01-31',analysisPeriods:[{start:'2026-01-01',tariff:ca.analysis},{start:'2026-01-16',tariff:cb.analysis}]};
+near(a.energyCostMonths([billCost],[staged],taxCost,2026,'luz')[0].gross,47*1.21);
+near(a.energyCostMonths([billCost],[ca,cb],taxCost,2026,'luz',{...scenarioCost,start:'2026-01-20',end:'2026-01-21'})[0].gross,49*1.1);
+assert.equal(a.energyCostMonths([billCost],[ca,cb],taxCost,2026,'luz')[1].gross,null);
+assert.ok(!a.energyTariffsHtml('luz').includes('data-analysis-contract'));
+assert.ok(!a.energyArchiveHtml('luz').includes('energyBillAdd'));
+console.log('Energía: vigencias, barras por compañía, huecos, solapamientos, IVA y sustitución parcial OK');
+
+const historyCost={...ca,tariff:'Prueba',supply:'',commitment:'',taxes:'excluidos',notes:'',source:'',prices:[],analysisPeriods:staged.analysisPeriods};
+a.validateImport({energyContracts:[historyCost]});
+assert.throws(()=>a.validateImport({energyContracts:[{...historyCost,analysisPeriods:[...staged.analysisPeriods,staged.analysisPeriods[0]]}]}));
+a.energyImportHistory({energyContracts:[historyCost]});
+assert.equal(a.energyContracts().find(c=>c.id==='a').analysisPeriods.length,2);
+const beforePeriods=a.energyImportHistory({energyContracts:[{...historyCost,analysisPeriods:[]}]});
+a.energyRestoreHistory(beforePeriods);assert.equal(a.energyContracts().find(c=>c.id==='a').analysisPeriods.length,2);
+console.log('Energía: períodos importables, validación y deshacer OK');
+
+const serviceBill={...billCost,id:'service',number:'S1',start:'2026-01-15',end:'2026-01-15',consumption:null,serviceOnly:true,gross:5};
+near(a.energyCostMonths([billCost,serviceBill],[ca,cb],taxCost,2026,'luz')[0].gross,47*1.21);
+assert.throws(()=>a.validateEnergyBills([{...serviceBill,serviceOnly:'sí'}]));

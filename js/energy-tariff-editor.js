@@ -31,10 +31,6 @@ function openEnergyTariff(kind,old,onSave,container){
   f.oninput=update;f.onchange=update;w.querySelector('#energyTariffBack').onclick=close;
   f.onsubmit=function(e){e.preventDefault();try{var n=read();n.precioKwh=energyWeightedPrice(n);n.useOwnPower=true;onSave(n);close();}catch(err){showToast(err.message,'error');}};update();
 }
-function energyEditContractTariff(kind,id){
-  var c=energyContracts().find(function(x){return x.id===id;});if(!c)return;
-  openEnergyTariff(kind,c.analysis,function(t){var before=energyContracts();energySaveContracts(energyMergeContracts(before,[Object.assign({},c,{analysis:t})]));openEnergyAnalysis(kind);showToast('Tarifa guardada','success',function(){energySaveContracts(before);openEnergyAnalysis(kind);});});
-}
 function energyEditLegacyTariff(kind,index,container,refresh){
   var key=kind==='luz'?'electComparaciones':'gasComparaciones';
   var old=index===null?(kind==='luz'?_currentElectTariff():_currentGasTariff()):DESPACHO[key][index];
