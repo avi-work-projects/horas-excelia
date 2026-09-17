@@ -71,3 +71,40 @@ Los consumos e importes se distribuyen uniformemente entre las fechas de cada fa
 La comparación aplica un contrato elegido a los días con consumo, independientemente de su vigencia histórica: es el contrafactual de mantenerlo todo el período. La columna facturada usa el total con impuestos, antes de saldo externo. Diferencia positiva significa menor coste simulado. Los abonos negativos siguen en tablas, como en el gráfico compartido de facturas.
 
 Compatibilidad: al añadir un backup antiguo sin `analysis`, `noReading` o `energyTaxes`, se conservan los datos nuevos existentes. Reemplazar sigue la semántica del importador general. El importador específico fusiona IVA por suministro/fecha en la misma transacción que contratos y facturas; Deshacer restaura los tres bloques.
+
+## Ventana de consumo y coste (v362, comportamiento vigente)
+
+Sustituye los paneles de estudio y los editores manuales del histórico de v359/v360.
+`energy-analysis-view.js` contiene los renders, `energy-analysis-bind.js` la navegación,
+importación y controles, y `energy-costs.js` el reparto por vigencias y las barras.
+La ventana usa `.full-overlay` y mantiene el scroll exclusivamente en `.sy-body`.
+Los gráficos muestran 12 meses; un swipe cambia el año. Pulsar un tramo selecciona
+ese contrato como período a sustituir en Escenarios. También admite fechas límite.
+
+Facturas, contratos y períodos de IVA son **solo importables**. No se crean, cambian
+ni borran desde formularios. Archivo es una consulta secundaria. Los escenarios
+sí se editan: las hipótesis se guardan en las listas existentes de `DESPACHO` y viajan
+en el backup habitual, sin añadir otra persistencia. Los filtros de la comparación
+son estado de sesión; no alteran el histórico real.
+
+`analysisPeriods` opcional en cada contrato es un array `{start, tariff}`. Cada tarifa
+sigue el esquema `analysis`; rige desde su fecha hasta la siguiente dentro de la
+vigencia del contrato. Se valida la unicidad de fechas. Si hay períodos, prevalecen
+sobre `analysis`; si no, sigue siendo compatible con el contrato de v360.
+
+El consumo de cada factura se distribuye entre sus días. Después, el consumo mensual
+conocido se divide por sus días cubiertos y se asigna a cada compañía según sus días
+de contrato. No se extrapolan huecos. Las vigencias ambiguas, lecturas solapadas o
+precios/IVA ausentes se muestran como Sin dato, no como cero. Las barras apiladas
+representan el coste estimado con IVA, no el mes de cobro de la factura. La comparación
+con facturas usa los mismos meses de consumo, prorrateados, y distingue total facturado
+y cargo indicado después de saldo. No confirma pagos bancarios.
+
+Los escenarios permiten mantener las tarifas reales o sustituir solo un contrato,
+todo el histórico o un intervalo de fechas; el IVA puede seguir las etapas importadas
+o permanecer constante (incluido 0 %). Se usan los mismos kWh y cobertura de la base.
+La simulación es aproximada: descuentos y otros impuestos no reproducen cada regla fiscal.
+
+`serviceOnly: true` distingue recibos de mantenimiento sin suministro: sus importes
+se conservan en la referencia documental, pero no convierten una lectura válida de
+ese mes en consumo desconocido. No se aplica esta marca a facturas con lectura ausente.

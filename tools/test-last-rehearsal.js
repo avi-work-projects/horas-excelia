@@ -13,3 +13,7 @@ a.EVENTS.pop();
 assert.equal(a.bodaEsUltimoEnsayo(last),true);
 assert.equal(a.bodaEsUltimoEnsayo(ev('same','2026-08-22','p')),true);
 console.log('Ultimo ensayo: fecha global, misma pareja, sin pareja y cambios verificados');
+
+const vm=require('vm'),fs=require('fs');vm.runInContext(fs.readFileSync('js/home-popup.js','utf8'),a);
+assert.notEqual(a.homeReminderColor({kind:'puntual',type:'Ensayos boda'}),a.homeReminderColor({kind:'puntual',type:'Rec. Gestiones'}));
+assert.equal(a.homeReminderColor({kind:'grande',type:'Asturias'}),a.evTypeColor('grande','Asturias'));

@@ -54,6 +54,7 @@ function energyConsumptionMonths(bills,year,kind){
     for(var d=lo;d<=hi;d++){
       var ds=energyDate(d),m=months[+ds.slice(5,7)-1];m.count++;m.net+=b.net/n;m.gross+=b.gross/n;
       if(b.paid===null)m.unknownPaid++;else m.paid+=b.paid/n;
+      if(b.serviceOnly)continue;
       if(b.consumption===null||b.noReading){m.unknownConsumption++;continue;}
       if(m.days[ds])m.overlap=true;m.days[ds]=true;m.consumption+=b.consumption/n;
       m.samples[ds]=(m.samples[ds]||0)+b.consumption/n;
