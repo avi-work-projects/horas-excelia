@@ -14,6 +14,9 @@ function validateEnergyBills(list){
     if(!b.supplier.trim()||!b.number.trim())throw new Error('Indica compañía y número de factura');
     if(!validIsoDate(b.issued)||!validIsoDate(b.start)||!validIsoDate(b.end)||b.end<b.start)throw new Error('Fechas de factura no válidas');
     ['net','gross','paid','consumption'].forEach(function(k){if((k==='paid'||k==='consumption')&&b[k]===null)return;if(typeof b[k]!=='number'||!Number.isFinite(b[k])||Math.abs(b[k])>1e9)throw new Error('Importe o consumo no válido');});
+    if(b.consumptionPeriods!=null){if(!Array.isArray(b.consumptionPeriods)||b.consumptionPeriods.length!==3||b.consumptionPeriods.some(function(n){return n!==null&&(typeof n!=='number'||!Number.isFinite(n)||n<0);}))throw new Error('Consumo por tramos no válido');}
+    ['vatAmount','electricityTaxAmount','otherTaxesAmount'].forEach(function(k){if(b[k]!=null&&(typeof b[k]!=='number'||!Number.isFinite(b[k])))throw new Error('Impuesto de factura no válido');});
+    if(b.readings!=null){if(!Array.isArray(b.readings)||b.readings.length>500)throw new Error('Lecturas no válidas');b.readings.forEach(function(r){if(!r||!validIsoDate(r.start)||!validIsoDate(r.end)||r.end<r.start||typeof r.consumption!=='number'||!Number.isFinite(r.consumption)||r.consumption<0)throw new Error('Período de lectura no válido');if(r.periods!=null&&(!Array.isArray(r.periods)||r.periods.length!==3||r.periods.some(function(n){return typeof n!=='number'||!Number.isFinite(n)||n<0;})))throw new Error('Tramos de lectura no válidos');});}
     var sig=energyBillSignature(b);if(signatures[sig])throw new Error('Número de factura repetido para la compañía');signatures[sig]=true;
   });return list;
 }

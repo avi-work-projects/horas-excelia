@@ -1,15 +1,16 @@
 /* Ventana de energía: histórico de solo lectura, escenarios independientes. */
-var ENERGY_ANALYSIS_TAB='consumo';
+var ENERGY_ANALYSIS_TAB='resumen';
 var ENERGY_ANALYSIS_YEAR=new Date().getFullYear();
 var ENERGY_ANALYSIS_KIND='luz';
-var ENERGY_SCENARIO={contractId:'',start:'',end:'',tariff:null,name:'Escenario',vatMode:'historical',vat:21,promos:false};
 var ENERGY_RETURN=null;
 function energyAnalysisHtml(kind){
   var year=ENERGY_ANALYSIS_YEAR,months=energyConsumptionMonths(energyBills(),year,kind);
   var h='<div class="energy-window-header"><button class="sy-back" id="energyAnalysisBack" aria-label="Volver">←</button><h2>Estudio de '+(kind==='luz'?'electricidad':'gas')+'</h2><button class="ev-io-btn" id="energyImportTop">Importar</button></div>';
-  h+='<div class="energy-year-nav"><button class="nav-btn" data-analysis-year="-1" aria-label="Año anterior">◀</button><strong>'+year+'</strong><button class="nav-btn" data-analysis-year="1" aria-label="Año siguiente">▶</button></div><div class="sy-body"><div class="econ-sub-tabs energy-tabs">';
-  [['consumo','Consumo'],['costes','Coste'],['tarifas','Tarifas'],['comparar','Escenarios'],['archivo','Archivo']].forEach(function(t){h+='<button class="econ-sub-tab'+(ENERGY_ANALYSIS_TAB===t[0]?' active':'')+'" data-energy-tab="'+t[0]+'">'+t[1]+'</button>';});
-  h+='</div><div class="energy-window-content">';
+  h+='<div class="econ-sub-tabs energy-tabs">';
+  [['resumen','Resumen'],['consumo','Consumo'],['costes','Coste'],['tarifas','Tarifas'],['comparar','Escenarios']].forEach(function(t){h+='<button class="econ-sub-tab'+(ENERGY_ANALYSIS_TAB===t[0]?' active':'')+'" data-energy-tab="'+t[0]+'">'+t[1]+'</button>';});
+  h+='</div><div class="energy-year-nav"><button class="nav-btn" data-analysis-year="-1" aria-label="Año anterior">◀</button><strong>'+year+'</strong><button class="nav-btn" data-analysis-year="1" aria-label="Año siguiente">▶</button></div><div class="sy-body">';
+  h+='<div class="energy-window-content">';
+  if(ENERGY_ANALYSIS_TAB==='resumen')h+=energySummaryHtml(kind,year);
   if(ENERGY_ANALYSIS_TAB==='consumo')h+=energyConsumptionHtml(kind,months,year);
   if(ENERGY_ANALYSIS_TAB==='costes')h+=energyCostsHtml(kind,year);
   if(ENERGY_ANALYSIS_TAB==='tarifas')h+=energyTariffsHtml(kind);
@@ -19,34 +20,38 @@ function energyAnalysisHtml(kind){
 }
 function energyConsumptionHtml(kind,months,year){
   var prev=energyConsumptionMonths(energyBills(),year-1,kind);
-  var h='<p class="energy-caption">Consumo por mes natural, estimado a partir de los días de cada lectura. Desliza el gráfico para cambiar de año.</p><section class="energy-contract energy-year-chart"><h3>Consumo mensual · kWh</h3>'+energyBillsChart(months,'consumption','#65a367')+'</section><div class="energy-table-scroll"><table class="sy-table"><thead><tr><th>Mes</th><th>kWh</th><th>kWh/día</th><th>'+ (year-1) +' · kWh</th><th>Días</th></tr></thead><tbody>';
-  months.forEach(function(m,i){var days=Object.keys(m.days).length,n=new Date(Date.UTC(year,i+1,0)).getUTCDate();h+='<tr><td>'+MN_SHORT[i]+'</td><td>'+energyNumber(!days||m.unknownConsumption||m.overlap?null:m.consumption,'kWh')+'</td><td>'+energyNumber(!days||m.unknownConsumption||m.overlap?null:m.consumption/days,'kWh')+'</td><td>'+energyNumber(!prev[i].count||prev[i].unknownConsumption||prev[i].overlap?null:prev[i].consumption,'kWh')+'</td><td>'+days+'/'+n+'</td></tr>';});
-  return h+'</tbody></table></div><p class="energy-caption">No se extrapolan los días sin lectura. Un mes parcial no equivale a un mes de menor consumo.</p>';
+  var h='<p class="energy-caption">Consumo por mes natural, repartido según los días de lectura. Desliza el gráfico para cambiar de año.</p><section class="energy-contract energy-year-chart"><h3>Consumo mensual · kWh</h3>'+energyBillsChart(months,'consumption','#65a367')+'</section><div class="energy-table-scroll"><table class="sy-table"><thead><tr><th>Mes</th><th>kWh</th><th>Punta</th><th>Llano</th><th>Valle</th></tr></thead><tbody>';
+  months.forEach(function(m,i){var days=Object.keys(m.days).length,valid=days&&!m.unknownConsumption&&!m.overlap;h+='<tr><td>'+MN_SHORT[i]+'</td><td>'+energyNumber(valid?m.consumption:null,'')+'</td>';m.periods.forEach(function(v){h+='<td>'+energyNumber(valid&&m.periodDays===days?v:null,'')+'</td>';});h+='</tr>';});
+  h+='</tbody></table></div><details class="energy-contract"><summary>Media diaria y comparación con '+(year-1)+'</summary><table class="sy-table"><thead><tr><th>Mes</th><th>kWh/día</th><th>Año anterior · kWh</th><th>Días</th></tr></thead><tbody>';
+  months.forEach(function(m,i){var days=Object.keys(m.days).length,n=new Date(Date.UTC(year,i+1,0)).getUTCDate();h+='<tr><td>'+MN_SHORT[i]+'</td><td>'+energyNumber(!days||m.unknownConsumption||m.overlap?null:m.consumption/days,'')+'</td><td>'+energyNumber(!Object.keys(prev[i].days).length||prev[i].unknownConsumption||prev[i].overlap?null:prev[i].consumption,'')+'</td><td>'+days+'/'+n+'</td></tr>';});
+  return h+'</tbody></table></details><p class="energy-caption">No se extrapolan días sin lectura. Si falta desglose por tramos no se reparte a partes iguales.</p><details class="energy-contract"><summary>Facturas de origen</summary>'+energyArchiveHtml(kind)+'</details>';
 }
 function energyCostsHtml(kind,year){
-  var months=energyCostMonths(energyBills(),energyContracts(),energyTaxes(),year,kind),suppliers={};
+  var bills=energyBills(),contracts=energyContracts(),taxes=energyTaxes(),real=energyCostMonths(bills,contracts,taxes,year,kind),months=energyCostMonths(bills,contracts,taxes,year,kind,{vatMode:ENERGY_COST_VAT,vat:ENERGY_COST_RATE}),suppliers={};
   months.forEach(function(m){m.groups.forEach(function(g){suppliers[g.supplier]=true;});});
-  var h='<p class="energy-caption">Coste estimado según el consumo y la tarifa contratada, con IVA histórico. Si cambias de compañía, el consumo medio diario del mes se reparte por días de contrato.</p><section class="energy-contract energy-year-chart"><h3>Coste del consumo · €</h3>'+energyCostChart(months)+'<div class="energy-legend">';
-  Object.keys(suppliers).forEach(function(s){h+='<span><i style="background:'+energySupplierColor(s)+'"></i>'+escHtml(s)+'</span>';});h+='</div><p class="energy-caption">Desliza para cambiar de año. Pulsa un tramo de barra para simular otra tarifa durante ese contrato.</p></section>';
-  var estimated=0,invoiced=0,charged=0,missingCharges=false,n=0;
-  h+='<div class="energy-table-scroll"><table class="sy-table"><thead><tr><th>Mes</th><th>Estimado</th><th>Compañías / días</th></tr></thead><tbody>';
-  months.forEach(function(m,i){if(m.gross!==null){estimated+=m.gross;invoiced+=m.source.gross;charged+=m.source.paid;missingCharges=missingCharges||!!m.source.unknownPaid;n++;}h+='<tr><td>'+MN_SHORT[i]+'</td><td>'+energyNumber(m.gross,'€')+'</td><td>'+(m.missing.length?escHtml(m.missing.join(' · ')):m.groups.map(function(g){return escHtml(g.supplier)+' · '+g.days+'d';}).join('<br>'))+'</td></tr>';});h+='</tbody></table></div>';
-  h+='<section class="energy-contract"><h3>Facturas frente a estimación</h3><p>'+n+(n===1?' mes comparable':' meses comparables')+' del período de consumo</p><div class="energy-price-view"><span>Facturado con impuestos*</span><b>'+energyNumber(n?invoiced:null,'€')+'</b></div><div class="energy-price-view"><span>Estimado por tarifa</span><b>'+energyNumber(n?estimated:null,'€')+'</b></div><div class="energy-price-view"><span>Diferencia</span><b>'+energyNumber(n?invoiced-estimated:null,'€')+'</b></div><div class="energy-price-view"><span>Cargo indicado tras saldo</span><b>'+energyNumber(n&&!missingCharges?charged:null,'€')+'</b></div><p class="energy-caption">* Facturas prorrateadas por su período, no por el mes de cobro. No acredita pagos bancarios. Descuentos, saldo y regularizaciones pueden explicar diferencias. Los meses sin tarifas o IVA importados quedan fuera.</p></section>';
-  return h;
+  var label=ENERGY_COST_VAT==='historical'?'IVA real':ENERGY_COST_VAT==='none'?'Sin IVA':'IVA cte '+ENERGY_COST_RATE+' %';
+  var h='<div class="energy-tax-controls"><label><input id="energyVatCycle" type="checkbox"'+(ENERGY_COST_VAT!=='none'?' checked':'')+'> '+label+'</label><label>IVA cte % <input id="energyCostRate" type="number" min="0" max="100" value="'+ENERGY_COST_RATE+'"></label></div><p class="energy-caption">Cada pulsación cambia: IVA real → sin IVA → IVA constante. El consumo medio diario mensual se reparte entre las compañías según sus días de contrato. El IVA histórico procede de los períodos importados.</p><section class="energy-contract energy-year-chart"><h3>Coste mensual estimado · €</h3>'+energyVatStrip(months,year)+energyCostChart(months)+'<div class="energy-legend">';
+  Object.keys(suppliers).forEach(function(x){h+='<span><i style="background:'+energySupplierColor(x)+'"></i>'+escHtml(x)+'</span>';});h+='</div></section>';
+  var estimate=0,covered=0,comparable=0;real.forEach(function(m){if(m.gross!==null){estimate+=m.gross;covered+=m.days;comparable++;}});
+  var issued=bills.filter(function(b){return b.kind===kind&&+b.issued.slice(0,4)===year;}),total=issued.reduce(function(n,b){return n+b.gross;},0),diff=comparable&&issued.length?estimate-total:null;
+  h+='<section class="energy-contract"><h3>Estimado frente a facturas · '+year+'</h3><div class="energy-metrics">'+energyMetric('Estimado · IVA real',energyNumber(comparable?estimate:null,'€'),covered+' días calculables')+energyMetric('Real · suma de facturas',energyNumber(issued.length?total:null,'€'),issued.length+' facturas emitidas en el año')+energyMetric('Diferencia estimado − real',energyNumber(diff,'€'),diff!==null&&total!==0?(diff/Math.abs(total)*100).toFixed(1)+' %':'')+'</div><p class="energy-caption">Esta comparación siempre usa IVA histórico, aunque cambies el gráfico. La emisión y el consumo pueden caer en años distintos; huecos, cuotas, descuentos y regularizaciones también afectan a la diferencia. No representa un error de cálculo aislado ni pagos bancarios.</p></section>';
+  h+='<div class="energy-table-scroll"><table class="sy-table"><thead><tr><th>Mes</th><th>Estimado</th><th>Cobertura / compañías</th></tr></thead><tbody>';
+  months.forEach(function(m,i){h+='<tr><td>'+MN_SHORT[i]+'</td><td>'+energyNumber(m.gross,'€')+'</td><td>'+escHtml(m.missing.length?m.missing.join(' · '):m.groups.map(function(g){return g.supplier+' · '+g.days+'d';}).join(' / '))+'</td></tr>';});return h+'</tbody></table></div>';
 }
 function energyTariffsHtml(kind){
-  var contracts=energyContracts().filter(function(c){return c.kind===kind;}).sort(function(a,b){return a.start.localeCompare(b.start);});
-  var h='<p class="energy-caption">Histórico importado, de solo lectura. Para corregir precios o fechas, importa un archivo actualizado. Las pruebas se hacen en Escenarios.</p>';
-  if(!contracts.length)h+='<p class="sy-note">Importa tus contratos para ver su evolución.</p>';
-  contracts.forEach(function(c){h+='<article class="energy-contract"><h3 style="color:'+energySupplierColor(c.supplier)+'">'+escHtml(c.supplier)+'</h3><p>'+escHtml(c.tariff)+' · '+escHtml(c.start||'Inicio pendiente')+' → '+escHtml(c.end||'Sin cierre')+'</p>';
-    var periods=c.analysisPeriods&&c.analysisPeriods.length?c.analysisPeriods:(c.analysis?[{start:c.start,tariff:c.analysis}]:[]);
-    periods.forEach(function(p){var t=p.tariff;h+='<div class="energy-price-view"><span>'+escHtml(p.start)+'</span><b>'+(t.modo==='fijo'?energyNumber(t.cuotaFija,'€')+'/mes':energyWeightedPrice(t).toFixed(5)+' €/kWh')+'</b></div>';});
+  var contracts=energyContracts().filter(function(c){return c.kind===kind&&(!c.start||c.start<=ENERGY_ANALYSIS_YEAR+'-12-31')&&(!c.end||c.end>=ENERGY_ANALYSIS_YEAR+'-01-01');}).sort(function(a,b){return b.start.localeCompare(a.start);});
+  var h='<p class="energy-caption">Tarifas del año seleccionado, de solo lectura. Precios sin impuestos. Las correcciones se incorporan importando un archivo actualizado.</p>';
+  contracts.forEach(function(c){h+='<article class="energy-contract"><h3 style="color:'+energySupplierColor(c.supplier)+'">'+escHtml(c.supplier)+'</h3><p>'+escHtml(c.tariff)+' · '+escHtml(c.start||'Inicio pendiente')+' → '+escHtml(c.end||'actualidad')+'</p>';
+    var periods=energyContractPeriods(c).slice().sort(function(a,b){return b.start.localeCompare(a.start);});
+    periods.forEach(function(p,i){var t=p.tariff;h+='<details class="energy-tariff-period"'+(!i?' open':'')+'><summary>Desde '+escHtml(p.start)+'</summary><h4>Consumo</h4>';
+      if(t.modo==='fijo')h+='<p>Cuota fija: <b>'+energyNumber(t.cuotaFija,'€')+'/mes</b></p>';
+      else if(t.energyMode==='tramos'){['Punta','Llano','Valle'].forEach(function(n,j){h+='<div class="energy-price-view"><span>'+n+' · '+t.periodWeights[j].toFixed(1)+' %</span><b>'+t.periodPrices[j].toFixed(6)+' €/kWh</b></div>';});h+='<p class="energy-caption">Media ponderada: '+energyWeightedPrice(t).toFixed(6)+' €/kWh</p>';}
+      else h+='<p><b>'+t.precioKwh.toFixed(6)+' €/kWh</b></p>';
+      if(kind==='luz'){h+='<h4>Potencia</h4>';['P1','P2'].forEach(function(n){h+='<div class="energy-price-view"><span>'+n+' · '+(t['potencia'+n]||t.potenciaTotal)+' kW</span><b>'+t['precioPot'+n].toFixed(6)+' €/kW/día</b></div>';});}
+      h+='<h4>Fijos e impuestos</h4><p>'+energyNumber(t.terminoFijo,'€')+'/mes · '+t.terminoFijoDia.toFixed(5)+' €/día</p><p class="energy-caption">Otros impuestos: '+t.otherTaxPct+' % + '+t.otherTaxKwh+' €/kWh. IVA según el período correspondiente.</p></details>';});
     if(!periods.length)h+='<p class="energy-caption">Falta importar una tarifa calculable con sus fechas.</p>';
-    h+='<details><summary>Precios del documento</summary>';c.prices.forEach(function(p){h+='<div class="energy-price-view"><span>'+escHtml(p.label)+'</span><b>'+p.value+' '+escHtml(p.unit)+'</b></div>';});h+='</details></article>';});
-  h+='<section class="energy-contract"><h3>IVA histórico importado</h3>';
-  var taxes=energyTaxes().filter(function(t){return t.kind===kind;}).sort(function(a,b){return a.start.localeCompare(b.start);});
-  taxes.forEach(function(t){h+='<div class="energy-price-view"><span>Desde '+t.start+'</span><b>'+t.rate+' %</b></div>';});
-  return h+(taxes.length?'':'<p class="energy-caption">Pendiente de importar. No se aplica el IVA actual al pasado por defecto.</p>')+'</section>';
+    h+='<details><summary>Precios y notas del documento</summary>';c.prices.forEach(function(p){h+='<div class="energy-price-view"><span>'+escHtml(p.label)+'</span><b>'+p.value+' '+escHtml(p.unit)+'</b></div>';});h+='<p class="energy-caption">'+escHtml(c.notes)+'</p></details></article>';});
+  return h+(contracts.length?'':'<p class="sy-note">No hay contratos importados para este año.</p>');
 }
 function energyScenarioOptions(kind){
   var opts=[];energyContracts().filter(function(c){return c.kind===kind;}).forEach(function(c){
@@ -56,16 +61,12 @@ function energyScenarioOptions(kind){
   (DESPACHO[kind==='luz'?'electComparaciones':'gasComparaciones']||[]).forEach(function(t){opts.push({name:t.nombre||t.comercializadora||'Tarifa de escenario',tariff:energyTariffDefaults(t)});});return opts;
 }
 function energyComparisonHtml(kind){
-  var s=ENERGY_SCENARIO,contracts=energyContracts().filter(function(c){return c.kind===kind&&c.start;});
-  var h='<p class="energy-caption">Sustituye una tarifa durante un contrato o entre dos fechas. El histórico real se conserva. Cambiar el IVA también funciona sin sustituir la tarifa.</p><section class="energy-contract"><h3>Período que quieres probar</h3><div class="energy-choice-list"><label><input type="radio" name="energyArea" value=""'+(!s.contractId?' checked':'')+'> Todo el período disponible</label>';
-  contracts.forEach(function(c){h+='<label><input type="radio" name="energyArea" value="'+c.id+'"'+(s.contractId===c.id?' checked':'')+'> '+escHtml(c.supplier+' · '+c.start+' → '+(c.end||'actualidad'))+'</label>';});
-  h+='</div><div class="energy-range"><label>Desde<input type="date" id="energyFrom" value="'+s.start+'"></label><label>Hasta<input type="date" id="energyTo" value="'+s.end+'"></label></div></section><section class="energy-contract"><h3>Tarifa alternativa</h3><p>'+(s.tariff?escHtml(s.name):'Mantener los contratos reales')+'</p><div class="ev-io-row"><button class="ev-io-btn io-primaria" id="energyScenarioNew">'+(s.tariff?'Editar hipótesis':'Crear hipótesis')+'</button><button class="ev-io-btn" id="energyScenarioReset">Restablecer</button></div><details><summary>Elegir una tarifa guardada</summary><div class="energy-choice-list">';
-  energyScenarioOptions(kind).forEach(function(o,i){h+='<button class="ev-io-btn" data-energy-option="'+i+'">'+escHtml(o.name)+'</button>';});
-  h+='</div></details></section><section class="energy-contract"><h3>Impuestos</h3><div class="energy-choice-list"><label><input type="radio" name="energyVat" value="historical"'+(s.vatMode==='historical'?' checked':'')+'> IVA histórico real</label><label><input type="radio" name="energyVat" value="constant"'+(s.vatMode==='constant'?' checked':'')+'> IVA constante</label></div><label class="energy-field"'+(s.vatMode!=='constant'?' hidden':'')+'>IVA %<input id="energyConstantVat" type="number" min="0" max="100" step="any" value="'+s.vat+'"></label><label class="energy-promo"><input type="checkbox" id="energyPromos"'+(s.promos?' checked':'')+'> Incluir promociones de la tarifa</label></section>';
-  var bills=energyBills(),cs=energyContracts(),taxes=energyTaxes(),base=energyCostMonths(bills,cs,taxes,ENERGY_ANALYSIS_YEAR,kind),sim=energyCostMonths(bills,cs,taxes,ENERGY_ANALYSIS_YEAR,kind,s);
-  h+='<section class="energy-contract energy-year-chart"><h3>Resultado del escenario · €</h3>'+energyCostChart(sim)+'</section><table class="sy-table"><thead><tr><th>Mes</th><th>Real estimado</th><th>Escenario</th><th>Ahorro</th></tr></thead><tbody>';
-  var diff=0,n=0;sim.forEach(function(m,i){var a=base[i].gross,b=m.gross;if(a!==null&&b!==null){diff+=a-b;n++;}h+='<tr><td>'+MN_SHORT[i]+'</td><td>'+energyNumber(a,'€')+'</td><td>'+energyNumber(b,'€')+'</td><td>'+energyNumber(a===null||b===null?null:a-b,'€')+'</td></tr>';});
-  return h+'</tbody></table><p class="sy-note">Ahorro estimado: '+energyNumber(n?diff:null,'€')+' en '+n+' meses comparables. «Sin dato» indica falta de lecturas, vigencias, precios o IVA; no significa coste cero.</p>';
+  var year=ENERGY_ANALYSIS_YEAR,bills=energyBills(),cs=energyContracts(),taxes=energyTaxes(),base=energyCostMonths(bills,cs,taxes,year,kind),vat=energyCostMonths(bills,cs,taxes,year,kind,{vatMode:'constant',vat:ENERGY_COMPARE_VAT});
+  var h='<section class="energy-contract energy-year-chart"><h3>Si el IVA hubiera sido siempre el mismo</h3><label class="energy-inline-input">IVA % <input id="energyCompareVat" type="number" min="0" max="100" step="any" value="'+ENERGY_COMPARE_VAT+'"></label>'+energyCompareChart(base,vat)+energyCompareTable(base,vat)+'</section>';
+  var options=energyScenarioOptions(kind),choice=options[ENERGY_COMPARE_TARIFF]||options[0];
+  h+='<section class="energy-contract energy-year-chart"><h3>Si hubiera mantenido una tarifa</h3><details class="energy-tariff-choices"><summary>'+escHtml(choice?choice.name:'Importa una tarifa para comparar')+'</summary><div class="energy-choice-list">';
+  options.forEach(function(o,i){h+='<button class="ev-io-btn" data-energy-compare-tariff="'+i+'">'+escHtml(o.name)+'</button>';});h+='</div></details>';
+  if(choice){var sim=energyCostMonths(bills,cs,taxes,year,kind,{tariff:choice.tariff,name:choice.name,vatMode:'historical'});h+='<p class="energy-caption">Toda la cobertura del año con esta tarifa, conservando el IVA histórico y el consumo.</p>'+energyCompareChart(base,sim)+energyCompareTable(base,sim);}return h+'</section>';
 }
 function energyArchiveHtml(kind){
   var list=energyBills().filter(function(b){return b.kind===kind&&+b.issued.slice(0,4)===ENERGY_ANALYSIS_YEAR;}).sort(function(a,b){return b.issued.localeCompare(a.issued);});
@@ -75,7 +76,7 @@ function energyArchiveHtml(kind){
 function closeEnergyAnalysis(){cerrarPanel('energyAnalysisWrap','energyAnalysisOverlay');NAV_BACK=ENERGY_RETURN;}
 function openEnergyAnalysis(kind){
   var existing=document.getElementById('energyAnalysisWrap');if(!existing)ENERGY_RETURN=NAV_BACK;
-  if(ENERGY_ANALYSIS_KIND!==kind){ENERGY_SCENARIO={contractId:'',start:'',end:'',tariff:null,name:'Escenario',vatMode:'historical',vat:21,promos:false};}ENERGY_ANALYSIS_KIND=kind;
+  ENERGY_ANALYSIS_KIND=kind;
   var w=abrirPanel('energyAnalysisWrap','<div class="full-overlay energy-window" id="energyAnalysisOverlay">'+energyAnalysisHtml(kind)+'</div>',{overlay:'energyAnalysisOverlay',contenedor:document.body,alCerrar:closeEnergyAnalysis,reutilizar:true});
   NAV_BACK=closeEnergyAnalysis;bindEnergyAnalysis(w,kind);
 }

@@ -577,7 +577,7 @@ function renderEvContent(){
       if(type===EV_FILTER_SEP_AFTER)h+='<span class="ev-filter-sep" aria-hidden="true"></span>';
     });
     var cycleLabel=['Ocultar todos','Ver todos','Restaurar filtros'][EV_FILTER_CYCLE];
-    h+='<button class="ev-filter-cycle" id="evCycleFilters" title="'+cycleLabel+'" aria-label="'+cycleLabel+'">'+['&#9633;','&#9635;','&#8630;'][EV_FILTER_CYCLE]+'</button>';
+    h+='<span class="ev-filter-cycle-wrap"><button class="ev-filter-cycle" id="evCycleFilters" title="'+cycleLabel+'" aria-label="'+cycleLabel+'" style="--cycle-color:'+['#c4443c','#398657','#b78b19'][EV_FILTER_CYCLE]+'"><span aria-hidden="true">×</span></button></span>';
     h+='</div>';
     h+='</div>';
   }

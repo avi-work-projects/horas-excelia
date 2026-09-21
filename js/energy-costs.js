@@ -21,17 +21,19 @@ function energySupplierColor(name){
 function energyCostMonths(bills,contracts,taxes,year,kind,scenario){
   return energyConsumptionMonths(bills,year,kind).map(function(m){
     var dates=Object.keys(m.samples).sort(),daily=dates.length?m.consumption/dates.length:0;
-    var result={consumption:m.consumption,days:dates.length,groups:[],gross:null,net:null,missing:[],source:m};
+    var result={consumption:m.consumption,days:dates.length,groups:[],gross:null,net:null,missing:[],vatBands:[],source:m};
     if(!dates.length||m.unknownConsumption||m.overlap||daily<0){result.missing.push(m.overlap?'Lecturas solapadas':'Consumo incompleto');return result;}
     var groups={},net=0,gross=0;
     dates.forEach(function(ds){
       var c=energyContractOn(contracts,kind,ds),t=energyContractTariff(c,ds);
       var replace=scenario&&scenario.tariff&&(!scenario.contractId||(c&&c.id===scenario.contractId))&&(!scenario.start||ds>=scenario.start)&&(!scenario.end||ds<=scenario.end);
       if(replace)t=scenario.tariff;
-      var vat=scenario&&scenario.vatMode==='constant'?scenario.vat:energyVatAt(taxes,kind,ds);
+      var vat=scenario&&scenario.vatMode==='none'?0:scenario&&scenario.vatMode==='constant'?scenario.vat:energyVatAt(taxes,kind,ds);
+      var last=result.vatBands[result.vatBands.length-1];if(last&&last.rate===vat&&energyUtc(ds)===energyUtc(last.end)+1){last.days++;last.end=ds;}else result.vatBands.push({start:ds,end:ds,rate:vat,days:1});
       if(!t||vat===null){var reason=!t?'Tarifa o vigencia pendiente':'IVA histórico pendiente';if(result.missing.indexOf(reason)<0)result.missing.push(reason);return;}
       var n=new Date(Date.UTC(+ds.slice(0,4),+ds.slice(5,7),0)).getUTCDate();
-      var base=energyTariffNet(t,kind,daily,1,n),cost=base*(1+vat/100)-(scenario&&scenario.promos?(t.promotion||0)/n:0);
+      var applied=t;if(t.energyMode==='tramos'&&m.periodDays===dates.length&&m.consumption>0){applied=Object.assign({},t,{periodWeights:m.periods.map(function(v){return v/m.consumption*100;})});}
+      var base=energyTariffNet(applied,kind,daily,1,n),cost=base*(1+vat/100)-(scenario&&scenario.promos?(t.promotion||0)/n:0);
       var key=replace?'scenario':c.id;
       if(!groups[key])groups[key]={id:key,contractId:c?c.id:'',supplier:replace?(scenario.name||'Escenario'):c.supplier,net:0,gross:0,days:0,kwh:0};
       var g=groups[key];g.net+=base;g.gross+=cost;g.days++;g.kwh+=daily;net+=base;gross+=cost;
@@ -46,7 +48,7 @@ function energyCostChart(months){
   var h='<div class="energy-cost-chart" aria-label="Coste mensual estimado por compañía">';
   months.forEach(function(m,i){
     h+='<div class="energy-cost-column"><span class="energy-bar-value">'+(m.gross===null?'—':Math.round(m.gross)+'€')+'</span><div class="energy-cost-stack">';
-    if(m.gross!==null)m.groups.forEach(function(g){h+='<button class="energy-cost-segment" data-energy-area="'+escHtml(g.contractId)+'" style="height:'+Math.max(0,g.gross)/max*130+'px;background:'+energySupplierColor(g.supplier)+'" title="'+escHtml(MN_SHORT[i]+' · '+g.supplier+' · '+energyNumber(g.gross,'€')+' · '+g.days+' días')+'" aria-label="'+escHtml(MN_SHORT[i]+' '+g.supplier+' '+energyNumber(g.gross,'€'))+'"></button>';});
+    if(m.gross!==null)m.groups.forEach(function(g){h+='<div class="energy-cost-segment" style="height:'+Math.max(0,g.gross)/max*130+'px;background:'+energySupplierColor(g.supplier)+'" title="'+escHtml(MN_SHORT[i]+' · '+g.supplier+' · '+energyNumber(g.gross,'€')+' · '+g.days+' días')+'" aria-label="'+escHtml(MN_SHORT[i]+' '+g.supplier+' '+energyNumber(g.gross,'€'))+'"></div>';});
     h+='</div><span>'+MN_SHORT[i]+'</span></div>';
   });return h+'</div>';
 }
