@@ -12,10 +12,10 @@ test('publicacion no incluye datos privados ni herramientas',async({request})=>{
 test('backup: importar, repetir sin duplicar y rechazar datos invalidos',async({page})=>{
  await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));await page.goto('/');
  const backup={days:{},events:[{id:'one',kind:'puntual',type:'Otros',title:'Evento de prueba',start:'2026-09-10',end:'2026-09-10',color:'#123456'}]};
- async function upload(data){await page.locator('#menuBtn').click();await page.locator('#importAllBtn').click();await page.locator('#importAllFile').setInputFiles({name:'test.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(data))});await page.locator('.imp-mode-btn').first().click();}
+ async function upload(data,invalid){await page.locator('#menuBtn').click();await page.locator('#importAllBtn').click();await page.locator('#importAllFile').setInputFiles({name:'test.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(data))});if(invalid){await expect(page.locator('.imp-mode-ov')).toHaveCount(0);await expect(page.locator('#toast')).toContainText('archivo inválido');return;}await expect(page.locator('.imp-preview')).toContainText('1 · Otros');await page.locator('.imp-mode-btn').first().click();await expect(page.locator('.imp-mode-ov')).toHaveCount(0);}
  await upload(backup);await upload(backup);
  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('excelia-events-v1')).length)).toBe(1);
- await upload({days:{},events:[{...backup.events[0],start:'2026-02-31'}]});
+ await upload({days:{},events:[{...backup.events[0],start:'2026-02-31'}]},true);
  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('excelia-events-v1'))[0].start)).toBe('2026-09-10');
 });
 test('actualizar desde menu recarga, sin consumir el click al cerrar',async({page})=>{
