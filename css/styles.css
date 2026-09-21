@@ -2812,7 +2812,7 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .energy-year-chart{touch-action:pan-y;user-select:none}
 
 /* Filtros y filas de parejas: controles compactos, columnas alineadas. */
-.ev-filter-cycle{height:22px;width:22px;flex:0 0 22px;padding:0;border:1px solid var(--border);border-radius:50%;background:var(--surface);color:var(--text-muted);font-size:.85rem;cursor:pointer}
+.ev-filter-cycle{height:22px;width:22px;flex:0 0 22px;padding:0;border:1px solid currentColor;border-radius:4px;background:var(--surface);color:var(--text-muted);font-size:.85rem;cursor:pointer}
 .ev-annual-filter-row{gap:3px}
 .ev-annual-filter-row .ev-filter-chip{padding-left:5px;padding-right:5px}
 .boda-det-row{display:grid;grid-template-columns:20px minmax(0,1fr) 43px minmax(70px,1fr) 34px;gap:6px}
@@ -2825,3 +2825,12 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .boda-asg-lock{position:absolute;top:2px;left:3px;font-size:.6rem}.boda-asg-day.closed{border-style:dashed}
 
 .boda-asg-legend .lg-libre{background:color-mix(in srgb,var(--wm-wine) 17%,var(--surface));border-color:var(--wm-wine)}
+
+.imp-mode-sheet{max-height:92dvh;overflow-y:auto}
+.imp-preview{display:grid;gap:8px;text-align:left}
+.imp-preview section{border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.imp-preview h4{margin:0 0 6px;color:var(--text);font-size:.85rem}
+.imp-preview p{margin:3px 0;font-size:.8rem;color:var(--text-muted)}
+.imp-preview-note{font-size:.75rem;color:var(--text-muted);line-height:1.4}
+
+#evIcsRoutineMonthWrap{flex:0 0 auto;font-size:.78rem;gap:5px}

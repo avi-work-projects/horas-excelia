@@ -1,0 +1,16 @@
+const assert=require('assert');
+const {cargarApp}=require('./entorno');const a=cargarApp({});
+const html=a.renderImportPreview({events:[{kind:'grande',type:'Viaje'},{kind:'puntual',type:'Ensayos boda'},{kind:'puntual',type:'<script>'}],birthdays:[],rutinas:[{}],days:{'2026-08-21':{}},mailConfig:{to:'private@example.test'},macroUrl:'secret-value',energyBills:[]});
+assert(html.includes('1 · Viaje'));assert(html.includes('1 · Ensayos boda'));assert(html.includes('0 cumpleaños'));assert(html.includes('0 facturas'));assert(html.includes('&lt;script&gt;'));assert(!html.includes('private@example'));assert(!html.includes('secret-value'));
+a.RUTINAS=[{id:'test',name:'Deporte',weekDays:[0,1,2,3,4,5,6],time:'19:00',duration:60,start:'2026-08-01',skips:{'2026-08-23':true},color:'#65a367'}];
+const now=new Date('2026-08-21T20:00:00');const rows=a.evIcsRoutineRows('2026-08',now);
+assert.equal(rows.length,9);assert.equal(rows[0].start,'2026-08-22');assert(!rows.some(r=>r.start==='2026-08-23'));assert(rows.every(r=>r.start<='2026-08-31'));
+assert.equal(a.evIcsRoutineRows('invalid',now).length,0);assert.equal(a.evIcsRoutineRows('2026-07',now).length,0);
+const selected={};selected[rows[0].key]=true;const records=a.evIcsPrepare(rows,selected,{},false,'',false);
+const again=a.evIcsPrepare(rows,selected,records,false,'',false);assert.equal(again[rows[0].key].sequence,0);
+const ics=a.evIcsFile(a.evIcsExportRows(records,selected),true);assert(ics.includes('SUMMARY:Deporte'));assert(ics.includes('20260822T190000'));assert.equal((ics.match(/BEGIN:VEVENT/g)||[]).length,1);
+a.validateImport({calendarExports:records});
+assert.equal(a.evIcsFilterRows(rows,'rutinas','','',{}).length,9);assert.equal(a.evIcsFilterRows(rows,'puntual','','',{}).length,0);
+assert.equal(a.evIcsRememberedRows([],'2026-08-01','2026-08-31',records).length,0);
+a.RUTINAS[0].skips['2026-08-22']=true;assert(!a.evIcsRoutineCurrent(rows[0]));
+console.log('Importación: resumen escapado, sin secretos; ICS: sesiones futuras, canceladas, mes, identidad y backup OK');

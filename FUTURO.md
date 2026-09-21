@@ -30,11 +30,3 @@ el marcado debería pasar a depender de la respuesta del webhook.
 Crear tareas para realizar durante una semana, mostrarlas en los recordatorios
 semanales y poder marcarlas como completadas y cerrarlas. Las pendientes deben
 seguir recordándose cada semana hasta completarse, manteniendo su historial.
-
-## Vista previa al importar copias de seguridad
-
-Antes de confirmar, mostrar un resumen por categorías: eventos grandes (viajes,
-Asturias, casas rurales...), puntuales (ensayos Wedding Moves, gestiones...),
-cumpleaños, rutinas y datos/configuración económica. Por ejemplo: 10 ensayos,
-3 viajes y 2 recordatorios. Distinguir nuevos, actualizados y duplicados cuando
-sea posible, y explicar el efecto de Añadir o Reemplazar sin exponer datos sensibles.
