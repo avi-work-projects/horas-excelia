@@ -251,12 +251,13 @@ function _lsJson(key,fallback){
 
 /* ── Modo de importación: añadir (incremental) o reemplazar ──────────
    Devuelve 'merge' | 'replace' al callback (o nada si se cancela). */
-function askImportMode(subtitle,cb){
+function askImportMode(subtitle,cb,preview){
   var ov=document.createElement('div');
   ov.className='imp-mode-ov';
   ov.innerHTML='<div class="imp-mode-sheet">'
     +'<div class="imp-mode-title">&#8593; Importar datos</div>'
     +'<div class="imp-mode-sub">'+escHtml(subtitle||'')+'</div>'
+    +(preview||'')
     +'<button class="imp-mode-btn merge" data-mode="merge"><b>&#10133; A&#241;adir a lo que ya hay</b><span>Fusiona: no se borra nada de lo actual. Lo que venga en el archivo actualiza lo que coincida.</span></button>'
     +'<button class="imp-mode-btn repl" data-mode="replace"><b>&#9851; Reemplazar todo</b><span>Sustituye los datos actuales por los del archivo.</span></button>'
     +'<button class="imp-mode-btn cancel" data-mode="">Cancelar</button>'
@@ -387,9 +388,9 @@ var _g6=document.getElementById('importAllFile'); if(_g6)_g6.addEventListener('c
   var r=new FileReader();
   r.onload=function(e){
     var d;
-    try{d=JSON.parse(e.target.result);}
+    try{d=validateImport(JSON.parse(e.target.result));}
     catch(err){showToast('Error al importar: archivo inválido','error');return;}
-    askImportMode('Backup completo: '+f.name,function(mode){_applyFullImport(d,mode);});
+    askImportMode('Backup completo: '+f.name,function(mode){_applyFullImport(d,mode);},renderImportPreview(d));
   };
   r.readAsText(f);
   ev.target.value='';

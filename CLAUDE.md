@@ -250,3 +250,11 @@ Al usar otro dispositivo se debe restaurar el backup para conservar identificado
 - `evCycleFilters`: ocultar todos → ver todos → restaurar selección previa,
   compartido entre anual y cuatro meses. Cambiar un chip reinicia el ciclo.
 - Recordatorios sin «Sin hora», salvo ensayos; faltas de pareja/sala explícitas.
+
+## Vista previa de importación y rutinas en ICS (v364)
+- `js/import-preview.js`: render puro de categorías y recuentos del archivo. Se utiliza antes de confirmar backups y archivos de eventos. No escribe datos ni muestra valores de correo/MacroDroid. Los recuentos son contenido recibido, no altas netas; la identidad y fusión siguen en import-export/data-integrity.
+- `askImportMode(subtitulo, callback, previewHtml)`: tercer argumento opcional generado por el render, nunca HTML del archivo importado. Validación del backup antes de abrir y antes de aplicar.
+- `evIcsRoutineRows(mes, ahora)`: sesiones virtuales futuras no canceladas, con horarios e históricos resueltos por `rutEventsOn`. Una ocurrencia por VEVENT, UID estable por rutina/fecha. El usuario elige mes en Rutinas y puede acumular sesiones en Seleccionados. Se revalidan antes de descargar. Los ensayos siguen excluidos.
+- No se añaden claves de almacenamiento: firmas y avisos de reexportación usan `calendarExports`, ya incluido en backup. Google se actualiza manualmente.
+- El ciclo de filtros de 4 meses/anual conserva sus tres estados y usa un chip cuadrado de 22 px.
+- Pruebas: `tools/test-import-sharing.js`, integrado en `npm test`.

@@ -523,7 +523,7 @@ function _bindEvListas(){
         var data={events:arr};if(incBodas)data.bodas=incBodas;
         applyFullImport(data,mode);refreshEvents();
       };
-      if(typeof askImportMode==='function')askImportMode('Eventos: '+f.name+' ('+arr.length+')',apply);
+      if(typeof askImportMode==='function')askImportMode('Eventos: '+f.name+' ('+arr.length+')',apply,renderImportPreview({events:arr,bodas:incBodas}));
       else apply('replace');
     };
     r.readAsText(f);
