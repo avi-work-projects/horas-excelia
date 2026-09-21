@@ -201,10 +201,7 @@ function bindBodasEvents(){
     });
   });
   document.querySelectorAll('.boda-c-asig[data-cid]').forEach(function(b){
-    b.addEventListener('click',function(e){e.stopPropagation();openBodaAssign(bodaCouple(b.dataset.cid),false);});
-  });
-  document.querySelectorAll('.boda-c-extra[data-cid]').forEach(function(b){
-    b.addEventListener('click',function(e){e.stopPropagation();openBodaAssign(bodaCouple(b.dataset.cid),true);});
+    b.addEventListener('click',function(e){e.stopPropagation();openBodaAssign(bodaCouple(b.dataset.cid));});
   });
   var _cls=document.getElementById('bodaClSearch');
   if(_cls)_cls.addEventListener('input',function(){

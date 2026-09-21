@@ -218,12 +218,12 @@ function _renderBodaStats(){
    tarjeta en la subpestana Parejas (ver _renderBodaParejas). */
 
 /* ══ Modal: calendario de asignación ══
-   - Días con clase YA de esta pareja: marcados (y fijos si extraMode)
+   - Días con clase YA de esta pareja: marcados; se pueden desasignar con confirmación si corresponde
    - Días con clase libre (sin pareja): resaltados como "disponibles"
    - Modo "Todos los días": permite marcar cualquier día (crea clase nueva)
    - El día de la boda se marca con 💍 */
-var BODA_ASSIGN = null;   /* {couple, extra, year, month, sel:{ds:true}, fixed:{ds:true}} */
-function openBodaAssign(couple,extraMode){
+var BODA_ASSIGN = null;   /* {couple, year, month, open, sel:{ds:count}} */
+function openBodaAssign(couple){
   if(!couple)return;
   var now=new Date();
   var refDs=null;
@@ -232,11 +232,10 @@ function openBodaAssign(couple,extraMode){
   else{var libres=bodaFreeClasses();if(libres.length)refDs=libres[0].start;}
   var y=refDs?parseInt(refDs.slice(0,4),10):now.getFullYear();
   var m=refDs?parseInt(refDs.slice(5,7),10)-1:now.getMonth();
-  BODA_ASSIGN={couple:couple,extra:!!extraMode,year:y,month:m,open:false,sel:{},fixed:{}};
-  /* Las clases que ya tiene salen marcadas; en modo "clase extra" quedan fijas */
+  BODA_ASSIGN={couple:couple,year:y,month:m,open:false,sel:{}};
+  /* Las clases actuales se pueden desmarcar, con confirmación al guardar si procede. */
   cls.forEach(function(ev){
     BODA_ASSIGN.sel[ev.start]=(BODA_ASSIGN.sel[ev.start]||0)+1;
-    if(extraMode)BODA_ASSIGN.fixed[ev.start]=true;
   });
   bodaOpenSheet('bodaAsgWrap','bodaAsgOv',
     '<div class="ev-detail-overlay" id="bodaAsgOv"><div class="ev-detail-sheet" id="bodaAsgSheet"></div></div>',
@@ -264,7 +263,7 @@ function renderBodaAssign(){
   h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">';
   h+='<button class="sy-back" id="bodaAsgClose">&#8592;</button>';
   h+='<div style="flex:1;font-size:.88rem;font-weight:600;text-align:center;color:'+c.color+'">'
-    +(A.extra?'Clase extra — ':'Asignar clases — ')+escHtml(c.name)+'</div>';
+    +'Asignar clases — '+escHtml(c.name)+'</div>';
   h+='<div style="width:36px"></div></div>';
   h+='<div class="boda-asg-info"><b>'+nSel+'</b> / '+p.total+' clases'
     +(c.weddingDate?(' · boda el <b>'+_bodaFmt(c.weddingDate)+'</b>'):'')+'</div>';
@@ -294,18 +293,18 @@ function renderBodaAssign(){
     var cls2='boda-asg-day';
     if(!inM)cls2+=' out';
     var selN=A.sel[ds]||0;
-    var isFixed=!!A.fixed[ds];
+    var isClosed=bodaIsClosed(ds);
     var hasLibre=!!libres[ds];
     var hasAjena=!!ajenas[ds];
     var isWed=c.weddingDate===ds;
     if(selN)cls2+=' sel';
-    if(isFixed)cls2+=' fixed';
+    if(isClosed)cls2+=' closed';
     if(hasLibre&&!selN)cls2+=' libre';
     if(hasAjena&&!selN)cls2+=' ajena';
     if(ds===todayDs)cls2+=' hoy';
     if(isWed)cls2+=' wedding';
-    /* Seleccionable: hay clase libre ese dia, o ya es mia, o estamos en modo abierto */
-    var pick=inM&&(hasLibre||selN||A.open);
+    /* Seleccionable: cualquier día de ensayo, o todos en modo abierto. */
+    var pick=inM&&(hasLibre||hasAjena||selN||A.open);
     if(!pick)cls2+=' off';
     var sty=selN?' style="background:'+c.color+'33;border-color:'+c.color+'"':'';
     h+='<div class="'+cls2+'"'+(pick?' data-ds="'+ds+'"':'')+sty+'>';
@@ -313,6 +312,7 @@ function renderBodaAssign(){
     if(selN>1)h+='<span class="boda-asg-badge" style="background:'+c.color+'">'+selN+'</span>';
     else if(selN)h+='<span class="boda-asg-tick" style="color:'+c.color+'">&#10003;</span>';
     else if(hasLibre)h+='<span class="boda-asg-free">'+libres[ds]+'</span>';
+    if(isClosed)h+='<span class="boda-asg-lock" aria-label="Día cerrado">&#128274;</span>';
     if(isWed)h+='<span class="boda-asg-wed">&#128141;</span>';
     h+='</div>';
     cur.setDate(cur.getDate()+1);
@@ -321,7 +321,7 @@ function renderBodaAssign(){
   h+='<div class="boda-asg-legend">'
     +'<span><i class="lg-libre"></i>día de ensayo libre</span>'
     +'<span><i class="lg-sel" style="background:'+c.color+'"></i>de esta pareja</span>'
-    +'<span><i class="lg-ajena"></i>de otra pareja</span></div>';
+    +'<span><i class="lg-ajena"></i>otra pareja: admite nueva clase</span><span>&#128274; cerrado: se reabre al añadir</span></div>';
   h+='<div class="ev-detail-actions">';
   h+='<button class="ev-btn primary" id="bodaAsgSave">Guardar</button>';
   h+='</div>';
@@ -348,10 +348,9 @@ function bindBodaAssign(){
   document.querySelectorAll('.boda-asg-day[data-ds]').forEach(function(d){
     d.addEventListener('click',function(){
       var ds=d.dataset.ds;
-      if(A.fixed[ds]){showToast('Esa clase ya estaba fijada','error');return;}
       if(A.sel[ds])delete A.sel[ds];
       else{
-        if(bodaDayFull(ds)){showToast('Ese día ya tiene '+EV_MAX_PUNT_DIA+' eventos puntuales (el máximo)','error');return;}
+        if(!bodaFreeClasses().some(function(ev){return ev.start===ds;})&&bodaDayFull(ds)){showToast('Ese día ya tiene '+EV_MAX_PUNT_DIA+' eventos puntuales (el máximo)','error');return;}
         A.sel[ds]=1;
       }
       renderBodaAssign();
@@ -361,10 +360,12 @@ function bindBodaAssign(){
     var c=A.couple;
     var mias=bodaClassesOfCouple(c.id);
     var libres=bodaFreeClasses();
+    var sensibles=mias.filter(function(ev){return !A.sel[ev.start]&&((ev.boda&&ev.boda.time)||bodaIsClosed(ev.start));});
+    if(sensibles.length&&!confirm('Vas a desasignar '+sensibles.length+' clase(s) con hora asignada o en un día cerrado. Se conservarán como huecos y se reabrirán los días afectados. ¿Quieres continuar?'))return;
     var nuevas=0,asignadas=0,soltadas=0;
     /* 1) Desasignar las que ya no estan seleccionadas */
     mias.forEach(function(ev){
-      if(!A.sel[ev.start]){ev.boda.coupleId=null;ev.title='Ensayo boda';soltadas++;}
+      if(!A.sel[ev.start]){bodaReopenDay(ev.start);ev.boda.coupleId=null;ev.title='Ensayo boda';soltadas++;}
     });
     /* 2) Asignar / crear las seleccionadas */
     Object.keys(A.sel).forEach(function(ds){
@@ -375,13 +376,14 @@ function bindBodaAssign(){
         if(libres[i].start===ds&&!libres[i].boda.coupleId){libre=libres[i];break;}
       }
       if(libre){
+        bodaReopenDay(ds);
         libre.boda.coupleId=c.id;
-        if(!libre.boda.time)libre.boda.time=BODA_DEFAULT_TIME;
         libre.title='Ensayo — '+c.name;
         asignadas++;
       }else{
         if(bodaDayFull(ds))return;
-        EVENTS.push(bodaNewClass(ds,BODA_DEFAULT_TIME,c.id,bodaPlaceForNewOn(ds)));
+        bodaReopenDay(ds);
+        EVENTS.push(bodaNewClass(ds,null,c.id,bodaPlaceForNewOn(ds)));
         nuevas++;
       }
     });

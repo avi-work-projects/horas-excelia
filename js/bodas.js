@@ -61,7 +61,7 @@ var BODA_SLOTS = [
 ];
 var BODA_NO_TIME_COLOR   = '#8b8f9a';
 var BODA_NO_COUPLE_COLOR = '#ffffff';  /* sin pareja: brazos de arriba en blanco */
-var BODA_DEFAULT_TIME    = '18:00';
+var BODA_DEFAULT_TIME    = '19:00'; // Solo propuesta del selector; los huecos nacen sin hora.
 /* Paleta para asignar color automaticamente a cada pareja nueva (sin repetir
    mientras queden libres) */
 var BODA_PALETTE = ['#e879a8','#4ecdc4','#fbbf24','#a3e635','#c084fc','#38bdf8',
@@ -212,7 +212,6 @@ function bodaPlaceForNewOn(ds){
   return BODA_PLACE_DEFAULT;
 }
 function bodaDayFull(ds){
-  if(bodaIsClosed(ds))return true;   /* dia cerrado: no admite mas clases */
   return typeof evDayLimitExceeded==='function'&&!!evDayLimitExceeded({start:ds,end:ds,repeat:null},null);
 }
 /* Alta masiva desde el calendario 1 mes: una clase por dia, sin hora ni pareja */
@@ -220,6 +219,7 @@ function bodaBulkCreate(dsList){
   var added=0;
   dsList.forEach(function(ds){
     if(bodaDayFull(ds))return;
+    bodaReopenDay(ds);
     EVENTS.push(bodaNewClass(ds,null,null,bodaPlaceForNewOn(ds)));
     added++;
   });
@@ -231,7 +231,7 @@ function bodaProgress(c){
   return {done:asignadas, total:c.contracted||0, falta:Math.max(0,(c.contracted||0)-asignadas)};
 }
 
-/* ── Dias CERRADOS: ese dia ya no admite mas clases ── */
+/* ── Días cerrados: añadir o liberar una clase reabre el día ── */
 var BODA_CLOSED_SK='excelia-bodas-closed-v1';
 var BODA_CLOSED=(function(){
   try{var r=appStorage.getItem(BODA_CLOSED_SK);if(r){var o=JSON.parse(r);if(o&&typeof o==='object')return o;}}catch(e){}
@@ -239,6 +239,10 @@ var BODA_CLOSED=(function(){
 })();
 function saveBodaClosed(){try{appStorage.setItem(BODA_CLOSED_SK,JSON.stringify(BODA_CLOSED));}catch(e){}}
 function bodaIsClosed(ds){return !!BODA_CLOSED[ds];}
+function bodaReopenDay(ds){
+  if(!bodaIsClosed(ds))return;
+  delete BODA_CLOSED[ds];saveBodaClosed();
+}
 function bodaToggleClosed(ds){
   if(BODA_CLOSED[ds])delete BODA_CLOSED[ds];else BODA_CLOSED[ds]=1;
   saveBodaClosed();
@@ -277,7 +281,7 @@ function bodaPendingApply(silencioso){
       ev.boda.coupleId=p.coupleId;
       var c=bodaCouple(p.coupleId);
       ev.title=c?('Ensayo — '+c.name):'Ensayo boda';
-      if(p.coupleId&&!ev.boda.time&&p.time===undefined)ev.boda.time=BODA_DEFAULT_TIME;
+
     }
     if(p.time!==undefined)ev.boda.time=p.time;
     if(p.place!==undefined)ev.boda.place=p.place;
@@ -525,8 +529,7 @@ function _renderBodaParejas(){
         h+='</div>';
       });
       h+='<div class="boda-det-actions boda-det-actions-row">';
-      h+='<button class="ev-btn boda-det-btn boda-c-asig" data-cid="'+c.id+'">&#128197; Asignar</button>';
-      h+='<button class="ev-btn boda-det-btn boda-c-extra" data-cid="'+c.id+'">&#10133; Extra</button>';
+      h+='<button class="ev-btn boda-det-btn boda-c-asig" data-cid="'+c.id+'">Asignar clases'+(p.done>=p.total?' (extras)':'')+'</button>';
       h+='</div>';
       h+='</div>';
     }
@@ -589,11 +592,11 @@ function _renderBodaClases(){
     h+='<div class="boda-day'+tono+'" data-day="'+ds+'">';
     h+='<div class="boda-day-hd">'+_bodaFmtCorto(ds)
       +'<span class="boda-day-n">'+byDay[ds].length+' clase'+(byDay[ds].length>1?'s':'')+'</span>'
-      +(cerrado?('<span class="boda-day-cerr" title="Día cerrado: no admite más clases">'
+      +(cerrado?('<span class="boda-day-cerr" title="Día cerrado: añadir una clase lo reabre">'
         +'&#10003; &#128274;</span>'):'');
     if(edit){
       h+='<button class="boda-mini-btn boda-day-lock'+(cerrado?' on':'')+'" data-lock="'+ds+'" title="'
-        +(cerrado?'Reabrir el día':'Cerrar el día (no admite más clases)')+'">'
+        +(cerrado?'Reabrir el día':'Marcar el día como cerrado')+'">'
         +(cerrado?'&#128274;':'&#128275;')+'</button>';
       if(!cerrado)h+='<button class="boda-mini-btn boda-day-add" data-ds="'+ds+'" title="Añadir clase este día">+</button>';
     }

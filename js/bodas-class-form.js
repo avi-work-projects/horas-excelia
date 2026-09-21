@@ -124,6 +124,7 @@ function _bodaFormRender(){
       var hechas=0,llenos=[];
       dias.forEach(function(d){
         if(bodaDayFull(d)){llenos.push(_bodaFmtCorto(d));return;}
+        bodaReopenDay(d);
         var created=bodaNewClass(d,b2.time,b2.coupleId,b2.place,b2.duration,b2.durationId);created.boda.teachers=JSON.parse(JSON.stringify(b2.teachers));EVENTS.push(created);
         hechas++;
       });
@@ -195,7 +196,7 @@ function openBodaCouplePicker(ev,opts){
     /* Queda pendiente hasta que se pulse Guardar (asi no se re-renderiza
        la lista entera y no se pierde el scroll) */
     bodaAplicarCampo(ev,'coupleId',cid,opts);
-    if(cid&&!bodaEff(ev).time)bodaAplicarCampo(ev,'time',BODA_DEFAULT_TIME,opts);
+
     closeBodaCouplePicker();
     bodaTrasElegir(ev,opts);
   }
@@ -208,14 +209,18 @@ function openBodaCouplePicker(ev,opts){
 function closeBodaCouplePicker(){bodaCloseSheet('bodaCpkWrap','bodaCpkOv');}
 
 /* ══ Modal: hora (ruedas de horas y minutos + entrada manual) ══ */
-var BODA_TIME_H = 18, BODA_TIME_M = 0;
+var BODA_TIME_H = 19, BODA_TIME_M = 0;
 var _BODA_HOURS=[],_BODA_MINS=[0,15,30,45];
 (function(){for(var i=7;i<=23;i++)_BODA_HOURS.push(i);})();
 function openBodaTimePicker(ev,opts){
   var t=(typeof bodaEff==='function'?bodaEff(ev).time:(ev.boda&&ev.boda.time))||BODA_DEFAULT_TIME;
   BODA_TIME_H=parseInt(t.slice(0,2),10);BODA_TIME_M=parseInt(t.slice(3,5),10);
-  if(isNaN(BODA_TIME_H))BODA_TIME_H=18;
+  if(isNaN(BODA_TIME_H))BODA_TIME_H=19;
   if(isNaN(BODA_TIME_M))BODA_TIME_M=0;
+  var minuteCycle=_BODA_MINS.slice();
+  if(minuteCycle.indexOf(BODA_TIME_M)<0)minuteCycle.push(BODA_TIME_M);
+  minuteCycle.sort(function(a,b){return a-b;});
+  var minuteValues=[];for(var cycle=0;cycle<5;cycle++)minuteValues=minuteValues.concat(minuteCycle);
   function drum(id,vals,sel){
     var s='<div class="drum-wrap"><div class="drum-picker boda-drum" id="'+id+'">';
     s+='<div style="height:44px"></div>';
@@ -229,7 +234,7 @@ function openBodaTimePicker(ev,opts){
   h+='<button class="sy-back" id="bodaTpClose">&#8592;</button>';
   h+='<div style="flex:1;font-size:.88rem;font-weight:600;text-align:center">Hora de la clase</div>';
   h+='<div style="width:36px"></div></div>';
-  h+='<div class="boda-tp-drums">'+drum('bodaTpH',_BODA_HOURS)+'<span class="boda-tp-sep">:</span>'+drum('bodaTpM',_BODA_MINS)+'</div>';
+  h+='<div class="boda-tp-drums">'+drum('bodaTpH',_BODA_HOURS)+'<span class="boda-tp-sep">:</span>'+drum('bodaTpM',minuteValues)+'</div>';
   h+='<div class="boda-tp-manual"><span>o escríbela:</span>';
   h+='<input type="number" id="bodaTpHi" min="0" max="23" value="'+BODA_TIME_H+'">';
   h+='<b>:</b><input type="number" id="bodaTpMi" min="0" max="59" step="15" value="'+String(BODA_TIME_M).padStart(2,'0')+'"></div>';
@@ -242,7 +247,10 @@ function openBodaTimePicker(ev,opts){
   function setDrum(id,vals,val){
     var d=document.getElementById(id);if(!d)return;
     var i=vals.indexOf(val);if(i<0)i=0;
+    if(id==='bodaTpM')i+=2*minuteCycle.length;
+    d.style.scrollSnapType='none';
     d.scrollTop=i*IH;mark(d);
+    setTimeout(function(){d.style.scrollSnapType='';},80);
   }
   function mark(d){
     var idx=Math.round(d.scrollTop/IH);
@@ -258,13 +266,13 @@ function openBodaTimePicker(ev,opts){
       mark(d);
       var hi=document.getElementById('bodaTpHi'),mi=document.getElementById('bodaTpMi');
       if(id==='bodaTpH')hi.value=drumVal('bodaTpH',_BODA_HOURS);
-      else mi.value=String(drumVal('bodaTpM',_BODA_MINS)).padStart(2,'0');
+      else mi.value=String(drumVal('bodaTpM',minuteValues)).padStart(2,'0');
     },{passive:true});
   });
   setTimeout(function(){
     setDrum('bodaTpH',_BODA_HOURS,BODA_TIME_H);
-    setDrum('bodaTpM',_BODA_MINS,_BODA_MINS.indexOf(BODA_TIME_M)>=0?BODA_TIME_M:0);
-  },30);
+    setDrum('bodaTpM',minuteValues,BODA_TIME_M);
+  },120);
   /* Entrada manual: manda sobre las ruedas */
   var manual=false;
   document.getElementById('bodaTpHi').addEventListener('input',function(){manual=true;});
@@ -272,7 +280,7 @@ function openBodaTimePicker(ev,opts){
   function readManual(){
     var hh=parseInt(document.getElementById('bodaTpHi').value,10);
     var mm=parseInt(document.getElementById('bodaTpMi').value,10);
-    if(isNaN(hh))hh=18;if(isNaN(mm))mm=0;
+    if(isNaN(hh))hh=19;if(isNaN(mm))mm=0;
     return [Math.max(0,Math.min(23,hh)),Math.max(0,Math.min(59,mm))];
   }
   document.getElementById('bodaTpClose').addEventListener('click',closeBodaTimePicker);
@@ -283,7 +291,7 @@ function openBodaTimePicker(ev,opts){
   document.getElementById('bodaTpSave').addEventListener('click',function(){
     var hh,mm;
     if(manual){var r=readManual();hh=r[0];mm=r[1];}
-    else{hh=drumVal('bodaTpH',_BODA_HOURS);mm=drumVal('bodaTpM',_BODA_MINS);}
+    else{hh=drumVal('bodaTpH',_BODA_HOURS);mm=drumVal('bodaTpM',minuteValues);}
     bodaAplicarCampo(ev,'time',String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0'),opts);
     closeBodaTimePicker();
     bodaTrasElegir(ev,opts);

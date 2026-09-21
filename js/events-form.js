@@ -508,18 +508,25 @@ function bindEvFormEvents(){
         var _d0=new Date(start+'T00:00:00'),_d1=new Date(end+'T00:00:00'),_g=0;
         for(var _dd=new Date(_d0);_dd<=_d1&&_g<400;_dd.setDate(_dd.getDate()+1),_g++)_dias.push(evDk(_dd));
       }
-      if(_dias.length>1){
+      if(!EV_EDIT||_dias.length>1){
         var _prevEv=EV_EDIT?JSON.parse(JSON.stringify(EV_EDIT)):null;
+        var _beforeIds=EVENTS.map(function(e){return e.id;}),_closedBefore=JSON.parse(JSON.stringify(BODA_CLOSED));
         if(EV_EDIT)EVENTS=EVENTS.filter(function(e){return e.id!==EV_EDIT.id;});
         var _n=typeof bodaBulkCreate==='function'?bodaBulkCreate(_dias):0;
+        var _createdIds=EVENTS.filter(function(e){return _beforeIds.indexOf(e.id)===-1;}).map(function(e){return e.id;});
+        EVENTS.forEach(function(e){if(_createdIds.indexOf(e.id)!==-1){e.title=title;e.note=note;}});
+        if(!_n&&_prevEv)EVENTS.push(_prevEv);
+        saveEvents();
         updateEventsBtn();closeEvForm();
         setTimeout(function(){refreshEvents();},320);
         showToast(_n===1?'1 clase creada':(_n+' clases creadas \u2014 as\u00edgnalas en la pesta\u00f1a Bodas'),
           _n?'success':'error',
-          _prevEv?function(){
-            EVENTS=EVENTS.filter(function(e){return !(getEvType(e)==='Ensayos boda'&&_dias.indexOf(e.start)!==-1&&!(e.boda&&e.boda.coupleId));});
-            EVENTS.push(_prevEv);saveEvents();updateEventsBtn();refreshEvents();
-          }:null);
+          function(){
+            EVENTS=EVENTS.filter(function(e){return _createdIds.indexOf(e.id)===-1;});
+            if(_prevEv&&_n)EVENTS.push(_prevEv);
+            _dias.forEach(function(ds){if(_closedBefore[ds])BODA_CLOSED[ds]=_closedBefore[ds];});saveBodaClosed();
+            saveEvents();updateEventsBtn();refreshEvents();
+          });
         return;
       }
     }

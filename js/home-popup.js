@@ -4,8 +4,8 @@ function homeReminderColor(ev){return getEvType(ev)==='Ensayos boda'?'#92334d':e
    enviar, cumpleanos hoy/manana, VIP sin alarma, eventos hoy)
    ============================================================ */
 /* ── Home Popup: semanas sin marcar + VIP sin alarma ── */
-function homeReminderEventText(when,time,content){
-  return '<span class="home-reminder-text"><span class="home-reminder-when">&#128197; '+escHtml(when)+(time?' · '+escHtml(time):' · Sin hora')+'</span> <span class="home-reminder-content">'+escHtml(content)+'</span></span>';
+function homeReminderEventText(when,time,content,missingTime){
+  return '<span class="home-reminder-text"><span class="home-reminder-when">&#128197; '+escHtml(when)+(time?' · '+escHtml(time):(missingTime?' · Sin hora':''))+'</span> <span class="home-reminder-content">'+escHtml(content)+'</span></span>';
 }
 function openHomePopup(){
   var csvWarnings=csvPendingWarnings(new Date());
@@ -61,9 +61,10 @@ function openHomePopup(){
         if(isEvBarAlways(ev)){var ida=evTramos(ev).filter(function(tr){return tr.k==='ida';})[0];time=ida&&ida.t.time||'';}
         if(getEvType(ev)==='Ensayos boda'){
           var pareja=typeof bodaCouple==='function'&&ev.boda?bodaCouple(ev.boda.coupleId):null;
-          contenido=pareja?'Ensayo - '+pareja.name:(ev.title||'Ensayo sin pareja asignada');
+          contenido=pareja?'Ensayo - '+pareja.name:'Ensayo sin pareja asignada';
+          if(!bodaPlaceOf(ev))contenido+=' · Sin sala';
         }
-        eventItems.push({days:diff,time:time||'',type:'event',color:homeReminderColor(ev),text:homeReminderEventText(diff===0?'Hoy':'Mañana',time,contenido)+bodaUltimoEnsayoHtml(ev)});
+        eventItems.push({days:diff,time:time||'',type:'event',color:homeReminderColor(ev),text:homeReminderEventText(diff===0?'Hoy':'Mañana',time,contenido,getEvType(ev)==='Ensayos boda')+bodaUltimoEnsayoHtml(ev)});
       }
       // Fin de eventos de más de 7 días
       if(ev.end&&ev.end>ev.start){
