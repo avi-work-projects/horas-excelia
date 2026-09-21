@@ -28,12 +28,47 @@ No hace falta cambiar de framework. Los renders devuelven HTML y no persisten ca
 | bodas-bind.js | pareja, acciones de vistas y contexto de render |
 | rutinas.js | recurrencias, excepciones y sesiones virtuales |
 | economics-* | calculos, datos, vistas y acciones economicas |
+| energy-analysis.js / energy-costs.js | lecturas por mes, tarifas ponderadas, vigencias, IVA y coste estimado |
+| energy-study.js / energy-analysis-view.js / energy-analysis-bind.js | indicadores, cinco pestañas del estudio y acciones de consulta/importación |
 | import-export.js | backups, fusion y exportaciones |
 | home-popup.js / init.js | avisos y arranque |
 
 ## Componentes compartidos
 - Ventanas: navegacion (renderNavBar), pestañas, cabecera, `.sy-body` como unico scroll.
 - Subpestañas: `.econ-sub-tabs` primer hijo de `.sy-body`.
+
+## Estudio energético (v366)
+
+Un acceso «Consumo y tarifas» abre una ventana propia: Resumen, Consumo, Coste,
+Tarifas y Escenarios. Sus pestañas y el selector de año quedan fuera del único
+scroll (`.sy-body`); los gráficos admiten swipe para cambiar de año.
+Los contratos, lecturas e impuestos históricos solo cambian al importar.
+Los controles de IVA y tarifa comparada son escenarios temporales, sin alterar el histórico.
+
+`energyBills` admite `vatAmount`, `electricityTaxAmount`, `otherTaxesAmount`
+y `readings:[{start,end,consumption,periods:[punta,llano,valle]}]` opcionales.
+Las fechas de `readings` son **inclusivas**. Un array vacío conserva el documento
+financiero sin añadir consumo (abono o lectura sustituida por una rectificación).
+Si no existe el campo se conserva el cálculo compatible con backups anteriores.
+`consumptionPeriods` permite el desglose de una factura antigua sin `readings`.
+Estos campos viajan dentro de `energyBills` en el backup, sin nuevas claves.
+
+El importador no deduce qué lectura rectifica a otra: el archivo preparado debe
+resolverlo explícitamente. Un solapamiento no resuelto bloquea el cálculo del mes.
+La cobertura incompleta se indica y nunca se extrapola a los días sin lectura.
+El coste usa consumo medio diario mensual y reparte los días según el contrato.
+Si todos los días tienen tramos, sus proporciones sustituyen los pesos genéricos
+de la tarifa. Las cuotas fijas conservan el prorrateo por días reales del mes.
+`energyCostMonths` devuelve grupos por contrato y bandas de IVA para las gráficas.
+
+Los impuestos documentados y el total real se agrupan por **emisión**; el estimado,
+por **consumo**. La diferencia incluye desplazamientos entre años, huecos,
+regularizaciones y servicios; no se interpreta como error puro del modelo.
+El IVA histórico refleja las fechas importadas, no una tabla legal incorporada.
+Los documentos privados y archivos de importación nunca van en el repositorio.
+
+El ciclo de filtros anual/4 meses mantiene una X cuadrada a la derecha:
+rojo = ocultar, verde = mostrar, amarillo = recuperar selección anterior.
 - Titulos centrados: `.sy-header-center`.
 - Paneles: `abrirPanel` / `cerrarPanel`; no duplicar temporizadores ni overlays.
 - Checkbox global `<input type="checkbox">`; color por `--chk`.

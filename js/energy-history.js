@@ -38,11 +38,12 @@ function energyMergeContracts(current,incoming){
   validateEnergyContracts(result);return result;
 }
 function energySaveContracts(list){validateEnergyContracts(list);appStorage.setItem(ENERGY_HISTORY_KEY,JSON.stringify(list));}
-function energyHistoryButton(kind){return '<button class="ev-io-btn io-primaria energy-analysis-open" data-energy-kind="'+kind+'">Consumo y tarifas</button> <button class="ev-io-btn energy-history-open" data-energy-kind="'+kind+'">Histórico de contratos</button> <button class="ev-io-btn energy-bills-open" data-energy-kind="'+kind+'">Facturas y consumo</button>';}
+function energyHistoryButton(kind){return '<button class="ev-io-btn io-primaria energy-analysis-open" data-energy-kind="'+kind+'">Consumo y tarifas</button>';}
+
 function energyContractStatus(c){
   var today=dk(new Date());
   return c.end&&c.end<today?'Finalizado':c.start&&c.start>today?'Próximo':c.start?(c.end?'En vigencia':'Sin cierre registrado'):'Fechas pendientes';
 }
 /* El histórico se consulta en la ventana propia; no hay alta o edición manual. */
 function openEnergyHistory(kind){ENERGY_ANALYSIS_TAB='tarifas';openEnergyAnalysis(kind);}
-function bindEnergyHistory(){document.querySelectorAll('.energy-analysis-open').forEach(function(b){b.onclick=function(){openEnergyAnalysis(b.dataset.energyKind);};});document.querySelectorAll('.energy-bills-open').forEach(function(b){b.onclick=function(){openEnergyBills(b.dataset.energyKind);};});document.querySelectorAll('.energy-history-open').forEach(function(b){b.onclick=function(){openEnergyHistory(b.dataset.energyKind);};});}
+function bindEnergyHistory(){document.querySelectorAll('.energy-analysis-open').forEach(function(b){b.onclick=function(){ENERGY_ANALYSIS_TAB='resumen';openEnergyAnalysis(b.dataset.energyKind);};});document.querySelectorAll('.energy-bills-open').forEach(function(b){b.onclick=function(){openEnergyBills(b.dataset.energyKind);};});document.querySelectorAll('.energy-history-open').forEach(function(b){b.onclick=function(){openEnergyHistory(b.dataset.energyKind);};});}

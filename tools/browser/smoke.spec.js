@@ -1,4 +1,25 @@
 const {test,expect}=require('@playwright/test');
+
+test('estudio energético: cinco pestañas, IVA, año y consulta sin edición',async({page})=>{
+ await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));
+ await page.goto('/');
+ await page.evaluate(()=>{
+  const tariff=energyTariffDefaults({precioKwh:.1});
+  energyImportHistory({energyBills:[{id:'eb',kind:'luz',supplier:'Ejemplo',number:'F1',issued:'2026-02-02',start:'2026-01-01',end:'2026-01-31',consumption:310,net:31,gross:37.51,paid:null,source:'Prueba ficticia',notes:'',readings:[{start:'2026-01-01',end:'2026-01-31',consumption:310,periods:[31,62,217]}]}],energyContracts:[{id:'ec',kind:'luz',supplier:'Ejemplo',tariff:'Prueba',supply:'',start:'2026-01-01',end:'',commitment:'',notes:'',source:'',taxes:'excluidos',prices:[],analysis:tariff}],energyTaxes:[{kind:'luz',start:'2026-01-01',rate:21}]});
+  ENERGY_ANALYSIS_YEAR=2026;openEnergyAnalysis('luz');
+ });
+ await expect(page.locator('[data-energy-tab]')).toHaveCount(5);
+ await page.locator('[data-energy-tab="costes"]').click();
+ await expect(page.locator('.energy-cost-segment')).toHaveCount(1);
+ await expect(page.locator('#energyVatCycle')).toBeChecked();
+ await page.locator('#energyVatCycle').click();await expect(page.getByText('Sin IVA',{exact:true})).toBeVisible();
+ await page.locator('#energyVatCycle').click();await expect(page.getByText('IVA cte 21 %',{exact:true})).toBeVisible();
+ await page.locator('[data-energy-tab="consumo"]').click();await expect(page.locator('.energy-table-scroll')).toContainText('217');
+ await page.locator('[data-analysis-year="-1"]').click();await expect(page.locator('.energy-year-nav')).toContainText('2025');
+ await page.locator('[data-energy-tab="tarifas"]').click();await expect(page.locator('.energy-window-content input')).toHaveCount(0);
+ await page.locator('[data-energy-tab="comparar"]').click();await expect(page.locator('.energy-compare-chart')).toHaveCount(2);
+ expect(await page.locator('#energyAnalysisOverlay').evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
+});
 test('mobile: menus, cumpleanos, guardado y deshacer',async({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-bdays-v1',JSON.stringify([{name:'Persona de prueba',day:22,month:8}]));});

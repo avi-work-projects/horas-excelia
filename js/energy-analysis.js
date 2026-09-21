@@ -46,18 +46,21 @@ function energyBillEnd(b,bills){
   return end;
 }
 function energyConsumptionMonths(bills,year,kind){
-  var relevant=bills.filter(function(b){return b.kind===kind;}),months=[];
-  for(var i=0;i<12;i++)months.push({count:0,consumption:0,net:0,gross:0,paid:0,unknownPaid:0,unknownConsumption:0,days:{},samples:{},overlap:false});
+  var relevant=bills.filter(function(b){return b.kind===kind;}),months=[],readings=[];
+  for(var i=0;i<12;i++)months.push({count:0,consumption:0,net:0,gross:0,paid:0,unknownPaid:0,unknownConsumption:0,days:{},samples:{},periods:[0,0,0],periodDays:0,overlap:false});
   relevant.forEach(function(b){
     var start=energyUtc(b.start),end=energyBillEnd(b,relevant),n=end-start+1;
-    var lo=Math.max(start,energyUtc(year+'-01-01')),hi=Math.min(end,energyUtc(year+'-12-31'));
-    for(var d=lo;d<=hi;d++){
-      var ds=energyDate(d),m=months[+ds.slice(5,7)-1];m.count++;m.net+=b.net/n;m.gross+=b.gross/n;
-      if(b.paid===null)m.unknownPaid++;else m.paid+=b.paid/n;
-      if(b.serviceOnly)continue;
-      if(b.consumption===null||b.noReading){m.unknownConsumption++;continue;}
-      if(m.days[ds])m.overlap=true;m.days[ds]=true;m.consumption+=b.consumption/n;
-      m.samples[ds]=(m.samples[ds]||0)+b.consumption/n;
+    for(var d=Math.max(start,energyUtc(year+'-01-01'));d<=Math.min(end,energyUtc(year+'-12-31'));d++){
+      var m=months[+energyDate(d).slice(5,7)-1];m.count++;m.net+=b.net/n;m.gross+=b.gross/n;if(b.paid===null)m.unknownPaid++;else m.paid+=b.paid/n;
+    }
+    if(b.readings){b.readings.forEach(function(r){readings.push({start:r.start,end:r.end,consumption:r.consumption,consumptionPeriods:r.periods,inclusive:true});});}
+    else if(!b.serviceOnly)readings.push(Object.assign({},b,{resolvedEnd:end}));
+  });
+  readings.forEach(function(b){var start=energyUtc(b.start),end=b.inclusive?energyUtc(b.end):b.resolvedEnd,n=end-start+1;
+    for(var d=Math.max(start,energyUtc(year+'-01-01'));d<=Math.min(end,energyUtc(year+'-12-31'));d++){
+      var ds=energyDate(d),m=months[+ds.slice(5,7)-1];if(b.consumption===null||b.noReading){m.unknownConsumption++;continue;}
+      if(m.days[ds])m.overlap=true;m.days[ds]=true;m.consumption+=b.consumption/n;m.samples[ds]=(m.samples[ds]||0)+b.consumption/n;
+      if(b.consumptionPeriods&&b.consumptionPeriods.every(function(v){return v!==null;})){m.periodDays++;b.consumptionPeriods.forEach(function(v,i){m.periods[i]+=v/n;});}
     }
   });return months;
 }

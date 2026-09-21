@@ -70,7 +70,7 @@ function _renderElectDetalle(){
   if(e.modo==='fijo')h+='<p class="energy-caption">Cuota fija activa: '+fcPlain(e.cuotaFija)+'/mes. Los precios de consumo y potencia quedan guardados para cambiar de modalidad.</p>';
   h+='</div>';
   h+=energyHistoryButton('luz');
-  h+='<button class="hip-edit-btn" id="energyLegacyluz">Tramos / cuota fija</button>';
+
 
   return h;
 }
