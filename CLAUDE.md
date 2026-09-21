@@ -232,3 +232,21 @@ STATUS:CANCELLED retiró el evento en aquella prueba. Desde v350 ya no se genera
 Es un intercambio manual: hay que importar el archivo más reciente en el MISMO calendario.
 No hay conexión automática, permisos OAuth, invitados ni modificaciones de ensayos.
 Al usar otro dispositivo se debe restaurar el backup para conservar identificadores, revisiones y bajas.
+
+
+## v363 — Huecos de ensayo, asignación y filtros
+
+- `bodaBulkCreate` también se usa para crear un solo hueco desde el calendario;
+  mantiene los ensayos anteriores y Deshacer retira solo los IDs recién creados.
+- Los huecos y las asignaciones no inventan hora. `BODA_DEFAULT_TIME` (19:00)
+  solo propone la hora al abrir el selector; minutos con cinco ciclos, centrados.
+- Un solo botón Asignar clases (extras si el paquete está completo). Ambos estados
+  permiten desasignar; al guardar se confirma si alguna clase liberada tiene hora
+  o pertenece a un día cerrado. Se conserva el hueco con su hora y sala.
+- `bodaReopenDay` reabre al añadir/asignar/liberar; cerrar ya no bloquea altas.
+  La selección pendiente no modifica ni clases ni candados hasta Guardar.
+- El límite de cinco puntuales sigue vigente; asignar un hueco existente no gasta
+  otra plaza. Días con otras parejas seleccionables y candados visibles en la leyenda.
+- `evCycleFilters`: ocultar todos → ver todos → restaurar selección previa,
+  compartido entre anual y cuatro meses. Cambiar un chip reinicia el ciclo.
+- Recordatorios sin «Sin hora», salvo ensayos; faltas de pareja/sala explícitas.

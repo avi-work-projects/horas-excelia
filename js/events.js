@@ -41,6 +41,13 @@ var EV_FILTER_COLOR  = {'Grandes':'#38bdf8','Asturias':'#1d4ed8','Rec. Gestiones
   'WM + Rut':'#c08a5a','Resto':'#ff6b6b','Cumplea\u00f1os VIP':'#fbbf24'};
 /* Tras que grupo va la linea que separa eventos grandes de puntuales */
 var EV_FILTER_SEP_AFTER = 'Asturias';
+var EV_FILTER_CYCLE = 0, EV_FILTER_SAVED = null;
+function evCycleFilters(){
+  if(EV_FILTER_CYCLE===0){EV_FILTER_SAVED=EV_ANNUAL_FILTER_HIDDEN.slice();EV_ANNUAL_FILTER_HIDDEN=EV_FILTER_GROUPS.slice();}
+  else if(EV_FILTER_CYCLE===1)EV_ANNUAL_FILTER_HIDDEN=[];
+  else{EV_ANNUAL_FILTER_HIDDEN=(EV_FILTER_SAVED||[]).slice();EV_FILTER_SAVED=null;}
+  EV_FILTER_CYCLE=(EV_FILTER_CYCLE+1)%3;
+}
 function evFilterGroup(ev){
   var t=getEvType(ev);
   if(t==='Cumplea\u00f1os VIP')return 'Cumplea\u00f1os VIP';

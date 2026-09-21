@@ -251,6 +251,7 @@ function _bindEvNav(){
   }
   document.querySelectorAll('.ev-filter-chip[data-filter-type]').forEach(function(chip){
     chip.addEventListener('click',function(){
+      EV_FILTER_CYCLE=0;EV_FILTER_SAVED=null;
       var type=chip.dataset.filterType;
       var idx=EV_ANNUAL_FILTER_HIDDEN.indexOf(type);
       if(idx!==-1)EV_ANNUAL_FILTER_HIDDEN.splice(idx,1);
@@ -258,6 +259,8 @@ function _bindEvNav(){
       refreshEvents();
     });
   });
+  var cycleFilters=document.getElementById('evCycleFilters');
+  if(cycleFilters)cycleFilters.addEventListener('click',function(){evCycleFilters();refreshEvents();});
   var _evAddBtn=document.getElementById('evAdd');
   if(_evAddBtn)_evAddBtn.addEventListener('click',function(){
     if(EV_VIEW==='annual'||EV_VIEW==='quad'){EV_EDIT_MODE=!EV_EDIT_MODE;refreshEvents();}

@@ -564,7 +564,7 @@ REGLAS.push(['inicio: ensayo con fecha, hora y pareja actual; sin hora explicita
   ctx.document.getElementById=id=>id==='homePopupContent'?content:id==='homePopup'?{style:{}}:null;
   require('vm').runInContext(fs.readFileSync(path.join(RAIZ,'js/home-popup.js'),'utf8'),ctx);
   return content.innerHTML.includes('Mañana · 18:00–19:00</span> <span class="home-reminder-content">Ensayo - Pareja &lt;actual&gt;')
-    &&content.innerHTML.includes('Hoy · Sin hora</span> <span class="home-reminder-content">Ensayo sin asignar')
+    &&content.innerHTML.includes('Hoy · Sin hora</span> <span class="home-reminder-content">Ensayo sin pareja asignada')
     &&!content.innerHTML.includes('Nombre antiguo');
 }]);
 

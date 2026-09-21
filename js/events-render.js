@@ -576,6 +576,8 @@ function renderEvContent(){
       h+='<button class="ev-filter-chip'+(hidden?'':' chip-active')+'" data-filter-type="'+escHtml(type)+'" style="'+sty+'">'+_typeShort[type]+'</button>';
       if(type===EV_FILTER_SEP_AFTER)h+='<span class="ev-filter-sep" aria-hidden="true"></span>';
     });
+    var cycleLabel=['Ocultar todos','Ver todos','Restaurar filtros'][EV_FILTER_CYCLE];
+    h+='<button class="ev-filter-cycle" id="evCycleFilters" title="'+cycleLabel+'" aria-label="'+cycleLabel+'">'+['&#9633;','&#9635;','&#8630;'][EV_FILTER_CYCLE]+'</button>';
     h+='</div>';
     h+='</div>';
   }
