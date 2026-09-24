@@ -34,6 +34,7 @@ No hace falta cambiar de framework. Los renders devuelven HTML y no persisten ca
 | home-popup.js / init.js | avisos y arranque |
 
 ## Componentes compartidos
+- Selector horario de clases: `#bodaTpOv` tiene layout oculto antes de abrir; las ruedas se posicionan síncronamente. No retrasar el scroll inicial con temporizadores: provoca un destello al abrir una clase sin hora.
 - Ventanas: navegacion (renderNavBar), pestañas, cabecera, `.sy-body` como unico scroll.
 - Subpestañas: `.econ-sub-tabs` primer hijo de `.sy-body`.
 
