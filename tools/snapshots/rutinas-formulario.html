@@ -12,6 +12,33 @@
 <input class="ev-input" id="rutFName" type="text" maxlength="40" placeholder="Ej: Gimnasio" value="Gimnasio">
 </div>
 <div class="ev-field">
+<label>Modalidad</label>
+<div class="rut-flex-choice">
+<button type="button" class="ev-btn primary" data-rmode="fixed" disabled>Horario fijo</button>
+<button type="button" class="ev-btn" data-rmode="flex" disabled>Sesiones flexibles</button>
+</div>
+</div>
+<div id="rutFlexOptions" hidden>
+<div class="ev-field">
+<label>Cupo de sesiones</label>
+<div class="rut-flex-choice">
+<button type="button" class="ev-btn primary" data-rperiod="month">Al mes</button>
+<button type="button" class="ev-btn" data-rperiod="week">A la semana</button>
+</div>
+</div>
+<div class="ev-date-row">
+<div>
+<label>Sesiones del cupo</label>
+<input class="ev-input" type="number" min="1" max="31" id="rutFTarget" value="8">
+</div>
+<div id="rutWeeklyGoal">
+<label>Objetivo semanal</label>
+<input class="ev-input" type="number" min="1" max="7" id="rutFWeekly" value="2">
+</div>
+</div>
+<p class="sy-note">Elige después cada fecha y hora. Las sesiones saltadas no consumen el cupo. Una sesión por día en esta rutina.</p>
+</div>
+<div class="ev-field">
 <label>Días de la semana</label>
 <div class="rut-days-pick" id="rutFDays">
 <button type="button" class="rut-day-btn on" data-wd="1">L</button>

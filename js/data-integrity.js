@@ -84,6 +84,11 @@ function validateImport(data){
     if(r.start&&!validIsoDate(r.start))throw new Error('Inicio de rutina no valido');
     Object.keys(r.skips||{}).forEach(function(ds){if(!validIsoDate(ds))throw new Error('Fecha de sesion no valida');});
     schedule(r);
+    if(r.flex){
+      var f=r.flex;
+      if(['month','week'].indexOf(f.period)<0||!Number.isInteger(f.target)||f.target<1||f.target>(f.period==='week'?7:31)||!Number.isInteger(f.weeklyTarget)||f.weeklyTarget<1||f.weeklyTarget>7||!f.sessions||typeof f.sessions!=='object'||Array.isArray(f.sessions))throw new Error('Cupo flexible no válido');
+      Object.keys(f.sessions).forEach(function(ds){var s=f.sessions[ds];if(!validIsoDate(ds)||!s||!hour(s.time)||!Number.isInteger(s.dur)||s.dur<15||s.dur>480||(r.start&&ds<r.start))throw new Error('Sesión flexible no válida');});
+    }
     if(r.scheduleHistory){
       if(!Array.isArray(r.scheduleHistory))throw new Error('Historial de rutina no valido');
       var last='';r.scheduleHistory.forEach(function(x){
@@ -123,7 +128,7 @@ function rutLimitExceeded(candidate,excludeId){
     if(r.start)bounds.push(r.start);
     (r.scheduleHistory||[]).forEach(function(x){bounds.push(x.until);Object.keys(x.schedule.weeks||{}).forEach(function(d){bounds.push(d);});});
     if(r.suspend){if(r.suspend.from)bounds.push(r.suspend.from);if(r.suspend.to)bounds.push(r.suspend.to);}
-    Object.keys(r.weeks||{}).concat(Object.keys(r.skips||{})).forEach(function(d){bounds.push(d);});
+    Object.keys(r.weeks||{}).concat(Object.keys(r.skips||{}),Object.keys(r.flex&&r.flex.sessions||{})).forEach(function(d){bounds.push(d);});
   });
   var today=evDk(new Date());bounds.push(today);
   for(var i=0;i<bounds.length;i++){

@@ -1,0 +1,41 @@
+const assert=require('assert/strict');
+const {cargarApp}=require('./entorno');
+const a=cargarApp({});
+const r={id:'flex-test',name:'Actividad flexible',start:'2026-09-01',weekDays:[],time:'19:00',dur:60,color:'#123456',skips:{},flex:{period:'month',target:8,weeklyTarget:2,sessions:{}}};
+a.RUTINAS=[r];
+assert.equal(a.rutFlexWarnings('2026-09-24')[0].text.includes('Faltan 2'),true);
+a.rutFlexSetSession(r,null,'2026-09-22','00:00',45);
+a.rutFlexSetSession(r,null,'2026-09-25','18:30',60);
+assert.equal(a.rutOccursOn(r,'2026-09-22'),'00:00');
+assert.equal(a.rutOccursOn(r,'2026-09-23'),null);
+assert.equal(a.rutDurationOn(r,'2026-09-22'),45);
+assert.equal(a.rutFlexWarnings('2026-09-24').length,0);
+assert.equal(a.rutEventsOn('2026-09-25')[0]._rutTime,'18:30');
+r.skips['2026-09-25']=1;
+assert.equal(a.rutFlexStatus(r,'2026-09-24').missing,1);
+assert.equal(a.rutEventsOn('2026-09-25')[0]._rutSkip,true);
+a.rutFlexSetSession(r,'2026-09-25','2026-09-25','20:00',45);
+assert.equal(a.rutIsSkipped(r,'2026-09-25'),true);
+assert.throws(()=>a.rutFlexSetSession(r,null,'2026-09-22','19:00',60));
+const restored=a.validateImport(JSON.parse(JSON.stringify({rutinas:[r]}))).rutinas[0];
+assert.equal(a.rutOccursOn(restored,'2026-09-22'),'00:00');
+assert.equal(a.rutDurationOn(restored,'2026-09-22'),45);
+assert.throws(()=>a.validateImport({rutinas:[{...r,flex:{...r.flex,target:0}}]}));
+assert.throws(()=>a.validateImport({rutinas:[{...r,flex:{...r.flex,sessions:{'2026-09-22':{time:'25:00',dur:60}}}}]}));
+// Cupo completo: no pedir más sesiones aunque la semana aún esté vacía.
+r.flex.target=1;assert.equal(a.rutFlexWarnings('2026-09-28').length,0);
+assert.throws(()=>a.rutFlexSetSession(r,null,'2026-09-29','19:00',60));
+assert.equal(r.flex.sessions['2026-09-29'],undefined);
+// Nuevo mes, semana que cruza año y febrero bisiesto.
+assert.equal(a.rutFlexStatus(r,'2026-10-01').left,1);
+assert.equal(a.rutFlexRange('2027-01-01','week').start,'2026-12-28');
+assert.equal(a.rutFlexRange('2028-02-15','month').end,'2028-02-29');
+const weekly=JSON.parse(JSON.stringify(r));weekly.id='weekly';weekly.flex={period:'week',target:2,weeklyTarget:2,sessions:{}};a.RUTINAS=[weekly];
+a.rutFlexSetSession(weekly,null,'2026-09-22','10:00',60);a.rutFlexSetSession(weekly,null,'2026-09-23','11:00',60);
+assert.throws(()=>a.rutFlexSetSession(weekly,null,'2026-09-24','11:00',60));
+a.rutFlexSetSession(weekly,null,'2026-09-28','11:00',60);
+assert.equal(a.rutFlexStatus(weekly,'2026-09-28').missing,1);
+// El límite diario se revisa también para fechas explícitas lejanas.
+a.RUTINAS=['a','b','c'].map(id=>({...r,id,flex:{period:'month',target:8,weeklyTarget:2,sessions:{'2027-06-15':{time:'18:00',dur:60}}}}));
+assert.throws(()=>a.rutFlexSetSession(weekly,null,'2027-06-15','18:00',60));
+console.log('Rutinas flexibles: cupos, avisos, cancelación, fechas, calendario, backup y límite diario OK');

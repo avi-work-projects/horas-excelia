@@ -9,10 +9,12 @@ function homeReminderEventText(when,time,content,missingTime){
 }
 function openHomePopup(){
   var csvWarnings=csvPendingWarnings(new Date());
+  var routineWarnings=rutFlexWarnings(evDk(new Date()));
   try{
-    if(sessionStorage.getItem('excelia-popup-dismissed')&&!csvWarnings.length)return;
+    if(sessionStorage.getItem('excelia-popup-dismissed')&&!csvWarnings.length&&!routineWarnings.length)return;
   }catch(e){}
   var items=csvWarnings.map(function(it){return {type:'warn',text:'&#9888; '+escHtml(it.text)};});
+  routineWarnings.forEach(function(it){items.push({type:'warn',text:'&#128197; '+escHtml(it.text)});});
   // Semanas sin enviar: 2 anteriores + actual + 3 siguientes
   var today=new Date();today.setHours(0,0,0,0);
   var dow=today.getDay();var off=dow===0?6:dow-1;

@@ -1,5 +1,26 @@
 const {test,expect}=require('@playwright/test');
 
+test('rutina flexible: crear, planificar, saltar y conservar al editar',async({page})=>{
+ await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));
+ await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewRutinas').click();
+ await page.locator('#rutAdd').click();await page.locator('#rutFName').fill('Flexible de prueba');
+ await page.locator('[data-rmode="flex"]').click();
+ await expect(page.locator('#rutFDays')).toBeHidden();
+ await page.locator('#rutFStart').fill('2026-01-01');await page.locator('#rutFSave').click();
+ await expect(page.locator('#rutPlanOv')).toBeVisible();
+ await page.locator('.rut-plan-grid [data-rday]:not(:disabled)').first().click();
+ await page.locator('#rutPlanTime').fill('19:30');await page.locator('#rutPlanSave').click();
+ await expect(page.locator('.rut-plan-day.planned')).toHaveCount(1);
+ await expect(page.locator('.rut-plan-row')).toContainText('19:30');
+ await page.locator('[data-rskip]').click();await expect(page.locator('.rut-plan-day.skipped')).toHaveCount(1);
+ await page.locator('[data-rskip]').click();await expect(page.locator('.rut-plan-day.skipped')).toHaveCount(0);
+ await page.locator('#rutPlanClose').click();await page.locator('.rut-edit').click();
+ await page.locator('#rutFName').fill('Flexible editada');await page.locator('#rutFSave').click();
+ const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('excelia-rutinas-v1'))[0]);
+ expect(saved.start).toBe('2026-01-01');expect(Object.values(saved.flex.sessions)[0].time).toBe('19:30');
+ expect(saved.flex.target).toBe(8);expect(saved.flex.weeklyTarget).toBe(2);
+});
+
 test('hora sin definir: ruedas preparadas antes de abrir y sin guardar al cancelar',async({page})=>{
  await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));
  await page.goto('/');await page.locator('#eventsBtn').click();

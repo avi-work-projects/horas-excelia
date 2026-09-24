@@ -224,7 +224,7 @@ function openEvDetail(ev,container,car){
   /* Acciones propias de una sesion de rutina */
   var _rs=document.getElementById('evDRutSes');
   if(_rs)_rs.addEventListener('click',function(){
-    if(typeof rutToggleSkip==='function')rutToggleSkip(ev._rut,(car&&car.ds)||ev.start);
+    if(typeof rutToggleSkip==='function'&&rutToggleSkip(ev._rut,(car&&car.ds)||ev.start)===false)return;
     closeEvDetail();
     setTimeout(refreshEvents,320);
   });

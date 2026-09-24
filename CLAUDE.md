@@ -27,6 +27,7 @@ No hace falta cambiar de framework. Los renders devuelven HTML y no persisten ca
 | bodas-class-form.js | formulario y selectores de una clase |
 | bodas-bind.js | pareja, acciones de vistas y contexto de render |
 | rutinas.js | recurrencias, excepciones y sesiones virtuales |
+| rutinas-flex.js | cupos semanales/mensuales, planificación por fecha y avisos de sesiones pendientes |
 | economics-* | calculos, datos, vistas y acciones economicas |
 | energy-analysis.js / energy-costs.js | lecturas por mes, tarifas ponderadas, vigencias, IVA y coste estimado |
 | energy-study.js / energy-analysis-view.js / energy-analysis-bind.js | indicadores, cinco pestañas del estudio y acciones de consulta/importación |
@@ -34,6 +35,20 @@ No hace falta cambiar de framework. Los renders devuelven HTML y no persisten ca
 | home-popup.js / init.js | avisos y arranque |
 
 ## Componentes compartidos
+### Rutinas flexibles (v368)
+Al crear una rutina se elige horario fijo o sesiones flexibles. La modalidad de
+una rutina existente no se transforma, para preservar su historial. `r.flex`
+guarda `{period:'month'|'week',target,weeklyTarget,sessions:{fecha:{time,dur}}}`.
+Una sesión por fecha y rutina; cada sesión conserva su duración al cambiar
+la predeterminada. Las cancelaciones siguen en `r.skips` y liberan cupo.
+`rutOccursOn` y `rutDurationOn` son las únicas puertas de entrada: calendarios,
+Próximos, estadísticas y exportación ICS reutilizan las sesiones virtuales.
+`rutFlexStatus` limita el aviso semanal al cupo restante del período; no genera
+sesiones automáticamente ni arrastra las pendientes al siguiente mes/semana.
+`RUT_PLAN` solo guarda la selección visual. Los datos viajan en `rutinas` del
+backup existente, con validación de fechas, horas, duración y cupos al importar.
+Los límites diarios incluyen también fechas explícitas lejanas.
+
 - Selector horario de clases: `#bodaTpOv` tiene layout oculto antes de abrir; las ruedas se posicionan síncronamente. No retrasar el scroll inicial con temporizadores: provoca un destello al abrir una clase sin hora.
 - Ventanas: navegacion (renderNavBar), pestañas, cabecera, `.sy-body` como unico scroll.
 - Subpestañas: `.econ-sub-tabs` primer hijo de `.sy-body`.
