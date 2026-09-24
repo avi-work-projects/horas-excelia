@@ -1,5 +1,22 @@
 const {test,expect}=require('@playwright/test');
 
+test('hora sin definir: ruedas preparadas antes de abrir y sin guardar al cancelar',async({page})=>{
+ await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));
+ await page.goto('/');await page.locator('#eventsBtn').click();
+ const positions=await page.evaluate(async()=>{
+  const ev={id:'picker-test',boda:{time:null}},frames=[];
+  openBodaTimePicker(ev,{directo:true});
+  for(let i=0;i<15;i++){
+   frames.push([document.getElementById('bodaTpH').scrollTop,document.getElementById('bodaTpM').scrollTop]);
+   await new Promise(requestAnimationFrame);
+  }
+  closeBodaTimePicker();
+  return {frames,time:ev.boda.time};
+ });
+ for(const [h,m] of positions.frames){expect(Math.abs(h-528)).toBeLessThan(2);expect(Math.abs(m-352)).toBeLessThan(2);}
+ expect(positions.time).toBeNull();
+});
+
 test('estudio energético: cinco pestañas, IVA, año y consulta sin edición',async({page})=>{
  await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));
  await page.goto('/');

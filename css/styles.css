@@ -2147,6 +2147,9 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .boda-cal-day.hl{border-width:2px}
 .boda-cal-day.dim{opacity:.35}
 .boda-cal-wed{font-size:.55rem;line-height:1.1;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Medible antes de abrir: colocar las ruedas sin mostrar su posición inicial. */
+#bodaTpOv{display:flex;align-items:flex-end;visibility:hidden}
+#bodaTpOv.open{visibility:visible}
 .boda-tp-drums{display:flex;align-items:center;justify-content:center;gap:10px;margin:6px 0 12px}
 .boda-tp-sep{font-size:1.6rem;font-weight:700;color:var(--text-dim)}
 .boda-tp-manual{display:flex;align-items:center;justify-content:center;gap:6px;font-size:.72rem;color:var(--text-muted)}

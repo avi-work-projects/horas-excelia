@@ -60,7 +60,9 @@ console.log('Asignación: cancelar aviso, liberar con hora, reabrir y reutilizar
 
 const picker=cargarApp({});const controls={};let pickerHtml='',chosen=null;
 picker.bodaOpenSheet=(a,b,html)=>{pickerHtml=html;};picker.closeBodaTimePicker=()=>{};picker.bodaTrasElegir=()=>{};
-picker.bodaAplicarCampo=(ev,key,value)=>{chosen=value;};picker.setTimeout=fn=>fn();
+picker.bodaAplicarCampo=(ev,key,value)=>{chosen=value;};
+// No ejecutar temporizadores: la hora debe estar lista en el primer render.
+picker.setTimeout=()=>0;
 picker.document.getElementById=id=>controls[id]||(controls[id]={style:{},scrollTop:0,value:'',querySelectorAll:()=>[],addEventListener:(name,fn)=>{controls[id][name]=fn;}});
 picker.openBodaTimePicker({boda:{time:null}});
 assert.equal(controls.bodaTpH.scrollTop,12*44);assert.equal(controls.bodaTpM.scrollTop,8*44);

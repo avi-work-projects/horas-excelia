@@ -250,7 +250,7 @@ function openBodaTimePicker(ev,opts){
     if(id==='bodaTpM')i+=2*minuteCycle.length;
     d.style.scrollSnapType='none';
     d.scrollTop=i*IH;mark(d);
-    setTimeout(function(){d.style.scrollSnapType='';},80);
+    d.style.scrollSnapType='';
   }
   function mark(d){
     var idx=Math.round(d.scrollTop/IH);
@@ -269,10 +269,9 @@ function openBodaTimePicker(ev,opts){
       else mi.value=String(drumVal('bodaTpM',minuteValues)).padStart(2,'0');
     },{passive:true});
   });
-  setTimeout(function(){
-    setDrum('bodaTpH',_BODA_HOURS,BODA_TIME_H);
-    setDrum('bodaTpM',minuteValues,BODA_TIME_M);
-  },120);
+  // Preparar las ruedas antes del primer frame de apertura, sin salto visible.
+  setDrum('bodaTpH',_BODA_HOURS,BODA_TIME_H);
+  setDrum('bodaTpM',minuteValues,BODA_TIME_M);
   /* Entrada manual: manda sobre las ruedas */
   var manual=false;
   document.getElementById('bodaTpHi').addEventListener('input',function(){manual=true;});
