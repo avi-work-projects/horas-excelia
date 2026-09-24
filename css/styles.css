@@ -2216,6 +2216,24 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .rut-icon-opt span{font-size:.58rem;font-weight:600}
 .rut-icon-opt.on{border-color:var(--accent);background:var(--accent-glow);color:var(--text)}
 .rut-sec{display:flex;flex-direction:column;gap:8px}
+.rut-flex-choice,.rut-plan-row{display:flex;gap:8px}
+#rutFormOv [hidden]{display:none!important}
+.rut-flex-choice>*{flex:1}
+.rut-flex-summary{display:grid;gap:8px;margin:12px 0;font-size:.8rem}
+.rut-flex-summary span{color:var(--text-muted)}
+.rut-plan-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.rut-plan-header b{text-align:center;flex:1}
+.rut-plan-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin:12px 0;text-align:center}
+.rut-plan-grid>span{font-size:.7rem;color:var(--text-muted)}
+.rut-plan-day{min-height:44px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);padding:3px;cursor:pointer}
+.rut-plan-day small{display:block;font-size:.6rem}
+.rut-plan-day.planned{background:var(--surface2);border-color:var(--accent)}
+.rut-plan-day.selected{outline:2px solid var(--accent)}
+.rut-plan-day.skipped{opacity:.5;text-decoration:line-through}
+.rut-plan-day:disabled{opacity:.35;cursor:default}
+.rut-plan-editor{padding:12px;border:1px solid var(--border);border-radius:12px;margin:16px 0}
+.rut-plan h4{font-size:.75rem;margin:18px 0 8px;color:var(--text-muted)}
+.rut-plan-row{margin:6px 0}.rut-plan-row>:first-child{flex:1;text-align:left;font-size:.72rem}
 .rut-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;display:flex;flex-direction:column;gap:7px}
 .rut-card.susp{opacity:.6;border-style:dashed}
 .rut-card-hd{display:flex;align-items:center;gap:8px}

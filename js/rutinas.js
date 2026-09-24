@@ -163,6 +163,7 @@ function rutScheduleCopy(r){
     dur:r.dur||RUT_DUR_DEFAULT,weeks:r.weeks||{},suspend:r.suspend||null}));
 }
 function rutDurationOn(r,ds){
+  if(r.flex&&r.flex.sessions&&r.flex.sessions[ds])return r.flex.sessions[ds].dur;
   var kept=r.keptSessions&&r.keptSessions[ds];
   return kept?kept.dur:(rutScheduleOn(r,ds).dur||RUT_DUR_DEFAULT);
 }
@@ -230,6 +231,7 @@ function rutDiaLleno(dias,desde,excluirId){
 }
 /* ¿Toca sesión ese día? Devuelve la hora, o null */
 function rutOccursOn(r,ds){
+  if(r.flex)return (!r.start||ds>=r.start)&&!rutSuspendedOn(r,ds)&&r.flex.sessions[ds]?r.flex.sessions[ds].time:null;
   if(r.keptSessions&&r.keptSessions[ds])return r.keptSessions[ds].time;
   if(r.start&&ds<r.start)return null;
   if(rutSuspendedOn(r,ds))return null;
@@ -241,6 +243,10 @@ function rutOccursOn(r,ds){
 function rutIsSkipped(r,ds){return !!(r.skips&&r.skips[ds]);}
 function rutToggleSkip(r,ds){
   r.skips=r.skips||{};
+  if(r.flex&&r.skips[ds]){
+    try{var s=r.flex.sessions[ds];rutFlexSetSession(r,ds,ds,s.time,s.dur,true);saveRutinas();return true;}
+    catch(e){showToast(e.message,'error');return false;}
+  }
   if(r.skips[ds])delete r.skips[ds];else r.skips[ds]=1;
   saveRutinas();
 }
@@ -260,7 +266,7 @@ function rutEventsOn(ds){
     out.push({
       id:'rut-'+r.id+'-'+ds,
       title:r.name,
-      note:'Rutina semanal · '+t+'–'+rutFin(t,rutDurationOn(r,ds)),
+      note:(r.flex?'Rutina flexible':'Rutina semanal')+' · '+t+'–'+rutFin(t,rutDurationOn(r,ds)),
       color:r.color,
       kind:'puntual', type:'Rutina',
       start:ds, end:ds, repeat:null,
@@ -331,7 +337,7 @@ function _renderRutLista(){
   var hoy=evDk(new Date());
   var h='';
   if(!RUTINAS.length){
-    h+='<div class="sy-note">Sin rutinas todavía. Son actividades que se repiten cada semana; añade una o usa una de las sugerencias.</div>';
+    h+='<div class="sy-note">Añade una rutina con horario fijo o sesiones flexibles por semana o mes. También puedes usar una sugerencia.</div>';
     h+='<div class="rut-sug">';
     RUT_SUGERENCIAS.forEach(function(s,i){
       h+='<button class="rut-sug-btn" data-sug="'+i+'"><i style="background:'+s.color+'"></i>'
@@ -350,6 +356,8 @@ function _renderRutLista(){
     if(susp)h+='<span class="rut-tag susp">en pausa'+(r.suspend&&r.suspend.to?(' hasta '+_rutFmt(r.suspend.to)):'')+'</span>';
     h+='<button class="action-edit boda-mini-btn rut-edit" data-rid="'+r.id+'" title="Editar">&#9998;</button>';
     h+='</div>';
+    if(r.flex)h+=rutFlexSummary(r);
+    else {
     /* Días de la semana */
     h+='<div class="rut-days">';
     for(var i=1;i<=7;i++){
@@ -364,6 +372,7 @@ function _renderRutLista(){
     }
     h+='</div>';
     /* Proximas sesiones */
+    }
     if(prox.length){
       h+='<div class="rut-prox">';
       prox.forEach(function(s){
@@ -453,6 +462,7 @@ function renderRutForm(r){
   h+='</div>';
   h+='<div class="ev-field"><label>Actividad</label>';
   h+='<input class="ev-input" id="rutFName" type="text" maxlength="40" placeholder="Ej: Gimnasio" value="'+(isEdit?escHtml(r.name):'')+'"></div>';
+  h+=rutFlexOptionsHtml(r);
   h+='<div class="ev-field"><label>Días de la semana</label><div class="rut-days-pick" id="rutFDays">';
   for(var i=1;i<=7;i++){
     var d=i%7;
@@ -494,8 +504,11 @@ function renderRutForm(r){
     h+='</div>';
     if(susp)h+='<button type="button" class="ev-btn" id="rutFSuspClear" style="margin-top:6px">Reanudar ahora</button>';
     h+='</div>';
-    h+='<button type="button" class="ev-btn" id="rutFWeek" style="width:100%;margin-bottom:12px">🗓 Cambiar (desde) una semana concreta</button>';
-    h+='<button type="button" class="ev-btn" id="rutFHistory" style="width:100%;margin-bottom:12px">Consultar histórico</button>';
+    if(r.flex)h+='<button type="button" class="ev-btn" id="rutFPlan" style="width:100%;margin-bottom:12px">Planificar sesiones</button>';
+    else {
+      h+='<button type="button" class="ev-btn" id="rutFWeek" style="width:100%;margin-bottom:12px">🗓 Cambiar (desde) una semana concreta</button>';
+      h+='<button type="button" class="ev-btn" id="rutFHistory" style="width:100%;margin-bottom:12px">Consultar histórico</button>';
+    }
   }
   h+='<div class="ev-form-actions"><button class="ev-btn primary" id="rutFSave">Guardar</button></div>';
   h+='</div></div>';
@@ -505,6 +518,9 @@ function openRutForm(r){
   var wrap=abrirPanel('rutFWrap',renderRutForm(r),
     {overlay:'rutFormOv',alCerrar:closeRutForm});
   var cp=_bindColorPicker(wrap,'rutCp');
+  bindRutFlexOptions(r);
+  var plan=document.getElementById('rutFPlan');
+  if(plan)plan.onclick=function(){closeRutForm();setTimeout(function(){openRutPlan(r);},310);};
   /* Los iconos se repintan con el color elegido para verlos como quedaran */
   /* Solo hay que repintar "Otra": el resto llevan color fijo */
   function _rutRepaintIcons(){
@@ -588,9 +604,12 @@ function openRutForm(r){
     if(!name){showToast('Ponle nombre a la rutina','error');return;}
     var dias=[];
     document.querySelectorAll('#rutFDays .rut-day-btn.on').forEach(function(b){dias.push(+b.dataset.wd);});
-    if(!dias.length){showToast('Elige al menos un día de la semana','error');return;}
+    var flex;
+    try{flex=rutFlexRead(r);}catch(e){showToast(e.message,'error');return;}
+    if(!flex&&!dias.length){showToast('Elige al menos un día de la semana','error');return;}
     var dur=parseInt(document.getElementById('rutFDur').value,10);
     if(isNaN(dur)||dur<15)dur=RUT_DUR_DEFAULT;
+    if(dur>480){showToast('La duración máxima es 480 minutos','error');return;}
     var datos={name:name,weekDays:dias.sort(),
       time:document.getElementById('rutFTime').value||RUT_TIME_DEFAULT,
       dur:dur,
@@ -598,6 +617,7 @@ function openRutForm(r){
       icon:(document.querySelector('#rutFIcons .rut-icon-opt.on')||{dataset:{}}).dataset.icon||'gen',
       color:cp.getColor()};
     datos.color=rutColorOf(datos.icon,datos.color);
+    if(flex){datos.flex=flex;datos.weekDays=[];if(r)datos.start=r.start;}
     /* Horario por dia: solo se guardan los dias que se salen de la hora general */
     var _pd=document.getElementById('rutFPorDia');
     if(_pd&&_pd.checked){
@@ -614,7 +634,7 @@ function openRutForm(r){
       var from=sf.value, to=document.getElementById('rutFSuspTo').value;
       datos.suspend=from?{from:from,to:to||null}:null;
     }
-    if(r){
+    if(r&&!flex){
       try{
         var candidate=Object.assign({},r,datos);
         candidate.weeks=JSON.parse(JSON.stringify(r.weeks||{}));
@@ -643,6 +663,7 @@ function openRutForm(r){
     saveRutinas();closeRutForm();
     setTimeout(function(){refreshEvents();},310);
     showToast(r?'Rutina actualizada':'Rutina creada','success');
+    if(flex&&!r)setTimeout(function(){openRutPlan(datos);},330);
   });
 }
 function closeRutForm(){cerrarPanel('rutFWrap','rutFormOv');}
@@ -819,7 +840,7 @@ function openRutSesion(r,ds){
     closeRutSesion();setTimeout(function(){openRutForm(r);},310);
   });
   document.getElementById('rutSesSkip').addEventListener('click',function(){
-    rutToggleSkip(r,ds);
+    if(rutToggleSkip(r,ds)===false)return;
     closeRutSesion();setTimeout(function(){refreshEvents();},310);
     showToast(rutIsSkipped(r,ds)?'Sesión marcada como saltada':'Sesión marcada como hecha','success',
       function(){rutToggleSkip(r,ds);refreshEvents();});
@@ -829,6 +850,7 @@ function closeRutSesion(){cerrarPanel('rutSesWrap','rutSesOv');}
 
 /* ══ Binds de la pestaña ══ */
 function bindRutinasEvents(){
+  document.querySelectorAll('[data-rplan]').forEach(function(b){b.onclick=function(){openRutPlan(rutById(b.dataset.rplan));};});
   document.querySelectorAll('.econ-sub-tab[data-rsub]').forEach(function(b){
     b.addEventListener('click',function(){RUT_SUBTAB=b.dataset.rsub;refreshEvents(false);});
   });
@@ -858,7 +880,7 @@ function bindRutinasEvents(){
     b.addEventListener('click',function(e){
       e.stopPropagation();
       var r=rutById(b.dataset.rid);if(!r)return;
-      rutToggleSkip(r,b.dataset.ds);
+      if(rutToggleSkip(r,b.dataset.ds)===false)return;
       refreshEvents();
       showToast(rutIsSkipped(r,b.dataset.ds)?'Sesión saltada':'Sesión hecha','success',
         function(){rutToggleSkip(r,b.dataset.ds);refreshEvents();});

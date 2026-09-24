@@ -2,7 +2,7 @@
   "name": "gestify",
   "private": true,
   "scripts": {
-    "test": "node tools/test.js && node tools/test-hardening.js && node tools/test-energy.js && node tools/test-last-rehearsal.js && node tools/test-import-sharing.js",
+    "test": "node tools/test.js && node tools/test-hardening.js && node tools/test-energy.js && node tools/test-last-rehearsal.js && node tools/test-import-sharing.js && node tools/test-rutinas-flex.js",
     "test:browser": "playwright test",
     "build": "node tools/build.js"
   },
