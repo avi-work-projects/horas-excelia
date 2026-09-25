@@ -87,7 +87,11 @@ function validateImport(data){
     if(r.flex){
       var f=r.flex;
       if(['month','week'].indexOf(f.period)<0||!Number.isInteger(f.target)||f.target<1||f.target>(f.period==='week'?7:31)||!Number.isInteger(f.weeklyTarget)||f.weeklyTarget<1||f.weeklyTarget>7||!f.sessions||typeof f.sessions!=='object'||Array.isArray(f.sessions))throw new Error('Cupo flexible no válido');
-      Object.keys(f.sessions).forEach(function(ds){var s=f.sessions[ds];if(!validIsoDate(ds)||!s||!hour(s.time)||!Number.isInteger(s.dur)||s.dur<15||s.dur>480||(r.start&&ds<r.start))throw new Error('Sesión flexible no válida');});
+      if(f.monthTargets!=null){
+        if(typeof f.monthTargets!=='object'||Array.isArray(f.monthTargets))throw new Error('Cupos mensuales no válidos');
+        Object.keys(f.monthTargets).forEach(function(m){var n=f.monthTargets[m];if(!/^\d{4}-\d{2}$/.test(m)||!validIsoDate(m+'-01')||!Number.isInteger(n)||n<0||n>31)throw new Error('Cupo mensual no válido');});
+      }
+      Object.keys(f.sessions).forEach(function(ds){var s=f.sessions[ds];if(!validIsoDate(ds)||!s||!hour(s.time)||!Number.isInteger(s.dur)||s.dur<15||s.dur>480||(r.start&&ds<rutFlexEarliest(r)))throw new Error('Sesión flexible no válida');});
     }
     if(r.scheduleHistory){
       if(!Array.isArray(r.scheduleHistory))throw new Error('Historial de rutina no valido');

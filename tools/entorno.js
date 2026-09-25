@@ -35,6 +35,7 @@ const MODULOS = [
   'energy-analysis.js',
   'energy-costs.js',
   'energy-study.js',
+  'energy-import-preview.js',
   'energy-analysis-view.js',
   'energy-analysis-bind.js',
   'energy-tariff-editor.js',

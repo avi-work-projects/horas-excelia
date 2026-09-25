@@ -1,110 +1,86 @@
-# Histórico de contratos de luz y gas
+# Histórico de energía (v369)
 
-Acceso: Configuración fiscal → Hipoteca y Facturas → Detalle Gas o Electricidad → Histórico de contratos.
+Acceso: Configuración fiscal → Hipoteca y Facturas → Detalle Electricidad/Gas → **Consumo y tarifas**.
 
-`js/energy-history.js` mantiene contratos independientes de DESPACHO y de las simulaciones. No migra automáticamente tarifas existentes: faltan las fechas y condiciones originales. No almacena los PDF, sino sus datos y una referencia al documento. Un cambio de condiciones con nueva vigencia se registra como otra etapa, conservando la anterior.
+Una ventana con cinco pestañas y selector de año: Resumen, Consumo, Coste, Tarifas y Escenarios. El histórico solo se incorpora mediante archivos; las hipótesis de los escenarios no alteran los datos reales. Los PDF se conservan fuera del repositorio: la app guarda datos y referencias al documento.
 
-Persistencia: `excelia-energy-history-v1`. El backup completo y la exportación específica incluyen `energyContracts`. La importación específica combina sin borrar otros contratos; la general respeta añadir/reemplazar cuando se incluye ese campo. Un backup antiguo que no incluya el campo deja el histórico intacto.
+## Módulos y persistencia
 
-Se valida antes de escribir. Las importaciones repetidas se identifican por `id` o por suministro, tipo, compañía, tarifa e intervalo de fechas. Si se reconoce un contrato se actualiza conservando su identificador local. Para archivos elaborados a partir de facturas, reutilizar el identificador ya exportado al corregir información. Nunca inferir fechas de contrato a partir del período facturado sin indicarlo en las observaciones.
+| Módulo | Responsabilidad |
+|---|---|
+| `energy-history.js` | Contratos, validación e identidad |
+| `energy-bills.js` | Facturas, lecturas, fusión y restauración |
+| `energy-analysis.js` | Tarifas ponderadas, cargos e IVA |
+| `energy-costs.js` | Coste del consumo por día y compañía |
+| `energy-study.js` | Indicadores, tarifas comerciales, franja de IVA y comparación |
+| `energy-analysis-view.js` / `energy-analysis-bind.js` | Cinco pestañas, navegación y acciones |
+| `energy-import-preview.js` | Diferencias antes de confirmar la importación |
 
-Formato mínimo de intercambio (datos ficticios):
+Las claves `excelia-energy-history-v1`, `excelia-energy-bills-v1` y `excelia-energy-tax-v1` viajan en el backup como `energyContracts`, `energyBills` y `energyTaxes`. La importación específica solo fusiona: muestra registros nuevos/actualizados, permite cancelar y ofrece Deshacer después. La general admite añadir/reemplazar por las categorías incluidas. Un archivo sin una categoría no la vacía.
+
+Contratos y facturas se identifican por `id` o firma de contenido; se conserva el identificador local cuando coinciden. Las correcciones preparadas deben reutilizar los identificadores anteriores. Todos los bloques se validan antes de guardarse dentro de una transacción.
+
+## Contratos y condiciones
+
+Formato mínimo de contrato (datos ficticios):
 
 ```json
 {
   "version": 7,
   "energyContracts": [{
-    "id": "energy-ejemplo-1",
+    "id": "contrato-ejemplo",
     "kind": "luz",
-    "supplier": "Comercializadora de ejemplo",
-    "tariff": "Tarifa ejemplo",
+    "supplier": "Compañía de ejemplo",
+    "tariff": "Tarifa por consumo",
     "supply": "Vivienda de ejemplo",
     "start": "2025-01-01",
-    "end": "2025-12-31",
+    "end": "",
     "commitment": "",
     "taxes": "excluidos",
-    "prices": [{"label": "Energía P1", "value": 0.12, "unit": "€/kWh"}],
-    "notes": "Condiciones que consten en el documento",
+    "prices": [{"label": "Consumo", "value": 0.12, "unit": "€/kWh"}],
+    "notes": "Condiciones documentadas; fechas desconocidas expresamente indicadas",
     "source": "factura-ejemplo.pdf"
   }]
 }
 ```
 
-`kind`: `luz` o `gas`. `taxes`: `incluidos`, `excluidos` o `desconocido`. Fechas desconocidas: cadena vacía; precios desconocidos: no incluir el concepto. Los precios conservan sus decimales y unidades, sin conversiones implícitas. Admite varios conceptos de energía/potencia, término fijo, cuotas y servicios. Condiciones indexadas, descuentos y excepciones se describen en `notes`.
+`kind`: luz/gas. `taxes`: incluidos/excluidos/desconocido. Fechas desconocidas: cadena vacía; precios desconocidos: omitir el concepto, nunca convertirlos en cero. El período de factura no acredita por sí solo el alta/baja contractual: indicar cuando se usa como aproximación de la cobertura.
 
-Verificación: `npm test` cubre persistencia, importación repetida, separación luz/gas, validación de fechas e importes e importación mediante el backup general. La interacción y el aspecto se revisan también en el navegador.
+`analysis` contiene una tarifa calculable, validada con `energyValidateTariff`. `analysisPeriods` admite etapas `{start, tariff}`: rigen hasta la siguiente etapa dentro del contrato y prevalecen sobre `analysis`.
 
-## Facturas y consumo (v359)
+- Consumo: precio único o tres precios (`periodPrices`) con pesos que suman 100 (`periodWeights`). Si las lecturas mensuales tienen desglose completo, se usan sus proporciones reales.
+- Potencia: uno o dos precios diarios multiplicados por los kW contratados.
+- Cuota fija mensual: sustituye consumo/potencia/fijos, con prorrateo por días reales del mes.
+- `terminoFijo` / `terminoFijoDia`: cargos mensuales/diarios incluidos en la base del impuesto eléctrico aproximado.
+- `extrasPerDay`: alquiler y servicios diarios fuera de esa base, sujetos a IVA. Opcional, cero cuando no existe.
+- `servicesPerDay` / `servicesVatPct`: servicios recurrentes con IVA propio (por ejemplo mantenimiento al 21 % mientras el suministro tiene IVA reducido). En escenarios de IVA constante o sin IVA, la hipótesis se aplica también a estos servicios.
+- `otherTaxPct` / `otherTaxKwh`: aproximación del impuesto eléctrico antes del IVA.
 
-Desde la misma sección, «Facturas y consumo» abre el registro real por año. `js/energy-bills.js` contiene validación, persistencia, fusión y agregación; `js/energy-bills-view.js` contiene vistas y formularios. Se reutilizan paneles, botones, tablas y `simpleBarChart`, sin dependencias nuevas.
+`energyCommercialPeriods` agrupa etapas consecutivas con iguales precios de consumo/potencia. Los cambios de reparto de consumo, cargos o impuestos se consultan dentro de la misma tarifa. El cálculo conserva todas las etapas originales. Las fechas exactas de cambio deben proceder de documentos; no crear una tarifa distinta solo por emitir otra factura.
 
-Persistencia: `excelia-energy-bills-v1`, campo `energyBills` del backup. Exportar desde facturas incluye todos los años del suministro y sus contratos. Ambos importadores específicos aceptan los dos campos y los guardan en una transacción con Deshacer. El backup general mantiene su semántica añadir/reemplazar; si falta el campo no lo borra.
+## Facturas, lecturas y cobertura
 
-Una factura contiene `id`, `kind`, `supplier`, `number`, `issued`, `start`, `end`, `consumption`, `net`, `gross`, `paid`, `notes`, `source`. `consumption` está en kWh; importes en euros. `net` excluye todos los impuestos del recibo (no es necesariamente la base de IVA). `gross` es el total con impuestos; `paid` es el cargo indicado tras créditos/saldo, no una confirmación bancaria. `null` en consumo/cargo significa desconocido; cero es un dato real y no se sustituye. Los abonos pueden ser negativos. Las correcciones de consumo se registran por su efecto neto, explicándolo en la nota, para no volver a sumar consumos ya registrados.
+`energyBills` conserva identificación, suministro, compañía, fecha de emisión, inicio/fin, consumo, neto, bruto, cargo conocido y notas. Los importes negativos se admiten para abonos; un valor desconocido es `null`.
 
-Identidad de importación: ID o suministro (luz/gas), comercializadora y número de factura; se conserva el ID local al actualizar. No usar el nombre del PDF como identidad. Los archivos personales nunca forman parte de los fixtures ni del repositorio.
+Campos opcionales:
 
-Las gráficas agrupan por **mes de emisión**, también cuando el período cruza meses/años. No se prorratea el consumo ni se convierte en consumo de mes natural. Mes sin facturas: sin dato, no cero. Si un recibo del mes carece de consumo/cargo, la gráfica correspondiente marca el mes incompleto; importes y datos individuales siguen en las tarjetas. Los abonos negativos se incluyen en los totales de la tabla, con aclaración cuando el gráfico compartido no puede representarlos.
+- `vatAmount`, `electricityTaxAmount`, `otherTaxesAmount`: impuestos documentados.
+- `readings: [{start,end,consumption,periods:[punta,llano,valle]}]`: lecturas con fechas **inclusivas**.
+- `readings: []`: documento financiero sin lectura adicional (abono o lectura sustituida).
+- `consumptionPeriods`: desglose de una factura antigua sin `readings`.
+- `serviceOnly`: mantenimiento sin suministro; no invalida otras lecturas del mes.
+- `noReading`: consumo no acreditado; no interpretarlo como consumo cero.
 
-Los contratos mantienen precios/unidades originales y no se recalculan con un IVA actual: los impuestos pueden cambiar. Si no hay fecha acreditada de cambio de precio, se describen las observaciones por factura en lugar de inventar una fecha de vigencia. Para fechas documentadas, registrar etapas separadas.
+El archivo preparado resuelve explícitamente las rectificaciones. No deducir automáticamente qué factura sustituye otra. Sin `readings`, se conserva la compatibilidad anterior: una fecha límite compartida se asigna al siguiente recibo. Solapamientos sin resolver bloquean el cálculo; los huecos nunca se extrapolan.
 
-Pruebas añadidas: identidad entre dispositivos, importación repetida, campos ausentes, cero, abonos, consumo fraccionario, agrupación anual por emisión, importación general y restauración. La vista se revisa en Edge con un almacenamiento aislado de prueba.
+## Coste, IVA y escenarios
 
+El consumo conocido de un mes se reparte uniformemente entre sus días cubiertos y se calcula con la tarifa vigente de cada día. Las barras apilan los costes por compañía. El IVA (`{kind,start,rate}`) procede del histórico importado; la franja une intervalos adyacentes iguales y muestra una etiqueta por tramo. No se instala una tabla fiscal supuesta.
 
-## Estudio de consumo y tarifas (v360)
+La comparación anual distingue **estimado por consumo** y **facturas por emisión**. Su diferencia puede incluir desplazamientos entre años, abonos, días sin lectura y regularizaciones; no es un error puro del modelo ni acredita pagos bancarios. Los cargos promedios deben justificarse con documentos, no ajustarse para forzar esa diferencia a cero.
 
-Acceso: Configuración fiscal → Hipoteca y facturas → Gas/Electricidad → Consumo y tarifas. Tres vistas: Consumo, Tarifas y Comparar; las facturas originales siguen aparte.
+Los dos escenarios comparan el histórico con IVA constante elegido y con una tarifa elegida para todo el período. Usan el mismo consumo/cobertura; el segundo conserva el IVA histórico y los últimos cargos documentados dentro de la tarifa elegida. Las tarifas hipotéticas de las listas de DESPACHO siguen siendo compatibles y exportables.
 
-- `energy-analysis.js`: motor puro compartido, validación de tarifas, IVA y prorrateo.
-- `energy-analysis-view.js`: vistas, navegación y editor de períodos de IVA.
-- `energy-tariff-editor.js`: formulario común para contratos y escenarios; copia explícita entre ambos, sin sustituir silenciosamente la tarifa actual.
-- `tools/test-energy.js`: invariantes numéricas y regresión de los cálculos anteriores.
+## Verificación
 
-Cada contrato admite `analysis` opcional. Usa las mismas claves que los escenarios (`modo`, `precioKwh`, `cuotaFija`, `terminoFijo`, `terminoFijoDia`, precios y potencias P1/P2). `energyMode` distingue `unico`/`tramos`; `periodPrices` y `periodWeights` tienen tres números, los pesos suman 100 %. El editor calcula `precioKwh` para mantener compatibles las vistas antiguas; el motor usa siempre la ponderación original. `useOwnPower` permite que una alternativa configurada tenga su propia potencia; las antiguas conservan la potencia de la tarifa actual.
-
-`modo: fijo` sustituye energía, potencia y términos fijos por una cuota mensual. El estudio nuevo prorratea por días reales de cada mes; los escenarios existentes mantienen su convenio de 30 días. `otherTaxPct` y `otherTaxKwh` son aproximaciones opcionales anteriores al IVA; `promotion` es descuento mensual después de impuestos, desactivado por defecto y prorrateado en meses parciales. No es una reproducción fiscal exacta de una factura.
-
-El IVA se almacena en `excelia-energy-tax-v1` y viaja como `energyTaxes` en el backup general y en los exports específicos. Cada registro: `{kind: 'luz'|'gas', start: 'YYYY-MM-DD', rate: número}`. Vale desde su fecha hasta el siguiente cambio del mismo suministro. No se aplica un IVA actual al pasado ni se preinstala un calendario fiscal supuesto: los períodos deben proceder del suministro del usuario. Sin período conocido, la comparación con impuestos muestra Sin dato. En el estudio aproximado se aplica por fecha de consumo, no se reproduce la regla de devengo de cada factura.
-
-Los consumos e importes se distribuyen uniformemente entre las fechas de cada factura. Si dos recibos de consumo comparten exactamente la fecha límite, se asigna al siguiente para evitar contar dos veces ese día. Los importes y kWh totales se conservan. Se muestran cobertura y meses parciales; no se extrapola a meses completos. Solapamientos o consumo desconocido impiden simular ese mes. El campo opcional `noReading` de una factura indica consumo no acreditado para el estudio (p.ej. cero impreso sin nueva lectura): mantiene el dato documental, pero no lo interpreta como consumo doméstico cero.
-
-La comparación aplica un contrato elegido a los días con consumo, independientemente de su vigencia histórica: es el contrafactual de mantenerlo todo el período. La columna facturada usa el total con impuestos, antes de saldo externo. Diferencia positiva significa menor coste simulado. Los abonos negativos siguen en tablas, como en el gráfico compartido de facturas.
-
-Compatibilidad: al añadir un backup antiguo sin `analysis`, `noReading` o `energyTaxes`, se conservan los datos nuevos existentes. Reemplazar sigue la semántica del importador general. El importador específico fusiona IVA por suministro/fecha en la misma transacción que contratos y facturas; Deshacer restaura los tres bloques.
-
-## Ventana de consumo y coste (v362, comportamiento vigente)
-
-Sustituye los paneles de estudio y los editores manuales del histórico de v359/v360.
-`energy-analysis-view.js` contiene los renders, `energy-analysis-bind.js` la navegación,
-importación y controles, y `energy-costs.js` el reparto por vigencias y las barras.
-La ventana usa `.full-overlay` y mantiene el scroll exclusivamente en `.sy-body`.
-Los gráficos muestran 12 meses; un swipe cambia el año. Pulsar un tramo selecciona
-ese contrato como período a sustituir en Escenarios. También admite fechas límite.
-
-Facturas, contratos y períodos de IVA son **solo importables**. No se crean, cambian
-ni borran desde formularios. Archivo es una consulta secundaria. Los escenarios
-sí se editan: las hipótesis se guardan en las listas existentes de `DESPACHO` y viajan
-en el backup habitual, sin añadir otra persistencia. Los filtros de la comparación
-son estado de sesión; no alteran el histórico real.
-
-`analysisPeriods` opcional en cada contrato es un array `{start, tariff}`. Cada tarifa
-sigue el esquema `analysis`; rige desde su fecha hasta la siguiente dentro de la
-vigencia del contrato. Se valida la unicidad de fechas. Si hay períodos, prevalecen
-sobre `analysis`; si no, sigue siendo compatible con el contrato de v360.
-
-El consumo de cada factura se distribuye entre sus días. Después, el consumo mensual
-conocido se divide por sus días cubiertos y se asigna a cada compañía según sus días
-de contrato. No se extrapolan huecos. Las vigencias ambiguas, lecturas solapadas o
-precios/IVA ausentes se muestran como Sin dato, no como cero. Las barras apiladas
-representan el coste estimado con IVA, no el mes de cobro de la factura. La comparación
-con facturas usa los mismos meses de consumo, prorrateados, y distingue total facturado
-y cargo indicado después de saldo. No confirma pagos bancarios.
-
-Los escenarios permiten mantener las tarifas reales o sustituir solo un contrato,
-todo el histórico o un intervalo de fechas; el IVA puede seguir las etapas importadas
-o permanecer constante (incluido 0 %). Se usan los mismos kWh y cobertura de la base.
-La simulación es aproximada: descuentos y otros impuestos no reproducen cada regla fiscal.
-
-`serviceOnly: true` distingue recibos de mantenimiento sin suministro: sus importes
-se conservan en la referencia documental, pero no convierten una lectura válida de
-ese mes en consumo desconocido. No se aplica esta marca a facturas con lectura ausente.
+`npm test` cubre compatibilidad, pesos, cuotas, IVA, cargos separados, lecturas corregidas, huecos, fusión idempotente, vista previa sin escritura y Deshacer. La revisión de CSS y acciones se realiza en Edge; CI ejecuta además las pruebas de navegador antes de publicar.

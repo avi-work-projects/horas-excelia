@@ -14,3 +14,5 @@ assert.equal(a.evIcsFilterRows(rows,'rutinas','','',{}).length,9);assert.equal(a
 assert.equal(a.evIcsRememberedRows([],'2026-08-01','2026-08-31',records).length,0);
 a.RUTINAS[0].skips['2026-08-22']=true;assert(!a.evIcsRoutineCurrent(rows[0]));
 console.log('Importación: resumen escapado, sin secretos; ICS: sesiones futuras, canceladas, mes, identidad y backup OK');
+const notes=a.renderImportPreview({importNotes:['Fecha provisional <pendiente>'],days:{'2027-05-03':{type:'festivo'}}});
+assert(notes.includes('Fecha provisional &lt;pendiente&gt;'));

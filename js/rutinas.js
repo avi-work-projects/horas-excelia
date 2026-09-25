@@ -231,7 +231,7 @@ function rutDiaLleno(dias,desde,excluirId){
 }
 /* ¿Toca sesión ese día? Devuelve la hora, o null */
 function rutOccursOn(r,ds){
-  if(r.flex)return (!r.start||ds>=r.start)&&!rutSuspendedOn(r,ds)&&r.flex.sessions[ds]?r.flex.sessions[ds].time:null;
+  if(r.flex)return ds>=rutFlexEarliest(r)&&!rutSuspendedOn(r,ds)&&r.flex.sessions[ds]?r.flex.sessions[ds].time:null;
   if(r.keptSessions&&r.keptSessions[ds])return r.keptSessions[ds].time;
   if(r.start&&ds<r.start)return null;
   if(rutSuspendedOn(r,ds))return null;
@@ -286,7 +286,8 @@ function rutEventFromId(id){
 /* ── Sesiones de una rutina entre dos fechas ── */
 function rutSessions(r,fromDs,toDs){
   var out=[];
-  var d=new Date((r.start&&r.start>fromDs?r.start:fromDs)+'T00:00:00');
+  var start=r.flex?rutFlexEarliest(r):r.start;
+  var d=new Date((start&&start>fromDs?start:fromDs)+'T00:00:00');
   var end=new Date(toDs+'T00:00:00');
   var g=0;
   while(d<=end&&g<800){
@@ -300,7 +301,7 @@ function rutSessions(r,fromDs,toDs){
 /* Recuento: hechas = sesiones pasadas no saltadas (automatico, corregible) */
 function rutStats(r,desdeDs){
   var hoy=evDk(new Date());
-  var ini=desdeDs||r.start||hoy;
+  var ini=desdeDs||(r.flex?rutFlexEarliest(r):r.start)||hoy;
   var ses=rutSessions(r,ini,hoy);
   var hechas=0,saltadas=0;
   ses.forEach(function(s){

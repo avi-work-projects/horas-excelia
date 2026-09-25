@@ -8,6 +8,8 @@ function energyWeightedPrice(t){
 function energyValidateTariff(t){
   if(!t||['consumo','fijo'].indexOf(t.modo)<0||['unico','tramos'].indexOf(t.energyMode)<0)throw new Error('Modalidad de tarifa no válida');
   ['precioKwh','cuotaFija','terminoFijo','terminoFijoDia','precioPotP1','precioPotP2','potenciaP1','potenciaP2','potenciaTotal','otherTaxPct','otherTaxKwh'].forEach(function(k){if(typeof t[k]!=='number'||!Number.isFinite(t[k])||t[k]<0)throw new Error('Revisa el valor de '+k);});
+  if(t.extrasPerDay!==undefined&&(typeof t.extrasPerDay!=='number'||!Number.isFinite(t.extrasPerDay)||t.extrasPerDay<0))throw new Error('Revisa los cargos diarios adicionales');
+  ['servicesPerDay','servicesVatPct'].forEach(function(k){if(t[k]!==undefined&&(typeof t[k]!=='number'||!Number.isFinite(t[k])||t[k]<0||(k==='servicesVatPct'&&t[k]>100)))throw new Error('Revisa los servicios y su IVA');});
   if(['simple','doble'].indexOf(t.modoPotencia)<0)throw new Error('Potencia no válida');
   ['periodPrices','periodWeights'].forEach(function(k){if(!Array.isArray(t[k])||t[k].length!==3||t[k].some(function(n){return typeof n!=='number'||!Number.isFinite(n)||n<0;}))throw new Error('Revisa los tres tramos');});
   if(Math.abs(t.periodWeights.reduce(function(a,b){return a+b;},0)-100)>0.001)throw new Error('Los pesos deben sumar 100 %');
@@ -27,7 +29,12 @@ function energyTariffBase(t,kind,kwh,days,monthDays,power){
   }
   return kwh*energyWeightedPrice(t)+fixed;
 }
-function energyTariffNet(t,kind,kwh,days,monthDays,power){return energyTariffBase(t,kind,kwh,days,monthDays,power)*(1+(t.otherTaxPct||0)/100)+kwh*(t.otherTaxKwh||0);}
+/* Alquiler y servicios sujetos a IVA, pero fuera de la base del impuesto eléctrico. */
+function energyTariffNet(t,kind,kwh,days,monthDays,power){return energyTariffBase(t,kind,kwh,days,monthDays,power)*(1+(t.otherTaxPct||0)/100)+kwh*(t.otherTaxKwh||0)+((t.extrasPerDay||0)+(t.servicesPerDay||0))*days;}
+function energyTariffGross(t,kind,kwh,days,monthDays,vat,power){
+  var net=energyTariffNet(t,kind,kwh,days,monthDays,power),service=(t.servicesPerDay||0)*days,serviceVat=t.servicesVatPct==null?vat:t.servicesVatPct;
+  return (net-service)*(1+vat/100)+service*(1+serviceVat/100);
+}
 function energyTaxes(){return energyValidateTaxes(JSON.parse(appStorage.getItem(ENERGY_TAX_KEY)||'[]'));}
 function energyValidateTaxes(rows){
   if(!Array.isArray(rows)||rows.length>500)throw new Error('Histórico de IVA no válido');
@@ -70,7 +77,7 @@ function energySimulateMonth(m,t,kind,taxes,promotions){
   dates.forEach(function(ds){
     var parts=ds.split('-'),monthDays=new Date(Date.UTC(+parts[0],+parts[1],0)).getUTCDate();
     var beforeVat=energyTariffNet(t,kind,m.samples[ds],1,monthDays);
-    var vat=energyVatAt(taxes,kind,ds);net+=beforeVat;if(vat===null)missing=true;else gross+=beforeVat*(1+vat/100);
+    var vat=energyVatAt(taxes,kind,ds);net+=beforeVat;if(vat===null)missing=true;else gross+=energyTariffGross(t,kind,m.samples[ds],1,monthDays,vat);
     if(promotions)discount+=t.promotion/monthDays;
   });
   return {net:net,gross:missing?null:gross-discount,days:dates.length};

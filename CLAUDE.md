@@ -31,11 +31,12 @@ No hace falta cambiar de framework. Los renders devuelven HTML y no persisten ca
 | economics-* | calculos, datos, vistas y acciones economicas |
 | energy-analysis.js / energy-costs.js | lecturas por mes, tarifas ponderadas, vigencias, IVA y coste estimado |
 | energy-study.js / energy-analysis-view.js / energy-analysis-bind.js | indicadores, cinco pestañas del estudio y acciones de consulta/importación |
+| energy-import-preview.js | cambios previstos al fusionar facturas, contratos e IVA antes de escribir |
 | import-export.js | backups, fusion y exportaciones |
 | home-popup.js / init.js | avisos y arranque |
 
 ## Componentes compartidos
-### Rutinas flexibles (v368)
+### Rutinas flexibles (v369)
 Al crear una rutina se elige horario fijo o sesiones flexibles. La modalidad de
 una rutina existente no se transforma, para preservar su historial. `r.flex`
 guarda `{period:'month'|'week',target,weeklyTarget,sessions:{fecha:{time,dur}}}`.
@@ -48,6 +49,12 @@ sesiones automáticamente ni arrastra las pendientes al siguiente mes/semana.
 `RUT_PLAN` solo guarda la selección visual. Los datos viajan en `rutinas` del
 backup existente, con validación de fechas, horas, duración y cupos al importar.
 Los límites diarios incluyen también fechas explícitas lejanas.
+
+`flex.monthTargets` guarda excepciones `{YYYY-MM: cupo}` (cero incluido).
+El primer mes incompleto pide el cupo total, contando sesiones realizadas.
+`rutFlexTarget` resuelve el cupo y `rutFlexEarliest` permite fechas desde el
+principio del primer período. Las sesiones pasadas no saltadas cuentan como
+hechas, igual que las rutinas fijas; no se duplica un estado de asistencia.
 
 - Selector horario de clases: `#bodaTpOv` tiene layout oculto antes de abrir; las ruedas se posicionan síncronamente. No retrasar el scroll inicial con temporizadores: provoca un destello al abrir una clase sin hora.
 - Ventanas: navegacion (renderNavBar), pestañas, cabecera, `.sy-body` como unico scroll.
@@ -82,6 +89,28 @@ por **consumo**. La diferencia incluye desplazamientos entre años, huecos,
 regularizaciones y servicios; no se interpreta como error puro del modelo.
 El IVA histórico refleja las fechas importadas, no una tabla legal incorporada.
 Los documentos privados y archivos de importación nunca van en el repositorio.
+
+`energyCommercialPeriods` agrupa condiciones de consumo/potencia iguales en la
+vista Tarifas y en Escenarios. Los cambios de pesos de consumo, impuestos y
+cargos no crean tarifas visuales nuevas: `analysisPeriods` conserva sus
+vigencias para el cálculo. `extrasPerDay` representa alquiler/servicios diarios
+sujetos a IVA, fuera de la base del impuesto eléctrico. Si no existe vale cero.
+Los servicios recurrentes con distinto IVA usan `servicesPerDay` y
+`servicesVatPct`. `energyTariffGross` separa ambos tipos; en escenarios de
+IVA constante/sin IVA se aplica la hipótesis a todos los conceptos.
+La franja de IVA une meses adyacentes del mismo tipo, respetando huecos sin datos.
+
+La importación específica llama a `energyImportPreview` antes de persistir y
+ofrece solo fusión; Cancelar no escribe. Usa las mismas funciones de fusión que
+la importación real. Los JSON compuestos pueden incluir `importNotes`, texto
+escapado que el resumen general muestra antes de confirmar.
+
+### Símbolos puntuales (v369)
+`evShapeSvg` es compartido por todos los calendarios y selectores. Hay 12 formas
+principales en 4 filas de 3 y una fila aparte de actividades. `diamond` sigue
+siendo el identificador histórico del hexágono y `x-thin` el del + fino: no
+renombrarlos en los backups. `wave`, `x-outline` y `circle-plus` usan trazos sin
+relleno; `cloud`, `petal` y `leaf` son siluetas rellenas.
 
 El ciclo de filtros anual/4 meses mantiene una X cuadrada a la derecha:
 rojo = ocultar, verde = mostrar, amarillo = recuperar selección anterior.
