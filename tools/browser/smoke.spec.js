@@ -30,7 +30,11 @@ test('rutina flexible: cupo del primer mes, sesiones pasadas y conservación al 
  await page.locator('[data-rskip]').click();await expect(page.locator('.rut-plan-day.skipped')).toHaveCount(0);
  await page.locator('#rutPlanClose').click();
  await expect(page.locator('.rut-card')).toContainText('1 hechas · 0 saltadas');
- await page.reload();await page.locator('#eventsBtn').click();
+ await page.reload();
+ // El cupo pendiente genera un recordatorio real al volver a abrir la app.
+ await expect(page.locator('#homePopup')).toBeVisible();
+ await page.locator('#homePopupClose').click();
+ await page.locator('#eventsBtn').click();
  await expect(page.locator('#eventsOverlay')).toHaveClass(/open/);
  await page.locator('#evViewRutinas').click();
  await expect(page.locator('.rut-card')).toContainText('1 / 3 sesiones del mes');
