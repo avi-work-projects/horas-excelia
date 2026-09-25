@@ -105,12 +105,20 @@ ofrece solo fusión; Cancelar no escribe. Usa las mismas funciones de fusión qu
 la importación real. Los JSON compuestos pueden incluir `importNotes`, texto
 escapado que el resumen general muestra antes de confirmar.
 
-### Símbolos puntuales (v369)
+### Símbolos puntuales y Médico (v370)
 `evShapeSvg` es compartido por todos los calendarios y selectores. Hay 12 formas
 principales en 4 filas de 3 y una fila aparte de actividades. `diamond` sigue
-siendo el identificador histórico del hexágono y `x-thin` el del + fino: no
+siendo el identificador histórico del hexágono y `x-thin` el del + relleno: no
 renombrarlos en los backups. `wave`, `x-outline` y `circle-plus` usan trazos sin
 relleno; `cloud`, `petal` y `leaf` son siluetas rellenas.
+La onda representa un período simple. Los tres trazos sin relleno usan grosor 3
+e inclinación de 10° con margen interior, conservando el viewBox de 20×20.
+El + comparte grosor de relleno y borde
+con el aspa. Rec. Gestiones usa por defecto el hexágono.
+`puntual|Médico` es una categoría propia al crear, editar, listar y exportar;
+comparte grupo de filtro y prioridad con Rec. Gestiones. Usa + rojo y ese
+mismo rojo en los recordatorios de inicio mediante `evTypeColor`, sin nuevas
+claves de almacenamiento ni migraciones de eventos existentes.
 
 El ciclo de filtros anual/4 meses mantiene una X cuadrada a la derecha:
 rojo = ocultar, verde = mostrar, amarillo = recuperar selección anterior.

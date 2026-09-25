@@ -1,0 +1,33 @@
+const {test,expect}=require('@playwright/test');
+
+test('Médico: crear, volver a editar, filtrar y conservar color en recordatorios',async({page})=>{
+ await page.clock.setFixedTime(new Date('2026-08-21T09:00:00'));
+ await page.addInitScript(()=>{if(!sessionStorage.getItem('medical-test-initialized')){sessionStorage.setItem('excelia-popup-dismissed','1');sessionStorage.setItem('medical-test-initialized','1');}});
+ await page.goto('/');await page.locator('#eventsBtn').click();
+ await page.locator('#evViewUpcoming').click();await page.locator('#evAdd').click();
+ await page.locator('#evFTypePicker [data-type="Médico"]').click();
+ await expect(page.locator('#evFTitle')).toHaveValue('Médico');
+ await page.locator('#evFTitle').fill('Consulta de prueba');
+ await page.locator('#evFTime').fill('12:00');await page.locator('#evFSave').click();
+ await expect(page.locator('#evFormOv')).toBeHidden();
+ await expect(page.locator('.ev-upcoming-item')).toContainText('Consulta de prueba');
+ await page.locator('#evViewCal').click();
+ await expect(page.locator('.ev-shape-x-thin[data-ds="2026-08-21"]')).toHaveCSS('color','rgb(224, 49, 49)');
+ await page.locator('#evViewQuad').click();
+ await expect(page.locator('.ev-shape-x-thin[data-ds="2026-08-21"]')).toHaveCount(1);
+ await page.locator('[data-filter-type="Rec. Gestiones"]').click();
+ await expect(page.locator('.ev-shape-x-thin[data-ds="2026-08-21"]')).toHaveCount(0);
+ await page.locator('#evViewUpcoming').click();await page.locator('#evSubTodos').click();
+ await page.locator('#evTypesFilter').click();await page.locator('.ev-type-option[data-type="Médico"]').click();
+ await page.locator('.ev-list-item').click();await page.locator('#evDEdit').click();
+ await expect(page.locator('#evFTypePicker [data-type="Médico"]')).toHaveClass(/selected/);
+ await expect(page.locator('#evFTime')).toHaveValue('12:00');
+ await page.locator('#evFSave').click();await expect(page.locator('#evFormOv')).toBeHidden();
+ await page.evaluate(()=>sessionStorage.removeItem('excelia-popup-dismissed'));
+ await page.reload();
+ const reminder=page.locator('.home-popup-item').filter({hasText:'Consulta de prueba'});
+ await expect(reminder).toContainText('12:00');
+ await expect(reminder).toHaveAttribute('style',/--reminder-color:#e03131/);
+ const stored=await page.evaluate(()=>JSON.parse(localStorage.getItem('excelia-events-v1')));
+ expect(stored).toHaveLength(1);expect(stored[0].type).toBe('Médico');expect(stored[0].color).toBe('#e03131');
+});

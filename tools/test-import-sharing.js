@@ -16,3 +16,19 @@ a.RUTINAS[0].skips['2026-08-22']=true;assert(!a.evIcsRoutineCurrent(rows[0]));
 console.log('Importación: resumen escapado, sin secretos; ICS: sesiones futuras, canceladas, mes, identidad y backup OK');
 const notes=a.renderImportPreview({importNotes:['Fecha provisional <pendiente>'],days:{'2027-05-03':{type:'festivo'}}});
 assert(notes.includes('Fecha provisional &lt;pendiente&gt;'));
+
+// Médico conserva identidad propia al guardar/exportar, pero comparte el filtro Gestión.
+const doctor={id:'medical-test',kind:'puntual',type:'Médico',title:'Consulta de prueba',color:a.evTypeColor('puntual','Médico'),start:'2026-08-21',end:'2026-08-21',time:'12:00'};
+a.EVENTS=[doctor];a.EV_YEAR=2026;a.EV_MONTH=7;a.EV_QUAD_YEAR=2026;a.EV_QUAD_MONTH=7;
+assert(a.renderEvCalMonth().includes('ev-shape-x-thin'));
+assert(a.renderEvQuad().includes('medical-test'));assert(a.renderEvAnnual().includes('medical-test'));
+a.EV_ANNUAL_FILTER_HIDDEN=['Rec. Gestiones'];
+assert(!a.renderEvQuad().includes('medical-test'));assert(!a.renderEvAnnual().includes('medical-test'));
+require('vm').runInContext(require('fs').readFileSync('js/home-popup.js','utf8'),a);
+assert.equal(a.homeReminderColor(doctor),'#e03131');assert.notEqual(a.homeReminderColor(doctor),a.homeReminderColor({kind:'puntual',type:'Rec. Gestiones'}));
+a.EV_LIST_SORT='categoria';assert(a.renderEvByTypes().includes('Consulta de prueba'));
+a.evMergeIncoming(a.validateImport({events:[doctor]}).events);assert.equal(a.EVENTS.length,1);
+const medicalRows=a.evIcsCandidates(a.EVENTS,'2026-08-21','2026-08-21');
+assert(medicalRows.some(r=>r.ev.type==='Médico'));
+assert.equal(a.evDefaultShape({type:'Rec. Gestiones'}),'diamond');
+console.log('Médico: calendario, filtros compartidos, categoría, recordatorios e importación/exportación OK');

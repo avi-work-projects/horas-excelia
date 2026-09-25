@@ -26,7 +26,7 @@ var EV_ANNUAL_FILTER_HIDDEN = []; // grupos ocultos en el calendario anual/4 mes
    para que los chips quepan y sean utiles.
      Grandes   -> todo kind 'grande' menos Asturias
      Asturias  -> aparte, por lo mucho que se usa
-     Gestiones -> puntual|Rec. Gestiones
+     Gestiones -> puntual|Rec. Gestiones y puntual|Médico
      Bodas     -> puntual|Ensayos boda
      Resto     -> el resto de puntuales (Plan/Quedada, Otros...) */
 var EV_FILTER_GROUPS = ['Grandes','Asturias','Rec. Gestiones','WM + Rut','Resto','Cumplea\u00f1os VIP'];
@@ -55,7 +55,7 @@ function evFilterGroup(ev){
   if(getEvKind(ev)==='grande')return 'Grandes';
   if(t==='Ensayos boda')return 'WM + Rut';
   if(t==='Rutina')return 'Resto';
-  if(t==='Rec. Gestiones')return 'Rec. Gestiones';
+  if(t==='Rec. Gestiones'||t==='Médico')return 'Rec. Gestiones';
   return 'Resto';
 }
 var EV_PREV_VIEW = null;       // para volver al anual al pulsar ←
@@ -325,6 +325,8 @@ function updateEventsBtn(){
 function evDefaultShape(ev){
   var t=getEvType(ev);
   if(t==='Ensayos boda')return 'x-boda';   /* aspa bicolor: pareja + franja horaria */
+  if(t==='Rec. Gestiones')return 'diamond'; /* identificador histórico del hexágono */
+  if(t==='Médico')return 'x-thin';          /* identificador histórico del + relleno */
   if(t==='Otros')return 'circle';
   return 'rounded';
 }
@@ -350,7 +352,7 @@ function evMorePlusHtml(extraClass){
    anual/4-meses solo se dibujan los tres primeros antes del "+", asi que ser
    el primero garantiza que se vea. El resto conserva su orden.
    Para dar prioridad a otra categoria basta con anadirla aqui. */
-var EV_MARK_ORDER = {'Rec. Gestiones':0};
+var EV_MARK_ORDER = {'Rec. Gestiones':0,'Médico':0};
 function evMarkPriority(ev){
   if(!ev)return 9;                       /* cumpleanos VIP y demas: al final */
   var p=EV_MARK_ORDER[getEvType(ev)];

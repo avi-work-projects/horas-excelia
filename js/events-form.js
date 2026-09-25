@@ -22,7 +22,9 @@ function _renderEvTypeSwatches(kind,selType){
     var isMulti=!!EV_FREE_COLOR[key]&&!EV_DOT_SOLID[key];
     var sel=(t===selType)?' selected':'';
     h+='<div class="ev-color-swatch'+sel+(isMulti?' ev-color-swatch-multi':'')+'" data-hex="'+c+'" data-type="'+escHtml(t)+'" data-kind="'+kind+'"'+(isMulti?'':' style="color:'+c+'"')+'>';
-    h+=isMulti?'<div class="ev-type-dot ev-type-dot-multi"></div>':'<div class="ev-type-dot" style="background:'+c+'"></div>';
+    h+=isMulti?'<div class="ev-type-dot ev-type-dot-multi"></div>'
+      :kind==='puntual'&&(t==='Rec. Gestiones'||t==='Médico')?'<span class="ev-type-dot">'+evShapeSvg(evDefaultShape({type:t}))+'</span>'
+      :'<div class="ev-type-dot" style="background:'+c+'"></div>';
     h+='<span class="ev-type-name">'+escHtml(t)+'</span></div>';
   });
   return h;
@@ -33,7 +35,7 @@ function _renderEvTypeSwatches(kind,selType){
    gestion y un "Otros" puntual. Ni los eventos grandes ni un plan ni un ensayo
    se repiten, asi que ahi el campo ni se pinta. */
 function evAdmiteRepeticion(kind,type){
-  return kind==='puntual'&&(type==='Rec. Gestiones'||type==='Otros');
+  return kind==='puntual'&&(type==='Rec. Gestiones'||type==='Médico'||type==='Otros');
 }
 function renderEvForm(ev){
   var isEdit=!!ev;
@@ -117,7 +119,7 @@ function renderEvForm(ev){
     {k:'square',  label:'Cuadrado'},
     {k:'diamond', label:'Hexágono'},
     {k:'x-thick', label:'X gorda'},
-    {k:'x-thin',  label:'Cruz fina'},
+    {k:'x-thin',  label:'Cruz'},
     {k:'rounded', label:'Redondeado'},
     {k:'wave', label:'Ola a mano'},
     {k:'x-outline', label:'X de rotulador'},
@@ -357,6 +359,7 @@ function bindEvFormEvents(){
             var noteEl2=document.getElementById('evFNote');
             if(noteEl2&&!noteEl2.value.trim()){noteEl2.value='Asturias';cntEl.textContent='8/200';}
           } else if(typeName==='Ensayos boda'){titleEl.value='Ensayo boda';}
+          else if(typeName==='Médico'){titleEl.value='Médico';}
           else if(typeName==='Casa Rural'){titleEl.value='Casa rural';}
         }
       });
