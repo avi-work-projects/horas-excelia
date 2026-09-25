@@ -219,7 +219,7 @@ function renderEvUpcoming(){
 }
 
 /* ── Render: lista de eventos por tipos ─────────────────── */
-var EV_LIST_TYPES=['Viaje','Asturias','Casa Rural','Rec. Gestiones','Plan/Quedada','Ensayos boda','Otros'];
+var EV_LIST_TYPES=['Viaje','Asturias','Casa Rural','Rec. Gestiones','Médico','Plan/Quedada','Ensayos boda','Otros'];
 function renderEvByTypes(){
   var today=new Date();today.setHours(0,0,0,0);
   /* Controles: buscador + orden + filtros */

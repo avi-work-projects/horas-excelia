@@ -42,12 +42,13 @@ var EV_COLOR_TYPES = {
    - puntual: se dibuja UN MARCADOR POR D\u00cdA (aunque abarque varios d\u00edas)
    - grande:  se dibuja como BARRA continua (formato actual de Viaje/Asturias) */
 var EV_KINDS = {
-  puntual:{label:'Puntual', types:['Rec. Gestiones','Plan/Quedada','Ensayos boda','Otros']},
+  puntual:{label:'Puntual', types:['Rec. Gestiones','Médico','Plan/Quedada','Ensayos boda','Otros']},
   grande: {label:'Grande',  types:['Viaje','Asturias','Casa Rural','Otros']}
 };
 /* Color por defecto de cada categor\u00eda (par kind|type) */
 var EV_TYPE_COLORS = {
   'puntual|Rec. Gestiones':'#34d399',
+  'puntual|Médico'       :'#e03131',
   'puntual|Plan/Quedada'  :'#fb923c',
   'puntual|Ensayos boda'  :'#c084fc',
   'puntual|Otros'         :'#a3e635',
@@ -104,9 +105,9 @@ function evShapeSvg(shape){
     return rutIconSvg(shape,'currentColor');
   var bw=EV_SHAPE_BW,inner;
   if(shape==='x-thick'||shape==='x-thin'){
-    var swIn=shape==='x-thick'?5:2.6;
+    var swIn=5;
     var swOut=swIn+bw*2;
-    var d=shape==='x-thin'?'M-6.5,0 H6.5 M0,-6.5 V6.5':'M-6,-6 L6,6 M-6,6 L6,-6';
+    var d=shape==='x-thin'?'M-5.5,0 H5.5 M0,-5.5 V5.5':'M-6,-6 L6,6 M-6,6 L6,-6';
     inner='<path d="'+d+'" stroke="#000" stroke-width="'+swOut+'" stroke-linecap="round" fill="none"/>'
         + '<path d="'+d+'" stroke="currentColor" stroke-width="'+swIn+'" stroke-linecap="round" fill="none" class="ev-shape-x-color"/>';
   } else if(shape==='circle'){
@@ -117,10 +118,12 @@ function evShapeSvg(shape){
     /* Se conserva el identificador para actualizar también eventos y backups antiguos. */
     inner='<polygon points="-4.2,-7.5 4.2,-7.5 8.5,0 4.2,7.5 -4.2,7.5 -8.5,0" fill="currentColor" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/>';
   } else if(shape==='wave'||shape==='x-outline'||shape==='circle-plus'){
-    var line=shape==='wave'?'M-8,4 C-4,4 -5,-5 0,-5 C5,-5 1,3 -1,1 C1,7 5,7 8,3'
-      :shape==='x-outline'?'M-6.5,-7 L6.5,7 M-7,6.5 L7,-6.5'
-      :'M7.5,0 C7.7,10 -8.5,10 -8,0 C-8.3,-10 8.2,-10 7.5,0 M-4,0 H4 M0,-4 V4';
-    inner='<path d="'+line+'" fill="none" stroke="currentColor" stroke-width="'+bw+'" stroke-linecap="'+(shape==='x-outline'?'square':'round')+'" stroke-linejoin="round"/>';
+    /* Trazo de rotulador inclinado; las coordenadas dejan margen al trazo
+       dentro del viewBox habitual, sin agrandar el hueco del marcador. */
+    var line=shape==='wave'?'M-7.5,0 C-5.6,-6 -1.9,-6 0,0 C1.9,6 5.6,6 7.5,0'
+      :shape==='x-outline'?'M-5.5,-6 L5.5,6 M-5.5,6 L5.5,-6'
+      :'M6.5,0 C6.7,8.6 -7.3,8.6 -7,0 C-7.1,-8.6 7.1,-8.6 6.5,0 M-3.4,0 H3.4 M0,-3.4 V3.4';
+    inner='<path d="'+line+'" transform="skewX(-10)" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="'+(shape==='x-outline'?'square':'round')+'" stroke-linejoin="round"/>';
   } else if(shape==='cloud'){
     inner='<path d="M-6,6 H6 C9.5,6 9.5,-2 7,-2 C7,-8 0,-9 -2,-5 C-7,-8 -10,-3 -7,0 C-10,1 -9.5,6 -6,6 Z" fill="currentColor" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/>';
   } else if(shape==='petal'){
