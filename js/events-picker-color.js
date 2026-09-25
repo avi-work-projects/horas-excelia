@@ -106,7 +106,7 @@ function evShapeSvg(shape){
   if(shape==='x-thick'||shape==='x-thin'){
     var swIn=shape==='x-thick'?5:2.6;
     var swOut=swIn+bw*2;
-    var d='M-6,-6 L6,6 M-6,6 L6,-6';
+    var d=shape==='x-thin'?'M-6.5,0 H6.5 M0,-6.5 V6.5':'M-6,-6 L6,6 M-6,6 L6,-6';
     inner='<path d="'+d+'" stroke="#000" stroke-width="'+swOut+'" stroke-linecap="round" fill="none"/>'
         + '<path d="'+d+'" stroke="currentColor" stroke-width="'+swIn+'" stroke-linecap="round" fill="none" class="ev-shape-x-color"/>';
   } else if(shape==='circle'){
@@ -114,7 +114,19 @@ function evShapeSvg(shape){
   } else if(shape==='square'){
     inner='<rect x="-8" y="-8" width="16" height="16" fill="currentColor" stroke="#000" stroke-width="'+bw+'"/>';
   } else if(shape==='diamond'){
-    inner='<polygon points="0,-8.5 8.5,0 0,8.5 -8.5,0" fill="currentColor" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/>';
+    /* Se conserva el identificador para actualizar también eventos y backups antiguos. */
+    inner='<polygon points="-4.2,-7.5 4.2,-7.5 8.5,0 4.2,7.5 -4.2,7.5 -8.5,0" fill="currentColor" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/>';
+  } else if(shape==='wave'||shape==='x-outline'||shape==='circle-plus'){
+    var line=shape==='wave'?'M-8,4 C-4,4 -5,-5 0,-5 C5,-5 1,3 -1,1 C1,7 5,7 8,3'
+      :shape==='x-outline'?'M-6.5,-7 L6.5,7 M-7,6.5 L7,-6.5'
+      :'M7.5,0 C7.7,10 -8.5,10 -8,0 C-8.3,-10 8.2,-10 7.5,0 M-4,0 H4 M0,-4 V4';
+    inner='<path d="'+line+'" fill="none" stroke="currentColor" stroke-width="'+bw+'" stroke-linecap="'+(shape==='x-outline'?'square':'round')+'" stroke-linejoin="round"/>';
+  } else if(shape==='cloud'){
+    inner='<path d="M-6,6 H6 C9.5,6 9.5,-2 7,-2 C7,-8 0,-9 -2,-5 C-7,-8 -10,-3 -7,0 C-10,1 -9.5,6 -6,6 Z" fill="currentColor" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/>';
+  } else if(shape==='petal'){
+    inner='<path d="M0,-8 C4,-8 4,-4 3,-2 C10,-6 12,2 5,3 C11,9 3,12 0,6 C-3,12 -11,9 -5,3 C-12,2 -10,-6 -3,-2 C-4,-4 -4,-8 0,-8 Z" fill="currentColor" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/>';
+  } else if(shape==='leaf'){
+    inner='<path d="M-7,7 C-10,-4 -2,-8 8,-8 C8,3 4,10 -7,7 Z" fill="currentColor" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/><path d="M-6,6 L3,-3" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>';
   } else { /* rounded */
     inner='<rect x="-9" y="-6" width="18" height="12" rx="4" fill="currentColor" stroke="#000" stroke-width="'+bw+'"/>';
   }

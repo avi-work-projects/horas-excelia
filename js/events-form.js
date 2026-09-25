@@ -115,16 +115,23 @@ function renderEvForm(ev){
   var _shapes=[
     {k:'circle',  label:'C\u00edrculo'},
     {k:'square',  label:'Cuadrado'},
-    {k:'diamond', label:'Rombo'},
+    {k:'diamond', label:'Hexágono'},
     {k:'x-thick', label:'X gorda'},
-    {k:'x-thin',  label:'X fina'},
+    {k:'x-thin',  label:'Cruz fina'},
     {k:'rounded', label:'Redondeado'},
+    {k:'wave', label:'Ola a mano'},
+    {k:'x-outline', label:'X de rotulador'},
+    {k:'circle-plus', label:'Círculo con cruz'},
+    {k:'cloud', label:'Nube'},
+    {k:'petal', label:'Pétalos'},
+    {k:'leaf', label:'Hoja'},
     /* Las mismas siluetas que usan las rutinas */
     {k:'gym',     label:'Mancuerna'},
     {k:'padel',   label:'Pala'},
     {k:'baile',   label:'Bailar\u00edn'}
   ];
-  _shapes.forEach(function(s){
+  _shapes.forEach(function(s,i){
+    if(i===12)h+='<span class="ev-shape-group-label">Actividades</span>';
     var sel=(s.k===curShape)?' selected':'';
     var prevColor=color||EV_COLORS[0];
     h+='<button type="button" class="ev-shape-opt'+sel+'" data-shape="'+s.k+'" title="'+s.label+'" aria-label="'+s.label+'">';

@@ -10,6 +10,15 @@ function energyYearIndicators(kind,year){
 }
 function energyMetric(label,value,note){return '<article class="energy-metric"><span>'+escHtml(label)+'</span><strong>'+escHtml(value)+'</strong>'+(note?'<small>'+escHtml(note)+'</small>':'')+'</article>';}
 function energyContractPeriods(c){return c.analysisPeriods&&c.analysisPeriods.length?c.analysisPeriods:c.analysis?[{start:c.start,tariff:c.analysis}]:[];}
+/* Agrupa condiciones comerciales; las vigencias fiscales originales siguen calculándose por día. */
+function energyCommercialPeriods(c){
+  var result=[],periods=energyContractPeriods(c).slice().sort(function(a,b){return a.start.localeCompare(b.start);});
+  function signature(t){var prices=t.energyMode==='tramos'?t.periodPrices:[t.precioKwh];return JSON.stringify([t.modo,t.energyMode,t.modo==='fijo'?t.cuotaFija:prices.map(function(v){return +v.toFixed(6);}),t.modoPotencia,t.precioPotP1,t.precioPotP2,t.potenciaP1,t.potenciaP2,t.potenciaTotal]);}
+  periods.forEach(function(p,i){var end=periods[i+1]?energyDate(energyUtc(periods[i+1].start)-1):(c.end||''),key=signature(p.tariff),last=result[result.length-1];
+    if(last&&last.key===key){last.end=end;last.tariff=p.tariff;last.variants.push(p);}
+    else result.push({start:p.start,end:end,tariff:p.tariff,key:key,variants:[p]});
+  });return result;
+}
 function energyPriceExtremes(kind,year){
   var types=[{name:'Consumo',unit:'€/kWh',value:function(t){return t.modo==='fijo'?null:energyWeightedPrice(t);}}, {name:'Potencia P1',unit:'€/kW/día',value:function(t){return t.modo==='fijo'?null:t.precioPotP1;}},{name:'Potencia P2',unit:'€/kW/día',value:function(t){return t.modo==='fijo'||t.modoPotencia!=='doble'?null:t.precioPotP2;}}];
   var h='<section class="energy-contract"><h3>Precios contratados · sin impuestos</h3><p class="energy-caption">Extremos del año. En consumo por tramos se compara la media ponderada de la tarifa; una cuota fija no es comparable por kWh.</p>';
@@ -29,7 +38,16 @@ function energySummaryHtml(kind,year){
   h+='</div><p class="energy-caption">Impuestos por fecha de emisión. Se muestran importes documentados, no acreditación del pago bancario. Los datos ausentes no se convierten en cero.</p>'+energyPriceExtremes(kind,year);return h;
 }
 function energyVatStrip(months,year){
-  var h='<div class="energy-vat-strip" aria-label="IVA aplicado por mes">';months.forEach(function(m,i){var total=new Date(Date.UTC(year,i+1,0)).getUTCDate();h+='<div>';var cursor=1;m.vatBands.forEach(function(b){var start=+b.start.slice(8),space=start-cursor;if(space>0)h+='<span style="flex:'+space+'"></span>';var color=b.rate===null?'var(--border)':energySupplierColor('IVA '+b.rate);h+='<span style="flex:'+b.days+';border-color:'+color+'" title="'+b.start+' → '+b.end+' · '+(b.rate===null?'IVA sin dato':b.rate+' %')+'">'+(b.rate===null?'?':b.rate+'%')+'</span>';cursor=+b.end.slice(8)+1;});if(cursor<=total)h+='<span style="flex:'+(total-cursor+1)+'"></span>';h+='</div>';});return h+'</div>';
+  var bands=[];
+  months.forEach(function(m,i){var days=new Date(Date.UTC(year,i+1,0)).getUTCDate();m.vatBands.forEach(function(b){
+    var left=(i+(+b.start.slice(8)-1)/days)/12*100,right=(i+(+b.end.slice(8))/days)/12*100,last=bands[bands.length-1];
+    if(last&&last.rate===b.rate&&energyUtc(b.start)===energyUtc(last.end)+1){last.right=right;last.end=b.end;}
+    else bands.push({left:left,right:right,start:b.start,end:b.end,rate:b.rate});
+  });});
+  return '<div class="energy-vat-strip" aria-label="Tramos de IVA">'+bands.map(function(b){
+    var label=b.rate===null?'IVA sin dato':b.rate+' %',color=b.rate===null?'var(--border)':energySupplierColor('IVA '+b.rate);
+    return '<span style="left:'+b.left+'%;width:'+(b.right-b.left)+'%;border-color:'+color+'" title="'+b.start+' → '+b.end+' · '+label+'">'+label+'</span>';
+  }).join('')+'</div>';
 }
 function energyCompareChart(base,sim){
   var max=1;base.concat(sim).forEach(function(m){if(m.gross!==null)max=Math.max(max,m.gross);});

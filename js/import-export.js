@@ -251,7 +251,8 @@ function _lsJson(key,fallback){
 
 /* ── Modo de importación: añadir (incremental) o reemplazar ──────────
    Devuelve 'merge' | 'replace' al callback (o nada si se cancela). */
-function askImportMode(subtitle,cb,preview){
+function askImportMode(subtitle,cb,preview,options){
+  options=options||{};
   var ov=document.createElement('div');
   ov.className='imp-mode-ov';
   ov.innerHTML='<div class="imp-mode-sheet">'
@@ -259,7 +260,7 @@ function askImportMode(subtitle,cb,preview){
     +'<div class="imp-mode-sub">'+escHtml(subtitle||'')+'</div>'
     +(preview||'')
     +'<button class="imp-mode-btn merge" data-mode="merge"><b>&#10133; A&#241;adir a lo que ya hay</b><span>Fusiona: no se borra nada de lo actual. Lo que venga en el archivo actualiza lo que coincida.</span></button>'
-    +'<button class="imp-mode-btn repl" data-mode="replace"><b>&#9851; Reemplazar todo</b><span>Sustituye los datos actuales por los del archivo.</span></button>'
+    +(options.mergeOnly?'':'<button class="imp-mode-btn repl" data-mode="replace"><b>&#9851; Reemplazar todo</b><span>Sustituye los datos actuales por los del archivo.</span></button>')
     +'<button class="imp-mode-btn cancel" data-mode="">Cancelar</button>'
     +'</div>';
   document.body.appendChild(ov);

@@ -33,7 +33,8 @@ function energyCostMonths(bills,contracts,taxes,year,kind,scenario){
       if(!t||vat===null){var reason=!t?'Tarifa o vigencia pendiente':'IVA histórico pendiente';if(result.missing.indexOf(reason)<0)result.missing.push(reason);return;}
       var n=new Date(Date.UTC(+ds.slice(0,4),+ds.slice(5,7),0)).getUTCDate();
       var applied=t;if(t.energyMode==='tramos'&&m.periodDays===dates.length&&m.consumption>0){applied=Object.assign({},t,{periodWeights:m.periods.map(function(v){return v/m.consumption*100;})});}
-      var base=energyTariffNet(applied,kind,daily,1,n),cost=base*(1+vat/100)-(scenario&&scenario.promos?(t.promotion||0)/n:0);
+      if(scenario&&scenario.vatMode&&scenario.vatMode!=='historical')applied=Object.assign({},applied,{servicesVatPct:vat});
+      var base=energyTariffNet(applied,kind,daily,1,n),cost=energyTariffGross(applied,kind,daily,1,n,vat)-(scenario&&scenario.promos?(t.promotion||0)/n:0);
       var key=replace?'scenario':c.id;
       if(!groups[key])groups[key]={id:key,contractId:c?c.id:'',supplier:replace?(scenario.name||'Escenario'):c.supplier,net:0,gross:0,days:0,kwh:0};
       var g=groups[key];g.net+=base;g.gross+=cost;g.days++;g.kwh+=daily;net+=base;gross+=cost;

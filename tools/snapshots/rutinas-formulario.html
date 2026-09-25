@@ -36,7 +36,13 @@
 <input class="ev-input" type="number" min="1" max="7" id="rutFWeekly" value="2">
 </div>
 </div>
-<p class="sy-note">Elige después cada fecha y hora. Las sesiones saltadas no consumen el cupo. Una sesión por día en esta rutina.</p>
+<div class="ev-field rut-first-quota" id="rutFirstQuota" hidden>
+<label id="rutFirstQuotaLabel" for="rutFFirstTarget">
+</label>
+<input class="ev-input" type="number" min="0" max="31" id="rutFFirstTarget" value="">
+<p class="sy-note">Incluye las sesiones ya realizadas y las que harás este mes. Si no necesitas un cupo especial, indica el habitual. Podrás añadir fechas pasadas del primer mes.</p>
+</div>
+<p class="sy-note rut-flex-help">Elige después cada fecha y hora, también las ya realizadas desde el comienzo del primer período. Las sesiones saltadas no consumen el cupo. Una sesión por día.</p>
 </div>
 <div class="ev-field">
 <label>Días de la semana</label>

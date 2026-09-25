@@ -114,3 +114,36 @@ assert.ok(study.indexOf('energy-year-nav')>study.indexOf('data-energy-tab="compa
 assert.equal((roundtrip._renderElectDetalle().match(/Consumo y tarifas/g)||[]).length,1);
 assert.ok(!roundtrip._renderElectDetalle().includes('energyLegacyluz'));
 console.log('Energía: lecturas rectificadas, tramos medidos, impuestos documentados y cinco pestañas OK');
+
+// Los servicios/alquiler no pagan impuesto eléctrico. Los backups antiguos siguen válidos.
+const fees=a.energyTariffDefaults({precioKwh:0.2,terminoFijoDia:0.01,extrasPerDay:0.03,otherTaxPct:5});
+near(a.energyTariffNet(fees,'luz',100,30,30),(20+0.3)*1.05+0.9);
+assert.throws(()=>a.energyValidateTariff({...fees,extrasPerDay:-1}));
+const commercial={...historyCost,end:'2026-12-31',analysisPeriods:[
+  {start:'2026-01-01',tariff:t},
+  {start:'2026-02-01',tariff:{...t,periodWeights:[10,20,70],otherTaxPct:5,extrasPerDay:0.02}},
+  {start:'2026-04-01',tariff:{...t,periodPrices:[0.4,0.2,0.1]}}
+]};
+const original=JSON.stringify(commercial),groups=a.energyCommercialPeriods(commercial);
+assert.equal(groups.length,2);assert.equal(groups[0].start,'2026-01-01');assert.equal(groups[0].end,'2026-03-31');assert.equal(groups[0].variants.length,2);
+assert.equal(JSON.stringify(commercial),original);
+// La franja no repite el IVA al cambiar de mes; sí separa cambios o huecos de cobertura.
+const bands=Array.from({length:12},(_,i)=>({vatBands:i<3?[{start:`2026-0${i+1}-01`,end:['2026-01-31','2026-02-28','2026-03-31'][i],rate:i<2?21:10}]:[]}));
+const vatHtml=a.energyVatStrip(bands,2026);assert.equal((vatHtml.match(/<span /g)||[]).length,2);assert(vatHtml.includes('width:16.666666666666'));
+const previewApp=cargarApp({});previewApp.energyImportHistory({energyBills:[bill],energyContracts:[commercial]});
+const stateBefore=JSON.stringify([previewApp.energyBills(),previewApp.energyContracts(),previewApp.energyTaxes()]);
+const preview=previewApp.energyImportPreview({energyBills:[{...bill,gross:99}],energyContracts:[{...commercial,notes:'Desglose corregido'}],days:{'2027-01-01':{type:'festivo'}}});
+assert(preview.includes('0 nuevos · 1 actualizados'));assert(preview.includes('2 tarifas'));assert(preview.includes('Aquí solo se importará energía'));
+assert.equal(JSON.stringify([previewApp.energyBills(),previewApp.energyContracts(),previewApp.energyTaxes()]),stateBefore);
+assert.throws(()=>previewApp.energyImportPreview({energyBills:[{...bill,gross:Infinity}]}));
+const change=previewApp.energyImportChanges([bill],[{...bill,notes:'<script>'}],x=>x.id,x=>x.notes);assert.equal(change.updated.length,1);
+console.log('Energía: cargos separados, tarifas comerciales agrupadas, IVA continuo y previsualización sin escritura OK');
+const serviceTariff=a.energyTariffDefaults({precioKwh:.2,servicesPerDay:.1,servicesVatPct:21});
+near(a.energyTariffNet(serviceTariff,'luz',100,30,30),23);
+near(a.energyTariffGross(serviceTariff,'luz',100,30,30,10),22+3.63);
+const serviceContract={...ca,end:'2026-01-31',analysis:serviceTariff};
+near(a.energyCostMonths([billCost],[serviceContract],[{kind:'luz',start:'2026-01-01',rate:10}],2026,'luz')[0].gross,62*1.1+3.1*1.21);
+near(a.energyCostMonths([billCost],[serviceContract],taxCost,2026,'luz',{vatMode:'none'})[0].gross,65.1);
+near(a.energyCostMonths([billCost],[serviceContract],taxCost,2026,'luz',{vatMode:'constant',vat:5})[0].gross,65.1*1.05);
+assert.throws(()=>a.energyValidateTariff({...serviceTariff,servicesVatPct:101}));
+console.log('Energía: servicios con IVA propio y escenarios constantes/sin IVA OK');

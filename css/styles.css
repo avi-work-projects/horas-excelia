@@ -2219,6 +2219,9 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .rut-flex-choice,.rut-plan-row{display:flex;gap:8px}
 #rutFormOv [hidden]{display:none!important}
 .rut-flex-choice>*{flex:1}
+.rut-first-quota{margin-top:18px}
+.rut-flex-help{margin-top:18px!important;line-height:1.5}
+.ev-shape-group-label{grid-column:1/-1;margin-top:6px;color:var(--text-muted);font-size:.72rem}
 .rut-flex-summary{display:grid;gap:8px;margin:12px 0;font-size:.8rem}
 .rut-flex-summary span{color:var(--text-muted)}
 .rut-plan-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
@@ -2815,7 +2818,9 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .energy-window-header h2{font-size:1rem;text-align:center;margin:0}
 .energy-window>.energy-year-nav{margin:0;padding:12px;flex-shrink:0}
 .energy-window .sy-body{padding:0;min-height:0;flex:1;overflow-y:auto}
-.energy-window-content{max-width:760px;margin:auto;padding:14px 16px 30px}
+.energy-window-content{width:100%;max-width:760px;margin:0 auto;padding:14px 16px 30px;flex-shrink:0}
+.energy-fee-period{padding:12px 0;box-shadow:0 1px 0 var(--border)}
+.energy-fee-period:last-child{box-shadow:none}
 .energy-tabs{top:0;z-index:3;background:var(--bg);gap:0}
 .energy-tabs .econ-sub-tab{padding:12px 5px;font-size:.72rem}
 .energy-cost-chart{display:flex;align-items:flex-end;height:180px;gap:3px;margin:16px 0 8px}
@@ -2867,7 +2872,7 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .energy-metric span,.energy-metric small{font-size:.72rem;color:var(--text-muted)}
 .energy-metric strong{font-size:1.05rem;color:var(--text);overflow-wrap:anywhere}
 .energy-supplier-row{display:flex;gap:10px;padding:10px 0;align-items:center}.energy-supplier-row i{width:9px;height:34px;border-radius:4px}.energy-supplier-row small{display:block;color:var(--text-muted);margin-top:4px;font-size:.75rem}
-.energy-vat-strip{display:flex;width:100%;margin-top:18px;font-size:.48rem;height:23px}.energy-vat-strip>div{display:flex;flex:1;min-width:0}.energy-vat-strip span{border-top:4px solid transparent;text-align:center;min-width:0;overflow:hidden;white-space:nowrap}
+.energy-vat-strip{position:relative;width:100%;margin-top:18px;font-size:.62rem;height:27px}.energy-vat-strip span{position:absolute;top:0;border-top:4px solid transparent;text-align:center;padding-top:3px;min-width:0;white-space:nowrap}
 .energy-tax-controls{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:.8rem}.energy-tax-controls label{display:flex;align-items:center;gap:6px}
 .energy-tax-controls input[type=number],.energy-inline-input input{width:65px;border:1px solid var(--border);border-radius:8px;padding:7px;background:var(--surface);color:var(--text)}
 .energy-tariff-period{border-top:1px solid var(--border);padding:12px 0}.energy-tariff-period summary{cursor:pointer;color:var(--text-muted);font-size:.8rem}.energy-tariff-period h4{margin:18px 0 8px;color:#a47b43;font-size:.8rem}.energy-tariff-period p{font-size:.8rem}
