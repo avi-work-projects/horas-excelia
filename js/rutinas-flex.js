@@ -13,7 +13,7 @@ function rutFlexRange(ds,period){
   return {start:start,end:evDk(end)};
 }
 function rutFlexCount(r,range){
-  return Object.keys(r.flex.sessions||{}).filter(function(ds){return ds>=range.start&&ds<=range.end&&rutOccursOn(r,ds)&&!rutIsSkipped(r,ds);}).length;
+  return rutSessions(r,range.start,range.end).filter(function(s){return !s.skip;}).length;
 }
 function rutFlexStatus(r,ds){
   var range=rutFlexRange(ds,r.flex.period),week=rutFlexRange(ds,'week');
@@ -46,7 +46,7 @@ function rutFlexOptionsHtml(r){
     +'<div class="ev-date-row"><div><label>Sesiones del cupo</label><input class="ev-input" type="number" min="1" max="31" id="rutFTarget" value="'+(f?f.target:8)+'"></div>'
     +'<div id="rutWeeklyGoal"><label>Objetivo semanal</label><input class="ev-input" type="number" min="1" max="7" id="rutFWeekly" value="'+(f?f.weeklyTarget:2)+'"></div></div>'
     +'<div class="ev-field rut-first-quota" id="rutFirstQuota" hidden><label id="rutFirstQuotaLabel" for="rutFFirstTarget"></label><input class="ev-input" type="number" min="0" max="31" id="rutFFirstTarget" value="'+firstTarget+'"><p class="sy-note">Incluye las sesiones ya realizadas y las que harás este mes. Si no necesitas un cupo especial, indica el habitual. Podrás añadir fechas pasadas del primer mes.</p></div>'
-    +'<p class="sy-note rut-flex-help">Elige después cada fecha y hora, también las ya realizadas desde el comienzo del primer período. Las sesiones saltadas no consumen el cupo. Una sesión por día.</p></div>';
+    +'<p class="sy-note rut-flex-help">Elige después cada fecha y hora, también las ya realizadas desde el comienzo del primer período. Las sesiones saltadas no consumen el cupo. Desde el histórico puedes añadir extras y recuperaciones.</p></div>';
 }
 function bindRutFlexOptions(r){
   function paint(){
@@ -85,6 +85,7 @@ function rutFlexRead(r){
   return {period:period,target:target,weeklyTarget:period==='week'?target:weekly,monthTargets:overrides,sessions:r&&r.flex?r.flex.sessions:{}};
 }
 function rutFlexSetSession(r,oldDay,ds,time,dur,reactivate){
+  if(oldDay&&(r.extraSessions||[]).some(function(s){return s.recoveryOf===oldDay;})&&(ds!==oldDay||reactivate))throw new Error('La sesión está vinculada a una recuperación. Puedes editar su hora desde el histórico.');
   if(!validIsoDate(ds))throw new Error('Elige una fecha válida para la sesión.');
   if(ds<rutFlexEarliest(r))throw new Error('Solo puedes registrar sesiones desde el '+_rutFmt(rutFlexEarliest(r))+', inicio del primer período.');
   if(!/^([01]\d|2[0-3]):[0-5]\d$/.test(time))throw new Error('Indica una hora válida para la sesión.');
@@ -98,7 +99,7 @@ function rutFlexSetSession(r,oldDay,ds,time,dur,reactivate){
   if(rutSuspendedOn(copy,ds))throw new Error('La rutina está en pausa ese día.');
   if(rutFlexCount(copy,rutFlexRange(ds,copy.flex.period))>rutFlexTarget(copy,ds))throw new Error('Has completado el cupo de '+rutFlexTarget(copy,ds)+' sesiones '+(copy.flex.period==='month'?'de '+MN[+ds.slice(5,7)-1].toLowerCase()+' '+ds.slice(0,4):'de esa semana')+'. Cambia el cupo o quita otra sesión.');
   var full=rutLimitExceeded(copy,r.id);if(full)throw new Error('El '+_rutFmt(full)+' ya tiene el máximo de rutinas.');
-  r.flex=copy.flex;r.skips=copy.skips;
+  rutValidateExtraSessions(copy);r.flex=copy.flex;r.skips=copy.skips;
 }
 function renderRutPlan(r){
   var month=RUT_PLAN.month,ds=RUT_PLAN.day,session=ds&&r.flex.sessions[ds];
@@ -135,5 +136,5 @@ function refreshRutPlan(){
   function mutate(fn){var prev=JSON.parse(JSON.stringify(r));try{fn();saveRutinas();refreshRutPlan();showToast('Planificación actualizada','success',function(){Object.assign(r,prev);saveRutinas();refreshEvents();if(document.getElementById('rutPlanOv'))refreshRutPlan();});}catch(e){showToast(e.message,'error');}}
   wrap.querySelectorAll('[data-rskip]').forEach(function(b){b.onclick=function(){mutate(function(){var ds=b.dataset.rskip;if(rutIsSkipped(r,ds))rutFlexSetSession(r,ds,ds,r.flex.sessions[ds].time,r.flex.sessions[ds].dur,true);else r.skips[ds]=1;});};});
   var save=wrap.querySelector('#rutPlanSave');if(save)save.onclick=function(){mutate(function(){var ds=RUT_PLAN.day;rutFlexSetSession(r,r.flex.sessions[ds]?ds:null,ds,wrap.querySelector('#rutPlanTime').value,Number(wrap.querySelector('#rutPlanDur').value));});};
-  var del=wrap.querySelector('#rutPlanDelete');if(del)del.onclick=function(){mutate(function(){delete r.flex.sessions[RUT_PLAN.day];delete r.skips[RUT_PLAN.day];RUT_PLAN.day=null;});};
+  var del=wrap.querySelector('#rutPlanDelete');if(del)del.onclick=function(){mutate(function(){if((r.extraSessions||[]).some(function(s){return s.recoveryOf===RUT_PLAN.day;}))throw new Error('Esta sesión está vinculada a una recuperación y debe conservarse.');delete r.flex.sessions[RUT_PLAN.day];delete r.skips[RUT_PLAN.day];RUT_PLAN.day=null;});};
 }

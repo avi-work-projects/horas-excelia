@@ -476,6 +476,7 @@ function _applyFullImport(d,mode){
         if(DESPACHO.valorCatastralConstruccion==null)DESPACHO.valorCatastralConstruccion=0;
         saveDespacho();
       }
+      if(d.energyCurrentTariffs)energyApplyCurrent(d.energyCurrentTariffs,d.energyContracts);
       if(d.personalData&&typeof PERSONAL_DATA!=='undefined'&&typeof savePersonalYear==='function'){PERSONAL_DATA=d.personalData;savePersonalYear(CY);}
       /* Per-year data */
       if(d.gastosPerYear){Object.keys(d.gastosPerYear).forEach(function(y){

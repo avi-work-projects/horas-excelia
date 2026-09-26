@@ -1,0 +1,35 @@
+const {test,expect}=require('@playwright/test');
+
+test('cancelar, recuperar después y añadir una extra conserva tres sesiones independientes',async({page})=>{
+  await page.clock.setFixedTime(new Date('2026-09-26T09:00:00'));
+  await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));
+  await page.goto('/');
+  await page.evaluate(()=>{RUTINAS=[{id:'test-recovery',name:'Deporte de prueba',icon:'padel',color:'#a3e635',start:'2026-09-01',weekDays:[1,4,6],time:'19:00',dur:60,skips:{},weeks:{}}];saveRutinas();});
+  await page.locator('#eventsBtn').click();await expect(page.locator('#eventsOverlay')).toHaveClass(/open/);
+  await page.evaluate(()=>openRutHistory(RUTINAS[0]));
+  await page.locator('#rutHistoryAdd').click();await page.locator('[data-addition-mode="cancel"]').click();
+  await page.locator('#rutWkOv [data-week="2026-09-21"]').click();
+  await page.locator('[data-source-session="2026-09-24"]').click();
+  await page.locator('#rutCancelForLater').click();
+  const original=page.locator('.rut-history-session').filter({hasText:'Jue 24/09'});
+  await expect(original).toContainText('Cancelada');
+  expect(await page.evaluate(()=>RUTINAS[0].extraSessions||[])).toHaveLength(0);
+  await expect(page.locator('#rutAdditionOv')).toHaveCount(0);
+  await page.locator('#rutHistoryAdd').click();await page.locator('[data-addition-mode="recover"]').click();
+  await page.locator('#rutWkOv [data-week="2026-09-21"]').click();
+  await page.locator('[data-source-session="2026-09-24"]').click();
+  await page.locator('#rutExtraDate').fill('2026-09-28');await page.locator('#rutExtraTime').fill('20:30');
+  await page.locator('#rutExtraSave').click();await expect(page.locator('#rutAdditionOv')).toHaveCount(0);
+  await expect(original).toContainText('Recuperada este día: 28/09/2026');
+  await page.locator('#rutHistoryAdd').click();await page.locator('[data-addition-mode="extra"]').click();
+  await page.locator('#rutExtraDate').fill('2026-09-28');await page.locator('#rutExtraTime').fill('21:45');
+  await page.locator('#rutExtraSave').click();await expect(page.locator('#rutAdditionOv')).toHaveCount(0);
+  await expect(page.locator('#rutHistoryOv')).toContainText('(Extra)');
+  await expect(page.locator('#rutHistoryOv')).toContainText('(Recuperada de 24/09/2026)');
+  await page.locator('#rutHistoryClose').click();await expect(page.locator('#rutHistoryOv')).toHaveCount(0);
+  await page.locator('#evViewCal').click();
+  await expect(page.locator('.ev-cell[data-ds="2026-09-28"] .ev-rut-mark')).toHaveCount(3);
+  await page.reload();
+  const persisted=await page.evaluate(()=>({sessions:rutSessionsOn(RUTINAS[0],'2026-09-28'),cancelled:rutIsSkipped(RUTINAS[0],'2026-09-24')}));
+  expect(persisted.sessions.map(s=>s.time)).toEqual(['19:00','20:30','21:45']);expect(persisted.cancelled).toBe(true);
+});

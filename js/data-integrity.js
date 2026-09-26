@@ -33,6 +33,7 @@ function validateImport(data){
   visit(data,'');
   if(data.energyContracts!=null)validateEnergyContracts(data.energyContracts);
   if(data.energyTaxes!=null)energyValidateTaxes(data.energyTaxes);
+  if(data.energyCurrentTariffs!=null)energyValidateCurrent(data.energyCurrentTariffs,data.energyContracts||energyContracts());
   if(data.despacho){
     var ed=data.despacho,eg=ed.gas||{};
     [ed.elect,eg.consumo,eg.fijo].concat(ed.electComparaciones||[],ed.gasComparaciones||[]).forEach(function(t){if(t&&t.energyMode!=null)energyValidateTariff(t);});
@@ -103,6 +104,7 @@ function validateImport(data){
     Object.keys(r.keptSessions||{}).forEach(function(ds){var session=r.keptSessions[ds];
       if(!validIsoDate(ds)||!session||(session.time!==null&&!/^([01]\d|2[0-3]):[0-5]\d$/.test(session.time))||!Number.isFinite(session.dur)||session.dur<=0)throw new Error('Sesion conservada no valida');
     });
+    rutValidateExtraSessions(r);
   });
   return JSON.parse(JSON.stringify(data));
 }
@@ -133,13 +135,15 @@ function rutLimitExceeded(candidate,excludeId){
     (r.scheduleHistory||[]).forEach(function(x){bounds.push(x.until);Object.keys(x.schedule.weeks||{}).forEach(function(d){bounds.push(d);});});
     if(r.suspend){if(r.suspend.from)bounds.push(r.suspend.from);if(r.suspend.to)bounds.push(r.suspend.to);}
     Object.keys(r.weeks||{}).concat(Object.keys(r.skips||{}),Object.keys(r.flex&&r.flex.sessions||{})).forEach(function(d){bounds.push(d);});
+    (r.extraSessions||[]).forEach(function(s){bounds.push(s.date);});
   });
   var today=evDk(new Date());bounds.push(today);
   for(var i=0;i<bounds.length;i++){
     var d=new Date(bounds[i]+'T12:00:00');
     for(var j=0;j<15;j++,d.setDate(d.getDate()+1)){
       var ds=evDk(d);if(ds<today||seen[ds])continue;seen[ds]=true;
-      if(rutOccursOn(candidate,ds)&&!rutIsSkipped(candidate,ds)&&rutDayCount(ds,excludeId)>=3)return ds;
+      var count=rutSessionsOn(candidate,ds).filter(function(s){return !s.skip;}).length;
+      if(count&&count+rutDayCount(ds,excludeId)>EV_MAX_RUT_DIA)return ds;
     }
   }
   return null;

@@ -81,6 +81,7 @@ function renderEvDetail(ev,fromSummary,car){
   h+='<div class="ev-detail-color-bar" style="background:'+_ddc+'" id="evDColorBar"></div>';
   h+='<div style="display:flex;align-items:center;gap:8px">';
   h+='<div class="ev-detail-title" style="color:'+_ddc+';flex:1" id="evDTitle">'+escHtml(ev.title)+'</div>';
+  h+=rutRecoveryHtml(ev);
   /* Paleta de color sólo en tipos Viaje y Otros */
   var _evType=getEvType(ev);
   if(_evType==='Viaje'||_evType==='Otros'){
@@ -224,7 +225,7 @@ function openEvDetail(ev,container,car){
   /* Acciones propias de una sesion de rutina */
   var _rs=document.getElementById('evDRutSes');
   if(_rs)_rs.addEventListener('click',function(){
-    if(typeof rutToggleSkip==='function'&&rutToggleSkip(ev._rut,(car&&car.ds)||ev.start)===false)return;
+    if(typeof rutToggleSkip==='function'&&rutToggleSkip(ev._rut,(car&&car.ds)||ev.start,ev._rutKey)===false)return;
     closeEvDetail();
     setTimeout(refreshEvents,320);
   });

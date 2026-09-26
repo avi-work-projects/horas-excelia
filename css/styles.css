@@ -1658,15 +1658,22 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
    puente quitan ese shadow para que el pattern fluya continuo. */
 .ev-cell{min-height:73px;padding:6px 4px 4px;background:var(--surface);border-radius:8px;display:flex;flex-direction:column;gap:2px;overflow:hidden;cursor:pointer;transition:background .12s;-webkit-user-select:none;user-select:none;position:relative}
 .ev-cell:active{background:var(--surface3)}
-.ev-cell.out-m{opacity:.35}
-.ev-cell.past-cal-day{opacity:.45}
+/* Atenuar el contenido, nunca la celda: opacity en la celda crea un
+   contexto que encierra los marcadores por debajo de las barras. */
+.ev-cell{--ev-marker-halo:var(--surface)}
+.ev-cell.weekend{--ev-marker-halo:color-mix(in srgb, rgb(160,160,200) 11%, var(--bg))}
+.ev-cell.out-m > .ev-num,.ev-cell.out-m > .ev-otros-corner,.ev-cell.out-m > .ev-day-left{opacity:.35}
+.ev-cell.past-cal-day > .ev-num,.ev-cell.past-cal-day > .ev-otros-corner,.ev-cell.past-cal-day > .ev-day-left{opacity:.45}
 .ev-multi-bar.past-bar{opacity:.4}
-.ev-annual-day.past-cal-day{opacity:.4}
+.ev-annual-day{--ev-marker-halo:var(--surface2)}
+.ev-annual-day.weekend{--ev-marker-halo:color-mix(in srgb, rgb(160,160,200) 22%, var(--surface))}
+.ev-annual-day.past-cal-day > *{opacity:.4}
 .ev-annual-mbar.past-bar{opacity:.4}
 .ev-annual-puente-perimeter.past-marker{opacity:.4}
 .ev-annual-x.past-marker,.ev-annual-vip-star.past-marker{opacity:.4}
 /* Bright past: bombilla override */
 .ev-bright-past .past-cal-day,.ev-bright-past .past-bar,.ev-bright-past .past-marker{opacity:1 !important}
+.ev-bright-past .ev-cell.past-cal-day > *,.ev-bright-past .ev-annual-day.past-cal-day > *{opacity:1!important}
 .ev-bright-btn{font-size:.85rem;padding:4px 8px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;opacity:.45;transition:opacity .2s}
 .ev-bright-btn.on{opacity:1;background:#fbbf2433;border-color:#fbbf24}
 /* Bombilla en Anual/Quad — mismo estilo que la pequeña inline del 1-mes/Semanal */
@@ -2464,6 +2471,16 @@ button.action-edit.action-edit-text:active{background:#f97316!important}
 .rut-history-head strong{font-size:.95rem;overflow-wrap:anywhere}
 .rut-history-head span{color:var(--text-muted);font-size:.75rem}
 .rut-history-body{overflow-y:auto;min-height:0;padding:0 2px 12px}
+.rut-history-actions{display:flex;flex-direction:column;gap:10px;flex-shrink:0;margin-bottom:18px}
+.rut-history-actions .ev-io-btn{flex:none;width:100%;margin:0}
+.rut-addition-choices{display:flex;flex-direction:column;gap:12px;margin:18px 0}
+.rut-addition-choices .ev-btn{text-align:left;display:flex;flex-direction:column;gap:6px;padding:14px;white-space:normal}
+.rut-addition-choices span{font-size:.72rem;font-weight:400;color:var(--text-muted);line-height:1.5}
+.rut-addition-fields{display:flex;flex-direction:column;gap:16px;margin:20px 0}
+.rut-addition-entry,.rut-week-help{margin-top:18px}
+.rut-recovery-note{display:block;color:var(--text-muted);font-size:.68rem;line-height:1.45;text-decoration:none}
+.rut-session-tag{color:var(--accent);font-size:.68rem}
+.ev-wk-chip .rut-recovery-note{color:inherit;white-space:normal;font-weight:400;margin-top:3px}
 .rut-history-period{border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:12px;margin:14px 0;background:var(--surface)}
 .rut-history-period summary{cursor:pointer;padding:14px;list-style:none;display:flex;flex-direction:column;gap:8px}
 .rut-history-period summary::-webkit-details-marker{display:none}
@@ -2475,7 +2492,7 @@ button.action-edit.action-edit-text:active{background:#f97316!important}
 .rut-history-session{display:flex;gap:10px;align-items:center;padding:12px;border-top:1px solid var(--border)}
 .rut-history-session>div:first-child{flex:1;display:flex;flex-direction:column;gap:4px;font-size:.75rem}
 .rut-history-session>div:first-child>span{font-size:.72rem;color:var(--text-muted)}
-.rut-history-session.cancelled>div:first-child{text-decoration:line-through;color:var(--text-muted)}
+.rut-history-session.cancelled>div:first-child>strong,.rut-history-session.cancelled>div:first-child>span{text-decoration:line-through;color:var(--text-muted)}
 .rut-history-status{font-size:.64rem;color:var(--text-muted);text-align:right}
 .rut-history-status small{display:block;color:var(--accent);margin-top:4px}
 .rut-history-more{display:block;width:calc(100% - 24px);margin:12px}
@@ -2880,3 +2897,4 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .energy-compare-chart{display:flex;gap:3px;align-items:flex-end;margin-top:18px}.energy-compare-chart>div{flex:1;min-width:0;text-align:center}.energy-compare-pair{height:130px;display:flex;gap:2px;align-items:flex-end}.energy-compare-pair span{flex:1;border-radius:3px 3px 0 0}.energy-compare-chart small{font-size:.55rem;color:var(--text-muted)}
 .energy-scenario-result{font-weight:700;color:#65a367;margin:16px 0}.energy-tariff-choices summary{padding:10px;border:1px solid var(--border);border-radius:8px;font-size:.8rem;cursor:pointer}
 .energy-cost-segment{cursor:default}.energy-inline-input{font-size:.8rem;display:flex;align-items:center;gap:10px}
+.ev-io-btn.energy-analysis-open{flex:0 0 auto;align-self:flex-start;width:auto;min-height:32px;padding:7px 12px;font-size:.74rem;margin:12px 0}
