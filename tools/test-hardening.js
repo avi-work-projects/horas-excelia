@@ -24,6 +24,18 @@ a.localStorage.setItem=(k,v)=>{if(k==='audit-fail'&&fail){fail=false;throw Error
 a.appStorage.begin();a.appStorage.setItem('audit-existing','new');a.appStorage.setItem('audit-fail','x');assert.throws(()=>a.appStorage.commit());assert.equal(a.appStorage.getItem('audit-existing'),'old');
 console.log('Hardening: import identity, validation and rollback OK');
 
+// El parche de tarifa actual viaja por la importación general y el backup.
+const tariffApp=cargarApp({});vm.runInContext(source,tariffApp);tariffApp.showToast=()=>{};tariffApp.render=()=>{};tariffApp.updateEventsBtn=()=>{};tariffApp.updateBdayBtn=()=>{};
+const currentTariff={id:'current-test',kind:'luz',supplier:'Compañía de prueba',tariff:'Tres tramos',supply:'Vivienda',start:'2026-09-24',end:'',commitment:'',notes:'',source:'',taxes:'excluidos',prices:[],analysis:tariffApp.energyTariffDefaults({energyMode:'tramos',periodPrices:[.3,.2,.1],periodWeights:[20,30,50]})};
+tariffApp.appStorage.setItem(tariffApp.DESPACHO_SK,JSON.stringify({m2Total:82,elect:{comercializadora:'Anterior'},gas:{activo:'fijo'}}));
+const tariffImport={energyContracts:[currentTariff],energyCurrentTariffs:[{kind:'luz',contractId:currentTariff.id,date:currentTariff.start}]};
+tariffApp.auditImport(tariffImport,'merge');assert.equal(tariffApp.DESPACHO.m2Total,82);assert.equal(tariffApp.DESPACHO.elect.comercializadora,currentTariff.supplier);
+const savedTariff=JSON.parse(tariffApp.appStorage.getItem(tariffApp.DESPACHO_SK));
+tariffApp.auditImport(tariffImport,'merge');assert.equal(tariffApp.energyContracts().length,1);
+tariffApp.auditImport({despacho:savedTariff,energyContracts:[currentTariff]},'replace');
+tariffApp.loadDespacho();assert.equal(tariffApp.DESPACHO.elect.effectiveFrom,'2026-09-24');assert.equal(tariffApp.DESPACHO.elect.periodPrices[2],.1);
+console.log('Hardening: importación general, tarifa actual y backup OK');
+
 const birthday={name:'Temporal',day:22,month:8};a.BDAY_ALARM_SET[a.getBdayAlarmKey(birthday)]=true;assert.equal(a.isBdayAlarmSet(birthday),false);
 a.setBdayAlarmState(birthday,true);assert.equal(a.isBdayAlarmSet(birthday),true);
 a.BDAY_ALARM_SET[a.getBdayAlarmKey(birthday)]={date:'2025-08-22'};assert.equal(a.isBdayAlarmSet(birthday),false);
@@ -108,7 +120,7 @@ assert.equal(routines.rutOccursOn(corrected,'2026-08-17'),'16:30');assert.equal(
 assert.equal(routines.rutHistoryPeriods(corrected,'2026-12-31').length,2);
 assert.throws(()=>routines.rutEditSession(corrected,'2026-08-17','99:30',45,false));
 assert.equal(routines.validateImport({rutinas:[corrected]}).rutinas[0].keptSessions['2026-08-17'].dur,45);
-assert.ok(routines.rutIconSvg('baile','#123456').includes('stroke-width="4.6"'));
+assert.ok(routines.rutIconSvg('baile','#123456').includes('stroke-width="8.6"'));
 console.log('Rutinas: etapas sin excepciones, edicion puntual e icono con contorno OK');
 
 const elapsed=routines.rutNewSchedule(original,{weekDays:[5],time:'00:00'},'2026-08-21');

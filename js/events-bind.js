@@ -294,7 +294,7 @@ function _bindEvCal(){
       EV_EDIT_DS=el.dataset.ds||null;
       if(ev){openEvDetail(ev);return;}
       var _rs2=(typeof rutEventFromId==='function')?rutEventFromId(id):null;
-      if(_rs2)openRutSesion(_rs2.rutina,_rs2.ds);
+      if(_rs2)openRutSesion(_rs2.rutina,_rs2.ds,_rs2.key);
     });
   });
   // Click en mes del calendario anual/quad: navegar o seleccionar día (modo añadir)
@@ -419,7 +419,7 @@ function _bindEvListas(){
       /* Una sesion de rutina no vive en EVENTS: se recalcula desde su id. */
       if(!ev&&typeof rutEventFromId==='function'){
         var _rf=rutEventFromId(id);
-        if(_rf){openRutSesion(_rf.rutina,_rf.ds);return;}
+        if(_rf){openRutSesion(_rf.rutina,_rf.ds,_rf.key);return;}
       }
       if(!ev)return;
       // Cumpleaños VIP → panel de alarma de cumpleaños
@@ -482,7 +482,7 @@ function _bindEvListas(){
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
       if(ev){openEvDetail(ev);return;}
       var _rs3=(typeof rutEventFromId==='function')?rutEventFromId(id):null;
-      if(_rs3)openRutSesion(_rs3.rutina,_rs3.ds);
+      if(_rs3)openRutSesion(_rs3.rutina,_rs3.ds,_rs3.key);
     });
   });
   // Click en celda de día (fecha o zona de chips) en Agenda Semanal → crear evento prefilled

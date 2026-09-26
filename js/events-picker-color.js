@@ -123,7 +123,9 @@ function evShapeSvg(shape){
     var line=shape==='wave'?'M-7.5,0 C-5.6,-6 -1.9,-6 0,0 C1.9,6 5.6,6 7.5,0'
       :shape==='x-outline'?'M-5.5,-6 L5.5,6 M-5.5,6 L5.5,-6'
       :'M6.5,0 C6.7,8.6 -7.3,8.6 -7,0 C-7.1,-8.6 7.1,-8.6 6.5,0 M-3.4,0 H3.4 M0,-3.4 V3.4';
-    inner='<path d="'+line+'" transform="skewX(-10)" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="'+(shape==='x-outline'?'square':'round')+'" stroke-linejoin="round"/>';
+    var path=' d="'+line+'" transform="skewX(-10)" fill="none" stroke-linecap="'+(shape==='x-outline'?'square':'round')+'" stroke-linejoin="round"';
+    inner='<path'+path+' class="ev-shape-halo" stroke="var(--ev-marker-halo, var(--surface))" stroke-width="4.2"/>'
+      +'<path'+path+' stroke="currentColor" stroke-width="3"/>';
   } else if(shape==='cloud'){
     inner='<path d="M-6,6 H6 C9.5,6 9.5,-2 7,-2 C7,-8 0,-9 -2,-5 C-7,-8 -10,-3 -7,0 C-10,1 -9.5,6 -6,6 Z" fill="currentColor" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/>';
   } else if(shape==='petal'){

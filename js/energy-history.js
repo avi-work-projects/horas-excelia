@@ -14,6 +14,7 @@ function validateEnergyContracts(list){
     if(['luz','gas'].indexOf(c.kind)<0)throw new Error('Suministro no válido');
     ['supplier','tariff','supply','start','end','commitment','notes','source'].forEach(function(k){if(typeof c[k]!=='string'||c[k].length>10000)throw new Error('Campo de contrato no válido: '+k);});
     if(!c.supplier.trim())throw new Error('Indica la comercializadora');
+    if(c.summaryNote!=null&&(typeof c.summaryNote!=='string'||c.summaryNote.length>10000))throw new Error('Nota de contrato no válida');
     ['start','end','commitment'].forEach(function(k){if(c[k]&&!validIsoDate(c[k]))throw new Error('Fecha de contrato no válida');});
     if(c.start&&c.end&&c.end<c.start)throw new Error('El fin no puede ser anterior al inicio');
     if(['incluidos','excluidos','desconocido'].indexOf(c.taxes)<0)throw new Error('Indica cómo están expresados los impuestos');

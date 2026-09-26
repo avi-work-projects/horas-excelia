@@ -246,7 +246,7 @@ function _renderEvMonthCard(m,yr,o){
       /* Cumpleanos VIP: rayas amarillas sobre la casilla (sin estrella aqui) */
       var _vipDay=inM&&!o.vipHidden&&typeof BDAYS!=='undefined'&&Array.isArray(BDAYS)
         &&BDAYS.some(function(b){return b.vip&&b.day===d.getDate()&&b.month===d.getMonth()+1;});
-      var cls='ev-annual-day'+(inM?'':' out-m')+(isT?' ann-today':'')+(past?' past-cal-day':'')
+      var cls='ev-annual-day'+(inM?'':' out-m')+(isT?' ann-today':'')+(past?' past-cal-day':'')+(isWknd?' weekend':'')
         +puenteCls+fiestasCls+(_vipDay?' ann-vip-bday':'');
       var bg='';
       if(inM){

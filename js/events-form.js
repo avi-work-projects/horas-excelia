@@ -144,7 +144,7 @@ function renderEvForm(ev){
   h+='</div></div>';
   /* Grosor de la barra (solo eventos grandes "Otros") */
   var showBar=!!EV_FREE_BARSIZE[curKey];
-  var curBar=evBarSize(isEdit?ev:{kind:curKind,type:curType,barSize:null});
+  var curBar=isEdit?evBarSize(ev):'sm';
   h+='<div id="evFBarBlock" style="display:'+(showBar?'block':'none')+'">';
   h+='<label>▬ Grosor de la barra</label>';
   h+='<div class="ev-barsize-picker" id="evFBarPicker">';

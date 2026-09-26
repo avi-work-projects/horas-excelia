@@ -64,6 +64,7 @@ function renderEvUpcoming(){
     s+='<div class="ev-upcoming-info">';
     s+=bodaUltimoEnsayoHtml(ev);
     s+='<div class="ev-upcoming-title">'+(ev._rutSkip?'<span class="rut-skipped-title">'+title+'</span> <span class="rut-skipped-label">(saltada)</span>':title)+'</div>';
+    s+=rutRecoveryHtml(ev);
     s+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+metaDate+'</div>';
     if(ev.note&&ev.note.trim()&&!_isVip)s+='<div class="ev-upcoming-note">'+escHtml(ev.note.trim())+'</div>';
     /* Nota propia del dia que se muestra (eventos puntuales de varios dias) */
@@ -439,7 +440,7 @@ function renderEvWeek(){
         var _t=_isVip?escHtml(ev.title.replace(/^\u2b50\s*/,'').replace(/^Cumple\s+/,'')):escHtml(ev.title);
         var _ic=_isVip?'\u2b50 ':'';
         h+='<div class="ev-wk-chip'+(ev._rutSkip?' rut-cancelled':'')+'" data-id="'+ev.id+'" style="border-left:3px solid '+_dc+';background:'+hexA(_dc,0.95)+'">';
-        h+='<span class="ev-wk-chip-title">'+(ev._rutSkip?'<span class="rut-skipped-title">'+_ic+_t+'</span> <span class="rut-skipped-label">(saltada)</span>':_ic+_t)+'</span>';
+        h+='<span class="ev-wk-chip-title">'+(ev._rutSkip?'<span class="rut-skipped-title">'+_ic+_t+'</span> <span class="rut-skipped-label">(saltada)</span>':_ic+_t)+rutRecoveryHtml(ev)+'</span>';
         /* Hora del evento puntual, si la tiene */
         var _wt=(!ev._rut&&getEvType(ev)!=='Ensayos boda')?evTimeLabel(ev):'';
         if(_wt)h+='<span class="ev-wk-chip-meta">'+escHtml(_wt)+'</span>';

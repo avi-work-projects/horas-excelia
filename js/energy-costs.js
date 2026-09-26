@@ -20,9 +20,11 @@ function energySupplierColor(name){
 }
 function energyCostMonths(bills,contracts,taxes,year,kind,scenario){
   return energyConsumptionMonths(bills,year,kind).map(function(m){
-    var dates=Object.keys(m.samples).sort(),daily=dates.length?m.consumption/dates.length:0;
-    var result={consumption:m.consumption,days:dates.length,groups:[],gross:null,net:null,missing:[],vatBands:[],source:m};
-    if(!dates.length||m.unknownConsumption||m.overlap||daily<0){result.missing.push(m.overlap?'Lecturas solapadas':'Consumo incompleto');return result;}
+    var readingDays=Object.keys(m.samples),pricedDays=Object.assign({},m.days),daily=readingDays.length?m.consumption/readingDays.length:0;
+    Object.keys(m.coverage).forEach(function(ds){var t=energyContractTariff(energyContractOn(contracts,kind,ds),ds);if(t&&t.modo==='fijo')pricedDays[ds]=true;});
+    var dates=Object.keys(pricedDays).sort();
+    var result={consumption:m.consumption,days:dates.length,groups:[],gross:null,net:null,missing:[],vatBands:[],dailyCosts:{},source:m};
+    if(!dates.length||m.overlap||daily<0){result.missing.push(m.overlap?'Lecturas solapadas':'Consumo incompleto');return result;}
     var groups={},net=0,gross=0;
     dates.forEach(function(ds){
       var c=energyContractOn(contracts,kind,ds),t=energyContractTariff(c,ds);
@@ -31,10 +33,12 @@ function energyCostMonths(bills,contracts,taxes,year,kind,scenario){
       var vat=scenario&&scenario.vatMode==='none'?0:scenario&&scenario.vatMode==='constant'?scenario.vat:energyVatAt(taxes,kind,ds);
       var last=result.vatBands[result.vatBands.length-1];if(last&&last.rate===vat&&energyUtc(ds)===energyUtc(last.end)+1){last.days++;last.end=ds;}else result.vatBands.push({start:ds,end:ds,rate:vat,days:1});
       if(!t||vat===null){var reason=!t?'Tarifa o vigencia pendiente':'IVA histórico pendiente';if(result.missing.indexOf(reason)<0)result.missing.push(reason);return;}
+      if(t.modo!=='fijo'&&!Object.prototype.hasOwnProperty.call(m.samples,ds)){if(result.missing.indexOf('Consumo incompleto')<0)result.missing.push('Consumo incompleto');return;}
       var n=new Date(Date.UTC(+ds.slice(0,4),+ds.slice(5,7),0)).getUTCDate();
-      var applied=t;if(t.energyMode==='tramos'&&m.periodDays===dates.length&&m.consumption>0){applied=Object.assign({},t,{periodWeights:m.periods.map(function(v){return v/m.consumption*100;})});}
+      var applied=Object.assign({},t,{servicesPerDay:0});if(t.energyMode==='tramos'&&m.periodDays===readingDays.length&&m.consumption>0){applied.periodWeights=m.periods.map(function(v){return v/m.consumption*100;});}
       if(scenario&&scenario.vatMode&&scenario.vatMode!=='historical')applied=Object.assign({},applied,{servicesVatPct:vat});
       var base=energyTariffNet(applied,kind,daily,1,n),cost=energyTariffGross(applied,kind,daily,1,n,vat)-(scenario&&scenario.promos?(t.promotion||0)/n:0);
+      result.dailyCosts[ds]=cost;
       var key=replace?'scenario':c.id;
       if(!groups[key])groups[key]={id:key,contractId:c?c.id:'',supplier:replace?(scenario.name||'Escenario'):c.supplier,net:0,gross:0,days:0,kwh:0};
       var g=groups[key];g.net+=base;g.gross+=cost;g.days++;g.kwh+=daily;net+=base;gross+=cost;

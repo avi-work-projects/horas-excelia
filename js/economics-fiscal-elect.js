@@ -60,7 +60,10 @@ function _renderElectDetalle(){
     }
     h+='<div style="border-top:1px solid var(--border);margin:4px 0"></div>';
     /* Nivel 3 */
-    h+=_hipRO('Precio kWh',e.precioKwh?e.precioKwh.toFixed(4)+' \u20ac/kWh':'\u2014');
+    if(e.energyMode==='tramos'){
+      ['Punta','Llano','Valle'].forEach(function(n,i){h+=_hipRO(n+' · '+e.periodWeights[i]+' %',e.periodPrices[i].toFixed(6)+' €/kWh');});
+      h+=_hipRO('Media ponderada',energyWeightedPrice(e).toFixed(6)+' €/kWh');
+    }else h+=_hipRO('Precio kWh',e.precioKwh?e.precioKwh.toFixed(4)+' \u20ac/kWh':'\u2014');
     h+='<div style="border-top:1px solid var(--border);margin:4px 0"></div>';
     /* Nivel 4 */
     h+=_hipROmoney('T\u00e9rmino fijo/mes',e.terminoFijo);

@@ -18,6 +18,7 @@ function energyImportPreview(data){
     if(changes.added.length||changes.updated.length){h+='<details><summary>Ver cambios</summary>';changes.added.forEach(function(v){h+='<p>Nuevo: '+escHtml(v)+'</p>';});changes.updated.forEach(function(v){h+='<p>Antes: '+escHtml(v.before)+'<br>Después: '+escHtml(v.after)+(v.before===v.after?'<br>Se actualizan precios, desglose o datos del documento.':'')+'</p>';});h+='</details>';}
     h+='</section>';
   });
-  var other=Object.keys(data).some(function(k){return ['version','exportedAt','energyBills','energyContracts','energyTaxes'].indexOf(k)<0;});
+  if(data.energyCurrentTariffs)h+='<section><h4>Tarifa actual de configuración fiscal</h4>'+energyCurrentPreview(data).map(function(x){return '<p>'+escHtml(x)+'</p>';}).join('')+'</section>';
+  var other=Object.keys(data).some(function(k){return ['version','exportedAt','energyBills','energyContracts','energyTaxes','energyCurrentTariffs'].indexOf(k)<0;});
   return h+'</div><p class="imp-preview-note">'+(other?'Este archivo también contiene otros datos. Aquí solo se importará energía; para incorporar todo, utiliza Importar todo en Ajustes. ':'')+'No se borra ningún registro. Las coincidencias se actualizan y podrás deshacer la importación.</p>';
 }

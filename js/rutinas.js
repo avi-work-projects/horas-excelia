@@ -105,16 +105,13 @@ function rutIconSvg(kind,color){
   var dark=(color==='currentColor')?'rgba(0,0,0,.45)'
           :((typeof fakeTrans==='function')?fakeTrans(color,0.52):color);
   var shapes=_rutIconShapes(kind);
-  var outline=shapes.replace(/stroke-width="([0-9.]+)"/g,function(_,w){return 'stroke-width="'+(+w+EV_SHAPE_BW)+'"';});
-  /* Dos pasadas: la negra ensancha la silueta y cierra la union de las
-     piezas, la de color la rellena por dentro. La diferencia entre las dos
-     ES el ribete, asi que se toma de EV_SHAPE_BW — el mismo borde que
-     llevan las aspas y los circulos de los eventos puntuales. Antes eran
-     2.8 y 2.7: el negro existia pero no se veia. */
-  var _sw=2.7, _bw=(typeof EV_SHAPE_BW!=='undefined'?EV_SHAPE_BW:2);
-  return '<svg viewBox="'+(kind==='baile'?'-3 -3 30 30':'0 0 24 24')+'" preserveAspectRatio="xMidYMid meet">'
-    + '<g fill="#000" stroke="#000" stroke-width="'+(_sw+_bw)+'" stroke-linejoin="round" stroke-linecap="round">'+outline+'</g>'
-    + '<g fill="'+color+'" stroke="'+color+'" stroke-width="'+_sw+'" stroke-linejoin="round" stroke-linecap="round">'+shapes+'</g>'
+  /* El ribete ocupa la misma proporción que en el viewBox de 20 de los
+     puntuales. En una silueta rellena la mitad del trazo queda dentro. */
+  var bw=(typeof EV_SHAPE_BW!=='undefined'?EV_SHAPE_BW:2)*30/20;
+  var outline=shapes.replace(/stroke-width="([0-9.]+)"/g,function(_,w){return 'stroke-width="'+(+w+2*bw)+'"';});
+  return '<svg viewBox="-3 -3 30 30" preserveAspectRatio="xMidYMid meet">'
+    + '<g fill="#000" stroke="#000" stroke-width="'+(2*bw)+'" stroke-linejoin="round" stroke-linecap="round">'+outline+'</g>'
+    + '<g fill="'+color+'" stroke="'+color+'" stroke-width="0" stroke-linejoin="round" stroke-linecap="round">'+shapes+'</g>'
     + _rutIconDetails(kind,dark)
     + '</svg>';
 }
@@ -241,7 +238,16 @@ function rutOccursOn(r,ds){
   return cfg.time;
 }
 function rutIsSkipped(r,ds){return !!(r.skips&&r.skips[ds]);}
-function rutToggleSkip(r,ds){
+function rutToggleSkip(r,ds,key){
+  key=key||ds;
+  var session=rutSessionByKey(r,key);
+  if(!session)return false;
+  if(session.skip&&rutRecoveryFor(r,key)){showToast('Esta sesión ya tiene una recuperación. Cancela primero la recuperación para reactivar la original.','error');return false;}
+  if(session.extra){
+    var copy=JSON.parse(JSON.stringify(r)),extra=copy.extraSessions.find(function(s){return s.id===key;});extra.skip=!extra.skip;
+    try{rutValidateExtraSessions(copy);}catch(e){showToast('Revisa la cancelación original y sus otras recuperaciones antes de reactivar esta clase.','error');return false;}
+    r.extraSessions=copy.extraSessions;saveRutinas();return true;
+  }
   r.skips=r.skips||{};
   if(r.flex&&r.skips[ds]){
     try{var s=r.flex.sessions[ds];rutFlexSetSession(r,ds,ds,s.time,s.dur,true);saveRutinas();return true;}
@@ -261,26 +267,26 @@ function rutFin(time,dur){
 function rutEventsOn(ds){
   var out=[];
   RUTINAS.forEach(function(r){
-    var t=rutOccursOn(r,ds);
-    if(!t)return;
-    out.push({
-      id:'rut-'+r.id+'-'+ds,
-      title:r.name,
-      note:(r.flex?'Rutina flexible':'Rutina semanal')+' · '+t+'–'+rutFin(t,rutDurationOn(r,ds)),
+    rutSessionsOn(r,ds).forEach(function(s){
+      var tag=rutSessionTag(r,s);
+      out.push({
+      id:'rut-'+r.id+'-'+ds+(s.extra?'~'+s.key:''),
+      title:r.name+(tag?' '+tag:''),
+      note:(r.flex?'Rutina flexible':'Rutina semanal')+' · '+s.time+'–'+rutFin(s.time,s.dur),
       color:r.color,
       kind:'puntual', type:'Rutina',
       start:ds, end:ds, repeat:null,
-      _rut:r, _rutTime:t, _rutDur:rutDurationOn(r,ds), _rutSkip:rutIsSkipped(r,ds)
-    });
+      _rut:r, _rutKey:s.key, _rutTime:s.time, _rutDur:s.dur, _rutSkip:s.skip
+    });});
   });
   return out;
 }
 function rutEventFromId(id){
-  var m=String(id||'').match(/^rut-(.+)-(\d{4}-\d{2}-\d{2})$/);
+  var m=String(id||'').match(/^rut-(.+)-(\d{4}-\d{2}-\d{2})(?:~(extra-[a-z0-9-]+))?$/);
   if(!m)return null;
   var r=rutById(m[1]);
   if(!r)return null;
-  return {rutina:r, ds:m[2]};
+  return rutSessionByKey(r,m[3]||m[2])?{rutina:r, ds:m[2],key:m[3]||m[2]}:null;
 }
 
 /* ── Sesiones de una rutina entre dos fechas ── */
@@ -292,8 +298,7 @@ function rutSessions(r,fromDs,toDs){
   var g=0;
   while(d<=end&&g<800){
     var ds=evDk(d);
-    var t=rutOccursOn(r,ds);
-    if(t)out.push({ds:ds,time:t,skip:rutIsSkipped(r,ds)});
+    out=out.concat(rutSessionsOn(r,ds));
     d.setDate(d.getDate()+1);g++;
   }
   return out;
@@ -377,8 +382,8 @@ function _renderRutLista(){
     if(prox.length){
       h+='<div class="rut-prox">';
       prox.forEach(function(s){
-        h+='<span class="rut-prox-i'+(s.skip?' skip':'')+'" data-rid="'+r.id+'" data-ds="'+s.ds+'">'
-          +_rutFmtCorto(s.ds)+' · '+s.time+(s.skip?' ✕':'')+'</span>';
+        h+='<span class="rut-prox-i'+(s.skip?' skip':'')+'" data-rid="'+r.id+'" data-ds="'+s.ds+'" data-session="'+s.key+'">'
+          +_rutFmtCorto(s.ds)+' · '+s.time+(s.skip?' ✕':'')+' '+escHtml(rutSessionTag(r,s))+'</span>';
       });
       h+='</div>';
     } else if(!susp){
@@ -436,7 +441,7 @@ function _renderRutStats(){
     if(pas.length){
       h+='<div class="rut-hist">';
       pas.forEach(function(x){
-        h+='<button class="rut-hist-i'+(x.skip?' skip':'')+'" data-rid="'+r.id+'" data-ds="'+x.ds+'" title="'
+        h+='<button class="rut-hist-i'+(x.skip?' skip':'')+'" data-rid="'+r.id+'" data-ds="'+x.ds+'" data-session="'+x.key+'" title="'
           +(x.skip?'Marcada como saltada':'Marcada como hecha')+' — pulsa para cambiar">'
           +x.ds.slice(8)+'/'+x.ds.slice(5,7)+'</button>';
       });
@@ -683,7 +688,8 @@ function openRutWeek(r){
    Se reutiliza renderEvCalMonth() tal cual (mismos eventos, mismos colores,
    mismos puentes) y se deja inerte con pointer-events: lo unico que se puede
    pulsar es la semana. Asi se localiza de un vistazo la que se busca. */
-function _rutWeekPick(r){
+function _rutWeekPick(r,opts){
+  opts=opts||{};
   var y=RUT_WEEK_CAL.y,m=RUT_WEEK_CAL.m;
   var h='<div class="ev-detail-overlay" id="rutWkOv"><div class="ev-detail-sheet">';
   h+='<div class="ev-detail-handle"></div>';
@@ -704,10 +710,10 @@ function _rutWeekPick(r){
   var cal=renderEvCalMonth();
   EV_YEAR=_y0;EV_MONTH=_m0;
   h+='<div class="rut-wpick-real">'+cal+'</div>';
-  h+='<div class="sy-note" style="font-size:.68rem">Pulsa cualquier semana para cambiarla. '
-    +'Las que ya tienen un cambio guardado salen recuadradas.</div>';
+  h+='<div class="sy-note rut-week-help">'+(opts.hint||'Pulsa cualquier semana para cambiarla. Las que ya tienen un cambio guardado salen recuadradas.')+'</div>';
   h+='</div></div>';
-  abrirPanel('rutWkWrap',h,{overlay:'rutWkOv',alCerrar:closeRutWeek});
+  var back=function(){closeRutWeek();if(opts.onClose)opts.onClose();};
+  abrirPanel('rutWkWrap',h,{overlay:'rutWkOv',alCerrar:back});
   /* Cada fila de semana se vuelve pulsable y se marca si ya tiene cambio */
   document.querySelectorAll('#rutWkOv .ev-week-outer').forEach(function(w){
     var celda=w.querySelector('.ev-cell[data-ds]');
@@ -717,17 +723,17 @@ function _rutWeekPick(r){
     if(r.weeks&&r.weeks[wk])w.classList.add('rut-wk-cambiada');
     w.addEventListener('click',function(){
       RUT_WEEK_SEL=wk;
-      _rutWeekRender(r);
+      if(opts.onWeek)opts.onWeek(wk);else _rutWeekRender(r);
     });
   });
-  document.getElementById('rutWkClose').addEventListener('click',closeRutWeek);
+  document.getElementById('rutWkClose').addEventListener('click',back);
   document.getElementById('rutWkMPrev').addEventListener('click',function(){
     RUT_WEEK_CAL.m--; if(RUT_WEEK_CAL.m<0){RUT_WEEK_CAL.m=11;RUT_WEEK_CAL.y--;}
-    _rutWeekPick(r);
+    _rutWeekPick(r,opts);
   });
   document.getElementById('rutWkMNext').addEventListener('click',function(){
     RUT_WEEK_CAL.m++; if(RUT_WEEK_CAL.m>11){RUT_WEEK_CAL.m=0;RUT_WEEK_CAL.y++;}
-    _rutWeekPick(r);
+    _rutWeekPick(r,opts);
   });
   if(typeof addSwipe==='function'){
     var _cal=document.querySelector('#rutWkOv .rut-wpick-real');
@@ -818,7 +824,9 @@ function _rutWeekRender(r){
 function closeRutWeek(){cerrarPanel('rutWkWrap','rutWkOv');}
 
 /* ══ Detalle de una sesión (al pulsarla en un calendario) ══ */
-function openRutSesion(r,ds){
+function openRutSesion(r,ds,key){
+  key=key||ds;
+  if(key!==ds){var virtual=rutEventsOn(ds).find(function(e){return e._rut===r&&e._rutKey===key;});if(virtual)openEvDetail(virtual);return;}
   var t=rutOccursOn(r,ds)||r.time;
   var skip=rutIsSkipped(r,ds);
   var h='<div class="ev-detail-overlay" id="rutSesOv"><div class="ev-detail-sheet">';
@@ -832,6 +840,7 @@ function openRutSesion(r,ds){
   h+='<div class="ev-detail-title" style="color:'+r.color+'">'+escHtml(r.name)+'</div>';
   h+='<div class="ev-detail-date">&#128197; '+_rutFmtCorto(ds)+' &#183; '+t+'–'+rutFin(t,rutDurationOn(r,ds))+'</div>';
   if(skip)h+='<div class="ev-detail-note" style="color:var(--c-orange)">Sesión marcada como saltada</div>';
+  var recovered=rutRecoveryNote(r,key);if(recovered)h+='<em class="rut-recovery-note">'+escHtml(recovered)+'</em>';
   h+='<div class="ev-detail-actions">';
   h+='<button class="ev-btn" id="rutSesSkip">'+(skip?'&#10003; Marcar como hecha':'&#10007; Marcar como saltada')+'</button>';
   h+='</div></div></div>';
@@ -881,10 +890,10 @@ function bindRutinasEvents(){
     b.addEventListener('click',function(e){
       e.stopPropagation();
       var r=rutById(b.dataset.rid);if(!r)return;
-      if(rutToggleSkip(r,b.dataset.ds)===false)return;
+      if(rutToggleSkip(r,b.dataset.ds,b.dataset.session)===false)return;
       refreshEvents();
-      showToast(rutIsSkipped(r,b.dataset.ds)?'Sesión saltada':'Sesión hecha','success',
-        function(){rutToggleSkip(r,b.dataset.ds);refreshEvents();});
+      showToast(rutSessionByKey(r,b.dataset.session||b.dataset.ds).skip?'Sesión saltada':'Sesión hecha','success',
+        function(){rutToggleSkip(r,b.dataset.ds,b.dataset.session);refreshEvents();});
     });
   });
 }

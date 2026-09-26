@@ -28,8 +28,10 @@ No hace falta cambiar de framework. Los renders devuelven HTML y no persisten ca
 | bodas-bind.js | pareja, acciones de vistas y contexto de render |
 | rutinas.js | recurrencias, excepciones y sesiones virtuales |
 | rutinas-flex.js | cupos semanales/mensuales, planificación por fecha y avisos de sesiones pendientes |
+| rutinas-sessions.js / rutinas-addition.js | sesiones extras y recuperadas, vínculos con canceladas y alta guiada |
 | economics-* | calculos, datos, vistas y acciones economicas |
 | energy-analysis.js / energy-costs.js | lecturas por mes, tarifas ponderadas, vigencias, IVA y coste estimado |
+| energy-reconciliation.js | suministro frente a facturación en los mismos días, servicios separados y tarifa actual importable |
 | energy-study.js / energy-analysis-view.js / energy-analysis-bind.js | indicadores, cinco pestañas del estudio y acciones de consulta/importación |
 | energy-import-preview.js | cambios previstos al fusionar facturas, contratos e IVA antes de escribir |
 | import-export.js | backups, fusion y exportaciones |
@@ -84,9 +86,11 @@ Si todos los días tienen tramos, sus proporciones sustituyen los pesos genéric
 de la tarifa. Las cuotas fijas conservan el prorrateo por días reales del mes.
 `energyCostMonths` devuelve grupos por contrato y bandas de IVA para las gráficas.
 
-Los impuestos documentados y el total real se agrupan por **emisión**; el estimado,
-por **consumo**. La diferencia incluye desplazamientos entre años, huecos,
-regularizaciones y servicios; no se interpreta como error puro del modelo.
+Los impuestos documentados y los totales del archivo se agrupan por **emisión**.
+La comparación de Coste usa los **mismos días de suministro** en estimado y
+facturado: prorratea cada factura o abono a su período y excluye los días que
+no tienen ambos datos. Así un abono de consumo del año anterior no falsea el
+año de emisión. No representa pagos bancarios ni un error puro del modelo.
 El IVA histórico refleja las fechas importadas, no una tabla legal incorporada.
 Los documentos privados y archivos de importación nunca van en el repositorio.
 
@@ -96,14 +100,48 @@ cargos no crean tarifas visuales nuevas: `analysisPeriods` conserva sus
 vigencias para el cálculo. `extrasPerDay` representa alquiler/servicios diarios
 sujetos a IVA, fuera de la base del impuesto eléctrico. Si no existe vale cero.
 Los servicios recurrentes con distinto IVA usan `servicesPerDay` y
-`servicesVatPct`. `energyTariffGross` separa ambos tipos; en escenarios de
-IVA constante/sin IVA se aplica la hipótesis a todos los conceptos.
+`servicesVatPct`. Los cálculos fiscales conservan esos campos. El estudio
+compara solo suministro: excluye `servicesPerDay`, los recibos `serviceOnly`
+y los importes opcionales `servicesNet` / `servicesGross` de recibos mixtos.
+Se conservan los abonos negativos de servicios y se muestran separados en Resumen.
+Las cuotas fijas pueden calcularse sobre los días facturados aunque no haya
+lectura nueva; eso no crea consumo cero ni permite un escenario por kWh sin lectura.
 La franja de IVA une meses adyacentes del mismo tipo, respetando huecos sin datos.
 
 La importación específica llama a `energyImportPreview` antes de persistir y
 ofrece solo fusión; Cancelar no escribe. Usa las mismas funciones de fusión que
 la importación real. Los JSON compuestos pueden incluir `importNotes`, texto
 escapado que el resumen general muestra antes de confirmar.
+
+### Importar la tarifa actual (v371)
+`energyCurrentTariffs:[{kind,contractId,date}]` es un parche opcional de importación.
+Valida la vigencia, resuelve la identidad por contenido al fusionar y actualiza
+solo la tarifa de `despacho` que corresponda. Lee la configuración almacenada,
+aunque no se haya abierto Fiscal; conserva hipoteca, gas, deducciones y demás
+campos. La vista previa anuncia el cambio. Importación y Deshacer son atómicos.
+No añade una clave de almacenamiento: Exportar todo ya incluye la tarifa en
+`despacho`, con sus tramos, pesos y fecha efectiva. No se cambia automáticamente
+por comparar un escenario ni por importar únicamente contratos históricos.
+
+### Rutinas: extras y recuperaciones (v371)
+`extraSessions:[{id,date,time,dur,recoveryOf,skip}]` vive dentro de cada rutina.
+Las sesiones habituales conservan su clave de fecha; las extras tienen id propio.
+`rutSessionsOn` es la enumeración común para calendarios, histórico, estadísticas,
+cupos e ICS: dos clases del mismo día nunca se colapsan en un único marcador.
+Una recuperación conserva el original cancelado y enlaza con su clave estable;
+solo puede haber una recuperación activa por original, siempre posterior.
+Cancelar una recuperación no reactiva automáticamente la original.
+El alta es guiada y reutiliza el calendario de elección de semana. Permite
+cancelar ahora y dejar la recuperación sin fecha. Se guardan al confirmar y
+ofrecen Deshacer. La importación valida vínculos, horarios y límites diarios.
+Los módulos no añaden claves al backup: viajan en `rutinas`.
+
+### Capas y contornos de calendarios (v371)
+La atenuación de días pasados/adyacentes se aplica a sus hijos, no a toda la
+celda: la opacidad del padre creaba una capa que dejaba marcadores bajo las barras.
+Los trazos huecos usan un halo fino con `--ev-marker-halo`, igual al fondo de
+laborable/finde y del tema. Los grandes Otros nuevos parten de grosor fino;
+los ya guardados conservan su grosor y la compatibilidad anterior.
 
 ### Símbolos puntuales y Médico (v370)
 `evShapeSvg` es compartido por todos los calendarios y selectores. Hay 12 formas

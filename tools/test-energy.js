@@ -142,8 +142,44 @@ const serviceTariff=a.energyTariffDefaults({precioKwh:.2,servicesPerDay:.1,servi
 near(a.energyTariffNet(serviceTariff,'luz',100,30,30),23);
 near(a.energyTariffGross(serviceTariff,'luz',100,30,30,10),22+3.63);
 const serviceContract={...ca,end:'2026-01-31',analysis:serviceTariff};
-near(a.energyCostMonths([billCost],[serviceContract],[{kind:'luz',start:'2026-01-01',rate:10}],2026,'luz')[0].gross,62*1.1+3.1*1.21);
-near(a.energyCostMonths([billCost],[serviceContract],taxCost,2026,'luz',{vatMode:'none'})[0].gross,65.1);
-near(a.energyCostMonths([billCost],[serviceContract],taxCost,2026,'luz',{vatMode:'constant',vat:5})[0].gross,65.1*1.05);
+near(a.energyCostMonths([billCost],[serviceContract],[{kind:'luz',start:'2026-01-01',rate:10}],2026,'luz')[0].gross,62*1.1);
+near(a.energyCostMonths([billCost],[serviceContract],taxCost,2026,'luz',{vatMode:'none'})[0].gross,62);
+near(a.energyCostMonths([billCost],[serviceContract],taxCost,2026,'luz',{vatMode:'constant',vat:5})[0].gross,62*1.05);
 assert.throws(()=>a.energyValidateTariff({...serviceTariff,servicesVatPct:101}));
-console.log('Energía: servicios con IVA propio y escenarios constantes/sin IVA OK');
+console.log('Energía: servicios conservados en tarifas, excluidos del coste del suministro OK');
+
+// Un abono de otro año y los servicios no falsean la comparación del consumo.
+const clean={...billCost,id:'clean',gross:80,servicesGross:10};
+const oldCredit={...clean,id:'credit',number:'old-credit',start:'2025-01-01',end:'2025-01-31',issued:'2026-01-20',gross:-100,servicesGross:0,readings:[]};
+const reconMonths=a.energyCostMonths([clean,oldCredit],[serviceContract],taxCost,2026,'luz');
+const rec=a.energyReconcile([clean,oldCredit],reconMonths,2026,'luz');
+near(rec.actual,70);near(rec.services,10);near(rec.issuedSupply,-30);assert.equal(rec.days,31);
+const svcCredit={...clean,servicesGross:-16.42,gross:50.13};a.validateEnergyBills([svcCredit]);near(a.energyBillSupply(svcCredit),66.55);
+const flatBill={...billCost,kind:'gas',consumption:null,noReading:true,readings:[]};
+const flatContract={...ca,kind:'gas',end:'2026-01-31',analysis:a.energyTariffDefaults({modo:'fijo',cuotaFija:55})};
+const flatMonths=a.energyCostMonths([flatBill],[flatContract],[{kind:'gas',start:'2026-01-01',rate:21}],2026,'gas');
+near(flatMonths[0].gross,66.55);assert.equal(Object.keys(flatMonths[0].source.samples).length,0);
+assert.equal(a.energyCostMonths([flatBill],[flatContract],[{kind:'gas',start:'2026-01-01',rate:21}],2026,'gas',{tariff:a.energyTariffDefaults({precioKwh:.1})})[0].gross,null);
+const currentApp=cargarApp({});currentApp.DESPACHO.personalSentinel='conservar';
+const currentData={energyContracts:[{tariff:'Tarifa de prueba',supply:'Vivienda',commitment:'',notes:'',source:'',prices:[],taxes:'excluidos',...serviceContract}],energyTaxes:taxCost,energyCurrentTariffs:[{kind:'luz',contractId:serviceContract.id,date:'2026-01-01'}]};
+assert(currentApp.renderImportPreview(currentData).includes('Sustituye la tarifa actual'));
+const oldConfig=JSON.stringify(currentApp.DESPACHO),restore=currentApp.energyImportHistory(currentData);
+assert.equal(currentApp.DESPACHO.elect.energyContractId,serviceContract.id);assert.equal(currentApp.DESPACHO.personalSentinel,'conservar');
+currentApp.energyRestoreHistory(restore);assert.equal(JSON.stringify(currentApp.DESPACHO),oldConfig);
+assert.throws(()=>currentApp.validateImport({...currentData,energyCurrentTariffs:[{kind:'luz',contractId:'inexistente',date:'2026-01-01'}]}));
+console.log('Energía: conciliación por consumo, servicios y abonos, cuota sin lectura, tarifa actual selectiva y deshacer OK');
+// Importar desde Inicio no debe reemplazar los ajustes fiscales aún sin cargar.
+const storedConfig={m2Total:84,m2Despacho:9,compra:{entidadBanco:'Banco de prueba'},elect:{comercializadora:'Anterior',custom:'conservar'},gas:{activo:'fijo',fijo:{cuotaFija:42}},futureSetting:{keep:true}};
+const cold=cargarApp({});cold.appStorage.setItem(cold.DESPACHO_SK,JSON.stringify(storedConfig));
+const coldUndo=cold.energyImportHistory(currentData);
+assert.equal(cold.DESPACHO.m2Total,84);assert.equal(cold.DESPACHO.compra.entidadBanco,'Banco de prueba');
+assert.equal(cold.DESPACHO.gas.fijo.cuotaFija,42);assert.equal(cold.DESPACHO.futureSetting.keep,true);assert.equal(cold.DESPACHO.elect.custom,'conservar');
+cold.energyRestoreHistory(coldUndo);assert.equal(cold.appStorage.getItem(cold.DESPACHO_SK),JSON.stringify(storedConfig));
+// Un contrato importado antes desde otro dispositivo conserva su id local.
+cold.energySaveContracts([{...currentData.energyContracts[0],id:'local-contract'}]);
+cold.energyImportHistory(currentData);assert.equal(cold.DESPACHO.elect.energyContractId,'local-contract');assert.equal(cold.energyContracts().length,1);
+assert(!cold.energyConsumptionHtml('gas',cold.energyConsumptionMonths([],2026,'gas'),2026).includes('<th>Punta</th>'));
+const gasCurrent={...currentData.energyContracts[0],id:'current-gas',kind:'gas',analysis:a.energyTariffDefaults({modo:'fijo',cuotaFija:40})};
+cold.energyImportHistory({energyContracts:[gasCurrent],energyTaxes:[{kind:'gas',start:'2026-01-01',rate:10}],energyCurrentTariffs:[{kind:'gas',contractId:'current-gas',date:'2026-01-01'}]});
+assert.equal(cold.DESPACHO.gas.activo,'fijo');assert.equal(cold.DESPACHO.gas.ivaGas,10);assert.equal(cold.DESPACHO.elect.energyContractId,'local-contract');
+console.log('Energía: configuración fiscal sin abrir, deshacer exacto e identidad entre dispositivos OK');
