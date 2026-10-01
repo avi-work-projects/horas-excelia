@@ -34,7 +34,7 @@ function openRutRecoveryDay(r,key,date,back){
     var wrap=rutAdditionPanel(r.name+' - elige día',h,back||function(){openRutAddition(r);});
     wrap.querySelectorAll('.ev-cell[data-ds]').forEach(function(cell){
       cell.classList.toggle('rut-day-selected',cell.dataset.ds===state.date);
-      cell.setAttribute('role','button');cell.setAttribute('tabindex','0');cell.setAttribute('aria-label',_rutFmt(cell.dataset.ds));
+      cell.setAttribute('role','button');cell.setAttribute('tabindex','0');cell.setAttribute('aria-label',_rutFmt(cell.dataset.ds));cell.setAttribute('aria-pressed',String(cell.dataset.ds===state.date));
       function select(){state.date=cell.dataset.ds;render();}
       cell.onclick=select;cell.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();select();}};
     });
@@ -47,7 +47,7 @@ function openRutRecoveryDay(r,key,date,back){
 function rutReadOnlyDayHtml(ds){
   if(!validIsoDate(ds))return '<p class="sy-note">Elige una fecha válida.</p>';
   var events=getEventsOn(ds).slice().sort(evCompareTime);
-  var h='<h3>Agenda · '+_rutFmt(ds)+'</h3><div class="rut-day-agenda">';
+  var h='<div class="rut-agenda-heading"><h3>Ese día ya tienes</h3><span>'+_rutFmtCorto(ds)+'</span></div><div class="rut-day-agenda">';
   events.forEach(function(ev){
     var time=evTimeLabel(ev);
     h+='<div class="rut-agenda-item" style="--agenda-color:'+getEvDisplayColor(ev)+'"><strong>'+escHtml(ev.title||getEvType(ev))+'</strong><span>'+escHtml(time||'Todo el día')+(ev._rutSkip?' · Cancelada':'')+'</span></div>';

@@ -14,7 +14,7 @@ test('navegación compartida, agenda integrada y acceso al último detalle del h
  await page.locator('[data-hipsub="gas"]').click();
  await page.locator('#fiscalOverlay [data-nav="events"]').click();
  await expect(page.locator('#eventsOverlay')).toHaveClass(/open/);
- expect(await page.locator('.ev-main-tabs button').evaluateAll(els=>els.map(el=>el.id))).toEqual(['evViewTimeOff','evViewCal','evViewQuad','evViewBodas','evViewBday','evViewUpcoming','evViewAnnual','evViewRutinas']);
+ expect(await page.locator('.ev-main-tabs button').evaluateAll(els=>els.map(el=>el.id))).toEqual(['evViewTimeOff','evViewQuad','evViewAnnual','evViewBodas','evViewBday','evViewUpcoming','evViewCal','evViewRutinas']);
  await page.locator('#evViewUpcoming').click();await page.locator('#evSubAgenda').click();
  await expect(page.locator('#evSubAgenda')).toHaveClass(/active/);
  await expect(page.locator('.ev-wk-month-sep').first()).toBeVisible();

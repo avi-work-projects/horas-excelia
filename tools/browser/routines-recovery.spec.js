@@ -13,10 +13,21 @@ async function history(page){
   await page.locator('.rut-edit').click();await page.locator('#rutFHistory').click();
 }
 test('recuperación con calendario, agenda fija y estado enlazado',async({page})=>{
+  await page.addInitScript(()=>localStorage.setItem('excelia-events-v1',JSON.stringify([
+    {id:'travel-hit-test',kind:'grande',type:'Viaje',title:'Viaje de prueba',start:'2026-10-01',end:'2026-10-12',color:'#426aaa'},
+    {id:'travel-overlap-test',kind:'grande',type:'Viaje',title:'Otro viaje de prueba',start:'2026-10-06',end:'2026-10-10',color:'#9a68b0'}
+  ])));
   await history(page);
   await page.locator('[data-history-edit="2026-09-24"]').click();
   await expect(page.locator('#rutHistorySkip')).toHaveCount(0);await expect(page.locator('#rutHistoryEditAdd')).toHaveCount(0);
   await page.locator('#rutHistoryRecover').click();
+  // Las barras escalonadas no pueden interceptar el centro ni la base de una celda.
+  for(const date of ['2026-10-07','2026-10-08']){
+    const cell=page.locator('#rutAdditionOv .ev-cell[data-ds="'+date+'"]');
+    const box=await cell.boundingBox();
+    await cell.click({position:{x:box.width*.5,y:box.height*.7}});
+    await expect(page.locator('#rutAdditionOv .ev-cell[data-ds="'+date+'"]')).toHaveAttribute('aria-pressed','true');
+  }
   await page.locator('#rutAdditionOv .ev-cell[data-ds="2026-10-08"]').click();
   await expect(page.locator('#rutRecoveryConfirm')).toContainText('08/10/2026');
   await page.locator('#rutRecoveryConfirm').click();await expect(page.locator('#rutDestinationAgenda')).toContainText('20:00');

@@ -111,6 +111,13 @@ energía para que no queden ventanas ocultas ni retornos pendientes.
 Los contratos, lecturas e impuestos históricos solo cambian al importar.
 Los controles de IVA y tarifa comparada son escenarios temporales, sin alterar el histórico.
 
+Desde v376, los cinco apartados tienen tonos propios limitados a `.energy-window`.
+`energySectionTitle` y `energyInfoHtml` unifican cabeceras y explicaciones plegables;
+`energyPeriodsHtml` y `energySuppliersHtml` separan el reparto por tramos del histórico.
+Resumen prioriza consumo y medias; Coste separa gráfico, conciliación y detalles;
+Escenarios destaca el ahorro/coste adicional. Se reutilizan los cálculos existentes.
+No extender estos estilos ni la distribución de `.energy-tabs` al resto de ventanas.
+
 `energyBills` admite `vatAmount`, `electricityTaxAmount`, `otherTaxesAmount`
 y `readings:[{start,end,consumption,periods:[punta,llano,valle]}]` opcionales.
 Las fechas de `readings` son **inclusivas**. Un array vacío conserva el documento
@@ -431,6 +438,8 @@ Al usar otro dispositivo se debe restaurar el backup para conservar identificado
 - Marcadores mensuales: `rutMarkerGroups` agrupa sesiones de la misma rutina, estado y horas consecutivas exactas. Cada grupo ocupa una fila; las posteriores se desplazan un 20 % a la derecha detrás de la primera, sin escalar el SVG. Los horarios separados ocupan filas distintas. El selector de actividad pasa `chooser:true` a `rutIconSvg` para suavizar solo ese contorno.
 - Prioridad puntual: Otros sin relleno (wave, x-outline, circle-plus), Gestiones/Médico, resto estable. Los ensayos conservan su orden horario. Médico fuerza `medical` al renderizar (cajetín blanco/cruz roja), también para datos antiguos con x-thin.
 - `rutinas-recovery.js`: listado cronológico de cancelaciones sin recuperar; filtro de pasadas; selección de día reutilizando el calendario mensual; agenda de consulta y formulario final. Guardar es el único paso que crea la recuperación.
+- Recuperación (v376): clase original, agenda de destino y nueva sesión en tres bloques. En `.rut-dpick-real` todo el contenido del calendario es inerte salvo las celdas: el `!important` evita que los paths de barras escalonadas capturen pulsaciones. El mes sticky del histórico tiene fondo opaco y esquinas rectas; el borde redondeado pertenece a su contenedor para no dejar huecos al desplazarlo.
+- Botonera Eventos (v376), por filas: Vacaciones/Festivos, 4 meses, Anual, WM; Cumpleaños, Próximos, 1 mes, Rutinas. Cumpleaños reutiliza el icono profesional conservado y mantiene su nombre accesible. Las rutinas de horario fijo destacan la hora inicial sin alterar su cálculo.
 - `rutinas-bulk.js`: selección múltiple por sesión/mes, cancelar/eliminar de forma atómica con confirmación y Deshacer. Si se elimina el origen, una recuperación no seleccionada se convierte en extra. `r.pauses=[{from,to}]` guarda pausas inclusivas independientes de las versiones del horario; la fecha de vuelta es `to+1`. Se fusionan intervalos contiguos; se ocultan sesiones ordinarias y extras activas del intervalo, sin borrarlas. Las canceladas se conservan en el histórico. Las pausas viajan dentro de `rutinas` en el backup y se validan al importar.
 - Subpestañas (corregido en v375): restaurada la base `.econ-sub-tabs` anterior a v373, con botones de igual ancho y sus tamaños/pesos originales. El reparto por ancho de texto queda limitado a `.energy-tabs`; Bodas conserva su excepción previa. No propagar esa excepción a Eventos, Economía ni al resto de ventanas. Home y overlays comparten padding/gap/tamaños de navegación; la campana usa margen automático en ambos.
 - Una paleta compartida de 48 colores, 8 filas de 6 por familia cromática.

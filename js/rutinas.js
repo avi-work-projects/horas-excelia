@@ -308,7 +308,7 @@ function _renderRutLista(){
     if(rutTieneHorarios(r)){
       h+='<span class="rut-hora rut-hora-varias">horario por d\u00eda</span>';
     } else {
-      h+='<span class="rut-hora">'+(r.time||RUT_TIME_DEFAULT)+'\u2013'+rutFin(r.time,r.dur)+'</span>';
+      h+='<span class="rut-hora rut-hora-fixed"><strong>'+(r.time||RUT_TIME_DEFAULT)+'</strong><span>–'+rutFin(r.time,r.dur)+'</span></span>';
     }
     h+='</div>';
     /* Proximas sesiones */
