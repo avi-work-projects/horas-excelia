@@ -60,7 +60,10 @@ test('Rutinas: intervalos completos, varias horas, flexibles e histórico direct
     {id:'flex',name:'Rutina flexible',icon:'gym',start:'2026-09-01',weekDays:[],time:'18:00',dur:60,skips:{},flex:{period:'month',target:8,weeklyTarget:2,sessions:{'2026-10-02':{time:'18:00',dur:75}}}}
   ])));
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewRutinas').click();
+  await page.goto('/');
+  // El cupo flexible incompleto recuerda sus sesiones incluso con otros avisos cerrados.
+  await page.locator('#homePopupClose').click();
+  await page.locator('#eventsBtn').click();await page.locator('#evViewRutinas').click();
   await expect(page.locator('[data-rid="fixed"] .rut-schedule')).toContainText('16:00–17:00');
   await expect(page.locator('[data-rid="multiple"] .rut-schedule')).toContainText('18:00–19:30');
   await expect(page.locator('[data-rid="multiple"] .rut-schedule')).toContainText('20:00–21:30');
