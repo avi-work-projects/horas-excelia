@@ -90,3 +90,41 @@ const nextHtml=a._renderRutSchedule(futureSchedule,'2026-09-01');
 assert(nextHtml.includes('Martes')&&nextHtml.includes('<time>21:30</time>'));
 assert(!nextHtml.includes('Lunes 18:00'));
 console.log('Rutinas: agrupación, horarios vigentes, operaciones atómicas y pausa temporal importable OK');
+
+// La edición general respeta el inicio y no modifica el horario ni el cupo inicial.
+{
+const future={...original,id:'future',start:'2026-09-01',icon:'padel',skips:{},extraSessions:[]};
+assert.equal(a.rutSetupLocked(future),false);
+assert.equal(a.rutSetupLocked({...future,start:'2026-08-21'}),true);
+assert.equal(a.rutSetupLocked({...future,extraSessions:[{date:'2026-08-20'}]}),true);
+assert(a.renderRutForm(future).includes('id="rutFIcons"'));
+assert(!a.renderRutForm({...future,start:'2026-08-21'}).includes('id="rutFIcons"'));
+const initial=a.rutFormCandidate(future,{name:'Otro nombre',icon:'baile',color:'#e03131',weekDays:[2],time:'21:00',dur:90,flex:null});
+assert.equal(initial.start,'2026-09-01');assert.equal(initial.time,'21:00');assert.equal(initial.dur,90);
+assert.equal(a.rutOccursOn(initial,'2026-08-25'),null);
+const protectedEdit=a.rutFormCandidate(original,{name:'Renombrada',icon:'gym',color:'#38bdf8',weekDays:[0],time:'21:00',dur:90,suspend:original.suspend});
+assert.equal(protectedEdit.time,original.time);assert.deepEqual(protectedEdit.weekDays,original.weekDays);
+assert.equal(protectedEdit.dur,original.dur);assert.equal(protectedEdit.icon,a.rutIconOf(original));
+const flexGoals={...future,start:'2026-08-01',weekDays:[],flex:{period:'month',target:8,weeklyTarget:2,sessions:{'2026-08-20':{time:'18:00',dur:60}}}};
+const newGoals=a.rutFormCandidate(flexGoals,{name:flexGoals.name,color:flexGoals.color,flex:{target:12,weeklyTarget:3,period:'week',sessions:{}}});
+assert.equal(newGoals.flex.period,'month');assert.equal(a.rutFlexTarget(newGoals,'2026-08-02'),8);
+assert.equal(a.rutFlexTarget(newGoals,'2026-09-02'),12);assert.equal(newGoals.flex.weeklyTarget,3);
+assert.deepEqual(newGoals.flex.sessions,flexGoals.flex.sessions);assert.equal(flexGoals.flex.target,8);
+assert.equal(a.rutSetupLocked({...flexGoals,start:'2026-08-25'}),true); // Fechas ya realizadas al iniciar a mitad de mes.
+// Cambiar modalidad antes del inicio conserva las sesiones explícitas y las recuperaciones.
+const planned={...future,weekDays:[],flex:{period:'month',target:8,weeklyTarget:2,sessions:{'2026-09-03':{time:'19:00',dur:45}}},skips:{'2026-09-03':1},extraSessions:[{id:'extra-linked',date:'2026-09-04',time:'12:00',dur:45,recoveryOf:'2026-09-03'}]};
+const toFixed=a.rutFormCandidate(planned,{name:planned.name,color:planned.color,flex:null,weekDays:[1],time:'17:00',dur:60});
+assert.equal(a.rutOccursOn(toFixed,'2026-09-03'),'19:00');assert.equal(a.rutDurationOn(toFixed,'2026-09-03'),45);
+assert.doesNotThrow(()=>a.validateImport({rutinas:[toFixed]}));
+const backToFlex=a.rutFormCandidate(toFixed,{name:planned.name,color:planned.color,flex:{period:'month',target:8,weeklyTarget:2,sessions:{}}});
+assert.equal(backToFlex.flex.sessions['2026-09-03'].time,'19:00');assert.doesNotThrow(()=>a.validateImport({rutinas:[backToFlex]}));
+// La duración de una semana no cambia semanas anteriores/posteriores ni las canceladas.
+const weeklyDuration=a.rutChangeWeek({...original,skips:{}},'2026-08-24',{weekDays:original.weekDays,time:'18:00',dur:90});
+assert.equal(a.rutDurationOn(weeklyDuration,'2026-08-20'),60);assert.equal(a.rutDurationOn(weeklyDuration,'2026-08-24'),90);
+assert.equal(a.rutDurationOn(weeklyDuration,'2026-08-31'),60);
+assert.equal(a.validateImport({rutinas:[weeklyDuration]}).rutinas[0].weeks['2026-08-24'].dur,90);
+assert.throws(()=>a.validateImport({rutinas:[{...weeklyDuration,weeks:{'2026-08-24':{dur:5}}}]}),/Excepcion/);
+const cancelledDuration=a.rutChangeWeek({...original,skips:{'2026-08-24':1}},'2026-08-24',{weekDays:original.weekDays,time:'18:00',dur:90});
+assert.equal(a.rutDurationOn(cancelledDuration,'2026-08-24'),60);
+console.log('Edición protegida, cupos habituales, modalidades futuras y duración semanal OK');
+}

@@ -1048,21 +1048,20 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 /* ── BIRTHDAYS ── */
 .data-btn.bday-active{color:var(--vacaciones)!important;border-radius:8px}
 .bday-hdr-sub{display:flex;align-items:stretch;padding:5px 6px;gap:5px;box-shadow:0 1px 0 var(--border);overflow-x:hidden}
-.bday-week-hdr{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:3px}
-.bday-week-hdr div{text-align:center;font-size:.62rem;color:var(--text-dim);text-transform:uppercase;padding:6px 0;font-weight:600}
-.bday-week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:2px}
-/* min-height bajo a proposito: la celda crece sola con los cajetines, asi
-   que un mes sin cumpleanos no ocupa pantalla de mas */
-.bday-cell{min-height:52px;padding:5px 3px 4px;background:var(--surface);border-radius:var(--radius-sm);display:flex;flex-direction:column;gap:2px;overflow:hidden;cursor:pointer;transition:background .12s}
-.bday-cell.out-m{opacity:.3}
-.bday-cell.past-cal-day{opacity:.45}
-.bday-cell.today-bday{box-shadow:inset 0 0 0 1.5px var(--accent),inset 0 5px 0 0 var(--accent)}
-.bday-cell.today-bday .bday-num{color:var(--accent-bright);font-weight:700}
-.bday-num{font-size:.72rem;font-family:var(--mono);line-height:1}
+.bday-calendar{max-width:900px;margin:0 auto}
+.bday-week-hdr{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-bottom:6px}
+.bday-week-hdr div{text-align:center;font-size:.64rem;color:var(--text-muted);padding:8px 0;font-weight:600}
+.bday-week-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-bottom:4px}
+.bday-cell{min-height:72px;padding:5px 2px;background:var(--surface);border:1px solid var(--border);border-radius:8px;display:flex;flex-direction:column;gap:4px;overflow:hidden;cursor:pointer;transition:background .12s}
+.bday-cell.out-m{opacity:.38}
+.bday-cell.past-cal-day .bday-num{color:var(--text-dim)}
+.bday-cell.today-bday{border-color:var(--birthday-tone);box-shadow:inset 0 0 0 1px var(--birthday-tone)}
+.bday-num{display:flex;align-items:center;justify-content:center;align-self:flex-start;min-width:23px;height:23px;font-size:.73rem;font-family:var(--mono);line-height:1;color:var(--text-muted)}
+.bday-calendar .bday-cell.today-bday .bday-num{background:var(--birthday-tone);color:var(--surface);border-radius:50%;font-weight:700}
 /* Cabe el nombre entero, hasta en tres lineas */
-.bday-badge{font-size:.5rem;letter-spacing:-.02em;border-radius:4px;padding:2px 2px;line-height:1.22;white-space:normal;overflow-wrap:anywhere;hyphens:auto;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;border:1.5px solid currentColor;font-weight:500;cursor:pointer;transition:opacity .1s;text-align:center}
+.bday-badge{font-size:.57rem;letter-spacing:-.015em;border-radius:4px;padding:3px 2px;line-height:1.25;white-space:normal;overflow-wrap:anywhere;hyphens:auto;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;border:1px solid color-mix(in srgb,var(--bday-color) 65%,var(--border));background:color-mix(in srgb,var(--bday-color) 15%,var(--surface));color:var(--text);font-weight:500;cursor:pointer;transition:opacity .1s;text-align:center}
 .bday-badge:active{opacity:.7}
-.bday-badge.bday-badge-vip{box-shadow:0 0 0 1.5px #fbbf24,0 0 6px rgba(251,191,36,.5);font-weight:700}
+.bday-badge.bday-badge-vip{border-color:#d8a51e;border-bottom-width:3px;font-weight:700}
 .bday-month-hdr{font-size:.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:10px 0 6px;border-bottom:1px solid var(--border);margin-bottom:6px}
 .bday-list-item{display:flex;align-items:center;gap:10px;padding:11px 0 15px;min-height:52px;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity .12s}
 /* VIP controls bar */
@@ -1132,11 +1131,8 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .bday-upcoming-lbl.this-week{color:var(--vacaciones);font-weight:600}
 .bday-add-btn{font-size:.72rem;padding:6px 12px;border-radius:16px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;white-space:nowrap;flex-shrink:0}
 .bday-add-btn:active{background:var(--accent);color:#fff}
-/* Weekend frame — gris lavanda suave */
-.bday-cell.weekend{border:1.5px solid rgba(160,160,200,.22);background:rgba(160,160,200,.04)}
-.bday-cell.weekend .bday-num{color:#8888a8}
-/* Hoy manda sobre el gris del fin de semana */
-.bday-cell.today-bday .bday-num,.bday-cell.today-bday.weekend .bday-num{color:var(--accent-bright);font-weight:700}
+/* Fin de semana suave; hoy conserva su borde y su fecha destacada. */
+.bday-cell.weekend{background:color-mix(in srgb,var(--birthday-tone) 5%,var(--surface2))}
 .ev-cell.weekend{background:rgba(160,160,200,.11);box-shadow:inset 0 -1.5px 0 0 rgba(160,160,200,.25),inset 1.5px 0 0 0 rgba(160,160,200,.25),inset -1.5px 0 0 0 rgba(160,160,200,.25)}
 .ev-cell.weekend .ev-num{color:inherit}
 /* Festivo/vacaciones/ausencia: indicador como box-shadow inset top (NO border-top)
@@ -3018,6 +3014,8 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .rut-card-icon{display:flex;align-items:center;justify-content:center;width:22px;height:22px;flex-shrink:0}
 .rut-card-icon svg{display:block;width:22px;height:22px}
 .rut-routine-card .rut-name{font-size:.78rem}
+.rut-card-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:3px}
+.rut-card-actions .ev-btn{min-width:0;min-height:42px;padding:8px 10px;font-size:.68rem;line-height:1.35}
 .ev-main-tabs .ev-btn-bday{display:flex;justify-content:center;align-items:center}
 .ev-main-tabs .ev-btn-bday .nav-pro-icon{color:inherit;width:30px;height:30px}
 
@@ -3033,9 +3031,9 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .energy-tariff-metrics .energy-price-taxed{display:flex;flex-direction:column;gap:2px;border-top:1px solid var(--border);margin-top:3px;padding-top:7px;color:var(--text-muted);font-size:.71rem;font-weight:400}
 .energy-price-taxed small{font-size:.59rem}
 .energy-tariff-metrics .energy-price-included{margin:auto 0;line-height:1.6}
-.energy-price-total{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px 12px;padding:11px 12px;margin:8px 0 12px;border-radius:9px;border-left:3px solid var(--accent);background:var(--surface2);color:var(--text)}
-.energy-price-total>span{font-size:.72rem;font-weight:600}
-.energy-price-total>strong{font-size:.96rem;white-space:nowrap;font-variant-numeric:tabular-nums}
-.energy-price-total small{font-size:.64rem;font-weight:400;color:var(--text-muted)}
+.energy-price-total{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;padding:7px 0 4px;margin:5px 0 8px;border-top:1px solid var(--border);color:var(--text)}
+.energy-price-total>span{font-size:.74rem;font-weight:600}
+.energy-price-total>strong{font-family:var(--mono);font-size:.8rem;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
+.energy-price-total small{font-size:.7rem;font-weight:500;color:var(--text-muted)}
 
 .rut-history-session:has(>[data-history-select]){grid-template-columns:auto minmax(0,1fr) auto auto}.rut-bulk-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:10px 0;flex-shrink:0}.rut-bulk-actions>span{font-size:.75rem;width:100%;color:var(--text-muted)}.rut-bulk-actions .ev-io-btn{font-size:.7rem;flex:1;padding:8px}.rut-month-select{display:flex;align-items:center;gap:8px;margin:12px 0;font-size:.75rem}.rut-bulk-actions button:disabled{opacity:.4}

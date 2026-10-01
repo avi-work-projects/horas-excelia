@@ -82,7 +82,7 @@ function validateImport(data){
       if(s.time!=null&&!hour(s.time))throw new Error('Hora de rutina no valida');
       if(s.dur!=null&&(!Number.isInteger(s.dur)||s.dur<15||s.dur>480))throw new Error('Duracion de rutina no valida');
       Object.keys(s.times||{}).forEach(function(wd){if(!/^[0-6]$/.test(wd)||!hour(s.times[wd]))throw new Error('Horario por dia no valido');});
-      Object.keys(s.weeks||{}).forEach(function(wk){var w=s.weeks[wk];if(!validIsoDate(wk)||!w||(w.weekDays&&!days(w.weekDays))||(w.time&&!hour(w.time)))throw new Error('Excepcion semanal no valida');});
+      Object.keys(s.weeks||{}).forEach(function(wk){var w=s.weeks[wk];if(!validIsoDate(wk)||!w||(w.weekDays&&!days(w.weekDays))||(w.time&&!hour(w.time))||(w.dur!=null&&(!Number.isInteger(w.dur)||w.dur<15||w.dur>480)))throw new Error('Excepcion semanal no valida');});
       if(s.suspend&&(!validIsoDate(s.suspend.from)||(s.suspend.to&&!validIsoDate(s.suspend.to))))throw new Error('Suspension no valida');
     }
     if(r.start&&!validIsoDate(r.start))throw new Error('Inicio de rutina no valido');

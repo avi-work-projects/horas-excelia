@@ -92,7 +92,7 @@ function renderBdayUpcoming(){
 function renderBdayCalMonth(){
   var today=new Date();today.setHours(0,0,0,0);
   var DN7=['L','M','X','J','V','S','D'];
-  var h='<div class="bday-week-hdr">';
+  var h='<div class="bday-calendar"><div class="bday-week-hdr">';
   DN7.forEach(function(n){h+='<div>'+n+'</div>';});
   h+='</div>';
   var first=new Date(BDAY_YEAR,BDAY_MONTH,1);
@@ -118,15 +118,14 @@ function renderBdayCalMonth(){
         var sn=bdName(b.name);   /* nombre completo: el cajetin admite 3 lineas */
         var bidx=BDAYS.indexOf(b);
         var vipCls=b.vip?' bday-badge-vip':'';
-        var vipXtra=b.vip?';border-width:2px;box-shadow:0 0 5px rgba(251,191,36,.55)':'';
-        h+='<div class="bday-badge'+vipCls+'" data-bday-idx="'+bidx+'" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" style="background:'+color+'22;color:'+color+';border-color:'+color+vipXtra+'" title="'+bdName(b.name)+(b.vip?' VIP':'')+'">'+sn+'</div>';
+        h+='<div class="bday-badge'+vipCls+'" data-bday-idx="'+bidx+'" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" style="--bday-color:'+color+'" title="'+bdName(b.name)+(b.vip?' VIP':'')+'">'+sn+'</div>';
       });
       h+='</div>';
       cur.setDate(cur.getDate()+1);
     }
     h+='</div>';
   }
-  return h;
+  return h+'</div>';
 }
 
 /* ── Lista por meses ──────────────────────────────────────── */

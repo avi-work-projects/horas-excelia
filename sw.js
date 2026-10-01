@@ -4,7 +4,7 @@
    → Cambiar CACHE_VER en cada deploy para forzar actualización
    ============================================================ */
 
-var CACHE_VER = 'v382';
+var CACHE_VER = 'v383';
 var CACHE_NAME = 'horas-excelia-' + CACHE_VER;
 
 var ASSETS = [
@@ -60,6 +60,7 @@ var ASSETS = [
   './js/events-picker-date.js',
   './js/rutinas-icons.js',
   './js/rutinas.js',
+  './js/rutinas-form.js',
   './js/rutinas-flex.js',
   './js/rutinas-sessions.js',
   './js/rutinas-addition.js',

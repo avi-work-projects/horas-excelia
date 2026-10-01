@@ -40,7 +40,7 @@ test('rutina flexible: cupo del primer mes, sesiones pasadas y conservación al 
  await expect(page.locator('.rut-card')).toContainText('1 / 3 sesiones del mes');
  await expect(page.locator('.rut-card')).toContainText('1 hechas · 0 saltadas');
  await page.locator('.rut-edit').click();
- await expect(page.locator('#rutFFirstTarget')).toHaveValue('3');
+ await expect(page.locator('#rutFFirstTarget')).toHaveCount(0);
  await page.locator('#rutFName').fill('Flexible editada');await page.locator('#rutFSave').click();
  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('excelia-rutinas-v1'))[0]);
  expect(saved.start).toBe('2026-09-25');expect(saved.flex.sessions['2026-09-01'].time).toBe('19:30');
@@ -228,7 +228,7 @@ test('Hoy apunta al mes y las cinco subpestanas de Bodas admiten swipe',async({p
 
 });
 
-test('rutinas: horario inmediato, semana futura, historico editable y backup',async({page})=>{
+test('rutinas: horario por semana, duración, histórico editable y backup',async({page})=>{
  await page.clock.setFixedTime(new Date('2026-08-21T10:00:00'));
  await page.addInitScript(()=>{
   sessionStorage.setItem('excelia-popup-dismissed','1');
@@ -238,14 +238,17 @@ test('rutinas: horario inmediato, semana futura, historico editable y backup',as
  await expect(page.locator('#rutFormOv')).toHaveClass(/open/);
  await page.screenshot({path:'.local-preview/routine-form-spacing.png',animations:'disabled'});
  await expect(page.locator('#rutFStart')).toHaveCount(0);
- await page.locator('#rutFTime').fill('18:00');await page.locator('#rutFSave').click();await expect(page.locator('#rutFWrap')).toHaveCount(0);
+ await expect(page.locator('#rutFTime,#rutFDur')).toHaveCount(0);await page.locator('#rutFClose').click();await expect(page.locator('#rutFWrap')).toHaveCount(0);
+ await page.locator('[data-rweek]').click();await page.locator('[data-week="2026-08-17"]').click();
+ await page.locator('#rutWkTime').fill('18:00');await page.locator('#rutWkDur').fill('75');await page.locator('#rutWkForward').check();await page.locator('#rutWkSave').click();await expect(page.locator('#rutWkWrap')).toHaveCount(0);
+ expect(await page.evaluate(()=>['2026-08-17','2026-08-24'].map(ds=>rutDurationOn(RUTINAS[0],ds)))).toEqual([60,75]);
  expect(await page.evaluate(()=>['2026-08-17','2026-08-24'].map(ds=>rutOccursOn(RUTINAS[0],ds)))).toEqual(['17:00','18:00']);
- await page.locator('.rut-edit').click();await page.locator('#rutFWeek').click();await page.locator('[data-week="2026-08-31"]').click();
+ await page.locator('[data-rweek]').click();await page.locator('[data-week="2026-08-31"]').click();
  await page.locator('#rutWkDays [data-wd="1"]').click();await page.locator('#rutWkDays [data-wd="2"]').click();await page.locator('#rutWkTime').fill('19:00');
  await page.locator('#rutWkForward').check();await expect(page.locator('#rutWkScope')).toContainText('Nuevo horario habitual');await page.locator('#rutWkSave').click();await expect(page.locator('#rutWkWrap')).toHaveCount(0);
  expect(await page.evaluate(()=>['2026-08-17','2026-08-24','2026-08-31','2026-09-01','2026-09-07'].map(ds=>rutOccursOn(RUTINAS[0],ds)))).toEqual(['17:00','18:00','17:00','19:00',null]);
  await page.locator('.rut-edit').click();await page.locator('#rutFName').fill('Actividad renombrada');await page.locator('#rutFSave').click();await expect(page.locator('#rutFWrap')).toHaveCount(0);
- await page.locator('.rut-edit').click();await page.locator('#rutFHistory').click();
+ await page.locator('[data-rhistory]').click();
  await expect(page.locator('[data-history-month="2026-08"]')).toBeVisible();
  await page.locator('[data-history-edit="2026-08-17"]').click();await page.locator('#rutHistoryTime').fill('16:30');await page.locator('#rutHistoryDuration').fill('45');await page.locator('#rutHistorySave').click();await expect(page.locator('#rutHistoryEditWrap')).toHaveCount(0);
  expect(await page.evaluate(()=>[rutOccursOn(RUTINAS[0],'2026-08-17'),rutDurationOn(RUTINAS[0],'2026-08-17'),rutOccursOn(RUTINAS[0],'2026-08-10')])).toEqual(['16:30',45,'17:00']);

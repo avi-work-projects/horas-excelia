@@ -10,7 +10,7 @@ async function history(page){
   await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewRutinas').click();
   await expect(page.locator('.rut-prox-i')).toHaveCount(0);
   expect(await page.evaluate(()=>Object.keys(RUTINAS[0].skips))).toEqual(['2026-09-24']);
-  await page.locator('.rut-edit').click();await page.locator('#rutFHistory').click();
+  await page.locator('[data-rhistory]').click();
 }
 test('recuperación con calendario, agenda fija y estado enlazado',async({page})=>{
   await page.addInitScript(()=>localStorage.setItem('excelia-events-v1',JSON.stringify([
