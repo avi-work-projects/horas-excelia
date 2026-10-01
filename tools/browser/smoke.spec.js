@@ -382,11 +382,13 @@ test('bicolor seleccionado, casillas vacias y pestanas de cumpleanos',async({pag
  }
  await page.evaluate(()=>document.documentElement.setAttribute('data-theme','light'));
  await page.locator('#evViewBday').click();
+ const birthdayColor=await page.locator('#evViewBday').evaluate(el=>getComputedStyle(el).color);
+ expect(birthdayColor).not.toBe(await page.locator('#evViewTimeOff').evaluate(el=>getComputedStyle(el).color));
  const tabs=page.locator('.bday-sub-tabs .econ-sub-tab');
  for(let i=0;i<await tabs.count();i++){
   const tab=tabs.nth(i);await tab.click();
   await expect(tab).toHaveClass(/active/);
-  await expect(tab).toHaveCSS('color','rgb(223, 139, 16)');
+  await expect(tab).toHaveCSS('color',birthdayColor);
  }
 });
 

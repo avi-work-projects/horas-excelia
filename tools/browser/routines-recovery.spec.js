@@ -8,7 +8,7 @@ test.beforeEach(async({page})=>{
 });
 async function history(page){
   await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewRutinas').click();
-  await page.locator('.rut-prox-i').first().click();
+  await expect(page.locator('.rut-prox-i')).toHaveCount(0);
   expect(await page.evaluate(()=>Object.keys(RUTINAS[0].skips))).toEqual(['2026-09-24']);
   await page.locator('.rut-edit').click();await page.locator('#rutFHistory').click();
 }
