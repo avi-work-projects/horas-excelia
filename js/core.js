@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v376 - recuperaciones y estudio energético más claros';
+var APP_VERSION = 'v377 - tareas pendientes y nuevos marcadores';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -718,6 +718,7 @@ var NAV_SWITCH_TIMER=null;
 function navigateMain(key){
   var routes={household:openHousehold,econ:openEcon,events:openEvents,estudio:openEstudio};
   if(key!=='home'&&key!=='alarm'&&key!=='menu'&&!routes[key])return;
+  if(typeof tasksDock==='function')tasksDock();
   clearTimeout(NAV_SWITCH_TIMER);NAV_BACK=null;
   var opened=document.querySelectorAll('.full-overlay.open');
   opened.forEach(function(ov){ov.classList.remove('open');setTimeout(function(){if(!ov.classList.contains('open'))ov.style.display='none';},320);});

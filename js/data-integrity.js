@@ -31,6 +31,7 @@ function validateImport(data){
     if(key==='color'&&typeof v==='string'&&!/^#[0-9a-f]{3,8}$/i.test(v))throw new Error('Color no valido');
   }
   visit(data,'');
+  if(data.tasks!=null)tasksValidate(data.tasks);
   if(data.routineAppearance&&!/^#[0-9a-f]{6}$/i.test(data.routineAppearance.gymColor))throw new Error('Color de gimnasio no válido');
   if(data.householdTab!=null&&householdTab(data.householdTab)!==data.householdTab)throw new Error('Pestaña de gastos del hogar no válida');
   if(data.energyContracts!=null)validateEnergyContracts(data.energyContracts);

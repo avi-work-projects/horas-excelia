@@ -36,7 +36,7 @@ var EV_FILTER_GROUPS = ['Grandes','Asturias','Rec. Gestiones','WM + Rut','Resto'
 /* Etiquetas cortas a proposito: con los nombres largos los chips se caian
    a una segunda fila en pantallas estrechas. Asturias va con su bandera. */
 var EV_FILTER_SHORT  = {'Grandes':'Grande','Asturias':'<img class="ev-chip-flag" src="css/asturias-cross.svg" alt="Asturias">','Rec. Gestiones':'Gesti&oacute;n',
-  'WM + Rut':'<span class="wm-logo wm-logo-chip" role="img" aria-label="WM"></span>','Resto':'Resto','Cumplea\u00f1os VIP':'\u2b50'};
+  'WM + Rut':'<span class="wm-logo wm-logo-chip" role="img" aria-label="WM"></span>','Resto':'Resto','Cumplea\u00f1os VIP':'<img class="ev-chip-vip" src="VIP.png" alt="VIP">'};
 var EV_FILTER_COLOR  = {'Grandes':'#38bdf8','Asturias':'#1d4ed8','Rec. Gestiones':'#34d399',
   'WM + Rut':'#c08a5a','Resto':'#ff6b6b','Cumplea\u00f1os VIP':'#fbbf24'};
 /* Tras que grupo va la linea que separa eventos grandes de puntuales */
@@ -55,7 +55,7 @@ function evFilterGroup(ev){
   if(getEvKind(ev)==='grande')return 'Grandes';
   if(t==='Ensayos boda')return 'WM + Rut';
   if(t==='Rutina')return 'Resto';
-  if(t==='Rec. Gestiones'||t==='Médico')return 'Rec. Gestiones';
+  if(evIsManagement(t))return 'Rec. Gestiones';
   return 'Resto';
 }
 var EV_PREV_VIEW = null;       // para volver al anual al pulsar ←
@@ -326,14 +326,14 @@ function evDefaultShape(ev){
   var t=getEvType(ev);
   if(t==='Ensayos boda')return 'x-boda';   /* aspa bicolor: pareja + franja horaria */
   if(t==='Rec. Gestiones')return 'diamond'; /* identificador histórico del hexágono */
-  if(t==='Médico')return 'medical';
+  if(EV_MANAGEMENT_SUBTYPES[t])return EV_MANAGEMENT_SUBTYPES[t];
   if(t==='Otros')return 'circle';
   return 'rounded';
 }
 function evMarkerHtml(ev,pastClass,sizeClass,defaultShape,ds){
   var color=getEvDisplayColor(ev);
   var type=getEvType(ev);
-  var shape=type==='Médico'?'medical':type==='Ensayos boda'?'x-boda':(ev.shape||defaultShape||'circle');
+  var shape=EV_MANAGEMENT_SUBTYPES[type]|| (type==='Ensayos boda'?'x-boda':(ev.shape||defaultShape||'circle'));
   var pmk=pastClass||'';
   var sz=sizeClass?(' '+sizeClass):'';
   var dsAttr=ds?(' data-ds="'+ds+'"'):'';
@@ -357,6 +357,7 @@ var EV_MARK_ORDER = {'Rec. Gestiones':0,'Médico':0};
 function evMarkPriority(ev){
   if(!ev)return 9;                       /* cumpleanos VIP y demas: al final */
   if(getEvKind(ev)==='puntual'&&getEvType(ev)==='Otros'&&['wave','x-outline','circle-plus'].indexOf(ev.shape)>=0)return -1;
+  if(evIsManagement(getEvType(ev)))return 0;
   var p=EV_MARK_ORDER[getEvType(ev)];
   return (p===undefined)?9:p;
 }
@@ -424,6 +425,9 @@ function vipStarSvgHtml(id,pastClass,sizeClass){
     +'fill="#fbbf24" stroke="#000" stroke-width="1.4" stroke-linejoin="round"/>'
     +'</svg>';
   return '<span class="ev-annual-vip-star-svg'+pmk+sz+'" data-id="'+id+'">'+svg+'</span>';
+}
+function vipIconHtml(id,pastClass){
+  return '<span class="ev-annual-vip-star-svg ev-month-vip'+(pastClass||'')+'" data-id="'+escHtml(id)+'"><img src="VIP.png" alt="VIP"></span>';
 }
 
 /* ── Render: próximos eventos (3 semanas) ───────────────── */

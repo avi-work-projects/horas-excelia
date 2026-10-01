@@ -1229,8 +1229,12 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-wk-chip-title{font-size:.73rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;color:#fff;flex:1;min-width:0}
 /* Event color type picker */
 .ev-type-picker{display:flex;flex-direction:column;gap:5px}
+.ev-type-picker button{font-family:var(--font);text-align:left}
 .ev-type-picker .ev-color-swatch{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--radius-sm);background:var(--surface);border:1.5px solid var(--border);cursor:pointer;transition:all .12s;outline:none;-webkit-tap-highlight-color:transparent}
 .ev-type-picker .ev-color-swatch.selected{border-color:currentColor;background:var(--surface3)}
+.ev-management-subtypes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin:0 0 5px}
+.ev-type-picker .ev-management-subtypes .ev-color-swatch{flex-direction:column;gap:5px;padding:8px 2px;font:inherit;min-width:0}
+.ev-management-subtypes .ev-type-name{font-size:.62rem;white-space:nowrap}
 .ev-type-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
 .ev-type-dot svg{display:block;width:100%;height:100%}
 .ev-type-name{font-size:.8rem}
@@ -1631,10 +1635,16 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 /* Los cumpleaños VIP se solapan al 75% (12px de marcador -> -9px) */
 .ev-day-vips{display:flex;align-items:center;cursor:pointer}
 .ev-day-vips .ev-annual-vip-star-svg + .ev-annual-vip-star-svg{margin-left:-9px}
+.ev-day-vips .ev-month-vip{width:18px;height:14px;flex-shrink:0}
+.ev-month-vip img{display:block;width:100%;height:100%;object-fit:contain;transform:scale(1.25)}
+.ev-day-vips .ev-month-vip+.ev-month-vip{margin-left:-10px}
+.ev-chip-vip{width:22px;height:20px;object-fit:contain;display:block;transform:scale(1.15)}
+.ev-annual-filter-row .ev-filter-chip:has(.ev-chip-vip){width:26px;padding:0;overflow:hidden}
 .ev-day-ruts{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
 .rut-marker-group{display:flex;isolation:isolate;line-height:0}
 .rut-marker-layer{position:relative;display:inline-flex}
-.rut-marker-layer+.rut-marker-layer{margin-left:-10.4px}
+.rut-marker-layer+.rut-marker-layer{margin-left:-9.1px}
+.rut-marker-group.past-marker{opacity:.5}
 .ev-rut-mark{display:inline-block;width:13px;height:13px;flex-shrink:0;line-height:0;cursor:pointer}
 .ev-rut-mark svg{display:block;width:100%;height:100%;overflow:visible}
 .ev-rut-mark.rut-skip{opacity:.38}

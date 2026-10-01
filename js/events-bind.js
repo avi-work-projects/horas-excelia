@@ -4,6 +4,7 @@
    ============================================================ */
 
 function _switchEvView(newView){
+  if(typeof tasksDock==='function')tasksDock();
   EV_SCROLL_RESET=true;   /* el proximo refresh empieza arriba */
   /* Guardar el estado de la vista que dejamos */
   if(EV_VIEW==='cal'||EV_VIEW==='week')EV_VIEW_STATE[EV_VIEW]={year:EV_YEAR,month:EV_MONTH};
