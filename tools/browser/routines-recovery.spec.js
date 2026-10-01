@@ -24,6 +24,7 @@ test('recuperación con calendario, agenda fija y estado enlazado',async({page})
   // Las barras escalonadas no pueden interceptar el centro ni la base de una celda.
   for(const date of ['2026-10-07','2026-10-08']){
     const cell=page.locator('#rutAdditionOv .ev-cell[data-ds="'+date+'"]');
+    await expect(cell).toBeVisible();
     const box=await cell.boundingBox();
     await cell.click({position:{x:box.width*.5,y:box.height*.7}});
     await expect(page.locator('#rutAdditionOv .ev-cell[data-ds="'+date+'"]')).toHaveAttribute('aria-pressed','true');

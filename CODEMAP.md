@@ -224,10 +224,10 @@
 ### js/import-preview.js  _(18 líneas)_
 **Funciones:** renderImportPreview:2 · add:4
 
-### js/init.js  _(493 líneas)_
+### js/init.js  _(498 líneas)_
 **Estado global:** DRUM_ITEM_H:143 · DN_ES:300
 
-**Funciones:** _updateHeaderActive:30 · buildDrumPicker:144 · updateDrumSelected:172 · getDrumValue:178 · checkDrumMinuteWrap:184 · buildAlarmDayBtns:215 · showAlarmPastConfirm:245 · proceed:286 · setConnectionsEditing:362 · aplicarActualizacion:423 · reload:429 · _showUpdateBar:450 · _buscar:480
+**Funciones:** _updateHeaderActive:30 · buildDrumPicker:144 · updateDrumSelected:172 · getDrumValue:178 · checkDrumMinuteWrap:184 · buildAlarmDayBtns:215 · showAlarmPastConfirm:245 · proceed:286 · setConnectionsEditing:362 · aplicarActualizacion:423 · reload:429 · _showUpdateBar:451 · _buscar:485
 
 ### js/logo-popup.js  _(51 líneas)_
 **Funciones:** _logoUpdateDots:14

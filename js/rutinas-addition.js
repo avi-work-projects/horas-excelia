@@ -37,7 +37,7 @@ function rutAdditionPickSession(r,mode,wk){
 }
 function rutAdditionForm(r,key,date,back){
   var source=key&&rutSessionByKey(r,key),today=evDk(new Date()),ds=date||(source&&source.ds>today?source.ds:today);
-  var h=source?'<div class="rut-recovery-origin"><span>Clase a recuperar</span><div><strong>'+_rutFmtCorto(source.ds)+'</strong><b>'+source.time+'</b></div><small>Se conserva cancelada en el histórico.</small></div>':'';
+  var h=source?'<div class="rut-recovery-origin"><span>Clase a recuperar</span><div><strong>'+_rutFmt(source.ds)+'</strong><b>'+source.time+'</b></div><small>Se conserva cancelada en el histórico.</small></div>':'';
   h+='<section class="rut-addition-agenda" id="rutDestinationAgenda">'+rutReadOnlyDayHtml(ds)+'</section>';
   h+='<section class="rut-addition-new"><h3>Nueva sesión</h3><div class="rut-addition-fields"><div class="ev-field rut-addition-date"><label for="rutExtraDate">Día</label><input class="ev-input" type="date" id="rutExtraDate" value="'+ds+'"></div>';
   h+='<div class="ev-field"><label for="rutExtraTime">Hora</label><input class="ev-input" type="time" id="rutExtraTime" value="'+(source?source.time:r.time||RUT_TIME_DEFAULT)+'"></div><div class="ev-field"><label for="rutExtraDur">Duración · min</label><input class="ev-input" type="number" min="15" max="480" id="rutExtraDur" value="'+(source?source.dur:r.dur||60)+'"></div></div></section>';
