@@ -30,7 +30,10 @@ function rutAdditionPickSession(r,mode,wk){
   list.forEach(function(s){h+='<button class="ev-btn" data-source-session="'+s.key+'"><strong>'+_rutFmtCorto(s.ds)+' · '+s.time+'–'+rutFin(s.time,s.dur)+'</strong><span>'+escHtml(r.name+' '+rutSessionTag(r,s))+'</span></button>';});
   if(!list.length)h+='<p class="sy-note">No hay sesiones disponibles para esta acción en esa semana. Vuelve para elegir otra.</p>';
   var wrap=rutAdditionPanel('Elige la clase',h+'</div>',function(){closeRutAddition();rutAdditionPickWeek(r,mode);});
-  wrap.querySelectorAll('[data-source-session]').forEach(function(b){b.onclick=function(){openRutRecoveryDay(r,b.dataset.sourceSession,null,function(){rutAdditionPickSession(r,mode,wk);});};});
+  wrap.querySelectorAll('[data-source-session]').forEach(function(b){b.onclick=function(){
+    if(mode==='cancel'){closeRutAddition();openRutHistoryEdit(r,b.dataset.sourceSession);return;}
+    openRutRecoveryDay(r,b.dataset.sourceSession,null,function(){rutAdditionPickSession(r,mode,wk);});
+  };});
 }
 function rutAdditionForm(r,key,date,back){
   var source=key&&rutSessionByKey(r,key),today=evDk(new Date()),ds=date||(source&&source.ds>today?source.ds:today);
