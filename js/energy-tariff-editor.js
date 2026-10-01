@@ -1,5 +1,5 @@
 /* Editor compartido por histórico y escenarios existentes. */
-function energyNumericField(key,label,value){return '<label class="energy-field">'+label+'<input name="'+key+'" type="number" min="0" step="any" required value="'+escHtml(String(value))+'"></label>';}
+function energyNumericField(key,label,value,step){return '<label class="energy-field">'+label+'<input name="'+key+'" type="number" min="0" step="'+(step||'any')+'" required value="'+escHtml(String(value))+'"></label>';}
 function energyTariffEditorHtml(kind,old){
   var t=energyComparisonDefaults(old,kind),h='<div class="sheet-handle"></div><div class="energy-history-heading"><button class="sy-back" id="energyTariffBack" aria-label="Volver">←</button><h2>Tarifa para comparar</h2></div><form id="energyTariffForm">';
   h+='<p class="energy-caption">Precios sin IVA. Los conceptos originales del contrato se conservan. Completa los costes que quieras incluir en la estimación.</p><fieldset class="energy-tax"><legend>Modalidad</legend>';
@@ -7,7 +7,8 @@ function energyTariffEditorHtml(kind,old){
   h+='</fieldset><div data-tariff-flat>'+energyNumericField('cuotaFija','Cuota total / mes (€)',t.cuotaFija)+'<p class="energy-caption">Sustituye consumo, potencia y términos fijos. Las regularizaciones se consultan en las facturas.</p></div><div data-tariff-usage><fieldset class="energy-tax"><legend>Precio del consumo</legend>';
   [['unico','Precio único'],['tramos','Tres tramos ponderados']].forEach(function(x){h+='<label><input type="radio" name="energyMode" value="'+x[0]+'"'+(t.energyMode===x[0]?' checked':'')+'> '+x[1]+'</label>';});
   h+='</fieldset><div data-tariff-single>'+energyNumericField('precioKwh','Precio único (€/kWh)',t.precioKwh)+'</div><div data-tariff-periods>';
-  for(var i=0;i<3;i++)h+='<div class="energy-fields">'+energyNumericField('price'+i,'P'+(i+1)+' (€/kWh)',t.periodPrices[i])+energyNumericField('weight'+i,'Consumo P'+(i+1)+' (%)',t.periodWeights[i])+'</div>';
+  var weights=energyDisplayWeights(t.periodWeights);
+  for(var i=0;i<3;i++)h+='<div class="energy-fields">'+energyNumericField('price'+i,'P'+(i+1)+' (€/kWh)',t.periodPrices[i])+energyNumericField('weight'+i,'Consumo P'+(i+1)+' (%)',weights[i],1)+'</div>';
   h+='<p class="energy-caption">Puedes ajustar el reparto. Los tres pesos deben sumar 100 %.</p><button class="ev-io-btn" type="button" id="energyUseBillWeights">Usar reparto de mis facturas</button><p id="energyWeighted" aria-live="polite"></p></div><h3>Costes fijos</h3><div class="energy-fields">'+energyNumericField('terminoFijo','Fijo / mes (€)',t.terminoFijo)+energyNumericField('terminoFijoDia','Fijo / día (€)',t.terminoFijoDia)+'</div>';
   if(kind==='luz'){
     h+='<fieldset class="energy-tax"><legend>Potencia</legend>';
@@ -19,16 +20,18 @@ function energyTariffEditorHtml(kind,old){
 }
 function openEnergyTariff(kind,old,onSave,container){
   var t=energyComparisonDefaults(old,kind),w=abrirPanel('energyTariffWrap','<div class="ev-form-overlay open" id="energyTariffOverlay"><div class="ev-detail-sheet energy-sheet">'+energyTariffEditorHtml(kind,t)+'</div></div>',{overlay:'energyTariffOverlay',contenedor:container||document.getElementById('fiscalOverlay')});
-  var f=w.querySelector('form');
+  var f=w.querySelector('form'),weightValues=t.periodWeights.slice();
   function close(){cerrarPanel('energyTariffWrap','energyTariffOverlay');}
-  function read(){var n=Object.assign({},t);Array.from(f.elements).forEach(function(el){if(el.type==='number')n[el.name]=Number(el.value);});n.modo=f.elements.modo.value;n.energyMode=f.elements.energyMode.value;if(kind==='luz')n.modoPotencia=f.elements.modoPotencia.value;n.periodPrices=[n.price0,n.price1,n.price2];n.periodWeights=[n.weight0,n.weight1,n.weight2];for(var i=0;i<3;i++){delete n['price'+i];delete n['weight'+i];}return energyValidateTariff(n);}
-  function update(){
+  function read(){var n=Object.assign({},t);Array.from(f.elements).forEach(function(el){if(el.type==='number')n[el.name]=Number(el.value);});n.modo=f.elements.modo.value;n.energyMode=f.elements.energyMode.value;if(kind==='luz')n.modoPotencia=f.elements.modoPotencia.value;n.periodPrices=[n.price0,n.price1,n.price2];n.periodWeights=weightValues.slice();for(var i=0;i<3;i++){delete n['price'+i];delete n['weight'+i];}return energyValidateTariff(n);}
+  function update(event){
+    // Abrir/guardar conserva la precisión importada; editar los pesos usa el reparto visible.
+    if(event&&/^weight[0-2]$/.test(event.target.name))weightValues=[0,1,2].map(function(i){return Number(f.elements['weight'+i].value);});
     w.querySelector('[data-tariff-flat]').hidden=f.elements.modo.value!=='fijo';w.querySelector('[data-tariff-usage]').hidden=f.elements.modo.value==='fijo';
     w.querySelector('[data-tariff-single]').hidden=f.elements.energyMode.value==='tramos';w.querySelector('[data-tariff-periods]').hidden=f.elements.energyMode.value!=='tramos';
     if(kind==='luz'){var double=f.elements.modoPotencia.value==='doble';f.elements.potenciaTotal.closest('label').hidden=double;['potenciaP1','potenciaP2','precioPotP2'].forEach(function(k){f.elements[k].closest('label').hidden=!double;});}
     try{w.querySelector('#energyWeighted').textContent='Media ponderada: '+energyUnitPrice(energyWeightedPrice(read()))+' €/kWh';}catch(e){w.querySelector('#energyWeighted').textContent=e.message;}
   }
-  w.querySelector('#energyUseBillWeights').onclick=function(){var p=energyUsageProfile(kind);p.weights.forEach(function(v,i){f.elements['weight'+i].value=v;});update();showToast(p.hasWeights?'Reparto de tus facturas aplicado':'Sin desglose importado: reparto orientativo 33 / 33 / 34','success');};
+  w.querySelector('#energyUseBillWeights').onclick=function(){var p=energyUsageProfile(kind);weightValues=p.weights.slice();energyDisplayWeights(p.weights).forEach(function(v,i){f.elements['weight'+i].value=v;});update();showToast(p.hasWeights?'Reparto de tus facturas aplicado':'Sin desglose importado: reparto orientativo 33 / 33 / 34','success');};
   f.oninput=update;f.onchange=update;w.querySelector('#energyTariffBack').onclick=close;
   f.onsubmit=function(e){e.preventDefault();try{var n=read();n.precioKwh=energyWeightedPrice(n);n.useOwnPower=true;onSave(n);close();}catch(err){showToast(err.message,'error');}};update();
 }

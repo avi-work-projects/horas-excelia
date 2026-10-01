@@ -55,15 +55,16 @@ function _renderElectDetalle(editable){
     if(e.modoPotencia==='doble'){
       h+=_hipRO('Precio P1 (punta)',energyUnitPrice(e.precioPotP1||0)+' \u20ac/kW/d\u00eda');
       h+=_hipRO('Precio P2 (valle)',energyUnitPrice(e.precioPotP2||0)+' \u20ac/kW/d\u00eda');
-      h+=_hipRO('Suma precios potencia',energyUnitPrice((e.precioPotP1||0)+(e.precioPotP2||0))+' \u20ac/kW/d\u00eda');
+      h+=energyPriceTotal('Suma precios potencia',(e.precioPotP1||0)+(e.precioPotP2||0),'€/kW/día');
     } else {
       h+=_hipRO('Precio potencia',energyUnitPrice(e.precioPotP1||0)+' \u20ac/kW/d\u00eda');
     }
     h+='<div style="border-top:1px solid var(--border);margin:4px 0"></div>';
     /* Nivel 3 */
     if(e.energyMode==='tramos'){
-      ['Punta','Llano','Valle'].forEach(function(n,i){h+=_hipRO(n+' · '+e.periodWeights[i]+' %',energyUnitPrice(e.periodPrices[i])+' €/kWh');});
-      h+=_hipRO('Media ponderada',energyUnitPrice(energyWeightedPrice(e))+' €/kWh');
+      var displayWeights=energyDisplayWeights(e.periodWeights);
+      ['Punta','Llano','Valle'].forEach(function(n,i){h+=_hipRO(n+' · '+displayWeights[i]+' %',energyUnitPrice(e.periodPrices[i])+' €/kWh');});
+      h+=energyPriceTotal('Media ponderada',energyWeightedPrice(e),'€/kWh');
     }else h+=_hipRO('Precio kWh',e.precioKwh?energyUnitPrice(e.precioKwh)+' \u20ac/kWh':'\u2014');
     h+='<div style="border-top:1px solid var(--border);margin:4px 0"></div>';
     /* Nivel 4 */

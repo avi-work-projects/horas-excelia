@@ -50,3 +50,18 @@ test('Próximos mantiene la posición de los cuatro títulos al cambiar de pesta
   const row=positions[0],gaps=row.slice(1).map((r,i)=>r[0]-row[i][0]-row[i][2]);
   expect(Math.max(...gaps)-Math.min(...gaps)).toBeLessThan(1);
 });
+
+test('los pesos se ven enteros y conservan la precisión hasta que se editan',async({page})=>{
+  async function openEditor(){
+    await page.evaluate(()=>openEnergyTariff('luz',energyTariffDefaults({energyMode:'tramos',periodPrices:[.3,.2,.1],periodWeights:[19.72,30.64,49.64]}),tariff=>window.qaSavedTariff=tariff,document.body));
+  }
+  await openEditor();
+  for(const [i,value] of ['20','31','49'].entries())await expect(page.locator('[name="weight'+i+'"]')).toHaveValue(value);
+  await page.getByRole('button',{name:'Guardar tarifa',exact:true}).click();
+  expect(await page.evaluate(()=>qaSavedTariff.periodWeights)).toEqual([19.72,30.64,49.64]);
+  await expect(page.locator('#energyTariffWrap')).toHaveCount(0);
+  await openEditor();
+  await page.locator('[name="weight0"]').fill('21');await page.locator('[name="weight2"]').fill('48');
+  await page.getByRole('button',{name:'Guardar tarifa',exact:true}).click();
+  expect(await page.evaluate(()=>qaSavedTariff.periodWeights)).toEqual([21,31,48]);
+});

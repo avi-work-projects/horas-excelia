@@ -18,20 +18,41 @@ function energyUsageProfile(kind,year){
   return {monthlyKwh:data.days?Math.round(data.total/data.days*30):kind==='luz'?250:600,days:data.days,year:usedYear,
     weights:weights,hasWeights:pTotal>0,source:data.days?'Media de tus lecturas'+(usedYear?' de '+usedYear:' disponibles'):'Consumo orientativo (sin lecturas importadas)'};
 }
+// Solo presentación: el reparto entero sigue sumando 100, sin tocar los pesos de cálculo.
+function energyDisplayWeights(weights){
+  var sum=weights.reduce(function(a,b){return a+b;},0);
+  if(!sum)return weights.map(function(){return 0;});
+  var exact=weights.map(function(n){return n/sum*100;}),rounded=exact.map(Math.floor);
+  var order=exact.map(function(n,i){return i;}).sort(function(a,b){return (exact[b]-rounded[b])-(exact[a]-rounded[a])||a-b;});
+  var remaining=100-rounded.reduce(function(a,b){return a+b;},0);
+  for(var i=0;i<remaining;i++)rounded[order[i]]++;
+  return rounded;
+}
+function energyPriceTotal(label,value,unit){
+  return '<div class="energy-price-total"><span>'+label+'</span><strong>'+energyUnitPrice(value)+' <small>'+unit+'</small></strong></div>';
+}
 function energyTariffReference(kind,tariff,profile,vat){
   var t=energyTariffDefaults(tariff);t.servicesPerDay=0;
   if(t.energyMode==='tramos'&&profile.hasWeights)t.periodWeights=profile.weights.slice();
-  var multiplier=(1+t.otherTaxPct/100)*(1+(vat||0)/100),fixed=t.modo==='fijo';
+  var multiplier=(1+t.otherTaxPct/100)*(1+(vat||0)/100),fixed=t.modo==='fijo',power={potenciaP1:3.3,potenciaP2:3.3,potenciaTotal:3.3};
+  var consumption=fixed?null:energyWeightedPrice(t),standing=fixed?null:kind==='luz'?t.precioPotP1+(t.modoPotencia==='doble'?t.precioPotP2:0):t.terminoFijo/30+t.terminoFijoDia;
   return {
-    consumption:vat===null||fixed?null:(energyWeightedPrice(t)*(1+t.otherTaxPct/100)+t.otherTaxKwh)*(1+vat/100),
-    standing:vat===null||fixed?null:(kind==='luz'?t.precioPotP1+(t.modoPotencia==='doble'?t.precioPotP2:0):t.terminoFijo/30+t.terminoFijoDia)*multiplier,
-    bill:vat===null?null:energyTariffGross(t,kind,profile.monthlyKwh,30,30,vat,{potenciaP1:3.3,potenciaP2:3.3,potenciaTotal:3.3})
+    consumptionNet:consumption,standingNet:standing,
+    billNet:energyTariffBase(t,kind,profile.monthlyKwh,30,30,power)+(t.extrasPerDay||0)*30,
+    consumption:vat===null||fixed?null:(consumption*(1+t.otherTaxPct/100)+t.otherTaxKwh)*(1+vat/100),
+    standing:vat===null||fixed?null:standing*multiplier,
+    bill:vat===null?null:energyTariffGross(t,kind,profile.monthlyKwh,30,30,vat,power)
   };
 }
 function energyTariffReferenceHtml(kind,t,profile,vat){
   var ref=energyTariffReference(kind,t,profile,vat);
-  function number(n,precision){return n===null?'—':n.toLocaleString('es-ES',{minimumFractionDigits:precision,maximumFractionDigits:precision});}
-  return '<span class="energy-tariff-metrics"><span><small>Consumo medio</small><b>'+energyUnitPrice(ref.consumption)+'</b><small>'+(t.modo==='fijo'?'Incluido en cuota':'€/kWh · con impuestos')+'</small></span><span><small>'+(kind==='luz'?'Suma potencia':'Término fijo')+'</small><b>'+energyUnitPrice(ref.standing)+'</b><small>'+(t.modo==='fijo'?'Incluido en cuota':kind==='luz'?'€/kW/día':'€/día')+'</small></span><span><small>Factura aprox.</small><b>'+number(ref.bill,2)+' €</b><small>30 días</small></span></span>';
+  function metric(label,net,gross,unit,money){
+    function number(n){return money?n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €':energyUnitPrice(n);}
+    var h='<span><small>'+label+'</small>';
+    if(net===null)return h+'<small class="energy-price-included">Incluido en cuota</small></span>';
+    return h+'<b>'+number(net)+'</b><small>'+unit+'</small><small class="energy-price-basis">sin impuestos</small><span class="energy-price-taxed">'+(gross===null?'Con impuestos: sin dato':'<span>'+number(gross)+'</span><small>con impuestos</small>')+'</span></span>';
+  }
+  return '<span class="energy-tariff-metrics">'+metric('Consumo medio',ref.consumptionNet,ref.consumption,'€/kWh')+metric(kind==='luz'?'Suma potencia':'Término fijo',ref.standingNet,ref.standing,kind==='luz'?'€/kW/día':'€/día')+metric('Factura aprox.',ref.billNet,ref.bill,'30 días',true)+'</span>';
 }
 function energyComparisonDefaults(old,kind){
   var source=old||{},profile=energyUsageProfile(kind);
