@@ -59,16 +59,16 @@ test('histórico mensual: borrar, recuperar con Deshacer y conservar recuperacio
 test('color de gimnasio, detalle del hogar e iconos viajan en la copia de seguridad',async({page})=>{
  await page.goto('/');await page.locator('#householdBtn').click();await page.locator('[data-hipsub="resumen"]').click();
  await page.locator('#fiscalOverlay [data-nav="events"]').click();await page.locator('#evViewRutinas').click();
- await page.locator('.rut-appearance summary').click();await page.locator('#rutGymHex').fill('#912fbc');
- await expect(page.locator('.rut-color-code')).toHaveText('#912fbc');
+ await expect(page.locator('.rut-appearance')).toHaveCount(0);
+ expect(await page.evaluate(()=>rutDisplayColor({icon:'gym',color:'#fb923c'}))).toBe('#38bdf8');
  await page.locator('#eventsOverlay [data-nav="home"]').click();await page.locator('#menuBtn').click();await page.locator('#navIconStyle').click();
  await page.locator('[data-icon-style="professional"]').click();await page.locator('#navIconPickerClose').click();
  await expect(page.locator('#householdBtn .nav-pro-household')).toBeVisible();
  await expect(page.locator('.nav-pro-bday')).toHaveCount(0);
  await page.locator('#menuBtn').click();const pending=page.waitForEvent('download');await page.locator('#exportAllBtn').click();const file=await pending;
  const data=JSON.parse(require('fs').readFileSync(await file.path(),'utf8'));
- expect(data.routineAppearance).toEqual({gymColor:'#912fbc'});expect(data.householdTab).toBe('resumen');
+ expect(data.routineAppearance).toEqual({gymColor:'#38bdf8'});expect(data.householdTab).toBe('resumen');
  await page.evaluate(d=>{setRutGymColor('#123456');setHouseholdTab('elect');applyFullImport(d,'replace');},data);
  await page.reload();await page.locator('#householdBtn').click();await expect(page.locator('[data-hipsub="resumen"]')).toHaveClass(/active/);
- expect(await page.evaluate(()=>RUT_GYM_COLOR)).toBe('#912fbc');
+ expect(await page.evaluate(()=>RUT_GYM_COLOR)).toBe('#38bdf8');
 });

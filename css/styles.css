@@ -2471,11 +2471,6 @@ button.action-edit.action-edit-text:active{background:#f97316!important}
 .rut-hpd{margin-top:12px}
 .rut-week-forward{margin:16px 0 10px}
 .rut-history-sheet{height:85vh;max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
-.rut-appearance{margin-top:24px;padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
-.rut-appearance summary{cursor:pointer;font-size:.78rem;font-weight:600}
-.rut-color-code{font-family:monospace;color:var(--text-muted);margin-left:8px}
-.rut-color-sample{display:flex;align-items:center;gap:12px;margin:18px 0;font-weight:600}
-.rut-color-sample svg{width:30px;height:30px}
 .rut-history-head{display:flex;align-items:center;gap:12px;flex-shrink:0;margin:8px 0 16px}
 .rut-history-head>div{display:flex;flex-direction:column;gap:4px;min-width:0}
 .rut-history-head strong{font-size:.95rem;overflow-wrap:anywhere}

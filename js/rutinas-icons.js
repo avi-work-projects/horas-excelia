@@ -78,19 +78,10 @@ function rutIconSvg(kind,color,chooser){
     + '</svg>';
 }
 
-/* Prueba temporal del color del gimnasio. La preferencia cambia la presentación;
-   las rutinas guardadas y sus fechas no se reescriben. */
+/* El azul turquesa #38bdf8 queda como color definitivo del gimnasio.
+   Se conserva la restauración de preferencias de backups anteriores. */
 function setRutGymColor(hex){
   if(!/^#[0-9a-f]{6}$/i.test(hex))return;
   RUT_GYM_COLOR=hex.toLowerCase();RUT_FIXED_COLOR.gym=RUT_GYM_COLOR;
   appStorage.setItem(RUT_APPEARANCE_KEY,JSON.stringify({gymColor:RUT_GYM_COLOR}));
-}
-function renderRutAppearance(){
-  return '<details class="rut-appearance"><summary>Probar color de gimnasio <span class="rut-color-code">'+RUT_GYM_COLOR+'</span></summary><p class="sy-note">Selector temporal. El color se mantiene al navegar y puedes pasarme su código cuando lo decidas.</p><div class="rut-color-sample">'+rutIconSvg('gym',RUT_GYM_COLOR)+'<span>Gimnasio</span></div>'+_renderColorPicker(RUT_GYM_COLOR,false,false,'rutGym')+'</details>';
-}
-function bindRutAppearance(){
-  var root=document.querySelector('.rut-appearance');if(!root)return;
-  var picker=_bindColorPicker(root,'rutGym',function(hex){setRutGymColor(hex);root.querySelector('.rut-color-sample').innerHTML=rutIconSvg('gym',hex)+'<span>Gimnasio</span>';root.querySelector('.rut-color-code').textContent=hex;});
-  root.querySelector('#rutGymHex').addEventListener('input',function(){if(/^#[0-9a-f]{6}$/i.test(this.value))picker.setColor(this.value);});
-  root.addEventListener('toggle',function(){if(!root.open)refreshEvents();});
 }

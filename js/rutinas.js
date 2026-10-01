@@ -331,7 +331,7 @@ function _renderRutLista(){
     }
     h+='</div>';
   });
-  h+='<button class="ev-io-btn rut-add" id="rutAdd">+ Nueva rutina</button>'+renderRutAppearance();
+  h+='<button class="ev-io-btn rut-add" id="rutAdd">+ Nueva rutina</button>';
   return h;
 }
 function _rutFmt(ds){return ds?ds.slice(8)+'/'+ds.slice(5,7)+'/'+ds.slice(0,4):'';}
@@ -794,7 +794,6 @@ function closeRutSesion(){cerrarPanel('rutSesWrap','rutSesOv');}
 
 /* ══ Binds de la pestaña ══ */
 function bindRutinasEvents(){
-  bindRutAppearance();
   document.querySelectorAll('[data-rplan]').forEach(function(b){b.onclick=function(){openRutPlan(rutById(b.dataset.rplan));};});
   document.querySelectorAll('.econ-sub-tab[data-rsub]').forEach(function(b){
     b.addEventListener('click',function(){RUT_SUBTAB=b.dataset.rsub;refreshEvents(false);});
