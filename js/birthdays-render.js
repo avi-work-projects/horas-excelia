@@ -2,7 +2,7 @@ function renderBdayVipFilter(){
   return '<div class="bday-header-vip"><label class="excl-item"><input type="checkbox" class="bday-up-vip"'+(BDAY_UP_VIP?' checked':'')+'> <img class="bday-vip-img" src="./VIP.png" alt="VIP"></label></div>';
 }
 function renderBdayUpcoming(){
-  if(!BDAYS.length)return '<div class="sy-note">No hay cumplea\u00f1os cargados. Importa un archivo JSON o configura el secreto BIRTHDAYS en GitHub.</div>';
+  if(!BDAYS.length)return '<div class="sy-note">Todavía no hay cumpleaños. Añade el primero o importa una copia.</div>';
 
   var today=new Date();today.setHours(0,0,0,0);
 
@@ -131,7 +131,7 @@ function renderBdayCalMonth(){
 
 /* ── Lista por meses ──────────────────────────────────────── */
 function renderBdayList(){
-  if(!BDAYS.length)return '<div class="sy-note">No hay cumplea\u00f1os cargados. Importa un archivo JSON o configura el secreto BIRTHDAYS en GitHub.</div>';
+  if(!BDAYS.length)return '<div class="sy-note">Todavía no hay cumpleaños. Añade el primero o importa una copia.</div>';
   /* El buscador y el boton de anadir viven en la barra fija de arriba
      (renderBdayContent), fuera del .sy-body, para que no se muevan al hacer
      scroll ni dejen ver nada por detras. */
@@ -214,9 +214,9 @@ function renderBdayContent(){
     h+='<button class="bday-vip-edit-btn'+(BDAY_EDIT_VIP?' active':'')+'" id="bdEditVip">'+(BDAY_EDIT_VIP?'\u2713 Listo':'Editar VIPs')+'</button>';
     h+='</div>';
   }
-  if(BDAY_VIEW==='list'&&BDAYS.length){
+  if(BDAY_VIEW==='list'){
     h+='<div class="bday-buscar-bar">';
-    h+='<div class="bday-search-wrap"><input class="bday-search-input" id="bdSearch" type="text" '
+    if(BDAYS.length)h+='<div class="bday-search-wrap"><input class="bday-search-input" id="bdSearch" type="text" '
       +'placeholder="Buscar persona\u2026" value="'+escHtml(BDAY_SEARCH)+'"></div>';
     h+='<button class="bday-io-btn bday-io-btn-add" id="bdAdd">+ A\u00f1adir</button>';
     h+='</div>';

@@ -245,7 +245,7 @@ test('rutinas: horario inmediato, semana futura, historico editable y backup',as
  },left);}
  await swipe(true);await expect(page.locator('[data-rsub="stats"]')).toHaveClass(/active/);await swipe(false);await expect(page.locator('[data-rsub="lista"]')).toHaveClass(/active/);
  await page.locator('#rutAdd').click();
- await expect(page.locator('#rutFIcons [data-icon="baile"] svg')).toHaveAttribute('viewBox','-3 -3 30 30');
+ await expect(page.locator('#rutFIcons [data-icon="baile"] svg')).toHaveAttribute('viewBox','-1 -1 26 26');
  await page.screenshot({path:'.local-preview/routine-form-check.png'});
 });
 

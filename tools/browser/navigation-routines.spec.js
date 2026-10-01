@@ -20,6 +20,7 @@ test('navegación compartida, agenda integrada y acceso al último detalle del h
  await expect(page.locator('.ev-wk-month-sep').first()).toBeVisible();
  await page.locator('#evViewBday').click();await page.locator('#bdViewList').click();
  await expect(page.locator('#bdAdd')).toBeVisible();
+ await page.locator('#bdAdd').click();await expect(page.locator('#bdFName')).toBeVisible();await page.locator('#bdFClose').click();
  await page.locator('#eventsOverlay [data-nav="household"]').click();
  await expect(page.locator('[data-hipsub="gas"]')).toHaveClass(/active/);
  await page.reload();await page.locator('#householdBtn').click();
