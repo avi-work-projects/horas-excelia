@@ -2255,6 +2255,7 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 #rutFormOv [hidden]{display:none!important}
 .rut-flex-choice>*{flex:1}
 .rut-first-quota{margin-top:18px}
+#rutFlexOptions{margin-bottom:18px}
 .rut-flex-help{margin-top:18px!important;line-height:1.5}
 .ev-shape-group-label{grid-column:1/-1;margin-top:6px;color:var(--text-muted);font-size:.72rem}
 .rut-flex-summary{display:grid;gap:8px;margin:12px 0;font-size:.8rem}
@@ -3007,38 +3008,18 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .ev-btn.rut-recovery-confirm,.ev-io-btn.rut-recovery-confirm{background:#ec168c;color:white;border-color:#ec168c;font-weight:600}.rut-addition-sheet>.rut-recovery-confirm{width:100%;margin-top:12px}.rut-recovery-confirm:disabled{opacity:.4;cursor:default}
 .rut-day-agenda{display:flex;flex-direction:column;gap:6px;max-height:22vh;overflow:auto;margin:10px 0 0}.rut-agenda-item{padding:9px 10px;border-left:3px solid var(--agenda-color);border-radius:7px;background:var(--surface2);display:flex;flex-wrap:wrap;align-items:center;gap:5px 12px;font-size:.75rem}.rut-agenda-item strong{flex:1;min-width:110px}.rut-agenda-item span{font-size:.7rem;color:var(--text-muted);white-space:nowrap}.rut-day-agenda>.sy-note{margin:0}
 
-/* Lista de rutinas: identidad, horario completo y próximas sesiones. */
-.rut-list-card{padding:14px;gap:14px;margin-bottom:4px}
-.rut-list-card.susp{opacity:1}
-.rut-list-card>.rut-tag{align-self:flex-start}
-.rut-list-card .rut-card-hd{gap:10px}
-.rut-list-icon{width:30px;height:30px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.rut-list-icon svg{width:28px;height:28px}
-.rut-list-heading{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
-.rut-list-heading .rut-name{font-size:.9rem;overflow-wrap:anywhere}
-.rut-list-mode{font-size:.65rem;color:var(--text-muted)}
-.rut-schedule{padding:10px 12px;border-radius:10px;background:var(--surface2);display:grid;gap:10px}
-.rut-schedule-row{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;font-size:.73rem;color:var(--text-muted)}
-.rut-time-range{display:inline-flex;gap:4px;align-items:baseline;white-space:nowrap;font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--text);font-weight:600}
-.rut-schedule-row .rut-time-range{font-size:.93rem;margin-left:auto}
-.rut-upcoming-label{font-size:.65rem;color:var(--text-muted);margin-bottom:7px}
-.rut-list-card .rut-prox{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
-.rut-list-card .rut-prox-i{padding:8px 4px;border-radius:9px;background:var(--surface);display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;min-width:0;text-decoration:none;color:var(--text-muted)}
-.rut-prox-date{font-size:.66rem;font-weight:500}
-.rut-prox-i .rut-time-range{font-size:.63rem;gap:2px;font-weight:500}
-.rut-prox-i small{font-size:.59rem;line-height:1.3;overflow-wrap:anywhere}
-.rut-list-card .rut-prox-i.skip{border-color:var(--border)}
-.rut-prox-i.skip .rut-time-range{color:var(--text-muted);text-decoration:line-through}
-.rut-prox-i .rut-prox-state{color:var(--c-red)}
-.rut-list-card .rut-card-ft{align-items:center;gap:10px;padding-top:9px;font-size:.65rem}
-.rut-history-link{border:0;background:transparent;color:var(--text);font-family:inherit;font-size:.69rem;font-weight:600;white-space:nowrap;padding:4px 0 4px 8px;cursor:pointer;min-height:30px}
-.rut-history-link span{margin-left:4px}
-.rut-list-card .rut-flex-summary{margin:0;padding:11px 12px;background:var(--surface2);border-radius:10px;font-size:.73rem;gap:7px}
-.rut-list-card .rut-flex-summary>span{font-size:.67rem;line-height:1.45}
-.rut-list-card .rut-flex-summary>.ev-btn{justify-self:start;margin-top:3px;font-size:.7rem}
+/* Tarjetas compactas: días visibles y un único estilo para inicio y fin. */
+.rut-days{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:2px 0}
+.rut-weekdays{display:flex;align-items:center;gap:3px}
+.rut-day{width:20px;height:20px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.58rem;color:var(--text-dim)}
+.rut-day.on{font-weight:700}
+.rut-hora{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--text-muted)}
+.rut-hora-varias{font-style:italic}
+.rut-hora-fixed{padding:5px 7px;border-radius:7px;background:var(--surface2)}
+.rut-time-range{display:inline-flex;gap:2px;align-items:baseline;white-space:nowrap;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.8rem;color:var(--text);font-weight:600}
 .ev-main-tabs .ev-btn-bday{display:flex;justify-content:center;align-items:center}
-#eventsOverlay .ev-hdr-sub .ev-view-toggle.ev-btn-bday{background:color-mix(in srgb,var(--tab-tone) 17%,var(--surface))!important}
-#eventsOverlay .ev-hdr-sub .ev-view-toggle.ev-btn-bday.active{background:color-mix(in srgb,var(--tab-tone) 32%,var(--surface))!important}
+#eventsOverlay .ev-hdr-sub .ev-view-toggle.ev-btn-bday{background:radial-gradient(circle at center,color-mix(in srgb,var(--tab-tone) 12%,var(--surface)) 18px,var(--surface) 19px)!important}
+#eventsOverlay .ev-hdr-sub .ev-view-toggle.ev-btn-bday.active{background:radial-gradient(circle at center,color-mix(in srgb,var(--tab-tone) 27%,var(--surface)) 18px,color-mix(in srgb,var(--tab-tone) 6%,var(--surface)) 19px)!important}
 .ev-main-tabs .ev-btn-bday .nav-pro-icon{color:inherit;width:30px;height:30px}
 
 .energy-tariff-period>summary{list-style-position:outside;cursor:pointer;padding:12px 0}.energy-tariff-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}.energy-tariff-metrics>span{display:flex;flex-direction:column;gap:5px;background:var(--surface2);padding:10px 5px;border-radius:9px;text-align:center}.energy-tariff-metrics small{font-size:.66rem;font-weight:400;color:var(--text-muted)}.energy-tariff-metrics b{font-size:.85rem;color:var(--text)}
