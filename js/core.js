@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v378 - gastos del hogar y ajustes de tareas';
+var APP_VERSION = 'v379 - rutinas y avisos deslizables';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -345,29 +345,82 @@ function getWD(wkey){
 /* todoPulsable: el aviso entero responde al toque, no solo su boton. Es una
    opcion y no lo de siempre porque en un "Deshacer" un roce accidental
    desharia lo que se acaba de hacer; en un "Actualizar" no se pierde nada. */
+function _toastReset(t){
+  clearTimeout(t._timer);clearTimeout(t._swipeReadyTimer);clearTimeout(t._exitTimer);
+  if(t._tap){t.removeEventListener('click',t._tap);t._tap=null;}
+  var g=t._gesture;t._gesture=null;t._ignoreClick=!!g;
+  if(g&&t.hasPointerCapture(g.id))t.releasePointerCapture(g.id);
+  t.style.removeProperty('--toast-x');t.style.removeProperty('--toast-opacity');
+  t.className='toast';
+}
+/* Un arrastre aparta el aviso, nunca ejecuta su acción. Los listeners viven
+   una sola vez; cada aviso reinicia su segundo de protección y su gesto. */
+function _toastBindSwipe(t){
+  if(t._swipeAdded)return;
+  t._swipeAdded=true;
+  t.addEventListener('click',function(e){
+    if(t._ignoreClick&&e.detail!==0){e.preventDefault();e.stopImmediatePropagation();}
+  },true);
+  t.addEventListener('pointerdown',function(e){
+    if(!e.isPrimary||e.button!==0||!t.classList.contains('show')||!t.classList.contains('has-undo'))return;
+    t._ignoreClick=false;
+    t._gesture={id:e.pointerId,x:e.clientX,y:e.clientY,dx:0,axis:null,ready:t.classList.contains('swipe-ready')};
+  });
+  t.addEventListener('pointermove',function(e){
+    var g=t._gesture;if(!g||g.id!==e.pointerId)return;
+    var dx=e.clientX-g.x,dy=e.clientY-g.y;
+    if(!g.axis&&Math.max(Math.abs(dx),Math.abs(dy))>8){
+      g.axis=Math.abs(dx)>Math.abs(dy)*1.2?'x':'y';
+      t._ignoreClick=true;
+      if(g.axis==='x')t.setPointerCapture(e.pointerId);
+    }
+    if(g.axis!=='x'||!g.ready)return;
+    e.preventDefault();g.dx=dx;
+    t.classList.add('swiping');
+    t.style.setProperty('--toast-x',dx+'px');
+    t.style.setProperty('--toast-opacity',String(Math.max(.25,1-Math.abs(dx)/t.offsetWidth)));
+  });
+  function end(e){
+    var g=t._gesture;if(!g||g.id!==e.pointerId)return;
+    t._gesture=null;t.classList.remove('swiping');
+    if(t.hasPointerCapture(e.pointerId))t.releasePointerCapture(e.pointerId);
+    if(e.type==='pointerup'&&g.ready&&g.axis==='x'&&Math.abs(g.dx)>=Math.min(80,t.offsetWidth*.25)){
+      clearTimeout(t._timer);
+      t.classList.add('swipe-away');
+      t.style.setProperty('--toast-x',(g.dx<0?-1:1)*(window.innerWidth+t.offsetWidth)/2+'px');
+      t.style.setProperty('--toast-opacity','0');
+      t._exitTimer=setTimeout(function(){_toastReset(t);},250);
+    }else{
+      t.style.removeProperty('--toast-x');t.style.removeProperty('--toast-opacity');
+    }
+  }
+  t.addEventListener('pointerup',end);
+  t.addEventListener('pointercancel',end);
+  t.addEventListener('lostpointercapture',end);
+}
 function showToast(msg,type,undoFn,btnTxt,todoPulsable){
   if(STORAGE_ERROR){msg=STORAGE_ERROR;type='error';undoFn=null;STORAGE_ERROR=null;}
   var t=document.getElementById('toast');
-  clearTimeout(t._timer);
-  if(t._tap){t.removeEventListener('click',t._tap);t._tap=null;}
+  _toastReset(t);_toastBindSwipe(t);
   if(undoFn){
     t.innerHTML=escHtml(msg)+'<button class="toast-undo-btn" id="toastUndoBtn">'+(btnTxt||'Deshacer')+'</button>';
     t.className='toast show has-undo'+(type?' '+type:'')+(todoPulsable?' pulsable':'');
     document.getElementById('toastUndoBtn').addEventListener('click',function(){
-      undoFn(); t.className='toast';
+      _toastReset(t);undoFn();
     });
     if(todoPulsable){
       t._tap=function(e){
         if(e.target.closest('.toast-undo-btn'))return;   /* ya lo lleva el boton */
-        t.className='toast'; undoFn();
+        _toastReset(t);undoFn();
       };
       t.addEventListener('click',t._tap);
     }
-    t._timer=setTimeout(function(){t.className='toast';},8000);
+    t._swipeReadyTimer=setTimeout(function(){t.classList.add('swipe-ready');},1000);
+    t._timer=setTimeout(function(){_toastReset(t);},8000);
   } else {
     t.textContent=msg;
     t.className='toast show'+(type?' '+type:'');
-    t._timer=setTimeout(function(){t.className='toast';},3500);
+    t._timer=setTimeout(function(){_toastReset(t);},3500);
   }
 }
 

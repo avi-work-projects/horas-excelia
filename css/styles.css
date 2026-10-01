@@ -188,8 +188,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 
 /* ── TOAST ── */
 .toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface3);color:var(--text);padding:10px 20px;border-radius:20px;font-size:.8rem;font-weight:500;opacity:0;transition:all .3s;pointer-events:none;z-index:350;border:1px solid var(--border-light);max-width:90vw;text-align:center}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.toast.show.has-undo{pointer-events:auto}
+.toast.show{opacity:var(--toast-opacity,1);transform:translateX(calc(-50% + var(--toast-x,0px))) translateY(0)}
+.toast.show.has-undo{pointer-events:auto;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.toast.swiping{transition:none;cursor:grabbing}
+.toast.show.swipe-away{transition:transform .25s ease-out,opacity .25s ease-out;pointer-events:none}
+@media(prefers-reduced-motion:reduce){.toast,.toast.show.swipe-away{transition:none}}
 .toast.error{border-color:#5a2a2a;background:#2a1a1a;color:var(--festivo)}
 .toast.success{border-color:var(--sent-border);background:var(--sent);color:var(--sent-text)}
 .toast.info{border-color:#2a3a6a;background:#0d1a3a;color:#93b4ff}
@@ -436,6 +439,10 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-sub-timeoff{--section-tab-tone:var(--vacaciones)}
 .rut-sub-tabs .econ-sub-tab,.econ-sub-tab.ev-sub-puentes,.econ-sub-tab.ev-sub-timeoff{color:var(--section-tab-tone);font-weight:600}
 .rut-sub-tabs .econ-sub-tab.active,.econ-sub-tab.ev-sub-puentes.active,.econ-sub-tab.ev-sub-timeoff.active{border-bottom-color:var(--section-tab-tone);background:color-mix(in srgb,var(--section-tab-tone) 10%,var(--surface))}
+.rut-sub-tabs .econ-sub-tab{position:relative;padding-bottom:10px}
+.rut-sub-tabs .econ-sub-tab.active{border-bottom-color:transparent;background:transparent}
+.rut-sub-tabs .econ-sub-tab>span{position:relative;display:inline-block}
+.rut-sub-tabs .econ-sub-tab.active>span::after{content:'';position:absolute;left:-6px;right:-6px;bottom:-10px;height:3px;border-radius:3px;background:var(--section-tab-tone)}
 .econ-sub-tab.est-casa{color:var(--text-dim)}
 .econ-sub-tab.est-casa.active{border-color:#14b8a6;background:rgba(20,184,166,.1);color:#14b8a6}
 /* Estudio Cambio — grouped nav */
@@ -2237,7 +2244,6 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .rut-hpd-row{display:flex;align-items:center;gap:10px}
 .rut-hpd-row span{flex:1;font-size:.76rem;color:var(--text-muted)}
 .rut-hpd-row .ev-input{flex:0 0 46%}
-.rut-hora-varias{font-style:italic;opacity:.85}
 /* Selector de icono de rutina */
 .rut-icon-row{display:flex;gap:6px}
 .rut-icon-opt{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 2px 5px;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;color:var(--text-muted)}
@@ -2273,10 +2279,6 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .rut-name{flex:1;font-size:.85rem;font-weight:600;color:var(--text)}
 .rut-tag{font-size:.6rem;border-radius:8px;padding:1px 6px;white-space:nowrap}
 .rut-tag.susp{color:var(--c-orange);border:1px solid var(--c-orange)}
-.rut-days{display:flex;align-items:center;gap:3px}
-.rut-day{width:20px;height:20px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.58rem;color:var(--text-dim)}
-.rut-day.on{font-weight:700}
-.rut-hora{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--text-muted)}
 .rut-prox{display:flex;flex-wrap:wrap;gap:4px}
 .rut-prox-i{font-size:.62rem;color:var(--text-muted);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:2px 7px;cursor:pointer}
 .rut-prox-i.skip{text-decoration:line-through;color:var(--c-orange);border-color:var(--c-orange)}
@@ -3005,8 +3007,35 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .ev-btn.rut-recovery-confirm,.ev-io-btn.rut-recovery-confirm{background:#ec168c;color:white;border-color:#ec168c;font-weight:600}.rut-addition-sheet>.rut-recovery-confirm{width:100%;margin-top:12px}.rut-recovery-confirm:disabled{opacity:.4;cursor:default}
 .rut-day-agenda{display:flex;flex-direction:column;gap:6px;max-height:22vh;overflow:auto;margin:10px 0 0}.rut-agenda-item{padding:9px 10px;border-left:3px solid var(--agenda-color);border-radius:7px;background:var(--surface2);display:flex;flex-wrap:wrap;align-items:center;gap:5px 12px;font-size:.75rem}.rut-agenda-item strong{flex:1;min-width:110px}.rut-agenda-item span{font-size:.7rem;color:var(--text-muted);white-space:nowrap}.rut-day-agenda>.sy-note{margin:0}
 
-.rut-hora-fixed{padding:5px 8px;border-radius:8px;background:var(--surface2);color:var(--text);display:inline-flex;align-items:baseline;white-space:nowrap;gap:2px}
-.rut-hora-fixed strong{font-size:.9rem;font-weight:700}.rut-hora-fixed>span{font-size:.65rem;color:var(--text-muted)}
+/* Lista de rutinas: identidad, horario completo y próximas sesiones. */
+.rut-list-card{padding:14px;gap:14px;margin-bottom:4px}
+.rut-list-card.susp{opacity:1}
+.rut-list-card>.rut-tag{align-self:flex-start}
+.rut-list-card .rut-card-hd{gap:10px}
+.rut-list-icon{width:30px;height:30px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.rut-list-icon svg{width:28px;height:28px}
+.rut-list-heading{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.rut-list-heading .rut-name{font-size:.9rem;overflow-wrap:anywhere}
+.rut-list-mode{font-size:.65rem;color:var(--text-muted)}
+.rut-schedule{padding:10px 12px;border-radius:10px;background:var(--surface2);display:grid;gap:10px}
+.rut-schedule-row{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;font-size:.73rem;color:var(--text-muted)}
+.rut-time-range{display:inline-flex;gap:4px;align-items:baseline;white-space:nowrap;font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--text);font-weight:600}
+.rut-schedule-row .rut-time-range{font-size:.93rem;margin-left:auto}
+.rut-upcoming-label{font-size:.65rem;color:var(--text-muted);margin-bottom:7px}
+.rut-list-card .rut-prox{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.rut-list-card .rut-prox-i{padding:8px 4px;border-radius:9px;background:var(--surface);display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;min-width:0;text-decoration:none;color:var(--text-muted)}
+.rut-prox-date{font-size:.66rem;font-weight:500}
+.rut-prox-i .rut-time-range{font-size:.63rem;gap:2px;font-weight:500}
+.rut-prox-i small{font-size:.59rem;line-height:1.3;overflow-wrap:anywhere}
+.rut-list-card .rut-prox-i.skip{border-color:var(--border)}
+.rut-prox-i.skip .rut-time-range{color:var(--text-muted);text-decoration:line-through}
+.rut-prox-i .rut-prox-state{color:var(--c-red)}
+.rut-list-card .rut-card-ft{align-items:center;gap:10px;padding-top:9px;font-size:.65rem}
+.rut-history-link{border:0;background:transparent;color:var(--text);font-family:inherit;font-size:.69rem;font-weight:600;white-space:nowrap;padding:4px 0 4px 8px;cursor:pointer;min-height:30px}
+.rut-history-link span{margin-left:4px}
+.rut-list-card .rut-flex-summary{margin:0;padding:11px 12px;background:var(--surface2);border-radius:10px;font-size:.73rem;gap:7px}
+.rut-list-card .rut-flex-summary>span{font-size:.67rem;line-height:1.45}
+.rut-list-card .rut-flex-summary>.ev-btn{justify-self:start;margin-top:3px;font-size:.7rem}
 .ev-main-tabs .ev-btn-bday{display:flex;justify-content:center;align-items:center}
 #eventsOverlay .ev-hdr-sub .ev-view-toggle.ev-btn-bday{background:color-mix(in srgb,var(--tab-tone) 17%,var(--surface))!important}
 #eventsOverlay .ev-hdr-sub .ev-view-toggle.ev-btn-bday.active{background:color-mix(in srgb,var(--tab-tone) 32%,var(--surface))!important}
