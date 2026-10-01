@@ -109,21 +109,33 @@ No hace falta cambiar de framework. Los renders devuelven HTML y no persisten ca
 | tasks.js / tasks-view.js / tasks-float.js | tareas, panel y acceso flotante global; estilos aislados en tasks.css |
 
 ## Componentes compartidos
-### Tareas y marcadores (v377)
+### Tareas y marcadores (v384)
 `excelia-tasks-v1` guarda `{items, weeklyReminder, reminderWeek}`. Cada tarea
-contiene `id`, `title`, `createdAt`, `updatedAt`, `completedAt` y `deletedAt`;
-las dos últimas fechas son `null` mientras ese estado no corresponda. El orden
-del array es la prioridad manual. Las tareas completadas se conservan; las
-eliminadas se pueden restaurar o deshacer durante siete días. `tasksPrune`
-depura una copia y la persistencia se actualiza al arrancar, abrir el panel o
-volver a la aplicación. El backup usa `tasks`, valida antes de escribir y
-fusiona por ID conservando la edición más reciente y el orden importado.
-Los backups antiguos que no incluyan tareas no alteran las existentes.
+contiene `id`, `title`, `createdAt`, `updatedAt`, `completedAt`,
+`lastCompletedAt` y `pendingVisible`. Solo hay dos estados: `completedAt`
+nulo = pendiente; fecha = completada. Marcar actualiza Completadas al instante,
+pero mantiene la fila marcada y su prioridad en Pendientes hasta pulsar
+«Mover». `pendingVisible` conserva esa presentación incluso al cerrar/recargar;
+no es un tercer estado. «Mover» no cambia la fecha y admite Deshacer.
+`tasksItems(data,'pending')` cuenta solo las realmente pendientes (también para
+el aviso semanal y el acceso flotante); `tasksPendingRows` incluye las marcadas
+sin mover. Completadas se ordena por fecha descendente y se agrupa por día local.
+
+Al reabrir se conserva `lastCompletedAt`. Si se vuelve a completar otro día,
+el panel pregunta si mantener esa fecha o usar hoy; `tasksChange` exige esa
+elección también en la capa de datos. `tasksNormalize` migra la antigua
+papelera (`deletedAt`) a Completadas sin purgarla ni modificar el objeto de
+entrada. No hay borrado automático del histórico. `tasksMigrate` persiste la
+normalización al arrancar/abrir. El backup incluye fechas y visibilidad, valida
+antes de escribir y fusiona por ID conservando la edición más reciente y el
+orden importado. Backups sin tareas no alteran las existentes.
 
 `renderTasks` y `renderTaskRow` devuelven HTML; `tasks-view.js` enlaza las
 acciones y reutiliza `abrirPanel`, con scroll propio, foco de diálogo y
-Deshacer visible. Se puede reordenar arrastrando, con las flechas del teclado
-o mediante Subir/Bajar. `tasks-float.js` conserva la posición de arrastre
+Deshacer visible. Pendientes permite reordenar arrastrando, con las flechas del
+teclado o mediante Subir/Bajar; Completadas siempre respeta la cronología.
+La elección de fecha es un bloque dentro de la fila, sin diálogo nativo.
+`tasks-float.js` conserva la posición de arrastre
 durante la vista; al navegar vuelve abajo a la derecha, visible y separado
 de los bordes y del área segura. Las coordenadas no se exportan. El aviso de
 pendientes se muestra una vez por semana al abrir la aplicación y se puede

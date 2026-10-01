@@ -26,7 +26,7 @@ function tasksUpdateFab(){
 }
 function initTasks(){
   if(document.getElementById('tasksFab'))return;
-  tasksPurge();
+  tasksMigrate();
   var b=document.createElement('button');b.id='tasksFab';b.type='button';b.className='tasks-fab';b.title='Mis tareas · arrastra para mover';
   document.body.appendChild(b);tasksUpdateFab();tasksDock();
   var bin=document.createElement('div');bin.id='tasksDropZone';bin.className='tasks-drop-zone';bin.hidden=true;
@@ -61,7 +61,7 @@ function initTasks(){
   function resize(){if(TASKS_FLOAT.docked)tasksDock();else tasksFloatPosition(TASKS_FLOAT.x,TASKS_FLOAT.y,false);}
   window.addEventListener('resize',resize);
   if(window.visualViewport)window.visualViewport.addEventListener('resize',resize);
-  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'){tasksPurge();tasksUpdateFab();}});
+  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')tasksUpdateFab();});
   window.addEventListener('storage',function(e){
     if(e.key===TASKS_FAB_HIDDEN_KEY){TASKS_FAB_HIDDEN=e.newValue==='1';tasksUpdateFab();}
     if(e.key===TASKS_KEY){tasksUpdateFab();if(TASKS_OPEN)renderTasksPanel();}
