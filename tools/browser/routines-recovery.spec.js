@@ -57,7 +57,7 @@ test('marcadores de rutina contiguos superpuestos y separados apilados',async({p
   await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewCal').click();
   const consecutive=page.locator('.ev-cell[data-ds="2026-10-01"] .ev-rut-mark');
   const bounds=await consecutive.evaluateAll(els=>els.map(e=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width};}));
-  expect(bounds).toHaveLength(2);expect(bounds[1].y).toBe(bounds[0].y);expect(bounds[1].x-bounds[0].x).toBeCloseTo(bounds[0].w*.2,1);
+  expect(bounds).toHaveLength(2);expect(bounds[1].y).toBe(bounds[0].y);expect(bounds[1].x-bounds[0].x).toBeCloseTo(bounds[0].w*.3,1);
   const separate=await page.locator('.ev-cell[data-ds="2026-10-08"] .ev-rut-mark').evaluateAll(els=>els.map(e=>e.getBoundingClientRect().y));
   expect(separate[1]).toBeGreaterThan(separate[0]+10);
 });
