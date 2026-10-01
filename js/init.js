@@ -447,6 +447,7 @@
   /* ── Service Worker: avisar cuando hay version nueva ── */
   if('serviceWorker' in navigator){
     var _swShown=false;
+    var _swHadController=!!navigator.serviceWorker.controller;
     function _showUpdateBar(){
       if(_swShown)return;
       _swShown=true;
@@ -462,7 +463,11 @@
           'success',aplicarActualizacion,'Actualizar',true);
     }
     // Método 1: controllerchange — el más fiable (skipWaiting activó el nuevo SW)
-    navigator.serviceWorker.addEventListener('controllerchange',_showUpdateBar);
+    navigator.serviceWorker.addEventListener('controllerchange',function(){
+      // La primera instalación ya contiene la versión que se está mostrando.
+      if(_swHadController)_showUpdateBar();
+      _swHadController=true;
+    });
     // Método 2: updatefound — detecta instalación en curso
     navigator.serviceWorker.ready.then(function(reg){
       reg.addEventListener('updatefound',function(){
@@ -485,7 +490,7 @@
     });
     // Método 3: mensaje del SW (compatibilidad)
     navigator.serviceWorker.addEventListener('message',function(ev){
-      if(ev.data&&ev.data.type==='SW_UPDATED')_showUpdateBar();
+      if(ev.data&&ev.data.type==='SW_UPDATED'&&ev.data.version!==APP_VERSION.split(' ')[0])_showUpdateBar();
     });
   }
 

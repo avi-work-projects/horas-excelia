@@ -118,6 +118,12 @@ test('backup: importar, repetir sin duplicar y rechazar datos invalidos',async({
 });
 test('actualizar desde menu recarga, sin consumir el click al cerrar',async({page})=>{
  await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));await page.goto('/');
+ await page.evaluate(()=>{
+   window._qaUndo=false;showToast('Cambio de prueba','success',()=>{window._qaUndo=true;});
+   navigator.serviceWorker.dispatchEvent(new MessageEvent('message',{data:{type:'SW_UPDATED',version:APP_VERSION.split(' ')[0]}}));
+ });
+ await page.locator('.toast.show').getByRole('button',{name:'Deshacer',exact:true}).click();
+ expect(await page.evaluate(()=>window._qaUndo)).toBe(true);
  await page.evaluate(()=>navigator.serviceWorker.dispatchEvent(new MessageEvent('message',{data:{type:'SW_UPDATED',version:'test'}})));
  await page.locator('#menuBtn').click();await expect(page.locator('#swUpdBtn')).toBeVisible();
  await Promise.all([page.waitForEvent('load'),page.locator('#swUpdBtn').click()]);
@@ -421,9 +427,10 @@ test('iconos alternativos: seleccion, navegacion, persistencia y backup',async({
  for(const theme of ['light','dark']){
   await page.evaluate(t=>{applyTheme(t);render();},theme);await page.screenshot({path:'.local-preview/icons-'+theme+'.png'});
  }
- await page.locator('#eventsBtn').click();await expect(page.locator('#eventsOverlay .nav-pro-icon')).toHaveCount(6);
- await page.evaluate(()=>applyFullImport({navIconStyle:'original'},'merge'));await expect(page.locator('.nav-pro-icon')).toHaveCount(0);
- await page.evaluate(()=>applyFullImport({navIconStyle:'professional'},'merge'));await expect(page.locator('#eventsOverlay .nav-pro-icon')).toHaveCount(6);
+ await page.locator('#eventsBtn').click();await expect(page.locator('#eventsOverlay .overlay-nav-bar .nav-pro-icon')).toHaveCount(6);
+ await page.evaluate(()=>applyFullImport({navIconStyle:'original'},'merge'));await expect(page.locator('.data-actions .nav-pro-icon,.overlay-nav-bar .nav-pro-icon')).toHaveCount(0);
+ await expect(page.locator('#evViewBday .nav-pro-bday')).toHaveCount(1);
+ await page.evaluate(()=>applyFullImport({navIconStyle:'professional'},'merge'));await expect(page.locator('#eventsOverlay .overlay-nav-bar .nav-pro-icon')).toHaveCount(6);
 });
 
 test('seleccion de ventanas: mismo fondo para iconos originales y profesionales',async({page})=>{

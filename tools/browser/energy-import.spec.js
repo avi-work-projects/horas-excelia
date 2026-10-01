@@ -16,6 +16,7 @@ test('energía: revisar, cancelar, fusionar y deshacer una importación',async({
   await page.locator('#energyStudyFile').setInputFiles(file);
   await page.locator('.imp-mode-btn.merge').click();
   await expect.poll(read).toBe(72.6);
-  await page.locator('.toast.show #toastUndoBtn').click();
+  await expect(page.locator('.toast.show')).toContainText('Histórico importado');
+  await page.locator('.toast.show').getByRole('button',{name:'Deshacer',exact:true}).click();
   await expect.poll(read).toBe(60.5);
 });

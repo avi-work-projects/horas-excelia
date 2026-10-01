@@ -118,6 +118,10 @@ Resumen prioriza consumo y medias; Coste separa gráfico, conciliación y detall
 Escenarios destaca el ahorro/coste adicional. Se reutilizan los cálculos existentes.
 No extender estos estilos ni la distribución de `.energy-tabs` al resto de ventanas.
 
+El primer `controllerchange` sin controlador previo y los mensajes `SW_UPDATED`
+de la misma versión no anuncian una actualización: hacerlo podía sustituir el
+aviso de Deshacer durante una importación. Se prueba junto al botón Actualizar.
+
 `energyBills` admite `vatAmount`, `electricityTaxAmount`, `otherTaxesAmount`
 y `readings:[{start,end,consumption,periods:[punta,llano,valle]}]` opcionales.
 Las fechas de `readings` son **inclusivas**. Un array vacío conserva el documento
