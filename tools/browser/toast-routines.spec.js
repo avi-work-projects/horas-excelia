@@ -69,7 +69,8 @@ test('Rutinas compactas: días, intervalos completos, planificación e históric
   await expect(page.locator('[data-rid="multiple"] .rut-day.on')).toHaveCount(2);
   await expect(page.locator('[data-rid="multiple"] [title="Lunes 18:00–19:30"]')).toBeVisible();
   await expect(page.locator('[data-rid="multiple"] [title="Viernes 20:00–21:30"]')).toBeVisible();
-  await expect(page.locator('[data-rid="flex"] .rut-prox')).toContainText('18:00');
+  await expect(page.locator('.rut-routine-card .rut-prox')).toHaveCount(0);
+  await expect(page.locator('.rut-routine-card .rut-card-icon svg')).toHaveCount(3);
   const sizes=await page.locator('[data-rid="fixed"] .rut-hora time').evaluateAll(nodes=>nodes.map(n=>{const s=getComputedStyle(n);return [s.fontSize,s.fontWeight,s.color];}));
   expect(sizes[0]).toEqual(sizes[1]);
   expect(await page.locator('.rut-card').evaluateAll(cards=>cards.every(c=>c.scrollWidth<=c.clientWidth))).toBe(true);

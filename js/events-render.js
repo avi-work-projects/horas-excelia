@@ -573,7 +573,7 @@ function renderEvContent(){
   }
   if(upcomingViews.indexOf(EV_VIEW)>=0){
     /* Próximos comparte pestañas y scroll con Cumpleaños, Agenda y Todos. */
-    h+='<div class="econ-sub-tabs">';
+    h+='<div class="econ-sub-tabs ev-upcoming-tabs">';
     h+='<button class="econ-sub-tab'+(EV_VIEW==='upcoming'?' active':'')+'" id="evSubUpcoming">Próximos</button>';
     h+='<button class="econ-sub-tab'+(EV_VIEW==='birthdays'?' active':'')+'" id="evSubBirthdays">Cumplea&ntilde;os</button>';
     h+='<button class="econ-sub-tab'+(EV_VIEW==='week'?' active':'')+'" id="evSubAgenda">Agenda</button>';
