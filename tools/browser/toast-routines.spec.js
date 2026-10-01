@@ -75,14 +75,49 @@ test('Rutinas compactas: días, intervalos completos, planificación e históric
   expect(sizes[0]).toEqual(sizes[1]);
   expect(await page.locator('.rut-card').evaluateAll(cards=>cards.every(c=>c.scrollWidth<=c.clientWidth))).toBe(true);
   await page.locator('.rut-edit[data-rid="fixed"]').click();
-  await expect(page.locator('#rutFWeek')).toBeVisible();
-  await page.locator('#rutFHistory').click();await expect(page.locator('#rutHistoryOv')).toBeVisible();
+  await expect(page.locator('#rutFTime,#rutFDur,#rutFDays,#rutFIcons,[data-rmode]')).toHaveCount(0);
+  await page.locator('#rutFClose').click();
+  await expect(page.locator('[data-rweek="fixed"]')).toBeVisible();
+  await page.locator('[data-rhistory="fixed"]').click();await expect(page.locator('#rutHistoryOv')).toBeVisible();
   await page.locator('#rutHistoryClose').click();await page.locator('[data-rplan="flex"]').click();
   await expect(page.locator('#rutPlanOv')).toBeVisible();
   await page.locator('#rutPlanClose').click();
   await page.locator('.rut-edit[data-rid="flex"]').click();
-  await expect(page.locator('#rutFPlan')).toBeVisible();
+  await expect(page.locator('#rutFTarget,#rutFWeekly')).toHaveCount(2);
+  await expect(page.locator('#rutFFirstTarget,#rutFTime,#rutFDur,#rutFDays,#rutFIcons,[data-rmode]')).toHaveCount(0);
   await expect(page.locator('#rutFormOv')).not.toContainText('Los cambios de horario');
-  await page.locator('#rutFHistory').click();await expect(page.locator('#rutHistoryOv')).toBeVisible();
+  await page.locator('#rutFClose').click();await page.locator('[data-rhistory="flex"]').click();await expect(page.locator('#rutHistoryOv')).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
+test('rutina futura: configuración completa; rutina iniciada: cupos habituales sin alterar el primer mes',async({page})=>{
+  await page.clock.setFixedTime(new Date('2026-10-01T10:00:00'));
+  await page.addInitScript(()=>{
+    sessionStorage.setItem('excelia-popup-dismissed','1');
+    localStorage.setItem('excelia-rutinas-v1',JSON.stringify([
+      {id:'future-edit',name:'Curso futuro',icon:'padel',start:'2026-11-10',weekDays:[2],time:'17:00',dur:60,weeks:{},skips:{}},
+      {id:'started-flex',name:'Curso flexible',icon:'gym',start:'2026-09-15',weekDays:[],time:'18:00',dur:60,skips:{},flex:{period:'month',target:8,weeklyTarget:2,monthTargets:{'2026-09':3},sessions:{'2026-09-17':{time:'18:00',dur:60}}}}
+    ]));
+  });
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto('/');
+  await page.locator('#homePopupClose').click();
+  await page.locator('#eventsBtn').click();await page.locator('#evViewRutinas').click();
+  await page.locator('.rut-edit[data-rid="future-edit"]').click();
+  await expect(page.locator('[data-rmode="flex"]')).toBeEnabled();
+  await page.locator('#rutFIcons [data-icon="baile"]').click();
+  await page.locator('#rutFTime').fill('20:00');await page.locator('#rutFDur').fill('90');
+  await page.locator('#rutFSave').click();await expect(page.locator('#rutFWrap')).toHaveCount(0);
+  let saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('excelia-rutinas-v1')));
+  expect(saved[0]).toMatchObject({start:'2026-11-10',icon:'baile',time:'20:00',dur:90,weekDays:[2]});
+  await page.locator('.rut-edit[data-rid="future-edit"]').click();await page.locator('[data-rmode="flex"]').click();
+  await page.locator('#rutFFirstTarget').fill('4');await page.locator('#rutFSave').click();await expect(page.locator('#rutFWrap')).toHaveCount(0);
+  await expect(page.locator('[data-rplan="future-edit"]')).toBeVisible();
+  await page.locator('.rut-edit[data-rid="started-flex"]').click();
+  await expect(page.locator('#rutFFirstTarget,[data-rmode],#rutFTime,#rutFDur,#rutFIcons')).toHaveCount(0);
+  await page.locator('#rutFTarget').fill('10');await page.locator('#rutFWeekly').fill('3');
+  await page.locator('#rutFSave').click();await expect(page.locator('#rutFWrap')).toHaveCount(0);
+  saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('excelia-rutinas-v1')));
+  expect(saved[1].flex).toMatchObject({period:'month',target:10,weeklyTarget:3,monthTargets:{'2026-09':3},sessions:{'2026-09-17':{time:'18:00',dur:60}}});
   expect(errors).toEqual([]);
 });

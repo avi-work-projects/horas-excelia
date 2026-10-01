@@ -31,24 +31,25 @@ function rutFlexWarnings(ds){
 function rutFlexSummary(r){
   var st=rutFlexStatus(r,evDk(new Date()));
   return '<div class="rut-flex-summary"><b>'+st.count+' / '+st.target+' sesiones '+(r.flex.period==='month'?'del mes':'de la semana')+'</b>'
-    +'<span>'+(st.missing?'Faltan '+st.missing+' por programar esta semana':'Objetivo semanal planificado')+'</span>'
-    +'<button class="ev-btn" data-rplan="'+escHtml(r.id)+'">Planificar sesiones</button></div>';
+    +'<span>'+(st.missing?'Faltan '+st.missing+' por programar esta semana':'Objetivo semanal planificado')+'</span></div>';
 }
 function rutFlexOptionsHtml(r){
-  var f=r&&r.flex,month=r&&r.start?r.start.slice(0,7):'';
+  var f=r&&r.flex,month=r&&r.start?r.start.slice(0,7):'',locked=rutSetupLocked(r);
+  if(locked&&!f)return '';
   var firstTarget=f&&f.monthTargets&&Object.prototype.hasOwnProperty.call(f.monthTargets,month)?f.monthTargets[month]:(f?f.target:'');
-  return '<div class="ev-field"><label>Modalidad</label><div class="rut-flex-choice">'
-    +'<button type="button" class="ev-btn'+(!f?' primary':'')+'" data-rmode="fixed"'+(r?' disabled':'')+'>Horario fijo</button>'
-    +'<button type="button" class="ev-btn'+(f?' primary':'')+'" data-rmode="flex"'+(r?' disabled':'')+'>Sesiones flexibles</button></div></div>'
-    +'<div id="rutFlexOptions"'+(!f?' hidden':'')+'><div class="ev-field"><label>Cupo de sesiones</label><div class="rut-flex-choice">'
+  return (locked?'':'<div class="ev-field"><label>Modalidad</label><div class="rut-flex-choice">'
+    +'<button type="button" class="ev-btn'+(!f?' primary':'')+'" data-rmode="fixed">Horario fijo</button>'
+    +'<button type="button" class="ev-btn'+(f?' primary':'')+'" data-rmode="flex">Sesiones flexibles</button></div></div>')
+    +'<div id="rutFlexOptions"'+(!f?' hidden':'')+'>'+(locked?'':'<div class="ev-field"><label>Cupo de sesiones</label><div class="rut-flex-choice">'
     +'<button type="button" class="ev-btn'+(!f||f.period==='month'?' primary':'')+'" data-rperiod="month">Al mes</button>'
-    +'<button type="button" class="ev-btn'+(f&&f.period==='week'?' primary':'')+'" data-rperiod="week">A la semana</button></div></div>'
-    +'<div class="ev-date-row"><div><label>Sesiones del cupo</label><input class="ev-input" type="number" min="1" max="31" id="rutFTarget" value="'+(f?f.target:8)+'"></div>'
-    +'<div id="rutWeeklyGoal"><label>Objetivo semanal</label><input class="ev-input" type="number" min="1" max="7" id="rutFWeekly" value="'+(f?f.weeklyTarget:2)+'"></div></div>'
-    +'<div class="ev-field rut-first-quota" id="rutFirstQuota" hidden><label id="rutFirstQuotaLabel" for="rutFFirstTarget"></label><input class="ev-input" type="number" min="0" max="31" id="rutFFirstTarget" value="'+firstTarget+'"><p class="sy-note">Incluye las sesiones ya realizadas.</p></div>'
+    +'<button type="button" class="ev-btn'+(f&&f.period==='week'?' primary':'')+'" data-rperiod="week">A la semana</button></div></div>')
+    +'<div class="ev-date-row"><div><label>Sesiones '+(locked?(f.period==='month'?'al mes':'a la semana'):'del cupo')+'</label><input class="ev-input" type="number" min="1" max="'+(f&&f.period==='week'?7:31)+'" id="rutFTarget" value="'+(f?f.target:8)+'"></div>'
+    +'<div id="rutWeeklyGoal"'+(f&&f.period==='week'?' hidden':'')+'><label>Objetivo semanal</label><input class="ev-input" type="number" min="1" max="7" id="rutFWeekly" value="'+(f?f.weeklyTarget:2)+'"></div></div>'
+    +(locked?'':'<div class="ev-field rut-first-quota" id="rutFirstQuota" hidden><label id="rutFirstQuotaLabel" for="rutFFirstTarget"></label><input class="ev-input" type="number" min="0" max="31" id="rutFFirstTarget" value="'+firstTarget+'"><p class="sy-note">Incluye las sesiones ya realizadas.</p></div>')
     +(r?'':'<p class="sy-note rut-flex-help">Elige las fechas en «Planificar sesiones».</p>')+'</div>';
 }
 function bindRutFlexOptions(r){
+  if(rutSetupLocked(r))return;
   function paint(){
     var flex=document.querySelector('[data-rmode="flex"]').classList.contains('primary');
     document.getElementById('rutFlexOptions').hidden=!flex;
@@ -68,15 +69,17 @@ function bindRutFlexOptions(r){
   };});});var start=document.getElementById('rutFStart');if(start){start.addEventListener('input',paint);start.addEventListener('change',paint);}paint();
 }
 function rutFlexRead(r){
-  if(!document.querySelector('[data-rmode="flex"]').classList.contains('primary'))return null;
-  var period=document.querySelector('[data-rperiod].primary').dataset.rperiod;
+  var locked=rutSetupLocked(r);
+  if(locked?!r.flex:!document.querySelector('[data-rmode="flex"]').classList.contains('primary'))return null;
+  var period=locked?r.flex.period:document.querySelector('[data-rperiod].primary').dataset.rperiod;
   var target=Number(document.getElementById('rutFTarget').value),weekly=Number(document.getElementById('rutFWeekly').value);
   var start=r?r.start:document.getElementById('rutFStart').value;
   if((!r||start)&&!validIsoDate(start))throw new Error('Elige una fecha de inicio válida.');
   if(!Number.isInteger(target)||target<1||target>(period==='week'?7:31))throw new Error('El cupo debe ser un número entero de 1 a '+(period==='week'?7:31)+' sesiones.');
   if(period==='month'&&(!Number.isInteger(weekly)||weekly<1||weekly>7))throw new Error('El objetivo semanal debe ser un número entero de 1 a 7 sesiones.');
   var overrides=Object.assign({},r&&r.flex?r.flex.monthTargets||{}:{});
-  if(period==='month'&&start&&start.slice(8)!=='01'){
+  if(locked&&period==='month'&&start)overrides[start.slice(0,7)]=rutFlexTarget(r,start);
+  if(!locked&&period==='month'&&start&&start.slice(8)!=='01'){
     var first=document.getElementById('rutFFirstTarget').value.trim(),n=Number(first),month=start.slice(0,7);
     if(first===''||!Number.isInteger(n)||n<0||n>31)throw new Error('Indica el cupo total del primer mes (0–31 sesiones), incluidas las ya realizadas.');
     if(!r||n!==target||Object.prototype.hasOwnProperty.call(overrides,month))overrides[month]=n;

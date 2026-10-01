@@ -155,13 +155,14 @@ assert.throws(()=>form.rutFlexRead(null),/objetivo semanal/);
 formPeriod='week';fields.rutFTarget.value='2';
 assert.equal(form.rutFlexRead(null).weeklyTarget,2); // Campo semanal oculto, sin efecto.
 assert.equal(Object.keys(form.rutFlexRead(null).monthTargets).length,0);
-assert.throws(()=>form.rutFlexRead(firstMonth),/quedarían sesiones/);
+fields.rutFWeekly.value='2';
+assert.equal(form.rutFlexRead(firstMonth).period,'month'); // Una rutina iniciada mantiene su modalidad/período.
 fields.rutFTarget.value='8';
 assert.throws(()=>form.rutFlexRead(null),/1 a 7/);
 formPeriod='month';fields.rutFWeekly.value='2';fields.rutFFirstTarget.value='8';
-assert.match(form.rutFlexOptionsHtml(legacy),/id="rutFFirstTarget" value="8"/);
-assert.equal(Object.keys(form.rutFlexRead(legacy).monthTargets).length,0); // Renombrar no congela el cupo antiguo.
-assert.match(form.rutFlexOptionsHtml(zero),/id="rutFFirstTarget" value="0"/);
+assert(!form.rutFlexOptionsHtml(legacy).includes('id="rutFFirstTarget"'));
+assert.equal(form.rutFlexRead(legacy).monthTargets[legacy.start.slice(0,7)],8);
+assert(!form.rutFlexOptionsHtml(zero).includes('id="rutFFirstTarget"'));
 fields.rutFFirstTarget.value='0';
 const beforeEdit=JSON.stringify(zero);
 const edited=form.rutFlexRead(zero);

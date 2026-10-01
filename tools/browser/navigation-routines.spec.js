@@ -36,7 +36,7 @@ test('histórico mensual: borrar, recuperar con Deshacer y conservar recuperacio
   if(!localStorage.getItem('excelia-rutinas-v1'))localStorage.setItem('excelia-rutinas-v1',JSON.stringify([{id:'delete-qa',name:'Actividad de prueba',icon:'gym',start:'2026-01-01',weekDays:[1,4],time:'19:00',dur:60,color:'#38bdf8',weeks:{},skips:{'2026-09-24':1},extraSessions:[{id:'extra-recovery-qa',date:'2026-10-03',time:'10:00',dur:60,skip:false,recoveryOf:'2026-09-24'}]}]));
  });
  await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewRutinas').click();
- await page.locator('.rut-edit').click();await page.locator('#rutFHistory').click();
+ await page.locator('[data-rhistory]').click();
  await expect(page.locator('#rutHistoryToday')).toBeVisible();
  await expect.poll(()=>page.locator('.rut-history-body').evaluate(el=>{
   const row=el.querySelector('[data-history-week="2026-09-28"]'),body=el.getBoundingClientRect(),r=row.getBoundingClientRect();return r.top>=body.top+30&&r.bottom<body.bottom;

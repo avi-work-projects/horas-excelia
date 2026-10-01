@@ -21,8 +21,8 @@ No hace falta cambiar de framework. Los renders devuelven HTML y no persisten ca
   contorno fino, círculos semanales y porcentaje de asistencia. No muestra las
   próximas tres sesiones. `_renderRutSchedule`
   pinta el horario vigente; `_rutTimeRange` da el mismo formato al inicio y al fin.
-  Editar conserva los accesos a cambio de semana, planificación e histórico
-  (también para sesiones flexibles). No sustituir esta vista por tarjetas grandes.
+  Cada tarjeta contiene dos accesos: cambio desde una semana o planificación,
+  junto a histórico. No están en Editar. No sustituir esta vista por tarjetas grandes.
 - Los textos de ayuda del formulario flexible son mínimos; su histórico y
   planificador mantienen las extras, recuperaciones y fechas pasadas.
 - El subrayado corto pertenece solo a `.rut-sub-tabs`; no modificar la distribución
@@ -60,6 +60,24 @@ No hace falta cambiar de framework. Los renders devuelven HTML y no persisten ca
 - `tools/browser/energy-navigation.spec.js` comprueba la prioridad de los gestos
   en ambos suministros, la posición estable de Próximos y la precisión del editor.
 
+### Edición de rutinas y detalle integrado (v383)
+- `rutinas-form.js` separa la configuración de las recurrencias. `rutSetupLocked`
+  bloquea los campos iniciales desde la fecha de inicio (o si ya hay sesiones
+  explícitas pasadas). `rutFormCandidate` protege esos datos también al guardar.
+  En flexibles siguen editables los objetivos habituales; el cupo del primer mes
+  permanece fijado y las fechas planificadas se conservan.
+- Antes del inicio se permite editar icono, modalidad, horario y duración. Cambiar
+  de modalidad conserva las sesiones explícitas y las recuperaciones vinculadas.
+  Las sesiones flexibles se planifican desde su acceso propio.
+- Las excepciones de `weeks` admiten `dur` opcional, validado al importar.
+  `rutDurationOn` resuelve versión, semana y sesión conservada, sin recalcular el
+  pasado ni las cancelaciones al cambiar semanas futuras.
+- `energyPriceTotal` es una fila de total con separador fino y cifra en negrita,
+  alineada con los precios desglosados. Se comparte en Fiscal, Hogar y tarifas.
+  El acceso al análisis de hipoteca queda inmediatamente después de su tarjeta.
+- `.bday-calendar` delimita el calendario de cumpleaños: nombres con contraste,
+  fines de semana suaves, fecha de hoy destacada y VIP dorados sin resplandor.
+
 | Modulo | Responsabilidad |
 |---|---|
 | data-integrity.js | appStorage, transaccion, validacion, referencias y migracion local |
@@ -75,6 +93,7 @@ No hace falta cambiar de framework. Los renders devuelven HTML y no persisten ca
 | bodas-class-form.js | formulario y selectores de una clase |
 | bodas-bind.js | pareja, acciones de vistas y contexto de render |
 | rutinas.js | recurrencias, excepciones y sesiones virtuales |
+| rutinas-form.js | configuración inicial, campos protegidos tras el inicio y edición general |
 | rutinas-icons.js | siluetas de rutina y colores por actividad |
 | rutinas-history.js | histórico mensual, semana actual y edición/borrado de sesiones |
 | rutinas-flex.js | cupos semanales/mensuales, planificación por fecha y avisos de sesiones pendientes |

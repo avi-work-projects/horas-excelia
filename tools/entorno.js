@@ -70,6 +70,7 @@ const MODULOS = [
   'bodas-config.js',
   'rutinas-icons.js',
   'rutinas.js',
+  'rutinas-form.js',
   'rutinas-flex.js',
   'rutinas-sessions.js',
   'rutinas-addition.js',

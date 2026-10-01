@@ -58,9 +58,9 @@ function renderHouseholdSummary(editable){
   if(total)h+='<div class="household-investment"><span>Inversión en la vivienda<small>Compra, impuestos y gastos</small></span><strong>'+fcPlain(total)+'</strong></div>';
   if(periods.length){
     h+=householdMortgageCard(comp,periods[periods.length-1],editable);
+    if(editable)h+='<button class="ev-io-btn household-analysis-link" id="hipGoAnalisis">Ver análisis de hipoteca</button>';
     if(periods.length>1){h+='<details class="household-history"><summary>Hipotecas anteriores <span>'+ (periods.length-1)+'</span></summary>';periods.slice(0,-1).reverse().forEach(function(p){h+=householdMortgageCard(comp,p,editable);});h+='</details>';}
   }else h+='<div class="household-empty">Sin hipoteca configurada. Puedes consultar tus suministros a continuación.</div>';
   h+='<h2 class="household-section-title">Suministros</h2><div class="household-utilities">'+householdUtilityCard('luz',editable)+householdUtilityCard('gas',editable)+'</div>';
-  if(editable&&periods.length)h+='<button class="ev-io-btn household-analysis-link" id="hipGoAnalisis">Ver análisis de hipoteca</button>';
   return h+'</div>';
 }
