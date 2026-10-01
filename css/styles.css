@@ -97,7 +97,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .ms-label{font-size:.82rem;color:var(--text-muted)}
 .ms-hrs{font-family:var(--mono);font-size:.78rem;color:var(--text-dim)}
 .data-actions{display:flex;gap:6px;flex-wrap:nowrap;align-items:center}
-.data-btn{width:44px;height:44px;border-radius:8px;border:none;background:transparent;color:var(--text-muted);font-size:1.35rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;position:relative}
+.data-btn{width:44px;height:44px;border-radius:8px;border:none;background:transparent;color:var(--text-muted);font-size:1.35rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,color .15s,box-shadow .15s;-webkit-user-select:none;user-select:none;position:relative}
 .data-btn:has(.btn-icon){width:66px;height:66px;border-radius:12px}
 #homeBtn{width:73px!important;height:73px!important;border-radius:14px!important}
 .btn-icon{width:42px;height:42px;object-fit:contain;pointer-events:none}

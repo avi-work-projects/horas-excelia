@@ -12,11 +12,12 @@ test('Médico: crear, volver a editar, filtrar y conservar color en recordatorio
  await expect(page.locator('#evFormOv')).toBeHidden();
  await expect(page.locator('.ev-upcoming-item')).toContainText('Consulta de prueba');
  await page.locator('#evViewCal').click();
- await expect(page.locator('.ev-shape-x-thin[data-ds="2026-08-21"]')).toHaveCSS('color','rgb(224, 49, 49)');
+ await expect(page.locator('.ev-shape-medical[data-ds="2026-08-21"]')).toHaveCSS('color','rgb(224, 49, 49)');
+ await expect(page.locator('.ev-shape-medical[data-ds="2026-08-21"] rect')).toHaveAttribute('fill','#fff');
  await page.locator('#evViewQuad').click();
- await expect(page.locator('.ev-shape-x-thin[data-ds="2026-08-21"]')).toHaveCount(1);
+ await expect(page.locator('.ev-shape-medical[data-ds="2026-08-21"]')).toHaveCount(1);
  await page.locator('[data-filter-type="Rec. Gestiones"]').click();
- await expect(page.locator('.ev-shape-x-thin[data-ds="2026-08-21"]')).toHaveCount(0);
+ await expect(page.locator('.ev-shape-medical[data-ds="2026-08-21"]')).toHaveCount(0);
  await page.locator('#evViewUpcoming').click();await page.locator('#evSubTodos').click();
  await page.locator('#evTypesFilter').click();await page.locator('.ev-type-option[data-type="Médico"]').click();
  await page.locator('.ev-list-item').click();await page.locator('#evDEdit').click();
