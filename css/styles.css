@@ -2280,9 +2280,6 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .rut-name{flex:1;font-size:.85rem;font-weight:600;color:var(--text)}
 .rut-tag{font-size:.6rem;border-radius:8px;padding:1px 6px;white-space:nowrap}
 .rut-tag.susp{color:var(--c-orange);border:1px solid var(--c-orange)}
-.rut-prox{display:flex;flex-wrap:wrap;gap:4px}
-.rut-prox-i{font-size:.62rem;color:var(--text-muted);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:2px 7px;cursor:pointer}
-.rut-prox-i.skip{text-decoration:line-through;color:var(--c-orange);border-color:var(--c-orange)}
 .rut-vacio{font-size:.62rem;color:var(--text-dim);font-style:italic}
 .rut-card-ft{display:flex;justify-content:space-between;font-size:.68rem;color:var(--text-muted);border-top:1px solid var(--border);padding-top:5px}
 .rut-pct{font-family:var(--mono);font-weight:600;color:var(--c-green)}
@@ -2583,7 +2580,7 @@ button.action-edit.action-edit-text:active{background:#f97316!important}
 #eventsOverlay .ev-hdr-sub .ev-view-toggle{--tab-tone:#60a5fa;color:var(--tab-tone)!important;border-color:var(--tab-tone)!important;background:color-mix(in srgb,var(--tab-tone) 8%,var(--surface))!important}
 #eventsOverlay .ev-hdr-sub .ev-view-toggle.active{background:color-mix(in srgb,var(--tab-tone) 23%,var(--surface))!important}
 #eventsOverlay .ev-hdr-sub .ev-btn-calendar{--tab-tone:#65a367}
-#eventsOverlay .ev-hdr-sub .ev-btn-bday{--tab-tone:#ee7817}
+#eventsOverlay .ev-hdr-sub .ev-btn-bday{--tab-tone:var(--birthday-tone)}
 .bday-sub-tabs .econ-sub-tab{color:var(--birthday-tone);font-weight:600}
 .bday-sub-tabs .econ-sub-tab.active{border-color:var(--birthday-tone);color:var(--birthday-tone)}
 .ev-bday-body{gap:12px}
@@ -2637,10 +2634,10 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 #fiscalOverlay .econ-sub-tab.active{background:color-mix(in srgb,var(--c-purple) 18%,var(--surface))}
 
 .nav-pro-icon{width:34px;height:34px;display:block;box-sizing:border-box;padding:1px;color:var(--c-blue)}
-.nav-pro-econ{color:var(--c-blue)}.nav-pro-home{color:var(--c-red)}.nav-pro-estudio{color:var(--c-purple)}.nav-pro-events{color:#65a367}.nav-pro-bday{color:var(--birthday-tone)}.nav-pro-alarm{color:#e5b600;width:31px;height:31px}
+.nav-pro-econ{color:var(--c-blue)}.nav-pro-home{color:var(--c-red)}.nav-pro-estudio{color:var(--study-tone)}.nav-pro-events{color:#65a367}.nav-pro-bday{color:var(--birthday-tone)}.nav-pro-alarm{color:#e5b600;width:31px;height:31px}
 
-:root{--birthday-tone:#ffb347}
-[data-theme="light"]{--birthday-tone:#df8b10}
+:root{--birthday-tone:#f08bb2;--study-tone:#69abc2}
+[data-theme="light"]{--birthday-tone:#b43868;--study-tone:#277b98}
 /* Los SVG comparten caja; Home solo es mas grande con los iconos originales. */
 .data-actions:has(.nav-pro-icon){align-items:center}
 .data-btn:has(.nav-pro-icon),.nav-bar-btn:has(.nav-pro-icon),#homeBtn:has(.nav-pro-icon),.nav-bar-btn[data-nav="home"]:has(.nav-pro-icon){width:44px!important;height:44px!important;flex-shrink:0;border-radius:8px!important}
@@ -2649,7 +2646,7 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 #econBtn,.nav-bar-btn[data-nav="econ"]{--nav-tone:var(--c-blue)}
 #householdBtn,.nav-bar-btn[data-nav="household"]{--nav-tone:#169a94}
 .nav-pro-household{color:#169a94}
-#estudioBtn,.nav-bar-btn[data-nav="estudio"]{--nav-tone:var(--c-purple)}
+#estudioBtn,.nav-bar-btn[data-nav="estudio"]{--nav-tone:var(--study-tone)}
 #homeBtn,.nav-bar-btn[data-nav="home"]{--nav-tone:var(--c-red)}
 #eventsBtn,.nav-bar-btn[data-nav="events"]{--nav-tone:#65a367}
 #bdayBtn,.nav-bar-btn[data-nav="bday"]{--nav-tone:var(--birthday-tone)}
@@ -2889,8 +2886,9 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 
 /* Ventana energética: cabecera fija, scroll del cuerpo, gráficos de un año. */
 .energy-window{display:flex!important;flex-direction:column;z-index:320;background:var(--bg);overflow:hidden}
-.energy-window-header{display:grid;grid-template-columns:38px 1fr auto;align-items:center;gap:10px;padding:16px;flex-shrink:0;box-shadow:0 1px 0 var(--border)}
+.energy-window-header{display:grid;grid-template-columns:38px 1fr 38px;align-items:center;gap:10px;padding:16px;flex-shrink:0;box-shadow:0 1px 0 var(--border)}
 .energy-window-header h2{font-size:1rem;text-align:center;margin:0}
+.energy-window-header .energy-import-icon{width:38px;height:38px;padding:0;flex:none;font-size:1.35rem;border-radius:50%;line-height:1}
 .energy-window>.energy-year-nav{margin:0;padding:12px;flex-shrink:0}
 .energy-window .sy-body{padding:0;min-height:0;flex:1;overflow-y:auto}
 .energy-window-content{width:100%;max-width:760px;margin:0 auto;padding:14px 16px 30px;flex-shrink:0}
@@ -3000,7 +2998,6 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .data-actions>.data-btn,.data-menu-wrap{flex-shrink:0}
 .data-actions>.data-btn,.data-actions>.data-menu-wrap{align-self:center}
 .nav-bar-btn[data-nav="alarm"]{margin-left:auto}
-.rut-prox-i{cursor:default}
 
 .rut-session-state{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.rut-session-state>.ev-io-btn{flex:1}
 .rut-recovery-list{position:relative;max-height:50vh;overflow-y:auto;margin-top:18px}.rut-recovery-list>h3{position:sticky;top:0;background:var(--surface);padding:10px 0;font-size:.8rem;z-index:1}.rut-recovery-list>.ev-io-btn{display:flex;flex-direction:column;gap:5px;width:100%;margin-bottom:8px;text-align:left}.rut-recovery-list small{color:var(--text-muted)}
@@ -3017,10 +3014,18 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .rut-hora-varias{font-style:italic}
 .rut-hora-fixed{padding:5px 7px;border-radius:7px;background:var(--surface2)}
 .rut-time-range{display:inline-flex;gap:2px;align-items:baseline;white-space:nowrap;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.8rem;color:var(--text);font-weight:600}
+.rut-card-icon{display:flex;align-items:center;justify-content:center;width:22px;height:22px;flex-shrink:0}
+.rut-card-icon svg{display:block;width:22px;height:22px}
+.rut-routine-card .rut-name{font-size:.78rem}
 .ev-main-tabs .ev-btn-bday{display:flex;justify-content:center;align-items:center}
-#eventsOverlay .ev-hdr-sub .ev-view-toggle.ev-btn-bday{background:radial-gradient(circle at center,color-mix(in srgb,var(--tab-tone) 12%,var(--surface)) 18px,var(--surface) 19px)!important}
-#eventsOverlay .ev-hdr-sub .ev-view-toggle.ev-btn-bday.active{background:radial-gradient(circle at center,color-mix(in srgb,var(--tab-tone) 27%,var(--surface)) 18px,color-mix(in srgb,var(--tab-tone) 6%,var(--surface)) 19px)!important}
 .ev-main-tabs .ev-btn-bday .nav-pro-icon{color:inherit;width:30px;height:30px}
+
+/* Selección por fondo en las subpestañas de Eventos; cada una conserva su tono. */
+#eventsOverlay .econ-sub-tab.active,#eventsOverlay .boda-config-btn.active{background:color-mix(in srgb,currentColor 10%,var(--surface))}
+#eventsOverlay .sy-body:has(> .ev-upcoming-tabs){scrollbar-gutter:stable}
+.ev-upcoming-tabs{justify-content:space-between;gap:8px;margin:0 -16px;padding:0 20px;height:48px;box-sizing:border-box;flex-shrink:0}
+.ev-wk-body>.ev-upcoming-tabs{margin:0}
+.ev-upcoming-tabs .econ-sub-tab{flex:0 0 auto;padding:8px 3px;font-size:.72rem;font-weight:600;line-height:1.2;white-space:nowrap;transition:color .15s,background .15s,border-color .15s}
 
 .energy-tariff-period>summary{list-style-position:outside;cursor:pointer;padding:12px 0}.energy-tariff-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}.energy-tariff-metrics>span{display:flex;flex-direction:column;gap:5px;background:var(--surface2);padding:10px 5px;border-radius:9px;text-align:center}.energy-tariff-metrics small{font-size:.66rem;font-weight:400;color:var(--text-muted)}.energy-tariff-metrics b{font-size:.85rem;color:var(--text)}
 

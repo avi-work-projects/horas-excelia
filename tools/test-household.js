@@ -3,7 +3,7 @@ const assert=require('assert');
 const {cargarApp}=require('./entorno');
 const a=cargarApp({});a.loadDespacho();
 // Presentación abreviada sin alterar la tarifa ni alimentar cálculos redondeados.
-[[.078456,'0,078'],[.1249,'0,12'],[1.345,'1,3'],[0,'0'],[null,'—']].forEach(([n,s])=>assert.equal(a.energyUnitPrice(n),s));
+[[.078456,'0,078'],[.1249,'0,12'],[.196,'0,20'],[.1,'0,10'],[1.345,'1,3'],[0,'0'],[null,'—']].forEach(([n,s])=>assert.equal(a.energyUnitPrice(n),s));
 const t=a.energyTariffDefaults({precioKwh:.1249,precioPotP1:.078456,potenciaTotal:3.3,modoPotencia:'simple'}),saved=JSON.stringify(t);
 a.energyUnitPrice(t.precioKwh);a.energyUnitPrice(t.precioPotP1);
 assert.equal(JSON.stringify(t),saved);

@@ -7,7 +7,15 @@ function bindEnergyAnalysis(w,kind){
   w.querySelectorAll('[data-energy-tab]').forEach(function(b){b.onclick=function(){ENERGY_ANALYSIS_TAB=b.dataset.energyTab;openEnergyAnalysis(kind);};});
   function year(delta){ENERGY_ANALYSIS_YEAR+=delta;refresh();}
   w.querySelectorAll('[data-analysis-year]').forEach(function(b){b.onclick=function(){year(+b.dataset.analysisYear);};});
-  w.querySelectorAll('.energy-year-chart').forEach(function(el){energyBindYearChart(el,function(){year(1);},function(){year(-1);});});
+  function tab(delta){
+    var index=ENERGY_ANALYSIS_TABS.map(function(t){return t[0];}).indexOf(ENERGY_ANALYSIS_TAB),next=ENERGY_ANALYSIS_TABS[index+delta];
+    if(next){ENERGY_ANALYSIS_TAB=next[0];openEnergyAnalysis(kind);}
+  }
+  // El panel interior consume su gesto: cambiar de año nunca cambia además de pestaña.
+  if(['resumen','consumo','costes'].indexOf(ENERGY_ANALYSIS_TAB)!==-1){
+    energyBindSwipe(w.querySelector('.energy-window-content').firstElementChild,function(){year(1);},function(){year(-1);});
+  }
+  energyBindSwipe(w.querySelector('.energy-window'),function(){tab(1);},function(){tab(-1);});
   var input=w.querySelector('#energyStudyFile');w.querySelector('#energyImportTop').onclick=function(){input.click();};
   input.onchange=function(){var file=input.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(){try{
     var data=validateImport(JSON.parse(reader.result)),preview=energyImportPreview(data);
@@ -20,10 +28,19 @@ function bindEnergyAnalysis(w,kind){
 
 }
 
-function energyBindYearChart(el,next,prev){
+function energyBindSwipe(el,next,prev){
   addSwipe(el,next,prev);
   var start=null;
-  el.addEventListener('pointerdown',function(e){if(e.pointerType==='mouse')start={x:e.clientX,y:e.clientY};});
+  // La misma prioridad para arrastrar con ratón en escritorio.
+  el.addEventListener('pointerdown',function(e){
+    start=null;if(e.pointerType!=='mouse'||e.target.closest('input,select,button,a'))return;
+    for(var n=e.target;n&&n!==el;n=n.parentElement){
+      if(n._swipeAdded)return;
+      if(n.scrollWidth>n.clientWidth+1&&/auto|scroll/.test(getComputedStyle(n).overflowX))return;
+    }
+    start={x:e.clientX,y:e.clientY};
+  });
   el.addEventListener('pointerup',function(e){if(!start)return;var dx=e.clientX-start.x,dy=e.clientY-start.y;start=null;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)){e.preventDefault();if(dx<0)next();else prev();}});
   el.addEventListener('pointerleave',function(){start=null;});
+  el.addEventListener('pointercancel',function(){start=null;});
 }

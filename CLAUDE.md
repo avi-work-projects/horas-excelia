@@ -12,13 +12,14 @@ PWA estatica, sin backend. Datos personales locales; el despliegue no inyecta se
 ES5 en el codigo existente; se permiten las APIs modernas compatibles con Edge/Chromium usadas por la PWA.
 No hace falta cambiar de framework. Los renders devuelven HTML y no persisten cambios.
 
-### Avisos y tarjetas de rutinas (v379/v380)
+### Avisos y tarjetas de rutinas (v379–v381)
 - `showToast` conserva la acción y su caducidad. `_toastBindSwipe` registra una sola
   vez el gesto horizontal, disponible tras 1 segundo en avisos con acción. Apartar
   el aviso nunca ejecuta Deshacer; un gesto vertical o corto tampoco lo activa.
   `_toastReset` limpia los temporizadores y el desplazamiento al sustituir un aviso.
-- La lista de Rutinas conserva las tarjetas compactas, puntos de color, círculos
-  semanales, próximas sesiones y porcentaje de asistencia. `_renderRutSchedule`
+- La lista de Rutinas conserva las tarjetas compactas, iconos de actividad con
+  contorno fino, círculos semanales y porcentaje de asistencia. No muestra las
+  próximas tres sesiones. `_renderRutSchedule`
   pinta el horario vigente; `_rutTimeRange` da el mismo formato al inicio y al fin.
   Editar conserva los accesos a cambio de semana, planificación e histórico
   (también para sesiones flexibles). No sustituir esta vista por tarjetas grandes.
@@ -28,6 +29,25 @@ No hace falta cambiar de framework. Los renders devuelven HTML y no persisten ca
   de las subpestañas globales para retocar esta vista.
 - Verificación: `tools/browser/toast-routines.spec.js`, instantáneas y pruebas de
   sesiones (horario vigente, cambios futuros e intervalos que cruzan medianoche).
+
+### Navegación y precisión visual (v381)
+- `ENERGY_ANALYSIS_TABS` define el orden de las cinco pestañas. `energyBindSwipe`
+  reutiliza `addSwipe`: en Resumen, Consumo y Coste el primer panel cambia el año;
+  el resto cambia la pestaña. Tarifas y Escenarios solo cambian la pestaña. El
+  gesto interior no se propaga al exterior, también al arrastrar con ratón.
+- `.ev-upcoming-tabs` mantiene anchos de texto y grosor de letra constantes. Su
+  margen compensa el padding de las listas, pero no el de Agenda. La reserva de
+  scrollbar evita saltos entre vistas cortas y largas. Esta regla es local a
+  Próximos; no alterar la distribución global de `.econ-sub-tabs`.
+- Las subpestañas de Eventos sombrean el fondo de la selección con su propio tono.
+  Cumpleaños usa `--birthday-tone` (frambuesa) y comparación `--study-tone` (azul
+  petróleo); el morado de Fiscal se conserva.
+- `energyUnitPrice` muestra dos cifras significativas, conservando ceros finales
+  (`0,20`). El resumen de tarifas incluye impuestos y lo dice junto al consumo;
+  el desglose muestra el origen sin impuestos. Nunca redondear los datos guardados
+  ni los cálculos; los importes finales mantienen dos decimales.
+- `tools/browser/energy-navigation.spec.js` comprueba la prioridad de los gestos
+  en ambos suministros y la posición estable de Próximos.
 
 | Modulo | Responsabilidad |
 |---|---|

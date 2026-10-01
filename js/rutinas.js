@@ -308,26 +308,15 @@ function _renderRutLista(){
   RUTINAS.forEach(function(r){
     var susp=rutSuspendedOn(r,hoy);
     var st=rutStats(r);
-    var prox=rutProximas(r,3);
-    h+='<div class="rut-card'+(susp?' susp':'')+'" data-rid="'+escHtml(r.id)+'">';
+    h+='<div class="rut-card rut-routine-card'+(susp?' susp':'')+'" data-rid="'+escHtml(r.id)+'">';
     h+='<div class="rut-card-hd">';
-    h+='<span class="rut-dot" style="background:'+rutDisplayColor(r)+'"></span>';
+    h+='<span class="rut-card-icon" aria-hidden="true">'+rutIconSvg(rutIconOf(r),rutDisplayColor(r),true)+'</span>';
     h+='<span class="rut-name">'+escHtml(r.name)+'</span>';
     if(susp)h+='<span class="rut-tag susp">en pausa'+(r.suspend&&r.suspend.to?(' hasta '+_rutFmt(r.suspend.to)):'')+'</span>';
     h+='<button class="action-edit boda-mini-btn rut-edit" data-rid="'+r.id+'" title="Editar">&#9998;</button>';
     h+='</div>';
     if(r.flex)h+=rutFlexSummary(r);
     else h+=_renderRutSchedule(r,hoy);
-    if(prox.length){
-      h+='<div class="rut-prox">';
-      prox.forEach(function(s){
-        h+='<span class="rut-prox-i'+(s.skip?' skip':'')+'" data-rid="'+escHtml(r.id)+'" data-ds="'+s.ds+'" data-session="'+escHtml(s.key)+'">'
-          +_rutFmtCorto(s.ds)+' · '+s.time+(s.skip?' ✕':'')+' '+escHtml(rutSessionTag(r,s))+'</span>';
-      });
-      h+='</div>';
-    }else if(!susp){
-      h+='<div class="rut-prox"><span class="rut-vacio">Sin sesiones próximas</span></div>';
-    }
     if(st.total){
       h+='<div class="rut-card-ft"><span>'+st.hechas+' hechas · '+st.saltadas+' saltadas</span>';
       h+='<span class="rut-pct">'+st.pct+'%</span></div>';
