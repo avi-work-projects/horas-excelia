@@ -1,5 +1,7 @@
 /* Binds de la ventana de energía. Los controles editables solo afectan escenarios. */
 function bindEnergyAnalysis(w,kind){
+  // Cerrar este panel antes de usar la navegación compartida, también al volver a Gastos del hogar.
+  w.querySelectorAll('.overlay-nav-bar [data-nav]').forEach(function(b){b.onclick=function(){closeEnergyAnalysis();navigateMain(b.dataset.nav);};});
   function refresh(){var body=w.querySelector('.sy-body'),top=body?body.scrollTop:0;openEnergyAnalysis(kind);var fresh=document.querySelector('#energyAnalysisOverlay .sy-body');if(fresh)fresh.scrollTop=top;}
   w.querySelector('#energyAnalysisBack').onclick=closeEnergyAnalysis;
   w.querySelectorAll('[data-energy-tab]').forEach(function(b){b.onclick=function(){ENERGY_ANALYSIS_TAB=b.dataset.energyTab;openEnergyAnalysis(kind);};});

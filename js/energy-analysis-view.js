@@ -5,7 +5,8 @@ var ENERGY_ANALYSIS_KIND='luz';
 var ENERGY_RETURN=null;
 function energyAnalysisHtml(kind){
   var year=ENERGY_ANALYSIS_YEAR,months=energyConsumptionMonths(energyBills(),year,kind);
-  var h='<div class="energy-window-header"><button class="sy-back" id="energyAnalysisBack" aria-label="Volver">←</button><h2>Estudio de '+(kind==='luz'?'electricidad':'gas')+'</h2><button class="ev-io-btn" id="energyImportTop">Importar</button></div>';
+  var h=renderNavBar('household');
+  h+='<div class="energy-window-header"><button class="sy-back" id="energyAnalysisBack" aria-label="Volver">←</button><h2>Estudio de '+(kind==='luz'?'electricidad':'gas')+'</h2><button class="ev-io-btn" id="energyImportTop">Importar</button></div>';
   h+='<div class="econ-sub-tabs energy-tabs">';
   [['resumen','Resumen'],['consumo','Consumo'],['costes','Coste'],['tarifas','Tarifas'],['comparar','Escenarios']].forEach(function(t){h+='<button class="econ-sub-tab'+(ENERGY_ANALYSIS_TAB===t[0]?' active':'')+'" data-energy-tab="'+t[0]+'">'+t[1]+'</button>';});
   h+='</div><div class="energy-year-nav"><button class="nav-btn" data-analysis-year="-1" aria-label="Año anterior">◀</button><strong>'+year+'</strong><button class="nav-btn" data-analysis-year="1" aria-label="Año siguiente">▶</button></div><div class="sy-body">';

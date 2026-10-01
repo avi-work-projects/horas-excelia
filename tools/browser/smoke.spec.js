@@ -74,6 +74,7 @@ test('estudio energético: cinco pestañas, IVA, año y consulta sin edición',a
   ENERGY_ANALYSIS_YEAR=2026;openEnergyAnalysis('luz');
  });
  await expect(page.locator('[data-energy-tab]')).toHaveCount(5);
+ await expect(page.locator('#energyAnalysisOverlay .overlay-nav-bar [data-nav]')).toHaveCount(7);
  await page.locator('[data-energy-tab="costes"]').click();
  await expect(page.locator('.energy-cost-segment')).toHaveCount(1);
  await expect(page.locator('#energyVatCycle')).toBeChecked();
@@ -84,6 +85,17 @@ test('estudio energético: cinco pestañas, IVA, año y consulta sin edición',a
  await page.locator('[data-energy-tab="tarifas"]').click();await expect(page.locator('.energy-window-content input')).toHaveCount(0);
  await page.locator('[data-energy-tab="comparar"]').click();await expect(page.locator('.energy-compare-chart')).toHaveCount(2);
  expect(await page.locator('#energyAnalysisOverlay').evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
+ await page.locator('#energyAnalysisOverlay .sy-body').evaluate(el=>el.scrollTop=el.scrollHeight);
+ await expect(page.locator('#energyAnalysisOverlay [data-nav="household"]')).toBeInViewport();
+ await page.locator('#energyAnalysisOverlay [data-nav="household"]').click();
+ await expect(page.locator('#energyAnalysisWrap')).toHaveCount(0);
+ await page.locator('[data-hipsub="gas"]').click();
+ await page.locator('#fiscalOverlay .energy-analysis-open').click();
+ await expect(page.locator('#energyAnalysisOverlay h2')).toHaveText('Estudio de gas');
+ await expect(page.locator('#energyAnalysisOverlay .overlay-nav-bar [data-nav]')).toHaveCount(7);
+ await page.locator('#energyAnalysisOverlay [data-nav="home"]').click();
+ await expect(page.locator('#energyAnalysisWrap')).toHaveCount(0);
+ await expect(page.locator('#homeBtn')).toBeInViewport();
 });
 test('mobile: menus, cumpleanos, guardado y deshacer',async({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
