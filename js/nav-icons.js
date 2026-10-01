@@ -1,6 +1,15 @@
 /* Iconos propios en SVG. La alternativa original se conserva sin cambios. */
 var NAV_ICON_STYLE=(function(){try{return appStorage.getItem('excelia-nav-icons-v1')==='professional'?'professional':'original';}catch(e){return 'original';}})();
+/* Una sola lista para la cabecera, los overlays y la vista previa del selector. */
+var NAV_MAIN_ITEMS=[
+ {key:'household',id:'householdBtn',title:'Gastos del hogar'},
+ {key:'estudio',id:'estudioBtn',title:'Herramientas de comparación'},
+ {key:'home',id:'homeBtn',title:'Inicio'},
+ {key:'events',id:'eventsBtn',title:'Eventos'},
+ {key:'econ',id:'econBtn',title:'Resumen económico'}
+];
 var NAV_ICON_PATHS={
+ household:'<path d="m3 10 8-7 8 7M5 9v11h5V9h11v12l-2-1-2 1-2-1-2 1h-3M14 13h4m-4 3h4"/>',
  econ:'<path d="M4 19V5h16v14zM7 15v-3m5 3V9m5 6V7"/>',
  estudio:'<path d="M5 4v16m14-16v16M3 8h4m10 8h4M9 7h5l-2-2m2 2-2 2M15 17h-5l2-2m-2 2 2 2"/>',
  home:'<path d="m3 11 9-8 9 8M5 10v10h5v-6h4v6h5V10"/>',
@@ -15,7 +24,7 @@ function navIconHtml(key,style){
 }
 function applyNavIconStyle(style){
  NAV_ICON_STYLE=style==='professional'?'professional':'original';
- var home={econ:'econBtn',estudio:'estudioBtn',home:'homeBtn',events:'eventsBtn',bday:'bdayBtn',alarm:'alarmTestBtn'};
+ var home={alarm:'alarmTestBtn'};NAV_MAIN_ITEMS.forEach(function(item){home[item.key]=item.id;});
  Object.keys(home).forEach(function(key){var el=document.getElementById(home[key]);if(el)el.innerHTML=navIconHtml(key);});
  document.querySelectorAll('.nav-bar-btn[data-nav]').forEach(function(el){if(NAV_ICON_PATHS[el.dataset.nav])el.innerHTML=navIconHtml(el.dataset.nav);});
  var value=document.getElementById('navIconStyleValue');if(value)value.textContent=NAV_ICON_STYLE==='professional'?'Profesionales':'Originales';
@@ -28,7 +37,7 @@ function openNavIconPicker(){
  [['original','Originales','Ilustraciones con volumen y color'],['professional','Profesionales','Trazos limpios y colores por ventana']].forEach(function(option){
   var selected=NAV_ICON_STYLE===option[0];
   h+='<button class="nav-icon-choice'+(selected?' selected':'')+'" data-icon-style="'+option[0]+'" aria-pressed="'+selected+'"><span class="nav-icon-choice-head"><strong>'+option[1]+'</strong><span class="nav-icon-choice-check" aria-hidden="true">'+(selected?'&#10003;':'')+'</span></span>';
-  h+='<span class="nav-icon-choice-preview" aria-hidden="true">'+Object.keys(NAV_ICON_PATHS).map(function(key){return navIconHtml(key,option[0]);}).join('')+'</span><span class="nav-icon-choice-note">'+option[2]+'</span></button>';
+  h+='<span class="nav-icon-choice-preview" aria-hidden="true">'+NAV_MAIN_ITEMS.map(function(item){return item.key;}).concat(['alarm']).map(function(key){return navIconHtml(key,option[0]);}).join('')+'</span><span class="nav-icon-choice-note">'+option[2]+'</span></button>';
  });
  h+='</div></div>';
  var wrap=abrirPanel('navIconPickerWrap',h,{contenedor:document.body,overlay:'navIconPickerOv',alCerrar:closeNavIconPicker});
@@ -47,4 +56,10 @@ function bindNavIconStyle(){
  applyNavIconStyle(NAV_ICON_STYLE);
  var button=document.getElementById('navIconStyle');
  if(button)button.addEventListener('click',function(e){e.stopPropagation();openNavIconPicker();});
+}
+
+function initMainNavigation(){
+ var mount=document.getElementById('mainNavMount');if(!mount)return;
+ mount.insertAdjacentHTML('beforebegin',NAV_MAIN_ITEMS.map(function(item){return '<button class="data-btn" id="'+item.id+'" title="'+item.title+'">'+navIconHtml(item.key)+'</button>';}).join(''));mount.remove();
+ NAV_MAIN_ITEMS.forEach(function(item){document.getElementById(item.id).addEventListener('click',function(){navigateMain(item.key);});});
 }

@@ -181,13 +181,7 @@ function renderBdayList(){
 /* ── Contenido principal ──────────────────────────────────── */
 function renderBdayContent(){
   var isUpcoming=BDAY_VIEW==='upcoming';
-  var h=renderNavBar('bday');
-  // TABS en nivel 2 (justo bajo el nav bar)
-  h+='<div class="bday-hdr-sub">';
-  h+='<div class="ev-view-zone ev-zone-a"><button class="ev-view-toggle'+(BDAY_VIEW==='upcoming'?' active':'')+'" id="bdViewUpcoming">Pr\u00f3ximos<br>Cumplea\u00f1os</button></div>';
-  h+='<div class="ev-view-zone ev-zone-a"><button class="ev-view-toggle'+(BDAY_VIEW==='list'?' active':'')+'" id="bdViewList">Lista<br>Cumplea\u00f1os</button></div>';
-  h+='<div class="ev-view-zone ev-zone-a"><button class="ev-view-toggle'+(BDAY_VIEW==='cal'?' active':'')+'" id="bdViewCal">Calendario<br>Cumplea\u00f1os</button></div>';
-  h+='</div>';
+  var h='';
   // Nivel 3: para TODAS las vistas
   h+='<div class="sy-header with-tabs sy-header-center">';
   h+='<button class="sy-back" id="bdBack">&#8592;</button>';
@@ -205,7 +199,11 @@ function renderBdayContent(){
     h+='<button class="today-btn" id="bdToday" style="font-size:.7rem;padding:6px 12px">Hoy</button>';
   }
   h+='</div>';
-  // Para 'list': filtro VIP sticky justo bajo nivel 3 (flex-shrink:0, fuera del sy-body)
+  h+='<div class="sy-body ev-bday-body"'+(BDAY_EDIT_VIP?' style="padding-bottom:56px"':'')+'>';
+  h+='<div class="econ-sub-tabs bday-sub-tabs">';
+  [['upcoming','Próximos','bdViewUpcoming'],['list','Lista','bdViewList'],['cal','Calendario','bdViewCal']].forEach(function(tab){h+='<button class="econ-sub-tab'+(BDAY_VIEW===tab[0]?' active':'')+'" id="'+tab[2]+'">'+tab[1]+'</button>';});
+  h+='</div>';
+  // Controles de la lista dentro del scroll, bajo las subpestañas fijas.
   if(BDAY_VIEW==='list'){
     h+='<div class="bday-vip-ctrl-bar">';
     h+='<div class="bday-vip-filter-chips">';
@@ -223,7 +221,7 @@ function renderBdayContent(){
     h+='<button class="bday-io-btn bday-io-btn-add" id="bdAdd">+ A\u00f1adir</button>';
     h+='</div>';
   }
-  h+='<div class="sy-body"'+(BDAY_EDIT_VIP?' style="padding-bottom:56px"':'')+'>';
+
   if(BDAY_VIEW==='upcoming'){
     h+=renderBdayUpcoming();
   } else if(BDAY_VIEW==='cal'){

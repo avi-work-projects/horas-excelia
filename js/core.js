@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v371 - recuperaciones y estudio energético';
+var APP_VERSION = 'v372 - navegación y sesiones de rutinas';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -702,53 +702,31 @@ function cerrarPanel(id, overlayId, alTerminar){
 
 // ── Barra de navegación compartida entre overlays ────────────
 function renderNavBar(current){
-  var evActive=typeof EVENTS!=='undefined'&&EVENTS.length>0&&typeof hasUpcomingEvent==='function'&&hasUpcomingEvent();
-  var bdActive=typeof BDAYS!=='undefined'&&BDAYS.length>0&&typeof hasUpcomingBday==='function'&&hasUpcomingBday();
-  var btns=[
-    {icon:'<img src="icon-econ.png" class="btn-icon" alt="">',key:'econ',title:'Econ\u00f3mico'},
-    {icon:'<img src="icon-estudio.png" class="btn-icon" alt="">',key:'estudio',title:'Estudio Cambio'},
-    {icon:'<img src="icon-home.png" class="btn-icon" alt="">',key:'home',title:'Inicio'},
-    {icon:'<img src="icon-events.png" class="btn-icon" alt="">',key:'events',title:'Eventos'},
-    {icon:'<img src="icon-bday.png" class="btn-icon" alt="">',key:'bday',title:'Cumplea\u00f1os'},
-    {icon:'<img src="icon-alarm.png" class="btn-icon" alt="">',key:'alarm',title:'Test alarma'},
-    {icon:'&#8943;',key:'menu',title:'M\u00e1s opciones'}
-  ];
-  var h='<div class="overlay-nav-bar">';
-  btns.forEach(function(b){
+  var h='<div class="overlay-nav-bar" data-current="'+current+'">';
+  NAV_MAIN_ITEMS.concat([{key:'alarm',title:'Crear alarma'},{key:'menu',title:'Más opciones'}]).forEach(function(b){
     if(b.key==='alarm')h+='<div class="nav-bar-spacer"></div>';
-    var active=b.key===current?' active':'';
-    var extra=b.key==='events'&&evActive?' events-active':b.key==='bday'&&bdActive?' bday-active':'';
-    h+='<button class="nav-bar-btn'+active+extra+'" data-nav="'+b.key+'" title="'+b.title+'">'+(NAV_ICON_STYLE==='professional'&&b.key!=='menu'?navIconHtml(b.key):b.icon)+'</button>';
+    h+='<button class="nav-bar-btn'+(b.key===current?' active':'')+'" data-nav="'+b.key+'" title="'+b.title+'">'+(b.key==='menu'?'&#8943;':navIconHtml(b.key))+'</button>';
   });
-  h+='</div>';
-  return h;
+  return h+'</div>';
 }
-
 function bindNavBar(current,closeFn){
-  // Map para reabrir el overlay actual (para NAV_BACK)
-  var reopenFns={econ:openEcon,bday:openBday,events:openEvents,estudio:openEstudio};
-  document.querySelectorAll('.overlay-nav-bar .nav-bar-btn[data-nav]').forEach(function(btn){
-    var key=btn.dataset.nav;
-    if(key===current)return;
-    btn.addEventListener('click',function(e){
-      var doNav=function(){
-        if(key==='home'){/* overlay ya cerrado */}
-        else if(key==='econ')openEcon();
-        else if(key==='bday')openBday();
-        else if(key==='events')openEvents();
-        else if(key==='estudio')openEstudio();
-        else if(key==='alarm')document.getElementById('alarmTestBtn').click();
-        else if(key==='menu'){var m=document.getElementById('dataMenu');if(m)m.classList.toggle('open');}
-      };
-      // Guardar función de retorno: cerrar la nueva ventana + reabrir la actual
-      if(closeFn&&reopenFns[key]&&reopenFns[current]){
-        var reopen=reopenFns[current];
-        NAV_BACK=function(){closeFn();setTimeout(reopen,330);};
-      } else {
-        NAV_BACK=null;
-      }
-      if(closeFn){closeFn();setTimeout(doNav,330);}
-      else doNav();
-    });
+  document.querySelectorAll('.overlay-nav-bar[data-current="'+current+'"] .nav-bar-btn[data-nav]').forEach(function(btn){
+    if(btn._navBound)return;btn._navBound=true;
+    btn.addEventListener('click',function(){if(btn.dataset.nav!==current)navigateMain(btn.dataset.nav);});
   });
+}
+var NAV_SWITCH_TIMER=null;
+function navigateMain(key){
+  var routes={household:openHousehold,econ:openEcon,events:openEvents,estudio:openEstudio};
+  if(key!=='home'&&key!=='alarm'&&key!=='menu'&&!routes[key])return;
+  clearTimeout(NAV_SWITCH_TIMER);NAV_BACK=null;
+  var opened=document.querySelectorAll('.full-overlay.open');
+  opened.forEach(function(ov){ov.classList.remove('open');setTimeout(function(){if(!ov.classList.contains('open'))ov.style.display='none';},320);});
+  function open(){
+    if(routes[key])routes[key]();
+    else if(key==='home')window.scrollTo({top:0,behavior:'instant'});
+    else if(key==='alarm')document.getElementById('alarmTestBtn').click();
+    else if(key==='menu'){var menu=document.getElementById('dataMenu');if(menu)menu.classList.toggle('open');}
+  }
+  if(opened.length)NAV_SWITCH_TIMER=setTimeout(open,330);else open();
 }

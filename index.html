@@ -39,11 +39,7 @@ var BDAYS_FROM_SECRET=[];
 <!-- ── HEADER ── -->
 <header class="header">
   <div class="data-actions">
-      <button class="data-btn" id="econBtn" title="Económico"><img src="icon-econ.png" class="btn-icon" alt="Económico"></button>
-      <button class="data-btn" id="estudioBtn" title="Estudio Cambio"><img src="icon-estudio.png" class="btn-icon" alt="Estudio"></button>
-      <button class="data-btn" id="homeBtn" title="Inicio" style="pointer-events:none"><img src="icon-home.png" class="btn-icon" alt="Inicio"></button>
-      <button class="data-btn" id="eventsBtn" title="Eventos"><img src="icon-events.png" class="btn-icon" alt="Eventos"></button>
-      <button class="data-btn" id="bdayBtn" title="Cumpleaños"><img src="icon-bday.png" class="btn-icon" alt="Cumpleaños"></button>
+      <span id="mainNavMount" hidden></span>
       <div class="data-menu-wrap" id="alarmWrap">
         <button class="data-btn" id="alarmTestBtn" title="Crear alarma"><img src="icon-alarm.png" class="btn-icon" alt="Alarma"></button>
         <div class="data-menu alarm-cfg" id="alarmPanel">
@@ -200,9 +196,7 @@ var BDAYS_FROM_SECRET=[];
 </div>
 
 <!-- ── OVERLAY: Cumpleaños ── -->
-<div id="bdayOverlay" class="full-overlay" style="display:none">
-  <div id="bdayContent"></div>
-</div>
+
 
 <!-- ── OVERLAY: Eventos ── -->
 <div id="eventsOverlay" class="full-overlay" style="display:none">
@@ -224,6 +218,7 @@ var BDAYS_FROM_SECRET=[];
     <button class="logo-popup-close" id="logoPopupClose">&#10005;</button>
     <div class="logo-gallery" id="logoGallery">
         <div class="logo-gallery-slide"><img src="logo.png" alt="Gestify"><div class="logo-gallery-label">Gestify</div></div>
+        <div class="logo-gallery-slide"><img src="icon-household.png" alt="Gastos del hogar"><div class="logo-gallery-label">Gastos del hogar</div></div>
         <div class="logo-gallery-slide"><img src="icon-econ.png" alt="Económico"><div class="logo-gallery-label">Económico</div></div>
         <div class="logo-gallery-slide"><img src="icon-estudio.png" alt="Estudio"><div class="logo-gallery-label">Estudio Cambio</div></div>
         <div class="logo-gallery-slide"><img src="icon-home.png" alt="Inicio" style="width:115px;height:115px"><div class="logo-gallery-label">Inicio</div></div>
@@ -269,6 +264,7 @@ var BDAYS_FROM_SECRET=[];
 <script defer src="js/birthdays-bind.js"></script>
 <script defer src="js/events-picker-color.js"></script>
 <script defer src="js/events-picker-date.js"></script>
+<script defer src="js/rutinas-icons.js"></script>
 <script defer src="js/rutinas.js"></script>
 <script defer src="js/rutinas-flex.js"></script>
 <script defer src="js/rutinas-sessions.js"></script>

@@ -1,22 +1,22 @@
-<div class="overlay-nav-bar">
-<button class="nav-bar-btn active" data-nav="econ" title="Económico">
-<img src="icon-econ.png" class="btn-icon" alt="">
+<div class="overlay-nav-bar" data-current="econ">
+<button class="nav-bar-btn" data-nav="household" title="Gastos del hogar">
+<img src="icon-household.png" class="btn-icon" alt="">
 </button>
-<button class="nav-bar-btn" data-nav="estudio" title="Estudio Cambio">
+<button class="nav-bar-btn" data-nav="estudio" title="Herramientas de comparación">
 <img src="icon-estudio.png" class="btn-icon" alt="">
 </button>
 <button class="nav-bar-btn" data-nav="home" title="Inicio">
 <img src="icon-home.png" class="btn-icon" alt="">
 </button>
-<button class="nav-bar-btn events-active" data-nav="events" title="Eventos">
+<button class="nav-bar-btn" data-nav="events" title="Eventos">
 <img src="icon-events.png" class="btn-icon" alt="">
 </button>
-<button class="nav-bar-btn bday-active" data-nav="bday" title="Cumpleaños">
-<img src="icon-bday.png" class="btn-icon" alt="">
+<button class="nav-bar-btn active" data-nav="econ" title="Resumen económico">
+<img src="icon-econ.png" class="btn-icon" alt="">
 </button>
 <div class="nav-bar-spacer">
 </div>
-<button class="nav-bar-btn" data-nav="alarm" title="Test alarma">
+<button class="nav-bar-btn" data-nav="alarm" title="Crear alarma">
 <img src="icon-alarm.png" class="btn-icon" alt="">
 </button>
 <button class="nav-bar-btn" data-nav="menu" title="Más opciones">&#8943;</button>
@@ -33,12 +33,56 @@
 </div>
 <div class="sy-body" style="padding:16px">
 <div class="econ-sub-tabs fiscal-hip-tabs">
-<button class="econ-sub-tab active" data-hipsub="resumen">Resumen</button>
+<button class="econ-sub-tab" data-hipsub="resumen">Resumen</button>
 <button class="econ-sub-tab" data-hipsub="detalle">Detalle<br>Hipoteca</button>
 <button class="econ-sub-tab est-hip" data-hipsub="gas">Detalle<br>Gas</button>
-<button class="econ-sub-tab est-hip" data-hipsub="elect">Detalle<br>Electricidad</button>
+<button class="econ-sub-tab est-hip active" data-hipsub="elect">Detalle<br>Electricidad</button>
 </div>
-<div style="text-align:center;padding:30px;color:var(--text-dim);font-size:.75rem">Configura los datos de hipoteca en la pestaña <b>Detalle</b>.</div>
+<div class="fiscal-section">
+<div class="hip-section-hdr">
+<span class="fiscal-section-title">⚡ Tarifa de Electricidad</span>
+<button class="hip-edit-btn" id="electEditBtn">Editar</button>
+</div>
+<div class="hip-ro-row">
+<span class="hip-ro-lbl">Potencia contratada</span>
+<span class="hip-ro-val">3.3 kW</span>
+</div>
+<div style="border-top:1px solid var(--border);margin:4px 0">
+</div>
+<div class="hip-ro-row">
+<span class="hip-ro-lbl">Precio P1 (punta)</span>
+<span class="hip-ro-val">0.000000 €/kW/día</span>
+</div>
+<div class="hip-ro-row">
+<span class="hip-ro-lbl">Precio P2 (valle)</span>
+<span class="hip-ro-val">0.000000 €/kW/día</span>
+</div>
+<div class="hip-ro-row">
+<span class="hip-ro-lbl">Suma precios potencia</span>
+<span class="hip-ro-val">0.000000 €/kW/día</span>
+</div>
+<div style="border-top:1px solid var(--border);margin:4px 0">
+</div>
+<div class="hip-ro-row">
+<span class="hip-ro-lbl">Precio kWh</span>
+<span class="hip-ro-val">—</span>
+</div>
+<div style="border-top:1px solid var(--border);margin:4px 0">
+</div>
+<div class="hip-ro-row">
+<span class="hip-ro-lbl">Término fijo/mes</span>
+<span class="hip-ro-val">—</span>
+</div>
+<div class="hip-ro-row">
+<span class="hip-ro-lbl">IVA</span>
+<span class="hip-ro-val">21%</span>
+</div>
+<div class="hip-ro-row">
+<span class="hip-ro-lbl">Comercializadora</span>
+<span class="hip-ro-val">—</span>
+</div>
+</div>
+<button class="ev-io-btn io-primaria energy-analysis-open" data-energy-kind="luz">Consumo y tarifas</button>
 </div>
 <div class="fiscal-sticky-save">
 <button class="fiscal-save-btn" id="fiscalSave">Guardar configuración</button>

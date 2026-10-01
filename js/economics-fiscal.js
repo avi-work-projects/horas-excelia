@@ -6,7 +6,7 @@
    ============================================================ */
 
 function renderFiscalContent(){
-  var h=renderNavBar('econ');
+  var h=renderNavBar(FISCAL_ENTRY);
   h+='<div class="sy-header with-tabs fiscal-hdr">';
   h+='<button class="sy-back" id="fiscalBack">&#8592;</button>';
   h+='<div class="sy-year" style="font-size:.9rem;color:#c084fc">&#9881; Configuraci\u00f3n Fiscal</div>';

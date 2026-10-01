@@ -172,7 +172,7 @@ function getEvDisplayColor(ev){
   /* Las sesiones de rutina llevan el color de su rutina tal cual: su id cambia
      cada dia, asi que el matiz por hash las pintaria de un color distinto
      cada sesion. */
-  if(getEvType(ev)==='Rutina')return ev.color;
+  if(getEvType(ev)==='Rutina')return ev._rut?rutDisplayColor(ev._rut):ev.color;
   /* Una clase de boda se tine con el color de SU pareja: el morado del tipo
      solo se usa mientras no hay pareja asignada. */
   if(getEvType(ev)==='Ensayos boda'&&ev.boda&&ev.boda.coupleId&&typeof bodaCouple==='function'){

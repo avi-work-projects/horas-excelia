@@ -372,6 +372,8 @@ var _g4=document.getElementById('exportAllBtn'); if(_g4)_g4.addEventListener('cl
     alarmHour:appStorage.getItem('excelia-alarm-h')||null,
     alarmMinute:appStorage.getItem('excelia-alarm-m')||null,
     alarmDays:appStorage.getItem('excelia-alarm-days')||null,
+    routineAppearance:{gymColor:RUT_GYM_COLOR},
+    householdTab:householdTab(appStorage.getItem(HOUSEHOLD_TAB_KEY)),
     navIconStyle:appStorage.getItem('excelia-nav-icons-v1')||'original',
     theme:appStorage.getItem('excelia-theme-v1')||null};
   var a=document.createElement('a');
@@ -508,6 +510,8 @@ function _applyFullImport(d,mode){
       if(d.alarmMinute)appStorage.setItem('excelia-alarm-m',d.alarmMinute);
       if(d.alarmDays)appStorage.setItem('excelia-alarm-days',d.alarmDays);
       if(d.theme)appStorage.setItem('excelia-theme-v1',d.theme);
+      if(d.routineAppearance)setRutGymColor(d.routineAppearance.gymColor);
+      if(d.householdTab)setHouseholdTab(d.householdTab);
       if(d.navIconStyle)appStorage.setItem('excelia-nav-icons-v1',d.navIconStyle);
       /* Va antes del save(): save() vuelca estas variables a excelia-horas-v3,
          asi que si se asignan despues no llegan al disco. */

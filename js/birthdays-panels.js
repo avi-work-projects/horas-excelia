@@ -94,7 +94,6 @@ function openBdayAlarm(b){
 }
 
 function _bdRefreshBoth(){
-  refreshBday();
   if(typeof refreshEvents==='function')refreshEvents();
 }
 

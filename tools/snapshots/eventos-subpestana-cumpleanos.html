@@ -1,46 +1,38 @@
-<div class="overlay-nav-bar">
-<button class="nav-bar-btn" data-nav="econ" title="Económico">
-<img src="icon-econ.png" class="btn-icon" alt="">
+<div class="overlay-nav-bar" data-current="events">
+<button class="nav-bar-btn" data-nav="household" title="Gastos del hogar">
+<img src="icon-household.png" class="btn-icon" alt="">
 </button>
-<button class="nav-bar-btn" data-nav="estudio" title="Estudio Cambio">
+<button class="nav-bar-btn" data-nav="estudio" title="Herramientas de comparación">
 <img src="icon-estudio.png" class="btn-icon" alt="">
 </button>
 <button class="nav-bar-btn" data-nav="home" title="Inicio">
 <img src="icon-home.png" class="btn-icon" alt="">
 </button>
-<button class="nav-bar-btn active events-active" data-nav="events" title="Eventos">
+<button class="nav-bar-btn active" data-nav="events" title="Eventos">
 <img src="icon-events.png" class="btn-icon" alt="">
 </button>
-<button class="nav-bar-btn bday-active" data-nav="bday" title="Cumpleaños">
-<img src="icon-bday.png" class="btn-icon" alt="">
+<button class="nav-bar-btn" data-nav="econ" title="Resumen económico">
+<img src="icon-econ.png" class="btn-icon" alt="">
 </button>
 <div class="nav-bar-spacer">
 </div>
-<button class="nav-bar-btn" data-nav="alarm" title="Test alarma">
+<button class="nav-bar-btn" data-nav="alarm" title="Crear alarma">
 <img src="icon-alarm.png" class="btn-icon" alt="">
 </button>
 <button class="nav-bar-btn" data-nav="menu" title="Más opciones">&#8943;</button>
 </div>
-<div class="ev-hdr-sub">
-<div class="ev-view-zone ev-zone-a">
-<button class="ev-view-toggle active" id="evViewUpcoming">Próximos</button>
+<div class="ev-hdr-sub ev-main-tabs">
 <button class="ev-view-toggle ev-btn-timeoff ev-btn-split" id="evViewTimeOff">Vacaciones<br>Festivos</button>
-</div>
-<div class="ev-view-zone ev-zone-b">
 <button class="ev-view-toggle ev-btn-calendar" id="evViewCal">Calendario<br>1 mes</button>
-<button class="ev-view-toggle ev-btn-week" id="evViewWeek">Agenda<br>Semanal</button>
-</div>
-<div class="ev-view-zone ev-zone-b">
 <button class="ev-view-toggle ev-btn-calendar" id="evViewQuad">Calendario<br>4 meses</button>
-<button class="ev-view-toggle ev-btn-calendar" id="evViewAnnual">Calendario<br>Anual</button>
-</div>
-<div class="ev-view-zone ev-zone-c">
 <button class="ev-view-toggle ev-btn-bodas" id="evViewBodas" aria-label="Bodas">
 <span class="wm-logo" role="img" aria-label="Wedding Moves">
 </span>
 </button>
+<button class="ev-view-toggle ev-btn-bday" id="evViewBday">Cumpleaños</button>
+<button class="ev-view-toggle ev-btn-upcoming active" id="evViewUpcoming">Próximos</button>
+<button class="ev-view-toggle ev-btn-calendar" id="evViewAnnual">Calendario<br>Anual</button>
 <button class="ev-view-toggle ev-btn-rutinas" id="evViewRutinas">Rutinas</button>
-</div>
 </div>
 <div class="sy-header with-tabs sy-header-center">
 <button class="sy-back" id="evBack">&#8592;</button>
@@ -57,6 +49,7 @@
 <div class="econ-sub-tabs">
 <button class="econ-sub-tab" id="evSubUpcoming">Próximos</button>
 <button class="econ-sub-tab active" id="evSubBirthdays">Cumplea&ntilde;os</button>
+<button class="econ-sub-tab" id="evSubAgenda">Agenda</button>
 <button class="econ-sub-tab" id="evSubTodos">Todos</button>
 </div>
 <div class="bday-upcoming-section" style="margin-top:8px">

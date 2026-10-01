@@ -3,6 +3,7 @@
    ============================================================ */
 
 (function(){
+  initMainNavigation();
   /* Una recarga arranca en Home: no restaurar un scroll del documento anterior
      que deje la primera semana oculta bajo la cabecera sticky. */
   if('scrollRestoration' in history)history.scrollRestoration='manual';
@@ -25,14 +26,14 @@
   if(typeof syncVipBdaysToEvents==='function') syncVipBdaysToEvents();
 
   /* ── Active state on header data-btn (highlights current open overlay) ── */
-  var _ovBtnMap={econOverlay:'econBtn',bdayOverlay:'bdayBtn',eventsOverlay:'eventsBtn',estudioOverlay:'estudioBtn'};
+  var _ovBtnMap={econOverlay:'econBtn',eventsOverlay:'eventsBtn',estudioOverlay:'estudioBtn',fiscalOverlay:'householdBtn'};
   function _updateHeaderActive(){
     var openKey=null;
     Object.keys(_ovBtnMap).forEach(function(ovId){
       var ov=document.getElementById(ovId);
-      if(ov&&ov.classList.contains('open'))openKey=_ovBtnMap[ovId];
+      if(ov&&ov.classList.contains('open'))openKey=ovId==='fiscalOverlay'&&FISCAL_ENTRY!=='household'?'econBtn':_ovBtnMap[ovId];
     });
-    ['econBtn','bdayBtn','eventsBtn','estudioBtn','homeBtn'].forEach(function(id){
+    NAV_MAIN_ITEMS.map(function(item){return item.id;}).forEach(function(id){
       var btn=document.getElementById(id);if(btn)btn.classList.remove('overlay-active');
     });
     var activeBtn=document.getElementById(openKey||'homeBtn');
@@ -115,10 +116,6 @@
   });
 
   /* ── Botones del header (overlays) ── */
-  var _g6=document.getElementById('econBtn'); if(_g6)_g6.addEventListener('click',openEcon);
-  var _g7=document.getElementById('bdayBtn'); if(_g7)_g7.addEventListener('click',openBday);
-  var _g8=document.getElementById('eventsBtn'); if(_g8)_g8.addEventListener('click',openEvents);
-  var _g9=document.getElementById('estudioBtn'); if(_g9)_g9.addEventListener('click',openEstudio);
 
   /* ── Alarma: panel configurable (Vivo X200 Ultra / Android) ── */
   var _g10=document.getElementById('alarmTestBtn'); if(_g10)_g10.addEventListener('click',function(e){

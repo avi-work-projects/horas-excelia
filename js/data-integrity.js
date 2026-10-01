@@ -31,6 +31,8 @@ function validateImport(data){
     if(key==='color'&&typeof v==='string'&&!/^#[0-9a-f]{3,8}$/i.test(v))throw new Error('Color no valido');
   }
   visit(data,'');
+  if(data.routineAppearance&&!/^#[0-9a-f]{6}$/i.test(data.routineAppearance.gymColor))throw new Error('Color de gimnasio no válido');
+  if(data.householdTab!=null&&householdTab(data.householdTab)!==data.householdTab)throw new Error('Pestaña de gastos del hogar no válida');
   if(data.energyContracts!=null)validateEnergyContracts(data.energyContracts);
   if(data.energyTaxes!=null)energyValidateTaxes(data.energyTaxes);
   if(data.energyCurrentTariffs!=null)energyValidateCurrent(data.energyCurrentTariffs,data.energyContracts||energyContracts());
@@ -84,6 +86,10 @@ function validateImport(data){
     }
     if(r.start&&!validIsoDate(r.start))throw new Error('Inicio de rutina no valido');
     Object.keys(r.skips||{}).forEach(function(ds){if(!validIsoDate(ds))throw new Error('Fecha de sesion no valida');});
+    if(r.deletedSessions!=null){
+      if(typeof r.deletedSessions!=='object'||Array.isArray(r.deletedSessions))throw new Error('Sesiones eliminadas no válidas');
+      Object.keys(r.deletedSessions).forEach(function(ds){if(!validIsoDate(ds)||r.deletedSessions[ds]!==true)throw new Error('Sesión eliminada no válida');});
+    }
     schedule(r);
     if(r.flex){
       var f=r.flex;

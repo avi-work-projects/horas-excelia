@@ -6,7 +6,12 @@
    "no responde", y las vistas el que se lee cuando algo "se ve mal".
    ============================================================ */
 
-function openFiscal(year){
+function openHousehold(){
+  FISCAL_TAB='despacho';FISCAL_HIP_SUB=householdTab(appStorage.getItem(HOUSEHOLD_TAB_KEY));
+  openFiscal(undefined,'household');
+}
+function openFiscal(year,entry){
+  FISCAL_ENTRY=entry==='household'?'household':'econ';
   /* Si se pasa un año explícito, lo usa; si no, hereda el año del overlay
      económico activo (ECON_YEAR) para mantener contexto entre vistas; si
      tampoco existe, cae al año actual. */
@@ -37,7 +42,7 @@ function reRenderFiscal(){
 /* ── bindFiscalEvents ─────────────────────────────────────── */
 function bindFiscalEvents(){
   document.getElementById('fiscalBack').addEventListener('click',function(){closeFiscal();});
-  bindNavBar('econ',closeFiscal);
+  bindNavBar(FISCAL_ENTRY,closeFiscal);
 
   function _switchTab(tab){
     FISCAL_TAB=tab;

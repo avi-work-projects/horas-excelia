@@ -50,24 +50,12 @@ function bindBdayFormEvents(){
 
 /* ── Apertura/cierre ventana ──────────────────────────────── */
 function openBday(){
-  NAV_BACK=null;
-  var now=new Date();BDAY_YEAR=now.getFullYear();BDAY_MONTH=now.getMonth();BDAY_VIEW='upcoming';
-  var ov=document.getElementById('bdayOverlay');
-  document.getElementById('bdayContent').innerHTML=renderBdayContent();
-  ov.style.display='flex';
-  requestAnimationFrame(function(){requestAnimationFrame(function(){ov.classList.add('open');bindBdayEvents();});});
+  NAV_BACK=null;var now=new Date();BDAY_YEAR=now.getFullYear();BDAY_MONTH=now.getMonth();
+  BDAY_VIEW='upcoming';EV_VIEW='bday';openEventsAt();
 }
-
-function closeBday(){
-  var ov=document.getElementById('bdayOverlay');
-  ov.classList.remove('open');
-  setTimeout(function(){ov.style.display='none';},320);
-}
-
+function closeBday(){closeEvents();}
 function refreshBday(){
-  document.getElementById('bdayContent').innerHTML=renderBdayContent();
-  bindBdayEvents();
-  if(typeof EV_VIEW!=='undefined'&&EV_VIEW==='birthdays')refreshEvents();
+  if(EV_VIEW==='bday'||EV_VIEW==='birthdays')refreshEvents();
 }
 
 function applyBdaySearch(q){
@@ -87,7 +75,7 @@ function bindBdayEvents(){
   if(bdBackEl)bdBackEl.addEventListener('click',function(){
     if(NAV_BACK){var fn=NAV_BACK;NAV_BACK=null;fn();}else{closeBday();}
   });
-  bindNavBar('bday',closeBday);
+
   var prevBtn=document.getElementById('bdPrev');
   if(prevBtn)prevBtn.addEventListener('click',function(){
     BDAY_MONTH--;if(BDAY_MONTH<0){BDAY_MONTH=11;BDAY_YEAR--;}refreshBday();
@@ -113,14 +101,14 @@ function bindBdayEvents(){
       }
     });
   }
-  function _bdResetScroll(){var b=document.querySelector('#bdayOverlay .sy-body');if(b)b.scrollTop=0;}
+  function _bdResetScroll(){var b=document.querySelector('#eventsOverlay .sy-body');if(b)b.scrollTop=0;}
   /* La lista arranca en el mes en curso; el resto queda a un scroll de distancia */
   function _bdScrollToMonth(){
-    var body=document.querySelector('#bdayOverlay .sy-body');
+    var body=document.querySelector('#eventsOverlay .sy-body');
     if(!body)return;
     var sec=body.querySelector('.bday-month-section[data-month="'+(new Date()).getMonth()+'"]');
     if(!sec){body.scrollTop=0;return;}
-    body.scrollTop=Math.max(0,body.scrollTop+sec.getBoundingClientRect().top-body.getBoundingClientRect().top-8);
+    body.scrollTop=Math.max(0,body.scrollTop+sec.getBoundingClientRect().top-body.getBoundingClientRect().top-(body.querySelector('.bday-sub-tabs')?.offsetHeight||0)-8);
   }
   document.getElementById('bdViewUpcoming').addEventListener('click',function(){BDAY_SEARCH='';BDAY_FILTER_VIP='all';BDAY_EDIT_VIP=false;BDAY_VIP_PENDING=null;BDAY_VIEW='upcoming';refreshBday();_bdResetScroll();});
   document.getElementById('bdViewCal').addEventListener('click',function(){BDAY_SEARCH='';BDAY_FILTER_VIP='all';BDAY_EDIT_VIP=false;BDAY_VIP_PENDING=null;BDAY_VIEW='cal';refreshBday();_bdResetScroll();});
@@ -256,7 +244,7 @@ function bindBdayEvents(){
       openBdayDetail(b);
     });
   });
-  bindBdayUpcoming(document.getElementById('bdayContent'));
+  bindBdayUpcoming(document.getElementById('eventsContent'));
   // Export
   var bdExportEl=document.getElementById('bdExport');
   if(bdExportEl)bdExportEl.addEventListener('click',function(){
@@ -266,7 +254,7 @@ function bindBdayEvents(){
     a.download='cumpleanos.json'; a.click();
   });
   /* Swipe: navegar mes anterior/siguiente (bdPrev/bdNext solo existen en vista cal) */
-  addSwipe(document.getElementById('bdayOverlay'),function(){
+  addSwipe(document.querySelector('#eventsOverlay .ev-bday-body'),function(){
     var b=document.getElementById('bdNext');if(b)b.click();
   },function(){
     var b=document.getElementById('bdPrev');if(b)b.click();
@@ -318,5 +306,5 @@ function bindBdayUpcoming(root){
 
 function bdayPanelHost(){
   var events=document.getElementById('eventsOverlay');
-  return typeof EV_VIEW!=='undefined'&&EV_VIEW==='birthdays'&&events&&events.classList.contains('open')?events:document.getElementById('bdayOverlay');
+  return events&&events.classList.contains('open')?events:document.body;
 }
