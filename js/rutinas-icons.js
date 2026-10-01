@@ -63,13 +63,13 @@ function rutIconOf(r){
 }
 /* color puede ser 'currentColor': entonces el detalle se oscurece con un
    velo negro en vez de calcular la mezcla, que necesita un hex. */
-function rutIconSvg(kind,color){
+function rutIconSvg(kind,color,chooser){
   var dark=(color==='currentColor')?'rgba(0,0,0,.45)'
           :((typeof fakeTrans==='function')?fakeTrans(color,0.52):color);
   var shapes=_rutIconShapes(kind);
   /* El ribete ocupa la misma proporción que en el viewBox de 20 de los
      puntuales. En una silueta rellena la mitad del trazo queda dentro. */
-  var bw=(typeof EV_SHAPE_BW!=='undefined'?EV_SHAPE_BW:2)*26/20;
+  var bw=chooser?1.15:(typeof EV_SHAPE_BW!=='undefined'?EV_SHAPE_BW:2)*26/20;
   var outline=shapes.replace(/stroke-width="([0-9.]+)"/g,function(_,w){return 'stroke-width="'+(+w+2*bw)+'"';});
   return '<svg viewBox="-1 -1 26 26" preserveAspectRatio="xMidYMid meet">'
     + '<g fill="#000" stroke="#000" stroke-width="'+(2*bw)+'" stroke-linejoin="round" stroke-linecap="round">'+outline+'</g>'

@@ -56,3 +56,27 @@ const months=a.rutHistoryMonthGroups(original,{from:'2026-07-01',to:'2026-09-30'
 assert.deepEqual(Object.keys(months),['2026-07','2026-08','2026-09']);
 assert(months['2026-08'].every(s=>s.ds.startsWith('2026-08')));
 console.log('Borrado de sesiones, recuperación convertida en extra, backup e histórico mensual OK');
+
+// Varias sesiones: contigüidad exacta y grupos independientes, sin reducir iconos.
+let groups=a.rutMarkerGroups([{_rut:{id:'a'},_rutTime:'18:00',_rutDur:60},{_rut:{id:'a'},_rutTime:'20:00',_rutDur:60},{_rut:{id:'a'},_rutTime:'19:00',_rutDur:60},{_rut:{id:'b'},_rutTime:'19:00',_rutDur:60}]);
+assert.deepEqual(Array.from(groups,g=>g.length),[3,1]);
+groups=a.rutMarkerGroups([{_rut:{id:'a'},_rutTime:'18:00',_rutDur:45},{_rut:{id:'a'},_rutTime:'19:00',_rutDur:60}]);assert.equal(groups.length,2);
+const markerEvents=[{id:'gest',kind:'puntual',type:'Rec. Gestiones'},{id:'fill',kind:'puntual',type:'Otros',shape:'circle'},{id:'outline',kind:'puntual',type:'Otros',shape:'wave'},{id:'med',kind:'puntual',type:'Médico'}];
+assert.deepEqual(Array.from(a.evSortMarks(markerEvents),e=>e.id),['outline','gest','med','fill']);
+assert(a.evMarkerHtml({kind:'puntual',type:'Médico',shape:'x-thin',color:'#e03131'}).includes('ev-shape-medical'));
+const massBase={...original,skips:{},extraSessions:[]};a.RUTINAS=[massBase];
+const massCancelled=a.rutBulkChange(massBase,['2026-08-20','2026-08-24'],'cancel');
+assert(massCancelled.skips['2026-08-20']&&massCancelled.skips['2026-08-24']);assert.equal(Object.keys(massBase.skips).length,0);
+assert.equal(a.rutUnrecoveredSessions(massCancelled).length,2);
+assert.throws(()=>a.rutBulkChange(massBase,['2026-08-20','invalid'],'cancel'));assert.equal(Object.keys(massBase.skips).length,0);
+const massDeleted=a.rutBulkChange(withRecovery,['2026-08-20','2026-08-24'],'delete');assert.equal(massDeleted.extraSessions[0].recoveryOf,null);
+// Pausas con vuelta explícita: conservan las versiones del horario y el backup.
+const paused=a.rutPauseAfter(withRecovery,'2026-08-20','2026-09-01');
+assert.equal(a.rutSessionsOn(paused,'2026-08-24').length,0);assert.equal(a.rutSessionsOn(paused,'2026-09-03').length,1);
+assert.equal(a.rutSessionsOn(paused,'2026-08-20').length,1);assert.equal(paused.extraSessions.length,1);
+const pausedImport=a.validateImport({rutinas:[paused]}).rutinas[0];assert.equal(a.rutSessionsOn(pausedImport,'2026-08-24').length,0);
+assert.throws(()=>a.rutPauseAfter(massBase,'2026-08-20','2026-08-20'));
+assert.throws(()=>a.validateImport({rutinas:[{...massBase,pauses:[{from:'2026-09-01',to:'2026-08-20'}]}]}));
+const flexCancelled=a.rutEditSession(f,'2026-08-17','19:00',60,true);
+const pausedFlex=a.rutPauseAfter(flexCancelled,'2026-08-17','2026-08-25');assert.equal(a.validateImport({rutinas:[pausedFlex]}).rutinas[0].pauses.length,1);
+console.log('Rutinas: agrupación, orden de marcadores, operaciones atómicas y pausa temporal importable OK');

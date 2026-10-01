@@ -116,7 +116,7 @@ function _renderEvCalMonth(){
         }
         if(_ruts.length){
           h+='<div class="ev-day-ruts">';
-          _ruts.forEach(function(rev){h+=rutMarkerHtml(rev,_pmkM,ds);});
+          h+=rutDayMarkersHtml(_ruts,_pmkM,ds);
           h+='</div>';
         }
         h+='</div>';

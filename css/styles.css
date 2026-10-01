@@ -96,7 +96,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .month-stat.off .ms-num{color:var(--text-muted)}
 .ms-label{font-size:.82rem;color:var(--text-muted)}
 .ms-hrs{font-family:var(--mono);font-size:.78rem;color:var(--text-dim)}
-.data-actions{display:flex;gap:8px;flex-wrap:wrap}
+.data-actions{display:flex;gap:6px;flex-wrap:nowrap;align-items:center}
 .data-btn{width:44px;height:44px;border-radius:8px;border:none;background:transparent;color:var(--text-muted);font-size:1.35rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;position:relative}
 .data-btn:has(.btn-icon){width:66px;height:66px;border-radius:12px}
 #homeBtn{width:73px!important;height:73px!important;border-radius:14px!important}
@@ -424,10 +424,10 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .econ-hdr-sub{flex-shrink:0;display:flex;align-items:stretch;padding:5px 6px;gap:5px;box-shadow:0 1px 0 var(--border);overflow-x:hidden;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 .econ-tab-btn{flex:1;font-size:.56rem;padding:5px 2px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;text-align:center;line-height:1.35;white-space:normal;word-break:break-word}
 .econ-tab-btn.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
-.econ-sub-tabs{display:flex;gap:6px;padding:10px 16px;box-shadow:0 1px 0 var(--border);align-items:center;position:sticky;top:0;z-index:5;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.econ-sub-tabs{display:flex;justify-content:space-between;gap:12px;overflow-x:auto;padding:10px 16px;box-shadow:0 1px 0 var(--border);align-items:center;position:sticky;top:0;z-index:5;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 .econ-sub-tabs::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:rgba(192,132,252,.2);z-index:10}
 .sy-body:has(> .econ-sub-tabs:first-child){padding-top:0!important}
-.econ-sub-tab{flex:1;font-size:.62rem;padding:5px 4px;border-radius:0;border:none;border-bottom:2px solid transparent;background:transparent;color:var(--text-dim);cursor:pointer;transition:all .15s;text-align:center;-webkit-user-select:none;user-select:none}
+.econ-sub-tab{flex:0 0 auto;font-size:.62rem;padding:5px 0;white-space:nowrap;font-weight:600;border-radius:0;border:none;border-bottom:2px solid transparent;background:transparent;color:var(--text-dim);cursor:pointer;transition:all .15s;text-align:center;-webkit-user-select:none;user-select:none}
 .econ-sub-tab.active{border-bottom-color:var(--accent);color:var(--accent-bright);font-weight:600}
 .econ-sub-tab.est-casa{color:var(--text-dim)}
 .econ-sub-tab.est-casa.active{border-color:#14b8a6;background:rgba(20,184,166,.1);color:#14b8a6}
@@ -1435,7 +1435,7 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-filter-chip:has(.ev-chip-flag){padding:0 5px}
 .ev-filter-chip.chip-active{opacity:1}
 /* Shared overlay nav bar — nivel 1, siempre visible en lo alto del overlay */
-.overlay-nav-bar{flex-shrink:0;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;gap:6px;padding:10px 12px 4px;box-shadow:0 1px 0 var(--border);overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none}
+.overlay-nav-bar{flex-shrink:0;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;gap:6px;padding:10px 16px 4px;box-shadow:0 1px 0 var(--border);overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none}
 .nav-bar-spacer{flex:1}
 .overlay-nav-bar::-webkit-scrollbar{display:none}
 /* ── TABS NIVEL 2 (birthdays/events/summary) — nivel 2, debajo del nav bar ── */
@@ -1631,7 +1631,10 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 /* Los cumpleaños VIP se solapan al 75% (12px de marcador -> -9px) */
 .ev-day-vips{display:flex;align-items:center;cursor:pointer}
 .ev-day-vips .ev-annual-vip-star-svg + .ev-annual-vip-star-svg{margin-left:-9px}
-.ev-day-ruts{display:flex;align-items:center;gap:2px;flex-wrap:wrap}
+.ev-day-ruts{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.rut-marker-group{display:flex;isolation:isolate;line-height:0}
+.rut-marker-layer{position:relative;display:inline-flex}
+.rut-marker-layer+.rut-marker-layer{margin-left:-10.4px}
 .ev-rut-mark{display:inline-block;width:13px;height:13px;flex-shrink:0;line-height:0;cursor:pointer}
 .ev-rut-mark svg{display:block;width:100%;height:100%;overflow:visible}
 .ev-rut-mark.rut-skip{opacity:.38}
@@ -1789,7 +1792,7 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
   #homeBtn{width:62px!important;height:62px!important}
   .btn-icon{width:36px;height:36px}
   #homeBtn .btn-icon{width:40px;height:40px}
-  .data-actions{gap:6px}
+  .data-actions,.overlay-nav-bar{gap:6px}
   .nav-bar-btn:has(.btn-icon){width:56px;height:56px}
   .nav-bar-btn[data-nav="home"]{width:62px!important;height:62px!important}
   .nav-bar-btn[data-nav="home"] .btn-icon{width:40px;height:40px}
@@ -1800,7 +1803,7 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
   #homeBtn{width:56px!important;height:56px!important}
   .btn-icon{width:32px;height:32px}
   #homeBtn .btn-icon{width:36px;height:36px}
-  .data-actions{gap:5px}
+  .data-actions,.overlay-nav-bar{gap:5px}
   .nav-bar-btn{width:40px;height:40px;font-size:1.2rem}
   .nav-bar-btn:has(.btn-icon){width:50px;height:50px}
   .nav-bar-btn[data-nav="home"]{width:56px!important;height:56px!important}
@@ -1812,7 +1815,7 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
   #homeBtn{width:50px!important;height:50px!important}
   .btn-icon{width:28px;height:28px}
   #homeBtn .btn-icon{width:32px;height:32px}
-  .data-actions{gap:4px}
+  .data-actions,.overlay-nav-bar{gap:4px}
   .header h1{font-size:.95rem}
   .nav-bar-btn{width:36px;height:36px;font-size:1.1rem}
   .nav-bar-btn:has(.btn-icon){width:46px;height:46px}
@@ -1825,7 +1828,7 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
   #homeBtn{width:46px!important;height:46px!important}
   .btn-icon{width:26px;height:26px}
   #homeBtn .btn-icon{width:30px;height:30px}
-  .data-actions{gap:3px}
+  .data-actions,.overlay-nav-bar{gap:3px}
   .header h1{font-size:.9rem}
   .nav-bar-btn{width:34px;height:34px;font-size:1.05rem}
   .nav-bar-btn:has(.btn-icon){width:42px;height:42px}
@@ -2552,7 +2555,7 @@ button.action-edit.action-edit-text:active{background:#f97316!important}
 #eventsOverlay .ev-hdr-sub .ev-view-toggle{--tab-tone:#60a5fa;color:var(--tab-tone)!important;border-color:var(--tab-tone)!important;background:color-mix(in srgb,var(--tab-tone) 8%,var(--surface))!important}
 #eventsOverlay .ev-hdr-sub .ev-view-toggle.active{background:color-mix(in srgb,var(--tab-tone) 23%,var(--surface))!important}
 #eventsOverlay .ev-hdr-sub .ev-btn-calendar{--tab-tone:#65a367}
-#eventsOverlay .ev-hdr-sub .ev-btn-bday{--tab-tone:var(--birthday-tone)}
+#eventsOverlay .ev-hdr-sub .ev-btn-bday{--tab-tone:#ee7817}
 .bday-sub-tabs .econ-sub-tab{color:var(--birthday-tone);font-weight:600}
 .bday-sub-tabs .econ-sub-tab.active{border-color:var(--birthday-tone);color:var(--birthday-tone)}
 .ev-bday-body{gap:12px}
@@ -2866,7 +2869,7 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .energy-fee-period{padding:12px 0;box-shadow:0 1px 0 var(--border)}
 .energy-fee-period:last-child{box-shadow:none}
 .energy-tabs{top:0;z-index:3;background:var(--bg);gap:0}
-.energy-tabs .econ-sub-tab{padding:12px 5px;font-size:.72rem}
+.energy-tabs .econ-sub-tab{padding:12px 0;font-size:.72rem}
 .energy-cost-chart{display:flex;align-items:flex-end;height:180px;gap:3px;margin:16px 0 8px}
 .energy-cost-column{flex:1;min-width:0;text-align:center;font-size:.55rem;color:var(--text-muted)}
 .energy-cost-stack{height:130px;display:flex;flex-direction:column-reverse;justify-content:flex-start;gap:0;margin:4px 1px}
@@ -2923,4 +2926,20 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .energy-compare-chart{display:flex;gap:3px;align-items:flex-end;margin-top:18px}.energy-compare-chart>div{flex:1;min-width:0;text-align:center}.energy-compare-pair{height:130px;display:flex;gap:2px;align-items:flex-end}.energy-compare-pair span{flex:1;border-radius:3px 3px 0 0}.energy-compare-chart small{font-size:.55rem;color:var(--text-muted)}
 .energy-scenario-result{font-weight:700;color:#65a367;margin:16px 0}.energy-tariff-choices summary{padding:10px;border:1px solid var(--border);border-radius:8px;font-size:.8rem;cursor:pointer}
 .energy-cost-segment{cursor:default}.energy-inline-input{font-size:.8rem;display:flex;align-items:center;gap:10px}
-.ev-io-btn.energy-analysis-open{flex:0 0 auto;align-self:flex-start;width:auto;min-height:32px;padding:7px 12px;font-size:.74rem;margin:12px 0}
+.ev-io-btn.energy-analysis-open{display:block;box-sizing:border-box;flex:0 0 auto;align-self:stretch;width:100%;min-height:39px;padding:9px 12px;font-size:.74rem;margin:12px 0}
+
+/* Navegación: la misma geometría en Home y en las ventanas. */
+.data-actions>.data-btn,.data-menu-wrap{flex-shrink:0}
+.data-actions>.data-btn,.data-actions>.data-menu-wrap{align-self:center}
+.nav-bar-btn[data-nav="alarm"]{margin-left:auto}
+.rut-prox-i{cursor:default}
+
+.rut-session-state{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.rut-session-state>.ev-io-btn{flex:1}
+.rut-recovery-list{position:relative;max-height:50vh;overflow-y:auto;margin-top:18px}.rut-recovery-list>h3{position:sticky;top:0;background:var(--surface);padding:10px 0;font-size:.8rem;z-index:1}.rut-recovery-list>.ev-io-btn{display:flex;flex-direction:column;gap:5px;width:100%;margin-bottom:8px;text-align:left}.rut-recovery-list small{color:var(--text-muted)}
+.rut-dpick-real *{pointer-events:none}.rut-dpick-real .ev-cell[data-ds]{pointer-events:auto;cursor:pointer}.rut-dpick-real .rut-day-selected{outline:3px solid #ec168c;outline-offset:-3px}.rut-dpick-real>.ev-io-row{display:none}
+.ev-btn.rut-recovery-confirm,.ev-io-btn.rut-recovery-confirm{background:#ec168c;color:white;border-color:#ec168c;font-weight:600}.rut-addition-sheet>.rut-recovery-confirm{width:100%;margin-top:12px}.rut-recovery-confirm:disabled{opacity:.4;cursor:default}
+.rut-day-agenda{display:flex;flex-direction:column;gap:6px;max-height:26vh;overflow:auto;margin:12px 0}.rut-agenda-item{padding:9px 12px;border-left:3px solid var(--agenda-color);border-radius:7px;background:var(--surface2);display:flex;flex-direction:column;gap:4px;font-size:.8rem}.rut-agenda-item span{font-size:.74rem;color:var(--text-muted)}
+
+.energy-tariff-period>summary{list-style-position:outside;cursor:pointer;padding:12px 0}.energy-tariff-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}.energy-tariff-metrics>span{display:flex;flex-direction:column;gap:5px;background:var(--surface2);padding:10px 5px;border-radius:9px;text-align:center}.energy-tariff-metrics small{font-size:.66rem;font-weight:400;color:var(--text-muted)}.energy-tariff-metrics b{font-size:.85rem;color:var(--text)}
+
+.rut-history-session:has(>[data-history-select]){grid-template-columns:auto minmax(0,1fr) auto auto}.rut-bulk-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:10px 0;flex-shrink:0}.rut-bulk-actions>span{font-size:.75rem;width:100%;color:var(--text-muted)}.rut-bulk-actions .ev-io-btn{font-size:.7rem;flex:1;padding:8px}.rut-month-select{display:flex;align-items:center;gap:8px;margin:12px 0;font-size:.75rem}.rut-bulk-actions button:disabled{opacity:.4}

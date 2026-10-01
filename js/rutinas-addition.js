@@ -14,6 +14,7 @@ function openRutAddition(r){
   wrap.querySelectorAll('[data-addition-mode]').forEach(function(b){b.onclick=function(){
     var mode=b.dataset.additionMode;
     if(mode==='extra'){rutAdditionForm(r,null);return;}
+    if(mode==='recover'){openRutRecoveryList(r,false);return;}
     closeRutAddition();rutAdditionPickWeek(r,mode);
   };});
 }
@@ -29,16 +30,18 @@ function rutAdditionPickSession(r,mode,wk){
   list.forEach(function(s){h+='<button class="ev-btn" data-source-session="'+s.key+'"><strong>'+_rutFmtCorto(s.ds)+' · '+s.time+'–'+rutFin(s.time,s.dur)+'</strong><span>'+escHtml(r.name+' '+rutSessionTag(r,s))+'</span></button>';});
   if(!list.length)h+='<p class="sy-note">No hay sesiones disponibles para esta acción en esa semana. Vuelve para elegir otra.</p>';
   var wrap=rutAdditionPanel('Elige la clase',h+'</div>',function(){closeRutAddition();rutAdditionPickWeek(r,mode);});
-  wrap.querySelectorAll('[data-source-session]').forEach(function(b){b.onclick=function(){rutAdditionForm(r,b.dataset.sourceSession);};});
+  wrap.querySelectorAll('[data-source-session]').forEach(function(b){b.onclick=function(){openRutRecoveryDay(r,b.dataset.sourceSession,null,function(){rutAdditionPickSession(r,mode,wk);});};});
 }
-function rutAdditionForm(r,key){
-  var source=key&&rutSessionByKey(r,key),today=evDk(new Date()),ds=source&&source.ds>today?source.ds:today;
+function rutAdditionForm(r,key,date,back){
+  var source=key&&rutSessionByKey(r,key),today=evDk(new Date()),ds=date||(source&&source.ds>today?source.ds:today);
   var h=source?'<p class="sy-note">La clase del <b>'+_rutFmt(source.ds)+' a las '+source.time+'</b> quedará cancelada en el histórico. Elige cuándo la recuperas.</p>':'<p class="sy-note">Añade una fecha y hora. Puede coincidir con otra clase de la rutina.</p>';
+  h+='<div id="rutDestinationAgenda">'+rutReadOnlyDayHtml(ds)+'</div>';
   h+='<div class="rut-addition-fields"><div class="ev-field"><label for="rutExtraDate">Día de la nueva clase</label><input class="ev-input" type="date" id="rutExtraDate" value="'+ds+'"></div>';
   h+='<div class="ev-date-row"><div><label for="rutExtraTime">Hora</label><input class="ev-input" type="time" id="rutExtraTime" value="'+(source?source.time:r.time||RUT_TIME_DEFAULT)+'"></div><div><label for="rutExtraDur">Duración (min)</label><input class="ev-input" type="number" min="15" max="480" id="rutExtraDur" value="'+(source?source.dur:r.dur||60)+'"></div></div></div>';
   h+='<div class="ev-form-actions"><button class="ev-btn primary" id="rutExtraSave">'+(source?'Guardar recuperación':'Añadir clase extra')+'</button></div>';
   if(source&&!source.skip)h+='<button class="ev-io-btn rut-addition-entry" id="rutCancelForLater">Cancelar ahora y recuperar más adelante</button>';
-  var wrap=rutAdditionPanel(source?'Programar recuperación':'Clase extra',h,function(){openRutAddition(r);});
+  var wrap=rutAdditionPanel(source?'Programar recuperación':'Clase extra',h,back||function(){openRutAddition(r);});
+  wrap.querySelector('#rutExtraDate').onchange=function(e){wrap.querySelector('#rutDestinationAgenda').innerHTML=rutReadOnlyDayHtml(e.target.value);};
   var later=wrap.querySelector('#rutCancelForLater');if(later)later.onclick=function(){try{var result=rutEditSession(r,source.ds,source.time,source.dur,true,key);closeRutAddition();rutSaveSessionChange(r,result,'Clase cancelada. Puedes elegir la recuperación más adelante.');}catch(e){showToast(e.message,'error');}};
   wrap.querySelector('#rutExtraSave').onclick=function(){try{
     var result=rutAddSession(r,{date:wrap.querySelector('#rutExtraDate').value,time:wrap.querySelector('#rutExtraTime').value,dur:+wrap.querySelector('#rutExtraDur').value},key);

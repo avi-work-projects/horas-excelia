@@ -405,7 +405,7 @@ function _renderEstudioElectComp(){
 
 function _renderElectCompCard(c,i,e){
   if(c.energyMode==='tramos')c=Object.assign({},c,{precioKwh:energyWeightedPrice(c)});
-  if(c.modo==='fijo')return '<div class="est-tariff-card"><div class="est-card-hdr"><input class="est-card-name" data-tipo="elect" data-idx="'+i+'" value="'+escHtml(c.nombre||'')+'"><button class="est-card-del" data-tipo="elect" data-idx="'+i+'">×</button></div><p>Cuota fija: '+fcPlain(c.cuotaFija)+'/mes · sin IVA</p><button class="hip-edit-btn" data-energy-legacy="'+i+'" data-energy-kind="luz">Tramos / cuota fija</button></div>';
+  if(c.modo==='fijo')return '<div class="est-tariff-card"><div class="est-card-hdr"><input class="est-card-name" data-tipo="elect" data-idx="'+i+'" value="'+escHtml(c.nombre||'')+'"><button class="est-card-del" data-tipo="elect" data-idx="'+i+'">×</button></div><p>Cuota fija: '+fcPlain(c.cuotaFija)+'/mes · sin IVA</p><button class="hip-edit-btn" data-energy-legacy="'+i+'" data-energy-kind="luz">Consumo: precio único / 3 tramos / cuota fija</button></div>';
   if(c.precioPot&&!c.precioPotP1){c.precioPotP1=c.precioPot;if(!c.modoPotencia)c.modoPotencia='simple';}
   if(!c.modoPotencia)c.modoPotencia=e.modoPotencia||'doble';
   var h='<div class="est-tariff-card">';
@@ -413,6 +413,11 @@ function _renderElectCompCard(c,i,e){
   h+='<input class="est-card-name" data-tipo="elect" data-idx="'+i+'" data-field="nombre" type="text" value="'+escHtml(c.nombre||'')+'" placeholder="Tarifa '+(i+1)+'">';
   h+='<button class="est-card-del" data-tipo="elect" data-idx="'+i+'">\u2715</button>';
   h+='</div>';
+  h+='<div class="est-fields-row">';
+  (c.modoPotencia==='doble'?['potenciaP1','potenciaP2']:['potenciaTotal']).forEach(function(key){
+    var value=c.useOwnPower&&c[key]!=null?c[key]:e[key]!=null?e[key]:3.3;
+    h+='<div class="est-field"><label>Potencia '+(key==='potenciaTotal'?'':key.slice(-2))+' (kW)</label><input class="analisis-input est-comp-f" data-tipo="elect" data-idx="'+i+'" data-field="'+key+'" type="number" min="0" step="0.1" value="'+value+'"></div>';
+  });h+='</div>';
   h+='<div class="est-modo-row">';
   h+='<button class="fiscal-onoff est-modo-btn'+(c.modoPotencia==='doble'?' on':'')+'" data-tipo="elect" data-idx="'+i+'" data-modo="doble">2 tramos (P1+P2)</button>';
   h+='<button class="fiscal-onoff est-modo-btn'+(c.modoPotencia==='simple'?' on':'')+'" data-tipo="elect" data-idx="'+i+'" data-modo="simple">Precio \u00fanico</button>';
@@ -430,7 +435,7 @@ function _renderElectCompCard(c,i,e){
   h+='<div class="est-fields-row">';
   h+='<div class="est-field est-field-wide"><label>Comercializadora</label><input class="fiscal-despacho-input est-comp-f" data-tipo="elect" data-idx="'+i+'" data-field="comercializadora" type="text" value="'+escHtml(c.comercializadora||'')+'" placeholder="Ej: Endesa..." style="text-align:left"></div>';
   h+='</div></div>';
-  h+='<button class="hip-edit-btn" data-energy-legacy="'+i+'" data-energy-kind="luz">Tramos / cuota fija</button>';
+  h+='<button class="hip-edit-btn" data-energy-legacy="'+i+'" data-energy-kind="luz">Consumo: precio único / 3 tramos / cuota fija</button>';
   return h;
 }
 
@@ -550,7 +555,7 @@ function _bindEstudioElect(){
   if(addBtn)addBtn.addEventListener('click',function(){
     if(!DESPACHO.electComparaciones)DESPACHO.electComparaciones=[];
     if(DESPACHO.electComparaciones.length>=5)return;
-    DESPACHO.electComparaciones.push({nombre:'',modoPotencia:e.modoPotencia||'doble',precioPotP1:0,precioPotP2:0,precioKwh:0,terminoFijo:e.terminoFijo||0,comercializadora:''});
+    DESPACHO.electComparaciones.push(energyComparisonDefaults({nombre:'',modoPotencia:'doble',comercializadora:'',useOwnPower:true},'luz'));
     saveDespacho();_estudioReRender();
   });
   var calcBtn=document.getElementById('estElectCalc');
@@ -621,6 +626,7 @@ function _bindCompFields(tipo,despKey){
     el.addEventListener('change',function(){
       var idx=parseInt(el.dataset.idx);
       if(!DESPACHO[despKey][idx])return;
+      if(tipo==='elect'&&/^potencia/.test(el.dataset.field)){var t=DESPACHO[despKey][idx];if(!t.useOwnPower){var p=_currentElectTariff();t.potenciaP1=p.potenciaP1==null?3.3:p.potenciaP1;t.potenciaP2=p.potenciaP2==null?3.3:p.potenciaP2;t.potenciaTotal=p.potenciaTotal==null?3.3:p.potenciaTotal;}t.useOwnPower=true;}
       if(el.type==='number')DESPACHO[despKey][idx][el.dataset.field]=parseFloat(el.value)||0;
       else DESPACHO[despKey][idx][el.dataset.field]=(el.value||'').trim();
       saveDespacho();
@@ -631,7 +637,8 @@ function _saveCompFields(tipo,despKey){
   document.querySelectorAll('.est-comp-f[data-tipo="'+tipo+'"]').forEach(function(el){
     var idx=parseInt(el.dataset.idx);
     if(!DESPACHO[despKey][idx])return;
-    if(el.type==='number')DESPACHO[despKey][idx][el.dataset.field]=parseFloat(el.value)||0;
+    if(tipo==='elect'&&/^potencia/.test(el.dataset.field)){var t=DESPACHO[despKey][idx];if(!t.useOwnPower){var p=_currentElectTariff();t.potenciaP1=p.potenciaP1==null?3.3:p.potenciaP1;t.potenciaP2=p.potenciaP2==null?3.3:p.potenciaP2;t.potenciaTotal=p.potenciaTotal==null?3.3:p.potenciaTotal;}t.useOwnPower=true;}
+      if(el.type==='number')DESPACHO[despKey][idx][el.dataset.field]=parseFloat(el.value)||0;
     else DESPACHO[despKey][idx][el.dataset.field]=(el.value||'').trim();
   });
   document.querySelectorAll('.est-card-name[data-tipo="'+tipo+'"]').forEach(function(el){

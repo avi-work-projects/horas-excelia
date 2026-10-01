@@ -39,10 +39,14 @@ function energyCostsHtml(kind,year){
 }
 function energyTariffsHtml(kind){
   var contracts=energyContracts().filter(function(c){return c.kind===kind&&(!c.start||c.start<=ENERGY_ANALYSIS_YEAR+'-12-31')&&(!c.end||c.end>=ENERGY_ANALYSIS_YEAR+'-01-01');}).sort(function(a,b){return b.start.localeCompare(a.start);});
-  var h='<p class="energy-caption">Tarifas del año seleccionado, de solo lectura. Precios sin impuestos. Las correcciones se incorporan importando un archivo actualizado.</p>';
+  var profile=energyUsageProfile(kind,ENERGY_ANALYSIS_YEAR),taxes=energyTaxes();
+  var h='<p class="energy-caption">'+escHtml(profile.source)+' · referencia de '+profile.monthlyKwh+' kWh en 30 días'+(kind==='luz'?' y 3,3 kW en P1/P2':'')+'. Los tres importes incluyen impuestos de la fecha indicada, sin servicios adicionales. Despliega una tarifa para consultar sus precios de origen.</p>';
   contracts.forEach(function(c){h+='<article class="energy-contract"><h3 style="color:'+energySupplierColor(c.supplier)+'">'+escHtml(c.supplier)+'</h3><p>'+escHtml(c.tariff)+' · '+escHtml(c.start||'Inicio pendiente')+' → '+escHtml(c.end||'actualidad')+'</p>';
     var periods=energyCommercialPeriods(c).slice().sort(function(a,b){return b.start.localeCompare(a.start);});
-    periods.forEach(function(p,i){var t=p.tariff;h+='<details class="energy-tariff-period"'+(!i?' open':'')+'><summary>'+escHtml(p.start)+' → '+escHtml(p.end||'actualidad')+'</summary><h4>Consumo</h4>';
+    periods.filter(function(p){return p.start<=ENERGY_ANALYSIS_YEAR+'-12-31'&&(!p.end||p.end>=ENERGY_ANALYSIS_YEAR+'-01-01');}).forEach(function(p){
+      var date=[p.end||evDk(new Date()),ENERGY_ANALYSIS_YEAR+'-12-31'].sort()[0];if(date<p.start)date=p.start;
+      var t=energyContractTariff(c,date)||p.tariff,vat=energyVatAt(taxes,kind,date);
+      h+='<details class="energy-tariff-period"><summary><span>'+escHtml(p.start)+' → '+escHtml(p.end||'actualidad')+'</span>'+energyTariffReferenceHtml(kind,t,profile,vat)+'</summary><p class="energy-caption">Referencia fiscal: '+_rutFmt(date)+' · '+(vat===null?'Falta el IVA importado':'IVA '+vat+' %')+'. Precios de origen sin impuestos.'+(t.energyMode==='tramos'&&profile.hasWeights?' La referencia usa tu reparto de consumo: '+profile.weights.join(' / ')+' %.':'')+'</p><h4>Consumo</h4>';
       if(t.modo==='fijo')h+='<p>Cuota fija: <b>'+energyNumber(t.cuotaFija,'€')+'/mes</b></p>';
       else if(t.energyMode==='tramos'){['Punta','Llano','Valle'].forEach(function(n,j){h+='<div class="energy-price-view"><span>'+n+' · '+t.periodWeights[j].toFixed(1)+' %</span><b>'+t.periodPrices[j].toFixed(6)+' €/kWh</b></div>';});h+='<p class="energy-caption">Media ponderada: '+energyWeightedPrice(t).toFixed(6)+' €/kWh</p>';}
       else h+='<p><b>'+t.precioKwh.toFixed(6)+' €/kWh</b></p>';

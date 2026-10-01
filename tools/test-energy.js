@@ -183,3 +183,15 @@ const gasCurrent={...currentData.energyContracts[0],id:'current-gas',kind:'gas',
 cold.energyImportHistory({energyContracts:[gasCurrent],energyTaxes:[{kind:'gas',start:'2026-01-01',rate:10}],energyCurrentTariffs:[{kind:'gas',contractId:'current-gas',date:'2026-01-01'}]});
 assert.equal(cold.DESPACHO.gas.activo,'fijo');assert.equal(cold.DESPACHO.gas.ivaGas,10);assert.equal(cold.DESPACHO.elect.energyContractId,'local-contract');
 console.log('Energía: configuración fiscal sin abrir, deshacer exacto e identidad entre dispositivos OK');
+
+// Resumen comparable: suministro e impuestos, sin mantenimiento ni servicios.
+const rp={monthlyKwh:270,hasWeights:true,weights:[20,30,50]};
+const rt=a.energyTariffDefaults({energyMode:'tramos',periodPrices:[.23,.16,.10],periodWeights:[33,33,34],precioPotP1:.09,precioPotP2:.02,otherTaxPct:5,extrasPerDay:.03,servicesPerDay:2});
+const rr=a.energyTariffReference('luz',rt,rp,21);near(rr.consumption,.144*1.05*1.21);near(rr.standing,.11*1.05*1.21);near(rr.bill,((270*.144+3.3*.11*30)*1.05+.9)*1.21);
+assert.equal(a.energyTariffReference('luz',rt,rp,null).bill,null);
+const refApp=cargarApp({});refApp.energySaveBills([{id:'profile',kind:'luz',supplier:'Prueba',number:'1',issued:'2026-02-01',start:'2026-01-01',end:'2026-01-30',net:50,gross:60.5,paid:60.5,consumption:300,consumptionPeriods:[30,90,180],notes:'',source:''}]);
+const profile=refApp.energyUsageProfile('luz',2026);assert.equal(profile.monthlyKwh,300);assert.deepEqual(Array.from(profile.weights),[10,30,60]);
+const defaults=refApp.energyComparisonDefaults({},'luz');assert.equal(defaults.potenciaP1,3.3);assert.deepEqual(Array.from(defaults.periodWeights),[10,30,60]);
+const custom=refApp.energyComparisonDefaults({potenciaP1:4.6,periodWeights:[20,40,40]},'luz');assert.equal(custom.potenciaP1,4.6);assert.deepEqual(Array.from(custom.periodWeights),[20,40,40]);
+near(refApp._calcElectCost({...rt,useOwnPower:true,potenciaP1:4.6,potenciaP2:3.3},{},270,30)-refApp._calcElectCost({...rt,useOwnPower:true,potenciaP1:3.3,potenciaP2:3.3},{},270,30),1.3*.09*30*1.05);
+console.log('Energía: referencias con impuestos, consumo documentado y potencia/tramos editables OK');
