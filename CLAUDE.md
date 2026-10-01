@@ -27,7 +27,7 @@ No hace falta cambiar de framework. Los renders devuelven HTML y no persisten ca
 | bodas-class-form.js | formulario y selectores de una clase |
 | bodas-bind.js | pareja, acciones de vistas y contexto de render |
 | rutinas.js | recurrencias, excepciones y sesiones virtuales |
-| rutinas-icons.js | siluetas de rutina y prueba temporal del color de gimnasio |
+| rutinas-icons.js | siluetas de rutina y colores por actividad |
 | rutinas-history.js | histórico mensual, semana actual y edición/borrado de sesiones |
 | rutinas-flex.js | cupos semanales/mensuales, planificación por fecha y avisos de sesiones pendientes |
 | rutinas-sessions.js / rutinas-addition.js | sesiones extras y recuperadas, vínculos con canceladas y alta guiada |
@@ -70,9 +70,10 @@ restaura el objeto completo y los vínculos. Todo viaja en `rutinas` del backup.
 
 Los símbolos de rutinas llenan mejor su espacio existente con un viewBox de
 26 unidades y contorno proporcional a `EV_SHAPE_BW`. `rutDisplayColor` resuelve
-el color del gimnasio sin reescribir fechas ni rutinas. El selector temporal
-al pie de Rutinas guarda `excelia-routine-appearance-v1`; su campo de backup es
-`routineAppearance`. Las preferencias se validan y restauran transaccionalmente.
+el color del gimnasio sin reescribir fechas ni rutinas. Desde v374 el azul
+turquesa `#38bdf8` es el color definitivo y se retira el selector temporal.
+Se conserva `excelia-routine-appearance-v1` y su campo de backup
+`routineAppearance` para restaurar preferencias de copias anteriores.
 
 ### Rutinas flexibles (v369)
 Al crear una rutina se elige horario fijo o sesiones flexibles. La modalidad de
