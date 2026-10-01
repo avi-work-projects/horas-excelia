@@ -292,15 +292,15 @@
 
 **Funciones:** tasksFloatPosition:6 · tasksDock:17 · tasksUpdateFab:20 · initTasks:27 · end:49 · resize:61 · tasksSetAccessHidden:72 · tasksRestoreAccess:73 · bindTasksRestoreGesture:74 · distance:76
 
-### js/tasks-view.js  _(103 líneas)_
+### js/tasks-view.js  _(138 líneas)_
 **Estado global:** TASKS_VIEW:2 · TASKS_ICON:3
 
-**Funciones:** renderTasks:4 · renderTaskRow:20 · openTasks:32 · closeTasks:40 · tasksKeydown:46 · renderTasksPanel:56 · tasksPerform:69 · tasksRowAction:73 · bindTasksReorder:86 · clear:92 · end:98
+**Funciones:** renderTasks:4 · tasksDateLabel:21 · renderTasksList:25 · renderTaskRow:39 · openTasks:55 · closeTasks:63 · tasksKeydown:69 · renderTasksPanel:79 · tasksPerform:96 · tasksRowAction:100 · tasksFocusRow:117 · bindTasksReorder:121 · clear:127 · end:133
 
-### js/tasks.js  _(68 líneas)_
-**Estado global:** TASKS_KEY:3 · TASKS_RETENTION:4
+### js/tasks.js  _(97 líneas)_
+**Estado global:** TASKS_KEY:3
 
-**Funciones:** tasksValidate:5 · tasksPrune:16 · tasksData:21 · tasksSave:26 · tasksPurge:27 · tasksMerge:32 · tasksItems:38 · tasksCreate:41 · tasksChange:46 · tasksMove:56 · tasksReminder:63 · tasksReminderSeen:67
+**Funciones:** tasksValidate:4 · tasksValidTimestamp:17 · tasksNormalize:18 · tasksData:29 · tasksSave:34 · tasksMigrate:35 · tasksMerge:40 · tasksItems:46 · tasksPendingRows:50 · tasksNeedsDateChoice:51 · tasksCreate:54 · tasksChange:59 · tasksMoveCompleted:75 · tasksUndoMove:80 · tasksMove:85 · tasksReminder:92 · tasksReminderSeen:96
 
 ## CSS
 

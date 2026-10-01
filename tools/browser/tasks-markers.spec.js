@@ -3,7 +3,7 @@ test.beforeEach(async({page})=>{
   await page.clock.setFixedTime(new Date('2026-10-01T10:00:00'));
   await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));
 });
-test('tareas: añadir, priorizar, completar, papelera, restaurar y backup',async({page})=>{
+test('tareas: marcar sin retirar, mover, reabrir y conservar en backup',async({page})=>{
   const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('/');
   await page.locator('#tasksFab').click();
   for(const title of ['Comprar pintura','Colgar cuadro','Revisar cisterna']){
@@ -12,23 +12,65 @@ test('tareas: añadir, priorizar, completar, papelera, restaurar y backup',async
   await page.getByRole('button',{name:'Reordenar Colgar cuadro',exact:true}).press('ArrowUp');
   await expect(page.locator('.task-title').first()).toHaveText('Colgar cuadro');
   await page.getByRole('checkbox',{name:'Completar Colgar cuadro',exact:true}).click();
-  await page.getByRole('tab',{name:'Hechas 1',exact:true}).click();
+  await expect(page.locator('.task-row')).toHaveCount(3);
+  await expect(page.getByRole('checkbox',{name:'Reabrir Colgar cuadro',exact:true})).toBeChecked();
+  await page.getByRole('tab',{name:'Completadas 1',exact:true}).click();
   await expect(page.locator('.task-title')).toHaveText('Colgar cuadro');
   await page.getByRole('tab',{name:'Pendientes 2',exact:true}).click();
-  await page.getByRole('button',{name:'Opciones de Comprar pintura',exact:true}).click();
-  await page.getByRole('button',{name:'Eliminar',exact:true}).click();
+  await expect(page.locator('.task-row')).toHaveCount(3);
+  await page.locator('#tasksClose').click();await page.locator('#tasksFab').click();
+  await expect(page.getByRole('checkbox',{name:'Reabrir Colgar cuadro',exact:true})).toBeChecked();
+  await page.getByRole('checkbox',{name:'Completar Comprar pintura',exact:true}).click();
+  await page.getByRole('button',{name:'Mover (2)',exact:true}).click();
+  await expect(page.locator('.task-title')).toHaveText('Revisar cisterna');
   await expect(page.locator('#toastUndoBtn').filter({hasText:'Deshacer'})).toBeVisible();
-  await page.getByRole('tab',{name:'Papelera 1',exact:true}).click();
-  await expect(page.locator('#tasksList')).toContainText('Se borra en 7 días');
-  await page.getByRole('button',{name:'Restaurar Comprar pintura',exact:true}).click();
+  await page.locator('#toastUndoBtn').click();await expect(page.locator('.task-row')).toHaveCount(3);
+  await page.getByRole('button',{name:'Mover (2)',exact:true}).click();
+  await page.getByRole('tab',{name:'Completadas 2',exact:true}).click();
+  await expect(page.locator('.tasks-day')).toHaveCount(1);
+  await page.getByRole('checkbox',{name:'Reabrir Comprar pintura',exact:true}).click();
   await expect(page.getByRole('tab',{name:'Pendientes 2',exact:true})).toBeVisible();
   await page.locator('#tasksClose').click();await page.locator('#menuBtn').click();
   const [download]=await Promise.all([page.waitForEvent('download'),page.locator('#exportAllBtn').click()]);
   const data=JSON.parse(require('fs').readFileSync(await download.path(),'utf8'));
   expect(data.tasks.items).toHaveLength(3);expect(data.tasks.items[0].title).toBe('Colgar cuadro');expect(data.tasks.items[0].completedAt).not.toBeNull();
   await page.reload();await page.locator('#homePopupDismiss').click();
-  await page.locator('#tasksFab').click();await expect(page.getByRole('tab',{name:'Hechas 1',exact:true})).toBeVisible();
+  await page.locator('#tasksFab').click();await expect(page.getByRole('tab',{name:'Completadas 1',exact:true})).toBeVisible();
+  await expect(page.locator('.task-row')).toHaveCount(2);
+  await expect(page.getByRole('tab')).toHaveCount(2);
   expect(errors).toEqual([]);
+});
+test('el historial agrupa por día y permite conservar la fecha al volver a completar',async({page})=>{
+  await page.addInitScript(()=>{
+    const now=new Date('2026-10-01T10:00:00').getTime(),yesterday=now-86400000;
+    localStorage.setItem('excelia-tasks-v1',JSON.stringify({items:[
+      {id:'old',title:'Terminada ayer',createdAt:yesterday,updatedAt:yesterday,completedAt:yesterday,deletedAt:null},
+      {id:'trash',title:'Antigua papelera',createdAt:yesterday,updatedAt:now,completedAt:null,deletedAt:now},
+      {id:'pending',title:'Comprar material',createdAt:now,updatedAt:now,completedAt:null,deletedAt:null}
+    ],weeklyReminder:false,reminderWeek:''}));
+  });
+  await page.goto('/');await page.locator('#tasksFab').click();
+  await page.getByRole('tab',{name:'Completadas 2',exact:true}).click();
+  await expect(page.locator('.tasks-day time')).toHaveText(['1 de octubre de 2026','30 de septiembre de 2026']);
+  await expect(page.locator('.task-title')).toHaveText(['Antigua papelera','Terminada ayer']);
+  await page.getByRole('checkbox',{name:'Reabrir Terminada ayer',exact:true}).click();
+  await page.getByRole('tab',{name:'Pendientes 2',exact:true}).click();
+  await page.getByRole('checkbox',{name:'Completar Terminada ayer',exact:true}).click();
+  await expect(page.getByRole('group',{name:'¿Qué día quieres guardar?',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'Cancelar',exact:true}).click();
+  await expect(page.getByRole('checkbox',{name:'Completar Terminada ayer',exact:true})).not.toBeChecked();
+  await page.getByRole('checkbox',{name:'Completar Terminada ayer',exact:true}).click();
+  await page.getByRole('button',{name:'Conservar el 30/09/2026',exact:true}).click();
+  await page.getByRole('tab',{name:'Completadas 2',exact:true}).click();
+  await expect(page.locator('.tasks-day time')).toHaveCount(2);
+  await page.getByRole('checkbox',{name:'Reabrir Terminada ayer',exact:true}).click();
+  await page.getByRole('tab',{name:'Pendientes 2',exact:true}).click();
+  await page.getByRole('checkbox',{name:'Completar Terminada ayer',exact:true}).click();
+  await page.getByRole('button',{name:'Usar hoy',exact:true}).click();
+  await page.getByRole('tab',{name:'Completadas 2',exact:true}).click();
+  await expect(page.locator('.tasks-day time')).toHaveText('1 de octubre de 2026');
+  await page.getByRole('tab',{name:'Pendientes 1',exact:true}).click();
+  await expect(page.locator('.task-row')).toHaveCount(2);
 });
 test('el botón se arrastra libre y se recoge al navegar; recordatorio solo una vez por semana',async({page})=>{
   await page.goto('/');await page.locator('#tasksFab').click();await page.locator('#tasksNew').fill('Tarea semanal');await page.getByRole('button',{name:'Añadir tarea',exact:true}).click();await page.locator('#tasksClose').click();
