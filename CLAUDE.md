@@ -32,6 +32,7 @@ No hace falta cambiar de framework. Los renders devuelven HTML y no persisten ca
 | rutinas-flex.js | cupos semanales/mensuales, planificación por fecha y avisos de sesiones pendientes |
 | rutinas-sessions.js / rutinas-addition.js | sesiones extras y recuperadas, vínculos con canceladas y alta guiada |
 | economics-* | calculos, datos, vistas y acciones economicas |
+| household.js / household-summary.js | ventana independiente del hogar y resumen compartido de hipoteca/suministros |
 | energy-analysis.js / energy-costs.js | lecturas por mes, tarifas ponderadas, vigencias, IVA y coste estimado |
 | energy-reconciliation.js | suministro frente a facturación en los mismos días, servicios separados y tarifa actual importable |
 | energy-study.js / energy-analysis-view.js / energy-analysis-bind.js | indicadores, cinco pestañas del estudio y acciones de consulta/importación |
@@ -56,10 +57,38 @@ Los backups antiguos que no incluyan tareas no alteran las existentes.
 acciones y reutiliza `abrirPanel`, con scroll propio, foco de diálogo y
 Deshacer visible. Se puede reordenar arrastrando, con las flechas del teclado
 o mediante Subir/Bajar. `tasks-float.js` conserva la posición de arrastre
-durante la vista; al navegar se recoge al lateral más próximo, al 70 % de
-la altura. Las coordenadas no se exportan entre dispositivos. El aviso de
+durante la vista; al navegar vuelve abajo a la derecha, visible y separado
+de los bordes y del área segura. Las coordenadas no se exportan. El aviso de
 pendientes se muestra una vez por semana al abrir la aplicación y se puede
 desactivar desde el panel.
+
+Desde v378, una pulsación de 450 ms muestra una papelera roja central. Soltar
+el acceso sobre ella solo lo oculta; nunca borra tareas. Un gesto de zoom con
+dos dedos lo recupera, sin cancelar el zoom nativo. «Mis tareas» en el menú es
+la alternativa de teclado/ratón. `excelia-tasks-fab-hidden-v1` es una preferencia
+local de visibilidad, excluida del backup; las tareas sí viajan como antes.
+
+### Gastos del hogar y precisión (v378)
+`#householdOverlay` es una ventana propia con navegación y scroll en `.sy-body`.
+`FISCAL_HIP_SUB` y `excelia-household-tab-v1` mantienen el último detalle. Se
+reutiliza `renderFiscalTabDespacho(editable)`: `false` en Fiscal (solo consulta,
+un botón «Ver en detalle / Editar»), `true` en Hogar. Los datos siguen en
+`DESPACHO`, con la misma persistencia, importación y backup. No hay copia de datos.
+`householdHost()` resuelve el contenedor activo; al cambiar entre ambas ventanas
+se vacía el host inactivo para evitar IDs duplicados y listeners equivocados.
+Volver desde el acceso fiscal recupera su año y sección.
+
+`household-summary.js` presenta la hipoteca actual, cuota, capital pendiente,
+seguros y suministros; los préstamos anteriores se pliegan. El tipo equivalente
+con seguros usa bisección sobre la cuota, sin redondear antes de calcular.
+`energyUnitPrice` formatea precios unitarios a dos cifras significativas; no
+modifica tarifas, históricos ni simulaciones. Los editores mantienen el número
+original y los porcentajes fiscales exactos; los totales monetarios se muestran
+con dos decimales. Las clases de `household.css` solo afectan a estas vistas.
+Recordatorios con borde común y cumpleaños normales azules; los acentos de
+Rutinas y Vacaciones/Festivos se aplican mediante clases propias, sin cambiar
+el reparto de espacios del sistema global de subpestañas.
+Pruebas: `tools/test-household.js` y `tools/browser/household-tasks.spec.js`.
 
 `EV_MANAGEMENT_SUBTYPES` define Llamada, Peluquería, Médico y Dentista.
 `evIsManagement` centraliza su filtro y prioridad junto a Rec. Gestiones;

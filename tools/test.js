@@ -366,6 +366,7 @@ const REGLAS = [
       'excelia-alarms-v1':         'alarms',
       'excelia-rutinas-v1':        'rutinas',
       'excelia-tasks-v1':          'tasks',
+      'excelia-tasks-fab-hidden-v1': false, // visibilidad del acceso en este dispositivo
       'excelia-bodas-v1':          'bodas',
       'excelia-bodas-closed-v1':   'bodasClosed',
       'excelia-ev-alarm-v1':       'evAlarms',

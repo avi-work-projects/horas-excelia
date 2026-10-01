@@ -263,7 +263,7 @@ var RUT_SUBTAB = 'lista';   /* 'lista' | 'stats' */
 
 /* ══ Render: pestaña Rutinas ══ */
 function renderRutinasBody(){
-  var h='<div class="econ-sub-tabs">';
+  var h='<div class="econ-sub-tabs rut-sub-tabs">';
   [['lista','Rutinas'],['stats','Estadísticas']].forEach(function(t){
     h+='<button class="econ-sub-tab'+(RUT_SUBTAB===t[0]?' active':'')+'" data-rsub="'+t[0]+'">'+t[1]+'</button>';
   });

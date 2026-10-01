@@ -6,12 +6,10 @@
    "no responde", y las vistas el que se lee cuando algo "se ve mal".
    ============================================================ */
 
-function openHousehold(){
-  FISCAL_TAB='despacho';FISCAL_HIP_SUB=householdTab(appStorage.getItem(HOUSEHOLD_TAB_KEY));
-  openFiscal(undefined,'household');
-}
-function openFiscal(year,entry){
-  FISCAL_ENTRY=entry==='household'?'household':'econ';
+function openFiscal(year){
+  FISCAL_ENTRY='econ';FISCAL_HIP_EDITING=null;FISCAL_ELECT_EDITING=false;FISCAL_GAS_EDITING=null;
+  var household=document.getElementById('householdOverlay');household.classList.remove('open');household.style.display='none';
+  document.getElementById('householdContent').innerHTML='';
   /* Si se pasa un año explícito, lo usa; si no, hereda el año del overlay
      económico activo (ECON_YEAR) para mantener contexto entre vistas; si
      tampoco existe, cae al año actual. */
@@ -23,14 +21,16 @@ function openFiscal(year,entry){
   document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
   ov.style.display='flex';
   requestAnimationFrame(function(){requestAnimationFrame(function(){ov.classList.add('open');bindFiscalEvents();});});
+  NAV_BACK=closeFiscal;
 }
 function closeFiscal(){
   var ov=document.getElementById('fiscalOverlay');
   ov.classList.remove('open');
-  setTimeout(function(){ov.style.display='none';},320);
+  setTimeout(function(){if(!ov.classList.contains('open'))ov.style.display='none';},320);NAV_BACK=null;
 }
 /* Re-render fiscal overlay preserving scroll position */
 function reRenderFiscal(){
+  if(FISCAL_ENTRY==='household'){reRenderHousehold();return;}
   var body=document.querySelector('#fiscalOverlay .sy-body');
   var scrollTop=body?body.scrollTop:0;
   document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
@@ -66,7 +66,8 @@ function bindFiscalEvents(){
     if(i>0){var b=document.getElementById(_fiscalTabIds[_fiscalTabOrder[i-1]]);if(b)b.click();}
   });
 
-  document.getElementById('fiscalSave').addEventListener('click',function(){_saveFiscalAll();});
+  var save=document.getElementById('fiscalSave');if(save)save.addEventListener('click',function(){_saveFiscalAll();});
+  var detail=document.getElementById('householdDetailLink');if(detail)detail.onclick=function(){openHousehold(FISCAL_HIP_SUB,true);};
 
   /* Year selector bindings (shared by personal + gastos_desg + irpf_deduc) */
   if(FISCAL_TAB==='personal'||FISCAL_TAB==='gastos_desg'||FISCAL_TAB==='irpf_deduc')_bindYearSelector();

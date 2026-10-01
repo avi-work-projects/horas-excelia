@@ -9,10 +9,10 @@ test('navegación compartida, agenda integrada y acceso al último detalle del h
  const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('/');
  expect(await page.locator('.data-actions button').evaluateAll(els=>els.slice(0,5).map(el=>el.id))).toEqual(['householdBtn','estudioBtn','homeBtn','eventsBtn','econBtn']);
  await page.locator('#householdBtn').click();
- await expect(page.locator('#fiscalOverlay')).toHaveClass(/open/);
+ await expect(page.locator('#householdOverlay')).toHaveClass(/open/);
  await expect(page.locator('[data-hipsub="elect"]')).toHaveClass(/active/);
  await page.locator('[data-hipsub="gas"]').click();
- await page.locator('#fiscalOverlay [data-nav="events"]').click();
+ await page.locator('#householdOverlay [data-nav="events"]').click();
  await expect(page.locator('#eventsOverlay')).toHaveClass(/open/);
  expect(await page.locator('.ev-main-tabs button').evaluateAll(els=>els.map(el=>el.id))).toEqual(['evViewTimeOff','evViewQuad','evViewAnnual','evViewBodas','evViewBday','evViewUpcoming','evViewCal','evViewRutinas']);
  await page.locator('#evViewUpcoming').click();await page.locator('#evSubAgenda').click();
@@ -25,7 +25,7 @@ test('navegación compartida, agenda integrada y acceso al último detalle del h
  await expect(page.locator('[data-hipsub="gas"]')).toHaveClass(/active/);
  await page.reload();await page.locator('#householdBtn').click();
  await expect(page.locator('[data-hipsub="gas"]')).toHaveClass(/active/);
- await page.locator('#fiscalOverlay [data-nav="econ"]').click();await expect(page.locator('#econOverlay')).toHaveClass(/open/);
+ await page.locator('#householdOverlay [data-nav="econ"]').click();await expect(page.locator('#econOverlay')).toHaveClass(/open/);
  await page.locator('#econOverlay [data-nav="estudio"]').click();await expect(page.locator('#estudioOverlay')).toHaveClass(/open/);
  await page.locator('#estudioOverlay [data-nav="home"]').click();await expect(page.locator('.full-overlay.open')).toHaveCount(0);
  expect(errors).toEqual([]);
@@ -58,7 +58,7 @@ test('histórico mensual: borrar, recuperar con Deshacer y conservar recuperacio
 
 test('color de gimnasio, detalle del hogar e iconos viajan en la copia de seguridad',async({page})=>{
  await page.goto('/');await page.locator('#householdBtn').click();await page.locator('[data-hipsub="resumen"]').click();
- await page.locator('#fiscalOverlay [data-nav="events"]').click();await page.locator('#evViewRutinas').click();
+ await page.locator('#householdOverlay [data-nav="events"]').click();await page.locator('#evViewRutinas').click();
  await expect(page.locator('.rut-appearance')).toHaveCount(0);
  expect(await page.evaluate(()=>rutDisplayColor({icon:'gym',color:'#fb923c'}))).toBe('#38bdf8');
  await page.locator('#eventsOverlay [data-nav="home"]').click();await page.locator('#menuBtn').click();await page.locator('#navIconStyle').click();

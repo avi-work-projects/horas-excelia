@@ -1,6 +1,8 @@
 /* Cálculos compartidos: las tarifas antiguas siguen usando meses de 30 días;
    el histórico prorratea por los días reales de cada mes. Importes sin IVA. */
 var ENERGY_TAX_KEY='excelia-energy-tax-v1';
+/* Solo presentación: nunca alimentar cálculos ni guardar este texto redondeado. */
+function energyUnitPrice(value){return value==null||!Number.isFinite(value)?'—':value.toLocaleString('es-ES',{maximumSignificantDigits:2});}
 function energyWeightedPrice(t){
   if(t.energyMode!=='tramos')return t.precioKwh||0;
   return t.periodPrices.reduce(function(sum,p,i){return sum+p*t.periodWeights[i]/100;},0);

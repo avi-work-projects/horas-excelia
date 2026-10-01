@@ -11,24 +11,25 @@ function _ensureGasScenarios(){
   if(!g.activo)g.activo=g.modo||'consumo';
   if(g.ivaGas===undefined)g.ivaGas=21;
 }
-function _renderGasDetalle(){
+function _renderGasDetalle(editable){
+  editable=editable!==false;
   _ensureGasScenarios();
   var g=DESPACHO.gas;
   var h='';
   /* Active scenario selector */
   h+='<div class="fiscal-section">';
   h+='<div class="fiscal-section-title">\uD83D\uDD25 Tarifa activa</div>';
-  h+='<div style="display:flex;gap:6px">';
+  if(editable){h+='<div style="display:flex;gap:6px">';
   h+='<button class="fiscal-onoff'+(g.activo==='consumo'?' on':'')+'" id="gasActivoConsumo">Por consumo</button>';
   h+='<button class="fiscal-onoff'+(g.activo==='fijo'?' on':'')+'" id="gasActivoFijo">Fijo mensual</button>';
-  h+='</div></div>';
+  h+='</div>';}else h+=_hipRO('Modalidad',g.activo==='fijo'?'Fijo mensual':'Por consumo');h+='</div>';
   /* Scenario 1: Consumo */
   var sc=g.consumo;
   h+='<div class="fiscal-section"'+(g.activo!=='consumo'?' style="opacity:.5"':'')+'>';
   h+='<div class="hip-section-hdr"><span class="fiscal-section-title">Escenario: Pago por consumo'+(g.activo==='consumo'?' \u2714':'')+'</span>';
-  if(FISCAL_GAS_EDITING!=='consumo')h+='<button class="hip-edit-btn" data-gasedit="consumo">Editar</button>';
+  if(editable&&FISCAL_GAS_EDITING!=='consumo')h+='<button class="hip-edit-btn" data-gasedit="consumo">Editar</button>';
   h+='</div>';
-  if(FISCAL_GAS_EDITING==='consumo'){
+  if(editable&&FISCAL_GAS_EDITING==='consumo'){
     h+='<div class="hip-g2">';
     h+=_hipNum('gasConsPrecio','Precio kWh',sc.precioKwh,'\u20ac/kWh');
     h+=_hipNum('gasConsTfijoDia','T\u00e9rmino fijo/d\u00eda',sc.terminoFijoDia||0,'\u20ac/d\u00eda');
@@ -38,8 +39,8 @@ function _renderGasDetalle(){
     h+='</div>';
     h+='<div class="hip-edit-actions"><button class="hip-save-btn" data-gassave="consumo">Guardar</button><button class="hip-cancel-btn" data-gascancel="consumo">Cancelar</button></div>';
   } else {
-    h+=_hipRO('Precio kWh',sc.precioKwh?(sc.precioKwh).toFixed(4)+' \u20ac/kWh':'\u2014');
-    h+=_hipRO('T\u00e9rmino fijo/d\u00eda',sc.terminoFijoDia?(sc.terminoFijoDia).toFixed(4)+' \u20ac/d\u00eda':'\u2014');
+    h+=_hipRO('Precio kWh',sc.precioKwh?energyUnitPrice(sc.precioKwh)+' \u20ac/kWh':'\u2014');
+    h+=_hipRO('T\u00e9rmino fijo/d\u00eda',sc.terminoFijoDia?energyUnitPrice(sc.terminoFijoDia)+' \u20ac/d\u00eda':'\u2014');
     h+=_hipROmoney('T\u00e9rmino fijo/factura',sc.terminoFijo);
     h+=_hipRO('IVA',(g.ivaGas==null?21:g.ivaGas)+'%');
     h+=_hipRO('Comercializadora',sc.comercializadora||'\u2014');
@@ -49,9 +50,9 @@ function _renderGasDetalle(){
   var sf=g.fijo;
   h+='<div class="fiscal-section"'+(g.activo!=='fijo'?' style="opacity:.5"':'')+'>';
   h+='<div class="hip-section-hdr"><span class="fiscal-section-title">Escenario: Cuota fija'+(g.activo==='fijo'?' \u2714':'')+'</span>';
-  if(FISCAL_GAS_EDITING!=='fijo')h+='<button class="hip-edit-btn" data-gasedit="fijo">Editar</button>';
+  if(editable&&FISCAL_GAS_EDITING!=='fijo')h+='<button class="hip-edit-btn" data-gasedit="fijo">Editar</button>';
   h+='</div>';
-  if(FISCAL_GAS_EDITING==='fijo'){
+  if(editable&&FISCAL_GAS_EDITING==='fijo'){
     h+='<div class="hip-g2">';
     h+=_hipMoney('gasFijoCuota','Cuota fija/mes',sf.cuotaFija);
     h+=_hipNum('gasIvaFijo','IVA',g.ivaGas,'%');
@@ -64,7 +65,7 @@ function _renderGasDetalle(){
     h+=_hipRO('Comercializadora',sf.comercializadora||'\u2014');
   }
   h+='</div>';
-  h+=energyHistoryButton('gas');
+  if(editable)h+=energyHistoryButton('gas');
 
   return h;
 }
@@ -73,7 +74,7 @@ function _renderGasDetalle(){
 
 function _bindGasDetalle(){
   var energyPrice=document.getElementById('desp-gasConsPrecio');if(energyPrice&&DESPACHO.gas.consumo.energyMode==='tramos'){energyPrice.readOnly=true;energyPrice.title='Media ponderada: editar desde Tramos / cuota fija';}
-  var advanced=document.getElementById('energyLegacygas');if(advanced)advanced.onclick=function(){energyEditLegacyTariff('gas',null,document.getElementById('fiscalOverlay'),reRenderFiscal);};
+  var advanced=document.getElementById('energyLegacygas');if(advanced)advanced.onclick=function(){energyEditLegacyTariff('gas',null,householdHost(),reRenderFiscal);};
   _ensureGasScenarios();
   /* Active scenario toggle */
   var actC=document.getElementById('gasActivoConsumo');

@@ -52,15 +52,15 @@ function energyTariffsHtml(kind){
       var t=energyContractTariff(c,date)||p.tariff,vat=energyVatAt(taxes,kind,date);
       h+='<details class="energy-tariff-period"><summary><span class="energy-tariff-dates">'+_rutFmt(p.start)+' – '+(p.end?_rutFmt(p.end):'actualidad')+'<span aria-hidden="true">⌄</span></span>'+energyTariffReferenceHtml(kind,t,profile,vat)+'</summary><p class="energy-caption">Referencia fiscal: '+_rutFmt(date)+' · '+(vat===null?'Falta el IVA importado':'IVA '+vat+' %')+'. Precios de origen sin impuestos.'+(t.energyMode==='tramos'&&profile.hasWeights?' La referencia usa tu reparto de consumo: '+profile.weights.join(' / ')+' %.':'')+'</p><h4>Consumo</h4>';
       if(t.modo==='fijo')h+='<p>Cuota fija: <b>'+energyNumber(t.cuotaFija,'€')+'/mes</b></p>';
-      else if(t.energyMode==='tramos'){['Punta','Llano','Valle'].forEach(function(n,j){h+='<div class="energy-price-view"><span>'+n+' · '+t.periodWeights[j].toFixed(1)+' %</span><b>'+t.periodPrices[j].toFixed(6)+' €/kWh</b></div>';});h+='<p class="energy-caption">Media ponderada: '+energyWeightedPrice(t).toFixed(6)+' €/kWh</p>';}
-      else h+='<p><b>'+t.precioKwh.toFixed(6)+' €/kWh</b></p>';
-      if(kind==='luz'){h+='<h4>Potencia</h4>';['P1','P2'].forEach(function(n){h+='<div class="energy-price-view"><span>'+n+' · '+(t['potencia'+n]||t.potenciaTotal)+' kW</span><b>'+t['precioPot'+n].toFixed(6)+' €/kW/día</b></div>';});}
+      else if(t.energyMode==='tramos'){['Punta','Llano','Valle'].forEach(function(n,j){h+='<div class="energy-price-view"><span>'+n+' · '+t.periodWeights[j].toFixed(1)+' %</span><b>'+energyUnitPrice(t.periodPrices[j])+' €/kWh</b></div>';});h+='<p class="energy-caption">Media ponderada: '+energyUnitPrice(energyWeightedPrice(t))+' €/kWh</p>';}
+      else h+='<p><b>'+energyUnitPrice(t.precioKwh)+' €/kWh</b></p>';
+      if(kind==='luz'){h+='<h4>Potencia</h4>';['P1','P2'].forEach(function(n){h+='<div class="energy-price-view"><span>'+n+' · '+(t['potencia'+n]||t.potenciaTotal)+' kW</span><b>'+energyUnitPrice(t['precioPot'+n])+' €/kW/día</b></div>';});}
       h+='<details><summary>Cargos e impuestos por fecha</summary>';
       var previous='';p.variants.forEach(function(v){var f=v.tariff,key=JSON.stringify([f.terminoFijo,f.terminoFijoDia,f.extrasPerDay||0,f.servicesPerDay||0,f.servicesVatPct,f.otherTaxPct,f.otherTaxKwh]);if(key===previous)return;previous=key;
-        h+='<div class="energy-fee-period"><b>Desde '+escHtml(v.start)+'</b><p>Cargos fijos: '+energyNumber(f.terminoFijo,'€')+'/mes · '+f.terminoFijoDia.toFixed(5)+' €/día</p>';
-        if(f.extrasPerDay)h+='<p>Alquiler y otros cargos del suministro: '+f.extrasPerDay.toFixed(5)+' €/día</p>';
-        if(f.servicesPerDay)h+='<p>Servicios ajenos al suministro (excluidos del estudio): '+f.servicesPerDay.toFixed(5)+' €/día'+(f.servicesVatPct==null?'':' + '+f.servicesVatPct+' % IVA')+'</p>';
-        h+='<p class="energy-caption">'+(kind==='luz'?'Impuesto eléctrico':'Impuesto de hidrocarburos')+': '+f.otherTaxPct+' % + '+f.otherTaxKwh+' €/kWh. IVA según el período.</p></div>';
+        h+='<div class="energy-fee-period"><b>Desde '+escHtml(v.start)+'</b><p>Cargos fijos: '+energyNumber(f.terminoFijo,'€')+'/mes · '+energyUnitPrice(f.terminoFijoDia)+' €/día</p>';
+        if(f.extrasPerDay)h+='<p>Alquiler y otros cargos del suministro: '+energyUnitPrice(f.extrasPerDay)+' €/día</p>';
+        if(f.servicesPerDay)h+='<p>Servicios ajenos al suministro (excluidos del estudio): '+energyUnitPrice(f.servicesPerDay)+' €/día'+(f.servicesVatPct==null?'':' + '+f.servicesVatPct+' % IVA')+'</p>';
+        h+='<p class="energy-caption">'+(kind==='luz'?'Impuesto eléctrico':'Impuesto de hidrocarburos')+': '+f.otherTaxPct+' % + '+energyUnitPrice(f.otherTaxKwh)+' €/kWh. IVA según el período.</p></div>';
       });h+='</details></details>';});
     if(!periods.length)h+='<p class="energy-caption">Falta importar una tarifa calculable con sus fechas.</p>';
     h+='<details><summary>Precios y notas del documento</summary>';c.prices.forEach(function(p){h+='<div class="energy-price-view"><span>'+escHtml(p.label)+'</span><b>'+p.value+' '+escHtml(p.unit)+'</b></div>';});h+='<p class="energy-caption">'+escHtml(c.notes)+'</p></details></article>';});

@@ -361,94 +361,6 @@ function _fmtDuration(meses){
   var a=Math.floor(meses/12),m=meses%12;
   return (a>0?a+'a ':'')+(m>0?m+'m':'');
 }
-/* Period card for Resumen sub-tab */
-function _hipPeriodCard(comp,subIdx,isActive,startDate,endDate){
-  var importe,tipo,plazo,banco,vinc,label;
-  if(subIdx<0){
-    importe=comp.importePrestamo;tipo=comp.tipoInteres;plazo=comp.plazoAnios;banco=comp.entidadBanco;vinc=comp.vinculaciones;label='Pr\u00e9stamo original';
-  } else {
-    var sub=comp.subrogaciones[subIdx];
-    importe=sub.nuevoImporte;tipo=sub.nuevoTipoInteres;plazo=sub.nuevoPlazoAnios;banco=sub.entidadBanco;vinc=sub.vinculaciones;label='Subrogaci\u00f3n '+(subIdx+1);
-  }
-  if(!importe||!tipo||!plazo)return '';
-  var tipoEf=_hipEffRate(tipo,vinc);
-  var r=tipoEf/100/12,n=plazo*12;
-  var cuota=r>0?Math.round(importe*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1)*100)/100:Math.round(importe/n*100)/100;
-  /* Tiempo pagado/restante */
-  var hoy=new Date();
-  var mPagados=0,mRestantes=0;
-  if(startDate){
-    var sp=startDate.split('-');
-    mPagados=Math.max(0,(hoy.getFullYear()-parseInt(sp[0],10))*12+(hoy.getMonth()-(parseInt(sp[1],10)-1)));
-    if(endDate){
-      var ep=endDate.split('-');
-      var mEnd=(parseInt(ep[0],10)-parseInt(sp[0],10))*12+(parseInt(ep[1],10)-parseInt(sp[1],10));
-      mPagados=Math.min(mPagados,mEnd);
-      mRestantes=0; /* this period ended */
-    } else {
-      mRestantes=Math.max(0,n-mPagados);
-    }
-  }
-  var saldoVivo=0,intAnual=0;
-  if(isActive&&comp.fechaInicio){
-    var todayStr=hoy.getFullYear()+'-'+String(hoy.getMonth()+1).padStart(2,'0')+'-01';
-    saldoVivo=_computeBalanceAtDate(comp,todayStr);
-    intAnual=_computeAnnualInterest(comp,FISCAL_YEAR);
-  }
-  var h='<div class="hip-period-card">';
-  h+='<div class="hip-period-hdr"><span class="hip-period-title">'+label+(banco?' \u2014 '+escHtml(banco):'')+'</span>';
-  h+='<span class="hip-period-badge'+(isActive?' active':'')+'">'+( isActive?'Vigente':'Finalizada')+'</span></div>';
-  h+='<div class="hip-period-cuota"><span class="hip-period-cuota-val">'+fcPlain(cuota)+'</span><span class="hip-period-cuota-lbl">/mes</span></div>';
-  h+='<div class="hip-period-info">'+tipoEf.toFixed(2)+'% '+(tipoEf!==tipo?'(nominal '+tipo.toFixed(2)+'%)':' fijo')+' \u00b7 '+plazo+' a\u00f1os \u00b7 '+_fmtMiles(importe)+' \u20ac</div>';
-  if(startDate){
-    h+='<div class="hip-period-info">';
-    h+=startDate.split('-').reverse().join('/')+(endDate?' \u2192 '+endDate.split('-').reverse().join('/'):' \u2192 hoy');
-    h+=' \u00b7 pagado: '+_fmtDuration(mPagados);
-    if(mRestantes>0)h+=' \u00b7 restante: '+_fmtDuration(mRestantes);
-    h+='</div>';
-  }
-  /* Stats for active mortgage */
-  if(isActive){
-    h+='<div class="hip-stats" style="margin-top:6px">';
-    if(saldoVivo>0){var pctA=Math.round((1-saldoVivo/importe)*100);h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-green)">'+_fmtMiles(saldoVivo)+' \u20ac</span><span class="hip-stat-lbl">Saldo vivo ('+pctA+'%)</span></div>';}
-    if(intAnual>0)h+='<div class="hip-stat"><span class="hip-stat-val" style="color:var(--c-orange)">'+fcPlain(intAnual)+'</span><span class="hip-stat-lbl">Intereses '+FISCAL_YEAR+'</span></div>';
-    h+='</div>';
-  }
-  /* Sobrecoste seguros vinculados + hipoteca equivalente */
-  if(vinc){
-    var oc=_calcInsOvercost(vinc);
-    if(oc!==null&&oc>0){
-      h+='<div class="hip-period-info" style="color:var(--c-red)">Sobrecoste seguros: +'+Math.round(oc)+'\u20ac/a\u00f1o</div>';
-      /* Hipoteca equivalente: cuota + sobrecoste/mes */
-      var _sRef=DESPACHO.segurosNormales||{};
-      var _sMes=0;
-      ['segHogar','segSalud','segVida'].forEach(function(k){
-        if(vinc[k]&&vinc[k].enabled){_sMes+=Math.max(0,(vinc[k].costeAnual||0)-(_sRef[k]||0))/12;}
-      });
-      var _hEq=Math.round((cuota+_sMes)*100)/100;
-      /* Tipo equivalente: iterar para encontrar el tipo que produce _hEq */
-      var _tEq=tipoEf;
-      if(importe>0&&n>0){
-        for(var _it=0;_it<50;_it++){
-          var _tR=_tEq/100/12;
-          var _tC=_tR>0?importe*_tR*Math.pow(1+_tR,n)/(Math.pow(1+_tR,n)-1):importe/n;
-          if(Math.abs(_tC-_hEq)<0.01)break;
-          _tEq+=(_hEq-_tC)*0.001;
-        }
-      }
-      h+='<div style="font-size:.68rem;margin-top:4px;padding:6px 8px;background:var(--surface2);border-radius:var(--radius-sm)">';
-      h+='<b style="color:var(--accent-bright)">Hipoteca equivalente: '+fcPlain(_hEq)+'/mes</b>';
-      h+='<div style="font-size:.6rem;color:var(--text-dim);margin-top:2px">Tipo equivalente: <b>'+_tEq.toFixed(2)+'%</b> (cuota '+fcPlain(cuota)+' + sobrecoste '+Math.round(_sMes)+'\u20ac/mes)</div></div>';
-    } else {
-      h+='<div style="font-size:.65rem;margin-top:4px;padding:5px 8px;color:var(--c-green);background:var(--surface2);border-radius:var(--radius-sm)">\u2714 Sin sobrecoste: tipo e hipoteca efectivos coinciden con los bonificados ('+tipoEf.toFixed(2)+'% \u2192 '+fcPlain(cuota)+'/mes)</div>';
-    }
-  } else {
-    h+='<div style="font-size:.65rem;margin-top:4px;padding:5px 8px;color:var(--c-green);background:var(--surface2);border-radius:var(--radius-sm)">\u2714 Sin vinculaciones: tipo e hipoteca son los nominales ('+tipo.toFixed(2)+'% \u2192 '+fcPlain(cuota)+'/mes)</div>';
-  }
-  h+='<button class="hip-period-btn" data-gotosection="'+(subIdx<0?'prestamo':'sub-'+subIdx)+'">Ver Detalle</button>';
-  h+='</div>';
-  return h;
-}
 function _hipROvinc(label,data){
   if(!data||!data.enabled)return '<div class="hip-ro-vinc"><span class="hip-ro-vinc-lbl">'+label+'</span><span class="hip-ro-vinc-off">OFF</span></div>';
   var isNom=label.indexOf('\u00f3mina')!==-1;
@@ -489,146 +401,51 @@ function _renderInlineOvercost(vinc){
 }
 
 /* ── Resumen sub-tab ──────────────────────────────────────── */
-function _renderHipResumen(){
-  var comp=DESPACHO.compra||_defaultCompra();
-  var h='';
-  if(!comp.importePrestamo){
-    h+='<div style="text-align:center;padding:30px;color:var(--text-dim);font-size:.75rem">Configura los datos de hipoteca en la pesta\u00f1a <b>Detalle</b>.</div>';
-    return h;
-  }
-  /* Compra summary */
-  var totalCompra=(comp.valorCompraTotal||0)+(comp.itpMadrid||0)+(comp.notariaRegistro||0)+(comp.tasacion||0)+(comp.reformas||0)+(comp.inmobiliaria||0);
-  if(totalCompra>0){
-    h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:8px">\uD83C\uDFE0 Inversi\u00f3n vivienda: <b style="color:var(--accent-bright)">'+_fmtMiles(totalCompra)+' \u20ac</b></div>';
-  }
-  /* Build periods */
-  var subs=comp.subrogaciones||[];
-  var periods=[];
-  /* Original mortgage */
-  var origEnd=subs.length>0&&subs[0].fecha?subs[0].fecha:null;
-  periods.push({subIdx:-1,start:comp.fechaInicio,end:origEnd,isActive:subs.length===0});
-  /* Each subrogation */
-  for(var i=0;i<subs.length;i++){
-    var nextEnd=(i<subs.length-1&&subs[i+1].fecha)?subs[i+1].fecha:null;
-    periods.push({subIdx:i,start:subs[i].fecha,end:nextEnd,isActive:i===subs.length-1});
-  }
-  for(var p=0;p<periods.length;p++){
-    h+=_hipPeriodCard(comp,periods[p].subIdx,periods[p].isActive,periods[p].start,periods[p].end);
-  }
-  /* Hipoteca equivalente = cuota + sobrecoste seguros/mes */
-  var _actP=periods[periods.length-1];
-  var _actVinc=_actP.subIdx>=0?(subs[_actP.subIdx].vinculaciones||{}):(comp.vinculaciones||{});
-  var _actTipo=_actP.subIdx>=0?subs[_actP.subIdx].nuevoTipoInteres:comp.tipoInteres;
-  var _actImporte=_actP.subIdx>=0?subs[_actP.subIdx].nuevoImporte:comp.importePrestamo;
-  var _actPlazo=_actP.subIdx>=0?subs[_actP.subIdx].nuevoPlazoAnios:comp.plazoAnios;
-  var _actTipoEf=_hipEffRate(_actTipo,_actVinc);
-  var _actR=_actTipoEf/100/12,_actN=_actPlazo*12;
-  var _actCuota=_actR>0?_actImporte*_actR*Math.pow(1+_actR,_actN)/(Math.pow(1+_actR,_actN)-1):_actImporte/_actN;
-  var _segRef=DESPACHO.segurosNormales||{};
-  var _sobrMes=0;
-  ['segHogar','segSalud','segVida'].forEach(function(k){
-    if(_actVinc[k]&&_actVinc[k].enabled){
-      var costeVinc=_actVinc[k].costeAnual||0;
-      var costeRef=_segRef[k]||0;
-      _sobrMes+=Math.max(0,costeVinc-costeRef)/12;
-    }
-  });
-  if(_sobrMes>0){
-    var _hipEq=Math.round((_actCuota+_sobrMes)*100)/100;
-    h+='<div style="font-size:.72rem;color:var(--text-dim);margin:8px 0 4px;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)">';
-    var _tipoEqNum=_actTipoEf;/* tipo equivalente: buscar tipo que produce la cuota equivalente */
-    var _hipEqR=_hipEq/(_actImporte>0?_actImporte:1);/* aprox */
-    /* Solve for equivalent rate: cuota_eq = I*r*(1+r)^n/((1+r)^n-1) => iterative */
-    var _eqTipo=_actTipoEf;
-    if(_actImporte>0&&_actN>0){
-      for(var _it=0;_it<50;_it++){
-        var _tr=_eqTipo/100/12;
-        var _tc=_tr>0?_actImporte*_tr*Math.pow(1+_tr,_actN)/(Math.pow(1+_tr,_actN)-1):_actImporte/_actN;
-        if(Math.abs(_tc-_hipEq)<0.01)break;
-        _eqTipo+=(_hipEq-_tc)*0.001;
-      }
-    }
-    h+='<b style="color:var(--accent-bright)">Hipoteca equivalente: '+fcPlain(_hipEq)+'/mes</b>';
-    h+='<div style="font-size:.62rem;margin-top:2px">Tipo equivalente: <b>'+_eqTipo.toFixed(2)+'%</b> (cuota '+fcPlain(Math.round(_actCuota*100)/100)+' + sobrecoste '+Math.round(_sobrMes)+'\u20ac/mes)</div></div>';
-  }
-  /* Gas/Electricidad summary cards */
-  var gas=DESPACHO.gas||{};
-  _ensureGasScenarios();
-  var gasActivo=gas.activo||'consumo';
-  var gasData=gasActivo==='fijo'?(gas.fijo||{}):(gas.consumo||{});
-  var elc=DESPACHO.elect||{};
-  var hasGas=gasActivo==='fijo'?gasData.cuotaFija:gasData.precioKwh;
-  if(hasGas||elc.precioKwh){
-    h+='<div style="font-size:.72rem;color:var(--text-dim);margin:12px 0 6px;font-weight:600">\uD83D\uDCE6 Facturas</div>';
-    if(hasGas){
-      h+='<div class="hip-period-card">';
-      h+='<div class="hip-period-hdr"><span class="hip-period-title">\uD83D\uDD25 Gas'+(gasData.comercializadora?' \u2014 '+escHtml(gasData.comercializadora):'')+'</span></div>';
-      if(gasActivo==='fijo')h+='<div class="hip-period-info">Cuota fija: <b>'+fcPlain(gasData.cuotaFija)+'/mes</b></div>';
-      else{
-        h+='<div class="hip-period-info">Precio: <b>'+(gasData.precioKwh||0).toFixed(4)+' \u20ac/kWh</b></div>';
-        if(gasData.terminoFijoDia)h+='<div class="hip-period-info">T\u00e9rmino fijo: '+fcPlain(gasData.terminoFijoDia)+'/d\u00eda</div>';
-        if(gasData.terminoFijo)h+='<div class="hip-period-info">T\u00e9rmino fijo: '+fcPlain(gasData.terminoFijo)+'/factura</div>';
-      }
-      if(gas.ivaGas)h+='<div class="hip-period-info">IVA: '+gas.ivaGas+'%</div>';
-      h+='<button class="hip-period-btn" data-hipsub="gas">Ver Detalle</button></div>';
-    }
-    if(elc.precioKwh){
-      h+='<div class="hip-period-card">';
-      h+='<div class="hip-period-hdr"><span class="hip-period-title">\u26A1 Electricidad'+(elc.comercializadora?' \u2014 '+escHtml(elc.comercializadora):'')+'</span></div>';
-      var potTxt=elc.modoPotencia==='doble'?'P1: '+elc.potenciaP1+'kW ('+(elc.precioPotP1||0).toFixed(6)+') + P2: '+elc.potenciaP2+'kW ('+(elc.precioPotP2||0).toFixed(6)+')':elc.potenciaTotal+'kW ('+(elc.precioPotP1||0).toFixed(6)+')';
-      h+='<div class="hip-period-info">Potencia: <b>'+potTxt+'</b> \u20ac/kW/d\u00eda</div>';
-      if(elc.modoPotencia==='doble')h+='<div class="hip-period-info">Suma precios: <b>'+((elc.precioPotP1||0)+(elc.precioPotP2||0)).toFixed(6)+' \u20ac/kW/d\u00eda</b></div>';
-      h+='<div class="hip-period-info">Precio: <b>'+(elc.precioKwh||0).toFixed(4)+' \u20ac/kWh</b></div>';
-      if(elc.terminoFijo)h+='<div class="hip-period-info">T\u00e9rmino fijo: '+fcPlain(elc.terminoFijo)+'/mes</div>';
-      h+='<button class="hip-period-btn" data-hipsub="elect">Ver Detalle</button></div>';
-    }
-  }
-  h+='<button class="hip-add-sub-btn" id="hipGoAnalisis" style="border-style:solid;margin-top:4px">\uD83D\uDCC8 Ver An\u00e1lisis Hipoteca</button>';
-  return h;
-}
+function _renderHipResumen(editable){return renderHouseholdSummary(editable!==false);}
 
 /* ── Detalle sub-tab ──────────────────────────────────────── */
-function _renderHipDetalle(){
+function _renderHipDetalle(editable){
+  editable=editable!==false;
   var comp=DESPACHO.compra||_defaultCompra();
   var h='';
   /* Compra section */
   h+='<div class="fiscal-section" id="hip-section-compra">';
-  h+=_renderHipSectionContent('compra',FISCAL_HIP_EDITING==='compra');
+  h+=_renderHipSectionContent('compra',editable&&FISCAL_HIP_EDITING==='compra',editable);
   h+='</div>';
   /* Préstamo section */
   h+='<div class="fiscal-section" id="hip-section-prestamo">';
-  h+=_renderHipSectionContent('prestamo',FISCAL_HIP_EDITING==='prestamo');
+  h+=_renderHipSectionContent('prestamo',editable&&FISCAL_HIP_EDITING==='prestamo',editable);
   h+='</div>';
   /* Subrogaciones */
   var subs=comp.subrogaciones||[];
   for(var i=0;i<subs.length;i++){
     var sid='sub-'+i;
     h+='<div class="fiscal-section" id="hip-section-'+sid+'">';
-    h+=_renderHipSectionContent(sid,FISCAL_HIP_EDITING===sid);
+    h+=_renderHipSectionContent(sid,editable&&FISCAL_HIP_EDITING===sid,editable);
     h+='</div>';
   }
   /* Add subrogation button */
-  h+='<button class="hip-add-sub-btn" id="hipAddSub">+ A\u00f1adir subrogaci\u00f3n</button>';
+  if(editable)h+='<button class="hip-add-sub-btn" id="hipAddSub">+ A\u00f1adir subrogaci\u00f3n</button>';
   /* Precios referencia seguros */
-  h+=_renderSegurosNormales();
+  h+=_renderSegurosNormales(editable);
   return h;
 }
 
-function _renderHipSectionContent(sectionId,isEditing){
+function _renderHipSectionContent(sectionId,isEditing,editable){
   var comp=DESPACHO.compra||_defaultCompra();
-  if(sectionId==='compra')return _renderCompraSection(comp,isEditing);
-  if(sectionId==='prestamo')return _renderPrestamoSection(comp,isEditing);
+  if(sectionId==='compra')return _renderCompraSection(comp,isEditing,editable);
+  if(sectionId==='prestamo')return _renderPrestamoSection(comp,isEditing,editable);
   if(sectionId.indexOf('sub-')===0){
     var idx=parseInt(sectionId.substring(4),10);
     var sub=(comp.subrogaciones||[])[idx];
-    if(sub)return _renderSubSection(comp,sub,idx,isEditing);
+    if(sub)return _renderSubSection(comp,sub,idx,isEditing,editable);
   }
   return '';
 }
 
-function _renderCompraSection(comp,isEditing){
+function _renderCompraSection(comp,isEditing,editable){
   var h='<div class="hip-section-hdr"><span class="fiscal-section-title">\uD83C\uDFE0 Compra de vivienda</span>';
-  if(!isEditing)h+='<button class="hip-edit-btn" data-editsection="compra">Editar</button>';
+  if(editable!==false&&!isEditing)h+='<button class="hip-edit-btn" data-editsection="compra">Editar</button>';
   h+='</div>';
   if(isEditing){
     h+='<div class="hip-g2">';
@@ -655,10 +472,10 @@ function _renderCompraSection(comp,isEditing){
   return h;
 }
 
-function _renderPrestamoSection(comp,isEditing){
+function _renderPrestamoSection(comp,isEditing,editable){
   var vinc=comp.vinculaciones||{nomina:{enabled:false,costeAnual:0,reduccion:0},segHogar:{enabled:false,costeAnual:0,reduccion:0},segSalud:{enabled:false,costeAnual:0,reduccion:0},segVida:{enabled:false,costeAnual:0,reduccion:0}};
   var h='<div class="hip-section-hdr"><span class="fiscal-section-title">\uD83C\uDFE6 Pr\u00e9stamo original</span>';
-  if(!isEditing)h+='<button class="hip-edit-btn" data-editsection="prestamo">Editar</button>';
+  if(editable!==false&&!isEditing)h+='<button class="hip-edit-btn" data-editsection="prestamo">Editar</button>';
   h+='</div>';
   if(isEditing){
     h+='<div class="hip-g2">';
@@ -702,10 +519,10 @@ function _renderPrestamoSection(comp,isEditing){
   return h;
 }
 
-function _renderSubSection(comp,sub,idx,isEditing){
+function _renderSubSection(comp,sub,idx,isEditing,editable){
   var pfx='sub'+idx;
   var h='<div class="hip-section-hdr"><span class="fiscal-section-title">\uD83D\uDD04 Subrogaci\u00f3n '+(idx+1)+(sub.entidadBanco?' \u2014 '+escHtml(sub.entidadBanco):'')+'</span>';
-  if(!isEditing)h+='<button class="hip-edit-btn" data-editsection="sub-'+idx+'">Editar</button>';
+  if(editable!==false&&!isEditing)h+='<button class="hip-edit-btn" data-editsection="sub-'+idx+'">Editar</button>';
   h+='</div>';
   if(isEditing){
     h+='<div class="hip-g2">';
@@ -773,7 +590,7 @@ function _renderSubSection(comp,sub,idx,isEditing){
 }
 
 /* ── Main tab dispatcher ──────────────────────────────────── */
-function renderFiscalTabDespacho(){
+function renderFiscalTabDespacho(editable){
   var h='';
   h+='<div class="econ-sub-tabs fiscal-hip-tabs">';
   h+='<button class="econ-sub-tab'+(FISCAL_HIP_SUB==='resumen'?' active':'')+'" data-hipsub="resumen">Resumen</button>';
@@ -781,17 +598,17 @@ function renderFiscalTabDespacho(){
   h+='<button class="econ-sub-tab est-hip'+(FISCAL_HIP_SUB==='gas'?' active':'')+'" data-hipsub="gas">Detalle<br>Gas</button>';
   h+='<button class="econ-sub-tab est-hip'+(FISCAL_HIP_SUB==='elect'?' active':'')+'" data-hipsub="elect">Detalle<br>Electricidad</button>';
   h+='</div>';
-  if(FISCAL_HIP_SUB==='resumen')h+=_renderHipResumen();
-  else if(FISCAL_HIP_SUB==='detalle')h+=_renderHipDetalle();
-  else if(FISCAL_HIP_SUB==='gas')h+=_renderGasDetalle();
-  else if(FISCAL_HIP_SUB==='elect')h+=_renderElectDetalle();
+  if(FISCAL_HIP_SUB==='resumen')h+=_renderHipResumen(editable);
+  else if(FISCAL_HIP_SUB==='detalle')h+=_renderHipDetalle(editable);
+  else if(FISCAL_HIP_SUB==='gas')h+=_renderGasDetalle(editable);
+  else if(FISCAL_HIP_SUB==='elect')h+=_renderElectDetalle(editable);
   return h;
 }
 
 /* ── Gas detail sub-tab (two scenarios: consumo + fijo) ──── */
 
 function _bindTabDespacho(){
-  bindEnergyHistory();
+  if(FISCAL_ENTRY==='household')bindEnergyHistory();
   if(!DESPACHO.compra)DESPACHO.compra=_defaultCompra();
   /* Sub-tab switching */
   document.querySelectorAll('[data-hipsub]').forEach(function(btn){
@@ -802,6 +619,7 @@ function _bindTabDespacho(){
       reRenderFiscal();
     });
   });
+  if(FISCAL_ENTRY!=='household')return;
   if(FISCAL_HIP_SUB==='resumen'){
     _bindHipResumen();
   } else if(FISCAL_HIP_SUB==='detalle'){
@@ -833,7 +651,7 @@ function _bindHipResumen(){
   /* "Ver análisis" */
   var goAnalBtn=document.getElementById('hipGoAnalisis');
   if(goAnalBtn)goAnalBtn.addEventListener('click',function(){
-    closeFiscal();
+    if(FISCAL_ENTRY==='household'){HOUSEHOLD_RETURN=null;closeHousehold();}else closeFiscal();
     setTimeout(function(){
       ECON_VIEW='analisis';ANALISIS_SUB='hipoteca';
       openEcon();
@@ -914,10 +732,10 @@ function _bindHipDetalle(){
 function _rerenderSection(sectionId,isEditing){
   var el=document.getElementById('hip-section-'+sectionId);
   if(!el)return;
-  var scrollTop=document.querySelector('#fiscalOverlay .sy-body').scrollTop;
+  var scrollTop=householdHost().querySelector('.sy-body').scrollTop;
   el.innerHTML=_renderHipSectionContent(sectionId,isEditing);
   _bindHipDetalle();
-  document.querySelector('#fiscalOverlay .sy-body').scrollTop=scrollTop;
+  householdHost().querySelector('.sy-body').scrollTop=scrollTop;
 }
 /* Read inputs from an editing section into DESPACHO */
 function _readSectionInputs(sectionId){
@@ -1012,7 +830,7 @@ function _bindEditingSection(sectionId){
       saveDespacho();
       var el=document.getElementById('hip-section-'+sid);
       if(el){
-        var st=document.querySelector('#fiscalOverlay .sy-body').scrollTop;
+        var st=householdHost().querySelector('.sy-body').scrollTop;
         el.innerHTML=_renderHipSectionContent(sid,true);
         _bindEditingSection(sid);
         /* Re-bind save/cancel */
@@ -1024,7 +842,7 @@ function _bindEditingSection(sectionId){
           if(FISCAL_HIP_EDIT_SNAPSHOT){DESPACHO.compra=FISCAL_HIP_EDIT_SNAPSHOT;saveDespacho();}
           FISCAL_HIP_EDITING=null;FISCAL_HIP_EDIT_SNAPSHOT=null;_rerenderSection(sid,false);
         });});
-        document.querySelector('#fiscalOverlay .sy-body').scrollTop=st;
+        householdHost().querySelector('.sy-body').scrollTop=st;
       }
     });
   });

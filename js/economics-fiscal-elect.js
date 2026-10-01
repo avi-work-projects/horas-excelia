@@ -3,15 +3,16 @@
    ============================================================ */
 
 var FISCAL_ELECT_EDITING=false;
-function _renderElectDetalle(){
+function _renderElectDetalle(editable){
+  editable=editable!==false;
   if(!DESPACHO.elect)DESPACHO.elect={modoPotencia:'doble',potenciaP1:3.3,potenciaP2:3.3,potenciaTotal:6.6,precioPotP1:0,precioPotP2:0,precioKwh:0,terminoFijo:0,comercializadora:''};
   var e=DESPACHO.elect;
   if(e.ivaElect===undefined)e.ivaElect=21;
   var h='<div class="fiscal-section">';
   h+='<div class="hip-section-hdr"><span class="fiscal-section-title">\u26A1 Tarifa de Electricidad</span>';
-  if(!FISCAL_ELECT_EDITING)h+='<button class="hip-edit-btn" id="electEditBtn">Editar</button>';
+  if(editable&&!FISCAL_ELECT_EDITING)h+='<button class="hip-edit-btn" id="electEditBtn">Editar</button>';
   h+='</div>';
-  if(FISCAL_ELECT_EDITING){
+  if(editable&&FISCAL_ELECT_EDITING){
     h+='<div style="margin-bottom:8px"><span class="hip-cf-lbl">Precio potencia</span>';
     h+='<div style="display:flex;gap:6px;margin-top:4px">';
     h+='<button class="fiscal-onoff'+(e.modoPotencia==='doble'?' on':'')+'" id="electModoDoble">2 tramos (P1+P2)</button>';
@@ -52,18 +53,18 @@ function _renderElectDetalle(){
     h+='<div style="border-top:1px solid var(--border);margin:4px 0"></div>';
     /* Nivel 2 */
     if(e.modoPotencia==='doble'){
-      h+=_hipRO('Precio P1 (punta)',(e.precioPotP1||0).toFixed(6)+' \u20ac/kW/d\u00eda');
-      h+=_hipRO('Precio P2 (valle)',(e.precioPotP2||0).toFixed(6)+' \u20ac/kW/d\u00eda');
-      h+=_hipRO('Suma precios potencia',((e.precioPotP1||0)+(e.precioPotP2||0)).toFixed(6)+' \u20ac/kW/d\u00eda');
+      h+=_hipRO('Precio P1 (punta)',energyUnitPrice(e.precioPotP1||0)+' \u20ac/kW/d\u00eda');
+      h+=_hipRO('Precio P2 (valle)',energyUnitPrice(e.precioPotP2||0)+' \u20ac/kW/d\u00eda');
+      h+=_hipRO('Suma precios potencia',energyUnitPrice((e.precioPotP1||0)+(e.precioPotP2||0))+' \u20ac/kW/d\u00eda');
     } else {
-      h+=_hipRO('Precio potencia',(e.precioPotP1||0).toFixed(6)+' \u20ac/kW/d\u00eda');
+      h+=_hipRO('Precio potencia',energyUnitPrice(e.precioPotP1||0)+' \u20ac/kW/d\u00eda');
     }
     h+='<div style="border-top:1px solid var(--border);margin:4px 0"></div>';
     /* Nivel 3 */
     if(e.energyMode==='tramos'){
-      ['Punta','Llano','Valle'].forEach(function(n,i){h+=_hipRO(n+' · '+e.periodWeights[i]+' %',e.periodPrices[i].toFixed(6)+' €/kWh');});
-      h+=_hipRO('Media ponderada',energyWeightedPrice(e).toFixed(6)+' €/kWh');
-    }else h+=_hipRO('Precio kWh',e.precioKwh?e.precioKwh.toFixed(4)+' \u20ac/kWh':'\u2014');
+      ['Punta','Llano','Valle'].forEach(function(n,i){h+=_hipRO(n+' · '+e.periodWeights[i]+' %',energyUnitPrice(e.periodPrices[i])+' €/kWh');});
+      h+=_hipRO('Media ponderada',energyUnitPrice(energyWeightedPrice(e))+' €/kWh');
+    }else h+=_hipRO('Precio kWh',e.precioKwh?energyUnitPrice(e.precioKwh)+' \u20ac/kWh':'\u2014');
     h+='<div style="border-top:1px solid var(--border);margin:4px 0"></div>';
     /* Nivel 4 */
     h+=_hipROmoney('T\u00e9rmino fijo/mes',e.terminoFijo);
@@ -72,19 +73,20 @@ function _renderElectDetalle(){
   }
   if(e.modo==='fijo')h+='<p class="energy-caption">Cuota fija activa: '+fcPlain(e.cuotaFija)+'/mes. Los precios de consumo y potencia quedan guardados para cambiar de modalidad.</p>';
   h+='</div>';
-  h+=energyHistoryButton('luz');
+  if(editable)h+=energyHistoryButton('luz');
 
 
   return h;
 }
 
 /* ── Precios normales de seguros (config) ────────────────── */
-function _renderSegurosNormales(){
+function _renderSegurosNormales(editable){
   if(!DESPACHO.segurosNormales)DESPACHO.segurosNormales={segSalud:0,segVida:0,segHogar:0};
   var sn=DESPACHO.segurosNormales;
   var h='<div class="fiscal-section">';
   h+='<div class="fiscal-section-title">\uD83D\uDCCB Precios referencia seguros</div>';
   h+='<div style="font-size:.68rem;color:var(--text-dim);margin-bottom:6px">Precio que consideras normal para comparar con seguros vinculados a la hipoteca.</div>';
+  if(editable===false)return h+_hipROmoney('Salud (anual)',sn.segSalud)+_hipROmoney('Vida (anual)',sn.segVida)+_hipROmoney('Hogar (anual)',sn.segHogar)+'</div>';
   h+='<div class="hip-g2">';
   h+=_hipMoney('segNormalSalud','Seg. salud (anual)',sn.segSalud);
   h+=_hipMoney('segNormalVida','Seg. vida (anual)',sn.segVida);
@@ -174,7 +176,7 @@ function renderGastosList(){
 
 function _bindElectDetalle(){
   var energyPrice=document.getElementById('desp-electPrecioKwh');if(energyPrice&&DESPACHO.elect.energyMode==='tramos'){energyPrice.readOnly=true;energyPrice.title='Media ponderada: editar desde Tramos / cuota fija';}
-  var advanced=document.getElementById('energyLegacyluz');if(advanced)advanced.onclick=function(){energyEditLegacyTariff('luz',null,document.getElementById('fiscalOverlay'),reRenderFiscal);};
+  var advanced=document.getElementById('energyLegacyluz');if(advanced)advanced.onclick=function(){energyEditLegacyTariff('luz',null,householdHost(),reRenderFiscal);};
   var editBtn=document.getElementById('electEditBtn');
   if(editBtn)editBtn.addEventListener('click',function(){FISCAL_ELECT_EDITING=true;reRenderFiscal();});
   var saveBtn=document.getElementById('electSaveBtn');

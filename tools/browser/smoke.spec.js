@@ -90,7 +90,7 @@ test('estudio energético: cinco pestañas, IVA, año y consulta sin edición',a
  await page.locator('#energyAnalysisOverlay [data-nav="household"]').click();
  await expect(page.locator('#energyAnalysisWrap')).toHaveCount(0);
  await page.locator('[data-hipsub="gas"]').click();
- await page.locator('#fiscalOverlay .energy-analysis-open').click();
+ await page.locator('#householdOverlay .energy-analysis-open').click();
  await expect(page.locator('#energyAnalysisOverlay h2')).toHaveText('Estudio de gas');
  await expect(page.locator('#energyAnalysisOverlay .overlay-nav-bar [data-nav]')).toHaveCount(7);
  await page.locator('#energyAnalysisOverlay [data-nav="home"]').click();

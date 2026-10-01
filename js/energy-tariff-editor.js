@@ -26,7 +26,7 @@ function openEnergyTariff(kind,old,onSave,container){
     w.querySelector('[data-tariff-flat]').hidden=f.elements.modo.value!=='fijo';w.querySelector('[data-tariff-usage]').hidden=f.elements.modo.value==='fijo';
     w.querySelector('[data-tariff-single]').hidden=f.elements.energyMode.value==='tramos';w.querySelector('[data-tariff-periods]').hidden=f.elements.energyMode.value!=='tramos';
     if(kind==='luz'){var double=f.elements.modoPotencia.value==='doble';f.elements.potenciaTotal.closest('label').hidden=double;['potenciaP1','potenciaP2','precioPotP2'].forEach(function(k){f.elements[k].closest('label').hidden=!double;});}
-    try{w.querySelector('#energyWeighted').textContent='Media ponderada: '+energyWeightedPrice(read()).toFixed(5)+' €/kWh';}catch(e){w.querySelector('#energyWeighted').textContent=e.message;}
+    try{w.querySelector('#energyWeighted').textContent='Media ponderada: '+energyUnitPrice(energyWeightedPrice(read()))+' €/kWh';}catch(e){w.querySelector('#energyWeighted').textContent=e.message;}
   }
   w.querySelector('#energyUseBillWeights').onclick=function(){var p=energyUsageProfile(kind);p.weights.forEach(function(v,i){f.elements['weight'+i].value=v;});update();showToast(p.hasWeights?'Reparto de tus facturas aplicado':'Sin desglose importado: reparto orientativo 33 / 33 / 34','success');};
   f.oninput=update;f.onchange=update;w.querySelector('#energyTariffBack').onclick=close;

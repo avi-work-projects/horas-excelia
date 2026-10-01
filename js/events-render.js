@@ -589,8 +589,8 @@ function renderEvContent(){
   if(EV_VIEW==='puentes'||EV_VIEW==='time-off'){
     /* Pestana unica "Vacaciones Festivos" con dos subpestanas */
     h+='<div class="econ-sub-tabs">';
-    h+='<button class="econ-sub-tab'+(EV_VIEW==='puentes'?' active':'')+'" id="evSubPuentes">Puentes</button>';
-    h+='<button class="econ-sub-tab'+(EV_VIEW==='time-off'?' active':'')+'" id="evSubTimeOff">Vacaciones y festivos</button>';
+    h+='<button class="econ-sub-tab ev-sub-puentes'+(EV_VIEW==='puentes'?' active':'')+'" id="evSubPuentes">Puentes</button>';
+    h+='<button class="econ-sub-tab ev-sub-timeoff'+(EV_VIEW==='time-off'?' active':'')+'" id="evSubTimeOff">Vacaciones y festivos</button>';
     h+='</div>';
   }
   if(EV_VIEW==='cal')h+=renderEvCalMonth();
