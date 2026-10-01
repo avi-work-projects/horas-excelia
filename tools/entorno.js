@@ -46,6 +46,8 @@ const MODULOS = [
   'energy-tariff-editor.js',
   'energy-bills-view.js',
   'economics-fiscal-elect.js',
+  'household.js',
+  'household-summary.js',
   'economics-gastos.js',
   'economics-analisis.js',
   'economics-comp.js',

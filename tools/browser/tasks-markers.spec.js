@@ -36,7 +36,7 @@ test('el botón se arrastra libre y se recoge al navegar; recordatorio solo una 
   await page.mouse.move(r.x+10,r.y+24);await page.mouse.down();await page.mouse.move(100,440,{steps:8});await page.mouse.up();
   await expect(fab).not.toHaveClass(/tasks-docked/);await expect(page.locator('#tasksOverlay')).toBeHidden();
   const position=await fab.boundingBox();expect(position.x).toBeGreaterThan(40);expect(position.y).toBeLessThan(500);
-  await page.locator('#eventsBtn').click();await expect(fab).toHaveClass(/tasks-docked/);await expect(fab).toHaveAttribute('data-side','left');
+  await page.locator('#eventsBtn').click();await expect(fab).toHaveClass(/tasks-docked/);await expect(fab).toHaveAttribute('data-side','right');
   await page.reload();await expect(page.locator('#homeTasksOpen')).toContainText('Tarea semanal');await page.locator('#homePopupDismiss').click();
   await page.reload();await expect(page.locator('#homeTasksOpen')).toHaveCount(0);
   await page.clock.setFixedTime(new Date('2026-10-05T10:00:00'));await page.reload();await expect(page.locator('#homeTasksOpen')).toContainText('Tarea semanal');

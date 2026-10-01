@@ -24,6 +24,3 @@ enviada sola.
 **A tener en cuenta**: hoy `sendEmail()` marca la semana como enviada nada más
 abrir Outlook, sin saber si el correo salió. Con N8N sí se podría saber, así que
 el marcado debería pasar a depender de la respuesta del webhook.
-
-Las tareas pendientes con recordatorio semanal, historial de completadas y
-papelera de siete días están implementadas desde v377 (ver CLAUDE.md).

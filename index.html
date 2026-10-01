@@ -12,6 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/styles.css">
 <link rel="stylesheet" href="css/tasks.css">
+<link rel="stylesheet" href="css/household.css">
 </head>
 <body>
 
@@ -72,6 +73,7 @@ var BDAYS_FROM_SECRET=[];
           <button class="data-menu-item" id="themeBtn">&#127769;&nbsp;Oscuro</button>
           <button class="data-menu-item nav-style-setting" id="navIconStyle"><span>Iconos de navegación</span><span id="navIconStyleValue">Originales</span><span aria-hidden="true">&#8250;</span></button>
           <div class="settings-menu-separator" role="separator"></div>
+          <button class="data-menu-item" id="tasksMenuOpen">&#9745;&nbsp;Mis tareas</button>
           <button class="data-menu-item" id="exportAllBtn">&#8595;&nbsp;Exportar todo</button>
           <button class="data-menu-item" id="importAllBtn">&#8593;&nbsp;Importar todo</button>
           <details class="settings-details"><summary>MacroDroid</summary><div class="macro-section">
@@ -195,6 +197,9 @@ var BDAYS_FROM_SECRET=[];
 <div id="fiscalOverlay" class="full-overlay" style="display:none;z-index:300">
   <div id="fiscalContent"></div>
 </div>
+<div id="householdOverlay" class="full-overlay" style="display:none;z-index:300">
+  <div id="householdContent"></div>
+</div>
 
 <!-- ── OVERLAY: Cumpleaños ── -->
 
@@ -263,6 +268,8 @@ var BDAYS_FROM_SECRET=[];
 <script defer src="js/energy-tariff-editor.js"></script>
 <script defer src="js/energy-bills-view.js"></script>
 <script defer src="js/economics-fiscal-bind.js"></script>
+<script defer src="js/household.js"></script>
+<script defer src="js/household-summary.js"></script>
 <script defer src="js/birthdays.js"></script>
 <script defer src="js/birthdays-render.js"></script>
 <script defer src="js/birthdays-panels.js"></script>

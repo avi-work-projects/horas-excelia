@@ -429,6 +429,13 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .sy-body:has(> .econ-sub-tabs:first-child){padding-top:0!important}
 .econ-sub-tab{flex:1;font-size:.62rem;padding:5px 4px;border-radius:0;border:none;border-bottom:2px solid transparent;background:transparent;color:var(--text-dim);cursor:pointer;transition:all .15s;text-align:center;-webkit-user-select:none;user-select:none}
 .econ-sub-tab.active{border-bottom-color:var(--accent);color:var(--accent-bright);font-weight:600}
+.rut-sub-tabs{--section-tab-tone:#eceff5}
+[data-theme="light"] .rut-sub-tabs{--section-tab-tone:#1f2937}
+.ev-sub-puentes{--section-tab-tone:#f291c3}
+[data-theme="light"] .ev-sub-puentes{--section-tab-tone:#b83276}
+.ev-sub-timeoff{--section-tab-tone:var(--vacaciones)}
+.rut-sub-tabs .econ-sub-tab,.econ-sub-tab.ev-sub-puentes,.econ-sub-tab.ev-sub-timeoff{color:var(--section-tab-tone);font-weight:600}
+.rut-sub-tabs .econ-sub-tab.active,.econ-sub-tab.ev-sub-puentes.active,.econ-sub-tab.ev-sub-timeoff.active{border-bottom-color:var(--section-tab-tone);background:color-mix(in srgb,var(--section-tab-tone) 10%,var(--surface))}
 .econ-sub-tab.est-casa{color:var(--text-dim)}
 .econ-sub-tab.est-casa.active{border-color:#14b8a6;background:rgba(20,184,166,.1);color:#14b8a6}
 /* Estudio Cambio — grouped nav */
@@ -1522,11 +1529,10 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .home-popup{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px 20px;max-width:360px;width:calc(100% - 32px);max-height:70vh;overflow-y:auto;position:relative;box-shadow:0 16px 48px var(--shadow)}
 .home-popup-close{position:absolute;top:10px;right:12px;width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .home-popup-title{font-size:.88rem;font-weight:700;color:var(--text);margin-bottom:10px;padding-right:30px}
-.home-popup-item{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;font-size:.8rem}
+.home-popup-item{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;font-size:.8rem}
 .home-popup-item.warn{border-color:var(--c-orange);background:rgba(251,146,60,.08);color:var(--c-orange)}
-.home-popup-item.vip{border-color:rgba(251,191,36,.45);background:rgba(251,191,36,.08);color:var(--c-yellow)}
-.home-popup-item.bday{border-color:rgba(52,211,153,.45);background:rgba(52,211,153,.08);color:var(--c-green)}
-.home-popup-item.event{border-color:rgba(56,189,248,.45);background:rgba(56,189,248,.08);color:#38bdf8}
+.home-popup-item.vip{border-color:var(--c-yellow);background:color-mix(in srgb,var(--c-yellow) 8%,var(--surface));color:var(--c-yellow)}
+.home-popup-item.bday{border-color:var(--c-blue);background:color-mix(in srgb,var(--c-blue) 8%,var(--surface));color:var(--c-blue)}
 .home-popup-dismiss{width:100%;margin-top:8px;padding:9px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);font-size:.78rem;cursor:pointer}
 /* ── MACRO URL EN MENÚ ── */
 .macro-section{padding:6px 12px 4px;border-top:1px solid var(--border);margin-top:4px}

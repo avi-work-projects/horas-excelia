@@ -256,8 +256,8 @@ function _renderEstudioGasComp(){
     h+='<div class="est-tariff-row"><span class="est-tariff-lbl">Cuota fija</span><span class="est-tariff-val"><b>'+fcPlain(cur.cuotaFija)+'</b>/mes</span></div>';
   } else {
     h+='<div class="est-tariff-row"><span class="est-tariff-lbl">Modo</span><span class="est-tariff-val">Por consumo</span></div>';
-    h+='<div class="est-tariff-row"><span class="est-tariff-lbl">Precio kWh</span><span class="est-tariff-val"><b>'+(cur.precioKwh).toFixed(4)+'</b> \u20ac/kWh</span></div>';
-    if(cur.terminoFijoDia)h+='<div class="est-tariff-row"><span class="est-tariff-lbl">T. fijo/d\u00eda</span><span class="est-tariff-val">'+(cur.terminoFijoDia).toFixed(4)+' \u20ac/d\u00eda</span></div>';
+    h+='<div class="est-tariff-row"><span class="est-tariff-lbl">Precio kWh</span><span class="est-tariff-val"><b>'+energyUnitPrice(cur.precioKwh)+'</b> \u20ac/kWh</span></div>';
+    if(cur.terminoFijoDia)h+='<div class="est-tariff-row"><span class="est-tariff-lbl">T. fijo/d\u00eda</span><span class="est-tariff-val">'+energyUnitPrice(cur.terminoFijoDia)+' \u20ac/d\u00eda</span></div>';
     if(cur.terminoFijo)h+='<div class="est-tariff-row"><span class="est-tariff-lbl">T. fijo/factura</span><span class="est-tariff-val">'+fcPlain(cur.terminoFijo)+'</span></div>';
   }
   h+='</div></div>';
@@ -355,13 +355,13 @@ function _renderEstudioElectComp(){
   if(e.energyMode==='tramos')h+='<p class="energy-caption">Precio del consumo: media ponderada de P1/P2/P3.</p>';
   h+='<div class="est-tariff-row"><span class="est-tariff-lbl">Potencia</span><span class="est-tariff-val"><b>'+(e.potenciaTotal||e.potenciaP1||0)+'</b> kW</span></div>';
   if(e.modoPotencia==='doble'){
-    h+='<div class="est-tariff-row"><span class="est-tariff-lbl">Precio P1 (punta)</span><span class="est-tariff-val">'+(e.precioPotP1||0).toFixed(6)+' \u20ac/kW/d</span></div>';
-    h+='<div class="est-tariff-row"><span class="est-tariff-lbl">Precio P2 (valle)</span><span class="est-tariff-val">'+(e.precioPotP2||0).toFixed(6)+' \u20ac/kW/d</span></div>';
-    h+='<div class="est-tariff-row"><span class="est-tariff-lbl">Suma precios</span><span class="est-tariff-val"><b>'+((e.precioPotP1||0)+(e.precioPotP2||0)).toFixed(6)+'</b> \u20ac/kW/d</span></div>';
+    h+='<div class="est-tariff-row"><span class="est-tariff-lbl">Precio P1 (punta)</span><span class="est-tariff-val">'+energyUnitPrice(e.precioPotP1||0)+' \u20ac/kW/d</span></div>';
+    h+='<div class="est-tariff-row"><span class="est-tariff-lbl">Precio P2 (valle)</span><span class="est-tariff-val">'+energyUnitPrice(e.precioPotP2||0)+' \u20ac/kW/d</span></div>';
+    h+='<div class="est-tariff-row"><span class="est-tariff-lbl">Suma precios</span><span class="est-tariff-val"><b>'+energyUnitPrice((e.precioPotP1||0)+(e.precioPotP2||0))+'</b> \u20ac/kW/d</span></div>';
   } else {
-    h+='<div class="est-tariff-row"><span class="est-tariff-lbl">Precio potencia</span><span class="est-tariff-val">'+(e.precioPotP1||0).toFixed(6)+' \u20ac/kW/d</span></div>';
+    h+='<div class="est-tariff-row"><span class="est-tariff-lbl">Precio potencia</span><span class="est-tariff-val">'+energyUnitPrice(e.precioPotP1||0)+' \u20ac/kW/d</span></div>';
   }
-  h+='<div class="est-tariff-row"><span class="est-tariff-lbl">Precio kWh</span><span class="est-tariff-val"><b>'+(e.precioKwh||0).toFixed(4)+'</b> \u20ac/kWh</span></div>';
+  h+='<div class="est-tariff-row"><span class="est-tariff-lbl">Precio kWh</span><span class="est-tariff-val"><b>'+energyUnitPrice(e.precioKwh||0)+'</b> \u20ac/kWh</span></div>';
   if(e.terminoFijo)h+='<div class="est-tariff-row"><span class="est-tariff-lbl">T. fijo/mes</span><span class="est-tariff-val">'+fcPlain(e.terminoFijo)+'</span></div>';
   h+='</div></div>';
   /* Consumption scenarios */

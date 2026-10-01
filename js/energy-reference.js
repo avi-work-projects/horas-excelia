@@ -31,7 +31,7 @@ function energyTariffReference(kind,tariff,profile,vat){
 function energyTariffReferenceHtml(kind,t,profile,vat){
   var ref=energyTariffReference(kind,t,profile,vat);
   function number(n,precision){return n===null?'—':n.toLocaleString('es-ES',{minimumFractionDigits:precision,maximumFractionDigits:precision});}
-  return '<span class="energy-tariff-metrics"><span><small>Consumo medio</small><b>'+number(ref.consumption,4)+'</b><small>'+(t.modo==='fijo'?'Incluido en cuota':'€/kWh')+'</small></span><span><small>'+(kind==='luz'?'Suma potencia':'Término fijo')+'</small><b>'+number(ref.standing,4)+'</b><small>'+(t.modo==='fijo'?'Incluido en cuota':kind==='luz'?'€/kW/día':'€/día')+'</small></span><span><small>Factura aprox.</small><b>'+number(ref.bill,2)+' €</b><small>30 días</small></span></span>';
+  return '<span class="energy-tariff-metrics"><span><small>Consumo medio</small><b>'+energyUnitPrice(ref.consumption)+'</b><small>'+(t.modo==='fijo'?'Incluido en cuota':'€/kWh')+'</small></span><span><small>'+(kind==='luz'?'Suma potencia':'Término fijo')+'</small><b>'+energyUnitPrice(ref.standing)+'</b><small>'+(t.modo==='fijo'?'Incluido en cuota':kind==='luz'?'€/kW/día':'€/día')+'</small></span><span><small>Factura aprox.</small><b>'+number(ref.bill,2)+' €</b><small>30 días</small></span></span>';
 }
 function energyComparisonDefaults(old,kind){
   var source=old||{},profile=energyUsageProfile(kind);

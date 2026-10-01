@@ -1,12 +1,15 @@
 /* Tareas globales: estilos aislados de calendarios y pestañas existentes. */
 .tasks-open{overflow:hidden;scrollbar-gutter:stable}
 .tasks-open .toast{z-index:1700}
-.tasks-fab{position:fixed;z-index:380;width:48px;height:48px;border:1.5px solid #9285bd;border-radius:17px;background:#70609e;color:#fff;box-shadow:0 4px 15px #21163a33;display:grid;place-items:center;cursor:grab;touch-action:none;user-select:none;transition:left .25s ease,top .25s ease,border-radius .2s;isolation:isolate}
+.tasks-fab{--tasks-safe-bottom:env(safe-area-inset-bottom,0px);position:fixed;z-index:380;width:48px;height:48px;border:1.5px solid #9285bd;border-radius:17px;background:#70609e;color:#fff;box-shadow:0 4px 15px #21163a33;display:grid;place-items:center;cursor:grab;touch-action:none;user-select:none;transition:left .25s ease,top .25s ease,border-radius .2s;isolation:isolate}
 .tasks-fab[hidden]{display:none}
 .tasks-fab svg{width:27px;height:27px}
 .tasks-fab.tasks-docked{box-shadow:0 2px 8px #21163a26}
-.tasks-fab.tasks-docked[data-side=right]{padding-right:10px;border-radius:17px 0 0 17px}
-.tasks-fab.tasks-docked[data-side=left]{padding-left:10px;border-radius:0 17px 17px 0}
+.tasks-drop-zone{position:fixed;z-index:1500;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:6px;width:150px;padding:18px 12px;border:2px solid #dc4545;border-radius:22px;background:#b92323;color:white;text-align:center;box-shadow:0 8px 35px #0004;pointer-events:none;font-size:.75rem}
+.tasks-drop-zone[hidden]{display:none}
+.tasks-drop-zone svg{width:36px;height:36px}
+.tasks-drop-zone span{font-size:.62rem}
+.tasks-drop-zone.tasks-drop-ready{background:#e03131;box-shadow:0 0 0 8px #e0313133,0 8px 35px #0004}
 .tasks-fab.tasks-dragging{transition:none;cursor:grabbing;box-shadow:0 7px 20px #21163a44}
 .tasks-count{position:absolute;top:-5px;left:-4px;min-width:16px;height:16px;padding:0 3px;border-radius:8px;font-size:10px;font-weight:700;line-height:16px;background:#f4e4bf;color:#553f1c;border:1px solid var(--surface)}
 .tasks-docked .tasks-count{top:-4px;left:2px}

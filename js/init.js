@@ -27,12 +27,12 @@
   if(typeof syncVipBdaysToEvents==='function') syncVipBdaysToEvents();
 
   /* ── Active state on header data-btn (highlights current open overlay) ── */
-  var _ovBtnMap={econOverlay:'econBtn',eventsOverlay:'eventsBtn',estudioOverlay:'estudioBtn',fiscalOverlay:'householdBtn'};
+  var _ovBtnMap={econOverlay:'econBtn',eventsOverlay:'eventsBtn',estudioOverlay:'estudioBtn',fiscalOverlay:'econBtn',householdOverlay:'householdBtn'};
   function _updateHeaderActive(){
     var openKey=null;
     Object.keys(_ovBtnMap).forEach(function(ovId){
       var ov=document.getElementById(ovId);
-      if(ov&&ov.classList.contains('open'))openKey=ovId==='fiscalOverlay'&&FISCAL_ENTRY!=='household'?'econBtn':_ovBtnMap[ovId];
+      if(ov&&ov.classList.contains('open'))openKey=_ovBtnMap[ovId];
     });
     NAV_MAIN_ITEMS.map(function(item){return item.id;}).forEach(function(id){
       var btn=document.getElementById(id);if(btn)btn.classList.remove('overlay-active');

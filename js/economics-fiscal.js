@@ -6,7 +6,7 @@
    ============================================================ */
 
 function renderFiscalContent(){
-  var h=renderNavBar(FISCAL_ENTRY);
+  var h=renderNavBar('econ');
   h+='<div class="sy-header with-tabs fiscal-hdr">';
   h+='<button class="sy-back" id="fiscalBack">&#8592;</button>';
   h+='<div class="sy-year" style="font-size:.9rem;color:#c084fc">&#9881; Configuraci\u00f3n Fiscal</div>';
@@ -22,10 +22,10 @@ function renderFiscalContent(){
   if(FISCAL_TAB==='personal')h+=renderFiscalTabPersonal();
   else if(FISCAL_TAB==='gastos_desg')h+=renderFiscalTabGastosDesg();
   else if(FISCAL_TAB==='irpf_deduc')h+=renderFiscalTabIrpfDeduc();
-  else if(FISCAL_TAB==='despacho')h+=renderFiscalTabDespacho();
+  else if(FISCAL_TAB==='despacho')h+=renderFiscalTabDespacho(false);
   h+='</div>';
   h+='<div class="fiscal-sticky-save">';
-  h+='<button class="fiscal-save-btn" id="fiscalSave">Guardar configuraci\u00f3n</button>';
+  h+=FISCAL_TAB==='despacho'?'<button class="fiscal-save-btn household-detail-link" id="householdDetailLink">Ver en detalle / Editar</button>':'<button class="fiscal-save-btn" id="fiscalSave">Guardar configuraci\u00f3n</button>';
   h+='</div>';
   return h;
 }
