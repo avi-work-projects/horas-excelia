@@ -102,8 +102,12 @@ hechas, igual que las rutinas fijas; no se duplica un estado de asistencia.
 ## Estudio energético (v366)
 
 Un acceso «Consumo y tarifas» abre una ventana propia: Resumen, Consumo, Coste,
-Tarifas y Escenarios. Sus pestañas y el selector de año quedan fuera del único
-scroll (`.sy-body`); los gráficos admiten swipe para cambiar de año.
+Tarifas y Escenarios. La navegación principal, sus pestañas y el selector de
+año quedan fuera del único scroll (`.sy-body`); los gráficos admiten swipe
+para cambiar de año. Desde v375 solo `.energy-tabs` distribuye espacios iguales
+entre textos: margen mínimo de 20 px y contenido centrado de hasta 720 px.
+La barra reutiliza `renderNavBar` y `navigateMain`; al salir cierra el panel de
+energía para que no queden ventanas ocultas ni retornos pendientes.
 Los contratos, lecturas e impuestos históricos solo cambian al importar.
 Los controles de IVA y tarifa comparada son escenarios temporales, sin alterar el histórico.
 
@@ -428,7 +432,7 @@ Al usar otro dispositivo se debe restaurar el backup para conservar identificado
 - Prioridad puntual: Otros sin relleno (wave, x-outline, circle-plus), Gestiones/Médico, resto estable. Los ensayos conservan su orden horario. Médico fuerza `medical` al renderizar (cajetín blanco/cruz roja), también para datos antiguos con x-thin.
 - `rutinas-recovery.js`: listado cronológico de cancelaciones sin recuperar; filtro de pasadas; selección de día reutilizando el calendario mensual; agenda de consulta y formulario final. Guardar es el único paso que crea la recuperación.
 - `rutinas-bulk.js`: selección múltiple por sesión/mes, cancelar/eliminar de forma atómica con confirmación y Deshacer. Si se elimina el origen, una recuperación no seleccionada se convierte en extra. `r.pauses=[{from,to}]` guarda pausas inclusivas independientes de las versiones del horario; la fecha de vuelta es `to+1`. Se fusionan intervalos contiguos; se ocultan sesiones ordinarias y extras activas del intervalo, sin borrarlas. Las canceladas se conservan en el histórico. Las pausas viajan dentro de `rutinas` en el backup y se validan al importar.
-- Norma de subpestañas: `.econ-sub-tabs` reparte espacios iguales entre textos; botones con ancho de contenido, peso fijo y padding horizontal cero. Si no caben, scroll horizontal. Aplica a Eventos, Cumpleaños, Rutinas, Economía, Fiscal, Comparación y Energía; Bodas ya usa esta regla. La rejilla de botones principales de Eventos mantiene sus celdas iguales (no es una fila de subpestañas). Home y overlays comparten padding/gap/tamaños de navegación; la campana usa margen automático en ambos.
+- Subpestañas (corregido en v375): restaurada la base `.econ-sub-tabs` anterior a v373, con botones de igual ancho y sus tamaños/pesos originales. El reparto por ancho de texto queda limitado a `.energy-tabs`; Bodas conserva su excepción previa. No propagar esa excepción a Eventos, Economía ni al resto de ventanas. Home y overlays comparten padding/gap/tamaños de navegación; la campana usa margen automático en ambos.
 - Una paleta compartida de 48 colores, 8 filas de 6 por familia cromática.
 - `energy-reference.js`: consumo de referencia de 30 días y pesos P1/P2/P3 calculados de lecturas importadas, excluyendo meses con solapamientos/datos desconocidos. El año seleccionado manda en Tarifas, con respaldo al histórico si no hay lecturas; sin datos se etiqueta como orientativo. Cada tarifa muestra media de consumo, suma de potencia (gas: término fijo) y factura de referencia con impuestos de su fecha, excluyendo servicios ajenos al suministro. Precios originales colapsados; cuota fija no inventa precio por kWh.
 - Comparador: nuevas tarifas con potencia editable de 3,3 kW por período y pesos de facturas. Los valores personalizados y las tarifas antiguas se conservan. El editor reutilizable ofrece precio único, tres tramos con pesos que suman 100 %, o cuota fija, y permite recargar los pesos del histórico.
