@@ -37,10 +37,10 @@ function rutAdditionPickSession(r,mode,wk){
 }
 function rutAdditionForm(r,key,date,back){
   var source=key&&rutSessionByKey(r,key),today=evDk(new Date()),ds=date||(source&&source.ds>today?source.ds:today);
-  var h=source?'<p class="sy-note">La clase del <b>'+_rutFmt(source.ds)+' a las '+source.time+'</b> quedará cancelada en el histórico. Elige cuándo la recuperas.</p>':'<p class="sy-note">Añade una fecha y hora. Puede coincidir con otra clase de la rutina.</p>';
-  h+='<div id="rutDestinationAgenda">'+rutReadOnlyDayHtml(ds)+'</div>';
-  h+='<div class="rut-addition-fields"><div class="ev-field"><label for="rutExtraDate">Día de la nueva clase</label><input class="ev-input" type="date" id="rutExtraDate" value="'+ds+'"></div>';
-  h+='<div class="ev-date-row"><div><label for="rutExtraTime">Hora</label><input class="ev-input" type="time" id="rutExtraTime" value="'+(source?source.time:r.time||RUT_TIME_DEFAULT)+'"></div><div><label for="rutExtraDur">Duración (min)</label><input class="ev-input" type="number" min="15" max="480" id="rutExtraDur" value="'+(source?source.dur:r.dur||60)+'"></div></div></div>';
+  var h=source?'<div class="rut-recovery-origin"><span>Clase a recuperar</span><div><strong>'+_rutFmtCorto(source.ds)+'</strong><b>'+source.time+'</b></div><small>Se conserva cancelada en el histórico.</small></div>':'';
+  h+='<section class="rut-addition-agenda" id="rutDestinationAgenda">'+rutReadOnlyDayHtml(ds)+'</section>';
+  h+='<section class="rut-addition-new"><h3>Nueva sesión</h3><div class="rut-addition-fields"><div class="ev-field rut-addition-date"><label for="rutExtraDate">Día</label><input class="ev-input" type="date" id="rutExtraDate" value="'+ds+'"></div>';
+  h+='<div class="ev-field"><label for="rutExtraTime">Hora</label><input class="ev-input" type="time" id="rutExtraTime" value="'+(source?source.time:r.time||RUT_TIME_DEFAULT)+'"></div><div class="ev-field"><label for="rutExtraDur">Duración · min</label><input class="ev-input" type="number" min="15" max="480" id="rutExtraDur" value="'+(source?source.dur:r.dur||60)+'"></div></div></section>';
   h+='<div class="ev-form-actions"><button class="ev-btn primary" id="rutExtraSave">'+(source?'Guardar recuperación':'Añadir clase extra')+'</button></div>';
   if(source&&!source.skip)h+='<button class="ev-io-btn rut-addition-entry" id="rutCancelForLater">Cancelar ahora y recuperar más adelante</button>';
   var wrap=rutAdditionPanel(source?'Programar recuperación':'Clase extra',h,back||function(){openRutAddition(r);});

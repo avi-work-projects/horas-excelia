@@ -475,16 +475,16 @@ function renderEvContent(){
   var upcomingViews=['upcoming','birthdays','week','months'];
   var buttons=[
     ['evViewTimeOff','Vacaciones<br>Festivos','ev-btn-timeoff ev-btn-split',EV_VIEW==='puentes'||EV_VIEW==='time-off'],
-    ['evViewCal','Calendario<br>1 mes','ev-btn-calendar',EV_VIEW==='cal'],
     ['evViewQuad','Calendario<br>4 meses','ev-btn-calendar',EV_VIEW==='quad'],
-    ['evViewBodas','<span class="wm-logo" role="img" aria-label="Wedding Moves"></span>','ev-btn-bodas',EV_VIEW==='bodas'],
-    ['evViewBday','Cumpleaños','ev-btn-bday',EV_VIEW==='bday'],
-    ['evViewUpcoming','Próximos','ev-btn-upcoming',upcomingViews.indexOf(EV_VIEW)>=0],
     ['evViewAnnual','Calendario<br>Anual','ev-btn-calendar',EV_VIEW==='annual'],
+    ['evViewBodas','<span class="wm-logo" role="img" aria-label="Wedding Moves"></span>','ev-btn-bodas',EV_VIEW==='bodas'],
+    ['evViewBday',navIconHtml('bday','professional'),'ev-btn-bday',EV_VIEW==='bday'],
+    ['evViewUpcoming','Próximos','ev-btn-upcoming',upcomingViews.indexOf(EV_VIEW)>=0],
+    ['evViewCal','Calendario<br>1 mes','ev-btn-calendar',EV_VIEW==='cal'],
     ['evViewRutinas','Rutinas','ev-btn-rutinas',EV_VIEW==='rutinas']
   ];
   h+='<div class="ev-hdr-sub ev-main-tabs">';
-  buttons.forEach(function(b){h+='<button class="ev-view-toggle '+b[2]+(b[3]?' active':'')+'" id="'+b[0]+'"'+(b[0]==='evViewBodas'?' aria-label="Bodas"':'')+'>'+b[1]+'</button>';});
+  buttons.forEach(function(b){h+='<button class="ev-view-toggle '+b[2]+(b[3]?' active':'')+'" id="'+b[0]+'"'+(b[0]==='evViewBodas'?' aria-label="Bodas"':b[0]==='evViewBday'?' aria-label="Cumpleaños" title="Cumpleaños"':'')+'>'+b[1]+'</button>';});
   h+='</div>';
   if(EV_VIEW==='bday')return h+renderBdayContent();
   // Header a nivel 3 (with-tabs → top:82px)
