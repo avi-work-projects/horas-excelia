@@ -796,7 +796,7 @@ function _bindTabDespacho(){
   /* Sub-tab switching */
   document.querySelectorAll('[data-hipsub]').forEach(function(btn){
     btn.addEventListener('click',function(){
-      FISCAL_HIP_SUB=btn.dataset.hipsub;
+      setHouseholdTab(btn.dataset.hipsub);
       FISCAL_HIP_EDITING=null;
       FISCAL_HIP_EDIT_SNAPSHOT=null;
       reRenderFiscal();
@@ -819,7 +819,7 @@ function _bindHipResumen(){
   /* "Ver Detalle" buttons */
   document.querySelectorAll('[data-gotosection]').forEach(function(btn){
     btn.addEventListener('click',function(){
-      FISCAL_HIP_SUB='detalle';
+      setHouseholdTab('detalle');
       FISCAL_HIP_DETAIL_TARGET=btn.dataset.gotosection;
       reRenderFiscal();
       /* Scroll to target section after render */

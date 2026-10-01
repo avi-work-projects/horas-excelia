@@ -27,7 +27,11 @@ var FISCAL_TAB='personal'; // 'personal' | 'gastos_desg' | 'irpf_deduc' | 'despa
 var FISCAL_IRPF_SUB='desgrav'; // 'desgrav' | 'irpf' | 'despacho' — sub-tab dentro de IRPF y Deducciones
 var FISCAL_YEAR=CY; // año activo para datos per-year
 /* Hipoteca sub-tabs */
-var FISCAL_HIP_SUB='resumen'; // 'resumen' | 'detalle'
+var HOUSEHOLD_TAB_KEY='excelia-household-tab-v1';
+var FISCAL_ENTRY='econ'; // acceso económico o acceso directo «Gastos del hogar»
+function householdTab(value){return ['resumen','detalle','gas','elect'].indexOf(value)>=0?value:'elect';}
+var FISCAL_HIP_SUB=householdTab(appStorage.getItem(HOUSEHOLD_TAB_KEY));
+function setHouseholdTab(value){FISCAL_HIP_SUB=householdTab(value);appStorage.setItem(HOUSEHOLD_TAB_KEY,FISCAL_HIP_SUB);}
 var FISCAL_HIP_EDITING=null;  // null | 'compra' | 'prestamo' | 'sub-0' | 'sub-1' ...
 var FISCAL_HIP_EDIT_SNAPSHOT=null; // deep copy for cancel
 var FISCAL_HIP_DETAIL_TARGET=null; // scroll target from "Ver Detalle"

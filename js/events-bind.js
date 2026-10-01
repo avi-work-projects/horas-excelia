@@ -75,7 +75,7 @@ function bindEvEvents(){
 /* Cabecera, pestanas y navegacion en el tiempo (flechas, Hoy, subpestanas,
    desplegable del anual). Nada de esto depende de que vista este pintada. */
 function _bindEvNav(){
-  document.getElementById('evBack').addEventListener('click',function(){
+  var back=document.getElementById('evBack');if(back)back.addEventListener('click',function(){
     if(EV_VIEW==='cal'&&(EV_PREV_VIEW==='annual'||EV_PREV_VIEW==='quad')){
       EV_VIEW=EV_PREV_VIEW;EV_PREV_VIEW=null;refreshEvents();
     }else if(NAV_BACK){var fn=NAV_BACK;NAV_BACK=null;fn();}
@@ -86,8 +86,8 @@ function _bindEvNav(){
     setTimeout(function(){
       var key=y+'-'+String(m+1).padStart(2,'0');
       var el=document.getElementById('ev-wk-month-'+key);
-      var body=document.querySelector('.sy-body');
-      if(el&&body)body.scrollTop=el.offsetTop-4;
+      var body=document.querySelector('#eventsOverlay .sy-body');
+      if(el&&body)body.scrollTop=body.scrollTop+el.getBoundingClientRect().top-body.getBoundingClientRect().top-(body.querySelector('.econ-sub-tabs')?.offsetHeight||0);
     },30);
   }
   var prevBtn=document.getElementById('evPrev');
@@ -180,7 +180,7 @@ function _bindEvNav(){
       refreshEvents();
     }
   });
-  var weekViewBtn=document.getElementById('evViewWeek');
+  var weekViewBtn=document.getElementById('evSubAgenda');
   if(weekViewBtn)weekViewBtn.addEventListener('click',function(){
     /* Cambiar a Agenda Semanal preservando el último mes en el que estuvo */
     _switchEvView('week');refreshEvents();
@@ -193,11 +193,13 @@ function _bindEvNav(){
     EV_BRIGHT_PAST=!EV_BRIGHT_PAST;refreshEvents();
   });
   document.getElementById('evViewUpcoming').addEventListener('click',function(){
-    _switchEvView(EV_VIEW==='months'?'months':'upcoming');refreshEvents();
+    _switchEvView(['months','birthdays','week'].indexOf(EV_VIEW)>=0?EV_VIEW:'upcoming');refreshEvents();
   });
   document.getElementById('evViewCal').addEventListener('click',function(){_switchEvView('cal');EV_PREV_VIEW=null;refreshEvents();});
   document.getElementById('evViewQuad').addEventListener('click',function(){_switchEvView('quad');refreshEvents();});
   document.getElementById('evViewAnnual').addEventListener('click',function(){_switchEvView('annual');refreshEvents();});
+  document.getElementById('evViewBday').addEventListener('click',function(){_switchEvView('bday');refreshEvents(false);});
+  if(EV_VIEW==='bday')bindBdayEvents();
   var _rutBtn=document.getElementById('evViewRutinas');
   if(_rutBtn)_rutBtn.addEventListener('click',function(){_switchEvView('rutinas');refreshEvents();});
   var _upR=document.getElementById('evUpShowRut');
@@ -365,7 +367,9 @@ function _bindEvCal(){
    frame de scroll; sin modificar datos ni repintar el calendario. */
 function _bindEvWeekTitleBackground(){
   var body=document.querySelector('#eventsOverlay .sy-body');
-  if(!body||!body.querySelector('.ev-wk-sticky-title'))return;
+  if(!body)return;
+  var tabs=body.querySelector('.econ-sub-tabs');if(tabs)body.style.setProperty('--ev-subtab-h',tabs.offsetHeight+'px');
+  if(!body.querySelector('.ev-wk-sticky-title'))return;
   var pending=false;
   function update(){
     pending=false;
@@ -543,9 +547,9 @@ function _bindEvGestos(){
   requestAnimationFrame(function(){ _positionEvBright(); });
 }
 
-/* Orden visual de las tres subpestanas; no se vuelve al inicio al llegar al borde. */
+/* Orden visual de las cuatro subpestañas; no se vuelve al inicio al llegar al borde. */
 function _evSwipeUpcoming(step){
-  var views=['upcoming','birthdays','months'],i=views.indexOf(EV_VIEW);
+  var views=['upcoming','birthdays','week','months'],i=views.indexOf(EV_VIEW);
   if(i<0)return false;
   if(views[i+step]){_switchEvView(views[i+step]);refreshEvents(false);}
   return true;

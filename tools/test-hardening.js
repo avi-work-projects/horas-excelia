@@ -24,6 +24,24 @@ a.localStorage.setItem=(k,v)=>{if(k==='audit-fail'&&fail){fail=false;throw Error
 a.appStorage.begin();a.appStorage.setItem('audit-existing','new');a.appStorage.setItem('audit-fail','x');assert.throws(()=>a.appStorage.commit());assert.equal(a.appStorage.getItem('audit-existing'),'old');
 console.log('Hardening: import identity, validation and rollback OK');
 
+// Las nuevas preferencias se restauran sin tocar datos de las rutinas.
+const prefs=cargarApp({});vm.runInContext(source,prefs);prefs.showToast=()=>{};prefs.render=()=>{};prefs.updateEventsBtn=()=>{};prefs.updateBdayBtn=()=>{};
+assert.equal(prefs.FISCAL_HIP_SUB,'elect');
+prefs.auditImport({routineAppearance:{gymColor:'#912fbc'},householdTab:'gas'},'merge');
+assert.equal(prefs.FISCAL_HIP_SUB,'gas');assert.equal(prefs.RUT_GYM_COLOR,'#912fbc');
+const reopened=cargarApp(prefs.localStorage._datos);
+assert.equal(reopened.FISCAL_HIP_SUB,'gas');assert.equal(reopened.rutDisplayColor({icon:'gym',color:'#ff9900'}),'#912fbc');
+assert.equal(reopened.rutDisplayColor({icon:'padel',color:'#a3e635'}),'#a3e635');
+assert.throws(()=>prefs.validateImport({householdTab:'otro'}));
+assert.throws(()=>prefs.validateImport({routineAppearance:{gymColor:'bad'}}));
+const putPref=prefs.localStorage.setItem;let failPref=true;
+prefs.localStorage.setItem=(key,value)=>{if(key===prefs.HOUSEHOLD_TAB_KEY&&failPref){failPref=false;throw Error('Quota');}putPref(key,value);};
+prefs.auditImport({routineAppearance:{gymColor:'#123456'},householdTab:'resumen'},'merge');
+assert.equal(prefs.RUT_GYM_COLOR,'#912fbc');assert.equal(prefs.FISCAL_HIP_SUB,'gas');
+assert.equal(prefs.localStorage.getItem(prefs.HOUSEHOLD_TAB_KEY),'gas');
+assert.equal(JSON.parse(prefs.localStorage.getItem(prefs.RUT_APPEARANCE_KEY)).gymColor,'#912fbc');
+console.log('Preferencias: inicio, persistencia, importación y recuperación ante fallo OK');
+
 // El parche de tarifa actual viaja por la importación general y el backup.
 const tariffApp=cargarApp({});vm.runInContext(source,tariffApp);tariffApp.showToast=()=>{};tariffApp.render=()=>{};tariffApp.updateEventsBtn=()=>{};tariffApp.updateBdayBtn=()=>{};
 const currentTariff={id:'current-test',kind:'luz',supplier:'Compañía de prueba',tariff:'Tres tramos',supply:'Vivienda',start:'2026-09-24',end:'',commitment:'',notes:'',source:'',taxes:'excluidos',prices:[],analysis:tariffApp.energyTariffDefaults({energyMode:'tramos',periodPrices:[.3,.2,.1],periodWeights:[20,30,50]})};
@@ -120,7 +138,7 @@ assert.equal(routines.rutOccursOn(corrected,'2026-08-17'),'16:30');assert.equal(
 assert.equal(routines.rutHistoryPeriods(corrected,'2026-12-31').length,2);
 assert.throws(()=>routines.rutEditSession(corrected,'2026-08-17','99:30',45,false));
 assert.equal(routines.validateImport({rutinas:[corrected]}).rutinas[0].keptSessions['2026-08-17'].dur,45);
-assert.ok(routines.rutIconSvg('baile','#123456').includes('stroke-width="8.6"'));
+assert.ok(routines.rutIconSvg('baile','#123456').includes('stroke-width="8.4"'));
 console.log('Rutinas: etapas sin excepciones, edicion puntual e icono con contorno OK');
 
 const elapsed=routines.rutNewSchedule(original,{weekDays:[5],time:'00:00'},'2026-08-21');

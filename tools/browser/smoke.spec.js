@@ -89,9 +89,9 @@ test('mobile: menus, cumpleanos, guardado y deshacer',async({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-bdays-v1',JSON.stringify([{name:'Persona de prueba',day:22,month:8}]));});
  await page.goto('/');await page.locator('#menuBtn').click();await page.locator('#themeBtn').click();await page.locator('#menuBtn').click();
- await page.locator('#bdayBtn').click();await page.locator('#bdViewList').click();await page.locator('.bday-list-item').first().click();await page.locator('#bdDEdit').click();
+ await page.locator('#eventsBtn').click();await page.locator('#evViewBday').click();await page.locator('#bdViewList').click();await page.locator('.bday-list-item').first().click();await page.locator('#bdDEdit').click();
  await page.locator('#bdFName').fill('Nombre editado');await page.locator('#bdFSave').click();await expect(page.getByRole('button',{name:'Deshacer',exact:true})).toBeVisible();await page.getByRole('button',{name:'Deshacer',exact:true}).click();
- await expect(page.locator('#bdayContent')).toContainText('Persona De Prueba');expect(errors).toEqual([]);
+ await expect(page.locator('#eventsContent')).toContainText('Persona De Prueba');expect(errors).toEqual([]);
 });
 test('publicacion no incluye datos privados ni herramientas',async({request})=>{for(const url of ['/CLAUDE.md','/tools/fixture.json','/horas-excelia-backup-test.json'])expect((await request.get(url)).status()).toBe(404);});
 
@@ -189,11 +189,11 @@ test('Bodas: configurar pack, duracion, salas y exportar catalogos',async({page}
 
 test('Hoy apunta al mes y las cinco subpestanas de Bodas admiten swipe',async({page})=>{
  await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-bdays-v1',JSON.stringify(Array.from({length:60},(_,m)=>({name:'Persona '+m,day:1+Math.floor(m/12),month:m%12+1}))));});
- await page.goto('/');await page.locator('#bdayBtn').click();await page.locator('#bdViewList').click();
- await page.evaluate(()=>document.querySelector('#bdayOverlay .sy-body').scrollTop=0);
+ await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewBday').click();await page.locator('#bdViewList').click();
+ await page.evaluate(()=>document.querySelector('#eventsOverlay .sy-body').scrollTop=0);
  await page.locator('#bdVipAll').click();
- expect(await page.evaluate(()=>{var body=document.querySelector('#bdayOverlay .sy-body'),sec=body.querySelector('[data-month="'+new Date().getMonth()+'"]');return Math.abs(sec.getBoundingClientRect().top-body.getBoundingClientRect().top-8)<2;})).toBe(true);
- await page.locator('#bdayContent').getByRole('button',{name:'Eventos',exact:true}).click();await page.locator('#evViewBodas').click();await page.locator('[data-bsub="stats"]').click();
+ expect(await page.evaluate(()=>{var body=document.querySelector('#eventsOverlay .sy-body'),sec=body.querySelector('[data-month="'+new Date().getMonth()+'"]');return Math.abs(sec.getBoundingClientRect().top-body.getBoundingClientRect().top-body.querySelector('.bday-sub-tabs').offsetHeight-8)<2;})).toBe(true);
+ await page.locator('#eventsContent').getByRole('button',{name:'Eventos',exact:true}).click();await page.locator('#evViewBodas').click();await page.locator('[data-bsub="stats"]').click();
  async function swipe(left){await page.locator('#eventsOverlay .boda-sec').evaluate((el,left)=>{el.dispatchEvent(new TouchEvent('touchstart',{bubbles:true,touches:[new Touch({identifier:1,target:el,clientX:left?300:80,clientY:400})]}));el.dispatchEvent(new TouchEvent('touchend',{bubbles:true,changedTouches:[new Touch({identifier:1,target:el,clientX:left?80:300,clientY:400})]}));},left);}
  await swipe(true);await expect(page.locator('#bodaConfigContent')).toBeVisible();await expect(page.locator('#bodaConfigWrap')).toHaveCount(0);
  await swipe(false);await expect(page.locator('[data-bsub="stats"]')).toHaveClass(/active/);
@@ -228,8 +228,7 @@ test('rutinas: horario inmediato, semana futura, historico editable y backup',as
  expect(await page.evaluate(()=>['2026-08-17','2026-08-24','2026-08-31','2026-09-01','2026-09-07'].map(ds=>rutOccursOn(RUTINAS[0],ds)))).toEqual(['17:00','18:00','17:00','19:00',null]);
  await page.locator('.rut-edit').click();await page.locator('#rutFName').fill('Actividad renombrada');await page.locator('#rutFSave').click();await expect(page.locator('#rutFWrap')).toHaveCount(0);
  await page.locator('.rut-edit').click();await page.locator('#rutFHistory').click();
- await expect(page.locator('.rut-history-period')).toHaveCount(3);
- await page.locator('[data-period="2026-01-01"] summary').click();await page.locator('[data-history-more="2026-01-01"]').click();
+ await expect(page.locator('[data-history-month="2026-08"]')).toBeVisible();
  await page.locator('[data-history-edit="2026-08-17"]').click();await page.locator('#rutHistoryTime').fill('16:30');await page.locator('#rutHistoryDuration').fill('45');await page.locator('#rutHistorySave').click();await expect(page.locator('#rutHistoryEditWrap')).toHaveCount(0);
  expect(await page.evaluate(()=>[rutOccursOn(RUTINAS[0],'2026-08-17'),rutDurationOn(RUTINAS[0],'2026-08-17'),rutOccursOn(RUTINAS[0],'2026-08-10')])).toEqual(['16:30',45,'17:00']);
  await page.screenshot({path:'.local-preview/routine-history-check.png'});
@@ -277,7 +276,7 @@ test('rutinas canceladas: ocultas en vistas compactas, tachadas en detalle',asyn
  await page.evaluate(()=>{EV_QUAD_YEAR=2026;EV_QUAD_MONTH=7;});
  await page.locator('#evViewQuad').click();await expect(page.locator('.ev-annual-day[data-ds="2026-08-24"] .ev-ann-rut')).toHaveCount(0);await expect(page.locator('.ev-annual-day[data-ds="2026-08-31"] .ev-ann-rut')).toHaveCount(1);
  await page.locator('#evViewAnnual').click();await expect(page.locator('.ev-annual-day[data-ds="2026-08-24"] .ev-ann-rut')).toHaveCount(0);await expect(page.locator('.ev-annual-day[data-ds="2026-08-31"] .ev-ann-rut')).toHaveCount(1);
- await page.locator('#evViewWeek').click();await expect(page.locator('.ev-wk-chip.rut-cancelled')).toHaveCount(1);
+ await page.locator('#evViewUpcoming').click();await page.locator('#evSubAgenda').click();await expect(page.locator('.ev-wk-chip.rut-cancelled')).toHaveCount(1);
  await expect(page.locator('.rut-cancelled .ev-wk-chip-title .rut-skipped-title')).toHaveCSS('text-decoration-line','line-through');
  const tones=await page.locator('.ev-wk-day-bg').evaluateAll(rows=>rows.slice(0,2).map(el=>getComputedStyle(el).backgroundColor));expect(tones[0]).not.toBe(tones[1]);
  await page.locator('.ev-wk-chip.rut-cancelled').scrollIntoViewIfNeeded();
@@ -294,7 +293,7 @@ test('agenda: transporte separado sin solapes',async({page})=>{
    {id:'end',kind:'puntual',type:'Otros',title:'Actividad último día',start:'2026-08-24',end:'2026-08-24',color:'#c67da0'}]));
  });
  await page.goto('/');await page.evaluate(()=>document.documentElement.setAttribute('data-theme','light'));
- await page.locator('#eventsBtn').click();await page.locator('#evViewWeek').click();
+ await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await page.locator('#evSubAgenda').click();
  const first=page.locator('.ev-wk-chips[data-ds="2026-08-21"]'),last=page.locator('.ev-wk-chips[data-ds="2026-08-24"]');
  await expect(first).toContainText('Ida');await expect(first).not.toContainText('Vuelta');await expect(last).toContainText('Viaje de prueba - Vuelta');await expect(first).toContainText('Viaje de prueba - Ida');
  await expect(first).toHaveCSS('padding-top','4px');await expect(last).toHaveCSS('padding-bottom','4px');
@@ -311,13 +310,13 @@ test('pestanas: tono estable y titulo de viaje que sigue al scroll',async({page}
  await page.goto('/');await page.locator('#eventsBtn').click();
  for(const theme of ['light','dark']){
   await page.evaluate(t=>document.documentElement.setAttribute('data-theme',t),theme);
-  for(const id of ['evViewCal','evViewQuad','evViewAnnual','evViewWeek','evViewBodas','evViewRutinas','evViewTimeOff','evViewUpcoming']){
+  for(const id of ['evViewCal','evViewQuad','evViewAnnual','evViewBday','evViewBodas','evViewRutinas','evViewTimeOff','evViewUpcoming']){
    const button=page.locator('#'+id);const before=await button.evaluate(el=>{const s=getComputedStyle(el);return [s.color,s.borderTopColor];});
    await button.click();const after=await button.evaluate(el=>{const s=getComputedStyle(el);return [s.color,s.borderTopColor];});expect(after).toEqual(before);
   }
  }
  await page.evaluate(()=>document.documentElement.setAttribute('data-theme','light'));
- await page.locator('#evViewWeek').click();
+ await page.locator('#evViewUpcoming').click();await page.locator('#evSubAgenda').click();
  const title=page.locator('.ev-wk-sticky-title[data-id="sticky-trip"]');
  await page.locator('.ev-wk-chips[data-ds="2026-08-15"]').scrollIntoViewIfNeeded();
  const y=(await title.boundingBox()).y;
@@ -364,11 +363,12 @@ test('bicolor seleccionado, casillas vacias y pestanas de cumpleanos',async({pag
   await page.screenshot({path:'.local-preview/checks-'+theme+'.png'});
  }
  await page.evaluate(()=>document.documentElement.setAttribute('data-theme','light'));
- await page.locator('#eventsOverlay [data-nav="bday"]').click();
- const tabs=page.locator('.bday-hdr-sub .ev-view-toggle');
+ await page.locator('#evViewBday').click();
+ const tabs=page.locator('.bday-sub-tabs .econ-sub-tab');
  for(let i=0;i<await tabs.count();i++){
-  const tab=tabs.nth(i);const before=await tab.evaluate(el=>[getComputedStyle(el).color,getComputedStyle(el).borderTopColor]);await tab.click();
-  expect(await tab.evaluate(el=>[getComputedStyle(el).color,getComputedStyle(el).borderTopColor])).toEqual(before);
+  const tab=tabs.nth(i);await tab.click();
+  await expect(tab).toHaveClass(/active/);
+  await expect(tab).toHaveCSS('color','rgb(223, 139, 16)');
  }
 });
 
@@ -418,9 +418,9 @@ test('seleccion de ventanas: mismo fondo para iconos originales y profesionales'
  await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));await page.goto('/');await page.addStyleTag({content:'*{transition:none!important;animation:none!important}'});
  for(const theme of ['light','dark']){
   await page.evaluate(t=>applyTheme(t),theme);
-  for(const key of ['econ','estudio','home','events','bday','alarm']){
+  for(const key of ['household','estudio','home','events','econ','alarm']){
    const colors=await page.evaluate(key=>{
-    const ids={econ:'econBtn',estudio:'estudioBtn',home:'homeBtn',events:'eventsBtn',bday:'bdayBtn',alarm:'alarmTestBtn'};
+    const ids={econ:'econBtn',estudio:'estudioBtn',home:'homeBtn',events:'eventsBtn',household:'householdBtn',alarm:'alarmTestBtn'};
     const btn=document.getElementById(ids[key]);btn.classList.add('overlay-active');
     applyNavIconStyle('original');const original=getComputedStyle(btn).backgroundColor;
     applyNavIconStyle('professional');const professional=getComputedStyle(btn).backgroundColor;
@@ -430,8 +430,8 @@ test('seleccion de ventanas: mismo fondo para iconos originales y profesionales'
    expect(colors.original).toBe(colors.professional);expect(colors.iconColor).toBe(colors.buttonColor);
   }
  }
- await page.evaluate(()=>applyTheme('light'));await page.locator('#bdayBtn').click();
- await expect(page.locator('#bdayOverlay')).toHaveClass(/open/);await page.screenshot({path:'.local-preview/birthday-selected-professional.png'});
+ await page.evaluate(()=>applyTheme('light'));await page.locator('#eventsBtn').click();await page.locator('#evViewBday').click();
+ await expect(page.locator('#eventsOverlay')).toHaveClass(/open/);await page.screenshot({path:'.local-preview/birthday-selected-professional.png'});
  await page.evaluate(()=>applyNavIconStyle('original'));await page.screenshot({path:'.local-preview/birthday-selected-original.png'});
 });
 
@@ -504,7 +504,7 @@ test('recarga de Home y linterna de agenda',async({page})=>{
  await page.goto('/');await page.evaluate(()=>window.scrollTo(0,80));await page.reload();
  await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBe(0);
  const top=await page.locator('.week-card').first().boundingBox(),header=await page.locator('.header').boundingBox();expect(top.y).toBeGreaterThanOrEqual(header.y+header.height);
- await page.locator('#eventsBtn').click();await page.locator('#evViewWeek').click();
+ await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await page.locator('#evSubAgenda').click();
  const past=page.locator('.ev-wk-chips[data-ds="2026-09-06"]');await expect(past).toHaveCSS('opacity','0.45');
  await page.locator('#evBright').click();await expect(past).toHaveCSS('opacity','1');
  await page.evaluate(()=>applyTheme('light'));
@@ -565,7 +565,7 @@ test('agenda: ancho continuo entre meses y años',async({page})=>{
    {id:'year-overlap',kind:'grande',type:'Otros',title:'Otra visita',color:'#e5a746',start:'2027-01-02',end:'2027-01-04'}]));
  });
  await page.goto('/');await page.evaluate(()=>applyTheme('light'));
- await page.locator('#eventsBtn').click();await page.locator('#evViewWeek').click();
+ await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await page.locator('#evSubAgenda').click();
  for(const id of ['cross','year']){
   const bars=page.locator('.ev-wk-multi[data-id="'+id+'"]');await expect(bars).toHaveCount(2);
   const a=await bars.nth(0).boundingBox(),b=await bars.nth(1).boundingBox();

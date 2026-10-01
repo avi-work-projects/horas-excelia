@@ -26,7 +26,7 @@ function saveRutinas(){try{appStorage.setItem(RUT_SK,JSON.stringify(RUTINAS));}c
 
 /* Sugerencias al crear la primera rutina */
 var RUT_SUGERENCIAS = [
-  {name:'Gimnasio', color:'#fb923c', weekDays:[1,3,5], icon:'gym'},
+  {name:'Gimnasio', color:RUT_GYM_COLOR, weekDays:[1,3,5], icon:'gym'},
   {name:'Baile',    color:'#e03131', weekDays:[2,4],   icon:'baile'},
   {name:'Pádel',    color:'#a3e635', weekDays:[6],     icon:'padel'}
 ];
@@ -35,92 +35,12 @@ var RUT_TIME_DEFAULT = '18:00';
 var RUT_DN = ['D','L','M','X','J','V','S'];
 var RUT_DN_LARGO = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
 
-/* ── Iconos de rutina ──────────────────────────────────────
-   Dibujos monocromos: la silueta va en el color de la rutina y los detalles
-   en un tono más oscuro del MISMO color (fakeTrans). Para que se recorten
-   igual que el resto de marcadores del calendario, la silueta se pinta dos
-   veces: primero con un trazo negro grueso (contorno de la unión) y luego
-   rellena. Viewbox 0 0 24 24 en todos. */
-var RUT_ICONS = ['gym','padel','baile','gen'];
-/* Las rutinas de siempre llevan su color de casa y no se tocan; solo
-   "Otra" deja elegir. Asi el gimnasio es naranja en todas partes. */
-var RUT_FIXED_COLOR = {gym:'#fb923c', padel:'#a3e635', baile:'#e03131'};
-function rutColorOf(icon,color){return RUT_FIXED_COLOR[icon]||color;}
-var RUT_ICON_LABEL = {gym:'Gimnasio', padel:'Pádel', baile:'Baile', gen:'Otra'};
-function _rutIconShapes(kind){
-  if(kind==='gym'){
-    /* Mancuerna. El brazo flexionado se probó y NO se lee a 13 px: el contorno
-       negro cierra el hueco entre bíceps y puño y queda una mancha. */
-    return '<rect x="0.6" y="8.2" width="4.2" height="7.6" rx="1.8"/>'
-         + '<rect x="4.4" y="10.1" width="2.8" height="3.8" rx="1"/>'
-         + '<rect x="6.8" y="10.7" width="10.4" height="2.6" rx="1.3"/>'
-         + '<rect x="16.8" y="10.1" width="2.8" height="3.8" rx="1"/>'
-         + '<rect x="19.2" y="8.2" width="4.2" height="7.6" rx="1.8"/>';
-  }
-  if(kind==='padel'){
-    /* Pala de pádel: cabeza ovalada + mango */
-    return '<ellipse cx="12" cy="8.6" rx="6.8" ry="7.2"/>'
-         + '<rect x="10.7" y="14" width="2.6" height="8.4" rx="1.3"/>';
-  }
-  if(kind==='baile'){
-    /* Bailarín: cabeza + torso inclinado + piernas + brazo en alto */
-    return '<circle cx="12.6" cy="3.6" r="2.6"/>'
-         + '<path d="M12.2,7.2 C10.4,8.8 9.9,10.8 10.6,12.6 L6.6,17.8" fill="none" stroke-width="2.6" stroke-linecap="round"/>'
-         + '<path d="M10.6,12.6 L14.8,14.8 L15.6,21.4" fill="none" stroke-width="2.6" stroke-linecap="round"/>'
-         + '<path d="M12.4,8.4 L18.4,5.4" fill="none" stroke-width="2.5" stroke-linecap="round"/>';
-  }
-  /* genérico: rombo con centro */
-  return '<polygon points="12,3 20,12 12,21 4,12"/>';
-}
-function _rutIconDetails(kind,dark){
-  if(kind==='padel'){
-    var o='';
-    [[10,7],[14,7],[12,10],[10,12.6],[14,12.6]].forEach(function(p){
-      o+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="1.15" fill="'+dark+'"/>';
-    });
-    o+='<rect x="10.9" y="16.2" width="2.2" height="4.4" rx="1.1" fill="'+dark+'"/>';
-    return o;
-  }
-  if(kind==='gym'){
-    /* Barra en el tono oscuro para que se distinga de los discos */
-    return '<rect x="6.8" y="10.7" width="10.4" height="2.6" rx="1.3" fill="'+dark+'"/>';
-  }
-  if(kind==='baile'){
-    return '<circle cx="18.6" cy="5.2" r="1.9" fill="'+dark+'"/>';
-  }
-  return '<circle cx="12" cy="12" r="3.1" fill="'+dark+'"/>';
-}
-/* Deduce el icono por el nombre cuando la rutina no lo trae guardado */
-function rutIconOf(r){
-  if(r&&r.icon&&RUT_ICON_LABEL[r.icon])return r.icon;
-  var n=(r&&r.name?r.name:'').toLowerCase();
-  if(/gim|gym|pesa|mancuerna|crossfit|musc/.test(n))return 'gym';
-  if(/p[aá]del|tenis|raqueta|squash|b[aá]dminton/.test(n))return 'padel';
-  if(/bail|danz|salsa|bachata|zumba/.test(n))return 'baile';
-  return 'gen';
-}
-/* color puede ser 'currentColor': entonces el detalle se oscurece con un
-   velo negro en vez de calcular la mezcla, que necesita un hex. */
-function rutIconSvg(kind,color){
-  var dark=(color==='currentColor')?'rgba(0,0,0,.45)'
-          :((typeof fakeTrans==='function')?fakeTrans(color,0.52):color);
-  var shapes=_rutIconShapes(kind);
-  /* El ribete ocupa la misma proporción que en el viewBox de 20 de los
-     puntuales. En una silueta rellena la mitad del trazo queda dentro. */
-  var bw=(typeof EV_SHAPE_BW!=='undefined'?EV_SHAPE_BW:2)*30/20;
-  var outline=shapes.replace(/stroke-width="([0-9.]+)"/g,function(_,w){return 'stroke-width="'+(+w+2*bw)+'"';});
-  return '<svg viewBox="-3 -3 30 30" preserveAspectRatio="xMidYMid meet">'
-    + '<g fill="#000" stroke="#000" stroke-width="'+(2*bw)+'" stroke-linejoin="round" stroke-linecap="round">'+outline+'</g>'
-    + '<g fill="'+color+'" stroke="'+color+'" stroke-width="0" stroke-linejoin="round" stroke-linecap="round">'+shapes+'</g>'
-    + _rutIconDetails(kind,dark)
-    + '</svg>';
-}
 /* Marcador de una sesión de rutina para el calendario de 1 mes */
 function rutMarkerHtml(ev,pastClass,ds){
   var r=ev._rut||{};
   var cls='ev-rut-mark'+(pastClass||'')+(ev._rutSkip?' rut-skip':'');
   return '<span class="'+cls+'" data-id="'+ev.id+'" data-ds="'+(ds||ev.start)+'" title="'+escHtml(r.name||'')+'">'
-    + rutIconSvg(rutIconOf(r),r.color||'#888')+'</span>';
+    + rutIconSvg(rutIconOf(r),rutDisplayColor(r))+'</span>';
 }
 
 function rutById(id){
@@ -228,6 +148,7 @@ function rutDiaLleno(dias,desde,excluirId){
 }
 /* ¿Toca sesión ese día? Devuelve la hora, o null */
 function rutOccursOn(r,ds){
+  if(r.deletedSessions&&r.deletedSessions[ds])return null;
   if(r.flex)return ds>=rutFlexEarliest(r)&&!rutSuspendedOn(r,ds)&&r.flex.sessions[ds]?r.flex.sessions[ds].time:null;
   if(r.keptSessions&&r.keptSessions[ds])return r.keptSessions[ds].time;
   if(r.start&&ds<r.start)return null;
@@ -273,7 +194,7 @@ function rutEventsOn(ds){
       id:'rut-'+r.id+'-'+ds+(s.extra?'~'+s.key:''),
       title:r.name+(tag?' '+tag:''),
       note:(r.flex?'Rutina flexible':'Rutina semanal')+' · '+s.time+'–'+rutFin(s.time,s.dur),
-      color:r.color,
+      color:rutDisplayColor(r),
       kind:'puntual', type:'Rutina',
       start:ds, end:ds, repeat:null,
       _rut:r, _rutKey:s.key, _rutTime:s.time, _rutDur:s.dur, _rutSkip:s.skip
@@ -346,7 +267,7 @@ function _renderRutLista(){
     h+='<div class="sy-note">Añade una rutina con horario fijo o sesiones flexibles por semana o mes. También puedes usar una sugerencia.</div>';
     h+='<div class="rut-sug">';
     RUT_SUGERENCIAS.forEach(function(s,i){
-      h+='<button class="rut-sug-btn" data-sug="'+i+'"><i style="background:'+s.color+'"></i>'
+      h+='<button class="rut-sug-btn" data-sug="'+i+'"><i style="background:'+rutColorOf(s.icon,s.color)+'"></i>'
         +escHtml(s.name)+'<span>'+s.weekDays.map(function(d){return RUT_DN[d];}).join(' ')+' · '+RUT_TIME_DEFAULT+'</span></button>';
     });
     h+='</div>';
@@ -357,7 +278,7 @@ function _renderRutLista(){
     var prox=rutProximas(r,3);
     h+='<div class="rut-card'+(susp?' susp':'')+'" data-rid="'+r.id+'">';
     h+='<div class="rut-card-hd">';
-    h+='<span class="rut-dot" style="background:'+r.color+'"></span>';
+    h+='<span class="rut-dot" style="background:'+rutDisplayColor(r)+'"></span>';
     h+='<span class="rut-name">'+escHtml(r.name)+'</span>';
     if(susp)h+='<span class="rut-tag susp">en pausa'+(r.suspend&&r.suspend.to?(' hasta '+_rutFmt(r.suspend.to)):'')+'</span>';
     h+='<button class="action-edit boda-mini-btn rut-edit" data-rid="'+r.id+'" title="Editar">&#9998;</button>';
@@ -369,7 +290,7 @@ function _renderRutLista(){
     for(var i=1;i<=7;i++){
       var d=i%7;   /* empieza en lunes */
       var on=(r.weekDays||[]).indexOf(d)!==-1;
-      h+='<span class="rut-day'+(on?' on':'')+'"'+(on?' style="background:'+r.color+'22;border-color:'+r.color+';color:'+r.color+'"':'')+'>'+RUT_DN[d]+'</span>';
+      h+='<span class="rut-day'+(on?' on':'')+'"'+(on?' style="background:'+rutDisplayColor(r)+'22;border-color:'+rutDisplayColor(r)+';color:'+rutDisplayColor(r)+'"':'')+'>'+RUT_DN[d]+'</span>';
     }
     if(rutTieneHorarios(r)){
       h+='<span class="rut-hora rut-hora-varias">horario por d\u00eda</span>';
@@ -397,7 +318,7 @@ function _renderRutLista(){
     }
     h+='</div>';
   });
-  h+='<button class="ev-io-btn rut-add" id="rutAdd">+ Nueva rutina</button>';
+  h+='<button class="ev-io-btn rut-add" id="rutAdd">+ Nueva rutina</button>'+renderRutAppearance();
   return h;
 }
 function _rutFmt(ds){return ds?ds.slice(8)+'/'+ds.slice(5,7)+'/'+ds.slice(0,4):'';}
@@ -423,13 +344,13 @@ function _renderRutStats(){
   h+='<div class="boda-stat-t">Por rutina</div>';
   h+=hBarRows(RUTINAS.map(function(r){
     var s=rutStats(r);
-    return {label:r.name,value:s.hechas,color:r.color};
+    return {label:r.name,value:s.hechas,color:rutDisplayColor(r)};
   }),{});
   /* Detalle por rutina */
   RUTINAS.forEach(function(r){
     var s=rutStats(r);
     h+='<div class="rut-stat-card">';
-    h+='<div class="rut-card-hd"><span class="rut-dot" style="background:'+r.color+'"></span>';
+    h+='<div class="rut-card-hd"><span class="rut-dot" style="background:'+rutDisplayColor(r)+'"></span>';
     h+='<span class="rut-name">'+escHtml(r.name)+'</span>';
     h+='<span class="rut-pct">'+(s.total?s.pct+'%':'—')+'</span></div>';
     h+='<div class="rut-stat-line">'+s.hechas+' hechas · '+s.saltadas+' saltadas · '+s.total+' previstas';
@@ -456,7 +377,7 @@ function _renderRutStats(){
 /* ══ Formulario de rutina ══ */
 function renderRutForm(r){
   var isEdit=!!r;
-  var col=isEdit&&rutIconOf(r)==='gen'?r.color:'#a78bfa';
+  var col=isEdit&&rutIconOf(r)==='gen'?rutDisplayColor(r):'#a78bfa';
   var dias=isEdit?(r.weekDays||[]):[];
   var h='<div class="ev-form-overlay" id="rutFormOv"><div class="ev-form-sheet">';
   h+='<div class="ev-form-handle"></div>';
@@ -495,7 +416,7 @@ function renderRutForm(r){
      acompana al color elegido, que es el unico que se puede cambiar. */
   RUT_ICONS.forEach(function(k){
     h+='<button type="button" class="rut-icon-opt'+(k===_ic?' on':'')+'" data-icon="'+k+'">'
-      +rutIconSvg(k,RUT_FIXED_COLOR[k]||col).replace('0 0 24 24','-3 -3 30 30')+'<span>'+RUT_ICON_LABEL[k]+'</span></button>';
+      +rutIconSvg(k,RUT_FIXED_COLOR[k]||col)+'<span>'+RUT_ICON_LABEL[k]+'</span></button>';
   });
   h+='</div></div>';
   h+='<div class="ev-field" id="rutFColorField"'+(_ic==='gen'?'':' style="display:none"')+'>'
@@ -534,7 +455,7 @@ function openRutForm(r){
     document.querySelectorAll('#rutFIcons .rut-icon-opt').forEach(function(b){
       var k=b.dataset.icon;
       if(RUT_FIXED_COLOR[k])return;
-      b.innerHTML=rutIconSvg(k,c).replace('0 0 24 24','-3 -3 30 30')+'<span>'+RUT_ICON_LABEL[k]+'</span>';
+      b.innerHTML=rutIconSvg(k,c)+'<span>'+RUT_ICON_LABEL[k]+'</span>';
     });
   }
   document.querySelectorAll('#rutFIcons .rut-icon-opt').forEach(function(b){
@@ -695,7 +616,7 @@ function _rutWeekPick(r,opts){
   h+='<div class="ev-detail-handle"></div>';
   h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">';
   h+='<button class="sy-back" id="rutWkClose">&#8592;</button>';
-  h+='<div style="flex:1;font-size:.88rem;font-weight:600;text-align:center;color:'+r.color+'">'
+  h+='<div style="flex:1;font-size:.88rem;font-weight:600;text-align:center;color:'+rutDisplayColor(r)+'">'
     +escHtml(r.name)+' \u2014 elige la semana</div>';
   h+='<div style="width:36px"></div></div>';
   h+='<div class="boda-asg-nav">';
@@ -752,7 +673,7 @@ function _rutWeekRender(r){
   h+='<div class="ev-detail-handle"></div>';
   h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">';
   h+='<button class="sy-back" id="rutWkClose">&#8592;</button>';
-  h+='<div style="flex:1;font-size:.88rem;font-weight:600;text-align:center;color:'+r.color+'">'+escHtml(r.name)+' — una semana</div>';
+  h+='<div style="flex:1;font-size:.88rem;font-weight:600;text-align:center;color:'+rutDisplayColor(r)+'">'+escHtml(r.name)+' — una semana</div>';
   h+='<div style="width:36px"></div></div>';
   h+='<div class="boda-asg-nav">';
   h+='<button class="sy-nav" id="rutWkPrev">&#9664;</button>';
@@ -836,8 +757,8 @@ function openRutSesion(r,ds,key){
   h+='<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">Rutina</div>';
   h+='<button class="action-edit action-edit-text ev-list-btn" id="rutSesEdit" style="font-size:.8rem;padding:6px 12px">&#9998; Editar</button>';
   h+='</div>';
-  h+='<div class="ev-detail-color-bar" style="background:'+r.color+'"></div>';
-  h+='<div class="ev-detail-title" style="color:'+r.color+'">'+escHtml(r.name)+'</div>';
+  h+='<div class="ev-detail-color-bar" style="background:'+rutDisplayColor(r)+'"></div>';
+  h+='<div class="ev-detail-title" style="color:'+rutDisplayColor(r)+'">'+escHtml(r.name)+'</div>';
   h+='<div class="ev-detail-date">&#128197; '+_rutFmtCorto(ds)+' &#183; '+t+'–'+rutFin(t,rutDurationOn(r,ds))+'</div>';
   if(skip)h+='<div class="ev-detail-note" style="color:var(--c-orange)">Sesión marcada como saltada</div>';
   var recovered=rutRecoveryNote(r,key);if(recovered)h+='<em class="rut-recovery-note">'+escHtml(recovered)+'</em>';
@@ -860,6 +781,7 @@ function closeRutSesion(){cerrarPanel('rutSesWrap','rutSesOv');}
 
 /* ══ Binds de la pestaña ══ */
 function bindRutinasEvents(){
+  bindRutAppearance();
   document.querySelectorAll('[data-rplan]').forEach(function(b){b.onclick=function(){openRutPlan(rutById(b.dataset.rplan));};});
   document.querySelectorAll('.econ-sub-tab[data-rsub]').forEach(function(b){
     b.addEventListener('click',function(){RUT_SUBTAB=b.dataset.rsub;refreshEvents(false);});
@@ -874,7 +796,7 @@ function bindRutinasEvents(){
         showToast('El '+_rutFmt(_ll)+' ya tiene '+EV_MAX_RUT_DIA+' rutinas (el m\u00e1ximo)','error');
         return;
       }
-      RUTINAS.push({id:'rut-'+Date.now(),createdAt:Date.now(),name:s.name,color:s.color,
+      RUTINAS.push({id:'rut-'+Date.now(),createdAt:Date.now(),name:s.name,color:rutColorOf(s.icon,s.color),
         icon:s.icon||'gen',
         weekDays:s.weekDays.slice(),time:RUT_TIME_DEFAULT,dur:RUT_DUR_DEFAULT,
         start:evDk(new Date()),suspend:null,weeks:{},skips:{}});

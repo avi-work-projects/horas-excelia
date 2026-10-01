@@ -71,3 +71,33 @@ function rutSaveSessionChange(r,result,message){
   if(document.getElementById('rutHistoryWrap'))openRutHistory(r,true);
   showToast(message,'success',function(){Object.keys(r).forEach(function(k){delete r[k];});Object.assign(r,before);saveRutinas();refreshEvents();if(document.getElementById('rutHistoryWrap'))openRutHistory(r,true);});
 }
+/* La exclusión pertenece a la rutina, no a una versión de su horario: una
+   sesión eliminada no reaparece al cambiar de días, recargar o importar. */
+function rutDeleteSession(r,key){
+  var session=rutSessionByKey(r,key);if(!session)throw new Error('La sesión ya no existe.');
+  var copy=JSON.parse(JSON.stringify(r));
+  if(session.extra)copy.extraSessions=copy.extraSessions.filter(function(s){return s.id!==key;});
+  else{
+    copy.deletedSessions=copy.deletedSessions||{};copy.deletedSessions[session.ds]=true;
+    if(copy.flex)delete copy.flex.sessions[session.ds];
+    if(copy.skips)delete copy.skips[session.ds];
+    if(copy.keptSessions)delete copy.keptSessions[session.ds];
+  }
+  (copy.extraSessions||[]).forEach(function(s){if(s.recoveryOf===key)s.recoveryOf=null;});
+  rutValidateExtraSessions(copy);return copy;
+}
+
+function openRutSessionDelete(r,key,afterDelete){
+  var session=rutSessionByKey(r,key);if(!session)return;
+  var linked=(r.extraSessions||[]).some(function(s){return s.recoveryOf===key;});
+  var h='<div class="ev-form-overlay" id="rutDeleteOv"><div class="ev-form-sheet" role="alertdialog" aria-modal="true" aria-labelledby="rutDeleteTitle"><div class="ev-form-handle"></div><h3 class="ev-del-title" id="rutDeleteTitle">Eliminar sesión</h3>';
+  h+='<p class="ev-del-sub">'+escHtml(r.name)+' · '+_rutFmt(session.ds)+' · '+session.time+'</p><p class="sy-note">Se quitará esta sesión del calendario y del histórico. No aparecerá como cancelada.</p>';
+  if(linked)h+='<p class="sy-note warn">La recuperación se conservará como clase extra, sin vínculo con esta sesión.</p>';
+  h+='<div class="ev-form-actions"><button class="ev-btn" id="rutDeleteCancel">Cancelar</button><button class="ev-btn danger" id="rutDeleteConfirm">Eliminar sesión</button></div></div></div>';
+  var close=function(){cerrarPanel('rutDeleteWrap','rutDeleteOv');};
+  var wrap=abrirPanel('rutDeleteWrap',h,{overlay:'rutDeleteOv',alCerrar:close});
+  wrap.querySelector('#rutDeleteCancel').onclick=close;
+  wrap.querySelector('#rutDeleteConfirm').onclick=function(){
+    try{var result=rutDeleteSession(r,key);close();if(afterDelete)afterDelete();rutSaveSessionChange(r,result,'Sesión eliminada');}catch(e){showToast(e.message,'error');}
+  };
+}

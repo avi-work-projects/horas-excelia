@@ -27,6 +27,8 @@ No hace falta cambiar de framework. Los renders devuelven HTML y no persisten ca
 | bodas-class-form.js | formulario y selectores de una clase |
 | bodas-bind.js | pareja, acciones de vistas y contexto de render |
 | rutinas.js | recurrencias, excepciones y sesiones virtuales |
+| rutinas-icons.js | siluetas de rutina y prueba temporal del color de gimnasio |
+| rutinas-history.js | histórico mensual, semana actual y edición/borrado de sesiones |
 | rutinas-flex.js | cupos semanales/mensuales, planificación por fecha y avisos de sesiones pendientes |
 | rutinas-sessions.js / rutinas-addition.js | sesiones extras y recuperadas, vínculos con canceladas y alta guiada |
 | economics-* | calculos, datos, vistas y acciones economicas |
@@ -38,6 +40,40 @@ No hace falta cambiar de framework. Los renders devuelven HTML y no persisten ca
 | home-popup.js / init.js | avisos y arranque |
 
 ## Componentes compartidos
+### Navegación y sesiones (v372)
+`NAV_MAIN_ITEMS` es la única lista y orden de las cinco ventanas principales.
+La usan la cabecera de Home, `renderNavBar` y la vista previa de iconos.
+`navigateMain` cierra la ventana anterior y abre la siguiente sin acumular
+overlays. Cada barra se enlaza una sola vez y se identifica por `data-current`.
+
+«Gastos del hogar» reutiliza la ventana fiscal, entra siempre en Hipoteca y
+Facturas y recuerda `FISCAL_HIP_SUB` en `excelia-household-tab-v1` (por defecto,
+Electricidad). El backup lo transporta en `householdTab`. `FISCAL_ENTRY` distingue
+este acceso del económico para resaltar el icono correcto. Se conservan el
+icono original y el SVG profesional de cumpleaños; el nuevo icono ilustrado
+del hogar se añade también a la galería Gestify.
+
+Cumpleaños es `EV_VIEW='bday'` dentro de Eventos: `renderBdayContent` aporta
+cabecera y cuerpo, sin duplicar navegación ni crear otro overlay. Sus fichas
+usan `bdayPanelHost`. «Agenda» sigue siendo `EV_VIEW='week'`, ahora en Próximos
+entre Cumpleaños y Todos. Los títulos fijos de la agenda descuentan la altura
+real de las subpestañas (`--ev-subtab-h`).
+
+El histórico de rutinas agrupa sesiones por meses con cabeceras fijas,
+horarios y excepciones. Carga 12 meses anteriores y 3 siguientes, ampliables;
+al abrir y al pulsar Hoy se sitúa en la semana actual, incluso si cruza de mes.
+`rutDeleteSession` devuelve una copia: para la recurrencia guarda la exclusión
+en `r.deletedSessions[fecha]=true`; para una extra elimina su registro.
+La exclusión persiste al cambiar de horario o importar. Si había una
+recuperación vinculada, el panel avisa y la convierte en Extra. Deshacer
+restaura el objeto completo y los vínculos. Todo viaja en `rutinas` del backup.
+
+Los símbolos de rutinas llenan mejor su espacio existente con un viewBox de
+26 unidades y contorno proporcional a `EV_SHAPE_BW`. `rutDisplayColor` resuelve
+el color del gimnasio sin reescribir fechas ni rutinas. El selector temporal
+al pie de Rutinas guarda `excelia-routine-appearance-v1`; su campo de backup es
+`routineAppearance`. Las preferencias se validan y restauran transaccionalmente.
+
 ### Rutinas flexibles (v369)
 Al crear una rutina se elige horario fijo o sesiones flexibles. La modalidad de
 una rutina existente no se transforma, para preservar su historial. `r.flex`

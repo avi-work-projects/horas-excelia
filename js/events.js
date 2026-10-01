@@ -438,7 +438,7 @@ function evUpcomingMarkHtml(ev){
   if(ev.id.indexOf('ev-bday-vip-')===0)return vipStarSvgHtml(ev.id,'','ev-marker-up');
   if(ev._rut&&typeof rutIconSvg==='function'){
     var r=ev._rut;
-    return '<span class="ev-rut-mark ev-marker-up'+(ev._rutSkip?' rut-skip':'')+'">'+rutIconSvg(rutIconOf(r),r.color||'#888')+'</span>';
+    return '<span class="ev-rut-mark ev-marker-up'+(ev._rutSkip?' rut-skip':'')+'">'+rutIconSvg(rutIconOf(r),rutDisplayColor(r))+'</span>';
   }
   if(typeof isEvBarAlways==='function'&&isEvBarAlways(ev))
     return '<span class="ev-up-bar" style="background:'+getEvDisplayColor(ev)+'"></span>';

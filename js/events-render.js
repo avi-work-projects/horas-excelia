@@ -472,32 +472,21 @@ function renderEvWeek(){
 /* ── Render: contenido principal ────────────────────────── */
 function renderEvContent(){
   var h=renderNavBar('events');
-  // Tabs a nivel 2 (sticky top:42px, justo bajo la nav bar)
-  h+='<div class="ev-hdr-sub">';
-  // Zona A: Proximos + Vacaciones/Festivos (esta ultima agrupa Puentes y
-  // Vac/Festivos en subpestanas)
-  h+='<div class="ev-view-zone ev-zone-a">';
-  var _upActive=(EV_VIEW==='upcoming'||EV_VIEW==='months'||EV_VIEW==='birthdays');
-  h+='<button class="ev-view-toggle'+(_upActive?' active':'')+'" id="evViewUpcoming">Pr\u00f3ximos</button>';
-  var _toActive=(EV_VIEW==='puentes'||EV_VIEW==='time-off');
-  h+='<button class="ev-view-toggle ev-btn-timeoff ev-btn-split'+(_toActive?' active':'')+'" id="evViewTimeOff">Vacaciones<br>Festivos</button>';
+  var upcomingViews=['upcoming','birthdays','week','months'];
+  var buttons=[
+    ['evViewTimeOff','Vacaciones<br>Festivos','ev-btn-timeoff ev-btn-split',EV_VIEW==='puentes'||EV_VIEW==='time-off'],
+    ['evViewCal','Calendario<br>1 mes','ev-btn-calendar',EV_VIEW==='cal'],
+    ['evViewQuad','Calendario<br>4 meses','ev-btn-calendar',EV_VIEW==='quad'],
+    ['evViewBodas','<span class="wm-logo" role="img" aria-label="Wedding Moves"></span>','ev-btn-bodas',EV_VIEW==='bodas'],
+    ['evViewBday','Cumpleaños','ev-btn-bday',EV_VIEW==='bday'],
+    ['evViewUpcoming','Próximos','ev-btn-upcoming',upcomingViews.indexOf(EV_VIEW)>=0],
+    ['evViewAnnual','Calendario<br>Anual','ev-btn-calendar',EV_VIEW==='annual'],
+    ['evViewRutinas','Rutinas','ev-btn-rutinas',EV_VIEW==='rutinas']
+  ];
+  h+='<div class="ev-hdr-sub ev-main-tabs">';
+  buttons.forEach(function(b){h+='<button class="ev-view-toggle '+b[2]+(b[3]?' active':'')+'" id="'+b[0]+'"'+(b[0]==='evViewBodas'?' aria-label="Bodas"':'')+'>'+b[1]+'</button>';});
   h+='</div>';
-  // Zona B: Calendarios visuales (1 mes + Semanal)
-  h+='<div class="ev-view-zone ev-zone-b">';
-  h+='<button class="ev-view-toggle ev-btn-calendar'+(EV_VIEW==='cal'?' active':'')+'" id="evViewCal">Calendario<br>1 mes</button>';
-  h+='<button class="ev-view-toggle ev-btn-week'+(EV_VIEW==='week'?' active':'')+'" id="evViewWeek">Agenda<br>Semanal</button>';
-  h+='</div>';
-  // Zona B: Calendarios visuales (4 meses + Anual)
-  h+='<div class="ev-view-zone ev-zone-b">';
-  h+='<button class="ev-view-toggle ev-btn-calendar'+(EV_VIEW==='quad'?' active':'')+'" id="evViewQuad">Calendario<br>4 meses</button>';
-  h+='<button class="ev-view-toggle ev-btn-calendar'+(EV_VIEW==='annual'?' active':'')+'" id="evViewAnnual">Calendario<br>Anual</button>';
-  h+='</div>';
-  // Zona C: Bodas + Rutinas
-  h+='<div class="ev-view-zone ev-zone-c">';
-  h+='<button class="ev-view-toggle ev-btn-bodas'+(EV_VIEW==='bodas'?' active':'')+'" id="evViewBodas" aria-label="Bodas"><span class="wm-logo" role="img" aria-label="Wedding Moves"></span></button>';
-  h+='<button class="ev-view-toggle ev-btn-rutinas'+(EV_VIEW==='rutinas'?' active':'')+'" id="evViewRutinas">Rutinas</button>';
-  h+='</div>';
-  h+='</div>';
+  if(EV_VIEW==='bday')return h+renderBdayContent();
   // Header a nivel 3 (with-tabs → top:82px)
   var _hdrCenterCls=' sy-header-center';
   h+='<div class="sy-header with-tabs'+_hdrCenterCls+'">';
@@ -582,11 +571,12 @@ function renderEvContent(){
     h+='</div>';
     h+='</div>';
   }
-  if(EV_VIEW==='upcoming'||EV_VIEW==='months'||EV_VIEW==='birthdays'){
-    /* Pestana "Proximos" con dos subpestanas: la agenda corta y la lista completa */
+  if(upcomingViews.indexOf(EV_VIEW)>=0){
+    /* Próximos comparte pestañas y scroll con Cumpleaños, Agenda y Todos. */
     h+='<div class="econ-sub-tabs">';
     h+='<button class="econ-sub-tab'+(EV_VIEW==='upcoming'?' active':'')+'" id="evSubUpcoming">Próximos</button>';
     h+='<button class="econ-sub-tab'+(EV_VIEW==='birthdays'?' active':'')+'" id="evSubBirthdays">Cumplea&ntilde;os</button>';
+    h+='<button class="econ-sub-tab'+(EV_VIEW==='week'?' active':'')+'" id="evSubAgenda">Agenda</button>';
     h+='<button class="econ-sub-tab'+(EV_VIEW==='months'?' active':'')+'" id="evSubTodos">Todos</button>';
     h+='</div>';
     if(EV_VIEW==='upcoming'){

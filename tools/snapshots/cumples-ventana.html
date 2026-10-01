@@ -1,37 +1,3 @@
-<div class="overlay-nav-bar">
-<button class="nav-bar-btn" data-nav="econ" title="Económico">
-<img src="icon-econ.png" class="btn-icon" alt="">
-</button>
-<button class="nav-bar-btn" data-nav="estudio" title="Estudio Cambio">
-<img src="icon-estudio.png" class="btn-icon" alt="">
-</button>
-<button class="nav-bar-btn" data-nav="home" title="Inicio">
-<img src="icon-home.png" class="btn-icon" alt="">
-</button>
-<button class="nav-bar-btn events-active" data-nav="events" title="Eventos">
-<img src="icon-events.png" class="btn-icon" alt="">
-</button>
-<button class="nav-bar-btn active bday-active" data-nav="bday" title="Cumpleaños">
-<img src="icon-bday.png" class="btn-icon" alt="">
-</button>
-<div class="nav-bar-spacer">
-</div>
-<button class="nav-bar-btn" data-nav="alarm" title="Test alarma">
-<img src="icon-alarm.png" class="btn-icon" alt="">
-</button>
-<button class="nav-bar-btn" data-nav="menu" title="Más opciones">&#8943;</button>
-</div>
-<div class="bday-hdr-sub">
-<div class="ev-view-zone ev-zone-a">
-<button class="ev-view-toggle active" id="bdViewUpcoming">Próximos<br>Cumpleaños</button>
-</div>
-<div class="ev-view-zone ev-zone-a">
-<button class="ev-view-toggle" id="bdViewList">Lista<br>Cumpleaños</button>
-</div>
-<div class="ev-view-zone ev-zone-a">
-<button class="ev-view-toggle" id="bdViewCal">Calendario<br>Cumpleaños</button>
-</div>
-</div>
 <div class="sy-header with-tabs sy-header-center">
 <button class="sy-back" id="bdBack">&#8592;</button>
 <div class="sy-year-nav">
@@ -43,7 +9,12 @@
 </label>
 </div>
 </div>
-<div class="sy-body">
+<div class="sy-body ev-bday-body">
+<div class="econ-sub-tabs bday-sub-tabs">
+<button class="econ-sub-tab active" id="bdViewUpcoming">Próximos</button>
+<button class="econ-sub-tab" id="bdViewList">Lista</button>
+<button class="econ-sub-tab" id="bdViewCal">Calendario</button>
+</div>
 <div class="bday-upcoming-section" style="margin-top:8px">
 <div class="ev-week-sep bday-group-today now">Hoy</div>
 <div class="ev-upcoming-section">

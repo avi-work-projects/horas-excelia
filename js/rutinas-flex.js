@@ -95,11 +95,12 @@ function rutFlexSetSession(r,oldDay,ds,time,dur,reactivate){
   var keepSkipped=oldDay&&copy.skips[oldDay]&&!reactivate;
   if(oldDay){delete copy.flex.sessions[oldDay];delete copy.skips[oldDay];}
   copy.flex.sessions[ds]={time:time,dur:dur};delete copy.skips[ds];
+  if(copy.deletedSessions)delete copy.deletedSessions[ds];
   if(keepSkipped)copy.skips[ds]=1;
   if(rutSuspendedOn(copy,ds))throw new Error('La rutina está en pausa ese día.');
   if(rutFlexCount(copy,rutFlexRange(ds,copy.flex.period))>rutFlexTarget(copy,ds))throw new Error('Has completado el cupo de '+rutFlexTarget(copy,ds)+' sesiones '+(copy.flex.period==='month'?'de '+MN[+ds.slice(5,7)-1].toLowerCase()+' '+ds.slice(0,4):'de esa semana')+'. Cambia el cupo o quita otra sesión.');
   var full=rutLimitExceeded(copy,r.id);if(full)throw new Error('El '+_rutFmt(full)+' ya tiene el máximo de rutinas.');
-  rutValidateExtraSessions(copy);r.flex=copy.flex;r.skips=copy.skips;
+  rutValidateExtraSessions(copy);r.flex=copy.flex;r.skips=copy.skips;r.deletedSessions=copy.deletedSessions;
 }
 function renderRutPlan(r){
   var month=RUT_PLAN.month,ds=RUT_PLAN.day,session=ds&&r.flex.sessions[ds];

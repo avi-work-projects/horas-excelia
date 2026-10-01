@@ -384,6 +384,8 @@ const REGLAS = [
       'excelia-alarm-h':           'alarmHour',
       'excelia-alarm-m':           'alarmMinute',
       'excelia-alarm-days':        'alarmDays',
+      'excelia-routine-appearance-v1': 'routineAppearance',
+      'excelia-household-tab-v1': 'householdTab',
       'excelia-nav-icons-v1':      'navIconStyle',
       'excelia-theme-v1':          'theme',
       /* A proposito FUERA del backup: */
@@ -592,8 +594,10 @@ REGLAS.push(['swipe proximos: orden, extremos y modal protegido',function(){
   ctx.requestAnimationFrame=()=>{};ctx._bindEvGestos();ctx.EV_VIEW='upcoming';
   function swipe(dx,target){handlers.touchstart({target:target||el,touches:[{clientX:150,clientY:100}]});handlers.touchend({changedTouches:[{clientX:150+dx,clientY:105}]});}
   swipe(-100);if(ctx.EV_VIEW!=='birthdays')return false;
+  swipe(-100);if(ctx.EV_VIEW!=='week')return false;
   swipe(-100);if(ctx.EV_VIEW!=='months')return false;
   swipe(-100);if(ctx.EV_VIEW!=='months')return false;
+  swipe(100);if(ctx.EV_VIEW!=='week')return false;
   swipe(100);if(ctx.EV_VIEW!=='birthdays')return false;
   const panel={nodeType:1,parentNode:el,classList:{contains:c=>c==='bd-alarm-overlay'}};
   swipe(100,panel);return ctx.EV_VIEW==='birthdays';
