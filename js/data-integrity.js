@@ -85,6 +85,7 @@ function validateImport(data){
       if(s.suspend&&(!validIsoDate(s.suspend.from)||(s.suspend.to&&!validIsoDate(s.suspend.to))))throw new Error('Suspension no valida');
     }
     if(r.start&&!validIsoDate(r.start))throw new Error('Inicio de rutina no valido');
+    if(r.pauses!=null){if(!Array.isArray(r.pauses)||r.pauses.length>500)throw new Error('Pausas de rutina no válidas');r.pauses.forEach(function(p){if(!p||!validIsoDate(p.from)||!validIsoDate(p.to)||p.from>p.to)throw new Error('Fechas de pausa no válidas');});}
     Object.keys(r.skips||{}).forEach(function(ds){if(!validIsoDate(ds))throw new Error('Fecha de sesion no valida');});
     if(r.deletedSessions!=null){
       if(typeof r.deletedSessions!=='object'||Array.isArray(r.deletedSessions))throw new Error('Sesiones eliminadas no válidas');

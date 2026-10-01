@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v372 - navegación y sesiones de rutinas';
+var APP_VERSION = 'v373 - recuperaciones, pausas y tarifas';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -704,7 +704,6 @@ function cerrarPanel(id, overlayId, alTerminar){
 function renderNavBar(current){
   var h='<div class="overlay-nav-bar" data-current="'+current+'">';
   NAV_MAIN_ITEMS.concat([{key:'alarm',title:'Crear alarma'},{key:'menu',title:'Más opciones'}]).forEach(function(b){
-    if(b.key==='alarm')h+='<div class="nav-bar-spacer"></div>';
     h+='<button class="nav-bar-btn'+(b.key===current?' active':'')+'" data-nav="'+b.key+'" title="'+b.title+'">'+(b.key==='menu'?'&#8943;':navIconHtml(b.key))+'</button>';
   });
   return h+'</div>';

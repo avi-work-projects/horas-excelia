@@ -65,7 +65,6 @@ function _renderGasDetalle(){
   }
   h+='</div>';
   h+=energyHistoryButton('gas');
-  h+='<button class="hip-edit-btn" id="energyLegacygas">Tramos / cuota fija</button>';
 
   return h;
 }

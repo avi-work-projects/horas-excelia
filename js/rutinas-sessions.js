@@ -3,13 +3,13 @@
 function rutSessionsOn(r,ds){
   var out=[],time=rutOccursOn(r,ds);
   if(time)out.push({key:ds,ds:ds,time:time,dur:rutDurationOn(r,ds),skip:rutIsSkipped(r,ds)});
-  (r.extraSessions||[]).forEach(function(s){if(s.date===ds)out.push({key:s.id,ds:ds,time:s.time,dur:s.dur,skip:!!s.skip,extra:true,recoveryOf:s.recoveryOf||null});});
+  (r.extraSessions||[]).forEach(function(s){if(s.date===ds&&(s.skip||!rutSuspendedOn(r,ds)))out.push({key:s.id,ds:ds,time:s.time,dur:s.dur,skip:!!s.skip,extra:true,recoveryOf:s.recoveryOf||null});});
   return out.sort(function(a,b){return a.time.localeCompare(b.time)||a.key.localeCompare(b.key);});
 }
 function rutSessionByKey(r,key){
   if(validIsoDate(key))return rutSessionsOn(r,key).find(function(s){return s.key===key;})||null;
   var s=(r.extraSessions||[]).find(function(s){return s.id===key;});
-  return s?rutSessionsOn(r,s.date).find(function(x){return x.key===key;}):null;
+  return s?{key:s.id,ds:s.date,time:s.time,dur:s.dur,skip:!!s.skip,extra:true,recoveryOf:s.recoveryOf||null}:null;
 }
 function rutRecoveryFor(r,key){return (r.extraSessions||[]).find(function(s){return s.recoveryOf===key&&!s.skip;})||null;}
 function rutSessionTag(r,s){

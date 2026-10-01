@@ -326,13 +326,14 @@ function evDefaultShape(ev){
   var t=getEvType(ev);
   if(t==='Ensayos boda')return 'x-boda';   /* aspa bicolor: pareja + franja horaria */
   if(t==='Rec. Gestiones')return 'diamond'; /* identificador histórico del hexágono */
-  if(t==='Médico')return 'x-thin';          /* identificador histórico del + relleno */
+  if(t==='Médico')return 'medical';
   if(t==='Otros')return 'circle';
   return 'rounded';
 }
 function evMarkerHtml(ev,pastClass,sizeClass,defaultShape,ds){
   var color=getEvDisplayColor(ev);
-  var shape=(getEvType(ev)==='Ensayos boda')?'x-boda':(ev.shape||defaultShape||'circle');
+  var type=getEvType(ev);
+  var shape=type==='Médico'?'medical':type==='Ensayos boda'?'x-boda':(ev.shape||defaultShape||'circle');
   var pmk=pastClass||'';
   var sz=sizeClass?(' '+sizeClass):'';
   var dsAttr=ds?(' data-ds="'+ds+'"'):'';
@@ -355,6 +356,7 @@ function evMorePlusHtml(extraClass){
 var EV_MARK_ORDER = {'Rec. Gestiones':0,'Médico':0};
 function evMarkPriority(ev){
   if(!ev)return 9;                       /* cumpleanos VIP y demas: al final */
+  if(getEvKind(ev)==='puntual'&&getEvType(ev)==='Otros'&&['wave','x-outline','circle-plus'].indexOf(ev.shape)>=0)return -1;
   var p=EV_MARK_ORDER[getEvType(ev)];
   return (p===undefined)?9:p;
 }

@@ -4,11 +4,7 @@
    ============================================================ */
 
 var EV_COLOR_GRID=[
-  /* Paleta 6x7 ordenada por familias: fila a fila el ojo recorre el circulo
-     cromatico y acaba en tierras y grises. Se quitaron 12 tonos que eran
-     practicamente el mismo color que su vecino (dos rojos casi iguales, tres
-     violetas oscuros, cinco naranjas...) y se anadio una fila de marrones,
-     beige y color carne, que no existian. */
+  /* Paleta compartida 6x8: familias cromáticas, tierras y grises. */
   /* Rojos, rosas y magentas */
   '#ff6b6b','#e03131','#f06595','#d6336c','#e879a8','#da77f2',
   /* Purpuras y violetas */
@@ -17,6 +13,8 @@ var EV_COLOR_GRID=[
   '#6c8cff','#1d4ed8','#1971c2','#38bdf8','#22d3ee','#4ecdc4',
   /* Verdes y limas */
   '#34d399','#56c596','#0ca678','#a3e635','#82c91e','#5c940d',
+  /* Verdes profundos y azul petróleo */
+  '#65a367','#2f855a','#166534','#0f766e','#087e8b','#155e75',
   /* Amarillos y naranjas */
   '#ffe066','#fbbf24','#f0b45c','#fb923c','#f08c00','#e8590c',
   /* Tierras: beige, carne y marrones (claro -> oscuro) */
@@ -104,7 +102,9 @@ function evShapeSvg(shape){
   if(typeof RUT_ICON_LABEL!=='undefined'&&RUT_ICON_LABEL[shape]&&typeof rutIconSvg==='function')
     return rutIconSvg(shape,'currentColor');
   var bw=EV_SHAPE_BW,inner;
-  if(shape==='x-thick'||shape==='x-thin'){
+  if(shape==='medical'){
+    inner='<rect x="-9" y="-7.5" width="18" height="15" rx="2" fill="#fff" stroke="#000" stroke-width="'+bw+'"/><path d="M-5,0 H5 M0,-5 V5" fill="none" stroke="#e03131" stroke-width="3.4"/>';
+  } else if(shape==='x-thick'||shape==='x-thin'){
     var swIn=5;
     var swOut=swIn+bw*2;
     var d=shape==='x-thin'?'M-5.5,0 H5.5 M0,-5.5 V5.5':'M-6,-6 L6,6 M-6,6 L6,-6';

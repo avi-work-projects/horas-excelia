@@ -1,14 +1,14 @@
 /* Editor compartido por histórico y escenarios existentes. */
 function energyNumericField(key,label,value){return '<label class="energy-field">'+label+'<input name="'+key+'" type="number" min="0" step="any" required value="'+escHtml(String(value))+'"></label>';}
 function energyTariffEditorHtml(kind,old){
-  var t=energyTariffDefaults(old),h='<div class="sheet-handle"></div><div class="energy-history-heading"><button class="sy-back" id="energyTariffBack" aria-label="Volver">←</button><h2>Tarifa para comparar</h2></div><form id="energyTariffForm">';
+  var t=energyComparisonDefaults(old,kind),h='<div class="sheet-handle"></div><div class="energy-history-heading"><button class="sy-back" id="energyTariffBack" aria-label="Volver">←</button><h2>Tarifa para comparar</h2></div><form id="energyTariffForm">';
   h+='<p class="energy-caption">Precios sin IVA. Los conceptos originales del contrato se conservan. Completa los costes que quieras incluir en la estimación.</p><fieldset class="energy-tax"><legend>Modalidad</legend>';
   [['consumo','Por consumo'],['fijo','Cuota fija mensual']].forEach(function(x){h+='<label><input type="radio" name="modo" value="'+x[0]+'"'+(t.modo===x[0]?' checked':'')+'> '+x[1]+'</label>';});
   h+='</fieldset><div data-tariff-flat>'+energyNumericField('cuotaFija','Cuota total / mes (€)',t.cuotaFija)+'<p class="energy-caption">Sustituye consumo, potencia y términos fijos. Las regularizaciones se consultan en las facturas.</p></div><div data-tariff-usage><fieldset class="energy-tax"><legend>Precio del consumo</legend>';
   [['unico','Precio único'],['tramos','Tres tramos ponderados']].forEach(function(x){h+='<label><input type="radio" name="energyMode" value="'+x[0]+'"'+(t.energyMode===x[0]?' checked':'')+'> '+x[1]+'</label>';});
   h+='</fieldset><div data-tariff-single>'+energyNumericField('precioKwh','Precio único (€/kWh)',t.precioKwh)+'</div><div data-tariff-periods>';
   for(var i=0;i<3;i++)h+='<div class="energy-fields">'+energyNumericField('price'+i,'P'+(i+1)+' (€/kWh)',t.periodPrices[i])+energyNumericField('weight'+i,'Consumo P'+(i+1)+' (%)',t.periodWeights[i])+'</div>';
-  h+='<p class="energy-caption">Introduce el reparto de tu consumo, real o estimado. Los tres pesos deben sumar 100 %.</p><p id="energyWeighted" aria-live="polite"></p></div><h3>Costes fijos</h3><div class="energy-fields">'+energyNumericField('terminoFijo','Fijo / mes (€)',t.terminoFijo)+energyNumericField('terminoFijoDia','Fijo / día (€)',t.terminoFijoDia)+'</div>';
+  h+='<p class="energy-caption">Puedes ajustar el reparto. Los tres pesos deben sumar 100 %.</p><button class="ev-io-btn" type="button" id="energyUseBillWeights">Usar reparto de mis facturas</button><p id="energyWeighted" aria-live="polite"></p></div><h3>Costes fijos</h3><div class="energy-fields">'+energyNumericField('terminoFijo','Fijo / mes (€)',t.terminoFijo)+energyNumericField('terminoFijoDia','Fijo / día (€)',t.terminoFijoDia)+'</div>';
   if(kind==='luz'){
     h+='<fieldset class="energy-tax"><legend>Potencia</legend>';
     [['simple','Un precio'],['doble','P1 y P2']].forEach(function(x){h+='<label><input type="radio" name="modoPotencia" value="'+x[0]+'"'+(t.modoPotencia===x[0]?' checked':'')+'> '+x[1]+'</label>';});
@@ -18,7 +18,7 @@ function energyTariffEditorHtml(kind,old){
   return h;
 }
 function openEnergyTariff(kind,old,onSave,container){
-  var t=energyTariffDefaults(old),w=abrirPanel('energyTariffWrap','<div class="ev-form-overlay open" id="energyTariffOverlay"><div class="ev-detail-sheet energy-sheet">'+energyTariffEditorHtml(kind,t)+'</div></div>',{overlay:'energyTariffOverlay',contenedor:container||document.getElementById('fiscalOverlay')});
+  var t=energyComparisonDefaults(old,kind),w=abrirPanel('energyTariffWrap','<div class="ev-form-overlay open" id="energyTariffOverlay"><div class="ev-detail-sheet energy-sheet">'+energyTariffEditorHtml(kind,t)+'</div></div>',{overlay:'energyTariffOverlay',contenedor:container||document.getElementById('fiscalOverlay')});
   var f=w.querySelector('form');
   function close(){cerrarPanel('energyTariffWrap','energyTariffOverlay');}
   function read(){var n=Object.assign({},t);Array.from(f.elements).forEach(function(el){if(el.type==='number')n[el.name]=Number(el.value);});n.modo=f.elements.modo.value;n.energyMode=f.elements.energyMode.value;if(kind==='luz')n.modoPotencia=f.elements.modoPotencia.value;n.periodPrices=[n.price0,n.price1,n.price2];n.periodWeights=[n.weight0,n.weight1,n.weight2];for(var i=0;i<3;i++){delete n['price'+i];delete n['weight'+i];}return energyValidateTariff(n);}
@@ -28,13 +28,14 @@ function openEnergyTariff(kind,old,onSave,container){
     if(kind==='luz'){var double=f.elements.modoPotencia.value==='doble';f.elements.potenciaTotal.closest('label').hidden=double;['potenciaP1','potenciaP2','precioPotP2'].forEach(function(k){f.elements[k].closest('label').hidden=!double;});}
     try{w.querySelector('#energyWeighted').textContent='Media ponderada: '+energyWeightedPrice(read()).toFixed(5)+' €/kWh';}catch(e){w.querySelector('#energyWeighted').textContent=e.message;}
   }
+  w.querySelector('#energyUseBillWeights').onclick=function(){var p=energyUsageProfile(kind);p.weights.forEach(function(v,i){f.elements['weight'+i].value=v;});update();showToast(p.hasWeights?'Reparto de tus facturas aplicado':'Sin desglose importado: reparto orientativo 33 / 33 / 34','success');};
   f.oninput=update;f.onchange=update;w.querySelector('#energyTariffBack').onclick=close;
   f.onsubmit=function(e){e.preventDefault();try{var n=read();n.precioKwh=energyWeightedPrice(n);n.useOwnPower=true;onSave(n);close();}catch(err){showToast(err.message,'error');}};update();
 }
 function energyEditLegacyTariff(kind,index,container,refresh){
   var key=kind==='luz'?'electComparaciones':'gasComparaciones';
   var old=index===null?(kind==='luz'?_currentElectTariff():_currentGasTariff()):DESPACHO[key][index];
-  var power=kind==='luz'?_currentElectTariff():{};
+  var power=kind==='luz'?{potenciaP1:3.3,potenciaP2:3.3,potenciaTotal:3.3}:{};
   openEnergyTariff(kind,Object.assign({},power,old),function(t){
     if(index===null){if(kind==='luz')DESPACHO.elect=Object.assign({},DESPACHO.elect,t);else {DESPACHO.gas.activo=t.modo;DESPACHO.gas[t.modo]=Object.assign({},DESPACHO.gas[t.modo],t);}}
     else DESPACHO[key][index]=Object.assign({},old,t);

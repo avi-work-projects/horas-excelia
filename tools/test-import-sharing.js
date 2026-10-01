@@ -20,7 +20,7 @@ assert(notes.includes('Fecha provisional &lt;pendiente&gt;'));
 // Médico conserva identidad propia al guardar/exportar, pero comparte el filtro Gestión.
 const doctor={id:'medical-test',kind:'puntual',type:'Médico',title:'Consulta de prueba',color:a.evTypeColor('puntual','Médico'),start:'2026-08-21',end:'2026-08-21',time:'12:00'};
 a.EVENTS=[doctor];a.EV_YEAR=2026;a.EV_MONTH=7;a.EV_QUAD_YEAR=2026;a.EV_QUAD_MONTH=7;
-assert(a.renderEvCalMonth().includes('ev-shape-x-thin'));
+assert(a.renderEvCalMonth().includes('ev-shape-medical'));
 assert(a.renderEvQuad().includes('medical-test'));assert(a.renderEvAnnual().includes('medical-test'));
 a.EV_ANNUAL_FILTER_HIDDEN=['Rec. Gestiones'];
 assert(!a.renderEvQuad().includes('medical-test'));assert(!a.renderEvAnnual().includes('medical-test'));

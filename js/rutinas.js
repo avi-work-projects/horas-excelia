@@ -42,6 +42,18 @@ function rutMarkerHtml(ev,pastClass,ds){
   return '<span class="'+cls+'" data-id="'+ev.id+'" data-ds="'+(ds||ev.start)+'" title="'+escHtml(r.name||'')+'">'
     + rutIconSvg(rutIconOf(r),rutDisplayColor(r))+'</span>';
 }
+/* Las sesiones contiguas de una misma rutina comparten hueco; el resto
+   conserva una fila propia. No cambia el tamaño de ningún marcador. */
+function rutMarkerGroups(events){
+  var groups=[];
+  events.slice().sort(function(a,b){return a._rutTime.localeCompare(b._rutTime);}).forEach(function(ev){
+    var group=groups.find(function(g){var last=g[g.length-1];return last._rut.id===ev._rut.id&&last._rutSkip===ev._rutSkip&&rutFin(last._rutTime,last._rutDur)===ev._rutTime;});
+    if(group)group.push(ev);else groups.push([ev]);
+  });return groups;
+}
+function rutDayMarkersHtml(events,pastClass,ds){
+  return rutMarkerGroups(events).map(function(group){return '<span class="rut-marker-group">'+group.map(function(ev,i){return '<span class="rut-marker-layer" style="z-index:'+(group.length-i)+'">'+rutMarkerHtml(ev,pastClass,ds)+'</span>';}).join('')+'</span>';}).join('');
+}
 
 function rutById(id){
   for(var i=0;i<RUTINAS.length;i++)if(RUTINAS[i].id===id)return RUTINAS[i];
@@ -135,6 +147,7 @@ function rutWeekCfg(r,ds){
   };
 }
 function rutSuspendedOn(r,ds){
+  if((r.pauses||[]).some(function(p){return ds>=p.from&&ds<=p.to;}))return true;
   var s=rutScheduleOn(r,ds).suspend;
   if(!s||!s.from)return false;
   if(ds<s.from)return false;
@@ -149,10 +162,10 @@ function rutDiaLleno(dias,desde,excluirId){
 /* ¿Toca sesión ese día? Devuelve la hora, o null */
 function rutOccursOn(r,ds){
   if(r.deletedSessions&&r.deletedSessions[ds])return null;
-  if(r.flex)return ds>=rutFlexEarliest(r)&&!rutSuspendedOn(r,ds)&&r.flex.sessions[ds]?r.flex.sessions[ds].time:null;
+  if(rutSuspendedOn(r,ds)&&!rutIsSkipped(r,ds))return null;
+  if(r.flex)return ds>=rutFlexEarliest(r)&&r.flex.sessions[ds]?r.flex.sessions[ds].time:null;
   if(r.keptSessions&&r.keptSessions[ds])return r.keptSessions[ds].time;
   if(r.start&&ds<r.start)return null;
-  if(rutSuspendedOn(r,ds))return null;
   var cfg=rutWeekCfg(r,ds);
   var wd=new Date(ds+'T00:00:00').getDay();
   if(cfg.weekDays.indexOf(wd)===-1)return null;
@@ -416,7 +429,7 @@ function renderRutForm(r){
      acompana al color elegido, que es el unico que se puede cambiar. */
   RUT_ICONS.forEach(function(k){
     h+='<button type="button" class="rut-icon-opt'+(k===_ic?' on':'')+'" data-icon="'+k+'">'
-      +rutIconSvg(k,RUT_FIXED_COLOR[k]||col)+'<span>'+RUT_ICON_LABEL[k]+'</span></button>';
+      +rutIconSvg(k,RUT_FIXED_COLOR[k]||col,true)+'<span>'+RUT_ICON_LABEL[k]+'</span></button>';
   });
   h+='</div></div>';
   h+='<div class="ev-field" id="rutFColorField"'+(_ic==='gen'?'':' style="display:none"')+'>'
@@ -455,7 +468,7 @@ function openRutForm(r){
     document.querySelectorAll('#rutFIcons .rut-icon-opt').forEach(function(b){
       var k=b.dataset.icon;
       if(RUT_FIXED_COLOR[k])return;
-      b.innerHTML=rutIconSvg(k,c)+'<span>'+RUT_ICON_LABEL[k]+'</span>';
+      b.innerHTML=rutIconSvg(k,c,true)+'<span>'+RUT_ICON_LABEL[k]+'</span>';
     });
   }
   document.querySelectorAll('#rutFIcons .rut-icon-opt').forEach(function(b){
@@ -807,8 +820,8 @@ function bindRutinasEvents(){
   document.querySelectorAll('.rut-edit[data-rid]').forEach(function(b){
     b.addEventListener('click',function(e){e.stopPropagation();openRutForm(rutById(b.dataset.rid));});
   });
-  /* Pulsar una sesión (próximas o histórico) alterna hecha/saltada */
-  document.querySelectorAll('.rut-prox-i[data-rid],.rut-hist-i[data-rid]').forEach(function(b){
+  /* La vista de próximas sesiones es informativa; los cambios van al histórico. */
+  document.querySelectorAll('.rut-hist-i[data-rid]').forEach(function(b){
     b.addEventListener('click',function(e){
       e.stopPropagation();
       var r=rutById(b.dataset.rid);if(!r)return;
