@@ -10,11 +10,13 @@ function homeReminderEventText(when,time,content,missingTime){
 function openHomePopup(){
   var csvWarnings=csvPendingWarnings(new Date());
   var routineWarnings=rutFlexWarnings(evDk(new Date()));
+  var pendingTasks=tasksReminder(new Date());
   try{
-    if(sessionStorage.getItem('excelia-popup-dismissed')&&!csvWarnings.length&&!routineWarnings.length)return;
+    if(sessionStorage.getItem('excelia-popup-dismissed')&&!csvWarnings.length&&!routineWarnings.length&&!pendingTasks.length)return;
   }catch(e){}
   var items=csvWarnings.map(function(it){return {type:'warn',text:'&#9888; '+escHtml(it.text)};});
   routineWarnings.forEach(function(it){items.push({type:'warn',text:'&#128197; '+escHtml(it.text)});});
+  if(pendingTasks.length)items.push({type:'tasks-reminder',text:'<button type="button" id="homeTasksOpen"><strong>'+pendingTasks.length+' tareas pendientes esta semana</strong><span>'+pendingTasks.slice(0,3).map(function(t){return escHtml(t.title);}).join(' · ')+(pendingTasks.length>3?'…':'')+'</span><b>Ver tareas</b></button>'});
   // Semanas sin enviar: 2 anteriores + actual + 3 siguientes
   var today=new Date();today.setHours(0,0,0,0);
   var dow=today.getDay();var off=dow===0?6:dow-1;
@@ -97,6 +99,8 @@ function openHomePopup(){
   });
   content.innerHTML=html;
   document.getElementById('homePopup').style.display='flex';
+  if(pendingTasks.length)tasksReminderSeen(new Date());
+  var tasksButton=document.getElementById('homeTasksOpen');if(tasksButton)tasksButton.onclick=function(){dismissPopup();openTasks();};
   function dismissPopup(){
     document.getElementById('homePopup').style.display='none';
     try{sessionStorage.setItem('excelia-popup-dismissed','1');}catch(e){}
@@ -109,5 +113,5 @@ function openHomePopup(){
 openHomePopup();
 // Al volver a la PWA, los CSV pendientes siguen necesitando atencion.
 document.addEventListener('visibilitychange',function(){
-  if(document.visibilityState==='visible'&&csvPendingWarnings(new Date()).length)openHomePopup();
+  if(document.visibilityState==='visible'&&(csvPendingWarnings(new Date()).length||tasksReminder(new Date()).length))openHomePopup();
 });

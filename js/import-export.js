@@ -345,6 +345,7 @@ var _g4=document.getElementById('exportAllBtn'); if(_g4)_g4.addEventListener('cl
     bodas:typeof BODA_COUPLES!=='undefined'?BODA_COUPLES:null,
     bodasClosed:typeof BODA_CLOSED!=='undefined'?BODA_CLOSED:null,
     rutinas:typeof RUTINAS!=='undefined'?RUTINAS:null,
+    tasks:tasksData(),
     bdayAlarmCount:typeof BDAY_ALARM_COUNT!=='undefined'?BDAY_ALARM_COUNT:null,
     gastosToggles:_lsJson('excelia-gastos-tgl-v1',null),
     alarms:typeof ALARMS!=='undefined'?ALARMS:[],
@@ -406,6 +407,7 @@ function _applyFullImport(d,mode){
     try{
       d=prepareImportRelations(validateImport(d),merge);
       appStorage.begin();
+      if(d.tasks)tasksSave(merge?tasksMerge(tasksData(),d.tasks):d.tasks);
       if(d.energyTaxes)energySaveTaxes(merge?energyMergeTaxes(energyTaxes(),d.energyTaxes):d.energyTaxes);
       if(d.energyBills)energySaveBills(merge?energyMergeBills(energyBills(),d.energyBills):d.energyBills);
       if(d.energyContracts)energySaveContracts(merge?energyMergeContracts(energyContracts(),d.energyContracts):d.energyContracts);
@@ -521,6 +523,8 @@ function _applyFullImport(d,mode){
         ECON_YEAR_CONFIG=merge?_mergeMap(ECON_YEAR_CONFIG,d.econYearConfig):d.econYearConfig;
       importBodaConfig(d.bodaConfig,merge);
       save();appStorage.commit();render();
+      tasksUpdateFab();
+      if(TASKS_OPEN)renderTasksPanel();
       if(d.navIconStyle)applyNavIconStyle(d.navIconStyle);
       updateBdayBtn();updateEventsBtn();
       showToast(merge?('Backup fusionado'+(_impRes?(' · eventos: '+evMergeMsg(_impRes)):''))

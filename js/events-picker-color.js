@@ -39,14 +39,19 @@ var EV_COLOR_TYPES = {
    la identidad de una categor\u00eda es el par (kind, type), no el nombre suelto.
    - puntual: se dibuja UN MARCADOR POR D\u00cdA (aunque abarque varios d\u00edas)
    - grande:  se dibuja como BARRA continua (formato actual de Viaje/Asturias) */
+var EV_MANAGEMENT_SUBTYPES={'Llamada':'phone','Peluquería':'comb','Médico':'medical','Dentista':'tooth'};
+function evIsManagement(type){return type==='Rec. Gestiones'||Object.prototype.hasOwnProperty.call(EV_MANAGEMENT_SUBTYPES,type);}
 var EV_KINDS = {
-  puntual:{label:'Puntual', types:['Rec. Gestiones','Médico','Plan/Quedada','Ensayos boda','Otros']},
+  puntual:{label:'Puntual', types:['Rec. Gestiones','Llamada','Peluquería','Médico','Dentista','Plan/Quedada','Ensayos boda','Otros']},
   grande: {label:'Grande',  types:['Viaje','Asturias','Casa Rural','Otros']}
 };
 /* Color por defecto de cada categor\u00eda (par kind|type) */
 var EV_TYPE_COLORS = {
   'puntual|Rec. Gestiones':'#34d399',
   'puntual|Médico'       :'#e03131',
+  'puntual|Llamada'      :'#868e96',
+  'puntual|Peluquería'   :'#8b5e34',
+  'puntual|Dentista'     :'#16859b',
   'puntual|Plan/Quedada'  :'#fb923c',
   'puntual|Ensayos boda'  :'#c084fc',
   'puntual|Otros'         :'#a3e635',
@@ -104,6 +109,18 @@ function evShapeSvg(shape){
   var bw=EV_SHAPE_BW,inner;
   if(shape==='medical'){
     inner='<rect x="-9" y="-7.5" width="18" height="15" rx="2" fill="#fff" stroke="#000" stroke-width="'+bw+'"/><path d="M-5,0 H5 M0,-5 V5" fill="none" stroke="#e03131" stroke-width="3.4"/>';
+  } else if(shape==='phone'){
+    inner='<path d="M-7,-8 C-10,-6 -8,1 -3,5 C1,9 6,10 8,7 L8,4 L3,1 L1,3 C-1,2 -3,0 -4,-2 L-2,-4 L-5,-8 Z" fill="#868e96" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/>';
+  } else if(shape==='comb'){
+    inner='<path d="M-8,-7 H8 V-3 H6 V7 H4 V-3 H2 V7 H0 V-3 H-2 V7 H-4 V-3 H-6 V7 H-8 Z" fill="#8b5e34" stroke="#000" stroke-width="1.5" stroke-linejoin="round"/>';
+  } else if(shape==='tooth'){
+    inner='<path d="M0,-6 C-9,-12 -10,-3 -7,2 C-6,5 -6,9 -3,9 C-1,9 -2,2 0,2 C2,2 1,9 3,9 C6,9 6,5 7,2 C10,-3 9,-12 0,-6 Z" fill="#e8f7fa" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/><path d="M-4,-4 Q-2,-5 0,-3" fill="none" stroke="#16859b" stroke-width="1.3" stroke-linecap="round"/>';
+  } else if(shape==='beer'){
+    inner='<path d="M4,-3 H8 V5 H4" fill="none" stroke="#000" stroke-width="3" stroke-linejoin="round"/><path d="M-7,-4 H5 V8 H-7 Z" fill="currentColor" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/><path d="M-7,-3 C-11,-5 -7,-9 -4,-7 C-3,-10 2,-10 3,-7 C7,-8 8,-3 4,-3 Z" fill="#fff" stroke="#000" stroke-width="'+bw+'"/><path d="M-3,0 V5 M1,0 V5" stroke="#000" stroke-width="1" opacity=".4"/>';
+  } else if(shape==='mountain'){
+    inner='<path d="M-9,8 L-1,-8 L9,8 Z" fill="currentColor" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/><path d="M-4,-2 L-1,-8 L3,-2 L0,-3 L-2,-1 Z" fill="#fff" stroke="#000" stroke-width="1" stroke-linejoin="round"/>';
+  } else if(shape==='rings'){
+    inner='<ellipse cx="-3" cy="0" rx="4.5" ry="7" fill="none" stroke="#000" stroke-width="5"/><ellipse cx="-3" cy="0" rx="4.5" ry="7" fill="none" stroke="currentColor" stroke-width="2.5"/><ellipse cx="3" cy="0" rx="4.5" ry="7" fill="none" stroke="#000" stroke-width="5"/><ellipse cx="3" cy="0" rx="4.5" ry="7" fill="none" stroke="currentColor" stroke-width="2.5"/>';
   } else if(shape==='x-thick'||shape==='x-thin'){
     var swIn=5;
     var swOut=swIn+bw*2;
@@ -173,6 +190,7 @@ function getEvDisplayColor(ev){
      cada dia, asi que el matiz por hash las pintaria de un color distinto
      cada sesion. */
   if(getEvType(ev)==='Rutina')return ev._rut?rutDisplayColor(ev._rut):ev.color;
+  if(getEvKind(ev)==='puntual'&&EV_MANAGEMENT_SUBTYPES[getEvType(ev)])return evTypeColor('puntual',getEvType(ev));
   /* Una clase de boda se tine con el color de SU pareja: el morado del tipo
      solo se usa mientras no hay pareja asignada. */
   if(getEvType(ev)==='Ensayos boda'&&ev.boda&&ev.boda.coupleId&&typeof bodaCouple==='function'){

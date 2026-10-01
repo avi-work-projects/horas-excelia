@@ -52,7 +52,8 @@ function rutMarkerGroups(events){
   });return groups;
 }
 function rutDayMarkersHtml(events,pastClass,ds){
-  return rutMarkerGroups(events).map(function(group){return '<span class="rut-marker-group">'+group.map(function(ev,i){return '<span class="rut-marker-layer" style="z-index:'+(group.length-i)+'">'+rutMarkerHtml(ev,pastClass,ds)+'</span>';}).join('')+'</span>';}).join('');
+  /* Atenuar después de componer la pila: una pala opaca tapa a la anterior. */
+  return rutMarkerGroups(events).map(function(group){return '<span class="rut-marker-group'+(pastClass||'')+'">'+group.map(function(ev,i){return '<span class="rut-marker-layer" style="z-index:'+(group.length-i)+'">'+rutMarkerHtml(ev,'',ds)+'</span>';}).join('')+'</span>';}).join('');
 }
 
 function rutById(id){

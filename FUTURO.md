@@ -25,8 +25,5 @@ enviada sola.
 abrir Outlook, sin saber si el correo salió. Con N8N sí se podría saber, así que
 el marcado debería pasar a depender de la respuesta del webhook.
 
-## Tareas pendientes por semana
-
-Crear tareas para realizar durante una semana, mostrarlas en los recordatorios
-semanales y poder marcarlas como completadas y cerrarlas. Las pendientes deben
-seguir recordándose cada semana hasta completarse, manteniendo su historial.
+Las tareas pendientes con recordatorio semanal, historial de completadas y
+papelera de siete días están implementadas desde v377 (ver CLAUDE.md).

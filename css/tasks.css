@@ -1,0 +1,65 @@
+/* Tareas globales: estilos aislados de calendarios y pestañas existentes. */
+.tasks-open{overflow:hidden;scrollbar-gutter:stable}
+.tasks-open .toast{z-index:1700}
+.tasks-fab{position:fixed;z-index:380;width:48px;height:48px;border:1.5px solid #9285bd;border-radius:17px;background:#70609e;color:#fff;box-shadow:0 4px 15px #21163a33;display:grid;place-items:center;cursor:grab;touch-action:none;user-select:none;transition:left .25s ease,top .25s ease,border-radius .2s;isolation:isolate}
+.tasks-fab[hidden]{display:none}
+.tasks-fab svg{width:27px;height:27px}
+.tasks-fab.tasks-docked{box-shadow:0 2px 8px #21163a26}
+.tasks-fab.tasks-docked[data-side=right]{padding-right:10px;border-radius:17px 0 0 17px}
+.tasks-fab.tasks-docked[data-side=left]{padding-left:10px;border-radius:0 17px 17px 0}
+.tasks-fab.tasks-dragging{transition:none;cursor:grabbing;box-shadow:0 7px 20px #21163a44}
+.tasks-count{position:absolute;top:-5px;left:-4px;min-width:16px;height:16px;padding:0 3px;border-radius:8px;font-size:10px;font-weight:700;line-height:16px;background:#f4e4bf;color:#553f1c;border:1px solid var(--surface)}
+.tasks-docked .tasks-count{top:-4px;left:2px}
+.tasks-docked[data-side=left] .tasks-count{left:auto;right:2px}
+.tasks-overlay{position:fixed;inset:0;z-index:1600;background:#16132566;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;overscroll-behavior:contain;--tasks-accent:#a899d1;--chk:var(--tasks-accent)}
+[data-theme=light] .tasks-overlay{--tasks-accent:#70609e}
+.tasks-overlay.open{opacity:1;pointer-events:auto}
+.tasks-sheet{display:flex;flex-direction:column;width:100%;max-width:520px;height:min(80dvh,730px);min-height:280px;background:var(--surface);border-radius:24px 24px 0 0;box-shadow:0 -10px 50px #0002;overflow:hidden;padding-bottom:env(safe-area-inset-bottom);transform:translateY(30px);transition:transform .2s;color:var(--text)}
+.tasks-overlay.open .tasks-sheet{transform:translateY(0)}
+.tasks-sheet>*{flex-shrink:0}
+.tasks-header{display:flex;align-items:center;gap:12px;padding:22px 20px 18px}
+.tasks-heading-icon{width:42px;height:42px;display:grid;place-items:center;color:var(--tasks-accent);background:color-mix(in srgb,var(--tasks-accent) 12%,var(--surface));border-radius:13px}
+.tasks-heading-icon svg{width:28px;height:28px}
+.tasks-header h2{margin:0;font-size:1.06rem;line-height:1.25}
+.tasks-header p{margin:3px 0 0;color:var(--text-muted);font-size:.7rem}
+.tasks-header>.sy-back{margin-left:auto}
+.tasks-tabs{display:flex;gap:6px;margin:0 20px 16px;background:var(--surface2);border-radius:12px;padding:4px}
+.tasks-tabs button{flex:1;min-width:0;padding:9px 2px;border:0;border-radius:9px;background:none;color:var(--text-muted);font:inherit;font-size:.72rem;cursor:pointer}
+.tasks-tabs button.active{background:var(--surface);color:var(--tasks-accent);box-shadow:0 1px 4px #0002;font-weight:600}
+.tasks-tabs span{font-size:.6rem;opacity:.75;margin-left:2px}
+.tasks-add{display:flex;gap:8px;padding:0 20px 16px}
+.tasks-add .ev-input{min-width:0;flex:1;font-size:.8rem}
+.tasks-add button{flex:none;width:42px;padding:0;font-size:1.35rem;background:var(--tasks-accent);border-color:var(--tasks-accent);color:var(--surface)}
+[data-theme=light] .tasks-add button{color:#fff}
+.tasks-list{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:0 20px 12px;scrollbar-gutter:stable}
+.task-row{position:relative;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;padding:12px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:13px}
+.task-row input[type=checkbox]{flex-shrink:0;--chk:var(--tasks-accent)}
+.task-content{flex:1;min-width:0}
+.task-title{border:0;background:none;color:var(--text);font:inherit;font-size:.82rem;line-height:1.45;text-align:left;padding:0;width:100%;overflow-wrap:anywhere;cursor:pointer}
+.task-content small{display:block;font-size:.64rem;color:var(--text-muted);margin-top:4px}
+.task-done .task-title{text-decoration:line-through;text-decoration-thickness:1px;color:var(--text-muted)}
+.task-grip,.task-more{flex:none;border:0;background:none;color:var(--text-muted);cursor:pointer;padding:0;min-height:32px}
+.task-grip{font-size:1.2rem;width:20px;touch-action:none;cursor:grab;color:var(--text-dim)}
+.task-more{font-size:1.2rem;width:28px}
+.task-editor{flex-basis:100%;padding-top:10px;box-shadow:0 -1px 0 var(--border);margin-top:4px}
+.task-editor label{display:block;font-size:.67rem;color:var(--text-muted)}
+.task-editor input{margin-top:6px;font-size:.8rem}
+.task-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.task-actions button{border:1px solid var(--border);border-radius:8px;padding:8px 10px;font:inherit;font-size:.66rem;color:var(--text-muted);background:var(--surface);cursor:pointer}
+.task-actions button:disabled{opacity:.35;cursor:default}
+.task-actions .task-delete{margin-left:auto;color:var(--c-red)}
+.task-actions .task-save{color:var(--tasks-accent);border-color:var(--tasks-accent)}
+.task-moving{opacity:.45}
+.task-drop-before:before,.task-drop-after:after{content:'';position:absolute;left:0;right:0;height:3px;background:var(--tasks-accent);border-radius:3px;pointer-events:none}
+.task-drop-before:before{top:-6px}.task-drop-after:after{bottom:-6px}
+.tasks-footer{padding:13px 20px 17px;color:var(--text-muted);font-size:.64rem;box-shadow:0 -1px 0 var(--border)}
+.tasks-footer label{display:flex;align-items:center;gap:8px;cursor:pointer}
+.tasks-empty{padding:36px 20px;display:flex;align-items:center;flex-direction:column;gap:12px;text-align:center;color:var(--text-muted)}
+.tasks-empty svg{width:44px;height:44px;color:var(--tasks-accent);opacity:.7}
+.tasks-empty strong{font-size:.88rem}.tasks-empty p{margin:0;max-width:240px;font-size:.75rem;line-height:1.5}
+.tasks-status{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.home-popup-item.tasks-reminder{border-color:#9285bd;background:color-mix(in srgb,#9285bd 12%,var(--surface))}
+.tasks-reminder button{font:inherit;border:0;background:none;color:var(--text);text-align:left;width:100%;padding:0;cursor:pointer}
+.tasks-reminder strong,.tasks-reminder span,.tasks-reminder b{display:block}.tasks-reminder span{font-size:.7rem;line-height:1.4;color:var(--text-muted);margin:6px 0}.tasks-reminder b{font-size:.68rem;color:var(--accent-bright)}
+@media(prefers-reduced-motion:reduce){.tasks-fab,.tasks-overlay,.tasks-sheet{transition:none}}
+@media print{.tasks-fab,.tasks-overlay{display:none!important}}

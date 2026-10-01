@@ -38,8 +38,38 @@ No hace falta cambiar de framework. Los renders devuelven HTML y no persisten ca
 | energy-import-preview.js | cambios previstos al fusionar facturas, contratos e IVA antes de escribir |
 | import-export.js | backups, fusion y exportaciones |
 | home-popup.js / init.js | avisos y arranque |
+| tasks.js / tasks-view.js / tasks-float.js | tareas, panel y acceso flotante global; estilos aislados en tasks.css |
 
 ## Componentes compartidos
+### Tareas y marcadores (v377)
+`excelia-tasks-v1` guarda `{items, weeklyReminder, reminderWeek}`. Cada tarea
+contiene `id`, `title`, `createdAt`, `updatedAt`, `completedAt` y `deletedAt`;
+las dos últimas fechas son `null` mientras ese estado no corresponda. El orden
+del array es la prioridad manual. Las tareas completadas se conservan; las
+eliminadas se pueden restaurar o deshacer durante siete días. `tasksPrune`
+depura una copia y la persistencia se actualiza al arrancar, abrir el panel o
+volver a la aplicación. El backup usa `tasks`, valida antes de escribir y
+fusiona por ID conservando la edición más reciente y el orden importado.
+Los backups antiguos que no incluyan tareas no alteran las existentes.
+
+`renderTasks` y `renderTaskRow` devuelven HTML; `tasks-view.js` enlaza las
+acciones y reutiliza `abrirPanel`, con scroll propio, foco de diálogo y
+Deshacer visible. Se puede reordenar arrastrando, con las flechas del teclado
+o mediante Subir/Bajar. `tasks-float.js` conserva la posición de arrastre
+durante la vista; al navegar se recoge al lateral más próximo, al 70 % de
+la altura. Las coordenadas no se exportan entre dispositivos. El aviso de
+pendientes se muestra una vez por semana al abrir la aplicación y se puede
+desactivar desde el panel.
+
+`EV_MANAGEMENT_SUBTYPES` define Llamada, Peluquería, Médico y Dentista.
+`evIsManagement` centraliza su filtro y prioridad junto a Rec. Gestiones;
+los cuatro fuerzan su forma y color incluso si llegan de un backup.
+Otros añade las formas `beer`, `mountain` y `rings`. En el calendario mensual
+las rutinas contiguas se componen opacas y se atenúa el grupo completo,
+evitando que la pala del fondo se vea a través de la delantera. La separación
+es del 30 % del ancho. El logo VIP usa el mismo punto de entrada de detalle
+que las estrellas anteriores y mantiene el ancho de la fila de filtros.
+
 ### Navegación y sesiones (v372)
 `NAV_MAIN_ITEMS` es la única lista y orden de las cinco ventanas principales.
 La usan la cabecera de Home, `renderNavBar` y la vista previa de iconos.

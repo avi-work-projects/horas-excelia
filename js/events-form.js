@@ -15,17 +15,19 @@ function evPuntualDays(ev){
 function _renderEvTypeSwatches(kind,selType){
   var h='';
   EV_KINDS[kind].types.forEach(function(t){
+    if(kind==='puntual'&&t==='Llamada')h+='<div class="ev-management-subtypes" role="group" aria-label="Tipos de gestión">';
     var key=evTypeKey(kind,t);
     var c=evTypeColor(kind,t);
     /* Multicolor = "elige tu color"; Casa Rural muestra su marron aunque
        tambien tenga paleta (EV_DOT_SOLID) */
     var isMulti=!!EV_FREE_COLOR[key]&&!EV_DOT_SOLID[key];
     var sel=(t===selType)?' selected':'';
-    h+='<div class="ev-color-swatch'+sel+(isMulti?' ev-color-swatch-multi':'')+'" data-hex="'+c+'" data-type="'+escHtml(t)+'" data-kind="'+kind+'"'+(isMulti?'':' style="color:'+c+'"')+'>';
+    h+='<button type="button" class="ev-color-swatch'+sel+(isMulti?' ev-color-swatch-multi':'')+'" data-hex="'+c+'" data-type="'+escHtml(t)+'" data-kind="'+kind+'"'+(isMulti?'':' style="color:'+c+'"')+'>';
     h+=isMulti?'<div class="ev-type-dot ev-type-dot-multi"></div>'
-      :kind==='puntual'&&(t==='Rec. Gestiones'||t==='Médico')?'<span class="ev-type-dot">'+evShapeSvg(evDefaultShape({type:t}))+'</span>'
+      :kind==='puntual'&&evIsManagement(t)?'<span class="ev-type-dot">'+evShapeSvg(evDefaultShape({type:t}))+'</span>'
       :'<div class="ev-type-dot" style="background:'+c+'"></div>';
-    h+='<span class="ev-type-name">'+escHtml(t)+'</span></div>';
+    h+='<span class="ev-type-name">'+escHtml(t)+'</span></button>';
+    if(kind==='puntual'&&t==='Dentista')h+='</div>';
   });
   return h;
 }
@@ -35,7 +37,7 @@ function _renderEvTypeSwatches(kind,selType){
    gestion y un "Otros" puntual. Ni los eventos grandes ni un plan ni un ensayo
    se repiten, asi que ahi el campo ni se pinta. */
 function evAdmiteRepeticion(kind,type){
-  return kind==='puntual'&&(type==='Rec. Gestiones'||type==='Médico'||type==='Otros');
+  return kind==='puntual'&&(evIsManagement(type)||type==='Otros');
 }
 function renderEvForm(ev){
   var isEdit=!!ev;
@@ -127,13 +129,16 @@ function renderEvForm(ev){
     {k:'cloud', label:'Nube'},
     {k:'petal', label:'Pétalos'},
     {k:'leaf', label:'Hoja'},
+    {k:'beer', label:'Cerveza'},
+    {k:'mountain', label:'Montaña'},
+    {k:'rings', label:'Boda'},
     /* Las mismas siluetas que usan las rutinas */
     {k:'gym',     label:'Mancuerna'},
     {k:'padel',   label:'Pala'},
     {k:'baile',   label:'Bailar\u00edn'}
   ];
   _shapes.forEach(function(s,i){
-    if(i===12)h+='<span class="ev-shape-group-label">Actividades</span>';
+    if(s.k==='gym')h+='<span class="ev-shape-group-label">Actividades</span>';
     var sel=(s.k===curShape)?' selected':'';
     var prevColor=color||EV_COLORS[0];
     h+='<button type="button" class="ev-shape-opt'+sel+'" data-shape="'+s.k+'" title="'+s.label+'" aria-label="'+s.label+'">';
@@ -359,7 +364,7 @@ function bindEvFormEvents(){
             var noteEl2=document.getElementById('evFNote');
             if(noteEl2&&!noteEl2.value.trim()){noteEl2.value='Asturias';cntEl.textContent='8/200';}
           } else if(typeName==='Ensayos boda'){titleEl.value='Ensayo boda';}
-          else if(typeName==='Médico'){titleEl.value='Médico';}
+          else if(EV_MANAGEMENT_SUBTYPES[typeName]){titleEl.value=typeName;}
           else if(typeName==='Casa Rural'){titleEl.value='Casa rural';}
         }
       });

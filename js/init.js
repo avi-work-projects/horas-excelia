@@ -4,6 +4,7 @@
 
 (function(){
   initMainNavigation();
+  initTasks();
   /* Una recarga arranca en Home: no restaurar un scroll del documento anterior
      que deje la primera semana oculta bajo la cabecera sticky. */
   if('scrollRestoration' in history)history.scrollRestoration='manual';

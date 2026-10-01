@@ -365,6 +365,7 @@ const REGLAS = [
       'excelia-events-v1':         'events',
       'excelia-alarms-v1':         'alarms',
       'excelia-rutinas-v1':        'rutinas',
+      'excelia-tasks-v1':          'tasks',
       'excelia-bodas-v1':          'bodas',
       'excelia-bodas-closed-v1':   'bodasClosed',
       'excelia-ev-alarm-v1':       'evAlarms',

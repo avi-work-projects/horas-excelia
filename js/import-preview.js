@@ -3,6 +3,7 @@ function renderImportPreview(d){
   var groups=[];
   function add(title,lines){if(lines.length)groups.push('<section><h4>'+escHtml(title)+'</h4>'+lines.map(function(x){return '<p>'+escHtml(x)+'</p>';}).join('')+'</section>');}
   if(Array.isArray(d.importNotes))add('Información del archivo',d.importNotes.filter(function(x){return typeof x==='string';}));
+  if(d.tasks)add('Tareas',[tasksItems(d.tasks,'pending').length+' pendientes',tasksItems(d.tasks,'done').length+' completadas',tasksItems(d.tasks,'trash').length+' en papelera','Orden de prioridad y recordatorio semanal']);
   if(Array.isArray(d.events)){
     ['grande','puntual'].forEach(function(kind){var counts={};d.events.forEach(function(e){if(getEvKind(e)===kind){var t=getEvType(e);counts[t]=(counts[t]||0)+1;}});add(kind==='grande'?'Eventos grandes':'Eventos puntuales',Object.keys(counts).sort().map(function(t){return counts[t]+' · '+t;}));});
     if(!d.events.length)add('Eventos',['0 eventos (lista vacía)']);

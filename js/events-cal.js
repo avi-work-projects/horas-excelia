@@ -110,7 +110,7 @@ function _renderEvCalMonth(){
         if(_vips.length){
           h+='<div class="ev-day-vips" data-ds="'+ds+'">';
           _vips.slice(0,EV_CAL_VIP_MAX).forEach(function(vid){
-            h+=vipStarSvgHtml(vid,_pmkM,'ev-marker-lg');
+            h+=vipIconHtml(vid,_pmkM);
           });
           h+='</div>';
         }
