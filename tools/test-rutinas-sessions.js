@@ -83,10 +83,10 @@ const pausedFlex=a.rutPauseAfter(flexCancelled,'2026-08-17','2026-08-25');assert
 const futureSchedule={...original,weekDays:[2],time:'20:00',dur:90,times:null,
  scheduleHistory:[{until:'2026-09-01',schedule:{weekDays:[1,4],time:'18:00',dur:60,times:{4:'23:30'}}}]};
 const currentHtml=a._renderRutSchedule(futureSchedule,'2026-08-21');
-assert(currentHtml.includes('<time>18:00</time>')&&currentHtml.includes('<time>19:00</time>'));
-assert(currentHtml.includes('<time>23:30</time>')&&currentHtml.includes('<time>00:30</time>'));
-assert(!currentHtml.includes('<time>20:00</time>'));
+assert(currentHtml.includes('Lunes 18:00–19:00'));
+assert(currentHtml.includes('Jueves 23:30–00:30'));
+assert(!currentHtml.includes('20:00'));
 const nextHtml=a._renderRutSchedule(futureSchedule,'2026-09-01');
 assert(nextHtml.includes('Martes')&&nextHtml.includes('<time>21:30</time>'));
-assert(!nextHtml.includes('Lunes'));
+assert(!nextHtml.includes('Lunes 18:00'));
 console.log('Rutinas: agrupación, horarios vigentes, operaciones atómicas y pausa temporal importable OK');

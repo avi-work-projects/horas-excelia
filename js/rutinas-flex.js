@@ -45,8 +45,8 @@ function rutFlexOptionsHtml(r){
     +'<button type="button" class="ev-btn'+(f&&f.period==='week'?' primary':'')+'" data-rperiod="week">A la semana</button></div></div>'
     +'<div class="ev-date-row"><div><label>Sesiones del cupo</label><input class="ev-input" type="number" min="1" max="31" id="rutFTarget" value="'+(f?f.target:8)+'"></div>'
     +'<div id="rutWeeklyGoal"><label>Objetivo semanal</label><input class="ev-input" type="number" min="1" max="7" id="rutFWeekly" value="'+(f?f.weeklyTarget:2)+'"></div></div>'
-    +'<div class="ev-field rut-first-quota" id="rutFirstQuota" hidden><label id="rutFirstQuotaLabel" for="rutFFirstTarget"></label><input class="ev-input" type="number" min="0" max="31" id="rutFFirstTarget" value="'+firstTarget+'"><p class="sy-note">Incluye las sesiones ya realizadas y las que harás este mes. Si no necesitas un cupo especial, indica el habitual. Podrás añadir fechas pasadas del primer mes.</p></div>'
-    +'<p class="sy-note rut-flex-help">Elige después cada fecha y hora, también las ya realizadas desde el comienzo del primer período. Las sesiones saltadas no consumen el cupo. Desde el histórico puedes añadir extras y recuperaciones.</p></div>';
+    +'<div class="ev-field rut-first-quota" id="rutFirstQuota" hidden><label id="rutFirstQuotaLabel" for="rutFFirstTarget"></label><input class="ev-input" type="number" min="0" max="31" id="rutFFirstTarget" value="'+firstTarget+'"><p class="sy-note">Incluye las sesiones ya realizadas.</p></div>'
+    +(r?'':'<p class="sy-note rut-flex-help">Elige las fechas en «Planificar sesiones».</p>')+'</div>';
 }
 function bindRutFlexOptions(r){
   function paint(){

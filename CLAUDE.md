@@ -12,15 +12,18 @@ PWA estatica, sin backend. Datos personales locales; el despliegue no inyecta se
 ES5 en el codigo existente; se permiten las APIs modernas compatibles con Edge/Chromium usadas por la PWA.
 No hace falta cambiar de framework. Los renders devuelven HTML y no persisten cambios.
 
-### Avisos y tarjetas de rutinas (v379)
+### Avisos y tarjetas de rutinas (v379/v380)
 - `showToast` conserva la acción y su caducidad. `_toastBindSwipe` registra una sola
   vez el gesto horizontal, disponible tras 1 segundo en avisos con acción. Apartar
   el aviso nunca ejecuta Deshacer; un gesto vertical o corto tampoco lo activa.
   `_toastReset` limpia los temporizadores y el desplazamiento al sustituir un aviso.
-- La lista de Rutinas separa identidad, horario habitual, próximas sesiones e
-  histórico. `_renderRutSchedule` usa la versión vigente de la rutina y agrupa días
-  con la misma hora; `_rutTimeRange` da el mismo formato al inicio y al final.
-  Las sesiones flexibles reutilizan su planificador y cupo existentes.
+- La lista de Rutinas conserva las tarjetas compactas, puntos de color, círculos
+  semanales, próximas sesiones y porcentaje de asistencia. `_renderRutSchedule`
+  pinta el horario vigente; `_rutTimeRange` da el mismo formato al inicio y al fin.
+  Editar conserva los accesos a cambio de semana, planificación e histórico
+  (también para sesiones flexibles). No sustituir esta vista por tarjetas grandes.
+- Los textos de ayuda del formulario flexible son mínimos; su histórico y
+  planificador mantienen las extras, recuperaciones y fechas pasadas.
 - El subrayado corto pertenece solo a `.rut-sub-tabs`; no modificar la distribución
   de las subpestañas globales para retocar esta vista.
 - Verificación: `tools/browser/toast-routines.spec.js`, instantáneas y pruebas de

@@ -52,7 +52,7 @@ test('Deshacer conserva los toques, descarta gestos verticales y reinicia cada a
   expect(await page.evaluate(()=>window.undoCount)).toBe(1);
   await page.clock.runFor(7650);await expect(page.locator('#toast')).not.toHaveClass(/show/);
 });
-test('Rutinas: intervalos completos, varias horas, flexibles e histórico directo',async({page})=>{
+test('Rutinas compactas: días, intervalos completos, planificación e histórico',async({page})=>{
   await page.clock.setFixedTime(new Date('2026-10-01T10:00:00'));
   await page.addInitScript(()=>localStorage.setItem('excelia-rutinas-v1',JSON.stringify([
     {id:'fixed',name:'Rutina fija',icon:'padel',color:'#a3e635',start:'2026-09-01',weekDays:[4],time:'16:00',dur:60,skips:{},weeks:{}},
@@ -64,14 +64,24 @@ test('Rutinas: intervalos completos, varias horas, flexibles e histórico direct
   // El cupo flexible incompleto recuerda sus sesiones incluso con otros avisos cerrados.
   await page.locator('#homePopupClose').click();
   await page.locator('#eventsBtn').click();await page.locator('#evViewRutinas').click();
-  await expect(page.locator('[data-rid="fixed"] .rut-schedule')).toContainText('16:00–17:00');
-  await expect(page.locator('[data-rid="multiple"] .rut-schedule')).toContainText('18:00–19:30');
-  await expect(page.locator('[data-rid="multiple"] .rut-schedule')).toContainText('20:00–21:30');
-  await expect(page.locator('[data-rid="flex"] .rut-prox')).toContainText('18:00–19:15');
-  const sizes=await page.locator('[data-rid="fixed"] .rut-schedule time').evaluateAll(nodes=>nodes.map(n=>{const s=getComputedStyle(n);return [s.fontSize,s.fontWeight,s.color];}));
+  await expect(page.locator('[data-rid="fixed"] .rut-hora')).toContainText('16:00–17:00');
+  await expect(page.locator('[data-rid="fixed"] .rut-day')).toHaveCount(7);
+  await expect(page.locator('[data-rid="multiple"] .rut-day.on')).toHaveCount(2);
+  await expect(page.locator('[data-rid="multiple"] [title="Lunes 18:00–19:30"]')).toBeVisible();
+  await expect(page.locator('[data-rid="multiple"] [title="Viernes 20:00–21:30"]')).toBeVisible();
+  await expect(page.locator('[data-rid="flex"] .rut-prox')).toContainText('18:00');
+  const sizes=await page.locator('[data-rid="fixed"] .rut-hora time').evaluateAll(nodes=>nodes.map(n=>{const s=getComputedStyle(n);return [s.fontSize,s.fontWeight,s.color];}));
   expect(sizes[0]).toEqual(sizes[1]);
-  expect(await page.locator('.rut-list-card').evaluateAll(cards=>cards.every(c=>c.scrollWidth<=c.clientWidth))).toBe(true);
-  await page.locator('[data-rhistory="fixed"]').click();await expect(page.locator('#rutHistoryOv')).toBeVisible();
+  expect(await page.locator('.rut-card').evaluateAll(cards=>cards.every(c=>c.scrollWidth<=c.clientWidth))).toBe(true);
+  await page.locator('.rut-edit[data-rid="fixed"]').click();
+  await expect(page.locator('#rutFWeek')).toBeVisible();
+  await page.locator('#rutFHistory').click();await expect(page.locator('#rutHistoryOv')).toBeVisible();
   await page.locator('#rutHistoryClose').click();await page.locator('[data-rplan="flex"]').click();
-  await expect(page.locator('#rutPlanOv')).toBeVisible();expect(errors).toEqual([]);
+  await expect(page.locator('#rutPlanOv')).toBeVisible();
+  await page.locator('#rutPlanClose').click();
+  await page.locator('.rut-edit[data-rid="flex"]').click();
+  await expect(page.locator('#rutFPlan')).toBeVisible();
+  await expect(page.locator('#rutFormOv')).not.toContainText('Los cambios de horario');
+  await page.locator('#rutFHistory').click();await expect(page.locator('#rutHistoryOv')).toBeVisible();
+  expect(errors).toEqual([]);
 });
