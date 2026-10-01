@@ -12,7 +12,8 @@
 .household-investment{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-radius:12px;background:var(--surface);border:1px solid var(--border);font-size:.75rem}
 .household-investment small{display:block;color:var(--home-muted);margin-top:4px;font-size:.64rem}
 .household-investment strong{font-size:.95rem;white-space:nowrap;color:var(--text)}
-.household-card{border:1px solid var(--border);border-radius:17px;background:var(--surface);padding:18px;overflow:hidden}
+.household-card{border:1px solid color-mix(in srgb,var(--home-card-color) 22%,var(--border));border-radius:17px;background:color-mix(in srgb,var(--home-card-color) 10%,var(--surface));padding:18px;overflow:hidden}
+.household-mortgage{--home-card-color:#60b693}
 .household-card>header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}
 .household-eyebrow{display:block;color:var(--home-tone);font-size:.65rem;letter-spacing:.055em;text-transform:uppercase;font-weight:700;margin-bottom:5px}
 .household-card h3{font-size:1rem;color:var(--text);font-weight:700;line-height:1.35;overflow-wrap:anywhere}
@@ -45,8 +46,8 @@
 .household-history .household-card{border-radius:0;border-width:1px 0 0}
 .household-section-title{font-size:.78rem;color:var(--text);margin:6px 0 -3px}
 .household-utilities{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
-.household-luz{--home-tone:#e1bb51}
-.household-gas{--home-tone:#71b1ee}
+.household-luz{--home-tone:#e1bb51;--home-card-color:#f4c542}
+.household-gas{--home-tone:#71b1ee;--home-card-color:#64b4ec}
 [data-theme=light] .household-luz{--home-tone:#9b6711}
 [data-theme=light] .household-gas{--home-tone:#316eaa}
 .household-utility-icon{display:grid;place-items:center;flex-shrink:0;width:34px;height:34px;border-radius:10px;background:color-mix(in srgb,var(--home-tone) 10%,var(--surface));color:var(--home-tone);font-size:1.15rem}
@@ -57,6 +58,11 @@
 .household-utility-rows .household-value{display:grid;grid-template-columns:1fr auto;column-gap:10px;align-items:baseline}
 .household-utility-rows dd{font-size:.77rem;text-align:right}
 .household-utility-rows small{grid-column:1/-1;margin-top:0}
+.household-utility-rows .household-value-total{padding:10px 12px;border-radius:9px;background:var(--surface);border-left:3px solid var(--home-tone);grid-template-columns:1fr}
+.household-value-total dt{font-weight:600;color:var(--text)}
+.household-utility-rows .household-value-total dd{font-size:.96rem;text-align:left}
+.household-value-total dd small{display:inline;font-size:.64rem;font-weight:400}
+.household-consumption-label{font-weight:600;color:var(--home-tone);margin-bottom:6px}
 .household-empty{font-size:.76rem;line-height:1.6;color:var(--home-muted);padding:12px 0}
 .household-detail-link{background:#7834a6;color:#fff}
 .household-analysis-link{margin-bottom:12px;color:var(--home-tone);border-color:var(--home-tone)}

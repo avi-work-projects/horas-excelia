@@ -188,7 +188,21 @@ console.log('Energía: configuración fiscal sin abrir, deshacer exacto e identi
 const rp={monthlyKwh:270,hasWeights:true,weights:[20,30,50]};
 const rt=a.energyTariffDefaults({energyMode:'tramos',periodPrices:[.23,.16,.10],periodWeights:[33,33,34],precioPotP1:.09,precioPotP2:.02,otherTaxPct:5,extrasPerDay:.03,servicesPerDay:2});
 const rr=a.energyTariffReference('luz',rt,rp,21);near(rr.consumption,.144*1.05*1.21);near(rr.standing,.11*1.05*1.21);near(rr.bill,((270*.144+3.3*.11*30)*1.05+.9)*1.21);
+near(rr.consumptionNet,.144);near(rr.standingNet,.11);near(rr.billNet,270*.144+3.3*.11*30+.9);
+// Sin IVA conocido aún se muestran precios netos. El neto excluye también los otros impuestos.
+near(a.energyTariffReference('luz',rt,rp,null).billNet,rr.billNet);
 assert.equal(a.energyTariffReference('luz',rt,rp,null).bill,null);
+const gasRef=a.energyTariffReference('gas',a.energyTariffDefaults({precioKwh:.06,terminoFijo:6,terminoFijoDia:.01,otherTaxKwh:.00234,extrasPerDay:.04,servicesPerDay:1}),{monthlyKwh:500,hasWeights:false},21);
+near(gasRef.consumptionNet,.06);near(gasRef.standingNet,.21);near(gasRef.billNet,37.5);near(gasRef.bill,(37.5+500*.00234)*1.21);
+const flatRef=a.energyTariffReference('luz',a.energyTariffDefaults({modo:'fijo',cuotaFija:50}),rp,21);
+assert.equal(flatRef.consumptionNet,null);assert.equal(flatRef.standingNet,null);near(flatRef.billNet,50);near(flatRef.bill,60.5);
+assert.deepEqual(Array.from(rt.periodWeights),[33,33,34]);
+// Redondear para mostrar no altera el reparto importado y nunca deja 99/101 %.
+const fractionalWeights=[19.72,30.64,49.64],originalWeights=fractionalWeights.slice();
+assert.deepEqual(Array.from(a.energyDisplayWeights(fractionalWeights)),[20,31,49]);
+assert.deepEqual(fractionalWeights,originalWeights);
+assert.deepEqual(Array.from(a.energyDisplayWeights([33.33,33.33,33.34])),[33,33,34]);
+assert.deepEqual(Array.from(a.energyDisplayWeights([0,0,100])),[0,0,100]);
 const refApp=cargarApp({});refApp.energySaveBills([{id:'profile',kind:'luz',supplier:'Prueba',number:'1',issued:'2026-02-01',start:'2026-01-01',end:'2026-01-30',net:50,gross:60.5,paid:60.5,consumption:300,consumptionPeriods:[30,90,180],notes:'',source:''}]);
 const profile=refApp.energyUsageProfile('luz',2026);assert.equal(profile.monthlyKwh,300);assert.deepEqual(Array.from(profile.weights),[10,30,60]);
 const defaults=refApp.energyComparisonDefaults({},'luz');assert.equal(defaults.potenciaP1,3.3);assert.deepEqual(Array.from(defaults.periodWeights),[10,30,60]);

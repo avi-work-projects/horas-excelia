@@ -30,7 +30,7 @@ No hace falta cambiar de framework. Los renders devuelven HTML y no persisten ca
 - Verificación: `tools/browser/toast-routines.spec.js`, instantáneas y pruebas de
   sesiones (horario vigente, cambios futuros e intervalos que cruzan medianoche).
 
-### Navegación y precisión visual (v381)
+### Navegación y precisión visual (v381–v382)
 - `ENERGY_ANALYSIS_TABS` define el orden de las cinco pestañas. `energyBindSwipe`
   reutiliza `addSwipe`: en Resumen, Consumo y Coste el primer panel cambia el año;
   el resto cambia la pestaña. Tarifas y Escenarios solo cambian la pestaña. El
@@ -40,14 +40,25 @@ No hace falta cambiar de framework. Los renders devuelven HTML y no persisten ca
   scrollbar evita saltos entre vistas cortas y largas. Esta regla es local a
   Próximos; no alterar la distribución global de `.econ-sub-tabs`.
 - Las subpestañas de Eventos sombrean el fondo de la selección con su propio tono.
-  Cumpleaños usa `--birthday-tone` (frambuesa) y comparación `--study-tone` (azul
-  petróleo); el morado de Fiscal se conserva.
+  En Rutinas, fondo y subrayado pertenecen al `span` del título y comparten ancho;
+  el botón conserva su área pulsable. Cumpleaños usa `--birthday-tone` (frambuesa)
+  y comparación `--study-tone` (cobre); el morado de Fiscal se conserva.
 - `energyUnitPrice` muestra dos cifras significativas, conservando ceros finales
-  (`0,20`). El resumen de tarifas incluye impuestos y lo dice junto al consumo;
-  el desglose muestra el origen sin impuestos. Nunca redondear los datos guardados
-  ni los cálculos; los importes finales mantienen dos decimales.
+  (`0,20`). Las tres métricas de tarifas muestran primero el precio sin impuestos
+  y, debajo, el importe con impuestos en menor tamaño. `energyTariffReference`
+  calcula ambos desde la tarifa original: el neto excluye IVA y otros impuestos,
+  conserva cargos del suministro y excluye servicios ajenos. Sin IVA conocido se
+  mantiene el neto; la cuota fija no inventa precios de consumo ni de potencia.
+  Nunca redondear datos guardados ni cálculos; los importes finales tienen dos decimales.
+- `energyDisplayWeights` redondea únicamente la presentación con reparto de restos
+  para que sume 100 %. En el editor se conservan los pesos precisos al guardar hasta
+  que se edita un peso; desde entonces se usa el reparto entero visible. Recargar
+  el reparto de facturas mantiene también sus valores precisos.
+- `energyPriceTotal` destaca suma de potencia y media ponderada en la consulta
+  fiscal, Gastos del hogar y el desglose de tarifas. El resumen compartido usa
+  fondos suaves distintos para hipoteca (verde), luz (amarillo) y gas (azul).
 - `tools/browser/energy-navigation.spec.js` comprueba la prioridad de los gestos
-  en ambos suministros y la posición estable de Próximos.
+  en ambos suministros, la posición estable de Próximos y la precisión del editor.
 
 | Modulo | Responsabilidad |
 |---|---|
