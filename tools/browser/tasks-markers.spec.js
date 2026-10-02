@@ -102,7 +102,7 @@ test('raquetas compuestas, VIP compacto y categorías de gestión con color fijo
   const row=await page.locator('.ev-annual-filter-row').evaluate(el=>({scroll:el.scrollWidth,width:el.clientWidth,ys:[...el.querySelectorAll('button')].map(b=>Math.round(b.getBoundingClientRect().y))}));
   expect(new Set(row.ys).size).toBe(1);expect(row.scroll).toBeLessThanOrEqual(row.width+1);
   await page.locator('#evViewUpcoming').click();await page.locator('#evAdd').click();
-  await expect(page.locator('.ev-category-group.gestiones .ev-category-children .ev-type-name')).toHaveText(['Llamada','Peluquería','Médico','Dentista']);
+  await expect(page.getByRole('region',{name:'Rec. Gestiones',exact:true}).locator('.ev-category-children .ev-type-name')).toHaveText(['Llamada','Peluquería','Médico','Dentista']);
   await page.locator('[data-type="Dentista"]').click();await expect(page.locator('#evFColorSection')).toBeHidden();await expect(page.locator('#evFTitle')).toHaveValue('Dentista');await page.locator('#evFSave').click();
   await page.locator('#evViewCal').click();await expect(page.locator('.ev-shape-tooth')).toBeVisible();
 });
