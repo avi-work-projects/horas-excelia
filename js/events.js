@@ -326,14 +326,14 @@ function evDefaultShape(ev){
   var t=getEvType(ev);
   if(t==='Ensayos boda')return 'x-boda';   /* aspa bicolor: pareja + franja horaria */
   if(t==='Rec. Gestiones')return 'diamond'; /* identificador histórico del hexágono */
-  if(EV_MANAGEMENT_SUBTYPES[t])return EV_MANAGEMENT_SUBTYPES[t];
+  if(evFixedSymbol(t))return evFixedSymbol(t);
   if(t==='Otros')return 'circle';
   return 'rounded';
 }
 function evMarkerHtml(ev,pastClass,sizeClass,defaultShape,ds){
   var color=getEvDisplayColor(ev);
   var type=getEvType(ev);
-  var shape=EV_MANAGEMENT_SUBTYPES[type]|| (type==='Ensayos boda'?'x-boda':(ev.shape||defaultShape||'circle'));
+  var shape=evFixedSymbol(type)|| (type==='Ensayos boda'?'x-boda':(ev.shape||defaultShape||'circle'));
   var pmk=pastClass||'';
   var sz=sizeClass?(' '+sizeClass):'';
   var dsAttr=ds?(' data-ds="'+ds+'"'):'';

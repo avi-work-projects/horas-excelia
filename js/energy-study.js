@@ -1,10 +1,23 @@
 /* Indicadores del estudio: datos documentados separados de estimaciones. */
 var ENERGY_COST_VAT='historical', ENERGY_COST_RATE=21, ENERGY_COMPARE_VAT=21;
 var ENERGY_COMPARE_TARIFF=0;
+function energyDocumentedYears(kind){
+  var years={};energyBills().filter(function(b){return b.kind===kind;}).forEach(function(b){
+    var ranges=[b].concat(b.readings||[]);
+    ranges.forEach(function(r){for(var y=+r.start.slice(0,4);y<=+r.end.slice(0,4);y++)years[y]=true;});
+    years[+b.issued.slice(0,4)]=true;
+  });return Object.keys(years).map(Number).sort(function(a,b){return a-b;});
+}
+/* Un documento sin vigencia no es una tarifa activa en todos los años. */
+function energyContractInYear(c,year){
+  var start=c.start||(c.analysisPeriods&&c.analysisPeriods[0]&&c.analysisPeriods[0].start);
+  return !!start&&(year==null||(start<=year+'-12-31'&&(!c.end||c.end>=year+'-01-01')));
+}
 function energyYearIndicators(kind,year){
-  var months=energyConsumptionMonths(energyBills(),year,kind),covered=0,kwh=0,active=0,periods=[0,0,0],periodDays=0;
+  var years=year==null?energyDocumentedYears(kind):[year],months=[],covered=0,kwh=0,active=0,periods=[0,0,0],periodDays=0;
+  years.forEach(function(y){months=months.concat(energyConsumptionMonths(energyBills(),y,kind));});
   months.forEach(function(m){if(m.overlap||m.unknownConsumption)return;var n=Object.keys(m.days).length;if(!n)return;covered+=n;kwh+=m.consumption;active++;periodDays+=m.periodDays;m.periods.forEach(function(v,i){periods[i]+=v;});});
-  var docs=energyBills().filter(function(b){return b.kind===kind&&+b.issued.slice(0,4)===year;});
+  var docs=energyBills().filter(function(b){return b.kind===kind&&(year==null||+b.issued.slice(0,4)===year);});
   function tax(key){var known=docs.filter(function(b){return b[key]!=null;});return {value:known.length?known.reduce(function(s,b){return s+b[key];},0):null,count:known.length,total:docs.length};}
   return {months:months,days:covered,kwh:kwh,active:active,periods:periods,periodDays:periodDays,vat:tax('vatAmount'),electricityTax:tax('electricityTaxAmount'),otherTax:tax('otherTaxesAmount'),services:docs.reduce(function(s,b){return s+energyBillServices(b);},0),billed:docs.length?docs.reduce(function(s,b){return s+b.gross;},0):null,bills:docs.length};
 }
@@ -19,12 +32,12 @@ function energyPeriodsHtml(s){
   names.forEach(function(n,i){h+='<div class="energy-period-'+i+'"><span>'+n+'</span><strong>'+energyNumber(s.periodDays?s.periods[i]:null,'kWh')+'</strong><small>'+(s.periodDays&&total?(s.periods[i]/total*100).toFixed(0)+' %':'Sin desglose')+'</small></div>';});
   h+='</div>';
   var note='<p>Solo lecturas con los tres tramos informados.</p>';
-  names.forEach(function(n,i){var daily=s.periodDays?s.periods[i]/s.periodDays:null;note+='<p>'+n+': '+energyNumber(daily,'kWh')+'/día · '+energyNumber(daily===null?null:daily*365.25/12,'kWh')+'/mes equivalente.</p>';});
+  names.forEach(function(n,i){var daily=s.periodDays?s.periods[i]/s.periodDays:null;note+='<p>'+n+': '+energyNumber(daily,'kWh',1)+'/día · '+energyNumber(daily===null?null:daily*365.25/12,'kWh')+'/mes equivalente.</p>';});
   return h+energyInfoHtml('Medias por tramo',note)+'</section>';
 }
-function energySuppliersHtml(kind){
-  var cs=energyContracts().filter(function(c){return c.kind===kind&&c.start;}).sort(function(a,b){return b.start.localeCompare(a.start);});
-  var h='<section class="energy-contract">'+energySectionTitle('Compañías','Histórico completo');
+function energySuppliersHtml(kind,year){
+  var cs=energyContracts().filter(function(c){return c.kind===kind&&energyContractInYear(c,year);}).sort(function(a,b){return b.start.localeCompare(a.start);});
+  var h='<section class="energy-contract">'+energySectionTitle('Compañías',year==null?'Histórico completo':String(year));
   cs.forEach(function(c){
     h+='<div class="energy-supplier-row"><i style="background:'+energySupplierColor(c.supplier)+'"></i><div><b>'+escHtml(c.supplier)+'</b><small>'+_rutFmt(c.start)+' – '+(c.end?_rutFmt(c.end):'actualidad')+'</small>'+(c.summaryNote?energyInfoHtml('Nota del contrato','<p>'+escHtml(c.summaryNote)+'</p>'):'')+'</div>';
     if(!c.end&&c.start<=evDk(new Date()))h+='<span class="energy-status-pill">Actual</span>';
@@ -45,17 +58,17 @@ function energyCommercialPeriods(c){
 function energyPriceExtremes(kind,year){
   var types=[{name:'Consumo',unit:'€/kWh',value:function(t){return t.modo==='fijo'?null:energyWeightedPrice(t);}}, {name:'Potencia P1',unit:'€/kW/día',value:function(t){return t.modo==='fijo'?null:t.precioPotP1;}},{name:'Potencia P2',unit:'€/kW/día',value:function(t){return t.modo==='fijo'||t.modoPotencia!=='doble'?null:t.precioPotP2;}}];
   var h='<section class="energy-contract">'+energySectionTitle('Precios mínimos y máximos','Sin impuestos');
-  types.forEach(function(type){if(kind!=='luz'&&type.name!=='Consumo')return;var rows=[];energyContracts().filter(function(c){return c.kind===kind;}).forEach(function(c){var ps=energyContractPeriods(c).slice().sort(function(a,b){return a.start.localeCompare(b.start);});ps.forEach(function(p,i){var end=ps[i+1]?energyDate(energyUtc(ps[i+1].start)-1):(c.end||'9999-12-31');if(p.start>year+'-12-31'||end<year+'-01-01')return;var n=type.value(p.tariff);if(n!==null)rows.push({value:n,supplier:c.supplier});});});rows.sort(function(a,b){return a.value-b.value;});h+='<h4>'+type.name+'</h4>';if(!rows.length){h+='<p class="energy-caption">Sin precios comparables</p>';return;}h+='<div class="energy-extremes">';[rows[0],rows[rows.length-1]].forEach(function(r,i){h+='<div><span>'+(i?'Máximo':'Mínimo')+'</span><strong>'+energyUnitPrice(r.value)+'</strong><small>'+type.unit+'</small><b>'+escHtml(r.supplier)+'</b></div>';});h+='</div>';});
-  return h+energyInfoHtml('Criterio de comparación','<p>Extremos de las tarifas vigentes en el año. En consumo por tramos se compara la media ponderada; una cuota fija no es comparable por kWh.</p>')+'</section>';
+  types.forEach(function(type){if(kind!=='luz'&&type.name!=='Consumo')return;var rows=[];energyContracts().filter(function(c){return c.kind===kind;}).forEach(function(c){var ps=energyContractPeriods(c).slice().sort(function(a,b){return a.start.localeCompare(b.start);});ps.forEach(function(p,i){var end=ps[i+1]?energyDate(energyUtc(ps[i+1].start)-1):(c.end||'9999-12-31');if(!p.start||(year!=null&&(p.start>year+'-12-31'||end<year+'-01-01')))return;var n=type.value(p.tariff);if(n!==null)rows.push({value:n,supplier:c.supplier});});});rows.sort(function(a,b){return a.value-b.value;});h+='<h4>'+type.name+'</h4>';if(!rows.length){h+='<p class="energy-caption">Sin precios comparables</p>';return;}h+='<div class="energy-extremes">';[rows[0],rows[rows.length-1]].forEach(function(r,i){h+='<div><span>'+(i?'Máximo':'Mínimo')+'</span><strong>'+energyUnitPrice(r.value)+'</strong><small>'+type.unit+'</small><b>'+escHtml(r.supplier)+'</b></div>';});h+='</div>';});
+  return h+energyInfoHtml('Criterio de comparación','<p>Extremos de las tarifas del período seleccionado. En consumo por tramos se compara la media ponderada; una cuota fija no es comparable por kWh.</p>')+'</section>';
 }
 function energySummaryHtml(kind,year){
-  var s=energyYearIndicators(kind,year),h='<section class="energy-overview"><span>Consumo registrado · '+year+'</span><strong>'+energyNumber(s.days?s.kwh:null,'kWh')+'</strong><small>'+s.days+' días con lectura · '+s.active+' meses con datos</small><div class="energy-overview-averages">';
-  h+=energyMetric('Media diaria',energyNumber(s.days?s.kwh/s.days:null,'kWh'),'');
+  var label=year==null?'Histórico completo':String(year),s=energyYearIndicators(kind,year),h='<section class="energy-overview"><span>Consumo registrado · '+label+'</span><strong>'+energyNumber(s.days?s.kwh:null,'kWh')+'</strong><small>'+s.days+' días con lectura · '+s.active+' meses con datos</small><div class="energy-overview-averages">';
+  h+=energyMetric('Media diaria',energyNumber(s.days?s.kwh/s.days:null,'kWh',1),'');
   h+=energyMetric('Media mensual',energyNumber(s.active?s.kwh/s.active:null,'kWh'),'');
-  h+='</div>'+energyInfoHtml('Cobertura y proyección','<p>Medias de los días y meses documentados, incluidos los parciales. No se completan los meses sin lecturas.</p><p>Proyección anual: <b>'+energyNumber(s.days?s.kwh/s.days*(new Date(year,1,29).getMonth()===1?366:365):null,'kWh')+'</b>. Es una extrapolación de la media diaria, no consumo medido.</p>')+'</section>';
+  h+='</div>'+energyInfoHtml('Cobertura y proyección','<p>Medias de los días y meses documentados, incluidos los parciales. No se completan los meses sin lecturas.</p><p>Proyección anual: <b>'+energyNumber(s.days?s.kwh/s.days*(year==null?365.25:new Date(year,1,29).getMonth()===1?366:365):null,'kWh')+'</b>. Es una extrapolación de la media diaria, no consumo medido.</p>')+'</section>';
   if(kind==='luz')h+=energyPeriodsHtml(s);
-  h+=energySuppliersHtml(kind);
-  h+='<section class="energy-contract">'+energySectionTitle('Impuestos y servicios',year+' · emisión')+'<div class="energy-tax-totals">';
+  h+=energySuppliersHtml(kind,year);
+  h+='<section class="energy-contract">'+energySectionTitle('Impuestos y servicios',label+' · emisión')+'<div class="energy-tax-totals">';
   var taxes=[['IVA facturado',s.vat],[kind==='luz'?'Otros impuestos':'Impuesto de hidrocarburos',s.otherTax]];if(kind==='luz')taxes.splice(1,0,['Impuesto eléctrico',s.electricityTax]);
   taxes.forEach(function(t){h+='<div><span>'+t[0]+'<small>'+t[1].count+'/'+t[1].total+' facturas con dato</small></span><b>'+energyNumber(t[1].value,'€')+'</b></div>';});
   h+='<div><span>Servicios adicionales<small>Fuera del coste del suministro</small></span><b>'+energyNumber(s.services,'€')+'</b></div></div>';

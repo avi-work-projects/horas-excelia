@@ -1,5 +1,14 @@
 # Gestify: guia de trabajo
 
+## Energía y planes (v385)
+- `energyNumber(valor, unidad, decimales?)`: kWh enteros por defecto; medias diarias con un decimal. Solo presentación, los cálculos y backups conservan precisión.
+- `ENERGY_SUMMARY_TOTAL` activa el histórico completo en Resumen de luz/gas. `energyYearIndicators(kind,null)` agrega las lecturas de todos los años documentados y cuenta cada factura e impuesto una sola vez. Navegar de año desactiva Total.
+- `energyContractInYear`: no presenta documentos sin vigencia como contratos activos todos los años. Los recibos de servicios siguen en archivo, impuestos/servicios y backup. Los desgloses de cargos también se limitan al año consultado.
+- `js/electricity-comparator.js` y `css/electricity-comparator.css`: comparador eléctrico separado del módulo general. Tarjetas con selección, fuente histórica/personalizada y edición integrada (único, tramos/pesos o cuota fija). Reutiliza los cálculos y campos de energía. Potencia editable, valores sin redondear y validación de pesos antes de guardar. Las alternativas y su selección viajan dentro de `despacho.electComparaciones`; nunca se editan contratos importados. `energyHistoricalTariffs` comparte el catálogo con Escenarios del estudio.
+- `EV_PLAN_SUBTYPES` y `evFixedSymbol`: seis planes con colores/símbolos fijos, conservados como categorías puntuales y dentro de Resto en calendarios. Las formas antiguas cloud/beer/mountain siguen renderizándose aunque ya no se ofrezcan en Otros.
+- El título automático del evento cambia con la categoría solo mientras no haya sido escrito por el usuario; editar un evento existente conserva su título.
+- Verificaciones: `test-energy-total.js` cubre acumulación multianual, fechas, precisión y copias independientes. `energy-plans.spec.js` cubre Total, edición/copia de tarifas, persistencia y formularios de planes.
+
 ## Antes de tocar codigo
 1. Buscar el simbolo en CODEMAP.md (indice generado), abrir solo el bloque necesario.
 2. Reutilizar los componentes existentes; renders puros, listeners separados.

@@ -40,9 +40,11 @@ var EV_COLOR_TYPES = {
    - puntual: se dibuja UN MARCADOR POR D\u00cdA (aunque abarque varios d\u00edas)
    - grande:  se dibuja como BARRA continua (formato actual de Viaje/Asturias) */
 var EV_MANAGEMENT_SUBTYPES={'Llamada':'phone','Peluquería':'comb','Médico':'medical','Dentista':'tooth'};
+var EV_PLAN_SUBTYPES={'Plan romántico':'heart','Comida':'meal','Cena':'dinner','Salir de fiesta':'party','Cerveza':'beer','Montaña':'mountain'};
 function evIsManagement(type){return type==='Rec. Gestiones'||Object.prototype.hasOwnProperty.call(EV_MANAGEMENT_SUBTYPES,type);}
+function evFixedSymbol(type){return EV_MANAGEMENT_SUBTYPES[type]||EV_PLAN_SUBTYPES[type]||null;}
 var EV_KINDS = {
-  puntual:{label:'Puntual', types:['Rec. Gestiones','Llamada','Peluquería','Médico','Dentista','Plan/Quedada','Ensayos boda','Otros']},
+  puntual:{label:'Puntual', types:['Rec. Gestiones','Llamada','Peluquería','Médico','Dentista','Plan/Quedada','Plan romántico','Comida','Cena','Salir de fiesta','Cerveza','Montaña','Ensayos boda','Otros']},
   grande: {label:'Grande',  types:['Viaje','Asturias','Casa Rural','Otros']}
 };
 /* Color por defecto de cada categor\u00eda (par kind|type) */
@@ -53,6 +55,12 @@ var EV_TYPE_COLORS = {
   'puntual|Peluquería'   :'#8b5e34',
   'puntual|Dentista'     :'#16859b',
   'puntual|Plan/Quedada'  :'#fb923c',
+  'puntual|Plan romántico':'#e03131',
+  'puntual|Comida'        :'#e99a31',
+  'puntual|Cena'          :'#6574c4',
+  'puntual|Salir de fiesta':'#c553a5',
+  'puntual|Cerveza'       :'#f5c232',
+  'puntual|Montaña'       :'#8b5e34',
   'puntual|Ensayos boda'  :'#c084fc',
   'puntual|Otros'         :'#a3e635',
   'grande|Viaje'          :'#38bdf8',
@@ -112,9 +120,17 @@ function evShapeSvg(shape){
   } else if(shape==='phone'){
     inner='<path d="M-7,-8 C-10,-6 -8,1 -3,5 C1,9 6,10 8,7 L8,4 L3,1 L1,3 C-1,2 -3,0 -4,-2 L-2,-4 L-5,-8 Z" fill="#868e96" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/>';
   } else if(shape==='comb'){
-    inner='<path d="M-8,-7 H8 V-3 H6 V7 H4 V-3 H2 V7 H0 V-3 H-2 V7 H-4 V-3 H-6 V7 H-8 Z" fill="#8b5e34" stroke="#000" stroke-width="1.5" stroke-linejoin="round"/>';
+    inner='<g transform="rotate(-40)"><path d="M-8,-3.5 H8 V3.5 H6 V0 H4 V3.5 H2 V0 H0 V3.5 H-2 V0 H-4 V3.5 H-6 V0 H-8 Z" fill="#8b5e34" stroke="#000" stroke-width="1.7" stroke-linejoin="round"/></g>';
   } else if(shape==='tooth'){
     inner='<path d="M0,-6 C-9,-12 -10,-3 -7,2 C-6,5 -6,9 -3,9 C-1,9 -2,2 0,2 C2,2 1,9 3,9 C6,9 6,5 7,2 C10,-3 9,-12 0,-6 Z" fill="#e8f7fa" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/><path d="M-4,-4 Q-2,-5 0,-3" fill="none" stroke="#16859b" stroke-width="1.3" stroke-linecap="round"/>';
+  } else if(shape==='heart'){
+    inner='<path d="M0,8 C-3,5 -9,1 -9,-3 C-9,-9 -2,-10 0,-5 C2,-10 9,-9 9,-3 C9,1 3,5 0,8 Z" fill="currentColor" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/>';
+  } else if(shape==='meal'){
+    inner='<circle r="6.2" fill="currentColor" stroke="#000" stroke-width="'+bw+'"/><circle r="3.4" fill="none" stroke="#fff" stroke-width="1.3"/><path d="M-9,-7 V-2 Q-7,-1 -7,-3 V-7 M-8,-1 V8 M9,-7 V8" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round"/>';
+  } else if(shape==='dinner'){
+    inner='<path d="M-9,6 A9,9 0 0 1 9,6 Z" fill="currentColor" stroke="#000" stroke-width="'+bw+'"/><path d="M-9,8 H9 M0,-3 V-5" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/><path d="M5,-9 A4,4 0 1 0 9,-5 A4,4 0 0 1 5,-9" fill="#ffe7a1" stroke="#000" stroke-width="1.2"/>';
+  } else if(shape==='party'){
+    inner='<path d="M-8,-7 H8 L1,2 V7 H5 V9 H-5 V7 H-1 V2 Z" fill="currentColor" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/><path d="M-5,-4 H5 M2,-4 L6,-9" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/>';
   } else if(shape==='beer'){
     inner='<path d="M4,-3 H8 V5 H4" fill="none" stroke="#000" stroke-width="3" stroke-linejoin="round"/><path d="M-7,-4 H5 V8 H-7 Z" fill="currentColor" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/><path d="M-7,-3 C-11,-5 -7,-9 -4,-7 C-3,-10 2,-10 3,-7 C7,-8 8,-3 4,-3 Z" fill="#fff" stroke="#000" stroke-width="'+bw+'"/><path d="M-3,0 V5 M1,0 V5" stroke="#000" stroke-width="1" opacity=".4"/>';
   } else if(shape==='mountain'){
@@ -190,7 +206,7 @@ function getEvDisplayColor(ev){
      cada dia, asi que el matiz por hash las pintaria de un color distinto
      cada sesion. */
   if(getEvType(ev)==='Rutina')return ev._rut?rutDisplayColor(ev._rut):ev.color;
-  if(getEvKind(ev)==='puntual'&&EV_MANAGEMENT_SUBTYPES[getEvType(ev)])return evTypeColor('puntual',getEvType(ev));
+  if(getEvKind(ev)==='puntual'&&evFixedSymbol(getEvType(ev)))return evTypeColor('puntual',getEvType(ev));
   /* Una clase de boda se tine con el color de SU pareja: el morado del tipo
      solo se usa mientras no hay pareja asignada. */
   if(getEvType(ev)==='Ensayos boda'&&ev.boda&&ev.boda.coupleId&&typeof bodaCouple==='function'){
