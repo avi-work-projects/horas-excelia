@@ -678,7 +678,7 @@
 **Rangos por prefijo de clase:**
 .boda-future:79-79 · .energy-contract:106-107 · .energy-field:109-110 · .energy-history:104-105 · .energy-price:108-113 · .energy-sheet:103-103 · .energy-tax:111-111 · .ev-cal:30-102 · .ev-field:78-78 · .ev-share:28-29 · .ev-week:65-80 · .ev-wk:3-3 · .header:2-2 · .home-reminder:59-61 · .home-submission:4-15 · .home-summary:16-24 · .month-summary:18-19
 
-### css/source/energy-refinements.css  _(210 líneas)_
+### css/source/energy-refinements.css  _(211 líneas)_
 
 **Secciones:**
 
@@ -694,7 +694,7 @@
 - Selección por fondo en las subpestañas de Eventos; cada una conserva su tono.:180
 
 **Rangos por prefijo de clase:**
-.boda-asg:106-111 · .boda-det:102-105 · .boda-last:15-19 · .data-actions:152-153 · .energy-bar:88-88 · .energy-caption:2-2 · .energy-choice:12-12 · .energy-compare:146-146 · .energy-contract:4-5 · .energy-cost:84-148 · .energy-coverage:75-75 · .energy-extremes:71-71 · .energy-fee:40-41 · .energy-field:7-7 · .energy-fields:9-9 · .energy-info:60-62 · .energy-inline:81-81 · .energy-legend:89-89 · .energy-metric:138-140 · .energy-metrics:137-137 · .energy-overview:64-66 · .energy-period:67-69 · .energy-price:193-198 · .energy-range:90-90 · .energy-reconciliation:74-74 · .energy-scenario:147-147 · .energy-section:59-59 · .energy-supplier:72-141 · .energy-table:3-3 · .energy-tabs:43-54 · .energy-tariff:77-194 · .energy-tax:70-144 · .energy-vat:142-142 · .energy-window:31-136 · .energy-year:6-96 · .ev-annual:100-132 · .ev-btn:159-159 · .ev-filter:99-124 · .ev-io:149-149 · .ev-main:177-178 · .ev-upcoming:185-187 · .ev-wk:16-25 · .home-popup:18-28 · .imp-mode:113-113 · .imp-preview:114-118 · .nav-bar:154-154 · .rut-bulk:204-209 · .rut-card:171-176 · .rut-day:160-166 · .rut-days:163-163 · .rut-dpick:158-158 · .rut-history:200-203 · .rut-hora:167-169 · .rut-month:208-208 · .rut-recovery:157-157 · .rut-routine:173-173 · .rut-session:156-156 · .rut-time:170-170 · .rut-weekdays:164-164 · .sy-body:184-184
+.boda-asg:106-111 · .boda-det:102-105 · .boda-last:15-19 · .data-actions:152-153 · .energy-bar:88-88 · .energy-caption:2-2 · .energy-choice:12-12 · .energy-compare:146-146 · .energy-contract:4-5 · .energy-cost:84-148 · .energy-coverage:75-75 · .energy-extremes:71-71 · .energy-fee:40-41 · .energy-field:7-7 · .energy-fields:9-9 · .energy-info:60-62 · .energy-inline:81-81 · .energy-legend:89-89 · .energy-metric:138-140 · .energy-metrics:137-137 · .energy-overview:64-66 · .energy-period:67-69 · .energy-price:194-199 · .energy-range:90-90 · .energy-reconciliation:74-74 · .energy-scenario:147-147 · .energy-section:59-59 · .energy-supplier:72-141 · .energy-table:3-3 · .energy-tabs:43-54 · .energy-tariff:77-195 · .energy-tax:70-144 · .energy-vat:142-142 · .energy-window:31-136 · .energy-year:6-96 · .ev-annual:100-132 · .ev-btn:159-159 · .ev-filter:99-124 · .ev-io:149-149 · .ev-main:177-178 · .ev-upcoming:186-188 · .ev-wk:16-25 · .home-popup:18-28 · .imp-mode:113-113 · .imp-preview:114-118 · .nav-bar:154-154 · .rut-bulk:205-210 · .rut-card:171-176 · .rut-day:160-166 · .rut-days:163-163 · .rut-dpick:158-158 · .rut-history:201-204 · .rut-hora:167-169 · .rut-month:209-209 · .rut-recovery:157-157 · .rut-routine:173-173 · .rut-session:156-156 · .rut-time:170-170 · .rut-weekdays:164-164 · .sy-body:184-184
 
 ### css/tasks.css  _(78 líneas)_
 

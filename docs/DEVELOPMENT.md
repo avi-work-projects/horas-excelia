@@ -102,6 +102,8 @@ con margen lateral y sin desbordar «Estadísticas» o «Cumpleaños» a 320 px.
 Próximos usa el mismo `.ev-upcoming-body` sin padding para las cuatro vistas
 y una rejilla de cuatro columnas iguales. El espaciado de las listas vive en
 `.ev-upcoming-content`; no compensar márgenes negativos según la subpestaña.
+La cabecera conserva 64 px mínimos también cuando «Añadir» reduce el botón
+de volver en móviles estrechos, para que la fila no salte al entrar en Cumpleaños.
 
 El menú de ajustes es único y se monta en `body`, anclado al botón pulsado.
 Abrirlo no cierra overlays ni reconstruye su contenido. Conserva el retorno

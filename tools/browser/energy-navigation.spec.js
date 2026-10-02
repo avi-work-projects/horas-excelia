@@ -59,7 +59,7 @@ test('Próximos mantiene la posición de los cuatro títulos al cambiar de pesta
         const text=range.getBoundingClientRect();return [r.x,r.y,r.width,r.height,text.x,text.width];
       })));
     }
-    for(const row of positions)row.forEach((r,i)=>r.forEach((v,j)=>expect(Math.abs(v-positions[0][i][j])).toBeLessThan(1)));
+    for(const [view,row] of positions.entries())row.forEach((r,i)=>r.forEach((v,j)=>expect(Math.abs(v-positions[0][i][j]),width+'px, vista '+view+', botón '+i+', medida '+j).toBeLessThan(1)));
     const row=positions[0],gaps=row.slice(1).map((r,i)=>r[0]-row[i][0]-row[i][2]);
     expect(Math.max(...gaps)-Math.min(...gaps)).toBeLessThan(1);
   }

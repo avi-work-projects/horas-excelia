@@ -12,8 +12,11 @@ test.beforeEach(async({page})=>{
 test('la campana conserva la ventana, su contenido y el scroll',async({page})=>{
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   const panel=page.locator('#alarmPanel');
+  await page.clock.install();
   await page.locator('#eventsBtn').click();
   await page.locator('#evSubAgenda').click();
+  // Dejar terminar el posicionamiento inicial de Agenda antes de fijar el scroll de prueba.
+  await page.clock.runFor(700);
   for(const key of ['events','econ','estudio','household']){
     if(key!=='events')await page.locator('.full-overlay.open [data-nav="'+key+'"]').click();
     const overlay=page.locator('.full-overlay.open');
@@ -38,7 +41,7 @@ test('la campana conserva la ventana, su contenido y el scroll',async({page})=>{
     await trigger.click();await expect(panel).toBeHidden();
     await trigger.click();await expect(page.locator('#alarmMsg')).toHaveValue('Alarma de prueba');
     await page.locator('#alarmMsg').press('Escape');await expect(panel).toBeHidden();
-    expect(await page.evaluate(()=>qaAlarmBody.isConnected&&qaAlarmBody.scrollTop===qaAlarmScroll&&NAV_BACK===qaAlarmBack)).toBe(true);
+    expect(await page.evaluate(()=>({connected:qaAlarmBody.isConnected,scroll:qaAlarmBody.scrollTop-qaAlarmScroll,back:NAV_BACK===qaAlarmBack})),key).toEqual({connected:true,scroll:0,back:true});
   }
   await page.locator('.full-overlay.open [data-nav="home"]').click();
   await expect(page.locator('.full-overlay.open')).toHaveCount(0);

@@ -354,7 +354,7 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 #eventsBtn,.nav-bar-btn[data-nav="events"]{--nav-tone:#65a367}
 #bdayBtn,.nav-bar-btn[data-nav="bday"]{--nav-tone:var(--birthday-tone)}
 #alarmTestBtn,.nav-bar-btn[data-nav="alarm"]{--nav-tone:#e5b600}
-.data-btn.overlay-active,.nav-bar-btn.active,#alarmWrap:has(#alarmPanel.open) #alarmTestBtn{
+.data-btn.overlay-active,.nav-bar-btn.active,#alarmTestBtn[aria-expanded="true"],.nav-bar-btn[data-nav="alarm"][aria-expanded="true"]{
  color:var(--nav-tone,var(--accent))!important;
  background:color-mix(in srgb,var(--nav-tone,var(--accent)) 15%,var(--surface))!important;
  box-shadow:0 0 0 1.5px color-mix(in srgb,var(--nav-tone,var(--accent)) 75%,transparent),0 0 8px color-mix(in srgb,var(--nav-tone,var(--accent)) 20%,transparent)!important;
