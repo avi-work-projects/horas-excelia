@@ -139,8 +139,12 @@ button.action-edit.active,button.action-edit:active{background:rgba(251,146,60,.
 .boda-cfg-card-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border)}
 .boda-cfg-card-controls label{display:flex;align-items:center;gap:7px;font-size:.72rem;color:var(--text-muted)}
 
-.boda-sticky-hd .econ-sub-tabs{display:flex;justify-content:space-between;gap:0}
-.boda-sticky-hd .econ-sub-tab,.boda-sticky-hd .boda-config-btn{flex:0 0 auto;width:auto;padding-left:0;padding-right:0}
+.boda-sticky-hd .econ-sub-tabs{grid-template-columns:repeat(4,minmax(0,1fr)) 28px;gap:6px;padding:10px 0}
+.boda-sticky-hd .econ-sub-tab,.boda-sticky-hd .boda-config-btn{width:100%;padding-left:2px;padding-right:2px}
+@media(max-width:360px){
+  .boda-sticky-hd .econ-sub-tabs{grid-template-columns:repeat(4,minmax(0,1fr)) 24px;gap:4px}
+  .boda-sticky-hd .econ-sub-tab:not(.boda-config-btn){font-size:.56rem;padding-left:0;padding-right:0}
+}
 
 .boda-cfg-section-head>.ev-io-btn{flex:0 0 auto}
 

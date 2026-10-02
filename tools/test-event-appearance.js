@@ -11,6 +11,9 @@ assert.equal(a._evBarPast({cs:0,ce:6},week,today).style,';--ev-bar-past:57.1429%
 assert.equal(a._evBarPast({cs:0,ce:3},week,today).cls,' past-bar');
 assert.equal(a._evBarPast({cs:4,ce:6},week,today).cls,'');
 assert.equal(a._evBarPast({cs:0,ce:6,halfL:true,halfR:true},week,today).style,';--ev-bar-past:58.3333%');
+assert.equal(a._evBarPast({cs:0,ce:3},week,today,false).cls,'');
+assert.equal(a._evBarPast({cs:0,ce:6},week,today,false).style,'');
+assert.equal(a._evBarPast({cs:0,ce:6},week,today,true).cls,' ev-part-past');
 a.EVENTS=[{id:'test-trip',kind:'grande',type:'Viaje',title:'Viaje en curso',start:'2026-08-19',end:'2026-08-24',color:'#38bdf8'}];
 a.EV_YEAR=2026;a.EV_MONTH=7;a.EV_QUAD_YEAR=2026;a.EV_QUAD_MONTH=7;
 for(const render of ['renderEvCalMonth','renderEvQuad','renderEvAnnual'])assert.match(a[render](),/ev-part-past[^>]+data-id="test-trip"/);

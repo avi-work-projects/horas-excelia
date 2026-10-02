@@ -75,6 +75,59 @@ test('viajes en curso: atenuar solo días pasados y respetar la bombilla',async(
   await page.locator('#evBright').click();expect(await segment.evaluate(e=>getComputedStyle(e).maskImage)).toContain('linear-gradient');
 });
 
+test('cambio de mes: no atenuar dos veces el tramo exterior de una barra',async({page})=>{
+  for(const overlap of [false,true]){
+    await page.evaluate(overlap=>{
+      EVENTS=[{id:'month-trip',kind:'grande',type:'Asturias',title:'Asturias',start:'2026-09-30',end:'2026-10-04',color:'#1946a0'}];
+      if(overlap)EVENTS.push({id:'fair',kind:'grande',type:'Otros',title:'Feria de prueba',start:'2026-10-03',end:'2026-10-04',barSize:'sm',color:'#c084fc'});
+      EV_YEAR=2026;EV_MONTH=8;EV_VIEW='cal';EV_BRIGHT_PAST=false;openEventsAt();
+    },overlap);
+    const bars=page.locator('.ev-multi-bar[data-id="month-trip"]');
+    await expect(bars).toHaveCount(2);
+    await expect(bars.first()).toHaveClass(/past-bar/);
+    await expect(bars.last()).not.toHaveClass(/past-bar|ev-part-past/);
+    await expect(bars.last()).toHaveCSS('opacity','1');
+    await expect(bars.last()).toHaveCSS('mask-image','none');
+    const appearance=await bars.last().getAttribute('style');
+    await page.locator('#evBright').click();
+    await expect(bars.first()).toHaveCSS('opacity','1');
+    await expect(bars.last()).toHaveAttribute('style',appearance);
+    await page.locator('#evNext').click();await page.locator('#evBright').click();
+    const ongoing=page.locator('.ev-part-past[data-id="month-trip"]');
+    await expect(ongoing).toHaveCount(1);
+    await expect(ongoing).toHaveCSS('--ev-bar-past','25.0000%');
+  }
+});
+
+test('Rutinas, WM y Próximos seleccionan la casilla completa sin mover los títulos',async({page})=>{
+  await page.locator('#eventsBtn').click();
+  for(const width of [320,400]){
+    await page.setViewportSize({width,height:880});
+    for(const view of [
+      {id:'evViewRutinas',tabs:'.rut-sub-tabs',buttons:['[data-rsub="lista"]','[data-rsub="stats"]']},
+      {id:'evViewBodas',tabs:'.boda-sticky-hd .econ-sub-tabs',buttons:['[data-bsub="clases"]','[data-bsub="parejas"]','[data-bsub="calendario"]','[data-bsub="stats"]']},
+      {id:'evViewUpcoming',tabs:'.ev-upcoming-tabs',buttons:['#evSubUpcoming','#evSubBirthdays','#evSubAgenda','#evSubTodos']}
+    ]){
+      await page.locator('#'+view.id).click();
+      let initial;
+      for(const selector of view.buttons){
+        await page.locator(selector).click();
+        const geometry=await page.locator(view.tabs+' .econ-sub-tab').evaluateAll(els=>els.map(el=>{
+          const r=el.getBoundingClientRect(),s=getComputedStyle(el);
+          return {x:r.x,width:r.width,y:r.y,height:r.height,active:el.classList.contains('active'),background:s.backgroundColor,border:s.borderBottomColor,borderWidth:s.borderBottomWidth,overflow:el.scrollWidth>el.clientWidth+1};
+        }));
+        initial=initial||geometry;
+        geometry.forEach((r,i)=>{expect(Math.abs(r.x-initial[i].x)).toBeLessThan(1);expect(Math.abs(r.width-initial[i].width)).toBeLessThan(1);expect(r.overflow).toBe(false);});
+        const active=geometry.find(r=>r.active);
+        expect(active.background).not.toBe('rgba(0, 0, 0, 0)');
+        expect(active.border).not.toBe('rgba(0, 0, 0, 0)');expect(active.borderWidth).toBe('2px');
+        const widths=geometry.slice(0,view.buttons.length).map(r=>r.width);
+        expect(Math.max(...widths)-Math.min(...widths)).toBeLessThan(1);
+      }
+    }
+  }
+});
+
 test('reabrir un formulario no hereda el cierre pendiente del anterior',async({page})=>{
   await page.clock.install();
   await page.evaluate(()=>{

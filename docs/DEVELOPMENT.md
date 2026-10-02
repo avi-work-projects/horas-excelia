@@ -94,6 +94,12 @@ Energía y de Próximos tiene reglas propias. Los campos con caja y tarjetas
 consecutivas necesitan al menos 10–12 px reales de separación, mediante `gap`
 en su contenedor. Comprobar contenido largo y móvil, además de escritorio.
 
+En Eventos, el fondo seleccionado y el subrayado ocupan el botón completo,
+no un `span` ajustado al texto. Rutinas y Próximos reparten el ancho disponible
+en partes iguales; WM hace lo mismo para sus cuatro títulos y reserva una
+columna compacta al engranaje. Mantener el ancho al cambiar de selección,
+con margen lateral y sin desbordar «Estadísticas» o «Cumpleaños» a 320 px.
+
 El menú de ajustes es único y se monta en `body`, anclado al botón pulsado.
 Abrirlo no cierra overlays ni reconstruye su contenido. Conserva el retorno
 anterior; Escape y el clic exterior lo cierran sin activar el control de debajo.
@@ -110,6 +116,10 @@ y elección de iconos, para restaurar ese retorno y el estado del botón.
 - `_evBarPast` calcula el porcentaje pasado del fragmento visible, incluyendo
   relevos de medio día. Una máscara atenúa esa parte sin cortar la barra ni
   duplicar el título. La bombilla retira la atenuación en los tres calendarios.
+- En 1 mes, los tramos exteriores ya se atenúan con `_evBarMutedColor`.
+  Desde v392, `_evBarPast(..., inMonth)` omite la segunda atenuación allí,
+  tanto en barras sencillas como escalonadas. Dentro del mes se sigue apagando
+  solo la parte pasada de un viaje en curso. La bombilla no activa el mes vecino.
 - La luna mantiene `planet` como identificador compatible con eventos previos.
 
 ### Calendarios y Economía personal (v391)
@@ -186,7 +196,9 @@ documento completo. `_evFormRead` valida los campos antes de cambiar `EVENTS`.
 límites diarios y guarda el resto. No añadir persistencia a listeners de selección.
 
 Al cambiar categoría se conserva un título escrito por el usuario, se actualiza
-solo el sugerido y se limpia repetición si la categoría no la admite. Un trayecto
+solo el sugerido y se limpia repetición si la categoría no la admite. Asturias
+sugiere el título, pero deja la nota vacía y conserva cualquier nota escrita.
+Un trayecto
 puede tener transporte/conductor sin hora. Editar una nota de día conserva las
 demás notas. Deshacer una creación múltiple restaura también los días cerrados.
 `tools/browser/event-form.spec.js` cubre esos recorridos y una recarga sin conexión.

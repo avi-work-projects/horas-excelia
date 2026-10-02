@@ -605,7 +605,10 @@ function _evBarMutedColor(color,inside){
 }
 /* La máscara sigue las casillas, sin partir la geometría, repetir el título
    ni crear bordes dentro de un viaje que aún está en curso. */
-function _evBarPast(it,week,today){
+function _evBarPast(it,week,today,inMonth){
+  /* Los días del mes vecino ya están apagados por _evBarMutedColor,
+     igual que sus marcadores: no aplicar una segunda atenuación. */
+  if(inMonth===false)return {cls:'',style:''};
   if(week[it.ce]<today)return {cls:' past-bar',style:''};
   if(week[it.cs]>=today)return {cls:'',style:''};
   var elapsed=0;
@@ -649,7 +652,7 @@ function _evSteppedBar(it,segments,annual,showTitle,week,today){
       var left=100*(tr.cs-first.cs)/days,right=100*(last.ce-tr.ce)/days;
       return '<g style="clip-path:inset(0 '+right+'% 0 '+left+'%)">'+halo+'</g>';
     }).join('');
-    var past=_evBarPast({cs:first.cs,ce:last.ce,halfL:it.halfL&&first.cs===it.cs,halfR:it.halfR&&last.ce===it.ce},week,today);
+    var past=_evBarPast({cs:first.cs,ce:last.ce,halfL:it.halfL&&first.cs===it.cs,halfR:it.halfR&&last.ce===it.ce},week,today,first.dentro);
     return '<div class="'+(annual?'ev-annual-mbar':'ev-multi-bar')+' ev-stepped-bar '+evBarSizeCls(it.ev)+past.cls+'" data-id="'+it.ev.id+'"'
       +' style="grid-column:'+(first.cs+1)+'/'+(last.ce+2)+';grid-row:1;z-index:'+evBarZ(it.ev)+med+past.style+'">'
       +'<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">'+halo+'<path d="'+path+'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+(annual?1:1.5)+'" vector-effect="non-scaling-stroke"/></svg>'
