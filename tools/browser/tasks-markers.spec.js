@@ -49,7 +49,10 @@ test('el historial agrupa por día y permite conservar la fecha al volver a comp
       {id:'pending',title:'Comprar material',createdAt:now,updatedAt:now,completedAt:null,deletedAt:null}
     ],weeklyReminder:false,reminderWeek:''}));
   });
-  await page.goto('/');await page.locator('#tasksFab').click();
+  await page.goto('/');
+  await expect(page.locator('#homeTasksOpen')).toContainText('Comprar material');
+  await page.locator('#homePopupDismiss').click();
+  await page.locator('#tasksFab').click();
   await page.getByRole('tab',{name:'Completadas 2',exact:true}).click();
   await expect(page.locator('.tasks-day time')).toHaveText(['1 de octubre de 2026','30 de septiembre de 2026']);
   await expect(page.locator('.task-title')).toHaveText(['Antigua papelera','Terminada ayer']);
