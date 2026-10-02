@@ -182,6 +182,7 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 /* Mismo contenedor en las cuatro vistas: sin compensaciones con márgenes
    negativos ni anchuras dependientes de la pestaña o de su contenido. */
 .sy-body.ev-upcoming-body{padding:0;gap:0;overflow-x:hidden;scrollbar-gutter:stable}
+#eventsContent>.sy-header:has(+.ev-upcoming-body){min-height:64px}
 .ev-upcoming-content{display:flex;flex-direction:column;gap:16px;padding:16px 16px 40px;min-width:0;flex-shrink:0}
 .ev-upcoming-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;width:100%;margin:0;padding:10px 20px;box-sizing:border-box;flex-shrink:0}
 .ev-upcoming-tabs .econ-sub-tab{flex:1;min-width:0;padding:5px 2px;font-size:.62rem;font-weight:600;line-height:1.2;color:var(--accent-bright);white-space:nowrap;transition:color .15s,background .15s,border-color .15s}
