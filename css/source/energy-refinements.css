@@ -95,10 +95,7 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 
 .energy-year-chart{touch-action:pan-y;user-select:none}
 
-/* Filtros y filas de parejas: controles compactos, columnas alineadas. */
-.ev-filter-cycle{height:22px;width:22px;flex:0 0 22px;padding:0;border:1px solid currentColor;border-radius:4px;background:var(--surface);color:var(--text-muted);font-size:.85rem;cursor:pointer}
-.ev-annual-filter-row{gap:3px}
-.ev-annual-filter-row .ev-filter-chip{padding-left:5px;padding-right:5px}
+/* Filas de parejas: controles compactos, columnas alineadas. */
 .boda-det-row{display:grid;grid-template-columns:20px minmax(0,1fr) 43px minmax(70px,1fr) 34px;gap:6px}
 .boda-det-row .boda-ro-time{text-align:right;margin:0}
 .boda-det-row .boda-ro-place{justify-self:start;max-width:100%;box-sizing:border-box;white-space:normal;line-height:1.2;margin:0}
@@ -118,19 +115,6 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .imp-preview-note{font-size:.75rem;color:var(--text-muted);line-height:1.4}
 
 #evIcsRoutineMonthWrap{flex:0 0 auto;font-size:.78rem;gap:5px}
-
-.ev-filter-cycle-wrap{margin-left:auto;display:flex;align-items:center;border-left:1px solid var(--border);padding-left:7px}
-.ev-filter-cycle{border-radius:3px;color:var(--text-muted);line-height:18px}
-.ev-filter-cycle span{color:var(--cycle-color);font-weight:800;font-size:19px}
-@media(max-width:420px){
-  .ev-annual-controls{padding-left:0;padding-right:0}
-  .ev-annual-filter-row{gap:2px}
-  .ev-annual-filter-row .ev-filter-chip{padding-left:3px;padding-right:3px;font-size:.6rem}
-  .ev-annual-filter-row .ev-filter-chip:has(.ev-chip-flag){width:28px;padding:0}
-  .ev-annual-filter-row .wm-logo-chip{width:24px}
-  .ev-annual-filter-row .ev-filter-sep{margin-left:2px;margin-right:2px}
-  .ev-annual-filter-row .ev-filter-cycle-wrap{padding-left:4px}
-}
 
 .energy-window>.energy-tabs{flex-shrink:0;position:static;margin:0;padding:0 max(20px,calc((100% - 720px)/2));box-shadow:0 1px 0 var(--border)}
 .energy-window>.energy-year-nav{display:flex;justify-content:center;gap:22px;align-items:center}

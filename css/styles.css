@@ -1470,14 +1470,29 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-ann-vd-opt:active,.ev-ann-vd-opt:hover{background:var(--surface2)}
 .ev-ann-vd-opt.active{color:var(--accent-bright);font-weight:600;background:var(--accent-glow)}
 /* Linea que separa los chips de eventos grandes de los puntuales */
-.ev-filter-sep{width:1px;align-self:stretch;margin:2px 3px;background:var(--border-light);flex:0 0 auto}
-.ev-annual-filter-row{display:flex;gap:3px;flex-wrap:nowrap;padding-bottom:2px}
+.ev-filter-sep{width:1px;align-self:stretch;margin:2px 1px;background:var(--border-light);flex:0 0 auto}
+.ev-annual-filter-row{display:flex;gap:clamp(3px,1vw,6px);flex-wrap:nowrap;padding-bottom:2px}
 .ev-filter-chip{height:22px;padding:0 7px;border:1px solid var(--border);border-radius:11px;background:transparent;color:var(--text-dim);font-size:.65rem;cursor:pointer;transition:opacity .15s;opacity:.4;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
-/* El chip de Asturias es la bandera, sin texto: ahorra el ancho que hacia
-   caer la fila de chips a dos niveles */
-.ev-chip-flag{width:24px;height:15px;display:block;border-radius:2.5px}
-.ev-filter-chip:has(.ev-chip-flag){padding:0 5px}
+/* El espacio libre se reparte entre etiquetas; los iconos y la X conservan
+   su proporción. Compartido por anual y cuatro meses, siempre en una fila. */
+.ev-annual-filter-row>.ev-filter-chip{flex:1 0 auto;padding:0 5px;font-size:.68rem;white-space:nowrap}
+.ev-chip-flag{width:100%;height:100%;display:block;border-radius:0;object-fit:cover}
+.ev-annual-filter-row>.ev-filter-chip:has(.ev-chip-flag){flex:0 0 34px;min-width:0;padding:0;overflow:hidden}
+.ev-annual-filter-row>.ev-filter-chip:has(.ev-chip-vip){flex:0 0 30px;min-width:0;padding:0;overflow:hidden}
 .ev-filter-chip.chip-active{opacity:1}
+.ev-filter-cycle-wrap{display:flex;align-items:center;flex:0 0 auto;border-left:1px solid var(--border);padding-left:5px}
+.ev-filter-cycle{height:22px;width:22px;flex:0 0 22px;padding:0;border:1px solid currentColor;border-radius:3px;background:var(--surface);color:var(--text-muted);font-size:.85rem;line-height:18px;cursor:pointer}
+.ev-filter-cycle span{color:var(--cycle-color);font-weight:800;font-size:19px}
+@media(max-width:420px){
+  .ev-annual-controls{padding-left:0;padding-right:0}
+}
+@media(max-width:360px){
+  .ev-annual-filter-row>.ev-filter-chip{padding:0 3px;font-size:.6rem}
+  .ev-annual-filter-row>.ev-filter-chip:has(.ev-chip-flag){flex-basis:28px;padding:0}
+  .ev-annual-filter-row>.ev-filter-chip:has(.ev-chip-vip){flex-basis:26px;padding:0}
+  .ev-annual-filter-row .wm-logo-chip{width:24px}
+  .ev-filter-cycle-wrap{padding-left:4px}
+}
 
 /* Fuente: css/source/navigation-alarms.css */
 /* Shared overlay nav bar — nivel 1, siempre visible en lo alto del overlay */
@@ -1677,11 +1692,13 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 /* Los cumpleaños VIP se solapan al 75% (12px de marcador -> -9px) */
 .ev-day-vips{display:flex;align-items:center;cursor:pointer}
 .ev-day-vips .ev-annual-vip-star-svg + .ev-annual-vip-star-svg{margin-left:-9px}
-.ev-day-vips .ev-month-vip{width:19px;height:14px;flex-shrink:0;border:1.6px solid #000;border-radius:50%;overflow:hidden;background:#fff;box-sizing:border-box}
+.ev-day-vips .ev-month-vip{position:relative;width:19px;height:14px;flex-shrink:0;padding:1px;border-radius:50%;overflow:hidden;background:#fff;box-sizing:border-box}
+/* Mismo trazo efectivo que un puntual: 2 unidades SVG × 12/20 × escala.
+   La sombra interior admite fracciones de píxel sin redondearlas a 1 px. */
+.ev-month-vip::after{content:'';position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 calc(1.2px * var(--ev-symbol-border-scale,.65)) #000;pointer-events:none}
 .ev-month-vip img{display:block;width:100%;height:100%;object-fit:contain;transform:scale(1.55)}
 .ev-day-vips .ev-month-vip+.ev-month-vip{margin-left:-10px}
 .ev-chip-vip{width:22px;height:20px;object-fit:contain;display:block;transform:scale(1.15)}
-.ev-annual-filter-row .ev-filter-chip:has(.ev-chip-vip){width:26px;padding:0;overflow:hidden}
 .ev-day-ruts{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
 .rut-marker-group{display:flex;isolation:isolate;line-height:0}
 .rut-marker-layer{position:relative;display:inline-flex}
@@ -2417,8 +2434,6 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 
 .macro-url-input[readonly]{cursor:default;border-color:transparent;background:transparent;color:var(--text-muted)}
 .settings-edit-btn{color:var(--c-orange)}
-.ev-filter-chip:has(.ev-chip-flag){padding:0;width:34px;overflow:hidden;}
-.ev-chip-flag{width:100%;height:100%;border-radius:0;object-fit:cover}
 .ev-multi-bar.ev-bar-lg.ev-bar-alone,.ev-annual-mbar.ev-bar-lg.ev-bar-alone{box-shadow:none}
 
 /* Editar: tono comun, con geometria propia de cada pantalla. */
@@ -3005,10 +3020,7 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 
 .energy-year-chart{touch-action:pan-y;user-select:none}
 
-/* Filtros y filas de parejas: controles compactos, columnas alineadas. */
-.ev-filter-cycle{height:22px;width:22px;flex:0 0 22px;padding:0;border:1px solid currentColor;border-radius:4px;background:var(--surface);color:var(--text-muted);font-size:.85rem;cursor:pointer}
-.ev-annual-filter-row{gap:3px}
-.ev-annual-filter-row .ev-filter-chip{padding-left:5px;padding-right:5px}
+/* Filas de parejas: controles compactos, columnas alineadas. */
 .boda-det-row{display:grid;grid-template-columns:20px minmax(0,1fr) 43px minmax(70px,1fr) 34px;gap:6px}
 .boda-det-row .boda-ro-time{text-align:right;margin:0}
 .boda-det-row .boda-ro-place{justify-self:start;max-width:100%;box-sizing:border-box;white-space:normal;line-height:1.2;margin:0}
@@ -3028,19 +3040,6 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .imp-preview-note{font-size:.75rem;color:var(--text-muted);line-height:1.4}
 
 #evIcsRoutineMonthWrap{flex:0 0 auto;font-size:.78rem;gap:5px}
-
-.ev-filter-cycle-wrap{margin-left:auto;display:flex;align-items:center;border-left:1px solid var(--border);padding-left:7px}
-.ev-filter-cycle{border-radius:3px;color:var(--text-muted);line-height:18px}
-.ev-filter-cycle span{color:var(--cycle-color);font-weight:800;font-size:19px}
-@media(max-width:420px){
-  .ev-annual-controls{padding-left:0;padding-right:0}
-  .ev-annual-filter-row{gap:2px}
-  .ev-annual-filter-row .ev-filter-chip{padding-left:3px;padding-right:3px;font-size:.6rem}
-  .ev-annual-filter-row .ev-filter-chip:has(.ev-chip-flag){width:28px;padding:0}
-  .ev-annual-filter-row .wm-logo-chip{width:24px}
-  .ev-annual-filter-row .ev-filter-sep{margin-left:2px;margin-right:2px}
-  .ev-annual-filter-row .ev-filter-cycle-wrap{padding-left:4px}
-}
 
 .energy-window>.energy-tabs{flex-shrink:0;position:static;margin:0;padding:0 max(20px,calc((100% - 720px)/2));box-shadow:0 1px 0 var(--border)}
 .energy-window>.energy-year-nav{display:flex;justify-content:center;gap:22px;align-items:center}

@@ -79,11 +79,13 @@
 /* Los cumpleaños VIP se solapan al 75% (12px de marcador -> -9px) */
 .ev-day-vips{display:flex;align-items:center;cursor:pointer}
 .ev-day-vips .ev-annual-vip-star-svg + .ev-annual-vip-star-svg{margin-left:-9px}
-.ev-day-vips .ev-month-vip{width:19px;height:14px;flex-shrink:0;border:1.6px solid #000;border-radius:50%;overflow:hidden;background:#fff;box-sizing:border-box}
+.ev-day-vips .ev-month-vip{position:relative;width:19px;height:14px;flex-shrink:0;padding:1px;border-radius:50%;overflow:hidden;background:#fff;box-sizing:border-box}
+/* Mismo trazo efectivo que un puntual: 2 unidades SVG × 12/20 × escala.
+   La sombra interior admite fracciones de píxel sin redondearlas a 1 px. */
+.ev-month-vip::after{content:'';position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 calc(1.2px * var(--ev-symbol-border-scale,.65)) #000;pointer-events:none}
 .ev-month-vip img{display:block;width:100%;height:100%;object-fit:contain;transform:scale(1.55)}
 .ev-day-vips .ev-month-vip+.ev-month-vip{margin-left:-10px}
 .ev-chip-vip{width:22px;height:20px;object-fit:contain;display:block;transform:scale(1.15)}
-.ev-annual-filter-row .ev-filter-chip:has(.ev-chip-vip){width:26px;padding:0;overflow:hidden}
 .ev-day-ruts{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
 .rut-marker-group{display:flex;isolation:isolate;line-height:0}
 .rut-marker-layer{position:relative;display:inline-flex}
