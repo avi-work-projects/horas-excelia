@@ -25,7 +25,7 @@ test('fiscal consulta, hogar edita y vuelve al mismo detalle conservando la prec
  await page.locator('#desp-electComerc').fill('Compañía editada');await page.locator('#electSaveBtn').click();
  await page.locator('#householdBack').click();await expect(page.locator('#fiscalOverlay')).toHaveClass(/open/);
  await expect(page.locator('#fiscalOverlay')).toContainText('Compañía editada');
- await page.locator('#fiscalTabPersonal').click();await expect(page.locator('#fiscalSave')).toBeVisible();
+ await page.locator('#fiscalTabPersonal').click();await expect(page.locator('#fiscalSave')).toBeHidden();
  await page.locator('#fiscalOverlay [data-nav="household"]').click();await page.locator('[data-hipsub="gas"]').click();
  await page.reload();await page.locator('#householdBtn').click();await expect(page.locator('[data-hipsub="gas"]')).toHaveClass(/active/);
  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('excelia-despacho-v1')).elect.precioKwh)).toBe(.1249);

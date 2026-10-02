@@ -380,6 +380,7 @@ const REGLAS = [
       'excelia-desgrav-v1':        'desgrav',
       'excelia-despacho-v1':       'despacho',
       'excelia-personal-v1':       'personalData + personalPerYear',
+      'excelia-personal-cards-v1': false, // plegado local por año y partida, sin información económica
       'excelia-econ-comp-v1':      'scenarios',
       'excelia-mail-config-v1': 'mailConfig',
       'excelia-alarm-url':         'macroUrl',

@@ -58,7 +58,7 @@ function renderEvUpcoming(){
       :escHtml(ev.title);
     var _bellSet=isEvAlarmSet(ev.id);
     var metaDate=fd2(item.firstDate);
-    if(ev.end&&ev.end!==ev.start){var _eD=new Date(ev.end+'T00:00:00');metaDate+=' <span style="font-size:.62rem;opacity:.7">&#8212; '+fd2(_eD)+'</span>';}
+    if(isEvBarAlways(ev)&&ev.end&&ev.end!==ev.start){var _eD=new Date(ev.end+'T00:00:00');metaDate+=' <span style="font-size:.62rem;opacity:.7">&#8212; '+fd2(_eD)+'</span>';}
     var s='<div class="ev-upcoming-item'+(ev._rutSkip?' rut-cancelled':'')+(isToday?' ev-upcoming-today':'')+'" data-id="'+ev.id+'" data-first="'+evIsoDate(item.firstDate)+'">';
     s+='<div class="ev-up-mark">'+evUpcomingMarkHtml(ev)+'</div>';
     s+='<div class="ev-upcoming-info">';
@@ -125,10 +125,9 @@ function renderEvUpcoming(){
     });
     return out;
   }
-  /* ── Semanas hacia adelante ──
-     Dedupe: cada evento se asigna solo a la PRIMERA semana donde aparece,
-     usando ev.start como fecha mostrada (no el primer día activo en esa
-     semana, que daría duraciones distintas entre secciones). */
+  /* Los grandes aparecen una vez como intervalo. Los puntuales, una tarjeta
+     por fecha activa; en repetidos conservamos solo la próxima ocurrencia. */
+  function occurrenceKey(ev,ds){return !isEvBarAlways(ev)&&!ev.repeat?ev.id+'|'+ds:ev.id;}
   var weeks=[{},{},{}];
   var _seenEv={};
   for(var w=0;w<3;w++){
@@ -139,13 +138,12 @@ function renderEvUpcoming(){
       evs.forEach(function(ev){
         if(_isVipBdayTooFar(ev,day,today))return;
         if(!EV_UP_SHOW_BODA&&getEvType(ev)==='Ensayos boda')return;
-        if(_seenEv[ev.id])return;
-        /* Recurrentes: ignorar ocurrencias ya pasadas de esta semana,
-           el evento se asigna a su PRÓXIMA ocurrencia (day >= hoy). */
-        if(ev.repeat&&day<today)return;
-        _seenEv[ev.id]=true;
-        var _startD=ev.repeat?new Date(day):new Date(ev.start+'T00:00:00');
-        weeks[w][ev.id]={ev:ev,firstDate:_startD};
+        var key=occurrenceKey(ev,ds);
+        if(_seenEv[key])return;
+        if((ev.repeat||!isEvBarAlways(ev))&&day<today)return;
+        _seenEv[key]=true;
+        var _startD=isEvBarAlways(ev)&&!ev.repeat?new Date(ev.start+'T00:00:00'):new Date(day);
+        weeks[w][key]={ev:ev,firstDate:_startD};
       });
     }
   }
@@ -170,7 +168,8 @@ function renderEvUpcoming(){
         fevs.forEach(function(ev){
           if(ev.id.indexOf('ev-bday-vip-')===0)return;
           if(!EV_UP_SHOW_BODA&&getEvType(ev)==='Ensayos boda')return;
-          if(!fwMap[ev.id])fwMap[ev.id]={ev:ev,firstDate:new Date(fday)};
+          var key=occurrenceKey(ev,fds);
+          if(!fwMap[key])fwMap[key]={ev:ev,firstDate:new Date(fday)};
         });
       }
       if(Object.keys(fwMap).length>0){
@@ -199,9 +198,7 @@ function renderEvUpcoming(){
       return (wkMap[a].firstDate-wkMap[b].firstDate)
         ||evCompareTime(wkMap[a].ev,wkMap[b].ev);
     });
-    /* Se descartan los puntuales ya pasados (los de varios días que cruzan hoy
-       salen como "En curso"; los recurrentes nunca entran aquí: su firstDate
-       es la próxima ocurrencia) */
+    /* Solo los grandes pueden empezar en el pasado y seguir en curso. */
     var vivos=ids.filter(function(id){
       var item=wkMap[id];var ev=item.ev;
       var diffToday=Math.round((item.firstDate-today)/86400000);
@@ -491,6 +488,7 @@ function renderEvContent(){
   var _hdrCenterCls=' sy-header-center';
   h+='<div class="sy-header with-tabs'+_hdrCenterCls+'">';
   h+='<button class="sy-back" id="evBack">&#8592;</button>';
+  if(EV_VIEW==='birthdays')h+=renderBdayAddButton('evBdayAdd');
   if(EV_VIEW==='upcoming'||EV_VIEW==='birthdays'){
     h+='<div class="sy-year-nav"><div class="sy-year">Eventos</div></div>';
     if(EV_VIEW==='birthdays')h+=renderBdayVipFilter();
@@ -595,7 +593,7 @@ function renderEvContent(){
   }
   if(EV_VIEW==='cal')h+=renderEvCalMonth();
   else if(EV_VIEW==='upcoming')h+=renderEvUpcoming();
-  else if(EV_VIEW==='birthdays')h+=renderBdayUpcoming()+'<div class="bday-io-row"><button class="bday-io-btn io-primaria" id="evBdayAdd">+ A&ntilde;adir cumplea&ntilde;os</button></div>';
+  else if(EV_VIEW==='birthdays')h+=renderBdayUpcoming();
   else if(EV_VIEW==='week')h+=renderEvWeek();
   else if(EV_VIEW==='annual')h+=renderEvAnnual();
   else if(EV_VIEW==='quad')h+=renderEvQuad();
@@ -604,11 +602,9 @@ function renderEvContent(){
   else if(EV_VIEW==='puentes')h+=renderSummaryPuentesBody(EV_YEAR);
   else if(EV_VIEW==='time-off')h+=renderSummaryTimeOffBody(EV_YEAR);
   else h+=renderEvMonthsView();
-  if(EV_VIEW!=='birthdays'&&EV_VIEW!=='puentes'&&EV_VIEW!=='time-off'&&EV_VIEW!=='bodas'&&EV_VIEW!=='rutinas'){
+  if(['upcoming','months','week'].indexOf(EV_VIEW)>=0){
     h+='<div class="ev-io-row">';
-    var _isPickView=EV_VIEW==='annual'||EV_VIEW==='quad';
-    var addLabel=_isPickView&&EV_EDIT_MODE?'&#10006; Cancelar':'+ A\u00f1adir';
-    h+='<button class="ev-io-btn'+(_isPickView&&EV_EDIT_MODE?' ev-edit-pick-mode':'')+'" id="evAdd">'+addLabel+'</button>';
+    h+='<button class="ev-io-btn" id="evAdd">+ Añadir</button>';
     if(EV_VIEW==='upcoming'||EV_VIEW==='months'||EV_VIEW==='birthdays'){
       /* Exportar solo los eventos se quito: el backup completo del menu de
          ajustes ya los lleva. Importar se queda para los ficheros antiguos. */

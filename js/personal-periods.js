@@ -54,10 +54,3 @@ function personalCopyYear(data,source,target){
   });});return copy;
 }
 function personalPeriodLabel(p){return p==='weekly'?'/sem':p==='annual'?'/año':'/mes';}
-function personalPeriodsSummary(item,section,index){
-  var annual=personalAnnual(item,FISCAL_YEAR,section),period=item.period||(section==='gastosSemanales'?'weekly':'monthly');
-  var h='<article class="personal-period-card"><header><input class="fiscal-gasto-lbl-input" aria-label="Nombre del concepto" data-ps="'+section+'" data-pi="'+index+'" data-pf="label" value="'+escHtml(item.label)+'"><button class="fiscal-gasto-del fiscal-personal-del" data-ps="'+section+'" data-pi="'+index+'" aria-label="Eliminar concepto">×</button></header>';
-  h+='<div class="personal-period-total"><b>'+fcPlain(annual/personalFactor(period))+personalPeriodLabel(period)+'</b><span>Media ponderada · '+fcPlain(annual)+'/año</span></div>';
-  item.periods.forEach(function(p){h+='<div class="personal-period-line'+(p.paused?' paused':'')+'"><div><b>'+escHtml(item.label||'Concepto')+'</b><small>'+_rutFmt(p.start)+' - '+_rutFmt(p.end)+'</small></div><strong>'+(p.paused?'Paralizado':fcPlain(p.amount)+personalPeriodLabel(p.period))+'</strong></div>';});
-  return h+'<button type="button" class="personal-advanced" data-pp-edit="'+index+'" data-ps="'+section+'">Editar períodos</button></article>';
-}

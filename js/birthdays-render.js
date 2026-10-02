@@ -179,12 +179,15 @@ function renderBdayList(){
 }
 
 /* ── Contenido principal ──────────────────────────────────── */
+function renderBdayAddButton(id){
+  return '<button class="bday-header-add" id="'+id+'" title="Añadir cumpleaños" aria-label="Añadir cumpleaños">Añadir</button>';
+}
 function renderBdayContent(){
   var h='';
   // Nivel 3: para TODAS las vistas
   h+='<div class="sy-header with-tabs sy-header-center">';
   h+='<button class="sy-back" id="bdBack">&#8592;</button>';
-  if(BDAY_VIEW==='upcoming'||BDAY_VIEW==='list')h+='<button class="bday-header-add" id="bdAdd" title="Añadir cumpleaños" aria-label="Añadir cumpleaños">+</button>';
+  if(BDAY_VIEW==='upcoming'||BDAY_VIEW==='list')h+=renderBdayAddButton('bdAdd');
   if(BDAY_VIEW==='upcoming'){
     h+='<div class="sy-year-nav"><div class="sy-year">Pr\u00f3ximos</div></div>';
     h+=renderBdayVipFilter();

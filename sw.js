@@ -4,7 +4,7 @@
    → Cambiar CACHE_VER en cada deploy para forzar actualización
    ============================================================ */
 
-var CACHE_VER = 'v390';
+var CACHE_VER = 'v391';
 var CACHE_NAME = 'horas-excelia-' + CACHE_VER;
 
 /* Generado desde app-assets.json: npm run assets */
@@ -38,6 +38,7 @@ var ASSETS = [
   "./js/economics-fiscal-datos.js",
   "./js/personal-periods.js",
   "./js/personal-periods-editor.js",
+  "./js/personal-cards.js",
   "./js/economics-fiscal.js",
   "./js/economics-fiscal-elect.js",
   "./js/economics-fiscal-hip.js",

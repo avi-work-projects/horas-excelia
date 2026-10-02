@@ -215,3 +215,11 @@
 .ev-detail-note{font-size:.85rem;color:var(--text-muted);line-height:1.5;margin-top:8px;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-sm)}
 .ev-detail-repeat{font-size:.75rem;color:var(--text-dim);margin-top:6px;padding:6px 10px;background:var(--surface2);border-radius:var(--radius-sm)}
 .ev-detail-actions{display:flex;gap:8px;margin-top:20px}
+
+/* El color del título depende de la familia; el símbolo conserva su identidad. */
+.ev-detail-sheet{--ev-detail-management:#34d399;--ev-detail-plan:#fb923c}
+[data-theme="light"] .ev-detail-sheet{--ev-detail-management:#15805e;--ev-detail-plan:#bd5a16}
+.ev-detail-heading{display:flex;align-items:center;gap:10px;margin-bottom:5px}
+.ev-detail-heading .ev-detail-title{flex:1;min-width:0;margin:0}
+.ev-detail-symbol{flex:0 0 28px;width:28px;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.ev-detail-symbol .ev-marker-up{width:26px;height:26px}

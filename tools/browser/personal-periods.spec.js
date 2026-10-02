@@ -30,11 +30,11 @@ test('períodos editables, parón, copia a ambos lados y recarga sin perder dato
  await page.locator('#fiscalYearNext').click();
  page.once('dialog',d=>d.accept());await page.locator('[data-copy-year="2026"]').click();
  await expect(page.locator('#personalGastosSem .personal-period-line')).toHaveCount(1);
- await expect(page.locator('#personalGastosSem')).toContainText('0,00€/sem');
+ await expect(page.locator('#personalGastosSem .personal-amount')).toHaveText('0,00€');
  await expect(page.locator('#personalGastosSem')).toContainText('Paralizado');
  await page.locator('#fiscalYearPrev').click();await page.locator('#fiscalYearPrev').click();
  page.once('dialog',d=>d.accept());await page.locator('[data-copy-year="2026"]').click();
- await expect(page.locator('#personalGastosSem')).toContainText('50,00€/sem');
+ await expect(page.locator('#personalGastosSem .personal-amount')).toHaveText('50,00€');
  await expect(page.locator('#personalGastosSem')).not.toContainText('Paralizado');
  // Una coincidencia de fechas nunca se guarda; cerrar descarta el borrador.
  await page.locator('#personalGastosSem [data-pp-edit]').click();await page.getByRole('button',{name:'+ Añadir período',exact:true}).click();

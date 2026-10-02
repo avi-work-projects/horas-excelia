@@ -117,6 +117,8 @@ function _bindYearSelector(){
 }
 
 function _bindTabPersonal(){
+  var fold=document.getElementById('personalFoldAll');
+  if(fold)fold.onclick=function(){togglePersonalCards();reRenderFiscal();};
   /* Event delegation for all sections */
   var fCont=document.getElementById('fiscalContent');
   var body=fCont?fCont.querySelector('.sy-body'):null;
@@ -126,6 +128,11 @@ function _bindTabPersonal(){
   body.addEventListener('click',function(e){
     var advanced=e.target.closest('[data-pp-edit]');
     if(advanced){openPersonalPeriodEditor(advanced.dataset.ps,+advanced.dataset.ppEdit);return;}
+    var toggle=e.target.closest('[data-pp-toggle]');
+    if(toggle){
+      var section=toggle.dataset.ps,index=+toggle.dataset.pi,item=PERSONAL_DATA[section][index];
+      setPersonalCardOpen(section,item,index,!personalCardOpen(section,item,index));savePersonalCards();reRenderFiscal();return;
+    }
     var addBtn=e.target.closest('[data-padd]');
     if(addBtn){
       var sec=addBtn.dataset.padd;
@@ -153,18 +160,23 @@ function _bindTabPersonal(){
       var sec=per.dataset.ps,pi=parseInt(per.dataset.pi,10);
       if(PERSONAL_DATA[sec]&&PERSONAL_DATA[sec][pi]){
         PERSONAL_DATA[sec][pi].period=per.dataset.val;
-        per.closest('.fiscal-gasto-period').querySelectorAll('.fiscal-period-btn').forEach(function(b){b.classList.toggle('active',b.dataset.val===per.dataset.val);});
+        reRenderFiscal();
       }
     }
   });
-  body.addEventListener('change',function(e){
+  function updateField(e){
     var el=e.target;
     var sec=el.dataset.ps,pi=parseInt(el.dataset.pi,10),field=el.dataset.pf;
     if(!sec||isNaN(pi)||!PERSONAL_DATA[sec]||!PERSONAL_DATA[sec][pi])return;
     if(field==='amount'){var v=parseFloat(el.value);PERSONAL_DATA[sec][pi].amount=isNaN(v)?0:v;}
     else if(field==='label'){PERSONAL_DATA[sec][pi].label=el.value||'';}
     else if(field==='viajeFilter'){PERSONAL_DATA[sec][pi].viajeFilter=el.value||'all';}
-  });
+    syncPersonalSave();
+    var card=el.closest('.personal-item-card'),annual=card&&card.querySelector('.personal-item-annual');
+    if(annual)annual.textContent=fcPlain(personalAnnual(PERSONAL_DATA[sec][pi],FISCAL_YEAR,sec))+'/año';
+  }
+  body.addEventListener('input',updateField);
+  body.addEventListener('change',updateField);
 }
 
 function _bindTabIrpf(){
