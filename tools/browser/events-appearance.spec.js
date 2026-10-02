@@ -36,31 +36,65 @@ test('añadir cumpleaños conserva el título centrado; distintivo VIP en la esq
   });
   expect(Math.abs(corner.dx)).toBeLessThan(1.1);expect(Math.abs(corner.dy)).toBeLessThan(1.1);expect(corner.overflow).toBe('visible');
   await page.getByRole('checkbox',{name:'Solo VIPs',exact:true}).check();await expect(page.locator('.bday-badge')).toHaveCount(1);
+  const tick=await page.locator('#bdCalVip').evaluate(e=>{const s=getComputedStyle(e,'::after');return {left:s.left,top:s.top,width:s.width,height:s.height};});
+  expect(tick).toEqual({left:'3px',top:'0px',width:'3px',height:'7px'});
 });
 
-test('grosores en vivo, sin cambiar huecos; persisten y se pueden restablecer',async({page})=>{
-  const openCalendar=async()=>{
-    await page.evaluate(()=>{
-      EVENTS=[{id:'rehearsal-test',kind:'puntual',type:'Ensayos boda',title:'Ensayo prueba',start:'2026-10-08',end:'2026-10-08',color:'#c084fc',boda:{time:'19:00'}}];
-      openEvents();
-    });
-    await expect(page.locator('#eventsOverlay')).toHaveClass(/open/);
-    await page.locator('#evViewCal').click();
-  };
-  await openCalendar();await page.locator('#evSymbolLab summary').click();
+test('ajustes sobre la ventana actual: cerrar, reabrir, cambiar iconos y navegar',async({page})=>{
+  await page.getByRole('button',{name:'Eventos',exact:true}).click();
+  await page.locator('#evViewRutinas').click();
+  const menu=page.locator('#dataMenu'),trigger=page.locator('#eventsOverlay [data-nav="menu"]');
+  await trigger.click();await expect(menu).toBeVisible();
+  await expect(page.locator('#evViewRutinas')).toHaveClass(/active/);
+  await trigger.click();await expect(menu).toBeHidden();
+  await trigger.click();await page.locator('#navIconStyle').click();
+  await expect(menu).toBeHidden();await expect(page.locator('#navIconPickerOv')).toHaveClass(/open/);
+  await page.locator('#navIconPickerClose').click();await expect(page.locator('#navIconPickerWrap')).toHaveCount(0);
+  await expect(page.locator('#evViewRutinas')).toHaveClass(/active/);
+  await trigger.click();await page.locator('#evViewCal').click(); // Solo cierra el menú.
+  await expect(menu).toBeHidden();await expect(page.locator('#evViewRutinas')).toHaveClass(/active/);
+  await page.locator('#eventsOverlay [data-nav="household"]').click();
+  await expect(page.locator('#householdOverlay')).toHaveClass(/open/);
+  await page.locator('#householdOverlay [data-nav="menu"]').click();await expect(menu).toBeVisible();
+  const bounds=await menu.boundingBox();expect(bounds.x).toBeGreaterThanOrEqual(10);expect(bounds.x+bounds.width).toBeLessThanOrEqual(400);
+  await page.locator('#themeBtn').press('Escape');await expect(page.locator('#householdOverlay')).toHaveClass(/open/);
+});
+
+test('viajes en curso: atenuar solo días pasados y respetar la bombilla',async({page})=>{
+  await page.evaluate(()=>{
+    EVENTS=[{id:'ongoing',kind:'grande',type:'Viaje',title:'Viaje de prueba',start:'2026-09-29',end:'2026-10-05',color:'#38bdf8'}];
+    EV_YEAR=2026;EV_MONTH=9;EV_VIEW='cal';openEventsAt();
+  });
+  const segment=page.locator('.ev-part-past[data-id="ongoing"]');
+  await expect(segment).toHaveCount(1);await expect(segment).toHaveCSS('--ev-bar-past','25.0000%');
+  expect(await segment.evaluate(e=>getComputedStyle(e).maskImage)).toContain('linear-gradient');
+  const before=await segment.boundingBox();
+  await page.locator('#evBright').click();await expect(segment).toHaveCSS('mask-image','none');
+  const after=await segment.boundingBox();expect(after).toEqual(before);
+  await page.locator('#evBright').click();expect(await segment.evaluate(e=>getComputedStyle(e).maskImage)).toContain('linear-gradient');
+});
+
+test('ribete definitivo, sin selector y con contraste en oscuro',async({page})=>{
+  await page.evaluate(()=>{
+    setEventAppearance({border:2.5,cross:5,ink:3,halo:.6});
+    EVENTS=[{id:'rehearsal-test',kind:'puntual',type:'Ensayos boda',title:'Ensayo prueba',start:'2026-10-08',end:'2026-10-08',color:'#c084fc',boda:{time:'19:00'}}];
+    openEvents();
+  });
+  await expect(page.locator('#eventsOverlay')).toHaveClass(/open/);
+  await page.locator('#evViewCal').click();
+  await expect(page.locator('#evSymbolLab')).toHaveCount(0);
   const marker=page.locator('.ev-month-wrap .ev-shape-x-boda'),before=await marker.boundingBox();
-  await page.getByRole('slider',{name:'Borde negro',exact:true}).press('Home');
-  await expect(marker.locator('path').first()).toHaveCSS('stroke-width','6px');
-  await page.getByRole('slider',{name:'Grosor de las cruces',exact:true}).press('Home');
-  await expect(marker.locator('path').first()).toHaveCSS('stroke-width','4px');
+  await expect(marker.locator('path').first()).toHaveCSS('stroke-width','7.6px');
+  await expect(marker.locator('path').first()).toHaveCSS('stroke','rgb(0, 0, 0)');
+  await page.locator('#eventsOverlay [data-nav="menu"]').click();
+  await expect(page.locator('#dataMenu')).toBeVisible();
+  await page.locator('#themeBtn').click(); // Gris.
+  await page.locator('#themeBtn').click(); // Oscuro.
+  await expect(marker.locator('path').first()).toHaveCSS('stroke','rgb(240, 240, 245)');
+  await expect(page.locator('#eventsOverlay')).toHaveClass(/open/);
+  await page.locator('#themeBtn').press('Escape');
+  await expect(page.locator('#dataMenu')).toBeHidden();
   const after=await marker.boundingBox();expect(after.width).toBe(before.width);expect(after.height).toBe(before.height);
-  await page.getByRole('slider',{name:'Símbolos sin relleno',exact:true}).press('Home');
-  await expect(page.locator('.ev-symbol-samples [title="Onda"] path').last()).toHaveCSS('stroke-width','1.5px');
-  await page.reload();await openCalendar();await page.locator('#evSymbolLab summary').click();
-  await expect(page.getByRole('slider',{name:'Borde negro',exact:true})).toHaveValue('0.5');
-  await expect(marker.locator('path').first()).toHaveCSS('stroke-width','4px');
-  await page.getByRole('button',{name:'Restablecer',exact:true}).click();
-  await expect(marker.locator('path').first()).toHaveCSS('stroke-width','9px');
-  await expect(page.locator('.ev-symbol-samples [title="Onda"] path').last()).toHaveCSS('stroke-width','3px');
-  await page.getByRole('button',{name:'Ver calendario',exact:true}).click();await expect(page.locator('#evSymbolLab')).not.toHaveAttribute('open','');
+  await page.reload();
+  expect(await page.evaluate(()=>EV_APPEARANCE.border)).toBe(1.3);
 });

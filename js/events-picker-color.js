@@ -127,20 +127,24 @@ function evShapeSvg(shape){
     inner='<path d="M-5,4 L5.5,-8 Q7,-7 5,-3 L0,3 Z M5,4 L-5.5,-8 Q-7,-7 -5,-3 L0,3 Z" fill="#dbe3e9" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/>'
       +'<circle cx="-5" cy="5.5" r="3" fill="#8b5e34" stroke="#000" '+evSymbolStroke(bw)+'/><circle cx="5" cy="5.5" r="3" fill="#8b5e34" stroke="#000" '+evSymbolStroke(bw)+'/><circle cy=".5" r="1" fill="#000"/>';
   } else if(shape==='barbecue'){
-    inner='<path d="M-7,0 A7,7 0 0 0 7,0 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/><path d="M-3,6 L-5,9 M3,6 L5,9" stroke="#000" '+evSymbolStroke(1.8)+' stroke-linecap="round"/>'
-      +'<path d="M-3,-8 C-6,-5 -1,-5 -3,-2 M3,-8 C0,-5 5,-5 3,-2" fill="none" stroke="#000" '+evSymbolStroke(1.5)+' stroke-linecap="round"/><path d="M-8,0 H8" stroke="#000" '+evSymbolStroke(bw)+' stroke-linecap="round"/>';
+    inner='<path d="M-5,3 L-7,9 M5,3 L7,9 M-5,7 H5" fill="none" stroke="#000" '+evSymbolStroke(bw)+' stroke-linecap="round"/>'
+      +'<path d="M-8,-2 H8 L6,4 H-6 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/>'
+      +'<ellipse cy="-2" rx="8" ry="2.7" fill="#48515c" stroke="#000" '+evSymbolStroke(bw)+'/><path d="M-4,-3.5 V-.5 M0,-4 V0 M4,-3.5 V-.5" stroke="#eef1f5" stroke-width="1.2"/>'
+      +'<path d="M-3,-6 Q-5,-7 -3,-9 M3,-6 Q1,-7 3,-9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>';
   } else if(shape==='tooth'){
     inner='<path d="M0,-6 C-9,-12 -10,-3 -7,2 C-6,5 -6,9 -3,9 C-1,9 -2,2 0,2 C2,2 1,9 3,9 C6,9 6,5 7,2 C10,-3 9,-12 0,-6 Z" fill="#e8f7fa" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/><path d="M-4,-4 Q-2,-5 0,-3" fill="none" stroke="#16859b" stroke-width="1.3" stroke-linecap="round"/>';
   } else if(shape==='heart'){
     inner='<path d="M0,8 C-3,5 -9,1 -9,-3 C-9,-9 -2,-10 0,-5 C2,-10 9,-9 9,-3 C9,1 3,5 0,8 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/>';
   } else if(shape==='meal'){
-    inner='<circle r="6.2" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+'/><circle r="3.4" fill="none" stroke="#fff" stroke-width="1.3"/><path d="M-9,-7 V-2 Q-7,-1 -7,-3 V-7 M-8,-1 V8 M9,-7 V8" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round"/>';
+    inner='<circle cx=".5" r="5.8" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+'/><circle cx=".5" r="3.2" fill="#fff4dd"/>'
+      +'<path d="M-9,-7 V-3 Q-9,-1 -7,-1 Q-5,-1 -5,-3 V-7 M-7,-7 V8 M9,8 V-7 Q6,-4 7,0 H9" fill="none" stroke="#000" '+evSymbolStroke(2.4)+' stroke-linecap="round" stroke-linejoin="round"/>';
   } else if(shape==='dinner'){
     inner='<path d="M-9,6 A9,9 0 0 1 9,6 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+'/><path d="M-9,8 H9 M0,-3 V-5" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/><path d="M5,-9 A4,4 0 1 0 9,-5 A4,4 0 0 1 5,-9" fill="#ffe7a1" stroke="#000" stroke-width="1.2"/>';
   } else if(shape==='disco'){
     inner='<path d="M0,-10 V-7" stroke="#000" stroke-width="1.6"/><circle cy="1" r="8" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+'/><path d="M-7,-2 H7 M-7,3 H7 M-4,7 Q-8,1 -4,-6 M4,7 Q8,1 4,-6 M0,-7 V9" fill="none" stroke="#fff" stroke-width="1.2"/><path d="M-9,-8 V-4 M-11,-6 H-7 M8,-8 V-4 M6,-6 H10" stroke="#000" stroke-width="1.1"/>';
-  } else if(shape==='planet'){
-    inner='<circle r="6" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+'/><ellipse rx="9" ry="3" transform="rotate(-30)" fill="none" stroke="#000" '+evSymbolStroke(3.2,'outline',1.3)+'/><ellipse rx="9" ry="3" transform="rotate(-30)" fill="none" stroke="currentColor" stroke-width="1.3"/>';
+  } else if(shape==='planet'||shape==='moon'){
+    /* Alias para que los eventos existentes adopten también la nueva luna. */
+    inner='<path d="M3,-8 A8.5,8.5 0 1 0 8,4 A8,8 0 0 1 3,-8 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/>';
   } else if(shape==='party'){
     inner='<path d="M-8,-7 H8 L1,2 V7 H5 V9 H-5 V7 H-1 V2 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/><path d="M-5,-4 H5 M2,-4 L6,-9" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/>';
   } else if(shape==='beer'){

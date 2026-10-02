@@ -18,7 +18,7 @@ function _renderEvTypeSwatches(kind,selType){
     :EV_KINDS[kind].types.map(function(t){return [t,[]];});
   return groups.map(function(group){
     var selected=selType===group[0]||group[1].indexOf(selType)>=0;
-    var h='<section class="ev-category-group'+(selected?' chosen':'')+'" style="--category-tone:'+evTypeColor(kind,group[0])+'" aria-label="'+group[0]+'">'+_renderEvTypeButton(kind,group[0],selType);
+    var h='<section class="ev-category-group'+(kind==='grande'?' ev-category-single':'')+(selected?' chosen':'')+'" style="--category-tone:'+evTypeColor(kind,group[0])+'" aria-label="'+group[0]+'">'+_renderEvTypeButton(kind,group[0],selType);
     if(group[1].length)h+='<div class="ev-category-children">'+group[1].map(function(t){return _renderEvTypeButton(kind,t,selType);}).join('')+'</div>';
     return h+'</section>';
   }).join('');
@@ -134,7 +134,7 @@ function renderEvForm(ev){
     {k:'x-outline', label:'X de rotulador'},
     {k:'circle-plus', label:'Círculo con cruz'},
     {k:'rings', label:'Boda'},
-    {k:'planet', label:'Planeta'},
+    {k:'planet', label:'Luna'},
     {k:'leaf', label:'Hoja'},
     /* Las mismas siluetas que usan las rutinas */
     {k:'gym',     label:'Mancuerna'},

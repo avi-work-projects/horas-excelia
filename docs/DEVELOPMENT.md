@@ -72,6 +72,7 @@ generado en `css/`, no respecto a `css/source/`.
 | Necesidad | Pieza existente |
 | --- | --- |
 | Navegación principal | `renderNavBar` / `bindNavBar` / `navigateMain` |
+| Ajustes globales sin salir de la ventana | `toggleSettingsMenu` / `closeSettingsMenu` en `settings-menu.js` |
 | Ventana secundaria | `.full-overlay` → navegación → cabecera → `.sy-body` |
 | Subpestañas | `.econ-sub-tabs` / `.econ-sub-tab`, con clase local de la pantalla |
 | Panel deslizante | `abrirPanel` / `cerrarPanel`, con cancelación del cierre pendiente |
@@ -92,6 +93,24 @@ No alterar todas las subpestañas para corregir una: el reparto entre textos de
 Energía y de Próximos tiene reglas propias. Los campos con caja y tarjetas
 consecutivas necesitan al menos 10–12 px reales de separación, mediante `gap`
 en su contenedor. Comprobar contenido largo y móvil, además de escritorio.
+
+El menú de ajustes es único y se monta en `body`, anclado al botón pulsado.
+Abrirlo no cierra overlays ni reconstruye su contenido. Conserva el retorno
+anterior; Escape y el clic exterior lo cierran sin activar el control de debajo.
+Toda salida del menú debe pasar por `closeSettingsMenu`, también importación
+y elección de iconos, para restaurar ese retorno y el estado del botón.
+
+### Marcadores y viajes (v390)
+
+- Ribete definitivo de símbolos: 1,3 px en el ajuste común, negro en claro y
+  blanco suave en oscuro/gris. `evSymbolStroke` distingue borde, relleno y halo;
+  no cambiar indiscriminadamente todos los trazos del SVG.
+- El laboratorio temporal se ha retirado. Los backups anteriores conservan
+  los otros ajustes de dibujo; el borde se normaliza a 1,3 al leer/importar.
+- `_evBarPast` calcula el porcentaje pasado del fragmento visible, incluyendo
+  relevos de medio día. Una máscara atenúa esa parte sin cortar la barra ni
+  duplicar el título. La bombilla retira la atenuación en los tres calendarios.
+- La luna mantiene `planet` como identificador compatible con eventos previos.
 
 ## Energía: datos y cálculos
 

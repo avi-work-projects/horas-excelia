@@ -601,7 +601,18 @@ function _evRoundedOutline(vertices,rx,ry,days,roundStart,roundEnd){
 function _evBarMutedColor(color,inside){
   return inside?color:'color-mix(in srgb, '+color+' 35%, var(--bg) 65%)';
 }
-function _evSteppedBar(it,segments,annual,showTitle,pastClass){
+/* La máscara sigue las casillas, sin partir la geometría, repetir el título
+   ni crear bordes dentro de un viaje que aún está en curso. */
+function _evBarPast(it,week,today){
+  if(week[it.ce]<today)return {cls:' past-bar',style:''};
+  if(week[it.cs]>=today)return {cls:'',style:''};
+  var elapsed=0;
+  for(var day=it.cs;day<=it.ce&&week[day]<today;day++)elapsed++;
+  var left=it.halfL?.5:0,right=it.halfR?.5:0;
+  var percent=100*(elapsed-left)/(it.ce-it.cs+1-left-right);
+  return {cls:' ev-part-past',style:';--ev-bar-past:'+percent.toFixed(4)+'%'};
+}
+function _evSteppedBar(it,segments,annual,showTitle,week,today){
   var groups=[];
   segments.forEach(function(tr){
     var g=groups[groups.length-1];
@@ -636,8 +647,9 @@ function _evSteppedBar(it,segments,annual,showTitle,pastClass){
       var left=100*(tr.cs-first.cs)/days,right=100*(last.ce-tr.ce)/days;
       return '<g style="clip-path:inset(0 '+right+'% 0 '+left+'%)">'+halo+'</g>';
     }).join('');
-    return '<div class="'+(annual?'ev-annual-mbar':'ev-multi-bar')+' ev-stepped-bar '+evBarSizeCls(it.ev)+(pastClass||'')+'" data-id="'+it.ev.id+'"'
-      +' style="grid-column:'+(first.cs+1)+'/'+(last.ce+2)+';grid-row:1;z-index:'+evBarZ(it.ev)+med+'">'
+    var past=_evBarPast({cs:first.cs,ce:last.ce,halfL:it.halfL&&first.cs===it.cs,halfR:it.halfR&&last.ce===it.ce},week,today);
+    return '<div class="'+(annual?'ev-annual-mbar':'ev-multi-bar')+' ev-stepped-bar '+evBarSizeCls(it.ev)+past.cls+'" data-id="'+it.ev.id+'"'
+      +' style="grid-column:'+(first.cs+1)+'/'+(last.ce+2)+';grid-row:1;z-index:'+evBarZ(it.ev)+med+past.style+'">'
       +'<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">'+halo+'<path d="'+path+'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+(annual?1:1.5)+'" vector-effect="non-scaling-stroke"/></svg>'
       +(showTitle&&gi===titleGroup?'<span title="'+escHtml(it.ev.title)+'" style="left:'+label.x/10+'%;width:'+(label.end-label.x)/10+'%;top:'+label.top/10+'%;height:'+(label.bottom-label.top)/10+'%;'+(it.labelTop?'align-content:start;padding-top:1px;':'')+'">'+escHtml(it.ev.title)+'</span>':'')+'</div>';
   }).join('');

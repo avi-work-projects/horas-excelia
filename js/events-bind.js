@@ -69,7 +69,6 @@ function refreshEvents(keepScroll){
 function bindEvEvents(){
   _bindEvNav();
   _bindEvCal();
-  bindEventAppearance();
   _bindEvListas();
   _bindEvGestos();
 }

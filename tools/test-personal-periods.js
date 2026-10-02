@@ -44,7 +44,7 @@ a.document.getElementById=id=>id==='exportAllBtn'?{addEventListener:(_,fn)=>expo
 a.document.createElement=()=>({click(){download=JSON.parse(decodeURIComponent(this.href.split(',').slice(1).join(',')));}});
 const source=fs.readFileSync('js/import-export.js','utf8');vm.runInContext(source,a);a.showToast=()=>{};exportClick();
 assert.deepEqual(download.despacho,home);assert.equal(download.personalPerYear['2026'].gastosSemanales[0].periods[2].paused,true);
-assert.deepEqual(download.eventAppearance,{border:1.25,cross:4,ink:2.5,halo:.4});
+assert.deepEqual(download.eventAppearance,{border:1.3,cross:4,ink:2.5,halo:.4});
 const b=cargarApp({});vm.runInContext(source,b);b.showToast=()=>{};b.render=()=>{};b.updateEventsBtn=()=>{};b.updateBdayBtn=()=>{};
 b.applyFullImport(download,'replace');b.loadDespacho();
 assert.deepEqual(plain(b.EV_APPEARANCE),download.eventAppearance);
