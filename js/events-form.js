@@ -268,15 +268,11 @@ function openEvForm(ev,prefillDate,container){
 }
 
 function closeEvForm(){
-  var fo=document.getElementById('evFormOv');
-  if(fo)fo.classList.remove('open');
-  setTimeout(function(){
-    var w=document.getElementById('evFWrap');
-    if(w)w.remove();
+  cerrarPanel('evFWrap','evFormOv',function(){
     EV_EDIT=null;
     EV_EDIT_DS=null;
     EV_FORM_CONTAINER=null;
-  },300);
+  });
 }
 
 function evSuggestedTitle(type){
