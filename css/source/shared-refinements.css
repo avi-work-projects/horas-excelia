@@ -1,0 +1,441 @@
+/* ── Lista "Todos": buscador, orden y borrado con pulsacion larga ── */
+.ev-list-tools{display:flex;flex-direction:column;gap:7px;padding-bottom:4px}
+.ev-search{display:flex;align-items:center;gap:6px;border:1.5px solid var(--border);background:var(--surface2);border-radius:14px;padding:0 10px}
+.ev-search-ico{font-size:.72rem;opacity:.6;flex-shrink:0}
+.ev-search input{flex:1;min-width:0;border:none;background:transparent;color:var(--text);font-size:.78rem;padding:8px 0;outline:none;font-family:var(--font);-webkit-appearance:none;appearance:none}
+.ev-search input::-webkit-search-cancel-button{display:none}
+.ev-search-x{border:none;background:transparent;color:var(--text-dim);font-size:1rem;cursor:pointer;padding:0 2px;line-height:1}
+.ev-sort-row{display:flex;gap:6px}
+.ev-sort-row .ev-sort-chip{flex:1}
+.ev-list-count{font-size:.62rem;color:var(--text-dim);padding:2px 0 4px}
+.ev-list-hint{color:var(--text-dim);opacity:.35;font-size:.9rem;letter-spacing:-1px}
+.ev-list-item{-webkit-touch-callout:none}
+.ev-del-title{font-size:1rem;font-weight:600;text-align:center;color:var(--text);margin-top:4px}
+.ev-del-sub{font-size:.72rem;color:var(--text-dim);text-align:center;margin-bottom:6px}
+
+/* ── Diálogo: modo de importación (añadir vs reemplazar) ── */
+.imp-mode-ov{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.imp-mode-ov.open{opacity:1;pointer-events:auto}
+.imp-mode-sheet{width:100%;max-width:520px;background:var(--surface);border-top-left-radius:18px;border-top-right-radius:18px;padding:16px 18px calc(24px + env(safe-area-inset-bottom,0px));transform:translateY(100%);transition:transform .22s ease;display:flex;flex-direction:column;gap:8px}
+.imp-mode-ov.open .imp-mode-sheet{transform:translateY(0)}
+.imp-mode-title{font-size:.95rem;font-weight:700;text-align:center;color:var(--text)}
+.imp-mode-sub{font-size:.7rem;color:var(--text-dim);text-align:center;margin-bottom:6px;word-break:break-all}
+.imp-mode-btn{display:flex;flex-direction:column;gap:3px;text-align:left;padding:11px 14px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;font-size:.8rem}
+.imp-mode-btn span{font-size:.68rem;color:var(--text-dim);font-weight:400;line-height:1.35}
+.imp-mode-btn.merge{border-color:var(--c-green,#34d399);color:var(--c-green,#34d399)}
+.imp-mode-btn.repl{border-color:var(--c-orange,#fb923c);color:var(--c-orange,#fb923c)}
+.imp-mode-btn.cancel{text-align:center;align-items:center;color:var(--text-muted);font-size:.78rem;padding:9px}
+
+/* ── PRINT ── */
+@media print{
+  body.print-summary>*:not(#summaryOverlay){display:none!important}
+  body.print-summary #summaryOverlay{display:flex!important;position:static!important;transform:none!important;background:white!important}
+  body.print-econ>*:not(#econOverlay){display:none!important}
+  body.print-econ #econOverlay{display:flex!important;position:static!important;transform:none!important;background:white!important}
+  .sy-body{overflow:visible!important;flex:none!important}
+  .sy-header{background:white!important;border-bottom:1px solid #ddd!important}
+  .sy-back,.sy-pdf,.sy-nav,.sy-nav-icon{display:none!important}
+  .sy-year,.sy-section-title,.sy-td-lbl{color:#333!important}
+  .sy-val,.sy-val-sm{color:#111!important}
+  .sy-lbl{color:#666!important}
+  .sy-card,.sy-table,.sy-chart,.sy-note{background:#f5f5f5!important;border-color:#ddd!important}
+  .sy-table th,.econ-month-table th{background:#e8e8e8!important}
+  .sy-tr-total,.econ-tr-total{background:#e0e0e0!important}
+  svg text{fill:#555!important}
+  svg rect{opacity:1!important}
+  .rate-input{border:none;background:transparent}
+}
+
+/* Separacion de siluetas incluso entre grosores distintos. */
+.ev-multi-bar:not(.ev-stepped-bar),.ev-annual-mbar:not(.ev-stepped-bar){box-shadow:0 0 0 1.5px var(--bg)}
+.ev-multi-bar.ev-label-top:not(.ev-stepped-bar),.ev-annual-mbar.ev-label-top:not(.ev-stepped-bar){align-items:flex-start;padding-top:1px}
+
+.ev-sort-chip.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright);font-weight:600}
+.bday-upcoming-name,.bday-list-day{color:var(--text)}
+
+.bday-jump-today{color:var(--c-green);border-color:var(--c-green)}
+
+.boda-pfilters{padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
+.boda-filter-label{font-size:.65rem;font-weight:600;color:var(--text-muted);margin-bottom:6px}
+.boda-filter-label:not(:first-child){margin-top:12px}
+.boda-filter-label span{font-weight:400}
+.boda-pfilters .boda-chips{margin-bottom:0}
+
+/* Controles tactiles: mismo minimo en filtros y navegacion, sin agrandar marcadores. */
+@media (pointer:coarse){
+  .ev-view-toggle,.boda-chip,.ev-sort-chip,.bday-vip-chip{min-height:34px}
+  .boda-mini-btn,.bday-ic-btn{min-height:32px;min-width:32px}
+}
+
+.macro-url-input[readonly]{cursor:default;border-color:transparent;background:transparent;color:var(--text-muted)}
+.settings-edit-btn{color:var(--c-orange)}
+.ev-filter-chip:has(.ev-chip-flag){padding:0;width:34px;overflow:hidden;}
+.ev-chip-flag{width:100%;height:100%;border-radius:0;object-fit:cover}
+.ev-multi-bar.ev-bar-lg.ev-bar-alone,.ev-annual-mbar.ev-bar-lg.ev-bar-alone{box-shadow:none}
+
+/* Editar: tono comun, con geometria propia de cada pantalla. */
+button.action-edit{color:#fb923c!important;border-color:#fb923c!important;background:rgba(251,146,60,.1)!important}
+button.action-edit.active,button.action-edit:active{background:rgba(251,146,60,.25)!important}
+.boda-config-btn{justify-self:center;width:30px;align-self:center;height:30px;border:1px solid #b98760;border-radius:8px;color:#b98760;background:rgba(185,135,96,.12);font-size:19px;cursor:pointer}
+.boda-sticky-hd .econ-sub-tab{min-width:0;padding-left:5px;padding-right:5px}
+.boda-config-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#bodaConfigOv .ev-detail-sheet{max-height:88dvh;overflow-y:auto}
+.boda-catalog-row{display:flex;align-items:center;flex-wrap:wrap;gap:9px;padding:12px 0;border-bottom:1px solid var(--border);margin-bottom:8px}
+.boda-catalog-row>span{flex:1;min-width:150px;color:var(--text)}
+.boda-catalog-row small{display:block;color:var(--text-muted);font-size:.7rem;margin-top:4px}
+.boda-catalog-row label{font-size:.72rem;display:flex;gap:5px;align-items:center;--chk:#b98760}
+.boda-count-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.boda-pack-stat{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:.76rem}
+.boda-pack-stat span{color:var(--text-muted)}
+
+.boda-catalog-row .ev-io-btn{flex:0 0 auto;padding:6px 9px;font-size:.7rem}
+
+/* Marca oficial con transparencia; conserva contraste en ambos temas. */
+.wm-logo{display:inline-block;width:44px;height:19px;background:currentColor;mask:url(wedding-moves.png) center/contain no-repeat;-webkit-mask:url(wedding-moves.png) center/contain no-repeat;vertical-align:middle;flex-shrink:0}
+.wm-logo-title{width:76px;height:28px;color:var(--text)}
+.wm-logo-chip{width:18px;height:12px}
+.bday-jump-today{background:color-mix(in srgb,var(--c-green) 16%,var(--surface))}
+.boda-sticky-hd .boda-config-btn{width:auto;justify-self:stretch;height:auto;border:0;border-radius:0;background:transparent;color:#b98760;font-size:19px}
+.boda-sticky-hd .boda-config-btn.active{color:#b98760;border-bottom:2px solid #b98760}
+
+.boda-sticky-hd{--wm-tab:#cc9294}
+[data-theme="light"] .boda-sticky-hd{--wm-tab:#6b1f20}
+.boda-sticky-hd .econ-sub-tab,.boda-sticky-hd .boda-config-btn{color:var(--wm-tab)}
+.boda-sticky-hd .econ-sub-tab.active,.boda-sticky-hd .boda-config-btn.active{color:var(--wm-tab);border-bottom-color:var(--wm-tab)}
+.wm-logo-chip{width:30px;height:13px}
+.bday-next-distant{color:var(--text-muted);opacity:.75}
+.bday-next-distant .ev-week-sep{background:var(--surface2);color:var(--text-muted)}
+.boda-teachers{flex-wrap:wrap;gap:12px;margin:8px 0}
+.settings-details{border-top:1px solid var(--border);padding:8px 12px}
+.settings-details summary{cursor:pointer;color:var(--text-muted);font-size:.8rem}
+.settings-details .macro-section{padding:8px 0 0;border:0}
+.settings-edit-btn{color:var(--c-orange)!important;background:color-mix(in srgb,var(--c-orange) 12%,var(--surface))!important;border:1px solid var(--c-orange)!important;border-radius:8px}
+
+/* Geometría constante aunque una subpestaña tenga más contenido y scroll. */
+#eventsOverlay .sy-body:has(> .boda-sticky-hd){scrollbar-gutter:stable}
+.boda-sticky-hd{flex-shrink:0}
+.boda-sticky-hd .econ-sub-tabs{align-items:stretch}
+.boda-sticky-hd .econ-sub-tab,.boda-sticky-hd .boda-config-btn{display:flex;align-items:center;justify-content:center;align-self:stretch;height:34px;box-sizing:border-box;padding:4px 2px;line-height:1;font-weight:600;border-bottom:2px solid transparent;transition:color .15s,border-color .15s}
+.boda-sticky-hd .econ-sub-tab.active{border-bottom-color:var(--wm-wine)}
+.boda-day-cerr{color:var(--wm-wine)}
+.boda-field-row{cursor:default}
+.boda-field-controls{flex:1;min-width:0}
+.boda-field-row .ev-input{flex:1;min-width:0;font-size:.78rem}
+.boda-field-row .boda-teachers{margin:0;gap:8px;justify-content:flex-end}
+.boda-field-row .boda-teachers .excl-item{font-size:.72rem;white-space:nowrap}
+.boda-field-controls #bodaTeacherName{margin-top:8px}
+#bodaConfigContent>h3{margin:4px 0 24px}
+.boda-config-section{margin-bottom:30px}
+.boda-config-section .boda-stat-t{margin:0 0 12px}
+.boda-config-section>.ev-io-btn{margin-top:12px}
+
+/* Catálogos: cabecera de sección, ficha y controles siempre en el mismo orden. */
+.boda-cfg-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.boda-cfg-section-head h4{margin:0;font-size:.9rem}
+.boda-cfg-section-head p{margin:5px 0 0;font-size:.72rem;color:var(--text-muted)}
+#bodaConfigContent .boda-catalog-row{display:block;padding:12px;margin:0 0 10px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
+.boda-cfg-card-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.boda-cfg-card-head>span{flex:1;min-width:0}
+.boda-cfg-card-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border)}
+.boda-cfg-card-controls label{display:flex;align-items:center;gap:7px;font-size:.72rem;color:var(--text-muted)}
+
+.boda-sticky-hd .econ-sub-tabs{display:flex;justify-content:space-between;gap:0}
+.boda-sticky-hd .econ-sub-tab,.boda-sticky-hd .boda-config-btn{flex:0 0 auto;width:auto;padding-left:0;padding-right:0}
+
+.boda-cfg-section-head>.ev-io-btn{flex:0 0 auto}
+
+.boda-date-ficha #bodaFormDia{flex:1;min-width:0;width:0;text-align:right;font-weight:700;border:0;background:transparent;padding:0;color:var(--text);font-size:.78rem}
+.boda-date-ficha #bodaFormDia::-webkit-datetime-edit{text-align:right}
+.boda-date-ficha .boda-multi-btn{margin:0 10px 10px;max-width:calc(100% - 20px)}
+#bodaTeachersOv #bodaTeacherName{margin-top:12px}
+
+.wm-logo-title{color:#b98760}
+[data-theme="light"] .wm-logo-title{color:#6d4826}
+.bday-header-vip{display:flex;align-items:center;justify-content:flex-end;margin-left:auto;flex-shrink:0}
+.bday-header-vip .excl-item{gap:5px;margin:0}
+.bday-header-vip img{width:24px;height:auto}
+
+/* Las tres vistas de Cumpleaños comparten el naranja en ambos temas. */
+.bday-hdr-sub .ev-view-toggle:not(.active){color:var(--birthday-tone);border-color:var(--birthday-tone);background:color-mix(in srgb,var(--birthday-tone) 8%,transparent)}
+.bday-hdr-sub .ev-view-toggle.active{color:var(--birthday-tone)!important;border-color:var(--birthday-tone)!important;background:color-mix(in srgb,var(--birthday-tone) 17%,transparent)!important}
+
+.boda-date-ficha #bodaFormDia{margin-left:auto;flex:0 1 146px;width:146px;max-width:50%}
+.boda-date-ficha #bodaFormDia::-webkit-date-and-time-value{text-align:right}
+.boda-date-ficha #bodaFormDia::-webkit-datetime-edit{padding:0;text-align:right;display:inline-flex;justify-content:flex-end}
+.boda-date-ficha #bodaFormDia::-webkit-calendar-picker-indicator{margin-left:4px;padding:0}
+
+/* Text edits retain the solid orange; only standalone pencils use a tint. */
+button.action-edit.action-edit-text,button.settings-edit-btn,button.hip-edit-btn,button.bday-vip-edit-btn:not(.active){background:#fb923c!important;color:#fff!important;border-color:#fb923c!important}
+button.action-edit.action-edit-text:active{background:#f97316!important}
+.rut-icon-opt{min-width:0;flex-shrink:0}
+.rut-icon-opt svg{flex-shrink:0;display:block}
+.bday-month-hdr{font-size:.82rem;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-left:3px solid #fb923c;border-radius:8px;padding:10px 12px;margin:18px 0 9px;font-weight:750}
+
+/* Etiquetas y casillas comparten tono dentro de Eventos, tambien en sus hojas. */
+#eventsOverlay input[type="checkbox"]{color:inherit}
+#eventsOverlay input[type="checkbox"]:checked{background:currentColor!important;border-color:currentColor!important}
+#eventsOverlay input[type="checkbox"]:checked::after{border-color:var(--surface)}
+#eventsOverlay label:has(#evUpShowRut){color:var(--text)}
+#eventsOverlay label:has(#evUpShowBoda){color:#b98760}
+[data-theme="light"] #eventsOverlay label:has(#evUpShowBoda){color:#80542f}
+#eventsOverlay label:has(#syPuentesLibresChk){color:#d870a5}
+#eventsOverlay label:has(#evTypesPast),#eventsOverlay label:has(#syExclPastChk),#eventsOverlay label:has(#bodaShowPast){color:var(--text-muted)}
+#eventsOverlay label:has(#bodaShowClosed){color:var(--wm-wine)}
+#eventsOverlay label:has(.bday-up-vip),#eventsOverlay label:has(#bdAlarmVip),#eventsOverlay label:has(#bdFVip){color:var(--c-yellow)}
+.wm-logo-check{width:30px;height:15px}
+.rut-hpd{margin-top:12px}
+.rut-week-forward{margin:16px 0 10px}
+.rut-history-sheet{height:85vh;max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
+.rut-history-head{display:flex;align-items:center;gap:12px;flex-shrink:0;margin:8px 0 16px}
+.rut-history-head>div{display:flex;flex-direction:column;gap:4px;min-width:0}
+.rut-history-head strong{font-size:.95rem;overflow-wrap:anywhere}
+.rut-history-head span{color:var(--text-muted);font-size:.75rem}
+.rut-history-head #rutHistoryToday{margin-left:auto;flex-shrink:0}
+.rut-history-month{border:1px solid var(--border);border-radius:12px;margin:16px 0;background:var(--surface)}
+.rut-history-month h3{position:sticky;top:0;z-index:2;margin:0;padding:12px;font-size:.85rem;text-transform:capitalize;background:var(--surface2);color:var(--accent);border-radius:0;box-shadow:0 1px 0 var(--border)}
+.rut-history-month{overflow:clip}
+.rut-history-month-counts{font-size:.68rem;color:var(--text-muted);padding:10px 12px;margin:0}
+.rut-history-schedule{font-size:.68rem;font-weight:600;color:var(--text-muted);padding:10px 12px 6px}
+.rut-history-session.current-week{box-shadow:inset 3px 0 var(--accent)}
+.rut-history-body>.sy-note{margin:0 0 18px}
+.rut-history-body{overflow-y:auto;min-height:0;padding:0 2px 12px}
+.rut-history-actions{display:flex;flex-direction:column;gap:10px;flex-shrink:0;margin-bottom:18px}
+.rut-history-actions .ev-io-btn{flex:none;width:100%;margin:0}
+.rut-addition-choices{display:flex;flex-direction:column;gap:12px;margin:18px 0}
+.rut-addition-choices .ev-btn{text-align:left;display:flex;flex-direction:column;gap:6px;padding:14px;white-space:normal}
+.rut-addition-choices span{font-size:.72rem;font-weight:400;color:var(--text-muted);line-height:1.5}
+.rut-addition-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0 0}
+.rut-addition-fields .ev-field{min-width:0;margin:0;gap:6px}
+.rut-addition-date{grid-column:1/-1}
+.rut-addition-fields .ev-input{min-width:0;font-size:.88rem}
+.rut-addition-new,.rut-addition-agenda{margin-top:22px}
+.rut-addition-new>h3,.rut-agenda-heading h3{font-size:.78rem;font-weight:600;margin:0;color:var(--text-muted)}
+.rut-recovery-origin{border-left:3px solid #ec168c;border-radius:8px;background:var(--surface2);padding:12px;display:flex;flex-direction:column;gap:7px}
+.rut-recovery-origin>span{font-size:.66rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em}
+.rut-recovery-origin>div{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:.85rem}
+.rut-recovery-origin b{font-family:var(--mono)}
+.rut-recovery-origin small{font-size:.68rem;color:var(--text-muted)}
+.rut-agenda-heading{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.rut-agenda-heading>span{font-size:.68rem;color:var(--text-muted);white-space:nowrap}
+.rut-addition-sheet .ev-form-actions{margin-top:20px}
+.rut-addition-entry,.rut-week-help{margin-top:18px}
+.rut-recovery-note{display:block;color:var(--text-muted);font-size:.68rem;line-height:1.45;text-decoration:none}
+.rut-session-tag{color:var(--accent);font-size:.68rem}
+.ev-wk-chip .rut-recovery-note{color:inherit;white-space:normal;font-weight:400;margin-top:3px}
+.rut-history-period{border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:12px;margin:14px 0;background:var(--surface)}
+.rut-history-period summary{cursor:pointer;padding:14px;list-style:none;display:flex;flex-direction:column;gap:8px}
+.rut-history-period summary::-webkit-details-marker{display:none}
+.rut-history-top{display:flex;justify-content:space-between;gap:8px;font-size:.72rem;color:var(--accent)}
+.rut-history-top em{font-style:normal;color:var(--text-muted)}
+.rut-history-hours{font-size:.85rem;line-height:1.55;color:var(--text)}
+.rut-history-range,.rut-history-counts{font-size:.68rem;color:var(--text-muted)}
+.rut-history-counts{padding-top:6px;border-top:1px solid var(--border)}
+.rut-history-session{display:flex;gap:10px;align-items:center;padding:12px;border-top:1px solid var(--border)}
+.rut-history-session>div:first-of-type{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;font-size:.75rem}
+.rut-history-session>div:first-of-type>span{font-size:.72rem;color:var(--text-muted)}
+.rut-history-session.cancelled>div:first-of-type>strong,.rut-history-session.cancelled>div:first-of-type>span{text-decoration:line-through;color:var(--text-muted)}
+.rut-history-status{font-size:.64rem;color:var(--text-muted);text-align:right}
+.rut-history-status small{display:block;color:var(--accent);margin-top:4px}
+.rut-history-more{display:block;width:calc(100% - 24px);margin:12px}
+
+/* Canceladas: visibles solo en las vistas de detalle, con marca y tono apagado. */
+.ev-rut-mark.rut-skip{position:relative;opacity:1;filter:brightness(.62)}
+.ev-rut-mark.rut-skip::before,.ev-rut-mark.rut-skip::after{content:'';position:absolute;left:0;top:calc(50% - 1px);width:100%;height:2px;background:#f03737;border-radius:2px;transform:rotate(45deg);pointer-events:none;z-index:2}
+.ev-rut-mark.rut-skip::after{transform:rotate(-45deg)}
+.rut-cancelled{filter:brightness(.65)}
+.rut-cancelled .ev-upcoming-title,.rut-cancelled .ev-upcoming-note,.rut-cancelled .ev-upcoming-meta,.rut-cancelled .ev-wk-chip-title,.rut-cancelled .ev-wk-chip-meta{text-decoration-line:line-through;text-decoration-color:#f03737;text-decoration-thickness:2px}
+.rut-cancelled .ev-rut-mark.rut-skip{filter:none}
+.ev-rut-mark.rut-skip.past-marker{opacity:.65}
+.wm-logo-check{width:46px;height:23px}
+.ev-wk-day-bg{background:var(--surface);z-index:0;pointer-events:none}
+.ev-wk-day-bg.even{background:var(--surface2)}
+.ev-wk-date.odd:not(.ev-wk-today){background:var(--surface)}
+.ev-wk-date.even:not(.ev-wk-today){background:var(--surface2)}
+[data-theme="light"] .ev-wk-day-bg.even,[data-theme="light"] .ev-wk-date.even:not(.ev-wk-today){background:#eceef1}
+
+/* Formulario de rutina: ritmo y etiquetas comunes, sin alterar otros paneles. */
+#rutFormOv .ev-form-sheet > .ev-field{margin-bottom:22px;gap:8px}
+#rutFormOv .ev-form-sheet > .ev-date-row{margin-bottom:18px;gap:14px}
+#rutFormOv .ev-date-row > div{display:flex;flex-direction:column;gap:8px;min-width:0}
+#rutFormOv label:not(.excl-item){font-size:.78rem;font-weight:600;color:var(--text-muted);line-height:1.4}
+#rutFormOv .rut-hpd{margin-top:16px}
+#rutFormOv .sy-note{margin:0 0 24px;line-height:1.5}
+#rutFormOv .rut-susp-box{padding:16px;margin-top:6px;gap:14px}
+#rutFormOv .ev-form-actions{margin-top:16px}
+
+/* Cancelaciones sutiles: el calendario mensual conserva el color original. */
+.ev-rut-mark.rut-skip{filter:none}
+.ev-rut-mark.rut-skip::before,.ev-rut-mark.rut-skip::after{height:1px;top:calc(50% - .5px)}
+.ev-up-mark .rut-skip::before,.ev-up-mark .rut-skip::after{display:none}
+.rut-cancelled .ev-upcoming-title,.rut-cancelled .ev-upcoming-note,.rut-cancelled .ev-upcoming-meta,.rut-cancelled .ev-wk-chip-title,.rut-cancelled .ev-wk-chip-meta{text-decoration-thickness:1px}
+.ev-wk-date{border:0}
+.ev-wk-travel-row{display:grid;gap:6px;flex-shrink:0}
+.ev-wk-travel{border:0;background:none;text-align:left;padding:3px 0 5px;min-width:0;cursor:pointer;pointer-events:auto;display:flex;flex-direction:column;gap:3px;font:inherit}
+.ev-wk-travel-title{font-size:.76rem;font-weight:700;overflow-wrap:anywhere;line-height:1.3}
+.ev-wk-travel .ev-wk-multi-trans{font-size:.62rem;line-height:1.4;overflow-wrap:anywhere}
+.ev-wk-travel-footer{margin-top:auto;padding-top:4px}
+
+/* Pestañas de Eventos: la seleccion solo intensifica el fondo. */
+#eventsOverlay .ev-hdr-sub .ev-view-toggle{--tab-tone:#60a5fa;color:var(--tab-tone)!important;border-color:var(--tab-tone)!important;background:color-mix(in srgb,var(--tab-tone) 8%,var(--surface))!important}
+#eventsOverlay .ev-hdr-sub .ev-view-toggle.active{background:color-mix(in srgb,var(--tab-tone) 23%,var(--surface))!important}
+#eventsOverlay .ev-hdr-sub .ev-btn-calendar{--tab-tone:#65a367}
+#eventsOverlay .ev-hdr-sub .ev-btn-bday{--tab-tone:var(--birthday-tone)}
+.bday-sub-tabs .econ-sub-tab{color:var(--birthday-tone);font-weight:600}
+.bday-sub-tabs .econ-sub-tab.active{border-color:var(--birthday-tone);color:var(--birthday-tone)}
+.ev-bday-body{gap:12px}
+.ev-bday-body .bday-vip-ctrl-bar,.ev-bday-body .bday-buscar-bar{margin:0}
+#eventsOverlay .ev-hdr-sub .ev-btn-week{--tab-tone:#ff6b6b}
+#eventsOverlay .ev-hdr-sub .ev-btn-bodas{--tab-tone:#c08a5a}
+#eventsOverlay .ev-hdr-sub .ev-btn-rutinas{--tab-tone:#eceff5}
+[data-theme="light"] #eventsOverlay .ev-hdr-sub .ev-btn-week{--tab-tone:#c02626}
+[data-theme="light"] #eventsOverlay .ev-hdr-sub .ev-btn-bodas{--tab-tone:#8b5e34}
+[data-theme="light"] #eventsOverlay .ev-hdr-sub .ev-btn-rutinas{--tab-tone:#1f2937}
+#eventsOverlay .ev-hdr-sub .ev-view-toggle.ev-btn-split{--tab-tone:var(--vacaciones);--tab-alpha:13%;background:linear-gradient(to bottom,color-mix(in srgb,#ffb347 var(--tab-alpha),var(--surface)) 50%,color-mix(in srgb,#f472b6 var(--tab-alpha),var(--surface)) 50%)!important}
+#eventsOverlay .ev-hdr-sub .ev-btn-split.active{--tab-alpha:30%}
+#eventsOverlay .boda-cfg-card-controls label{color:var(--wm-wine)}
+.ev-rut-mark.rut-skip::before,.ev-rut-mark.rut-skip::after{height:1.5px;top:calc(50% - .75px)}
+.rut-cancelled .ev-upcoming-title,.rut-cancelled .ev-upcoming-note,.rut-cancelled .ev-upcoming-meta,.rut-cancelled .ev-wk-chip-title,.rut-cancelled .ev-wk-chip-meta{text-decoration-color:currentColor}
+.ev-wk-chips{border-bottom:0}
+.ev-wk-title-track{position:relative;z-index:3;pointer-events:none;margin:2px 4px;padding:5px 8px;min-width:0}
+.ev-wk-sticky-title{position:sticky;top:32px;background:color-mix(in srgb,currentColor 18%,var(--surface));border-radius:3px;padding:0;font-size:.76rem;font-weight:700;line-height:1.3;width:100%;overflow-wrap:anywhere}
+.ev-wk-travel-row .ev-wk-travel-title{visibility:hidden}
+
+/* Titulo y estado separados para que "saltada" nunca quede tachado. */
+.rut-cancelled .ev-upcoming-title,.rut-cancelled .ev-wk-chip-title{text-decoration:none}
+.rut-skipped-title{text-decoration:line-through #f03737 1px}
+.rut-skipped-label{color:#f03737;font-size:.85em;font-weight:600;text-decoration:none}
+.ev-wk-title-track{padding-left:0;padding-right:0}
+.ev-wk-sticky-title{box-sizing:border-box;padding-left:6px;padding-right:0;border-radius:0;background:var(--surface)}
+.ev-rut-mark.rut-skip::before,.ev-rut-mark.rut-skip::after{box-shadow:0 0 0 .45px #000}
+
+.ev-wk-chip .rut-skipped-label{background:none;padding:0}
+
+/* Casillas vacias: mantener el tono de su etiqueta o su color explicito. */
+input[type="checkbox"]{color:inherit}
+input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
+#eventsOverlay input[type="checkbox"]:not(:checked){border-color:currentColor}
+
+/* El titulo queda dentro del borde de 1.5px de su caja continua. */
+.ev-wk-title-track{padding-left:1.5px;padding-right:1.5px}
+.ev-wk-date.ev-wk-today{background:color-mix(in srgb,var(--accent) 20%,var(--surface));box-shadow:inset 3px 0 0 var(--accent)}
+.ev-wk-date.ev-wk-today .ev-wk-num,.ev-wk-date.ev-wk-today .ev-wk-dow{color:var(--accent);font-weight:800}
+.ev-wk-date.ev-wk-today .ev-wk-num{font-size:1.15rem}
+
+/* Economia, Fiscal y Escenarios: tono constante, seleccion por fondo. */
+.econ-tab-btn,.fiscal-tab-btn,.est-nav .est-btn{--tab-tone:var(--accent);color:var(--tab-tone)!important;border-color:var(--tab-tone)!important;background:color-mix(in srgb,var(--tab-tone) 8%,var(--surface))!important}
+.fiscal-tab-btn{--tab-tone:var(--c-purple)}
+.est-nav .est-btn{--tab-tone:#60a5fa;flex:1}
+.est-nav .est-btn.est-casa{--tab-tone:#14b8a6}
+.econ-tab-btn.active,.fiscal-tab-btn.active,.est-nav .est-btn.active{background:color-mix(in srgb,var(--tab-tone) 23%,var(--surface))!important}
+#econOverlay .econ-sub-tab,#fiscalOverlay .econ-sub-tab,#estudioOverlay .econ-sub-tab{color:var(--accent)!important;border-color:var(--accent)!important;font-weight:600}
+#fiscalOverlay .econ-sub-tab{color:var(--c-purple)!important;border-color:var(--c-purple)!important}
+#econOverlay .econ-sub-tab.active,#estudioOverlay .econ-sub-tab.active{background:color-mix(in srgb,var(--accent) 18%,var(--surface))}
+#fiscalOverlay .econ-sub-tab.active{background:color-mix(in srgb,var(--c-purple) 18%,var(--surface))}
+
+.nav-pro-icon{width:34px;height:34px;display:block;box-sizing:border-box;padding:1px;color:var(--c-blue)}
+.nav-pro-econ{color:var(--c-blue)}.nav-pro-home{color:var(--c-red)}.nav-pro-estudio{color:var(--study-tone)}.nav-pro-events{color:#65a367}.nav-pro-bday{color:var(--birthday-tone)}.nav-pro-alarm{color:#e5b600;width:31px;height:31px}
+
+:root{--birthday-tone:#f08bb2;--study-tone:#e4ac72}
+[data-theme="light"]{--birthday-tone:#b43868;--study-tone:#a56625}
+/* Los SVG comparten caja; Home solo es mas grande con los iconos originales. */
+.data-actions:has(.nav-pro-icon){align-items:center}
+.data-btn:has(.nav-pro-icon),.nav-bar-btn:has(.nav-pro-icon),#homeBtn:has(.nav-pro-icon),.nav-bar-btn[data-nav="home"]:has(.nav-pro-icon){width:44px!important;height:44px!important;flex-shrink:0;border-radius:8px!important}
+
+/* Una identidad de color por ventana para ambos juegos de iconos. */
+#econBtn,.nav-bar-btn[data-nav="econ"]{--nav-tone:var(--c-blue)}
+#householdBtn,.nav-bar-btn[data-nav="household"]{--nav-tone:#169a94}
+.nav-pro-household{color:#169a94}
+#estudioBtn,.nav-bar-btn[data-nav="estudio"]{--nav-tone:var(--study-tone)}
+#homeBtn,.nav-bar-btn[data-nav="home"]{--nav-tone:var(--c-red)}
+#eventsBtn,.nav-bar-btn[data-nav="events"]{--nav-tone:#65a367}
+#bdayBtn,.nav-bar-btn[data-nav="bday"]{--nav-tone:var(--birthday-tone)}
+#alarmTestBtn,.nav-bar-btn[data-nav="alarm"]{--nav-tone:#e5b600}
+.data-btn.overlay-active,.nav-bar-btn.active,#alarmWrap:has(#alarmPanel.open) #alarmTestBtn{
+ color:var(--nav-tone,var(--accent))!important;
+ background:color-mix(in srgb,var(--nav-tone,var(--accent)) 15%,var(--surface))!important;
+ box-shadow:0 0 0 1.5px color-mix(in srgb,var(--nav-tone,var(--accent)) 75%,transparent),0 0 8px color-mix(in srgb,var(--nav-tone,var(--accent)) 20%,transparent)!important;
+}
+
+.nav-style-setting{display:flex;align-items:center;gap:8px}
+#navIconStyleValue{margin-left:auto;font-size:.7rem;color:var(--text-muted)}
+.nav-icon-picker-head{display:flex;align-items:center;gap:12px;margin:12px 0}
+.nav-icon-picker-head h2{font-size:1rem;font-weight:600}
+.nav-icon-picker-note{font-size:.78rem;color:var(--text-muted);line-height:1.5;margin-bottom:20px}
+.nav-icon-choice{display:flex;flex-direction:column;width:100%;gap:16px;text-align:left;padding:16px;margin:12px 0;border:1px solid var(--border);border-radius:14px;background:var(--surface2);color:var(--text);cursor:pointer;font:inherit}
+.nav-icon-choice.selected{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 7%,var(--surface))}
+.nav-icon-choice-head{display:flex;align-items:center;justify-content:space-between;font-size:.9rem}
+.nav-icon-choice-check{width:20px;height:20px;border:1px solid var(--border);border-radius:50%;text-align:center;font-size:.8rem;line-height:18px}
+.selected .nav-icon-choice-check{background:var(--accent);border-color:var(--accent);color:white}
+.nav-icon-choice-preview{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.nav-icon-choice-preview .btn-icon{width:34px;height:34px;object-fit:contain}
+.nav-icon-choice-note{font-size:.74rem;color:var(--text-muted)}
+
+#navIconPickerOv{position:fixed;z-index:1500}
+
+/* Mes y titulo fijo comparten una referencia de altura: sin franja abierta. */
+.ev-wk-month-sep{flex-shrink:0;height:32px;box-sizing:border-box;display:flex;align-items:center;background:#242c3d;padding-top:0;padding-bottom:0}
+[data-theme="light"] .ev-wk-month-sep{background:#dfe5f1;border-color:#c1ccde;color:#405778}
+.ev-wk-date.ev-wk-today{width:100%;margin:0;justify-self:stretch;background:color-mix(in srgb,var(--c-green) 18%,var(--surface));border:1.5px solid var(--c-green);box-shadow:none}
+.ev-wk-date.ev-wk-today .ev-wk-num,.ev-wk-date.ev-wk-today .ev-wk-dow{color:var(--c-green)}
+.ev-wk-day-bg.ev-wk-today{background:#162b25}
+[data-theme="light"] .ev-wk-day-bg.ev-wk-today{background:#edf6f0}
+/* Semanas enviadas en claro: verdes suaves, sin pastillas oscuras. */
+[data-theme="light"] .week-card.sent{--sent:#f0f6f2;--sent-border:#c5dacf;--sent-text:#35684a}
+[data-theme="light"] .week-card.sent .week-total{background:#deece2;color:#35684a}
+[data-theme="light"] .week-card.sent .action-btn.sent-toggle{background:#d6e9dd;color:#35684a}
+
+/* Borde discreto para identificar semanas enviadas en ambos temas. */
+.week-card.sent{border:1.5px solid #427958}
+[data-theme="light"] .week-card.sent{border-color:#427958}
+
+/* Filtros junto al buscador sin ensanchar la ventana movil. */
+.ev-list-search-row{display:flex;align-items:center;gap:8px}
+.ev-list-search-row .ev-search{flex:1;min-width:0;margin:0}
+.ev-list-search-row .ev-types-select{width:120px;min-width:0;max-width:35%;flex-shrink:0}
+.ev-wk-sticky-title{padding-top:4px;padding-bottom:3px}
+.ev-wk-body{--ev-subtab-h:48px}
+.ev-wk-body>.econ-sub-tabs{z-index:7}
+.ev-wk-body .ev-wk-month-sep{top:var(--ev-subtab-h)}
+.ev-wk-body .ev-wk-sticky-title{top:calc(var(--ev-subtab-h) + 32px)}
+.ev-wk-body #ev-wk-today-row{scroll-margin-top:calc(var(--ev-subtab-h) + 40px)}
+.ev-wk-date.ev-wk-today{margin-left:3px;width:calc(100% - 3px)}
+.fiscal-hip-tabs{align-items:stretch}
+.fiscal-hip-tabs .econ-sub-tab{display:flex;align-items:center;justify-content:center}
+/* Configuracion de tarifa: controles verdes y valores neutros. */
+.econ-tariff-settings{--tariff-tone:#538477}
+[data-theme="dark"] .econ-tariff-settings{--tariff-tone:#80b5a5}
+.econ-tariff-settings .econ-opt-btn.active{color:var(--tariff-tone);border-color:var(--tariff-tone);background:color-mix(in srgb,var(--tariff-tone) 12%,var(--surface))}
+.econ-tariff-settings .econ-rate-field.primary .econ-rate-input{border-color:var(--tariff-tone);background:color-mix(in srgb,var(--tariff-tone) 7%,var(--surface))}
+.econ-tariff-settings .econ-multi-rate-num,.econ-tariff-settings .econ-equiv-val{color:var(--text)}
+.econ-tariff-settings .econ-multi-rate-add{color:var(--tariff-tone);border-color:var(--tariff-tone);background:color-mix(in srgb,var(--tariff-tone) 7%,var(--surface))}
+.sy-period-past{--period-tone:#a0a5b0}
+.sy-period-future{--period-tone:#c6a16a}
+.sy-period-total{--period-tone:#75aa99}
+[data-theme="light"] .sy-period-past{--period-tone:#626c7b}
+[data-theme="light"] .sy-period-future{--period-tone:#9a743e}
+[data-theme="light"] .sy-period-total{--period-tone:#397e6b}
+.sy-period-past,.sy-period-future,.sy-period-total{border-color:var(--period-tone);background:color-mix(in srgb,var(--period-tone) 12%,var(--surface))}
+.sy-period-past .sy-val,.sy-period-future .sy-val,.sy-period-total .sy-val{color:var(--period-tone)}
+
+.ev-wk-travel-row .ev-wk-travel-title{padding-top:4px;padding-bottom:3px}
+
+/* Aire entre dias; el hueco entre eventos del mismo dia se conserva. */
+.ev-wk-chips,.ev-wk-chips.ev-wk-chips-nested{padding-top:14px;padding-bottom:14px}
+.ev-list-search-row .ev-types-select{flex:0 0 76px;width:76px;display:flex;align-items:center;justify-content:space-between;gap:4px}
+.ev-types-select span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ev-type-options{display:flex;flex-direction:column;gap:8px;margin:16px 0 8px}
+.ev-type-option{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font:inherit;text-align:left;cursor:pointer}
+.ev-type-option.selected{border-color:var(--accent);background:var(--accent-glow);color:var(--accent)}
+
+/* La cabecera y el regreso del viaje tienen su propio margen compacto.
+   Los otros dias conservan los 14 px de aire entre grupos de eventos. */
+.ev-wk-chips:has(> .ev-wk-travel-row:not(.ev-wk-travel-footer)){padding-top:4px}
+.ev-wk-travel-row:not(.ev-wk-travel-footer) > .ev-wk-travel{padding-bottom:1px}
+.ev-wk-chips:has(> .ev-wk-travel-footer){padding-bottom:4px}
+.ev-wk-travel-footer > .ev-wk-travel{padding-bottom:0}
+
+.settings-menu-separator{border-top:1px solid var(--border);flex-shrink:0}
+
+/* Texto del trayecto alineado con el titulo, sin mover las tarjetas puntuales. */
+.ev-wk-travel-row{margin-left:-6.5px}
+.ev-bright-past .ev-wk-date.ev-wk-past,.ev-bright-past .ev-wk-chips.ev-wk-past{opacity:1}

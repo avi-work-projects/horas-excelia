@@ -1,0 +1,197 @@
+/* Facturas: mismos componentes que los contratos, cifras sin desbordar. */
+.energy-caption{font-size:11px;line-height:1.45;color:var(--muted);overflow-wrap:anywhere;margin:6px 0}
+.energy-table-scroll{overflow-x:auto}.energy-table-scroll th,.energy-table-scroll td{padding:7px 6px;text-align:right;white-space:nowrap}
+.energy-contract h3{font-size:14px;margin:0 0 12px}.energy-contract>p{font-size:12px;margin:8px 0}
+.energy-contract summary{cursor:pointer;font-size:12px;color:var(--muted)}
+.energy-year-nav{display:flex;align-items:center;justify-content:center;gap:28px;margin:14px 0}.energy-year-nav .nav-btn{flex:0 0 34px;width:34px;height:34px}.energy-year-nav strong{font-size:19px}
+.energy-field textarea{box-sizing:border-box;width:100%;min-height:64px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:9px;padding:10px}
+
+.energy-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}.energy-fields .energy-field{margin:0;min-width:0}.energy-fields .energy-field:first-child{grid-column:1/-1}.energy-fields input{font-size:13px}.energy-price-view b{white-space:nowrap}
+
+/* Estudio energético: controles compactos y separación entre apartados. */
+.energy-choice-list{display:grid;gap:10px;margin:14px 0}.energy-choice-list label,.energy-promo{display:flex;align-items:center;gap:8px}.energy-promo{margin:14px 0}.energy-tax-row{display:grid;grid-template-columns:1fr 90px 36px;gap:10px;align-items:end;margin:12px 0}.energy-tax-row .energy-field{margin:0}.energy-sheet form>h3{margin:20px 0 10px}.energy-sheet [hidden]{display:none!important}.energy-sheet .econ-sub-tabs{flex-shrink:0}.energy-sheet th,.energy-sheet td{padding:7px 5px}.energy-sheet form>.ev-io-btn{width:100%;margin-top:16px}
+
+/* Ultimo dia de ensayo: distintivo compartido y pulso solo en el mensual. */
+.boda-last-rehearsal{display:block;width:max-content;max-width:100%;font-size:.58rem;font-weight:800;letter-spacing:.045em;color:#92334d;background:#f8e8ed;border-radius:4px;padding:2px 5px;margin:2px 0 4px}
+.ev-wk-chip:has(.boda-last-rehearsal){flex-wrap:wrap}
+.ev-wk-chip>.boda-last-rehearsal{flex-basis:100%;width:auto;background:transparent;color:inherit;margin:2px 0 0;padding:0;font-size:.55rem}
+.home-popup-item .boda-last-rehearsal{margin:5px 0 0}
+.boda-last-marker{animation:boda-last-pulse 4s ease-in-out infinite}
+@keyframes boda-last-pulse{0%,72%,100%{filter:opacity(1)}84%{filter:opacity(.25)}}
+@media(prefers-reduced-motion:reduce){.boda-last-marker{animation:none;outline:1px solid #92334d;border-radius:4px}}
+.home-popup-item:has(.boda-last-rehearsal){flex-wrap:wrap}
+.home-popup-item:has(.boda-last-rehearsal)>.home-reminder-text{flex-basis:100%}
+.home-popup-item .boda-last-rehearsal{flex-shrink:0;white-space:nowrap}
+.ev-wk-chip>.boda-last-rehearsal{color:#fff}
+
+.home-popup-item.event{border-color:var(--reminder-color,#38bdf8);background:color-mix(in srgb,var(--reminder-color,#38bdf8) 12%,var(--surface));color:var(--text)}
+.home-popup-item.event .home-reminder-when{color:var(--text);font-weight:700}
+
+/* Ventana energética: cabecera fija, scroll del cuerpo, gráficos de un año. */
+.energy-window{display:flex!important;flex-direction:column;z-index:320;background:var(--bg);overflow:hidden}
+.energy-window-header{display:grid;grid-template-columns:70px 1fr 70px;align-items:center;gap:8px;padding:16px;flex-shrink:0;box-shadow:0 1px 0 var(--border)}
+.energy-window-header h2{font-size:1rem;text-align:center;margin:0}
+.energy-window-header .energy-import-button{width:70px;height:36px;padding:0 6px;flex:none;font-size:.72rem;border-radius:10px}
+.energy-year-nav{position:relative}.energy-total-button{position:absolute;right:16px;background:var(--surface);color:var(--energy-resumen);border:1px solid currentColor;border-radius:9px;padding:7px 10px;font:inherit;font-size:.75rem}.energy-total-button[aria-pressed="true"]{background:color-mix(in srgb,var(--energy-resumen) 15%,var(--surface));box-shadow:0 2px 5px #0001}
+.energy-year-nav:has(.energy-total-button){padding-right:86px}
+.energy-window>.energy-year-nav{margin:0;padding:12px;flex-shrink:0}
+.energy-window .sy-body{padding:0;min-height:0;flex:1;overflow-y:auto}
+.energy-window-content{width:100%;max-width:760px;margin:0 auto;padding:14px 16px 30px;flex-shrink:0}
+.energy-fee-period{padding:12px 0;box-shadow:0 1px 0 var(--border)}
+.energy-fee-period:last-child{box-shadow:none}
+/* Solo energía reparte el espacio entre textos, con ancho de contenido. */
+.energy-tabs{top:0;z-index:3;background:var(--bg);justify-content:space-between;gap:12px;overflow-x:auto}
+.energy-tabs .econ-sub-tab{flex:0 0 auto;padding:12px 0;font-size:.72rem;font-weight:600;white-space:nowrap}
+/* Identidad propia de cada pestaña, sin alterar el sistema general. */
+.energy-window{--energy-tone:var(--energy-resumen);--energy-resumen:#65b9bd;--energy-consumo:#84b994;--energy-costes:#d4aa63;--energy-tarifas:#91b4e8;--energy-comparar:#c09bd3}
+[data-theme="light"] .energy-window{--energy-resumen:#267b7e;--energy-consumo:#457a51;--energy-costes:#a2691c;--energy-tarifas:#426aaa;--energy-comparar:#86549b}
+.energy-window [data-energy-tab="resumen"],.energy-window [data-energy-view="resumen"]{--energy-tone:var(--energy-resumen)}
+.energy-window [data-energy-tab="consumo"],.energy-window [data-energy-view="consumo"]{--energy-tone:var(--energy-consumo)}
+.energy-window [data-energy-tab="costes"],.energy-window [data-energy-view="costes"]{--energy-tone:var(--energy-costes)}
+.energy-window [data-energy-tab="tarifas"],.energy-window [data-energy-view="tarifas"]{--energy-tone:var(--energy-tarifas)}
+.energy-window [data-energy-tab="comparar"],.energy-window [data-energy-view="comparar"]{--energy-tone:var(--energy-comparar)}
+.energy-tabs .econ-sub-tab{color:var(--energy-tone);border-bottom-color:transparent;position:relative}
+.energy-tabs .econ-sub-tab.active{color:var(--energy-tone);border-bottom-color:var(--energy-tone);background:color-mix(in srgb,var(--energy-tone) 10%,var(--surface))}
+.energy-window .energy-contract{border:1px solid var(--border);border-top:2px solid color-mix(in srgb,var(--supplier-color,var(--energy-tone)) 45%,var(--border));background:var(--surface);margin:0 0 18px;padding:16px}
+.energy-window .energy-caption{color:var(--text-muted);font-size:.69rem;line-height:1.5}
+.energy-window .energy-section-title{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:5px 12px;margin-bottom:14px}
+.energy-window .energy-section-title h3{margin:0;font-size:.86rem}
+.energy-section-title>span{font-size:.64rem;color:var(--text-muted)}
+.energy-info{margin:14px 0;font-size:.72rem;color:var(--text-muted)}
+.energy-info>summary{cursor:pointer;font-size:.72rem;color:var(--text-muted);padding:6px 0}
+.energy-info>div{padding-top:5px;line-height:1.55}.energy-info p{margin:7px 0}
+.energy-window .energy-overview{padding:20px 16px 10px;border-radius:14px;background:color-mix(in srgb,var(--energy-tone) 11%,var(--surface));border:1px solid color-mix(in srgb,var(--energy-tone) 32%,var(--border));margin-bottom:18px;display:flex;flex-direction:column;gap:8px}
+.energy-overview>span{font-size:.75rem;color:var(--text-muted)}.energy-overview>strong{font-size:1.85rem;letter-spacing:-.05em;line-height:1.15;color:var(--energy-tone);overflow-wrap:anywhere}.energy-overview>small{font-size:.67rem;color:var(--text-muted)}
+.energy-overview-averages{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px}
+.energy-overview .energy-metric{padding:10px 0;border:0;background:transparent;box-shadow:0 -1px 0 color-mix(in srgb,var(--energy-tone) 20%,var(--border));border-radius:0}.energy-overview .energy-info{margin:0}
+.energy-period-track{display:flex;height:10px;gap:3px;border-radius:5px;overflow:hidden;margin:14px 0}.energy-period-track>span{flex-basis:0;background:var(--period-tone)}
+.energy-period-0{--period-tone:#bd7075}.energy-period-1{--period-tone:#c99a40}.energy-period-2{--period-tone:#4f9c90}
+.energy-period-values{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.energy-period-values>div{display:flex;flex-direction:column;gap:7px;font-size:.66rem;border-top:2px solid var(--period-tone);padding-top:8px;min-width:0}.energy-period-values strong{font-size:.8rem;overflow-wrap:anywhere}.energy-period-values small{color:var(--text-muted)}
+.energy-tax-totals>div{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;box-shadow:0 1px 0 var(--border);font-size:.76rem}.energy-tax-totals>div:last-child{box-shadow:none}.energy-tax-totals small{display:block;font-size:.64rem;color:var(--text-muted);margin-top:4px}.energy-tax-totals b{white-space:nowrap;font-family:var(--mono);font-size:.8rem}
+.energy-extremes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 18px}.energy-extremes>div{display:flex;flex-direction:column;gap:5px;padding:12px;background:var(--surface2);border-radius:8px;min-width:0}.energy-extremes span,.energy-extremes small{font-size:.64rem;color:var(--text-muted)}.energy-extremes strong{font-size:1rem;color:var(--energy-tone)}.energy-extremes b{font-size:.69rem;overflow-wrap:anywhere}.energy-window .energy-contract>h4{margin:18px 0 8px;font-size:.78rem}
+.energy-supplier-row>div{flex:1}.energy-status-pill{font-size:.6rem;color:var(--energy-tone);background:color-mix(in srgb,var(--energy-tone) 10%,var(--surface));padding:4px 7px;border-radius:6px;align-self:flex-start;white-space:nowrap}
+.energy-window .energy-metric strong{font-size:1.1rem;line-height:1.3}.energy-window .energy-metric span{font-size:.68rem}.energy-window .energy-metric small{font-size:.65rem}
+.energy-reconciliation .energy-metric:last-child{grid-column:1/-1;border-color:color-mix(in srgb,var(--energy-tone) 40%,var(--border));background:color-mix(in srgb,var(--energy-tone) 7%,var(--surface))}
+.energy-coverage-note{color:var(--c-orange);font-size:.72rem;margin:10px 0}
+.energy-window .energy-reference-strip{padding:14px;border:1px solid var(--border);background:var(--surface2);border-radius:12px;margin-bottom:18px}.energy-reference-strip>strong{font-size:.75rem}.energy-reference-strip>div:not(.energy-info){display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.energy-reference-strip>div>span{padding:4px 7px;border-radius:5px;background:var(--surface);font-size:.67rem;color:var(--energy-tone)}.energy-reference-strip .energy-info{margin:8px 0 0}
+.energy-tariff-heading{display:flex;justify-content:space-between;align-items:center;gap:10px}.energy-window .energy-tariff-heading h3{color:color-mix(in srgb,var(--supplier-color) 80%,var(--text));margin:0}.energy-tariff-dates{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.69rem;color:var(--text-muted)}.energy-tariff-dates>span{font-size:1rem;color:var(--text)}
+.energy-window .energy-tariff-period>summary{list-style:none}.energy-tariff-period>summary::-webkit-details-marker{display:none}
+.energy-window .energy-inline-input{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:9px;background:var(--surface2);font-size:.75rem;gap:12px}
+.energy-window .energy-tax-controls label{color:var(--energy-tone);--chk:var(--energy-tone)}
+.energy-inline-input input{width:68px;font:600 .85rem var(--font);padding:6px;border:1px solid var(--border);border-radius:6px;color:var(--text);background:var(--surface);text-align:right}
+.energy-window .energy-scenario-result{display:flex;flex-direction:column;gap:6px;background:color-mix(in srgb,var(--energy-tone) 10%,var(--surface));padding:14px;border-radius:10px;margin:16px 0 8px;color:var(--text)}.energy-scenario-result>span{font-size:.72rem}.energy-scenario-result>strong{font-size:1.45rem;color:var(--energy-tone)}.energy-scenario-result>small{font-size:.65rem;color:var(--text-muted)}
+.energy-window .sy-table td:first-child,.energy-window .sy-table th:first-child{text-align:left}.energy-window .sy-table td{font-variant-numeric:tabular-nums}.energy-window .sy-table tbody tr:nth-child(even){background:var(--surface2)}
+.energy-cost-chart{display:flex;align-items:flex-end;height:180px;gap:3px;margin:16px 0 8px}
+.energy-cost-column{flex:1;min-width:0;text-align:center;font-size:.55rem;color:var(--text-muted)}
+.energy-cost-stack{height:130px;display:flex;flex-direction:column-reverse;justify-content:flex-start;gap:0;margin:4px 1px}
+.energy-cost-segment{width:100%;padding:0;border:0;min-height:0;cursor:pointer;flex-shrink:0;border-radius:2px}
+.energy-bar-value{font-size:.5rem;white-space:nowrap}
+.energy-legend{display:flex;flex-wrap:wrap;gap:8px;font-size:.7rem}.energy-legend span{display:flex;align-items:center;gap:5px}.energy-legend i{width:10px;height:10px;border-radius:2px}
+.energy-range{display:grid;grid-template-columns:1fr 1fr;gap:10px}.energy-range label{font-size:.75rem;min-width:0}.energy-range input{width:100%;min-width:0;display:block;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:8px}
+.energy-window [hidden]{display:none!important}.energy-window .sy-table{font-size:.7rem;width:100%}.energy-window th,.energy-window td{padding:8px 4px}
+.energy-window .energy-contract h3{font-size:.9rem}
+#energyTariffWrap>.ev-form-overlay{z-index:340}
+body:has(#energyAnalysisOverlay.open){overflow:hidden}
+
+.energy-year-chart{touch-action:pan-y;user-select:none}
+
+/* Filtros y filas de parejas: controles compactos, columnas alineadas. */
+.ev-filter-cycle{height:22px;width:22px;flex:0 0 22px;padding:0;border:1px solid currentColor;border-radius:4px;background:var(--surface);color:var(--text-muted);font-size:.85rem;cursor:pointer}
+.ev-annual-filter-row{gap:3px}
+.ev-annual-filter-row .ev-filter-chip{padding-left:5px;padding-right:5px}
+.boda-det-row{display:grid;grid-template-columns:20px minmax(0,1fr) 43px minmax(70px,1fr) 34px;gap:6px}
+.boda-det-row .boda-ro-time{text-align:right;margin:0}
+.boda-det-row .boda-ro-place{justify-self:start;max-width:100%;box-sizing:border-box;white-space:normal;line-height:1.2;margin:0}
+.boda-det-row .boda-det-day{white-space:nowrap}
+.boda-asg-day.libre{border-color:var(--wm-wine);background:color-mix(in srgb,var(--wm-wine) 17%,var(--surface));font-weight:700;box-shadow:inset 0 0 0 1px var(--wm-wine)}
+.boda-asg-day.ajena:not(.off){opacity:1;border-color:#8b5e34;box-shadow:inset 0 0 0 1px #8b5e34}
+
+.boda-asg-lock{position:absolute;top:2px;left:3px;font-size:.6rem}.boda-asg-day.closed{border-style:dashed}
+
+.boda-asg-legend .lg-libre{background:color-mix(in srgb,var(--wm-wine) 17%,var(--surface));border-color:var(--wm-wine)}
+
+.imp-mode-sheet{max-height:92dvh;overflow-y:auto}
+.imp-preview{display:grid;gap:8px;text-align:left}
+.imp-preview section{border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.imp-preview h4{margin:0 0 6px;color:var(--text);font-size:.85rem}
+.imp-preview p{margin:3px 0;font-size:.8rem;color:var(--text-muted)}
+.imp-preview-note{font-size:.75rem;color:var(--text-muted);line-height:1.4}
+
+#evIcsRoutineMonthWrap{flex:0 0 auto;font-size:.78rem;gap:5px}
+
+.ev-filter-cycle-wrap{margin-left:auto;display:flex;align-items:center;border-left:1px solid var(--border);padding-left:7px}
+.ev-filter-cycle{border-radius:3px;color:var(--text-muted);line-height:18px}
+.ev-filter-cycle span{color:var(--cycle-color);font-weight:800;font-size:19px}
+
+.energy-window>.energy-tabs{flex-shrink:0;position:static;margin:0;padding:0 max(20px,calc((100% - 720px)/2));box-shadow:0 1px 0 var(--border)}
+.energy-window>.energy-year-nav{display:flex;justify-content:center;gap:22px;align-items:center}
+.energy-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
+.energy-metric{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:7px;min-width:0}
+.energy-metric span,.energy-metric small{font-size:.72rem;color:var(--text-muted)}
+.energy-metric strong{font-size:1.05rem;color:var(--text);overflow-wrap:anywhere}
+.energy-supplier-row{display:flex;gap:10px;padding:10px 0;align-items:center}.energy-supplier-row i{width:9px;height:34px;border-radius:4px}.energy-supplier-row small{display:block;color:var(--text-muted);margin-top:4px;font-size:.75rem}
+.energy-vat-strip{position:relative;width:100%;margin-top:18px;font-size:.62rem;height:27px}.energy-vat-strip span{position:absolute;top:0;border-top:4px solid transparent;text-align:center;padding-top:3px;min-width:0;white-space:nowrap}
+.energy-tax-controls{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:.8rem}.energy-tax-controls label{display:flex;align-items:center;gap:6px}
+.energy-tax-controls input[type=number],.energy-inline-input input{width:65px;border:1px solid var(--border);border-radius:8px;padding:7px;background:var(--surface);color:var(--text)}
+.energy-tariff-period{border-top:1px solid var(--border);padding:12px 0}.energy-tariff-period summary{cursor:pointer;color:var(--text-muted);font-size:.8rem}.energy-tariff-period h4{margin:18px 0 8px;color:#a47b43;font-size:.8rem}.energy-tariff-period p{font-size:.8rem}
+.energy-compare-chart{display:flex;gap:7px;align-items:flex-end;margin-top:18px}.energy-compare-chart>div{flex:1;min-width:0;text-align:center}.energy-compare-pair{height:130px;display:flex;gap:2px;align-items:flex-end}.energy-compare-pair span{flex:1;border-radius:3px 3px 0 0}.energy-compare-chart small{font-size:.55rem;color:var(--text-muted)}
+.energy-scenario-result{font-weight:700;color:#65a367;margin:16px 0}.energy-tariff-choices summary{padding:10px;border:1px solid var(--border);border-radius:8px;font-size:.8rem;cursor:pointer}
+.energy-cost-segment{cursor:default}.energy-inline-input{font-size:.8rem;display:flex;align-items:center;gap:10px}
+.ev-io-btn.energy-analysis-open{display:block;box-sizing:border-box;flex:0 0 auto;align-self:stretch;width:100%;min-height:39px;padding:9px 12px;font-size:.74rem;margin:12px 0}
+
+/* Navegación: la misma geometría en Home y en las ventanas. */
+.data-actions>.data-btn,.data-menu-wrap{flex-shrink:0}
+.data-actions>.data-btn,.data-actions>.data-menu-wrap{align-self:center}
+.nav-bar-btn[data-nav="alarm"]{margin-left:auto}
+
+.rut-session-state{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.rut-session-state>.ev-io-btn{flex:1}
+.rut-recovery-list{position:relative;max-height:50vh;overflow-y:auto;margin-top:18px}.rut-recovery-list>h3{position:sticky;top:0;background:var(--surface);padding:10px 0;font-size:.8rem;z-index:1}.rut-recovery-list>.ev-io-btn{display:flex;flex-direction:column;gap:5px;width:100%;margin-bottom:8px;text-align:left}.rut-recovery-list small{color:var(--text-muted)}
+.rut-dpick-real *{pointer-events:none!important}.rut-dpick-real .ev-cell[data-ds]{pointer-events:auto!important;cursor:pointer}.rut-dpick-real .rut-day-selected{outline:3px solid #ec168c;outline-offset:-3px}.rut-dpick-real>.ev-io-row{display:none}
+.ev-btn.rut-recovery-confirm,.ev-io-btn.rut-recovery-confirm{background:#ec168c;color:white;border-color:#ec168c;font-weight:600}.rut-addition-sheet>.rut-recovery-confirm{width:100%;margin-top:12px}.rut-recovery-confirm:disabled{opacity:.4;cursor:default}
+.rut-day-agenda{display:flex;flex-direction:column;gap:6px;max-height:22vh;overflow:auto;margin:10px 0 0}.rut-agenda-item{padding:9px 10px;border-left:3px solid var(--agenda-color);border-radius:7px;background:var(--surface2);display:flex;flex-wrap:wrap;align-items:center;gap:5px 12px;font-size:.75rem}.rut-agenda-item strong{flex:1;min-width:110px}.rut-agenda-item span{font-size:.7rem;color:var(--text-muted);white-space:nowrap}.rut-day-agenda>.sy-note{margin:0}
+
+/* Tarjetas compactas: días visibles y un único estilo para inicio y fin. */
+.rut-days{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:2px 0}
+.rut-weekdays{display:flex;align-items:center;gap:3px}
+.rut-day{width:20px;height:20px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.58rem;color:var(--text-dim)}
+.rut-day.on{font-weight:700}
+.rut-hora{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--text-muted)}
+.rut-hora-varias{font-style:italic}
+.rut-hora-fixed{padding:5px 7px;border-radius:7px;background:var(--surface2)}
+.rut-time-range{display:inline-flex;gap:2px;align-items:baseline;white-space:nowrap;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.8rem;color:var(--text);font-weight:600}
+.rut-card-icon{display:flex;align-items:center;justify-content:center;width:22px;height:22px;flex-shrink:0}
+.rut-card-icon svg{display:block;width:22px;height:22px}
+.rut-routine-card .rut-name{font-size:.78rem}
+.rut-card-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:3px}
+.rut-card-actions .ev-btn{min-width:0;min-height:42px;padding:8px 10px;font-size:.68rem;line-height:1.35}
+.rut-card-actions [data-rweek]{--rut-action:#a2793b}.rut-card-actions [data-rplan]{--rut-action:#2e9388}.rut-card-actions [data-rhistory]{--rut-action:#597caf}.rut-card-actions .ev-btn{color:var(--rut-action);border-color:color-mix(in srgb,var(--rut-action) 45%,var(--border));background:color-mix(in srgb,var(--rut-action) 10%,var(--surface))}
+.ev-main-tabs .ev-btn-bday{display:flex;justify-content:center;align-items:center}
+.ev-main-tabs .ev-btn-bday .nav-pro-icon{color:inherit;width:30px;height:30px}
+
+/* Selección por fondo en las subpestañas de Eventos; cada una conserva su tono. */
+#eventsOverlay .econ-sub-tab.active,#eventsOverlay .boda-config-btn.active{background:color-mix(in srgb,currentColor 10%,var(--surface))}
+#eventsOverlay .sy-body:has(> .ev-upcoming-tabs){scrollbar-gutter:stable}
+.ev-upcoming-tabs{justify-content:space-between;gap:8px;margin:0 -16px;padding:0 20px;height:48px;box-sizing:border-box;flex-shrink:0}
+.ev-wk-body>.ev-upcoming-tabs{margin:0}
+.ev-upcoming-tabs .econ-sub-tab{flex:0 0 auto;padding:8px 3px;font-size:.72rem;font-weight:600;line-height:1.2;white-space:nowrap;transition:color .15s,background .15s,border-color .15s}
+
+.energy-tariff-period>summary{list-style-position:outside;cursor:pointer;padding:12px 0}.energy-tariff-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}.energy-tariff-metrics>span{display:flex;flex-direction:column;gap:5px;background:var(--surface2);padding:10px 5px;border-radius:9px;text-align:center}.energy-tariff-metrics small{font-size:.66rem;font-weight:400;color:var(--text-muted)}.energy-tariff-metrics b{font-size:.85rem;color:var(--text)}
+.energy-tariff-metrics .energy-price-basis{font-size:.59rem;margin-top:-2px}
+.energy-tariff-metrics .energy-price-taxed{display:flex;flex-direction:column;gap:2px;border-top:1px solid var(--border);margin-top:3px;padding-top:7px;color:var(--text-muted);font-size:.71rem;font-weight:400}
+.energy-price-taxed small{font-size:.59rem}
+.energy-tariff-metrics .energy-price-included{margin:auto 0;line-height:1.6}
+.energy-price-total{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;padding:7px 0 4px;margin:5px 0 8px;border-top:1px solid var(--border);color:var(--text)}
+.energy-price-total>span{font-size:.74rem;font-weight:600}
+.energy-price-total>strong{font-family:var(--mono);font-size:.8rem;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
+.energy-price-total small{font-size:.7rem;font-weight:500;color:var(--text-muted)}
+
+.rut-history-session>[data-history-select]{flex-shrink:0;margin:0}
+.rut-history-session:has(>[data-history-select]){gap:8px}
+.rut-history-session:has(>[data-history-select]) .rut-history-status{max-width:24%;line-height:1.4}
+.rut-history-session .boda-mini-btn{flex-shrink:0}
+.rut-bulk-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 0 14px;flex-shrink:0}
+.rut-bulk-actions>span{grid-column:1/-1;font-size:.72rem;color:var(--text-muted)}
+.rut-bulk-actions .ev-io-btn{font-size:.7rem;min-width:0;min-height:34px;padding:8px;line-height:1.3;margin:0}
+.rut-bulk-actions [data-rut-bulk-action="pause"]{grid-column:1/-1}
+.rut-month-select{display:flex;align-items:center;gap:8px;margin:8px 12px 12px;font-size:.7rem}
+.rut-bulk-actions button:disabled{opacity:.4}

@@ -1,9 +1,10 @@
 /* Contratos históricos: independientes de las tarifas de simulación. */
 var ENERGY_HISTORY_KEY='excelia-energy-history-v1';
 function energyContracts(){
-  var raw=appStorage.getItem(ENERGY_HISTORY_KEY);
-  if(!raw)return [];
-  var list=JSON.parse(raw);validateEnergyContracts(list);return list;
+  return energyReadData(ENERGY_HISTORY_KEY,function(){
+    var raw=appStorage.getItem(ENERGY_HISTORY_KEY);
+    return raw?validateEnergyContracts(JSON.parse(raw)):[];
+  });
 }
 function validateEnergyContracts(list){
   if(!Array.isArray(list)||list.length>5000)throw new Error('Histórico de contratos no válido');

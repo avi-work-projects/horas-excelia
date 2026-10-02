@@ -1,0 +1,281 @@
+{
+  "styleSources": [
+    "css/source/base.css",
+    "css/source/economics.css",
+    "css/source/birthdays.css",
+    "css/source/event-calendar.css",
+    "css/source/navigation-alarms.css",
+    "css/source/event-panels.css",
+    "css/source/dialogs-responsive.css",
+    "css/source/wedding-moves.css",
+    "css/source/routines.css",
+    "css/source/shared-refinements.css",
+    "css/source/home-sharing.css",
+    "css/source/energy-refinements.css"
+  ],
+  "styles": [
+    "css/styles.css",
+    "css/tasks.css",
+    "css/household.css",
+    "css/electricity-comparator.css",
+    "css/finance-views.css",
+    "css/personal-periods.css"
+  ],
+  "scripts": [
+    {
+      "path": "js/lib/jspdf.umd.min.js",
+      "unit": false
+    },
+    {
+      "path": "js/lib/jspdf.plugin.autotable.min.js",
+      "unit": false
+    },
+    {
+      "path": "js/data-integrity.js"
+    },
+    {
+      "path": "js/energy-data.js"
+    },
+    {
+      "path": "js/nav-icons.js"
+    },
+    {
+      "path": "js/core.js"
+    },
+    {
+      "path": "js/tasks.js"
+    },
+    {
+      "path": "js/tasks-view.js"
+    },
+    {
+      "path": "js/tasks-float.js"
+    },
+    {
+      "path": "js/csv-sync.js"
+    },
+    {
+      "path": "js/summary.js"
+    },
+    {
+      "path": "js/economics-helpers.js"
+    },
+    {
+      "path": "js/economics.js"
+    },
+    {
+      "path": "js/economics-analisis.js"
+    },
+    {
+      "path": "js/economics-estudio.js"
+    },
+    {
+      "path": "js/economics-comp.js"
+    },
+    {
+      "path": "js/economics-sim.js"
+    },
+    {
+      "path": "js/economics-gastos.js"
+    },
+    {
+      "path": "js/economics-fiscal-datos.js"
+    },
+    {
+      "path": "js/personal-periods.js"
+    },
+    {
+      "path": "js/personal-periods-editor.js"
+    },
+    {
+      "path": "js/economics-fiscal.js"
+    },
+    {
+      "path": "js/economics-fiscal-elect.js"
+    },
+    {
+      "path": "js/economics-fiscal-hip.js"
+    },
+    {
+      "path": "js/economics-fiscal-gas.js"
+    },
+    {
+      "path": "js/energy-history.js"
+    },
+    {
+      "path": "js/energy-bills.js"
+    },
+    {
+      "path": "js/energy-analysis.js"
+    },
+    {
+      "path": "js/energy-reference.js"
+    },
+    {
+      "path": "js/energy-costs.js"
+    },
+    {
+      "path": "js/energy-reconciliation.js"
+    },
+    {
+      "path": "js/energy-study.js"
+    },
+    {
+      "path": "js/energy-import-preview.js"
+    },
+    {
+      "path": "js/energy-analysis-view.js"
+    },
+    {
+      "path": "js/energy-analysis-bind.js"
+    },
+    {
+      "path": "js/energy-tariff-editor.js"
+    },
+    {
+      "path": "js/energy-bills-view.js"
+    },
+    {
+      "path": "js/electricity-comparator.js"
+    },
+    {
+      "path": "js/electricity-comparator-inputs.js"
+    },
+    {
+      "path": "js/economics-fiscal-bind.js",
+      "unit": false
+    },
+    {
+      "path": "js/household.js"
+    },
+    {
+      "path": "js/household-summary.js"
+    },
+    {
+      "path": "js/birthdays.js"
+    },
+    {
+      "path": "js/birthdays-render.js"
+    },
+    {
+      "path": "js/birthdays-panels.js"
+    },
+    {
+      "path": "js/birthdays-bind.js"
+    },
+    {
+      "path": "js/events-appearance.js"
+    },
+    {
+      "path": "js/events-picker-color.js"
+    },
+    {
+      "path": "js/events-picker-date.js"
+    },
+    {
+      "path": "js/rutinas-icons.js"
+    },
+    {
+      "path": "js/rutinas.js"
+    },
+    {
+      "path": "js/rutinas-form.js"
+    },
+    {
+      "path": "js/rutinas-flex.js"
+    },
+    {
+      "path": "js/rutinas-sessions.js"
+    },
+    {
+      "path": "js/rutinas-addition.js"
+    },
+    {
+      "path": "js/rutinas-recovery.js"
+    },
+    {
+      "path": "js/rutinas-history.js"
+    },
+    {
+      "path": "js/rutinas-bulk.js"
+    },
+    {
+      "path": "js/bodas.js"
+    },
+    {
+      "path": "js/bodas-assign.js"
+    },
+    {
+      "path": "js/bodas-class-form.js"
+    },
+    {
+      "path": "js/bodas-bind.js"
+    },
+    {
+      "path": "js/bodas-config.js"
+    },
+    {
+      "path": "js/events.js"
+    },
+    {
+      "path": "js/events-calendar-export.js"
+    },
+    {
+      "path": "js/events-cal.js"
+    },
+    {
+      "path": "js/events-render.js"
+    },
+    {
+      "path": "js/events-form.js"
+    },
+    {
+      "path": "js/events-form-controls.js"
+    },
+    {
+      "path": "js/events-form-save.js"
+    },
+    {
+      "path": "js/events-detail.js"
+    },
+    {
+      "path": "js/events-bind.js"
+    },
+    {
+      "path": "js/alarms.js"
+    },
+    {
+      "path": "js/init.js",
+      "unit": false
+    },
+    {
+      "path": "js/logo-popup.js",
+      "unit": false
+    },
+    {
+      "path": "js/import-preview.js"
+    },
+    {
+      "path": "js/import-export.js",
+      "unit": false
+    },
+    {
+      "path": "js/home-popup.js",
+      "unit": false
+    }
+  ],
+  "assets": [
+    "manifest.json",
+    "logo.png",
+    "css/asturias-cross.svg",
+    "css/wedding-moves.png",
+    "VIP.png",
+    "icon-home.png",
+    "icon-econ.png",
+    "icon-household.png",
+    "icon-alarm.png",
+    "icon-bday.png",
+    "icon-events.png",
+    "icon-estudio.png"
+  ]
+}

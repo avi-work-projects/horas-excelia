@@ -10,12 +10,14 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- assets:styles -->
 <link rel="stylesheet" href="css/styles.css">
 <link rel="stylesheet" href="css/tasks.css">
 <link rel="stylesheet" href="css/household.css">
 <link rel="stylesheet" href="css/electricity-comparator.css">
 <link rel="stylesheet" href="css/finance-views.css">
 <link rel="stylesheet" href="css/personal-periods.css">
+<!-- /assets:styles -->
 </head>
 <body>
 
@@ -213,16 +215,6 @@ var BDAYS_FROM_SECRET=[];
 
 
 
-<!-- ── SCRIPTS ── -->
-<script defer src="js/lib/jspdf.umd.min.js"></script>
-<script defer src="js/lib/jspdf.plugin.autotable.min.js"></script>
-<script defer src="js/data-integrity.js"></script>
-<script defer src="js/nav-icons.js"></script>
-<script defer src="js/core.js"></script>
-<script defer src="js/tasks.js"></script>
-<script defer src="js/tasks-view.js"></script>
-<script defer src="js/tasks-float.js"></script>
-<script defer src="js/csv-sync.js"></script>
 <!-- ── LOGO GALLERY (before scripts so init.js can find it) ── -->
 <div class="logo-popup" id="logoPopup">
   <div class="logo-popup-box" id="logoPopupBox">
@@ -244,6 +236,18 @@ var BDAYS_FROM_SECRET=[];
   </div>
 </div>
 
+<!-- ── SCRIPTS ── -->
+<!-- assets:scripts -->
+<script defer src="js/lib/jspdf.umd.min.js"></script>
+<script defer src="js/lib/jspdf.plugin.autotable.min.js"></script>
+<script defer src="js/data-integrity.js"></script>
+<script defer src="js/energy-data.js"></script>
+<script defer src="js/nav-icons.js"></script>
+<script defer src="js/core.js"></script>
+<script defer src="js/tasks.js"></script>
+<script defer src="js/tasks-view.js"></script>
+<script defer src="js/tasks-float.js"></script>
+<script defer src="js/csv-sync.js"></script>
 <script defer src="js/summary.js"></script>
 <script defer src="js/economics-helpers.js"></script>
 <script defer src="js/economics.js"></script>
@@ -302,6 +306,8 @@ var BDAYS_FROM_SECRET=[];
 <script defer src="js/events-cal.js"></script>
 <script defer src="js/events-render.js"></script>
 <script defer src="js/events-form.js"></script>
+<script defer src="js/events-form-controls.js"></script>
+<script defer src="js/events-form-save.js"></script>
 <script defer src="js/events-detail.js"></script>
 <script defer src="js/events-bind.js"></script>
 <script defer src="js/alarms.js"></script>
@@ -310,6 +316,7 @@ var BDAYS_FROM_SECRET=[];
 <script defer src="js/import-preview.js"></script>
 <script defer src="js/import-export.js"></script>
 <script defer src="js/home-popup.js"></script>
+<!-- /assets:scripts -->
 
 <script>
 // Mostrar nombre del autor si está configurado

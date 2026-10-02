@@ -133,21 +133,21 @@
 
 **Funciones:** electricComparisonTaxes:4 · electricComparisonApplied:8 · electricInputValue:12 · electricFixedDay:18 · electricInputField:19 · electricUsageYear:23 · electricInitialScenarios:28 · electricWeightWarning:33 · electricFoldCard:39 · electricUsageYears:45 · bindElectricComparisonCard:50 · validate:52 · save:57 · bindElectricityComparison:89 · refresh:93
 
-### js/electricity-comparator.js  _(82 líneas)_
-**Funciones:** energyHistoricalTariffs:2 · electricComparisonTariff:9 · electricHistoricalCopy:16 · electricModesHtml:24 · electricTariffFieldsHtml:28 · electricComparisonCard:46 · electricConsumptionScenariosHtml:55 · electricUsageYearsHtml:63 · renderElectricityComparison:69
+### js/electricity-comparator.js  _(85 líneas)_
+**Funciones:** energyHistoricalTariffs:2 · electricComparisonTariff:9 · electricHistoricalCopy:16 · electricModesHtml:24 · electricTariffFieldsHtml:28 · electricComparisonCard:46 · electricConsumptionScenariosHtml:55 · electricUsageYearsHtml:63 · renderElectricityComparison:69 · _renderElectricityComparison:72
 
 ### js/energy-analysis-bind.js  _(48 líneas)_
 **Funciones:** bindEnergyAnalysis:2 · refresh:5 · year:8 · tab:11 · energyBindSwipe:32
 
-### js/energy-analysis-view.js  _(96 líneas)_
+### js/energy-analysis-view.js  _(99 líneas)_
 **Estado global:** ENERGY_ANALYSIS_TAB:2 · ENERGY_ANALYSIS_YEAR:3 · ENERGY_SUMMARY_TOTAL:4 · ENERGY_ANALYSIS_KIND:5 · ENERGY_RETURN:6 · ENERGY_ANALYSIS_TABS:7
 
-**Funciones:** energyAnalysisHtml:8 · energyConsumptionHtml:24 · energyCostsHtml:32 · energyTariffsHtml:46 · energyScenarioOptions:71 · energyComparisonHtml:75 · energyArchiveHtml:83 · closeEnergyAnalysis:88 · openEnergyAnalysis:89 · energyRefreshAnalysis:95
+**Funciones:** energyAnalysisHtml:8 · _energyAnalysisHtml:11 · energyConsumptionHtml:27 · energyCostsHtml:35 · energyTariffsHtml:49 · energyScenarioOptions:74 · energyComparisonHtml:78 · energyArchiveHtml:86 · closeEnergyAnalysis:91 · openEnergyAnalysis:92 · energyRefreshAnalysis:98
 
-### js/energy-analysis.js  _(87 líneas)_
+### js/energy-analysis.js  _(90 líneas)_
 **Estado global:** ENERGY_TAX_KEY:3
 
-**Funciones:** energyUnitPrice:5 · energyWeightedPrice:6 · energyValidateTariff:10 · energyTariffDefaults:21 · energyTariffBase:24 · energyTariffNet:35 · energyTariffGross:36 · energyTaxes:40 · energyValidateTaxes:41 · energyMergeTaxes:45 · energySaveTaxes:46 · energyVatAt:47 · energyUtc:48 · energyDate:49 · energyBillEnd:52 · energyConsumptionMonths:57 · energySimulateMonth:76
+**Funciones:** energyUnitPrice:5 · energyWeightedPrice:6 · energyValidateTariff:10 · energyTariffDefaults:21 · energyTariffBase:24 · energyTariffNet:35 · energyTariffGross:36 · energyTaxes:40 · energyValidateTaxes:41 · energyMergeTaxes:45 · energySaveTaxes:46 · energyVatAt:47 · energyUtc:48 · energyDate:49 · energyBillEnd:52 · energyConsumptionMonths:57 · _energyConsumptionMonths:60 · energySimulateMonth:79
 
 ### js/energy-bills-view.js  _(13 líneas)_
 **Estado global:** ENERGY_BILLS_YEAR:1 · ENERGY_BILLS_COST:2
@@ -162,10 +162,15 @@
 ### js/energy-costs.js  _(60 líneas)_
 **Funciones:** energyContractOn:3 · energyContractTariff:8 · energySupplierColor:16 · energyCostMonths:21 · energyCostChart:51
 
-### js/energy-history.js  _(51 líneas)_
+### js/energy-data.js  _(22 líneas)_
+**Estado global:** ENERGY_RENDER_CONTEXT:3
+
+**Funciones:** withEnergyData:4 · energyReadData:9 · energyMemo:15
+
+### js/energy-history.js  _(52 líneas)_
 **Estado global:** ENERGY_HISTORY_KEY:2
 
-**Funciones:** energyContracts:3 · validateEnergyContracts:8 · energyContractSignature:31 · energyMergeContracts:32 · energySaveContracts:41 · energyHistoryButton:42 · energyContractStatus:44 · openEnergyHistory:49 · bindEnergyHistory:50
+**Funciones:** energyContracts:3 · validateEnergyContracts:9 · energyContractSignature:32 · energyMergeContracts:33 · energySaveContracts:42 · energyHistoryButton:43 · energyContractStatus:45 · openEnergyHistory:50 · bindEnergyHistory:51
 
 ### js/energy-import-preview.js  _(25 líneas)_
 **Funciones:** energyImportChanges:2 · stable:3 · energyImportPreview:8
@@ -205,8 +210,14 @@
 ### js/events-detail.js  _(603 líneas)_
 **Funciones:** openEvDeleteSheet:7 · closeEvDeleteSheet:37 · renderEvDetail:40 (!118) · fd2:43 · _fila:123 · evDayCarItems:158 · evCarGo:171 · _evCarShow:179 · openEvDayCarousel:187 · closeEvDayCarousel:195 · openEvDetail:202 (!155) · repintar:242 · closeEvDetail:357 · renderEvAlarmPanel:360 (!96) · fd2:362 · openEvAlarm:456 · closeEvAlarm:462 · openBdayAlarmFromEvents:470 · bindEvAlarmEvents:478 (!125) · _syncPre:516 · fmtD:546
 
-### js/events-form.js  _(635 líneas)_
-**Funciones:** evPuntualDays:6 · _renderEvTypeSwatches:15 · _renderEvTypeButton:26 · evAdmiteRepeticion:46 · renderEvForm:49 (!195) · openEvForm:244 · closeEvForm:270 · evSuggestedTitle:282 · bindEvFormEvents:285 (!350) · suggestTitle:288 · _refreshShapePreviews:308 · _refreshPickDatesLabel:313 · _curKind:332 · _applyTypeUI:333 · _bindTypeSwatches:362 · _viajeSync:452
+### js/events-form-controls.js  _(106 líneas)_
+**Funciones:** _evFormEl:2 · _evFormAll:3 · _evFormKind:4 · _evFormColor:5 · _evFormSuggestTitle:6 · _evFormTypeUI:10 · _bindEvFormTypes:24 · _bindEvFormCategories:38 · _evFormShapePreviews:53 · _bindEvFormAppearance:56 · _evFormDatesLabel:74 · _bindEvFormDates:82 · _evFormTravelUI:93 · _bindEvFormDetails:99
+
+### js/events-form-save.js  _(108 líneas)_
+**Funciones:** _evFormRead:2 · _evFormReadDetails:26 · _evFormSaveBodas:46 · _evFormCommit:74 · _evFormDelete:90 · _bindEvFormActions:101
+
+### js/events-form.js  _(293 líneas)_
+**Funciones:** evPuntualDays:6 · _renderEvTypeSwatches:15 · _renderEvTypeButton:26 · evAdmiteRepeticion:46 · renderEvForm:49 (!195) · openEvForm:244 · closeEvForm:270 · evSuggestedTitle:282 · bindEvFormEvents:285
 
 ### js/events-picker-color.js  _(306 líneas)_
 **Estado global:** EV_COLOR_GRID:6 · EV_COLOR_TYPES:25 · EV_MANAGEMENT_SUBTYPES:42 · EV_PLAN_SUBTYPES:43 · EV_KINDS:46 · EV_TYPE_COLORS:51 · EV_FREE_COLOR:74 · EV_FREE_SHAPE:75 · EV_FREE_DATES:78 · EV_BAR_SIZES:81 · EV_FREE_BARSIZE:82 · EV_DOT_SOLID:86 · EV_SHAPE_BW:113
@@ -327,7 +338,9 @@
 
 ## CSS
 
-### css/styles.css  _(3082 líneas)_
+> `css/styles.css` se genera: editar las fuentes listadas a continuación.
+
+### css/source/base.css  _(360 líneas)_
 
 **Secciones:**
 
@@ -355,227 +368,360 @@
 - Quitar festivos/vacaciones checkboxes:331
 - Month summary breakdown:353
 - Ausencia list tag:358
-- ECONOMICS:361
-- Quarterly aligned grid — única cuadrícula 4 col × 4 fila:366
-- Summary sublabel (hours breakdown):383
-- Ingresado box (formerly cobrado) — neutral:392
-- ECONOMICS v2: tabs + nuevas secciones:426
-- Estudio Cambio — grouped nav:449
-- Estudio — tariff comparison cards:458
-- Análisis hipoteca — secciones organizadas:479
-- Mis gastos — budget table:496
-- Year selector for per-year fiscal tabs:509
-- §1.1 Tarifa dual:520
-- §1.3 Stats por hora/día:532
-- §1.4 Toggles:539
-- §1.5 Declaración IRPF:544
-- Tab 2: Comparador:557
-- Calcular Tarifa (sim):585
-- Scenario zones (Comparar Escenarios):603
-- Análisis Ec. Personal:620
-- Bloques de la Subrogación:622
-- Fiscal config modal — purple theme override:665
-- Fiscal config modal:667
-- ECONOMICS v3: opt-buttons, cascade, gastos:693
-- Cascade ingresos/gastos:700
-- Media mensual: cards:710
-- Tab 4: Análisis:720
-- IRPF Breakdown visual:734
-- Card "A pagar / Devolución" más ancha cuando lleva sub-líneas integradas:761
-- Sub-línea de deducciones integrada (antes era una tarjeta verde suelta):763
-- Desglose item-por-item del Ahorro por desgravaciones (ordenado desc):787
-- Anotación inline en Cálculo de base mostrando el ahorro real en IRPF que produce cada reducción:796
-- Resumen fiscal al final de Ingresos y Gastos:798
-- Donut chart:805
-- Breakdown del sector seleccionado (IRPF/IVA dentro de Impuestos, etc.):815
-- Fiscal config: gastos items:822
-- Fiscal: tab bar:834
-- Fiscal: sticky save:839
-- Fiscal: section title income/expense colors:841
-- Fiscal: desgravaciones:851
-- Fiscal: compras profesionales:878
-- Desgravaciones: notas + tabla despacho info:886
-- Nota IVA compras:906
-- IVA por item en compras:908
-- Fiscal: despacho en casa:915
-- Hipoteca — resumen visual:938
-- Hipoteca — compact 2-col grid:961
-- Hipoteca — compact vinculaciones:969
-- Hipoteca — read-only fields:980
-- Hipoteca — edit/detail buttons:989
-- Hipoteca — period summary card:995
-- Multi-rate period cards:1008
-- Distribución de ingresos:1024
-- Comparador: reorder buttons:1040
-- Rate input styled:1044
-- BIRTHDAYS:1048
-- El nombre admite hasta cuatro líneas.:1061
-- VIP controls bar:1075
-- Botón Cancelar fijo al fondo de pantalla en modo edición VIP:1086
-- VIP edit mode item states:1089
-- Feat 1: Buscador en lista por meses:1099
-- Upcoming birthdays:1125
-- Fin de semana suave; hoy conserva su borde y su fecha destacada.:1142
-- Events in puentes (summary) — one per line:1162
-- Events upcoming view:1166
-- Minicabecera de día dentro de un panel de Próximos:1168
-- Marcador de la tarjeta de Proximos: la forma real del evento:1178
-- Horas del evento y transporte de ida/vuelta:1183
-- Fallback declarativo para scrollIntoView cuando el JS aún no ha medido el sticky:1215
-- Grid del mes: col fecha (48px) + col eventos (1fr):1217
-- Columna fecha (col 1):1219
-- Caja del multi-día: UN ÚNICO grid item que abarca varias filas → se ve como una unidad:1228
-- Contenedor de chips puntuales — se monta ENCIMA del multi-día por z-index:1235
-- Cuando el día está dentro de un viaje: padding extra y fondo transparente para que el viaje se vea continuo:1239
-- Chip puntual: opaco con sombra para destacar sobre el viaje translúcido:1245
-- Event color type picker:1249
-- Tipos sin color fijo (Viaje, Otros): dot multicolor + borde neutro:1281
-- Color picker avanzado (paleta 6×8 + color libre):1285
-- Detail color picker toggle:1303
-- Annual events calendar:1309
-- Badge punto: estilo "1 mes" reducido para anual/4-meses (reemplaza la X):1339
-- Selector de formas en el formulario de evento (Otros):1351
-- Selector de grosor de barra (grande | Otros):1353
-- Previews del formulario: mismo SVG que los calendarios (borde uniforme):1368
-- Tamaños en Calendario 1 mes: "lg" en la esquina, "ovf" en la fila de desborde:1372
-- Inicio/Fin bloqueados cuando hay Selección Multidía:1375
-- Mini-overlay para elegir días específicos (Otros):1380
-- Estrella VIP vectorial (SVG): tamaño homogéneo con el resto de markers:1407
-- Marcador "+" (más de 4 eventos puntuales en el mismo día):1411
-- Barras multi-día en calendario anual/4meses: ocupa una franja vertical y se divide en filas con grid:1413
-- Perímetro de días puente en vista anual: z-index:1, debajo de eventos:1419
-- Calendario 4 meses: 2 columnas × 2 filas:1421
-- Botón ir al calendario mensual en puentes del resumen:1423
-- Botón editar (lápiz) en Anual/Quad — mismo aspecto que la bombilla pequeña de 1-mes/Semanal:1435
-- Diagonales en anual/quad: attachment:fixed para que el patrón sea continuo entre celdas:1439
-- Festivos/vac en vista anual: borde brillante + relleno suave por día individual:1457
-- Dropdown de vista anual:1464
-- Linea que separa los chips de eventos grandes de los puntuales:1473
-- Shared overlay nav bar — nivel 1, siempre visible en lo alto del overlay:1482
-- TABS NIVEL 2 (birthdays/events/summary) — nivel 2, debajo del nav bar:1486
-- Summary tabs — nivel 2:1489
-- BRIDGE DAY CELLS in summary:1494
-- VIP BIRTHDAYS:1503
-- BIRTHDAY + EVENT ALARM PANEL:1506
-- Campana de alarma en items de próximos (bday + eventos):1509
-- 3-ZONE ALARM MARKER:1547
-- ALARM MANAGEMENT OVERLAY:1560
-- HOME POPUP (semanas pendientes / VIP sin alarma):1561
-- MACRO URL EN MENÚ:1571
-- Feat 4: Nav-bar emoji alignment:1577
-- Birthday detail / form overlays:1587
-- EVENTS:1597
-- Zone A: upcoming/list views — subtle blue tint:1605
-- Zone B: calendar grid views — subtle teal tint, active = green:1606
-- Feat 2: Lista de Eventos subtabs:1609
-- Contenedor semana: barras multi-día ENCIMA (position:absolute) de las celdas:1626
-- Barras multi-día: 65% de la celda, centradas verticalmente, encima de números:1628
-- Si hay columna de marcadores en la esquina, la fila se queda a su izquierda:1640
-- Marcadores desbordados: SEGUNDA COLUMNA (uno debajo de otro), no en fila:1644
-- Carrusel del dia (estrellas VIP / "+" del calendario de 1 mes):1650
-- Rutinas en anual y 4 meses: puntitos en fila arriba del dia:1665
-- Los cumpleaños VIP se solapan al 75% (12px de marcador -> -9px):1675
-- Sin z-index propio para no crear stacking context — permite que ev-badge (z-index:4) quede encima de ev-bars-row (z-index:3):1707
-- Perímetro puente: capa inferior a eventos:1709
-- Bright past: bombilla override:1729
-- Bombilla en Anual/Quad — mismo estilo que la pequeña inline del 1-mes/Semanal:1734
-- Bombilla en 1-mes y agenda semanal: posicionada en el centro entre el ▶ y "Hoy":1739
-- Quad label 3 lines:1744
-- ev-num con altura fija para alinear perfectamente todos los números de la misma semana:1751
-- ev-badge: z-index:4 > ev-bars-row z-index:3 → los badges 1-día quedan encima de barras multi-día:1753
-- Events list view:1755
-- Event form overlay (inside eventsOverlay):1769
-- Relleno, para que haga pareja con el naranja de "Editar evento":1799
-- Event detail:1805
-- LOGO POPUP:1813
-- Gallery:1822
-- BD ALARM VIP TOGGLE:1831
-- RESPONSIVE (mobile header):1834
-- IVA trimestral: compactar celdas para que los 4 trimestres quepan sin scroll horizontal:1836
-- ALARM PANEL:1889
-- Drum picker (selector giratorio de hora/minuto):1894
-- Confirmación alarma en el pasado:1920
-- Botón flotante "Listo" en modo Editar VIPs:1926
-- Controles inline long-press cumpleaños:1929
-- Selector de clase en el formulario:1937
-- Notas: general vs de un dia concreto:1943
-- Pestana Bodas y pestana partida Vacaciones/Festivos:1947
-- Mitad marron (vacaciones/festivos) + mitad rosa (puentes), sin linea visible:1948
-- Tarjetas de avisos (huecos / parejas pendientes / info incompleta):1959
-- Filas del panel de un aviso:1973
-- Estadisticas:1977
-- Barras horizontales de reparto (componente generico: hBarRows):1985
-- El marron macizo quedaba demasiado oscuro: ahora es un tinte suave:1995
-- Dia cerrado: no admite mas clases:2012
-- Una clase a la que le falta la hora o la sala se marca ella sola.:2023
-- Fila con cambios sin guardar:2028
-- Filtros de Parejas como chips pulsables:2040
-- El color de la pareja va en un punto delante; el nombre, en color normal:2103
-- Sala sin asignar: se marca en naranja para que cante en la lista:2108
-- Nota propia del dia en la lista de Proximos:2111
-- Hora y sala de un ensayo, al pie de la tarjeta de Proximos:2113
-- Atajos de alarma para un ensayo: 1 h / 30 min antes (se pueden marcar los dos):2115
-- Agenda semanal: hora y sala de los ensayos + continuacion de un mes anterior:2123
-- Editar siempre en naranja, como en el resto de la app:2129
-- Los tres botones del detalle de pareja comparten aspecto:2146
-- Subpestana Calendario de bodas:2186
-- Leyenda: una pareja por linea y pulsable para resaltar sus dias:2200
-- Dia resaltado al pulsar una pareja en la leyenda:2207
-- Medible antes de abrir: colocar las ruedas sin mostrar su posición inicial.:2213
-- Ficha del dia: alto fijo para que no baile al pasar de un evento a otro:2235
-- Sin esto los hijos se encogen y el texto se derrama sobre los botones:2237
-- etiqueta al minimo: el nombre de la pareja necesita el resto:2246
-- el color de la pareja va en un punto, no tinendo el nombre:2249
-- Los tres botones de la pareja, en una sola linea:2256
-- Buscador y boton de anadir en la misma fila:2259
-- Tarjeta de pareja desplegada en su sitio (antes era un modal):2265
-- Horario distinto segun el dia:2269
-- Selector de icono de rutina:2274
-- Lista "Todos": buscador, orden y borrado con pulsacion larga:2329
-- Diálogo: modo de importación (añadir vs reemplazar):2344
-- PRINT:2357
-- Separacion de siluetas incluso entre grosores distintos.:2377
-- Controles tactiles: mismo minimo en filtros y navegacion, sin agrandar marcadores.:2392
-- Editar: tono comun, con geometria propia de cada pantalla.:2404
-- Marca oficial con transparencia; conserva contraste en ambos temas.:2421
-- Geometría constante aunque una subpestaña tenga más contenido y scroll.:2442
-- Catálogos: cabecera de sección, ficha y controles siempre en el mismo orden.:2460
-- Las tres vistas de Cumpleaños comparten el naranja en ambos temas.:2486
-- Text edits retain the solid orange; only standalone pencils use a tint.:2495
-- Etiquetas y casillas comparten tono dentro de Eventos, tambien en sus hojas.:2502
-- Canceladas: visibles solo en las vistas de detalle, con marca y tono apagado.:2569
-- Formulario de rutina: ritmo y etiquetas comunes, sin alterar otros paneles.:2584
-- Cancelaciones sutiles: el calendario mensual conserva el color original.:2594
-- Pestañas de Eventos: la seleccion solo intensifica el fondo.:2606
-- Titulo y estado separados para que "saltada" nunca quede tachado.:2631
-- Casillas vacias: mantener el tono de su etiqueta o su color explicito.:2641
-- El titulo queda dentro del borde de 1.5px de su caja continua.:2646
-- Economia, Fiscal y Escenarios: tono constante, seleccion por fondo.:2652
-- Los SVG comparten caja; Home solo es mas grande con los iconos originales.:2668
-- Una identidad de color por ventana para ambos juegos de iconos.:2672
-- Mes y titulo fijo comparten una referencia de altura: sin franja abierta.:2703
-- Semanas enviadas en claro: verdes suaves, sin pastillas oscuras.:2710
-- Borde discreto para identificar semanas enviadas en ambos temas.:2715
-- Filtros junto al buscador sin ensanchar la ventana movil.:2719
-- Configuracion de tarifa: controles verdes y valores neutros.:2732
-- Aire entre dias; el hueco entre eventos del mismo dia se conserva.:2750
-- Texto del trayecto alineado con el titulo, sin mover las tarjetas puntuales.:2767
-- Cabecera de Home opaca, incluso sobre los botones oscuros de las semanas.:2771
-- Selector de eventos para compartir por iCalendar:2796
-- Selector de exportación: controles compactos y lista con espacio propio.:2797
-- Colores por tramo, compartidos entre las dos vistas de próximos cumpleaños.:2834
-- Compartir: cabecera centrada, categorías completas y lista compacta.:2852
-- Facturas: mismos componentes que los contratos, cifras sin desbordar.:2885
-- Estudio energético: controles compactos y separación entre apartados.:2895
-- Ultimo dia de ensayo: distintivo compartido y pulso solo en el mensual.:2898
-- Ventana energética: cabecera fija, scroll del cuerpo, gráficos de un año.:2914
-- Solo energía reparte el espacio entre textos, con ancho de contenido.:2926
-- Identidad propia de cada pestaña, sin alterar el sistema general.:2929
-- Filtros y filas de parejas: controles compactos, columnas alineadas.:2982
-- Navegación: la misma geometría en Home y en las ventanas.:3026
-- Tarjetas compactas: días visibles y un único estilo para inicio y fin.:3037
-- Selección por fondo en las subpestañas de Eventos; cada una conserva su tono.:3055
 
-**Rangos por prefijo de clase:** 
-.action-btn:160-164 · .ah-cuota:483-485 · .ah-donut:493-495 · .ah-section:480-482 · .ah-total:490-492 · .ah-vs:486-489 · .alarm-cfg:1890-1890 · .alarm-colon:1893-1893 · .alarm-create:1907-1913 · .alarm-day:1917-1919 · .alarm-days:1914-1916 · .alarm-msg:1903-1904 · .alarm-panel:1891-1891 · .alarm-past:1921-1925 · .alarm-time:1892-1892 · .analisis-card:632-634 · .analisis-cards:621-621 · .analisis-hbar:635-640 · .analisis-input:650-653 · .analisis-ins:659-664 · .analisis-insurance:658-658 · .analisis-mortgage:641-657 · .app-logo:61-61 · .app-version:124-124 · .bd-alarm:1507-1833 · .bd-detail:1588-1595 · .bd-export:266-266 · .bday-add:1140-1141 · .bday-badge:1062-1065 · .bday-buscar:1102-1104 · .bday-calendar:1051-1067 · .bday-cancel:1087-1088 · .bday-cell:1055-1143 · .bday-hdr:1050-2488 · .bday-header:1068-2484 · .bday-ic:1931-1935 · .bday-inline:1930-1930 · .bday-io:1108-1124 · .bday-jump:2384-2425 · .bday-list:1074-1098 · .bday-listo:1927-1927 · .bday-month:1073-2500 · .bday-next:2434-2435 · .bday-num:1059-1059 · .bday-search:1105-1107 · .bday-sub:2611-2612 · .bday-upcoming:1126-2382 · .bday-vip:1070-1504 · .bday-week:1052-1054 · .boda-actions:2138-2138 · .boda-add:2140-2140 · .boda-asg:2163-2995 · .boda-buscar:2260-2262 · .boda-cal:2187-2212 · .boda-card:2046-2268 · .boda-catalog:2411-2419 · .boda-cfg:2461-2473 · .boda-chip:2042-2044 · .boda-chips:2041-2041 · .boda-cl:2100-2137 · .boda-class:2024-2099 · .boda-config:2407-2458 · .boda-controls:2002-2002 · .boda-count:2415-2415 · .boda-couple:2082-2084 · .boda-cpk:2154-2162 · .boda-date:2139-2493 · .boda-day:2018-2448 · .boda-det:2145-2989 · .boda-dia:2089-2091 · .boda-dot:2050-2050 · .boda-falta:2057-2057 · .boda-field:2449-2454 · .boda-filter:2387-2389 · .boda-filters:2005-2005 · .boda-fsel:2006-2009 · .boda-ftoggles:2010-2011 · .boda-future:2849-2849 · .boda-hd:2133-2135 · .boda-inp:2077-2077 · .boda-iss:1974-1976 · .boda-issue:1961-1972 · .boda-issues:1960-1960 · .boda-last:2899-2903 · .boda-legend:2141-2144 · .boda-mini:2127-2395 · .boda-mode:1992-1994 · .boda-multi:2092-2097 · .boda-name:2051-2051 · .boda-ok:2058-2058 · .boda-pack:2416-2417 · .boda-pfilters:2386-2390 · .boda-place:2085-2110 · .boda-prog:2053-2054 · .boda-ro:2101-2109 · .boda-save:2038-2039 · .boda-savebar:2034-2037 · .boda-search:2263-2263 · .boda-sec:1958-1958 · .boda-sobra:2059-2059 · .boda-sort:2264-2264 · .boda-stat:1979-1984 · .boda-stats:1978-1978 · .boda-sticky:1954-2471 · .boda-sum:1998-2001 · .boda-summary:1997-1997 · .boda-swap:2067-2074 · .boda-teachers:2436-2436 · .boda-time:2078-2078 · .boda-tp:2216-2219 · .boda-wed:2052-2052 · .bottom-sheet:170-171 · .btn-icon:103-1879 · .csv-export:76-77 · .data-actions:99-3028 · .data-btn:100-2681 · .data-menu:117-123 · .day-cell:138-244 · .day-date:143-143 · .day-hours:144-144 · .day-name:142-142 · .day-status:151-151 · .days-grid:137-137 · .default-hours:72-81 · .dp-actions:1403-1404 · .dp-counter:1390-1391 · .dp-day:1398-1402 · .dp-days:1397-1397 · .dp-grid:1392-1392 · .dp-handle:1385-1385 · .dp-hdr:1386-1386 · .dp-mhdr:1395-1396 · .dp-mname:1394-1394 · .dp-month:1393-1393 · .dp-overlay:1381-1384 · .dp-sheet:1383-1383 · .dp-title:1387-1387 · .dp-yearnav:1388-1389 · .drum-picker:1896-1899 · .drum-sel:1902-1902 · .drum-wrap:1895-1901 · .econ-add:567-568 · .econ-ahorro:788-795 · .econ-annual:385-385 · .econ-avg:386-715 · .econ-bracket:550-556 · .econ-calc:698-699 · .econ-casc:702-709 · .econ-cascade:701-701 · .econ-chart:580-581 · .econ-comp:558-582 · .econ-decl:545-719 · .econ-distrib:1025-1039 · .econ-donut:806-821 · .econ-equiv:1020-1023 · .econ-fiscal:799-804 · .econ-formula:405-408 · .econ-gastos:721-733 · .econ-gear:517-518 · .econ-hdr:427-519 · .econ-ingresado:393-393 · .econ-irpf:735-797 · .econ-legend:583-584 · .econ-line:578-579 · .econ-month:410-423 · .econ-mr:1017-1018 · .econ-multi:1009-1019 · .econ-opt:694-697 · .econ-qcard:375-382 · .econ-qcell:371-1840 · .econ-qm:380-380 · .econ-qmonth:378-379 · .econ-quarter:367-1837 · .econ-rate:521-529 · .econ-row:394-404 · .econ-sc:560-1046 · .econ-scenario:559-559 · .econ-section:424-424 · .econ-sim:586-596 · .econ-stats:533-538 · .econ-sub:430-448 · .econ-tab:428-2657 · .econ-tariff:2733-2738 · .econ-toggle:540-543 · .econ-val:409-409 · .energy-bar:2972-2972 · .energy-caption:2886-2886 · .energy-choice:2896-2896 · .energy-compare:3021-3021 · .energy-contract:2876-2889 · .energy-cost:2968-3023 · .energy-coverage:2959-2959 · .energy-extremes:2955-2955 · .energy-fee:2924-2925 · .energy-field:2879-2891 · .energy-fields:2893-2893 · .energy-history:2874-2875 · .energy-info:2944-2946 · .energy-inline:2965-2965 · .energy-legend:2973-2973 · .energy-metric:3013-3015 · .energy-metrics:3012-3012 · .energy-overview:2948-2950 · .energy-period:2951-2953 · .energy-price:2878-3070 · .energy-range:2974-2974 · .energy-reconciliation:2958-2958 · .energy-scenario:3022-3022 · .energy-section:2943-2943 · .energy-sheet:2873-2873 · .energy-supplier:2956-3016 · .energy-table:2887-2887 · .energy-tabs:2927-2938 · .energy-tariff:2961-3066 · .energy-tax:2881-3019 · .energy-vat:3017-3017 · .energy-window:2915-3011 · .energy-year:2890-2980 · .est-btn:453-457 · .est-card:463-465 · .est-detail:460-460 · .est-field:472-478 · .est-fields:471-471 · .est-group:451-455 · .est-modo:466-466 · .est-nav:450-2656 · .est-section:459-459 · .est-tariff:461-470 · .ev-alarm:1530-2122 · .ev-ann:1436-1672 · .ev-annual:1180-2985 · .ev-badge:1754-1754 · .ev-badges:1636-1636 · .ev-bar:1701-1701 · .ev-bars:1629-1629 · .ev-barsize:1354-1363 · .ev-bday:2613-2614 · .ev-bficha:2242-2242 · .ev-bfila:2243-2252 · .ev-bpunto:2250-2250 · .ev-bright:1730-2769 · .ev-btn:1792-3034 · .ev-bver:2255-2255 · .ev-cal:2800-2872 · .ev-car:1651-2239 · .ev-category:1270-1276 · .ev-cell:1144-1750 · .ev-char:1781-1781 · .ev-checkbox:1786-1786 · .ev-chip:1479-2401 · .ev-color:1283-1302 · .ev-colors:1782-1782 · .ev-date:1783-1783 · .ev-dates:1376-1378 · .ev-day:1639-1692 · .ev-daynote:1945-1945 · .ev-del:2341-2342 · .ev-detail:1304-2236 · .ev-dot:156-156 · .ev-dots:155-155 · .ev-edit:1427-1796 · .ev-field:1775-2848 · .ev-filter:1474-3008 · .ev-form:1770-1791 · .ev-hdr:1488-1601 · .ev-hora:1184-1184 · .ev-input:1777-1778 · .ev-io:1110-3024 · .ev-kind:1938-1942 · .ev-list:1610-2752 · .ev-main:1602-3053 · .ev-management:1348-1348 · .ev-month:1618-1679 · .ev-multi:1633-2402 · .ev-note:1944-1944 · .ev-num:1752-1752 · .ev-otros:1352-1697 · .ev-puente:1710-1710 · .ev-quad:1422-1746 · .ev-repeat:1787-1787 · .ev-rut:1688-2637 · .ev-search:2331-2335 · .ev-sep:1207-1207 · .ev-shape:1364-2287 · .ev-share:2798-2799 · .ev-sort:2336-2381 · .ev-stepped:1703-1705 · .ev-sub:437-439 · .ev-symbol:1250-1263 · .ev-textarea:1779-1780 · .ev-toggle:1784-1785 · .ev-type:1264-2756 · .ev-types:1613-2753 · .ev-up:1169-2597 · .ev-upcoming:326-3060 · .ev-viaje:1185-1193 · .ev-view:1600-2394 · .ev-wd:1789-1790 · .ev-week:322-2850 · .ev-weekday:1788-1788 · .ev-wk:1194-3059 · .excl-item:352-531 · .excl-row:332-530 · .fiscal-add:687-850 · .fiscal-bracket:678-686 · .fiscal-compras:879-914 · .fiscal-copy:514-516 · .fiscal-custom:675-675 · .fiscal-ded:889-903 · .fiscal-desgrav:852-904 · .fiscal-despacho:916-937 · .fiscal-error:691-691 · .fiscal-gasto:823-885 · .fiscal-gastos:905-905 · .fiscal-hdr:835-835 · .fiscal-highlight:876-876 · .fiscal-hip:2730-2731 · .fiscal-onoff:918-919 · .fiscal-pct:676-685 · .fiscal-period:831-832 · .fiscal-radio:670-674 · .fiscal-save:689-690 · .fiscal-section:668-843 · .fiscal-sticky:840-840 · .fiscal-subsection:844-845 · .fiscal-tab:836-2654 · .fiscal-viaje:846-847 · .fiscal-vinc:929-930 · .fiscal-year:510-513 · .full-overlay:247-248 · .hbar-lbl:1988-1988 · .hbar-row:1987-1987 · .hbar-rows:1986-1986 · .hbar-track:1989-1990 · .hbar-val:1991-1991 · .header:57-2772 · .header-brand:60-60 · .hip-add:1007-1007 · .hip-auto:958-958 · .hip-bar:944-951 · .hip-cancel:994-994 · .hip-cf:963-968 · .hip-edit:990-992 · .hip-g2:962-962 · .hip-grid:956-956 · .hip-period:996-1005 · .hip-resumen:939-943 · .hip-ro:981-988 · .hip-save:993-993 · .hip-section:957-1006 · .hip-stat:953-955 · .hip-stats:952-952 · .hip-sub:960-960 · .hip-vinc:959-959 · .hip-vr:970-979 · .home-popup:1562-2912 · .home-reminder:2829-2831 · .home-submission:2774-2785 · .home-summary:2786-2794 · .hour-chip:90-91 · .hour-chips:89-89 · .hour-picker:87-88 · .hours-chip:84-85 · .hours-chips:83-83 · .hours-control:71-71 · .hours-label:82-82 · .hours-panel:86-86 · .ico-doc:78-78 · .ico-exportar:267-267 · .imp-mode:2345-2997 · .imp-preview:2998-3002 · .io-peligro:1115-1123 · .io-primaria:1114-1121 · .logo-gallery:1823-1830 · .logo-popup:1814-1821 · .macro-section:1572-1573 · .macro-url:1574-2398 · .mg-budget:497-506 · .mg-cat:507-507 · .mg-desgrav:508-508 · .mg-sort:503-503 · .month-nav:62-64 · .month-stat:93-96 · .month-summary:92-2789 · .ms-breakdown:354-356 · .ms-hrs:98-98 · .ms-label:97-97 · .ms-num:94-94 · .ms-sep:357-357 · .nav-bar:1484-3029 · .nav-btn:65-66 · .nav-icon:2689-2699 · .nav-pro:2663-2675 · .nav-style:2687-2687 · .option-desc:186-186 · .option-dot:179-183 · .option-hours:187-187 · .option-info:184-184 · .option-label:185-185 · .overlay:168-169 · .overlay-nav:1483-1485 · .rate-input:364-2374 · .rate-label:363-363 · .rate-row:362-362 · .rate-suffix:365-365 · .rut-add:2313-2313 · .rut-addition:2532-2549 · .rut-agenda:2546-2547 · .rut-bulk:3076-3081 · .rut-cancelled:2573-2632 · .rut-card:2303-3051 · .rut-day:2319-3041 · .rut-days:2318-3038 · .rut-dot:2306-2306 · .rut-dpick:3033-3033 · .rut-first:2284-2284 · .rut-flex:2281-2289 · .rut-hist:2325-2328 · .rut-history:2516-3075 · .rut-hora:3042-3044 · .rut-hpd:2270-2514 · .rut-icon:2275-2499 · .rut-marker:1684-1687 · .rut-month:3080-3080 · .rut-name:2307-2307 · .rut-pct:2312-2312 · .rut-plan:2290-2302 · .rut-recovery:2541-3032 · .rut-routine:3048-3048 · .rut-sec:2280-2280 · .rut-session:2551-3031 · .rut-skipped:2633-2634 · .rut-stat:2322-2324 · .rut-sub:435-446 · .rut-sug:2314-2317 · .rut-susp:2321-2321 · .rut-tag:2308-2309 · .rut-time:3045-3045 · .rut-vacio:2310-2310 · .rut-week:2515-2515 · .rut-weekdays:3039-3039 · .rut-wpick:2229-2234 · .selected:2696-2696 · .sent-badge:134-134 · .settings-details:2437-2439 · .settings-edit:2399-2440 · .settings-menu:2765-2765 · .sheet-handle:172-172 · .sheet-option:176-178 · .sheet-options:175-175 · .sheet-subtitle:174-174 · .sheet-title:173-173 · .sim-combo:598-602 · .sim-field:587-588 · .sim-hr:597-597 · .sim-period:594-594 · .sim-target:589-593 · .sub-block:623-624 · .sub-row:625-631 · .sw-upd:204-204 · .sy-back:253-2365 · .sy-body:273-2363 · .sy-card:284-2369 · .sy-cards3:276-276 · .sy-cards4:277-277 · .sy-chart:302-302 · .sy-hdr:258-258 · .sy-header:252-2364 · .sy-lbl:293-2368 · .sy-list:306-359 · .sy-month:320-320 · .sy-nav:262-1743 · .sy-note:303-305 · .sy-pdf:264-265 · .sy-period:2739-2746 · .sy-puente:312-1502 · .sy-section:274-275 · .sy-spain:278-283 · .sy-sublbl:384-384 · .sy-suelto:317-319 · .sy-tab:1490-1493 · .sy-table:294-2370 · .sy-td:299-299 · .sy-tr:300-2371 · .sy-val:289-2367 · .sy-year:255-2366 · .toast:190-209 · .toast-undo:206-206 · .today-btn:67-68 · .vac-config:328-330 · .vip-no:1082-1083 · .week-actions:159-159 · .week-card:128-2716 · .week-header:131-131 · .week-info:132-133 · .week-total:135-135 · .weeks-container:127-127 · .wm-logo:2422-2577
+**Rangos por prefijo de clase:**
+.action-btn:160-164 · .app-logo:61-61 · .app-version:124-124 · .bd-export:266-266 · .bottom-sheet:170-171 · .btn-icon:103-103 · .csv-export:76-77 · .data-actions:99-99 · .data-btn:100-115 · .data-menu:117-123 · .day-cell:138-244 · .day-date:143-143 · .day-hours:144-144 · .day-name:142-142 · .day-status:151-151 · .days-grid:137-137 · .default-hours:72-81 · .ev-dot:156-156 · .ev-dots:155-155 · .ev-upcoming:326-326 · .ev-week:322-323 · .excl-item:352-352 · .excl-row:332-332 · .full-overlay:247-248 · .header:57-59 · .header-brand:60-60 · .hour-chip:90-91 · .hour-chips:89-89 · .hour-picker:87-88 · .hours-chip:84-85 · .hours-chips:83-83 · .hours-control:71-71 · .hours-label:82-82 · .hours-panel:86-86 · .ico-doc:78-78 · .ico-exportar:267-267 · .month-nav:62-64 · .month-stat:93-96 · .month-summary:92-92 · .ms-breakdown:354-356 · .ms-hrs:98-98 · .ms-label:97-97 · .ms-num:94-94 · .ms-sep:357-357 · .nav-btn:65-66 · .option-desc:186-186 · .option-dot:179-183 · .option-hours:187-187 · .option-info:184-184 · .option-label:185-185 · .overlay:168-169 · .sent-badge:134-134 · .sheet-handle:172-172 · .sheet-option:176-178 · .sheet-options:175-175 · .sheet-subtitle:174-174 · .sheet-title:173-173 · .sw-upd:204-204 · .sy-back:253-254 · .sy-body:273-273 · .sy-card:284-291 · .sy-cards3:276-276 · .sy-cards4:277-277 · .sy-chart:302-302 · .sy-hdr:258-258 · .sy-header:252-257 · .sy-lbl:293-293 · .sy-list:306-359 · .sy-month:320-320 · .sy-nav:262-270 · .sy-note:303-305 · .sy-pdf:264-265 · .sy-puente:312-316 · .sy-section:274-275 · .sy-spain:278-283 · .sy-suelto:317-319 · .sy-table:294-298 · .sy-td:299-299 · .sy-tr:300-301 · .sy-val:289-292 · .sy-year:255-261 · .toast:190-209 · .toast-undo:206-206 · .today-btn:67-68 · .vac-config:328-330 · .week-actions:159-159 · .week-card:128-226 · .week-header:131-131 · .week-info:132-133 · .week-total:135-135 · .weeks-container:127-127
+
+### css/source/economics.css  _(686 líneas)_
+
+**Secciones:**
+
+- ECONOMICS:1
+- Quarterly aligned grid — única cuadrícula 4 col × 4 fila:6
+- Summary sublabel (hours breakdown):23
+- Ingresado box (formerly cobrado) — neutral:32
+- ECONOMICS v2: tabs + nuevas secciones:66
+- Estudio Cambio — grouped nav:88
+- Estudio — tariff comparison cards:97
+- Análisis hipoteca — secciones organizadas:118
+- Mis gastos — budget table:135
+- Year selector for per-year fiscal tabs:148
+- §1.1 Tarifa dual:159
+- §1.3 Stats por hora/día:171
+- §1.4 Toggles:178
+- §1.5 Declaración IRPF:183
+- Tab 2: Comparador:196
+- Calcular Tarifa (sim):224
+- Scenario zones (Comparar Escenarios):242
+- Análisis Ec. Personal:259
+- Bloques de la Subrogación:261
+- Fiscal config modal — purple theme override:304
+- Fiscal config modal:306
+- ECONOMICS v3: opt-buttons, cascade, gastos:332
+- Cascade ingresos/gastos:339
+- Media mensual: cards:349
+- Tab 4: Análisis:359
+- IRPF Breakdown visual:373
+- Card "A pagar / Devolución" más ancha cuando lleva sub-líneas integradas:400
+- Sub-línea de deducciones integrada (antes era una tarjeta verde suelta):402
+- Desglose item-por-item del Ahorro por desgravaciones (ordenado desc):426
+- Anotación inline en Cálculo de base mostrando el ahorro real en IRPF que produce cada reducción:435
+- Resumen fiscal al final de Ingresos y Gastos:437
+- Donut chart:444
+- Breakdown del sector seleccionado (IRPF/IVA dentro de Impuestos, etc.):454
+- Fiscal config: gastos items:461
+- Fiscal: tab bar:473
+- Fiscal: sticky save:478
+- Fiscal: section title income/expense colors:480
+- Fiscal: desgravaciones:490
+- Fiscal: compras profesionales:517
+- Desgravaciones: notas + tabla despacho info:525
+- Nota IVA compras:545
+- IVA por item en compras:547
+- Fiscal: despacho en casa:554
+- Hipoteca — resumen visual:577
+- Hipoteca — compact 2-col grid:600
+- Hipoteca — compact vinculaciones:608
+- Hipoteca — read-only fields:619
+- Hipoteca — edit/detail buttons:628
+- Hipoteca — period summary card:634
+- Multi-rate period cards:647
+- Distribución de ingresos:663
+- Comparador: reorder buttons:679
+- Rate input styled:683
+
+**Rangos por prefijo de clase:**
+.ah-cuota:122-124 · .ah-donut:132-134 · .ah-section:119-121 · .ah-total:129-131 · .ah-vs:125-128 · .analisis-card:271-273 · .analisis-cards:260-260 · .analisis-hbar:274-279 · .analisis-input:289-292 · .analisis-ins:298-303 · .analisis-insurance:297-297 · .analisis-mortgage:280-296 · .econ-add:206-207 · .econ-ahorro:427-434 · .econ-annual:25-25 · .econ-avg:26-354 · .econ-bracket:189-195 · .econ-calc:337-338 · .econ-casc:341-348 · .econ-cascade:340-340 · .econ-chart:219-220 · .econ-comp:197-221 · .econ-decl:184-358 · .econ-distrib:664-678 · .econ-donut:445-460 · .econ-equiv:659-662 · .econ-fiscal:438-443 · .econ-formula:45-48 · .econ-gastos:360-372 · .econ-gear:156-157 · .econ-hdr:67-158 · .econ-ingresado:33-33 · .econ-irpf:374-436 · .econ-legend:222-223 · .econ-line:217-218 · .econ-month:50-63 · .econ-mr:656-657 · .econ-multi:648-658 · .econ-opt:333-336 · .econ-qcard:15-22 · .econ-qcell:11-14 · .econ-qm:20-20 · .econ-qmonth:18-19 · .econ-quarter:7-10 · .econ-rate:160-168 · .econ-row:34-44 · .econ-sc:199-685 · .econ-scenario:198-198 · .econ-section:64-64 · .econ-sim:225-235 · .econ-stats:172-177 · .econ-sub:70-87 · .econ-tab:68-69 · .econ-toggle:179-182 · .econ-val:49-49 · .est-btn:92-96 · .est-card:102-104 · .est-detail:99-99 · .est-field:111-117 · .est-fields:110-110 · .est-group:90-94 · .est-modo:105-105 · .est-nav:89-89 · .est-section:98-98 · .est-tariff:100-109 · .ev-sub:76-78 · .excl-item:170-170 · .excl-row:169-169 · .fiscal-add:326-489 · .fiscal-bracket:317-325 · .fiscal-compras:518-553 · .fiscal-copy:153-155 · .fiscal-custom:314-314 · .fiscal-ded:528-542 · .fiscal-desgrav:491-543 · .fiscal-despacho:555-576 · .fiscal-error:330-330 · .fiscal-gasto:462-524 · .fiscal-gastos:544-544 · .fiscal-hdr:474-474 · .fiscal-highlight:515-515 · .fiscal-onoff:557-558 · .fiscal-pct:315-324 · .fiscal-period:470-471 · .fiscal-radio:309-313 · .fiscal-save:328-329 · .fiscal-section:307-482 · .fiscal-sticky:479-479 · .fiscal-subsection:483-484 · .fiscal-tab:475-477 · .fiscal-viaje:485-486 · .fiscal-vinc:568-569 · .fiscal-year:149-152 · .hip-add:646-646 · .hip-auto:597-597 · .hip-bar:583-590 · .hip-cancel:633-633 · .hip-cf:602-607 · .hip-edit:629-631 · .hip-g2:601-601 · .hip-grid:595-595 · .hip-period:635-644 · .hip-resumen:578-582 · .hip-ro:620-627 · .hip-save:632-632 · .hip-section:596-645 · .hip-stat:592-594 · .hip-stats:591-591 · .hip-sub:599-599 · .hip-vinc:598-598 · .hip-vr:609-618 · .mg-budget:136-145 · .mg-cat:146-146 · .mg-desgrav:147-147 · .mg-sort:142-142 · .rate-input:4-4 · .rate-label:3-3 · .rate-row:2-2 · .rate-suffix:5-5 · .rut-sub:74-85 · .sim-combo:237-241 · .sim-field:226-227 · .sim-hr:236-236 · .sim-period:233-233 · .sim-target:228-232 · .sub-block:262-263 · .sub-row:264-270 · .sy-sublbl:24-24
+
+### css/source/birthdays.css  _(115 líneas)_
+
+**Secciones:**
+
+- BIRTHDAYS:1
+- El nombre admite hasta cuatro líneas.:14
+- VIP controls bar:28
+- Botón Cancelar fijo al fondo de pantalla en modo edición VIP:39
+- VIP edit mode item states:42
+- Feat 1: Buscador en lista por meses:52
+- Upcoming birthdays:78
+- Fin de semana suave; hoy conserva su borde y su fecha destacada.:95
+
+**Rangos por prefijo de clase:**
+.bday-add:93-94 · .bday-badge:15-18 · .bday-buscar:55-57 · .bday-calendar:4-20 · .bday-cancel:40-41 · .bday-cell:8-96 · .bday-hdr:3-3 · .bday-header:21-25 · .bday-io:61-77 · .bday-list:27-51 · .bday-month:26-26 · .bday-num:12-12 · .bday-search:58-60 · .bday-upcoming:79-92 · .bday-vip:23-38 · .bday-week:5-7 · .data-btn:2-2 · .ev-cell:97-114 · .ev-io:63-63 · .io-peligro:68-76 · .io-primaria:67-74 · .vip-no:35-36
+
+### css/source/event-calendar.css  _(321 líneas)_
+
+**Secciones:**
+
+- Events in puentes (summary) — one per line:1
+- Events upcoming view:5
+- Minicabecera de día dentro de un panel de Próximos:7
+- Marcador de la tarjeta de Proximos: la forma real del evento:17
+- Horas del evento y transporte de ida/vuelta:22
+- Fallback declarativo para scrollIntoView cuando el JS aún no ha medido el sticky:54
+- Grid del mes: col fecha (48px) + col eventos (1fr):56
+- Columna fecha (col 1):58
+- Caja del multi-día: UN ÚNICO grid item que abarca varias filas → se ve como una unidad:67
+- Contenedor de chips puntuales — se monta ENCIMA del multi-día por z-index:74
+- Cuando el día está dentro de un viaje: padding extra y fondo transparente para que el viaje se vea continuo:78
+- Chip puntual: opaco con sombra para destacar sobre el viaje translúcido:84
+- Event color type picker:88
+- Tipos sin color fijo (Viaje, Otros): dot multicolor + borde neutro:120
+- Color picker avanzado (paleta 6×8 + color libre):124
+- Detail color picker toggle:142
+- Annual events calendar:148
+- Badge punto: estilo "1 mes" reducido para anual/4-meses (reemplaza la X):178
+- Selector de formas en el formulario de evento (Otros):190
+- Selector de grosor de barra (grande | Otros):192
+- Previews del formulario: mismo SVG que los calendarios (borde uniforme):207
+- Tamaños en Calendario 1 mes: "lg" en la esquina, "ovf" en la fila de desborde:211
+- Inicio/Fin bloqueados cuando hay Selección Multidía:214
+- Mini-overlay para elegir días específicos (Otros):219
+- Estrella VIP vectorial (SVG): tamaño homogéneo con el resto de markers:246
+- Marcador "+" (más de 4 eventos puntuales en el mismo día):250
+- Barras multi-día en calendario anual/4meses: ocupa una franja vertical y se divide en filas con grid:252
+- Perímetro de días puente en vista anual: z-index:1, debajo de eventos:258
+- Calendario 4 meses: 2 columnas × 2 filas:260
+- Botón ir al calendario mensual en puentes del resumen:262
+- Botón editar (lápiz) en Anual/Quad — mismo aspecto que la bombilla pequeña de 1-mes/Semanal:274
+- Diagonales en anual/quad: attachment:fixed para que el patrón sea continuo entre celdas:278
+- Festivos/vac en vista anual: borde brillante + relleno suave por día individual:296
+- Dropdown de vista anual:303
+- Linea que separa los chips de eventos grandes de los puntuales:312
+
+**Rangos por prefijo de clase:**
+.dp-actions:242-243 · .dp-counter:229-230 · .dp-day:237-241 · .dp-days:236-236 · .dp-grid:231-231 · .dp-handle:224-224 · .dp-hdr:225-225 · .dp-mhdr:234-235 · .dp-mname:233-233 · .dp-month:232-232 · .dp-overlay:220-223 · .dp-sheet:222-222 · .dp-title:226-226 · .dp-yearnav:227-228 · .ev-ann:275-311 · .ev-annual:19-314 · .ev-barsize:193-202 · .ev-category:109-115 · .ev-chip:318-318 · .ev-color:122-141 · .ev-dates:215-217 · .ev-detail:143-147 · .ev-edit:266-272 · .ev-filter:313-320 · .ev-hora:23-23 · .ev-io:273-273 · .ev-management:187-187 · .ev-otros:191-191 · .ev-quad:261-261 · .ev-sep:46-46 · .ev-shape:203-210 · .ev-symbol:89-102 · .ev-type:103-123 · .ev-up:8-21 · .ev-upcoming:6-45 · .ev-viaje:24-32 · .ev-wk:33-87 · .sy-body:51-51 · .sy-puente:2-264
+
+### css/source/navigation-alarms.css  _(115 líneas)_
+
+**Secciones:**
+
+- Shared overlay nav bar — nivel 1, siempre visible en lo alto del overlay:1
+- TABS NIVEL 2 (birthdays/events/summary) — nivel 2, debajo del nav bar:5
+- Summary tabs — nivel 2:8
+- BRIDGE DAY CELLS in summary:13
+- VIP BIRTHDAYS:22
+- BIRTHDAY + EVENT ALARM PANEL:25
+- Campana de alarma en items de próximos (bday + eventos):28
+- 3-ZONE ALARM MARKER:66
+- ALARM MANAGEMENT OVERLAY:79
+- HOME POPUP (semanas pendientes / VIP sin alarma):80
+- MACRO URL EN MENÚ:90
+- Feat 4: Nav-bar emoji alignment:96
+- Birthday detail / form overlays:106
+
+**Rangos por prefijo de clase:**
+.bd-alarm:26-78 · .bd-detail:107-114 · .bday-hdr:6-6 · .bday-upcoming:24-24 · .bday-vip:23-23 · .ev-alarm:49-55 · .ev-hdr:7-7 · .ev-upcoming:29-32 · .home-popup:81-89 · .macro-section:91-92 · .macro-url:93-95 · .nav-bar:3-105 · .overlay-nav:2-4 · .sy-puente:14-21 · .sy-tab:9-12
+
+### css/source/event-panels.css  _(216 líneas)_
+
+**Secciones:**
+
+- EVENTS:1
+- Zone A: upcoming/list views — subtle blue tint:9
+- Zone B: calendar grid views — subtle teal tint, active = green:10
+- Feat 2: Lista de Eventos subtabs:13
+- Contenedor semana: barras multi-día ENCIMA (position:absolute) de las celdas:30
+- Barras multi-día: 65% de la celda, centradas verticalmente, encima de números:32
+- Si hay columna de marcadores en la esquina, la fila se queda a su izquierda:44
+- Marcadores desbordados: SEGUNDA COLUMNA (uno debajo de otro), no en fila:48
+- Carrusel del dia (estrellas VIP / "+" del calendario de 1 mes):54
+- Rutinas en anual y 4 meses: puntitos en fila arriba del dia:69
+- Los cumpleaños VIP se solapan al 75% (12px de marcador -> -9px):79
+- Sin z-index propio para no crear stacking context — permite que ev-badge (z-index:4) quede encima de ev-bars-row (z-index:3):111
+- Perímetro puente: capa inferior a eventos:113
+- Bright past: bombilla override:133
+- Bombilla en Anual/Quad — mismo estilo que la pequeña inline del 1-mes/Semanal:138
+- Bombilla en 1-mes y agenda semanal: posicionada en el centro entre el ▶ y "Hoy":143
+- Quad label 3 lines:148
+- ev-num con altura fija para alinear perfectamente todos los números de la misma semana:155
+- ev-badge: z-index:4 > ev-bars-row z-index:3 → los badges 1-día quedan encima de barras multi-día:157
+- Events list view:159
+- Event form overlay (inside eventsOverlay):173
+- Relleno, para que haga pareja con el naranja de "Editar evento":203
+- Event detail:209
+
+**Rangos por prefijo de clase:**
+.data-btn:2-2 · .ev-ann:74-76 · .ev-annual:86-132 · .ev-badge:158-158 · .ev-badges:40-40 · .ev-bar:105-105 · .ev-bars:33-33 · .ev-bright:134-145 · .ev-btn:196-205 · .ev-car:55-67 · .ev-cell:118-154 · .ev-char:185-185 · .ev-checkbox:190-190 · .ev-chip:85-85 · .ev-colors:186-186 · .ev-date:187-187 · .ev-day:43-96 · .ev-detail:210-215 · .ev-edit:199-200 · .ev-field:179-180 · .ev-form:174-195 · .ev-hdr:3-5 · .ev-input:181-182 · .ev-io:207-208 · .ev-list:14-172 · .ev-main:6-6 · .ev-month:22-83 · .ev-multi:37-126 · .ev-num:156-156 · .ev-otros:53-101 · .ev-puente:114-114 · .ev-quad:149-150 · .ev-repeat:191-191 · .ev-rut:92-95 · .ev-stepped:107-109 · .ev-textarea:183-184 · .ev-toggle:188-189 · .ev-types:17-19 · .ev-view:4-8 · .ev-wd:193-194 · .ev-week:28-112 · .ev-weekday:192-192 · .rut-marker:88-91 · .sy-nav:146-147
+
+### css/source/dialogs-responsive.css  _(135 líneas)_
+
+**Secciones:**
+
+- LOGO POPUP:1
+- Gallery:10
+- BD ALARM VIP TOGGLE:19
+- RESPONSIVE (mobile header):22
+- IVA trimestral: compactar celdas para que los 4 trimestres quepan sin scroll horizontal:24
+- ALARM PANEL:77
+- Drum picker (selector giratorio de hora/minuto):82
+- Confirmación alarma en el pasado:108
+- Botón flotante "Listo" en modo Editar VIPs:114
+- Controles inline long-press cumpleaños:117
+- Selector de clase en el formulario:125
+- Notas: general vs de un dia concreto:131
+
+**Rangos por prefijo de clase:**
+.alarm-cfg:78-78 · .alarm-colon:81-81 · .alarm-create:95-101 · .alarm-day:105-107 · .alarm-days:102-104 · .alarm-msg:91-92 · .alarm-panel:79-79 · .alarm-past:109-113 · .alarm-time:80-80 · .bd-alarm:20-21 · .bday-ic:119-123 · .bday-inline:118-118 · .bday-listo:115-115 · .btn-icon:31-67 · .data-actions:33-69 · .data-btn:29-65 · .drum-picker:84-87 · .drum-sel:90-90 · .drum-wrap:83-89 · .econ-qcell:26-28 · .econ-quarter:25-25 · .ev-daynote:133-133 · .ev-detail:134-134 · .ev-kind:126-130 · .ev-note:132-132 · .header:57-70 · .logo-gallery:11-18 · .logo-popup:2-9 · .nav-bar:34-74
+
+### css/source/wedding-moves.css  _(323 líneas)_
+
+**Secciones:**
+
+- Pestana Bodas y pestana partida Vacaciones/Festivos:1
+- Mitad marron (vacaciones/festivos) + mitad rosa (puentes), sin linea visible:2
+- Tarjetas de avisos (huecos / parejas pendientes / info incompleta):13
+- Filas del panel de un aviso:27
+- Estadisticas:31
+- Barras horizontales de reparto (componente generico: hBarRows):39
+- El marron macizo quedaba demasiado oscuro: ahora es un tinte suave:49
+- Dia cerrado: no admite mas clases:66
+- Una clase a la que le falta la hora o la sala se marca ella sola.:77
+- Fila con cambios sin guardar:82
+- Filtros de Parejas como chips pulsables:94
+- El color de la pareja va en un punto delante; el nombre, en color normal:157
+- Sala sin asignar: se marca en naranja para que cante en la lista:162
+- Nota propia del dia en la lista de Proximos:165
+- Hora y sala de un ensayo, al pie de la tarjeta de Proximos:167
+- Atajos de alarma para un ensayo: 1 h / 30 min antes (se pueden marcar los dos):169
+- Agenda semanal: hora y sala de los ensayos + continuacion de un mes anterior:177
+- Editar siempre en naranja, como en el resto de la app:183
+- Los tres botones del detalle de pareja comparten aspecto:200
+- Subpestana Calendario de bodas:240
+- Leyenda: una pareja por linea y pulsable para resaltar sus dias:254
+- Dia resaltado al pulsar una pareja en la leyenda:261
+- Medible antes de abrir: colocar las ruedas sin mostrar su posición inicial.:267
+- Ficha del dia: alto fijo para que no baile al pasar de un evento a otro:289
+- Sin esto los hijos se encogen y el texto se derrama sobre los botones:291
+- etiqueta al minimo: el nombre de la pareja necesita el resto:300
+- el color de la pareja va en un punto, no tinendo el nombre:303
+- Los tres botones de la pareja, en una sola linea:310
+- Buscador y boton de anadir en la misma fila:313
+- Tarjeta de pareja desplegada en su sitio (antes era un modal):319
+
+**Rangos por prefijo de clase:**
+.boda-actions:192-192 · .boda-add:194-194 · .boda-asg:217-239 · .boda-buscar:314-316 · .boda-cal:241-266 · .boda-card:100-322 · .boda-chip:96-98 · .boda-chips:95-95 · .boda-cl:154-191 · .boda-class:78-153 · .boda-controls:56-56 · .boda-couple:136-138 · .boda-cpk:208-216 · .boda-date:193-193 · .boda-day:72-116 · .boda-det:199-312 · .boda-dia:143-145 · .boda-dot:104-104 · .boda-falta:111-111 · .boda-filters:59-59 · .boda-fsel:60-63 · .boda-ftoggles:64-65 · .boda-hd:187-189 · .boda-inp:131-131 · .boda-iss:28-30 · .boda-issue:15-26 · .boda-issues:14-14 · .boda-legend:195-198 · .boda-mini:181-182 · .boda-mode:46-48 · .boda-multi:146-151 · .boda-name:105-105 · .boda-ok:112-112 · .boda-place:139-164 · .boda-prog:107-108 · .boda-ro:155-163 · .boda-save:92-93 · .boda-savebar:88-91 · .boda-search:317-317 · .boda-sec:12-12 · .boda-sobra:113-113 · .boda-sort:318-318 · .boda-stat:33-38 · .boda-stats:32-32 · .boda-sticky:8-10 · .boda-sum:52-55 · .boda-summary:51-51 · .boda-swap:121-128 · .boda-time:132-132 · .boda-tp:270-273 · .boda-wed:106-106 · .ev-alarm:170-176 · .ev-bficha:296-296 · .ev-bfila:297-306 · .ev-bpunto:304-304 · .ev-bver:309-309 · .ev-car:292-293 · .ev-detail:290-290 · .ev-upcoming:166-168 · .ev-wk:178-180 · .hbar-lbl:42-42 · .hbar-row:41-41 · .hbar-rows:40-40 · .hbar-track:43-44 · .hbar-val:45-45 · .rut-wpick:283-288 · .sy-body:5-11
+
+### css/source/routines.css  _(61 líneas)_
+
+**Secciones:**
+
+- Horario distinto segun el dia:1
+- Selector de icono de rutina:6
+
+**Rangos por prefijo de clase:**
+.ev-shape:19-19 · .rut-add:45-45 · .rut-card:35-43 · .rut-day:51-52 · .rut-days:50-50 · .rut-dot:38-38 · .rut-first:16-16 · .rut-flex:13-21 · .rut-hist:57-60 · .rut-hpd:2-5 · .rut-icon:7-11 · .rut-name:39-39 · .rut-pct:44-44 · .rut-plan:22-34 · .rut-sec:12-12 · .rut-stat:54-56 · .rut-sug:46-49 · .rut-susp:53-53 · .rut-tag:40-41 · .rut-vacio:42-42
+
+### css/source/shared-refinements.css  _(442 líneas)_
+
+**Secciones:**
+
+- Lista "Todos": buscador, orden y borrado con pulsacion larga:1
+- Diálogo: modo de importación (añadir vs reemplazar):16
+- PRINT:29
+- Separacion de siluetas incluso entre grosores distintos.:49
+- Controles tactiles: mismo minimo en filtros y navegacion, sin agrandar marcadores.:64
+- Editar: tono comun, con geometria propia de cada pantalla.:76
+- Marca oficial con transparencia; conserva contraste en ambos temas.:93
+- Geometría constante aunque una subpestaña tenga más contenido y scroll.:114
+- Catálogos: cabecera de sección, ficha y controles siempre en el mismo orden.:132
+- Las tres vistas de Cumpleaños comparten el naranja en ambos temas.:158
+- Text edits retain the solid orange; only standalone pencils use a tint.:167
+- Etiquetas y casillas comparten tono dentro de Eventos, tambien en sus hojas.:174
+- Canceladas: visibles solo en las vistas de detalle, con marca y tono apagado.:241
+- Formulario de rutina: ritmo y etiquetas comunes, sin alterar otros paneles.:256
+- Cancelaciones sutiles: el calendario mensual conserva el color original.:266
+- Pestañas de Eventos: la seleccion solo intensifica el fondo.:278
+- Titulo y estado separados para que "saltada" nunca quede tachado.:303
+- Casillas vacias: mantener el tono de su etiqueta o su color explicito.:313
+- El titulo queda dentro del borde de 1.5px de su caja continua.:318
+- Economia, Fiscal y Escenarios: tono constante, seleccion por fondo.:324
+- Los SVG comparten caja; Home solo es mas grande con los iconos originales.:340
+- Una identidad de color por ventana para ambos juegos de iconos.:344
+- Mes y titulo fijo comparten una referencia de altura: sin franja abierta.:375
+- Semanas enviadas en claro: verdes suaves, sin pastillas oscuras.:382
+- Borde discreto para identificar semanas enviadas en ambos temas.:387
+- Filtros junto al buscador sin ensanchar la ventana movil.:391
+- Configuracion de tarifa: controles verdes y valores neutros.:404
+- Aire entre dias; el hueco entre eventos del mismo dia se conserva.:422
+- Texto del trayecto alineado con el titulo, sin mover las tarjetas puntuales.:439
+
+**Rangos por prefijo de clase:**
+.bday-hdr:159-160 · .bday-header:154-156 · .bday-jump:56-97 · .bday-month:172-172 · .bday-next:106-107 · .bday-sub:283-284 · .bday-upcoming:54-54 · .boda-catalog:83-91 · .boda-cfg:133-145 · .boda-config:79-130 · .boda-count:87-87 · .boda-date:147-165 · .boda-day:120-120 · .boda-field:121-126 · .boda-filter:59-61 · .boda-mini:67-67 · .boda-pack:88-89 · .boda-pfilters:58-62 · .boda-sticky:80-143 · .boda-teachers:108-108 · .data-actions:341-341 · .data-btn:342-353 · .econ-tab:325-329 · .econ-tariff:405-410 · .est-nav:327-328 · .ev-bday:285-286 · .ev-bright:441-441 · .ev-chip:73-73 · .ev-del:13-14 · .ev-filter:72-72 · .ev-list:2-424 · .ev-multi:50-74 · .ev-rut:242-309 · .ev-search:3-7 · .ev-sort:8-53 · .ev-type:426-428 · .ev-types:425-425 · .ev-up:269-269 · .ev-view:66-66 · .ev-wk:224-440 · .fiscal-hip:402-403 · .fiscal-tab:326-326 · .imp-mode:17-27 · .macro-url:70-70 · .nav-icon:361-371 · .nav-pro:335-347 · .nav-style:359-359 · .rate-input:46-46 · .rut-addition:204-221 · .rut-agenda:218-219 · .rut-cancelled:245-304 · .rut-history:188-239 · .rut-hpd:186-186 · .rut-icon:170-171 · .rut-recovery:213-222 · .rut-session:223-223 · .rut-skipped:305-306 · .rut-week:187-187 · .selected:368-368 · .settings-details:109-111 · .settings-edit:71-112 · .settings-menu:437-437 · .sy-back:37-37 · .sy-body:35-35 · .sy-card:41-41 · .sy-header:36-36 · .sy-lbl:40-40 · .sy-period:411-418 · .sy-table:42-42 · .sy-tr:43-43 · .sy-val:39-39 · .sy-year:38-38 · .week-card:388-388 · .wm-logo:94-249
+
+### css/source/home-sharing.css  _(114 líneas)_
+
+**Secciones:**
+
+- Cabecera de Home opaca, incluso sobre los botones oscuros de las semanas.:1
+- Selector de eventos para compartir por iCalendar:26
+- Selector de exportación: controles compactos y lista con espacio propio.:27
+- Colores por tramo, compartidos entre las dos vistas de próximos cumpleaños.:64
+- Compartir: cabecera centrada, categorías completas y lista compacta.:82
+
+**Rangos por prefijo de clase:**
+.boda-future:79-79 · .energy-contract:106-107 · .energy-field:109-110 · .energy-history:104-105 · .energy-price:108-113 · .energy-sheet:103-103 · .energy-tax:111-111 · .ev-cal:30-102 · .ev-field:78-78 · .ev-share:28-29 · .ev-week:65-80 · .ev-wk:3-3 · .header:2-2 · .home-reminder:59-61 · .home-submission:4-15 · .home-summary:16-24 · .month-summary:18-19
+
+### css/source/energy-refinements.css  _(198 líneas)_
+
+**Secciones:**
+
+- Facturas: mismos componentes que los contratos, cifras sin desbordar.:1
+- Estudio energético: controles compactos y separación entre apartados.:11
+- Ultimo dia de ensayo: distintivo compartido y pulso solo en el mensual.:14
+- Ventana energética: cabecera fija, scroll del cuerpo, gráficos de un año.:30
+- Solo energía reparte el espacio entre textos, con ancho de contenido.:42
+- Identidad propia de cada pestaña, sin alterar el sistema general.:45
+- Filtros y filas de parejas: controles compactos, columnas alineadas.:98
+- Navegación: la misma geometría en Home y en las ventanas.:142
+- Tarjetas compactas: días visibles y un único estilo para inicio y fin.:153
+- Selección por fondo en las subpestañas de Eventos; cada una conserva su tono.:171
+
+**Rangos por prefijo de clase:**
+.boda-asg:106-111 · .boda-det:102-105 · .boda-last:15-19 · .data-actions:143-144 · .energy-bar:88-88 · .energy-caption:2-2 · .energy-choice:12-12 · .energy-compare:137-137 · .energy-contract:4-5 · .energy-cost:84-139 · .energy-coverage:75-75 · .energy-extremes:71-71 · .energy-fee:40-41 · .energy-field:7-7 · .energy-fields:9-9 · .energy-info:60-62 · .energy-inline:81-81 · .energy-legend:89-89 · .energy-metric:129-131 · .energy-metrics:128-128 · .energy-overview:64-66 · .energy-period:67-69 · .energy-price:181-186 · .energy-range:90-90 · .energy-reconciliation:74-74 · .energy-scenario:138-138 · .energy-section:59-59 · .energy-supplier:72-132 · .energy-table:3-3 · .energy-tabs:43-54 · .energy-tariff:77-182 · .energy-tax:70-135 · .energy-vat:133-133 · .energy-window:31-127 · .energy-year:6-96 · .ev-annual:100-101 · .ev-btn:150-150 · .ev-filter:99-124 · .ev-io:140-140 · .ev-main:168-169 · .ev-upcoming:174-176 · .ev-wk:16-175 · .home-popup:18-28 · .imp-mode:113-113 · .imp-preview:114-118 · .nav-bar:145-145 · .rut-bulk:192-197 · .rut-card:162-167 · .rut-day:151-157 · .rut-days:154-154 · .rut-dpick:149-149 · .rut-history:188-191 · .rut-hora:158-160 · .rut-month:196-196 · .rut-recovery:148-148 · .rut-routine:164-164 · .rut-session:147-147 · .rut-time:161-161 · .rut-weekdays:155-155
+
+### css/tasks.css  _(78 líneas)_
+
+**Secciones:**
+
+- Tareas globales: estilos aislados de calendarios y pestañas existentes.:1
+
+**Rangos por prefijo de clase:**
+.home-popup:73-73 · .task-actions:55-58 · .task-content:40-42 · .task-date:47-48 · .task-done:43-44 · .task-drop:60-61 · .task-editor:52-54 · .task-grip:49-50 · .task-more:51-51 · .task-moving:59-59 · .task-row:38-39 · .task-title:41-41 · .tasks-add:33-35 · .tasks-count:14-14 · .tasks-day:45-46 · .tasks-docked:15-16 · .tasks-drop:8-12 · .tasks-empty:69-71 · .tasks-fab:4-13 · .tasks-footer:62-63 · .tasks-header:23-28 · .tasks-heading:24-25 · .tasks-list:37-37 · .tasks-move:64-68 · .tasks-open:2-3 · .tasks-overlay:17-21 · .tasks-reminder:74-75 · .tasks-sheet:20-22 · .tasks-status:72-72 · .tasks-tabs:29-32
+
+### css/household.css  _(107 líneas)_
+
+**Secciones:**
+
+- Vivienda: lectura con contraste, cifras principales y detalle secundario.:1
+- Pares de precios: cifra neta principal, importe con impuestos secundario.:59
+
+**Rangos por prefijo de clase:**
+.energy-pair:61-67 · .energy-price:60-68 · .household-active:98-98 · .household-analysis:56-56 · .household-balance:29-32 · .household-body:6-9 · .household-card:15-42 · .household-dates:24-24 · .household-detail:55-96 · .household-empty:54-54 · .household-equivalent:35-39 · .household-eyebrow:18-18 · .household-gas:50-105 · .household-header:5-5 · .household-history:43-46 · .household-investment:12-14 · .household-luz:49-49 · .household-metrics:25-25 · .household-mortgage:16-16 · .household-ok:40-40 · .household-payment:21-23 · .household-price:69-69 · .household-progress:33-34 · .household-rate:79-84 · .household-section:47-47 · .household-status:20-20 · .household-summary:10-10 · .household-tax:70-71 · .household-utilities:48-48 · .household-utility:53-53 · .household-value:26-28
+
+### css/electricity-comparator.css  _(76 líneas)_
+
+**Secciones:**
+
+- Solo el comparador eléctrico: no altera pestañas ni formularios compartidos.:1
+
+**Rangos por prefijo de clase:**
+.electric-add:71-71 · .electric-card:20-70 · .electric-cards:19-19 · .electric-check:30-30 · .electric-company:33-33 · .electric-comparator:2-72 · .electric-current:6-8 · .electric-field:53-54 · .electric-fields:69-69 · .electric-identity:32-32 · .electric-input:55-57 · .electric-link:9-9 · .electric-modes:40-42 · .electric-period:45-47 · .electric-power:52-52 · .electric-reference:62-62 · .electric-remove:18-18 · .electric-results:73-75 · .electric-scenario:15-17 · .electric-scenarios:10-10 · .electric-section:11-13 · .electric-source:34-39 · .electric-tax:58-61 · .electric-usage:63-68 · .electric-weight:50-51 · .electric-weighted:48-49
+
+### css/finance-views.css  _(82 líneas)_
+
+**Secciones:**
+
+- Contenido financiero. No modifica la navegación ni las subpestañas globales.:1
+
+**Rangos por prefijo de clase:**
+.econ-rate:10-14 · .econ-stats:7-7 · .econ-summary:3-76 · .study-company:20-20 · .study-mortgage:61-64 · .study-rate:51-60 · .study-workspace:15-80
+
+### css/personal-periods.css  _(13 líneas)_
+
+**Secciones:**
+
+
+**Rangos por prefijo de clase:**
+.personal-advanced:1-1 · .personal-frequency:11-11 · .personal-period:3-12
 

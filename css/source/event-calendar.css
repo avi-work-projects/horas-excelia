@@ -1,0 +1,320 @@
+/* Events in puentes (summary) — one per line */
+.sy-puente-evs{display:flex;flex-direction:column;gap:3px;margin-top:6px}
+.sy-puente-ev{display:flex;justify-content:space-between;align-items:baseline;padding:4px 8px;border-radius:6px;background:var(--surface3);color:var(--text-muted);border:1px solid var(--border-light);font-size:.72rem;gap:6px}
+.sy-puente-ev-date{font-size:.65rem;color:var(--text-dim);flex-shrink:0}
+/* Events upcoming view */
+.ev-upcoming-section{display:flex;flex-direction:column;gap:6px}
+/* Minicabecera de día dentro de un panel de Próximos */
+.ev-up-daysep{font-size:.66rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;padding:6px 2px 1px;display:flex;align-items:center;gap:7px}
+.ev-up-daysep::after{content:'';flex:1;height:1px;background:var(--border)}
+.ev-up-daysep:first-child{padding-top:0}
+.ev-up-daysep.today{color:var(--accent-bright)}
+.ev-up-daysep.today::after{background:var(--accent);opacity:.45}
+.ev-up-daysep span{font-size:.6rem;font-weight:800;background:var(--accent);color:#fff;border-radius:8px;padding:1px 6px;letter-spacing:.02em}
+.ev-upcoming-item{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .12s}
+.ev-upcoming-item:active{background:var(--surface3)}
+.ev-upcoming-item.ev-upcoming-today{border-color:var(--sent-border);background:rgba(90,224,136,.06)}
+/* Marcador de la tarjeta de Proximos: la forma real del evento */
+.ev-up-mark{width:20px;height:20px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.ev-annual-marker.ev-marker-up,.ev-annual-vip-star-svg.ev-marker-up,.ev-rut-mark.ev-marker-up{width:19px;height:19px}
+.ev-up-bar{width:14px;height:14px;border-radius:3px;display:block}
+.ev-up-filters{padding:2px 2px 8px}
+/* Horas del evento y transporte de ida/vuelta */
+.ev-hora-row{margin-top:2px}
+.ev-viaje-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px}
+.ev-viaje-tramo{border-top:1px solid var(--border);padding:8px 0 2px;margin-top:6px}
+.ev-viaje-tramo:first-of-type{border-top:none;margin-top:2px;padding-top:2px}
+.ev-viaje-hd{font-size:.78rem;color:var(--text)}
+.ev-viaje-campos{display:flex;gap:8px;margin-top:7px}
+.ev-viaje-campos .ev-viaje-time{flex:0 0 40%}
+.ev-viaje-campos .ev-viaje-modo{flex:1;min-width:0}
+.ev-viaje-cond{margin-top:7px}
+.ev-viaje-note{font-size:.62rem;color:var(--text-dim);margin-top:9px;line-height:1.4}
+.ev-wk-multi-trans{font-size:.58rem;color:var(--text-muted);margin-top:1px;font-family:var(--mono)}
+.ev-upcoming-color{width:14px;height:14px;border-radius:3px;flex-shrink:0}
+.ev-upcoming-info{flex:1;min-width:0}
+.ev-upcoming-title{font-size:.88rem;font-weight:600;word-wrap:break-word;overflow-wrap:break-word;line-height:1.2}
+.ev-upcoming-meta{font-size:.7rem;color:var(--text-muted);margin-top:2px}
+.ev-upcoming-note{font-size:.67rem;color:var(--text-dim);margin-top:2px;font-style:italic;opacity:.75;word-wrap:break-word;overflow-wrap:break-word;line-height:1.3;white-space:normal}
+.ev-upcoming-lbl{font-size:.7rem;font-weight:600;color:var(--text-dim);flex-shrink:0;text-align:right}
+.ev-upcoming-lbl.near{color:var(--vacaciones)}
+.ev-upcoming-lbl.today-lbl{color:var(--sent-text)}
+.ev-upcoming-lbl.ongoing{color:var(--accent-bright)}
+.ev-upcoming-lbl.past-lbl{color:var(--text-dim);opacity:.7}
+.ev-upcoming-past{opacity:.55}
+.ev-upcoming-past .ev-upcoming-title{color:var(--text-muted)}
+.ev-sep-past{opacity:.7}
+/* Agenda semanal: SOLO scroll vertical. Los hijos del grid heredan
+   min-width:auto, asi que un chip largo (titulo + hora/sala) ensanchaba la
+   columna y aparecia un scroll horizontal de unos pocos px, molesto al
+   deslizar. Se corta aqui y se deja que los textos se recorten con "...". */
+.sy-body.ev-wk-body{padding:0;gap:0;overflow-x:hidden}
+.ev-wk-mgrid,.ev-wk-chips,.ev-wk-multi,.ev-wk-chip{min-width:0}
+.ev-wk-month-sep{font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-bright);background:var(--bg);padding:5px 12px;border-bottom:1px solid var(--border);border-top:1px solid var(--border);position:sticky;top:0;z-index:5}
+/* Fallback declarativo para scrollIntoView cuando el JS aún no ha medido el sticky */
+#ev-wk-today-row{scroll-margin-top:48px}
+/* Grid del mes: col fecha (48px) + col eventos (1fr) */
+.ev-wk-mgrid{display:grid;grid-template-columns:48px 1fr;position:relative}
+/* Columna fecha (col 1) */
+.ev-wk-date{grid-column:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 2px;gap:1px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);min-height:30px;position:relative;z-index:3;background:var(--bg)}
+.ev-wk-date.ev-wk-past{opacity:.45}
+.ev-wk-date.ev-wk-today{background:rgba(90,224,136,.10)}
+.ev-wk-date.ev-wk-wknd:not(.ev-wk-today){background:rgba(255,255,255,.03)}
+.ev-wk-dow{font-size:.6rem;color:var(--text-dim);text-transform:uppercase;line-height:1}
+.ev-wk-num{font-size:.85rem;font-weight:600;font-family:var(--mono);line-height:1}
+.ev-wk-date.ev-wk-today .ev-wk-num{color:var(--sent-text);font-weight:700}
+.ev-wk-date.ev-wk-today .ev-wk-dow{color:var(--sent-text)}
+/* Caja del multi-día: UN ÚNICO grid item que abarca varias filas → se ve como una unidad */
+.ev-wk-multi{align-self:stretch;justify-self:stretch;border:1.5px solid;border-radius:6px;margin:2px 4px;padding:5px 8px;cursor:pointer;position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;transition:opacity .12s}
+.ev-wk-multi:active{opacity:.7}
+.ev-wk-multi.wk-multi-cont-top{border-top-style:dashed;border-top-left-radius:0;border-top-right-radius:0;margin-top:0}
+.ev-wk-multi.wk-multi-cont-bot{border-bottom-style:dashed;border-bottom-left-radius:0;border-bottom-right-radius:0;margin-bottom:0}
+.ev-wk-multi-title{font-size:.78rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;line-height:1.2;position:sticky;top:32px}
+.ev-wk-multi.wk-shared .ev-wk-multi-title{font-size:.68rem;white-space:normal;overflow-wrap:anywhere;position:static}
+/* Contenedor de chips puntuales — se monta ENCIMA del multi-día por z-index */
+.ev-wk-chips{display:flex;flex-direction:column;gap:3px;justify-content:flex-start;align-items:stretch;padding:3px 6px;border-bottom:1px solid var(--border);min-height:30px;position:relative;z-index:2;pointer-events:none}
+.ev-wk-chips.ev-wk-past{opacity:.45}
+.ev-wk-chips.ev-wk-today{background:rgba(90,224,136,.07)}
+/* Cuando el día está dentro de un viaje: padding extra y fondo transparente para que el viaje se vea continuo */
+.ev-wk-chips.ev-wk-chips-nested{padding:3px 10px 3px 18px;background:transparent;border-bottom:none}
+/* Primera fila de un multi-día (donde se pinta el título): empujar chips hacia abajo
+   para que no se solapen con el texto del título de la barra multi-día. */
+.ev-wk-chips.ev-wk-chips-first-of-multi{padding-top:28px}
+.ev-wk-chips.ev-wk-chips-nested.ev-wk-today{background:transparent}
+/* Chip puntual: opaco con sombra para destacar sobre el viaje translúcido */
+.ev-wk-chip{display:flex;align-items:center;padding:3px 8px;border-radius:4px;cursor:pointer;transition:opacity .1s;min-height:20px;gap:0;pointer-events:auto;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.ev-wk-chip:active{opacity:.6}
+.ev-wk-chip-title{font-size:.73rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;color:#fff;flex:1;min-width:0}
+/* Event color type picker */
+.ev-symbol-lab{border:1px solid var(--border);border-radius:12px;background:var(--surface);flex-shrink:0;width:100%;max-width:520px;margin-inline:auto}
+.ev-symbol-lab summary{cursor:pointer;padding:13px 14px;color:var(--text);font-size:.78rem;font-weight:600}
+.ev-symbol-lab summary span{float:right;color:var(--text-dim);font-size:.65rem;font-weight:400}
+.ev-symbol-lab-body{display:grid;gap:15px;padding:0 14px 14px}
+.ev-symbol-lab-body p{margin:0;font-size:.69rem;color:var(--text-muted);line-height:1.5}
+.ev-symbol-samples{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));justify-items:center;gap:14px;padding:12px 6px;background:var(--surface2);border-radius:9px;--ev-marker-halo:var(--surface2)}
+.ev-symbol-samples>span{display:flex;width:26px;height:26px;align-items:center;justify-content:center}
+.ev-symbol-samples svg{width:100%;height:100%;overflow:visible}
+.ev-symbol-control{display:grid;grid-template-columns:1fr auto;align-items:center;gap:5px 12px}
+.ev-symbol-control label{font-size:.74rem;color:var(--text);font-weight:500}
+.ev-symbol-control output{font-family:var(--mono);font-size:.72rem;color:var(--accent-bright);font-variant-numeric:tabular-nums}
+.ev-symbol-control input{grid-column:1/-1;width:100%;margin:0;min-height:26px;accent-color:var(--accent);touch-action:pan-y}
+.ev-symbol-control input:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+.ev-symbol-actions{display:flex;gap:10px}.ev-symbol-actions>button{flex:1;min-width:0}
+.ev-type-picker{display:flex;flex-direction:column;gap:5px}
+.ev-type-picker button{font-family:var(--font);text-align:left}
+.ev-type-picker .ev-color-swatch{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--radius-sm);background:var(--surface);border:1.5px solid var(--border);cursor:pointer;transition:all .12s;outline:none;-webkit-tap-highlight-color:transparent}
+.ev-type-picker .ev-color-swatch.selected{border-color:currentColor;background:color-mix(in srgb,currentColor 12%,var(--surface));box-shadow:0 1px 3px #0001}
+.ev-type-picker .ev-type-name{color:var(--text)}
+.ev-type-picker .selected .ev-type-name{font-weight:600}
+.ev-category-group{border:1px solid color-mix(in srgb,var(--category-tone) 45%,var(--border));border-radius:12px;padding:8px;background:color-mix(in srgb,var(--category-tone) 11%,var(--surface));margin-bottom:6px}
+.ev-category-group.chosen{border-color:var(--category-tone)}
+.ev-category-group>.ev-color-swatch{width:100%;font-weight:600;min-height:36px;background:transparent;border-color:transparent}
+.ev-category-children{margin-top:8px}
+.ev-category-children{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.ev-type-picker .ev-category-children .ev-color-swatch{flex-direction:column;justify-content:center;text-align:center;gap:6px;padding:8px 2px;min-width:0;min-height:60px}
+.ev-category-children .ev-type-name{font-size:.61rem;line-height:1.2;min-height:2.4em;display:flex;align-items:center;justify-content:center}.ev-category-children .ev-type-dot{width:22px;height:22px}
+.ev-type-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.ev-type-symbol{width:18px;height:18px}
+.ev-type-dot svg{display:block;width:100%;height:100%}
+.ev-type-name{font-size:.8rem}
+/* Tipos sin color fijo (Viaje, Otros): dot multicolor + borde neutro */
+.ev-type-dot-multi{background:conic-gradient(from 0deg,#ff6b6b,#fb923c,#fbbf24,#34d399,#22d3ee,#6c8cff,#9775fa,#e64980,#ff6b6b);border:1px solid rgba(255,255,255,.25);box-shadow:0 0 0 .5px rgba(0,0,0,.4)}
+.ev-color-swatch-multi{color:var(--text)!important}
+.ev-type-picker .ev-color-swatch-multi.selected{border-color:var(--accent-bright);background:var(--surface3)}
+/* Color picker avanzado (paleta 6×8 + color libre) */
+.ev-color-picker{padding:4px 0}
+.ev-color-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-bottom:10px}
+.ev-color-dot{width:26px;height:26px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:transform .1s,box-shadow .1s;-webkit-tap-highlight-color:transparent}
+.ev-color-dot:hover{transform:scale(1.15)}
+.ev-color-dot.selected{box-shadow:0 0 0 2px var(--bg),0 0 0 4px currentColor;transform:scale(1.15)}
+.ev-color-custom-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.ev-color-native{width:32px;height:32px;padding:0;border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;background:none;-webkit-appearance:none;appearance:none}
+.ev-color-native::-webkit-color-swatch-wrapper{padding:2px}
+.ev-color-native::-webkit-color-swatch{border:none;border-radius:3px}
+.ev-color-hex-input{flex:1;font-family:var(--mono);font-size:.78rem;padding:6px 8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text)}
+.ev-color-preview-row{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.ev-color-preview-item{display:flex;align-items:center;gap:4px;font-size:.7rem;color:var(--text-muted)}
+.ev-color-preview-swatch{width:20px;height:14px;border-radius:3px}
+.ev-color-preview-hex{margin-left:auto;font-family:var(--mono);font-size:.72rem;color:var(--text-dim)}
+.ev-color-lock-row{margin-top:6px;padding-top:6px;border-top:1px solid var(--border)}
+.ev-color-lock-label{display:flex;align-items:center;gap:6px;font-size:.76rem;color:var(--text-muted);cursor:pointer}
+.ev-color-lock-cb{width:16px;height:16px}
+/* Detail color picker toggle */
+.ev-detail-color-btn{padding:4px 10px;font-size:.75rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);cursor:pointer;color:var(--text-muted);transition:border-color .15s}
+.ev-detail-color-btn:hover{border-color:var(--accent)}
+.ev-detail-color-btn.locked{opacity:.5;cursor:default}
+.ev-detail-color-section{margin:8px 0;display:none}
+.ev-detail-color-section.open{display:block}
+/* Annual events calendar */
+.ev-annual-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:4px 0}
+.ev-annual-month{background:var(--surface);border-radius:var(--radius-sm);padding:6px 4px 4px}
+.ev-annual-mname{font-size:.58rem;font-weight:700;text-transform:uppercase;color:var(--text-dim);text-align:center;margin-bottom:3px;letter-spacing:.04em}
+.ev-annual-cal{display:flex;flex-direction:column;gap:1px}
+.ev-annual-hdr-row{display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
+.ev-annual-hdr{font-size:.38rem;text-align:center;color:var(--text-dim);padding-bottom:1px}
+.ev-annual-week-outer{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;position:relative;isolation:isolate}
+.ev-annual-day{aspect-ratio:1;border-radius:2px;background:var(--surface2);position:relative;overflow:hidden}
+.ev-annual-day.out-m{background:transparent}
+.ev-annual-day.ann-today{outline:1.5px solid var(--accent);outline-offset:-1px}
+/* Eventos puntuales en anual/4meses — rejilla 2×2 dentro de la casilla del día:
+   1 → ocupa el cuadrado entero · 2 → izquierda/derecha · 3 → pirámide (1 arriba,
+   2 abajo) · 4 → cubo 2×2 · >4 → 3 marcadores + "+" en la 4ª posición.
+   Los markers son SVG con preserveAspectRatio=meet: aunque el hueco no sea
+   cuadrado (caso de 2), la forma se dibuja cuadrada y centrada. */
+.ev-annual-xs{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;overflow:hidden;z-index:3}
+.ev-annual-xs.ev-xs-n1{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
+.ev-annual-xs.ev-xs-n2{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:minmax(0,1fr)}
+.ev-annual-xs.ev-xs-n3,
+.ev-annual-xs.ev-xs-n4{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}
+.ev-annual-xs.ev-xs-n3>*:first-child{grid-column:1/3}
+.ev-annual-xs>.ev-annual-marker{width:100%;height:100%;max-width:100%;max-height:100%}
+/* Tope de tamano comun: haya 1 o 4 eventos, el simbolo nunca supera este
+   tamano (si el hueco de la rejilla es menor, manda el hueco) */
+.ev-annual-xs>.ev-annual-marker{max-width:8px;max-height:8px}
+.ev-annual-x{position:relative;width:4px;height:4px;flex-shrink:0}
+.ev-annual-x::before,.ev-annual-x::after{content:'';position:absolute;top:50%;left:50%;background:currentColor;border-radius:1px}
+.ev-annual-x::before{width:5px;height:1.5px;transform:translate(-50%,-50%) rotate(45deg);box-shadow:0 0 0 .5px #000}
+.ev-annual-x::after{width:5px;height:1.5px;transform:translate(-50%,-50%) rotate(-45deg);box-shadow:0 0 0 .5px #000}
+/* Badge punto: estilo "1 mes" reducido para anual/4-meses (reemplaza la X) */
+.ev-annual-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;border:1px solid currentColor;background:currentColor;box-shadow:0 0 0 .5px rgba(0,0,0,.6)}
+/* Marcadores con forma (eventos "Otros" y puntuales) — TODAS las formas son SVG
+   inline generado por evShapeSvg() con el mismo grosor de borde (EV_SHAPE_BW),
+   por lo que aquí solo se define el tamaño de la caja.
+   z-index:4 para que en el calendario 1-mes no queden tapados detrás de las barras
+   multi-día (.ev-multi-bar tiene z-index:3 absolute encima de las celdas). */
+.ev-annual-marker{position:relative;width:7px;height:7px;flex-shrink:0;display:inline-block;z-index:4;line-height:0}
+.ev-annual-marker svg{display:block;width:100%;height:100%;overflow:visible}
+.ev-management-mark{border-radius:4px;background:color-mix(in srgb,currentColor 16%,var(--surface));box-shadow:0 0 0 1px color-mix(in srgb,currentColor 38%,var(--surface))}
+.ev-annual-marker.past-marker{opacity:.5}
+
+/* === Selector de formas en el formulario de evento (Otros) === */
+.ev-otros-extras{padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-top:8px}
+/* Selector de grosor de barra (grande | Otros) */
+.ev-barsize-picker{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
+.ev-barsize-opt{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:10px 4px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s}
+.ev-barsize-opt.selected{border-color:var(--accent-bright);background:var(--accent-glow);box-shadow:0 0 0 1px var(--accent-bright)}
+.ev-barsize-lbl{font-size:.62rem;color:var(--text-muted)}
+.ev-barsize-opt.selected .ev-barsize-lbl{color:var(--accent-bright)}
+.ev-barsize-demo{width:100%;border-radius:20px;background:var(--text-muted);display:block}
+.ev-barsize-demo.ev-bar-lg{height:13px}
+.ev-barsize-demo.ev-bar-md{height:8px}
+.ev-barsize-demo.ev-bar-sm{height:4px}
+.ev-barsize-opt.selected .ev-barsize-demo{background:var(--accent-bright)}
+.ev-shape-picker{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
+.ev-shape-opt{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:10px 4px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;color:var(--text);font-size:.65rem;transition:all .15s;min-height:38px}
+.ev-shape-opt:hover{border-color:var(--accent)}
+.ev-shape-opt.selected{border-color:var(--accent-bright);background:var(--accent-glow);box-shadow:0 0 0 1px var(--accent-bright)}
+/* Previews del formulario: mismo SVG que los calendarios (borde uniforme) */
+.ev-shape-preview{display:inline-block;width:20px;height:20px;flex-shrink:0;position:relative;line-height:0}
+.ev-shape-preview svg{display:block;width:100%;height:100%;overflow:visible}
+.ev-shape-lbl{display:none}
+/* Tamaños en Calendario 1 mes: "lg" en la esquina, "ovf" en la fila de desborde */
+.ev-annual-marker.ev-marker-lg,.ev-annual-vip-star-svg.ev-marker-lg{width:12px;height:12px}
+.ev-annual-marker.ev-marker-ovf,.ev-annual-vip-star-svg.ev-marker-ovf{width:9px;height:9px}
+/* Inicio/Fin bloqueados cuando hay Selección Multidía */
+.ev-dates-locked input{opacity:.45;cursor:not-allowed;background:var(--surface2)!important}
+.ev-dates-locked label{opacity:.55}
+.ev-dates-locked-note{grid-column:1/-1;font-size:.62rem;color:var(--c-orange);background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.3);border-radius:6px;padding:6px 10px;margin-top:6px;line-height:1.4}
+
+/* === Mini-overlay para elegir días específicos (Otros) === */
+.dp-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1500;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.dp-overlay.open{opacity:1;pointer-events:auto}
+.dp-sheet{background:var(--surface);border-top-left-radius:18px;border-top-right-radius:18px;width:100%;max-width:520px;max-height:92vh;display:flex;flex-direction:column;padding:8px 12px 12px;transform:translateY(100%);transition:transform .25s ease;box-shadow:0 -8px 24px rgba(0,0,0,.4)}
+.dp-overlay.open .dp-sheet{transform:translateY(0)}
+.dp-handle{width:38px;height:4px;background:var(--border);border-radius:2px;margin:4px auto 8px}
+.dp-hdr{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.dp-title{flex:1;font-size:.9rem;font-weight:600;text-align:center}
+.dp-yearnav{display:flex;align-items:center;justify-content:center;gap:14px;margin:4px 0 6px;font-size:.95rem;font-weight:600}
+.dp-yearnav button{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-size:.85rem;padding:3px 10px;border-radius:6px;cursor:pointer}
+.dp-counter{text-align:center;font-size:.7rem;color:var(--text-muted);margin-bottom:8px}
+.dp-counter b{color:var(--accent-bright);font-size:.85rem}
+.dp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;overflow-y:auto;flex:1;min-height:0;padding:2px}
+.dp-month{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px}
+.dp-mname{font-size:.65rem;font-weight:600;color:var(--text);text-align:center;margin-bottom:3px}
+.dp-mhdr{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;margin-bottom:1px}
+.dp-mhdr-c{font-size:.5rem;color:var(--text-dim);text-align:center}
+.dp-days{display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
+.dp-day{font-size:.55rem;text-align:center;padding:3px 0;border:1px solid transparent;border-radius:3px;color:var(--text);background:var(--surface);cursor:pointer;line-height:1;user-select:none}
+.dp-day.out{visibility:hidden}
+.dp-day.wk{color:var(--text-dim)}
+.dp-day:hover{border-color:var(--accent)}
+.dp-day.sel{font-weight:700}
+.dp-actions{display:flex;gap:8px;margin-top:10px}
+.dp-actions .ev-btn{flex:1}
+.ev-annual-vip-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:#fbbf24;border:1px solid #fbbf24;box-shadow:0 0 4px rgba(251,191,36,.7),0 0 0 .5px rgba(0,0,0,.5)}
+.ev-annual-vip-star{font-size:.26rem;line-height:1;flex-shrink:0;filter:drop-shadow(0 0 1px rgba(251,191,36,.9));-webkit-text-stroke:.4px rgba(0,0,0,.7)}
+/* Estrella VIP vectorial (SVG): tamaño homogéneo con el resto de markers */
+.ev-annual-vip-star-svg{display:inline-block;width:8px;height:8px;flex-shrink:0;z-index:4;line-height:0;filter:drop-shadow(0 0 1px rgba(251,191,36,.55))}
+.ev-annual-vip-star-svg svg{display:block;width:100%;height:100%;overflow:visible}
+.ev-annual-vip-star-svg.past-marker{opacity:.5}
+/* Marcador "+" (más de 4 eventos puntuales en el mismo día) */
+.ev-annual-marker.ev-marker-more{color:#fff}
+/* Barras multi-día en calendario anual/4meses: ocupa una franja vertical y se divide en filas con grid */
+.ev-annual-bars-row{position:absolute;top:0;left:0;right:0;height:100%;z-index:2;pointer-events:none;display:grid;grid-template-columns:repeat(7,1fr);gap:1px;grid-auto-rows:1fr}
+.ev-annual-mbar{display:flex;align-items:center;border-radius:6px;overflow:hidden;white-space:nowrap;color:#fff}
+.ev-annual-mbar.a-starts{border-top-right-radius:0;border-bottom-right-radius:0}
+.ev-annual-mbar.a-ends{border-top-left-radius:0;border-bottom-left-radius:0}
+.ev-annual-mbar.a-mid{border-radius:0}
+/* Perímetro de días puente en vista anual: z-index:1, debajo de eventos */
+.ev-annual-puente-perimeter{position:absolute;inset:0;border:1px solid #f472b6;border-radius:2px;pointer-events:none;z-index:1}
+/* Calendario 4 meses: 2 columnas × 2 filas */
+.ev-quad-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;padding:4px 0}
+/* Botón ir al calendario mensual en puentes del resumen */
+.sy-puente-goto{border:none;background:transparent;color:var(--accent);font-size:.85rem;cursor:pointer;padding:2px 6px;border-radius:4px;line-height:1;transition:background .12s}
+.sy-puente-goto:active{background:var(--surface3)}
+.ev-annual-month{cursor:pointer;transition:opacity .15s}
+.ev-edit-mode .ev-annual-day[data-ds]{cursor:crosshair}
+.ev-edit-mode .ev-annual-day[data-ds]:hover{outline:1.5px solid rgba(255,255,255,.5);outline-offset:-1px}
+.ev-edit-mode .ev-annual-bars-row{pointer-events:auto}
+.ev-edit-mode .ev-annual-mbar[data-id]{cursor:pointer}
+.ev-edit-mode .ev-annual-mbar[data-id]:hover{filter:brightness(1.3)}
+.ev-edit-mode .ev-annual-x[data-id],.ev-edit-mode .ev-annual-dot[data-id],.ev-edit-mode .ev-annual-vip-star[data-id],.ev-edit-mode .ev-annual-vip-dot[data-id]{cursor:pointer}
+.ev-edit-mode .ev-annual-xs{pointer-events:auto}
+.ev-io-btn.ev-edit-pick-mode{border-color:var(--c-orange)!important;color:var(--c-orange)!important}
+/* Botón editar (lápiz) en Anual/Quad — mismo aspecto que la bombilla pequeña de 1-mes/Semanal */
+.ev-ann-edit-btn{font-size:.85rem;padding:4px 8px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;flex-shrink:0;display:flex;align-items:center;justify-content:center;height:28px;min-width:30px;line-height:1}
+.ev-ann-edit-btn,.ev-ann-edit-btn:hover{border-color:#fb923c;color:#fb923c;background:rgba(251,146,60,.1)}
+.ev-ann-edit-btn.active{border-color:#fb923c;background:rgba(251,146,60,.25);color:#fb923c;box-shadow:inset 0 0 0 1px #fb923c}
+/* Diagonales en anual/quad: attachment:fixed para que el patrón sea continuo entre celdas */
+/* Puentes (anual y 4-meses): pattern aplicado SOLO a celdas puente
+   individualmente (no al .ev-annual-week-outer, que manchaba weekend/festivo
+   por su bg semi-transparente). Mismo enfoque que 1-mes: layered backgrounds
+   con el pattern + el color base de cada estado. */
+.ev-annual-week-outer{background-image:none}
+.ev-annual-day.ev-annual-puente{background:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 2px,transparent 2px,transparent 5px),var(--surface2)!important}
+.ev-annual-day.ev-annual-puente.ann-festivo{background:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 2px,transparent 2px,transparent 5px),rgba(255,107,107,.18)!important}
+.ev-annual-day.ev-annual-puente.ann-vac{background:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 2px,transparent 2px,transparent 5px),rgba(255,179,71,.18)!important}
+.ev-annual-day.ev-annual-suelto-fest{background:repeating-linear-gradient(-45deg,rgba(255,107,107,.85),rgba(255,107,107,.85) 2px,transparent 2px,transparent 5px),var(--surface2)!important}
+.ev-annual-day.ev-annual-suelto-vac{background:repeating-linear-gradient(45deg,rgba(255,179,71,.45),rgba(255,179,71,.45) 2px,transparent 2px,transparent 5px),var(--surface2)!important}
+/* Cumpleaños VIP en anual/4-meses: rayas diagonales amarillas (en 1-mes se usa
+   la estrella). Se pintan como capa ::after con el patrón DESFASADO respecto al
+   de puente (rosa 0→2px, amarillo 2→5px) para que, si el día es puente, las
+   rayas amarillas rellenen justo los huecos entre las rosas. */
+.ev-annual-day.ann-vip-bday::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:repeating-linear-gradient(45deg,transparent 0,transparent 2px,rgba(255,214,10,.95) 2px,rgba(255,214,10,.95) 5px);
+  filter:saturate(1.25)}
+/* Festivos/vac en vista anual: borde brillante + relleno suave por día individual */
+.ev-annual-day.ann-festivo{background:rgba(255,107,107,.15)!important;outline:1.5px solid rgba(255,107,107,.85);outline-offset:-1.5px}
+.ev-annual-day.ann-vac{background:rgba(255,179,71,.15)!important;outline:1.5px solid rgba(255,179,71,.85);outline-offset:-1.5px}
+.ev-annual-controls{padding:8px 10px 4px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:5px}
+.ev-annual-view-toggle{display:flex;gap:6px}
+.ev-annual-vt-btn{flex:1;height:28px;border:1px solid var(--border);border-radius:14px;background:var(--surface);color:var(--text-muted);font-size:.7rem;cursor:pointer;transition:all .15s}
+.ev-annual-vt-btn.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
+/* ── Dropdown de vista anual ── */
+.ev-ann-vd-wrap{position:relative;flex:1}
+.ev-ann-vd-btn{width:100%;height:28px;border:1px solid var(--accent);border-radius:14px;background:var(--accent-glow);color:var(--accent-bright);font-size:.68rem;cursor:pointer;transition:all .15s;padding:0 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev-ann-vd-menu{position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:30;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;display:none;flex-direction:column;min-width:180px;box-shadow:0 6px 20px rgba(0,0,0,.4)}
+.ev-ann-vd-menu.open{display:flex}
+.ev-ann-vd-opt{padding:10px 14px;font-size:.72rem;color:var(--text-muted);text-align:left;background:none;border:none;cursor:pointer;border-bottom:1px solid var(--border);transition:background .1s}
+.ev-ann-vd-opt:last-child{border-bottom:none}
+.ev-ann-vd-opt:active,.ev-ann-vd-opt:hover{background:var(--surface2)}
+.ev-ann-vd-opt.active{color:var(--accent-bright);font-weight:600;background:var(--accent-glow)}
+/* Linea que separa los chips de eventos grandes de los puntuales */
+.ev-filter-sep{width:1px;align-self:stretch;margin:2px 3px;background:var(--border-light);flex:0 0 auto}
+.ev-annual-filter-row{display:flex;gap:4px;flex-wrap:wrap;padding-bottom:2px}
+.ev-filter-chip{height:22px;padding:0 7px;border:1px solid var(--border);border-radius:11px;background:transparent;color:var(--text-dim);font-size:.65rem;cursor:pointer;transition:opacity .15s;opacity:.4;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+/* El chip de Asturias es la bandera, sin texto: ahorra el ancho que hacia
+   caer la fila de chips a dos niveles */
+.ev-chip-flag{width:24px;height:15px;display:block;border-radius:2.5px}
+.ev-filter-chip:has(.ev-chip-flag){padding:0 5px}
+.ev-filter-chip.chip-active{opacity:1}
