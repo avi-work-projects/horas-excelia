@@ -99,12 +99,20 @@ no un `span` ajustado al texto. Rutinas y Próximos reparten el ancho disponible
 en partes iguales; WM hace lo mismo para sus cuatro títulos y reserva una
 columna compacta al engranaje. Mantener el ancho al cambiar de selección,
 con margen lateral y sin desbordar «Estadísticas» o «Cumpleaños» a 320 px.
+Próximos usa el mismo `.ev-upcoming-body` sin padding para las cuatro vistas
+y una rejilla de cuatro columnas iguales. El espaciado de las listas vive en
+`.ev-upcoming-content`; no compensar márgenes negativos según la subpestaña.
 
 El menú de ajustes es único y se monta en `body`, anclado al botón pulsado.
 Abrirlo no cierra overlays ni reconstruye su contenido. Conserva el retorno
 anterior; Escape y el clic exterior lo cierran sin activar el control de debajo.
 Toda salida del menú debe pasar por `closeSettingsMenu`, también importación
 y elección de iconos, para restaurar ese retorno y el estado del botón.
+La campana sigue el mismo patrón (`alarm-panel.js`): formulario único en `body`,
+`toggleAlarmPanel` desde Home y navegación, y `closeAlarmPanel` en toda salida.
+Comparte `_positionHeaderMenu` con ajustes. Al alternar entre ambos se cierra
+primero el anterior para conservar `NAV_BACK`; abrirlos nunca llama a una ruta.
+`init.js` prepara las ruedas al abrir y conserva el envío de alarmas a MacroDroid.
 
 ### Marcadores y viajes (v390)
 

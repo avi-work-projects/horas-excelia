@@ -534,7 +534,8 @@ function renderEvContent(){
     h+='</div>';
   }
   h+='</div>';
-  h+='<div class="sy-body'+(EV_BRIGHT_PAST?' ev-bright-past':'')+(EV_VIEW==='week'?' ev-wk-body':'')+'">';
+  var upcoming=upcomingViews.indexOf(EV_VIEW)>=0;
+  h+='<div class="sy-body'+(EV_BRIGHT_PAST?' ev-bright-past':'')+(upcoming?' ev-upcoming-body':'')+(EV_VIEW==='week'?' ev-wk-body':'')+'">';
   if(EV_VIEW==='annual'||EV_VIEW==='quad'){
     var _typeOrder=EV_FILTER_GROUPS;
     var _typeShort=EV_FILTER_SHORT;
@@ -569,7 +570,7 @@ function renderEvContent(){
     h+='</div>';
     h+='</div>';
   }
-  if(upcomingViews.indexOf(EV_VIEW)>=0){
+  if(upcoming){
     /* Próximos comparte pestañas y scroll con Cumpleaños, Agenda y Todos. */
     h+='<div class="econ-sub-tabs ev-upcoming-tabs">';
     h+='<button class="econ-sub-tab'+(EV_VIEW==='upcoming'?' active':'')+'" id="evSubUpcoming">Próximos</button>';
@@ -577,6 +578,8 @@ function renderEvContent(){
     h+='<button class="econ-sub-tab'+(EV_VIEW==='week'?' active':'')+'" id="evSubAgenda">Agenda</button>';
     h+='<button class="econ-sub-tab'+(EV_VIEW==='months'?' active':'')+'" id="evSubTodos">Todos</button>';
     h+='</div>';
+    /* El margen del contenido no cambia la geometría de la barra sticky. */
+    if(EV_VIEW!=='week')h+='<div class="ev-upcoming-content">';
     if(EV_VIEW==='upcoming'){
       h+='<div class="excl-row ev-up-filters">';
       h+='<label class="excl-item"><input type="checkbox" id="evUpShowRut"'+(EV_UP_SHOW_RUT?' checked':'')+'> Ver rutinas</label>';
@@ -613,6 +616,7 @@ function renderEvContent(){
     }
     h+='</div>';
   }
+  if(upcoming&&EV_VIEW!=='week')h+='</div>';
   h+='</div>';
   return h;
 }

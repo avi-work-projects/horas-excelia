@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v392 — barras entre meses y subpestañas completas';
+var APP_VERSION = 'v393 — campana contextual y pestañas estables';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -764,23 +764,28 @@ function renderNavBar(current){
 function bindNavBar(current,closeFn){
   document.querySelectorAll('.overlay-nav-bar[data-current="'+current+'"] .nav-bar-btn[data-nav]').forEach(function(btn){
     if(btn._navBound)return;btn._navBound=true;
-    btn.addEventListener('click',function(e){if(btn.dataset.nav==='menu'){e.stopPropagation();toggleSettingsMenu(btn);}else if(btn.dataset.nav!==current)navigateMain(btn.dataset.nav);});
+    btn.addEventListener('click',function(e){
+      if(btn.dataset.nav==='menu'){e.stopPropagation();toggleSettingsMenu(btn);}
+      else if(btn.dataset.nav==='alarm'){e.stopPropagation();toggleAlarmPanel(btn);}
+      else if(btn.dataset.nav!==current)navigateMain(btn.dataset.nav);
+    });
   });
 }
 var NAV_SWITCH_TIMER=null;
 function navigateMain(key){
   if(key==='menu'){toggleSettingsMenu(document.querySelector('.full-overlay.open [data-nav="menu"]')||document.getElementById('menuBtn'));return;}
+  if(key==='alarm'){toggleAlarmPanel(document.querySelector('.full-overlay.open [data-nav="alarm"]')||document.getElementById('alarmTestBtn'));return;}
   var routes={household:openHousehold,econ:openEcon,events:openEvents,estudio:openEstudio};
-  if(key!=='home'&&key!=='alarm'&&key!=='menu'&&!routes[key])return;
+  if(key!=='home'&&!routes[key])return;
   if(typeof tasksDock==='function')tasksDock();
   closeSettingsMenu();
+  closeAlarmPanel();
   clearTimeout(NAV_SWITCH_TIMER);NAV_BACK=null;
   var opened=document.querySelectorAll('.full-overlay.open');
   opened.forEach(function(ov){ov.classList.remove('open');setTimeout(function(){if(!ov.classList.contains('open'))ov.style.display='none';},320);});
   function open(){
     if(routes[key])routes[key]();
     else if(key==='home')window.scrollTo({top:0,behavior:'instant'});
-    else if(key==='alarm')document.getElementById('alarmTestBtn').click();
   }
   if(opened.length)NAV_SWITCH_TIMER=setTimeout(open,330);else open();
 }

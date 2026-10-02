@@ -6,6 +6,11 @@
 
 ## JavaScript
 
+### js/alarm-panel.js  _(42 líneas)_
+**Estado global:** ALARM_PANEL_ANCHOR:3 · ALARM_PANEL_BACK:4 · ALARM_PANEL_PREPARE:5
+
+**Funciones:** closeAlarmPanel:7 · positionAlarmPanel:17 · toggleAlarmPanel:20 · initAlarmPanel:31
+
 ### js/alarms.js  _(48 líneas)_
 **Estado global:** ALARMS_SK:8 · ALARMS:9
 
@@ -52,10 +57,10 @@
 
 **Funciones:** saveBodas:18 · bodaPlaceEmoji:39 · bodaPlaceOf:43 · bodaPlaceLabel:48 · bodaNextColor:69 · bodaCouple:77 · bodaSlot:81 · bodaSlotColors:91 · bodaMarkFor:96 · evBodaSvg:102 · bodaClasses:119 · bodaPrimeraClase:123 · bodaClassesOfCouple:127 · bodaEsUltimoEnsayo:131 · bodaUltimoEnsayoHtml:137 · bodaFreeClasses:140 · bodaClaseById:143 · bodaSortClasses:147 · bodaClassesOnDay:154 · bodaNewClass:157 · bodaNormalizeClasses:172 · bodaPlaceForNewOn:209 · bodaDayFull:214 · bodaBulkCreate:218 · bodaProgress:229 · saveBodaClosed:240 · bodaIsClosed:241 · bodaReopenDay:242 · bodaToggleClosed:246 · bodaPendingCount:256 · bodaEff:258 · bodaSetPending:267 · bodaPendingApply:271 · bodaPendingDiscard:294 · _bodaLegendHtml:315 · _renderBodaCalendario:326 (!88) · _renderBodasBody:414 · _bodaCmpFecha:444 · _renderBodaParejas:450 (!91) · _bodaFmt:541 · _bodaFmtCorto:542 · _renderBodaClases:549 (!108)
 
-### js/core.js  _(787 líneas)_
-**Estado global:** APP_VERSION:6 · NAV_BACK:101 · THEME_STORAGE_KEY:104 · THEME:105 · THEME_LABELS:111 · THEME_META:112 · THEME_SEQUENCE:113 · ECON_YEAR_CONFIG:137 · MN_SHORT:139 · DN5:439 · FESTIVOS_ANIO:658 · NAV_SWITCH_TIMER:770
+### js/core.js  _(792 líneas)_
+**Estado global:** APP_VERSION:6 · NAV_BACK:101 · THEME_STORAGE_KEY:104 · THEME:105 · THEME_LABELS:111 · THEME_META:112 · THEME_SEQUENCE:113 · ECON_YEAR_CONFIG:137 · MN_SHORT:139 · DN5:439 · FESTIVOS_ANIO:658 · NAV_SWITCH_TIMER:774
 
-**Funciones:** normalizeMacroBase:9 · addSwipe:18 · startedInScrollX:24 · startedInPanel:37 · addLongPress:66 · start:70 · move:84 · end:87 · applyTheme:114 · cycleTheme:121 · updateThemeBtn:126 · load:144 · save:156 · loadEconYear:161 · saveEconYear:180 · fakeTrans:190 · simpleBarChart:207 · hBarRows:231 · shareOrDownload:248 · download:250 · escHtml:279 · mkey:284 · getMonthH:285 · defH:291 · dayH:292 · dayT:293 · dk:294 · fd:295 · ad:296 · fh:297 · fhP:298 · isToday:299 · isPast:300 · wn:301 · weeks:304 · homeSubmissionStatus:318 · renderHomeSubmissionStatus:323 · getWD:332 · _toastReset:348 · _toastBindSwipe:358 · end:383 · showToast:401 · sendEmail:428 · buildMailtoBody:438 · render:460 (!99) · fmtH:536 · openSheet:559 · closeSheet:578 · selectType:584 · contarVacaciones:617 · confirmarCupoVacaciones:630 · contarFestivos:646 · confirmarCupoFestivos:659 · togSent:668 · _panelBorrarLuego:689 · _panelCancelarBorrado:700 · abrirPanel:702 · engancharFondo:722 · abrirUnaVez:740 · cerrarPanel:746 · renderNavBar:757 · bindNavBar:764 · navigateMain:771 · open:780
+**Funciones:** normalizeMacroBase:9 · addSwipe:18 · startedInScrollX:24 · startedInPanel:37 · addLongPress:66 · start:70 · move:84 · end:87 · applyTheme:114 · cycleTheme:121 · updateThemeBtn:126 · load:144 · save:156 · loadEconYear:161 · saveEconYear:180 · fakeTrans:190 · simpleBarChart:207 · hBarRows:231 · shareOrDownload:248 · download:250 · escHtml:279 · mkey:284 · getMonthH:285 · defH:291 · dayH:292 · dayT:293 · dk:294 · fd:295 · ad:296 · fh:297 · fhP:298 · isToday:299 · isPast:300 · wn:301 · weeks:304 · homeSubmissionStatus:318 · renderHomeSubmissionStatus:323 · getWD:332 · _toastReset:348 · _toastBindSwipe:358 · end:383 · showToast:401 · sendEmail:428 · buildMailtoBody:438 · render:460 (!99) · fmtH:536 · openSheet:559 · closeSheet:578 · selectType:584 · contarVacaciones:617 · confirmarCupoVacaciones:630 · contarFestivos:646 · confirmarCupoFestivos:659 · togSent:668 · _panelBorrarLuego:689 · _panelCancelarBorrado:700 · abrirPanel:702 · engancharFondo:722 · abrirUnaVez:740 · cerrarPanel:746 · renderNavBar:757 · bindNavBar:764 · navigateMain:775 · open:786
 
 ### js/csv-sync.js  _(40 líneas)_
 **Estado global:** CSV_EXPORT_KEY:2 · CSV_WARNED:3
@@ -229,10 +234,10 @@
 
 **Funciones:** openOtrosDatePicker:7 (!96) · _evDk:11 · _count:12 · _render:13 · _attach:54 · _rerender:85 · _close:93
 
-### js/events-render.js  _(619 líneas)_
+### js/events-render.js  _(623 líneas)_
 **Estado global:** EV_LIST_TYPES:220
 
-**Funciones:** renderEvListItem:11 · fd2:15 · renderEvUpcoming:43 (!178) · fd2:50 · renderEvItem:51 · renderEvPanel:103 · occurrenceKey:130 · renderEvByTypes:221 · coincide:242 · renderEvMonthsView:288 · _evWeekLanes:299 · assign:302 · evWeekTravelRow:317 · renderEvWeek:337 (!133) · hexA:341 · renderEvContent:470 (!149)
+**Funciones:** renderEvListItem:11 · fd2:15 · renderEvUpcoming:43 (!178) · fd2:50 · renderEvItem:51 · renderEvPanel:103 · occurrenceKey:130 · renderEvByTypes:221 · coincide:242 · renderEvMonthsView:288 · _evWeekLanes:299 · assign:302 · evWeekTravelRow:317 · renderEvWeek:337 (!133) · hexA:341 · renderEvContent:470 (!153)
 
 ### js/events.js  _(819 líneas)_
 **Estado global:** EV_STORAGE_KEY:5 · EV_YEAR:6 · EV_MONTH:7 · EV_VIEW_STATE:11 · EV_SCROLL_RESET:16 · EV_VIEW:17 · EV_EDIT:18 · EV_EDIT_DS:19 · EV_FORM_CONTAINER:20 · EV_EDIT_MODE:21 · EV_BRIGHT_PAST:22 · EV_ANNUAL_VIEW:23 · EV_ANNUAL_FILTER_HIDDEN:24 · EV_FILTER_GROUPS:33 · EV_FILTER_SHORT:39 · EV_FILTER_COLOR:41 · EV_FILTER_SEP_AFTER:44 · EV_FILTER_CYCLE:45 · EV_PREV_VIEW:63 · EV_QUAD_YEAR:64 · EV_QUAD_MONTH:65 · EV_TO_SUBTAB:66 · EV_TYPES_FILTER:67 · EV_TYPES_PAST:68 · EV_LIST_SORT:69 · EV_LIST_SEARCH:70 · EV_COLORS:71 · EVENTS:72 · EV_ALARM_SK:101 · EV_ALARMS_SET:102 · EV_NO_RUT:194 · EV_MAX_BAR_DIA:250 · EV_MARK_ORDER:356 · EV_MAX_PUNT_DIA:398 · EV_MAX_RUT_DIA:399 · EV_CAL_CORNER_STACK:402 · EV_MAX_VIP_DIA:404 · EV_CAL_VIP_MAX:405 · EV_UP_SHOW_RUT:407 · EV_UP_SHOW_BODA:408 · EV_BAR_Z:460 · EV_COMPARTE_DIA:464 · EV_MNS:671 · EV_CAR:714 · EV_TRANSPORTES:733 · EV_TRANS_EMOJI:739 · EV_DATE_INDEX:805
@@ -256,10 +261,10 @@
 ### js/import-preview.js  _(19 líneas)_
 **Funciones:** renderImportPreview:2 · add:4
 
-### js/init.js  _(459 líneas)_
-**Estado global:** DRUM_ITEM_H:143 · DN_ES:300
+### js/init.js  _(446 líneas)_
+**Estado global:** DRUM_ITEM_H:132 · DN_ES:289
 
-**Funciones:** _updateHeaderActive:31 · buildDrumPicker:144 · updateDrumSelected:172 · getDrumValue:178 · checkDrumMinuteWrap:184 · buildAlarmDayBtns:215 · showAlarmPastConfirm:245 · proceed:286 · aplicarActualizacion:384 · reload:390 · _showUpdateBar:412 · _buscar:446
+**Funciones:** _updateHeaderActive:31 · buildDrumPicker:133 · updateDrumSelected:161 · getDrumValue:167 · checkDrumMinuteWrap:173 · buildAlarmDayBtns:204 · showAlarmPastConfirm:234 · proceed:275 · aplicarActualizacion:371 · reload:377 · _showUpdateBar:399 · _buscar:433
 
 ### js/logo-popup.js  _(51 líneas)_
 **Funciones:** _logoUpdateDots:14
@@ -321,10 +326,10 @@
 
 **Funciones:** saveRutinas:25 · rutMarkerHtml:39 · rutMarkerGroups:47 · rutDayMarkersHtml:54 · rutById:59 · rutWeekKey:64 · rutTimeOfDay:73 · rutTieneHorarios:78 · rutScheduleOn:86 · rutScheduleCopy:91 · rutDurationOn:95 · rutChangeFrom:100 · rutChangeWeek:124 · update:128 · rutWeekCfg:140 · rutSuspendedOn:151 · rutDiaLleno:161 · rutOccursOn:165 · rutIsSkipped:176 · rutToggleSkip:177 · rutFin:195 · rutEventsOn:203 · rutEventFromId:220 · rutSessions:229 · rutStats:243 · rutProximas:256 · renderRutinasBody:266 · _rutTimeRange:279 · _renderRutSchedule:283 · _renderRutLista:297 · _rutFmt:335 · _rutFmtCorto:336 · _renderRutStats:342 · openRutWeek:395 · _rutWeekPick:404 · back:428 · _rutWeekRender:457 (!83) · closeRutWeek:540 · openRutSesion:543 · closeRutSesion:575 · bindRutinasEvents:578
 
-### js/settings-menu.js  _(67 líneas)_
+### js/settings-menu.js  _(70 líneas)_
 **Estado global:** SETTINGS_MENU_ANCHOR:3 · SETTINGS_MENU_BACK:4
 
-**Funciones:** closeSettingsMenu:5 · positionSettingsMenu:14 · toggleSettingsMenu:23 · setConnectionsEditing:35 · initSettingsMenu:46
+**Funciones:** closeSettingsMenu:5 · positionSettingsMenu:14 · _positionHeaderMenu:18 · toggleSettingsMenu:26 · setConnectionsEditing:38 · initSettingsMenu:49
 
 ### js/summary.js  _(613 líneas)_
 **Estado global:** FEST_REQUIRED:5 · VAC_STORAGE_KEY:6 · VAC_ENTITLEMENT:7 · SUMMARY_YEAR:11 · SY_EXCL_PAST:12 · SY_PUENTES_LIBRES:13 · SUMMARY_TAB:14 · VAC_YEAR_KEY:16 · VAC_BY_YEAR:17 · SPAIN_AVG:258 · DN7S:282
@@ -555,7 +560,7 @@
 **Rangos por prefijo de clase:**
 .data-btn:2-2 · .ev-ann:74-76 · .ev-annual:86-132 · .ev-badge:160-160 · .ev-badges:40-40 · .ev-bar:105-105 · .ev-bars:33-33 · .ev-bright:134-147 · .ev-btn:198-207 · .ev-car:55-67 · .ev-cell:118-156 · .ev-char:187-187 · .ev-checkbox:192-192 · .ev-chip:85-85 · .ev-colors:188-188 · .ev-date:189-189 · .ev-day:43-96 · .ev-detail:212-225 · .ev-edit:201-202 · .ev-field:181-182 · .ev-form:176-197 · .ev-hdr:3-5 · .ev-input:183-184 · .ev-io:209-210 · .ev-list:14-174 · .ev-main:6-6 · .ev-month:22-83 · .ev-multi:37-126 · .ev-num:158-158 · .ev-otros:53-101 · .ev-part:135-135 · .ev-puente:114-114 · .ev-quad:151-152 · .ev-repeat:193-193 · .ev-rut:92-95 · .ev-stepped:107-109 · .ev-textarea:185-186 · .ev-toggle:190-191 · .ev-types:17-19 · .ev-view:4-8 · .ev-wd:195-196 · .ev-week:28-112 · .ev-weekday:194-194 · .rut-marker:88-91 · .sy-nav:148-149
 
-### css/source/dialogs-responsive.css  _(135 líneas)_
+### css/source/dialogs-responsive.css  _(136 líneas)_
 
 **Secciones:**
 
@@ -565,15 +570,15 @@
 - RESPONSIVE (mobile header):22
 - IVA trimestral: compactar celdas para que los 4 trimestres quepan sin scroll horizontal:24
 - ALARM PANEL:77
-- Drum picker (selector giratorio de hora/minuto):82
-- Confirmación alarma en el pasado:108
-- Botón flotante "Listo" en modo Editar VIPs:114
-- Controles inline long-press cumpleaños:117
-- Selector de clase en el formulario:125
-- Notas: general vs de un dia concreto:131
+- Drum picker (selector giratorio de hora/minuto):83
+- Confirmación alarma en el pasado:109
+- Botón flotante "Listo" en modo Editar VIPs:115
+- Controles inline long-press cumpleaños:118
+- Selector de clase en el formulario:126
+- Notas: general vs de un dia concreto:132
 
 **Rangos por prefijo de clase:**
-.alarm-cfg:78-78 · .alarm-colon:81-81 · .alarm-create:95-101 · .alarm-day:105-107 · .alarm-days:102-104 · .alarm-msg:91-92 · .alarm-panel:79-79 · .alarm-past:109-113 · .alarm-time:80-80 · .bd-alarm:20-21 · .bday-ic:119-123 · .bday-inline:118-118 · .bday-listo:115-115 · .btn-icon:31-67 · .data-actions:33-69 · .data-btn:29-65 · .drum-picker:84-87 · .drum-sel:90-90 · .drum-wrap:83-89 · .econ-qcell:26-28 · .econ-quarter:25-25 · .ev-daynote:133-133 · .ev-detail:134-134 · .ev-kind:126-130 · .ev-note:132-132 · .header:57-70 · .logo-gallery:11-18 · .logo-popup:2-9 · .nav-bar:34-74
+.alarm-cfg:78-79 · .alarm-colon:82-82 · .alarm-create:96-102 · .alarm-day:106-108 · .alarm-days:103-105 · .alarm-msg:92-93 · .alarm-panel:80-80 · .alarm-past:110-114 · .alarm-time:81-81 · .bd-alarm:20-21 · .bday-ic:120-124 · .bday-inline:119-119 · .bday-listo:116-116 · .btn-icon:31-67 · .data-actions:33-69 · .data-btn:29-65 · .drum-picker:85-88 · .drum-sel:91-91 · .drum-wrap:84-90 · .econ-qcell:26-28 · .econ-quarter:25-25 · .ev-daynote:134-134 · .ev-detail:135-135 · .ev-kind:127-131 · .ev-note:133-133 · .header:57-70 · .logo-gallery:11-18 · .logo-popup:2-9 · .nav-bar:34-74
 
 ### css/source/wedding-moves.css  _(323 líneas)_
 
@@ -673,7 +678,7 @@
 **Rangos por prefijo de clase:**
 .boda-future:79-79 · .energy-contract:106-107 · .energy-field:109-110 · .energy-history:104-105 · .energy-price:108-113 · .energy-sheet:103-103 · .energy-tax:111-111 · .ev-cal:30-102 · .ev-field:78-78 · .ev-share:28-29 · .ev-week:65-80 · .ev-wk:3-3 · .header:2-2 · .home-reminder:59-61 · .home-submission:4-15 · .home-summary:16-24 · .month-summary:18-19
 
-### css/source/energy-refinements.css  _(208 líneas)_
+### css/source/energy-refinements.css  _(210 líneas)_
 
 **Secciones:**
 
@@ -689,7 +694,7 @@
 - Selección por fondo en las subpestañas de Eventos; cada una conserva su tono.:180
 
 **Rangos por prefijo de clase:**
-.boda-asg:106-111 · .boda-det:102-105 · .boda-last:15-19 · .data-actions:152-153 · .energy-bar:88-88 · .energy-caption:2-2 · .energy-choice:12-12 · .energy-compare:146-146 · .energy-contract:4-5 · .energy-cost:84-148 · .energy-coverage:75-75 · .energy-extremes:71-71 · .energy-fee:40-41 · .energy-field:7-7 · .energy-fields:9-9 · .energy-info:60-62 · .energy-inline:81-81 · .energy-legend:89-89 · .energy-metric:138-140 · .energy-metrics:137-137 · .energy-overview:64-66 · .energy-period:67-69 · .energy-price:191-196 · .energy-range:90-90 · .energy-reconciliation:74-74 · .energy-scenario:147-147 · .energy-section:59-59 · .energy-supplier:72-141 · .energy-table:3-3 · .energy-tabs:43-54 · .energy-tariff:77-192 · .energy-tax:70-144 · .energy-vat:142-142 · .energy-window:31-136 · .energy-year:6-96 · .ev-annual:100-132 · .ev-btn:159-159 · .ev-filter:99-124 · .ev-io:149-149 · .ev-main:177-178 · .ev-upcoming:183-185 · .ev-wk:16-184 · .home-popup:18-28 · .imp-mode:113-113 · .imp-preview:114-118 · .nav-bar:154-154 · .rut-bulk:202-207 · .rut-card:171-176 · .rut-day:160-166 · .rut-days:163-163 · .rut-dpick:158-158 · .rut-history:198-201 · .rut-hora:167-169 · .rut-month:206-206 · .rut-recovery:157-157 · .rut-routine:173-173 · .rut-session:156-156 · .rut-time:170-170 · .rut-weekdays:164-164
+.boda-asg:106-111 · .boda-det:102-105 · .boda-last:15-19 · .data-actions:152-153 · .energy-bar:88-88 · .energy-caption:2-2 · .energy-choice:12-12 · .energy-compare:146-146 · .energy-contract:4-5 · .energy-cost:84-148 · .energy-coverage:75-75 · .energy-extremes:71-71 · .energy-fee:40-41 · .energy-field:7-7 · .energy-fields:9-9 · .energy-info:60-62 · .energy-inline:81-81 · .energy-legend:89-89 · .energy-metric:138-140 · .energy-metrics:137-137 · .energy-overview:64-66 · .energy-period:67-69 · .energy-price:193-198 · .energy-range:90-90 · .energy-reconciliation:74-74 · .energy-scenario:147-147 · .energy-section:59-59 · .energy-supplier:72-141 · .energy-table:3-3 · .energy-tabs:43-54 · .energy-tariff:77-194 · .energy-tax:70-144 · .energy-vat:142-142 · .energy-window:31-136 · .energy-year:6-96 · .ev-annual:100-132 · .ev-btn:159-159 · .ev-filter:99-124 · .ev-io:149-149 · .ev-main:177-178 · .ev-upcoming:185-187 · .ev-wk:16-25 · .home-popup:18-28 · .imp-mode:113-113 · .imp-preview:114-118 · .nav-bar:154-154 · .rut-bulk:204-209 · .rut-card:171-176 · .rut-day:160-166 · .rut-days:163-163 · .rut-dpick:158-158 · .rut-history:200-203 · .rut-hora:167-169 · .rut-month:208-208 · .rut-recovery:157-157 · .rut-routine:173-173 · .rut-session:156-156 · .rut-time:170-170 · .rut-weekdays:164-164 · .sy-body:184-184
 
 ### css/tasks.css  _(78 líneas)_
 
