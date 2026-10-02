@@ -85,6 +85,8 @@ function bindBdayEvents(){
     BDAY_MONTH++;if(BDAY_MONTH>11){BDAY_MONTH=0;BDAY_YEAR++;}refreshBday();
   });
   var todayBtn=document.getElementById('bdToday');
+  var calVip=document.getElementById('bdCalVip');
+  if(calVip)calVip.onchange=function(){BDAY_CAL_VIP=calVip.checked;refreshBday();};
   if(todayBtn)todayBtn.addEventListener('click',function(){
     var n=new Date();BDAY_YEAR=n.getFullYear();BDAY_MONTH=n.getMonth();refreshBday();
   });

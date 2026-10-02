@@ -23,8 +23,11 @@ for(const tab of ['resumen','detalle','gas','elect']){
  a.FISCAL_HIP_SUB=tab;a.FISCAL_HIP_EDITING='prestamo';a.FISCAL_ELECT_EDITING=true;a.FISCAL_GAS_EDITING='consumo';
  const fiscal=a.renderFiscalContent();
  assert(fiscal.includes('id="householdDetailLink"'),tab);
- assert(!/id="fiscalSave"|data-editsection=|data-gasedit=|id="electEditBtn"|energy-analysis-open|<input/.test(fiscal),tab);
+ assert(!/id="fiscalSave"|data-editsection=|data-gasedit=|id="electEditBtn"|energy-analysis-open/.test(fiscal),tab);
+ assert.equal((fiscal.match(/<input/g)||[]).length,tab==='detalle'?3:0,tab);
+ if(tab==='detalle')assert(fiscal.indexOf('Precios referencia seguros')<fiscal.indexOf('id="hip-section-prestamo"'));
 }
+assert(!a._renderHipDetalle(true).includes('Precios referencia seguros'),'Las referencias se editan solo en Fiscal');
 a.FISCAL_HIP_EDITING=null;a.FISCAL_ELECT_EDITING=false;a.FISCAL_GAS_EDITING=null;
 a.FISCAL_HIP_SUB='elect';const household=a.renderHouseholdContent();
 assert(household.includes('id="electEditBtn"'));assert(household.includes('energy-analysis-open'));assert(!household.includes('fiscalTabPersonal'));

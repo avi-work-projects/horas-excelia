@@ -107,18 +107,18 @@ function renderBdayCalMonth(){
       var inM=d.getMonth()===BDAY_MONTH;
       var isTod=d.getTime()===today.getTime();
       var past=inM&&d<today;
-      var bds=getBdaysOn(d.getMonth()+1,d.getDate());
+      var bds=getBdaysOn(d.getMonth()+1,d.getDate()).filter(function(b){return !BDAY_CAL_VIP||b.vip;});
       var bdow=d.getDay();
       var cls='bday-cell'+(inM?'':' out-m')+(isTod?' today-bday':'')+(past?' past-cal-day':'')+(bdow===0||bdow===6?' weekend':'');
       var dataAttrs=inM?' data-cal-day="'+d.getDate()+'" data-cal-month="'+(d.getMonth()+1)+'"':'';
       h+='<div class="'+cls+'"'+dataAttrs+'>';
       h+='<div class="bday-num">'+d.getDate()+'</div>';
       bds.forEach(function(b){
-        var color=b.vip?'#fbbf24':getBdayColor(b);
-        var sn=bdName(b.name);   /* nombre completo: el cajetin admite 3 lineas */
+        var color=getBdayColor(b);
+        var sn=bdName(b.name);   /* nombre completo: hasta cuatro líneas */
         var bidx=BDAYS.indexOf(b);
         var vipCls=b.vip?' bday-badge-vip':'';
-        h+='<div class="bday-badge'+vipCls+'" data-bday-idx="'+bidx+'" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" style="--bday-color:'+color+'" title="'+bdName(b.name)+(b.vip?' VIP':'')+'">'+sn+'</div>';
+        h+='<div class="bday-badge'+vipCls+'" data-bday-idx="'+bidx+'" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" style="--bday-color:'+color+'" title="'+bdName(b.name)+(b.vip?' VIP':'')+'">'+(b.vip?'<img class="bday-calendar-vip" src="./VIP.png" alt="VIP">':'')+'<span class="bday-badge-name">'+sn+'</span></div>';
       });
       h+='</div>';
       cur.setDate(cur.getDate()+1);
@@ -195,7 +195,7 @@ function renderBdayContent(){
     h+='<div class="sy-year-nav"><button class="sy-nav" id="bdPrev">&#9664;</button>';
     h+='<div class="sy-year sy-year-2line">'+MN[BDAY_MONTH]+'<span class="sy-year-sub">'+BDAY_YEAR+'</span></div>';
     h+='<button class="sy-nav" id="bdNext">&#9654;</button></div>';
-    h+='<button class="today-btn" id="bdToday" style="font-size:.7rem;padding:6px 12px">Hoy</button>';
+    h+='<div class="sy-hdr-right bday-calendar-tools"><button class="today-btn" id="bdToday" style="font-size:.7rem;padding:6px 12px">Hoy</button><label><input type="checkbox" id="bdCalVip"'+(BDAY_CAL_VIP?' checked':'')+'>Solo VIPs</label></div>';
   }
   h+='</div>';
   h+='<div class="sy-body ev-bday-body"'+(BDAY_EDIT_VIP?' style="padding-bottom:56px"':'')+'>';

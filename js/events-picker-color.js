@@ -40,11 +40,11 @@ var EV_COLOR_TYPES = {
    - puntual: se dibuja UN MARCADOR POR D\u00cdA (aunque abarque varios d\u00edas)
    - grande:  se dibuja como BARRA continua (formato actual de Viaje/Asturias) */
 var EV_MANAGEMENT_SUBTYPES={'Llamada':'phone','Peluquería':'comb','Médico':'medical','Dentista':'tooth'};
-var EV_PLAN_SUBTYPES={'Plan romántico':'heart','Comida':'meal','Cena':'dinner','Salir de fiesta':'party','Cerveza':'beer','Montaña':'mountain'};
+var EV_PLAN_SUBTYPES={'Plan romántico':'heart','Comida':'meal','Cena':'dinner','Salir de fiesta':'disco','Copas':'party','Cerveza':'beer','Montaña':'mountain'};
 function evIsManagement(type){return type==='Rec. Gestiones'||Object.prototype.hasOwnProperty.call(EV_MANAGEMENT_SUBTYPES,type);}
 function evFixedSymbol(type){return EV_MANAGEMENT_SUBTYPES[type]||EV_PLAN_SUBTYPES[type]||null;}
 var EV_KINDS = {
-  puntual:{label:'Puntual', types:['Rec. Gestiones','Llamada','Peluquería','Médico','Dentista','Plan/Quedada','Plan romántico','Comida','Cena','Salir de fiesta','Cerveza','Montaña','Ensayos boda','Otros']},
+  puntual:{label:'Puntual', types:['Rec. Gestiones','Llamada','Peluquería','Médico','Dentista','Plan/Quedada','Plan romántico','Comida','Cena','Salir de fiesta','Copas','Cerveza','Montaña','Ensayos boda','Otros']},
   grande: {label:'Grande',  types:['Viaje','Asturias','Casa Rural','Otros']}
 };
 /* Color por defecto de cada categor\u00eda (par kind|type) */
@@ -59,6 +59,7 @@ var EV_TYPE_COLORS = {
   'puntual|Comida'        :'#e99a31',
   'puntual|Cena'          :'#6574c4',
   'puntual|Salir de fiesta':'#c553a5',
+  'puntual|Copas'        :'#9f62bc',
   'puntual|Cerveza'       :'#f5c232',
   'puntual|Montaña'       :'#8b5e34',
   'puntual|Ensayos boda'  :'#c084fc',
@@ -112,15 +113,17 @@ var EV_SHAPE_BW = 2;
 function evShapeSvg(shape){
   /* Las siluetas de rutina (mancuerna, pala, bailarin) tambien se pueden
      elegir como forma para un evento puntual de tipo Otros. */
-  if(typeof RUT_ICON_LABEL!=='undefined'&&RUT_ICON_LABEL[shape]&&typeof rutIconSvg==='function')
-    return rutIconSvg(shape,'currentColor');
+  if(typeof RUT_ICON_LABEL!=='undefined'&&RUT_ICON_LABEL[shape]&&typeof rutIconSvg==='function'){
+    var activity=rutIconSvg(shape,RUT_FIXED_COLOR[shape]||'#888',true).replace(/^<svg[^>]*>/,'').replace(/<\/svg>$/,'');
+    return '<svg viewBox="0 0 20 20"><rect x="1" y="1" width="18" height="18" rx="4" fill="#fff" stroke="#000" stroke-width="1.7"/><g transform="translate(3.5 3.5) scale(.54)">'+activity+'</g></svg>';
+  }
   var bw=EV_SHAPE_BW,inner;
   if(shape==='medical'){
     inner='<rect x="-9" y="-7.5" width="18" height="15" rx="2" fill="#fff" stroke="#000" stroke-width="'+bw+'"/><path d="M-5,0 H5 M0,-5 V5" fill="none" stroke="#e03131" stroke-width="3.4"/>';
   } else if(shape==='phone'){
     inner='<path d="M-7,-8 C-10,-6 -8,1 -3,5 C1,9 6,10 8,7 L8,4 L3,1 L1,3 C-1,2 -3,0 -4,-2 L-2,-4 L-5,-8 Z" fill="#868e96" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/>';
   } else if(shape==='comb'){
-    inner='<g transform="rotate(-40)"><path d="M-8,-3.5 H8 V3.5 H6 V0 H4 V3.5 H2 V0 H0 V3.5 H-2 V0 H-4 V3.5 H-6 V0 H-8 Z" fill="#8b5e34" stroke="#000" stroke-width="1.7" stroke-linejoin="round"/></g>';
+    inner='<g transform="rotate(-40)"><rect x="-8" y="-4" width="16" height="4" rx="1.4" fill="#8b5e34" stroke="#000" stroke-width="1.7"/><path d="M-7,0 V4 M-3.5,0 V4 M0,0 V4 M3.5,0 V4 M7,0 V4" fill="none" stroke="#000" stroke-width="2.6" stroke-linecap="round"/><path d="M-7,0 V3.5 M-3.5,0 V3.5 M0,0 V3.5 M3.5,0 V3.5 M7,0 V3.5" fill="none" stroke="#8b5e34" stroke-width="1.2"/></g>';
   } else if(shape==='tooth'){
     inner='<path d="M0,-6 C-9,-12 -10,-3 -7,2 C-6,5 -6,9 -3,9 C-1,9 -2,2 0,2 C2,2 1,9 3,9 C6,9 6,5 7,2 C10,-3 9,-12 0,-6 Z" fill="#e8f7fa" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/><path d="M-4,-4 Q-2,-5 0,-3" fill="none" stroke="#16859b" stroke-width="1.3" stroke-linecap="round"/>';
   } else if(shape==='heart'){
@@ -129,6 +132,10 @@ function evShapeSvg(shape){
     inner='<circle r="6.2" fill="currentColor" stroke="#000" stroke-width="'+bw+'"/><circle r="3.4" fill="none" stroke="#fff" stroke-width="1.3"/><path d="M-9,-7 V-2 Q-7,-1 -7,-3 V-7 M-8,-1 V8 M9,-7 V8" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round"/>';
   } else if(shape==='dinner'){
     inner='<path d="M-9,6 A9,9 0 0 1 9,6 Z" fill="currentColor" stroke="#000" stroke-width="'+bw+'"/><path d="M-9,8 H9 M0,-3 V-5" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/><path d="M5,-9 A4,4 0 1 0 9,-5 A4,4 0 0 1 5,-9" fill="#ffe7a1" stroke="#000" stroke-width="1.2"/>';
+  } else if(shape==='disco'){
+    inner='<path d="M0,-10 V-7" stroke="#000" stroke-width="1.6"/><circle cy="1" r="8" fill="currentColor" stroke="#000" stroke-width="'+bw+'"/><path d="M-7,-2 H7 M-7,3 H7 M-4,7 Q-8,1 -4,-6 M4,7 Q8,1 4,-6 M0,-7 V9" fill="none" stroke="#fff" stroke-width="1.2"/><path d="M-9,-8 V-4 M-11,-6 H-7 M8,-8 V-4 M6,-6 H10" stroke="#000" stroke-width="1.1"/>';
+  } else if(shape==='planet'){
+    inner='<circle r="6" fill="currentColor" stroke="#000" stroke-width="'+bw+'"/><ellipse rx="9" ry="3" transform="rotate(-30)" fill="none" stroke="#000" stroke-width="3.2"/><ellipse rx="9" ry="3" transform="rotate(-30)" fill="none" stroke="currentColor" stroke-width="1.3"/>';
   } else if(shape==='party'){
     inner='<path d="M-8,-7 H8 L1,2 V7 H5 V9 H-5 V7 H-1 V2 Z" fill="currentColor" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/><path d="M-5,-4 H5 M2,-4 L6,-9" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/>';
   } else if(shape==='beer'){
@@ -206,6 +213,7 @@ function getEvDisplayColor(ev){
      cada dia, asi que el matiz por hash las pintaria de un color distinto
      cada sesion. */
   if(getEvType(ev)==='Rutina')return ev._rut?rutDisplayColor(ev._rut):ev.color;
+  if(getEvKind(ev)==='puntual'&&getEvType(ev)==='Otros'&&typeof RUT_FIXED_COLOR!=='undefined'&&RUT_FIXED_COLOR[ev.shape])return RUT_FIXED_COLOR[ev.shape];
   if(getEvKind(ev)==='puntual'&&evFixedSymbol(getEvType(ev)))return evTypeColor('puntual',getEvType(ev));
   /* Una clase de boda se tine con el color de SU pareja: el morado del tipo
      solo se usa mientras no hay pareja asignada. */

@@ -67,7 +67,6 @@ function initTasks(){
     if(e.key===TASKS_KEY){tasksUpdateFab();if(TASKS_OPEN)renderTasksPanel();}
   });
   bindTasksRestoreGesture();
-  var menu=document.getElementById('tasksMenuOpen');if(menu)menu.onclick=function(){tasksRestoreAccess();document.getElementById('dataMenu').classList.remove('open');openTasks();};
 }
 function tasksSetAccessHidden(hidden){TASKS_FAB_HIDDEN=hidden;appStorage.setItem(TASKS_FAB_HIDDEN_KEY,hidden?'1':'0');tasksUpdateFab();}
 function tasksRestoreAccess(){tasksSetAccessHidden(false);tasksDock();}

@@ -413,6 +413,7 @@ function _renderHipDetalle(editable){
   h+=_renderHipSectionContent('compra',editable&&FISCAL_HIP_EDITING==='compra',editable);
   h+='</div>';
   /* Préstamo section */
+  if(!editable)h+=_renderSegurosNormales(true);
   h+='<div class="fiscal-section" id="hip-section-prestamo">';
   h+=_renderHipSectionContent('prestamo',editable&&FISCAL_HIP_EDITING==='prestamo',editable);
   h+='</div>';
@@ -426,8 +427,6 @@ function _renderHipDetalle(editable){
   }
   /* Add subrogation button */
   if(editable)h+='<button class="hip-add-sub-btn" id="hipAddSub">+ A\u00f1adir subrogaci\u00f3n</button>';
-  /* Precios referencia seguros */
-  h+=_renderSegurosNormales(editable);
   return h;
 }
 
@@ -619,7 +618,7 @@ function _bindTabDespacho(){
       reRenderFiscal();
     });
   });
-  if(FISCAL_ENTRY!=='household')return;
+  if(FISCAL_ENTRY!=='household'){if(FISCAL_HIP_SUB==='detalle')_bindSegurosNormales();return;}
   if(FISCAL_HIP_SUB==='resumen'){
     _bindHipResumen();
   } else if(FISCAL_HIP_SUB==='detalle'){

@@ -66,6 +66,7 @@ function _personalListHtml(arr,section,periodMode){
   /* periodMode: 'weekly'=/sem|/mes, 'monthly'=/mes|/año */
   var h='';
   arr.forEach(function(item,i){
+    if(Array.isArray(item.periods)){h+=personalPeriodsSummary(item,section,i)+_personalTripFilter(item,section,i);return;}
     /* Compute annual for this item */
     var annual=0;
     if(item.amount){
@@ -91,37 +92,26 @@ function _personalListHtml(arr,section,periodMode){
     h+='</div>';
     /* Annual amount indicator */
     if(annual>0)h+='<div class="fiscal-gasto-annual">'+fcPlain(annual)+'/a\u00f1o</div>';
-    /* Viaje event selector */
-    if(item._viaje){
-      var evList=typeof EVENTS!=='undefined'?EVENTS.filter(function(ev){return ev.title&&ev.title.length>0&&(getEvType(ev)==='Viaje'||getEvType(ev)==='Asturias');}):[];
-      h+='<div class="fiscal-viaje-selector" data-ps="'+section+'" data-pi="'+i+'">';
-      h+='<select class="fiscal-viaje-select" data-ps="'+section+'" data-pi="'+i+'" data-pf="viajeFilter">';
-      h+='<option value="all"'+((!item.viajeFilter||item.viajeFilter==='all')?' selected':'')+'>Todos los viajes</option>';
-      evList.forEach(function(ev){
-        h+='<option value="'+ev.id+'"'+(item.viajeFilter===ev.id?' selected':'')+'>'+escHtml(ev.title)+'</option>';
-      });
-      h+='</select></div>';
-    }
+    h+='<button type="button" class="personal-advanced" data-pp-edit="'+i+'" data-ps="'+section+'">Avanzado · fechas y períodos</button>';
+    h+=_personalTripFilter(item,section,i);
   });
   return h;
 }
-function _personalTotal(arr){
-  var t=0;
-  arr.forEach(function(item){
-    if(!item.amount)return;
-    if(item.period==='weekly'||!item.period&&item._isWeeklySection)t+=item.amount*52;
-    else if(item.period==='annual')t+=item.amount;
-    else t+=item.amount*12; /* monthly default */
-  });
+function _personalTripFilter(item,section,i){
+  if(!item._viaje)return '';
+  var evList=typeof EVENTS!=='undefined'?EVENTS.filter(function(ev){return ev.title&&ev.title.length>0&&(getEvType(ev)==='Viaje'||getEvType(ev)==='Asturias');}):[];
+  var h='<div class="fiscal-viaje-selector" data-ps="'+section+'" data-pi="'+i+'">';
+  h+='<select class="fiscal-viaje-select" data-ps="'+section+'" data-pi="'+i+'" data-pf="viajeFilter">';
+  h+='<option value="all"'+((!item.viajeFilter||item.viajeFilter==='all')?' selected':'')+'>Todos los viajes</option>';
+  evList.forEach(function(ev){h+='<option value="'+ev.id+'"'+(item.viajeFilter===ev.id?' selected':'')+'>'+escHtml(ev.title)+'</option>';});
+  return h+'</select></div>';
+}
+function _personalTotal(arr,year){
+  var t=arr.reduce(function(sum,item){return sum+personalAnnual(item,year||FISCAL_YEAR,item._isWeeklySection?'gastosSemanales':'');},0);
   return Math.round(t*100)/100;
 }
 function _personalTotalWeekly(arr){
-  var t=0;
-  arr.forEach(function(item){
-    if(!item.amount)return;
-    if(item.period==='monthly')t+=item.amount*12;
-    else t+=item.amount*52; /* weekly default */
-  });
+  var t=arr.reduce(function(sum,item){return sum+personalAnnual(item,FISCAL_YEAR,'gastosSemanales');},0);
   return Math.round(t*100)/100;
 }
 function renderFiscalTabPersonal(){
