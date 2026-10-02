@@ -17,6 +17,7 @@ function tasksValidate(data){
 function tasksValidTimestamp(value){return Number.isSafeInteger(value)&&value>=0&&Number.isFinite(new Date(value).getTime());}
 function tasksNormalize(data){
   var copy=JSON.parse(JSON.stringify(data));
+  copy.weeklyReminder=true; // Recordatorio semanal permanente; compatible con backups antiguos.
   copy.items.forEach(function(t){
     // Los backups antiguos conservan también las tareas de la antigua papelera.
     if(t.completedAt===null&&t.deletedAt!=null)t.completedAt=t.deletedAt;

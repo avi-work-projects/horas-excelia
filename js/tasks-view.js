@@ -15,7 +15,6 @@ function renderTasks(data,view){
   h+=renderTasksList(items,view);
   h+='</div><footer class="tasks-footer">';
   if(view==='pending')h+='<div class="tasks-move-row"><span>'+(checked?checked+' marcada'+(checked===1?'':'s')+' para mover':'Marca las tareas que ya has terminado')+'</span><button type="button" class="ev-io-btn io-primaria" id="tasksMoveCompleted"'+(!checked?' disabled':'')+'>Mover'+(checked?' ('+checked+')':'')+'</button></div>';
-  h+='<label><input id="tasksWeekly" type="checkbox"'+(data.weeklyReminder?' checked':'')+'> Recordarme las pendientes cada semana</label>';
   return h+'</footer><div class="tasks-status" id="tasksStatus" role="status" aria-live="polite"></div></section></div>';
 }
 function tasksDateLabel(timestamp,short){
@@ -84,7 +83,6 @@ function renderTasksPanel(){
   document.getElementById('tasksClose').onclick=closeTasks;
   wrap.querySelectorAll('[data-tasks-view]').forEach(function(b){b.onclick=function(){TASKS_VIEW=b.dataset.tasksView;TASKS_EDIT=null;TASKS_DATE_CHOICE=null;document.getElementById('tasksList').scrollTop=0;renderTasksPanel();document.querySelector('[data-tasks-view="'+TASKS_VIEW+'"]').focus();};});
   var add=document.getElementById('tasksAdd');if(add)add.onsubmit=function(e){e.preventDefault();tasksPerform(function(){tasksCreate(document.getElementById('tasksNew').value);TASKS_EDIT=null;},'Tarea añadida');document.getElementById('tasksNew').focus();document.getElementById('tasksList').scrollTop=document.getElementById('tasksList').scrollHeight;};
-  var weekly=document.getElementById('tasksWeekly');if(weekly)weekly.onchange=function(){tasksPerform(function(){var d=tasksData();d.weeklyReminder=weekly.checked;tasksSave(d);},'Preferencia guardada');};
   var move=document.getElementById('tasksMoveCompleted');if(move)move.onclick=function(){
     var moved=[];tasksPerform(function(){moved=tasksMoveCompleted();},'Tareas movidas a Completadas',function(){tasksUndoMove(moved);if(TASKS_OPEN)renderTasksPanel();tasksUpdateFab();});
     document.querySelector('[data-tasks-view="pending"]').focus({preventScroll:true});

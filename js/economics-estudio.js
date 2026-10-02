@@ -16,12 +16,13 @@ function renderEconEstudio(){
   h+='<button class="est-btn est-casa'+(ECON_ESTUDIO_SUB==='gas'?' active':'')+'" id="ecSubGas">Comparar Gas</button>';
   h+='<button class="est-btn est-casa'+(ECON_ESTUDIO_SUB==='elect'?' active':'')+'" id="ecSubElect">Comparar Electricidad</button>';
   h+='</div></div>';
+  h+='<div class="study-workspace study-'+ECON_ESTUDIO_SUB+'">';
   if(ECON_ESTUDIO_SUB==='comparador'){h+=typeof renderEconComp==='function'?renderEconComp():'';}
   else if(ECON_ESTUDIO_SUB==='simulador'){h+=typeof renderEconSim==='function'?renderEconSim():'';}
   else if(ECON_ESTUDIO_SUB==='hipoteca'){h+=_renderEstudioHipotecaComp();}
   else if(ECON_ESTUDIO_SUB==='gas'){h+=_renderEstudioGasComp();}
   else if(ECON_ESTUDIO_SUB==='elect'){h+=_renderEstudioElectComp();}
-  return h;
+  return h+'</div>';
 }
 
 /* ── Helpers ──────────────────────────────────────────────── */
@@ -48,24 +49,21 @@ function _renderEstudioHipotecaComp(){
   if(act.vinc){['segHogar','segSalud','segVida'].forEach(function(k){if(act.vinc[k]&&act.vinc[k].enabled)vincAnual+=act.vinc[k].costeAnual||0;});}
   var cuotaActConSeg=Math.round((cuotaAct+vincAnual/12)*100)/100;
 
-  h+='<div class="sy-section">';
-  h+='<div class="sy-section-title">Tu hipoteca actual (tipo bonificado + seguros)</div>';
-  h+='<div class="analisis-mortgage-current">';
-  h+='<div style="font-size:.72rem;color:var(--text-dim)">'+escHtml(act.banco||'')+' \u00b7 '+tipoEfAct.toFixed(2)+'% (bonificado) \u00b7 '+act.plazo+'a \u00b7 '+_fmtMiles(act.importe)+'\u20ac</div>';
-  h+='<div style="font-family:var(--mono);font-size:1rem;font-weight:700;margin-top:4px">'+fcPlain(Math.round(cuotaAct*100)/100)+'<span style="font-size:.68rem;color:var(--text-dim)">/mes</span>';
-  if(vincAnual>0)h+='<span style="font-size:.62rem;color:var(--c-orange);margin-left:6px">+ '+fcPlain(Math.round(vincAnual/12*100)/100)+' seguros = '+fcPlain(cuotaActConSeg)+'/mes</span>';
-  h+='</div></div></div>';
+  h+='<section class="sy-section study-reference"><div class="sy-section-title">Tu hipoteca actual</div>';
+  h+='<h3 class="study-company">'+escHtml(act.banco||'Hipoteca actual')+'</h3><div class="study-mortgage-payment"><strong>'+fcPlain(Math.round(cuotaAct*100)/100)+'</strong><span>/mes</span></div>';
+  if(vincAnual>0)h+='<p class="study-rate-note">Con seguros: <b>'+fcPlain(cuotaActConSeg)+'/mes</b> · '+fcPlain(Math.round(vincAnual/12*100)/100)+' de seguros.</p>';
+  h+='<dl class="study-mortgage-facts"><div><dt>Tipo bonificado</dt><dd>'+tipoEfAct.toFixed(2).replace('.',',')+' %</dd></div><div><dt>Plazo</dt><dd>'+act.plazo+' años</dd></div><div><dt>Capital</dt><dd>'+fcPlain(act.importe)+'</dd></div></dl></section>';
 
   /* Alternative mortgages */
   h+='<div class="sy-section">';
-  h+='<div class="sy-section-title">Hipotecas alternativas (max 3)</div>';
+  h+='<div class="sy-section-title">Hipotecas a comparar</div>';
   ESTUDIO_HIP_ALTS.forEach(function(alt,ai){
     if(!alt.importe&&act)alt.importe=act.importe;
     if(!alt.plazo&&act)alt.plazo=act.plazo;
     if(!alt.vinculaciones)alt.vinculaciones=_defaultVinc();
     var av=alt.vinculaciones;
     var pfx='estHip'+ai;
-    h+='<div class="est-tariff-card" style="margin-bottom:10px">';
+    h+='<div class="est-tariff-card study-alternative" style="--study-tone:'+ELECTRIC_COMPARISON_COLORS[ai]+'">';
     h+='<div class="est-card-hdr"><span style="font-size:.72rem;font-weight:600;color:var(--accent-bright)">Alternativa '+(ai+1)+'</span>';
     if(ESTUDIO_HIP_ALTS.length>1)h+='<button class="est-card-del est-hip-del" data-hidx="'+ai+'">\u2715</button>';
     h+='</div>';
@@ -246,26 +244,13 @@ function _renderEstudioGasComp(){
   var comps=DESPACHO&&DESPACHO.gasComparaciones?DESPACHO.gasComparaciones:[];
   var h='';
   /* Current tariff card */
-  h+='<div class="sy-section">';
-  h+='<div class="est-section-hdr"><span class="sy-section-title">\uD83D\uDD25 Tu tarifa actual</span>';
-  h+='<button class="est-detail-btn" id="estGasGoDetail">Ver Detalle \u2192</button></div>';
-  h+='<div class="est-tariff-card est-current">';
-  if(cur.comercializadora)h+='<div style="font-size:.72rem;font-weight:600;color:var(--accent-bright)">'+escHtml(cur.comercializadora)+'</div>';
-  if(cur.modo==='fijo'){
-    h+='<div class="est-tariff-row"><span class="est-tariff-lbl">Modo</span><span class="est-tariff-val">Cuota fija</span></div>';
-    h+='<div class="est-tariff-row"><span class="est-tariff-lbl">Cuota fija</span><span class="est-tariff-val"><b>'+fcPlain(cur.cuotaFija)+'</b>/mes</span></div>';
-  } else {
-    h+='<div class="est-tariff-row"><span class="est-tariff-lbl">Modo</span><span class="est-tariff-val">Por consumo</span></div>';
-    h+='<div class="est-tariff-row"><span class="est-tariff-lbl">Precio kWh</span><span class="est-tariff-val"><b>'+energyUnitPrice(cur.precioKwh)+'</b> \u20ac/kWh</span></div>';
-    if(cur.terminoFijoDia)h+='<div class="est-tariff-row"><span class="est-tariff-lbl">T. fijo/d\u00eda</span><span class="est-tariff-val">'+energyUnitPrice(cur.terminoFijoDia)+' \u20ac/d\u00eda</span></div>';
-    if(cur.terminoFijo)h+='<div class="est-tariff-row"><span class="est-tariff-lbl">T. fijo/factura</span><span class="est-tariff-val">'+fcPlain(cur.terminoFijo)+'</span></div>';
-  }
-  h+='</div></div>';
+  h+='<section class="sy-section study-reference"><div class="est-section-hdr"><span class="sy-section-title">Tu referencia actual</span><button class="est-detail-btn" id="estGasGoDetail">Ver detalle</button></div>';
+  h+='<h3 class="study-company">'+escHtml(cur.comercializadora||'Gas')+'</h3>'+householdUtilityPrices('gas',cur,DESPACHO.gas.ivaGas,cur.modo==='fijo',false)+'</section>';
   /* Consumption scenarios */
   h+='<div class="sy-section">';
-  h+='<div class="sy-section-title">Escenarios de consumo (max 3)</div>';
+  h+='<div class="sy-section-title">Consumo a comparar</div>';
   ESTUDIO_GAS_SCENARIOS.forEach(function(sc,si){
-    h+='<div class="est-tariff-card" style="padding:6px 10px;margin-bottom:6px">';
+    h+='<div class="est-tariff-card study-consumption">';
     h+='<div style="display:flex;gap:6px;align-items:center">';
     h+='<input class="est-card-name est-sc-name" data-stipo="gas" data-sidx="'+si+'" type="text" value="'+escHtml(sc.nombre||'')+'" placeholder="Escenario '+(si+1)+'" style="flex:1">';
     if(ESTUDIO_GAS_SCENARIOS.length>1)h+='<button class="est-card-del est-sc-del" data-stipo="gas" data-sidx="'+si+'">\u2715</button>';
@@ -284,7 +269,7 @@ function _renderEstudioGasComp(){
   h+='</div>';
   /* Alternative tariff cards */
   h+='<div class="sy-section">';
-  h+='<div class="sy-section-title">Tarifas alternativas (max 5)</div>';
+  h+='<div class="sy-section-title">Elige tus tarifas</div>';
   comps.forEach(function(c,i){h+=_renderGasCompCard(c,i);});
   if(comps.length<5)h+='<button class="hip-add-sub-btn" id="estGasAdd">+ A\u00f1adir tarifa</button>';
   h+='<button class="econ-calc-btn" id="estGasCalc" style="margin-top:8px">Comparar</button>';
@@ -302,7 +287,7 @@ function _renderEstudioGasComp(){
 
 function _renderGasCompCard(c,i){
   if(c.energyMode==='tramos')c=Object.assign({},c,{precioKwh:energyWeightedPrice(c)});
-  var h='<div class="est-tariff-card">';
+  var h='<div class="est-tariff-card study-alternative" style="--study-tone:'+ELECTRIC_COMPARISON_COLORS[i%5]+'">';
   h+='<div class="est-card-hdr">';
   h+='<input class="est-card-name" data-tipo="gas" data-idx="'+i+'" data-field="nombre" type="text" value="'+escHtml(c.nombre||'')+'" placeholder="Tarifa '+(i+1)+'">';
   h+='<button class="est-card-del" data-tipo="gas" data-idx="'+i+'">\u2715</button>';
@@ -324,8 +309,8 @@ function _renderGasCompCard(c,i){
   }
   h+='<div class="est-fields-row">';
   h+='<div class="est-field est-field-wide"><label>Comercializadora</label><input class="fiscal-despacho-input est-comp-f" data-tipo="gas" data-idx="'+i+'" data-field="comercializadora" type="text" value="'+escHtml(c.comercializadora||'')+'" placeholder="Ej: Naturgy..." style="text-align:left"></div>';
-  h+='</div></div>';
-  h+='<button class="hip-edit-btn" data-energy-legacy="'+i+'" data-energy-kind="gas">Tramos / cuota fija</button>';
+  h+='</div>';
+  h+='<button class="hip-edit-btn" data-energy-legacy="'+i+'" data-energy-kind="gas">Tramos / cuota fija</button></div>';
   return h;
 }
 
@@ -333,6 +318,7 @@ function _renderGasCompCard(c,i){
 var ESTUDIO_ELECT_SCENARIOS=[{nombre:'Mi consumo',consumoKwh:150,dias:30}];
 var ESTUDIO_ELECT_CALC=false;
 var ESTUDIO_ELECT_IVA=null;
+var ESTUDIO_ELECT_TAX=null; // Impuesto eléctrico utilizado en la comparación, antes del IVA.
 
 function _calcElectCost(t,e,kwh,dias){return energyTariffNet(t,'luz',kwh,dias,30,t.useOwnPower?t:e);}
 function _currentElectTariff(){
@@ -344,7 +330,7 @@ function _renderEstudioElectComp(){return renderElectricityComparison();}
 
 /* ── Multi-scenario result table ─────────────────────────── */
 function _renderMultiScenarioResult(scenarios,comps,tipo,currentTariff,ivaPct){
-  var _colors=['#6c8cff','#fb923c','#c084fc','#fbbf24','#34d399'];
+  var _colors=tipo==='elect'?ELECTRIC_COMPARISON_COLORS:['#518aaf','#b57b39','#6c9675','#9876ac','#b96c7c'];
   var ivaFactor=1+(ivaPct||0)/100;
   var h='';
   scenarios.forEach(function(sc,si){

@@ -31,6 +31,12 @@ function energyDisplayWeights(weights){
 function energyPriceTotal(label,value,unit){
   return '<div class="energy-price-total"><span>'+label+'</span><strong>'+energyUnitPrice(value)+' <small>'+unit+'</small></strong></div>';
 }
+/* Neto y total comparten siempre el mismo dato de origen, nunca el texto redondeado. */
+function energyPricePair(label,net,gross,unit,note,money){
+  function value(n){return n==null?'—':money?fcPlain(n):energyUnitPrice(n);}
+  return '<div class="energy-price-pair"><span class="energy-pair-label">'+label+'</span><div class="energy-pair-net"><strong>'+value(net)+'</strong><span>'+unit+'</span></div><small>sin impuestos</small><div class="energy-pair-gross">'+value(gross)+' '+(money?'':unit)+' <span>con impuestos</span></div>'+(note?'<small class="energy-pair-note">'+note+'</small>':'')+'</div>';
+}
+function energyTaxPrice(t,net,vat,consumption){return (net*(1+(t.otherTaxPct||0)/100)+(consumption?t.otherTaxKwh||0:0))*(1+vat/100);}
 function energyTariffReference(kind,tariff,profile,vat){
   var t=energyTariffDefaults(tariff);t.servicesPerDay=0;
   if(t.energyMode==='tramos'&&profile.hasWeights)t.periodWeights=profile.weights.slice();

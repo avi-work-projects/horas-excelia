@@ -250,7 +250,7 @@ function renderEconResumen(){
   var cotAnual=typeof gastoAnual==='function'?gastoAnual('cot_social'):0;
   var dr=typeof computeDeclResult==='function'?computeDeclResult(e.totBase,e.totIrpf):{gdPct:5,totalDesgrav:0,baseDecl:Math.max(0,Math.round((e.totBase*0.95)*100)/100),decl:computeIrpfBrackets(Math.max(0,Math.round((e.totBase*0.95)*100)/100)),declDiff:0};
   var declDiff=dr.declDiff; // pos=paga más, neg=devuelve
-  var h='';
+  var h='<div class="econ-summary-view">';
 
   /* §1 Tarifa + Calcular */
   h+='<div class="sy-section econ-tariff-settings"><div class="sy-section-title">Tarifa</div>';
@@ -359,7 +359,7 @@ function renderEconResumen(){
   h+='</div>';
   }
 
-  if(ECON_RATE_MODE==='salary')return h;
+  if(ECON_RATE_MODE==='salary')return h+'</div>';
 
   /* §4 Estadísticas por hora/día (siempre con columna 8h) */
   var e8h=computeEconEx(ECON_YEAR,{hoursMode:'8h'});
@@ -376,12 +376,11 @@ function renderEconResumen(){
   var d8_irpf=Math.round(d8_base*e.irpfPct/100*100)/100;
   var d8_net=Math.round((d8_base-d8_irpf)*100)/100;
   h+='<div class="sy-section"><div class="sy-section-title">Estad&#237;sticas por hora y d&#237;a</div>';
-  h+='<div style="overflow-x:auto"><table class="econ-stats-table"><thead><tr>';
-  h+='<th></th><th>Por hora</th><th>Por d&#237;a</th><th>Hora (8h fijas)</th></tr></thead><tbody>';
-  h+='<tr class="col-base"><td>Base</td><td>'+fc(hPerH_base)+'/h</td><td>'+fc(dPerD_base)+'/d</td><td>'+fc(d8_base)+'/h</td></tr>';
-  h+='<tr class="col-iva"><td>IVA</td><td>'+fc(hPerH_iva)+'/h</td><td>'+fc(dPerD_iva)+'/d</td><td>'+fc(d8_iva)+'/h</td></tr>';
-  h+='<tr class="col-irpf"><td>IRPF</td><td>'+fc(hPerH_irpf)+'/h</td><td>'+fc(dPerD_irpf)+'/d</td><td>'+fc(d8_irpf)+'/h</td></tr>';
-  h+='<tr class="col-net"><td>Neto</td><td>'+fc(hPerH_net)+'/h</td><td>'+fc(dPerD_net)+'/d</td><td>'+fc(d8_net)+'/h</td></tr>';
+  h+='<div class="econ-stats-wrap"><table class="econ-stats-table econ-rate-stats"><thead><tr>';
+  h+='<th scope="col">Concepto</th><th scope="col">Por hora<small>€/h real</small></th><th scope="col">Por día<small>€/día</small></th><th scope="col">Hora de 8h<small>€/h fija</small></th></tr></thead><tbody>';
+  [['Base','col-base',hPerH_base,dPerD_base,d8_base],['IVA','col-iva',hPerH_iva,dPerD_iva,d8_iva],['IRPF','col-irpf',hPerH_irpf,dPerD_irpf,d8_irpf],['Neto','col-net',hPerH_net,dPerD_net,d8_net]].forEach(function(row){
+    h+='<tr class="'+row[1]+'"><th scope="row">'+row[0]+'</th>'+row.slice(2).map(function(v){return '<td>'+fcPlain(v)+'</td>';}).join('')+'</tr>';
+  });
   h+='</tbody></table></div></div>';
 
   /* §5 IVA trimestral — sin fila Base */
@@ -435,7 +434,7 @@ function renderEconResumen(){
   h+='<td style="color:var(--accent-bright)">'+fc(cotAnual>0?totNetoDecl:(Math.round((e.netoReal-declDiff)*100)/100))+'</td>';
   h+='</tr></tbody></table></div></div>';
 
-  return h;
+  return h+'</div>';
 }
 
 /* ── renderEconContent — 4 tabs ─────────────────────────────── */

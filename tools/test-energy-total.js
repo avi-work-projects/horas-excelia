@@ -25,6 +25,23 @@ near(a.energyHistoricalTariffs('luz')[0].tariff.periodPrices[0],.23);
 // Los precios no se redondean al formatearlos ni al crear una copia de simulación.
 near(a.electricComparisonTariff({precioKwh:.14234,useOwnPower:true},{}).precioKwh,.14234);
 assert.equal(a.electricComparisonTariff({},{}).potenciaP1,3.3);
+// Introducir precios finales o netos debe dar exactamente la misma factura.
+const taxes={vat:21,other:5.11},grossTariff=a.energyTariffDefaults({priceInputMode:'gross',precioKwh:.1,precioPotP1:.08,precioPotP2:.02,otherTaxKwh:.002});
+near(a.electricInputValue(grossTariff,'precioKwh',.1,taxes,false),(.1*1.0511+.002)*1.21);
+for(const key of ['precioKwh','price0','price1','price2','precioPotP1','precioPotP2','terminoFijo','fixedDay','cuotaFija']){
+ const net=.078456789,gross=a.electricInputValue(grossTariff,key,net,taxes,false);
+ near(a.electricInputValue(grossTariff,key,gross,taxes,true),net);
+}
+near(a.electricInputValue(grossTariff,'precioPotP1',.08,{vat:0,other:0},false),.08);
+const old=a.energyTariffDefaults({precioKwh:.1,terminoFijoDia:.15,extrasPerDay:.03,otherTaxPct:5.11});
+const combined={...old,terminoFijoDia:a.electricFixedDay(old,taxes),extrasPerDay:0};
+near(a.energyTariffGross(old,'luz',200,30,30,21),a.energyTariffGross(combined,'luz',200,30,30,21));
+const before=JSON.stringify(grossTariff);a.electricTariffFieldsHtml(grossTariff,taxes);assert.equal(JSON.stringify(grossTariff),before);
+const usage=a.electricUsageYears('luz');assert.deepEqual(Array.from(usage,x=>x.year),[2026,2025]);
+near(usage[0].monthly,310.75/31*30);assert.equal(usage[0].days,15);
+const pairs=a.householdUtilityPrices('luz',{...grossTariff,otherTaxPct:5.11},21,false,true);
+assert(pairs.includes('con impuestos')&&pairs.includes('sin impuestos'));
+assert.equal((pairs.match(/class="energy-price-pair"/g)||[]).length,2);
 for(const type of Object.keys(a.EV_PLAN_SUBTYPES)){
  const ev={id:'test-plan',kind:'puntual',type,color:'#000000',shape:'cloud'};
  assert.equal(a.getEvDisplayColor(ev),a.evTypeColor('puntual',type));

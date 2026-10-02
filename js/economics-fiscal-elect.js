@@ -48,31 +48,10 @@ function _renderElectDetalle(editable){
     h+='</div>';
     h+='<div class="hip-edit-actions"><button class="hip-save-btn" id="electSaveBtn">Guardar cambios</button><button class="hip-cancel-btn" id="electCancelBtn">Cancelar</button></div>';
   } else {
-    /* Nivel 1 */
-    h+=_hipRO('Potencia contratada',(e.potenciaP1||e.potenciaTotal||0)+' kW');
-    h+='<div style="border-top:1px solid var(--border);margin:4px 0"></div>';
-    /* Nivel 2 */
-    if(e.modoPotencia==='doble'){
-      h+=_hipRO('Precio P1 (punta)',energyUnitPrice(e.precioPotP1||0)+' \u20ac/kW/d\u00eda');
-      h+=_hipRO('Precio P2 (valle)',energyUnitPrice(e.precioPotP2||0)+' \u20ac/kW/d\u00eda');
-      h+=energyPriceTotal('Suma precios potencia',(e.precioPotP1||0)+(e.precioPotP2||0),'€/kW/día');
-    } else {
-      h+=_hipRO('Precio potencia',energyUnitPrice(e.precioPotP1||0)+' \u20ac/kW/d\u00eda');
-    }
-    h+='<div style="border-top:1px solid var(--border);margin:4px 0"></div>';
-    /* Nivel 3 */
-    if(e.energyMode==='tramos'){
-      var displayWeights=energyDisplayWeights(e.periodWeights);
-      ['Punta','Llano','Valle'].forEach(function(n,i){h+=_hipRO(n+' · '+displayWeights[i]+' %',energyUnitPrice(e.periodPrices[i])+' €/kWh');});
-      h+=energyPriceTotal('Media ponderada',energyWeightedPrice(e),'€/kWh');
-    }else h+=_hipRO('Precio kWh',e.precioKwh?energyUnitPrice(e.precioKwh)+' \u20ac/kWh':'\u2014');
-    h+='<div style="border-top:1px solid var(--border);margin:4px 0"></div>';
-    /* Nivel 4 */
-    h+=_hipROmoney('T\u00e9rmino fijo/mes',e.terminoFijo);
-    h+=_hipRO('IVA',(e.ivaElect==null?21:e.ivaElect)+'%');
-    h+=_hipRO('Comercializadora',e.comercializadora||'\u2014');
+    h+='<div class="household-detail-supplier">'+escHtml(e.comercializadora||'Sin comercializadora')+'</div>';
+    h+=householdUtilityPrices('luz',e,e.ivaElect,e.modo==='fijo',true);
   }
-  if(e.modo==='fijo')h+='<p class="energy-caption">Cuota fija activa: '+fcPlain(e.cuotaFija)+'/mes. Los precios de consumo y potencia quedan guardados para cambiar de modalidad.</p>';
+  if(e.modo==='fijo'&&FISCAL_ELECT_EDITING)h+='<p class="energy-caption">Cuota fija activa: '+fcPlain(e.cuotaFija)+'/mes. Los precios de consumo y potencia quedan guardados para cambiar de modalidad.</p>';
   h+='</div>';
   if(editable)h+=energyHistoryButton('luz');
 
