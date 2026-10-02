@@ -118,6 +118,11 @@ primero el anterior para conservar `NAV_BACK`; abrirlos nunca llama a una ruta.
 
 ### Marcadores y viajes (v390)
 
+- Los filtros de anual y cuatro meses comparten reparto flexible del ancho:
+  crecen las etiquetas, no los iconos ni la X. Sus reglas viven en
+  `event-calendar.css`; evitar un margen automático que deje un hueco al final.
+- El óvalo VIP de un mes aplica la misma escala de ribete que los puntuales,
+  incluida su reducción de 20 unidades SVG a 12 px al mostrarse.
 - Ribete definitivo de símbolos: 1,3 px en el ajuste común, negro en claro y
   blanco suave en oscuro/gris. `evSymbolStroke` distingue borde, relleno y halo;
   no cambiar indiscriminadamente todos los trazos del SVG.
