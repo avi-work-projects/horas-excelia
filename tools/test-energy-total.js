@@ -39,6 +39,14 @@ near(a.energyTariffGross(old,'luz',200,30,30,21),a.energyTariffGross(combined,'l
 const before=JSON.stringify(grossTariff);a.electricTariffFieldsHtml(grossTariff,taxes);assert.equal(JSON.stringify(grossTariff),before);
 const usage=a.electricUsageYears('luz');assert.deepEqual(Array.from(usage,x=>x.year),[2026,2025]);
 near(usage[0].monthly,310.75/31*30);assert.equal(usage[0].days,15);
+assert.equal(a.electricInitialScenarios()[0].consumoKwh,Math.round(310.75/31*30));
+assert.equal(a.electricUsageYear('luz',2024).monthly,null);
+assert.equal(a.electricWeightWarning(tariff),'');
+assert.match(a.electricWeightWarning({...tariff,periodWeights:[10,30,50]}),/90 %/);
+assert.match(a.electricWeightWarning({...tariff,periodWeights:[NaN,30,50]}),/Completa/);
+a.loadDespacho();a.DESPACHO.elect={otherTaxPct:5.11269632,ivaElect:21};
+assert.match(a.electricConsumptionScenariosHtml(a.electricComparisonTaxes()),/id="estElectTax"[^>]*value="5.1"/);
+near(a.electricComparisonTaxes().other,5.11269632);
 const pairs=a.householdUtilityPrices('luz',{...grossTariff,otherTaxPct:5.11},21,false,true);
 assert(pairs.includes('con impuestos')&&pairs.includes('sin impuestos'));
 assert.equal((pairs.match(/class="energy-price-pair"/g)||[]).length,2);

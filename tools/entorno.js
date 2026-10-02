@@ -57,6 +57,7 @@ const MODULOS = [
   'economics-comp.js',
   'economics-sim.js',
   'economics-estudio.js',
+  'events-appearance.js',
   'events-picker-color.js',
   'events-picker-date.js',
   'events.js',
@@ -106,7 +107,7 @@ function falsoLocalStorage(inicial) {
 
 function falsoElemento() {
   const el = {
-    style: {}, dataset: {}, classList: {
+    style: {setProperty(k,v){this[k]=v;},getPropertyValue(k){return this[k]||'';}}, dataset: {}, classList: {
       add() {}, remove() {}, toggle() {}, contains() { return false; },
     },
     children: [], value: '', textContent: '', innerHTML: '',

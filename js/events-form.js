@@ -13,14 +13,15 @@ function evPuntualDays(ev){
 
 /* Swatches de categoria de la clase indicada */
 function _renderEvTypeSwatches(kind,selType){
-  if(kind!=='puntual')return '<div class="ev-category-main-grid">'+EV_KINDS[kind].types.map(function(t){return _renderEvTypeButton(kind,t,selType);}).join('')+'</div>';
-  var h='';
-  [['Rec. Gestiones',Object.keys(EV_MANAGEMENT_SUBTYPES),'gestiones'],['Plan/Quedada',Object.keys(EV_PLAN_SUBTYPES),'planes']].forEach(function(group){
+  var groups=kind==='puntual'
+    ?[['Rec. Gestiones',Object.keys(EV_MANAGEMENT_SUBTYPES)],['Plan/Quedada',Object.keys(EV_PLAN_SUBTYPES)],['Ensayos boda',[]],['Otros',[]]]
+    :EV_KINDS[kind].types.map(function(t){return [t,[]];});
+  return groups.map(function(group){
     var selected=selType===group[0]||group[1].indexOf(selType)>=0;
-    h+='<section class="ev-category-group '+group[2]+(selected?' chosen':'')+'" aria-label="'+group[0]+'">'+_renderEvTypeButton(kind,group[0],selType);
-    h+='<div class="ev-category-children">'+group[1].map(function(t){return _renderEvTypeButton(kind,t,selType);}).join('')+'</div></section>';
-  });
-  return h+'<div class="ev-category-main-grid">'+['Ensayos boda','Otros'].map(function(t){return _renderEvTypeButton(kind,t,selType);}).join('')+'</div>';
+    var h='<section class="ev-category-group'+(selected?' chosen':'')+'" style="--category-tone:'+evTypeColor(kind,group[0])+'" aria-label="'+group[0]+'">'+_renderEvTypeButton(kind,group[0],selType);
+    if(group[1].length)h+='<div class="ev-category-children">'+group[1].map(function(t){return _renderEvTypeButton(kind,t,selType);}).join('')+'</div>';
+    return h+'</section>';
+  }).join('');
 }
 function _renderEvTypeButton(kind,t,selType){
     var h='';
@@ -32,7 +33,7 @@ function _renderEvTypeButton(kind,t,selType){
     var sel=(t===selType)?' selected':'';
     h+='<button type="button" class="ev-color-swatch'+sel+(isMulti?' ev-color-swatch-multi':'')+'" data-hex="'+c+'" data-type="'+escHtml(t)+'" data-kind="'+kind+'"'+(isMulti?'':' style="color:'+c+'"')+'>';
     h+=isMulti?'<div class="ev-type-dot ev-type-dot-multi"></div>'
-      :kind==='puntual'&&(evIsManagement(t)||evFixedSymbol(t))?'<span class="ev-type-dot">'+evShapeSvg(evDefaultShape({type:t}))+'</span>'
+      :kind==='puntual'?'<span class="ev-type-dot ev-type-symbol">'+evShapeSvg(t==='Ensayos boda'?'x-thick':evDefaultShape({type:t}))+'</span>'
       :'<div class="ev-type-dot" style="background:'+c+'"></div>';
     h+='<span class="ev-type-name">'+escHtml(t)+'</span></button>';
   return h;

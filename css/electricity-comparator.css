@@ -20,6 +20,13 @@
 .electric-card{padding:16px;background:color-mix(in srgb,var(--electric-tone) 7%,var(--surface));border:1px solid var(--border);border-radius:16px;min-width:0}
 .electric-card:has([data-electric-include]:checked){border-color:color-mix(in srgb,var(--electric-tone) 60%,var(--border));box-shadow:0 3px 12px #00000008}
 .electric-card-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.electric-card-toggle{display:flex;align-items:center;gap:8px;width:100%;padding:0 0 12px;margin:0 0 14px;background:none;border:0;border-bottom:1px solid var(--border);color:var(--text);cursor:pointer;text-align:left}
+.electric-card-toggle strong{flex:1;font-size:.87rem;overflow-wrap:anywhere;min-width:0}
+.electric-card-toggle>span{font-size:.63rem;color:var(--text-muted)}
+.electric-card-toggle .electric-fold-icon{font-size:1rem;color:var(--electric-tone)}
+.electric-card.is-collapsed .electric-card-toggle{margin:0;padding:0;border:0}
+.electric-card.is-collapsed .electric-fold-icon{transform:rotate(180deg)}
+.electric-card-body[hidden]{display:none}
 .electric-check{display:flex;align-items:center;gap:8px;font-size:.75rem;color:var(--electric-tone);--chk:var(--electric-tone)}
 .electric-comparator input.electric-name{font-size:.95rem;font-weight:650;width:100%;background:var(--surface);padding:10px}
 .electric-identity{display:grid;gap:12px;margin-bottom:18px}
@@ -40,6 +47,8 @@
 .electric-period-row>b{font-size:.73rem}.electric-period-row .energy-field{font-size:0;margin:5px 0;gap:0}
 .electric-weighted{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:9px;padding:10px 0;border-top:1px solid var(--border);font-size:.72rem}
 .electric-weighted b{font-size:.86rem;color:var(--electric-tone)}
+.electric-weight-warning:empty{display:none}
+.electric-weight-warning{font-size:.72rem;line-height:1.45;margin:8px 0 0;padding:9px;border:1px solid var(--c-orange);border-radius:8px;background:color-mix(in srgb,var(--c-orange) 9%,var(--surface));color:var(--text)}
 .electric-power,.electric-extras{margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
 .electric-field-section h4{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:0;font-size:.84rem;color:var(--text)}
 .electric-field-section h4 small{font-size:.63rem;font-weight:400;color:var(--text-muted)}

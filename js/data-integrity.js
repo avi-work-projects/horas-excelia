@@ -35,6 +35,7 @@ function validateImport(data){
   if(data.personalData)personalValidateData(data.personalData);
   if(data.personalPerYear)Object.keys(data.personalPerYear).forEach(function(year){personalValidateData(data.personalPerYear[year],year);});
   if(data.routineAppearance&&!/^#[0-9a-f]{6}$/i.test(data.routineAppearance.gymColor))throw new Error('Color de gimnasio no válido');
+  if(data.eventAppearance!=null)validateEventAppearance(data.eventAppearance);
   if(data.householdTab!=null&&householdTab(data.householdTab)!==data.householdTab)throw new Error('Pestaña de gastos del hogar no válida');
   if(data.energyContracts!=null)validateEnergyContracts(data.energyContracts);
   if(data.energyTaxes!=null)energyValidateTaxes(data.energyTaxes);

@@ -1,5 +1,6 @@
-function renderBdayVipFilter(){
-  return '<div class="bday-header-vip"><label class="excl-item"><input type="checkbox" class="bday-up-vip"'+(BDAY_UP_VIP?' checked':'')+'> <img class="bday-vip-img" src="./VIP.png" alt="VIP"></label></div>';
+function renderBdayVipFilter(calendar){
+  var selected=calendar?BDAY_CAL_VIP:BDAY_UP_VIP;
+  return '<div class="bday-header-vip'+(calendar?' bday-vip-compact':'')+'"><label class="excl-item" title="Solo VIPs"><input type="checkbox" aria-label="Solo VIPs" '+(calendar?'id="bdCalVip"':'class="bday-up-vip"')+(selected?' checked':'')+'> <img class="bday-vip-img" src="./VIP.png" alt="VIP"></label></div>';
 }
 function renderBdayUpcoming(){
   if(!BDAYS.length)return '<div class="sy-note">Todavía no hay cumpleaños. Añade el primero o importa una copia.</div>';
@@ -179,11 +180,11 @@ function renderBdayList(){
 
 /* ── Contenido principal ──────────────────────────────────── */
 function renderBdayContent(){
-  var isUpcoming=BDAY_VIEW==='upcoming';
   var h='';
   // Nivel 3: para TODAS las vistas
   h+='<div class="sy-header with-tabs sy-header-center">';
   h+='<button class="sy-back" id="bdBack">&#8592;</button>';
+  if(BDAY_VIEW==='upcoming'||BDAY_VIEW==='list')h+='<button class="bday-header-add" id="bdAdd" title="Añadir cumpleaños" aria-label="Añadir cumpleaños">+</button>';
   if(BDAY_VIEW==='upcoming'){
     h+='<div class="sy-year-nav"><div class="sy-year">Pr\u00f3ximos</div></div>';
     h+=renderBdayVipFilter();
@@ -195,7 +196,7 @@ function renderBdayContent(){
     h+='<div class="sy-year-nav"><button class="sy-nav" id="bdPrev">&#9664;</button>';
     h+='<div class="sy-year sy-year-2line">'+MN[BDAY_MONTH]+'<span class="sy-year-sub">'+BDAY_YEAR+'</span></div>';
     h+='<button class="sy-nav" id="bdNext">&#9654;</button></div>';
-    h+='<div class="sy-hdr-right bday-calendar-tools"><button class="today-btn" id="bdToday" style="font-size:.7rem;padding:6px 12px">Hoy</button><label><input type="checkbox" id="bdCalVip"'+(BDAY_CAL_VIP?' checked':'')+'>Solo VIPs</label></div>';
+    h+='<div class="sy-hdr-right bday-calendar-tools"><button class="today-btn" id="bdToday" style="font-size:.7rem;padding:6px 12px">Hoy</button>'+renderBdayVipFilter(true)+'</div>';
   }
   h+='</div>';
   h+='<div class="sy-body ev-bday-body"'+(BDAY_EDIT_VIP?' style="padding-bottom:56px"':'')+'>';
@@ -217,7 +218,6 @@ function renderBdayContent(){
     h+='<div class="bday-buscar-bar">';
     if(BDAYS.length)h+='<div class="bday-search-wrap"><input class="bday-search-input" id="bdSearch" type="text" '
       +'placeholder="Buscar persona\u2026" value="'+escHtml(BDAY_SEARCH)+'"></div>';
-    h+='<button class="bday-io-btn bday-io-btn-add" id="bdAdd">+ A\u00f1adir</button>';
     h+='</div>';
   }
 
@@ -228,12 +228,6 @@ function renderBdayContent(){
     else h+=renderBdayCalMonth();
   } else {
     h+=renderBdayList();
-  }
-  // Lista: botones en la parte de arriba del renderBdayList(); resto de vistas: botones al fondo
-  if(BDAY_VIEW==='upcoming'){
-    h+='<div class="bday-io-row">';
-    h+='<button class="bday-io-btn bday-io-btn-add" id="bdAdd">+ A\u00f1adir cumplea\u00f1os</button>';
-    h+='</div>';
   }
   h+='</div>';
   if(BDAY_EDIT_VIP){

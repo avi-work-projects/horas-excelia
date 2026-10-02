@@ -108,10 +108,10 @@ function evBodaSvg(ev){
   /* Los brazos de ABAJO se dibujan primero para que en el centro predominen
      los de arriba (el color de la pareja), no la franja horaria. */
   return '<svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">'
-    +'<path d="M-6,-6 L6,6 M-6,6 L6,-6" stroke="#000" stroke-width="'+swOut+'" stroke-linecap="round" fill="none"/>'
-    +'<path d="M0,0 L-6,6" stroke="'+bot[0]+'" stroke-width="'+swIn+'" stroke-linecap="round" fill="none"/>'
-    +'<path d="M0,0 L6,6"  stroke="'+bot[1]+'" stroke-width="'+swIn+'" stroke-linecap="round" fill="none"/>'
-    +'<path d="M0,0 L-6,-6 M0,0 L6,-6" stroke="'+top+'" stroke-width="'+swIn+'" stroke-linecap="round" fill="none"/>'
+    +'<path d="M-6,-6 L6,6 M-6,6 L6,-6" stroke="#000" '+evSymbolStroke(swOut,'cross-outline',swIn)+' stroke-linecap="round" fill="none"/>'
+    +'<path d="M0,0 L-6,6" stroke="'+bot[0]+'" '+evSymbolStroke(swIn,'cross')+' stroke-linecap="round" fill="none"/>'
+    +'<path d="M0,0 L6,6"  stroke="'+bot[1]+'" '+evSymbolStroke(swIn,'cross')+' stroke-linecap="round" fill="none"/>'
+    +'<path d="M0,0 L-6,-6 M0,0 L6,-6" stroke="'+top+'" '+evSymbolStroke(swIn,'cross')+' stroke-linecap="round" fill="none"/>'
     +'</svg>';
 }
 

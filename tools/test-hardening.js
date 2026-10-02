@@ -42,6 +42,22 @@ assert.equal(prefs.localStorage.getItem(prefs.HOUSEHOLD_TAB_KEY),'gas');
 assert.equal(JSON.parse(prefs.localStorage.getItem(prefs.RUT_APPEARANCE_KEY)).gymColor,'#912fbc');
 console.log('Preferencias: inicio, persistencia, importación y recuperación ante fallo OK');
 
+// Renombrar una categoría no pierde sus eventos ni duplica backups antiguos.
+const legacyDrink={id:'legacy-drink',kind:'puntual',type:'Cerveza',title:'Encuentro',start:'2026-10-03',end:'2026-10-03',color:'#f5c232'};
+prefs.EVENTS=[legacyDrink];prefs.evMergeIncoming([{...legacyDrink,id:'imported-drink',type:'Tomar algo'}]);
+assert.equal(prefs.EVENTS.length,1);assert.equal(prefs.getEvType(legacyDrink),'Tomar algo');
+assert.equal(prefs.evDefaultShape(legacyDrink),'beer');assert.equal(prefs.evFilterGroup({kind:'puntual',type:'Barbacoa'}),'Resto');
+assert.throws(()=>prefs.validateImport({eventAppearance:{border:0,cross:5,ink:3,halo:.6}}));
+assert.throws(()=>prefs.validateImport({eventAppearance:{border:2,cross:5,ink:'3',halo:.6}}));
+assert.throws(()=>prefs.validateImport({eventAppearance:{border:2,cross:5,ink:3}}));
+prefs.setEventAppearance({border:1.5,cross:4,ink:2.5,halo:.4});
+const putAppearance=prefs.localStorage.setItem;let failAppearance=true;
+prefs.localStorage.setItem=(key,value)=>{if(key===prefs.EV_APPEARANCE_KEY&&failAppearance){failAppearance=false;throw Error('Quota');}putAppearance(key,value);};
+prefs.auditImport({eventAppearance:{border:2,cross:5,ink:3,halo:.6}},'merge');
+assert.equal(prefs.EV_APPEARANCE.border,1.5);
+assert.equal(prefs.document.documentElement.style.getPropertyValue('--ev-symbol-border-scale'),'0.75');
+console.log('Símbolos: alias compatible, validación y restauración de apariencia ante fallo OK');
+
 // El parche de tarifa actual viaja por la importación general y el backup.
 const tariffApp=cargarApp({});vm.runInContext(source,tariffApp);tariffApp.showToast=()=>{};tariffApp.render=()=>{};tariffApp.updateEventsBtn=()=>{};tariffApp.updateBdayBtn=()=>{};
 const currentTariff={id:'current-test',kind:'luz',supplier:'Compañía de prueba',tariff:'Tres tramos',supply:'Vivienda',start:'2026-09-24',end:'',commitment:'',notes:'',source:'',taxes:'excluidos',prices:[],analysis:tariffApp.energyTariffDefaults({energyMode:'tramos',periodPrices:[.3,.2,.1],periodWeights:[20,30,50]})};

@@ -92,6 +92,15 @@
 .household-detail .hip-section-total{padding:14px 0 2px;font-size:.91rem;color:var(--text);font-weight:650}
 .household-detail .hip-edit-actions{margin-top:18px;gap:10px}
 .household-detail .fiscal-onoff{background:var(--surface);border-color:var(--border);color:var(--text-muted);padding:8px 12px}
-.household-detail .fiscal-onoff.on{background:color-mix(in srgb,var(--detail-tone) 15%,var(--surface));border-color:var(--detail-tone);color:var(--text)}
-.household-detail .household-gas-option.is-current{border-color:var(--detail-tone);background:color-mix(in srgb,var(--detail-tone) 8%,var(--surface))}
+.household-detail .fiscal-onoff.on{background:color-mix(in srgb,var(--detail-tone) 32%,var(--surface));border-color:var(--detail-tone);color:var(--text);box-shadow:inset 0 0 0 1px var(--detail-tone)}
+.household-detail .household-gas-option.is-current{border-color:var(--detail-tone);background:color-mix(in srgb,var(--detail-tone) 12%,var(--surface));box-shadow:inset 4px 0 var(--detail-tone)}
+.household-gas-option .fiscal-section-title{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.household-active-badge{display:inline-flex;align-items:center;white-space:nowrap;border-radius:6px;padding:4px 6px;background:#286486;color:#fff;font-size:.58rem;font-weight:600}
+.household-gas-option .household-price-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.household-gas-option .energy-price-pair:only-child{grid-column:1/-1}
+.household-gas-option .energy-price-pair{padding:10px 7px}
+.household-gas-option .energy-pair-net strong{font-size:clamp(.9rem,4.2vw,1.18rem)}
+.household-gas-option .energy-pair-label{font-size:.62rem;min-height:2.6em}
+.household-gas-option .energy-pair-net>span{font-size:.58rem}
+.household-gas-option .energy-pair-gross{font-size:.62rem;overflow-wrap:anywhere}
 @media(max-width:440px){.household-detail>.fiscal-section{padding:15px}.household-detail .hip-ro-grid{grid-template-columns:1fr}.energy-pair-net strong{font-size:1.15rem}}

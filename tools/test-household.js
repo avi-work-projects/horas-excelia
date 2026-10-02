@@ -26,6 +26,7 @@ for(const tab of ['resumen','detalle','gas','elect']){
  assert(!/id="fiscalSave"|data-editsection=|data-gasedit=|id="electEditBtn"|energy-analysis-open/.test(fiscal),tab);
  assert.equal((fiscal.match(/<input/g)||[]).length,tab==='detalle'?3:0,tab);
  if(tab==='detalle')assert(fiscal.indexOf('Precios referencia seguros')<fiscal.indexOf('id="hip-section-prestamo"'));
+ if(tab==='detalle'||tab==='resumen')assert.equal((fiscal.match(/id="hipGoAnalisis"/g)||[]).length,1);
 }
 assert(!a._renderHipDetalle(true).includes('Precios referencia seguros'),'Las referencias se editan solo en Fiscal');
 a.FISCAL_HIP_EDITING=null;a.FISCAL_ELECT_EDITING=false;a.FISCAL_GAS_EDITING=null;
