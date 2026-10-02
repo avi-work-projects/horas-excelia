@@ -67,6 +67,9 @@ function electricUsageYearsHtml(){
   return h+'</div><small>Media equivalente a 30 días, calculada solo con días documentados.</small></section>';
 }
 function renderElectricityComparison(){
+  return withEnergyData(_renderElectricityComparison);
+}
+function _renderElectricityComparison(){
   loadDespacho();var e=electricComparisonTariff(Object.assign({},_currentElectTariff(),{useOwnPower:true}),{}),comps=DESPACHO.electComparaciones||[],options=energyHistoricalTariffs('luz'),taxes=electricComparisonTaxes();
   var net=e.modo==='fijo'?e.cuotaFija:energyWeightedPrice(e),gross=e.modo==='fijo'?energyTariffGross(e,'luz',0,30,30,e.ivaElect==null?21:e.ivaElect):energyTaxPrice(e,net,e.ivaElect==null?21:e.ivaElect,true);
   var h='<div class="electric-comparator"><section class="electric-current"><div><small>Tu referencia actual</small><h3>'+escHtml(e.comercializadora||'Tarifa actual')+'</h3></div><button class="electric-link" id="estElectGoDetail">Ver detalle</button><div class="electric-reference-prices">'+energyPricePair(e.modo==='fijo'?'Cuota mensual':'Consumo medio',net,gross,e.modo==='fijo'?'/mes':'€/kWh','',e.modo==='fijo');

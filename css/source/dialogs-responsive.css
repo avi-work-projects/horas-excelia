@@ -1,0 +1,134 @@
+/* ── LOGO POPUP ── */
+.logo-popup{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.logo-popup.open{display:flex}
+.logo-popup-box{display:flex;flex-direction:column;align-items:center;gap:20px;padding:46px 30px 36px;background:var(--surface);border-radius:28px;border:1px solid var(--border);width:75vw;max-width:330px;text-align:center;position:relative}
+.logo-popup-close{position:absolute;top:8px;right:8px;background:none;border:none;color:var(--text-muted);font-size:1rem;cursor:pointer;width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:50%;padding:0;line-height:1}
+.logo-popup-close:active{background:var(--surface3)}
+.logo-popup-img{width:80%;height:auto;object-fit:contain;border-radius:20px}
+.logo-popup-name{font-size:2rem;font-weight:700;letter-spacing:-.02em;color:var(--text)}
+.logo-popup-sub{font-size:1.2rem;color:var(--text-muted);font-weight:400}
+/* Gallery */
+.logo-gallery{width:100%;min-width:0;display:flex;flex-shrink:0;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;-webkit-user-select:none;user-select:none;scrollbar-width:none}
+.logo-gallery::-webkit-scrollbar{display:none}
+.logo-gallery-slide{flex:0 0 100%;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:160px;padding:10px;scroll-snap-align:start}
+.logo-gallery-slide img{width:140px;height:140px;object-fit:contain;border-radius:16px}
+.logo-gallery-label{font-size:.85rem;color:var(--text-dim);margin-top:10px}
+.logo-gallery-dots{display:flex;gap:6px;justify-content:center;margin-top:8px}
+.logo-gallery-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:background .2s,transform .2s}
+.logo-gallery-dot.active{background:var(--accent);transform:scale(1.3)}
+/* ── BD ALARM VIP TOGGLE ── */
+.bd-alarm-vip-row{display:flex;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border)}
+.bd-alarm-vip-lbl{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--text);cursor:pointer;-webkit-user-select:none;user-select:none}
+/* ── RESPONSIVE (mobile header) ── */
+@media(max-width:520px){
+  /* IVA trimestral: compactar celdas para que los 4 trimestres quepan sin scroll horizontal */
+  .econ-quarter-grid{min-width:0}
+  .econ-qcell{padding:8px 3px}
+  .econ-qcell .sy-val-sm{font-size:.68rem}
+  .econ-qcell .sy-lbl{font-size:.52rem}
+  .data-btn:has(.btn-icon){width:56px;height:56px}
+  #homeBtn{width:62px!important;height:62px!important}
+  .btn-icon{width:36px;height:36px}
+  #homeBtn .btn-icon{width:40px;height:40px}
+  .data-actions,.overlay-nav-bar{gap:6px}
+  .nav-bar-btn:has(.btn-icon){width:56px;height:56px}
+  .nav-bar-btn[data-nav="home"]{width:62px!important;height:62px!important}
+  .nav-bar-btn[data-nav="home"] .btn-icon{width:40px;height:40px}
+}
+@media(max-width:440px){
+  .data-btn{width:40px;height:40px;font-size:1.2rem}
+  .data-btn:has(.btn-icon){width:50px;height:50px}
+  #homeBtn{width:56px!important;height:56px!important}
+  .btn-icon{width:32px;height:32px}
+  #homeBtn .btn-icon{width:36px;height:36px}
+  .data-actions,.overlay-nav-bar{gap:5px}
+  .nav-bar-btn{width:40px;height:40px;font-size:1.2rem}
+  .nav-bar-btn:has(.btn-icon){width:50px;height:50px}
+  .nav-bar-btn[data-nav="home"]{width:56px!important;height:56px!important}
+  .nav-bar-btn[data-nav="home"] .btn-icon{width:36px;height:36px}
+}
+@media(max-width:400px){
+  .data-btn{width:36px;height:36px;font-size:1.1rem}
+  .data-btn:has(.btn-icon){width:46px;height:46px}
+  #homeBtn{width:50px!important;height:50px!important}
+  .btn-icon{width:28px;height:28px}
+  #homeBtn .btn-icon{width:32px;height:32px}
+  .data-actions,.overlay-nav-bar{gap:4px}
+  .header h1{font-size:.95rem}
+  .nav-bar-btn{width:36px;height:36px;font-size:1.1rem}
+  .nav-bar-btn:has(.btn-icon){width:46px;height:46px}
+  .nav-bar-btn[data-nav="home"]{width:50px!important;height:50px!important}
+  .nav-bar-btn[data-nav="home"] .btn-icon{width:32px;height:32px}
+}
+@media(max-width:360px){
+  .data-btn{width:34px;height:34px;font-size:1.05rem}
+  .data-btn:has(.btn-icon){width:42px;height:42px}
+  #homeBtn{width:46px!important;height:46px!important}
+  .btn-icon{width:26px;height:26px}
+  #homeBtn .btn-icon{width:30px;height:30px}
+  .data-actions,.overlay-nav-bar{gap:3px}
+  .header h1{font-size:.9rem}
+  .nav-bar-btn{width:34px;height:34px;font-size:1.05rem}
+  .nav-bar-btn:has(.btn-icon){width:42px;height:42px}
+  .nav-bar-btn[data-nav="home"]{width:46px!important;height:46px!important}
+  .nav-bar-btn[data-nav="home"] .btn-icon{width:30px;height:30px}
+}
+
+/* ── ALARM PANEL ── */
+.alarm-cfg{min-width:220px;padding:4px 0}
+.alarm-panel-title{font-size:.7rem;color:var(--text-muted);padding:6px 12px 4px;font-weight:600}
+.alarm-time-row{display:flex;align-items:center;gap:10px;padding:8px 12px 4px;justify-content:center}
+.alarm-colon{font-family:var(--mono);font-size:1.6rem;font-weight:700;color:var(--accent-bright);user-select:none;line-height:1}
+/* ── Drum picker (selector giratorio de hora/minuto) ── */
+.drum-wrap{position:relative;height:132px;width:76px;overflow:hidden;border-radius:10px;background:var(--surface2);border:1px solid var(--border)}
+.drum-picker{height:100%;overflow-y:scroll;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none}
+.drum-picker::-webkit-scrollbar{display:none}
+.drum-picker-item{height:44px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:1.8rem;font-weight:700;color:var(--text-dim);scroll-snap-align:center;-webkit-user-select:none;user-select:none;transition:color .08s}
+.drum-picker-item.drum-selected{color:var(--text)}
+.drum-wrap::before{content:'';position:absolute;top:0;left:0;right:0;height:44px;background:linear-gradient(to bottom,var(--surface2) 0%,transparent 100%);z-index:2;pointer-events:none}
+.drum-wrap::after{content:'';position:absolute;bottom:0;left:0;right:0;height:44px;background:linear-gradient(to top,var(--surface2) 0%,transparent 100%);z-index:2;pointer-events:none}
+.drum-sel-lines{position:absolute;top:50%;left:6px;right:6px;height:44px;transform:translateY(-50%);border-top:1px solid var(--border);border-bottom:1px solid var(--border);z-index:3;pointer-events:none}
+.alarm-msg-input{display:block;width:calc(100% - 24px);margin:0 12px 6px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-family:var(--font);font-size:.78rem}
+.alarm-msg-input:focus{outline:none;border-color:var(--accent)}
+/* Va metido dentro del panel, no a sangre: antes su borde inferior era el
+   del propio menu y no se distinguia donde acababa. */
+.alarm-create-btn{background:var(--accent)!important;color:#fff!important;
+  font-weight:700!important;font-size:.8rem!important;
+  border:1px solid var(--accent)!important;border-radius:var(--radius-sm)!important;
+  padding:10px 12px!important;margin:8px 4px 6px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:6px;letter-spacing:.01em}
+.alarm-create-btn:active{background:var(--accent-bright)!important}
+.alarm-days-row{padding:6px 12px 4px;border-top:1px solid var(--border)}
+.alarm-days-label{font-size:.65rem;color:var(--text-muted);margin-bottom:5px;text-align:center}
+.alarm-days-btns{display:flex;gap:4px}
+.alarm-day-btn{flex:1;padding:5px 2px;font-size:.65rem;font-weight:700;border:1px solid var(--border);border-radius:5px;background:var(--surface2);color:var(--text-muted);cursor:pointer;font-family:var(--font);line-height:1.2;text-align:center;display:flex;flex-direction:column;align-items:center;gap:1px}
+.alarm-day-btn.on{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
+.alarm-day-date{font-size:.5rem;font-weight:400;opacity:.7;line-height:1;white-space:nowrap}
+/* ── Confirmación alarma en el pasado ── */
+.alarm-past-confirm{padding:10px 12px 8px;border-top:1px solid var(--border);background:rgba(255,107,107,.06)}
+.alarm-past-confirm-msg{font-size:.72rem;color:var(--text-muted);line-height:1.55;margin-bottom:8px}
+.alarm-past-confirm-btns{display:flex;gap:6px}
+.alarm-past-btn-ok{flex:1;padding:7px 4px;border:1px solid var(--accent);border-radius:6px;background:var(--accent-glow);color:var(--accent-bright);font-size:.72rem;font-weight:600;cursor:pointer}
+.alarm-past-btn-cancel{flex:1;padding:7px 4px;border:1px solid var(--border);border-radius:6px;background:none;color:var(--text-muted);font-size:.72rem;cursor:pointer}
+/* ── Botón flotante "Listo" en modo Editar VIPs ── */
+.bday-listo-fab{display:block;align-self:center;margin:12px auto 4px;padding:10px 32px;border-radius:24px;border:none;background:#fbbf24;color:#1a1a2e;font-size:.84rem;font-weight:700;cursor:pointer;position:sticky;bottom:16px;z-index:20;box-shadow:0 4px 16px rgba(0,0,0,.35);-webkit-user-select:none;user-select:none}
+
+/* ── Controles inline long-press cumpleaños ── */
+.bday-inline-ctrl{display:flex;gap:6px;padding:8px 10px;background:var(--surface2);border-bottom:1px solid var(--border);animation:fadeIn .15s ease}
+.bday-ic-btn{flex:1;padding:7px 4px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);font-size:.72rem;font-weight:600;cursor:pointer;text-align:center;transition:all .12s;-webkit-user-select:none;user-select:none}
+.bday-ic-btn:active{background:var(--surface3)}
+.bday-ic-vip.active{border-color:#fbbf24;background:rgba(251,191,36,.12);color:#fbbf24}
+.bday-ic-edit{border-color:var(--accent);color:var(--accent-bright)}
+.bday-ic-close{flex:0 0 36px;color:var(--text-dim)}
+
+/* Selector de clase en el formulario */
+.ev-kind-picker{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.ev-kind-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 6px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text-muted);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s}
+.ev-kind-btn span{font-size:.62rem;font-weight:400;color:var(--text-dim);text-align:center;line-height:1.2}
+.ev-kind-btn.selected{border-color:var(--accent-bright);background:var(--accent-glow);color:var(--accent-bright)}
+.ev-kind-btn.selected span{color:var(--accent-bright);opacity:.8}
+/* Notas: general vs de un dia concreto */
+.ev-note-scope{font-weight:400;font-size:.62rem;color:var(--accent-bright);opacity:.85}
+.ev-daynote-field{border-left:2px solid var(--accent);padding-left:8px}
+.ev-detail-daynote{border-left:2px solid var(--accent);padding-left:8px;margin-top:6px}

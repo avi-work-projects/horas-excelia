@@ -1,0 +1,215 @@
+/* ── EVENTS ── */
+.data-btn.events-active{color:var(--c-blue)!important;border-radius:8px}
+.ev-hdr-sub{display:flex;align-items:stretch;padding:5px 6px;gap:5px;box-shadow:0 1px 0 var(--border);overflow-x:hidden}
+.ev-view-zone{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:4px;}
+.ev-hdr-sub.ev-main-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px 5px}
+.ev-main-tabs .ev-view-toggle{min-height:42px}
+.ev-view-toggle{flex:1;font-size:.62rem;padding:6px 3px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;text-align:center;line-height:1.3;width:100%}
+.ev-view-toggle.active{background:var(--accent-glow);color:var(--accent-bright);border-color:var(--accent)}
+/* Zone A: upcoming/list views — subtle blue tint */
+/* Zone B: calendar grid views — subtle teal tint, active = green */
+/* Agenda Semanal: mismo patron que el resto pero en rojo, para distinguirla
+   de los tres calendarios (que comparten el verde de la zona B) */
+/* ── Feat 2: Lista de Eventos subtabs ── */
+.ev-list-subtabs{display:flex;gap:6px;padding:8px 0 4px}
+.ev-list-subtab{flex:1;font-size:.72rem;padding:6px 12px;border-radius:14px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;text-align:center;transition:all .15s;-webkit-user-select:none;user-select:none}
+.ev-list-subtab.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
+.ev-types-controls{display:flex;align-items:center;gap:10px;padding:4px 0 8px;flex-wrap:wrap}
+.ev-types-past-label{font-size:.75rem;color:var(--text-muted);display:flex;align-items:center;gap:5px;cursor:pointer;flex-shrink:0}
+.ev-types-select{font-size:.75rem;padding:5px 8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;flex:1;min-width:0;outline:none}
+/* Contenedor del calendario 1-mes: bloque propio para que .sy-body no meta su
+   gap:16px entre semanas (así entran las 6 semanas de meses como agosto 2026) */
+.ev-month-wrap{display:block}
+/* Cabecera L M X J V S D: compacta y pegada (sticky) al header del mes.
+   top:-16px (y no 0) porque la línea de anclaje del sticky va al borde del
+   PADDING de .sy-body (padding:16px) — con top:0 quedaba una banda de 16px por
+   la que se veían pasar los días al hacer scroll. Los márgenes negativos la
+   hacen a sangre para que tape también los laterales. */
+.ev-week-hdr{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin:0 -16px 2px;padding:0 16px;position:sticky;top:-16px;z-index:6;background:var(--bg);box-shadow:0 1px 0 var(--border)}
+.ev-week-hdr div{text-align:center;font-size:.55rem;color:var(--text-dim);text-transform:uppercase;padding:2px 0 3px;font-weight:600;line-height:1}
+/* Contenedor semana: barras multi-día ENCIMA (position:absolute) de las celdas */
+.ev-week-outer{margin-bottom:3px;position:relative;isolation:isolate}
+/* Barras multi-día: 65% de la celda, centradas verticalmente, encima de números */
+.ev-bars-row{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;position:absolute;top:19px;left:0;right:0;bottom:4px;z-index:3;pointer-events:none;grid-auto-rows:1fr;align-items:center}
+/* La geometria de las barras se calcula por tramo en _evBarSegmentStyle:
+   gruesa centrada, media contenida y fina junto a la base del dia.
+   Una sola fila de rejilla: solo se estrechan los dias compartidos. */
+.ev-multi-bar{height:65%;min-height:8px;border-radius:20px;font-size:.52rem;font-weight:600;display:flex;align-items:center;padding:0 6px;overflow:hidden;white-space:nowrap;cursor:pointer;color:#fff;pointer-events:auto}
+/* Badges (eventos no-Otros): empujados hacia el FONDO de la celda para no
+   solaparse con el texto centrado de las barras multi-día (Viajes, etc.) */
+.ev-badges-wrap{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:1.5px;overflow:hidden;min-height:0;padding-bottom:1px}
+/* Eventos que no caben en sus pilas (a partir del 6º del día): fila horizontal
+   justo DEBAJO del número del día, en vez de seguir alargando la pila */
+.ev-day-overflow{position:absolute;top:17px;left:4px;right:4px;display:flex;align-items:center;gap:1px;z-index:5;pointer-events:none}
+/* Si hay columna de marcadores en la esquina, la fila se queda a su izquierda */
+.ev-day-overflow.with-corner{right:20px}
+.ev-day-overflow > *{pointer-events:auto;flex:0 1 auto;min-width:0}
+.ev-day-overflow .ev-badge{flex:1 1 auto}
+/* Marcadores desbordados: SEGUNDA COLUMNA (uno debajo de otro), no en fila */
+.ev-day-overflow.ovf-col{flex-direction:column;align-items:flex-start;right:auto;width:11px;gap:2px}
+.ev-day-overflow.ovf-col > *{flex:0 0 auto}
+/* Otros: contenedor en esquina superior DERECHA del día (apilados verticalmente).
+   Posicionados absolutamente para no afectar al layout del resto. */
+.ev-otros-corner{position:absolute;top:5px;right:4px;display:flex;flex-direction:column;align-items:flex-end;gap:3px;z-index:5;pointer-events:none;max-width:60%}
+/* Carrusel del dia (estrellas VIP / "+" del calendario de 1 mes) */
+.ev-car-count{font-size:.68rem;font-weight:700;color:var(--text-muted);min-width:44px;text-align:right;font-family:var(--mono)}
+.ev-car-body{min-height:120px}
+.ev-car-card{display:flex;flex-direction:column;gap:6px}
+.ev-car-title{font-size:1.05rem;font-weight:700;line-height:1.2}
+.ev-car-type{font-size:.72rem;font-weight:600;color:var(--text-muted)}
+/* Fila de flechas compacta: antes ocupaba 42 px de alto para dos botones
+   que solo pasan de evento */
+.ev-car-nav{display:flex;align-items:center;gap:8px;margin:6px 0 2px}
+.ev-car-arrow{flex:0 0 auto;width:34px;height:26px;padding:0;font-size:.62rem;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted)}
+.ev-car-arrow:active{background:var(--surface3)}
+.ev-car-dots{flex:1;display:flex;justify-content:center;align-items:center;gap:6px}
+.ev-car-dot{width:6px;height:6px;border-radius:50%;background:var(--border-light)}
+.ev-car-dot.on{background:var(--accent);transform:scale(1.35)}
+&
+/* Rutinas en anual y 4 meses: puntitos en fila arriba del dia */
+/* Rutinas en anual y 4 meses: barritas, no puntos. Rejilla de --rutn columnas
+   (minimo 2), asi cada una ocupa como mucho medio dia haya una rutina o dos,
+   y con tres o mas se reparten el hueco. La primera cae siempre a la
+   izquierda porque las columnas se llenan en orden. */
+.ev-ann-ruts{position:absolute;top:1px;left:1px;right:1px;display:grid;
+  grid-template-columns:repeat(var(--rutn,2),1fr);gap:1px;z-index:6;pointer-events:none}
+.ev-ann-rut{height:2px;border-radius:1px;min-width:0}
+.ev-day-left{position:absolute;top:18px;left:3px;display:flex;flex-direction:column;align-items:flex-start;gap:3px;z-index:5;pointer-events:none;max-width:72%}
+.ev-day-left > *{pointer-events:auto}
+/* Los cumpleaños VIP se solapan al 75% (12px de marcador -> -9px) */
+.ev-day-vips{display:flex;align-items:center;cursor:pointer}
+.ev-day-vips .ev-annual-vip-star-svg + .ev-annual-vip-star-svg{margin-left:-9px}
+.ev-day-vips .ev-month-vip{width:19px;height:14px;flex-shrink:0;border:1.6px solid #000;border-radius:50%;overflow:hidden;background:#fff;box-sizing:border-box}
+.ev-month-vip img{display:block;width:100%;height:100%;object-fit:contain;transform:scale(1.55)}
+.ev-day-vips .ev-month-vip+.ev-month-vip{margin-left:-10px}
+.ev-chip-vip{width:22px;height:20px;object-fit:contain;display:block;transform:scale(1.15)}
+.ev-annual-filter-row .ev-filter-chip:has(.ev-chip-vip){width:26px;padding:0;overflow:hidden}
+.ev-day-ruts{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.rut-marker-group{display:flex;isolation:isolate;line-height:0}
+.rut-marker-layer{position:relative;display:inline-flex}
+.rut-marker-layer+.rut-marker-layer{margin-left:-9.1px}
+.rut-marker-group.past-marker{opacity:.5}
+.ev-rut-mark{display:inline-block;width:13px;height:13px;flex-shrink:0;line-height:0;cursor:pointer}
+.ev-rut-mark svg{display:block;width:100%;height:100%;overflow:visible}
+.ev-rut-mark.rut-skip{opacity:.38}
+.ev-rut-mark.past-marker{opacity:.5}
+.ev-day-more{display:inline-block;line-height:0;cursor:pointer}
+.ev-otros-corner > *{pointer-events:auto;flex-shrink:0}
+/* Con la pila llena (5) los marcadores se encogen un pelin: a 12 px el
+   ultimo se salia de la casilla y se veia cortado. */
+.ev-otros-corner.llena{gap:2px}
+.ev-otros-corner.llena > *{width:11px;height:11px}
+.ev-multi-bar.starts{border-top-right-radius:0;border-bottom-right-radius:0}
+.ev-multi-bar.ends{border-top-left-radius:0;border-bottom-left-radius:0}
+.ev-multi-bar.continues{border-radius:0}
+.ev-bar-label{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1}
+.ev-multi-bar.ev-stepped-bar,.ev-annual-mbar.ev-stepped-bar{height:100%;min-height:0;position:relative;align-self:start;padding:0;border:0;border-radius:0;background:none;overflow:visible;pointer-events:none}
+.ev-stepped-bar svg{display:block;position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.ev-stepped-bar path{pointer-events:visiblePainted;cursor:pointer}
+.ev-stepped-bar span{position:absolute;display:block;align-content:center;box-sizing:border-box;padding:0 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1;pointer-events:none}
+.ev-annual-mbar.ev-stepped-bar span{font-size:.3rem;padding:0 3px}
+/* Sin z-index propio para no crear stacking context — permite que ev-badge (z-index:4) quede encima de ev-bars-row (z-index:3) */
+.ev-week-grid{position:relative;display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:0}
+/* Perímetro puente: capa inferior a eventos */
+.ev-puente-perimeter{position:absolute;inset:0;border:1.5px solid #f472b6;border-radius:5px;pointer-events:none;z-index:1}
+/* Separación visual via inset box-shadow en var(--bg) (simula gap sin
+   interrumpir el pattern del puente entre celdas adyacentes). Las celdas
+   puente quitan ese shadow para que el pattern fluya continuo. */
+.ev-cell{min-height:73px;padding:6px 4px 4px;background:var(--surface);border-radius:8px;display:flex;flex-direction:column;gap:2px;overflow:hidden;cursor:pointer;transition:background .12s;-webkit-user-select:none;user-select:none;position:relative}
+.ev-cell:active{background:var(--surface3)}
+/* Atenuar el contenido, nunca la celda: opacity en la celda crea un
+   contexto que encierra los marcadores por debajo de las barras. */
+.ev-cell{--ev-marker-halo:var(--surface)}
+.ev-cell.weekend{--ev-marker-halo:color-mix(in srgb, rgb(160,160,200) 11%, var(--bg))}
+.ev-cell.out-m > .ev-num,.ev-cell.out-m > .ev-otros-corner,.ev-cell.out-m > .ev-day-left{opacity:.35}
+.ev-cell.past-cal-day > .ev-num,.ev-cell.past-cal-day > .ev-otros-corner,.ev-cell.past-cal-day > .ev-day-left{opacity:.45}
+.ev-multi-bar.past-bar{opacity:.4}
+.ev-annual-day{--ev-marker-halo:var(--surface2)}
+.ev-annual-day.weekend{--ev-marker-halo:color-mix(in srgb, rgb(160,160,200) 22%, var(--surface))}
+.ev-annual-day.past-cal-day > *{opacity:.4}
+.ev-annual-mbar.past-bar{opacity:.4}
+.ev-annual-puente-perimeter.past-marker{opacity:.4}
+.ev-annual-x.past-marker,.ev-annual-vip-star.past-marker{opacity:.4}
+/* Bright past: bombilla override */
+.ev-bright-past .past-cal-day,.ev-bright-past .past-bar,.ev-bright-past .past-marker{opacity:1 !important}
+.ev-bright-past .ev-cell.past-cal-day > *,.ev-bright-past .ev-annual-day.past-cal-day > *{opacity:1!important}
+.ev-bright-btn{font-size:.85rem;padding:4px 8px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;opacity:.45;transition:opacity .2s}
+.ev-bright-btn.on{opacity:1;background:#fbbf2433;border-color:#fbbf24}
+/* Bombilla en Anual/Quad — mismo estilo que la pequeña inline del 1-mes/Semanal */
+.ev-bright-round{font-size:.85rem;padding:4px 8px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;height:28px;min-width:30px;opacity:.55;transition:all .15s;line-height:1}
+.ev-bright-round:hover{border-color:#fbbf24;opacity:.8}
+.ev-bright-round.on{opacity:1;background:#fbbf2433;border-color:#fbbf24}
+.ev-bright-sm{font-size:.7rem;padding:2px 5px;border-radius:6px}
+/* Bombilla en 1-mes y agenda semanal: posicionada en el centro entre el ▶ y "Hoy" */
+.ev-bright-mid{position:absolute;right:78px;top:50%;transform:translateY(-50%);z-index:3;font-size:.7rem;padding:2px 5px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;opacity:.45;transition:opacity .2s}
+.ev-bright-mid.on{opacity:1;background:#fbbf2433;border-color:#fbbf24}
+.sy-nav-sm{font-size:.7rem !important;min-width:24px !important;padding:4px 5px !important}
+.sy-nav-pill{width:32px !important;height:36px !important;border-radius:10px !important;padding:0 !important;font-size:.75rem !important}
+/* Quad label 3 lines */
+.ev-quad-label{display:flex;flex-direction:column;align-items:center;line-height:1.1;font-size:.72rem}
+.ev-quad-dash{font-size:.55rem;line-height:.7;color:var(--text-dim)}
+/* today-ev: indicador como box-shadow inset (no consume layout, así el pattern
+   de puente sigue alineado entre celdas) */
+.ev-cell.today-ev{box-shadow:inset 0 0 0 1.5px var(--accent),inset 0 5px 0 0 var(--accent)}
+.ev-cell.today-ev .ev-num{color:var(--accent-bright);font-weight:700}
+/* ev-num con altura fija para alinear perfectamente todos los números de la misma semana */
+.ev-num{font-size:.72rem;font-family:var(--mono);line-height:1;height:13px;display:flex;align-items:center}
+/* ev-badge: z-index:4 > ev-bars-row z-index:3 → los badges 1-día quedan encima de barras multi-día */
+.ev-badge{font-size:.56rem;border-radius:10px;padding:0 4px;min-height:7px;height:7px;line-height:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;border:1.5px solid currentColor;cursor:pointer;position:relative;z-index:4}
+/* Events list view */
+.ev-list-day{padding:12px 0 6px;border-bottom:1px solid var(--border);margin-bottom:6px}
+.ev-list-day-hdr{font-size:.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.ev-list-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity .12s}
+.ev-list-item:last-child{border-bottom:none}
+.ev-list-item:active{opacity:.7}
+.ev-list-color{width:4px;border-radius:2px;align-self:stretch;flex-shrink:0;min-height:20px}
+.ev-list-body{flex:1;min-width:0}
+.ev-list-title{font-size:.85rem;color:var(--text);font-weight:500}
+.ev-list-note{font-size:.73rem;color:var(--text-muted);margin-top:2px;line-height:1.4}
+.ev-list-meta{font-size:.65rem;color:var(--text-dim);margin-top:3px}
+.ev-list-actions{display:flex;gap:6px;flex-shrink:0}
+.ev-list-btn{font-size:.7rem;padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer}
+.ev-list-btn.del{border-color:#3a2a2a;color:var(--c-red)}
+/* Event form overlay (inside eventsOverlay) */
+.ev-form-overlay,.ev-detail-overlay{position:absolute;inset:0;z-index:10;background:rgba(0,0,0,.6);display:none}
+.ev-form-overlay.open,.ev-detail-overlay.open{display:flex;align-items:flex-end}
+.ev-form-sheet,.ev-detail-sheet{width:100%;background:var(--surface);border-top-left-radius:20px;border-top-right-radius:20px;padding:8px 20px 30px;padding-bottom:calc(30px + env(safe-area-inset-bottom,0px));max-height:90vh;overflow-y:auto}
+.ev-form-handle,.ev-detail-handle{width:36px;height:4px;border-radius:2px;background:var(--border-light);margin:0 auto 14px}
+.ev-form-title{font-size:.9rem;font-weight:600;margin-bottom:14px;text-align:center}
+.ev-field{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.ev-field label{font-size:.72rem;color:var(--text-muted);font-weight:500}
+.ev-input{font-family:var(--font);font-size:.88rem;padding:10px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text);outline:none;transition:border-color .15s;width:100%}
+.ev-input:focus{border-color:var(--accent)}
+.ev-textarea{font-family:var(--font);font-size:.85rem;padding:10px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text);outline:none;resize:none;height:80px;width:100%}
+.ev-textarea:focus{border-color:var(--accent)}
+.ev-char-count{font-size:.65rem;color:var(--text-dim);text-align:right;margin-top:2px}
+.ev-colors{display:flex;gap:8px;flex-wrap:wrap}
+.ev-date-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ev-toggle-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.ev-toggle-label{font-size:.82rem;color:var(--text-muted);flex:1}
+.ev-checkbox{cursor:pointer}
+.ev-repeat-select{font-family:var(--font);font-size:.85rem;padding:9px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text);outline:none;width:100%}
+.ev-weekday-row{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+.ev-wd-btn{font-size:.7rem;padding:5px 8px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;-webkit-user-select:none;user-select:none;transition:all .12s}
+.ev-wd-btn.on{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
+.ev-form-actions{display:flex;gap:8px;margin-top:16px}
+.ev-btn{flex:1;padding:12px;border-radius:var(--radius-sm);border:none;font-family:var(--font);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s}
+.ev-btn.primary{background:var(--accent);color:#fff}
+.ev-btn.primary:active{background:var(--accent-bright)}
+.ev-edit-orange{background:#fb923c !important;color:#fff !important;border-color:#fb923c !important}
+.ev-edit-orange:active{background:#f97316 !important}
+.ev-btn.cancel{background:var(--surface2);color:var(--text-muted);border:1px solid var(--border)}
+.ev-btn.cancel:active{background:var(--surface3)}
+/* Relleno, para que haga pareja con el naranja de "Editar evento" */
+.ev-btn.danger{background:#c0392f;color:#fff;border:1px solid #c0392f}
+.ev-btn.danger:active{background:#9d2c24}
+[data-theme="light"] .ev-btn.danger{background:#d64541;border-color:#d64541}
+.ev-io-row{display:flex;gap:8px;margin-top:8px}
+.ev-io-btn:active{background:var(--surface3)}
+/* Event detail */
+.ev-detail-color-bar{height:4px;border-radius:2px;margin-bottom:14px}
+.ev-detail-title{font-size:1.1rem;font-weight:700;margin-bottom:6px}
+.ev-detail-date{font-family:var(--mono);font-size:.82rem;color:var(--text-muted);margin-bottom:4px}
+.ev-detail-note{font-size:.85rem;color:var(--text-muted);line-height:1.5;margin-top:8px;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-sm)}
+.ev-detail-repeat{font-size:.75rem;color:var(--text-dim);margin-top:6px;padding:6px 10px;background:var(--surface2);border-radius:var(--radius-sm)}
+.ev-detail-actions{display:flex;gap:8px;margin-top:20px}

@@ -37,7 +37,7 @@ function energyTariffGross(t,kind,kwh,days,monthDays,vat,power){
   var net=energyTariffNet(t,kind,kwh,days,monthDays,power),service=(t.servicesPerDay||0)*days,serviceVat=t.servicesVatPct==null?vat:t.servicesVatPct;
   return (net-service)*(1+vat/100)+service*(1+serviceVat/100);
 }
-function energyTaxes(){return energyValidateTaxes(JSON.parse(appStorage.getItem(ENERGY_TAX_KEY)||'[]'));}
+function energyTaxes(){return energyReadData(ENERGY_TAX_KEY,function(){return energyValidateTaxes(JSON.parse(appStorage.getItem(ENERGY_TAX_KEY)||'[]'));});}
 function energyValidateTaxes(rows){
   if(!Array.isArray(rows)||rows.length>500)throw new Error('Histórico de IVA no válido');
   var seen={};rows.forEach(function(r){if(!r)throw new Error('Período de IVA no válido');var key=r.kind+'|'+r.start;if(['luz','gas'].indexOf(r.kind)<0||!validIsoDate(r.start)||typeof r.rate!=='number'||!Number.isFinite(r.rate)||r.rate<0||r.rate>100||seen[key])throw new Error('Revisa fechas y porcentajes de IVA (sin fechas repetidas)');seen[key]=true;});return rows;
@@ -55,6 +55,9 @@ function energyBillEnd(b,bills){
   return end;
 }
 function energyConsumptionMonths(bills,year,kind){
+  return energyMemo('consumption',[bills,year,kind],function(){return _energyConsumptionMonths(bills,year,kind);});
+}
+function _energyConsumptionMonths(bills,year,kind){
   var relevant=bills.filter(function(b){return b.kind===kind;}),months=[],readings=[];
   for(var i=0;i<12;i++)months.push({count:0,consumption:0,net:0,gross:0,paid:0,unknownPaid:0,unknownConsumption:0,coverage:{},days:{},samples:{},periods:[0,0,0],periodDays:0,overlap:false});
   relevant.forEach(function(b){

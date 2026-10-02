@@ -1,0 +1,114 @@
+/* ── BIRTHDAYS ── */
+.data-btn.bday-active{color:var(--vacaciones)!important;border-radius:8px}
+.bday-hdr-sub{display:flex;align-items:stretch;padding:5px 6px;gap:5px;box-shadow:0 1px 0 var(--border);overflow-x:hidden}
+.bday-calendar{max-width:900px;margin:0 auto}
+.bday-week-hdr{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-bottom:6px}
+.bday-week-hdr div{text-align:center;font-size:.64rem;color:var(--text-muted);padding:8px 0;font-weight:600}
+.bday-week-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-bottom:4px}
+.bday-cell{min-height:72px;padding:5px 2px;background:var(--surface);border:1px solid var(--border);border-radius:8px;display:flex;flex-direction:column;gap:4px;cursor:pointer;transition:background .12s}
+.bday-cell.out-m{opacity:.38}
+.bday-cell.past-cal-day .bday-num{color:var(--text-dim)}
+.bday-cell.today-bday{border-color:var(--birthday-tone);box-shadow:inset 0 0 0 1px var(--birthday-tone)}
+.bday-num{display:flex;align-items:center;justify-content:center;align-self:flex-start;min-width:23px;height:23px;font-size:.73rem;font-family:var(--mono);line-height:1;color:var(--text-muted)}
+.bday-calendar .bday-cell.today-bday .bday-num{background:var(--birthday-tone);color:var(--surface);border-radius:50%;font-weight:700}
+/* El nombre admite hasta cuatro líneas. */
+.bday-badge{position:relative;font-size:.57rem;letter-spacing:-.015em;border-radius:4px;padding:3px 2px;line-height:1.25;white-space:normal;overflow-wrap:anywhere;hyphens:auto;overflow:hidden;border:1px solid color-mix(in srgb,var(--bday-color) 65%,var(--border));background:color-mix(in srgb,var(--bday-color) 15%,var(--surface));color:var(--text);font-weight:500;cursor:pointer;transition:opacity .1s;text-align:center}
+.bday-badge-name{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.bday-badge:active{opacity:.7}
+.bday-badge.bday-badge-vip{background:#ffdf70;border-color:#d8ab28;color:#543e08;font-weight:700;overflow:visible;margin:5px 3px 1px 0;padding:5px 2px}
+.bday-calendar-vip{position:absolute;top:0;right:0;transform:translate(50%,-50%);width:24px;height:24px;object-fit:contain;z-index:1;pointer-events:none}
+.bday-calendar-tools{display:flex;flex-direction:column;align-items:center;gap:7px}
+.bday-header-vip.bday-vip-compact{margin:0;--chk:#c2911c}
+.bday-header-vip.bday-vip-compact img{width:20px;margin:0}
+.bday-vip-compact input[type=checkbox]{width:13px;height:13px}
+.bday-header-add{position:relative;z-index:1;width:32px;height:32px;flex:0 0 32px;padding:0;border:1px solid var(--accent);border-radius:10px;background:color-mix(in srgb,var(--accent) 10%,var(--surface));color:var(--accent-bright);font-size:1.3rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.bday-header-add:active{background:color-mix(in srgb,var(--accent) 20%,var(--surface))}
+.bday-month-hdr{font-size:.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:10px 0 6px;border-bottom:1px solid var(--border);margin-bottom:6px}
+.bday-list-item{display:flex;align-items:center;gap:10px;padding:11px 0 15px;min-height:52px;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity .12s}
+/* VIP controls bar */
+.bday-vip-ctrl-bar{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:7px 12px;border-bottom:1px solid var(--border);background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.bday-vip-filter-chips{display:flex;gap:4px;flex:1}
+.bday-vip-chip{flex:1;font-size:.68rem;padding:5px 4px;border-radius:12px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;display:flex;align-items:center;justify-content:center;gap:3px;line-height:1}
+.bday-vip-chip.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
+.bday-vip-chip.chip-vip.active{border-color:#fbbf24;background:rgba(251,191,36,.15);color:#fbbf24}
+.bday-vip-chip.chip-novip.active{border-color:var(--text-muted);background:var(--surface3);color:var(--text)}
+.vip-no-icon{position:relative;display:inline-flex;align-items:center;justify-content:center}
+.vip-no-icon::after{content:'';position:absolute;inset:15%;background:linear-gradient(to top right,transparent 44%,#ef4444 46%,#ef4444 54%,transparent 56%);pointer-events:none}
+.bday-vip-edit-btn{flex-shrink:0;font-size:.7rem;padding:5px 10px;border-radius:12px;border:1px solid #fb923c;background:rgba(251,146,60,.1);color:#fb923c;cursor:pointer;transition:all .15s}
+.bday-vip-edit-btn.active{border-color:#fb923c;background:rgba(251,146,60,.3);color:#fff}
+/* Botón Cancelar fijo al fondo de pantalla en modo edición VIP */
+.bday-cancel-edit-btn{position:fixed;bottom:max(20px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:var(--surface);color:#ef4444;border:3px solid #ef4444;padding:8px 28px;border-radius:20px;font-size:.82rem;font-weight:600;cursor:pointer;z-index:200;white-space:nowrap;transition:background .15s}
+.bday-cancel-edit-btn:active{background:var(--surface2)}
+/* VIP edit mode item states */
+.bday-list-item.bday-list-vip-dim{opacity:.38}
+.bday-list-item.bday-list-vip-active{opacity:1}
+.bday-list-item:last-child{border-bottom:none}
+.bday-list-item:active{opacity:.7}
+.bday-list-day{font-family:var(--mono);font-size:.75rem;color:var(--text-muted);min-width:22px;flex-shrink:0}
+.bday-list-name{font-size:.85rem;color:var(--text);flex:1}
+.bday-list-left{font-size:.7rem;font-weight:600;color:var(--text-dim);flex-shrink:0}
+.bday-list-left.near{color:var(--vacaciones)}
+.bday-list-left.today-lbl{color:var(--sent-text)}
+/* ── Feat 1: Buscador en lista por meses ── */
+/* Barra fija con el buscador y el boton de anadir: va fuera del .sy-body,
+   asi que no se mueve al hacer scroll y no deja ver nada por detras */
+.bday-buscar-bar{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg);box-shadow:0 1px 0 var(--border)}
+.bday-buscar-bar .bday-search-wrap{flex:1;padding:0;min-width:0}
+.bday-buscar-bar .bday-io-btn{flex:0 0 auto;white-space:nowrap}
+.bday-search-wrap{padding:8px 0 4px}
+.bday-search-input{width:100%;box-sizing:border-box;padding:8px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.82rem;outline:none;transition:border-color .15s}
+.bday-search-input:focus{border-color:var(--accent)}
+.bday-io-row{display:flex;gap:8px;margin-top:8px}
+/* ── Botones de accion: UN solo sistema con tres variantes ──────────
+   .ev-io-btn y .bday-io-btn eran dos estilos para el mismo papel y se
+   mezclaban en la misma pantalla. Ahora comparten base y se diferencian
+   por variante:
+     (sola)        neutra   — accion secundaria (Importar, Exportar...)
+     .io-primaria  azul     — la accion principal (Anadir)
+     .io-peligro   roja     — destructiva (Eliminar)
+   .bday-io-btn-add se mantiene como alias de .io-primaria porque ya
+   estaba repartido por varias pantallas. */
+.bday-io-btn,.ev-io-btn{flex:1;font-size:.75rem;padding:9px 8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;text-align:center;transition:all .15s;font-family:var(--font)}
+.bday-io-btn:active,.ev-io-btn:active{background:var(--surface3)}
+.io-primaria,.bday-io-btn-add{background:var(--c-blue)!important;color:#fff!important;border-color:var(--c-blue)!important;font-weight:600}
+.io-primaria:active,.bday-io-btn-add:active{opacity:.85}
+.io-peligro{background:#c0392f!important;color:#fff!important;border-color:#c0392f!important;font-weight:600}
+.io-peligro:active{background:#9d2c24!important}
+.bday-io-btn:active{background:var(--surface3)}
+/* Upcoming birthdays */
+.bday-upcoming-section{display:flex;flex-direction:column;gap:4px}
+.bday-upcoming-item{display:flex;align-items:center;gap:12px;padding:11px 14px;min-height:68px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .12s}
+.bday-upcoming-item:active{background:var(--surface3)}
+.bday-upcoming-item.bday-today-item{border-color:var(--sent-border);background:rgba(90,224,136,.07)}
+.bday-upcoming-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;-webkit-text-stroke:.5px rgba(0,0,0,.6);overflow:hidden}
+.bday-upcoming-vip-img{width:34px;height:auto;display:block;-webkit-text-stroke:0}
+.bday-upcoming-info{flex:1;min-width:0}
+.bday-upcoming-name{font-size:.88rem;font-weight:600;word-wrap:break-word;overflow-wrap:break-word;line-height:1.2}
+.bday-upcoming-date{font-size:.7rem;color:var(--text-muted);margin-top:2px}
+.bday-upcoming-lbl{font-size:.7rem;font-weight:600;color:var(--text-dim);flex-shrink:0;text-align:right}
+.bday-upcoming-lbl.near{color:var(--vacaciones)}
+.bday-upcoming-lbl.today-lbl{color:var(--sent-text)}
+.bday-upcoming-lbl.past-lbl{color:var(--text-dim);opacity:.7}
+.bday-upcoming-lbl.this-week{color:var(--vacaciones);font-weight:600}
+.bday-add-btn{font-size:.72rem;padding:6px 12px;border-radius:16px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;white-space:nowrap;flex-shrink:0}
+.bday-add-btn:active{background:var(--accent);color:#fff}
+/* Fin de semana suave; hoy conserva su borde y su fecha destacada. */
+.bday-cell.weekend{background:color-mix(in srgb,var(--birthday-tone) 5%,var(--surface2))}
+.ev-cell.weekend{background:rgba(160,160,200,.11);box-shadow:inset 0 -1.5px 0 0 rgba(160,160,200,.25),inset 1.5px 0 0 0 rgba(160,160,200,.25),inset -1.5px 0 0 0 rgba(160,160,200,.25)}
+.ev-cell.weekend .ev-num{color:inherit}
+/* Festivo/vacaciones/ausencia: indicador como box-shadow inset top (NO border-top)
+   para que no desplace el layout y el pattern de puente coincida en la misma
+   posición vertical que las celdas normales. Compone con el separador inset. */
+.ev-cell.ev-day-festivo{background:rgba(255,107,107,.09);box-shadow:inset 0 5px 0 0 var(--festivo)}
+.ev-cell.ev-day-vacaciones{background:rgba(255,179,71,.09);box-shadow:inset 0 5px 0 0 var(--vacaciones)}
+.ev-cell.ev-day-ausencia{background:rgba(192,132,252,.09);box-shadow:inset 0 5px 0 0 var(--ausencia)}
+/* Puentes (1-mes): pattern aplicado SOLO a las celdas puente individualmente.
+   Sin background-attachment:fixed (rompe con stacking contexts), sin pattern
+   en grid (mancharía celdas con bg semi-transparente). Cada celda dibuja su
+   propio tramo del pattern; pueden no alinearse perfectamente entre días pero
+   el pattern queda restringido SOLO a los días puente, que es lo correcto. */
+.ev-cell.ev-puente{background:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 3px,transparent 3px,transparent 8px),var(--surface)}
+.ev-cell.ev-puente.weekend{background:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 3px,transparent 3px,transparent 8px),rgba(160,160,200,.18)}
+.ev-cell.ev-puente.ev-day-festivo{background:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 3px,transparent 3px,transparent 8px),rgba(255,107,107,.15)}
+.ev-cell.ev-puente.ev-day-vacaciones{background:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 3px,transparent 3px,transparent 8px),rgba(255,179,71,.15)}
+.ev-cell.ev-puente.ev-day-ausencia{background:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 3px,transparent 3px,transparent 8px),rgba(192,132,252,.15)}

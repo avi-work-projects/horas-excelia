@@ -86,7 +86,10 @@ list('js', '.js').forEach(function(f){
 
 out.push('## CSS');
 out.push('');
-['css/styles.css'].forEach(function(f){
+var assets = require('../app-assets.json');
+out.push('> `css/styles.css` se genera: editar las fuentes listadas a continuación.');
+out.push('');
+assets.styleSources.concat(assets.styles.filter(function(f){return f!=='css/styles.css';})).forEach(function(f){
   var s = scanCss(f);
   out.push('### ' + s.file + '  _(' + s.lines + ' líneas)_');
   out.push('');
@@ -94,7 +97,7 @@ out.push('');
   out.push('');
   s.sections.forEach(function(x){ out.push('- ' + x); });
   out.push('');
-  out.push('**Rangos por prefijo de clase:** ');
+  out.push('**Rangos por prefijo de clase:**');
   var keys = Object.keys(s.prefixes).sort();
   out.push(keys.map(function(k){ var r = s.prefixes[k]; return k + ':' + r[0] + '-' + r[1]; }).join(' · '));
   out.push('');

@@ -1,6 +1,6 @@
 /* Facturas reales: no alimentan las simulaciones ni las deducciones fiscales. */
 var ENERGY_BILLS_KEY='excelia-energy-bills-v1';
-function energyBills(){var raw=appStorage.getItem(ENERGY_BILLS_KEY);return raw?validateEnergyBills(JSON.parse(raw)):[];}
+function energyBills(){return energyReadData(ENERGY_BILLS_KEY,function(){var raw=appStorage.getItem(ENERGY_BILLS_KEY);return raw?validateEnergyBills(JSON.parse(raw)):[];});}
 function validateEnergyBills(list){
   if(!Array.isArray(list)||list.length>10000)throw new Error('Lista de facturas no válida');
   var ids=Object.create(null),signatures=Object.create(null);

@@ -2,9 +2,12 @@
   "name": "gestify",
   "private": true,
   "scripts": {
-    "test": "node tools/test.js && node tools/test-hardening.js && node tools/test-energy.js && node tools/test-energy-total.js && node tools/test-last-rehearsal.js && node tools/test-import-sharing.js && node tools/test-rutinas-flex.js && node tools/test-rutinas-sessions.js && node tools/test-tasks.js && node tools/test-household.js && node tools/test-personal-periods.js",
+    "test": "npm run check:assets && node tools/test.js && node tools/test-hardening.js && node tools/test-energy.js && node tools/test-energy-total.js && node tools/test-energy-cache.js && node tools/test-last-rehearsal.js && node tools/test-import-sharing.js && node tools/test-rutinas-flex.js && node tools/test-rutinas-sessions.js && node tools/test-tasks.js && node tools/test-household.js && node tools/test-personal-periods.js",
     "test:browser": "playwright test",
-    "build": "node tools/build.js"
+    "build": "node tools/build.js",
+    "assets": "node tools/assets.js",
+    "check:assets": "node tools/assets.js --check",
+    "benchmark:energy": "node tools/benchmark-energy.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0"

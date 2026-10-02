@@ -6,7 +6,10 @@ var ENERGY_ANALYSIS_KIND='luz';
 var ENERGY_RETURN=null;
 var ENERGY_ANALYSIS_TABS=[['resumen','Resumen'],['consumo','Consumo'],['costes','Coste'],['tarifas','Tarifas'],['comparar','Escenarios']];
 function energyAnalysisHtml(kind){
-  var year=ENERGY_ANALYSIS_YEAR,months=energyConsumptionMonths(energyBills(),year,kind);
+  return withEnergyData(function(){return _energyAnalysisHtml(kind);});
+}
+function _energyAnalysisHtml(kind){
+  var year=ENERGY_ANALYSIS_YEAR;
   var h=renderNavBar('household');
   h+='<div class="energy-window-header"><button class="sy-back" id="energyAnalysisBack" aria-label="Volver">←</button><h2>Estudio de '+(kind==='luz'?'electricidad':'gas')+'</h2><button class="ev-io-btn energy-import-button" id="energyImportTop" aria-label="Importar datos" title="Importar datos">Importar</button></div>';
   h+='<div class="econ-sub-tabs energy-tabs">';
@@ -14,10 +17,10 @@ function energyAnalysisHtml(kind){
   h+='</div><div class="energy-year-nav"><button class="nav-btn" data-analysis-year="-1" aria-label="Año anterior">◀</button><strong>'+year+'</strong><button class="nav-btn" data-analysis-year="1" aria-label="Año siguiente">▶</button>'+(ENERGY_ANALYSIS_TAB==='resumen'?'<button class="energy-total-button" id="energySummaryTotal" aria-pressed="'+ENERGY_SUMMARY_TOTAL+'">Total</button>':'')+'</div><div class="sy-body">';
   h+='<div class="energy-window-content" data-energy-view="'+ENERGY_ANALYSIS_TAB+'">';
   if(ENERGY_ANALYSIS_TAB==='resumen')h+=energySummaryHtml(kind,ENERGY_SUMMARY_TOTAL?null:year);
-  if(ENERGY_ANALYSIS_TAB==='consumo')h+=energyConsumptionHtml(kind,months,year);
+  if(ENERGY_ANALYSIS_TAB==='consumo')h+=energyConsumptionHtml(kind,energyConsumptionMonths(energyBills(),year,kind),year);
   if(ENERGY_ANALYSIS_TAB==='costes')h+=energyCostsHtml(kind,year);
   if(ENERGY_ANALYSIS_TAB==='tarifas')h+=energyTariffsHtml(kind);
-  if(ENERGY_ANALYSIS_TAB==='comparar')h+=energyComparisonHtml(kind,months);
+  if(ENERGY_ANALYSIS_TAB==='comparar')h+=energyComparisonHtml(kind);
   if(ENERGY_ANALYSIS_TAB==='archivo')h+=energyArchiveHtml(kind);
   return h+'</div></div><input type="file" id="energyStudyFile" accept=".json,application/json" hidden>';
 }
@@ -30,7 +33,7 @@ function energyConsumptionHtml(kind,months,year){
   return h+'</tbody></table></details>'+energyInfoHtml('Cómo se distribuye el consumo','<p>Los acumulados se distribuyen por días entre lecturas; no se extrapolan días sin cubrir.'+(kind==='luz'?' Si falta desglose por tramos no se reparte a partes iguales.':' Una cuota fija sin nueva lectura permite calcular el coste, pero no implica un consumo de cero.')+'</p>')+'<details class="energy-contract"><summary>Facturas de origen</summary>'+energyArchiveHtml(kind)+'</details>';
 }
 function energyCostsHtml(kind,year){
-  var bills=energyBills(),contracts=energyContracts(),taxes=energyTaxes(),real=energyCostMonths(bills,contracts,taxes,year,kind),months=energyCostMonths(bills,contracts,taxes,year,kind,{vatMode:ENERGY_COST_VAT,vat:ENERGY_COST_RATE}),suppliers={};
+  var bills=energyBills(),contracts=energyContracts(),taxes=energyTaxes(),real=energyCostMonths(bills,contracts,taxes,year,kind),months=ENERGY_COST_VAT==='historical'?real:energyCostMonths(bills,contracts,taxes,year,kind,{vatMode:ENERGY_COST_VAT,vat:ENERGY_COST_RATE}),suppliers={};
   months.forEach(function(m){m.groups.forEach(function(g){suppliers[g.supplier]=true;});});
   var label=ENERGY_COST_VAT==='historical'?'IVA real':ENERGY_COST_VAT==='none'?'Sin IVA':'IVA cte '+ENERGY_COST_RATE+' %';
   var h='<section class="energy-contract energy-year-chart">'+energySectionTitle('Coste mensual','Estimado · €')+'<div class="energy-tax-controls"><label><input id="energyVatCycle" type="checkbox"'+(ENERGY_COST_VAT!=='none'?' checked':'')+'> '+label+'</label><label'+(ENERGY_COST_VAT!=='constant'?' hidden':'')+'>IVA % <input id="energyCostRate" type="number" min="0" max="100" value="'+ENERGY_COST_RATE+'"></label></div>'+energyVatStrip(months,year)+energyCostChart(months)+'<div class="energy-legend">';

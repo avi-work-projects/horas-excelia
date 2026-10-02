@@ -1,0 +1,113 @@
+/* Cabecera de Home opaca, incluso sobre los botones oscuros de las semanas. */
+.header,[data-theme="light"] .header,[data-theme="grey"] .header{background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none}
+.ev-wk-travel-row:not(.ev-wk-travel-footer) > .ev-wk-travel{gap:0}
+.home-submission{display:flex;align-items:center;gap:10px;padding:11px 13px;border:1px solid var(--status-tone);border-radius:10px;background:color-mix(in srgb,var(--status-tone) 9%,var(--surface));color:var(--status-tone)}
+.home-submission.pending{--status-tone:var(--c-orange)}
+.home-submission.complete{--status-tone:var(--c-green)}
+.home-submission strong{display:block;font-size:.78rem;font-weight:600}
+.home-submission-message > span{display:block;font-size:.68rem;line-height:1.4;margin-top:3px;color:var(--text-muted)}
+.home-submission-icon{font-size:1.1rem;flex-shrink:0}
+.home-submission.pending{animation:home-pending-pulse 1.8s ease-in-out infinite}
+@keyframes home-pending-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@media(prefers-reduced-motion:reduce){.home-submission.pending{animation:none}}
+
+[data-theme="light"] #eventsOverlay .ev-hdr-sub #evViewUpcoming{--tab-tone:#397dbb}
+.home-submission.complete{display:grid;grid-template-columns:18px 70px minmax(0,1fr);gap:8px}
+.home-summary-compact{justify-self:end;width:max-content;max-width:100%;box-sizing:border-box;padding:6px 7px;border:1px solid var(--border);border-radius:8px;background:var(--surface);gap:3px;min-width:0}
+.home-summary-compact .month-stat{justify-content:flex-start;text-align:left;gap:3px;flex-wrap:nowrap;white-space:nowrap}
+.month-summary .month-stat.total{border-top:1px solid var(--border);padding-top:3px}
+.month-summary .month-stat.total .ms-num{font-weight:600}
+.home-summary-compact .month-stat.total .ms-num{font-size:.9rem;font-weight:600}
+.home-summary-compact .month-stat{font-size:.65rem;line-height:1.35}
+.home-summary-compact .ms-num{font-size:.8rem}
+.home-summary-compact .ms-label,.home-summary-compact .ms-hrs{font-size:.62rem}
+.home-summary-compact .ms-breakdown{font-size:.6rem}
+
+/* Selector de eventos para compartir por iCalendar */
+/* Selector de exportación: controles compactos y lista con espacio propio. */
+.ev-share-btn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:42px;padding:6px;border:1px solid #8b5e3445;border-radius:14px;color:#8b5e34;background:var(--surface);cursor:pointer}
+.ev-share-btn svg{width:30px;height:30px}.ev-share-btn:hover{background:var(--surface2)}
+.ev-cal-export-sheet{display:flex;flex-direction:column;gap:8px;height:92dvh;max-height:92dvh;overflow:hidden;padding:10px 14px 14px!important;box-sizing:border-box}
+.ev-cal-export-sheet>*{flex-shrink:0}.ev-cal-export-sheet .ev-detail-handle{margin:0 auto 2px}
+.ev-cal-export-sheet>.boda-config-head h3{font-size:1rem;margin:0}
+.ev-cal-export-sheet>.boda-config-head{margin:0}.ev-cal-export-sheet .sy-back{width:34px;height:34px}
+.ev-cal-export-intro,.ev-cal-export-empty{font-size:.74rem;color:var(--text-muted);margin:0;line-height:1.4}
+.ev-cal-export-sheet .ev-input{margin:0;padding:8px 10px;min-height:36px}
+.ev-cal-export-sheet .ev-date-row{display:flex;gap:10px;margin:8px 0}
+.ev-cal-export-sheet .ev-field{flex:1;min-width:0;margin:0;font-size:.75rem;color:var(--text-muted)}
+.ev-cal-export-filters{display:flex;gap:6px;overflow-x:auto;padding:2px 0;scrollbar-width:none}
+.ev-cal-export-filters .ev-filter-chip{opacity:1;min-height:30px;font-size:.72rem;flex-shrink:0;white-space:nowrap;padding:6px 10px;color:var(--text-muted);border:1px solid var(--border);background:var(--surface)}
+.ev-cal-export-filters .ev-filter-chip.active{color:#8b5e34;border-color:#8b5e34;background:var(--surface2)}
+.ev-cal-export-options{font-size:.74rem;color:var(--text-muted);max-height:25dvh;overflow:auto}
+.ev-cal-export-options summary{cursor:pointer;padding:4px 0}
+.ev-cal-export-tools{display:flex;gap:8px;justify-content:space-between}
+.ev-cal-export-tools .ev-io-btn{font-size:.7rem;padding:6px 8px}
+.ev-cal-export-list{scrollbar-color:var(--border) transparent;flex:1 1 160px;min-height:100px;overflow-y:auto;border:1px solid var(--border);border-radius:12px}
+.ev-cal-export-item{display:flex;align-items:center;gap:6px;padding:8px 10px;border-bottom:1px solid var(--border)}
+.ev-cal-export-item:last-child{border-bottom:0}
+.ev-cal-export-item:has(input:checked){background:var(--surface2)}
+.ev-cal-export-item label{display:flex;align-items:center;gap:9px;min-width:0;flex:1;cursor:pointer}
+.ev-cal-export-item input{flex-shrink:0}.ev-cal-export-item span{min-width:0;flex:1}
+.ev-cal-export-item strong{display:block;font-size:.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ev-cal-export-item small{display:block;font-size:.67rem;color:var(--text-muted);margin-top:3px}
+.ev-cal-export-empty{padding:14px}.ev-cal-export-notes{display:flex;align-items:center;gap:8px;font-size:.75rem;margin:8px 0}
+.ev-cal-export-footer p{font-size:.68rem;color:var(--text-muted);line-height:1.4;margin:0 0 6px}
+.ev-cal-export-footer .ev-cal-export-warning{color:var(--red,#c54444);max-height:55px;overflow:auto}
+.ev-cal-export-footer .ev-io-btn{width:100%;padding:10px}
+.ev-cal-export-footer .ev-io-btn:disabled{opacity:.45;cursor:default}
+
+.home-reminder-text{min-width:0;display:block;width:100%}
+.home-reminder-when{white-space:nowrap}
+.home-reminder-content{display:inline-block;max-width:100%;vertical-align:top}
+.ev-cal-export-status.changed{color:var(--c-orange)}
+
+/* Colores por tramo, compartidos entre las dos vistas de próximos cumpleaños. */
+.ev-week-sep.bday-group-past{background:#66708525;color:var(--text-muted)}
+.ev-week-sep.bday-group-today{background:#39a66b30;color:var(--c-green)}
+.ev-week-sep.bday-group-tomorrow{background:#d9943030;color:var(--c-orange)}
+.ev-week-sep.bday-group-week{background:#4b94d430;color:var(--c-blue)}
+.ev-week-sep.bday-group-fortnight{background:#a078cf30;color:var(--c-purple)}
+.ev-week-sep.bday-group-later{background:#3babab25;color:var(--text-muted)}
+.ev-cal-export-tabs{display:flex;gap:6px}
+.ev-cal-export-tabs button{flex:1;padding:9px 5px;border:1px solid #8b5e3470;border-radius:10px;background:var(--surface);color:#8b5e34;font:inherit;font-size:.75rem;cursor:pointer}
+.ev-cal-export-tabs button[aria-pressed="true"]{background:#8b5e3425}
+.ev-cal-export-sheet [hidden]{display:none!important}
+
+[data-theme="light"] .ev-week-sep.bday-group-today,.ev-week-sep.bday-group-today{background:#39a66b30;color:var(--c-green);border-color:#39a66b60}
+
+.ev-field label.boda-future-check{display:flex;align-items:center;gap:8px}
+.boda-future-check input[type="checkbox"]{margin:0;flex-shrink:0}
+.ev-week-sep.bday-group-after-tomorrow{background:#c7aa3530;color:var(--c-orange)}
+
+/* Compartir: cabecera centrada, categorías completas y lista compacta. */
+.ev-cal-export-sheet>.boda-config-head{display:grid;grid-template-columns:34px minmax(0,1fr) 34px;align-items:center;gap:8px}
+.ev-cal-export-sheet>.boda-config-head h3{text-align:center}
+.ev-cal-export-filter-label{display:flex;justify-content:space-between;gap:6px;font-size:.7rem;color:var(--text-muted);margin:2px 0 4px}
+.ev-cal-export-filter-label span{font-size:.65rem;color:var(--text-dim)}
+.ev-cal-export-types{flex-wrap:wrap;overflow:visible;gap:4px}
+.ev-cal-export-types .ev-filter-chip{padding:4px 7px;min-height:27px;font-size:.68rem}
+.ev-cal-export-types .ev-filter-chip.excluded{border-style:dashed;color:var(--text-dim);background:var(--surface)}
+.ev-cal-export-tools{gap:5px;flex-wrap:wrap}
+.ev-cal-export-tools .ev-io-btn{padding:5px 7px;font-size:.66rem}
+.ev-cal-export-item{padding:6px 9px}
+.ev-cal-export-item small{margin-top:2px}
+.ev-cal-export-sheet{height:96dvh;max-height:96dvh;gap:6px}
+
+.ev-cal-export-settings{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface2)}
+.ev-cal-export-settings .ev-cal-export-intro{font-size:.65rem}
+
+.ev-cal-export-settings{padding:7px 9px}
+.ev-cal-export-settings .ev-cal-export-signature{display:flex;flex-direction:row;align-items:center;gap:10px;text-align:left}
+.ev-cal-export-signature .ev-input{flex:1;min-width:0;min-height:30px;padding:5px 8px}
+.ev-cal-export-settings .ev-cal-export-notes{margin:5px 0;font-size:.7rem}
+.energy-sheet{width:100%;max-width:680px;margin:0 auto;max-height:88dvh;overflow-y:auto;padding:18px;box-sizing:border-box}
+.energy-history-heading{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.energy-history-heading h2{font-size:18px;flex:1;text-align:center;margin:0 35px 0 0}
+.energy-contract{border:1px solid var(--border);border-left:3px solid #8c6db5;border-radius:12px;padding:14px;margin:14px 0}
+.energy-contract .sy-note{margin:6px 0}.energy-notes{white-space:pre-wrap;font-size:13px}
+.energy-price-view{display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:4px 0}
+.energy-field{display:flex;flex-direction:column;gap:6px;margin:14px 0;font-size:13px}
+.energy-field input,.energy-field textarea,.energy-price-edit input{box-sizing:border-box;width:100%;min-width:0;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px;font:inherit}
+.energy-tax{border:1px solid var(--border);border-radius:10px;padding:12px;margin:18px 0}.energy-tax label{display:flex;align-items:center;gap:7px;margin:8px 0;font-size:13px}
+.energy-price-edit{display:grid;grid-template-columns:1.4fr .8fr 1fr 24px;gap:5px;margin:8px 0}.energy-price-edit input{padding:8px 5px;font-size:12px}
+.energy-price-edit button{border:0;background:none;color:var(--text);font-size:20px}.energy-history-open{margin:16px 0}

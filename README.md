@@ -10,10 +10,15 @@ Configura el correo de horas y MacroDroid en Ajustes. En instalaciones anteriore
 recuperar el correo y cumpleaños de la cache local antigua; si no existe, importa tu backup.
 
 ## Desarrollo
-Node 24: `npm ci`, `npm test`, `npm run build`, `npm run test:browser`.
-En Windows las pruebas usan Microsoft Edge aislado; CI instala Chromium para las pruebas.
+Node 24: `npm ci`, `npm run assets`, `npm test`, `npm run build`.
+`npm run test:browser` ejecuta las interacciones en CI con Chromium.
+La revisión visual local se hace en Microsoft Edge mediante la extensión.
 GitHub Actions publica dist en Pages solo cuando pasan todas las comprobaciones.
-Consulta CLAUDE.md para arquitectura y CODEMAP.md para localizar funciones.
+Consulta [CLAUDE.md](CLAUDE.md) para las reglas vigentes,
+[docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) para arquitectura y componentes,
+y [CODEMAP.md](CODEMAP.md) para localizar funciones y estilos.
+`app-assets.json` es el catálogo de carga, pruebas y archivos sin conexión.
+`css/styles.css` se genera desde `css/source/`; ejecuta `npm run assets` tras editarlas.
 No subir backups personales, .local-preview ni configuracion del dispositivo.
 
 ## Versiones

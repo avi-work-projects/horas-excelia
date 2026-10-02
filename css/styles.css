@@ -1,3 +1,5 @@
+/* GENERADO: editar css/source/ y ejecutar npm run assets. Orden: app-assets.json. */
+/* Fuente: css/source/base.css */
 /* ============================================================
    HORAS EXCELIA — Estilos globales
    ============================================================ */
@@ -358,6 +360,7 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 /* Ausencia list tag */
 .sy-list-tag.ausencia{background:rgba(192,132,252,.15);color:var(--ausencia)}
 
+/* Fuente: css/source/economics.css */
 /* ── ECONOMICS ── */
 .rate-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm)}
 .rate-label{font-size:.8rem;color:var(--text-muted);flex:1}
@@ -429,7 +432,6 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .econ-tab-btn.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
 .econ-sub-tabs{display:flex;gap:6px;padding:10px 16px;box-shadow:0 1px 0 var(--border);align-items:center;position:sticky;top:0;z-index:5;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 .econ-sub-tabs::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:rgba(192,132,252,.2);z-index:10}
-.sy-body:has(> .econ-sub-tabs:first-child){padding-top:0!important}
 .econ-sub-tab{flex:1;font-size:.62rem;padding:5px 4px;border-radius:0;border:none;border-bottom:2px solid transparent;background:transparent;color:var(--text-dim);cursor:pointer;transition:all .15s;text-align:center;-webkit-user-select:none;user-select:none}
 .econ-sub-tab.active{border-bottom-color:var(--accent);color:var(--accent-bright);font-weight:600}
 .rut-sub-tabs{--section-tab-tone:#eceff5}
@@ -1045,6 +1047,7 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .econ-sc-val-input{font-family:var(--mono);font-size:.92rem;font-weight:600;padding:7px 10px;border-radius:var(--radius-sm);border:1.5px solid var(--accent);background:var(--accent-glow);color:var(--text);width:100%;text-align:right;outline:none;transition:border-color .15s}
 .econ-sc-val-input:focus{border-color:var(--accent-bright)}
 
+/* Fuente: css/source/birthdays.css */
 /* ── BIRTHDAYS ── */
 .data-btn.bday-active{color:var(--vacaciones)!important;border-radius:8px}
 .bday-hdr-sub{display:flex;align-items:stretch;padding:5px 6px;gap:5px;box-shadow:0 1px 0 var(--border);overflow-x:hidden}
@@ -1159,6 +1162,8 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-cell.ev-puente.ev-day-festivo{background:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 3px,transparent 3px,transparent 8px),rgba(255,107,107,.15)}
 .ev-cell.ev-puente.ev-day-vacaciones{background:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 3px,transparent 3px,transparent 8px),rgba(255,179,71,.15)}
 .ev-cell.ev-puente.ev-day-ausencia{background:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 3px,transparent 3px,transparent 8px),rgba(192,132,252,.15)}
+
+/* Fuente: css/source/event-calendar.css */
 /* Events in puentes (summary) — one per line */
 .sy-puente-evs{display:flex;flex-direction:column;gap:3px;margin-top:6px}
 .sy-puente-ev{display:flex;justify-content:space-between;align-items:baseline;padding:4px 8px;border-radius:6px;background:var(--surface3);color:var(--text-muted);border:1px solid var(--border-light);font-size:.72rem;gap:6px}
@@ -1479,6 +1484,8 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-chip-flag{width:24px;height:15px;display:block;border-radius:2.5px}
 .ev-filter-chip:has(.ev-chip-flag){padding:0 5px}
 .ev-filter-chip.chip-active{opacity:1}
+
+/* Fuente: css/source/navigation-alarms.css */
 /* Shared overlay nav bar — nivel 1, siempre visible en lo alto del overlay */
 .overlay-nav-bar{flex-shrink:0;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;gap:6px;padding:10px 16px 4px;box-shadow:0 1px 0 var(--border);overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none}
 .nav-bar-spacer{flex:1}
@@ -1594,6 +1601,7 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .bd-detail-date{font-family:var(--mono);font-size:.82rem;color:var(--text-muted);margin-bottom:6px}
 .bd-detail-lbl{font-size:.9rem;font-weight:600;padding:6px 14px;border-radius:16px;display:inline-block;margin-top:4px}
 
+/* Fuente: css/source/event-panels.css */
 /* ── EVENTS ── */
 .data-btn.events-active{color:var(--c-blue)!important;border-radius:8px}
 .ev-hdr-sub{display:flex;align-items:stretch;padding:5px 6px;gap:5px;box-shadow:0 1px 0 var(--border);overflow-x:hidden}
@@ -1810,6 +1818,7 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-detail-repeat{font-size:.75rem;color:var(--text-dim);margin-top:6px;padding:6px 10px;background:var(--surface2);border-radius:var(--radius-sm)}
 .ev-detail-actions{display:flex;gap:8px;margin-top:20px}
 
+/* Fuente: css/source/dialogs-responsive.css */
 /* ── LOGO POPUP ── */
 .logo-popup{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .logo-popup.open{display:flex}
@@ -1944,6 +1953,8 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-note-scope{font-weight:400;font-size:.62rem;color:var(--accent-bright);opacity:.85}
 .ev-daynote-field{border-left:2px solid var(--accent);padding-left:8px}
 .ev-detail-daynote{border-left:2px solid var(--accent);padding-left:8px;margin-top:6px}
+
+/* Fuente: css/source/wedding-moves.css */
 /* Pestana Bodas y pestana partida Vacaciones/Festivos */
 /* Mitad marron (vacaciones/festivos) + mitad rosa (puentes), sin linea visible */
 /* Subpestanas (Puentes/Vac-Festivos y Clases/Parejas): usan .econ-sub-tabs, el
@@ -2266,6 +2277,8 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .boda-card.abierta{border-color:var(--border-light);box-shadow:0 2px 10px var(--shadow)}
 .boda-card-open{margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
 .boda-card-open .boda-det-actions{margin-top:10px}
+
+/* Fuente: css/source/routines.css */
 /* Horario distinto segun el dia */
 .rut-hpd-rows{margin-top:8px;display:flex;flex-direction:column;gap:6px}
 .rut-hpd-row{display:flex;align-items:center;gap:10px}
@@ -2326,6 +2339,8 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .rut-hist-i{font-size:.6rem;font-family:var(--mono);padding:3px 6px;border-radius:6px;border:1px solid var(--c-green);background:rgba(52,211,153,.12);color:var(--c-green);cursor:pointer}
 .rut-hist-i.skip{border-color:var(--c-orange);background:rgba(251,146,60,.12);color:var(--c-orange);text-decoration:line-through}
 .rut-hist-lbl{font-size:.58rem;color:var(--text-dim);margin-top:4px}
+
+/* Fuente: css/source/shared-refinements.css */
 /* ── Lista "Todos": buscador, orden y borrado con pulsacion larga ── */
 .ev-list-tools{display:flex;flex-direction:column;gap:7px;padding-bottom:4px}
 .ev-search{display:flex;align-items:center;gap:6px;border:1.5px solid var(--border);background:var(--surface2);border-radius:14px;padding:0 10px}
@@ -2768,6 +2783,7 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .ev-wk-travel-row{margin-left:-6.5px}
 .ev-bright-past .ev-wk-date.ev-wk-past,.ev-bright-past .ev-wk-chips.ev-wk-past{opacity:1}
 
+/* Fuente: css/source/home-sharing.css */
 /* Cabecera de Home opaca, incluso sobre los botones oscuros de las semanas. */
 .header,[data-theme="light"] .header,[data-theme="grey"] .header{background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none}
 .ev-wk-travel-row:not(.ev-wk-travel-footer) > .ev-wk-travel{gap:0}
@@ -2882,6 +2898,7 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .energy-price-edit{display:grid;grid-template-columns:1.4fr .8fr 1fr 24px;gap:5px;margin:8px 0}.energy-price-edit input{padding:8px 5px;font-size:12px}
 .energy-price-edit button{border:0;background:none;color:var(--text);font-size:20px}.energy-history-open{margin:16px 0}
 
+/* Fuente: css/source/energy-refinements.css */
 /* Facturas: mismos componentes que los contratos, cifras sin desbordar. */
 .energy-caption{font-size:11px;line-height:1.45;color:var(--muted);overflow-wrap:anywhere;margin:6px 0}
 .energy-table-scroll{overflow-x:auto}.energy-table-scroll th,.energy-table-scroll td{padding:7px 6px;text-align:right;white-space:nowrap}
