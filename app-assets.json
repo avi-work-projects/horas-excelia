@@ -88,6 +88,9 @@
       "path": "js/personal-periods-editor.js"
     },
     {
+      "path": "js/personal-cards.js"
+    },
+    {
       "path": "js/economics-fiscal.js"
     },
     {

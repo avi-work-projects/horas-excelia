@@ -42,6 +42,8 @@ function _yearKey(base,year){return base+'-'+year;}
 /* ── Economía Personal (per-year) ─────────────────────────── */
 var PERSONAL_SK='excelia-personal-v1';
 var PERSONAL_DATA={gastosRecurrentes:[],gastosSemanales:[],inversiones:[],ingresos:[]};
+var PERSONAL_SAVED=null; // fotografía del año cargado; no es un dato persistente
+function personalHasChanges(){return PERSONAL_SAVED!==null&&JSON.stringify(PERSONAL_DATA)!==PERSONAL_SAVED;}
 
 var DEFAULT_PERSONAL_GASTOS_REC=[
   {id:'baile_def',label:'Baile',amount:0,period:'monthly'},
@@ -87,9 +89,12 @@ function loadPersonalYear(year){
     }
   }catch(e){PERSONAL_DATA={gastosRecurrentes:[],gastosSemanales:[],inversiones:[],ingresos:[]};}
   _ensureDefaults(PERSONAL_DATA);
+  PERSONAL_SAVED=JSON.stringify(PERSONAL_DATA);
 }
 function savePersonalYear(year){
-  try{appStorage.setItem(_yearKey(PERSONAL_SK,year),JSON.stringify(PERSONAL_DATA));}catch(e){}
+  var value=JSON.stringify(PERSONAL_DATA);
+  appStorage.setItem(_yearKey(PERSONAL_SK,year),value);
+  PERSONAL_SAVED=value;
 }
 
 /* ── Ingresos regulares ───────────────────────────────────── */

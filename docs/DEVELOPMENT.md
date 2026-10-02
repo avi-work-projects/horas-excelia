@@ -112,6 +112,27 @@ y elección de iconos, para restaurar ese retorno y el estado del botón.
   duplicar el título. La bombilla retira la atenuación en los tres calendarios.
 - La luna mantiene `planet` como identificador compatible con eventos previos.
 
+### Calendarios y Economía personal (v391)
+
+- `renderBdayAddButton` comparte el botón de cabecera entre cumpleaños y la
+  subpestaña de cumpleaños de Próximos. Los calendarios crean desde el día;
+  anual/4 meses conservan el lápiz para activar la edición.
+- `evIsPlan` agrupa Plan/Quedada y subtipos para el filtro P/Q. La fila compacta
+  incluye siete filtros y el control de ciclo, sin saltos de línea desde 320 px.
+- Próximos identifica cada cita puntual por evento + fecha activa. Los grandes
+  mantienen su intervalo y las repeticiones muestran la próxima ocurrencia.
+  No inferir duración continua a partir de los extremos de `dates`.
+- `evDetailTitleColor` define el color del título; `evUpcomingMarkHtml` conserva
+  la identidad del marcador. Cambiar el color libre no recolorea el título.
+- `personal-cards.js` renderiza las partidas con y sin períodos sobre la misma
+  estructura. `excelia-personal-cards-v1` recuerda el plegado por año/partida y
+  se excluye del backup por ser solo presentación local. Los períodos e importes
+  siguen viajando íntegros con `personalPerYear`.
+- `PERSONAL_SAVED` compara el borrador con la carga/guardado del año. Cambiar
+  el plegado no enciende Guardar; revertir el importe tampoco deja un falso aviso.
+  Guardar períodos conserva su guardado explícito; los campos simples usan
+  Guardar configuración cuando hay cambios.
+
 ## Energía: datos y cálculos
 
 | Módulos | Responsabilidad |

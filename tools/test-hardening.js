@@ -46,7 +46,7 @@ console.log('Preferencias: inicio, persistencia, importación y recuperación an
 const legacyDrink={id:'legacy-drink',kind:'puntual',type:'Cerveza',title:'Encuentro',start:'2026-10-03',end:'2026-10-03',color:'#f5c232'};
 prefs.EVENTS=[legacyDrink];prefs.evMergeIncoming([{...legacyDrink,id:'imported-drink',type:'Tomar algo'}]);
 assert.equal(prefs.EVENTS.length,1);assert.equal(prefs.getEvType(legacyDrink),'Tomar algo');
-assert.equal(prefs.evDefaultShape(legacyDrink),'beer');assert.equal(prefs.evFilterGroup({kind:'puntual',type:'Barbacoa'}),'Resto');
+assert.equal(prefs.evDefaultShape(legacyDrink),'beer');assert.equal(prefs.evFilterGroup({kind:'puntual',type:'Barbacoa'}),'Plan/Quedada');
 assert.throws(()=>prefs.validateImport({eventAppearance:{border:0,cross:5,ink:3,halo:.6}}));
 assert.throws(()=>prefs.validateImport({eventAppearance:{border:2,cross:5,ink:'3',halo:.6}}));
 assert.throws(()=>prefs.validateImport({eventAppearance:{border:2,cross:5,ink:3}}));

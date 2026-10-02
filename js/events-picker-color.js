@@ -42,6 +42,7 @@ var EV_COLOR_TYPES = {
 var EV_MANAGEMENT_SUBTYPES={'Llamada':'phone','Peluquería':'scissors','Médico':'medical','Dentista':'tooth'};
 var EV_PLAN_SUBTYPES={'Plan romántico':'heart','Comida':'meal','Cena':'dinner','Salir de fiesta':'disco','Copas':'party','Tomar algo':'beer','Montaña':'mountain','Barbacoa':'barbecue'};
 function evIsManagement(type){return type==='Rec. Gestiones'||Object.prototype.hasOwnProperty.call(EV_MANAGEMENT_SUBTYPES,type);}
+function evIsPlan(type){return type==='Plan/Quedada'||Object.prototype.hasOwnProperty.call(EV_PLAN_SUBTYPES,type);}
 function evFixedSymbol(type){return EV_MANAGEMENT_SUBTYPES[type]||EV_PLAN_SUBTYPES[type]||null;}
 var EV_KINDS = {
   puntual:{label:'Puntual', types:['Rec. Gestiones'].concat(Object.keys(EV_MANAGEMENT_SUBTYPES),['Plan/Quedada'],Object.keys(EV_PLAN_SUBTYPES),['Ensayos boda','Otros'])},
@@ -51,7 +52,7 @@ var EV_KINDS = {
 var EV_TYPE_COLORS = {
   'puntual|Rec. Gestiones':'#34d399',
   'puntual|Médico'       :'#e03131',
-  'puntual|Llamada'      :'#868e96',
+  'puntual|Llamada'      :'#1e40af',
   'puntual|Peluquería'   :'#8b5e34',
   'puntual|Dentista'     :'#16859b',
   'puntual|Plan/Quedada'  :'#fb923c',
@@ -122,7 +123,7 @@ function evShapeSvg(shape){
   if(shape==='medical'){
     inner='<rect x="-9" y="-7.5" width="18" height="15" rx="2" fill="#fff" stroke="#000" '+evSymbolStroke(bw)+'/><path d="M-5,0 H5 M0,-5 V5" fill="none" stroke="#e03131" '+evSymbolStroke(3.4,'cross')+'/>';
   } else if(shape==='phone'){
-    inner='<path d="M-7,-8 C-10,-6 -8,1 -3,5 C1,9 6,10 8,7 L8,4 L3,1 L1,3 C-1,2 -3,0 -4,-2 L-2,-4 L-5,-8 Z" fill="#868e96" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/>';
+    inner='<path d="M-7,-8 C-10,-6 -8,1 -3,5 C1,9 6,10 8,7 L8,4 L3,1 L1,3 C-1,2 -3,0 -4,-2 L-2,-4 L-5,-8 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/>';
   } else if(shape==='scissors'||shape==='comb'){
     inner='<path d="M-5,4 L5.5,-8 Q7,-7 5,-3 L0,3 Z M5,4 L-5.5,-8 Q-7,-7 -5,-3 L0,3 Z" fill="#dbe3e9" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/>'
       +'<circle cx="-5" cy="5.5" r="3" fill="#8b5e34" stroke="#000" '+evSymbolStroke(bw)+'/><circle cx="5" cy="5.5" r="3" fill="#8b5e34" stroke="#000" '+evSymbolStroke(bw)+'/><circle cy=".5" r="1" fill="#000"/>';

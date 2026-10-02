@@ -54,7 +54,7 @@ for(const type of Object.keys(a.EV_PLAN_SUBTYPES)){
  const ev={id:'test-plan',kind:'puntual',type,color:'#000000',shape:'cloud'};
  assert.equal(a.getEvDisplayColor(ev),a.evTypeColor('puntual',type));
  assert.equal(a.evDefaultShape(ev),a.EV_PLAN_SUBTYPES[type]);
- assert.equal(a.evFilterGroup(ev),'Resto');assert.ok(!a.EV_FREE_COLOR['puntual|'+type]);
+ assert.equal(a.evFilterGroup(ev),'Plan/Quedada');assert.ok(!a.EV_FREE_COLOR['puntual|'+type]);
  assert.equal(a.evSuggestedTitle(type),type);
 }
 assert.match(a.evShapeSvg('cloud'),/path/);assert.match(a.evShapeSvg('beer'),/path/);

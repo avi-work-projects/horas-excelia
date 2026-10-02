@@ -28,16 +28,17 @@ var EV_ANNUAL_FILTER_HIDDEN = []; // grupos ocultos en el calendario anual/4 mes
      Asturias  -> aparte, por lo mucho que se usa
      Gestiones -> puntual|Rec. Gestiones y puntual|Médico
      Bodas     -> puntual|Ensayos boda
-     Resto     -> el resto de puntuales (Plan/Quedada, Otros...) */
-var EV_FILTER_GROUPS = ['Grandes','Asturias','Rec. Gestiones','WM + Rut','Resto','Cumplea\u00f1os VIP'];
+     P/Q       -> Plan/Quedada y todas sus subcategorías
+     Resto     -> otros puntuales y rutinas */
+var EV_FILTER_GROUPS = ['Grandes','Asturias','Rec. Gestiones','Plan/Quedada','WM + Rut','Resto','Cumplea\u00f1os VIP'];
 /* Etiquetas en SINGULAR: con el plural la estrella de VIP se caia a una
    segunda fila en pantallas estrechas */
 /* WM = Wedding Moves (las clases de baile de boda) + Rut = rutinas */
 /* Etiquetas cortas a proposito: con los nombres largos los chips se caian
    a una segunda fila en pantallas estrechas. Asturias va con su bandera. */
-var EV_FILTER_SHORT  = {'Grandes':'Grande','Asturias':'<img class="ev-chip-flag" src="css/asturias-cross.svg" alt="Asturias">','Rec. Gestiones':'Gesti&oacute;n',
+var EV_FILTER_SHORT  = {'Grandes':'Grande','Asturias':'<img class="ev-chip-flag" src="css/asturias-cross.svg" alt="Asturias">','Rec. Gestiones':'Gest','Plan/Quedada':'P/Q',
   'WM + Rut':'<span class="wm-logo wm-logo-chip" role="img" aria-label="WM"></span>','Resto':'Resto','Cumplea\u00f1os VIP':'<img class="ev-chip-vip" src="VIP.png" alt="VIP">'};
-var EV_FILTER_COLOR  = {'Grandes':'#38bdf8','Asturias':'#1d4ed8','Rec. Gestiones':'#34d399',
+var EV_FILTER_COLOR  = {'Grandes':'#38bdf8','Asturias':'#1d4ed8','Rec. Gestiones':'#34d399','Plan/Quedada':'#fb923c',
   'WM + Rut':'#c08a5a','Resto':'#ff6b6b','Cumplea\u00f1os VIP':'#fbbf24'};
 /* Tras que grupo va la linea que separa eventos grandes de puntuales */
 var EV_FILTER_SEP_AFTER = 'Asturias';
@@ -56,6 +57,7 @@ function evFilterGroup(ev){
   if(t==='Ensayos boda')return 'WM + Rut';
   if(t==='Rutina')return 'Resto';
   if(evIsManagement(t))return 'Rec. Gestiones';
+  if(evIsPlan(t))return 'Plan/Quedada';
   return 'Resto';
 }
 var EV_PREV_VIEW = null;       // para volver al anual al pulsar ←

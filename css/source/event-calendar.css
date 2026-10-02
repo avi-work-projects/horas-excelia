@@ -302,7 +302,7 @@
 .ev-ann-vd-opt.active{color:var(--accent-bright);font-weight:600;background:var(--accent-glow)}
 /* Linea que separa los chips de eventos grandes de los puntuales */
 .ev-filter-sep{width:1px;align-self:stretch;margin:2px 3px;background:var(--border-light);flex:0 0 auto}
-.ev-annual-filter-row{display:flex;gap:4px;flex-wrap:wrap;padding-bottom:2px}
+.ev-annual-filter-row{display:flex;gap:3px;flex-wrap:nowrap;padding-bottom:2px}
 .ev-filter-chip{height:22px;padding:0 7px;border:1px solid var(--border);border-radius:11px;background:transparent;color:var(--text-dim);font-size:.65rem;cursor:pointer;transition:opacity .15s;opacity:.4;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
 /* El chip de Asturias es la bandera, sin texto: ahorra el ancho que hacia
    caer la fila de chips a dos niveles */

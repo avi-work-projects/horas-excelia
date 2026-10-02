@@ -24,7 +24,7 @@ function renderFiscalContent(){
   else if(FISCAL_TAB==='irpf_deduc')h+=renderFiscalTabIrpfDeduc();
   else if(FISCAL_TAB==='despacho')h+=renderFiscalTabDespacho(false);
   h+='</div>';
-  h+='<div class="fiscal-sticky-save">';
+  h+='<div class="fiscal-sticky-save"'+(FISCAL_TAB==='personal'?' id="personalSaveFooter"'+(personalHasChanges()?'':' hidden'):'')+'>';
   h+=FISCAL_TAB==='despacho'?'<button class="fiscal-save-btn household-detail-link" id="householdDetailLink">Ver en detalle / Editar</button>':'<button class="fiscal-save-btn" id="fiscalSave">Guardar configuraci\u00f3n</button>';
   h+='</div>';
   return h;
@@ -36,6 +36,7 @@ function _renderYearSelector(){
   h+='<button class="fiscal-year-arrow" id="fiscalYearPrev">&#8592;</button>';
   h+='<span class="fiscal-year-label" id="fiscalYearLabel">'+FISCAL_YEAR+'</span>';
   h+='<button class="fiscal-year-arrow" id="fiscalYearNext">&#8594;</button>';
+  if(FISCAL_TAB==='personal')h+=renderPersonalCardsToggle();
   h+='</div>';
   return h;
 }
@@ -63,39 +64,7 @@ function _renderCopyYearBtn(){
 
 /* ── Tab Economía Personal (per-year) ─────────────────────── */
 function _personalListHtml(arr,section,periodMode){
-  /* periodMode: 'weekly'=/sem|/mes, 'monthly'=/mes|/año */
-  var h='';
-  arr.forEach(function(item,i){
-    if(Array.isArray(item.periods)){h+=personalPeriodsSummary(item,section,i)+_personalTripFilter(item,section,i);return;}
-    /* Compute annual for this item */
-    var annual=0;
-    if(item.amount){
-      if(item.period==='weekly'||(periodMode==='weekly'&&!item.period))annual=item.amount*52;
-      else if(item.period==='annual')annual=item.amount;
-      else annual=item.amount*12;
-    }
-    h+='<div class="fiscal-gasto-item" data-ps="'+section+'" data-pi="'+i+'">';
-    h+='<input class="fiscal-gasto-lbl-input" data-ps="'+section+'" data-pi="'+i+'" data-pf="label" value="'+escHtml(item.label)+'" placeholder="Nombre...">';
-    h+='<input class="fiscal-gasto-amt fiscal-gasto-amt-sm" data-ps="'+section+'" data-pi="'+i+'" data-pf="amount" type="number" min="0" step="1" value="'+(item.amount||0)+'">';
-    if(periodMode==='weekly'){
-      h+='<div class="fiscal-gasto-period">';
-      h+='<button class="fiscal-period-btn'+(item.period==='weekly'||!item.period?' active':'')+'" data-ps="'+section+'" data-pi="'+i+'" data-pf="period" data-val="weekly">/sem</button>';
-      h+='<button class="fiscal-period-btn'+(item.period==='monthly'?' active':'')+'" data-ps="'+section+'" data-pi="'+i+'" data-pf="period" data-val="monthly">/mes</button>';
-      h+='</div>';
-    }else if(periodMode==='monthly'){
-      h+='<div class="fiscal-gasto-period">';
-      h+='<button class="fiscal-period-btn'+(item.period==='monthly'||!item.period?' active':'')+'" data-ps="'+section+'" data-pi="'+i+'" data-pf="period" data-val="monthly">/mes</button>';
-      h+='<button class="fiscal-period-btn'+(item.period==='annual'?' active':'')+'" data-ps="'+section+'" data-pi="'+i+'" data-pf="period" data-val="annual">/a\u00f1o</button>';
-      h+='</div>';
-    }
-    h+='<button class="fiscal-gasto-del fiscal-personal-del" data-ps="'+section+'" data-pi="'+i+'">&#10005;</button>';
-    h+='</div>';
-    /* Annual amount indicator */
-    if(annual>0)h+='<div class="fiscal-gasto-annual">'+fcPlain(annual)+'/a\u00f1o</div>';
-    h+='<button type="button" class="personal-advanced" data-pp-edit="'+i+'" data-ps="'+section+'">Avanzado · fechas y períodos</button>';
-    h+=_personalTripFilter(item,section,i);
-  });
-  return h;
+  return arr.map(function(item,index){return renderPersonalCard(item,section,index,periodMode);}).join('');
 }
 function _personalTripFilter(item,section,i){
   if(!item._viaje)return '';

@@ -122,6 +122,15 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .ev-filter-cycle-wrap{margin-left:auto;display:flex;align-items:center;border-left:1px solid var(--border);padding-left:7px}
 .ev-filter-cycle{border-radius:3px;color:var(--text-muted);line-height:18px}
 .ev-filter-cycle span{color:var(--cycle-color);font-weight:800;font-size:19px}
+@media(max-width:420px){
+  .ev-annual-controls{padding-left:0;padding-right:0}
+  .ev-annual-filter-row{gap:2px}
+  .ev-annual-filter-row .ev-filter-chip{padding-left:3px;padding-right:3px;font-size:.6rem}
+  .ev-annual-filter-row .ev-filter-chip:has(.ev-chip-flag){width:28px;padding:0}
+  .ev-annual-filter-row .wm-logo-chip{width:24px}
+  .ev-annual-filter-row .ev-filter-sep{margin-left:2px;margin-right:2px}
+  .ev-annual-filter-row .ev-filter-cycle-wrap{padding-left:4px}
+}
 
 .energy-window>.energy-tabs{flex-shrink:0;position:static;margin:0;padding:0 max(20px,calc((100% - 720px)/2));box-shadow:0 1px 0 var(--border)}
 .energy-window>.energy-year-nav{display:flex;justify-content:center;gap:22px;align-items:center}

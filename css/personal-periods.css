@@ -1,10 +1,28 @@
-.personal-advanced{display:block;width:100%;background:var(--surface2);color:var(--personal-tone,var(--accent-bright));border:1px solid var(--border);border-radius:8px;padding:7px 10px;margin:4px 0 14px;text-align:left;font:inherit;font-size:.7rem;cursor:pointer}
+/* Partidas simples y por tramos: misma fila y misma jerarquía visual. */
 [data-theme="light"] #fiscalOverlay{--personal-tone:#79509c}
+.personal-item-card{border:1px solid var(--border);border-radius:12px;margin:0 0 10px;padding:10px;background:var(--surface);min-width:0}
+.personal-item-main{display:flex;align-items:center;gap:6px;min-width:0}
+.personal-gear{flex:0 0 27px;width:27px;height:30px;border:0;border-radius:7px;padding:0;background:color-mix(in srgb,var(--personal-tone,var(--accent)) 9%,var(--surface));color:var(--personal-tone,var(--accent-bright));font:inherit;font-size:1.05rem;cursor:pointer}
+.personal-item-main .fiscal-gasto-lbl-input{min-width:0;width:0;padding:6px 4px;font-size:.76rem;background:transparent;border-color:transparent}
+.personal-item-main .fiscal-gasto-lbl-input:focus{border-color:var(--accent)}
+.personal-amount-input{display:flex;align-items:center;gap:2px;flex:0 0 67px;width:67px;font-size:.7rem;color:var(--text-muted)}
+.personal-amount-input .fiscal-gasto-amt{width:55px;min-width:0;padding:6px 3px;box-sizing:border-box;font-size:.75rem;appearance:textfield;-moz-appearance:textfield}
+.personal-amount-input input::-webkit-inner-spin-button,.personal-amount-input input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.personal-amount{flex:0 0 auto;min-width:67px;text-align:right;font-family:var(--mono);font-size:.75rem;color:var(--text);white-space:nowrap}
+.personal-item-meta{display:flex;align-items:center;gap:6px;padding:8px 24px 0 33px;font-size:.63rem;color:var(--text-muted);min-height:24px}
+.personal-item-annual{margin-left:auto;white-space:nowrap;font-family:var(--mono);font-size:.61rem;color:var(--text-dim)}
+.personal-period-toggle{font:inherit;color:var(--personal-tone,var(--accent-bright));border:1px solid var(--border);border-radius:5px;padding:3px 6px;background:var(--surface2);cursor:pointer;white-space:nowrap}
+.personal-average{font-size:.59rem;white-space:nowrap}
+.personal-period-details{margin-top:10px;border-top:1px solid var(--border)}
+.personal-period-line{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 3px;border-bottom:1px solid var(--border);font-size:.67rem;color:var(--text-muted)}
+.personal-period-line:last-child{border:0}.personal-period-line>strong{white-space:nowrap;font-weight:500;color:var(--text)}.personal-period-line.paused>strong{color:var(--c-orange)}
+.personal-item-card .fiscal-viaje-selector{padding:10px 0 0 33px}
+.fiscal-year-selector{position:relative}
+.personal-fold-all{position:absolute;right:16px;width:30px;height:30px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--personal-tone,var(--accent-bright));display:flex;align-items:center;justify-content:center;padding:5px;cursor:pointer}
+.personal-fold-all svg{width:20px;height:20px}.personal-fold-all:disabled{opacity:.35;cursor:default}
+#personalSaveFooter[hidden],.personal-period-details[hidden]{display:none}
 .personal-period-editor .personal-frequency button[aria-pressed=true]{color:var(--personal-tone,var(--accent-bright))}
-.personal-period-card{border:1px solid var(--border);border-radius:12px;margin:12px 0;background:var(--surface);overflow:hidden}
-.personal-period-card>header{display:flex;align-items:center;gap:8px;padding:10px 12px}.personal-period-card>header input{width:100%;min-width:0;font-weight:600}.personal-period-card .personal-advanced{width:calc(100% - 24px);margin:10px 12px}
-.personal-period-total{display:flex;flex-direction:column;gap:3px;padding:10px 12px;background:color-mix(in srgb,var(--accent) 7%,var(--surface));font-size:.8rem}.personal-period-total span{font-size:.66rem;color:var(--text-muted)}
-.personal-period-line{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:.7rem}.personal-period-line:last-of-type{border:0}.personal-period-line>div{min-width:0}.personal-period-line b{display:block;overflow-wrap:anywhere}.personal-period-line small{display:block;color:var(--text-muted);margin-top:4px}.personal-period-line>strong{white-space:nowrap;font-weight:500}.personal-period-line.paused>strong{color:var(--c-orange)}
+@media(max-width:360px){.personal-item-card{padding:8px}.personal-item-main{gap:4px}.personal-item-main .fiscal-gasto-lbl-input{font-size:.7rem}.personal-item-meta{padding-right:20px;gap:4px}.personal-average{font-size:.54rem}.personal-item-annual{font-size:.57rem}}
 #personalPeriodsOverlay{z-index:650}.personal-period-editor{max-height:88vh;max-width:560px;box-sizing:border-box;display:flex;flex-direction:column;gap:16px;overflow-y:auto}.personal-period-editor>*{flex-shrink:0}.personal-period-editor>header{display:flex;align-items:center;gap:12px}.personal-period-editor h2{font-size:1rem;margin:0 0 4px}.personal-period-editor header span{font-size:.72rem;color:var(--text-muted)}
 .personal-period-rows{display:flex;flex-direction:column;gap:12px}.personal-period-edit-row{border:1px solid var(--border);border-radius:12px;background:var(--surface2);padding:12px}.personal-period-edit-row>header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:.78rem}.personal-period-edit-row>header button{border:0;background:transparent;color:var(--c-red);font-size:1.1rem;cursor:pointer}
 .personal-period-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}.personal-period-editor label{display:flex;flex-direction:column;gap:5px;font-size:.7rem;color:var(--text-muted)}.personal-period-editor input:not([type=checkbox]){box-sizing:border-box;width:100%;min-width:0;padding:9px 6px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font:inherit;font-size:.82rem}.personal-period-editor .personal-pause-check{flex-direction:row;align-items:center;margin-top:12px;gap:7px}

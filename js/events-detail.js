@@ -37,6 +37,15 @@ function openEvDeleteSheet(ev){
 function closeEvDeleteSheet(){cerrarPanel('evDelWrap','evDelOv');}
 
 
+function evDetailTitleColor(ev){
+  var type=getEvType(ev);
+  if(getEvKind(ev)==='puntual'){
+    if(evIsManagement(type))return 'var(--ev-detail-management)';
+    if(evIsPlan(type))return 'var(--ev-detail-plan)';
+    if(type==='Ensayos boda'&&ev.boda&&ev.boda.coupleId)return getEvDisplayColor(ev);
+  }
+  return 'var(--text)';
+}
 function renderEvDetail(ev,fromSummary,car){
   var s=new Date(ev.start+'T00:00:00');
   var e2=ev.end&&ev.end!==ev.start?new Date(ev.end+'T00:00:00'):null;
@@ -79,15 +88,16 @@ function renderEvDetail(ev,fromSummary,car){
   }
   var _ddc=getEvDisplayColor(ev);
   h+='<div class="ev-detail-color-bar" style="background:'+_ddc+'" id="evDColorBar"></div>';
-  h+='<div style="display:flex;align-items:center;gap:8px">';
-  h+='<div class="ev-detail-title" style="color:'+_ddc+';flex:1" id="evDTitle">'+escHtml(ev.title)+'</div>';
-  h+=rutRecoveryHtml(ev);
+  h+='<div class="ev-detail-heading">';
+  h+='<span class="ev-detail-symbol" id="evDMarker" aria-hidden="true">'+evUpcomingMarkHtml(ev)+'</span>';
+  h+='<div class="ev-detail-title" style="color:'+evDetailTitleColor(ev)+'" id="evDTitle">'+escHtml(ev.title)+'</div>';
   /* Paleta de color sólo en tipos Viaje y Otros */
   var _evType=getEvType(ev);
   if(_evType==='Viaje'||_evType==='Otros'){
     h+='<button class="ev-detail-color-btn" id="evDColorBtn">\uD83C\uDFA8</button>';
   }
   h+='</div>';
+  h+=rutRecoveryHtml(ev);
   h+='<div style="font-size:.72rem;font-weight:600;color:'+_ddc+';opacity:.8;margin-bottom:4px">'+getEvType(ev)+'</div>';
   h+='<div class="ev-detail-color-section" id="evDColorSection">';
   h+=_renderColorPicker(_ddc,false,false,'evDCp');
@@ -288,7 +298,8 @@ function openEvDetail(ev,container,car){
         _dCpRef=_bindColorPicker(wrap,'evDCp',function(hex){
           /* Solo actualiza preview local, NO guarda */
           var bar=document.getElementById('evDColorBar');if(bar)bar.style.background=hex;
-          var ttl=document.getElementById('evDTitle');if(ttl)ttl.style.color=hex;
+          var marker=document.getElementById('evDMarker');
+          if(marker)marker.innerHTML=evUpcomingMarkHtml(Object.assign({},ev,{color:hex}));
         });
       }
     });
