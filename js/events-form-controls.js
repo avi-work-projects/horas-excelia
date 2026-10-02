@@ -30,8 +30,6 @@ function _bindEvFormTypes(form){
       _evFormTypeUI(form,kind,type);
       if(EV_FREE_COLOR[evTypeKey(kind,type)])form.colorPicker.setColor(evTypeColor(kind,type));
       _evFormSuggestTitle(form,type);
-      var note=_evFormEl(form,'evFNote');
-      if(type==='Asturias'&&!note.value.trim()){note.value='Asturias';_evFormEl(form,'evCharCnt').textContent='8/200';}
     });
   });
 }

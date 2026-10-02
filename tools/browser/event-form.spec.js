@@ -52,6 +52,18 @@ test('cambiar de clase reinicia repetición y conserva trayectos sin hora',async
   await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);
   expect(await page.evaluate(()=>EVENTS[0])).toMatchObject({kind:'grande',type:'Otros',barSize:'sm',repeat:null,viaje:{ida:{time:null,modo:'coche',conductor:'Conductor de prueba'},vuelta:{time:'18:30',modo:'tren'}}});
 });
+test('Asturias sugiere el título sin rellenar la nota ni borrar una nota escrita',async({page})=>{
+  await newEvent(page);await page.locator('.ev-kind-btn[data-kind="grande"]').click();
+  await page.locator('#evFTypePicker [data-type="Asturias"]').click();
+  await expect(page.locator('#evFTitle')).toHaveValue('Asturias');
+  await expect(page.locator('#evFNote')).toHaveValue('');
+  await expect(page.locator('#evCharCnt')).toHaveText('0/200');
+  await page.locator('#evFNote').fill('Mi nota de prueba');
+  await page.locator('#evFTypePicker [data-type="Viaje"]').click();
+  await page.locator('#evFTypePicker [data-type="Asturias"]').click();
+  await expect(page.locator('#evFNote')).toHaveValue('Mi nota de prueba');
+});
+
 test('ensayos por rango son clases independientes y Deshacer restaura días cerrados',async({page})=>{
   await page.evaluate(()=>{BODA_CLOSED={'2026-10-05':true};saveBodaClosed();});
   await newEvent(page);await page.locator('#evFTypePicker [data-type="Ensayos boda"]').click();

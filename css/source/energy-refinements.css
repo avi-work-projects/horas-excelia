@@ -180,9 +180,10 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 /* Selección por fondo en las subpestañas de Eventos; cada una conserva su tono. */
 #eventsOverlay .econ-sub-tab.active,#eventsOverlay .boda-config-btn.active{background:color-mix(in srgb,currentColor 10%,var(--surface))}
 #eventsOverlay .sy-body:has(> .ev-upcoming-tabs){scrollbar-gutter:stable}
-.ev-upcoming-tabs{justify-content:space-between;gap:8px;margin:0 -16px;padding:10px 20px;box-sizing:border-box;flex-shrink:0}
+.ev-upcoming-tabs{gap:6px;margin:0 -16px;padding:10px 20px;box-sizing:border-box;flex-shrink:0}
 .ev-wk-body>.ev-upcoming-tabs{margin:0}
-.ev-upcoming-tabs .econ-sub-tab{flex:0 0 auto;padding:5px 4px;font-size:.62rem;font-weight:600;line-height:1.2;color:var(--accent-bright);white-space:nowrap;transition:color .15s,background .15s,border-color .15s}
+.ev-upcoming-tabs .econ-sub-tab{flex:1;min-width:0;padding:5px 2px;font-size:.62rem;font-weight:600;line-height:1.2;color:var(--accent-bright);white-space:nowrap;transition:color .15s,background .15s,border-color .15s}
+@media(max-width:360px){.ev-upcoming-tabs .econ-sub-tab{font-size:.6rem;padding-left:0;padding-right:0}}
 
 .energy-tariff-period>summary{list-style-position:outside;cursor:pointer;padding:12px 0}.energy-tariff-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}.energy-tariff-metrics>span{display:flex;flex-direction:column;gap:5px;background:var(--surface2);padding:10px 5px;border-radius:9px;text-align:center}.energy-tariff-metrics small{font-size:.66rem;font-weight:400;color:var(--text-muted)}.energy-tariff-metrics b{font-size:.85rem;color:var(--text)}
 .energy-tariff-metrics .energy-price-basis{font-size:.59rem;margin-top:-2px}
