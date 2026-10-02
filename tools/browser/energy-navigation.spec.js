@@ -38,17 +38,31 @@ for(const kind of ['luz','gas'])test(kind+': el primer panel cambia de año y el
 });
 
 test('Próximos mantiene la posición de los cuatro títulos al cambiar de pestaña',async({page})=>{
+  await page.evaluate(()=>{
+    const now=new Date();
+    EVENTS=Array.from({length:30},(_,i)=>{
+      const date=dk(new Date(now.getFullYear(),now.getMonth(),now.getDate()+i));
+      return {id:'tabs-'+i,kind:'puntual',type:'Otros',title:'Evento de prueba '+i,start:date,end:date,color:'#65a367'};
+    });
+    BDAYS=[];
+  });
   await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();
-  const positions=[];
-  for(const id of ['evSubUpcoming','evSubBirthdays','evSubAgenda','evSubTodos','evSubUpcoming']){
-    await page.locator('#'+id).click();
-    positions.push(await page.locator('.ev-upcoming-tabs .econ-sub-tab').evaluateAll(els=>els.map(el=>{
-      const r=el.getBoundingClientRect();return [r.x,r.y,r.width,r.height];
-    })));
+  for(const width of [320,400]){
+    await page.setViewportSize({width,height:880});
+    const positions=[];
+    for(const id of ['evSubUpcoming','evSubBirthdays','evSubAgenda','evSubTodos','evSubUpcoming']){
+      await page.locator('#'+id).click();
+      // Medir también las letras y con el listado desplazado, no solo las cajas vacías.
+      await page.locator('#eventsContent .sy-body').evaluate(el=>el.scrollTop=240);
+      positions.push(await page.locator('.ev-upcoming-tabs .econ-sub-tab').evaluateAll(els=>els.map(el=>{
+        const r=el.getBoundingClientRect(),range=document.createRange();range.selectNodeContents(el);
+        const text=range.getBoundingClientRect();return [r.x,r.y,r.width,r.height,text.x,text.width];
+      })));
+    }
+    for(const row of positions)row.forEach((r,i)=>r.forEach((v,j)=>expect(Math.abs(v-positions[0][i][j])).toBeLessThan(1)));
+    const row=positions[0],gaps=row.slice(1).map((r,i)=>r[0]-row[i][0]-row[i][2]);
+    expect(Math.max(...gaps)-Math.min(...gaps)).toBeLessThan(1);
   }
-  for(const row of positions)row.forEach((r,i)=>r.forEach((v,j)=>expect(Math.abs(v-positions[0][i][j])).toBeLessThan(1)));
-  const row=positions[0],gaps=row.slice(1).map((r,i)=>r[0]-row[i][0]-row[i][2]);
-  expect(Math.max(...gaps)-Math.min(...gaps)).toBeLessThan(1);
 });
 
 test('los pesos se ven enteros y conservan la precisión hasta que se editan',async({page})=>{

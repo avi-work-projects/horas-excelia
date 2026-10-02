@@ -1901,6 +1901,7 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 
 /* ── ALARM PANEL ── */
 .alarm-cfg{min-width:220px;padding:4px 0}
+.alarm-cfg>*{flex-shrink:0}
 .alarm-panel-title{font-size:.7rem;color:var(--text-muted);padding:6px 12px 4px;font-weight:600}
 .alarm-time-row{display:flex;align-items:center;gap:10px;padding:8px 12px 4px;justify-content:center}
 .alarm-colon{font-family:var(--mono);font-size:1.6rem;font-weight:700;color:var(--accent-bright);user-select:none;line-height:1}
@@ -3088,9 +3089,11 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 
 /* Selección por fondo en las subpestañas de Eventos; cada una conserva su tono. */
 #eventsOverlay .econ-sub-tab.active,#eventsOverlay .boda-config-btn.active{background:color-mix(in srgb,currentColor 10%,var(--surface))}
-#eventsOverlay .sy-body:has(> .ev-upcoming-tabs){scrollbar-gutter:stable}
-.ev-upcoming-tabs{gap:6px;margin:0 -16px;padding:10px 20px;box-sizing:border-box;flex-shrink:0}
-.ev-wk-body>.ev-upcoming-tabs{margin:0}
+/* Mismo contenedor en las cuatro vistas: sin compensaciones con márgenes
+   negativos ni anchuras dependientes de la pestaña o de su contenido. */
+.sy-body.ev-upcoming-body{padding:0;gap:0;overflow-x:hidden;scrollbar-gutter:stable}
+.ev-upcoming-content{display:flex;flex-direction:column;gap:16px;padding:16px 16px 40px;min-width:0;flex-shrink:0}
+.ev-upcoming-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;width:100%;margin:0;padding:10px 20px;box-sizing:border-box;flex-shrink:0}
 .ev-upcoming-tabs .econ-sub-tab{flex:1;min-width:0;padding:5px 2px;font-size:.62rem;font-weight:600;line-height:1.2;color:var(--accent-bright);white-space:nowrap;transition:color .15s,background .15s,border-color .15s}
 @media(max-width:360px){.ev-upcoming-tabs .econ-sub-tab{font-size:.6rem;padding-left:0;padding-right:0}}
 

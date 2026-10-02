@@ -12,7 +12,10 @@ function closeSettingsMenu(restoreFocus){
   SETTINGS_MENU_ANCHOR=null;SETTINGS_MENU_BACK=null;
 }
 function positionSettingsMenu(){
-  var menu=document.getElementById('dataMenu'),anchor=SETTINGS_MENU_ANCHOR;
+  _positionHeaderMenu(document.getElementById('dataMenu'),SETTINGS_MENU_ANCHOR);
+}
+/* Ajustes y campana comparten anclaje y límites, también con el teclado móvil. */
+function _positionHeaderMenu(menu,anchor){
   if(!menu||!anchor||!menu.classList.contains('open'))return;
   var rect=anchor.getBoundingClientRect(),top=Math.max(8,rect.bottom+6);
   var viewport=window.visualViewport,height=viewport?viewport.height:window.innerHeight;
@@ -23,9 +26,9 @@ function positionSettingsMenu(){
 function toggleSettingsMenu(anchor){
   var menu=document.getElementById('dataMenu');if(!menu)return;
   if(menu.classList.contains('open')){closeSettingsMenu();return;}
+  closeAlarmPanel();
   SETTINGS_MENU_ANCHOR=anchor||document.getElementById('menuBtn');
   SETTINGS_MENU_BACK=NAV_BACK;NAV_BACK=closeSettingsMenu;
-  var alarm=document.getElementById('alarmPanel');if(alarm)alarm.classList.remove('open');
   setConnectionsEditing(false);
   menu.querySelectorAll('.settings-details').forEach(function(d){d.open=false;});
   menu.classList.add('open');menu.scrollTop=0;

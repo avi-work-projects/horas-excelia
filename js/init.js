@@ -119,24 +119,13 @@
   /* ── Botones del header (overlays) ── */
 
   /* ── Alarma: panel configurable (Vivo X200 Ultra / Android) ── */
-  var _g10=document.getElementById('alarmTestBtn'); if(_g10)_g10.addEventListener('click',function(e){
-    e.stopPropagation();
-    var panel=document.getElementById('alarmPanel');
-    var opening=!panel.classList.contains('open');
-    /* Solo puede haber un desplegable abierto: al abrir este, cerrar el otro */
-    closeSettingsMenu();
-    if(opening){
-      // Construir botones de días ordenados desde hoy con fecha debajo
-      buildAlarmDayBtns();
-    }
-    panel.classList.toggle('open');
-    if(opening){
-      // Drum pickers: inicializar DESPUÉS de que el panel sea visible (display:none → flex)
-      var _dH=parseInt(appStorage.getItem('excelia-alarm-h')||'9',10);
-      var _dM=parseInt(appStorage.getItem('excelia-alarm-m')||'20',10);
-      buildDrumPicker('drumHour',24,_dH);
-      buildDrumPicker('drumMin',60,_dM);
-    }
+  initAlarmPanel(function(){
+    buildAlarmDayBtns();
+    // Inicializar las ruedas DESPUÉS de que el panel sea visible.
+    var _dH=parseInt(appStorage.getItem('excelia-alarm-h')||'9',10);
+    var _dM=parseInt(appStorage.getItem('excelia-alarm-m')||'20',10);
+    buildDrumPicker('drumHour',24,_dH);
+    buildDrumPicker('drumMin',60,_dM);
   });
 
   /* ── Drum picker: selector giratorio de hora/minuto ── */
@@ -284,7 +273,7 @@
     var todaySelected=selDays.indexOf(todayAndroid)>=0;
     var needsConfirm=todaySelected&&nowMins>=alarmMins;
     function proceed(){
-      document.getElementById('alarmPanel').classList.remove('open');
+      closeAlarmPanel();
       // alarmDays siempre presente: valor vacío = sin días (alarma puntual), evita que MacroDroid no sustituya {v=alarmDays}
       var url=macroBase+'/generar_alarma1?alarmH='+h+'&alarmM='+m+'&alarmMsg='+encodeURIComponent(msg)+'&alarmDays='+(selDays.length?selDays.join(','):'');
       if(typeof addAlarm==='function'){
@@ -334,12 +323,10 @@
     var alarmAbierto=panel&&panel.classList.contains('open');
     var menuAbierto=menu&&menu.classList.contains('open');
     if(!alarmAbierto&&!menuAbierto)return;
-    var alarmWrap=document.getElementById('alarmWrap');
-
-    var dentroAlarma=alarmWrap&&alarmWrap.contains(e.target);
+    var dentroAlarma=panel&&(panel.contains(e.target)||e.target.closest('#alarmTestBtn,[data-nav="alarm"]'));
     var dentroMenu=menu&&(menu.contains(e.target)||e.target.closest('#menuBtn,[data-nav="menu"]'));
     if(dentroAlarma||dentroMenu)return;      /* el click es del propio panel */
-    if(alarmAbierto)panel.classList.remove('open');
+    if(alarmAbierto)closeAlarmPanel();
     if(menuAbierto)closeSettingsMenu();
     e.stopPropagation();
     e.preventDefault();

@@ -251,6 +251,9 @@
       "path": "js/settings-menu.js"
     },
     {
+      "path": "js/alarm-panel.js"
+    },
+    {
       "path": "js/init.js",
       "unit": false
     },
