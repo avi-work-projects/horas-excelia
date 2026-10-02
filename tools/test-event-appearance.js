@@ -1,0 +1,17 @@
+const assert=require('node:assert/strict');
+const {cargarApp}=require('./entorno');
+const a=cargarApp({'excelia-event-appearance-v1':JSON.stringify({border:2.4,cross:4,ink:2.5,halo:.4})});
+assert.equal(a.EV_APPEARANCE.border,1.3);
+assert.equal(a.EV_APPEARANCE.cross,4);
+assert.equal(a.document.documentElement.style.getPropertyValue('--ev-symbol-border-scale'),'0.65');
+a.setEventAppearance({border:.5,cross:5,ink:3,halo:.6});
+assert.equal(a.loadEventAppearance().border,1.3);
+const week=Array.from({length:7},(_,i)=>new Date(2026,7,17+i)),today=new Date(2026,7,21);
+assert.equal(a._evBarPast({cs:0,ce:6},week,today).style,';--ev-bar-past:57.1429%');
+assert.equal(a._evBarPast({cs:0,ce:3},week,today).cls,' past-bar');
+assert.equal(a._evBarPast({cs:4,ce:6},week,today).cls,'');
+assert.equal(a._evBarPast({cs:0,ce:6,halfL:true,halfR:true},week,today).style,';--ev-bar-past:58.3333%');
+a.EVENTS=[{id:'test-trip',kind:'grande',type:'Viaje',title:'Viaje en curso',start:'2026-08-19',end:'2026-08-24',color:'#38bdf8'}];
+a.EV_YEAR=2026;a.EV_MONTH=7;a.EV_QUAD_YEAR=2026;a.EV_QUAD_MONTH=7;
+for(const render of ['renderEvCalMonth','renderEvQuad','renderEvAnnual'])assert.match(a[render](),/ev-part-past[^>]+data-id="test-trip"/);
+console.log('Apariencia: ribete definitivo, backups previos y viajes en curso en los tres calendarios OK');

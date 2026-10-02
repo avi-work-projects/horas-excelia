@@ -124,8 +124,7 @@
     var panel=document.getElementById('alarmPanel');
     var opening=!panel.classList.contains('open');
     /* Solo puede haber un desplegable abierto: al abrir este, cerrar el otro */
-    var _dm=document.getElementById('dataMenu');
-    if(_dm)_dm.classList.remove('open');
+    closeSettingsMenu();
     if(opening){
       // Construir botones de días ordenados desde hoy con fecha debajo
       buildAlarmDayBtns();
@@ -323,22 +322,7 @@
   /* ── Alarma: fallback .ics (recordatorio de calendario, 100% fiable) ── */
 
   /* ── Menú 3 puntos: exportar/importar TODO + MacroDroid URLs ── */
-  var _g14=document.getElementById('menuBtn'); if(_g14)_g14.addEventListener('click',function(e){
-    e.stopPropagation();
-    var menu=document.getElementById('dataMenu');
-    var opening=!menu.classList.contains('open');
-    /* Solo puede haber un desplegable abierto: al abrir este, cerrar el otro */
-    var _ap=document.getElementById('alarmPanel');
-    if(_ap)_ap.classList.remove('open');
-    if(opening){
-      setConnectionsEditing(false);
-      document.querySelectorAll('.settings-details').forEach(function(d){d.open=false;});
-      // Poblar inputs con los valores guardados en localStorage
-      var mAlarm=document.getElementById('macroAlarmUrlMenu');
-      if(mAlarm)mAlarm.value=normalizeMacroBase(appStorage.getItem('excelia-alarm-url')||'');
-    }
-    menu.classList.toggle('open');
-  });
+  initSettingsMenu();
   /* Click fuera de un desplegable abierto: lo cierra y se queda ahi. Va en
      fase de CAPTURA y corta el evento, porque si no el mismo toque activaba
      ademas lo que hubiera debajo (tocabas fuera del panel de alarma para
@@ -351,39 +335,15 @@
     var menuAbierto=menu&&menu.classList.contains('open');
     if(!alarmAbierto&&!menuAbierto)return;
     var alarmWrap=document.getElementById('alarmWrap');
-    var menuWrap=menu&&menu.closest('.data-menu-wrap');
+
     var dentroAlarma=alarmWrap&&alarmWrap.contains(e.target);
-    var dentroMenu=menuWrap&&menuWrap.contains(e.target);
+    var dentroMenu=menu&&(menu.contains(e.target)||e.target.closest('#menuBtn,[data-nav="menu"]'));
     if(dentroAlarma||dentroMenu)return;      /* el click es del propio panel */
     if(alarmAbierto)panel.classList.remove('open');
-    if(menuAbierto)menu.classList.remove('open');
+    if(menuAbierto)closeSettingsMenu();
     e.stopPropagation();
     e.preventDefault();
   },true);
-  function setConnectionsEditing(editing){
-    if(editing)document.querySelectorAll('.settings-details').forEach(function(d){d.open=true;});
-    var values=[normalizeMacroBase(appStorage.getItem('excelia-alarm-url')||''),TO,CC.join(', '),AUTHOR_NAME];
-    ['macroAlarmUrlMenu','mailToLocal','mailCcLocal','mailNameLocal'].forEach(function(id,i){
-      var input=document.getElementById(id);input.readOnly=!editing;
-      if(!editing)input.value=values[i];
-    });
-    var btn=document.getElementById('editConnectionsBtn');
-    btn.textContent=editing?'Guardar configuración':'Editar correo y MacroDroid';
-    btn.setAttribute('aria-pressed',String(editing));
-  }
-  document.getElementById('editConnectionsBtn').addEventListener('click',function(){
-    var url=document.getElementById('macroAlarmUrlMenu'),to=document.getElementById('mailToLocal');
-    if(url.readOnly){setConnectionsEditing(true);return;}
-    if(!url.reportValidity()||!to.reportValidity())return;
-    var cfg={to:to.value.trim(),cc:document.getElementById('mailCcLocal').value.split(',').map(function(x){return x.trim();}).filter(Boolean),name:document.getElementById('mailNameLocal').value.trim()};
-    try{
-      appStorage.begin();appStorage.setItem(MAIL_CFG_SK,JSON.stringify(cfg));
-      appStorage.setItem('excelia-alarm-url',normalizeMacroBase(url.value));appStorage.commit();
-      loadMailConfig();setConnectionsEditing(false);showToast('Configuración guardada','success');
-    }catch(e){appStorage.cancel();showToast('No se pudo guardar la configuración','error');}
-  });
-  setConnectionsEditing(false);
-
   /* ── Bottom sheet: overlay de fondo ── */
   var _g15=document.getElementById('overlay'); if(_g15)_g15.addEventListener('click',closeSheet);
 
@@ -426,7 +386,7 @@
     _aplicandoActualizacion=true;
     var mb=document.getElementById('menuBtn');
     if(mb)mb.classList.remove('has-update');
-    var menu=document.getElementById('dataMenu');if(menu)menu.classList.remove('open');
+    closeSettingsMenu();
     function reload(){window.location.reload();}
     if(!('serviceWorker' in navigator)){reload();return;}
     navigator.serviceWorker.getRegistration().then(function(reg){

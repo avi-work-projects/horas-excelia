@@ -245,6 +245,9 @@
       "path": "js/alarms.js"
     },
     {
+      "path": "js/settings-menu.js"
+    },
+    {
       "path": "js/init.js",
       "unit": false
     },

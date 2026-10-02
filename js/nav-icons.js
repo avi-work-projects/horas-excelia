@@ -30,7 +30,7 @@ function applyNavIconStyle(style){
  var value=document.getElementById('navIconStyleValue');if(value)value.textContent=NAV_ICON_STYLE==='professional'?'Profesionales':'Originales';
 }
 function openNavIconPicker(){
- var menu=document.getElementById('dataMenu');if(menu)menu.classList.remove('open');
+ closeSettingsMenu();
  var h='<div class="ev-form-overlay" id="navIconPickerOv"><div class="ev-form-sheet nav-icon-sheet" role="dialog" aria-modal="true" aria-labelledby="navIconPickerTitle"><div class="ev-form-handle"></div>';
  h+='<div class="nav-icon-picker-head"><button class="sy-back" id="navIconPickerClose" aria-label="Cerrar">&#8592;</button><h2 id="navIconPickerTitle">Iconos de navegación</h2></div>';
  h+='<p class="nav-icon-picker-note">Prueba ambos estilos. La elección se guarda al volver atrás o tocar fuera.</p>';

@@ -20,7 +20,8 @@
 .bday-calendar-tools{display:flex;flex-direction:column;align-items:center;gap:7px}
 .bday-header-vip.bday-vip-compact{margin:0;--chk:#c2911c}
 .bday-header-vip.bday-vip-compact img{width:20px;margin:0}
-.bday-vip-compact input[type=checkbox]{width:13px;height:13px}
+.bday-vip-compact input[type=checkbox]{width:13px;height:13px;border-radius:4px}
+.bday-vip-compact input[type=checkbox]:checked::after{left:3px;top:0;width:3px;height:7px;border-width:0 1.6px 1.6px 0}
 .bday-header-add{position:relative;z-index:1;width:32px;height:32px;flex:0 0 32px;padding:0;border:1px solid var(--accent);border-radius:10px;background:color-mix(in srgb,var(--accent) 10%,var(--surface));color:var(--accent-bright);font-size:1.3rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .bday-header-add:active{background:color-mix(in srgb,var(--accent) 20%,var(--surface))}
 .bday-month-hdr{font-size:.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:10px 0 6px;border-bottom:1px solid var(--border);margin-bottom:6px}

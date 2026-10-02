@@ -54,8 +54,8 @@ prefs.setEventAppearance({border:1.5,cross:4,ink:2.5,halo:.4});
 const putAppearance=prefs.localStorage.setItem;let failAppearance=true;
 prefs.localStorage.setItem=(key,value)=>{if(key===prefs.EV_APPEARANCE_KEY&&failAppearance){failAppearance=false;throw Error('Quota');}putAppearance(key,value);};
 prefs.auditImport({eventAppearance:{border:2,cross:5,ink:3,halo:.6}},'merge');
-assert.equal(prefs.EV_APPEARANCE.border,1.5);
-assert.equal(prefs.document.documentElement.style.getPropertyValue('--ev-symbol-border-scale'),'0.75');
+assert.equal(prefs.EV_APPEARANCE.border,1.3);
+assert.equal(prefs.document.documentElement.style.getPropertyValue('--ev-symbol-border-scale'),'0.65');
 console.log('Símbolos: alias compatible, validación y restauración de apariencia ante fallo OK');
 
 // El parche de tarifa actual viaja por la importación general y el backup.

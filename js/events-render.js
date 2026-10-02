@@ -617,7 +617,6 @@ function renderEvContent(){
     }
     h+='</div>';
   }
-  if(EV_VIEW==='cal')h+=renderEventAppearance();
   h+='</div>';
   return h;
 }
