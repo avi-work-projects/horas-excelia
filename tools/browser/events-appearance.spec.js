@@ -39,10 +39,14 @@ test('añadir cumpleaños conserva el título centrado; distintivo VIP en la esq
 });
 
 test('grosores en vivo, sin cambiar huecos; persisten y se pueden restablecer',async({page})=>{
-  const openCalendar=()=>page.evaluate(()=>{
-    EVENTS=[{id:'rehearsal-test',kind:'puntual',type:'Ensayos boda',title:'Ensayo prueba',start:'2026-10-08',end:'2026-10-08',color:'#c084fc',boda:{time:'19:00'}}];
-    EV_VIEW='cal';EV_YEAR=2026;EV_MONTH=9;openEvents();
-  });
+  const openCalendar=async()=>{
+    await page.evaluate(()=>{
+      EVENTS=[{id:'rehearsal-test',kind:'puntual',type:'Ensayos boda',title:'Ensayo prueba',start:'2026-10-08',end:'2026-10-08',color:'#c084fc',boda:{time:'19:00'}}];
+      openEvents();
+    });
+    await expect(page.locator('#eventsOverlay')).toHaveClass(/open/);
+    await page.locator('#evViewCal').click();
+  };
   await openCalendar();await page.locator('#evSymbolLab summary').click();
   const marker=page.locator('.ev-month-wrap .ev-shape-x-boda'),before=await marker.boundingBox();
   await page.getByRole('slider',{name:'Borde negro',exact:true}).press('Home');
