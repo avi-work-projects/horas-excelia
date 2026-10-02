@@ -77,43 +77,23 @@ function renderEconSim(){
     h+='<div class="sy-section">';
     h+='<div class="sy-section-title">Para obtener '+netoFmt+' de '+netoLabel+':</div>';
 
-    /* Tabla resumen de todas las combinaciones */
-    h+='<div style="overflow-x:auto"><table class="econ-stats-table sim-combo-table"><thead><tr>';
-    h+='<th>Modalidad</th><th>Tarifa</th><th>Base anual</th><th>Neto anual</th>';
-    h+='</tr></thead><tbody>';
-
-    /* Fila: Tarifa por día */
-    h+='<tr class="sim-combo-highlight"><td>Tarifa / d\u00eda</td>';
-    h+='<td class="sim-combo-rate">'+fc(eR.dailyRate)+'/d</td>';
-    h+='<td>'+fc(eR.totBase)+'</td>';
-    h+='<td class="col-net">'+fc(eR.netoReal)+'</td></tr>';
-
-    /* Fila: Tarifa por hora (horas reales) */
-    h+='<tr><td>Tarifa / hora real</td>';
-    h+='<td class="sim-combo-rate">'+fc(eR.hourlyRate)+'/h</td>';
-    h+='<td>'+fc(eR.totBase)+'</td>';
-    h+='<td class="col-net">'+fc(eR.netoReal)+'</td></tr>';
-
-    /* Fila: Tarifa por hora (8h fijas) */
+    /* Resultado por modalidad: tarifa destacada y magnitudes anuales debajo. */
     var hourly8h=e8.totalHours>0?Math.round(e8.totBase/e8.totalHours*100)/100:0;
-    h+='<tr><td>Tarifa / hora (8h fijas)</td>';
-    h+='<td class="sim-combo-rate">'+fc(hourly8h)+'/h</td>';
-    h+='<td>'+fc(e8.totBase)+'</td>';
-    h+='<td class="col-net">'+fc(e8.netoReal)+'</td></tr>';
-
-    /* Fila: Nómina */
-    h+='<tr style="border-top:2px solid var(--border)"><td>N\u00f3mina asalariado</td>';
-    h+='<td class="sim-combo-rate">'+fc(res.salBrut)+'/a\u00f1o</td>';
-    h+='<td>\u2014</td>';
-    h+='<td class="col-net">'+fc(sal.netoAnual)+'</td></tr>';
-    h+='<tr style="opacity:.7"><td style="padding-left:16px">Neto mensual (12p)</td>';
-    h+='<td></td><td></td>';
-    h+='<td class="col-net">'+fc(sal.netoMensual12)+'</td></tr>';
-    h+='<tr style="opacity:.7"><td style="padding-left:16px">Neto mensual (14p)</td>';
-    h+='<td></td><td></td>';
-    h+='<td class="col-net">'+fc(sal.netoMensual)+'</td></tr>';
-
-    h+='</tbody></table></div>';
+    var rates=[
+      {label:'Por día',rate:eR.dailyRate,unit:'/día',base:eR.totBase,net:eR.netoReal},
+      {label:'Por hora real',rate:eR.hourlyRate,unit:'/hora',base:eR.totBase,net:eR.netoReal},
+      {label:'Por hora · jornada de 8h',rate:hourly8h,unit:'/hora',base:e8.totBase,net:e8.netoReal},
+      {label:'Nómina',rate:res.salBrut,unit:'/año bruto',base:null,net:sal.netoAnual}
+    ];
+    h+='<div class="study-rate-results">';
+    rates.forEach(function(r){
+      h+='<article class="study-rate-result"><h3>'+r.label+'</h3><div class="study-rate-price">'+fcPlain(r.rate)+'<small>'+r.unit+'</small></div><dl>';
+      if(r.base!=null)h+='<div><dt>Base anual</dt><dd>'+fcPlain(r.base)+'</dd></div>';
+      h+='<div><dt>Neto anual</dt><dd class="study-rate-net">'+fcPlain(r.net)+'</dd></div>';
+      if(r.base==null)h+='<div><dt>12 / 14 pagas · neto mensual</dt><dd>'+fcPlain(sal.netoMensual12)+' / '+fcPlain(sal.netoMensual)+'</dd></div>';
+      h+='</dl></article>';
+    });
+    h+='</div>';
 
     /* Info adicional */
     h+='<div style="font-size:.68rem;color:var(--text-dim);margin-top:6px">';

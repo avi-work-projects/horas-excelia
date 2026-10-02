@@ -1,0 +1,80 @@
+/* Contenido financiero. No modifica la navegación ni las subpestañas globales. */
+.econ-summary-view,.study-workspace{width:100%;max-width:860px;margin:auto;min-width:0}
+.econ-summary-view>.sy-section,.study-workspace>.sy-section{padding:18px;margin:0 0 18px;border:1px solid var(--border);border-radius:16px;background:var(--surface)}
+.econ-summary-view .sy-section-title,.study-workspace .sy-section-title{font-size:.88rem;font-weight:700;color:var(--text);text-transform:none;letter-spacing:-.015em;line-height:1.4;margin:0 0 16px;padding:0 0 12px;border-bottom:1px solid var(--border)}
+.econ-summary-view .fiscal-period-btn{min-height:30px;padding:5px 9px!important;font-size:.65rem!important}
+.econ-stats-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:12px}
+.econ-summary-view .econ-rate-stats{margin:0;table-layout:fixed;border-collapse:separate;border-spacing:0}
+.econ-summary-view .econ-rate-stats thead th{font-size:.69rem;padding:12px 6px;text-transform:none;letter-spacing:0;color:var(--text);background:var(--surface2);white-space:normal}
+.econ-rate-stats th small{display:block;font-size:.55rem;font-weight:400;color:var(--text-muted);margin-top:3px}
+.econ-summary-view .econ-rate-stats tbody th{color:inherit;text-align:left;font-size:.76rem;text-transform:none;letter-spacing:0;padding:13px 10px}
+.econ-summary-view .econ-rate-stats td{font-family:var(--font);font-variant-numeric:tabular-nums;font-size:.79rem;font-weight:600;padding:13px 7px;white-space:nowrap}
+.econ-summary-view .econ-rate-stats .col-net{background:color-mix(in srgb,var(--c-green) 9%,var(--surface))}
+.econ-rate-stats tbody tr:last-child th{border-bottom:0}
+.study-workspace{--study-tone:#518aaf;padding-top:6px;padding-bottom:24px}
+.study-workspace.study-gas{--study-tone:#518aaf}.study-workspace.study-hipoteca{--study-tone:#619580}.study-workspace.study-simulador{--study-tone:#b58a4c}
+.study-workspace .est-section-hdr{align-items:center;gap:12px;margin-bottom:14px}
+.study-workspace .est-section-hdr .sy-section-title{border:0;padding:0;margin:0}
+.study-workspace .study-reference{background:color-mix(in srgb,var(--study-tone) 7%,var(--surface));border-color:color-mix(in srgb,var(--study-tone) 35%,var(--border))}
+.study-company{font-size:1rem;margin:0 0 16px;color:var(--text)}
+.study-workspace .est-tariff-card,.study-workspace .econ-scenario-card{border:1px solid color-mix(in srgb,var(--study-tone) 45%,var(--border));border-radius:14px;padding:16px;background:color-mix(in srgb,var(--study-tone) 7%,var(--surface));margin-bottom:16px;min-width:0}
+.study-workspace .econ-comp-scenarios{gap:16px}
+.study-workspace .econ-scenario-card{gap:12px;margin-bottom:0}
+.study-workspace .econ-sc-header{margin-bottom:4px}
+.study-workspace .econ-sc-zones{gap:10px}
+.study-workspace .econ-sc-zone{padding:12px;border-radius:10px;background:var(--surface)}
+.study-workspace .econ-sc-zone:not(.active){opacity:1}
+.study-workspace .econ-sc-zone-input::placeholder{color:var(--text-muted);font-weight:400}
+.study-workspace .econ-sc-heading{color:color-mix(in srgb,var(--study-tone) 60%,var(--text));font-weight:700;font-size:.88rem}
+.study-workspace .econ-sc-zone.active{border-color:var(--study-tone);background:color-mix(in srgb,var(--study-tone) 9%,var(--surface))}
+.study-workspace .econ-sc-zone-input{border-radius:8px;font-size:.95rem;padding:9px 8px}
+.study-workspace .econ-sc-zone-sub{font-size:.64rem;padding:7px 6px}
+.study-workspace .econ-calc-btn{margin-top:18px;min-height:44px;border-radius:11px}
+.study-workspace .hip-g2{gap:14px 12px}
+.study-workspace .hip-cf{gap:6px}
+.study-workspace .hip-cf-lbl,.study-workspace .est-field label,.study-workspace .analisis-input-group label{color:var(--text-muted);font-size:.68rem;line-height:1.4}
+.study-workspace .hip-cf input,.study-workspace .est-field input,.study-workspace .analisis-input{border-radius:8px;padding:10px 8px;min-height:38px;background:var(--surface);color:var(--text);font-size:.82rem}
+.study-workspace .est-card-hdr{gap:10px;margin-bottom:16px}
+.study-workspace .est-card-name{font-size:.95rem;font-weight:650;padding:9px;border:1px solid var(--border);border-radius:8px;background:var(--surface);min-width:0}
+.study-workspace .est-modo-row{gap:8px;margin-bottom:18px}
+.study-workspace .est-fields-row{gap:12px;margin:12px 0}
+.study-workspace .est-field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.study-workspace .est-field-inp{min-width:0}
+.study-workspace .est-field-inp input{min-width:0;width:100%}
+.study-workspace .fiscal-despacho-unit{font-size:.62rem;color:var(--text-muted);white-space:nowrap}
+.study-workspace .hip-vr,.study-workspace .hip-vr-sum{padding-top:9px;padding-bottom:9px}
+.study-workspace .hip-add-sub-btn{min-height:40px;font-size:.73rem!important;border-radius:10px;padding:10px!important;margin-top:8px}
+.study-workspace .sim-field-group{padding:16px;border:1px solid var(--border);border-radius:12px;background:color-mix(in srgb,var(--study-tone) 5%,var(--surface));gap:10px}
+.study-workspace .sim-field-label{font-size:.77rem;font-weight:600;color:var(--text)}
+.study-workspace .sim-target-input-wrap{background:var(--surface);border-radius:10px}
+.study-rate-results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.study-rate-result{padding:14px;border:1px solid var(--border);border-radius:12px;background:color-mix(in srgb,var(--study-tone) 6%,var(--surface));min-width:0}
+.study-rate-result h3{font-size:.73rem;font-weight:600;margin:0 0 12px;color:var(--text)}
+.study-rate-price{display:flex;flex-wrap:wrap;align-items:baseline;gap:3px;font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:12px}
+.study-rate-price small{font-size:.61rem;color:var(--text-muted);font-weight:400}
+.study-rate-result dl{display:flex;flex-direction:column;gap:8px;font-size:.63rem}
+.study-rate-result dt{color:var(--text-muted)}
+.study-rate-result dd{font-weight:600;color:var(--text);margin:2px 0 0;font-size:.72rem}
+.study-rate-result .study-rate-net{color:var(--c-green)}
+.study-rate-note{margin-top:12px;font-size:.63rem;line-height:1.6;color:var(--text-muted)}
+.study-mortgage-payment{display:flex;align-items:baseline;gap:7px;color:var(--text)}
+.study-mortgage-payment strong{font-size:1.65rem;letter-spacing:-.03em}.study-mortgage-payment>span{font-size:.7rem;color:var(--text-muted)}
+.study-mortgage-facts{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:12px;padding-top:14px;border-top:1px solid var(--border);margin-top:8px}
+.study-mortgage-facts dt{font-size:.63rem;color:var(--text-muted);margin-bottom:6px}.study-mortgage-facts dd{font-size:.78rem;color:var(--text);font-weight:600;overflow-wrap:anywhere}
+.study-workspace .econ-stats-table td,.study-workspace .econ-comp-table td{padding:11px 9px;line-height:1.45}
+.study-workspace .econ-stats-table th,.study-workspace .econ-comp-table th{background:var(--surface2);padding:10px 9px;text-transform:none;color:var(--text-muted)}
+.study-workspace .est-detail-btn{font-size:.7rem;color:var(--accent-bright);padding:7px 0;white-space:nowrap}
+.study-workspace .analisis-mortgage-current{background:color-mix(in srgb,#619580 8%,var(--surface));border-radius:12px;padding:16px}
+.study-workspace .mg-budget-table{border-radius:10px;overflow:hidden}
+.study-workspace .mg-budget-row,.study-workspace .mg-budget-hdr{padding:10px 8px;gap:5px}
+.study-workspace .mg-budget-lbl{overflow-wrap:anywhere;min-width:0}
+@media(max-width:440px){
+  .econ-summary-view>.sy-section,.study-workspace>.sy-section{padding:14px}
+  .econ-summary-view .econ-rate-stats td{font-size:.7rem;padding:12px 4px}
+  .econ-summary-view .econ-rate-stats tbody th{font-size:.7rem;padding:12px 6px}
+  .econ-summary-view .econ-rate-stats thead th{font-size:.62rem}
+  .study-workspace .econ-comp-scenarios{grid-template-columns:1fr}
+  .study-workspace .est-fields-row{flex-wrap:wrap}
+  .study-workspace .est-field{flex:1 1 40%}
+  .study-workspace .est-field-wide{flex-basis:100%}
+}

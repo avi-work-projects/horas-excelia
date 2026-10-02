@@ -15,7 +15,7 @@ function householdMortgagePeriod(comp,index,today){
   if(extra){var low=effective,high=Math.max(effective+1,100);for(var i=0;i<60;i++){var mid=(low+high)/2;if(householdMortgagePayment(capital,mid,months)<payment+extra/12)low=mid;else high=mid;}equivalentRate=(low+high)/2;}
   return {index:index,bank:(sub?sub.entidadBanco:comp.entidadBanco)||'Entidad sin indicar',label:sub?'Subrogación '+(index+1):'Préstamo original',active:!next,capital:capital,rate:rate||0,effective:effective,years:years,start:start,end:end,paid:paid,remaining:end?0:Math.max(0,months-paid),payment:payment,extra:extra,equivalentRate:equivalentRate};
 }
-function householdValue(label,value,extra,highlight){return '<div class="household-value'+(highlight?' household-value-total':'')+'"><dt>'+label+'</dt><dd>'+value+'</dd>'+(extra?'<small>'+extra+'</small>':'')+'</div>';}
+function householdValue(label,value,extra){return '<div class="household-value"><dt>'+label+'</dt><dd>'+value+'</dd>'+(extra?'<small>'+extra+'</small>':'')+'</div>';}
 function householdMortgageCard(comp,p,editable){
   var date=function(s){return s?s.split('-').reverse().join('/'):'Sin fecha';};
   var h='<article class="household-card household-mortgage"><header><div><span class="household-eyebrow">'+p.label+'</span><h3>'+escHtml(p.bank)+'</h3></div><span class="household-status">'+(p.active?'Actual':'Finalizada')+'</span></header>';
@@ -32,6 +32,38 @@ function householdMortgageCard(comp,p,editable){
   if(editable)h+='<button class="household-card-link" data-gotosection="'+(p.index<0?'prestamo':'sub-'+p.index)+'">Ver detalle de la hipoteca <span>›</span></button>';
   return h+'</article>';
 }
+function householdUtilityPrices(kind,source,vat,fixed,detail){
+  var t=energyTariffDefaults(source);vat=vat==null?21:vat;
+  var h='<div class="household-price-grid">';
+  var label=fixed?'Cuota mensual':t.energyMode==='tramos'?'Consumo · media ponderada':'Consumo';
+  var net=fixed?t.cuotaFija:energyWeightedPrice(t);
+  h+=energyPricePair(label,net,energyTaxPrice(t,net,vat,!fixed),fixed?'/mes':'€/kWh','',fixed);
+  if(!fixed&&kind==='luz'){
+    var p=t.precioPotP1+(t.modoPotencia==='doble'?t.precioPotP2:0);
+    h+=energyPricePair('Potencia · suma de precios',p,energyTaxPrice(t,p,vat,false),'€/kW/día',t.modoPotencia==='doble'?'P1 '+energyNumber(t.potenciaP1,'kW')+' · P2 '+energyNumber(t.potenciaP2,'kW'):energyNumber(t.potenciaTotal,'kW'));
+  }
+  if(!fixed&&t.terminoFijoDia)h+=energyPricePair('Fijo diario',t.terminoFijoDia,energyTaxPrice(t,t.terminoFijoDia,vat,false),'€/día');
+  if(!fixed&&t.terminoFijo)h+=energyPricePair(kind==='gas'?'Fijo por factura':'Fijo mensual',t.terminoFijo,energyTaxPrice(t,t.terminoFijo,vat,false),kind==='gas'?'/factura':'/mes','',true);
+  h+='</div>';
+  if(detail&&!fixed){
+    h+='<div class="household-rate-breakdown">';
+    if(t.energyMode==='tramos'){
+      var weights=energyDisplayWeights(t.periodWeights);
+      h+='<section><h4>Reparto del consumo</h4>';
+      ['Punta','Llano','Valle'].forEach(function(n,i){h+='<div class="household-rate-line"><span>'+n+' <small>'+weights[i]+' %</small></span><strong>'+energyUnitPrice(t.periodPrices[i])+' <small>€/kWh</small></strong></div>';});h+='</section>';
+    }
+    if(kind==='luz'){
+      h+='<section><h4>Potencia contratada</h4>';
+      (t.modoPotencia==='doble'?['P1','P2']:['P1']).forEach(function(p){h+='<div class="household-rate-line"><span>'+p+' <small>'+energyNumber(t.modoPotencia==='doble'?t['potencia'+p]:t.potenciaTotal,'kW')+'</small></span><strong>'+energyUnitPrice(t['precioPot'+p])+' <small>€/kW/día</small></strong></div>';});h+='</section>';
+    }
+    h+='</div>';
+    if(t.extrasPerDay)h+='<p class="household-dates">Otros cargos: '+energyUnitPrice(t.extrasPerDay)+' €/día sin impuestos.</p>';
+  }
+  h+='<div class="household-tax-note"><span>IVA <b>'+vat+' %</b></span>';
+  if(t.otherTaxPct)h+='<span>Impuesto eléctrico <b>'+t.otherTaxPct.toLocaleString('es-ES',{maximumFractionDigits:2})+' %</b></span>';
+  if(t.otherTaxKwh)h+='<span>Impuesto por energía <b>'+energyUnitPrice(t.otherTaxKwh)+' €/kWh</b></span>';
+  return h+'</div>';
+}
 function householdUtilityCard(kind,editable){
   var gas=DESPACHO.gas||{},fixed=kind==='gas'?(gas.activo||gas.modo)==='fijo':(DESPACHO.elect||{}).modo==='fijo';
   var source=kind==='gas'?(fixed?gas.fijo:gas.consumo)||gas:DESPACHO.elect||{},t=energyTariffDefaults(source),vat=kind==='gas'?gas.ivaGas:source.ivaElect;
@@ -39,14 +71,7 @@ function householdUtilityCard(kind,editable){
   var h='<article class="household-card household-utility household-'+kind+'"><header><div><span class="household-eyebrow">'+(kind==='luz'?'Electricidad':'Gas')+'</span><h3>'+escHtml(source.comercializadora||'Sin comercializadora')+'</h3></div><span class="household-utility-icon" aria-hidden="true">'+(kind==='luz'?'⚡':'♨')+'</span></header>';
   if(!configured)h+='<p class="household-empty">Aún no hay una tarifa configurada.</p>';
   else{
-    h+='<p class="household-dates household-consumption-label">'+(fixed?'Cuota fija':t.energyMode==='tramos'?'Consumo · media ponderada':'Consumo')+'</p><div class="household-unit-price"><strong>'+(fixed?fcPlain(t.cuotaFija):energyUnitPrice(energyWeightedPrice(t)))+'</strong><span>'+(fixed?'/mes':'€/kWh')+'</span></div><p class="household-dates">Sin impuestos</p>';
-    h+='<dl class="household-utility-rows">';
-    if(!fixed&&kind==='luz'){
-      h+=householdValue('Suma precios potencia',energyUnitPrice(t.precioPotP1+(t.modoPotencia==='doble'?t.precioPotP2:0))+' <small>€/kW/día</small>',t.modoPotencia==='doble'?'P1 '+energyNumber(t.potenciaP1,'kW')+' · P2 '+energyNumber(t.potenciaP2,'kW'):energyNumber(t.potenciaTotal,'kW'),true);
-    }
-    if(!fixed&&t.terminoFijoDia)h+=householdValue('Fijo diario',energyUnitPrice(t.terminoFijoDia)+' €/día');
-    if(!fixed&&t.terminoFijo)h+=householdValue(kind==='gas'?'Fijo por factura':'Fijo mensual',fcPlain(t.terminoFijo));
-    h+=householdValue('IVA',(vat==null?21:vat)+' %')+'</dl>';
+    h+=householdUtilityPrices(kind,source,vat,fixed,false);
   }
   if(editable)h+='<button class="household-card-link" data-hipsub="'+(kind==='luz'?'elect':'gas')+'">Ver tarifa y consumo <span>›</span></button>';
   return h+'</article>';

@@ -25,8 +25,8 @@ function _renderGasDetalle(editable){
   h+='</div>';}else h+=_hipRO('Modalidad',g.activo==='fijo'?'Fijo mensual':'Por consumo');h+='</div>';
   /* Scenario 1: Consumo */
   var sc=g.consumo;
-  h+='<div class="fiscal-section"'+(g.activo!=='consumo'?' style="opacity:.5"':'')+'>';
-  h+='<div class="hip-section-hdr"><span class="fiscal-section-title">Escenario: Pago por consumo'+(g.activo==='consumo'?' \u2714':'')+'</span>';
+  h+='<div class="fiscal-section household-gas-option'+(g.activo==='consumo'?' is-current':'')+'">';
+  h+='<div class="hip-section-hdr"><span class="fiscal-section-title">Por consumo'+(g.activo==='consumo'?' \u2714':'')+'</span>';
   if(editable&&FISCAL_GAS_EDITING!=='consumo')h+='<button class="hip-edit-btn" data-gasedit="consumo">Editar</button>';
   h+='</div>';
   if(editable&&FISCAL_GAS_EDITING==='consumo'){
@@ -39,17 +39,14 @@ function _renderGasDetalle(editable){
     h+='</div>';
     h+='<div class="hip-edit-actions"><button class="hip-save-btn" data-gassave="consumo">Guardar</button><button class="hip-cancel-btn" data-gascancel="consumo">Cancelar</button></div>';
   } else {
-    h+=_hipRO('Precio kWh',sc.precioKwh?energyUnitPrice(sc.precioKwh)+' \u20ac/kWh':'\u2014');
-    h+=_hipRO('T\u00e9rmino fijo/d\u00eda',sc.terminoFijoDia?energyUnitPrice(sc.terminoFijoDia)+' \u20ac/d\u00eda':'\u2014');
-    h+=_hipROmoney('T\u00e9rmino fijo/factura',sc.terminoFijo);
-    h+=_hipRO('IVA',(g.ivaGas==null?21:g.ivaGas)+'%');
-    h+=_hipRO('Comercializadora',sc.comercializadora||'\u2014');
+    h+='<div class="household-detail-supplier">'+escHtml(sc.comercializadora||'Sin comercializadora')+'</div>';
+    h+=householdUtilityPrices('gas',sc,g.ivaGas,false,true);
   }
   h+='</div>';
   /* Scenario 2: Fijo */
   var sf=g.fijo;
-  h+='<div class="fiscal-section"'+(g.activo!=='fijo'?' style="opacity:.5"':'')+'>';
-  h+='<div class="hip-section-hdr"><span class="fiscal-section-title">Escenario: Cuota fija'+(g.activo==='fijo'?' \u2714':'')+'</span>';
+  h+='<div class="fiscal-section household-gas-option'+(g.activo==='fijo'?' is-current':'')+'">';
+  h+='<div class="hip-section-hdr"><span class="fiscal-section-title">Cuota fija'+(g.activo==='fijo'?' \u2714':'')+'</span>';
   if(editable&&FISCAL_GAS_EDITING!=='fijo')h+='<button class="hip-edit-btn" data-gasedit="fijo">Editar</button>';
   h+='</div>';
   if(editable&&FISCAL_GAS_EDITING==='fijo'){
@@ -60,9 +57,8 @@ function _renderGasDetalle(editable){
     h+='</div>';
     h+='<div class="hip-edit-actions"><button class="hip-save-btn" data-gassave="fijo">Guardar</button><button class="hip-cancel-btn" data-gascancel="fijo">Cancelar</button></div>';
   } else {
-    h+=_hipROmoney('Cuota fija/mes',sf.cuotaFija);
-    h+=_hipRO('IVA',(g.ivaGas==null?21:g.ivaGas)+'%');
-    h+=_hipRO('Comercializadora',sf.comercializadora||'\u2014');
+    h+='<div class="household-detail-supplier">'+escHtml(sf.comercializadora||'Sin comercializadora')+'</div>';
+    h+=householdUtilityPrices('gas',sf,g.ivaGas,true,true);
   }
   h+='</div>';
   if(editable)h+=energyHistoryButton('gas');

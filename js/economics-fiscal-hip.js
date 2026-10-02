@@ -597,11 +597,12 @@ function renderFiscalTabDespacho(editable){
   h+='<button class="econ-sub-tab est-hip'+(FISCAL_HIP_SUB==='gas'?' active':'')+'" data-hipsub="gas">Detalle<br>Gas</button>';
   h+='<button class="econ-sub-tab est-hip'+(FISCAL_HIP_SUB==='elect'?' active':'')+'" data-hipsub="elect">Detalle<br>Electricidad</button>';
   h+='</div>';
+  if(FISCAL_HIP_SUB!=='resumen')h+='<div class="household-detail household-detail-'+FISCAL_HIP_SUB+'">';
   if(FISCAL_HIP_SUB==='resumen')h+=_renderHipResumen(editable);
   else if(FISCAL_HIP_SUB==='detalle')h+=_renderHipDetalle(editable);
   else if(FISCAL_HIP_SUB==='gas')h+=_renderGasDetalle(editable);
   else if(FISCAL_HIP_SUB==='elect')h+=_renderElectDetalle(editable);
-  return h;
+  return h+(FISCAL_HIP_SUB==='resumen'?'':'</div>');
 }
 
 /* ── Gas detail sub-tab (two scenarios: consumo + fijo) ──── */

@@ -81,9 +81,9 @@ function renderEconComp(){
   h+='<div class="econ-comp-scenarios">';
   ECON_SCENARIOS.forEach(function(sc,i){
     var _zoneKey=sc.rateType==='salary'?'salary':sc.rateType==='daily'?'daily':sc.hoursMode==='8h'?'hourly8h':'hourlyReal';
-    h+='<div class="econ-scenario-card" style="border-left:3px solid '+ECON_COMP_COLORS[i]+'">';
+    h+='<div class="econ-scenario-card" style="--study-tone:'+ECON_COMP_COLORS[i]+'">';
     h+='<div class="econ-sc-header">';
-    h+='<span style="color:'+ECON_COMP_COLORS[i]+';font-weight:700;font-size:.88rem">Escenario '+sc.label+'</span>';
+    h+='<span class="econ-sc-heading">Escenario '+sc.label+'</span>';
     h+='<div style="display:flex;gap:2px;align-items:center">';
     h+='<button class="econ-sc-reorder" data-sci="'+i+'" data-dir="up"'+(i===0?' disabled':'')+'>&#9650;</button>';
     h+='<button class="econ-sc-reorder" data-sci="'+i+'" data-dir="down"'+(i===ECON_SCENARIOS.length-1?' disabled':'')+'>&#9660;</button>';

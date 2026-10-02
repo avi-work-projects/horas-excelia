@@ -77,10 +77,10 @@
 
 **Funciones:** _salaryMonths:17 · loadEconComp:23 · saveEconComp:29 · econLineChart:34 · xPos:49 · yPos:50 · renderEconComp:77 (!119) · bindEconCompEvents:196 (!100) · _selectZone:217
 
-### js/economics-estudio.js  _(584 líneas)_
-**Estado global:** ESTUDIO_HIP_ALTS:32 · ESTUDIO_HIP_CALC:33 · ESTUDIO_GAS_SCENARIOS:230 · ESTUDIO_GAS_CALC:231 · ESTUDIO_GAS_IVA:232 · ESTUDIO_ELECT_SCENARIOS:333 · ESTUDIO_ELECT_CALC:334 · ESTUDIO_ELECT_IVA:335
+### js/economics-estudio.js  _(570 líneas)_
+**Estado global:** ESTUDIO_HIP_ALTS:33 · ESTUDIO_HIP_CALC:34 · ESTUDIO_GAS_SCENARIOS:228 · ESTUDIO_GAS_CALC:229 · ESTUDIO_GAS_IVA:230 · ESTUDIO_ELECT_SCENARIOS:318 · ESTUDIO_ELECT_CALC:319 · ESTUDIO_ELECT_IVA:320 · ESTUDIO_ELECT_TAX:321
 
-**Funciones:** renderEconEstudio:6 · _defaultVinc:28 · _defaultHipAlt:29 · _renderEstudioHipotecaComp:35 (!98) · bindEconEstudioEvents:133 · _estudioReRender:146 · _bindEstudioHipoteca:151 · _readEstHipAltAt:201 · _readEstHipVincAt:212 · _calcGasCost:234 · _currentGasTariff:235 · _renderEstudioGasComp:243 · _renderGasCompCard:303 · _calcElectCost:337 · _currentElectTariff:338 · _renderEstudioElectComp:343 · _renderMultiScenarioResult:346 · _bindEstudioGas:414 · _bindEstudioElect:445 · _bindScenarios:447 · _readScenarios:466 · _bindCompFields:475 · _saveCompFields:510 · renderEstudioContent:526 · openEstudio:540 · closeEstudio:550 · reRenderEstudio:555 · bindEstudioEvents:563
+**Funciones:** renderEconEstudio:6 · _defaultVinc:29 · _defaultHipAlt:30 · _renderEstudioHipotecaComp:36 (!95) · bindEconEstudioEvents:131 · _estudioReRender:144 · _bindEstudioHipoteca:149 · _readEstHipAltAt:199 · _readEstHipVincAt:210 · _calcGasCost:232 · _currentGasTariff:233 · _renderEstudioGasComp:241 · _renderGasCompCard:288 · _calcElectCost:323 · _currentElectTariff:324 · _renderEstudioElectComp:329 · _renderMultiScenarioResult:332 · _bindEstudioGas:400 · _bindEstudioElect:431 · _bindScenarios:433 · _readScenarios:452 · _bindCompFields:461 · _saveCompFields:496 · renderEstudioContent:512 · openEstudio:526 · closeEstudio:536 · reRenderEstudio:541 · bindEstudioEvents:549
 
 ### js/economics-fiscal-bind.js  _(563 líneas)_
 **Funciones:** openFiscal:9 · closeFiscal:26 · reRenderFiscal:32 · bindFiscalEvents:43 · _switchTab:47 · _bindYearSelector:81 · _bindTabPersonal:119 · _bindTabIrpf:170 · _bindTabGastosDesg:215 (!91) · _rebindComprasDel:264 · _bindTabIrpfDeduc:306 · _bindTabDesgrav:319 (!96) · _bindList:321 · _bindTabDespachoOnly:415 (!83) · _syncLiveD:426 · _updateFmt:464 · _saveFiscalAll:498 · _rv:527
@@ -90,20 +90,20 @@
 
 **Funciones:** householdTab:32 · setHouseholdTab:34 · _yearKey:40 · _ensureDefaults:59 · loadPersonalYear:75 · savePersonalYear:91 · loadIngresos:98 · saveIngresos:101 · findIngreso:104 · ingresoAnual:108 · loadFiscal:136 · saveFiscal:144 · getIrpfPct:147 · getBrackets:148 · _loadGastosFromRaw:150 · loadGastosYear:168 · loadGastos:181 · saveGastosYear:182 · findGasto:185 · gastoAnual:189 · loadCompras:205 · saveCompras:222 · comprasTotal:226 · comprasIvaTotal:236 · loadDesgrav:275 · saveDesgrav:306 · desgravAnual:309 · computeTotalDesgrav:330
 
-### js/economics-fiscal-elect.js  _(241 líneas)_
-**Estado global:** FISCAL_ELECT_EDITING:5 · GASTOS_GROUPS:135
+### js/economics-fiscal-elect.js  _(220 líneas)_
+**Estado global:** FISCAL_ELECT_EDITING:5 · GASTOS_GROUPS:114
 
-**Funciones:** _renderElectDetalle:6 · _renderSegurosNormales:84 · _despField:100 · _despFieldMoney:109 · _renderIngresosDesgList:122 · _renderGastoItem:141 · renderGastosList:156 · _bindElectDetalle:178 · _bindSegurosNormales:225
+**Funciones:** _renderElectDetalle:6 · _renderSegurosNormales:63 · _despField:79 · _despFieldMoney:88 · _renderIngresosDesgList:101 · _renderGastoItem:120 · renderGastosList:135 · _bindElectDetalle:157 · _bindSegurosNormales:204
 
-### js/economics-fiscal-gas.js  _(113 líneas)_
+### js/economics-fiscal-gas.js  _(109 líneas)_
 **Estado global:** FISCAL_GAS_EDITING:5
 
-**Funciones:** _ensureGasScenarios:6 · _renderGasDetalle:14 · _bindGasDetalle:75
+**Funciones:** _ensureGasScenarios:6 · _renderGasDetalle:14 · _bindGasDetalle:71
 
-### js/economics-fiscal-hip.js  _(851 líneas)_
+### js/economics-fiscal-hip.js  _(852 líneas)_
 **Estado global:** DESPACHO_SK:5 · DESPACHO:6 · GROUP_CASA:110 · GROUP_UTIL:111
 
-**Funciones:** _defaultCompra:8 · _defaultSubrogacion:9 · loadDespacho:10 · saveDespacho:62 · _despachoGetPct:65 · computeDespachoDeduccion:70 · computeDeclResult:124 · computeIrpfBrackets:177 · _hipEffRate:194 · _buildMortgageSwitches:200 · _computeAnnualInterest:221 · _computeBalanceAtDate:255 · renderFiscalTabDespachoOnly:288 · _getActiveMortgage:352 · _fmtDuration:359 · _hipROvinc:364 · _calcInsOvercost:374 · _renderInlineOvercost:385 · _renderHipResumen:404 · _renderHipDetalle:407 · _renderHipSectionContent:433 · _renderCompraSection:445 · _renderPrestamoSection:474 · _renderSubSection:521 · renderFiscalTabDespacho:592 · _bindTabDespacho:609 · _bindHipResumen:635 · _bindHipDetalle:660 · _rerenderSection:731 · _readSectionInputs:740 · _rv:741 · _rv_s:742 · _bindEditingSection:800
+**Funciones:** _defaultCompra:8 · _defaultSubrogacion:9 · loadDespacho:10 · saveDespacho:62 · _despachoGetPct:65 · computeDespachoDeduccion:70 · computeDeclResult:124 · computeIrpfBrackets:177 · _hipEffRate:194 · _buildMortgageSwitches:200 · _computeAnnualInterest:221 · _computeBalanceAtDate:255 · renderFiscalTabDespachoOnly:288 · _getActiveMortgage:352 · _fmtDuration:359 · _hipROvinc:364 · _calcInsOvercost:374 · _renderInlineOvercost:385 · _renderHipResumen:404 · _renderHipDetalle:407 · _renderHipSectionContent:433 · _renderCompraSection:445 · _renderPrestamoSection:474 · _renderSubSection:521 · renderFiscalTabDespacho:592 · _bindTabDespacho:610 · _bindHipResumen:636 · _bindHipDetalle:661 · _rerenderSection:732 · _readSectionInputs:741 · _rv:742 · _rv_s:743 · _bindEditingSection:801
 
 ### js/economics-fiscal.js  _(461 líneas)_
 **Estado global:** GROUP_CASA_DESP:324 · GROUP_UTIL_DESP:325
@@ -118,18 +118,23 @@
 ### js/economics-helpers.js  _(68 líneas)_
 **Funciones:** _fmtMiles:8 · _hipMoney:14 · _hipNum:19 · _hipDate:24 · _hipText:28 · _hipVinc:32 · _hipVincSum:46 · _hipRO:62 · _hipROmoney:65
 
-### js/economics-sim.js  _(201 líneas)_
+### js/economics-sim.js  _(181 líneas)_
 **Estado global:** SIM_TARGET:5 · SIM_PERIOD:6 · SIM_NET_MODE:7
 
-**Funciones:** _simComputeAll:10 · _inverseSalary:48 · renderEconSim:62 (!102) · bindEconSimEvents:164
+**Funciones:** _simComputeAll:10 · _inverseSalary:48 · renderEconSim:62 (!82) · bindEconSimEvents:144
 
-### js/economics.js  _(689 líneas)_
+### js/economics.js  _(688 líneas)_
 **Estado global:** ECON_YEAR:5 · ECON_VIEW:6 · ECON_RESUMEN_MODE:7 · ECON_RATE_MODE:8 · ECON_MULTI_RATE:9 · ECON_RATE_PERIODS:10 · ECON_ESTUDIO_SUB:14 · ESTUDIO_YEAR:15
 
-**Funciones:** computeSalaryNet:23 · fc:41 · fcPlain:46 · _rateForDate:56 · _buildDatePeriods:71 · computeEconEx:85 · econBarChart:144 · _fmtDateEs:172 · _prevDate:177 · _ensureDatePeriods:184 · _renderRateInputs:201 · _econCard:218 · _econCards7:224 · f:226 · _getMultiRateOpts:241 · renderEconResumen:245 (!197) · renderEconContent:442 · openEcon:467 · closeEcon:483 · reRenderEcon:488 · bindEconEvents:500 · bindEconResumenEvents:538 (!151)
+**Funciones:** computeSalaryNet:23 · fc:41 · fcPlain:46 · _rateForDate:56 · _buildDatePeriods:71 · computeEconEx:85 · econBarChart:144 · _fmtDateEs:172 · _prevDate:177 · _ensureDatePeriods:184 · _renderRateInputs:201 · _econCard:218 · _econCards7:224 · f:226 · _getMultiRateOpts:241 · renderEconResumen:245 (!196) · renderEconContent:441 · openEcon:466 · closeEcon:482 · reRenderEcon:487 · bindEconEvents:499 · bindEconResumenEvents:537 (!151)
 
-### js/electricity-comparator.js  _(112 líneas)_
-**Funciones:** energyHistoricalTariffs:2 · electricComparisonTariff:9 · electricHistoricalCopy:16 · electricModesHtml:24 · electricTariffFieldsHtml:28 · electricComparisonCard:44 · electricConsumptionScenariosHtml:51 · renderElectricityComparison:57 · bindElectricComparisonCard:69 · validate:70 · save:74 · bindElectricityComparison:95 · refresh:98
+### js/electricity-comparator-inputs.js  _(82 líneas)_
+**Estado global:** ELECTRIC_COMPARISON_COLORS:2
+
+**Funciones:** electricComparisonTaxes:3 · electricComparisonApplied:7 · electricInputValue:11 · electricFixedDay:17 · electricInputField:18 · electricUsageYears:22 · bindElectricComparisonCard:31 · validate:33 · save:34 · bindElectricityComparison:65 · refresh:68
+
+### js/electricity-comparator.js  _(80 líneas)_
+**Funciones:** energyHistoricalTariffs:2 · electricComparisonTariff:9 · electricHistoricalCopy:16 · electricModesHtml:24 · electricTariffFieldsHtml:28 · electricComparisonCard:46 · electricConsumptionScenariosHtml:54 · electricUsageYearsHtml:61 · renderElectricityComparison:67
 
 ### js/energy-analysis-bind.js  _(48 líneas)_
 **Funciones:** bindEnergyAnalysis:2 · refresh:5 · year:8 · tab:11 · energyBindSwipe:32
@@ -168,8 +173,8 @@
 ### js/energy-reconciliation.js  _(49 líneas)_
 **Funciones:** energyBillServices:3 · energyBillSupply:4 · energyBilledDays:5 · energyReconcile:14 · energyValidateCurrent:25 · energyCurrentConfig:31 · energyApplyCurrent:35 · energyCurrentPreview:48
 
-### js/energy-reference.js  _(61 líneas)_
-**Funciones:** energyUsageProfile:3 · collect:6 · energyDisplayWeights:22 · energyPriceTotal:31 · energyTariffReference:34 · energyTariffReferenceHtml:47 · metric:49 · number:50 · energyComparisonDefaults:57
+### js/energy-reference.js  _(67 líneas)_
+**Funciones:** energyUsageProfile:3 · collect:6 · energyDisplayWeights:22 · energyPriceTotal:31 · energyPricePair:35 · value:36 · energyTaxPrice:39 · energyTariffReference:40 · energyTariffReferenceHtml:53 · metric:55 · number:56 · energyComparisonDefaults:63
 
 ### js/energy-study.js  _(97 líneas)_
 **Estado global:** ENERGY_COST_VAT:2 · ENERGY_COMPARE_TARIFF:3
@@ -221,8 +226,8 @@
 ### js/home-popup.js  _(118 líneas)_
 **Funciones:** homeReminderColor:1 · homeReminderEventText:7 · openHomePopup:10 (!108) · dismissPopup:104
 
-### js/household-summary.js  _(67 líneas)_
-**Funciones:** householdMortgagePayment:2 · householdMortgagePeriod:5 · householdValue:18 · householdMortgageCard:19 · date:20 · householdUtilityCard:35 · renderHouseholdSummary:54
+### js/household-summary.js  _(92 líneas)_
+**Funciones:** householdMortgagePayment:2 · householdMortgagePeriod:5 · householdValue:18 · householdMortgageCard:19 · date:20 · householdUtilityPrices:35 · householdUtilityCard:67 · renderHouseholdSummary:79
 
 ### js/household.js  _(39 líneas)_
 **Estado global:** HOUSEHOLD_RETURN:3
@@ -305,15 +310,15 @@
 
 **Funciones:** tasksFloatPosition:6 · tasksDock:17 · tasksUpdateFab:20 · initTasks:27 · end:49 · resize:61 · tasksSetAccessHidden:71 · tasksRestoreAccess:72 · bindTasksRestoreGesture:73 · distance:75
 
-### js/tasks-view.js  _(138 líneas)_
+### js/tasks-view.js  _(136 líneas)_
 **Estado global:** TASKS_VIEW:2 · TASKS_ICON:3
 
-**Funciones:** renderTasks:4 · tasksDateLabel:21 · renderTasksList:25 · renderTaskRow:39 · openTasks:55 · closeTasks:63 · tasksKeydown:69 · renderTasksPanel:79 · tasksPerform:96 · tasksRowAction:100 · tasksFocusRow:117 · bindTasksReorder:121 · clear:127 · end:133
+**Funciones:** renderTasks:4 · tasksDateLabel:20 · renderTasksList:24 · renderTaskRow:38 · openTasks:54 · closeTasks:62 · tasksKeydown:68 · renderTasksPanel:78 · tasksPerform:94 · tasksRowAction:98 · tasksFocusRow:115 · bindTasksReorder:119 · clear:125 · end:131
 
-### js/tasks.js  _(97 líneas)_
+### js/tasks.js  _(98 líneas)_
 **Estado global:** TASKS_KEY:3
 
-**Funciones:** tasksValidate:4 · tasksValidTimestamp:17 · tasksNormalize:18 · tasksData:29 · tasksSave:34 · tasksMigrate:35 · tasksMerge:40 · tasksItems:46 · tasksPendingRows:50 · tasksNeedsDateChoice:51 · tasksCreate:54 · tasksChange:59 · tasksMoveCompleted:75 · tasksUndoMove:80 · tasksMove:85 · tasksReminder:92 · tasksReminderSeen:96
+**Funciones:** tasksValidate:4 · tasksValidTimestamp:17 · tasksNormalize:18 · tasksData:30 · tasksSave:35 · tasksMigrate:36 · tasksMerge:41 · tasksItems:47 · tasksPendingRows:51 · tasksNeedsDateChoice:52 · tasksCreate:55 · tasksChange:60 · tasksMoveCompleted:76 · tasksUndoMove:81 · tasksMove:86 · tasksReminder:93 · tasksReminderSeen:97
 
 ## CSS
 
@@ -399,7 +404,7 @@
 - Comparador: reorder buttons:1040
 - Rate input styled:1044
 - BIRTHDAYS:1048
-- Cabe el nombre entero, hasta en tres lineas:1061
+- El nombre admite hasta cuatro líneas.:1061
 - VIP controls bar:1070
 - Botón Cancelar fijo al fondo de pantalla en modo edición VIP:1081
 - VIP edit mode item states:1084

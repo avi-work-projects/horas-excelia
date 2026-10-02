@@ -37,14 +37,14 @@ test('tarifa histórica editable, pesos por tarjeta, potencia y cuota fija; cons
   await card.getByLabel('Llano · peso %',{exact:true}).fill('30');
   await card.getByLabel('Valle · peso %',{exact:true}).fill('50');
   await expect(card.locator('[data-electric-weighted]')).toHaveText('0,17 €/kWh');
-  await card.locator('.electric-power summary').click();
+  await expect(card.locator('.electric-power')).toBeVisible();
   await card.getByLabel('Potencia P1 · kW',{exact:true}).fill('4.6');
   await page.getByRole('button',{name:'Comparar 1 tarifa',exact:true}).click();
   await expect(page.locator('.electric-results')).toContainText('Tarifa anterior');
   expect(await page.evaluate(()=>DESPACHO.electComparaciones[0].potenciaP1)).toBe(4.6);
   expect(await page.evaluate(()=>energyContracts()[0].analysis.potenciaP1)).toBe(3.3);
   await card.getByRole('button',{name:'Cuota fija',exact:true}).click();
-  await card.getByLabel('Cuota mensual sin IVA (€)',{exact:true}).fill('40');
+  await card.getByLabel('Cuota mensual · €',{exact:true}).fill('40');
   await page.getByRole('button',{name:'Comparar 1 tarifa',exact:true}).click();
   await expect(page.locator('.electric-results')).toContainText('48,40€');
   await card.getByRole('checkbox',{name:'Comparar',exact:true}).uncheck();
@@ -53,7 +53,35 @@ test('tarifa histórica editable, pesos por tarjeta, potencia y cuota fija; cons
   await page.reload();
   await page.evaluate(()=>{ECON_ESTUDIO_SUB='elect';openEstudio();});
   await expect(card.getByRole('button',{name:'Cuota fija',exact:true})).toHaveAttribute('aria-pressed','true');
-  await expect(card.getByLabel('Cuota mensual sin IVA (€)',{exact:true})).toHaveValue('40');
+  await expect(card.getByLabel('Cuota mensual · €',{exact:true})).toHaveValue('40');
+  expect(errors).toEqual([]);
+});
+test('precios finales, identidad de compañía, espacio entre campos y recordatorio permanente',async({page})=>{
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.evaluate(()=>{
+    loadDespacho();DESPACHO.elect=energyTariffDefaults({precioKwh:.1,ivaElect:21,otherTaxPct:5.11});
+    DESPACHO.electComparaciones=[energyTariffDefaults({nombre:'',precioKwh:.1,precioPotP1:.08,precioPotP2:.02,useOwnPower:true})];saveDespacho();ECON_ESTUDIO_SUB='elect';openEstudio();
+  });
+  const card=page.locator('[data-electric-card="0"]');
+  await card.getByLabel('Nombre de la tarifa 1',{exact:true}).fill('Compañía de prueba');
+  await expect(card.locator('[data-electric-source-label]')).toHaveText('Compañía de prueba');
+  const gap=await card.evaluate(el=>el.querySelector('.electric-source').getBoundingClientRect().top-el.querySelector('.electric-name').getBoundingClientRect().bottom);
+  expect(gap).toBeGreaterThanOrEqual(10);
+  await card.getByRole('button',{name:'Con impuestos',exact:true}).click();
+  await expect(card.getByLabel('Precio · €/kWh',{exact:true})).toHaveValue('0.1271831');
+  await card.getByLabel('Precio · €/kWh',{exact:true}).fill('0.2543662');
+  await card.getByRole('button',{name:'Sin impuestos',exact:true}).click();
+  await expect(card.getByLabel('Precio · €/kWh',{exact:true})).toHaveValue('0.2');
+  await card.getByRole('button',{name:'Con impuestos',exact:true}).click();
+  await page.getByRole('button',{name:'Comparar 1 tarifa',exact:true}).click();
+  const result=await page.locator('.electric-results').textContent();
+  await card.getByRole('button',{name:'Sin impuestos',exact:true}).click();
+  await page.getByRole('button',{name:'Comparar 1 tarifa',exact:true}).click();
+  await expect(page.locator('.electric-results')).toHaveText(result);
+  expect(await page.evaluate(()=>DESPACHO.electComparaciones[0].precioKwh)).toBeCloseTo(.2,12);
+  await page.reload();await page.evaluate(()=>{ECON_ESTUDIO_SUB='elect';openEstudio();});
+  await expect(card.getByLabel('Nombre de la tarifa 1',{exact:true})).toHaveValue('Compañía de prueba');
+  expect(await page.evaluate(()=>tasksNormalize({items:[],weeklyReminder:false,reminderWeek:''}).weeklyReminder)).toBe(true);
   expect(errors).toEqual([]);
 });
 test('autotítulos, planes fijos y símbolos anteriores compatibles',async({page})=>{
