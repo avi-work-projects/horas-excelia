@@ -342,22 +342,19 @@ function evMarkerHtml(ev,pastClass,sizeClass,defaultShape,ds){
   }
   /* Todas las formas se dibujan con evShapeSvg() → mismo grosor de borde
      (EV_SHAPE_BW) y escalado automático al tamaño del contenedor. */
-  return '<span class="ev-annual-marker ev-shape-'+shape+pmk+sz+'" data-id="'+ev.id+'"'+dsAttr+' style="color:'+color+'">'+evShapeSvg(shape)+'</span>';
+  return '<span class="ev-annual-marker ev-shape-'+shape+(evIsManagement(type)?' ev-management-mark':'')+pmk+sz+'" data-id="'+ev.id+'"'+dsAttr+' style="color:'+color+'">'+evShapeSvg(shape)+'</span>';
 }
 /* Marcador "+" (hay más eventos de los que caben en el día) */
 function evMorePlusHtml(extraClass){
   return '<span class="ev-annual-marker ev-marker-more'+(extraClass?' '+extraClass:'')+'">'+evMorePlusSvg()+'</span>';
 }
-/* Orden de los marcadores dentro de un mismo día: las gestiones SIEMPRE
-   primero. Importa por dos motivos: es lo que mas urge ver de un vistazo, y en
-   anual/4-meses solo se dibujan los tres primeros antes del "+", asi que ser
-   el primero garantiza que se vea. El resto conserva su orden.
-   Para dar prioridad a otra categoria basta con anadirla aqui. */
-var EV_MARK_ORDER = {'Rec. Gestiones':0,'Médico':0};
+/* Otros sin relleno abre el día, seguido de las gestiones por prioridad.
+   Anual/4 meses muestran los tres primeros antes del "+"; el resto conserva
+   su orden, con los ensayos ordenados entre sí por hora. */
+var EV_MARK_ORDER = {'Llamada':0,'Médico':1,'Dentista':2,'Peluquería':3,'Rec. Gestiones':4};
 function evMarkPriority(ev){
   if(!ev)return 9;                       /* cumpleanos VIP y demas: al final */
   if(getEvKind(ev)==='puntual'&&getEvType(ev)==='Otros'&&['wave','x-outline','circle-plus'].indexOf(ev.shape)>=0)return -1;
-  if(evIsManagement(getEvType(ev)))return 0;
   var p=EV_MARK_ORDER[getEvType(ev)];
   return (p===undefined)?9:p;
 }

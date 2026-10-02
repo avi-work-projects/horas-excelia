@@ -1,5 +1,15 @@
 # Gestify: guia de trabajo
 
+## Períodos personales, categorías y consulta (v386)
+- `js/personal-periods.js` concentra prorrateo, validación, copia y presentación; `personal-periods-editor.js` mantiene un borrador hasta Guardar. Los conceptos antiguos sin `periods` siguen calculándose como antes. Cada período guarda `start`, `end` (ambos inclusivos), `amount`, `period` y `paused`; no puede solaparse ni salir de su año. Los días sin período o paralizados valen cero. La media ponderada usa días naturales del año (también bisiestos), anualizando semana/mes/año con 52/12/1. El ajuste histórico del 18 % en el análisis de gastos semanales se conserva.
+- `personalCopyYear` usa el estado del 31/12 al copiar hacia delante y el del 01/01 hacia atrás, y lo extiende al año destino. Un parón o hueco en ese extremo permanece paralizado. Las listas se copian sin compartir referencias. Los períodos viajan en `personalPerYear` del backup existente; validación previa a importar y cálculos de Economía personal/Análisis comparten la misma función.
+- Seguros de referencia: editables únicamente en Fiscal > Hipoteca y Facturas > Detalle Hipoteca, inmediatamente antes del préstamo original. Se guardan en `despacho.segurosNormales`; Hogar sigue utilizándolos en sus cálculos, pero no muestra el bloque.
+- `EV_MANAGEMENT_SUBTYPES` y `EV_PLAN_SUBTYPES` alimentan grupos visuales en el formulario. Salir de fiesta usa `disco`; Copas conserva `party`. Otros ofrece `rounded` en vez de `square`, reubica `petal` (Estrella) y añade `planet`. Los símbolos antiguos siguen renderizándose. Las actividades puntuales llevan sus colores de rutina y un recuadro blanco: el icono real de rutina no cambia.
+- Marcadores: Otros sin relleno, Llamada, Médico, Dentista, Peluquería, Rec. Gestiones y resto. Un fondo suave distingue las gestiones sin ocupar más espacio. No confundir esta prioridad visual con la ordenación cronológica de las listas.
+- Cumpleaños: nombres de hasta cuatro líneas; VIP conserva su color personal, añade contorno amarillo y distintivo. `BDAY_CAL_VIP` solo filtra el calendario. Se reutiliza `.sy-hdr-right` para Hoy y su casilla, sin alterar otras cabeceras.
+- Las acciones de rutinas conservan disposición y comportamiento, con tres tonos suaves. Mis tareas se retira solo de Configuración; el botón flotante y su gesto de recuperación permanecen.
+- `tools/test-personal-periods.js` verifica fechas, parones, copia en ambos sentidos y una exportación/restauración real de TODO Hogar: hipoteca, seguros, suministros, comparaciones, contratos, facturas e IVA, incluso sin abrir sus ventanas. `personal-periods.spec.js` verifica edición, copia, persistencia, seguros y filtro VIP en navegador.
+
 ## Energía y planes (v385)
 - `energyNumber(valor, unidad, decimales?)`: kWh enteros por defecto; medias diarias con un decimal. Solo presentación, los cálculos y backups conservan precisión.
 - `ENERGY_SUMMARY_TOTAL` activa el histórico completo en Resumen de luz/gas. `energyYearIndicators(kind,null)` agrega las lecturas de todos los años documentados y cuenta cada factura e impuesto una sola vez. Navegar de año desactiva Total.

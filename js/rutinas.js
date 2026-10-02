@@ -325,7 +325,7 @@ function _renderRutLista(){
       h+='<div class="rut-card-ft"><span class="rut-vacio">Aún sin sesiones pasadas</span></div>';
     }
     h+='<div class="rut-card-actions"><button class="ev-btn" '+(r.flex?'data-rplan':'data-rweek')+'="'+escHtml(r.id)+'">'
-      +(r.flex?'Planificar sesiones':'Cambiar desde una semana concreta')+'</button>'
+      +(r.flex?'Planificar sesiones':'Cambiar (desde) una semana concreta')+'</button>'
       +'<button class="ev-btn" data-rhistory="'+escHtml(r.id)+'">Consultar histórico</button></div>';
     h+='</div>';
   });

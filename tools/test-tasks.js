@@ -77,7 +77,7 @@ console.log('Tareas: dos estados, Mover explícito, fechas recuperables, histór
 // Todas las categorías fijas comparten Gestión y sobreviven a la importación.
 Object.keys(a.EV_MANAGEMENT_SUBTYPES).forEach(type=>{
  const ev={id:type==='Médico'?'doctor':'test-'+a.EV_MANAGEMENT_SUBTYPES[type],kind:'puntual',type,title:type,start:'2026-08-21',end:'2026-08-21',color:'#ff0000'};
- assert.equal(a.evFilterGroup(ev),'Rec. Gestiones');assert.equal(a.evMarkPriority(ev),0);
+ assert.equal(a.evFilterGroup(ev),'Rec. Gestiones');assert.equal(a.evMarkPriority(ev),['Llamada','Médico','Dentista','Peluquería'].indexOf(type));
  assert.equal(a.getEvDisplayColor(ev),a.evTypeColor('puntual',type));
  assert(a.evMarkerHtml(ev,'','','circle').includes('ev-shape-'+a.EV_MANAGEMENT_SUBTYPES[type]));
  a.validateImport({events:[ev]});assert(a.evAdmiteRepeticion('puntual',type));

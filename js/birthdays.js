@@ -4,6 +4,7 @@
 
 var BDAY_STORAGE_KEY='excelia-bdays-v1';
 var BDAY_YEAR=new Date().getFullYear(), BDAY_MONTH=new Date().getMonth(), BDAY_VIEW='upcoming';
+var BDAY_CAL_VIP=false;
 var BDAY_EDIT=null;
 var BDAY_SEARCH='';
 var BDAY_UP_VIP=false;

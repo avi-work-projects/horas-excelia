@@ -101,6 +101,7 @@ function _bindYearSelector(){
       if(!confirm('¿Copiar datos de '+srcYear+' al año '+FISCAL_YEAR+'?'))return;
       if(FISCAL_TAB==='personal'){
         loadPersonalYear(srcYear);
+        PERSONAL_DATA=personalCopyYear(PERSONAL_DATA,srcYear,FISCAL_YEAR);
         savePersonalYear(FISCAL_YEAR);
         loadPersonalYear(FISCAL_YEAR);
       }else{
@@ -123,6 +124,8 @@ function _bindTabPersonal(){
   body._personalDel=true;
   /* Add buttons — preserve scroll position */
   body.addEventListener('click',function(e){
+    var advanced=e.target.closest('[data-pp-edit]');
+    if(advanced){openPersonalPeriodEditor(advanced.dataset.ps,+advanced.dataset.ppEdit);return;}
     var addBtn=e.target.closest('[data-padd]');
     if(addBtn){
       var sec=addBtn.dataset.padd;

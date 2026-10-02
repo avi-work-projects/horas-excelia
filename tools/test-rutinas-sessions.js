@@ -62,7 +62,7 @@ let groups=a.rutMarkerGroups([{_rut:{id:'a'},_rutTime:'18:00',_rutDur:60},{_rut:
 assert.deepEqual(Array.from(groups,g=>g.length),[3,1]);
 groups=a.rutMarkerGroups([{_rut:{id:'a'},_rutTime:'18:00',_rutDur:45},{_rut:{id:'a'},_rutTime:'19:00',_rutDur:60}]);assert.equal(groups.length,2);
 const markerEvents=[{id:'gest',kind:'puntual',type:'Rec. Gestiones'},{id:'fill',kind:'puntual',type:'Otros',shape:'circle'},{id:'outline',kind:'puntual',type:'Otros',shape:'wave'},{id:'med',kind:'puntual',type:'Médico'}];
-assert.deepEqual(Array.from(a.evSortMarks(markerEvents),e=>e.id),['outline','gest','med','fill']);
+assert.deepEqual(Array.from(a.evSortMarks(markerEvents),e=>e.id),['outline','med','gest','fill']);
 assert(a.evMarkerHtml({kind:'puntual',type:'Médico',shape:'x-thin',color:'#e03131'}).includes('ev-shape-medical'));
 const massBase={...original,skips:{},extraSessions:[]};a.RUTINAS=[massBase];
 const massCancelled=a.rutBulkChange(massBase,['2026-08-20','2026-08-24'],'cancel');

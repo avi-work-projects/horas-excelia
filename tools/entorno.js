@@ -30,6 +30,8 @@ const MODULOS = [
   'economics-helpers.js',
   'economics.js',
   'economics-fiscal-datos.js',
+  'personal-periods.js',
+  'personal-periods-editor.js',
   'economics-fiscal.js',
   'economics-fiscal-hip.js',
   'economics-fiscal-gas.js',

@@ -33,16 +33,16 @@ function _renderAnalisisGastos(){
   var h='';
   /* Real income = disponible (post decl. renta + ingresos extras), NOT personal ingresos */
   var disponible=typeof computeDisponible==='function'?computeDisponible(ECON_YEAR):0;
-  var tIngExtra=typeof _personalTotal==='function'?_personalTotal(PERSONAL_DATA.ingresos):0;
+  var tIngExtra=typeof _personalTotal==='function'?_personalTotal(PERSONAL_DATA.ingresos,ECON_YEAR):0;
 
   /* Collect personal gastos with categories */
   var allItems=[];
   /* Gastos semanales: reducidos 18% (parte se dedica a otros conceptos ya listados) */
   var totalSemAnual=0;
-  (PERSONAL_DATA.gastosSemanales||[]).forEach(function(g){if(!g.amount)return;var a=g.period==='monthly'?g.amount*12:Math.ceil(g.amount*52*0.82);totalSemAnual+=a;allItems.push({label:g.label,annual:a,cat:'gasto',_weekly:true});});
+  (PERSONAL_DATA.gastosSemanales||[]).forEach(function(g){var a=personalAnnual(g,ECON_YEAR,'gastosSemanales',true);if(!a)return;totalSemAnual+=a;allItems.push({label:g.label,annual:a,cat:'gasto',_weekly:true});});
   /* Gastos recurrentes (incluye viajes con prorrateo) */
   var gastoSemDiario=totalSemAnual/365;
-  (PERSONAL_DATA.gastosRecurrentes||[]).forEach(function(g){if(!g.amount)return;var a=g.period==='annual'?g.amount:g.period==='weekly'?g.amount*52:g.amount*12;
+  (PERSONAL_DATA.gastosRecurrentes||[]).forEach(function(g){var a=personalAnnual(g,ECON_YEAR,'gastosRecurrentes');if(!a)return;
     /* Prorrateo viajes: restar gastos semanales de los días de viaje */
     if(g._viaje&&typeof EVENTS!=='undefined'){
       var diasViaje=0;
@@ -57,7 +57,7 @@ function _renderAnalisisGastos(){
     }
     allItems.push({label:g.label,annual:a,cat:'gasto',_viaje:!!g._viaje});
   });
-  (PERSONAL_DATA.inversiones||[]).forEach(function(g){if(!g.amount)return;var a=g.period==='annual'?g.amount:g.amount*12;allItems.push({label:g.label,annual:a,cat:'inversion'});});
+  (PERSONAL_DATA.inversiones||[]).forEach(function(g){var a=personalAnnual(g,ECON_YEAR,'inversiones');if(!a)return;allItems.push({label:g.label,annual:a,cat:'inversion'});});
   allItems.sort(function(a,b){return b.annual-a.annual;});
 
   var tGastos=0,tInv=0;

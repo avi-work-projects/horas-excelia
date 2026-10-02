@@ -1058,10 +1058,13 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .bday-cell.today-bday{border-color:var(--birthday-tone);box-shadow:inset 0 0 0 1px var(--birthday-tone)}
 .bday-num{display:flex;align-items:center;justify-content:center;align-self:flex-start;min-width:23px;height:23px;font-size:.73rem;font-family:var(--mono);line-height:1;color:var(--text-muted)}
 .bday-calendar .bday-cell.today-bday .bday-num{background:var(--birthday-tone);color:var(--surface);border-radius:50%;font-weight:700}
-/* Cabe el nombre entero, hasta en tres lineas */
-.bday-badge{font-size:.57rem;letter-spacing:-.015em;border-radius:4px;padding:3px 2px;line-height:1.25;white-space:normal;overflow-wrap:anywhere;hyphens:auto;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;border:1px solid color-mix(in srgb,var(--bday-color) 65%,var(--border));background:color-mix(in srgb,var(--bday-color) 15%,var(--surface));color:var(--text);font-weight:500;cursor:pointer;transition:opacity .1s;text-align:center}
+/* El nombre admite hasta cuatro líneas. */
+.bday-badge{position:relative;font-size:.57rem;letter-spacing:-.015em;border-radius:4px;padding:3px 2px;line-height:1.25;white-space:normal;overflow-wrap:anywhere;hyphens:auto;overflow:hidden;border:1px solid color-mix(in srgb,var(--bday-color) 65%,var(--border));background:color-mix(in srgb,var(--bday-color) 15%,var(--surface));color:var(--text);font-weight:500;cursor:pointer;transition:opacity .1s;text-align:center}
+.bday-badge-name{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
 .bday-badge:active{opacity:.7}
-.bday-badge.bday-badge-vip{border-color:#d8a51e;border-bottom-width:3px;font-weight:700}
+.bday-badge.bday-badge-vip{box-shadow:inset 0 0 0 1.5px #e6b52a;font-weight:700;padding-top:15px}
+.bday-calendar-vip{position:absolute;top:1px;right:1px;width:23px;height:14px;object-fit:contain}
+.bday-calendar-tools{display:flex;flex-direction:column;align-items:center;gap:7px}.bday-calendar-tools label{display:flex;align-items:center;gap:4px;color:var(--text-muted);font-size:.59rem;white-space:nowrap;--chk:#c2911c}.bday-calendar-tools input[type=checkbox]{width:13px;height:13px}
 .bday-month-hdr{font-size:.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:10px 0 6px;border-bottom:1px solid var(--border);margin-bottom:6px}
 .bday-list-item{display:flex;align-items:center;gap:10px;padding:11px 0 15px;min-height:52px;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity .12s}
 /* VIP controls bar */
@@ -1245,13 +1248,12 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-type-picker .ev-color-swatch.selected{border-color:currentColor;background:color-mix(in srgb,currentColor 12%,var(--surface));box-shadow:0 1px 3px #0001}
 .ev-type-picker .ev-type-name{color:var(--text)}
 .ev-type-picker .selected .ev-type-name{font-weight:600}
-.ev-plan-subtypes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0 0 5px}
-.ev-type-picker .ev-plan-subtypes .ev-color-swatch{flex-direction:column;justify-content:center;text-align:center;gap:7px;padding:9px 3px;min-width:0}
-.ev-plan-subtypes .ev-type-name{font-size:.69rem;line-height:1.25}
-.ev-plan-subtypes .ev-type-dot,.ev-management-subtypes .ev-type-dot{width:20px;height:20px}
-.ev-management-subtypes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin:0 0 5px}
-.ev-type-picker .ev-management-subtypes .ev-color-swatch{flex-direction:column;gap:5px;padding:8px 2px;font:inherit;min-width:0}
-.ev-management-subtypes .ev-type-name{font-size:.62rem;white-space:nowrap}
+.ev-category-group{border:1px solid var(--border);border-radius:12px;padding:8px;background:var(--surface2);margin-bottom:6px;--category-tone:#349c83}.ev-category-group.planes{--category-tone:#d78435}.ev-category-group.chosen{border-color:var(--category-tone)}
+.ev-category-group>.ev-color-swatch{width:100%;font-weight:600;margin-bottom:8px}
+.ev-category-children{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.ev-type-picker .ev-category-children .ev-color-swatch{flex-direction:column;justify-content:center;text-align:center;gap:6px;padding:8px 2px;min-width:0;min-height:60px}
+.ev-category-children .ev-type-name{font-size:.61rem;line-height:1.2;min-height:2.4em;display:flex;align-items:center;justify-content:center}.ev-category-children .ev-type-dot{width:22px;height:22px}
+.ev-category-main-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.ev-type-picker .ev-category-main-grid .ev-color-swatch{min-width:0;justify-content:center}
 .ev-type-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
 .ev-type-dot svg{display:block;width:100%;height:100%}
 .ev-type-name{font-size:.8rem}
@@ -1322,6 +1324,7 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
    multi-día (.ev-multi-bar tiene z-index:3 absolute encima de las celdas). */
 .ev-annual-marker{position:relative;width:7px;height:7px;flex-shrink:0;display:inline-block;z-index:4;line-height:0}
 .ev-annual-marker svg{display:block;width:100%;height:100%;overflow:visible}
+.ev-management-mark{border-radius:4px;background:color-mix(in srgb,currentColor 16%,var(--surface));box-shadow:0 0 0 1px color-mix(in srgb,currentColor 38%,var(--surface))}
 .ev-annual-marker.past-marker{opacity:.5}
 
 /* === Selector de formas en el formulario de evento (Otros) === */
@@ -3024,6 +3027,7 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .rut-routine-card .rut-name{font-size:.78rem}
 .rut-card-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:3px}
 .rut-card-actions .ev-btn{min-width:0;min-height:42px;padding:8px 10px;font-size:.68rem;line-height:1.35}
+.rut-card-actions [data-rweek]{--rut-action:#a2793b}.rut-card-actions [data-rplan]{--rut-action:#2e9388}.rut-card-actions [data-rhistory]{--rut-action:#597caf}.rut-card-actions .ev-btn{color:var(--rut-action);border-color:color-mix(in srgb,var(--rut-action) 45%,var(--border));background:color-mix(in srgb,var(--rut-action) 10%,var(--surface))}
 .ev-main-tabs .ev-btn-bday{display:flex;justify-content:center;align-items:center}
 .ev-main-tabs .ev-btn-bday .nav-pro-icon{color:inherit;width:30px;height:30px}
 

@@ -13,7 +13,8 @@ test('fiscal consulta, hogar edita y vuelve al mismo detalle conservando la prec
  await page.evaluate(()=>{FISCAL_TAB='despacho';FISCAL_HIP_SUB='elect';openFiscal(2026);});
  for(const tab of ['resumen','detalle','gas','elect']){
   await page.locator('#fiscalOverlay [data-hipsub="'+tab+'"]').click();
-  await expect(page.locator('#fiscalOverlay input,#fiscalSave,#fiscalOverlay .hip-edit-btn,#fiscalOverlay .energy-analysis-open')).toHaveCount(0);
+  await expect(page.locator('#fiscalSave,#fiscalOverlay .hip-edit-btn,#fiscalOverlay .energy-analysis-open')).toHaveCount(0);
+  await expect(page.locator('#fiscalOverlay input')).toHaveCount(tab==='detalle'?3:0);
   await expect(page.locator('#householdDetailLink')).toBeVisible();
  }
  await page.locator('#householdDetailLink').click();
@@ -31,7 +32,7 @@ test('fiscal consulta, hogar edita y vuelve al mismo detalle conservando la prec
  expect(errors).toEqual([]);
 });
 
-test('acceso de tareas: margen inferior, ocultar por arrastre, persistir y recuperar por gesto o menú',async({page})=>{
+test('acceso de tareas: margen inferior, ocultar por arrastre, persistir y recuperar por gesto',async({page})=>{
  await page.goto('/');const fab=page.locator('#tasksFab');
  await fab.click();await page.locator('#tasksNew').fill('Conservar esta tarea');await page.getByRole('button',{name:'Añadir tarea',exact:true}).click();await page.locator('#tasksClose').click();
  async function hide(){
@@ -49,8 +50,9 @@ test('acceso de tareas: margen inferior, ocultar por arrastre, persistir y recup
   document.body.dispatchEvent(new TouchEvent('touchend',{bubbles:true,touches:[]}));
  });
  await expect(fab).toBeVisible();await expect(fab).toHaveClass(/tasks-docked/);
- await hide();await page.locator('#menuBtn').click();await page.locator('#tasksMenuOpen').click();await expect(page.locator('.task-title')).toHaveText('Conservar esta tarea');
+ await fab.click();await expect(page.locator('.task-title')).toHaveText('Conservar esta tarea');
  await page.locator('#tasksClose').click();await expect(fab).toBeVisible();
+ await page.locator('#menuBtn').click();await expect(page.locator('#tasksMenuOpen')).toHaveCount(0);
 });
 
 test('recordatorios con bordes uniformes y colores de cumpleaños y gestiones distintos',async({page})=>{

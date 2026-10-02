@@ -13,10 +13,17 @@ function evPuntualDays(ev){
 
 /* Swatches de categoria de la clase indicada */
 function _renderEvTypeSwatches(kind,selType){
+  if(kind!=='puntual')return '<div class="ev-category-main-grid">'+EV_KINDS[kind].types.map(function(t){return _renderEvTypeButton(kind,t,selType);}).join('')+'</div>';
   var h='';
-  EV_KINDS[kind].types.forEach(function(t){
-    if(kind==='puntual'&&t==='Llamada')h+='<div class="ev-management-subtypes" role="group" aria-label="Tipos de gestión">';
-    if(kind==='puntual'&&t==='Plan romántico')h+='<div class="ev-plan-subtypes" role="group" aria-label="Tipos de plan">';
+  [['Rec. Gestiones',Object.keys(EV_MANAGEMENT_SUBTYPES),'gestiones'],['Plan/Quedada',Object.keys(EV_PLAN_SUBTYPES),'planes']].forEach(function(group){
+    var selected=selType===group[0]||group[1].indexOf(selType)>=0;
+    h+='<section class="ev-category-group '+group[2]+(selected?' chosen':'')+'" aria-label="'+group[0]+'">'+_renderEvTypeButton(kind,group[0],selType);
+    h+='<div class="ev-category-children">'+group[1].map(function(t){return _renderEvTypeButton(kind,t,selType);}).join('')+'</div></section>';
+  });
+  return h+'<div class="ev-category-main-grid">'+['Ensayos boda','Otros'].map(function(t){return _renderEvTypeButton(kind,t,selType);}).join('')+'</div>';
+}
+function _renderEvTypeButton(kind,t,selType){
+    var h='';
     var key=evTypeKey(kind,t);
     var c=evTypeColor(kind,t);
     /* Multicolor = "elige tu color"; Casa Rural muestra su marron aunque
@@ -28,8 +35,6 @@ function _renderEvTypeSwatches(kind,selType){
       :kind==='puntual'&&(evIsManagement(t)||evFixedSymbol(t))?'<span class="ev-type-dot">'+evShapeSvg(evDefaultShape({type:t}))+'</span>'
       :'<div class="ev-type-dot" style="background:'+c+'"></div>';
     h+='<span class="ev-type-name">'+escHtml(t)+'</span></button>';
-    if(kind==='puntual'&&(t==='Dentista'||t==='Montaña'))h+='</div>';
-  });
   return h;
 }
 
@@ -119,16 +124,16 @@ function renderEvForm(ev){
   h+='<div class="ev-shape-picker" id="evFShapePicker">';
   var _shapes=[
     {k:'circle',  label:'C\u00edrculo'},
-    {k:'square',  label:'Cuadrado'},
+    {k:'rounded', label:'Rectángulo redondeado'},
     {k:'diamond', label:'Hexágono'},
     {k:'x-thick', label:'X gorda'},
     {k:'x-thin',  label:'Cruz'},
-    {k:'rounded', label:'Redondeado'},
+    {k:'petal', label:'Estrella'},
     {k:'wave', label:'Ola a mano'},
     {k:'x-outline', label:'X de rotulador'},
     {k:'circle-plus', label:'Círculo con cruz'},
     {k:'rings', label:'Boda'},
-    {k:'petal', label:'Pétalos'},
+    {k:'planet', label:'Planeta'},
     {k:'leaf', label:'Hoja'},
     /* Las mismas siluetas que usan las rutinas */
     {k:'gym',     label:'Mancuerna'},
@@ -327,7 +332,7 @@ function bindEvFormEvents(){
   function _applyTypeUI(kind,typeName){
     var key=evTypeKey(kind,typeName);
     if(_kindPicker){_kindPicker.dataset.curKind=kind;_kindPicker.dataset.curType=typeName;}
-    if(_colorSection)_colorSection.style.display=EV_FREE_COLOR[key]?'block':'none';
+    if(_colorSection)_colorSection.style.display=EV_FREE_COLOR[key]&&!(kind==='puntual'&&typeName==='Otros'&&RUT_FIXED_COLOR[_otrosShape])?'block':'none';
     var _shp=!!EV_FREE_SHAPE[key],_dts=!!EV_FREE_DATES[key],_bar=!!EV_FREE_BARSIZE[key];
     if(_otrosExtras)_otrosExtras.style.display=(_shp||_dts||_bar)?'block':'none';
     var _bb=document.getElementById('evFBarBlock');
@@ -358,6 +363,7 @@ function bindEvFormEvents(){
       sw.addEventListener('click',function(){
         document.querySelectorAll('#evFTypePicker .ev-color-swatch').forEach(function(x){x.classList.remove('selected');});
         sw.classList.add('selected');
+        document.querySelectorAll('#evFTypePicker .ev-category-group').forEach(function(g){g.classList.toggle('chosen',g.contains(sw));});
         _selectedTypeHex=sw.dataset.hex;
         var typeName=sw.dataset.type||'Otros';
         _applyTypeUI(sw.dataset.kind||_curKind(),typeName);
@@ -405,6 +411,7 @@ function bindEvFormEvents(){
       document.querySelectorAll('#evFShapePicker .ev-shape-opt').forEach(function(x){x.classList.remove('selected');});
       b.classList.add('selected');
       _otrosShape=b.dataset.shape;
+      _applyTypeUI(_curKind(),(_kindPicker&&_kindPicker.dataset.curType)||'Otros');
     });
   });
   /* Bot\u00f3n elegir d\u00edas espec\u00edficos */
