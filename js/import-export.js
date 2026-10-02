@@ -374,6 +374,7 @@ var _g4=document.getElementById('exportAllBtn'); if(_g4)_g4.addEventListener('cl
     alarmMinute:appStorage.getItem('excelia-alarm-m')||null,
     alarmDays:appStorage.getItem('excelia-alarm-days')||null,
     routineAppearance:{gymColor:RUT_GYM_COLOR},
+    eventAppearance:loadEventAppearance(),
     householdTab:householdTab(appStorage.getItem(HOUSEHOLD_TAB_KEY)),
     navIconStyle:appStorage.getItem('excelia-nav-icons-v1')||'original',
     theme:appStorage.getItem('excelia-theme-v1')||null};
@@ -513,6 +514,7 @@ function _applyFullImport(d,mode){
       if(d.alarmDays)appStorage.setItem('excelia-alarm-days',d.alarmDays);
       if(d.theme)appStorage.setItem('excelia-theme-v1',d.theme);
       if(d.routineAppearance)setRutGymColor(d.routineAppearance.gymColor);
+      if(d.eventAppearance)setEventAppearance(d.eventAppearance);
       if(d.householdTab)setHouseholdTab(d.householdTab);
       if(d.navIconStyle)appStorage.setItem('excelia-nav-icons-v1',d.navIconStyle);
       /* Va antes del save(): save() vuelca estas variables a excelia-horas-v3,
@@ -529,7 +531,7 @@ function _applyFullImport(d,mode){
       updateBdayBtn();updateEventsBtn();
       showToast(merge?('Backup fusionado'+(_impRes?(' · eventos: '+evMergeMsg(_impRes)):''))
         :'Backup completo importado','success');
-    }catch(err){appStorage.cancel();Object.keys(memory).forEach(function(k){window[k]=memory[k];});showToast('No se ha importado: '+err.message,'error');}
+    }catch(err){appStorage.cancel();Object.keys(memory).forEach(function(k){window[k]=memory[k];});applyEventAppearance();showToast('No se ha importado: '+err.message,'error');}
 }
 
 window.applyFullImport=_applyFullImport;

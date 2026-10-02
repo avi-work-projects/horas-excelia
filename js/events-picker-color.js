@@ -39,12 +39,12 @@ var EV_COLOR_TYPES = {
    la identidad de una categor\u00eda es el par (kind, type), no el nombre suelto.
    - puntual: se dibuja UN MARCADOR POR D\u00cdA (aunque abarque varios d\u00edas)
    - grande:  se dibuja como BARRA continua (formato actual de Viaje/Asturias) */
-var EV_MANAGEMENT_SUBTYPES={'Llamada':'phone','Peluquería':'comb','Médico':'medical','Dentista':'tooth'};
-var EV_PLAN_SUBTYPES={'Plan romántico':'heart','Comida':'meal','Cena':'dinner','Salir de fiesta':'disco','Copas':'party','Cerveza':'beer','Montaña':'mountain'};
+var EV_MANAGEMENT_SUBTYPES={'Llamada':'phone','Peluquería':'scissors','Médico':'medical','Dentista':'tooth'};
+var EV_PLAN_SUBTYPES={'Plan romántico':'heart','Comida':'meal','Cena':'dinner','Salir de fiesta':'disco','Copas':'party','Tomar algo':'beer','Montaña':'mountain','Barbacoa':'barbecue'};
 function evIsManagement(type){return type==='Rec. Gestiones'||Object.prototype.hasOwnProperty.call(EV_MANAGEMENT_SUBTYPES,type);}
 function evFixedSymbol(type){return EV_MANAGEMENT_SUBTYPES[type]||EV_PLAN_SUBTYPES[type]||null;}
 var EV_KINDS = {
-  puntual:{label:'Puntual', types:['Rec. Gestiones','Llamada','Peluquería','Médico','Dentista','Plan/Quedada','Plan romántico','Comida','Cena','Salir de fiesta','Copas','Cerveza','Montaña','Ensayos boda','Otros']},
+  puntual:{label:'Puntual', types:['Rec. Gestiones'].concat(Object.keys(EV_MANAGEMENT_SUBTYPES),['Plan/Quedada'],Object.keys(EV_PLAN_SUBTYPES),['Ensayos boda','Otros'])},
   grande: {label:'Grande',  types:['Viaje','Asturias','Casa Rural','Otros']}
 };
 /* Color por defecto de cada categor\u00eda (par kind|type) */
@@ -60,8 +60,9 @@ var EV_TYPE_COLORS = {
   'puntual|Cena'          :'#6574c4',
   'puntual|Salir de fiesta':'#c553a5',
   'puntual|Copas'        :'#9f62bc',
-  'puntual|Cerveza'       :'#f5c232',
+  'puntual|Tomar algo'    :'#f5c232',
   'puntual|Montaña'       :'#8b5e34',
+  'puntual|Barbacoa'      :'#d46535',
   'puntual|Ensayos boda'  :'#c084fc',
   'puntual|Otros'         :'#a3e635',
   'grande|Viaje'          :'#38bdf8',
@@ -115,48 +116,52 @@ function evShapeSvg(shape){
      elegir como forma para un evento puntual de tipo Otros. */
   if(typeof RUT_ICON_LABEL!=='undefined'&&RUT_ICON_LABEL[shape]&&typeof rutIconSvg==='function'){
     var activity=rutIconSvg(shape,RUT_FIXED_COLOR[shape]||'#888',true).replace(/^<svg[^>]*>/,'').replace(/<\/svg>$/,'');
-    return '<svg viewBox="0 0 20 20"><rect x="1" y="1" width="18" height="18" rx="4" fill="#fff" stroke="#000" stroke-width="1.7"/><g transform="translate(3.5 3.5) scale(.54)">'+activity+'</g></svg>';
+    return '<svg viewBox="0 0 20 20"><rect x="1" y="1" width="18" height="18" rx="4" fill="#fff" stroke="#000" '+evSymbolStroke(1.7)+'/><g transform="translate(3.5 3.5) scale(.54)">'+activity+'</g></svg>';
   }
   var bw=EV_SHAPE_BW,inner;
   if(shape==='medical'){
-    inner='<rect x="-9" y="-7.5" width="18" height="15" rx="2" fill="#fff" stroke="#000" stroke-width="'+bw+'"/><path d="M-5,0 H5 M0,-5 V5" fill="none" stroke="#e03131" stroke-width="3.4"/>';
+    inner='<rect x="-9" y="-7.5" width="18" height="15" rx="2" fill="#fff" stroke="#000" '+evSymbolStroke(bw)+'/><path d="M-5,0 H5 M0,-5 V5" fill="none" stroke="#e03131" '+evSymbolStroke(3.4,'cross')+'/>';
   } else if(shape==='phone'){
-    inner='<path d="M-7,-8 C-10,-6 -8,1 -3,5 C1,9 6,10 8,7 L8,4 L3,1 L1,3 C-1,2 -3,0 -4,-2 L-2,-4 L-5,-8 Z" fill="#868e96" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/>';
-  } else if(shape==='comb'){
-    inner='<g transform="rotate(-40)"><rect x="-8" y="-4" width="16" height="4" rx="1.4" fill="#8b5e34" stroke="#000" stroke-width="1.7"/><path d="M-7,0 V4 M-3.5,0 V4 M0,0 V4 M3.5,0 V4 M7,0 V4" fill="none" stroke="#000" stroke-width="2.6" stroke-linecap="round"/><path d="M-7,0 V3.5 M-3.5,0 V3.5 M0,0 V3.5 M3.5,0 V3.5 M7,0 V3.5" fill="none" stroke="#8b5e34" stroke-width="1.2"/></g>';
+    inner='<path d="M-7,-8 C-10,-6 -8,1 -3,5 C1,9 6,10 8,7 L8,4 L3,1 L1,3 C-1,2 -3,0 -4,-2 L-2,-4 L-5,-8 Z" fill="#868e96" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/>';
+  } else if(shape==='scissors'||shape==='comb'){
+    inner='<path d="M-5,4 L5.5,-8 Q7,-7 5,-3 L0,3 Z M5,4 L-5.5,-8 Q-7,-7 -5,-3 L0,3 Z" fill="#dbe3e9" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/>'
+      +'<circle cx="-5" cy="5.5" r="3" fill="#8b5e34" stroke="#000" '+evSymbolStroke(bw)+'/><circle cx="5" cy="5.5" r="3" fill="#8b5e34" stroke="#000" '+evSymbolStroke(bw)+'/><circle cy=".5" r="1" fill="#000"/>';
+  } else if(shape==='barbecue'){
+    inner='<path d="M-7,0 A7,7 0 0 0 7,0 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/><path d="M-3,6 L-5,9 M3,6 L5,9" stroke="#000" '+evSymbolStroke(1.8)+' stroke-linecap="round"/>'
+      +'<path d="M-3,-8 C-6,-5 -1,-5 -3,-2 M3,-8 C0,-5 5,-5 3,-2" fill="none" stroke="#000" '+evSymbolStroke(1.5)+' stroke-linecap="round"/><path d="M-8,0 H8" stroke="#000" '+evSymbolStroke(bw)+' stroke-linecap="round"/>';
   } else if(shape==='tooth'){
-    inner='<path d="M0,-6 C-9,-12 -10,-3 -7,2 C-6,5 -6,9 -3,9 C-1,9 -2,2 0,2 C2,2 1,9 3,9 C6,9 6,5 7,2 C10,-3 9,-12 0,-6 Z" fill="#e8f7fa" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/><path d="M-4,-4 Q-2,-5 0,-3" fill="none" stroke="#16859b" stroke-width="1.3" stroke-linecap="round"/>';
+    inner='<path d="M0,-6 C-9,-12 -10,-3 -7,2 C-6,5 -6,9 -3,9 C-1,9 -2,2 0,2 C2,2 1,9 3,9 C6,9 6,5 7,2 C10,-3 9,-12 0,-6 Z" fill="#e8f7fa" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/><path d="M-4,-4 Q-2,-5 0,-3" fill="none" stroke="#16859b" stroke-width="1.3" stroke-linecap="round"/>';
   } else if(shape==='heart'){
-    inner='<path d="M0,8 C-3,5 -9,1 -9,-3 C-9,-9 -2,-10 0,-5 C2,-10 9,-9 9,-3 C9,1 3,5 0,8 Z" fill="currentColor" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/>';
+    inner='<path d="M0,8 C-3,5 -9,1 -9,-3 C-9,-9 -2,-10 0,-5 C2,-10 9,-9 9,-3 C9,1 3,5 0,8 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/>';
   } else if(shape==='meal'){
-    inner='<circle r="6.2" fill="currentColor" stroke="#000" stroke-width="'+bw+'"/><circle r="3.4" fill="none" stroke="#fff" stroke-width="1.3"/><path d="M-9,-7 V-2 Q-7,-1 -7,-3 V-7 M-8,-1 V8 M9,-7 V8" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round"/>';
+    inner='<circle r="6.2" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+'/><circle r="3.4" fill="none" stroke="#fff" stroke-width="1.3"/><path d="M-9,-7 V-2 Q-7,-1 -7,-3 V-7 M-8,-1 V8 M9,-7 V8" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round"/>';
   } else if(shape==='dinner'){
-    inner='<path d="M-9,6 A9,9 0 0 1 9,6 Z" fill="currentColor" stroke="#000" stroke-width="'+bw+'"/><path d="M-9,8 H9 M0,-3 V-5" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/><path d="M5,-9 A4,4 0 1 0 9,-5 A4,4 0 0 1 5,-9" fill="#ffe7a1" stroke="#000" stroke-width="1.2"/>';
+    inner='<path d="M-9,6 A9,9 0 0 1 9,6 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+'/><path d="M-9,8 H9 M0,-3 V-5" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/><path d="M5,-9 A4,4 0 1 0 9,-5 A4,4 0 0 1 5,-9" fill="#ffe7a1" stroke="#000" stroke-width="1.2"/>';
   } else if(shape==='disco'){
-    inner='<path d="M0,-10 V-7" stroke="#000" stroke-width="1.6"/><circle cy="1" r="8" fill="currentColor" stroke="#000" stroke-width="'+bw+'"/><path d="M-7,-2 H7 M-7,3 H7 M-4,7 Q-8,1 -4,-6 M4,7 Q8,1 4,-6 M0,-7 V9" fill="none" stroke="#fff" stroke-width="1.2"/><path d="M-9,-8 V-4 M-11,-6 H-7 M8,-8 V-4 M6,-6 H10" stroke="#000" stroke-width="1.1"/>';
+    inner='<path d="M0,-10 V-7" stroke="#000" stroke-width="1.6"/><circle cy="1" r="8" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+'/><path d="M-7,-2 H7 M-7,3 H7 M-4,7 Q-8,1 -4,-6 M4,7 Q8,1 4,-6 M0,-7 V9" fill="none" stroke="#fff" stroke-width="1.2"/><path d="M-9,-8 V-4 M-11,-6 H-7 M8,-8 V-4 M6,-6 H10" stroke="#000" stroke-width="1.1"/>';
   } else if(shape==='planet'){
-    inner='<circle r="6" fill="currentColor" stroke="#000" stroke-width="'+bw+'"/><ellipse rx="9" ry="3" transform="rotate(-30)" fill="none" stroke="#000" stroke-width="3.2"/><ellipse rx="9" ry="3" transform="rotate(-30)" fill="none" stroke="currentColor" stroke-width="1.3"/>';
+    inner='<circle r="6" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+'/><ellipse rx="9" ry="3" transform="rotate(-30)" fill="none" stroke="#000" '+evSymbolStroke(3.2,'outline',1.3)+'/><ellipse rx="9" ry="3" transform="rotate(-30)" fill="none" stroke="currentColor" stroke-width="1.3"/>';
   } else if(shape==='party'){
-    inner='<path d="M-8,-7 H8 L1,2 V7 H5 V9 H-5 V7 H-1 V2 Z" fill="currentColor" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/><path d="M-5,-4 H5 M2,-4 L6,-9" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/>';
+    inner='<path d="M-8,-7 H8 L1,2 V7 H5 V9 H-5 V7 H-1 V2 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/><path d="M-5,-4 H5 M2,-4 L6,-9" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/>';
   } else if(shape==='beer'){
-    inner='<path d="M4,-3 H8 V5 H4" fill="none" stroke="#000" stroke-width="3" stroke-linejoin="round"/><path d="M-7,-4 H5 V8 H-7 Z" fill="currentColor" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/><path d="M-7,-3 C-11,-5 -7,-9 -4,-7 C-3,-10 2,-10 3,-7 C7,-8 8,-3 4,-3 Z" fill="#fff" stroke="#000" stroke-width="'+bw+'"/><path d="M-3,0 V5 M1,0 V5" stroke="#000" stroke-width="1" opacity=".4"/>';
+    inner='<path d="M4,-3 H8 V5 H4" fill="none" stroke="#000" stroke-width="3" stroke-linejoin="round"/><path d="M-7,-4 H5 V8 H-7 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/><path d="M-7,-3 C-11,-5 -7,-9 -4,-7 C-3,-10 2,-10 3,-7 C7,-8 8,-3 4,-3 Z" fill="#fff" stroke="#000" '+evSymbolStroke(bw)+'/><path d="M-3,0 V5 M1,0 V5" stroke="#000" stroke-width="1" opacity=".4"/>';
   } else if(shape==='mountain'){
-    inner='<path d="M-9,8 L-1,-8 L9,8 Z" fill="currentColor" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/><path d="M-4,-2 L-1,-8 L3,-2 L0,-3 L-2,-1 Z" fill="#fff" stroke="#000" stroke-width="1" stroke-linejoin="round"/>';
+    inner='<path d="M-9,8 L-1,-8 L9,8 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/><path d="M-4,-2 L-1,-8 L3,-2 L0,-3 L-2,-1 Z" fill="#fff" stroke="#000" stroke-width="1" stroke-linejoin="round"/>';
   } else if(shape==='rings'){
-    inner='<ellipse cx="-3" cy="0" rx="4.5" ry="7" fill="none" stroke="#000" stroke-width="5"/><ellipse cx="-3" cy="0" rx="4.5" ry="7" fill="none" stroke="currentColor" stroke-width="2.5"/><ellipse cx="3" cy="0" rx="4.5" ry="7" fill="none" stroke="#000" stroke-width="5"/><ellipse cx="3" cy="0" rx="4.5" ry="7" fill="none" stroke="currentColor" stroke-width="2.5"/>';
+    inner='<ellipse cx="-3" cy="0" rx="4.5" ry="7" fill="none" stroke="#000" '+evSymbolStroke(5,'outline',2.5)+'/><ellipse cx="-3" cy="0" rx="4.5" ry="7" fill="none" stroke="currentColor" stroke-width="2.5"/><ellipse cx="3" cy="0" rx="4.5" ry="7" fill="none" stroke="#000" '+evSymbolStroke(5,'outline',2.5)+'/><ellipse cx="3" cy="0" rx="4.5" ry="7" fill="none" stroke="currentColor" stroke-width="2.5"/>';
   } else if(shape==='x-thick'||shape==='x-thin'){
     var swIn=5;
     var swOut=swIn+bw*2;
     var d=shape==='x-thin'?'M-5.5,0 H5.5 M0,-5.5 V5.5':'M-6,-6 L6,6 M-6,6 L6,-6';
-    inner='<path d="'+d+'" stroke="#000" stroke-width="'+swOut+'" stroke-linecap="round" fill="none"/>'
-        + '<path d="'+d+'" stroke="currentColor" stroke-width="'+swIn+'" stroke-linecap="round" fill="none" class="ev-shape-x-color"/>';
+    inner='<path d="'+d+'" stroke="#000" '+evSymbolStroke(swOut,'cross-outline',swIn)+' stroke-linecap="round" fill="none"/>'
+        + '<path d="'+d+'" stroke="currentColor" '+evSymbolStroke(swIn,'cross')+' stroke-linecap="round" fill="none" class="ev-shape-x-color"/>';
   } else if(shape==='circle'){
-    inner='<circle cx="0" cy="0" r="'+(9-bw/2)+'" fill="currentColor" stroke="#000" stroke-width="'+bw+'"/>';
+    inner='<circle cx="0" cy="0" r="'+(9-bw/2)+'" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+'/>';
   } else if(shape==='square'){
-    inner='<rect x="-8" y="-8" width="16" height="16" fill="currentColor" stroke="#000" stroke-width="'+bw+'"/>';
+    inner='<rect x="-8" y="-8" width="16" height="16" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+'/>';
   } else if(shape==='diamond'){
     /* Se conserva el identificador para actualizar también eventos y backups antiguos. */
-    inner='<polygon points="-4.2,-7.5 4.2,-7.5 8.5,0 4.2,7.5 -4.2,7.5 -8.5,0" fill="currentColor" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/>';
+    inner='<polygon points="-4.2,-7.5 4.2,-7.5 8.5,0 4.2,7.5 -4.2,7.5 -8.5,0" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/>';
   } else if(shape==='wave'||shape==='x-outline'||shape==='circle-plus'){
     /* Trazo de rotulador inclinado; las coordenadas dejan margen al trazo
        dentro del viewBox habitual, sin agrandar el hueco del marcador. */
@@ -164,16 +169,16 @@ function evShapeSvg(shape){
       :shape==='x-outline'?'M-5.5,-6 L5.5,6 M-5.5,6 L5.5,-6'
       :'M6.5,0 C6.7,8.6 -7.3,8.6 -7,0 C-7.1,-8.6 7.1,-8.6 6.5,0 M-3.4,0 H3.4 M0,-3.4 V3.4';
     var path=' d="'+line+'" transform="skewX(-10)" fill="none" stroke-linecap="'+(shape==='x-outline'?'square':'round')+'" stroke-linejoin="round"';
-    inner='<path'+path+' class="ev-shape-halo" stroke="var(--ev-marker-halo, var(--surface))" stroke-width="4.2"/>'
-      +'<path'+path+' stroke="currentColor" stroke-width="3"/>';
+    inner='<path'+path+' class="ev-shape-halo" stroke="var(--ev-marker-halo, var(--surface))" '+evSymbolStroke(4.2,'halo')+'/>'
+      +'<path'+path+' stroke="currentColor" '+evSymbolStroke(3,'ink')+'/>';
   } else if(shape==='cloud'){
-    inner='<path d="M-6,6 H6 C9.5,6 9.5,-2 7,-2 C7,-8 0,-9 -2,-5 C-7,-8 -10,-3 -7,0 C-10,1 -9.5,6 -6,6 Z" fill="currentColor" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/>';
+    inner='<path d="M-6,6 H6 C9.5,6 9.5,-2 7,-2 C7,-8 0,-9 -2,-5 C-7,-8 -10,-3 -7,0 C-10,1 -9.5,6 -6,6 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/>';
   } else if(shape==='petal'){
-    inner='<path d="M0,-8 C4,-8 4,-4 3,-2 C10,-6 12,2 5,3 C11,9 3,12 0,6 C-3,12 -11,9 -5,3 C-12,2 -10,-6 -3,-2 C-4,-4 -4,-8 0,-8 Z" fill="currentColor" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/>';
+    inner='<path d="M0,-8 C4,-8 4,-4 3,-2 C10,-6 12,2 5,3 C11,9 3,12 0,6 C-3,12 -11,9 -5,3 C-12,2 -10,-6 -3,-2 C-4,-4 -4,-8 0,-8 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/>';
   } else if(shape==='leaf'){
-    inner='<path d="M-7,7 C-10,-4 -2,-8 8,-8 C8,3 4,10 -7,7 Z" fill="currentColor" stroke="#000" stroke-width="'+bw+'" stroke-linejoin="round"/><path d="M-6,6 L3,-3" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>';
+    inner='<path d="M-7,7 C-10,-4 -2,-8 8,-8 C8,3 4,10 -7,7 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/><path d="M-6,6 L3,-3" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>';
   } else { /* rounded */
-    inner='<rect x="-9" y="-6" width="18" height="12" rx="4" fill="currentColor" stroke="#000" stroke-width="'+bw+'"/>';
+    inner='<rect x="-9" y="-6" width="18" height="12" rx="4" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+'/>';
   }
   return '<svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">'+inner+'</svg>';
 }
@@ -197,6 +202,7 @@ function evTravelColor(evId){
 function getEvType(ev){
   var t=ev.type||EV_COLOR_TYPES[ev.color]||'Otros';
   if(t==='Festivo'||t==='Puente')t='Otros';
+  if(t==='Cerveza')t='Tomar algo'; // Alias: conserva ids, títulos y fechas de eventos antiguos.
   return t;
 }
 // ¿Se dibuja como BARRA? Desde v241 lo decide la clase: todos los "grandes"

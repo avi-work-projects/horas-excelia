@@ -1052,7 +1052,7 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .bday-week-hdr{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-bottom:6px}
 .bday-week-hdr div{text-align:center;font-size:.64rem;color:var(--text-muted);padding:8px 0;font-weight:600}
 .bday-week-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-bottom:4px}
-.bday-cell{min-height:72px;padding:5px 2px;background:var(--surface);border:1px solid var(--border);border-radius:8px;display:flex;flex-direction:column;gap:4px;overflow:hidden;cursor:pointer;transition:background .12s}
+.bday-cell{min-height:72px;padding:5px 2px;background:var(--surface);border:1px solid var(--border);border-radius:8px;display:flex;flex-direction:column;gap:4px;cursor:pointer;transition:background .12s}
 .bday-cell.out-m{opacity:.38}
 .bday-cell.past-cal-day .bday-num{color:var(--text-dim)}
 .bday-cell.today-bday{border-color:var(--birthday-tone);box-shadow:inset 0 0 0 1px var(--birthday-tone)}
@@ -1062,9 +1062,14 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .bday-badge{position:relative;font-size:.57rem;letter-spacing:-.015em;border-radius:4px;padding:3px 2px;line-height:1.25;white-space:normal;overflow-wrap:anywhere;hyphens:auto;overflow:hidden;border:1px solid color-mix(in srgb,var(--bday-color) 65%,var(--border));background:color-mix(in srgb,var(--bday-color) 15%,var(--surface));color:var(--text);font-weight:500;cursor:pointer;transition:opacity .1s;text-align:center}
 .bday-badge-name{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
 .bday-badge:active{opacity:.7}
-.bday-badge.bday-badge-vip{box-shadow:inset 0 0 0 1.5px #e6b52a;font-weight:700;padding-top:15px}
-.bday-calendar-vip{position:absolute;top:1px;right:1px;width:23px;height:14px;object-fit:contain}
-.bday-calendar-tools{display:flex;flex-direction:column;align-items:center;gap:7px}.bday-calendar-tools label{display:flex;align-items:center;gap:4px;color:var(--text-muted);font-size:.59rem;white-space:nowrap;--chk:#c2911c}.bday-calendar-tools input[type=checkbox]{width:13px;height:13px}
+.bday-badge.bday-badge-vip{background:#ffdf70;border-color:#d8ab28;color:#543e08;font-weight:700;overflow:visible;margin:5px 3px 1px 0;padding:5px 2px}
+.bday-calendar-vip{position:absolute;top:0;right:0;transform:translate(50%,-50%);width:24px;height:24px;object-fit:contain;z-index:1;pointer-events:none}
+.bday-calendar-tools{display:flex;flex-direction:column;align-items:center;gap:7px}
+.bday-header-vip.bday-vip-compact{margin:0;--chk:#c2911c}
+.bday-header-vip.bday-vip-compact img{width:20px;margin:0}
+.bday-vip-compact input[type=checkbox]{width:13px;height:13px}
+.bday-header-add{position:relative;z-index:1;width:32px;height:32px;flex:0 0 32px;padding:0;border:1px solid var(--accent);border-radius:10px;background:color-mix(in srgb,var(--accent) 10%,var(--surface));color:var(--accent-bright);font-size:1.3rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.bday-header-add:active{background:color-mix(in srgb,var(--accent) 20%,var(--surface))}
 .bday-month-hdr{font-size:.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:10px 0 6px;border-bottom:1px solid var(--border);margin-bottom:6px}
 .bday-list-item{display:flex;align-items:center;gap:10px;padding:11px 0 15px;min-height:52px;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity .12s}
 /* VIP controls bar */
@@ -1242,19 +1247,35 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-wk-chip:active{opacity:.6}
 .ev-wk-chip-title{font-size:.73rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;color:#fff;flex:1;min-width:0}
 /* Event color type picker */
+.ev-symbol-lab{border:1px solid var(--border);border-radius:12px;background:var(--surface);flex-shrink:0;width:100%;max-width:520px;margin-inline:auto}
+.ev-symbol-lab summary{cursor:pointer;padding:13px 14px;color:var(--text);font-size:.78rem;font-weight:600}
+.ev-symbol-lab summary span{float:right;color:var(--text-dim);font-size:.65rem;font-weight:400}
+.ev-symbol-lab-body{display:grid;gap:15px;padding:0 14px 14px}
+.ev-symbol-lab-body p{margin:0;font-size:.69rem;color:var(--text-muted);line-height:1.5}
+.ev-symbol-samples{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));justify-items:center;gap:14px;padding:12px 6px;background:var(--surface2);border-radius:9px;--ev-marker-halo:var(--surface2)}
+.ev-symbol-samples>span{display:flex;width:26px;height:26px;align-items:center;justify-content:center}
+.ev-symbol-samples svg{width:100%;height:100%;overflow:visible}
+.ev-symbol-control{display:grid;grid-template-columns:1fr auto;align-items:center;gap:5px 12px}
+.ev-symbol-control label{font-size:.74rem;color:var(--text);font-weight:500}
+.ev-symbol-control output{font-family:var(--mono);font-size:.72rem;color:var(--accent-bright);font-variant-numeric:tabular-nums}
+.ev-symbol-control input{grid-column:1/-1;width:100%;margin:0;min-height:26px;accent-color:var(--accent);touch-action:pan-y}
+.ev-symbol-control input:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+.ev-symbol-actions{display:flex;gap:10px}.ev-symbol-actions>button{flex:1;min-width:0}
 .ev-type-picker{display:flex;flex-direction:column;gap:5px}
 .ev-type-picker button{font-family:var(--font);text-align:left}
 .ev-type-picker .ev-color-swatch{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--radius-sm);background:var(--surface);border:1.5px solid var(--border);cursor:pointer;transition:all .12s;outline:none;-webkit-tap-highlight-color:transparent}
 .ev-type-picker .ev-color-swatch.selected{border-color:currentColor;background:color-mix(in srgb,currentColor 12%,var(--surface));box-shadow:0 1px 3px #0001}
 .ev-type-picker .ev-type-name{color:var(--text)}
 .ev-type-picker .selected .ev-type-name{font-weight:600}
-.ev-category-group{border:1px solid var(--border);border-radius:12px;padding:8px;background:var(--surface2);margin-bottom:6px;--category-tone:#349c83}.ev-category-group.planes{--category-tone:#d78435}.ev-category-group.chosen{border-color:var(--category-tone)}
-.ev-category-group>.ev-color-swatch{width:100%;font-weight:600;margin-bottom:8px}
+.ev-category-group{border:1px solid color-mix(in srgb,var(--category-tone) 45%,var(--border));border-radius:12px;padding:8px;background:color-mix(in srgb,var(--category-tone) 11%,var(--surface));margin-bottom:6px}
+.ev-category-group.chosen{border-color:var(--category-tone)}
+.ev-category-group>.ev-color-swatch{width:100%;font-weight:600;min-height:36px;background:transparent;border-color:transparent}
+.ev-category-children{margin-top:8px}
 .ev-category-children{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
 .ev-type-picker .ev-category-children .ev-color-swatch{flex-direction:column;justify-content:center;text-align:center;gap:6px;padding:8px 2px;min-width:0;min-height:60px}
 .ev-category-children .ev-type-name{font-size:.61rem;line-height:1.2;min-height:2.4em;display:flex;align-items:center;justify-content:center}.ev-category-children .ev-type-dot{width:22px;height:22px}
-.ev-category-main-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.ev-type-picker .ev-category-main-grid .ev-color-swatch{min-width:0;justify-content:center}
 .ev-type-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.ev-type-symbol{width:18px;height:18px}
 .ev-type-dot svg{display:block;width:100%;height:100%}
 .ev-type-name{font-size:.8rem}
 /* Tipos sin color fijo (Viaje, Otros): dot multicolor + borde neutro */
@@ -2538,9 +2559,9 @@ button.action-edit.action-edit-text:active{background:#f97316!important}
 .rut-history-range,.rut-history-counts{font-size:.68rem;color:var(--text-muted)}
 .rut-history-counts{padding-top:6px;border-top:1px solid var(--border)}
 .rut-history-session{display:flex;gap:10px;align-items:center;padding:12px;border-top:1px solid var(--border)}
-.rut-history-session>div:first-child{flex:1;display:flex;flex-direction:column;gap:4px;font-size:.75rem}
-.rut-history-session>div:first-child>span{font-size:.72rem;color:var(--text-muted)}
-.rut-history-session.cancelled>div:first-child>strong,.rut-history-session.cancelled>div:first-child>span{text-decoration:line-through;color:var(--text-muted)}
+.rut-history-session>div:first-of-type{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;font-size:.75rem}
+.rut-history-session>div:first-of-type>span{font-size:.72rem;color:var(--text-muted)}
+.rut-history-session.cancelled>div:first-of-type>strong,.rut-history-session.cancelled>div:first-of-type>span{text-decoration:line-through;color:var(--text-muted)}
 .rut-history-status{font-size:.64rem;color:var(--text-muted);text-align:right}
 .rut-history-status small{display:block;color:var(--accent);margin-top:4px}
 .rut-history-more{display:block;width:calc(100% - 24px);margin:12px}
@@ -3048,4 +3069,13 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .energy-price-total>strong{font-family:var(--mono);font-size:.8rem;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
 .energy-price-total small{font-size:.7rem;font-weight:500;color:var(--text-muted)}
 
-.rut-history-session:has(>[data-history-select]){grid-template-columns:auto minmax(0,1fr) auto auto}.rut-bulk-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:10px 0;flex-shrink:0}.rut-bulk-actions>span{font-size:.75rem;width:100%;color:var(--text-muted)}.rut-bulk-actions .ev-io-btn{font-size:.7rem;flex:1;padding:8px}.rut-month-select{display:flex;align-items:center;gap:8px;margin:12px 0;font-size:.75rem}.rut-bulk-actions button:disabled{opacity:.4}
+.rut-history-session>[data-history-select]{flex-shrink:0;margin:0}
+.rut-history-session:has(>[data-history-select]){gap:8px}
+.rut-history-session:has(>[data-history-select]) .rut-history-status{max-width:24%;line-height:1.4}
+.rut-history-session .boda-mini-btn{flex-shrink:0}
+.rut-bulk-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 0 14px;flex-shrink:0}
+.rut-bulk-actions>span{grid-column:1/-1;font-size:.72rem;color:var(--text-muted)}
+.rut-bulk-actions .ev-io-btn{font-size:.7rem;min-width:0;min-height:34px;padding:8px;line-height:1.3;margin:0}
+.rut-bulk-actions [data-rut-bulk-action="pause"]{grid-column:1/-1}
+.rut-month-select{display:flex;align-items:center;gap:8px;margin:8px 12px 12px;font-size:.7rem}
+.rut-bulk-actions button:disabled{opacity:.4}

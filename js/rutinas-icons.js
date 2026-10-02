@@ -70,9 +70,9 @@ function rutIconSvg(kind,color,chooser){
   /* El ribete ocupa la misma proporción que en el viewBox de 20 de los
      puntuales. En una silueta rellena la mitad del trazo queda dentro. */
   var bw=chooser?1.15:(typeof EV_SHAPE_BW!=='undefined'?EV_SHAPE_BW:2)*26/20;
-  var outline=shapes.replace(/stroke-width="([0-9.]+)"/g,function(_,w){return 'stroke-width="'+(+w+2*bw)+'"';});
+  var outline=shapes.replace(/stroke-width="([0-9.]+)"/g,function(_,w){return chooser?'stroke-width="'+(+w+2*bw)+'"':evSymbolStroke(+w+2*bw,'outline',+w);});
   return '<svg viewBox="-1 -1 26 26" preserveAspectRatio="xMidYMid meet">'
-    + '<g fill="#000" stroke="#000" stroke-width="'+(2*bw)+'" stroke-linejoin="round" stroke-linecap="round">'+outline+'</g>'
+    + '<g fill="#000" stroke="#000" '+(chooser?'stroke-width="'+(2*bw)+'"':evSymbolStroke(2*bw))+' stroke-linejoin="round" stroke-linecap="round">'+outline+'</g>'
     + '<g fill="'+color+'" stroke="'+color+'" stroke-width="0" stroke-linejoin="round" stroke-linecap="round">'+shapes+'</g>'
     + _rutIconDetails(kind,dark)
     + '</svg>';

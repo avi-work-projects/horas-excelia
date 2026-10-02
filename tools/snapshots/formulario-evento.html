@@ -29,28 +29,34 @@
 <div class="ev-field">
 <label>Categoría</label>
 <div class="ev-type-picker" id="evFTypePicker">
-<div class="ev-category-main-grid">
+<section class="ev-category-group chosen" style="--category-tone:#38bdf8" aria-label="Viaje">
 <button type="button" class="ev-color-swatch selected ev-color-swatch-multi" data-hex="#38bdf8" data-type="Viaje" data-kind="grande">
 <div class="ev-type-dot ev-type-dot-multi">
 </div>
 <span class="ev-type-name">Viaje</span>
 </button>
+</section>
+<section class="ev-category-group" style="--category-tone:#1d4ed8" aria-label="Asturias">
 <button type="button" class="ev-color-swatch" data-hex="#1d4ed8" data-type="Asturias" data-kind="grande" style="color:#1d4ed8">
 <div class="ev-type-dot" style="background:#1d4ed8">
 </div>
 <span class="ev-type-name">Asturias</span>
 </button>
+</section>
+<section class="ev-category-group" style="--category-tone:#8b5e34" aria-label="Casa Rural">
 <button type="button" class="ev-color-swatch" data-hex="#8b5e34" data-type="Casa Rural" data-kind="grande" style="color:#8b5e34">
 <div class="ev-type-dot" style="background:#8b5e34">
 </div>
 <span class="ev-type-name">Casa Rural</span>
 </button>
+</section>
+<section class="ev-category-group" style="--category-tone:#ff6b6b" aria-label="Otros">
 <button type="button" class="ev-color-swatch ev-color-swatch-multi" data-hex="#ff6b6b" data-type="Otros" data-kind="grande">
 <div class="ev-type-dot ev-type-dot-multi">
 </div>
 <span class="ev-type-name">Otros</span>
 </button>
-</div>
+</section>
 </div>
 </div>
 <div class="ev-field ev-form-color-section" id="evFColorSection" style="display:block">
@@ -180,77 +186,77 @@
 <button type="button" class="ev-shape-opt selected" data-shape="circle" title="Círculo" aria-label="Círculo">
 <span class="ev-shape-preview ev-shape-circle" style="color:#38bdf8">
 <svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">
-<circle cx="0" cy="0" r="8" fill="currentColor" stroke="#000" stroke-width="2"/>
+<circle cx="0" cy="0" r="8" fill="currentColor" stroke="#000" stroke-width="2" style="stroke-width:calc(2px * var(--ev-symbol-border-scale,1))"/>
 </svg>
 </span>
 </button>
 <button type="button" class="ev-shape-opt" data-shape="rounded" title="Rectángulo redondeado" aria-label="Rectángulo redondeado">
 <span class="ev-shape-preview ev-shape-rounded" style="color:#38bdf8">
 <svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">
-<rect x="-9" y="-6" width="18" height="12" rx="4" fill="currentColor" stroke="#000" stroke-width="2"/>
+<rect x="-9" y="-6" width="18" height="12" rx="4" fill="currentColor" stroke="#000" stroke-width="2" style="stroke-width:calc(2px * var(--ev-symbol-border-scale,1))"/>
 </svg>
 </span>
 </button>
 <button type="button" class="ev-shape-opt" data-shape="diamond" title="Hexágono" aria-label="Hexágono">
 <span class="ev-shape-preview ev-shape-diamond" style="color:#38bdf8">
 <svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">
-<polygon points="-4.2,-7.5 4.2,-7.5 8.5,0 4.2,7.5 -4.2,7.5 -8.5,0" fill="currentColor" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="-4.2,-7.5 4.2,-7.5 8.5,0 4.2,7.5 -4.2,7.5 -8.5,0" fill="currentColor" stroke="#000" stroke-width="2" style="stroke-width:calc(2px * var(--ev-symbol-border-scale,1))" stroke-linejoin="round"/>
 </svg>
 </span>
 </button>
 <button type="button" class="ev-shape-opt" data-shape="x-thick" title="X gorda" aria-label="X gorda">
 <span class="ev-shape-preview ev-shape-x-thick" style="color:#38bdf8">
 <svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">
-<path d="M-6,-6 L6,6 M-6,6 L6,-6" stroke="#000" stroke-width="9" stroke-linecap="round" fill="none"/>
-<path d="M-6,-6 L6,6 M-6,6 L6,-6" stroke="currentColor" stroke-width="5" stroke-linecap="round" fill="none" class="ev-shape-x-color"/>
+<path d="M-6,-6 L6,6 M-6,6 L6,-6" stroke="#000" stroke-width="9" style="stroke-width:calc(5px * var(--ev-symbol-cross-scale,1) + 4px * var(--ev-symbol-border-scale,1))" stroke-linecap="round" fill="none"/>
+<path d="M-6,-6 L6,6 M-6,6 L6,-6" stroke="currentColor" stroke-width="5" style="stroke-width:calc(5px * var(--ev-symbol-cross-scale,1))" stroke-linecap="round" fill="none" class="ev-shape-x-color"/>
 </svg>
 </span>
 </button>
 <button type="button" class="ev-shape-opt" data-shape="x-thin" title="Cruz" aria-label="Cruz">
 <span class="ev-shape-preview ev-shape-x-thin" style="color:#38bdf8">
 <svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">
-<path d="M-5.5,0 H5.5 M0,-5.5 V5.5" stroke="#000" stroke-width="9" stroke-linecap="round" fill="none"/>
-<path d="M-5.5,0 H5.5 M0,-5.5 V5.5" stroke="currentColor" stroke-width="5" stroke-linecap="round" fill="none" class="ev-shape-x-color"/>
+<path d="M-5.5,0 H5.5 M0,-5.5 V5.5" stroke="#000" stroke-width="9" style="stroke-width:calc(5px * var(--ev-symbol-cross-scale,1) + 4px * var(--ev-symbol-border-scale,1))" stroke-linecap="round" fill="none"/>
+<path d="M-5.5,0 H5.5 M0,-5.5 V5.5" stroke="currentColor" stroke-width="5" style="stroke-width:calc(5px * var(--ev-symbol-cross-scale,1))" stroke-linecap="round" fill="none" class="ev-shape-x-color"/>
 </svg>
 </span>
 </button>
 <button type="button" class="ev-shape-opt" data-shape="petal" title="Estrella" aria-label="Estrella">
 <span class="ev-shape-preview ev-shape-petal" style="color:#38bdf8">
 <svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">
-<path d="M0,-8 C4,-8 4,-4 3,-2 C10,-6 12,2 5,3 C11,9 3,12 0,6 C-3,12 -11,9 -5,3 C-12,2 -10,-6 -3,-2 C-4,-4 -4,-8 0,-8 Z" fill="currentColor" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+<path d="M0,-8 C4,-8 4,-4 3,-2 C10,-6 12,2 5,3 C11,9 3,12 0,6 C-3,12 -11,9 -5,3 C-12,2 -10,-6 -3,-2 C-4,-4 -4,-8 0,-8 Z" fill="currentColor" stroke="#000" stroke-width="2" style="stroke-width:calc(2px * var(--ev-symbol-border-scale,1))" stroke-linejoin="round"/>
 </svg>
 </span>
 </button>
 <button type="button" class="ev-shape-opt" data-shape="wave" title="Ola a mano" aria-label="Ola a mano">
 <span class="ev-shape-preview ev-shape-wave" style="color:#38bdf8">
 <svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">
-<path d="M-7.5,0 C-5.6,-6 -1.9,-6 0,0 C1.9,6 5.6,6 7.5,0" transform="skewX(-10)" fill="none" stroke-linecap="round" stroke-linejoin="round" class="ev-shape-halo" stroke="var(--ev-marker-halo, var(--surface))" stroke-width="4.2"/>
-<path d="M-7.5,0 C-5.6,-6 -1.9,-6 0,0 C1.9,6 5.6,6 7.5,0" transform="skewX(-10)" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor" stroke-width="3"/>
+<path d="M-7.5,0 C-5.6,-6 -1.9,-6 0,0 C1.9,6 5.6,6 7.5,0" transform="skewX(-10)" fill="none" stroke-linecap="round" stroke-linejoin="round" class="ev-shape-halo" stroke="var(--ev-marker-halo, var(--surface))" stroke-width="4.2" style="stroke-width:calc(3px * var(--ev-symbol-ink-scale,1) + 1.2px * var(--ev-symbol-halo-scale,1))"/>
+<path d="M-7.5,0 C-5.6,-6 -1.9,-6 0,0 C1.9,6 5.6,6 7.5,0" transform="skewX(-10)" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor" stroke-width="3" style="stroke-width:calc(3px * var(--ev-symbol-ink-scale,1))"/>
 </svg>
 </span>
 </button>
 <button type="button" class="ev-shape-opt" data-shape="x-outline" title="X de rotulador" aria-label="X de rotulador">
 <span class="ev-shape-preview ev-shape-x-outline" style="color:#38bdf8">
 <svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">
-<path d="M-5.5,-6 L5.5,6 M-5.5,6 L5.5,-6" transform="skewX(-10)" fill="none" stroke-linecap="square" stroke-linejoin="round" class="ev-shape-halo" stroke="var(--ev-marker-halo, var(--surface))" stroke-width="4.2"/>
-<path d="M-5.5,-6 L5.5,6 M-5.5,6 L5.5,-6" transform="skewX(-10)" fill="none" stroke-linecap="square" stroke-linejoin="round" stroke="currentColor" stroke-width="3"/>
+<path d="M-5.5,-6 L5.5,6 M-5.5,6 L5.5,-6" transform="skewX(-10)" fill="none" stroke-linecap="square" stroke-linejoin="round" class="ev-shape-halo" stroke="var(--ev-marker-halo, var(--surface))" stroke-width="4.2" style="stroke-width:calc(3px * var(--ev-symbol-ink-scale,1) + 1.2px * var(--ev-symbol-halo-scale,1))"/>
+<path d="M-5.5,-6 L5.5,6 M-5.5,6 L5.5,-6" transform="skewX(-10)" fill="none" stroke-linecap="square" stroke-linejoin="round" stroke="currentColor" stroke-width="3" style="stroke-width:calc(3px * var(--ev-symbol-ink-scale,1))"/>
 </svg>
 </span>
 </button>
 <button type="button" class="ev-shape-opt" data-shape="circle-plus" title="Círculo con cruz" aria-label="Círculo con cruz">
 <span class="ev-shape-preview ev-shape-circle-plus" style="color:#38bdf8">
 <svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">
-<path d="M6.5,0 C6.7,8.6 -7.3,8.6 -7,0 C-7.1,-8.6 7.1,-8.6 6.5,0 M-3.4,0 H3.4 M0,-3.4 V3.4" transform="skewX(-10)" fill="none" stroke-linecap="round" stroke-linejoin="round" class="ev-shape-halo" stroke="var(--ev-marker-halo, var(--surface))" stroke-width="4.2"/>
-<path d="M6.5,0 C6.7,8.6 -7.3,8.6 -7,0 C-7.1,-8.6 7.1,-8.6 6.5,0 M-3.4,0 H3.4 M0,-3.4 V3.4" transform="skewX(-10)" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor" stroke-width="3"/>
+<path d="M6.5,0 C6.7,8.6 -7.3,8.6 -7,0 C-7.1,-8.6 7.1,-8.6 6.5,0 M-3.4,0 H3.4 M0,-3.4 V3.4" transform="skewX(-10)" fill="none" stroke-linecap="round" stroke-linejoin="round" class="ev-shape-halo" stroke="var(--ev-marker-halo, var(--surface))" stroke-width="4.2" style="stroke-width:calc(3px * var(--ev-symbol-ink-scale,1) + 1.2px * var(--ev-symbol-halo-scale,1))"/>
+<path d="M6.5,0 C6.7,8.6 -7.3,8.6 -7,0 C-7.1,-8.6 7.1,-8.6 6.5,0 M-3.4,0 H3.4 M0,-3.4 V3.4" transform="skewX(-10)" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor" stroke-width="3" style="stroke-width:calc(3px * var(--ev-symbol-ink-scale,1))"/>
 </svg>
 </span>
 </button>
 <button type="button" class="ev-shape-opt" data-shape="rings" title="Boda" aria-label="Boda">
 <span class="ev-shape-preview ev-shape-rings" style="color:#38bdf8">
 <svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">
-<ellipse cx="-3" cy="0" rx="4.5" ry="7" fill="none" stroke="#000" stroke-width="5"/>
+<ellipse cx="-3" cy="0" rx="4.5" ry="7" fill="none" stroke="#000" stroke-width="5" style="stroke-width:calc(2.5px + 2.5px * var(--ev-symbol-border-scale,1))"/>
 <ellipse cx="-3" cy="0" rx="4.5" ry="7" fill="none" stroke="currentColor" stroke-width="2.5"/>
-<ellipse cx="3" cy="0" rx="4.5" ry="7" fill="none" stroke="#000" stroke-width="5"/>
+<ellipse cx="3" cy="0" rx="4.5" ry="7" fill="none" stroke="#000" stroke-width="5" style="stroke-width:calc(2.5px + 2.5px * var(--ev-symbol-border-scale,1))"/>
 <ellipse cx="3" cy="0" rx="4.5" ry="7" fill="none" stroke="currentColor" stroke-width="2.5"/>
 </svg>
 </span>
@@ -258,8 +264,8 @@
 <button type="button" class="ev-shape-opt" data-shape="planet" title="Planeta" aria-label="Planeta">
 <span class="ev-shape-preview ev-shape-planet" style="color:#38bdf8">
 <svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">
-<circle r="6" fill="currentColor" stroke="#000" stroke-width="2"/>
-<ellipse rx="9" ry="3" transform="rotate(-30)" fill="none" stroke="#000" stroke-width="3.2"/>
+<circle r="6" fill="currentColor" stroke="#000" stroke-width="2" style="stroke-width:calc(2px * var(--ev-symbol-border-scale,1))"/>
+<ellipse rx="9" ry="3" transform="rotate(-30)" fill="none" stroke="#000" stroke-width="3.2" style="stroke-width:calc(1.3px + 1.9px * var(--ev-symbol-border-scale,1))"/>
 <ellipse rx="9" ry="3" transform="rotate(-30)" fill="none" stroke="currentColor" stroke-width="1.3"/>
 </svg>
 </span>
@@ -267,7 +273,7 @@
 <button type="button" class="ev-shape-opt" data-shape="leaf" title="Hoja" aria-label="Hoja">
 <span class="ev-shape-preview ev-shape-leaf" style="color:#38bdf8">
 <svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">
-<path d="M-7,7 C-10,-4 -2,-8 8,-8 C8,3 4,10 -7,7 Z" fill="currentColor" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+<path d="M-7,7 C-10,-4 -2,-8 8,-8 C8,3 4,10 -7,7 Z" fill="currentColor" stroke="#000" stroke-width="2" style="stroke-width:calc(2px * var(--ev-symbol-border-scale,1))" stroke-linejoin="round"/>
 <path d="M-6,6 L3,-3" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>
 </svg>
 </span>
@@ -276,7 +282,7 @@
 <button type="button" class="ev-shape-opt" data-shape="gym" title="Mancuerna" aria-label="Mancuerna">
 <span class="ev-shape-preview ev-shape-gym" style="color:#38bdf8">
 <svg viewBox="0 0 20 20">
-<rect x="1" y="1" width="18" height="18" rx="4" fill="#fff" stroke="#000" stroke-width="1.7"/>
+<rect x="1" y="1" width="18" height="18" rx="4" fill="#fff" stroke="#000" stroke-width="1.7" style="stroke-width:calc(1.7px * var(--ev-symbol-border-scale,1))"/>
 <g transform="translate(3.5 3.5) scale(.54)">
 <g fill="#000" stroke="#000" stroke-width="2.3" stroke-linejoin="round" stroke-linecap="round">
 <rect x="2" y="5" width="5" height="14" rx="1.8"/>
@@ -296,7 +302,7 @@
 <button type="button" class="ev-shape-opt" data-shape="padel" title="Pala" aria-label="Pala">
 <span class="ev-shape-preview ev-shape-padel" style="color:#38bdf8">
 <svg viewBox="0 0 20 20">
-<rect x="1" y="1" width="18" height="18" rx="4" fill="#fff" stroke="#000" stroke-width="1.7"/>
+<rect x="1" y="1" width="18" height="18" rx="4" fill="#fff" stroke="#000" stroke-width="1.7" style="stroke-width:calc(1.7px * var(--ev-symbol-border-scale,1))"/>
 <g transform="translate(3.5 3.5) scale(.54)">
 <g fill="#000" stroke="#000" stroke-width="2.3" stroke-linejoin="round" stroke-linecap="round">
 <ellipse cx="12" cy="8.8" rx="7.6" ry="7.2"/>
@@ -317,7 +323,7 @@
 <button type="button" class="ev-shape-opt" data-shape="baile" title="Bailarín" aria-label="Bailarín">
 <span class="ev-shape-preview ev-shape-baile" style="color:#38bdf8">
 <svg viewBox="0 0 20 20">
-<rect x="1" y="1" width="18" height="18" rx="4" fill="#fff" stroke="#000" stroke-width="1.7"/>
+<rect x="1" y="1" width="18" height="18" rx="4" fill="#fff" stroke="#000" stroke-width="1.7" style="stroke-width:calc(1.7px * var(--ev-symbol-border-scale,1))"/>
 <g transform="translate(3.5 3.5) scale(.54)">
 <g fill="#000" stroke="#000" stroke-width="2.3" stroke-linejoin="round" stroke-linecap="round">
 <circle cx="12.6" cy="4.5" r="2.5"/>

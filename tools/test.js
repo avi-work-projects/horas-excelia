@@ -387,6 +387,7 @@ const REGLAS = [
       'excelia-alarm-m':           'alarmMinute',
       'excelia-alarm-days':        'alarmDays',
       'excelia-routine-appearance-v1': 'routineAppearance',
+      'excelia-event-appearance-v1': 'eventAppearance',
       'excelia-household-tab-v1': 'householdTab',
       'excelia-nav-icons-v1':      'navIconStyle',
       'excelia-theme-v1':          'theme',

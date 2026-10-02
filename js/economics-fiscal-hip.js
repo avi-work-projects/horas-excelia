@@ -427,7 +427,7 @@ function _renderHipDetalle(editable){
   }
   /* Add subrogation button */
   if(editable)h+='<button class="hip-add-sub-btn" id="hipAddSub">+ A\u00f1adir subrogaci\u00f3n</button>';
-  return h;
+  return h+householdMortgageAnalysisButton();
 }
 
 function _renderHipSectionContent(sectionId,isEditing,editable){
@@ -609,6 +609,7 @@ function renderFiscalTabDespacho(editable){
 
 function _bindTabDespacho(){
   if(FISCAL_ENTRY==='household')bindEnergyHistory();
+  _bindHipAnalysis();
   if(!DESPACHO.compra)DESPACHO.compra=_defaultCompra();
   /* Sub-tab switching */
   document.querySelectorAll('[data-hipsub]').forEach(function(btn){
@@ -648,15 +649,16 @@ function _bindHipResumen(){
       },100);
     });
   });
-  /* "Ver análisis" */
-  var goAnalBtn=document.getElementById('hipGoAnalisis');
-  if(goAnalBtn)goAnalBtn.addEventListener('click',function(){
+}
+function _bindHipAnalysis(){
+  var goAnalBtn=householdHost().querySelector('#hipGoAnalisis');
+  if(goAnalBtn)goAnalBtn.onclick=function(){
     if(FISCAL_ENTRY==='household'){HOUSEHOLD_RETURN=null;closeHousehold();}else closeFiscal();
     setTimeout(function(){
       ECON_VIEW='analisis';ANALISIS_SUB='hipoteca';
       openEcon();
     },350);
-  });
+  };
 }
 function _bindHipDetalle(){
   /* Edit buttons */

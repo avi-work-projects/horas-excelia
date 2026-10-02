@@ -38,13 +38,17 @@ a.DESPACHO.gas={modo:'consumo',activo:'consumo',ivaGas:21,consumo:{precioKwh:.06
 a.energySaveContracts(['luz','gas'].map(kind=>({id:'contract-'+kind,kind,supplier:'Proveedor de prueba',tariff:'Contrato',supply:'Casa',start:'2026-01-01',end:'',commitment:'',notes:'Dato importado',source:'factura de prueba',taxes:'excluidos',prices:[{label:'Consumo',unit:'€/kWh',value:.15342}],analysis:a.energyTariffDefaults({precioKwh:.15342})})));
 a.energySaveBills(['luz','gas'].map(kind=>({id:'bill-'+kind,kind,supplier:'Proveedor de prueba',number:'TEST',issued:'2026-02-01',start:'2026-01-01',end:'2026-01-31',consumption:180.125,net:45.125,gross:54.60125,paid:null,notes:'Archivo histórico',source:'prueba'})));
 a.energySaveTaxes([{kind:'luz',start:'2026-01-01',rate:21},{kind:'gas',start:'2026-01-01',rate:10}]);
+a.setEventAppearance({border:1.25,cross:4,ink:2.5,halo:.4});
 a.DESPACHO={};a.PERSONAL_DATA={};let exportClick,download;
 a.document.getElementById=id=>id==='exportAllBtn'?{addEventListener:(_,fn)=>exportClick=fn}:null;
 a.document.createElement=()=>({click(){download=JSON.parse(decodeURIComponent(this.href.split(',').slice(1).join(',')));}});
 const source=fs.readFileSync('js/import-export.js','utf8');vm.runInContext(source,a);a.showToast=()=>{};exportClick();
 assert.deepEqual(download.despacho,home);assert.equal(download.personalPerYear['2026'].gastosSemanales[0].periods[2].paused,true);
+assert.deepEqual(download.eventAppearance,{border:1.25,cross:4,ink:2.5,halo:.4});
 const b=cargarApp({});vm.runInContext(source,b);b.showToast=()=>{};b.render=()=>{};b.updateEventsBtn=()=>{};b.updateBdayBtn=()=>{};
 b.applyFullImport(download,'replace');b.loadDespacho();
+assert.deepEqual(plain(b.EV_APPEARANCE),download.eventAppearance);
+assert.deepEqual(plain(cargarApp(b.localStorage._datos).EV_APPEARANCE),download.eventAppearance);
 assert.deepEqual(plain(b.DESPACHO),home);
 for(const [field,read] of [['energyContracts','energyContracts'],['energyBills','energyBills'],['energyTaxes','energyTaxes']])assert.deepEqual(plain(b[read]()),download[field]);
 b.loadPersonalYear(2026);assert.deepEqual(plain(b.PERSONAL_DATA.gastosSemanales),plain(personal.gastosSemanales));

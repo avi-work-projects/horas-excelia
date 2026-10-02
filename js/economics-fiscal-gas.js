@@ -20,13 +20,13 @@ function _renderGasDetalle(editable){
   h+='<div class="fiscal-section">';
   h+='<div class="fiscal-section-title">\uD83D\uDD25 Tarifa activa</div>';
   if(editable){h+='<div style="display:flex;gap:6px">';
-  h+='<button class="fiscal-onoff'+(g.activo==='consumo'?' on':'')+'" id="gasActivoConsumo">Por consumo</button>';
-  h+='<button class="fiscal-onoff'+(g.activo==='fijo'?' on':'')+'" id="gasActivoFijo">Fijo mensual</button>';
+  h+='<button class="fiscal-onoff'+(g.activo==='consumo'?' on':'')+'" id="gasActivoConsumo" aria-pressed="'+(g.activo==='consumo')+'">Por consumo</button>';
+  h+='<button class="fiscal-onoff'+(g.activo==='fijo'?' on':'')+'" id="gasActivoFijo" aria-pressed="'+(g.activo==='fijo')+'">Fijo mensual</button>';
   h+='</div>';}else h+=_hipRO('Modalidad',g.activo==='fijo'?'Fijo mensual':'Por consumo');h+='</div>';
   /* Scenario 1: Consumo */
   var sc=g.consumo;
   h+='<div class="fiscal-section household-gas-option'+(g.activo==='consumo'?' is-current':'')+'">';
-  h+='<div class="hip-section-hdr"><span class="fiscal-section-title">Por consumo'+(g.activo==='consumo'?' \u2714':'')+'</span>';
+  h+='<div class="hip-section-hdr"><span class="fiscal-section-title">Por consumo'+(g.activo==='consumo'?'<span class="household-active-badge">✓ En uso</span>':'')+'</span>';
   if(editable&&FISCAL_GAS_EDITING!=='consumo')h+='<button class="hip-edit-btn" data-gasedit="consumo">Editar</button>';
   h+='</div>';
   if(editable&&FISCAL_GAS_EDITING==='consumo'){
@@ -46,7 +46,7 @@ function _renderGasDetalle(editable){
   /* Scenario 2: Fijo */
   var sf=g.fijo;
   h+='<div class="fiscal-section household-gas-option'+(g.activo==='fijo'?' is-current':'')+'">';
-  h+='<div class="hip-section-hdr"><span class="fiscal-section-title">Cuota fija'+(g.activo==='fijo'?' \u2714':'')+'</span>';
+  h+='<div class="hip-section-hdr"><span class="fiscal-section-title">Cuota fija'+(g.activo==='fijo'?'<span class="household-active-badge">✓ En uso</span>':'')+'</span>';
   if(editable&&FISCAL_GAS_EDITING!=='fijo')h+='<button class="hip-edit-btn" data-gasedit="fijo">Editar</button>';
   h+='</div>';
   if(editable&&FISCAL_GAS_EDITING==='fijo'){
@@ -105,4 +105,3 @@ function _bindGasDetalle(){
     btn.addEventListener('click',function(){loadDespacho();FISCAL_GAS_EDITING=null;reRenderFiscal();});
   });
 }
-

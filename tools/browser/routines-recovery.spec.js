@@ -41,7 +41,15 @@ test('recuperación con calendario, agenda fija y estado enlazado',async({page})
   await page.locator('#rutHistoryCancel').click();await expect(page.locator('#rutHistoryCancel')).toHaveText('Cancelar clase');
 });
 test('selección múltiple y pausa con fecha de vuelta',async({page})=>{
-  await history(page);await page.locator('#rutHistoryBulk').click();
+  await history(page);
+  const typography=()=>page.locator('[data-history-date="2026-10-15"]').evaluate(el=>[el.querySelector('strong'),el.querySelector('div>span')].map(e=>getComputedStyle(e).fontSize));
+  const normal=await typography();await page.locator('#rutHistoryBulk').click();
+  expect(await typography()).toEqual(normal);
+  const layout=await page.locator('[data-history-date="2026-10-15"]').evaluate(el=>{
+    const parts=Array.from(el.children).map(e=>e.getBoundingClientRect());
+    return {overflow:el.scrollWidth-el.clientWidth,gaps:parts.slice(1).map((r,i)=>r.left-parts[i].right)};
+  });
+  expect(layout.overflow).toBeLessThanOrEqual(1);expect(Math.min(...layout.gaps)).toBeGreaterThanOrEqual(6);
   for(const date of ['2026-10-15','2026-10-22'])await page.locator('[data-history-select="'+date+'"]').check();
   await page.locator('[data-rut-bulk-action="cancel"]').click();await expect(page.locator('#rutBulkOv')).toContainText('2 clases');
   await page.locator('#rutBulkConfirm').click();await expect(page.locator('[data-history-date="2026-10-15"]')).toContainText('(sin recuperar)');

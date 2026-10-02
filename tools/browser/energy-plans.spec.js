@@ -87,7 +87,7 @@ test('precios finales, identidad de compañía, espacio entre campos y recordato
 test('autotítulos, planes fijos y símbolos anteriores compatibles',async({page})=>{
   await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await page.locator('#evAdd').click();
   const form=page.locator('#evFWrap'),title=page.locator('#evFTitle');
-  for(const type of ['Llamada','Peluquería','Médico','Cena','Cerveza','Montaña','Plan romántico','Comida','Salir de fiesta','Copas']){
+  for(const type of ['Llamada','Peluquería','Médico','Cena','Tomar algo','Montaña','Plan romántico','Comida','Salir de fiesta','Copas','Barbacoa']){
     await page.locator('#evFTypePicker').getByRole('button',{name:type,exact:true}).click();
     await expect(title).toHaveValue(type);await expect(page.locator('#evFColorSection')).toBeHidden();
   }

@@ -315,7 +315,7 @@ function _renderGasCompCard(c,i){
 }
 
 /* ── Estudio: Comparar Electricidad ──────────────────────── */
-var ESTUDIO_ELECT_SCENARIOS=[{nombre:'Mi consumo',consumoKwh:150,dias:30}];
+var ESTUDIO_ELECT_SCENARIOS=null; // Se inicia al abrir con la media documentada de 2026.
 var ESTUDIO_ELECT_CALC=false;
 var ESTUDIO_ELECT_IVA=null;
 var ESTUDIO_ELECT_TAX=null; // Impuesto eléctrico utilizado en la comparación, antes del IVA.
