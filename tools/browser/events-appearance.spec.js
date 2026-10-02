@@ -51,7 +51,7 @@ test('ajustes sobre la ventana actual: cerrar, reabrir, cambiar iconos y navegar
   await expect(menu).toBeHidden();await expect(page.locator('#navIconPickerOv')).toHaveClass(/open/);
   await page.locator('#navIconPickerClose').click();await expect(page.locator('#navIconPickerWrap')).toHaveCount(0);
   await expect(page.locator('#evViewRutinas')).toHaveClass(/active/);
-  await trigger.click();await page.locator('#evViewCal').click(); // Solo cierra el menú.
+  await trigger.click();await page.locator('#evViewTimeOff').click(); // Fuera del menú: solo lo cierra.
   await expect(menu).toBeHidden();await expect(page.locator('#evViewRutinas')).toHaveClass(/active/);
   await page.locator('#eventsOverlay [data-nav="household"]').click();
   await expect(page.locator('#householdOverlay')).toHaveClass(/open/);
@@ -67,11 +67,26 @@ test('viajes en curso: atenuar solo días pasados y respetar la bombilla',async(
   });
   const segment=page.locator('.ev-part-past[data-id="ongoing"]');
   await expect(segment).toHaveCount(1);await expect(segment).toHaveCSS('--ev-bar-past','25.0000%');
+  await expect(page.locator('#eventsOverlay')).toHaveCSS('transform','matrix(1, 0, 0, 1, 0, 0)');
   expect(await segment.evaluate(e=>getComputedStyle(e).maskImage)).toContain('linear-gradient');
   const before=await segment.boundingBox();
   await page.locator('#evBright').click();await expect(segment).toHaveCSS('mask-image','none');
   const after=await segment.boundingBox();expect(after).toEqual(before);
   await page.locator('#evBright').click();expect(await segment.evaluate(e=>getComputedStyle(e).maskImage)).toContain('linear-gradient');
+});
+
+test('reabrir un formulario no hereda el cierre pendiente del anterior',async({page})=>{
+  await page.clock.install();
+  await page.evaluate(()=>{
+    openEvents();
+    openEvForm(null);
+    closeEvForm();
+    openEvForm({id:'second-form',kind:'puntual',type:'Otros',title:'Segundo evento',shape:'planet',color:'#fb923c',start:'2026-10-08',end:'2026-10-08'});
+  });
+  await page.clock.runFor(400);
+  await expect(page.locator('#evFTitle')).toHaveValue('Segundo evento');
+  await expect(page.locator('#evFWrap')).toHaveCount(1);
+  expect(await page.evaluate(()=>EV_EDIT.id)).toBe('second-form');
 });
 
 test('ribete definitivo, sin selector y con contraste en oscuro',async({page})=>{
