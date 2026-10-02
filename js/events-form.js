@@ -16,6 +16,7 @@ function _renderEvTypeSwatches(kind,selType){
   var h='';
   EV_KINDS[kind].types.forEach(function(t){
     if(kind==='puntual'&&t==='Llamada')h+='<div class="ev-management-subtypes" role="group" aria-label="Tipos de gestión">';
+    if(kind==='puntual'&&t==='Plan romántico')h+='<div class="ev-plan-subtypes" role="group" aria-label="Tipos de plan">';
     var key=evTypeKey(kind,t);
     var c=evTypeColor(kind,t);
     /* Multicolor = "elige tu color"; Casa Rural muestra su marron aunque
@@ -24,10 +25,10 @@ function _renderEvTypeSwatches(kind,selType){
     var sel=(t===selType)?' selected':'';
     h+='<button type="button" class="ev-color-swatch'+sel+(isMulti?' ev-color-swatch-multi':'')+'" data-hex="'+c+'" data-type="'+escHtml(t)+'" data-kind="'+kind+'"'+(isMulti?'':' style="color:'+c+'"')+'>';
     h+=isMulti?'<div class="ev-type-dot ev-type-dot-multi"></div>'
-      :kind==='puntual'&&evIsManagement(t)?'<span class="ev-type-dot">'+evShapeSvg(evDefaultShape({type:t}))+'</span>'
+      :kind==='puntual'&&(evIsManagement(t)||evFixedSymbol(t))?'<span class="ev-type-dot">'+evShapeSvg(evDefaultShape({type:t}))+'</span>'
       :'<div class="ev-type-dot" style="background:'+c+'"></div>';
     h+='<span class="ev-type-name">'+escHtml(t)+'</span></button>';
-    if(kind==='puntual'&&t==='Dentista')h+='</div>';
+    if(kind==='puntual'&&(t==='Dentista'||t==='Montaña'))h+='</div>';
   });
   return h;
 }
@@ -126,12 +127,9 @@ function renderEvForm(ev){
     {k:'wave', label:'Ola a mano'},
     {k:'x-outline', label:'X de rotulador'},
     {k:'circle-plus', label:'Círculo con cruz'},
-    {k:'cloud', label:'Nube'},
+    {k:'rings', label:'Boda'},
     {k:'petal', label:'Pétalos'},
     {k:'leaf', label:'Hoja'},
-    {k:'beer', label:'Cerveza'},
-    {k:'mountain', label:'Montaña'},
-    {k:'rings', label:'Boda'},
     /* Las mismas siluetas que usan las rutinas */
     {k:'gym',     label:'Mancuerna'},
     {k:'padel',   label:'Pala'},
@@ -275,7 +273,17 @@ function closeEvForm(){
   },300);
 }
 
+function evSuggestedTitle(type){
+  return evFixedSymbol(type)?type:({'Asturias':'Asturias','Ensayos boda':'Ensayo boda','Casa Rural':'Casa rural'}[type]||'');
+}
 function bindEvFormEvents(){
+  var titleInput=document.getElementById('evFTitle'),autoTitle=EV_EDIT?null:'';
+  titleInput.addEventListener('input',function(){autoTitle=null;});
+  function suggestTitle(type){
+    if(!titleInput.value.trim()||titleInput.value===autoTitle){
+      autoTitle=evSuggestedTitle(type);titleInput.value=autoTitle;
+    }
+  }
   document.getElementById('evFClose').addEventListener('click',closeEvForm);
   var noteEl=document.getElementById('evFNote');
   var cntEl=document.getElementById('evCharCnt');
@@ -357,16 +365,8 @@ function bindEvFormEvents(){
            categoria (asi "Casa Rural" sale marron por defecto). */
         var _k2=evTypeKey(sw.dataset.kind||_curKind(),typeName);
         if(EV_FREE_COLOR[_k2]&&_fCp&&_fCp.setColor)_fCp.setColor(evTypeColor(sw.dataset.kind||_curKind(),typeName));
-        var titleEl=document.getElementById('evFTitle');
-        if(titleEl&&!titleEl.value.trim()){
-          if(typeName==='Asturias'){
-            titleEl.value='Asturias';
-            var noteEl2=document.getElementById('evFNote');
-            if(noteEl2&&!noteEl2.value.trim()){noteEl2.value='Asturias';cntEl.textContent='8/200';}
-          } else if(typeName==='Ensayos boda'){titleEl.value='Ensayo boda';}
-          else if(EV_MANAGEMENT_SUBTYPES[typeName]){titleEl.value=typeName;}
-          else if(typeName==='Casa Rural'){titleEl.value='Casa rural';}
-        }
+        suggestTitle(typeName);
+        if(typeName==='Asturias'&&!noteEl.value.trim()){noteEl.value='Asturias';cntEl.textContent='8/200';}
       });
     });
   }
@@ -387,6 +387,7 @@ function bindEvFormEvents(){
       if(tp)tp.innerHTML=_renderEvTypeSwatches(kind,t);
       _bindTypeSwatches();
       _applyTypeUI(kind,t);
+      suggestTitle(t);
     });
   });
   /* Selector de grosor de barra (grande|Otros) */

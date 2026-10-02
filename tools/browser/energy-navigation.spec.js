@@ -33,7 +33,7 @@ for(const kind of ['luz','gas'])test(kind+': el primer panel cambia de año y el
   await expect(active()).toHaveAttribute('data-energy-tab','tarifas');await expect(year()).toHaveText('2026');
   await swipe(page.locator('.energy-reference-strip > strong'),false);
   await expect(active()).toHaveAttribute('data-energy-tab','costes');
-  await expect(page.getByRole('button',{name:'Importar datos',exact:true})).toHaveText('↑');
+  await expect(page.getByRole('button',{name:'Importar datos',exact:true})).toHaveText('Importar');
   expect(errors).toEqual([]);
 });
 

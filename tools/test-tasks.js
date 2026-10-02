@@ -82,7 +82,8 @@ Object.keys(a.EV_MANAGEMENT_SUBTYPES).forEach(type=>{
  assert(a.evMarkerHtml(ev,'','','circle').includes('ev-shape-'+a.EV_MANAGEMENT_SUBTYPES[type]));
  a.validateImport({events:[ev]});assert(a.evAdmiteRepeticion('puntual',type));
 });
-const form=a.renderEvForm(null);['beer','mountain','rings'].forEach(shape=>assert(form.includes('data-shape="'+shape+'"')));
+const form=a.renderEvForm(null);assert(form.includes('data-shape="rings"'));
+['beer','mountain'].forEach(shape=>{assert(!form.includes('data-shape="'+shape+'"'));assert(a.evShapeSvg(shape).includes('<path'));});
 const group=a.rutDayMarkersHtml([{id:'a',_rut:{id:'r',name:'Pádel',color:'#a3e635'},_rutTime:'16:00',_rutDur:60},{id:'b',_rut:{id:'r',name:'Pádel',color:'#a3e635'},_rutTime:'17:00',_rutDur:60}],' past-marker','2026-08-20');
 assert.equal((group.match(/past-marker/g)||[]).length,1);assert(group.includes('rut-marker-group past-marker'));
 console.log('Marcadores: gestión compartida, colores fijos, nuevas formas y atenuación de la pila OK');

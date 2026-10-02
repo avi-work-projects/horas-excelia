@@ -5,7 +5,8 @@ function bindEnergyAnalysis(w,kind){
   function refresh(){var body=w.querySelector('.sy-body'),top=body?body.scrollTop:0;openEnergyAnalysis(kind);var fresh=document.querySelector('#energyAnalysisOverlay .sy-body');if(fresh)fresh.scrollTop=top;}
   w.querySelector('#energyAnalysisBack').onclick=closeEnergyAnalysis;
   w.querySelectorAll('[data-energy-tab]').forEach(function(b){b.onclick=function(){ENERGY_ANALYSIS_TAB=b.dataset.energyTab;openEnergyAnalysis(kind);};});
-  function year(delta){ENERGY_ANALYSIS_YEAR+=delta;refresh();}
+  function year(delta){ENERGY_SUMMARY_TOTAL=false;ENERGY_ANALYSIS_YEAR+=delta;refresh();}
+  var total=w.querySelector("#energySummaryTotal");if(total)total.onclick=function(){ENERGY_SUMMARY_TOTAL=!ENERGY_SUMMARY_TOTAL;refresh();};
   w.querySelectorAll('[data-analysis-year]').forEach(function(b){b.onclick=function(){year(+b.dataset.analysisYear);};});
   function tab(delta){
     var index=ENERGY_ANALYSIS_TABS.map(function(t){return t[0];}).indexOf(ENERGY_ANALYSIS_TAB),next=ENERGY_ANALYSIS_TABS[index+delta];
