@@ -448,22 +448,22 @@
 **Rangos por prefijo de clase:**
 .ah-cuota:117-119 · .ah-donut:127-129 · .ah-section:114-116 · .ah-total:124-126 · .ah-vs:120-123 · .analisis-card:266-268 · .analisis-cards:255-255 · .analisis-hbar:269-274 · .analisis-input:284-287 · .analisis-ins:293-298 · .analisis-insurance:292-292 · .analisis-mortgage:275-291 · .econ-add:201-202 · .econ-ahorro:422-429 · .econ-annual:25-25 · .econ-avg:26-349 · .econ-bracket:184-190 · .econ-calc:332-333 · .econ-casc:336-343 · .econ-cascade:335-335 · .econ-chart:214-215 · .econ-comp:192-216 · .econ-decl:179-353 · .econ-distrib:659-673 · .econ-donut:440-455 · .econ-equiv:654-657 · .econ-fiscal:433-438 · .econ-formula:45-48 · .econ-gastos:355-367 · .econ-gear:151-152 · .econ-hdr:67-153 · .econ-ingresado:33-33 · .econ-irpf:369-431 · .econ-legend:217-218 · .econ-line:212-213 · .econ-month:50-63 · .econ-mr:651-652 · .econ-multi:643-653 · .econ-opt:328-331 · .econ-qcard:15-22 · .econ-qcell:11-14 · .econ-qm:20-20 · .econ-qmonth:18-19 · .econ-quarter:7-10 · .econ-rate:155-163 · .econ-row:34-44 · .econ-sc:194-680 · .econ-scenario:193-193 · .econ-section:64-64 · .econ-sim:220-230 · .econ-stats:167-172 · .econ-sub:70-82 · .econ-tab:68-69 · .econ-toggle:174-177 · .econ-val:49-49 · .est-btn:87-91 · .est-card:97-99 · .est-detail:94-94 · .est-field:106-112 · .est-fields:105-105 · .est-group:85-89 · .est-modo:100-100 · .est-nav:84-84 · .est-section:93-93 · .est-tariff:95-104 · .ev-sub:76-78 · .excl-item:165-165 · .excl-row:164-164 · .fiscal-add:321-484 · .fiscal-bracket:312-320 · .fiscal-compras:513-548 · .fiscal-copy:148-150 · .fiscal-custom:309-309 · .fiscal-ded:523-537 · .fiscal-desgrav:486-538 · .fiscal-despacho:550-571 · .fiscal-error:325-325 · .fiscal-gasto:457-519 · .fiscal-gastos:539-539 · .fiscal-hdr:469-469 · .fiscal-highlight:510-510 · .fiscal-onoff:552-553 · .fiscal-pct:310-319 · .fiscal-period:465-466 · .fiscal-radio:304-308 · .fiscal-save:323-324 · .fiscal-section:302-477 · .fiscal-sticky:474-474 · .fiscal-subsection:478-479 · .fiscal-tab:470-472 · .fiscal-viaje:480-481 · .fiscal-vinc:563-564 · .fiscal-year:144-147 · .hip-add:641-641 · .hip-auto:592-592 · .hip-bar:578-585 · .hip-cancel:628-628 · .hip-cf:597-602 · .hip-edit:624-626 · .hip-g2:596-596 · .hip-grid:590-590 · .hip-period:630-639 · .hip-resumen:573-577 · .hip-ro:615-622 · .hip-save:627-627 · .hip-section:591-640 · .hip-stat:587-589 · .hip-stats:586-586 · .hip-sub:594-594 · .hip-vinc:593-593 · .hip-vr:604-613 · .mg-budget:131-140 · .mg-cat:141-141 · .mg-desgrav:142-142 · .mg-sort:137-137 · .rate-input:4-4 · .rate-label:3-3 · .rate-row:2-2 · .rate-suffix:5-5 · .rut-sub:74-80 · .sim-combo:232-236 · .sim-field:221-222 · .sim-hr:231-231 · .sim-period:228-228 · .sim-target:223-227 · .sub-block:257-258 · .sub-row:259-265 · .sy-sublbl:24-24
 
-### css/source/birthdays.css  _(123 líneas)_
+### css/source/birthdays.css  _(122 líneas)_
 
 **Secciones:**
 
 - BIRTHDAYS:1
 - El nombre admite hasta cuatro líneas.:14
-- La flecha conserva sus 36 px incluso en el móvil más estrecho.:29
-- VIP controls bar:36
-- Botón Cancelar fijo al fondo de pantalla en modo edición VIP:47
-- VIP edit mode item states:50
-- Feat 1: Buscador en lista por meses:60
-- Upcoming birthdays:86
-- Fin de semana suave; hoy conserva su borde y su fecha destacada.:103
+- Compactar los márgenes, no el título ni la flecha, en móviles estrechos.:29
+- VIP controls bar:35
+- Botón Cancelar fijo al fondo de pantalla en modo edición VIP:46
+- VIP edit mode item states:49
+- Feat 1: Buscador en lista por meses:59
+- Upcoming birthdays:85
+- Fin de semana suave; hoy conserva su borde y su fecha destacada.:102
 
 **Rangos por prefijo de clase:**
-.bday-add:101-102 · .bday-badge:15-18 · .bday-buscar:63-65 · .bday-calendar:4-20 · .bday-cancel:48-49 · .bday-cell:8-104 · .bday-hdr:3-3 · .bday-header:21-31 · .bday-io:69-85 · .bday-list:35-59 · .bday-month:34-34 · .bday-num:12-12 · .bday-search:66-68 · .bday-upcoming:27-100 · .bday-vip:23-46 · .bday-week:5-7 · .data-btn:2-2 · .ev-cell:105-122 · .ev-io:71-71 · .io-peligro:76-84 · .io-primaria:75-82 · .sy-header:30-32 · .vip-no:43-44
+.bday-add:100-101 · .bday-badge:15-18 · .bday-buscar:62-64 · .bday-calendar:4-20 · .bday-cancel:47-48 · .bday-cell:8-103 · .bday-hdr:3-3 · .bday-header:21-31 · .bday-io:68-84 · .bday-list:34-58 · .bday-month:33-33 · .bday-num:12-12 · .bday-search:65-67 · .bday-upcoming:27-99 · .bday-vip:23-45 · .bday-week:5-7 · .data-btn:2-2 · .ev-cell:104-121 · .ev-io:70-70 · .io-peligro:75-83 · .io-primaria:74-81 · .sy-header:30-30 · .vip-no:42-43
 
 ### css/source/event-calendar.css  _(327 líneas)_
 
