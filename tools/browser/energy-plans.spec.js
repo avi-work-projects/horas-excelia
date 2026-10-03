@@ -14,8 +14,12 @@ test('Total alterna el histórico en luz y gas sin duplicar una factura entre a�
     await expect(page.locator('.energy-overview')).toContainText('311 kWh');
     await expect(page.locator('.energy-overview')).toContainText('Histórico completo');
     await expect(page.locator('.energy-tax-totals')).toContainText('10,50 €');
-    await page.getByRole('button',{name:'Año anterior',exact:true}).click();
+    await expect(page.locator('.energy-year-selector')).toBeHidden();
+    await page.getByRole('button',{name:'Total',exact:true}).click();
     await expect(page.getByRole('button',{name:'Total',exact:true})).toHaveAttribute('aria-pressed','false');
+    await expect(page.locator('.energy-year-selector')).toBeVisible();
+    await expect(page.locator('.energy-overview')).toContainText('150 kWh');
+    await page.getByRole('button',{name:'Año anterior',exact:true}).click();
     await expect(page.locator('.energy-overview')).toContainText('160 kWh');
     await page.getByRole('button',{name:'Volver',exact:true}).click();
     await expect(page.locator('#energyAnalysisOverlay')).toHaveCount(0);
