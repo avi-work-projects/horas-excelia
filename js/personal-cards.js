@@ -14,8 +14,9 @@ function setPersonalCardOpen(section,item,index,open){
 function savePersonalCards(){appStorage.setItem(PERSONAL_CARDS_KEY,JSON.stringify(PERSONAL_CARDS_OPEN));}
 function personalAdvancedCards(){
   var cards=[];
-  Object.keys(PERSONAL_DATA).forEach(function(section){
-    PERSONAL_DATA[section].forEach(function(item,index){if(Array.isArray(item.periods))cards.push({section:section,item:item,index:index});});
+  PERSONAL_SECTIONS.forEach(function(section){
+    var items=PERSONAL_DATA[section];
+    if(Array.isArray(items))items.forEach(function(item,index){if(Array.isArray(item.periods))cards.push({section:section,item:item,index:index});});
   });
   return cards;
 }

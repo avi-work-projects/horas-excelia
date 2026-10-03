@@ -20,10 +20,12 @@ test('añadir cumpleaños conserva el título centrado; distintivo VIP en la esq
       await page.locator('.bday-sub-tabs').getByRole('button',{name:view,exact:true}).click();
       await expect(page.locator('#bdAdd')).toHaveCount(1);
       const layout=await page.locator('#eventsContent .sy-header').evaluate(e=>{
-        const header=e.getBoundingClientRect(),title=e.querySelector('.sy-year').getBoundingClientRect(),button=e.querySelector('#bdAdd').getBoundingClientRect();
-        return {center:title.x+title.width/2-header.x-header.width/2,gap:title.left-button.right};
+        const header=e.getBoundingClientRect(),title=e.querySelector('.sy-year').getBoundingClientRect(),button=e.querySelector('#bdAdd').getBoundingClientRect(),back=e.querySelector('.sy-back').getBoundingClientRect();
+        return {center:title.x+title.width/2-header.x-header.width/2,gap:title.left-button.right,backWidth:back.width,backHeight:back.height};
       });
       expect(Math.abs(layout.center)).toBeLessThan(1);expect(layout.gap).toBeGreaterThan(2);
+      expect(layout.backWidth).toBe(36);expect(layout.backHeight).toBe(36);
+      await expect(page.locator('#bdAdd')).toHaveText('+ Añadir');
       await page.getByRole('button',{name:'Añadir cumpleaños',exact:true}).click();
       await expect(page.locator('#bdFName')).toBeVisible();await page.locator('#bdFClose').click();
     }
