@@ -24,7 +24,7 @@ test('filtros compactos P/Q, sin Añadir inferior y cumpleaños con Añadir en c
  }
  await page.locator('#evViewCal').click();await expect(page.locator('#evAdd')).toHaveCount(0);
  await page.locator('#evViewUpcoming').click();await page.locator('#evSubBirthdays').click();
- await expect(page.locator('#evBdayAdd')).toHaveText('Añadir');
+ await expect(page.locator('#evBdayAdd')).toHaveText('+ Añadir');
  await page.locator('#evBdayAdd').click();await expect(page.locator('#bdFName')).toBeVisible();
 });
 

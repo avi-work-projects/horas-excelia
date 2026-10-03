@@ -22,19 +22,25 @@ assert.equal(a.getEvDisplayColor({kind:'puntual',type:'Llamada',color:'#868e96'}
 assert(a.evShapeSvg('phone').includes('fill="currentColor"'));assert(!a.evShapeSvg('phone').includes('#868e96'));
 assert.match(a.renderEvDetail(multiple),/id="evDMarker"[^>]*>.*ev-shape-x-outline/);
 for(const view of ['cal','quad','annual']){a.EV_VIEW=view;assert(!a.renderEvContent().includes('id="evAdd"'));}
-a.EV_VIEW='birthdays';html=a.renderEvContent();assert.match(html,/id="evBdayAdd"[^>]*>Añadir<\/button>/);assert.equal((html.match(/id="evBdayAdd"/g)||[]).length,1);
+a.EV_VIEW='birthdays';html=a.renderEvContent();assert.match(html,/id="evBdayAdd"[^>]*>\+ Añadir<\/button>/);assert.equal((html.match(/id="evBdayAdd"/g)||[]).length,1);
 
 a.FISCAL_YEAR=2026;a.FISCAL_TAB='personal';a.loadPersonalYear(2026);
 assert.equal(a.personalHasChanges(),false);assert.match(a.renderFiscalContent(),/id="personalSaveFooter" hidden/);
 a.PERSONAL_DATA.gastosRecurrentes[0].amount=80;assert.equal(a.personalHasChanges(),true);
 a.PERSONAL_DATA.gastosRecurrentes[0].amount=0;assert.equal(a.personalHasChanges(),false);
 a.PERSONAL_DATA.gastosRecurrentes[0].periods=[{start:'2026-01-01',end:'2026-12-31',amount:80,period:'monthly'}];
+// Las copias antiguas admiten opciones auxiliares que no son listas de partidas.
+a.PERSONAL_DATA.limpiezaCasa={enabled:true,amount:40};
+a.PERSONAL_DATA.legacyNote='Preferencia anterior';
+assert.doesNotThrow(()=>a.renderFiscalContent());
+assert.equal(a.personalAdvancedCards().length,1);
 a.savePersonalYear(2026);assert.equal(a.personalHasChanges(),false);
 const item=a.PERSONAL_DATA.gastosRecurrentes[0];
 assert.equal(a.personalCardOpen('gastosRecurrentes',item,0),false);
 assert.match(a.renderPersonalCard(item,'gastosRecurrentes',0,'monthly'),/class="personal-period-details" hidden/);
 a.togglePersonalCards();assert(a.personalCardsAllOpen());
 const b=cargarApp(a.localStorage._datos);b.FISCAL_YEAR=2026;b.loadPersonalYear(2026);assert(b.personalCardOpen('gastosRecurrentes',item,0));
+assert.equal(b.PERSONAL_DATA.limpiezaCasa.amount,40);assert.equal(b.PERSONAL_DATA.legacyNote,'Preferencia anterior');
 b.FISCAL_YEAR=2027;assert(!b.personalCardOpen('gastosRecurrentes',item,0));
 a.togglePersonalCards();assert(!a.personalCardsAllOpen());assert(!a.personalHasChanges(),'Plegar no modifica importes');
 console.log('Eventos por fecha, filtros P/Q, ficha con símbolo y partidas personales plegables: OK');

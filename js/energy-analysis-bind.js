@@ -13,7 +13,7 @@ function bindEnergyAnalysis(w,kind){
     if(next){ENERGY_ANALYSIS_TAB=next[0];openEnergyAnalysis(kind);}
   }
   // El panel interior consume su gesto: cambiar de año nunca cambia además de pestaña.
-  if(['resumen','consumo','costes'].indexOf(ENERGY_ANALYSIS_TAB)!==-1){
+  if(['resumen','consumo','costes'].indexOf(ENERGY_ANALYSIS_TAB)!==-1&&!(ENERGY_ANALYSIS_TAB==='resumen'&&ENERGY_SUMMARY_TOTAL)){
     energyBindSwipe(w.querySelector('.energy-window-content').firstElementChild,function(){year(1);},function(){year(-1);});
   }
   energyBindSwipe(w.querySelector('.energy-window'),function(){tab(1);},function(){tab(-1);});

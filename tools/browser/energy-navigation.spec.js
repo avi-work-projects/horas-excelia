@@ -52,6 +52,15 @@ test('Próximos mantiene la posición de los cuatro títulos al cambiar de pesta
     const positions=[];
     for(const id of ['evSubUpcoming','evSubBirthdays','evSubAgenda','evSubTodos','evSubUpcoming']){
       await page.locator('#'+id).click();
+      const title={evSubUpcoming:'Próximos eventos',evSubBirthdays:'Cumpleaños',evSubTodos:'Todos los Eventos'}[id];
+      if(title)await expect(page.locator('#eventsContent>.sy-header .sy-year')).toHaveText(title);
+      if(id==='evSubBirthdays'){
+        const layout=await page.locator('#eventsContent>.sy-header').evaluate(e=>{
+          const back=e.querySelector('.sy-back').getBoundingClientRect(),add=e.querySelector('.bday-header-add').getBoundingClientRect(),title=e.querySelector('.sy-year').getBoundingClientRect();
+          return {backWidth:back.width,backHeight:back.height,gap:title.left-add.right};
+        });
+        expect(layout.backWidth).toBe(36);expect(layout.backHeight).toBe(36);expect(layout.gap).toBeGreaterThan(2);
+      }
       // Medir también las letras y con el listado desplazado, no solo las cajas vacías.
       await page.locator('#eventsContent .sy-body').evaluate(el=>el.scrollTop=240);
       positions.push(await page.locator('.ev-upcoming-tabs .econ-sub-tab').evaluateAll(els=>els.map(el=>{
@@ -63,6 +72,47 @@ test('Próximos mantiene la posición de los cuatro títulos al cambiar de pesta
     const row=positions[0],gaps=row.slice(1).map((r,i)=>r[0]-row[i][0]-row[i][2]);
     expect(Math.max(...gaps)-Math.min(...gaps)).toBeLessThan(1);
   }
+});
+
+for(const kind of ['luz','gas'])test(kind+': Total oculta el año y permite volver al mismo año',async({page})=>{
+  await page.evaluate(kind=>{ENERGY_ANALYSIS_YEAR=2025;ENERGY_ANALYSIS_TAB='resumen';ENERGY_SUMMARY_TOTAL=false;openEnergyAnalysis(kind);},kind);
+  await expect(page.locator('#energyAnalysisOverlay')).toHaveCSS('transform','matrix(1, 0, 0, 1, 0, 0)');
+  const selector=page.locator('.energy-year-selector'),total=page.locator('#energySummaryTotal');
+  const before=await total.boundingBox();
+  await total.click();await expect(selector).toBeHidden();await expect(total).toHaveAttribute('aria-pressed','true');
+  expect(await total.boundingBox()).toEqual(before);
+  await total.click();await expect(selector).toBeVisible();await expect(selector.locator('strong')).toHaveText('2025');
+  await total.click();await page.locator('[data-energy-tab="consumo"]').click();
+  await expect(selector).toBeVisible();await expect(selector.locator('strong')).toHaveText('2025');
+  await page.locator('[data-energy-tab="resumen"]').click();await expect(selector).toBeHidden();
+});
+
+test('fiscal abre con opciones antiguas y las subpestañas mantienen toda su casilla',async({page})=>{
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.evaluate(()=>{
+    ECON_YEAR=2026;
+    localStorage.setItem('excelia-personal-v1-2026',JSON.stringify({gastosRecurrentes:[],gastosSemanales:[],inversiones:[],ingresos:[],limpiezaCasa:{enabled:true,amount:40}}));
+  });
+  await page.locator('#econBtn').click();await page.locator('#ecGear').click();
+  await expect(page.locator('#fiscalOverlay')).toHaveClass(/open/);
+  await expect(page.locator('#fiscalTabPersonal')).toHaveClass(/active/);
+  for(const section of ['fiscalTabIrpfDeduc','fiscalTabDespacho']){
+    await page.locator('#'+section).click();
+    const tabs=page.locator('#fiscalOverlay .econ-sub-tab'),count=await tabs.count();
+    let initial;
+    for(let i=0;i<count;i++){
+      await tabs.nth(i).click();
+      const rects=await tabs.evaluateAll(els=>els.map(e=>{const r=e.getBoundingClientRect(),s=getComputedStyle(e);return {x:r.x,width:r.width,height:r.height,border:s.borderBottomColor,background:s.backgroundColor};}));
+      initial=initial||rects;
+      rects.forEach((r,j)=>{expect(Math.abs(r.width-initial[j].width)).toBeLessThan(1);expect(Math.abs(r.x-initial[j].x)).toBeLessThan(1);expect(Math.abs(r.height-rects[0].height)).toBeLessThan(1);});
+      expect(Math.max(...rects.map(r=>r.width))-Math.min(...rects.map(r=>r.width))).toBeLessThan(1);
+      expect(rects[i].background).not.toBe('rgba(0, 0, 0, 0)');
+      expect(rects[i].border).not.toBe('rgba(0, 0, 0, 0)');
+      rects.filter((_,j)=>j!==i).forEach(r=>expect(r.border).toBe('rgba(0, 0, 0, 0)'));
+    }
+  }
+  expect(errors).toEqual([]);
+  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('excelia-personal-v1-2026')).limpiezaCasa.amount)).toBe(40);
 });
 
 test('los pesos se ven enteros y conservan la precisión hasta que se editan',async({page})=>{

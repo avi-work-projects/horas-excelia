@@ -66,7 +66,7 @@ function renderBdayUpcoming(){
 
   var h='';
   if(prevItems.length){
-    h+='<div class="bday-upcoming-section">';
+    h+='<div class="bday-upcoming-section bday-upcoming-past">';
     h+=renderGroup('Pasados',prevItems);
     h+='</div>';
   }
@@ -180,7 +180,7 @@ function renderBdayList(){
 
 /* ── Contenido principal ──────────────────────────────────── */
 function renderBdayAddButton(id){
-  return '<button class="bday-header-add" id="'+id+'" title="Añadir cumpleaños" aria-label="Añadir cumpleaños">Añadir</button>';
+  return '<button class="bday-header-add" id="'+id+'" title="Añadir cumpleaños" aria-label="Añadir cumpleaños">+ Añadir</button>';
 }
 function renderBdayContent(){
   var h='';

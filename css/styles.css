@@ -1069,12 +1069,14 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .bday-header-vip.bday-vip-compact img{width:20px;margin:0}
 .bday-vip-compact input[type=checkbox]{width:13px;height:13px;border-radius:4px}
 .bday-vip-compact input[type=checkbox]:checked::after{left:3px;top:0;width:3px;height:7px;border-width:0 1.6px 1.6px 0}
-.bday-header-add{position:relative;z-index:1;height:32px;flex:0 0 auto;padding:0 8px;border:1px solid var(--accent);border-radius:10px;background:color-mix(in srgb,var(--accent) 10%,var(--surface));color:var(--accent-bright);font-size:.68rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.bday-header-add:active{background:color-mix(in srgb,var(--accent) 20%,var(--surface))}
+.bday-header-add{position:relative;z-index:1;height:32px;flex:0 0 auto;margin-left:4px;padding:0 8px;border:1px solid var(--birthday-tone);border-radius:10px;background:var(--birthday-tone);color:var(--surface);font-size:.68rem;font-weight:600;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.bday-header-add:active{filter:brightness(.9)}
+.bday-upcoming-past{opacity:.65}
 @media(max-width:360px){
-  .sy-header:has(>.bday-header-add){padding-left:12px;gap:6px}
-  .sy-header:has(>.bday-header-add)>.sy-back{width:30px;height:30px}
-  .bday-header-add{padding:0 6px;font-size:.65rem}
+  /* La flecha conserva sus 36 px incluso en el móvil más estrecho. */
+  .sy-header:has(>.bday-header-add){gap:8px}
+  .bday-header-add{margin-left:0;padding:0 4px;font-size:.625rem}
+  .sy-header:has(>.bday-header-add) .sy-year{font-size:.75rem}
 }
 .bday-month-hdr{font-size:.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:10px 0 6px;border-bottom:1px solid var(--border);margin-bottom:6px}
 .bday-list-item{display:flex;align-items:center;gap:10px;padding:11px 0 15px;min-height:52px;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity .12s}
@@ -2694,10 +2696,11 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .est-nav .est-btn{--tab-tone:#60a5fa;flex:1}
 .est-nav .est-btn.est-casa{--tab-tone:#14b8a6}
 .econ-tab-btn.active,.fiscal-tab-btn.active,.est-nav .est-btn.active{background:color-mix(in srgb,var(--tab-tone) 23%,var(--surface))!important}
-#econOverlay .econ-sub-tab,#fiscalOverlay .econ-sub-tab,#estudioOverlay .econ-sub-tab{color:var(--accent)!important;border-color:var(--accent)!important;font-weight:600}
-#fiscalOverlay .econ-sub-tab{color:var(--c-purple)!important;border-color:var(--c-purple)!important}
+#econOverlay .econ-sub-tab,#estudioOverlay .econ-sub-tab{color:var(--accent)!important;border-color:var(--accent)!important;font-weight:600}
+#fiscalOverlay .econ-sub-tabs{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);align-items:stretch}
+#fiscalOverlay .econ-sub-tab{display:flex;align-items:center;justify-content:center;min-width:0;width:100%;color:var(--c-purple);border-bottom-color:transparent;font-weight:600;line-height:1.2;transition:color .15s,background .15s,border-color .15s}
 #econOverlay .econ-sub-tab.active,#estudioOverlay .econ-sub-tab.active{background:color-mix(in srgb,var(--accent) 18%,var(--surface))}
-#fiscalOverlay .econ-sub-tab.active{background:color-mix(in srgb,var(--c-purple) 18%,var(--surface))}
+#fiscalOverlay .econ-sub-tab.active{border-bottom-color:var(--c-purple);background:color-mix(in srgb,var(--c-purple) 10%,var(--surface))}
 
 .nav-pro-icon{width:34px;height:34px;display:block;box-sizing:border-box;padding:1px;color:var(--c-blue)}
 .nav-pro-econ{color:var(--c-blue)}.nav-pro-home{color:var(--c-red)}.nav-pro-estudio{color:var(--study-tone)}.nav-pro-events{color:#65a367}.nav-pro-bday{color:var(--birthday-tone)}.nav-pro-alarm{color:#e5b600;width:31px;height:31px}
@@ -2959,7 +2962,9 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .energy-window-header .energy-import-button{width:70px;height:36px;padding:0 6px;flex:none;font-size:.72rem;border-radius:10px}
 .energy-year-nav{position:relative}.energy-total-button{position:absolute;right:16px;background:var(--surface);color:var(--energy-resumen);border:1px solid currentColor;border-radius:9px;padding:7px 10px;font:inherit;font-size:.75rem}.energy-total-button[aria-pressed="true"]{background:color-mix(in srgb,var(--energy-resumen) 15%,var(--surface));box-shadow:0 2px 5px #0001}
 .energy-year-nav:has(.energy-total-button){padding-right:86px}
-.energy-window>.energy-year-nav{margin:0;padding:12px;flex-shrink:0}
+.energy-window>.energy-year-nav{margin:0;padding:12px;flex-shrink:0;min-height:58px}
+.energy-year-selector{display:flex;align-items:center;justify-content:center;gap:22px}
+.energy-year-selector[hidden]{display:none}
 .energy-window .sy-body{padding:0;min-height:0;flex:1;overflow-y:auto}
 .energy-window-content{width:100%;max-width:760px;margin:0 auto;padding:14px 16px 30px;flex-shrink:0}
 .energy-fee-period{padding:12px 0;box-shadow:0 1px 0 var(--border)}
@@ -3095,6 +3100,8 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .ev-upcoming-content{display:flex;flex-direction:column;gap:16px;padding:16px 16px 40px;min-width:0;flex-shrink:0}
 .ev-upcoming-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;width:100%;margin:0;padding:10px 20px;box-sizing:border-box;flex-shrink:0}
 .ev-upcoming-tabs .econ-sub-tab{flex:1;min-width:0;padding:5px 2px;font-size:.62rem;font-weight:600;line-height:1.2;color:var(--accent-bright);white-space:nowrap;transition:color .15s,background .15s,border-color .15s}
+.ev-upcoming-tabs #evSubBirthdays{color:var(--birthday-tone)}
+.ev-upcoming-tabs #evSubBirthdays.active{border-bottom-color:var(--birthday-tone)}
 @media(max-width:360px){.ev-upcoming-tabs .econ-sub-tab{font-size:.6rem;padding-left:0;padding-right:0}}
 
 .energy-tariff-period>summary{list-style-position:outside;cursor:pointer;padding:12px 0}.energy-tariff-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}.energy-tariff-metrics>span{display:flex;flex-direction:column;gap:5px;background:var(--surface2);padding:10px 5px;border-radius:9px;text-align:center}.energy-tariff-metrics small{font-size:.66rem;font-weight:400;color:var(--text-muted)}.energy-tariff-metrics b{font-size:.85rem;color:var(--text)}

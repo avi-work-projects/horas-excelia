@@ -153,6 +153,9 @@ primero el anterior para conservar `NAV_BACK`; abrirlos nunca llama a una ruta.
   estructura. `excelia-personal-cards-v1` recuerda el plegado por año/partida y
   se excluye del backup por ser solo presentación local. Los períodos e importes
   siguen viajando íntegros con `personalPerYear`.
+- Los controles de partidas recorren `PERSONAL_SECTIONS`, no todas las claves
+  de `PERSONAL_DATA`: copias antiguas también contienen opciones auxiliares
+  como `limpiezaCasa`. Se conservan, pero no son listas de tarjetas (v396).
 - `PERSONAL_SAVED` compara el borrador con la carga/guardado del año. Cambiar
   el plegado no enciende Guardar; revertir el importe tampoco deja un falso aviso.
   Guardar períodos conserva su guardado explícito; los campos simples usan
@@ -167,6 +170,10 @@ primero el anterior para conservar `NAV_BACK`; abrirlos nunca llama a una ruta.
 | `energy-reference`, `electricity-comparator*` | Referencias y escenarios independientes. |
 | `energy-analysis-view`, `energy-analysis-bind` | Presentación y navegación del estudio. |
 | `energy-data` | Reutilización de datos y cálculos durante un render. |
+
+El modo Total de Resumen oculta el selector anual sin cambiar el año guardado
+ni la altura de su fila. El mismo botón vuelve al año seleccionado; las demás
+pestañas conservan su selector y los gestos de navegación correspondientes.
 
 `withEnergyData(render)` crea un contexto síncrono de solo lectura para una
 actualización de pantalla. Las llamadas anidadas lo comparten. `energyReadData`
