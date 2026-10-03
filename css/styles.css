@@ -1073,10 +1073,9 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .bday-header-add:active{filter:brightness(.9)}
 .bday-upcoming-past{opacity:.65}
 @media(max-width:360px){
-  /* La flecha conserva sus 36 px incluso en el móvil más estrecho. */
-  .sy-header:has(>.bday-header-add){gap:8px}
+  /* Compactar los márgenes, no el título ni la flecha, en móviles estrechos. */
+  .sy-header:has(>.bday-header-add){gap:5px;padding-left:8px;padding-right:8px}
   .bday-header-add{margin-left:0;padding:0 4px;font-size:.625rem}
-  .sy-header:has(>.bday-header-add) .sy-year{font-size:.75rem}
 }
 .bday-month-hdr{font-size:.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:10px 0 6px;border-bottom:1px solid var(--border);margin-bottom:6px}
 .bday-list-item{display:flex;align-items:center;gap:10px;padding:11px 0 15px;min-height:52px;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity .12s}
