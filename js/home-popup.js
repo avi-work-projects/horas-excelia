@@ -4,8 +4,9 @@ function homeReminderColor(ev){return getEvType(ev)==='Ensayos boda'?'#92334d':e
    enviar, cumpleanos hoy/manana, VIP sin alarma, eventos hoy)
    ============================================================ */
 /* ── Home Popup: semanas sin marcar + VIP sin alarma ── */
-function homeReminderEventText(when,time,content,missingTime){
-  return '<span class="home-reminder-text"><span class="home-reminder-when">&#128197; '+escHtml(when)+(time?' · '+escHtml(time):(missingTime?' · Sin hora':''))+'</span> <span class="home-reminder-content">'+escHtml(content)+'</span></span>';
+function homeReminderEventText(when,time,content,missingTime,ev){
+  var marker=ev?(getEvType(ev)==='Asturias'?'<span class="home-reminder-asturias" style="background:'+fakeTrans(EV_TYPE_COLORS['grande|Asturias'],.65)+'">'+EV_FILTER_SHORT.Asturias+'</span>':evUpcomingMarkHtml(ev)):'&#128197;';
+  return '<span class="home-reminder-text"><span class="home-reminder-symbol" aria-hidden="true">'+marker+'</span><strong class="home-reminder-when">'+escHtml(when)+(time?' · '+escHtml(time):(missingTime?' · Sin hora':''))+'</strong> <span class="home-reminder-content">'+escHtml(content)+'</span></span>';
 }
 function openHomePopup(){
   var csvWarnings=csvPendingWarnings(new Date());
@@ -34,7 +35,7 @@ function openHomePopup(){
     }
     if(!hasWork)continue;
     var lbl='Semana del '+String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');
-    items.push({type:'warn',text:'&#128221; '+lbl+' sin enviar'});
+    items.push({type:'warn',text:'&#128221; <strong>'+lbl+'</strong> sin enviar'});
   }
   // Todos los cumpleanos hasta dentro de 7 dias, solo si falta la alarma.
   if(typeof BDAYS!=='undefined'&&BDAYS.length){
@@ -45,11 +46,11 @@ function openHomePopup(){
       var diff=Math.round((bd-today)/86400000);
       if(diff>7||(typeof isBdayAlarmSet==='function'&&isBdayAlarmSet(b)))return;
       var when=diff===0?' (hoy)':diff===1?' (ma\u00f1ana)':' (en '+diff+'d)';
-      birthdays.push({days:diff,type:b.vip?'vip':'bday',text:(b.vip?'&#11088; ':'&#127874; ')+escHtml(b.name)+when+' - sin alarma'});
+      birthdays.push({days:diff,type:b.vip?'vip':'bday',text:'<span>'+(b.vip?'&#11088; ':'&#127874; ')+'<strong>'+escHtml(b.name)+'</strong>'+when+' - sin alarma</span>'});
     });
   }
   if(typeof birthdays!=='undefined'){
-    birthdays.sort(function(a,b){return (a.type==='vip'?0:1)-(b.type==='vip'?0:1)||a.days-b.days;});
+    birthdays.sort(function(a,b){return a.days-b.days||(a.type==='vip'?0:1)-(b.type==='vip'?0:1);});
     items=items.concat(birthdays);
   }
   // Eventos hoy o mañana (inicio) + fin de eventos largos (>7 días)
@@ -68,7 +69,7 @@ function openHomePopup(){
           contenido=pareja?'Ensayo - '+pareja.name:'Ensayo sin pareja asignada';
           if(!bodaPlaceOf(ev))contenido+=' · Sin sala';
         }
-        eventItems.push({days:diff,time:time||'',type:'event',color:homeReminderColor(ev),text:homeReminderEventText(diff===0?'Hoy':'Mañana',time,contenido,getEvType(ev)==='Ensayos boda')+bodaUltimoEnsayoHtml(ev)});
+        eventItems.push({days:diff,time:time||'',type:'event',color:homeReminderColor(ev),text:homeReminderEventText(diff===0?'Hoy':'Mañana',time,contenido,getEvType(ev)==='Ensayos boda',ev)+bodaUltimoEnsayoHtml(ev)});
       }
       // Fin de eventos de más de 7 días
       if(ev.end&&ev.end>ev.start){
@@ -79,7 +80,7 @@ function openHomePopup(){
           if(diffEnd===0||diffEnd===1){
             var vuelta=evTramos(ev).filter(function(tr){return tr.k==='vuelta';})[0];
             var endTime=vuelta&&vuelta.t.time||'';
-            eventItems.push({days:diffEnd,time:endTime,type:'event',color:homeReminderColor(ev),text:homeReminderEventText(diffEnd===0?'Hoy':'Mañana',endTime,'Fin - '+ev.title)});
+            eventItems.push({days:diffEnd,time:endTime,type:'event',color:homeReminderColor(ev),text:homeReminderEventText(diffEnd===0?'Hoy':'Mañana',endTime,'Fin - '+ev.title,false,ev)});
           }
         }
       }
@@ -94,9 +95,19 @@ function openHomePopup(){
   var content=document.getElementById('homePopupContent');
   if(!content)return;
   var html='<div class="home-popup-title">&#128276; Recordatorios</div>';
+  var bdayCount=0,group='';
   items.forEach(function(it){
+    var nextGroup=it.type==='vip'||it.type==='bday'?'birthdays':it.type==='event'?'events':'warnings';
+    if(nextGroup!==group){
+      if(group==='birthdays'&&bdayCount>2)html+='</details>';
+      if(group)html+='</section>';
+      html+='<section class="home-reminder-group" aria-label="'+({birthdays:'Cumpleaños',events:'Eventos',warnings:'Avisos'}[nextGroup])+'">';group=nextGroup;
+    }
+    if(group==='birthdays'&&++bdayCount===3)html+='<details class="home-birthday-more"><summary>Ver '+(birthdays.length-2)+' cumpleaños más</summary>';
     html+='<div class="home-popup-item '+it.type+'"'+(it.color?' style="--reminder-color:'+it.color+'"':'')+'>'+it.text+'</div>';
   });
+  if(group==='birthdays'&&bdayCount>2)html+='</details>';
+  html+='</section>';
   content.innerHTML=html;
   document.getElementById('homePopup').style.display='flex';
   if(pendingTasks.length)tasksReminderSeen(new Date());
