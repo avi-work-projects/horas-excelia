@@ -489,7 +489,7 @@ test('cupos por ano, backup y ajustes visuales de resumen',async({page})=>{
  await page.locator('#ecNext').click();await expect(page.locator('#vacInput')).toHaveValue('23');
  await page.locator('#vacInput').fill('28');await page.locator('#vacInput').blur();await page.locator('#ecPrev').click();
  await expect(page.locator('#vacInput')).toHaveValue('25');await page.screenshot({path:'.local-preview/summary-year.png',animations:'disabled'});
- await page.locator('#ecTabResumen').click();await page.locator('#ecRateMulti').click();await page.screenshot({path:'.local-preview/tariff-tones.png',animations:'disabled'});
+ await page.locator('#ecTabResumen').click();await page.locator('#ecTariffDetails > summary').click();await page.locator('#ecRateMulti').click();await page.screenshot({path:'.local-preview/tariff-tones.png',animations:'disabled'});
  await page.evaluate(()=>{openFiscal();FISCAL_TAB='despacho';document.getElementById('fiscalContent').innerHTML=renderFiscalContent();bindFiscalEvents();});
  const tabs=await page.locator('[data-hipsub]').evaluateAll(els=>els.map(el=>el.getBoundingClientRect().bottom));expect(tabs.length).toBe(4);expect(Math.max(...tabs)-Math.min(...tabs)).toBeLessThan(1);
  await page.screenshot({path:'.local-preview/fiscal-tabs-aligned.png',animations:'disabled'});

@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v399 — cumpleaños, recordatorios y paneles plegables';
+var APP_VERSION = 'v400 — cumpleaños, recordatorios y paneles plegables';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
