@@ -23,7 +23,8 @@
 .electric-card-toggle{display:flex;align-items:center;gap:8px;width:100%;padding:0 0 12px;margin:0 0 14px;background:none;border:0;border-bottom:1px solid var(--border);color:var(--text);cursor:pointer;text-align:left}
 .electric-card-toggle strong{flex:1;font-size:.87rem;overflow-wrap:anywhere;min-width:0}
 .electric-card-toggle>span{font-size:.63rem;color:var(--text-muted)}
-.electric-card-toggle .electric-fold-icon{font-size:1rem;color:var(--electric-tone)}
+.electric-card-toggle .electric-fold-icon{position:relative;display:inline-flex;width:29px;height:29px;flex-shrink:0;border:1px solid var(--border);border-radius:9px;background:var(--surface2);font-size:0;color:var(--electric-tone);box-shadow:0 2px 4px #0001}
+.electric-fold-icon::after{content:'';position:absolute;left:9px;top:11px;width:8px;height:8px;border-top:2px solid currentColor;border-left:2px solid currentColor;transform:rotate(45deg)}
 .electric-card.is-collapsed .electric-card-toggle{margin:0;padding:0;border:0}
 .electric-card.is-collapsed .electric-fold-icon{transform:rotate(180deg)}
 .electric-card-body[hidden]{display:none}

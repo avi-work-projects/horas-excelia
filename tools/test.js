@@ -569,12 +569,12 @@ REGLAS.push(['inicio: ensayo con fecha, hora y pareja actual; sin hora explicita
   ctx.sessionStorage={getItem:()=>null};
   ctx.document.getElementById=id=>id==='homePopupContent'?content:id==='homePopup'?{style:{}}:null;
   require('vm').runInContext(fs.readFileSync(path.join(RAIZ,'js/home-popup.js'),'utf8'),ctx);
-  return content.innerHTML.includes('Mañana · 18:00–19:00</span> <span class="home-reminder-content">Ensayo - Pareja &lt;actual&gt;')
-    &&content.innerHTML.includes('Hoy · Sin hora</span> <span class="home-reminder-content">Ensayo sin pareja asignada')
+  return content.innerHTML.includes('Mañana · 18:00–19:00</strong> <span class="home-reminder-content">Ensayo - Pareja &lt;actual&gt;')
+    &&content.innerHTML.includes('Hoy · Sin hora</strong> <span class="home-reminder-content">Ensayo sin pareja asignada')
     &&!content.innerHTML.includes('Nombre antiguo');
 }]);
 
-REGLAS.push(['inicio: tres semanas futuras, VIP primero y eventos sin hora antes de horas',function(){
+REGLAS.push(['inicio: tres semanas futuras, dos cumpleaños próximos visibles y eventos sin hora antes de horas',function(){
   const ctx=cargarApp(claves),content={innerHTML:''};
   ctx.SW={};ctx.dayT=()=> 'normal';ctx.csvPendingWarnings=()=>[];
   ctx.BDAYS=[{name:'NormalHoy',month:8,day:21},{name:'VipLejano',month:8,day:28,vip:true},{name:'VipHoy',month:8,day:21,vip:true}];
@@ -584,8 +584,11 @@ REGLAS.push(['inicio: tres semanas futuras, VIP primero y eventos sin hora antes
   ctx.sessionStorage={getItem:()=>null};
   ctx.document.getElementById=id=>id==='homePopupContent'?content:id==='homePopup'?{style:{}}:null;
   require('vm').runInContext(fs.readFileSync(path.join(RAIZ,'js/home-popup.js'),'utf8'),ctx);
-  const html=content.innerHTML,order=['VipHoy','VipLejano','NormalHoy','SinHoraHoy','SinHoraManana','TempranoHoy','TardeHoy','TempranoManana'];
-  return html.includes('Semana del 07/09 sin enviar')&&!html.includes('Semana del 14/09 sin enviar')
+  const html=content.innerHTML,order=['VipHoy','NormalHoy','VipLejano','SinHoraHoy','SinHoraManana','TempranoHoy','TardeHoy','TempranoManana'];
+  return html.includes('Semana del 07/09</strong> sin enviar')&&!html.includes('Semana del 14/09</strong> sin enviar')
+    &&html.indexOf('NormalHoy')<html.indexOf('<details class="home-birthday-more">')
+    &&html.indexOf('<details class="home-birthday-more">')<html.indexOf('VipLejano')
+    &&html.includes('Ver 1 cumpleaños más')&&!html.includes('home-birthday-more" open')
     &&order.every((name,i)=>html.includes(name)&&(!i||html.indexOf(order[i-1])<html.indexOf(name)))
     &&ctx.EVENTS[0].title==='TardeHoy'&&ctx.BDAYS[0].name==='NormalHoy';
 }]);

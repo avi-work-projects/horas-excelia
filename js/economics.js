@@ -7,6 +7,7 @@ var ECON_VIEW='resumen';    // 'resumen' | 'gastos' | 'analisis' | 'estudio'
 var ECON_RESUMEN_MODE='anual'; // 'anual' | 'mensual'
 var ECON_RATE_MODE='daily'; // 'daily' | 'hourly' | 'salary'
 var ECON_MULTI_RATE=false;
+var ECON_TARIFF_OPEN=false; // Panel de tarifa plegado al entrar; conserva estado al recalcular.
 var ECON_RATE_PERIODS=[{from:0,to:11,rate:0}]; // legacy month-based (migrated to date-based)
 /* New date-based periods: [{startDate:'YYYY-MM-DD', rate:315, rateMode:'daily'}]
    First period always starts Jan 1. The startDate of period N+1 = end+1 of period N.
@@ -253,7 +254,12 @@ function renderEconResumen(){
   var h='<div class="econ-summary-view">';
 
   /* §1 Tarifa + Calcular */
-  h+='<div class="sy-section econ-tariff-settings"><div class="sy-section-title">Tarifa</div>';
+  var eqRate=e.totalDays>0?Math.round(e.totBase/e.totalDays*100)/100:DAILY_RATE;
+  var eqHourly=e.totalHours>0?Math.round(e.totBase/e.totalHours*100)/100:hourlyRate;
+  h+='<div class="sy-section econ-tariff-settings"><details id="ecTariffDetails"'+(ECON_TARIFF_OPEN?' open':'')+'><summary>';
+  h+='<span class="econ-equiv-rate"><span class="econ-equiv-label">'+(ECON_RATE_MODE==='salary'?'Salario bruto anual':'Tarifa equivalente')+'</span><span class="econ-equiv-val">'+(ECON_RATE_MODE==='salary'?fc(window._ECON_SALARY||0):fc(eqRate)+'/día')+'</span>';
+  if(ECON_RATE_MODE!=='salary')h+='<span class="econ-equiv-hour">'+fc(eqHourly)+'/hora</span>';
+  h+='</span></summary><div class="econ-tariff-controls">';
   /* Selector de modo */
   h+='<div class="econ-opt-row" style="margin-bottom:8px">';
   h+='<button class="econ-opt-btn'+(ECON_RATE_MODE==='daily'||ECON_RATE_MODE==='hourly'?' active':'')+'" id="ecModeFreelance">Aut\u00f3nomo</button>';
@@ -307,18 +313,10 @@ function renderEconResumen(){
         h+='<button class="econ-multi-rate-add" id="ecRateAddPeriod">+ A\u00f1adir per\u00edodo</button>';
       }
       h+='</div>';
-      /* Tarifa equivalente */
-      var eqRate=e.totalDays>0?Math.round(e.totBase/e.totalDays*100)/100:DAILY_RATE;
-      var eqHourly=e.totalHours>0?Math.round(e.totBase/e.totalHours*100)/100:0;
-      h+='<div class="econ-equiv-rate">';
-      h+='<span class="econ-equiv-label">Tarifa equivalente</span>';
-      h+='<span class="econ-equiv-val">'+fc(eqRate)+'/d\u00eda</span>';
-      h+='<span class="econ-equiv-sep">\u00b7</span>';
-      h+='<span class="econ-equiv-val">'+fc(eqHourly)+'/hora</span>';
-      h+='</div>';
     }
   }
   h+='<button class="econ-calc-btn" id="ecCalcular">Calcular</button>';
+  h+='</div></details>';
   /* Checkboxes below Calcular */
   if(ECON_RATE_MODE!=='salary'){
     h+='<div class="excl-row" style="margin-top:8px">';
@@ -464,6 +462,7 @@ function renderEconContent(){
 }
 
 function openEcon(){
+  ECON_TARIFF_OPEN=false;
   NAV_BACK=null;
   ECON_YEAR=CY;
   if(typeof loadFiscal==='function')loadFiscal();
@@ -535,6 +534,8 @@ function bindEconEvents(){
 
 
 function bindEconResumenEvents(){
+  var tariff=document.getElementById('ecTariffDetails');
+  if(tariff)tariff.addEventListener('toggle',function(){ECON_TARIFF_OPEN=this.open;});
   /* Modo Autónomo / Nómina */
   var modeF=document.getElementById('ecModeFreelance');
   var modeS=document.getElementById('ecModeSalary');

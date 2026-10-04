@@ -37,7 +37,15 @@
 <div class="sy-body">
 <div class="econ-summary-view">
 <div class="sy-section econ-tariff-settings">
-<div class="sy-section-title">Tarifa</div>
+<details id="ecTariffDetails">
+<summary>
+<span class="econ-equiv-rate">
+<span class="econ-equiv-label">Tarifa equivalente</span>
+<span class="econ-equiv-val">0,00&#8364;/día</span>
+<span class="econ-equiv-hour">0,00&#8364;/hora</span>
+</span>
+</summary>
+<div class="econ-tariff-controls">
 <div class="econ-opt-row" style="margin-bottom:8px">
 <button class="econ-opt-btn active" id="ecModeFreelance">Autónomo</button>
 <button class="econ-opt-btn" id="ecModeSalary">Nómina</button>
@@ -59,6 +67,8 @@
 </div>
 </div>
 <button class="econ-calc-btn" id="ecCalcular">Calcular</button>
+</div>
+</details>
 <div class="excl-row" style="margin-top:8px">
 <label class="excl-item" style="color:var(--festivo)">
 <input type="checkbox" class="excl-chk" id="ecExclFestChk" style="--chk:var(--festivo)" checked>&#160;Quitar festivos</label>

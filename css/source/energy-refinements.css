@@ -41,9 +41,9 @@
 .energy-window-content{width:100%;max-width:760px;margin:0 auto;padding:14px 16px 30px;flex-shrink:0}
 .energy-fee-period{padding:12px 0;box-shadow:0 1px 0 var(--border)}
 .energy-fee-period:last-child{box-shadow:none}
-/* Solo energía reparte el espacio entre textos, con ancho de contenido. */
-.energy-tabs{top:0;z-index:3;background:var(--bg);justify-content:space-between;gap:12px;overflow-x:auto}
-.energy-tabs .econ-sub-tab{flex:0 0 auto;padding:12px 0;font-size:.72rem;font-weight:600;white-space:nowrap}
+/* Cada pestaña ocupa su celda completa, igual que en Eventos. */
+.energy-tabs{top:0;z-index:3;background:var(--bg);display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);align-items:stretch;gap:4px;padding:10px 12px;flex-shrink:0}
+.energy-tabs .econ-sub-tab{min-width:0;padding:10px 0;font-size:.62rem;font-weight:600;white-space:nowrap}
 /* Identidad propia de cada pestaña, sin alterar el sistema general. */
 .energy-window{--energy-tone:var(--energy-resumen);--energy-resumen:#65b9bd;--energy-consumo:#84b994;--energy-costes:#d4aa63;--energy-tarifas:#91b4e8;--energy-comparar:#c09bd3}
 [data-theme="light"] .energy-window{--energy-resumen:#267b7e;--energy-consumo:#457a51;--energy-costes:#a2691c;--energy-tarifas:#426aaa;--energy-comparar:#86549b}
@@ -118,7 +118,7 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 
 #evIcsRoutineMonthWrap{flex:0 0 auto;font-size:.78rem;gap:5px}
 
-.energy-window>.energy-tabs{flex-shrink:0;position:static;margin:0;padding:0 max(20px,calc((100% - 720px)/2));box-shadow:0 1px 0 var(--border)}
+.energy-window>.energy-tabs{flex-shrink:0;position:static;margin:0;padding:10px 12px;box-shadow:0 1px 0 var(--border)}
 .energy-window>.energy-year-nav{display:flex;justify-content:center;gap:22px;align-items:center}
 .energy-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
 .energy-metric{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:7px;min-width:0}
@@ -172,8 +172,6 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .ev-upcoming-content{display:flex;flex-direction:column;gap:16px;padding:16px 16px 40px;min-width:0;flex-shrink:0}
 .ev-upcoming-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;width:100%;margin:0;padding:10px 20px;box-sizing:border-box;flex-shrink:0}
 .ev-upcoming-tabs .econ-sub-tab{flex:1;min-width:0;padding:5px 2px;font-size:.62rem;font-weight:600;line-height:1.2;color:var(--accent-bright);white-space:nowrap;transition:color .15s,background .15s,border-color .15s}
-.ev-upcoming-tabs #evSubBirthdays{color:var(--birthday-tone)}
-.ev-upcoming-tabs #evSubBirthdays.active{border-bottom-color:var(--birthday-tone)}
 @media(max-width:360px){.ev-upcoming-tabs .econ-sub-tab{font-size:.6rem;padding-left:0;padding-right:0}}
 
 .energy-tariff-period>summary{list-style-position:outside;cursor:pointer;padding:12px 0}.energy-tariff-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}.energy-tariff-metrics>span{display:flex;flex-direction:column;gap:5px;background:var(--surface2);padding:10px 5px;border-radius:9px;text-align:center}.energy-tariff-metrics small{font-size:.66rem;font-weight:400;color:var(--text-muted)}.energy-tariff-metrics b{font-size:.85rem;color:var(--text)}
