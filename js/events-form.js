@@ -192,9 +192,9 @@ function renderEvForm(ev){
   h+='<div class="ev-field ev-date-row ev-hora-row" id="evFHoraRow"'
     +((curKind==='puntual'&&!_esBoda)?'':' style="display:none"')+'>';
   h+='<div><label>Hora inicio <span class="ev-note-scope">(opcional)</span></label>'
-    +'<input class="ev-input" id="evFTime" type="time" step="300" value="'+_horaIni+'"></div>';
+    +'<input class="ev-input" id="evFTime" type="text" readonly data-time-picker aria-haspopup="dialog" placeholder="Sin hora" value="'+_horaIni+'"></div>';
   h+='<div><label>Hora fin</label>'
-    +'<input class="ev-input" id="evFEndTime" type="time" step="300" value="'+_horaFin+'"'
+    +'<input class="ev-input" id="evFEndTime" type="text" readonly data-time-picker aria-haspopup="dialog" placeholder="Sin hora" value="'+_horaFin+'"'
     +(_horaIni?'':' disabled')+'></div>';
   h+='</div>';
   var _vj=(isEdit&&ev.viaje)?ev.viaje:{};
@@ -208,7 +208,7 @@ function renderEvForm(ev){
     h+='<label class="excl-item ev-viaje-hd"><input type="checkbox" class="ev-viaje-chk" data-tramo="'
       +tr[0]+'"'+(on?' checked':'')+'> <b>'+tr[1]+'</b></label>';
     h+='<div class="ev-viaje-campos" style="display:'+(on?'flex':'none')+'">';
-    h+='<input class="ev-input ev-viaje-time" data-tramo="'+tr[0]+'" type="time" step="300" value="'+(d.time||'')+'">';
+    h+='<input class="ev-input ev-viaje-time" data-tramo="'+tr[0]+'" type="text" readonly data-time-picker aria-haspopup="dialog" placeholder="Sin hora" value="'+(d.time||'')+'">';
     h+='<select class="ev-input ev-viaje-modo" data-tramo="'+tr[0]+'">';
     EV_TRANSPORTES.forEach(function(m){
       h+='<option value="'+m.k+'"'+((d.modo||'tren')===m.k?' selected':'')+'>'+m.e+' '+m.l+'</option>';

@@ -1,3 +1,4 @@
+const {chooseTime}=require('./time-picker-helper');
 const {test,expect}=require('@playwright/test');
 
 test('Médico: crear, volver a editar, filtrar y conservar color en recordatorios',async({page})=>{
@@ -8,7 +9,7 @@ test('Médico: crear, volver a editar, filtrar y conservar color en recordatorio
  await page.locator('#evFTypePicker [data-type="Médico"]').click();
  await expect(page.locator('#evFTitle')).toHaveValue('Médico');
  await page.locator('#evFTitle').fill('Consulta de prueba');
- await page.locator('#evFTime').fill('12:00');await page.locator('#evFSave').click();
+ await chooseTime(page,'#evFTime','12:00');await page.locator('#evFSave').click();
  await expect(page.locator('#evFormOv')).toBeHidden();
  await expect(page.locator('.ev-upcoming-item')).toContainText('Consulta de prueba');
  await page.locator('#evViewCal').click();

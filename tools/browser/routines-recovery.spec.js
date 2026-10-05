@@ -1,3 +1,4 @@
+const {chooseTime}=require('./time-picker-helper');
 const {test,expect}=require('@playwright/test');
 test.beforeEach(async({page})=>{
   await page.clock.setFixedTime(new Date('2026-10-01T10:00:00'));
@@ -33,7 +34,7 @@ test('recuperación con calendario, agenda fija y estado enlazado',async({page})
   await expect(page.locator('#rutRecoveryConfirm')).toContainText('08/10/2026');
   await page.locator('#rutRecoveryConfirm').click();await expect(page.locator('#rutDestinationAgenda')).toContainText('20:00');
   await expect(page.locator('#rutDestinationAgenda input,#rutDestinationAgenda button')).toHaveCount(0);
-  await page.locator('#rutExtraTime').fill('18:00');await page.locator('#rutExtraSave').click();
+  await chooseTime(page,'#rutExtraTime','18:00');await page.locator('#rutExtraSave').click();
   await expect(page.locator('[data-history-date="2026-09-24"]')).toContainText('Recuperada este día: 08/10/2026');
   await expect(page.locator('[data-history-date="2026-10-08"]').filter({hasText:'18:00'})).toContainText('(Recuperada de 24/09/2026)');
   await page.locator('[data-history-edit="2026-10-15"]').click();await page.locator('#rutHistoryCancel').click();

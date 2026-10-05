@@ -1,3 +1,4 @@
+const {chooseTime}=require('./time-picker-helper');
 const {test,expect}=require('@playwright/test');
 test.beforeEach(async({page})=>{
   await page.clock.setFixedTime(new Date('2026-10-02T10:00:00'));
@@ -12,7 +13,7 @@ test('repetición exige días, guarda las horas y permite deshacer',async({page}
   await newEvent(page);
   await page.locator('#evFTitle').fill('Gestión semanal de prueba');
   await page.locator('#evFStart').fill('2026-10-05');await page.locator('#evFEnd').fill('2026-10-30');
-  await page.locator('#evFTime').fill('10:30');await page.locator('#evFEndTime').fill('11:15');
+  await chooseTime(page,'#evFTime','10:30');await chooseTime(page,'#evFEndTime','11:15');
   await page.locator('#evFRepeat').selectOption('weekly');await page.locator('#evFSave').click();
   await expect(page.locator('#toast')).toContainText('Selecciona al menos un día');
   expect(await page.evaluate(()=>EVENTS.length)).toBe(0);
@@ -48,7 +49,7 @@ test('cambiar de clase reinicia repetición y conserva trayectos sin hora',async
   await page.locator('.ev-viaje-modo[data-tramo="ida"]').selectOption('coche');
   await page.locator('.ev-viaje-tramo[data-tramo="ida"] .ev-viaje-cond').fill('Conductor de prueba');
   await page.locator('.ev-viaje-chk[data-tramo="vuelta"]').check();
-  await page.locator('.ev-viaje-tramo[data-tramo="vuelta"] .ev-viaje-time').fill('18:30');
+  await chooseTime(page,'.ev-viaje-tramo[data-tramo="vuelta"] .ev-viaje-time','18:30');
   await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);
   expect(await page.evaluate(()=>EVENTS[0])).toMatchObject({kind:'grande',type:'Otros',barSize:'sm',repeat:null,viaje:{ida:{time:null,modo:'coche',conductor:'Conductor de prueba'},vuelta:{time:'18:30',modo:'tren'}}});
 });

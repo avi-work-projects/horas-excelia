@@ -1,3 +1,4 @@
+const {chooseTime}=require('./time-picker-helper');
 const {test,expect}=require('@playwright/test');
 
 test.beforeEach(async({page})=>{
@@ -106,7 +107,7 @@ test('rutina futura: configuración completa; rutina iniciada: cupos habituales 
   await page.locator('.rut-edit[data-rid="future-edit"]').click();
   await expect(page.locator('[data-rmode="flex"]')).toBeEnabled();
   await page.locator('#rutFIcons [data-icon="baile"]').click();
-  await page.locator('#rutFTime').fill('20:00');await page.locator('#rutFDur').fill('90');
+  await chooseTime(page,'#rutFTime','20:00');await page.locator('#rutFDur').fill('90');
   await page.locator('#rutFSave').click();await expect(page.locator('#rutFWrap')).toHaveCount(0);
   let saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('excelia-rutinas-v1')));
   expect(saved[0]).toMatchObject({start:'2026-11-10',icon:'baile',time:'20:00',dur:90,weekDays:[2]});

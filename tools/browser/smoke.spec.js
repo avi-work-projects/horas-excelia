@@ -1,3 +1,4 @@
+const {chooseTime}=require('./time-picker-helper');
 const {test,expect}=require('@playwright/test');
 
 test('rutina flexible: cupo del primer mes, sesiones pasadas y conservación al editar',async({page})=>{
@@ -23,7 +24,7 @@ test('rutina flexible: cupo del primer mes, sesiones pasadas y conservación al 
  await expect(page.locator('.rut-plan-grid [data-rday="2026-08-31"]')).toBeDisabled();
  await page.locator('[data-rmonth="1"]').click();
  await page.locator('.rut-plan-grid [data-rday="2026-09-01"]').click();
- await page.locator('#rutPlanTime').fill('19:30');await page.locator('#rutPlanSave').click();
+ await chooseTime(page,'#rutPlanTime','19:30');await page.locator('#rutPlanSave').click();
  await expect(page.locator('.rut-plan-day.planned')).toHaveCount(1);
  await expect(page.locator('.rut-plan-row')).toContainText('19:30');
  await page.locator('[data-rskip]').click();await expect(page.locator('.rut-plan-day.skipped')).toHaveCount(1);
@@ -240,17 +241,17 @@ test('rutinas: horario por semana, duración, histórico editable y backup',asyn
  await expect(page.locator('#rutFStart')).toHaveCount(0);
  await expect(page.locator('#rutFTime,#rutFDur')).toHaveCount(0);await page.locator('#rutFClose').click();await expect(page.locator('#rutFWrap')).toHaveCount(0);
  await page.locator('[data-rweek]').click();await page.locator('[data-week="2026-08-17"]').click();
- await page.locator('#rutWkTime').fill('18:00');await page.locator('#rutWkDur').fill('75');await page.locator('#rutWkForward').check();await page.locator('#rutWkSave').click();await expect(page.locator('#rutWkWrap')).toHaveCount(0);
+ await chooseTime(page,'#rutWkTime','18:00');await page.locator('#rutWkDur').fill('75');await page.locator('#rutWkForward').check();await page.locator('#rutWkSave').click();await expect(page.locator('#rutWkWrap')).toHaveCount(0);
  expect(await page.evaluate(()=>['2026-08-17','2026-08-24'].map(ds=>rutDurationOn(RUTINAS[0],ds)))).toEqual([60,75]);
  expect(await page.evaluate(()=>['2026-08-17','2026-08-24'].map(ds=>rutOccursOn(RUTINAS[0],ds)))).toEqual(['17:00','18:00']);
  await page.locator('[data-rweek]').click();await page.locator('[data-week="2026-08-31"]').click();
- await page.locator('#rutWkDays [data-wd="1"]').click();await page.locator('#rutWkDays [data-wd="2"]').click();await page.locator('#rutWkTime').fill('19:00');
+ await page.locator('#rutWkDays [data-wd="1"]').click();await page.locator('#rutWkDays [data-wd="2"]').click();await chooseTime(page,'#rutWkTime','19:00');
  await page.locator('#rutWkForward').check();await expect(page.locator('#rutWkScope')).toContainText('Nuevo horario habitual');await page.locator('#rutWkSave').click();await expect(page.locator('#rutWkWrap')).toHaveCount(0);
  expect(await page.evaluate(()=>['2026-08-17','2026-08-24','2026-08-31','2026-09-01','2026-09-07'].map(ds=>rutOccursOn(RUTINAS[0],ds)))).toEqual(['17:00','18:00','17:00','19:00',null]);
  await page.locator('.rut-edit').click();await page.locator('#rutFName').fill('Actividad renombrada');await page.locator('#rutFSave').click();await expect(page.locator('#rutFWrap')).toHaveCount(0);
  await page.locator('[data-rhistory]').click();
  await expect(page.locator('[data-history-month="2026-08"]')).toBeVisible();
- await page.locator('[data-history-edit="2026-08-17"]').click();await page.locator('#rutHistoryTime').fill('16:30');await page.locator('#rutHistoryDuration').fill('45');await page.locator('#rutHistorySave').click();await expect(page.locator('#rutHistoryEditWrap')).toHaveCount(0);
+ await page.locator('[data-history-edit="2026-08-17"]').click();await chooseTime(page,'#rutHistoryTime','16:30');await page.locator('#rutHistoryDuration').fill('45');await page.locator('#rutHistorySave').click();await expect(page.locator('#rutHistoryEditWrap')).toHaveCount(0);
  expect(await page.evaluate(()=>[rutOccursOn(RUTINAS[0],'2026-08-17'),rutDurationOn(RUTINAS[0],'2026-08-17'),rutOccursOn(RUTINAS[0],'2026-08-10')])).toEqual(['16:30',45,'17:00']);
  await page.screenshot({path:'.local-preview/routine-history-check.png'});
  await page.locator('#rutHistoryClose').click();await expect(page.locator('#rutHistoryWrap')).toHaveCount(0);

@@ -234,10 +234,10 @@
 
 **Funciones:** openOtrosDatePicker:7 (!96) · _evDk:11 · _count:12 · _render:13 · _attach:54 · _rerender:85 · _close:93
 
-### js/events-render.js  _(635 líneas)_
-**Estado global:** EV_LIST_TYPES:232
+### js/events-render.js  _(630 líneas)_
+**Estado global:** EV_LIST_TYPES:227
 
-**Funciones:** renderEvListItem:11 · fd2:15 · evUpcomingCompare:44 · minutes:45 · renderEvUpcoming:56 (!177) · fd2:63 · renderEvItem:64 · renderEvPanel:115 · occurrenceKey:142 · renderEvByTypes:233 · coincide:254 · renderEvMonthsView:300 · _evWeekLanes:311 · assign:314 · evWeekTravelRow:329 · renderEvWeek:349 (!133) · hexA:353 · renderEvContent:482 (!153)
+**Funciones:** renderEvListItem:11 · fd2:15 · evUpcomingCompare:44 · minutes:45 · renderEvUpcoming:51 (!177) · fd2:58 · renderEvItem:59 · renderEvPanel:110 · occurrenceKey:137 · renderEvByTypes:228 · coincide:249 · renderEvMonthsView:295 · _evWeekLanes:306 · assign:309 · evWeekTravelRow:324 · renderEvWeek:344 (!133) · hexA:348 · renderEvContent:477 (!153)
 
 ### js/events.js  _(819 líneas)_
 **Estado global:** EV_STORAGE_KEY:5 · EV_YEAR:6 · EV_MONTH:7 · EV_VIEW_STATE:11 · EV_SCROLL_RESET:16 · EV_VIEW:17 · EV_EDIT:18 · EV_EDIT_DS:19 · EV_FORM_CONTAINER:20 · EV_EDIT_MODE:21 · EV_BRIGHT_PAST:22 · EV_ANNUAL_VIEW:23 · EV_ANNUAL_FILTER_HIDDEN:24 · EV_FILTER_GROUPS:33 · EV_FILTER_SHORT:39 · EV_FILTER_COLOR:41 · EV_FILTER_SEP_AFTER:44 · EV_FILTER_CYCLE:45 · EV_PREV_VIEW:63 · EV_QUAD_YEAR:64 · EV_QUAD_MONTH:65 · EV_TO_SUBTAB:66 · EV_TYPES_FILTER:67 · EV_TYPES_PAST:68 · EV_LIST_SORT:69 · EV_LIST_SEARCH:70 · EV_COLORS:71 · EVENTS:72 · EV_ALARM_SK:101 · EV_ALARMS_SET:102 · EV_NO_RUT:194 · EV_MAX_BAR_DIA:250 · EV_MARK_ORDER:356 · EV_MAX_PUNT_DIA:398 · EV_MAX_RUT_DIA:399 · EV_CAL_CORNER_STACK:402 · EV_MAX_VIP_DIA:404 · EV_CAL_VIP_MAX:405 · EV_UP_SHOW_RUT:407 · EV_UP_SHOW_BODA:408 · EV_BAR_Z:460 · EV_COMPARTE_DIA:464 · EV_MNS:671 · EV_CAR:714 · EV_TRANSPORTES:733 · EV_TRANS_EMOJI:739 · EV_DATE_INDEX:805
@@ -352,6 +352,9 @@
 **Estado global:** TASKS_KEY:3
 
 **Funciones:** tasksValidate:4 · tasksValidTimestamp:17 · tasksNormalize:18 · tasksData:30 · tasksSave:35 · tasksMigrate:36 · tasksMerge:41 · tasksItems:47 · tasksPendingRows:51 · tasksNeedsDateChoice:52 · tasksCreate:55 · tasksChange:60 · tasksMoveCompleted:76 · tasksUndoMove:81 · tasksMove:86 · tasksReminder:93 · tasksReminderSeen:97
+
+### js/time-picker.js  _(79 líneas)_
+**Funciones:** evPlanReferenceTime:2 · timePickerInitial:5 · timePickerDrum:11 · bindTimePickerDrum:16 · index:18 · mark:19 · move:23 · openTimePicker:32 · close:35 · escape:41 · save:50
 
 ## CSS
 
@@ -563,7 +566,7 @@
 **Rangos por prefijo de clase:**
 .data-btn:2-2 · .ev-ann:74-76 · .ev-annual:112-134 · .ev-badge:162-162 · .ev-badges:40-40 · .ev-bar:107-107 · .ev-bars:33-33 · .ev-bright:136-149 · .ev-btn:200-209 · .ev-car:55-67 · .ev-cell:120-158 · .ev-char:189-189 · .ev-checkbox:194-194 · .ev-chip:88-88 · .ev-colors:190-190 · .ev-date:191-191 · .ev-day:43-98 · .ev-detail:214-227 · .ev-edit:203-204 · .ev-field:183-184 · .ev-form:178-199 · .ev-hdr:3-5 · .ev-input:185-186 · .ev-io:211-212 · .ev-list:14-176 · .ev-main:6-6 · .ev-month:22-86 · .ev-multi:37-128 · .ev-num:160-160 · .ev-otros:53-103 · .ev-part:137-137 · .ev-puente:116-116 · .ev-quad:153-154 · .ev-repeat:195-195 · .ev-rut:94-97 · .ev-stepped:109-111 · .ev-textarea:187-188 · .ev-toggle:192-193 · .ev-types:17-19 · .ev-view:4-8 · .ev-wd:197-198 · .ev-week:28-114 · .ev-weekday:196-196 · .rut-marker:90-93 · .sy-nav:150-151
 
-### css/source/dialogs-responsive.css  _(136 líneas)_
+### css/source/dialogs-responsive.css  _(146 líneas)_
 
 **Secciones:**
 
@@ -581,7 +584,7 @@
 - Notas: general vs de un dia concreto:132
 
 **Rangos por prefijo de clase:**
-.alarm-cfg:78-79 · .alarm-colon:82-82 · .alarm-create:96-102 · .alarm-day:106-108 · .alarm-days:103-105 · .alarm-msg:92-93 · .alarm-panel:80-80 · .alarm-past:110-114 · .alarm-time:81-81 · .bd-alarm:20-21 · .bday-ic:120-124 · .bday-inline:119-119 · .bday-listo:116-116 · .btn-icon:31-67 · .data-actions:33-69 · .data-btn:29-65 · .drum-picker:85-88 · .drum-sel:91-91 · .drum-wrap:84-90 · .econ-qcell:26-28 · .econ-quarter:25-25 · .ev-daynote:134-134 · .ev-detail:135-135 · .ev-kind:127-131 · .ev-note:133-133 · .header:57-70 · .logo-gallery:11-18 · .logo-popup:2-9 · .nav-bar:34-74
+.alarm-cfg:78-79 · .alarm-colon:82-82 · .alarm-create:96-102 · .alarm-day:106-108 · .alarm-days:103-105 · .alarm-msg:92-93 · .alarm-panel:80-80 · .alarm-past:110-114 · .alarm-time:81-81 · .bd-alarm:20-21 · .bday-ic:120-124 · .bday-inline:119-119 · .bday-listo:116-116 · .btn-icon:31-67 · .data-actions:33-69 · .data-btn:29-65 · .drum-picker:85-88 · .drum-sel:91-91 · .drum-wrap:84-90 · .econ-qcell:26-28 · .econ-quarter:25-25 · .ev-daynote:134-134 · .ev-detail:135-136 · .ev-kind:127-131 · .ev-note:133-133 · .header:57-70 · .logo-gallery:11-18 · .logo-popup:2-9 · .nav-bar:34-74 · .time-picker:137-145
 
 ### css/source/wedding-moves.css  _(323 líneas)_
 

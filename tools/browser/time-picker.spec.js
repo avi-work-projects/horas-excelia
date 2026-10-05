@@ -1,0 +1,26 @@
+const {test,expect}=require('@playwright/test');
+const {chooseTime}=require('./time-picker-helper');
+test('referencia invisible, cancelar, minutos exactos y quitar hora de inicio',async({page})=>{
+  await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));
+  await page.goto('/');await page.locator('#eventsBtn').click();
+  await page.locator('#evViewUpcoming').click();await page.locator('#evAdd').click();
+  await page.locator('#evFTypePicker [data-type="Cena"]').click();
+  await expect(page.locator('#evFTime')).toHaveValue('');
+  await expect(page.locator('input[type="time"]')).toHaveCount(0);
+  await page.locator('#evFTime').click();
+  await expect(page.locator('#timePickerHours')).toHaveAttribute('aria-valuenow','21');
+  await expect(page.locator('#timePickerMinutes')).toHaveAttribute('aria-valuenow','0');
+  await page.locator('#timePickerCancel').click();
+  await expect(page.locator('#evFTime')).toHaveValue('');
+  await chooseTime(page,'#evFTime','20:37');
+  await chooseTime(page,'#evFEndTime','22:43');
+  await page.locator('#evFTime').click();
+  await expect(page.locator('#timePickerMinutes')).toHaveAttribute('aria-valuenow','37');
+  await page.locator('#timePickerClear').click();
+  await expect(page.locator('#evFTime')).toHaveValue('');
+  await expect(page.locator('#evFEndTime')).toHaveValue('');
+  await expect(page.locator('#evFEndTime')).toBeDisabled();
+  await page.locator('#evFSave').click();
+  const event=await page.evaluate(()=>EVENTS[0]);
+  expect(event.time).toBeFalsy();expect(event.endTime).toBeFalsy();
+});
