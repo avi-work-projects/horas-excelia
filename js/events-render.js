@@ -40,6 +40,19 @@ function renderEvListItem(ev){
   return h;
 }
 
+/* Hora real primero como criterio; los planes sin hora tienen orden orientativo. */
+function evUpcomingCompare(a,b){
+  function minutes(ev){
+    var t=evStartTime(ev),m=t&&/^(\d{1,2}):(\d{2})$/.exec(t);
+    return m?Number(m[1])*60+Number(m[2]):-1;
+  }
+  var ta=minutes(a),tb=minutes(b);
+  if(ta!==tb)return ta-tb;
+  if(ta>=0)return 0;
+  var order={'Comida':1,'Cena':2,'Salir de fiesta':3,'Copas':3};
+  return (order[getEvType(a)]||0)-(order[getEvType(b)]||0);
+}
+
 function renderEvUpcoming(){
   if(!EVENTS.length&&!(typeof RUTINAS!=='undefined'&&RUTINAS.length))return '<div class="sy-note">No hay eventos creados. Pulsa \"+ A\u00f1adir\" para crear uno.</div>';
   var today=new Date();today.setHours(0,0,0,0);
@@ -184,7 +197,7 @@ function renderEvUpcoming(){
     var fids=Object.keys(fallbackMap);
     fids.sort(function(a,b){
       return (fallbackMap[a].firstDate-fallbackMap[b].firstDate)
-        ||evCompareTime(fallbackMap[a].ev,fallbackMap[b].ev);
+        ||evUpcomingCompare(fallbackMap[a].ev,fallbackMap[b].ev);
     });
     h+='<div class="ev-week-sep">'+fallbackLabel+'</div>';
     h+='<div class="ev-upcoming-section">'+renderEvPanel(fids,fallbackMap)+'</div>';
@@ -195,7 +208,7 @@ function renderEvUpcoming(){
     if(!ids.length)return;
     ids.sort(function(a,b){
       return (wkMap[a].firstDate-wkMap[b].firstDate)
-        ||evCompareTime(wkMap[a].ev,wkMap[b].ev);
+        ||evUpcomingCompare(wkMap[a].ev,wkMap[b].ev);
     });
     /* Solo los grandes pueden empezar en el pasado y seguir en curso. */
     var vivos=ids.filter(function(id){
