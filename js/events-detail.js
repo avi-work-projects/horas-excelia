@@ -385,8 +385,8 @@ function renderEvAlarmPanel(ev,firstDate){
      pasaba desapercibido entre "Crear alarma" y "Editar evento".
      Toma el color del propio evento, el mismo que la tarjeta usa ya para su
      borde y su fondo: destaca sin salirse de la gama del panel.
-     Solo los ensayos tienen ficha que anada algo (hora, sala y pareja). */
-  var _conFicha=(getEvType(ev)==='Ensayos boda');
+     Ensayos y rutinas conservan aquí el acceso a su ficha. */
+  var _conFicha=(getEvType(ev)==='Ensayos boda'||!!ev._rut);
   h+='<div class="bd-alarm-top'+(_conFicha?' con-ficha':'')+'">';
   h+='<div class="bd-alarm-info" style="border-color:'+_ac+'44;background:'+_ac+'11">';
   h+='<div class="bd-alarm-name" style="color:'+_ac+'">'+escHtml(ev.title)+'</div>';
@@ -459,7 +459,7 @@ function renderEvAlarmPanel(ev,firstDate){
   h+='</div>';
   h+='<div class="ev-form-actions">';
   h+='<button class="ev-btn primary" id="evAlarmCreate">&#128276; Crear alarma</button>';
-  h+='<button class="action-edit action-edit-text ev-btn ev-edit-orange" id="evAlarmEdit">&#9998; Editar evento</button>';
+  h+='<button class="action-edit action-edit-text ev-btn ev-edit-orange" id="evAlarmEdit">&#9998; '+(ev._rut?'Editar rutina':'Editar evento')+'</button>';
   h+='</div></div></div>';
   return h;
 }
@@ -518,7 +518,7 @@ function bindEvAlarmEvents(ev,firstDate){
   });
   var editBtn=document.getElementById('evAlarmEdit');
   if(editBtn)editBtn.addEventListener('click',function(){
-    closeEvAlarm();setTimeout(function(){openEvForm(ev,null);},310);
+    closeEvAlarm();setTimeout(function(){if(ev._rut)openRutForm(ev._rut);else openEvForm(ev,null);},310);
   });
   /* Atajos "1 h / 30 min antes": son interruptores. Con uno marcado, la hora
      de abajo lo refleja y sigue siendo editable (editarla a mano los desmarca).
