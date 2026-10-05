@@ -179,8 +179,10 @@ var BDAYS_FROM_SECRET=[];
 
 <!-- ── HOME POPUP (semanas pendientes / VIP sin alarma) ── -->
 <div class="home-popup-overlay" id="homePopup" style="display:none">
-  <div class="home-popup">
-    <button class="home-popup-close" id="homePopupClose" aria-label="Cerrar recordatorios">&#215;</button>
+  <div class="home-popup" role="dialog" aria-modal="true" aria-labelledby="homePopupTitle">
+    <header class="home-popup-header"><div><span class="home-popup-eyebrow">TU AGENDA, AL DÍA</span><h2 class="home-popup-title" id="homePopupTitle">Recordatorios</h2></div>
+      <button class="home-popup-close" id="homePopupClose" aria-label="Cerrar recordatorios">&#215;</button>
+    </header>
     <div id="homePopupContent"></div>
   </div>
 </div>

@@ -1,8 +1,13 @@
 /* Recordatorios: todas las ocurrencias de hoy/mañana y cumpleaños a siete días. */
+var HOME_BIRTHDAYS_OPEN=false;
 function homeReminderColor(ev){return ev._rut?getEvDisplayColor(ev):getEvType(ev)==='Ensayos boda'?'#92334d':evTypeColor(getEvKind(ev),getEvType(ev));}
 function homeReminderEventText(when,time,content,missingTime,ev){
   var marker=ev?(getEvType(ev)==='Asturias'?'<span class="home-reminder-asturias" style="background:'+fakeTrans(EV_TYPE_COLORS['grande|Asturias'],.65)+'">'+EV_FILTER_SHORT.Asturias+'</span>':evUpcomingMarkHtml(ev)):'&#128197;';
-  return '<span class="home-reminder-text"><span class="home-reminder-symbol" aria-hidden="true">'+marker+'</span><strong class="home-reminder-when">'+escHtml(when)+(time?' · '+escHtml(time):(missingTime?' · Sin hora':''))+'</strong> <span class="home-reminder-content">'+escHtml(content)+'</span></span>';
+  return '<span class="home-reminder-symbol" aria-hidden="true">'+marker+'</span><span class="home-reminder-text"><strong class="home-reminder-when">'+escHtml(when)+(time?' · '+escHtml(time):(missingTime?' · Sin hora':''))+'</strong> <span class="home-reminder-content">'+escHtml(content)+'</span></span>';
+}
+function homeReminderNoteHtml(ev,ds){
+  var notes=[ev.note,ev.dayNotes&&ev.dayNotes[ds]].filter(Boolean);
+  return notes.length?'<details class="home-reminder-note"><summary>Descripción</summary><p>'+escHtml(notes.join('\n\n'))+'</p></details>':'';
 }
 function homeReminderEvents(today){
   var items=[];
@@ -23,7 +28,7 @@ function homeReminderEvents(today){
         if(!bodaPlaceOf(ev))content+=' · Sin sala';
       }
       if(ev._rutSkip)content+=' · Saltada';
-      items.push({days:days,time:time||'',type:'event',color:homeReminderColor(ev),text:homeReminderEventText(days===0?'Hoy':'Mañana',time,content,type==='Ensayos boda',ev)+bodaUltimoEnsayoHtml(ev)});
+      items.push({days:days,time:time||'',type:'event',color:homeReminderColor(ev),text:homeReminderEventText(days===0?'Hoy':'Mañana',time,content,type==='Ensayos boda',ev)+bodaUltimoEnsayoHtml(ev)+homeReminderNoteHtml(ev,ds)});
     });
   }
   return items.sort(function(a,b){return a.days-b.days||Number(!!a.time)-Number(!!b.time)||a.time.localeCompare(b.time);});
@@ -37,20 +42,23 @@ function homeReminderTasksHtml(){
 }
 function homeReminderItemsHtml(items,birthdayCount){
   var h='',count=0,group='',eventDay=null;
+  function endGroup(){
+    if(group==='birthdays'&&count>2)h+='</div><button type="button" class="home-birthday-more" id="homeBirthdayToggle" aria-controls="homeBirthdayExtra" aria-expanded="false">Ver '+(birthdayCount-2)+' cumpleaños más <span aria-hidden="true">⌄</span></button>';
+    if(group)h+='</section>';
+  }
   items.forEach(function(it){
     var next=it.type==='vip'||it.type==='bday'?'birthdays':it.type==='event'?'events':'warnings';
     if(next!==group){
-      if(group==='birthdays'&&count>2)h+='</details>';
-      if(group)h+='</section>';
+      endGroup();
       h+='<section class="home-reminder-group" aria-label="'+({birthdays:'Cumpleaños',events:'Eventos',warnings:'Avisos'}[next])+'">';group=next;
     }
-    if(group==='birthdays'&&++count===3)h+='<details class="home-birthday-more"><summary><span class="home-birthday-expand">Ver '+(birthdayCount-2)+' cumpleaños más</span><span class="home-birthday-collapse">Mostrar menos</span></summary>';
+    if(group==='birthdays'&&++count===3)h+='<div id="homeBirthdayExtra" hidden>';
     var dayBreak=group==='events'&&eventDay!==null&&eventDay!==it.days;
     if(group==='events')eventDay=it.days;
     h+='<div class="home-popup-item '+it.type+(dayBreak?' home-reminder-next-day':'')+'"'+(it.color?' style="--reminder-color:'+it.color+'"':'')+'>'+it.text+'</div>';
   });
-  if(group==='birthdays'&&count>2)h+='</details>';
-  return h+(group?'</section>':'');
+  endGroup();
+  return h;
 }
 function closeHomePopup(){
   document.getElementById('homePopup').style.display='none';
@@ -79,16 +87,26 @@ function openHomePopup(force){
     var bd=new Date(today.getFullYear(),b.month-1,b.day);if(bd<today)bd.setFullYear(today.getFullYear()+1);
     var diff=Math.round((bd-today)/86400000);if(diff>7)return;
     var when=diff===0?' (hoy)':diff===1?' (mañana)':' (en '+diff+'d)';
-    birthdays.push({days:diff,type:b.vip?'vip':'bday',text:'<span class="home-birthday-line">'+(b.vip?'&#11088; ':bdaySymbolHtml())+'<span><strong>'+escHtml(b.name)+'</strong>'+when+' · '+(isBdayAlarmSet(b)?'alarma creada':'sin alarma')+'</span></span>'});
+    birthdays.push({days:diff,type:b.vip?'vip':'bday',text:'<span class="home-birthday-line">'+(b.vip?'<img class="home-reminder-vip" src="./VIP.png" alt="VIP">':bdaySymbolHtml())+'<span><strong>'+escHtml(b.name)+'</strong>'+when+'<span class="home-reminder-content">'+(isBdayAlarmSet(b)?'Alarma creada':'Sin alarma')+'</span></span></span>'});
   });
   birthdays.sort(function(a,b){return a.days-b.days||(a.type==='vip'?0:1)-(b.type==='vip'?0:1);});
   items=items.concat(birthdays,homeReminderEvents(today));
   if(!force&&!items.length&&!pendingTasks.length)return;
   var content=document.getElementById('homePopupContent');if(!content)return;
-  content.innerHTML='<div class="home-popup-title">&#128276; Recordatorios</div>'+homeReminderTasksHtml()+homeReminderItemsHtml(items,birthdays.length);
+  HOME_BIRTHDAYS_OPEN=false;
+  content.innerHTML=homeReminderTasksHtml()+homeReminderItemsHtml(items,birthdays.length);
+  content.scrollTop=0;
   document.getElementById('homePopup').style.display='flex';
   if(pendingTasks.length)tasksReminderSeen(new Date());
   var tasksButton=document.getElementById('homeTasksOpen');if(tasksButton)tasksButton.onclick=function(){closeHomePopup();openTasks();};
+  var toggle=document.getElementById('homeBirthdayToggle');
+  if(toggle)toggle.onclick=function(){
+    HOME_BIRTHDAYS_OPEN=!HOME_BIRTHDAYS_OPEN;
+    document.getElementById('homeBirthdayExtra').hidden=!HOME_BIRTHDAYS_OPEN;
+    toggle.setAttribute('aria-expanded',String(HOME_BIRTHDAYS_OPEN));
+    toggle.innerHTML=HOME_BIRTHDAYS_OPEN?'Mostrar menos <span aria-hidden="true">⌃</span>':'Ver '+(birthdays.length-2)+' cumpleaños más <span aria-hidden="true">⌄</span>';
+  };
+  document.getElementById('homePopup').onclick=function(e){if(e.target===this)closeHomePopup();};
   var closeBtn=document.getElementById('homePopupClose');if(closeBtn)closeBtn.onclick=closeHomePopup;
 }
 openHomePopup();

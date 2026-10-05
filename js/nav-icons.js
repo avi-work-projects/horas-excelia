@@ -65,5 +65,5 @@ function initMainNavigation(){
  NAV_MAIN_ITEMS.forEach(function(item){document.getElementById(item.id).addEventListener('click',function(){navigateMain(item.key);});});
 }
 function bdaySymbolHtml(){
- return '<svg class="bday-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+NAV_ICON_PATHS.bday+'</svg>';
+ return evShapeSvg('cake').replace('<svg ', '<svg class="bday-symbol" aria-hidden="true" ');
 }

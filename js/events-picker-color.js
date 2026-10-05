@@ -120,7 +120,11 @@ function evShapeSvg(shape){
     return '<svg viewBox="0 0 20 20"><rect x="1" y="1" width="18" height="18" rx="4" fill="#fff" stroke="#000" '+evSymbolStroke(1.7)+'/><g transform="translate(3.5 3.5) scale(.54)">'+activity+'</g></svg>';
   }
   var bw=EV_SHAPE_BW,inner;
-  if(shape==='medical'){
+  if(shape==='cake'){
+    inner='<path d="M0,-9 C-4,-5 3,-4 2,-7 Z" fill="#ffcc52" stroke="#000" '+evSymbolStroke(1.5)+' stroke-linejoin="round"/>'
+      +'<path d="M0,-4 V0" stroke="#000" '+evSymbolStroke(2)+'/><rect x="-8" y="-1" width="16" height="9" rx="1.5" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+'/>'
+      +'<path d="M-8,0 Q-8,-2 -6,-2 H6 Q8,-2 8,0 V2 Q6,4 4,2 Q2,0 0,2 Q-2,4 -4,2 Q-6,0 -8,2 Z" fill="#fff0d6" stroke="#000" '+evSymbolStroke(1.5)+' stroke-linejoin="round"/>';
+  } else if(shape==='medical'){
     inner='<rect x="-9" y="-7.5" width="18" height="15" rx="2" fill="#fff" stroke="#000" '+evSymbolStroke(bw)+'/><path d="M-5,0 H5 M0,-5 V5" fill="none" stroke="#e03131" '+evSymbolStroke(3.4,'cross')+'/>';
   } else if(shape==='phone'){
     inner='<path d="M-7,-8 C-10,-6 -8,1 -3,5 C1,9 6,10 8,7 L8,4 L3,1 L1,3 C-1,2 -3,0 -4,-2 L-2,-4 L-5,-8 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/>';
