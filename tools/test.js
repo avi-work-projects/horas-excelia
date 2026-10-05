@@ -551,11 +551,11 @@ REGLAS.push(['finas: apiladas con altura original solo durante coincidencia',fun
 REGLAS.push(['próximos: hora real, planes sin hora y desempates estables',function(){
   const ctx=cargarApp(claves);
   const ev=(id,type,time)=>({id,title:id,kind:'puntual',type,time,start:'2026-08-21'});
-  const items=[ev('fiesta','Salir de fiesta'),ev('tarde','Comida','18:00'),ev('cena','Cena'),ev('gestion','Rec. Gestiones'),ev('comida','Comida'),ev('temprano','Otros','9:00'),ev('igual','Otros','09:00'),{...ev('ensayo','Ensayos boda'),boda:{time:'10:00'}},{...ev('rutina','Rutina'),_rutTime:'08:30'}];
+  const items=[ev('fiesta','Salir de fiesta'),ev('copas','Copas'),ev('tomar','Tomar algo'),ev('barbacoa','Barbacoa'),ev('tarde','Comida','18:00'),ev('cena','Cena'),ev('gestion','Rec. Gestiones'),ev('comida','Comida'),ev('temprano','Otros','9:00'),ev('igual','Otros','09:00'),{...ev('ensayo','Ensayos boda'),boda:{time:'10:00'}},{...ev('rutina','Rutina'),_rutTime:'08:30'}];
   const sorted=items.slice().sort(ctx.evUpcomingCompare).map(e=>e.id);
-  if(sorted.join(',')!=='gestion,comida,cena,fiesta,rutina,temprano,igual,ensayo,tarde')return false;
+  if(sorted.join(',')!=='gestion,barbacoa,comida,tomar,cena,copas,fiesta,rutina,temprano,igual,ensayo,tarde')return false;
   ctx.BDAYS=[];ctx.RUTINAS=[];ctx.EVENTS=items.filter(e=>e.id!=='rutina'&&e.id!=='ensayo');
-  const html=ctx.renderEvUpcoming(),names=['gestion','comida','cena','fiesta','temprano','igual','tarde'];
+  const html=ctx.renderEvUpcoming(),names=['gestion','barbacoa','comida','tomar','cena','copas','fiesta','temprano','igual','tarde'];
   return names.every((n,i)=>html.includes('data-id="'+n+'"')&&(!i||html.indexOf('data-id="'+names[i-1]+'"')<html.indexOf('data-id="'+n+'"')));
 }]);
 
