@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v405 — ajustes de calendario, hipoteca y gas';
+var APP_VERSION = 'v406 — próximos ordenados por hora y tipo de plan';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

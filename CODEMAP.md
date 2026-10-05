@@ -234,10 +234,10 @@
 
 **Funciones:** openOtrosDatePicker:7 (!96) · _evDk:11 · _count:12 · _render:13 · _attach:54 · _rerender:85 · _close:93
 
-### js/events-render.js  _(622 líneas)_
-**Estado global:** EV_LIST_TYPES:219
+### js/events-render.js  _(635 líneas)_
+**Estado global:** EV_LIST_TYPES:232
 
-**Funciones:** renderEvListItem:11 · fd2:15 · renderEvUpcoming:43 (!177) · fd2:50 · renderEvItem:51 · renderEvPanel:102 · occurrenceKey:129 · renderEvByTypes:220 · coincide:241 · renderEvMonthsView:287 · _evWeekLanes:298 · assign:301 · evWeekTravelRow:316 · renderEvWeek:336 (!133) · hexA:340 · renderEvContent:469 (!153)
+**Funciones:** renderEvListItem:11 · fd2:15 · evUpcomingCompare:44 · minutes:45 · renderEvUpcoming:56 (!177) · fd2:63 · renderEvItem:64 · renderEvPanel:115 · occurrenceKey:142 · renderEvByTypes:233 · coincide:254 · renderEvMonthsView:300 · _evWeekLanes:311 · assign:314 · evWeekTravelRow:329 · renderEvWeek:349 (!133) · hexA:353 · renderEvContent:482 (!153)
 
 ### js/events.js  _(819 líneas)_
 **Estado global:** EV_STORAGE_KEY:5 · EV_YEAR:6 · EV_MONTH:7 · EV_VIEW_STATE:11 · EV_SCROLL_RESET:16 · EV_VIEW:17 · EV_EDIT:18 · EV_EDIT_DS:19 · EV_FORM_CONTAINER:20 · EV_EDIT_MODE:21 · EV_BRIGHT_PAST:22 · EV_ANNUAL_VIEW:23 · EV_ANNUAL_FILTER_HIDDEN:24 · EV_FILTER_GROUPS:33 · EV_FILTER_SHORT:39 · EV_FILTER_COLOR:41 · EV_FILTER_SEP_AFTER:44 · EV_FILTER_CYCLE:45 · EV_PREV_VIEW:63 · EV_QUAD_YEAR:64 · EV_QUAD_MONTH:65 · EV_TO_SUBTAB:66 · EV_TYPES_FILTER:67 · EV_TYPES_PAST:68 · EV_LIST_SORT:69 · EV_LIST_SEARCH:70 · EV_COLORS:71 · EVENTS:72 · EV_ALARM_SK:101 · EV_ALARMS_SET:102 · EV_NO_RUT:194 · EV_MAX_BAR_DIA:250 · EV_MARK_ORDER:356 · EV_MAX_PUNT_DIA:398 · EV_MAX_RUT_DIA:399 · EV_CAL_CORNER_STACK:402 · EV_MAX_VIP_DIA:404 · EV_CAL_VIP_MAX:405 · EV_UP_SHOW_RUT:407 · EV_UP_SHOW_BODA:408 · EV_BAR_Z:460 · EV_COMPARTE_DIA:464 · EV_MNS:671 · EV_CAR:714 · EV_TRANSPORTES:733 · EV_TRANS_EMOJI:739 · EV_DATE_INDEX:805
