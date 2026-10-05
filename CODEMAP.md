@@ -534,7 +534,7 @@
 **Rangos por prefijo de clase:**
 .bd-alarm:26-78 · .bd-detail:107-114 · .bday-hdr:6-6 · .bday-upcoming:24-24 · .bday-vip:23-23 · .ev-alarm:49-55 · .ev-hdr:7-7 · .ev-upcoming:29-32 · .home-popup:81-89 · .macro-section:91-92 · .macro-url:93-95 · .nav-bar:3-105 · .overlay-nav:2-4 · .sy-puente:14-21 · .sy-tab:9-12
 
-### css/source/event-panels.css  _(228 líneas)_
+### css/source/event-panels.css  _(230 líneas)_
 
 **Secciones:**
 
@@ -548,23 +548,24 @@
 - Marcadores desbordados: SEGUNDA COLUMNA (uno debajo de otro), no en fila:48
 - Carrusel del dia (estrellas VIP / "+" del calendario de 1 mes):54
 - Rutinas en anual y 4 meses: puntitos en fila arriba del dia:69
-- Los cumpleaños VIP se solapan al 75% (12px de marcador -> -9px):79
-- Sin z-index propio para no crear stacking context — permite que ev-badge (z-index:4) quede encima de ev-bars-row (z-index:3):113
-- Perímetro puente: capa inferior a eventos:115
-- Bright past: bombilla override:135
-- Bombilla en Anual/Quad — mismo estilo que la pequeña inline del 1-mes/Semanal:142
-- Bombilla en 1-mes y agenda semanal: posicionada en el centro entre el ▶ y "Hoy":147
-- Quad label 3 lines:152
-- ev-num con altura fija para alinear perfectamente todos los números de la misma semana:159
-- ev-badge: z-index:4 > ev-bars-row z-index:3 → los badges 1-día quedan encima de barras multi-día:161
-- Events list view:163
-- Event form overlay (inside eventsOverlay):177
-- Relleno, para que haga pareja con el naranja de "Editar evento":207
-- Event detail:213
-- El color del título depende de la familia; el símbolo conserva su identidad.:221
+- Separar los símbolos del número; conservar espacio cuando la pila está llena.:78
+- Los cumpleaños VIP se solapan al 75% (12px de marcador -> -9px):81
+- Sin z-index propio para no crear stacking context — permite que ev-badge (z-index:4) quede encima de ev-bars-row (z-index:3):115
+- Perímetro puente: capa inferior a eventos:117
+- Bright past: bombilla override:137
+- Bombilla en Anual/Quad — mismo estilo que la pequeña inline del 1-mes/Semanal:144
+- Bombilla en 1-mes y agenda semanal: posicionada en el centro entre el ▶ y "Hoy":149
+- Quad label 3 lines:154
+- ev-num con altura fija para alinear perfectamente todos los números de la misma semana:161
+- ev-badge: z-index:4 > ev-bars-row z-index:3 → los badges 1-día quedan encima de barras multi-día:163
+- Events list view:165
+- Event form overlay (inside eventsOverlay):179
+- Relleno, para que haga pareja con el naranja de "Editar evento":209
+- Event detail:215
+- El color del título depende de la familia; el símbolo conserva su identidad.:223
 
 **Rangos por prefijo de clase:**
-.data-btn:2-2 · .ev-ann:74-76 · .ev-annual:112-134 · .ev-badge:162-162 · .ev-badges:40-40 · .ev-bar:107-107 · .ev-bars:33-33 · .ev-bright:136-149 · .ev-btn:200-209 · .ev-car:55-67 · .ev-cell:120-158 · .ev-char:189-189 · .ev-checkbox:194-194 · .ev-chip:88-88 · .ev-colors:190-190 · .ev-date:191-191 · .ev-day:43-98 · .ev-detail:214-227 · .ev-edit:203-204 · .ev-field:183-184 · .ev-form:178-199 · .ev-hdr:3-5 · .ev-input:185-186 · .ev-io:211-212 · .ev-list:14-176 · .ev-main:6-6 · .ev-month:22-86 · .ev-multi:37-128 · .ev-num:160-160 · .ev-otros:53-103 · .ev-part:137-137 · .ev-puente:116-116 · .ev-quad:153-154 · .ev-repeat:195-195 · .ev-rut:94-97 · .ev-stepped:109-111 · .ev-textarea:187-188 · .ev-toggle:192-193 · .ev-types:17-19 · .ev-view:4-8 · .ev-wd:197-198 · .ev-week:28-114 · .ev-weekday:196-196 · .rut-marker:90-93 · .sy-nav:150-151
+.data-btn:2-2 · .ev-ann:74-76 · .ev-annual:114-136 · .ev-badge:164-164 · .ev-badges:40-40 · .ev-bar:109-109 · .ev-bars:33-33 · .ev-bright:138-151 · .ev-btn:202-211 · .ev-car:55-67 · .ev-cell:122-160 · .ev-char:191-191 · .ev-checkbox:196-196 · .ev-chip:90-90 · .ev-colors:192-192 · .ev-date:193-193 · .ev-day:43-100 · .ev-detail:216-229 · .ev-edit:205-206 · .ev-field:185-186 · .ev-form:180-201 · .ev-hdr:3-5 · .ev-input:187-188 · .ev-io:213-214 · .ev-list:14-178 · .ev-main:6-6 · .ev-month:22-88 · .ev-multi:37-130 · .ev-num:162-162 · .ev-otros:53-105 · .ev-part:139-139 · .ev-puente:118-118 · .ev-quad:155-156 · .ev-repeat:197-197 · .ev-rut:96-99 · .ev-stepped:111-113 · .ev-textarea:189-190 · .ev-toggle:194-195 · .ev-types:17-19 · .ev-view:4-8 · .ev-wd:199-200 · .ev-week:28-116 · .ev-weekday:198-198 · .rut-marker:92-95 · .sy-nav:152-153
 
 ### css/source/dialogs-responsive.css  _(146 líneas)_
 
