@@ -1,4 +1,7 @@
 const {test,expect}=require('@playwright/test');
+// La caché sin conexión se verifica en su propia suite. Aquí la petición debe
+// llegar siempre a la ruta simulada, sin que el service worker la intercepte.
+test.use({serviceWorkers:'block'});
 test.beforeEach(async({page})=>{
   await page.clock.setFixedTime(new Date('2026-10-06T09:00:00'));
   await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));
