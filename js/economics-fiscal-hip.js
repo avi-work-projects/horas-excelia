@@ -362,11 +362,11 @@ function _fmtDuration(meses){
   return (a>0?a+'a ':'')+(m>0?m+'m':'');
 }
 function _hipROvinc(label,data){
-  if(!data||!data.enabled)return '<div class="hip-ro-vinc"><span class="hip-ro-vinc-lbl">'+label+'</span><span class="hip-ro-vinc-off">OFF</span></div>';
+  if(!data||!data.enabled)return '<div class="hip-ro-vinc"><span class="hip-ro-vinc-lbl">'+label+'</span><span class="hip-ro-vinc-off">NO</span></div>';
   var isNom=label.indexOf('\u00f3mina')!==-1;
   var h='<div class="hip-ro-vinc"><span class="hip-ro-vinc-lbl">'+label+'</span><span class="hip-ro-vinc-vals">';
-  if(!isNom&&data.costeAnual)h+=_fmtMiles(data.costeAnual)+'\u20ac ';
-  if(data.reduccion)h+='\u2212'+data.reduccion.toFixed(2).replace('.',',')+' puntos';
+  if(!isNom&&data.costeAnual)h+='<span>'+_fmtMiles(data.costeAnual)+' €</span>';
+  if(data.reduccion)h+='<span>−'+data.reduccion.toFixed(2).replace('.',',')+' puntos</span>';
   h+='</span></div>';
   return h;
 }

@@ -631,7 +631,7 @@
 **Rangos por prefijo de clase:**
 .ev-shape:19-19 · .rut-add:45-45 · .rut-card:35-43 · .rut-day:51-52 · .rut-days:50-50 · .rut-dot:38-38 · .rut-first:16-16 · .rut-flex:13-21 · .rut-hist:57-60 · .rut-hpd:2-5 · .rut-icon:7-11 · .rut-name:39-39 · .rut-pct:44-44 · .rut-plan:22-34 · .rut-sec:12-12 · .rut-stat:54-56 · .rut-sug:46-49 · .rut-susp:53-53 · .rut-tag:40-41 · .rut-vacio:42-42
 
-### css/source/shared-refinements.css  _(547 líneas)_
+### css/source/shared-refinements.css  _(553 líneas)_
 
 **Secciones:**
 
@@ -670,7 +670,7 @@
 - Calendario mensual: malla tranquila; conserva la geometría de eventos y puentes.:514
 
 **Rangos por prefijo de clase:**
-.bday-hdr:161-162 · .bday-header:156-503 · .bday-jump:56-95 · .bday-month:174-174 · .bday-next:104-105 · .bday-sub:285-286 · .bday-upcoming:54-530 · .bday-vip:531-532 · .boda-catalog:81-89 · .boda-cfg:131-147 · .boda-config:77-128 · .boda-count:85-85 · .boda-date:149-167 · .boda-day:118-118 · .boda-field:119-124 · .boda-filter:59-61 · .boda-mini:67-67 · .boda-pack:86-87 · .boda-pfilters:58-62 · .boda-sticky:78-144 · .boda-teachers:106-106 · .data-actions:344-344 · .data-btn:345-356 · .econ-equiv:476-476 · .econ-tab:327-331 · .econ-tariff:408-478 · .energy-tariff:454-456 · .est-nav:329-330 · .ev-bday:287-288 · .ev-bright:444-444 · .ev-del:13-14 · .ev-list:2-427 · .ev-month:515-525 · .ev-multi:50-72 · .ev-rut:244-311 · .ev-search:3-7 · .ev-sort:8-53 · .ev-type:429-431 · .ev-types:428-428 · .ev-up:271-529 · .ev-view:66-66 · .ev-wk:226-443 · .fiscal-hip:405-406 · .fiscal-tab:328-328 · .hip-rate:506-510 · .home-birthday:467-498 · .home-pending:468-474 · .home-popup:483-538 · .home-reminder:462-546 · .imp-mode:17-27 · .macro-url:70-70 · .nav-icon:364-374 · .nav-pro:338-350 · .nav-style:362-362 · .rate-input:46-46 · .rut-addition:206-223 · .rut-agenda:220-221 · .rut-cancelled:247-306 · .rut-history:190-241 · .rut-hpd:188-188 · .rut-icon:172-173 · .rut-recovery:215-224 · .rut-session:225-225 · .rut-skipped:307-308 · .rut-week:189-189 · .selected:371-371 · .settings-details:107-109 · .settings-edit:71-110 · .settings-menu:440-440 · .sy-back:37-37 · .sy-body:35-35 · .sy-card:41-41 · .sy-header:36-505 · .sy-lbl:40-40 · .sy-period:414-421 · .sy-table:42-42 · .sy-tr:43-43 · .sy-val:39-39 · .sy-year:38-38 · .week-card:391-391 · .wm-logo:92-251
+.bday-hdr:161-162 · .bday-header:156-503 · .bday-jump:56-95 · .bday-month:174-174 · .bday-next:104-105 · .bday-sub:285-286 · .bday-upcoming:54-530 · .bday-vip:531-532 · .boda-catalog:81-89 · .boda-cfg:131-147 · .boda-config:77-128 · .boda-count:85-85 · .boda-date:149-167 · .boda-day:118-118 · .boda-field:119-124 · .boda-filter:59-61 · .boda-mini:67-67 · .boda-pack:86-87 · .boda-pfilters:58-62 · .boda-sticky:78-144 · .boda-teachers:106-106 · .data-actions:344-344 · .data-btn:345-356 · .econ-equiv:476-476 · .econ-tab:327-331 · .econ-tariff:408-478 · .energy-tariff:454-456 · .est-nav:329-330 · .ev-annual:548-548 · .ev-bday:287-288 · .ev-bright:444-444 · .ev-del:13-14 · .ev-list:2-427 · .ev-month:515-525 · .ev-multi:50-72 · .ev-rut:244-311 · .ev-search:3-7 · .ev-sort:8-53 · .ev-type:429-431 · .ev-types:428-428 · .ev-up:271-529 · .ev-view:66-66 · .ev-wk:226-443 · .fiscal-hdr:552-552 · .fiscal-hip:405-406 · .fiscal-tab:328-328 · .hip-rate:506-510 · .hip-ro:549-550 · .home-birthday:467-498 · .home-pending:468-474 · .home-popup:483-538 · .home-reminder:462-546 · .imp-mode:17-27 · .macro-url:70-70 · .nav-icon:364-374 · .nav-pro:338-350 · .nav-style:362-362 · .rate-input:46-46 · .rut-addition:206-223 · .rut-agenda:220-221 · .rut-cancelled:247-306 · .rut-history:190-241 · .rut-hpd:188-188 · .rut-icon:172-173 · .rut-recovery:215-224 · .rut-session:225-225 · .rut-skipped:307-308 · .rut-week:189-189 · .selected:371-371 · .settings-details:107-109 · .settings-edit:71-110 · .settings-menu:440-440 · .sy-back:37-37 · .sy-body:35-35 · .sy-card:41-41 · .sy-header:36-505 · .sy-lbl:40-40 · .sy-period:414-421 · .sy-table:42-42 · .sy-tr:43-43 · .sy-val:39-39 · .sy-year:38-38 · .week-card:391-391 · .wm-logo:92-251
 
 ### css/source/home-sharing.css  _(114 líneas)_
 
@@ -712,7 +712,7 @@
 **Rangos por prefijo de clase:**
 .home-popup:75-75 · .task-actions:57-60 · .task-content:42-44 · .task-date:49-50 · .task-done:45-46 · .task-drop:62-63 · .task-editor:54-56 · .task-grip:51-52 · .task-more:53-53 · .task-moving:61-61 · .task-row:40-41 · .task-title:43-43 · .tasks-add:35-37 · .tasks-count:14-14 · .tasks-day:47-48 · .tasks-docked:15-16 · .tasks-drop:8-12 · .tasks-empty:71-73 · .tasks-fab:4-13 · .tasks-footer:64-65 · .tasks-header:23-28 · .tasks-heading:24-25 · .tasks-list:39-39 · .tasks-move:66-70 · .tasks-open:2-3 · .tasks-overlay:17-21 · .tasks-reminder:76-77 · .tasks-reminders:29-29 · .tasks-sheet:20-22 · .tasks-status:74-74 · .tasks-tabs:31-34
 
-### css/household.css  _(107 líneas)_
+### css/household.css  _(114 líneas)_
 
 **Secciones:**
 
@@ -720,7 +720,7 @@
 - Pares de precios: cifra neta principal, importe con impuestos secundario.:59
 
 **Rangos por prefijo de clase:**
-.energy-pair:61-67 · .energy-price:60-68 · .household-active:98-98 · .household-analysis:56-56 · .household-balance:29-32 · .household-body:6-9 · .household-card:15-42 · .household-dates:24-24 · .household-detail:55-96 · .household-empty:54-54 · .household-equivalent:35-39 · .household-eyebrow:18-18 · .household-gas:50-105 · .household-header:5-5 · .household-history:43-46 · .household-investment:12-14 · .household-luz:49-49 · .household-metrics:25-25 · .household-mortgage:16-16 · .household-ok:40-40 · .household-payment:21-23 · .household-price:69-69 · .household-progress:33-34 · .household-rate:79-84 · .household-section:47-47 · .household-status:20-20 · .household-summary:10-10 · .household-tax:70-71 · .household-utilities:48-48 · .household-utility:53-53 · .household-value:26-28
+.energy-pair:61-67 · .energy-price:60-68 · .household-active:98-98 · .household-analysis:56-56 · .household-balance:29-32 · .household-body:6-9 · .household-card:15-42 · .household-dates:24-24 · .household-detail:55-96 · .household-empty:54-54 · .household-equivalent:35-39 · .household-eyebrow:18-18 · .household-gas:50-113 · .household-header:5-5 · .household-history:43-46 · .household-investment:12-14 · .household-luz:49-49 · .household-metrics:25-25 · .household-mortgage:16-16 · .household-ok:40-40 · .household-payment:21-23 · .household-price:69-69 · .household-progress:33-34 · .household-rate:79-84 · .household-section:47-47 · .household-status:20-20 · .household-summary:10-10 · .household-tax:70-71 · .household-utilities:48-48 · .household-utility:53-53 · .household-value:26-28
 
 ### css/electricity-comparator.css  _(77 líneas)_
 

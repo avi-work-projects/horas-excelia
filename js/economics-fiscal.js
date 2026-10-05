@@ -9,7 +9,7 @@ function renderFiscalContent(){
   var h=renderNavBar('econ');
   h+='<div class="sy-header with-tabs fiscal-hdr">';
   h+='<button class="sy-back" id="fiscalBack">&#8592;</button>';
-  h+='<div class="sy-year" style="font-size:.9rem;color:#c084fc">&#9881; Configuraci\u00f3n Fiscal</div>';
+  h+='<div class="sy-year fiscal-window-title">&#9881; Configuraci\u00f3n Fiscal</div>';
   h+='</div>';
   h+='<div class="fiscal-tab-bar">';
   h+='<button class="fiscal-tab-btn'+(FISCAL_TAB==='personal'?' active':'')+'" id="fiscalTabPersonal">Econom\u00eda<br>Personal</button>';
@@ -25,7 +25,7 @@ function renderFiscalContent(){
   else if(FISCAL_TAB==='despacho')h+=renderFiscalTabDespacho(false);
   h+='</div>';
   h+='<div class="fiscal-sticky-save"'+(FISCAL_TAB==='personal'?' id="personalSaveFooter"'+(personalHasChanges()?'':' hidden'):'')+'>';
-  h+=FISCAL_TAB==='despacho'?'<button class="fiscal-save-btn household-detail-link" id="householdDetailLink">Ver en detalle / Editar</button>':'<button class="fiscal-save-btn" id="fiscalSave">Guardar configuraci\u00f3n</button>';
+  h+=FISCAL_TAB==='despacho'?'<button class="fiscal-save-btn household-detail-link" id="householdDetailLink">Editar / Ver en detalle</button>':'<button class="fiscal-save-btn" id="fiscalSave">Guardar configuraci\u00f3n</button>';
   h+='</div>';
   return h;
 }

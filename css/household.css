@@ -104,3 +104,10 @@
 .household-gas-option .energy-pair-net>span{font-size:.58rem}
 .household-gas-option .energy-pair-gross{font-size:.62rem;overflow-wrap:anywhere}
 @media(max-width:440px){.household-detail>.fiscal-section{padding:15px}.household-detail .hip-ro-grid{grid-template-columns:1fr}.energy-pair-net strong{font-size:1.15rem}}
+
+.household-gas-prices{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.household-gas-prices .energy-price-pair{min-width:0;padding:10px 7px}
+.household-gas-prices .energy-pair-net strong{font-size:clamp(.9rem,4.2vw,1.18rem)}
+.household-gas-prices .energy-pair-label{font-size:.62rem;min-height:2.6em}
+.household-gas-prices .energy-pair-net>span{font-size:.58rem}
+.household-gas-prices .energy-pair-gross{font-size:.62rem;overflow-wrap:anywhere}
