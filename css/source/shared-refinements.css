@@ -460,16 +460,11 @@ details[open]>summary{margin-bottom:10px}
 .econ-tariff-settings .econ-equiv-hour{font-size:.94rem;font-family:var(--mono);color:var(--text-muted)}
 .econ-tariff-controls{padding-top:8px}
 .home-reminder-group+.home-reminder-group{margin-top:22px}
-.home-birthday-more>summary{font-size:.75rem;margin-bottom:8px}
 .home-reminder-symbol{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;width:22px;height:20px;margin-right:7px}
 .home-reminder-symbol .ev-marker-up{margin:0;flex-shrink:0}
 .home-reminder-symbol .ev-management-mark{background:none;box-shadow:none;border-radius:0}
 .home-reminder-next-day{margin-top:14px}
 .home-birthday-line{display:flex;align-items:center;gap:7px;min-width:0}
-.home-birthday-collapse{display:none}
-.home-birthday-more[open]>summary{width:max-content;margin:0 0 6px auto;background:none;min-height:32px;padding:6px 42px 6px 8px!important;font-size:.68rem}
-.home-birthday-more[open] .home-birthday-expand{display:none}
-.home-birthday-more[open] .home-birthday-collapse{display:inline}
 .home-pending-tasks{border:1px solid var(--border);background:var(--surface2);border-radius:10px;padding:10px;margin:12px 0 18px;font-size:.75rem}
 .home-pending-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .home-pending-heading strong{font-size:.76rem}
@@ -483,3 +478,28 @@ details[open]>summary{margin-bottom:10px}
 .econ-tariff-settings .econ-equiv-hour{font-size:1.08rem;line-height:1.65;color:var(--text-muted)}
 .home-reminder-symbol .ev-chip-flag{width:22px;height:16px}
 .home-reminder-asturias{display:flex;align-items:center;justify-content:center;border:1px solid #1689ed;border-radius:5px;padding:1px}
+
+/* Recordatorios: cabecera siempre visible y contenido independiente. */
+.home-popup-overlay{padding:clamp(24px,8vh,80px) 0;align-items:flex-start}
+.home-popup{display:flex;flex-direction:column;padding:0;max-width:410px;max-height:100%;overflow:hidden;background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 5%,var(--surface)),var(--surface) 55%)}
+.home-popup-header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0;padding:20px;border-bottom:1px solid var(--border);background:linear-gradient(120deg,color-mix(in srgb,var(--accent) 16%,var(--surface)),color-mix(in srgb,#a76dc2 10%,var(--surface)))}
+.home-popup-eyebrow{font-size:.58rem;letter-spacing:.15em;font-weight:700;color:var(--accent-bright)}
+.home-popup-title{font-size:1.35rem;letter-spacing:-.03em;margin:4px 0 0;padding:0;line-height:1.2}
+.home-popup-close{position:static;flex-shrink:0;width:34px;height:34px;border-radius:11px;font-size:1.35rem;color:var(--text);background:var(--surface)}
+#homePopupContent{min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:0 18px 18px}
+.home-popup-item.event{display:grid;grid-template-columns:24px minmax(0,1fr);gap:4px 10px;align-items:center}
+.home-popup-item .home-reminder-text{min-width:0}
+.home-popup-item .home-reminder-content{display:block;margin-top:3px;line-height:1.4;overflow-wrap:anywhere}
+.home-reminder-symbol{margin:0;width:24px;height:24px}
+.home-birthday-line{gap:10px;line-height:1.4}
+.home-birthday-line>.bday-symbol,.home-reminder-vip{width:26px;height:26px;flex-shrink:0;object-fit:contain}
+.home-birthday-line .home-reminder-content{font-size:.72rem;color:var(--text-muted)}
+.home-birthday-more{display:flex;align-items:center;gap:7px;margin:8px 0 0 auto;border:1px solid var(--border);border-radius:16px;background:var(--surface2);color:var(--accent-bright);padding:6px 11px;font:inherit;font-size:.69rem;cursor:pointer}
+.home-birthday-more[aria-expanded="true"]{background:none;border-color:transparent;margin-top:4px}
+.home-reminder-note{grid-column:2;min-width:0}
+.home-reminder-note>summary{display:flex!important;justify-content:flex-start!important;gap:5px!important;min-height:0!important;padding:3px 0!important;margin:0!important;border:0!important;background:none!important;box-shadow:none!important;color:var(--text-muted);font-size:.66rem;font-weight:500;cursor:pointer;list-style:none}
+.home-reminder-note>summary::before{display:none!important}
+.home-reminder-note>summary::after{content:'⌄'!important;position:static!important;width:auto!important;height:auto!important;background:none!important;border:0!important;box-shadow:none!important;transform:none!important}
+.home-reminder-note[open]>summary::after{content:'⌃'!important}
+.home-reminder-note p{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.73rem;line-height:1.5;margin:4px 0}
+.home-popup-item.event>.boda-last-rehearsal{grid-column:2}

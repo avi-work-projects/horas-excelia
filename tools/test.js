@@ -555,7 +555,7 @@ REGLAS.push(['inicio: todos los cumpleanos a 7 dias, con o sin alarma',function(
   ctx.sessionStorage={getItem:()=>null};
   ctx.document.getElementById=id=>id==='homePopupContent'?content:id==='homePopup'?{style:{}}:null;
   require('vm').runInContext(fs.readFileSync(path.join(RAIZ,'js/home-popup.js'),'utf8'),ctx);
-  return content.innerHTML.includes('Normal cercano')&&content.innerHTML.includes('VIP cercano')&&content.innerHTML.includes('Ya avisado')&&content.innerHTML.includes('alarma creada')&&!content.innerHTML.includes('Fuera plazo');
+  return content.innerHTML.includes('Normal cercano')&&content.innerHTML.includes('VIP cercano')&&content.innerHTML.includes('Ya avisado')&&content.innerHTML.includes('Alarma creada')&&!content.innerHTML.includes('Fuera plazo');
 }]);
 
 REGLAS.push(['inicio: ensayo con fecha, hora y pareja actual; sin hora explicita',function(){
@@ -586,9 +586,9 @@ REGLAS.push(['inicio: tres semanas futuras, dos cumpleaños próximos visibles y
   require('vm').runInContext(fs.readFileSync(path.join(RAIZ,'js/home-popup.js'),'utf8'),ctx);
   const html=content.innerHTML,order=['VipHoy','NormalHoy','VipLejano','SinHoraHoy','TempranoHoy','TardeHoy','SinHoraManana','TempranoManana'];
   return html.includes('Semana del 07/09</strong> sin enviar')&&!html.includes('Semana del 14/09</strong> sin enviar')
-    &&html.indexOf('NormalHoy')<html.indexOf('<details class="home-birthday-more">')
-    &&html.indexOf('<details class="home-birthday-more">')<html.indexOf('VipLejano')
-    &&html.includes('Ver 1 cumpleaños más')&&!html.includes('home-birthday-more" open')
+    &&html.indexOf('NormalHoy')<html.indexOf('<div id="homeBirthdayExtra" hidden>')
+    &&html.indexOf('<div id="homeBirthdayExtra" hidden>')<html.indexOf('VipLejano')
+    &&html.includes('Ver 1 cumpleaños más')&&html.indexOf('homeBirthdayToggle')>html.indexOf('VipLejano')
     &&order.every((name,i)=>html.includes(name)&&(!i||html.indexOf(order[i-1])<html.indexOf(name)))
     &&ctx.EVENTS[0].title==='TardeHoy'&&ctx.BDAYS[0].name==='NormalHoy';
 }]);
