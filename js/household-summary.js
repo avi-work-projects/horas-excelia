@@ -34,7 +34,7 @@ function householdMortgageCard(comp,p,editable){
 }
 function householdUtilityPrices(kind,source,vat,fixed,detail){
   var t=energyTariffDefaults(source);vat=vat==null?21:vat;
-  var h='<div class="household-price-grid">';
+  var h='<div class="household-price-grid'+(kind==='gas'&&!fixed?' household-gas-prices':'')+'">';
   var label=fixed?'Cuota mensual':t.energyMode==='tramos'?'Consumo · media ponderada':'Consumo';
   var net=fixed?t.cuotaFija:energyWeightedPrice(t);
   h+=energyPricePair(label,net,energyTaxPrice(t,net,vat,!fixed),fixed?'/mes':'€/kWh','',fixed);
@@ -42,8 +42,8 @@ function householdUtilityPrices(kind,source,vat,fixed,detail){
     var p=t.precioPotP1+(t.modoPotencia==='doble'?t.precioPotP2:0);
     h+=energyPricePair('Potencia · suma de precios',p,energyTaxPrice(t,p,vat,false),'€/kW/día',t.modoPotencia==='doble'?'P1 '+energyNumber(t.potenciaP1,'kW')+' · P2 '+energyNumber(t.potenciaP2,'kW'):energyNumber(t.potenciaTotal,'kW'));
   }
-  if(!fixed&&t.terminoFijoDia)h+=energyPricePair('Fijo diario',t.terminoFijoDia,energyTaxPrice(t,t.terminoFijoDia,vat,false),'€/día');
-  if(!fixed&&t.terminoFijo)h+=energyPricePair(kind==='gas'?'Fijo por factura':'Fijo mensual',t.terminoFijo,energyTaxPrice(t,t.terminoFijo,vat,false),kind==='gas'?'/factura':'/mes','',true);
+  if(!fixed&&(kind==='gas'||t.terminoFijoDia))h+=energyPricePair('Fijo diario',t.terminoFijoDia,energyTaxPrice(t,t.terminoFijoDia,vat,false),'€/día');
+  if(!fixed&&(kind==='gas'||t.terminoFijo))h+=energyPricePair(kind==='gas'?'Fijo por factura':'Fijo mensual',t.terminoFijo,energyTaxPrice(t,t.terminoFijo,vat,false),kind==='gas'?'/factura':'/mes','',true);
   h+='</div>';
   if(detail&&!fixed){
     h+='<div class="household-rate-breakdown">';
