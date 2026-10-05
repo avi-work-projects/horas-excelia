@@ -366,7 +366,7 @@ function _hipROvinc(label,data){
   var isNom=label.indexOf('\u00f3mina')!==-1;
   var h='<div class="hip-ro-vinc"><span class="hip-ro-vinc-lbl">'+label+'</span><span class="hip-ro-vinc-vals">';
   if(!isNom&&data.costeAnual)h+=_fmtMiles(data.costeAnual)+'\u20ac ';
-  if(data.reduccion)h+='\u2212'+data.reduccion.toFixed(2)+'%';
+  if(data.reduccion)h+='\u2212'+data.reduccion.toFixed(2).replace('.',',')+' puntos';
   h+='</span></div>';
   return h;
 }
@@ -471,6 +471,16 @@ function _renderCompraSection(comp,isEditing,editable){
   return h;
 }
 
+function _hipRateDetail(base,vinc){
+  if(base==null)return '';
+  var effective=_hipEffRate(base,vinc),reduction=base-effective;
+  var fmt=function(n){return n.toFixed(2).replace('.',',');};
+  return '<section class="hip-rate-detail" aria-label="Tipo de interés y bonificaciones">'
+    +'<div><span>Tipo sin bonificar</span><b>'+fmt(base)+' %</b></div>'
+    +'<div><span>Reducción por vinculaciones</span><b>−'+fmt(reduction)+' puntos</b></div>'
+    +'<div class="hip-rate-result"><span>Tipo aplicado</span><strong>'+fmt(effective)+' %</strong></div></section>';
+}
+
 function _renderPrestamoSection(comp,isEditing,editable){
   var vinc=comp.vinculaciones||{nomina:{enabled:false,costeAnual:0,reduccion:0},segHogar:{enabled:false,costeAnual:0,reduccion:0},segSalud:{enabled:false,costeAnual:0,reduccion:0},segVida:{enabled:false,costeAnual:0,reduccion:0}};
   var h='<div class="hip-section-hdr"><span class="fiscal-section-title">\uD83C\uDFE6 Pr\u00e9stamo original</span>';
@@ -494,7 +504,7 @@ function _renderPrestamoSection(comp,isEditing,editable){
     h+='<div class="hip-edit-actions"><button class="hip-save-btn" data-savesection="prestamo">Guardar cambios</button><button class="hip-cancel-btn" data-cancelsection="prestamo">Cancelar</button></div>';
   } else {
     h+=_hipRO('Importe',comp.importePrestamo?_fmtMiles(comp.importePrestamo)+' \u20ac':'\u2014');
-    h+=_hipRO('Tipo inter\u00e9s',comp.tipoInteres?comp.tipoInteres.toFixed(2)+'%':'\u2014');
+    h+=_hipRateDetail(comp.tipoInteres,vinc);
     h+=_hipRO('Plazo',comp.plazoAnios?comp.plazoAnios+' a\u00f1os':'\u2014');
     h+=_hipRO('Fecha inicio',comp.fechaInicio?comp.fechaInicio.split('-').reverse().join('/'):'\u2014');
     h+=_hipRO('Banco',comp.entidadBanco||'\u2014');
@@ -504,7 +514,6 @@ function _renderPrestamoSection(comp,isEditing,editable){
       var r=tipoEf/100/12,n=comp.plazoAnios*12;
       var cuota=r>0?Math.round(comp.importePrestamo*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1)*100)/100:0;
       h+='<div class="hip-ro-row" style="margin-top:4px;border-top:1px solid var(--border);padding-top:4px"><span class="hip-ro-lbl">Cuota mensual</span><span class="hip-ro-val" style="font-size:.88rem;font-weight:700">'+fcPlain(cuota)+'</span></div>';
-      if(tipoEf!==comp.tipoInteres)h+='<div style="font-size:.62rem;color:var(--c-green);text-align:right">Tipo efectivo: '+tipoEf.toFixed(2)+'%</div>';
     }
     /* Vinculaciones read-only */
     h+='<div style="font-size:.66rem;color:var(--text-dim);margin-top:6px;font-weight:600">Vinculaciones</div>';
@@ -512,7 +521,7 @@ function _renderPrestamoSection(comp,isEditing,editable){
     h+=_hipROvinc('Seg. hogar',vinc.segHogar);
     h+=_hipROvinc('Seg. salud',vinc.segSalud);
     h+=_hipROvinc('Seg. vida',vinc.segVida);
-    h+=_hipVincSum(vinc,comp.tipoInteres);
+    h+=_hipVincSum(vinc,comp.tipoInteres,true);
     h+=_renderInlineOvercost(vinc);
   }
   return h;
@@ -554,7 +563,7 @@ function _renderSubSection(comp,sub,idx,isEditing,editable){
     var costes=(sub.comisionCancelacion||0)+(sub.notaria||0)+(sub.tasacion||0)+(sub.registro||0);
     if(costes>0)h+=_hipROmoney('Costes cambio',costes);
     h+=_hipRO('Capital',sub.nuevoImporte?_fmtMiles(sub.nuevoImporte)+' \u20ac':'\u2014');
-    h+=_hipRO('Tipo inter\u00e9s',sub.nuevoTipoInteres?sub.nuevoTipoInteres.toFixed(2)+'%':'\u2014');
+    h+=_hipRateDetail(sub.nuevoTipoInteres,sub.vinculaciones);
     h+=_hipRO('Plazo',sub.nuevoPlazoAnios?sub.nuevoPlazoAnios+' a\u00f1os':'\u2014');
     h+=_hipRO('Banco',sub.entidadBanco||'\u2014');
     /* Cuota + tiempo restante */
@@ -564,7 +573,6 @@ function _renderSubSection(comp,sub,idx,isEditing,editable){
       var rs=tipoEfS/100/12,ns=sub.nuevoPlazoAnios*12;
       var cuotaS=rs>0?Math.round(sub.nuevoImporte*rs*Math.pow(1+rs,ns)/(Math.pow(1+rs,ns)-1)*100)/100:0;
       h+='<div class="hip-ro-row" style="margin-top:4px;border-top:1px solid var(--border);padding-top:4px"><span class="hip-ro-lbl">Cuota mensual</span><span class="hip-ro-val" style="font-size:.88rem;font-weight:700">'+fcPlain(cuotaS)+'</span></div>';
-      if(tipoEfS!==sub.nuevoTipoInteres)h+='<div style="font-size:.62rem;color:var(--c-green);text-align:right">Tipo efectivo: '+tipoEfS.toFixed(2)+'%</div>';
       /* Tiempo restante */
       if(sub.fecha){
         var hoy=new Date();
@@ -582,7 +590,7 @@ function _renderSubSection(comp,sub,idx,isEditing,editable){
     h+=_hipROvinc('Seg. vida',sv3.segVida);
     h+=_hipROvinc('Seg. salud',sv3.segSalud);
     h+=_hipROvinc('Seg. hogar',sv3.segHogar);
-    h+=_hipVincSum(sv3,sub.nuevoTipoInteres);
+    h+=_hipVincSum(sv3,sub.nuevoTipoInteres,true);
     h+=_renderInlineOvercost(sv3);
   }
   return h;

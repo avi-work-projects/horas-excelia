@@ -43,14 +43,14 @@ function _hipVinc(id,label,data){
   h+='</div></div>';
   return h;
 }
-function _hipVincSum(vinc,tipoBase){
+function _hipVincSum(vinc,tipoBase,costOnly){
   var total=0,reduc=0;
   if(!vinc)return '';
   ['nomina','segHogar','segSalud','segVida'].forEach(function(k){if(vinc[k]&&vinc[k].enabled){total+=vinc[k].costeAnual||0;reduc+=vinc[k].reduccion||0;}});
-  if(!total&&!reduc)return '';
+  if(!total&&(!reduc||costOnly))return '';
   var h='<div class="hip-vinc-summary">';
   if(total>0)h+='Coste: <b style="color:var(--c-orange)">'+fcPlain(total)+'</b>/a';
-  if(reduc>0){
+  if(reduc>0&&!costOnly){
     h+=(total>0?' · ':'')+'<b style="color:var(--c-green)">−'+reduc.toFixed(2)+'%</b>';
     if(tipoBase>0)h+=' → <b style="color:var(--c-green)">'+Math.max(0,tipoBase-reduc).toFixed(2)+'%</b>';
   }
