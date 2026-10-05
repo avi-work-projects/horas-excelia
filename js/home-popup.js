@@ -7,7 +7,7 @@ function homeReminderEventText(when,time,content,missingTime,ev){
 }
 function homeReminderNoteHtml(ev,ds){
   var notes=[ev.note,ev.dayNotes&&ev.dayNotes[ds]].filter(Boolean);
-  return notes.length?'<details class="home-reminder-note"><summary>Descripción</summary><p>'+escHtml(notes.join('\n\n'))+'</p></details>':'';
+  return notes.length?'<p class="home-reminder-description">'+escHtml(notes.join('\n\n'))+'</p>':'';
 }
 function homeReminderEvents(today){
   var items=[];
@@ -28,7 +28,7 @@ function homeReminderEvents(today){
         if(!bodaPlaceOf(ev))content+=' · Sin sala';
       }
       if(ev._rutSkip)content+=' · Saltada';
-      items.push({days:days,time:time||'',type:'event',color:homeReminderColor(ev),text:homeReminderEventText(days===0?'Hoy':'Mañana',time,content,type==='Ensayos boda',ev)+bodaUltimoEnsayoHtml(ev)+homeReminderNoteHtml(ev,ds)});
+      items.push({days:days,time:time||'',type:'event',color:homeReminderColor(ev),text:homeReminderEventText(days===0?'Hoy':'Mañana',time,content,type==='Ensayos boda',ev)+bodaUltimoEnsayoHtml(ev),note:homeReminderNoteHtml(ev,ds)});
     });
   }
   return items.sort(function(a,b){return a.days-b.days||Number(!!a.time)-Number(!!b.time)||a.time.localeCompare(b.time);});
@@ -55,7 +55,8 @@ function homeReminderItemsHtml(items,birthdayCount){
     if(group==='birthdays'&&++count===3)h+='<div id="homeBirthdayExtra" hidden>';
     var dayBreak=group==='events'&&eventDay!==null&&eventDay!==it.days;
     if(group==='events')eventDay=it.days;
-    h+='<div class="home-popup-item '+it.type+(dayBreak?' home-reminder-next-day':'')+'"'+(it.color?' style="--reminder-color:'+it.color+'"':'')+'>'+it.text+'</div>';
+    var attrs=' class="home-popup-item '+it.type+(dayBreak?' home-reminder-next-day':'')+(it.note?' home-reminder-disclosure':'')+'"'+(it.color?' style="--reminder-color:'+it.color+'"':'');
+    h+=it.note?'<details'+attrs+'><summary aria-label="Mostrar u ocultar descripción">'+it.text+'<span class="home-reminder-toggle" aria-hidden="true"></span></summary>'+it.note+'</details>':'<div'+attrs+'>'+it.text+'</div>';
   });
   endGroup();
   return h;
@@ -106,7 +107,11 @@ function openHomePopup(force){
     toggle.setAttribute('aria-expanded',String(HOME_BIRTHDAYS_OPEN));
     toggle.innerHTML=HOME_BIRTHDAYS_OPEN?'Mostrar menos <span aria-hidden="true">⌃</span>':'Ver '+(birthdays.length-2)+' cumpleaños más <span aria-hidden="true">⌄</span>';
   };
-  document.getElementById('homePopup').onclick=function(e){if(e.target===this)closeHomePopup();};
+  document.getElementById('homePopup').onclick=function(e){
+    if(e.target===this){closeHomePopup();return;}
+    var card=e.target.closest('.home-reminder-disclosure');
+    if(card&&!e.target.closest('summary'))card.open=!card.open;
+  };
   var closeBtn=document.getElementById('homePopupClose');if(closeBtn)closeBtn.onclick=closeHomePopup;
 }
 openHomePopup();

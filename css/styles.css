@@ -2869,12 +2869,6 @@ details[open]>summary{margin-bottom:10px}
 .home-birthday-line .home-reminder-content{font-size:.72rem;color:var(--text-muted)}
 .home-birthday-more{display:flex;align-items:center;gap:7px;margin:8px 0 0 auto;border:1px solid var(--border);border-radius:16px;background:var(--surface2);color:var(--accent-bright);padding:6px 11px;font:inherit;font-size:.69rem;cursor:pointer}
 .home-birthday-more[aria-expanded="true"]{background:none;border-color:transparent;margin-top:4px}
-.home-reminder-note{grid-column:2;min-width:0}
-.home-reminder-note>summary{display:flex!important;justify-content:flex-start!important;gap:5px!important;min-height:0!important;padding:3px 0!important;margin:0!important;border:0!important;background:none!important;box-shadow:none!important;color:var(--text-muted);font-size:.66rem;font-weight:500;cursor:pointer;list-style:none}
-.home-reminder-note>summary::before{display:none!important}
-.home-reminder-note>summary::after{content:'⌄'!important;position:static!important;width:auto!important;height:auto!important;background:none!important;border:0!important;box-shadow:none!important;transform:none!important}
-.home-reminder-note[open]>summary::after{content:'⌃'!important}
-.home-reminder-note p{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.73rem;line-height:1.5;margin:4px 0}
 .home-popup-item.event>.boda-last-rehearsal{grid-column:2}
 
 /* Los controles de cumpleaños heredan el tema de la vista que los aloja. */
@@ -2889,6 +2883,40 @@ details[open]>summary{margin-bottom:10px}
 .hip-rate-result strong{font-size:1.2rem;color:var(--c-green);white-space:nowrap}
 
 #eventsOverlay .bday-header-vip input[type="checkbox"],#bdayOverlay input[type="checkbox"]{color:var(--birthday-tone);--chk:var(--birthday-tone)}
+
+/* Calendario mensual: malla tranquila; conserva la geometría de eventos y puentes. */
+.ev-month-wrap{--calendar-tone:var(--c-green)}
+.ev-month-wrap .ev-cell{border-radius:6px;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--border) 55%,transparent)}
+.ev-month-wrap .ev-cell.weekend:not(.ev-puente):not(.ev-day-festivo):not(.ev-day-vacaciones):not(.ev-day-ausencia){background:color-mix(in srgb,var(--text-muted) 7%,var(--surface));--ev-marker-halo:color-mix(in srgb,var(--text-muted) 7%,var(--surface))}
+.ev-month-wrap .ev-cell.ev-puente{box-shadow:none}
+.ev-month-wrap .ev-cell.ev-day-festivo{box-shadow:inset 0 3px var(--festivo)}
+.ev-month-wrap .ev-cell.ev-day-vacaciones{box-shadow:inset 0 3px var(--vacaciones)}
+.ev-month-wrap .ev-cell.ev-day-ausencia{box-shadow:inset 0 3px var(--ausencia)}
+.ev-month-wrap .ev-cell.today-ev{outline:1.5px solid var(--calendar-tone);outline-offset:-1.5px}
+.ev-month-wrap .ev-cell.today-ev .ev-num{width:21px;height:18px;margin-top:-2px;margin-bottom:-3px;justify-content:center;border-radius:5px;background:var(--calendar-tone);color:#fff;font-weight:700}
+.ev-month-wrap .ev-cell:active{outline:2px solid var(--calendar-tone);outline-offset:-2px}
+.ev-month-wrap .ev-week-hdr div{font-size:.6rem;letter-spacing:.06em;padding:6px 0;color:var(--text-muted)}
+#eventsOverlay:has(#evViewCal.active) #evToday,#eventsOverlay:has(#evViewAnnual.active) #evToday,#eventsOverlay:has(#evViewQuad.active) #evToday{border-color:var(--c-green);color:var(--c-green);background:color-mix(in srgb,var(--c-green) 9%,var(--surface))}
+#eventsOverlay:has(#evViewCal.active) input[type="date"]{accent-color:var(--c-green)}
+.ev-up-mark .ev-management-mark{background:none;box-shadow:none;border-radius:0}
+.ev-up-vip-icon{width:30px;height:30px;object-fit:contain}
+.bday-upcoming-item.bday-vip-item{border-color:color-mix(in srgb,var(--c-yellow) 70%,var(--border));background:color-mix(in srgb,var(--c-yellow) 12%,var(--surface));box-shadow:inset 3px 0 var(--c-yellow)}
+.bday-vip-item .bday-upcoming-icon{background:none;border:0;border-radius:0;overflow:visible}
+.bday-vip-item .bday-upcoming-name{font-weight:750;color:var(--c-yellow)}
+.home-popup-header{padding:12px 18px}
+.home-popup-eyebrow{display:none}
+.home-popup-title{font-size:1.15rem;margin:0}
+.home-popup-close{width:30px;height:30px;border-radius:9px}
+.home-popup-item.bday{border-color:var(--birthday-tone);background:color-mix(in srgb,var(--birthday-tone) 8%,var(--surface));color:var(--birthday-tone)}
+.home-popup-item.home-reminder-disclosure{display:block;padding:0}
+.home-reminder-disclosure>summary{display:grid;grid-template-columns:24px minmax(0,1fr) 18px;align-items:center;gap:4px 10px;list-style:none;border:0;border-radius:inherit;background:none;box-shadow:none;margin:0!important;padding:9px 12px!important;min-height:0;font-weight:400;color:inherit}
+.home-reminder-disclosure>summary::before,.home-reminder-disclosure>summary::after{display:none}
+.home-reminder-disclosure>summary:hover{background:none}
+.home-reminder-toggle{align-self:end;justify-self:end;display:flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;border:1px solid currentColor;color:var(--text-muted);font-size:.8rem;line-height:1}
+.home-reminder-toggle::after{content:'+'}
+.home-reminder-disclosure[open] .home-reminder-toggle::after{content:'−'}
+.home-reminder-description{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.73rem;line-height:1.5;margin:0;padding:0 12px 10px 46px;color:var(--text-muted);cursor:pointer}
+.home-reminder-disclosure .boda-last-rehearsal{grid-column:2}
 
 /* Fuente: css/source/home-sharing.css */
 /* Cabecera de Home opaca, incluso sobre los botones oscuros de las semanas. */

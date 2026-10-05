@@ -54,13 +54,12 @@ function renderEvUpcoming(){
     var lbl=isToday?'Hoy':diffToday===1?'Ma\u00f1ana':diffToday<0?'En curso':('En '+diffToday+'d');
     var lblCls='ev-upcoming-lbl'+(isToday?' today-lbl':diffToday===1?' near':diffToday<0?' ongoing':'');
     var _isVip=ev.id.indexOf('ev-bday-vip-')===0;
-    var title=_isVip?('<img src="./VIP.png" class="bday-vip-img" alt="VIP" style="height:1.2em;vertical-align:middle;margin-right:3px">'+escHtml(ev.title.replace(/^\u2b50\s*/,'')))
-      :escHtml(ev.title);
+    var title=escHtml(_isVip?ev.title.replace(/^\u2b50\s*/,''):ev.title);
     var _bellSet=isEvAlarmSet(ev.id);
     var metaDate=fd2(item.firstDate);
     if(isEvBarAlways(ev)&&ev.end&&ev.end!==ev.start){var _eD=new Date(ev.end+'T00:00:00');metaDate+=' <span style="font-size:.62rem;opacity:.7">&#8212; '+fd2(_eD)+'</span>';}
     var s='<div class="ev-upcoming-item'+(ev._rutSkip?' rut-cancelled':'')+(isToday?' ev-upcoming-today':'')+'" data-id="'+ev.id+'" data-first="'+evIsoDate(item.firstDate)+'">';
-    s+='<div class="ev-up-mark">'+evUpcomingMarkHtml(ev)+'</div>';
+    s+='<div class="ev-up-mark">'+(_isVip?'<img class="ev-up-vip-icon" src="./VIP.png" alt="VIP">':evUpcomingMarkHtml(ev))+'</div>';
     s+='<div class="ev-upcoming-info">';
     s+=bodaUltimoEnsayoHtml(ev);
     s+='<div class="ev-upcoming-title">'+(ev._rutSkip?'<span class="rut-skipped-title">'+title+'</span> <span class="rut-skipped-label">(saltada)</span>':title)+'</div>';
