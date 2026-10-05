@@ -49,7 +49,7 @@ function evUpcomingCompare(a,b){
   var ta=minutes(a),tb=minutes(b);
   if(ta!==tb)return ta-tb;
   if(ta>=0)return 0;
-  var order={'Comida':1,'Cena':2,'Salir de fiesta':3,'Copas':3};
+  var order={'Comida':1,'Barbacoa':1,'Tomar algo':2,'Cena':3,'Copas':4,'Salir de fiesta':5};
   return (order[getEvType(a)]||0)-(order[getEvType(b)]||0);
 }
 
