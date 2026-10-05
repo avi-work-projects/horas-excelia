@@ -128,9 +128,10 @@ test('recordatorios: acceso desde tareas, dos pendientes, cumpleaños plegables 
  const position=await page.locator('#homeBirthdayToggle').boundingBox(),lastBirthday=await third.boundingBox();expect(position.y).toBeGreaterThanOrEqual(lastBirthday.y+lastBirthday.height);
  await expect(page.locator('.home-reminder-vip')).toBeVisible();
  await expect(page.locator('.home-popup-item.bday .home-reminder-content').first()).toHaveText('Sin alarma');
- const note=page.locator('.home-reminder-note').filter({hasText:'Descripción <segura>'});
+ const note=page.locator('.home-reminder-disclosure').filter({hasText:'Descripción <segura>'});
  await expect(note.locator('p')).toBeHidden();await note.locator('summary').click();await expect(note.locator('p')).toHaveText('Descripción <segura>');
- await note.locator('summary').click();await expect(note.locator('p')).toBeHidden();
+ await note.locator('p').click();await expect(note.locator('p')).toBeHidden();
+ await note.locator('.home-reminder-content').click();await expect(note.locator('p')).toBeVisible();await note.locator('summary').press('Enter');await expect(note.locator('p')).toBeHidden();
  await expect(page.locator('#homePopupClose')).toBeInViewport();
  const lines=await page.locator('.home-popup-item.event').first().evaluate(el=>({title:el.querySelector('.home-reminder-content').getBoundingClientRect().y,when:el.querySelector('.home-reminder-when').getBoundingClientRect().y}));expect(lines.title).toBeGreaterThan(lines.when);
  await expect(page.locator('#homeBirthdayToggle')).toHaveText(/Mostrar menos/);
