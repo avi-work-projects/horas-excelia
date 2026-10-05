@@ -105,10 +105,10 @@
 
 **Funciones:** _ensureGasScenarios:6 · _renderGasDetalle:14 · _bindGasDetalle:71
 
-### js/economics-fiscal-hip.js  _(854 líneas)_
+### js/economics-fiscal-hip.js  _(862 líneas)_
 **Estado global:** DESPACHO_SK:5 · DESPACHO:6 · GROUP_CASA:110 · GROUP_UTIL:111
 
-**Funciones:** _defaultCompra:8 · _defaultSubrogacion:9 · loadDespacho:10 · saveDespacho:62 · _despachoGetPct:65 · computeDespachoDeduccion:70 · computeDeclResult:124 · computeIrpfBrackets:177 · _hipEffRate:194 · _buildMortgageSwitches:200 · _computeAnnualInterest:221 · _computeBalanceAtDate:255 · renderFiscalTabDespachoOnly:288 · _getActiveMortgage:352 · _fmtDuration:359 · _hipROvinc:364 · _calcInsOvercost:374 · _renderInlineOvercost:385 · _renderHipResumen:404 · _renderHipDetalle:407 · _renderHipSectionContent:433 · _renderCompraSection:445 · _renderPrestamoSection:474 · _renderSubSection:521 · renderFiscalTabDespacho:592 · _bindTabDespacho:610 · _bindHipResumen:637 · _bindHipAnalysis:653 · _bindHipDetalle:663 · _rerenderSection:734 · _readSectionInputs:743 · _rv:744 · _rv_s:745 · _bindEditingSection:803
+**Funciones:** _defaultCompra:8 · _defaultSubrogacion:9 · loadDespacho:10 · saveDespacho:62 · _despachoGetPct:65 · computeDespachoDeduccion:70 · computeDeclResult:124 · computeIrpfBrackets:177 · _hipEffRate:194 · _buildMortgageSwitches:200 · _computeAnnualInterest:221 · _computeBalanceAtDate:255 · renderFiscalTabDespachoOnly:288 · _getActiveMortgage:352 · _fmtDuration:359 · _hipROvinc:364 · _calcInsOvercost:374 · _renderInlineOvercost:385 · _renderHipResumen:404 · _renderHipDetalle:407 · _renderHipSectionContent:433 · _renderCompraSection:445 · _hipRateDetail:474 · fmt:477 · _renderPrestamoSection:484 · _renderSubSection:530 · renderFiscalTabDespacho:600 · _bindTabDespacho:618 · _bindHipResumen:645 · _bindHipAnalysis:661 · _bindHipDetalle:671 · _rerenderSection:742 · _readSectionInputs:751 · _rv:752 · _rv_s:753 · _bindEditingSection:811
 
 ### js/economics-fiscal.js  _(430 líneas)_
 **Estado global:** GROUP_CASA_DESP:293 · GROUP_UTIL_DESP:294
@@ -631,7 +631,7 @@
 **Rangos por prefijo de clase:**
 .ev-shape:19-19 · .rut-add:45-45 · .rut-card:35-43 · .rut-day:51-52 · .rut-days:50-50 · .rut-dot:38-38 · .rut-first:16-16 · .rut-flex:13-21 · .rut-hist:57-60 · .rut-hpd:2-5 · .rut-icon:7-11 · .rut-name:39-39 · .rut-pct:44-44 · .rut-plan:22-34 · .rut-sec:12-12 · .rut-stat:54-56 · .rut-sug:46-49 · .rut-susp:53-53 · .rut-tag:40-41 · .rut-vacio:42-42
 
-### css/source/shared-refinements.css  _(506 líneas)_
+### css/source/shared-refinements.css  _(519 líneas)_
 
 **Secciones:**
 
@@ -666,9 +666,10 @@
 - Texto del trayecto alineado con el titulo, sin mover las tarjetas puntuales.:442
 - Controles de plegado compartidos: superficie, foco y chevrón dibujado.:445
 - Recordatorios: cabecera siempre visible y contenido independiente.:482
+- Los controles de cumpleaños heredan el tema de la vista que los aloja.:507
 
 **Rangos por prefijo de clase:**
-.bday-hdr:161-162 · .bday-header:156-158 · .bday-jump:56-95 · .bday-month:174-174 · .bday-next:104-105 · .bday-sub:285-286 · .bday-upcoming:54-54 · .boda-catalog:81-89 · .boda-cfg:131-147 · .boda-config:77-128 · .boda-count:85-85 · .boda-date:149-167 · .boda-day:118-118 · .boda-field:119-124 · .boda-filter:59-61 · .boda-mini:67-67 · .boda-pack:86-87 · .boda-pfilters:58-62 · .boda-sticky:78-144 · .boda-teachers:106-106 · .data-actions:344-344 · .data-btn:345-356 · .econ-equiv:476-476 · .econ-tab:327-331 · .econ-tariff:408-478 · .energy-tariff:454-456 · .est-nav:329-330 · .ev-bday:287-288 · .ev-bright:444-444 · .ev-del:13-14 · .ev-list:2-427 · .ev-multi:50-72 · .ev-rut:244-311 · .ev-search:3-7 · .ev-sort:8-53 · .ev-type:429-431 · .ev-types:428-428 · .ev-up:271-271 · .ev-view:66-66 · .ev-wk:226-443 · .fiscal-hip:405-406 · .fiscal-tab:328-328 · .home-birthday:467-498 · .home-pending:468-474 · .home-popup:483-505 · .home-reminder:462-504 · .imp-mode:17-27 · .macro-url:70-70 · .nav-icon:364-374 · .nav-pro:338-350 · .nav-style:362-362 · .rate-input:46-46 · .rut-addition:206-223 · .rut-agenda:220-221 · .rut-cancelled:247-306 · .rut-history:190-241 · .rut-hpd:188-188 · .rut-icon:172-173 · .rut-recovery:215-224 · .rut-session:225-225 · .rut-skipped:307-308 · .rut-week:189-189 · .selected:371-371 · .settings-details:107-109 · .settings-edit:71-110 · .settings-menu:440-440 · .sy-back:37-37 · .sy-body:35-35 · .sy-card:41-41 · .sy-header:36-36 · .sy-lbl:40-40 · .sy-period:414-421 · .sy-table:42-42 · .sy-tr:43-43 · .sy-val:39-39 · .sy-year:38-38 · .week-card:391-391 · .wm-logo:92-251
+.bday-hdr:161-162 · .bday-header:156-509 · .bday-jump:56-95 · .bday-month:174-174 · .bday-next:104-105 · .bday-sub:285-286 · .bday-upcoming:54-54 · .boda-catalog:81-89 · .boda-cfg:131-147 · .boda-config:77-128 · .boda-count:85-85 · .boda-date:149-167 · .boda-day:118-118 · .boda-field:119-124 · .boda-filter:59-61 · .boda-mini:67-67 · .boda-pack:86-87 · .boda-pfilters:58-62 · .boda-sticky:78-144 · .boda-teachers:106-106 · .data-actions:344-344 · .data-btn:345-356 · .econ-equiv:476-476 · .econ-tab:327-331 · .econ-tariff:408-478 · .energy-tariff:454-456 · .est-nav:329-330 · .ev-bday:287-288 · .ev-bright:444-444 · .ev-del:13-14 · .ev-list:2-427 · .ev-multi:50-72 · .ev-rut:244-311 · .ev-search:3-7 · .ev-sort:8-53 · .ev-type:429-431 · .ev-types:428-428 · .ev-up:271-271 · .ev-view:66-66 · .ev-wk:226-443 · .fiscal-hip:405-406 · .fiscal-tab:328-328 · .hip-rate:512-516 · .home-birthday:467-498 · .home-pending:468-474 · .home-popup:483-505 · .home-reminder:462-504 · .imp-mode:17-27 · .macro-url:70-70 · .nav-icon:364-374 · .nav-pro:338-350 · .nav-style:362-362 · .rate-input:46-46 · .rut-addition:206-223 · .rut-agenda:220-221 · .rut-cancelled:247-306 · .rut-history:190-241 · .rut-hpd:188-188 · .rut-icon:172-173 · .rut-recovery:215-224 · .rut-session:225-225 · .rut-skipped:307-308 · .rut-week:189-189 · .selected:371-371 · .settings-details:107-109 · .settings-edit:71-110 · .settings-menu:440-440 · .sy-back:37-37 · .sy-body:35-35 · .sy-card:41-41 · .sy-header:36-511 · .sy-lbl:40-40 · .sy-period:414-421 · .sy-table:42-42 · .sy-tr:43-43 · .sy-val:39-39 · .sy-year:38-38 · .week-card:391-391 · .wm-logo:92-251
 
 ### css/source/home-sharing.css  _(114 líneas)_
 
