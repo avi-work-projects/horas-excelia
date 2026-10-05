@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v410 — horas, alarmas y ajustes de calendario';
+var APP_VERSION = 'v411 — horas, alarmas y ajustes de calendario';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
