@@ -128,7 +128,7 @@ function openRutHistoryEdit(r,key){
   var session=rutSessionByKey(r,key);if(!session)return;var ds=session.ds;
   var h='<div class="ev-form-overlay" id="rutHistoryEditOv"><div class="ev-form-sheet"><div class="ev-form-handle"></div>';
   h+='<div class="rut-history-head"><button class="sy-back" id="rutHistoryEditClose">&#8592;</button><div><strong>Editar sesión</strong><span>'+_rutFmtCorto(ds)+'</span></div></div>';
-  h+='<div class="ev-date-row"><div><label>Hora</label><input type="time" class="ev-input" id="rutHistoryTime" value="'+session.time+'"></div><div><label>Duración (min)</label><input type="number" class="ev-input" id="rutHistoryDuration" min="15" max="480" value="'+session.dur+'"></div></div>';
+  h+='<div class="ev-date-row"><div><label>Hora</label><input type="text" readonly data-time-picker aria-haspopup="dialog" placeholder="Sin hora" class="ev-input" id="rutHistoryTime" value="'+session.time+'"></div><div><label>Duración (min)</label><input type="number" class="ev-input" id="rutHistoryDuration" min="15" max="480" value="'+session.dur+'"></div></div>';
   h+='<p class="sy-note">Solo cambia esta sesión. El horario habitual se conserva.</p><div class="rut-session-state">';
   if(session.skip){
     h+='<button class="ev-io-btn" id="rutHistoryCancel">Descancelar clase</button>';

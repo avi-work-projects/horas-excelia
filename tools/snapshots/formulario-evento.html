@@ -385,11 +385,11 @@
 <div>
 <label>Hora inicio <span class="ev-note-scope">(opcional)</span>
 </label>
-<input class="ev-input" id="evFTime" type="time" step="300" value="">
+<input class="ev-input" id="evFTime" type="text" readonly data-time-picker aria-haspopup="dialog" placeholder="Sin hora" value="">
 </div>
 <div>
 <label>Hora fin</label>
-<input class="ev-input" id="evFEndTime" type="time" step="300" value="" disabled>
+<input class="ev-input" id="evFEndTime" type="text" readonly data-time-picker aria-haspopup="dialog" placeholder="Sin hora" value="" disabled>
 </div>
 </div>
 <div class="ev-field ev-viaje-box" id="evFViajeBox" style="display:block">
@@ -400,7 +400,7 @@
 <input type="checkbox" class="ev-viaje-chk" data-tramo="ida"> <b>Ida</b>
 </label>
 <div class="ev-viaje-campos" style="display:none">
-<input class="ev-input ev-viaje-time" data-tramo="ida" type="time" step="300" value="">
+<input class="ev-input ev-viaje-time" data-tramo="ida" type="text" readonly data-time-picker aria-haspopup="dialog" placeholder="Sin hora" value="">
 <select class="ev-input ev-viaje-modo" data-tramo="ida">
 <option value="tren" selected>🚆 Tren</option>
 <option value="bus">🚌 Autobús</option>
@@ -415,7 +415,7 @@
 <input type="checkbox" class="ev-viaje-chk" data-tramo="vuelta"> <b>Vuelta</b>
 </label>
 <div class="ev-viaje-campos" style="display:none">
-<input class="ev-input ev-viaje-time" data-tramo="vuelta" type="time" step="300" value="">
+<input class="ev-input ev-viaje-time" data-tramo="vuelta" type="text" readonly data-time-picker aria-haspopup="dialog" placeholder="Sin hora" value="">
 <select class="ev-input ev-viaje-modo" data-tramo="vuelta">
 <option value="tren" selected>🚆 Tren</option>
 <option value="bus">🚌 Autobús</option>

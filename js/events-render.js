@@ -40,19 +40,14 @@ function renderEvListItem(ev){
   return h;
 }
 
-/* Hora real primero como criterio; los planes sin hora tienen orden orientativo. */
+/* Las referencias solo ordenan: nunca se convierten en una hora del evento. */
 function evUpcomingCompare(a,b){
   function minutes(ev){
-    var t=evStartTime(ev),m=t&&/^(\d{1,2}):(\d{2})$/.exec(t);
+    var t=evStartTime(ev)||evPlanReferenceTime(getEvType(ev)),m=t&&/^(\d{1,2}):(\d{2})$/.exec(t);
     return m?Number(m[1])*60+Number(m[2]):-1;
   }
-  var ta=minutes(a),tb=minutes(b);
-  if(ta!==tb)return ta-tb;
-  if(ta>=0)return 0;
-  var order={'Comida':1,'Barbacoa':1,'Tomar algo':2,'Cena':3,'Copas':4,'Salir de fiesta':5};
-  return (order[getEvType(a)]||0)-(order[getEvType(b)]||0);
+  return minutes(a)-minutes(b);
 }
-
 function renderEvUpcoming(){
   if(!EVENTS.length&&!(typeof RUTINAS!=='undefined'&&RUTINAS.length))return '<div class="sy-note">No hay eventos creados. Pulsa \"+ A\u00f1adir\" para crear uno.</div>';
   var today=new Date();today.setHours(0,0,0,0);

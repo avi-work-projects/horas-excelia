@@ -43,6 +43,9 @@
       "path": "js/core.js"
     },
     {
+      "path": "js/time-picker.js"
+    },
+    {
       "path": "js/tasks.js"
     },
     {

@@ -553,10 +553,22 @@ REGLAS.push(['próximos: hora real, planes sin hora y desempates estables',funct
   const ev=(id,type,time)=>({id,title:id,kind:'puntual',type,time,start:'2026-08-21'});
   const items=[ev('fiesta','Salir de fiesta'),ev('copas','Copas'),ev('tomar','Tomar algo'),ev('barbacoa','Barbacoa'),ev('tarde','Comida','18:00'),ev('cena','Cena'),ev('gestion','Rec. Gestiones'),ev('comida','Comida'),ev('temprano','Otros','9:00'),ev('igual','Otros','09:00'),{...ev('ensayo','Ensayos boda'),boda:{time:'10:00'}},{...ev('rutina','Rutina'),_rutTime:'08:30'}];
   const sorted=items.slice().sort(ctx.evUpcomingCompare).map(e=>e.id);
-  if(sorted.join(',')!=='gestion,barbacoa,comida,tomar,cena,copas,fiesta,rutina,temprano,igual,ensayo,tarde')return false;
+  if(sorted.join(',')!=='gestion,rutina,temprano,igual,ensayo,barbacoa,comida,tomar,tarde,cena,copas,fiesta')return false;
   ctx.BDAYS=[];ctx.RUTINAS=[];ctx.EVENTS=items.filter(e=>e.id!=='rutina'&&e.id!=='ensayo');
-  const html=ctx.renderEvUpcoming(),names=['gestion','barbacoa','comida','tomar','cena','copas','fiesta','temprano','igual','tarde'];
+  const html=ctx.renderEvUpcoming(),names=['gestion','temprano','igual','barbacoa','comida','tomar','tarde','cena','copas','fiesta'];
   return names.every((n,i)=>html.includes('data-id="'+n+'"')&&(!i||html.indexOf('data-id="'+names[i-1]+'"')<html.indexOf('data-id="'+n+'"')));
+}]);
+
+REGLAS.push(['planes: referencias invisibles y hora explícita prioritaria',function(){
+  const ctx=cargarApp(claves);
+  const refs={'Comida':'14:00','Barbacoa':'14:00','Tomar algo':'18:00','Cena':'21:00','Copas':'22:00','Salir de fiesta':'23:50'};
+  for(const [type,time] of Object.entries(refs)){
+    const ev={kind:'puntual',type},real={kind:'puntual',type:'Otros',time};
+    const before=JSON.stringify(ev);
+    if(ctx.evUpcomingCompare(ev,real)!==0||ctx.evStartTime(ev)||ctx.evTimeLabel(ev)||JSON.stringify(ev)!==before)return false;
+    ev.time='08:00';if(ctx.evUpcomingCompare(ev,real)>=0)return false;
+  }
+  return ctx.evPlanReferenceTime('Montaña')===null;
 }]);
 
 REGLAS.push(['inicio: todos los cumpleanos a 7 dias, con o sin alarma',function(){

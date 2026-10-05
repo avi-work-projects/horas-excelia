@@ -479,7 +479,7 @@ function _rutWeekRender(r){
   }
   h+='</div>';
   h+='<div class="ev-date-row" style="margin-top:12px"><div><label>Hora</label>';
-  h+='<input class="ev-input" id="rutWkTime" type="time" step="900" value="'+hora+'"></div>';
+  h+='<input class="ev-input" id="rutWkTime" type="text" readonly data-time-picker aria-haspopup="dialog" placeholder="Sin hora" value="'+hora+'"></div>';
   h+='<div><label>Duración (min)</label><input class="ev-input" id="rutWkDur" type="number" min="15" max="480" step="15" value="'+effective.dur+'"></div></div>';
   h+='<label class="excl-item rut-week-forward"><input type="checkbox" id="rutWkForward"> Cambiar desde esta semana en adelante</label>';
   h+='<div class="sy-note" id="rutWkScope">Solo afecta a esta semana. El horario habitual se mantiene.</div>';

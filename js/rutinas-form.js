@@ -96,7 +96,7 @@ function renderRutForm(r){
   }
   h+='</div></div>';
   h+='<div class="ev-date-row">';
-  h+='<div><label>Hora</label><input class="ev-input" id="rutFTime" type="time" step="900" value="'+(isEdit?(r.time||RUT_TIME_DEFAULT):RUT_TIME_DEFAULT)+'"></div>';
+  h+='<div><label>Hora</label><input class="ev-input" id="rutFTime" type="text" readonly data-time-picker aria-haspopup="dialog" placeholder="Sin hora" value="'+(isEdit?(r.time||RUT_TIME_DEFAULT):RUT_TIME_DEFAULT)+'"></div>';
   h+='<div><label>Duración (min)</label><input class="ev-input" id="rutFDur" type="number" min="15" max="480" step="15" value="'+(isEdit?(r.dur||RUT_DUR_DEFAULT):RUT_DUR_DEFAULT)+'"></div>';
   h+='</div>';
   /* Horario por dia: se despliega con el conmutador y pone una hora por cada
@@ -184,7 +184,7 @@ function openRutForm(r){
       if(!btn||!btn.classList.contains('on'))continue;
       var v=previas[d]||(r&&r.times&&r.times[d])||base;
       hh+='<div class="rut-hpd-row"><span>'+RUT_DN_LARGO[d]+'</span>'
-        +'<input class="ev-input" type="time" step="900" data-wd="'+d+'" value="'+v+'"></div>';
+        +'<input class="ev-input" type="text" readonly data-time-picker aria-haspopup="dialog" placeholder="Sin hora" data-wd="'+d+'" value="'+v+'"></div>';
     }
     cont.innerHTML=hh||'<div class="rut-vacio">Marca antes los d\u00edas de la semana</div>';
   }
