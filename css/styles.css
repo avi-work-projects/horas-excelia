@@ -1046,6 +1046,9 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 
 /* Fuente: css/source/birthdays.css */
 /* ── BIRTHDAYS ── */
+.bday-symbol{display:inline-block;width:22px;height:22px;vertical-align:middle;flex-shrink:0;color:var(--birthday-tone)}
+.bday-upcoming-icon .bday-symbol{width:24px;height:24px}
+.ev-btn-bday .bday-symbol{width:26px;height:26px}
 .data-btn.bday-active{color:var(--vacaciones)!important;border-radius:8px}
 .bday-hdr-sub{display:flex;align-items:stretch;padding:5px 6px;gap:5px;box-shadow:0 1px 0 var(--border);overflow-x:hidden}
 .bday-calendar{max-width:900px;margin:0 auto}
@@ -2833,6 +2836,24 @@ details[open]>summary{margin-bottom:10px}
 .home-birthday-more>summary{font-size:.75rem;margin-bottom:8px}
 .home-reminder-symbol{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;width:22px;height:20px;margin-right:7px}
 .home-reminder-symbol .ev-marker-up{margin:0;flex-shrink:0}
+.home-reminder-symbol .ev-management-mark{background:none;box-shadow:none;border-radius:0}
+.home-reminder-next-day{margin-top:14px}
+.home-birthday-line{display:flex;align-items:center;gap:7px;min-width:0}
+.home-birthday-collapse{display:none}
+.home-birthday-more[open]>summary{width:max-content;margin:0 0 6px auto;background:none;min-height:32px;padding:6px 42px 6px 8px!important;font-size:.68rem}
+.home-birthday-more[open] .home-birthday-expand{display:none}
+.home-birthday-more[open] .home-birthday-collapse{display:inline}
+.home-pending-tasks{border:1px solid var(--border);background:var(--surface2);border-radius:10px;padding:10px;margin:12px 0 18px;font-size:.75rem}
+.home-pending-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.home-pending-heading strong{font-size:.76rem}
+.home-pending-heading button{background:none;border:0;color:var(--accent-bright);font:inherit;font-size:.68rem;padding:5px 0;cursor:pointer;white-space:nowrap}
+.home-pending-tasks ul{padding-left:18px;margin:7px 0 0;color:var(--text-muted)}
+.home-pending-tasks li{padding:3px 0;overflow-wrap:anywhere}
+.home-pending-tasks p{margin:7px 0 0;color:var(--text-muted);font-size:.7rem}
+.econ-tariff-settings .econ-equiv-metric{display:flex;flex-direction:column;gap:5px;min-width:90px;padding:8px 12px;background:var(--surface);border-radius:8px}
+.econ-equiv-metric small{font-family:var(--font);font-size:.67rem;color:var(--text-muted);font-weight:500}
+.econ-tariff-settings .econ-equiv-hourly{border-left:2px solid var(--border)}
+.econ-tariff-settings .econ-equiv-hour{font-size:1.08rem;line-height:1.65;color:var(--text-muted)}
 .home-reminder-symbol .ev-chip-flag{width:22px;height:16px}
 .home-reminder-asturias{display:flex;align-items:center;justify-content:center;border:1px solid #1689ed;border-radius:5px;padding:1px}
 

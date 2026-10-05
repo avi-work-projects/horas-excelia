@@ -14,11 +14,12 @@ var NAV_ICON_PATHS={
  estudio:'<path d="M5 4v16m14-16v16M3 8h4m10 8h4M9 7h5l-2-2m2 2-2 2M15 17h-5l2-2m-2 2 2 2"/>',
  home:'<path d="m3 11 9-8 9 8M5 10v10h5v-6h4v6h5V10"/>',
  events:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 10h18m-14 4h3m4 0h3m-10 4h3"/>',
- bday:'<path d="M4 13h16v7H4zM3 20h18M4 16c2 2 3-2 5 0s3-2 5 0 4-2 6 0M8 13V9m8 4V9m-4 4V7"/><path d="M8 6v.1M16 6v.1M12 4v.1"/>',
+ bday:'<path d="M4 12h16v8H4z" fill="currentColor" fill-opacity=".16"/><path d="M3 20h18M4 15c2 2 3-2 5 0s3-2 5 0 4-2 6 0M8 12V8m8 4V8m-4 4V6"/><path d="M8 5v.1M16 5v.1M12 3v.1"/>',
  alarm:'<path d="M5 17h14l-2-3V9a5 5 0 0 0-10 0v5zM10 20h4M12 2v2"/>'
 };
 function navIconHtml(key,style){
  if(!NAV_ICON_PATHS[key])return '';
+ if(key==='bday')return bdaySymbolHtml();
  if((style||NAV_ICON_STYLE)==='original')return '<img src="icon-'+key+'.png" class="btn-icon" alt="">';
  return '<svg class="nav-pro-icon nav-pro-'+key+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+NAV_ICON_PATHS[key]+'</svg>';
 }
@@ -62,4 +63,7 @@ function initMainNavigation(){
  var mount=document.getElementById('mainNavMount');if(!mount)return;
  mount.insertAdjacentHTML('beforebegin',NAV_MAIN_ITEMS.map(function(item){return '<button class="data-btn" id="'+item.id+'" title="'+item.title+'">'+navIconHtml(item.key)+'</button>';}).join(''));mount.remove();
  NAV_MAIN_ITEMS.forEach(function(item){document.getElementById(item.id).addEventListener('click',function(){navigateMain(item.key);});});
+}
+function bdaySymbolHtml(){
+ return '<svg class="bday-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+NAV_ICON_PATHS.bday+'</svg>';
 }

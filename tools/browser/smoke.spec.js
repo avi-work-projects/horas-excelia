@@ -434,7 +434,7 @@ test('iconos alternativos: seleccion, navegacion, persistencia y backup',async({
  }
  await page.locator('#eventsBtn').click();await expect(page.locator('#eventsOverlay .overlay-nav-bar .nav-pro-icon')).toHaveCount(6);
  await page.evaluate(()=>applyFullImport({navIconStyle:'original'},'merge'));await expect(page.locator('.data-actions .nav-pro-icon,.overlay-nav-bar .nav-pro-icon')).toHaveCount(0);
- await expect(page.locator('#evViewBday .nav-pro-bday')).toHaveCount(1);
+ await expect(page.locator('#evViewBday .bday-symbol')).toHaveCount(1);
  await page.evaluate(()=>applyFullImport({navIconStyle:'professional'},'merge'));await expect(page.locator('#eventsOverlay .overlay-nav-bar .nav-pro-icon')).toHaveCount(6);
 });
 
@@ -612,15 +612,15 @@ test('CSV: aviso persistente y horas en recordatorios',async({page})=>{
  await page.goto('/');
  await expect(page.locator('#homePopupContent')).toContainText('18:30');
  await expect(page.locator('#homePopupContent')).toContainText('09:15');
- await page.locator('#homePopupDismiss').click();
+ await page.locator('#homePopupClose').click();
  const download=page.waitForEvent('download');await page.locator('#csvExportBtn').click();await download;
  await page.evaluate(()=>{ST['2026-09-14']={type:'festivo'};save();});
  await expect(page.locator('#toast')).toContainText('CSV de 2026 desactualizado');
  await page.reload();await expect(page.locator('#homePopupContent')).toContainText('CSV de 2026 desactualizado');
- await page.locator('#homePopupDismiss').click();await page.reload();
+ await page.locator('#homePopupClose').click();await page.reload();
  await expect(page.locator('#homePopup')).toBeVisible();
  await page.screenshot({path:'.local-preview/csv-reminders.png',animations:'disabled'});
- await page.locator('#homePopupDismiss').click();
+ await page.locator('#homePopupClose').click();
  const second=page.waitForEvent('download');await page.locator('#csvExportBtn').click();await second;
  await page.reload();await expect(page.locator('#homePopup')).toBeHidden();
  // Cancelar compartir no sustituye el registro de lo exportado.

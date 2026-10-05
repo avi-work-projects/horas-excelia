@@ -1,128 +1,97 @@
-function homeReminderColor(ev){return getEvType(ev)==='Ensayos boda'?'#92334d':evTypeColor(getEvKind(ev),getEvType(ev));}
-/* ============================================================
-   HOME POPUP - Recordatorios al cargar la home (semanas sin
-   enviar, cumpleanos hoy/manana, VIP sin alarma, eventos hoy)
-   ============================================================ */
-/* ── Home Popup: semanas sin marcar + VIP sin alarma ── */
+/* Recordatorios: todas las ocurrencias de hoy/mañana y cumpleaños a siete días. */
+function homeReminderColor(ev){return ev._rut?getEvDisplayColor(ev):getEvType(ev)==='Ensayos boda'?'#92334d':evTypeColor(getEvKind(ev),getEvType(ev));}
 function homeReminderEventText(when,time,content,missingTime,ev){
   var marker=ev?(getEvType(ev)==='Asturias'?'<span class="home-reminder-asturias" style="background:'+fakeTrans(EV_TYPE_COLORS['grande|Asturias'],.65)+'">'+EV_FILTER_SHORT.Asturias+'</span>':evUpcomingMarkHtml(ev)):'&#128197;';
   return '<span class="home-reminder-text"><span class="home-reminder-symbol" aria-hidden="true">'+marker+'</span><strong class="home-reminder-when">'+escHtml(when)+(time?' · '+escHtml(time):(missingTime?' · Sin hora':''))+'</strong> <span class="home-reminder-content">'+escHtml(content)+'</span></span>';
 }
-function openHomePopup(){
-  var csvWarnings=csvPendingWarnings(new Date());
-  var routineWarnings=rutFlexWarnings(evDk(new Date()));
-  var pendingTasks=tasksReminder(new Date());
-  try{
-    if(sessionStorage.getItem('excelia-popup-dismissed')&&!csvWarnings.length&&!routineWarnings.length&&!pendingTasks.length)return;
-  }catch(e){}
+function homeReminderEvents(today){
+  var items=[];
+  for(var days=0;days<2;days++){
+    var date=new Date(today);date.setDate(date.getDate()+days);var ds=evDk(date);
+    getEventsOn(ds).forEach(function(ev){
+      if(ev.id&&ev.id.indexOf('ev-bday-vip-')===0)return; // Ya figuran en el bloque de cumpleaños.
+      var time=evTimeLabel(ev),content=ev.title||getEvType(ev),type=getEvType(ev);
+      if(isEvBarAlways(ev)){
+        var leg=ds===ev.start?'ida':ds===ev.end?'vuelta':null;
+        var tramo=evTramos(ev).filter(function(t){return t.k===leg;})[0];
+        time=tramo&&tramo.t.time||'';
+        if(ds!==ev.start)content=(ds===ev.end?'Fin · ':'En curso · ')+content;
+      }
+      if(type==='Ensayos boda'){
+        var pareja=ev.boda?bodaCouple(ev.boda.coupleId):null;
+        content=pareja?'Ensayo - '+pareja.name:'Ensayo sin pareja asignada';
+        if(!bodaPlaceOf(ev))content+=' · Sin sala';
+      }
+      if(ev._rutSkip)content+=' · Saltada';
+      items.push({days:days,time:time||'',type:'event',color:homeReminderColor(ev),text:homeReminderEventText(days===0?'Hoy':'Mañana',time,content,type==='Ensayos boda',ev)+bodaUltimoEnsayoHtml(ev)});
+    });
+  }
+  return items.sort(function(a,b){return a.days-b.days||Number(!!a.time)-Number(!!b.time)||a.time.localeCompare(b.time);});
+}
+function homeReminderTasksHtml(){
+  var pending=tasksItems(tasksData(),'pending');
+  var h='<section class="home-pending-tasks" aria-label="Tareas pendientes"><div class="home-pending-heading"><strong>Tareas pendientes</strong><button type="button" id="homeTasksOpen">Mis tareas'+(pending.length>2?' ('+pending.length+')':'')+' →</button></div>';
+  if(pending.length){h+='<ul>';pending.slice(0,2).forEach(function(t){h+='<li>'+escHtml(t.title)+'</li>';});h+='</ul>';}
+  else h+='<p>No tienes tareas pendientes.</p>';
+  return h+'</section>';
+}
+function homeReminderItemsHtml(items,birthdayCount){
+  var h='',count=0,group='',eventDay=null;
+  items.forEach(function(it){
+    var next=it.type==='vip'||it.type==='bday'?'birthdays':it.type==='event'?'events':'warnings';
+    if(next!==group){
+      if(group==='birthdays'&&count>2)h+='</details>';
+      if(group)h+='</section>';
+      h+='<section class="home-reminder-group" aria-label="'+({birthdays:'Cumpleaños',events:'Eventos',warnings:'Avisos'}[next])+'">';group=next;
+    }
+    if(group==='birthdays'&&++count===3)h+='<details class="home-birthday-more"><summary><span class="home-birthday-expand">Ver '+(birthdayCount-2)+' cumpleaños más</span><span class="home-birthday-collapse">Mostrar menos</span></summary>';
+    var dayBreak=group==='events'&&eventDay!==null&&eventDay!==it.days;
+    if(group==='events')eventDay=it.days;
+    h+='<div class="home-popup-item '+it.type+(dayBreak?' home-reminder-next-day':'')+'"'+(it.color?' style="--reminder-color:'+it.color+'"':'')+'>'+it.text+'</div>';
+  });
+  if(group==='birthdays'&&count>2)h+='</details>';
+  return h+(group?'</section>':'');
+}
+function closeHomePopup(){
+  document.getElementById('homePopup').style.display='none';
+  try{sessionStorage.setItem('excelia-popup-dismissed','1');}catch(e){}
+}
+function openHomePopup(force){
+  var csvWarnings=csvPendingWarnings(new Date()),routineWarnings=rutFlexWarnings(evDk(new Date())),pendingTasks=tasksReminder(new Date());
+  try{if(!force&&sessionStorage.getItem('excelia-popup-dismissed')&&!csvWarnings.length&&!routineWarnings.length&&!pendingTasks.length)return;}catch(e){}
   var items=csvWarnings.map(function(it){return {type:'warn',text:'&#9888; '+escHtml(it.text)};});
   routineWarnings.forEach(function(it){items.push({type:'warn',text:'&#128197; '+escHtml(it.text)});});
-  if(pendingTasks.length)items.push({type:'tasks-reminder',text:'<button type="button" id="homeTasksOpen"><strong>'+pendingTasks.length+' tareas pendientes esta semana</strong><span>'+pendingTasks.slice(0,3).map(function(t){return escHtml(t.title);}).join(' · ')+(pendingTasks.length>3?'…':'')+'</span><b>Ver tareas</b></button>'});
-  // Semanas sin enviar: 2 anteriores + actual + 3 siguientes
   var today=new Date();today.setHours(0,0,0,0);
-  var dow=today.getDay();var off=dow===0?6:dow-1;
+  var dow=today.getDay(),off=dow===0?6:dow-1;
   var thisMon=new Date(today);thisMon.setDate(thisMon.getDate()-off);
   for(var w=-2;w<=3;w++){
     var d=new Date(thisMon);d.setDate(d.getDate()+w*7);
-    var key=dk(d);
-    if(SW[key])continue; // Ya enviada
-    // ¿Tiene días laborables no-festivos?
+    if(SW[dk(d)])continue;
     var hasWork=false;
     for(var di=0;di<5;di++){
-      var wd=new Date(d);wd.setDate(wd.getDate()+di);
-      var t=dayT(wd);
+      var wd=new Date(d);wd.setDate(wd.getDate()+di);var t=dayT(wd);
       if(t==='normal'||t==='vacaciones'||t==='ausencia'){hasWork=true;break;}
     }
-    if(!hasWork)continue;
-    var lbl='Semana del '+String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');
-    items.push({type:'warn',text:'&#128221; <strong>'+lbl+'</strong> sin enviar'});
+    if(hasWork){var label='Semana del '+String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');items.push({type:'warn',text:'&#128221; <strong>'+label+'</strong> sin enviar'});}
   }
-  // Todos los cumpleanos hasta dentro de 7 dias, solo si falta la alarma.
-  if(typeof BDAYS!=='undefined'&&BDAYS.length){
-    var birthdays=[];
-    BDAYS.forEach(function(b){
-      var bd=new Date(today.getFullYear(),b.month-1,b.day);
-      if(bd<today)bd.setFullYear(today.getFullYear()+1);
-      var diff=Math.round((bd-today)/86400000);
-      if(diff>7||(typeof isBdayAlarmSet==='function'&&isBdayAlarmSet(b)))return;
-      var when=diff===0?' (hoy)':diff===1?' (ma\u00f1ana)':' (en '+diff+'d)';
-      birthdays.push({days:diff,type:b.vip?'vip':'bday',text:'<span>'+(b.vip?'&#11088; ':'&#127874; ')+'<strong>'+escHtml(b.name)+'</strong>'+when+' - sin alarma</span>'});
-    });
-  }
-  if(typeof birthdays!=='undefined'){
-    birthdays.sort(function(a,b){return a.days-b.days||(a.type==='vip'?0:1)-(b.type==='vip'?0:1);});
-    items=items.concat(birthdays);
-  }
-  // Eventos hoy o mañana (inicio) + fin de eventos largos (>7 días)
-  if(typeof EVENTS!=='undefined'&&EVENTS.length){
-    var eventItems=[];
-    EVENTS.forEach(function(ev){
-      if(!ev.start)return;
-      if(ev.id&&ev.id.indexOf('ev-bday-vip-')===0)return; // ya cubiertos por BDAYS
-      var evStart=new Date(ev.start+'T00:00:00');
-      var diff=Math.round((evStart-today)/86400000);
-      if(diff===0||diff===1){
-        var time=evTimeLabel(ev),contenido=ev.title||getEvType(ev);
-        if(isEvBarAlways(ev)){var ida=evTramos(ev).filter(function(tr){return tr.k==='ida';})[0];time=ida&&ida.t.time||'';}
-        if(getEvType(ev)==='Ensayos boda'){
-          var pareja=typeof bodaCouple==='function'&&ev.boda?bodaCouple(ev.boda.coupleId):null;
-          contenido=pareja?'Ensayo - '+pareja.name:'Ensayo sin pareja asignada';
-          if(!bodaPlaceOf(ev))contenido+=' · Sin sala';
-        }
-        eventItems.push({days:diff,time:time||'',type:'event',color:homeReminderColor(ev),text:homeReminderEventText(diff===0?'Hoy':'Mañana',time,contenido,getEvType(ev)==='Ensayos boda',ev)+bodaUltimoEnsayoHtml(ev)});
-      }
-      // Fin de eventos de más de 7 días
-      if(ev.end&&ev.end>ev.start){
-        var evEnd=new Date(ev.end+'T00:00:00');
-        var span=Math.round((evEnd-evStart)/86400000);
-        if(span>7){
-          var diffEnd=Math.round((evEnd-today)/86400000);
-          if(diffEnd===0||diffEnd===1){
-            var vuelta=evTramos(ev).filter(function(tr){return tr.k==='vuelta';})[0];
-            var endTime=vuelta&&vuelta.t.time||'';
-            eventItems.push({days:diffEnd,time:endTime,type:'event',color:homeReminderColor(ev),text:homeReminderEventText(diffEnd===0?'Hoy':'Mañana',endTime,'Fin - '+ev.title,false,ev)});
-          }
-        }
-      }
-    });
-  }
-  if(typeof eventItems!=='undefined'){
-    // Sin hora primero; en cada grupo, fecha y hora de inicio (o vuelta).
-    eventItems.sort(function(a,b){return Number(!!a.time)-Number(!!b.time)||a.days-b.days||a.time.localeCompare(b.time);});
-    items=items.concat(eventItems);
-  }
-  if(!items.length)return;
-  var content=document.getElementById('homePopupContent');
-  if(!content)return;
-  var html='<div class="home-popup-title">&#128276; Recordatorios</div>';
-  var bdayCount=0,group='';
-  items.forEach(function(it){
-    var nextGroup=it.type==='vip'||it.type==='bday'?'birthdays':it.type==='event'?'events':'warnings';
-    if(nextGroup!==group){
-      if(group==='birthdays'&&bdayCount>2)html+='</details>';
-      if(group)html+='</section>';
-      html+='<section class="home-reminder-group" aria-label="'+({birthdays:'Cumpleaños',events:'Eventos',warnings:'Avisos'}[nextGroup])+'">';group=nextGroup;
-    }
-    if(group==='birthdays'&&++bdayCount===3)html+='<details class="home-birthday-more"><summary>Ver '+(birthdays.length-2)+' cumpleaños más</summary>';
-    html+='<div class="home-popup-item '+it.type+'"'+(it.color?' style="--reminder-color:'+it.color+'"':'')+'>'+it.text+'</div>';
+  var birthdays=[];
+  BDAYS.forEach(function(b){
+    var bd=new Date(today.getFullYear(),b.month-1,b.day);if(bd<today)bd.setFullYear(today.getFullYear()+1);
+    var diff=Math.round((bd-today)/86400000);if(diff>7)return;
+    var when=diff===0?' (hoy)':diff===1?' (mañana)':' (en '+diff+'d)';
+    birthdays.push({days:diff,type:b.vip?'vip':'bday',text:'<span class="home-birthday-line">'+(b.vip?'&#11088; ':bdaySymbolHtml())+'<span><strong>'+escHtml(b.name)+'</strong>'+when+' · '+(isBdayAlarmSet(b)?'alarma creada':'sin alarma')+'</span></span>'});
   });
-  if(group==='birthdays'&&bdayCount>2)html+='</details>';
-  html+='</section>';
-  content.innerHTML=html;
+  birthdays.sort(function(a,b){return a.days-b.days||(a.type==='vip'?0:1)-(b.type==='vip'?0:1);});
+  items=items.concat(birthdays,homeReminderEvents(today));
+  if(!force&&!items.length&&!pendingTasks.length)return;
+  var content=document.getElementById('homePopupContent');if(!content)return;
+  content.innerHTML='<div class="home-popup-title">&#128276; Recordatorios</div>'+homeReminderTasksHtml()+homeReminderItemsHtml(items,birthdays.length);
   document.getElementById('homePopup').style.display='flex';
   if(pendingTasks.length)tasksReminderSeen(new Date());
-  var tasksButton=document.getElementById('homeTasksOpen');if(tasksButton)tasksButton.onclick=function(){dismissPopup();openTasks();};
-  function dismissPopup(){
-    document.getElementById('homePopup').style.display='none';
-    try{sessionStorage.setItem('excelia-popup-dismissed','1');}catch(e){}
-  }
-  var closeBtn=document.getElementById('homePopupClose');
-  var dismissBtn=document.getElementById('homePopupDismiss');
-  if(closeBtn)closeBtn.onclick=dismissPopup;
-  if(dismissBtn)dismissBtn.onclick=dismissPopup;
+  var tasksButton=document.getElementById('homeTasksOpen');if(tasksButton)tasksButton.onclick=function(){closeHomePopup();openTasks();};
+  var closeBtn=document.getElementById('homePopupClose');if(closeBtn)closeBtn.onclick=closeHomePopup;
 }
 openHomePopup();
-// Al volver a la PWA, los CSV pendientes siguen necesitando atencion.
 document.addEventListener('visibilitychange',function(){
   if(document.visibilityState==='visible'&&(csvPendingWarnings(new Date()).length||tasksReminder(new Date()).length))openHomePopup();
 });

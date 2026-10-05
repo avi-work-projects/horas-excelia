@@ -41,7 +41,7 @@ test('acceso de tareas: margen inferior, ocultar por arrastre, persistir y recup
   await page.mouse.move(bin.x+bin.width/2,bin.y+bin.height/2,{steps:10});await expect(page.locator('#tasksDropZone')).toHaveClass(/tasks-drop-ready/);await page.mouse.up();await expect(fab).toBeHidden();
  }
  const r=await fab.boundingBox(),v=page.viewportSize();expect(v.width-r.x-r.width).toBeGreaterThanOrEqual(16);expect(v.height-r.y-r.height).toBeGreaterThanOrEqual(18);expect(v.height-r.y-r.height).toBeLessThan(50);
- await hide();await page.reload();await page.locator('#homePopupDismiss').click();await expect(fab).toBeHidden();
+ await hide();await page.reload();await page.locator('#homePopupClose').click();await expect(fab).toBeHidden();
  // El gesto no modifica zoom ni tareas; no se cancela la acción nativa del navegador.
  await page.evaluate(()=>{
   function touch(x,id){return new Touch({identifier:id,target:document.body,clientX:x,clientY:300});}

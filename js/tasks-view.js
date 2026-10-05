@@ -5,7 +5,7 @@ function renderTasks(data,view){
   var items=view==='pending'?tasksPendingRows(data):tasksItems(data,'done'),pending=tasksItems(data,'pending').length;
   var checked=tasksPendingRows(data).filter(function(t){return t.completedAt!==null;}).length;
   var h='<div class="tasks-overlay" id="tasksOverlay"><section class="tasks-sheet" role="dialog" aria-modal="true" aria-labelledby="tasksTitle">';
-  h+='<header class="tasks-header"><span class="tasks-heading-icon">'+TASKS_ICON+'</span><div><h2 id="tasksTitle">Mis tareas</h2><p>'+pending+' pendiente'+(pending===1?'':'s')+'</p></div><button type="button" class="sy-back" id="tasksClose" aria-label="Cerrar tareas">×</button></header>';
+  h+='<header class="tasks-header"><span class="tasks-heading-icon">'+TASKS_ICON+'</span><div><h2 id="tasksTitle">Mis tareas</h2><p>'+pending+' pendiente'+(pending===1?'':'s')+'</p></div><button type="button" class="tasks-reminders-button" id="tasksReminders">Recordatorios</button><button type="button" class="sy-back" id="tasksClose" aria-label="Cerrar tareas">×</button></header>';
   h+='<div class="tasks-tabs" role="tablist" aria-label="Estado de las tareas">';
   [['pending','Pendientes'],['done','Completadas']].forEach(function(v){h+='<button type="button" role="tab" aria-selected="'+(view===v[0])+'" data-tasks-view="'+v[0]+'" class="'+(view===v[0]?'active':'')+'">'+v[1]+' <span>'+tasksItems(data,v[0]).length+'</span></button>';});
   h+='</div>';
@@ -81,6 +81,7 @@ function renderTasksPanel(){
   if(!wrap)return;
   document.getElementById('tasksList').scrollTop=scroll;
   document.getElementById('tasksClose').onclick=closeTasks;
+  document.getElementById('tasksReminders').onclick=function(){closeTasks();openHomePopup(true);};
   wrap.querySelectorAll('[data-tasks-view]').forEach(function(b){b.onclick=function(){TASKS_VIEW=b.dataset.tasksView;TASKS_EDIT=null;TASKS_DATE_CHOICE=null;document.getElementById('tasksList').scrollTop=0;renderTasksPanel();document.querySelector('[data-tasks-view="'+TASKS_VIEW+'"]').focus();};});
   var add=document.getElementById('tasksAdd');if(add)add.onsubmit=function(e){e.preventDefault();tasksPerform(function(){tasksCreate(document.getElementById('tasksNew').value);TASKS_EDIT=null;},'Tarea añadida');document.getElementById('tasksNew').focus();document.getElementById('tasksList').scrollTop=document.getElementById('tasksList').scrollHeight;};
   var move=document.getElementById('tasksMoveCompleted');if(move)move.onclick=function(){

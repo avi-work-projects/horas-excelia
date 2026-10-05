@@ -65,7 +65,7 @@ test('color de gimnasio, detalle del hogar e iconos viajan en la copia de seguri
  await page.locator('[data-icon-style="professional"]').click();await page.locator('#navIconPickerClose').click();
  await expect(page.locator('#householdBtn .nav-pro-household')).toBeVisible();
  await expect(page.locator('.data-actions .nav-pro-bday,.overlay-nav-bar .nav-pro-bday')).toHaveCount(0);
- await expect(page.locator('#evViewBday .nav-pro-bday')).toHaveCount(1);
+ await expect(page.locator('#evViewBday .bday-symbol')).toHaveCount(1);
  await page.locator('#menuBtn').click();const pending=page.waitForEvent('download');await page.locator('#exportAllBtn').click();const file=await pending;
  const data=JSON.parse(require('fs').readFileSync(await file.path(),'utf8'));
  expect(data.routineAppearance).toEqual({gymColor:'#38bdf8'});expect(data.householdTab).toBe('resumen');

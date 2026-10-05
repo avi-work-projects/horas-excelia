@@ -201,7 +201,7 @@ function bindBdayAlarmEvents(b){
     var h2=isNaN(h2r)?(isToday?18:9):Math.min(23,Math.max(0,h2r));
     var m2r=parseInt(document.getElementById('bdAlarmM2').value,10);
     var m2=isNaN(m2r)?2:Math.min(59,Math.max(0,m2r));
-    var msgDay='\uD83C\uDF82 Cumple '+tc(b.name)+'! '+String(b.day).padStart(2,'0')+'/'+String(b.month).padStart(2,'0');
+    var msgDay='Cumple '+tc(b.name)+'! '+String(b.day).padStart(2,'0')+'/'+String(b.month).padStart(2,'0');
     var base=normalizeMacroBase(alarmUrl);
     var dayBd=(isToday?today2:bdDate2).getDay()+1;
     var url2=base+'/generar_alarma2?alarmH='+h2+'&alarmM='+m2+'&alarmMsg='+encodeURIComponent(msgDay)+'&alarmDays='+dayBd;

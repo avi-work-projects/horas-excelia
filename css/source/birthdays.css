@@ -1,4 +1,7 @@
 /* ── BIRTHDAYS ── */
+.bday-symbol{display:inline-block;width:22px;height:22px;vertical-align:middle;flex-shrink:0;color:var(--birthday-tone)}
+.bday-upcoming-icon .bday-symbol{width:24px;height:24px}
+.ev-btn-bday .bday-symbol{width:26px;height:26px}
 .data-btn.bday-active{color:var(--vacaciones)!important;border-radius:8px}
 .bday-hdr-sub{display:flex;align-items:stretch;padding:5px 6px;gap:5px;box-shadow:0 1px 0 var(--border);overflow-x:hidden}
 .bday-calendar{max-width:900px;margin:0 auto}

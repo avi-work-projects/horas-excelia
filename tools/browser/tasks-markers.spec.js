@@ -34,7 +34,7 @@ test('tareas: marcar sin retirar, mover, reabrir y conservar en backup',async({p
   const [download]=await Promise.all([page.waitForEvent('download'),page.locator('#exportAllBtn').click()]);
   const data=JSON.parse(require('fs').readFileSync(await download.path(),'utf8'));
   expect(data.tasks.items).toHaveLength(3);expect(data.tasks.items[0].title).toBe('Colgar cuadro');expect(data.tasks.items[0].completedAt).not.toBeNull();
-  await page.reload();await page.locator('#homePopupDismiss').click();
+  await page.reload();await page.locator('#homePopupClose').click();
   await page.locator('#tasksFab').click();await expect(page.getByRole('tab',{name:'Completadas 1',exact:true})).toBeVisible();
   await expect(page.locator('.task-row')).toHaveCount(2);
   await expect(page.getByRole('tab')).toHaveCount(2);
@@ -50,8 +50,8 @@ test('el historial agrupa por día y permite conservar la fecha al volver a comp
     ],weeklyReminder:false,reminderWeek:''}));
   });
   await page.goto('/');
-  await expect(page.locator('#homeTasksOpen')).toContainText('Comprar material');
-  await page.locator('#homePopupDismiss').click();
+  await expect(page.locator('.home-pending-tasks')).toContainText('Comprar material');
+  await page.locator('#homePopupClose').click();
   await page.locator('#tasksFab').click();
   await page.getByRole('tab',{name:'Completadas 2',exact:true}).click();
   await expect(page.locator('.tasks-day time')).toHaveText(['1 de octubre de 2026','30 de septiembre de 2026']);
@@ -82,9 +82,9 @@ test('el botón se arrastra libre y se recoge al navegar; recordatorio solo una 
   await expect(fab).not.toHaveClass(/tasks-docked/);await expect(page.locator('#tasksOverlay')).toBeHidden();
   const position=await fab.boundingBox();expect(position.x).toBeGreaterThan(40);expect(position.y).toBeLessThan(500);
   await page.locator('#eventsBtn').click();await expect(fab).toHaveClass(/tasks-docked/);await expect(fab).toHaveAttribute('data-side','right');
-  await page.reload();await expect(page.locator('#homeTasksOpen')).toContainText('Tarea semanal');await page.locator('#homePopupDismiss').click();
+  await page.reload();await expect(page.locator('.home-pending-tasks')).toContainText('Tarea semanal');await page.locator('#homePopupClose').click();
   await page.reload();await expect(page.locator('#homeTasksOpen')).toHaveCount(0);
-  await page.clock.setFixedTime(new Date('2026-10-05T10:00:00'));await page.reload();await expect(page.locator('#homeTasksOpen')).toContainText('Tarea semanal');
+  await page.clock.setFixedTime(new Date('2026-10-05T10:00:00'));await page.reload();await expect(page.locator('.home-pending-tasks')).toContainText('Tarea semanal');
 });
 test('raquetas compuestas, VIP compacto y categorías de gestión con color fijo',async({page})=>{
   await page.addInitScript(()=>{
@@ -105,4 +105,30 @@ test('raquetas compuestas, VIP compacto y categorías de gestión con color fijo
   await expect(page.getByRole('region',{name:'Rec. Gestiones',exact:true}).locator('.ev-category-children .ev-type-name')).toHaveText(['Llamada','Peluquería','Médico','Dentista']);
   await page.locator('[data-type="Dentista"]').click();await expect(page.locator('#evFColorSection')).toBeHidden();await expect(page.locator('#evFTitle')).toHaveValue('Dentista');await page.locator('#evFSave').click();
   await page.locator('#evViewCal').click();await expect(page.locator('.ev-shape-tooth')).toBeVisible();
+});
+test('recordatorios: acceso desde tareas, dos pendientes, cumpleaños plegables y todas las ocurrencias',async({page})=>{
+ await page.addInitScript(()=>{
+  const now=Date.now();
+  localStorage.setItem('excelia-tasks-v1',JSON.stringify({items:['Primera tarea','Segunda tarea','Tercera tarea'].map((title,i)=>({id:'pending'+i,title,createdAt:now,updatedAt:now,completedAt:null,deletedAt:null})),weeklyReminder:false,reminderWeek:'2026-09-28'}));
+  localStorage.setItem('excelia-bdays-v1',JSON.stringify([{name:'Primera cumple',day:1,month:10},{name:'Segunda cumple',day:2,month:10},{name:'Tercera cumple',day:3,month:10}]));
+  localStorage.setItem('excelia-events-v1',JSON.stringify([{id:'rec',kind:'puntual',type:'Rec. Gestiones',title:'Gestión repetida',start:'2026-09-24',repeat:{type:'weekly',weekDays:[4]}},{id:'tomorrow',kind:'puntual',type:'Plan/Quedada',title:'Plan de mañana',start:'2026-10-02',color:'#fb923c'}]));
+  localStorage.setItem('excelia-rutinas-v1',JSON.stringify([{id:'gym',name:'Rutina de prueba',icon:'gym',color:'#ff8800',start:'2026-09-01',weekDays:[4],time:'17:00',dur:60}]));
+ });
+ await page.goto('/');await page.locator('#tasksFab').click();
+ await expect(page.locator('#tasksReminders')).toBeVisible();
+ await page.locator('#tasksReminders').click();await expect(page.locator('#homePopup')).toBeVisible();
+ await expect(page.getByRole('button',{name:'Entendido',exact:true})).toHaveCount(0);
+ await expect(page.locator('.home-pending-tasks li')).toHaveText(['Primera tarea','Segunda tarea']);
+ await expect(page.locator('#homePopupContent')).toContainText('Gestión repetida');
+ await expect(page.locator('#homePopupContent')).toContainText('Rutina de prueba');
+ await expect(page.locator('.home-reminder-next-day')).toContainText('Plan de mañana');
+ await expect(page.locator('.home-reminder-symbol .ev-management-mark')).toHaveCSS('box-shadow','none');
+ const third=page.locator('.home-popup-item').filter({hasText:'Tercera cumple'});
+ await expect(third).toBeHidden();await page.locator('.home-birthday-more > summary').click();await expect(third).toBeVisible();
+ await expect(page.locator('.home-birthday-expand')).toBeHidden();await expect(page.locator('.home-birthday-collapse')).toBeVisible();
+ await page.locator('.home-birthday-more > summary').click();await expect(third).toBeHidden();
+ await page.locator('#homeTasksOpen').click();await expect(page.locator('#tasksOverlay')).toBeVisible();await expect(page.locator('.task-title')).toHaveCount(3);
+ await page.locator('#tasksReminders').click();await expect(page.locator('#homePopup')).toBeVisible();await page.locator('#homePopupClose').click();
+ await page.locator('#econBtn').click();await expect(page.locator('.econ-equiv-metric').first()).toContainText('Por día');
+ await expect(page.locator('.econ-equiv-hourly')).toContainText('Por hora');await expect(page.locator('.econ-equiv-val')).not.toContainText(',');
 });
