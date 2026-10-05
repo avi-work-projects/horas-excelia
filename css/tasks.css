@@ -25,7 +25,9 @@
 .tasks-heading-icon svg{width:28px;height:28px}
 .tasks-header h2{margin:0;font-size:1.06rem;line-height:1.25}
 .tasks-header p{margin:3px 0 0;color:var(--text-muted);font-size:.7rem}
-.tasks-header>.sy-back{margin-left:auto}
+.tasks-header>.sy-back{margin-left:0}
+.tasks-reminders-button{margin-left:auto;flex-shrink:0;border:1px solid color-mix(in srgb,var(--c-orange) 45%,var(--border));background:color-mix(in srgb,var(--c-orange) 10%,var(--surface));color:var(--c-orange);border-radius:9px;padding:7px 8px;font:inherit;font-size:.64rem;cursor:pointer}
+@media(max-width:380px){.tasks-header{gap:8px;padding-left:14px;padding-right:14px}.tasks-heading-icon{width:30px;height:34px;flex-shrink:0}.tasks-heading-icon svg{width:22px;height:22px}.tasks-header h2{font-size:.93rem}.tasks-reminders-button{font-size:.59rem;padding:7px 5px}}
 .tasks-tabs{display:flex;gap:6px;margin:0 20px 16px;background:var(--surface2);border-radius:12px;padding:4px}
 .tasks-tabs button{flex:1;min-width:0;padding:9px 2px;border:0;border-radius:9px;background:none;color:var(--text-muted);font:inherit;font-size:.72rem;cursor:pointer}
 .tasks-tabs button.active{background:var(--surface);color:var(--tasks-accent);box-shadow:0 1px 4px #0002;font-weight:600}

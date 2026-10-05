@@ -257,8 +257,9 @@ function renderEconResumen(){
   var eqRate=e.totalDays>0?Math.round(e.totBase/e.totalDays*100)/100:DAILY_RATE;
   var eqHourly=e.totalHours>0?Math.round(e.totBase/e.totalHours*100)/100:hourlyRate;
   h+='<div class="sy-section econ-tariff-settings"><details id="ecTariffDetails"'+(ECON_TARIFF_OPEN?' open':'')+'><summary>';
-  h+='<span class="econ-equiv-rate"><span class="econ-equiv-label">'+(ECON_RATE_MODE==='salary'?'Salario bruto anual':'Tarifa equivalente')+'</span><span class="econ-equiv-val">'+(ECON_RATE_MODE==='salary'?fc(window._ECON_SALARY||0):fc(eqRate)+'/día')+'</span>';
-  if(ECON_RATE_MODE!=='salary')h+='<span class="econ-equiv-hour">'+fc(eqHourly)+'/hora</span>';
+  h+='<span class="econ-equiv-rate"><span class="econ-equiv-label">'+(ECON_RATE_MODE==='salary'?'Salario bruto anual':'Tarifa equivalente')+'</span>';
+  if(ECON_RATE_MODE==='salary')h+='<span class="econ-equiv-val">'+fc(window._ECON_SALARY||0)+'</span>';
+  else h+='<span class="econ-equiv-metric"><small>Por día</small><b class="econ-equiv-val">'+Math.round(eqRate).toLocaleString('es-ES')+'&#8364;</b></span><span class="econ-equiv-metric econ-equiv-hourly"><small>Por hora</small><b class="econ-equiv-hour">'+fc(eqHourly)+'</b></span>';
   h+='</span></summary><div class="econ-tariff-controls">';
   /* Selector de modo */
   h+='<div class="econ-opt-row" style="margin-bottom:8px">';

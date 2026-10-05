@@ -548,14 +548,14 @@ REGLAS.push(['finas: apiladas con altura original solo durante coincidencia',fun
   });
 }]);
 
-REGLAS.push(['inicio: todos los cumpleanos a 7 dias sin alarma',function(){
+REGLAS.push(['inicio: todos los cumpleanos a 7 dias, con o sin alarma',function(){
   const ctx=cargarApp(claves),content={innerHTML:''};
   ctx.BDAYS=[{name:'Normal cercano',month:8,day:28},{name:'VIP cercano',month:8,day:22,vip:true},{name:'Ya avisado',month:8,day:21},{name:'Fuera plazo',month:8,day:29}];
   ctx.isBdayAlarmSet=b=>b.name==='Ya avisado';
   ctx.sessionStorage={getItem:()=>null};
   ctx.document.getElementById=id=>id==='homePopupContent'?content:id==='homePopup'?{style:{}}:null;
   require('vm').runInContext(fs.readFileSync(path.join(RAIZ,'js/home-popup.js'),'utf8'),ctx);
-  return content.innerHTML.includes('Normal cercano')&&content.innerHTML.includes('VIP cercano')&&!content.innerHTML.includes('Ya avisado')&&!content.innerHTML.includes('Fuera plazo');
+  return content.innerHTML.includes('Normal cercano')&&content.innerHTML.includes('VIP cercano')&&content.innerHTML.includes('Ya avisado')&&content.innerHTML.includes('alarma creada')&&!content.innerHTML.includes('Fuera plazo');
 }]);
 
 REGLAS.push(['inicio: ensayo con fecha, hora y pareja actual; sin hora explicita',function(){
@@ -584,7 +584,7 @@ REGLAS.push(['inicio: tres semanas futuras, dos cumpleaños próximos visibles y
   ctx.sessionStorage={getItem:()=>null};
   ctx.document.getElementById=id=>id==='homePopupContent'?content:id==='homePopup'?{style:{}}:null;
   require('vm').runInContext(fs.readFileSync(path.join(RAIZ,'js/home-popup.js'),'utf8'),ctx);
-  const html=content.innerHTML,order=['VipHoy','NormalHoy','VipLejano','SinHoraHoy','SinHoraManana','TempranoHoy','TardeHoy','TempranoManana'];
+  const html=content.innerHTML,order=['VipHoy','NormalHoy','VipLejano','SinHoraHoy','TempranoHoy','TardeHoy','SinHoraManana','TempranoManana'];
   return html.includes('Semana del 07/09</strong> sin enviar')&&!html.includes('Semana del 14/09</strong> sin enviar')
     &&html.indexOf('NormalHoy')<html.indexOf('<details class="home-birthday-more">')
     &&html.indexOf('<details class="home-birthday-more">')<html.indexOf('VipLejano')
@@ -593,6 +593,30 @@ REGLAS.push(['inicio: tres semanas futuras, dos cumpleaños próximos visibles y
     &&ctx.EVENTS[0].title==='TardeHoy'&&ctx.BDAYS[0].name==='NormalHoy';
 }]);
 
+REGLAS.push(['recordatorios: ocurrencias repetidas, multidía, viajes en curso y rutinas sin duplicar cumpleaños',function(){
+  const ctx=cargarApp(claves),content={innerHTML:''};
+  ctx.BDAYS=[];ctx.RUTINAS=[];
+  ctx.EVENTS=[
+    {id:'weekly',kind:'puntual',type:'Rec. Gestiones',title:'Repetición',start:'2026-08-01',repeat:{type:'weekly',weekDays:[5]}},
+    {id:'dates',kind:'puntual',type:'Otros',title:'Multidía',start:'2026-08-01',dates:['2026-08-21','2026-08-22']},
+    {id:'trip',kind:'grande',type:'Viaje',title:'Viaje en curso',start:'2026-08-20',end:'2026-08-22'},
+    {id:'ev-bday-vip-test',title:'VIP duplicado',start:'2026-08-21'}
+  ];
+  ctx.rutEventsOn=ds=>ds==='2026-08-21'?[{id:'rut-test',kind:'puntual',type:'Rutina',title:'Gimnasio',start:ds,_rut:{icon:'gym'},_rutTime:'09:00',_rutDur:60,color:'#ff8800'}]:[];
+  ctx.sessionStorage={getItem:()=>null};ctx.document.getElementById=id=>id==='homePopupContent'?content:id==='homePopup'?{style:{}}:null;
+  require('vm').runInContext(fs.readFileSync(path.join(RAIZ,'js/home-popup.js'),'utf8'),ctx);
+  const items=ctx.homeReminderEvents(new ctx.Date('2026-08-21T00:00:00'));
+  return items.length===6&&items.filter(x=>x.text.includes('Multidía')).length===2&&items.some(x=>x.text.includes('Repetición'))&&items.some(x=>x.text.includes('Gimnasio'))&&items.some(x=>x.text.includes('Fin · Viaje en curso'))&&!items.some(x=>x.text.includes('VIP duplicado'));
+}]);
+REGLAS.push(['recordatorios: acceso manual tras cerrar y bloque de tareas siempre presente',function(){
+  const ctx=cargarApp(claves),content={innerHTML:''};
+  ctx.sessionStorage={getItem:()=> '1'};ctx.tasksReminder=()=>[];ctx.csvPendingWarnings=()=>[];ctx.rutFlexWarnings=()=>[];
+  ctx.document.getElementById=id=>id==='homePopupContent'?content:id==='homePopup'?{style:{}}:null;
+  require('vm').runInContext(fs.readFileSync(path.join(RAIZ,'js/home-popup.js'),'utf8'),ctx);
+  if(content.innerHTML)return false;
+  ctx.openHomePopup(true);
+  return content.innerHTML.includes('Tareas pendientes')&&content.innerHTML.includes('homeTasksOpen');
+}]);
 REGLAS.push(['swipe proximos: orden, extremos y modal protegido',function(){
   const ctx=cargarApp(claves),handlers={},el={addEventListener:(name,fn)=>{handlers[name]=fn;}};
   require('vm').runInContext(fs.readFileSync(path.join(RAIZ,'js/events-bind.js'),'utf8'),ctx);

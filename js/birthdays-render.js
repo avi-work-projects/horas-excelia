@@ -49,7 +49,7 @@ function renderBdayUpcoming(){
       var bidxUp=BDAYS.indexOf(x.b);
       var iconHtml=isVip
         ?'<img src="./VIP.png" class="bday-upcoming-vip-img" alt="VIP">'
-        :'\uD83C\uDF82';
+        :bdaySymbolHtml();
       s+='<div class="bday-upcoming-item'+vipCls+(isT?' bday-today-item':'')+'" data-bday-idx="'+bidxUp+'" data-bday-name="'+escHtml(x.b.name)+'" data-bday-day="'+x.b.day+'" data-bday-month="'+x.b.month+'" data-diff="'+x.diff+'">';
       s+='<div class="bday-upcoming-icon" style="background:'+color+'22;border-color:'+color+'">'+iconHtml+'</div>';
       s+='<div class="bday-upcoming-info">';
