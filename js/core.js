@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v408 — rotores de hora y orden orientativo de planes';
+var APP_VERSION = 'v409 — horas, alarmas y cabeceras de cumpleaños';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

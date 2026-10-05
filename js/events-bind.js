@@ -424,7 +424,7 @@ function _bindEvListas(){
       /* Una sesion de rutina no vive en EVENTS: se recalcula desde su id. */
       if(!ev&&typeof rutEventFromId==='function'){
         var _rf=rutEventFromId(id);
-        if(_rf){openRutSesion(_rf.rutina,_rf.ds,_rf.key);return;}
+        if(_rf)ev=rutEventsOn(_rf.ds).find(function(session){return session.id===id;})||null;
       }
       if(!ev)return;
       // Cumpleaños VIP → panel de alarma de cumpleaños
