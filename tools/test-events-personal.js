@@ -57,7 +57,7 @@ for(const [type,time] of Object.entries({Brunch:'11:00',Bolos:'19:00',Cine:'20:0
 for(const type of ['Cumpleaños','Ping pong','Ver partido fútbol','Juegos de mesa','Ponencia'])assert.equal(a.evPlanReferenceTime(type),null);
 for(const type of ['Cumpleaños','Brunch','Bolos','Cine','Ping pong','Ver partido fútbol','Juegos de mesa','Ponencia']){
   assert(a.evIsPlan(type));assert(a.EV_TYPE_COLORS['puntual|'+type]);
-  assert(a.evShapeSvg(a.evFixedSymbol(type)).includes('fill="currentColor"'));
+  assert(a.evShapeSvg(a.evFixedSymbol(type)).includes(type==='Cine'?'fill="#202124"':'fill="currentColor"'));
 }
 // El bloque continuo queda reservado a viajes que ya han comenzado.
 a.EVENTS=[{id:'ongoing',kind:'grande',type:'Viaje',title:'En curso prueba',start:'2026-08-20',end:'2026-08-25'},

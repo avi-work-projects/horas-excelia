@@ -227,20 +227,20 @@
 ### js/events-management.js  _(32 líneas)_
 **Funciones:** evTaxBuildingSvg:1 · evUtilityHomeSvg:2 · evManagementShapeInner:4 · evManagementCheckable:17 · evManagementDate:18 · evManagementDone:19 · evManagementCheckHtml:20 · bindEvManagementCheck:25
 
-### js/events-picker-color.js  _(346 líneas)_
+### js/events-picker-color.js  _(347 líneas)_
 **Estado global:** EV_COLOR_GRID:6 · EV_COLOR_TYPES:25 · EV_MANAGEMENT_SUBTYPES:42 · EV_PLAN_SUBTYPES:43 · EV_KINDS:47 · EV_TYPE_COLORS:52 · EV_FREE_COLOR:92 · EV_FREE_SHAPE:93 · EV_FREE_DATES:96 · EV_BAR_SIZES:99 · EV_FREE_BARSIZE:100 · EV_DOT_SOLID:104 · EV_SHAPE_BW:131
 
-**Funciones:** evIsManagement:44 · evIsPlan:45 · evFixedSymbol:46 · evBarSize:105 · evBarSizeCls:111 · evTypeKey:112 · evTypeColor:113 · getEvKind:116 · evPlanShapeInner:132 · evShapeSvg:145 (!82) · evMorePlusSvg:227 · evTravelColor:236 · getEvType:242 · isEvBarAlways:251 · getEvDisplayColor:253 · _renderColorPicker:275 · _bindColorPicker:298 · updatePreview:308
+**Funciones:** evIsManagement:44 · evIsPlan:45 · evFixedSymbol:46 · evBarSize:105 · evBarSizeCls:111 · evTypeKey:112 · evTypeColor:113 · getEvKind:116 · evPlanShapeInner:132 · evShapeSvg:145 (!83) · evMorePlusSvg:228 · evTravelColor:237 · getEvType:243 · isEvBarAlways:252 · getEvDisplayColor:254 · _renderColorPicker:276 · _bindColorPicker:299 · updatePreview:309
 
 ### js/events-picker-date.js  _(103 líneas)_
 **Estado global:** MNS:10
 
 **Funciones:** openOtrosDatePicker:7 (!96) · _evDk:11 · _count:12 · _render:13 · _attach:54 · _rerender:85 · _close:93
 
-### js/events-plan-picker.js  _(62 líneas)_
+### js/events-plan-picker.js  _(67 líneas)_
 **Estado global:** EV_PLAN_PICK:2 · EV_QUICK_PLANS:3 · EV_PICKER_GROUPS:4
 
-**Funciones:** evPickerHas:8 · evPickerMoreIcon:9 · renderEvQuickPlans:10 · updateEvQuickPlan:16 · renderEvPlanOptions:22 · closeEvPlanPicker:29 · evPlanPickerKey:35 · openEvPlanPicker:38
+**Funciones:** evPickerHas:8 · evPickerMoreIcon:9 · evQuickSelection:10 · renderEvQuickPlans:13 · updateEvQuickPlan:20 · renderEvPlanOptions:27 · closeEvPlanPicker:34 · evPlanPickerKey:40 · openEvPlanPicker:43
 
 ### js/events-render.js  _(630 líneas)_
 **Estado global:** EV_LIST_TYPES:227
@@ -491,7 +491,7 @@
 **Rangos por prefijo de clase:**
 .bday-add:102-103 · .bday-badge:18-21 · .bday-buscar:64-66 · .bday-calendar:7-23 · .bday-cancel:49-50 · .bday-cell:11-105 · .bday-hdr:6-6 · .bday-header:24-33 · .bday-io:70-86 · .bday-list:36-60 · .bday-month:35-35 · .bday-num:15-15 · .bday-search:67-69 · .bday-symbol:2-2 · .bday-upcoming:3-101 · .bday-vip:26-47 · .bday-week:8-10 · .data-btn:5-5 · .ev-btn:4-4 · .ev-cell:106-123 · .ev-io:72-72 · .io-peligro:77-85 · .io-primaria:76-83 · .vip-no:44-45
 
-### css/source/event-calendar.css  _(354 líneas)_
+### css/source/event-calendar.css  _(361 líneas)_
 
 **Secciones:**
 
@@ -531,9 +531,10 @@
 - Dropdown de vista anual:294
 - Linea que separa los chips de eventos grandes de los puntuales:303
 - Planes: cuatro accesos y cuadrícula ampliada con confirmación fija.:328
+- La selección pertenece al grupo; el símbolo conserva su color propio.:355
 
 **Rangos por prefijo de clase:**
-.dp-actions:233-234 · .dp-counter:220-221 · .dp-day:228-232 · .dp-days:227-227 · .dp-grid:222-222 · .dp-handle:215-215 · .dp-hdr:216-216 · .dp-mhdr:225-226 · .dp-mname:224-224 · .dp-month:223-223 · .dp-overlay:211-214 · .dp-sheet:213-213 · .dp-title:217-217 · .dp-yearnav:218-219 · .ev-ann:266-302 · .ev-annual:19-324 · .ev-barsize:184-193 · .ev-category:95-114 · .ev-chip:310-310 · .ev-color:108-132 · .ev-dates:206-208 · .ev-detail:134-333 · .ev-edit:257-263 · .ev-filter:304-325 · .ev-hora:23-23 · .ev-io:264-264 · .ev-management:178-353 · .ev-otros:182-182 · .ev-picker:351-351 · .ev-plan:329-350 · .ev-quad:252-252 · .ev-sep:46-46 · .ev-shape:194-201 · .ev-type:89-111 · .ev-up:8-21 · .ev-upcoming:6-45 · .ev-viaje:24-32 · .ev-wk:33-87 · .sy-body:51-51 · .sy-puente:2-255
+.dp-actions:233-234 · .dp-counter:220-221 · .dp-day:228-232 · .dp-days:227-227 · .dp-grid:222-222 · .dp-handle:215-215 · .dp-hdr:216-216 · .dp-mhdr:225-226 · .dp-mname:224-224 · .dp-month:223-223 · .dp-overlay:211-214 · .dp-sheet:213-213 · .dp-title:217-217 · .dp-yearnav:218-219 · .ev-ann:266-302 · .ev-annual:19-324 · .ev-barsize:184-193 · .ev-category:95-114 · .ev-chip:310-310 · .ev-color:108-132 · .ev-dates:206-208 · .ev-detail:134-333 · .ev-edit:257-263 · .ev-filter:304-325 · .ev-hora:23-23 · .ev-io:264-264 · .ev-management:178-353 · .ev-otros:182-182 · .ev-picker:351-351 · .ev-plan:329-357 · .ev-quad:252-252 · .ev-quick:359-360 · .ev-sep:46-46 · .ev-shape:194-201 · .ev-type:89-358 · .ev-up:8-21 · .ev-upcoming:6-45 · .ev-viaje:24-32 · .ev-wk:33-87 · .sy-body:51-51 · .sy-puente:2-255
 
 ### css/source/navigation-alarms.css  _(115 líneas)_
 

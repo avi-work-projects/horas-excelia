@@ -132,9 +132,9 @@ var EV_SHAPE_BW = 2;
 function evPlanShapeInner(shape){
   var outline=' stroke="#000" '+evSymbolStroke(EV_SHAPE_BW)+' stroke-linejoin="round"';
   var shapes={
-    brunch:'<ellipse cy="3" rx="9" ry="5" fill="currentColor"'+outline+'/><path d="M-6,2 C-9,-4 -3,-7 0,-4 C6,-8 10,0 5,4 C1,8 -2,4 -6,2 Z" fill="#fff7df"'+outline+'/><circle cx="1" cy="0" r="3" fill="#f8bd36"/><path d="M-7,-7 Q-8,-9 -6,-10" fill="none" stroke="#000" stroke-width="1.2"/>',
+    brunch:'<ellipse cy="3" rx="9" ry="5" fill="currentColor"'+outline+'/><path d="M-6,2 C-9,-4 -3,-7 0,-4 C6,-8 10,0 5,4 C1,8 -2,4 -6,2 Z" fill="#fff7df"'+outline+'/><circle cx="1" cy="0" r="3" fill="#f8bd36"/>',
     bowling:'<path d="M3,-9 C-1,-9 0,-5 1,-3 C2,0 -2,3 0,8 H7 C9,3 5,0 6,-3 C7,-5 7,-9 3,-9 Z" fill="#fff5e3"'+outline+'/><path d="M1,-3 H6 M1,-1 H6" stroke="#d74756" stroke-width="1.5"/><circle cx="-4" cy="4" r="5" fill="currentColor"'+outline+'/><circle cx="-5" cy="2" r=".9"/><circle cx="-2.5" cy="2.5" r=".9"/><circle cx="-4" cy="4.5" r=".9"/>',
-    cinema:'<rect x="-9" y="-3" width="18" height="12" rx="1.5" fill="currentColor"'+outline+'/><path d="M-9,-3 L-10,-7 L7,-10 L8,-6 Z" fill="#e9edf3"'+outline+'/><path d="M-5,-8 L-2,-5 M1,-9 L4,-6" stroke="#000" stroke-width="2"/><path d="M-5,1 H5 M-5,5 H2" stroke="#fff2da" stroke-width="1.6" stroke-linecap="round"/>',
+    cinema:'<rect x="-9" y="-3" width="18" height="12" rx="1.5" fill="#202124"'+outline+'/><path d="M-9,-3 L-10,-7 L7,-10 L8,-6 Z" fill="#e9edf3"'+outline+'/><path d="M-5,-8 L-2,-5 M1,-9 L4,-6" stroke="#000" stroke-width="2"/><path d="M-5,1 H5 M-5,5 H2" stroke="#fff2da" stroke-width="1.6" stroke-linecap="round"/>',
     pingpong:'<g transform="rotate(-35)"><path d="M-1.5,2 H1.5 V9 H-1.5 Z" fill="#d6a365" stroke="#000" stroke-width="1.4"/><ellipse cy="-3" rx="5.5" ry="6.5" fill="currentColor"'+outline+'/></g><circle cx="7" cy="-5" r="2.5" fill="#fff" stroke="#000" stroke-width="1.4"/>',
     'football-tv':'<rect x="-9" y="-7" width="18" height="13" rx="2" fill="currentColor"'+outline+'/><path d="M0,6 V9 M-5,9 H5" stroke="#000" stroke-width="2" stroke-linecap="round"/><circle cy="-.5" r="5" fill="#fff" stroke="#000" stroke-width="1.1"/><path d="M0,-3 L2,-1.5 L1,1 H-1 L-2,-1.5 Z M-4,-3 L-2.5,-4.5 L-2,-3 M4,-3 L2.5,-4.5 L2,-3 M-4,2 L-2.5,3.5 L-2,2 M4,2 L2.5,3.5 L2,2" fill="#000"/>',
     boardgames:'<rect x="-9" y="-5" width="11" height="12" rx="2" transform="rotate(-12)" fill="currentColor"'+outline+'/><rect x="-1" y="-7" width="10" height="12" rx="2" transform="rotate(12)" fill="#f9d375"'+outline+'/><g fill="#000"><circle cx="-6" cy="-1" r="1"/><circle cx="-3" cy="3" r="1"/><circle cx="3" cy="-4" r="1"/><circle cx="6" cy="0" r="1"/></g>',
@@ -172,8 +172,9 @@ function evShapeSvg(shape){
   } else if(shape==='heart'){
     inner='<path d="M0,8 C-3,5 -9,1 -9,-3 C-9,-9 -2,-10 0,-5 C2,-10 9,-9 9,-3 C9,1 3,5 0,8 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/>';
   } else if(shape==='meal'){
-    inner='<circle cx="0" r="4.6" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+'/><circle cx="0" r="2.7" fill="#fff4dd"/>'
-      +'<path d="M-9,-7 V-3 Q-9,-1 -8,-1 Q-7,-1 -7,-3 V-7 M-8,-7 V8 M9,8 V-7 Q6,-4 7,0 H9" fill="none" stroke="#000" '+evSymbolStroke(1.3)+' stroke-linecap="round" stroke-linejoin="round"/>';
+    inner='<circle r="5.1" fill="currentColor" stroke="#000" stroke-width="1.3"/><circle r="3.4" fill="#fff7e6" stroke="#000" stroke-width=".7"/>'
+      +'<path d="M-9,-7 V-3 Q-9,-1 -7.5,-1 Q-6,-1 -6,-3 V-7 M-7.5,-7 V-3 M-7.5,-1 V7" fill="none" stroke="#000" stroke-width="1.25" stroke-linecap="round"/>'
+      +'<path d="M8.5,-7 Q6,-5 6,0 H8.5 Z" fill="#e6e9eb" stroke="#000" stroke-width="1.1" stroke-linejoin="round"/><path d="M8.5,0 V7" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>';
   } else if(shape==='dinner'){
     inner='<path d="M-9,6 A9,9 0 0 1 9,6 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+'/><path d="M-9,8 H9 M0,-3 V-5" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/><path d="M5,-9 A4,4 0 1 0 9,-5 A4,4 0 0 1 5,-9" fill="#ffe7a1" stroke="#000" stroke-width="1.2"/>';
   } else if(shape==='disco'){
@@ -184,7 +185,7 @@ function evShapeSvg(shape){
   } else if(shape==='party'){
     inner='<path d="M-8,-7 H8 L1,2 V7 H5 V9 H-5 V7 H-1 V2 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/><path d="M-5,-4 H5 M2,-4 L6,-9" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/>';
   } else if(shape==='beer'){
-    inner='<path d="M4,-2 H9 V5 H4" fill="none" stroke="#000" stroke-width="1.4" stroke-linejoin="round"/><path d="M-7,-4 H5 V8 H-7 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/><path d="M-7,-3 C-11,-5 -7,-9 -4,-7 C-3,-10 2,-10 3,-7 C7,-8 8,-3 4,-3 Z" fill="#fff" stroke="#000" '+evSymbolStroke(bw)+'/><path d="M-3,0 V5 M1,0 V5" stroke="#000" stroke-width="1" opacity=".4"/>';
+    inner='<path d="M4,-2 H6 Q9,-2 9,1.5 Q9,5 6,5 H4" fill="none" stroke="#000" stroke-width="1.4" stroke-linejoin="round"/><path d="M-7,-4 H5 V8 H-7 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/><path d="M-7,-3 C-11,-5 -7,-9 -4,-7 C-3,-10 2,-10 3,-7 C7,-8 8,-3 4,-3 Z" fill="#fff" stroke="#000" '+evSymbolStroke(bw)+'/><path d="M-3,0 V5 M1,0 V5" stroke="#000" stroke-width="1" opacity=".4"/>';
   } else if(shape==='mountain'){
     inner='<path d="M-9,8 L-1,-8 L9,8 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/><path d="M-4,-2 L-1,-8 L3,-2 L0,-3 L-2,-1 Z" fill="#fff" stroke="#000" stroke-width="1" stroke-linejoin="round"/>';
   } else if(shape==='rings'){

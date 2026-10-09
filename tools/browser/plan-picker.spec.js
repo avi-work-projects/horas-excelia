@@ -20,7 +20,7 @@ test('planes: cuatro accesos, selección provisional, confirmar fijo y persisten
   await page.locator('#timePickerCancel').click();await expect(page.locator('#timePickerWrap')).toHaveCount(0);
   await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);
   expect(await page.evaluate(()=>EVENTS[0].type)).toBe('Brunch');expect(await page.evaluate(()=>EVENTS[0].time)).toBeFalsy();
-  await page.evaluate(()=>openEvForm(EVENTS[0]));await expect(page.locator('[data-picker=plans]')).toContainText('Brunch');
+  await page.evaluate(()=>openEvForm(EVENTS[0]));await expect(page.locator('[data-group=plans] .ev-quick-selection')).toContainText('Brunch');
   await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);
   expect(await page.evaluate(()=>EVENTS[0].type)).toBe('Brunch');
 });

@@ -37,7 +37,7 @@ function _renderEvTypeButton(kind,t,selType){
     h+=isMulti?'<div class="ev-type-dot ev-type-dot-multi"></div>'
       :kind==='puntual'?'<span class="ev-type-dot ev-type-symbol">'+evShapeSvg(t==='Ensayos boda'?'x-thick':evDefaultShape({type:t}))+'</span>'
       :'<div class="ev-type-dot" style="background:'+c+'"></div>';
-    h+='<span class="ev-type-name">'+escHtml(t)+'</span></button>';
+    h+='<span class="ev-type-name">'+escHtml(t==='Contratar electricidad'?'Contratar electric.':t)+'</span></button>';
   return h;
 }
 
@@ -88,7 +88,7 @@ function renderEvForm(ev){
   h+='<div class="ev-field"><label>T\u00edtulo</label>';
   h+='<input class="ev-input" id="evFTitle" type="text" maxlength="80" placeholder="Nombre del evento" value="'+escHtml(title)+'"></div>';
   /* Nota general (todos los dias del evento) */
-  h+='<div class="ev-field"><label>'+(showDayNote?'Nota general <span class="ev-note-scope">(todos los d\u00edas)</span> ':'Nota ')
+  h+='<div class="ev-field"><label>'+(showDayNote?'Notas generales <span class="ev-note-scope">(todos los d\u00edas)</span> ':'Notas ')
     +'<span id="evCharCnt" style="font-weight:400;color:var(--text-dim)">'+note.length+'/200</span></label>';
   h+='<textarea class="ev-textarea" id="evFNote" maxlength="200" placeholder="Notas opcionales...">'+escHtml(note)+'</textarea></div>';
   /* Nota especifica de ESTE dia */
