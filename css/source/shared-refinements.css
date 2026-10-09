@@ -520,7 +520,7 @@ details[open]>summary{margin-bottom:10px}
 .ev-month-wrap .ev-cell.ev-day-vacaciones{box-shadow:inset 0 3px var(--vacaciones)}
 .ev-month-wrap .ev-cell.ev-day-ausencia{box-shadow:inset 0 3px var(--ausencia)}
 .ev-month-wrap .ev-cell.today-ev{outline:2.5px solid var(--calendar-tone);outline-offset:-2.5px}
-.ev-month-wrap .ev-cell.today-ev .ev-num{width:21px;height:18px;margin-top:-2px;margin-bottom:-3px;justify-content:center;border-radius:5px;background:var(--calendar-tone);color:#fff;font-weight:700}
+.ev-month-wrap .ev-cell.today-ev .ev-num{width:18px;height:13px;font-size:.65rem;margin-top:-3px;margin-bottom:3px;justify-content:center;border-radius:5px;background:var(--calendar-tone);color:#fff;font-weight:700}
 .ev-month-wrap .ev-cell:active{outline:2px solid var(--calendar-tone);outline-offset:-2px}
 .ev-month-wrap .ev-week-hdr div{font-size:.6rem;letter-spacing:.06em;padding:6px 0;color:var(--text-muted)}
 #eventsOverlay:has(#evViewCal.active) #evToday,#eventsOverlay:has(#evViewAnnual.active) #evToday,#eventsOverlay:has(#evViewQuad.active) #evToday{border-color:var(--c-green);color:var(--c-green);background:color-mix(in srgb,var(--c-green) 9%,var(--surface))}

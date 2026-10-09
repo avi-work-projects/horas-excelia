@@ -324,3 +324,20 @@
   .ev-annual-filter-row .wm-logo-chip{width:24px}
   .ev-filter-cycle-wrap{padding-left:4px}
 }
+
+/* Planes: cuatro accesos y cuadrícula ampliada con confirmación fija. */
+.ev-plan-heading{padding:9px 4px;font-size:.72rem;font-weight:700;color:var(--text)}
+.ev-plan-more{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--c-orange);padding:8px 2px;min-width:0;cursor:pointer}
+.ev-plan-more.selected{border-color:var(--c-orange);background:color-mix(in srgb,var(--c-orange) 14%,var(--surface))}
+.ev-plan-plus{font-size:26px;font-weight:600;line-height:22px}
+.ev-detail-overlay.ev-plan-overlay{position:fixed;z-index:20000;justify-content:center}
+.ev-plan-sheet{display:flex;flex-direction:column;max-width:600px;max-height:85dvh;padding:0;overflow:hidden}
+.ev-plan-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;flex-shrink:0}
+.ev-plan-header h2{font-size:1.15rem;margin:0}
+.ev-plan-options{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;padding:4px 16px 18px;overflow-y:auto;min-height:0}
+.ev-plan-option>.ev-color-swatch{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;width:100%;height:100%;min-height:86px;padding:10px 3px;text-align:center}
+.ev-plan-options .ev-type-dot{width:28px;height:28px}
+.ev-plan-options .ev-type-name{font-size:.7rem;line-height:1.2}
+.ev-plan-footer{padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));box-shadow:0 -1px 0 var(--border);flex-shrink:0;background:var(--surface)}
+.ev-plan-confirm{width:100%;background:#ed8b28;color:#201305;font-weight:750;border-color:#ed8b28}
+.ev-plan-confirm:disabled{opacity:.45;cursor:default}

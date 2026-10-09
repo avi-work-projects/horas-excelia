@@ -22,6 +22,8 @@ function _evFormTypeUI(form,kind,type){
   }
 }
 function _bindEvFormTypes(form){
+  var more=form.root.querySelector('.ev-plan-more');
+  if(more)more.onclick=function(){openEvPlanPicker(form);};
   _evFormAll(form,'#evFTypePicker .ev-color-swatch').forEach(function(button){
     button.addEventListener('click',function(){
       _evFormAll(form,'#evFTypePicker .ev-color-swatch').forEach(function(b){b.classList.toggle('selected',b===button);});
@@ -30,6 +32,7 @@ function _bindEvFormTypes(form){
       _evFormTypeUI(form,kind,type);
       if(EV_FREE_COLOR[evTypeKey(kind,type)])form.colorPicker.setColor(evTypeColor(kind,type));
       _evFormSuggestTitle(form,type);
+      updateEvQuickPlan(form,type);
     });
   });
 }
@@ -37,7 +40,7 @@ function _bindEvFormCategories(form){
   _evFormEl(form,'evFTitle').addEventListener('input',function(){form.autoTitle=null;});
   _bindEvFormTypes(form);
   var selected=form.root.querySelector('#evFTypePicker .ev-color-swatch.selected');
-  _evFormTypeUI(form,_evFormKind(form),selected?selected.dataset.type:'');
+  _evFormTypeUI(form,_evFormKind(form),selected?selected.dataset.type:form.root.querySelector('.ev-kind-picker').dataset.curType);
   _evFormAll(form,'.ev-kind-btn[data-kind]').forEach(function(button){
     button.addEventListener('click',function(){
       var kind=button.dataset.kind,picker=form.root.querySelector('.ev-kind-picker'),previous=picker&&picker.dataset.curType||'';

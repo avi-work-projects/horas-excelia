@@ -239,6 +239,9 @@
       "path": "js/events-form-controls.js"
     },
     {
+      "path": "js/events-plan-picker.js"
+    },
+    {
       "path": "js/events-form-save.js"
     },
     {
