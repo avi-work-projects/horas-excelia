@@ -60,6 +60,6 @@ test('selección compartida: genéricos, acentos y nombre elegido fuera de acces
  }
  await expect(mg.locator('.ev-quick-selection')).toBeHidden();
  await mg.locator('[data-type="Llamada"]').click();await expect(mg.locator('.selected')).toHaveCSS('border-top-color','rgb(39, 132, 92)');await expect(pl.locator('.ev-quick-selection')).toBeHidden();
- await pl.locator('[data-type="Plan/Quedada"]').click();await expect(pl.locator('[data-type="Plan/Quedada"]')).toHaveClass(/selected/);
+ await pl.locator('[data-type="Plan/Quedada"]').click();await expect(pl.locator('[data-type="Plan/Quedada"]')).toHaveClass(/selected/);await page.locator('#evFTitle').fill('Plan de prueba');
  await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);expect(await page.evaluate(()=>EVENTS[0].type)).toBe('Plan/Quedada');
 });
