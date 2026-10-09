@@ -109,6 +109,7 @@ function renderEvForm(ev){
   h+='<div class="ev-field"><label>Categor\u00eda</label><div class="ev-type-picker" id="evFTypePicker">';
   h+=_renderEvTypeSwatches(curKind,curType);
   h+='</div></div>';
+  h+=renderEvTaxFields(ev);
   /* Color picker section: visible para Viaje y Otros */
   var isOtros=!!EV_FREE_SHAPE[curKey];
   var showColorPicker=!!EV_FREE_COLOR[curKey];
@@ -285,6 +286,6 @@ function bindEvFormEvents(){
   var form={root:root,edit:edit,day:EV_EDIT_DS,autoTitle:edit?null:'',
     colorPicker:_bindColorPicker(root,'evFCp'),shape:edit&&edit.shape||'circle',
     dates:edit&&Array.isArray(edit.dates)?edit.dates.slice():[],barSize:edit&&edit.barSize||null};
-  _bindEvFormCategories(form);_bindEvFormAppearance(form);_bindEvFormDates(form);
+  bindEvTaxFields(form);_bindEvFormCategories(form);_bindEvFormAppearance(form);_bindEvFormDates(form);
   _bindEvFormDetails(form);_bindEvFormActions(form);
 }

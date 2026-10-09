@@ -24,3 +24,27 @@ enviada sola.
 **A tener en cuenta**: hoy `sendEmail()` marca la semana como enviada nada más
 abrir Outlook, sin saber si el correo salió. Con N8N sí se podría saber, así que
 el marcado debería pasar a depender de la respuesta del webhook.
+
+
+## 2. Detalle seguros en Gastos del hogar
+
+Añadir una sección «Detalle seguros» que permita ver de un vistazo los seguros
+vigentes y consultar el histórico de los que se han tenido contratados.
+
+Cada seguro incluiría: medio o canal de contratación, precio, resumen de
+coberturas en texto, vigencia, comentarios, persona de contacto (por ejemplo,
+Ana de Rastreator), teléfono del seguro y enlace a su web o aplicación.
+
+## 3. Categorías múltiples y filtros de cumpleaños
+
+Clasificar fácilmente a las personas desde la propia ventana de cumpleaños.
+Cada persona podrá pertenecer a varias categorías y se podrán crear categorías
+adicionales a las predeterminadas.
+
+Categorías iniciales: Amigos Oviedo, Amigos baile, Amigos Moco, Amigos master,
+Familia cercana, Familia, Familia Celia, Amigas Celia, Amigos Carrera,
+Amigos en Madrid, Amigos Guadalupe, Mejores amigos, Amigos Villa, Amigos,
+Amigos extranjeros y Otros.
+
+La lista de cumpleaños permitirá filtrar por una o varias categorías con
+criterio inclusivo: categoría A **o** B, no exigir pertenecer a A **y** B.

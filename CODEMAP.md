@@ -67,10 +67,10 @@
 
 **Funciones:** csvYearContent:4 · csvExportRecords:15 · csvRecordExport:18 · csvPendingWarnings:23 · csvCheckChanges:32
 
-### js/data-integrity.js  _(184 líneas)_
-**Estado global:** STORAGE_ERROR:2 · MAIL_CFG_SK:130
+### js/data-integrity.js  _(185 líneas)_
+**Estado global:** STORAGE_ERROR:2 · MAIL_CFG_SK:131
 
-**Funciones:** fail:5 · validIsoDate:21 · validateImport:25 (!97) · visit:27 · hour:81 · days:82 · schedule:83 · validBirthday:122 · prepareImportRelations:123 · loadMailConfig:131 · saveMailConfig:134 · birthdayValidation:137 · rutLimitExceeded:142 · legacy:173
+**Funciones:** fail:5 · validIsoDate:21 · validateImport:25 (!98) · visit:27 · hour:82 · days:83 · schedule:84 · validBirthday:123 · prepareImportRelations:124 · loadMailConfig:132 · saveMailConfig:135 · birthdayValidation:138 · rutLimitExceeded:143 · legacy:174
 
 ### js/economics-analisis.js  _(797 líneas)_
 **Estado global:** ANALISIS_SUB:6 · ANALISIS_SORT:7 · ANALISIS_FILTER_TEXT:8 · ANALISIS_FILTER_CAT:9 · ANALISIS_CAT_MODE:10 · ANALISIS_DET_MODE:11 · ANALISIS_RES_MODE:12 · ANALISIS_SEG_NORMAL:15
@@ -212,32 +212,32 @@
 
 **Funciones:** evIcsAuthor:8 · evIcsDescription:9 · evIcsText:14 · evIcsFold:17 · evIcsNextDay:26 · evIcsCandidates:27 · evIcsFile:47 · evIcsRecords:74 · evIcsMergeRecords:77 · evIcsRoutineRows:83 · evIcsRoutineCurrent:93 · evIcsRememberedRows:97 · evIcsPrepare:114 · evIcsExportRows:131 · evIcsExportStatus:134 · evIcsFilterRows:140 · renderEvCalendarExport:145 · openEvCalendarExport:160 · close:163 · find:166 · count:167 · filters:176 · list:182 · dates:198
 
-### js/events-detail.js  _(616 líneas)_
-**Funciones:** openEvDeleteSheet:7 · closeEvDeleteSheet:37 · evDetailTitleColor:40 · renderEvDetail:49 (!120) · fd2:52 · _fila:134 · evDayCarItems:169 · evCarGo:182 · _evCarShow:190 · openEvDayCarousel:198 · closeEvDayCarousel:206 · openEvDetail:213 (!157) · repintar:254 · closeEvDetail:370 · renderEvAlarmPanel:373 (!96) · fd2:375 · openEvAlarm:469 · closeEvAlarm:475 · openBdayAlarmFromEvents:483 · bindEvAlarmEvents:491 (!125) · _syncPre:529 · fmtD:559
+### js/events-detail.js  _(617 líneas)_
+**Funciones:** openEvDeleteSheet:7 · closeEvDeleteSheet:37 · evDetailTitleColor:40 · renderEvDetail:49 (!121) · fd2:52 · _fila:135 · evDayCarItems:170 · evCarGo:183 · _evCarShow:191 · openEvDayCarousel:199 · closeEvDayCarousel:207 · openEvDetail:214 (!157) · repintar:255 · closeEvDetail:371 · renderEvAlarmPanel:374 (!96) · fd2:376 · openEvAlarm:470 · closeEvAlarm:476 · openBdayAlarmFromEvents:484 · bindEvAlarmEvents:492 (!125) · _syncPre:530 · fmtD:560
 
 ### js/events-form-controls.js  _(106 líneas)_
 **Funciones:** _evFormEl:2 · _evFormAll:3 · _evFormKind:4 · _evFormColor:5 · _evFormSuggestTitle:6 · _evFormTypeUI:10 · _bindEvFormTypes:24 · _bindEvFormCategories:38 · _evFormShapePreviews:53 · _bindEvFormAppearance:56 · _evFormDatesLabel:74 · _bindEvFormDates:82 · _evFormTravelUI:93 · _bindEvFormDetails:99
 
-### js/events-form-save.js  _(108 líneas)_
-**Funciones:** _evFormRead:2 · _evFormReadDetails:26 · _evFormSaveBodas:46 · _evFormCommit:74 · _evFormDelete:90 · _bindEvFormActions:101
+### js/events-form-save.js  _(111 líneas)_
+**Funciones:** _evFormRead:2 · _evFormReadDetails:29 · _evFormSaveBodas:49 · _evFormCommit:77 · _evFormDelete:93 · _bindEvFormActions:104
 
-### js/events-form.js  _(291 líneas)_
-**Funciones:** evPuntualDays:6 · _renderEvTypeSwatches:15 · _renderEvTypeButton:28 · evAdmiteRepeticion:48 · renderEvForm:51 (!195) · openEvForm:246 · closeEvForm:272 · evSuggestedTitle:280 · bindEvFormEvents:283
+### js/events-form.js  _(292 líneas)_
+**Funciones:** evPuntualDays:6 · _renderEvTypeSwatches:15 · _renderEvTypeButton:28 · evAdmiteRepeticion:48 · renderEvForm:51 (!196) · openEvForm:247 · closeEvForm:273 · evSuggestedTitle:281 · bindEvFormEvents:284
 
-### js/events-management.js  _(26 líneas)_
-**Funciones:** evManagementShapeInner:2 · evManagementCheckable:11 · evManagementDate:12 · evManagementDone:13 · evManagementCheckHtml:14 · bindEvManagementCheck:19
+### js/events-management.js  _(32 líneas)_
+**Funciones:** evTaxBuildingSvg:1 · evUtilityHomeSvg:2 · evManagementShapeInner:4 · evManagementCheckable:17 · evManagementDate:18 · evManagementDone:19 · evManagementCheckHtml:20 · bindEvManagementCheck:25
 
-### js/events-picker-color.js  _(342 líneas)_
-**Estado global:** EV_COLOR_GRID:6 · EV_COLOR_TYPES:25 · EV_MANAGEMENT_SUBTYPES:42 · EV_PLAN_SUBTYPES:43 · EV_KINDS:47 · EV_TYPE_COLORS:52 · EV_FREE_COLOR:88 · EV_FREE_SHAPE:89 · EV_FREE_DATES:92 · EV_BAR_SIZES:95 · EV_FREE_BARSIZE:96 · EV_DOT_SOLID:100 · EV_SHAPE_BW:127
+### js/events-picker-color.js  _(346 líneas)_
+**Estado global:** EV_COLOR_GRID:6 · EV_COLOR_TYPES:25 · EV_MANAGEMENT_SUBTYPES:42 · EV_PLAN_SUBTYPES:43 · EV_KINDS:47 · EV_TYPE_COLORS:52 · EV_FREE_COLOR:92 · EV_FREE_SHAPE:93 · EV_FREE_DATES:96 · EV_BAR_SIZES:99 · EV_FREE_BARSIZE:100 · EV_DOT_SOLID:104 · EV_SHAPE_BW:131
 
-**Funciones:** evIsManagement:44 · evIsPlan:45 · evFixedSymbol:46 · evBarSize:101 · evBarSizeCls:107 · evTypeKey:108 · evTypeColor:109 · getEvKind:112 · evPlanShapeInner:128 · evShapeSvg:141 (!82) · evMorePlusSvg:223 · evTravelColor:232 · getEvType:238 · isEvBarAlways:247 · getEvDisplayColor:249 · _renderColorPicker:271 · _bindColorPicker:294 · updatePreview:304
+**Funciones:** evIsManagement:44 · evIsPlan:45 · evFixedSymbol:46 · evBarSize:105 · evBarSizeCls:111 · evTypeKey:112 · evTypeColor:113 · getEvKind:116 · evPlanShapeInner:132 · evShapeSvg:145 (!82) · evMorePlusSvg:227 · evTravelColor:236 · getEvType:242 · isEvBarAlways:251 · getEvDisplayColor:253 · _renderColorPicker:275 · _bindColorPicker:298 · updatePreview:308
 
 ### js/events-picker-date.js  _(103 líneas)_
 **Estado global:** MNS:10
 
 **Funciones:** openOtrosDatePicker:7 (!96) · _evDk:11 · _count:12 · _render:13 · _attach:54 · _rerender:85 · _close:93
 
-### js/events-plan-picker.js  _(61 líneas)_
+### js/events-plan-picker.js  _(62 líneas)_
 **Estado global:** EV_PLAN_PICK:2 · EV_QUICK_PLANS:3 · EV_PICKER_GROUPS:4
 
 **Funciones:** evPickerHas:8 · evPickerMoreIcon:9 · renderEvQuickPlans:10 · updateEvQuickPlan:16 · renderEvPlanOptions:22 · closeEvPlanPicker:29 · evPlanPickerKey:35 · openEvPlanPicker:38
@@ -246,6 +246,11 @@
 **Estado global:** EV_LIST_TYPES:227
 
 **Funciones:** renderEvListItem:11 · fd2:15 · evUpcomingCompare:44 · minutes:45 · renderEvUpcoming:51 (!177) · fd2:58 · renderEvItem:59 · renderEvPanel:110 · occurrenceKey:137 · renderEvByTypes:228 · coincide:249 · renderEvMonthsView:295 · _evWeekLanes:306 · assign:309 · evWeekTravelRow:324 · renderEvWeek:344 (!133) · hexA:348 · renderEvContent:477 (!153)
+
+### js/events-tax-model.js  _(19 líneas)_
+**Estado global:** EV_TAX_MODELS:2
+
+**Funciones:** evTaxTitle:3 · renderEvTaxFields:4 · evFormTaxCode:8 · bindEvTaxFields:9 · change:11
 
 ### js/events.js  _(819 líneas)_
 **Estado global:** EV_STORAGE_KEY:5 · EV_YEAR:6 · EV_MONTH:7 · EV_VIEW_STATE:11 · EV_SCROLL_RESET:16 · EV_VIEW:17 · EV_EDIT:18 · EV_EDIT_DS:19 · EV_FORM_CONTAINER:20 · EV_EDIT_MODE:21 · EV_BRIGHT_PAST:22 · EV_ANNUAL_VIEW:23 · EV_ANNUAL_FILTER_HIDDEN:24 · EV_FILTER_GROUPS:33 · EV_FILTER_SHORT:39 · EV_FILTER_COLOR:41 · EV_FILTER_SEP_AFTER:44 · EV_FILTER_CYCLE:45 · EV_PREV_VIEW:63 · EV_QUAD_YEAR:64 · EV_QUAD_MONTH:65 · EV_TO_SUBTAB:66 · EV_TYPES_FILTER:67 · EV_TYPES_PAST:68 · EV_LIST_SORT:69 · EV_LIST_SEARCH:70 · EV_COLORS:71 · EVENTS:72 · EV_ALARM_SK:101 · EV_ALARMS_SET:102 · EV_NO_RUT:194 · EV_MAX_BAR_DIA:250 · EV_MARK_ORDER:356 · EV_MAX_PUNT_DIA:398 · EV_MAX_RUT_DIA:399 · EV_CAL_CORNER_STACK:402 · EV_MAX_VIP_DIA:404 · EV_CAL_VIP_MAX:405 · EV_UP_SHOW_RUT:407 · EV_UP_SHOW_BODA:408 · EV_BAR_Z:460 · EV_COMPARTE_DIA:464 · EV_MNS:671 · EV_CAR:714 · EV_TRANSPORTES:733 · EV_TRANS_EMOJI:739 · EV_DATE_INDEX:805

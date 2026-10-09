@@ -59,6 +59,17 @@
 </section>
 </div>
 </div>
+<div class="ev-field ev-tax-model" id="evFTaxBlock" style="display:none">
+<label for="evFTaxModel">Modelo que vas a presentar</label>
+<select class="ev-input" id="evFTaxModel">
+<option value="303" selected>IVA trimestral · Modelo 303</option>
+<option value="390">IVA anual · Modelo 390</option>
+<option value="100">Declaración de la renta · Modelo 100</option>
+<option value="other">Otro modelo</option>
+</select>
+<label id="evFTaxOtherLabel" for="evFTaxOther" hidden>Número de modelo<input class="ev-input" id="evFTaxOther" inputmode="numeric" maxlength="3" placeholder="Ej.: 130" value="">
+</label>
+</div>
 <div class="ev-field ev-form-color-section" id="evFColorSection" style="display:block">
 <label>🎨 Paleta de colores</label>
 <div class="ev-color-picker" id="evFCpWrap">

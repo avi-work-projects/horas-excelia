@@ -5,13 +5,13 @@ function _evFormKind(form){var picker=form.root.querySelector('.ev-kind-picker')
 function _evFormColor(form){return form.colorPicker.getColor();}
 function _evFormSuggestTitle(form,type){
   var input=_evFormEl(form,'evFTitle');
-  if(!input.value.trim()||input.value===form.autoTitle){form.autoTitle=evSuggestedTitle(type);input.value=form.autoTitle;}
+  if(!input.value.trim()||input.value===form.autoTitle){form.autoTitle=type==='Presentar Modelo'?evTaxTitle(evFormTaxCode(form)):evSuggestedTitle(type);input.value=form.autoTitle;}
 }
 function _evFormTypeUI(form,kind,type){
   var key=evTypeKey(kind,type),picker=form.root.querySelector('.ev-kind-picker');
   if(picker){picker.dataset.curKind=kind;picker.dataset.curType=type;}
   var freeColor=EV_FREE_COLOR[key]&&!(kind==='puntual'&&type==='Otros'&&RUT_FIXED_COLOR[form.shape]);
-  var blocks={evFColorSection:freeColor,evFOtrosExtras:EV_FREE_SHAPE[key]||EV_FREE_DATES[key]||EV_FREE_BARSIZE[key],evFBarBlock:EV_FREE_BARSIZE[key],evFShapeBlock:EV_FREE_SHAPE[key],evFDatesBlock:EV_FREE_DATES[key],evFViajeBox:kind==='grande'};
+  var blocks={evFTaxBlock:kind==='puntual'&&type==='Presentar Modelo',evFColorSection:freeColor,evFOtrosExtras:EV_FREE_SHAPE[key]||EV_FREE_DATES[key]||EV_FREE_BARSIZE[key],evFBarBlock:EV_FREE_BARSIZE[key],evFShapeBlock:EV_FREE_SHAPE[key],evFDatesBlock:EV_FREE_DATES[key],evFViajeBox:kind==='grande'};
   Object.keys(blocks).forEach(function(id){var el=_evFormEl(form,id);if(el)el.style.display=blocks[id]?'block':'none';});
   var hours=_evFormEl(form,'evFHoraRow');if(hours)hours.style.display=kind==='puntual'&&type!=='Ensayos boda'?'':'none';
   var repeat=evAdmiteRepeticion(kind,type),block=_evFormEl(form,'evFRepBlock');

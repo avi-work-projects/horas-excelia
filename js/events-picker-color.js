@@ -39,7 +39,7 @@ var EV_COLOR_TYPES = {
    la identidad de una categor\u00eda es el par (kind, type), no el nombre suelto.
    - puntual: se dibuja UN MARCADOR POR D\u00cdA (aunque abarque varios d\u00edas)
    - grande:  se dibuja como BARRA continua (formato actual de Viaje/Asturias) */
-var EV_MANAGEMENT_SUBTYPES={'Llamada':'phone','Peluquería':'scissors','Médico':'medical','Dentista':'tooth','Pago hacienda':'tax','Pago':'payment','Contratar seguro':'insurance','Contratar gas/electricidad':'utilities','Enviar factura':'invoice'};
+var EV_MANAGEMENT_SUBTYPES={'Llamada':'phone','Peluquería':'scissors','Médico':'medical','Dentista':'tooth','Pago hacienda':'tax','Pago':'payment','Contratar seguro':'insurance','Contratar gas/electricidad':'utilities','Enviar factura':'invoice','Cita':'appointment','Presentar Modelo':'tax-form','Contratar gas':'gas-home','Contratar electricidad':'electric-home'};
 var EV_PLAN_SUBTYPES={'Plan romántico':'heart','Comida':'meal','Cena':'dinner','Salir de fiesta':'disco','Copas':'party','Tomar algo':'beer','Montaña':'mountain','Barbacoa':'barbecue','Cumpleaños':'cake','Brunch':'brunch','Bolos':'bowling','Cine':'cinema','Ping pong':'pingpong','Ver partido fútbol':'football-tv','Juegos de mesa':'boardgames','Ponencia':'lecture'};
 function evIsManagement(type){return type==='Rec. Gestiones'||Object.prototype.hasOwnProperty.call(EV_MANAGEMENT_SUBTYPES,type);}
 function evIsPlan(type){return type==='Plan/Quedada'||Object.prototype.hasOwnProperty.call(EV_PLAN_SUBTYPES,type);}
@@ -55,8 +55,12 @@ var EV_TYPE_COLORS = {
   'puntual|Llamada'      :'#1e40af',
   'puntual|Peluquería'   :'#8b5e34',
   'puntual|Dentista'     :'#16859b',
+  'puntual|Cita':'#668cac',
+  'puntual|Presentar Modelo':'#647db1',
+  'puntual|Contratar gas':'#e18b46',
+  'puntual|Contratar electricidad':'#dfb23e',
   'puntual|Pago hacienda':'#458b77',
-  'puntual|Pago':'#52a878',
+  'puntual|Pago':'#dcae3e',
   'puntual|Contratar seguro':'#568cc2',
   'puntual|Contratar gas/electricidad':'#dea642',
   'puntual|Enviar factura':'#5b9ea4',
@@ -136,7 +140,7 @@ function evPlanShapeInner(shape){
     boardgames:'<rect x="-9" y="-5" width="11" height="12" rx="2" transform="rotate(-12)" fill="currentColor"'+outline+'/><rect x="-1" y="-7" width="10" height="12" rx="2" transform="rotate(12)" fill="#f9d375"'+outline+'/><g fill="#000"><circle cx="-6" cy="-1" r="1"/><circle cx="-3" cy="3" r="1"/><circle cx="3" cy="-4" r="1"/><circle cx="6" cy="0" r="1"/></g>',
     lecture:'<rect x="-9" y="-9" width="18" height="11" rx="1" fill="#e7edf5"'+outline+'/><path d="M1,-6 H6 M1,-3 H5" stroke="currentColor" stroke-width="1.6"/><circle cx="-4" cy="-4" r="2.5" fill="#f4cba6" stroke="#000" stroke-width="1.3"/><path d="M-8,3 Q-8,-1 -4,-1 Q0,-1 0,3" fill="currentColor"'+outline+'/><path d="M-7,2 H6 L4,9 H-5 Z" fill="currentColor"'+outline+'/><path d="M2,2 V-1 L4,-2" fill="none" stroke="#000" stroke-width="1.3"/>'
   };
-  return shapes[shape]||null;
+  return shapes[shape]?(shape==='boardgames'?'<g transform="scale(.82)">'+shapes[shape]+'</g>':shapes[shape]):null;
 }
 function evShapeSvg(shape){
   /* Las siluetas de rutina (mancuerna, pala, bailarin) tambien se pueden
