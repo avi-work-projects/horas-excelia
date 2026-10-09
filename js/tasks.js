@@ -1,12 +1,15 @@
 /* Dos estados: pendientes y completadas. Mover solo retira filas ya marcadas.
    El estado se lee del almacenamiento para compartir transacciones de backup. */
 var TASKS_KEY='excelia-tasks-v1';
+var TASKS_COLORS={default:{name:'Por defecto',hex:null},green:{name:'Verde',hex:'#e4f4e9'},blue:{name:'Azul',hex:'#e6f0fc'},peach:{name:'Melocotón',hex:'#fff0df'},lavender:{name:'Lavanda',hex:'#eee9fa'}};
 function tasksValidate(data){
   if(!data||typeof data!=='object'||!Array.isArray(data.items)||data.items.length>2000||typeof data.weeklyReminder!=='boolean'||(data.reminderWeek!==''&&!validIsoDate(data.reminderWeek)))throw new Error('Lista de tareas no válida');
   var ids=new Set();
   data.items.forEach(function(t){
     if(!t||typeof t.id!=='string'||!/^[a-zA-Z0-9_-]{1,100}$/.test(t.id)||ids.has(t.id)||typeof t.title!=='string'||!t.title.trim()||t.title.length>160)throw new Error('Tarea no válida');
     ids.add(t.id);
+    if(t.color!==undefined&&!Object.prototype.hasOwnProperty.call(TASKS_COLORS,t.color))throw new Error('Color de tarea no válido');
+    if(t.eventRef&&(!t.eventRef.id||typeof t.eventRef.id!=='string'||typeof t.eventRef.signature!=='string'||t.eventRef.signature.length>2000||!validIsoDate(t.eventRef.date)))throw new Error('Gestión enlazada no válida');
     ['createdAt','updatedAt'].forEach(function(k){if(!tasksValidTimestamp(t[k]))throw new Error('Fecha de tarea no válida');});
     if(t.completedAt!==null&&!tasksValidTimestamp(t.completedAt))throw new Error('Estado de tarea no válido');
     ['deletedAt','lastCompletedAt'].forEach(function(k){if(t[k]!=null&&!tasksValidTimestamp(t[k]))throw new Error('Fecha de tarea no válida');});
@@ -29,10 +32,10 @@ function tasksNormalize(data){
 }
 function tasksData(){
   var raw=appStorage.getItem(TASKS_KEY);
-  if(!raw)return {items:[],weeklyReminder:true,reminderWeek:''};
-  return tasksNormalize(tasksValidate(JSON.parse(raw)));
+  var data=raw?tasksNormalize(tasksValidate(JSON.parse(raw))):{items:[],weeklyReminder:true,reminderWeek:''};
+  return tasksReconcileEvents(data);
 }
-function tasksSave(data){tasksValidate(data);appStorage.setItem(TASKS_KEY,JSON.stringify(tasksNormalize(data)));}
+function tasksSave(data){tasksValidate(data);data=tasksNormalize(data);tasksRebindEventRefs(data);appStorage.setItem(TASKS_KEY,JSON.stringify(tasksNormalize(data)));}
 function tasksMigrate(){
   if(!appStorage.getItem(TASKS_KEY))return;
   var data=tasksData();
@@ -45,10 +48,10 @@ function tasksMerge(current,incoming){
   return tasksNormalize({items:items,weeklyReminder:incoming.weeklyReminder,reminderWeek:current.reminderWeek>incoming.reminderWeek?current.reminderWeek:incoming.reminderWeek});
 }
 function tasksItems(data,view){
-  var items=tasksNormalize(data).items.filter(function(t){return view==='done'?t.completedAt!==null:t.completedAt===null;});
+  var items=tasksNormalize(data).items.filter(function(t){return view==='done'?t.completedAt!==null:t.completedAt===null&&tasksEventVisible(t);});
   return view==='done'?items.sort(function(a,b){return b.completedAt-a.completedAt||b.createdAt-a.createdAt||a.id.localeCompare(b.id);}):items;
 }
-function tasksPendingRows(data){return tasksNormalize(data).items.filter(function(t){return t.pendingVisible;});}
+function tasksPendingRows(data){return tasksNormalize(data).items.filter(function(t){return t.pendingVisible&&tasksEventVisible(t);});}
 function tasksNeedsDateChoice(t,now){
   return t.completedAt===null&&t.lastCompletedAt!=null&&evDk(new Date(t.lastCompletedAt))!==evDk(new Date(now));
 }
@@ -61,6 +64,7 @@ function tasksChange(id,action,value){
   var data=tasksData(),t=data.items.find(function(x){return x.id===id;});if(!t)return false;
   var now=Date.now();
   if(action==='title'){value=String(value||'').trim();if(!value||value.length>160)throw new Error('Escribe una tarea de hasta 160 caracteres');t.title=value;}
+  else if(action==='color'){if(!Object.prototype.hasOwnProperty.call(TASKS_COLORS,value))throw new Error('Color de tarea no válido');t.color=value;}
   else if(action==='complete'){
     if(t.completedAt!==null){t.lastCompletedAt=t.completedAt;t.completedAt=null;}
     else{

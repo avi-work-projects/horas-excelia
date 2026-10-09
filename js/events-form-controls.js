@@ -22,8 +22,7 @@ function _evFormTypeUI(form,kind,type){
   }
 }
 function _bindEvFormTypes(form){
-  var more=form.root.querySelector('.ev-plan-more');
-  if(more)more.onclick=function(){openEvPlanPicker(form);};
+  form.root.querySelectorAll('.ev-plan-more').forEach(function(more){more.onclick=function(){openEvPlanPicker(form,more.dataset.picker);};});
   _evFormAll(form,'#evFTypePicker .ev-color-swatch').forEach(function(button){
     button.addEventListener('click',function(){
       _evFormAll(form,'#evFTypePicker .ev-color-swatch').forEach(function(b){b.classList.toggle('selected',b===button);});

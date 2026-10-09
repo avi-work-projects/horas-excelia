@@ -37,13 +37,14 @@ function renderTasksList(items,view){
 }
 function renderTaskRow(t,i,count,view){
   var title=escHtml(t.title),id=escHtml(t.id),editing=TASKS_EDIT===t.id,done=t.completedAt!==null;
-  var h='<article class="task-row'+(done?' task-done':'')+'" data-task-id="'+id+'">';
+  var tone=TASKS_COLORS[t.color||'default'];
+  var h='<article style="'+(tone.hex?'--task-tint:'+tone.hex+';':'')+'" class="task-row'+(done?' task-done':'')+'" data-task-id="'+id+'">';
   if(view==='pending')h+='<button type="button" class="task-grip" data-task-drag="'+id+'" aria-label="Reordenar '+title+'" title="Arrastra o usa las flechas del teclado">⠿</button>';
   h+='<input type="checkbox" data-task-action="complete" aria-label="'+(done?'Reabrir':'Completar')+' '+title+'"'+(done?' checked':'')+'>';
-  h+='<div class="task-content"><button type="button" class="task-title" data-task-action="edit" aria-expanded="'+editing+'">'+title+'</button></div><button type="button" class="task-more" data-task-action="edit" aria-label="Opciones de '+title+'">⋯</button>';
+  h+='<div class="task-content"><button type="button" class="task-title" data-task-action="edit" aria-expanded="'+editing+'">'+title+'</button>'+(t.eventRef?'<small>Gestión · '+tasksDateLabel(new Date(t.eventRef.date+'T00:00:00').getTime(),true)+'</small>':'')+'</div><button type="button" class="task-more" data-task-action="edit" aria-label="Opciones de '+title+'">⋯</button>';
   if(editing){
-    h+='<form class="task-editor"><label>Texto de la tarea<input class="ev-input" name="title" maxlength="160" value="'+title+'"></label><div class="task-actions">';
-    if(view==='pending')h+='<button type="button" data-task-action="up" aria-label="Subir prioridad"'+(i===0?' disabled':'')+'>↑ Subir</button><button type="button" data-task-action="down" aria-label="Bajar prioridad"'+(i===count-1?' disabled':'')+'>↓ Bajar</button>';
+    h+='<form class="task-editor">'+(t.eventRef?'<p class="task-linked-note">El título se edita desde el evento del calendario.</p>':'<label>Texto de la tarea<input class="ev-input" name="title" maxlength="160" value="'+title+'"></label>')+'<div class="task-actions">';
+    h+=renderTaskColors(t);
     h+='<button type="button" data-task-action="complete">'+(done?'Volver a pendientes':'Completar')+'</button><button type="submit" class="task-save">Guardar</button></div></form>';
   }
   if(TASKS_DATE_CHOICE===t.id&&!done){
@@ -60,6 +61,7 @@ function openTasks(){
   var fab=document.getElementById('tasksFab');if(fab)fab.hidden=true;
 }
 function closeTasks(){
+  tasksStopDrag();
   TASKS_OPEN=false;cerrarPanel('tasksWrap','tasksOverlay');NAV_BACK=TASKS_PREV_BACK;
   document.documentElement.classList.remove('tasks-open');
   document.removeEventListener('keydown',tasksKeydown);tasksUpdateFab();
@@ -76,6 +78,7 @@ function tasksKeydown(e){
   else if(!e.shiftKey&&document.activeElement===list[list.length-1]){e.preventDefault();list[0].focus();}
 }
 function renderTasksPanel(){
+  tasksStopDrag();
   var old=document.getElementById('tasksList'),scroll=old?old.scrollTop:0;
   var wrap=abrirPanel('tasksWrap',renderTasks(tasksData(),TASKS_VIEW),{contenedor:document.body,overlay:'tasksOverlay',alCerrar:closeTasks,reutilizar:true});
   if(!wrap)return;
@@ -89,7 +92,7 @@ function renderTasksPanel(){
     document.querySelector('[data-tasks-view="pending"]').focus({preventScroll:true});
   };
   wrap.querySelectorAll('[data-task-action]').forEach(function(b){b.onclick=function(){tasksRowAction(b);};});
-  wrap.querySelectorAll('.task-editor').forEach(function(f){f.onsubmit=function(e){e.preventDefault();var id=f.closest('[data-task-id]').dataset.taskId;tasksPerform(function(){tasksChange(id,'title',f.elements.title.value);TASKS_EDIT=null;},'Tarea guardada');};});
+  wrap.querySelectorAll('.task-editor').forEach(function(f){f.onsubmit=function(e){e.preventDefault();var id=f.closest('[data-task-id]').dataset.taskId;tasksPerform(function(){if(f.elements.title)tasksChange(id,'title',f.elements.title.value);TASKS_EDIT=null;},'Tarea guardada');};});
   bindTasksReorder(wrap);
 }
 function tasksPerform(action,message,undo){
@@ -98,6 +101,11 @@ function tasksPerform(action,message,undo){
 }
 function tasksRowAction(button){
   var id=button.closest('[data-task-id]').dataset.taskId,action=button.dataset.taskAction;
+  if(action==='color'){
+    var input=button.closest('[data-task-id]').querySelector('input[name=title]'),draft=input&&input.value;
+    tasksPerform(function(){tasksChange(id,'color',button.dataset.color);},'Color actualizado');
+    var restored=document.querySelector('[data-task-id="'+id+'"] input[name=title]');if(restored&&draft!==null)restored.value=draft;return;
+  }
   if(action==='edit'){TASKS_EDIT=TASKS_EDIT===id?null:id;TASKS_DATE_CHOICE=null;renderTasksPanel();return;}
   if(action==='up'||action==='down'){
     var list=tasksPendingRows(tasksData()),i=list.findIndex(function(t){return t.id===id;}),target=list[i+(action==='up'?-1:1)];
@@ -117,20 +125,6 @@ function tasksFocusRow(id){
   var checkbox=document.querySelector('[data-task-id="'+id+'"] input[type="checkbox"]');
   if(checkbox)checkbox.focus({preventScroll:true});else document.querySelector('[data-tasks-view="'+TASKS_VIEW+'"]').focus();
 }
-function bindTasksReorder(wrap){
-  wrap.querySelectorAll('[data-task-drag]').forEach(function(grip){
-    grip.onkeydown=function(e){if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();tasksRowAction({dataset:{taskAction:e.key==='ArrowUp'?'up':'down'},closest:function(){return grip.closest('[data-task-id]');}});var next=document.querySelector('[data-task-drag="'+grip.dataset.taskDrag+'"]');if(next)next.focus();}};
-    grip.onpointerdown=function(e){
-      if(e.button!==0)return;e.preventDefault();grip.setPointerCapture(e.pointerId);
-      var row=grip.closest('[data-task-id]'),target=null,after=false,list=document.getElementById('tasksList');row.classList.add('task-moving');
-      function clear(){wrap.querySelectorAll('.task-drop-before,.task-drop-after').forEach(function(el){el.classList.remove('task-drop-before','task-drop-after');});}
-      grip.onpointermove=function(ev){
-        clear();var box=list.getBoundingClientRect();if(ev.clientY<box.top+32)list.scrollTop-=14;else if(ev.clientY>box.bottom-32)list.scrollTop+=14;
-        var hit=document.elementFromPoint(ev.clientX,ev.clientY);target=hit&&hit.closest('[data-task-id]');
-        if(target&&target!==row&&list.contains(target)){var r=target.getBoundingClientRect();after=ev.clientY>r.top+r.height/2;target.classList.add(after?'task-drop-after':'task-drop-before');}else target=null;
-      };
-      function end(ev){clear();row.classList.remove('task-moving');grip.onpointermove=null;grip.onpointerup=null;grip.onpointercancel=null;if(ev.type==='pointerup'&&target)tasksPerform(function(){tasksMove(row.dataset.taskId,target.dataset.taskId,after);},'Prioridad actualizada');}
-      grip.onpointerup=end;grip.onpointercancel=end;
-    };
-  });
+function renderTaskColors(t){
+  return '<div class="task-colors" role="group" aria-label="Color de la tarjeta">'+Object.keys(TASKS_COLORS).map(function(key){var color=TASKS_COLORS[key];return '<button type="button" data-task-action="color" data-color="'+key+'" aria-label="'+color.name+'" aria-pressed="'+((t.color||'default')===key)+'" style="--swatch:'+(color.hex||'var(--surface2)')+'">'+((t.color||'default')===key?'✓':'')+'</button>';}).join('')+'</div>';
 }

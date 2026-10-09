@@ -6,7 +6,7 @@ test('Médico: crear, volver a editar, filtrar y conservar color en recordatorio
  await page.addInitScript(()=>{if(!sessionStorage.getItem('medical-test-initialized')){sessionStorage.setItem('excelia-popup-dismissed','1');sessionStorage.setItem('medical-test-initialized','1');}});
  await page.goto('/');await page.locator('#eventsBtn').click();
  await page.locator('#evViewUpcoming').click();await page.locator('#evAdd').click();
- await page.locator('#evFTypePicker [data-type="Médico"]').click();
+ await page.locator('[data-picker=management]').click();await page.locator('#evPlanPickerOv [data-type="Médico"]').click();await page.locator('#evPlanConfirm').click();await expect(page.locator('#evPlanPickerWrap')).toHaveCount(0);
  await expect(page.locator('#evFTitle')).toHaveValue('Médico');
  await page.locator('#evFTitle').fill('Consulta de prueba');
  await chooseTime(page,'#evFTime','12:00');await page.locator('#evFSave').click();
@@ -22,7 +22,7 @@ test('Médico: crear, volver a editar, filtrar y conservar color en recordatorio
  await page.locator('#evViewUpcoming').click();await page.locator('#evSubTodos').click();
  await page.locator('#evTypesFilter').click();await page.locator('.ev-type-option[data-type="Médico"]').click();
  await page.locator('.ev-list-item').click();await page.locator('#evDEdit').click();
- await expect(page.locator('#evFTypePicker [data-type="Médico"]')).toHaveClass(/selected/);
+ await expect(page.locator('[data-picker=management]')).toHaveClass(/selected/);
  await expect(page.locator('#evFTime')).toHaveValue('12:00');
  await page.locator('#evFSave').click();await expect(page.locator('#evFormOv')).toBeHidden();
  await page.evaluate(()=>sessionStorage.removeItem('excelia-popup-dismissed'));

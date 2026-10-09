@@ -524,6 +524,7 @@ function _applyFullImport(d,mode){
       if(d.econYearConfig&&typeof ECON_YEAR_CONFIG!=='undefined')
         ECON_YEAR_CONFIG=merge?_mergeMap(ECON_YEAR_CONFIG,d.econYearConfig):d.econYearConfig;
       importBodaConfig(d.bodaConfig,merge);
+      if(d.events||d.tasks)tasksMigrate();
       save();appStorage.commit();render();
       tasksUpdateFab();
       if(TASKS_OPEN)renderTasksPanel();

@@ -212,32 +212,35 @@
 
 **Funciones:** evIcsAuthor:8 · evIcsDescription:9 · evIcsText:14 · evIcsFold:17 · evIcsNextDay:26 · evIcsCandidates:27 · evIcsFile:47 · evIcsRecords:74 · evIcsMergeRecords:77 · evIcsRoutineRows:83 · evIcsRoutineCurrent:93 · evIcsRememberedRows:97 · evIcsPrepare:114 · evIcsExportRows:131 · evIcsExportStatus:134 · evIcsFilterRows:140 · renderEvCalendarExport:145 · openEvCalendarExport:160 · close:163 · find:166 · count:167 · filters:176 · list:182 · dates:198
 
-### js/events-detail.js  _(614 líneas)_
-**Funciones:** openEvDeleteSheet:7 · closeEvDeleteSheet:37 · evDetailTitleColor:40 · renderEvDetail:49 (!119) · fd2:52 · _fila:133 · evDayCarItems:168 · evCarGo:181 · _evCarShow:189 · openEvDayCarousel:197 · closeEvDayCarousel:205 · openEvDetail:212 (!156) · repintar:252 · closeEvDetail:368 · renderEvAlarmPanel:371 (!96) · fd2:373 · openEvAlarm:467 · closeEvAlarm:473 · openBdayAlarmFromEvents:481 · bindEvAlarmEvents:489 (!125) · _syncPre:527 · fmtD:557
+### js/events-detail.js  _(616 líneas)_
+**Funciones:** openEvDeleteSheet:7 · closeEvDeleteSheet:37 · evDetailTitleColor:40 · renderEvDetail:49 (!120) · fd2:52 · _fila:134 · evDayCarItems:169 · evCarGo:182 · _evCarShow:190 · openEvDayCarousel:198 · closeEvDayCarousel:206 · openEvDetail:213 (!157) · repintar:254 · closeEvDetail:370 · renderEvAlarmPanel:373 (!96) · fd2:375 · openEvAlarm:469 · closeEvAlarm:475 · openBdayAlarmFromEvents:483 · bindEvAlarmEvents:491 (!125) · _syncPre:529 · fmtD:559
 
-### js/events-form-controls.js  _(107 líneas)_
-**Funciones:** _evFormEl:2 · _evFormAll:3 · _evFormKind:4 · _evFormColor:5 · _evFormSuggestTitle:6 · _evFormTypeUI:10 · _bindEvFormTypes:24 · _bindEvFormCategories:39 · _evFormShapePreviews:54 · _bindEvFormAppearance:57 · _evFormDatesLabel:75 · _bindEvFormDates:83 · _evFormTravelUI:94 · _bindEvFormDetails:100
+### js/events-form-controls.js  _(106 líneas)_
+**Funciones:** _evFormEl:2 · _evFormAll:3 · _evFormKind:4 · _evFormColor:5 · _evFormSuggestTitle:6 · _evFormTypeUI:10 · _bindEvFormTypes:24 · _bindEvFormCategories:38 · _evFormShapePreviews:53 · _bindEvFormAppearance:56 · _evFormDatesLabel:74 · _bindEvFormDates:82 · _evFormTravelUI:93 · _bindEvFormDetails:99
 
 ### js/events-form-save.js  _(108 líneas)_
 **Funciones:** _evFormRead:2 · _evFormReadDetails:26 · _evFormSaveBodas:46 · _evFormCommit:74 · _evFormDelete:90 · _bindEvFormActions:101
 
-### js/events-form.js  _(290 líneas)_
-**Funciones:** evPuntualDays:6 · _renderEvTypeSwatches:15 · _renderEvTypeButton:27 · evAdmiteRepeticion:47 · renderEvForm:50 (!195) · openEvForm:245 · closeEvForm:271 · evSuggestedTitle:279 · bindEvFormEvents:282
+### js/events-form.js  _(291 líneas)_
+**Funciones:** evPuntualDays:6 · _renderEvTypeSwatches:15 · _renderEvTypeButton:28 · evAdmiteRepeticion:48 · renderEvForm:51 (!195) · openEvForm:246 · closeEvForm:272 · evSuggestedTitle:280 · bindEvFormEvents:283
 
-### js/events-picker-color.js  _(337 líneas)_
-**Estado global:** EV_COLOR_GRID:6 · EV_COLOR_TYPES:25 · EV_MANAGEMENT_SUBTYPES:42 · EV_PLAN_SUBTYPES:43 · EV_KINDS:47 · EV_TYPE_COLORS:52 · EV_FREE_COLOR:83 · EV_FREE_SHAPE:84 · EV_FREE_DATES:87 · EV_BAR_SIZES:90 · EV_FREE_BARSIZE:91 · EV_DOT_SOLID:95 · EV_SHAPE_BW:122
+### js/events-management.js  _(26 líneas)_
+**Funciones:** evManagementShapeInner:2 · evManagementCheckable:11 · evManagementDate:12 · evManagementDone:13 · evManagementCheckHtml:14 · bindEvManagementCheck:19
 
-**Funciones:** evIsManagement:44 · evIsPlan:45 · evFixedSymbol:46 · evBarSize:96 · evBarSizeCls:102 · evTypeKey:103 · evTypeColor:104 · getEvKind:107 · evPlanShapeInner:123 · evShapeSvg:136 (!82) · evMorePlusSvg:218 · evTravelColor:227 · getEvType:233 · isEvBarAlways:242 · getEvDisplayColor:244 · _renderColorPicker:266 · _bindColorPicker:289 · updatePreview:299
+### js/events-picker-color.js  _(342 líneas)_
+**Estado global:** EV_COLOR_GRID:6 · EV_COLOR_TYPES:25 · EV_MANAGEMENT_SUBTYPES:42 · EV_PLAN_SUBTYPES:43 · EV_KINDS:47 · EV_TYPE_COLORS:52 · EV_FREE_COLOR:88 · EV_FREE_SHAPE:89 · EV_FREE_DATES:92 · EV_BAR_SIZES:95 · EV_FREE_BARSIZE:96 · EV_DOT_SOLID:100 · EV_SHAPE_BW:127
+
+**Funciones:** evIsManagement:44 · evIsPlan:45 · evFixedSymbol:46 · evBarSize:101 · evBarSizeCls:107 · evTypeKey:108 · evTypeColor:109 · getEvKind:112 · evPlanShapeInner:128 · evShapeSvg:141 (!82) · evMorePlusSvg:223 · evTravelColor:232 · getEvType:238 · isEvBarAlways:247 · getEvDisplayColor:249 · _renderColorPicker:271 · _bindColorPicker:294 · updatePreview:304
 
 ### js/events-picker-date.js  _(103 líneas)_
 **Estado global:** MNS:10
 
 **Funciones:** openOtrosDatePicker:7 (!96) · _evDk:11 · _count:12 · _render:13 · _attach:54 · _rerender:85 · _close:93
 
-### js/events-plan-picker.js  _(55 líneas)_
-**Estado global:** EV_PLAN_PICK:2 · EV_QUICK_PLANS:3
+### js/events-plan-picker.js  _(61 líneas)_
+**Estado global:** EV_PLAN_PICK:2 · EV_QUICK_PLANS:3 · EV_PICKER_GROUPS:4
 
-**Funciones:** renderEvQuickPlans:4 · updateEvQuickPlan:10 · renderEvPlanOptions:16 · closeEvPlanPicker:24 · evPlanPickerKey:30 · openEvPlanPicker:33
+**Funciones:** evPickerHas:8 · evPickerMoreIcon:9 · renderEvQuickPlans:10 · updateEvQuickPlan:16 · renderEvPlanOptions:22 · closeEvPlanPicker:29 · evPlanPickerKey:35 · openEvPlanPicker:38
 
 ### js/events-render.js  _(630 líneas)_
 **Estado global:** EV_LIST_TYPES:227
@@ -262,8 +265,8 @@
 
 **Funciones:** householdHost:4 · renderHouseholdContent:5 · openHousehold:8 · closeHousehold:21 · reRenderHousehold:28 · bindHousehold:33 · move:36
 
-### js/import-export.js  _(539 líneas)_
-**Funciones:** _lsJson:247 · askImportMode:254 · close:268 · _mergeMap:282 · _mergeList:293 · _sigEvent:303 · _sigCouple:305 · _sigAlarm:306 · _sigGasto:307 · _keyId:309 · _keyBday:310 · _keyGasto:311 · _exportPerYearKeys:317 (!86) · _applyFullImport:403 (!136)
+### js/import-export.js  _(540 líneas)_
+**Funciones:** _lsJson:247 · askImportMode:254 · close:268 · _mergeMap:282 · _mergeList:293 · _sigEvent:303 · _sigCouple:305 · _sigAlarm:306 · _sigGasto:307 · _keyId:309 · _keyBday:310 · _keyGasto:311 · _exportPerYearKeys:317 (!86) · _applyFullImport:403 (!137)
 
 ### js/import-preview.js  _(19 líneas)_
 **Funciones:** renderImportPreview:2 · add:4
@@ -343,20 +346,28 @@
 
 **Funciones:** vacEntitlementForYear:18 · saveVacEntitlement:21 · fhY:27 · fdY:28 · computeYearlySummary:30 · barChart3:104 · computePuentes:131 · isNWD:141 · typeOf:142 · renderSummaryWorkBody:175 (!101) · fmtSigned:263 · renderSummaryPuentesBody:276 (!94) · fdd:283 · renderSummaryTimeOffBody:370 (!92) · fdd:376 · bindSummaryWorkBodyEvents:462 · bindSummaryPuentesBodyEvents:472 · bindSummaryTimeOffBodyEvents:497 · renderSummaryContent:503 · closeSummary:524 · bindSummaryEvents:530 (!83)
 
+### js/tasks-drag.js  _(65 líneas)_
+**Estado global:** TASKS_DRAG_CANCEL:2
+
+**Funciones:** tasksStopDrag:3 · bindTasksReorder:4 · rows:16 · cleanup:17 · cancel:21 · key:22 · place:23 · tick:33 · move:38 · end:50 · finish:57
+
+### js/tasks-events.js  _(50 líneas)_
+**Funciones:** tasksEventMatches:3 · tasksEventId:6 · tasksEventRow:11 · tasksEventVisible:14 · tasksReconcileEvents:15 · tasksSetEventDone:38 · tasksRebindEventRefs:46
+
 ### js/tasks-float.js  _(80 líneas)_
 **Estado global:** TASKS_FAB_HIDDEN_KEY:3 · TASKS_FAB_HIDDEN:4 · TASKS_FLOAT:5
 
 **Funciones:** tasksFloatPosition:6 · tasksDock:17 · tasksUpdateFab:20 · initTasks:27 · end:49 · resize:61 · tasksSetAccessHidden:71 · tasksRestoreAccess:72 · bindTasksRestoreGesture:73 · distance:75
 
-### js/tasks-view.js  _(137 líneas)_
+### js/tasks-view.js  _(131 líneas)_
 **Estado global:** TASKS_VIEW:2 · TASKS_ICON:3
 
-**Funciones:** renderTasks:4 · tasksDateLabel:20 · renderTasksList:24 · renderTaskRow:38 · openTasks:54 · closeTasks:62 · tasksKeydown:68 · renderTasksPanel:78 · tasksPerform:95 · tasksRowAction:99 · tasksFocusRow:116 · bindTasksReorder:120 · clear:126 · end:132
+**Funciones:** renderTasks:4 · tasksDateLabel:20 · renderTasksList:24 · renderTaskRow:38 · openTasks:55 · closeTasks:63 · tasksKeydown:70 · renderTasksPanel:80 · tasksPerform:98 · tasksRowAction:102 · tasksFocusRow:124 · renderTaskColors:128
 
-### js/tasks.js  _(98 líneas)_
-**Estado global:** TASKS_KEY:3
+### js/tasks.js  _(102 líneas)_
+**Estado global:** TASKS_KEY:3 · TASKS_COLORS:4
 
-**Funciones:** tasksValidate:4 · tasksValidTimestamp:17 · tasksNormalize:18 · tasksData:30 · tasksSave:35 · tasksMigrate:36 · tasksMerge:41 · tasksItems:47 · tasksPendingRows:51 · tasksNeedsDateChoice:52 · tasksCreate:55 · tasksChange:60 · tasksMoveCompleted:76 · tasksUndoMove:81 · tasksMove:86 · tasksReminder:93 · tasksReminderSeen:97
+**Funciones:** tasksValidate:5 · tasksValidTimestamp:20 · tasksNormalize:21 · tasksData:33 · tasksSave:38 · tasksMigrate:39 · tasksMerge:44 · tasksItems:50 · tasksPendingRows:54 · tasksNeedsDateChoice:55 · tasksCreate:58 · tasksChange:63 · tasksMoveCompleted:80 · tasksUndoMove:85 · tasksMove:90 · tasksReminder:97 · tasksReminderSeen:101
 
 ### js/time-picker.js  _(79 líneas)_
 **Funciones:** evPlanReferenceTime:2 · timePickerInitial:5 · timePickerDrum:11 · bindTimePickerDrum:16 · index:18 · mark:19 · move:23 · openTimePicker:32 · close:35 · escape:41 · save:50
@@ -475,7 +486,7 @@
 **Rangos por prefijo de clase:**
 .bday-add:102-103 · .bday-badge:18-21 · .bday-buscar:64-66 · .bday-calendar:7-23 · .bday-cancel:49-50 · .bday-cell:11-105 · .bday-hdr:6-6 · .bday-header:24-33 · .bday-io:70-86 · .bday-list:36-60 · .bday-month:35-35 · .bday-num:15-15 · .bday-search:67-69 · .bday-symbol:2-2 · .bday-upcoming:3-101 · .bday-vip:26-47 · .bday-week:8-10 · .data-btn:5-5 · .ev-btn:4-4 · .ev-cell:106-123 · .ev-io:72-72 · .io-peligro:77-85 · .io-primaria:76-83 · .vip-no:44-45
 
-### css/source/event-calendar.css  _(344 líneas)_
+### css/source/event-calendar.css  _(354 líneas)_
 
 **Secciones:**
 
@@ -517,7 +528,7 @@
 - Planes: cuatro accesos y cuadrícula ampliada con confirmación fija.:328
 
 **Rangos por prefijo de clase:**
-.dp-actions:233-234 · .dp-counter:220-221 · .dp-day:228-232 · .dp-days:227-227 · .dp-grid:222-222 · .dp-handle:215-215 · .dp-hdr:216-216 · .dp-mhdr:225-226 · .dp-mname:224-224 · .dp-month:223-223 · .dp-overlay:211-214 · .dp-sheet:213-213 · .dp-title:217-217 · .dp-yearnav:218-219 · .ev-ann:266-302 · .ev-annual:19-324 · .ev-barsize:184-193 · .ev-category:95-114 · .ev-chip:310-310 · .ev-color:108-132 · .ev-dates:206-208 · .ev-detail:134-333 · .ev-edit:257-263 · .ev-filter:304-325 · .ev-hora:23-23 · .ev-io:264-264 · .ev-management:178-178 · .ev-otros:182-182 · .ev-plan:329-343 · .ev-quad:252-252 · .ev-sep:46-46 · .ev-shape:194-201 · .ev-type:89-111 · .ev-up:8-21 · .ev-upcoming:6-45 · .ev-viaje:24-32 · .ev-wk:33-87 · .sy-body:51-51 · .sy-puente:2-255
+.dp-actions:233-234 · .dp-counter:220-221 · .dp-day:228-232 · .dp-days:227-227 · .dp-grid:222-222 · .dp-handle:215-215 · .dp-hdr:216-216 · .dp-mhdr:225-226 · .dp-mname:224-224 · .dp-month:223-223 · .dp-overlay:211-214 · .dp-sheet:213-213 · .dp-title:217-217 · .dp-yearnav:218-219 · .ev-ann:266-302 · .ev-annual:19-324 · .ev-barsize:184-193 · .ev-category:95-114 · .ev-chip:310-310 · .ev-color:108-132 · .ev-dates:206-208 · .ev-detail:134-333 · .ev-edit:257-263 · .ev-filter:304-325 · .ev-hora:23-23 · .ev-io:264-264 · .ev-management:178-353 · .ev-otros:182-182 · .ev-picker:351-351 · .ev-plan:329-350 · .ev-quad:252-252 · .ev-sep:46-46 · .ev-shape:194-201 · .ev-type:89-111 · .ev-up:8-21 · .ev-upcoming:6-45 · .ev-viaje:24-32 · .ev-wk:33-87 · .sy-body:51-51 · .sy-puente:2-255
 
 ### css/source/navigation-alarms.css  _(115 líneas)_
 
@@ -713,14 +724,15 @@
 **Rangos por prefijo de clase:**
 .boda-asg:105-110 · .boda-det:101-104 · .boda-last:15-19 · .data-actions:138-139 · .energy-bar:90-90 · .energy-caption:2-2 · .energy-choice:12-12 · .energy-compare:132-132 · .energy-contract:4-5 · .energy-cost:86-134 · .energy-coverage:77-77 · .energy-extremes:73-73 · .energy-fee:42-43 · .energy-field:7-7 · .energy-fields:9-9 · .energy-info:62-64 · .energy-inline:83-83 · .energy-legend:91-91 · .energy-metric:124-126 · .energy-metrics:123-123 · .energy-overview:66-68 · .energy-period:69-71 · .energy-price:180-185 · .energy-range:92-92 · .energy-reconciliation:76-76 · .energy-scenario:133-133 · .energy-section:61-61 · .energy-supplier:74-127 · .energy-table:3-3 · .energy-tabs:45-56 · .energy-tariff:79-181 · .energy-tax:72-130 · .energy-vat:128-128 · .energy-window:31-122 · .energy-year:6-98 · .ev-btn:145-145 · .ev-io:135-135 · .ev-main:163-164 · .ev-upcoming:172-174 · .ev-wk:16-25 · .home-popup:18-28 · .imp-mode:112-112 · .imp-preview:113-117 · .nav-bar:140-140 · .rut-bulk:191-196 · .rut-card:157-162 · .rut-day:146-152 · .rut-days:149-149 · .rut-dpick:144-144 · .rut-history:187-190 · .rut-hora:153-155 · .rut-month:195-195 · .rut-recovery:143-143 · .rut-routine:159-159 · .rut-session:142-142 · .rut-time:156-156 · .rut-weekdays:150-150 · .sy-body:170-170
 
-### css/tasks.css  _(80 líneas)_
+### css/tasks.css  _(97 líneas)_
 
 **Secciones:**
 
 - Tareas globales: estilos aislados de calendarios y pestañas existentes.:1
+- Tarjetas pastel y arrastre con hueco visible.:81
 
 **Rangos por prefijo de clase:**
-.home-popup:75-75 · .task-actions:57-60 · .task-content:42-44 · .task-date:49-50 · .task-done:45-46 · .task-drop:62-63 · .task-editor:54-56 · .task-grip:51-52 · .task-more:53-53 · .task-moving:61-61 · .task-row:40-41 · .task-title:43-43 · .tasks-add:35-37 · .tasks-count:14-14 · .tasks-day:47-48 · .tasks-docked:15-16 · .tasks-drop:8-12 · .tasks-empty:71-73 · .tasks-fab:4-13 · .tasks-footer:64-65 · .tasks-header:23-28 · .tasks-heading:24-25 · .tasks-list:39-39 · .tasks-move:66-70 · .tasks-open:2-3 · .tasks-overlay:17-21 · .tasks-reminder:76-77 · .tasks-reminders:29-29 · .tasks-sheet:20-22 · .tasks-status:74-74 · .tasks-tabs:31-34
+.home-popup:75-75 · .task-actions:57-60 · .task-colors:87-89 · .task-content:42-44 · .task-date:49-50 · .task-done:45-46 · .task-drag:92-93 · .task-drop:62-63 · .task-editor:54-56 · .task-grip:51-91 · .task-linked:90-90 · .task-more:53-53 · .task-moving:61-61 · .task-row:40-86 · .task-title:43-43 · .tasks-add:35-37 · .tasks-count:14-14 · .tasks-day:47-48 · .tasks-docked:15-16 · .tasks-dragging:94-95 · .tasks-drop:8-12 · .tasks-empty:71-73 · .tasks-fab:4-13 · .tasks-footer:64-65 · .tasks-header:23-28 · .tasks-heading:24-25 · .tasks-list:39-39 · .tasks-move:66-70 · .tasks-open:2-3 · .tasks-overlay:17-21 · .tasks-reminder:76-77 · .tasks-reminders:29-29 · .tasks-sheet:20-22 · .tasks-status:74-74 · .tasks-tabs:31-34
 
 ### css/household.css  _(114 líneas)_
 

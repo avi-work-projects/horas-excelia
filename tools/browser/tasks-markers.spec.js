@@ -102,8 +102,8 @@ test('raquetas compuestas, VIP compacto y categorías de gestión con color fijo
   const row=await page.locator('.ev-annual-filter-row').evaluate(el=>({scroll:el.scrollWidth,width:el.clientWidth,ys:[...el.querySelectorAll('button')].map(b=>Math.round(b.getBoundingClientRect().y))}));
   expect(new Set(row.ys).size).toBe(1);expect(row.scroll).toBeLessThanOrEqual(row.width+1);
   await page.locator('#evViewUpcoming').click();await page.locator('#evAdd').click();
-  await expect(page.getByRole('region',{name:'Rec. Gestiones',exact:true}).locator('.ev-category-children .ev-type-name')).toHaveText(['Llamada','Peluquería','Médico','Dentista']);
-  await page.locator('[data-type="Dentista"]').click();await expect(page.locator('#evFColorSection')).toBeHidden();await expect(page.locator('#evFTitle')).toHaveValue('Dentista');await page.locator('#evFSave').click();
+  await expect(page.getByRole('region',{name:'Rec. Gestiones',exact:true}).locator('.ev-category-children .ev-type-name')).toHaveText(['Llamada','Pago','Enviar factura','Rec. Gestiones']);
+  await page.locator('[data-picker=management]').click();await page.locator('#evPlanPickerOv [data-type="Dentista"]').click();await page.locator('#evPlanConfirm').click();await expect(page.locator('#evPlanPickerWrap')).toHaveCount(0);await expect(page.locator('#evFColorSection')).toBeHidden();await expect(page.locator('#evFTitle')).toHaveValue('Dentista');await page.locator('#evFSave').click();
   await page.locator('#evViewCal').click();await expect(page.locator('.ev-shape-tooth')).toBeVisible();
 });
 test('recordatorios: acceso desde tareas, dos pendientes, cumpleaños plegables y todas las ocurrencias',async({page})=>{
@@ -118,7 +118,7 @@ test('recordatorios: acceso desde tareas, dos pendientes, cumpleaños plegables 
  await expect(page.locator('#tasksReminders')).toBeVisible();
  await page.locator('#tasksReminders').click();await expect(page.locator('#homePopup')).toBeVisible();
  await expect(page.getByRole('button',{name:'Entendido',exact:true})).toHaveCount(0);
- await expect(page.locator('.home-pending-tasks li')).toHaveText(['Primera tarea','Segunda tarea']);
+ await expect(page.locator('.home-pending-tasks li')).toHaveText(['Gestión repetida','Primera tarea']);
  await expect(page.locator('#homePopupContent')).toContainText('Gestión repetida');
  await expect(page.locator('#homePopupContent')).toContainText('Rutina de prueba');
  await expect(page.locator('.home-reminder-next-day')).toContainText('Plan de mañana');
@@ -136,7 +136,7 @@ test('recordatorios: acceso desde tareas, dos pendientes, cumpleaños plegables 
  const lines=await page.locator('.home-popup-item.event').first().evaluate(el=>({title:el.querySelector('.home-reminder-content').getBoundingClientRect().y,when:el.querySelector('.home-reminder-when').getBoundingClientRect().y}));expect(lines.title).toBeGreaterThan(lines.when);
  await expect(page.locator('#homeBirthdayToggle')).toHaveText(/Mostrar menos/);
  await page.locator('#homeBirthdayToggle').click();await expect(third).toBeHidden();
- await page.locator('#homeTasksOpen').click();await expect(page.locator('#tasksOverlay')).toBeVisible();await expect(page.locator('.task-title')).toHaveCount(3);
+ await page.locator('#homeTasksOpen').click();await expect(page.locator('#tasksOverlay')).toBeVisible();await expect(page.locator('.task-title')).toHaveCount(4);
  await page.locator('#tasksReminders').click();await expect(page.locator('#homePopup')).toBeVisible();await page.locator('#homePopupClose').click();
  await page.locator('#tasksFab').click();await page.locator('#tasksReminders').click();await page.locator('#homePopup').click({position:{x:3,y:3}});await expect(page.locator('#homePopup')).toBeHidden();
  await page.locator('#econBtn').click();await expect(page.locator('.econ-equiv-metric').first()).toContainText('Por día');
