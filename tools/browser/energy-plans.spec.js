@@ -91,10 +91,11 @@ test('precios finales, identidad de compañía, espacio entre campos y recordato
 test('autotítulos, planes fijos y símbolos anteriores compatibles',async({page})=>{
   await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await page.locator('#evAdd').click();
   const form=page.locator('#evFWrap'),title=page.locator('#evFTitle');
+  await expect(form.locator('.ev-kind-picker')).toBeVisible();
   for(const type of ['Llamada','Peluquería','Médico','Cena','Tomar algo','Montaña','Plan romántico','Comida','Salir de fiesta','Copas','Barbacoa']){
     const option=page.locator('#evFTypePicker').getByRole('button',{name:type,exact:true});
     if(await option.count())await option.click();
-    else {await page.locator('[data-picker="'+(['Peluquería','Médico'].includes(type)?'management':'plans')+'"]').click();await page.locator('#evPlanPickerOv').getByRole('button',{name:type,exact:true}).click();await page.locator('#evPlanConfirm').click();await expect(page.locator('#evPlanPickerWrap')).toHaveCount(0);}
+    else {await page.locator('[data-picker="'+(['Llamada','Peluquería','Médico'].includes(type)?'management':'plans')+'"]').click();await page.locator('#evPlanPickerOv').getByRole('button',{name:type,exact:true}).click();await page.locator('#evPlanConfirm').click();await expect(page.locator('#evPlanPickerWrap')).toHaveCount(0);}
     await expect(title).toHaveValue(type);await expect(page.locator('#evFColorSection')).toBeHidden();
   }
   await title.fill('Mi título');await page.locator('#evFTypePicker').getByRole('button',{name:'Cena',exact:true}).click();
