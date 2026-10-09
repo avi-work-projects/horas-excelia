@@ -77,3 +77,20 @@
 .tasks-reminder strong,.tasks-reminder span,.tasks-reminder b{display:block}.tasks-reminder span{font-size:.7rem;line-height:1.4;color:var(--text-muted);margin:6px 0}.tasks-reminder b{font-size:.68rem;color:var(--accent-bright)}
 @media(prefers-reduced-motion:reduce){.tasks-fab,.tasks-overlay,.tasks-sheet{transition:none}}
 @media print{.tasks-fab,.tasks-overlay{display:none!important}}
+
+/* Tarjetas pastel y arrastre con hueco visible. */
+.task-row{background:var(--task-tint,var(--surface2))}
+.task-row[style*="--task-tint"]{color:#253443;border-color:color-mix(in srgb,var(--task-tint) 70%,#84919c)}
+.task-row[style*="--task-tint"] .task-title{color:#253443}
+.task-row[style*="--task-tint"] .task-content small,.task-row[style*="--task-tint"] .task-grip,.task-row[style*="--task-tint"] .task-more{color:#627080}
+.task-row[style*="--task-tint"] input[type=checkbox]{--chk:#299963}
+.task-colors{display:flex;gap:10px;width:100%;padding:2px 0 6px}
+.task-colors button{width:32px;height:32px;padding:0;border-radius:50%;background:var(--swatch);color:#344858;border:1px solid #bac5cf;font-size:.85rem}
+.task-colors button[aria-pressed=true]{outline:2px solid var(--tasks-accent);outline-offset:2px}
+.task-linked-note{font-size:.68rem;margin:0;color:var(--text-muted)}
+.task-grip{width:26px;min-height:40px}
+.task-drag-placeholder{opacity:.2;border-style:dashed}
+.task-drag-ghost{position:fixed;z-index:50000;pointer-events:none;margin:0;box-sizing:border-box;box-shadow:0 12px 30px #17213c30,0 3px 8px #17213c18;outline:2px solid color-mix(in srgb,var(--tasks-accent) 45%,transparent);will-change:transform}
+.tasks-dragging{cursor:grabbing;scroll-behavior:auto;overflow-anchor:none}
+.tasks-dragging *{cursor:grabbing!important;user-select:none}
+@media(prefers-reduced-motion:reduce){.task-row{transition:none!important}}

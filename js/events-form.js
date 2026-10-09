@@ -17,6 +17,7 @@ function _renderEvTypeSwatches(kind,selType){
     ?[['Rec. Gestiones',Object.keys(EV_MANAGEMENT_SUBTYPES)],['Plan/Quedada',Object.keys(EV_PLAN_SUBTYPES)],['Ensayos boda',[]],['Otros',[]]]
     :EV_KINDS[kind].types.map(function(t){return [t,[]];});
   return groups.map(function(group){
+    if(kind==='puntual'&&group[0]==='Rec. Gestiones')return renderEvQuickPlans(selType,'management');
     if(kind==='puntual'&&group[0]==='Plan/Quedada')return renderEvQuickPlans(selType);
     var selected=selType===group[0]||group[1].indexOf(selType)>=0;
     var h='<section class="ev-category-group'+(kind==='grande'?' ev-category-single':'')+(selected?' chosen':'')+'" style="--category-tone:'+evTypeColor(kind,group[0])+'" aria-label="'+group[0]+'">'+_renderEvTypeButton(kind,group[0],selType);

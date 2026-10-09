@@ -49,6 +49,12 @@
       "path": "js/tasks.js"
     },
     {
+      "path": "js/tasks-events.js"
+    },
+    {
+      "path": "js/tasks-drag.js"
+    },
+    {
       "path": "js/tasks-view.js"
     },
     {
@@ -171,6 +177,9 @@
     },
     {
       "path": "js/events-appearance.js"
+    },
+    {
+      "path": "js/events-management.js"
     },
     {
       "path": "js/events-picker-color.js"

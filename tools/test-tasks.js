@@ -78,7 +78,7 @@ console.log('Tareas: dos estados, Mover explícito, fechas recuperables, histór
 // Todas las categorías fijas comparten Gestión y sobreviven a la importación.
 Object.keys(a.EV_MANAGEMENT_SUBTYPES).forEach(type=>{
  const ev={id:type==='Médico'?'doctor':'test-'+a.EV_MANAGEMENT_SUBTYPES[type],kind:'puntual',type,title:type,start:'2026-08-21',end:'2026-08-21',color:'#ff0000'};
- assert.equal(a.evFilterGroup(ev),'Rec. Gestiones');assert.equal(a.evMarkPriority(ev),['Llamada','Médico','Dentista','Peluquería'].indexOf(type));
+ assert.equal(a.evFilterGroup(ev),'Rec. Gestiones');assert.equal(a.evMarkPriority(ev),(['Llamada','Médico','Dentista','Peluquería'].includes(type)?['Llamada','Médico','Dentista','Peluquería'].indexOf(type):4));
  assert.equal(a.getEvDisplayColor(ev),a.evTypeColor('puntual',type));
  assert(a.evMarkerHtml(ev,'','','circle').includes('ev-shape-'+a.EV_MANAGEMENT_SUBTYPES[type]));
  a.validateImport({events:[ev]});assert(a.evAdmiteRepeticion('puntual',type));
@@ -88,3 +88,33 @@ const form=a.renderEvForm(null);assert(form.includes('data-shape="rings"'));
 const group=a.rutDayMarkersHtml([{id:'a',_rut:{id:'r',name:'Pádel',color:'#a3e635'},_rutTime:'16:00',_rutDur:60},{id:'b',_rut:{id:'r',name:'Pádel',color:'#a3e635'},_rutTime:'17:00',_rutDur:60}],' past-marker','2026-08-20');
 assert.equal((group.match(/past-marker/g)||[]).length,1);assert(group.includes('rut-marker-group past-marker'));
 console.log('Marcadores: gestión compartida, colores fijos, nuevas formas y atenuación de la pila OK');
+
+// Gestiones: vencimiento, excepciones, check compartido y backup sin duplicados.
+const g=cargarApp({});g.EVENTS=[
+ {id:'bill',kind:'puntual',type:'Enviar factura',title:'Factura pendiente',start:'2026-08-20'},
+ {id:'call',kind:'puntual',type:'Llamada',title:'Llamada de hoy',start:'2026-08-21'},
+ {id:'doctor',kind:'puntual',type:'Médico',title:'Cita de ayer',start:'2026-08-20'},
+ {id:'repeat',kind:'puntual',type:'Pago',title:'Pago semanal',start:'2026-08-14',repeat:{type:'weekly',weekDays:[5]}}
+];
+g.tasksCreate('Tarea manual');let rows=g.tasksItems(g.tasksData(),'pending');
+assert.deepEqual(Array.from(rows,t=>t.title),['Factura pendiente','Pago semanal','Tarea manual']);
+assert.equal(rows[0].color,'green');assert.equal(g.tasksData().items.length,3);
+g.tasksChange(rows[0].id,'complete');assert(g.evManagementDone(g.EVENTS[0],'2026-08-20'));
+g.tasksSetEventDone(g.EVENTS[0],'2026-08-20',false);assert(!g.evManagementDone(g.EVENTS[0],'2026-08-20'));
+g.tasksSetEventDone(g.EVENTS[1],'2026-08-21',true);assert(g.evManagementDone(g.EVENTS[1],'2026-08-21'));
+assert(!g.tasksItems(g.tasksData(),'pending').some(t=>t.title==='Llamada de hoy'));
+g.tasksSetEventDone(g.EVENTS[1],'2026-08-21',false);assert(!g.tasksItems(g.tasksData(),'pending').some(t=>t.title==='Llamada de hoy'));
+let gn=g.Date.now();g.Date.now=()=>gn+86400000;
+assert(g.tasksItems(g.tasksData(),'pending').some(t=>t.title==='Llamada de hoy'));
+assert.equal(g.tasksData().items.filter(t=>t.title==='Pago semanal').length,2,'Cada ocurrencia tiene su propio check');
+const bill=g.tasksData().items.find(t=>t.title==='Factura pendiente');g.tasksChange(bill.id,'color','lavender');g.tasksChange(bill.id,'complete','today');
+const transferred=JSON.parse(JSON.stringify(g.tasksData()));g.tasksValidate(transferred);
+const restored=cargarApp({});restored.EVENTS=JSON.parse(JSON.stringify(g.EVENTS));restored.EVENTS[0].id='another-device';restored.tasksSave(transferred);
+assert(restored.evManagementDone(restored.EVENTS[0],'2026-08-20'),'El enlace sobrevive a un id distinto al importar');
+assert.equal(restored.tasksData().items.find(t=>t.title==='Factura pendiente').color,'lavender');
+restored.EVENTS[0].title='Factura corregida';assert(restored.tasksData().items.some(t=>t.title==='Factura corregida'&&t.completedAt!==null));
+assert.equal(Object.keys(g.TASKS_COLORS).length,5);assert.throws(()=>g.tasksChange(bill.id,'color','red'));
+const beforeCheck=g.localStorage.getItem(g.TASKS_KEY),originalPut=g.localStorage.setItem;g.localStorage.setItem=()=>{throw Error('Quota');};
+assert.throws(()=>g.tasksSetEventDone(g.EVENTS[1],'2026-08-21',true));g.localStorage.setItem=originalPut;assert.equal(g.localStorage.getItem(g.TASKS_KEY),beforeCheck);
+['Peluquería','Médico','Dentista'].forEach(type=>assert(!g.evManagementCheckable({kind:'puntual',type})));
+console.log('Gestiones vencidas, checks por fecha, enlace entre vistas, colores, backup y fallo de disco OK');

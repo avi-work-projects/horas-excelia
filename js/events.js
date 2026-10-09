@@ -358,7 +358,7 @@ function evMarkPriority(ev){
   if(!ev)return 9;                       /* cumpleanos VIP y demas: al final */
   if(getEvKind(ev)==='puntual'&&getEvType(ev)==='Otros'&&['wave','x-outline','circle-plus'].indexOf(ev.shape)>=0)return -1;
   var p=EV_MARK_ORDER[getEvType(ev)];
-  return (p===undefined)?9:p;
+  return (p===undefined)?(evIsManagement(getEvType(ev))?4:9):p;
 }
 /* Hora de una clase de boda en minutos (para ordenarlas); las que no tienen
    hora van al final de su grupo. */

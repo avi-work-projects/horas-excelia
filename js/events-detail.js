@@ -98,6 +98,7 @@ function renderEvDetail(ev,fromSummary,car){
   }
   h+='</div>';
   h+=rutRecoveryHtml(ev);
+  h+=evManagementCheckHtml(ev,(car&&car.ds)||EV_EDIT_DS);
   h+='<div style="font-size:.72rem;font-weight:600;color:'+_ddc+';opacity:.8;margin-bottom:4px">'+getEvType(ev)+'</div>';
   h+='<div class="ev-detail-color-section" id="evDColorSection">';
   h+=_renderColorPicker(_ddc,false,false,'evDCp');
@@ -220,6 +221,7 @@ function openEvDetail(ev,container,car){
     contenedor:ov, overlay:'evDetailOv', alCerrar:closeEvDetail,
     reutilizar:!!car
   });
+  bindEvManagementCheck(wrap,ev);
   document.getElementById('evDClose').addEventListener('click',car?closeEvDayCarousel:closeEvDetail);
   /* Flechas, puntos y deslizamiento del carrusel */
   if(car){
