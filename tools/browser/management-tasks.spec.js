@@ -11,7 +11,7 @@ test('gestiones: selector, confirmación, check compartido y vencimiento',async(
  expect(generic.x+generic.width).toBeLessThan(heading.x);expect(Math.abs(generic.y+generic.height/2-heading.y-heading.height/2)).toBeLessThan(3);
  await expect(page.locator('.ev-plan-options .ev-type-name').first()).toHaveText('Peluquería');
  const order=await page.locator('.ev-plan-options [data-type]').evaluateAll(els=>els.map(e=>e.dataset.type));
- expect(order.slice(0,4)).toEqual(['Peluquería','Médico','Dentista','Cita']);
+ expect(order).toEqual(['Peluquería','Médico','Dentista','Cita','Llamada','Contratar seguro','Contratar gas','Contratar electricidad','Enviar factura','Pago','Pago hacienda','Presentar Modelo']);
  for(const type of ['Pago hacienda','Pago','Contratar seguro','Contratar gas','Contratar electricidad','Presentar Modelo','Enviar factura'])await expect(page.locator('#evPlanPickerOv [data-type="'+type+'"]')).toBeVisible();
  await page.locator('#evPlanPickerOv [data-type="Enviar factura"]').click();await page.locator('#evPlanConfirm').click();await expect(page.locator('#evPlanPickerWrap')).toHaveCount(0);
  await expect(page.locator('#evFTitle')).toHaveValue('Enviar factura');await page.locator('#evFStart').fill('2026-10-08');await page.locator('#evFEnd').fill('2026-10-08');await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);
@@ -46,4 +46,20 @@ test('modelo fiscal: título, otro modelo y persistencia al editar',async({page}
  await page.locator('#evFTitle').fill('Mi presentación');await page.locator('#evFTaxOther').fill('111');await expect(page.locator('#evFTitle')).toHaveValue('Mi presentación');
  await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);await page.locator('#evViewCal').click();await page.locator('.ev-shape-tax-form').click();
  await expect(page.locator('#evDWrap')).toContainText('Modelo 111');await page.locator('#evDEdit').click();await expect(page.locator('#evFTaxModel')).toHaveValue('other');await expect(page.locator('#evFTaxOther')).toHaveValue('111');
+});
+
+test('selección compartida: genéricos, acentos y nombre elegido fuera de accesos rápidos',async({page})=>{
+ await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await page.locator('#evAdd').click();
+ const mg=page.locator('[data-group=management]'),pl=page.locator('[data-group=plans]');
+ await expect(mg.locator('[data-type="Rec. Gestiones"]')).toBeVisible();await expect(pl.locator('[data-type="Plan/Quedada"]')).toBeVisible();
+ for(const [key,type,color] of [['management','Pago','rgb(39, 132, 92)'],['plans','Cine','rgb(189, 97, 25)']]){
+   await page.locator('[data-picker='+key+']').click();await page.locator('#evPlanPickerOv [data-type="'+type+'"]').click();
+   await expect(page.locator('#evPlanPickerOv .ev-plan-options .selected')).toHaveCSS('border-top-color',color);await expect(page.locator('#evPlanConfirm')).toHaveCSS('background-color',color);await expect(page.locator('#evPlanConfirm')).toHaveCSS('color','rgb(255, 255, 255)');
+   await page.locator('#evPlanConfirm').click();await expect(page.locator('#evPlanPickerWrap')).toHaveCount(0);
+   await expect(page.locator('[data-group='+key+'] .ev-quick-selection')).toContainText(type);await expect(page.locator('[data-picker='+key+'] .ev-type-name')).toHaveText('Más opciones');await expect(page.locator('[data-picker='+key+'] .ev-type-name')).toHaveCSS('font-weight','400');
+ }
+ await expect(mg.locator('.ev-quick-selection')).toBeHidden();
+ await mg.locator('[data-type="Llamada"]').click();await expect(mg.locator('.selected')).toHaveCSS('border-top-color','rgb(39, 132, 92)');await expect(pl.locator('.ev-quick-selection')).toBeHidden();
+ await pl.locator('[data-type="Plan/Quedada"]').click();await expect(pl.locator('[data-type="Plan/Quedada"]')).toHaveClass(/selected/);
+ await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);expect(await page.evaluate(()=>EVENTS[0].type)).toBe('Plan/Quedada');
 });

@@ -1511,18 +1511,25 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-plan-options .ev-type-dot{width:28px;height:28px}
 .ev-plan-options .ev-type-name{font-size:.7rem;line-height:1.2;max-width:100%;overflow-wrap:anywhere}
 .ev-plan-footer{padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));box-shadow:0 -1px 0 var(--border);flex-shrink:0;background:var(--surface)}
-.ev-plan-confirm{width:100%;background:#ed8b28;color:#201305;font-weight:750;border-color:#ed8b28}
+.ev-plan-confirm{width:100%;background:var(--picker-accent);color:#fff;font-weight:750;border-color:var(--picker-accent)}
 .ev-plan-confirm:disabled{opacity:.45;cursor:default}
 
-.ev-plan-more{background:#e6f2fb;color:#527c9b;border-color:#bfd5e5}
-.ev-plan-more>svg{width:26px;height:26px;fill:#95bdd9}
-.ev-plan-more.selected{background:#dbeefb;border-color:#6d9dbc}
+.ev-plan-more{background:color-mix(in srgb,var(--picker-accent) 10%,var(--surface));color:var(--picker-accent);border-color:color-mix(in srgb,var(--picker-accent) 40%,var(--border))}
+.ev-plan-more>svg{width:26px;height:26px;fill:currentColor}
+.ev-plan-more.selected{background:color-mix(in srgb,var(--picker-accent) 18%,var(--surface));border-color:var(--picker-accent)}
 .ev-plan-header{gap:12px;flex-direction:row}
 .ev-plan-header h2{flex:1}
 .ev-plan-header .ev-picker-generic{flex:none;width:38px;height:38px;padding:8px;border-radius:12px}
 .ev-picker-generic .ev-type-dot{width:22px;height:22px}
 .ev-management-check{display:flex;align-items:center;gap:10px;margin:12px 0;padding:10px 12px;border:1px solid #b4d9c5;border-radius:12px;color:#248755;font-weight:600;background:color-mix(in srgb,#80d5a4 14%,var(--surface))}
 .ev-management-check:has(:checked){background:color-mix(in srgb,#80d5a4 28%,var(--surface))}
+
+/* La selección pertenece al grupo; el símbolo conserva su color propio. */
+.ev-type-picker .ev-quick-group .ev-color-swatch.selected,
+.ev-plan-sheet .ev-type-picker .ev-color-swatch.selected{border-color:var(--picker-accent);background:color-mix(in srgb,var(--picker-accent) 14%,var(--surface))}
+.ev-type-picker .ev-plan-more .ev-type-name{font-weight:400}
+.ev-quick-selection{padding:3px 10px 0;color:var(--picker-accent);font-size:.72rem;font-weight:600}
+.ev-quick-selection[hidden]{display:none}
 
 /* Fuente: css/source/navigation-alarms.css */
 /* Shared overlay nav bar — nivel 1, siempre visible en lo alto del overlay */
