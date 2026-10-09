@@ -18,7 +18,7 @@ test('gestiones: selector, confirmación, check compartido y vencimiento',async(
  await expect(page.locator('#evManagementDone')).not.toBeChecked();await page.locator('#evManagementDone').check();
  await page.locator('#evDClose').click();await expect(page.locator('#evDWrap')).toHaveCount(0);await page.locator('#tasksFab').click();
  await expect(page.getByRole('tab',{name:'Completadas 1',exact:true})).toBeVisible();await page.getByRole('tab',{name:'Completadas 1',exact:true}).click();
- await page.getByRole('checkbox',{name:'Reabrir Enviar factura',exact:true}).uncheck();await page.getByRole('tab',{name:'Pendientes 1',exact:true}).click();
+ await page.getByRole('checkbox',{name:'Reabrir Enviar factura',exact:true}).click();await expect(page.getByRole('tab',{name:'Pendientes 1',exact:true})).toBeVisible();await page.getByRole('tab',{name:'Pendientes 1',exact:true}).click();
  await expect(page.locator('.task-row').first()).toHaveCSS('background-color','rgb(228, 244, 233)');
  await page.locator('#tasksClose').click();await expect(page.locator('#tasksWrap')).toHaveCount(0);await page.locator('.ev-cell[data-ds="2026-10-08"] .ev-shape-invoice').click();await expect(page.locator('#evManagementDone')).not.toBeChecked();
 });
