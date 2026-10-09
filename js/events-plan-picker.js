@@ -3,26 +3,26 @@ var EV_PLAN_PICK=null;
 var EV_QUICK_PLANS=['Comida','Tomar algo','Cena'];
 var EV_PICKER_GROUPS={
   plans:{generic:'Plan/Quedada',title:'Elige tu plan',label:'Plan / Quedada',quick:EV_QUICK_PLANS,types:['Comida','Tomar algo','Cena','Brunch','Barbacoa','Cumpleaños','Plan romántico','Copas','Salir de fiesta','Bolos','Cine','Ping pong','Ver partido fútbol','Juegos de mesa','Montaña','Ponencia']},
-  management:{generic:'Rec. Gestiones',title:'Elige tu gestión',label:'Rec. Gestiones',quick:['Llamada','Pago','Enviar factura'],types:['Llamada','Pago','Enviar factura','Pago hacienda','Contratar seguro','Contratar gas/electricidad','Peluquería','Médico','Dentista']}
+  management:{generic:'Rec. Gestiones',title:'Elige tu gestión',label:'Rec. Gestiones',quick:['Llamada','Cita','Peluquería'],legacy:['Contratar gas/electricidad'],types:['Peluquería','Médico','Dentista','Cita','Llamada','Pago','Pago hacienda','Presentar Modelo','Enviar factura','Contratar seguro','Contratar gas','Contratar electricidad']}
 };
-function evPickerHas(group,type){return type===group.generic||group.types.indexOf(type)>=0;}
+function evPickerHas(group,type){return type===group.generic||group.types.indexOf(type)>=0||(group.legacy||[]).indexOf(type)>=0;}
 function evPickerMoreIcon(){return '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><path d="M17.5 14v7m-3.5-3.5h7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';}
 function renderEvQuickPlans(type,key){
   key=key||'plans';var group=EV_PICKER_GROUPS[key],other=evPickerHas(group,type)&&group.quick.indexOf(type)<0;
   return '<section class="ev-category-group'+(evPickerHas(group,type)?' chosen':'')+'" style="--category-tone:'+evTypeColor('puntual',group.generic)+'" aria-label="'+group.generic+'"><div class="ev-plan-heading">'+group.label+'</div><div class="ev-category-children ev-plan-quick" data-quick="'+key+'">'
     +group.quick.map(function(t){return _renderEvTypeButton('puntual',t,type);}).join('')
-    +'<button type="button" data-picker="'+key+'" class="ev-plan-more'+(other?' selected':'')+'" aria-label="Más opciones de '+(key==='plans'?'planes':'gestiones')+'" aria-haspopup="dialog">'+evPickerMoreIcon()+'<span class="ev-type-name">'+(other?escHtml(type):'Más opciones')+'</span></button></div></section>';
+    +'<button type="button" data-picker="'+key+'" class="ev-plan-more'+(other?' selected':'')+'" aria-label="Más opciones de '+(key==='plans'?'planes':'gestiones')+'" aria-haspopup="dialog">'+evPickerMoreIcon()+'<span class="ev-type-name">'+(other&&key==='plans'?escHtml(type):'Más opciones')+'</span></button></div></section>';
 }
 function updateEvQuickPlan(form,type){
   form.root.querySelectorAll('.ev-plan-more').forEach(function(more){
     var group=EV_PICKER_GROUPS[more.dataset.picker],other=evPickerHas(group,type)&&group.quick.indexOf(type)<0;
-    more.classList.toggle('selected',other);more.querySelector('.ev-type-name').textContent=other?type:'Más opciones';
+    more.classList.toggle('selected',other);more.querySelector('.ev-type-name').textContent=other&&more.dataset.picker==='plans'?type:'Más opciones';
   });
 }
 function renderEvPlanOptions(selected,key){
   var types=EV_PICKER_GROUPS[key||'plans'].types,remainder=types.length%4,start=types.length-remainder;
   return types.map(function(t,i){
-    var button=_renderEvTypeButton('puntual',t,selected),column=remainder&&i===start?5-remainder:null;
+    var button=_renderEvTypeButton('puntual',t,selected).replace('>Cumpleaños</span>','>Cumple</span>'),column=remainder&&i===start?5-remainder:null;
     return '<div class="ev-plan-option" style="grid-column:'+(column?column+' / ':'')+'span 2">'+button+'</div>';
   }).join('');
 }
@@ -56,5 +56,6 @@ function openEvPlanPicker(form,key){
     _evFormEl(form,'evFTypePicker').innerHTML=_renderEvTypeSwatches('puntual',type);
     _bindEvFormTypes(form);_evFormTypeUI(form,'puntual',type);_evFormSuggestTitle(form,type);
     closeEvPlanPicker();
+    if(type==='Presentar Modelo')requestAnimationFrame(function(){_evFormEl(form,'evFTaxBlock').scrollIntoView({block:'nearest',behavior:'smooth'});});
   };
 }

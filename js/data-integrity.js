@@ -76,6 +76,7 @@ function validateImport(data){
     if(data[k]!=null&&(!Array.isArray(data[k])||data[k].some(function(x){return !x||typeof x!=='object'||Array.isArray(x);})))throw new Error('Lista no valida: '+k);
   });
   (data.events||[]).forEach(function(e){if(!validIsoDate(e.start)||(e.end&&(!validIsoDate(e.end)||e.end<e.start)))throw new Error('Fechas de evento no validas');if(e.dates&&(!Array.isArray(e.dates)||e.dates.some(function(d){return !validIsoDate(d);})))throw new Error('Seleccion de dias no valida');});
+  (data.events||[]).forEach(function(e){if(e.taxModel!=null&&(typeof e.taxModel!=='string'||!/^\d{3}$/.test(e.taxModel)))throw new Error('Código de modelo fiscal no válido');});
   (data.birthdays||[]).forEach(function(b){if(!validBirthday(b.day,b.month))throw new Error('Fecha de cumpleanos no valida');});
   (data.rutinas||[]).forEach(function(r){
     function hour(t){return typeof t==='string'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(t);}

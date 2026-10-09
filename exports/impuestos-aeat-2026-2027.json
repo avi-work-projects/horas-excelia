@@ -1,0 +1,148 @@
+{
+  "importNotes": [
+    "Territorio común AEAT: modelos 303 trimestral, 390 y 100. Confirma que te corresponden; el modelo 390 tiene exoneraciones.",
+    "Fechas que caen en 2026 y 2027; enero incluye el cuarto trimestre del año anterior. El cuarto trimestre de 2027 vence en 2028 y no está incluido.",
+    "Los recordatorios se sitúan en el último día para domiciliar (303/100), y en el de presentar el 390. La nota incluye el plazo final de presentación.",
+    "2026: calendario AEAT publicado. 2027: previsiones que debes verificar; la AEAT ya confirma el 01/02/2027 para presentar el 303 del 4T de 2026, pero la domiciliación indicada sigue siendo provisional.",
+    "No se presupone que hayas realizado los trámites pasados: al importar, las gestiones vencidas pendientes aparecerán en Mis tareas. Usa Añadir/fusionar para conservar tus eventos."
+  ],
+  "sources": [
+    "https://sede.agenciatributaria.gob.es/Sede/ayuda/calendario-contribuyente/calendario-contribuyente-2026/plazos-presentacion-autoliquidaciones-domiciliacion-bancaria.html",
+    "https://sede.agenciatributaria.gob.es/Sede/ayuda/contenidos-lectura-facil/calendario-contribuyente-2026-simplificado-personas-fisicas/calendario-anual/febrero-2027/hasta-1-febrero-2027.html"
+  ],
+  "reviewedAt": "2026-10-09",
+  "events": [
+    {
+      "id": "aeat-303-4T-2025",
+      "kind": "puntual",
+      "type": "Presentar Modelo",
+      "taxModel": "303",
+      "title": "Domiciliar y presentar IVA",
+      "start": "2026-01-27",
+      "end": "2026-01-27",
+      "color": "#647db1",
+      "note": "Modelo 303 · 4T 2025. Domiciliar hasta 2026-01-27; presentar hasta 2026-01-30. Solo domiciliación si sale a pagar."
+    },
+    {
+      "id": "aeat-390-2025",
+      "kind": "puntual",
+      "type": "Presentar Modelo",
+      "taxModel": "390",
+      "title": "Presentar IVA anual",
+      "start": "2026-01-30",
+      "end": "2026-01-30",
+      "color": "#647db1",
+      "note": "Modelo 390 · Ejercicio 2025. Último día de presentación; no se domicilia. Solo si no estás exonerado del resumen anual."
+    },
+    {
+      "id": "aeat-303-1T-2026",
+      "kind": "puntual",
+      "type": "Presentar Modelo",
+      "taxModel": "303",
+      "title": "Domiciliar y presentar IVA",
+      "start": "2026-04-15",
+      "end": "2026-04-15",
+      "color": "#647db1",
+      "note": "Modelo 303 · 1T 2026. Domiciliar hasta 2026-04-15; presentar hasta 2026-04-20. Solo domiciliación si sale a pagar."
+    },
+    {
+      "id": "aeat-100-2025",
+      "kind": "puntual",
+      "type": "Presentar Modelo",
+      "taxModel": "100",
+      "title": "Presentar Dec. Renta",
+      "start": "2026-06-25",
+      "end": "2026-06-25",
+      "color": "#647db1",
+      "note": "Modelo 100 · Renta 2025. Domiciliar hasta 2026-06-25; presentar hasta 2026-06-30. Si sale a devolver, no hay domiciliación."
+    },
+    {
+      "id": "aeat-303-2T-2026",
+      "kind": "puntual",
+      "type": "Presentar Modelo",
+      "taxModel": "303",
+      "title": "Domiciliar y presentar IVA",
+      "start": "2026-07-15",
+      "end": "2026-07-15",
+      "color": "#647db1",
+      "note": "Modelo 303 · 2T 2026. Domiciliar hasta 2026-07-15; presentar hasta 2026-07-20. Solo domiciliación si sale a pagar."
+    },
+    {
+      "id": "aeat-303-3T-2026",
+      "kind": "puntual",
+      "type": "Presentar Modelo",
+      "taxModel": "303",
+      "title": "Domiciliar y presentar IVA",
+      "start": "2026-10-15",
+      "end": "2026-10-15",
+      "color": "#647db1",
+      "note": "Modelo 303 · 3T 2026. Domiciliar hasta 2026-10-15; presentar hasta 2026-10-20. Solo domiciliación si sale a pagar."
+    },
+    {
+      "id": "aeat-303-4T-2026",
+      "kind": "puntual",
+      "type": "Presentar Modelo",
+      "taxModel": "303",
+      "title": "Domiciliar y presentar IVA",
+      "start": "2027-01-27",
+      "end": "2027-01-27",
+      "color": "#647db1",
+      "note": "Modelo 303 · 4T 2026. Domiciliar hasta 2027-01-27; presentar hasta 2027-02-01. Solo domiciliación si sale a pagar. Fechas provisionales; verificar AEAT."
+    },
+    {
+      "id": "aeat-390-2026",
+      "kind": "puntual",
+      "type": "Presentar Modelo",
+      "taxModel": "390",
+      "title": "Presentar IVA anual",
+      "start": "2027-02-01",
+      "end": "2027-02-01",
+      "color": "#647db1",
+      "note": "Modelo 390 · Ejercicio 2026. Último día de presentación; no se domicilia. Solo si no estás exonerado del resumen anual. Fecha provisional; verificar AEAT."
+    },
+    {
+      "id": "aeat-303-1T-2027",
+      "kind": "puntual",
+      "type": "Presentar Modelo",
+      "taxModel": "303",
+      "title": "Domiciliar y presentar IVA",
+      "start": "2027-04-15",
+      "end": "2027-04-15",
+      "color": "#647db1",
+      "note": "Modelo 303 · 1T 2027. Domiciliar hasta 2027-04-15; presentar hasta 2027-04-20. Solo domiciliación si sale a pagar. Fechas provisionales; verificar AEAT."
+    },
+    {
+      "id": "aeat-100-2026",
+      "kind": "puntual",
+      "type": "Presentar Modelo",
+      "taxModel": "100",
+      "title": "Presentar Dec. Renta",
+      "start": "2027-06-25",
+      "end": "2027-06-25",
+      "color": "#647db1",
+      "note": "Modelo 100 · Renta 2026. Domiciliar hasta 2027-06-25; presentar hasta 2027-06-30. Si sale a devolver, no hay domiciliación. Fecha provisional; verificar AEAT."
+    },
+    {
+      "id": "aeat-303-2T-2027",
+      "kind": "puntual",
+      "type": "Presentar Modelo",
+      "taxModel": "303",
+      "title": "Domiciliar y presentar IVA",
+      "start": "2027-07-15",
+      "end": "2027-07-15",
+      "color": "#647db1",
+      "note": "Modelo 303 · 2T 2027. Domiciliar hasta 2027-07-15; presentar hasta 2027-07-20. Solo domiciliación si sale a pagar. Fechas provisionales; verificar AEAT."
+    },
+    {
+      "id": "aeat-303-3T-2027",
+      "kind": "puntual",
+      "type": "Presentar Modelo",
+      "taxModel": "303",
+      "title": "Domiciliar y presentar IVA",
+      "start": "2027-10-15",
+      "end": "2027-10-15",
+      "color": "#647db1",
+      "note": "Modelo 303 · 3T 2027. Domiciliar hasta 2027-10-15; presentar hasta 2027-10-20. Solo domiciliación si sale a pagar. Fechas provisionales; verificar AEAT."
+    }
+  ]
+}

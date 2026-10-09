@@ -9,9 +9,10 @@ test('gestiones: selector, confirmación, check compartido y vencimiento',async(
  await expect(page.locator('#evPlanTitle')).toHaveText('Elige tu gestión');
  const generic=await page.locator('.ev-picker-generic').boundingBox(),heading=await page.locator('#evPlanTitle').boundingBox();
  expect(generic.x+generic.width).toBeLessThan(heading.x);expect(Math.abs(generic.y+generic.height/2-heading.y-heading.height/2)).toBeLessThan(3);
- const last=await page.locator('.ev-plan-options [data-type="Dentista"]').boundingBox(),grid=await page.locator('.ev-plan-options').boundingBox();
- expect(Math.abs(last.x+last.width/2-grid.x-grid.width/2)).toBeLessThan(2);
- for(const type of ['Pago hacienda','Pago','Contratar seguro','Contratar gas/electricidad','Enviar factura'])await expect(page.locator('#evPlanPickerOv [data-type="'+type+'"]')).toBeVisible();
+ await expect(page.locator('.ev-plan-options .ev-type-name').first()).toHaveText('Peluquería');
+ const order=await page.locator('.ev-plan-options [data-type]').evaluateAll(els=>els.map(e=>e.dataset.type));
+ expect(order.slice(0,4)).toEqual(['Peluquería','Médico','Dentista','Cita']);
+ for(const type of ['Pago hacienda','Pago','Contratar seguro','Contratar gas','Contratar electricidad','Presentar Modelo','Enviar factura'])await expect(page.locator('#evPlanPickerOv [data-type="'+type+'"]')).toBeVisible();
  await page.locator('#evPlanPickerOv [data-type="Enviar factura"]').click();await page.locator('#evPlanConfirm').click();await expect(page.locator('#evPlanPickerWrap')).toHaveCount(0);
  await expect(page.locator('#evFTitle')).toHaveValue('Enviar factura');await page.locator('#evFStart').fill('2026-10-08');await page.locator('#evFEnd').fill('2026-10-08');await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);
  await page.locator('#evViewCal').click();await page.locator('.ev-cell[data-ds="2026-10-08"] .ev-shape-invoice').click();
@@ -33,4 +34,16 @@ test('tareas: arrastre, cancelación, color y persistencia',async({page})=>{
  await expect(page.locator('.task-title')).toHaveText(['Cuarta','Primera','Segunda','Tercera']);
  await page.getByRole('button',{name:'Opciones de Cuarta',exact:true}).click();await expect(page.locator('.task-colors button')).toHaveCount(5);await page.locator('[data-color=blue]').click();await expect(page.locator('.task-row').first()).toHaveCSS('background-color','rgb(230, 240, 252)');
  await page.reload();if(await page.locator('#homePopupClose').isVisible())await page.locator('#homePopupClose').click();await page.locator('#tasksFab').click();await expect(page.locator('.task-title')).toHaveText(['Cuarta','Primera','Segunda','Tercera']);await expect(page.locator('.task-row').first()).toHaveCSS('background-color','rgb(230, 240, 252)');
+});
+
+test('modelo fiscal: título, otro modelo y persistencia al editar',async({page})=>{
+ await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await page.locator('#evAdd').click();
+ await page.locator('[data-picker=management]').click();await page.locator('#evPlanPickerOv [data-type="Presentar Modelo"]').click();await page.locator('#evPlanConfirm').click();
+ await expect(page.locator('#evFTaxBlock')).toBeVisible();await expect(page.locator('#evFTitle')).toHaveValue('Domiciliar y presentar IVA');
+ await page.locator('#evFTaxModel').selectOption('390');await expect(page.locator('#evFTitle')).toHaveValue('Presentar IVA anual');
+ await page.locator('#evFTaxModel').selectOption('100');await expect(page.locator('#evFTitle')).toHaveValue('Presentar Dec. Renta');
+ await page.locator('#evFTaxModel').selectOption('other');await page.locator('#evFTaxOther').fill('130');await expect(page.locator('#evFTitle')).toHaveValue('Presentar Modelo 130');
+ await page.locator('#evFTitle').fill('Mi presentación');await page.locator('#evFTaxOther').fill('111');await expect(page.locator('#evFTitle')).toHaveValue('Mi presentación');
+ await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);await page.locator('#evViewCal').click();await page.locator('.ev-shape-tax-form').click();
+ await expect(page.locator('#evDWrap')).toContainText('Modelo 111');await page.locator('#evDEdit').click();await expect(page.locator('#evFTaxModel')).toHaveValue('other');await expect(page.locator('#evFTaxOther')).toHaveValue('111');
 });

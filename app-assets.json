@@ -242,6 +242,9 @@
       "path": "js/events-render.js"
     },
     {
+      "path": "js/events-tax-model.js"
+    },
+    {
       "path": "js/events-form.js"
     },
     {

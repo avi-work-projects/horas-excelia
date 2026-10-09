@@ -32,3 +32,13 @@ const medicalRows=a.evIcsCandidates(a.EVENTS,'2026-08-21','2026-08-21');
 assert(medicalRows.some(r=>r.ev.type==='Médico'));
 assert.equal(a.evDefaultShape({type:'Rec. Gestiones'}),'diamond');
 console.log('Médico: calendario, filtros compartidos, categoría, recordatorios e importación/exportación OK');
+
+const fiscal=JSON.parse(require('fs').readFileSync('exports/impuestos-aeat-2026-2027.json','utf8'));
+const validFiscal=a.validateImport(fiscal);a.EVENTS=[];a.evMergeIncoming(validFiscal.events);a.evMergeIncoming(validFiscal.events);
+assert.equal(a.EVENTS.length,12);assert(a.EVENTS.every(e=>e.taxModel&&e.type==='Presentar Modelo'&&e.note.length<=200));
+const original=fiscal.events[0],other={...original,id:'another',taxModel:'111'};
+assert.notEqual(a.evSignature(original),a.evSignature(other));
+assert.throws(()=>a.validateImport({events:[{...original,taxModel:'bad'}]}));
+assert.equal(a.evTaxTitle('303'),'Domiciliar y presentar IVA');assert.equal(a.evTaxTitle('130'),'Presentar Modelo 130');
+assert(a.evPickerHas(a.EV_PICKER_GROUPS.management,'Contratar gas/electricidad'));
+console.log('Fiscal: archivo importable, sin duplicados, modelo conservado y código validado OK');

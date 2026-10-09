@@ -5,6 +5,8 @@ function _evFormRead(form){
   var selected=form.root.querySelector('#evFTypePicker .ev-color-swatch.selected'),picker=form.root.querySelector('.ev-kind-picker');
   var kind=selected&&selected.dataset.kind||picker&&picker.dataset.curKind||'puntual';
   var type=selected&&selected.dataset.type||picker&&picker.dataset.curType||'Otros',key=evTypeKey(kind,type);
+  var taxModel=type==='Presentar Modelo'?evFormTaxCode(form):null;
+  if(taxModel!==null&&!/^\d{3}$/.test(taxModel)){showToast('Escribe el código de modelo de tres cifras','error');return null;}
   var start=_evFormEl(form,'evFStart').value,end=_evFormEl(form,'evFEnd').value;
   if(!start){showToast('La fecha de inicio es obligatoria','error');return null;}
   if(!end||end<start)end=start;
@@ -15,6 +17,7 @@ function _evFormRead(form){
     repeat={type:'weekly',weekDays:days};
   }else if(repType!=='none')repeat={type:repType};
   var event={id:form.edit?form.edit.id:'ev-'+Date.now(),title:title,note:_evFormEl(form,'evFNote').value.trim(),color:EV_FREE_COLOR[key]?_evFormColor(form):evTypeColor(kind,type),kind:kind,type:type,start:start,end:end,repeat:repeat};
+  if(taxModel!==null)event.taxModel=taxModel;
   if(EV_FREE_DATES[key]&&form.dates.length>1)event.dates=form.dates.slice().sort();
   if(EV_FREE_SHAPE[key]&&form.shape)event.shape=form.shape;
   if(EV_FREE_BARSIZE[key]){

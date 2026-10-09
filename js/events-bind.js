@@ -528,7 +528,7 @@ function _bindEvListas(){
         var data={events:arr};if(incBodas)data.bodas=incBodas;
         applyFullImport(data,mode);refreshEvents();
       };
-      if(typeof askImportMode==='function')askImportMode('Eventos: '+f.name+' ('+arr.length+')',apply,renderImportPreview({events:arr,bodas:incBodas}));
+      if(typeof askImportMode==='function')askImportMode('Eventos: '+f.name+' ('+arr.length+')',apply,renderImportPreview({events:arr,bodas:incBodas,importNotes:_raw.importNotes}));
       else apply('replace');
     };
     r.readAsText(f);

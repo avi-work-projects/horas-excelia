@@ -205,7 +205,7 @@ function evSignature(ev){
     String(ev.title||'').trim().toLowerCase().replace(/\s+/g,' '),
     ev.start,ev.end||ev.start,
     (ev.dates&&ev.dates.length)?ev.dates.slice().sort().join(','):'',
-    rep,evStartTime(ev)||'',evEndTime(ev)||'',ev.boda&&ev.boda.coupleId||''].join('|');
+    rep,evStartTime(ev)||'',evEndTime(ev)||'',ev.boda&&ev.boda.coupleId||''].join('|')+(ev.taxModel?'|modelo:'+ev.taxModel:'');
 }
 /* Fusiona una lista de eventos entrantes sobre EVENTS sin crear duplicados.
    Devuelve el recuento para poder decirselo al usuario. */

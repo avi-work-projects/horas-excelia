@@ -97,6 +97,7 @@ function renderEvDetail(ev,fromSummary,car){
     h+='<button class="ev-detail-color-btn" id="evDColorBtn">\uD83C\uDFA8</button>';
   }
   h+='</div>';
+  if(ev.type==='Presentar Modelo'&&ev.taxModel)h+='<div class="ev-detail-repeat">Modelo '+escHtml(ev.taxModel)+'</div>';
   h+=rutRecoveryHtml(ev);
   h+=evManagementCheckHtml(ev,(car&&car.ds)||EV_EDIT_DS);
   h+='<div style="font-size:.72rem;font-weight:600;color:'+_ddc+';opacity:.8;margin-bottom:4px">'+getEvType(ev)+'</div>';
