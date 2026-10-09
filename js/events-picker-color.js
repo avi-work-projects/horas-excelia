@@ -40,7 +40,7 @@ var EV_COLOR_TYPES = {
    - puntual: se dibuja UN MARCADOR POR D\u00cdA (aunque abarque varios d\u00edas)
    - grande:  se dibuja como BARRA continua (formato actual de Viaje/Asturias) */
 var EV_MANAGEMENT_SUBTYPES={'Llamada':'phone','Peluquería':'scissors','Médico':'medical','Dentista':'tooth'};
-var EV_PLAN_SUBTYPES={'Plan romántico':'heart','Comida':'meal','Cena':'dinner','Salir de fiesta':'disco','Copas':'party','Tomar algo':'beer','Montaña':'mountain','Barbacoa':'barbecue'};
+var EV_PLAN_SUBTYPES={'Plan romántico':'heart','Comida':'meal','Cena':'dinner','Salir de fiesta':'disco','Copas':'party','Tomar algo':'beer','Montaña':'mountain','Barbacoa':'barbecue','Cumpleaños':'cake','Brunch':'brunch','Bolos':'bowling','Cine':'cinema','Ping pong':'pingpong','Ver partido fútbol':'football-tv','Juegos de mesa':'boardgames','Ponencia':'lecture'};
 function evIsManagement(type){return type==='Rec. Gestiones'||Object.prototype.hasOwnProperty.call(EV_MANAGEMENT_SUBTYPES,type);}
 function evIsPlan(type){return type==='Plan/Quedada'||Object.prototype.hasOwnProperty.call(EV_PLAN_SUBTYPES,type);}
 function evFixedSymbol(type){return EV_MANAGEMENT_SUBTYPES[type]||EV_PLAN_SUBTYPES[type]||null;}
@@ -64,6 +64,14 @@ var EV_TYPE_COLORS = {
   'puntual|Tomar algo'    :'#f5c232',
   'puntual|Montaña'       :'#8b5e34',
   'puntual|Barbacoa'      :'#d46535',
+  'puntual|Cumpleaños'    :'#ad396b',
+  'puntual|Brunch'        :'#efb34c',
+  'puntual|Bolos'         :'#895ac4',
+  'puntual|Cine'          :'#d95365',
+  'puntual|Ping pong'     :'#e96836',
+  'puntual|Ver partido fútbol':'#429867',
+  'puntual|Juegos de mesa':'#398fbb',
+  'puntual|Ponencia'      :'#7c6bb0',
   'puntual|Ensayos boda'  :'#c084fc',
   'puntual|Otros'         :'#a3e635',
   'grande|Viaje'          :'#38bdf8',
@@ -112,6 +120,19 @@ function getEvKind(ev){
    tamaño del contenedor (el layout de anual/4-meses dimensiona por CSS grid).
    El color del relleno/trazo es currentColor → se controla con style="color:…". */
 var EV_SHAPE_BW = 2;
+function evPlanShapeInner(shape){
+  var outline=' stroke="#000" '+evSymbolStroke(EV_SHAPE_BW)+' stroke-linejoin="round"';
+  var shapes={
+    brunch:'<ellipse cy="3" rx="9" ry="5" fill="currentColor"'+outline+'/><path d="M-6,2 C-9,-4 -3,-7 0,-4 C6,-8 10,0 5,4 C1,8 -2,4 -6,2 Z" fill="#fff7df"'+outline+'/><circle cx="1" cy="0" r="3" fill="#f8bd36"/><path d="M-7,-7 Q-8,-9 -6,-10" fill="none" stroke="#000" stroke-width="1.2"/>',
+    bowling:'<path d="M3,-9 C-1,-9 0,-5 1,-3 C2,0 -2,3 0,8 H7 C9,3 5,0 6,-3 C7,-5 7,-9 3,-9 Z" fill="#fff5e3"'+outline+'/><path d="M1,-3 H6 M1,-1 H6" stroke="#d74756" stroke-width="1.5"/><circle cx="-4" cy="4" r="5" fill="currentColor"'+outline+'/><circle cx="-5" cy="2" r=".9"/><circle cx="-2.5" cy="2.5" r=".9"/><circle cx="-4" cy="4.5" r=".9"/>',
+    cinema:'<rect x="-9" y="-3" width="18" height="12" rx="1.5" fill="currentColor"'+outline+'/><path d="M-9,-3 L-10,-7 L7,-10 L8,-6 Z" fill="#e9edf3"'+outline+'/><path d="M-5,-8 L-2,-5 M1,-9 L4,-6" stroke="#000" stroke-width="2"/><path d="M-2,0 L4,3 L-2,6 Z" fill="#fff2da"/>',
+    pingpong:'<path d="M1,2 L7,9 L9,7 L3,0 Z" fill="#d6a365"'+outline+'/><ellipse cx="-2" cy="-2" rx="6" ry="7" transform="rotate(-35)" fill="currentColor"'+outline+'/><circle cx="6" cy="-5" r="3" fill="#fff"'+outline+'/>',
+    'football-tv':'<rect x="-9" y="-7" width="18" height="13" rx="2" fill="currentColor"'+outline+'/><path d="M0,6 V9 M-5,9 H5" stroke="#000" stroke-width="2" stroke-linecap="round"/><circle cy="-.5" r="5" fill="#fff" stroke="#000" stroke-width="1.1"/><path d="M0,-3 L2,-1.5 L1,1 H-1 L-2,-1.5 Z M-4,-3 L-2.5,-4.5 L-2,-3 M4,-3 L2.5,-4.5 L2,-3 M-4,2 L-2.5,3.5 L-2,2 M4,2 L2.5,3.5 L2,2" fill="#000"/>',
+    boardgames:'<rect x="-9" y="-5" width="11" height="12" rx="2" transform="rotate(-12)" fill="currentColor"'+outline+'/><rect x="-1" y="-7" width="10" height="12" rx="2" transform="rotate(12)" fill="#f9d375"'+outline+'/><g fill="#000"><circle cx="-6" cy="-1" r="1"/><circle cx="-3" cy="3" r="1"/><circle cx="3" cy="-4" r="1"/><circle cx="6" cy="0" r="1"/></g>',
+    lecture:'<rect x="-9" y="-9" width="18" height="11" rx="1" fill="#e7edf5"'+outline+'/><path d="M1,-6 H6 M1,-3 H5" stroke="currentColor" stroke-width="1.6"/><circle cx="-4" cy="-4" r="2.5" fill="#f4cba6" stroke="#000" stroke-width="1.3"/><path d="M-8,3 Q-8,-1 -4,-1 Q0,-1 0,3" fill="currentColor"'+outline+'/><path d="M-7,2 H6 L4,9 H-5 Z" fill="currentColor"'+outline+'/><path d="M2,2 V-1 L4,-2" fill="none" stroke="#000" stroke-width="1.3"/>'
+  };
+  return shapes[shape]||null;
+}
 function evShapeSvg(shape){
   /* Las siluetas de rutina (mancuerna, pala, bailarin) tambien se pueden
      elegir como forma para un evento puntual de tipo Otros. */
@@ -119,8 +140,9 @@ function evShapeSvg(shape){
     var activity=rutIconSvg(shape,RUT_FIXED_COLOR[shape]||'#888',true).replace(/^<svg[^>]*>/,'').replace(/<\/svg>$/,'');
     return '<svg viewBox="0 0 20 20"><rect x="1" y="1" width="18" height="18" rx="4" fill="#fff" stroke="#000" '+evSymbolStroke(1.7)+'/><g transform="translate(3.5 3.5) scale(.54)">'+activity+'</g></svg>';
   }
-  var bw=EV_SHAPE_BW,inner;
-  if(shape==='cake'){
+  var bw=EV_SHAPE_BW,inner=evPlanShapeInner(shape);
+  if(inner){ /* Símbolos de planes con su relleno propio. */
+  } else if(shape==='cake'){
     inner='<path d="M0,-9 C-4,-5 3,-4 2,-7 Z" fill="#ffcc52" stroke="#000" '+evSymbolStroke(1.5)+' stroke-linejoin="round"/>'
       +'<path d="M0,-4 V0" stroke="#000" '+evSymbolStroke(2)+'/><rect x="-8" y="-1" width="16" height="9" rx="1.5" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+'/>'
       +'<path d="M-8,0 Q-8,-2 -6,-2 H6 Q8,-2 8,0 V2 Q6,4 4,2 Q2,0 0,2 Q-2,4 -4,2 Q-6,0 -8,2 Z" fill="#fff0d6" stroke="#000" '+evSymbolStroke(1.5)+' stroke-linejoin="round"/>';

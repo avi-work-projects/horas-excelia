@@ -1497,6 +1497,23 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
   .ev-filter-cycle-wrap{padding-left:4px}
 }
 
+/* Planes: cuatro accesos y cuadrícula ampliada con confirmación fija. */
+.ev-plan-heading{padding:9px 4px;font-size:.72rem;font-weight:700;color:var(--text)}
+.ev-plan-more{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--c-orange);padding:8px 2px;min-width:0;cursor:pointer}
+.ev-plan-more.selected{border-color:var(--c-orange);background:color-mix(in srgb,var(--c-orange) 14%,var(--surface))}
+.ev-plan-plus{font-size:26px;font-weight:600;line-height:22px}
+.ev-detail-overlay.ev-plan-overlay{position:fixed;z-index:20000;justify-content:center}
+.ev-plan-sheet{display:flex;flex-direction:column;max-width:600px;max-height:85dvh;padding:0;overflow:hidden}
+.ev-plan-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;flex-shrink:0}
+.ev-plan-header h2{font-size:1.15rem;margin:0}
+.ev-plan-options{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;padding:4px 16px 18px;overflow-y:auto;min-height:0}
+.ev-plan-option>.ev-color-swatch{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;width:100%;height:100%;min-height:86px;padding:10px 3px;text-align:center}
+.ev-plan-options .ev-type-dot{width:28px;height:28px}
+.ev-plan-options .ev-type-name{font-size:.7rem;line-height:1.2}
+.ev-plan-footer{padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));box-shadow:0 -1px 0 var(--border);flex-shrink:0;background:var(--surface)}
+.ev-plan-confirm{width:100%;background:#ed8b28;color:#201305;font-weight:750;border-color:#ed8b28}
+.ev-plan-confirm:disabled{opacity:.45;cursor:default}
+
 /* Fuente: css/source/navigation-alarms.css */
 /* Shared overlay nav bar — nivel 1, siempre visible en lo alto del overlay */
 .overlay-nav-bar{flex-shrink:0;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;gap:6px;padding:10px 16px 4px;box-shadow:0 1px 0 var(--border);overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none}
@@ -1690,9 +1707,9 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-ann-ruts{position:absolute;top:1px;left:1px;right:1px;display:grid;
   grid-template-columns:repeat(var(--rutn,2),1fr);gap:1px;z-index:6;pointer-events:none}
 .ev-ann-rut{height:2px;border-radius:1px;min-width:0}
-.ev-day-left{position:absolute;top:25px;left:3px;display:flex;flex-direction:column;align-items:flex-start;gap:3px;z-index:5;pointer-events:none;max-width:72%}
-/* Separar los símbolos del número; conservar espacio cuando la pila está llena. */
-.ev-month-wrap .ev-cell:has(.ev-day-vips):has(.rut-marker-group:nth-child(3)){min-height:89px}
+.ev-day-left{position:absolute;top:18px;left:3px;display:flex;flex-direction:column;align-items:flex-start;gap:3px;z-index:5;pointer-events:none;max-width:72%}
+/* Conservar espacio cuando la pila está llena. */
+.ev-month-wrap .ev-cell:has(.ev-day-vips):has(.rut-marker-group:nth-child(3)){min-height:82px}
 .ev-day-left > *{pointer-events:auto}
 /* Los cumpleaños VIP se solapan al 75% (12px de marcador -> -9px) */
 .ev-day-vips{display:flex;align-items:center;cursor:pointer}
@@ -2900,7 +2917,7 @@ details[open]>summary{margin-bottom:10px}
 .ev-month-wrap .ev-cell.ev-day-vacaciones{box-shadow:inset 0 3px var(--vacaciones)}
 .ev-month-wrap .ev-cell.ev-day-ausencia{box-shadow:inset 0 3px var(--ausencia)}
 .ev-month-wrap .ev-cell.today-ev{outline:2.5px solid var(--calendar-tone);outline-offset:-2.5px}
-.ev-month-wrap .ev-cell.today-ev .ev-num{width:21px;height:18px;margin-top:-2px;margin-bottom:-3px;justify-content:center;border-radius:5px;background:var(--calendar-tone);color:#fff;font-weight:700}
+.ev-month-wrap .ev-cell.today-ev .ev-num{width:18px;height:13px;font-size:.65rem;margin-top:-3px;margin-bottom:3px;justify-content:center;border-radius:5px;background:var(--calendar-tone);color:#fff;font-weight:700}
 .ev-month-wrap .ev-cell:active{outline:2px solid var(--calendar-tone);outline-offset:-2px}
 .ev-month-wrap .ev-week-hdr div{font-size:.6rem;letter-spacing:.06em;padding:6px 0;color:var(--text-muted)}
 #eventsOverlay:has(#evViewCal.active) #evToday,#eventsOverlay:has(#evViewAnnual.active) #evToday,#eventsOverlay:has(#evViewQuad.active) #evToday{border-color:var(--c-green);color:var(--c-green);background:color-mix(in srgb,var(--c-green) 9%,var(--surface))}
@@ -3190,7 +3207,7 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 
 .rut-session-state{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.rut-session-state>.ev-io-btn{flex:1}
 .rut-recovery-list{position:relative;max-height:50vh;overflow-y:auto;margin-top:18px}.rut-recovery-list>h3{position:sticky;top:0;background:var(--surface);padding:10px 0;font-size:.8rem;z-index:1}.rut-recovery-list>.ev-io-btn{display:flex;flex-direction:column;gap:5px;width:100%;margin-bottom:8px;text-align:left}.rut-recovery-list small{color:var(--text-muted)}
-.rut-dpick-real *{pointer-events:none!important}.rut-dpick-real .ev-cell[data-ds]{pointer-events:auto!important;cursor:pointer}.rut-dpick-real .rut-day-selected{outline:3px solid #ec168c;outline-offset:-3px}.rut-dpick-real>.ev-io-row{display:none}
+.rut-dpick-real *{pointer-events:none!important}.rut-dpick-real .ev-cell[data-ds]{pointer-events:auto!important;cursor:pointer}.rut-dpick-real .ev-month-wrap .ev-cell.rut-day-selected{outline:3px solid #ec168c;outline-offset:-3px;background:color-mix(in srgb,#ec168c 14%,var(--surface))}.rut-dpick-real .ev-cell.rut-day-selected::after{content:"✓";position:absolute;right:2px;bottom:2px;border-radius:50%;width:15px;height:15px;background:#b51068;color:#fff;font-size:11px;font-weight:800;text-align:center;line-height:15px;z-index:7}.rut-dpick-real>.ev-io-row{display:none}
 .ev-btn.rut-recovery-confirm,.ev-io-btn.rut-recovery-confirm{background:#ec168c;color:white;border-color:#ec168c;font-weight:600}.rut-addition-sheet>.rut-recovery-confirm{width:100%;margin-top:12px}.rut-recovery-confirm:disabled{opacity:.4;cursor:default}
 .rut-day-agenda{display:flex;flex-direction:column;gap:6px;max-height:22vh;overflow:auto;margin:10px 0 0}.rut-agenda-item{padding:9px 10px;border-left:3px solid var(--agenda-color);border-radius:7px;background:var(--surface2);display:flex;flex-wrap:wrap;align-items:center;gap:5px 12px;font-size:.75rem}.rut-agenda-item strong{flex:1;min-width:110px}.rut-agenda-item span{font-size:.7rem;color:var(--text-muted);white-space:nowrap}.rut-day-agenda>.sy-note{margin:0}
 

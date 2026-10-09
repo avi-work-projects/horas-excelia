@@ -28,10 +28,10 @@ function homeReminderEvents(today){
         if(!bodaPlaceOf(ev))content+=' · Sin sala';
       }
       if(ev._rutSkip)content+=' · Saltada';
-      items.push({days:days,time:time||'',type:'event',color:homeReminderColor(ev),text:homeReminderEventText(days===0?'Hoy':'Mañana',time,content,type==='Ensayos boda',ev)+bodaUltimoEnsayoHtml(ev),note:homeReminderNoteHtml(ev,ds)});
+      items.push({event:ev,days:days,time:time||'',type:'event',color:homeReminderColor(ev),text:homeReminderEventText(days===0?'Hoy':'Mañana',time,content,type==='Ensayos boda',ev)+bodaUltimoEnsayoHtml(ev),note:homeReminderNoteHtml(ev,ds)});
     });
   }
-  return items.sort(function(a,b){return a.days-b.days||Number(!!a.time)-Number(!!b.time)||a.time.localeCompare(b.time);});
+  return items.sort(function(a,b){return a.days-b.days||evUpcomingCompare(a.event,b.event);});
 }
 function homeReminderTasksHtml(){
   var pending=tasksItems(tasksData(),'pending');

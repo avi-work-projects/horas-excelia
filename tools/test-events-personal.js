@@ -44,3 +44,26 @@ assert.equal(b.PERSONAL_DATA.limpiezaCasa.amount,40);assert.equal(b.PERSONAL_DAT
 b.FISCAL_YEAR=2027;assert(!b.personalCardOpen('gastosRecurrentes',item,0));
 a.togglePersonalCards();assert(!a.personalCardsAllOpen());assert(!a.personalHasChanges(),'Plegar no modifica importes');
 console.log('Eventos por fecha, filtros P/Q, ficha con símbolo y partidas personales plegables: OK');
+
+// Próximos y Recordatorios comparten orden, sin convertir referencias en horas reales.
+a.RUTINAS=[];a.BDAYS=[];
+require('vm').runInContext(require('fs').readFileSync(require('path').join(__dirname,'../js/home-popup.js'),'utf8'),a);
+a.EVENTS=['Cena','Comida','Cine','Brunch','Bolos','Tomar algo','Copas','Salir de fiesta'].map((type,i)=>({id:'order-'+i,kind:'puntual',type,title:type,start:'2026-08-21'}));
+a.EVENTS.push({id:'timed',kind:'puntual',type:'Rec. Gestiones',title:'Gestión con hora',time:'19:30',start:'2026-08-21'});
+const ordered=a.EVENTS.slice().sort(a.evUpcomingCompare).map(e=>e.id);
+assert.deepEqual(Array.from(a.homeReminderEvents(new a.Date(2026,7,21)),it=>it.event.id),ordered);
+html=a.renderEvUpcoming();ordered.forEach((id,i)=>{if(i)assert(html.indexOf('data-id="'+ordered[i-1]+'"')<html.indexOf('data-id="'+id+'"'));});
+for(const [type,time] of Object.entries({Brunch:'11:00',Bolos:'19:00',Cine:'20:00'}))assert.equal(a.evPlanReferenceTime(type),time);
+for(const type of ['Cumpleaños','Ping pong','Ver partido fútbol','Juegos de mesa','Ponencia'])assert.equal(a.evPlanReferenceTime(type),null);
+for(const type of ['Cumpleaños','Brunch','Bolos','Cine','Ping pong','Ver partido fútbol','Juegos de mesa','Ponencia']){
+  assert(a.evIsPlan(type));assert(a.EV_TYPE_COLORS['puntual|'+type]);
+  assert(a.evShapeSvg(a.evFixedSymbol(type)).includes('fill="currentColor"'));
+}
+// El bloque continuo queda reservado a viajes que ya han comenzado.
+a.EVENTS=[{id:'ongoing',kind:'grande',type:'Viaje',title:'En curso prueba',start:'2026-08-20',end:'2026-08-25'},
+ {id:'future',kind:'grande',type:'Viaje',title:'Futuro prueba',start:'2026-08-22',end:'2026-08-25'}];
+html=a.renderEvUpcoming();assert(html.indexOf('data-id="ongoing"')<html.indexOf('ev-up-daysep'));
+assert(html.indexOf('Sáb 22/08')<html.indexOf('data-id="future"'));
+a.EVENTS=[{...a.EVENTS[1],start:'2026-10-03',end:'2026-10-05'}];
+html=a.renderEvUpcoming();assert(html.includes('Sin eventos en las próximas 3 semanas'));assert(html.indexOf('Sáb 03/10')<html.indexOf('data-id="future"'));
+console.log('Planes nuevos, orden compartido y grandes agrupados por inicio: OK');

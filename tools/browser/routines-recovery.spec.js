@@ -23,12 +23,13 @@ test('recuperación con calendario, agenda fija y estado enlazado',async({page})
   await expect(page.locator('#rutHistorySkip')).toHaveCount(0);await expect(page.locator('#rutHistoryEditAdd')).toHaveCount(0);
   await page.locator('#rutHistoryRecover').click();
   // Las barras escalonadas no pueden interceptar el centro ni la base de una celda.
-  for(const date of ['2026-10-07','2026-10-08']){
+  for(const date of ['2026-10-01','2026-10-07','2026-10-08']){
     const cell=page.locator('#rutAdditionOv .ev-cell[data-ds="'+date+'"]');
     await expect(cell).toBeVisible();
     const box=await cell.boundingBox();
     await cell.click({position:{x:box.width*.5,y:box.height*.7}});
     await expect(page.locator('#rutAdditionOv .ev-cell[data-ds="'+date+'"]')).toHaveAttribute('aria-pressed','true');
+    await expect(page.locator('#rutAdditionOv .ev-cell[data-ds="'+date+'"]')).toHaveCSS('outline-color','rgb(236, 22, 140)');
   }
   await page.locator('#rutAdditionOv .ev-cell[data-ds="2026-10-08"]').click();
   await expect(page.locator('#rutRecoveryConfirm')).toContainText('08/10/2026');

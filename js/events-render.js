@@ -104,14 +104,14 @@ function renderEvUpcoming(){
     return s;
   }
   /* Un panel de Proximos se pinta en dos bloques:
-       1) los eventos GRANDES, siempre arriba y sin minicabecera
-       2) el resto, agrupado por dia con una minicabecera (ej: "Dom 23/08")
+       1) los eventos GRANDES en curso, arriba y sin minicabecera
+       2) el resto (también grandes futuros), agrupado por dia con una minicabecera (ej: "Dom 23/08")
           que sale una sola vez aunque el dia tenga varios eventos. */
   function renderEvPanel(ids,map){
     var grandes=[],sueltos=[];
     ids.forEach(function(id){
       var it=map[id];
-      if(typeof getEvKind==='function'&&getEvKind(it.ev)==='grande')grandes.push(id);
+      if(isEvBarAlways(it.ev)&&it.ev.start<=evDk(today)&&(it.ev.end||it.ev.start)>=evDk(today))grandes.push(id);
       else sueltos.push(id);
     });
     var out='';
