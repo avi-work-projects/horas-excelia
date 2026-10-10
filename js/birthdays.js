@@ -105,6 +105,13 @@ function daysUntil(m1,d){
   return Math.round((bd-today)/86400000);
 }
 
+/* Alarmas disponibles desde hoy hasta dentro de 14 días, inclusive. */
+function bdayCanSetAlarm(b){
+  if(!b)return false;
+  var days=daysUntil(b.month,b.day);
+  return Number.isFinite(days)&&days>=0&&days<=14;
+}
+
 function hasUpcomingBday(){
   var t=new Date();t.setHours(0,0,0,0);
   for(var i=0;i<7;i++){var d=new Date(t);d.setDate(d.getDate()+i);if(getBdaysOn(d.getMonth()+1,d.getDate()).length)return true;}

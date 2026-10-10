@@ -19,7 +19,8 @@ a.EV_YEAR=2026;a.EV_MONTH=7;a.EV_QUAD_YEAR=2026;a.EV_QUAD_MONTH=7;
 for(const render of ['renderEvCalMonth','renderEvQuad','renderEvAnnual'])assert.match(a[render](),/ev-part-past[^>]+data-id="test-trip"/);
 console.log('Apariencia: ribete definitivo, backups previos y viajes en curso en los tres calendarios OK');
 
-const birthday=a.renderEvDetail({id:'ev-bday-vip-test',title:'⭐ Cumple Ana',note:'Cumpleaños VIP',start:'2026-08-21',end:'2026-08-21',color:'#fbbf24',repeat:{type:'yearly'}},false,{ds:'2027-08-21',i:0,n:1});
+a.BDAYS=[{name:'Ana',day:21,month:8,vip:true}];
+const birthday=a.renderEvDetail({id:'ev-bday-vip-21-8-ana',title:'⭐ Cumple Ana',note:'Cumpleaños VIP',start:'2026-08-21',end:'2026-08-21',color:'#fbbf24',repeat:{type:'yearly'}},false,{ds:'2027-08-21',i:0,n:1});
 assert.match(birthday,/id="evDTitle">Ana<\/div>/);
 assert.equal((birthday.match(/src="VIP.png"/g)||[]).length,1);
 assert.doesNotMatch(birthday,/⭐|Cumpleaños VIP|Anual/);
@@ -43,3 +44,10 @@ assert.throws(()=>a.validateImport({birthdays:[{name:'Ana',day:1,month:10,catego
 const savedPeople=JSON.stringify(a.BDAYS),setGroups=a.appStorage.setItem;
 a.appStorage.setItem=()=>{throw Error('sin espacio');};
 assert.throws(()=>a.bdaySaveGroupDraft([[],[]]));assert.equal(JSON.stringify(a.BDAYS),savedPeople);a.appStorage.setItem=setGroups;
+
+assert.equal(a.bdayCanSetAlarm({day:21,month:8}),true);
+assert.equal(a.bdayCanSetAlarm({day:4,month:9}),true);
+assert.equal(a.bdayCanSetAlarm({day:5,month:9}),false);
+assert.equal(a.bdayCanSetAlarm({day:20,month:8}),false);
+assert.equal(a.bdayCanSetAlarm(null),false);
+assert.doesNotMatch(a.renderBdayDetail({name:'Lejano',day:5,month:9}),/id="bdDAlarm"/);

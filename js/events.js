@@ -425,8 +425,8 @@ function vipStarSvgHtml(id,pastClass,sizeClass){
     +'</svg>';
   return '<span class="ev-annual-vip-star-svg'+pmk+sz+'" data-id="'+id+'">'+svg+'</span>';
 }
-function vipIconHtml(id,pastClass){
-  return '<span class="ev-annual-vip-star-svg ev-month-vip'+(pastClass||'')+'" data-id="'+escHtml(id)+'"><img src="VIP.png" alt="VIP"></span>';
+function vipIconHtml(id,pastClass,layer){
+  return '<span class="ev-annual-vip-star-svg ev-month-vip'+(pastClass||'')+'"'+(layer===undefined?'':' style="z-index:'+layer+'"')+' data-id="'+escHtml(id)+'"><img src="VIP.png" alt="VIP"></span>';
 }
 
 /* ── Render: próximos eventos (3 semanas) ───────────────── */
