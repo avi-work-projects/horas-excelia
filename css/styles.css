@@ -1528,7 +1528,20 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-type-picker .ev-quick-group .ev-color-swatch.selected,
 .ev-plan-sheet .ev-type-picker .ev-color-swatch.selected{border-color:var(--picker-accent);background:color-mix(in srgb,var(--picker-accent) 14%,var(--surface))}
 .ev-type-picker .ev-plan-more .ev-type-name{font-weight:400}
-.ev-quick-selection{padding:3px 10px 0;color:var(--picker-accent);font-size:.72rem;font-weight:600}
+.ev-quick-header{display:flex;align-items:center;gap:8px;min-width:0}
+.ev-type-picker .ev-quick-header>.ev-color-swatch{flex:1;min-width:0;background:transparent;border-color:transparent;font-weight:600;padding:7px 4px}
+.ev-quick-selection{flex:0 1 auto;max-width:48%;min-width:0}
+.ev-type-picker .ev-quick-selection .ev-color-swatch{width:100%;padding:6px;gap:5px;min-height:34px}
+.ev-quick-selection .ev-type-name{font-size:.66rem;line-height:1.15;overflow-wrap:anywhere}
+.ev-quick-selection .ev-type-dot{width:20px;height:20px}
+.ev-type-picker .ev-quick-header .ev-color-swatch.selected{border-color:var(--picker-accent);background:color-mix(in srgb,var(--picker-accent) 14%,var(--surface))}
+.ev-tax-model{margin:12px 0 2px;padding-top:12px;box-shadow:0 -1px 0 color-mix(in srgb,var(--picker-accent) 25%,var(--border))}
+.ev-type-picker .ev-tax-trigger{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:10px;border:1px solid var(--picker-accent);border-radius:10px;background:var(--surface);color:var(--text);font-size:.76rem;cursor:pointer}
+.ev-tax-menu{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:7px}
+.ev-tax-menu[hidden]{display:none}
+.ev-type-picker .ev-tax-menu button{display:flex;align-items:center;gap:8px;padding:10px 7px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);cursor:pointer;font-size:.7rem}
+.ev-tax-menu strong{color:var(--picker-accent);font-size:.82rem}
+.ev-type-picker .ev-tax-menu [aria-pressed="true"]{border-color:var(--picker-accent);background:color-mix(in srgb,var(--picker-accent) 14%,var(--surface))}
 .ev-quick-selection[hidden]{display:none}
 
 /* Fuente: css/source/navigation-alarms.css */

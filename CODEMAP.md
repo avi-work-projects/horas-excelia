@@ -221,7 +221,7 @@
 ### js/events-form-save.js  _(111 líneas)_
 **Funciones:** _evFormRead:2 · _evFormReadDetails:29 · _evFormSaveBodas:49 · _evFormCommit:77 · _evFormDelete:93 · _bindEvFormActions:104
 
-### js/events-form.js  _(292 líneas)_
+### js/events-form.js  _(294 líneas)_
 **Funciones:** evPuntualDays:6 · _renderEvTypeSwatches:15 · _renderEvTypeButton:28 · evAdmiteRepeticion:48 · renderEvForm:51 (!196) · openEvForm:247 · closeEvForm:273 · evSuggestedTitle:281 · bindEvFormEvents:284
 
 ### js/events-management.js  _(32 líneas)_
@@ -237,20 +237,20 @@
 
 **Funciones:** openOtrosDatePicker:7 (!96) · _evDk:11 · _count:12 · _render:13 · _attach:54 · _rerender:85 · _close:93
 
-### js/events-plan-picker.js  _(67 líneas)_
+### js/events-plan-picker.js  _(71 líneas)_
 **Estado global:** EV_PLAN_PICK:2 · EV_QUICK_PLANS:3 · EV_PICKER_GROUPS:4
 
-**Funciones:** evPickerHas:8 · evPickerMoreIcon:9 · evQuickSelection:10 · renderEvQuickPlans:13 · updateEvQuickPlan:20 · renderEvPlanOptions:27 · closeEvPlanPicker:34 · evPlanPickerKey:40 · openEvPlanPicker:43
+**Funciones:** evPickerHas:8 · evPickerMoreIcon:9 · evQuickSelection:10 · renderEvQuickPlans:13 · updateEvQuickPlan:20 · evFormRenderTypes:25 · renderEvPlanOptions:30 · closeEvPlanPicker:37 · evPlanPickerKey:43 · openEvPlanPicker:46
 
 ### js/events-render.js  _(630 líneas)_
 **Estado global:** EV_LIST_TYPES:227
 
 **Funciones:** renderEvListItem:11 · fd2:15 · evUpcomingCompare:44 · minutes:45 · renderEvUpcoming:51 (!177) · fd2:58 · renderEvItem:59 · renderEvPanel:110 · occurrenceKey:137 · renderEvByTypes:228 · coincide:249 · renderEvMonthsView:295 · _evWeekLanes:306 · assign:309 · evWeekTravelRow:324 · renderEvWeek:344 (!133) · hexA:348 · renderEvContent:477 (!153)
 
-### js/events-tax-model.js  _(19 líneas)_
+### js/events-tax-model.js  _(28 líneas)_
 **Estado global:** EV_TAX_MODELS:2
 
-**Funciones:** evTaxTitle:3 · renderEvTaxFields:4 · evFormTaxCode:8 · bindEvTaxFields:9 · change:11
+**Funciones:** evTaxTitle:3 · renderEvTaxFields:4 · evFormTaxCode:8 · bindEvTaxFields:9 · change:11 · close:18
 
 ### js/events.js  _(819 líneas)_
 **Estado global:** EV_STORAGE_KEY:5 · EV_YEAR:6 · EV_MONTH:7 · EV_VIEW_STATE:11 · EV_SCROLL_RESET:16 · EV_VIEW:17 · EV_EDIT:18 · EV_EDIT_DS:19 · EV_FORM_CONTAINER:20 · EV_EDIT_MODE:21 · EV_BRIGHT_PAST:22 · EV_ANNUAL_VIEW:23 · EV_ANNUAL_FILTER_HIDDEN:24 · EV_FILTER_GROUPS:33 · EV_FILTER_SHORT:39 · EV_FILTER_COLOR:41 · EV_FILTER_SEP_AFTER:44 · EV_FILTER_CYCLE:45 · EV_PREV_VIEW:63 · EV_QUAD_YEAR:64 · EV_QUAD_MONTH:65 · EV_TO_SUBTAB:66 · EV_TYPES_FILTER:67 · EV_TYPES_PAST:68 · EV_LIST_SORT:69 · EV_LIST_SEARCH:70 · EV_COLORS:71 · EVENTS:72 · EV_ALARM_SK:101 · EV_ALARMS_SET:102 · EV_NO_RUT:194 · EV_MAX_BAR_DIA:250 · EV_MARK_ORDER:356 · EV_MAX_PUNT_DIA:398 · EV_MAX_RUT_DIA:399 · EV_CAL_CORNER_STACK:402 · EV_MAX_VIP_DIA:404 · EV_CAL_VIP_MAX:405 · EV_UP_SHOW_RUT:407 · EV_UP_SHOW_BODA:408 · EV_BAR_Z:460 · EV_COMPARTE_DIA:464 · EV_MNS:671 · EV_CAR:714 · EV_TRANSPORTES:733 · EV_TRANS_EMOJI:739 · EV_DATE_INDEX:805
@@ -491,7 +491,7 @@
 **Rangos por prefijo de clase:**
 .bday-add:102-103 · .bday-badge:18-21 · .bday-buscar:64-66 · .bday-calendar:7-23 · .bday-cancel:49-50 · .bday-cell:11-105 · .bday-hdr:6-6 · .bday-header:24-33 · .bday-io:70-86 · .bday-list:36-60 · .bday-month:35-35 · .bday-num:15-15 · .bday-search:67-69 · .bday-symbol:2-2 · .bday-upcoming:3-101 · .bday-vip:26-47 · .bday-week:8-10 · .data-btn:5-5 · .ev-btn:4-4 · .ev-cell:106-123 · .ev-io:72-72 · .io-peligro:77-85 · .io-primaria:76-83 · .vip-no:44-45
 
-### css/source/event-calendar.css  _(361 líneas)_
+### css/source/event-calendar.css  _(374 líneas)_
 
 **Secciones:**
 
@@ -534,7 +534,7 @@
 - La selección pertenece al grupo; el símbolo conserva su color propio.:355
 
 **Rangos por prefijo de clase:**
-.dp-actions:233-234 · .dp-counter:220-221 · .dp-day:228-232 · .dp-days:227-227 · .dp-grid:222-222 · .dp-handle:215-215 · .dp-hdr:216-216 · .dp-mhdr:225-226 · .dp-mname:224-224 · .dp-month:223-223 · .dp-overlay:211-214 · .dp-sheet:213-213 · .dp-title:217-217 · .dp-yearnav:218-219 · .ev-ann:266-302 · .ev-annual:19-324 · .ev-barsize:184-193 · .ev-category:95-114 · .ev-chip:310-310 · .ev-color:108-132 · .ev-dates:206-208 · .ev-detail:134-333 · .ev-edit:257-263 · .ev-filter:304-325 · .ev-hora:23-23 · .ev-io:264-264 · .ev-management:178-353 · .ev-otros:182-182 · .ev-picker:351-351 · .ev-plan:329-357 · .ev-quad:252-252 · .ev-quick:359-360 · .ev-sep:46-46 · .ev-shape:194-201 · .ev-type:89-358 · .ev-up:8-21 · .ev-upcoming:6-45 · .ev-viaje:24-32 · .ev-wk:33-87 · .sy-body:51-51 · .sy-puente:2-255
+.dp-actions:233-234 · .dp-counter:220-221 · .dp-day:228-232 · .dp-days:227-227 · .dp-grid:222-222 · .dp-handle:215-215 · .dp-hdr:216-216 · .dp-mhdr:225-226 · .dp-mname:224-224 · .dp-month:223-223 · .dp-overlay:211-214 · .dp-sheet:213-213 · .dp-title:217-217 · .dp-yearnav:218-219 · .ev-ann:266-302 · .ev-annual:19-324 · .ev-barsize:184-193 · .ev-category:95-114 · .ev-chip:310-310 · .ev-color:108-132 · .ev-dates:206-208 · .ev-detail:134-333 · .ev-edit:257-263 · .ev-filter:304-325 · .ev-hora:23-23 · .ev-io:264-264 · .ev-management:178-353 · .ev-otros:182-182 · .ev-picker:351-351 · .ev-plan:329-357 · .ev-quad:252-252 · .ev-quick:359-373 · .ev-sep:46-46 · .ev-shape:194-201 · .ev-tax:366-371 · .ev-type:89-372 · .ev-up:8-21 · .ev-upcoming:6-45 · .ev-viaje:24-32 · .ev-wk:33-87 · .sy-body:51-51 · .sy-puente:2-255
 
 ### css/source/navigation-alarms.css  _(115 líneas)_
 

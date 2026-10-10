@@ -10,19 +10,22 @@ function evPickerMoreIcon(){return '<svg viewBox="0 0 24 24" aria-hidden="true">
 function evQuickSelection(type,group){
   return evPickerHas(group,type)&&type!==group.generic&&group.quick.indexOf(type)<0?'✓ '+(type==='Contratar electricidad'?'Contratar electric.':type):'';
 }
-function renderEvQuickPlans(type,key){
-  key=key||'plans';var group=EV_PICKER_GROUPS[key],selection=evQuickSelection(type,group);
-  return '<section class="ev-category-group ev-quick-group'+(evPickerHas(group,type)?' chosen':'')+'" data-group="'+key+'" style="--category-tone:'+evTypeColor('puntual',group.generic)+';--picker-accent:'+group.accent+'" aria-label="'+group.generic+'">'+_renderEvTypeButton('puntual',group.generic,type)
-    +'<div class="ev-quick-selection" aria-live="polite"'+(!selection?' hidden':'')+'>'+escHtml(selection)+'</div><div class="ev-category-children ev-plan-quick" data-quick="'+key+'">'
+function renderEvQuickPlans(type,key,extra){
+  key=key||'plans';var group=EV_PICKER_GROUPS[key],selection=evQuickSelection(type,group),remembered=extra||(selection?type:null);
+  return '<section class="ev-category-group ev-quick-group'+(evPickerHas(group,type)?' chosen':'')+'" data-group="'+key+'" style="--category-tone:'+evTypeColor('puntual',group.generic)+';--picker-accent:'+group.accent+'" aria-label="'+group.generic+'"><div class="ev-quick-header">'+_renderEvTypeButton('puntual',group.generic,type)
+    +(remembered?'<div class="ev-quick-selection">'+_renderEvTypeButton('puntual',remembered,type)+'</div>':'')+'</div><div class="ev-category-children ev-plan-quick" data-quick="'+key+'">'
     +group.quick.map(function(t){return _renderEvTypeButton('puntual',t,type);}).join('')
     +'<button type="button" data-picker="'+key+'" class="ev-plan-more'+(selection?' selected':'')+'" aria-label="Más opciones de '+(key==='plans'?'planes':'gestiones')+'" aria-haspopup="dialog">'+evPickerMoreIcon()+'<span class="ev-type-name">Más opciones</span></button></div></section>';
 }
 function updateEvQuickPlan(form,type){
   form.root.querySelectorAll('.ev-quick-group').forEach(function(section){
-    var selection=evQuickSelection(type,EV_PICKER_GROUPS[section.dataset.group]),label=section.querySelector('.ev-quick-selection');
-    label.textContent=selection;label.hidden=!selection;
-    section.querySelector('.ev-plan-more').classList.toggle('selected',!!selection);
+    section.querySelector('.ev-plan-more').classList.toggle('selected',!!evQuickSelection(type,EV_PICKER_GROUPS[section.dataset.group]));
   });
+}
+function evFormRenderTypes(form,kind,type){
+  var tax=_evFormEl(form,'evFTaxBlock');if(tax)tax.remove();
+  _evFormEl(form,'evFTypePicker').innerHTML=_renderEvTypeSwatches(kind,type,form.quickExtras);
+  if(tax)(form.root.querySelector('[data-group="management"]')||form.root).appendChild(tax);
 }
 function renderEvPlanOptions(selected,key){
   var types=EV_PICKER_GROUPS[key||'plans'].types,remainder=types.length%4,start=types.length-remainder;
@@ -58,7 +61,8 @@ function openEvPlanPicker(form,key){
   });
   wrap.querySelector('#evPlanConfirm').onclick=function(){
     var type=EV_PLAN_PICK.type;if(!type)return;
-    _evFormEl(form,'evFTypePicker').innerHTML=_renderEvTypeSwatches('puntual',type);
+    if(evQuickSelection(type,group))form.quickExtras[key]=type;
+    evFormRenderTypes(form,'puntual',type);
     _bindEvFormTypes(form);_evFormTypeUI(form,'puntual',type);_evFormSuggestTitle(form,type);
     closeEvPlanPicker();
     if(type==='Presentar Modelo')requestAnimationFrame(function(){_evFormEl(form,'evFTaxBlock').scrollIntoView({block:'nearest',behavior:'smooth'});});
