@@ -7,8 +7,10 @@ test('gestiones: selector, confirmación, check compartido y vencimiento',async(
  await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await page.locator('#evAdd').click();
  await page.locator('[data-picker=management]').click();
  await expect(page.locator('#evPlanTitle')).toHaveText('Elige tu gestión');
- const generic=await page.locator('.ev-picker-generic').boundingBox(),heading=await page.locator('#evPlanTitle').boundingBox();
- expect(generic.x+generic.width).toBeLessThan(heading.x);expect(Math.abs(generic.y+generic.height/2-heading.y-heading.height/2)).toBeLessThan(3);
+ await expect.poll(async()=>{
+  const generic=await page.locator('.ev-picker-generic').boundingBox(),heading=await page.locator('#evPlanTitle').boundingBox();
+  return !!(generic&&heading&&generic.x+generic.width<heading.x&&Math.abs(generic.y+generic.height/2-heading.y-heading.height/2)<3);
+ }).toBe(true);
  await expect(page.locator('.ev-plan-options .ev-type-name').first()).toHaveText('Peluquería');
  const order=await page.locator('.ev-plan-options [data-type]').evaluateAll(els=>els.map(e=>e.dataset.type));
  expect(order).toEqual(['Peluquería','Médico','Dentista','Cita','Llamada','Contratar seguro','Contratar gas','Contratar electricidad','Enviar factura','Pago','Pago hacienda','Presentar Modelo']);
