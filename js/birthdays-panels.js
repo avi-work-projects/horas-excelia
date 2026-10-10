@@ -12,8 +12,10 @@ function renderBdayDetail(b){
   h+='</div>';
   h+='<div class="bd-detail-color-bar" style="background:'+color+'"></div>';
   h+='<div class="bd-detail-name">'+bdName(b.name)+vipStar+'</div>';
+  h+=renderBdayPersonGroups(b);
   h+='<div class="bd-detail-date">'+b.day+' de '+MN[b.month-1]+'</div>';
   h+='<div class="bd-detail-lbl" style="background:'+color+'22;color:'+color+'">'+lbl+'</div>';
+  h+='<button class="ev-btn" id="bdDAlarm">Configurar alarma</button>';
   h+='</div></div>';
   return h;
 }
@@ -283,6 +285,7 @@ function openBdayDetail(b){
   abrirPanel('bdDWrap',renderBdayDetail(b),{
     contenedor:bdayPanelHost(),
     overlay:'bdDetailOv', alCerrar:closeBdayDetail});
+  document.getElementById('bdDAlarm').addEventListener('click',function(){closeBdayDetail();setTimeout(function(){openBdayAlarm(b);},300);});
   document.getElementById('bdDClose').addEventListener('click',closeBdayDetail);
   document.getElementById('bdDEdit').addEventListener('click',function(){
     closeBdayDetail();setTimeout(function(){openBdayForm(b);},300);

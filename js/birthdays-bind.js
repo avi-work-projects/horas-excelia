@@ -59,7 +59,7 @@ function refreshBday(){
 }
 
 function applyBdaySearch(q){
-  var today=new Date();
+  var today=new Date(),totalVisible=0;
   document.querySelectorAll('.bday-month-section').forEach(function(sec){
     var vis=0,todayMarked=false;
     sec.querySelectorAll('.bday-list-item').forEach(function(item){
@@ -72,8 +72,10 @@ function applyBdaySearch(q){
     });
     var line=sec.querySelector('.bday-today-line');
     if(line)line.hidden=todayMarked;
+    totalVisible+=vis;
     sec.style.display=vis||line?'':'none';
   });
+  updateBdayGroupStatus(totalVisible);
 }
 
 function bindBdayEvents(){
@@ -286,7 +288,7 @@ function bindBdayEvents(){
 function bindBdayUpcoming(root){
   var vip=root.querySelector('.bday-up-vip');
   if(vip)vip.addEventListener('change',function(){BDAY_UP_VIP=this.checked;_bdRefreshBoth();});
-  // Clicks en vista "Próximos" → ALARM panel
+  // Próximos abre la misma ficha de consulta que la lista.
   root.querySelectorAll('.bday-upcoming-item[data-bday-name]').forEach(function(item){
     item.addEventListener('touchstart',function(){
       _bdLpFired=false;
@@ -306,9 +308,6 @@ function bindBdayUpcoming(root){
       if(_bdLpFired){_bdLpFired=false;return;}
       var prev=document.querySelector('.bday-inline-ctrl');
       if(prev){prev.remove();return;}
-      // No alarm panel for past birthdays
-      var diff=parseInt(item.dataset.diff,10);
-      if(!isNaN(diff)&&diff<0)return;
       /* Bug 1 fix: usar índice directo para evitar ambigüedad con dos VIPs el mismo día */
       var bidxUp=parseInt(item.dataset.bdayIdx,10);
       var b=null;
@@ -320,7 +319,7 @@ function bindBdayUpcoming(root){
         for(var i=0;i<BDAYS.length;i++){if(BDAYS[i].name===name&&BDAYS[i].day===day&&BDAYS[i].month===month){b=BDAYS[i];break;}}
         if(!b)b={name:name,day:day,month:month};
       }
-      openBdayAlarm(b);
+      openBdayDetail(b);
     });
   });
 }
