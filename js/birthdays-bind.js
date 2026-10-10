@@ -59,20 +59,36 @@ function refreshBday(){
 }
 
 function applyBdaySearch(q){
+  var today=new Date();
   document.querySelectorAll('.bday-month-section').forEach(function(sec){
-    var vis=0;
+    var vis=0,todayMarked=false;
     sec.querySelectorAll('.bday-list-item').forEach(function(item){
       var match=(!q||(item.dataset.sname&&item.dataset.sname.indexOf(q)>=0))&&bdayGroupMatch(BDAYS[+item.dataset.bdayIdx]);
       item.style.display=match?'':'none';
+      var isToday=match&&!todayMarked&&+item.dataset.bdayMonth===today.getMonth()+1&&+item.dataset.bdayDay===today.getDate();
+      item.classList.toggle('bday-today-item',isToday);
+      if(isToday)todayMarked=true;
       if(match)vis++;
     });
-    sec.style.display=vis?'':'none';
+    var line=sec.querySelector('.bday-today-line');
+    if(line)line.hidden=todayMarked;
+    sec.style.display=vis||line?'':'none';
   });
 }
 
 function bindBdayEvents(){
   bindBdayGroupTools();
   applyBdaySearch(BDAY_SEARCH.toLowerCase());
+  var listTabs=document.querySelector('#eventsOverlay .bday-sub-tabs');
+  if(listTabs){
+    var updateListOffset=function(){listTabs.parentElement.style.setProperty('--bday-tabs-height',listTabs.offsetHeight+'px');};
+    updateListOffset();
+    if(listTabs.parentElement._bdayResize)listTabs.parentElement._bdayResize.disconnect();
+    if(typeof ResizeObserver!=='undefined'){
+      var listObserver=new ResizeObserver(function(){if(!listTabs.isConnected){listObserver.disconnect();return;}updateListOffset();});
+      listObserver.observe(listTabs);listTabs.parentElement._bdayResize=listObserver;
+    }
+  }
   var bdBackEl=document.getElementById('bdBack');
   if(bdBackEl)bdBackEl.addEventListener('click',function(){
     if(NAV_BACK){var fn=NAV_BACK;NAV_BACK=null;fn();}else{closeBday();}
@@ -106,22 +122,23 @@ function bindBdayEvents(){
     });
   }
   function _bdResetScroll(){var b=document.querySelector('#eventsOverlay .sy-body');if(b)b.scrollTop=0;}
-  /* La lista arranca en el mes en curso; el resto queda a un scroll de distancia */
-  function _bdScrollToMonth(){
+  /* Deja el día actual bajo las pestañas y el mes que acompaña al scroll. */
+  function _bdScrollToToday(){
     var body=document.querySelector('#eventsOverlay .sy-body');
     if(!body)return;
-    var sec=body.querySelector('.bday-month-section[data-month="'+(new Date()).getMonth()+'"]');
+    var sec=body.querySelector('.bday-today-item,.bday-today-line:not([hidden])');
     if(!sec){body.scrollTop=0;return;}
-    body.scrollTop=Math.max(0,body.scrollTop+sec.getBoundingClientRect().top-body.getBoundingClientRect().top-(body.querySelector('.bday-sub-tabs')?.offsetHeight||0)-8);
+    var header=sec.closest('.bday-month-section').querySelector('.bday-month-hdr');
+    body.scrollTop=Math.max(0,body.scrollTop+sec.getBoundingClientRect().top-body.getBoundingClientRect().top-(body.querySelector('.bday-sub-tabs')?.offsetHeight||0)-header.offsetHeight-16);
   }
   document.getElementById('bdViewUpcoming').addEventListener('click',function(){BDAY_SEARCH='';BDAY_FILTER_VIP='all';BDAY_EDIT_VIP=false;BDAY_VIP_PENDING=null;BDAY_VIEW='upcoming';refreshBday();_bdResetScroll();});
   document.getElementById('bdViewCal').addEventListener('click',function(){BDAY_SEARCH='';BDAY_FILTER_VIP='all';BDAY_EDIT_VIP=false;BDAY_VIP_PENDING=null;BDAY_VIEW='cal';refreshBday();_bdResetScroll();});
-  document.getElementById('bdViewList').addEventListener('click',function(){BDAY_VIP_PENDING=null;BDAY_EDIT_VIP=false;BDAY_VIEW='list';refreshBday();_bdScrollToMonth();});
+  document.getElementById('bdViewList').addEventListener('click',function(){BDAY_VIP_PENDING=null;BDAY_EDIT_VIP=false;BDAY_VIEW='list';refreshBday();_bdScrollToToday();});
   // Filter chips: Todos / Solo VIP / Sin VIP
   var bdVipAllEl=document.getElementById('bdVipAll');
   if(bdVipAllEl)bdVipAllEl.addEventListener('click',function(){
     BDAY_FILTER_VIP='all';BDAY_SEARCH='';refreshBday();
-    _bdScrollToMonth();
+    _bdScrollToToday();
   });
   var bdVipOnlyEl=document.getElementById('bdVipOnly');
   if(bdVipOnlyEl)bdVipOnlyEl.addEventListener('click',function(){BDAY_FILTER_VIP=BDAY_FILTER_VIP==='vip'?'all':'vip';BDAY_SEARCH='';refreshBday();});
