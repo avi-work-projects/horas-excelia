@@ -3,7 +3,7 @@ var EV_PLAN_PICK=null;
 var EV_QUICK_PLANS=['Comida','Tomar algo','Cena'];
 var EV_PICKER_GROUPS={
   plans:{accent:'#bd6119',generic:'Plan/Quedada',title:'Elige tu plan',label:'Plan / Quedada',quick:EV_QUICK_PLANS,types:['Comida','Tomar algo','Cena','Brunch','Barbacoa','Cumpleaños','Plan romántico','Copas','Salir de fiesta','Bolos','Cine','Ping pong','Ver partido fútbol','Juegos de mesa','Montaña','Ponencia']},
-  management:{accent:'#27845c',generic:'Rec. Gestiones',title:'Elige tu gestión',label:'Rec. Gestiones',quick:['Llamada','Cita','Peluquería'],legacy:['Contratar gas/electricidad'],types:['Peluquería','Médico','Dentista','Cita','Llamada','Contratar seguro','Contratar gas','Contratar electricidad','Enviar factura','Pago','Pago hacienda','Presentar Modelo']}
+  management:{accent:'#27845c',generic:'Rec. Gestiones',title:'Elige tu gestión',label:'Rec. Gestiones',quick:['Llamada','Cita','Peluquería'],legacy:['Contratar gas/electricidad'],types:['Peluquería','Médico','Dentista','Cita','Llamada','Contratar seguro','Contratar gas','Contratar electricidad','Enviar factura','Pago','Pago Hacienda','Presentar Modelo']}
 };
 function evPickerHas(group,type){return type===group.generic||group.types.indexOf(type)>=0||(group.legacy||[]).indexOf(type)>=0;}
 function evPickerMoreIcon(){return '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><path d="M17.5 14v7m-3.5-3.5h7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';}

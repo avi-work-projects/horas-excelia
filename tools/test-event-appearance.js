@@ -25,3 +25,8 @@ assert.equal((birthday.match(/src="VIP.png"/g)||[]).length,1);
 assert.doesNotMatch(birthday,/⭐|Cumpleaños VIP|Anual/);
 assert.match(birthday,/21 de agosto/);
 assert.match(birthday,/id="evDBdayAlarm"/);
+
+assert.equal(a.getEvType({type:'Pago hacienda'}),'Pago Hacienda');
+assert.match(a.evManagementShapeInner('tax'),/#647db1/);
+assert.ok(a.evManagementShapeInner('tax').includes(a.evPaymentCoinsSvg()));
+assert.ok(a.evManagementShapeInner('payment').includes(a.evPaymentCoinsSvg()));

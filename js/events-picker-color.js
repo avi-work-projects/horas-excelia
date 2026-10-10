@@ -39,7 +39,7 @@ var EV_COLOR_TYPES = {
    la identidad de una categor\u00eda es el par (kind, type), no el nombre suelto.
    - puntual: se dibuja UN MARCADOR POR D\u00cdA (aunque abarque varios d\u00edas)
    - grande:  se dibuja como BARRA continua (formato actual de Viaje/Asturias) */
-var EV_MANAGEMENT_SUBTYPES={'Llamada':'phone','Peluquería':'scissors','Médico':'medical','Dentista':'tooth','Pago hacienda':'tax','Pago':'payment','Contratar seguro':'insurance','Contratar gas/electricidad':'utilities','Enviar factura':'invoice','Cita':'appointment','Presentar Modelo':'tax-form','Contratar gas':'gas-home','Contratar electricidad':'electric-home'};
+var EV_MANAGEMENT_SUBTYPES={'Llamada':'phone','Peluquería':'scissors','Médico':'medical','Dentista':'tooth','Pago Hacienda':'tax','Pago':'payment','Contratar seguro':'insurance','Contratar gas/electricidad':'utilities','Enviar factura':'invoice','Cita':'appointment','Presentar Modelo':'tax-form','Contratar gas':'gas-home','Contratar electricidad':'electric-home'};
 var EV_PLAN_SUBTYPES={'Plan romántico':'heart','Comida':'meal','Cena':'dinner','Salir de fiesta':'disco','Copas':'party','Tomar algo':'beer','Montaña':'mountain','Barbacoa':'barbecue','Cumpleaños':'cake','Brunch':'brunch','Bolos':'bowling','Cine':'cinema','Ping pong':'pingpong','Ver partido fútbol':'football-tv','Juegos de mesa':'boardgames','Ponencia':'lecture'};
 function evIsManagement(type){return type==='Rec. Gestiones'||Object.prototype.hasOwnProperty.call(EV_MANAGEMENT_SUBTYPES,type);}
 function evIsPlan(type){return type==='Plan/Quedada'||Object.prototype.hasOwnProperty.call(EV_PLAN_SUBTYPES,type);}
@@ -59,7 +59,7 @@ var EV_TYPE_COLORS = {
   'puntual|Presentar Modelo':'#647db1',
   'puntual|Contratar gas':'#e18b46',
   'puntual|Contratar electricidad':'#dfb23e',
-  'puntual|Pago hacienda':'#458b77',
+  'puntual|Pago Hacienda':'#458b77',
   'puntual|Pago':'#dcae3e',
   'puntual|Contratar seguro':'#568cc2',
   'puntual|Contratar gas/electricidad':'#dea642',
@@ -243,6 +243,7 @@ function evTravelColor(evId){
 function getEvType(ev){
   var t=ev.type||EV_COLOR_TYPES[ev.color]||'Otros';
   if(t==='Festivo'||t==='Puente')t='Otros';
+  if(t==='Pago hacienda')t='Pago Hacienda'; // Compatibilidad con los eventos guardados.
   if(t==='Cerveza')t='Tomar algo'; // Alias: conserva ids, títulos y fechas de eventos antiguos.
   return t;
 }

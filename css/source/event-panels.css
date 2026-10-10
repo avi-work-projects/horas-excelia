@@ -251,8 +251,17 @@
 .ev-management-complete{display:none}
 .ev-management-check:has(input:checked) .ev-management-pending{display:none}
 .ev-management-check:has(input:checked) .ev-management-complete{display:inline;color:#279b64}
-.ev-detail-modern .ev-bficha{border-radius:14px;background:var(--surface)}
+.ev-detail-modern .ev-bficha{border-radius:14px;background:var(--surface2)}
 .ev-detail-modern .ev-bfila{padding:13px 14px;min-height:47px}
 .ev-detail-modern .ev-bfila-val{white-space:normal;text-align:right}
 .ev-detail-modern .ev-detail-actions{flex-wrap:wrap;gap:8px;padding-top:18px}
 .ev-detail-modern .ev-detail-actions .ev-btn{min-height:42px;border-radius:12px}
+
+.ev-form-sheet .ev-field>label{font-weight:600;color:var(--text)}
+.ev-detail-modern .ev-detail-symbol .ev-month-vip::after{display:none}
+.ev-detail-modern .ev-detail-symbol .ev-month-vip{background:none;box-shadow:none;filter:none}
+.ev-detail-modern .ev-detail-symbol .ev-month-vip img{transform:scale(1.4)}
+.ev-detail-modern .ev-detail-symbol .ev-management-mark{background:none;box-shadow:none;border-radius:0}
+.ev-detail-sheet.ev-detail-modern.ev-car-sheet{height:74dvh;min-height:0;max-height:90dvh;overflow:hidden}
+.ev-detail-modern.ev-car-sheet>.ev-detail-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:0 2px;flex-shrink:1}
+.ev-detail-modern.ev-car-sheet>.ev-detail-actions{flex-shrink:0;margin-top:0}
