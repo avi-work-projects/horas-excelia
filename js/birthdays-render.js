@@ -136,7 +136,7 @@ function renderBdayList(){
      (renderBdayContent), fuera del .sy-body, para que no se muevan al hacer
      scroll ni dejen ver nada por detras. */
   var h='',today=new Date(),month=today.getMonth(),day=today.getDate();
-  var todayLine='<div class="bday-today-line" aria-label="Hoy, '+day+' de '+MN[month]+'"><span>Hoy · '+day+'</span></div>';
+  var todayLine='<div class="bday-today-line" aria-label="Hoy, '+day+' de '+MN[month]+'"><span>Hoy</span></div>';
   // Helper: effective VIP state (considers pending changes)
   function getEffVip(b,idx){
     if(BDAY_VIP_PENDING!==null&&BDAY_VIP_PENDING.hasOwnProperty(idx))return BDAY_VIP_PENDING[idx];
@@ -172,7 +172,7 @@ function renderBdayList(){
       var vipStar=effVip?' <img src="./VIP.png" class="bday-vip-img" alt="VIP">':'';
       h+='<div class="bday-list-item'+editCls+'" data-bday-idx="'+lidx+'" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" data-sname="'+sname+'">';
       h+='<span class="bday-list-day">'+b.day+'</span>';
-      h+='<span class="bday-list-name">'+bdName(b.name)+vipStar+(bdayGroups(b).length?'<small class="bday-person-groups">'+bdayGroups(b).map(escHtml).join(' · ')+'</small>':'')+'</span>';
+      h+='<span class="bday-list-name">'+bdName(b.name)+vipStar+(BDAY_SHOW_GROUPS&&bdayGroups(b).length?'<small class="bday-person-groups">'+bdayGroupTags(bdayGroups(b))+'</small>':'')+'</span>';
       h+='<span class="'+cls+'">'+lbl+'</span>';
       h+='</div>';
     });
@@ -206,7 +206,7 @@ function renderBdayContent(){
     h+='<div class="sy-hdr-right bday-calendar-tools"><button class="today-btn" id="bdToday" style="font-size:.7rem;padding:6px 12px">Hoy</button>'+renderBdayVipFilter(true)+'</div>';
   }
   h+='</div>';
-  h+='<div class="sy-body ev-bday-body"'+(BDAY_EDIT_VIP?' style="padding-bottom:56px"':'')+'>';
+  h+='<div class="sy-body ev-bday-body'+(BDAY_VIEW==='list'?' bday-list-body':'')+(BDAY_SHOW_GROUPS?' bday-show-groups':'')+'"'+(BDAY_EDIT_VIP?' style="padding-bottom:56px"':'')+'>';
   h+='<div class="econ-sub-tabs bday-sub-tabs">';
   [['upcoming','Próximos','bdViewUpcoming'],['list','Lista','bdViewList'],['cal','Calendario','bdViewCal']].forEach(function(tab){h+='<button class="econ-sub-tab'+(BDAY_VIEW===tab[0]?' active':'')+'" id="'+tab[2]+'">'+tab[1]+'</button>';});
   h+='</div>';
@@ -214,7 +214,7 @@ function renderBdayContent(){
   if(BDAY_VIEW==='list'){
     h+='<div class="bday-vip-ctrl-bar">';
     h+='<div class="bday-vip-filter-chips">';
-    h+='<button class="bday-vip-chip bday-jump-today" id="bdVipAll">Hoy</button>';
+    h+='<button class="bday-vip-chip" id="bdShowGroups" aria-pressed="'+BDAY_SHOW_GROUPS+'">Etiquetas</button>';
     h+='<button class="bday-vip-chip chip-vip'+(BDAY_FILTER_VIP==='vip'?' active':'')+'" id="bdVipOnly"><img src="./VIP.png" style="width:20px;height:auto;vertical-align:middle" alt="VIP"></button>';
     h+='<button class="bday-vip-chip chip-novip'+(BDAY_FILTER_VIP==='novip'?' active':'')+'" id="bdVipNone"><span class="vip-no-icon"><img src="./VIP.png" style="width:20px;height:auto;display:block" alt="no VIP"></span></button>';
     h+='</div>';
@@ -235,6 +235,7 @@ function renderBdayContent(){
     if(!BDAYS.length)h+='<div class="sy-note">No hay cumplea\u00f1os cargados.</div>';
     else h+=renderBdayCalMonth();
   } else {
+    h+='<div class="bday-today-dock"><button class="today-btn" id="bdVipAll">Hoy</button></div>';
     h+=renderBdayList();
   }
   h+='</div>';

@@ -1,8 +1,17 @@
 /* Categorías personales: viajan en cada cumpleaños, también al exportar. */
-var BDAY_GROUP_DEFAULTS=['Amigos Oviedo','Amigos baile','Amigos Moco','Amigos master','Familia cercana','Familia','Familia Celia','Amigas Celia','Amigos Carrera','Amigos en Madrid','Amigos Guadalupe','Mejores amigos','Amigos Villa','Amigos','Amigos extranjeros','N.A.S.A.','Otros'];
+var BDAY_GROUP_DEFAULTS=['Amigos Oviedo','Amigos Baile','Amigos Moco','Amigos Master','Familia Cercana','Familia','Familia Celia','Amigas Celia','Amigos Carrera','Amigos En Madrid','Amigos Guadalupe','Mejores Amigos','Amigos Villa','Amigos Extranjeros','Amigos N.A.S.A','Otros'];
 var BDAY_GROUP_FILTER=[];
-function bdayGroups(b){return Array.isArray(b&&b.categories)?b.categories.filter(function(x){return typeof x==='string'&&x.trim();}):[];}
-function bdayGroupCatalog(){var out=BDAY_GROUP_DEFAULTS.slice();BDAYS.forEach(function(b){bdayGroups(b).forEach(function(g){if(out.indexOf(g)<0)out.push(g);});});return out;}
+var BDAY_SHOW_GROUPS=false; // Etiquetas visibles en la lista, solo durante esta sesión.
+function bdayNormalizeGroup(name){
+  name=name.trim();
+  if(/^(amigos\s+)?n\.?a\.?s\.?a\.?$/i.test(name))return 'Amigos N.A.S.A';
+  if(/^amigos$/i.test(name))return '';
+  return name.replace(/(^|\s)(\p{L})/gu,function(_,space,letter){return space+letter.toLocaleUpperCase('es');});
+}
+
+function bdayGroups(b){return Array.from(new Set((Array.isArray(b&&b.categories)?b.categories:[]).filter(function(g){return typeof g==='string';}).map(bdayNormalizeGroup).filter(Boolean))).sort(function(a,b){return a.localeCompare(b,'es');});}
+function bdayGroupCatalog(){return bdayGroups({categories:BDAY_GROUP_DEFAULTS.concat.apply(BDAY_GROUP_DEFAULTS,BDAYS.map(bdayGroups))});}
+function bdayGroupTags(groups){return groups.map(function(g){var hue=0;for(var i=0;i<g.length;i++)hue=(hue*31+g.charCodeAt(i))%360;return '<span class="bday-group-tag" style="--group-hue:'+hue+'">'+escHtml(g)+'</span>';}).join('');}
 function bdayGroupMatch(b){return !BDAY_GROUP_FILTER.length||BDAY_GROUP_FILTER.some(function(g){return g==='__none'?bdayGroups(b).length===0:bdayGroups(b).indexOf(g)>=0;});}
 function bdayGroupChips(groups,selected,attr){return groups.map(function(g){return '<label class="bday-group-chip"><input type="checkbox" '+attr+'="'+escHtml(g)+'"'+(selected.indexOf(g)>=0?' checked':'')+'><span>'+escHtml(g)+'</span></label>';}).join('');}
 function renderBdayGroupTools(){
@@ -13,12 +22,21 @@ function renderBdayGroupTools(){
   return '<div class="bday-group-tools"><details><summary>Filtrar por categoría <span id="bdGroupSummary">'+bdayGroupFilterLabel()+'</span></summary><p>Elige una o varias categorías. Se incluyen las personas de cualquiera de ellas.</p><div class="bday-group-chips">'+options+'</div></details><div class="bday-filter-status"><span id="bdGroupResults" role="status" aria-live="polite"></span><button class="ev-btn" id="bdClearGroups"'+(!BDAY_GROUP_FILTER.length?' disabled':'')+'>Limpiar categorías</button></div><div id="bdGroupActive" class="bday-group-chips"></div><p id="bdGroupEmpty" hidden>No hay personas que coincidan. Cambia las categorías o la búsqueda.</p></div>';
 }
 function bdayGroupFilterLabel(){return BDAY_GROUP_FILTER.length?BDAY_GROUP_FILTER.length+' seleccionada'+(BDAY_GROUP_FILTER.length===1?'':'s'):'Todas';}
-function renderBdayGroupFields(b){return '<fieldset class="bday-group-fields"><legend>Categorías de esta persona</legend><p>Puedes seleccionar varias etiquetas.</p><div class="bday-group-chips">'+bdayGroupChips(bdayGroupCatalog(),bdayGroups(b),'data-bd-category')+'</div><label>Nueva categoría<input class="ev-input" id="bdFNewCategory" maxlength="60" placeholder="Escribe una etiqueta nueva"></label></fieldset>';}
-function renderBdayPersonGroups(b){
-  var groups=bdayGroups(b);
-  return '<section class="bday-detail-groups"><h3>Categorías</h3><div class="bday-group-chips">'+(groups.length?groups.map(function(g){return '<span class="bday-group-tag">'+escHtml(g)+'</span>';}).join(''):'<span class="bday-person-groups">Sin categoría</span>')+'</div></section>';
+function renderBdayGroupPickerFields(b){return '<fieldset class="bday-group-fields"><legend>Categorías de esta persona</legend><p>Puedes seleccionar varias etiquetas.</p><div class="bday-group-chips">'+bdayGroupChips(bdayGroups({categories:bdayGroupCatalog().concat(bdayGroups(b))}),bdayGroups(b),'data-bd-category')+'</div><label>Nueva categoría<input class="ev-input" id="bdFNewCategory" maxlength="60" placeholder="Escribe una etiqueta nueva"></label></fieldset>';}
+function renderBdayGroupFields(b){return '<button type="button" class="ev-btn bday-category-button" id="bdCategories" data-groups="'+escHtml(JSON.stringify(bdayGroups(b)))+'">Categorías · '+bdayGroups(b).length+' <span aria-hidden="true">›</span></button>';}
+function renderBdayPersonGroups(b){return renderBdayGroupFields(b);}
+function bindBdayCategoryButton(root,onSave){
+  var button=root.querySelector('#bdCategories');
+  button.onclick=function(){openBdayCategoryPicker(JSON.parse(button.dataset.groups),function(groups){button.dataset.groups=JSON.stringify(groups);button.innerHTML='Categorías · '+groups.length+' <span aria-hidden="true">›</span>';if(onSave)onSave(groups);});};
 }
-function bdayReadGroupFields(root){var groups=Array.from(root.querySelectorAll('[data-bd-category]:checked')).map(function(x){return x.dataset.bdCategory;});var input=root.querySelector('#bdFNewCategory'),name=input&&input.value.trim();if(name){name=bdayGroupCatalog().find(function(g){return g.toLowerCase()===name.toLowerCase();})||name;if(groups.indexOf(name)<0)groups.push(name);}return groups;}
+function openBdayCategoryPicker(groups,onSave){
+  function close(){cerrarPanel('bdCategoryWrap','bdCategoryOv');}
+  var html='<div class="bd-form-overlay" id="bdCategoryOv"><div class="bd-form-sheet"><button class="sy-back" id="bdCategoryClose" aria-label="Volver">←</button><h2>Categorías</h2>'+renderBdayGroupPickerFields({categories:groups})+'<button class="ev-btn primary" id="bdCategorySave">Guardar categorías</button></div></div>';
+  var wrap=abrirPanel('bdCategoryWrap',html,{contenedor:bdayPanelHost(),overlay:'bdCategoryOv',alCerrar:close});
+  wrap.querySelector('#bdCategoryClose').onclick=close;
+  wrap.querySelector('#bdCategorySave').onclick=function(){onSave(bdayReadGroupFields(wrap));close();};
+}
+function bdayReadGroupFields(root){var button=root.querySelector('#bdCategories');if(button)return JSON.parse(button.dataset.groups);var groups=Array.from(root.querySelectorAll('[data-bd-category]:checked')).map(function(x){return x.dataset.bdCategory;});var input=root.querySelector('#bdFNewCategory'),name=input&&input.value.trim();if(name){name=bdayGroupCatalog().find(function(g){return g.toLowerCase()===name.toLowerCase();})||name;if(groups.indexOf(name)<0)groups.push(name);}return bdayGroups({categories:groups});}
 function updateBdayGroupStatus(count){
   var summary=document.getElementById('bdGroupSummary'),results=document.getElementById('bdGroupResults'),empty=document.getElementById('bdGroupEmpty'),clear=document.getElementById('bdClearGroups'),active=document.getElementById('bdGroupActive');
   if(summary)summary.textContent=bdayGroupFilterLabel();

@@ -2,7 +2,7 @@ function renderBdayDetail(b){
   var dl=daysUntil(b.month,b.day);
   var lbl=dl===0?'\u00a1Hoy es su cumplea\u00f1os!':dl===1?'Ma\u00f1ana cumple a\u00f1os':'Faltan '+dl+' d\u00edas';
   var color=getBdayColor(b);
-  var vipStar=b.vip?' \u2b50':'';
+  var vipStar=b.vip?' <img src="./VIP.png" class="bday-vip-img" alt="VIP">':'';
   var h='<div class="bd-detail-overlay" id="bdDetailOv"><div class="bd-detail-sheet">';
   h+='<div class="bd-detail-handle"></div>';
   h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">';
@@ -13,9 +13,10 @@ function renderBdayDetail(b){
   h+='<div class="bd-detail-color-bar" style="background:'+color+'"></div>';
   h+='<div class="bd-detail-name">'+bdName(b.name)+vipStar+'</div>';
   h+=renderBdayPersonGroups(b);
+  h+='<label class="ev-toggle-row"><img src="./VIP.png" class="bday-vip-img" alt="VIP"><input type="checkbox" id="bdDVip" aria-label="VIP"'+(b.vip?' checked':'')+'></label>';
   h+='<div class="bd-detail-date">'+b.day+' de '+MN[b.month-1]+'</div>';
   h+='<div class="bd-detail-lbl" style="background:'+color+'22;color:'+color+'">'+lbl+'</div>';
-  h+=bdayCanSetAlarm(b)?'<button class="ev-btn" id="bdDAlarm">Configurar alarma</button>':'<p class="bday-alarm-hint">Disponible para configurar la alarma en los próximos 14 días.</p>';
+  h+=bdayCanSetAlarm(b)?'<button class="ev-btn" id="bdDAlarm">Configurar alarma</button>':'';
   h+='</div></div>';
   return h;
 }
@@ -42,7 +43,7 @@ function renderBdayAlarmPanel(b){
   h+='<div style="width:36px"></div>';
   h+='</div>';
   h+='<div class="bd-alarm-info" style="border-color:'+color+'44;background:'+color+'11">';
-  h+='<div class="bd-alarm-name" style="color:'+color+'">'+(b.vip?'\u2b50 ':'')+bdName(b.name)+'</div>';
+  h+='<div class="bd-alarm-name" style="color:'+color+'">'+(b.vip?'<img src="./VIP.png" class="bday-vip-img" alt="VIP"> ':'')+bdName(b.name)+'</div>';
   h+='<div class="bd-alarm-date">'+b.day+' de '+MN[b.month-1]+' \u00b7 '+lbl+'</div>';
   h+='</div>';
   // Permanent 3-zone alarm marker
@@ -274,7 +275,7 @@ function renderBdayForm(b,prefillDay,prefillMonth){
   h+='</div>';
   // VIP toggle
   h+='<div class="ev-toggle-row">';
-  h+='<label class="ev-toggle-label" for="bdFVip"><img src="./VIP.png" alt="VIP" style="height:1.6em;vertical-align:middle;margin-right:5px"> VIP (alarma prioritaria + sync eventos)</label>';
+  h+='<label class="ev-toggle-label" for="bdFVip"><img src="./VIP.png" alt="VIP" style="height:1.6em;vertical-align:middle;margin-right:5px"></label>';
   h+='<input type="checkbox" class="ev-checkbox" id="bdFVip"'+(vip?' checked':'')+' style="--chk:#fbbf24">';
   h+='</div>';
   h+=renderBdayGroupFields(b);
@@ -288,6 +289,14 @@ function openBdayDetail(b){
   abrirPanel('bdDWrap',renderBdayDetail(b),{
     contenedor:bdayPanelHost(),
     overlay:'bdDetailOv', alCerrar:closeBdayDetail});
+  function savePerson(){appStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));syncVipBdaysToEvents();updateBdayBtn();refreshBday();}
+  bindBdayCategoryButton(document.getElementById('bdDWrap'),function(groups){b.categories=groups;savePerson();});
+  document.getElementById('bdDVip').onchange=function(){
+    var issue=birthdayValidation(Object.assign({},b,{vip:this.checked}),b);
+    if(issue){this.checked=!!b.vip;showToast(issue,'error');return;}
+    b.vip=this.checked;savePerson();
+    document.querySelector('#bdDWrap .bd-detail-name').innerHTML=bdName(b.name)+(b.vip?' <img src="./VIP.png" class="bday-vip-img" alt="VIP">':'');
+  };
   var alarmButton=document.getElementById('bdDAlarm');
   if(alarmButton)alarmButton.addEventListener('click',function(){closeBdayDetail();setTimeout(function(){openBdayAlarm(b);},300);});
   document.getElementById('bdDClose').addEventListener('click',closeBdayDetail);
@@ -306,6 +315,7 @@ function openBdayForm(b,prefillDay,prefillMonth){
     overlay:'bdFormOv', alCerrar:closeBdayForm});
   var inp=document.getElementById('bdFName');
   if(inp)setTimeout(function(){inp.focus();},100);
+  bindBdayCategoryButton(document.getElementById('bdFWrap'));
   bindBdayFormEvents();
 }
 

@@ -3054,13 +3054,42 @@ details[open]>summary{margin-bottom:10px}
 /* La cabecera sigue su mes; hoy comparte el acento de cumpleaños. */
 .ev-bday-body .bday-month-hdr{position:sticky;top:var(--bday-tabs-height,58px);z-index:4;flex-shrink:0;background:var(--surface);border-left-color:var(--birthday-tone)}
 .bday-month-section .bday-list-item{padding-left:18px;position:relative}
-.bday-month-section .bday-today-item{border-top:1px solid var(--birthday-tone)}
+.bday-month-section .bday-today-item{border-top:3px solid var(--birthday-tone);margin-top:8px}
 .bday-month-section .bday-before-today{border-bottom-color:transparent}
-.bday-month-section .bday-today-item::before,.bday-today-line::before{content:"";position:absolute;left:0;top:-4px;width:7px;height:7px;border-radius:50%;background:var(--birthday-tone)}
+.bday-month-section .bday-today-item::before,.bday-today-line::before{content:"";position:absolute;left:0;top:-7px;width:11px;height:11px;border-radius:50%;background:var(--surface);border:3px solid var(--birthday-tone)}
 .bday-today-item .bday-list-day,.bday-today-item .today-lbl{color:var(--birthday-tone);font-weight:750}
-.bday-today-line{position:relative;height:0;min-height:0;margin:0;padding:0;border-top:1px solid var(--birthday-tone)}
-.bday-today-line>span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.bday-today-line{position:relative;height:0;min-height:0;margin:8px 0 0;padding:0;border-top:3px solid var(--birthday-tone)}
+.bday-today-line>span,.bday-today-item::after{position:absolute;left:20px;top:-11px;padding:0 5px;background:var(--surface);color:var(--birthday-tone);font-size:.7rem;font-weight:800;line-height:18px}
+.bday-today-item::after{content:"Hoy"}
 .bday-today-line[hidden]{display:none}
+
+/* Lista de cumpleaños: etiquetas opcionales y acceso a hoy junto al mes. */
+.bday-group-tools{margin:8px 0 4px}
+.bday-group-tools details{padding:10px 12px}
+#bdGroupSummary{display:inline;margin-left:8px;font-size:.68rem}
+.bday-filter-status{margin-top:4px;font-size:.65rem;min-height:20px}
+.bday-filter-status .ev-btn:disabled{display:none}
+#bdGroupActive:empty{display:none}
+#bdGroupActive{margin:4px 0}
+.bday-person-groups{display:flex;flex-wrap:wrap;gap:3px;margin-top:2px;line-height:1.2}
+.bday-person-groups .bday-group-tag{min-height:0;padding:2px 5px;font-size:.58rem;border-radius:5px;color:hsl(var(--group-hue) 65% 78%);background:color-mix(in srgb,hsl(var(--group-hue) 60% 55%) 12%,var(--surface));border-color:color-mix(in srgb,hsl(var(--group-hue) 60% 55%) 30%,var(--border))}
+.bday-show-groups .bday-list-day{font-size:1.2rem;font-weight:700;min-width:28px}
+.bday-show-groups .bday-list-item{gap:8px}
+.bday-category-button{width:100%;justify-content:space-between;margin:12px 0}
+#bdCategoryOv{z-index:420}
+#bdCategoryOv .bd-form-sheet{max-height:88dvh;overflow-y:auto}
+.bday-today-dock{position:sticky;top:calc(var(--bday-tabs-height,58px) + 4px);height:0;z-index:5;display:flex;justify-content:flex-end;visibility:hidden;pointer-events:none}
+.bday-today-dock.visible{visibility:visible}
+.bday-today-dock .today-btn{pointer-events:auto;height:28px;padding:4px 14px;background:var(--surface);border:1px solid var(--birthday-tone);color:var(--birthday-tone);box-shadow:0 2px 5px #0002}
+.ev-bday-body .bday-month-hdr{padding-right:74px}
+#bdShowGroups[aria-pressed=true]{border-color:var(--birthday-tone);color:var(--birthday-tone)}
+
+.sy-body.bday-list-body{gap:8px}
+.bday-list-body .bday-month-section{gap:0}
+.bday-list-body .bday-today-dock{margin-bottom:-8px;flex-shrink:0}
+
+[data-theme="light"] .bday-person-groups .bday-group-tag{color:hsl(var(--group-hue) 55% 32%)}
+.bday-today-dock + .bday-month-section .bday-month-hdr{margin-top:0}
 
 /* Fuente: css/source/home-sharing.css */
 /* Cabecera de Home opaca, incluso sobre los botones oscuros de las semanas. */
