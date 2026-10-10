@@ -1169,34 +1169,32 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-cell.ev-puente.ev-day-vacaciones{background:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 3px,transparent 3px,transparent 8px),rgba(255,179,71,.15)}
 .ev-cell.ev-puente.ev-day-ausencia{background:repeating-linear-gradient(45deg,rgba(244,114,182,.32),rgba(244,114,182,.32) 3px,transparent 3px,transparent 8px),rgba(192,132,252,.15)}
 
-/* Categorías múltiples y clasificación rápida por grupos. */
-.bday-group-tools{display:flex;gap:8px;align-items:flex-start;margin:12px 0;--chk:#ad396b}
-.bday-group-tools>button{flex:none;font-size:.72rem;border-color:#ad396b;color:#ad396b}
-.bday-group-tools details{flex:1;min-width:0;border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--surface)}
-.bday-group-tools summary,.bday-group-fields summary{cursor:pointer;font-size:.76rem;font-weight:600}
-.bday-group-tools p,.bday-classifier>p{font-size:.72rem;color:var(--text-muted);line-height:1.5}
-.bday-group-chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
-.bday-group-chip{display:flex;align-items:center;gap:6px;padding:7px 8px;border:1px solid var(--border);border-radius:9px;font-size:.7rem;background:var(--surface);--chk:#ad396b;cursor:pointer}
+/* Categorías de personas y filtros de consulta. */
+.bday-group-tools{margin:12px 0;--chk:#ad396b}
+.bday-group-tools details{border:1px solid var(--border);border-radius:14px;padding:14px;background:var(--surface)}
+.bday-group-tools summary{cursor:pointer;font-size:.85rem;font-weight:600}
+#bdGroupSummary{display:block;margin-top:4px;font-size:.75rem;font-weight:400;color:var(--text-muted)}
+.bday-group-tools p,.bday-group-fields p{font-size:.75rem;color:var(--text-muted);line-height:1.5}
+.bday-group-chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.bday-group-chip{display:flex;align-items:center;gap:8px;min-height:44px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-size:.8rem;background:var(--surface);--chk:#ad396b;cursor:pointer;max-width:100%;overflow-wrap:anywhere}
+.bday-group-chip input{flex-shrink:0}
+.bday-group-chip small{color:var(--text-muted);margin-left:auto}
 .bday-group-chip:has(:checked){border-color:#ad396b;background:color-mix(in srgb,#ad396b 12%,var(--surface))}
-.bday-group-fields{margin:12px 0;--chk:#ad396b}
-.bday-person-groups{display:block;font-size:.62rem;font-weight:400;color:var(--text-muted);margin-top:3px;line-height:1.4}
-.bday-classifier{display:flex;flex-direction:column;width:100%;max-width:640px;height:88dvh;margin:0 auto;padding:18px 18px max(18px,env(safe-area-inset-bottom));background:var(--surface);border-radius:22px 22px 0 0;--chk:#ad396b;color:var(--text);overflow:hidden}
-.bday-classifier>*{flex-shrink:0}
-.bday-classifier header,.bday-classifier footer{display:flex;gap:12px;align-items:center;justify-content:space-between}
-.bday-classifier h2{font-size:1.05rem;margin:0}
-.bday-classifier .bday-group-chips{max-height:20dvh;overflow-y:auto}
-.bday-classifier .bday-group-chips button{flex:none;font-size:.67rem;padding:7px 9px}
-.bday-classifier [aria-pressed=true]{border-color:#ad396b!important;background:color-mix(in srgb,#ad396b 15%,var(--surface));color:#ad396b}
-.bday-group-new{display:flex;gap:8px;margin:0 0 10px}
-.bday-group-new input{min-width:0}
-.bday-group-unassigned{display:flex;gap:8px;align-items:center;font-size:.72rem;margin:10px 0}
-.bday-classifier .bday-group-people{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
-.bday-group-person{display:flex;align-items:center;gap:12px;padding:10px 4px;box-shadow:0 1px 0 var(--border);font-size:.82rem;cursor:pointer}
-.bday-group-person small{display:block;font-size:.65rem;color:var(--text-muted);margin-top:3px}
-.bday-classifier footer{padding-top:14px;font-size:.68rem}
-.bday-classifier footer .ev-btn.primary{flex:none;background:#ad396b;border-color:#ad396b;color:white}
-
-body:has(#bdGroupsOv.open) .tasks-fab{visibility:hidden}
+.bday-group-fields{margin:18px 0;padding:16px;border:1px solid var(--border);border-radius:14px;min-width:0;--chk:#ad396b}
+.bday-group-fields legend,.bday-detail-groups h3{font-size:.85rem;font-weight:600}
+.bday-group-fields .bday-group-chip{flex:1 1 180px}
+.bday-group-fields>label{display:block;font-size:.8rem}
+.bday-group-fields input.ev-input{margin-top:8px;width:100%}
+.bday-detail-groups{text-align:left;margin:20px 0}
+.bday-group-tag{display:inline-flex;align-items:center;min-height:36px;max-width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:10px;background:color-mix(in srgb,#ad396b 10%,var(--surface));color:var(--text);font:inherit;font-size:.82rem;overflow-wrap:anywhere}
+button.bday-group-tag{cursor:pointer;min-height:44px;text-align:left}
+.bday-person-groups{display:block;font-size:.74rem;font-weight:400;color:var(--text-muted);margin-top:5px;line-height:1.5;white-space:normal;overflow-wrap:anywhere}
+.bday-filter-status{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;font-size:.75rem;color:var(--text-muted)}
+.bday-filter-status .ev-btn{font-size:.72rem;min-height:40px}
+.bday-filter-status .ev-btn:disabled{opacity:.5;cursor:default}
+.bday-group-chip:focus-within,.bday-group-tag:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.bd-detail-sheet{max-height:90dvh;overflow-y:auto}
+#bdDAlarm{margin-top:18px;width:100%}
 
 /* Fuente: css/source/event-calendar.css */
 /* Events in puentes (summary) — one per line */

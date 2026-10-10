@@ -1,14 +1,28 @@
 const {test,expect}=require('@playwright/test');
-test('categorías: varias por persona, filtros OR, cancelar y persistencia',async({page})=>{
- await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');if(!localStorage.getItem('qa-groups')){localStorage.setItem('qa-groups','1');localStorage.setItem('excelia-bdays-v1',JSON.stringify([{name:'Ana',day:1,month:10},{name:'Luis',day:2,month:10},{name:'Marta',day:3,month:10}]));}});
- await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewBday').click();await page.locator('#bdViewList').click();await page.locator('#bdClassify').click();
- await page.locator('[data-person="0"]').check();
- await page.locator('#bdGroupsTabs').getByRole('button',{name:'Familia',exact:true}).click();await page.locator('[data-person="0"]').check();await page.locator('[data-person="1"]').check();
- await page.locator('#bdGroupNew').fill('Equipo de prueba');await page.locator('#bdGroupCreate').click();await page.locator('[data-person="2"]').check();await page.locator('#bdGroupsSave').click();await expect(page.locator('#bdGroupsWrap')).toHaveCount(0);
- const people=await page.evaluate(()=>JSON.parse(localStorage.getItem('excelia-bdays-v1')));expect(people[0].categories).toEqual(['Amigos Oviedo','Familia']);expect(people[2].categories).toEqual(['Equipo de prueba']);
- await page.locator('.bday-group-tools summary').click();await page.locator('[data-bd-filter="Amigos Oviedo"]').check();await page.locator('[data-bd-filter="Equipo de prueba"]').check();await expect(page.locator('.bday-list-item:visible')).toHaveCount(2);
- await page.locator('#bdClassify').click();await page.locator('[data-person="0"]').uncheck();await page.locator('#bdGroupsClose').click();await expect(page.locator('#bdGroupsWrap')).toHaveCount(0);expect(await page.evaluate(()=>BDAYS[0].categories)).toEqual(['Amigos Oviedo','Familia']);
- await page.reload();expect(await page.evaluate(()=>BDAYS[2].categories)).toEqual(['Equipo de prueba']);
+test('consulta, etiquetas amplias, filtro combinado y edición individual persistente',async({page})=>{
+ await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');if(!localStorage.getItem('qa-groups')){localStorage.setItem('qa-groups','1');localStorage.setItem('excelia-bdays-v1',JSON.stringify([{name:'Ana',day:1,month:10,categories:['Familia','N.A.S.A.']},{name:'Luis',day:2,month:10,categories:['Familia']},{name:'Marta',day:3,month:10,categories:[]}]))}});
+ await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewBday').click();await page.locator('#bdViewList').click();
+ await expect(page.locator('#bdClassify')).toHaveCount(0);
+ await page.locator('.bday-list-item[data-bday-idx="0"]').click();
+ await expect(page.locator('#bdDetailOv .bday-group-tag')).toHaveText(['Familia','N.A.S.A.']);
+ await page.locator('#bdDEdit').click();await expect(page.locator('[data-bd-category="N.A.S.A."]')).toBeVisible();
+ await page.locator('[data-bd-category="Amigos"]').check();await page.locator('#bdFClose').click();await expect(page.locator('#bdFWrap')).toHaveCount(0);
+ expect(await page.evaluate(()=>BDAYS[0].categories)).toEqual(['Familia','N.A.S.A.']);
+ await page.locator('.bday-group-tools summary').click();await page.locator('[data-bd-filter="N.A.S.A."]').check();
+ await expect(page.locator('.bday-list-item:visible')).toHaveCount(1);await expect(page.locator('#bdGroupResults')).toHaveText('1 de 3 personas');
+ await page.locator('[data-bd-filter="__none"]').check();await expect(page.locator('.bday-list-item:visible')).toHaveCount(2);
+ await page.locator('#bdSearch').fill('Marta');await expect(page.locator('.bday-list-item:visible')).toHaveCount(1);
+ await page.locator('[data-bd-remove="__none"]').click();await expect(page.locator('#bdGroupEmpty')).toBeVisible();
+ await page.locator('#bdClearGroups').click();await expect(page.locator('.bday-list-item:visible')).toHaveCount(1);
+ await page.locator('#bdSearch').fill('');await page.locator('.bday-list-item[data-bday-idx="2"]').click();await page.locator('#bdDEdit').click();
+ await page.locator('[data-bd-category="N.A.S.A."]').check();await page.locator('#bdFNewCategory').fill('Equipo de prueba con una etiqueta bastante larga');await page.locator('#bdFSave').click();
+ await expect(page.locator('#bdFWrap')).toHaveCount(0);await page.reload();
+ expect(await page.evaluate(()=>BDAYS[2].categories)).toEqual(['N.A.S.A.','Equipo de prueba con una etiqueta bastante larga']);
+});
+test('próximos abre consulta con categorías y conserva acceso a alarma',async({page})=>{
+ await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');const d=new Date();localStorage.setItem('excelia-bdays-v1',JSON.stringify([{name:'Persona de prueba',day:d.getDate(),month:d.getMonth()+1,categories:['N.A.S.A.'],vip:true}]))});
+ await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewBday').click();await page.locator('.bday-upcoming-item').first().click();
+ await expect(page.locator('#bdDetailOv .bday-group-tag')).toHaveText('N.A.S.A.');await page.locator('#bdDAlarm').click();await expect(page.locator('#bdAlarmOv')).toBeVisible();
 });
 test('lista: hoy único, alternativa al filtrar y mes fijo durante scroll',async({page})=>{
  await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');const d=new Date();localStorage.setItem('excelia-bdays-v1',JSON.stringify([{name:'Hoy A',day:d.getDate(),month:d.getMonth()+1},{name:'Hoy B',day:d.getDate(),month:d.getMonth()+1},...Array.from({length:336},(_,i)=>({name:'Persona '+i,day:i%28+1,month:Math.floor(i/28)+1}))]));});

@@ -39,8 +39,9 @@
 <img src="./VIP.png" alt="VIP" style="height:1.6em;vertical-align:middle;margin-right:5px"> VIP (alarma prioritaria + sync eventos)</label>
 <input type="checkbox" class="ev-checkbox" id="bdFVip" checked style="--chk:#fbbf24">
 </div>
-<details class="bday-group-fields">
-<summary>Categorías · 0</summary>
+<fieldset class="bday-group-fields">
+<legend>Categorías de esta persona</legend>
+<p>Puedes seleccionar varias etiquetas.</p>
 <div class="bday-group-chips">
 <label class="bday-group-chip">
 <input type="checkbox" data-bd-category="Amigos Oviedo">
@@ -103,13 +104,17 @@
 <span>Amigos extranjeros</span>
 </label>
 <label class="bday-group-chip">
+<input type="checkbox" data-bd-category="N.A.S.A.">
+<span>N.A.S.A.</span>
+</label>
+<label class="bday-group-chip">
 <input type="checkbox" data-bd-category="Otros">
 <span>Otros</span>
 </label>
 </div>
-<label>Nueva categoría<input class="ev-input" id="bdFNewCategory" maxlength="60" placeholder="Opcional">
+<label>Nueva categoría<input class="ev-input" id="bdFNewCategory" maxlength="60" placeholder="Escribe una etiqueta nueva">
 </label>
-</details>
+</fieldset>
 <div class="ev-form-actions">
 <button class="ev-btn primary" id="bdFSave">Guardar</button>
 </div>
