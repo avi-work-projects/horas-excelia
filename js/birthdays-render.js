@@ -135,7 +135,8 @@ function renderBdayList(){
   /* El buscador y el boton de anadir viven en la barra fija de arriba
      (renderBdayContent), fuera del .sy-body, para que no se muevan al hacer
      scroll ni dejen ver nada por detras. */
-  var h='';
+  var h='',today=new Date(),month=today.getMonth(),day=today.getDate();
+  var todayLine='<div class="bday-today-line" aria-label="Hoy, '+day+' de '+MN[month]+'"><span>Hoy · '+day+'</span></div>';
   // Helper: effective VIP state (considers pending changes)
   function getEffVip(b,idx){
     if(BDAY_VIP_PENDING!==null&&BDAY_VIP_PENDING.hasOwnProperty(idx))return BDAY_VIP_PENDING[idx];
@@ -154,10 +155,12 @@ function renderBdayList(){
       filtered=BDAY_FILTER_VIP==='vip'?list.filter(function(b){return !!b.vip;}):
                BDAY_FILTER_VIP==='novip'?list.filter(function(b){return !b.vip;}):list;
     }
-    if(!filtered.length&&(m!==new Date().getMonth()||BDAY_FILTER_VIP!=='all'))return;
+    if(!filtered.length&&m!==month)return;
     filtered.sort(function(a,b){return a.day-b.day;});
     h+='<div class="sy-section bday-month-section" data-month="'+m+'"><div class="bday-month-hdr">'+MN[m]+'</div>';
+    var marked=false;
     filtered.forEach(function(b){
+      if(m===month&&!marked&&b.day>=day){h+=todayLine;marked=true;}
       var dl=daysUntil(b.month,b.day);
       var lbl=dl===0?'\u00a1Hoy!':dl===1?'Ma\u00f1ana':'en '+dl+'d';
       var cls='bday-list-left'+(dl===0?' today-lbl':dl<=7?' near':'');
@@ -173,6 +176,7 @@ function renderBdayList(){
       h+='<span class="'+cls+'">'+lbl+'</span>';
       h+='</div>';
     });
+    if(m===month&&!marked)h+=todayLine;
     h+='</div>';
   });
   return h;
