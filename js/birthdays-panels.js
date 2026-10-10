@@ -15,7 +15,7 @@ function renderBdayDetail(b){
   h+=renderBdayPersonGroups(b);
   h+='<div class="bd-detail-date">'+b.day+' de '+MN[b.month-1]+'</div>';
   h+='<div class="bd-detail-lbl" style="background:'+color+'22;color:'+color+'">'+lbl+'</div>';
-  h+='<button class="ev-btn" id="bdDAlarm">Configurar alarma</button>';
+  h+=bdayCanSetAlarm(b)?'<button class="ev-btn" id="bdDAlarm">Configurar alarma</button>':'<p class="bday-alarm-hint">Disponible para configurar la alarma en los próximos 14 días.</p>';
   h+='</div></div>';
   return h;
 }
@@ -89,6 +89,7 @@ function renderBdayAlarmPanel(b){
 }
 
 function openBdayAlarm(b){
+  if(!bdayCanSetAlarm(b)){showToast('Solo puedes configurar alarmas para cumpleaños en los próximos 14 días','error');return;}
   abrirPanel('bdAlarmWrap',renderBdayAlarmPanel(b),{
     contenedor:bdayPanelHost(),
     overlay:'bdAlarmOv', alCerrar:closeBdayAlarm});
@@ -165,6 +166,7 @@ function bindBdayAlarmEvents(b){
   if(ponerBtn){
     ponerBtn.addEventListener('click',function(e){
       e.stopPropagation();
+      if(!bdayCanSetAlarm(b)){closeBdayAlarm();showToast('El cumpleaños está fuera de los próximos 14 días','error');return;}
       setBdayAlarmState(b,true);
       showToast('\u2713 Marcado como configurada','success');
       // Update UI inline
@@ -185,6 +187,7 @@ function bindBdayAlarmEvents(b){
 
   // Create alarm via MacroDroid
   document.getElementById('bdAlarmCreate').addEventListener('click',function(){
+    if(!bdayCanSetAlarm(b)){closeBdayAlarm();showToast('El cumpleaños está fuera de los próximos 14 días','error');return;}
     var alarmUrl=appStorage.getItem('excelia-alarm-url')||appStorage.getItem('excelia-macro-alarm-url')||'';
     if(!alarmUrl){
       showToast('Configura la URL de MacroDroid en el men\u00fa \u22ef','error');
@@ -285,7 +288,8 @@ function openBdayDetail(b){
   abrirPanel('bdDWrap',renderBdayDetail(b),{
     contenedor:bdayPanelHost(),
     overlay:'bdDetailOv', alCerrar:closeBdayDetail});
-  document.getElementById('bdDAlarm').addEventListener('click',function(){closeBdayDetail();setTimeout(function(){openBdayAlarm(b);},300);});
+  var alarmButton=document.getElementById('bdDAlarm');
+  if(alarmButton)alarmButton.addEventListener('click',function(){closeBdayDetail();setTimeout(function(){openBdayAlarm(b);},300);});
   document.getElementById('bdDClose').addEventListener('click',closeBdayDetail);
   document.getElementById('bdDEdit').addEventListener('click',function(){
     closeBdayDetail();setTimeout(function(){openBdayForm(b);},300);

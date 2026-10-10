@@ -162,7 +162,7 @@ function renderEvDetail(ev,fromSummary,car){
     h+='<button class="ev-btn primary" id="evDRutSes">'+(ev._rutSkip?'Marcar como hecha':'Marcar como saltada')+'</button>';
     h+='<button class="action-edit action-edit-text ev-btn ev-edit-orange" id="evDRutEdit">&#9998; Editar rutina</button>';
   } else if(ev.id.indexOf('ev-bday-vip-')===0){
-    h+='<button class="ev-btn primary" id="evDBdayAlarm">&#128276; Alarma de cumplea'+'\u00f1'+'os</button>';
+    if(bdayCanSetAlarm(_findBdayByEvId(ev.id)))h+='<button class="ev-btn primary" id="evDBdayAlarm">&#128276; Alarma de cumplea'+'\u00f1'+'os</button>';
   } else {
     if(fromSummary)h+='<button class="ev-btn" id="evDGoCal" style="border-color:var(--c-blue);color:var(--c-blue)">&#128197; Ver en Calendario</button>';
     /* Mismo boton que en el panel de alarma de Proximos */
@@ -489,11 +489,8 @@ function closeEvAlarm(){
 
 /* Abre el panel de cumpleaños VIP desde la ventana de eventos */
 function openBdayAlarmFromEvents(b){
-  abrirPanel('bdAlarmWrap',
-    typeof renderBdayAlarmPanel==='function'?renderBdayAlarmPanel(b):'',
-    {overlay:'bdAlarmOv',
-     alCerrar:function(){if(typeof closeBdayAlarm==='function')closeBdayAlarm();}});
-  if(typeof bindBdayAlarmEvents==='function')bindBdayAlarmEvents(b);
+  var birthday=b&&b.id?_findBdayByEvId(b.id):b;
+  openBdayAlarm(birthday);
 }
 
 function bindEvAlarmEvents(ev,firstDate){

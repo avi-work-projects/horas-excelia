@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v427 — fichas y filtros de cumpleaños';
+var APP_VERSION = 'v428 — cumpleaños compactos y alarmas a 14 días';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

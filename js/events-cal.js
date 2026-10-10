@@ -108,9 +108,9 @@ function _renderEvCalMonth(){
       if(_vips.length||_ruts.length){
         h+='<div class="ev-day-left">';
         if(_vips.length){
-          h+='<div class="ev-day-vips" data-ds="'+ds+'">';
-          _vips.slice(0,EV_CAL_VIP_MAX).forEach(function(vid){
-            h+=vipIconHtml(vid,_pmkM);
+          h+='<div class="ev-day-vips'+_pmkM+'" data-ds="'+ds+'">';
+          _vips.slice(0,EV_CAL_VIP_MAX).forEach(function(vid,i){
+            h+=vipIconHtml(vid,'',EV_CAL_VIP_MAX-i);
           });
           h+='</div>';
         }

@@ -61,17 +61,30 @@ function refreshBday(){
 function applyBdaySearch(q){
   var today=new Date(),totalVisible=0;
   document.querySelectorAll('.bday-month-section').forEach(function(sec){
-    var vis=0,todayMarked=false;
+    var vis=0,todayMarked=false,previousVisible=null,beforeToday=null;
     sec.querySelectorAll('.bday-list-item').forEach(function(item){
       var match=(!q||(item.dataset.sname&&item.dataset.sname.indexOf(q)>=0))&&bdayGroupMatch(BDAYS[+item.dataset.bdayIdx]);
       item.style.display=match?'':'none';
       var isToday=match&&!todayMarked&&+item.dataset.bdayMonth===today.getMonth()+1&&+item.dataset.bdayDay===today.getDate();
+      item.classList.remove('bday-before-today');
       item.classList.toggle('bday-today-item',isToday);
+      if(isToday)beforeToday=previousVisible;
+      if(match)previousVisible=item;
       if(isToday)todayMarked=true;
       if(match)vis++;
     });
     var line=sec.querySelector('.bday-today-line');
-    if(line)line.hidden=todayMarked;
+    if(line){
+      line.hidden=todayMarked;
+      if(!todayMarked){
+        var sibling=line.previousElementSibling;
+        while(sibling&&!sibling.classList.contains('bday-month-hdr')){
+          if(sibling.classList.contains('bday-list-item')&&sibling.style.display!=='none'){beforeToday=sibling;break;}
+          sibling=sibling.previousElementSibling;
+        }
+      }
+    }
+    if(beforeToday)beforeToday.classList.add('bday-before-today');
     totalVisible+=vis;
     sec.style.display=vis||line?'':'none';
   });
