@@ -75,5 +75,5 @@ test('último extra: se puede reelegir, sustituye al anterior y se olvida al cer
  await mg.locator('.ev-quick-selection button').click();await expect(page.locator('#evFTaxModel')).toHaveValue('390');
  await page.locator('[data-picker=management]').click();await page.locator('#evPlanPickerOv [data-type="Pago"]').click();await page.locator('#evPlanConfirm').click();await expect(page.locator('#evPlanPickerWrap')).toHaveCount(0);
  await expect(mg.locator('.ev-quick-selection button')).toHaveCount(1);await expect(mg.locator('.ev-quick-selection button')).toHaveText('Pago');
- await page.locator('#evFClose').click();await expect(page.locator('#evFWrap')).toHaveCount(0);await page.locator('#evAdd').click();await expect(page.locator('#evFWrap')).toBeVisible();await expect(page.locator('.ev-quick-selection')).toHaveCount(0);
+ await page.locator('#evFClose').click();await expect(page.locator('#evFWrap')).toHaveCount(0);await page.locator('#evAdd').click();await expect(page.locator('#evFTitle')).toBeVisible();await expect(page.locator('.ev-quick-selection')).toHaveCount(0);
 });
