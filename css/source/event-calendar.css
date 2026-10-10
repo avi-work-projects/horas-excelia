@@ -374,6 +374,6 @@
 
 /* Selección rápida visible sin alterar los colores de cada símbolo. */
 .ev-type-picker .ev-quick-group .ev-color-swatch.selected{background:color-mix(in srgb,var(--picker-accent) 25%,var(--surface));box-shadow:inset 0 0 0 1px var(--picker-accent),0 2px 5px #0002;border-color:var(--picker-accent)}
-.ev-type-picker .ev-quick-group .selected .ev-type-name{font-weight:700;color:var(--picker-accent)}
+.ev-type-picker .ev-quick-group .ev-color-swatch.selected .ev-type-name{font-weight:700;color:var(--picker-accent)}
 .ev-tax-chevron{width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);margin:0 4px 4px;flex-shrink:0;transition:transform .18s}
 [aria-expanded=true]>.ev-tax-chevron{transform:rotate(225deg);margin-bottom:0}
