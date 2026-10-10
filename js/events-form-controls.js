@@ -44,7 +44,7 @@ function _bindEvFormCategories(form){
     button.addEventListener('click',function(){
       var kind=button.dataset.kind,picker=form.root.querySelector('.ev-kind-picker'),previous=picker&&picker.dataset.curType||'';
       _evFormAll(form,'.ev-kind-btn').forEach(function(b){b.classList.toggle('selected',b===button);});
-      var type=EV_KINDS[kind].types.indexOf(previous)!==-1?previous:EV_KINDS[kind].types[0];
+      var type=EV_KINDS[kind].types.indexOf(previous)!==-1?previous:'';
       evFormRenderTypes(form,kind,type);
       _bindEvFormTypes(form);_evFormTypeUI(form,kind,type);_evFormSuggestTitle(form,type);
     });

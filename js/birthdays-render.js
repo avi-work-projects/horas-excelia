@@ -169,7 +169,7 @@ function renderBdayList(){
       var vipStar=effVip?' <img src="./VIP.png" class="bday-vip-img" alt="VIP">':'';
       h+='<div class="bday-list-item'+editCls+'" data-bday-idx="'+lidx+'" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" data-sname="'+sname+'">';
       h+='<span class="bday-list-day">'+b.day+'</span>';
-      h+='<span class="bday-list-name">'+bdName(b.name)+vipStar+'</span>';
+      h+='<span class="bday-list-name">'+bdName(b.name)+vipStar+(bdayGroups(b).length?'<small class="bday-person-groups">'+bdayGroups(b).map(escHtml).join(' · ')+'</small>':'')+'</span>';
       h+='<span class="'+cls+'">'+lbl+'</span>';
       h+='</div>';
     });
@@ -222,6 +222,7 @@ function renderBdayContent(){
     if(BDAYS.length)h+='<div class="bday-search-wrap"><input class="bday-search-input" id="bdSearch" type="text" '
       +'placeholder="Buscar persona\u2026" value="'+escHtml(BDAY_SEARCH)+'"></div>';
     h+='</div>';
+    h+=renderBdayGroupTools();
   }
 
   if(BDAY_VIEW==='upcoming'){

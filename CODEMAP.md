@@ -16,13 +16,18 @@
 
 **Funciones:** saveAlarms:17 · addAlarm:23 · removeAlarm:30 · isAlarmPast:35 · nextAlarmTime:43
 
-### js/birthdays-bind.js  _(313 líneas)_
-**Funciones:** bindBdayFormEvents:1 · openBday:52 · closeBday:56 · refreshBday:57 · applyBdaySearch:61 · bindBdayEvents:73 (!194) · _bdResetScroll:106 · _bdScrollToMonth:108 · bindBdayUpcoming:267 · bdayPanelHost:309
+### js/birthdays-bind.js  _(315 líneas)_
+**Funciones:** bindBdayFormEvents:1 · openBday:52 · closeBday:56 · refreshBday:57 · applyBdaySearch:61 · bindBdayEvents:73 (!196) · _bdResetScroll:108 · _bdScrollToMonth:110 · bindBdayUpcoming:269 · bdayPanelHost:311
 
-### js/birthdays-panels.js  _(307 líneas)_
-**Funciones:** renderBdayDetail:1 · renderBdayAlarmPanel:22 · fmtDate:34 · openBdayAlarm:89 · _bdRefreshBoth:96 · closeBdayAlarm:100 · bindBdayAlarmEvents:102 (!146) · fmtD:218 · onOk:225 · onErr:226 · renderBdayForm:248 · openBdayDetail:281 · closeBdayDetail:291 · openBdayForm:294 · closeBdayForm:304
+### js/birthdays-groups.js  _(40 líneas)_
+**Estado global:** BDAY_GROUP_DEFAULTS:2 · BDAY_GROUP_FILTER:3
 
-### js/birthdays-render.js  _(243 líneas)_
+**Funciones:** bdayGroups:4 · bdayGroupCatalog:5 · bdayGroupMatch:6 · bdayGroupChips:7 · renderBdayGroupTools:8 · renderBdayGroupFields:9 · bdayReadGroupFields:10 · bindBdayGroupTools:11 · bdaySaveGroupDraft:16 · openBdayClassifier:20 · close:23 · renderTabs:25 · renderPeople:26
+
+### js/birthdays-panels.js  _(308 líneas)_
+**Funciones:** renderBdayDetail:1 · renderBdayAlarmPanel:22 · fmtDate:34 · openBdayAlarm:89 · _bdRefreshBoth:96 · closeBdayAlarm:100 · bindBdayAlarmEvents:102 (!146) · fmtD:218 · onOk:225 · onErr:226 · renderBdayForm:248 · openBdayDetail:282 · closeBdayDetail:292 · openBdayForm:295 · closeBdayForm:305
+
+### js/birthdays-render.js  _(244 líneas)_
 **Estado global:** DN7:95
 
 **Funciones:** renderBdayVipFilter:1 · renderBdayUpcoming:5 (!88) · getBdaysInRange:10 · bdayLabel:25 · renderGroup:34 · renderBdayCalMonth:93 · renderBdayList:133 · getEffVip:140 · renderBdayAddButton:182 · renderBdayContent:185
@@ -218,8 +223,8 @@
 ### js/events-form-controls.js  _(106 líneas)_
 **Funciones:** _evFormEl:2 · _evFormAll:3 · _evFormKind:4 · _evFormColor:5 · _evFormSuggestTitle:6 · _evFormTypeUI:10 · _bindEvFormTypes:24 · _bindEvFormCategories:38 · _evFormShapePreviews:53 · _bindEvFormAppearance:56 · _evFormDatesLabel:74 · _bindEvFormDates:82 · _evFormTravelUI:93 · _bindEvFormDetails:99
 
-### js/events-form-save.js  _(111 líneas)_
-**Funciones:** _evFormRead:2 · _evFormReadDetails:29 · _evFormSaveBodas:49 · _evFormCommit:77 · _evFormDelete:93 · _bindEvFormActions:104
+### js/events-form-save.js  _(112 líneas)_
+**Funciones:** _evFormRead:2 · _evFormReadDetails:30 · _evFormSaveBodas:50 · _evFormCommit:78 · _evFormDelete:94 · _bindEvFormActions:105
 
 ### js/events-form.js  _(294 líneas)_
 **Funciones:** evPuntualDays:6 · _renderEvTypeSwatches:15 · _renderEvTypeButton:28 · evAdmiteRepeticion:48 · renderEvForm:51 (!196) · openEvForm:247 · closeEvForm:273 · evSuggestedTitle:281 · bindEvFormEvents:284
@@ -474,7 +479,7 @@
 **Rangos por prefijo de clase:**
 .ah-cuota:117-119 · .ah-donut:127-129 · .ah-section:114-116 · .ah-total:124-126 · .ah-vs:120-123 · .analisis-card:266-268 · .analisis-cards:255-255 · .analisis-hbar:269-274 · .analisis-input:284-287 · .analisis-ins:293-298 · .analisis-insurance:292-292 · .analisis-mortgage:275-291 · .econ-add:201-202 · .econ-ahorro:422-429 · .econ-annual:25-25 · .econ-avg:26-349 · .econ-bracket:184-190 · .econ-calc:332-333 · .econ-casc:336-343 · .econ-cascade:335-335 · .econ-chart:214-215 · .econ-comp:192-216 · .econ-decl:179-353 · .econ-distrib:659-673 · .econ-donut:440-455 · .econ-equiv:654-657 · .econ-fiscal:433-438 · .econ-formula:45-48 · .econ-gastos:355-367 · .econ-gear:151-152 · .econ-hdr:67-153 · .econ-ingresado:33-33 · .econ-irpf:369-431 · .econ-legend:217-218 · .econ-line:212-213 · .econ-month:50-63 · .econ-mr:651-652 · .econ-multi:643-653 · .econ-opt:328-331 · .econ-qcard:15-22 · .econ-qcell:11-14 · .econ-qm:20-20 · .econ-qmonth:18-19 · .econ-quarter:7-10 · .econ-rate:155-163 · .econ-row:34-44 · .econ-sc:194-680 · .econ-scenario:193-193 · .econ-section:64-64 · .econ-sim:220-230 · .econ-stats:167-172 · .econ-sub:70-82 · .econ-tab:68-69 · .econ-toggle:174-177 · .econ-val:49-49 · .est-btn:87-91 · .est-card:97-99 · .est-detail:94-94 · .est-field:106-112 · .est-fields:105-105 · .est-group:85-89 · .est-modo:100-100 · .est-nav:84-84 · .est-section:93-93 · .est-tariff:95-104 · .ev-sub:76-78 · .excl-item:165-165 · .excl-row:164-164 · .fiscal-add:321-484 · .fiscal-bracket:312-320 · .fiscal-compras:513-548 · .fiscal-copy:148-150 · .fiscal-custom:309-309 · .fiscal-ded:523-537 · .fiscal-desgrav:486-538 · .fiscal-despacho:550-571 · .fiscal-error:325-325 · .fiscal-gasto:457-519 · .fiscal-gastos:539-539 · .fiscal-hdr:469-469 · .fiscal-highlight:510-510 · .fiscal-onoff:552-553 · .fiscal-pct:310-319 · .fiscal-period:465-466 · .fiscal-radio:304-308 · .fiscal-save:323-324 · .fiscal-section:302-477 · .fiscal-sticky:474-474 · .fiscal-subsection:478-479 · .fiscal-tab:470-472 · .fiscal-viaje:480-481 · .fiscal-vinc:563-564 · .fiscal-year:144-147 · .hip-add:641-641 · .hip-auto:592-592 · .hip-bar:578-585 · .hip-cancel:628-628 · .hip-cf:597-602 · .hip-edit:624-626 · .hip-g2:596-596 · .hip-grid:590-590 · .hip-period:630-639 · .hip-resumen:573-577 · .hip-ro:615-622 · .hip-save:627-627 · .hip-section:591-640 · .hip-stat:587-589 · .hip-stats:586-586 · .hip-sub:594-594 · .hip-vinc:593-593 · .hip-vr:604-613 · .mg-budget:131-140 · .mg-cat:141-141 · .mg-desgrav:142-142 · .mg-sort:137-137 · .rate-input:4-4 · .rate-label:3-3 · .rate-row:2-2 · .rate-suffix:5-5 · .rut-sub:74-80 · .sim-combo:232-236 · .sim-field:221-222 · .sim-hr:231-231 · .sim-period:228-228 · .sim-target:223-227 · .sub-block:257-258 · .sub-row:259-265 · .sy-sublbl:24-24
 
-### css/source/birthdays.css  _(124 líneas)_
+### css/source/birthdays.css  _(153 líneas)_
 
 **Secciones:**
 
@@ -487,9 +492,10 @@
 - Feat 1: Buscador en lista por meses:61
 - Upcoming birthdays:87
 - Fin de semana suave; hoy conserva su borde y su fecha destacada.:104
+- Categorías múltiples y clasificación rápida por grupos.:125
 
 **Rangos por prefijo de clase:**
-.bday-add:102-103 · .bday-badge:18-21 · .bday-buscar:64-66 · .bday-calendar:7-23 · .bday-cancel:49-50 · .bday-cell:11-105 · .bday-hdr:6-6 · .bday-header:24-33 · .bday-io:70-86 · .bday-list:36-60 · .bday-month:35-35 · .bday-num:15-15 · .bday-search:67-69 · .bday-symbol:2-2 · .bday-upcoming:3-101 · .bday-vip:26-47 · .bday-week:8-10 · .data-btn:5-5 · .ev-btn:4-4 · .ev-cell:106-123 · .ev-io:72-72 · .io-peligro:77-85 · .io-primaria:76-83 · .vip-no:44-45
+.bday-add:102-103 · .bday-badge:18-21 · .bday-buscar:64-66 · .bday-calendar:7-23 · .bday-cancel:49-50 · .bday-cell:11-105 · .bday-classifier:136-150 · .bday-group:126-148 · .bday-hdr:6-6 · .bday-header:24-33 · .bday-io:70-86 · .bday-list:36-60 · .bday-month:35-35 · .bday-num:15-15 · .bday-person:135-135 · .bday-search:67-69 · .bday-symbol:2-2 · .bday-upcoming:3-101 · .bday-vip:26-47 · .bday-week:8-10 · .data-btn:5-5 · .ev-btn:4-4 · .ev-cell:106-123 · .ev-io:72-72 · .io-peligro:77-85 · .io-primaria:76-83 · .vip-no:44-45
 
 ### css/source/event-calendar.css  _(380 líneas)_
 

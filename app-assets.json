@@ -167,6 +167,9 @@
       "path": "js/birthdays.js"
     },
     {
+      "path": "js/birthdays-groups.js"
+    },
+    {
       "path": "js/birthdays-render.js"
     },
     {

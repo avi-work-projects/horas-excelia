@@ -4,7 +4,7 @@
    → Cambiar CACHE_VER en cada deploy para forzar actualización
    ============================================================ */
 
-var CACHE_VER = 'v424';
+var CACHE_VER = 'v425';
 var CACHE_NAME = 'horas-excelia-' + CACHE_VER;
 
 /* Generado desde app-assets.json: npm run assets */
@@ -64,6 +64,7 @@ var ASSETS = [
   "./js/household.js",
   "./js/household-summary.js",
   "./js/birthdays.js",
+  "./js/birthdays-groups.js",
   "./js/birthdays-render.js",
   "./js/birthdays-panels.js",
   "./js/birthdays-bind.js",

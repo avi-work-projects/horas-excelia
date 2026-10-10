@@ -30,3 +30,16 @@ assert.equal(a.getEvType({type:'Pago hacienda'}),'Pago Hacienda');
 assert.match(a.evManagementShapeInner('tax'),/#647db1/);
 assert.ok(a.evManagementShapeInner('tax').includes(a.evPaymentCoinsSvg()));
 assert.ok(a.evManagementShapeInner('payment').includes(a.evPaymentCoinsSvg()));
+
+// Clasificación múltiple: OR, catálogo ampliado y persistencia sin perder VIP.
+a.BDAYS=[{name:'Ana',day:1,month:10,vip:true},{name:'Luis',day:2,month:10}];
+a.bdaySaveGroupDraft([['Amigos Oviedo','Familia'],['Grupo nuevo']]);
+assert.equal(a.BDAYS[0].vip,true);
+assert.ok(a.bdayGroupCatalog().includes('Grupo nuevo'));
+a.BDAY_GROUP_FILTER=['Familia','Grupo nuevo'];assert.ok(a.BDAYS.every(b=>a.bdayGroupMatch(b)));
+a.BDAY_GROUP_FILTER=['Amigos Oviedo'];assert.equal(a.bdayGroupMatch(a.BDAYS[1]),false);
+assert.doesNotThrow(()=>a.validateImport({birthdays:JSON.parse(a.appStorage.getItem(a.BDAY_STORAGE_KEY))}));
+assert.throws(()=>a.validateImport({birthdays:[{name:'Ana',day:1,month:10,categories:[9]}]}));
+const savedPeople=JSON.stringify(a.BDAYS),setGroups=a.appStorage.setItem;
+a.appStorage.setItem=()=>{throw Error('sin espacio');};
+assert.throws(()=>a.bdaySaveGroupDraft([[],[]]));assert.equal(JSON.stringify(a.BDAYS),savedPeople);a.appStorage.setItem=setGroups;
