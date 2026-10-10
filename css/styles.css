@@ -1891,6 +1891,35 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-detail-symbol{flex:0 0 28px;width:28px;display:flex;align-items:center;justify-content:center;pointer-events:none}
 .ev-detail-symbol .ev-marker-up{width:26px;height:26px}
 
+/* Fichas de consulta: jerarquía común, datos legibles y controles discretos. */
+.ev-detail-modern{padding:8px 20px 24px;max-width:620px;margin:0 auto}
+.ev-detail-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.ev-detail-modern .ev-detail-color-bar{height:3px;margin-bottom:20px;opacity:.65}
+.ev-detail-modern .ev-detail-heading{gap:14px;margin-bottom:20px}
+.ev-detail-heading-copy{flex:1;min-width:0}
+.ev-detail-kicker{font-size:.66rem;font-weight:600;color:var(--text-muted);margin-bottom:5px}
+.ev-detail-modern .ev-detail-title{font-size:1.22rem;line-height:1.3;overflow-wrap:anywhere}
+.ev-detail-modern .ev-detail-symbol{width:40px;flex-basis:40px}
+.ev-detail-modern .ev-detail-symbol>*{width:36px!important;height:36px!important}
+.ev-detail-modern .ev-detail-symbol img{width:100%;height:100%;object-fit:contain}
+.ev-detail-facts{border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:8px}
+.ev-detail-modern .ev-detail-date{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0;padding:13px 14px;font-family:inherit;font-size:.8rem}
+.ev-detail-modern .ev-detail-date+.ev-detail-date{box-shadow:0 -1px 0 var(--border)}
+.ev-detail-date strong{font-weight:600;text-align:right;color:var(--text)}
+.ev-detail-label{display:block;font-size:.69rem;color:var(--text-muted);font-weight:500}
+.ev-detail-modern .ev-detail-note{padding:14px;border-radius:14px;white-space:pre-wrap;overflow-wrap:anywhere}
+.ev-detail-note>.ev-detail-label{margin-bottom:7px}
+.ev-detail-modern .ev-detail-repeat{background:none;padding:5px 1px;font-size:.71rem}
+.ev-detail-modern .ev-management-check{order:0;justify-content:space-between;flex-direction:row-reverse;margin:0 0 12px;padding:11px 14px;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-size:.8rem;font-weight:500;border-radius:14px}
+.ev-management-complete{display:none}
+.ev-management-check:has(input:checked) .ev-management-pending{display:none}
+.ev-management-check:has(input:checked) .ev-management-complete{display:inline;color:#279b64}
+.ev-detail-modern .ev-bficha{border-radius:14px;background:var(--surface)}
+.ev-detail-modern .ev-bfila{padding:13px 14px;min-height:47px}
+.ev-detail-modern .ev-bfila-val{white-space:normal;text-align:right}
+.ev-detail-modern .ev-detail-actions{flex-wrap:wrap;gap:8px;padding-top:18px}
+.ev-detail-modern .ev-detail-actions .ev-btn{min-height:42px;border-radius:12px}
+
 /* Fuente: css/source/dialogs-responsive.css */
 /* ── LOGO POPUP ── */
 .logo-popup{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}

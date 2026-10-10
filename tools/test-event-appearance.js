@@ -18,3 +18,10 @@ a.EVENTS=[{id:'test-trip',kind:'grande',type:'Viaje',title:'Viaje en curso',star
 a.EV_YEAR=2026;a.EV_MONTH=7;a.EV_QUAD_YEAR=2026;a.EV_QUAD_MONTH=7;
 for(const render of ['renderEvCalMonth','renderEvQuad','renderEvAnnual'])assert.match(a[render](),/ev-part-past[^>]+data-id="test-trip"/);
 console.log('Apariencia: ribete definitivo, backups previos y viajes en curso en los tres calendarios OK');
+
+const birthday=a.renderEvDetail({id:'ev-bday-vip-test',title:'⭐ Cumple Ana',note:'Cumpleaños VIP',start:'2026-08-21',end:'2026-08-21',color:'#fbbf24',repeat:{type:'yearly'}},false,{ds:'2027-08-21',i:0,n:1});
+assert.match(birthday,/id="evDTitle">Ana<\/div>/);
+assert.equal((birthday.match(/src="VIP.png"/g)||[]).length,1);
+assert.doesNotMatch(birthday,/⭐|Cumpleaños VIP|Anual/);
+assert.match(birthday,/21 de agosto/);
+assert.match(birthday,/id="evDBdayAlarm"/);
