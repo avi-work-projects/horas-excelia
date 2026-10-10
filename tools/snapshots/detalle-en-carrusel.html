@@ -1,8 +1,8 @@
 <div class="ev-detail-overlay" id="evDetailOv">
-<div class="ev-detail-sheet ev-car-sheet">
+<div class="ev-detail-sheet ev-detail-modern ev-car-sheet">
 <div class="ev-detail-handle">
 </div>
-<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+<div class="ev-detail-toolbar">
 <button class="sy-back" id="evDClose">&#8592;</button>
 <div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">Mié 26/08</div>
 <div class="ev-car-count">2 / 5</div>
@@ -33,13 +33,18 @@
 </svg>
 </span>
 </span>
+<div class="ev-detail-heading-copy">
+<div class="ev-detail-kicker">Rec. Gestiones</div>
 <div class="ev-detail-title" style="color:var(--ev-detail-management)" id="evDTitle">Gestion uno</div>
+</div>
 </div>
 <label class="ev-management-check">
 <input type="checkbox" id="evManagementDone" style="--chk:#279b64" data-ds="2026-08-26">
-<span>Hecho</span>
+<span class="ev-management-state">
+<span class="ev-management-pending">Pendiente</span>
+<span class="ev-management-complete">Hecho</span>
+</span>
 </label>
-<div style="font-size:.72rem;font-weight:600;color:#34d399;opacity:.8;margin-bottom:4px">Rec. Gestiones</div>
 <div class="ev-detail-color-section" id="evDColorSection">
 <div class="ev-color-picker" id="evDCpWrap">
 <div class="ev-color-grid">
@@ -160,8 +165,14 @@
 </div>
 <button class="econ-calc-btn" id="evDColorApply" style="margin-top:8px;font-size:.78rem;padding:8px 0">Probar color</button>
 </div>
-<div class="ev-detail-date">&#128197; 26/08/2026</div>
-<div class="ev-detail-note">con nota</div>
+<div class="ev-detail-facts">
+<div class="ev-detail-date">
+<span class="ev-detail-label">Fecha</span>
+<strong>26/08/2026</strong>
+</div>
+</div>
+<div class="ev-detail-note">
+<span class="ev-detail-label">Notas</span>con nota</div>
 <div class="ev-detail-actions">
 <button class="action-edit action-edit-text ev-btn ev-edit-orange" id="evDEdit">&#9998; Editar evento</button>
 <button class="ev-btn danger" id="evDDel">Eliminar</button>

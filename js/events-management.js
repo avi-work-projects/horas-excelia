@@ -20,7 +20,7 @@ function evManagementDone(ev,ds){return tasksData().items.some(function(t){retur
 function evManagementCheckHtml(ev,ds){
   if(!evManagementCheckable(ev))return '';
   ds=evManagementDate(ev,ds);
-  return '<label class="ev-management-check"><input type="checkbox" id="evManagementDone" style="--chk:#279b64" data-ds="'+ds+'"'+(evManagementDone(ev,ds)?' checked':'')+'><span>Hecho</span></label>';
+  return '<label class="ev-management-check"><input type="checkbox" id="evManagementDone" style="--chk:#279b64" data-ds="'+ds+'"'+(evManagementDone(ev,ds)?' checked':'')+'><span class="ev-management-state"><span class="ev-management-pending">Pendiente</span><span class="ev-management-complete">Hecho</span></span></label>';
 }
 function bindEvManagementCheck(wrap,ev){
   var box=wrap.querySelector('#evManagementDone');if(!box)return;

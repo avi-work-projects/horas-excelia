@@ -47,11 +47,13 @@ function evDetailTitleColor(ev){
   return 'var(--text)';
 }
 function renderEvDetail(ev,fromSummary,car){
+  var isBirthday=ev.id.indexOf('ev-bday-vip-')===0;
   var s=new Date(ev.start+'T00:00:00');
   var e2=ev.end&&ev.end!==ev.start?new Date(ev.end+'T00:00:00'):null;
   var fd2=function(dd){return String(dd.getDate()).padStart(2,'0')+'/'+String(dd.getMonth()+1).padStart(2,'0')+'/'+dd.getFullYear();};
   var dateStr=fd2(s);
-  if(e2)dateStr+=' \u2014 '+fd2(e2);
+  if(isBirthday)dateStr=s.getDate()+' de '+MN[s.getMonth()].toLowerCase();
+  if(e2&&!isBirthday)dateStr+=' \u2014 '+fd2(e2);
   var repeatStr='';
   if(ev.repeat){
     var rt=ev.repeat.type;
@@ -62,9 +64,9 @@ function renderEvDetail(ev,fromSummary,car){
     else if(rt==='monthly-first'){repeatStr='\ud83d\udd01 Mensual (d\u00eda 1)';}
     else if(rt==='yearly'){repeatStr='\ud83d\udd01 Anual';}
   }
-  var h='<div class="ev-detail-overlay" id="evDetailOv"><div class="ev-detail-sheet'+(car?' ev-car-sheet':'')+'">';
+  var h='<div class="ev-detail-overlay" id="evDetailOv"><div class="ev-detail-sheet ev-detail-modern'+(car?' ev-car-sheet':'')+'">';
   h+='<div class="ev-detail-handle"></div>';
-  h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">';
+  h+='<div class="ev-detail-toolbar">';
   h+='<button class="sy-back" id="evDClose">&#8592;</button>';
   if(car){
     var _wn=['Dom','Lun','Mar','Mi\u00e9','Jue','Vie','S\u00e1b'];
@@ -89,8 +91,10 @@ function renderEvDetail(ev,fromSummary,car){
   var _ddc=getEvDisplayColor(ev);
   h+='<div class="ev-detail-color-bar" style="background:'+_ddc+'" id="evDColorBar"></div>';
   h+='<div class="ev-detail-heading">';
-  h+='<span class="ev-detail-symbol" id="evDMarker" aria-hidden="true">'+evUpcomingMarkHtml(ev)+'</span>';
-  h+='<div class="ev-detail-title" style="color:'+evDetailTitleColor(ev)+'" id="evDTitle">'+escHtml(ev.title)+'</div>';
+  h+='<span class="ev-detail-symbol" id="evDMarker" aria-hidden="true">'+(isBirthday?vipIconHtml(ev.id,''):evUpcomingMarkHtml(ev))+'</span>';
+  h+='<div class="ev-detail-heading-copy"><div class="ev-detail-kicker">'+(isBirthday?'Cumpleaños':escHtml(getEvType(ev)))+'</div>';
+  var displayTitle=isBirthday?ev.title.replace(/^[\s⭐★🌟]+/u,'').replace(/^Cumple\s+/i,''):ev.title;
+  h+='<div class="ev-detail-title" style="color:'+evDetailTitleColor(ev)+'" id="evDTitle">'+escHtml(displayTitle)+'</div></div>';
   /* Paleta de color sólo en tipos Viaje y Otros */
   var _evType=getEvType(ev);
   if(_evType==='Viaje'||_evType==='Otros'){
@@ -100,21 +104,22 @@ function renderEvDetail(ev,fromSummary,car){
   if(ev.type==='Presentar Modelo'&&ev.taxModel)h+='<div class="ev-detail-repeat">Modelo '+escHtml(ev.taxModel)+'</div>';
   h+=rutRecoveryHtml(ev);
   h+=evManagementCheckHtml(ev,(car&&car.ds)||EV_EDIT_DS);
-  h+='<div style="font-size:.72rem;font-weight:600;color:'+_ddc+';opacity:.8;margin-bottom:4px">'+getEvType(ev)+'</div>';
+
   h+='<div class="ev-detail-color-section" id="evDColorSection">';
   h+=_renderColorPicker(_ddc,false,false,'evDCp');
   h+='<button class="econ-calc-btn" id="evDColorApply" style="margin-top:8px;font-size:.78rem;padding:8px 0">Probar color</button>';
   h+='</div>';
-  h+='<div class="ev-detail-date">&#128197; '+dateStr+'</div>';
+  h+='<div class="ev-detail-facts"><div class="ev-detail-date"><span class="ev-detail-label">Fecha</span><strong>'+dateStr+'</strong></div>';
   /* En una clase de boda la hora sale abajo en su pastilla, no aqui */
   var _dt=(getEvType(ev)==='Ensayos boda')?'':evTimeLabel(ev);
-  if(_dt)h+='<div class="ev-detail-repeat">\ud83d\udd52 '+_dt+'</div>';
+  if(_dt)h+='<div class="ev-detail-date"><span class="ev-detail-label">Horario</span><strong>'+_dt+'</strong></div>';
   evTramos(ev).forEach(function(tr){
     h+='<div class="ev-detail-repeat">'+evTramoTexto(tr)+'</div>';
   });
-  if(repeatStr)h+='<div class="ev-detail-repeat">'+repeatStr+'</div>';
+  h+='</div>';
+  if(repeatStr&&!isBirthday)h+='<div class="ev-detail-repeat">'+repeatStr+'</div>';
   /* En una rutina la nota repite la hora que ya sale arriba */
-  if(ev.note&&!ev._rut)h+='<div class="ev-detail-note">'+escHtml(ev.note)+'</div>';
+  if(ev.note&&!ev._rut&&!isBirthday)h+='<div class="ev-detail-note"><span class="ev-detail-label">Notas</span>'+escHtml(ev.note)+'</div>';
   /* Nota especifica del dia desde el que se abrio (puntuales de varios dias) */
   if(EV_EDIT_DS&&ev.dayNotes&&ev.dayNotes[EV_EDIT_DS]){
     h+='<div class="ev-detail-note ev-detail-daynote"><span class="ev-note-scope">'

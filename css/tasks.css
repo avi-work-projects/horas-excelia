@@ -17,10 +17,10 @@
 .tasks-overlay{position:fixed;inset:0;z-index:1600;background:#16132566;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;overscroll-behavior:contain;--tasks-accent:#a899d1;--chk:var(--tasks-accent)}
 [data-theme=light] .tasks-overlay{--tasks-accent:#70609e}
 .tasks-overlay.open{opacity:1;pointer-events:auto}
-.tasks-sheet{display:flex;flex-direction:column;width:100%;max-width:520px;height:min(80dvh,730px);min-height:280px;background:var(--surface);border-radius:24px 24px 0 0;box-shadow:0 -10px 50px #0002;overflow:hidden;padding-bottom:env(safe-area-inset-bottom);transform:translateY(30px);transition:transform .2s;color:var(--text)}
+.tasks-sheet{display:flex;flex-direction:column;width:100%;max-width:520px;height:min(88dvh,840px);min-height:280px;background:var(--surface);border-radius:24px 24px 0 0;box-shadow:0 -10px 50px #0002;overflow:hidden;padding-bottom:env(safe-area-inset-bottom);transform:translateY(30px);transition:transform .2s;color:var(--text)}
 .tasks-overlay.open .tasks-sheet{transform:translateY(0)}
 .tasks-sheet>*{flex-shrink:0}
-.tasks-header{display:flex;align-items:center;gap:12px;padding:22px 20px 18px}
+.tasks-header{display:flex;align-items:center;gap:12px;padding:18px 20px 14px}
 .tasks-heading-icon{width:42px;height:42px;display:grid;place-items:center;color:var(--tasks-accent);background:color-mix(in srgb,var(--tasks-accent) 12%,var(--surface));border-radius:13px}
 .tasks-heading-icon svg{width:28px;height:28px}
 .tasks-header h2{margin:0;font-size:1.06rem;line-height:1.25}
@@ -37,7 +37,7 @@
 .tasks-add button{flex:none;width:42px;padding:0;font-size:1.35rem;background:var(--tasks-accent);border-color:var(--tasks-accent);color:var(--surface)}
 [data-theme=light] .tasks-add button{color:#fff}
 .tasks-list{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:0 20px 12px;scrollbar-gutter:stable}
-.task-row{position:relative;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;padding:12px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:13px}
+.task-row{position:relative;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;padding:6px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:13px}
 .task-row input[type=checkbox]{flex-shrink:0;--chk:var(--tasks-accent)}
 .task-content{flex:1;min-width:0}
 .task-title{border:0;background:none;color:var(--text);font:inherit;font-size:.82rem;line-height:1.45;text-align:left;padding:0;width:100%;overflow-wrap:anywhere;cursor:pointer}
