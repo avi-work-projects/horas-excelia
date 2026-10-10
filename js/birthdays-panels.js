@@ -272,6 +272,7 @@ function renderBdayForm(b,prefillDay,prefillMonth){
   h+='<label class="ev-toggle-label" for="bdFVip"><img src="./VIP.png" alt="VIP" style="height:1.6em;vertical-align:middle;margin-right:5px"> VIP (alarma prioritaria + sync eventos)</label>';
   h+='<input type="checkbox" class="ev-checkbox" id="bdFVip"'+(vip?' checked':'')+' style="--chk:#fbbf24">';
   h+='</div>';
+  h+=renderBdayGroupFields(b);
   h+='<div class="ev-form-actions"><button class="ev-btn primary" id="bdFSave">Guardar</button></div>';
   h+='</div></div>';
   return h;

@@ -3,6 +3,7 @@ function _evFormRead(form){
   var title=_evFormEl(form,'evFTitle').value.trim();
   if(!title){showToast('El título es obligatorio','error');return null;}
   var selected=form.root.querySelector('#evFTypePicker .ev-color-swatch.selected'),picker=form.root.querySelector('.ev-kind-picker');
+  if(!selected){showToast('Elige una categoría para el evento','error');return null;}
   var kind=selected&&selected.dataset.kind||picker&&picker.dataset.curKind||'puntual';
   var type=selected&&selected.dataset.type||picker&&picker.dataset.curType||'Otros',key=evTypeKey(kind,type);
   var taxModel=type==='Presentar Modelo'?evFormTaxCode(form):null;

@@ -35,9 +35,9 @@ Cada seguro incluiría: medio o canal de contratación, precio, resumen de
 coberturas en texto, vigencia, comentarios, persona de contacto (por ejemplo,
 Ana de Rastreator), teléfono del seguro y enlace a su web o aplicación.
 
-## 3. Categorías múltiples y filtros de cumpleaños
+## 3. Categorías múltiples y filtros de cumpleaños — implementado en v425
 
-Clasificar fácilmente a las personas desde la propia ventana de cumpleaños.
+Disponible en Cumpleaños → Lista → Clasificar personas. Permite marcar personas por categoría, buscar y trabajar solo con quienes aún no están clasificados.
 Cada persona podrá pertenecer a varias categorías y se podrán crear categorías
 adicionales a las predeterminadas.
 

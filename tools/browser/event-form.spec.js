@@ -11,7 +11,10 @@ async function newEvent(page){
 }
 test('repetición exige días, guarda las horas y permite deshacer',async({page})=>{
   await newEvent(page);
+  await expect(page.locator('#evFTypePicker .selected')).toHaveCount(0);
   await page.locator('#evFTitle').fill('Gestión semanal de prueba');
+  await page.locator('#evFSave').click();await expect(page.locator('#toast')).toContainText('Elige una categoría');
+  await page.locator('#evFTypePicker [data-type="Rec. Gestiones"]').click();
   await page.locator('#evFStart').fill('2026-10-05');await page.locator('#evFEnd').fill('2026-10-30');
   await chooseTime(page,'#evFTime','10:30');await chooseTime(page,'#evFEndTime','11:15');
   await page.locator('#evFRepeat').selectOption('weekly');await page.locator('#evFSave').click();
@@ -39,7 +42,7 @@ test('editar multidía conserva el resto de notas y el título personalizado',as
   expect(await page.evaluate(()=>EVENTS[0].dayNotes['2026-10-08'])).toBe('Nota ocho');
 });
 test('cambiar de clase reinicia repetición y conserva trayectos sin hora',async({page})=>{
-  await newEvent(page);await page.locator('#evFTitle').fill('Viaje de prueba');
+  await newEvent(page);await page.locator('#evFTypePicker [data-type="Rec. Gestiones"]').click();await page.locator('#evFTitle').fill('Viaje de prueba');
   await page.locator('#evFRepeat').selectOption('weekly');
   await page.locator('.ev-kind-btn[data-kind="grande"]').click();
   await expect(page.locator('#evFRepeat')).toHaveValue('none');

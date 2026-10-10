@@ -26,7 +26,7 @@ function bindBdayFormEvents(){
         if(BDAYS[i].name===BDAY_EDIT.name&&BDAYS[i].day===BDAY_EDIT.day&&BDAYS[i].month===BDAY_EDIT.month){idx=i;break;}
       }
       var previous=idx>=0?JSON.parse(JSON.stringify(BDAYS[idx])):null;
-      var updated={name:name,day:day,month:month,vip:vip||undefined};
+      var updated={name:name,day:day,month:month,vip:vip||undefined,categories:bdayReadGroupFields(document.getElementById('bdFWrap'))};
       if(idx!==-1)BDAYS[idx]=updated;
       showToast('Cumplea\u00f1os actualizado','success',function(){
         var current=BDAYS.indexOf(updated);
@@ -37,7 +37,7 @@ function bindBdayFormEvents(){
         }
       });
     } else {
-      var newB={name:name,day:day,month:month};
+      var newB={name:name,day:day,month:month,categories:bdayReadGroupFields(document.getElementById('bdFWrap'))};
       if(vip)newB.vip=true;
       BDAYS.push(newB);
       showToast('Cumplea\u00f1os a\u00f1adido','success');
@@ -62,7 +62,7 @@ function applyBdaySearch(q){
   document.querySelectorAll('.bday-month-section').forEach(function(sec){
     var vis=0;
     sec.querySelectorAll('.bday-list-item').forEach(function(item){
-      var match=!q||(item.dataset.sname&&item.dataset.sname.indexOf(q)>=0);
+      var match=(!q||(item.dataset.sname&&item.dataset.sname.indexOf(q)>=0))&&bdayGroupMatch(BDAYS[+item.dataset.bdayIdx]);
       item.style.display=match?'':'none';
       if(match)vis++;
     });
@@ -71,6 +71,8 @@ function applyBdaySearch(q){
 }
 
 function bindBdayEvents(){
+  bindBdayGroupTools();
+  applyBdaySearch(BDAY_SEARCH.toLowerCase());
   var bdBackEl=document.getElementById('bdBack');
   if(bdBackEl)bdBackEl.addEventListener('click',function(){
     if(NAV_BACK){var fn=NAV_BACK;NAV_BACK=null;fn();}else{closeBday();}

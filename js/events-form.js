@@ -67,9 +67,9 @@ function renderEvForm(ev){
   /* Clase y categoria actuales (v241). getEvKind/getEvType hacen el fallback
      para eventos anteriores, que no tenian ni kind ni type. */
   var curKind=isEdit?getEvKind(ev):'puntual';
-  var curType=isEdit?getEvType(ev):'Rec. Gestiones';
+  var curType=isEdit?getEvType(ev):'';
   if(curType==='Cumplea\u00f1os VIP'){curKind='puntual';curType='Otros';}
-  if(EV_KINDS[curKind].types.indexOf(curType)===-1)curType=EV_KINDS[curKind].types[0];
+  if(isEdit&&EV_KINDS[curKind].types.indexOf(curType)===-1)curType=EV_KINDS[curKind].types[0];
   var curKey=evTypeKey(curKind,curType);
   /* Nota especifica del dia: solo si es puntual, ocupa varios dias y se ha
      entrado desde un dia concreto del calendario */
