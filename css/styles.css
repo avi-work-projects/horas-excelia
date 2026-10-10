@@ -1347,7 +1347,7 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
    multi-día (.ev-multi-bar tiene z-index:3 absolute encima de las celdas). */
 .ev-annual-marker{position:relative;width:7px;height:7px;flex-shrink:0;display:inline-block;z-index:4;line-height:0}
 .ev-annual-marker svg{display:block;width:100%;height:100%;overflow:visible}
-.ev-management-mark{border-radius:4px;background:color-mix(in srgb,currentColor 16%,var(--surface));box-shadow:0 0 0 1px color-mix(in srgb,currentColor 38%,var(--surface))}
+.ev-management-mark{border-radius:4px;background:color-mix(in srgb,#34d399 24%,var(--surface));box-shadow:0 0 0 1px color-mix(in srgb,#34d399 55%,var(--surface))}
 .ev-annual-marker.past-marker{opacity:.5}
 
 /* === Selector de formas en el formulario de evento (Otros) === */
@@ -1543,6 +1543,12 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-tax-menu strong{color:var(--picker-accent);font-size:.82rem}
 .ev-type-picker .ev-tax-menu [aria-pressed="true"]{border-color:var(--picker-accent);background:color-mix(in srgb,var(--picker-accent) 14%,var(--surface))}
 .ev-quick-selection[hidden]{display:none}
+
+/* Selección rápida visible sin alterar los colores de cada símbolo. */
+.ev-type-picker .ev-quick-group .ev-color-swatch.selected{background:color-mix(in srgb,var(--picker-accent) 25%,var(--surface));box-shadow:inset 0 0 0 1px var(--picker-accent),0 2px 5px #0002;border-color:var(--picker-accent)}
+.ev-type-picker .ev-quick-group .selected .ev-type-name{font-weight:700;color:var(--picker-accent)}
+.ev-tax-chevron{width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);margin:0 4px 4px;flex-shrink:0;transition:transform .18s}
+[aria-expanded=true]>.ev-tax-chevron{transform:rotate(225deg);margin-bottom:0}
 
 /* Fuente: css/source/navigation-alarms.css */
 /* Shared overlay nav bar — nivel 1, siempre visible en lo alto del overlay */
@@ -1914,11 +1920,20 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ev-management-complete{display:none}
 .ev-management-check:has(input:checked) .ev-management-pending{display:none}
 .ev-management-check:has(input:checked) .ev-management-complete{display:inline;color:#279b64}
-.ev-detail-modern .ev-bficha{border-radius:14px;background:var(--surface)}
+.ev-detail-modern .ev-bficha{border-radius:14px;background:var(--surface2)}
 .ev-detail-modern .ev-bfila{padding:13px 14px;min-height:47px}
 .ev-detail-modern .ev-bfila-val{white-space:normal;text-align:right}
 .ev-detail-modern .ev-detail-actions{flex-wrap:wrap;gap:8px;padding-top:18px}
 .ev-detail-modern .ev-detail-actions .ev-btn{min-height:42px;border-radius:12px}
+
+.ev-form-sheet .ev-field>label{font-weight:600;color:var(--text)}
+.ev-detail-modern .ev-detail-symbol .ev-month-vip::after{display:none}
+.ev-detail-modern .ev-detail-symbol .ev-month-vip{background:none;box-shadow:none;filter:none}
+.ev-detail-modern .ev-detail-symbol .ev-month-vip img{transform:scale(1.4)}
+.ev-detail-modern .ev-detail-symbol .ev-management-mark{background:none;box-shadow:none;border-radius:0}
+.ev-detail-sheet.ev-detail-modern.ev-car-sheet{height:74dvh;min-height:0;max-height:90dvh;overflow:hidden}
+.ev-detail-modern.ev-car-sheet>.ev-detail-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:0 2px;flex-shrink:1}
+.ev-detail-modern.ev-car-sheet>.ev-detail-actions{flex-shrink:0;margin-top:0}
 
 /* Fuente: css/source/dialogs-responsive.css */
 /* ── LOGO POPUP ── */

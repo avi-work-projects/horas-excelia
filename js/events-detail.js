@@ -88,6 +88,7 @@ function renderEvDetail(ev,fromSummary,car){
     h+='<button class="ev-btn ev-car-arrow" id="evCarNext">&#9654;</button>';
     h+='</div>';
   }
+  h+='<div class="ev-detail-body">';
   var _ddc=getEvDisplayColor(ev);
   h+='<div class="ev-detail-color-bar" style="background:'+_ddc+'" id="evDColorBar"></div>';
   h+='<div class="ev-detail-heading">';
@@ -153,6 +154,7 @@ function renderEvDetail(ev,fromSummary,car){
       _c?('<span class="ev-bver" data-cid="'+_c.id+'">Ver</span>'):'');
     h+='</div>';
   }
+  h+='</div>';
   h+='<div class="ev-detail-actions">';
   if(ev._rut){
     /* Sesion de rutina: no es un evento guardado, asi que ni se edita ni se
