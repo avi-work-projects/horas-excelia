@@ -209,7 +209,7 @@ test('Bodas: configurar pack, duracion, salas y exportar catalogos',async({page}
 test('Hoy apunta al día y las cinco subpestanas de Bodas admiten swipe',async({page})=>{
  await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-bdays-v1',JSON.stringify(Array.from({length:60},(_,m)=>({name:'Persona '+m,day:1+Math.floor(m/12),month:m%12+1}))));});
  await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewBday').click();await page.locator('#bdViewList').click();
- await page.evaluate(()=>document.querySelector('#eventsOverlay .sy-body').scrollTop=0);
+ await page.evaluate(()=>document.querySelector('#eventsOverlay .sy-body').scrollTop=300);
  await page.locator('#bdVipAll').click();
  expect(await page.evaluate(()=>{var body=document.querySelector('#eventsOverlay .sy-body'),sec=body.querySelector('.bday-today-line:not([hidden])'),hdr=sec.closest('.bday-month-section').querySelector('.bday-month-hdr');return Math.abs(sec.getBoundingClientRect().top-body.getBoundingClientRect().top-body.querySelector('.bday-sub-tabs').offsetHeight-hdr.offsetHeight-16)<2;})).toBe(true);
  await page.locator('#eventsContent').getByRole('button',{name:'Eventos',exact:true}).click();await page.locator('#evViewBodas').click();await page.locator('[data-bsub="stats"]').click();

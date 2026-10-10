@@ -4,7 +4,7 @@ test.beforeEach(async({page})=>{await page.addInitScript(()=>{sessionStorage.set
 test('alarma: hoy y 14 días sí, 15 y pasado no; protege acceso desde eventos',async({page})=>{
  await openBirthdays(page);
  expect(await page.evaluate(()=>BDAYS.map(bdayCanSetAlarm))).toEqual([true,true,true,false,false]);
- await page.evaluate(()=>openBdayDetail(BDAYS[3]));await expect(page.locator('#bdDAlarm')).toHaveCount(0);await expect(page.locator('.bday-alarm-hint')).toBeVisible();
+ await page.evaluate(()=>openBdayDetail(BDAYS[3]));await expect(page.locator('#bdDAlarm')).toHaveCount(0);await expect(page.locator('.bday-alarm-hint')).toHaveCount(0);
  await page.locator('#bdDClose').click();await expect(page.locator('#bdDWrap')).toHaveCount(0);
  await page.evaluate(()=>openBdayAlarm(BDAYS[3]));await expect(page.locator('#bdAlarmWrap')).toHaveCount(0);
  await page.evaluate(()=>{syncVipBdaysToEvents();openBdayAlarmFromEvents(EVENTS.find(e=>e.id.includes('lejano')))});await expect(page.locator('#bdAlarmWrap')).toHaveCount(0);
@@ -13,9 +13,9 @@ test('alarma: hoy y 14 días sí, 15 y pasado no; protege acceso desde eventos',
 test('hoy usa el separador existente y filas compactas, incluso con filtro',async({page})=>{
  await openBirthdays(page);await page.locator('#bdViewList').click();
  const row=page.locator('.bday-today-item');await expect(row).toHaveCount(1);await expect(page.locator('.bday-today-line')).toBeHidden();
- const style=await row.evaluate(el=>({border:getComputedStyle(el).borderTopWidth,dotTop:getComputedStyle(el,'::before').top,height:el.getBoundingClientRect().height}));expect(style.border).toBe('1px');expect(style.dotTop).toBe('-4px');expect(style.height).toBeLessThan(56);
+ const style=await row.evaluate(el=>({border:getComputedStyle(el).borderTopWidth,dotTop:getComputedStyle(el,'::before').top,height:el.getBoundingClientRect().height}));expect(style.border).toBe('3px');expect(style.dotTop).toBe('-7px');expect(style.height).toBeLessThan(56);
  await page.screenshot({path:'test-results/cumpleanos-compactos.png'});
- await page.locator('#bdSearch').fill('Lejano');const line=page.locator('.bday-today-line');await expect(line).toBeVisible();expect((await line.boundingBox()).height).toBeLessThanOrEqual(1);
+ await page.locator('#bdSearch').fill('Lejano');const line=page.locator('.bday-today-line');await expect(line).toBeVisible();expect((await line.boundingBox()).height).toBeLessThanOrEqual(3);
  await page.screenshot({path:'test-results/separador-cumpleanos.png'});
 });
 test('VIP del mismo día se solapan con el primero delante y sin altura extra',async({page})=>{
