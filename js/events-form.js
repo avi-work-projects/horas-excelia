@@ -12,13 +12,13 @@ function evPuntualDays(ev){
 }
 
 /* Swatches de categoria de la clase indicada */
-function _renderEvTypeSwatches(kind,selType){
+function _renderEvTypeSwatches(kind,selType,extras){
   var groups=kind==='puntual'
     ?[['Rec. Gestiones',Object.keys(EV_MANAGEMENT_SUBTYPES)],['Plan/Quedada',Object.keys(EV_PLAN_SUBTYPES)],['Ensayos boda',[]],['Otros',[]]]
     :EV_KINDS[kind].types.map(function(t){return [t,[]];});
   return groups.map(function(group){
-    if(kind==='puntual'&&group[0]==='Rec. Gestiones')return renderEvQuickPlans(selType,'management');
-    if(kind==='puntual'&&group[0]==='Plan/Quedada')return renderEvQuickPlans(selType);
+    if(kind==='puntual'&&group[0]==='Rec. Gestiones')return renderEvQuickPlans(selType,'management',extras&&extras.management);
+    if(kind==='puntual'&&group[0]==='Plan/Quedada')return renderEvQuickPlans(selType,'plans',extras&&extras.plans);
     var selected=selType===group[0]||group[1].indexOf(selType)>=0;
     var h='<section class="ev-category-group'+(kind==='grande'?' ev-category-single':'')+(selected?' chosen':'')+'" style="--category-tone:'+evTypeColor(kind,group[0])+'" aria-label="'+group[0]+'">'+_renderEvTypeButton(kind,group[0],selType);
     if(group[1].length)h+='<div class="ev-category-children">'+group[1].map(function(t){return _renderEvTypeButton(kind,t,selType);}).join('')+'</div>';
@@ -283,9 +283,11 @@ function evSuggestedTitle(type){
 }
 function bindEvFormEvents(){
   var root=document.getElementById('evFWrap'),edit=EV_EDIT;
-  var form={root:root,edit:edit,day:EV_EDIT_DS,autoTitle:edit?null:'',
+  var form={root:root,edit:edit,day:EV_EDIT_DS,autoTitle:edit?null:'',quickExtras:{},
     colorPicker:_bindColorPicker(root,'evFCp'),shape:edit&&edit.shape||'circle',
     dates:edit&&Array.isArray(edit.dates)?edit.dates.slice():[],barSize:edit&&edit.barSize||null};
+  Object.keys(EV_PICKER_GROUPS).forEach(function(k){if(edit&&evQuickSelection(edit.type,EV_PICKER_GROUPS[k]))form.quickExtras[k]=edit.type;});
+  evFormRenderTypes(form,_evFormKind(form),root.querySelector('.ev-kind-picker').dataset.curType);
   bindEvTaxFields(form);_bindEvFormCategories(form);_bindEvFormAppearance(form);_bindEvFormDates(form);
   _bindEvFormDetails(form);_bindEvFormActions(form);
 }

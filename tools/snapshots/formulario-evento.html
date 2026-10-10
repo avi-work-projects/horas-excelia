@@ -60,13 +60,28 @@
 </div>
 </div>
 <div class="ev-field ev-tax-model" id="evFTaxBlock" style="display:none">
-<label for="evFTaxModel">Modelo que vas a presentar</label>
-<select class="ev-input" id="evFTaxModel">
-<option value="303" selected>IVA trimestral · Modelo 303</option>
-<option value="390">IVA anual · Modelo 390</option>
-<option value="100">Declaración de la renta · Modelo 100</option>
-<option value="other">Otro modelo</option>
-</select>
+<label>Modelo que vas a presentar</label>
+<input type="hidden" id="evFTaxModel" value="303">
+<button type="button" class="ev-tax-trigger" id="evFTaxTrigger" aria-expanded="false" aria-controls="evFTaxMenu">IVA trimestral · Modelo 303<span aria-hidden="true">⌄</span>
+</button>
+<div id="evFTaxMenu" class="ev-tax-menu" hidden>
+<button type="button" data-tax="303" aria-pressed="true">
+<strong>303</strong>
+<span>IVA trimestral</span>
+</button>
+<button type="button" data-tax="390" aria-pressed="false">
+<strong>390</strong>
+<span>IVA anual</span>
+</button>
+<button type="button" data-tax="100" aria-pressed="false">
+<strong>100</strong>
+<span>Declaración de la renta</span>
+</button>
+<button type="button" data-tax="other" aria-pressed="false">
+<strong>+</strong>
+<span>Otro modelo</span>
+</button>
+</div>
 <label id="evFTaxOtherLabel" for="evFTaxOther" hidden>Número de modelo<input class="ev-input" id="evFTaxOther" inputmode="numeric" maxlength="3" placeholder="Ej.: 130" value="">
 </label>
 </div>

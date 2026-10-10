@@ -45,7 +45,7 @@ function _bindEvFormCategories(form){
       var kind=button.dataset.kind,picker=form.root.querySelector('.ev-kind-picker'),previous=picker&&picker.dataset.curType||'';
       _evFormAll(form,'.ev-kind-btn').forEach(function(b){b.classList.toggle('selected',b===button);});
       var type=EV_KINDS[kind].types.indexOf(previous)!==-1?previous:EV_KINDS[kind].types[0];
-      _evFormEl(form,'evFTypePicker').innerHTML=_renderEvTypeSwatches(kind,type);
+      evFormRenderTypes(form,kind,type);
       _bindEvFormTypes(form);_evFormTypeUI(form,kind,type);_evFormSuggestTitle(form,type);
     });
   });

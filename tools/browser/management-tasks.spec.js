@@ -40,9 +40,9 @@ test('modelo fiscal: título, otro modelo y persistencia al editar',async({page}
  await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await page.locator('#evAdd').click();
  await page.locator('[data-picker=management]').click();await page.locator('#evPlanPickerOv [data-type="Presentar Modelo"]').click();await page.locator('#evPlanConfirm').click();
  await expect(page.locator('#evFTaxBlock')).toBeVisible();await expect(page.locator('#evFTitle')).toHaveValue('Domiciliar y presentar IVA');
- await page.locator('#evFTaxModel').selectOption('390');await expect(page.locator('#evFTitle')).toHaveValue('Presentar IVA anual');
- await page.locator('#evFTaxModel').selectOption('100');await expect(page.locator('#evFTitle')).toHaveValue('Presentar Dec. Renta');
- await page.locator('#evFTaxModel').selectOption('other');await page.locator('#evFTaxOther').fill('130');await expect(page.locator('#evFTitle')).toHaveValue('Presentar Modelo 130');
+ await page.locator('#evFTaxTrigger').click();await page.locator('[data-tax="390"]').click();await expect(page.locator('#evFTitle')).toHaveValue('Presentar IVA anual');
+ await page.locator('#evFTaxTrigger').click();await page.locator('[data-tax="100"]').click();await expect(page.locator('#evFTitle')).toHaveValue('Presentar Dec. Renta');
+ await page.locator('#evFTaxTrigger').click();await page.locator('[data-tax="other"]').click();await page.locator('#evFTaxOther').fill('130');await expect(page.locator('#evFTitle')).toHaveValue('Presentar Modelo 130');
  await page.locator('#evFTitle').fill('Mi presentación');await page.locator('#evFTaxOther').fill('111');await expect(page.locator('#evFTitle')).toHaveValue('Mi presentación');
  await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);await page.locator('#evViewCal').click();await page.locator('.ev-shape-tax-form').click();
  await expect(page.locator('#evDWrap')).toContainText('Modelo 111');await page.locator('#evDEdit').click();await expect(page.locator('#evFTaxModel')).toHaveValue('other');await expect(page.locator('#evFTaxOther')).toHaveValue('111');
@@ -58,8 +58,22 @@ test('selección compartida: genéricos, acentos y nombre elegido fuera de acces
    await page.locator('#evPlanConfirm').click();await expect(page.locator('#evPlanPickerWrap')).toHaveCount(0);
    await expect(page.locator('[data-group='+key+'] .ev-quick-selection')).toContainText(type);await expect(page.locator('[data-picker='+key+'] .ev-type-name')).toHaveText('Más opciones');await expect(page.locator('[data-picker='+key+'] .ev-type-name')).toHaveCSS('font-weight','400');
  }
- await expect(mg.locator('.ev-quick-selection')).toBeHidden();
- await mg.locator('[data-type="Llamada"]').click();await expect(mg.locator('.selected')).toHaveCSS('border-top-color','rgb(39, 132, 92)');await expect(pl.locator('.ev-quick-selection')).toBeHidden();
+ await expect(mg.locator('.ev-quick-selection')).toBeVisible();
+ await mg.locator('[data-type="Llamada"]').click();await expect(mg.locator('.selected')).toHaveCSS('border-top-color','rgb(39, 132, 92)');await expect(pl.locator('.ev-quick-selection')).toBeVisible();
  await pl.locator('[data-type="Plan/Quedada"]').click();await expect(pl.locator('[data-type="Plan/Quedada"]')).toHaveClass(/selected/);await page.locator('#evFTitle').fill('Plan de prueba');
  await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);expect(await page.evaluate(()=>EVENTS[0].type)).toBe('Plan/Quedada');
+});
+
+test('último extra: se puede reelegir, sustituye al anterior y se olvida al cerrar',async({page})=>{
+ await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await page.locator('#evAdd').click();
+ const mg=page.locator('[data-group=management]');
+ await page.locator('[data-picker=management]').click();await page.locator('#evPlanPickerOv [data-type="Presentar Modelo"]').click();await page.locator('#evPlanConfirm').click();await expect(page.locator('#evPlanPickerWrap')).toHaveCount(0);
+ await expect(mg.locator('#evFTaxBlock')).toBeVisible();await expect(mg.locator('select')).toHaveCount(0);
+ await page.locator('#evFTaxTrigger').click();await page.locator('[data-tax="390"]').click();
+ await mg.locator('[data-type="Llamada"]').click();await expect(mg.locator('#evFTaxBlock')).toBeHidden();await mg.locator('.ev-quick-selection button').click();await expect(mg.locator('#evFTaxBlock')).toBeVisible();await expect(page.locator('#evFTaxModel')).toHaveValue('390');
+ await page.locator('[data-picker=plans]').click();await page.locator('#evPlanPickerOv [data-type="Brunch"]').click();await page.locator('#evPlanConfirm').click();await expect(page.locator('#evPlanPickerWrap')).toHaveCount(0);
+ await mg.locator('.ev-quick-selection button').click();await expect(page.locator('#evFTaxModel')).toHaveValue('390');
+ await page.locator('[data-picker=management]').click();await page.locator('#evPlanPickerOv [data-type="Pago"]').click();await page.locator('#evPlanConfirm').click();await expect(page.locator('#evPlanPickerWrap')).toHaveCount(0);
+ await expect(mg.locator('.ev-quick-selection button')).toHaveCount(1);await expect(mg.locator('.ev-quick-selection button')).toHaveText('Pago');
+ await page.locator('#evFClose').click();await expect(page.locator('#evFWrap')).toHaveCount(0);await page.locator('#evAdd').click();await expect(page.locator('#evFWrap')).toBeVisible();await expect(page.locator('.ev-quick-selection')).toHaveCount(0);
 });
