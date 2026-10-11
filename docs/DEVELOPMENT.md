@@ -52,6 +52,50 @@ eliminar esa recuperación o convertirla en extra. La operación se valida antes
 Los filtros de Todos usan `kind|type`, para distinguir ambos tipos Otros, y `kind|*`
 para filtrar todos los puntuales o grandes. Se conserva lectura de filtros antiguos.
 
+## Preparación mensual de facturación (v443)
+
+Home agrupa los exportadores anuales existentes en «Exportar horas». «Enviar
+factura» abre la preparación del mes visible en Home. El símbolo reutiliza
+`evManagementShapeInner('invoice')`, igual que Rec. Gestiones.
+
+`invoices.js` separa el cálculo por fechas/tarifas del resumen económico predictivo.
+Calcula en céntimos, agrupa por unidad/tarifa y exige revisar los días seleccionados,
+incluidos los planificados. Las tarifas diarias pueden proceder de la configuración
+anual. El modo horario antiguo de Económico conserva una equivalencia diaria:
+se exige tarifa explícita en el nuevo editor, sin reconstruirla mediante una media.
+La configuración y los PDF son privados del dispositivo; no introducirlos en Git.
+
+La fase inicial produce un XLSX auxiliar con fórmulas y un JSON versionado desde
+el mismo cálculo. `invoices-export.js` escribe OOXML/ZIP localmente, sin red ni
+biblioteca adicional. Son documentos auxiliares; no se importan automáticamente
+en la aplicación gratuita AEAT ni constituyen una factura definitiva.
+
+Octubre de 2026 es el primer mes real autorizado. Los meses anteriores permiten
+comprobaciones históricas pero no asociar documentos para nuevos envíos.
+El PDF definitivo se incorpora después de emitir en AEAT: se declara número,
+fecha y comprobación del mes/importes/entorno. Gestify valida formato/tamaño,
+identifica el archivo por SHA-256 y evita repetir PDF o número entre meses. La
+confirmación del usuario no se presenta como una consulta automática a AEAT.
+Con PDF definitivo, la preparación queda conservada. «Corregir PDF asociado»
+requiere nuevamente archivo y confirmación, sin borrar antes el documento vigente.
+
+`excelia-invoices-v1` incluye configuración, preparaciones y PDF (máximo 2 MB por
+archivo), también en el backup completo. Si se supera la cuota del navegador,
+guardar falla sin marcar la asociación como completada. Fusionar dos versiones
+distintas del mismo mes se rechaza para evitar sobrescribir documentación.
+
+Gmail se abre con cuenta sugerida, destinatarios, asunto y cuerpo; no adjunta por
+URL, envía ni programa automáticamente. La pantalla indica guardar el PDF
+definitivo y adjuntarlo en Gmail. Nunca ofrece el auxiliar como adjunto de factura
+ni marca enviado por abrir un borrador. El usuario comprueba remitente y decide
+cuándo enviar/programar. La negrita del mensaje puede aplicarse al revisarlo en Gmail.
+
+Configuración → Edición facturas y correo centraliza emisor, cliente, proyecto,
+concepto, tarifa/unidad, impuestos y correo. `{mes}`, `{anio}` y `{periodo}` se
+sustituyen en concepto, asunto y cuerpo. Los campos personales empiezan vacíos.
+Pruebas: `tools/test-invoices.js` y `tools/browser/invoices.spec.js`, siempre con
+identidades y PDF sintéticos. No se emiten facturas ni se envían correos al probar.
+
 ## Catálogo único de archivos
 
 `app-assets.json` determina:

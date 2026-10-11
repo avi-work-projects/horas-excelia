@@ -78,6 +78,7 @@ var BDAYS_FROM_SECRET=[];
           <button class="data-menu-item" id="themeBtn">&#127769;&nbsp;Oscuro</button>
           <button class="data-menu-item nav-style-setting" id="navIconStyle"><span>Iconos de navegación</span><span id="navIconStyleValue">Originales</span><span aria-hidden="true">&#8250;</span></button>
           <div class="settings-menu-separator" role="separator"></div>
+          <button class="data-menu-item" id="invoiceSettingsBtn">Edición facturas y correo</button>
           <button class="data-menu-item" id="exportFolderBtn">Carpeta de exportaciones</button>
           <div class="settings-menu-separator" role="separator"></div>
           <button class="data-menu-item" id="exportAllBtn">&#8595;&nbsp;Exportar todo</button>
@@ -106,12 +107,13 @@ var BDAYS_FROM_SECRET=[];
     </div>
     <button class="today-btn" id="todayBtn">Hoy</button>
   </nav>
+  <div class="home-invoice-actions"><button id="hoursExportBtn">Exportar horas</button><button id="invoiceHomeBtn">Enviar factura</button></div>
   <div class="hours-control">
     <button class="default-hours-btn" id="editHoursBtn">
       &#9998;&nbsp;Jornada:&nbsp;<span class="dh-val">9h</span>&nbsp;&#xB7;&nbsp;Editar
     </button>
-    <button class="default-hours-btn csv-export-btn" id="csvExportBtn"><svg viewBox="0 0 24 24" class="ico-doc" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>CSV</button>
-    <button class="default-hours-btn pdf-export-btn" id="pdfExportBtn"><svg viewBox="0 0 24 24" class="ico-doc" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>PDF</button>
+    <button class="default-hours-btn csv-export-btn" id="csvExportBtn" hidden><svg viewBox="0 0 24 24" class="ico-doc" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>CSV</button>
+    <button class="default-hours-btn pdf-export-btn" id="pdfExportBtn" hidden><svg viewBox="0 0 24 24" class="ico-doc" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>PDF</button>
     <div class="default-hours-panel" id="hoursPanel">
       <span class="hours-label">h/d&#237;a (mes):</span>
       <div class="hours-chips">
@@ -325,6 +327,9 @@ var BDAYS_FROM_SECRET=[];
 <script defer src="js/alarms.js"></script>
 <script defer src="js/settings-menu.js"></script>
 <script defer src="js/alarm-panel.js"></script>
+<script defer src="js/invoices.js"></script>
+<script defer src="js/invoices-export.js"></script>
+<script defer src="js/invoices-ui.js"></script>
 <script defer src="js/init.js"></script>
 <script defer src="js/logo-popup.js"></script>
 <script defer src="js/import-preview.js"></script>
