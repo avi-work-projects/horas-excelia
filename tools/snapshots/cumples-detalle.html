@@ -1,24 +1,33 @@
 <div class="bd-detail-overlay" id="bdDetailOv">
 <div class="bd-detail-sheet">
-<div class="bd-detail-handle">
-</div>
-<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-<button class="sy-back" id="bdDClose">&#8592;</button>
-<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">Cumpleaños</div>
-<button class="action-edit action-edit-text ev-list-btn" id="bdDEdit" style="font-size:.8rem;padding:6px 12px">&#9998; Editar</button>
-</div>
-<div class="bd-detail-color-bar" style="background:#6c8cff">
-</div>
-<div class="bd-detail-name">Ana Pruebas <img src="./VIP.png" class="bday-vip-img" alt="VIP">
-</div>
-<button type="button" class="ev-btn bday-category-button" id="bdCategories" data-groups="[]">Categorías · 0 <span aria-hidden="true">›</span>
-</button>
-<label class="ev-toggle-row">
-<img src="./VIP.png" class="bday-vip-img" alt="VIP">
-<input type="checkbox" id="bdDVip" aria-label="VIP" checked>
-</label>
+<header class="bd-panel-header">
+<button class="sy-back" id="bdDClose" aria-label="Volver">←</button>
+<h2>Cumpleaños</h2>
+<button class="action-edit action-edit-text ev-list-btn" id="bdDEdit">✎ Editar</button>
+</header>
+<div class="bd-panel-body">
+<div class="bday-person-summary">
+<div class="bd-detail-name">Ana Pruebas</div>
 <div class="bd-detail-date">26 de Agosto</div>
-<div class="bd-detail-lbl" style="background:#6c8cff22;color:#6c8cff">Faltan 5 días</div>
+<div class="bd-detail-lbl">Faltan 5 días</div>
+</div>
+<label class="bday-person-vip">
+<input type="checkbox" id="bdDVip" aria-label="VIP" checked>
+<img src="./VIP.png" alt="" aria-hidden="true">
+</label>
+<section class="bday-detail-groups">
+<div class="bday-category-heading">
+<h3>Categorías</h3>
+<button type="button" class="ev-btn bday-category-button" id="bdCategories" data-groups="[]">Cambiar <span aria-hidden="true">›</span>
+</button>
+</div>
+<div class="bday-person-groups" id="bdPersonGroups">
+<span class="bday-no-category">Sin categoría</span>
+</div>
+</section>
+</div>
+<footer class="bd-panel-footer">
 <button class="ev-btn" id="bdDAlarm">Configurar alarma</button>
+</footer>
 </div>
 </div>

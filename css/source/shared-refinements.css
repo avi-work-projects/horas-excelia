@@ -183,7 +183,7 @@ button.action-edit.action-edit-text:active{background:#f97316!important}
 #eventsOverlay label:has(#syPuentesLibresChk){color:#d870a5}
 #eventsOverlay label:has(#evTypesPast),#eventsOverlay label:has(#syExclPastChk),#eventsOverlay label:has(#bodaShowPast){color:var(--text-muted)}
 #eventsOverlay label:has(#bodaShowClosed){color:var(--wm-wine)}
-#eventsOverlay label:has(.bday-up-vip),#eventsOverlay label:has(#bdAlarmVip),#eventsOverlay label:has(#bdFVip){color:var(--c-yellow)}
+#eventsOverlay label:has(.bday-up-vip),#eventsOverlay label:has(#bdAlarmVip){color:var(--c-yellow)}
 .wm-logo-check{width:30px;height:15px}
 .rut-hpd{margin-top:12px}
 .rut-week-forward{margin:16px 0 10px}
@@ -558,7 +558,7 @@ details[open]>summary{margin-bottom:10px}
 .bday-month-section .bday-today-item::before,.bday-today-line::before{content:"";position:absolute;left:0;top:-7px;width:11px;height:11px;border-radius:50%;background:var(--surface);border:3px solid var(--birthday-tone)}
 .bday-today-item .bday-list-day,.bday-today-item .today-lbl{color:var(--birthday-tone);font-weight:750}
 .bday-today-line{position:relative;height:0;min-height:0;margin:8px 0 0;padding:0;border-top:3px solid var(--birthday-tone)}
-.bday-today-line>span,.bday-today-item::after{position:absolute;left:20px;top:-11px;padding:0 5px;background:var(--surface);color:var(--birthday-tone);font-size:.7rem;font-weight:800;line-height:18px}
+.bday-today-line>span,.bday-today-item::after{position:absolute;left:20px;top:-11px;padding:0 5px;background:var(--bg);color:var(--birthday-tone);font-size:.7rem;font-weight:800;line-height:18px;border:2px solid var(--birthday-tone);border-radius:6px}
 .bday-today-item::after{content:"Hoy"}
 .bday-today-line[hidden]{display:none}
 
@@ -576,9 +576,8 @@ details[open]>summary{margin-bottom:10px}
 .bday-show-groups .bday-list-item{gap:8px}
 .bday-category-button{width:100%;justify-content:space-between;margin:12px 0}
 #bdCategoryOv{z-index:420}
-#bdCategoryOv .bd-form-sheet{max-height:88dvh;overflow-y:auto}
-.bday-today-dock{position:sticky;top:calc(var(--bday-tabs-height,58px) + 4px);height:0;z-index:5;display:flex;justify-content:flex-end;visibility:hidden;pointer-events:none}
-.bday-today-dock.visible{visibility:visible}
+#bdCategoryOv .bd-form-sheet{max-height:88dvh}
+.bday-today-dock{position:sticky;top:calc(var(--bday-tabs-height,58px) + 4px);height:0;z-index:5;display:flex;justify-content:flex-end;pointer-events:none}
 .bday-today-dock .today-btn{pointer-events:auto;height:28px;padding:4px 14px;background:var(--surface);border:1px solid var(--birthday-tone);color:var(--birthday-tone);box-shadow:0 2px 5px #0002}
 .ev-bday-body .bday-month-hdr{padding-right:74px}
 #bdShowGroups[aria-pressed=true]{border-color:var(--birthday-tone);color:var(--birthday-tone)}
@@ -589,3 +588,46 @@ details[open]>summary{margin-bottom:10px}
 
 [data-theme="light"] .bday-person-groups .bday-group-tag{color:hsl(var(--group-hue) 55% 32%)}
 .bday-today-dock + .bday-month-section .bday-month-hdr{margin-top:0}
+
+/* Controles compactos y paneles estables: solo se desplaza su contenido. */
+#bdShowGroups{flex:1.7;gap:5px;min-height:34px;padding:6px 8px;color:var(--birthday-tone);border-color:color-mix(in srgb,var(--birthday-tone) 45%,var(--border));background:color-mix(in srgb,var(--birthday-tone) 7%,var(--surface))}
+#bdShowGroups svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;flex-shrink:0}
+#bdShowGroups[aria-pressed=true]{background:color-mix(in srgb,var(--birthday-tone) 22%,var(--surface));box-shadow:inset 0 0 0 1px var(--birthday-tone)}
+.bday-label-state{font-size:.85rem;width:12px}
+.bday-group-tools details .bday-group-chips,.bday-group-fields .bday-group-chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+button.bday-group-chip{justify-content:center;min-width:0;width:100%;min-height:44px;padding:7px 5px;font:inherit;font-size:.69rem;line-height:1.25;text-align:center;color:var(--text);gap:4px}
+button.bday-group-chip small{font-size:.6rem;margin-left:0;flex-shrink:0}
+button.bday-group-chip[aria-pressed=true]{border-color:var(--birthday-tone);background:color-mix(in srgb,var(--birthday-tone) 18%,var(--surface));color:var(--birthday-tone);box-shadow:inset 0 0 0 1px var(--birthday-tone);font-weight:700}
+button.bday-group-chip:focus-visible{outline:2px solid var(--birthday-tone);outline-offset:2px}
+@media(max-width:389px){.bday-group-tools details .bday-group-chips,.bday-group-fields .bday-group-chips{grid-template-columns:repeat(2,minmax(0,1fr))}}
+#bdDetailOv .bd-detail-sheet,#bdFormOv .bd-form-sheet,#bdCategoryOv .bd-form-sheet{display:flex;flex-direction:column;height:min(480px,86dvh);max-height:86dvh;overflow:hidden;padding:16px 18px;gap:16px}
+#bdFormOv .bd-form-sheet{height:min(560px,88dvh);max-height:88dvh}
+#bdCategoryOv .bd-form-sheet{height:min(700px,88dvh);max-height:88dvh}
+.bd-panel-header{display:flex;align-items:center;gap:10px;flex-shrink:0;min-height:36px}
+.bd-panel-header h2{flex:1;font-size:.9rem;text-align:center;margin:0}
+.bd-panel-header .action-edit{font-size:.75rem;padding:7px 10px}
+.bd-panel-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+.bd-panel-footer{flex-shrink:0;padding-top:12px;box-shadow:0 -1px 0 var(--border)}
+.bd-panel-footer .ev-btn{width:100%;min-height:44px;margin:0!important;border-radius:12px;font:inherit;font-size:.8rem;cursor:pointer}
+#bdDAlarm{background:color-mix(in srgb,var(--birthday-tone) 12%,var(--surface));color:var(--birthday-tone);border:1px solid var(--birthday-tone)}
+.bday-person-summary{padding:4px 0 18px;box-shadow:0 1px 0 var(--border)}
+.bday-person-summary .bd-detail-name{line-height:1.35;overflow-wrap:anywhere;margin:0 0 7px}
+.bday-person-summary .bd-detail-date{font-family:inherit;font-size:.85rem}
+.bday-person-summary .bd-detail-lbl{background:color-mix(in srgb,var(--birthday-tone) 12%,var(--surface));color:var(--birthday-tone);font-size:.76rem;padding:6px 10px;border-radius:8px;margin-top:6px}
+.bday-person-vip{display:flex;align-items:center;justify-content:flex-start;gap:10px;height:52px;flex-shrink:0;margin:10px 0;color:var(--birthday-tone);cursor:pointer}
+.bday-person-vip img{width:40px;height:30px;object-fit:contain}
+.bday-person-vip input{flex-shrink:0;margin:0}
+.bday-detail-groups{margin:12px 0;padding-top:12px;box-shadow:0 -1px 0 var(--border)}
+.bday-category-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.bday-category-heading h3{font-size:.8rem;margin:0;font-weight:600;color:var(--text-muted)}
+.bday-category-heading .bday-category-button{flex:none;width:auto;min-height:36px;margin:0;padding:6px 10px;border:1px solid var(--border);border-radius:9px;background:var(--surface2);color:var(--text);font-size:.75rem;cursor:pointer}
+.bday-detail-groups .bday-person-groups{gap:6px}
+.bday-detail-groups .bday-group-tag{font-size:.72rem;padding:5px 8px;line-height:1.3}
+.bday-no-category{font-size:.8rem;color:var(--text-muted)}
+#bdCategoryOv .bday-group-fields{margin:0;padding:0;border:0}
+#bdCategoryOv .bday-group-fields legend{display:none}
+#bdCategoryOv .bday-group-fields p{margin:0 0 10px}
+#bdFormOv .bd-form-handle{display:none}
+body:has(#bdDetailOv.open,#bdFormOv.open,#bdCategoryOv.open) .tasks-fab{visibility:hidden}
+
+#eventsOverlay .bday-person-vip{color:var(--birthday-tone)}

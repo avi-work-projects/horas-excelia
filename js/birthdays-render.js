@@ -214,7 +214,7 @@ function renderBdayContent(){
   if(BDAY_VIEW==='list'){
     h+='<div class="bday-vip-ctrl-bar">';
     h+='<div class="bday-vip-filter-chips">';
-    h+='<button class="bday-vip-chip" id="bdShowGroups" aria-pressed="'+BDAY_SHOW_GROUPS+'">Etiquetas</button>';
+    h+='<button class="bday-vip-chip" id="bdShowGroups" aria-pressed="'+BDAY_SHOW_GROUPS+'" aria-label="Mostrar etiquetas de categorías"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h8l10 10-7 7L3 10Z"/><circle cx="7.5" cy="8" r="1"/></svg><span>Etiquetas</span><span class="bday-label-state" aria-hidden="true">'+(BDAY_SHOW_GROUPS?'✓':'+')+'</span></button>';
     h+='<button class="bday-vip-chip chip-vip'+(BDAY_FILTER_VIP==='vip'?' active':'')+'" id="bdVipOnly"><img src="./VIP.png" style="width:20px;height:auto;vertical-align:middle" alt="VIP"></button>';
     h+='<button class="bday-vip-chip chip-novip'+(BDAY_FILTER_VIP==='novip'?' active':'')+'" id="bdVipNone"><span class="vip-no-icon"><img src="./VIP.png" style="width:20px;height:auto;display:block" alt="no VIP"></span></button>';
     h+='</div>';
