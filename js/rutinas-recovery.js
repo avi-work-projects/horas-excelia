@@ -23,7 +23,7 @@ function openRutRecoveryList(r,excludePast){
     var body=wrap.querySelector('.rut-recovery-list');if(target)body.scrollTop=target.offsetTop-body.offsetTop-40;
   });
 }
-function openRutRecoveryDay(r,key,date,back){
+function openRutRecoveryDay(r,key,date,back,onSaved){
   var d=new Date((date||evDk(new Date()))+'T12:00:00');
   RUT_RECOVERY_PICK={year:d.getFullYear(),month:d.getMonth(),date:date||null};
   function render(){
@@ -41,7 +41,7 @@ function openRutRecoveryDay(r,key,date,back){
     function move(delta){var next=new Date(state.year,state.month+delta,1);state.year=next.getFullYear();state.month=next.getMonth();render();}
     wrap.querySelector('#rutRecoveryPrev').onclick=function(){move(-1);};wrap.querySelector('#rutRecoveryNext').onclick=function(){move(1);};
     addSwipe(wrap.querySelector('.rut-dpick-real'),function(){move(1);},function(){move(-1);});
-    wrap.querySelector('#rutRecoveryConfirm').onclick=function(){if(state.date)rutAdditionForm(r,key,state.date,function(){openRutRecoveryDay(r,key,state.date,back);});};
+    wrap.querySelector('#rutRecoveryConfirm').onclick=function(){if(state.date)rutAdditionForm(r,key,state.date,function(){openRutRecoveryDay(r,key,state.date,back,onSaved);},onSaved);};
   }render();
 }
 function rutReadOnlyDayHtml(ds){

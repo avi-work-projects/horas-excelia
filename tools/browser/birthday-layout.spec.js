@@ -65,7 +65,7 @@ for(const width of [360,400,440])for(const theme of ['dark','light']){
   const title=await page.locator('#bdDetailOv h2').boundingBox(),panelBox=await sheet.boundingBox();expect(Math.abs(title.x+title.width/2-panelBox.x-panelBox.width/2)).toBeLessThan(1);
   const nameVip=await page.locator('.bd-detail-name').evaluate(el=>{const range=document.createRange();range.selectNodeContents(el.querySelector('.bday-name-tail').firstChild);const last=Array.from(range.getClientRects()).at(-1),icon=el.querySelector('img').getBoundingClientRect();return {gap:icon.x-last.right,y:icon.y,lastY:last.y};});expect(nameVip.gap).toBeLessThan(9);expect(nameVip.gap).toBeGreaterThanOrEqual(0);
   await expect(page.locator('#bdDetailOv .bd-panel-header #bdDAlarm')).toHaveCount(0);
-  await expect(page.locator('.bday-detail-alarm svg')).toBeVisible();
+  await expect(page.locator('.bday-detail-alarm .ev-upcoming-bell')).toBeVisible();
   const alarmBox=await page.locator('.bday-detail-alarm').boundingBox(),categoryBox=await page.locator('#bdDetailOv .bday-detail-groups').boundingBox();expect(alarmBox.y-categoryBox.y-categoryBox.height).toBeGreaterThanOrEqual(8);
   await expect(page.locator('#bdCategories')).toHaveText('✎');await expect(page.locator('#bdCategories')).toHaveClass(/boda-cl-edit/);
   expect((await page.locator('#bdCategories').boundingBox()).width).toBe(24);
@@ -81,7 +81,7 @@ for(const width of [360,400,440])for(const theme of ['dark','light']){
   await page.screenshot({animations:'disabled',path:testInfo.outputPath('selector.png')});
   await page.locator('[data-bd-category="Amigos Baile"]').click();await page.locator('#bdCategorySave').click();
   await expect(page.locator('#bdCategoryWrap')).toHaveCount(0);
-  expect(await sheet.boundingBox()).toEqual(before);
+  expect(await page.locator('#bdDetailOv .bd-panel-body').evaluate(el=>el.scrollHeight<=el.clientHeight+1)).toBe(true);
   await expect(page.locator('#bdPersonGroups .bday-group-tag')).toHaveText(['Amigos Baile','Amigos N.A.S.A','Familia Cercana']);
   const vipGeometry=await page.locator('.bday-person-vip').evaluate(el=>({check:el.querySelector('input').getBoundingClientRect().right,icon:el.querySelector('img').getBoundingClientRect().left}));
   expect(vipGeometry.check).toBeLessThan(vipGeometry.icon);

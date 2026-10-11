@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v441 — cumpleaños y exportaciones compartidas';
+var APP_VERSION = 'v442 — paneles, exportaciones y sesiones de rutina';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -247,11 +247,14 @@ function hBarRows(rows,opts){
 // ── Compartir / descargar archivo ────────────────────────────
 function shareOrDownload(blob,filename,onSuccess,options){
   options=options||{};
+  if(!options.mode&&!options.download){openExportChoice(blob,filename,onSuccess,options);return;}
   filename=exportFileName(filename);
   var delivered=false,success=function(){if(!delivered){delivered=true;if(onSuccess)onSuccess();}};
-  var copy=saveExportCopy(blob,filename);copy.then(function(saved){if(saved)success();});
+  var downloaded=false;
+  var copy=options.mode==='share'?Promise.resolve(false):saveExportCopy(blob,filename);copy.then(function(saved){if(saved)success();else if(options.mode==='both')download();});
   function fallback(){copy.then(function(saved){if(!saved)download();});}
   function download(){
+    if(downloaded)return;downloaded=true;
     var url=null,a=null;
     try{
       url=URL.createObjectURL(blob);a=document.createElement('a');
@@ -264,7 +267,7 @@ function shareOrDownload(blob,filename,onSuccess,options){
       if(url&&!options.onDownloadReady)setTimeout(function(){URL.revokeObjectURL(url);},60000);
     }
   }
-  if(!options.download&&navigator.share&&navigator.canShare){
+  if(!options.download&&options.mode!=='save'&&navigator.share&&navigator.canShare){
     try{
       var file=new File([blob],filename,{type:blob.type});
       if(!navigator.canShare({files:[file]}))file=new File([blob],filename,{type:'application/octet-stream'});

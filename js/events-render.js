@@ -29,11 +29,11 @@ function renderEvListItem(ev){
   var _listTitle=_isVipBdayL?('<img src="./VIP.png" class="bday-vip-img" alt="VIP" style="height:1.3em;vertical-align:middle;margin-right:4px">'+escHtml(ev.title.replace(/^\u2b50\s*/,'')))
     :escHtml(ev.title);
   var h='<div class="ev-list-item" data-id="'+ev.id+'">';
-  h+='<div class="ev-list-color" style="background:'+ev.color+'"></div>';
+  h+='<div class="ev-list-color" style="background:'+getEvDisplayColor(ev)+'"></div>';
   h+='<div class="ev-list-body">';
   h+='<div class="ev-list-title">'+_listTitle+'</div>';
   if(ev.note)h+='<div class="ev-list-note">'+escHtml(ev.note)+'</div>';
-  h+='<div class="ev-list-meta">'+getEvType(ev)+' \u00b7 '+dateStr+repeatStr+'</div>';
+  h+='<div class="ev-list-category" style="--event-tone:'+getEvDisplayColor(ev)+'">'+escHtml(getEvType(ev))+'<span>'+ (getEvKind(ev)==='grande'?'Grande':'Puntual')+'</span></div><div class="ev-list-meta">'+dateStr+repeatStr+'</div>';
   h+='</div>';
   h+='<div class="ev-list-actions"><span class="ev-list-hint">&#8942;</span></div>';
   h+='</div>';
@@ -229,10 +229,10 @@ function renderEvByTypes(){
   var today=new Date();today.setHours(0,0,0,0);
   /* Controles: buscador + orden + filtros */
   var h='<div class="ev-list-tools"><div class="ev-list-search-row">';
-  h+='<div class="ev-search"><span class="ev-search-ico">&#128269;</span>'
+  h+='<div class="ev-search">'
     +'<input type="search" id="evListSearch" placeholder="Buscar por título/descripción" value="'+escHtml(EV_LIST_SEARCH)+'">'
     +(EV_LIST_SEARCH?'<button class="ev-search-x" id="evListSearchX">&#215;</button>':'')+'</div>';
-  h+='<button type="button" class="ev-types-select" id="evTypesFilter" aria-haspopup="dialog" title="Filtrar por tipo: '+escHtml(EV_TYPES_FILTER==='all'?'Todos':EV_TYPES_FILTER)+'"><span>'+escHtml(EV_TYPES_FILTER==='all'?'Todos':EV_TYPES_FILTER)+'</span><span aria-hidden="true">&#9662;</span></button></div>';
+  h+='<button type="button" class="ev-types-select" id="evTypesFilter" aria-haspopup="dialog" title="Filtrar por tipo: '+escHtml(evListFilterLabel(EV_TYPES_FILTER))+'"><span>'+escHtml(evListFilterLabel(EV_TYPES_FILTER))+'</span><span class="ev-tax-chevron" aria-hidden="true"></span></button></div>';
   h+='<div class="ev-sort-row">';
   /* Solo interesa lo mas cercano primero; el orden inverso se quito */
   if(EV_LIST_SORT==='fecha-desc')EV_LIST_SORT='fecha';
@@ -256,7 +256,7 @@ function renderEvByTypes(){
     if(ev.id&&ev.id.indexOf('ev-bday-vip-')===0)return false;  /* los VIP tienen su ventana */
     var evEnd=ev.end?new Date(ev.end+'T00:00:00'):new Date(ev.start+'T00:00:00');
     if(EV_TYPES_PAST&&!ev.repeat&&evEnd<today)return false;
-    if(EV_TYPES_FILTER!=='all'&&getEvType(ev)!==EV_TYPES_FILTER)return false;
+    if(!evListFilterMatches(ev,EV_TYPES_FILTER))return false;
     return coincide(ev);
   });
   if(!lista.length){

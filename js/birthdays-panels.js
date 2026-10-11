@@ -1,3 +1,8 @@
+function bdaySwitchPanel(id,open){
+  _panelCancelarBorrado(id);var previous=document.getElementById(id);if(previous)previous.remove();
+  open();
+  ['bdDetailOv','bdFormOv','bdAlarmOv'].forEach(function(key){var el=document.getElementById(key);if(el){el.style.transition='none';el.classList.add('open');requestAnimationFrame(function(){el.style.transition='';});}});
+}
 function renderBdayNameVip(id,vip){return '<img class="bday-name-vip" id="'+id+'" src="./VIP.png" alt="VIP" style="visibility:'+(vip?'visible':'hidden')+'" aria-hidden="'+!vip+'">';}
 function updateBdayNameVip(id,vip){var icon=document.getElementById(id);icon.style.visibility=vip?'visible':'hidden';icon.setAttribute('aria-hidden',!vip);}
 function renderBdayVipToggle(id,vip){return '<label class="bday-person-vip"><input type="checkbox" id="'+id+'" aria-label="VIP"'+(vip?' checked':'')+'><img src="./VIP.png" alt="" aria-hidden="true"></label>';}
@@ -11,7 +16,7 @@ function renderBdayDetail(b){
   h+='<header class="bd-panel-header"><button class="sy-back" id="bdDClose" aria-label="Volver">←</button><h2>Cumpleaños</h2></header>';
   h+='<div class="bd-panel-body"><div class="bday-person-summary"><div class="bd-detail-name"><span>'+displayName+'</span></div><div class="bday-detail-meta"><div class="bd-detail-date">'+b.day+' de '+MN[b.month-1]+'</div>'+renderBdayVipToggle('bdDVip',b.vip)+'</div><div class="bd-detail-lbl">'+lbl+'</div></div>';
   h+=renderBdayPersonGroups(b);
-  if(hasAlarm)h+='<section class="bday-detail-alarm bd-alarm-marker-row" aria-label="Alarma">'+navIconHtml('alarm')+'<div class="bday-detail-alarm-copy"><strong>Alarma</strong><span>'+(isBdayAlarmSet(b)?'Configurada':'Sin configurar')+'</span></div><button class="ev-btn" id="bdDAlarm">Configurar</button></section>';
+  if(hasAlarm)h+='<section class="bday-detail-alarm bd-alarm-marker-row" aria-label="Alarma"><span class="ev-upcoming-bell'+(isBdayAlarmSet(b)?' set':'')+'" aria-hidden="true">&#128276;</span><div class="bday-detail-alarm-copy"><strong>Alarma</strong><span>'+(isBdayAlarmSet(b)?'Configurada':'Sin configurar')+'</span></div><button class="ev-btn" id="bdDAlarm">Configurar</button></section>';
   h+='</div>';
   h+='<footer class="bd-panel-footer ev-detail-actions"><button class="action-edit action-edit-text ev-btn ev-edit-orange" id="bdDEdit">&#9998; Editar</button><button class="ev-btn danger" id="bdDDel">Eliminar</button></footer>';
   h+='</div></div>';
@@ -86,12 +91,13 @@ function renderBdayAlarmPanel(b){
   return h;
 }
 
-function openBdayAlarm(b){
+function openBdayAlarm(b,onBack){
   if(!bdayCanSetAlarm(b)){showToast('Solo puedes configurar alarmas para cumpleaños en los próximos 14 días','error');return;}
   abrirPanel('bdAlarmWrap',renderBdayAlarmPanel(b),{
     contenedor:bdayPanelHost(),
-    overlay:'bdAlarmOv', alCerrar:closeBdayAlarm});
-  bindBdayAlarmEvents(b);
+    overlay:'bdAlarmOv', alCerrar:back});
+  function back(){if(onBack)bdaySwitchPanel('bdAlarmWrap',onBack);else closeBdayAlarm();}
+  bindBdayAlarmEvents(b,onBack,back);
 }
 
 function _bdRefreshBoth(){
@@ -100,8 +106,9 @@ function _bdRefreshBoth(){
 
 function closeBdayAlarm(){cerrarPanel('bdAlarmWrap','bdAlarmOv',_bdRefreshBoth);}
 
-function bindBdayAlarmEvents(b){
-  document.getElementById('bdAlarmClose').addEventListener('click',closeBdayAlarm);
+function bindBdayAlarmEvents(b,onBack,back){
+  back=back||function(){if(onBack)bdaySwitchPanel('bdAlarmWrap',onBack);else closeBdayAlarm();};
+  document.getElementById('bdAlarmClose').addEventListener('click',back);
 
   // VIP toggle inside alarm panel — refresco inline sin animar el cierre/apertura
   var vipChk=document.getElementById('bdAlarmVip');
@@ -122,10 +129,10 @@ function bindBdayAlarmEvents(b){
         if(newFo){
           newFo.style.transition='none';
           newFo.classList.add('open');
-          newFo.addEventListener('click',function(ev){if(ev.target===newFo)closeBdayAlarm();});
+          newFo.addEventListener('click',function(ev){if(ev.target===newFo)back();});
           requestAnimationFrame(function(){newFo.style.transition='';});
         }
-        bindBdayAlarmEvents(b);
+        bindBdayAlarmEvents(b,onBack,back);
       }
     });
   }
@@ -138,7 +145,7 @@ function bindBdayAlarmEvents(b){
       BDAY_ALARM_COUNT=parseInt(btn.dataset.cnt,10);
       appStorage.setItem(BDAY_ALARM_COUNT_KEY,String(BDAY_ALARM_COUNT));
       var fo=document.getElementById('bdAlarmOv');if(fo)fo.classList.remove('open');
-      setTimeout(function(){var w=document.getElementById('bdAlarmWrap');if(w)w.remove();openBdayAlarm(b);},310);
+      bdaySwitchPanel('bdAlarmWrap',function(){openBdayAlarm(b,onBack);});
     });
   });
 
@@ -287,11 +294,11 @@ function openBdayDetail(b){
     b.vip=this.checked;savePerson();updateBdayNameVip('bdDNameVip',b.vip);
   };
   var alarmButton=document.getElementById('bdDAlarm');
-  if(alarmButton)alarmButton.addEventListener('click',function(){closeBdayDetail();setTimeout(function(){openBdayAlarm(b);},300);});
+  if(alarmButton)alarmButton.addEventListener('click',function(){bdaySwitchPanel('bdDWrap',function(){openBdayAlarm(b,function(){openBdayDetail(b);});});});
   document.getElementById('bdDDel').onclick=function(){deleteBdayPerson(b);closeBdayDetail();};
   document.getElementById('bdDClose').addEventListener('click',closeBdayDetail);
   document.getElementById('bdDEdit').addEventListener('click',function(){
-    closeBdayDetail();setTimeout(function(){openBdayForm(b,null,null,function(){openBdayDetail(b);});},300);
+    bdaySwitchPanel('bdDWrap',function(){openBdayForm(b,null,null,function(){openBdayDetail(b);});});
   });
 }
 
@@ -299,7 +306,7 @@ function closeBdayDetail(){cerrarPanel('bdDWrap','bdDetailOv');}
 
 /* ── Abrir/cerrar form ────────────────────────────────────── */
 function openBdayForm(b,prefillDay,prefillMonth,onBack){
-  function back(){closeBdayForm();if(onBack)setTimeout(onBack,320);}
+  function back(){if(onBack){BDAY_EDIT=null;bdaySwitchPanel('bdFWrap',onBack);}else closeBdayForm();}
   BDAY_EDIT=b||null;
   abrirPanel('bdFWrap',renderBdayForm(b,prefillDay,prefillMonth),{
     contenedor:bdayPanelHost(),

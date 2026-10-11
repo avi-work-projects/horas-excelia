@@ -1,3 +1,4 @@
+const {exportFile}=require('./export-helper');
 const {test,expect}=require('@playwright/test');
 // Estas pruebas inspeccionan el archivo descargado; Compartir se valida en export-sharing.spec.js.
 test.beforeEach(async({page})=>{await page.addInitScript(()=>Object.defineProperty(navigator,'canShare',{configurable:true,value:()=>false}));});
@@ -68,7 +69,7 @@ test('color de gimnasio, detalle del hogar e iconos viajan en la copia de seguri
  await expect(page.locator('#householdBtn .nav-pro-household')).toBeVisible();
  await expect(page.locator('.data-actions .nav-pro-bday,.overlay-nav-bar .nav-pro-bday')).toHaveCount(0);
  await expect(page.locator('#evViewBday .bday-symbol')).toHaveCount(1);
- await page.locator('#menuBtn').click();const pending=page.waitForEvent('download');await page.locator('#exportAllBtn').click();const file=await pending;
+ await page.locator('#menuBtn').click();const pending=page.waitForEvent('download');await exportFile(page,'#exportAllBtn','save');const file=await pending;
  const data=JSON.parse(require('fs').readFileSync(await file.path(),'utf8'));
  expect(data.routineAppearance).toEqual({gymColor:'#38bdf8'});expect(data.householdTab).toBe('resumen');
  await page.evaluate(d=>{setRutGymColor('#123456');setHouseholdTab('elect');applyFullImport(d,'replace');},data);

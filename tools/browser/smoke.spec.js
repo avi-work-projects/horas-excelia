@@ -1,3 +1,4 @@
+const {exportFile}=require('./export-helper');
 const {chooseTime}=require('./time-picker-helper');
 const {test,expect}=require('@playwright/test');
 // Estas pruebas inspeccionan el archivo descargado; Compartir se valida en export-sharing.spec.js.
@@ -156,7 +157,7 @@ test('ajustes bloqueados, guardado explicito y backup con conexiones',async({pag
  await page.locator('#macroAlarmUrlMenu').fill('https://trigger.macrodroid.com/TEST');
  expect(await page.evaluate(()=>localStorage.getItem('excelia-mail-config-v1'))).toBeNull();
  await page.locator('#editConnectionsBtn').click();await expect(page.locator('#mailToLocal')).toHaveAttribute('readonly','');
- const [download]=await Promise.all([page.waitForEvent('download'),page.locator('#exportAllBtn').click()]);
+ const [download]=await Promise.all([page.waitForEvent('download'),exportFile(page,'#exportAllBtn','save')]);
  const data=JSON.parse(require('fs').readFileSync(await download.path(),'utf8'));
  expect(data.mailConfig.to).toBe('test@example.invalid');expect(data.macroUrl).toBe('https://trigger.macrodroid.com/TEST');
  await page.evaluate(()=>{localStorage.removeItem('excelia-mail-config-v1');localStorage.removeItem('excelia-alarm-url');});
@@ -201,7 +202,7 @@ test('Bodas: configurar pack, duracion, salas y exportar catalogos',async({page}
  await page.locator('#bodaFormDuration').click();await page.locator('[data-duration=dur-20]').click();await expect(page.locator('#bodaFormOv')).toContainText('18:20');await page.locator('#bodaFormSave').click();
  expect(await page.evaluate(()=>EVENTS.find(e=>e.id==='cls1').boda.duration)).toBe(20);
  await page.locator('#eventsContent').getByRole('button',{name:'Inicio',exact:true}).click();await page.locator('#menuBtn').click();
- const [download]=await Promise.all([page.waitForEvent('download'),page.locator('#exportAllBtn').click()]);const data=JSON.parse(require('fs').readFileSync(await download.path(),'utf8'));
+ const [download]=await Promise.all([page.waitForEvent('download'),exportFile(page,'#exportAllBtn','save')]);const data=JSON.parse(require('fs').readFileSync(await download.path(),'utf8'));
  expect(data.events.find(e=>e.id==='cls1').boda.teachers).toEqual({celia:false,angel:true,substitute:'Profesora prueba',lastSelected:'angel'});
  expect(data.bodaConfig.teacherNames).toEqual({angel:'Profesor A',celia:'Profesora B'});expect(data.bodaConfig.defaultPlace).toBe('sala');
  expect(data.bodaConfig.defaultDurationId).toBe('dur-20');expect(data.bodaConfig.places.find(p=>p.k==='casa').n).toBe('Mi casa');
@@ -262,7 +263,7 @@ test('rutinas: horario por semana, duración, histórico editable y backup',asyn
  await page.locator('#rutHistoryClose').click();await expect(page.locator('#rutHistoryWrap')).toHaveCount(0);
  await page.reload();await page.locator('#eventsBtn').click();await page.locator('#evViewRutinas').click();
  expect(await page.evaluate(()=>rutOccursOn(RUTINAS[0],'2026-08-17'))).toBe('16:30');
- const download=page.waitForEvent('download');await page.locator('#eventsContent').getByRole('button',{name:'Inicio',exact:true}).click();await expect(page.locator('#eventsOverlay')).not.toBeVisible();await page.locator('#menuBtn').click();await page.locator('#exportAllBtn').click();
+ const download=page.waitForEvent('download');await page.locator('#eventsContent').getByRole('button',{name:'Inicio',exact:true}).click();await expect(page.locator('#eventsOverlay')).not.toBeVisible();await page.locator('#menuBtn').click();await exportFile(page,'#exportAllBtn','save');
  const file=await download;const fs=require('fs');const data=JSON.parse(fs.readFileSync(await file.path(),'utf8'));
  expect(data.rutinas[0].scheduleHistory).toHaveLength(2);expect(data.rutinas[0].keptSessions['2026-08-17'].time).toBe('16:30');
  await expect(page.locator('#dataMenu')).not.toHaveClass(/open/);await page.locator('#eventsBtn').click();await page.locator('#evViewRutinas').click();
@@ -432,7 +433,7 @@ test('iconos alternativos: seleccion, navegacion, persistencia y backup',async({
  await expect(page.locator('#navIconPickerWrap')).toHaveCount(0);
  const centers=await page.locator('.data-actions .nav-pro-icon').evaluateAll(icons=>icons.map(el=>{const r=el.getBoundingClientRect();return r.y+r.height/2;}));expect(Math.max(...centers)-Math.min(...centers)).toBeLessThan(1);
 
- const downloadPromise=page.waitForEvent('download');await page.locator('#menuBtn').click();await page.locator('#exportAllBtn').click();const download=await downloadPromise;
+ const downloadPromise=page.waitForEvent('download');await page.locator('#menuBtn').click();await exportFile(page,'#exportAllBtn','save');const download=await downloadPromise;
  const data=JSON.parse(require('fs').readFileSync(await download.path(),'utf8'));expect(data.navIconStyle).toBe('professional');
  await page.reload();await expect(page.locator('.data-actions .nav-pro-icon')).toHaveCount(6);
  for(const theme of ['light','dark']){
@@ -501,7 +502,7 @@ test('cupos por ano, backup y ajustes visuales de resumen',async({page})=>{
  await page.screenshot({path:'.local-preview/fiscal-tabs-aligned.png',animations:'disabled'});
  await page.evaluate(()=>closeFiscal());await expect(page.locator('#fiscalOverlay')).not.toBeVisible();
  await page.evaluate(()=>closeEcon());await expect(page.locator('#econOverlay')).not.toBeVisible();
- const downloadPromise=page.waitForEvent('download');await page.locator('#menuBtn').click();await page.locator('#exportAllBtn').click();
+ const downloadPromise=page.waitForEvent('download');await page.locator('#menuBtn').click();await exportFile(page,'#exportAllBtn','save');
  const download=await downloadPromise,data=JSON.parse(require('fs').readFileSync(await download.path(),'utf8'));
  expect(data.vacByYear).toEqual({'2026':25,'2027':28});
  if(await page.locator('#dataMenu').evaluate(el=>el.classList.contains('open')))await page.locator('#menuBtn').click();
@@ -513,9 +514,9 @@ test('cupos por ano, backup y ajustes visuales de resumen',async({page})=>{
  await page.screenshot({path:'.local-preview/todos-search-row.png',animations:'disabled'});
  await page.locator('#evTypesFilter').click();await expect(page.locator('#evTypeFilterOv')).toHaveClass(/open/);
  await page.screenshot({path:'.local-preview/event-type-picker.png',animations:'disabled'});
- await page.locator('.ev-type-option[data-type="Asturias"]').click();await expect(page.locator('#evTypesFilter')).toHaveText('Asturias▾');
+ await page.locator('.ev-filter-category-group summary').filter({hasText:'Eventos grandes'}).click();await page.locator('.ev-type-option[data-type="grande|Asturias"]').click();await expect(page.locator('#evTypesFilter')).toHaveText('Asturias');
  await expect(page.locator('#evTypeFilterWrap')).toHaveCount(0);
- await page.locator('#evTypesFilter').click();await page.locator('.ev-type-option[data-type="all"]').click();await expect(page.locator('#evTypesFilter')).toHaveText('Todos▾');
+ await page.locator('#evTypesFilter').click();await page.locator('.ev-type-option[data-type="all"]').click();await expect(page.locator('#evTypesFilter')).toHaveText('Todos');
  await expect(page.locator('#evTypeFilterWrap')).toHaveCount(0);
  await page.evaluate(()=>{closeEvents();DAILY_RATE=315;ECON_MULTI_RATE=false;ECON_VIEW='resumen';});
  await expect(page.locator('#eventsOverlay')).not.toBeVisible();await page.locator('#econBtn').click();
@@ -619,7 +620,7 @@ test('CSV: aviso persistente y horas en recordatorios',async({page})=>{
  await expect(page.locator('#homePopupContent')).toContainText('18:30');
  await expect(page.locator('#homePopupContent')).toContainText('09:15');
  await page.locator('#homePopupClose').click();
- const download=page.waitForEvent('download');await page.locator('#csvExportBtn').click();await download;
+ const download=page.waitForEvent('download');await exportFile(page,'#csvExportBtn','save');await download;
  await page.evaluate(()=>{ST['2026-09-14']={type:'festivo'};save();});
  await expect(page.locator('#toast')).toContainText('CSV de 2026 desactualizado');
  await page.reload();await expect(page.locator('#homePopupContent')).toContainText('CSV de 2026 desactualizado');
@@ -627,7 +628,7 @@ test('CSV: aviso persistente y horas en recordatorios',async({page})=>{
  await expect(page.locator('#homePopup')).toBeVisible();
  await page.screenshot({path:'.local-preview/csv-reminders.png',animations:'disabled'});
  await page.locator('#homePopupClose').click();
- const second=page.waitForEvent('download');await page.locator('#csvExportBtn').click();await second;
+ const second=page.waitForEvent('download');await exportFile(page,'#csvExportBtn','save');await second;
  await page.reload();await expect(page.locator('#homePopup')).toBeHidden();
  // Cancelar compartir no sustituye el registro de lo exportado.
  await page.evaluate(()=>{
@@ -635,6 +636,6 @@ test('CSV: aviso persistente y horas en recordatorios',async({page})=>{
   Object.defineProperty(navigator,'canShare',{configurable:true,value:()=>true});
   Object.defineProperty(navigator,'share',{configurable:true,value:()=>Promise.reject(new DOMException('Cancelado','AbortError'))});
  });
- await page.locator('#csvExportBtn').click();
+ await exportFile(page,'#csvExportBtn','share');
  expect(await page.evaluate(()=>csvPendingWarnings(new Date()).length)).toBe(1);
 });

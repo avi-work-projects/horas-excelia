@@ -178,6 +178,7 @@ function rutToggleSkip(r,ds,key){
   key=key||ds;
   var session=rutSessionByKey(r,key);
   if(!session)return false;
+  if(rutFlexible(r)&&!session.skip){showToast('Solo las rutinas de horario fijo pueden marcarse como saltadas.','error');return false;}
   if(session.skip&&rutRecoveryFor(r,key)){showToast('Esta sesión ya tiene una recuperación. Cancela primero la recuperación para reactivar la original.','error');return false;}
   if(session.extra){
     var copy=JSON.parse(JSON.stringify(r)),extra=copy.extraSessions.find(function(s){return s.id===key;});extra.skip=!extra.skip;
@@ -541,36 +542,8 @@ function closeRutWeek(){cerrarPanel('rutWkWrap','rutWkOv');}
 
 /* ══ Detalle de una sesión (al pulsarla en un calendario) ══ */
 function openRutSesion(r,ds,key){
-  key=key||ds;
-  if(key!==ds){var virtual=rutEventsOn(ds).find(function(e){return e._rut===r&&e._rutKey===key;});if(virtual)openEvDetail(virtual);return;}
-  var t=rutOccursOn(r,ds)||r.time;
-  var skip=rutIsSkipped(r,ds);
-  var h='<div class="ev-detail-overlay" id="rutSesOv"><div class="ev-detail-sheet">';
-  h+='<div class="ev-detail-handle"></div>';
-  h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">';
-  h+='<button class="sy-back" id="rutSesClose">&#8592;</button>';
-  h+='<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">Rutina</div>';
-  h+='<button class="action-edit action-edit-text ev-list-btn" id="rutSesEdit" style="font-size:.8rem;padding:6px 12px">&#9998; Editar</button>';
-  h+='</div>';
-  h+='<div class="ev-detail-color-bar" style="background:'+rutDisplayColor(r)+'"></div>';
-  h+='<div class="ev-detail-title" style="color:'+rutDisplayColor(r)+'">'+escHtml(r.name)+'</div>';
-  h+='<div class="ev-detail-date">&#128197; '+_rutFmtCorto(ds)+' &#183; '+t+'–'+rutFin(t,rutDurationOn(r,ds))+'</div>';
-  if(skip)h+='<div class="ev-detail-note" style="color:var(--c-orange)">Sesión marcada como saltada</div>';
-  var recovered=rutRecoveryNote(r,key);if(recovered)h+='<em class="rut-recovery-note">'+escHtml(recovered)+'</em>';
-  h+='<div class="ev-detail-actions">';
-  h+='<button class="ev-btn" id="rutSesSkip">'+(skip?'&#10003; Marcar como hecha':'&#10007; Marcar como saltada')+'</button>';
-  h+='</div></div></div>';
-  abrirPanel('rutSesWrap',h,{overlay:'rutSesOv',alCerrar:closeRutSesion});
-  document.getElementById('rutSesClose').addEventListener('click',closeRutSesion);
-  document.getElementById('rutSesEdit').addEventListener('click',function(){
-    closeRutSesion();setTimeout(function(){openRutForm(r);},310);
-  });
-  document.getElementById('rutSesSkip').addEventListener('click',function(){
-    if(rutToggleSkip(r,ds)===false)return;
-    closeRutSesion();setTimeout(function(){refreshEvents();},310);
-    showToast(rutIsSkipped(r,ds)?'Sesión marcada como saltada':'Sesión marcada como hecha','success',
-      function(){rutToggleSkip(r,ds);refreshEvents();});
-  });
+  var event=rutEventsOn(ds).find(function(ev){return ev._rut===r&&ev._rutKey===(key||ds);});
+  if(event)openEvDetail(event);
 }
 function closeRutSesion(){cerrarPanel('rutSesWrap','rutSesOv');}
 
