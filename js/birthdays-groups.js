@@ -11,7 +11,8 @@ function bdayNormalizeGroup(name){
 
 function bdayGroups(b){return Array.from(new Set((Array.isArray(b&&b.categories)?b.categories:[]).filter(function(g){return typeof g==='string';}).map(bdayNormalizeGroup).filter(Boolean))).sort(function(a,b){return a.localeCompare(b,'es');});}
 function bdayGroupCatalog(){return bdayGroups({categories:BDAY_GROUP_DEFAULTS.concat.apply(BDAY_GROUP_DEFAULTS,BDAYS.map(bdayGroups))});}
-function bdayGroupHue(g){var hue=0;for(var i=0;i<g.length;i++)hue=(hue*31+g.charCodeAt(i))%360;return hue;}
+// Progresión cálida → verde → azul → rosa, siguiendo el catálogo alfabético.
+function bdayGroupHue(g){var groups=bdayGroupCatalog(),index=groups.indexOf(g);return index<0?324:Math.round(24+300*index/Math.max(1,groups.length-1));}
 function bdayGroupTags(groups){return groups.map(function(g){var hue=bdayGroupHue(g);return '<span class="bday-group-tag" style="--group-hue:'+hue+'">'+escHtml(g)+'</span>';}).join('');}
 function bdayGroupMatch(b){return !BDAY_GROUP_FILTER.length||BDAY_GROUP_FILTER.some(function(g){return g==='__none'?bdayGroups(b).length===0:bdayGroups(b).indexOf(g)>=0;});}
 function bdayGroupChips(groups,selected,attr){return groups.map(function(g){return '<button type="button" class="bday-group-chip" style="--group-hue:'+bdayGroupHue(g)+'" '+attr+'="'+escHtml(g)+'" aria-pressed="'+(selected.indexOf(g)>=0)+'">'+escHtml(g)+'</button>';}).join('');}
