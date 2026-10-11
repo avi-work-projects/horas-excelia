@@ -1,5 +1,7 @@
 const {test,expect}=require('@playwright/test');
-test.use({viewport:{width:400,height:880},isMobile:true,hasTouch:true});
+// Usa el navegador completo para probar handles de carpetas reales al recargar,
+// también en Linux; sigue ejecutándose sin ventanas visibles.
+test.use({viewport:{width:400,height:880},isMobile:true,hasTouch:true,channel:process.platform==='win32'?'msedge':'chromium'});
 test.beforeEach(async({page})=>{
  await page.addInitScript(()=>{
   sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-theme-v1','light');localStorage.setItem('excelia-nav-icons-v1','professional');
@@ -48,13 +50,13 @@ test('sin compartir descarga; permiso revocado no pierde el archivo',async({page
  expect(file.suggestedFilename()).toMatch(/dias_trabajados_\d{4}_\d{8}_\d{6}_\d{3}\.csv/);
  expect(await page.evaluate(()=>sharedFiles.length)).toBe(0);
 });
-test('el permiso de carpeta se recuerda localmente y los nombres no se repiten',async({page})=>{
+test('la carpeta se recuerda localmente y los nombres no se repiten',async({page})=>{
  await page.evaluate(async()=>{
   await EXPORT_DIRECTORY_READY;
   const root=await navigator.storage.getDirectory(),dir=await root.getDirectoryHandle('Gestify-prueba',{create:true});
   await exportDirectoryStore('set',dir);
  });
- await page.reload();await expect.poll(()=>page.evaluate(()=>EXPORT_DIRECTORY?.name)).toBe('Gestify-prueba');
+ await page.reload();expect(await page.evaluate(async()=>{await EXPORT_DIRECTORY_READY;return EXPORT_DIRECTORY?.name;})).toBe('Gestify-prueba');
  await page.evaluate(async()=>{await exportDirectoryStore('set',null);EXPORT_DIRECTORY=null;});
  await page.clock.setFixedTime(new Date(2026,9,11,12,30));
  await page.locator('#csvExportBtn').click();await page.locator('#csvExportBtn').click();
