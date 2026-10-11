@@ -71,6 +71,43 @@ el mismo cálculo. `invoices-export.js` escribe OOXML/ZIP localmente, sin red ni
 biblioteca adicional. Son documentos auxiliares; no se importan automáticamente
 en la aplicación gratuita AEAT ni constituyen una factura definitiva.
 
+### Estado y comprobación de los exports auxiliares
+
+`condition: "calendar-month"` significa preparación automática basada en el mes
+completo del calendario, incluyendo los días futuros seleccionados por sus reglas;
+no acredita trabajo ya realizado ni una confirmación explícita del usuario. El
+Excel expresa lo mismo: «Basada en calendario; puede incluir planificación».
+No se añade un paso de confirmación. No cambia el esquema ni las huellas existentes.
+
+`node tools/verify-invoice-export.js "ruta/al/export.json"` comprueba ambas huellas
+con `node:crypto`, sin cargar la aplicación ni escribir en el archivo. Salida: dos
+booleanos, y código de salida 1 si alguna no coincide. Son huellas de coherencia,
+no firmas de autenticidad. Para reproducirlas desde el JSON original:
+
+- **operationId**: SHA-256 de los bytes UTF-8 de `JSON.stringify` del array
+  `[issuer.taxId.trim().toUpperCase(), client.taxId.trim().toUpperCase(), period,
+  project.trim().toLowerCase()]`. Salida hexadecimal minúscula (64 caracteres).
+- **contentHash**: SHA-256, UTF-8, hexadecimal minúscula, de `JSON.stringify(p)`
+  excluyendo `appVersion`, `contentHash`, `revision` y `preparedAt`. Incluye el
+  `operationId` almacenado. Se verifica este último por separado.
+- No se ordenan claves, no hay espacios de formato ni salto final, no se normaliza
+  Unicode. Los números se serializan como JavaScript. Se conserva el orden de las
+  propiedades y de los arrays, incluidos `days` y `lines`. Un JSON reindentado
+  verifica; uno con claves reordenadas puede no hacerlo.
+- Orden superior actual: `schemaVersion`, `period`, `kind`, `condition`, `issuer`,
+  `client`, `project`, `payment`, `concept`, `days`, `lines`, `vatBasisPoints`,
+  `withholdingBasisPoints`, `baseCents`, `vatCents`, `withholdingCents`, `totalCents`,
+  `operationId`. `payment` no se inserta al verificar exports antiguos sin ese campo.
+- Objetos emisor/cliente: `name`, `taxId`, `address`; pago: `iban`. En cada día del
+  calendario: `date`, `type`, `weekend`, `selected`, `hours`, `rate`, `unit`,
+  `rateIssue`. En cada línea: `unit`, `rateCents`, `quantity100`, `baseCents`.
+  Para versiones anteriores se conserva el orden y los campos presentes, sin rellenar.
+
+El Excel muestra `operationId`, `contentHash` y `revision` copiados de esa misma
+preparación. `contentHash` no es la huella binaria del XLSX: cambios de texto o
+formato en el libro no la alteran. Corregir la etiqueta requiere volver a exportar
+el Excel una vez instalada la corrección; el JSON previo no necesita regenerarse.
+
 Octubre de 2026 es el primer mes real autorizado. Los meses anteriores permiten
 comprobaciones históricas pero no asociar documentos para nuevos envíos.
 El PDF definitivo se incorpora después de emitir en AEAT: se declara número,
