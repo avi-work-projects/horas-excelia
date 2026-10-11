@@ -26,6 +26,32 @@ function rutRecoveryHtml(ev){
   var text=rutRecoveryNote(ev._rut,ev._rutKey||ev.start);
   return text?'<em class="rut-recovery-note">'+escHtml(text)+'</em>':'';
 }
+/* Reactivar una original exige resolver primero su recuperación enlazada. */
+function rutDoneCandidate(r,key,choice){
+  var copy=JSON.parse(JSON.stringify(r)),recovery=rutRecoveryFor(copy,key);
+  if(recovery){
+    if(choice==='delete')copy=rutDeleteSession(copy,recovery.id);
+    else if(choice==='extra')delete recovery.recoveryOf;
+    else throw new Error('Elige qué hacer con la recuperación programada.');
+  }
+  var session=rutSessionByKey(copy,key);
+  return rutEditSession(copy,session.ds,session.time,session.dur,false,key);
+}
+function rutChangeFromDetail(r,key,after){
+  var session=rutSessionByKey(r,key);if(!session)return;
+  function apply(choice){try{
+    var result=session.skip?rutDoneCandidate(r,key,choice):rutEditSession(r,session.ds,session.time,session.dur,true,key);
+    rutSaveSessionChange(r,result,session.skip?'Sesión marcada como hecha':'Sesión marcada como saltada',after);
+  }catch(e){showToast(e.message,'error');}}
+  var recovery=session.skip&&rutRecoveryFor(r,key);
+  if(!recovery){apply();return;}
+  function close(){cerrarPanel('rutDoneWrap','rutDoneOv');}
+  var html='<div class="ev-form-overlay" id="rutDoneOv"><div class="ev-form-sheet rut-done-sheet"><header class="rut-history-head"><button class="sy-back" id="rutDoneClose" aria-label="Volver">←</button><strong>Recuperación programada</strong></header><p>Esta clase ya tenía una recuperación el '+_rutFmt(recovery.date)+'. Para marcar la original como hecha, elige qué hacer con esa otra clase.</p><button class="ev-btn rut-skip-action" id="rutDoneDelete">Eliminar la recuperación</button><button class="ev-btn" id="rutDoneExtra">Conservar como clase extra</button><button class="ev-btn" id="rutDoneCancel">Cancelar</button></div></div>';
+  var wrap=abrirPanel('rutDoneWrap',html,{overlay:'rutDoneOv',alCerrar:close});
+  wrap.querySelector('#rutDoneClose').onclick=close;wrap.querySelector('#rutDoneCancel').onclick=close;
+  wrap.querySelector('#rutDoneDelete').onclick=function(){apply('delete');close();};
+  wrap.querySelector('#rutDoneExtra').onclick=function(){apply('extra');close();};
+}
 function rutValidateAddition(r,s){
   if(!s||!validIsoDate(s.date)||!/^([01]\d|2[0-3]):[0-5]\d$/.test(s.time)||!Number.isInteger(s.dur)||s.dur<15||s.dur>480)throw new Error('Revisa la fecha, la hora y la duración (15–480 min).');
   var earliest=r.flex?rutFlexEarliest(r):r.start;
@@ -35,6 +61,7 @@ function rutAddSession(r,data,sourceKey){
   rutValidateAddition(r,data);
   var copy=JSON.parse(JSON.stringify(r)),source=sourceKey&&rutSessionByKey(copy,sourceKey);
   if(sourceKey&&!source)throw new Error('La sesión original ya no existe.');
+  if(source&&!source.skip&&rutFlexible(r))throw new Error('Solo las rutinas de horario fijo pueden marcarse como saltadas.');
   if(source&&rutRecoveryFor(copy,sourceKey))throw new Error('Esta sesión ya tiene una recuperación asignada.');
   if(source&&(data.date<source.ds||(data.date===source.ds&&data.time<=source.time)))throw new Error('La recuperación debe ser posterior a la sesión original.');
   if(rutDayCount(data.date,r.id)+rutSessionsOn(copy,data.date).length>=EV_MAX_RUT_DIA)throw new Error('Ese día ya tiene el máximo de '+EV_MAX_RUT_DIA+' sesiones de rutina.');
@@ -66,10 +93,10 @@ function rutValidateExtraSessions(r){
     if(!s.skip)linked[s.recoveryOf]=true;
   });
 }
-function rutSaveSessionChange(r,result,message){
+function rutSaveSessionChange(r,result,message,onChange){
   var before=JSON.parse(JSON.stringify(r));Object.assign(r,result);saveRutinas();refreshEvents();
-  if(document.getElementById('rutHistoryWrap'))openRutHistory(r,true);
-  showToast(message,'success',function(){Object.keys(r).forEach(function(k){delete r[k];});Object.assign(r,before);saveRutinas();refreshEvents();if(document.getElementById('rutHistoryWrap'))openRutHistory(r,true);});
+  if(document.getElementById('rutHistoryWrap'))openRutHistory(r,true);if(onChange)onChange();
+  showToast(message,'success',function(){Object.keys(r).forEach(function(k){delete r[k];});Object.assign(r,before);saveRutinas();refreshEvents();if(document.getElementById('rutHistoryWrap'))openRutHistory(r,true);if(onChange)onChange();});
 }
 /* La exclusión pertenece a la rutina, no a una versión de su horario: una
    sesión eliminada no reaparece al cambiar de días, recargar o importar. */

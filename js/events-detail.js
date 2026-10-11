@@ -159,7 +159,8 @@ function renderEvDetail(ev,fromSummary,car){
   if(ev._rut){
     /* Sesion de rutina: no es un evento guardado, asi que ni se edita ni se
        borra desde aqui; lo que se hace es marcarla */
-    h+='<button class="ev-btn primary" id="evDRutSes">'+(ev._rutSkip?'Marcar como hecha':'Marcar como saltada')+'</button>';
+    if(!rutFlexible(ev._rut)||ev._rutSkip)h+='<button class="ev-btn '+(ev._rutSkip?'rut-done-action':'rut-skip-action')+'" id="evDRutSes">'+(ev._rutSkip?'Marcar como hecha':'Marcar como saltada')+'</button>';
+    if(ev._rutSkip&&!rutRecoveryFor(ev._rut,ev._rutKey||ev.start))h+='<button class="ev-btn" id="evDRutRecover">Recuperar esta clase</button>';
     h+='<button class="action-edit action-edit-text ev-btn ev-edit-orange" id="evDRutEdit">&#9998; Editar rutina</button>';
   } else if(ev.id.indexOf('ev-bday-vip-')===0){
     if(bdayCanSetAlarm(_findBdayByEvId(ev.id)))h+='<button class="ev-btn primary" id="evDBdayAlarm">&#128276; Alarma de cumplea'+'\u00f1'+'os</button>';
@@ -245,10 +246,11 @@ function openEvDetail(ev,container,car){
   /* Acciones propias de una sesion de rutina */
   var _rs=document.getElementById('evDRutSes');
   if(_rs)_rs.addEventListener('click',function(){
-    if(typeof rutToggleSkip==='function'&&rutToggleSkip(ev._rut,(car&&car.ds)||ev.start,ev._rutKey)===false)return;
-    closeEvDetail();
-    setTimeout(refreshEvents,320);
+    rutChangeFromDetail(ev._rut,ev._rutKey||ev.start,repaintRoutine);
   });
+  function repaintRoutine(){var updated=rutEventsOn(ev.start).find(function(item){return item.id===ev.id;});if(updated)openEvDetail(updated,container,car);}
+  var recoveryButton=document.getElementById('evDRutRecover');
+  if(recoveryButton)recoveryButton.onclick=function(){openRutRecoveryDay(ev._rut,ev._rutKey||ev.start,null,function(){closeRutAddition();repaintRoutine();},repaintRoutine);};
   var _re=document.getElementById('evDRutEdit');
   if(_re)_re.addEventListener('click',function(){
     closeEvDetail();
@@ -403,8 +405,7 @@ function renderEvAlarmPanel(ev,firstDate){
   h+='<div class="bd-alarm-date">'+fd2(firstDate)+' \u00b7 '+diffLbl+'</div>';
   h+='<div class="ev-alarm-note">'+note+'</div></div>';
   if(_conFicha)
-    h+='<button class="ev-alarm-info" id="evAlarmInfo" style="border-color:'+_ac+';'
-      +'background:'+fakeTrans(_ac,0.72)+'">'
+    h+='<button class="ev-alarm-info" id="evAlarmInfo" style="--event-tone:'+_ac+'">'
       +'<span class="ev-alarm-info-t">Ver<br>ficha</span>'
       +'<span class="ev-alarm-info-f">&#8250;</span></button>';
   h+='</div>';

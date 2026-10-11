@@ -21,7 +21,7 @@ assert(a.rutIsSkipped(r,'2026-08-20'));a.rutToggleSkip(r,'2026-08-20');assert(!a
 assert.equal(a.validateImport({rutinas:[r]}).rutinas[0].extraSessions.length,2);
 const changed=a.rutNewSchedule(r,{weekDays:[2],time:'19:00'},'2026-08-25');assert.equal(changed.extraSessions.length,2);
 const f={id:'flex',name:'Flexible',start:'2026-08-01',weekDays:[],time:'19:00',dur:60,skips:{},weeks:{},flex:{period:'month',target:8,weeklyTarget:2,sessions:{'2026-08-17':{time:'19:00',dur:60}}}};
-a.RUTINAS=[f];Object.assign(f,a.rutAddSession(f,{date:'2026-08-19',time:'19:00',dur:60},'2026-08-17'));
+a.RUTINAS=[f];assert.throws(()=>a.rutEditSession(f,'2026-08-17','19:00',60,true),/horario fijo/);assert.throws(()=>a.rutAddSession(f,{date:'2026-08-19',time:'19:00',dur:60},'2026-08-17'),/horario fijo/);f.skips['2026-08-17']=1;Object.assign(f,a.rutAddSession(f,{date:'2026-08-19',time:'19:00',dur:60},'2026-08-17'));
 assert.equal(a.rutFlexCount(f,{start:'2026-08-01',end:'2026-08-31'}),1);
 assert.throws(()=>a.rutFlexSetSession(f,'2026-08-17','2026-08-18','19:00',60),/vinculada/);
 assert.equal(a.validateImport({rutinas:[f]}).rutinas[0].extraSessions.length,1);
@@ -128,3 +128,12 @@ const cancelledDuration=a.rutChangeWeek({...original,skips:{'2026-08-24':1}},'20
 assert.equal(a.rutDurationOn(cancelledDuration,'2026-08-24'),60);
 console.log('Edición protegida, cupos habituales, modalidades futuras y duración semanal OK');
 }
+
+// Reactivar la original exige una decisión, sin tocar el estado hasta confirmar.
+const linked={id:'linked',name:'Clase',start:'2026-08-01',weekDays:[4],time:'18:00',dur:60,skips:{},weeks:{}};
+a.RUTINAS=[linked];const pending=a.rutAddSession(linked,{date:'2026-08-24',time:'19:00',dur:60},'2026-08-20');
+const originalJSON=JSON.stringify(pending);
+assert.throws(()=>a.rutDoneCandidate(pending,'2026-08-20'),/Elige/);
+const asExtra=a.rutDoneCandidate(pending,'2026-08-20','extra');assert(!asExtra.skips['2026-08-20']);assert.equal(asExtra.extraSessions.length,1);assert(!asExtra.extraSessions[0].recoveryOf);a.rutValidateExtraSessions(asExtra);
+const removed=a.rutDoneCandidate(pending,'2026-08-20','delete');assert(!removed.skips['2026-08-20']);assert.equal(removed.extraSessions.length,0);a.rutValidateExtraSessions(removed);
+assert.equal(JSON.stringify(pending),originalJSON);

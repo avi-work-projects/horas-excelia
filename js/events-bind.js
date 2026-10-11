@@ -400,18 +400,32 @@ function _bindEvWeekTitleBackground(){
   schedule();
 }
 
+function evListFilterLabel(value){
+  if(value==='all')return 'Todos';var parts=value.split('|');
+  if(parts.length===1)return value;
+  if(parts[1]==='*')return parts[0]==='grande'?'Grandes':'Puntuales';
+  return parts[1]+(parts[1]==='Otros'?' · '+(parts[0]==='grande'?'grande':'puntual'):'');
+}
+function evListFilterMatches(ev,value){
+  if(value==='all')return true;var parts=value.split('|');
+  return parts.length===1?getEvType(ev)===value:getEvKind(ev)===parts[0]&&(parts[1]==='*'||getEvType(ev)===parts[1]);
+}
 function openEvTypeFilter(){
-  var h='<div class="ev-form-overlay" id="evTypeFilterOv"><div class="ev-form-sheet" role="dialog" aria-modal="true" aria-labelledby="evTypeFilterTitle"><div class="ev-form-handle"></div>';
-  h+='<div class="nav-icon-picker-head"><button class="sy-back" id="evTypeFilterClose" aria-label="Volver">&#8592;</button><h2 id="evTypeFilterTitle">Tipo de evento</h2></div><div class="ev-type-options">';
-  ['all'].concat(EV_LIST_TYPES).forEach(function(type){
-    var selected=EV_TYPES_FILTER===type;
-    h+='<button class="ev-type-option'+(selected?' selected':'')+'" data-type="'+escHtml(type)+'" aria-pressed="'+selected+'"><span>'+escHtml(type==='all'?'Todos':type)+'</span><span aria-hidden="true">'+(selected?'&#10003;':'')+'</span></button>';
+  var h='<div class="ev-form-overlay" id="evTypeFilterOv"><div class="ev-form-sheet ev-filter-picker" role="dialog" aria-modal="true" aria-labelledby="evTypeFilterTitle"><div class="ev-form-handle"></div>';
+  h+='<div class="nav-icon-picker-head"><button class="sy-back" id="evTypeFilterClose" aria-label="Volver">←</button><h2 id="evTypeFilterTitle">Filtrar eventos</h2></div>';
+  function option(value,label){return '<button class="ev-type-option'+(EV_TYPES_FILTER===value?' selected':'')+'" data-type="'+escHtml(value)+'" aria-pressed="'+(EV_TYPES_FILTER===value)+'">'+escHtml(label)+'</button>';}
+  h+='<div class="ev-filter-kind">'+option('all','Todos')+option('puntual|*','Puntuales')+option('grande|*','Grandes')+'</div><div class="ev-filter-groups">';
+  var groups=[['Recordatorios','puntual','#64829d',['Rec. Gestiones']],['Gestiones','puntual','#328a70',Object.keys(EV_MANAGEMENT_SUBTYPES)],['Planes y quedadas','puntual','#c47631',EV_KINDS.puntual.types.filter(evIsPlan)],['Ensayos y otros puntuales','puntual','#8c68ad',['Ensayos boda','Otros']],['Eventos grandes','grande','#3286ac',EV_KINDS.grande.types]];
+  groups.forEach(function(group){
+    var active=group[3].some(function(type){return EV_TYPES_FILTER===group[1]+'|'+type;});
+    h+='<details class="ev-filter-category-group" style="--event-tone:'+group[2]+'"'+(active?' open':'')+'><summary>'+group[0]+'<small>'+ (group[1]==='grande'?'Grande':'Puntual')+'</small></summary><div class="ev-type-options">';
+    group[3].forEach(function(type){h+=option(group[1]+'|'+type,type);});h+='</div></details>';
   });
   h+='</div></div></div>';
   var close=function(){cerrarPanel('evTypeFilterWrap','evTypeFilterOv');};
   var wrap=abrirPanel('evTypeFilterWrap',h,{overlay:'evTypeFilterOv',alCerrar:close});
-  wrap.querySelector('#evTypeFilterClose').addEventListener('click',close);
-  wrap.querySelectorAll('[data-type]').forEach(function(button){button.addEventListener('click',function(){EV_TYPES_FILTER=button.dataset.type;close();refreshEvents();});});
+  wrap.querySelector('#evTypeFilterClose').onclick=close;
+  wrap.querySelectorAll('[data-type]').forEach(function(button){button.onclick=function(){EV_TYPES_FILTER=button.dataset.type;close();refreshEvents();};});
 }
 
 function _bindEvListas(){

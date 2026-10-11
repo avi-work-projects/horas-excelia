@@ -245,7 +245,7 @@ function _renderAnalisisGastos(){
     /* Filters: search bar on first row, category buttons on second row */
     h+='<div style="display:flex;gap:4px;margin-bottom:4px;align-items:center">';
     h+='<input type="text" id="analisisFilterText" placeholder="Buscar concepto..." value="'+escHtml(ANALISIS_FILTER_TEXT)+'" style="flex:1;min-width:80px;font-size:.65rem;padding:3px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface2);color:var(--text)">';
-    h+='<button class="fiscal-period-btn" id="analisisFilterBtn" style="font-size:.58rem;padding:2px 6px">\uD83D\uDD0D Buscar</button>';
+    h+='<button class="fiscal-period-btn" id="analisisFilterBtn" style="font-size:.58rem;padding:2px 6px">Buscar</button>';
     h+='</div>';
     h+='<div style="display:flex;gap:4px;margin-bottom:6px">';
     var _fc=['all','gasto','inversion','desgrav'];

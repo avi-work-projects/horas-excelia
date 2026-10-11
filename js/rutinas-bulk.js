@@ -16,10 +16,11 @@ function rutPauseAfter(r,key,returnDate){
   var copy=JSON.parse(JSON.stringify(r)),pauses=(copy.pauses||[]).concat([{from:from,to:to}]).sort(function(a,b){return a.from.localeCompare(b.from);}),merged=[];
   pauses.forEach(function(p){var last=merged[merged.length-1];if(last&&p.from<=rutOffsetDate(last.to,1)){if(p.to>last.to)last.to=p.to;}else merged.push(p);});copy.pauses=merged;return copy;
 }
-function rutHistorySelectionHtml(state){
+function rutHistorySelectionHtml(state,r){
   if(!state.bulk)return '';
   var n=(state.selected||[]).length;
-  return '<div class="rut-bulk-actions"><span>'+n+' seleccionada'+(n===1?'':'s')+'</span><button class="ev-io-btn" data-rut-bulk-action="cancel"'+(!n?' disabled':'')+'>Cancelar clases</button><button class="ev-io-btn io-peligro" data-rut-bulk-action="delete"'+(!n?' disabled':'')+'>Eliminar</button><button class="ev-io-btn" data-rut-bulk-action="pause"'+(n!==1?' disabled':'')+'>Última antes del parón</button></div>';
+  var cancel=r&&rutFlexible(r)?'':'<button class="ev-io-btn" data-rut-bulk-action="cancel"'+(!n?' disabled':'')+'>Cancelar clases</button>';
+  return '<div class="rut-bulk-actions"><span>'+n+' seleccionada'+(n===1?'':'s')+'</span>'+cancel+'<button class="ev-io-btn io-peligro" data-rut-bulk-action="delete"'+(!n?' disabled':'')+'>Eliminar</button><button class="ev-io-btn" data-rut-bulk-action="pause"'+(n!==1?' disabled':'')+'>Última antes del parón</button></div>';
 }
 function bindRutHistorySelection(wrap,r){
   var state=RUT_HISTORY;state.selected=state.selected||[];

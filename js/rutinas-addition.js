@@ -9,7 +9,7 @@ function rutAdditionPanel(title,body,back){
 }
 function openRutAddition(r){
   var h='<p class="sy-note">'+escHtml(r.name)+' · El horario habitual se mantiene.</p><div class="rut-addition-choices">';
-  [['extra','Añadir una clase extra','Una sesión adicional, sin cancelar otra.'],['recover','Recuperar una clase cancelada','Elige la sesión que te dejaron recuperar.'],['cancel','Cancelar una clase','Puedes fijar la recuperación ahora o dejar la fecha para más adelante.']].forEach(function(o){h+='<button class="ev-btn" data-addition-mode="'+o[0]+'"><strong>'+o[1]+'</strong><span>'+o[2]+'</span></button>';});
+  [['extra','Añadir una clase extra','Una sesión adicional, sin cancelar otra.'],['recover','Recuperar una clase cancelada','Elige la sesión que te dejaron recuperar.'],['cancel','Cancelar una clase','Puedes fijar la recuperación ahora o dejar la fecha para más adelante.']].filter(function(o){return o[0]!=='cancel'||!rutFlexible(r);}).forEach(function(o){h+='<button class="ev-btn" data-addition-mode="'+o[0]+'"><strong>'+o[1]+'</strong><span>'+o[2]+'</span></button>';});
   var wrap=rutAdditionPanel('Añadir clase extra/recuperada',h+'</div>');
   wrap.querySelectorAll('[data-addition-mode]').forEach(function(b){b.onclick=function(){
     var mode=b.dataset.additionMode;
@@ -35,7 +35,7 @@ function rutAdditionPickSession(r,mode,wk){
     openRutRecoveryDay(r,b.dataset.sourceSession,null,function(){rutAdditionPickSession(r,mode,wk);});
   };});
 }
-function rutAdditionForm(r,key,date,back){
+function rutAdditionForm(r,key,date,back,onSaved){
   var source=key&&rutSessionByKey(r,key),today=evDk(new Date()),ds=date||(source&&source.ds>today?source.ds:today);
   var h=source?'<div class="rut-recovery-origin"><span>Clase a recuperar</span><div><strong>'+_rutFmt(source.ds)+'</strong><b>'+source.time+'</b></div><small>Se conserva cancelada en el histórico.</small></div>':'';
   h+='<section class="rut-addition-agenda" id="rutDestinationAgenda">'+rutReadOnlyDayHtml(ds)+'</section>';
@@ -49,5 +49,6 @@ function rutAdditionForm(r,key,date,back){
   wrap.querySelector('#rutExtraSave').onclick=function(){try{
     var result=rutAddSession(r,{date:wrap.querySelector('#rutExtraDate').value,time:wrap.querySelector('#rutExtraTime').value,dur:+wrap.querySelector('#rutExtraDur').value},key);
     closeRutAddition();rutSaveSessionChange(r,result,source?'Recuperación programada':'Clase extra añadida');
+    if(onSaved)onSaved();
   }catch(e){showToast(e.message,'error');}};
 }

@@ -32,13 +32,25 @@ milisegundo. Compartir se invoca directamente desde el gesto del usuario; cancel
 el diálogo no provoca una descarga inesperada. Si el formato o navegador no admite
 compartir, se conserva la descarga como alternativa.
 
-En Ajustes → Carpeta de exportaciones se puede elegir una carpeta para guardar
-además una copia. `export-files.js` conserva el permiso en IndexedDB, exclusivamente
-en ese dispositivo; no se exporta en el backup porque no es transferible. Sin
-carpeta seleccionada no se crea una copia adicional. Con carpeta elegida, la copia
-se intenta aunque se cancele Compartir. Si el permiso caduca o falla la escritura,
-se avisa y el archivo sigue disponible mediante Compartir o descarga. El soporte
-del selector de carpetas se comprueba en ejecución.
+Cada exportación abre una elección: Guardar copia, Compartir o Guardar y compartir.
+Compartir solo no escribe una copia; Guardar solo no abre el diálogo nativo.
+Si no hay carpeta elegida o falla su permiso, guardar usa la descarga del navegador.
+En Ajustes → Carpeta de exportaciones se elige o cambia la carpeta. Su handle y
+una ubicación descriptiva opcional se conservan en IndexedDB solo en ese dispositivo.
+La descripción la escribe el usuario: nunca se presenta como ruta detectada, porque
+el navegador no expone los antecesores de la carpeta. No viaja en el backup.
+En Guardar y compartir, cancelar Compartir no deshace la copia ya solicitada.
+El soporte del selector de carpetas se comprueba en ejecución.
+
+La ficha de cumpleaños ajusta su altura al contenido. Volver desde edición o
+alarma sustituye el panel sin esperar animaciones ni mostrar la lista entre medias.
+Las categorías conservan aire entre su título y las etiquetas; el nombre es mayor.
+Solo las rutinas de horario fijo admiten nuevas sesiones saltadas (incluido histórico
+y operaciones en lote). Los datos flexibles antiguos se preservan. La ficha permanece
+abierta tras cambiar el estado; al reactivar una original con recuperación, se exige
+eliminar esa recuperación o convertirla en extra. La operación se valida antes de guardar.
+Los filtros de Todos usan `kind|type`, para distinguir ambos tipos Otros, y `kind|*`
+para filtrar todos los puntuales o grandes. Se conserva lectura de filtros antiguos.
 
 ## Catálogo único de archivos
 

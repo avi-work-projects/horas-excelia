@@ -801,3 +801,47 @@ body:has(#bdAlarmOv.open) .tasks-fab{visibility:hidden}
 #bdDetailOv .bday-detail-alarm{border:0;background:none;padding:4px 0;box-shadow:none}
 .export-folder-sheet .ev-btn:not(.primary){color:var(--text);background:var(--surface2);border:1px solid var(--border)}
 body:has(#exportFolderOv.open) .tasks-fab{visibility:hidden}
+
+/* Fichas ajustadas a su contenido y acciones con tonos suaves. */
+#bdDetailOv .bd-detail-sheet,#bdDetailOv .bd-detail-sheet.bday-detail-has-alarm,#bdDetailOv .bd-detail-sheet:not(.bday-detail-has-alarm){height:auto;min-height:0;gap:8px}
+#bdDetailOv .bd-panel-body{flex:0 1 auto}
+#bdDetailOv .bd-detail-name{font-size:1.08rem;line-height:1.35}
+#bdDetailOv .bday-category-heading{margin-bottom:12px}
+#bdDetailOv .bd-panel-footer{margin-top:0;padding-top:6px}
+#bdDetailOv .bday-detail-alarm{margin-bottom:0}
+.bday-detail-alarm>.ev-upcoming-bell{position:static;font-size:1.3rem;flex:none}
+.ev-alarm-info{background:color-mix(in srgb,var(--event-tone) 8%,var(--surface));color:var(--text);border:1px solid color-mix(in srgb,var(--event-tone) 40%,var(--border));box-shadow:none}
+.ev-alarm-info-f{color:var(--event-tone)}
+.ev-btn.rut-skip-action{background:color-mix(in srgb,var(--c-red) 10%,var(--surface));color:var(--c-red);border:1px solid color-mix(in srgb,var(--c-red) 45%,var(--border))}
+.ev-btn.rut-done-action{background:color-mix(in srgb,var(--c-green) 10%,var(--surface));color:var(--c-green);border:1px solid color-mix(in srgb,var(--c-green) 40%,var(--border))}
+.rut-done-sheet{display:flex;flex-direction:column;gap:12px}
+.rut-done-sheet p{font-size:.85rem;line-height:1.5;margin:0}
+.export-choice-sheet{display:flex;flex-direction:column;gap:12px;width:min(420px,94vw);padding:16px;max-height:88dvh;overflow:auto}
+.export-choice-sheet p{margin:0;font-size:.8rem;line-height:1.4;color:var(--text-muted);overflow-wrap:anywhere}
+.export-choice-options{display:grid;gap:8px}
+.export-choice-options .ev-btn{display:flex;flex-direction:column;text-align:left;align-items:flex-start;gap:5px;padding:12px;background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.export-choice-options .ev-btn span{font-size:.76rem;font-weight:400;color:var(--text-muted)}
+.export-choice-options [data-export-mode="both"]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 6%,var(--surface))}
+.export-folder-sheet label{font-size:.8rem;font-weight:600}
+body:has(#exportChoiceOv.open) .tasks-fab,body:has(#rutDoneOv.open) .tasks-fab{visibility:hidden}
+.ev-filter-picker{width:min(480px,96vw);max-height:85dvh;display:flex;flex-direction:column;gap:14px;overflow:hidden}
+.ev-filter-kind{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.ev-filter-groups{overflow:auto;min-height:0;display:flex;flex-direction:column;gap:10px}
+.ev-filter-category-group{border:1px solid color-mix(in srgb,var(--event-tone) 35%,var(--border));background:color-mix(in srgb,var(--event-tone) 5%,var(--surface));border-radius:12px;padding:10px}
+.ev-filter-category-group summary{font-size:.83rem;font-weight:600;cursor:pointer;color:var(--text);display:flex;align-items:center;gap:8px;list-style:none}
+.ev-filter-category-group summary::-webkit-details-marker{display:none}
+.ev-filter-category-group summary::after{content:'';width:7px;height:7px;border-right:2px solid var(--event-tone);border-bottom:2px solid var(--event-tone);transform:rotate(45deg);margin-left:4px;flex:none}
+.ev-filter-category-group[open] summary::after{transform:rotate(225deg)}
+.ev-filter-category-group summary small{margin-left:auto;font-weight:400;font-size:.65rem;color:var(--text-muted)}
+.ev-filter-category-group .ev-type-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:12px}
+.ev-filter-picker .ev-type-option{font-size:.77rem;padding:10px 8px;min-height:40px;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:8px;white-space:normal;text-align:left}
+.ev-filter-picker .ev-type-option.selected{border-color:var(--event-tone,var(--accent));box-shadow:inset 0 0 0 1px var(--event-tone,var(--accent));background:color-mix(in srgb,var(--event-tone,var(--accent)) 12%,var(--surface))}
+.ev-types-select .ev-tax-chevron{width:8px;height:8px;margin-right:3px;flex:none}
+.ev-list-category{display:flex;align-items:center;gap:8px;font-size:.7rem;color:var(--text-muted);margin:5px 0}
+.ev-list-category span{font-size:.65rem;border:1px solid color-mix(in srgb,var(--event-tone) 40%,var(--border));background:color-mix(in srgb,var(--event-tone) 7%,var(--surface));border-radius:5px;padding:2px 5px}
+
+body:has(#evTypeFilterOv.open,#evAlarmOv.open,#rutAdditionOv.open) .tasks-fab{visibility:hidden}
+#bdDetailOv .bday-detail-alarm>.ev-upcoming-bell{opacity:1}
+.ev-filter-category-group summary{background:none;padding-top:4px;padding-bottom:4px}
+
+#evDetailOv:has(#evDRutEdit) .ev-detail-sheet:not(.ev-car-sheet){height:min(360px,88dvh)}

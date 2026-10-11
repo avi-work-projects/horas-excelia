@@ -72,15 +72,18 @@ a.rutFlexSetSession(firstMonth,null,'2026-09-01','19:00',60);
 const beforeMove=JSON.stringify(firstMonth);
 assert.throws(()=>a.rutFlexSetSession(firstMonth,'2026-09-01','2026-08-22','19:00',60),/cupo/);
 assert.equal(JSON.stringify(firstMonth),beforeMove);
-// Las canceladas no cuentan como hechas y liberan también el cupo especial.
-a.rutToggleSkip(firstMonth,'2026-08-01');
+// No se crean cancelaciones flexibles nuevas; las importadas siguen contando bien.
+a.showToast=()=>{};
+assert.equal(a.rutToggleSkip(firstMonth,'2026-08-01'),false);
+assert(!firstMonth.skips['2026-08-01']);
+firstMonth.skips['2026-08-01']=1;
 assert.equal(a.rutStats(firstMonth).hechas,1);
 assert.equal(a.rutStats(firstMonth).saltadas,1);
 assert.equal(a.rutFlexStatus(firstMonth,'2026-08-21').left,1);
 a.rutFlexSetSession(firstMonth,null,'2026-08-22','19:00',60);
 assert.throws(()=>a.rutFlexSetSession(firstMonth,'2026-08-01','2026-08-01','00:00',45,true),/cupo/);
 assert.equal(a.rutIsSkipped(firstMonth,'2026-08-01'),true);
-a.rutToggleSkip(firstMonth,'2026-08-22');
+firstMonth.skips['2026-08-22']=1; // estado legado importado
 a.rutToggleSkip(firstMonth,'2026-08-01');
 assert.equal(a.rutStats(firstMonth).hechas,2);
 // Recarga e importación conservan el cupo, las fechas y la duración histórica.

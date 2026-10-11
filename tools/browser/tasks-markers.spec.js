@@ -1,3 +1,4 @@
+const {exportFile}=require('./export-helper');
 const {test,expect}=require('@playwright/test');
 // Estas pruebas inspeccionan el archivo descargado; Compartir se valida en export-sharing.spec.js.
 test.beforeEach(async({page})=>{await page.addInitScript(()=>Object.defineProperty(navigator,'canShare',{configurable:true,value:()=>false}));});
@@ -33,7 +34,7 @@ test('tareas: marcar sin retirar, mover, reabrir y conservar en backup',async({p
   await page.getByRole('checkbox',{name:'Reabrir Comprar pintura',exact:true}).click();
   await expect(page.getByRole('tab',{name:'Pendientes 2',exact:true})).toBeVisible();
   await page.locator('#tasksClose').click();await page.locator('#menuBtn').click();
-  const [download]=await Promise.all([page.waitForEvent('download'),page.locator('#exportAllBtn').click()]);
+  const [download]=await Promise.all([page.waitForEvent('download'),exportFile(page,'#exportAllBtn','save')]);
   const data=JSON.parse(require('fs').readFileSync(await download.path(),'utf8'));
   expect(data.tasks.items).toHaveLength(3);expect(data.tasks.items[0].title).toBe('Colgar cuadro');expect(data.tasks.items[0].completedAt).not.toBeNull();
   await page.reload();await page.locator('#homePopupClose').click();

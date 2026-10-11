@@ -58,7 +58,7 @@ function renderRutHistory(r,state){
   var today=evDk(new Date()),groups=rutHistoryMonthGroups(r,state);
   var h='<div class="ev-detail-overlay" id="rutHistoryOv"><div class="ev-detail-sheet rut-history-sheet">';
   h+='<div class="ev-detail-handle"></div><div class="rut-history-head"><button class="sy-back" id="rutHistoryClose" aria-label="Cerrar histórico">&#8592;</button><div><strong>'+escHtml(r.name)+'</strong><span>Histórico de sesiones</span></div><button class="today-btn" id="rutHistoryToday">Hoy</button></div>';
-  h+='<div class="rut-history-actions"><button class="ev-io-btn io-primaria" id="rutHistoryAdd">Añadir clase extra/recuperada</button><button class="ev-io-btn" id="rutHistoryBulk">'+(state.bulk?'Terminar selección':'Seleccionar clases / parón')+'</button></div>'+(state.bulk?rutHistorySelectionHtml(state):'')+'<div class="rut-history-body"><p class="sy-note">Sesiones por mes y horario habitual. El lápiz permite corregir o eliminar una sesión; las semanas sueltas se señalan como excepciones.</p>';
+  h+='<div class="rut-history-actions"><button class="ev-io-btn io-primaria" id="rutHistoryAdd">Añadir clase extra/recuperada</button><button class="ev-io-btn" id="rutHistoryBulk">'+(state.bulk?'Terminar selección':'Seleccionar clases / parón')+'</button></div>'+(state.bulk?rutHistorySelectionHtml(state,r):'')+'<div class="rut-history-body"><p class="sy-note">Sesiones por mes y horario habitual. El lápiz permite corregir o eliminar una sesión; las semanas sueltas se señalan como excepciones.</p>';
   (r.pauses||[]).forEach(function(p){h+='<p class="sy-note">Pausa: '+_rutFmt(p.from)+' a '+_rutFmt(p.to)+' · vuelta '+_rutFmt(rutOffsetDate(p.to,1))+'</p>';});
   if(state.from>(r.flex?rutFlexEarliest(r):r.start))h+='<button class="ev-io-btn rut-history-more" id="rutHistoryPast">Ver 12 meses anteriores</button>';
   Object.keys(groups).forEach(function(month){
@@ -112,6 +112,7 @@ function closeRutHistory(){cerrarPanel('rutHistoryWrap','rutHistoryOv');}
 function rutEditSession(r,ds,time,dur,skip,key){
   key=key||ds;var session=rutSessionByKey(r,key);
   if(!session)throw new Error('La sesión ya no existe');
+  if(skip&&!session.skip&&rutFlexible(r))throw new Error('Solo las rutinas de horario fijo pueden marcarse como saltadas.');
   if(!skip&&rutRecoveryFor(r,key))throw new Error('Cancela primero su recuperación para reactivar la sesión original.');
   if(!skip&&rutSessionsOn(r,ds).some(function(s){return s.key!==key&&!s.skip&&s.time===time;}))throw new Error('Ya tienes una sesión de esta rutina a esa hora.');
   if(!/^([01]\d|2[0-3]):[0-5]\d$/.test(time)||!Number.isInteger(dur)||dur<15||dur>480)throw new Error('Revisa la hora y duración (15–480 min)');
@@ -134,13 +135,13 @@ function openRutHistoryEdit(r,key){
     h+='<button class="ev-io-btn" id="rutHistoryCancel">Descancelar clase</button>';
     if(!rutRecoveryFor(r,key))h+='<button class="ev-io-btn rut-recovery-confirm" id="rutHistoryRecover">Recuperar clase</button>';
     else h+='<p class="sy-note">'+escHtml(rutRecoveryNote(r,key))+'</p>';
-  }else h+='<button class="ev-io-btn io-peligro" id="rutHistoryCancel">Cancelar clase</button>';
+  }else if(!rutFlexible(r))h+='<button class="ev-io-btn io-peligro" id="rutHistoryCancel">Cancelar clase</button>';
   h+='</div>';
   h+='<div class="ev-form-actions"><button class="ev-btn danger" id="rutHistoryDelete">Eliminar</button><button class="ev-btn primary" id="rutHistorySave">Guardar</button></div></div></div>';
   var close=function(){cerrarPanel('rutHistoryEditWrap','rutHistoryEditOv');};
   var wrap=abrirPanel('rutHistoryEditWrap',h,{overlay:'rutHistoryEditOv',alCerrar:close});
   wrap.querySelector('#rutHistoryEditClose').onclick=close;
-  wrap.querySelector('#rutHistoryCancel').onclick=function(){try{
+  var cancel=wrap.querySelector('#rutHistoryCancel');if(cancel)cancel.onclick=function(){try{
     var result=rutEditSession(r,ds,session.time,session.dur,!session.skip,key);
     rutSaveSessionChange(r,result,session.skip?'Clase reactivada':'Clase cancelada');openRutHistoryEdit(r,key);
   }catch(e){showToast(e.message,'error');}};

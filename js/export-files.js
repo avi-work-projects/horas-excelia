@@ -1,6 +1,7 @@
 /* Exportaciones: nombres únicos y copia opcional en una carpeta elegida.
    El permiso de carpeta es local a este dispositivo: no viaja en el backup. */
 var EXPORT_DIRECTORY=null;
+var EXPORT_DIRECTORY_LABEL='';
 var EXPORT_DIRECTORY_READY=Promise.resolve();
 var EXPORT_NAME_LAST='',EXPORT_NAME_SEQUENCE=0;
 function exportFileName(filename){
@@ -29,7 +30,7 @@ function exportDirectoryStore(mode,value){
   });
 }
 function initExportDirectory(){
-  EXPORT_DIRECTORY_READY=exportDirectoryStore('get').then(function(handle){EXPORT_DIRECTORY=handle||null;}).catch(function(){});
+  EXPORT_DIRECTORY_READY=exportDirectoryStore('get').then(function(record){EXPORT_DIRECTORY=record&&(record.handle||record);EXPORT_DIRECTORY_LABEL=record&&record.label||'';}).catch(function(){});
   var btn=document.getElementById('exportFolderBtn');if(btn)btn.onclick=openExportDirectory;
 }
 async function saveExportCopy(blob,filename){
@@ -37,31 +38,45 @@ async function saveExportCopy(blob,filename){
   var dir=EXPORT_DIRECTORY;if(!dir)return false;
   var writable;
   try{
-    if(await dir.queryPermission({mode:'readwrite'})!=='granted')throw new Error('permission');
+    var permission=await dir.queryPermission({mode:'readwrite'});
+    if(permission==='prompt'&&dir.requestPermission)permission=await dir.requestPermission({mode:'readwrite'});
+    if(permission!=='granted')throw new Error('permission');
     var file=await dir.getFileHandle(filename,{create:true});
     writable=await file.createWritable();await writable.write(blob);await writable.close();
-    showToast('Copia guardada en '+dir.name,'success');return true;
+    showToast('Copia guardada en '+(EXPORT_DIRECTORY_LABEL||dir.name),'success');return true;
   }catch(err){
     if(writable&&writable.abort)try{await writable.abort();}catch(ignore){}
     showToast('No se pudo guardar la copia. Revisa la carpeta de exportaciones en Ajustes','error');return false;
   }
 }
-function openExportDirectory(){
+function openExportDirectory(onClosed){
   closeSettingsMenu();
-  function close(){cerrarPanel('exportFolderWrap','exportFolderOv');}
+  function close(){cerrarPanel('exportFolderWrap','exportFolderOv');if(typeof onClosed==='function')onClosed();}
   var supported=typeof window.showDirectoryPicker==='function';
-  var html='<div class="bd-form-overlay" id="exportFolderOv"><div class="bd-form-sheet export-folder-sheet"><header class="bd-panel-header"><button class="sy-back" id="exportFolderClose" aria-label="Volver">←</button><h2>Carpeta de exportaciones</h2></header><p>Al exportar se abrirá Compartir. Si eliges una carpeta, también se guardará una copia con fecha y hora.</p><p id="exportFolderStatus" role="status"></p><button class="ev-btn primary" id="exportFolderChoose"'+(supported?'':' disabled')+'>Elegir carpeta</button><button class="ev-btn" id="exportFolderClear">Dejar de guardar copias</button>'+(supported?'':'<p>Este navegador no permite elegir carpetas. Puedes guardar el archivo desde el menú Compartir si ofrece esa opción.</p>')+'</div></div>';
+  var html='<div class="bd-form-overlay" id="exportFolderOv"><div class="bd-form-sheet export-folder-sheet"><header class="bd-panel-header"><button class="sy-back" id="exportFolderClose" aria-label="Volver">←</button><h2>Carpeta de exportaciones</h2></header><p>Al exportar podrás guardar una copia, compartir el archivo o hacer ambas cosas.</p><p id="exportFolderStatus" role="status"></p><button class="ev-btn" id="exportFolderChoose"'+(supported?'':' disabled')+'>Elegir o cambiar carpeta</button><label for="exportFolderLabel">Ubicación descriptiva</label><input class="ev-input" id="exportFolderLabel" maxlength="200" placeholder="Ej.: Downloads / Gestify"><p>Referencia escrita por ti. El navegador no permite consultar las carpetas superiores.</p><button class="ev-btn primary" id="exportFolderSave">Guardar referencia</button>'+(supported?'':'<p>Este navegador no permite elegir carpetas. La copia se descargará en la ubicación configurada por el navegador.</p>')+'</div></div>';
   var root=abrirPanel('exportFolderWrap',html,{contenedor:document.body,overlay:'exportFolderOv',alCerrar:close});
-  function status(){root.querySelector('#exportFolderStatus').textContent=EXPORT_DIRECTORY?'Carpeta: '+EXPORT_DIRECTORY.name:'Sin carpeta seleccionada';root.querySelector('#exportFolderClear').disabled=!EXPORT_DIRECTORY;}
+  function status(){root.querySelector('#exportFolderStatus').textContent=EXPORT_DIRECTORY?'Carpeta: '+(EXPORT_DIRECTORY_LABEL||EXPORT_DIRECTORY.name):'Sin carpeta seleccionada';root.querySelector('#exportFolderLabel').value=EXPORT_DIRECTORY_LABEL;root.querySelector('#exportFolderSave').disabled=!EXPORT_DIRECTORY;}
   status();EXPORT_DIRECTORY_READY.then(function(){if(root.isConnected)status();});
   root.querySelector('#exportFolderClose').onclick=close;
   root.querySelector('#exportFolderChoose').onclick=async function(){
     try{
       var dir=await window.showDirectoryPicker({id:'gestify-exports',mode:'readwrite'});
-      await exportDirectoryStore('set',dir);EXPORT_DIRECTORY=dir;status();
+      await exportDirectoryStore('set',{handle:dir,label:''});EXPORT_DIRECTORY=dir;EXPORT_DIRECTORY_LABEL='';status();
     }catch(err){if(err.name!=='AbortError')showToast('No se pudo seleccionar la carpeta','error');}
   };
-  root.querySelector('#exportFolderClear').onclick=async function(){
-    try{await exportDirectoryStore('set',null);EXPORT_DIRECTORY=null;status();}catch(err){showToast('No se pudo quitar la carpeta','error');}
+  root.querySelector('#exportFolderSave').onclick=async function(){
+    try{var label=root.querySelector('#exportFolderLabel').value.trim();await exportDirectoryStore('set',{handle:EXPORT_DIRECTORY,label:label});EXPORT_DIRECTORY_LABEL=label;status();showToast('Ubicación descriptiva guardada','success');}catch(err){showToast('No se pudo guardar la referencia','error');}
   };
+}
+function openExportChoice(blob,filename,onSuccess,options){
+  function close(){cerrarPanel('exportChoiceWrap','exportChoiceOv');}
+  var html='<div class="bd-form-overlay" id="exportChoiceOv"><div class="bd-form-sheet export-choice-sheet" role="dialog" aria-modal="true" aria-labelledby="exportChoiceTitle"><header class="bd-panel-header"><button class="sy-back" id="exportChoiceClose" aria-label="Volver">←</button><h2 id="exportChoiceTitle">Exportar archivo</h2></header><p class="export-choice-filename">'+escHtml(filename)+'</p><div class="export-choice-options">';
+  [['save','Guardar copia','Guardar el archivo en este dispositivo.'],['share','Compartir','Enviar a WhatsApp u otra aplicación.'],['both','Guardar y compartir','Conservar una copia y abrir Compartir.']].forEach(function(item){html+='<button class="ev-btn" data-export-mode="'+item[0]+'"><strong>'+item[1]+'</strong><span>'+item[2]+'</span></button>';});
+  html+='</div><p id="exportChoiceLocation"></p><button class="ev-btn" id="exportChoiceFolder">Carpeta de exportaciones</button></div></div>';
+  var root=abrirPanel('exportChoiceWrap',html,{contenedor:document.body,overlay:'exportChoiceOv',alCerrar:close});
+  function location(){if(root.isConnected)root.querySelector('#exportChoiceLocation').textContent=EXPORT_DIRECTORY?'Copia local: '+(EXPORT_DIRECTORY_LABEL||EXPORT_DIRECTORY.name):'Sin carpeta elegida: la copia se guardará mediante una descarga.';}
+  location();EXPORT_DIRECTORY_READY.then(location);
+  root.querySelector('#exportChoiceClose').onclick=close;
+  root.querySelector('#exportChoiceFolder').onclick=function(){openExportDirectory(location);};
+  root.querySelectorAll('[data-export-mode]').forEach(function(button){button.onclick=function(){close();shareOrDownload(blob,filename,onSuccess,Object.assign({},options,{mode:button.dataset.exportMode}));};});
 }

@@ -317,7 +317,7 @@ console.log('ICS: avisos de cambios/reexportación, cero cancelaciones y backup 
     c.setTimeout=(fn,ms)=>{state.timers.push({fn,ms});};
     c.document.body={appendChild(el){el.parentNode=this;},removeChild(el){el.parentNode=null;}};
     c.document.createElement=()=>({click(){state.clicks++;}});c.showToast=()=>{};
-    return {c,state,run:opts=>c.shareOrDownload({type:'text/calendar'},'test.ics',()=>state.success++,opts)};
+    return {c,state,run:opts=>c.shareOrDownload({type:'text/calendar'},'test.ics',()=>state.success++,Object.assign({mode:'share'},opts))};
   }
   let x=env(()=>Promise.reject({name:'NotAllowedError'}),()=>true);x.run();
   await new Promise(resolve=>setImmediate(resolve));
@@ -327,6 +327,8 @@ console.log('ICS: avisos de cambios/reexportación, cero cancelaciones y backup 
   await new Promise(resolve=>setImmediate(resolve));assert.equal(x.state.clicks,0);assert.equal(x.state.success,0);
   x=env(()=>{throw Error('No debe abrir compartir');},()=>true);x.run({download:true});await new Promise(resolve=>setImmediate(resolve));assert.equal(x.state.clicks,1);
   x=env(()=>{},()=>{throw Error('Formato no admitido');});x.run();await new Promise(resolve=>setImmediate(resolve));assert.equal(x.state.clicks,1);
+  x=env(()=>Promise.reject({name:'AbortError'}),()=>true);x.run({mode:'both'});await new Promise(resolve=>setImmediate(resolve));assert.equal(x.state.clicks,1);assert.equal(x.state.success,1);
+  x=env(()=>Promise.reject({name:'NotAllowedError'}),()=>true);x.run({mode:'both'});await new Promise(resolve=>setImmediate(resolve));assert.equal(x.state.clicks,1);assert.equal(x.state.success,1);
   console.log('Descargas: rechazo recuperable, cancelar, enlace diferido y descarga directa OK');
 })().catch(err=>{console.error(err);process.exitCode=1;});
 
