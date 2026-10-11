@@ -10,7 +10,13 @@
 <div class="bd-panel-body">
 <div class="ev-field">
 <label>Nombre</label>
+<div class="bday-form-name-row">
 <input class="ev-input" id="bdFName" type="text" maxlength="60" placeholder="Nombre completo" value="ana pruebas">
+<label class="bday-person-vip">
+<input type="checkbox" id="bdFVip" aria-label="VIP" checked>
+<img src="./VIP.png" alt="" aria-hidden="true">
+</label>
+</div>
 </div>
 <div class="ev-field ev-date-row">
 <div>
@@ -28,14 +34,11 @@
 </div>
 <div id="bdFDateError" class="bday-date-error" role="status">
 </div>
-<label class="bday-person-vip">
-<input type="checkbox" id="bdFVip" aria-label="VIP" checked>
-<img src="./VIP.png" alt="" aria-hidden="true">
-</label>
 <section class="bday-detail-groups">
 <div class="bday-category-heading">
 <h3>Categorías</h3>
-<button type="button" class="ev-btn bday-category-button" id="bdCategories" data-groups="[]">Cambiar <span aria-hidden="true">›</span>
+<button type="button" class="action-edit bday-category-button" id="bdCategories" aria-label="Editar categorías" data-groups="[]">
+<span aria-hidden="true">&#9998;</span>
 </button>
 </div>
 <div class="bday-person-groups" id="bdPersonGroups">

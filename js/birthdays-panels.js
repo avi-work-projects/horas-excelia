@@ -2,11 +2,13 @@ function renderBdayNameVip(id,vip){return '<img class="bday-name-vip" id="'+id+'
 function updateBdayNameVip(id,vip){var icon=document.getElementById(id);icon.style.visibility=vip?'visible':'hidden';icon.setAttribute('aria-hidden',!vip);}
 function renderBdayVipToggle(id,vip){return '<label class="bday-person-vip"><input type="checkbox" id="'+id+'" aria-label="VIP"'+(vip?' checked':'')+'><img src="./VIP.png" alt="" aria-hidden="true"></label>';}
 function renderBdayDetail(b){
+  var words=tc(b.name).trim().split(/\s+/),lastWord=words.pop();
+  var displayName=(words.length?escHtml(words.join(' '))+' ':'')+'<span class="bday-name-tail">'+escHtml(lastWord)+renderBdayNameVip('bdDNameVip',b.vip)+'</span>';
   var dl=daysUntil(b.month,b.day);
   var lbl=dl===0?'¡Hoy es su cumpleaños!':dl===1?'Mañana cumple años':'Faltan '+dl+' días';
   var h='<div class="bd-detail-overlay" id="bdDetailOv"><div class="bd-detail-sheet">';
   h+='<header class="bd-panel-header"><button class="sy-back" id="bdDClose" aria-label="Volver">←</button><h2>Cumpleaños</h2>'+(bdayCanSetAlarm(b)?'<button class="ev-btn" id="bdDAlarm" aria-label="Configurar alarma">Alarma</button>':'')+'</header>';
-  h+='<div class="bd-panel-body"><div class="bday-person-summary"><div class="bd-detail-name"><span>'+bdName(b.name)+'</span>'+renderBdayNameVip('bdDNameVip',b.vip)+'</div><div class="bday-detail-meta"><div class="bd-detail-date">'+b.day+' de '+MN[b.month-1]+'</div>'+renderBdayVipToggle('bdDVip',b.vip)+'</div><div class="bd-detail-lbl">'+lbl+'</div></div>';
+  h+='<div class="bd-panel-body"><div class="bday-person-summary"><div class="bd-detail-name"><span>'+displayName+'</span></div><div class="bday-detail-meta"><div class="bd-detail-date">'+b.day+' de '+MN[b.month-1]+'</div>'+renderBdayVipToggle('bdDVip',b.vip)+'</div><div class="bd-detail-lbl">'+lbl+'</div></div>';
   h+=renderBdayPersonGroups(b);
   h+='</div>';
   h+='<footer class="bd-panel-footer ev-detail-actions"><button class="action-edit action-edit-text ev-btn ev-edit-orange" id="bdDEdit">&#9998; Editar</button><button class="ev-btn danger" id="bdDDel">Eliminar</button></footer>';
@@ -259,12 +261,11 @@ function renderBdayForm(b,prefillDay,prefillMonth){
   else h+='<div style="width:60px"></div>';
   h+='</header><div class="bd-panel-body">';
   h+='<div class="ev-field"><label>Nombre</label>';
-  h+='<input class="ev-input" id="bdFName" type="text" maxlength="60" placeholder="Nombre completo" value="'+escHtml(name)+'"></div>';
+  h+='<div class="bday-form-name-row"><input class="ev-input" id="bdFName" type="text" maxlength="60" placeholder="Nombre completo" value="'+escHtml(name)+'">'+renderBdayVipToggle('bdFVip',vip)+'</div></div>';
   h+='<div class="ev-field ev-date-row">';
   h+='<div><label>Día</label><input type="hidden" id="bdFDay" value="'+escHtml(String(day))+'"><button type="button" class="ev-input bday-date-button" id="bdFDayPick" aria-describedby="bdFDateError">'+(day||'Elegir día')+' <span aria-hidden="true">⌄</span></button></div>';
   h+='<div><label>Mes</label><input type="hidden" id="bdFMonth" value="'+month+'"><button type="button" class="ev-input bday-date-button" id="bdFMonthPick">'+MN[month-1]+' <span aria-hidden="true">⌄</span></button></div></div>';
   h+='<div id="bdFDateError" class="bday-date-error" role="status"></div>';
-  h+=renderBdayVipToggle('bdFVip',vip);
   h+=renderBdayGroupFields(b);
   h+='</div><footer class="bd-panel-footer"><button class="ev-btn primary" id="bdFSave">Guardar</button></footer>';
   h+='</div></div>';

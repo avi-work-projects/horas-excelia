@@ -24,8 +24,8 @@
 
 **Funciones:** bdayNormalizeGroup:5 · bdayGroups:12 · bdayGroupCatalog:13 · bdayGroupHue:15 · bdayGroupTags:16 · bdayGroupMatch:17 · bdayGroupChips:18 · renderBdayGroupTools:19 · bdayGroupFilterLabel:27 · renderBdayGroupPickerFields:28 · renderBdayGroupFields:29 · renderBdayPersonGroups:30 · bindBdayCategoryButton:31 · openBdayCategoryPicker:35 · close:36 · bdayReadGroupFields:43 · updateBdayGroupStatus:44 · bindBdayGroupTools:55 · bdaySaveGroupDraft:62
 
-### js/birthdays-panels.js  _(357 líneas)_
-**Funciones:** renderBdayNameVip:1 · updateBdayNameVip:2 · renderBdayVipToggle:3 · renderBdayDetail:4 · renderBdayAlarmPanel:18 · fmtDate:30 · openBdayAlarm:85 · _bdRefreshBoth:93 · closeBdayAlarm:97 · bindBdayAlarmEvents:99 (!148) · fmtD:217 · onOk:224 · onErr:225 · renderBdayForm:247 · openBdayDetail:275 · savePerson:279 · closeBdayDetail:295 · openBdayForm:298 · closeBdayForm:307 · deleteBdayPerson:311 · persist:314 · bindBdayDateFields:317 · update:319 · openBdayDatePicker:331 · close:332 · mark:347 · select:348
+### js/birthdays-panels.js  _(358 líneas)_
+**Funciones:** renderBdayNameVip:1 · updateBdayNameVip:2 · renderBdayVipToggle:3 · renderBdayDetail:4 · renderBdayAlarmPanel:20 · fmtDate:32 · openBdayAlarm:87 · _bdRefreshBoth:95 · closeBdayAlarm:99 · bindBdayAlarmEvents:101 (!148) · fmtD:219 · onOk:226 · onErr:227 · renderBdayForm:249 · openBdayDetail:276 · savePerson:280 · closeBdayDetail:296 · openBdayForm:299 · closeBdayForm:308 · deleteBdayPerson:312 · persist:315 · bindBdayDateFields:318 · update:320 · openBdayDatePicker:332 · close:333 · mark:348 · select:349
 
 ### js/birthdays-render.js  _(243 líneas)_
 **Estado global:** DN7:95
@@ -281,10 +281,10 @@
 ### js/import-preview.js  _(19 líneas)_
 **Funciones:** renderImportPreview:2 · add:4
 
-### js/init.js  _(446 líneas)_
+### js/init.js  _(447 líneas)_
 **Estado global:** DRUM_ITEM_H:132 · DN_ES:289
 
-**Funciones:** _updateHeaderActive:31 · buildDrumPicker:133 · updateDrumSelected:161 · getDrumValue:167 · checkDrumMinuteWrap:173 · buildAlarmDayBtns:204 · showAlarmPastConfirm:234 · proceed:275 · aplicarActualizacion:371 · reload:377 · _showUpdateBar:399 · _buscar:433
+**Funciones:** _updateHeaderActive:31 · buildDrumPicker:133 · updateDrumSelected:161 · getDrumValue:167 · checkDrumMinuteWrap:173 · buildAlarmDayBtns:204 · showAlarmPastConfirm:234 · proceed:275 · aplicarActualizacion:371 · reload:377 · _showUpdateBar:399 · _buscar:434
 
 ### js/logo-popup.js  _(51 líneas)_
 **Funciones:** _logoUpdateDots:14
@@ -666,7 +666,7 @@
 **Rangos por prefijo de clase:**
 .ev-shape:19-19 · .rut-add:45-45 · .rut-card:35-43 · .rut-day:51-52 · .rut-days:50-50 · .rut-dot:38-38 · .rut-first:16-16 · .rut-flex:13-21 · .rut-hist:57-60 · .rut-hpd:2-5 · .rut-icon:7-11 · .rut-name:39-39 · .rut-pct:44-44 · .rut-plan:22-34 · .rut-sec:12-12 · .rut-stat:54-56 · .rut-sug:46-49 · .rut-susp:53-53 · .rut-tag:40-41 · .rut-vacio:42-42
 
-### css/source/shared-refinements.css  _(714 líneas)_
+### css/source/shared-refinements.css  _(737 líneas)_
 
 **Secciones:**
 
@@ -708,9 +708,10 @@
 - Controles compactos y paneles estables: solo se desplaza su contenido.:593
 - Buscador y filtro comparten fila; las opciones conservan todo el ancho.:636
 - Ficha compacta, acciones compartidas y fecha sin controles nativos.:680
+- Cumpleaños: jerarquía por espacios y edición junto a cada campo.:715
 
 **Rangos por prefijo de clase:**
-.bd-detail:653-654 · .bd-panel:607-612 · .bday-category:578-624 · .bday-date:689-711 · .bday-detail:621-669 · .bday-filter:569-645 · .bday-first:591-591 · .bday-group:566-662 · .bday-hdr:161-162 · .bday-header:156-503 · .bday-jump:56-95 · .bday-label:597-597 · .bday-list:575-588 · .bday-month:174-713 · .bday-name:655-655 · .bday-next:104-105 · .bday-no:627-627 · .bday-person:573-620 · .bday-show:577-683 · .bday-sub:285-286 · .bday-today:559-681 · .bday-upcoming:54-530 · .bday-vip:531-657 · .boda-catalog:81-89 · .boda-cfg:131-147 · .boda-config:77-128 · .boda-count:85-85 · .boda-date:149-167 · .boda-day:118-118 · .boda-field:119-124 · .boda-filter:59-61 · .boda-mini:67-67 · .boda-pack:86-87 · .boda-pfilters:58-62 · .boda-sticky:78-144 · .boda-teachers:106-106 · .data-actions:344-344 · .data-btn:345-356 · .econ-equiv:476-476 · .econ-tab:327-331 · .econ-tariff:408-478 · .energy-tariff:454-456 · .est-nav:329-330 · .ev-annual:548-548 · .ev-bday:287-583 · .ev-bright:444-444 · .ev-del:13-14 · .ev-list:2-427 · .ev-month:515-525 · .ev-multi:50-72 · .ev-rut:244-311 · .ev-search:3-7 · .ev-sort:8-53 · .ev-type:429-431 · .ev-types:428-428 · .ev-up:271-529 · .ev-view:66-66 · .ev-wk:226-443 · .fiscal-hdr:552-552 · .fiscal-hip:405-406 · .fiscal-tab:328-328 · .hip-rate:506-510 · .hip-ro:549-550 · .home-birthday:467-498 · .home-pending:468-474 · .home-popup:483-538 · .home-reminder:462-546 · .imp-mode:17-27 · .macro-url:70-70 · .nav-icon:364-374 · .nav-pro:338-350 · .nav-style:362-362 · .rate-input:46-46 · .rut-addition:206-223 · .rut-agenda:220-221 · .rut-cancelled:247-306 · .rut-history:190-241 · .rut-hpd:188-188 · .rut-icon:172-173 · .rut-recovery:215-224 · .rut-session:225-225 · .rut-skipped:307-308 · .rut-week:189-189 · .selected:371-371 · .settings-details:107-109 · .settings-edit:71-110 · .settings-menu:440-440 · .sy-back:37-37 · .sy-body:35-586 · .sy-card:41-41 · .sy-header:36-505 · .sy-lbl:40-40 · .sy-period:414-421 · .sy-table:42-42 · .sy-tr:43-43 · .sy-val:39-39 · .sy-year:38-38 · .week-card:391-391 · .wm-logo:92-251
+.app-update:732-734 · .bd-detail:653-654 · .bd-panel:607-612 · .bday-category:578-624 · .bday-date:689-711 · .bday-detail:621-669 · .bday-filter:569-645 · .bday-first:591-591 · .bday-form:727-728 · .bday-group:566-731 · .bday-hdr:161-162 · .bday-header:156-503 · .bday-jump:56-95 · .bday-label:597-597 · .bday-list:575-588 · .bday-month:174-713 · .bday-name:655-736 · .bday-next:104-105 · .bday-no:627-627 · .bday-person:573-620 · .bday-show:577-683 · .bday-sub:285-286 · .bday-today:559-681 · .bday-upcoming:54-530 · .bday-vip:531-657 · .boda-catalog:81-89 · .boda-cfg:131-147 · .boda-config:77-128 · .boda-count:85-85 · .boda-date:149-167 · .boda-day:118-118 · .boda-field:119-124 · .boda-filter:59-61 · .boda-mini:67-67 · .boda-pack:86-87 · .boda-pfilters:58-62 · .boda-sticky:78-144 · .boda-teachers:106-106 · .data-actions:344-344 · .data-btn:345-356 · .econ-equiv:476-476 · .econ-tab:327-331 · .econ-tariff:408-478 · .energy-tariff:454-456 · .est-nav:329-330 · .ev-annual:548-548 · .ev-bday:287-583 · .ev-bright:444-444 · .ev-del:13-14 · .ev-list:2-427 · .ev-month:515-525 · .ev-multi:50-72 · .ev-rut:244-311 · .ev-search:3-7 · .ev-sort:8-53 · .ev-type:429-431 · .ev-types:428-428 · .ev-up:271-529 · .ev-view:66-66 · .ev-wk:226-443 · .fiscal-hdr:552-552 · .fiscal-hip:405-406 · .fiscal-tab:328-328 · .hip-rate:506-510 · .hip-ro:549-550 · .home-birthday:467-498 · .home-pending:468-474 · .home-popup:483-538 · .home-reminder:462-546 · .imp-mode:17-27 · .macro-url:70-70 · .nav-icon:364-374 · .nav-pro:338-350 · .nav-style:362-362 · .rate-input:46-46 · .rut-addition:206-223 · .rut-agenda:220-221 · .rut-cancelled:247-306 · .rut-history:190-241 · .rut-hpd:188-188 · .rut-icon:172-173 · .rut-recovery:215-224 · .rut-session:225-225 · .rut-skipped:307-308 · .rut-week:189-189 · .selected:371-371 · .settings-details:107-109 · .settings-edit:71-110 · .settings-menu:440-440 · .sy-back:37-37 · .sy-body:35-586 · .sy-card:41-41 · .sy-header:36-505 · .sy-lbl:40-40 · .sy-period:414-421 · .sy-table:42-42 · .sy-tr:43-43 · .sy-val:39-39 · .sy-year:38-38 · .week-card:391-391 · .wm-logo:92-251
 
 ### css/source/home-sharing.css  _(114 líneas)_
 

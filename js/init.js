@@ -317,7 +317,7 @@
      ademas lo que hubiera debajo (tocabas fuera del panel de alarma para
      cerrarlo y de paso marcabas una semana como enviada). */
   document.addEventListener('click',function(e){
-    if(e.target.closest&&e.target.closest('#swUpdBtn'))return;
+    if(e.target.closest&&e.target.closest('#swUpdBtn,#swUpdateFab'))return;
     var panel=document.getElementById('alarmPanel');
     var menu=document.getElementById('dataMenu');
     var alarmAbierto=panel&&panel.classList.contains('open');
@@ -388,7 +388,7 @@
   }
   /* Delegado en captura: el cierre de menus no puede consumir este toque. */
   document.addEventListener('click',function(e){
-    if(!e.target.closest||!e.target.closest('#swUpdBtn'))return;
+    if(!e.target.closest||!e.target.closest('#swUpdBtn,#swUpdateFab'))return;
     e.preventDefault();e.stopImmediatePropagation();aplicarActualizacion();
   },true);
 
@@ -403,12 +403,13 @@
       if(btn)btn.style.display='';
       var mb=document.getElementById('menuBtn');
       if(mb)mb.classList.add('has-update');
-      /* El aviso es la via rapida: se pulsa el toast entero, no hace falta
-         ir al menu. El boton del menu sigue ahi para cuando el toast ya se
-         ha ido solo. */
-      if(typeof showToast==='function')
-        showToast('\uD83D\uDD04 Nueva versión disponible',
-          'success',aplicarActualizacion,'Actualizar',true);
+      /* Mismo acceso rápido a actualizar, presentado como botón flotante. */
+      var fab=document.createElement('button');
+      fab.id='swUpdateFab';fab.className='app-update-fab';fab.type='button';
+      fab.setAttribute('aria-label','Nueva versión disponible. Actualizar aplicación');
+      fab.title='Actualizar aplicación';
+      fab.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6.1 7a7 7 0 0 1 11.6-1L20 9M4 15l2.3 3A7 7 0 0 0 17.9 17"/></svg>';
+      document.body.appendChild(fab);
     }
     // Método 1: controllerchange — el más fiable (skipWaiting activó el nuevo SW)
     navigator.serviceWorker.addEventListener('controllerchange',function(){

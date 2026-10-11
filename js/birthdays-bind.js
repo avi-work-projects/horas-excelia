@@ -147,7 +147,7 @@ function bindBdayEvents(){
   }
   document.getElementById('bdViewUpcoming').addEventListener('click',function(){BDAY_SEARCH='';BDAY_FILTER_VIP='all';BDAY_EDIT_VIP=false;BDAY_VIP_PENDING=null;BDAY_VIEW='upcoming';refreshBday();_bdResetScroll();});
   document.getElementById('bdViewCal').addEventListener('click',function(){BDAY_SEARCH='';BDAY_FILTER_VIP='all';BDAY_EDIT_VIP=false;BDAY_VIP_PENDING=null;BDAY_VIEW='cal';refreshBday();_bdResetScroll();});
-  document.getElementById('bdViewList').addEventListener('click',function(){BDAY_VIP_PENDING=null;BDAY_EDIT_VIP=false;BDAY_VIEW='list';refreshBday();_bdScrollToToday();});
+  document.getElementById('bdViewList').addEventListener('click',function(){BDAY_VIP_PENDING=null;BDAY_EDIT_VIP=false;BDAY_VIEW='list';BDAY_LIST_TOP=true;refreshBday();_bdScrollToToday();});
   // Filter chips: Todos / Solo VIP / Sin VIP
   var showGroups=document.getElementById('bdShowGroups');
   if(showGroups)showGroups.onclick=function(){BDAY_SHOW_GROUPS=!BDAY_SHOW_GROUPS;refreshBday();};
