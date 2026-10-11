@@ -150,13 +150,13 @@ test('ajustes bloqueados, guardado explicito y backup con conexiones',async({pag
  await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));await page.goto('/');
  await page.locator('#menuBtn').click();
  await expect(page.locator('#mailToLocal')).not.toBeVisible();await expect(page.locator('#macroAlarmUrlMenu')).not.toBeVisible();
- await page.locator('summary').filter({hasText:'Correo de horas'}).click();await expect(page.locator('#mailToLocal')).toBeVisible();
+ await expect(page.locator('#dataMenu .settings-details')).toHaveCount(0);await page.locator('#editConnectionsBtn').click();await expect(page.locator('#mailToLocal')).toBeVisible();
  for(const id of ['mailToLocal','mailCcLocal','mailNameLocal','macroAlarmUrlMenu'])await expect(page.locator('#'+id)).toHaveAttribute('readonly','');
- await page.locator('#editConnectionsBtn').click();
+ await page.locator('#connectionsEdit').click();
  await page.locator('#mailToLocal').fill('test@example.invalid');await page.locator('#mailNameLocal').fill('Prueba');
  await page.locator('#macroAlarmUrlMenu').fill('https://trigger.macrodroid.com/TEST');
  expect(await page.evaluate(()=>localStorage.getItem('excelia-mail-config-v1'))).toBeNull();
- await page.locator('#editConnectionsBtn').click();await expect(page.locator('#mailToLocal')).toHaveAttribute('readonly','');
+ await page.locator('#connectionsSave').click();await expect(page.locator('#mailToLocal')).toHaveAttribute('readonly','');await page.locator('#connectionsClose').click();await expect(page.locator('#connectionsWrap')).toHaveCount(0);await page.locator('#menuBtn').click();
  const [download]=await Promise.all([page.waitForEvent('download'),exportFile(page,'#exportAllBtn','save')]);
  const data=JSON.parse(require('fs').readFileSync(await download.path(),'utf8'));
  expect(data.mailConfig.to).toBe('test@example.invalid');expect(data.macroUrl).toBe('https://trigger.macrodroid.com/TEST');

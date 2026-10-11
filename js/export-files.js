@@ -50,23 +50,26 @@ async function saveExportCopy(blob,filename){
   }
 }
 function openExportDirectory(onClosed){
-  closeSettingsMenu();
-  function close(){cerrarPanel('exportFolderWrap','exportFolderOv');if(typeof onClosed==='function')onClosed();}
+  closeSettingsMenu();var previous=NAV_BACK,draft=null;
+  function close(){cerrarPanel('exportFolderWrap','exportFolderOv');if(NAV_BACK===close)NAV_BACK=previous;if(typeof onClosed==='function')onClosed();}
   var supported=typeof window.showDirectoryPicker==='function';
-  var html='<div class="bd-form-overlay" id="exportFolderOv"><div class="bd-form-sheet export-folder-sheet"><header class="bd-panel-header panel-header-centered"><button class="sy-back" id="exportFolderClose" aria-label="Volver">←</button><h2>Modificar ruta de guardado</h2></header><p>Al exportar podrás guardar una copia, compartir el archivo o hacer ambas cosas.</p><p id="exportFolderStatus" role="status"></p><button class="ev-btn" id="exportFolderChoose"'+(supported?'':' disabled')+'>Elegir o cambiar carpeta</button><label for="exportFolderLabel">Ubicación descriptiva</label><input class="ev-input" id="exportFolderLabel" maxlength="200" placeholder="Ej.: Downloads / Gestify"><p>Referencia escrita por ti. El navegador no permite consultar las carpetas superiores.</p><button class="ev-btn primary" id="exportFolderSave">Guardar referencia</button>'+(supported?'':'<p>Este navegador no permite elegir carpetas. La copia se descargará en la ubicación configurada por el navegador.</p>')+'</div></div>';
-  var root=abrirPanel('exportFolderWrap',html,{contenedor:document.body,overlay:'exportFolderOv',alCerrar:close});
-  function status(){root.querySelector('#exportFolderStatus').textContent=EXPORT_DIRECTORY?'Carpeta: '+(EXPORT_DIRECTORY_LABEL||EXPORT_DIRECTORY.name):'Sin carpeta seleccionada';root.querySelector('#exportFolderLabel').value=EXPORT_DIRECTORY_LABEL;root.querySelector('#exportFolderSave').disabled=!EXPORT_DIRECTORY;}
-  status();EXPORT_DIRECTORY_READY.then(function(){if(root.isConnected)status();});
-  root.querySelector('#exportFolderClose').onclick=close;
+  var body='<section class="settings-editor-section"><h3>Destino de las copias</h3><p id="exportFolderStatus" role="status"></p><button class="ev-btn" id="exportFolderChoose" data-settings-edit-only'+(supported?'':' disabled')+'>Elegir o cambiar carpeta</button><label class="invoice-field"><span>Ubicación descriptiva</span><input class="ev-input" id="exportFolderLabel" maxlength="200" placeholder="Sin referencia"></label><p class="settings-editor-note">Referencia escrita por ti. El navegador no permite consultar las carpetas superiores.</p></section>'+(supported?'':'<p class="settings-editor-note">Este navegador no permite elegir carpetas. La copia se descargará en la ubicación configurada por el navegador.</p>');
+  var root=abrirPanel('exportFolderWrap',settingsPanelHtml('exportFolder','Ruta de guardado',body,'var(--c-blue)'),{contenedor:document.body,overlay:'exportFolderOv',alCerrar:close});
+  var edit=root.querySelector('#exportFolderEdit');edit.disabled=true;
+  function status(){if(root.isConnected)root.querySelector('#exportFolderStatus').textContent=draft?'Carpeta: '+(root.querySelector('#exportFolderLabel').value.trim()||draft.name):'Sin carpeta seleccionada';}
+  function load(){draft=EXPORT_DIRECTORY;root.querySelector('#exportFolderLabel').value=EXPORT_DIRECTORY_LABEL;status();}
+  load();EXPORT_DIRECTORY_READY.then(function(){if(root.isConnected){load();edit.disabled=false;}});
+  root.querySelector('#exportFolderClose').onclick=close;NAV_BACK=close;
   root.querySelector('#exportFolderChoose').onclick=async function(){
-    try{
-      var dir=await window.showDirectoryPicker({id:'gestify-exports',mode:'readwrite'});
-      await exportDirectoryStore('set',{handle:dir,label:''});EXPORT_DIRECTORY=dir;EXPORT_DIRECTORY_LABEL='';status();
-    }catch(err){if(err.name!=='AbortError')showToast('No se pudo seleccionar la carpeta','error');}
+    if(!SETTINGS_EDITOR_MODES.exportFolder)return;
+    try{var dir=await window.showDirectoryPicker({id:'gestify-exports',mode:'readwrite'});if(!root.isConnected||!SETTINGS_EDITOR_MODES.exportFolder)return;draft=dir;root.querySelector('#exportFolderLabel').value='';status();}
+    catch(e){if(e.name!=='AbortError')showToast('No se pudo seleccionar la carpeta','error');}
   };
-  root.querySelector('#exportFolderSave').onclick=async function(){
-    try{var label=root.querySelector('#exportFolderLabel').value.trim();await exportDirectoryStore('set',{handle:EXPORT_DIRECTORY,label:label});EXPORT_DIRECTORY_LABEL=label;status();showToast('Ubicación descriptiva guardada','success');}catch(err){showToast('No se pudo guardar la referencia','error');}
-  };
+  bindSettingsEditor(root,'exportFolder',{onEdit:load,onCancel:load,onSave:async function(){
+    var label=root.querySelector('#exportFolderLabel').value.trim();
+    if(!draft&&label)throw new Error('Elige una carpeta antes de guardar una referencia');
+    await exportDirectoryStore('set',draft?{handle:draft,label:label}:null);EXPORT_DIRECTORY=draft;EXPORT_DIRECTORY_LABEL=label;status();if(typeof onClosed==='function')onClosed();showToast('Ruta de guardado guardada','success');
+  }});
 }
 function renderExportActionIcon(mode){
   var paths={save:'M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4',share:'M14 3h7v7M21 3l-11 11M10 5H4v15h15v-6',both:'M8 8H3v13h13v-5M8 3h8l5 5v8H8V3Zm8 0v5h5M11 12h7m-3-3 3 3-3 3'};
