@@ -20,7 +20,7 @@ test('Médico: crear, volver a editar, filtrar y conservar color en recordatorio
  await page.locator('[data-filter-type="Rec. Gestiones"]').click();
  await expect(page.locator('.ev-shape-medical[data-ds="2026-08-21"]')).toHaveCount(0);
  await page.locator('#evViewUpcoming').click();await page.locator('#evSubTodos').click();
- await page.locator('#evTypesFilter').click();await page.locator('.ev-filter-category-group summary').filter({hasText:'Gestiones'}).click();await page.locator('.ev-type-option[data-type="puntual|Médico"]').click();await page.locator('#evTypeFilterDone').click();
+ await page.locator('#evTypesFilter').click();await expect(page.locator('#evTypeFilterOv')).toHaveClass(/open/);const disclosure=page.locator('.ev-filter-category-group summary').filter({hasText:'Gestiones'});await disclosure.click({position:{x:await disclosure.evaluate(e=>e.clientWidth-18),y:24}});await page.locator('.ev-type-option[data-type="puntual|Médico"]').click();await page.locator('#evTypeFilterDone').click();
  await page.locator('.ev-list-item').click();await page.locator('#evDEdit').click();
  await expect(page.locator('[data-picker=management]')).toHaveClass(/selected/);
  await expect(page.locator('#evFTime')).toHaveValue('12:00');
