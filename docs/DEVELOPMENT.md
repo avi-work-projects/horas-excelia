@@ -433,3 +433,8 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 | Cumpleaños dentro de Próximos | `evUpBirthdays`, `EV_VIEW='birthdays'` |
 | Datos y direcciones personales | `openPersonalData`, `CONTACT_GROUPS` |
 | Nota única | `openPersonalNotes`, `PERSONAL_NOTES_KEY` |
+
+## Refinamiento de filtros y estadísticas (v457)
+- Home usa rosa (`--home-tone`: #bb3979 en claro, #f29bc2 en oscuro), sustituyendo al pizarra de v455 por petición de Ángel.
+- Filtrar Eventos: pulsar el nombre selecciona la categoría completa; el área del chevrón abre los tipos. El fondo de cada categoría conserva su color suave y la selección se indica por el borde. Se conserva la regla de categorías completas o tipos de una única categoría.
+- Estadísticas: selector de año con Total a su derecha, que recuerda el último año consultado. Gestiones y Planes muestran Veces sin columna Días.

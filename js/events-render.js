@@ -231,15 +231,15 @@ function renderEvByTypes(){
   var h='<div class="ev-list-tools"><div class="ev-list-search-row">';
   h+='<div class="ev-search">'
     +'<input type="search" id="evListSearch" placeholder="Buscar por título/descripción" value="'+escHtml(EV_LIST_SEARCH)+'">'
-    +(EV_LIST_SEARCH?'<button class="ev-search-x" id="evListSearchX">&#215;</button>':'')+'</div></div>';
-  h+='<button type="button" class="ev-types-select" id="evTypesFilter" aria-haspopup="dialog" title="Filtrar por tipo: '+escHtml(evListFilterLabel(EV_TYPES_FILTER))+'"><span>'+escHtml(evListFilterLabel(EV_TYPES_FILTER))+'</span><span class="ev-tax-chevron" aria-hidden="true"></span></button>';
+    +(EV_LIST_SEARCH?'<button class="ev-search-x" id="evListSearchX">&#215;</button>':'')+'</div>';
   h+='<div class="ev-sort-row">';
   /* Solo interesa lo mas cercano primero; el orden inverso se quito */
   if(EV_LIST_SORT==='fecha-desc')EV_LIST_SORT='fecha';
   [['fecha','Por Fecha'],['categoria','Por Categoría']].forEach(function(o){
-    h+='<button class="ev-sort-chip'+(EV_LIST_SORT===o[0]?' active':'')+'" data-sort="'+o[0]+'">'+o[1]+'</button>';
+    h+='<button class="ev-sort-chip'+(EV_LIST_SORT===o[0]?' active':'')+'" data-sort="'+o[0]+'">'+o[1].replace(' ','<br>')+'</button>';
   });
-  h+='</div>';
+  h+='</div></div>';
+  h+='<button type="button" class="ev-types-select" id="evTypesFilter" aria-haspopup="dialog" title="Filtrar por tipo: '+escHtml(evListFilterLabel(EV_TYPES_FILTER))+'"><span>'+escHtml(evListFilterLabel(EV_TYPES_FILTER))+'</span><span class="ev-tax-chevron" aria-hidden="true"></span></button>';
   h+='<div class="ev-types-controls">';
   h+='<label class="ev-types-past-label"><input type="checkbox" id="evTypesPast"'+(EV_TYPES_PAST?' checked':'')+'> Excluir Pasados</label>';
   h+='</div></div>';
