@@ -15,6 +15,15 @@ for(const width of [360,400])test(`fichas compactas del calendario ${width}`,asy
  await page.locator('.ev-cell[data-ds="2026-10-07"] [data-id="management-demo"]').first().click();
  const sheet=page.locator('#evDetailOv .ev-car-sheet');await expect(sheet).toBeVisible();const original=await sheet.boundingBox();expect(original.height).toBeLessThanOrEqual(420);
  const date=await page.locator('.ev-detail-date-status .ev-detail-date').boundingBox(),state=await page.locator('.ev-management-check').boundingBox();expect(Math.abs(date.y+date.height/2-state.y-state.height/2)).toBeLessThan(1);
+ expect(state.x-(date.x+date.width)).toBeGreaterThanOrEqual(8);
+ for(const selector of ['.ev-detail-date-status .ev-detail-date','.ev-management-check']){
+  await expect(page.locator(selector)).toHaveCSS('border-top-width','1px');
+  await expect(page.locator(selector)).toHaveCSS('border-radius','14px');
+ }
+ await expect(page.locator('.ev-detail-facts')).toHaveCSS('border-top-width','0px');
+ const heading=await page.locator('.ev-detail-heading').boundingBox(),bar=await page.locator('.ev-detail-color-bar').boundingBox();
+ expect(heading.y-bar.y-bar.height).toBeGreaterThanOrEqual(16);
+ expect(date.y-heading.y-heading.height).toBeGreaterThanOrEqual(18);
  await page.screenshot({path:testInfo.outputPath('gestion.png'),animations:'disabled'});
  await page.locator('#evManagementDone').check();await expect(page.locator('.ev-management-complete')).toBeVisible();expect(await sheet.boundingBox()).toEqual(original);
  while(!await page.locator('#evDTitle').filter({hasText:'Ensayo'}).count())await page.locator('#evCarNext').click();
