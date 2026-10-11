@@ -799,7 +799,7 @@ body:has(#bdAlarmOv.open) .tasks-fab{visibility:hidden}
 .export-folder-sheet p{font-size:.8rem;line-height:1.5;margin:0;color:var(--text-muted)}
 .export-folder-sheet .ev-btn{min-height:40px}
 
-#bdDetailOv .bday-detail-alarm{padding:10px;border:1px solid color-mix(in srgb,var(--birthday-tone) 25%,var(--border));background:color-mix(in srgb,var(--birthday-tone) 5%,var(--surface));box-shadow:none}
+#bdDetailOv .bday-detail-alarm{padding:8px 10px;border:1px solid color-mix(in srgb,var(--birthday-tone) 25%,var(--border));background:color-mix(in srgb,var(--birthday-tone) 5%,var(--surface));box-shadow:none}
 .export-folder-sheet .ev-btn:not(.primary){color:var(--text);background:var(--surface2);border:1px solid var(--border)}
 body:has(#exportFolderOv.open) .tasks-fab{visibility:hidden}
 
