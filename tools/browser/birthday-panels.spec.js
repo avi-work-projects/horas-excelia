@@ -17,6 +17,8 @@ test('filas VIP uniformes y acceso al configurador de alarma',async({page},testI
   if(labels)await page.locator('#bdShowGroups').click();
   const heights=await rows.evaluateAll(els=>els.map(el=>el.getBoundingClientRect().height));
   expect(heights).toHaveLength(2);expect(heights[0]).toBe(heights[1]);
+  const icon=await rows.first().locator('.bday-vip-img').boundingBox(),row=await rows.first().boundingBox();
+  expect(icon.height).toBeGreaterThanOrEqual(32);expect(icon.y).toBeGreaterThanOrEqual(row.y);expect(icon.y+icon.height).toBeLessThanOrEqual(row.y+row.height);
   await page.screenshot({path:testInfo.outputPath(labels?'filas-etiquetas.png':'filas.png')});
  }
  await rows.first().click();

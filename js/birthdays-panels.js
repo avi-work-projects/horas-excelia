@@ -262,12 +262,12 @@ function renderBdayForm(b,prefillDay,prefillMonth){
   if(isEdit)h+='<button class="ev-btn danger" id="bdFDel" style="flex:none;padding:6px 12px;font-size:.75rem">Eliminar</button>';
   else h+='<div style="width:60px"></div>';
   h+='</header><div class="bd-panel-body">';
-  h+='<div class="ev-field"><label>Nombre</label>';
-  h+='<div class="bday-form-name-row"><input class="ev-input" id="bdFName" type="text" maxlength="60" placeholder="Nombre completo" value="'+escHtml(name)+'">'+renderBdayVipToggle('bdFVip',vip)+'</div></div>';
-  h+='<div class="ev-field ev-date-row">';
-  h+='<div><label>Día</label><input type="hidden" id="bdFDay" value="'+escHtml(String(day))+'"><button type="button" class="ev-input bday-date-button" id="bdFDayPick" aria-describedby="bdFDateError">'+(day||'Elegir día')+' <span aria-hidden="true">⌄</span></button></div>';
-  h+='<div><label>Mes</label><input type="hidden" id="bdFMonth" value="'+month+'"><button type="button" class="ev-input bday-date-button" id="bdFMonthPick">'+MN[month-1]+' <span aria-hidden="true">⌄</span></button></div></div>';
-  h+='<div id="bdFDateError" class="bday-date-error" role="status"></div>';
+  h+='<section class="bday-form-panel"><div class="ev-field"><label>Nombre</label>';
+  h+='<div class="bday-form-name-row"><input class="ev-input" id="bdFName" type="text" maxlength="60" placeholder="Nombre completo" value="'+escHtml(name)+'">'+renderBdayVipToggle('bdFVip',vip)+'</div></div></section>';
+  h+='<section class="bday-form-panel"><div class="ev-field ev-date-row">';
+  h+='<div><label>Día</label><input type="hidden" id="bdFDay" value="'+escHtml(String(day))+'"><button type="button" class="ev-input bday-date-button" id="bdFDayPick" aria-describedby="bdFDateError">'+(day||'Elegir día')+' <span class="ev-tax-chevron" aria-hidden="true"></span></button></div>';
+  h+='<div><label>Mes</label><input type="hidden" id="bdFMonth" value="'+month+'"><button type="button" class="ev-input bday-date-button" id="bdFMonthPick">'+MN[month-1]+' <span class="ev-tax-chevron" aria-hidden="true"></span></button></div></div>';
+  h+='<div id="bdFDateError" class="bday-date-error" role="status"></div></section>';
   h+=renderBdayGroupFields(b);
   h+='</div><footer class="bd-panel-footer"><button class="ev-btn primary" id="bdFSave">Guardar</button></footer>';
   h+='</div></div>';
@@ -321,8 +321,8 @@ function bindBdayDateFields(){
   var day=document.getElementById('bdFDay'),month=document.getElementById('bdFMonth');
   function update(){
     var valid=validBirthday(+day.value,+month.value),message=valid?'':(day.value?'El '+day.value+' de '+MN[+month.value-1]+' no existe.':'Elige un día.');
-    document.getElementById('bdFDayPick').innerHTML=(day.value||'Elegir día')+' <span aria-hidden="true">⌄</span>';
-    document.getElementById('bdFMonthPick').innerHTML=MN[+month.value-1]+' <span aria-hidden="true">⌄</span>';
+    document.getElementById('bdFDayPick').innerHTML=(day.value||'Elegir día')+' <span class="ev-tax-chevron" aria-hidden="true"></span>';
+    document.getElementById('bdFMonthPick').innerHTML=MN[+month.value-1]+' <span class="ev-tax-chevron" aria-hidden="true"></span>';
     document.getElementById('bdFDateError').textContent=message;
     document.getElementById('bdFDayPick').setAttribute('aria-invalid',!valid);
     document.getElementById('bdFSave').disabled=!valid;

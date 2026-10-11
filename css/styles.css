@@ -3084,7 +3084,7 @@ details[open]>summary{margin-bottom:10px}
 .bday-month-section .bday-today-item::before,.bday-today-line::before{content:"";position:absolute;left:0;top:-7px;width:11px;height:11px;border-radius:50%;background:var(--surface);border:3px solid var(--birthday-tone)}
 .bday-today-item .bday-list-day,.bday-today-item .today-lbl{color:var(--birthday-tone);font-weight:750}
 .bday-today-line{position:relative;height:0;min-height:0;margin:8px 0 0;padding:0;border-top:3px solid var(--birthday-tone)}
-.bday-today-line>span,.bday-today-item::after{position:absolute;left:20px;top:-11px;padding:0 5px;background:var(--bg);color:var(--birthday-tone);font-size:.7rem;font-weight:800;line-height:18px;border:2px solid var(--birthday-tone);border-radius:6px}
+.bday-today-line>span,.bday-today-item::after{position:absolute;left:48px;top:-11px;padding:0 5px;background:var(--bg);color:var(--birthday-tone);font-size:.7rem;font-weight:800;line-height:18px;border:2px solid var(--birthday-tone);border-radius:6px}
 .bday-today-item::after{content:"Hoy"}
 .bday-today-line[hidden]{display:none}
 
@@ -3255,8 +3255,8 @@ body:has(#bdDateOv.open) .tasks-fab{visibility:hidden}
 #bdFormOv .bday-form-name-row .bday-person-vip{flex:none;gap:4px;margin:0}
 #bdFormOv .bday-form-name-row .bday-person-vip img{width:32px}
 .bday-group-tools summary{color:var(--birthday-tone);border-color:color-mix(in srgb,var(--birthday-tone) 50%,var(--border));background:color-mix(in srgb,var(--birthday-tone) 9%,var(--surface))}
-.app-update-fab{position:fixed;left:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:380;width:48px;height:48px;border:1.5px solid #9285bd;border-radius:17px;background:#70609e;color:#fff;box-shadow:0 4px 15px #21163a33;display:grid;place-items:center;cursor:pointer}
-.app-update-fab svg{width:27px;height:27px}
+.app-update-fab{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:380;min-height:44px;padding:10px 16px;border:1px solid var(--border);border-radius:22px;background:var(--surface);color:var(--text);box-shadow:0 3px 12px #0002;display:flex;align-items:center;gap:8px;font:inherit;font-size:.8rem;font-weight:600;cursor:pointer}
+.app-update-fab svg{width:22px;height:22px;flex:none}
 .app-update-fab:focus-visible{outline:2px solid var(--text);outline-offset:3px}
 
 .bday-name-tail{white-space:nowrap}
@@ -3301,6 +3301,17 @@ body:has(#bdDateOv.open) .tasks-fab{visibility:hidden}
 
 #bdAlarmOv .bd-alarm-vip-row{border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);margin-bottom:8px}
 body:has(#bdAlarmOv.open) .tasks-fab{visibility:hidden}
+
+/* Controles de cumpleaños: aire en los bordes y símbolos sin alterar las filas. */
+.bday-today-dock{padding-right:6px}
+.bday-list-name>.bday-vip-img{height:20px;width:40px;object-fit:contain;transform:scale(1.65);transform-origin:center; margin-left:8px;margin-right:8px}
+#bdDetailOv .bday-category-button,#bdFormOv .bday-category-button{width:24px;min-width:24px;height:24px;min-height:24px;font-size:.78rem;border-radius:6px}
+#bdFormOv .bd-form-sheet{height:min(440px,88dvh)}
+#bdFormOv .bday-form-panel,#bdFormOv .bday-detail-groups{padding:8px 10px;border:1px solid var(--border);border-radius:12px;background:var(--surface2);box-shadow:none;margin:0 0 8px}
+#bdFormOv .bday-form-panel .ev-field{margin-bottom:0}
+#bdFormOv .bd-panel-footer{box-shadow:none;padding-top:2px}
+#bdFormOv .bd-panel-body>:last-child{margin-bottom:0}
+.bday-date-button .ev-tax-chevron{width:8px;height:8px;flex:none;color:var(--birthday-tone);margin-right:4px}
 
 /* Fuente: css/source/home-sharing.css */
 /* Cabecera de Home opaca, incluso sobre los botones oscuros de las semanas. */
