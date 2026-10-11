@@ -3692,9 +3692,12 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .rut-bulk-actions button:disabled{opacity:.4}
 
 /* Fuente: css/source/invoices.css */
-.home-invoice-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
-.home-invoice-actions button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:8px 10px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);font:inherit;font-size:.85rem;font-weight:650}
-.home-invoice-actions svg{width:26px;height:26px;flex-shrink:0;color:#279b64}
+.hours-control:has(.home-invoice-actions){gap:6px;flex-wrap:wrap}
+.hours-control #editHoursBtn{padding:6px 8px;gap:2px;min-height:42px;white-space:nowrap;font-size:.65rem}
+.home-invoice-actions{display:flex;gap:6px;flex:1;min-width:0}
+.home-invoice-actions button{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:4px;min-height:42px;padding:6px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);font:inherit;font-size:.72rem;font-weight:600;line-height:1.25}
+.home-invoice-actions svg{width:21px;height:21px;flex-shrink:0;color:var(--c-green)}
+.hours-control .default-hours-panel{flex-basis:100%}
 #csvExportBtn[hidden],#pdfExportBtn[hidden]{display:none!important}
 .invoice-sheet{width:min(560px,100%);max-height:90dvh;display:flex;flex-direction:column;padding:16px!important;box-sizing:border-box}
 .invoice-sheet .bd-panel-header{flex-shrink:0;margin-bottom:10px}.invoice-sheet h2{font-size:1.05rem}
@@ -3717,3 +3720,12 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .invoice-error{color:var(--red,#c64545);font-size:.85rem;margin:0}.invoice-error:empty{display:none}.invoice-mail{white-space:pre-wrap;font:inherit;font-size:.85rem;line-height:1.6}
 .invoice-filename{overflow-wrap:anywhere;font-size:.82rem}.invoice-unit{display:flex;gap:12px;border:0;padding:0;font-size:.83rem}.invoice-unit legend{margin-bottom:8px}
 body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
+
+.invoice-month-summary{background:color-mix(in srgb,var(--c-green) 4%,var(--surface));border-color:color-mix(in srgb,var(--c-green) 25%,var(--border))}
+.invoice-month-summary .invoice-totals{margin-bottom:0}
+.invoice-month-summary .invoice-total{padding-top:10px;font-size:1rem;box-shadow:0 -1px 0 var(--border)}
+.invoice-document>summary{color:var(--c-green)}
+.invoice-month-summary .invoice-filename{margin-bottom:4px}
+
+.invoice-fields .invoice-field{margin:0}
+#invoiceImportStatus:empty{display:none}

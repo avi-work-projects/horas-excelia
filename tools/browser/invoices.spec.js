@@ -10,12 +10,12 @@ test.beforeEach(async({page})=>{
 });
 test('preparación mensual, XLSX válido, Gmail solo con definitivo y recuperación tras recarga',async({page},info)=>{
  await page.screenshot({path:info.outputPath('home.png')});await page.locator('#invoiceHomeBtn').click();await expect(page.locator('.invoice-status')).toHaveText('Pendiente de emitir en AEAT');await expect(page.locator('#invoiceGmail')).toHaveCount(0);
- await page.locator('#invoicePrepare').click();await expect(page.locator('#invoiceError')).toContainText('Confirma');await page.locator('#invoiceConfirm').check();await page.locator('#invoicePrepare').click();await expect(page.locator('#invoiceExcel')).toBeVisible();
+ await expect(page.locator('#invoiceExcel')).toBeVisible();await expect(page.locator('[data-invoice-day]')).toHaveCount(0);await expect(page.locator('#invoiceReloadDays')).toHaveCount(0);
  await page.screenshot({path:info.outputPath('preparacion.png')});
  const first=await page.evaluate(()=>invoiceData().months['2026-10'].preparation);expect(first.days.length).toBe(22);expect(first.baseCents).toBe(704000);
- await page.locator('#invoiceConfirm').check();await page.locator('#invoicePrepare').click();expect(await page.evaluate(()=>invoiceData().months['2026-10'].preparation.revision)).toBe(1);
- await page.locator('.invoice-days summary').click();const day=page.locator('[data-invoice-day="0"]');await day.uncheck();await expect(page.locator('#invoiceExcel')).toBeDisabled();await expect(page.locator('#invoiceAttach')).toBeDisabled();await expect(page.locator('#invoiceConfirm')).not.toBeChecked();await day.check();await expect(page.locator('#invoiceExcel')).toBeEnabled();await page.locator('.invoice-days summary').click();
+ await page.locator('#invoiceBack').click();await page.locator('#invoiceHomeBtn').click();await expect(page.locator('#invoiceExcel')).toBeVisible();expect(await page.evaluate(()=>invoiceData().months['2026-10'].preparation.revision)).toBe(1);
  const dl=page.waitForEvent('download');await page.locator('#invoiceExcel').click();await page.locator('[data-export-mode="save"]').click();const excel=await dl;await excel.saveAs(info.outputPath('auxiliar.xlsx'));expect(fs.readFileSync(info.outputPath('auxiliar.xlsx')).subarray(0,2).toString()).toBe('PK');
+ await page.locator('#invoiceDocument summary').click();
  const invalid=Buffer.from('%PDF-1.4\nprueba');await page.locator('#invoiceFinalFile').setInputFiles({name:'borrador.pdf',mimeType:'application/pdf',buffer:invalid});await page.locator('[data-invoice-field="number"]').fill('PRUEBA-1');await page.locator('[data-invoice-field="date"]').fill('2026-10-11');await page.locator('#invoiceFinalConfirm').check();await page.locator('#invoiceAttach').click();await expect(page.locator('#invoiceError')).toContainText('no un borrador');await expect(page.locator('#invoiceGmail')).toHaveCount(0);
  const pdf=await page.evaluate(()=>{const d=new jspdf.jsPDF();d.text('DOCUMENTO SINTETICO PARA PRUEBAS DE SOFTWARE',10,20);return d.output('datauristring').split(',')[1];});await page.locator('#invoiceFinalFile').setInputFiles({name:'documento-prueba.pdf',mimeType:'application/pdf',buffer:Buffer.from(pdf,'base64')});await page.locator('#invoiceAttach').click();await expect(page.locator('#invoiceGmail')).toHaveCount(1);
  await page.evaluate(()=>{window.gmailCalls=[];window.open=url=>gmailCalls.push(url);});await page.locator('#invoiceGmail').click();expect(await page.evaluate(()=>gmailCalls[0])).toContain('view=cm');expect(await page.evaluate(()=>invoiceData().months['2026-10'].sent)).toBeUndefined();await page.screenshot({path:info.outputPath('correo.png')});
@@ -40,4 +40,22 @@ test('PDF: duplicados entre meses, backup completo, importación y falta de espa
  });expect(result.duplicate).toContain('ya está asociado');expect(result.restored).toBe(true);expect(result.quota).toBe('Sin espacio');expect(result.unchanged).toBe(true);expect(result.hash).toMatch(/^[a-f0-9]{64}$/);
  await page.locator('#menuBtn').click();const pending=page.waitForEvent('download');await exportFile(page,'#exportAllBtn');const download=await pending;const backup=JSON.parse(fs.readFileSync(await download.path(),'utf8'));expect(backup.invoices.months['2026-10'].final.hash).toBe(result.hash);
  await page.evaluate(data=>{invoiceSave({config:invoiceDefaults(),months:{}});applyFullImport(data,'replace');},backup);expect(await page.evaluate(()=>invoiceData().months['2026-10'].final.hash)).toBe(result.hash);
+});
+
+test('importar configuración revisable sin sustituir los meses y botones junto a Jornada',async({page},info)=>{
+ for(const width of [360,400]){
+  await page.setViewportSize({width,height:880});const row=page.locator('#editHoursBtn');const r=await row.boundingBox();
+  for(const id of ['#hoursExportBtn','#invoiceHomeBtn']){const b=await page.locator(id).boundingBox();expect(b.x).toBeGreaterThan(r.x+r.width);expect(Math.abs(b.y-r.y)).toBeLessThan(1);}
+  await page.screenshot({path:info.outputPath('home-'+width+'.png')});
+ }
+ await page.locator('#invoiceHomeBtn').click();await expect(page.locator('#invoiceExcel')).toBeVisible();const months=await page.evaluate(()=>JSON.stringify(invoiceData().months));
+ await page.locator('#invoiceConfig').click();
+ const payload={format:'gestify-invoice-settings',version:1,config:{issuer:'Nuevo emisor de prueba',issuerTax:'NIF-PRUEBA',issuerAddress:'Domicilio inventado'}};
+ await page.locator('#invoiceConfigFile').setInputFiles({name:'datos-facturacion.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(payload))});
+ await expect(page.locator('[data-invoice-field="issuer"]')).toHaveValue(payload.config.issuer);await expect(page.locator('#invoiceImportStatus')).toContainText('Datos cargados');
+ expect(await page.evaluate(()=>invoiceData().config.issuer)).toBe('Persona de prueba');expect(await page.evaluate(()=>JSON.stringify(invoiceData().months))).toBe(months);
+ await page.locator('#invoiceConfigFile').setInputFiles({name:'incorrecto.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({format:'gestify-invoice-settings',version:1,config:{vat:'101'}}))});await expect(page.locator('#invoiceError')).toContainText('Porcentaje');await expect(page.locator('[data-invoice-field="issuer"]')).toHaveValue(payload.config.issuer);
+ await page.locator('#invoiceSaveSettings').click();await expect(page.locator('#invoiceExcel')).toBeVisible();expect(await page.evaluate(()=>invoiceData().config.issuer)).toBe(payload.config.issuer);
+ await page.screenshot({path:info.outputPath('resumen.png')});
+ await page.locator('#invoiceDocument summary').click();await expect(page.locator('#invoiceFinalFile')).toBeVisible();await page.screenshot({path:info.outputPath('siguiente-paso.png')});
 });

@@ -52,15 +52,16 @@ eliminar esa recuperación o convertirla en extra. La operación se valida antes
 Los filtros de Todos usan `kind|type`, para distinguir ambos tipos Otros, y `kind|*`
 para filtrar todos los puntuales o grandes. Se conserva lectura de filtros antiguos.
 
-## Preparación mensual de facturación (v443)
+## Preparación mensual de facturación (v445)
 
 Home agrupa los exportadores anuales existentes en «Exportar horas». «Enviar
 factura» abre la preparación del mes visible en Home. El símbolo reutiliza
 `evManagementShapeInner('invoice')`, igual que Rec. Gestiones.
 
 `invoices.js` separa el cálculo por fechas/tarifas del resumen económico predictivo.
-Calcula en céntimos, agrupa por unidad/tarifa y exige revisar los días seleccionados,
-incluidos los planificados. Las tarifas diarias pueden proceder de la configuración
+Calcula en céntimos y agrupa por unidad/tarifa. Al abrir el mes prepara automáticamente
+los laborables normales del calendario completo, excluyendo festivos, vacaciones y
+ausencias. Muestra un resumen mensual, sin selección ni confirmación diaria. Las tarifas diarias pueden proceder de la configuración
 anual. El modo horario antiguo de Económico conserva una equivalencia diaria:
 se exige tarifa explícita en el nuevo editor, sin reconstruirla mediante una media.
 La configuración y los PDF son privados del dispositivo; no introducirlos en Git.
@@ -92,7 +93,12 @@ cuándo enviar/programar. La negrita del mensaje puede aplicarse al revisarlo en
 
 Configuración → Edición facturas y correo centraliza emisor, cliente, proyecto,
 concepto, tarifa/unidad, impuestos y correo. `{mes}`, `{anio}` y `{periodo}` se
-sustituyen en concepto, asunto y cuerpo. Los campos personales empiezan vacíos.
+sustituyen en concepto, asunto y cuerpo. Los campos personales empiezan vacíos. «Importar datos» acepta JSON con
+`format: "gestify-invoice-settings"`, `version: 1` y `config` (campos de
+`invoiceDefaults`). Admite campos parciales: conserva los demás. Carga el formulario
+para revisión; solo «Guardar configuración» persiste. No importa meses ni PDF.
+«Exportar datos» genera ese mismo formato. Los archivos reales permanecen fuera de Git.
+Los botones de Home se ubican a la derecha de Jornada.
 Pruebas: `tools/test-invoices.js` y `tools/browser/invoices.spec.js`, siempre con
 identidades y PDF sintéticos. No se emiten facturas ni se envían correos al probar.
 

@@ -21,3 +21,10 @@ require('node:vm').runInContext(require('node:fs').readFileSync('js/import-expor
 g.showToast=()=>{};g.render=()=>{};g.updateEventsBtn=()=>{};g.updateBdayBtn=()=>{};
 g.applyFullImport({invoices:data},'replace');assert.equal(g.invoiceData().config.from,cfg.from);
 console.log('Facturación auxiliar: céntimos, tramos, exclusiones, histórico, Gmail y backup OK');
+
+const imported=g.invoiceConfigImport({format:'gestify-invoice-settings',version:1,config:{issuer:'Persona ejemplo',issuerTax:'TEST',issuerAddress:'Dirección ficticia'}},cfg);
+assert.equal(imported.issuer,'Persona ejemplo');assert.equal(imported.to,cfg.to);assert.equal(cfg.issuer,'');
+assert.throws(()=>g.invoiceConfigImport({config:{}},cfg),/archivo/);
+assert.throws(()=>g.invoiceConfigImport({format:'gestify-invoice-settings',version:1,config:{vat:'101'}},cfg),/Porcentaje/);
+assert.throws(()=>g.invoiceConfigImport({format:'gestify-invoice-settings',version:1,config:{months:{}}},cfg),/Campo/);
+console.log('Importación de configuración: campos parciales, validación y meses protegidos OK');

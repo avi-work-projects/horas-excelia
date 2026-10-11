@@ -2,6 +2,7 @@
 var INVOICE_KEY='excelia-invoices-v1';
 var INVOICE_MONTH=null;
 var INVOICE_BACK=null;
+var INVOICE_OPEN_SEQ=0;
 function invoiceDefaults(){return {issuer:'',issuerTax:'',issuerAddress:'',client:'',clientTax:'',clientAddress:'',project:'',concept:'Servicios de consultoría · {mes} {anio}',unit:'day',rate:'',vat:'21',withholding:'15',from:'',to:'',cc:'',subject:'Factura · {mes} {anio}',body:'Buenos días!\n\nAdjunto la factura relativa a {mes}.\n\nConfirmad recepción,\n\nMuchas gracias,\n\nBuena semana!'};}
 function invoiceData(){var raw=appStorage.getItem(INVOICE_KEY);return raw?invoiceValidate(JSON.parse(raw)):{config:invoiceDefaults(),months:{}};}
 function invoiceValidate(data){
@@ -62,7 +63,7 @@ function invoiceCalculate(period,config,rows){
   var lines=Object.values(groups),base=0;lines.forEach(function(l){var product=l.quantity100*l.rateCents;if(!Number.isSafeInteger(product))throw new Error('Importe demasiado grande');l.baseCents=Math.round(product/100);base+=l.baseCents;});
   if(!Number.isSafeInteger(base*10000))throw new Error('Importe demasiado grande');
   var iva=Math.round(base*vat/10000),irpf=Math.round(base*ret/10000);
-  return {schemaVersion:1,appVersion:APP_VERSION,period:period,kind:'auxiliary',condition:'planned-confirmed-by-user',issuer:{name:config.issuer,taxId:config.issuerTax,address:config.issuerAddress},client:{name:config.client,taxId:config.clientTax,address:config.clientAddress},project:config.project,concept:invoiceText(config.concept,period),days:chosen,lines:lines,vatBasisPoints:vat,withholdingBasisPoints:ret,baseCents:base,vatCents:iva,withholdingCents:irpf,totalCents:base+iva-irpf};
+  return {schemaVersion:1,appVersion:APP_VERSION,period:period,kind:'auxiliary',condition:'calendar-month',issuer:{name:config.issuer,taxId:config.issuerTax,address:config.issuerAddress},client:{name:config.client,taxId:config.clientTax,address:config.clientAddress},project:config.project,concept:invoiceText(config.concept,period),days:chosen,lines:lines,vatBasisPoints:vat,withholdingBasisPoints:ret,baseCents:base,vatCents:iva,withholdingCents:irpf,totalCents:base+iva-irpf};
 }
 async function invoiceHash(value){var bytes=typeof value==='string'?new TextEncoder().encode(value):value;return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(function(b){return b.toString(16).padStart(2,'0');}).join('');}
 async function invoicePrepare(period,config,rows){
@@ -89,3 +90,14 @@ async function invoiceAttach(period,file,number,date,confirmed){
   record.final={name:file.name,number:number.trim(),date:date,pdf:pdf,hash:hash,confirmedAt:new Date().toISOString(),preparationHash:record.preparation.contentHash};invoiceSave(data);
 }
 function invoiceFinalBlob(record){if(!record||!record.final)throw new Error('Pendiente de emitir en AEAT');var b=atob(record.final.pdf.split(',')[1]);return new Blob([Uint8Array.from(b,function(c){return c.charCodeAt(0);})],{type:'application/pdf'});}
+
+/* Solo configuración: nunca importa preparaciones ni documentos emitidos. */
+function invoiceConfigImport(input,current){
+  if(!input||input.format!=='gestify-invoice-settings'||input.version!==1||!input.config||typeof input.config!=='object'||Array.isArray(input.config))throw new Error('Selecciona un archivo de datos de facturación de Gestify');
+  var result=Object.assign({},current),keys=Object.keys(invoiceDefaults());
+  Object.keys(input.config).forEach(function(k){if(!keys.includes(k)||typeof input.config[k]!=='string'||input.config[k].length>5000)throw new Error('Campo de configuración no válido: '+k);result[k]=input.config[k].trim();});
+  result=invoiceValidate({config:result,months:{}}).config;
+  if(result.rate!=='')invoiceDecimal(result.rate,2);
+  ['vat','withholding'].forEach(function(k){if(invoiceDecimal(result[k],2)>10000)throw new Error('Porcentaje superior al 100 %');});
+  ['from','to','cc'].forEach(function(k){if(result[k])invoiceEmails(result[k]);});return result;
+}
