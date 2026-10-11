@@ -1,6 +1,8 @@
 /* Categorías personales: viajan en cada cumpleaños, también al exportar. */
 var BDAY_GROUP_DEFAULTS=['Amigos Oviedo','Amigos Baile','Amigos Moco','Amigos Master','Familia Cercana','Familia','Familia Celia','Amigas Celia','Amigos Carrera','Amigos En Madrid','Amigos Guadalupe','Mejores Amigos','Amigos Villa','Amigos Extranjeros','Amigos N.A.S.A','Otros'];
 var BDAY_GROUP_FILTER=[];
+var BDAY_EDIT_GROUP=''; // Etiqueta en edición; vacío fuera de la edición.
+var BDAY_GROUP_PENDING=null; // Borrador de etiquetas por persona hasta pulsar Listo.
 var BDAY_SHOW_GROUPS=false; // Etiquetas visibles en la lista, solo durante esta sesión.
 function bdayNormalizeGroup(name){
   name=name.trim();
@@ -62,4 +64,31 @@ function bindBdayGroupTools(){
 function bdaySaveGroupDraft(draft){
   var next=BDAYS.map(function(b,i){return Object.assign({},b,{categories:(draft[i]||[]).slice()});});
   appStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(next));BDAYS=next;
+}
+
+// Edición por etiqueta: borrador por persona, confirmado solo al pulsar Listo.
+function cancelBdayGroupEdit(){BDAY_EDIT_GROUP='';BDAY_GROUP_PENDING=null;}
+function openBdayGroupEdit(){
+  function close(){cerrarPanel('bdGroupEditWrap','bdGroupEditOv');}
+  var html='<div class="bd-form-overlay" id="bdGroupEditOv"><div class="bd-form-sheet bd-category-sheet"><header class="bd-panel-header"><button class="sy-back" id="bdGroupEditClose" aria-label="Volver">←</button><h2>Editar etiquetas</h2></header><div class="bd-panel-body"><p>Elige la etiqueta que quieres asignar o quitar.</p><div class="bday-group-chips">'+bdayGroupChips(bdayGroupCatalog(),[],'data-bd-edit-group')+'</div></div></div></div>';
+  var wrap=abrirPanel('bdGroupEditWrap',html,{contenedor:bdayPanelHost(),overlay:'bdGroupEditOv',alCerrar:close});
+  wrap.querySelector('#bdGroupEditClose').onclick=close;
+  wrap.querySelectorAll('[data-bd-edit-group]').forEach(function(button){button.onclick=function(){
+    BDAY_EDIT_GROUP=button.dataset.bdEditGroup;BDAY_GROUP_PENDING=BDAYS.map(bdayGroups);
+    BDAY_FILTER_VIP='all';BDAY_GROUP_FILTER=[];BDAY_SEARCH='';close();refreshBday();
+  };});
+}
+function bindBdayGroupEdit(){
+  var button=document.getElementById('bdEditGroups');
+  if(button)button.onclick=function(){
+    if(!BDAY_EDIT_GROUP){openBdayGroupEdit();return;}
+    try{bdaySaveGroupDraft(BDAY_GROUP_PENDING);}catch(e){showToast('No se pudieron guardar las etiquetas','error');return;}
+    cancelBdayGroupEdit();refreshBday();
+  };
+}
+function toggleBdayGroupPerson(item,index){
+  var groups=BDAY_GROUP_PENDING[index],pos=groups.indexOf(BDAY_EDIT_GROUP);
+  if(pos<0)groups.push(BDAY_EDIT_GROUP);else groups.splice(pos,1);
+  item.classList.toggle('bday-list-vip-active',pos<0);item.classList.toggle('bday-list-vip-dim',pos>=0);
+  var tags=item.querySelector('.bday-person-groups');if(tags)tags.innerHTML=bdayGroupTags(groups);
 }

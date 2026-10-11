@@ -231,8 +231,8 @@ function renderEvByTypes(){
   var h='<div class="ev-list-tools"><div class="ev-list-search-row">';
   h+='<div class="ev-search">'
     +'<input type="search" id="evListSearch" placeholder="Buscar por título/descripción" value="'+escHtml(EV_LIST_SEARCH)+'">'
-    +(EV_LIST_SEARCH?'<button class="ev-search-x" id="evListSearchX">&#215;</button>':'')+'</div>';
-  h+='<button type="button" class="ev-types-select" id="evTypesFilter" aria-haspopup="dialog" title="Filtrar por tipo: '+escHtml(evListFilterLabel(EV_TYPES_FILTER))+'"><span>'+escHtml(evListFilterLabel(EV_TYPES_FILTER))+'</span><span class="ev-tax-chevron" aria-hidden="true"></span></button></div>';
+    +(EV_LIST_SEARCH?'<button class="ev-search-x" id="evListSearchX">&#215;</button>':'')+'</div></div>';
+  h+='<button type="button" class="ev-types-select" id="evTypesFilter" aria-haspopup="dialog" title="Filtrar por tipo: '+escHtml(evListFilterLabel(EV_TYPES_FILTER))+'"><span>'+escHtml(evListFilterLabel(EV_TYPES_FILTER))+'</span><span class="ev-tax-chevron" aria-hidden="true"></span></button>';
   h+='<div class="ev-sort-row">';
   /* Solo interesa lo mas cercano primero; el orden inverso se quito */
   if(EV_LIST_SORT==='fecha-desc')EV_LIST_SORT='fecha';
@@ -243,7 +243,7 @@ function renderEvByTypes(){
   h+='<div class="ev-types-controls">';
   h+='<label class="ev-types-past-label"><input type="checkbox" id="evTypesPast"'+(EV_TYPES_PAST?' checked':'')+'> Excluir pasados</label>';
   h+='</div></div>';
-  if(!EVENTS.length)return h+'<div class="sy-note">No hay eventos. Pulsa &quot;+ A\u00f1adir&quot; para crear uno.</div>';
+  if(!EVENTS.length)return h+'<div class="sy-note">No hay eventos. Puedes añadirlos desde Próximos o el calendario.</div>';
   /* Filtrado comun */
   var q=EV_LIST_SEARCH.trim().toLowerCase();
   function coincide(ev){
@@ -612,7 +612,7 @@ function renderEvContent(){
   else if(EV_VIEW==='puentes')h+=renderSummaryPuentesBody(EV_YEAR);
   else if(EV_VIEW==='time-off')h+=renderSummaryTimeOffBody(EV_YEAR);
   else h+=renderEvMonthsView();
-  if(['upcoming','months','week'].indexOf(EV_VIEW)>=0){
+  if(['upcoming','week'].indexOf(EV_VIEW)>=0){
     h+='<div class="ev-io-row">';
     h+='<button class="ev-io-btn" id="evAdd">+ Añadir</button>';
     if(EV_VIEW==='upcoming'||EV_VIEW==='months'||EV_VIEW==='birthdays'){
