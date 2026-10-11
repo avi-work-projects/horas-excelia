@@ -41,13 +41,15 @@ function settingsPanelHtml(prefix,title,body,tone){
   return '<div class="bd-form-overlay" id="'+prefix+'Ov"><section class="bd-form-sheet settings-editor-sheet" style="--settings-tone:'+tone+'" role="dialog" aria-modal="true" aria-labelledby="'+prefix+'Title"><header class="bd-panel-header panel-header-centered"><button class="sy-back" id="'+prefix+'Close" aria-label="Volver">←</button><h2 id="'+prefix+'Title">'+title+'</h2></header><div class="settings-editor-body">'+body+'</div>'+settingsEditorActions(prefix)+'</section></div>';
 }
 function bindSettingsEditor(root,prefix,options){
-  var fields=Array.from(root.querySelectorAll('input:not([type="file"]),textarea,select')),snapshot=[];
+  var fields=Array.from(root.querySelectorAll('input:not([type="file"]):not([data-personal-select]),textarea,select')),snapshot=[];
   var edit=root.querySelector('#'+prefix+'Edit'),cancel=root.querySelector('#'+prefix+'Cancel'),save=root.querySelector('#'+prefix+'Save');
+  bindSettingsCopy(root,fields);
   function setEditing(editing){
     SETTINGS_EDITOR_MODES[prefix]=editing;root.classList.toggle('settings-is-reading',!editing);
     fields.forEach(function(el){if(el.type==='radio'||el.type==='checkbox'||el.tagName==='SELECT')el.disabled=!editing;else el.readOnly=!editing;});
     edit.hidden=editing;cancel.hidden=save.hidden=!editing;
     root.querySelectorAll('[data-settings-edit-only]').forEach(function(el){el.hidden=!editing;});
+    root.querySelectorAll('.settings-copy').forEach(function(btn){btn.hidden=editing;btn.classList.remove('copied');btn.innerHTML=settingsCopyIcon(false);btn.setAttribute('aria-label',btn.dataset.copyLabel);});
     if(options.onMode)options.onMode(editing);
   }
   edit.onclick=function(){snapshot=fields.map(function(el){return {value:el.value,checked:el.checked};});if(options.onEdit)options.onEdit();setEditing(true);};
@@ -61,27 +63,57 @@ function bindSettingsEditor(root,prefix,options){
   };
   setEditing(false);
 }
-function openConnectionsSettings(){
-  closeSettingsMenu();var previous=NAV_BACK;
+function settingsCopyIcon(done){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(done?'<path d="m5 12 4 4 10-10"/>':'<rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V3H3v13h5"/>')+'</svg>';}
+async function settingsCopyText(text,button){
+  try{await navigator.clipboard.writeText(text);button.classList.add('copied');button.innerHTML=settingsCopyIcon(true)+(button.id==='personalCopySelected'?'<span>Copiado</span>':'');button.setAttribute('aria-label','Copiado');showToast('Copiado','success');}
+  catch(e){button.classList.remove('copied');button.innerHTML=settingsCopyIcon(false)+(button.id==='personalCopySelected'?'<span>Copiar Selección</span>':'');button.setAttribute('aria-label',button.dataset.copyLabel||'Copiar selección');showToast('No se pudo copiar. Comprueba el permiso del portapapeles','error');}
+}
+function bindSettingsCopy(root,fields){
+  fields.filter(function(el){return el.type!=='radio'&&el.type!=='checkbox';}).forEach(function(el){
+    var label=el.closest('label'),name=label&&label.querySelector('span')?label.querySelector('span').textContent:'Campo';
+    var wrap=document.createElement('span');wrap.className='settings-field-value';el.parentNode.insertBefore(wrap,el);wrap.appendChild(el);
+    var btn=document.createElement('button');btn.type='button';btn.className='settings-copy';btn.dataset.copyLabel='Copiar '+name;btn.setAttribute('aria-label',btn.dataset.copyLabel);btn.innerHTML=settingsCopyIcon(false);wrap.appendChild(btn);
+    btn.onclick=function(e){e.preventDefault();if(!el.value){showToast('Este campo está vacío');return;}settingsCopyText(el.value,btn);};
+  });
+}
+function openConnectionsSettings(kind){
+  kind=kind==='macro'?'macro':'mail';closeSettingsMenu();var previous=NAV_BACK;
   function close(){cerrarPanel('connectionsWrap','connectionsOv');if(NAV_BACK===close)NAV_BACK=previous;}
-  var values=[TO,CC.join(', '),AUTHOR_NAME,normalizeMacroBase(appStorage.getItem('excelia-alarm-url')||'')];
-  var fields=[['mailToLocal','Destinatario','email'],['mailCcLocal','CC (separados por comas)','text'],['mailNameLocal','Tu nombre','text'],['macroAlarmUrlMenu','URL base de MacroDroid','url']];
-  var body='<section class="settings-editor-section"><h3>Correo de horas</h3>';
-  fields.forEach(function(f,i){if(i===3)body+='</section><section class="settings-editor-section"><h3>MacroDroid</h3>';body+='<label class="invoice-field"><span>'+f[1]+'</span><input id="'+f[0]+'" type="'+f[2]+'" value="'+escHtml(values[i])+'" placeholder="Sin configurar"></label>';});body+='</section>';
-  var root=abrirPanel('connectionsWrap',settingsPanelHtml('connections','Correo y MacroDroid',body,'var(--c-orange)'),{contenedor:document.body,overlay:'connectionsOv',alCerrar:close});
+  var values=kind==='macro'?[normalizeMacroBase(appStorage.getItem('excelia-alarm-url')||'')]:[TO,CC.join(', '),AUTHOR_NAME];
+  var fields=kind==='macro'?[['macroAlarmUrlMenu','URL base de MacroDroid','url']]:[['mailToLocal','Destinatario','email'],['mailCcLocal','CC (separados por comas)','text'],['mailNameLocal','Tu nombre','text']];
+  var title=kind==='macro'?'MacroDroid':'Correo de Horas',body='<section class="settings-editor-section"><h3>'+title+'</h3>';
+  fields.forEach(function(f,i){body+='<label class="invoice-field"><span>'+f[1]+'</span><input id="'+f[0]+'" type="'+f[2]+'" value="'+escHtml(values[i])+'" placeholder="Sin configurar"></label>';});body+='</section>';
+  var root=abrirPanel('connectionsWrap',settingsPanelHtml('connections',title,body,kind==='macro'?'#8a5794':'var(--c-orange)'),{contenedor:document.body,overlay:'connectionsOv',alCerrar:close});
   root.querySelector('#connectionsClose').onclick=close;NAV_BACK=close;
   bindSettingsEditor(root,'connections',{onSave:function(){
-    var cfg={to:root.querySelector('#mailToLocal').value.trim(),cc:root.querySelector('#mailCcLocal').value.split(',').map(function(x){return x.trim();}).filter(Boolean),name:root.querySelector('#mailNameLocal').value.trim()};
-    if(cfg.cc.length)invoiceEmails(cfg.cc.join(','));
-    try{appStorage.begin();appStorage.setItem(MAIL_CFG_SK,JSON.stringify(cfg));appStorage.setItem('excelia-alarm-url',normalizeMacroBase(root.querySelector('#macroAlarmUrlMenu').value));appStorage.commit();loadMailConfig();showToast('Configuración guardada','success');}
-    catch(e){appStorage.cancel();throw e;}
+    if(kind==='macro')appStorage.setItem('excelia-alarm-url',normalizeMacroBase(root.querySelector('#macroAlarmUrlMenu').value));
+    else{var cfg={to:root.querySelector('#mailToLocal').value.trim(),cc:root.querySelector('#mailCcLocal').value.split(',').map(function(x){return x.trim();}).filter(Boolean),name:root.querySelector('#mailNameLocal').value.trim()};if(cfg.cc.length)invoiceEmails(cfg.cc.join(','));appStorage.setItem(MAIL_CFG_SK,JSON.stringify(cfg));loadMailConfig();}
+    showToast('Configuración guardada','success');
   }});
+}
+var CONTACT_DATA_KEY='excelia-contact-data-v1';
+var CONTACT_FIELDS=[['name','Nombre y Apellidos'],['tax','DNI / NIE'],['birth','Fecha de Nacimiento'],['phone','Teléfono'],['email','Correo Electrónico'],['address','Dirección'],['postal','Código Postal'],['city','Localidad'],['iban','IBAN'],['notes','Otros Datos']];
+function normalizeContactData(value){var result={};CONTACT_FIELDS.forEach(function(f){result[f[0]]=value&&typeof value[f[0]]==='string'?value[f[0]].slice(0,2000):'';});return result;}
+function contactData(){try{return normalizeContactData(JSON.parse(appStorage.getItem(CONTACT_DATA_KEY)||'{}'));}catch(e){return normalizeContactData({});}}
+function openPersonalData(){
+  closeSettingsMenu();var previous=NAV_BACK,data=contactData();
+  function close(){cerrarPanel('personalDataWrap','personalDataOv');if(NAV_BACK===close)NAV_BACK=previous;}
+  var body='<p class="settings-editor-note">Selecciona los datos que quieras copiar juntos. Se guardan en este dispositivo y en tus copias de seguridad.</p>';
+  CONTACT_FIELDS.forEach(function(f){body+='<div class="personal-data-row"><input type="checkbox" data-personal-select="'+f[0]+'" aria-label="Seleccionar '+f[1]+'"><label class="invoice-field"><span>'+f[1]+'</span><textarea rows="1" maxlength="2000" data-contact="'+f[0]+'">'+escHtml(data[f[0]])+'</textarea></label></div>';});
+  var root=abrirPanel('personalDataWrap',settingsPanelHtml('personalData','Mis Datos',body,'var(--home-tone)'),{contenedor:document.body,overlay:'personalDataOv',alCerrar:close});root.querySelector('#personalDataClose').onclick=close;NAV_BACK=close;
+  var copy=document.createElement('button');copy.className='ev-btn personal-copy-selected';copy.id='personalCopySelected';copy.textContent='Copiar Selección';root.querySelector('.settings-editor-actions').prepend(copy);
+  function selection(){copy.disabled=!root.querySelector('[data-personal-select]:checked');copy.innerHTML=settingsCopyIcon(false)+'<span>Copiar Selección</span>';copy.classList.remove('copied');copy.setAttribute('aria-label','Copiar selección');}
+  root.querySelectorAll('[data-personal-select]').forEach(function(el){el.onchange=selection;});selection();
+  copy.onclick=function(){var lines=[];CONTACT_FIELDS.forEach(function(f){if(root.querySelector('[data-personal-select="'+f[0]+'"]:checked')){var value=root.querySelector('[data-contact="'+f[0]+'"]').value.trim();if(value)lines.push(f[1]+': '+value);}});if(lines.length)settingsCopyText(lines.join('\n'),copy);else showToast('Los campos seleccionados están vacíos');};
+  bindSettingsEditor(root,'personalData',{onMode:function(editing){copy.hidden=editing;root.querySelectorAll('[data-personal-select]').forEach(function(el){el.hidden=editing;});selection();},onSave:function(){var values={};root.querySelectorAll('[data-contact]').forEach(function(el){values[el.dataset.contact]=el.value;});appStorage.setItem(CONTACT_DATA_KEY,JSON.stringify(normalizeContactData(values)));showToast('Datos guardados','success');}});
 }
 function initSettingsMenu(){
   initExportDirectory();
   var menu=document.getElementById('dataMenu');document.body.appendChild(menu);
   document.getElementById('menuBtn').addEventListener('click',function(e){e.stopPropagation();toggleSettingsMenu(e.currentTarget);});
-  document.getElementById('editConnectionsBtn').addEventListener('click',openConnectionsSettings);
+  document.getElementById('editConnectionsBtn').addEventListener('click',function(){openConnectionsSettings('mail');});
+  document.getElementById('editMacroBtn').onclick=function(){openConnectionsSettings('macro');};
+  document.getElementById('personalDataBtn').onclick=openPersonalData;
   document.addEventListener('keydown',function(e){
     if(e.key==='Escape'&&menu.classList.contains('open')){e.preventDefault();e.stopPropagation();closeSettingsMenu(true);}
   },true);

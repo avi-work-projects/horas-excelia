@@ -53,9 +53,10 @@ function openExportDirectory(onClosed){
   closeSettingsMenu();var previous=NAV_BACK,draft=null;
   function close(){cerrarPanel('exportFolderWrap','exportFolderOv');if(NAV_BACK===close)NAV_BACK=previous;if(typeof onClosed==='function')onClosed();}
   var supported=typeof window.showDirectoryPicker==='function';
-  var body='<section class="settings-editor-section"><h3>Destino de las copias</h3><p id="exportFolderStatus" role="status"></p><button class="ev-btn" id="exportFolderChoose" data-settings-edit-only'+(supported?'':' disabled')+'>Elegir o cambiar carpeta</button><label class="invoice-field"><span>Ubicación descriptiva</span><input class="ev-input" id="exportFolderLabel" maxlength="200" placeholder="Sin referencia"></label><p class="settings-editor-note">Referencia escrita por ti. El navegador no permite consultar las carpetas superiores.</p></section>'+(supported?'':'<p class="settings-editor-note">Este navegador no permite elegir carpetas. La copia se descargará en la ubicación configurada por el navegador.</p>');
+  var body='<section class="settings-editor-section"><h3>Destino de las copias</h3><div class="settings-field-value"><p id="exportFolderStatus" role="status"></p><button type="button" class="settings-copy" id="exportFolderCopy" aria-label="Copiar Carpeta" data-copy-label="Copiar Carpeta"></button></div><button class="ev-btn" id="exportFolderChoose" data-settings-edit-only'+(supported?'':' disabled')+'>Elegir o cambiar carpeta</button><label class="invoice-field"><span>Ubicación descriptiva</span><input class="ev-input" id="exportFolderLabel" maxlength="200" placeholder="Sin referencia"></label><p class="settings-editor-note">Referencia escrita por ti. El navegador no permite consultar las carpetas superiores.</p></section>'+(supported?'':'<p class="settings-editor-note">Este navegador no permite elegir carpetas. La copia se descargará en la ubicación configurada por el navegador.</p>');
   var root=abrirPanel('exportFolderWrap',settingsPanelHtml('exportFolder','Ruta de guardado',body,'var(--c-blue)'),{contenedor:document.body,overlay:'exportFolderOv',alCerrar:close});
   var edit=root.querySelector('#exportFolderEdit');edit.disabled=true;
+  root.querySelector('#exportFolderCopy').onclick=function(){settingsCopyText(EXPORT_DIRECTORY_LABEL||(EXPORT_DIRECTORY&&EXPORT_DIRECTORY.name)||'Sin carpeta seleccionada',this);};
   function status(){if(root.isConnected)root.querySelector('#exportFolderStatus').textContent=draft?'Carpeta: '+(root.querySelector('#exportFolderLabel').value.trim()||draft.name):'Sin carpeta seleccionada';}
   function load(){draft=EXPORT_DIRECTORY;root.querySelector('#exportFolderLabel').value=EXPORT_DIRECTORY_LABEL;status();}
   load();EXPORT_DIRECTORY_READY.then(function(){if(root.isConnected){load();edit.disabled=false;}});
@@ -72,7 +73,7 @@ function openExportDirectory(onClosed){
   }});
 }
 function renderExportActionIcon(mode){
-  var paths={save:'M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4',share:'M14 3h7v7M21 3l-11 11M10 5H4v15h15v-6',both:'M8 8H3v13h13v-5M8 3h8l5 5v8H8V3Zm8 0v5h5M11 12h7m-3-3 3 3-3 3'};
+  var paths={save:'M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4',share:'M14 3h7v7M21 3l-11 11M10 5H4v15h15v-6',both:'M4 3h11v18H4zM7 7h5M7 11h3M14 13h7m-3-3 3 3-3 3'};
   return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+paths[mode]+'"/></svg>';
 }
 function openExportChoice(blob,filename,onSuccess,options){
@@ -85,5 +86,5 @@ function openExportChoice(blob,filename,onSuccess,options){
   location();EXPORT_DIRECTORY_READY.then(location);
   root.querySelector('#exportChoiceClose').onclick=close;
   root.querySelector('#exportChoiceFolder').onclick=function(){openExportDirectory(location);};
-  root.querySelectorAll('[data-export-mode]').forEach(function(button){button.onclick=function(){close();shareOrDownload(blob,filename,onSuccess,Object.assign({},options,{mode:button.dataset.exportMode}));};});
+  root.querySelectorAll('[data-export-mode]').forEach(function(button){button.onclick=function(){close();if(button.dataset.exportMode==='save'&&document.querySelector('.hours-export-sheet'))document.getElementById('invoiceBack').click();shareOrDownload(blob,filename,onSuccess,Object.assign({},options,{mode:button.dataset.exportMode}));};});
 }
