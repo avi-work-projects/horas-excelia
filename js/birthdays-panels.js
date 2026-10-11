@@ -1,22 +1,14 @@
+function renderBdayVipToggle(id,vip){return '<label class="bday-person-vip"><input type="checkbox" id="'+id+'" aria-label="VIP"'+(vip?' checked':'')+'><img src="./VIP.png" alt="" aria-hidden="true"></label>';}
 function renderBdayDetail(b){
   var dl=daysUntil(b.month,b.day);
-  var lbl=dl===0?'\u00a1Hoy es su cumplea\u00f1os!':dl===1?'Ma\u00f1ana cumple a\u00f1os':'Faltan '+dl+' d\u00edas';
-  var color=getBdayColor(b);
-  var vipStar=b.vip?' <img src="./VIP.png" class="bday-vip-img" alt="VIP">':'';
+  var lbl=dl===0?'¡Hoy es su cumpleaños!':dl===1?'Mañana cumple años':'Faltan '+dl+' días';
   var h='<div class="bd-detail-overlay" id="bdDetailOv"><div class="bd-detail-sheet">';
-  h+='<div class="bd-detail-handle"></div>';
-  h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">';
-  h+='<button class="sy-back" id="bdDClose">&#8592;</button>';
-  h+='<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">Cumplea\u00f1os</div>';
-  h+='<button class="action-edit action-edit-text ev-list-btn" id="bdDEdit" style="font-size:.8rem;padding:6px 12px">&#9998; Editar</button>';
-  h+='</div>';
-  h+='<div class="bd-detail-color-bar" style="background:'+color+'"></div>';
-  h+='<div class="bd-detail-name">'+bdName(b.name)+vipStar+'</div>';
+  h+='<header class="bd-panel-header"><button class="sy-back" id="bdDClose" aria-label="Volver">←</button><h2>Cumpleaños</h2><button class="action-edit action-edit-text ev-list-btn" id="bdDEdit">✎ Editar</button></header>';
+  h+='<div class="bd-panel-body"><div class="bday-person-summary"><div class="bd-detail-name">'+bdName(b.name)+'</div><div class="bd-detail-date">'+b.day+' de '+MN[b.month-1]+'</div><div class="bd-detail-lbl">'+lbl+'</div></div>';
+  h+=renderBdayVipToggle('bdDVip',b.vip);
   h+=renderBdayPersonGroups(b);
-  h+='<label class="ev-toggle-row"><img src="./VIP.png" class="bday-vip-img" alt="VIP"><input type="checkbox" id="bdDVip" aria-label="VIP"'+(b.vip?' checked':'')+'></label>';
-  h+='<div class="bd-detail-date">'+b.day+' de '+MN[b.month-1]+'</div>';
-  h+='<div class="bd-detail-lbl" style="background:'+color+'22;color:'+color+'">'+lbl+'</div>';
-  h+=bdayCanSetAlarm(b)?'<button class="ev-btn" id="bdDAlarm">Configurar alarma</button>':'';
+  h+='</div>';
+  if(bdayCanSetAlarm(b))h+='<footer class="bd-panel-footer"><button class="ev-btn" id="bdDAlarm">Configurar alarma</button></footer>';
   h+='</div></div>';
   return h;
 }
@@ -259,12 +251,12 @@ function renderBdayForm(b,prefillDay,prefillMonth){
   var vip=isEdit?!!b.vip:false;
   var h='<div class="bd-form-overlay" id="bdFormOv"><div class="bd-form-sheet">';
   h+='<div class="bd-form-handle"></div>';
-  h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">';
+  h+='<header class="bd-panel-header">';
   h+='<button class="sy-back" id="bdFClose">&#8592;</button>';
   h+='<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">'+(isEdit?'Editar cumplea\u00f1os':'Nuevo cumplea\u00f1os')+'</div>';
   if(isEdit)h+='<button class="ev-btn danger" id="bdFDel" style="flex:none;padding:6px 12px;font-size:.75rem">Eliminar</button>';
   else h+='<div style="width:60px"></div>';
-  h+='</div>';
+  h+='</header><div class="bd-panel-body">';
   h+='<div class="ev-field"><label>Nombre</label>';
   h+='<input class="ev-input" id="bdFName" type="text" maxlength="60" placeholder="Nombre completo" value="'+escHtml(name)+'"></div>';
   h+='<div class="ev-field ev-date-row">';
@@ -273,13 +265,9 @@ function renderBdayForm(b,prefillDay,prefillMonth){
   MN.forEach(function(mn,i){h+='<option value="'+(i+1)+'"'+(month===(i+1)?' selected':'')+'>'+mn+'</option>';});
   h+='</select></div>';
   h+='</div>';
-  // VIP toggle
-  h+='<div class="ev-toggle-row">';
-  h+='<label class="ev-toggle-label" for="bdFVip"><img src="./VIP.png" alt="VIP" style="height:1.6em;vertical-align:middle;margin-right:5px"></label>';
-  h+='<input type="checkbox" class="ev-checkbox" id="bdFVip"'+(vip?' checked':'')+' style="--chk:#fbbf24">';
-  h+='</div>';
+  h+=renderBdayVipToggle('bdFVip',vip);
   h+=renderBdayGroupFields(b);
-  h+='<div class="ev-form-actions"><button class="ev-btn primary" id="bdFSave">Guardar</button></div>';
+  h+='</div><footer class="bd-panel-footer"><button class="ev-btn primary" id="bdFSave">Guardar</button></footer>';
   h+='</div></div>';
   return h;
 }
@@ -295,7 +283,6 @@ function openBdayDetail(b){
     var issue=birthdayValidation(Object.assign({},b,{vip:this.checked}),b);
     if(issue){this.checked=!!b.vip;showToast(issue,'error');return;}
     b.vip=this.checked;savePerson();
-    document.querySelector('#bdDWrap .bd-detail-name').innerHTML=bdName(b.name)+(b.vip?' <img src="./VIP.png" class="bday-vip-img" alt="VIP">':'');
   };
   var alarmButton=document.getElementById('bdDAlarm');
   if(alarmButton)alarmButton.addEventListener('click',function(){closeBdayDetail();setTimeout(function(){openBdayAlarm(b);},300);});

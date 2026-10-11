@@ -2,11 +2,12 @@
 <div class="bd-form-sheet">
 <div class="bd-form-handle">
 </div>
-<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+<header class="bd-panel-header">
 <button class="sy-back" id="bdFClose">&#8592;</button>
 <div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">Editar cumpleaños</div>
 <button class="ev-btn danger" id="bdFDel" style="flex:none;padding:6px 12px;font-size:.75rem">Eliminar</button>
-</div>
+</header>
+<div class="bd-panel-body">
 <div class="ev-field">
 <label>Nombre</label>
 <input class="ev-input" id="bdFName" type="text" maxlength="60" placeholder="Nombre completo" value="ana pruebas">
@@ -34,16 +35,23 @@
 </select>
 </div>
 </div>
-<div class="ev-toggle-row">
-<label class="ev-toggle-label" for="bdFVip">
-<img src="./VIP.png" alt="VIP" style="height:1.6em;vertical-align:middle;margin-right:5px">
+<label class="bday-person-vip">
+<input type="checkbox" id="bdFVip" aria-label="VIP" checked>
+<img src="./VIP.png" alt="" aria-hidden="true">
 </label>
-<input type="checkbox" class="ev-checkbox" id="bdFVip" checked style="--chk:#fbbf24">
-</div>
-<button type="button" class="ev-btn bday-category-button" id="bdCategories" data-groups="[]">Categorías · 0 <span aria-hidden="true">›</span>
+<section class="bday-detail-groups">
+<div class="bday-category-heading">
+<h3>Categorías</h3>
+<button type="button" class="ev-btn bday-category-button" id="bdCategories" data-groups="[]">Cambiar <span aria-hidden="true">›</span>
 </button>
-<div class="ev-form-actions">
-<button class="ev-btn primary" id="bdFSave">Guardar</button>
 </div>
+<div class="bday-person-groups" id="bdPersonGroups">
+<span class="bday-no-category">Sin categoría</span>
+</div>
+</section>
+</div>
+<footer class="bd-panel-footer">
+<button class="ev-btn primary" id="bdFSave">Guardar</button>
+</footer>
 </div>
 </div>
