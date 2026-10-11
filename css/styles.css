@@ -3268,13 +3268,39 @@ body:has(#bdDateOv.open) .tasks-fab{visibility:hidden}
 .bday-today-item>.bday-today-stroke,.bday-today-line>.bday-today-stroke{display:block;position:absolute;left:8px;right:0;top:-3px;height:3px;background:var(--birthday-tone);border-radius:0 999px 999px 0;pointer-events:none}
 
 /* Separadores discretos con aire y alarma dentro de su propia sección. */
-#bdDetailOv .bd-detail-sheet.bday-detail-has-alarm{height:min(370px,86dvh)}
+#bdDetailOv .bd-detail-sheet.bday-detail-has-alarm{height:min(390px,86dvh)}
 #bdDetailOv .bday-detail-groups,#bdFormOv .bday-detail-groups,#bdDetailOv .bday-detail-alarm{box-shadow:0 -1px 0 var(--border);margin:10px 0 0;padding-top:10px}
 #bdDetailOv .bd-panel-footer,#bdFormOv .bd-panel-footer{box-shadow:0 -1px 0 var(--border);padding-top:10px}
 #bdDetailOv .bday-category-button,#bdFormOv .bday-category-button{line-height:1;place-items:center;justify-content:center}
 .bday-category-button svg{display:block;width:16px;height:16px;margin:0;pointer-events:none}
 #bdDetailOv #bdDAlarm{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:36px;margin:0;padding:7px 10px;font-size:.78rem}
 #bdDAlarm svg,#bdDAlarm img{width:20px;height:20px;flex:none;object-fit:contain}
+
+/* Ficha de cumpleaños: paneles como en Próximos, sin separadores sueltos. */
+#bdDetailOv .bday-person-summary,#bdDetailOv .bday-detail-groups,#bdDetailOv .bday-detail-alarm{padding:8px 10px;margin:0 0 8px;border:1px solid var(--border);border-radius:12px;box-shadow:none;background:var(--surface2)}
+#bdDetailOv .bday-person-summary{background:var(--surface)}
+#bdDetailOv .bd-panel-footer{box-shadow:none;padding-top:2px}
+#bdDetailOv .bday-detail-alarm{display:flex;align-items:center;gap:8px}
+.bday-detail-alarm>svg,.bday-detail-alarm>img{width:24px;height:24px;flex:none;color:var(--birthday-tone)}
+.bday-detail-alarm-copy{flex:1;min-width:0;font-size:.75rem}
+.bday-detail-alarm-copy strong,.bday-detail-alarm-copy span{display:block}
+.bday-detail-alarm-copy span{font-size:.67rem;color:var(--text-muted);margin-top:3px}
+#bdDetailOv #bdDAlarm{width:auto;min-height:36px;padding:6px 10px}
+#bdDetailOv .bday-category-button,#bdFormOv .bday-category-button{width:32px;height:32px;min-height:32px;border-radius:6px;font-size:.85rem;display:flex;align-items:center;justify-content:center}
+.bday-list-name{line-height:24px}
+.bday-list-name>.bday-vip-img{height:20px;width:28px;vertical-align:-4px;margin-left:4px}
+
+#bdDetailOv .bd-panel-body>:last-child{margin-bottom:0}
+#bdDetailOv .bd-detail-sheet:not(.bday-detail-has-alarm){height:min(340px,86dvh)}
+
+#bdFormOv .bday-category-button{width:28px;min-width:28px;height:28px;min-height:28px}
+
+.bday-month-section .bday-list-item{border-bottom:0;box-shadow:0 1px 0 var(--border)}
+.bday-month-section .bday-list-item:last-child,.bday-month-section .bday-before-today{box-shadow:none}
+.bday-month-section .bday-today-item{border-top:0}
+
+#bdAlarmOv .bd-alarm-vip-row{border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);margin-bottom:8px}
+body:has(#bdAlarmOv.open) .tasks-fab{visibility:hidden}
 
 /* Fuente: css/source/home-sharing.css */
 /* Cabecera de Home opaca, incluso sobre los botones oscuros de las semanas. */

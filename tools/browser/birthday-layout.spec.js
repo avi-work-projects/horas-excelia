@@ -64,13 +64,14 @@ for(const width of [360,400,440])for(const theme of ['dark','light']){
   const title=await page.locator('#bdDetailOv h2').boundingBox(),panelBox=await sheet.boundingBox();expect(Math.abs(title.x+title.width/2-panelBox.x-panelBox.width/2)).toBeLessThan(1);
   const nameVip=await page.locator('.bd-detail-name').evaluate(el=>{const range=document.createRange();range.selectNodeContents(el.querySelector('.bday-name-tail').firstChild);const last=Array.from(range.getClientRects()).at(-1),icon=el.querySelector('img').getBoundingClientRect();return {gap:icon.x-last.right,y:icon.y,lastY:last.y};});expect(nameVip.gap).toBeLessThan(9);expect(nameVip.gap).toBeGreaterThanOrEqual(0);
   await expect(page.locator('#bdDetailOv .bd-panel-header #bdDAlarm')).toHaveCount(0);
-  await expect(page.locator('.bday-detail-alarm #bdDAlarm svg')).toBeVisible();
-  const alarmBox=await page.locator('.bday-detail-alarm').boundingBox(),categoryBox=await page.locator('#bdDetailOv .bday-detail-groups').boundingBox();expect(alarmBox.y-categoryBox.y-categoryBox.height).toBeGreaterThanOrEqual(9);
-  const pencil=await page.locator('#bdCategories').boundingBox(),pencilIcon=await page.locator('#bdCategories svg').boundingBox();expect(Math.abs(pencil.x+pencil.width/2-pencilIcon.x-pencilIcon.width/2)).toBeLessThan(1);expect(Math.abs(pencil.y+pencil.height/2-pencilIcon.y-pencilIcon.height/2)).toBeLessThan(1);
+  await expect(page.locator('.bday-detail-alarm svg')).toBeVisible();
+  const alarmBox=await page.locator('.bday-detail-alarm').boundingBox(),categoryBox=await page.locator('#bdDetailOv .bday-detail-groups').boundingBox();expect(alarmBox.y-categoryBox.y-categoryBox.height).toBeGreaterThanOrEqual(8);
+  await expect(page.locator('#bdCategories')).toHaveText('✎');await expect(page.locator('#bdCategories')).toHaveClass(/boda-cl-edit/);
+  await page.screenshot({animations:'disabled',path:testInfo.outputPath('panel-review.png')});
   expect(await page.locator('#bdDetailOv .bd-panel-body').evaluate(el=>el.scrollHeight<=el.clientHeight+1)).toBe(true);
   const before=await sheet.boundingBox();
   await page.locator('#bdDVip').uncheck();expect(await sheet.boundingBox()).toEqual(before);await expect(page.locator('#bdDNameVip')).toBeHidden();
-  await page.locator('#bdDVip').check();expect(await sheet.boundingBox()).toEqual(before);await expect(page.locator('#bdDNameVip')).toBeVisible();expect(before.height).toBeLessThanOrEqual(370);
+  await page.locator('#bdDVip').check();expect(await sheet.boundingBox()).toEqual(before);await expect(page.locator('#bdDNameVip')).toBeVisible();expect(before.height).toBeLessThanOrEqual(390);
   await page.screenshot({animations:'disabled',path:testInfo.outputPath('ficha.png')});
   await page.locator('#bdCategories').click();await expect(page.locator('#bdCategoryOv.open')).toBeVisible();
   const hues=await page.locator('[data-bd-category]').evaluateAll(els=>els.map(el=>+el.style.getPropertyValue('--group-hue')));
