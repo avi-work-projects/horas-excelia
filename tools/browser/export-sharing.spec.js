@@ -37,13 +37,13 @@ test('carpeta elegida guarda la misma copia sin impedir compartir',async({page},
   exportDirectoryStore=async(mode,value)=>{if(mode==='set')storedDirectory=value;return storedDirectory;};
  });
  await page.locator('#menuBtn').click();await page.locator('#exportFolderBtn').click();
- await page.locator('#exportFolderChoose').click();await expect(page.locator('#exportFolderStatus')).toHaveText('Carpeta: Gestify');
+ await page.locator('#exportFolderEdit').click();await page.locator('#exportFolderChoose').click();await page.locator('#exportFolderSave').click();await expect(page.locator('#exportFolderStatus')).toHaveText('Carpeta: Gestify');
  await page.screenshot({path:testInfo.outputPath('carpeta.png')});await page.locator('#exportFolderClose').click();
  await exportFile(page,'#csvExportBtn','both');
  await expect.poll(()=>page.evaluate(()=>copies.length)).toBe(1);await expect.poll(()=>page.evaluate(()=>sharedFiles.length)).toBe(1);
  expect(await page.evaluate(()=>copies[0])).toEqual(await page.evaluate(()=>({name:sharedFiles[0].name,text:sharedFiles[0].text})));
  await page.evaluate(()=>{EXPORT_DIRECTORY=null;initExportDirectory();});await expect.poll(()=>page.evaluate(()=>EXPORT_DIRECTORY?.name)).toBe('Gestify');
- await page.locator('#menuBtn').click();await page.locator('#exportFolderBtn').click();await page.locator('#exportFolderLabel').fill('Downloads / Gestify');await page.locator('#exportFolderSave').click();
+ await page.locator('#menuBtn').click();await page.locator('#exportFolderBtn').click();await page.locator('#exportFolderEdit').click();await page.locator('#exportFolderLabel').fill('Downloads / Gestify');await page.locator('#exportFolderSave').click();
  await expect(page.locator('#exportFolderStatus')).toHaveText('Carpeta: Downloads / Gestify');expect(await page.evaluate(()=>storedDirectory.label)).toBe('Downloads / Gestify');await page.screenshot({path:testInfo.outputPath('ubicacion.png')});
 });
 test('sin compartir descarga; permiso revocado no pierde el archivo',async({page})=>{

@@ -3256,8 +3256,8 @@ body:has(#bdDateOv.open) .tasks-fab{visibility:hidden}
 #bdFormOv .bday-form-name-row .bday-person-vip{flex:none;gap:4px;margin:0}
 #bdFormOv .bday-form-name-row .bday-person-vip img{width:32px}
 .bday-group-tools summary{color:var(--birthday-tone);border-color:color-mix(in srgb,var(--birthday-tone) 50%,var(--border));background:color-mix(in srgb,var(--birthday-tone) 9%,var(--surface))}
-.app-update-fab{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:380;min-height:44px;padding:10px 16px;border:1px solid var(--border);border-radius:22px;background:var(--surface);color:var(--text);box-shadow:0 3px 12px #0002;display:flex;align-items:center;gap:8px;font:inherit;font-size:.8rem;font-weight:600;cursor:pointer}
-.app-update-fab svg{width:22px;height:22px;flex:none}
+.app-update-fab{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:380;width:48px;height:48px;padding:0;border:1.5px solid var(--c-red);border-radius:17px;background:#fff;color:var(--c-red);box-shadow:0 4px 15px #21163a33;display:grid;place-items:center;cursor:pointer}
+.app-update-fab svg{width:27px;height:27px;flex:none}
 .app-update-fab:focus-visible{outline:2px solid var(--text);outline-offset:3px}
 
 .bday-name-tail{white-space:nowrap}
@@ -3420,6 +3420,27 @@ body:has(#bdGroupEditOv.open) .tasks-fab{visibility:hidden}
 
 #todayBtn{color:var(--c-red);border-color:var(--c-red)}
 #todayBtn:active{background:var(--c-red);color:#fff}
+
+.settings-edit-links{display:grid;gap:8px;padding:10px 12px}
+.settings-edit-links .settings-edit-btn{margin:0;white-space:normal;padding:11px 12px;text-align:left;font-weight:600;background:var(--settings-tone)!important;border-color:var(--settings-tone)!important;color:#fff!important}
+.settings-edit-connections{--settings-tone:#c06619}.settings-edit-invoices{--settings-tone:#27815a}.settings-edit-directory{--settings-tone:#496ac0}
+.settings-editor-sheet{box-sizing:border-box;width:min(480px,calc(100vw - 24px));height:min(660px,88dvh);max-height:88dvh;border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:14px;overflow:hidden}
+.settings-editor-sheet>.bd-panel-header{flex:none;margin:0;padding-bottom:12px;box-shadow:0 1px 0 var(--border)}
+.settings-editor-body,.settings-editor-sheet>.invoice-body{flex:1;min-height:0;overflow:auto;padding:2px}
+.settings-editor-section{border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px;background:var(--surface)}
+.settings-editor-section h3{font-size:.86rem;color:var(--settings-tone);margin:0 0 12px}
+.settings-editor-note,#exportFolderStatus{font-size:.76rem;color:var(--text-muted);line-height:1.5;overflow-wrap:anywhere}
+.settings-editor-actions{display:flex;gap:8px;flex:none;padding-top:12px;box-shadow:0 -1px 0 var(--border)}
+.settings-editor-sheet .settings-editor-actions .ev-btn{flex:1;min-height:42px;margin:0;border:1px solid var(--settings-tone);color:var(--settings-tone);background:var(--surface);border-radius:10px;font:inherit;font-size:.84rem;font-weight:600}
+.settings-editor-sheet .settings-editor-actions .ev-btn.primary{background:var(--settings-tone);color:#fff}
+.settings-editor-actions [hidden],[data-settings-edit-only][hidden]{display:none!important}
+.settings-is-reading .settings-editor-sheet input:not([type=radio]),.settings-is-reading .settings-editor-sheet textarea{background:var(--surface2);border-color:transparent;color:var(--text);cursor:default}
+.settings-editor-sheet .invoice-field input,.settings-editor-sheet .invoice-field textarea{font-size:.83rem}
+.settings-editor-sheet #exportFolderChoose{margin:8px 0;min-height:40px;width:100%}
+body:has(#connectionsOv.open) .tasks-fab{visibility:hidden}
+
+.invoice-sheet.settings-editor-sheet{width:min(480px,calc(100vw - 24px));border-radius:20px}
+#exportFolderOv .settings-editor-sheet{height:min(450px,88dvh)}
 
 /* Fuente: css/source/home-sharing.css */
 /* Cabecera de Home opaca, incluso sobre los botones oscuros de las semanas. */

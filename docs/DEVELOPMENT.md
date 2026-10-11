@@ -393,3 +393,14 @@ límites están en [macrodroid.md](macrodroid.md).
   offline instala el conjunto completo; no actualizar scripts sueltos en una caché vieja.
 - GitHub Actions debe completar las pruebas y el despliegue de la revisión concreta
   antes de dar la versión por publicada.
+
+## Paneles de configuración (v454)
+
+El menú de ajustes ofrece tres accesos, en este orden: correo de horas y
+MacroDroid, facturas y correo, y ruta de guardado. Se abren en consulta;
+`bindSettingsEditor` habilita los campos al pulsar Editar, conserva un borrador
+para Cancelar y vuelve a consulta después de Guardar. Los botones del pie
+permanecen visibles y el contenido largo se desplaza dentro del panel.
+`settingsPanelHtml` y `settingsEditorActions` comparten cabecera centrada y pie.
+En la ruta de guardado, elegir una carpeta solo cambia el borrador: tanto el
+handle como su referencia se escriben juntos en IndexedDB al guardar.

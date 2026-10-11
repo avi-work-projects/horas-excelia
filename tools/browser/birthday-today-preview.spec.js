@@ -23,7 +23,7 @@ test('actualización: botón flotante único conserva toast y recarga',async({pa
  await page.evaluate(()=>{showToast('Aviso de prueba','success');navigator.serviceWorker.dispatchEvent(new MessageEvent('message',{data:{type:'SW_UPDATED',version:'test'}}));});
  const fab=page.locator('#swUpdateFab');await expect(fab).toBeVisible();await expect(page.locator('#toast')).toContainText('Aviso de prueba');
  await page.evaluate(()=>navigator.serviceWorker.dispatchEvent(new MessageEvent('message',{data:{type:'SW_UPDATED',version:'test'}})));await expect(fab).toHaveCount(1);
- const r=await fab.boundingBox();expect(Math.abs(r.x+r.width/2-200)).toBeLessThan(1);expect(r.height).toBe(44);expect(r.y+r.height).toBe(862);
+ const r=await fab.boundingBox();expect(Math.abs(r.x+r.width/2-200)).toBeLessThan(1);expect(r.height).toBe(48);expect(r.width).toBe(48);await expect(fab).toHaveText('');await expect(fab).toHaveCSS('background-color','rgb(255, 255, 255)');await expect(fab).toHaveCSS('border-radius','17px');expect(r.y+r.height).toBe(862);
  await page.evaluate(()=>document.getElementById('toast').classList.remove('show'));
  await page.screenshot({path:testInfo.outputPath('actualizar.png'),animations:'disabled'});
  await Promise.all([page.waitForEvent('load'),fab.click()]);await expect(fab).toHaveCount(0);

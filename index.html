@@ -78,20 +78,14 @@ var BDAYS_FROM_SECRET=[];
           <button class="data-menu-item" id="themeBtn">&#127769;&nbsp;Oscuro</button>
           <button class="data-menu-item nav-style-setting" id="navIconStyle"><span>Iconos de navegación</span><span id="navIconStyleValue">Originales</span><span aria-hidden="true">&#8250;</span></button>
           <div class="settings-menu-separator" role="separator"></div>
-          <button class="data-menu-item" id="invoiceSettingsBtn">Edición facturas y correo</button>
-          <button class="data-menu-item" id="exportFolderBtn">Modificar ruta de guardado</button>
+          <div class="settings-edit-links">
+            <button class="data-menu-item settings-edit-btn settings-edit-connections" id="editConnectionsBtn">Editar correo y MacroDroid</button>
+            <button class="data-menu-item settings-edit-btn settings-edit-invoices" id="invoiceSettingsBtn">Edición facturas y correo</button>
+            <button class="data-menu-item settings-edit-btn settings-edit-directory" id="exportFolderBtn">Modificar ruta de guardado</button>
+          </div>
           <div class="settings-menu-separator" role="separator"></div>
           <button class="data-menu-item" id="exportAllBtn">&#8595;&nbsp;Exportar todo</button>
           <button class="data-menu-item" id="importAllBtn">&#8593;&nbsp;Importar todo</button>
-          <details class="settings-details"><summary>MacroDroid</summary><div class="macro-section">
-            <div class="macro-section-lbl">URL base</div>
-            <input class="macro-url-input" id="macroAlarmUrlMenu" readonly type="url" placeholder="https://trigger.macrodroid.com/ID">
-          </div></details>
-          <details class="settings-details"><summary>Correo de horas</summary><div class="macro-section">
-<input class="macro-url-input" id="mailToLocal" readonly type="email" placeholder="Destinatario">
-<input class="macro-url-input" id="mailCcLocal" readonly type="text" placeholder="CC (separados por comas)">
-<input class="macro-url-input" id="mailNameLocal" readonly type="text" placeholder="Tu nombre"></div></details>
-          <button class="data-menu-item settings-edit-btn" id="editConnectionsBtn">Editar correo y MacroDroid</button>
           <div class="app-version-label" id="appVersionLabel"></div>
           <button class="data-menu-item sw-upd-menu-btn" id="swUpdBtn" style="display:none">&#128260;&nbsp;Actualizar</button>
         </div>

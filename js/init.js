@@ -408,7 +408,7 @@
       fab.id='swUpdateFab';fab.className='app-update-fab';fab.type='button';
       fab.setAttribute('aria-label','Nueva versión disponible. Actualizar aplicación');
       fab.title='Actualizar aplicación';
-      fab.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19.5 8A8 8 0 1 0 20 15M19.5 3v5h-5"/></svg><span>Actualizar</span>';
+      fab.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19.5 8A8 8 0 1 0 20 15M19.5 3v5h-5"/></svg>';
       document.body.appendChild(fab);
     }
     // Método 1: controllerchange — el más fiable (skipWaiting activó el nuevo SW)

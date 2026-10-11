@@ -25,7 +25,7 @@ test('preparación mensual, XLSX válido, Gmail solo con definitivo y recuperaci
  await page.locator('#invoiceBack').click();await page.locator('#prevBtn').click();await page.locator('#invoiceHomeBtn').click();await expect(page.locator('.invoice-status')).toContainText('histórica');await expect(page.locator('#invoiceFinalFile')).toHaveCount(0);await expect(page.locator('#invoiceGmail')).toHaveCount(0);
 });
 test('configuración sin datos privados publicados y diseño móvil estrecho',async({page},info)=>{
- await page.evaluate(()=>invoiceSave({config:invoiceDefaults(),months:{}}));await page.evaluate(()=>openInvoiceSettings());await expect(page.locator('[data-invoice-field="issuer"]')).toHaveValue('');await expect(page.locator('[data-invoice-field="iban"]')).toBeVisible();await page.locator('[data-invoice-field="issuer"]').fill('Persona ejemplo');await page.locator('#invoiceSaveSettings').click();await expect(page.locator('#invoiceTitle')).toHaveText('Enviar factura');await page.locator('#invoiceConfig').click();await expect(page.locator('[data-invoice-field="issuer"]')).toHaveValue('Persona ejemplo');
+ await page.evaluate(()=>invoiceSave({config:invoiceDefaults(),months:{}}));await page.evaluate(()=>openInvoiceSettings());await expect(page.locator('[data-invoice-field="issuer"]')).toHaveValue('');await expect(page.locator('[data-invoice-field="iban"]')).toBeVisible();await page.locator('#invoiceSettingsEdit').click();await page.locator('[data-invoice-field="issuer"]').fill('Persona ejemplo');await page.locator('#invoiceSettingsSave').click();await expect(page.locator('#invoiceTitle')).toHaveText('Facturas y correo');await expect(page.locator('[data-invoice-field="issuer"]')).toHaveValue('Persona ejemplo');
  await page.screenshot({path:info.outputPath('configuracion.png')});await page.setViewportSize({width:360,height:800});expect(await page.locator('#invoiceOv').evaluate(el=>el.scrollWidth<=innerWidth)).toBe(true);await page.screenshot({path:info.outputPath('configuracion-360.png')});
 });
 test('PDF: duplicados entre meses, backup completo, importación y falta de espacio',async({page})=>{
@@ -50,13 +50,13 @@ test('importar configuración revisable sin sustituir los meses y botones junto 
   await page.screenshot({path:info.outputPath('home-'+width+'.png')});
  }
  await page.locator('#invoiceHomeBtn').click();await expect(page.locator('#invoiceExcel')).toBeVisible();const months=await page.evaluate(()=>JSON.stringify(invoiceData().months));
- await page.locator('#invoiceConfig').click();
+ await page.locator('#invoiceConfig').click();await page.locator('#invoiceSettingsEdit').click();
  const payload={format:'gestify-invoice-settings',version:1,config:{issuer:'Nuevo emisor de prueba',issuerTax:'NIF-PRUEBA',issuerAddress:'Domicilio inventado'}};
  await page.locator('#invoiceConfigFile').setInputFiles({name:'datos-facturacion.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(payload))});
  await expect(page.locator('[data-invoice-field="issuer"]')).toHaveValue(payload.config.issuer);await expect(page.locator('#invoiceImportStatus')).toContainText('Datos cargados');
  expect(await page.evaluate(()=>invoiceData().config.issuer)).toBe('Persona de prueba');expect(await page.evaluate(()=>JSON.stringify(invoiceData().months))).toBe(months);
  await page.locator('#invoiceConfigFile').setInputFiles({name:'incorrecto.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({format:'gestify-invoice-settings',version:1,config:{vat:'101'}}))});await expect(page.locator('#invoiceError')).toContainText('Porcentaje');await expect(page.locator('[data-invoice-field="issuer"]')).toHaveValue(payload.config.issuer);
- await page.locator('#invoiceSaveSettings').click();await expect(page.locator('#invoiceExcel')).toBeVisible();expect(await page.evaluate(()=>invoiceData().config.issuer)).toBe(payload.config.issuer);
+ await page.locator('#invoiceSettingsSave').click();await expect(page.locator('#invoiceSettingsEdit')).toBeVisible();await page.locator('#invoiceBack').click();await expect(page.locator('#invoiceWrap')).toHaveCount(0);await page.locator('#invoiceHomeBtn').click();await expect(page.locator('#invoiceExcel')).toBeVisible();expect(await page.evaluate(()=>invoiceData().config.issuer)).toBe(payload.config.issuer);
  await page.screenshot({path:info.outputPath('resumen.png')});
  await page.locator('#invoiceDocument summary').click();await expect(page.locator('#invoiceFinalFile')).toBeVisible();await page.screenshot({path:info.outputPath('siguiente-paso.png')});
 });
