@@ -20,7 +20,7 @@ test('cumpleaños: volver sin intervalo, tamaño por contenido y espacio entre c
 });
 test('exportar: elección explícita, compartir sin copia y copia sin compartir',async({page},info)=>{
  await page.evaluate(async()=>{await EXPORT_DIRECTORY_READY;window.sent=0;window.saved=0;EXPORT_DIRECTORY={name:'Prueba',queryPermission:async()=> 'granted',getFileHandle:async()=>({createWritable:async()=>({write:async()=>saved++,close:async()=>{}})})};Object.defineProperty(navigator,'canShare',{configurable:true,value:()=>true});Object.defineProperty(navigator,'share',{configurable:true,value:async()=>{sent++;}});});
- await page.locator('#csvExportBtn').click();await page.screenshot({path:info.outputPath('exportar.png')});expect(await page.evaluate(()=>[sent,saved])).toEqual([0,0]);await page.locator('#exportChoiceClose').click();await expect(page.locator('#exportChoiceWrap')).toHaveCount(0);
+ await page.locator('#hoursExportBtn').click();await page.locator('#hoursCsv').click();await page.screenshot({path:info.outputPath('exportar.png')});expect(await page.evaluate(()=>[sent,saved])).toEqual([0,0]);await page.locator('#exportChoiceClose').click();await expect(page.locator('#exportChoiceWrap')).toHaveCount(0);
  await exportFile(page,'#csvExportBtn','share');expect(await page.evaluate(()=>[sent,saved])).toEqual([1,0]);
  await exportFile(page,'#csvExportBtn','save');expect(await page.evaluate(()=>[sent,saved])).toEqual([1,1]);
  await exportFile(page,'#csvExportBtn','both');expect(await page.evaluate(()=>[sent,saved])).toEqual([2,2]);

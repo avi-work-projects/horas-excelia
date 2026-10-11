@@ -11,7 +11,8 @@
     "css/source/routines.css",
     "css/source/shared-refinements.css",
     "css/source/home-sharing.css",
-    "css/source/energy-refinements.css"
+    "css/source/energy-refinements.css",
+    "css/source/invoices.css"
   ],
   "styles": [
     "css/styles.css",
@@ -276,6 +277,15 @@
     },
     {
       "path": "js/alarm-panel.js"
+    },
+    {
+      "path": "js/invoices.js"
+    },
+    {
+      "path": "js/invoices-export.js"
+    },
+    {
+      "path": "js/invoices-ui.js"
     },
     {
       "path": "js/init.js",
