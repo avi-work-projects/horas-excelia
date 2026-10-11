@@ -11,7 +11,7 @@ function renderBdayDetail(b){
   h+='<header class="bd-panel-header"><button class="sy-back" id="bdDClose" aria-label="Volver">←</button><h2>Cumpleaños</h2></header>';
   h+='<div class="bd-panel-body"><div class="bday-person-summary"><div class="bd-detail-name"><span>'+displayName+'</span></div><div class="bday-detail-meta"><div class="bd-detail-date">'+b.day+' de '+MN[b.month-1]+'</div>'+renderBdayVipToggle('bdDVip',b.vip)+'</div><div class="bd-detail-lbl">'+lbl+'</div></div>';
   h+=renderBdayPersonGroups(b);
-  if(hasAlarm)h+='<section class="bday-detail-alarm" aria-label="Alarma"><button class="ev-btn" id="bdDAlarm">'+navIconHtml('alarm')+'<span>Configurar alarma</span></button></section>';
+  if(hasAlarm)h+='<section class="bday-detail-alarm bd-alarm-marker-row" aria-label="Alarma">'+navIconHtml('alarm')+'<div class="bday-detail-alarm-copy"><strong>Alarma</strong><span>'+(isBdayAlarmSet(b)?'Configurada':'Sin configurar')+'</span></div><button class="ev-btn" id="bdDAlarm">Configurar</button></section>';
   h+='</div>';
   h+='<footer class="bd-panel-footer ev-detail-actions"><button class="action-edit action-edit-text ev-btn ev-edit-orange" id="bdDEdit">&#9998; Editar</button><button class="ev-btn danger" id="bdDDel">Eliminar</button></footer>';
   h+='</div></div>';

@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v438 — fecha y estado en tarjetas separadas';
+var APP_VERSION = 'v439 — paneles de cumpleaños y filas VIP uniformes';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

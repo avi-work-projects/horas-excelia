@@ -23,21 +23,19 @@
 <section class="bday-detail-groups">
 <div class="bday-category-heading">
 <h3>Categorías</h3>
-<button type="button" class="action-edit bday-category-button" id="bdCategories" aria-label="Editar categorías" data-groups="[]">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-<path d="m16 3 5 5L8 21H3v-5L16 3ZM13 6l5 5"/>
-</svg>
-</button>
+<button type="button" class="action-edit boda-mini-btn boda-cl-edit bday-category-button" id="bdCategories" aria-label="Editar categorías" data-groups="[]">&#9998;</button>
 </div>
 <div class="bday-person-groups" id="bdPersonGroups">
 <span class="bday-no-category">Sin categoría</span>
 </div>
 </section>
-<section class="bday-detail-alarm" aria-label="Alarma">
-<button class="ev-btn" id="bdDAlarm">
+<section class="bday-detail-alarm bd-alarm-marker-row" aria-label="Alarma">
 <img src="icon-alarm.png" class="btn-icon" alt="">
-<span>Configurar alarma</span>
-</button>
+<div class="bday-detail-alarm-copy">
+<strong>Alarma</strong>
+<span>Sin configurar</span>
+</div>
+<button class="ev-btn" id="bdDAlarm">Configurar</button>
 </section>
 </div>
 <footer class="bd-panel-footer ev-detail-actions">
