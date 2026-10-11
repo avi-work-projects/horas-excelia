@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v457 — estadísticas y filtros refinados, Home rosa';
+var APP_VERSION = 'v458 — Próximos celeste, años y direcciones plegables';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
