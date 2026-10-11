@@ -104,13 +104,13 @@ function renderEvDetail(ev,fromSummary,car){
   h+='</div>';
   if(ev.type==='Presentar Modelo'&&ev.taxModel)h+='<div class="ev-detail-repeat">Modelo '+escHtml(ev.taxModel)+'</div>';
   h+=rutRecoveryHtml(ev);
-  h+=evManagementCheckHtml(ev,(car&&car.ds)||EV_EDIT_DS);
+  var managementCheck=evManagementCheckHtml(ev,(car&&car.ds)||EV_EDIT_DS);
 
   h+='<div class="ev-detail-color-section" id="evDColorSection">';
   h+=_renderColorPicker(_ddc,false,false,'evDCp');
   h+='<button class="econ-calc-btn" id="evDColorApply" style="margin-top:8px;font-size:.78rem;padding:8px 0">Probar color</button>';
   h+='</div>';
-  h+='<div class="ev-detail-facts"><div class="ev-detail-date"><span class="ev-detail-label">Fecha</span><strong>'+dateStr+'</strong></div>';
+  h+='<div class="ev-detail-facts"><div class="ev-detail-date-status"><div class="ev-detail-date"><span class="ev-detail-label">Fecha</span><strong>'+dateStr+'</strong></div>'+managementCheck+'</div>';
   /* En una clase de boda la hora sale abajo en su pastilla, no aqui */
   var _dt=(getEvType(ev)==='Ensayos boda')?'':evTimeLabel(ev);
   if(_dt)h+='<div class="ev-detail-date"><span class="ev-detail-label">Horario</span><strong>'+_dt+'</strong></div>';
