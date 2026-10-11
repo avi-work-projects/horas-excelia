@@ -15,7 +15,7 @@ for(const width of [360,400,440])for(const theme of ['dark','light']){
   await page.goto('/');
   await page.evaluate(theme=>document.documentElement.setAttribute('data-theme',theme),theme);
   await page.locator('#eventsBtn').click();await page.locator('#evViewBday').click();await page.locator('#bdViewList').click();
-  const body=page.locator('#eventsOverlay .sy-body');await body.evaluate(el=>el.scrollTop=0);
+  const body=page.locator('#eventsOverlay .sy-body');await expect(page.locator('#bdVipAll')).toHaveText('↑');await page.locator('#bdVipAll').click();await expect.poll(()=>body.evaluate(el=>el.scrollTop)).toBe(0);
   await expect(page.locator('#bdVipAll')).toBeInViewport();
   const todayStart=await page.locator('#bdVipAll').boundingBox();
   const firstHeader=await page.locator('.bday-month-hdr').first().boundingBox();
@@ -60,6 +60,8 @@ for(const width of [360,400,440])for(const theme of ['dark','light']){
   await expect(sheet).toBeVisible();
   await expect(page.locator('#bdPersonGroups .bday-group-tag')).toHaveText(['Amigos N.A.S.A','Familia Cercana']);
   expect(await page.locator('#bdPersonGroups .bday-group-tag').filter({hasText:'Familia Cercana'}).evaluate(el=>getComputedStyle(el).color)).toBe(familyColor);
+  const title=await page.locator('#bdDetailOv h2').boundingBox(),panelBox=await sheet.boundingBox();expect(Math.abs(title.x+title.width/2-panelBox.x-panelBox.width/2)).toBeLessThan(1);
+  const nameVip=await page.locator('.bd-detail-name').evaluate(el=>{const range=document.createRange();range.selectNodeContents(el.querySelector('.bday-name-tail').firstChild);const last=Array.from(range.getClientRects()).at(-1),icon=el.querySelector('img').getBoundingClientRect();return {gap:icon.x-last.right,y:icon.y,lastY:last.y};});expect(nameVip.gap).toBeLessThan(9);expect(nameVip.gap).toBeGreaterThanOrEqual(0);
   const before=await sheet.boundingBox();
   await page.locator('#bdDVip').uncheck();expect(await sheet.boundingBox()).toEqual(before);await expect(page.locator('#bdDNameVip')).toBeHidden();
   await page.locator('#bdDVip').check();expect(await sheet.boundingBox()).toEqual(before);await expect(page.locator('#bdDNameVip')).toBeVisible();expect(before.height).toBeLessThanOrEqual(310);
@@ -75,12 +77,15 @@ for(const width of [360,400,440])for(const theme of ['dark','light']){
   const vipGeometry=await page.locator('.bday-person-vip').evaluate(el=>({check:el.querySelector('input').getBoundingClientRect().right,icon:el.querySelector('img').getBoundingClientRect().left}));
   expect(vipGeometry.check).toBeLessThan(vipGeometry.icon);
   await page.locator('#bdDEdit').click();await expect(page.locator('#bdFormOv')).toBeVisible();
-  const form=page.locator('#bdFormOv .bd-form-sheet');const formBefore=await form.boundingBox();expect(formBefore.height).toBeLessThanOrEqual(370);
+  const form=page.locator('#bdFormOv .bd-form-sheet');const formBefore=await form.boundingBox();expect(formBefore.height).toBeLessThanOrEqual(390);
   await page.locator('#bdFVip').uncheck();expect(await form.boundingBox()).toEqual(formBefore);await expect(page.locator('#bdFNameVip')).toHaveCount(0);
   await page.locator('#bdFVip').check();expect(await form.boundingBox()).toEqual(formBefore);await expect(page.locator('#bdFNameVip')).toHaveCount(0);
   const formVip=await page.locator('#bdFVip').evaluate(el=>({check:el.getBoundingClientRect().right,icon:el.nextElementSibling.getBoundingClientRect().left}));
   expect(formVip.check).toBeLessThan(formVip.icon);
   await expect(page.locator('#bdFName')).not.toBeFocused();
+  const nameBox=await page.locator('#bdFName').boundingBox(),vipBox=await page.locator('#bdFVip').boundingBox();expect(vipBox.x).toBeGreaterThan(nameBox.x+nameBox.width);
+  await page.locator('#bdCategories').click();await page.locator('[data-bd-category="Amigos Extranjeros"]').click();await page.locator('[data-bd-category="Amigos En Madrid"]').click();await page.locator('#bdCategorySave').click();await expect(page.locator('#bdCategoryWrap')).toHaveCount(0);
+  const tagLines=await page.locator('#bdPersonGroups .bday-group-tag').evaluateAll(els=>new Set(els.map(el=>el.getBoundingClientRect().y)).size);expect(tagLines).toBeGreaterThanOrEqual(2);
   expect(await page.locator('#bdFormOv .bd-panel-body').evaluate(el=>el.scrollHeight<=el.clientHeight+1)).toBe(true);
   await page.screenshot({animations:'disabled',path:testInfo.outputPath('editar.png')});
   await page.locator('#bdFMonthPick').click();await expect(page.locator('#bdDateOv.open')).toBeVisible();

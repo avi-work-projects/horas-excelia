@@ -47,5 +47,5 @@ test('categorías unificadas, VIP directo y etiquetas opcionales con hoy anclado
  const body=page.locator('#eventsOverlay .sy-body');await body.evaluate(el=>el.scrollTop=0);await expect(page.locator('#bdVipAll')).toBeVisible();
  await body.evaluate(el=>el.scrollTop=600);await expect(page.locator('#bdVipAll')).toBeVisible();
  await page.screenshot({path:'test-results/cumpleanos-etiquetas.png'});
- await page.locator('#bdVipAll').click();await expect(page.locator('.bday-today-item,.bday-today-line:not([hidden])').first()).toBeInViewport();
+ await page.locator('#bdVipAll').click();await expect(page.locator('#bdVipAll')).toHaveText('Hoy');await page.locator('#bdVipAll').click();await expect(page.locator('.bday-today-item,.bday-today-line:not([hidden])').first()).toBeInViewport();
 });
