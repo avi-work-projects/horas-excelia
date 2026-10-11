@@ -168,12 +168,14 @@ function renderBdayList(){
       var sname=escHtml(b.name.toLowerCase());
       var lidx=BDAYS.indexOf(b);
       var effVip=BDAY_EDIT_VIP?getEffVip(b,lidx):!!b.vip;
-      var editCls=BDAY_EDIT_VIP?(effVip?' bday-list-vip-active':' bday-list-vip-dim'):'';
+      var personGroups=BDAY_EDIT_GROUP?BDAY_GROUP_PENDING[lidx]:bdayGroups(b);
+      var groupActive=BDAY_EDIT_GROUP&&personGroups.indexOf(BDAY_EDIT_GROUP)>=0;
+      var editCls=BDAY_EDIT_GROUP?(groupActive?' bday-list-vip-active':' bday-list-vip-dim'):BDAY_EDIT_VIP?(effVip?' bday-list-vip-active':' bday-list-vip-dim'):'';
       var vipStar=effVip?' <img src="./VIP.png" class="bday-vip-img" alt="VIP">':'';
       h+='<div class="bday-list-item'+editCls+'" data-bday-idx="'+lidx+'" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" data-sname="'+sname+'">';
       if(dl===0)h+='<i class="bday-today-stroke" aria-hidden="true"></i>';
       h+='<span class="bday-list-day">'+b.day+'</span>';
-      h+='<span class="bday-list-name">'+bdName(b.name)+vipStar+(BDAY_SHOW_GROUPS&&bdayGroups(b).length?'<small class="bday-person-groups">'+bdayGroupTags(bdayGroups(b))+'</small>':'')+'</span>';
+      h+='<span class="bday-list-name">'+bdName(b.name)+vipStar+(BDAY_SHOW_GROUPS&&(personGroups.length||BDAY_EDIT_GROUP)?'<small class="bday-person-groups">'+bdayGroupTags(personGroups)+'</small>':'')+'</span>';
       h+='<span class="'+cls+'">'+lbl+'</span>';
       h+='</div>';
     });
@@ -207,7 +209,7 @@ function renderBdayContent(){
     h+='<div class="sy-hdr-right bday-calendar-tools"><button class="today-btn" id="bdToday" style="font-size:.7rem;padding:6px 12px">Hoy</button>'+renderBdayVipFilter(true)+'</div>';
   }
   h+='</div>';
-  h+='<div class="sy-body ev-bday-body'+(BDAY_VIEW==='list'?' bday-list-body':'')+(BDAY_SHOW_GROUPS?' bday-show-groups':'')+'"'+(BDAY_EDIT_VIP?' style="padding-bottom:56px"':'')+'>';
+  h+='<div class="sy-body ev-bday-body'+(BDAY_VIEW==='list'?' bday-list-body':'')+(BDAY_SHOW_GROUPS?' bday-show-groups':'')+'"'+((BDAY_EDIT_VIP||BDAY_EDIT_GROUP)?' style="padding-bottom:56px"':'')+'>';
   h+='<div class="econ-sub-tabs bday-sub-tabs">';
   [['upcoming','Próximos','bdViewUpcoming'],['list','Lista','bdViewList'],['cal','Calendario','bdViewCal']].forEach(function(tab){h+='<button class="econ-sub-tab'+(BDAY_VIEW===tab[0]?' active':'')+'" id="'+tab[2]+'">'+tab[1]+'</button>';});
   h+='</div>';
@@ -219,8 +221,10 @@ function renderBdayContent(){
     h+='<button class="bday-vip-chip chip-vip'+(BDAY_FILTER_VIP==='vip'?' active':'')+'" id="bdVipOnly"><img src="./VIP.png" style="width:20px;height:auto;vertical-align:middle" alt="VIP"></button>';
     h+='<button class="bday-vip-chip chip-novip'+(BDAY_FILTER_VIP==='novip'?' active':'')+'" id="bdVipNone"><span class="vip-no-icon"><img src="./VIP.png" style="width:20px;height:auto;display:block" alt="no VIP"></span></button>';
     h+='</div>';
-    h+='<button class="bday-vip-edit-btn'+(BDAY_EDIT_VIP?' active':'')+'" id="bdEditVip">'+(BDAY_EDIT_VIP?'\u2713 Listo':'Editar VIPs')+'</button>';
+    h+='<button class="bday-vip-edit-btn'+(BDAY_EDIT_VIP?' active':'')+'" id="bdEditVip"'+(BDAY_EDIT_GROUP?' disabled':'')+'>'+(BDAY_EDIT_VIP?'\u2713 Listo':'Editar VIPs')+'</button>';
+    h+='<button class="bday-vip-edit-btn'+(BDAY_EDIT_GROUP?' active':'')+'" id="bdEditGroups"'+(BDAY_EDIT_VIP?' disabled':'')+'>'+(BDAY_EDIT_GROUP?'✓ Listo':'Editar etiquetas')+'</button>';
     h+='</div>';
+    if(BDAY_EDIT_GROUP)h+='<p class="bday-edit-group-hint">'+escHtml(BDAY_EDIT_GROUP)+' · Pulsa cada persona para asignar o quitar la etiqueta.</p>';
   }
   if(BDAY_VIEW==='list')h+=renderBdayGroupTools();
 
@@ -234,7 +238,7 @@ function renderBdayContent(){
     h+=renderBdayList();
   }
   h+='</div>';
-  if(BDAY_EDIT_VIP){
+  if(BDAY_EDIT_VIP||BDAY_EDIT_GROUP){
     h+='<button class="bday-cancel-edit-btn" id="bdCancelEdit">Cancelar</button>';
   }
   return h;

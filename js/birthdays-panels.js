@@ -14,7 +14,7 @@ function renderBdayDetail(b){
   var hasAlarm=bdayCanSetAlarm(b);
   var h='<div class="bd-detail-overlay" id="bdDetailOv"><div class="bd-detail-sheet'+(hasAlarm?' bday-detail-has-alarm':'')+'">';
   h+='<header class="bd-panel-header"><button class="sy-back" id="bdDClose" aria-label="Volver">←</button><h2>Cumpleaños</h2></header>';
-  h+='<div class="bd-panel-body"><div class="bday-person-summary"><div class="bd-detail-name"><span>'+displayName+'</span></div><div class="bday-detail-meta"><div class="bd-detail-date">'+b.day+' de '+MN[b.month-1]+'</div>'+renderBdayVipToggle('bdDVip',b.vip)+'</div><div class="bd-detail-lbl">'+lbl+'</div></div>';
+  h+='<div class="bd-panel-body"><div class="bday-person-summary"><div class="bd-detail-name"><span>'+displayName+'</span></div><div class="bday-detail-meta"><div class="bd-detail-date">'+b.day+' de '+MN[b.month-1]+'</div></div><div class="bday-detail-countdown"><div class="bd-detail-lbl">'+lbl+'</div>'+renderBdayVipToggle('bdDVip',b.vip)+'</div></div>';
   h+=renderBdayPersonGroups(b);
   if(hasAlarm)h+='<section class="bday-detail-alarm bd-alarm-marker-row" aria-label="Alarma"><span class="ev-upcoming-bell'+(isBdayAlarmSet(b)?' set':'')+'" aria-hidden="true">&#128276;</span><div class="bday-detail-alarm-copy"><strong>Alarma</strong><span>'+(isBdayAlarmSet(b)?'Configurada':'Sin configurar')+'</span></div><button class="ev-btn" id="bdDAlarm">Configurar</button></section>';
   h+='</div>';

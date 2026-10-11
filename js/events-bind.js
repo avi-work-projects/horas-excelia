@@ -401,31 +401,40 @@ function _bindEvWeekTitleBackground(){
 }
 
 function evListFilterLabel(value){
+  if(Array.isArray(value))return value.length?value.map(evListFilterLabel).join(' · '):'Todos';
   if(value==='all')return 'Todos';var parts=value.split('|');
   if(parts.length===1)return value;
   if(parts[1]==='*')return parts[0]==='grande'?'Grandes':'Puntuales';
   return parts[1]+(parts[1]==='Otros'?' · '+(parts[0]==='grande'?'grande':'puntual'):'');
 }
 function evListFilterMatches(ev,value){
+  if(Array.isArray(value))return !value.length||value.some(function(v){return evListFilterMatches(ev,v);});
   if(value==='all')return true;var parts=value.split('|');
   return parts.length===1?getEvType(ev)===value:getEvKind(ev)===parts[0]&&(parts[1]==='*'||getEvType(ev)===parts[1]);
 }
 function openEvTypeFilter(){
+  var selected=Array.isArray(EV_TYPES_FILTER)?EV_TYPES_FILTER.slice():EV_TYPES_FILTER==='all'?[]:[EV_TYPES_FILTER];
+  function isSelected(value){return value==='all'?!selected.length:selected.indexOf(value)>=0;}
   var h='<div class="ev-form-overlay" id="evTypeFilterOv"><div class="ev-form-sheet ev-filter-picker" role="dialog" aria-modal="true" aria-labelledby="evTypeFilterTitle">';
   h+='<div class="ev-filter-header"><button class="sy-back" id="evTypeFilterClose" aria-label="Volver">←</button><h2 id="evTypeFilterTitle">Filtrar eventos</h2></div>';
-  function option(value,label){return '<button class="ev-type-option'+(EV_TYPES_FILTER===value?' selected':'')+'" data-type="'+escHtml(value)+'" aria-pressed="'+(EV_TYPES_FILTER===value)+'">'+escHtml(label)+'</button>';}
+  function option(value,label){return '<button class="ev-type-option'+(isSelected(value)?' selected':'')+'" data-type="'+escHtml(value)+'" aria-pressed="'+(isSelected(value))+'">'+escHtml(label)+'</button>';}
   h+='<div class="ev-filter-kind">'+option('all','Todos')+option('puntual|*','Puntuales')+option('grande|*','Grandes')+'</div><div class="ev-filter-groups">';
   var groups=[['Recordatorios y gestiones','puntual','#328a70',['Rec. Gestiones'].concat(Object.keys(EV_MANAGEMENT_SUBTYPES))],['Planes y quedadas','puntual','#c47631',EV_KINDS.puntual.types.filter(evIsPlan)],['Ensayos y otros puntuales','puntual','#8c68ad',['Ensayos boda','Otros']],['Eventos grandes','grande','#3286ac',EV_KINDS.grande.types]];
   groups.forEach(function(group){
-    var active=group[3].some(function(type){return EV_TYPES_FILTER===group[1]+'|'+type;});
+    var active=group[3].some(function(type){return isSelected(group[1]+'|'+type);});
     h+='<details class="ev-filter-category-group" style="--event-tone:'+group[2]+'"'+(active?' open':'')+'><summary><span>'+group[0]+'</span><small>'+ (group[1]==='grande'?'Grande':'Puntual')+'</small></summary><div class="ev-type-options">';
     group[3].forEach(function(type){h+=option(group[1]+'|'+type,type);});h+='</div></details>';
   });
-  h+='</div></div></div>';
-  var close=function(){cerrarPanel('evTypeFilterWrap','evTypeFilterOv');};
+  h+='</div><button class="ev-btn primary" id="evTypeFilterDone">Listo</button></div></div>';
+  var close=function(){EV_TYPES_FILTER=selected;cerrarPanel('evTypeFilterWrap','evTypeFilterOv');refreshEvents();};
   var wrap=abrirPanel('evTypeFilterWrap',h,{overlay:'evTypeFilterOv',alCerrar:close});
   wrap.querySelector('#evTypeFilterClose').onclick=close;
-  wrap.querySelectorAll('[data-type]').forEach(function(button){button.onclick=function(){EV_TYPES_FILTER=button.dataset.type;close();refreshEvents();};});
+  wrap.querySelector('#evTypeFilterDone').onclick=close;
+  wrap.querySelectorAll('[data-type]').forEach(function(button){button.onclick=function(){
+    var value=button.dataset.type,index=selected.indexOf(value);
+    if(value==='all')selected=[];else if(index<0)selected.push(value);else selected.splice(index,1);
+    wrap.querySelectorAll('[data-type]').forEach(function(b){var active=isSelected(b.dataset.type);b.classList.toggle('selected',active);b.setAttribute('aria-pressed',active);});
+  };});
 }
 
 function _bindEvListas(){
