@@ -262,10 +262,10 @@
 
 **Funciones:** evCycleFilters:46 · evFilterGroup:52 · saveEvents:96 · loadEvAlarms:103 · saveEvAlarms:104 · _findBdayByEvId:105 · isEvAlarmSet:117 · setEvAlarmState:123 · evDk:130 · _evClampDate:139 · eventOccursOn:143 · getEventsOn:187 · evSignature:202 · evMergeIncoming:212 · evMergeMsg:237 · _fmtDayEs:249 · evBarLimitExceeded:251 · evDayLimitExceeded:261 · rutDayCount:297 · hasUpcomingEvent:304 · updateEventsBtn:313 · evDefaultShape:327 · evMarkerHtml:335 · evMorePlusHtml:350 · evMarkPriority:357 · evBodaMinutes:365 · evSortMarks:376 · ev0:377 · evAnnualXsHtml:409 · vipStarSvgHtml:419 · vipIconHtml:428 · evIsoDate:434 · _isVipBdayTooFar:435 · evUpcomingMarkHtml:442 · _evRowOcc:461 · evComparteDia:465 · _evSoloSeRozan:470 · _evTrozosSeRozan:481 · _evAssignRow:489 · _evMarcarMitades:503 · _evMitadesStyle:518 · evBarZ:525 · _evBarSegments:529 · _evBarBand:553 · _evBarSegmentStyle:559 · _evBarExtent:564 · _evRoundedOutline:575 · near:584 · _evBarMutedColor:603 · _evBarPast:608 · _evSteppedBar:620 · _evAnnualCtx:674 · visible:675 · _evLoadPuentes:693 · _evScheduleRemove:721 · _evCancelRemove:722 · evStartTime:741 · evCompareTime:747 · evEndTime:748 · evTimeLabel:755 · evTramos:762 · evTramoTexto:773 · evMinutosDe:780 · _positionEvBright:790 · withEventDateIndex:806
 
-### js/export-files.js  _(83 líneas)_
+### js/export-files.js  _(87 líneas)_
 **Estado global:** EXPORT_DIRECTORY:3 · EXPORT_DIRECTORY_LABEL:4 · EXPORT_DIRECTORY_READY:5 · EXPORT_NAME_LAST:6
 
-**Funciones:** exportFileName:7 · exportDirectoryStore:15 · initExportDirectory:32 · openExportDirectory:52 · close:54 · status:58 · openExportChoice:71 · close:72 · location:77
+**Funciones:** exportFileName:7 · exportDirectoryStore:15 · initExportDirectory:32 · openExportDirectory:52 · close:54 · status:58 · renderExportActionIcon:71 · openExportChoice:75 · close:76 · location:81
 
 ### js/home-popup.js  _(121 líneas)_
 **Estado global:** HOME_BIRTHDAYS_OPEN:2
@@ -683,7 +683,7 @@
 **Rangos por prefijo de clase:**
 .ev-shape:19-19 · .rut-add:45-45 · .rut-card:35-43 · .rut-day:51-52 · .rut-days:50-50 · .rut-dot:38-38 · .rut-first:16-16 · .rut-flex:13-21 · .rut-hist:57-60 · .rut-hpd:2-5 · .rut-icon:7-11 · .rut-name:39-39 · .rut-pct:44-44 · .rut-plan:22-34 · .rut-sec:12-12 · .rut-stat:54-56 · .rut-sug:46-49 · .rut-susp:53-53 · .rut-tag:40-41 · .rut-vacio:42-42
 
-### css/source/shared-refinements.css  _(883 líneas)_
+### css/source/shared-refinements.css  _(894 líneas)_
 
 **Secciones:**
 
@@ -732,11 +732,12 @@
 - Controles de cumpleaños: aire en los bordes y símbolos sin alterar las filas.:780
 - Cumpleaños: resumen abierto y paneles blancos con acento suave.:791
 - Fichas ajustadas a su contenido y acciones con tonos suaves.:806
-- Lista de cumpleaños: controles compactos y edición por etiqueta.:855
-- Todos: búsqueda y categoría a ancho completo, ordenación segmentada.:864
+- Lista de cumpleaños: controles compactos y edición por etiqueta.:861
+- Todos: búsqueda y categoría a ancho completo, ordenación segmentada.:870
+- Centro geométrico del panel: ambos extremos reservan el mismo ancho.:890
 
 **Rangos por prefijo de clase:**
-.app-update:733-735 · .bd-detail:654-655 · .bd-panel:608-613 · .bday-category:579-750 · .bday-date:690-789 · .bday-detail:622-860 · .bday-edit:859-859 · .bday-filter:570-646 · .bday-first:592-592 · .bday-form:728-729 · .bday-group:567-732 · .bday-hdr:161-162 · .bday-header:156-504 · .bday-jump:56-95 · .bday-label:598-598 · .bday-list:576-782 · .bday-month:174-796 · .bday-name:656-737 · .bday-next:104-105 · .bday-no:628-628 · .bday-person:574-621 · .bday-show:578-684 · .bday-sub:285-286 · .bday-today:560-781 · .bday-upcoming:54-531 · .bday-vip:532-878 · .boda-catalog:81-89 · .boda-cfg:131-147 · .boda-config:77-128 · .boda-count:85-85 · .boda-date:149-167 · .boda-day:118-118 · .boda-field:119-124 · .boda-filter:59-61 · .boda-mini:67-67 · .boda-pack:86-87 · .boda-pfilters:58-62 · .boda-sticky:78-144 · .boda-teachers:106-106 · .data-actions:344-344 · .data-btn:345-356 · .econ-equiv:477-477 · .econ-tab:327-331 · .econ-tariff:409-479 · .energy-tariff:455-457 · .est-nav:329-330 · .ev-alarm:814-815 · .ev-annual:549-549 · .ev-bday:287-584 · .ev-bright:445-445 · .ev-btn:816-817 · .ev-del:13-14 · .ev-filter:829-872 · .ev-list:2-869 · .ev-month:516-526 · .ev-multi:50-72 · .ev-rut:244-311 · .ev-search:3-7 · .ev-sort:8-53 · .ev-type:430-432 · .ev-types:429-844 · .ev-up:271-530 · .ev-view:66-66 · .ev-wk:226-444 · .export-choice:820-825 · .export-folder:798-826 · .fiscal-hdr:553-553 · .fiscal-hip:406-407 · .fiscal-tab:328-328 · .hip-rate:507-511 · .hip-ro:550-551 · .home-birthday:468-499 · .home-pending:469-475 · .home-popup:484-539 · .home-reminder:463-547 · .imp-mode:17-27 · .macro-url:70-70 · .nav-icon:364-374 · .nav-pro:338-350 · .nav-style:362-362 · .rate-input:46-46 · .rut-addition:206-223 · .rut-agenda:220-221 · .rut-cancelled:247-306 · .rut-done:818-819 · .rut-history:190-241 · .rut-hpd:188-188 · .rut-icon:172-173 · .rut-recovery:215-224 · .rut-session:225-225 · .rut-skipped:307-308 · .rut-week:189-189 · .selected:371-371 · .settings-details:107-109 · .settings-edit:71-110 · .settings-menu:441-441 · .sy-back:37-37 · .sy-body:35-587 · .sy-card:41-41 · .sy-header:36-506 · .sy-lbl:40-40 · .sy-period:415-422 · .sy-table:42-42 · .sy-tr:43-43 · .sy-val:39-39 · .sy-year:38-38 · .week-action:880-881 · .week-card:391-391 · .wm-logo:92-251
+.app-update:733-735 · .bd-detail:654-655 · .bd-panel:608-891 · .bday-category:579-750 · .bday-date:690-789 · .bday-detail:622-866 · .bday-edit:865-865 · .bday-filter:570-646 · .bday-first:592-592 · .bday-form:728-729 · .bday-group:567-732 · .bday-hdr:161-162 · .bday-header:156-504 · .bday-jump:56-95 · .bday-label:598-598 · .bday-list:576-782 · .bday-month:174-796 · .bday-name:656-737 · .bday-next:104-105 · .bday-no:628-628 · .bday-person:574-621 · .bday-show:578-684 · .bday-sub:285-286 · .bday-today:560-781 · .bday-upcoming:54-531 · .bday-vip:532-884 · .boda-catalog:81-89 · .boda-cfg:131-147 · .boda-config:77-128 · .boda-count:85-85 · .boda-date:149-167 · .boda-day:118-118 · .boda-field:119-124 · .boda-filter:59-61 · .boda-mini:67-67 · .boda-pack:86-87 · .boda-pfilters:58-62 · .boda-sticky:78-144 · .boda-teachers:106-106 · .data-actions:344-344 · .data-btn:345-356 · .econ-equiv:477-477 · .econ-tab:327-331 · .econ-tariff:409-479 · .energy-tariff:455-457 · .est-nav:329-330 · .ev-alarm:814-815 · .ev-annual:549-549 · .ev-bday:287-584 · .ev-bright:445-445 · .ev-btn:816-817 · .ev-del:13-14 · .ev-filter:835-878 · .ev-list:2-875 · .ev-month:516-526 · .ev-multi:50-72 · .ev-rut:244-311 · .ev-search:3-7 · .ev-sort:8-53 · .ev-type:430-432 · .ev-types:429-850 · .ev-up:271-530 · .ev-view:66-66 · .ev-wk:226-444 · .export-choice:820-829 · .export-folder:798-832 · .fiscal-hdr:553-553 · .fiscal-hip:406-407 · .fiscal-tab:328-328 · .hip-rate:507-511 · .hip-ro:550-551 · .home-birthday:468-499 · .home-pending:469-475 · .home-popup:484-539 · .home-reminder:463-547 · .imp-mode:17-27 · .macro-url:70-70 · .nav-icon:364-374 · .nav-pro:338-350 · .nav-style:362-362 · .panel-header:892-893 · .rate-input:46-46 · .rut-addition:206-223 · .rut-agenda:220-221 · .rut-cancelled:247-306 · .rut-done:818-819 · .rut-history:190-241 · .rut-hpd:188-188 · .rut-icon:172-173 · .rut-recovery:215-224 · .rut-session:225-225 · .rut-skipped:307-308 · .rut-week:189-189 · .selected:371-371 · .settings-details:107-109 · .settings-edit:71-110 · .settings-menu:441-441 · .sy-back:37-37 · .sy-body:35-587 · .sy-card:41-41 · .sy-header:36-506 · .sy-lbl:40-40 · .sy-period:415-422 · .sy-table:42-42 · .sy-tr:43-43 · .sy-val:39-39 · .sy-year:38-38 · .week-action:886-887 · .week-card:391-391 · .wm-logo:92-251
 
 ### css/source/home-sharing.css  _(114 líneas)_
 
@@ -769,13 +770,13 @@
 **Rangos por prefijo de clase:**
 .boda-asg:105-110 · .boda-det:101-104 · .boda-last:15-19 · .data-actions:138-139 · .energy-bar:90-90 · .energy-caption:2-2 · .energy-choice:12-12 · .energy-compare:132-132 · .energy-contract:4-5 · .energy-cost:86-134 · .energy-coverage:77-77 · .energy-extremes:73-73 · .energy-fee:42-43 · .energy-field:7-7 · .energy-fields:9-9 · .energy-info:62-64 · .energy-inline:83-83 · .energy-legend:91-91 · .energy-metric:124-126 · .energy-metrics:123-123 · .energy-overview:66-68 · .energy-period:69-71 · .energy-price:180-185 · .energy-range:92-92 · .energy-reconciliation:76-76 · .energy-scenario:133-133 · .energy-section:61-61 · .energy-supplier:74-127 · .energy-table:3-3 · .energy-tabs:45-56 · .energy-tariff:79-181 · .energy-tax:72-130 · .energy-vat:128-128 · .energy-window:31-122 · .energy-year:6-98 · .ev-btn:145-145 · .ev-io:135-135 · .ev-main:163-164 · .ev-upcoming:172-174 · .ev-wk:16-25 · .home-popup:18-28 · .imp-mode:112-112 · .imp-preview:113-117 · .nav-bar:140-140 · .rut-bulk:191-196 · .rut-card:157-162 · .rut-day:146-152 · .rut-days:149-149 · .rut-dpick:144-144 · .rut-history:187-190 · .rut-hora:153-155 · .rut-month:195-195 · .rut-recovery:143-143 · .rut-routine:159-159 · .rut-session:142-142 · .rut-time:156-156 · .rut-weekdays:150-150 · .sy-body:170-170
 
-### css/source/invoices.css  _(50 líneas)_
+### css/source/invoices.css  _(52 líneas)_
 
 **Secciones:**
 
 
 **Rangos por prefijo de clase:**
-.home-invoice:3-5 · .hours-control:1-6 · .hours-export:49-49 · .invoice-actions:20-20 · .invoice-body:10-10 · .invoice-card:11-13 · .invoice-config:18-18 · .invoice-confirm:25-25 · .invoice-day:24-24 · .invoice-document:33-33 · .invoice-error:26-26 · .invoice-eye:45-46 · .invoice-field:15-15 · .invoice-fields:14-36 · .invoice-filename:27-27 · .invoice-month:30-42 · .invoice-note:16-16 · .invoice-sheet:8-48 · .invoice-status:17-17 · .invoice-summary:43-44 · .invoice-totals:19-19
+.home-invoice:3-5 · .hours-control:1-6 · .hours-export:49-51 · .invoice-actions:20-20 · .invoice-body:10-10 · .invoice-card:11-13 · .invoice-config:18-18 · .invoice-confirm:25-25 · .invoice-day:24-24 · .invoice-document:33-33 · .invoice-error:26-26 · .invoice-eye:45-46 · .invoice-field:15-15 · .invoice-fields:14-36 · .invoice-filename:27-27 · .invoice-month:30-42 · .invoice-note:16-16 · .invoice-sheet:8-48 · .invoice-status:17-17 · .invoice-summary:43-44 · .invoice-totals:19-19
 
 ### css/tasks.css  _(97 líneas)_
 

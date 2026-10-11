@@ -29,6 +29,8 @@ Las ideas aún no implementadas están en [FUTURO.md](../FUTURO.md).
 
 ## Convenciones visuales de controles
 
+- Por defecto, el título de cada menú o panel nuevo se centra respecto al ancho completo de su contenedor, no al espacio sobrante tras la flecha. Reutilizar `.bd-panel-header.panel-header-centered`, con columnas laterales simétricas; si hay acciones más anchas, reservar el mismo ancho en ambos lados. Preferencia de Ángel del 11/10/2026.
+
 - En desplegables, reutilizar los indicadores dibujados de la aplicación (`.ev-tax-chevron` o el chevrón de `details > summary`). No usar caracteres de texto como `⌄` para representar la flecha. Preferencia de Ángel del 11/10/2026.
 - En el editor de cumpleaños, nombre y fecha comparten un panel blanco; categorías tiene su propio panel con acento suave. En la ficha, el resumen queda abierto, sin recuadro interior, y categorías conserva su panel.
 - Los símbolos VIP de la lista no deben cambiar la altura de las filas.
@@ -45,7 +47,7 @@ compartir, se conserva la descarga como alternativa.
 Cada exportación abre una elección: Guardar copia, Compartir o Guardar y compartir.
 Compartir solo no escribe una copia; Guardar solo no abre el diálogo nativo.
 Si no hay carpeta elegida o falla su permiso, guardar usa la descarga del navegador.
-En Ajustes → Carpeta de exportaciones se elige o cambia la carpeta. Su handle y
+En Ajustes → Modificar ruta de guardado se elige o cambia la carpeta. Su handle y
 una ubicación descriptiva opcional se conservan en IndexedDB solo en ese dispositivo.
 La descripción la escribe el usuario: nunca se presenta como ruta detectada, porque
 el navegador no expone los antecesores de la carpeta. No viaja en el backup.
