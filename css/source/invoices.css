@@ -47,3 +47,5 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 
 .invoice-sheet.hours-export-sheet{width:min(360px,calc(100% - 32px));margin-inline:auto;border-radius:20px}
 .hours-export-sheet .invoice-actions .ev-btn{display:flex;align-items:center;justify-content:center;gap:7px}
+
+.hours-export-sheet .hours-export-footnote{font-size:.72rem;margin:0;line-height:1.5}
