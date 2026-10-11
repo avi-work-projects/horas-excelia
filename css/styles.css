@@ -3385,6 +3385,7 @@ body:has(#evTypeFilterOv.open,#evAlarmOv.open,#rutAdditionOv.open) .tasks-fab{vi
 .bday-edit-group-hint{font-size:.75rem;color:var(--text-muted);margin:6px 0 10px}
 .bday-detail-countdown{display:flex;align-items:center;justify-content:space-between;gap:10px}
 #bdDetailOv .bday-detail-countdown .bd-detail-lbl{margin:0}
+#bdDetailOv .bday-detail-countdown .bday-person-vip{height:28px;margin:0}
 #bdDetailOv .bday-detail-alarm{background:color-mix(in srgb,#3688a8 10%,var(--surface));border-color:color-mix(in srgb,#3688a8 45%,var(--border))}
 /* Todos: búsqueda y categoría a ancho completo, ordenación segmentada. */
 .ev-list-tools{display:flex;flex-direction:column;gap:10px}
