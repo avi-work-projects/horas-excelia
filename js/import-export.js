@@ -248,7 +248,7 @@ function askImportMode(subtitle,cb,preview,options){
   var ov=document.createElement('div');
   ov.className='imp-mode-ov';
   ov.innerHTML='<div class="imp-mode-sheet">'
-    +'<div class="imp-mode-title">&#8593; Importar datos</div>'
+    +'<div class="imp-mode-title">&#8593; Importar Datos</div>'
     +'<div class="imp-mode-sub">'+escHtml(subtitle||'')+'</div>'
     +(preview||'')
     +'<button class="imp-mode-btn merge" data-mode="merge"><b>&#10133; A&#241;adir a lo que ya hay</b><span>Fusiona: no se borra nada de lo actual. Lo que venga en el archivo actualiza lo que coincida.</span></button>'
@@ -332,7 +332,7 @@ var _g4=document.getElementById('exportAllBtn'); if(_g4)_g4.addEventListener('cl
   if(typeof loadPersonalYear==='function')loadPersonalYear(CY);
   if(typeof loadEconComp==='function')loadEconComp();
   if(typeof loadEvAlarms==='function')loadEvAlarms();
-  var data={version:7,contactData:contactData(),energyTaxes:energyTaxes(),energyBills:energyBills(),energyContracts:energyContracts(),calendarUppercase:appStorage.getItem(EV_ICS_UPPER_KEY)==='true',calendarNotes:appStorage.getItem(EV_ICS_NOTES_KEY)==='true',calendarAuthor:evIcsAuthor(),calendarExports:evIcsRecords(),csvExports:csvExportRecords(),invoices:invoiceData(),bodaConfig:JSON.parse(JSON.stringify(BODA_CONFIG)),mailConfig:_lsJson(MAIL_CFG_SK,null),days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
+  var data={version:7,contactData:contactData(),personalNotes:personalNote(),energyTaxes:energyTaxes(),energyBills:energyBills(),energyContracts:energyContracts(),calendarUppercase:appStorage.getItem(EV_ICS_UPPER_KEY)==='true',calendarNotes:appStorage.getItem(EV_ICS_NOTES_KEY)==='true',calendarAuthor:evIcsAuthor(),calendarExports:evIcsRecords(),csvExports:csvExportRecords(),invoices:invoiceData(),bodaConfig:JSON.parse(JSON.stringify(BODA_CONFIG)),mailConfig:_lsJson(MAIL_CFG_SK,null),days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
     exclFest:EXCL_FEST,exclVac:EXCL_VAC,vacEntitlement:VAC_ENTITLEMENT,vacByYear:_lsJson(VAC_YEAR_KEY,VAC_BY_YEAR),
     birthdays:BDAYS,events:EVENTS,
     bodas:typeof BODA_COUPLES!=='undefined'?BODA_COUPLES:null,
@@ -498,7 +498,8 @@ function _applyFullImport(d,mode){
       if(d.scenarios&&Array.isArray(d.scenarios)&&typeof saveEconComp==='function'){ECON_SCENARIOS=merge?_mergeList(ECON_SCENARIOS,d.scenarios,_keyGasto):d.scenarios;saveEconComp();}
       if(d.evAlarms&&typeof EV_ALARMS_SET!=='undefined'){EV_ALARMS_SET=merge?_mergeMap(EV_ALARMS_SET,d.evAlarms):d.evAlarms;if(typeof saveEvAlarms==='function')saveEvAlarms();}
       if(d.bdayAlarms&&typeof BDAY_ALARM_SET!=='undefined'){BDAY_ALARM_SET=merge?_mergeMap(BDAY_ALARM_SET,d.bdayAlarms):d.bdayAlarms;appStorage.setItem('excelia-bday-alarm-set',JSON.stringify(BDAY_ALARM_SET));}
-      if(d.contactData){appStorage.setItem(CONTACT_DATA_KEY,JSON.stringify(normalizeContactData(merge?_mergeMap(contactData(),d.contactData):d.contactData)));}
+      if(d.personalNotes!=null)appStorage.setItem(PERSONAL_NOTES_KEY,d.personalNotes);
+      if(d.contactData){appStorage.setItem(CONTACT_DATA_KEY,JSON.stringify((merge?mergeContactData(contactData(),d.contactData):normalizeContactData(d.contactData))));}
       if(d.mailConfig){appStorage.setItem(MAIL_CFG_SK,JSON.stringify(d.mailConfig));loadMailConfig();}
       if(d.macroUrl)appStorage.setItem('excelia-alarm-url',d.macroUrl);
       if(d.alarmHour)appStorage.setItem('excelia-alarm-h',d.alarmHour);

@@ -249,6 +249,9 @@
       "path": "js/events-render.js"
     },
     {
+      "path": "js/events-statistics.js"
+    },
+    {
       "path": "js/events-tax-model.js"
     },
     {
@@ -274,6 +277,9 @@
     },
     {
       "path": "js/settings-menu.js"
+    },
+    {
+      "path": "js/settings-personal.js"
     },
     {
       "path": "js/alarm-panel.js"

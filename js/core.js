@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v455 — Home pizarra y datos personales';
+var APP_VERSION = 'v456 — estadísticas, notas y datos ampliados';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -284,6 +284,13 @@ function shareOrDownload(blob,filename,onSuccess,options){
 
 // ── Utilidades HTML ─────────────────────────────────────────
 function renderDocumentIcon(){return '<svg viewBox="0 0 24 24" class="ico-doc" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>';}
+/* Mayúscula inicial en palabras significativas de opciones, nunca en datos. */
+function menuTitle(text){
+  if(text==='Rec. Gestiones')return 'Recordatorio Gestiones';
+  return String(text).replace(/[\p{L}\p{N}]+/gu,function(word,offset){
+    return offset>0&&/^(de|del|y|o|en|a|al|el|la|los|las|por|para|con|sin|un|una)$/i.test(word)?word.toLowerCase():word.charAt(0).toUpperCase()+word.slice(1);
+  });
+}
 function escHtml(s){
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }

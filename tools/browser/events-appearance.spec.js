@@ -108,7 +108,7 @@ test('Rutinas, WM y Próximos seleccionan la casilla completa sin mover los tít
     for(const view of [
       {id:'evViewRutinas',tabs:'.rut-sub-tabs',buttons:['[data-rsub="lista"]','[data-rsub="stats"]']},
       {id:'evViewBodas',tabs:'.boda-sticky-hd .econ-sub-tabs',buttons:['[data-bsub="clases"]','[data-bsub="parejas"]','[data-bsub="calendario"]','[data-bsub="stats"]']},
-      {id:'evViewUpcoming',tabs:'.ev-upcoming-tabs',buttons:['#evSubUpcoming','#evSubBirthdays','#evSubAgenda','#evSubTodos']}
+      {id:'evViewUpcoming',tabs:'.ev-upcoming-tabs',buttons:['#evSubUpcoming','#evSubAgenda','#evSubTodos','#evSubStats']}
     ]){
       await page.locator('#'+view.id).click();
       let initial;

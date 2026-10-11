@@ -236,12 +236,12 @@ function renderEvByTypes(){
   h+='<div class="ev-sort-row">';
   /* Solo interesa lo mas cercano primero; el orden inverso se quito */
   if(EV_LIST_SORT==='fecha-desc')EV_LIST_SORT='fecha';
-  [['fecha','Por fecha'],['categoria','Por categoría']].forEach(function(o){
+  [['fecha','Por Fecha'],['categoria','Por Categoría']].forEach(function(o){
     h+='<button class="ev-sort-chip'+(EV_LIST_SORT===o[0]?' active':'')+'" data-sort="'+o[0]+'">'+o[1]+'</button>';
   });
   h+='</div>';
   h+='<div class="ev-types-controls">';
-  h+='<label class="ev-types-past-label"><input type="checkbox" id="evTypesPast"'+(EV_TYPES_PAST?' checked':'')+'> Excluir pasados</label>';
+  h+='<label class="ev-types-past-label"><input type="checkbox" id="evTypesPast"'+(EV_TYPES_PAST?' checked':'')+'> Excluir Pasados</label>';
   h+='</div></div>';
   if(!EVENTS.length)return h+'<div class="sy-note">No hay eventos. Puedes añadirlos desde Próximos o el calendario.</div>';
   /* Filtrado comun */
@@ -476,7 +476,7 @@ function renderEvWeek(){
 /* ── Render: contenido principal ────────────────────────── */
 function renderEvContent(){
   var h=renderNavBar('events');
-  var upcomingViews=['upcoming','birthdays','week','months'];
+  var upcomingViews=['upcoming','birthdays','week','months','stats'];
   var buttons=[
     ['evViewTimeOff','Vacaciones<br>Festivos','ev-btn-timeoff ev-btn-split',EV_VIEW==='puentes'||EV_VIEW==='time-off'],
     ['evViewQuad','Calendario<br>4 meses','ev-btn-calendar',EV_VIEW==='quad'],
@@ -497,7 +497,7 @@ function renderEvContent(){
   h+='<button class="sy-back" id="evBack">&#8592;</button>';
   if(EV_VIEW==='birthdays')h+=renderBdayAddButton('evBdayAdd');
   if(EV_VIEW==='upcoming'||EV_VIEW==='birthdays'){
-    h+='<div class="sy-year-nav"><div class="sy-year">'+(EV_VIEW==='birthdays'?'Cumpleaños':'Próximos eventos')+'</div></div>';
+    h+='<div class="sy-year-nav"><div class="sy-year">'+(EV_VIEW==='birthdays'?'Cumpleaños':'Próximos Eventos')+'</div></div>';
     if(EV_VIEW==='birthdays')h+=renderBdayVipFilter();
   } else if(EV_VIEW==='week'){
     h+='<div class="sy-year-nav"><button class="sy-nav" id="evPrev">&#9664;</button>';
@@ -505,6 +505,8 @@ function renderEvContent(){
     h+='<button class="sy-nav" id="evNext">&#9654;</button></div>';
     h+='<button class="ev-bright-btn ev-bright-mid'+(EV_BRIGHT_PAST?' on':'')+'" id="evBright">\uD83D\uDCA1</button>';
     h+='<div class="sy-hdr-right"><button class="today-btn" id="evToday" style="font-size:.65rem;padding:4px 10px">Hoy</button></div>';
+  } else if(EV_VIEW==='stats'){
+    h+='<div class="sy-year-nav"><div class="sy-year">Estadísticas</div></div>';
   } else if(EV_VIEW==='months'){
     h+='<div class="sy-year-nav"><div class="sy-year">Todos los Eventos</div></div>';
   } else if(EV_VIEW==='rutinas'){
@@ -548,14 +550,14 @@ function renderEvContent(){
     var _typeShort=EV_FILTER_SHORT;
     var _typeColor=EV_FILTER_COLOR;
     h+='<div class="ev-annual-controls">';
-    var _vdLabels={'puentes':'\uD83D\uDDD3 Puentes','fiestas':'\uD83D\uDCC5 Vac + Festivos','vacaciones':'\uD83C\uDFD6 Solo vacaciones','festivos':'\uD83C\uDF8C Solo festivos','none':'\u2715 Nada'};
+    var _vdLabels={'puentes':'\uD83D\uDDD3 Puentes','fiestas':'\uD83D\uDCC5 Vac + Festivos','vacaciones':'\uD83C\uDFD6 Solo Vacaciones','festivos':'\uD83C\uDF8C Solo Festivos','none':'\u2715 Nada'};
     var _curVdLabel=_vdLabels[EV_ANNUAL_VIEW]||_vdLabels['none'];
     h+='<div class="ev-annual-view-toggle">';
     h+='<button class="action-edit ev-ann-edit-btn'+(EV_EDIT_MODE?' active':'')+'" id="evAnnEditBtn" title="Modo edici\u00f3n">&#9998;</button>';
     h+='<div class="ev-ann-vd-wrap" id="evAnnVdWrap">';
     h+='<button class="ev-ann-vd-btn" id="evAnnVdBtn">'+_curVdLabel+' \u25be</button>';
     h+='<div class="ev-ann-vd-menu" id="evAnnVdMenu">';
-    [['puentes','\uD83D\uDDD3 Solo puentes'],['fiestas','\uD83D\uDCC5 Vac + festivos'],['vacaciones','\uD83C\uDFD6 Solo vacaciones'],['festivos','\uD83C\uDF8C Solo festivos'],['none','\u2715 No ver nada']].forEach(function(opt){
+    [['puentes','\uD83D\uDDD3 Solo Puentes'],['fiestas','\uD83D\uDCC5 Vac + festivos'],['vacaciones','\uD83C\uDFD6 Solo Vacaciones'],['festivos','\uD83C\uDF8C Solo Festivos'],['none','\u2715 No Ver Nada']].forEach(function(opt){
       var active=EV_ANNUAL_VIEW===opt[0];
       h+='<button class="ev-ann-vd-opt'+(active?' active':'')+'" data-view="'+opt[0]+'">'+opt[1]+'</button>';
     });
@@ -580,17 +582,18 @@ function renderEvContent(){
   if(upcoming){
     /* Próximos comparte pestañas y scroll con Cumpleaños, Agenda y Todos. */
     h+='<div class="econ-sub-tabs ev-upcoming-tabs">';
-    h+='<button class="econ-sub-tab'+(EV_VIEW==='upcoming'?' active':'')+'" id="evSubUpcoming">Próximos</button>';
-    h+='<button class="econ-sub-tab'+(EV_VIEW==='birthdays'?' active':'')+'" id="evSubBirthdays">Cumplea&ntilde;os</button>';
+    h+='<button class="econ-sub-tab'+(EV_VIEW==='upcoming'||EV_VIEW==='birthdays'?' active':'')+'" id="evSubUpcoming">Próximos</button>';
     h+='<button class="econ-sub-tab'+(EV_VIEW==='week'?' active':'')+'" id="evSubAgenda">Agenda</button>';
     h+='<button class="econ-sub-tab'+(EV_VIEW==='months'?' active':'')+'" id="evSubTodos">Todos</button>';
+    h+='<button class="econ-sub-tab'+(EV_VIEW==='stats'?' active':'')+'" id="evSubStats">Estadísticas</button>';
     h+='</div>';
     /* El margen del contenido no cambia la geometría de la barra sticky. */
     if(EV_VIEW!=='week')h+='<div class="ev-upcoming-content">';
-    if(EV_VIEW==='upcoming'){
+    if(EV_VIEW==='upcoming'||EV_VIEW==='birthdays'){
       h+='<div class="excl-row ev-up-filters">';
-      h+='<label class="excl-item"><input type="checkbox" id="evUpShowRut"'+(EV_UP_SHOW_RUT?' checked':'')+'> Ver rutinas</label>';
-      h+='<label class="excl-item"><input type="checkbox" id="evUpShowBoda"'+(EV_UP_SHOW_BODA?' checked':'')+'> Ver ensayos <span class="wm-logo wm-logo-check" role="img" aria-label="Wedding Moves"></span></label>';
+      h+='<label class="excl-item"><input type="checkbox" id="evUpShowRut"'+(EV_UP_SHOW_RUT?' checked':'')+'> Ver Rutinas</label>';
+      h+='<label class="excl-item"><input type="checkbox" id="evUpShowBoda"'+(EV_UP_SHOW_BODA?' checked':'')+'> Ver Ensayos <span class="wm-logo wm-logo-check" role="img" aria-label="Wedding Moves"></span></label>';
+      h+='<button class="ev-up-birthday-toggle'+(EV_VIEW==='birthdays'?' active':'')+'" id="evUpBirthdays" aria-pressed="'+(EV_VIEW==='birthdays')+'">Cumpleaños</button>';
       h+='</div>';
     }
   }
@@ -598,12 +601,13 @@ function renderEvContent(){
     /* Pestana unica "Vacaciones Festivos" con dos subpestanas */
     h+='<div class="econ-sub-tabs">';
     h+='<button class="econ-sub-tab ev-sub-puentes'+(EV_VIEW==='puentes'?' active':'')+'" id="evSubPuentes">Puentes</button>';
-    h+='<button class="econ-sub-tab ev-sub-timeoff'+(EV_VIEW==='time-off'?' active':'')+'" id="evSubTimeOff">Vacaciones y festivos</button>';
+    h+='<button class="econ-sub-tab ev-sub-timeoff'+(EV_VIEW==='time-off'?' active':'')+'" id="evSubTimeOff">Vacaciones y Festivos</button>';
     h+='</div>';
   }
   if(EV_VIEW==='cal')h+=renderEvCalMonth();
   else if(EV_VIEW==='upcoming')h+=renderEvUpcoming();
   else if(EV_VIEW==='birthdays')h+=renderBdayUpcoming();
+  else if(EV_VIEW==='stats')h+=renderEventStatistics();
   else if(EV_VIEW==='week')h+=renderEvWeek();
   else if(EV_VIEW==='annual')h+=renderEvAnnual();
   else if(EV_VIEW==='quad')h+=renderEvQuad();

@@ -50,11 +50,11 @@ test('Próximos mantiene la posición de los cuatro títulos al cambiar de pesta
   for(const width of [320,400]){
     await page.setViewportSize({width,height:880});
     const positions=[];
-    for(const id of ['evSubUpcoming','evSubBirthdays','evSubAgenda','evSubTodos','evSubUpcoming']){
+    for(const id of ['evSubUpcoming','evUpBirthdays','evSubAgenda','evSubTodos','evSubStats','evSubUpcoming']){
       await page.locator('#'+id).click();
-      const title={evSubUpcoming:'Próximos eventos',evSubBirthdays:'Cumpleaños',evSubTodos:'Todos los Eventos'}[id];
+      const title={evSubUpcoming:'Próximos Eventos',evUpBirthdays:'Cumpleaños',evSubTodos:'Todos los Eventos'}[id];
       if(title)await expect(page.locator('#eventsContent>.sy-header .sy-year')).toHaveText(title);
-      if(id==='evSubBirthdays'){
+      if(id==='evUpBirthdays'){
         const layout=await page.locator('#eventsContent>.sy-header').evaluate(e=>{
           const back=e.querySelector('.sy-back').getBoundingClientRect(),add=e.querySelector('.bday-header-add').getBoundingClientRect(),title=e.querySelector('.sy-year').getBoundingClientRect();
           return {backWidth:back.width,backHeight:back.height,gap:title.left-add.right};

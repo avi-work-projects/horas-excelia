@@ -6,7 +6,7 @@ test.beforeEach(async({page})=>{
 test('gestiones: selector, confirmación, check compartido y vencimiento',async({page})=>{
  await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await page.locator('#evAdd').click();
  await page.locator('[data-picker=management]').click();
- await expect(page.locator('#evPlanTitle')).toHaveText('Elige tu gestión');
+ await expect(page.locator('#evPlanTitle')).toHaveText('Elige tu Gestión');
  await expect.poll(async()=>{
   const generic=await page.locator('.ev-picker-generic').boundingBox(),heading=await page.locator('#evPlanTitle').boundingBox();
   return !!(generic&&heading&&generic.x+generic.width<heading.x&&Math.abs(generic.y+generic.height/2-heading.y-heading.height/2)<3);
@@ -58,7 +58,7 @@ test('selección compartida: genéricos, acentos y nombre elegido fuera de acces
    await page.locator('[data-picker='+key+']').click();await page.locator('#evPlanPickerOv [data-type="'+type+'"]').click();
    await expect(page.locator('#evPlanPickerOv .ev-plan-options .selected')).toHaveCSS('border-top-color',color);await expect(page.locator('#evPlanConfirm')).toHaveCSS('background-color',color);await expect(page.locator('#evPlanConfirm')).toHaveCSS('color','rgb(255, 255, 255)');
    await page.locator('#evPlanConfirm').click();await expect(page.locator('#evPlanPickerWrap')).toHaveCount(0);
-   await expect(page.locator('[data-group='+key+'] .ev-quick-selection')).toContainText(type);await expect(page.locator('[data-picker='+key+'] .ev-type-name')).toHaveText('Más opciones');await expect(page.locator('[data-picker='+key+'] .ev-type-name')).toHaveCSS('font-weight','400');
+   await expect(page.locator('[data-group='+key+'] .ev-quick-selection')).toContainText(type);await expect(page.locator('[data-picker='+key+'] .ev-type-name')).toHaveText('Más Opciones');await expect(page.locator('[data-picker='+key+'] .ev-type-name')).toHaveCSS('font-weight','400');
  }
  await expect(mg.locator('.ev-quick-selection')).toBeVisible();
  await mg.locator('[data-type="Llamada"]').click();await expect(mg.locator('.selected')).toHaveCSS('border-top-color','rgb(39, 132, 92)');await expect(pl.locator('.ev-quick-selection')).toBeVisible();

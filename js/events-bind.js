@@ -194,7 +194,7 @@ function _bindEvNav(){
     EV_BRIGHT_PAST=!EV_BRIGHT_PAST;refreshEvents();
   });
   document.getElementById('evViewUpcoming').addEventListener('click',function(){
-    _switchEvView(['months','birthdays','week'].indexOf(EV_VIEW)>=0?EV_VIEW:'upcoming');refreshEvents();
+    _switchEvView(['months','birthdays','week','stats'].indexOf(EV_VIEW)>=0?EV_VIEW:'upcoming');refreshEvents();
   });
   document.getElementById('evViewCal').addEventListener('click',function(){_switchEvView('cal');EV_PREV_VIEW=null;refreshEvents();});
   document.getElementById('evViewQuad').addEventListener('click',function(){_switchEvView('quad');refreshEvents();});
@@ -209,8 +209,10 @@ function _bindEvNav(){
   if(_upB)_upB.addEventListener('change',function(){EV_UP_SHOW_BODA=this.checked;refreshEvents();});
   var _subUp=document.getElementById('evSubUpcoming');
   if(_subUp)_subUp.addEventListener('click',function(){_switchEvView('upcoming');refreshEvents(false);});
-  var _subBd=document.getElementById('evSubBirthdays');
-  if(_subBd)_subBd.addEventListener('click',function(){_switchEvView('birthdays');refreshEvents(false);});
+  var _subBd=document.getElementById('evUpBirthdays');
+  if(_subBd)_subBd.addEventListener('click',function(){_switchEvView(EV_VIEW==='birthdays'?'upcoming':'birthdays');refreshEvents(false);});
+  var stats=document.getElementById('evSubStats');if(stats)stats.onclick=function(){_switchEvView('stats');refreshEvents(false);};
+  if(EV_VIEW==='stats')bindEventStatistics();
   if(EV_VIEW==='birthdays'){
     bindBdayUpcoming(document.getElementById('eventsContent'));
     document.getElementById('evBdayAdd').addEventListener('click',function(){openBdayForm(null);});
@@ -400,41 +402,60 @@ function _bindEvWeekTitleBackground(){
   schedule();
 }
 
+function evFilterCategories(){
+  return [
+    {id:'management',title:'Recordatorio Gestiones',kind:'puntual',color:'#328a70',types:['Rec. Gestiones'].concat(Object.keys(EV_MANAGEMENT_SUBTYPES))},
+    {id:'plans',title:'Planes y Quedadas',kind:'puntual',color:'#c47631',types:EV_KINDS.puntual.types.filter(evIsPlan)},
+    {id:'rehearsals',title:'Ensayos',kind:'puntual',color:'#8c68ad',types:['Ensayos boda']},
+    {id:'other',title:'Otros',kind:'puntual',color:'#849a30',types:['Otros']},
+    {id:'large',title:'Eventos Grandes',kind:'grande',color:'#3286ac',types:EV_KINDS.grande.types}
+  ];
+}
+function evFilterCategoryFor(value){return evFilterCategories().find(function(g){return g.types.some(function(t){return value===g.kind+'|'+t;});});}
 function evListFilterLabel(value){
   if(Array.isArray(value))return value.length?value.map(evListFilterLabel).join(' · '):'Todos';
-  if(value==='all')return 'Todos';var parts=value.split('|');
-  if(parts.length===1)return value;
+  if(value==='all')return 'Todos';
+  if(value.indexOf('group:')===0){var group=evFilterCategories().find(function(g){return value==='group:'+g.id;});return group?group.title:'Todos';}
+  var parts=value.split('|');if(parts.length===1)return menuTitle(value);
   if(parts[1]==='*')return parts[0]==='grande'?'Grandes':'Puntuales';
-  return parts[1]+(parts[1]==='Otros'?' · '+(parts[0]==='grande'?'grande':'puntual'):'');
+  return menuTitle(parts[1]==='Rec. Gestiones'?'Recordatorio Gestiones':parts[1])+(parts[1]==='Otros'?' · '+(parts[0]==='grande'?'Grande':'Puntual'):'');
 }
 function evListFilterMatches(ev,value){
   if(Array.isArray(value))return !value.length||value.some(function(v){return evListFilterMatches(ev,v);});
-  if(value==='all')return true;var parts=value.split('|');
-  return parts.length===1?getEvType(ev)===value:getEvKind(ev)===parts[0]&&(parts[1]==='*'||getEvType(ev)===parts[1]);
+  if(value==='all')return true;
+  if(value.indexOf('group:')===0){var group=evFilterCategories().find(function(g){return value==='group:'+g.id;});return !!group&&getEvKind(ev)===group.kind&&group.types.indexOf(getEvType(ev))>=0;}
+  var parts=value.split('|');return parts.length===1?getEvType(ev)===value:getEvKind(ev)===parts[0]&&(parts[1]==='*'||getEvType(ev)===parts[1]);
+}
+function evToggleListFilter(selected,value){
+  if(value==='all')return [];
+  var whole=value.indexOf('group:')===0,broad=value.endsWith('|*'),group=evFilterCategoryFor(value);
+  var compatible=selected.filter(function(v){
+    if(whole)return v.indexOf('group:')===0;
+    if(broad)return false;
+    var other=evFilterCategoryFor(v);return group&&other&&group.id===other.id;
+  });
+  // Un tipo global vuelve a Todos al pulsarlo de nuevo.
+  if(broad)return selected.length===1&&selected[0]===value?[]:[value];
+  var index=compatible.indexOf(value);if(index>=0)compatible.splice(index,1);else compatible.push(value);return compatible;
 }
 function openEvTypeFilter(){
   var selected=Array.isArray(EV_TYPES_FILTER)?EV_TYPES_FILTER.slice():EV_TYPES_FILTER==='all'?[]:[EV_TYPES_FILTER];
   function isSelected(value){return value==='all'?!selected.length:selected.indexOf(value)>=0;}
-  var h='<div class="ev-form-overlay" id="evTypeFilterOv"><div class="ev-form-sheet ev-filter-picker" role="dialog" aria-modal="true" aria-labelledby="evTypeFilterTitle">';
-  h+='<div class="ev-filter-header"><button class="sy-back" id="evTypeFilterClose" aria-label="Volver">←</button><h2 id="evTypeFilterTitle">Filtrar eventos</h2></div>';
-  function option(value,label){return '<button class="ev-type-option'+(isSelected(value)?' selected':'')+'" data-type="'+escHtml(value)+'" aria-pressed="'+(isSelected(value))+'">'+escHtml(label)+'</button>';}
-  h+='<div class="ev-filter-kind">'+option('all','Todos')+option('puntual|*','Puntuales')+option('grande|*','Grandes')+'</div><div class="ev-filter-groups">';
-  var groups=[['Recordatorios y gestiones','puntual','#328a70',['Rec. Gestiones'].concat(Object.keys(EV_MANAGEMENT_SUBTYPES))],['Planes y quedadas','puntual','#c47631',EV_KINDS.puntual.types.filter(evIsPlan)],['Ensayos y otros puntuales','puntual','#8c68ad',['Ensayos boda','Otros']],['Eventos grandes','grande','#3286ac',EV_KINDS.grande.types]];
-  groups.forEach(function(group){
-    var active=group[3].some(function(type){return isSelected(group[1]+'|'+type);});
-    h+='<details class="ev-filter-category-group" style="--event-tone:'+group[2]+'"'+(active?' open':'')+'><summary><span>'+group[0]+'</span><small>'+ (group[1]==='grande'?'Grande':'Puntual')+'</small></summary><div class="ev-type-options">';
-    group[3].forEach(function(type){h+=option(group[1]+'|'+type,type);});h+='</div></details>';
+  function option(value,label,color){return '<button class="ev-type-option'+(isSelected(value)?' selected':'')+'" style="--event-tone:'+color+'" data-type="'+escHtml(value)+'" aria-pressed="'+isSelected(value)+'">'+escHtml(menuTitle(label))+'</button>';}
+  var h='<div class="ev-form-overlay" id="evTypeFilterOv"><div class="ev-form-sheet ev-filter-picker" role="dialog" aria-modal="true" aria-labelledby="evTypeFilterTitle"><div class="ev-filter-header"><button class="sy-back" id="evTypeFilterClose" aria-label="Volver">←</button><h2 id="evTypeFilterTitle">Filtrar Eventos</h2></div>';
+  h+='<div class="ev-filter-kind">'+option('all','Todos','#526477')+option('puntual|*','Puntuales','#328a70')+option('grande|*','Grandes','#3286ac')+'</div><div class="ev-filter-groups">';
+  evFilterCategories().forEach(function(group){
+    var active=group.types.some(function(type){return isSelected(group.kind+'|'+type);});
+    h+='<details class="ev-filter-category-group" style="--event-tone:'+group.color+'"'+(active?' open':'')+'><summary><span>'+group.title+'</span><small>'+ (group.kind==='grande'?'Grande':'Puntual')+'</small></summary><div class="ev-type-options">';
+    h+=option('group:'+group.id,'Toda la Categoría',group.color);
+    group.types.forEach(function(type){h+=option(group.kind+'|'+type,type==='Rec. Gestiones'?'Recordatorio Gestiones':type,evTypeColor(group.kind,type));});h+='</div></details>';
   });
-  h+='</div><button class="ev-btn primary" id="evTypeFilterDone">Listo</button></div></div>';
-  var close=function(){EV_TYPES_FILTER=selected;cerrarPanel('evTypeFilterWrap','evTypeFilterOv');refreshEvents();};
+  h+='</div><p class="ev-filter-help" id="evFilterHelp" role="status">Combina categorías completas o tipos de una sola categoría.</p><button class="ev-btn primary" id="evTypeFilterDone">Listo</button></div></div>';
+  function close(){EV_TYPES_FILTER=selected;cerrarPanel('evTypeFilterWrap','evTypeFilterOv');refreshEvents();}
   var wrap=abrirPanel('evTypeFilterWrap',h,{overlay:'evTypeFilterOv',alCerrar:close});
-  wrap.querySelector('#evTypeFilterClose').onclick=close;
-  wrap.querySelector('#evTypeFilterDone').onclick=close;
-  wrap.querySelectorAll('[data-type]').forEach(function(button){button.onclick=function(){
-    var value=button.dataset.type,index=selected.indexOf(value);
-    if(value==='all')selected=[];else if(index<0)selected.push(value);else selected.splice(index,1);
-    wrap.querySelectorAll('[data-type]').forEach(function(b){var active=isSelected(b.dataset.type);b.classList.toggle('selected',active);b.setAttribute('aria-pressed',active);});
-  };});
+  wrap.querySelector('#evTypeFilterClose').onclick=close;wrap.querySelector('#evTypeFilterDone').onclick=close;
+  function paint(){wrap.querySelectorAll('[data-type]').forEach(function(b){var active=isSelected(b.dataset.type);b.classList.toggle('selected',active);b.setAttribute('aria-pressed',active);});wrap.querySelectorAll('details').forEach(function(card){card.classList.toggle('has-selection',!!card.querySelector('.selected'));});}
+  wrap.querySelectorAll('[data-type]').forEach(function(button){button.onclick=function(){var before=selected;selected=evToggleListFilter(selected,button.dataset.type);var removed=before.some(function(v){return v!==button.dataset.type&&selected.indexOf(v)<0;});wrap.querySelector('#evFilterHelp').textContent=removed?'Selección sustituida: combina categorías completas o tipos de una sola categoría.':'Combina categorías completas o tipos de una sola categoría.';paint();};});paint();
 }
 
 function _bindEvListas(){
@@ -573,7 +594,7 @@ function _bindEvGestos(){
 
 /* Orden visual de las cuatro subpestañas; no se vuelve al inicio al llegar al borde. */
 function _evSwipeUpcoming(step){
-  var views=['upcoming','birthdays','week','months'],i=views.indexOf(EV_VIEW);
+  var views=['upcoming','week','months','stats'],i=views.indexOf(EV_VIEW==='birthdays'?'upcoming':EV_VIEW);
   if(i<0)return false;
   if(views[i+step]){_switchEvView(views[i+step]);refreshEvents(false);}
   return true;
