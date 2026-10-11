@@ -5,6 +5,7 @@ for(const width of [360,400,440])for(const theme of ['dark','light']){
  test(`cumpleaños: geometría y revisión visual ${width}px ${theme}`,async({page},testInfo)=>{
   await page.setViewportSize({width,height:880});
   await page.addInitScript(()=>{
+   localStorage.setItem('excelia-nav-icons-v1','professional');
    sessionStorage.setItem('excelia-popup-dismissed','1');
    const today=new Date();
    localStorage.setItem('excelia-bdays-v1',JSON.stringify([
@@ -62,9 +63,14 @@ for(const width of [360,400,440])for(const theme of ['dark','light']){
   expect(await page.locator('#bdPersonGroups .bday-group-tag').filter({hasText:'Familia Cercana'}).evaluate(el=>getComputedStyle(el).color)).toBe(familyColor);
   const title=await page.locator('#bdDetailOv h2').boundingBox(),panelBox=await sheet.boundingBox();expect(Math.abs(title.x+title.width/2-panelBox.x-panelBox.width/2)).toBeLessThan(1);
   const nameVip=await page.locator('.bd-detail-name').evaluate(el=>{const range=document.createRange();range.selectNodeContents(el.querySelector('.bday-name-tail').firstChild);const last=Array.from(range.getClientRects()).at(-1),icon=el.querySelector('img').getBoundingClientRect();return {gap:icon.x-last.right,y:icon.y,lastY:last.y};});expect(nameVip.gap).toBeLessThan(9);expect(nameVip.gap).toBeGreaterThanOrEqual(0);
+  await expect(page.locator('#bdDetailOv .bd-panel-header #bdDAlarm')).toHaveCount(0);
+  await expect(page.locator('.bday-detail-alarm #bdDAlarm svg')).toBeVisible();
+  const alarmBox=await page.locator('.bday-detail-alarm').boundingBox(),categoryBox=await page.locator('#bdDetailOv .bday-detail-groups').boundingBox();expect(alarmBox.y-categoryBox.y-categoryBox.height).toBeGreaterThanOrEqual(9);
+  const pencil=await page.locator('#bdCategories').boundingBox(),pencilIcon=await page.locator('#bdCategories svg').boundingBox();expect(Math.abs(pencil.x+pencil.width/2-pencilIcon.x-pencilIcon.width/2)).toBeLessThan(1);expect(Math.abs(pencil.y+pencil.height/2-pencilIcon.y-pencilIcon.height/2)).toBeLessThan(1);
+  expect(await page.locator('#bdDetailOv .bd-panel-body').evaluate(el=>el.scrollHeight<=el.clientHeight+1)).toBe(true);
   const before=await sheet.boundingBox();
   await page.locator('#bdDVip').uncheck();expect(await sheet.boundingBox()).toEqual(before);await expect(page.locator('#bdDNameVip')).toBeHidden();
-  await page.locator('#bdDVip').check();expect(await sheet.boundingBox()).toEqual(before);await expect(page.locator('#bdDNameVip')).toBeVisible();expect(before.height).toBeLessThanOrEqual(310);
+  await page.locator('#bdDVip').check();expect(await sheet.boundingBox()).toEqual(before);await expect(page.locator('#bdDNameVip')).toBeVisible();expect(before.height).toBeLessThanOrEqual(370);
   await page.screenshot({animations:'disabled',path:testInfo.outputPath('ficha.png')});
   await page.locator('#bdCategories').click();await expect(page.locator('#bdCategoryOv.open')).toBeVisible();
   const hues=await page.locator('[data-bd-category]').evaluateAll(els=>els.map(el=>+el.style.getPropertyValue('--group-hue')));
@@ -77,7 +83,7 @@ for(const width of [360,400,440])for(const theme of ['dark','light']){
   const vipGeometry=await page.locator('.bday-person-vip').evaluate(el=>({check:el.querySelector('input').getBoundingClientRect().right,icon:el.querySelector('img').getBoundingClientRect().left}));
   expect(vipGeometry.check).toBeLessThan(vipGeometry.icon);
   await page.locator('#bdDEdit').click();await expect(page.locator('#bdFormOv')).toBeVisible();
-  const form=page.locator('#bdFormOv .bd-form-sheet');const formBefore=await form.boundingBox();expect(formBefore.height).toBeLessThanOrEqual(390);
+  const form=page.locator('#bdFormOv .bd-form-sheet');const formBefore=await form.boundingBox();expect(formBefore.height).toBeLessThanOrEqual(400);
   await page.locator('#bdFVip').uncheck();expect(await form.boundingBox()).toEqual(formBefore);await expect(page.locator('#bdFNameVip')).toHaveCount(0);
   await page.locator('#bdFVip').check();expect(await form.boundingBox()).toEqual(formBefore);await expect(page.locator('#bdFNameVip')).toHaveCount(0);
   const formVip=await page.locator('#bdFVip').evaluate(el=>({check:el.getBoundingClientRect().right,icon:el.nextElementSibling.getBoundingClientRect().left}));

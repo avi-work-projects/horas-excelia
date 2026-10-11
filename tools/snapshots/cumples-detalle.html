@@ -1,9 +1,8 @@
 <div class="bd-detail-overlay" id="bdDetailOv">
-<div class="bd-detail-sheet">
+<div class="bd-detail-sheet bday-detail-has-alarm">
 <header class="bd-panel-header">
 <button class="sy-back" id="bdDClose" aria-label="Volver">←</button>
 <h2>Cumpleaños</h2>
-<button class="ev-btn" id="bdDAlarm" aria-label="Configurar alarma">Alarma</button>
 </header>
 <div class="bd-panel-body">
 <div class="bday-person-summary">
@@ -25,12 +24,20 @@
 <div class="bday-category-heading">
 <h3>Categorías</h3>
 <button type="button" class="action-edit bday-category-button" id="bdCategories" aria-label="Editar categorías" data-groups="[]">
-<span aria-hidden="true">&#9998;</span>
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+<path d="m16 3 5 5L8 21H3v-5L16 3ZM13 6l5 5"/>
+</svg>
 </button>
 </div>
 <div class="bday-person-groups" id="bdPersonGroups">
 <span class="bday-no-category">Sin categoría</span>
 </div>
+</section>
+<section class="bday-detail-alarm" aria-label="Alarma">
+<button class="ev-btn" id="bdDAlarm">
+<img src="icon-alarm.png" class="btn-icon" alt="">
+<span>Configurar alarma</span>
+</button>
 </section>
 </div>
 <footer class="bd-panel-footer ev-detail-actions">
