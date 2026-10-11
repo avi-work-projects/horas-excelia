@@ -411,14 +411,14 @@ function evListFilterMatches(ev,value){
   return parts.length===1?getEvType(ev)===value:getEvKind(ev)===parts[0]&&(parts[1]==='*'||getEvType(ev)===parts[1]);
 }
 function openEvTypeFilter(){
-  var h='<div class="ev-form-overlay" id="evTypeFilterOv"><div class="ev-form-sheet ev-filter-picker" role="dialog" aria-modal="true" aria-labelledby="evTypeFilterTitle"><div class="ev-form-handle"></div>';
-  h+='<div class="nav-icon-picker-head"><button class="sy-back" id="evTypeFilterClose" aria-label="Volver">←</button><h2 id="evTypeFilterTitle">Filtrar eventos</h2></div>';
+  var h='<div class="ev-form-overlay" id="evTypeFilterOv"><div class="ev-form-sheet ev-filter-picker" role="dialog" aria-modal="true" aria-labelledby="evTypeFilterTitle">';
+  h+='<div class="ev-filter-header"><button class="sy-back" id="evTypeFilterClose" aria-label="Volver">←</button><h2 id="evTypeFilterTitle">Filtrar eventos</h2></div>';
   function option(value,label){return '<button class="ev-type-option'+(EV_TYPES_FILTER===value?' selected':'')+'" data-type="'+escHtml(value)+'" aria-pressed="'+(EV_TYPES_FILTER===value)+'">'+escHtml(label)+'</button>';}
   h+='<div class="ev-filter-kind">'+option('all','Todos')+option('puntual|*','Puntuales')+option('grande|*','Grandes')+'</div><div class="ev-filter-groups">';
-  var groups=[['Recordatorios','puntual','#64829d',['Rec. Gestiones']],['Gestiones','puntual','#328a70',Object.keys(EV_MANAGEMENT_SUBTYPES)],['Planes y quedadas','puntual','#c47631',EV_KINDS.puntual.types.filter(evIsPlan)],['Ensayos y otros puntuales','puntual','#8c68ad',['Ensayos boda','Otros']],['Eventos grandes','grande','#3286ac',EV_KINDS.grande.types]];
+  var groups=[['Recordatorios y gestiones','puntual','#328a70',['Rec. Gestiones'].concat(Object.keys(EV_MANAGEMENT_SUBTYPES))],['Planes y quedadas','puntual','#c47631',EV_KINDS.puntual.types.filter(evIsPlan)],['Ensayos y otros puntuales','puntual','#8c68ad',['Ensayos boda','Otros']],['Eventos grandes','grande','#3286ac',EV_KINDS.grande.types]];
   groups.forEach(function(group){
     var active=group[3].some(function(type){return EV_TYPES_FILTER===group[1]+'|'+type;});
-    h+='<details class="ev-filter-category-group" style="--event-tone:'+group[2]+'"'+(active?' open':'')+'><summary>'+group[0]+'<small>'+ (group[1]==='grande'?'Grande':'Puntual')+'</small></summary><div class="ev-type-options">';
+    h+='<details class="ev-filter-category-group" style="--event-tone:'+group[2]+'"'+(active?' open':'')+'><summary><span>'+group[0]+'</span><small>'+ (group[1]==='grande'?'Grande':'Puntual')+'</small></summary><div class="ev-type-options">';
     group[3].forEach(function(type){h+=option(group[1]+'|'+type,type);});h+='</div></details>';
   });
   h+='</div></div></div>';

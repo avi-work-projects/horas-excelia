@@ -52,3 +52,27 @@ test('Guardar y compartir sin carpeta descarga una sola copia aunque se cancele 
  }
  expect(count).toBe(2);
 });
+
+ test('filtro centrado en móvil, controles iguales y grupos desplegados sin desbordamiento',async({page},info)=>{
+ for(const width of [360,400]){
+  await page.setViewportSize({width,height:880});
+  await page.evaluate(()=>{EV_VIEW='upcoming';openEvents();});
+  await page.locator('#evViewUpcoming').click();await page.locator('#evSubTodos').click();
+  const search=await page.locator('.ev-list-search-row .ev-search').boundingBox(),filter=await page.locator('#evTypesFilter').boundingBox();
+  expect(filter.height).toBe(search.height);expect(filter.y).toBe(search.y);
+  await page.locator('#evTypesFilter').click();
+  const sheet=page.locator('.ev-filter-picker');await expect(sheet).toBeVisible();const box=await sheet.boundingBox();
+  expect(Math.abs(box.x+box.width/2-width/2)).toBeLessThan(1);expect(Math.abs(box.y+box.height/2-440)).toBeLessThan(1);
+  const title=await page.locator('#evTypeFilterTitle').boundingBox(),back=await page.locator('#evTypeFilterClose').boundingBox();
+  expect(Math.abs(title.y+title.height/2-back.y-back.height/2)).toBeLessThan(1);
+  await expect(page.locator('.ev-filter-category-group')).toHaveCount(4);
+  await page.screenshot({path:info.outputPath('filtro-'+width+'.png')});
+  const summaries=page.locator('.ev-filter-category-group summary');
+  for(const summary of await summaries.all())await summary.click();
+  await expect(page.locator('.ev-filter-category-group').first().locator('[data-type="puntual|Rec. Gestiones"]')).toHaveCount(1);
+  expect(await sheet.evaluate(el=>el.scrollWidth-el.clientWidth)).toBeLessThanOrEqual(1);
+  await page.locator('[data-type="grande|Otros"]').scrollIntoViewIfNeeded();await expect(page.locator('#evTypeFilterClose')).toBeInViewport();
+  await page.screenshot({path:info.outputPath('desplegado-'+width+'.png')});
+  await page.locator('#evTypeFilterClose').click();
+ }
+ });

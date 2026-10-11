@@ -683,7 +683,7 @@
 **Rangos por prefijo de clase:**
 .ev-shape:19-19 · .rut-add:45-45 · .rut-card:35-43 · .rut-day:51-52 · .rut-days:50-50 · .rut-dot:38-38 · .rut-first:16-16 · .rut-flex:13-21 · .rut-hist:57-60 · .rut-hpd:2-5 · .rut-icon:7-11 · .rut-name:39-39 · .rut-pct:44-44 · .rut-plan:22-34 · .rut-sec:12-12 · .rut-stat:54-56 · .rut-sug:46-49 · .rut-susp:53-53 · .rut-tag:40-41 · .rut-vacio:42-42
 
-### css/source/shared-refinements.css  _(848 líneas)_
+### css/source/shared-refinements.css  _(854 líneas)_
 
 **Secciones:**
 
@@ -713,28 +713,28 @@
 - Semanas enviadas en claro: verdes suaves, sin pastillas oscuras.:385
 - Borde discreto para identificar semanas enviadas en ambos temas.:390
 - Filtros junto al buscador sin ensanchar la ventana movil.:394
-- Configuracion de tarifa: controles verdes y valores neutros.:407
-- Aire entre dias; el hueco entre eventos del mismo dia se conserva.:425
-- Texto del trayecto alineado con el titulo, sin mover las tarjetas puntuales.:442
-- Controles de plegado compartidos: superficie, foco y chevrón dibujado.:445
-- Recordatorios: cabecera siempre visible y contenido independiente.:482
-- Los controles de cumpleaños heredan el tema de la vista que los aloja.:501
-- Calendario mensual: malla tranquila; conserva la geometría de eventos y puentes.:514
-- La cabecera sigue su mes; hoy comparte el acento de cumpleaños.:553
-- Lista de cumpleaños: etiquetas opcionales y acceso a hoy junto al mes.:565
-- Controles compactos y paneles estables: solo se desplaza su contenido.:593
-- Buscador y filtro comparten fila; las opciones conservan todo el ancho.:636
-- Ficha compacta, acciones compartidas y fecha sin controles nativos.:680
-- Cumpleaños: jerarquía por espacios y edición junto a cada campo.:715
-- Todas las personas de hoy comparten acento; solo la primera lleva la línea.:738
-- Separadores discretos con aire y alarma dentro de su propia sección.:744
-- Ficha de cumpleaños: paneles como en Próximos, sin separadores sueltos.:753
-- Controles de cumpleaños: aire en los bordes y símbolos sin alterar las filas.:779
-- Cumpleaños: resumen abierto y paneles blancos con acento suave.:790
-- Fichas ajustadas a su contenido y acciones con tonos suaves.:805
+- Configuracion de tarifa: controles verdes y valores neutros.:408
+- Aire entre dias; el hueco entre eventos del mismo dia se conserva.:426
+- Texto del trayecto alineado con el titulo, sin mover las tarjetas puntuales.:443
+- Controles de plegado compartidos: superficie, foco y chevrón dibujado.:446
+- Recordatorios: cabecera siempre visible y contenido independiente.:483
+- Los controles de cumpleaños heredan el tema de la vista que los aloja.:502
+- Calendario mensual: malla tranquila; conserva la geometría de eventos y puentes.:515
+- La cabecera sigue su mes; hoy comparte el acento de cumpleaños.:554
+- Lista de cumpleaños: etiquetas opcionales y acceso a hoy junto al mes.:566
+- Controles compactos y paneles estables: solo se desplaza su contenido.:594
+- Buscador y filtro comparten fila; las opciones conservan todo el ancho.:637
+- Ficha compacta, acciones compartidas y fecha sin controles nativos.:681
+- Cumpleaños: jerarquía por espacios y edición junto a cada campo.:716
+- Todas las personas de hoy comparten acento; solo la primera lleva la línea.:739
+- Separadores discretos con aire y alarma dentro de su propia sección.:745
+- Ficha de cumpleaños: paneles como en Próximos, sin separadores sueltos.:754
+- Controles de cumpleaños: aire en los bordes y símbolos sin alterar las filas.:780
+- Cumpleaños: resumen abierto y paneles blancos con acento suave.:791
+- Fichas ajustadas a su contenido y acciones con tonos suaves.:806
 
 **Rangos por prefijo de clase:**
-.app-update:732-734 · .bd-detail:653-654 · .bd-panel:607-612 · .bday-category:578-749 · .bday-date:689-788 · .bday-detail:621-812 · .bday-filter:569-645 · .bday-first:591-591 · .bday-form:727-728 · .bday-group:566-731 · .bday-hdr:161-162 · .bday-header:156-503 · .bday-jump:56-95 · .bday-label:597-597 · .bday-list:575-781 · .bday-month:174-795 · .bday-name:655-736 · .bday-next:104-105 · .bday-no:627-627 · .bday-person:573-620 · .bday-show:577-683 · .bday-sub:285-286 · .bday-today:559-780 · .bday-upcoming:54-530 · .bday-vip:531-657 · .boda-catalog:81-89 · .boda-cfg:131-147 · .boda-config:77-128 · .boda-count:85-85 · .boda-date:149-167 · .boda-day:118-118 · .boda-field:119-124 · .boda-filter:59-61 · .boda-mini:67-67 · .boda-pack:86-87 · .boda-pfilters:58-62 · .boda-sticky:78-144 · .boda-teachers:106-106 · .data-actions:344-344 · .data-btn:345-356 · .econ-equiv:476-476 · .econ-tab:327-331 · .econ-tariff:408-478 · .energy-tariff:454-456 · .est-nav:329-330 · .ev-alarm:813-814 · .ev-annual:548-548 · .ev-bday:287-583 · .ev-bright:444-444 · .ev-btn:815-816 · .ev-del:13-14 · .ev-filter:827-845 · .ev-list:2-841 · .ev-month:515-525 · .ev-multi:50-72 · .ev-rut:244-311 · .ev-search:3-7 · .ev-sort:8-53 · .ev-type:429-431 · .ev-types:428-839 · .ev-up:271-529 · .ev-view:66-66 · .ev-wk:226-443 · .export-choice:819-824 · .export-folder:797-825 · .fiscal-hdr:552-552 · .fiscal-hip:405-406 · .fiscal-tab:328-328 · .hip-rate:506-510 · .hip-ro:549-550 · .home-birthday:467-498 · .home-pending:468-474 · .home-popup:483-538 · .home-reminder:462-546 · .imp-mode:17-27 · .macro-url:70-70 · .nav-icon:364-374 · .nav-pro:338-350 · .nav-style:362-362 · .rate-input:46-46 · .rut-addition:206-223 · .rut-agenda:220-221 · .rut-cancelled:247-306 · .rut-done:817-818 · .rut-history:190-241 · .rut-hpd:188-188 · .rut-icon:172-173 · .rut-recovery:215-224 · .rut-session:225-225 · .rut-skipped:307-308 · .rut-week:189-189 · .selected:371-371 · .settings-details:107-109 · .settings-edit:71-110 · .settings-menu:440-440 · .sy-back:37-37 · .sy-body:35-586 · .sy-card:41-41 · .sy-header:36-505 · .sy-lbl:40-40 · .sy-period:414-421 · .sy-table:42-42 · .sy-tr:43-43 · .sy-val:39-39 · .sy-year:38-38 · .week-card:391-391 · .wm-logo:92-251
+.app-update:733-735 · .bd-detail:654-655 · .bd-panel:608-613 · .bday-category:579-750 · .bday-date:690-789 · .bday-detail:622-813 · .bday-filter:570-646 · .bday-first:592-592 · .bday-form:728-729 · .bday-group:567-732 · .bday-hdr:161-162 · .bday-header:156-504 · .bday-jump:56-95 · .bday-label:598-598 · .bday-list:576-782 · .bday-month:174-796 · .bday-name:656-737 · .bday-next:104-105 · .bday-no:628-628 · .bday-person:574-621 · .bday-show:578-684 · .bday-sub:285-286 · .bday-today:560-781 · .bday-upcoming:54-531 · .bday-vip:532-658 · .boda-catalog:81-89 · .boda-cfg:131-147 · .boda-config:77-128 · .boda-count:85-85 · .boda-date:149-167 · .boda-day:118-118 · .boda-field:119-124 · .boda-filter:59-61 · .boda-mini:67-67 · .boda-pack:86-87 · .boda-pfilters:58-62 · .boda-sticky:78-144 · .boda-teachers:106-106 · .data-actions:344-344 · .data-btn:345-356 · .econ-equiv:477-477 · .econ-tab:327-331 · .econ-tariff:409-479 · .energy-tariff:455-457 · .est-nav:329-330 · .ev-alarm:814-815 · .ev-annual:549-549 · .ev-bday:287-584 · .ev-bright:445-445 · .ev-btn:816-817 · .ev-del:13-14 · .ev-filter:829-851 · .ev-list:2-846 · .ev-month:516-526 · .ev-multi:50-72 · .ev-rut:244-311 · .ev-search:3-7 · .ev-sort:8-53 · .ev-type:430-432 · .ev-types:429-844 · .ev-up:271-530 · .ev-view:66-66 · .ev-wk:226-444 · .export-choice:820-825 · .export-folder:798-826 · .fiscal-hdr:553-553 · .fiscal-hip:406-407 · .fiscal-tab:328-328 · .hip-rate:507-511 · .hip-ro:550-551 · .home-birthday:468-499 · .home-pending:469-475 · .home-popup:484-539 · .home-reminder:463-547 · .imp-mode:17-27 · .macro-url:70-70 · .nav-icon:364-374 · .nav-pro:338-350 · .nav-style:362-362 · .rate-input:46-46 · .rut-addition:206-223 · .rut-agenda:220-221 · .rut-cancelled:247-306 · .rut-done:818-819 · .rut-history:190-241 · .rut-hpd:188-188 · .rut-icon:172-173 · .rut-recovery:215-224 · .rut-session:225-225 · .rut-skipped:307-308 · .rut-week:189-189 · .selected:371-371 · .settings-details:107-109 · .settings-edit:71-110 · .settings-menu:441-441 · .sy-back:37-37 · .sy-body:35-587 · .sy-card:41-41 · .sy-header:36-506 · .sy-lbl:40-40 · .sy-period:415-422 · .sy-table:42-42 · .sy-tr:43-43 · .sy-val:39-39 · .sy-year:38-38 · .week-card:391-391 · .wm-logo:92-251
 
 ### css/source/home-sharing.css  _(114 líneas)_
 
