@@ -20,6 +20,7 @@ for(const width of [360,400,440])for(const theme of ['dark','light']){
   await expect(page.locator('#bdVipAll')).toBeInViewport();
   const todayStart=await page.locator('#bdVipAll').boundingBox();
   const firstHeader=await page.locator('.bday-month-hdr').first().boundingBox();
+  expect(firstHeader.x+firstHeader.width-todayStart.x-todayStart.width).toBeGreaterThanOrEqual(6);
   expect(Math.abs(todayStart.y+todayStart.height/2-firstHeader.y-firstHeader.height/2)).toBeLessThan(1);
   const controls=await page.locator('.bday-vip-filter-chips button').evaluateAll(els=>els.map(el=>el.getBoundingClientRect().width));
   expect(controls[0]).toBeGreaterThan(controls[1]*1.5);expect(Math.abs(controls[1]-controls[2])).toBeLessThan(1);
@@ -67,6 +68,7 @@ for(const width of [360,400,440])for(const theme of ['dark','light']){
   await expect(page.locator('.bday-detail-alarm svg')).toBeVisible();
   const alarmBox=await page.locator('.bday-detail-alarm').boundingBox(),categoryBox=await page.locator('#bdDetailOv .bday-detail-groups').boundingBox();expect(alarmBox.y-categoryBox.y-categoryBox.height).toBeGreaterThanOrEqual(8);
   await expect(page.locator('#bdCategories')).toHaveText('✎');await expect(page.locator('#bdCategories')).toHaveClass(/boda-cl-edit/);
+  expect((await page.locator('#bdCategories').boundingBox()).width).toBe(24);
   await page.screenshot({animations:'disabled',path:testInfo.outputPath('panel-review.png')});
   expect(await page.locator('#bdDetailOv .bd-panel-body').evaluate(el=>el.scrollHeight<=el.clientHeight+1)).toBe(true);
   const before=await sheet.boundingBox();
@@ -84,12 +86,14 @@ for(const width of [360,400,440])for(const theme of ['dark','light']){
   const vipGeometry=await page.locator('.bday-person-vip').evaluate(el=>({check:el.querySelector('input').getBoundingClientRect().right,icon:el.querySelector('img').getBoundingClientRect().left}));
   expect(vipGeometry.check).toBeLessThan(vipGeometry.icon);
   await page.locator('#bdDEdit').click();await expect(page.locator('#bdFormOv')).toBeVisible();
-  const form=page.locator('#bdFormOv .bd-form-sheet');const formBefore=await form.boundingBox();expect(formBefore.height).toBeLessThanOrEqual(400);
+  const form=page.locator('#bdFormOv .bd-form-sheet');const formBefore=await form.boundingBox();expect(formBefore.height).toBeLessThanOrEqual(440);
   await page.locator('#bdFVip').uncheck();expect(await form.boundingBox()).toEqual(formBefore);await expect(page.locator('#bdFNameVip')).toHaveCount(0);
   await page.locator('#bdFVip').check();expect(await form.boundingBox()).toEqual(formBefore);await expect(page.locator('#bdFNameVip')).toHaveCount(0);
   const formVip=await page.locator('#bdFVip').evaluate(el=>({check:el.getBoundingClientRect().right,icon:el.nextElementSibling.getBoundingClientRect().left}));
   expect(formVip.check).toBeLessThan(formVip.icon);
   await expect(page.locator('#bdFName')).not.toBeFocused();
+  await expect(page.locator('#bdFormOv .bday-form-panel')).toHaveCount(2);
+  await expect(page.locator('#bdFormOv .bday-date-button .ev-tax-chevron')).toHaveCount(2);
   const nameBox=await page.locator('#bdFName').boundingBox(),vipBox=await page.locator('#bdFVip').boundingBox();expect(vipBox.x).toBeGreaterThan(nameBox.x+nameBox.width);
   await page.locator('#bdCategories').click();await page.locator('[data-bd-category="Amigos Extranjeros"]').click();await page.locator('[data-bd-category="Amigos En Madrid"]').click();await page.locator('#bdCategorySave').click();await expect(page.locator('#bdCategoryWrap')).toHaveCount(0);
   const tagLines=await page.locator('#bdPersonGroups .bday-group-tag').evaluateAll(els=>new Set(els.map(el=>el.getBoundingClientRect().y)).size);expect(tagLines).toBeGreaterThanOrEqual(2);

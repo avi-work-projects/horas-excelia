@@ -17,6 +17,12 @@ responsabilidades cuando se trabaja en ellas, no una orden de reescribirlas toda
 Los históricos por versión están en [history-through-v388.md](history-through-v388.md).
 Las ideas aún no implementadas están en [FUTURO.md](../FUTURO.md).
 
+## Convenciones visuales de controles
+
+- En desplegables, reutilizar los indicadores dibujados de la aplicación (`.ev-tax-chevron` o el chevrón de `details > summary`). No usar caracteres de texto como `⌄` para representar la flecha. Preferencia de Ángel del 11/10/2026.
+- En las fichas y el editor de cumpleaños, agrupar las secciones en paneles con bordes suaves, en lugar de líneas horizontales sueltas.
+- Los símbolos VIP de la lista no deben cambiar la altura de las filas.
+
 ## Catálogo único de archivos
 
 `app-assets.json` determina:

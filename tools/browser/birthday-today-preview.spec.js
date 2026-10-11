@@ -13,14 +13,18 @@ for(const count of [1,2])test(`captura: ${count} cumpleaños hoy`,async({page},t
  await expect(page.locator('.bday-today-item')).toHaveCount(1);await expect(page.locator('.bday-today-line')).toBeHidden();
  for(const row of await rows.all()){await expect(row).toBeInViewport();await expect(row.locator('.today-lbl')).toHaveText('¡Hoy!');const colors=await row.evaluate(el=>({day:getComputedStyle(el.querySelector('.bday-list-day')).color,label:getComputedStyle(el.querySelector('.today-lbl')).color,accent:getComputedStyle(document.querySelector('#bdVipAll')).color}));expect(colors.day).toBe(colors.accent);expect(colors.label).toBe(colors.accent);}
  await expect(page.locator('.bday-today-stroke:visible')).toHaveCount(1);await expect(page.locator('.bday-today-stroke:visible')).toHaveCSS('border-top-right-radius','999px');
+ const todayRow=page.locator('.bday-today-item');
+ const gap=await todayRow.evaluate(el=>el.getBoundingClientRect().x+parseFloat(getComputedStyle(el,'::after').left)-el.querySelector('.bday-list-day').getBoundingClientRect().right);
+ expect(gap).toBeGreaterThanOrEqual(8);
  await page.screenshot({path:testInfo.outputPath(`hoy-${count}.png`),animations:'disabled'});
 });
 test('actualización: botón flotante único conserva toast y recarga',async({page},testInfo)=>{
- await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));await page.goto('/');
+ await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-theme-v1','light');localStorage.setItem('excelia-nav-icons-v1','professional');});await page.goto('/');
  await page.evaluate(()=>{showToast('Aviso de prueba','success');navigator.serviceWorker.dispatchEvent(new MessageEvent('message',{data:{type:'SW_UPDATED',version:'test'}}));});
  const fab=page.locator('#swUpdateFab');await expect(fab).toBeVisible();await expect(page.locator('#toast')).toContainText('Aviso de prueba');
  await page.evaluate(()=>navigator.serviceWorker.dispatchEvent(new MessageEvent('message',{data:{type:'SW_UPDATED',version:'test'}})));await expect(fab).toHaveCount(1);
- const r=await fab.boundingBox();expect(r.x).toBe(18);expect(r.width).toBe(48);expect(r.height).toBe(48);expect(r.y+r.height).toBe(862);
+ const r=await fab.boundingBox();expect(Math.abs(r.x+r.width/2-200)).toBeLessThan(1);expect(r.height).toBe(44);expect(r.y+r.height).toBe(862);
+ await page.evaluate(()=>document.getElementById('toast').classList.remove('show'));
  await page.screenshot({path:testInfo.outputPath('actualizar.png'),animations:'disabled'});
  await Promise.all([page.waitForEvent('load'),fab.click()]);await expect(fab).toHaveCount(0);
 });
