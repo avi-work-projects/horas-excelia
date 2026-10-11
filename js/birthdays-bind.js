@@ -59,7 +59,7 @@ function refreshBday(){
 }
 
 function applyBdaySearch(q){
-  var today=new Date(),totalVisible=0;
+  var today=new Date(),totalVisible=0,firstVisible=true;
   document.querySelectorAll('.bday-month-section').forEach(function(sec){
     var vis=0,todayMarked=false,previousVisible=null,beforeToday=null;
     sec.querySelectorAll('.bday-list-item').forEach(function(item){
@@ -87,6 +87,8 @@ function applyBdaySearch(q){
     if(beforeToday)beforeToday.classList.add('bday-before-today');
     totalVisible+=vis;
     sec.style.display=vis||line?'':'none';
+    sec.classList.toggle('bday-first-month',!!(vis||line)&&firstVisible);
+    if(vis||line)firstVisible=false;
   });
   updateBdayGroupStatus(totalVisible);
 }
