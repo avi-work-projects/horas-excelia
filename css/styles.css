@@ -1966,14 +1966,17 @@ button.bday-group-tag{cursor:pointer;min-height:44px;text-align:left}
 .ev-detail-modern.ev-car-sheet>.ev-detail-actions{flex-shrink:0;margin-top:0}
 
 /* Consulta compacta: fecha y estado comparten fila; el carrusel no cambia de alto. */
-.ev-detail-modern .ev-detail-date-status{display:flex;align-items:center;gap:8px;padding-right:10px}
+.ev-detail-modern .ev-detail-date-status{display:flex;align-items:stretch;gap:8px}
 .ev-detail-modern .ev-detail-date-status>.ev-detail-date{flex:1;min-width:0;gap:8px}
-.ev-detail-modern .ev-detail-date-status>.ev-management-check{flex:none;margin:0;padding:0;gap:6px;min-height:36px;border:0;background:none;border-radius:0;font-size:.72rem}
+.ev-detail-modern .ev-detail-date-status>.ev-management-check{flex:none;margin:0;padding:8px 10px;gap:6px;min-height:36px;background:none;font-size:.72rem}
+.ev-detail-facts:has(.ev-management-check){border:0;border-radius:0;overflow:visible}
+.ev-detail-facts:has(.ev-management-check) .ev-detail-date{border:1px solid var(--border);border-radius:14px}
+.ev-detail-facts:has(.ev-management-check)>.ev-detail-date{margin-top:8px;box-shadow:none}
 .ev-detail-date-status+.ev-detail-date{box-shadow:0 -1px 0 var(--border)}
 .ev-detail-modern .ev-detail-date{padding:8px 10px;font-size:.76rem;min-height:36px}
 .ev-detail-modern .ev-detail-toolbar{margin-bottom:8px}
-.ev-detail-modern .ev-detail-color-bar{margin-bottom:10px}
-.ev-detail-modern .ev-detail-heading{gap:10px;margin-bottom:12px}
+.ev-detail-modern .ev-detail-color-bar{margin-bottom:16px}
+.ev-detail-modern .ev-detail-heading{gap:10px;margin-bottom:18px}
 .ev-detail-modern .ev-detail-title{font-size:1.08rem;line-height:1.25}
 .ev-detail-modern .ev-detail-kicker{margin-bottom:3px}
 .ev-detail-modern .ev-detail-symbol{width:32px;flex-basis:32px}
