@@ -11,17 +11,19 @@ function bdayNormalizeGroup(name){
 
 function bdayGroups(b){return Array.from(new Set((Array.isArray(b&&b.categories)?b.categories:[]).filter(function(g){return typeof g==='string';}).map(bdayNormalizeGroup).filter(Boolean))).sort(function(a,b){return a.localeCompare(b,'es');});}
 function bdayGroupCatalog(){return bdayGroups({categories:BDAY_GROUP_DEFAULTS.concat.apply(BDAY_GROUP_DEFAULTS,BDAYS.map(bdayGroups))});}
-function bdayGroupTags(groups){return groups.map(function(g){var hue=0;for(var i=0;i<g.length;i++)hue=(hue*31+g.charCodeAt(i))%360;return '<span class="bday-group-tag" style="--group-hue:'+hue+'">'+escHtml(g)+'</span>';}).join('');}
+function bdayGroupHue(g){var hue=0;for(var i=0;i<g.length;i++)hue=(hue*31+g.charCodeAt(i))%360;return hue;}
+function bdayGroupTags(groups){return groups.map(function(g){var hue=bdayGroupHue(g);return '<span class="bday-group-tag" style="--group-hue:'+hue+'">'+escHtml(g)+'</span>';}).join('');}
 function bdayGroupMatch(b){return !BDAY_GROUP_FILTER.length||BDAY_GROUP_FILTER.some(function(g){return g==='__none'?bdayGroups(b).length===0:bdayGroups(b).indexOf(g)>=0;});}
-function bdayGroupChips(groups,selected,attr){return groups.map(function(g){return '<button type="button" class="bday-group-chip" '+attr+'="'+escHtml(g)+'" aria-pressed="'+(selected.indexOf(g)>=0)+'">'+escHtml(g)+'</button>';}).join('');}
+function bdayGroupChips(groups,selected,attr){return groups.map(function(g){return '<button type="button" class="bday-group-chip" style="--group-hue:'+bdayGroupHue(g)+'" '+attr+'="'+escHtml(g)+'" aria-pressed="'+(selected.indexOf(g)>=0)+'">'+escHtml(g)+'</button>';}).join('');}
 function renderBdayGroupTools(){
   var options=bdayGroupCatalog().concat(['__none']).map(function(g){
     var count=BDAYS.filter(function(b){return g==='__none'?!bdayGroups(b).length:bdayGroups(b).indexOf(g)>=0;}).length;
-    return '<button type="button" class="bday-group-chip" data-bd-filter="'+escHtml(g)+'" aria-pressed="'+(BDAY_GROUP_FILTER.indexOf(g)>=0)+'"><span>'+escHtml(g==='__none'?'Sin categoría':g)+'</span><small>'+count+'</small></button>';
+    return '<button type="button" class="bday-group-chip" style="--group-hue:'+bdayGroupHue(g)+'" data-bd-filter="'+escHtml(g)+'" aria-pressed="'+(BDAY_GROUP_FILTER.indexOf(g)>=0)+'"><span>'+escHtml(g==='__none'?'Sin categoría':g)+'</span><small>'+count+'</small></button>';
   }).join('');
-  return '<div class="bday-group-tools"><details><summary>Filtrar por categoría <span id="bdGroupSummary">'+bdayGroupFilterLabel()+'</span></summary><p>Elige una o varias categorías. Se incluyen las personas de cualquiera de ellas.</p><div class="bday-group-chips">'+options+'</div></details><div class="bday-filter-status"><span id="bdGroupResults" role="status" aria-live="polite"></span><button class="ev-btn" id="bdClearGroups"'+(!BDAY_GROUP_FILTER.length?' disabled':'')+'>Limpiar categorías</button></div><div id="bdGroupActive" class="bday-group-chips"></div><p id="bdGroupEmpty" hidden>No hay personas que coincidan. Cambia las categorías o la búsqueda.</p></div>';
+  var search='<div class="bday-buscar-bar"><div class="bday-search-wrap"><input class="bday-search-input" id="bdSearch" type="text" aria-label="Buscar persona" placeholder="Buscar persona…" value="'+escHtml(BDAY_SEARCH)+'"></div></div>';
+  return '<div class="bday-group-tools">'+search+'<details><summary aria-label="Filtrar por categoría">Categorías <span id="bdGroupSummary">'+bdayGroupFilterLabel()+'</span></summary><div class="bday-filter-options"><p>Elige una o varias categorías. Se incluyen las personas de cualquiera de ellas.</p><div class="bday-group-chips">'+options+'</div></div></details><div class="bday-filter-status"><span id="bdGroupResults" role="status" aria-live="polite"></span><button class="ev-btn" id="bdClearGroups"'+(!BDAY_GROUP_FILTER.length?' disabled':'')+'>Limpiar categorías</button></div><div id="bdGroupActive" class="bday-group-chips"></div><p id="bdGroupEmpty" hidden>No hay personas que coincidan. Cambia las categorías o la búsqueda.</p></div>';
 }
-function bdayGroupFilterLabel(){return BDAY_GROUP_FILTER.length?BDAY_GROUP_FILTER.length+' seleccionada'+(BDAY_GROUP_FILTER.length===1?'':'s'):'Todas';}
+function bdayGroupFilterLabel(){return BDAY_GROUP_FILTER.length?'('+BDAY_GROUP_FILTER.length+')':'';}
 function renderBdayGroupPickerFields(b){return '<fieldset class="bday-group-fields"><legend>Categorías de esta persona</legend><p>Puedes seleccionar varias etiquetas.</p><div class="bday-group-chips">'+bdayGroupChips(bdayGroups({categories:bdayGroupCatalog().concat(bdayGroups(b))}),bdayGroups(b),'data-bd-category')+'</div><label>Nueva categoría<input class="ev-input" id="bdFNewCategory" maxlength="60" placeholder="Escribe una etiqueta nueva"></label></fieldset>';}
 function renderBdayGroupFields(b){return '<section class="bday-detail-groups"><div class="bday-category-heading"><h3>Categorías</h3><button type="button" class="ev-btn bday-category-button" id="bdCategories" data-groups="'+escHtml(JSON.stringify(bdayGroups(b)))+'">Cambiar <span aria-hidden="true">›</span></button></div><div class="bday-person-groups" id="bdPersonGroups">'+(bdayGroups(b).length?bdayGroupTags(bdayGroups(b)):'<span class="bday-no-category">Sin categoría</span>')+'</div></section>';}
 function renderBdayPersonGroups(b){return renderBdayGroupFields(b);}
@@ -45,7 +47,7 @@ function updateBdayGroupStatus(count){
   if(empty)empty.hidden=count>0;
   if(clear)clear.disabled=!BDAY_GROUP_FILTER.length;
   if(active){
-    active.innerHTML=BDAY_GROUP_FILTER.map(function(g){var label=g==='__none'?'Sin categoría':g;return '<button class="bday-group-tag" data-bd-remove="'+escHtml(g)+'" aria-label="Quitar filtro '+escHtml(label)+'">'+escHtml(label)+' ×</button>';}).join('');
+    active.innerHTML=BDAY_GROUP_FILTER.map(function(g){var label=g==='__none'?'Sin categoría':g;return '<button class="bday-group-tag" style="--group-hue:'+bdayGroupHue(g)+'" data-bd-remove="'+escHtml(g)+'" aria-label="Quitar filtro '+escHtml(label)+'">'+escHtml(label)+' ×</button>';}).join('');
     active.querySelectorAll('[data-bd-remove]').forEach(function(button){button.onclick=function(){BDAY_GROUP_FILTER=BDAY_GROUP_FILTER.filter(function(g){return g!==button.dataset.bdRemove;});bindBdayGroupTools();applyBdaySearch(BDAY_SEARCH.toLowerCase());document.querySelector('.bday-group-tools summary').focus();};});
   }
 }
