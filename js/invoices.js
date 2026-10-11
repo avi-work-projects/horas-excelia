@@ -3,11 +3,12 @@ var INVOICE_KEY='excelia-invoices-v1';
 var INVOICE_MONTH=null;
 var INVOICE_BACK=null;
 var INVOICE_OPEN_SEQ=0;
-function invoiceDefaults(){return {issuer:'',issuerTax:'',issuerAddress:'',client:'',clientTax:'',clientAddress:'',project:'',concept:'Servicios de consultoría · {mes} {anio}',unit:'day',rate:'',vat:'21',withholding:'15',from:'',to:'',cc:'',subject:'Factura · {mes} {anio}',body:'Buenos días!\n\nAdjunto la factura relativa a {mes}.\n\nConfirmad recepción,\n\nMuchas gracias,\n\nBuena semana!'};}
+function invoiceDefaults(){return {issuer:'',issuerTax:'',issuerAddress:'',iban:'',client:'',clientTax:'',clientAddress:'',project:'',concept:'Servicios de consultoría · {mes} {anio}',unit:'day',rate:'',vat:'21',withholding:'15',from:'',to:'',cc:'',subject:'Factura · {mes} {anio}',body:'Buenos días!\n\nAdjunto la factura relativa a {mes}.\n\nConfirmad recepción,\n\nMuchas gracias,\n\nBuena semana!'};}
 function invoiceData(){var raw=appStorage.getItem(INVOICE_KEY);return raw?invoiceValidate(JSON.parse(raw)):{config:invoiceDefaults(),months:{}};}
 function invoiceValidate(data){
   if(!data||typeof data!=='object'||Array.isArray(data))throw new Error('Datos de facturación no válidos');
   var config=invoiceDefaults();Object.keys(config).forEach(function(k){if(data.config&&data.config[k]!=null){if(typeof data.config[k]!=='string'||data.config[k].length>5000)throw new Error('Campo de facturación no válido');config[k]=data.config[k];}});
+  config.iban=invoiceIban(config.iban);
   if(!['day','hour'].includes(config.unit))throw new Error('Unidad no válida');
   var months={};Object.keys(data.months||{}).forEach(function(k){
     if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(k))throw new Error('Mes de facturación no válido');
@@ -63,7 +64,7 @@ function invoiceCalculate(period,config,rows){
   var lines=Object.values(groups),base=0;lines.forEach(function(l){var product=l.quantity100*l.rateCents;if(!Number.isSafeInteger(product))throw new Error('Importe demasiado grande');l.baseCents=Math.round(product/100);base+=l.baseCents;});
   if(!Number.isSafeInteger(base*10000))throw new Error('Importe demasiado grande');
   var iva=Math.round(base*vat/10000),irpf=Math.round(base*ret/10000);
-  return {schemaVersion:1,appVersion:APP_VERSION,period:period,kind:'auxiliary',condition:'calendar-month',issuer:{name:config.issuer,taxId:config.issuerTax,address:config.issuerAddress},client:{name:config.client,taxId:config.clientTax,address:config.clientAddress},project:config.project,concept:invoiceText(config.concept,period),days:chosen,lines:lines,vatBasisPoints:vat,withholdingBasisPoints:ret,baseCents:base,vatCents:iva,withholdingCents:irpf,totalCents:base+iva-irpf};
+  return {schemaVersion:1,appVersion:APP_VERSION,period:period,kind:'auxiliary',condition:'calendar-month',issuer:{name:config.issuer,taxId:config.issuerTax,address:config.issuerAddress},client:{name:config.client,taxId:config.clientTax,address:config.clientAddress},project:config.project,payment:{iban:invoiceIban(config.iban||'')},concept:invoiceText(config.concept,period),days:chosen,lines:lines,vatBasisPoints:vat,withholdingBasisPoints:ret,baseCents:base,vatCents:iva,withholdingCents:irpf,totalCents:base+iva-irpf};
 }
 async function invoiceHash(value){var bytes=typeof value==='string'?new TextEncoder().encode(value):value;return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(function(b){return b.toString(16).padStart(2,'0');}).join('');}
 async function invoicePrepare(period,config,rows){
@@ -100,4 +101,12 @@ function invoiceConfigImport(input,current){
   if(result.rate!=='')invoiceDecimal(result.rate,2);
   ['vat','withholding'].forEach(function(k){if(invoiceDecimal(result[k],2)>10000)throw new Error('Porcentaje superior al 100 %');});
   ['from','to','cc'].forEach(function(k){if(result[k])invoiceEmails(result[k]);});return result;
+}
+
+function invoiceIban(value){
+  var iban=String(value||'').replace(/\s/g,'').toUpperCase();if(!iban)return '';
+  if(!/^[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}$/.test(iban)||(iban.startsWith('ES')&&iban.length!==24))throw new Error('Revisa el IBAN de ingreso');
+  var reordered=iban.slice(4)+iban.slice(0,4),remainder=0;
+  reordered.split('').forEach(function(char){var digits=/[A-Z]/.test(char)?String(char.charCodeAt(0)-55):char;digits.split('').forEach(function(d){remainder=(remainder*10+Number(d))%97;});});
+  if(remainder!==1)throw new Error('El IBAN de ingreso no supera la comprobación de dígitos de control');return iban;
 }

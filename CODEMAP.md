@@ -297,10 +297,10 @@
 ### js/invoices-ui.js  _(73 líneas)_
 **Funciones:** invoicePanel:2 · invoiceField:8 · openInvoiceSettings:9 · invoiceSummary:17 · error:43 · openHoursExport:53 · initInvoices:57 · bindInvoiceConfigImport:62 · readFields:63
 
-### js/invoices.js  _(104 líneas)_
+### js/invoices.js  _(113 líneas)_
 **Estado global:** INVOICE_KEY:2 · INVOICE_MONTH:3 · INVOICE_BACK:4 · INVOICE_OPEN_SEQ:5
 
-**Funciones:** invoiceDefaults:6 · invoiceData:7 · invoiceValidate:8 · invoiceSave:27 · invoiceMerge:28 · invoiceDecimal:33 · invoiceMoney:37 · invoiceLabel:38 · invoiceText:39 · invoiceDayRows:40 · invoiceCalculate:52 · invoiceEmails:77 · invoiceGmailUrl:78 · invoiceFinalBlob:92 · invoiceConfigImport:95
+**Funciones:** invoiceDefaults:6 · invoiceData:7 · invoiceValidate:8 · invoiceSave:28 · invoiceMerge:29 · invoiceDecimal:34 · invoiceMoney:38 · invoiceLabel:39 · invoiceText:40 · invoiceDayRows:41 · invoiceCalculate:53 · invoiceEmails:78 · invoiceGmailUrl:79 · invoiceFinalBlob:93 · invoiceConfigImport:96 · invoiceIban:106
 
 ### js/logo-popup.js  _(51 líneas)_
 **Funciones:** _logoUpdateDots:14
