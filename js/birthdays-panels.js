@@ -6,10 +6,12 @@ function renderBdayDetail(b){
   var displayName=(words.length?escHtml(words.join(' '))+' ':'')+'<span class="bday-name-tail">'+escHtml(lastWord)+renderBdayNameVip('bdDNameVip',b.vip)+'</span>';
   var dl=daysUntil(b.month,b.day);
   var lbl=dl===0?'¡Hoy es su cumpleaños!':dl===1?'Mañana cumple años':'Faltan '+dl+' días';
-  var h='<div class="bd-detail-overlay" id="bdDetailOv"><div class="bd-detail-sheet">';
-  h+='<header class="bd-panel-header"><button class="sy-back" id="bdDClose" aria-label="Volver">←</button><h2>Cumpleaños</h2>'+(bdayCanSetAlarm(b)?'<button class="ev-btn" id="bdDAlarm" aria-label="Configurar alarma">Alarma</button>':'')+'</header>';
+  var hasAlarm=bdayCanSetAlarm(b);
+  var h='<div class="bd-detail-overlay" id="bdDetailOv"><div class="bd-detail-sheet'+(hasAlarm?' bday-detail-has-alarm':'')+'">';
+  h+='<header class="bd-panel-header"><button class="sy-back" id="bdDClose" aria-label="Volver">←</button><h2>Cumpleaños</h2></header>';
   h+='<div class="bd-panel-body"><div class="bday-person-summary"><div class="bd-detail-name"><span>'+displayName+'</span></div><div class="bday-detail-meta"><div class="bd-detail-date">'+b.day+' de '+MN[b.month-1]+'</div>'+renderBdayVipToggle('bdDVip',b.vip)+'</div><div class="bd-detail-lbl">'+lbl+'</div></div>';
   h+=renderBdayPersonGroups(b);
+  if(hasAlarm)h+='<section class="bday-detail-alarm" aria-label="Alarma"><button class="ev-btn" id="bdDAlarm">'+navIconHtml('alarm')+'<span>Configurar alarma</span></button></section>';
   h+='</div>';
   h+='<footer class="bd-panel-footer ev-detail-actions"><button class="action-edit action-edit-text ev-btn ev-edit-orange" id="bdDEdit">&#9998; Editar</button><button class="ev-btn danger" id="bdDDel">Eliminar</button></footer>';
   h+='</div></div>';
