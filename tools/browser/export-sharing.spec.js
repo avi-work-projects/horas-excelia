@@ -2,7 +2,7 @@ const {test,expect}=require('@playwright/test');
 // Usa el navegador completo para probar handles de carpetas reales al recargar,
 // también en Linux; sigue ejecutándose sin ventanas visibles.
 test.use({viewport:{width:400,height:880},isMobile:true,hasTouch:true,channel:process.platform==='win32'?'msedge':'chromium'});
-test.beforeEach(async({page})=>{
+async function prepareExports(page){
  await page.addInitScript(()=>{
   sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-theme-v1','light');localStorage.setItem('excelia-nav-icons-v1','professional');
   localStorage.setItem('excelia-bdays-v1',JSON.stringify([{name:'Persona de prueba',day:11,month:10}]));
@@ -11,7 +11,8 @@ test.beforeEach(async({page})=>{
   Object.defineProperty(navigator,'share',{configurable:true,value:async({files})=>{for(const f of files)sharedFiles.push({name:f.name,type:f.type,text:await f.text()});}});
  });
  await page.goto('/');
-});
+}
+test.beforeEach(async({page})=>prepareExports(page));
 test('CSV, PDF, backup, cumpleaños, energía y calendario comparten archivos con fecha',async({page})=>{
  await page.locator('#csvExportBtn').click();await expect.poll(()=>page.evaluate(()=>sharedFiles.length)).toBe(1);
  await page.locator('#pdfExportBtn').click();await expect.poll(()=>page.evaluate(()=>sharedFiles.length)).toBe(2);
@@ -50,7 +51,13 @@ test('sin compartir descarga; permiso revocado no pierde el archivo',async({page
  expect(file.suggestedFilename()).toMatch(/dias_trabajados_\d{4}_\d{8}_\d{6}_\d{3}\.csv/);
  expect(await page.evaluate(()=>sharedFiles.length)).toBe(0);
 });
-test('la carpeta se recuerda localmente y los nombres no se repiten',async({page})=>{
+test('la carpeta se recuerda localmente y los nombres no se repiten',async({playwright},testInfo)=>{
+ // La carpeta pertenece a un perfil de navegador: probar persistencia fuera del
+ // contexto de incógnito de Playwright, con un perfil aislado y datos inventados.
+ const context=await playwright.chromium.launchPersistentContext(testInfo.outputPath('profile'),{headless:true,channel:process.platform==='win32'?'msedge':'chromium',viewport:{width:400,height:880}});
+ const page=await context.newPage();
+ try{
+ await prepareExports(page);
  await page.evaluate(async()=>{
   await EXPORT_DIRECTORY_READY;
   const root=await navigator.storage.getDirectory(),dir=await root.getDirectoryHandle('Gestify-prueba',{create:true});
@@ -62,6 +69,7 @@ test('la carpeta se recuerda localmente y los nombres no se repiten',async({page
  await page.locator('#csvExportBtn').click();await page.locator('#csvExportBtn').click();
  await expect.poll(()=>page.evaluate(()=>sharedFiles.length)).toBe(2);
  expect(await page.evaluate(()=>new Set(sharedFiles.map(f=>f.name)).size)).toBe(2);
+ }finally{await context.close();}
 });
 test('cancelar compartir no descarga y un fallo de copia no impide compartir',async({page})=>{
  let downloads=0;page.on('download',()=>downloads++);
