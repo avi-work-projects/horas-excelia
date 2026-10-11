@@ -21,7 +21,7 @@ test('preparación mensual, XLSX válido, Gmail solo con definitivo y recuperaci
  await page.evaluate(()=>{window.gmailCalls=[];window.open=url=>gmailCalls.push(url);});await page.locator('#invoiceGmail').click();expect(await page.evaluate(()=>gmailCalls[0])).toContain('view=cm');expect(await page.evaluate(()=>invoiceData().months['2026-10'].sent)).toBeUndefined();await page.screenshot({path:info.outputPath('correo.png')});
  await page.reload();await page.locator('#invoiceHomeBtn').click();await expect(page.locator('.invoice-status')).toHaveText('PDF definitivo de AEAT incorporado');await expect(page.locator('#invoicePrepare')).toHaveCount(0);
  const finalDownload=page.waitForEvent('download');await page.locator('#invoiceDownloadFinal').click();await page.locator('[data-export-mode="save"]').click();const file=await finalDownload;await file.saveAs(info.outputPath('definitivo-prueba.pdf'));expect(fs.readFileSync(info.outputPath('definitivo-prueba.pdf'))).toEqual(Buffer.from(pdf,'base64'));
- await page.locator('#invoicePrev').click();await expect(page.locator('.invoice-status')).toContainText('histórica');await expect(page.locator('#invoiceFinalFile')).toHaveCount(0);await expect(page.locator('#invoiceGmail')).toHaveCount(0);
+ await page.locator('#invoiceBack').click();await page.locator('#prevBtn').click();await page.locator('#invoiceHomeBtn').click();await expect(page.locator('.invoice-status')).toContainText('histórica');await expect(page.locator('#invoiceFinalFile')).toHaveCount(0);await expect(page.locator('#invoiceGmail')).toHaveCount(0);
 });
 test('configuración sin datos privados publicados y diseño móvil estrecho',async({page},info)=>{
  await page.evaluate(()=>invoiceSave({config:invoiceDefaults(),months:{}}));await page.evaluate(()=>openInvoiceSettings());await expect(page.locator('[data-invoice-field="issuer"]')).toHaveValue('');await expect(page.locator('[data-invoice-field="iban"]')).toBeVisible();await page.locator('[data-invoice-field="issuer"]').fill('Persona ejemplo');await page.locator('#invoiceSaveSettings').click();await expect(page.locator('#invoiceTitle')).toHaveText('Enviar factura');await page.locator('#invoiceConfig').click();await expect(page.locator('[data-invoice-field="issuer"]')).toHaveValue('Persona ejemplo');
@@ -58,4 +58,24 @@ test('importar configuración revisable sin sustituir los meses y botones junto 
  await page.locator('#invoiceSaveSettings').click();await expect(page.locator('#invoiceExcel')).toBeVisible();expect(await page.evaluate(()=>invoiceData().config.issuer)).toBe(payload.config.issuer);
  await page.screenshot({path:info.outputPath('resumen.png')});
  await page.locator('#invoiceDocument summary').click();await expect(page.locator('#invoiceFinalFile')).toBeVisible();await page.screenshot({path:info.outputPath('siguiente-paso.png')});
+});
+
+test('mes de Home, título centrado, tarifa diaria y ojo sin alterar el cálculo',async({page},info)=>{
+ await page.evaluate(()=>{CY=2027;CM=4;render();});await page.locator('#invoiceHomeBtn').click();
+ await expect(page.locator('.invoice-month')).toHaveText('Mayo 2027');await expect(page.locator('#invoicePrev,#invoiceNext')).toHaveCount(0);
+ await expect(page.locator('#invoiceAmounts')).toContainText('Precio por día');await expect(page.locator('#invoiceAmounts')).toContainText('320,00');
+ const stored=await page.evaluate(()=>JSON.stringify(invoiceData().months['2027-05']));
+ for(const width of [360,400]){
+  await page.setViewportSize({width,height:880});const title=await page.locator('#invoiceTitle').boundingBox(),sheet=await page.locator('.invoice-sheet').boundingBox();
+  expect(Math.abs(title.x+title.width/2-sheet.x-sheet.width/2)).toBeLessThan(1);
+ }
+ await page.screenshot({path:info.outputPath('resumen-visible.png'),animations:'disabled'});
+ const before=await page.locator('#invoiceAmounts').boundingBox();await page.getByRole('button',{name:'Ocultar importes',exact:true}).click();
+ await expect(page.locator('#invoiceAmounts')).not.toContainText('€');await expect(page.locator('#invoiceAmounts')).not.toContainText('320,00');
+ expect((await page.locator('#invoiceAmounts').boundingBox()).height).toBe(before.height);
+ expect(await page.evaluate(()=>JSON.stringify(invoiceData().months['2027-05']))).toBe(stored);
+ await page.screenshot({path:info.outputPath('resumen-oculto.png'),animations:'disabled'});
+ await page.getByRole('button',{name:'Mostrar importes',exact:true}).click();await expect(page.locator('#invoiceAmounts')).toContainText('320,00');
+ await page.locator('#invoiceBack').click();await page.evaluate(()=>openEcon());await expect.poll(async()=>Math.round((await page.locator('#econOverlay').boundingBox()).y)).toBe(0);await page.locator('.econ-avg-card').filter({hasText:'IVA'}).first().scrollIntoViewIfNeeded();await expect(page.locator('#econOverlay')).not.toContainText('no toques');
+ await page.screenshot({path:info.outputPath('resumen-economico.png'),animations:'disabled'});
 });

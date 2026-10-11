@@ -14,7 +14,16 @@ function openInvoiceSettings(){
   h+='<p class="invoice-error" id="invoiceError" role="alert"></p><button class="ev-btn ev-btn-primary" id="invoiceSaveSettings">Guardar configuración</button>';
   var root=invoicePanel('Edición facturas y correo',h);bindInvoiceConfigImport(root,c);root.querySelector('#invoiceSaveSettings').onclick=function(){try{var data=invoiceData();root.querySelectorAll('[data-invoice-field]').forEach(function(el){data.config[el.dataset.invoiceField]=el.value.trim();});data.config.unit=root.querySelector('[name="invoiceUnit"]:checked').value;if(data.config.rate!=='')invoiceDecimal(data.config.rate,2);['vat','withholding'].forEach(function(k){if(invoiceDecimal(data.config[k],2)>10000)throw new Error('Porcentaje superior al 100 %');});['from','to','cc'].forEach(function(k){if(data.config[k])invoiceEmails(data.config[k]);});invoiceSave(data);showToast('Configuración de facturación guardada','success');openInvoiceMonth(INVOICE_MONTH||mkey(CY,CM));}catch(e){root.querySelector('#invoiceError').textContent=e.message;}};
 }
-function invoiceSummary(p){return '<dl class="invoice-totals"><div><dt>Días incluidos</dt><dd>'+p.days.length+'</dd></div><div><dt>Base</dt><dd>'+invoiceMoney(p.baseCents)+'</dd></div><div><dt>IVA</dt><dd>'+invoiceMoney(p.vatCents)+'</dd></div><div><dt>Retención IRPF</dt><dd>−'+invoiceMoney(p.withholdingCents)+'</dd></div><div class="invoice-total"><dt>Total a cobrar</dt><dd>'+invoiceMoney(p.totalCents)+'</dd></div></dl>';}
+function invoiceSummary(p){
+  function money(value){return INVOICE_HIDE_AMOUNTS?'<span aria-label="Importe oculto">••••</span>':invoiceMoney(value);}
+  var h='<dl class="invoice-totals"><div><dt>Días incluidos</dt><dd>'+p.days.length+'</dd></div>';
+  p.lines.forEach(function(line){h+='<div><dt>'+(line.unit==='day'?'Precio por día':'Precio por hora')+(p.lines.length>1?' ('+(line.quantity100/100)+' '+(line.unit==='day'?'días':'h')+')':'')+'</dt><dd>'+money(line.rateCents)+'</dd></div>';});
+  [['Base',p.baseCents],['IVA',p.vatCents],['Retención IRPF',-p.withholdingCents],['Total a cobrar',p.totalCents]].forEach(function(row,i){h+='<div'+(i===3?' class="invoice-total"':'')+'><dt>'+row[0]+'</dt><dd>'+money(row[1])+'</dd></div>';});return h+'</dl>';
+}
+function invoicePrivacyButton(){
+  var label=INVOICE_HIDE_AMOUNTS?'Mostrar importes':'Ocultar importes';
+  return '<button type="button" class="invoice-eye" id="invoicePrivacy" aria-label="'+label+'" title="'+label+'" aria-pressed="'+INVOICE_HIDE_AMOUNTS+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>'+(INVOICE_HIDE_AMOUNTS?'<path d="m3 3 18 18"/>':'')+'</svg></button>';
+}
 async function openInvoiceMonth(period){
   INVOICE_MONTH=period||mkey(CY,CM);period=INVOICE_MONTH;
   var seq=++INVOICE_OPEN_SEQ,data=invoiceData(),c=data.config,record=data.months[period]||{},historical=period<'2026-10',p=record.preparation,problem='';
@@ -23,10 +32,10 @@ async function openInvoiceMonth(period){
     catch(e){problem=e.message;}
   }
   if(seq!==INVOICE_OPEN_SEQ)return;
-  var h='<div class="invoice-month"><button class="nav-btn" id="invoicePrev" aria-label="Mes anterior">◀</button><strong>'+escHtml(invoiceLabel(period))+'</strong><button class="nav-btn" id="invoiceNext" aria-label="Mes siguiente">▶</button></div>';
+  var h='<p class="invoice-month"><strong>'+escHtml(invoiceLabel(period))+'</strong></p>';
   h+='<p class="invoice-status">'+(historical?'Referencia histórica · no preparar un nuevo envío':record.final?'PDF definitivo de AEAT incorporado':'Pendiente de emitir en AEAT')+'</p>';
-  h+='<section class="invoice-card invoice-month-summary"><h3>Resumen mensual</h3><p class="invoice-filename"><strong>'+escHtml(p&&p.client?p.client.name:c.client||'Cliente pendiente de configurar')+'</strong><br>'+escHtml(p?p.concept:invoiceText(c.concept,period))+'</p>';
-  if(p)h+=invoiceSummary(p);
+  h+='<section class="invoice-card invoice-month-summary"><header class="invoice-summary-header"><h3>Resumen mensual</h3><span id="invoicePrivacyControl">'+invoicePrivacyButton()+'</span></header><p class="invoice-filename"><strong>'+escHtml(p&&p.client?p.client.name:c.client||'Cliente pendiente de configurar')+'</strong><br>'+escHtml(p?p.concept:invoiceText(c.concept,period))+'</p>';
+  if(p)h+='<div id="invoiceAmounts">'+invoiceSummary(p)+'</div>';
   if(problem)h+='<p class="invoice-note">'+escHtml(problem)+'</p>';
   if(p&&!problem&&!historical)h+='<div class="invoice-actions"><button class="ev-btn" id="invoiceExcel">Excel auxiliar</button><button class="ev-btn" id="invoiceJson">Datos para AEAT</button></div>';
   h+='</section><button class="invoice-config-link" id="invoiceConfig">'+(problem?'Completar datos de facturación':'Edición facturas y correo')+'</button>';
@@ -42,7 +51,7 @@ async function openInvoiceMonth(period){
   h+='<p id="invoiceError" class="invoice-error" role="alert"></p>';var root=invoicePanel('Enviar factura',h);
   function error(e){root.querySelector('#invoiceError').textContent=e.message;root.querySelector('#invoiceError').scrollIntoView({block:'nearest'});}
   root.querySelector('#invoiceConfig').onclick=openInvoiceSettings;
-  [-1,1].forEach(function(direction){root.querySelector(direction<0?'#invoicePrev':'#invoiceNext').onclick=function(){var dt=new Date(+period.slice(0,4),+period.slice(5)-1+direction,1);openInvoiceMonth(mkey(dt.getFullYear(),dt.getMonth()));};});
+  function bindPrivacy(){root.querySelector('#invoicePrivacy').onclick=function(){INVOICE_HIDE_AMOUNTS=!INVOICE_HIDE_AMOUNTS;root.querySelector('#invoicePrivacyControl').innerHTML=invoicePrivacyButton();if(p)root.querySelector('#invoiceAmounts').innerHTML=invoiceSummary(p);bindPrivacy();root.querySelector('#invoicePrivacy').focus();};}bindPrivacy();
   if(root.querySelector('#invoiceExcel')){
     root.querySelector('#invoiceExcel').onclick=function(){shareOrDownload(invoiceWorkbook(p),'calculo-auxiliar-'+period+'.xlsx');};
     root.querySelector('#invoiceJson').onclick=function(){shareOrDownload(new Blob([JSON.stringify(p,null,2)],{type:'application/json'}),'datos-auxiliares-'+period+'.json');};

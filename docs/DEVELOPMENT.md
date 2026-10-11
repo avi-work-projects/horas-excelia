@@ -52,7 +52,7 @@ eliminar esa recuperación o convertirla en extra. La operación se valida antes
 Los filtros de Todos usan `kind|type`, para distinguir ambos tipos Otros, y `kind|*`
 para filtrar todos los puntuales o grandes. Se conserva lectura de filtros antiguos.
 
-## Preparación mensual de facturación (v446)
+## Preparación mensual de facturación (v447)
 
 Home agrupa los exportadores anuales existentes en «Exportar horas». «Enviar
 factura» abre la preparación del mes visible en Home. El símbolo reutiliza
@@ -98,7 +98,10 @@ sustituyen en concepto, asunto y cuerpo. Los campos personales empiezan vacíos.
 `invoiceDefaults`). Admite campos parciales: conserva los demás. Carga el formulario
 para revisión; solo «Guardar configuración» persiste. No importa meses ni PDF.
 «Exportar datos» genera ese mismo formato. Los archivos reales permanecen fuera de Git.
-Los botones de Home se ubican a la derecha de Jornada. El IBAN de ingreso es
+Los botones de Home se ubican a la derecha de Jornada. El mes de facturación se
+toma de Home y se muestra sin selector en el panel. El resumen incluye las tarifas
+por día (o por hora si está configurado), separadas si hay varios tramos. El ojo
+oculta los importes del resumen durante la sesión sin modificar datos ni exportaciones. El IBAN de ingreso es
 opcional, se normaliza sin espacios y en mayúsculas, y se comprueban sus dígitos
 de control. Viaja en configuración, backup y `preparation.payment.iban`; también
 aparece en el Excel auxiliar. Preparaciones antiguas sin IBAN siguen siendo válidas.

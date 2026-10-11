@@ -229,7 +229,7 @@ function _econCards7(e,cotAnual,declDiff,factor,subSuffix){
   var netoDecl=Math.round((e.netoReal-cotAnual-declDiff)*100)/100;
   var h='';
   h+=_econCard('var(--c-blue)','Base',f(e.totBase),subSuffix);
-  h+=_econCard('var(--c-orange)','IVA',f(e.totIva),'no toques');
+  h+=_econCard('var(--c-orange)','IVA',f(e.totIva),subSuffix);
   h+=_econCard('var(--c-green)','Base \u2212 15% IRPF',f(e.netoReal),'base \u2212 15% IRPF');
   h+=_econCard('var(--c-red)','IRPF',f(e.totIrpf),'retenci\u00f3n '+e.irpfPct+'%');
   h+=_econCard('var(--c-green)','Base \u2212 15% IRPF \u2212 CCSS',f(cotAnual>0?netoCCSS:e.netoReal),'tras CCSS');

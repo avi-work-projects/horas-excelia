@@ -3729,3 +3729,12 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 
 .invoice-fields .invoice-field{margin:0}
 #invoiceImportStatus:empty{display:none}
+
+.invoice-sheet .bd-panel-header{display:grid;grid-template-columns:36px minmax(0,1fr) 36px;align-items:center}
+.invoice-sheet .bd-panel-header h2{grid-column:2;margin:0;text-align:center}
+.invoice-sheet .bd-panel-header .sy-back{width:36px;height:36px;margin:0}
+.invoice-month{justify-content:center;margin:0;font-size:.9rem;color:var(--text-muted)}
+.invoice-summary-header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.invoice-summary-header h3{margin:0}
+.invoice-eye{display:flex;align-items:center;justify-content:center;width:34px;height:34px;padding:6px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text-muted);cursor:pointer}
+.invoice-eye svg{width:21px;height:21px}
