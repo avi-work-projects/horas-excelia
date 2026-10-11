@@ -4,6 +4,16 @@ Gestify es una PWA estática sin backend. Mantiene scripts clásicos, renders qu
 devuelven HTML y listeners separados. No requiere un framework ni un empaquetador
 de JavaScript. Los datos personales residen en el dispositivo y viajan en JSON.
 
+## Publicación al terminar
+
+Por autorización permanente de Ángel del 11/10/2026, después de realizar cambios:
+validar, integrar la rama de tarea en `main`, subirla al remoto y comprobar el
+despliegue de GitHub Pages. No terminar dejando el resultado solo en una rama.
+Esta preferencia sustituye en este proyecto la norma general de no integrar ni
+desplegar al guardar, salvo instrucción explícita en contrario. Incrementar
+`APP_VERSION` y `CACHE_VER` de forma sincronizada en cada publicación. Conservar
+fuera del commit los cambios previos ajenos y los datos privados.
+
 ## Localizar y modificar código
 
 1. Buscar el símbolo en `CODEMAP.md` y leer solo el bloque necesario.
