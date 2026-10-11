@@ -21,7 +21,7 @@ for(const width of [360,400,440])for(const theme of ['dark','light']){
   const firstHeader=await page.locator('.bday-month-hdr').first().boundingBox();
   expect(Math.abs(todayStart.y+todayStart.height/2-firstHeader.y-firstHeader.height/2)).toBeLessThan(1);
   const controls=await page.locator('.bday-vip-filter-chips button').evaluateAll(els=>els.map(el=>el.getBoundingClientRect().width));
-  expect(Math.max(...controls)-Math.min(...controls)).toBeLessThan(1);
+  expect(controls[0]).toBeGreaterThan(controls[1]*1.5);expect(Math.abs(controls[1]-controls[2])).toBeLessThan(1);
   const search=await page.locator('#bdSearch').boundingBox(),filter=await page.locator('.bday-group-tools summary').boundingBox();
   expect(filter.x).toBeGreaterThan(search.x+search.width);expect(Math.abs(filter.y-search.y)).toBeLessThan(2);
   await page.screenshot({animations:'disabled',path:testInfo.outputPath('lista-inicial.png')});
@@ -58,9 +58,11 @@ for(const width of [360,400,440])for(const theme of ['dark','light']){
   expect(await page.locator('#bdPersonGroups .bday-group-tag').filter({hasText:'Familia Cercana'}).evaluate(el=>getComputedStyle(el).color)).toBe(familyColor);
   const before=await sheet.boundingBox();
   await page.locator('#bdDVip').uncheck();expect(await sheet.boundingBox()).toEqual(before);await expect(page.locator('#bdDNameVip')).toBeHidden();
-  await page.locator('#bdDVip').check();expect(await sheet.boundingBox()).toEqual(before);await expect(page.locator('#bdDNameVip')).toBeVisible();expect(before.height).toBeLessThanOrEqual(390);
+  await page.locator('#bdDVip').check();expect(await sheet.boundingBox()).toEqual(before);await expect(page.locator('#bdDNameVip')).toBeVisible();expect(before.height).toBeLessThanOrEqual(340);
   await page.screenshot({animations:'disabled',path:testInfo.outputPath('ficha.png')});
   await page.locator('#bdCategories').click();await expect(page.locator('#bdCategoryOv.open')).toBeVisible();
+  const hues=await page.locator('[data-bd-category]').evaluateAll(els=>els.map(el=>+el.style.getPropertyValue('--group-hue')));
+  expect(hues.every((h,i)=>!i||h>=hues[i-1])).toBe(true);
   await page.screenshot({animations:'disabled',path:testInfo.outputPath('selector.png')});
   await page.locator('[data-bd-category="Amigos Baile"]').click();await page.locator('#bdCategorySave').click();
   await expect(page.locator('#bdCategoryWrap')).toHaveCount(0);
@@ -69,9 +71,9 @@ for(const width of [360,400,440])for(const theme of ['dark','light']){
   const vipGeometry=await page.locator('.bday-person-vip').evaluate(el=>({check:el.querySelector('input').getBoundingClientRect().right,icon:el.querySelector('img').getBoundingClientRect().left}));
   expect(vipGeometry.check).toBeLessThan(vipGeometry.icon);
   await page.locator('#bdDEdit').click();await expect(page.locator('#bdFormOv')).toBeVisible();
-  const form=page.locator('#bdFormOv .bd-form-sheet');const formBefore=await form.boundingBox();
-  await page.locator('#bdFVip').uncheck();expect(await form.boundingBox()).toEqual(formBefore);await expect(page.locator('#bdFNameVip')).toBeHidden();
-  await page.locator('#bdFVip').check();expect(await form.boundingBox()).toEqual(formBefore);await expect(page.locator('#bdFNameVip')).toBeVisible();
+  const form=page.locator('#bdFormOv .bd-form-sheet');const formBefore=await form.boundingBox();expect(formBefore.height).toBeLessThanOrEqual(400);
+  await page.locator('#bdFVip').uncheck();expect(await form.boundingBox()).toEqual(formBefore);await expect(page.locator('#bdFNameVip')).toHaveCount(0);
+  await page.locator('#bdFVip').check();expect(await form.boundingBox()).toEqual(formBefore);await expect(page.locator('#bdFNameVip')).toHaveCount(0);
   const formVip=await page.locator('#bdFVip').evaluate(el=>({check:el.getBoundingClientRect().right,icon:el.nextElementSibling.getBoundingClientRect().left}));
   expect(formVip.check).toBeLessThan(formVip.icon);
   await page.screenshot({animations:'disabled',path:testInfo.outputPath('editar.png')});

@@ -6,8 +6,7 @@ function renderBdayDetail(b){
   var lbl=dl===0?'¡Hoy es su cumpleaños!':dl===1?'Mañana cumple años':'Faltan '+dl+' días';
   var h='<div class="bd-detail-overlay" id="bdDetailOv"><div class="bd-detail-sheet">';
   h+='<header class="bd-panel-header"><button class="sy-back" id="bdDClose" aria-label="Volver">←</button><h2>Cumpleaños</h2><button class="action-edit action-edit-text ev-list-btn" id="bdDEdit">✎ Editar</button></header>';
-  h+='<div class="bd-panel-body"><div class="bday-person-summary"><div class="bd-detail-name"><span>'+bdName(b.name)+'</span>'+renderBdayNameVip('bdDNameVip',b.vip)+'</div><div class="bd-detail-date">'+b.day+' de '+MN[b.month-1]+'</div><div class="bd-detail-lbl">'+lbl+'</div></div>';
-  h+=renderBdayVipToggle('bdDVip',b.vip);
+  h+='<div class="bd-panel-body"><div class="bday-person-summary"><div class="bd-detail-name"><span>'+bdName(b.name)+'</span>'+renderBdayNameVip('bdDNameVip',b.vip)+'</div><div class="bday-detail-meta"><div class="bd-detail-date">'+b.day+' de '+MN[b.month-1]+'</div>'+renderBdayVipToggle('bdDVip',b.vip)+'</div><div class="bd-detail-lbl">'+lbl+'</div></div>';
   h+=renderBdayPersonGroups(b);
   h+='</div>';
   if(bdayCanSetAlarm(b))h+='<footer class="bd-panel-footer"><button class="ev-btn" id="bdDAlarm">Configurar alarma</button></footer>';
@@ -260,7 +259,7 @@ function renderBdayForm(b,prefillDay,prefillMonth){
   else h+='<div style="width:60px"></div>';
   h+='</header><div class="bd-panel-body">';
   h+='<div class="ev-field"><label>Nombre</label>';
-  h+='<div class="bday-name-field"><input class="ev-input" id="bdFName" type="text" maxlength="60" placeholder="Nombre completo" value="'+escHtml(name)+'">'+renderBdayNameVip('bdFNameVip',vip)+'</div></div>';
+  h+='<input class="ev-input" id="bdFName" type="text" maxlength="60" placeholder="Nombre completo" value="'+escHtml(name)+'"></div>';
   h+='<div class="ev-field ev-date-row">';
   h+='<div><label>D\u00eda</label><input class="ev-input" id="bdFDay" type="number" min="1" max="31" placeholder="1-31" value="'+escHtml(String(day))+'"></div>';
   h+='<div><label>Mes</label><select class="ev-input" id="bdFMonth">';
@@ -305,7 +304,6 @@ function openBdayForm(b,prefillDay,prefillMonth){
   var inp=document.getElementById('bdFName');
   if(inp)setTimeout(function(){inp.focus();},100);
   bindBdayCategoryButton(document.getElementById('bdFWrap'));
-  document.getElementById('bdFVip').addEventListener('change',function(){updateBdayNameVip('bdFNameVip',this.checked);});
   bindBdayFormEvents();
 }
 
