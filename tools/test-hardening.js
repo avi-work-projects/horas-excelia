@@ -325,8 +325,8 @@ console.log('ICS: avisos de cambios/reexportación, cero cancelaciones y backup 
   assert(x.state.timers[0].ms>=1000);x.state.timers[0].fn();assert.equal(x.state.revoked,1);
   x=env(()=>Promise.reject({name:'AbortError'}),()=>true);x.run();
   await new Promise(resolve=>setImmediate(resolve));assert.equal(x.state.clicks,0);assert.equal(x.state.success,0);
-  x=env(()=>{throw Error('No debe abrir compartir');},()=>true);x.run({download:true});assert.equal(x.state.clicks,1);
-  x=env(()=>{},()=>{throw Error('Formato no admitido');});x.run();assert.equal(x.state.clicks,1);
+  x=env(()=>{throw Error('No debe abrir compartir');},()=>true);x.run({download:true});await new Promise(resolve=>setImmediate(resolve));assert.equal(x.state.clicks,1);
+  x=env(()=>{},()=>{throw Error('Formato no admitido');});x.run();await new Promise(resolve=>setImmediate(resolve));assert.equal(x.state.clicks,1);
   console.log('Descargas: rechazo recuperable, cancelar, enlace diferido y descarga directa OK');
 })().catch(err=>{console.error(err);process.exitCode=1;});
 

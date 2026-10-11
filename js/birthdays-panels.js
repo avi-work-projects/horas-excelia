@@ -263,8 +263,8 @@ function renderBdayForm(b,prefillDay,prefillMonth){
   else h+='<div style="width:60px"></div>';
   h+='</header><div class="bd-panel-body">';
   h+='<section class="bday-form-panel"><div class="ev-field"><label>Nombre</label>';
-  h+='<div class="bday-form-name-row"><input class="ev-input" id="bdFName" type="text" maxlength="60" placeholder="Nombre completo" value="'+escHtml(name)+'">'+renderBdayVipToggle('bdFVip',vip)+'</div></div></section>';
-  h+='<section class="bday-form-panel"><div class="ev-field ev-date-row">';
+  h+='<div class="bday-form-name-row"><input class="ev-input" id="bdFName" type="text" maxlength="60" placeholder="Nombre completo" value="'+escHtml(name)+'">'+renderBdayVipToggle('bdFVip',vip)+'</div></div>';
+  h+='<div class="ev-field ev-date-row">';
   h+='<div><label>Día</label><input type="hidden" id="bdFDay" value="'+escHtml(String(day))+'"><button type="button" class="ev-input bday-date-button" id="bdFDayPick" aria-describedby="bdFDateError">'+(day||'Elegir día')+' <span class="ev-tax-chevron" aria-hidden="true"></span></button></div>';
   h+='<div><label>Mes</label><input type="hidden" id="bdFMonth" value="'+month+'"><button type="button" class="ev-input bday-date-button" id="bdFMonthPick">'+MN[month-1]+' <span class="ev-tax-chevron" aria-hidden="true"></span></button></div></div>';
   h+='<div id="bdFDateError" class="bday-date-error" role="status"></div></section>';
@@ -291,20 +291,21 @@ function openBdayDetail(b){
   document.getElementById('bdDDel').onclick=function(){deleteBdayPerson(b);closeBdayDetail();};
   document.getElementById('bdDClose').addEventListener('click',closeBdayDetail);
   document.getElementById('bdDEdit').addEventListener('click',function(){
-    closeBdayDetail();setTimeout(function(){openBdayForm(b);},300);
+    closeBdayDetail();setTimeout(function(){openBdayForm(b,null,null,function(){openBdayDetail(b);});},300);
   });
 }
 
 function closeBdayDetail(){cerrarPanel('bdDWrap','bdDetailOv');}
 
 /* ── Abrir/cerrar form ────────────────────────────────────── */
-function openBdayForm(b,prefillDay,prefillMonth){
+function openBdayForm(b,prefillDay,prefillMonth,onBack){
+  function back(){closeBdayForm();if(onBack)setTimeout(onBack,320);}
   BDAY_EDIT=b||null;
   abrirPanel('bdFWrap',renderBdayForm(b,prefillDay,prefillMonth),{
     contenedor:bdayPanelHost(),
-    overlay:'bdFormOv', alCerrar:closeBdayForm});
+    overlay:'bdFormOv', alCerrar:back});
   bindBdayCategoryButton(document.getElementById('bdFWrap'));
-  bindBdayFormEvents();
+  bindBdayFormEvents(back);
 }
 
 function closeBdayForm(){

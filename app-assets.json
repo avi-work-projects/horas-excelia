@@ -43,6 +43,9 @@
       "path": "js/core.js"
     },
     {
+      "path": "js/export-files.js"
+    },
+    {
       "path": "js/time-picker.js"
     },
     {

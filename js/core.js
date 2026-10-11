@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v440 — controles y editor de cumpleaños refinados';
+var APP_VERSION = 'v441 — cumpleaños y exportaciones compartidas';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -247,12 +247,16 @@ function hBarRows(rows,opts){
 // ── Compartir / descargar archivo ────────────────────────────
 function shareOrDownload(blob,filename,onSuccess,options){
   options=options||{};
+  filename=exportFileName(filename);
+  var delivered=false,success=function(){if(!delivered){delivered=true;if(onSuccess)onSuccess();}};
+  var copy=saveExportCopy(blob,filename);copy.then(function(saved){if(saved)success();});
+  function fallback(){copy.then(function(saved){if(!saved)download();});}
   function download(){
     var url=null,a=null;
     try{
       url=URL.createObjectURL(blob);a=document.createElement('a');
       a.href=url;a.download=filename;if(options.onDownloadReady)options.onDownloadReady(url);document.body.appendChild(a);a.click();
-      if(onSuccess)onSuccess();
+      success();
     }catch(err){showToast('No se pudo descargar el archivo. Vuelve a intentarlo','error');}
     finally{
       if(a&&a.parentNode)a.parentNode.removeChild(a);
@@ -265,14 +269,14 @@ function shareOrDownload(blob,filename,onSuccess,options){
       var file=new File([blob],filename,{type:blob.type});
       if(!navigator.canShare({files:[file]}))file=new File([blob],filename,{type:'application/octet-stream'});
       if(navigator.canShare({files:[file]})){
-        navigator.share({files:[file],title:filename}).then(function(){if(onSuccess)onSuccess();}).catch(function(err){
+        navigator.share({files:[file],title:filename}).then(success).catch(function(err){
           if(err&&err.name==='AbortError')return;
-          download();
+          fallback();
         });return;
       }
     }catch(err){} // API no disponible o formato no admitido: descargar.
   }
-  download();
+  fallback();
 }
 
 // ── Utilidades HTML ─────────────────────────────────────────

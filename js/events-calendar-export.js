@@ -222,8 +222,8 @@ function openEvCalendarExport(){
     if(blob.size>1000000){showToast('Selecciona menos eventos: Google admite archivos de hasta 1 MB','error');return;}
     shareOrDownload(blob,'gestify-eventos.ics',function(){
       appStorage.setItem(EV_ICS_KEY,JSON.stringify(next));F.records=next;
-      showToast('Descarga iniciada. Busca gestify-eventos.ics en Descargas','success');dates();
-    },{download:true});
+      showToast('Calendario exportado','success');dates();
+    });
   };
   dates();
 }

@@ -1,5 +1,5 @@
-function bindBdayFormEvents(){
-  document.getElementById('bdFClose').addEventListener('click',closeBdayForm);
+function bindBdayFormEvents(onBack){
+  document.getElementById('bdFClose').addEventListener('click',onBack||closeBdayForm);
   var delBtn=document.getElementById('bdFDel');
   if(delBtn){
     delBtn.addEventListener('click',function(){
@@ -286,9 +286,7 @@ function bindBdayEvents(){
   var bdExportEl=document.getElementById('bdExport');
   if(bdExportEl)bdExportEl.addEventListener('click',function(){
     if(!BDAYS.length){showToast('No hay cumplea\u00f1os para exportar','error');return;}
-    var a=document.createElement('a');
-    a.href='data:application/json,'+encodeURIComponent(JSON.stringify(BDAYS,null,2));
-    a.download='cumpleanos.json'; a.click();
+    shareOrDownload(new Blob([JSON.stringify(BDAYS,null,2)],{type:'application/json'}),'gestify-cumpleanos.json');
   });
   /* Swipe: navegar mes anterior/siguiente (bdPrev/bdNext solo existen en vista cal) */
   addSwipe(document.querySelector('#eventsOverlay .ev-bday-body'),function(){

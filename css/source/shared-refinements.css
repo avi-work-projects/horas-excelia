@@ -786,3 +786,18 @@ body:has(#bdAlarmOv.open) .tasks-fab{visibility:hidden}
 #bdFormOv .bd-panel-footer{box-shadow:none;padding-top:2px}
 #bdFormOv .bd-panel-body>:last-child{margin-bottom:0}
 .bday-date-button .ev-tax-chevron{width:8px;height:8px;flex:none;color:var(--birthday-tone);margin-right:4px}
+
+/* Cumpleaños: resumen abierto y paneles blancos con acento suave. */
+#bdDetailOv .bday-person-summary{border:0;background:none;padding:2px 0 8px;box-shadow:none}
+#bdDetailOv .bday-detail-groups,#bdFormOv .bday-detail-groups{background:color-mix(in srgb,var(--birthday-tone) 5%,var(--surface));border-color:color-mix(in srgb,var(--birthday-tone) 25%,var(--border))}
+#bdDetailOv .bday-detail-alarm,#bdFormOv .bday-form-panel{background:var(--surface);border-color:color-mix(in srgb,var(--birthday-tone) 16%,var(--border))}
+#bdFormOv .bday-form-panel .ev-date-row{margin-top:10px}
+.bday-month-section .bday-list-item{padding-top:10px;padding-bottom:12px;min-height:50px}
+
+.export-folder-sheet{padding:16px;display:flex;flex-direction:column;gap:12px;max-width:440px;width:calc(100% - 24px);margin:auto}
+.export-folder-sheet p{font-size:.8rem;line-height:1.5;margin:0;color:var(--text-muted)}
+.export-folder-sheet .ev-btn{min-height:40px}
+
+#bdDetailOv .bday-detail-alarm{border:0;background:none;padding:4px 0;box-shadow:none}
+.export-folder-sheet .ev-btn:not(.primary){color:var(--text);background:var(--surface2);border:1px solid var(--border)}
+body:has(#exportFolderOv.open) .tasks-fab{visibility:hidden}
