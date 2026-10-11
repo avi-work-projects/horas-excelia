@@ -3561,7 +3561,9 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 @keyframes home-pending-pulse{0%,100%{opacity:1}50%{opacity:.3}}
 @media(prefers-reduced-motion:reduce){.home-submission.pending{animation:none}}
 
-[data-theme="light"] #eventsOverlay .ev-hdr-sub #evViewUpcoming{--tab-tone:#397dbb}
+:root{--upcoming-tone:#71c9ed;--upcoming-text:#91d9f6}
+[data-theme="light"]{--upcoming-tone:#56b6e0;--upcoming-text:#227fa8}
+#eventsOverlay .ev-hdr-sub #evViewUpcoming{--tab-tone:var(--upcoming-tone)}
 .home-submission.complete{display:grid;grid-template-columns:18px 70px minmax(0,1fr);gap:8px}
 .home-summary-compact{justify-self:end;width:max-content;max-width:100%;box-sizing:border-box;padding:6px 7px;border:1px solid var(--border);border-radius:8px;background:var(--surface);gap:3px;min-width:0}
 .home-summary-compact .month-stat{justify-content:flex-start;text-align:left;gap:3px;flex-wrap:nowrap;white-space:nowrap}
@@ -3661,6 +3663,26 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 .energy-tax{border:1px solid var(--border);border-radius:10px;padding:12px;margin:18px 0}.energy-tax label{display:flex;align-items:center;gap:7px;margin:8px 0;font-size:13px}
 .energy-price-edit{display:grid;grid-template-columns:1.4fr .8fr 1fr 24px;gap:5px;margin:8px 0}.energy-price-edit input{padding:8px 5px;font-size:12px}
 .energy-price-edit button{border:0;background:none;color:var(--text);font-size:20px}.energy-history-open{margin:16px 0}
+
+/* Próximos comparte identidad celeste en sus cuatro subpestañas. */
+#eventsContent:has(.ev-upcoming-body){--accent:var(--upcoming-tone);--accent-bright:var(--upcoming-text);--accent-glow:color-mix(in srgb,var(--upcoming-tone) 13%,var(--surface))}
+.ev-stat-cards strong{color:var(--upcoming-text)}
+.ev-stat-year-nav{--energy-resumen:var(--upcoming-text);position:relative;min-height:44px;justify-content:center;padding-right:76px}
+.ev-stat-year-nav .energy-total-button{position:absolute;right:8px}
+.ev-stat-year-nav .nav-btn{width:34px;height:34px;flex:0 0 34px;color:var(--upcoming-text);border-color:var(--upcoming-tone)}
+.ev-stat-year-nav .energy-year-selector{gap:22px}
+.ev-stat-year-nav .energy-year-selector strong{font-size:1.15rem}
+.ev-stat-year-nav .energy-year-selector[hidden]{display:none}
+.ev-stat-period button.active{border-color:var(--upcoming-tone);background:color-mix(in srgb,var(--upcoming-tone) 10%,var(--surface));color:var(--upcoming-text);box-shadow:inset 0 0 0 1px var(--upcoming-tone)}
+.ev-list-order{flex:0 0 auto;border-left:1px solid var(--border);padding-left:7px;display:flex;flex-direction:column;gap:3px}
+.ev-list-order-label{text-align:center;font-size:.61rem;color:var(--text-muted);line-height:1.2}
+.ev-list-search-row{align-items:center}
+.ev-list-search-row .ev-sort-chip{min-height:34px;width:58px}
+.ev-list-type-title{color:var(--category-tone)!important;border-color:var(--category-tone)!important}
+.contact-entry.contact-address{display:block;padding:0}
+.contact-address>summary{padding:12px 42px 12px 12px;font-size:.8rem;line-height:1.4;min-height:44px;box-sizing:border-box;color:var(--settings-tone);overflow-wrap:anywhere}
+.contact-address-title{display:block;white-space:normal}
+.contact-address-body{display:grid;gap:10px;padding:12px}
 
 /* Fuente: css/source/energy-refinements.css */
 /* Facturas: mismos componentes que los contratos, cifras sin desbordar. */

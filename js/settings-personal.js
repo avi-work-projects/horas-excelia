@@ -53,8 +53,9 @@ function renderContactGroups(data){
     var h='<details class="settings-editor-section contact-group" data-contact-group="'+g.key+'"><summary>'+g.title+' <small>Hasta 8</small></summary><div class="contact-group-body">';
     for(var i=0;i<CONTACT_LIMIT;i++){
       var row=data[g.key][i]||{},key=g.key+'.'+i;
-      h+='<section class="contact-entry" data-contact-entry="'+key+'"'+(i>=Math.max(1,data[g.key].length)?' hidden':'')+'><header><label><input type="checkbox" data-personal-select="'+key+'"> '+g.item+' '+(i+1)+'</label><button class="contact-remove" type="button" data-contact-remove="'+key+'" data-settings-edit-only aria-label="Quitar '+g.item+' '+(i+1)+'">Quitar</button></header>';
-      g.fields.forEach(function(f){h+=contactFieldHtml(key+'.'+f[0],f[1],row[f[0]]);});h+='</section>';
+      var address=g.key==='addresses';
+      h+='<'+(address?'details':'section')+' class="contact-entry'+(address?' contact-address':'')+'" data-contact-entry="'+key+'"'+(i>=Math.max(1,data[g.key].length)?' hidden':'')+'>'+ (address?'<summary><span class="contact-address-title">'+escHtml(row.label||row.address||('Dirección '+(i+1)))+'</span></summary><div class="contact-address-body">':'')+'<header><label><input type="checkbox" data-personal-select="'+key+'"> '+g.item+' '+(i+1)+'</label><button class="contact-remove" type="button" data-contact-remove="'+key+'" data-settings-edit-only aria-label="Quitar '+g.item+' '+(i+1)+'">Quitar</button></header>';
+      g.fields.forEach(function(f){h+=contactFieldHtml(key+'.'+f[0],f[1],row[f[0]]);});h+=address?'</div></details>':'</section>';
     }
     return h+'<button type="button" class="ev-btn contact-add" data-contact-add="'+g.key+'" data-settings-edit-only>Añadir '+g.item+'</button></div></details>';
   }).join('');
@@ -73,9 +74,10 @@ function contactSelectionText(root){
   });return lines.join('\n');
 }
 function bindContactGroups(root){
-  function update(){root.querySelectorAll('[data-contact-add]').forEach(function(btn){btn.disabled=!root.querySelector('[data-contact-entry^="'+btn.dataset.contactAdd+'."][hidden]');});}
-  root.querySelectorAll('[data-contact-add]').forEach(function(btn){btn.onclick=function(){var entry=root.querySelector('[data-contact-entry^="'+btn.dataset.contactAdd+'."][hidden]');if(entry){entry.hidden=false;entry.querySelector('textarea').focus();}update();};});
+  function update(){root.querySelectorAll('.contact-address').forEach(function(entry){var key=entry.dataset.contactEntry;entry.querySelector('.contact-address-title').textContent=entry.querySelector('[data-contact="'+key+'.label"]').value.trim()||entry.querySelector('[data-contact="'+key+'.address"]').value.trim()||('Dirección '+(+key.split('.')[1]+1));});root.querySelectorAll('[data-contact-add]').forEach(function(btn){btn.disabled=!root.querySelector('[data-contact-entry^="'+btn.dataset.contactAdd+'."][hidden]');});}
+  root.querySelectorAll('[data-contact-add]').forEach(function(btn){btn.onclick=function(){var entry=root.querySelector('[data-contact-entry^="'+btn.dataset.contactAdd+'."][hidden]');if(entry){entry.hidden=false;if(entry.tagName==='DETAILS')entry.open=true;entry.querySelector('textarea').focus();}update();};});
   root.querySelectorAll('[data-contact-remove]').forEach(function(btn){btn.onclick=function(){var entry=btn.closest('.contact-entry');entry.querySelectorAll('textarea').forEach(function(el){el.value='';});entry.querySelector('input').checked=false;entry.hidden=true;update();};});
+  root.querySelectorAll('.contact-address textarea').forEach(function(field){field.addEventListener('input',update);});
   update();return update;
 }
 function openPersonalData(){
@@ -91,7 +93,7 @@ function openPersonalData(){
   copy.onclick=function(){var text=contactSelectionText(root);if(text)settingsCopyText(text,copy);else showToast('Los campos seleccionados están vacíos');};
   var updateGroups=bindContactGroups(root);
   bindSettingsEditor(root,'personalData',{
-    onEdit:function(){visibility=Array.from(root.querySelectorAll('.contact-entry')).map(function(el){return el.hidden;});},
+    onEdit:function(){root.querySelectorAll('.contact-address:not([hidden])').forEach(function(entry){entry.open=true;});visibility=Array.from(root.querySelectorAll('.contact-entry')).map(function(el){return el.hidden;});},
     onCancel:function(){root.querySelectorAll('.contact-entry').forEach(function(el,i){el.hidden=visibility[i];});updateGroups();},
     onMode:function(editing){copy.hidden=editing;root.querySelectorAll('[data-personal-select]').forEach(function(el){el.hidden=editing;});selection();updateGroups();},
     onSave:function(){appStorage.setItem(CONTACT_DATA_KEY,JSON.stringify(readContactFields(root)));showToast('Datos guardados','success');}
