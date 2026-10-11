@@ -1,54 +1,54 @@
 /* Home → preparación mensual → PDF de AEAT → correo revisado por el usuario. */
 function invoicePanel(title,body){
-  var previous=NAV_BACK;function close(){cerrarPanel('invoiceWrap','invoiceOv');if(NAV_BACK===close)NAV_BACK=previous;}
+  var previous=NAV_BACK;function close(){INVOICE_OPEN_SEQ++;cerrarPanel('invoiceWrap','invoiceOv');if(NAV_BACK===close)NAV_BACK=previous;}
   if(document.getElementById('invoiceWrap'))previous=INVOICE_BACK||null;INVOICE_BACK=previous;
   var root=abrirPanel('invoiceWrap','<div class="bd-form-overlay" id="invoiceOv"><section class="bd-form-sheet invoice-sheet" role="dialog" aria-modal="true" aria-labelledby="invoiceTitle"><header class="bd-panel-header"><button class="sy-back" id="invoiceBack" aria-label="Volver">←</button><h2 id="invoiceTitle">'+title+'</h2></header><div class="invoice-body">'+body+'</div></section></div>',{contenedor:document.body,overlay:'invoiceOv',alCerrar:close,reutilizar:true});
   root.querySelector('#invoiceBack').onclick=close;NAV_BACK=close;return root;
 }
 function invoiceField(key,label,value,type){return '<label class="invoice-field"><span>'+label+'</span><input data-invoice-field="'+key+'" type="'+(type||'text')+'" value="'+escHtml(value||'')+'" autocomplete="off"></label>';}
 function openInvoiceSettings(){
-  closeSettingsMenu();var c=invoiceData().config,h='<p class="invoice-note">Datos guardados en este dispositivo y en tus copias de seguridad. No se publican con la aplicación.</p>';
+  INVOICE_OPEN_SEQ++;closeSettingsMenu();var c=invoiceData().config,h='<p class="invoice-note">Datos guardados en este dispositivo y en tus copias de seguridad. No se publican con la aplicación.</p>';
+  h+='<div class="invoice-actions"><button class="ev-btn" id="invoiceImportConfig">Importar datos</button><button class="ev-btn" id="invoiceExportConfig">Exportar datos</button></div><input type="file" id="invoiceConfigFile" accept=".json,application/json" hidden><p class="invoice-note" id="invoiceImportStatus" role="status"></p>';
   [['Emisor',[['issuer','Nombre o razón social'],['issuerTax','NIF'],['issuerAddress','Domicilio']]],['Cliente y servicio',[['client','Nombre o razón social'],['clientTax','NIF'],['clientAddress','Domicilio'],['project','Proyecto'],['concept','Concepto']]],['Cálculo',[['rate','Tarifa (vacía: usar la del año en Económico)'],['vat','IVA (%)'],['withholding','Retención IRPF (%)']]],['Correo Gmail',[['from','Cuenta remitente'],['to','Para (separados por comas)'],['cc','CC (opcional)'],['subject','Asunto']]]].forEach(function(group,i){h+='<details class="invoice-card"'+(i===0?' open':'')+'><summary>'+group[0]+'</summary><div class="invoice-fields">';group[1].forEach(function(f){h+=invoiceField(f[0],f[1],c[f[0]]);});if(i===2)h+='<fieldset class="invoice-unit"><legend>Unidad de la tarifa manual</legend><label><input type="radio" name="invoiceUnit" value="day"'+(c.unit==='day'?' checked':'')+'> Por día</label><label><input type="radio" name="invoiceUnit" value="hour"'+(c.unit==='hour'?' checked':'')+'> Por hora</label></fieldset>';if(i===3)h+='<label class="invoice-field"><span>Mensaje</span><textarea data-invoice-field="body" rows="9">'+escHtml(c.body)+'</textarea></label><p class="invoice-note">Puedes usar {mes}, {anio} y {periodo} en el concepto y el correo. Gmail se abre para revisar; adjunta el PDF definitivo y elige allí cuándo enviarlo.</p>';h+='</div></details>';});
+
   h+='<p class="invoice-error" id="invoiceError" role="alert"></p><button class="ev-btn ev-btn-primary" id="invoiceSaveSettings">Guardar configuración</button>';
-  var root=invoicePanel('Edición facturas y correo',h);root.querySelector('#invoiceSaveSettings').onclick=function(){try{var data=invoiceData();root.querySelectorAll('[data-invoice-field]').forEach(function(el){data.config[el.dataset.invoiceField]=el.value.trim();});data.config.unit=root.querySelector('[name="invoiceUnit"]:checked').value;if(data.config.rate!=='')invoiceDecimal(data.config.rate,2);['vat','withholding'].forEach(function(k){if(invoiceDecimal(data.config[k],2)>10000)throw new Error('Porcentaje superior al 100 %');});['from','to','cc'].forEach(function(k){if(data.config[k])invoiceEmails(data.config[k]);});invoiceSave(data);showToast('Configuración de facturación guardada','success');openInvoiceMonth(INVOICE_MONTH||mkey(CY,CM));}catch(e){root.querySelector('#invoiceError').textContent=e.message;}};
+  var root=invoicePanel('Edición facturas y correo',h);bindInvoiceConfigImport(root,c);root.querySelector('#invoiceSaveSettings').onclick=function(){try{var data=invoiceData();root.querySelectorAll('[data-invoice-field]').forEach(function(el){data.config[el.dataset.invoiceField]=el.value.trim();});data.config.unit=root.querySelector('[name="invoiceUnit"]:checked').value;if(data.config.rate!=='')invoiceDecimal(data.config.rate,2);['vat','withholding'].forEach(function(k){if(invoiceDecimal(data.config[k],2)>10000)throw new Error('Porcentaje superior al 100 %');});['from','to','cc'].forEach(function(k){if(data.config[k])invoiceEmails(data.config[k]);});invoiceSave(data);showToast('Configuración de facturación guardada','success');openInvoiceMonth(INVOICE_MONTH||mkey(CY,CM));}catch(e){root.querySelector('#invoiceError').textContent=e.message;}};
 }
 function invoiceSummary(p){return '<dl class="invoice-totals"><div><dt>Días incluidos</dt><dd>'+p.days.length+'</dd></div><div><dt>Base</dt><dd>'+invoiceMoney(p.baseCents)+'</dd></div><div><dt>IVA</dt><dd>'+invoiceMoney(p.vatCents)+'</dd></div><div><dt>Retención IRPF</dt><dd>−'+invoiceMoney(p.withholdingCents)+'</dd></div><div class="invoice-total"><dt>Total a cobrar</dt><dd>'+invoiceMoney(p.totalCents)+'</dd></div></dl>';}
-function openInvoiceMonth(period){
-  INVOICE_MONTH=period||mkey(CY,CM);period=INVOICE_MONTH;var data=invoiceData(),c=data.config,record=data.months[period]||{},p=record.preparation,historical=period<'2026-10';
-  var rows=p?p.days.map(function(r){return Object.assign({},r,{selected:true});}):invoiceDayRows(period,c);
-  if(p&&!record.final){var chosen={};rows.forEach(function(r){chosen[r.date]=r;});rows=invoiceDayRows(period,c).map(function(r){return chosen[r.date]||Object.assign(r,{selected:false});});}
+async function openInvoiceMonth(period){
+  INVOICE_MONTH=period||mkey(CY,CM);period=INVOICE_MONTH;
+  var seq=++INVOICE_OPEN_SEQ,data=invoiceData(),c=data.config,record=data.months[period]||{},historical=period<'2026-10',p=record.preparation,problem='';
+  if(!record.final){
+    try{var rows=invoiceDayRows(period,c);p=invoiceCalculate(period,c,rows);if(!historical)p=await invoicePrepare(period,c,rows);}
+    catch(e){problem=e.message;}
+  }
+  if(seq!==INVOICE_OPEN_SEQ)return;
   var h='<div class="invoice-month"><button class="nav-btn" id="invoicePrev" aria-label="Mes anterior">◀</button><strong>'+escHtml(invoiceLabel(period))+'</strong><button class="nav-btn" id="invoiceNext" aria-label="Mes siguiente">▶</button></div>';
-  h+='<p class="invoice-status">'+(historical?'Referencia histórica · no preparar un nuevo envío':record.final?'PDF definitivo de AEAT incorporado':'Pendiente de emitir en AEAT')+'</p><button class="invoice-config-link" id="invoiceConfig">Edición facturas y correo</button>';
-  h+='<section class="invoice-card"><h3>1. Preparar el mes</h3><p class="invoice-note">Revisa días y tarifas. Los días futuros son planificación. El Excel y los datos exportados son auxiliares.</p>';
-  h+='<p class="invoice-filename"><strong>'+escHtml(p?p.client.name:c.client||'Cliente pendiente de configurar')+'</strong><br>'+escHtml(p?p.concept:invoiceText(c.concept,period))+'</p>';
-  if(p)h+='<p class="invoice-note">Preparación guardada · revisión '+p.revision+'. '+(record.final?'Se conserva junto al PDF definitivo.':'Puedes ajustar la selección o actualizarla desde el calendario.')+'</p>';
-  if(!record.final)h+='<button class="ev-btn invoice-small" id="invoiceReloadDays">Actualizar días y tarifas del calendario</button>';
-  h+='<details class="invoice-days"><summary>Revisar días y tarifas</summary><div class="invoice-days-list">';rows.forEach(function(r,i){h+='<label class="invoice-day"><input type="checkbox" data-invoice-day="'+i+'"'+(r.selected?' checked':'')+(record.final?' disabled':'')+'><span>'+r.date.slice(8)+' · '+escHtml(r.type==='normal'?'Laborable':r.type)+'</span><small>'+escHtml(r.rate)+' €/'+(r.unit==='day'?'día':'h')+(r.unit==='hour'?' · '+r.hours+' h':'')+'</small></label>';});h+='</div></details><div id="invoiceCalculation"></div>';
-  if(!record.final)h+='<label class="invoice-confirm"><input type="checkbox" id="invoiceConfirm">He revisado los días, tarifas y datos que deseo preparar para este mes.</label><button class="ev-btn ev-btn-primary" id="invoicePrepare">Preparar cálculo mensual</button>';
-  if(p)h+='<div class="invoice-actions"><button class="ev-btn" id="invoiceExcel">Excel auxiliar</button><button class="ev-btn" id="invoiceJson">Datos para AEAT</button></div><p class="invoice-note">No se importan automáticamente en AEAT. Usa estos datos para revisar y cumplimentar su aplicación.</p>';h+='</section>';
-  if(!historical){h+='<section class="invoice-card"><h3>2. PDF definitivo de AEAT</h3>';
-    if(record.final){h+='<p>'+escHtml(record.final.number)+' · '+escHtml(record.final.date)+'</p><p class="invoice-filename">'+escHtml(record.final.name)+'</p><button class="ev-btn" id="invoiceDownloadFinal">Guardar PDF definitivo</button><details><summary>Corregir PDF asociado</summary>';}else h+='<p class="invoice-note">Emite la factura en AEAT y descarga su PDF definitivo. Después incorpóralo aquí.</p>';
-    if(p){h+='<label class="invoice-field"><span>PDF definitivo (máximo 2 MB)</span><input type="file" accept="application/pdf,.pdf" id="invoiceFinalFile"></label>'+invoiceField('number','Serie y número de factura',record.final&&record.final.number||'')+invoiceField('date','Fecha real de expedición',record.final&&record.final.date||'','date')+'<label class="invoice-confirm"><input type="checkbox" id="invoiceFinalConfirm">He comprobado que es la factura definitiva de AEAT para '+escHtml(invoiceLabel(period))+', que sus datos e importes son correctos y que no es un ensayo.</label><button class="ev-btn" id="invoiceAttach">Asociar PDF definitivo</button>';}else h+='<p class="invoice-note">Prepara primero el mes para asociar el documento.</p>';
-    if(record.final)h+='</details>';h+='</section><section class="invoice-card"><h3>3. Revisar correo en Gmail</h3>';
-    if(record.final){h+='<p class="invoice-note">Guarda el PDF definitivo y adjúntalo en Gmail. Comprueba la cuenta remitente; allí podrás enviar o programar el correo. Gestify no envía correos ni confirma su entrega.</p><p class="invoice-filename">Para: '+escHtml(c.to||'Pendiente de configurar')+'</p><p><strong>'+escHtml(invoiceText(c.subject,period))+'</strong></p><pre class="invoice-mail">'+escHtml(invoiceText(c.body,period))+'</pre><button class="ev-btn ev-btn-primary" id="invoiceGmail">Abrir correo en Gmail</button>';}else h+='<p class="invoice-note">Pendiente de emitir en AEAT. Solo se permite utilizar el PDF definitivo asociado a este mes.</p>';h+='</section>';
+  h+='<p class="invoice-status">'+(historical?'Referencia histórica · no preparar un nuevo envío':record.final?'PDF definitivo de AEAT incorporado':'Pendiente de emitir en AEAT')+'</p>';
+  h+='<section class="invoice-card invoice-month-summary"><h3>Resumen mensual</h3><p class="invoice-filename"><strong>'+escHtml(p&&p.client?p.client.name:c.client||'Cliente pendiente de configurar')+'</strong><br>'+escHtml(p?p.concept:invoiceText(c.concept,period))+'</p>';
+  if(p)h+=invoiceSummary(p);
+  if(problem)h+='<p class="invoice-note">'+escHtml(problem)+'</p>';
+  if(p&&!problem&&!historical)h+='<div class="invoice-actions"><button class="ev-btn" id="invoiceExcel">Excel auxiliar</button><button class="ev-btn" id="invoiceJson">Datos para AEAT</button></div>';
+  h+='</section><button class="invoice-config-link" id="invoiceConfig">'+(problem?'Completar datos de facturación':'Edición facturas y correo')+'</button>';
+  if(!historical&&!problem&&p){
+    if(record.final){
+      h+='<section class="invoice-card"><h3>Factura definitiva</h3><p class="invoice-filename">'+escHtml(record.final.number)+' · '+escHtml(record.final.date)+'<br>'+escHtml(record.final.name)+'</p><button class="ev-btn" id="invoiceDownloadFinal">Guardar PDF definitivo</button></section>';
+      h+='<section class="invoice-card"><h3>Correo</h3><p class="invoice-filename">Para: '+escHtml(c.to||'Pendiente de configurar')+'</p><p><strong>'+escHtml(invoiceText(c.subject,period))+'</strong></p><pre class="invoice-mail">'+escHtml(invoiceText(c.body,period))+'</pre><p class="invoice-note">Adjunta el PDF definitivo en Gmail y revisa el correo antes de enviarlo o programarlo.</p><button class="ev-btn ev-btn-primary" id="invoiceGmail">Abrir correo en Gmail</button></section>';
+    }
+    h+='<details class="invoice-card invoice-document" id="invoiceDocument"><summary>'+(record.final?'Cambiar PDF asociado':'Continuar · incorporar PDF de AEAT')+'</summary><p class="invoice-note">'+(record.final?'Selecciona el PDF definitivo corregido.':'Emite la factura en AEAT con los datos del mes y añade aquí el PDF definitivo.')+'</p>';
+    h+='<label class="invoice-field"><span>PDF definitivo (máximo 2 MB)</span><input type="file" accept="application/pdf,.pdf" id="invoiceFinalFile"></label>'+invoiceField('number','Serie y número de factura',record.final&&record.final.number||'')+invoiceField('date','Fecha de expedición',record.final&&record.final.date||'','date');
+    h+='<label class="invoice-confirm"><input type="checkbox" id="invoiceFinalConfirm">Es el PDF definitivo de AEAT de '+escHtml(invoiceLabel(period))+' y he comprobado sus datos e importes.</label><button class="ev-btn ev-btn-primary" id="invoiceAttach">Guardar PDF y preparar correo</button></details>';
   }
   h+='<p id="invoiceError" class="invoice-error" role="alert"></p>';var root=invoicePanel('Enviar factura',h);
   function error(e){root.querySelector('#invoiceError').textContent=e.message;root.querySelector('#invoiceError').scrollIntoView({block:'nearest'});}
-  function calculate(){
-    var ready=false;
-    try{var current=record.final?p:invoiceCalculate(period,c,rows);ready=!!p&&['days','lines','issuer','client','project','concept','vatBasisPoints','withholdingBasisPoints'].every(function(k){return JSON.stringify(current[k])===JSON.stringify(p[k]);});
-      root.querySelector('#invoiceCalculation').innerHTML=invoiceSummary(current)+(p&&!ready?'<p class="invoice-note">Hay cambios sin preparar. Prepara de nuevo el cálculo antes de exportarlo o asociar un PDF.</p>':'');root.querySelector('#invoiceError').textContent='';
-    }catch(e){root.querySelector('#invoiceCalculation').textContent=e.message;}
-    ['#invoiceExcel','#invoiceJson','#invoiceAttach'].forEach(function(id){var button=root.querySelector(id);if(button)button.disabled=!ready;});
-  }calculate();
   root.querySelector('#invoiceConfig').onclick=openInvoiceSettings;
   [-1,1].forEach(function(direction){root.querySelector(direction<0?'#invoicePrev':'#invoiceNext').onclick=function(){var dt=new Date(+period.slice(0,4),+period.slice(5)-1+direction,1);openInvoiceMonth(mkey(dt.getFullYear(),dt.getMonth()));};});
-  root.querySelectorAll('[data-invoice-day]').forEach(function(box){box.onchange=function(){rows[+box.dataset.invoiceDay].selected=box.checked;root.querySelector('#invoiceConfirm').checked=false;calculate();};});
-  var reload=root.querySelector('#invoiceReloadDays');if(reload)reload.onclick=function(){rows=invoiceDayRows(period,c);root.querySelectorAll('[data-invoice-day]').forEach(function(box){box.checked=rows[+box.dataset.invoiceDay].selected;box.closest('label').querySelector('small').textContent=rows[+box.dataset.invoiceDay].rate+' €/'+(rows[+box.dataset.invoiceDay].unit==='day'?'día':'h');});root.querySelector('#invoiceConfirm').checked=false;calculate();};
-  var prepare=root.querySelector('#invoicePrepare');if(prepare)prepare.onclick=async function(){prepare.disabled=true;try{if(!root.querySelector('#invoiceConfirm').checked)throw new Error('Confirma la revisión del mes antes de preparar');await invoicePrepare(period,c,rows);openInvoiceMonth(period);}catch(e){error(e);prepare.disabled=false;}};
-  if(p){root.querySelector('#invoiceExcel').onclick=function(){shareOrDownload(invoiceWorkbook(p),'calculo-auxiliar-'+period+'.xlsx');};root.querySelector('#invoiceJson').onclick=function(){shareOrDownload(new Blob([JSON.stringify(p,null,2)],{type:'application/json'}),'datos-auxiliares-'+period+'.json');};}
+  if(root.querySelector('#invoiceExcel')){
+    root.querySelector('#invoiceExcel').onclick=function(){shareOrDownload(invoiceWorkbook(p),'calculo-auxiliar-'+period+'.xlsx');};
+    root.querySelector('#invoiceJson').onclick=function(){shareOrDownload(new Blob([JSON.stringify(p,null,2)],{type:'application/json'}),'datos-auxiliares-'+period+'.json');};
+  }
   var attach=root.querySelector('#invoiceAttach');if(attach)attach.onclick=async function(){attach.disabled=true;try{await invoiceAttach(period,root.querySelector('#invoiceFinalFile').files[0],root.querySelector('[data-invoice-field="number"]').value,root.querySelector('[data-invoice-field="date"]').value,root.querySelector('#invoiceFinalConfirm').checked);openInvoiceMonth(period);}catch(e){error(e);attach.disabled=false;}};
-  if(record.final){root.querySelector('#invoiceDownloadFinal').onclick=function(){shareOrDownload(invoiceFinalBlob(record),record.final.name);};root.querySelector('#invoiceGmail').onclick=function(){try{var url=invoiceGmailUrl(invoiceData().config,period);window.open(url,'_blank','noopener,noreferrer');}catch(e){error(e);}};}
+  if(record.final){root.querySelector('#invoiceDownloadFinal').onclick=function(){shareOrDownload(invoiceFinalBlob(record),record.final.name);};root.querySelector('#invoiceGmail').onclick=function(){try{window.open(invoiceGmailUrl(invoiceData().config,period),'_blank','noopener,noreferrer');}catch(e){error(e);}};}
 }
 function openHoursExport(){
   var root=invoicePanel('Exportar horas','<p class="invoice-note">Registro anual de '+CY+'. El cálculo de facturación mensual se prepara desde Enviar factura.</p><div class="invoice-actions"><button class="ev-btn" id="hoursCsv">CSV</button><button class="ev-btn" id="hoursPdf">PDF</button></div>');
@@ -58,3 +58,15 @@ function initInvoices(){
   var btn=document.getElementById('invoiceHomeBtn');if(!btn)return;btn.innerHTML='<svg viewBox="-12 -12 24 24" aria-hidden="true">'+evManagementShapeInner('invoice')+'</svg><span>Enviar factura</span>';btn.onclick=function(){openInvoiceMonth(mkey(CY,CM));};document.getElementById('hoursExportBtn').onclick=openHoursExport;document.getElementById('invoiceSettingsBtn').onclick=openInvoiceSettings;
 }
 if(typeof document!=='undefined')document.addEventListener('DOMContentLoaded',initInvoices);
+
+function bindInvoiceConfigImport(root,config){
+  function readFields(){var c=Object.assign({},config);root.querySelectorAll('[data-invoice-field]').forEach(function(el){c[el.dataset.invoiceField]=el.value.trim();});c.unit=root.querySelector('[name="invoiceUnit"]:checked').value;return c;}
+  root.querySelector('#invoiceImportConfig').onclick=function(){root.querySelector('#invoiceConfigFile').click();};
+  root.querySelector('#invoiceConfigFile').onchange=async function(){
+    try{var file=this.files[0];if(!file)return;if(file.size>100000)throw new Error('El archivo de configuración es demasiado grande');var c=invoiceConfigImport(JSON.parse(await file.text()),readFields());
+      root.querySelectorAll('[data-invoice-field]').forEach(function(el){el.value=c[el.dataset.invoiceField];});root.querySelector('[name="invoiceUnit"][value="'+c.unit+'"]').checked=true;
+      root.querySelector('#invoiceError').textContent='';root.querySelector('#invoiceImportStatus').textContent='Datos cargados. Revisa los campos y pulsa Guardar configuración.';
+    }catch(e){root.querySelector('#invoiceError').textContent=e.message;}finally{this.value='';}
+  };
+  root.querySelector('#invoiceExportConfig').onclick=function(){try{var c=invoiceConfigImport({format:'gestify-invoice-settings',version:1,config:readFields()},config);shareOrDownload(new Blob([JSON.stringify({format:'gestify-invoice-settings',version:1,config:c},null,2)],{type:'application/json'}),'configuracion-facturas.json');}catch(e){root.querySelector('#invoiceError').textContent=e.message;}};
+}

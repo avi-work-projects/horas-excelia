@@ -294,13 +294,13 @@
 ### js/invoices-export.js  _(36 líneas)_
 **Funciones:** invoiceXml:2 · invoiceZip:3 · header:5 · invoiceWorkbook:14 · textCell:15 · numCell:16 · sheet:26
 
-### js/invoices-ui.js  _(61 líneas)_
-**Funciones:** invoicePanel:2 · invoiceField:8 · openInvoiceSettings:9 · invoiceSummary:15 · openInvoiceMonth:16 · error:36 · calculate:37 · openHoursExport:53 · initInvoices:57
+### js/invoices-ui.js  _(73 líneas)_
+**Funciones:** invoicePanel:2 · invoiceField:8 · openInvoiceSettings:9 · invoiceSummary:17 · error:43 · openHoursExport:53 · initInvoices:57 · bindInvoiceConfigImport:62 · readFields:63
 
-### js/invoices.js  _(92 líneas)_
-**Estado global:** INVOICE_KEY:2 · INVOICE_MONTH:3 · INVOICE_BACK:4
+### js/invoices.js  _(104 líneas)_
+**Estado global:** INVOICE_KEY:2 · INVOICE_MONTH:3 · INVOICE_BACK:4 · INVOICE_OPEN_SEQ:5
 
-**Funciones:** invoiceDefaults:5 · invoiceData:6 · invoiceValidate:7 · invoiceSave:26 · invoiceMerge:27 · invoiceDecimal:32 · invoiceMoney:36 · invoiceLabel:37 · invoiceText:38 · invoiceDayRows:39 · invoiceCalculate:51 · invoiceEmails:76 · invoiceGmailUrl:77 · invoiceFinalBlob:91
+**Funciones:** invoiceDefaults:6 · invoiceData:7 · invoiceValidate:8 · invoiceSave:27 · invoiceMerge:28 · invoiceDecimal:33 · invoiceMoney:37 · invoiceLabel:38 · invoiceText:39 · invoiceDayRows:40 · invoiceCalculate:52 · invoiceEmails:77 · invoiceGmailUrl:78 · invoiceFinalBlob:92 · invoiceConfigImport:95
 
 ### js/logo-popup.js  _(51 líneas)_
 **Funciones:** _logoUpdateDots:14
@@ -767,13 +767,13 @@
 **Rangos por prefijo de clase:**
 .boda-asg:105-110 · .boda-det:101-104 · .boda-last:15-19 · .data-actions:138-139 · .energy-bar:90-90 · .energy-caption:2-2 · .energy-choice:12-12 · .energy-compare:132-132 · .energy-contract:4-5 · .energy-cost:86-134 · .energy-coverage:77-77 · .energy-extremes:73-73 · .energy-fee:42-43 · .energy-field:7-7 · .energy-fields:9-9 · .energy-info:62-64 · .energy-inline:83-83 · .energy-legend:91-91 · .energy-metric:124-126 · .energy-metrics:123-123 · .energy-overview:66-68 · .energy-period:69-71 · .energy-price:180-185 · .energy-range:92-92 · .energy-reconciliation:76-76 · .energy-scenario:133-133 · .energy-section:61-61 · .energy-supplier:74-127 · .energy-table:3-3 · .energy-tabs:45-56 · .energy-tariff:79-181 · .energy-tax:72-130 · .energy-vat:128-128 · .energy-window:31-122 · .energy-year:6-98 · .ev-btn:145-145 · .ev-io:135-135 · .ev-main:163-164 · .ev-upcoming:172-174 · .ev-wk:16-25 · .home-popup:18-28 · .imp-mode:112-112 · .imp-preview:113-117 · .nav-bar:140-140 · .rut-bulk:191-196 · .rut-card:157-162 · .rut-day:146-152 · .rut-days:149-149 · .rut-dpick:144-144 · .rut-history:187-190 · .rut-hora:153-155 · .rut-month:195-195 · .rut-recovery:143-143 · .rut-routine:159-159 · .rut-session:142-142 · .rut-time:156-156 · .rut-weekdays:150-150 · .sy-body:170-170
 
-### css/source/invoices.css  _(26 líneas)_
+### css/source/invoices.css  _(38 líneas)_
 
 **Secciones:**
 
 
 **Rangos por prefijo de clase:**
-.home-invoice:1-3 · .invoice-actions:17-17 · .invoice-body:7-7 · .invoice-card:8-10 · .invoice-config:15-15 · .invoice-confirm:22-22 · .invoice-day:21-21 · .invoice-error:23-23 · .invoice-field:12-12 · .invoice-fields:11-11 · .invoice-filename:24-24 · .invoice-note:13-13 · .invoice-sheet:5-20 · .invoice-status:14-14 · .invoice-totals:16-16
+.home-invoice:3-5 · .hours-control:1-6 · .invoice-actions:20-20 · .invoice-body:10-10 · .invoice-card:11-13 · .invoice-config:18-18 · .invoice-confirm:25-25 · .invoice-day:24-24 · .invoice-document:33-33 · .invoice-error:26-26 · .invoice-field:15-15 · .invoice-fields:14-36 · .invoice-filename:27-27 · .invoice-month:30-34 · .invoice-note:16-16 · .invoice-sheet:8-23 · .invoice-status:17-17 · .invoice-totals:19-19
 
 ### css/tasks.css  _(97 líneas)_
 
