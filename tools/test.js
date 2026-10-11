@@ -383,6 +383,7 @@ const REGLAS = [
       'excelia-personal-v1':       'personalData + personalPerYear',
       'excelia-personal-cards-v1': false, // plegado local por año y partida, sin información económica
       'excelia-econ-comp-v1':      'scenarios',
+      'excelia-contact-data-v1': 'contactData',
       'excelia-mail-config-v1': 'mailConfig',
       'excelia-alarm-url':         'macroUrl',
       'excelia-alarm-h':           'alarmHour',

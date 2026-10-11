@@ -31,6 +31,7 @@ function validateImport(data){
     if(key==='color'&&typeof v==='string'&&!/^#[0-9a-f]{3,8}$/i.test(v))throw new Error('Color no valido');
   }
   visit(data,'');
+  if(data.contactData!=null){if(typeof data.contactData!=='object'||Array.isArray(data.contactData)||Object.keys(data.contactData).some(function(k){return typeof data.contactData[k]!=='string'||data.contactData[k].length>2000;}))throw new Error('Datos de contacto no válidos');}
   if(data.tasks!=null)tasksValidate(data.tasks);
   if(data.personalData)personalValidateData(data.personalData);
   if(data.personalPerYear)Object.keys(data.personalPerYear).forEach(function(year){personalValidateData(data.personalPerYear[year],year);});

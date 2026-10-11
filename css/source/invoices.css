@@ -2,7 +2,7 @@
 .hours-control #editHoursBtn{padding:6px 8px;gap:2px;min-height:42px;white-space:nowrap;font-size:.65rem}
 .home-invoice-actions{display:flex;gap:6px;flex:1;min-width:0}
 .home-invoice-actions button{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:4px;min-height:42px;padding:6px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);font:inherit;font-size:.72rem;font-weight:600;line-height:1.25}
-.home-invoice-actions svg{width:21px;height:21px;flex-shrink:0;color:var(--c-red);opacity:1}
+.home-invoice-actions svg{width:21px;height:21px;flex-shrink:0;color:var(--home-tone);opacity:1}
 .hours-control .default-hours-panel{flex-basis:100%}
 #csvExportBtn[hidden],#pdfExportBtn[hidden]{display:none!important}
 .invoice-sheet{width:min(560px,100%);max-height:90dvh;display:flex;flex-direction:column;padding:16px!important;box-sizing:border-box}

@@ -404,3 +404,16 @@ permanecen visibles y el contenido largo se desplaza dentro del panel.
 `settingsPanelHtml` y `settingsEditorActions` comparten cabecera centrada y pie.
 En la ruta de guardado, elegir una carpeta solo cambia el borrador: tanto el
 handle como su referencia se escriben juntos en IndexedDB al guardar.
+
+## Home y configuración (v455)
+El acento de Home pasa del rojo a pizarra azulado (`--home-tone`, #526477 en claro).
+Afecta a navegación, Hoy, exportación, actualización y al símbolo compartido de factura.
+Los estados de error y acciones destructivas conservan su rojo.
+Configuración separa Correo de Horas y MacroDroid y añade Ver Datos. Los cinco paneles
+abren en consulta; cada campo ofrece copia con confirmación verde. Editar habilita
+los campos, Cancelar descarta y Guardar persiste. El foco de teclado de los botones
+sigue visible; los campos de consulta no muestran el contorno negro del navegador.
+`excelia-contact-data-v1` guarda campos personales como strings, sin valores iniciales.
+Viaja como `contactData` en el backup, con validación y normalización de campos.
+La selección para copiar es temporal y nunca envía mensajes por sí sola.
+Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.

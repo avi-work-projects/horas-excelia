@@ -336,7 +336,7 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 #fiscalOverlay .econ-sub-tab.active{border-bottom-color:var(--c-purple);background:color-mix(in srgb,var(--c-purple) 10%,var(--surface))}
 
 .nav-pro-icon{width:34px;height:34px;display:block;box-sizing:border-box;padding:1px;color:var(--c-blue)}
-.nav-pro-econ{color:var(--c-blue)}.nav-pro-home{color:var(--c-red)}.nav-pro-estudio{color:var(--study-tone)}.nav-pro-events{color:#65a367}.nav-pro-bday{color:var(--birthday-tone)}.nav-pro-alarm{color:#e5b600;width:31px;height:31px}
+.nav-pro-econ{color:var(--c-blue)}.nav-pro-home{color:var(--home-tone)}.nav-pro-estudio{color:var(--study-tone)}.nav-pro-events{color:#65a367}.nav-pro-bday{color:var(--birthday-tone)}.nav-pro-alarm{color:#e5b600;width:31px;height:31px}
 
 :root{--birthday-tone:#f08bb2;--study-tone:#e4ac72}
 [data-theme="light"]{--birthday-tone:#b43868;--study-tone:#a56625}
@@ -349,7 +349,7 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 #householdBtn,.nav-bar-btn[data-nav="household"]{--nav-tone:#169a94}
 .nav-pro-household{color:#169a94}
 #estudioBtn,.nav-bar-btn[data-nav="estudio"]{--nav-tone:var(--study-tone)}
-#homeBtn,.nav-bar-btn[data-nav="home"]{--nav-tone:var(--c-red)}
+#homeBtn,.nav-bar-btn[data-nav="home"]{--nav-tone:var(--home-tone)}
 #eventsBtn,.nav-bar-btn[data-nav="events"]{--nav-tone:#65a367}
 #bdayBtn,.nav-bar-btn[data-nav="bday"]{--nav-tone:var(--birthday-tone)}
 #alarmTestBtn,.nav-bar-btn[data-nav="alarm"]{--nav-tone:#e5b600}
@@ -730,7 +730,7 @@ body:has(#bdDateOv.open) .tasks-fab{visibility:hidden}
 #bdFormOv .bday-form-name-row .bday-person-vip{flex:none;gap:4px;margin:0}
 #bdFormOv .bday-form-name-row .bday-person-vip img{width:32px}
 .bday-group-tools summary{color:var(--birthday-tone);border-color:color-mix(in srgb,var(--birthday-tone) 50%,var(--border));background:color-mix(in srgb,var(--birthday-tone) 9%,var(--surface))}
-.app-update-fab{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:380;width:48px;height:48px;padding:0;border:1.5px solid var(--c-red);border-radius:17px;background:#fff;color:var(--c-red);box-shadow:0 4px 15px #21163a33;display:grid;place-items:center;cursor:pointer}
+.app-update-fab{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:380;width:48px;height:48px;padding:0;border:1.5px solid var(--home-tone);border-radius:17px;background:#fff;color:var(--home-tone);box-shadow:0 4px 15px #21163a33;display:grid;place-items:center;cursor:pointer}
 .app-update-fab svg{width:27px;height:27px;flex:none}
 .app-update-fab:focus-visible{outline:2px solid var(--text);outline-offset:3px}
 
@@ -817,7 +817,7 @@ body:has(#exportFolderOv.open) .tasks-fab{visibility:hidden}
 .ev-btn.rut-done-action{background:color-mix(in srgb,var(--c-green) 10%,var(--surface));color:var(--c-green);border:1px solid color-mix(in srgb,var(--c-green) 40%,var(--border))}
 .rut-done-sheet{display:flex;flex-direction:column;gap:12px}
 .rut-done-sheet p{font-size:.85rem;line-height:1.5;margin:0}
-.export-choice-sheet{--accent:var(--c-red);display:flex;flex-direction:column;gap:16px;width:min(400px,calc(100vw - 32px));box-sizing:border-box;padding:18px;border-radius:22px;max-height:88dvh;overflow:auto}
+.export-choice-sheet{--accent:var(--home-tone);display:flex;flex-direction:column;gap:16px;width:min(400px,calc(100vw - 32px));box-sizing:border-box;padding:18px;border-radius:22px;max-height:88dvh;overflow:auto}
 .export-choice-sheet p{margin:0;font-size:.76rem;line-height:1.45;color:var(--text-muted);overflow-wrap:anywhere}
 .export-choice-file{display:flex;align-items:center;gap:10px;padding:12px;border-radius:12px;background:var(--surface2)}
 .export-choice-file .ico-doc{width:24px;height:24px;color:var(--accent);opacity:1}
@@ -892,8 +892,8 @@ body:has(#bdGroupEditOv.open) .tasks-fab{visibility:hidden}
 .panel-header-centered h2{grid-column:2;text-align:center}
 .panel-header-centered .sy-back{width:36px;height:36px;margin:0;justify-self:start}
 
-#todayBtn{color:var(--c-red);border-color:var(--c-red)}
-#todayBtn:active{background:var(--c-red);color:#fff}
+#todayBtn{color:var(--home-tone);border-color:var(--home-tone)}
+#todayBtn:active{background:var(--home-tone);color:#fff}
 
 .settings-edit-links{display:grid;gap:8px;padding:10px 12px}
 .settings-edit-links .settings-edit-btn{margin:0;white-space:normal;padding:11px 12px;text-align:left;font-weight:600;background:var(--settings-tone)!important;border-color:var(--settings-tone)!important;color:#fff!important}
@@ -908,10 +908,34 @@ body:has(#bdGroupEditOv.open) .tasks-fab{visibility:hidden}
 .settings-editor-sheet .settings-editor-actions .ev-btn{flex:1;min-height:42px;margin:0;border:1px solid var(--settings-tone);color:var(--settings-tone);background:var(--surface);border-radius:10px;font:inherit;font-size:.84rem;font-weight:600}
 .settings-editor-sheet .settings-editor-actions .ev-btn.primary{background:var(--settings-tone);color:#fff}
 .settings-editor-actions [hidden],[data-settings-edit-only][hidden]{display:none!important}
-.settings-is-reading .settings-editor-sheet input:not([type=radio]),.settings-is-reading .settings-editor-sheet textarea{background:var(--surface2);border-color:transparent;color:var(--text);cursor:default}
+.settings-is-reading .settings-editor-sheet input:not([type=radio]):not([type=checkbox]),.settings-is-reading .settings-editor-sheet textarea{background:var(--surface2);border-color:transparent;color:var(--text);cursor:default}
 .settings-editor-sheet .invoice-field input,.settings-editor-sheet .invoice-field textarea{font-size:.83rem}
 .settings-editor-sheet #exportFolderChoose{margin:8px 0;min-height:40px;width:100%}
 body:has(#connectionsOv.open) .tasks-fab{visibility:hidden}
 
 .invoice-sheet.settings-editor-sheet{width:min(480px,calc(100vw - 24px));border-radius:20px}
 #exportFolderOv .settings-editor-sheet{height:min(450px,88dvh)}
+
+:root{--home-tone:#9eafc1}
+[data-theme="light"]{--home-tone:#526477}
+.settings-edit-macro{--settings-tone:#8a5794}.settings-edit-personal{--settings-tone:var(--home-tone)}
+.settings-field-value{display:flex;align-items:center;gap:6px;min-width:0}
+.settings-field-value input,.settings-field-value textarea,.settings-field-value select{min-width:0;flex:1;width:0}
+.settings-copy{flex:none;display:grid;place-items:center;width:34px;height:34px;padding:7px;border:1px solid var(--border);border-radius:9px;color:var(--settings-tone);background:var(--surface);cursor:pointer}
+.settings-copy svg,.personal-copy-selected svg{width:18px;height:18px;flex:none}
+.settings-copy.copied,.personal-copy-selected.copied{color:var(--c-green)!important}
+.settings-copy[hidden],.personal-copy-selected[hidden],[data-personal-select][hidden]{display:none!important}
+.settings-editor-sheet input:focus,.settings-editor-sheet textarea:focus{outline:none;box-shadow:none;border-color:var(--settings-tone)}
+.settings-is-reading .settings-editor-sheet input:focus,.settings-is-reading .settings-editor-sheet textarea:focus{border-color:transparent}
+.settings-editor-sheet button:focus-visible{outline:2px solid var(--settings-tone);outline-offset:2px}
+.personal-data-row{display:flex;align-items:center;gap:10px;margin-bottom:14px}.personal-data-row .invoice-field{flex:1;min-width:0;margin:0}
+.personal-copy-selected{display:flex;align-items:center;justify-content:center;gap:6px}.personal-copy-selected:disabled{opacity:.45}
+#personalDataOv .settings-editor-actions .personal-copy-selected{flex:2}
+.sw-upd-menu-btn{display:flex!important;flex-direction:column;gap:3px;color:var(--home-tone)!important;font-weight:600}.sw-upd-menu-btn[style*="display:none"]{display:none!important}.sw-upd-menu-btn small{font-size:.7rem;font-weight:400;color:var(--text-muted)}
+body:has(#personalDataOv.open) .tasks-fab{visibility:hidden}
+
+.settings-is-reading .settings-editor-sheet textarea{resize:none}
+.personal-data-row input[type=checkbox]{--chk:var(--home-tone)}
+.settings-editor-sheet .invoice-unit legend .settings-copy{display:inline-grid;margin-left:8px;vertical-align:middle}
+
+.settings-field-value #exportFolderStatus{flex:1;min-width:0}

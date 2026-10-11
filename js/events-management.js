@@ -12,7 +12,7 @@ function evManagementShapeInner(shape){
     'electric-home':evUtilityHomeSvg(edge).replace('currentColor','#65ad83')+'<path d="M1,-4 L-3,2 H0 L-1,6 L4,0 H1 Z" fill="#fff7d3" stroke="#000" stroke-width="1"/>',
     insurance:'<path d="M0,-9 L8,-6 V0 Q8,6 0,9 Q-8,6 -8,0 V-6 Z" fill="currentColor"'+edge+'/><path d="M-4,0 L-1,3 L4,-3" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
     utilities:'<path d="M-8,-1 L0,-8 L8,-1 V8 H-8 Z" fill="currentColor"'+edge+'/><path d="M1,-4 L-3,2 H0 L-1,6 L4,0 H1 Z" fill="#fff7d3" stroke="#000" stroke-width="1"/>',
-    invoice:'<path d="M-7,-9 H3 L7,-5 V9 H-7 Z" fill="#f6faf8"'+edge+'/><path d="M3,-9 V-5 H7 M-4,-3 H1 M-4,0 H0" fill="none" stroke="#000" stroke-width="1.2"/><path d="M-3,5 H8 M4,1 L8,5 L4,9" fill="none" stroke="var(--c-red)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>'
+    invoice:'<path d="M-7,-9 H3 L7,-5 V9 H-7 Z" fill="#f6faf8"'+edge+'/><path d="M3,-9 V-5 H7 M-4,-3 H1 M-4,0 H0" fill="none" stroke="#000" stroke-width="1.2"/><path d="M-3,5 H8 M4,1 L8,5 L4,9" fill="none" stroke="var(--home-tone)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>'
   };return shapes[shape]||null;
 }
 function evManagementCheckable(ev){return getEvKind(ev)==='puntual'&&evIsManagement(getEvType(ev))&&['Peluquería','Médico','Dentista'].indexOf(getEvType(ev))<0;}
