@@ -676,3 +676,38 @@ button.bday-group-chip:focus-visible{outline:2px dashed currentColor;outline-off
 #bdFormOv .bday-category-heading{margin-bottom:6px}
 #bdFormOv .bday-category-button{min-height:32px}
 [data-bd-filter="__none"]{--group-ink:var(--text-muted);--group-bg:var(--surface2);--group-border:var(--border)}
+
+/* Ficha compacta, acciones compartidas y fecha sin controles nativos. */
+.bday-today-dock .today-btn{width:52px;padding-inline:0}
+.bday-month-section .bday-list-item{padding-left:8px;gap:18px}
+.bday-show-groups .bday-list-item{gap:18px}
+#bdDetailOv .bd-detail-sheet{height:min(310px,86dvh)}
+#bdFormOv .bd-form-sheet{height:min(370px,88dvh)}
+#bdDetailOv .bd-panel-footer{display:flex;gap:8px;margin:0;padding-top:8px}
+#bdDetailOv .bd-panel-footer .ev-btn{flex:1;width:auto;min-width:0}
+#bdDetailOv #bdDAlarm{width:auto;min-height:32px;padding:5px 10px;border-radius:9px;font-size:.75rem}
+.bday-date-button{display:flex;align-items:center;justify-content:space-between;cursor:pointer;font:inherit;font-size:.85rem}
+.bday-date-error{min-height:18px;color:var(--c-red);font-size:.7rem;line-height:18px}
+.bday-date-button[aria-invalid=true]{border-color:var(--c-red)}
+#bdFSave:disabled{opacity:.45;cursor:not-allowed}
+#bdFormOv .ev-date-row{margin-bottom:0}
+#bdDateOv{z-index:430}
+#bdDateOv .bday-date-sheet{display:flex;flex-direction:column;gap:16px;padding:14px 16px;max-height:86dvh;overflow-y:auto}
+.bday-date-sheet .drum-wrap{margin:0 auto;width:100px;flex-shrink:0}
+.bday-date-sheet .ev-btn{min-height:40px;font:inherit;font-size:.8rem}
+.bday-month-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.bday-month-options [aria-pressed=true]{border-color:var(--birthday-tone);color:var(--birthday-tone);background:color-mix(in srgb,var(--birthday-tone) 12%,var(--surface))}
+body:has(#bdDateOv.open) .tasks-fab{visibility:hidden}
+
+#bdDetailOv #bdDAlarm{flex:none;margin:0}
+#bdDetailOv .bd-detail-name{font-size:1rem;line-height:1.2}
+#bdDetailOv .bd-detail-lbl{padding:4px 8px;margin-top:4px}
+#bdDetailOv .bday-detail-groups,#bdFormOv .bday-detail-groups{margin:4px 0;padding-top:4px}
+#bdDetailOv .bday-category-heading,#bdFormOv .bday-category-heading{margin-bottom:4px}
+#bdDetailOv .bday-detail-groups .bday-group-tag,#bdFormOv .bday-detail-groups .bday-group-tag{padding:3px 6px}
+#bdFormOv .ev-field{margin-bottom:6px}
+#bdFormOv .ev-date-row{margin-bottom:0}
+#bdFormOv .bday-person-vip{height:26px;margin:2px 0}
+.bday-date-error{min-height:16px;line-height:16px}
+.bday-month-options .ev-btn{background:var(--surface2);color:var(--text);border:1px solid var(--border);padding:10px 4px}
+.bday-month-options [aria-pressed=true]{border-color:var(--birthday-tone);color:var(--birthday-tone);background:color-mix(in srgb,var(--birthday-tone) 12%,var(--surface))}

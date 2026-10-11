@@ -15,25 +15,18 @@
 <div class="ev-field ev-date-row">
 <div>
 <label>Día</label>
-<input class="ev-input" id="bdFDay" type="number" min="1" max="31" placeholder="1-31" value="26">
+<input type="hidden" id="bdFDay" value="26">
+<button type="button" class="ev-input bday-date-button" id="bdFDayPick" aria-describedby="bdFDateError">26 <span aria-hidden="true">⌄</span>
+</button>
 </div>
 <div>
 <label>Mes</label>
-<select class="ev-input" id="bdFMonth">
-<option value="1">Enero</option>
-<option value="2">Febrero</option>
-<option value="3">Marzo</option>
-<option value="4">Abril</option>
-<option value="5">Mayo</option>
-<option value="6">Junio</option>
-<option value="7">Julio</option>
-<option value="8" selected>Agosto</option>
-<option value="9">Septiembre</option>
-<option value="10">Octubre</option>
-<option value="11">Noviembre</option>
-<option value="12">Diciembre</option>
-</select>
+<input type="hidden" id="bdFMonth" value="8">
+<button type="button" class="ev-input bday-date-button" id="bdFMonthPick">Agosto <span aria-hidden="true">⌄</span>
+</button>
 </div>
+</div>
+<div id="bdFDateError" class="bday-date-error" role="status">
 </div>
 <label class="bday-person-vip">
 <input type="checkbox" id="bdFVip" aria-label="VIP" checked>

@@ -5,11 +5,11 @@ function renderBdayDetail(b){
   var dl=daysUntil(b.month,b.day);
   var lbl=dl===0?'¡Hoy es su cumpleaños!':dl===1?'Mañana cumple años':'Faltan '+dl+' días';
   var h='<div class="bd-detail-overlay" id="bdDetailOv"><div class="bd-detail-sheet">';
-  h+='<header class="bd-panel-header"><button class="sy-back" id="bdDClose" aria-label="Volver">←</button><h2>Cumpleaños</h2><button class="action-edit action-edit-text ev-list-btn" id="bdDEdit">✎ Editar</button></header>';
+  h+='<header class="bd-panel-header"><button class="sy-back" id="bdDClose" aria-label="Volver">←</button><h2>Cumpleaños</h2>'+(bdayCanSetAlarm(b)?'<button class="ev-btn" id="bdDAlarm" aria-label="Configurar alarma">Alarma</button>':'')+'</header>';
   h+='<div class="bd-panel-body"><div class="bday-person-summary"><div class="bd-detail-name"><span>'+bdName(b.name)+'</span>'+renderBdayNameVip('bdDNameVip',b.vip)+'</div><div class="bday-detail-meta"><div class="bd-detail-date">'+b.day+' de '+MN[b.month-1]+'</div>'+renderBdayVipToggle('bdDVip',b.vip)+'</div><div class="bd-detail-lbl">'+lbl+'</div></div>';
   h+=renderBdayPersonGroups(b);
   h+='</div>';
-  if(bdayCanSetAlarm(b))h+='<footer class="bd-panel-footer"><button class="ev-btn" id="bdDAlarm">Configurar alarma</button></footer>';
+  h+='<footer class="bd-panel-footer ev-detail-actions"><button class="action-edit action-edit-text ev-btn ev-edit-orange" id="bdDEdit">&#9998; Editar</button><button class="ev-btn danger" id="bdDDel">Eliminar</button></footer>';
   h+='</div></div>';
   return h;
 }
@@ -261,11 +261,9 @@ function renderBdayForm(b,prefillDay,prefillMonth){
   h+='<div class="ev-field"><label>Nombre</label>';
   h+='<input class="ev-input" id="bdFName" type="text" maxlength="60" placeholder="Nombre completo" value="'+escHtml(name)+'"></div>';
   h+='<div class="ev-field ev-date-row">';
-  h+='<div><label>D\u00eda</label><input class="ev-input" id="bdFDay" type="number" min="1" max="31" placeholder="1-31" value="'+escHtml(String(day))+'"></div>';
-  h+='<div><label>Mes</label><select class="ev-input" id="bdFMonth">';
-  MN.forEach(function(mn,i){h+='<option value="'+(i+1)+'"'+(month===(i+1)?' selected':'')+'>'+mn+'</option>';});
-  h+='</select></div>';
-  h+='</div>';
+  h+='<div><label>Día</label><input type="hidden" id="bdFDay" value="'+escHtml(String(day))+'"><button type="button" class="ev-input bday-date-button" id="bdFDayPick" aria-describedby="bdFDateError">'+(day||'Elegir día')+' <span aria-hidden="true">⌄</span></button></div>';
+  h+='<div><label>Mes</label><input type="hidden" id="bdFMonth" value="'+month+'"><button type="button" class="ev-input bday-date-button" id="bdFMonthPick">'+MN[month-1]+' <span aria-hidden="true">⌄</span></button></div></div>';
+  h+='<div id="bdFDateError" class="bday-date-error" role="status"></div>';
   h+=renderBdayVipToggle('bdFVip',vip);
   h+=renderBdayGroupFields(b);
   h+='</div><footer class="bd-panel-footer"><button class="ev-btn primary" id="bdFSave">Guardar</button></footer>';
@@ -287,6 +285,7 @@ function openBdayDetail(b){
   };
   var alarmButton=document.getElementById('bdDAlarm');
   if(alarmButton)alarmButton.addEventListener('click',function(){closeBdayDetail();setTimeout(function(){openBdayAlarm(b);},300);});
+  document.getElementById('bdDDel').onclick=function(){deleteBdayPerson(b);closeBdayDetail();};
   document.getElementById('bdDClose').addEventListener('click',closeBdayDetail);
   document.getElementById('bdDEdit').addEventListener('click',function(){
     closeBdayDetail();setTimeout(function(){openBdayForm(b);},300);
@@ -301,12 +300,57 @@ function openBdayForm(b,prefillDay,prefillMonth){
   abrirPanel('bdFWrap',renderBdayForm(b,prefillDay,prefillMonth),{
     contenedor:bdayPanelHost(),
     overlay:'bdFormOv', alCerrar:closeBdayForm});
-  var inp=document.getElementById('bdFName');
-  if(inp)setTimeout(function(){inp.focus();},100);
   bindBdayCategoryButton(document.getElementById('bdFWrap'));
   bindBdayFormEvents();
 }
 
 function closeBdayForm(){
   cerrarPanel('bdFWrap','bdFormOv',function(){BDAY_EDIT=null;});
+}
+
+function deleteBdayPerson(b){
+  var index=BDAYS.indexOf(b);if(index<0)return;
+  BDAYS.splice(index,1);
+  function persist(){appStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));syncVipBdaysToEvents();updateBdayBtn();refreshBday();}
+  persist();showToast('Cumpleaños eliminado','success',function(){BDAYS.splice(Math.min(index,BDAYS.length),0,b);persist();});
+}
+function bindBdayDateFields(){
+  var day=document.getElementById('bdFDay'),month=document.getElementById('bdFMonth');
+  function update(){
+    var valid=validBirthday(+day.value,+month.value),message=valid?'':(day.value?'El '+day.value+' de '+MN[+month.value-1]+' no existe.':'Elige un día.');
+    document.getElementById('bdFDayPick').innerHTML=(day.value||'Elegir día')+' <span aria-hidden="true">⌄</span>';
+    document.getElementById('bdFMonthPick').innerHTML=MN[+month.value-1]+' <span aria-hidden="true">⌄</span>';
+    document.getElementById('bdFDateError').textContent=message;
+    document.getElementById('bdFDayPick').setAttribute('aria-invalid',!valid);
+    document.getElementById('bdFSave').disabled=!valid;
+  }
+  document.getElementById('bdFDayPick').onclick=function(){openBdayDatePicker('day',+day.value||1,function(value){day.value=value;update();});};
+  document.getElementById('bdFMonthPick').onclick=function(){openBdayDatePicker('month',+month.value,function(value){month.value=value;update();});};
+  update();
+}
+function openBdayDatePicker(kind,value,onPick){
+  function close(){cerrarPanel('bdDateWrap','bdDateOv');}
+  var isDay=kind==='day',h='<div class="bd-form-overlay" id="bdDateOv"><div class="bd-form-sheet bday-date-sheet"><header class="bd-panel-header"><button class="sy-back" id="bdDateClose" aria-label="Volver">←</button><h2>'+ (isDay?'Día':'Mes')+'</h2></header>';
+  if(isDay){
+    h+='<div class="drum-wrap"><div class="drum-picker" id="bdDayDrum" role="spinbutton" tabindex="0" aria-label="Día" aria-valuemin="1" aria-valuemax="31"><div style="height:44px"></div>';
+    for(var d=1;d<=31;d++)h+='<div class="drum-picker-item" data-day="'+d+'">'+d+'</div>';
+    h+='<div style="height:44px"></div></div><div class="drum-sel-lines"></div></div><button class="ev-btn primary" id="bdDateApply">Elegir día</button>';
+  }else{
+    h+='<div class="bday-month-options">';
+    MN.forEach(function(name,i){h+='<button class="ev-btn" data-month="'+(i+1)+'" aria-pressed="'+(value===i+1)+'">'+name+'</button>';});h+='</div>';
+  }
+  h+='</div></div>';
+  var wrap=abrirPanel('bdDateWrap',h,{contenedor:bdayPanelHost(),overlay:'bdDateOv',alCerrar:close});
+  wrap.querySelector('#bdDateClose').onclick=close;
+  if(!isDay){wrap.querySelectorAll('[data-month]').forEach(function(button){button.onclick=function(){onPick(+button.dataset.month);close();};});return;}
+  var drum=wrap.querySelector('#bdDayDrum');
+  function mark(){value=Math.max(1,Math.min(31,Math.round(drum.scrollTop/44)+1));drum.setAttribute('aria-valuenow',value);drum.querySelectorAll('[data-day]').forEach(function(item){item.classList.toggle('drum-selected',+item.dataset.day===value);});}
+  function select(day){drum.style.scrollSnapType='none';drum.scrollTop=(Math.max(1,Math.min(31,day))-1)*44;mark();requestAnimationFrame(function(){drum.style.scrollSnapType='';});}
+  drum.addEventListener('scroll',mark,{passive:true});
+  drum.onclick=function(e){var item=e.target.closest('[data-day]');if(item)select(+item.dataset.day);};
+  drum.onkeydown=function(e){if(['ArrowUp','ArrowDown','Home','End'].indexOf(e.key)<0)return;e.preventDefault();select(e.key==='Home'?1:e.key==='End'?31:value+(e.key==='ArrowUp'?-1:1));};
+  var initial=value,ov=wrap.querySelector('#bdDateOv');
+  var observer=new MutationObserver(function(){if(ov.classList.contains('open')){observer.disconnect();select(initial);}});
+  observer.observe(ov,{attributes:true,attributeFilter:['class']});
+  wrap.querySelector('#bdDateApply').onclick=function(){mark();onPick(value);close();};
 }

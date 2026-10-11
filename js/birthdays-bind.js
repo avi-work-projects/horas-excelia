@@ -4,13 +4,10 @@ function bindBdayFormEvents(){
   if(delBtn){
     delBtn.addEventListener('click',function(){
       if(!BDAY_EDIT)return;
-      BDAYS=BDAYS.filter(function(x){return!(x.name===BDAY_EDIT.name&&x.day===BDAY_EDIT.day&&x.month===BDAY_EDIT.month);});
-      appStorage.setItem(BDAY_STORAGE_KEY,JSON.stringify(BDAYS));
-      syncVipBdaysToEvents();
-      showToast('Cumplea\u00f1os eliminado','success');
-      updateBdayBtn();closeBdayForm();setTimeout(refreshBday,320);
+      deleteBdayPerson(BDAY_EDIT);closeBdayForm();
     });
   }
+  bindBdayDateFields();
   document.getElementById('bdFSave').addEventListener('click',function(){
     var name=document.getElementById('bdFName').value.trim();
     var day=parseInt(document.getElementById('bdFDay').value,10);
@@ -156,8 +153,8 @@ function bindBdayEvents(){
   if(showGroups)showGroups.onclick=function(){BDAY_SHOW_GROUPS=!BDAY_SHOW_GROUPS;refreshBday();};
   var bdVipAllEl=document.getElementById('bdVipAll');
   if(bdVipAllEl)bdVipAllEl.addEventListener('click',function(){
-    BDAY_FILTER_VIP='all';BDAY_SEARCH='';refreshBday();
-    _bdScrollToToday();
+    if(BDAY_LIST_TOP){BDAY_LIST_TOP=false;refreshBday();_bdResetScroll();}
+    else{BDAY_LIST_TOP=true;BDAY_FILTER_VIP='all';BDAY_SEARCH='';refreshBday();_bdScrollToToday();}
   });
   var bdVipOnlyEl=document.getElementById('bdVipOnly');
   if(bdVipOnlyEl)bdVipOnlyEl.addEventListener('click',function(){BDAY_FILTER_VIP=BDAY_FILTER_VIP==='vip'?'all':'vip';BDAY_SEARCH='';refreshBday();});

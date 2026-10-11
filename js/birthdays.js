@@ -7,6 +7,7 @@ var BDAY_YEAR=new Date().getFullYear(), BDAY_MONTH=new Date().getMonth(), BDAY_V
 var BDAY_CAL_VIP=false;
 var BDAY_EDIT=null;
 var BDAY_SEARCH='';
+var BDAY_LIST_TOP=false; // Hoy pulsado: ofrecer volver al principio.
 var BDAY_UP_VIP=false;
 var BDAY_FILTER_VIP='all'; // 'all' | 'vip' | 'novip'
 var BDAY_EDIT_VIP=false;
