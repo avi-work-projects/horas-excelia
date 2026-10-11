@@ -2,8 +2,8 @@
 var EV_PLAN_PICK=null;
 var EV_QUICK_PLANS=['Comida','Tomar algo','Cena'];
 var EV_PICKER_GROUPS={
-  plans:{accent:'#bd6119',generic:'Plan/Quedada',title:'Elige tu plan',label:'Plan / Quedada',quick:EV_QUICK_PLANS,types:['Comida','Tomar algo','Cena','Brunch','Barbacoa','Cumpleaños','Plan romántico','Copas','Salir de fiesta','Bolos','Cine','Ping pong','Ver partido fútbol','Juegos de mesa','Montaña','Ponencia']},
-  management:{accent:'#27845c',generic:'Rec. Gestiones',title:'Elige tu gestión',label:'Rec. Gestiones',quick:['Llamada','Cita','Peluquería'],legacy:['Contratar gas/electricidad'],types:['Peluquería','Médico','Dentista','Cita','Llamada','Contratar seguro','Contratar gas','Contratar electricidad','Enviar factura','Pago','Pago Hacienda','Presentar Modelo']}
+  plans:{accent:'#bd6119',generic:'Plan/Quedada',title:'Elige tu Plan',label:'Plan / Quedada',quick:EV_QUICK_PLANS,types:['Comida','Tomar algo','Cena','Brunch','Barbacoa','Cumpleaños','Plan romántico','Copas','Salir de fiesta','Bolos','Cine','Ping pong','Ver partido fútbol','Juegos de mesa','Montaña','Ponencia']},
+  management:{accent:'#27845c',generic:'Rec. Gestiones',title:'Elige tu Gestión',label:'Rec. Gestiones',quick:['Llamada','Cita','Peluquería'],legacy:['Contratar gas/electricidad'],types:['Peluquería','Médico','Dentista','Cita','Llamada','Contratar seguro','Contratar gas','Contratar electricidad','Enviar factura','Pago','Pago Hacienda','Presentar Modelo']}
 };
 function evPickerHas(group,type){return type===group.generic||group.types.indexOf(type)>=0||(group.legacy||[]).indexOf(type)>=0;}
 function evPickerMoreIcon(){return '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><path d="M17.5 14v7m-3.5-3.5h7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';}
@@ -15,7 +15,7 @@ function renderEvQuickPlans(type,key,extra){
   return '<section class="ev-category-group ev-quick-group'+(evPickerHas(group,type)?' chosen':'')+'" data-group="'+key+'" style="--category-tone:'+evTypeColor('puntual',group.generic)+';--picker-accent:'+group.accent+'" aria-label="'+group.generic+'"><div class="ev-quick-header">'+_renderEvTypeButton('puntual',group.generic,type)
     +(remembered?'<div class="ev-quick-selection">'+_renderEvTypeButton('puntual',remembered,type)+'</div>':'')+'</div><div class="ev-category-children ev-plan-quick" data-quick="'+key+'">'
     +group.quick.map(function(t){return _renderEvTypeButton('puntual',t,type);}).join('')
-    +'<button type="button" data-picker="'+key+'" class="ev-plan-more'+(selection?' selected':'')+'" aria-label="Más opciones de '+(key==='plans'?'planes':'gestiones')+'" aria-haspopup="dialog">'+evPickerMoreIcon()+'<span class="ev-type-name">Más opciones</span></button></div></section>';
+    +'<button type="button" data-picker="'+key+'" class="ev-plan-more'+(selection?' selected':'')+'" aria-label="Más Opciones de '+(key==='plans'?'planes':'gestiones')+'" aria-haspopup="dialog">'+evPickerMoreIcon()+'<span class="ev-type-name">Más Opciones</span></button></div></section>';
 }
 function updateEvQuickPlan(form,type){
   form.root.querySelectorAll('.ev-quick-group').forEach(function(section){

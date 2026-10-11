@@ -417,3 +417,19 @@ sigue visible; los campos de consulta no muestran el contorno negro del navegado
 Viaja como `contactData` en el backup, con validación y normalización de campos.
 La selección para copiar es temporal y nunca envía mensajes por sí sola.
 Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
+
+## Opciones, estadísticas y datos personales (v456)
+- Los títulos de menús y sus opciones llevan mayúscula inicial en palabras significativas; artículos y enlaces (de, y, para…) siguen en minúscula. `menuTitle` sirve para etiquetas presentadas, nunca para reescribir nombres del usuario o los valores de categorías guardadas.
+- Próximos conserva cuatro subpestañas: Próximos, Agenda, Todos y Estadísticas. Cumpleaños es una vista alternativa de Próximos, accesible mediante `evUpBirthdays`; el mismo botón vuelve a eventos. Los swipes siguen las cuatro pestañas visibles.
+- `events-statistics.js`: estado `EV_STATS_YEAR` y `EV_STATS_PERIOD`, render puro y binds propios. Realizados llega hasta hoy, Futuros comienza mañana y Ambos reúne las dos partes. Los agregados se basan en fechas registradas. Los grandes cuentan una vez por evento; los puntuales una vez por fecha activa. Los días se deduplican por categoría y en Días Fuera (Viaje + Asturias + Casa Rural). Las repeticiones futuras sin año explícito se acotan a 12 meses. Los VIP virtuales y rutinas no entran en estos agregados.
+- Todos permite categorías completas (`group:id`) combinadas por OR o tipos (`kind|type`) de una sola categoría. Al elegir un tipo de otra categoría se sustituye la selección incompatible y se explica en el panel. Ensayos y Otros son categorías independientes. La selección se muestra mediante un contorno, sin oscurecer el fondo.
+- `settings-personal.js`: Ver Datos y Notas viven en el grupo personal de Configuración, separado por una línea. Los datos escalares antiguos se migran en lectura a correos, direcciones vinculadas a CP/localidad y cuentas. Hasta ocho registros por grupo; tarjetas y cuentas tienen nombre identificativo. Editar/Guardar/Cancelar y la copia reutilizan el editor común. No se crean campos de CVV ni PIN.
+- `excelia-contact-data-v1` sigue viajando como `contactData`; admite grupos de objetos validados. La fusión deduplica y rechaza exceder ocho entradas antes de confirmar la transacción. `excelia-personal-notes-v1` es una única nota de hasta 50.000 caracteres, exportada como `personalNotes`.
+- El distintivo «Para el Programa Imputaciones» corresponde exclusivamente al CSV anual de horas; no se muestra en facturas ni en PDFs.
+
+| Vocabulario | Código |
+| --- | --- |
+| Estadísticas de Próximos | `renderEventStatistics` / `computeEventStatistics` |
+| Cumpleaños dentro de Próximos | `evUpBirthdays`, `EV_VIEW='birthdays'` |
+| Datos y direcciones personales | `openPersonalData`, `CONTACT_GROUPS` |
+| Nota única | `openPersonalNotes`, `PERSONAL_NOTES_KEY` |

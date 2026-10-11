@@ -91,22 +91,6 @@ function openConnectionsSettings(kind){
     showToast('Configuración guardada','success');
   }});
 }
-var CONTACT_DATA_KEY='excelia-contact-data-v1';
-var CONTACT_FIELDS=[['name','Nombre y Apellidos'],['tax','DNI / NIE'],['birth','Fecha de Nacimiento'],['phone','Teléfono'],['email','Correo Electrónico'],['address','Dirección'],['postal','Código Postal'],['city','Localidad'],['iban','IBAN'],['notes','Otros Datos']];
-function normalizeContactData(value){var result={};CONTACT_FIELDS.forEach(function(f){result[f[0]]=value&&typeof value[f[0]]==='string'?value[f[0]].slice(0,2000):'';});return result;}
-function contactData(){try{return normalizeContactData(JSON.parse(appStorage.getItem(CONTACT_DATA_KEY)||'{}'));}catch(e){return normalizeContactData({});}}
-function openPersonalData(){
-  closeSettingsMenu();var previous=NAV_BACK,data=contactData();
-  function close(){cerrarPanel('personalDataWrap','personalDataOv');if(NAV_BACK===close)NAV_BACK=previous;}
-  var body='<p class="settings-editor-note">Selecciona los datos que quieras copiar juntos. Se guardan en este dispositivo y en tus copias de seguridad.</p>';
-  CONTACT_FIELDS.forEach(function(f){body+='<div class="personal-data-row"><input type="checkbox" data-personal-select="'+f[0]+'" aria-label="Seleccionar '+f[1]+'"><label class="invoice-field"><span>'+f[1]+'</span><textarea rows="1" maxlength="2000" data-contact="'+f[0]+'">'+escHtml(data[f[0]])+'</textarea></label></div>';});
-  var root=abrirPanel('personalDataWrap',settingsPanelHtml('personalData','Mis Datos',body,'var(--home-tone)'),{contenedor:document.body,overlay:'personalDataOv',alCerrar:close});root.querySelector('#personalDataClose').onclick=close;NAV_BACK=close;
-  var copy=document.createElement('button');copy.className='ev-btn personal-copy-selected';copy.id='personalCopySelected';copy.textContent='Copiar Selección';root.querySelector('.settings-editor-actions').prepend(copy);
-  function selection(){copy.disabled=!root.querySelector('[data-personal-select]:checked');copy.innerHTML=settingsCopyIcon(false)+'<span>Copiar Selección</span>';copy.classList.remove('copied');copy.setAttribute('aria-label','Copiar selección');}
-  root.querySelectorAll('[data-personal-select]').forEach(function(el){el.onchange=selection;});selection();
-  copy.onclick=function(){var lines=[];CONTACT_FIELDS.forEach(function(f){if(root.querySelector('[data-personal-select="'+f[0]+'"]:checked')){var value=root.querySelector('[data-contact="'+f[0]+'"]').value.trim();if(value)lines.push(f[1]+': '+value);}});if(lines.length)settingsCopyText(lines.join('\n'),copy);else showToast('Los campos seleccionados están vacíos');};
-  bindSettingsEditor(root,'personalData',{onMode:function(editing){copy.hidden=editing;root.querySelectorAll('[data-personal-select]').forEach(function(el){el.hidden=editing;});selection();},onSave:function(){var values={};root.querySelectorAll('[data-contact]').forEach(function(el){values[el.dataset.contact]=el.value;});appStorage.setItem(CONTACT_DATA_KEY,JSON.stringify(normalizeContactData(values)));showToast('Datos guardados','success');}});
-}
 function initSettingsMenu(){
   initExportDirectory();
   var menu=document.getElementById('dataMenu');document.body.appendChild(menu);
@@ -114,6 +98,7 @@ function initSettingsMenu(){
   document.getElementById('editConnectionsBtn').addEventListener('click',function(){openConnectionsSettings('mail');});
   document.getElementById('editMacroBtn').onclick=function(){openConnectionsSettings('macro');};
   document.getElementById('personalDataBtn').onclick=openPersonalData;
+  document.getElementById('personalNotesBtn').onclick=openPersonalNotes;
   document.addEventListener('keydown',function(e){
     if(e.key==='Escape'&&menu.classList.contains('open')){e.preventDefault();e.stopPropagation();closeSettingsMenu(true);}
   },true);

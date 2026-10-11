@@ -39,7 +39,7 @@ test('rutina fija: saltar, recuperar y decidir qué hacer con la recuperación s
 test('Todos: filtros por tipo y clase distinguen Otros puntual de grande',async({page},info)=>{
  await page.evaluate(()=>{EVENTS=[{id:'a',title:'Puntual prueba',kind:'puntual',type:'Otros',color:'#c084fc',start:'2026-10-12',end:'2026-10-12'},{id:'b',title:'Grande prueba',kind:'grande',type:'Otros',color:'#38bdf8',start:'2026-10-12',end:'2026-10-13'}];EV_VIEW='upcoming';EV_UPCOMING_SUB='todos';openEvents();});
  await page.locator('#evViewUpcoming').click();await page.locator('#evSubTodos').click();await expect(page.locator('.ev-search-ico')).toHaveCount(0);await page.locator('#evTypesFilter').click();await expect(page.locator('#evTypeFilterOv')).toBeVisible();await page.screenshot({path:info.outputPath('filtro.png'),animations:'disabled'});
- await page.locator('.ev-filter-category-group summary').filter({hasText:'Eventos grandes'}).click();await page.locator('[data-type="grande|Otros"]').click();await page.locator('#evTypeFilterDone').click();await expect(page.locator('.ev-list-item')).toHaveCount(1);await expect(page.locator('.ev-list-title')).toHaveText('Grande prueba');
+ await page.locator('.ev-filter-category-group summary').filter({hasText:'Eventos Grandes'}).click();await page.locator('[data-type="grande|Otros"]').click();await page.locator('#evTypeFilterDone').click();await expect(page.locator('.ev-list-item')).toHaveCount(1);await expect(page.locator('.ev-list-title')).toHaveText('Grande prueba');
  await page.locator('#evTypesFilter').click();await page.locator('[data-type="all"]').click();await page.locator('[data-type="puntual|*"]').click();await page.locator('#evTypeFilterDone').click();await expect(page.locator('.ev-list-title')).toHaveText('Puntual prueba');
 });
 
@@ -65,7 +65,7 @@ test('Guardar y compartir sin carpeta descarga una sola copia aunque se cancele 
   expect(Math.abs(box.x+box.width/2-width/2)).toBeLessThan(1);expect(Math.abs(box.y+box.height/2-440)).toBeLessThan(1);
   const title=await page.locator('#evTypeFilterTitle').boundingBox(),back=await page.locator('#evTypeFilterClose').boundingBox();
   expect(Math.abs(title.y+title.height/2-back.y-back.height/2)).toBeLessThan(1);
-  await expect(page.locator('.ev-filter-category-group')).toHaveCount(4);
+  await expect(page.locator('.ev-filter-category-group')).toHaveCount(5);
   await page.screenshot({path:info.outputPath('filtro-'+width+'.png')});
   const summaries=page.locator('.ev-filter-category-group summary');
   for(const summary of await summaries.all())await summary.click();

@@ -3,7 +3,7 @@ test('planes: cuatro accesos, selección provisional, confirmar fijo y persisten
   await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));
   await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await page.locator('#evAdd').click();
   const quick=page.locator('[data-quick=plans]>button');await expect(quick).toHaveCount(4);
-  expect(await quick.allTextContents()).toEqual(['Comida','Tomar algo','Cena','Más opciones']);
+  expect(await quick.allTextContents()).toEqual(['Comida','Tomar Algo','Cena','Más Opciones']);
   await page.locator('#evFTypePicker [data-type="Cena"]').click();
   await page.locator('[data-picker=plans]').click();await page.locator('#evPlanPickerOv [data-type="Brunch"]').click();
   await expect(page.locator('#evFTitle')).toHaveValue('Cena');

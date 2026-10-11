@@ -383,6 +383,7 @@ const REGLAS = [
       'excelia-personal-v1':       'personalData + personalPerYear',
       'excelia-personal-cards-v1': false, // plegado local por año y partida, sin información económica
       'excelia-econ-comp-v1':      'scenarios',
+      'excelia-personal-notes-v1': 'personalNotes',
       'excelia-contact-data-v1': 'contactData',
       'excelia-mail-config-v1': 'mailConfig',
       'excelia-alarm-url':         'macroUrl',
@@ -649,14 +650,15 @@ REGLAS.push(['swipe proximos: orden, extremos y modal protegido',function(){
   ctx.refreshEvents=()=>{};ctx._switchEvView=view=>{ctx.EV_VIEW=view;};
   ctx.requestAnimationFrame=()=>{};ctx._bindEvGestos();ctx.EV_VIEW='upcoming';
   function swipe(dx,target){handlers.touchstart({target:target||el,touches:[{clientX:150,clientY:100}]});handlers.touchend({changedTouches:[{clientX:150+dx,clientY:105}]});}
-  swipe(-100);if(ctx.EV_VIEW!=='birthdays')return false;
   swipe(-100);if(ctx.EV_VIEW!=='week')return false;
   swipe(-100);if(ctx.EV_VIEW!=='months')return false;
-  swipe(-100);if(ctx.EV_VIEW!=='months')return false;
+  swipe(-100);if(ctx.EV_VIEW!=='stats')return false;
+  swipe(-100);if(ctx.EV_VIEW!=='stats')return false;
+  swipe(100);if(ctx.EV_VIEW!=='months')return false;
   swipe(100);if(ctx.EV_VIEW!=='week')return false;
-  swipe(100);if(ctx.EV_VIEW!=='birthdays')return false;
   const panel={nodeType:1,parentNode:el,classList:{contains:c=>c==='bd-alarm-overlay'}};
-  swipe(100,panel);return ctx.EV_VIEW==='birthdays';
+  swipe(100,panel);if(ctx.EV_VIEW!=='week')return false;
+  ctx.EV_VIEW='birthdays';swipe(-100);return ctx.EV_VIEW==='week';
 }]);
 
 REGLAS.push(['parejas activas: hoy incluido, pasadas fuera y sin fecha al final',function(){

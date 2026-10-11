@@ -26,10 +26,10 @@ test('filtros múltiples conservan panel y tono, sin recortes ni botones inferio
  await expect(panel).toBeVisible();
  const color=await punctual.evaluate(e=>getComputedStyle(e).backgroundColor),before=await panel.boundingBox();
  await punctual.click();await expect(panel).toBeVisible();await expect(punctual).toHaveCSS('background-color',color);
- await page.locator('[data-type="grande|*"]').click();await expect(punctual).toHaveAttribute('aria-pressed','true');await expect(page.locator('[data-type="grande|*"]')).toHaveAttribute('aria-pressed','true');await page.locator('[data-type="grande|*"]').click();
+ await page.locator('[data-type="grande|*"]').click();await expect(punctual).toHaveAttribute('aria-pressed','false');await expect(page.locator('[data-type="grande|*"]')).toHaveAttribute('aria-pressed','true');await page.locator('[data-type="grande|*"]').click();
  await page.locator('.ev-filter-category-group').last().locator('summary').click();await page.locator('[data-type="grande|Viaje"]').click();expect((await panel.boundingBox()).height).toBe(before.height);
  expect((await page.locator('#evTypeFilterDone').boundingBox()).height).toBeLessThan(60);await page.screenshot({path:info.outputPath('filtros.png')});await page.locator('#evTypeFilterDone').click();
- await expect(page.locator('.ev-list-item')).toHaveCount(2);
+ await expect(page.locator('.ev-list-item')).toHaveCount(1);
  for(const width of [320,400]){await page.setViewportSize({width,height:880});const size=await page.locator('#evTypesFilter span').first().evaluate(e=>({client:e.clientWidth,scroll:e.scrollWidth}));expect(size.scroll).toBeLessThanOrEqual(size.client+1);await page.screenshot({path:info.outputPath('todos-'+width+'.png')});}
- await page.locator('#evTypesFilter').click();await expect(punctual).toHaveAttribute('aria-pressed','true');await page.locator('[data-type="all"]').click();await page.locator('#evTypeFilterDone').click();await expect(page.locator('.ev-list-item')).toHaveCount(3);
+ await page.locator('#evTypesFilter').click();await expect(page.locator('[data-type="grande|Viaje"]')).toHaveAttribute('aria-pressed','true');await page.locator('[data-type="all"]').click();await page.locator('#evTypeFilterDone').click();await expect(page.locator('.ev-list-item')).toHaveCount(3);
 });

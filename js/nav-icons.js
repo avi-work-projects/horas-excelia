@@ -33,7 +33,7 @@ function applyNavIconStyle(style){
 function openNavIconPicker(){
  closeSettingsMenu();
  var h='<div class="ev-form-overlay" id="navIconPickerOv"><div class="ev-form-sheet nav-icon-sheet" role="dialog" aria-modal="true" aria-labelledby="navIconPickerTitle"><div class="ev-form-handle"></div>';
- h+='<div class="nav-icon-picker-head"><button class="sy-back" id="navIconPickerClose" aria-label="Cerrar">&#8592;</button><h2 id="navIconPickerTitle">Iconos de navegación</h2></div>';
+ h+='<div class="nav-icon-picker-head"><button class="sy-back" id="navIconPickerClose" aria-label="Cerrar">&#8592;</button><h2 id="navIconPickerTitle">Iconos de Navegación</h2></div>';
  h+='<p class="nav-icon-picker-note">Prueba ambos estilos. La elección se guarda al volver atrás o tocar fuera.</p>';
  [['original','Originales','Ilustraciones con volumen y color'],['professional','Profesionales','Trazos limpios y colores por ventana']].forEach(function(option){
   var selected=NAV_ICON_STYLE===option[0];

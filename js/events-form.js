@@ -37,7 +37,7 @@ function _renderEvTypeButton(kind,t,selType){
     h+=isMulti?'<div class="ev-type-dot ev-type-dot-multi"></div>'
       :kind==='puntual'?'<span class="ev-type-dot ev-type-symbol">'+evShapeSvg(t==='Ensayos boda'?'x-thick':evDefaultShape({type:t}))+'</span>'
       :'<div class="ev-type-dot" style="background:'+c+'"></div>';
-    h+='<span class="ev-type-name">'+escHtml(t==='Contratar electricidad'?'Contratar electric.':t)+'</span></button>';
+    h+='<span class="ev-type-name">'+escHtml(menuTitle(t==='Contratar electricidad'?'Contratar electric.':t))+'</span></button>';
   return h;
 }
 
