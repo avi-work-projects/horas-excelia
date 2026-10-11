@@ -1,5 +1,7 @@
 const {chooseTime}=require('./time-picker-helper');
 const {test,expect}=require('@playwright/test');
+// Estas pruebas inspeccionan el archivo descargado; Compartir se valida en export-sharing.spec.js.
+test.beforeEach(async({page})=>{await page.addInitScript(()=>Object.defineProperty(navigator,'canShare',{configurable:true,value:()=>false}));});
 
 test('rutina flexible: cupo del primer mes, sesiones pasadas y conservación al editar',async({page})=>{
  await page.clock.setFixedTime(new Date('2026-09-25T09:00:00'));
@@ -263,7 +265,7 @@ test('rutinas: horario por semana, duración, histórico editable y backup',asyn
  const download=page.waitForEvent('download');await page.locator('#eventsContent').getByRole('button',{name:'Inicio',exact:true}).click();await expect(page.locator('#eventsOverlay')).not.toBeVisible();await page.locator('#menuBtn').click();await page.locator('#exportAllBtn').click();
  const file=await download;const fs=require('fs');const data=JSON.parse(fs.readFileSync(await file.path(),'utf8'));
  expect(data.rutinas[0].scheduleHistory).toHaveLength(2);expect(data.rutinas[0].keptSessions['2026-08-17'].time).toBe('16:30');
- await page.locator('#menuBtn').click();await page.locator('#eventsBtn').click();await page.locator('#evViewRutinas').click();
+ await expect(page.locator('#dataMenu')).not.toHaveClass(/open/);await page.locator('#eventsBtn').click();await page.locator('#evViewRutinas').click();
  async function swipe(left){await page.locator('#eventsOverlay .rut-sec').evaluate((el,left)=>{
   el.dispatchEvent(new TouchEvent('touchstart',{bubbles:true,touches:[new Touch({identifier:1,target:el,clientX:left?300:80,clientY:400})]}));
   el.dispatchEvent(new TouchEvent('touchend',{bubbles:true,changedTouches:[new Touch({identifier:1,target:el,clientX:left?80:300,clientY:400})]}));

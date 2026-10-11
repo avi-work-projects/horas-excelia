@@ -14,7 +14,7 @@ test('CSV, PDF, backup, cumpleaños, energía y calendario comparten archivos co
  await page.locator('#csvExportBtn').click();await expect.poll(()=>page.evaluate(()=>sharedFiles.length)).toBe(1);
  await page.locator('#pdfExportBtn').click();await expect.poll(()=>page.evaluate(()=>sharedFiles.length)).toBe(2);
  await page.locator('#menuBtn').click();await page.locator('#exportAllBtn').click();await expect.poll(()=>page.evaluate(()=>sharedFiles.length)).toBe(3);
- await page.locator('#menuBtn').click();await page.locator('#eventsBtn').click();await page.locator('#evViewBday').click();await page.locator('#bdViewList').click();await page.locator('#bdExport').click();await expect.poll(()=>page.evaluate(()=>sharedFiles.length)).toBe(4);
+ await page.locator('#eventsBtn').click();await page.locator('#evViewBday').click();await page.locator('#bdViewList').click();await page.locator('#bdExport').click();await expect.poll(()=>page.evaluate(()=>sharedFiles.length)).toBe(4);
  await page.evaluate(()=>{ENERGY_ANALYSIS_TAB='archivo';openEnergyAnalysis('luz');});
  await page.locator('#energyStudyExport').click();await expect.poll(()=>page.evaluate(()=>sharedFiles.length)).toBe(5);
  await page.evaluate(()=>{closeEnergyAnalysis();EVENTS=[{id:'demo',kind:'puntual',type:'Otros',title:'Evento de prueba',start:'2026-10-11',end:'2026-10-11',color:'#888888'}];openEvCalendarExport();});

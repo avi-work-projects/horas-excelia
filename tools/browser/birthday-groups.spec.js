@@ -8,6 +8,7 @@ test('consulta, etiquetas amplias, filtro combinado y edición individual persis
  await page.locator('#bdDEdit').click();await page.locator('#bdCategories').click();await expect(page.locator('[data-bd-category="Amigos N.A.S.A"]')).toBeVisible();
  await page.locator('[data-bd-category="Amigos Baile"]').click();await page.locator('#bdCategorySave').click();await expect(page.locator('#bdCategoryWrap')).toHaveCount(0);await page.locator('#bdFClose').click();await expect(page.locator('#bdFWrap')).toHaveCount(0);
  expect(await page.evaluate(()=>BDAYS[0].categories)).toEqual(['Familia','N.A.S.A.']);
+ await expect(page.locator('#bdDetailOv')).toBeVisible();await page.locator('#bdDClose').click();await expect(page.locator('#bdDWrap')).toHaveCount(0);
  await page.locator('.bday-group-tools summary').click();await page.locator('[data-bd-filter="Amigos N.A.S.A"]').click();
  await expect(page.locator('.bday-list-item:visible')).toHaveCount(1);await expect(page.locator('#bdGroupResults')).toHaveText('1 de 3 personas');
  await page.locator('[data-bd-filter="__none"]').click();await expect(page.locator('.bday-list-item:visible')).toHaveCount(2);

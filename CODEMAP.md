@@ -280,8 +280,8 @@
 
 **Funciones:** householdHost:4 · renderHouseholdContent:5 · openHousehold:8 · closeHousehold:21 · reRenderHousehold:28 · bindHousehold:33 · move:36
 
-### js/import-export.js  _(528 líneas)_
-**Funciones:** _lsJson:239 · askImportMode:246 · close:260 · _mergeMap:274 · _mergeList:285 · _sigEvent:295 · _sigCouple:297 · _sigAlarm:298 · _sigGasto:299 · _keyId:301 · _keyBday:302 · _keyGasto:303 · _exportPerYearKeys:309 (!82) · _applyFullImport:391 (!137)
+### js/import-export.js  _(529 líneas)_
+**Funciones:** _lsJson:239 · askImportMode:246 · close:260 · _mergeMap:274 · _mergeList:285 · _sigEvent:295 · _sigCouple:297 · _sigAlarm:298 · _sigGasto:299 · _keyId:301 · _keyBday:302 · _keyGasto:303 · _exportPerYearKeys:309 (!83) · _applyFullImport:392 (!137)
 
 ### js/import-preview.js  _(19 líneas)_
 **Funciones:** renderImportPreview:2 · add:4

@@ -318,6 +318,7 @@ function _exportPerYearKeys(baseKey){
   return Object.keys(result).length?result:null;
 }
 var _g4=document.getElementById('exportAllBtn'); if(_g4)_g4.addEventListener('click',function(){
+  closeSettingsMenu();
   /* Garantizar que toda la config económica esté cargada en memoria.
      loadDespacho/loadFiscal/etc. solo se ejecutan al abrir el overlay
      económico — si el usuario nunca lo abrió, DESPACHO.compra queda en null
