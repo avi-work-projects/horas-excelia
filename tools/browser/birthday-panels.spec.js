@@ -26,7 +26,8 @@ test('filas VIP uniformes y acceso al configurador de alarma',async({page},testI
  await page.locator('#bdFName').fill('Borrador sin guardar');await page.locator('#bdFClose').click();
  await expect(page.locator('#bdDetailOv')).toBeVisible();await expect(page.locator('.bd-detail-name')).toContainText('Ana Prueba');
  await expect(page.locator('.bday-person-summary')).toHaveCSS('border-top-width','0px');
- for(const selector of ['.bday-detail-groups']){
+ for(const selector of ['.bday-detail-groups','.bday-detail-alarm']){
+  await expect(page.locator('#bdDetailOv '+selector)).toHaveCSS('border-top-width','1px');
   await expect(page.locator('#bdDetailOv '+selector)).toHaveCSS('box-shadow','none');
   await expect(page.locator('#bdDetailOv '+selector)).toHaveCSS('border-radius','12px');
  }
