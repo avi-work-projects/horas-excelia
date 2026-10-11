@@ -13,7 +13,7 @@ test('alarma: hoy y 14 días sí, 15 y pasado no; protege acceso desde eventos',
 test('hoy usa el separador existente y filas compactas, incluso con filtro',async({page})=>{
  await openBirthdays(page);await page.locator('#bdViewList').click();
  const row=page.locator('.bday-today-item');await expect(row).toHaveCount(1);await expect(page.locator('.bday-today-line')).toBeHidden();
- const style=await row.evaluate(el=>({border:getComputedStyle(el).borderTopWidth,dotTop:getComputedStyle(el,'::before').top,height:el.getBoundingClientRect().height}));expect(style.border).toBe('3px');expect(style.dotTop).toBe('-7px');expect(style.height).toBeLessThan(56);
+ const style=await row.evaluate(el=>({border:getComputedStyle(el).borderTopWidth,dotTop:getComputedStyle(el,'::before').top,height:el.getBoundingClientRect().height}));expect(style.border).toBe('0px');await expect(row.locator('.bday-today-stroke')).toHaveCSS('height','3px');expect(style.dotTop).toBe('-7px');expect(style.height).toBeLessThan(56);
  await page.screenshot({path:'test-results/cumpleanos-compactos.png'});
  await page.locator('#bdSearch').fill('Lejano');const line=page.locator('.bday-today-line');await expect(line).toBeVisible();expect((await line.boundingBox()).height).toBeLessThanOrEqual(3);
  await page.screenshot({path:'test-results/separador-cumpleanos.png'});
