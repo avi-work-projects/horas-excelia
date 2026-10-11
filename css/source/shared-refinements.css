@@ -817,7 +817,7 @@ body:has(#exportFolderOv.open) .tasks-fab{visibility:hidden}
 .ev-btn.rut-done-action{background:color-mix(in srgb,var(--c-green) 10%,var(--surface));color:var(--c-green);border:1px solid color-mix(in srgb,var(--c-green) 40%,var(--border))}
 .rut-done-sheet{display:flex;flex-direction:column;gap:12px}
 .rut-done-sheet p{font-size:.85rem;line-height:1.5;margin:0}
-.export-choice-sheet{display:flex;flex-direction:column;gap:16px;width:min(400px,calc(100vw - 32px));box-sizing:border-box;padding:18px;border-radius:22px;max-height:88dvh;overflow:auto}
+.export-choice-sheet{--accent:var(--c-red);display:flex;flex-direction:column;gap:16px;width:min(400px,calc(100vw - 32px));box-sizing:border-box;padding:18px;border-radius:22px;max-height:88dvh;overflow:auto}
 .export-choice-sheet p{margin:0;font-size:.76rem;line-height:1.45;color:var(--text-muted);overflow-wrap:anywhere}
 .export-choice-file{display:flex;align-items:center;gap:10px;padding:12px;border-radius:12px;background:var(--surface2)}
 .export-choice-file .ico-doc{width:24px;height:24px;color:var(--accent);opacity:1}
@@ -891,3 +891,6 @@ body:has(#bdGroupEditOv.open) .tasks-fab{visibility:hidden}
 .bd-panel-header.panel-header-centered{display:grid;grid-template-columns:36px minmax(0,1fr) 36px;gap:8px}
 .panel-header-centered h2{grid-column:2;text-align:center}
 .panel-header-centered .sy-back{width:36px;height:36px;margin:0;justify-self:start}
+
+#todayBtn{color:var(--c-red);border-color:var(--c-red)}
+#todayBtn:active{background:var(--c-red);color:#fff}

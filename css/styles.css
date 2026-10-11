@@ -3343,7 +3343,7 @@ body:has(#exportFolderOv.open) .tasks-fab{visibility:hidden}
 .ev-btn.rut-done-action{background:color-mix(in srgb,var(--c-green) 10%,var(--surface));color:var(--c-green);border:1px solid color-mix(in srgb,var(--c-green) 40%,var(--border))}
 .rut-done-sheet{display:flex;flex-direction:column;gap:12px}
 .rut-done-sheet p{font-size:.85rem;line-height:1.5;margin:0}
-.export-choice-sheet{display:flex;flex-direction:column;gap:16px;width:min(400px,calc(100vw - 32px));box-sizing:border-box;padding:18px;border-radius:22px;max-height:88dvh;overflow:auto}
+.export-choice-sheet{--accent:var(--c-red);display:flex;flex-direction:column;gap:16px;width:min(400px,calc(100vw - 32px));box-sizing:border-box;padding:18px;border-radius:22px;max-height:88dvh;overflow:auto}
 .export-choice-sheet p{margin:0;font-size:.76rem;line-height:1.45;color:var(--text-muted);overflow-wrap:anywhere}
 .export-choice-file{display:flex;align-items:center;gap:10px;padding:12px;border-radius:12px;background:var(--surface2)}
 .export-choice-file .ico-doc{width:24px;height:24px;color:var(--accent);opacity:1}
@@ -3417,6 +3417,9 @@ body:has(#bdGroupEditOv.open) .tasks-fab{visibility:hidden}
 .bd-panel-header.panel-header-centered{display:grid;grid-template-columns:36px minmax(0,1fr) 36px;gap:8px}
 .panel-header-centered h2{grid-column:2;text-align:center}
 .panel-header-centered .sy-back{width:36px;height:36px;margin:0;justify-self:start}
+
+#todayBtn{color:var(--c-red);border-color:var(--c-red)}
+#todayBtn:active{background:var(--c-red);color:#fff}
 
 /* Fuente: css/source/home-sharing.css */
 /* Cabecera de Home opaca, incluso sobre los botones oscuros de las semanas. */
@@ -3736,7 +3739,7 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .hours-control #editHoursBtn{padding:6px 8px;gap:2px;min-height:42px;white-space:nowrap;font-size:.65rem}
 .home-invoice-actions{display:flex;gap:6px;flex:1;min-width:0}
 .home-invoice-actions button{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:4px;min-height:42px;padding:6px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);font:inherit;font-size:.72rem;font-weight:600;line-height:1.25}
-.home-invoice-actions svg{width:21px;height:21px;flex-shrink:0;color:var(--c-green)}
+.home-invoice-actions svg{width:21px;height:21px;flex-shrink:0;color:var(--c-red);opacity:1}
 .hours-control .default-hours-panel{flex-basis:100%}
 #csvExportBtn[hidden],#pdfExportBtn[hidden]{display:none!important}
 .invoice-sheet{width:min(560px,100%);max-height:90dvh;display:flex;flex-direction:column;padding:16px!important;box-sizing:border-box}
@@ -3783,3 +3786,12 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 .hours-export-sheet .invoice-actions .ev-btn{display:flex;align-items:center;justify-content:center;gap:7px}
 
 .hours-export-sheet .hours-export-footnote{font-size:.72rem;margin:0;line-height:1.5}
+
+.hours-export-sheet .invoice-body{gap:8px}
+.hours-export-sheet .invoice-note,.hours-export-sheet .invoice-actions{margin:0}
+.hours-export-sheet #hoursCsv{--format-tone:var(--c-green)}
+.hours-export-sheet #hoursPdf{--format-tone:var(--c-blue)}
+.hours-export-sheet .invoice-actions .ev-btn{color:var(--format-tone);border-color:color-mix(in srgb,var(--format-tone) 45%,var(--border));background:color-mix(in srgb,var(--format-tone) 8%,var(--surface))}
+.hours-export-sheet .invoice-actions .ico-doc{opacity:1}
+.hours-export-sheet #hoursCsv sup{font-size:.7em;margin-left:2px}
+.hours-export-sheet .hours-export-footnote{color:var(--c-green)}
