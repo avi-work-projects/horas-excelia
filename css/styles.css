@@ -3402,6 +3402,10 @@ body:has(#bdGroupEditOv.open) .tasks-fab{visibility:hidden}
 
 .bday-vip-ctrl-bar .bday-vip-edit-btn:disabled{opacity:.45;cursor:default}
 
+.week-action-icon{width:21px;height:21px;flex-shrink:0}
+.week-action-icon.mail-icon{width:23px;height:23px}
+#ecPdf{display:flex;align-items:center;justify-content:center;gap:5px}
+
 /* Fuente: css/source/home-sharing.css */
 /* Cabecera de Home opaca, incluso sobre los botones oscuros de las semanas. */
 .header,[data-theme="light"] .header,[data-theme="grey"] .header{background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none}
@@ -3762,3 +3766,6 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 .invoice-summary-header h3{margin:0}
 .invoice-eye{display:flex;align-items:center;justify-content:center;width:34px;height:34px;padding:6px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text-muted);cursor:pointer}
 .invoice-eye svg{width:21px;height:21px}
+
+.invoice-sheet.hours-export-sheet{width:min(360px,calc(100% - 32px));margin-inline:auto;border-radius:20px}
+.hours-export-sheet .invoice-actions .ev-btn{display:flex;align-items:center;justify-content:center;gap:7px}

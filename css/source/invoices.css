@@ -44,3 +44,6 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 .invoice-summary-header h3{margin:0}
 .invoice-eye{display:flex;align-items:center;justify-content:center;width:34px;height:34px;padding:6px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text-muted);cursor:pointer}
 .invoice-eye svg{width:21px;height:21px}
+
+.invoice-sheet.hours-export-sheet{width:min(360px,calc(100% - 32px));margin-inline:auto;border-radius:20px}
+.hours-export-sheet .invoice-actions .ev-btn{display:flex;align-items:center;justify-content:center;gap:7px}

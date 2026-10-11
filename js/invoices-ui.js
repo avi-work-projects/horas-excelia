@@ -60,11 +60,12 @@ async function openInvoiceMonth(period){
   if(record.final){root.querySelector('#invoiceDownloadFinal').onclick=function(){shareOrDownload(invoiceFinalBlob(record),record.final.name);};root.querySelector('#invoiceGmail').onclick=function(){try{window.open(invoiceGmailUrl(invoiceData().config,period),'_blank','noopener,noreferrer');}catch(e){error(e);}};}
 }
 function openHoursExport(){
-  var root=invoicePanel('Exportar horas','<p class="invoice-note">Registro anual de '+CY+'. El cálculo de facturación mensual se prepara desde Enviar factura.</p><div class="invoice-actions"><button class="ev-btn" id="hoursCsv">CSV</button><button class="ev-btn" id="hoursPdf">PDF</button></div>');
+  var root=invoicePanel('Exportar horas','<p class="invoice-note">Registro anual de '+CY+'. El cálculo de facturación mensual se prepara desde Enviar factura.</p><div class="invoice-actions"><button class="ev-btn" id="hoursCsv">'+renderDocumentIcon()+'CSV</button><button class="ev-btn" id="hoursPdf">'+renderDocumentIcon()+'PDF</button></div>');
+  root.querySelector('.invoice-sheet').classList.add('hours-export-sheet');
   root.querySelector('#hoursCsv').onclick=function(){document.getElementById('csvExportBtn').click();};root.querySelector('#hoursPdf').onclick=function(){document.getElementById('pdfExportBtn').click();};
 }
 function initInvoices(){
-  var btn=document.getElementById('invoiceHomeBtn');if(!btn)return;btn.innerHTML='<svg viewBox="-12 -12 24 24" aria-hidden="true">'+evManagementShapeInner('invoice')+'</svg><span>Enviar factura</span>';btn.onclick=function(){openInvoiceMonth(mkey(CY,CM));};document.getElementById('hoursExportBtn').onclick=openHoursExport;document.getElementById('invoiceSettingsBtn').onclick=openInvoiceSettings;
+  var btn=document.getElementById('invoiceHomeBtn');if(!btn)return;btn.innerHTML='<svg viewBox="-12 -12 24 24" aria-hidden="true">'+evManagementShapeInner('invoice')+'</svg><span>Enviar factura</span>';btn.onclick=function(){openInvoiceMonth(mkey(CY,CM));};var hoursBtn=document.getElementById('hoursExportBtn');hoursBtn.innerHTML=renderDocumentIcon()+'<span>Exportar horas</span>';hoursBtn.onclick=openHoursExport;document.getElementById('invoiceSettingsBtn').onclick=openInvoiceSettings;
 }
 if(typeof document!=='undefined')document.addEventListener('DOMContentLoaded',initInvoices);
 
