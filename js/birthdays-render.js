@@ -136,7 +136,7 @@ function renderBdayList(){
      (renderBdayContent), fuera del .sy-body, para que no se muevan al hacer
      scroll ni dejen ver nada por detras. */
   var h='',today=new Date(),month=today.getMonth(),day=today.getDate();
-  var todayLine='<div class="bday-today-line" aria-label="Hoy, '+day+' de '+MN[month]+'"><span>Hoy</span></div>';
+  var todayLine='<div class="bday-today-line" aria-label="Hoy, '+day+' de '+MN[month]+'"><i class="bday-today-stroke" aria-hidden="true"></i><span>Hoy</span></div>';
   // Helper: effective VIP state (considers pending changes)
   function getEffVip(b,idx){
     if(BDAY_VIP_PENDING!==null&&BDAY_VIP_PENDING.hasOwnProperty(idx))return BDAY_VIP_PENDING[idx];
@@ -171,6 +171,7 @@ function renderBdayList(){
       var editCls=BDAY_EDIT_VIP?(effVip?' bday-list-vip-active':' bday-list-vip-dim'):'';
       var vipStar=effVip?' <img src="./VIP.png" class="bday-vip-img" alt="VIP">':'';
       h+='<div class="bday-list-item'+editCls+'" data-bday-idx="'+lidx+'" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" data-sname="'+sname+'">';
+      if(dl===0)h+='<i class="bday-today-stroke" aria-hidden="true"></i>';
       h+='<span class="bday-list-day">'+b.day+'</span>';
       h+='<span class="bday-list-name">'+bdName(b.name)+vipStar+(BDAY_SHOW_GROUPS&&bdayGroups(b).length?'<small class="bday-person-groups">'+bdayGroupTags(bdayGroups(b))+'</small>':'')+'</span>';
       h+='<span class="'+cls+'">'+lbl+'</span>';
