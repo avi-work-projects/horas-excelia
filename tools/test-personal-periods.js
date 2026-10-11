@@ -41,7 +41,8 @@ a.energySaveTaxes([{kind:'luz',start:'2026-01-01',rate:21},{kind:'gas',start:'20
 a.setEventAppearance({border:1.25,cross:4,ink:2.5,halo:.4});
 a.DESPACHO={};a.PERSONAL_DATA={};let exportClick,download;
 a.document.getElementById=id=>id==='exportAllBtn'?{addEventListener:(_,fn)=>exportClick=fn}:null;
-a.document.createElement=()=>({click(){download=JSON.parse(decodeURIComponent(this.href.split(',').slice(1).join(',')));}});
+a.Blob=function(parts){this.parts=parts;};
+a.shareOrDownload=blob=>{download=JSON.parse(blob.parts.join(''));};
 const source=fs.readFileSync('js/import-export.js','utf8');vm.runInContext(source,a);a.showToast=()=>{};exportClick();
 assert.deepEqual(download.despacho,home);assert.equal(download.personalPerYear['2026'].gastosSemanales[0].periods[2].paused,true);
 assert.deepEqual(download.eventAppearance,{border:1.3,cross:4,ink:2.5,halo:.4});

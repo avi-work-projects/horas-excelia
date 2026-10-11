@@ -47,6 +47,7 @@ function setConnectionsEditing(editing){
   btn.setAttribute('aria-pressed',String(editing));
 }
 function initSettingsMenu(){
+  initExportDirectory();
   var menu=document.getElementById('dataMenu');document.body.appendChild(menu);
   document.getElementById('menuBtn').addEventListener('click',function(e){e.stopPropagation();toggleSettingsMenu(e.currentTarget);});
   document.getElementById('editConnectionsBtn').addEventListener('click',function(){

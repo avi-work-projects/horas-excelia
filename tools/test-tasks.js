@@ -61,7 +61,8 @@ assert(a.renderImportPreview({tasks:legacy}).includes('3 completadas'));
 // Exportar de verdad, restaurar, fusionar dos veces y simular fallo de disco.
 let exportClick,download;
 a.document.getElementById=id=>id==='exportAllBtn'?{addEventListener:(_,fn)=>exportClick=fn}:null;
-a.document.createElement=()=>({click(){download=JSON.parse(decodeURIComponent(this.href.split(',').slice(1).join(',')));}});
+a.Blob=function(parts){this.parts=parts;};
+a.shareOrDownload=blob=>{download=JSON.parse(blob.parts.join(''));};
 vm.runInContext(fs.readFileSync('js/import-export.js','utf8'),a);a.showToast=()=>{};exportClick();
 assert.deepEqual(JSON.parse(JSON.stringify(download.tasks)),JSON.parse(JSON.stringify(a.tasksData())));
 const b=cargarApp({});vm.runInContext(fs.readFileSync('js/import-export.js','utf8'),b);b.showToast=()=>{};b.render=()=>{};b.updateEventsBtn=()=>{};b.updateBdayBtn=()=>{};

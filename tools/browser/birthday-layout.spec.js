@@ -92,7 +92,7 @@ for(const width of [360,400,440])for(const theme of ['dark','light']){
   const formVip=await page.locator('#bdFVip').evaluate(el=>({check:el.getBoundingClientRect().right,icon:el.nextElementSibling.getBoundingClientRect().left}));
   expect(formVip.check).toBeLessThan(formVip.icon);
   await expect(page.locator('#bdFName')).not.toBeFocused();
-  await expect(page.locator('#bdFormOv .bday-form-panel')).toHaveCount(2);
+  await expect(page.locator('#bdFormOv .bday-form-panel')).toHaveCount(1);
   await expect(page.locator('#bdFormOv .bday-date-button .ev-tax-chevron')).toHaveCount(2);
   const nameBox=await page.locator('#bdFName').boundingBox(),vipBox=await page.locator('#bdFVip').boundingBox();expect(vipBox.x).toBeGreaterThan(nameBox.x+nameBox.width);
   await page.locator('#bdCategories').click();await page.locator('[data-bd-category="Amigos Extranjeros"]').click();await page.locator('[data-bd-category="Amigos En Madrid"]').click();await page.locator('#bdCategorySave').click();await expect(page.locator('#bdCategoryWrap')).toHaveCount(0);

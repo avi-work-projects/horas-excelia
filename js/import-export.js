@@ -7,16 +7,9 @@
 /* ── Exportar CSV del año ── */
 var _g1=document.getElementById('csvExportBtn'); if(_g1)_g1.addEventListener('click',function(){
   var year=CY;
-  var now=new Date();
-  var ts=now.getFullYear()+
-    String(now.getMonth()+1).padStart(2,'0')+
-    String(now.getDate()).padStart(2,'0')+'_'+
-    String(now.getHours()).padStart(2,'0')+
-    String(now.getMinutes()).padStart(2,'0')+
-    String(now.getSeconds()).padStart(2,'0');
   var csv=csvYearContent(year);
   var blob=new Blob(['\uFEFF'+csv],{type:'text/csv'});
-  var fname='dias_trabajados_'+year+'_'+ts+'.csv';
+  var fname='dias_trabajados_'+year+'.csv';
   shareOrDownload(blob,fname,function(){
     csvRecordExport(year,csv);
     showToast('CSV exportado','success');
@@ -237,8 +230,7 @@ var _g2=document.getElementById('pdfExportBtn'); if(_g2)_g2.addEventListener('cl
 
   // ── Guardar ──
   var pdfBlob=doc.output('blob');
-  shareOrDownload(pdfBlob,'horas-'+year+'.pdf');
-  showToast('PDF exportado: horas-'+year+'.pdf','success');
+  shareOrDownload(pdfBlob,'horas-'+year+'.pdf',function(){showToast('PDF exportado','success');});
 });
 
 
@@ -378,11 +370,7 @@ var _g4=document.getElementById('exportAllBtn'); if(_g4)_g4.addEventListener('cl
     householdTab:householdTab(appStorage.getItem(HOUSEHOLD_TAB_KEY)),
     navIconStyle:appStorage.getItem('excelia-nav-icons-v1')||'original',
     theme:appStorage.getItem('excelia-theme-v1')||null};
-  var a=document.createElement('a');
-  a.href='data:application/json,'+encodeURIComponent(JSON.stringify(data,null,2));
-  a.download='horas-excelia-backup.json';
-  a.click();
-  showToast('Backup completo exportado','success');
+  shareOrDownload(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),'gestify-backup.json',function(){showToast('Backup completo exportado','success');});
 });
 var _g5=document.getElementById('importAllBtn'); if(_g5)_g5.addEventListener('click',function(){
   closeSettingsMenu();

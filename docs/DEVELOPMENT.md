@@ -20,8 +20,25 @@ Las ideas aún no implementadas están en [FUTURO.md](../FUTURO.md).
 ## Convenciones visuales de controles
 
 - En desplegables, reutilizar los indicadores dibujados de la aplicación (`.ev-tax-chevron` o el chevrón de `details > summary`). No usar caracteres de texto como `⌄` para representar la flecha. Preferencia de Ángel del 11/10/2026.
-- En las fichas y el editor de cumpleaños, agrupar las secciones en paneles con bordes suaves, en lugar de líneas horizontales sueltas.
+- En el editor de cumpleaños, nombre y fecha comparten un panel blanco; categorías tiene su propio panel con acento suave. En la ficha, el resumen queda abierto, sin recuadro interior, y categorías conserva su panel.
 - Los símbolos VIP de la lista no deben cambiar la altura de las filas.
+
+## Exportaciones de archivos
+
+Todos los exportadores usan `shareOrDownload`: CSV, PDF, cumpleaños, copia completa,
+histórico de energía y calendario ICS. `exportFileName` añade fecha y hora local
+(`nombre_YYYYMMDD_HHMMSS_mmm.ext`), con un sufijo adicional si coinciden en el mismo
+milisegundo. Compartir se invoca directamente desde el gesto del usuario; cancelar
+el diálogo no provoca una descarga inesperada. Si el formato o navegador no admite
+compartir, se conserva la descarga como alternativa.
+
+En Ajustes → Carpeta de exportaciones se puede elegir una carpeta para guardar
+además una copia. `export-files.js` conserva el permiso en IndexedDB, exclusivamente
+en ese dispositivo; no se exporta en el backup porque no es transferible. Sin
+carpeta seleccionada no se crea una copia adicional. Con carpeta elegida, la copia
+se intenta aunque se cancele Compartir. Si el permiso caduca o falla la escritura,
+se avisa y el archivo sigue disponible mediante Compartir o descarga. El soporte
+del selector de carpetas se comprueba en ejecución.
 
 ## Catálogo único de archivos
 
