@@ -875,3 +875,7 @@ body:has(#evTypeFilterOv.open,#evAlarmOv.open,#rutAdditionOv.open) .tasks-fab{vi
 body:has(#bdGroupEditOv.open) .tasks-fab{visibility:hidden}
 
 .bday-vip-ctrl-bar .bday-vip-edit-btn:disabled{opacity:.45;cursor:default}
+
+.week-action-icon{width:21px;height:21px;flex-shrink:0}
+.week-action-icon.mail-icon{width:23px;height:23px}
+#ecPdf{display:flex;align-items:center;justify-content:center;gap:5px}

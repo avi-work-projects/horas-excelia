@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v449 — etiquetas y filtros múltiples';
+var APP_VERSION = 'v450 — iconos y exportación de horas';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -283,6 +283,7 @@ function shareOrDownload(blob,filename,onSuccess,options){
 }
 
 // ── Utilidades HTML ─────────────────────────────────────────
+function renderDocumentIcon(){return '<svg viewBox="0 0 24 24" class="ico-doc" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>';}
 function escHtml(s){
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
@@ -513,11 +514,11 @@ function render(){
     var acts=document.createElement('div'); acts.className='week-actions';
     var sendBtn=document.createElement('button');
     sendBtn.className='action-btn send';
-    sendBtn.innerHTML='\u2709 Abrir en Outlook';
+    sendBtn.innerHTML='<svg class="week-action-icon mail-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M3 4h18a1 1 0 0 1 1 1v.5L12 12 2 5.5V5a1 1 0 0 1 1-1Zm-1 4 9.45 6.14a1 1 0 0 0 1.1 0L22 8v11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1Z"/></svg><span>Enviar a Outlook</span>';
     (function(k){sendBtn.addEventListener('click',function(e){e.stopPropagation();sendEmail(k);});})(wkey);
     var sb=document.createElement('button');
     sb.className='action-btn sent-toggle';
-    sb.textContent=sent?'\u21a9 Desmarcar':'\u2713 Marcar enviada';
+    sb.innerHTML=sent?'<svg class="week-action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12h8"/></svg><span>Desmarcar</span>':'\u2713 Marcar enviada';
     (function(k){sb.addEventListener('click',function(e){e.stopPropagation();togSent(k);});})(wkey);
     acts.appendChild(sendBtn); acts.appendChild(sb);
     card.appendChild(acts); c.appendChild(card);
