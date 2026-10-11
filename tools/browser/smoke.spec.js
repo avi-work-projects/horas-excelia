@@ -515,7 +515,7 @@ test('cupos por ano, backup y ajustes visuales de resumen',async({page})=>{
  await page.screenshot({path:'.local-preview/todos-search-row.png',animations:'disabled'});
  await page.locator('#evTypesFilter').click();await expect(page.locator('#evTypeFilterOv')).toHaveClass(/open/);
  await page.screenshot({path:'.local-preview/event-type-picker.png',animations:'disabled'});
- await page.locator('.ev-filter-category-group summary').filter({hasText:'Eventos Grandes'}).click();await page.locator('.ev-type-option[data-type="grande|Asturias"]').click();await page.locator('#evTypeFilterDone').click();await expect(page.locator('#evTypesFilter')).toHaveText('Asturias');
+ await page.locator('.ev-filter-category-group summary').filter({hasText:'Eventos Grandes'}).press('Enter');await page.locator('.ev-type-option[data-type="grande|Asturias"]').click();await page.locator('#evTypeFilterDone').click();await expect(page.locator('#evTypesFilter')).toHaveText('Asturias');
  await expect(page.locator('#evTypeFilterWrap')).toHaveCount(0);
  await page.locator('#evTypesFilter').click();await page.locator('.ev-type-option[data-type="all"]').click();await page.locator('#evTypeFilterDone').click();await expect(page.locator('#evTypesFilter')).toHaveText('Todos');
  await expect(page.locator('#evTypeFilterWrap')).toHaveCount(0);

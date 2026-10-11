@@ -446,8 +446,7 @@ function openEvTypeFilter(){
   h+='<div class="ev-filter-kind">'+option('all','Todos','#526477')+option('puntual|*','Puntuales','#328a70')+option('grande|*','Grandes','#3286ac')+'</div><div class="ev-filter-groups">';
   evFilterCategories().forEach(function(group){
     var active=group.types.some(function(type){return isSelected(group.kind+'|'+type);});
-    h+='<details class="ev-filter-category-group" style="--event-tone:'+group.color+'"'+(active?' open':'')+'><summary><span>'+group.title+'</span><small>'+ (group.kind==='grande'?'Grande':'Puntual')+'</small></summary><div class="ev-type-options">';
-    h+=option('group:'+group.id,'Toda la Categoría',group.color);
+    h+='<details class="ev-filter-category-group" style="--event-tone:'+group.color+'"'+(active?' open':'')+'><summary aria-label="Desplegar '+group.title+'"><button type="button" class="ev-filter-category-select" data-type="group:'+group.id+'" aria-pressed="'+isSelected('group:'+group.id)+'"><span>'+group.title+'</span><small>'+ (group.kind==='grande'?'Grande':'Puntual')+'</small></button></summary><div class="ev-type-options">';
     group.types.forEach(function(type){h+=option(group.kind+'|'+type,type==='Rec. Gestiones'?'Recordatorio Gestiones':type,evTypeColor(group.kind,type));});h+='</div></details>';
   });
   h+='</div><p class="ev-filter-help" id="evFilterHelp" role="status">Combina categorías completas o tipos de una sola categoría.</p><button class="ev-btn primary" id="evTypeFilterDone">Listo</button></div></div>';
@@ -455,7 +454,7 @@ function openEvTypeFilter(){
   var wrap=abrirPanel('evTypeFilterWrap',h,{overlay:'evTypeFilterOv',alCerrar:close});
   wrap.querySelector('#evTypeFilterClose').onclick=close;wrap.querySelector('#evTypeFilterDone').onclick=close;
   function paint(){wrap.querySelectorAll('[data-type]').forEach(function(b){var active=isSelected(b.dataset.type);b.classList.toggle('selected',active);b.setAttribute('aria-pressed',active);});wrap.querySelectorAll('details').forEach(function(card){card.classList.toggle('has-selection',!!card.querySelector('.selected'));});}
-  wrap.querySelectorAll('[data-type]').forEach(function(button){button.onclick=function(){var before=selected;selected=evToggleListFilter(selected,button.dataset.type);var removed=before.some(function(v){return v!==button.dataset.type&&selected.indexOf(v)<0;});wrap.querySelector('#evFilterHelp').textContent=removed?'Selección sustituida: combina categorías completas o tipos de una sola categoría.':'Combina categorías completas o tipos de una sola categoría.';paint();};});paint();
+  wrap.querySelectorAll('[data-type]').forEach(function(button){button.onclick=function(e){e.preventDefault();e.stopPropagation();var before=selected;selected=evToggleListFilter(selected,button.dataset.type);var removed=before.some(function(v){return v!==button.dataset.type&&selected.indexOf(v)<0;});wrap.querySelector('#evFilterHelp').textContent=removed?'Selección sustituida: combina categorías completas o tipos de una sola categoría.':'Combina categorías completas o tipos de una sola categoría.';paint();};});paint();
 }
 
 function _bindEvListas(){
