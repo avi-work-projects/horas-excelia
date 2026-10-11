@@ -52,7 +52,7 @@ eliminar esa recuperación o convertirla en extra. La operación se valida antes
 Los filtros de Todos usan `kind|type`, para distinguir ambos tipos Otros, y `kind|*`
 para filtrar todos los puntuales o grandes. Se conserva lectura de filtros antiguos.
 
-## Preparación mensual de facturación (v445)
+## Preparación mensual de facturación (v446)
 
 Home agrupa los exportadores anuales existentes en «Exportar horas». «Enviar
 factura» abre la preparación del mes visible en Home. El símbolo reutiliza
@@ -98,7 +98,13 @@ sustituyen en concepto, asunto y cuerpo. Los campos personales empiezan vacíos.
 `invoiceDefaults`). Admite campos parciales: conserva los demás. Carga el formulario
 para revisión; solo «Guardar configuración» persiste. No importa meses ni PDF.
 «Exportar datos» genera ese mismo formato. Los archivos reales permanecen fuera de Git.
-Los botones de Home se ubican a la derecha de Jornada.
+Los botones de Home se ubican a la derecha de Jornada. El IBAN de ingreso es
+opcional, se normaliza sin espacios y en mayúsculas, y se comprueban sus dígitos
+de control. Viaja en configuración, backup y `preparation.payment.iban`; también
+aparece en el Excel auxiliar. Preparaciones antiguas sin IBAN siguen siendo válidas.
+
+Preferencia de Ángel: los archivos preparados para importar en el teléfono se dejan
+en `%USERPROFILE%/CrossDevice/V2454A/storage/Download/Gestify`, fuera del repositorio.
 Pruebas: `tools/test-invoices.js` y `tools/browser/invoices.spec.js`, siempre con
 identidades y PDF sintéticos. No se emiten facturas ni se envían correos al probar.
 

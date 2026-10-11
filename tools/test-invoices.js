@@ -28,3 +28,12 @@ assert.throws(()=>g.invoiceConfigImport({config:{}},cfg),/archivo/);
 assert.throws(()=>g.invoiceConfigImport({format:'gestify-invoice-settings',version:1,config:{vat:'101'}},cfg),/Porcentaje/);
 assert.throws(()=>g.invoiceConfigImport({format:'gestify-invoice-settings',version:1,config:{months:{}}},cfg),/Campo/);
 console.log('Importación de configuración: campos parciales, validación y meses protegidos OK');
+
+const sampleIban='ES'+String(98n-(BigInt('00000000000000000000'+'142800')%97n)).padStart(2,'0')+'00000000000000000000';
+assert.equal(g.invoiceIban(sampleIban.toLowerCase().replace(/(.{4})/g,'$1 ')),sampleIban);
+assert.throws(()=>g.invoiceIban(sampleIban.slice(0,-1)+'1'),/dígitos/);
+assert.equal(g.invoiceIban(''),'');
+const bankConfig=g.invoiceConfigImport({format:'gestify-invoice-settings',version:1,config:{iban:sampleIban}},cfg);
+g.invoiceSave({config:bankConfig,months:{}});assert.equal(g.invoiceData().config.iban,sampleIban);
+assert.equal(g.invoiceCalculate('2026-10',bankConfig,[{date:'2026-10-01',selected:true,rate:'320',unit:'day',hours:9}]).payment.iban,sampleIban);
+console.log('IBAN: normalización, dígitos de control, importación y preparación OK');
