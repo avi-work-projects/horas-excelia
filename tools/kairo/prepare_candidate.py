@@ -42,6 +42,6 @@ if __name__ == '__main__':
     candidate = patch((args.source / 'service.py').read_text(encoding='utf-8'))
     args.destination.mkdir(parents=True)
     (args.destination / 'service.py').write_text(candidate, encoding='utf-8')
-    for name in ('gestify_bridge.py', 'receiver.js'):
+    for name in ('gestify_bridge.py', 'receiver.js', 'receiver.html'):
         shutil.copyfile(Path(__file__).with_name(name), args.destination / name)
     print('Candidato preparado. Sin configuración, instalación ni ejecución.')

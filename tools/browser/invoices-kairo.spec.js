@@ -1,6 +1,7 @@
 const {test,expect}=require('@playwright/test');
 const fs=require('node:fs');
 const receiver=fs.readFileSync('tools/kairo/receiver.js','utf8');
+const receiverHtml=fs.readFileSync('tools/kairo/receiver.html','utf8').replace('/*BRIDGE_CONFIG*/',JSON.stringify({origin:'http://127.0.0.1:8765',csrf:'synthetic'})).replace('/*BRIDGE_SCRIPT*/',()=>receiver);
 const {verifyInvoiceExport}=require('../verify-invoice-export');
 const base='https://synthetic-kairo.test.ts.net/facturas/';
 test.use({viewport:{width:393,height:880},isMobile:true,hasTouch:true});
@@ -9,7 +10,7 @@ async function setup(page,context,{loseReply=false}={}){
   let stored=null,calls=0;
   await context.route('https://synthetic-kairo.test.ts.net/**',async route=>{
     const req=route.request();
-    if(req.method()==='GET')return route.fulfill({contentType:'text/html',body:`<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><h1>Kairo de prueba</h1><p id="status"></p><button id="receive" hidden>Recibir preparación</button><script>const bridgeConfig={origin:'http://127.0.0.1:8765',csrf:'synthetic'};${receiver}</script>`});
+    if(req.method()==='GET')return route.fulfill({contentType:'text/html',body:receiverHtml});
     const data=req.postDataJSON();expect(req.headers()['x-csrf']).toBe('synthetic');
     if(data.action==='prepare'){
       const p=JSON.parse(data.source);expect(verifyInvoiceExport(p)).toEqual({operationIdMatches:true,contentHashMatches:true});
@@ -73,4 +74,30 @@ test('cancelar recepción y cerrar ventana no marca éxito; configuración borra
   await page.evaluate(()=>{const d=invoiceData();d.config.kairoUrl='';invoiceSave(d);openInvoiceMonth('2027-02');});
   await expect(page.locator('#invoiceDocument,#invoiceGmail')).toHaveCount(0);
   await expect(page.locator('#invoiceKairoMessage')).toContainText('Configura de nuevo');
+});
+
+test('cambiar un día y restaurarlo: consulta sin recepción, textos claros y pantalla móvil',async({page,context},info)=>{
+  const calls=await setup(page,context);
+  const initial=await page.evaluate(()=>invoiceData().months['2027-02'].preparation);
+  const first=await exchange(page,'#invoiceKairoSend');
+  await expect(first.locator('#resultTitle')).toHaveText('Preparación recibida');await first.close();
+  await page.evaluate(()=>{ST['2027-02-01']={type:'festivo'};return openInvoiceMonth('2027-02');});
+  expect(await page.evaluate(()=>invoiceData().months['2027-02'].preparation.days.length)).toBe(initial.days.length-1);
+  let popup=await exchange(page,'#invoiceKairoStatus',false);
+  await expect(popup.locator('#resultTitle')).toHaveText('Los datos no coinciden');
+  await expect(popup.locator('#receive')).toBeHidden();
+  await expect(popup.locator('#mode')).toHaveText('Solo consulta');
+  for(const width of [320,393,412,1024]){
+    await popup.setViewportSize({width,height:880});
+    expect(await popup.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+    await popup.screenshot({path:info.outputPath('receptor-diferente-'+width+'.png'),animations:'disabled'});
+  }
+  await popup.close();
+  await page.evaluate(()=>{delete ST['2027-02-01'];return openInvoiceMonth('2027-02');});
+  const restored=await page.evaluate(()=>invoiceData().months['2027-02'].preparation);
+  expect(restored.contentHash).toBe(initial.contentHash);expect(restored.revision).toBe(initial.revision+2);
+  popup=await exchange(page,'#invoiceKairoStatus',false);
+  await expect(popup.locator('#resultTitle')).toHaveText('Preparación recibida');
+  await expect(popup.locator('#receive')).toBeHidden();expect(calls()).toBe(1);
+  await popup.screenshot({path:info.outputPath('receptor-restaurado-393.png'),animations:'disabled'});
 });

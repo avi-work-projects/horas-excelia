@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#112e38">
+<title>Kairo · Facturación</title>
+<style>
+:root{font-family:system-ui,-apple-system,sans-serif;color:#18343d;background:#f1f5f5;font-synthesis:none;line-height:1.55}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0}header{background:#112e38;color:white;padding:20px max(20px,calc((100% - 600px)/2))}
+.brand{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:750;letter-spacing:.02em}.brand svg{width:28px;height:28px;color:#72ddc3}
+.brand small{margin-left:auto;font-size:12px;font-weight:500;color:#c5d9dc;letter-spacing:0}
+main{max-width:640px;margin:auto;padding:28px 20px 36px}.eyebrow{margin:0 0 8px;color:#536f77;text-transform:uppercase;letter-spacing:.12em;font-size:11px;font-weight:750}
+h1{font-size:clamp(25px,6vw,32px);line-height:1.2;margin:0 0 10px;letter-spacing:-.035em}.intro{color:#536f77;margin:0 0 24px;font-size:15px}
+.card{background:white;border:1px solid #d9e5e5;border-radius:18px;padding:22px;box-shadow:0 8px 28px #153c4510}
+.card-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}.period{font-weight:650;font-size:14px}.badge{font-size:11px;padding:5px 10px;border-radius:99px;background:#edf3f4;color:#46656f;white-space:nowrap}
+.signal{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:#e8f2f4;color:#3b6a78;margin-bottom:14px;font-size:22px;font-weight:650}
+.card[data-tone="success"] .signal{color:#08735c;background:#e0f5ec}.card[data-tone="warning"] .signal{color:#92530b;background:#fff1d9}.card[data-tone="error"] .signal{color:#a03838;background:#ffeded}
+h2{font-size:21px;line-height:1.3;letter-spacing:-.02em;margin:0 0 9px}#status{margin:0;color:#536f77;font-size:15px;overflow-wrap:anywhere}
+.actions{display:grid;gap:10px;margin-top:22px}button,.button{border:1px solid #d0dfdf;border-radius:11px;padding:13px 16px;font:600 15px/1.4 system-ui;text-align:center;text-decoration:none;cursor:pointer;background:white;color:#254852;min-height:48px}
+button.primary{background:#087960;border-color:#087960;color:white}button:disabled{opacity:.65;cursor:wait}a.button{color:#254852}button:focus-visible,a:focus-visible{outline:3px solid #18a989;outline-offset:3px}
+.footnote{display:flex;align-items:flex-start;gap:9px;margin:18px 4px;color:#617880;font-size:13px}.footnote svg{width:17px;min-width:17px;margin-top:2px}.back{width:100%;background:transparent;border:0;font-size:14px;color:#46656f}.footer{text-align:center;font-size:12px;color:#6d838a;margin:24px 0 0}
+@media(max-width:360px){main{padding:22px 14px}.card{padding:18px}.brand small{font-size:10px}}
+</style>
+</head>
+<body>
+<header><div class="brand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="2" width="18" height="20" rx="4"/><path d="M8 7v10m8-10-5 5 5 5"/></svg>Kairo <small>Facturación privada</small></div></header>
+<main>
+<p class="eyebrow">Gestify → Kairo</p>
+<h1 id="title">Conectando con Gestify</h1>
+<p class="intro" id="intro">Comprobamos la conexión con tu preparación mensual.</p>
+<section class="card" id="resultCard" data-tone="neutral" aria-live="polite" aria-atomic="true">
+<div class="card-top"><span class="period" id="period">Preparación mensual</span><span class="badge" id="mode">Conexión privada</span></div>
+<div class="signal" id="signal" aria-hidden="true">↔</div>
+<h2 id="resultTitle">Esperando a Gestify</h2>
+<p id="status" role="status">Mantén esta ventana abierta mientras se establece la conexión.</p>
+<div class="actions"><button class="primary" id="receive" hidden>Recibir preparación</button><a class="button" href="/facturas/" rel="noopener">Ver factura y programación</a></div>
+</section>
+<p class="footnote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span id="assurance">La aprobación y la emisión se gestionan por separado en Kairo.</span></p>
+<button class="back" id="return">Volver a Gestify</button>
+<p class="footer">Tu conexión privada · Tailscale</p>
+</main>
+<script>const bridgeConfig=/*BRIDGE_CONFIG*/;
+/*BRIDGE_SCRIPT*/</script>
+</body></html>
