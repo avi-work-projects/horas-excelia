@@ -1,4 +1,12 @@
 <div class="ev-list-tools">
+<div class="ev-stat-year-nav ev-list-year-nav">
+<div class="energy-year-selector">
+<button class="nav-btn" data-list-year="-1" aria-label="Año Anterior">◀</button>
+<strong id="evListYear">2026</strong>
+<button class="nav-btn" data-list-year="1" aria-label="Año Siguiente">▶</button>
+</div>
+<button class="energy-total-button" id="evListTotal" aria-pressed="false">Total</button>
+</div>
 <div class="ev-list-search-row">
 <div class="ev-search">
 <input type="search" id="evListSearch" placeholder="Buscar por título/descripción" value="">
@@ -6,8 +14,8 @@
 <div class="ev-list-order">
 <span class="ev-list-order-label">Ordenado por</span>
 <div class="ev-sort-row">
-<button class="ev-sort-chip" data-sort="fecha">Por<br>Fecha</button>
-<button class="ev-sort-chip active" data-sort="categoria">Por<br>Categoría</button>
+<button class="ev-sort-chip" data-sort="fecha">Fecha</button>
+<button class="ev-sort-chip active" data-sort="categoria">Categoría</button>
 </div>
 </div>
 </div>

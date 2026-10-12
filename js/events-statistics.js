@@ -39,9 +39,10 @@ function renderEventStatistics(){
   [['past','Realizados'],['future','Futuros'],['all','Ambos']].forEach(function(p){h+='<button class="ev-sort-chip'+(EV_STATS_PERIOD===p[0]?' active':'')+'" aria-pressed="'+(EV_STATS_PERIOD===p[0])+'" data-stats-period="'+p[0]+'">'+p[1]+'</button>';});h+='</div></div>';
   h+='<p class="sy-note ev-stat-note">'+(EV_STATS_YEAR==='all'?'Todos los años':EV_STATS_YEAR)+' · Por fechas registradas · Inicio y fin incluidos.</p>';
   h+='<div class="ev-stat-cards">';
-  [[stats.trips,'Viajes'],[stats.asturias,'Visitas a Asturias'],[stats.rural,'Estancias Rurales'],[stats.travelDays,'Días Fuera'],[stats.plansDays,'Días de Planes'],[stats.ruralDays,'Días de Casa Rural']].forEach(function(c){h+='<div class="sy-card"><strong>'+c[0]+'</strong><span>'+c[1]+'</span></div>';});h+='</div>';
+  [[stats.trips,'Viajes'],[stats.asturias,'Visitas a Asturias'],[stats.rural,'Casas Rurales'],[stats.travelDays,'Días Fuera'],[stats.plansDays,'Días de Planes'],[stats.ruralDays,'Días de Casa Rural']].forEach(function(c){h+='<div class="sy-card"><strong>'+c[0]+'</strong><span>'+c[1]+'</span></div>';});h+='</div>';
+  h+='<div class="ev-stats-links"><button class="ev-sort-chip" id="evStatsRoutines">Estadísticas de Rutinas</button><button class="ev-sort-chip" id="evStatsRehearsals">Estadísticas de Wedding Moves</button></div>';
   if(!stats.rows.length)return h+'<p class="sy-note">No hay eventos registrados en este período.</p>';
-  [['grandes','Viajes y Estancias'],['management','Recordatorio Gestiones'],['plans','Planes y Quedadas'],['rehearsals','Ensayos'],['other','Otros Puntuales']].forEach(function(g){
+  [['grandes','Viajes y Estancias'],['management','Recordatorio Gestiones'],['plans','Planes y Quedadas'],['other','Otros Puntuales']].forEach(function(g){
     var rows=stats.rows.filter(function(r){return g[0]==='grandes'?r.kind==='grande':r.group===g[0];}).sort(function(a,b){return b.days-a.days||a.type.localeCompare(b.type,'es');});if(!rows.length)return;
     var showDays=g[0]!=='management'&&g[0]!=='plans';
     h+='<section class="ev-stat-section"><h3>'+g[1]+'</h3><table><thead><tr><th>Evento</th><th>'+(g[0]==='grandes'?'Viajes / Eventos':'Veces')+'</th>'+(showDays?'<th>Días</th>':'')+'</tr></thead><tbody>';
@@ -50,7 +51,27 @@ function renderEventStatistics(){
 }
 function bindEventStatistics(){
   if(!document.getElementById('evStatsTotal'))return;
+  document.getElementById('evStatsRoutines').onclick=function(){RUT_SUBTAB='stats';_switchEvView('rutinas');refreshEvents(false);};
+  document.getElementById('evStatsRehearsals').onclick=function(){BODA_SUBTAB='stats';_switchEvView('bodas');refreshEvents(false);};
   document.querySelectorAll('[data-stats-year]').forEach(function(btn){btn.onclick=function(){EV_STATS_YEAR=EV_STATS_LAST_YEAR=Math.max(1900,Math.min(2200,+EV_STATS_YEAR + +this.dataset.statsYear));refreshEvents(false);};});
   document.getElementById('evStatsTotal').onclick=function(){if(EV_STATS_YEAR==='all')EV_STATS_YEAR=EV_STATS_LAST_YEAR;else{EV_STATS_LAST_YEAR=+EV_STATS_YEAR;EV_STATS_YEAR='all';}refreshEvents(false);};
   document.querySelectorAll('[data-stats-period]').forEach(function(btn){btn.onclick=function(){EV_STATS_PERIOD=this.dataset.statsPeriod;refreshEvents(false);};});
+}
+
+/* Selector de año compartido por los listados de Próximos. */
+function renderEvYearControl(scope,year,lastYear){
+ return '<div class="ev-stat-year-nav ev-list-year-nav"><div class="energy-year-selector"'+(year==='all'?' hidden':'')+'><button class="nav-btn" data-'+scope+'-year="-1" aria-label="Año Anterior">◀</button><strong id="evListYear">'+(year==='all'?lastYear:year)+'</strong><button class="nav-btn" data-'+scope+'-year="1" aria-label="Año Siguiente">▶</button></div><button class="energy-total-button" id="evListTotal" aria-pressed="'+(year==='all')+'">Total</button></div>';
+}
+function evListInYear(ev,year){
+ if(year==='all')return true;
+ var from=year+'-01-01',until=year+'-12-31';
+ if(ev.dates&&ev.dates.length)return ev.dates.some(function(ds){return ds>=from&&ds<=until;});
+ if(!ev.repeat)return ev.start<=until&&(ev.end||ev.start)>=from;
+ for(var day=new Date(from+'T12:00:00');evDk(day)<=until;day.setDate(day.getDate()+1)){if(eventOccursOn(ev,evDk(day)))return true;}
+ return false;
+}
+function bindEvListYear(){
+ var total=document.getElementById('evListTotal');if(!total)return;
+ document.querySelectorAll('[data-list-year]').forEach(function(btn){btn.onclick=function(){EV_LIST_YEAR=EV_LIST_LAST_YEAR=Math.max(1900,Math.min(2200,+EV_LIST_YEAR + +btn.dataset.listYear));refreshEvents(false);};});
+ total.onclick=function(){if(EV_LIST_YEAR==='all')EV_LIST_YEAR=EV_LIST_LAST_YEAR;else{EV_LIST_LAST_YEAR=EV_LIST_YEAR;EV_LIST_YEAR='all';}refreshEvents(false);};
 }

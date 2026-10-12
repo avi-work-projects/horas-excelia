@@ -210,14 +210,10 @@ test('Bodas: configurar pack, duracion, salas y exportar catalogos',async({page}
  await page.evaluate(d=>applyFullImport(d,'replace'),data);expect(await page.evaluate(()=>BODA_CONFIG)).toEqual(data.bodaConfig);expect(errors).toEqual([]);
 });
 
-test('Hoy apunta al día y las cinco subpestanas de Bodas admiten swipe',async({page})=>{
+test('Lista abre en el día sin Hoy flotante y las cinco subpestanas de Bodas admiten swipe',async({page})=>{
  await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-bdays-v1',JSON.stringify(Array.from({length:60},(_,m)=>({name:'Persona '+m,day:1+Math.floor(m/12),month:m%12+1}))));});
  await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewBday').click();await page.locator('#bdViewList').click();
- await expect(page.locator('#bdVipAll')).toHaveText('↑');
- await page.locator('#bdVipAll').click();
- await expect.poll(()=>page.locator('#eventsOverlay .sy-body').evaluate(el=>el.scrollTop)).toBe(0);
- await expect(page.locator('#bdVipAll')).toHaveText('Hoy');
- await page.locator('#bdVipAll').click();
+ await expect(page.locator('#bdVipAll')).toHaveCount(0);
  expect(await page.evaluate(()=>{var body=document.querySelector('#eventsOverlay .sy-body'),sec=body.querySelector('.bday-today-line:not([hidden])'),hdr=sec.closest('.bday-month-section').querySelector('.bday-month-hdr');return Math.abs(sec.getBoundingClientRect().top-body.getBoundingClientRect().top-body.querySelector('.bday-sub-tabs').offsetHeight-hdr.offsetHeight-16)<2;})).toBe(true);
  await page.locator('#eventsContent').getByRole('button',{name:'Eventos',exact:true}).click();await page.locator('#evViewBodas').click();await page.locator('[data-bsub="stats"]').click();
  async function swipe(left){await page.locator('#eventsOverlay .boda-sec').evaluate((el,left)=>{el.dispatchEvent(new TouchEvent('touchstart',{bubbles:true,touches:[new Touch({identifier:1,target:el,clientX:left?300:80,clientY:400})]}));el.dispatchEvent(new TouchEvent('touchend',{bubbles:true,changedTouches:[new Touch({identifier:1,target:el,clientX:left?80:300,clientY:400})]}));},left);}
