@@ -3684,6 +3684,20 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 .contact-address-title{display:block;white-space:normal}
 .contact-address-body{display:grid;gap:10px;padding:12px}
 
+/* Mis Datos: atajos, registros plegables y contenido multil�nea completo. */
+.contact-shortcuts{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+.contact-shortcuts[hidden]{display:none}
+.contact-shortcuts button{border:1px solid color-mix(in srgb,var(--settings-tone) 45%,var(--border));border-radius:12px;padding:9px 11px;background:color-mix(in srgb,var(--settings-tone) 7%,var(--surface));color:var(--settings-tone);font:inherit;font-size:.74rem;cursor:pointer}
+.contact-address>summary{display:flex;align-items:center;gap:8px;padding-right:36px}
+.contact-address-title{flex:1;min-width:0}
+.contact-primary-badge{font-size:.63rem;color:var(--settings-tone)}
+.contact-primary-badge[hidden]{display:none}
+.contact-address>summary .contact-copy-entry{position:static;flex:0 0 32px;width:32px;height:32px;transform:none}
+.contact-primary-choice{font-size:.78rem;display:flex;align-items:center;gap:7px}
+#personalDataWrap textarea[data-contact]{resize:none;overflow:hidden;min-height:38px;white-space:pre-wrap;line-height:1.5}
+
+.contact-primary-choice[hidden]{display:none}
+
 /* Fuente: css/source/energy-refinements.css */
 /* Facturas: mismos componentes que los contratos, cifras sin desbordar. */
 .energy-caption{font-size:11px;line-height:1.45;color:var(--muted);overflow-wrap:anywhere;margin:6px 0}
@@ -3937,9 +3951,9 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 
 .hours-export-sheet .invoice-body{gap:8px}
 .hours-export-sheet .invoice-note,.hours-export-sheet .invoice-actions{margin:0}
-.hours-export-sheet #hoursCsv{--format-tone:var(--c-green)}
-.hours-export-sheet #hoursPdf{--format-tone:var(--c-blue)}
+.hours-export-sheet #hoursCsv{--format-tone:var(--home-tone)}
+.hours-export-sheet #hoursPdf{--format-tone:#777777}
 .hours-export-sheet .invoice-actions .ev-btn{color:var(--format-tone);border-color:color-mix(in srgb,var(--format-tone) 45%,var(--border));background:color-mix(in srgb,var(--format-tone) 8%,var(--surface))}
 .hours-export-sheet .invoice-actions .ico-doc{opacity:1}
 .hours-export-sheet #hoursCsv sup{font-size:.7em;margin-left:2px}
-.hours-export-sheet .hours-export-footnote{color:var(--c-green)}
+.hours-export-sheet .hours-export-footnote{color:var(--home-tone)}

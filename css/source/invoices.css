@@ -52,9 +52,9 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 
 .hours-export-sheet .invoice-body{gap:8px}
 .hours-export-sheet .invoice-note,.hours-export-sheet .invoice-actions{margin:0}
-.hours-export-sheet #hoursCsv{--format-tone:var(--c-green)}
-.hours-export-sheet #hoursPdf{--format-tone:var(--c-blue)}
+.hours-export-sheet #hoursCsv{--format-tone:var(--home-tone)}
+.hours-export-sheet #hoursPdf{--format-tone:#777777}
 .hours-export-sheet .invoice-actions .ev-btn{color:var(--format-tone);border-color:color-mix(in srgb,var(--format-tone) 45%,var(--border));background:color-mix(in srgb,var(--format-tone) 8%,var(--surface))}
 .hours-export-sheet .invoice-actions .ico-doc{opacity:1}
 .hours-export-sheet #hoursCsv sup{font-size:.7em;margin-left:2px}
-.hours-export-sheet .hours-export-footnote{color:var(--c-green)}
+.hours-export-sheet .hours-export-footnote{color:var(--home-tone)}

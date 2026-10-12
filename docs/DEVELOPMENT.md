@@ -443,3 +443,8 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 - Próximos y Estadísticas comparten `--upcoming-tone` celeste, con variante de texto legible. Los colores de los tipos de evento conservan su identidad.
 - Estadísticas usa flechas anuales y oculta el año y las flechas al activar Total; desactivarlo recupera el último año.
 - Cada dirección de Mis Datos se muestra plegada por nombre (o por dirección si falta el nombre); al editar se abren los registros y los nuevos se abren para rellenarlos.
+
+## Mis Datos y exportación (v459)
+- Atajos de selección para identidad, contacto y dirección principal; copia directa desde registros plegados.
+- Direcciones y cuentas guardan `primary: "1"` en el registro principal; sin marca explícita se utiliza el primero. Se conserva en copias e importaciones.
+- Campos personales con altura automática al desplegar, escribir y cambiar de ancho. CSV y nota usan el acento Home; PDF usa gris.
