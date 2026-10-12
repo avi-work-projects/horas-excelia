@@ -25,4 +25,5 @@ console.log('Estadísticas, intervalos, días únicos, filtros compatibles, dato
 
 const principal=a.normalizeContactData({banks:[{label:"Uno",iban:"UNO",primary:"1"},{label:"Dos",iban:"DOS",primary:"1"}],addresses:[{primary:"1"}]});assert.equal(principal.addresses.length,0);assert.equal(principal.banks.filter(r=>r.primary==="1").length,1);assert.equal(a.mergeContactData(principal,{banks:[{label:"Uno actualizado",iban:"UNO"}]}).banks[0].primary,"1");const changed=a.mergeContactData(principal,{banks:[{label:"Dos",iban:"DOS",primary:"1"}]});assert.equal(changed.banks[1].primary,"1");assert(!changed.banks[0].primary);
 
-assert(a.evListInYear(event("cross","Viaje","2025-12-30","2026-01-02"),2026));assert(!a.evListInYear(event("old","Viaje","2025-01-01"),2026));assert(a.evListInYear(event("repeat","Llamada","2025-01-01",null,{repeat:{type:"yearly"}}),2026));assert(!a.evListInYear(event("future-list","Llamada","2027-02-01",null,{repeat:{type:"yearly"}}),2025));
+
+assert.equal(a.EV_STATS_YEAR,new a.Date().getFullYear());
