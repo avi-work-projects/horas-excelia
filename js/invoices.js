@@ -4,12 +4,13 @@ var INVOICE_MONTH=null;
 var INVOICE_BACK=null;
 var INVOICE_OPEN_SEQ=0;
 var INVOICE_HIDE_AMOUNTS=false; // Preferencia durante esta sesión.
-function invoiceDefaults(){return {issuer:'',issuerTax:'',issuerAddress:'',iban:'',client:'',clientTax:'',clientAddress:'',project:'',concept:'Servicios de consultoría · {mes} {anio}',unit:'day',rate:'',vat:'21',withholding:'15',from:'',to:'',cc:'',subject:'Factura · {mes} {anio}',body:'Buenos días!\n\nAdjunto la factura relativa a {mes}.\n\nConfirmad recepción,\n\nMuchas gracias,\n\nBuena semana!'};}
+function invoiceDefaults(){return {kairoUrl:'',issuer:'',issuerTax:'',issuerAddress:'',iban:'',client:'',clientTax:'',clientAddress:'',project:'',concept:'Servicios de consultoría · {mes} {anio}',unit:'day',rate:'',vat:'21',withholding:'15',from:'',to:'',cc:'',subject:'Factura · {mes} {anio}',body:'Buenos días!\n\nAdjunto la factura relativa a {mes}.\n\nConfirmad recepción,\n\nMuchas gracias,\n\nBuena semana!'};}
 function invoiceData(){var raw=appStorage.getItem(INVOICE_KEY);return raw?invoiceValidate(JSON.parse(raw)):{config:invoiceDefaults(),months:{}};}
 function invoiceValidate(data){
   if(!data||typeof data!=='object'||Array.isArray(data))throw new Error('Datos de facturación no válidos');
   var config=invoiceDefaults();Object.keys(config).forEach(function(k){if(data.config&&data.config[k]!=null){if(typeof data.config[k]!=='string'||data.config[k].length>5000)throw new Error('Campo de facturación no válido');config[k]=data.config[k];}});
   config.iban=invoiceIban(config.iban);
+  config.kairoUrl=invoiceKairoUrl(config.kairoUrl);
   if(!['day','hour'].includes(config.unit))throw new Error('Unidad no válida');
   var months={};Object.keys(data.months||{}).forEach(function(k){
     if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(k))throw new Error('Mes de facturación no válido');

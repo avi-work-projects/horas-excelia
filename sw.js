@@ -103,6 +103,7 @@ var ASSETS = [
   "./js/settings-menu.js",
   "./js/settings-personal.js",
   "./js/alarm-panel.js",
+  "./js/invoices-kairo.js",
   "./js/invoices.js",
   "./js/invoices-export.js",
   "./js/invoices-ui.js",

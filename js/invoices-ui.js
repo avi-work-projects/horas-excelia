@@ -11,6 +11,7 @@ function openInvoiceSettings(){
   h+='<div class="invoice-actions"><button class="ev-btn" id="invoiceImportConfig" data-settings-edit-only>Importar Datos</button><button class="ev-btn" id="invoiceExportConfig">Exportar Datos</button></div><input type="file" id="invoiceConfigFile" accept=".json,application/json" hidden><p class="invoice-note" id="invoiceImportStatus" role="status"></p>';
   [['Emisor',[['issuer','Nombre o razón social'],['issuerTax','NIF'],['issuerAddress','Domicilio'],['iban','IBAN de ingreso (opcional)']]],['Cliente y servicio',[['client','Nombre o razón social'],['clientTax','NIF'],['clientAddress','Domicilio'],['project','Proyecto'],['concept','Concepto']]],['Cálculo',[['rate','Tarifa (vacía: usar la del año en Económico)'],['vat','IVA (%)'],['withholding','Retención IRPF (%)']]],['Correo Gmail',[['from','Cuenta remitente'],['to','Para (separados por comas)'],['cc','CC (opcional)'],['subject','Asunto']]]].forEach(function(group,i){h+='<details class="invoice-card"'+(i===0?' open':'')+'><summary>'+group[0]+'</summary><div class="invoice-fields">';group[1].forEach(function(f){h+=invoiceField(f[0],f[1],c[f[0]]);});if(i===2)h+='<fieldset class="invoice-unit"><legend>Unidad de la tarifa manual <button type="button" class="settings-copy" id="invoiceUnitCopy" data-copy-label="Copiar Unidad" aria-label="Copiar Unidad"></button></legend><label><input type="radio" name="invoiceUnit" value="day"'+(c.unit==='day'?' checked':'')+'> Por día</label><label><input type="radio" name="invoiceUnit" value="hour"'+(c.unit==='hour'?' checked':'')+'> Por hora</label></fieldset>';if(i===3)h+='<label class="invoice-field"><span>Mensaje</span><textarea data-invoice-field="body" rows="9">'+escHtml(c.body)+'</textarea></label><p class="invoice-note">Puedes usar {mes}, {anio} y {periodo} en el concepto y el correo. Gmail se abre para revisar; adjunta el PDF definitivo y elige allí cuándo enviarlo.</p>';h+='</div></details>';});
 
+  h+='<details class="invoice-card"><summary>Conexión privada</summary>'+invoiceField('kairoUrl','Dirección de Kairo (opcional)',c.kairoUrl)+'<p class="invoice-note">Configura esta dirección solo después de activar el receptor de Gestify en Kairo. Usa su URL HTTPS de Tailscale terminada en /facturas/. Al conectarlo, la revisión y el correo se gestionan allí.</p></details>';
   h+='<p class="invoice-error" id="invoiceError" role="alert"></p>';
   var root=invoicePanel('Facturas y Correo',h),sheet=root.querySelector('.invoice-sheet');
   root.querySelector('.bd-panel-header').classList.add('panel-header-centered');sheet.classList.add('settings-editor-sheet');sheet.style.setProperty('--settings-tone','var(--c-green)');sheet.insertAdjacentHTML('beforeend',settingsEditorActions('invoiceSettings'));
@@ -42,13 +43,16 @@ async function openInvoiceMonth(period){
   }
   if(seq!==INVOICE_OPEN_SEQ)return;
   var h='<p class="invoice-month"><strong>'+escHtml(invoiceLabel(period))+'</strong></p>';
-  h+='<p class="invoice-status">'+(historical?'Referencia histórica · no preparar un nuevo envío':record.final?'PDF definitivo de AEAT incorporado':'Pendiente de emitir en AEAT')+'</p>';
+  h+='<p class="invoice-status">'+(historical?'Referencia histórica · no preparar un nuevo envío':(c.kairoUrl||record.kairo)?'Estado de factura y correo: consulta Kairo':record.final?'PDF definitivo de AEAT incorporado':'Pendiente de emitir en AEAT')+'</p>';
   h+='<section class="invoice-card invoice-month-summary"><header class="invoice-summary-header"><h3>Resumen mensual</h3><span id="invoicePrivacyControl">'+invoicePrivacyButton()+'</span></header><p class="invoice-filename"><strong>'+escHtml(p&&p.client?p.client.name:c.client||'Cliente pendiente de configurar')+'</strong><br>'+escHtml(p?p.concept:invoiceText(c.concept,period))+'</p>';
   if(p)h+='<div id="invoiceAmounts">'+invoiceSummary(p)+'</div>';
   if(problem)h+='<p class="invoice-note">'+escHtml(problem)+'</p>';
   if(p&&!problem&&!historical)h+='<div class="invoice-actions"><button class="ev-btn" id="invoiceExcel">Excel auxiliar</button><button class="ev-btn" id="invoiceJson">Datos para AEAT</button></div>';
   h+='</section><button class="invoice-config-link" id="invoiceConfig">'+(problem?'Completar datos de facturación':'Edición facturas y correo')+'</button>';
   if(!historical&&!problem&&p){
+    h+=invoiceKairoSection(p,record,c.kairoUrl);
+  }
+  if(!historical&&!problem&&p&&!record.kairo&&!c.kairoUrl){
     if(record.final){
       h+='<section class="invoice-card"><h3>Factura definitiva</h3><p class="invoice-filename">'+escHtml(record.final.number)+' · '+escHtml(record.final.date)+'<br>'+escHtml(record.final.name)+'</p><button class="ev-btn" id="invoiceDownloadFinal">Guardar PDF definitivo</button></section>';
       h+='<section class="invoice-card"><h3>Correo</h3><p class="invoice-filename">Para: '+escHtml(c.to||'Pendiente de configurar')+'</p><p><strong>'+escHtml(invoiceText(c.subject,period))+'</strong></p><pre class="invoice-mail">'+escHtml(invoiceText(c.body,period))+'</pre><p class="invoice-note">Adjunta el PDF definitivo en Gmail y revisa el correo antes de enviarlo o programarlo.</p><button class="ev-btn ev-btn-primary" id="invoiceGmail">Abrir correo en Gmail</button></section>';
@@ -58,6 +62,7 @@ async function openInvoiceMonth(period){
     h+='<label class="invoice-confirm"><input type="checkbox" id="invoiceFinalConfirm">Es el PDF definitivo de AEAT de '+escHtml(invoiceLabel(period))+' y he comprobado sus datos e importes.</label><button class="ev-btn ev-btn-primary" id="invoiceAttach">Guardar PDF y preparar correo</button></details>';
   }
   h+='<p id="invoiceError" class="invoice-error" role="alert"></p>';var root=invoicePanel('Enviar factura',h);
+  if(c.kairoUrl||record.kairo)root.querySelector('.invoice-sheet').classList.add('invoice-kairo-sheet');
   function error(e){root.querySelector('#invoiceError').textContent=e.message;root.querySelector('#invoiceError').scrollIntoView({block:'nearest'});}
   root.querySelector('#invoiceConfig').onclick=openInvoiceSettings;
   function bindPrivacy(){root.querySelector('#invoicePrivacy').onclick=function(){INVOICE_HIDE_AMOUNTS=!INVOICE_HIDE_AMOUNTS;root.querySelector('#invoicePrivacyControl').innerHTML=invoicePrivacyButton();if(p)root.querySelector('#invoiceAmounts').innerHTML=invoiceSummary(p);bindPrivacy();root.querySelector('#invoicePrivacy').focus();};}bindPrivacy();
@@ -65,8 +70,9 @@ async function openInvoiceMonth(period){
     root.querySelector('#invoiceExcel').onclick=function(){shareOrDownload(invoiceWorkbook(p),'calculo-auxiliar-'+period+'.xlsx');};
     root.querySelector('#invoiceJson').onclick=function(){shareOrDownload(new Blob([JSON.stringify(p,null,2)],{type:'application/json'}),'datos-auxiliares-'+period+'.json');};
   }
+  if(p&&!historical&&!problem)bindInvoiceKairo(root,p,c.kairoUrl);
   var attach=root.querySelector('#invoiceAttach');if(attach)attach.onclick=async function(){attach.disabled=true;try{await invoiceAttach(period,root.querySelector('#invoiceFinalFile').files[0],root.querySelector('[data-invoice-field="number"]').value,root.querySelector('[data-invoice-field="date"]').value,root.querySelector('#invoiceFinalConfirm').checked);openInvoiceMonth(period);}catch(e){error(e);attach.disabled=false;}};
-  if(record.final){root.querySelector('#invoiceDownloadFinal').onclick=function(){shareOrDownload(invoiceFinalBlob(record),record.final.name);};root.querySelector('#invoiceGmail').onclick=function(){try{window.open(invoiceGmailUrl(invoiceData().config,period),'_blank','noopener,noreferrer');}catch(e){error(e);}};}
+  if(record.final&&!record.kairo&&!c.kairoUrl){root.querySelector('#invoiceDownloadFinal').onclick=function(){shareOrDownload(invoiceFinalBlob(record),record.final.name);};root.querySelector('#invoiceGmail').onclick=function(){try{window.open(invoiceGmailUrl(invoiceData().config,period),'_blank','noopener,noreferrer');}catch(e){error(e);}};}
 }
 function openHoursExport(){
   var root=invoicePanel('Exportar Horas','<p class="invoice-note">Registro de horas de todo el año '+CY+'.</p><div class="invoice-actions"><button class="ev-btn" id="hoursCsv">'+renderDocumentIcon()+'<span>CSV<sup>*</sup></span></button><button class="ev-btn" id="hoursPdf">'+renderDocumentIcon()+'PDF</button></div><p class="invoice-note hours-export-footnote"><em>* El archivo CSV se utiliza en el programa de computación de horas de Excelia.</em></p>');
