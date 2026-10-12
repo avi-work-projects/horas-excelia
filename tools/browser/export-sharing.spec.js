@@ -4,6 +4,7 @@ const {test,expect}=require('@playwright/test');
 // también en Linux; sigue ejecutándose sin ventanas visibles.
 test.use({viewport:{width:400,height:880},isMobile:true,hasTouch:true,channel:process.platform==='win32'?'msedge':'chromium'});
 async function prepareExports(page){
+ await page.clock.setFixedTime(new Date(2026,9,11,12));
  await page.addInitScript(()=>{
   sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-theme-v1','light');localStorage.setItem('excelia-nav-icons-v1','professional');
   localStorage.setItem('excelia-bdays-v1',JSON.stringify([{name:'Persona de prueba',day:11,month:10}]));
