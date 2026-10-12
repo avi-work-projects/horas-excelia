@@ -44,8 +44,8 @@ def handle(service, panel, validate_source, data):
     if any(source[k] != data[k] for k in result):
         raise ValueError('La preparación no corresponde a la solicitud')
     if matching:
-        if source['revision'] != matching['revision']:
-            raise ValueError('Revisión inconsistente')
+        # Local revisions increase when edits are undone. Validated identical
+        # content is already registered: keep the original plan and approval.
         # A lost reply or repeated send never reimports or sends mail.
         return result | {'state': state}
     if any(r['status'] in ACTIVE or (r['data']['period'] == data['period'] and r['status'] in ISSUED) for r in plans):
@@ -78,12 +78,5 @@ def receiver(origin, csrf):
         raise ValueError('Configura el origen HTTPS de GitHub Pages')
     script = (Path(__file__).with_name('receiver.js')).read_text(encoding='utf-8')
     config = json.dumps({'origin': origin, 'csrf': csrf}).replace('<', '\\u003c')
-    return '''<!doctype html><html lang="es"><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Recibir preparación de Gestify</title>
-<style>body{font:16px system-ui;max-width:36rem;margin:2rem auto;padding:1rem;line-height:1.5}button,a{display:block;margin:1rem 0;padding:.8rem}button{font:inherit}</style>
-<h1>Preparación de Gestify</h1><p id="status" role="status">Esperando a Gestify…</p>
-<button id="receive" hidden>Recibir preparación</button>
-<p>Recibir no aprueba, emite ni envía correos. Revisa después la versión en Kairo.</p>
-<a href="/facturas/" rel="noopener">Abrir revisión y estado en Kairo</a>
-<script>const bridgeConfig=''' + config + ';\n' + script + '</script></html>'
+    template = Path(__file__).with_name('receiver.html').read_text(encoding='utf-8')
+    return template.replace('/*BRIDGE_CONFIG*/', config).replace('/*BRIDGE_SCRIPT*/', script)

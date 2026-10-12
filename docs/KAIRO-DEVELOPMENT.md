@@ -138,3 +138,23 @@ Primera prueba móvil: Tailscale activo, consultar octubre. Si los datos locales
 coinciden, devuelve factura emitida/correo pendiente; si no, conserva otra versión.
 No modificar octubre ni preparar un mes ficticio en el servicio de producción.
 El recorrido real con el opener de la PWA instalada sigue pendiente del móvil.
+
+
+## Corrección de restauración y pantalla de consulta (v463)
+
+La revisión local aumenta al editar y deshacer; no pertenece a contentHash.
+Tras validar íntegramente el JSON, mismo operationId/hash/mes es una repetición
+sin cambios, aunque tenga mayor revisión. Nunca modifica la revisión fiscal,
+aprobación o plan original. Contenido diferente mantiene los bloqueos existentes.
+La ruta status ya devolvía antes de validar la revisión; el antiguo error
+«Revisión inconsistente» solo existía en prepare. Las capturas no permiten
+confirmar qué acción originó la segunda petición; no atribuirlo a una emisión.
+
+El receptor usa receiver.html + receiver.js: mes, modo consulta/recepción,
+estados en español, retorno a Gestify y acceso a la programación. La regla
+[hidden] prevalece sobre estilos de botones; consulta no muestra ni engancha
+el botón de recibir. Instaladores deben copiar también receiver.html.
+Regresiones: editar/restaurar un día, revision+2 con hash original, consulta sin
+importaciones, recepción idéntica tras restaurar, aprobación conservada, hash
+inválido rechazado. Pruebas del navegador usan la plantilla real, no una página
+sustituta; capturas a 320/393/412/1024 px.

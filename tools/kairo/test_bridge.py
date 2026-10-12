@@ -59,6 +59,23 @@ class BridgeTests(unittest.TestCase):
         self.assertEqual(self.call(dict(self.data, action='status'))['state'], 'review')
         self.assertEqual(len(self.calls), 1)
 
+    def test_edit_then_revert_keeps_issued_invoice_and_approval(self):
+        self.call()
+        with self.db() as db:
+            db.execute("UPDATE plans SET status='accepted',approval='keep'")
+        before = self.load()
+        changed = dict(self.source, contentHash='c'*64, revision=2)
+        self.assertEqual(self.call(dict(changed, action='status'))['state'], 'different')
+        restored = dict(self.source, revision=3)
+        self.assertEqual(self.call(dict(restored, action='status'))['state'], 'accepted')
+        self.assertEqual(self.call(dict(restored, action='prepare', source=json.dumps(restored)))['state'], 'accepted')
+        self.assertEqual(self.load(), before)
+        self.assertEqual(len(self.calls), 1)
+        # Same declared hash does not bypass the real validator.
+        with self.assertRaises(ValueError):
+            self.call(dict(restored, action='prepare', source=json.dumps(restored)), validator=lambda p: (_ for _ in ()).throw(ValueError('Invalid hash')))
+        self.assertEqual(self.load(), before)
+
     def test_invalid_json_and_hash_validator(self):
         with self.assertRaises(ValueError):
             self.call(dict(self.data, source='{'))
