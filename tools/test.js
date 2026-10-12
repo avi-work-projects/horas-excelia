@@ -457,7 +457,7 @@ for (const [nombre, fn] of VISTAS) {
     nuevas++;
     continue;
   }
-  const guardado = fs.readFileSync(fichero, 'utf8');
+  const guardado = fs.readFileSync(fichero, 'utf8').replace(/\r\n/g, '\n');
   if (guardado === bonito) { ok++; continue; }
   if (ACTUALIZAR) { fs.writeFileSync(fichero, bonito, 'utf8'); actualizadas++; continue; }
   /* primera linea distinta, para saber por donde mirar */

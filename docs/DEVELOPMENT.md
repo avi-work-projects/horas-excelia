@@ -162,6 +162,11 @@ identidades y PDF sintéticos. No se emiten facturas ni se envían correos al pr
 
 ## Catálogo único de archivos
 
+Conexión privada de facturación (candidato sin desplegar): ver
+[KAIRO-DEVELOPMENT.md](KAIRO-DEVELOPMENT.md). `js/invoices-kairo.js` aporta transporte
+entre ventanas y consulta; reutiliza preparaciones y persistencia de facturación.
+No habilitar el campo opcional de conexión hasta instalar y validar el receptor.
+
 `app-assets.json` determina:
 
 | Campo | Responsabilidad |
