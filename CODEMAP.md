@@ -372,10 +372,10 @@
 
 **Funciones:** closeSettingsMenu:6 · positionSettingsMenu:15 · _positionHeaderMenu:19 · toggleSettingsMenu:27 · settingsEditorActions:37 · settingsPanelHtml:40 · bindSettingsEditor:43 · setEditing:47 · settingsCopyIcon:66 · bindSettingsCopy:71 · openConnectionsSettings:79 · close:81 · initSettingsMenu:94
 
-### js/settings-personal.js  _(109 líneas)_
+### js/settings-personal.js  _(122 líneas)_
 **Estado global:** CONTACT_DATA_KEY:2 · PERSONAL_NOTES_KEY:3 · CONTACT_LIMIT:4 · CONTACT_FIELDS:5 · CONTACT_GROUPS:6
 
-**Funciones:** normalizeContactData:12 · text:14 · validateContactData:26 · string:28 · mergeContactData:36 · signature:41 · contactData:46 · personalNote:47 · contactFieldHtml:48 · renderContactGroups:51 · readContactFields:63 · contactSelectionText:68 · bindContactGroups:76 · update:77 · openPersonalData:83 · close:85 · selection:91 · openPersonalNotes:102 · close:104
+**Funciones:** normalizeContactData:12 · text:14 · validateContactData:27 · string:29 · mergeContactData:37 · signature:42 · contactData:48 · personalNote:49 · contactFieldHtml:50 · renderContactGroups:53 · readContactFields:66 · contactSelectionText:71 · contactPrimaryIndex:79 · contactResizeFields:80 · bindContactGroups:81 · update:82 · openPersonalData:94 · close:96 · selection:102 · openPersonalNotes:115 · close:117
 
 ### js/summary.js  _(613 líneas)_
 **Estado global:** FEST_REQUIRED:5 · VAC_STORAGE_KEY:6 · VAC_ENTITLEMENT:7 · SUMMARY_YEAR:11 · SY_EXCL_PAST:12 · SY_PUENTES_LIBRES:13 · SUMMARY_TAB:14 · VAC_YEAR_KEY:16 · VAC_BY_YEAR:17 · SPAIN_AVG:258 · DN7S:282
@@ -754,7 +754,7 @@
 **Rangos por prefijo de clase:**
 .app-update:733-735 · .bd-detail:654-655 · .bd-panel:608-891 · .bday-category:579-750 · .bday-date:690-789 · .bday-detail:622-866 · .bday-edit:865-865 · .bday-filter:570-646 · .bday-first:592-592 · .bday-form:728-729 · .bday-group:567-732 · .bday-hdr:161-162 · .bday-header:156-504 · .bday-jump:56-95 · .bday-label:598-598 · .bday-list:576-782 · .bday-month:174-796 · .bday-name:656-737 · .bday-next:104-105 · .bday-no:628-628 · .bday-person:574-621 · .bday-show:578-684 · .bday-sub:285-286 · .bday-today:560-781 · .bday-upcoming:54-531 · .bday-vip:532-884 · .boda-catalog:81-89 · .boda-cfg:131-147 · .boda-config:77-128 · .boda-count:85-85 · .boda-date:149-167 · .boda-day:118-118 · .boda-field:119-124 · .boda-filter:59-61 · .boda-mini:67-67 · .boda-pack:86-87 · .boda-pfilters:58-62 · .boda-sticky:78-144 · .boda-teachers:106-106 · .contact-add:955-955 · .contact-entry:948-953 · .contact-group:945-947 · .contact-remove:954-954 · .data-actions:344-344 · .data-btn:345-356 · .econ-equiv:477-477 · .econ-tab:327-331 · .econ-tariff:409-479 · .energy-tariff:455-457 · .est-nav:329-330 · .ev-alarm:814-815 · .ev-annual:549-549 · .ev-bday:287-584 · .ev-bright:445-445 · .ev-btn:816-817 · .ev-del:13-14 · .ev-filter:835-1011 · .ev-list:2-1015 · .ev-month:516-526 · .ev-multi:50-72 · .ev-rut:244-311 · .ev-search:3-7 · .ev-sort:8-53 · .ev-stat:976-1022 · .ev-type:430-432 · .ev-types:429-850 · .ev-up:271-973 · .ev-upcoming:974-1003 · .ev-view:66-66 · .ev-wk:226-444 · .export-choice:820-992 · .export-folder:798-832 · .fiscal-hdr:553-553 · .fiscal-hip:406-407 · .fiscal-tab:328-328 · .hip-rate:507-511 · .hip-ro:550-551 · .home-birthday:468-499 · .home-pending:469-475 · .home-popup:484-539 · .home-reminder:463-547 · .imp-mode:17-27 · .invoice-field:1001-1001 · .invoice-sheet:916-916 · .macro-url:70-70 · .nav-icon:364-374 · .nav-pro:338-350 · .nav-style:362-362 · .panel-header:892-893 · .personal-copy:932-932 · .personal-data:931-938 · .personal-note:956-998 · .rate-input:46-46 · .rut-addition:206-223 · .rut-agenda:220-221 · .rut-cancelled:247-306 · .rut-done:818-819 · .rut-history:190-241 · .rut-hpd:188-188 · .rut-icon:172-173 · .rut-recovery:215-224 · .rut-session:225-225 · .rut-skipped:307-308 · .rut-week:189-189 · .selected:371-371 · .settings-copy:924-927 · .settings-details:107-109 · .settings-edit:71-944 · .settings-editor:901-939 · .settings-field:922-941 · .settings-is:911-937 · .settings-menu:441-441 · .sw-upd:934-934 · .sy-back:37-37 · .sy-body:35-587 · .sy-card:41-41 · .sy-header:36-506 · .sy-lbl:40-40 · .sy-period:415-422 · .sy-table:42-42 · .sy-tr:43-43 · .sy-val:39-39 · .sy-year:38-38 · .week-action:886-887 · .week-card:391-391 · .wm-logo:92-251
 
-### css/source/home-sharing.css  _(136 líneas)_
+### css/source/home-sharing.css  _(150 líneas)_
 
 **Secciones:**
 
@@ -764,9 +764,10 @@
 - Colores por tramo, compartidos entre las dos vistas de próximos cumpleaños.:66
 - Compartir: cabecera centrada, categorías completas y lista compacta.:84
 - Próximos comparte identidad celeste en sus cuatro subpestañas.:117
+- Mis Datos: atajos, registros plegables y contenido multil�nea completo.:137
 
 **Rangos por prefijo de clase:**
-.boda-future:81-81 · .contact-address:133-135 · .contact-entry:132-132 · .energy-contract:108-109 · .energy-field:111-112 · .energy-history:106-107 · .energy-price:110-115 · .energy-sheet:105-105 · .energy-tax:113-113 · .ev-cal:32-104 · .ev-field:80-80 · .ev-list:127-131 · .ev-share:30-31 · .ev-stat:119-126 · .ev-week:67-82 · .ev-wk:3-3 · .header:2-2 · .home-reminder:61-63 · .home-submission:4-17 · .home-summary:18-26 · .month-summary:20-21
+.boda-future:81-81 · .contact-address:133-145 · .contact-entry:132-132 · .contact-primary:143-149 · .contact-shortcuts:138-140 · .energy-contract:108-109 · .energy-field:111-112 · .energy-history:106-107 · .energy-price:110-115 · .energy-sheet:105-105 · .energy-tax:113-113 · .ev-cal:32-104 · .ev-field:80-80 · .ev-list:127-131 · .ev-share:30-31 · .ev-stat:119-126 · .ev-week:67-82 · .ev-wk:3-3 · .header:2-2 · .home-reminder:61-63 · .home-submission:4-17 · .home-summary:18-26 · .month-summary:20-21
 
 ### css/source/energy-refinements.css  _(197 líneas)_
 
