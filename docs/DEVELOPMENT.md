@@ -448,3 +448,9 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 - Atajos de selección para identidad, contacto y dirección principal; copia directa desde registros plegados.
 - Direcciones y cuentas guardan `primary: "1"` en el registro principal; sin marca explícita se utiliza el primero. Se conserva en copias e importaciones.
 - Campos personales con altura automática al desplegar, escribir y cambiar de ancho. CSV y nota usan el acento Home; PDF usa gris.
+
+## Próximos y copia directa (v460)
+- Los atajos de Mis Datos copian directamente y confirman con un check verde.
+- Todos filtra por el año actual, con flechas y Total; los eventos que cruzan años y las repeticiones se incluyen si ocurren dentro del año.
+- Cumpleaños/Eventos alterna el texto y sustituye los controles de rutinas y ensayos por VIP. Se elimina el acceso flotante Hoy de la lista de cumpleaños.
+- Estadísticas identifica Casas Rurales y ofrece accesos a los módulos de estadísticas de Rutinas y Wedding Moves.

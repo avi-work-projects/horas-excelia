@@ -8,10 +8,10 @@ for(const count of [1,2])test(`captura: ${count} cumpleaños hoy`,async({page},t
   {name:'Ejemplo Enero',day:8,month:1},{name:'Ejemplo Septiembre',day:20,month:9}
  ]));},count);
  await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewBday').click();await page.locator('#bdViewList').click();
- await expect(page.locator('#bdVipAll')).toHaveText('↑');
+ await expect(page.locator('#bdVipAll')).toHaveCount(0);
  const rows=page.locator('.bday-list-item[data-bday-day="11"][data-bday-month="10"]');await expect(rows).toHaveCount(count);
  await expect(page.locator('.bday-today-item')).toHaveCount(1);await expect(page.locator('.bday-today-line')).toBeHidden();
- for(const row of await rows.all()){await expect(row).toBeInViewport();await expect(row.locator('.today-lbl')).toHaveText('¡Hoy!');const colors=await row.evaluate(el=>({day:getComputedStyle(el.querySelector('.bday-list-day')).color,label:getComputedStyle(el.querySelector('.today-lbl')).color,accent:getComputedStyle(document.querySelector('#bdVipAll')).color}));expect(colors.day).toBe(colors.accent);expect(colors.label).toBe(colors.accent);}
+ for(const row of await rows.all()){await expect(row).toBeInViewport();await expect(row.locator('.today-lbl')).toHaveText('¡Hoy!');const colors=await row.evaluate(el=>({day:getComputedStyle(el.querySelector('.bday-list-day')).color,label:getComputedStyle(el.querySelector('.today-lbl')).color,accent:getComputedStyle(el.querySelector('.bday-list-day')).getPropertyValue('--birthday-tone').trim()}));expect(colors.day).toBe(colors.label);}
  await expect(page.locator('.bday-today-stroke:visible')).toHaveCount(1);await expect(page.locator('.bday-today-stroke:visible')).toHaveCSS('border-top-right-radius','999px');
  const todayRow=page.locator('.bday-today-item');
  const gap=await todayRow.evaluate(el=>el.getBoundingClientRect().x+parseFloat(getComputedStyle(el,'::after').left)-el.querySelector('.bday-list-day').getBoundingClientRect().right);

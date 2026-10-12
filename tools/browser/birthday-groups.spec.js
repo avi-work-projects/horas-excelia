@@ -45,8 +45,8 @@ test('categorías unificadas, VIP directo y etiquetas opcionales con hoy anclado
  await page.locator('#bdCategories').click();await page.locator('[data-bd-category="Familia"]').click();await page.locator('#bdCategorySave').click();await expect(page.locator('#bdCategoryWrap')).toHaveCount(0);
  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('excelia-bdays-v1'))[0].categories)).toContain('Familia');
  await page.locator('#bdDClose').click();await expect(page.locator('#bdDWrap')).toHaveCount(0);
- const body=page.locator('#eventsOverlay .sy-body');await body.evaluate(el=>el.scrollTop=0);await expect(page.locator('#bdVipAll')).toBeVisible();
- await body.evaluate(el=>el.scrollTop=600);await expect(page.locator('#bdVipAll')).toBeVisible();
+ const body=page.locator('#eventsOverlay .sy-body');await body.evaluate(el=>el.scrollTop=0);await expect(page.locator('#bdVipAll')).toHaveCount(0);
+ await body.evaluate(el=>el.scrollTop=600);await expect(page.locator('#bdVipAll')).toHaveCount(0);
  await page.screenshot({path:'test-results/cumpleanos-etiquetas.png'});
- await page.locator('#bdVipAll').click();await expect(page.locator('#bdVipAll')).toHaveText('Hoy');await page.locator('#bdVipAll').click();await expect(page.locator('.bday-today-item,.bday-today-line:not([hidden])').first()).toBeInViewport();
+ await page.locator('#bdViewList').click();await expect(page.locator('.bday-today-item,.bday-today-line:not([hidden])').first()).toBeInViewport();
 });

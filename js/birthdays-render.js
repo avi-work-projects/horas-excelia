@@ -234,7 +234,6 @@ function renderBdayContent(){
     if(!BDAYS.length)h+='<div class="sy-note">No hay cumplea\u00f1os cargados.</div>';
     else h+=renderBdayCalMonth();
   } else {
-    h+='<div class="bday-today-dock"><button class="today-btn" id="bdVipAll" aria-label="'+(BDAY_LIST_TOP?'Volver arriba':'Ir a hoy')+'">'+(BDAY_LIST_TOP?'↑':'Hoy')+'</button></div>';
     h+=renderBdayList();
   }
   h+='</div>';

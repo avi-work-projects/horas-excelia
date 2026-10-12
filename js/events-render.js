@@ -228,15 +228,15 @@ var EV_LIST_TYPES=EV_KINDS.grande.types.filter(function(t){return t!=='Otros';})
 function renderEvByTypes(){
   var today=new Date();today.setHours(0,0,0,0);
   /* Controles: buscador + orden + filtros */
-  var h='<div class="ev-list-tools"><div class="ev-list-search-row">';
+  var h='<div class="ev-list-tools">'+renderEvYearControl('list',EV_LIST_YEAR,EV_LIST_LAST_YEAR)+'<div class="ev-list-search-row">';
   h+='<div class="ev-search">'
     +'<input type="search" id="evListSearch" placeholder="Buscar por título/descripción" value="'+escHtml(EV_LIST_SEARCH)+'">'
     +(EV_LIST_SEARCH?'<button class="ev-search-x" id="evListSearchX">&#215;</button>':'')+'</div>';
   h+='<div class="ev-list-order"><span class="ev-list-order-label">Ordenado por</span><div class="ev-sort-row">';
   /* Solo interesa lo mas cercano primero; el orden inverso se quito */
   if(EV_LIST_SORT==='fecha-desc')EV_LIST_SORT='fecha';
-  [['fecha','Por Fecha'],['categoria','Por Categoría']].forEach(function(o){
-    h+='<button class="ev-sort-chip'+(EV_LIST_SORT===o[0]?' active':'')+'" data-sort="'+o[0]+'">'+o[1].replace(' ','<br>')+'</button>';
+  [['fecha','Fecha'],['categoria','Categoría']].forEach(function(o){
+    h+='<button class="ev-sort-chip'+(EV_LIST_SORT===o[0]?' active':'')+'" data-sort="'+o[0]+'">'+o[1]+'</button>';
   });
   h+='</div></div></div>';
   h+='<button type="button" class="ev-types-select" id="evTypesFilter" aria-haspopup="dialog" title="Filtrar por tipo: '+escHtml(evListFilterLabel(EV_TYPES_FILTER))+'"><span>'+escHtml(evListFilterLabel(EV_TYPES_FILTER))+'</span><span class="ev-tax-chevron" aria-hidden="true"></span></button>';
@@ -256,7 +256,7 @@ function renderEvByTypes(){
     if(ev.id&&ev.id.indexOf('ev-bday-vip-')===0)return false;  /* los VIP tienen su ventana */
     var evEnd=ev.end?new Date(ev.end+'T00:00:00'):new Date(ev.start+'T00:00:00');
     if(EV_TYPES_PAST&&!ev.repeat&&evEnd<today)return false;
-    if(!evListFilterMatches(ev,EV_TYPES_FILTER))return false;
+    if(!evListFilterMatches(ev,EV_TYPES_FILTER)||!evListInYear(ev,EV_LIST_YEAR))return false;
     return coincide(ev);
   });
   if(!lista.length){
@@ -498,7 +498,6 @@ function renderEvContent(){
   if(EV_VIEW==='birthdays')h+=renderBdayAddButton('evBdayAdd');
   if(EV_VIEW==='upcoming'||EV_VIEW==='birthdays'){
     h+='<div class="sy-year-nav"><div class="sy-year">'+(EV_VIEW==='birthdays'?'Cumpleaños':'Próximos Eventos')+'</div></div>';
-    if(EV_VIEW==='birthdays')h+=renderBdayVipFilter();
   } else if(EV_VIEW==='week'){
     h+='<div class="sy-year-nav"><button class="sy-nav" id="evPrev">&#9664;</button>';
     h+='<div class="sy-year sy-year-2line">'+MN[EV_MONTH]+'<span class="sy-year-sub">'+EV_YEAR+'</span></div>';
@@ -591,9 +590,11 @@ function renderEvContent(){
     if(EV_VIEW!=='week')h+='<div class="ev-upcoming-content">';
     if(EV_VIEW==='upcoming'||EV_VIEW==='birthdays'){
       h+='<div class="excl-row ev-up-filters">';
-      h+='<label class="excl-item"><input type="checkbox" id="evUpShowRut"'+(EV_UP_SHOW_RUT?' checked':'')+'> Ver Rutinas</label>';
+      if(EV_VIEW==='birthdays')h+=renderBdayVipFilter();
+      else{h+='<label class="excl-item"><input type="checkbox" id="evUpShowRut"'+(EV_UP_SHOW_RUT?' checked':'')+'> Ver Rutinas</label>';
       h+='<label class="excl-item"><input type="checkbox" id="evUpShowBoda"'+(EV_UP_SHOW_BODA?' checked':'')+'> Ver Ensayos <span class="wm-logo wm-logo-check" role="img" aria-label="Wedding Moves"></span></label>';
-      h+='<button class="ev-up-birthday-toggle'+(EV_VIEW==='birthdays'?' active':'')+'" id="evUpBirthdays" aria-pressed="'+(EV_VIEW==='birthdays')+'">Cumpleaños</button>';
+      }
+      h+='<button class="ev-up-birthday-toggle'+(EV_VIEW==='birthdays'?' active':'')+'" id="evUpBirthdays" aria-pressed="'+(EV_VIEW==='birthdays')+'">'+(EV_VIEW==='birthdays'?'Eventos':'Cumpleaños')+'</button>';
       h+='</div>';
     }
   }
