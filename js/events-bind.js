@@ -213,7 +213,6 @@ function _bindEvNav(){
   if(_subBd)_subBd.addEventListener('click',function(){_switchEvView(EV_VIEW==='birthdays'?'upcoming':'birthdays');refreshEvents(false);});
   var stats=document.getElementById('evSubStats');if(stats)stats.onclick=function(){_switchEvView('stats');refreshEvents(false);};
   if(EV_VIEW==='stats')bindEventStatistics();
-  if(EV_VIEW==='months')bindEvListYear();
   if(EV_VIEW==='birthdays'){
     bindBdayUpcoming(document.getElementById('eventsContent'));
     document.getElementById('evBdayAdd').addEventListener('click',function(){openBdayForm(null);});
