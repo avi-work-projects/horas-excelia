@@ -228,7 +228,7 @@ var EV_LIST_TYPES=EV_KINDS.grande.types.filter(function(t){return t!=='Otros';})
 function renderEvByTypes(){
   var today=new Date();today.setHours(0,0,0,0);
   /* Controles: buscador + orden + filtros */
-  var h='<div class="ev-list-tools">'+renderEvYearControl('list',EV_LIST_YEAR,EV_LIST_LAST_YEAR)+'<div class="ev-list-search-row">';
+  var h='<div class="ev-list-tools"><div class="ev-list-search-row">';
   h+='<div class="ev-search">'
     +'<input type="search" id="evListSearch" placeholder="Buscar por título/descripción" value="'+escHtml(EV_LIST_SEARCH)+'">'
     +(EV_LIST_SEARCH?'<button class="ev-search-x" id="evListSearchX">&#215;</button>':'')+'</div>';
@@ -256,7 +256,7 @@ function renderEvByTypes(){
     if(ev.id&&ev.id.indexOf('ev-bday-vip-')===0)return false;  /* los VIP tienen su ventana */
     var evEnd=ev.end?new Date(ev.end+'T00:00:00'):new Date(ev.start+'T00:00:00');
     if(EV_TYPES_PAST&&!ev.repeat&&evEnd<today)return false;
-    if(!evListFilterMatches(ev,EV_TYPES_FILTER)||!evListInYear(ev,EV_LIST_YEAR))return false;
+    if(!evListFilterMatches(ev,EV_TYPES_FILTER))return false;
     return coincide(ev);
   });
   if(!lista.length){

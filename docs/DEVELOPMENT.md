@@ -459,3 +459,7 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 - Todos filtra por el año actual, con flechas y Total; los eventos que cruzan años y las repeticiones se incluyen si ocurren dentro del año.
 - Cumpleaños/Eventos alterna el texto y sustituye los controles de rutinas y ensayos por VIP. Se elimina el acceso flotante Hoy de la lista de cumpleaños.
 - Estadísticas identifica Casas Rurales y ofrece accesos a los módulos de estadísticas de Rutinas y Wedding Moves.
+
+## Selector anual (v461)
+- Estadísticas abre con el año actual, centrado y conservando el color de las flechas. Total es explícito y al desactivarlo recupera el año elegido.
+- Todos vuelve a su listado sin selector ni filtro anual; conserva el buscador, los tipos y la ordenación compacta.
