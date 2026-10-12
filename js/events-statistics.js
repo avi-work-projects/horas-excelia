@@ -1,5 +1,5 @@
 /* Agregados por fechas registradas; no implica confirmación de asistencia. */
-var EV_STATS_YEAR='all'; // 'all' o año numérico.
+var EV_STATS_YEAR=new Date().getFullYear(); // 'all' o año numérico.
 var EV_STATS_LAST_YEAR=new Date().getFullYear(); // Año al volver desde Total.
 var EV_STATS_PERIOD='past'; // past (hasta hoy) | future (desde mañana) | all (ambos).
 function evStatsGroup(ev){
@@ -56,22 +56,4 @@ function bindEventStatistics(){
   document.querySelectorAll('[data-stats-year]').forEach(function(btn){btn.onclick=function(){EV_STATS_YEAR=EV_STATS_LAST_YEAR=Math.max(1900,Math.min(2200,+EV_STATS_YEAR + +this.dataset.statsYear));refreshEvents(false);};});
   document.getElementById('evStatsTotal').onclick=function(){if(EV_STATS_YEAR==='all')EV_STATS_YEAR=EV_STATS_LAST_YEAR;else{EV_STATS_LAST_YEAR=+EV_STATS_YEAR;EV_STATS_YEAR='all';}refreshEvents(false);};
   document.querySelectorAll('[data-stats-period]').forEach(function(btn){btn.onclick=function(){EV_STATS_PERIOD=this.dataset.statsPeriod;refreshEvents(false);};});
-}
-
-/* Selector de año compartido por los listados de Próximos. */
-function renderEvYearControl(scope,year,lastYear){
- return '<div class="ev-stat-year-nav ev-list-year-nav"><div class="energy-year-selector"'+(year==='all'?' hidden':'')+'><button class="nav-btn" data-'+scope+'-year="-1" aria-label="Año Anterior">◀</button><strong id="evListYear">'+(year==='all'?lastYear:year)+'</strong><button class="nav-btn" data-'+scope+'-year="1" aria-label="Año Siguiente">▶</button></div><button class="energy-total-button" id="evListTotal" aria-pressed="'+(year==='all')+'">Total</button></div>';
-}
-function evListInYear(ev,year){
- if(year==='all')return true;
- var from=year+'-01-01',until=year+'-12-31';
- if(ev.dates&&ev.dates.length)return ev.dates.some(function(ds){return ds>=from&&ds<=until;});
- if(!ev.repeat)return ev.start<=until&&(ev.end||ev.start)>=from;
- for(var day=new Date(from+'T12:00:00');evDk(day)<=until;day.setDate(day.getDate()+1)){if(eventOccursOn(ev,evDk(day)))return true;}
- return false;
-}
-function bindEvListYear(){
- var total=document.getElementById('evListTotal');if(!total)return;
- document.querySelectorAll('[data-list-year]').forEach(function(btn){btn.onclick=function(){EV_LIST_YEAR=EV_LIST_LAST_YEAR=Math.max(1900,Math.min(2200,+EV_LIST_YEAR + +btn.dataset.listYear));refreshEvents(false);};});
- total.onclick=function(){if(EV_LIST_YEAR==='all')EV_LIST_YEAR=EV_LIST_LAST_YEAR;else{EV_LIST_LAST_YEAR=EV_LIST_YEAR;EV_LIST_YEAR='all';}refreshEvents(false);};
 }
