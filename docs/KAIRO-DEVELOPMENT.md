@@ -1,4 +1,4 @@
-# Conexión de preparaciones Gestify → Kairo (candidato, sin desplegar)
+# Conexión de preparaciones Gestify → Kairo
 
 ## Hallazgos y alcance
 
@@ -117,3 +117,24 @@ Antes de activar, en otro encargo autorizado:
 
 El proceso mensual sigue dependiendo de los scripts, servicios y temporizador
 existentes de Kairo; no necesita Codex ni una IA cada mes.
+
+
+## Activación autorizada del 12/10/2026
+
+Receptor instalado sobre la versión vigente del servicio, con copia privada para
+reversión. Solo se reinició el servicio web; temporizador y datos conservados.
+Origen exacto de la PWA configurado, sin CORS ni acceso público añadido.
+Pruebas: npm test; 9 pruebas Edge; 9 del adaptador y 4 HTTP; consulta HTTP real
+con autenticación/CSRF y rechazo de identidad/origen inválidos. La repetición de
+la fuente ya registrada pasó dos veces por el validador real, sin reimportación.
+Comparación de tablas, plan/aprobación y PDFs antes/después: sin cambios.
+No hubo emisión ni correo. No se probó aquí crear una factura nueva con el
+importador real: el plan emitido con correo pendiente bloquea esa operación.
+
+Acceso en la PWA: Enviar Factura → Edición facturas y correo → Conexión privada.
+Editar y guardar la URL privada facilitada al propietario; volver a Enviar Factura.
+Aparecen Enviar a Kairo y Consultar estado (solo consulta si hay PDF final local).
+Primera prueba móvil: Tailscale activo, consultar octubre. Si los datos locales
+coinciden, devuelve factura emitida/correo pendiente; si no, conserva otra versión.
+No modificar octubre ni preparar un mes ficticio en el servicio de producción.
+El recorrido real con el opener de la PWA instalada sigue pendiente del móvil.
