@@ -279,6 +279,7 @@ function closeEvForm(){
 }
 
 function evSuggestedTitle(type){
+  if(type==='Actividad cultural')return '';
   return evFixedSymbol(type)?type:({'Asturias':'Asturias','Ensayos boda':'Ensayo boda','Casa Rural':'Casa rural'}[type]||'');
 }
 function bindEvFormEvents(){
