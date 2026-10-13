@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v466 — Gestiones del mes y carrusel con arrastre';
+var APP_VERSION = 'v467 — Nuevos símbolos para Planes y Quedadas';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
