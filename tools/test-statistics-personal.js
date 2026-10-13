@@ -27,3 +27,15 @@ const principal=a.normalizeContactData({banks:[{label:"Uno",iban:"UNO",primary:"
 
 
 assert.equal(a.EV_STATS_YEAR,new a.Date().getFullYear());
+
+// Todos: el año se aplica a ocurrencias, incluyendo cruces y fechas no consecutivas.
+const listApp=cargarApp({});listApp.EV_TYPES_PAST=false;listApp.EV_LIST_YEAR=2026;
+assert(listApp.evListInYear(crossing[0]));assert(listApp.evListInYear(leap[0]));
+assert(!listApp.evListInYear(event('old','Cena','2025-01-01')));
+assert(!listApp.evListInYear(event('future-repeat','Cita','2027-01-01',null,{repeat:{type:'weekly',weekDays:[1]}})));
+assert(listApp.evListInYear(event('split','Cita','2025-01-01',null,{dates:['2025-01-01','2026-12-31']})));
+assert(!listApp.evListInYear(event('gap','Cita','2025-12-31','2027-01-01',{dates:['2025-12-31','2027-01-01']})));
+listApp.EV_TYPES_PAST=true;assert(!listApp.evListInYear(crossing[0]));
+listApp.EV_LIST_YEAR=2025;assert(!listApp.evListInYear(events[7]));
+listApp.EV_LIST_YEAR='all';listApp.EV_TYPES_PAST=false;assert(listApp.evListInYear(event('old','Cena','2025-01-01')));
+console.log('Todos: año actual, Total, cruces, repeticiones y fechas discontinuas OK');

@@ -470,3 +470,8 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 - Las ruedas resaltan únicamente los dos elementos afectados. La campana recentra los minutos al terminar el gesto, para no interrumpirlo.
 - El día de cumpleaños tiene tres ciclos y arranca en el central. Los horarios de rutinas usan cuartos de hora, conservando los minutos antiguos que no coincidan con ellos al editar.
 - Fiscal enlaza los campos antes de mostrar la ventana, evitando perder cambios durante la animación de apertura.
+
+## Cabecera anual de Eventos (v465)
+- Todos y Estadísticas sitúan el año y Total en la cabecera, sustituyendo sus títulos. Usan la geometría de Agenda y las flechas neutras compartidas.
+- Ambas consultas arrancan en el año actual. Total oculta el año y las flechas, muestra Todo el Histórico y conserva el año para recuperarlo al desactivarlo.
+- Todos filtra por ocurrencias del año, incluyendo repeticiones, cruces de año y fechas discontinuas. Buscar, categorías y Excluir Pasados siguen combinándose con ese período.

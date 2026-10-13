@@ -5,6 +5,8 @@
 var EV_STORAGE_KEY = 'excelia-events-v1';
 var EV_YEAR = new Date().getFullYear();
 var EV_MONTH = new Date().getMonth();
+var EV_LIST_YEAR = new Date().getFullYear(); // Año de Todos, o 'all'.
+var EV_LIST_LAST_YEAR = new Date().getFullYear(); // Vuelta desde Total.
 /* Estado por vista — cada calendario guarda su propio año/mes para que sean
    independientes (1-mes recuerda dónde estabas aunque hayas movido Agenda Semanal,
    y viceversa). EV_YEAR/EV_MONTH son siempre los de la vista activa actualmente. */

@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v464 — Alarmas desde calendario y selectores más ágiles';
+var APP_VERSION = 'v465 — Selectores anuales en Todos y Estadísticas';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

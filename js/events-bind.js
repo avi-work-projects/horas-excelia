@@ -66,6 +66,23 @@ function refreshEvents(keepScroll){
    la cabecera se mira _bindEvNav, si falla un dia del calendario _bindEvCal, si
    falla una tarjeta _bindEvListas. Los cuatro trozos son independientes: ninguna
    variable cruza de uno a otro. */
+function bindEvYearHeader(){
+  var stats=EV_VIEW==='stats';
+  if(!stats&&EV_VIEW!=='months')return;
+  var scope=stats?'stats':'list',total=document.getElementById(stats?'evStatsTotal':'evListTotal');
+  function setYear(year,last){
+    if(stats){EV_STATS_YEAR=year;EV_STATS_LAST_YEAR=last;}
+    else{EV_LIST_YEAR=year;EV_LIST_LAST_YEAR=last;}
+    refreshEvents(false);
+  }
+  document.querySelectorAll('[data-'+scope+'-year]').forEach(function(button){button.onclick=function(){
+    var current=stats?EV_STATS_YEAR:EV_LIST_YEAR;if(current==='all')return;
+    var year=Math.max(1900,Math.min(2200,+current + +button.getAttribute('data-'+scope+'-year')));
+    setYear(year,year);
+  };});
+  total.onclick=function(){var year=stats?EV_STATS_YEAR:EV_LIST_YEAR,last=stats?EV_STATS_LAST_YEAR:EV_LIST_LAST_YEAR;setYear(year==='all'?last:'all',year==='all'?last:year);};
+}
+
 function bindEvEvents(){
   _bindEvNav();
   _bindEvCal();
@@ -212,6 +229,7 @@ function _bindEvNav(){
   var _subBd=document.getElementById('evUpBirthdays');
   if(_subBd)_subBd.addEventListener('click',function(){_switchEvView(EV_VIEW==='birthdays'?'upcoming':'birthdays');refreshEvents(false);});
   var stats=document.getElementById('evSubStats');if(stats)stats.onclick=function(){_switchEvView('stats');refreshEvents(false);};
+  bindEvYearHeader();
   if(EV_VIEW==='stats')bindEventStatistics();
   if(EV_VIEW==='birthdays'){
     bindBdayUpcoming(document.getElementById('eventsContent'));
