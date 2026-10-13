@@ -82,7 +82,7 @@
 .alarm-colon{font-family:var(--mono);font-size:1.6rem;font-weight:700;color:var(--accent-bright);user-select:none;line-height:1}
 /* ── Drum picker (selector giratorio de hora/minuto) ── */
 .drum-wrap{position:relative;height:132px;width:76px;overflow:hidden;border-radius:10px;background:var(--surface2);border:1px solid var(--border)}
-.drum-picker{height:100%;overflow-y:scroll;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none}
+.drum-picker{height:100%;overflow-y:scroll;scroll-snap-type:y mandatory;overscroll-behavior-y:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none}
 .drum-picker::-webkit-scrollbar{display:none}
 .drum-picker-item{height:44px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:1.8rem;font-weight:700;color:var(--text-dim);scroll-snap-align:center;-webkit-user-select:none;user-select:none;transition:color .08s}
 .drum-picker-item.drum-selected{color:var(--text)}
