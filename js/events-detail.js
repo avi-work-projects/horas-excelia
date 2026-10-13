@@ -85,14 +85,16 @@ function renderEvDetail(ev,fromSummary,car,occurrenceDs){
   if(car){
     var _wn=['Dom','Lun','Mar','Mi\u00e9','Jue','Vie','S\u00e1b'];
     var _cd=new Date(car.ds+'T00:00:00');
-    h+='<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">'
+    h+='<div class="ev-detail-day-title">'
       +_wn[_cd.getDay()]+' '+car.ds.slice(8)+'/'+car.ds.slice(5,7)+'</div>';
-    h+='<div class="ev-car-count">'+(car.i+1)+' / '+car.n+'</div>';
+
   } else {
-    h+='<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">Evento</div>';
-    h+='<div style="width:36px"></div>';
+    h+='<div class="ev-detail-day-title">Evento</div>';
   }
-  if(evDetailAlarmDate(ev,(car&&car.ds)||occurrenceDs))h+='<button class="sy-back" id="evDAlarm" aria-label="Configurar Alarma" title="Configurar Alarma">&#128276;</button>';
+  h+='<div class="ev-detail-tools">';
+  if(car)h+='<div class="ev-car-count">'+(car.i+1)+' / '+car.n+'</div>';
+  if(evDetailAlarmDate(ev,(car&&car.ds)||occurrenceDs))h+='<button class="ev-detail-alarm" id="evDAlarm" aria-label="Configurar Alarma" title="Configurar Alarma"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 16v-5a7 7 0 0 1 14 0v5l2 3H3l2-3Z M10 22h4 M12 2V1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>';
+  h+='</div>';
   h+='</div>';
   if(car&&car.n>1){
     h+='<div class="ev-car-nav">';
@@ -260,10 +262,7 @@ function openEvDetail(ev,container,car,occurrenceDs){
     if(_p)_p.addEventListener('click',function(){evCarGo(-1);});
     var _n=document.getElementById('evCarNext');
     if(_n)_n.addEventListener('click',function(){evCarGo(1);});
-    if(typeof addSwipe==='function'){
-      var _sheet=document.querySelector('#evDetailOv .ev-detail-sheet');
-      addSwipe(_sheet,function(){evCarGo(1);},function(){evCarGo(-1);});
-    }
+    if(car.n>1)bindEvCarouselDrag(wrap.querySelector('.ev-detail-sheet'),car,fromSummary);
   }
   /* Acciones propias de una sesion de rutina */
   var _rs=document.getElementById('evDRutSes');

@@ -98,16 +98,16 @@ const g=cargarApp({});g.EVENTS=[
  {id:'repeat',kind:'puntual',type:'Pago',title:'Pago semanal',start:'2026-08-14',repeat:{type:'weekly',weekDays:[5]}}
 ];
 g.tasksCreate('Tarea manual');let rows=g.tasksItems(g.tasksData(),'pending');
-assert.deepEqual(Array.from(rows,t=>t.title),['Factura pendiente','Pago semanal','Tarea manual']);
-assert.equal(rows[0].color,'green');assert.equal(g.tasksData().items.length,3);
-g.tasksChange(rows[0].id,'complete');assert(g.evManagementDone(g.EVENTS[0],'2026-08-20'));
+assert.deepEqual(Array.from(rows,t=>t.title),['Pago semanal','Pago semanal','Factura pendiente','Pago semanal','Tarea manual']);
+assert.equal(rows[0].color,'green');assert.equal(g.tasksData().items.length,5);
+g.tasksChange(rows.find(t=>t.title==='Factura pendiente').id,'complete');assert(g.evManagementDone(g.EVENTS[0],'2026-08-20'));
 g.tasksSetEventDone(g.EVENTS[0],'2026-08-20',false);assert(!g.evManagementDone(g.EVENTS[0],'2026-08-20'));
 g.tasksSetEventDone(g.EVENTS[1],'2026-08-21',true);assert(g.evManagementDone(g.EVENTS[1],'2026-08-21'));
 assert(!g.tasksItems(g.tasksData(),'pending').some(t=>t.title==='Llamada de hoy'));
 g.tasksSetEventDone(g.EVENTS[1],'2026-08-21',false);assert(!g.tasksItems(g.tasksData(),'pending').some(t=>t.title==='Llamada de hoy'));
 let gn=g.Date.now();g.Date.now=()=>gn+86400000;
 assert(g.tasksItems(g.tasksData(),'pending').some(t=>t.title==='Llamada de hoy'));
-assert.equal(g.tasksData().items.filter(t=>t.title==='Pago semanal').length,2,'Cada ocurrencia tiene su propio check');
+assert.equal(g.tasksData().items.filter(t=>t.title==='Pago semanal').length,3,'Cada ocurrencia tiene su propio check');
 const bill=g.tasksData().items.find(t=>t.title==='Factura pendiente');g.tasksChange(bill.id,'color','lavender');g.tasksChange(bill.id,'complete','today');
 const transferred=JSON.parse(JSON.stringify(g.tasksData()));g.tasksValidate(transferred);
 const restored=cargarApp({});restored.EVENTS=JSON.parse(JSON.stringify(g.EVENTS));restored.EVENTS[0].id='another-device';restored.tasksSave(transferred);
@@ -119,3 +119,12 @@ const beforeCheck=g.localStorage.getItem(g.TASKS_KEY),originalPut=g.localStorage
 assert.throws(()=>g.tasksSetEventDone(g.EVENTS[1],'2026-08-21',true));g.localStorage.setItem=originalPut;assert.equal(g.localStorage.getItem(g.TASKS_KEY),beforeCheck);
 ['Peluquería','Médico','Dentista'].forEach(type=>assert(!g.evManagementCheckable({kind:'puntual',type})));
 console.log('Gestiones vencidas, checks por fecha, enlace entre vistas, colores, backup y fallo de disco OK');
+
+const monthly=cargarApp({});monthly.EVENTS=['Enviar factura','Pago','Pago Hacienda','Presentar Modelo'].map((type,i)=>({id:'month-'+i,kind:'puntual',type,title:type,start:'2026-09-28'}));
+assert.equal(monthly.tasksItems(monthly.tasksData(),'pending').length,0);
+monthly.Date.now=()=>new Date('2026-09-01T12:00:00').getTime();
+let monthRows=monthly.tasksItems(monthly.tasksData(),'pending');assert.equal(monthRows.length,4);assert(monthRows.every(t=>t.color==='green'));
+monthly.tasksSetEventDone(monthly.EVENTS[0],'2026-09-28',true);assert.equal(monthly.tasksItems(monthly.tasksData(),'pending').length,3);
+monthly.tasksSetEventDone(monthly.EVENTS[0],'2026-09-28',false);assert.equal(monthly.tasksItems(monthly.tasksData(),'pending').length,4);
+assert.equal(monthly.tasksData().items.length,4);monthly.EVENTS[0].start='2026-10-28';assert.equal(monthly.tasksItems(monthly.tasksData(),'pending').length,3);
+console.log('Gestiones del mes: entrada anticipada, check compartido, cambios y ausencia de duplicados OK');

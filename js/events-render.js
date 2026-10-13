@@ -518,9 +518,8 @@ function renderEvContent(){
   var _hdrCenterCls=' sy-header-center'+(['week','months','stats'].indexOf(EV_VIEW)>=0?' ev-period-header':'');
   h+='<div class="sy-header with-tabs'+_hdrCenterCls+'">';
   h+='<button class="sy-back" id="evBack">&#8592;</button>';
-  if(EV_VIEW==='birthdays')h+=renderBdayAddButton('evBdayAdd');
   if(EV_VIEW==='upcoming'||EV_VIEW==='birthdays'){
-    h+='<div class="sy-year-nav"><div class="sy-year">'+(EV_VIEW==='birthdays'?'Cumpleaños':'Próximos Eventos')+'</div></div>';
+    h+='<div class="sy-year-nav"><div class="sy-year">'+(EV_VIEW==='birthdays'?'Próximos Cumpleaños':'Próximos Eventos')+'</div></div>';
   } else if(EV_VIEW==='week'){
     h+='<div class="sy-year-nav"><button class="sy-nav" id="evPrev">&#9664;</button>';
     h+='<div class="sy-year sy-year-2line">'+MN[EV_MONTH]+'<span class="sy-year-sub">'+EV_YEAR+'</span></div>';
@@ -611,7 +610,7 @@ function renderEvContent(){
     if(EV_VIEW!=='week')h+='<div class="ev-upcoming-content">';
     if(EV_VIEW==='upcoming'||EV_VIEW==='birthdays'){
       h+='<div class="excl-row ev-up-filters">';
-      if(EV_VIEW==='birthdays')h+=renderBdayVipFilter();
+      if(EV_VIEW==='birthdays')h+=renderBdayVipFilter()+renderBdayAddButton('evBdayAdd');
       else{h+='<label class="excl-item"><input type="checkbox" id="evUpShowRut"'+(EV_UP_SHOW_RUT?' checked':'')+'> Ver Rutinas</label>';
       h+='<label class="excl-item"><input type="checkbox" id="evUpShowBoda"'+(EV_UP_SHOW_BODA?' checked':'')+'> Ver Ensayos <span class="wm-logo wm-logo-check" role="img" aria-label="Wedding Moves"></span></label>';
       }

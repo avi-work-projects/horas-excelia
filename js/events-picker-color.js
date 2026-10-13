@@ -217,7 +217,8 @@ function evShapeSvg(shape){
   } else if(shape==='petal'){
     inner='<path d="M0,-8 C4,-8 4,-4 3,-2 C10,-6 12,2 5,3 C11,9 3,12 0,6 C-3,12 -11,9 -5,3 C-12,2 -10,-6 -3,-2 C-4,-4 -4,-8 0,-8 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/>';
   } else if(shape==='leaf'){
-    inner='<path d="M-7,7 C-10,-4 -2,-8 8,-8 C8,3 4,10 -7,7 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/><path d="M-6,6 L3,-3" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>';
+    // Conserva leaf para actualizar también los eventos y copias existentes.
+    inner='<path d="M2,-2 L7,-9" fill="none" stroke="#000" '+evSymbolStroke(3)+' stroke-linecap="round"/><path d="M-2,-3 L4,1 L1,9 Q-5,8 -9,3 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/><path d="M-2,0 L-6,5 M1,2 L-2,7" fill="none" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/><path d="M-7,-8 V-4 M-9,-6 H-5" stroke="#000" stroke-width="1.2" stroke-linecap="round"/>';
   } else { /* rounded */
     inner='<rect x="-9" y="-6" width="18" height="12" rx="4" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+'/>';
   }

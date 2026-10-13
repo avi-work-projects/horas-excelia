@@ -4,7 +4,7 @@
    → Cambiar CACHE_VER en cada deploy para forzar actualización
    ============================================================ */
 
-var CACHE_VER = 'v465';
+var CACHE_VER = 'v466';
 var CACHE_NAME = 'horas-excelia-' + CACHE_VER;
 
 /* Generado desde app-assets.json: npm run assets */
@@ -98,6 +98,7 @@ var ASSETS = [
   "./js/events-plan-picker.js",
   "./js/events-form-save.js",
   "./js/events-detail.js",
+  "./js/events-carousel.js",
   "./js/events-bind.js",
   "./js/alarms.js",
   "./js/settings-menu.js",

@@ -1990,6 +1990,17 @@ button.bday-group-tag{cursor:pointer;min-height:44px;text-align:left}
 
 body:has(#evDetailOv.open) .tasks-fab{visibility:hidden}
 
+.ev-detail-modern .ev-detail-toolbar{display:grid;grid-template-columns:76px minmax(0,1fr) 76px;gap:4px;min-height:36px}
+.ev-detail-day-title{text-align:center;font-size:.9rem;font-weight:600;line-height:1.2}
+.ev-detail-tools{display:flex;align-items:center;justify-content:flex-end;gap:5px}
+.ev-detail-tools .ev-car-count{min-width:0;font-size:.62rem;white-space:nowrap}
+.ev-detail-alarm{display:flex;align-items:center;justify-content:center;flex:none;width:34px;height:34px;padding:6px;border-radius:9px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer}
+.ev-detail-alarm svg{width:21px;height:21px}
+.ev-car-sheet{touch-action:pan-y}
+#evDetailOv{overflow:hidden}
+#evDetailOv .ev-car-preview{position:absolute;bottom:0;margin:0;pointer-events:none}
+.ev-car-dragging{user-select:none;will-change:transform}
+
 /* Fuente: css/source/dialogs-responsive.css */
 /* ── LOGO POPUP ── */
 .logo-popup{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
@@ -3711,6 +3722,11 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 .ev-period-history{font-size:.75rem;line-height:1.15}
 .ev-period-total{font-size:.65rem;padding:4px 10px}
 .ev-period-total[aria-pressed="true"]{background:var(--upcoming-text);border-color:var(--upcoming-text);color:#fff}
+
+#eventsOverlay .ev-up-filters .bday-header-vip input[type="checkbox"]{--chk:var(--upcoming-tone);color:var(--upcoming-tone)}
+.ev-up-filters #evBdayAdd{position:static;left:auto;transform:none;width:auto;justify-self:start;margin:0;background:var(--upcoming-text);border-color:var(--upcoming-text);color:#fff;font-size:.7rem;min-height:32px;padding:6px 9px}
+#eventsContent:has(#evBdayAdd)>.sy-header .sy-year-nav{max-width:calc(100% - 104px)}
+#eventsContent:has(#evBdayAdd)>.sy-header .sy-year{font-size:1rem;line-height:1.15}
 
 /* Fuente: css/source/energy-refinements.css */
 /* Facturas: mismos componentes que los contratos, cifras sin desbordar. */
