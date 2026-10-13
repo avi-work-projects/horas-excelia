@@ -475,3 +475,9 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 - Todos y Estadísticas sitúan el año y Total en la cabecera, sustituyendo sus títulos. Usan la geometría de Agenda y las flechas neutras compartidas.
 - Ambas consultas arrancan en el año actual. Total oculta el año y las flechas, muestra Todo el Histórico y conserva el año para recuperarlo al desactivarlo.
 - Todos filtra por ocurrencias del año, incluyendo repeticiones, cruces de año y fechas discontinuas. Buscar, categorías y Excluir Pasados siguen combinándose con ese período.
+## Gestiones del mes y carrusel (v466)
+- Enviar Factura, Pago, Pago Hacienda y Presentar Modelo entran en las tareas verdes desde el inicio de su mes. Las ocurrencias conservan su identidad y estado de finalización.
+- El símbolo de limpieza sustituye a la hoja conservando la clave `leaf`, compatible con eventos y copias anteriores.
+- Próximos Cumpleaños muestra VIP con el acento de Próximos y Añadir a su derecha.
+- El carrusel acompaña el arrastre con vistas previas inertes, mantiene el tamaño y respeta el desplazamiento vertical. La fecha queda centrada y la alarma usa un icono vectorial.
+- La captura táctil ignora la pérdida de captura de los hijos y evita la navegación lateral del navegador durante el arrastre.

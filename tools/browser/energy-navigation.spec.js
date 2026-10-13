@@ -52,14 +52,14 @@ test('Próximos mantiene la posición de los cuatro títulos al cambiar de pesta
     const positions=[];
     for(const id of ['evSubUpcoming','evUpBirthdays','evSubAgenda','evSubTodos','evSubStats','evSubUpcoming']){
       await page.locator('#'+id).click();
-      const title={evSubUpcoming:'Próximos Eventos',evUpBirthdays:'Cumpleaños',evSubTodos:String(await page.evaluate(()=>EV_LIST_YEAR)),evSubStats:String(await page.evaluate(()=>EV_STATS_YEAR))}[id];
+      const title={evSubUpcoming:'Próximos Eventos',evUpBirthdays:'Próximos Cumpleaños',evSubTodos:String(await page.evaluate(()=>EV_LIST_YEAR)),evSubStats:String(await page.evaluate(()=>EV_STATS_YEAR))}[id];
       if(title)await expect(page.locator('#eventsContent>.sy-header .sy-year')).toHaveText(title);
       if(id==='evUpBirthdays'){
         const layout=await page.locator('#eventsContent>.sy-header').evaluate(e=>{
-          const back=e.querySelector('.sy-back').getBoundingClientRect(),add=e.querySelector('.bday-header-add').getBoundingClientRect(),title=e.querySelector('.sy-year').getBoundingClientRect();
-          return {backWidth:back.width,backHeight:back.height,gap:title.left-add.right};
+          const back=e.querySelector('.sy-back').getBoundingClientRect(),add=document.querySelector('#evBdayAdd').getBoundingClientRect(),title=e.querySelector('.sy-year').getBoundingClientRect();
+          return {backWidth:back.width,backHeight:back.height,gap:Math.abs(title.left+title.width/2-window.innerWidth/2)};
         });
-        expect(layout.backWidth).toBe(36);expect(layout.backHeight).toBe(36);expect(layout.gap).toBeGreaterThan(2);
+        expect(layout.backWidth).toBe(36);expect(layout.backHeight).toBe(36);expect(layout.gap).toBeLessThan(1);
       }
       // Medir también las letras y con el listado desplazado, no solo las cajas vacías.
       await page.locator('#eventsContent .sy-body').evaluate(el=>el.scrollTop=240);

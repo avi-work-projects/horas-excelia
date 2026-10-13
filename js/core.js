@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v465 — Selectores anuales en Todos y Estadísticas';
+var APP_VERSION = 'v466 — Gestiones del mes y carrusel con arrastre';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
