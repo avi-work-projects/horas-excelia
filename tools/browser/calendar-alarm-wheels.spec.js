@@ -15,6 +15,7 @@ test('botones principales con el peso de Próximos en las cuatro ventanas',async
    for(const button of await buttons.all()){await expect(button).toHaveCSS('font-weight','600');expect(await button.evaluate(el=>el.scrollWidth<=el.clientWidth+1)).toBe(true);}
    await page.screenshot({path:info.outputPath(open+'-'+width+'.png'),animations:'disabled'});
    await page.evaluate(name=>window[name](),close);
+   await expect.poll(()=>buttons.first().evaluate(el=>el.closest('.full-overlay').style.display)).toBe('none');
   }
  }
 });
