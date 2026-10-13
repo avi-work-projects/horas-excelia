@@ -52,3 +52,14 @@ test('partidas: cambios reales, plegado independiente por año y memoria al reca
  await amount.fill('45');await save.click();await page.reload();await page.evaluate(()=>{FISCAL_TAB='personal';openFiscal(2026);});
  await expect(amount).toHaveValue('45');await expect(save).toBeHidden();await expect(details).toBeHidden();
 });
+
+test('Fiscal escucha los cambios desde el primer instante de apertura',async({page})=>{
+ const result=await page.evaluate(()=>{
+  PERSONAL_DATA={gastosSemanales:[],gastosRecurrentes:[{id:'transport',label:'Transporte',period:'monthly',amount:35}],inversiones:[],ingresos:[]};
+  savePersonalYear(2026);FISCAL_TAB='personal';openFiscal(2026);
+  const input=document.querySelector('#fiscalContent [data-ps="gastosRecurrentes"][data-pf="amount"]');
+  input.value='45';input.dispatchEvent(new Event('input',{bubbles:true}));
+  return PERSONAL_DATA.gastosRecurrentes[0].amount;
+ });
+ expect(result).toBe(45);await expect(page.locator('#fiscalSave')).toBeVisible();
+});

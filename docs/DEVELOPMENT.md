@@ -466,6 +466,7 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 
 ## Botones, alarmas y rotores (v464)
 - Las pestañas principales de Eventos, Economía y Fiscal y los botones de Estudios comparten peso 600, como Próximos.
-- La ficha ofrece Configurar Alarma para ocurrencias entre hoy y dentro de 14 días, incluidos ambos extremos. Calendarios y agenda conservan la fecha pulsada; sin fecha se busca la próxima ocurrencia.
+- La campana de la cabecera de la ficha ofrece Configurar Alarma para ocurrencias entre hoy y dentro de 14 días, incluidos ambos extremos. Calendarios y agenda conservan la fecha pulsada; sin fecha se busca la próxima ocurrencia.
 - Las ruedas resaltan únicamente los dos elementos afectados. La campana recentra los minutos al terminar el gesto, para no interrumpirlo.
 - El día de cumpleaños tiene tres ciclos y arranca en el central. Los horarios de rutinas usan cuartos de hora, conservando los minutos antiguos que no coincidan con ellos al editar.
+- Fiscal enlaza los campos antes de mostrar la ventana, evitando perder cambios durante la animación de apertura.

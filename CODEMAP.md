@@ -92,8 +92,8 @@
 
 **Funciones:** renderEconEstudio:6 · _defaultVinc:29 · _defaultHipAlt:30 · _renderEstudioHipotecaComp:36 (!95) · bindEconEstudioEvents:131 · _estudioReRender:144 · _bindEstudioHipoteca:149 · _readEstHipAltAt:199 · _readEstHipVincAt:210 · _calcGasCost:232 · _currentGasTariff:233 · _renderEstudioGasComp:241 · _renderGasCompCard:288 · _calcElectCost:323 · _currentElectTariff:324 · _renderEstudioElectComp:329 · _renderMultiScenarioResult:332 · _bindEstudioGas:400 · _bindEstudioElect:431 · _bindScenarios:433 · _readScenarios:452 · _bindCompFields:461 · _saveCompFields:496 · renderEstudioContent:512 · openEstudio:526 · closeEstudio:536 · reRenderEstudio:541 · bindEstudioEvents:549
 
-### js/economics-fiscal-bind.js  _(575 líneas)_
-**Funciones:** openFiscal:9 · closeFiscal:26 · reRenderFiscal:32 · bindFiscalEvents:43 · _switchTab:47 · _bindYearSelector:81 · _bindTabPersonal:119 · updateField:167 · _bindTabIrpf:182 · _bindTabGastosDesg:227 (!91) · _rebindComprasDel:276 · _bindTabIrpfDeduc:318 · _bindTabDesgrav:331 (!96) · _bindList:333 · _bindTabDespachoOnly:427 (!83) · _syncLiveD:438 · _updateFmt:476 · _saveFiscalAll:510 · _rv:539
+### js/economics-fiscal-bind.js  _(576 líneas)_
+**Funciones:** openFiscal:9 · closeFiscal:27 · reRenderFiscal:33 · bindFiscalEvents:44 · _switchTab:48 · _bindYearSelector:82 · _bindTabPersonal:120 · updateField:168 · _bindTabIrpf:183 · _bindTabGastosDesg:228 (!91) · _rebindComprasDel:277 · _bindTabIrpfDeduc:319 · _bindTabDesgrav:332 (!96) · _bindList:334 · _bindTabDespachoOnly:428 (!83) · _syncLiveD:439 · _updateFmt:477 · _saveFiscalAll:511 · _rv:540
 
 ### js/economics-fiscal-datos.js  _(346 líneas)_
 **Estado global:** FISCAL_SK:10 · DEFAULT_BRACKETS:16 · FISCAL:23 · FISCAL_TAB:26 · FISCAL_IRPF_SUB:27 · FISCAL_YEAR:28 · HOUSEHOLD_TAB_KEY:30 · FISCAL_ENTRY:31 · FISCAL_HIP_SUB:33 · FISCAL_HIP_EDITING:35 · FISCAL_HIP_EDIT_SNAPSHOT:36 · FISCAL_HIP_DETAIL_TARGET:37 · PERSONAL_SK:43 · PERSONAL_DATA:44 · PERSONAL_SAVED:45 · DEFAULT_PERSONAL_GASTOS_REC:48 · DEFAULT_PERSONAL_INVERSIONES:54 · INGRESOS_SK:101 · INGRESOS_ITEMS:102 · GASTOS_SK:119 · GASTOS_DIFICIL_PCT:120 · DEFAULT_GASTOS:121 · GASTOS_ITEMS:139 · COMPRAS_SK:201 · COMPRAS_IVA_ENABLED:202 · DEFAULT_COMPRAS:203 · COMPRAS_ITEMS:209 · DESGRAV_SK:256 · DESGRAV_DEFAULT:258 · DESGRAV_ITEMS:278 · OBSOLETE_IDS:281
@@ -218,7 +218,7 @@
 **Funciones:** evIcsAuthor:8 · evIcsDescription:9 · evIcsText:14 · evIcsFold:17 · evIcsNextDay:26 · evIcsCandidates:27 · evIcsFile:47 · evIcsRecords:74 · evIcsMergeRecords:77 · evIcsRoutineRows:83 · evIcsRoutineCurrent:93 · evIcsRememberedRows:97 · evIcsPrepare:114 · evIcsExportRows:131 · evIcsExportStatus:134 · evIcsFilterRows:140 · renderEvCalendarExport:145 · openEvCalendarExport:160 · close:163 · find:166 · count:167 · filters:176 · list:182 · dates:198
 
 ### js/events-detail.js  _(644 líneas)_
-**Funciones:** openEvDeleteSheet:7 · closeEvDeleteSheet:37 · evDetailTitleColor:40 · evDetailAlarmDate:49 · renderEvDetail:63 (!130) · fd2:67 · _fila:155 · evDayCarItems:193 · evCarGo:206 · _evCarShow:214 · openEvDayCarousel:222 · closeEvDayCarousel:230 · openEvDetail:237 (!165) · repaintRoutine:273 · repintar:286 · closeEvDetail:402 · renderEvAlarmPanel:405 (!95) · fd2:407 · openEvAlarm:500 · closeEvAlarm:506 · openBdayAlarmFromEvents:514 · bindEvAlarmEvents:519 (!125) · _syncPre:557 · fmtD:587
+**Funciones:** openEvDeleteSheet:7 · closeEvDeleteSheet:37 · evDetailTitleColor:40 · evDetailAlarmDate:49 · renderEvDetail:63 (!130) · fd2:67 · _fila:156 · evDayCarItems:193 · evCarGo:206 · _evCarShow:214 · openEvDayCarousel:222 · closeEvDayCarousel:230 · openEvDetail:237 (!165) · repaintRoutine:273 · repintar:286 · closeEvDetail:402 · renderEvAlarmPanel:405 (!95) · fd2:407 · openEvAlarm:500 · closeEvAlarm:506 · openBdayAlarmFromEvents:514 · bindEvAlarmEvents:519 (!125) · _syncPre:557 · fmtD:587
 
 ### js/events-form-controls.js  _(106 líneas)_
 **Funciones:** _evFormEl:2 · _evFormAll:3 · _evFormKind:4 · _evFormColor:5 · _evFormSuggestTitle:6 · _evFormTypeUI:10 · _bindEvFormTypes:24 · _bindEvFormCategories:38 · _evFormShapePreviews:53 · _bindEvFormAppearance:56 · _evFormDatesLabel:74 · _bindEvFormDates:82 · _evFormTravelUI:93 · _bindEvFormDetails:99
@@ -595,7 +595,7 @@
 **Rangos por prefijo de clase:**
 .bd-alarm:26-78 · .bd-detail:107-114 · .bday-hdr:6-6 · .bday-upcoming:24-24 · .bday-vip:23-23 · .ev-alarm:49-55 · .ev-hdr:7-7 · .ev-upcoming:29-32 · .home-popup:81-89 · .macro-section:91-92 · .macro-url:93-95 · .nav-bar:3-105 · .overlay-nav:2-4 · .sy-puente:14-21 · .sy-tab:9-12
 
-### css/source/event-panels.css  _(295 líneas)_
+### css/source/event-panels.css  _(294 líneas)_
 
 **Secciones:**
 
@@ -625,10 +625,10 @@
 - Event detail:216
 - El color del título depende de la familia; el símbolo conserva su identidad.:224
 - Fichas de consulta: jerarquía común, datos legibles y controles discretos.:232
-- Consulta compacta: fecha y estado comparten fila; el carrusel no cambia de alto.:271
+- Consulta compacta: fecha y estado comparten fila; el carrusel no cambia de alto.:270
 
 **Rangos por prefijo de clase:**
-.data-btn:2-2 · .ev-ann:74-76 · .ev-annual:115-137 · .ev-badge:165-165 · .ev-badges:40-40 · .ev-bar:110-110 · .ev-bars:33-33 · .ev-bright:139-152 · .ev-btn:203-212 · .ev-car:55-67 · .ev-cell:123-161 · .ev-char:192-192 · .ev-checkbox:197-197 · .ev-chip:91-91 · .ev-colors:193-193 · .ev-date:194-194 · .ev-day:43-101 · .ev-detail:217-292 · .ev-edit:206-207 · .ev-field:186-187 · .ev-form:181-262 · .ev-hdr:3-5 · .ev-input:188-189 · .ev-io:214-215 · .ev-list:14-179 · .ev-main:6-6 · .ev-management:252-254 · .ev-month:22-89 · .ev-multi:37-131 · .ev-num:163-163 · .ev-otros:53-106 · .ev-part:140-140 · .ev-puente:119-119 · .ev-quad:156-157 · .ev-repeat:198-198 · .ev-rut:97-100 · .ev-stepped:112-114 · .ev-textarea:190-191 · .ev-toggle:195-196 · .ev-types:17-19 · .ev-view:4-8 · .ev-wd:200-201 · .ev-week:28-117 · .ev-weekday:199-199 · .rut-marker:93-96 · .sy-nav:153-154
+.data-btn:2-2 · .ev-ann:74-76 · .ev-annual:115-137 · .ev-badge:165-165 · .ev-badges:40-40 · .ev-bar:110-110 · .ev-bars:33-33 · .ev-bright:139-152 · .ev-btn:203-212 · .ev-car:55-67 · .ev-cell:123-161 · .ev-char:192-192 · .ev-checkbox:197-197 · .ev-chip:91-91 · .ev-colors:193-193 · .ev-date:194-194 · .ev-day:43-101 · .ev-detail:217-291 · .ev-edit:206-207 · .ev-field:186-187 · .ev-form:181-261 · .ev-hdr:3-5 · .ev-input:188-189 · .ev-io:214-215 · .ev-list:14-179 · .ev-main:6-6 · .ev-management:252-254 · .ev-month:22-89 · .ev-multi:37-131 · .ev-num:163-163 · .ev-otros:53-106 · .ev-part:140-140 · .ev-puente:119-119 · .ev-quad:156-157 · .ev-repeat:198-198 · .ev-rut:97-100 · .ev-stepped:112-114 · .ev-textarea:190-191 · .ev-toggle:195-196 · .ev-types:17-19 · .ev-view:4-8 · .ev-wd:200-201 · .ev-week:28-117 · .ev-weekday:199-199 · .rut-marker:93-96 · .sy-nav:153-154
 
 ### css/source/dialogs-responsive.css  _(146 líneas)_
 

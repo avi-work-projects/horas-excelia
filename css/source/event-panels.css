@@ -256,7 +256,6 @@
 .ev-detail-modern .ev-bfila{padding:13px 14px;min-height:47px}
 .ev-detail-modern .ev-bfila-val{white-space:normal;text-align:right}
 .ev-detail-modern .ev-detail-actions{flex-wrap:wrap;gap:8px;padding-top:18px}
-.ev-detail-modern #evDAlarm{flex-basis:100%}
 .ev-detail-modern .ev-detail-actions .ev-btn{min-height:42px;border-radius:12px}
 
 .ev-form-sheet .ev-field>label{font-weight:600;color:var(--text)}
