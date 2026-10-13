@@ -117,12 +117,6 @@
 /* Próximos comparte identidad celeste en sus cuatro subpestañas. */
 #eventsContent:has(.ev-upcoming-body){--accent:var(--upcoming-tone);--accent-bright:var(--upcoming-text);--accent-glow:color-mix(in srgb,var(--upcoming-tone) 13%,var(--surface))}
 .ev-stat-cards strong{color:var(--upcoming-text)}
-.ev-stat-year-nav{--energy-resumen:var(--upcoming-text);position:relative;min-height:44px;justify-content:center;padding-right:76px}
-.ev-stat-year-nav .energy-total-button{position:absolute;right:8px}
-.ev-stat-year-nav .nav-btn{width:34px;height:34px;flex:0 0 34px;color:var(--upcoming-text);border-color:var(--upcoming-tone)}
-.ev-stat-year-nav .energy-year-selector{gap:22px}
-.ev-stat-year-nav .energy-year-selector strong{font-size:1.15rem}
-.ev-stat-year-nav .energy-year-selector[hidden]{display:none}
 .ev-stat-period button.active{border-color:var(--upcoming-tone);background:color-mix(in srgb,var(--upcoming-tone) 10%,var(--surface));color:var(--upcoming-text);box-shadow:inset 0 0 0 1px var(--upcoming-tone)}
 .ev-list-order{flex:0 0 auto;border-left:1px solid var(--border);padding-left:7px;display:flex;flex-direction:column;gap:3px}
 .ev-list-order-label{text-align:center;font-size:.61rem;color:var(--text-muted);line-height:1.2}
@@ -165,5 +159,10 @@
 .ev-up-filters .bday-up-vip{--chk:var(--upcoming-text)}
 
 /* Año de Estadísticas centrado sin desplazar las pestañas ni cambiar las flechas. */
-.ev-stat-year-nav{padding:0}
-.ev-stat-year-nav .energy-year-selector{position:absolute;left:calc(50vw - 16px);transform:translateX(-50%);gap:12px}
+
+/* Agenda y consultas anuales: cabecera estable y flechas neutras compartidas. */
+.ev-period-header .sy-year{width:91px;min-width:91px;flex:0 0 91px}
+.ev-period-header .ev-period-label{display:flex;align-items:center;justify-content:center;min-height:32px}
+.ev-period-history{font-size:.75rem;line-height:1.15}
+.ev-period-total{font-size:.65rem;padding:4px 10px}
+.ev-period-total[aria-pressed="true"]{background:var(--upcoming-text);border-color:var(--upcoming-text);color:#fff}
