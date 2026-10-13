@@ -132,8 +132,8 @@
   var DRUM_ITEM_H=44,DRUM_CYCLES=3,_drumWrapTimer=null;
   function buildDrumPicker(id,count,initVal){
     var drum=document.getElementById(id);if(!drum)return;
-    drum._count=count;
-    drum.innerHTML='';
+    drum._count=count;drum._drumReady=false;
+    drum.innerHTML='';drum._pickerItems=null;drum._pickerSelected=null;
     var padT=document.createElement('div');padT.style.height=DRUM_ITEM_H+'px';drum.appendChild(padT);
     for(var c=0;c<DRUM_CYCLES;c++){
       for(var _i=0;_i<count;_i++){
@@ -147,22 +147,23 @@
     setTimeout(function(){
       if(drum.scrollTo)drum.scrollTo({top:_target,behavior:'instant'});
       else drum.scrollTop=_target;
+      drum._drumReady=true;
       setTimeout(function(){updateDrumSelected(drum);},10);
     },50);
     if(!drum._drumEv){
       drum._drumEv=true;
+      if(id==='drumMin'&&'onscrollend' in drum)drum.addEventListener('scrollend',checkDrumMinuteWrap);
       drum.addEventListener('scroll',function(){
         updateDrumSelected(drum);
         // Al rotar minutos: detectar wrap de ciclo y avanzar/retroceder hora
-        if(id==='drumMin'){clearTimeout(_drumWrapTimer);_drumWrapTimer=setTimeout(checkDrumMinuteWrap,200);}
+        if(id==='drumMin'&&!('onscrollend' in drum)){clearTimeout(_drumWrapTimer);_drumWrapTimer=setTimeout(checkDrumMinuteWrap,400);}
       },{passive:true});
     }
   }
   function updateDrumSelected(drum){
     // Resaltar por posición absoluta (no por data-val, ya que hay 3 ciclos con el mismo valor)
     var total=Math.max(0,Math.round(drum.scrollTop/DRUM_ITEM_H));
-    var items=drum.querySelectorAll('.drum-picker-item');
-    items.forEach(function(it,idx){it.classList.toggle('drum-selected',idx===total);});
+    markPickerDrum(drum,total);
   }
   function getDrumValue(id){
     var drum=document.getElementById(id);if(!drum)return 0;
@@ -174,7 +175,7 @@
     _drumWrapTimer=null;
     var minDrum=document.getElementById('drumMin');
     var hourDrum=document.getElementById('drumHour');
-    if(!minDrum||!hourDrum)return;
+    if(!minDrum||!hourDrum||!minDrum._drumReady)return;
     var minCount=minDrum._count||60;
     var midMin=Math.floor(DRUM_CYCLES/2)*minCount; // índice del inicio del ciclo central
     var total=Math.round(minDrum.scrollTop/DRUM_ITEM_H);

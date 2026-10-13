@@ -46,7 +46,21 @@ function evDetailTitleColor(ev){
   }
   return 'var(--text)';
 }
-function renderEvDetail(ev,fromSummary,car){
+function evDetailAlarmDate(ev,ds){
+  if(ev._rutSkip||ev.id.indexOf('ev-bday-vip-')===0)return null;
+  var today=new Date();today.setHours(0,0,0,0);
+  var limit=new Date(today);limit.setDate(limit.getDate()+14);
+  if(ds){
+    var selected=new Date(ds+'T00:00:00');
+    return selected>=today&&selected<=limit&&eventOccursOn(ev,ds)?selected:null;
+  }
+  for(var day=new Date(today);day<=limit;day.setDate(day.getDate()+1)){
+    if(eventOccursOn(ev,evDk(day)))return new Date(day);
+  }
+  return null;
+}
+
+function renderEvDetail(ev,fromSummary,car,occurrenceDs){
   var isBirthday=ev.id.indexOf('ev-bday-vip-')===0;
   var s=new Date(ev.start+'T00:00:00');
   var e2=ev.end&&ev.end!==ev.start?new Date(ev.end+'T00:00:00'):null;
@@ -156,6 +170,7 @@ function renderEvDetail(ev,fromSummary,car){
   }
   h+='</div>';
   h+='<div class="ev-detail-actions">';
+  if(evDetailAlarmDate(ev,(car&&car.ds)||occurrenceDs))h+='<button class="ev-btn primary" id="evDAlarm">&#128276; Configurar Alarma</button>';
   if(ev._rut){
     /* Sesion de rutina: no es un evento guardado, asi que ni se edita ni se
        borra desde aqui; lo que se hace es marcarla */
@@ -219,18 +234,25 @@ function closeEvDayCarousel(){
 }
 
 /* ── Apertura/cierre del detalle ────────────────────────── */
-function openEvDetail(ev,container,car){
+function openEvDetail(ev,container,car,occurrenceDs){
   var ov=container||document.getElementById('eventsOverlay');
   var fromSummary=(EV_VIEW==='puentes'||EV_VIEW==='time-off');
   ov.scrollTop=0;
   /* Al deslizar dentro del carrusel se reaprovecha el panel abierto: si se
      quitara y se volviera a poner, la animacion de entrada saldria en cada
      evento y pareceria que se cierra y se abre otra ficha distinta. */
-  var wrap=abrirPanel('evDWrap',renderEvDetail(ev,fromSummary,car),{
+  var wrap=abrirPanel('evDWrap',renderEvDetail(ev,fromSummary,car,occurrenceDs),{
     contenedor:ov, overlay:'evDetailOv', alCerrar:closeEvDetail,
     reutilizar:!!car
   });
   bindEvManagementCheck(wrap,ev);
+  var alarmButton=wrap.querySelector('#evDAlarm');
+  if(alarmButton)alarmButton.onclick=function(){
+    var date=evDetailAlarmDate(ev,(car&&car.ds)||occurrenceDs);
+    if(!date)return;
+    closeEvDetail();
+    setTimeout(function(){openEvAlarm(ev,date,ov);},320);
+  };
   document.getElementById('evDClose').addEventListener('click',car?closeEvDayCarousel:closeEvDetail);
   /* Flechas, puntos y deslizamiento del carrusel */
   if(car){
@@ -248,7 +270,7 @@ function openEvDetail(ev,container,car){
   if(_rs)_rs.addEventListener('click',function(){
     rutChangeFromDetail(ev._rut,ev._rutKey||ev.start,repaintRoutine);
   });
-  function repaintRoutine(){var updated=rutEventsOn(ev.start).find(function(item){return item.id===ev.id;});if(updated)openEvDetail(updated,container,car);}
+  function repaintRoutine(){var updated=rutEventsOn(ev.start).find(function(item){return item.id===ev.id;});if(updated)openEvDetail(updated,container,car,occurrenceDs);}
   var recoveryButton=document.getElementById('evDRutRecover');
   if(recoveryButton)recoveryButton.onclick=function(){openRutRecoveryDay(ev._rut,ev._rutKey||ev.start,null,function(){closeRutAddition();repaintRoutine();},repaintRoutine);};
   var _re=document.getElementById('evDRutEdit');
@@ -261,7 +283,7 @@ function openEvDetail(ev,container,car){
   document.querySelectorAll('#evDetailOv .ev-bfila[data-bcampo]').forEach(function(fila){
     fila.addEventListener('click',function(e){
       if(e.target.closest('.ev-bver'))return;      /* eso va a la pareja */
-      var repintar=function(){openEvDetail(ev,null,car);};
+      var repintar=function(){openEvDetail(ev,container,car,occurrenceDs);};
       var opts={directo:true,alGuardar:repintar};
       var campo=fila.dataset.bcampo;
       if(campo==='hora'&&typeof openBodaTimePicker==='function')openBodaTimePicker(ev,opts);
@@ -475,9 +497,9 @@ function renderEvAlarmPanel(ev,firstDate){
   return h;
 }
 
-function openEvAlarm(ev,firstDate){
+function openEvAlarm(ev,firstDate,container){
   abrirPanel('evAlarmWrap',renderEvAlarmPanel(ev,firstDate),
-    {overlay:'evAlarmOv',alCerrar:closeEvAlarm});
+    {contenedor:container,overlay:'evAlarmOv',alCerrar:closeEvAlarm});
   bindEvAlarmEvents(ev,firstDate);
 }
 
@@ -611,7 +633,7 @@ function bindEvAlarmEvents(ev,firstDate){
   var _info=document.getElementById('evAlarmInfo');
   if(_info)_info.addEventListener('click',function(){
     closeEvAlarm();
-    setTimeout(function(){openEvDetail(ev);},320);
+    setTimeout(function(){openEvDetail(ev,null,null,evIsoDate(firstDate));},320);
   });
   var mInp=document.getElementById('evAlarmM');
   if(mInp)mInp.addEventListener('blur',function(){

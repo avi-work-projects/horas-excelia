@@ -254,7 +254,7 @@ function openBodaTimePicker(ev,opts){
   }
   function mark(d){
     var idx=Math.round(d.scrollTop/IH);
-    d.querySelectorAll('.drum-picker-item').forEach(function(it,j){it.classList.toggle('drum-selected',j===idx);});
+    markPickerDrum(d,idx);
   }
   function drumVal(id,vals){
     var d=document.getElementById(id);if(!d)return vals[0];

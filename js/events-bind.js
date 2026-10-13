@@ -297,7 +297,7 @@ function _bindEvCal(){
       var id=el.dataset.id;var ev=null;
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
       EV_EDIT_DS=el.dataset.ds||null;
-      if(ev){openEvDetail(ev);return;}
+      if(ev){openEvDetail(ev,null,null,EV_EDIT_DS);return;}
       var _rs2=(typeof rutEventFromId==='function')?rutEventFromId(id):null;
       if(_rs2)openRutSesion(_rs2.rutina,_rs2.ds,_rs2.key);
     });
@@ -528,7 +528,7 @@ function _bindEvListas(){
       e.stopPropagation();
       var id=el.dataset.id;var ev=null;
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
-      if(ev){openEvDetail(ev);return;}
+      if(ev){openEvDetail(ev,null,null,el.dataset.ds);return;}
       var _rs3=(typeof rutEventFromId==='function')?rutEventFromId(id):null;
       if(_rs3)openRutSesion(_rs3.rutina,_rs3.ds,_rs3.key);
     });

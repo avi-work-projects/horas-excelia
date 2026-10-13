@@ -24,8 +24,8 @@
 
 **Funciones:** bdayNormalizeGroup:7 · bdayGroups:14 · bdayGroupCatalog:15 · bdayGroupHue:17 · bdayGroupTags:18 · bdayGroupMatch:19 · bdayGroupChips:20 · renderBdayGroupTools:21 · bdayGroupFilterLabel:29 · renderBdayGroupPickerFields:30 · renderBdayGroupFields:31 · renderBdayPersonGroups:32 · bindBdayCategoryButton:33 · openBdayCategoryPicker:37 · close:38 · bdayReadGroupFields:45 · updateBdayGroupStatus:46 · bindBdayGroupTools:57 · bdaySaveGroupDraft:64 · cancelBdayGroupEdit:70 · openBdayGroupEdit:71 · close:72 · bindBdayGroupEdit:81 · toggleBdayGroupPerson:89
 
-### js/birthdays-panels.js  _(368 líneas)_
-**Funciones:** bdaySwitchPanel:1 · renderBdayNameVip:6 · updateBdayNameVip:7 · renderBdayVipToggle:8 · renderBdayDetail:9 · renderBdayAlarmPanel:27 · fmtDate:39 · openBdayAlarm:94 · back:99 · _bdRefreshBoth:103 · closeBdayAlarm:107 · bindBdayAlarmEvents:109 (!149) · fmtD:228 · onOk:235 · onErr:236 · renderBdayForm:258 · openBdayDetail:285 · savePerson:289 · closeBdayDetail:305 · openBdayForm:308 · back:309 · closeBdayForm:318 · deleteBdayPerson:322 · persist:325 · bindBdayDateFields:328 · update:330 · openBdayDatePicker:342 · close:343 · mark:358 · select:359
+### js/birthdays-panels.js  _(370 líneas)_
+**Funciones:** bdaySwitchPanel:1 · renderBdayNameVip:6 · updateBdayNameVip:7 · renderBdayVipToggle:8 · renderBdayDetail:9 · renderBdayAlarmPanel:27 · fmtDate:39 · openBdayAlarm:94 · back:99 · _bdRefreshBoth:103 · closeBdayAlarm:107 · bindBdayAlarmEvents:109 (!149) · fmtD:228 · onOk:235 · onErr:236 · renderBdayForm:258 · openBdayDetail:285 · savePerson:289 · closeBdayDetail:305 · openBdayForm:308 · back:309 · closeBdayForm:318 · deleteBdayPerson:322 · persist:325 · bindBdayDateFields:328 · update:330 · openBdayDatePicker:342 · close:343 · index:359 · mark:360 · select:361
 
 ### js/birthdays-render.js  _(247 líneas)_
 **Estado global:** DN7:95
@@ -217,8 +217,8 @@
 
 **Funciones:** evIcsAuthor:8 · evIcsDescription:9 · evIcsText:14 · evIcsFold:17 · evIcsNextDay:26 · evIcsCandidates:27 · evIcsFile:47 · evIcsRecords:74 · evIcsMergeRecords:77 · evIcsRoutineRows:83 · evIcsRoutineCurrent:93 · evIcsRememberedRows:97 · evIcsPrepare:114 · evIcsExportRows:131 · evIcsExportStatus:134 · evIcsFilterRows:140 · renderEvCalendarExport:145 · openEvCalendarExport:160 · close:163 · find:166 · count:167 · filters:176 · list:182 · dates:198
 
-### js/events-detail.js  _(622 líneas)_
-**Funciones:** openEvDeleteSheet:7 · closeEvDeleteSheet:37 · evDetailTitleColor:40 · renderEvDetail:49 (!129) · fd2:53 · _fila:141 · evDayCarItems:178 · evCarGo:191 · _evCarShow:199 · openEvDayCarousel:207 · closeEvDayCarousel:215 · openEvDetail:222 (!158) · repaintRoutine:251 · repintar:264 · closeEvDetail:380 · renderEvAlarmPanel:383 (!95) · fd2:385 · openEvAlarm:478 · closeEvAlarm:484 · openBdayAlarmFromEvents:492 · bindEvAlarmEvents:497 (!125) · _syncPre:535 · fmtD:565
+### js/events-detail.js  _(644 líneas)_
+**Funciones:** openEvDeleteSheet:7 · closeEvDeleteSheet:37 · evDetailTitleColor:40 · evDetailAlarmDate:49 · renderEvDetail:63 (!130) · fd2:67 · _fila:155 · evDayCarItems:193 · evCarGo:206 · _evCarShow:214 · openEvDayCarousel:222 · closeEvDayCarousel:230 · openEvDetail:237 (!165) · repaintRoutine:273 · repintar:286 · closeEvDetail:402 · renderEvAlarmPanel:405 (!95) · fd2:407 · openEvAlarm:500 · closeEvAlarm:506 · openBdayAlarmFromEvents:514 · bindEvAlarmEvents:519 (!125) · _syncPre:557 · fmtD:587
 
 ### js/events-form-controls.js  _(106 líneas)_
 **Funciones:** _evFormEl:2 · _evFormAll:3 · _evFormKind:4 · _evFormColor:5 · _evFormSuggestTitle:6 · _evFormTypeUI:10 · _bindEvFormTypes:24 · _bindEvFormCategories:38 · _evFormShapePreviews:53 · _bindEvFormAppearance:56 · _evFormDatesLabel:74 · _bindEvFormDates:82 · _evFormTravelUI:93 · _bindEvFormDetails:99
@@ -291,10 +291,10 @@
 ### js/import-preview.js  _(19 líneas)_
 **Funciones:** renderImportPreview:2 · add:4
 
-### js/init.js  _(447 líneas)_
-**Estado global:** DRUM_ITEM_H:132 · DN_ES:289
+### js/init.js  _(448 líneas)_
+**Estado global:** DRUM_ITEM_H:132 · DN_ES:290
 
-**Funciones:** _updateHeaderActive:31 · buildDrumPicker:133 · updateDrumSelected:161 · getDrumValue:167 · checkDrumMinuteWrap:173 · buildAlarmDayBtns:204 · showAlarmPastConfirm:234 · proceed:275 · aplicarActualizacion:371 · reload:377 · _showUpdateBar:399 · _buscar:434
+**Funciones:** _updateHeaderActive:31 · buildDrumPicker:133 · updateDrumSelected:163 · getDrumValue:168 · checkDrumMinuteWrap:174 · buildAlarmDayBtns:205 · showAlarmPastConfirm:235 · proceed:276 · aplicarActualizacion:372 · reload:378 · _showUpdateBar:400 · _buscar:435
 
 ### js/invoices-export.js  _(36 líneas)_
 **Funciones:** invoiceXml:2 · invoiceZip:3 · header:5 · invoiceWorkbook:14 · textCell:15 · numCell:16 · sheet:26
@@ -410,8 +410,8 @@
 
 **Funciones:** tasksValidate:5 · tasksValidTimestamp:20 · tasksNormalize:21 · tasksData:33 · tasksSave:38 · tasksMigrate:39 · tasksMerge:44 · tasksItems:50 · tasksPendingRows:54 · tasksNeedsDateChoice:55 · tasksCreate:58 · tasksChange:63 · tasksMoveCompleted:80 · tasksUndoMove:85 · tasksMove:90 · tasksReminder:97 · tasksReminderSeen:101
 
-### js/time-picker.js  _(79 líneas)_
-**Funciones:** evPlanReferenceTime:2 · timePickerInitial:5 · timePickerDrum:11 · bindTimePickerDrum:16 · index:18 · mark:19 · move:23 · openTimePicker:32 · close:35 · escape:41 · save:50
+### js/time-picker.js  _(95 líneas)_
+**Funciones:** evPlanReferenceTime:2 · timePickerInitial:5 · markPickerDrum:11 · timePickerDrum:19 · bindTimePickerDrum:24 · index:26 · mark:27 · move:31 · openTimePicker:40 · close:51 · escape:57 · save:66
 
 ## CSS
 
@@ -595,7 +595,7 @@
 **Rangos por prefijo de clase:**
 .bd-alarm:26-78 · .bd-detail:107-114 · .bday-hdr:6-6 · .bday-upcoming:24-24 · .bday-vip:23-23 · .ev-alarm:49-55 · .ev-hdr:7-7 · .ev-upcoming:29-32 · .home-popup:81-89 · .macro-section:91-92 · .macro-url:93-95 · .nav-bar:3-105 · .overlay-nav:2-4 · .sy-puente:14-21 · .sy-tab:9-12
 
-### css/source/event-panels.css  _(294 líneas)_
+### css/source/event-panels.css  _(295 líneas)_
 
 **Secciones:**
 
@@ -625,10 +625,10 @@
 - Event detail:216
 - El color del título depende de la familia; el símbolo conserva su identidad.:224
 - Fichas de consulta: jerarquía común, datos legibles y controles discretos.:232
-- Consulta compacta: fecha y estado comparten fila; el carrusel no cambia de alto.:270
+- Consulta compacta: fecha y estado comparten fila; el carrusel no cambia de alto.:271
 
 **Rangos por prefijo de clase:**
-.data-btn:2-2 · .ev-ann:74-76 · .ev-annual:115-137 · .ev-badge:165-165 · .ev-badges:40-40 · .ev-bar:110-110 · .ev-bars:33-33 · .ev-bright:139-152 · .ev-btn:203-212 · .ev-car:55-67 · .ev-cell:123-161 · .ev-char:192-192 · .ev-checkbox:197-197 · .ev-chip:91-91 · .ev-colors:193-193 · .ev-date:194-194 · .ev-day:43-101 · .ev-detail:217-291 · .ev-edit:206-207 · .ev-field:186-187 · .ev-form:181-261 · .ev-hdr:3-5 · .ev-input:188-189 · .ev-io:214-215 · .ev-list:14-179 · .ev-main:6-6 · .ev-management:252-254 · .ev-month:22-89 · .ev-multi:37-131 · .ev-num:163-163 · .ev-otros:53-106 · .ev-part:140-140 · .ev-puente:119-119 · .ev-quad:156-157 · .ev-repeat:198-198 · .ev-rut:97-100 · .ev-stepped:112-114 · .ev-textarea:190-191 · .ev-toggle:195-196 · .ev-types:17-19 · .ev-view:4-8 · .ev-wd:200-201 · .ev-week:28-117 · .ev-weekday:199-199 · .rut-marker:93-96 · .sy-nav:153-154
+.data-btn:2-2 · .ev-ann:74-76 · .ev-annual:115-137 · .ev-badge:165-165 · .ev-badges:40-40 · .ev-bar:110-110 · .ev-bars:33-33 · .ev-bright:139-152 · .ev-btn:203-212 · .ev-car:55-67 · .ev-cell:123-161 · .ev-char:192-192 · .ev-checkbox:197-197 · .ev-chip:91-91 · .ev-colors:193-193 · .ev-date:194-194 · .ev-day:43-101 · .ev-detail:217-292 · .ev-edit:206-207 · .ev-field:186-187 · .ev-form:181-262 · .ev-hdr:3-5 · .ev-input:188-189 · .ev-io:214-215 · .ev-list:14-179 · .ev-main:6-6 · .ev-management:252-254 · .ev-month:22-89 · .ev-multi:37-131 · .ev-num:163-163 · .ev-otros:53-106 · .ev-part:140-140 · .ev-puente:119-119 · .ev-quad:156-157 · .ev-repeat:198-198 · .ev-rut:97-100 · .ev-stepped:112-114 · .ev-textarea:190-191 · .ev-toggle:195-196 · .ev-types:17-19 · .ev-view:4-8 · .ev-wd:200-201 · .ev-week:28-117 · .ev-weekday:199-199 · .rut-marker:93-96 · .sy-nav:153-154
 
 ### css/source/dialogs-responsive.css  _(146 líneas)_
 

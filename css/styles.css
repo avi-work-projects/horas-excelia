@@ -1954,6 +1954,7 @@ button.bday-group-tag{cursor:pointer;min-height:44px;text-align:left}
 .ev-detail-modern .ev-bfila{padding:13px 14px;min-height:47px}
 .ev-detail-modern .ev-bfila-val{white-space:normal;text-align:right}
 .ev-detail-modern .ev-detail-actions{flex-wrap:wrap;gap:8px;padding-top:18px}
+.ev-detail-modern #evDAlarm{flex-basis:100%}
 .ev-detail-modern .ev-detail-actions .ev-btn{min-height:42px;border-radius:12px}
 
 .ev-form-sheet .ev-field>label{font-weight:600;color:var(--text)}
@@ -2075,7 +2076,7 @@ body:has(#evDetailOv.open) .tasks-fab{visibility:hidden}
 .alarm-colon{font-family:var(--mono);font-size:1.6rem;font-weight:700;color:var(--accent-bright);user-select:none;line-height:1}
 /* ── Drum picker (selector giratorio de hora/minuto) ── */
 .drum-wrap{position:relative;height:132px;width:76px;overflow:hidden;border-radius:10px;background:var(--surface2);border:1px solid var(--border)}
-.drum-picker{height:100%;overflow-y:scroll;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none}
+.drum-picker{height:100%;overflow-y:scroll;scroll-snap-type:y mandatory;overscroll-behavior-y:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none}
 .drum-picker::-webkit-scrollbar{display:none}
 .drum-picker-item{height:44px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:1.8rem;font-weight:700;color:var(--text-dim);scroll-snap-align:center;-webkit-user-select:none;user-select:none;transition:color .08s}
 .drum-picker-item.drum-selected{color:var(--text)}
@@ -2804,7 +2805,7 @@ button.action-edit.action-edit-text:active{background:#f97316!important}
 .ev-wk-travel-footer{margin-top:auto;padding-top:4px}
 
 /* Pestañas de Eventos: la seleccion solo intensifica el fondo. */
-#eventsOverlay .ev-hdr-sub .ev-view-toggle{--tab-tone:#60a5fa;color:var(--tab-tone)!important;border-color:var(--tab-tone)!important;background:color-mix(in srgb,var(--tab-tone) 8%,var(--surface))!important}
+#eventsOverlay .ev-hdr-sub .ev-view-toggle{font-weight:600;--tab-tone:#60a5fa;color:var(--tab-tone)!important;border-color:var(--tab-tone)!important;background:color-mix(in srgb,var(--tab-tone) 8%,var(--surface))!important}
 #eventsOverlay .ev-hdr-sub .ev-view-toggle.active{background:color-mix(in srgb,var(--tab-tone) 23%,var(--surface))!important}
 #eventsOverlay .ev-hdr-sub .ev-btn-calendar{--tab-tone:#65a367}
 #eventsOverlay .ev-hdr-sub .ev-btn-bday{--tab-tone:var(--birthday-tone)}
@@ -2850,7 +2851,7 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .ev-wk-date.ev-wk-today .ev-wk-num{font-size:1.15rem}
 
 /* Economia, Fiscal y Escenarios: tono constante, seleccion por fondo. */
-.econ-tab-btn,.fiscal-tab-btn,.est-nav .est-btn{--tab-tone:var(--accent);color:var(--tab-tone)!important;border-color:var(--tab-tone)!important;background:color-mix(in srgb,var(--tab-tone) 8%,var(--surface))!important}
+.econ-tab-btn,.fiscal-tab-btn,.est-nav .est-btn{font-weight:600;--tab-tone:var(--accent);color:var(--tab-tone)!important;border-color:var(--tab-tone)!important;background:color-mix(in srgb,var(--tab-tone) 8%,var(--surface))!important}
 .fiscal-tab-btn{--tab-tone:var(--c-purple)}
 .est-nav .est-btn{--tab-tone:#60a5fa;flex:1}
 .est-nav .est-btn.est-casa{--tab-tone:#14b8a6}
