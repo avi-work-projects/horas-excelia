@@ -92,6 +92,7 @@ function renderEvDetail(ev,fromSummary,car,occurrenceDs){
     h+='<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">Evento</div>';
     h+='<div style="width:36px"></div>';
   }
+  if(evDetailAlarmDate(ev,(car&&car.ds)||occurrenceDs))h+='<button class="sy-back" id="evDAlarm" aria-label="Configurar Alarma" title="Configurar Alarma">&#128276;</button>';
   h+='</div>';
   if(car&&car.n>1){
     h+='<div class="ev-car-nav">';
@@ -170,7 +171,6 @@ function renderEvDetail(ev,fromSummary,car,occurrenceDs){
   }
   h+='</div>';
   h+='<div class="ev-detail-actions">';
-  if(evDetailAlarmDate(ev,(car&&car.ds)||occurrenceDs))h+='<button class="ev-btn primary" id="evDAlarm">&#128276; Configurar Alarma</button>';
   if(ev._rut){
     /* Sesion de rutina: no es un evento guardado, asi que ni se edita ni se
        borra desde aqui; lo que se hace es marcarla */
