@@ -52,7 +52,7 @@ test('Próximos mantiene la posición de los cuatro títulos al cambiar de pesta
     const positions=[];
     for(const id of ['evSubUpcoming','evUpBirthdays','evSubAgenda','evSubTodos','evSubStats','evSubUpcoming']){
       await page.locator('#'+id).click();
-      const title={evSubUpcoming:'Próximos Eventos',evUpBirthdays:'Cumpleaños',evSubTodos:'Todos los Eventos'}[id];
+      const title={evSubUpcoming:'Próximos Eventos',evUpBirthdays:'Cumpleaños',evSubTodos:String(await page.evaluate(()=>EV_LIST_YEAR)),evSubStats:String(await page.evaluate(()=>EV_STATS_YEAR))}[id];
       if(title)await expect(page.locator('#eventsContent>.sy-header .sy-year')).toHaveText(title);
       if(id==='evUpBirthdays'){
         const layout=await page.locator('#eventsContent>.sy-header').evaluate(e=>{
