@@ -50,6 +50,8 @@ function _bindEvFormCategories(form){
 }
 function _evFormShapePreviews(form){
   _evFormAll(form,'#evFShapePicker .ev-shape-preview').forEach(function(p){p.style.color=_evFormColor(form);});
+  var other=form.root.querySelector('#evFTypePicker [data-kind="puntual"][data-type="Otros"]');
+  if(other&&other.classList.contains('selected')){var dot=other.querySelector('.ev-type-dot');dot.classList.remove('ev-type-dot-multi');dot.classList.add('ev-type-symbol');dot.style.color=_evFormColor(form);dot.innerHTML=evShapeSvg(form.shape||'circle');}
 }
 function _bindEvFormAppearance(form){
   _evFormAll(form,'#evFBarPicker .ev-barsize-opt').forEach(function(button){
@@ -63,11 +65,10 @@ function _bindEvFormAppearance(form){
       _evFormAll(form,'#evFShapePicker .ev-shape-opt').forEach(function(b){b.classList.toggle('selected',b===button);});
       form.shape=button.dataset.shape;
       var picker=form.root.querySelector('.ev-kind-picker');_evFormTypeUI(form,_evFormKind(form),picker&&picker.dataset.curType||'Otros');
+      _evFormShapePreviews(form);
     });
   });
-  var picker=_evFormEl(form,'evFCp'),hex=form.root.querySelector('#evFCp input[type=text],#evFCp .ev-color-hex-input');
-  if(picker)picker.addEventListener('click',function(){setTimeout(function(){_evFormShapePreviews(form);},50);});
-  if(hex)hex.addEventListener('input',function(){_evFormShapePreviews(form);});
+  _evFormShapePreviews(form);
 }
 function _evFormTravelUI(form,part){
   var box=form.root.querySelector('.ev-viaje-tramo[data-tramo="'+part+'"]');if(!box)return;

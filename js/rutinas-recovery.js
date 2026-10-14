@@ -26,23 +26,30 @@ function openRutRecoveryList(r,excludePast){
 function openRutRecoveryDay(r,key,date,back,onSaved){
   var d=new Date((date||evDk(new Date()))+'T12:00:00');
   RUT_RECOVERY_PICK={year:d.getFullYear(),month:d.getMonth(),date:date||null};
+  var state=RUT_RECOVERY_PICK;
+  var h='<div class="boda-asg-nav"><button class="sy-nav" id="rutRecoveryPrev" aria-label="Mes anterior">◀</button><strong id="rutRecoveryMonth"></strong><button class="sy-nav" id="rutRecoveryNext" aria-label="Mes siguiente">▶</button></div>';
+  h+='<div class="rut-dpick-real"></div><p class="sy-note">Selecciona un día para consultar su agenda.</p><button class="ev-btn rut-recovery-confirm" id="rutRecoveryConfirm">Confirmar</button>';
+  var wrap=rutAdditionPanel(r.name+' - elige día',h,back||function(){openRutAddition(r);});
   function render(){
-    var state=RUT_RECOVERY_PICK,y=EV_YEAR,m=EV_MONTH,cal;
+    var y=EV_YEAR,m=EV_MONTH,cal;
     try{EV_YEAR=state.year;EV_MONTH=state.month;cal=renderEvCalMonth();}finally{EV_YEAR=y;EV_MONTH=m;}
-    var h='<div class="boda-asg-nav"><button class="sy-nav" id="rutRecoveryPrev" aria-label="Mes anterior">◀</button><strong>'+MN[state.month]+' '+state.year+'</strong><button class="sy-nav" id="rutRecoveryNext" aria-label="Mes siguiente">▶</button></div>';
-    h+='<div class="rut-dpick-real">'+cal+'</div><p class="sy-note">Selecciona un día para consultar su agenda.</p><button class="ev-btn rut-recovery-confirm" id="rutRecoveryConfirm"'+(!state.date?' disabled':'')+'>Confirmar'+(state.date?' · '+_rutFmt(state.date):'')+'</button>';
-    var wrap=rutAdditionPanel(r.name+' - elige día',h,back||function(){openRutAddition(r);});
+    wrap.querySelector('#rutRecoveryMonth').textContent=MN[state.month]+' '+state.year;
+    wrap.querySelector('.rut-dpick-real').innerHTML=cal;
+    var month=wrap.querySelector('.ev-month-wrap'),weeks=month.querySelectorAll('.ev-week-outer').length;
+    for(var i=weeks;i<6;i++){var spacer=document.createElement('div');spacer.className='rut-calendar-spacer';spacer.setAttribute('aria-hidden','true');month.appendChild(spacer);}
+    var confirm=wrap.querySelector('#rutRecoveryConfirm');confirm.disabled=!state.date;confirm.textContent='Confirmar'+(state.date?' · '+_rutFmt(state.date):'');
     wrap.querySelectorAll('.ev-cell[data-ds]').forEach(function(cell){
       cell.classList.toggle('rut-day-selected',cell.dataset.ds===state.date);
       cell.setAttribute('role','button');cell.setAttribute('tabindex','0');cell.setAttribute('aria-label',_rutFmt(cell.dataset.ds));cell.setAttribute('aria-pressed',String(cell.dataset.ds===state.date));
       function select(){state.date=cell.dataset.ds;render();}
       cell.onclick=select;cell.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();select();}};
     });
-    function move(delta){var next=new Date(state.year,state.month+delta,1);state.year=next.getFullYear();state.month=next.getMonth();render();}
-    wrap.querySelector('#rutRecoveryPrev').onclick=function(){move(-1);};wrap.querySelector('#rutRecoveryNext').onclick=function(){move(1);};
-    addSwipe(wrap.querySelector('.rut-dpick-real'),function(){move(1);},function(){move(-1);});
-    wrap.querySelector('#rutRecoveryConfirm').onclick=function(){if(state.date)rutAdditionForm(r,key,state.date,function(){openRutRecoveryDay(r,key,state.date,back,onSaved);},onSaved);};
-  }render();
+  }
+  function move(delta){var next=new Date(state.year,state.month+delta,1);state.year=next.getFullYear();state.month=next.getMonth();render();}
+  wrap.querySelector('#rutRecoveryPrev').onclick=function(){move(-1);};wrap.querySelector('#rutRecoveryNext').onclick=function(){move(1);};
+  addSwipe(wrap.querySelector('.rut-dpick-real'),function(){move(1);},function(){move(-1);});
+  wrap.querySelector('#rutRecoveryConfirm').onclick=function(){if(state.date)rutAdditionForm(r,key,state.date,function(){openRutRecoveryDay(r,key,state.date,back,onSaved);},onSaved);};
+  render();
 }
 function rutReadOnlyDayHtml(ds){
   if(!validIsoDate(ds))return '<p class="sy-note">Elige una fecha válida.</p>';

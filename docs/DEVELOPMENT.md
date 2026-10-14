@@ -34,6 +34,7 @@ Las ideas aún no implementadas están en [FUTURO.md](../FUTURO.md).
 - En desplegables, reutilizar los indicadores dibujados de la aplicación (`.ev-tax-chevron` o el chevrón de `details > summary`). No usar caracteres de texto como `⌄` para representar la flecha. Preferencia de Ángel del 11/10/2026.
 - En el editor de cumpleaños, nombre y fecha comparten un panel blanco; categorías tiene su propio panel con acento suave. En la ficha, el resumen queda abierto, sin recuadro interior, y categorías conserva su panel.
 - Los símbolos VIP de la lista no deben cambiar la altura de las filas.
+- Los calendarios de selección de día conservan altura y posición exterior al cambiar de mes mediante flechas o swipe, aunque el mes ocupe cuatro, cinco o seis semanas. Reutilizar el marco y reservar seis filas semanales; actualizar únicamente el contenido interior. Preferencia de Ángel del 14/10/2026, también para clases extras y recuperaciones.
 
 ## Exportaciones de archivos
 
@@ -502,3 +503,11 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 - Puntual y Grande muestran sus símbolos de categoría. Ensayos boda y Otros comparten la selección mediante check sin sombreado adicional.
 - En el carrusel, `.ev-car-viewport` recorta el contenido de cada evento y sus vistas previas. La fecha, los controles de navegación y el marco permanecen quietos durante el arrastre. La campana usa `navIconHtml('alarm')` con el formato cuadrado de esquinas redondeadas.
 - `tools/browser/event-form-layout.spec.js` verifica cabecera fija, geometría móvil, guardado de fechas y horas, conservación de datos anteriores y desplazamiento exclusivo del contenido del carrusel. La revisión visual usa Edge oculto, tema claro e iconos profesionales.
+
+## Planes, prioridades y calendarios estables (v471)
+- Próximos Cumpleaños alinea VIP a la izquierda, Añadir al centro de la pantalla y configuración a la derecha. La configuración usa el acento de Próximos sin recuadro. Eventos vuelve desde la cabecera.
+- El orden de planes comparte `bindListReorder` con Mis Tareas: arrastre con ratón y táctil, cancelación, auto-scroll y flechas del teclado. Arrastre y botones ajustan la hora de referencia del plan movido al intervalo de sus vecinos; el listado siempre conserva el orden horario. Guardar confirma el borrador; salir lo descarta. Las horas reales siguen mandando en eventos, agenda y recordatorios. Este criterio sustituye el bloqueo anterior al reordenar horas diferentes.
+- El selector muestra Barbacoa cuarta y Desayunar primero en la segunda fila, con tostadas. Los planes de Pádel y Baile usan símbolos propios sin marco; las rutinas conservan el marco blanco. La cuadrícula reserva espacio para todas las opciones y las rutinas activas usan tarjetas compactas.
+- Otros puntual arranca con amarillo claro. La paleta, el selector nativo y el hexadecimal actualizan las formas y el símbolo seleccionado mediante el callback compartido del selector de color. Los colores ya guardados se conservan al editar.
+- Todas las rutinas, fijas y flexibles, ofrecen Añadir Clase Extra junto a Consultar Histórico. El selector de día mantiene su marco, seis filas semanales y Confirmar visible al cambiar de mes con flechas o swipe; solo se repinta el calendario interior. Mis Datos mantiene los tres atajos con texto en negrita.
+- `tools/browser/plans-routines-layout.spec.js` cubre geometría móvil, arrastre y persistencia, cancelación, teclado, colores, alta de extras, recuperación y estabilidad de meses de cuatro, cinco y seis semanas. Revisión visual en Edge oculto con tema claro e iconos profesionales.

@@ -332,6 +332,10 @@
 .ev-plan-plus{font-size:26px;font-weight:600;line-height:22px}
 .ev-detail-overlay.ev-plan-overlay{position:fixed;z-index:20000;justify-content:center}
 .ev-plan-sheet{display:flex;flex-direction:column;max-width:600px;max-height:85dvh;padding:0;overflow:hidden}
+.ev-plan-sheet[data-picker-kind="plans"]{height:min(680px,90dvh);max-height:90dvh}
+.ev-plan-sheet[data-picker-kind="plans"] .ev-plan-options{flex:1;grid-auto-rows:minmax(0,1fr);gap:6px;padding:4px 14px 14px}
+.ev-plan-sheet[data-picker-kind="plans"] .ev-plan-option>.ev-color-swatch{min-height:0;padding:6px 2px;gap:5px}
+@media(max-width:360px){.ev-plan-sheet[data-picker-kind="plans"] .ev-type-name{font-size:.64rem;overflow-wrap:normal}}
 .ev-plan-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;flex-shrink:0}
 .ev-plan-header h2{font-size:1.15rem;margin:0}
 .ev-plan-options{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;padding:4px 16px 18px;overflow-y:auto;min-height:0}
@@ -346,6 +350,7 @@
 .ev-plan-more>svg{width:26px;height:26px;fill:currentColor}
 .ev-plan-more.selected{background:color-mix(in srgb,var(--picker-accent) 18%,var(--surface));border-color:var(--picker-accent)}
 .ev-plan-header{gap:12px;flex-direction:row}
+.ev-plan-sheet[data-picker-kind="plans"] .ev-plan-header{padding:14px 16px}
 .ev-plan-header h2{flex:1}
 .ev-plan-header .ev-picker-generic{flex:none;width:38px;height:38px;padding:8px;border-radius:12px}
 .ev-picker-generic .ev-type-dot{width:22px;height:22px}

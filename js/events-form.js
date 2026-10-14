@@ -31,7 +31,7 @@ function _renderEvTypeButton(kind,t,selType){
     var c=evTypeColor(kind,t);
     /* Multicolor = "elige tu color"; Casa Rural muestra su marron aunque
        tambien tenga paleta (EV_DOT_SOLID) */
-    var isMulti=!!EV_FREE_COLOR[key]&&!EV_DOT_SOLID[key];
+    var isMulti=!!EV_FREE_COLOR[key]&&!EV_DOT_SOLID[key]&&key!=='puntual|Otros';
     var sel=(t===selType)?' selected':'';
     h+='<button type="button" class="ev-color-swatch'+sel+(isMulti?' ev-color-swatch-multi':'')+'" data-hex="'+c+'" data-type="'+escHtml(t)+'" data-kind="'+kind+'"'+(isMulti?'':' style="color:'+c+'"')+'>';
     h+=isMulti?'<div class="ev-type-dot ev-type-dot-multi"></div>'
@@ -206,7 +206,7 @@ function evSuggestedTitle(type){
 function bindEvFormEvents(){
   var root=document.getElementById('evFWrap'),edit=EV_EDIT;
   var form={root:root,edit:edit,day:EV_EDIT_DS,autoTitle:edit?null:'',quickExtras:{},
-    colorPicker:_bindColorPicker(root,'evFCp'),shape:edit&&edit.shape||'circle',
+    colorPicker:_bindColorPicker(root,'evFCp',function(){_evFormShapePreviews(form);}),shape:edit&&edit.shape||'circle',
     dates:edit&&Array.isArray(edit.dates)?edit.dates.slice():[],barSize:edit&&edit.barSize||null};
   Object.keys(EV_PICKER_GROUPS).forEach(function(k){if(edit&&evQuickSelection(edit.type,EV_PICKER_GROUPS[k]))form.quickExtras[k]=edit.type;});
   evFormRenderTypes(form,_evFormKind(form),root.querySelector('.ev-kind-picker').dataset.curType);
