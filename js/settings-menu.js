@@ -73,7 +73,7 @@ function bindSettingsCopy(root,fields){
     var label=el.closest('label'),name=label&&label.querySelector('span')?label.querySelector('span').textContent:'Campo';
     var wrap=document.createElement('span');wrap.className='settings-field-value';el.parentNode.insertBefore(wrap,el);wrap.appendChild(el);
     var btn=document.createElement('button');btn.type='button';btn.className='settings-copy';btn.dataset.copyLabel='Copiar '+name;btn.setAttribute('aria-label',btn.dataset.copyLabel);btn.innerHTML=settingsCopyIcon(false);wrap.appendChild(btn);
-    btn.onclick=function(e){e.preventDefault();if(!el.value){showToast('Este campo está vacío');return;}settingsCopyText(el.value,btn);};
+    btn.onclick=function(e){e.preventDefault();if(!el.value){showToast('Este campo está vacío');return;}settingsCopyText(el.dataset.contact?contactValueText(el.dataset.contact,name,el.value):el.value,btn);};
   });
 }
 function openConnectionsSettings(kind){

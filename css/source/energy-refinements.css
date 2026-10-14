@@ -200,7 +200,7 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .rut-history-month h3::before{content:'';position:absolute;inset:0;background:var(--surface2);border-radius:11px 11px 0 0;z-index:-1}
 .rut-history-time{display:flex;flex-direction:column;gap:3px;margin-top:6px}
 .rut-history-time>small{font-size:.62rem;color:var(--text-muted)}
-#rutHistoryEditOv .ev-form-sheet{height:min(520px,80dvh);display:flex;flex-direction:column}
+#rutHistoryEditOv .ev-form-sheet{height:min(430px,80dvh);display:flex;flex-direction:column}
 .rut-session-fields{gap:12px;margin-top:8px}
 .rut-session-fields .ev-field{min-width:0;margin:0}
 .rut-session-fields+p.sy-note{margin:18px 0 20px;line-height:1.5}
@@ -214,11 +214,48 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .contact-shortcuts button{min-width:0;min-height:70px;justify-content:center;text-align:center;background:var(--settings-tone);border-color:var(--settings-tone);color:#fff;padding:9px 6px;font-size:.65rem;line-height:1.35}
 .contact-shortcuts button.copied{color:#fff;background:var(--settings-tone)}
 .contact-shortcuts .copied svg{color:#fff}
-.sy-header:has(#evBdayAdd) #evBdayAdd{position:absolute;left:50%;transform:translateX(-50%);margin:0}
-.sy-header:has(#evBdayAdd){min-height:96px;align-items:flex-start;padding-top:8px}
-.sy-header:has(#evBdayAdd) #evBdayAdd{top:54px}
-.ev-stat-year-nav .energy-total-button{min-height:0;font-weight:400;right:16px;--energy-resumen:var(--energy-gas,#aa7c38)}
+.ev-stat-year-nav .energy-total-button{min-height:0;font-weight:400;right:16px;--energy-resumen:var(--upcoming-text)}
 .ev-stats-links{display:flex;align-items:center;gap:8px;flex-wrap:nowrap}
 .ev-stats-links>span{font-size:.7rem;flex-shrink:0}
 .ev-stats-links>.ev-view-toggle{min-height:38px;padding:6px 8px;flex:1;min-width:0}
 .ev-stats-links .wm-logo{width:72px;height:22px}
+.ev-stats-links .ev-view-toggle{font-weight:600;color:var(--tab-tone);border-color:var(--tab-tone);background:color-mix(in srgb,var(--tab-tone) 8%,var(--surface));font-size:.62rem}
+.ev-stats-links .ev-btn-bodas{--tab-tone:#c08a5a}
+.ev-stats-links .ev-btn-rutinas{--tab-tone:#eceff5}
+[data-theme="light"] .ev-stats-links .ev-btn-bodas{--tab-tone:#8b5e34}
+[data-theme="light"] .ev-stats-links .ev-btn-rutinas{--tab-tone:#1f2937}
+
+.ev-routines-active>strong{display:block;padding:9px 4px;font-size:.72rem;font-weight:600;color:var(--text-muted)}
+.ev-routines-active{--category-tone:#768695}
+.ev-routines-quick{display:grid;grid-template-columns:repeat(var(--routine-columns,2),minmax(0,1fr));gap:8px;margin:6px 0}
+.ev-routines-quick:has(>:only-child)>:only-child{grid-column:1/-1;width:calc((100% - 8px)/2);justify-self:center}
+.ev-type-picker .ev-routine-choice,.ev-routines-quick .ev-routine-choice{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-width:0;min-height:70px;padding:8px 3px;border:1px solid var(--border);border-radius:8px;background:var(--surface);font:inherit;cursor:pointer}
+.ev-routine-choice .ev-type-dot{width:25px;height:25px}
+.ev-routine-choice .ev-type-name{font-size:.68rem;text-align:center;overflow-wrap:anywhere}
+.ev-routine-choice svg{width:100%;height:100%}
+#evRoutinesMore{width:100%;margin:8px 0 0;font-size:.72rem}
+.ev-order-sheet{height:80dvh;display:flex;flex-direction:column;overflow:hidden}
+.ev-order-list{flex:1;min-height:0;overflow-y:auto}
+.ev-order-row{display:grid;grid-template-columns:26px minmax(0,1fr) 64px 30px 30px;gap:6px;align-items:center;padding:9px 0;box-shadow:0 1px 0 var(--border)}
+.ev-order-row>span,.ev-order-row svg{width:24px;height:24px}
+.ev-order-row>strong{font-size:.72rem;font-weight:500;overflow-wrap:anywhere}
+.ev-order-row .ev-input{min-width:0;padding:7px 4px;font-size:.76rem;text-align:center}
+.ev-order-row .sy-nav{width:30px;height:32px;font-size:.9rem}
+.ev-order-row button:disabled{opacity:.3}
+body:has(#evPlanOrderOv.open,#evRoutinesOv.open,#rutHistoryEditOv.open) .tasks-fab{visibility:hidden}
+body:has(#evFormOv.open) .tasks-fab{visibility:hidden}
+.rut-addition-sheet>.rut-history-head{display:grid;grid-template-columns:36px minmax(0,1fr) 36px}
+.rut-addition-sheet>.rut-history-head>strong{text-align:center;line-height:1.3}
+.rut-addition-sheet:has(.rut-dpick-real,#evRoutineWeek,#rutDestinationAgenda){height:min(650px,85dvh);display:flex;flex-direction:column;overflow:hidden}
+.rut-addition-sheet>.ev-form-handle,.rut-addition-sheet>.rut-history-head{flex-shrink:0}
+.rut-addition-body{flex:1;min-height:0;overflow-y:auto}
+.rut-addition-body>.rut-recovery-confirm{width:100%;margin-top:12px}
+.ev-up-filters:has(#evBdayAdd){grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)}
+.ev-up-filters:has(#evBdayAdd){position:relative}
+.ev-up-filters #evBdayAdd{position:absolute;left:calc(50vw - 16px);top:calc(50% - 3px);transform:translate(-50%,-50%)}
+.sy-hdr-right .ev-period-total{position:static}
+.ev-up-filters:has(#evBdayAdd) #evUpBirthdays{justify-self:end}
+.ev-up-filters .bday-header-vip{min-width:0;font-size:.64rem}
+.ev-cell .ev-day-left{top:19px}
+.ev-cell:has(.ev-otros-corner.llena) .ev-day-left{top:17px}
+.ev-day-left:has(.ev-day-vips){gap:2px}

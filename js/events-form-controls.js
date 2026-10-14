@@ -11,7 +11,7 @@ function _evFormTypeUI(form,kind,type){
   var key=evTypeKey(kind,type),picker=form.root.querySelector('.ev-kind-picker');
   if(picker){picker.dataset.curKind=kind;picker.dataset.curType=type;}
   var freeColor=EV_FREE_COLOR[key]&&!(kind==='puntual'&&type==='Otros'&&RUT_FIXED_COLOR[form.shape]);
-  var blocks={evFTaxBlock:kind==='puntual'&&type==='Presentar Modelo',evFColorSection:freeColor,evFOtrosExtras:EV_FREE_SHAPE[key]||EV_FREE_DATES[key]||EV_FREE_BARSIZE[key],evFBarBlock:EV_FREE_BARSIZE[key],evFShapeBlock:EV_FREE_SHAPE[key],evFDatesBlock:EV_FREE_DATES[key],evFViajeBox:kind==='grande'};
+  var blocks={evFCultureBlock:kind==='puntual'&&type==='Plan cultural',evFTaxBlock:kind==='puntual'&&type==='Presentar Modelo',evFColorSection:freeColor,evFOtrosExtras:EV_FREE_SHAPE[key]||EV_FREE_DATES[key]||EV_FREE_BARSIZE[key],evFBarBlock:EV_FREE_BARSIZE[key],evFShapeBlock:EV_FREE_SHAPE[key],evFDatesBlock:EV_FREE_DATES[key],evFViajeBox:kind==='grande'};
   Object.keys(blocks).forEach(function(id){var el=_evFormEl(form,id);if(el)el.style.display=blocks[id]?'block':'none';});
   var hours=_evFormEl(form,'evFHoraRow');if(hours)hours.style.display=kind==='puntual'&&type!=='Ensayos boda'?'':'none';
   var repeat=evAdmiteRepeticion(kind,type),block=_evFormEl(form,'evFRepBlock');
@@ -22,6 +22,7 @@ function _evFormTypeUI(form,kind,type){
   }
 }
 function _bindEvFormTypes(form){
+  bindEvCultureFields(form);
   if(form.edit){var routines=form.root.querySelector('.ev-routines-active');if(routines)routines.remove();}
   else bindEvRoutineChoices(form);
   form.root.querySelectorAll('.ev-plan-more').forEach(function(more){more.onclick=function(){openEvPlanPicker(form,more.dataset.picker);};});

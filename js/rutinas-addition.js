@@ -3,7 +3,7 @@
 function closeRutAddition(){cerrarPanel('rutAdditionWrap','rutAdditionOv');}
 function rutAdditionPanel(title,body,back){
   var h='<div class="ev-form-overlay" id="rutAdditionOv"><div class="ev-form-sheet rut-addition-sheet"><div class="ev-form-handle"></div>';
-  h+='<div class="rut-history-head"><button class="sy-back" id="rutAdditionBack" aria-label="Volver">&#8592;</button><strong>'+escHtml(title)+'</strong></div>'+body+'</div></div>';
+  h+='<div class="rut-history-head"><button class="sy-back" id="rutAdditionBack" aria-label="Volver">&#8592;</button><strong>'+escHtml(title)+'</strong></div><div class="rut-addition-body">'+body+'</div></div></div>';
   var wrap=abrirPanel('rutAdditionWrap',h,{overlay:'rutAdditionOv',alCerrar:closeRutAddition});
   wrap.querySelector('#rutAdditionBack').onclick=back||closeRutAddition;return wrap;
 }

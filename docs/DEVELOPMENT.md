@@ -481,3 +481,14 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 - Próximos Cumpleaños muestra VIP con el acento de Próximos y Añadir a su derecha.
 - El carrusel acompaña el arrastre con vistas previas inertes, mantiene el tamaño y respeta el desplazamiento vertical. La fecha queda centrada y la alarma usa un icono vectorial.
 - La captura táctil ignora la pérdida de captura de los hijos y evita la navegación lateral del navegador durante el arrastre.
+
+
+## Rutinas y orden de planes (v468)
+- Desde Eventos, `js/events-routines.js` ofrece hasta cuatro rutinas activas y un selector ampliado. Una flexible crea una extra; una fija crea una sesión planificada y permite sustituir un compromiso de esa semana sin modificar semanas posteriores.
+- El histórico compara el horario efectivo con el original (`originalTime`, `originalDur`, y `originalDate` si se cambió de día), conservado en `keptSessions`. Volver al horario original o cancelar y descancelar no deja una marca de edición. Las nuevas sesiones fijas llevan `planned` y cuentan entre las previstas. El recuento mensual añade las movidas de horario.
+- Una extra sin `recoveryOf` se puede editar o eliminar, pero no cancelar ni recuperar, también al actuar por lote. Las recuperaciones mantienen su vínculo y los controles correspondientes.
+- Rutinas separa hechas habituales, canceladas, recuperadas y extras pasadas. Cumplimiento = (hechas + recuperadas + extras) / sesiones habituales previstas hasta ayer. Puede superar el 100 %; sin sesiones de referencia se muestra un guion.
+- `js/events-order.js` guarda las preferencias en `excelia-plan-order-v1`, campo `planOrder` del backup. Las horas de referencia no se escriben en los eventos ni producen alarmas. Las horas ordenan primero; las flechas desempatan planes sin hora con la misma referencia. Próximos, recordatorios, agenda y marcadores usan la misma comparación. La prioridad histórica de gestiones se conserva como desempate, no por encima de una hora real.
+- Plan cultural sustituye al alias Actividad cultural sin perder eventos antiguos; `culturalPlan` conserva Monólogo, Teatro, Scape Room u Otro. Ponencia sigue independiente. Desayunar se añade; las actividades pasan a Plan/Quedada y Carrera usa una bandera diferenciada de Salir a Correr. Las rutinas comparten el marco blanco de los símbolos de actividad.
+- El histórico mantiene esquinas opacas al fijar el mes. Mis Datos usa tres atajos iguales y copia nombre, teléfono y correo sin prefijo; los documentos de identidad y campos bancarios conservan la etiqueta, incluso al copiar un campo individual.
+- Verificación: `tools/test-routines-plans.js` y `tools/browser/routines-plans-adjustments.spec.js`, además de las pruebas existentes. Capturas en Edge oculto con tema claro, iconos profesionales y tamaños móviles.

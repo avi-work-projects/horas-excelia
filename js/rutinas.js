@@ -245,7 +245,7 @@ function rutSessions(r,fromDs,toDs){
 function rutStats(r,desdeDs){
   var hoy=evDk(new Date());
   var ini=desdeDs||(r.flex?rutFlexEarliest(r):r.start)||hoy;
-  var ses=rutSessions(r,ini,hoy);
+  var ses=rutHistorySessions(r,ini,hoy);
   var hechas=0,saltadas=0,recuperadas=0,extras=0,total=0;
   ses.forEach(function(s){
     if(s.ds===hoy)return;               /* el día en curso aún no cuenta */
@@ -321,9 +321,9 @@ function _renderRutLista(){
     h+='</div>';
     if(r.flex)h+=rutFlexSummary(r);
     else h+=_renderRutSchedule(r,hoy);
-    if(st.total){
+    if(st.total||st.extras||st.recuperadas){
       h+='<div class="rut-card-ft"><span>'+st.hechas+' hechas · '+st.saltadas+' canceladas · '+st.recuperadas+' recuperadas · '+st.extras+' extras</span>';
-      h+='<span class="rut-pct">'+st.pct+'%</span></div>';
+      h+='<span class="rut-pct">'+(st.total?st.pct+'%':'—')+'</span></div>';
     }else{
       h+='<div class="rut-card-ft"><span class="rut-vacio">Aún sin sesiones pasadas</span></div>';
     }

@@ -164,8 +164,8 @@
 .ev-period-header .sy-year{width:91px;min-width:91px;flex:0 0 91px}
 .ev-period-header .ev-period-label{display:flex;align-items:center;justify-content:center;min-height:32px}
 .ev-period-history{font-size:.75rem;line-height:1.15}
-.ev-period-total{font-size:.65rem;padding:4px 10px}
-.ev-period-total[aria-pressed="true"]{background:var(--upcoming-text);border-color:var(--upcoming-text);color:#fff}
+.ev-period-total{position:static;--energy-resumen:var(--upcoming-text)}
+
 
 #eventsOverlay .ev-up-filters .bday-header-vip input[type="checkbox"]{--chk:var(--upcoming-tone);color:var(--upcoming-tone)}
 .ev-up-filters #evBdayAdd{position:static;left:auto;transform:none;width:auto;justify-self:start;margin:0;background:var(--upcoming-text);border-color:var(--upcoming-text);color:#fff;font-size:.7rem;min-height:32px;padding:6px 9px}

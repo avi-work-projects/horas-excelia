@@ -2,7 +2,7 @@
 var EV_PLAN_PICK=null;
 var EV_QUICK_PLANS=['Comida','Tomar algo','Cena'];
 var EV_PICKER_GROUPS={
-  plans:{accent:'#bd6119',generic:'Plan/Quedada',title:'Elige tu Plan',label:'Plan / Quedada',quick:EV_QUICK_PLANS,types:['Comida','Tomar algo','Cena','Brunch','Barbacoa','Cumpleaños','Plan romántico','Copas','Salir de fiesta','Bolos','Cine','Ping pong','Ver partido fútbol','Juegos de mesa','Montaña','Ponencia','Carrera','Merendar','Actividad cultural']},
+  plans:{accent:'#bd6119',generic:'Plan/Quedada',title:'Elige tu Plan',label:'Plan / Quedada',quick:EV_QUICK_PLANS,types:['Comida','Tomar algo','Cena','Desayunar','Brunch','Merendar','Barbacoa','Cumpleaños','Plan romántico','Copas','Salir de fiesta','Cine','Plan cultural','Ponencia','Bolos','Ping pong','Ver partido fútbol','Juegos de mesa','Montaña','Carrera','Salir a Correr','Pádel','Baile']},
   management:{accent:'#27845c',generic:'Rec. Gestiones',title:'Elige tu Gestión',label:'Rec. Gestiones',quick:['Llamada','Cita','Peluquería'],legacy:['Contratar gas/electricidad'],types:['Peluquería','Médico','Dentista','Cita','Llamada','Contratar seguro','Contratar gas','Contratar electricidad','Enviar factura','Pago','Pago Hacienda','Presentar Modelo']}
 };
 function evPickerHas(group,type){return type===group.generic||group.types.indexOf(type)>=0||(group.legacy||[]).indexOf(type)>=0;}
@@ -24,8 +24,10 @@ function updateEvQuickPlan(form,type){
 }
 function evFormRenderTypes(form,kind,type){
   var tax=_evFormEl(form,'evFTaxBlock');if(tax)tax.remove();
+  var culture=_evFormEl(form,'evFCultureBlock');if(culture)culture.remove();
   _evFormEl(form,'evFTypePicker').innerHTML=_renderEvTypeSwatches(kind,type,form.quickExtras);
   if(tax)(form.root.querySelector('[data-group="management"]')||form.root).appendChild(tax);
+  if(culture)(form.root.querySelector('[data-group="plans"]')||form.root).appendChild(culture);
 }
 function renderEvPlanOptions(selected,key){
   var types=EV_PICKER_GROUPS[key||'plans'].types,remainder=types.length%4,start=types.length-remainder;
@@ -65,6 +67,18 @@ function openEvPlanPicker(form,key){
     evFormRenderTypes(form,'puntual',type);
     _bindEvFormTypes(form);_evFormTypeUI(form,'puntual',type);_evFormSuggestTitle(form,type);
     closeEvPlanPicker();
-    if(type==='Presentar Modelo')requestAnimationFrame(function(){_evFormEl(form,'evFTaxBlock').scrollIntoView({block:'nearest',behavior:'smooth'});});
+    if(type==='Presentar Modelo'||type==='Plan cultural')requestAnimationFrame(function(){_evFormEl(form,type==='Plan cultural'?'evFCultureBlock':'evFTaxBlock').scrollIntoView({block:'nearest',behavior:'smooth'});});
   };
+}
+
+var EV_CULTURE_OPTIONS=['Monólogo','Teatro','Scape Room','Otro'];
+function renderEvCultureFields(ev){
+  var value=ev&&(ev.culturalPlan||(getEvType(ev)==='Plan cultural'?'Otro':''))||'';
+  return '<div class="ev-tax-model" id="evFCultureBlock" style="display:'+(ev&&getEvType(ev)==='Plan cultural'?'block':'none')+'"><label>Tipo de plan cultural</label><div class="ev-tax-menu">'+EV_CULTURE_OPTIONS.map(function(option){return '<button type="button" data-culture="'+option+'" aria-pressed="'+(value===option)+'">'+option+'</button>';}).join('')+'</div></div>';
+}
+function bindEvCultureFields(form){
+  form.root.querySelectorAll('[data-culture]').forEach(function(button){button.onclick=function(){
+    form.root.querySelectorAll('[data-culture]').forEach(function(b){b.setAttribute('aria-pressed',String(b===button));});
+    var input=_evFormEl(form,'evFTitle');if(!input.value.trim()||input.value===form.autoTitle){form.autoTitle=button.dataset.culture==='Otro'?'Plan cultural':button.dataset.culture;input.value=form.autoTitle;}
+  };});
 }

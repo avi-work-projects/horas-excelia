@@ -154,7 +154,7 @@ assert.equal(routines.rutOccursOn(corrected,'2026-08-17'),'16:30');assert.equal(
 assert.equal(routines.rutHistoryPeriods(corrected,'2026-12-31').length,2);
 assert.throws(()=>routines.rutEditSession(corrected,'2026-08-17','99:30',45,false));
 assert.equal(routines.validateImport({rutinas:[corrected]}).rutinas[0].keptSessions['2026-08-17'].dur,45);
-assert.ok(routines.rutIconSvg('baile','#123456').includes('stroke-width="8.4"'));
+assert.ok(routines._rutIconRawSvg('baile','#123456').includes('stroke-width="8.4"'));assert.ok(routines.rutIconSvg('baile','#123456').includes('fill="#fff"'));
 console.log('Rutinas: etapas sin excepciones, edicion puntual e icono con contorno OK');
 
 const elapsed=routines.rutNewSchedule(original,{weekDays:[5],time:'00:00'},'2026-08-21');
