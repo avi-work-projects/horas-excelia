@@ -572,7 +572,7 @@ REGLAS.push(['planes: referencias invisibles y hora explícita prioritaria',func
     if(ctx.evUpcomingCompare(ev,real)!==0||ctx.evStartTime(ev)||ctx.evTimeLabel(ev)||JSON.stringify(ev)!==before)return false;
     ev.time='08:00';if(ctx.evUpcomingCompare(ev,real)>=0)return false;
   }
-  return ctx.evPlanReferenceTime('Montaña')===null;
+  return ctx.evPlanReferenceTime('Montaña')==='09:00';
 }]);
 
 REGLAS.push(['inicio: todos los cumpleanos a 7 dias, con o sin alarma',function(){

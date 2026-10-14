@@ -125,7 +125,7 @@ function renderRutPlan(r){
   if(!list.length)h+='<p class="sy-note">Pulsa un día para programar una sesión.</p>';
   list.forEach(function(day){
     var wk=rutWeekKey(day);if(wk!==week){week=wk;h+='<h4>Semana del '+_rutFmtCorto(wk)+' · '+rutFlexCount(r,rutFlexRange(day,'week'))+' / '+(r.flex.period==='week'?r.flex.target:r.flex.weeklyTarget)+'</h4>';}
-    var s=r.flex.sessions[day];h+='<div class="rut-plan-row"><button class="ev-btn" data-rday="'+day+'">'+_rutFmtCorto(day)+' · '+s.time+'–'+rutFin(s.time,s.dur)+'</button><button class="ev-btn" data-rskip="'+day+'">'+(rutIsSkipped(r,day)?'Reactivar':'Saltar')+'</button></div>';
+    var s=r.flex.sessions[day];h+='<div class="rut-plan-row"><button class="ev-btn" data-rday="'+day+'">'+_rutFmtCorto(day)+' · '+s.time+'–'+rutFin(s.time,s.dur)+'</button><button class="ev-btn" data-rskip="'+day+'">'+(rutIsSkipped(r,day)?'Reactivar':'Cancelar')+'</button></div>';
   });return h+'</div></div>';
 }
 function openRutPlan(r){RUT_PLAN={id:r.id,month:evDk(new Date()).slice(0,7),day:null};refreshRutPlan();}

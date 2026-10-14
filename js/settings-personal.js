@@ -47,6 +47,9 @@ function mergeContactData(current,incoming){
 }
 function contactData(){try{return normalizeContactData(JSON.parse(appStorage.getItem(CONTACT_DATA_KEY)||'{}'));}catch(e){return normalizeContactData({});}}
 function personalNote(){return appStorage.getItem(PERSONAL_NOTES_KEY)||'';}
+function contactValueText(key,label,value){
+  return key==='name'||key==='phone'||key.indexOf('emails.')===0?value:label+': '+value;
+}
 function contactFieldHtml(key,label,value){
   return '<label class="invoice-field"><span>'+label+'</span><textarea rows="1" maxlength="2000" data-contact="'+key+'">'+escHtml(value||'')+'</textarea></label>';
 }
@@ -72,8 +75,8 @@ function contactSelectionText(root){
   var lines=[];
   root.querySelectorAll('[data-personal-select]:checked').forEach(function(box){
     var key=box.dataset.personalSelect,parts=key.split('.');
-    if(parts.length===1){var field=CONTACT_FIELDS.find(function(f){return f[0]===key;}),value=root.querySelector('[data-contact="'+key+'"]').value.trim();if(value)lines.push(['name','phone'].indexOf(key)>=0?value:field[1]+': '+value);}
-    else{var group=CONTACT_GROUPS.find(function(g){return g.key===parts[0];}),values=[];group.fields.forEach(function(f){var value=root.querySelector('[data-contact="'+key+'.'+f[0]+'"]').value.trim();if(value)values.push(group.key==='emails'?value:f[1]+': '+value);});if(values.length)lines.push(values.join('\n'));}
+    if(parts.length===1){var field=CONTACT_FIELDS.find(function(f){return f[0]===key;}),value=root.querySelector('[data-contact="'+key+'"]').value.trim();if(value)lines.push(contactValueText(key,field[1],value));}
+    else{var group=CONTACT_GROUPS.find(function(g){return g.key===parts[0];}),values=[];group.fields.forEach(function(f){var value=root.querySelector('[data-contact="'+key+'.'+f[0]+'"]').value.trim();if(value)values.push(contactValueText(key+'.'+f[0],f[1],value));});if(values.length)lines.push(values.join('\n'));}
   });return lines.join('\n');
 }
 function contactPrimaryIndex(rows){var index=rows.findIndex(function(row){return row.primary==='1';});return index<0?0:index;}

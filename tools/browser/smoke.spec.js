@@ -33,7 +33,7 @@ test('rutina flexible: cupo del primer mes, sesiones pasadas y conservación al 
  await page.locator('[data-rskip]').click();await expect(page.locator('.rut-plan-day.skipped')).toHaveCount(1);
  await page.locator('[data-rskip]').click();await expect(page.locator('.rut-plan-day.skipped')).toHaveCount(0);
  await page.locator('#rutPlanClose').click();
- await expect(page.locator('.rut-card')).toContainText('1 hechas · 0 saltadas');
+ await expect(page.locator('.rut-card')).toContainText('1 hechas · 0 canceladas');
  await page.reload();
  // El cupo pendiente genera un recordatorio real al volver a abrir la app.
  await expect(page.locator('#homePopup')).toBeVisible();
@@ -42,7 +42,7 @@ test('rutina flexible: cupo del primer mes, sesiones pasadas y conservación al 
  await expect(page.locator('#eventsOverlay')).toHaveClass(/open/);
  await page.locator('#evViewRutinas').click();
  await expect(page.locator('.rut-card')).toContainText('1 / 3 sesiones del mes');
- await expect(page.locator('.rut-card')).toContainText('1 hechas · 0 saltadas');
+ await expect(page.locator('.rut-card')).toContainText('1 hechas · 0 canceladas');
  await page.locator('.rut-edit').click();
  await expect(page.locator('#rutFFirstTarget')).toHaveCount(0);
  await page.locator('#rutFName').fill('Flexible editada');await page.locator('#rutFSave').click();
@@ -270,7 +270,7 @@ test('rutinas: horario por semana, duración, histórico editable y backup',asyn
  },left);}
  await swipe(true);await expect(page.locator('[data-rsub="stats"]')).toHaveClass(/active/);await swipe(false);await expect(page.locator('[data-rsub="lista"]')).toHaveClass(/active/);
  await page.locator('#rutAdd').click();
- await expect(page.locator('#rutFIcons [data-icon="baile"] svg')).toHaveAttribute('viewBox','-1 -1 26 26');
+ await expect(page.locator('#rutFIcons [data-icon="baile"] svg')).toHaveAttribute('viewBox','0 0 20 20');
  await page.screenshot({path:'.local-preview/routine-form-check.png'});
 });
 

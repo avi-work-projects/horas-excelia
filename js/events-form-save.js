@@ -19,6 +19,7 @@ function _evFormRead(form){
   }else if(repType!=='none')repeat={type:repType};
   var event={id:form.edit?form.edit.id:'ev-'+Date.now(),title:title,note:_evFormEl(form,'evFNote').value.trim(),color:EV_FREE_COLOR[key]?_evFormColor(form):evTypeColor(kind,type),kind:kind,type:type,start:start,end:end,repeat:repeat};
   if(taxModel!==null)event.taxModel=taxModel;
+  if(type==='Plan cultural'){var culture=form.root.querySelector('[data-culture][aria-pressed="true"]');if(!culture){showToast('Elige el tipo de plan cultural','error');return null;}event.culturalPlan=culture.dataset.culture;}
   if(EV_FREE_DATES[key]&&form.dates.length>1)event.dates=form.dates.slice().sort();
   if(EV_FREE_SHAPE[key]&&form.shape)event.shape=form.shape;
   if(EV_FREE_BARSIZE[key]){

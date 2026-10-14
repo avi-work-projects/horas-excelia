@@ -19,7 +19,7 @@ function bindEvRoutineChoices(form){
   form.root.querySelectorAll('[data-event-routine]').forEach(function(b){b.onclick=function(){choose(rutById(b.dataset.eventRoutine));};});
   var more=form.root.querySelector('#evRoutinesMore');if(more)more.onclick=function(){
     function close(){cerrarPanel('evRoutinesWrap','evRoutinesOv');}
-    var html='<div class="ev-detail-overlay" id="evRoutinesOv"><section class="ev-detail-sheet"><header class="rut-history-head"><button class="sy-back" id="evRoutinesClose">←</button><strong>Rutinas activas</strong></header><div class="ev-routines-quick" style="--routine-columns:2">'+evActiveRoutines().map(evRoutineChoice).join('')+'</div></section></div>';
+    var html='<div class="ev-detail-overlay" id="evRoutinesOv"><section class="ev-detail-sheet"><header class="bd-panel-header panel-header-centered"><button class="sy-back" id="evRoutinesClose" aria-label="Volver">←</button><h2>Rutinas activas</h2><span></span></header><div class="ev-routines-quick" style="--routine-columns:2">'+evActiveRoutines().map(evRoutineChoice).join('')+'</div></section></div>';
     var wrap=abrirPanel('evRoutinesWrap',html,{overlay:'evRoutinesOv',alCerrar:close});wrap.querySelector('#evRoutinesClose').onclick=close;
     wrap.querySelectorAll('[data-event-routine]').forEach(function(b){b.onclick=function(){close();choose(rutById(b.dataset.eventRoutine));};});
   };
@@ -38,8 +38,8 @@ function rutPlanFixedSession(r,data,replaceKey){
   if(copy.deletedSessions)delete copy.deletedSessions[data.date];
   delete copy.skips[data.date];
   var original=source?rutSessionOriginal(r,source):null;
-  copy.keptSessions[data.date]={time:data.time,dur:data.dur};
-  if(original){Object.assign(copy.keptSessions[data.date],{originalTime:original.time,originalDur:original.dur,originalDate:source.ds});}
+  copy.keptSessions[data.date]={time:data.time,dur:data.dur,planned:true};
+  if(original){Object.assign(copy.keptSessions[data.date],{originalTime:original.time,originalDur:original.dur,originalDate:original.ds});}
   var full=rutLimitExceeded(copy,r.id);if(full)throw new Error('El '+_rutFmt(full)+' ya tiene el máximo de rutinas.');
   rutValidateExtraSessions(copy);return copy;
 }

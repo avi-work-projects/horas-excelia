@@ -54,10 +54,10 @@ const ordered=a.EVENTS.slice().sort(a.evUpcomingCompare).map(e=>e.id);
 assert.deepEqual(Array.from(a.homeReminderEvents(new a.Date(2026,7,21)),it=>it.event.id),ordered);
 html=a.renderEvUpcoming();ordered.forEach((id,i)=>{if(i)assert(html.indexOf('data-id="'+ordered[i-1]+'"')<html.indexOf('data-id="'+id+'"'));});
 for(const [type,time] of Object.entries({Brunch:'11:00',Bolos:'19:00',Cine:'20:00'}))assert.equal(a.evPlanReferenceTime(type),time);
-for(const type of ['Cumpleaños','Ping pong','Ver partido fútbol','Juegos de mesa','Ponencia'])assert.equal(a.evPlanReferenceTime(type),null);
-for(const type of ['Carrera','Merendar','Actividad cultural','Cumpleaños','Brunch','Bolos','Cine','Ping pong','Ver partido fútbol','Juegos de mesa','Ponencia']){
+for(const type of ['Cumpleaños','Ping pong','Ver partido fútbol','Juegos de mesa','Ponencia'])assert.equal(a.evPlanReferenceTime(type),'18:00');
+for(const type of ['Carrera','Merendar','Plan cultural','Cumpleaños','Brunch','Bolos','Cine','Ping pong','Ver partido fútbol','Juegos de mesa','Ponencia']){
   assert(a.evIsPlan(type));assert(a.EV_TYPE_COLORS['puntual|'+type]);
-  assert(a.evShapeSvg(a.evFixedSymbol(type)).includes(type==='Cine'?'fill="#202124"':'fill="currentColor"'));
+  assert(a.evShapeSvg(a.evFixedSymbol(type)).includes(type==='Cine'?'fill="#202124"':type==='Carrera'?'fill="#fff"':'fill="currentColor"'));
 }
 // El bloque continuo queda reservado a viajes que ya han comenzado.
 a.EVENTS=[{id:'ongoing',kind:'grande',type:'Viaje',title:'En curso prueba',start:'2026-08-20',end:'2026-08-25'},

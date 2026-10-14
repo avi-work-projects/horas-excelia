@@ -25,7 +25,7 @@ test('cancelar, recuperar después y añadir una extra conserva tres sesiones in
   await page.locator('#rutExtraDate').fill('2026-09-28');await chooseTime(page,'#rutExtraTime','20:30');
   await page.locator('#rutExtraSave').click();await expect(page.locator('#rutAdditionOv')).toHaveCount(0);
   await expect(original).toContainText('Recuperada este día: 28/09/2026');
-  await page.locator('#rutHistoryAdd').click();await page.locator('[data-addition-mode="extra"]').click();
+  await page.locator('#rutHistoryAdd').click();await page.locator('[data-addition-mode="extra"]').click();await page.locator('#rutAdditionOv .ev-cell[data-ds="2026-09-28"]').click();await page.locator('#rutRecoveryConfirm').click();
   await page.locator('#rutExtraDate').fill('2026-09-28');await chooseTime(page,'#rutExtraTime','21:45');
   await page.locator('#rutExtraSave').click();await expect(page.locator('#rutAdditionOv')).toHaveCount(0);
   await expect(page.locator('#rutHistoryOv')).toContainText('(Extra)');

@@ -63,7 +63,7 @@ function rutIconOf(r){
 }
 /* color puede ser 'currentColor': entonces el detalle se oscurece con un
    velo negro en vez de calcular la mezcla, que necesita un hex. */
-function rutIconSvg(kind,color,chooser){
+function _rutIconRawSvg(kind,color,chooser){
   var dark=(color==='currentColor')?'rgba(0,0,0,.45)'
           :((typeof fakeTrans==='function')?fakeTrans(color,0.52):color);
   var shapes=_rutIconShapes(kind);
@@ -85,3 +85,10 @@ function setRutGymColor(hex){
   RUT_GYM_COLOR=hex.toLowerCase();RUT_FIXED_COLOR.gym=RUT_GYM_COLOR;
   appStorage.setItem(RUT_APPEARANCE_KEY,JSON.stringify({gymColor:RUT_GYM_COLOR}));
 }
+
+/* Marco blanco compartido con las actividades; la silueta se genera una vez. */
+function evActivitySvg(kind,color){
+  var activity=_rutIconRawSvg(kind,color,true).replace(/^<svg[^>]*>/,'').replace(/<\/svg>$/,'');
+  return '<svg viewBox="0 0 20 20"><rect x="1" y="1" width="18" height="18" rx="4" fill="#fff" stroke="#000" '+evSymbolStroke(1.7)+'/><g transform="translate(3.5 3.5) scale(.54)">'+activity+'</g></svg>';
+}
+function rutIconSvg(kind,color,chooser){return evActivitySvg(kind,color);}

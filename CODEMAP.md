@@ -72,10 +72,10 @@
 
 **Funciones:** csvYearContent:4 · csvExportRecords:15 · csvRecordExport:18 · csvPendingWarnings:23 · csvCheckChanges:32
 
-### js/data-integrity.js  _(187 líneas)_
-**Estado global:** STORAGE_ERROR:2 · MAIL_CFG_SK:133
+### js/data-integrity.js  _(191 líneas)_
+**Estado global:** STORAGE_ERROR:2 · MAIL_CFG_SK:137
 
-**Funciones:** fail:5 · validIsoDate:21 · validateImport:25 (!100) · visit:27 · hour:84 · days:85 · schedule:86 · validBirthday:125 · prepareImportRelations:126 · loadMailConfig:134 · saveMailConfig:137 · birthdayValidation:140 · rutLimitExceeded:145 · legacy:176
+**Funciones:** fail:5 · validIsoDate:21 · validateImport:25 (!104) · visit:27 · hour:86 · days:87 · schedule:88 · validBirthday:129 · prepareImportRelations:130 · loadMailConfig:138 · saveMailConfig:141 · birthdayValidation:144 · rutLimitExceeded:149 · legacy:180
 
 ### js/economics-analisis.js  _(797 líneas)_
 **Estado global:** ANALISIS_SUB:6 · ANALISIS_SORT:7 · ANALISIS_FILTER_TEXT:8 · ANALISIS_FILTER_CAT:9 · ANALISIS_CAT_MODE:10 · ANALISIS_DET_MODE:11 · ANALISIS_RES_MODE:12 · ANALISIS_SEG_NORMAL:15
@@ -204,8 +204,8 @@
 
 **Funciones:** evAppearanceDefaults:10 · validateEventAppearance:13 · loadEventAppearance:19 · applyEventAppearance:24 · setEventAppearance:28 · evSymbolStroke:37
 
-### js/events-bind.js  _(633 líneas)_
-**Funciones:** _switchEvView:6 · openEvents:24 · closeEvents:34 · openEventsAt:41 · refreshEvents:48 · bindEvYearHeader:69 · setYear:73 · bindEvEvents:86 · _bindEvNav:95 (!201) · _scrollWeekToMonth:103 · _scrollWeekToToday:150 · doScroll:160 · _bindEvCal:296 (!93) · _bindEvWeekTitleBackground:389 · update:395 · schedule:418 · evFilterCategories:423 · evFilterCategoryFor:432 · evListFilterLabel:433 · evListFilterMatches:441 · evToggleListFilter:447 · openEvTypeFilter:459 · isSelected:461 · option:462 · close:471 · paint:474 · _bindEvListas:478 (!122) · apply:588 · _bindEvGestos:600 · _evSwipeUpcoming:613 · _evSwipeBodas:620 · _evSwipeRutinas:627
+### js/events-bind.js  _(634 líneas)_
+**Funciones:** _switchEvView:6 · openEvents:24 · closeEvents:34 · openEventsAt:41 · refreshEvents:48 · bindEvYearHeader:69 · setYear:73 · bindEvEvents:86 · _bindEvNav:95 (!202) · _scrollWeekToMonth:104 · _scrollWeekToToday:151 · doScroll:161 · _bindEvCal:297 (!93) · _bindEvWeekTitleBackground:390 · update:396 · schedule:419 · evFilterCategories:424 · evFilterCategoryFor:433 · evListFilterLabel:434 · evListFilterMatches:442 · evToggleListFilter:448 · openEvTypeFilter:460 · isSelected:462 · option:463 · close:472 · paint:475 · _bindEvListas:479 (!122) · apply:589 · _bindEvGestos:601 · _evSwipeUpcoming:614 · _evSwipeBodas:621 · _evSwipeRutinas:628
 
 ### js/events-cal.js  _(374 líneas)_
 **Estado global:** DN7:25
@@ -220,40 +220,48 @@
 ### js/events-carousel.js  _(59 líneas)_
 **Funciones:** bindEvCarouselDrag:2 · preview:5 · position:14 · clear:19 · finish:23
 
-### js/events-detail.js  _(643 líneas)_
-**Funciones:** openEvDeleteSheet:7 · closeEvDeleteSheet:37 · evDetailTitleColor:40 · evDetailAlarmDate:49 · renderEvDetail:63 (!132) · fd2:67 · _fila:158 · evDayCarItems:195 · evCarGo:208 · _evCarShow:216 · openEvDayCarousel:224 · closeEvDayCarousel:232 · openEvDetail:239 (!162) · repaintRoutine:272 · repintar:285 · closeEvDetail:401 · renderEvAlarmPanel:404 (!95) · fd2:406 · openEvAlarm:499 · closeEvAlarm:505 · openBdayAlarmFromEvents:513 · bindEvAlarmEvents:518 (!125) · _syncPre:556 · fmtD:586
+### js/events-detail.js  _(646 líneas)_
+**Funciones:** openEvDeleteSheet:7 · closeEvDeleteSheet:37 · evDetailTitleColor:40 · evDetailAlarmDate:49 · renderEvDetail:63 (!133) · fd2:67 · _fila:158 · evDayCarItems:196 · evCarGo:209 · _evCarShow:217 · openEvDayCarousel:225 · closeEvDayCarousel:233 · openEvDetail:240 (!164) · repaintRoutine:273 · repintar:288 · closeEvDetail:404 · renderEvAlarmPanel:407 (!95) · fd2:409 · openEvAlarm:502 · closeEvAlarm:508 · openBdayAlarmFromEvents:516 · bindEvAlarmEvents:521 (!125) · _syncPre:559 · fmtD:589
 
-### js/events-form-controls.js  _(106 líneas)_
-**Funciones:** _evFormEl:2 · _evFormAll:3 · _evFormKind:4 · _evFormColor:5 · _evFormSuggestTitle:6 · _evFormTypeUI:10 · _bindEvFormTypes:24 · _bindEvFormCategories:38 · _evFormShapePreviews:53 · _bindEvFormAppearance:56 · _evFormDatesLabel:74 · _bindEvFormDates:82 · _evFormTravelUI:93 · _bindEvFormDetails:99
+### js/events-form-controls.js  _(109 líneas)_
+**Funciones:** _evFormEl:2 · _evFormAll:3 · _evFormKind:4 · _evFormColor:5 · _evFormSuggestTitle:6 · _evFormTypeUI:10 · _bindEvFormTypes:24 · _bindEvFormCategories:41 · _evFormShapePreviews:56 · _bindEvFormAppearance:59 · _evFormDatesLabel:77 · _bindEvFormDates:85 · _evFormTravelUI:96 · _bindEvFormDetails:102
 
-### js/events-form-save.js  _(112 líneas)_
-**Funciones:** _evFormRead:2 · _evFormReadDetails:30 · _evFormSaveBodas:50 · _evFormCommit:78 · _evFormDelete:94 · _bindEvFormActions:105
+### js/events-form-save.js  _(113 líneas)_
+**Funciones:** _evFormRead:2 · _evFormReadDetails:31 · _evFormSaveBodas:51 · _evFormCommit:79 · _evFormDelete:95 · _bindEvFormActions:106
 
-### js/events-form.js  _(295 líneas)_
-**Funciones:** evPuntualDays:6 · _renderEvTypeSwatches:15 · _renderEvTypeButton:28 · evAdmiteRepeticion:48 · renderEvForm:51 (!196) · openEvForm:247 · closeEvForm:273 · evSuggestedTitle:281 · bindEvFormEvents:285
+### js/events-form.js  _(291 líneas)_
+**Funciones:** evPuntualDays:6 · _renderEvTypeSwatches:15 · _renderEvTypeButton:28 · evAdmiteRepeticion:48 · renderEvForm:51 (!192) · openEvForm:243 · closeEvForm:269 · evSuggestedTitle:277 · bindEvFormEvents:281
 
 ### js/events-management.js  _(33 líneas)_
 **Funciones:** evPaymentCoinsSvg:1 · evTaxBuildingSvg:2 · evUtilityHomeSvg:3 · evManagementShapeInner:5 · evManagementCheckable:18 · evManagementDate:19 · evManagementDone:20 · evManagementCheckHtml:21 · bindEvManagementCheck:26
 
-### js/events-picker-color.js  _(356 líneas)_
-**Estado global:** EV_COLOR_GRID:6 · EV_COLOR_TYPES:25 · EV_MANAGEMENT_SUBTYPES:42 · EV_PLAN_SUBTYPES:43 · EV_KINDS:47 · EV_TYPE_COLORS:52 · EV_FREE_COLOR:95 · EV_FREE_SHAPE:96 · EV_FREE_DATES:99 · EV_BAR_SIZES:102 · EV_FREE_BARSIZE:103 · EV_DOT_SOLID:107 · EV_SHAPE_BW:134
+### js/events-order.js  _(57 líneas)_
+**Estado global:** EV_PLAN_ORDER_KEY:2 · EV_PLAN_ORDER_DRAFT:3 · EV_PLAN_ORDER_CACHE:4
 
-**Funciones:** evIsManagement:44 · evIsPlan:45 · evFixedSymbol:46 · evBarSize:108 · evBarSizeCls:114 · evTypeKey:115 · evTypeColor:116 · getEvKind:119 · evPlanShapeInner:135 · evShapeSvg:152 (!84) · evMorePlusSvg:236 · evTravelColor:245 · getEvType:251 · isEvBarAlways:261 · getEvDisplayColor:263 · _renderColorPicker:285 · _bindColorPicker:308 · updatePreview:318
+**Funciones:** evPlanOrderDefaults:5 · validateEvPlanOrder:9 · evPlanOrderData:14 · evPlanReferenceTime:22 · evCompareOrder:25 · minutes:27 · closeEvPlanOrder:34 · openEvPlanOrder:35 · renderEvPlanOrder:36
+
+### js/events-picker-color.js  _(363 líneas)_
+**Estado global:** EV_COLOR_GRID:6 · EV_COLOR_TYPES:25 · EV_MANAGEMENT_SUBTYPES:42 · EV_PLAN_SUBTYPES:43 · EV_KINDS:47 · EV_TYPE_COLORS:52 · EV_FREE_COLOR:99 · EV_FREE_SHAPE:100 · EV_FREE_DATES:103 · EV_BAR_SIZES:106 · EV_FREE_BARSIZE:107 · EV_DOT_SOLID:111 · EV_SHAPE_BW:138
+
+**Funciones:** evIsManagement:44 · evIsPlan:45 · evFixedSymbol:46 · evBarSize:112 · evBarSizeCls:118 · evTypeKey:119 · evTypeColor:120 · getEvKind:123 · evPlanShapeInner:139 · evShapeSvg:158 (!83) · evMorePlusSvg:241 · evTravelColor:250 · getEvType:256 · isEvBarAlways:268 · getEvDisplayColor:270 · _renderColorPicker:292 · _bindColorPicker:315 · updatePreview:325
 
 ### js/events-picker-date.js  _(103 líneas)_
 **Estado global:** MNS:10
 
 **Funciones:** openOtrosDatePicker:7 (!96) · _evDk:11 · _count:12 · _render:13 · _attach:54 · _rerender:85 · _close:93
 
-### js/events-plan-picker.js  _(71 líneas)_
-**Estado global:** EV_PLAN_PICK:2 · EV_QUICK_PLANS:3 · EV_PICKER_GROUPS:4
+### js/events-plan-picker.js  _(85 líneas)_
+**Estado global:** EV_PLAN_PICK:2 · EV_QUICK_PLANS:3 · EV_PICKER_GROUPS:4 · EV_CULTURE_OPTIONS:74
 
-**Funciones:** evPickerHas:8 · evPickerMoreIcon:9 · evQuickSelection:10 · renderEvQuickPlans:13 · updateEvQuickPlan:20 · evFormRenderTypes:25 · renderEvPlanOptions:30 · closeEvPlanPicker:37 · evPlanPickerKey:43 · openEvPlanPicker:46
+**Funciones:** evPickerHas:8 · evPickerMoreIcon:9 · evQuickSelection:10 · renderEvQuickPlans:13 · updateEvQuickPlan:20 · evFormRenderTypes:25 · renderEvPlanOptions:32 · closeEvPlanPicker:39 · evPlanPickerKey:45 · openEvPlanPicker:48 · renderEvCultureFields:75 · bindEvCultureFields:79
 
-### js/events-render.js  _(655 líneas)_
-**Estado global:** EV_LIST_TYPES:227
+### js/events-render.js  _(652 líneas)_
+**Estado global:** EV_LIST_TYPES:223
 
-**Funciones:** renderEvListItem:11 · fd2:15 · evUpcomingCompare:44 · minutes:45 · renderEvUpcoming:51 (!177) · fd2:58 · renderEvItem:59 · renderEvPanel:110 · occurrenceKey:137 · evListInYear:228 · renderEvByTypes:243 · coincide:263 · renderEvMonthsView:308 · _evWeekLanes:319 · assign:322 · evWeekTravelRow:337 · renderEvWeek:357 (!133) · hexA:361 · renderEvYearHeader:490 · renderEvContent:500 (!155)
+**Funciones:** renderEvListItem:11 · fd2:15 · evUpcomingCompare:44 · renderEvUpcoming:47 (!177) · fd2:54 · renderEvItem:55 · renderEvPanel:106 · occurrenceKey:133 · evListInYear:224 · renderEvByTypes:239 · coincide:259 · renderEvMonthsView:304 · _evWeekLanes:315 · assign:318 · evWeekTravelRow:333 · renderEvWeek:353 (!133) · hexA:357 · renderEvYearHeader:486 · renderEvContent:496 (!156)
+
+### js/events-routines.js  _(63 líneas)_
+**Funciones:** evActiveRoutines:2 · evRoutineChoice:6 · renderEvRoutineChoices:9 · bindEvRoutineChoices:13 · choose:14 · close:21 · rutPlanFixedSession:27 · openEvRoutineSession:46 · week:49
 
 ### js/events-statistics.js  _(57 líneas)_
 **Estado global:** EV_STATS_YEAR:2 · EV_STATS_LAST_YEAR:3 · EV_STATS_PERIOD:4
@@ -288,8 +296,8 @@
 
 **Funciones:** householdHost:4 · renderHouseholdContent:5 · openHousehold:8 · closeHousehold:21 · reRenderHousehold:28 · bindHousehold:33 · move:36
 
-### js/import-export.js  _(533 líneas)_
-**Funciones:** _lsJson:239 · askImportMode:246 · close:260 · _mergeMap:274 · _mergeList:285 · _sigEvent:295 · _sigCouple:297 · _sigAlarm:298 · _sigGasto:299 · _keyId:301 · _keyBday:302 · _keyGasto:303 · _exportPerYearKeys:309 (!83) · _applyFullImport:392 (!141)
+### js/import-export.js  _(535 líneas)_
+**Funciones:** _lsJson:239 · askImportMode:246 · close:260 · _mergeMap:274 · _mergeList:285 · _sigEvent:295 · _sigCouple:297 · _sigAlarm:298 · _sigGasto:299 · _keyId:301 · _keyBday:302 · _keyGasto:303 · _exportPerYearKeys:309 (!84) · _applyFullImport:393 (!142)
 
 ### js/import-preview.js  _(19 líneas)_
 **Funciones:** renderImportPreview:2 · add:4
@@ -352,38 +360,38 @@
 ### js/rutinas-form.js  _(241 líneas)_
 **Funciones:** rutSetupLocked:3 · rutFormCandidate:11 · rutReadForm:41 · renderRutForm:75 · openRutForm:142 (!98) · _rutRepaintIcons:149 · _rutPintaHoras:174 · closeRutForm:240
 
-### js/rutinas-history.js  _(159 líneas)_
+### js/rutinas-history.js  _(178 líneas)_
 **Estado global:** RUT_HISTORY:2
 
-**Funciones:** rutNewSchedule:3 · rutScheduleSignature:12 · rutHistoryPeriods:15 · rutHistorySessions:27 · rutHistoryLabel:36 · rutHistoryMonthGroups:41 · renderRutHistorySession:47 · renderRutHistory:57 · rutHistoryScrollToday:80 · openRutHistory:85 · closeRutHistory:111 · rutEditSession:112 · openRutHistoryEdit:128 · close:141
+**Funciones:** rutNewSchedule:3 · rutScheduleSignature:12 · rutHistoryPeriods:15 · rutHistorySessions:27 · rutHistoryLabel:36 · rutHistoryMonthGroups:41 · renderRutHistorySession:47 · renderRutHistory:59 · rutHistoryScrollToday:82 · openRutHistory:87 · closeRutHistory:113 · rutSessionOriginal:114 · rutSessionMoved:123 · rutEditSession:127 · openRutHistoryEdit:147 · close:160
 
-### js/rutinas-icons.js  _(88 líneas)_
+### js/rutinas-icons.js  _(95 líneas)_
 **Estado global:** RUT_ICONS:7 · RUT_APPEARANCE_KEY:8 · RUT_GYM_COLOR:9 · RUT_FIXED_COLOR:10 · RUT_ICON_LABEL:13
 
-**Funciones:** rutDisplayColor:11 · rutColorOf:12 · _rutIconShapes:14 · _rutIconDetails:37 · rutIconOf:56 · rutIconSvg:66 · setRutGymColor:83
+**Funciones:** rutDisplayColor:11 · rutColorOf:12 · _rutIconShapes:14 · _rutIconDetails:37 · rutIconOf:56 · _rutIconRawSvg:66 · setRutGymColor:83 · evActivitySvg:90 · rutIconSvg:94
 
 ### js/rutinas-recovery.js  _(57 líneas)_
 **Estado global:** RUT_RECOVERY_PICK:3
 
 **Funciones:** rutUnrecoveredSessions:4 · openRutRecoveryList:9 · openRutRecoveryDay:26 · render:29 · select:38 · move:41 · rutReadOnlyDayHtml:47
 
-### js/rutinas-sessions.js  _(131 líneas)_
-**Funciones:** rutSessionsOn:3 · rutSessionByKey:9 · rutRecoveryFor:14 · rutSessionTag:15 · rutRecoveryNote:20 · rutRecoveryHtml:24 · rutDoneCandidate:30 · rutChangeFromDetail:40 · apply:42 · close:48 · rutValidateAddition:55 · rutAddSession:60 · rutValidateExtraSessions:80 · rutSaveSessionChange:96 · rutDeleteSession:103 · openRutSessionDelete:117 · close:124
+### js/rutinas-sessions.js  _(132 líneas)_
+**Funciones:** rutSessionsOn:3 · rutSessionByKey:9 · rutRecoveryFor:14 · rutSessionTag:15 · rutRecoveryNote:20 · rutRecoveryHtml:24 · rutDoneCandidate:30 · rutChangeFromDetail:40 · apply:42 · close:48 · rutValidateAddition:55 · rutAddSession:60 · rutValidateExtraSessions:81 · rutSaveSessionChange:97 · rutDeleteSession:104 · openRutSessionDelete:118 · close:125
 
-### js/rutinas.js  _(591 líneas)_
-**Estado global:** RUT_SK:20 · RUTINAS:21 · RUT_SUGERENCIAS:28 · RUT_DUR_DEFAULT:33 · RUT_TIME_DEFAULT:34 · RUT_DN:35 · RUT_DN_LARGO:36 · RUT_SUBTAB:264 · RUT_WEEK_SEL:394 · RUT_WEEK_CAL:395
+### js/rutinas.js  _(594 líneas)_
+**Estado global:** RUT_SK:20 · RUTINAS:21 · RUT_SUGERENCIAS:28 · RUT_DUR_DEFAULT:33 · RUT_TIME_DEFAULT:34 · RUT_DN:35 · RUT_DN_LARGO:36 · RUT_SUBTAB:266 · RUT_WEEK_SEL:399 · RUT_WEEK_CAL:400
 
-**Funciones:** saveRutinas:25 · rutMarkerHtml:39 · rutMarkerGroups:47 · rutDayMarkersHtml:54 · rutById:59 · rutWeekKey:64 · rutTimeOfDay:73 · rutTieneHorarios:78 · rutScheduleOn:86 · rutScheduleCopy:91 · rutDurationOn:95 · rutChangeFrom:100 · rutChangeWeek:124 · update:128 · rutWeekCfg:140 · rutSuspendedOn:151 · rutDiaLleno:161 · rutOccursOn:165 · rutIsSkipped:176 · rutToggleSkip:177 · rutFin:196 · rutEventsOn:204 · rutEventFromId:221 · rutSessions:230 · rutStats:244 · rutProximas:257 · renderRutinasBody:267 · _rutTimeRange:280 · _renderRutSchedule:284 · _renderRutLista:298 · _rutFmt:336 · _rutFmtCorto:337 · _renderRutStats:343 · openRutWeek:396 · _rutWeekPick:405 · back:429 · _rutWeekRender:458 (!83) · closeRutWeek:541 · openRutSesion:544 · closeRutSesion:548 · bindRutinasEvents:551
+**Funciones:** saveRutinas:25 · rutMarkerHtml:39 · rutMarkerGroups:47 · rutDayMarkersHtml:54 · rutById:59 · rutWeekKey:64 · rutTimeOfDay:73 · rutTieneHorarios:78 · rutScheduleOn:86 · rutScheduleCopy:91 · rutDurationOn:95 · rutChangeFrom:100 · rutChangeWeek:124 · update:128 · rutWeekCfg:140 · rutSuspendedOn:151 · rutDiaLleno:161 · rutOccursOn:165 · rutIsSkipped:176 · rutToggleSkip:177 · rutFin:197 · rutEventsOn:205 · rutEventFromId:222 · rutSessions:231 · rutStats:245 · rutProximas:259 · renderRutinasBody:269 · _rutTimeRange:282 · _renderRutSchedule:286 · _renderRutLista:300 · _rutFmt:339 · _rutFmtCorto:340 · _renderRutStats:346 · openRutWeek:401 · _rutWeekPick:410 · back:434 · _rutWeekRender:463 (!83) · closeRutWeek:546 · openRutSesion:549 · closeRutSesion:553 · bindRutinasEvents:556
 
 ### js/settings-menu.js  _(108 líneas)_
 **Estado global:** SETTINGS_MENU_ANCHOR:3 · SETTINGS_MENU_BACK:4 · SETTINGS_EDITOR_MODES:5
 
 **Funciones:** closeSettingsMenu:6 · positionSettingsMenu:15 · _positionHeaderMenu:19 · toggleSettingsMenu:27 · settingsEditorActions:37 · settingsPanelHtml:40 · bindSettingsEditor:43 · setEditing:47 · settingsCopyIcon:66 · bindSettingsCopy:71 · openConnectionsSettings:79 · close:81 · initSettingsMenu:94
 
-### js/settings-personal.js  _(122 líneas)_
+### js/settings-personal.js  _(125 líneas)_
 **Estado global:** CONTACT_DATA_KEY:2 · PERSONAL_NOTES_KEY:3 · CONTACT_LIMIT:4 · CONTACT_FIELDS:5 · CONTACT_GROUPS:6
 
-**Funciones:** normalizeContactData:12 · text:14 · validateContactData:27 · string:29 · mergeContactData:37 · signature:42 · contactData:48 · personalNote:49 · contactFieldHtml:50 · renderContactGroups:53 · readContactFields:66 · contactSelectionText:71 · contactPrimaryIndex:79 · contactResizeFields:80 · bindContactGroups:81 · update:82 · openPersonalData:94 · close:96 · selection:102 · openPersonalNotes:115 · close:117
+**Funciones:** normalizeContactData:12 · text:14 · validateContactData:27 · string:29 · mergeContactData:37 · signature:42 · contactData:48 · personalNote:49 · contactValueText:50 · contactFieldHtml:53 · renderContactGroups:56 · readContactFields:69 · contactSelectionText:74 · contactPrimaryIndex:82 · contactResizeFields:83 · bindContactGroups:84 · update:85 · openPersonalData:97 · close:99 · selection:105 · openPersonalNotes:118 · close:120
 
 ### js/summary.js  _(613 líneas)_
 **Estado global:** FEST_REQUIRED:5 · VAC_STORAGE_KEY:6 · VAC_ENTITLEMENT:7 · SUMMARY_YEAR:11 · SY_EXCL_PAST:12 · SY_PUENTES_LIBRES:13 · SUMMARY_TAB:14 · VAC_YEAR_KEY:16 · VAC_BY_YEAR:17 · SPAIN_AVG:258 · DN7S:282
@@ -413,8 +421,8 @@
 
 **Funciones:** tasksValidate:5 · tasksValidTimestamp:20 · tasksNormalize:21 · tasksData:33 · tasksSave:38 · tasksMigrate:39 · tasksMerge:44 · tasksItems:50 · tasksPendingRows:54 · tasksNeedsDateChoice:55 · tasksCreate:58 · tasksChange:63 · tasksMoveCompleted:80 · tasksUndoMove:85 · tasksMove:90 · tasksReminder:97 · tasksReminderSeen:101
 
-### js/time-picker.js  _(95 líneas)_
-**Funciones:** evPlanReferenceTime:2 · timePickerInitial:5 · markPickerDrum:11 · timePickerDrum:19 · bindTimePickerDrum:24 · index:26 · mark:27 · move:31 · openTimePicker:40 · close:51 · escape:57 · save:66
+### js/time-picker.js  _(92 líneas)_
+**Funciones:** timePickerInitial:2 · markPickerDrum:8 · timePickerDrum:16 · bindTimePickerDrum:21 · index:23 · mark:24 · move:28 · openTimePicker:37 · close:48 · escape:54 · save:63
 
 ## CSS
 
@@ -778,9 +786,9 @@
 - Agenda y consultas anuales: cabecera estable y flechas neutras compartidas.:163
 
 **Rangos por prefijo de clase:**
-.boda-future:81-81 · .contact-address:127-139 · .contact-entry:126-126 · .contact-primary:137-143 · .contact-shortcuts:132-155 · .energy-contract:108-109 · .energy-field:111-112 · .energy-history:106-107 · .energy-price:110-115 · .energy-sheet:105-105 · .energy-tax:113-113 · .ev-cal:32-104 · .ev-field:80-80 · .ev-list:121-150 · .ev-period:164-168 · .ev-share:30-31 · .ev-stat:119-120 · .ev-stats:151-156 · .ev-up:147-171 · .ev-week:67-82 · .ev-wk:3-3 · .header:2-2 · .home-reminder:61-63 · .home-submission:4-17 · .home-summary:18-26 · .month-summary:20-21
+.boda-future:81-81 · .contact-address:127-139 · .contact-entry:126-126 · .contact-primary:137-143 · .contact-shortcuts:132-155 · .energy-contract:108-109 · .energy-field:111-112 · .energy-history:106-107 · .energy-price:110-115 · .energy-sheet:105-105 · .energy-tax:113-113 · .ev-cal:32-104 · .ev-field:80-80 · .ev-list:121-150 · .ev-period:164-167 · .ev-share:30-31 · .ev-stat:119-120 · .ev-stats:151-156 · .ev-up:147-171 · .ev-week:67-82 · .ev-wk:3-3 · .header:2-2 · .home-reminder:61-63 · .home-submission:4-17 · .home-summary:18-26 · .month-summary:20-21
 
-### css/source/energy-refinements.css  _(197 líneas)_
+### css/source/energy-refinements.css  _(262 líneas)_
 
 **Secciones:**
 
@@ -794,9 +802,10 @@
 - Navegación: la misma geometría en Home y en las ventanas.:137
 - Tarjetas compactas: días visibles y un único estilo para inicio y fin.:148
 - Selección por fondo en las subpestañas de Eventos; cada una conserva su tono.:166
+- Histórico: esquinas opacas incluso cuando la cabecera queda fija.:198
 
 **Rangos por prefijo de clase:**
-.boda-asg:105-110 · .boda-det:101-104 · .boda-last:15-19 · .data-actions:138-139 · .energy-bar:90-90 · .energy-caption:2-2 · .energy-choice:12-12 · .energy-compare:132-132 · .energy-contract:4-5 · .energy-cost:86-134 · .energy-coverage:77-77 · .energy-extremes:73-73 · .energy-fee:42-43 · .energy-field:7-7 · .energy-fields:9-9 · .energy-info:62-64 · .energy-inline:83-83 · .energy-legend:91-91 · .energy-metric:124-126 · .energy-metrics:123-123 · .energy-overview:66-68 · .energy-period:69-71 · .energy-price:180-185 · .energy-range:92-92 · .energy-reconciliation:76-76 · .energy-scenario:133-133 · .energy-section:61-61 · .energy-supplier:74-127 · .energy-table:3-3 · .energy-tabs:45-56 · .energy-tariff:79-181 · .energy-tax:72-130 · .energy-vat:128-128 · .energy-window:31-122 · .energy-year:6-98 · .ev-btn:145-145 · .ev-io:135-135 · .ev-main:163-164 · .ev-upcoming:172-174 · .ev-wk:16-25 · .home-popup:18-28 · .imp-mode:112-112 · .imp-preview:113-117 · .nav-bar:140-140 · .rut-bulk:191-196 · .rut-card:157-162 · .rut-day:146-152 · .rut-days:149-149 · .rut-dpick:144-144 · .rut-history:187-190 · .rut-hora:153-155 · .rut-month:195-195 · .rut-recovery:143-143 · .rut-routine:159-159 · .rut-session:142-142 · .rut-time:156-156 · .rut-weekdays:150-150 · .sy-body:170-170
+.boda-asg:105-110 · .boda-det:101-104 · .boda-last:15-19 · .contact-shortcuts:213-216 · .data-actions:138-139 · .energy-bar:90-90 · .energy-caption:2-2 · .energy-choice:12-12 · .energy-compare:132-132 · .energy-contract:4-5 · .energy-cost:86-134 · .energy-coverage:77-77 · .energy-extremes:73-73 · .energy-fee:42-43 · .energy-field:7-7 · .energy-fields:9-9 · .energy-info:62-64 · .energy-inline:83-83 · .energy-legend:91-91 · .energy-metric:124-126 · .energy-metrics:123-123 · .energy-overview:66-68 · .energy-period:69-71 · .energy-price:180-185 · .energy-range:92-92 · .energy-reconciliation:76-76 · .energy-scenario:133-133 · .energy-section:61-61 · .energy-supplier:74-127 · .energy-table:3-3 · .energy-tabs:45-56 · .energy-tariff:79-181 · .energy-tax:72-130 · .energy-vat:128-128 · .energy-window:31-122 · .energy-year:6-98 · .ev-btn:145-145 · .ev-cell:259-260 · .ev-day:261-261 · .ev-io:135-135 · .ev-main:163-164 · .ev-order:237-244 · .ev-routine:233-235 · .ev-routines:228-231 · .ev-stat:217-217 · .ev-stats:218-224 · .ev-type:232-232 · .ev-up:253-258 · .ev-upcoming:172-174 · .ev-wk:16-25 · .home-popup:18-28 · .imp-mode:112-112 · .imp-preview:113-117 · .nav-bar:140-140 · .rut-addition:247-252 · .rut-bulk:191-196 · .rut-card:157-210 · .rut-day:146-152 · .rut-days:149-149 · .rut-dpick:144-144 · .rut-history:187-202 · .rut-hora:153-155 · .rut-month:195-195 · .rut-recovery:143-143 · .rut-routine:159-159 · .rut-sec:211-212 · .rut-session:142-206 · .rut-time:156-156 · .rut-weekdays:150-150 · .sy-body:170-170 · .sy-hdr:256-256
 
 ### css/source/invoices.css  _(62 líneas)_
 

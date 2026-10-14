@@ -490,7 +490,7 @@ function renderEvYearHeader(scope){
   h+='<button class="sy-nav" data-'+scope+'-year="-1" aria-label="Año Anterior"'+(total?' style="visibility:hidden" tabindex="-1"':'')+'>◀</button>';
   h+='<div class="sy-year ev-period-label"><span id="'+id+'Year"'+(total?' hidden':'')+'>'+(total?last:year)+'</span>'+(total?'<span class="ev-period-history">Todo el<br>Histórico</span>':'')+'</div>';
   h+='<button class="sy-nav" data-'+scope+'-year="1" aria-label="Año Siguiente"'+(total?' style="visibility:hidden" tabindex="-1"':'')+'>▶</button></div>';
-  return h+'<div class="sy-hdr-right"><button class="today-btn ev-period-total" id="'+id+'Total" aria-pressed="'+total+'">Total</button></div>';
+  return h+'<div class="sy-hdr-right"><button class="energy-total-button ev-period-total" id="'+id+'Total" aria-pressed="'+total+'">Total</button></div>';
 }
 
 function renderEvContent(){

@@ -2,11 +2,11 @@ const {test,expect}=require('@playwright/test');
 test.beforeEach(async({page})=>{
  await page.clock.setFixedTime(new Date(2026,9,13,12));await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-theme-v1','light');localStorage.setItem('excelia-nav-icons-v1','professional');});await page.goto('/');
 });
-test('cumpleaños de Próximos: título, VIP celeste y Añadir a su derecha',async({page},info)=>{
+test('cumpleaños de Próximos: título, VIP celeste y Añadir centrado',async({page},info)=>{
  await page.locator('#eventsBtn').click();await page.locator('#evUpBirthdays').click();
  for(const width of [320,400]){
   await page.setViewportSize({width,height:880});await expect(page.locator('#eventsContent>.sy-header .sy-year')).toHaveText('Próximos Cumpleaños');
-  const vip=page.locator('.ev-up-filters .bday-header-vip'),add=page.locator('#evBdayAdd');const v=await vip.boundingBox(),a=await add.boundingBox();expect(a.x).toBeGreaterThan(v.x+v.width);expect(Math.abs(a.y+a.height/2-v.y-v.height/2)).toBeLessThan(1);
+  const vip=page.locator('.ev-up-filters .bday-header-vip'),add=page.locator('#evBdayAdd');const v=await vip.boundingBox(),a=await add.boundingBox();expect(Math.abs(a.x+a.width/2-width/2)).toBeLessThan(1);expect(Math.abs(a.y+a.height/2-v.y-v.height/2)).toBeLessThan(1);
   await expect(vip.locator('input')).toHaveCSS('color','rgb(86, 182, 224)');await expect(page.locator('#eventsContent>.sy-header #evBdayAdd')).toHaveCount(0);
   await page.screenshot({path:info.outputPath('cumpleanos-'+width+'.png')});
  }

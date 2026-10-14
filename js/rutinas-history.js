@@ -49,7 +49,7 @@ function renderRutHistorySession(r,x,today,state){
   var override=rutWeekCfg(r,x.ds).cambiada,original=rutSessionOriginal(r,x),edited=rutSessionMoved(r,x);
   var recovered=rutRecoveryNote(r,x.key),currentWeek=rutWeekKey(x.ds)===rutWeekKey(today);
   var h='<div class="rut-history-session'+(x.skip?' cancelled':'')+(currentWeek?' current-week':'')+'" data-history-week="'+rutWeekKey(x.ds)+'" data-history-date="'+x.ds+'">'+(state.bulk?'<input type="checkbox" data-history-select="'+x.key+'" aria-label="Seleccionar '+x.ds+' '+x.time+'"'+((state.selected||[]).indexOf(x.key)>=0?' checked':'')+'>':'')+'<div><strong>'+_rutFmtCorto(x.ds)+'</strong>';
-  if(edited)h+='<span class="rut-history-time"><small>Horario original</small>'+original.time+'–'+rutFin(original.time,original.dur)+'</span><span class="rut-history-time"><small>Horario nuevo</small>'+x.time+'–'+rutFin(x.time,x.dur)+'</span>';
+  if(edited)h+='<span class="rut-history-time"><small>Horario original'+(original.ds!==x.ds?' · '+_rutFmtCorto(original.ds):'')+'</small>'+original.time+'–'+rutFin(original.time,original.dur)+'</span><span class="rut-history-time"><small>Horario nuevo</small>'+x.time+'–'+rutFin(x.time,x.dur)+'</span>';
   else h+='<span>'+x.time+'–'+rutFin(x.time,x.dur)+'</span>';
   if(x.extra)h+='<small class="rut-session-tag">'+escHtml(rutSessionTag(r,x))+'</small>';
   if(recovered)h+='<em class="rut-recovery-note">'+escHtml(recovered)+'</em>';
@@ -114,14 +114,15 @@ function closeRutHistory(){cerrarPanel('rutHistoryWrap','rutHistoryOv');}
 function rutSessionOriginal(r,s){
   if(s.extra)return null;
   var kept=r.keptSessions&&r.keptSessions[s.ds];
-  if(kept&&kept.originalTime)return {time:kept.originalTime,dur:kept.originalDur};
-  if(r.flex)return {time:s.time,dur:s.dur};
+  if(kept&&kept.originalTime)return {time:kept.originalTime,dur:kept.originalDur,ds:kept.originalDate||s.ds};
+  if(kept&&kept.planned)return {time:kept.time,dur:kept.dur,ds:s.ds};
+  if(r.flex)return {time:s.time,dur:s.dur,ds:s.ds};
   var cfg=rutWeekCfg(r,s.ds);
-  return {time:cfg.time,dur:cfg.dur};
+  return {time:cfg.time,dur:cfg.dur,ds:s.ds};
 }
 function rutSessionMoved(r,s){
   var original=rutSessionOriginal(r,s);
-  return !!original&&(original.time!==s.time||original.dur!==s.dur);
+  return !!original&&(original.time!==s.time||original.dur!==s.dur||original.ds!==s.ds);
 }
 function rutEditSession(r,ds,time,dur,skip,key){
   key=key||ds;var session=rutSessionByKey(r,key);
@@ -133,11 +134,10 @@ function rutEditSession(r,ds,time,dur,skip,key){
   if(!/^([01]\d|2[0-3]):[0-5]\d$/.test(time)||!Number.isInteger(dur)||dur<15||dur>480)throw new Error('Revisa la hora y duración (15–480 min)');
   var candidate=JSON.parse(JSON.stringify(r));candidate.keptSessions=candidate.keptSessions||{};
   if(session.extra){var extra=candidate.extraSessions.find(function(s){return s.id===key;});extra.time=time;extra.dur=dur;extra.skip=skip;rutValidateExtraSessions(candidate);return candidate;}
-  var original=rutSessionOriginal(r,session),changed=original.time!==time||original.dur!==dur;
+  var original=rutSessionOriginal(r,session),changed=original.time!==time||original.dur!==dur||original.ds!==ds,cfg=rutWeekCfg(candidate,ds);
   if(candidate.flex)candidate.flex.sessions[ds]={time:time,dur:dur};
-  if(changed)candidate.keptSessions[ds]={time:time,dur:dur,originalTime:original.time,originalDur:original.dur};
-  else if(candidate.flex||rutWeekCfg(candidate,ds).weekDays.indexOf(new Date(ds+'T12:00:00').getDay())>=0)delete candidate.keptSessions[ds];
-  else candidate.keptSessions[ds]={time:time,dur:dur};
+  if(!changed&&(candidate.flex||(cfg.weekDays.indexOf(new Date(ds+'T12:00:00').getDay())>=0&&cfg.time===time&&cfg.dur===dur)))delete candidate.keptSessions[ds];
+  else candidate.keptSessions[ds]={time:time,dur:dur,originalTime:original.time,originalDur:original.dur,originalDate:original.ds};
   candidate.skips=candidate.skips||{};
   if(skip)candidate.skips[ds]=1;else delete candidate.skips[ds];
   if(!skip&&rutIsSkipped(r,ds)&&ds>=evDk(new Date())&&rutDayCount(ds,r.id)>=3)throw new Error('Ese día ya tiene 3 rutinas');

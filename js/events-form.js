@@ -17,13 +17,12 @@ function _renderEvTypeSwatches(kind,selType,extras){
     ?[['Rec. Gestiones',Object.keys(EV_MANAGEMENT_SUBTYPES)],['Plan/Quedada',Object.keys(EV_PLAN_SUBTYPES)],['Ensayos boda',[]],['Otros',[]]]
     :EV_KINDS[kind].types.map(function(t){return [t,[]];});
   return groups.map(function(group){
-    if(kind==='puntual'&&group[0]==='Ensayos boda')return '<section class="ev-category-group" style="--category-tone:'+evTypeColor(kind,group[0])+'">'+_renderEvTypeButton(kind,group[0],selType)+'</section>'+renderEvRoutineChoices();
     if(kind==='puntual'&&group[0]==='Rec. Gestiones')return renderEvQuickPlans(selType,'management',extras&&extras.management);
     if(kind==='puntual'&&group[0]==='Plan/Quedada')return renderEvQuickPlans(selType,'plans',extras&&extras.plans);
     var selected=selType===group[0]||group[1].indexOf(selType)>=0;
     var h='<section class="ev-category-group'+(kind==='grande'?' ev-category-single':'')+(selected?' chosen':'')+'" style="--category-tone:'+evTypeColor(kind,group[0])+'" aria-label="'+group[0]+'">'+_renderEvTypeButton(kind,group[0],selType);
     if(group[1].length)h+='<div class="ev-category-children">'+group[1].map(function(t){return _renderEvTypeButton(kind,t,selType);}).join('')+'</div>';
-    return h+'</section>';
+    return h+'</section>'+(kind==='puntual'&&group[0]==='Ensayos boda'?renderEvRoutineChoices():'');
   }).join('');
 }
 function _renderEvTypeButton(kind,t,selType){
@@ -111,6 +110,7 @@ function renderEvForm(ev){
   h+=_renderEvTypeSwatches(curKind,curType);
   h+='</div></div>';
   h+=renderEvTaxFields(ev);
+  h+=renderEvCultureFields(ev);
   /* Color picker section: visible para Viaje y Otros */
   var isOtros=!!EV_FREE_SHAPE[curKey];
   var showColorPicker=!!EV_FREE_COLOR[curKey];
@@ -139,14 +139,9 @@ function renderEvForm(ev){
     {k:'circle-plus', label:'Círculo con cruz'},
     {k:'rings', label:'Boda'},
     {k:'planet', label:'Luna'},
-    {k:'leaf', label:'Limpieza'},
-    /* Las mismas siluetas que usan las rutinas */
-    {k:'gym',     label:'Mancuerna'},
-    {k:'padel',   label:'Pala'},
-    {k:'baile',   label:'Bailar\u00edn'}
+    {k:'leaf', label:'Limpieza'}
   ];
   _shapes.forEach(function(s,i){
-    if(s.k==='gym')h+='<span class="ev-shape-group-label">Actividades</span>';
     var sel=(s.k===curShape)?' selected':'';
     var prevColor=color||EV_COLORS[0];
     h+='<button type="button" class="ev-shape-opt'+sel+'" data-shape="'+s.k+'" title="'+s.label+'" aria-label="'+s.label+'">';

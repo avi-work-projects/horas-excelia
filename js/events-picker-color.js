@@ -40,7 +40,7 @@ var EV_COLOR_TYPES = {
    - puntual: se dibuja UN MARCADOR POR D\u00cdA (aunque abarque varios d\u00edas)
    - grande:  se dibuja como BARRA continua (formato actual de Viaje/Asturias) */
 var EV_MANAGEMENT_SUBTYPES={'Llamada':'phone','Peluquería':'scissors','Médico':'medical','Dentista':'tooth','Pago Hacienda':'tax','Pago':'payment','Contratar seguro':'insurance','Contratar gas/electricidad':'utilities','Enviar factura':'invoice','Cita':'appointment','Presentar Modelo':'tax-form','Contratar gas':'gas-home','Contratar electricidad':'electric-home'};
-var EV_PLAN_SUBTYPES={'Plan romántico':'heart','Comida':'meal','Cena':'dinner','Salir de fiesta':'disco','Copas':'party','Tomar algo':'beer','Montaña':'mountain','Barbacoa':'barbecue','Cumpleaños':'cake','Brunch':'brunch','Bolos':'bowling','Cine':'cinema','Ping pong':'pingpong','Ver partido fútbol':'football-tv','Juegos de mesa':'boardgames','Ponencia':'lecture','Carrera':'running','Merendar':'snack','Actividad cultural':'culture'};
+var EV_PLAN_SUBTYPES={'Plan romántico':'heart','Comida':'meal','Cena':'dinner','Salir de fiesta':'disco','Copas':'party','Tomar algo':'beer','Montaña':'mountain','Barbacoa':'barbecue','Cumpleaños':'cake','Brunch':'brunch','Bolos':'bowling','Cine':'cinema','Ping pong':'pingpong','Ver partido fútbol':'football-tv','Juegos de mesa':'boardgames','Ponencia':'lecture','Carrera':'race','Merendar':'snack','Plan cultural':'culture','Desayunar':'breakfast','Salir a Correr':'running','Pádel':'padel','Baile':'baile'};
 function evIsManagement(type){return type==='Rec. Gestiones'||Object.prototype.hasOwnProperty.call(EV_MANAGEMENT_SUBTYPES,type);}
 function evIsPlan(type){return type==='Plan/Quedada'||Object.prototype.hasOwnProperty.call(EV_PLAN_SUBTYPES,type);}
 function evFixedSymbol(type){return EV_MANAGEMENT_SUBTYPES[type]||EV_PLAN_SUBTYPES[type]||null;}
@@ -83,7 +83,11 @@ var EV_TYPE_COLORS = {
   'puntual|Ponencia'      :'#7c6bb0',
   'puntual|Carrera'       :'#319b79',
   'puntual|Merendar'      :'#c98a46',
-  'puntual|Actividad cultural':'#9964b3',
+  'puntual|Plan cultural':'#9964b3',
+  'puntual|Desayunar':'#d59b44',
+  'puntual|Salir a Correr':'#38bdf8',
+  'puntual|Pádel':'#a3e635',
+  'puntual|Baile':'#e03131',
   'puntual|Ensayos boda'  :'#c084fc',
   'puntual|Otros'         :'#a3e635',
   'grande|Viaje'          :'#38bdf8',
@@ -135,9 +139,11 @@ var EV_SHAPE_BW = 2;
 function evPlanShapeInner(shape){
   var outline=' stroke="#000" '+evSymbolStroke(EV_SHAPE_BW)+' stroke-linejoin="round"';
   var shapes={
+    breakfast:'<path d="M-9,3 L-4,-4 Q0,-8 4,-4 L9,3 L5,7 H-5 Z" fill="#edb75b"'+outline+'/><path d="M-4,-3 L-2,3 M1,-4 L3,3" fill="none" stroke="#8b5e34" stroke-width="1.5"/><path d="M-2,7 H7 V2 H-2 Z" fill="currentColor"'+outline+'/><path d="M7,2 Q12,2 8,6" fill="none"'+outline+'/>',
+    race:'<path d="M-6,9 V-9" fill="none"'+outline+'/><path d="M-6,-8 Q0,-11 8,-7 V3 Q0,-1 -6,2 Z" fill="#fff"'+outline+'/><path d="M-6,-8 H-2 V-4 H-6 M2,-9 L6,-8 V-4 H2 M-2,-4 H2 V0 H-2 M6,-4 H8 V1 H6" fill="#222"/>',
+    culture:'<path d="M-9,-6 Q-5,-3 0,-6 L-1,3 Q-6,9 -9,2 Z" fill="currentColor"'+outline+'/><path d="M0,-8 Q5,-5 9,-8 L8,1 Q4,7 0,0 Z" fill="#fff1d5"'+outline+'/><path d="M-7,-2 H-5 M-3,-2 H-1 M-7,2 Q-4,5 -2,2 M2,-4 H4 M6,-4 H8 M2,1 Q5,-2 7,1" fill="none" stroke="#000" stroke-width="1.3"/>',
     running:'<circle cx="3" cy="-7" r="2.3" fill="#f4cba6"'+outline+'/><path d="M-1,-3 L3,-2 L1,3 L-3,1 Z" fill="currentColor"'+outline+'/><path d="M-1,-3 L-5,-3 L-7,0 M3,-2 L5,1 H9 M1,3 L5,5 L3,9 M-3,1 L-5,6 H-9" fill="none"'+outline+' stroke-linecap="round"/>',
     snack:'<path d="M-2,-4 H6 V2 Q6,6 2,6 Q-2,6 -2,2 Z" fill="currentColor"'+outline+'/><path d="M6,-3 H8 Q11,1 6,2 M-3,8 H9" fill="none"'+outline+' stroke-linecap="round"/><path d="M0,-9 Q-2,-7 0,-6 M4,-9 Q2,-7 4,-6" fill="none" stroke="#000" stroke-width="1"/><path d="M-9,1 L-4,-1 L-3,6 H-9 Z" fill="#f5d08a"'+outline+'/><path d="M-8,3 H-5" stroke="#8b5e34" stroke-width="1.3"/>',
-    culture:'<path d="M-9,-3 L0,-9 L9,-3 Z" fill="currentColor"'+outline+'/><path d="M-8,8 H8 M-9,5 H9" fill="none"'+outline+'/><path d="M-6,-1 V5 M0,-1 V5 M6,-1 V5" stroke="currentColor" stroke-width="3"/><path d="M-7,-1 H7" stroke="#000" stroke-width="1.5"/>',
 
     brunch:'<ellipse cy="3" rx="9" ry="5" fill="currentColor"'+outline+'/><path d="M-6,2 C-9,-4 -3,-7 0,-4 C6,-8 10,0 5,4 C1,8 -2,4 -6,2 Z" fill="#fff7df"'+outline+'/><circle cx="1" cy="0" r="3" fill="#f8bd36"/>',
     bowling:'<path d="M3,-9 C-1,-9 0,-5 1,-3 C2,0 -2,3 0,8 H7 C9,3 5,0 6,-3 C7,-5 7,-9 3,-9 Z" fill="#fff5e3"'+outline+'/><path d="M1,-3 H6 M1,-1 H6" stroke="#d74756" stroke-width="1.5"/><circle cx="-4" cy="4" r="5" fill="currentColor"'+outline+'/><circle cx="-5" cy="2" r=".9"/><circle cx="-2.5" cy="2.5" r=".9"/><circle cx="-4" cy="4.5" r=".9"/>',
@@ -153,8 +159,7 @@ function evShapeSvg(shape){
   /* Las siluetas de rutina (mancuerna, pala, bailarin) tambien se pueden
      elegir como forma para un evento puntual de tipo Otros. */
   if(typeof RUT_ICON_LABEL!=='undefined'&&RUT_ICON_LABEL[shape]&&typeof rutIconSvg==='function'){
-    var activity=rutIconSvg(shape,RUT_FIXED_COLOR[shape]||'#888',true).replace(/^<svg[^>]*>/,'').replace(/<\/svg>$/,'');
-    return '<svg viewBox="0 0 20 20"><rect x="1" y="1" width="18" height="18" rx="4" fill="#fff" stroke="#000" '+evSymbolStroke(1.7)+'/><g transform="translate(3.5 3.5) scale(.54)">'+activity+'</g></svg>';
+    return evActivitySvg(shape,RUT_FIXED_COLOR[shape]||'currentColor');
   }
   var bw=EV_SHAPE_BW,inner=evPlanShapeInner(shape)||evManagementShapeInner(shape);
   if(inner){ /* Símbolos de planes con su relleno propio. */
@@ -252,6 +257,8 @@ function getEvType(ev){
   var t=ev.type||EV_COLOR_TYPES[ev.color]||'Otros';
   if(t==='Festivo'||t==='Puente')t='Otros';
   if(t==='Pago hacienda')t='Pago Hacienda'; // Compatibilidad con los eventos guardados.
+  if(t==='Actividad cultural')t='Plan cultural';
+  if(t==='Otros'&&getEvKind(ev)==='puntual'&&['gym','padel','baile'].indexOf(ev.shape)>=0)t={gym:'Salir a Correr',padel:'Pádel',baile:'Baile'}[ev.shape];
   if(t==='Cerveza')t='Tomar algo'; // Alias: conserva ids, títulos y fechas de eventos antiguos.
   return t;
 }
