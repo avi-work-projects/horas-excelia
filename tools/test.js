@@ -385,6 +385,7 @@ const REGLAS = [
       'excelia-econ-comp-v1':      'scenarios',
       'excelia-personal-notes-v1': 'personalNotes',
       'excelia-contact-data-v1': 'contactData',
+      'excelia-plan-order-v1': 'planOrder',
       'excelia-mail-config-v1': 'mailConfig',
       'excelia-alarm-url':         'macroUrl',
       'excelia-alarm-h':           'alarmHour',

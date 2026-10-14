@@ -40,7 +40,7 @@ function renderEventStatistics(){
   h+='<p class="sy-note ev-stat-note">'+(EV_STATS_YEAR==='all'?'Todos los años':EV_STATS_YEAR)+' · Por fechas registradas · Inicio y fin incluidos.</p>';
   h+='<div class="ev-stat-cards">';
   [[stats.trips,'Viajes'],[stats.asturias,'Visitas a Asturias'],[stats.rural,'Casas Rurales'],[stats.travelDays,'Días Fuera'],[stats.plansDays,'Días de Planes'],[stats.ruralDays,'Días de Casa Rural']].forEach(function(c){h+='<div class="sy-card"><strong>'+c[0]+'</strong><span>'+c[1]+'</span></div>';});h+='</div>';
-  h+='<div class="ev-stats-links"><button class="ev-sort-chip" id="evStatsRoutines">Estadísticas de Rutinas</button><button class="ev-sort-chip" id="evStatsRehearsals">Estadísticas de Wedding Moves</button></div>';
+  h+='<div class="ev-stats-links"><span>Ver otras estadísticas:</span><button class="ev-view-toggle ev-btn-bodas" id="evStatsRehearsals" aria-label="Estadísticas de Wedding Moves"><span class="wm-logo" aria-hidden="true"></span></button><button class="ev-view-toggle ev-btn-rutinas" id="evStatsRoutines">Rutinas</button></div>';
   if(!stats.rows.length)return h+'<p class="sy-note">No hay eventos registrados en este período.</p>';
   [['grandes','Viajes y Estancias'],['management','Recordatorio Gestiones'],['plans','Planes y Quedadas'],['other','Otros Puntuales']].forEach(function(g){
     var rows=stats.rows.filter(function(r){return g[0]==='grandes'?r.kind==='grande':r.group===g[0];}).sort(function(a,b){return b.days-a.days||a.type.localeCompare(b.type,'es');});if(!rows.length)return;

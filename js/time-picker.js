@@ -1,7 +1,4 @@
 /* Referencias de planes: solo ordenación e inicio del selector, nunca persistencia. */
-function evPlanReferenceTime(type){
-  return {'Brunch':'11:00','Bolos':'19:00','Cine':'20:00','Comida':'14:00','Barbacoa':'14:00','Tomar algo':'18:00','Cena':'21:00','Copas':'22:00','Salir de fiesta':'23:50'}[type]||null;
-}
 function timePickerInitial(input){
   if(input.value)return input.value;
   var form=input.closest('.ev-form-sheet'),picker=form&&form.querySelector('.ev-kind-picker');

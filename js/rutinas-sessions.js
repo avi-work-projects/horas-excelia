@@ -41,7 +41,7 @@ function rutChangeFromDetail(r,key,after){
   var session=rutSessionByKey(r,key);if(!session)return;
   function apply(choice){try{
     var result=session.skip?rutDoneCandidate(r,key,choice):rutEditSession(r,session.ds,session.time,session.dur,true,key);
-    rutSaveSessionChange(r,result,session.skip?'Sesión marcada como hecha':'Sesión marcada como saltada',after);
+    rutSaveSessionChange(r,result,session.skip?'Sesión marcada como hecha':'Sesión marcada como cancelada',after);
   }catch(e){showToast(e.message,'error');}}
   var recovery=session.skip&&rutRecoveryFor(r,key);
   if(!recovery){apply();return;}
@@ -61,7 +61,8 @@ function rutAddSession(r,data,sourceKey){
   rutValidateAddition(r,data);
   var copy=JSON.parse(JSON.stringify(r)),source=sourceKey&&rutSessionByKey(copy,sourceKey);
   if(sourceKey&&!source)throw new Error('La sesión original ya no existe.');
-  if(source&&!source.skip&&rutFlexible(r))throw new Error('Solo las rutinas de horario fijo pueden marcarse como saltadas.');
+  if(source&&source.extra&&!source.recoveryOf)throw new Error('Las clases extras no se pueden recuperar.');
+  if(source&&!source.skip&&rutFlexible(r))throw new Error('Solo las rutinas de horario fijo pueden marcarse como canceladas.');
   if(source&&rutRecoveryFor(copy,sourceKey))throw new Error('Esta sesión ya tiene una recuperación asignada.');
   if(source&&(data.date<source.ds||(data.date===source.ds&&data.time<=source.time)))throw new Error('La recuperación debe ser posterior a la sesión original.');
   if(rutDayCount(data.date,r.id)+rutSessionsOn(copy,data.date).length>=EV_MAX_RUT_DIA)throw new Error('Ese día ya tiene el máximo de '+EV_MAX_RUT_DIA+' sesiones de rutina.');
@@ -73,7 +74,7 @@ function rutAddSession(r,data,sourceKey){
   if(source){
     if(source.extra)copy.extraSessions.find(function(s){return s.id===sourceKey;}).skip=true;
     else{copy.skips=copy.skips||{};copy.skips[source.ds]=1;
-      if(!copy.flex){copy.keptSessions=copy.keptSessions||{};copy.keptSessions[source.ds]={time:source.time,dur:source.dur,edited:true};}}
+      if(!copy.flex){copy.keptSessions=copy.keptSessions||{};copy.keptSessions[source.ds]=Object.assign({},copy.keptSessions[source.ds]||{},{time:source.time,dur:source.dur});}}
   }
   return copy;
 }

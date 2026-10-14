@@ -194,3 +194,31 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .rut-bulk-actions [data-rut-bulk-action="pause"]{grid-column:1/-1}
 .rut-month-select{display:flex;align-items:center;gap:8px;margin:8px 12px 12px;font-size:.7rem}
 .rut-bulk-actions button:disabled{opacity:.4}
+
+/* Histórico: esquinas opacas incluso cuando la cabecera queda fija. */
+.rut-history-month h3{background:var(--surface);isolation:isolate}
+.rut-history-month h3::before{content:'';position:absolute;inset:0;background:var(--surface2);border-radius:11px 11px 0 0;z-index:-1}
+.rut-history-time{display:flex;flex-direction:column;gap:3px;margin-top:6px}
+.rut-history-time>small{font-size:.62rem;color:var(--text-muted)}
+#rutHistoryEditOv .ev-form-sheet{height:min(520px,80dvh);display:flex;flex-direction:column}
+.rut-session-fields{gap:12px;margin-top:8px}
+.rut-session-fields .ev-field{min-width:0;margin:0}
+.rut-session-fields+p.sy-note{margin:18px 0 20px;line-height:1.5}
+#rutHistoryEditOv .ev-form-actions{margin-top:auto;padding-top:20px;flex-shrink:0}
+.rut-card-actions:has([data-rextra]){grid-template-columns:repeat(3,minmax(0,1fr))}
+.rut-card-actions [data-rextra]{--rut-action:#9272b9}
+.rut-card-ft>span:first-child{line-height:1.6}
+.rut-sec>.boda-stats-row{flex-wrap:wrap}
+.rut-sec>.boda-stats-row>.boda-stat{flex:1 1 28%}
+.contact-shortcuts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.contact-shortcuts button{min-width:0;min-height:70px;justify-content:center;text-align:center;background:var(--settings-tone);border-color:var(--settings-tone);color:#fff;padding:9px 6px;font-size:.65rem;line-height:1.35}
+.contact-shortcuts button.copied{color:#fff;background:var(--settings-tone)}
+.contact-shortcuts .copied svg{color:#fff}
+.sy-header:has(#evBdayAdd) #evBdayAdd{position:absolute;left:50%;transform:translateX(-50%);margin:0}
+.sy-header:has(#evBdayAdd){min-height:96px;align-items:flex-start;padding-top:8px}
+.sy-header:has(#evBdayAdd) #evBdayAdd{top:54px}
+.ev-stat-year-nav .energy-total-button{min-height:0;font-weight:400;right:16px;--energy-resumen:var(--energy-gas,#aa7c38)}
+.ev-stats-links{display:flex;align-items:center;gap:8px;flex-wrap:nowrap}
+.ev-stats-links>span{font-size:.7rem;flex-shrink:0}
+.ev-stats-links>.ev-view-toggle{min-height:38px;padding:6px 8px;flex:1;min-width:0}
+.ev-stats-links .wm-logo{width:72px;height:22px}

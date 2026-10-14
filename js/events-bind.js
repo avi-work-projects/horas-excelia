@@ -76,6 +76,7 @@ function bindEvEvents(){
 /* Cabecera, pestanas y navegacion en el tiempo (flechas, Hoy, subpestanas,
    desplegable del anual). Nada de esto depende de que vista este pintada. */
 function _bindEvNav(){
+  var order=document.getElementById('evUpcomingOrder');if(order)order.onclick=openEvPlanOrder;
   var back=document.getElementById('evBack');if(back)back.addEventListener('click',function(){
     if(EV_VIEW==='cal'&&(EV_PREV_VIEW==='annual'||EV_PREV_VIEW==='quad')){
       EV_VIEW=EV_PREV_VIEW;EV_PREV_VIEW=null;refreshEvents();

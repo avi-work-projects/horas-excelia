@@ -46,9 +46,11 @@ function rutHistoryMonthGroups(r,state){
 }
 function renderRutHistorySession(r,x,today,state){
   state=state||{};
-  var override=rutWeekCfg(r,x.ds).cambiada,edited=r.keptSessions&&r.keptSessions[x.ds]&&r.keptSessions[x.ds].edited;
+  var override=rutWeekCfg(r,x.ds).cambiada,original=rutSessionOriginal(r,x),edited=rutSessionMoved(r,x);
   var recovered=rutRecoveryNote(r,x.key),currentWeek=rutWeekKey(x.ds)===rutWeekKey(today);
-  var h='<div class="rut-history-session'+(x.skip?' cancelled':'')+(currentWeek?' current-week':'')+'" data-history-week="'+rutWeekKey(x.ds)+'" data-history-date="'+x.ds+'">'+(state.bulk?'<input type="checkbox" data-history-select="'+x.key+'" aria-label="Seleccionar '+x.ds+' '+x.time+'"'+((state.selected||[]).indexOf(x.key)>=0?' checked':'')+'>':'')+'<div><strong>'+_rutFmtCorto(x.ds)+'</strong><span>'+x.time+'–'+rutFin(x.time,x.dur)+'</span>';
+  var h='<div class="rut-history-session'+(x.skip?' cancelled':'')+(currentWeek?' current-week':'')+'" data-history-week="'+rutWeekKey(x.ds)+'" data-history-date="'+x.ds+'">'+(state.bulk?'<input type="checkbox" data-history-select="'+x.key+'" aria-label="Seleccionar '+x.ds+' '+x.time+'"'+((state.selected||[]).indexOf(x.key)>=0?' checked':'')+'>':'')+'<div><strong>'+_rutFmtCorto(x.ds)+'</strong>';
+  if(edited)h+='<span class="rut-history-time"><small>Horario original</small>'+original.time+'–'+rutFin(original.time,original.dur)+'</span><span class="rut-history-time"><small>Horario nuevo</small>'+x.time+'–'+rutFin(x.time,x.dur)+'</span>';
+  else h+='<span>'+x.time+'–'+rutFin(x.time,x.dur)+'</span>';
   if(x.extra)h+='<small class="rut-session-tag">'+escHtml(rutSessionTag(r,x))+'</small>';
   if(recovered)h+='<em class="rut-recovery-note">'+escHtml(recovered)+'</em>';
   h+='</div><div class="rut-history-status">'+(x.skip?'Cancelada'+(!recovered?' (sin recuperar)':''):x.ds<today?'Realizada':x.ds===today?'Hoy':'Prevista')+(edited?'<small>Editada</small>':override?'<small>Excepción semanal</small>':'')+'</div>';
@@ -64,7 +66,7 @@ function renderRutHistory(r,state){
   Object.keys(groups).forEach(function(month){
     var sessions=groups[month],cancelled=sessions.filter(function(x){return x.skip;}).length,done=sessions.filter(function(x){return x.ds<today&&!x.skip;}).length;
     h+='<section class="rut-history-month" data-history-month="'+month+'"><h3>'+MN[+month.slice(5)-1]+' '+month.slice(0,4)+'</h3>';
-    if(sessions.length)h+='<p class="rut-history-month-counts">'+done+' realizadas · '+cancelled+' canceladas · '+(sessions.length-done-cancelled)+' previstas</p>';
+    if(sessions.length)h+='<p class="rut-history-month-counts">'+done+' realizadas · '+cancelled+' canceladas · '+(sessions.length-done-cancelled)+' previstas · '+sessions.filter(function(x){return rutSessionMoved(r,x);}).length+' movidas de horario</p>';
     else h+='<p class="sy-note">Sin sesiones este mes.</p>';
     if(state.bulk&&sessions.length)h+='<label class="rut-month-select"><input type="checkbox" data-history-select-month="'+month+'"'+(sessions.every(function(x){return (state.selected||[]).indexOf(x.key)>=0;})?' checked':'')+'> Seleccionar este mes</label>';
     var lastSignature=null;
@@ -109,17 +111,34 @@ function openRutHistory(r,keep){
   if(!keep)requestAnimationFrame(function(){requestAnimationFrame(function(){if(wrap.isConnected)rutHistoryScrollToday(wrap,false);});});
 }
 function closeRutHistory(){cerrarPanel('rutHistoryWrap','rutHistoryOv');}
+function rutSessionOriginal(r,s){
+  if(s.extra)return null;
+  var kept=r.keptSessions&&r.keptSessions[s.ds];
+  if(kept&&kept.originalTime)return {time:kept.originalTime,dur:kept.originalDur};
+  if(r.flex)return {time:s.time,dur:s.dur};
+  var cfg=rutWeekCfg(r,s.ds);
+  return {time:cfg.time,dur:cfg.dur};
+}
+function rutSessionMoved(r,s){
+  var original=rutSessionOriginal(r,s);
+  return !!original&&(original.time!==s.time||original.dur!==s.dur);
+}
 function rutEditSession(r,ds,time,dur,skip,key){
   key=key||ds;var session=rutSessionByKey(r,key);
   if(!session)throw new Error('La sesión ya no existe');
-  if(skip&&!session.skip&&rutFlexible(r))throw new Error('Solo las rutinas de horario fijo pueden marcarse como saltadas.');
+  if(session.extra&&!session.recoveryOf&&skip!==session.skip)throw new Error('Las clases extras solo se pueden eliminar; no se pueden cancelar.');
+  if(skip&&!session.skip&&rutFlexible(r))throw new Error('Solo las rutinas de horario fijo pueden marcarse como canceladas.');
   if(!skip&&rutRecoveryFor(r,key))throw new Error('Cancela primero su recuperación para reactivar la sesión original.');
   if(!skip&&rutSessionsOn(r,ds).some(function(s){return s.key!==key&&!s.skip&&s.time===time;}))throw new Error('Ya tienes una sesión de esta rutina a esa hora.');
   if(!/^([01]\d|2[0-3]):[0-5]\d$/.test(time)||!Number.isInteger(dur)||dur<15||dur>480)throw new Error('Revisa la hora y duración (15–480 min)');
   var candidate=JSON.parse(JSON.stringify(r));candidate.keptSessions=candidate.keptSessions||{};
   if(session.extra){var extra=candidate.extraSessions.find(function(s){return s.id===key;});extra.time=time;extra.dur=dur;extra.skip=skip;rutValidateExtraSessions(candidate);return candidate;}
+  var original=rutSessionOriginal(r,session),changed=original.time!==time||original.dur!==dur;
   if(candidate.flex)candidate.flex.sessions[ds]={time:time,dur:dur};
-  else candidate.keptSessions[ds]={time:time,dur:dur,edited:true};candidate.skips=candidate.skips||{};
+  if(changed)candidate.keptSessions[ds]={time:time,dur:dur,originalTime:original.time,originalDur:original.dur};
+  else if(candidate.flex||rutWeekCfg(candidate,ds).weekDays.indexOf(new Date(ds+'T12:00:00').getDay())>=0)delete candidate.keptSessions[ds];
+  else candidate.keptSessions[ds]={time:time,dur:dur};
+  candidate.skips=candidate.skips||{};
   if(skip)candidate.skips[ds]=1;else delete candidate.skips[ds];
   if(!skip&&rutIsSkipped(r,ds)&&ds>=evDk(new Date())&&rutDayCount(ds,r.id)>=3)throw new Error('Ese día ya tiene 3 rutinas');
   rutValidateExtraSessions(candidate);
@@ -129,13 +148,13 @@ function openRutHistoryEdit(r,key){
   var session=rutSessionByKey(r,key);if(!session)return;var ds=session.ds;
   var h='<div class="ev-form-overlay" id="rutHistoryEditOv"><div class="ev-form-sheet"><div class="ev-form-handle"></div>';
   h+='<div class="rut-history-head"><button class="sy-back" id="rutHistoryEditClose">&#8592;</button><div><strong>Editar sesión</strong><span>'+_rutFmtCorto(ds)+'</span></div></div>';
-  h+='<div class="ev-date-row"><div><label>Hora</label><input type="text" readonly data-time-picker aria-haspopup="dialog" placeholder="Sin hora" class="ev-input" id="rutHistoryTime" value="'+session.time+'"></div><div><label>Duración (min)</label><input type="number" class="ev-input" id="rutHistoryDuration" min="15" max="480" value="'+session.dur+'"></div></div>';
+  h+='<div class="ev-date-row rut-session-fields"><div class="ev-field"><label for="rutHistoryTime">Hora</label><input type="text" readonly data-time-picker aria-haspopup="dialog" placeholder="Sin hora" class="ev-input" id="rutHistoryTime" value="'+session.time+'"></div><div class="ev-field"><label for="rutHistoryDuration">Duración · min</label><input type="number" class="ev-input" id="rutHistoryDuration" min="15" max="480" value="'+session.dur+'"></div></div>';
   h+='<p class="sy-note">Solo cambia esta sesión. El horario habitual se conserva.</p><div class="rut-session-state">';
-  if(session.skip){
+  if(session.skip&&(!session.extra||session.recoveryOf)){
     h+='<button class="ev-io-btn" id="rutHistoryCancel">Descancelar clase</button>';
     if(!rutRecoveryFor(r,key))h+='<button class="ev-io-btn rut-recovery-confirm" id="rutHistoryRecover">Recuperar clase</button>';
     else h+='<p class="sy-note">'+escHtml(rutRecoveryNote(r,key))+'</p>';
-  }else if(!rutFlexible(r))h+='<button class="ev-io-btn io-peligro" id="rutHistoryCancel">Cancelar clase</button>';
+  }else if(!rutFlexible(r)&&(!session.extra||session.recoveryOf))h+='<button class="ev-io-btn io-peligro" id="rutHistoryCancel">Cancelar clase</button>';
   h+='</div>';
   h+='<div class="ev-form-actions"><button class="ev-btn danger" id="rutHistoryDelete">Eliminar</button><button class="ev-btn primary" id="rutHistorySave">Guardar</button></div></div></div>';
   var close=function(){cerrarPanel('rutHistoryEditWrap','rutHistoryEditOv');};
