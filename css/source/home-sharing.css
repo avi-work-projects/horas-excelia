@@ -168,6 +168,6 @@
 
 
 #eventsOverlay .ev-up-filters .bday-header-vip input[type="checkbox"]{--chk:var(--upcoming-tone);color:var(--upcoming-tone)}
-.ev-up-filters #evBdayAdd{position:static;left:auto;transform:none;width:auto;justify-self:start;margin:0;background:var(--upcoming-text);border-color:var(--upcoming-text);color:#fff;font-size:.7rem;min-height:32px;padding:6px 9px}
+.ev-up-filters #evBdayAdd{position:static;left:auto;transform:none;width:auto;justify-self:center;margin:0;background:var(--upcoming-text);border-color:var(--upcoming-text);color:#fff;font-size:.7rem;min-height:32px;padding:6px 9px}
 #eventsContent:has(#evBdayAdd)>.sy-header .sy-year-nav{max-width:calc(100% - 104px)}
 #eventsContent:has(#evBdayAdd)>.sy-header .sy-year{font-size:1rem;line-height:1.15}

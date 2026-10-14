@@ -2,7 +2,7 @@
 var EV_PLAN_PICK=null;
 var EV_QUICK_PLANS=['Comida','Tomar algo','Cena'];
 var EV_PICKER_GROUPS={
-  plans:{accent:'#bd6119',generic:'Plan/Quedada',title:'Elige tu Plan',label:'Plan / Quedada',quick:EV_QUICK_PLANS,types:['Comida','Tomar algo','Cena','Desayunar','Brunch','Merendar','Barbacoa','Cumpleaños','Plan romántico','Copas','Salir de fiesta','Cine','Plan cultural','Ponencia','Bolos','Ping pong','Ver partido fútbol','Juegos de mesa','Montaña','Carrera','Salir a Correr','Pádel','Baile']},
+  plans:{accent:'#bd6119',generic:'Plan/Quedada',title:'Elige tu Plan',label:'Plan / Quedada',quick:EV_QUICK_PLANS,types:['Comida','Tomar algo','Cena','Barbacoa','Desayunar','Brunch','Merendar','Cumpleaños','Plan romántico','Copas','Salir de fiesta','Cine','Plan cultural','Ponencia','Bolos','Ping pong','Ver partido fútbol','Juegos de mesa','Montaña','Carrera','Salir a Correr','Pádel','Baile']},
   management:{accent:'#27845c',generic:'Rec. Gestiones',title:'Elige tu Gestión',label:'Rec. Gestiones',quick:['Llamada','Cita','Peluquería'],legacy:['Contratar gas/electricidad'],types:['Peluquería','Médico','Dentista','Cita','Llamada','Contratar seguro','Contratar gas','Contratar electricidad','Enviar factura','Pago','Pago Hacienda','Presentar Modelo']}
 };
 function evPickerHas(group,type){return type===group.generic||group.types.indexOf(type)>=0||(group.legacy||[]).indexOf(type)>=0;}
@@ -51,6 +51,7 @@ function openEvPlanPicker(form,key){
   EV_PLAN_PICK={form:form,type:evPickerHas(group,current)?current:null,back:NAV_BACK};
   var h='<div class="ev-detail-overlay ev-plan-overlay" id="evPlanPickerOv"><section class="ev-detail-sheet ev-plan-sheet" style="--picker-accent:'+group.accent+'" role="dialog" aria-modal="true" aria-labelledby="evPlanTitle"><header class="ev-plan-header ev-type-picker"><button type="button" class="ev-color-swatch ev-picker-generic'+(current===group.generic?' selected':'')+'" data-type="'+group.generic+'" aria-label="'+group.generic+'" title="'+group.generic+'" style="color:'+evTypeColor('puntual',group.generic)+'"><span class="ev-type-dot">'+evShapeSvg(evDefaultShape({type:group.generic}))+'</span></button><h2 id="evPlanTitle">'+group.title+'</h2><button class="sy-back" id="evPlanCancel" aria-label="Cerrar selector">×</button></header><div class="ev-plan-options ev-type-picker">'+renderEvPlanOptions(EV_PLAN_PICK.type,key)+'</div><footer class="ev-plan-footer"><button class="ev-btn ev-plan-confirm" id="evPlanConfirm"'+(!EV_PLAN_PICK.type?' disabled':'')+'>Confirmar</button></footer></section></div>';
   var wrap=abrirPanel('evPlanPickerWrap',h,{contenedor:document.body,overlay:'evPlanPickerOv',alCerrar:closeEvPlanPicker});
+  wrap.querySelector('.ev-plan-sheet').dataset.pickerKind=key;
   NAV_BACK=closeEvPlanPicker;document.addEventListener('keydown',evPlanPickerKey);
   wrap.querySelector('#evPlanCancel').onclick=closeEvPlanPicker;
   wrap.querySelectorAll('[data-type]').forEach(function(button){

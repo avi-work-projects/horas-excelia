@@ -330,7 +330,7 @@ function _renderRutLista(){
     h+='<div class="rut-card-actions"><button class="ev-btn" '+(r.flex?'data-rplan':'data-rweek')+'="'+escHtml(r.id)+'">'
       +(r.flex?'Planificar sesiones':'Cambiar (desde) una semana concreta')+'</button>'
       +'<button class="ev-btn" data-rhistory="'+escHtml(r.id)+'">Consultar histórico</button>'
-      +(r.flex?'<button class="ev-btn" data-rextra="'+escHtml(r.id)+'">Añadir clase extra</button>':'')+'</div>';
+      +'<button class="ev-btn" data-rextra="'+escHtml(r.id)+'">Añadir clase extra</button></div>';
     h+='</div>';
   });
   h+='<button class="ev-io-btn rut-add" id="rutAdd">+ Nueva rutina</button>';

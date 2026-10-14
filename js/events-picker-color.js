@@ -40,7 +40,7 @@ var EV_COLOR_TYPES = {
    - puntual: se dibuja UN MARCADOR POR D\u00cdA (aunque abarque varios d\u00edas)
    - grande:  se dibuja como BARRA continua (formato actual de Viaje/Asturias) */
 var EV_MANAGEMENT_SUBTYPES={'Llamada':'phone','Peluquería':'scissors','Médico':'medical','Dentista':'tooth','Pago Hacienda':'tax','Pago':'payment','Contratar seguro':'insurance','Contratar gas/electricidad':'utilities','Enviar factura':'invoice','Cita':'appointment','Presentar Modelo':'tax-form','Contratar gas':'gas-home','Contratar electricidad':'electric-home'};
-var EV_PLAN_SUBTYPES={'Plan romántico':'heart','Comida':'meal','Cena':'dinner','Salir de fiesta':'disco','Copas':'party','Tomar algo':'beer','Montaña':'mountain','Barbacoa':'barbecue','Cumpleaños':'cake','Brunch':'brunch','Bolos':'bowling','Cine':'cinema','Ping pong':'pingpong','Ver partido fútbol':'football-tv','Juegos de mesa':'boardgames','Ponencia':'lecture','Carrera':'race','Merendar':'snack','Plan cultural':'culture','Desayunar':'breakfast','Salir a Correr':'running','Pádel':'padel','Baile':'baile'};
+var EV_PLAN_SUBTYPES={'Plan romántico':'heart','Comida':'meal','Cena':'dinner','Salir de fiesta':'disco','Copas':'party','Tomar algo':'beer','Montaña':'mountain','Barbacoa':'barbecue','Cumpleaños':'cake','Brunch':'brunch','Bolos':'bowling','Cine':'cinema','Ping pong':'pingpong','Ver partido fútbol':'football-tv','Juegos de mesa':'boardgames','Ponencia':'lecture','Carrera':'race','Merendar':'snack','Plan cultural':'culture','Desayunar':'breakfast','Salir a Correr':'running','Pádel':'plan-padel','Baile':'plan-dance'};
 function evIsManagement(type){return type==='Rec. Gestiones'||Object.prototype.hasOwnProperty.call(EV_MANAGEMENT_SUBTYPES,type);}
 function evIsPlan(type){return type==='Plan/Quedada'||Object.prototype.hasOwnProperty.call(EV_PLAN_SUBTYPES,type);}
 function evFixedSymbol(type){return EV_MANAGEMENT_SUBTYPES[type]||EV_PLAN_SUBTYPES[type]||null;}
@@ -89,7 +89,7 @@ var EV_TYPE_COLORS = {
   'puntual|Pádel':'#a3e635',
   'puntual|Baile':'#e03131',
   'puntual|Ensayos boda'  :'#c084fc',
-  'puntual|Otros'         :'#a3e635',
+  'puntual|Otros'         :'#ffe066',
   'grande|Viaje'          :'#38bdf8',
   'grande|Asturias'       :'#1d4ed8',
   'grande|Casa Rural'     :'#8b5e34',   /* marr\u00f3n */
@@ -139,7 +139,9 @@ var EV_SHAPE_BW = 2;
 function evPlanShapeInner(shape){
   var outline=' stroke="#000" '+evSymbolStroke(EV_SHAPE_BW)+' stroke-linejoin="round"';
   var shapes={
-    breakfast:'<path d="M-9,3 L-4,-4 Q0,-8 4,-4 L9,3 L5,7 H-5 Z" fill="#edb75b"'+outline+'/><path d="M-4,-3 L-2,3 M1,-4 L3,3" fill="none" stroke="#8b5e34" stroke-width="1.5"/><path d="M-2,7 H7 V2 H-2 Z" fill="currentColor"'+outline+'/><path d="M7,2 Q12,2 8,6" fill="none"'+outline+'/>',
+    breakfast:'<path d="M-7,7 V-2 C-11,-7 -3,-11 1,-7 C5,-9 9,-5 5,-2 V7 Z" fill="#c48b45"'+outline+'/><path d="M-3,9 V0 C-7,-5 1,-9 5,-5 C9,-7 12,-3 8,0 V9 Z" fill="#f6d99a"'+outline+'/><path d="M0,6 V1 Q3,-2 5,1 V6 Z" fill="#e7ae5c"/><rect x="1" y="2" width="4" height="3" rx=".7" fill="#ffe066"/>',
+    'plan-padel':'<g transform="rotate(-28)"><path d="M-1.5,2 H1.5 V9 H-1.5 Z" fill="#e5b275"'+outline+'/><ellipse cy="-3" rx="5.8" ry="6.5" fill="currentColor"'+outline+'/><g fill="#263328"><circle cx="-2" cy="-5" r=".7"/><circle cx="2" cy="-5" r=".7"/><circle cx="-2" cy="-1" r=".7"/><circle cx="2" cy="-1" r=".7"/><circle cy="-3" r=".7"/></g></g><circle cx="6.5" cy="5.5" r="3" fill="#ffe066"'+outline+'/><path d="M5,3 Q8,5 7,8" fill="none" stroke="#fff" stroke-width="1"/>',
+    'plan-dance':'<path d="M-8,-5 L-3,-7 L0,-1 L-2,2 L-2,6 L-5,6 L-5,2 L-8,2 Z" fill="currentColor"'+outline+'/><path d="M1,-2 L5,-4 L6,1 L9,5 Q10,8 4,8 H0 L0,5 L3,4 Z" fill="#f2ba79"'+outline+'/><path d="M-6,-3 L-3,-4 M2,5 H7" stroke="#fff3d5" stroke-width="1.3"/><path d="M6,-8 V-5 M6,-8 H9" fill="none" stroke="#000" stroke-width="1.2"/><circle cx="5" cy="-4" r="1.3" fill="#000"/>',
     race:'<path d="M-6,9 V-9" fill="none"'+outline+'/><path d="M-6,-8 Q0,-11 8,-7 V3 Q0,-1 -6,2 Z" fill="#fff"'+outline+'/><path d="M-6,-8 H-2 V-4 H-6 M2,-9 L6,-8 V-4 H2 M-2,-4 H2 V0 H-2 M6,-4 H8 V1 H6" fill="#222"/>',
     culture:'<path d="M-9,-6 Q-5,-3 0,-6 L-1,3 Q-6,9 -9,2 Z" fill="currentColor"'+outline+'/><path d="M0,-8 Q5,-5 9,-8 L8,1 Q4,7 0,0 Z" fill="#fff1d5"'+outline+'/><path d="M-7,-2 H-5 M-3,-2 H-1 M-7,2 Q-4,5 -2,2 M2,-4 H4 M6,-4 H8 M2,1 Q5,-2 7,1" fill="none" stroke="#000" stroke-width="1.3"/>',
     running:'<circle cx="3" cy="-7" r="2.3" fill="#f4cba6"'+outline+'/><path d="M-1,-3 L3,-2 L1,3 L-3,1 Z" fill="currentColor"'+outline+'/><path d="M-1,-3 L-5,-3 L-7,0 M3,-2 L5,1 H9 M1,3 L5,5 L3,9 M-3,1 L-5,6 H-9" fill="none"'+outline+' stroke-linecap="round"/>',
