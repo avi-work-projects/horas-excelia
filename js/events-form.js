@@ -139,7 +139,7 @@ function renderEvForm(ev){
     {k:'circle-plus', label:'Círculo con cruz'},
     {k:'rings', label:'Boda'},
     {k:'planet', label:'Luna'},
-    {k:'leaf', label:'Hoja'},
+    {k:'leaf', label:'Limpieza'},
     /* Las mismas siluetas que usan las rutinas */
     {k:'gym',     label:'Mancuerna'},
     {k:'padel',   label:'Pala'},
@@ -280,6 +280,7 @@ function closeEvForm(){
 }
 
 function evSuggestedTitle(type){
+  if(type==='Actividad cultural')return '';
   return evFixedSymbol(type)?type:({'Asturias':'Asturias','Ensayos boda':'Ensayo boda','Casa Rural':'Casa rural'}[type]||'');
 }
 function bindEvFormEvents(){

@@ -11,7 +11,7 @@ for(const width of [360,400])test(`fichas compactas del calendario ${width}`,asy
    {id:'other-demo',kind:'puntual',type:'Otros',title:'Otra cita',start:'2026-10-07',end:'2026-10-07',color:'#6b85de'}
   ]));
  });
- await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewCal').click();
+ await page.goto('/');await page.evaluate(()=>closeHomePopup());await page.locator('#eventsBtn').click();await page.locator('#evViewCal').click();
  await page.locator('.ev-cell[data-ds="2026-10-07"] [data-id="management-demo"]').first().click();
  const sheet=page.locator('#evDetailOv .ev-car-sheet');await expect(sheet).toBeVisible();const original=await sheet.boundingBox();expect(original.height).toBeLessThanOrEqual(420);
  const date=await page.locator('.ev-detail-date-status .ev-detail-date').boundingBox(),state=await page.locator('.ev-management-check').boundingBox();expect(Math.abs(date.y+date.height/2-state.y-state.height/2)).toBeLessThan(1);

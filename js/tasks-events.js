@@ -11,7 +11,18 @@ function tasksEventId(ev,ds){
 function tasksEventRow(ev,ds){
   var now=Date.now();return {id:tasksEventId(ev,ds),title:ev.title||getEvType(ev),createdAt:now,updatedAt:now,completedAt:null,lastCompletedAt:null,pendingVisible:true,color:'green',eventRef:{id:ev.id,signature:evSignature(ev),date:ds}};
 }
-function tasksEventVisible(task){return !task.eventRef||task.completedAt!==null||task.eventRef.date<evDk(new Date(Date.now()));}
+function tasksEventMonthReminder(ev){return ['Enviar factura','Pago','Pago Hacienda','Presentar Modelo'].indexOf(getEvType(ev))>=0;}
+function tasksEventLimit(ev,today){
+  var date=new Date(today);
+  if(tasksEventMonthReminder(ev))date=new Date(date.getFullYear(),date.getMonth()+1,0);
+  else date.setDate(date.getDate()-1);
+  return evDk(date);
+}
+function tasksEventVisible(task){
+  if(!task.eventRef||task.completedAt!==null)return true;
+  var ev=EVENTS.find(function(e){return e.id===task.eventRef.id;});
+  return task.eventRef.date<evDk(new Date(Date.now()))||!!ev&&task.eventRef.date<=tasksEventLimit(ev,new Date(Date.now()));
+}
 function tasksReconcileEvents(data){
   if(typeof EVENTS==='undefined'||typeof evManagementCheckable!=='function')return data;
   var today=evDk(new Date(Date.now())),events=EVENTS.filter(evManagementCheckable),added=[],seen=new Set();
@@ -26,8 +37,10 @@ function tasksReconcileEvents(data){
     t.eventRef.id=ev.id;t.eventRef.signature=evSignature(ev);t.title=ev.title||getEvType(ev);return true;
   });
   events.forEach(function(ev){
-    var end=ev.repeat?today:((ev.end||ev.start)<today?(ev.end||ev.start):today);
-    for(var day=new Date(ev.start+'T00:00:00');evDk(day)<=end&&evDk(day)<today;day.setDate(day.getDate()+1)){
+    var limit=tasksEventLimit(ev,new Date(today+'T12:00:00'));
+    var end=ev.repeat?limit:((ev.end||ev.start)<limit?(ev.end||ev.start):limit);
+    if(ev.dates&&ev.dates.length)end=ev.dates.slice().sort().pop()<limit?ev.dates.slice().sort().pop():limit;
+    for(var day=new Date(ev.start+'T00:00:00');evDk(day)<=end;day.setDate(day.getDate()+1)){
       var ds=evDk(day);if(!eventOccursOn(ev,ds)||seen.has(ev.id+'|'+ds))continue;
       added.push(tasksEventRow(ev,ds));seen.add(ev.id+'|'+ds);
     }

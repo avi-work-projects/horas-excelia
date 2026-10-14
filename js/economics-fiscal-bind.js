@@ -19,8 +19,9 @@ function openFiscal(year){
   if(typeof loadDespacho==='function')loadDespacho();
   var ov=document.getElementById('fiscalOverlay');
   document.getElementById('fiscalContent').innerHTML=renderFiscalContent();
+  bindFiscalEvents();
   ov.style.display='flex';
-  requestAnimationFrame(function(){requestAnimationFrame(function(){ov.classList.add('open');bindFiscalEvents();});});
+  requestAnimationFrame(function(){requestAnimationFrame(function(){ov.classList.add('open');});});
   NAV_BACK=closeFiscal;
 }
 function closeFiscal(){

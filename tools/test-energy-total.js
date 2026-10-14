@@ -55,7 +55,7 @@ for(const type of Object.keys(a.EV_PLAN_SUBTYPES)){
  assert.equal(a.getEvDisplayColor(ev),a.evTypeColor('puntual',type));
  assert.equal(a.evDefaultShape(ev),a.EV_PLAN_SUBTYPES[type]);
  assert.equal(a.evFilterGroup(ev),'Plan/Quedada');assert.ok(!a.EV_FREE_COLOR['puntual|'+type]);
- assert.equal(a.evSuggestedTitle(type),type);
+ assert.equal(a.evSuggestedTitle(type),type==='Actividad cultural'?'':type);
 }
 assert.match(a.evShapeSvg('cloud'),/path/);assert.match(a.evShapeSvg('beer'),/path/);
 console.log('Total multianual, precisión, vigencias, copias de tarifas y nuevos planes OK');

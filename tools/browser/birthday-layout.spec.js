@@ -89,7 +89,7 @@ for(const width of [360,400,440])for(const theme of ['dark','light']){
   await page.screenshot({animations:'disabled',path:testInfo.outputPath('meses.png')});
   await page.locator('#bdDateOv [data-month="4"]').click();await expect(page.locator('#bdDateWrap')).toHaveCount(0);
   await page.locator('#bdFDayPick').click();await expect(page.locator('#bdDateOv.open')).toBeVisible();const drum=page.locator('#bdDayDrum');
-  await expect(drum.locator('[data-day]')).toHaveCount(31);
+  await expect(drum.locator('[data-day]')).toHaveCount(93);
   await drum.evaluate(el=>el.scrollTop=29*44);await expect(drum).toHaveAttribute('aria-valuenow','30');
   await drum.focus();await drum.press('End');await expect(drum).toHaveAttribute('aria-valuenow','31');
   await page.screenshot({animations:'disabled',path:testInfo.outputPath('rotor.png')});

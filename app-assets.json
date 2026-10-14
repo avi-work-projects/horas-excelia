@@ -276,6 +276,9 @@
       "path": "js/events-detail.js"
     },
     {
+      "path": "js/events-carousel.js"
+    },
+    {
       "path": "js/events-bind.js"
     },
     {

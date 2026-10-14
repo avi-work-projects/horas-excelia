@@ -40,7 +40,7 @@ var EV_COLOR_TYPES = {
    - puntual: se dibuja UN MARCADOR POR D\u00cdA (aunque abarque varios d\u00edas)
    - grande:  se dibuja como BARRA continua (formato actual de Viaje/Asturias) */
 var EV_MANAGEMENT_SUBTYPES={'Llamada':'phone','Peluquería':'scissors','Médico':'medical','Dentista':'tooth','Pago Hacienda':'tax','Pago':'payment','Contratar seguro':'insurance','Contratar gas/electricidad':'utilities','Enviar factura':'invoice','Cita':'appointment','Presentar Modelo':'tax-form','Contratar gas':'gas-home','Contratar electricidad':'electric-home'};
-var EV_PLAN_SUBTYPES={'Plan romántico':'heart','Comida':'meal','Cena':'dinner','Salir de fiesta':'disco','Copas':'party','Tomar algo':'beer','Montaña':'mountain','Barbacoa':'barbecue','Cumpleaños':'cake','Brunch':'brunch','Bolos':'bowling','Cine':'cinema','Ping pong':'pingpong','Ver partido fútbol':'football-tv','Juegos de mesa':'boardgames','Ponencia':'lecture'};
+var EV_PLAN_SUBTYPES={'Plan romántico':'heart','Comida':'meal','Cena':'dinner','Salir de fiesta':'disco','Copas':'party','Tomar algo':'beer','Montaña':'mountain','Barbacoa':'barbecue','Cumpleaños':'cake','Brunch':'brunch','Bolos':'bowling','Cine':'cinema','Ping pong':'pingpong','Ver partido fútbol':'football-tv','Juegos de mesa':'boardgames','Ponencia':'lecture','Carrera':'running','Merendar':'snack','Actividad cultural':'culture'};
 function evIsManagement(type){return type==='Rec. Gestiones'||Object.prototype.hasOwnProperty.call(EV_MANAGEMENT_SUBTYPES,type);}
 function evIsPlan(type){return type==='Plan/Quedada'||Object.prototype.hasOwnProperty.call(EV_PLAN_SUBTYPES,type);}
 function evFixedSymbol(type){return EV_MANAGEMENT_SUBTYPES[type]||EV_PLAN_SUBTYPES[type]||null;}
@@ -81,6 +81,9 @@ var EV_TYPE_COLORS = {
   'puntual|Ver partido fútbol':'#429867',
   'puntual|Juegos de mesa':'#398fbb',
   'puntual|Ponencia'      :'#7c6bb0',
+  'puntual|Carrera'       :'#319b79',
+  'puntual|Merendar'      :'#c98a46',
+  'puntual|Actividad cultural':'#9964b3',
   'puntual|Ensayos boda'  :'#c084fc',
   'puntual|Otros'         :'#a3e635',
   'grande|Viaje'          :'#38bdf8',
@@ -132,6 +135,10 @@ var EV_SHAPE_BW = 2;
 function evPlanShapeInner(shape){
   var outline=' stroke="#000" '+evSymbolStroke(EV_SHAPE_BW)+' stroke-linejoin="round"';
   var shapes={
+    running:'<circle cx="3" cy="-7" r="2.3" fill="#f4cba6"'+outline+'/><path d="M-1,-3 L3,-2 L1,3 L-3,1 Z" fill="currentColor"'+outline+'/><path d="M-1,-3 L-5,-3 L-7,0 M3,-2 L5,1 H9 M1,3 L5,5 L3,9 M-3,1 L-5,6 H-9" fill="none"'+outline+' stroke-linecap="round"/>',
+    snack:'<path d="M-2,-4 H6 V2 Q6,6 2,6 Q-2,6 -2,2 Z" fill="currentColor"'+outline+'/><path d="M6,-3 H8 Q11,1 6,2 M-3,8 H9" fill="none"'+outline+' stroke-linecap="round"/><path d="M0,-9 Q-2,-7 0,-6 M4,-9 Q2,-7 4,-6" fill="none" stroke="#000" stroke-width="1"/><path d="M-9,1 L-4,-1 L-3,6 H-9 Z" fill="#f5d08a"'+outline+'/><path d="M-8,3 H-5" stroke="#8b5e34" stroke-width="1.3"/>',
+    culture:'<path d="M-9,-3 L0,-9 L9,-3 Z" fill="currentColor"'+outline+'/><path d="M-8,8 H8 M-9,5 H9" fill="none"'+outline+'/><path d="M-6,-1 V5 M0,-1 V5 M6,-1 V5" stroke="currentColor" stroke-width="3"/><path d="M-7,-1 H7" stroke="#000" stroke-width="1.5"/>',
+
     brunch:'<ellipse cy="3" rx="9" ry="5" fill="currentColor"'+outline+'/><path d="M-6,2 C-9,-4 -3,-7 0,-4 C6,-8 10,0 5,4 C1,8 -2,4 -6,2 Z" fill="#fff7df"'+outline+'/><circle cx="1" cy="0" r="3" fill="#f8bd36"/>',
     bowling:'<path d="M3,-9 C-1,-9 0,-5 1,-3 C2,0 -2,3 0,8 H7 C9,3 5,0 6,-3 C7,-5 7,-9 3,-9 Z" fill="#fff5e3"'+outline+'/><path d="M1,-3 H6 M1,-1 H6" stroke="#d74756" stroke-width="1.5"/><circle cx="-4" cy="4" r="5" fill="currentColor"'+outline+'/><circle cx="-5" cy="2" r=".9"/><circle cx="-2.5" cy="2.5" r=".9"/><circle cx="-4" cy="4.5" r=".9"/>',
     cinema:'<rect x="-9" y="-3" width="18" height="12" rx="1.5" fill="#202124"'+outline+'/><path d="M-9,-3 L-10,-7 L7,-10 L8,-6 Z" fill="#e9edf3"'+outline+'/><path d="M-5,-8 L-2,-5 M1,-9 L4,-6" stroke="#000" stroke-width="2"/><path d="M-5,1 H5 M-5,5 H2" stroke="#fff2da" stroke-width="1.6" stroke-linecap="round"/>',
@@ -217,7 +224,8 @@ function evShapeSvg(shape){
   } else if(shape==='petal'){
     inner='<path d="M0,-8 C4,-8 4,-4 3,-2 C10,-6 12,2 5,3 C11,9 3,12 0,6 C-3,12 -11,9 -5,3 C-12,2 -10,-6 -3,-2 C-4,-4 -4,-8 0,-8 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/>';
   } else if(shape==='leaf'){
-    inner='<path d="M-7,7 C-10,-4 -2,-8 8,-8 C8,3 4,10 -7,7 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/><path d="M-6,6 L3,-3" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>';
+    // Conserva leaf para actualizar también los eventos y copias existentes.
+    inner='<path d="M2,-2 L7,-9" fill="none" stroke="#000" '+evSymbolStroke(3)+' stroke-linecap="round"/><path d="M-2,-3 L4,1 L1,9 Q-5,8 -9,3 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/><path d="M-2,0 L-6,5 M1,2 L-2,7" fill="none" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/><path d="M-7,-8 V-4 M-9,-6 H-5" stroke="#000" stroke-width="1.2" stroke-linecap="round"/>';
   } else { /* rounded */
     inner='<rect x="-9" y="-6" width="18" height="12" rx="4" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+'/>';
   }

@@ -6,7 +6,7 @@ async function chooseTime(page,selector,time){
   const [h,m]=time.split(':').map(Number);
   // Scroll the real wheels, then let scroll snapping settle before saving.
   await page.locator('#timePickerHours').evaluate((el,v)=>{el.scrollTop=(24+v)*44;},h);
-  await page.locator('#timePickerMinutes').evaluate((el,v)=>{el.scrollTop=(60+v)*44;},m);
+  await page.locator('#timePickerMinutes').evaluate((el,v)=>{const items=[...el.querySelectorAll('[data-val]')],count=items.length/3,index=items.slice(0,count).findIndex(item=>Number(item.dataset.val)===v);if(index<0)throw new Error('Minuto no disponible: '+v);el.scrollTop=(count+index)*44;},m);
   await expect(page.locator('#timePickerHours')).toHaveAttribute('aria-valuenow',String(h));
   await expect(page.locator('#timePickerMinutes')).toHaveAttribute('aria-valuenow',String(m));
   await page.locator('#timePickerSave').click();
