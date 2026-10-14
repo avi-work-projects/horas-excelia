@@ -27,7 +27,7 @@ function homeReminderEvents(today){
         content=pareja?'Ensayo - '+pareja.name:'Ensayo sin pareja asignada';
         if(!bodaPlaceOf(ev))content+=' · Sin sala';
       }
-      if(ev._rutSkip)content+=' · Saltada';
+      if(ev._rutSkip)content+=' · Cancelada';
       items.push({event:ev,days:days,time:time||'',type:'event',color:homeReminderColor(ev),text:homeReminderEventText(days===0?'Hoy':'Mañana',time,content,type==='Ensayos boda',ev)+bodaUltimoEnsayoHtml(ev),note:homeReminderNoteHtml(ev,ds)});
     });
   }

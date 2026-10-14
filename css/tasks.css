@@ -11,7 +11,7 @@
 .tasks-drop-zone span{font-size:.62rem}
 .tasks-drop-zone.tasks-drop-ready{background:#e03131;box-shadow:0 0 0 8px #e0313133,0 8px 35px #0004}
 .tasks-fab.tasks-dragging{transition:none;cursor:grabbing;box-shadow:0 7px 20px #21163a44}
-.tasks-count{position:absolute;top:-5px;left:-4px;min-width:16px;height:16px;padding:0 3px;border-radius:8px;font-size:10px;font-weight:700;line-height:16px;background:#f4e4bf;color:#553f1c;border:1px solid var(--surface)}
+.tasks-count{position:absolute;top:-5px;left:-4px;min-width:16px;height:16px;padding:0 3px;border-radius:8px;font-size:10px;font-weight:700;line-height:16px;background:#f4e4bf;color:#553f1c;border:1.5px solid #b8a6df}
 .tasks-docked .tasks-count{top:-4px;left:2px}
 .tasks-docked[data-side=left] .tasks-count{left:auto;right:2px}
 .tasks-overlay{position:fixed;inset:0;z-index:1600;background:#16132566;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;overscroll-behavior:contain;--tasks-accent:#a899d1;--chk:var(--tasks-accent)}

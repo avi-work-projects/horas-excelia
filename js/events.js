@@ -376,7 +376,7 @@ function evBodaMinutes(ev){
 function evSortMarks(list,getEv){
   function ev0(x){return getEv?getEv(x):x;}
   var out=list.map(function(x,i){return {x:x,i:i,p:evMarkPriority(ev0(x))};})
-    .sort(function(a,b){return (a.p-b.p)||(a.i-b.i);})
+    .sort(function(a,b){return evCompareOrder(ev0(a.x),ev0(b.x))||(a.p-b.p)||(a.i-b.i);})
     .map(function(o){return o.x;});
   var pos=[],clases=[];
   out.forEach(function(x,i){
@@ -744,7 +744,7 @@ function evStartTime(ev){
   if(getEvType(ev)==='Ensayos boda')return (ev.boda&&ev.boda.time)||null;
   return ev.time||null;
 }
-function evCompareTime(a,b){return (evStartTime(a)||'').localeCompare(evStartTime(b)||'');}
+function evCompareTime(a,b){return evCompareOrder(a,b);}
 function evEndTime(ev){
   if(!ev)return null;
   if(ev._rut)return (typeof rutFin==='function')?rutFin(ev._rutTime,ev._rutDur||rutDurationOn(ev._rut,ev.start)):null;

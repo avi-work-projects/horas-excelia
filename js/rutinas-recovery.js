@@ -2,7 +2,7 @@
    Solo el último paso escribe; el calendario de fondo no cambia de mes. */
 var RUT_RECOVERY_PICK=null;
 function rutUnrecoveredSessions(r){
-  var keys=Object.keys(r.skips||{}).concat((r.extraSessions||[]).filter(function(s){return s.skip;}).map(function(s){return s.id;}));
+  var keys=Object.keys(r.skips||{}).concat((r.extraSessions||[]).filter(function(s){return s.skip&&s.recoveryOf;}).map(function(s){return s.id;}));
   return keys.map(function(key){return rutSessionByKey(r,key);}).filter(function(s){return s&&s.skip&&!rutRecoveryFor(r,s.key);})
     .sort(function(a,b){return a.ds.localeCompare(b.ds)||a.time.localeCompare(b.time)||a.key.localeCompare(b.key);});
 }

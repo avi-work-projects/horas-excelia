@@ -13,7 +13,7 @@ function openRutAddition(r){
   var wrap=rutAdditionPanel('Añadir clase extra/recuperada',h+'</div>');
   wrap.querySelectorAll('[data-addition-mode]').forEach(function(b){b.onclick=function(){
     var mode=b.dataset.additionMode;
-    if(mode==='extra'){rutAdditionForm(r,null);return;}
+    if(mode==='extra'){openRutRecoveryDay(r,null);return;}
     if(mode==='recover'){openRutRecoveryList(r,false);return;}
     closeRutAddition();rutAdditionPickWeek(r,mode);
   };});
@@ -25,7 +25,7 @@ function rutAdditionPickWeek(r,mode){
 }
 function rutAdditionPickSession(r,mode,wk){
   var end=new Date(wk+'T12:00:00');end.setDate(end.getDate()+6);
-  var list=rutSessions(r,wk,evDk(end)).filter(function(s){return (mode==='recover'?s.skip:!s.skip)&&!rutRecoveryFor(r,s.key);});
+  var list=rutSessions(r,wk,evDk(end)).filter(function(s){return (!s.extra||s.recoveryOf)&&(mode==='recover'?s.skip:!s.skip)&&!rutRecoveryFor(r,s.key);});
   var h='<p class="sy-note">Semana del '+_rutFmt(wk)+' · '+(mode==='recover'?'Sesiones canceladas sin recuperación':'Elige la sesión original')+'</p><div class="rut-addition-choices">';
   list.forEach(function(s){h+='<button class="ev-btn" data-source-session="'+s.key+'"><strong>'+_rutFmtCorto(s.ds)+' · '+s.time+'–'+rutFin(s.time,s.dur)+'</strong><span>'+escHtml(r.name+' '+rutSessionTag(r,s))+'</span></button>';});
   if(!list.length)h+='<p class="sy-note">No hay sesiones disponibles para esta acción en esa semana. Vuelve para elegir otra.</p>';

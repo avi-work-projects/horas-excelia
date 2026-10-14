@@ -159,8 +159,9 @@ function renderEvDetail(ev,fromSummary,car){
   if(ev._rut){
     /* Sesion de rutina: no es un evento guardado, asi que ni se edita ni se
        borra desde aqui; lo que se hace es marcarla */
-    if(!rutFlexible(ev._rut)||ev._rutSkip)h+='<button class="ev-btn '+(ev._rutSkip?'rut-done-action':'rut-skip-action')+'" id="evDRutSes">'+(ev._rutSkip?'Marcar como hecha':'Marcar como saltada')+'</button>';
-    if(ev._rutSkip&&!rutRecoveryFor(ev._rut,ev._rutKey||ev.start))h+='<button class="ev-btn" id="evDRutRecover">Recuperar esta clase</button>';
+    if((!ev._rutExtra||rutSessionByKey(ev._rut,ev._rutKey||ev.start).recoveryOf)&&(!rutFlexible(ev._rut)||ev._rutSkip))h+='<button class="ev-btn '+(ev._rutSkip?'rut-done-action':'rut-skip-action')+'" id="evDRutSes">'+(ev._rutSkip?'Marcar como hecha':'Marcar como cancelada')+'</button>';
+    if(ev._rutSkip&&(!ev._rutExtra||rutSessionByKey(ev._rut,ev._rutKey||ev.start).recoveryOf)&&!rutRecoveryFor(ev._rut,ev._rutKey||ev.start))h+='<button class="ev-btn" id="evDRutRecover">Recuperar esta clase</button>';
+    if(ev._rutExtra)h+='<button class="ev-btn danger" id="evDRutDelete">Eliminar clase</button>';
     h+='<button class="action-edit action-edit-text ev-btn ev-edit-orange" id="evDRutEdit">&#9998; Editar rutina</button>';
   } else if(ev.id.indexOf('ev-bday-vip-')===0){
     if(bdayCanSetAlarm(_findBdayByEvId(ev.id)))h+='<button class="ev-btn primary" id="evDBdayAlarm">&#128276; Alarma de cumplea'+'\u00f1'+'os</button>';
@@ -251,6 +252,8 @@ function openEvDetail(ev,container,car){
   function repaintRoutine(){var updated=rutEventsOn(ev.start).find(function(item){return item.id===ev.id;});if(updated)openEvDetail(updated,container,car);}
   var recoveryButton=document.getElementById('evDRutRecover');
   if(recoveryButton)recoveryButton.onclick=function(){openRutRecoveryDay(ev._rut,ev._rutKey||ev.start,null,function(){closeRutAddition();repaintRoutine();},repaintRoutine);};
+  var extraDelete=document.getElementById('evDRutDelete');
+  if(extraDelete)extraDelete.onclick=function(){openRutSessionDelete(ev._rut,ev._rutKey||ev.start,closeEvDetail);};
   var _re=document.getElementById('evDRutEdit');
   if(_re)_re.addEventListener('click',function(){
     closeEvDetail();

@@ -178,7 +178,8 @@ function rutToggleSkip(r,ds,key){
   key=key||ds;
   var session=rutSessionByKey(r,key);
   if(!session)return false;
-  if(rutFlexible(r)&&!session.skip){showToast('Solo las rutinas de horario fijo pueden marcarse como saltadas.','error');return false;}
+  if(session.extra&&!session.recoveryOf){showToast('Las clases extras solo se pueden eliminar.','error');return false;}
+  if(rutFlexible(r)&&!session.skip){showToast('Solo las rutinas de horario fijo pueden marcarse como canceladas.','error');return false;}
   if(session.skip&&rutRecoveryFor(r,key)){showToast('Esta sesión ya tiene una recuperación. Cancela primero la recuperación para reactivar la original.','error');return false;}
   if(session.extra){
     var copy=JSON.parse(JSON.stringify(r)),extra=copy.extraSessions.find(function(s){return s.id===key;});extra.skip=!extra.skip;
@@ -213,7 +214,7 @@ function rutEventsOn(ds){
       color:rutDisplayColor(r),
       kind:'puntual', type:'Rutina',
       start:ds, end:ds, repeat:null,
-      _rut:r, _rutKey:s.key, _rutTime:s.time, _rutDur:s.dur, _rutSkip:s.skip
+      _rut:r, _rutKey:s.key, _rutTime:s.time, _rutDur:s.dur, _rutSkip:s.skip, _rutExtra:!!s.extra
     });});
   });
   return out;
@@ -245,14 +246,15 @@ function rutStats(r,desdeDs){
   var hoy=evDk(new Date());
   var ini=desdeDs||(r.flex?rutFlexEarliest(r):r.start)||hoy;
   var ses=rutSessions(r,ini,hoy);
-  var hechas=0,saltadas=0;
+  var hechas=0,saltadas=0,recuperadas=0,extras=0,total=0;
   ses.forEach(function(s){
     if(s.ds===hoy)return;               /* el día en curso aún no cuenta */
-    if(s.skip)saltadas++;else hechas++;
+    if(!s.extra)total++;
+    if(s.skip){saltadas++;return;}
+    if(s.extra){if(s.recoveryOf)recuperadas++;else extras++;}else hechas++;
   });
-  var total=hechas+saltadas;
-  return {hechas:hechas,saltadas:saltadas,total:total,
-    pct:total?Math.round(hechas*100/total):0};
+  return {hechas:hechas,saltadas:saltadas,recuperadas:recuperadas,extras:extras,total:total,
+    pct:total?Math.round((hechas+recuperadas+extras)*100/total):0};
 }
 function rutProximas(r,n){
   var hoy=evDk(new Date());
@@ -320,14 +322,15 @@ function _renderRutLista(){
     if(r.flex)h+=rutFlexSummary(r);
     else h+=_renderRutSchedule(r,hoy);
     if(st.total){
-      h+='<div class="rut-card-ft"><span>'+st.hechas+' hechas · '+st.saltadas+' saltadas</span>';
+      h+='<div class="rut-card-ft"><span>'+st.hechas+' hechas · '+st.saltadas+' canceladas · '+st.recuperadas+' recuperadas · '+st.extras+' extras</span>';
       h+='<span class="rut-pct">'+st.pct+'%</span></div>';
     }else{
       h+='<div class="rut-card-ft"><span class="rut-vacio">Aún sin sesiones pasadas</span></div>';
     }
     h+='<div class="rut-card-actions"><button class="ev-btn" '+(r.flex?'data-rplan':'data-rweek')+'="'+escHtml(r.id)+'">'
       +(r.flex?'Planificar sesiones':'Cambiar (desde) una semana concreta')+'</button>'
-      +'<button class="ev-btn" data-rhistory="'+escHtml(r.id)+'">Consultar histórico</button></div>';
+      +'<button class="ev-btn" data-rhistory="'+escHtml(r.id)+'">Consultar histórico</button>'
+      +(r.flex?'<button class="ev-btn" data-rextra="'+escHtml(r.id)+'">Añadir clase extra</button>':'')+'</div>';
     h+='</div>';
   });
   h+='<button class="ev-io-btn rut-add" id="rutAdd">+ Nueva rutina</button>';
@@ -345,18 +348,20 @@ function _renderRutStats(){
   var hoy=new Date(), hoyDs=evDk(hoy);
   var h='';
   /* Totales */
-  var tH=0,tS=0;
-  RUTINAS.forEach(function(r){var s=rutStats(r);tH+=s.hechas;tS+=s.saltadas;});
+  var tH=0,tS=0,tR=0,tE=0,tP=0;
+  RUTINAS.forEach(function(r){var s=rutStats(r);tH+=s.hechas;tS+=s.saltadas;tR+=s.recuperadas;tE+=s.extras;tP+=s.total;});
   h+='<div class="boda-stats-row">';
   h+='<div class="boda-stat"><b>'+tH+'</b><span>hechas</span></div>';
-  h+='<div class="boda-stat"><b>'+tS+'</b><span>saltadas</span></div>';
-  h+='<div class="boda-stat"><b>'+((tH+tS)?Math.round(tH*100/(tH+tS)):0)+'%</b><span>cumplimiento</span></div>';
+  h+='<div class="boda-stat"><b>'+tS+'</b><span>canceladas</span></div>';
+  h+='<div class="boda-stat"><b>'+tR+'</b><span>recuperadas</span></div>';
+  h+='<div class="boda-stat"><b>'+tE+'</b><span>extras</span></div>';
+  h+='<div class="boda-stat"><b>'+(tP?Math.round((tH+tR+tE)*100/tP):0)+'%</b><span>cumplimiento</span></div>';
   h+='</div>';
   /* Por rutina */
   h+='<div class="boda-stat-t">Por rutina</div>';
   h+=hBarRows(RUTINAS.map(function(r){
     var s=rutStats(r);
-    return {label:r.name,value:s.hechas,color:rutDisplayColor(r)};
+    return {label:r.name,value:s.hechas+s.recuperadas+s.extras,color:rutDisplayColor(r)};
   }),{});
   /* Detalle por rutina */
   RUTINAS.forEach(function(r){
@@ -365,7 +370,7 @@ function _renderRutStats(){
     h+='<div class="rut-card-hd"><span class="rut-dot" style="background:'+rutDisplayColor(r)+'"></span>';
     h+='<span class="rut-name">'+escHtml(r.name)+'</span>';
     h+='<span class="rut-pct">'+(s.total?s.pct+'%':'—')+'</span></div>';
-    h+='<div class="rut-stat-line">'+s.hechas+' hechas · '+s.saltadas+' saltadas · '+s.total+' previstas';
+    h+='<div class="rut-stat-line">'+s.hechas+' hechas · '+s.saltadas+' canceladas · '+s.recuperadas+' recuperadas · '+s.extras+' extras · '+s.total+' previstas';
     if(r.start)h+=' <em>desde '+_rutFmt(r.start)+'</em>';
     h+='</div>';
     /* Ultimas 8 sesiones pasadas, para poder corregir */
@@ -375,11 +380,11 @@ function _renderRutStats(){
       h+='<div class="rut-hist">';
       pas.forEach(function(x){
         h+='<button class="rut-hist-i'+(x.skip?' skip':'')+'" data-rid="'+r.id+'" data-ds="'+x.ds+'" data-session="'+x.key+'" title="'
-          +(x.skip?'Marcada como saltada':'Marcada como hecha')+' — pulsa para cambiar">'
+          +(x.skip?'Cancelada':'Realizada')+' — pulsa para editar">'
           +x.ds.slice(8)+'/'+x.ds.slice(5,7)+'</button>';
       });
       h+='</div>';
-      h+='<div class="rut-hist-lbl">Pulsa una sesión para marcarla como saltada o hecha</div>';
+      h+='<div class="rut-hist-lbl">Pulsa una sesión para editarla. Cumplimiento = (hechas + recuperadas + extras) / previstas.</div>';
     }
     h+='</div>';
   });
@@ -549,6 +554,7 @@ function closeRutSesion(){cerrarPanel('rutSesWrap','rutSesOv');}
 
 /* ══ Binds de la pestaña ══ */
 function bindRutinasEvents(){
+  document.querySelectorAll('[data-rextra]').forEach(function(b){b.onclick=function(){openRutRecoveryDay(rutById(b.dataset.rextra),null);};});
   document.querySelectorAll('[data-rplan]').forEach(function(b){b.onclick=function(){openRutPlan(rutById(b.dataset.rplan));};});
   document.querySelectorAll('[data-rweek]').forEach(function(b){b.onclick=function(){openRutWeek(rutById(b.dataset.rweek));};});
   document.querySelectorAll('[data-rhistory]').forEach(function(b){b.onclick=function(){openRutHistory(rutById(b.dataset.rhistory));};});
@@ -581,10 +587,7 @@ function bindRutinasEvents(){
     b.addEventListener('click',function(e){
       e.stopPropagation();
       var r=rutById(b.dataset.rid);if(!r)return;
-      if(rutToggleSkip(r,b.dataset.ds,b.dataset.session)===false)return;
-      refreshEvents();
-      showToast(rutSessionByKey(r,b.dataset.session||b.dataset.ds).skip?'Sesión saltada':'Sesión hecha','success',
-        function(){rutToggleSkip(r,b.dataset.ds,b.dataset.session);refreshEvents();});
+      openRutHistoryEdit(r,b.dataset.session||b.dataset.ds);
     });
   });
 }

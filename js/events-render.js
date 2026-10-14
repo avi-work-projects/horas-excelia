@@ -42,11 +42,7 @@ function renderEvListItem(ev){
 
 /* Las referencias solo ordenan: nunca se convierten en una hora del evento. */
 function evUpcomingCompare(a,b){
-  function minutes(ev){
-    var t=evStartTime(ev)||evPlanReferenceTime(getEvType(ev)),m=t&&/^(\d{1,2}):(\d{2})$/.exec(t);
-    return m?Number(m[1])*60+Number(m[2]):-1;
-  }
-  return minutes(a)-minutes(b);
+  return evCompareOrder(a,b);
 }
 function renderEvUpcoming(){
   if(!EVENTS.length&&!(typeof RUTINAS!=='undefined'&&RUTINAS.length))return '<div class="sy-note">No hay eventos creados. Pulsa \"+ A\u00f1adir\" para crear uno.</div>';
@@ -70,7 +66,7 @@ function renderEvUpcoming(){
     s+='<div class="ev-up-mark">'+(_isVip?'<img class="ev-up-vip-icon" src="./VIP.png" alt="VIP">':evUpcomingMarkHtml(ev))+'</div>';
     s+='<div class="ev-upcoming-info">';
     s+=bodaUltimoEnsayoHtml(ev);
-    s+='<div class="ev-upcoming-title">'+(ev._rutSkip?'<span class="rut-skipped-title">'+title+'</span> <span class="rut-skipped-label">(saltada)</span>':title)+'</div>';
+    s+='<div class="ev-upcoming-title">'+(ev._rutSkip?'<span class="rut-skipped-title">'+title+'</span> <span class="rut-skipped-label">(cancelada)</span>':title)+'</div>';
     s+=rutRecoveryHtml(ev);
     s+='<div class="ev-upcoming-meta">'+type+' \u00b7 '+metaDate+'</div>';
     if(ev.note&&ev.note.trim()&&!_isVip)s+='<div class="ev-upcoming-note">'+escHtml(ev.note.trim())+'</div>';
@@ -444,7 +440,7 @@ function renderEvWeek(){
         var _t=_isVip?escHtml(ev.title.replace(/^\u2b50\s*/,'').replace(/^Cumple\s+/,'')):escHtml(ev.title);
         var _ic=_isVip?'\u2b50 ':'';
         h+='<div class="ev-wk-chip'+(ev._rutSkip?' rut-cancelled':'')+'" data-id="'+ev.id+'" style="border-left:3px solid '+_dc+';background:'+hexA(_dc,0.95)+'">';
-        h+='<span class="ev-wk-chip-title">'+(ev._rutSkip?'<span class="rut-skipped-title">'+_ic+_t+'</span> <span class="rut-skipped-label">(saltada)</span>':_ic+_t)+rutRecoveryHtml(ev)+'</span>';
+        h+='<span class="ev-wk-chip-title">'+(ev._rutSkip?'<span class="rut-skipped-title">'+_ic+_t+'</span> <span class="rut-skipped-label">(cancelada)</span>':_ic+_t)+rutRecoveryHtml(ev)+'</span>';
         /* Hora del evento puntual, si la tiene */
         var _wt=(!ev._rut&&getEvType(ev)!=='Ensayos boda')?evTimeLabel(ev):'';
         if(_wt)h+='<span class="ev-wk-chip-meta">'+escHtml(_wt)+'</span>';
@@ -498,6 +494,7 @@ function renderEvContent(){
   if(EV_VIEW==='birthdays')h+=renderBdayAddButton('evBdayAdd');
   if(EV_VIEW==='upcoming'||EV_VIEW==='birthdays'){
     h+='<div class="sy-year-nav"><div class="sy-year">'+(EV_VIEW==='birthdays'?'Cumpleaños':'Próximos Eventos')+'</div></div>';
+    if(EV_VIEW==='upcoming')h+='<button class="econ-gear" id="evUpcomingOrder" aria-label="Configurar orden de planes">⚙</button>';
   } else if(EV_VIEW==='week'){
     h+='<div class="sy-year-nav"><button class="sy-nav" id="evPrev">&#9664;</button>';
     h+='<div class="sy-year sy-year-2line">'+MN[EV_MONTH]+'<span class="sy-year-sub">'+EV_YEAR+'</span></div>';

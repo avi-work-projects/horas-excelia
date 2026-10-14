@@ -47,6 +47,9 @@
       "path": "js/export-files.js"
     },
     {
+      "path": "js/events-order.js"
+    },
+    {
       "path": "js/time-picker.js"
     },
     {
@@ -253,6 +256,9 @@
     },
     {
       "path": "js/events-tax-model.js"
+    },
+    {
+      "path": "js/events-routines.js"
     },
     {
       "path": "js/events-form.js"

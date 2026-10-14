@@ -356,6 +356,7 @@ var _g4=document.getElementById('exportAllBtn'); if(_g4)_g4.addEventListener('cl
     /* Estas tres se leen de localStorage y no de memoria: la variable puede
        seguir vacia si el usuario no ha abierto la ventana que la carga. */
     evAlarms:_lsJson('excelia-ev-alarm-v1',typeof EV_ALARMS_SET!=='undefined'?EV_ALARMS_SET:null),
+    planOrder:evPlanOrderData(),
     bdayAlarms:_lsJson('excelia-bday-alarm-set',typeof BDAY_ALARM_SET!=='undefined'?BDAY_ALARM_SET:null),
     /* Configuracion economica POR ANIO: vive dentro de excelia-horas-v3 y se
        perdia entera al restaurar. */
@@ -499,6 +500,7 @@ function _applyFullImport(d,mode){
       if(d.evAlarms&&typeof EV_ALARMS_SET!=='undefined'){EV_ALARMS_SET=merge?_mergeMap(EV_ALARMS_SET,d.evAlarms):d.evAlarms;if(typeof saveEvAlarms==='function')saveEvAlarms();}
       if(d.bdayAlarms&&typeof BDAY_ALARM_SET!=='undefined'){BDAY_ALARM_SET=merge?_mergeMap(BDAY_ALARM_SET,d.bdayAlarms):d.bdayAlarms;appStorage.setItem('excelia-bday-alarm-set',JSON.stringify(BDAY_ALARM_SET));}
       if(d.personalNotes!=null)appStorage.setItem(PERSONAL_NOTES_KEY,d.personalNotes);
+      if(d.planOrder!=null)appStorage.setItem(EV_PLAN_ORDER_KEY,JSON.stringify(validateEvPlanOrder(d.planOrder)));
       if(d.contactData){appStorage.setItem(CONTACT_DATA_KEY,JSON.stringify((merge?mergeContactData(contactData(),d.contactData):normalizeContactData(d.contactData))));}
       if(d.mailConfig){appStorage.setItem(MAIL_CFG_SK,JSON.stringify(d.mailConfig));loadMailConfig();}
       if(d.macroUrl)appStorage.setItem('excelia-alarm-url',d.macroUrl);
