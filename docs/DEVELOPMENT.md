@@ -495,3 +495,10 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 
 ## Medición visual estable (v469)
 - La alineación izquierda/derecha se mide dentro del mismo fotograma. Evita atribuir al calendario el desplazamiento de la animación de apertura del overlay; se mantiene la tolerancia de un píxel.
+
+## Formulario de eventos y carrusel (v470)
+- Los eventos puntuales nuevos ocupan un único día. El formulario elimina las repeticiones y la selección multidía; al editar se conservan los días y las repeticiones de eventos anteriores. Cumpleaños mantiene su recurrencia anual.
+- `js/events-form-schedule.js` reúne la cabecera dinámica y los controles de fechas y horas, situados a la derecha de Título y Notas. La cabecera y Guardar permanecen fijos; únicamente el cuerpo desplaza su contenido. El final de un ensayo se calcula con su duración y no se edita como una hora independiente.
+- Puntual y Grande muestran sus símbolos de categoría. Ensayos boda y Otros comparten la selección mediante check sin sombreado adicional.
+- En el carrusel, `.ev-car-viewport` recorta el contenido de cada evento y sus vistas previas. La fecha, los controles de navegación y el marco permanecen quietos durante el arrastre. La campana usa `navIconHtml('alarm')` con el formato cuadrado de esquinas redondeadas.
+- `tools/browser/event-form-layout.spec.js` verifica cabecera fija, geometría móvil, guardado de fechas y horas, conservación de datos anteriores y desplazamiento exclusivo del contenido del carrusel. La revisión visual usa Edge oculto, tema claro e iconos profesionales.

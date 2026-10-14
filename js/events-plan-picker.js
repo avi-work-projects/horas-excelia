@@ -80,5 +80,6 @@ function bindEvCultureFields(form){
   form.root.querySelectorAll('[data-culture]').forEach(function(button){button.onclick=function(){
     form.root.querySelectorAll('[data-culture]').forEach(function(b){b.setAttribute('aria-pressed',String(b===button));});
     var input=_evFormEl(form,'evFTitle');if(!input.value.trim()||input.value===form.autoTitle){form.autoTitle=button.dataset.culture==='Otro'?'Plan cultural':button.dataset.culture;input.value=form.autoTitle;}
+    _evFormUpdateHeading(form);
   };});
 }

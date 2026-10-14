@@ -93,7 +93,7 @@ function renderEvDetail(ev,fromSummary,car,occurrenceDs){
   }
   h+='<div class="ev-detail-tools">';
   if(car)h+='<div class="ev-car-count">'+(car.i+1)+' / '+car.n+'</div>';
-  if(evDetailAlarmDate(ev,(car&&car.ds)||occurrenceDs))h+='<button class="ev-detail-alarm" id="evDAlarm" aria-label="Configurar Alarma" title="Configurar Alarma"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 16v-5a7 7 0 0 1 14 0v5l2 3H3l2-3Z M10 22h4 M12 2V1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>';
+  if(evDetailAlarmDate(ev,(car&&car.ds)||occurrenceDs))h+='<button class="ev-detail-alarm" id="evDAlarm" aria-label="Configurar Alarma" title="Configurar Alarma">'+navIconHtml('alarm')+'</button>';
   h+='</div>';
   h+='</div>';
   if(car&&car.n>1){
@@ -105,6 +105,7 @@ function renderEvDetail(ev,fromSummary,car,occurrenceDs){
     h+='<button class="ev-btn ev-car-arrow" id="evCarNext">&#9654;</button>';
     h+='</div>';
   }
+  if(car)h+='<div class="ev-car-viewport"><div class="ev-car-content">';
   h+='<div class="ev-detail-body">';
   var _ddc=getEvDisplayColor(ev);
   h+='<div class="ev-detail-color-bar" style="background:'+_ddc+'" id="evDColorBar"></div>';
@@ -189,6 +190,7 @@ function renderEvDetail(ev,fromSummary,car,occurrenceDs){
     h+='<button class="ev-btn danger" id="evDDel">Eliminar</button>';
   }
   h+='</div>';
+  if(car)h+='</div></div>';
   h+='</div></div>';
   return h;
 }

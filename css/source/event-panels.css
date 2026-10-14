@@ -302,3 +302,39 @@ body:has(#evDetailOv.open) .tasks-fab{visibility:hidden}
 #evDetailOv{overflow:hidden}
 #evDetailOv .ev-car-preview{position:absolute;bottom:0;margin:0;pointer-events:none}
 .ev-car-dragging{user-select:none;will-change:transform}
+
+
+/* Formulario de evento: marco fijo, texto a la izquierda y agenda a la derecha. */
+#evFormOv .ev-event-form-sheet{height:90dvh;max-height:90dvh;display:flex;flex-direction:column;padding:8px 0 0;overflow:hidden}
+.ev-event-form-sheet>.ev-form-handle,.ev-event-form-header,.ev-event-form-actions{flex-shrink:0}
+#evFormOv .ev-event-form-header{grid-template-columns:64px minmax(0,1fr) 64px;padding:0 20px 12px;margin:0;box-shadow:0 1px 0 var(--border)}
+.ev-event-form-header h2{min-width:0;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0}
+.ev-event-form-header #evFDel{padding:6px 4px;font-size:.65rem}
+.ev-event-form-body{flex:1;min-height:0;overflow-y:auto;padding:16px 20px 20px;overscroll-behavior:contain}
+#evFormOv .ev-event-form-actions{margin:0;padding:12px 20px calc(16px + env(safe-area-inset-bottom,0px));box-shadow:0 -1px 0 var(--border);background:var(--surface)}
+.ev-event-form-actions #evFSave{width:100%}
+.ev-form-lead{display:grid;grid-template-columns:minmax(0,1fr) 138px;gap:12px;align-items:start;margin-bottom:14px}
+.ev-form-writing,.ev-form-schedule{min-width:0}
+.ev-form-writing .ev-field:last-child{margin-bottom:0}
+.ev-form-writing .ev-textarea{height:90px}
+.ev-form-counter{font-weight:400;color:var(--text-dim);font-size:.6rem}
+.ev-form-schedule{display:flex;flex-direction:column;gap:8px;padding-top:1px}
+.ev-form-schedule>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.ev-schedule-control{position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;min-width:0;min-height:78px;padding:8px 2px;border:1px solid color-mix(in srgb,var(--accent) 35%,var(--border));border-radius:12px;background:color-mix(in srgb,var(--accent) 7%,var(--surface));cursor:pointer;text-align:center}
+.ev-schedule-control>span{font-size:.6rem;font-weight:500;line-height:1.2;color:var(--text-muted)}
+.ev-schedule-control>strong{font-family:var(--mono);font-size:.74rem;font-weight:600;color:var(--text)}
+#evFormOv .ev-schedule-input{position:absolute;inset:0;width:100%;height:100%;opacity:0;padding:0;cursor:pointer}
+.ev-schedule-control.disabled{background:var(--surface2);border-color:var(--border);cursor:default}
+.ev-schedule-control.disabled>span,.ev-schedule-control.disabled>strong{color:var(--text-dim);opacity:.65}
+.ev-schedule-control:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.ev-form-legacy{margin:0 0 14px;font-size:.65rem}
+@media(max-width:360px){.ev-form-lead{grid-template-columns:minmax(0,1fr) 120px;gap:9px}.ev-schedule-control{min-height:78px}.ev-schedule-control>strong{font-size:.69rem}}
+/* Solo el contenido de la ficha acompaña el dedo. */
+.ev-detail-modern.ev-car-sheet{height:56dvh;min-height:56dvh;max-height:90dvh;overflow:hidden}
+.ev-car-sheet>.ev-detail-handle,.ev-car-sheet>.ev-detail-toolbar,.ev-car-sheet>.ev-car-nav{flex-shrink:0}
+.ev-car-viewport{position:relative;flex:1;min-height:0;overflow:hidden}
+.ev-car-content{height:100%;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;touch-action:pan-y}
+.ev-car-content>*{flex-shrink:0}
+.ev-car-content>.ev-detail-actions{margin-top:auto}
+#evDetailOv .ev-car-content.ev-car-preview{position:absolute;inset:0;margin:0;pointer-events:none}
+.ev-detail-alarm .nav-pro-icon,.ev-detail-alarm .btn-icon{width:21px;height:21px;object-fit:contain}

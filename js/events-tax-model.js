@@ -12,7 +12,7 @@ function bindEvTaxFields(form){
     _evFormEl(form,'evFTaxOtherLabel').hidden=select.value!=='other';
     var input=_evFormEl(form,'evFTitle'),code=evFormTaxCode(form);
     if(!input.value.trim()||input.value===form.autoTitle||input.value===evTaxTitle(previous)){form.autoTitle=evTaxTitle(code);input.value=form.autoTitle;}
-    previous=code;
+    _evFormUpdateHeading(form);previous=code;
   }
   var trigger=_evFormEl(form,'evFTaxTrigger'),menu=_evFormEl(form,'evFTaxMenu');
   function close(){menu.hidden=true;trigger.setAttribute('aria-expanded','false');}

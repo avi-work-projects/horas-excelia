@@ -82,7 +82,7 @@ Object.keys(a.EV_MANAGEMENT_SUBTYPES).forEach(type=>{
  assert.equal(a.evFilterGroup(ev),'Rec. Gestiones');assert.equal(a.evMarkPriority(ev),(['Llamada','Médico','Dentista','Peluquería'].includes(type)?['Llamada','Médico','Dentista','Peluquería'].indexOf(type):4));
  assert.equal(a.getEvDisplayColor(ev),a.evTypeColor('puntual',type));
  assert(a.evMarkerHtml(ev,'','','circle').includes('ev-shape-'+a.EV_MANAGEMENT_SUBTYPES[type]));
- a.validateImport({events:[ev]});assert(a.evAdmiteRepeticion('puntual',type));
+ a.validateImport({events:[ev]});assert(!a.evAdmiteRepeticion('puntual',type));
 });
 const form=a.renderEvForm(null);assert(form.includes('data-shape="rings"'));
 ['beer','mountain'].forEach(shape=>{assert(!form.includes('data-shape="'+shape+'"'));assert(a.evShapeSvg(shape).includes('<path'));});
