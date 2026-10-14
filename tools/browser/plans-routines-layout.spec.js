@@ -21,7 +21,7 @@ test('orden móvil: descripción separada, controles completos y cabecera establ
  await page.locator('#evUpcomingOrder').click();
  for(const width of [320,400,440]){
   await page.setViewportSize({width,height:880});
-  const bounds=await page.locator('.ev-order-sheet').evaluate(el=>{const header=el.querySelector('header').getBoundingClientRect(),note=el.querySelector('.ev-order-note').getBoundingClientRect(),list=el.querySelector('.ev-order-list').getBoundingClientRect();return {gap:note.top-header.bottom,overflow:el.querySelector('.ev-order-list').scrollWidth-list.width,buttons:Array.from(el.querySelectorAll('[data-order-move]')).every(button=>{const r=button.getBoundingClientRect();return r.left>=list.left&&r.right<=list.right;})};});
+  const bounds=await page.locator('.ev-order-sheet').evaluate(el=>{const header=el.querySelector('header').getBoundingClientRect(),note=el.querySelector('.ev-order-note').getBoundingClientRect(),list=el.querySelector('.ev-order-list').getBoundingClientRect();return {gap:note.top-header.bottom,overflow:el.querySelector('.ev-order-list').scrollWidth-list.width,buttons:Array.from(el.querySelectorAll('[data-order-drag],input')).every(button=>{const r=button.getBoundingClientRect();return r.left>=list.left&&r.right<=list.right;})};});
   expect(bounds.gap).toBeGreaterThanOrEqual(12);expect(bounds.overflow).toBeLessThanOrEqual(1);expect(bounds.buttons).toBe(true);
   await page.screenshot({path:info.outputPath('orden-'+width+'.png'),animations:'disabled'});
  }
@@ -51,6 +51,7 @@ test('planes completos de un vistazo: barbacoa cuarta, tostadas en segunda fila 
  for(const width of [320,400,440]){
   await page.setViewportSize({width,height:800});await page.locator('[data-picker="plans"]').click();
   expect((await page.locator('.ev-plan-options [data-type]').evaluateAll(els=>els.map(el=>el.dataset.type))).slice(0,8)).toEqual(['Comida','Tomar algo','Cena','Barbacoa','Desayunar','Brunch','Merendar','Cumpleaños']);
+  expect(await page.locator('.ev-plan-options [data-type]').evaluateAll(es=>[es[11].dataset.type,es[15].dataset.type,es[22].dataset.type])).toEqual(['Baile','Cine','Ping pong']);
   for(const type of ['Salir a Correr','Pádel','Baile'])await expect(page.locator('#evPlanPickerOv [data-type="'+type+'"]')).toBeInViewport();
   expect(await page.locator('.ev-plan-options').evaluate(el=>el.scrollHeight-el.clientHeight)).toBeLessThanOrEqual(1);
   for(const type of ['Pádel','Baile'])await expect(page.locator('#evPlanPickerOv [data-type="'+type+'"] svg>rect[fill="#fff"]')).toHaveCount(0);
@@ -59,11 +60,11 @@ test('planes completos de un vistazo: barbacoa cuarta, tostadas en segunda fila 
  const group=page.locator('.ev-routines-active');await group.scrollIntoViewIfNeeded();expect((await group.boundingBox()).height).toBeLessThan(120);await page.screenshot({path:info.outputPath('rutinas-compactas.png'),animations:'disabled'});
 });
 test('Otros amarillo claro: paleta, color personalizado y forma actualizan las previsualizaciones',async({page},info)=>{
- await page.locator('#evAdd').click();const other=page.locator('#evFTypePicker [data-kind="puntual"][data-type="Otros"]');await other.click();await page.locator('#evFTitle').fill('Marcador de prueba');await expect(page.locator('#evFCpHex')).toHaveValue('#ffe066');await expect(other.locator('.ev-type-dot')).toHaveCSS('color','rgb(255, 224, 102)');
-  await page.locator('#evFCpWrap [data-hex="#1d4ed8"]').click();await expect(page.locator('#evFShapePicker .ev-shape-preview').first()).toHaveCSS('color','rgb(29, 78, 216)');await expect(other.locator('.ev-type-dot')).toHaveCSS('color','rgb(29, 78, 216)');
- await page.locator('[data-shape="rounded"]').click();await expect(other.locator('svg>rect')).toHaveCount(1);await page.locator('#evFCpHex').fill('#663399');await page.locator('#evFCpHex').press('Tab');await expect(page.locator('#evFShapePicker .ev-shape-preview').first()).toHaveCSS('color','rgb(102, 51, 153)');
- await page.locator('#evFCpNative').evaluate(el=>{el.value='#ff6b6b';el.dispatchEvent(new Event('input',{bubbles:true}));});await expect(other.locator('.ev-type-dot')).toHaveCSS('color','rgb(255, 107, 107)');await page.screenshot({path:info.outputPath('otros-paleta.png'),animations:'disabled'});await other.scrollIntoViewIfNeeded();await page.screenshot({path:info.outputPath('otros-marcador.png'),animations:'disabled'});
- await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);expect(await page.evaluate(()=>EVENTS[0])).toMatchObject({type:'Otros',color:'#ff6b6b',shape:'rounded'});
+ await page.locator('#evAdd').click();const other=page.locator('#evFTypePicker [data-kind="puntual"][data-type="Otros"]');await other.click();await page.locator('#evFTitle').fill('Marcador de prueba');await expect(page.locator('#evFCpHex')).toHaveValue('#ffe066');await expect(other.locator('.ev-type-dot')).toHaveClass(/ev-type-dot-multi/);
+  await page.locator('#evFCpWrap [data-hex="#1d4ed8"]').click();await expect(page.locator('#evFShapePicker .ev-shape-preview').first()).toHaveCSS('color','rgb(29, 78, 216)');await expect(other.locator('.ev-type-dot')).toHaveClass(/ev-type-dot-multi/);
+ await page.locator('[data-shape="cooking"]').click();await expect(page.locator('[data-shape="cooking"] svg path')).not.toHaveCount(0);await page.locator('#evFCpHex').fill('#663399');await page.locator('#evFCpHex').press('Tab');await expect(page.locator('#evFShapePicker .ev-shape-preview').first()).toHaveCSS('color','rgb(102, 51, 153)');
+ await page.locator('#evFCpNative').evaluate(el=>{el.value='#ff6b6b';el.dispatchEvent(new Event('input',{bubbles:true}));});await expect(other.locator('.ev-type-dot')).toHaveClass(/ev-type-dot-multi/);await page.screenshot({path:info.outputPath('otros-paleta.png'),animations:'disabled'});await other.scrollIntoViewIfNeeded();await page.screenshot({path:info.outputPath('otros-marcador.png'),animations:'disabled'});
+ await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);expect(await page.evaluate(()=>EVENTS[0])).toMatchObject({type:'Otros',color:'#ff6b6b',shape:'cooking'});
 });
 test('extra fija y recuperación: mismo marco con cuatro, cinco y seis semanas y con swipe',async({page},info)=>{
  await page.evaluate(()=>{_switchEvView('rutinas');refreshEvents(false);});await expect(page.locator('[data-rid="fixed"].rut-routine-card [data-rextra]')).toHaveCount(1);await page.locator('[data-rextra="fixed"]').click();

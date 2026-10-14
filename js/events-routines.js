@@ -8,7 +8,7 @@ function evRoutineChoice(r){
 }
 function renderEvRoutineChoices(){
   var list=evActiveRoutines();if(!list.length)return '';
-  return '<section class="ev-category-group ev-routines-active" aria-label="Rutinas activas"><strong>Rutinas activas</strong><div class="ev-routines-quick" style="--routine-columns:'+Math.max(2,Math.min(4,list.length))+'">'+list.slice(0,4).map(evRoutineChoice).join('')+'</div>'+(list.length>4?'<button type="button" class="ev-io-btn" id="evRoutinesMore">Más opciones</button>':'')+'</section>';
+  return '<section class="ev-category-group ev-routines-active" aria-label="Rutinas activas"><strong><span class="ev-type-dot">'+rutIconSvg('gen','#768695',true)+'</span>Rutinas activas</strong><div class="ev-routines-quick" style="--routine-columns:'+Math.max(2,Math.min(4,list.length))+'">'+list.slice(0,4).map(evRoutineChoice).join('')+'</div>'+(list.length>4?'<button type="button" class="ev-io-btn" id="evRoutinesMore">Más opciones</button>':'')+'</section>';
 }
 function bindEvRoutineChoices(form){
   function choose(r){

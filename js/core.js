@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v472 — Evento alineado y selección multidía';
+var APP_VERSION = 'v473 — Fichas fijas y planes sin hora';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -19,6 +19,7 @@ function addSwipe(el, onLeft, onRight){
   if(!el||el._swipeAdded)return;
   el._swipeAdded=true;
   var _sx=0,_sy=0,_skip=false;
+  var resolve=swipeContentResolver(el),moving=[],offset=0,stop=null;
   /* ¿el gesto empezó dentro de un contenedor con scroll horizontal propio?
      Si es así, el swipe es para mover la tabla, no para cambiar de pestaña. */
   function startedInScrollX(node){
@@ -48,16 +49,27 @@ function addSwipe(el, onLeft, onRight){
     return false;
   }
   el.addEventListener('touchstart',function(e){
+    if(stop)stop();stop=null;swipeContentReset(moving);moving=[];offset=0;
     _sx=e.touches[0].clientX;_sy=e.touches[0].clientY;
-    _skip=startedInScrollX(e.target)||startedInPanel(e.target);
+    _skip=e.touches.length!==1||startedInScrollX(e.target)||startedInPanel(e.target);
   },{passive:true});
+  el.addEventListener('touchmove',function(e){
+    if(_skip||e.touches.length!==1)return;
+    var dx=e.touches[0].clientX-_sx,dy=e.touches[0].clientY-_sy;
+    if(!moving.length&&Math.abs(dy)>Math.abs(dx)&&Math.abs(dy)>8){_skip=true;return;}
+    if(Math.abs(dx)<8||Math.abs(dx)<=Math.abs(dy))return;
+    if(!moving.length)moving=resolve();offset=dx;
+    if(e.cancelable)e.preventDefault();
+    if(!matchMedia('(prefers-reduced-motion: reduce)').matches)moving.forEach(function(n){n.style.translate=dx+'px 0';});
+  },{passive:false});
   el.addEventListener('touchend',function(e){
-    if(_skip)return;
+    swipeContentReset(moving);if(_skip||!e.changedTouches.length)return;
     var dx=e.changedTouches[0].clientX-_sx;
     var dy=e.changedTouches[0].clientY-_sy;
     if(Math.abs(dx)<50||Math.abs(dx)<=Math.abs(dy))return;
-    if(dx<0)onLeft();else onRight();
+    stop=animateContentSwipe(resolve,dx<0?onLeft:onRight,dx<0?-1:1,offset);
   },{passive:true});
+  el.addEventListener('touchcancel',function(){_skip=true;swipeContentReset(moving);moving=[];});
 }
 
 // ── Pulsación larga (500 ms) ─────────────────────────────────

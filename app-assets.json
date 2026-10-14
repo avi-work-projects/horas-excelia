@@ -44,6 +44,9 @@
       "path": "js/core.js"
     },
     {
+      "path": "js/swipe-content.js"
+    },
+    {
       "path": "js/export-files.js"
     },
     {

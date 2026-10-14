@@ -17,7 +17,7 @@ test('carrusel: arrastre muestra la siguiente ficha, cancela, navega y mantiene 
   EVENTS=[{id:'one',kind:'puntual',type:'Pago',title:'Primera gestión',start:'2026-10-13',end:'2026-10-13',color:'#dcae3e'},{id:'two',kind:'puntual',type:'Otros',shape:'leaf',title:'Limpieza de prueba',start:'2026-10-13',end:'2026-10-13',color:'#3ba780'}];EV_VIEW='cal';EV_YEAR=2026;EV_MONTH=9;refreshEvents();openEvDayCarousel('2026-10-13','one');
  });
  const sheet=page.locator('#evDetailOv>.ev-car-sheet:not(.ev-car-preview)'),title=page.locator('#evDTitle');
- for(const width of [320,400]){await page.setViewportSize({width,height:880});const t=await page.locator('.ev-detail-day-title').boundingBox();expect(Math.abs(t.x+t.width/2-width/2)).toBeLessThan(1);await expect(page.locator('#evDAlarm svg')).toBeVisible();await expect(page.locator('#evDAlarm')).toHaveCSS('border-radius','9px');}
+ for(const width of [320,400]){await page.setViewportSize({width,height:880});const t=await page.locator('.ev-detail-day-title').boundingBox();expect(Math.abs(t.x+t.width/2-width/2)).toBeLessThan(1);await expect(page.locator('#evDAlarm')).toHaveText('🔔');await expect(page.locator('#evDAlarm')).toHaveCSS('border-radius','9px');}
  await expect(page.locator('#eventsOverlay')).toHaveCSS('transform','matrix(1, 0, 0, 1, 0, 0)');
  const original=await sheet.boundingBox();const heading=await page.locator('.ev-detail-heading').boundingBox();const x=heading.x+heading.width*.7,y=heading.y+15;
  await page.mouse.move(x,y);await page.mouse.down();await page.mouse.move(x-45,y,{steps:5});await expect(page.locator('.ev-car-preview')).toHaveCount(2);await expect(title).toHaveText('Primera gestión');

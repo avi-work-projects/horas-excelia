@@ -5,7 +5,7 @@ test.beforeEach(async({page})=>{
  await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evAdd').click();
 });
 test('cabecera fija y dinámica, controles a la derecha y cuerpo con scroll móvil',async({page},info)=>{
- const title=page.locator('#evFHeadingTitle');await expect(title).toHaveText('Nuevo Evento');await expect(page.locator('#evFRepeat')).toHaveCount(0);await expect(page.locator('#evFPickDates')).toBeDisabled();
+ const title=page.locator('#evFHeadingTitle');await expect(title).toHaveText('Nuevo Evento');await expect(page.locator('#evFRepeat')).toHaveCount(0);await expect(page.locator('[data-ev-multiday]:not(:disabled)')).toHaveCount(0);
  await page.locator('#evFTypePicker [data-type="Comida"]').click();await expect(title).toHaveText('Comida');await page.locator('#evFTitle').fill('Mi título personal');await expect(title).toHaveText('Mi título personal');
  for(const width of [320,400,440]){
   await page.setViewportSize({width,height:880});
@@ -40,7 +40,7 @@ test('ensayo de un día con hora y checks de categoría sin sombreado adicional'
 });
 test('editar eventos anteriores conserva fechas discontinuas, repetición y notas',async({page})=>{
  await page.evaluate(()=>{EVENTS=[{id:'legacy',kind:'puntual',type:'Otros',title:'Registro anterior',start:'2026-10-16',end:'2026-10-22',dates:['2026-10-16','2026-10-22'],repeat:{type:'yearly'},color:'#a3e635',dayNotes:{'2026-10-16':'Nota conservada'}}];openEvForm(EVENTS[0]);});
- await expect(page.locator('#evFStart')).toBeDisabled();await expect(page.locator('#evFEnd')).toBeDisabled();await expect(page.locator('#evFRepeat')).toHaveCount(0);await expect(page.locator('#evFPickDates')).toBeEnabled();await page.locator('#evFNote').fill('Nota corregida');await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);
+ await expect(page.locator('#evFStart')).toBeDisabled();await expect(page.locator('#evFEnd')).toBeDisabled();await expect(page.locator('#evFRepeat')).toHaveCount(0);await expect(page.locator('[data-ev-multiday]:not(:disabled)')).toBeEnabled();await page.locator('#evFNote').fill('Nota corregida');await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);
  expect(await page.evaluate(()=>EVENTS[0])).toMatchObject({id:'legacy',start:'2026-10-16',end:'2026-10-22',dates:['2026-10-16','2026-10-22'],repeat:{type:'yearly'},note:'Nota corregida',dayNotes:{'2026-10-16':'Nota conservada'}});
 });
 test('el marco y la cabecera del carrusel permanecen quietos durante el arrastre',async({page},info)=>{
@@ -49,7 +49,7 @@ test('el marco y la cabecera del carrusel permanecen quietos durante el arrastre
  const original=await sheet.boundingBox();const heading=await page.locator('#evDTitle').boundingBox();const x=heading.x+20,y=heading.y+10;const toolbar=await page.locator('.ev-detail-toolbar').boundingBox();
  await page.mouse.move(x,y);await page.mouse.down();await page.mouse.move(x-45,y,{steps:5});await expect(page.locator('.ev-car-preview')).toHaveCount(2);
  expect(await sheet.boundingBox()).toEqual(original);expect(await page.locator('.ev-detail-toolbar').boundingBox()).toEqual(toolbar);expect(await page.locator('.ev-car-content:not(.ev-car-preview)').evaluate(el=>el.style.transform)).toContain('-45px');
- expect(await page.locator('#evDAlarm').evaluate(el=>{const template=document.createElement('template');template.innerHTML=navIconHtml('alarm');return el.firstElementChild.isEqualNode(template.content.firstElementChild);})).toBe(true);await expect(page.locator('#evDAlarm')).toHaveCSS('border-radius','9px');await page.screenshot({path:info.outputPath('contenido-en-arrastre.png')});
+ await expect(page.locator('#evDAlarm')).toHaveText('🔔');await expect(page.locator('#evDAlarm')).toHaveCSS('border-radius','9px');await page.screenshot({path:info.outputPath('contenido-en-arrastre.png')});
  await page.mouse.up();await expect(page.locator('.ev-car-preview')).toHaveCount(0);await expect(page.locator('#evDTitle')).toHaveText('Primera ficha');
  await page.mouse.move(x,y);await page.mouse.down();await page.mouse.move(x-150,y,{steps:8});await page.mouse.up();await expect(page.locator('#evDTitle')).toHaveText('Segunda ficha');expect(await sheet.boundingBox()).toEqual(original);expect(await page.evaluate(()=>EV_MONTH)).toBe(9);await page.screenshot({path:info.outputPath('segunda-ficha.png'),animations:'disabled'});
 });

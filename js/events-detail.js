@@ -93,7 +93,7 @@ function renderEvDetail(ev,fromSummary,car,occurrenceDs){
   }
   h+='<div class="ev-detail-tools">';
   if(car)h+='<div class="ev-car-count">'+(car.i+1)+' / '+car.n+'</div>';
-  if(evDetailAlarmDate(ev,(car&&car.ds)||occurrenceDs))h+='<button class="ev-detail-alarm" id="evDAlarm" aria-label="Configurar Alarma" title="Configurar Alarma">'+navIconHtml('alarm')+'</button>';
+  if(evDetailAlarmDate(ev,(car&&car.ds)||occurrenceDs))h+='<button class="ev-detail-alarm" id="evDAlarm" aria-label="Configurar Alarma" title="Configurar Alarma">🔔</button>';
   h+='</div>';
   h+='</div>';
   if(car&&car.n>1){
@@ -173,24 +173,30 @@ function renderEvDetail(ev,fromSummary,car,occurrenceDs){
     h+='</div>';
   }
   h+='</div>';
-  h+='<div class="ev-detail-actions">';
   if(ev._rut){
-    /* Sesion de rutina: no es un evento guardado, asi que ni se edita ni se
-       borra desde aqui; lo que se hace es marcarla */
+    /* El estado pertenece a esta sesión; Editar abre la rutina y Eliminar
+       utiliza el borrado de una sola sesión, con confirmación y Deshacer. */
+    h+='<div class="ev-routine-state-actions">';
     if((!ev._rutExtra||rutSessionByKey(ev._rut,ev._rutKey||ev.start).recoveryOf)&&(!rutFlexible(ev._rut)||ev._rutSkip))h+='<button class="ev-btn '+(ev._rutSkip?'rut-done-action':'rut-skip-action')+'" id="evDRutSes">'+(ev._rutSkip?'Marcar como hecha':'Marcar como cancelada')+'</button>';
     if(ev._rutSkip&&(!ev._rutExtra||rutSessionByKey(ev._rut,ev._rutKey||ev.start).recoveryOf)&&!rutRecoveryFor(ev._rut,ev._rutKey||ev.start))h+='<button class="ev-btn" id="evDRutRecover">Recuperar esta clase</button>';
-    if(ev._rutExtra)h+='<button class="ev-btn danger" id="evDRutDelete">Eliminar clase</button>';
-    h+='<button class="action-edit action-edit-text ev-btn ev-edit-orange" id="evDRutEdit">&#9998; Editar rutina</button>';
+    h+='</div>';
+  }
+  if(isBirthday&&bdayCanSetAlarm(_findBdayByEvId(ev.id)))h+='<button class="ev-btn primary" id="evDBdayAlarm">🔔 Alarma de cumpleaños</button>';
+  if(car)h+='</div></div>';
+  h+='<div class="ev-detail-actions">';
+  var trash='<svg class="ev-delete-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7m4-7v7" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  if(ev._rut){
+    h+='<button class="action-edit action-edit-text ev-btn ev-edit-orange" id="evDRutEdit">&#9998; Editar</button>';
+    h+='<button class="ev-btn danger" id="evDRutDelete">'+trash+'Eliminar</button>';
   } else if(ev.id.indexOf('ev-bday-vip-')===0){
-    if(bdayCanSetAlarm(_findBdayByEvId(ev.id)))h+='<button class="ev-btn primary" id="evDBdayAlarm">&#128276; Alarma de cumplea'+'\u00f1'+'os</button>';
+    h+='<button class="action-edit action-edit-text ev-btn ev-edit-orange" id="evDEdit">&#9998; Editar</button><button class="ev-btn danger" id="evDBdayDelete">'+trash+'Eliminar</button>';
   } else {
     if(fromSummary)h+='<button class="ev-btn" id="evDGoCal" style="border-color:var(--c-blue);color:var(--c-blue)">&#128197; Ver en Calendario</button>';
     /* Mismo boton que en el panel de alarma de Proximos */
-    h+='<button class="action-edit action-edit-text ev-btn ev-edit-orange" id="evDEdit">&#9998; Editar evento</button>';
-    h+='<button class="ev-btn danger" id="evDDel">Eliminar</button>';
+    h+='<button class="action-edit action-edit-text ev-btn ev-edit-orange" id="evDEdit">&#9998; Editar</button>';
+    h+='<button class="ev-btn danger" id="evDDel">'+trash+'Eliminar</button>';
   }
   h+='</div>';
-  if(car)h+='</div></div>';
   h+='</div></div>';
   return h;
 }
@@ -277,6 +283,8 @@ function openEvDetail(ev,container,car,occurrenceDs){
   if(recoveryButton)recoveryButton.onclick=function(){openRutRecoveryDay(ev._rut,ev._rutKey||ev.start,null,function(){closeRutAddition();repaintRoutine();},repaintRoutine);};
   var extraDelete=document.getElementById('evDRutDelete');
   if(extraDelete)extraDelete.onclick=function(){openRutSessionDelete(ev._rut,ev._rutKey||ev.start,closeEvDetail);};
+  var birthdayDelete=wrap.querySelector('#evDBdayDelete');
+  if(birthdayDelete)birthdayDelete.onclick=function(){var person=_findBdayByEvId(ev.id);if(person){deleteBdayPerson(person);closeEvDayCarousel();refreshEvents();}};
   var _re=document.getElementById('evDRutEdit');
   if(_re)_re.addEventListener('click',function(){
     closeEvDetail();
@@ -358,20 +366,8 @@ function openEvDetail(ev,container,car,occurrenceDs){
     closeEvDetail();
     // VIP birthday → abrir formulario de cumpleaños en lugar del de eventos
     if(ev.id.indexOf('ev-bday-vip-')===0&&typeof BDAYS!=='undefined'){
-      var evDay=parseInt(ev.start.slice(8,10),10);
-      var evMonth=parseInt(ev.start.slice(5,7),10);
-      var b=null;
-      for(var i=0;i<BDAYS.length;i++){
-        if(BDAYS[i].day===evDay&&BDAYS[i].month===evMonth){b=BDAYS[i];break;}
-      }
-      if(b){
-        closeEvents();
-        setTimeout(function(){
-          openBday();
-          setTimeout(function(){openBdayForm(b);},350);
-        },330);
-        return;
-      }
+      var b=_findBdayByEvId(ev.id);
+      if(b){setTimeout(function(){openBdayForm(b);},330);return;}
     }
     setTimeout(function(){openEvForm(ev);},300);
   });

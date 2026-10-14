@@ -17,6 +17,7 @@ function _evFormTypeUI(form,kind,type){
   _evFormScheduleState(form);
 }
 function _bindEvFormTypes(form){
+  bindEvFormMultiday(form);
   bindEvCultureFields(form);
   if(form.edit){var routines=form.root.querySelector('.ev-routines-active');if(routines)routines.remove();}
   else bindEvRoutineChoices(form);
@@ -50,8 +51,6 @@ function _bindEvFormCategories(form){
 }
 function _evFormShapePreviews(form){
   _evFormAll(form,'#evFShapePicker .ev-shape-preview').forEach(function(p){p.style.color=_evFormColor(form);});
-  var other=form.root.querySelector('#evFTypePicker [data-kind="puntual"][data-type="Otros"]');
-  if(other&&other.classList.contains('selected')){var dot=other.querySelector('.ev-type-dot');dot.classList.remove('ev-type-dot-multi');dot.classList.add('ev-type-symbol');dot.style.color=_evFormColor(form);dot.innerHTML=evShapeSvg(form.shape||'circle');}
 }
 function _bindEvFormAppearance(form){
   _evFormAll(form,'#evFBarPicker .ev-barsize-opt').forEach(function(button){
