@@ -42,3 +42,23 @@ assert.equal(a.getEvType({type:'Actividad cultural'}),'Plan cultural');assert(a.
 for(const shape of ['gym','padel','baile']){assert(a.rutIconSvg(shape,'#123456').includes('fill="#fff"'));assert(!a.renderEvForm(null).includes('data-shape="'+shape+'"'));}
 assert.notEqual(a.evFixedSymbol('Carrera'),a.evFixedSymbol('Salir a Correr'));
 console.log('Rutinas y planes: reversión, horarios originales, extras, cumplimiento, alta fija, prioridad real y backup OK');
+
+// Sin hora se conserva la posición y el backup, con referencias vecinas o sin ninguna.
+const nullable=[{type:'Carrera',time:'10:00'},{type:'Desayunar',time:null},{type:'Brunch',time:'11:00'}];
+a.appStorage.setItem(a.EV_PLAN_ORDER_KEY,JSON.stringify(nullable));
+assert.equal(a.evPlanReferenceTime('Desayunar'),null);
+assert(a.evCompareOrder({type:'Carrera'},{type:'Desayunar'})<0);
+assert(a.evCompareOrder({type:'Desayunar'},{type:'Brunch'})<0);
+assert(a.evCompareOrder({type:'Otros',time:'09:50'},{type:'Carrera'})<0);
+assert(a.evCompareOrder({type:'Otros',time:'11:10'},{type:'Brunch'})>0);
+a.validateImport({planOrder:nullable});
+a.EV_PLAN_ORDER_DRAFT=nullable.map(r=>({...r}));a.evPlanOrderReorder('Desayunar',0);
+assert.equal(a.EV_PLAN_ORDER_DRAFT[0].time,null);
+const pure=[{type:'Cena',time:null},{type:'Comida',time:null},{type:'Brunch',time:null}];
+a.appStorage.setItem(a.EV_PLAN_ORDER_KEY,JSON.stringify(pure));
+assert.deepEqual(Array.from(pure.slice().reverse().sort(a.evCompareOrder).map(r=>r.type)),pure.map(r=>r.type));
+assert.equal(a.evStartTime({type:'Cena'}),null);assert.equal(a.evTimeLabel({type:'Cena'}),'');
+assert(a.evShapeSvg('cooking').includes('svg'));
+console.log('Planes sin referencia: posición, horas reales, arrastre, representación y backup OK');
+
+assert.throws(()=>a.validateImport({planOrder:[{type:"Cena",time:"18:00"},{type:"Comida",time:null},{type:"Brunch",time:"12:00"}]}),/horas/);

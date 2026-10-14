@@ -41,7 +41,7 @@ function energyBindSwipe(el,next,prev){
     }
     start={x:e.clientX,y:e.clientY};
   });
-  el.addEventListener('pointerup',function(e){if(!start)return;var dx=e.clientX-start.x,dy=e.clientY-start.y;start=null;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)){e.preventDefault();if(dx<0)next();else prev();}});
+  el.addEventListener('pointerup',function(e){if(!start)return;var dx=e.clientX-start.x,dy=e.clientY-start.y;start=null;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)){e.preventDefault();animateContentSwipe(swipeContentResolver(el),dx<0?next:prev,dx<0?-1:1);}});
   el.addEventListener('pointerleave',function(){start=null;});
   el.addEventListener('pointercancel',function(){start=null;});
 }

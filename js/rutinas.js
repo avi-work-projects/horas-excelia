@@ -38,7 +38,7 @@ var RUT_DN_LARGO = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','
 /* Marcador de una sesión de rutina para el calendario de 1 mes */
 function rutMarkerHtml(ev,pastClass,ds){
   var r=ev._rut||{};
-  var cls='ev-rut-mark'+(pastClass||'')+(ev._rutSkip?' rut-skip':'');
+  var cls='ev-rut-mark'+(pastClass||'')+(ev._rutSkip?' rut-skip'+(rutIconOf(ev._rut)==='padel'?' rut-skip-slash':''):'');
   return '<span class="'+cls+'" data-id="'+ev.id+'" data-ds="'+(ds||ev.start)+'" title="'+escHtml(r.name||'')+'">'
     + rutIconSvg(rutIconOf(r),rutDisplayColor(r))+'</span>';
 }
@@ -410,7 +410,7 @@ function openRutWeek(r){
 function _rutWeekPick(r,opts){
   opts=opts||{};
   var y=RUT_WEEK_CAL.y,m=RUT_WEEK_CAL.m;
-  var h='<div class="ev-detail-overlay" id="rutWkOv"><div class="ev-detail-sheet">';
+  var h='<div class="ev-detail-overlay" id="rutWkOv"><div class="ev-detail-sheet rut-week-picker-sheet">';
   h+='<div class="ev-detail-handle"></div>';
   h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">';
   h+='<button class="sy-back" id="rutWkClose">&#8592;</button>';
@@ -432,7 +432,9 @@ function _rutWeekPick(r,opts){
   h+='<div class="sy-note rut-week-help">'+(opts.hint||'Pulsa cualquier semana para cambiarla. Las que ya tienen un cambio guardado salen recuadradas.')+'</div>';
   h+='</div></div>';
   var back=function(){closeRutWeek();if(opts.onClose)opts.onClose();};
-  abrirPanel('rutWkWrap',h,{overlay:'rutWkOv',alCerrar:back});
+  abrirPanel('rutWkWrap',h,{overlay:'rutWkOv',alCerrar:back,reutilizar:true});
+  var month=document.querySelector('#rutWkOv .ev-month-wrap'),weeks=month.querySelectorAll('.ev-week-outer').length;
+  for(var i=weeks;i<6;i++){var spacer=document.createElement('div');spacer.className='rut-calendar-spacer';spacer.setAttribute('aria-hidden','true');month.appendChild(spacer);}
   /* Cada fila de semana se vuelve pulsable y se marca si ya tiene cambio */
   document.querySelectorAll('#rutWkOv .ev-week-outer').forEach(function(w){
     var celda=w.querySelector('.ev-cell[data-ds]');

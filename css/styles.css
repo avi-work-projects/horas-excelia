@@ -2026,7 +2026,7 @@ body:has(#evDetailOv.open) .tasks-fab{visibility:hidden}
 .ev-form-writing .ev-textarea{flex:1;height:auto;min-height:90px}
 .ev-form-counter{font-weight:400;color:var(--text-dim);font-size:.6rem}
 .ev-form-schedule>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;min-height:0}
-#evFDateRow{grid-template-rows:minmax(0,1fr) auto}
+#evFDateRow{grid-template-rows:minmax(0,1fr)}
 .ev-form-multiday{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:6px;min-width:0;min-height:34px;padding:5px 4px;border:1px solid color-mix(in srgb,var(--accent) 35%,var(--border));border-radius:10px;background:color-mix(in srgb,var(--accent) 7%,var(--surface));color:var(--accent-bright);font:inherit;font-size:.65rem;font-weight:600;cursor:pointer}
 .ev-form-multiday small{font-size:.59rem;font-weight:400;white-space:nowrap}
 .ev-form-multiday:disabled{background:var(--surface2);border-color:var(--border);color:var(--text-dim);cursor:default;opacity:.65}
@@ -2049,6 +2049,38 @@ body:has(#evDetailOv.open) .tasks-fab{visibility:hidden}
 .ev-car-content>.ev-detail-actions{margin-top:auto}
 #evDetailOv .ev-car-content.ev-car-preview{position:absolute;inset:0;margin:0;pointer-events:none}
 .ev-detail-alarm .nav-pro-icon,.ev-detail-alarm .btn-icon{width:21px;height:21px;object-fit:contain}
+
+/* Las etiquetas comparten la línea de Título/Notas; solo el dato ocupa la tarjeta. */
+.ev-schedule-field{display:flex;flex-direction:column;min-width:0;gap:6px}
+.ev-schedule-field>[data-schedule-label]{font-size:.6rem;line-height:1.2;font-weight:600;color:var(--text);white-space:nowrap}
+.ev-schedule-field>.ev-schedule-control{flex:1}
+.ev-category-single:has([data-ev-multiday]){display:flex;align-items:center;gap:6px}
+.ev-category-single:has([data-ev-multiday])>.ev-color-swatch{flex:1;min-width:0}
+.ev-category-single .ev-form-multiday{flex:none;padding:7px 8px;flex-direction:column;gap:2px}
+.ev-car-sheet>.ev-detail-actions{flex-shrink:0;margin-top:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.ev-delete-icon{width:17px;height:17px;flex:none;vertical-align:middle}
+.ev-detail-actions>.danger{display:flex;align-items:center;justify-content:center;gap:6px}
+.ev-routine-state-actions{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.ev-detail-alarm{font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;font-size:22px}
+.ev-rut-mark.rut-skip-slash::after{display:none}
+.ev-rut-mark.rut-skip-slash::before{transform:rotate(45deg);height:1.5px;background:#f03737}
+
+.sy-body,.energy-window-content,.rut-addition-content,.rut-wpick-real{overflow-x:hidden}
+.swipe-content-preview{background:transparent;pointer-events:none}
+
+.rut-week-picker-sheet{height:min(650px,85dvh);display:flex;flex-direction:column;overflow:hidden}
+.rut-week-picker-sheet>:not(.rut-wpick-real){flex-shrink:0}
+.rut-week-picker-sheet>.rut-wpick-real{flex:1;min-height:0;overflow:hidden}
+.rut-wpick-real .ev-month-wrap{height:100%;display:flex;flex-direction:column}
+.rut-wpick-real .ev-week-hdr{position:static;flex-shrink:0;margin:0 0 3px;padding:0}
+.rut-wpick-real .ev-week-outer{flex:1;min-height:0;margin-bottom:3px}
+.rut-wpick-real .ev-week-grid{height:100%}
+.rut-wpick-real .ev-cell{min-height:0}
+
+#bodaAsgSheet{height:min(680px,90dvh);display:flex;flex-direction:column;overflow:hidden}
+#bodaAsgSheet>:not(.boda-asg-grid){flex-shrink:0}
+#bodaAsgSheet>.boda-asg-grid{flex:1;min-height:0;grid-template-rows:repeat(6,minmax(32px,1fr));overflow-y:auto;overflow-x:hidden}
+#bodaAsgSheet .boda-asg-day{min-height:0}
 
 /* Fuente: css/source/dialogs-responsive.css */
 /* ── LOGO POPUP ── */
@@ -4016,7 +4048,8 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 [data-theme="light"] .ev-stats-links .ev-btn-bodas{--tab-tone:#8b5e34}
 [data-theme="light"] .ev-stats-links .ev-btn-rutinas{--tab-tone:#1f2937}
 
-.ev-routines-active>strong{display:block;padding:3px 4px;font-size:.72rem;font-weight:600;color:var(--text-muted)}
+.ev-routines-active>strong{display:flex;align-items:center;gap:9px;padding:3px 4px;font-size:.72rem;font-weight:600;color:var(--text)}
+.ev-routines-active>strong .ev-type-dot{width:22px;height:22px;flex:none}
 .ev-routines-active{--category-tone:#768695}
 .ev-routines-quick{display:grid;grid-template-columns:repeat(var(--routine-columns,2),minmax(0,1fr));gap:8px;margin:4px 0}
 .ev-routines-quick:has(>:only-child)>:only-child{grid-column:1/-1;width:calc((100% - 8px)/2);justify-self:center}
@@ -4031,12 +4064,10 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .ev-order-sheet>.bd-panel-header h2{font-size:1rem;line-height:1.2;margin:0}
 .ev-order-note{margin:0 0 12px;font-size:.7rem;line-height:1.45}
 .ev-order-list{flex:1;min-height:0;overflow-y:auto}
-.ev-order-row{display:grid;grid-template-columns:22px 24px minmax(0,1fr) 62px 58px;gap:6px;align-items:center;padding:9px 0;box-shadow:0 1px 0 var(--border);background:var(--surface);min-width:0}
+.ev-order-row{display:grid;grid-template-columns:22px 24px minmax(0,1fr) 78px;gap:6px;align-items:center;padding:9px 0;box-shadow:0 1px 0 var(--border);background:var(--surface);min-width:0}
 .ev-order-row>span,.ev-order-row svg{width:24px;height:24px}
 .ev-order-row>strong{font-size:.72rem;font-weight:500;overflow-wrap:anywhere}
 .ev-order-row .ev-input{min-width:0;padding:7px 4px;font-size:.76rem;text-align:center}
-.ev-order-arrows{display:flex;gap:4px;min-width:0}
-.ev-order-row .sy-nav{width:27px;min-width:0;height:32px;padding:0;flex:none;font-size:.9rem}
 .ev-order-row .ev-order-grip{width:22px;padding:0;min-width:0;touch-action:none;color:var(--upcoming-text)}
 .ev-order-status{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
 .ev-order-row button:disabled{opacity:.3}
@@ -4073,6 +4104,13 @@ body:has(#evFormOv.open) .tasks-fab{visibility:hidden}
 .ev-cell .ev-day-left{top:19px}
 .ev-cell:has(.ev-otros-corner.llena) .ev-day-left{top:17px}
 .ev-day-left:has(.ev-day-vips){gap:2px}
+
+/* El ancho del nombre del mes no desplaza las flechas compartidas. */
+.boda-asg-nav,.boda-cal-nav{display:grid;grid-template-columns:32px minmax(0,1fr) 32px;align-items:center;gap:10px;width:100%}
+.boda-asg-nav>strong,.boda-asg-month,.boda-cal-month{text-align:center;min-width:0}
+/* Deshacer acompaña a la ficha de sesión sin tapar sus controles de estado. */
+body:has(#evDetailOv.open #evDRutSes) .toast{bottom:calc(min(360px,88dvh) + 12px)}
+body:has(#evDetailOv.open .ev-car-sheet #evDRutSes) .toast{bottom:calc(56dvh + 12px)}
 
 /* Fuente: css/source/invoices.css */
 .hours-control:has(.home-invoice-actions){gap:6px;flex-wrap:wrap}

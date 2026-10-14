@@ -22,6 +22,7 @@ function _renderEvTypeSwatches(kind,selType,extras){
     var selected=selType===group[0]||group[1].indexOf(selType)>=0;
     var h='<section class="ev-category-group'+(kind==='grande'||group[0]==='Ensayos boda'||group[0]==='Otros'?' ev-category-single':'')+(selected?' chosen':'')+'" style="--category-tone:'+evTypeColor(kind,group[0])+'" aria-label="'+group[0]+'">'+_renderEvTypeButton(kind,group[0],selType);
     if(group[1].length)h+='<div class="ev-category-children">'+group[1].map(function(t){return _renderEvTypeButton(kind,t,selType);}).join('')+'</div>';
+    if(EV_FREE_DATES[evTypeKey(kind,group[0])])h+='<button type="button" class="ev-form-multiday" data-ev-multiday="'+group[0]+'" aria-haspopup="dialog"'+(selected?'':' disabled')+'><span>Multidía</span><small></small></button>';
     return h+'</section>'+(kind==='puntual'&&group[0]==='Ensayos boda'?renderEvRoutineChoices():'');
   }).join('');
 }
@@ -31,7 +32,7 @@ function _renderEvTypeButton(kind,t,selType){
     var c=evTypeColor(kind,t);
     /* Multicolor = "elige tu color"; Casa Rural muestra su marron aunque
        tambien tenga paleta (EV_DOT_SOLID) */
-    var isMulti=!!EV_FREE_COLOR[key]&&!EV_DOT_SOLID[key]&&key!=='puntual|Otros';
+    var isMulti=!!EV_FREE_COLOR[key]&&!EV_DOT_SOLID[key];
     var sel=(t===selType)?' selected':'';
     h+='<button type="button" class="ev-color-swatch'+sel+(isMulti?' ev-color-swatch-multi':'')+'" data-hex="'+c+'" data-type="'+escHtml(t)+'" data-kind="'+kind+'"'+(isMulti?'':' style="color:'+c+'"')+'>';
     h+=isMulti?'<div class="ev-type-dot ev-type-dot-multi"></div>'
@@ -104,16 +105,13 @@ function renderEvForm(ev){
   h+='<div class="ev-shape-picker" id="evFShapePicker">';
   var _shapes=[
     {k:'circle',  label:'C\u00edrculo'},
-    {k:'rounded', label:'Rectángulo redondeado'},
-    {k:'diamond', label:'Hexágono'},
-    {k:'x-thick', label:'X gorda'},
     {k:'x-thin',  label:'Cruz'},
     {k:'petal', label:'Estrella'},
     {k:'wave', label:'Ola a mano'},
     {k:'x-outline', label:'X de rotulador'},
     {k:'circle-plus', label:'Círculo con cruz'},
     {k:'rings', label:'Boda'},
-    {k:'planet', label:'Luna'},
+    {k:'cooking', label:'Cocinar'},
     {k:'leaf', label:'Limpieza'}
   ];
   _shapes.forEach(function(s,i){

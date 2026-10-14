@@ -317,6 +317,8 @@ function renderBodaAssign(){
     h+='</div>';
     cur.setDate(cur.getDate()+1);
   }
+  var cells=Math.round((cur-first)/86400000)+off;
+  for(var i=cells;i<42;i++)h+='<div class="boda-asg-spacer" aria-hidden="true"></div>';
   h+='</div>';
   h+='<div class="boda-asg-legend">'
     +'<span><i class="lg-libre"></i>día de ensayo libre</span>'

@@ -65,7 +65,7 @@ function openTimePicker(input){
     input.dispatchEvent(new Event('input',{bubbles:true}));
     input.dispatchEvent(new Event('change',{bubbles:true}));
   }
-  var optional=input.id==='evFTime'||input.id==='evFEndTime'||input.classList.contains('ev-viaje-time');
+  var optional=input.hasAttribute('data-time-optional')||input.id==='evFTime'||input.id==='evFEndTime'||input.classList.contains('ev-viaje-time');
   var h='<div class="ev-detail-overlay time-picker-overlay" id="timePickerOv"><section class="ev-detail-sheet time-picker-sheet" role="dialog" aria-modal="true" aria-labelledby="timePickerTitle">';
   h+='<div class="ev-detail-handle"></div><h2 id="timePickerTitle">Elegir hora</h2><div class="time-picker-drums">'+timePickerDrum('timePickerHours',24,'Horas')+'<b>:</b>'+timePickerDrum('timePickerMinutes',minuteCount,'Minutos',minuteValues)+'</div>';
   h+='<div class="ev-detail-actions"><button class="ev-btn" id="timePickerCancel">Cancelar</button>'+(optional?'<button class="ev-btn" id="timePickerClear">Sin hora</button>':'')+'<button class="ev-btn primary" id="timePickerSave">Guardar</button></div></section></div>';
