@@ -144,12 +144,11 @@
 [data-time-picker]:disabled{cursor:default}
 .time-picker-drums .drum-picker:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
 
-#evFormOv .ev-kind-btn{--kind-tone:#288d75;gap:9px;padding:12px 8px;border-radius:14px;color:var(--kind-tone);border-color:color-mix(in srgb,var(--kind-tone) 35%,var(--border));background:color-mix(in srgb,var(--kind-tone) 5%,var(--surface));position:relative}
-#evFormOv .ev-kind-btn[data-kind="grande"]{--kind-tone:#9470bc}
+#evFormOv .ev-kind-btn{--kind-tone:#9470bc;gap:9px;padding:12px 8px;border-radius:14px;color:var(--kind-tone);border-color:color-mix(in srgb,var(--kind-tone) 35%,var(--border));background:color-mix(in srgb,var(--kind-tone) 5%,var(--surface));position:relative}
 #evFormOv .ev-kind-btn.selected{background:color-mix(in srgb,var(--kind-tone) 16%,var(--surface));border-color:var(--kind-tone);box-shadow:inset 0 0 0 .5px var(--kind-tone)}
 #evFormOv .ev-kind-btn.selected::after{content:'✓';position:absolute;right:9px;top:6px;font-size:.65rem}
 #evFormOv .ev-kind-btn b{font-size:.85rem;font-weight:600}
-#evFormOv .ev-kind-symbols{display:flex;align-items:center;justify-content:center;gap:11px;opacity:1;line-height:0}
+#evFormOv .ev-kind-symbols{display:flex;align-items:center;justify-content:center;gap:11px;height:15px;opacity:1;line-height:0}
 .ev-kind-symbols i{display:inline-block;width:15px;height:15px;font-style:normal}
 .ev-kind-symbols svg{width:100%;height:100%;display:block}
 .ev-kind-symbols .ev-kind-bar{width:21px;height:7px;border-radius:3px;border:1px solid #0008}

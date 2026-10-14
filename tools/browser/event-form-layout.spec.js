@@ -5,12 +5,13 @@ test.beforeEach(async({page})=>{
  await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evAdd').click();
 });
 test('cabecera fija y dinámica, controles a la derecha y cuerpo con scroll móvil',async({page},info)=>{
- const title=page.locator('#evFHeadingTitle');await expect(title).toHaveText('Nuevo Evento');await expect(page.locator('#evFRepeat,#evFPickDates')).toHaveCount(0);
+ const title=page.locator('#evFHeadingTitle');await expect(title).toHaveText('Nuevo Evento');await expect(page.locator('#evFRepeat')).toHaveCount(0);await expect(page.locator('#evFPickDates')).toBeDisabled();
  await page.locator('#evFTypePicker [data-type="Comida"]').click();await expect(title).toHaveText('Comida');await page.locator('#evFTitle').fill('Mi título personal');await expect(title).toHaveText('Mi título personal');
  for(const width of [320,400,440]){
   await page.setViewportSize({width,height:880});
   const frame=await page.locator('.ev-event-form-sheet').evaluate(el=>{const h=el.querySelector('.ev-event-form-header').getBoundingClientRect(),b=el.getBoundingClientRect();return {header:h.y-b.y,height:b.height};});
   const writingRight=await page.locator('.ev-form-lead').evaluate(el=>el.querySelector('.ev-form-schedule').getBoundingClientRect().left-el.querySelector('.ev-form-writing').getBoundingClientRect().right);expect(writingRight).toBeGreaterThan(0);
+  const aligned=await page.locator('.ev-form-lead').evaluate(el=>{const fields=el.querySelectorAll('.ev-form-writing .ev-field'),hours=el.querySelector('#evFHoraRow').getBoundingClientRect(),dates=el.querySelector('#evFDateRow').getBoundingClientRect(),title=fields[0].getBoundingClientRect(),note=fields[1].getBoundingClientRect();return [Math.abs(title.top-hours.top),Math.abs(title.bottom-hours.bottom),Math.abs(note.top-dates.top),Math.abs(note.bottom-dates.bottom),dates.top-hours.bottom];});expect(aligned.slice(0,4).every(delta=>delta<1)).toBe(true);expect(aligned[4]).toBeGreaterThan(0);
   await page.screenshot({path:info.outputPath('nuevo-evento-'+width+'.png'),animations:'disabled'});
   await page.locator('#evFTypePicker [data-type="Otros"]').click();await page.locator('.ev-event-form-body').evaluate(el=>el.scrollTop=el.scrollHeight);
   await expect(page.locator('#evFClose')).toBeInViewport();await expect(title).toBeInViewport();await expect(page.locator('#evFSave')).toBeInViewport();
@@ -18,6 +19,7 @@ test('cabecera fija y dinámica, controles a la derecha y cuerpo con scroll móv
   await page.screenshot({path:info.outputPath('scroll-'+width+'.png'),animations:'disabled'});await page.locator('.ev-event-form-body').evaluate(el=>el.scrollTop=0);
  }
  await page.locator('#evFTitle').fill('');await expect(title).toHaveText('Nuevo Evento');await expect(page.locator('.ev-kind-btn[data-kind="puntual"] .ev-kind-symbols i')).toHaveCount(4);
+ await expect(page.locator('.ev-kind-btn[data-kind="grande"] .ev-kind-symbols i')).toHaveCount(3);const symbols=await page.locator('.ev-kind-picker').evaluate(el=>{const buttons=[...el.querySelectorAll('.ev-kind-btn')],centers=buttons.map(b=>{const r=b.querySelector('.ev-kind-symbols i').getBoundingClientRect();return r.top+r.height/2;});return {colors:buttons.map(b=>getComputedStyle(b).color),offset:Math.abs(centers[0]-centers[1])};});expect(symbols.colors[0]).toBe(symbols.colors[1]);expect(symbols.offset).toBeLessThan(1);
 });
 test('puntual de un día sin fin ni repetición, incluso frente a un fin manipulado',async({page})=>{
  await page.locator('#evFTypePicker [data-type="Otros"]').click();await page.locator('#evFTitle').fill('Sesión de prueba');await page.locator('#evFStart').fill('2026-10-16');await expect(page.locator('#evFEnd')).toBeDisabled();
@@ -38,7 +40,7 @@ test('ensayo de un día con hora y checks de categoría sin sombreado adicional'
 });
 test('editar eventos anteriores conserva fechas discontinuas, repetición y notas',async({page})=>{
  await page.evaluate(()=>{EVENTS=[{id:'legacy',kind:'puntual',type:'Otros',title:'Registro anterior',start:'2026-10-16',end:'2026-10-22',dates:['2026-10-16','2026-10-22'],repeat:{type:'yearly'},color:'#a3e635',dayNotes:{'2026-10-16':'Nota conservada'}}];openEvForm(EVENTS[0]);});
- await expect(page.locator('#evFStart')).toBeDisabled();await expect(page.locator('#evFEnd')).toBeDisabled();await expect(page.locator('#evFRepeat,#evFPickDates')).toHaveCount(0);await page.locator('#evFNote').fill('Nota corregida');await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);
+ await expect(page.locator('#evFStart')).toBeDisabled();await expect(page.locator('#evFEnd')).toBeDisabled();await expect(page.locator('#evFRepeat')).toHaveCount(0);await expect(page.locator('#evFPickDates')).toBeEnabled();await page.locator('#evFNote').fill('Nota corregida');await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);
  expect(await page.evaluate(()=>EVENTS[0])).toMatchObject({id:'legacy',start:'2026-10-16',end:'2026-10-22',dates:['2026-10-16','2026-10-22'],repeat:{type:'yearly'},note:'Nota corregida',dayNotes:{'2026-10-16':'Nota conservada'}});
 });
 test('el marco y la cabecera del carrusel permanecen quietos durante el arrastre',async({page},info)=>{
