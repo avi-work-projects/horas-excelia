@@ -261,6 +261,9 @@
       "path": "js/events-routines.js"
     },
     {
+      "path": "js/events-form-schedule.js"
+    },
+    {
       "path": "js/events-form.js"
     },
     {

@@ -20,7 +20,7 @@ function _renderEvTypeSwatches(kind,selType,extras){
     if(kind==='puntual'&&group[0]==='Rec. Gestiones')return renderEvQuickPlans(selType,'management',extras&&extras.management);
     if(kind==='puntual'&&group[0]==='Plan/Quedada')return renderEvQuickPlans(selType,'plans',extras&&extras.plans);
     var selected=selType===group[0]||group[1].indexOf(selType)>=0;
-    var h='<section class="ev-category-group'+(kind==='grande'?' ev-category-single':'')+(selected?' chosen':'')+'" style="--category-tone:'+evTypeColor(kind,group[0])+'" aria-label="'+group[0]+'">'+_renderEvTypeButton(kind,group[0],selType);
+    var h='<section class="ev-category-group'+(kind==='grande'||group[0]==='Ensayos boda'||group[0]==='Otros'?' ev-category-single':'')+(selected?' chosen':'')+'" style="--category-tone:'+evTypeColor(kind,group[0])+'" aria-label="'+group[0]+'">'+_renderEvTypeButton(kind,group[0],selType);
     if(group[1].length)h+='<div class="ev-category-children">'+group[1].map(function(t){return _renderEvTypeButton(kind,t,selType);}).join('')+'</div>';
     return h+'</section>'+(kind==='puntual'&&group[0]==='Ensayos boda'?renderEvRoutineChoices():'');
   }).join('');
@@ -42,24 +42,12 @@ function _renderEvTypeButton(kind,t,selType){
 }
 
 /* ── Render: formulario de evento ───────────────────────── */
-/* La repeticion solo tiene sentido en dos categorias: un recordatorio de
-   gestion y un "Otros" puntual. Ni los eventos grandes ni un plan ni un ensayo
-   se repiten, asi que ahi el campo ni se pinta. */
-function evAdmiteRepeticion(kind,type){
-  return kind==='puntual'&&(evIsManagement(type)||type==='Otros');
-}
+/* Los eventos nuevos no crean repeticiones; cumpleaños conserva su módulo. */
+function evAdmiteRepeticion(){return false;}
 function renderEvForm(ev){
   var isEdit=!!ev;
   var title=isEdit?ev.title:'';
-  var note=isEdit?(ev.note||''):'';
   var color=isEdit?ev.color:evTypeColor('puntual','Rec. Gestiones');
-  var today=evDk(new Date());
-  var start=isEdit?ev.start:today;
-  var end=isEdit?(ev.end||ev.start):today;
-  var repeat=isEdit?ev.repeat:null;
-  var repType=repeat?repeat.type:'none';
-  var wdays=(repeat&&repeat.type==='weekly')?repeat.weekDays:[];
-  var wdNames=['Do','Lu','Ma','Mi','Ju','Vi','Sa'];
   /* Tipo actual: SIEMPRE el tipo guardado del evento (getEvType ya hace el
      fallback por color para eventos antiguos sin ev.type). Antes la selección
      del picker se decidía por color y un evento con color personalizado no
@@ -77,20 +65,10 @@ function renderEvForm(ev){
   var showDayNote=isEdit&&curKind==='puntual'&&EV_EDIT_DS&&_dayList.length>1&&_dayList.indexOf(EV_EDIT_DS)!==-1;
   var dayNote=showDayNote?((ev.dayNotes&&ev.dayNotes[EV_EDIT_DS])||''):'';
   var h='<div class="ev-form-overlay" id="evFormOv">';
-  h+='<div class="ev-form-sheet">';
-  h+='<div class="ev-form-handle"></div>';
-  h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">';
-  h+='<button class="sy-back" id="evFClose">&#8592;</button>';
-  h+='<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">'+(isEdit?'Editar evento':'Nuevo evento')+'</div>';
-  if(isEdit)h+='<button class="ev-btn danger" id="evFDel" style="flex:none;padding:6px 12px;font-size:.75rem">Eliminar</button>';
-  else h+='<div style="width:36px"></div>';
-  h+='</div>';
-  h+='<div class="ev-field"><label>T\u00edtulo</label>';
-  h+='<input class="ev-input" id="evFTitle" type="text" maxlength="80" placeholder="Nombre del evento" value="'+escHtml(title)+'"></div>';
-  /* Nota general (todos los dias del evento) */
-  h+='<div class="ev-field"><label>'+(showDayNote?'Notas generales <span class="ev-note-scope">(todos los d\u00edas)</span> ':'Notas ')
-    +'<span id="evCharCnt" style="font-weight:400;color:var(--text-dim)">'+note.length+'/200</span></label>';
-  h+='<textarea class="ev-textarea" id="evFNote" maxlength="200" placeholder="Notas opcionales...">'+escHtml(note)+'</textarea></div>';
+  h+='<div class="ev-form-sheet ev-event-form-sheet"><div class="ev-form-handle"></div>';
+  h+='<header class="bd-panel-header panel-header-centered ev-event-form-header"><button class="sy-back" id="evFClose" aria-label="Volver">&#8592;</button><h2 id="evFHeadingTitle">'+escHtml(title||(isEdit?'Editar Evento':'Nuevo Evento'))+'</h2>';
+  h+=isEdit?'<button class="ev-btn danger" id="evFDel">Eliminar</button>':'<span></span>';
+  h+='</header><div class="ev-event-form-body">'+renderEvFormLead(ev,showDayNote);
   /* Nota especifica de ESTE dia */
   if(showDayNote){
     h+='<div class="ev-field ev-daynote-field"><label>Nota de este d\u00eda <span class="ev-note-scope">('+EV_EDIT_DS.slice(8)+'/'+EV_EDIT_DS.slice(5,7)+')</span> '
@@ -102,8 +80,7 @@ function renderEvForm(ev){
   h+='<div class="ev-kind-picker" data-cur-kind="'+curKind+'" data-cur-type="'+escHtml(curType)+'">';
   ['puntual','grande'].forEach(function(k){
     h+='<button type="button" class="ev-kind-btn'+(k===curKind?' selected':'')+'" data-kind="'+k+'">'
-      +(k==='puntual'?'\u2726 Puntual':'\u25ac Grande')
-      +'<span>'+(k==='puntual'?'un marcador por d\u00eda':'barra de varios d\u00edas')+'</span></button>';
+      +'<b>'+(k==='puntual'?'Puntual':'Grande')+'</b>'+renderEvKindSymbols(k)+'</button>';
   });
   h+='</div></div>';
   h+='<div class="ev-field"><label>Categor\u00eda</label><div class="ev-type-picker" id="evFTypePicker">';
@@ -120,9 +97,7 @@ function renderEvForm(ev){
   h+='</div>';
   /* Secci\u00f3n extra para Otros: forma del marcador + selector multi-d\u00eda */
   var curShape=isEdit&&ev.shape?ev.shape:'circle';
-  var curDates=isEdit&&Array.isArray(ev.dates)?ev.dates.slice():[];
-  var showDates=!!EV_FREE_DATES[curKey];
-  var _extras=(isOtros||showDates||!!EV_FREE_BARSIZE[curKey]);
+  var _extras=(isOtros||!!EV_FREE_BARSIZE[curKey]);
   h+='<div class="ev-field ev-otros-extras" id="evFOtrosExtras" style="display:'+(_extras?'block':'none')+'">';
   h+='<div id="evFShapeBlock" style="display:'+(isOtros?'block':'none')+'">';
   h+='<label>\u25B8 Forma del marcador</label>';
@@ -162,39 +137,6 @@ function renderEvForm(ev){
       +'<span class="ev-barsize-lbl">'+b.label+'</span></button>';
   });
   h+='</div></div>';
-  h+='<div id="evFDatesBlock" style="display:'+(showDates?'block':'none')+';margin-top:12px">';
-  h+='<label>\uD83D\uDDD3 Selecci\u00f3n Multid\u00eda</label>';
-  h+='<button type="button" class="ev-btn" id="evFPickDates" style="width:100%;margin-top:4px;font-size:.78rem;padding:8px 10px">';
-  h+='<span id="evFPickDatesLbl">'+(curDates.length>1?(curDates.length+' d\u00edas seleccionados \u2014 pulsa para editar'):'\uD83D\uDDD3 Selecci\u00f3n Multid\u00eda\u2026')+'</span>';
-  h+='</button>';
-  h+='<div style="font-size:.62rem;color:var(--text-dim);margin-top:4px;line-height:1.4">'
-    +(curType==='Ensayos boda'
-      ? 'Marca todos los d\u00edas con clase: se crear\u00e1 <b>una clase por d\u00eda</b>, sin hora ni pareja. Luego las asignas desde la pesta\u00f1a <b>Bodas</b>.'
-      : 'Si seleccionas <b>m\u00e1s de un d\u00eda</b>, el evento aparecer\u00e1 en cada uno de esos d\u00edas e ignorar\u00e1 las fechas de inicio/fin de abajo.')
-    +'</div>';
-  h+='</div>';
-  h+='</div>';
-  /* Inicio/Fin: deshabilitados si hay multid\u00eda activo */
-  var _multiActive=curDates.length>1;
-  h+='<div class="ev-field ev-date-row'+(_multiActive?' ev-dates-locked':'')+'" id="evFDateRow">';
-  h+='<div><label>Inicio</label><input class="ev-input" id="evFStart" type="date" value="'+start+'"'+(_multiActive?' disabled':'')+'></div>';
-  h+='<div><label>Fin</label><input class="ev-input" id="evFEnd" type="date" value="'+end+'"'+(_multiActive?' disabled':'')+'></div>';
-  h+='<div class="ev-dates-locked-note" id="evFDatesLockedNote" style="display:'+(_multiActive?'block':'none')+'">Estas fechas se ignoran porque hay <b>Selecci\u00f3n Multid\u00eda</b> activa.</div>';
-  h+='</div>';
-  /* ── Horas del evento ────────────────────────────────────────────
-     Puntual: hora de inicio y fin (el fin solo se activa con inicio puesto).
-     Las clases de boda no la llevan aqui: tienen la suya en la pestana Bodas.
-     Grande: hora de salida de ida y de vuelta, con medio de transporte. */
-  var _esBoda=(curType==='Ensayos boda');
-  var _horaIni=(isEdit&&ev.time)?ev.time:'';
-  var _horaFin=(isEdit&&ev.endTime)?ev.endTime:'';
-  h+='<div class="ev-field ev-date-row ev-hora-row" id="evFHoraRow"'
-    +((curKind==='puntual'&&!_esBoda)?'':' style="display:none"')+'>';
-  h+='<div><label>Hora inicio <span class="ev-note-scope">(opcional)</span></label>'
-    +'<input class="ev-input" id="evFTime" type="text" readonly data-time-picker aria-haspopup="dialog" placeholder="Sin hora" value="'+_horaIni+'"></div>';
-  h+='<div><label>Hora fin</label>'
-    +'<input class="ev-input" id="evFEndTime" type="text" readonly data-time-picker aria-haspopup="dialog" placeholder="Sin hora" value="'+_horaFin+'"'
-    +(_horaIni?'':' disabled')+'></div>';
   h+='</div>';
   var _vj=(isEdit&&ev.viaje)?ev.viaje:{};
   h+='<div class="ev-field ev-viaje-box" id="evFViajeBox" style="display:'
@@ -202,7 +144,7 @@ function renderEvForm(ev){
   h+='<label>\ud83d\ude86 Ida y vuelta <span class="ev-note-scope">(opcional)</span></label>';
   [['ida','Ida'],['vuelta','Vuelta']].forEach(function(tr){
     var d=_vj[tr[0]]||{};
-    var on=!!d.time;
+    var on=!!_vj[tr[0]];
     h+='<div class="ev-viaje-tramo'+(on?' on':'')+'" data-tramo="'+tr[0]+'">';
     h+='<label class="excl-item ev-viaje-hd"><input type="checkbox" class="ev-viaje-chk" data-tramo="'
       +tr[0]+'"'+(on?' checked':'')+'> <b>'+tr[1]+'</b></label>';
@@ -220,21 +162,7 @@ function renderEvForm(ev){
   });
   h+='<div class="ev-viaje-note">La hora es la de <b>salida</b>: desde Pr\u00f3ximos podr\u00e1s crear una alarma para cada trayecto.</div>';
   h+='</div>';
-  h+='<div class="ev-field" id="evFRepBlock"><label>Repetici\u00f3n</label>';
-  h+='<select class="ev-input" id="evFRepeat">';
-  h+='<option value="none"'+(repType==='none'?' selected':'')+'>Sin repetici\u00f3n</option>';
-  h+='<option value="weekly"'+(repType==='weekly'?' selected':'')+'>Semanal</option>';
-  h+='<option value="monthly-date"'+(repType==='monthly-date'?' selected':'')+'>Mensual (mismo d\u00eda)</option>';
-  h+='<option value="monthly-first"'+(repType==='monthly-first'?' selected':'')+'>Mensual (d\u00eda 1)</option>';
-  h+='<option value="yearly"'+(repType==='yearly'?' selected':'')+'>Anual</option>';
-  h+='</select></div>';
-  h+='<div class="ev-weekday-row" id="evWdRow" style="display:'+(repType==='weekly'?'flex':'none')+'">';
-  for(var w=0;w<7;w++){
-    var on2=wdays.indexOf(w)!==-1?' on':'';
-    h+='<button class="ev-wd-btn'+on2+'" data-wd="'+w+'">'+wdNames[w]+'</button>';
-  }
-  h+='</div>';
-  h+='<div class="ev-form-actions"><button class="ev-btn primary" id="evFSave">Guardar</button></div>';
+  h+='</div><div class="ev-form-actions ev-event-form-actions"><button class="ev-btn primary" id="evFSave">Guardar</button></div>';
   h+='</div></div>';
   return h;
 }
@@ -257,12 +185,9 @@ function openEvForm(ev,prefillDate,container){
       var ei=document.getElementById('evFEnd');
       if(si)si.value=prefillDate;
       if(ei)ei.value=prefillDate;
+      if(si)si.dispatchEvent(new Event('change',{bubbles:true}));
     },10);
   }
-  requestAnimationFrame(function(){
-    var fo=document.getElementById('evFormOv');
-    if(fo)fo.classList.add('open');
-  });
   bindEvFormEvents();
 }
 
@@ -285,6 +210,6 @@ function bindEvFormEvents(){
     dates:edit&&Array.isArray(edit.dates)?edit.dates.slice():[],barSize:edit&&edit.barSize||null};
   Object.keys(EV_PICKER_GROUPS).forEach(function(k){if(edit&&evQuickSelection(edit.type,EV_PICKER_GROUPS[k]))form.quickExtras[k]=edit.type;});
   evFormRenderTypes(form,_evFormKind(form),root.querySelector('.ev-kind-picker').dataset.curType);
-  bindEvTaxFields(form);_bindEvFormCategories(form);_bindEvFormAppearance(form);_bindEvFormDates(form);
-  _bindEvFormDetails(form);_bindEvFormActions(form);
+  bindEvTaxFields(form);_bindEvFormCategories(form);_bindEvFormAppearance(form);
+  bindEvFormSchedule(form);_bindEvFormDetails(form);_bindEvFormActions(form);
 }

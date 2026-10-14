@@ -16,7 +16,7 @@ test('gestiones: selector, confirmación, check compartido y vencimiento',async(
  expect(order).toEqual(['Peluquería','Médico','Dentista','Cita','Llamada','Contratar seguro','Contratar gas','Contratar electricidad','Enviar factura','Pago','Pago Hacienda','Presentar Modelo']);
  for(const type of ['Pago Hacienda','Pago','Contratar seguro','Contratar gas','Contratar electricidad','Presentar Modelo','Enviar factura'])await expect(page.locator('#evPlanPickerOv [data-type="'+type+'"]')).toBeVisible();
  await page.locator('#evPlanPickerOv [data-type="Enviar factura"]').click();await page.locator('#evPlanConfirm').click();await expect(page.locator('#evPlanPickerWrap')).toHaveCount(0);
- await expect(page.locator('#evFTitle')).toHaveValue('Enviar factura');await page.locator('#evFStart').fill('2026-10-08');await page.locator('#evFEnd').fill('2026-10-08');await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);
+ await expect(page.locator('#evFTitle')).toHaveValue('Enviar factura');await page.locator('#evFStart').fill('2026-10-08');await expect(page.locator('#evFEnd')).toBeDisabled();await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);
  await page.locator('#evViewCal').click();await page.locator('.ev-cell[data-ds="2026-10-08"] .ev-shape-invoice').click();
  await expect(page.locator('#evManagementDone')).not.toBeChecked();await page.locator('#evManagementDone').check();
  await page.locator('#evDClose').click();await expect(page.locator('#evDWrap')).toHaveCount(0);await page.locator('#tasksFab').click();

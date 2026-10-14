@@ -6,20 +6,15 @@ function _evFormColor(form){return form.colorPicker.getColor();}
 function _evFormSuggestTitle(form,type){
   var input=_evFormEl(form,'evFTitle');
   if(!input.value.trim()||input.value===form.autoTitle){form.autoTitle=type==='Presentar Modelo'?evTaxTitle(evFormTaxCode(form)):evSuggestedTitle(type);input.value=form.autoTitle;}
+  _evFormUpdateHeading(form);
 }
 function _evFormTypeUI(form,kind,type){
   var key=evTypeKey(kind,type),picker=form.root.querySelector('.ev-kind-picker');
   if(picker){picker.dataset.curKind=kind;picker.dataset.curType=type;}
   var freeColor=EV_FREE_COLOR[key]&&!(kind==='puntual'&&type==='Otros'&&RUT_FIXED_COLOR[form.shape]);
-  var blocks={evFCultureBlock:kind==='puntual'&&type==='Plan cultural',evFTaxBlock:kind==='puntual'&&type==='Presentar Modelo',evFColorSection:freeColor,evFOtrosExtras:EV_FREE_SHAPE[key]||EV_FREE_DATES[key]||EV_FREE_BARSIZE[key],evFBarBlock:EV_FREE_BARSIZE[key],evFShapeBlock:EV_FREE_SHAPE[key],evFDatesBlock:EV_FREE_DATES[key],evFViajeBox:kind==='grande'};
+  var blocks={evFCultureBlock:kind==='puntual'&&type==='Plan cultural',evFTaxBlock:kind==='puntual'&&type==='Presentar Modelo',evFColorSection:freeColor,evFOtrosExtras:EV_FREE_SHAPE[key]||EV_FREE_BARSIZE[key],evFBarBlock:EV_FREE_BARSIZE[key],evFShapeBlock:EV_FREE_SHAPE[key],evFViajeBox:kind==='grande'};
   Object.keys(blocks).forEach(function(id){var el=_evFormEl(form,id);if(el)el.style.display=blocks[id]?'block':'none';});
-  var hours=_evFormEl(form,'evFHoraRow');if(hours)hours.style.display=kind==='puntual'&&type!=='Ensayos boda'?'':'none';
-  var repeat=evAdmiteRepeticion(kind,type),block=_evFormEl(form,'evFRepBlock');
-  if(block)block.style.display=repeat?'':'none';
-  if(!repeat){
-    var select=_evFormEl(form,'evFRepeat'),days=_evFormEl(form,'evWdRow');
-    if(select)select.value='none';if(days)days.style.display='none';
-  }
+  _evFormScheduleState(form);
 }
 function _bindEvFormTypes(form){
   bindEvCultureFields(form);
@@ -39,7 +34,7 @@ function _bindEvFormTypes(form){
   });
 }
 function _bindEvFormCategories(form){
-  _evFormEl(form,'evFTitle').addEventListener('input',function(){form.autoTitle=null;});
+  _evFormEl(form,'evFTitle').addEventListener('input',function(){form.autoTitle=null;_evFormUpdateHeading(form);});
   _bindEvFormTypes(form);
   var selected=form.root.querySelector('#evFTypePicker .ev-color-swatch.selected');
   _evFormTypeUI(form,_evFormKind(form),selected?selected.dataset.type:form.root.querySelector('.ev-kind-picker').dataset.curType);
@@ -73,25 +68,6 @@ function _bindEvFormAppearance(form){
   var picker=_evFormEl(form,'evFCp'),hex=form.root.querySelector('#evFCp input[type=text],#evFCp .ev-color-hex-input');
   if(picker)picker.addEventListener('click',function(){setTimeout(function(){_evFormShapePreviews(form);},50);});
   if(hex)hex.addEventListener('input',function(){_evFormShapePreviews(form);});
-}
-function _evFormDatesLabel(form){
-  var locked=form.dates.length>1,label=_evFormEl(form,'evFPickDatesLbl');
-  if(label)label.textContent=locked?form.dates.length+' días seleccionados — pulsa para editar':'🗓 Selección Multidía…';
-  var row=_evFormEl(form,'evFDateRow'),note=_evFormEl(form,'evFDatesLockedNote');
-  if(row)row.classList.toggle('ev-dates-locked',locked);
-  ['evFStart','evFEnd'].forEach(function(id){var el=_evFormEl(form,id);if(el)el.disabled=locked;});
-  if(note)note.style.display=locked?'block':'none';
-}
-function _bindEvFormDates(form){
-  var pick=_evFormEl(form,'evFPickDates');
-  if(pick)pick.addEventListener('click',function(){
-    var start=_evFormEl(form,'evFStart'),year=start&&start.value?parseInt(start.value.slice(0,4),10):new Date().getFullYear();
-    openOtrosDatePicker(form.dates,_evFormColor(form),year,function(dates){form.dates=dates.slice().sort();_evFormDatesLabel(form);});
-  });
-  _evFormEl(form,'evFRepeat').addEventListener('change',function(){_evFormEl(form,'evWdRow').style.display=this.value==='weekly'?'flex':'none';});
-  _evFormAll(form,'.ev-wd-btn').forEach(function(b){b.addEventListener('click',function(){b.classList.toggle('on');});});
-  var start=_evFormEl(form,'evFTime'),end=_evFormEl(form,'evFEndTime');
-  if(start&&end)start.addEventListener('input',function(){end.disabled=!start.value;if(!start.value)end.value='';});
 }
 function _evFormTravelUI(form,part){
   var box=form.root.querySelector('.ev-viaje-tramo[data-tramo="'+part+'"]');if(!box)return;
