@@ -59,7 +59,7 @@ test('calendario móvil: primera fila izquierda alineada con segunda derecha y c
     await page.setViewportSize({width,height:880});
     for(const count of [2,5]){
       await page.evaluate(n=>{EVENTS=Array.from({length:n},(_,i)=>({id:'marker-'+i,title:'Plan '+i,type:'Comida',kind:'puntual',start:'2026-10-16',end:'2026-10-16',time:String(9+i).padStart(2,'0')+':00',color:'#e99a31'}));BDAYS=[];_switchEvView('cal');EV_YEAR=2026;EV_MONTH=9;refreshEvents(false);},count);
-      const day=page.locator('#eventsContent .ev-cell[data-ds="2026-10-16"]');const left=await day.locator('.ev-day-left .ev-rut-mark').first().boundingBox(),right=await day.locator('.ev-otros-corner>span').nth(1).boundingBox();expect(Math.abs(left.y+left.height/2-right.y-right.height/2)).toBeLessThanOrEqual(1);
+      const day=page.locator('#eventsContent .ev-cell[data-ds="2026-10-16"]');const difference=await day.evaluate(el=>{const left=el.querySelector('.ev-day-left .ev-rut-mark').getBoundingClientRect(),right=el.querySelector('.ev-otros-corner>span:nth-child(2)').getBoundingClientRect();return Math.abs(left.y+left.height/2-right.y-right.height/2);});expect(difference).toBeLessThanOrEqual(1);
       await page.screenshot({path:info.outputPath('calendario-'+width+'-'+count+'.png'),animations:'disabled'});
     }
   }

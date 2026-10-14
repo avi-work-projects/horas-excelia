@@ -492,3 +492,6 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 - Plan cultural sustituye al alias Actividad cultural sin perder eventos antiguos; `culturalPlan` conserva Monólogo, Teatro, Scape Room u Otro. Ponencia sigue independiente. Desayunar se añade; las actividades pasan a Plan/Quedada y Carrera usa una bandera diferenciada de Salir a Correr. Las rutinas comparten el marco blanco de los símbolos de actividad.
 - El histórico mantiene esquinas opacas al fijar el mes. Mis Datos usa tres atajos iguales y copia nombre, teléfono y correo sin prefijo; los documentos de identidad y campos bancarios conservan la etiqueta, incluso al copiar un campo individual.
 - Verificación: `tools/test-routines-plans.js` y `tools/browser/routines-plans-adjustments.spec.js`, además de las pruebas existentes. Capturas en Edge oculto con tema claro, iconos profesionales y tamaños móviles.
+
+## Medición visual estable (v469)
+- La alineación izquierda/derecha se mide dentro del mismo fotograma. Evita atribuir al calendario el desplazamiento de la animación de apertura del overlay; se mantiene la tolerancia de un píxel.
