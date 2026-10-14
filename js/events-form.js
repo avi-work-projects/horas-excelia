@@ -110,13 +110,13 @@ function renderEvForm(ev){
     {k:'wave', label:'Ola a mano'},
     {k:'x-outline', label:'X de rotulador'},
     {k:'circle-plus', label:'Círculo con cruz'},
-    {k:'rings', label:'Boda'},
+    {k:'repair', label:'Reparación'},
     {k:'cooking', label:'Cocinar'},
-    {k:'leaf', label:'Limpieza'}
+    {k:'leaf', label:'Limpiar'}
   ];
   _shapes.forEach(function(s,i){
     var sel=(s.k===curShape)?' selected':'';
-    var prevColor=color||EV_COLORS[0];
+    var prevColor=evOtherShapeColor(s.k)||color||EV_COLORS[0];
     h+='<button type="button" class="ev-shape-opt'+sel+'" data-shape="'+s.k+'" title="'+s.label+'" aria-label="'+s.label+'">';
     /* Todas las formas: mismo SVG que en los calendarios → mismo grosor de borde */
     h+='<span class="ev-shape-preview ev-shape-'+s.k+'" style="color:'+prevColor+'">'+evShapeSvg(s.k)+'</span>';

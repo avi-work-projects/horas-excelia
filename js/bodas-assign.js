@@ -247,8 +247,10 @@ function closeBodaAssign(){
   setTimeout(function(){BODA_ASSIGN=null;},300);
 }
 function renderBodaAssign(){
-  var A=BODA_ASSIGN;if(!A)return;
-  var sheet=document.getElementById('bodaAsgSheet');if(!sheet)return;
+  var sheet=document.getElementById('bodaAsgSheet');if(!sheet||!BODA_ASSIGN)return;
+  sheet.innerHTML=renderBodaAssignHtml(BODA_ASSIGN);bindBodaAssign();
+}
+function renderBodaAssignHtml(A){
   var c=A.couple;
   var libres={},mias={},ajenas={};
   bodaClasses().forEach(function(ev){
@@ -327,8 +329,7 @@ function renderBodaAssign(){
   h+='<div class="ev-detail-actions">';
   h+='<button class="ev-btn primary" id="bodaAsgSave">Guardar</button>';
   h+='</div>';
-  sheet.innerHTML=h;
-  bindBodaAssign();
+  return h;
 }
 function bindBodaAssign(){
   var A=BODA_ASSIGN;if(!A)return;

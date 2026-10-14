@@ -14,8 +14,8 @@ function renderEvFormLead(ev,showDayNote){
   var multi=!!EV_FREE_DATES[evTypeKey(kind,ev?getEvType(ev):'')];
   var h='<div class="ev-form-lead"><div class="ev-form-writing"><div class="ev-field"><label for="evFTitle">Título</label><input class="ev-input" id="evFTitle" type="text" maxlength="80" placeholder="Nombre del evento" value="'+escHtml(ev&&ev.title||'')+'"></div>';
   h+='<div class="ev-field"><label for="evFNote">'+(showDayNote?'Notas generales':'Notas')+' <span id="evCharCnt" class="ev-form-counter">'+note.length+'/200</span></label><textarea class="ev-textarea" id="evFNote" maxlength="200" placeholder="Notas opcionales…">'+escHtml(note)+'</textarea></div></div>';
-  h+='<div class="ev-form-schedule"><div id="evFHoraRow">'+evFormScheduleControl('evFTime','Hora inicio',time,false,false)+evFormScheduleControl('evFEndTime','Hora fin',finish,false,boda||!time)+'</div>';
-  h+='<div id="evFDateRow">'+evFormScheduleControl('evFStart',kind==='puntual'?'Día':'Fecha inicio',start,true,legacy)+evFormScheduleControl('evFEnd','Fecha fin',end,true,kind==='puntual')+'</div></div></div>';
+  h+='<div class="ev-form-schedule"><div id="evFHoraRow">'+evFormScheduleControl('evFTime','Hora',time,false,false)+evFormScheduleControl('evFEndTime','Hora fin',finish,false,boda||!time)+'</div>';
+  h+='<div id="evFDateRow">'+evFormScheduleControl('evFStart','Día',start,true,legacy)+evFormScheduleControl('evFEnd','Día fin',end,true,kind==='puntual')+'</div></div></div>';
   if(legacy)h+='<p class="sy-note ev-form-legacy">'+(multi?'Edita los días desde Multidía.':'Se conservan los días de este evento anterior.')+'</p>';
   return h;
 }
@@ -23,6 +23,7 @@ function renderEvKindSymbols(kind){
   var types=kind==='puntual'?['Rec. Gestiones','Plan/Quedada','Ensayos boda','Otros']:EV_KINDS.grande.types.slice(0,3);
   return '<span class="ev-kind-symbols" aria-hidden="true">'+types.map(function(type){
     var color=evTypeColor(kind,type);
+    if(kind==='puntual'&&type==='Otros')return '<i class="ev-kind-multicolor ev-type-dot-multi"></i>';
     return kind==='grande'?'<i class="ev-kind-bar" style="background:'+color+'"></i>':'<i style="color:'+color+'">'+evShapeSvg(type==='Ensayos boda'?'x-thick':evDefaultShape({type:type}))+'</i>';
   }).join('')+'</span>';
 }
@@ -50,7 +51,6 @@ function _evFormScheduleState(form){
     var input=_evFormEl(form,id),control=input.closest('[data-schedule]'),isDate=input.type==='date';
     control.classList.toggle('disabled',input.disabled);control.setAttribute('aria-disabled',String(input.disabled));
     control.querySelector('[data-schedule-value]').textContent=id==='evFStart'&&multi?form.dates.length+' días':id==='evFEnd'&&kind==='puntual'&&!legacy?'—':isDate?evFormDateLabel(input.value):input.value||'Sin hora';
-    if(id==='evFStart'){var label=kind==='puntual'?'Día':'Fecha inicio';control.parentElement.querySelector('[data-schedule-label]').textContent=label;input.setAttribute('aria-label',label);}
   });
 }
 function bindEvFormSchedule(form){

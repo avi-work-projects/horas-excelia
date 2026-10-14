@@ -40,7 +40,7 @@ var EV_COLOR_TYPES = {
    - puntual: se dibuja UN MARCADOR POR D\u00cdA (aunque abarque varios d\u00edas)
    - grande:  se dibuja como BARRA continua (formato actual de Viaje/Asturias) */
 var EV_MANAGEMENT_SUBTYPES={'Llamada':'phone','Peluquería':'scissors','Médico':'medical','Dentista':'tooth','Pago Hacienda':'tax','Pago':'payment','Contratar seguro':'insurance','Contratar gas/electricidad':'utilities','Enviar factura':'invoice','Cita':'appointment','Presentar Modelo':'tax-form','Contratar gas':'gas-home','Contratar electricidad':'electric-home'};
-var EV_PLAN_SUBTYPES={'Plan romántico':'heart','Comida':'meal','Cena':'dinner','Salir de fiesta':'disco','Copas':'party','Tomar algo':'beer','Montaña':'mountain','Barbacoa':'barbecue','Cumpleaños':'cake','Brunch':'brunch','Bolos':'bowling','Cine':'cinema','Ping pong':'pingpong','Ver partido fútbol':'football-tv','Juegos de mesa':'boardgames','Ponencia':'lecture','Carrera':'race','Merendar':'snack','Plan cultural':'culture','Desayunar':'breakfast','Salir a Correr':'running','Pádel':'plan-padel','Baile':'plan-dance'};
+var EV_PLAN_SUBTYPES={'Plan romántico':'heart','Comida':'meal','Cena':'dinner','Salir de fiesta':'disco','Copas':'party','Tomar algo':'beer','Montaña':'mountain','Barbacoa':'barbecue','Cumpleaños':'cake','Brunch':'brunch','Bolos':'bowling','Cine':'cinema','Ping pong':'pingpong','Ver partido fútbol':'football-tv','Juegos de mesa':'boardgames','Ponencia':'lecture','Carrera':'race','Merendar':'snack','Plan cultural':'culture','Desayunar':'breakfast','Salir a Correr':'running','Pádel':'plan-padel','Baile':'plan-dance','Boda':'rings'};
 function evIsManagement(type){return type==='Rec. Gestiones'||Object.prototype.hasOwnProperty.call(EV_MANAGEMENT_SUBTYPES,type);}
 function evIsPlan(type){return type==='Plan/Quedada'||Object.prototype.hasOwnProperty.call(EV_PLAN_SUBTYPES,type);}
 function evFixedSymbol(type){return EV_MANAGEMENT_SUBTYPES[type]||EV_PLAN_SUBTYPES[type]||null;}
@@ -88,6 +88,7 @@ var EV_TYPE_COLORS = {
   'puntual|Salir a Correr':'#38bdf8',
   'puntual|Pádel':'#a3e635',
   'puntual|Baile':'#e03131',
+  'puntual|Boda':'#d6a335',
   'puntual|Ensayos boda'  :'#c084fc',
   'puntual|Otros'         :'#ffe066',
   'grande|Viaje'          :'#38bdf8',
@@ -98,6 +99,9 @@ var EV_TYPE_COLORS = {
 /* Categor\u00edas con color libre (paleta) y con selector de forma */
 var EV_FREE_COLOR = {'grande|Viaje':1,'grande|Otros':1,'puntual|Otros':1,'grande|Casa Rural':1};
 var EV_FREE_SHAPE = {'puntual|Otros':1};
+/* Identidad fija de las actividades domésticas, también al importar eventos. */
+var EV_OTHER_FIXED_COLORS={repair:'#647db1',cooking:'#e8590c',leaf:'#34b77c'};
+function evOtherShapeColor(shape){return EV_OTHER_FIXED_COLORS[shape]||(typeof RUT_FIXED_COLOR!=='undefined'&&RUT_FIXED_COLOR[shape])||null;}
 /* Categorias con "Seleccion Multidia" (varios dias sueltos). En Ensayos boda
    sirve para dar de alta muchas clases de golpe desde el calendario 1 mes. */
 var EV_FREE_DATES = {'puntual|Otros':1,'puntual|Ensayos boda':1};
@@ -193,6 +197,8 @@ function evShapeSvg(shape){
     inner='<path d="M-9,6 A9,9 0 0 1 9,6 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+'/><path d="M-9,8 H9 M0,-3 V-5" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/><path d="M5,-9 A4,4 0 1 0 9,-5 A4,4 0 0 1 5,-9" fill="#ffe7a1" stroke="#000" stroke-width="1.2"/>';
   } else if(shape==='disco'){
     inner='<path d="M0,-10 V-7" stroke="#000" stroke-width="1.6"/><circle cy="1" r="8" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+'/><path d="M-7,-2 H7 M-7,3 H7 M-4,7 Q-8,1 -4,-6 M4,7 Q8,1 4,-6 M0,-7 V9" fill="none" stroke="#fff" stroke-width="1.2"/><path d="M-9,-8 V-4 M-11,-6 H-7 M8,-8 V-4 M6,-6 H10" stroke="#000" stroke-width="1.1"/>';
+  } else if(shape==='repair'){
+    inner='<path d="M-7,9 L-9,7 L1,-3 Q-1,-8 4,-9 L3,-5 L6,-3 L9,-5 Q10,1 4,2 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/><circle cx="-6" cy="6" r="1.2" fill="#fff" stroke="#000" stroke-width=".8"/>';
   } else if(shape==='cooking'){
     inner='<path d="M-7,0 H7 V7 Q7,9 5,9 H-5 Q-7,9 -7,7 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+'/><path d="M-10,2 H-7 M7,2 H10 M-8,-1 H8 M-2,-3 H2" fill="none" stroke="#000" stroke-width="1.7" stroke-linecap="round"/><path d="M-4,-4 Q-6,-6 -4,-8 M1,-5 Q-1,-7 1,-9 M5,-4 Q3,-6 5,-8" fill="none" stroke="#000" stroke-width="1.2" stroke-linecap="round"/>';
   } else if(shape==='planet'||shape==='moon'){
@@ -280,7 +286,7 @@ function getEvDisplayColor(ev){
      cada dia, asi que el matiz por hash las pintaria de un color distinto
      cada sesion. */
   if(getEvType(ev)==='Rutina')return ev._rut?rutDisplayColor(ev._rut):ev.color;
-  if(getEvKind(ev)==='puntual'&&getEvType(ev)==='Otros'&&typeof RUT_FIXED_COLOR!=='undefined'&&RUT_FIXED_COLOR[ev.shape])return RUT_FIXED_COLOR[ev.shape];
+  if(getEvKind(ev)==='puntual'&&getEvType(ev)==='Otros'&&evOtherShapeColor(ev.shape))return evOtherShapeColor(ev.shape);
   if(getEvKind(ev)==='puntual'&&evFixedSymbol(getEvType(ev)))return evTypeColor('puntual',getEvType(ev));
   /* Una clase de boda se tine con el color de SU pareja: el morado del tipo
      solo se usa mientras no hay pareja asignada. */

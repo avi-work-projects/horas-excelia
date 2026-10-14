@@ -24,10 +24,10 @@
 <div class="ev-form-schedule">
 <div id="evFHoraRow">
 <div class="ev-schedule-field">
-<label data-schedule-label for="evFTime">Hora inicio</label>
+<label data-schedule-label for="evFTime">Hora</label>
 <label class="ev-schedule-control" data-schedule="evFTime">
 <strong data-schedule-value>Sin hora</strong>
-<input class="ev-input ev-schedule-input" id="evFTime" aria-label="Hora inicio" type="text" readonly data-time-picker aria-haspopup="dialog" value="">
+<input class="ev-input ev-schedule-input" id="evFTime" aria-label="Hora" type="text" readonly data-time-picker aria-haspopup="dialog" value="">
 </label>
 </div>
 <div class="ev-schedule-field">
@@ -40,17 +40,17 @@
 </div>
 <div id="evFDateRow">
 <div class="ev-schedule-field">
-<label data-schedule-label for="evFStart">Fecha inicio</label>
+<label data-schedule-label for="evFStart">Día</label>
 <label class="ev-schedule-control" data-schedule="evFStart">
 <strong data-schedule-value>07/09</strong>
-<input class="ev-input ev-schedule-input" id="evFStart" aria-label="Fecha inicio" type="date" value="2026-09-07">
+<input class="ev-input ev-schedule-input" id="evFStart" aria-label="Día" type="date" value="2026-09-07">
 </label>
 </div>
 <div class="ev-schedule-field">
-<label data-schedule-label for="evFEnd">Fecha fin</label>
+<label data-schedule-label for="evFEnd">Día fin</label>
 <label class="ev-schedule-control" data-schedule="evFEnd">
 <strong data-schedule-value>10/09</strong>
-<input class="ev-input ev-schedule-input" id="evFEnd" aria-label="Fecha fin" type="date" value="2026-09-10">
+<input class="ev-input ev-schedule-input" id="evFEnd" aria-label="Día fin" type="date" value="2026-09-10">
 </label>
 </div>
 </div>
@@ -78,10 +78,7 @@
 <path d="M-6,-6 L6,6 M-6,6 L6,-6" stroke="currentColor" stroke-width="5" style="stroke-width:calc(5px * var(--ev-symbol-cross-scale,1))" stroke-linecap="round" fill="none" class="ev-shape-x-color"/>
 </svg>
 </i>
-<i style="color:#ffe066">
-<svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">
-<circle cx="0" cy="0" r="8" fill="currentColor" stroke="#000" stroke-width="2" style="stroke-width:calc(2px * var(--ev-symbol-border-scale,1));stroke:var(--ev-symbol-outline,#000)"/>
-</svg>
+<i class="ev-kind-multicolor ev-type-dot-multi">
 </i>
 </span>
 </button>
@@ -337,18 +334,16 @@
 </svg>
 </span>
 </button>
-<button type="button" class="ev-shape-opt" data-shape="rings" title="Boda" aria-label="Boda">
-<span class="ev-shape-preview ev-shape-rings" style="color:#38bdf8">
+<button type="button" class="ev-shape-opt" data-shape="repair" title="Reparación" aria-label="Reparación">
+<span class="ev-shape-preview ev-shape-repair" style="color:#647db1">
 <svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">
-<ellipse cx="-3" cy="0" rx="4.5" ry="7" fill="none" stroke="#000" stroke-width="5" style="stroke-width:calc(2.5px + 2.5px * var(--ev-symbol-border-scale,1));stroke:var(--ev-symbol-outline,#000)"/>
-<ellipse cx="-3" cy="0" rx="4.5" ry="7" fill="none" stroke="currentColor" stroke-width="2.5"/>
-<ellipse cx="3" cy="0" rx="4.5" ry="7" fill="none" stroke="#000" stroke-width="5" style="stroke-width:calc(2.5px + 2.5px * var(--ev-symbol-border-scale,1));stroke:var(--ev-symbol-outline,#000)"/>
-<ellipse cx="3" cy="0" rx="4.5" ry="7" fill="none" stroke="currentColor" stroke-width="2.5"/>
+<path d="M-7,9 L-9,7 L1,-3 Q-1,-8 4,-9 L3,-5 L6,-3 L9,-5 Q10,1 4,2 Z" fill="currentColor" stroke="#000" stroke-width="2" style="stroke-width:calc(2px * var(--ev-symbol-border-scale,1));stroke:var(--ev-symbol-outline,#000)" stroke-linejoin="round"/>
+<circle cx="-6" cy="6" r="1.2" fill="#fff" stroke="#000" stroke-width=".8"/>
 </svg>
 </span>
 </button>
 <button type="button" class="ev-shape-opt" data-shape="cooking" title="Cocinar" aria-label="Cocinar">
-<span class="ev-shape-preview ev-shape-cooking" style="color:#38bdf8">
+<span class="ev-shape-preview ev-shape-cooking" style="color:#e8590c">
 <svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">
 <path d="M-7,0 H7 V7 Q7,9 5,9 H-5 Q-7,9 -7,7 Z" fill="currentColor" stroke="#000" stroke-width="2" style="stroke-width:calc(2px * var(--ev-symbol-border-scale,1));stroke:var(--ev-symbol-outline,#000)"/>
 <path d="M-10,2 H-7 M7,2 H10 M-8,-1 H8 M-2,-3 H2" fill="none" stroke="#000" stroke-width="1.7" stroke-linecap="round"/>
@@ -356,8 +351,8 @@
 </svg>
 </span>
 </button>
-<button type="button" class="ev-shape-opt" data-shape="leaf" title="Limpieza" aria-label="Limpieza">
-<span class="ev-shape-preview ev-shape-leaf" style="color:#38bdf8">
+<button type="button" class="ev-shape-opt" data-shape="leaf" title="Limpiar" aria-label="Limpiar">
+<span class="ev-shape-preview ev-shape-leaf" style="color:#34b77c">
 <svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">
 <path d="M2,-2 L7,-9" fill="none" stroke="#000" stroke-width="3" style="stroke-width:calc(3px * var(--ev-symbol-border-scale,1));stroke:var(--ev-symbol-outline,#000)" stroke-linecap="round"/>
 <path d="M-2,-3 L4,1 L1,9 Q-5,8 -9,3 Z" fill="currentColor" stroke="#000" stroke-width="2" style="stroke-width:calc(2px * var(--ev-symbol-border-scale,1));stroke:var(--ev-symbol-outline,#000)" stroke-linejoin="round"/>

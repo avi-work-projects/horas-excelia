@@ -2,7 +2,10 @@
 function _evFormEl(form,id){return form.root.querySelector('#'+id);}
 function _evFormAll(form,selector){return form.root.querySelectorAll(selector);}
 function _evFormKind(form){var picker=form.root.querySelector('.ev-kind-picker');return picker&&picker.dataset.curKind||'puntual';}
-function _evFormColor(form){return form.colorPicker.getColor();}
+function _evFormColor(form){
+  var type=form.root.querySelector('.ev-kind-picker').dataset.curType;
+  return _evFormKind(form)==='puntual'&&type==='Otros'&&evOtherShapeColor(form.shape)||form.colorPicker.getColor();
+}
 function _evFormSuggestTitle(form,type){
   var input=_evFormEl(form,'evFTitle');
   if(!input.value.trim()||input.value===form.autoTitle){form.autoTitle=type==='Presentar Modelo'?evTaxTitle(evFormTaxCode(form)):evSuggestedTitle(type);input.value=form.autoTitle;}
@@ -11,7 +14,7 @@ function _evFormSuggestTitle(form,type){
 function _evFormTypeUI(form,kind,type){
   var key=evTypeKey(kind,type),picker=form.root.querySelector('.ev-kind-picker');
   if(picker){picker.dataset.curKind=kind;picker.dataset.curType=type;}
-  var freeColor=EV_FREE_COLOR[key]&&!(kind==='puntual'&&type==='Otros'&&RUT_FIXED_COLOR[form.shape]);
+  var freeColor=EV_FREE_COLOR[key]&&!(kind==='puntual'&&type==='Otros'&&evOtherShapeColor(form.shape));
   var blocks={evFCultureBlock:kind==='puntual'&&type==='Plan cultural',evFTaxBlock:kind==='puntual'&&type==='Presentar Modelo',evFColorSection:freeColor,evFOtrosExtras:EV_FREE_SHAPE[key]||EV_FREE_BARSIZE[key],evFBarBlock:EV_FREE_BARSIZE[key],evFShapeBlock:EV_FREE_SHAPE[key],evFViajeBox:kind==='grande'};
   Object.keys(blocks).forEach(function(id){var el=_evFormEl(form,id);if(el)el.style.display=blocks[id]?'block':'none';});
   _evFormScheduleState(form);
@@ -50,7 +53,7 @@ function _bindEvFormCategories(form){
   });
 }
 function _evFormShapePreviews(form){
-  _evFormAll(form,'#evFShapePicker .ev-shape-preview').forEach(function(p){p.style.color=_evFormColor(form);});
+  _evFormAll(form,'#evFShapePicker .ev-shape-preview').forEach(function(p){p.style.color=evOtherShapeColor(p.closest('[data-shape]').dataset.shape)||form.colorPicker.getColor();});
 }
 function _bindEvFormAppearance(form){
   _evFormAll(form,'#evFBarPicker .ev-barsize-opt').forEach(function(button){
