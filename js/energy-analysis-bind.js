@@ -31,9 +31,10 @@ function bindEnergyAnalysis(w,kind){
 
 function energyBindSwipe(el,next,prev){
   addSwipe(el,next,prev);
-  var start=null;
+  var start=null,live=null,stop=null;
   // La misma prioridad para arrastrar con ratón en escritorio.
   el.addEventListener('pointerdown',function(e){
+    if(stop)stop();if(live)live.cancel();stop=null;live=null;
     start=null;if(e.pointerType!=='mouse'||e.target.closest('input,select,button,a'))return;
     for(var n=e.target;n&&n!==el;n=n.parentElement){
       if(n._swipeAdded)return;
@@ -41,7 +42,19 @@ function energyBindSwipe(el,next,prev){
     }
     start={x:e.clientX,y:e.clientY};
   });
-  el.addEventListener('pointerup',function(e){if(!start)return;var dx=e.clientX-start.x,dy=e.clientY-start.y;start=null;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)){e.preventDefault();animateContentSwipe(swipeContentResolver(el),dx<0?next:prev,dx<0?-1:1);}});
-  el.addEventListener('pointerleave',function(){start=null;});
-  el.addEventListener('pointercancel',function(){start=null;});
+  el.addEventListener('pointermove',function(e){
+    if(!start)return;var dx=e.clientX-start.x,dy=e.clientY-start.y;
+    if(!live&&Math.abs(dy)>Math.abs(dx)&&Math.abs(dy)>8){start=null;return;}
+    if(Math.abs(dx)<8||Math.abs(dx)<=Math.abs(dy))return;e.preventDefault();
+    if(!matchMedia('(prefers-reduced-motion: reduce)').matches){if(!live){live=createLiveSwipe(el,swipeContentResolver(el));if(live)try{el.setPointerCapture(e.pointerId);}catch(ignore){}}if(live)live.move(dx);}
+  });
+  el.addEventListener('pointerup',function(e){
+    if(!start)return;var dx=e.clientX-start.x,dy=e.clientY-start.y;start=null;
+    var commit=Math.abs(dx)>=50&&Math.abs(dx)>Math.abs(dy),change=dx<0?next:prev;
+    if(live){live.finish(commit,change);stop=live.cancel;live=null;}
+    else if(commit){e.preventDefault();animateContentSwipe(swipeContentResolver(el),change,dx<0?-1:1);}
+  });
+  function cancel(){start=null;if(live){live.finish(false);stop=live.cancel;live=null;}}
+  el.addEventListener('pointerleave',cancel);
+  el.addEventListener('pointercancel',cancel);
 }

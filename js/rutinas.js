@@ -409,6 +409,7 @@ function openRutWeek(r){
    pulsar es la semana. Asi se localiza de un vistazo la que se busca. */
 function _rutWeekPick(r,opts){
   opts=opts||{};
+  RUT_WEEK_CAL.rid=r.id;
   var y=RUT_WEEK_CAL.y,m=RUT_WEEK_CAL.m;
   var h='<div class="ev-detail-overlay" id="rutWkOv"><div class="ev-detail-sheet rut-week-picker-sheet">';
   h+='<div class="ev-detail-handle"></div>';

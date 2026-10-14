@@ -102,12 +102,12 @@ test('autotítulos, planes fijos y símbolos anteriores compatibles',async({page
   await expect(title).toHaveValue('Mi título');await page.locator('#evFSave').click();
   expect(await page.evaluate(()=>EVENTS[EVENTS.length-1].type)).toBe('Cena');
   await page.locator('#evAdd').click();await page.locator('#evFTypePicker').getByRole('button',{name:'Otros',exact:true}).click();
-  await expect(page.locator('#evFShapePicker [data-shape="rings"]')).toHaveCount(1);
+  await expect(page.locator('#evFShapePicker [data-shape="rings"]')).toHaveCount(0);await expect(page.locator('#evFShapePicker [data-shape="repair"]')).toHaveCount(1);
   await expect(page.locator('#evFShapePicker [data-shape="cloud"],#evFShapePicker [data-shape="beer"],#evFShapePicker [data-shape="mountain"],#evFShapePicker [data-shape="square"]')).toHaveCount(0);
   await expect(page.locator('#evFShapePicker [data-shape="gym"],#evFShapePicker [data-shape="padel"],#evFShapePicker [data-shape="baile"]')).toHaveCount(0);
   await page.locator('[data-picker=plans]').click();await page.locator('#evPlanPickerOv [data-type="Pádel"]').click();await page.locator('#evPlanConfirm').click();await expect(page.locator('#evFColorSection')).toBeHidden();
   await expect(page.locator('#evFTypePicker [data-type="Pádel"] svg')).toBeVisible();await expect(page.locator('#evFTypePicker [data-type="Pádel"] svg > rect[fill="#fff"]')).toHaveCount(0);expect(await page.evaluate(()=>rutIconSvg('padel','#a3e635'))).toContain('fill="#fff"');await page.locator('#evFTypePicker [data-type="Otros"]').click();
-  await page.locator('#evFShapePicker [data-shape="cooking"]').click();await expect(page.locator('#evFColorSection')).toBeVisible();
+  await page.locator('#evFShapePicker [data-shape="wave"]').click();await expect(page.locator('#evFColorSection')).toBeVisible();
   const preserved=await page.evaluate(()=>evMarkerHtml({id:'old-beer',kind:'puntual',type:'Otros',shape:'beer',color:'#ffcc00'},false,18));
   expect(preserved).toContain('ev-shape-beer');
 });

@@ -62,3 +62,11 @@ assert(a.evShapeSvg('cooking').includes('svg'));
 console.log('Planes sin referencia: posición, horas reales, arrastre, representación y backup OK');
 
 assert.throws(()=>a.validateImport({planOrder:[{type:"Cena",time:"18:00"},{type:"Comida",time:null},{type:"Brunch",time:"12:00"}]}),/horas/);
+// Identidad de los símbolos domésticos al importar y compatibilidad de las alianzas antiguas.
+assert(a.evIsPlan('Boda'));assert.equal(a.evFixedSymbol('Boda'),'rings');
+for(const shape of ['repair','cooking','leaf']){
+  const ev={kind:'puntual',type:'Otros',shape,color:'#123456'};
+  assert.equal(a.getEvDisplayColor(ev),a.EV_OTHER_FIXED_COLORS[shape]);
+  assert.equal(a.getEvDisplayColor({...ev,kind:'grande'}),'#123456');
+}
+assert.equal(a.getEvDisplayColor({kind:'puntual',type:'Otros',shape:'rings',color:'#123456'}),'#123456');

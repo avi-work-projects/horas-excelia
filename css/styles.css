@@ -2052,11 +2052,13 @@ body:has(#evDetailOv.open) .tasks-fab{visibility:hidden}
 
 /* Las etiquetas comparten la línea de Título/Notas; solo el dato ocupa la tarjeta. */
 .ev-schedule-field{display:flex;flex-direction:column;min-width:0;gap:6px}
-.ev-schedule-field>[data-schedule-label]{font-size:.6rem;line-height:1.2;font-weight:600;color:var(--text);white-space:nowrap}
+.ev-schedule-field>[data-schedule-label]{font-family:inherit;font-size:.72rem;font-weight:600;color:var(--text);white-space:nowrap;text-align:center}
 .ev-schedule-field>.ev-schedule-control{flex:1}
 .ev-category-single:has([data-ev-multiday]){display:flex;align-items:center;gap:6px}
 .ev-category-single:has([data-ev-multiday])>.ev-color-swatch{flex:1;min-width:0}
-.ev-category-single .ev-form-multiday{flex:none;padding:7px 8px;flex-direction:column;gap:2px}
+.ev-category-single .ev-form-multiday{flex:none;margin-right:10px;padding:7px 8px;flex-direction:column;gap:2px;border-color:color-mix(in srgb,var(--category-tone) 55%,var(--border));background:color-mix(in srgb,var(--category-tone) 18%,var(--surface));color:color-mix(in srgb,var(--category-tone) 45%,var(--text))}
+.ev-category-single .ev-form-multiday:disabled{background:color-mix(in srgb,var(--category-tone) 9%,var(--surface));color:var(--text-muted);opacity:.7}
+.ev-kind-symbols .ev-kind-multicolor{width:13px;height:13px;border-radius:50%;border:1px solid #000;box-shadow:none}
 .ev-car-sheet>.ev-detail-actions{flex-shrink:0;margin-top:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .ev-delete-icon{width:17px;height:17px;flex:none;vertical-align:middle}
 .ev-detail-actions>.danger{display:flex;align-items:center;justify-content:center;gap:6px}
@@ -4048,7 +4050,7 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 [data-theme="light"] .ev-stats-links .ev-btn-bodas{--tab-tone:#8b5e34}
 [data-theme="light"] .ev-stats-links .ev-btn-rutinas{--tab-tone:#1f2937}
 
-.ev-routines-active>strong{display:flex;align-items:center;gap:9px;padding:3px 4px;font-size:.72rem;font-weight:600;color:var(--text)}
+.ev-routines-active>strong{display:flex;align-items:center;gap:9px;padding:3px 4px;font-size:.8rem;font-weight:600;color:var(--text)}
 .ev-routines-active>strong .ev-type-dot{width:22px;height:22px;flex:none}
 .ev-routines-active{--category-tone:#768695}
 .ev-routines-quick{display:grid;grid-template-columns:repeat(var(--routine-columns,2),minmax(0,1fr));gap:8px;margin:4px 0}

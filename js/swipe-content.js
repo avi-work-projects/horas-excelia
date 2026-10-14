@@ -1,30 +1,33 @@
 /* Un gesto ya autorizado mueve solo el contenido; navegación y acciones quedan fijas. */
 var SWIPE_PREVIEW_STYLES=null;
+var SWIPE_PREVIEW_SHEET=null;
+var SWIPE_FIXED_SELECTOR='.econ-sub-tabs,.rut-sub-tabs,.boda-sub-tabs,.ev-annual-controls,.ev-io-row,.sy-header,.bday-header,.energy-year-nav,.fiscal-hip-tabs,.est-nav,.boda-cal-nav,.ev-dow-row,.ev-week-hdr,.bday-week-hdr';
 function swipePreviewRoot(frame,copy,source){
   // La copia solo pinta: sus clases tampoco participan en consultas ni listeners de la app.
   if(SWIPE_PREVIEW_STYLES===null)SWIPE_PREVIEW_STYLES=Array.from(document.styleSheets).map(function(sheet){try{return Array.from(sheet.cssRules).map(function(rule){return rule.cssText.replace(/url\((['"]?)([^'"\)]+)\1\)/g,function(_,quote,url){return 'url("'+new URL(url,sheet.href||location.href).href+'")';});}).join('\n');}catch(e){return '';}}).join('\n');
-  var root=frame.attachShadow({mode:'closed'}),style=document.createElement('style');style.textContent=SWIPE_PREVIEW_STYLES;
-  root.appendChild(style);
+  var root=frame.attachShadow({mode:'closed'});
+  if(typeof CSSStyleSheet==='function'&&CSSStyleSheet.prototype.replaceSync){if(!SWIPE_PREVIEW_SHEET){SWIPE_PREVIEW_SHEET=new CSSStyleSheet();SWIPE_PREVIEW_SHEET.replaceSync(SWIPE_PREVIEW_STYLES);}root.adoptedStyleSheets=[SWIPE_PREVIEW_SHEET];}
+  else{var style=document.createElement('style');style.textContent=SWIPE_PREVIEW_STYLES;root.appendChild(style);}
   var context=document.createElement('div');context.setAttribute('data-theme',document.documentElement.getAttribute('data-theme')||'light');context.style.display='contents';root.appendChild(context);
   var ancestors=[];for(var node=source.parentElement;node&&node!==document.body;node=node.parentElement)ancestors.unshift(node);
-  ancestors.forEach(function(original){var shell=document.createElement('div');shell.className=original.className;Array.from(original.style).forEach(function(key){if(key.indexOf('--')===0)shell.style.setProperty(key,original.style.getPropertyValue(key));});shell.style.display='contents';context.appendChild(shell);context=shell;});
+  ancestors.forEach(function(original){var shell=document.createElement('div');shell.className=original.className;if(original.id)shell.id=original.id;Array.from(original.style).forEach(function(key){if(key.indexOf('--')===0)shell.style.setProperty(key,original.style.getPropertyValue(key));});shell.style.setProperty('display','contents','important');context.appendChild(shell);context=shell;});
   context.appendChild(copy);
 }
 function swipeContentResolver(el){
   if(typeof el.matches!=='function')return function(){return [];};
   var selectors=['.rut-dpick-real','.rut-wpick-real','.boda-asg-grid','.energy-window-content','.energy-window','.ev-bday-body'];
   var selector=el.id?'#'+el.id:selectors.find(function(s){return el.matches(s);});
-  if(!selector&&el.parentElement&&el.parentElement.matches('.energy-window-content'))selector='#energyAnalysisOverlay .energy-window-content > :first-child';
+  if(!selector&&el.parentElement&&el.parentElement.matches('.energy-window-content'))selector='#energyAnalysisOverlay .energy-window-content';
   var anchor=el.closest('[id]'),prefix=selector&&selector.charAt(0)!=='#'&&anchor&&anchor!==el?'#'+anchor.id+' ':'';
-  function fixed(node){return node.matches('.econ-sub-tabs,.rut-sub-tabs,.boda-sub-tabs,.ev-annual-controls,.ev-io-row,.sy-header,.bday-header,.energy-year-nav,.ev-up-filters,.fiscal-hip-tabs,.est-nav,.boda-cal-nav,.ev-dow-row,.ev-week-hdr,.bday-week-hdr');}
+  function fixed(node){return node.matches(SWIPE_FIXED_SELECTOR);}
   function content(node){
     if(!node)return [];
     var body=node.matches('.full-overlay,.energy-window')?node.querySelector('.sy-body'):node.querySelector(':scope > .sy-body');
     if(body)node=body;
-    if(node.matches('.sy-body,.rut-sec,.boda-sec,.ev-bday-body,.ev-upcoming-content,.rut-dpick-real,.rut-wpick-real,.ev-month-wrap,.bday-calendar'))return Array.from(node.children).filter(function(n){return !fixed(n);}).reduce(function(out,n){return out.concat(n.matches('.rut-sec,.boda-sec,.ev-upcoming-content,.ev-month-wrap,.bday-calendar')?content(n):[n]);},[]);
+    if(node.matches('.sy-body,.rut-sec,.boda-sec,.boda-sticky-hd,.ev-bday-body,.ev-upcoming-content,.rut-dpick-real,.rut-wpick-real,.ev-month-wrap,.bday-calendar'))return Array.from(node.children).filter(function(n){return !fixed(n);}).reduce(function(out,n){return out.concat(n.matches('.rut-sec,.boda-sec,.boda-sticky-hd,.ev-upcoming-content,.ev-month-wrap,.bday-calendar')?content(n):[n]);},[]);
     return [node];
   }
-  return function(){return content(selector?document.querySelector(prefix+selector):el.isConnected?el:null);};
+  return function(root){return content(selector?(root||document).querySelector(prefix+selector):el.isConnected?el:null);};
 }
 function swipeContentReset(nodes){nodes.forEach(function(n){n.style.translate='';});}
 function animateContentSwipe(resolve,change,direction,offset){
