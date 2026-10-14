@@ -22,18 +22,6 @@
 </div>
 </div>
 <div class="ev-form-schedule">
-<div id="evFDateRow">
-<label class="ev-schedule-control" data-schedule="evFStart">
-<span data-schedule-label>Fecha inicio</span>
-<strong data-schedule-value>07/09</strong>
-<input class="ev-input ev-schedule-input" id="evFStart" aria-label="Fecha inicio" type="date" value="2026-09-07">
-</label>
-<label class="ev-schedule-control" data-schedule="evFEnd">
-<span data-schedule-label>Fecha fin</span>
-<strong data-schedule-value>10/09</strong>
-<input class="ev-input ev-schedule-input" id="evFEnd" aria-label="Fecha fin" type="date" value="2026-09-10">
-</label>
-</div>
 <div id="evFHoraRow">
 <label class="ev-schedule-control" data-schedule="evFTime">
 <span data-schedule-label>Hora inicio</span>
@@ -45,6 +33,23 @@
 <strong data-schedule-value>Sin hora</strong>
 <input class="ev-input ev-schedule-input" id="evFEndTime" aria-label="Hora fin" type="text" readonly data-time-picker aria-haspopup="dialog" value="" disabled>
 </label>
+</div>
+<div id="evFDateRow">
+<label class="ev-schedule-control" data-schedule="evFStart">
+<span data-schedule-label>Fecha inicio</span>
+<strong data-schedule-value>07/09</strong>
+<input class="ev-input ev-schedule-input" id="evFStart" aria-label="Fecha inicio" type="date" value="2026-09-07">
+</label>
+<label class="ev-schedule-control" data-schedule="evFEnd">
+<span data-schedule-label>Fecha fin</span>
+<strong data-schedule-value>10/09</strong>
+<input class="ev-input ev-schedule-input" id="evFEnd" aria-label="Fecha fin" type="date" value="2026-09-10">
+</label>
+<button type="button" class="ev-form-multiday" id="evFPickDates" aria-haspopup="dialog" disabled>
+<span>Multidía</span>
+<small id="evFPickDatesCount">
+</small>
+</button>
 </div>
 </div>
 </div>
@@ -85,8 +90,6 @@
 <i class="ev-kind-bar" style="background:#1d4ed8">
 </i>
 <i class="ev-kind-bar" style="background:#8b5e34">
-</i>
-<i class="ev-kind-bar" style="background:#ff6b6b">
 </i>
 </span>
 </button>

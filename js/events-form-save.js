@@ -11,13 +11,14 @@ function _evFormRead(form){
   var start=_evFormEl(form,'evFStart').value,end=_evFormEl(form,'evFEnd').value;
   if(!start){showToast('La fecha de inicio es obligatoria','error');return null;}
   if(!end||end<start)end=start;
-  var legacy=evFormLegacyDays(form.edit,kind);
+  var legacy=evFormLegacyDays(form.edit,kind)&&!form.multiChanged;
   if(kind==='puntual')end=legacy?form.edit.end||start:start;
   var repeat=form.edit&&form.edit.repeat?JSON.parse(JSON.stringify(form.edit.repeat)):null;
   var event={id:form.edit?form.edit.id:'ev-'+Date.now(),title:title,note:_evFormEl(form,'evFNote').value.trim(),color:EV_FREE_COLOR[key]?_evFormColor(form):evTypeColor(kind,type),kind:kind,type:type,start:start,end:end,repeat:repeat};
   if(taxModel!==null)event.taxModel=taxModel;
   if(type==='Plan cultural'){var culture=form.root.querySelector('[data-culture][aria-pressed="true"]');if(!culture){showToast('Elige el tipo de plan cultural','error');return null;}event.culturalPlan=culture.dataset.culture;}
   if(legacy&&form.edit.dates)event.dates=form.edit.dates.slice();
+  else if(EV_FREE_DATES[key]&&form.dates.length>1){event.dates=form.dates.slice();event.start=event.dates[0];event.end=event.start;}
   if(EV_FREE_SHAPE[key]&&form.shape)event.shape=form.shape;
   if(EV_FREE_BARSIZE[key]){
     var bar=form.root.querySelector('#evFBarPicker .ev-barsize-opt.selected'),size=bar?bar.dataset.bar:form.barSize;
@@ -66,7 +67,7 @@ function _evFormSaveBodas(form,event){
   if(form.edit)EVENTS=EVENTS.filter(function(e){return e.id!==form.edit.id;});
   var count=typeof bodaBulkCreate==='function'?bodaBulkCreate(days):0;
   var created=EVENTS.filter(function(e){return beforeIds.indexOf(e.id)===-1;}).map(function(e){return e.id;});
-  EVENTS.forEach(function(e){if(created.indexOf(e.id)!==-1){e.title=event.title;e.note=event.note;if(event.boda&&e.boda)e.boda.time=event.boda.time;}});
+  EVENTS.forEach(function(e){if(created.indexOf(e.id)!==-1){e.title=event.title;e.note=event.note;if(event.boda&&e.boda)e.boda=Object.assign({},event.boda);}});
   if(!count&&previous)EVENTS.push(previous);
   saveEvents();updateEventsBtn();closeEvForm();setTimeout(function(){refreshEvents();},320);
   showToast(count===1?'1 clase creada':count+' clases creadas — asígnalas en la pestaña Bodas',count?'success':'error',function(){

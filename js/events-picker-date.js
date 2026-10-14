@@ -6,6 +6,8 @@
 /* === Mini-overlay para elegir d\u00edas espec\u00edficos (Otros) === */
 function openOtrosDatePicker(initialDates,color,year,onAccept){
   var sel={};(initialDates||[]).forEach(function(d){sel[d]=true;});
+  var hex=(color||'#888').replace('#','');if(hex.length===3)hex=hex.replace(/./g,function(c){return c+c;});
+  var rgb=parseInt(hex,16),ink=((rgb>>16)*299+((rgb>>8)&255)*587+(rgb&255)*114)>150000?'#1a1a2e':'#fff';
   var curYear=year||(new Date()).getFullYear();
   var MNS=MN_SHORT;   /* los meses viven en core.js */
   function _evDk(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
@@ -38,7 +40,7 @@ function openOtrosDatePicker(initialDates,color,year,onAccept){
         var isWk=dt.getDay()===0||dt.getDay()===6;
         var isSel=!!sel[ds];
         var cls='dp-day'+(isWk?' wk':'')+(isSel?' sel':'');
-        var sty=isSel?(' style="background:'+color+';color:#fff;border-color:'+color+'"'):'';
+        var sty=isSel?(' style="background:'+color+';color:'+ink+';border-color:'+color+'"'):'';
         h+='<div class="'+cls+'" data-ds="'+ds+'"'+sty+'>'+d+'</div>';
       }
       h+='</div></div>';
@@ -71,7 +73,7 @@ function openOtrosDatePicker(initialDates,color,year,onAccept){
         if(sel[ds])delete sel[ds];else sel[ds]=true;
         if(sel[ds]){
           el.classList.add('sel');
-          el.style.background=color;el.style.color='#fff';el.style.borderColor=color;
+          el.style.background=color;el.style.color=ink;el.style.borderColor=color;
         }else{
           el.classList.remove('sel');
           el.style.background='';el.style.color='';el.style.borderColor='';
@@ -85,9 +87,7 @@ function openOtrosDatePicker(initialDates,color,year,onAccept){
   function _rerender(){
     var ovEl=document.getElementById('dpOv');
     if(!ovEl)return;
-    var parent=ovEl.parentNode;
-    parent.innerHTML=_render();
-    requestAnimationFrame(function(){var fo=document.getElementById('dpOv');if(fo)fo.classList.add('open');});
+    abrirPanel('dpWrap',_render(),{contenedor:host,overlay:'dpOv',alCerrar:_close,reutilizar:true});
     _attach();
   }
   function _close(){
