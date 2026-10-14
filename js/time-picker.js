@@ -5,17 +5,25 @@ function timePickerInitial(input){
   if(input.id==='evFEndTime')return (form.querySelector('#evFTime')||{}).value||'09:00';
   return input.id==='evFTime'&&picker?evPlanReferenceTime(picker.dataset.curType)||'09:00':'09:00';
 }
-function timePickerDrum(id,count,label){
-  var h='<div><span class="time-picker-label">'+label+'</span><div class="drum-wrap"><div class="drum-picker" id="'+id+'" role="spinbutton" tabindex="0" aria-label="'+label+'" aria-valuemin="0" aria-valuemax="'+(count-1)+'"><div style="height:44px"></div>';
-  for(var cycle=0;cycle<3;cycle++)for(var i=0;i<count;i++)h+='<div class="drum-picker-item" data-val="'+i+'">'+String(i).padStart(2,'0')+'</div>';
+function markPickerDrum(drum,index){
+  var items=drum._pickerItems||(drum._pickerItems=drum.querySelectorAll('.drum-picker-item'));
+  var next=items[index];
+  if(drum._pickerSelected===next)return;
+  if(drum._pickerSelected)drum._pickerSelected.classList.remove('drum-selected');
+  if(next)next.classList.add('drum-selected');
+  drum._pickerSelected=next;
+}
+function timePickerDrum(id,count,label,values){
+  var h='<div><span class="time-picker-label">'+label+'</span><div class="drum-wrap"><div class="drum-picker" id="'+id+'" role="spinbutton" tabindex="0" aria-label="'+label+'" aria-valuemin="0" aria-valuemax="'+(values?values[count-1]:count-1)+'"><div style="height:44px"></div>';
+  for(var cycle=0;cycle<3;cycle++)for(var i=0;i<count;i++)h+='<div class="drum-picker-item" data-val="'+(values?values[i]:i)+'">'+String(values?values[i]:i).padStart(2,'0')+'</div>';
   return h+'<div style="height:44px"></div></div><div class="drum-sel-lines"></div></div></div>';
 }
-function bindTimePickerDrum(drum,count,value){
+function bindTimePickerDrum(drum,count,value,values){
   var items=Array.from(drum.querySelectorAll('.drum-picker-item'));
   function index(){return Math.max(0,Math.min(count*3-1,Math.round(drum.scrollTop/44)));}
   function mark(){
-    var n=index();items.forEach(function(it,i){it.classList.toggle('drum-selected',i===n);});
-    drum.setAttribute('aria-valuenow',n%count);drum.setAttribute('aria-valuetext',String(n%count).padStart(2,'0'));
+    var n=index(),v=values?values[n%count]:n%count;markPickerDrum(drum,n);
+    drum.setAttribute('aria-valuenow',v);drum.setAttribute('aria-valuetext',String(v).padStart(2,'0'));
   }
   function move(n){drum.scrollTop=Math.max(0,Math.min(count*3-1,n))*44;mark();}
   drum.addEventListener('scroll',mark,{passive:true});
@@ -23,12 +31,20 @@ function bindTimePickerDrum(drum,count,value){
   drum.addEventListener('keydown',function(e){
     if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();move(index()+(e.key==='ArrowUp'?-1:1));}
   });
-  move(count+value);
-  return function(){return index()%count;};
+  move(count+(values?Math.max(0,values.indexOf(value)):value));
+  return function(){return values?values[index()%count]:index()%count;};
 }
 function openTimePicker(input){
   if(input.disabled||document.getElementById('timePickerOv'))return;
   var initial=timePickerInitial(input).split(':'),previousBack=NAV_BACK,closed=false;
+  var minuteValues=null;
+  if(input.hasAttribute('data-time-quarter')){
+    minuteValues=[0,15,30,45];
+    var savedMinute=Number(initial[1]);
+    if(minuteValues.indexOf(savedMinute)<0)minuteValues.push(savedMinute);
+    minuteValues.sort(function(a,b){return a-b;});
+  }
+  var minuteCount=minuteValues?minuteValues.length:60;
   function close(){
     if(closed)return;closed=true;NAV_BACK=previousBack;
     document.removeEventListener('keydown',escape);
@@ -51,7 +67,7 @@ function openTimePicker(input){
   }
   var optional=input.id==='evFTime'||input.id==='evFEndTime'||input.classList.contains('ev-viaje-time');
   var h='<div class="ev-detail-overlay time-picker-overlay" id="timePickerOv"><section class="ev-detail-sheet time-picker-sheet" role="dialog" aria-modal="true" aria-labelledby="timePickerTitle">';
-  h+='<div class="ev-detail-handle"></div><h2 id="timePickerTitle">Elegir hora</h2><div class="time-picker-drums">'+timePickerDrum('timePickerHours',24,'Horas')+'<b>:</b>'+timePickerDrum('timePickerMinutes',60,'Minutos')+'</div>';
+  h+='<div class="ev-detail-handle"></div><h2 id="timePickerTitle">Elegir hora</h2><div class="time-picker-drums">'+timePickerDrum('timePickerHours',24,'Horas')+'<b>:</b>'+timePickerDrum('timePickerMinutes',minuteCount,'Minutos',minuteValues)+'</div>';
   h+='<div class="ev-detail-actions"><button class="ev-btn" id="timePickerCancel">Cancelar</button>'+(optional?'<button class="ev-btn" id="timePickerClear">Sin hora</button>':'')+'<button class="ev-btn primary" id="timePickerSave">Guardar</button></div></section></div>';
   var wrap=abrirPanel('timePickerWrap',h,{contenedor:document.body,overlay:'timePickerOv',alCerrar:close});
   NAV_BACK=close;document.addEventListener('keydown',escape);
@@ -62,7 +78,7 @@ function openTimePicker(input){
   setTimeout(function(){
     if(closed)return;
     var hours=bindTimePickerDrum(wrap.querySelector('#timePickerHours'),24,Number(initial[0]));
-    var minutes=bindTimePickerDrum(wrap.querySelector('#timePickerMinutes'),60,Number(initial[1]));
+    var minutes=bindTimePickerDrum(wrap.querySelector('#timePickerMinutes'),minuteCount,Number(initial[1]),minuteValues);
     saveButton.disabled=false;saveButton.onclick=function(){save(String(hours()).padStart(2,'0')+':'+String(minutes()).padStart(2,'0'));};
     wrap.querySelector('#timePickerHours').focus();
   },80);

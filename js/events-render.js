@@ -221,8 +221,22 @@ function renderEvUpcoming(){
 
 /* ── Render: lista de eventos por tipos ─────────────────── */
 var EV_LIST_TYPES=EV_KINDS.grande.types.filter(function(t){return t!=='Otros';}).concat(EV_KINDS.puntual.types);
+function evListInYear(ev){
+  var from=EV_LIST_YEAR==='all'?'0000-01-01':EV_LIST_YEAR+'-01-01';
+  var until=EV_LIST_YEAR==='all'?'9999-12-31':EV_LIST_YEAR+'-12-31';
+  if(EV_TYPES_PAST){var today=evDk(new Date());if(today>from)from=today;}
+  if(from>until)return false;
+  if(ev.dates&&ev.dates.length)return ev.dates.some(function(ds){return ds>=from&&ds<=until;});
+  if(!ev.repeat)return ev.start<=until&&(ev.end||ev.start)>=from;
+  if(ev.start>until)return false;
+  if(EV_LIST_YEAR==='all')return true;
+  for(var day=new Date(from+'T12:00:00');evDk(day)<=until;day.setDate(day.getDate()+1)){
+    if(eventOccursOn(ev,evDk(day)))return true;
+  }
+  return false;
+}
+
 function renderEvByTypes(){
-  var today=new Date();today.setHours(0,0,0,0);
   /* Controles: buscador + orden + filtros */
   var h='<div class="ev-list-tools"><div class="ev-list-search-row">';
   h+='<div class="ev-search">'
@@ -250,8 +264,7 @@ function renderEvByTypes(){
   }
   var lista=EVENTS.filter(function(ev){
     if(ev.id&&ev.id.indexOf('ev-bday-vip-')===0)return false;  /* los VIP tienen su ventana */
-    var evEnd=ev.end?new Date(ev.end+'T00:00:00'):new Date(ev.start+'T00:00:00');
-    if(EV_TYPES_PAST&&!ev.repeat&&evEnd<today)return false;
+    if(!evListInYear(ev))return false;
     if(!evListFilterMatches(ev,EV_TYPES_FILTER))return false;
     return coincide(ev);
   });
@@ -439,7 +452,7 @@ function renderEvWeek(){
         var _isVip=ev.id.indexOf('ev-bday-vip-')===0;
         var _t=_isVip?escHtml(ev.title.replace(/^\u2b50\s*/,'').replace(/^Cumple\s+/,'')):escHtml(ev.title);
         var _ic=_isVip?'\u2b50 ':'';
-        h+='<div class="ev-wk-chip'+(ev._rutSkip?' rut-cancelled':'')+'" data-id="'+ev.id+'" style="border-left:3px solid '+_dc+';background:'+hexA(_dc,0.95)+'">';
+        h+='<div class="ev-wk-chip'+(ev._rutSkip?' rut-cancelled':'')+'" data-id="'+ev.id+'" data-ds="'+ds+'" style="border-left:3px solid '+_dc+';background:'+hexA(_dc,0.95)+'">';
         h+='<span class="ev-wk-chip-title">'+(ev._rutSkip?'<span class="rut-skipped-title">'+_ic+_t+'</span> <span class="rut-skipped-label">(cancelada)</span>':_ic+_t)+rutRecoveryHtml(ev)+'</span>';
         /* Hora del evento puntual, si la tiene */
         var _wt=(!ev._rut&&getEvType(ev)!=='Ensayos boda')?evTimeLabel(ev):'';
@@ -470,6 +483,16 @@ function renderEvWeek(){
 }
 
 /* ── Render: contenido principal ────────────────────────── */
+function renderEvYearHeader(scope){
+  var stats=scope==='stats',year=stats?EV_STATS_YEAR:EV_LIST_YEAR;
+  var last=stats?EV_STATS_LAST_YEAR:EV_LIST_LAST_YEAR,id=stats?'evStats':'evList',total=year==='all';
+  var h='<div class="sy-year-nav ev-period-selector">';
+  h+='<button class="sy-nav" data-'+scope+'-year="-1" aria-label="Año Anterior"'+(total?' style="visibility:hidden" tabindex="-1"':'')+'>◀</button>';
+  h+='<div class="sy-year ev-period-label"><span id="'+id+'Year"'+(total?' hidden':'')+'>'+(total?last:year)+'</span>'+(total?'<span class="ev-period-history">Todo el<br>Histórico</span>':'')+'</div>';
+  h+='<button class="sy-nav" data-'+scope+'-year="1" aria-label="Año Siguiente"'+(total?' style="visibility:hidden" tabindex="-1"':'')+'>▶</button></div>';
+  return h+'<div class="sy-hdr-right"><button class="today-btn ev-period-total" id="'+id+'Total" aria-pressed="'+total+'">Total</button></div>';
+}
+
 function renderEvContent(){
   var h=renderNavBar('events');
   var upcomingViews=['upcoming','birthdays','week','months','stats'];
@@ -488,12 +511,11 @@ function renderEvContent(){
   h+='</div>';
   if(EV_VIEW==='bday')return h+renderBdayContent();
   // Header a nivel 3 (with-tabs → top:82px)
-  var _hdrCenterCls=' sy-header-center';
+  var _hdrCenterCls=' sy-header-center'+(['week','months','stats'].indexOf(EV_VIEW)>=0?' ev-period-header':'');
   h+='<div class="sy-header with-tabs'+_hdrCenterCls+'">';
   h+='<button class="sy-back" id="evBack">&#8592;</button>';
-  if(EV_VIEW==='birthdays')h+=renderBdayAddButton('evBdayAdd');
   if(EV_VIEW==='upcoming'||EV_VIEW==='birthdays'){
-    h+='<div class="sy-year-nav"><div class="sy-year">'+(EV_VIEW==='birthdays'?'Cumpleaños':'Próximos Eventos')+'</div></div>';
+    h+='<div class="sy-year-nav"><div class="sy-year">'+(EV_VIEW==='birthdays'?'Próximos Cumpleaños':'Próximos Eventos')+'</div></div>';
     if(EV_VIEW==='upcoming')h+='<button class="econ-gear" id="evUpcomingOrder" aria-label="Configurar orden de planes">⚙</button>';
   } else if(EV_VIEW==='week'){
     h+='<div class="sy-year-nav"><button class="sy-nav" id="evPrev">&#9664;</button>';
@@ -501,10 +523,8 @@ function renderEvContent(){
     h+='<button class="sy-nav" id="evNext">&#9654;</button></div>';
     h+='<button class="ev-bright-btn ev-bright-mid'+(EV_BRIGHT_PAST?' on':'')+'" id="evBright">\uD83D\uDCA1</button>';
     h+='<div class="sy-hdr-right"><button class="today-btn" id="evToday" style="font-size:.65rem;padding:4px 10px">Hoy</button></div>';
-  } else if(EV_VIEW==='stats'){
-    h+='<div class="sy-year-nav"><div class="sy-year">Estadísticas</div></div>';
-  } else if(EV_VIEW==='months'){
-    h+='<div class="sy-year-nav"><div class="sy-year">Todos los Eventos</div></div>';
+  } else if(EV_VIEW==='stats'||EV_VIEW==='months'){
+    h+=renderEvYearHeader(EV_VIEW==='stats'?'stats':'list');
   } else if(EV_VIEW==='rutinas'){
     h+='<div class="sy-year-nav"><div class="sy-year">Rutinas</div></div>';
   } else if(EV_VIEW==='bodas'){
@@ -587,7 +607,7 @@ function renderEvContent(){
     if(EV_VIEW!=='week')h+='<div class="ev-upcoming-content">';
     if(EV_VIEW==='upcoming'||EV_VIEW==='birthdays'){
       h+='<div class="excl-row ev-up-filters">';
-      if(EV_VIEW==='birthdays')h+=renderBdayVipFilter();
+      if(EV_VIEW==='birthdays')h+=renderBdayVipFilter()+renderBdayAddButton('evBdayAdd');
       else{h+='<label class="excl-item"><input type="checkbox" id="evUpShowRut"'+(EV_UP_SHOW_RUT?' checked':'')+'> Ver Rutinas</label>';
       h+='<label class="excl-item"><input type="checkbox" id="evUpShowBoda"'+(EV_UP_SHOW_BODA?' checked':'')+'> Ver Ensayos <span class="wm-logo wm-logo-check" role="img" aria-label="Wedding Moves"></span></label>';
       }

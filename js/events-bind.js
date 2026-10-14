@@ -66,6 +66,23 @@ function refreshEvents(keepScroll){
    la cabecera se mira _bindEvNav, si falla un dia del calendario _bindEvCal, si
    falla una tarjeta _bindEvListas. Los cuatro trozos son independientes: ninguna
    variable cruza de uno a otro. */
+function bindEvYearHeader(){
+  var stats=EV_VIEW==='stats';
+  if(!stats&&EV_VIEW!=='months')return;
+  var scope=stats?'stats':'list',total=document.getElementById(stats?'evStatsTotal':'evListTotal');
+  function setYear(year,last){
+    if(stats){EV_STATS_YEAR=year;EV_STATS_LAST_YEAR=last;}
+    else{EV_LIST_YEAR=year;EV_LIST_LAST_YEAR=last;}
+    refreshEvents(false);
+  }
+  document.querySelectorAll('[data-'+scope+'-year]').forEach(function(button){button.onclick=function(){
+    var current=stats?EV_STATS_YEAR:EV_LIST_YEAR;if(current==='all')return;
+    var year=Math.max(1900,Math.min(2200,+current + +button.getAttribute('data-'+scope+'-year')));
+    setYear(year,year);
+  };});
+  total.onclick=function(){var year=stats?EV_STATS_YEAR:EV_LIST_YEAR,last=stats?EV_STATS_LAST_YEAR:EV_LIST_LAST_YEAR;setYear(year==='all'?last:'all',year==='all'?last:year);};
+}
+
 function bindEvEvents(){
   _bindEvNav();
   _bindEvCal();
@@ -213,6 +230,7 @@ function _bindEvNav(){
   var _subBd=document.getElementById('evUpBirthdays');
   if(_subBd)_subBd.addEventListener('click',function(){_switchEvView(EV_VIEW==='birthdays'?'upcoming':'birthdays');refreshEvents(false);});
   var stats=document.getElementById('evSubStats');if(stats)stats.onclick=function(){_switchEvView('stats');refreshEvents(false);};
+  bindEvYearHeader();
   if(EV_VIEW==='stats')bindEventStatistics();
   if(EV_VIEW==='birthdays'){
     bindBdayUpcoming(document.getElementById('eventsContent'));
@@ -298,7 +316,7 @@ function _bindEvCal(){
       var id=el.dataset.id;var ev=null;
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
       EV_EDIT_DS=el.dataset.ds||null;
-      if(ev){openEvDetail(ev);return;}
+      if(ev){openEvDetail(ev,null,null,EV_EDIT_DS);return;}
       var _rs2=(typeof rutEventFromId==='function')?rutEventFromId(id):null;
       if(_rs2)openRutSesion(_rs2.rutina,_rs2.ds,_rs2.key);
     });
@@ -529,7 +547,7 @@ function _bindEvListas(){
       e.stopPropagation();
       var id=el.dataset.id;var ev=null;
       for(var i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){ev=EVENTS[i];break;}}
-      if(ev){openEvDetail(ev);return;}
+      if(ev){openEvDetail(ev,null,null,el.dataset.ds);return;}
       var _rs3=(typeof rutEventFromId==='function')?rutEventFromId(id):null;
       if(_rs3)openRutSesion(_rs3.rutina,_rs3.ds,_rs3.key);
     });

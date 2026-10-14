@@ -278,7 +278,7 @@ button.action-edit.action-edit-text:active{background:#f97316!important}
 .ev-wk-travel-footer{margin-top:auto;padding-top:4px}
 
 /* Pestañas de Eventos: la seleccion solo intensifica el fondo. */
-#eventsOverlay .ev-hdr-sub .ev-view-toggle{--tab-tone:#60a5fa;color:var(--tab-tone)!important;border-color:var(--tab-tone)!important;background:color-mix(in srgb,var(--tab-tone) 8%,var(--surface))!important}
+#eventsOverlay .ev-hdr-sub .ev-view-toggle{font-weight:600;--tab-tone:#60a5fa;color:var(--tab-tone)!important;border-color:var(--tab-tone)!important;background:color-mix(in srgb,var(--tab-tone) 8%,var(--surface))!important}
 #eventsOverlay .ev-hdr-sub .ev-view-toggle.active{background:color-mix(in srgb,var(--tab-tone) 23%,var(--surface))!important}
 #eventsOverlay .ev-hdr-sub .ev-btn-calendar{--tab-tone:#65a367}
 #eventsOverlay .ev-hdr-sub .ev-btn-bday{--tab-tone:var(--birthday-tone)}
@@ -324,7 +324,7 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .ev-wk-date.ev-wk-today .ev-wk-num{font-size:1.15rem}
 
 /* Economia, Fiscal y Escenarios: tono constante, seleccion por fondo. */
-.econ-tab-btn,.fiscal-tab-btn,.est-nav .est-btn{--tab-tone:var(--accent);color:var(--tab-tone)!important;border-color:var(--tab-tone)!important;background:color-mix(in srgb,var(--tab-tone) 8%,var(--surface))!important}
+.econ-tab-btn,.fiscal-tab-btn,.est-nav .est-btn{font-weight:600;--tab-tone:var(--accent);color:var(--tab-tone)!important;border-color:var(--tab-tone)!important;background:color-mix(in srgb,var(--tab-tone) 8%,var(--surface))!important}
 .fiscal-tab-btn{--tab-tone:var(--c-purple)}
 .est-nav .est-btn{--tab-tone:#60a5fa;flex:1}
 .est-nav .est-btn.est-casa{--tab-tone:#14b8a6}
@@ -1013,10 +1013,5 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 .ev-list-search-row .ev-sort-chip{flex:none;width:62px;min-height:40px;padding:3px 2px;font-size:.65rem;line-height:1.3;text-align:center;border-radius:9px}
 .ev-list-search-row{gap:6px}
 .ev-list-search-row .ev-search input{min-width:0;width:100%;font-size:.7rem}
-.ev-stat-year-nav{display:flex;align-items:center;justify-content:center;gap:14px;--energy-resumen:var(--c-green)}
-.ev-stat-year-nav label{flex:1;max-width:230px;justify-content:center}
-.ev-stat-year-nav select{flex:0 1 110px;text-align:center;font-weight:600;font-size:1rem}
-.ev-stat-year-nav .energy-total-button{position:static;min-height:40px;font-weight:600}
-.ev-stat-year-nav select.is-total{color:var(--text-muted)}
 .ev-stat-period button{border:1px solid var(--border);border-radius:10px;background:var(--surface);padding:10px 4px;color:var(--text-muted);font-size:.75rem}
 .ev-stat-period button.active{border-color:var(--c-green);background:color-mix(in srgb,var(--c-green) 9%,var(--surface));color:var(--c-green);box-shadow:inset 0 0 0 1px var(--c-green)}

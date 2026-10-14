@@ -34,8 +34,7 @@ function computeEventStatistics(events,year,period,today){
 }
 function renderEventStatistics(){
   var now=new Date(),stats=computeEventStatistics(EVENTS,EV_STATS_YEAR,EV_STATS_PERIOD,now);
-  var chosen=EV_STATS_YEAR==='all'?EV_STATS_LAST_YEAR:+EV_STATS_YEAR;
-  var h='<div class="ev-stat-controls"><div class="ev-stat-year-nav"><div class="energy-year-selector"'+(EV_STATS_YEAR==='all'?' hidden':'')+'><button class="nav-btn" data-stats-year="-1" aria-label="Año Anterior">◀</button><strong id="evStatsYear">'+chosen+'</strong><button class="nav-btn" data-stats-year="1" aria-label="Año Siguiente">▶</button></div><button class="energy-total-button" id="evStatsTotal" aria-pressed="'+(EV_STATS_YEAR==='all')+'">Total</button></div><div class="ev-stat-period">';
+  var h='<div class="ev-stat-controls"><div class="ev-stat-period">';
   [['past','Realizados'],['future','Futuros'],['all','Ambos']].forEach(function(p){h+='<button class="ev-sort-chip'+(EV_STATS_PERIOD===p[0]?' active':'')+'" aria-pressed="'+(EV_STATS_PERIOD===p[0])+'" data-stats-period="'+p[0]+'">'+p[1]+'</button>';});h+='</div></div>';
   h+='<p class="sy-note ev-stat-note">'+(EV_STATS_YEAR==='all'?'Todos los años':EV_STATS_YEAR)+' · Por fechas registradas · Inicio y fin incluidos.</p>';
   h+='<div class="ev-stat-cards">';
@@ -53,7 +52,5 @@ function bindEventStatistics(){
   if(!document.getElementById('evStatsTotal'))return;
   document.getElementById('evStatsRoutines').onclick=function(){RUT_SUBTAB='stats';_switchEvView('rutinas');refreshEvents(false);};
   document.getElementById('evStatsRehearsals').onclick=function(){BODA_SUBTAB='stats';_switchEvView('bodas');refreshEvents(false);};
-  document.querySelectorAll('[data-stats-year]').forEach(function(btn){btn.onclick=function(){EV_STATS_YEAR=EV_STATS_LAST_YEAR=Math.max(1900,Math.min(2200,+EV_STATS_YEAR + +this.dataset.statsYear));refreshEvents(false);};});
-  document.getElementById('evStatsTotal').onclick=function(){if(EV_STATS_YEAR==='all')EV_STATS_YEAR=EV_STATS_LAST_YEAR;else{EV_STATS_LAST_YEAR=+EV_STATS_YEAR;EV_STATS_YEAR='all';}refreshEvents(false);};
   document.querySelectorAll('[data-stats-period]').forEach(function(btn){btn.onclick=function(){EV_STATS_PERIOD=this.dataset.statsPeriod;refreshEvents(false);};});
 }

@@ -344,7 +344,7 @@ function openBdayDatePicker(kind,value,onPick){
   var isDay=kind==='day',h='<div class="bd-form-overlay" id="bdDateOv"><div class="bd-form-sheet bday-date-sheet"><header class="bd-panel-header"><button class="sy-back" id="bdDateClose" aria-label="Volver">←</button><h2>'+ (isDay?'Día':'Mes')+'</h2></header>';
   if(isDay){
     h+='<div class="drum-wrap"><div class="drum-picker" id="bdDayDrum" role="spinbutton" tabindex="0" aria-label="Día" aria-valuemin="1" aria-valuemax="31"><div style="height:44px"></div>';
-    for(var d=1;d<=31;d++)h+='<div class="drum-picker-item" data-day="'+d+'">'+d+'</div>';
+    for(var cycle=0;cycle<3;cycle++)for(var d=1;d<=31;d++)h+='<div class="drum-picker-item" data-day="'+d+'">'+d+'</div>';
     h+='<div style="height:44px"></div></div><div class="drum-sel-lines"></div></div><button class="ev-btn primary" id="bdDateApply">Elegir día</button>';
   }else{
     h+='<div class="bday-month-options">';
@@ -355,13 +355,15 @@ function openBdayDatePicker(kind,value,onPick){
   wrap.querySelector('#bdDateClose').onclick=close;
   if(!isDay){wrap.querySelectorAll('[data-month]').forEach(function(button){button.onclick=function(){onPick(+button.dataset.month);close();};});return;}
   var drum=wrap.querySelector('#bdDayDrum');
-  function mark(){value=Math.max(1,Math.min(31,Math.round(drum.scrollTop/44)+1));drum.setAttribute('aria-valuenow',value);drum.querySelectorAll('[data-day]').forEach(function(item){item.classList.toggle('drum-selected',+item.dataset.day===value);});}
-  function select(day){drum.style.scrollSnapType='none';drum.scrollTop=(Math.max(1,Math.min(31,day))-1)*44;mark();requestAnimationFrame(function(){drum.style.scrollSnapType='';});}
+  var items=Array.from(drum.querySelectorAll('[data-day]'));
+  function index(){return Math.max(0,Math.min(92,Math.round(drum.scrollTop/44)));}
+  function mark(){value=index()%31+1;drum.setAttribute('aria-valuenow',value);markPickerDrum(drum,index());}
+  function select(n){drum.style.scrollSnapType='none';drum.scrollTop=Math.max(0,Math.min(92,n))*44;mark();requestAnimationFrame(function(){drum.style.scrollSnapType='';});}
   drum.addEventListener('scroll',mark,{passive:true});
-  drum.onclick=function(e){var item=e.target.closest('[data-day]');if(item)select(+item.dataset.day);};
-  drum.onkeydown=function(e){if(['ArrowUp','ArrowDown','Home','End'].indexOf(e.key)<0)return;e.preventDefault();select(e.key==='Home'?1:e.key==='End'?31:value+(e.key==='ArrowUp'?-1:1));};
+  drum.onclick=function(e){var item=e.target.closest('[data-day]');if(item)select(items.indexOf(item));};
+  drum.onkeydown=function(e){if(['ArrowUp','ArrowDown','Home','End'].indexOf(e.key)<0)return;e.preventDefault();select(e.key==='Home'?31:e.key==='End'?61:index()+(e.key==='ArrowUp'?-1:1));};
   var initial=value,ov=wrap.querySelector('#bdDateOv');
-  var observer=new MutationObserver(function(){if(ov.classList.contains('open')){observer.disconnect();select(initial);}});
+  var observer=new MutationObserver(function(){if(ov.classList.contains('open')){observer.disconnect();select(31+initial-1);}});
   observer.observe(ov,{attributes:true,attributeFilter:['class']});
   wrap.querySelector('#bdDateApply').onclick=function(){mark();onPick(value);close();};
 }

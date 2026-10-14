@@ -291,3 +291,14 @@
 .ev-detail-modern .ev-car-nav{margin:0 0 8px}
 
 body:has(#evDetailOv.open) .tasks-fab{visibility:hidden}
+
+.ev-detail-modern .ev-detail-toolbar{display:grid;grid-template-columns:76px minmax(0,1fr) 76px;gap:4px;min-height:36px}
+.ev-detail-day-title{text-align:center;font-size:.9rem;font-weight:600;line-height:1.2}
+.ev-detail-tools{display:flex;align-items:center;justify-content:flex-end;gap:5px}
+.ev-detail-tools .ev-car-count{min-width:0;font-size:.62rem;white-space:nowrap}
+.ev-detail-alarm{display:flex;align-items:center;justify-content:center;flex:none;width:34px;height:34px;padding:6px;border-radius:9px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer}
+.ev-detail-alarm svg{width:21px;height:21px}
+.ev-car-sheet{touch-action:pan-y}
+#evDetailOv{overflow:hidden}
+#evDetailOv .ev-car-preview{position:absolute;bottom:0;margin:0;pointer-events:none}
+.ev-car-dragging{user-select:none;will-change:transform}
