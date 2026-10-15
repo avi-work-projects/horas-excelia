@@ -387,14 +387,7 @@ function _bindEvCal(){
    borrado por pulsacion larga. */
 /* Reutiliza el fondo real de la fila bajo cada titulo sticky. Una lectura por
    frame de scroll; sin modificar datos ni repintar el calendario. */
-function _bindEvWeekTitleBackground(){
-  var body=document.querySelector('#eventsOverlay .sy-body');
-  if(!body)return;
-  var tabs=body.querySelector('.econ-sub-tabs');if(tabs)body.style.setProperty('--ev-subtab-h',tabs.offsetHeight+'px');
-  if(!body.querySelector('.ev-wk-sticky-title'))return;
-  var pending=false;
-  function update(){
-    pending=false;
+function evLayoutWeekTitles(body){
     if(!body.isConnected)return;
     var bounds=body.getBoundingClientRect();
     body.querySelectorAll('.ev-wk-mgrid').forEach(function(month){
@@ -415,7 +408,14 @@ function _bindEvWeekTitleBackground(){
         if(stops.length)t.el.style.background='linear-gradient(to bottom,'+stops.join(',')+')';
       });
     });
-  }
+}
+function _bindEvWeekTitleBackground(){
+  var body=document.querySelector('#eventsOverlay .sy-body');
+  if(!body)return;
+  var tabs=body.querySelector('.econ-sub-tabs');if(tabs)body.style.setProperty('--ev-subtab-h',tabs.offsetHeight+'px');
+  if(!body.querySelector('.ev-wk-sticky-title'))return;
+  var pending=false;
+  function update(){pending=false;evLayoutWeekTitles(body);}
   function schedule(){if(!pending){pending=true;requestAnimationFrame(update);}}
   body.addEventListener('scroll',schedule,{passive:true});
   schedule();

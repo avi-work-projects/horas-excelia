@@ -205,7 +205,7 @@
 **Funciones:** evAppearanceDefaults:10 · validateEventAppearance:13 · loadEventAppearance:19 · applyEventAppearance:24 · setEventAppearance:28 · evSymbolStroke:37
 
 ### js/events-bind.js  _(634 líneas)_
-**Funciones:** _switchEvView:6 · openEvents:24 · closeEvents:34 · openEventsAt:41 · refreshEvents:48 · bindEvYearHeader:69 · setYear:73 · bindEvEvents:86 · _bindEvNav:95 (!202) · _scrollWeekToMonth:104 · _scrollWeekToToday:151 · doScroll:161 · _bindEvCal:297 (!93) · _bindEvWeekTitleBackground:390 · update:396 · schedule:419 · evFilterCategories:424 · evFilterCategoryFor:433 · evListFilterLabel:434 · evListFilterMatches:442 · evToggleListFilter:448 · openEvTypeFilter:460 · isSelected:462 · option:463 · close:472 · paint:475 · _bindEvListas:479 (!122) · apply:589 · _bindEvGestos:601 · _evSwipeUpcoming:614 · _evSwipeBodas:621 · _evSwipeRutinas:628
+**Funciones:** _switchEvView:6 · openEvents:24 · closeEvents:34 · openEventsAt:41 · refreshEvents:48 · bindEvYearHeader:69 · setYear:73 · bindEvEvents:86 · _bindEvNav:95 (!202) · _scrollWeekToMonth:104 · _scrollWeekToToday:151 · doScroll:161 · _bindEvCal:297 (!93) · evLayoutWeekTitles:390 · _bindEvWeekTitleBackground:412 · update:418 · schedule:419 · evFilterCategories:424 · evFilterCategoryFor:433 · evListFilterLabel:434 · evListFilterMatches:442 · evToggleListFilter:448 · openEvTypeFilter:460 · isSelected:462 · option:463 · close:472 · paint:475 · _bindEvListas:479 (!122) · apply:589 · _bindEvGestos:601 · _evSwipeUpcoming:614 · _evSwipeBodas:621 · _evSwipeRutinas:628
 
 ### js/events-cal.js  _(374 líneas)_
 **Estado global:** DN7:25
@@ -305,10 +305,10 @@
 ### js/import-preview.js  _(19 líneas)_
 **Funciones:** renderImportPreview:2 · add:4
 
-### js/init.js  _(448 líneas)_
-**Estado global:** DRUM_ITEM_H:132 · DN_ES:290
+### js/init.js  _(449 líneas)_
+**Estado global:** DRUM_ITEM_H:133 · DN_ES:287
 
-**Funciones:** _updateHeaderActive:31 · buildDrumPicker:133 · updateDrumSelected:163 · getDrumValue:168 · checkDrumMinuteWrap:174 · buildAlarmDayBtns:205 · showAlarmPastConfirm:235 · proceed:276 · aplicarActualizacion:372 · reload:378 · _showUpdateBar:400 · _buscar:435
+**Funciones:** _updateHeaderActive:31 · buildDrumPicker:134 · updateDrumSelected:164 · getDrumValue:169 · checkDrumMinuteWrap:175 · buildAlarmDayBtns:206 · showAlarmPastConfirm:232 · createHeaderAlarm:253 · proceed:273 · aplicarActualizacion:373 · reload:379 · _showUpdateBar:401 · _buscar:436
 
 ### js/invoices-export.js  _(36 líneas)_
 **Funciones:** invoiceXml:2 · invoiceZip:3 · header:5 · invoiceWorkbook:14 · textCell:15 · numCell:16 · sheet:26
@@ -401,13 +401,16 @@
 
 **Funciones:** vacEntitlementForYear:18 · saveVacEntitlement:21 · fhY:27 · fdY:28 · computeYearlySummary:30 · barChart3:104 · computePuentes:131 · isNWD:141 · typeOf:142 · renderSummaryWorkBody:175 (!101) · fmtSigned:263 · renderSummaryPuentesBody:276 (!94) · fdd:283 · renderSummaryTimeOffBody:370 (!92) · fdd:376 · bindSummaryWorkBodyEvents:462 · bindSummaryPuentesBodyEvents:472 · bindSummaryTimeOffBodyEvents:497 · renderSummaryContent:503 · closeSummary:524 · bindSummaryEvents:530 (!83)
 
-### js/swipe-content.js  _(62 líneas)_
+### js/swipe-content.js  _(42 líneas)_
 **Estado global:** SWIPE_PREVIEW_STYLES:2 · SWIPE_PREVIEW_SHEET:3 · SWIPE_CONTENT_GAP:5 · SWIPE_FIXED_SELECTOR:7
 
-**Funciones:** swipeContentDistance:6 · swipePreviewRoot:8 · swipeContentResolver:19 · fixed:25 · content:26 · swipeContentReset:35 · animateContentSwipe:36
+**Funciones:** swipeContentDistance:6 · swipePreviewRoot:8 · swipeContentResolver:18 · fixed:24 · content:25 · resolve:32 · swipeContentReset:34 · animateContentSwipe:35
 
-### js/swipe-live.js  _(60 líneas)_
-**Funciones:** swipeCommonRoot:2 · swipeLiveFrame:5 · createLiveSwipe:19 · restore:28 · clear:29 · prepare:30 · move:39 · finish:44
+### js/swipe-layout.js  _(43 líneas)_
+**Funciones:** swipeLayoutClone:2 · swipeLayoutMerge:8 · swipeLayoutViewport:17 · swipeLayoutFrame:27
+
+### js/swipe-live.js  _(38 líneas)_
+**Funciones:** swipeCommonRoot:2 · createLiveSwipe:5 · hide:11 · clear:12 · prepare:17 · move:21 · finish:26
 
 ### js/swipe-render.js  _(73 líneas)_
 **Funciones:** swipeWithState:2 · swipeMonth:9 · swipeNext:10 · swipeFrame:11 · swipeKeepsPreviewScroll:12 · swipeCalendarPreview:17 · swipeEventsPreview:25 · swipeRenderPreview:41
@@ -659,7 +662,7 @@
 **Rangos por prefijo de clase:**
 .data-btn:2-2 · .ev-ann:74-76 · .ev-annual:115-137 · .ev-badge:165-165 · .ev-badges:40-40 · .ev-bar:110-110 · .ev-bars:33-33 · .ev-bright:139-152 · .ev-btn:203-212 · .ev-car:55-358 · .ev-category:353-356 · .ev-cell:123-161 · .ev-char:192-192 · .ev-checkbox:197-197 · .ev-chip:91-91 · .ev-colors:193-193 · .ev-date:194-194 · .ev-day:43-101 · .ev-delete:359-359 · .ev-detail:217-362 · .ev-edit:206-207 · .ev-event:309-315 · .ev-field:186-187 · .ev-form:181-337 · .ev-hdr:3-5 · .ev-input:188-189 · .ev-io:214-215 · .ev-kind:357-357 · .ev-list:14-179 · .ev-main:6-6 · .ev-management:252-254 · .ev-month:22-89 · .ev-multi:37-131 · .ev-num:163-163 · .ev-otros:53-106 · .ev-part:140-140 · .ev-puente:119-119 · .ev-quad:156-157 · .ev-repeat:198-198 · .ev-routine:361-361 · .ev-rut:97-364 · .ev-schedule:330-352 · .ev-stepped:112-114 · .ev-textarea:190-191 · .ev-toggle:195-196 · .ev-types:17-19 · .ev-view:4-8 · .ev-wd:200-201 · .ev-week:28-117 · .ev-weekday:199-199 · .rut-marker:93-96 · .rut-week:369-371 · .rut-wpick:372-376 · .swipe-content:367-367 · .sy-body:366-366 · .sy-nav:153-154
 
-### css/source/dialogs-responsive.css  _(157 líneas)_
+### css/source/dialogs-responsive.css  _(159 líneas)_
 
 **Secciones:**
 
@@ -677,7 +680,7 @@
 - Notas: general vs de un dia concreto:132
 
 **Rangos por prefijo de clase:**
-.alarm-cfg:78-79 · .alarm-colon:82-82 · .alarm-create:96-102 · .alarm-day:106-108 · .alarm-days:103-105 · .alarm-msg:92-93 · .alarm-panel:80-80 · .alarm-past:110-114 · .alarm-time:81-81 · .bd-alarm:20-21 · .bday-ic:120-124 · .bday-inline:119-119 · .bday-listo:116-116 · .btn-icon:31-67 · .data-actions:33-69 · .data-btn:29-65 · .drum-picker:85-88 · .drum-sel:91-91 · .drum-wrap:84-90 · .econ-qcell:26-28 · .econ-quarter:25-25 · .ev-daynote:134-134 · .ev-detail:135-136 · .ev-kind:127-154 · .ev-note:133-133 · .header:57-70 · .logo-gallery:11-18 · .logo-popup:2-9 · .nav-bar:34-74 · .time-picker:137-145
+.alarm-cfg:78-79 · .alarm-colon:82-82 · .alarm-create:96-102 · .alarm-day:106-108 · .alarm-days:103-105 · .alarm-msg:92-93 · .alarm-nap:146-147 · .alarm-panel:80-80 · .alarm-past:110-114 · .alarm-time:81-81 · .bd-alarm:20-21 · .bday-ic:120-124 · .bday-inline:119-119 · .bday-listo:116-116 · .btn-icon:31-67 · .data-actions:33-69 · .data-btn:29-65 · .drum-picker:85-88 · .drum-sel:91-91 · .drum-wrap:84-90 · .econ-qcell:26-28 · .econ-quarter:25-25 · .ev-daynote:134-134 · .ev-detail:135-136 · .ev-kind:127-156 · .ev-note:133-133 · .header:57-70 · .logo-gallery:11-18 · .logo-popup:2-9 · .nav-bar:34-74 · .time-picker:137-145
 
 ### css/source/wedding-moves.css  _(323 líneas)_
 
@@ -806,7 +809,7 @@
 **Rangos por prefijo de clase:**
 .boda-future:81-81 · .contact-address:127-139 · .contact-entry:126-126 · .contact-primary:137-143 · .contact-shortcuts:132-155 · .energy-contract:108-109 · .energy-field:111-112 · .energy-history:106-107 · .energy-price:110-115 · .energy-sheet:105-105 · .energy-tax:113-113 · .ev-cal:32-104 · .ev-field:80-80 · .ev-list:121-150 · .ev-period:164-167 · .ev-share:30-31 · .ev-stat:119-120 · .ev-stats:151-156 · .ev-up:147-171 · .ev-week:67-82 · .ev-wk:3-3 · .header:2-2 · .home-reminder:61-63 · .home-submission:4-17 · .home-summary:18-26 · .month-summary:20-21
 
-### css/source/energy-refinements.css  _(291 líneas)_
+### css/source/energy-refinements.css  _(292 líneas)_
 
 **Secciones:**
 
@@ -816,17 +819,18 @@
 - Ventana energética: cabecera fija, scroll del cuerpo, gráficos de un año.:30
 - Cada pestaña ocupa su celda completa, igual que en Eventos.:44
 - Identidad propia de cada pestaña, sin alterar el sistema general.:47
-- Filas de parejas: controles compactos, columnas alineadas.:100
-- Navegación: la misma geometría en Home y en las ventanas.:137
-- Tarjetas compactas: días visibles y un único estilo para inicio y fin.:148
-- Selección por fondo en las subpestañas de Eventos; cada una conserva su tono.:166
-- Histórico: esquinas opacas incluso cuando la cabecera queda fija.:198
-- El selector de día conserva marco y seis huecos semanales al cambiar de mes.:270
-- El ancho del nombre del mes no desplaza las flechas compartidas.:285
-- Deshacer acompaña a la ficha de sesión sin tapar sus controles de estado.:288
+- Lados explícitos: CSSOM conserva los bordes al copiar la vista al swipe.:57
+- Filas de parejas: controles compactos, columnas alineadas.:101
+- Navegación: la misma geometría en Home y en las ventanas.:138
+- Tarjetas compactas: días visibles y un único estilo para inicio y fin.:149
+- Selección por fondo en las subpestañas de Eventos; cada una conserva su tono.:167
+- Histórico: esquinas opacas incluso cuando la cabecera queda fija.:199
+- El selector de día conserva marco y seis huecos semanales al cambiar de mes.:271
+- El ancho del nombre del mes no desplaza las flechas compartidas.:286
+- Deshacer acompaña a la ficha de sesión sin tapar sus controles de estado.:289
 
 **Rangos por prefijo de clase:**
-.boda-asg:105-287 · .boda-det:101-104 · .boda-last:15-19 · .contact-shortcuts:213-216 · .data-actions:138-139 · .energy-bar:90-90 · .energy-caption:2-2 · .energy-choice:12-12 · .energy-compare:132-132 · .energy-contract:4-5 · .energy-cost:86-134 · .energy-coverage:77-77 · .energy-extremes:73-73 · .energy-fee:42-43 · .energy-field:7-7 · .energy-fields:9-9 · .energy-info:62-64 · .energy-inline:83-83 · .energy-legend:91-91 · .energy-metric:124-126 · .energy-metrics:123-123 · .energy-overview:66-68 · .energy-period:69-71 · .energy-price:180-185 · .energy-range:92-92 · .energy-reconciliation:76-76 · .energy-scenario:133-133 · .energy-section:61-61 · .energy-supplier:74-127 · .energy-table:3-3 · .energy-tabs:45-56 · .energy-tariff:79-181 · .energy-tax:72-130 · .energy-vat:128-128 · .energy-window:31-122 · .energy-year:6-98 · .ev-btn:145-145 · .ev-cell:281-282 · .ev-day:283-283 · .ev-io:135-135 · .ev-main:163-164 · .ev-order:238-250 · .ev-routine:234-236 · .ev-routines:228-232 · .ev-stat:217-217 · .ev-stats:218-224 · .ev-type:233-233 · .ev-up:259-268 · .ev-upcoming:172-174 · .ev-wk:16-25 · .home-popup:18-28 · .imp-mode:112-112 · .imp-preview:113-117 · .nav-bar:140-140 · .rut-addition:253-280 · .rut-bulk:191-196 · .rut-card:157-210 · .rut-day:146-152 · .rut-days:149-149 · .rut-dpick:144-278 · .rut-history:187-202 · .rut-hora:153-155 · .rut-month:195-195 · .rut-recovery:143-143 · .rut-routine:159-159 · .rut-sec:211-212 · .rut-session:142-206 · .rut-time:156-156 · .rut-weekdays:150-150 · .sy-body:170-170 · .sy-hdr:262-262
+.boda-asg:106-288 · .boda-det:102-105 · .boda-last:15-19 · .contact-shortcuts:214-217 · .data-actions:139-140 · .energy-bar:91-91 · .energy-caption:2-2 · .energy-choice:12-12 · .energy-compare:133-133 · .energy-contract:4-5 · .energy-cost:87-135 · .energy-coverage:78-78 · .energy-extremes:74-74 · .energy-fee:42-43 · .energy-field:7-7 · .energy-fields:9-9 · .energy-info:63-65 · .energy-inline:84-84 · .energy-legend:92-92 · .energy-metric:125-127 · .energy-metrics:124-124 · .energy-overview:67-69 · .energy-period:70-72 · .energy-price:181-186 · .energy-range:93-93 · .energy-reconciliation:77-77 · .energy-scenario:134-134 · .energy-section:62-62 · .energy-supplier:75-128 · .energy-table:3-3 · .energy-tabs:45-56 · .energy-tariff:80-182 · .energy-tax:73-131 · .energy-vat:129-129 · .energy-window:31-123 · .energy-year:6-99 · .ev-btn:146-146 · .ev-cell:282-283 · .ev-day:284-284 · .ev-io:136-136 · .ev-main:164-165 · .ev-order:239-251 · .ev-routine:235-237 · .ev-routines:229-233 · .ev-stat:218-218 · .ev-stats:219-225 · .ev-type:234-234 · .ev-up:260-269 · .ev-upcoming:173-175 · .ev-wk:16-25 · .home-popup:18-28 · .imp-mode:113-113 · .imp-preview:114-118 · .nav-bar:141-141 · .rut-addition:254-281 · .rut-bulk:192-197 · .rut-card:158-211 · .rut-day:147-153 · .rut-days:150-150 · .rut-dpick:145-279 · .rut-history:188-203 · .rut-hora:154-156 · .rut-month:196-196 · .rut-recovery:144-144 · .rut-routine:160-160 · .rut-sec:212-213 · .rut-session:143-207 · .rut-time:157-157 · .rut-weekdays:151-151 · .sy-body:171-171 · .sy-hdr:263-263
 
 ### css/source/invoices.css  _(62 líneas)_
 

@@ -120,6 +120,7 @@
 
   /* ── Alarma: panel configurable (Vivo X200 Ultra / Android) ── */
   initAlarmPanel(function(){
+    document.getElementById('alarmMsg').value='';
     buildAlarmDayBtns();
     // Inicializar las ruedas DESPUÉS de que el panel sea visible.
     var _dH=parseInt(appStorage.getItem('excelia-alarm-h')||'9',10);
@@ -209,24 +210,20 @@
     var DN=['D','L','M','X','J','V','S'];
     var today=new Date();
     var todayJs=today.getDay();
-    var savedDays=(appStorage.getItem('excelia-alarm-days')||'').split(',').filter(Boolean);
     var html='';
     for(var i=0;i<7;i++){
       var jsDay=(todayJs+i)%7;
       var d=new Date(today);d.setDate(today.getDate()+i);
       var ddmm=String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');
       var androidDay=jsDay+1; // Android: 1=Dom,2=Lun,...,7=Sáb
-      var isOn=savedDays.indexOf(String(androidDay))>=0;
-      html+='<button class="alarm-day-btn'+(isOn?' on':'')+'" data-day="'+androidDay+'" type="button">'+DN[jsDay]+'<span class="alarm-day-date">'+ddmm+'</span></button>';
+      html+='<button class="alarm-day-btn" data-day="'+androidDay+'" type="button" aria-pressed="false">'+DN[jsDay]+'<span class="alarm-day-date">'+ddmm+'</span></button>';
     }
     container.innerHTML=html;
     container.querySelectorAll('.alarm-day-btn').forEach(function(btn){
       btn.addEventListener('click',function(e){
         e.stopPropagation();
         btn.classList.toggle('on');
-        var sel=[];
-        container.querySelectorAll('.alarm-day-btn.on').forEach(function(b){sel.push(b.dataset.day);});
-        appStorage.setItem('excelia-alarm-days',sel.join(','));
+        btn.setAttribute('aria-pressed',String(btn.classList.contains('on')));
       });
     });
   }
@@ -253,14 +250,14 @@
   }
 
   /* ── Alarma: toggle MacroDroid ── */
-  var _g13=document.getElementById('alarmCreateBtn'); if(_g13)_g13.addEventListener('click',function(){
-    var h=getDrumValue('drumHour');
-    var m=getDrumValue('drumMin');
+  function createHeaderAlarm(preset){
+    var h=preset?preset.hour:getDrumValue('drumHour');
+    var m=preset?preset.minute:getDrumValue('drumMin');
     appStorage.setItem('excelia-alarm-h',h);
     appStorage.setItem('excelia-alarm-m',m);
-    var msg=(document.getElementById('alarmMsg').value.trim()||'Horas Excelia');
+    var msg=preset?preset.label:document.getElementById('alarmMsg').value.trim();
     var selDays=[];
-    document.querySelectorAll('.alarm-day-btn.on').forEach(function(b){selDays.push(+b.dataset.day);});
+    if(!preset)document.querySelectorAll('.alarm-day-btn.on').forEach(function(b){selDays.push(+b.dataset.day);});
     /* Las alarmas se crean siempre por el webhook de MacroDroid: es lo unico
        que funciona en el movil. La URL vive en el menu de ajustes. */
     var macroBase=normalizeMacroBase(appStorage.getItem('excelia-alarm-url')||'');
@@ -307,6 +304,10 @@
     } else {
       proceed();
     }
+  }
+  var _g13=document.getElementById('alarmCreateBtn');if(_g13)_g13.addEventListener('click',function(){createHeaderAlarm();});
+  var nap=document.getElementById('alarmNapBtn');if(nap)nap.addEventListener('click',function(){
+    var target=new Date(Date.now()+22*60000);createHeaderAlarm({hour:target.getHours(),minute:target.getMinutes(),label:'Siesta'});
   });
 
   /* ── Alarma: fallback .ics (recordatorio de calendario, 100% fiable) ── */
