@@ -5,15 +5,13 @@ test.beforeEach(async({page})=>{
  await page.goto('/');await page.evaluate(()=>{RUTINAS=[{id:'fixed',name:'Pádel',icon:'padel',color:'#a3e635',start:'2026-09-01',weekDays:[1,5],time:'15:00',dur:60,weeks:{},skips:{'2026-10-12':true},extraSessions:[]},{id:'flex',name:'Baile flexible',icon:'baile',color:'#e03131',start:'2026-09-01',weekDays:[],time:'18:00',dur:60,weeks:{},skips:{},flex:{period:'week',target:2,weeklyTarget:2,sessions:{}}}];saveRutinas();});
  await page.locator('#eventsBtn').click();await expect(page.locator('#eventsOverlay')).toHaveClass(/open/);await page.locator('#eventsOverlay').evaluate(el=>Promise.all(el.getAnimations().map(a=>a.finished)));
 });
-test('cumpleaños: VIP a la izquierda, Añadir centrado y configuración a la derecha sin marco',async({page},info)=>{
- await page.locator('#evUpBirthdays').click();await expect(page.locator('#evBdayAdd')).toBeVisible();
+test('cumpleaños: VIP a la izquierda, Añadir centrado y Eventos en la misma posición que Cumpleaños',async({page},info)=>{
  for(const width of [320,400,440]){
-  await page.setViewportSize({width,height:880});
-  const geometry=await page.locator('.ev-up-filters').evaluate(el=>{const vip=el.querySelector('.bday-up-vip').getBoundingClientRect(),add=el.querySelector('#evBdayAdd').getBoundingClientRect(),gear=el.querySelector('#evUpcomingOrder').getBoundingClientRect();return {vip:vip.left,add:add.left+add.width/2,gear:gear.left,edge:gear.right};});
-  expect(geometry.vip).toBeLessThan(30);expect(Math.abs(geometry.add-width/2)).toBeLessThan(1);expect(geometry.gear).toBeGreaterThan(width/2+45);expect(geometry.edge).toBeLessThan(width);
-  const gear=page.locator('#evUpcomingOrder');await expect(gear).toHaveCSS('border-top-width','0px');await expect(gear).toHaveCSS('background-color','rgba(0, 0, 0, 0)');
-  const colors=await gear.evaluate(el=>{const probe=document.createElement('i');probe.style.color='var(--upcoming-text)';el.appendChild(probe);const actual=getComputedStyle(el).color,accent=getComputedStyle(probe).color;probe.remove();return {actual,accent};});expect(colors.actual).toBe(colors.accent);
-  await page.screenshot({path:info.outputPath('cumpleanos-'+width+'.png'),animations:'disabled'});
+  await page.setViewportSize({width,height:880});const entry=await page.locator('#evUpBirthdays').boundingBox();await page.locator('#evUpBirthdays').click();
+  await expect(page.locator('#evUpcomingOrder')).toHaveCount(0);await expect(page.locator('#eventsContent>.sy-header #evUpBirthdays')).toHaveCount(0);
+  const geometry=await page.locator('.ev-up-filters').evaluate(el=>{const vip=el.querySelector('.bday-up-vip').getBoundingClientRect(),add=el.querySelector('#evBdayAdd').getBoundingClientRect(),back=el.querySelector('#evUpBirthdays').getBoundingClientRect();return {vip:vip.left,add:add.left+add.width/2,back:back.left,edge:back.right,cy:back.y+back.height/2};});
+  expect(geometry.vip).toBeLessThan(30);expect(Math.abs(geometry.add-width/2)).toBeLessThan(1);expect(geometry.back).toBeGreaterThan(width/2+25);expect(Math.abs(geometry.edge-entry.x-entry.width)).toBeLessThan(1);expect(Math.abs(geometry.cy-entry.y-entry.height/2)).toBeLessThan(1);
+  await page.screenshot({path:info.outputPath('cumpleanos-'+width+'.png'),animations:'disabled'});await page.locator('#evUpBirthdays').click();await expect(page.locator('#evUpcomingOrder')).toBeVisible();
  }
  await page.locator('#evUpcomingOrder').click();await expect(page.locator('.ev-order-sheet')).toBeVisible();
 });

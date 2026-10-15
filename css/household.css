@@ -111,3 +111,6 @@
 .household-gas-prices .energy-pair-label{font-size:.62rem;min-height:2.6em}
 .household-gas-prices .energy-pair-net>span{font-size:.58rem}
 .household-gas-prices .energy-pair-gross{font-size:.62rem;overflow-wrap:anywhere}
+
+.household-body .household-detail:has(>.energy-analysis-open){margin:0 auto;padding-top:0}
+.household-body .energy-analysis-open{--c-blue:var(--accent);width:100%;margin:0}

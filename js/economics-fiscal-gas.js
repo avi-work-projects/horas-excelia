@@ -15,7 +15,7 @@ function _renderGasDetalle(editable){
   editable=editable!==false;
   _ensureGasScenarios();
   var g=DESPACHO.gas;
-  var h='';
+  var h=editable?energyHistoryButton('gas'):'';
   /* Active scenario selector */
   h+='<div class="fiscal-section">';
   h+='<div class="fiscal-section-title">\uD83D\uDD25 Tarifa activa</div>';
@@ -61,8 +61,6 @@ function _renderGasDetalle(editable){
     h+=householdUtilityPrices('gas',sf,g.ivaGas,true,true);
   }
   h+='</div>';
-  if(editable)h+=energyHistoryButton('gas');
-
   return h;
 }
 

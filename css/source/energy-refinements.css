@@ -257,17 +257,17 @@ body:has(#evFormOv.open) .tasks-fab{visibility:hidden}
 .rut-addition-sheet>.ev-form-handle,.rut-addition-sheet>.rut-history-head{flex-shrink:0}
 .rut-addition-body{flex:1;min-height:0;overflow-y:auto}
 .rut-addition-body>.rut-recovery-confirm{width:100%;margin-top:12px}
-.ev-up-filters:has(#evBdayAdd){grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);padding:0 2px}
+.ev-up-filters:has(#evBdayAdd){grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);padding:2px}
 .ev-up-filters:has(#evBdayAdd){position:relative}
 .ev-up-filters #evBdayAdd{position:absolute;left:calc(50vw - 16px);top:50%;transform:translate(-50%,-50%);margin:0}
 .sy-hdr-right .ev-period-total{position:static}
-.ev-up-filters:has(#evBdayAdd) #evUpBirthdays{justify-self:end}
+.ev-up-filters:has(#evBdayAdd) #evUpBirthdays{grid-column:3;justify-self:end}
 .ev-up-filters .bday-header-vip{min-width:0;font-size:.64rem}
 .ev-up-order-button{display:grid;place-items:center;flex:none;width:42px;height:42px;min-width:42px;padding:0;border:0;background:transparent;color:var(--upcoming-text);font:inherit;font-size:1.8rem;line-height:1;cursor:pointer}
 .ev-up-order-button:focus-visible{outline:2px solid currentColor;outline-offset:2px;border-radius:8px}
-.ev-up-filters #evUpcomingOrder{grid-column:3;justify-self:end}
+.ev-up-filters #evUpBirthdays{min-width:78px;text-align:center}
 .ev-up-filters .bday-header-vip{justify-self:start;margin:0}
-#eventsContent>.sy-header>.ev-up-order-button,#eventsContent>.sy-header>.ev-up-birthday-toggle{position:absolute;right:20px;top:50%;transform:translateY(-50%);z-index:2}
+#eventsContent>.sy-header>.ev-up-order-button{position:absolute;right:20px;top:50%;transform:translateY(-50%);z-index:2}
 /* El selector de día conserva marco y seis huecos semanales al cambiar de mes. */
 .rut-addition-sheet:has(.rut-dpick-real) .rut-addition-body{display:flex;flex-direction:column;gap:8px;overflow:hidden}
 .rut-addition-body:has(.rut-dpick-real)>:not(.rut-dpick-real){flex-shrink:0}

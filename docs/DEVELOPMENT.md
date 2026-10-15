@@ -552,3 +552,10 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 - Cada apertura de Crear alarma empieza con mensaje vacío y ningún día seleccionado. Los días guardados por versiones anteriores se ignoran en este formulario y siguen siendo compatibles con las copias de seguridad. Un mensaje vacío se envía vacío.
 - Siesta crea una alarma puntual por MacroDroid para la hora actual más 22 minutos, con mensaje Siesta y sin días de repetición, también al cruzar medianoche. Utiliza la configuración y registro existentes; sin URL no crea una alarma.
 - `swipe-layout-quality.spec.js` contrasta geometría, fuentes y colores de la previsualización con la pantalla definitiva en Inicio, Agenda y ocho secciones adicionales. Incluye meses enviados, viajes, rutinas, notas y scroll en 320/400/440 px. `alarm-nap.spec.js` verifica aperturas vacías, horario diurno y medianoche con envíos simulados. Validación visual en Edge oculto, tema claro e iconos profesionales.
+
+## Continuidad de pintado y accesos (v478)
+- El contenido real y su copia de swipe conservan la misma composición del texto. Los avisos con animación infinita se congelan en su fase actual durante el gesto; la copia reproduce sus propiedades calculadas y se reanudan al terminar o cancelar. La nueva vista pinta un fotograma bajo la copia opaca antes de retirarla; las esquinas vuelven suavemente a su estado de reposo.
+- `swipe-paint.spec.js` compara píxeles al comenzar y finalizar en Inicio, Calendario y Agenda, con densidades 1 y 3. Verifica también el relevo sin huecos y la reanudación de los avisos al confirmar o cancelar.
+- Actualizar usa fondo del acento de Inicio e icono blanco. Hoy en Inicio comparte el relleno suave del calendario, adaptado al acento de Inicio.
+- Próximos Cumpleaños no muestra configuración de planes. El botón Eventos ocupa la misma posición que Cumpleaños en la fila de filtros, con VIP a la izquierda y Añadir centrado.
+- Los accesos Consumo y tarifas de Gas y Electricidad están al principio del detalle, bajo las pestañas, con el acento de Gastos del hogar. El detalle permanece alineado arriba aunque sea corto.
