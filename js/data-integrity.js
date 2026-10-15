@@ -34,6 +34,7 @@ function validateImport(data){
   if(data.contactData!=null)validateContactData(data.contactData);
   if(data.planOrder!=null)validateEvPlanOrder(data.planOrder);
   if(data.personalNotes!=null&&(typeof data.personalNotes!=='string'||data.personalNotes.length>50000))throw new Error('Nota personal no válida');
+  if(data.hairdresserNotes!=null&&(typeof data.hairdresserNotes!=='string'||data.hairdresserNotes.length>50000))throw new Error('Nota de peluquería no válida');
   if(data.tasks!=null)tasksValidate(data.tasks);
   if(data.personalData)personalValidateData(data.personalData);
   if(data.personalPerYear)Object.keys(data.personalPerYear).forEach(function(year){personalValidateData(data.personalPerYear[year],year);});

@@ -1,6 +1,8 @@
 /* Datos de contacto: los grupos conservan juntas sus referencias. */
 var CONTACT_DATA_KEY='excelia-contact-data-v1';
 var PERSONAL_NOTES_KEY='excelia-personal-notes-v1';
+var HAIRDRESSER_NOTES_KEY='excelia-hairdresser-notes-v1';
+var PERSONAL_NOTES_TAB='general'; // general | hairdresser
 var CONTACT_LIMIT=8;
 var CONTACT_FIELDS=[['name','Nombre y Apellidos'],['tax','DNI / NIE'],['passport','Pasaporte'],['birth','Fecha de Nacimiento'],['phone','Teléfono'],['notes','Otros Datos']];
 var CONTACT_GROUPS=[
@@ -47,6 +49,7 @@ function mergeContactData(current,incoming){
 }
 function contactData(){try{return normalizeContactData(JSON.parse(appStorage.getItem(CONTACT_DATA_KEY)||'{}'));}catch(e){return normalizeContactData({});}}
 function personalNote(){return appStorage.getItem(PERSONAL_NOTES_KEY)||'';}
+function hairdresserNote(){return appStorage.getItem(HAIRDRESSER_NOTES_KEY)||'';}
 function contactValueText(key,label,value){
   return key==='name'||key==='phone'||key.indexOf('emails.')===0?value:label+': '+value;
 }
@@ -128,7 +131,22 @@ function openPersonalData(){
 function openPersonalNotes(){
   closeSettingsMenu();var previous=NAV_BACK;
   function close(){cerrarPanel('personalNotesWrap','personalNotesOv');if(NAV_BACK===close)NAV_BACK=previous;}
-  var body='<label class="invoice-field personal-note-field"><span>Mi Nota</span><textarea id="personalNoteText" rows="14" maxlength="50000" placeholder="Escribe aquí tus notas">'+escHtml(personalNote())+'</textarea></label>';
+  var body='<div class="econ-sub-tabs personal-notes-tabs" role="tablist" aria-label="Mis notas"><button class="econ-sub-tab" role="tab" id="personalGeneralTab" aria-controls="personalGeneralPanel" data-notes-tab="general">General</button><button class="econ-sub-tab" role="tab" id="personalHairdresserTab" aria-controls="personalHairdresserPanel" data-notes-tab="hairdresser">Peluquería</button></div>';
+  body+='<label class="invoice-field personal-note-field" id="personalGeneralPanel" role="tabpanel" aria-labelledby="personalGeneralTab" data-notes-panel="general"><span>Mi Nota</span><textarea id="personalNoteText" rows="14" maxlength="50000" placeholder="Escribe aquí tus notas">'+escHtml(personalNote())+'</textarea></label>';
+  body+='<label class="invoice-field personal-note-field" id="personalHairdresserPanel" role="tabpanel" aria-labelledby="personalHairdresserTab" data-notes-panel="hairdresser"><span>Instrucciones para el peluquero</span><textarea id="hairdresserNoteText" rows="14" maxlength="50000" placeholder="Estas instrucciones aparecerán en tus eventos de peluquería">'+escHtml(hairdresserNote())+'</textarea></label>';
   var root=abrirPanel('personalNotesWrap',settingsPanelHtml('personalNotes','Notas',body,'#537b78'),{contenedor:document.body,overlay:'personalNotesOv',alCerrar:close});root.querySelector('#personalNotesClose').onclick=close;NAV_BACK=close;
-  bindSettingsEditor(root,'personalNotes',{onSave:function(){appStorage.setItem(PERSONAL_NOTES_KEY,root.querySelector('#personalNoteText').value);showToast('Nota guardada','success');}});
+  root.querySelector('.settings-editor-body').classList.add('personal-notes-body');
+  function selectTab(tab){
+    PERSONAL_NOTES_TAB=tab;
+    root.querySelectorAll('[data-notes-tab]').forEach(function(btn){var active=btn.dataset.notesTab===tab;btn.classList.toggle('active',active);btn.setAttribute('aria-selected',String(active));btn.tabIndex=active?0:-1;});
+    root.querySelectorAll('[data-notes-panel]').forEach(function(panel){panel.hidden=panel.dataset.notesPanel!==tab;});
+  }
+  root.querySelectorAll('[data-notes-tab]').forEach(function(btn){btn.onclick=function(){selectTab(btn.dataset.notesTab);};btn.onkeydown=function(e){if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();selectTab(PERSONAL_NOTES_TAB==='general'?'hairdresser':'general');root.querySelector('[data-notes-tab="'+PERSONAL_NOTES_TAB+'"]').focus();}};});
+  selectTab(PERSONAL_NOTES_TAB);
+  bindSettingsEditor(root,'personalNotes',{onSave:function(){
+    appStorage.begin();
+    try{appStorage.setItem(PERSONAL_NOTES_KEY,root.querySelector('#personalNoteText').value);appStorage.setItem(HAIRDRESSER_NOTES_KEY,root.querySelector('#hairdresserNoteText').value);appStorage.commit();}
+    catch(e){appStorage.cancel();throw e;}
+    showToast('Notas guardadas','success');
+  }});
 }

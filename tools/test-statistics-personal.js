@@ -23,6 +23,20 @@ const merged=a.mergeContactData(normalized,{emails:[{value:'two@example.invalid'
 const beforeMerge=JSON.stringify(a.contactData());a.applyFullImport({personalNotes:'No debe guardarse',contactData:{emails:[{value:'extra@example.invalid'}]}},'merge');assert.equal(JSON.stringify(a.contactData()),beforeMerge);assert.equal(a.personalNote(),'Nota sintética\nSegunda línea');
 console.log('Estadísticas, intervalos, días únicos, filtros compatibles, datos agrupados y notas: OK');
 
+a.applyFullImport({hairdresserNotes:'Laterales cortos\nArriba: <tijera>'},'replace');
+assert.equal(a.hairdresserNote(),'Laterales cortos\nArriba: <tijera>');
+a.applyFullImport({personalNotes:'General independiente'},'replace');
+assert.equal(a.hairdresserNote(),'Laterales cortos\nArriba: <tijera>');
+assert.throws(()=>a.validateImport({hairdresserNotes:12}));
+assert.throws(()=>a.validateImport({hairdresserNotes:'x'.repeat(50001)}));
+const haircut=event('haircut','Peluquería','2026-10-20',null,{title:'Corte',note:'Nota de esta cita'});
+const haircutBefore=JSON.stringify(haircut),haircutHtml=a.renderEvDetail(haircut);
+assert(haircutHtml.includes('Laterales cortos\nArriba: &lt;tijera&gt;'));
+assert(haircutHtml.includes('Nota de esta cita'));assert.equal(JSON.stringify(haircut),haircutBefore);
+assert(!a.renderEvDetail({...haircut,type:'Dentista'}).includes('ev-hairdresser-note'));
+a.applyFullImport({hairdresserNotes:''},'merge');assert(!a.renderEvDetail(haircut).includes('ev-hairdresser-note'));
+console.log('Peluquería: notas vinculadas, escape de texto, backup compatible y borrado OK');
+
 const principal=a.normalizeContactData({banks:[{label:"Uno",iban:"UNO",primary:"1"},{label:"Dos",iban:"DOS",primary:"1"}],addresses:[{primary:"1"}]});assert.equal(principal.addresses.length,0);assert.equal(principal.banks.filter(r=>r.primary==="1").length,1);assert.equal(a.mergeContactData(principal,{banks:[{label:"Uno actualizado",iban:"UNO"}]}).banks[0].primary,"1");const changed=a.mergeContactData(principal,{banks:[{label:"Dos",iban:"DOS",primary:"1"}]});assert.equal(changed.banks[1].primary,"1");assert(!changed.banks[0].primary);
 
 

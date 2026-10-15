@@ -384,6 +384,7 @@ const REGLAS = [
       'excelia-personal-cards-v1': false, // plegado local por año y partida, sin información económica
       'excelia-econ-comp-v1':      'scenarios',
       'excelia-personal-notes-v1': 'personalNotes',
+      'excelia-hairdresser-notes-v1': 'hairdresserNotes',
       'excelia-contact-data-v1': 'contactData',
       'excelia-plan-order-v1': 'planOrder',
       'excelia-mail-config-v1': 'mailConfig',

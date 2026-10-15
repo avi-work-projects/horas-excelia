@@ -567,3 +567,10 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 - El acceso Ver análisis de hipoteca encabeza Resumen y Detalle Hipoteca, en Hogar y Fiscal, usando el acento de la ventana correspondiente.
 - En consulta de Mis datos, tocar el cuerpo de una tarjeta alterna su casilla y resalta el contorno. El scroll, los botones de copia, las casillas, los desplegables y el modo de edición conservan sus acciones propias.
 - `agenda-minute-cards.spec.js` verifica la línea con capturas durante el swipe, los píxeles opacos de las esquinas al hacer scroll, gestos táctiles rápidos/lentos y cancelación, cruces de hora, accesos de hipoteca y selección de tarjetas. Revisar visualmente en Edge oculto con tema claro e iconos profesionales.
+
+## Agenda y notas de peluquería (v480)
+- Las cabeceras de mes de Agenda no añaden un segundo borde superior bajo las subpestañas. Su fondo exterior es opaco y la superficie interior tiene esquinas superiores de 16 px, también en los meses siguientes y al hacer scroll. El botón Hoy comparte dimensiones y relleno suave con Inicio, usando el acento de Agenda.
+- Mis notas tiene las pestañas General y Peluquería, con altura exterior estable, edición explícita, cancelar y copiar. `PERSONAL_NOTES_TAB` conserva la pestaña durante la sesión. Las notas generales anteriores mantienen su formato y clave.
+- `hairdresserNote()` lee `excelia-hairdresser-notes-v1`, que viaja como `hairdresserNotes` en el backup y admite hasta 50 000 caracteres. Los backups antiguos que no incluyen el campo conservan la nota existente. El guardado de ambas notas es atómico.
+- Las fichas de eventos de tipo Peluquería muestran las instrucciones actuales al consultarlas, junto a las notas particulares del evento. No se duplican en cada evento ni se sobreescriben sus notas. El texto se escapa como el resto de las notas.
+- `agenda-hairdresser.spec.js` comprueba las esquinas con contenido detrás, el formato de Hoy, la edición entre pestañas, el carrusel y la ida y vuelta del backup. Las pruebas de lógica cubren compatibilidad, validación, texto escapado y eliminación de las instrucciones.

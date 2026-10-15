@@ -139,6 +139,7 @@ function renderEvDetail(ev,fromSummary,car,occurrenceDs){
   if(repeatStr&&!isBirthday)h+='<div class="ev-detail-repeat">'+repeatStr+'</div>';
   /* En una rutina la nota repite la hora que ya sale arriba */
   if(ev.note&&!ev._rut&&!isBirthday)h+='<div class="ev-detail-note"><span class="ev-detail-label">Notas</span>'+escHtml(ev.note)+'</div>';
+  if(_evType==='Peluquería'&&hairdresserNote().trim())h+='<div class="ev-detail-note ev-hairdresser-note"><span class="ev-detail-label">Instrucciones para el peluquero</span>'+escHtml(hairdresserNote())+'</div>';
   /* Nota especifica del dia desde el que se abrio (puntuales de varios dias) */
   if(EV_EDIT_DS&&ev.dayNotes&&ev.dayNotes[EV_EDIT_DS]){
     h+='<div class="ev-detail-note ev-detail-daynote"><span class="ev-note-scope">'
