@@ -3647,6 +3647,9 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 
 /* Mantener la misma composición de texto antes, durante y después del swipe. */
 .weeks-container,.full-overlay .sy-body{will-change:transform}
+.settings-is-reading .personal-data-row,.settings-is-reading .contact-entry{border-radius:12px;cursor:pointer}
+.settings-is-reading .personal-data-row textarea,.settings-is-reading .contact-entry textarea{cursor:pointer}
+.settings-is-reading .personal-data-row:has([data-personal-select]:checked),.settings-is-reading .contact-entry:has([data-personal-select]:checked){outline:2px solid var(--settings-tone);outline-offset:-2px}
 
 /* Fuente: css/source/home-sharing.css */
 /* Cabecera de Home opaca, incluso sobre los botones oscuros de las semanas. */
@@ -3997,7 +4000,9 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .sy-body.ev-upcoming-body{padding:0;gap:0;overflow-x:hidden;scrollbar-gutter:stable}
 #eventsContent>.sy-header:has(+.ev-upcoming-body){min-height:64px}
 .ev-upcoming-content{display:flex;flex-direction:column;gap:16px;padding:16px 16px 40px;min-width:0;flex-shrink:0}
-.ev-upcoming-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;width:100%;margin:0;padding:10px 20px;box-sizing:border-box;flex-shrink:0}
+.ev-upcoming-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;width:100%;margin:0;padding:10px 20px;box-sizing:border-box;flex-shrink:0;box-shadow:inset 0 -1px 0 var(--border);background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none}
+.ev-wk-body{--swipe-rest-radius:16px;border-radius:0 0 16px 16px}
+.ev-wk-body>.ev-upcoming-tabs::after{content:'';position:absolute;top:100%;left:0;right:0;height:16px;pointer-events:none;background:radial-gradient(circle at right bottom,transparent 15.5px,var(--bg) 16px) left top/16px 16px no-repeat,radial-gradient(circle at left bottom,transparent 15.5px,var(--bg) 16px) right top/16px 16px no-repeat}
 .ev-upcoming-tabs .econ-sub-tab{flex:1;min-width:0;padding:5px 2px;font-size:.62rem;font-weight:600;line-height:1.2;color:var(--accent-bright);white-space:nowrap;transition:color .15s,background .15s,border-color .15s}
 @media(max-width:360px){.ev-upcoming-tabs .econ-sub-tab{font-size:.6rem;padding-left:0;padding-right:0}}
 

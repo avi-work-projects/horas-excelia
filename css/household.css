@@ -53,7 +53,9 @@
 .household-utility-icon{display:grid;place-items:center;flex-shrink:0;width:34px;height:34px;border-radius:10px;background:color-mix(in srgb,var(--home-tone) 10%,var(--surface));color:var(--home-tone);font-size:1.15rem}
 .household-empty{font-size:.76rem;line-height:1.6;color:var(--home-muted);padding:12px 0}
 .household-detail-link{background:#7834a6;color:#fff}
-.household-analysis-link{margin-bottom:12px;color:var(--home-tone);border-color:var(--home-tone)}
+.household-analysis-link{width:100%;margin:0;background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+#fiscalOverlay .household-analysis-link{--accent:var(--c-purple)}
+.household-detail:has(>.household-analysis-link){margin:0 auto}
 @media(max-width:360px){.household-card{padding:14px}.household-investment{flex-wrap:wrap}.household-metrics{gap:10px}}
 
 /* Pares de precios: cifra neta principal, importe con impuestos secundario. */

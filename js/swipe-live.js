@@ -37,8 +37,8 @@ function createLiveSwipe(el,resolve){
       var fresh=resolve();hide(fresh);pauseMotion(fresh,true);fresh.forEach(function(n){n.getBoundingClientRect();n.getAnimations({subtree:true}).forEach(function(a){if(a.effect.getTiming().iterations!==Infinity)try{a.finish();}catch(ignore){}});});
     }
     var to=commit?direction*distance:0,options={duration:180,easing:'ease-out',fill:'forwards'};
-    animations.push(outgoing.frame.animate([{transform:'translateX('+offset+'px)',borderRadius:'16px'},{transform:'translateX('+to+'px)',borderRadius:commit?'16px':'0px'}],options));
-    animations.push(incoming.frame.animate([{transform:'translateX('+(offset-direction*distance)+'px)',borderRadius:'16px'},{transform:'translateX('+(to-direction*distance)+'px)',borderRadius:commit?'0px':'16px'}],options));
+    animations.push(outgoing.frame.animate([{transform:'translateX('+offset+'px)',borderRadius:'16px'},{transform:'translateX('+to+'px)',borderRadius:commit?'16px':outgoing.restRadius}],options));
+    animations.push(incoming.frame.animate([{transform:'translateX('+(offset-direction*distance)+'px)',borderRadius:'16px'},{transform:'translateX('+(to-direction*distance)+'px)',borderRadius:commit?incoming.restRadius:'16px'}],options));
     Promise.all(animations.map(function(a){return a.finished.catch(function(){});})).then(function(){
       if(stopped)return;reveal();
       // Un fotograma real bajo la copia opaca antes de retirar la cobertura.

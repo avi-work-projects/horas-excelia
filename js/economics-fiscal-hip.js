@@ -407,7 +407,7 @@ function _renderHipResumen(editable){return renderHouseholdSummary(editable!==fa
 function _renderHipDetalle(editable){
   editable=editable!==false;
   var comp=DESPACHO.compra||_defaultCompra();
-  var h='';
+  var h=householdMortgageAnalysisButton();
   /* Compra section */
   h+='<div class="fiscal-section" id="hip-section-compra">';
   h+=_renderHipSectionContent('compra',editable&&FISCAL_HIP_EDITING==='compra',editable);
@@ -427,7 +427,7 @@ function _renderHipDetalle(editable){
   }
   /* Add subrogation button */
   if(editable)h+='<button class="hip-add-sub-btn" id="hipAddSub">+ A\u00f1adir subrogaci\u00f3n</button>';
-  return h+householdMortgageAnalysisButton();
+  return h;
 }
 
 function _renderHipSectionContent(sectionId,isEditing,editable){

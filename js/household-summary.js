@@ -80,11 +80,10 @@ function householdMortgageAnalysisButton(){return '<button class="ev-io-btn hous
 function renderHouseholdSummary(editable){
   var comp=DESPACHO.compra||_defaultCompra(),total=['valorCompraTotal','itpMadrid','notariaRegistro','tasacion','reformas','inmobiliaria'].reduce(function(n,k){return n+(comp[k]||0);},0),periods=[];
   for(var i=-1;i<(comp.subrogaciones||[]).length;i++){var p=householdMortgagePeriod(comp,i,new Date());if(p)periods.push(p);}
-  var h='<div class="household-summary">';
+  var h='<div class="household-summary">'+(periods.length?householdMortgageAnalysisButton():'');
   if(total)h+='<div class="household-investment"><span>Inversión en la vivienda<small>Compra, impuestos y gastos</small></span><strong>'+fcPlain(total)+'</strong></div>';
   if(periods.length){
     h+=householdMortgageCard(comp,periods[periods.length-1],editable);
-    h+=householdMortgageAnalysisButton();
     if(periods.length>1){h+='<details class="household-history"><summary>Hipotecas anteriores <span>'+ (periods.length-1)+'</span></summary>';periods.slice(0,-1).reverse().forEach(function(p){h+=householdMortgageCard(comp,p,editable);});h+='</details>';}
   }else h+='<div class="household-empty">Sin hipoteca configurada. Puedes consultar tus suministros a continuación.</div>';
   h+='<h2 class="household-section-title">Suministros</h2><div class="household-utilities">'+householdUtilityCard('luz',editable)+householdUtilityCard('gas',editable)+'</div>';

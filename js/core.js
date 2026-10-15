@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v478 — Swipe sin parpadeos y accesos a mano';
+var APP_VERSION = 'v479 — Agenda redondeada y minutero ágil';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

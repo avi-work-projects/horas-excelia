@@ -133,7 +133,9 @@
   var DRUM_ITEM_H=44,DRUM_CYCLES=3,_drumWrapTimer=null;
   function buildDrumPicker(id,count,initVal){
     var drum=document.getElementById(id);if(!drum)return;
-    drum._count=count;drum._drumReady=false;
+    drum._drumReady=false;
+    bindMinuteDrumMotion(drum,count);
+    drum._count=count;
     drum.innerHTML='';drum._pickerItems=null;drum._pickerSelected=null;
     var padT=document.createElement('div');padT.style.height=DRUM_ITEM_H+'px';drum.appendChild(padT);
     for(var c=0;c<DRUM_CYCLES;c++){
@@ -176,7 +178,7 @@
     _drumWrapTimer=null;
     var minDrum=document.getElementById('drumMin');
     var hourDrum=document.getElementById('drumHour');
-    if(!minDrum||!hourDrum||!minDrum._drumReady)return;
+    if(!minDrum||!hourDrum||!minDrum._drumReady||minDrum._minuteGesture)return;
     var minCount=minDrum._count||60;
     var midMin=Math.floor(DRUM_CYCLES/2)*minCount; // índice del inicio del ciclo central
     var total=Math.round(minDrum.scrollTop/DRUM_ITEM_H);
@@ -195,11 +197,10 @@
     // Re-centrar minutos en ciclo central (mismo valor, sin salto visual)
     var minVal=((total%minCount)+minCount)%minCount;
     var newMinTotal=midMin+minVal;
-    setTimeout(function(){
-      if(minDrum.scrollTo)minDrum.scrollTo({top:newMinTotal*DRUM_ITEM_H,behavior:'instant'});
-      else minDrum.scrollTop=newMinTotal*DRUM_ITEM_H;
-      updateDrumSelected(minDrum);
-    },50);
+    // Recentrar antes del siguiente scrollend: el mismo cruce solo suma una hora.
+    if(minDrum.scrollTo)minDrum.scrollTo({top:newMinTotal*DRUM_ITEM_H,behavior:'instant'});
+    else minDrum.scrollTop=newMinTotal*DRUM_ITEM_H;
+    updateDrumSelected(minDrum);
   }
 
   /* ── Alarma: botones días de semana (generados dinámicamente, ordenados desde hoy) ── */
