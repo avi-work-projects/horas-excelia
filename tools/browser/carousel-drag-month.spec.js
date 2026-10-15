@@ -22,6 +22,7 @@ test('carrusel: arrastre muestra la siguiente ficha, cancela, navega y mantiene 
  const original=await sheet.boundingBox();const heading=await page.locator('.ev-detail-heading').boundingBox();const x=heading.x+heading.width*.7,y=heading.y+15;
  await page.mouse.move(x,y);await page.mouse.down();await page.mouse.move(x-45,y,{steps:5});await expect(page.locator('.ev-car-preview')).toHaveCount(2);await expect(title).toHaveText('Primera gestión');
  const preview=await page.locator('.ev-car-preview').last().boundingBox();expect(preview.x).toBeLessThan(400);await page.screenshot({path:info.outputPath('arrastre.png')});
+ const current=await page.locator('.ev-car-content:not(.ev-car-preview)').boundingBox();expect(preview.x-current.x-current.width).toBeCloseTo(24,0);
  expect(await page.locator('[id]').evaluateAll(els=>els.map(e=>e.id).filter((id,i,ids)=>ids.indexOf(id)!==i))).toEqual([]);
  await page.mouse.up();await expect(page.locator('.ev-car-preview')).toHaveCount(0);await expect(title).toHaveText('Primera gestión');expect(await sheet.boundingBox()).toEqual(original);
  await page.mouse.move(x,y);await page.mouse.down();await page.mouse.move(x-150,y,{steps:8});await page.mouse.up();await expect(title).toHaveText('Limpieza de prueba');await expect(page.locator('.ev-car-preview')).toHaveCount(0);expect(await sheet.boundingBox()).toEqual(original);expect(await page.evaluate(()=>EV_MONTH)).toBe(9);

@@ -1,6 +1,9 @@
 /* Un gesto ya autorizado mueve solo el contenido; navegación y acciones quedan fijas. */
 var SWIPE_PREVIEW_STYLES=null;
 var SWIPE_PREVIEW_SHEET=null;
+// Espacio visible entre las dos vistas, también al completar la transición.
+var SWIPE_CONTENT_GAP=24;
+function swipeContentDistance(width){return width+SWIPE_CONTENT_GAP;}
 var SWIPE_FIXED_SELECTOR='.econ-sub-tabs,.rut-sub-tabs,.boda-sub-tabs,.ev-annual-controls,.ev-io-row,.sy-header,.bday-header,.energy-year-nav,.fiscal-hip-tabs,.est-nav,.boda-cal-nav,.ev-dow-row,.ev-week-hdr,.bday-week-hdr';
 function swipePreviewRoot(frame,copy,source){
   // La copia solo pinta: sus clases tampoco participan en consultas ni listeners de la app.
@@ -51,8 +54,8 @@ function animateContentSwipe(resolve,change,direction,offset){
   change();var fresh=resolve();
   if(before===fresh.map(function(n){return n.outerHTML;}).join(''))return;
   var duration=180,animations=[];
-  shots.forEach(function(s){document.body.appendChild(s.frame);var a=s.copy.animate([{transform:'translateX('+(offset||0)+'px)'},{transform:'translateX('+(direction*s.width)+'px)'}],{duration:duration,easing:'ease-out'});animations.push(a);a.finished.catch(function(){}).then(function(){s.frame.remove();});});
-  fresh.forEach(function(n){if(!n.getBoundingClientRect().width)return;var width=n.getBoundingClientRect().width;animations.push(n.animate([{translate:(-direction*width+(offset||0))+'px 0'},{translate:'0px 0'}],{duration:duration,easing:'ease-out'}));});
+  shots.forEach(function(s){document.body.appendChild(s.frame);var a=s.copy.animate([{transform:'translateX('+(offset||0)+'px)'},{transform:'translateX('+(direction*swipeContentDistance(s.width))+'px)'}],{duration:duration,easing:'ease-out'});animations.push(a);a.finished.catch(function(){}).then(function(){s.frame.remove();});});
+  fresh.forEach(function(n){if(!n.getBoundingClientRect().width)return;var width=n.getBoundingClientRect().width;animations.push(n.animate([{translate:(-direction*swipeContentDistance(width)+(offset||0))+'px 0'},{translate:'0px 0'}],{duration:duration,easing:'ease-out'}));});
   // Una transición nueva sustituye a la anterior sin retener capas ni bloquear gestos.
   return function(){animations.forEach(function(a){a.cancel();});shots.forEach(function(s){s.frame.remove();});swipeContentReset(fresh);};
 }

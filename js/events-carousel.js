@@ -13,7 +13,7 @@ function bindEvCarouselDrag(sheet,car,fromSummary){
     viewport.appendChild(node);previews.push({node:node,step:step});
   }
   function position(offset){
-    var width=viewport.clientWidth+12;
+    var width=swipeContentDistance(viewport.clientWidth);
     content.style.transform='translateX('+offset+'px)';
     previews.forEach(function(p){p.node.style.transform='translateX('+(offset+p.step*width)+'px)';});
   }
@@ -28,7 +28,7 @@ function bindEvCarouselDrag(sheet,car,fromSummary){
     var duration=matchMedia('(prefers-reduced-motion: reduce)').matches?0:180;
     content.style.transition='transform '+duration+'ms ease-out';
     previews.forEach(function(p){p.node.style.transition=content.style.transition;});
-    position(step?-step*(viewport.clientWidth+12):0);
+    position(step?-step*swipeContentDistance(viewport.clientWidth):0);
     setTimeout(function(){
       var active=sheet.isConnected&&EV_CAR.ds===car.ds&&EV_CAR.i===car.i;
       clear();settling=false;
