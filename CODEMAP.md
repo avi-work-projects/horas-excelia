@@ -442,7 +442,7 @@
 
 > `css/styles.css` se genera: editar las fuentes listadas a continuación.
 
-### css/source/base.css  _(362 líneas)_
+### css/source/base.css  _(358 líneas)_
 
 **Secciones:**
 
@@ -461,18 +461,19 @@
 - SW UPDATE BUTTON (en menú ⋯):205
 - Aviso pulsable entero (el de nueva version): se nota que se puede tocar.:209
 - ANIMATIONS:213
-- Los dias marcados (festivo/vacaciones/ausencia) mandan sobre la jornada:242
-- OVERLAY BASE (summary, econ, bday, events):248
-- SHARED OVERLAY HEADER:253
-- SHARED BODY:274
-- En Proximos la cabecera de semana manda sobre las de dia: va en pastilla:323
-- Vacaciones config:329
-- Quitar festivos/vacaciones checkboxes:333
-- Month summary breakdown:355
-- Ausencia list tag:360
+- Las semanas se desplazan con el mes, sin otra entrada vertical.:215
+- Los dias marcados (festivo/vacaciones/ausencia) mandan sobre la jornada:238
+- OVERLAY BASE (summary, econ, bday, events):244
+- SHARED OVERLAY HEADER:249
+- SHARED BODY:270
+- En Proximos la cabecera de semana manda sobre las de dia: va en pastilla:319
+- Vacaciones config:325
+- Quitar festivos/vacaciones checkboxes:329
+- Month summary breakdown:351
+- Ausencia list tag:356
 
 **Rangos por prefijo de clase:**
-.action-btn:162-166 · .app-logo:63-63 · .app-version:126-126 · .bd-export:268-268 · .bottom-sheet:172-173 · .btn-icon:105-105 · .csv-export:78-79 · .data-actions:101-101 · .data-btn:102-117 · .data-menu:119-125 · .day-cell:140-246 · .day-date:145-145 · .day-hours:146-146 · .day-name:144-144 · .day-status:153-153 · .days-grid:139-139 · .default-hours:74-83 · .ev-dot:158-158 · .ev-dots:157-157 · .ev-upcoming:328-328 · .ev-week:324-325 · .excl-item:354-354 · .excl-row:334-334 · .full-overlay:249-250 · .header:59-61 · .header-brand:62-62 · .hour-chip:92-93 · .hour-chips:91-91 · .hour-picker:89-90 · .hours-chip:86-87 · .hours-chips:85-85 · .hours-control:73-73 · .hours-label:84-84 · .hours-panel:88-88 · .ico-doc:80-80 · .ico-exportar:269-269 · .month-nav:64-66 · .month-stat:95-98 · .month-summary:94-94 · .ms-breakdown:356-358 · .ms-hrs:100-100 · .ms-label:99-99 · .ms-num:96-96 · .ms-sep:359-359 · .nav-btn:67-68 · .option-desc:188-188 · .option-dot:181-185 · .option-hours:189-189 · .option-info:186-186 · .option-label:187-187 · .overlay:170-171 · .sent-badge:136-136 · .sheet-handle:174-174 · .sheet-option:178-180 · .sheet-options:177-177 · .sheet-subtitle:176-176 · .sheet-title:175-175 · .sw-upd:206-206 · .sy-back:255-256 · .sy-body:275-275 · .sy-card:286-293 · .sy-cards3:278-278 · .sy-cards4:279-279 · .sy-chart:304-304 · .sy-hdr:260-260 · .sy-header:254-259 · .sy-lbl:295-295 · .sy-list:308-361 · .sy-month:322-322 · .sy-nav:264-272 · .sy-note:305-307 · .sy-pdf:266-267 · .sy-puente:314-318 · .sy-section:276-277 · .sy-spain:280-285 · .sy-suelto:319-321 · .sy-table:296-300 · .sy-td:301-301 · .sy-tr:302-303 · .sy-val:291-294 · .sy-year:257-263 · .toast:192-211 · .toast-undo:208-208 · .today-btn:69-70 · .vac-config:330-332 · .week-actions:161-161 · .week-card:130-228 · .week-header:133-133 · .week-info:134-135 · .week-total:137-137 · .weeks-container:129-129
+.action-btn:162-166 · .app-logo:63-63 · .app-version:126-126 · .bd-export:264-264 · .bottom-sheet:172-173 · .btn-icon:105-105 · .csv-export:78-79 · .data-actions:101-101 · .data-btn:102-117 · .data-menu:119-125 · .day-cell:140-242 · .day-date:145-145 · .day-hours:146-146 · .day-name:144-144 · .day-status:153-153 · .days-grid:139-139 · .default-hours:74-83 · .ev-dot:158-158 · .ev-dots:157-157 · .ev-upcoming:324-324 · .ev-week:320-321 · .excl-item:350-350 · .excl-row:330-330 · .full-overlay:245-246 · .header:59-61 · .header-brand:62-62 · .hour-chip:92-93 · .hour-chips:91-91 · .hour-picker:89-90 · .hours-chip:86-87 · .hours-chips:85-85 · .hours-control:73-73 · .hours-label:84-84 · .hours-panel:88-88 · .ico-doc:80-80 · .ico-exportar:265-265 · .month-nav:64-66 · .month-stat:95-98 · .month-summary:94-94 · .ms-breakdown:352-354 · .ms-hrs:100-100 · .ms-label:99-99 · .ms-num:96-96 · .ms-sep:355-355 · .nav-btn:67-68 · .option-desc:188-188 · .option-dot:181-185 · .option-hours:189-189 · .option-info:186-186 · .option-label:187-187 · .overlay:170-171 · .sent-badge:136-136 · .sheet-handle:174-174 · .sheet-option:178-180 · .sheet-options:177-177 · .sheet-subtitle:176-176 · .sheet-title:175-175 · .sw-upd:206-206 · .sy-back:251-252 · .sy-body:271-271 · .sy-card:282-289 · .sy-cards3:274-274 · .sy-cards4:275-275 · .sy-chart:300-300 · .sy-hdr:256-256 · .sy-header:250-255 · .sy-lbl:291-291 · .sy-list:304-357 · .sy-month:318-318 · .sy-nav:260-268 · .sy-note:301-303 · .sy-pdf:262-263 · .sy-puente:310-314 · .sy-section:272-273 · .sy-spain:276-281 · .sy-suelto:315-317 · .sy-table:292-296 · .sy-td:297-297 · .sy-tr:298-299 · .sy-val:287-290 · .sy-year:253-259 · .toast:192-211 · .toast-undo:208-208 · .today-btn:69-70 · .vac-config:326-328 · .week-actions:161-161 · .week-card:130-224 · .week-header:133-133 · .week-info:134-135 · .week-total:137-137 · .weeks-container:129-129
 
 ### css/source/economics.css  _(681 líneas)_
 

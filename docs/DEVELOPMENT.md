@@ -539,3 +539,6 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 ## Separación durante el swipe (v475)
 - Por indicación de Ángel del 15/10/2026, los contenidos actual y vecino dejan 24 px de separación durante el arrastre y al completar o cancelar la transición, en ambos sentidos. `swipeContentDistance` comparte la distancia entre meses, pestañas y fichas del día. El hueco muestra el fondo de la vista; no reduce el ancho del contenido ni mueve las cabeceras y acciones compartidas.
 - Durante el gesto se suspenden las transiciones CSS de los elementos desplazados, para que sigan el dedo sin retraso ni invadan el hueco. Al terminar se restauran sus estilos originales.
+
+## Semanas sin entrada vertical (v476)
+- Las tarjetas semanales de Home no tienen animación de entrada ni retardos por fila. Al cambiar de mes acompañan únicamente la transición horizontal compartida, tanto en la previsualización como después de soltar el dedo. Esto elimina la aparición escalonada desde abajo sin afectar a otros usos de `fadeUp`.
