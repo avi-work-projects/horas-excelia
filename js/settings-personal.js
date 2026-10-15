@@ -104,6 +104,16 @@ function openPersonalData(){
   var copy=document.createElement('button');copy.className='ev-btn personal-copy-selected';copy.id='personalCopySelected';root.querySelector('.settings-editor-actions').prepend(copy);
   function selection(){copy.disabled=!root.querySelector('[data-personal-select]:checked');copy.innerHTML=settingsCopyIcon(false)+'<span>Copiar Selección</span>';copy.classList.remove('copied');copy.setAttribute('aria-label','Copiar Selección');}
   root.querySelectorAll('[data-personal-select]').forEach(function(el){el.onchange=selection;});
+  var selectionStart=null;
+  root.addEventListener('pointerdown',function(e){selectionStart={x:e.clientX,y:e.clientY};},{passive:true});
+  root.addEventListener('click',function(e){
+    if(!root.classList.contains('settings-is-reading')||e.target.closest('button,input,summary'))return;
+    var card=e.target.closest('.personal-data-row,.contact-entry');if(!card)return;
+    var label=e.target.closest('label');if(label&&label.querySelector('[data-personal-select]'))return;
+    if(selectionStart&&Math.hypot(e.clientX-selectionStart.x,e.clientY-selectionStart.y)>6)return;
+    var box=card.querySelector('[data-personal-select]');if(!box||box.hidden)return;
+    e.preventDefault();box.checked=!box.checked;selection();
+  });
   copy.onclick=function(){var text=contactSelectionText(root);if(text)settingsCopyText(text,copy);else showToast('Los campos seleccionados están vacíos');};
   var updateGroups=bindContactGroups(root);
   if(typeof ResizeObserver!=='undefined'){var lastWidth=0;resizeObserver=new ResizeObserver(function(entries){var width=entries[0].contentRect.width;if(width!==lastWidth){lastWidth=width;contactResizeFields(root);}});resizeObserver.observe(root.querySelector('.settings-editor-sheet'));}

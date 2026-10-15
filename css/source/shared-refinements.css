@@ -1018,3 +1018,6 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 
 /* Mantener la misma composición de texto antes, durante y después del swipe. */
 .weeks-container,.full-overlay .sy-body{will-change:transform}
+.settings-is-reading .personal-data-row,.settings-is-reading .contact-entry{border-radius:12px;cursor:pointer}
+.settings-is-reading .personal-data-row textarea,.settings-is-reading .contact-entry textarea{cursor:pointer}
+.settings-is-reading .personal-data-row:has([data-personal-select]:checked),.settings-is-reading .contact-entry:has([data-personal-select]:checked){outline:2px solid var(--settings-tone);outline-offset:-2px}

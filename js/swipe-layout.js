@@ -44,5 +44,5 @@ function swipeLayoutFrame(el,resolve,region,html,kind,seed){
   tree.scrolls.forEach(function(s){if(s.node.isConnected){s.node.scrollTop=s.top;s.node.scrollLeft=s.left;}});
   var body=copy.closest('.sy-body');if(body){var tabs=body.querySelector('.econ-sub-tabs');if(tabs){body.style.setProperty('--ev-subtab-h',tabs.offsetHeight+'px');body.style.setProperty('--bday-tabs-height',tabs.offsetHeight+'px');}body.scrollTop=html?(swipeKeepsPreviewScroll(el)?region.scroll.scrollTop:0):region.scroll.scrollTop;}
   if(body&&typeof evLayoutWeekTitles==='function')evLayoutWeekTitles(body);
-  return {frame:frame,copy:copy,scope:tree.body,nodes:nodes};
+  return {frame:frame,copy:copy,scope:tree.body,nodes:nodes,restRadius:getComputedStyle(body||copy).getPropertyValue('--swipe-rest-radius').trim()||'0px'};
 }

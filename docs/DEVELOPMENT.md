@@ -559,3 +559,11 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 - Actualizar usa fondo del acento de Inicio e icono blanco. Hoy en Inicio comparte el relleno suave del calendario, adaptado al acento de Inicio.
 - Próximos Cumpleaños no muestra configuración de planes. El botón Eventos ocupa la misma posición que Cumpleaños en la fila de filtros, con VIP a la izquierda y Añadir centrado.
 - Los accesos Consumo y tarifas de Gas y Electricidad están al principio del detalle, bajo las pestañas, con el acento de Gastos del hogar. El detalle permanece alineado arriba aunque sea corto.
+
+## Agenda, minutero y selección de datos (v479)
+- La línea bajo Próximos, Agenda, Todos y Estadísticas se dibuja dentro de la barra fija con una sombra interior. Las vistas de swipe no pueden taparla.
+- Por nueva petición de Ángel, Agenda mantiene las esquinas de 16 px también en reposo; sustituye el criterio de v477 de redondear solo durante el gesto. Las máscaras superiores usan el fondo opaco de la ventana y los bordes inferiores recortan el área de scroll. El radio final de la transición coincide con el de la vista de destino.
+- `bindMinuteDrumMotion` se comparte entre las ruedas de 60 minutos del selector general y Crear alarma. El desplazamiento depende de la velocidad del dedo, con inercia limitada y ajuste al minuto al detenerse o cancelar. Un nuevo toque detiene la inercia. Las ruedas de horas y cuartos de hora conservan su funcionamiento. El cruce de hora de la alarma se procesa una sola vez, al terminar el gesto.
+- El acceso Ver análisis de hipoteca encabeza Resumen y Detalle Hipoteca, en Hogar y Fiscal, usando el acento de la ventana correspondiente.
+- En consulta de Mis datos, tocar el cuerpo de una tarjeta alterna su casilla y resalta el contorno. El scroll, los botones de copia, las casillas, los desplegables y el modo de edición conservan sus acciones propias.
+- `agenda-minute-cards.spec.js` verifica la línea con capturas durante el swipe, los píxeles opacos de las esquinas al hacer scroll, gestos táctiles rápidos/lentos y cancelación, cruces de hora, accesos de hipoteca y selección de tarjetas. Revisar visualmente en Edge oculto con tema claro e iconos profesionales.

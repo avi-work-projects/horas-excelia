@@ -18,6 +18,58 @@ function timePickerDrum(id,count,label,values){
   for(var cycle=0;cycle<3;cycle++)for(var i=0;i<count;i++)h+='<div class="drum-picker-item" data-val="'+(values?values[i]:i)+'">'+String(values?values[i]:i).padStart(2,'0')+'</div>';
   return h+'<div style="height:44px"></div></div><div class="drum-sel-lines"></div></div></div>';
 }
+/* Minutos de uno en uno: precisión lenta y recorrido largo con un gesto rápido. */
+function bindMinuteDrumMotion(drum,count){
+  if(drum._minuteStop)drum._minuteStop();
+  if(count!==60||drum._minuteMotionBound)return;
+  drum._minuteMotionBound=true;drum.style.touchAction='none';
+  var drag=null,frame=0,velocity=0,lastFrame=0,clickUntil=0,snap,behavior;
+  function finish(){
+    cancelAnimationFrame(frame);frame=0;drag=null;
+    if(!drum._minuteGesture)return;
+    drum.scrollTop=Math.round(drum.scrollTop/44)*44;
+    drum.style.scrollSnapType=snap;drum.style.scrollBehavior=behavior;drum._minuteGesture=false;
+    drum.dispatchEvent(new Event('scroll'));drum.dispatchEvent(new Event('scrollend'));
+  }
+  drum._minuteStop=finish;
+  function position(delta){
+    var before=drum.scrollTop;drum.scrollTop=Math.max(0,Math.min(drum.scrollHeight-drum.clientHeight,before+delta));
+    return Math.abs(drum.scrollTop-before)>.1;
+  }
+  function coast(now){
+    if(!drum.isConnected||!drum.getClientRects().length){finish();return;}
+    var dt=Math.min(32,now-lastFrame);lastFrame=now;velocity*=Math.exp(-dt/180);
+    if(Math.abs(velocity)<.08||!position(velocity*dt)){finish();return;}
+    frame=requestAnimationFrame(coast);
+  }
+  drum.addEventListener('pointerdown',function(e){
+    if(e.pointerType==='mouse'){finish();return;}
+    if(!e.isPrimary)return;
+    finish();clickUntil=0;snap=drum.style.scrollSnapType;behavior=drum.style.scrollBehavior;
+    drum.style.scrollSnapType='none';drum.style.scrollBehavior='auto';drum._minuteGesture=true;
+    drag={id:e.pointerId,y:e.clientY,start:e.clientY,time:e.timeStamp,moved:false};velocity=0;
+  });
+  drum.addEventListener('pointermove',function(e){
+    if(!drag||drag.id!==e.pointerId)return;
+    var dy=drag.y-e.clientY,dt=Math.max(8,e.timeStamp-drag.time),speed=dy/dt;
+    if(!drag.moved&&Math.abs(e.clientY-drag.start)>4){drag.moved=true;drum.setPointerCapture(e.pointerId);}
+    if(drag.moved){
+      e.preventDefault();var gain=1+Math.min(5,Math.max(0,(Math.abs(speed)-.18)*7));
+      position(dy*gain);velocity=Math.max(-9,Math.min(9,speed*gain));
+    }
+    drag.y=e.clientY;drag.time=e.timeStamp;
+  });
+  function release(e){
+    if(!drag||drag.id!==e.pointerId)return;
+    var moved=drag.moved,recent=e.timeStamp-drag.time<90;drag=null;
+    if(moved)clickUntil=performance.now()+350;
+    if(e.type==='pointercancel'||!moved||!recent||Math.abs(velocity)<.3){finish();return;}
+    lastFrame=performance.now();frame=requestAnimationFrame(coast);
+  }
+  drum.addEventListener('pointerup',release);drum.addEventListener('pointercancel',release);
+  drum.addEventListener('keydown',finish,true);drum.addEventListener('wheel',finish,{passive:true});
+  drum.addEventListener('click',function(e){if(performance.now()<clickUntil){e.preventDefault();e.stopImmediatePropagation();}},true);
+}
 function bindTimePickerDrum(drum,count,value,values){
   var items=Array.from(drum.querySelectorAll('.drum-picker-item'));
   function index(){return Math.max(0,Math.min(count*3-1,Math.round(drum.scrollTop/44)));}
@@ -32,6 +84,7 @@ function bindTimePickerDrum(drum,count,value,values){
     if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();move(index()+(e.key==='ArrowUp'?-1:1));}
   });
   move(count+(values?Math.max(0,values.indexOf(value)):value));
+  bindMinuteDrumMotion(drum,count);
   return function(){return values?values[index()%count]:index()%count;};
 }
 function openTimePicker(input){
