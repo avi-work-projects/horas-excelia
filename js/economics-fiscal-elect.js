@@ -8,7 +8,7 @@ function _renderElectDetalle(editable){
   if(!DESPACHO.elect)DESPACHO.elect={modoPotencia:'doble',potenciaP1:3.3,potenciaP2:3.3,potenciaTotal:6.6,precioPotP1:0,precioPotP2:0,precioKwh:0,terminoFijo:0,comercializadora:''};
   var e=DESPACHO.elect;
   if(e.ivaElect===undefined)e.ivaElect=21;
-  var h='<div class="fiscal-section">';
+  var h=(editable?energyHistoryButton('luz'):'')+'<div class="fiscal-section">';
   h+='<div class="hip-section-hdr"><span class="fiscal-section-title">\u26A1 Tarifa de Electricidad</span>';
   if(editable&&!FISCAL_ELECT_EDITING)h+='<button class="hip-edit-btn" id="electEditBtn">Editar</button>';
   h+='</div>';
@@ -53,9 +53,6 @@ function _renderElectDetalle(editable){
   }
   if(e.modo==='fijo'&&FISCAL_ELECT_EDITING)h+='<p class="energy-caption">Cuota fija activa: '+fcPlain(e.cuotaFija)+'/mes. Los precios de consumo y potencia quedan guardados para cambiar de modalidad.</p>';
   h+='</div>';
-  if(editable)h+=energyHistoryButton('luz');
-
-
   return h;
 }
 

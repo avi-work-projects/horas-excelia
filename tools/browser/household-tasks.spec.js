@@ -4,11 +4,13 @@ test.beforeEach(async({page})=>{
  await page.clock.setFixedTime(new Date('2026-10-01T10:00:00'));
  await page.addInitScript(()=>{
   sessionStorage.setItem('excelia-popup-dismissed','1');
+  localStorage.setItem('excelia-theme-v1','light');
+  localStorage.setItem('excelia-nav-icons-v1','professional');
   if(!localStorage.getItem('excelia-despacho-v1'))localStorage.setItem('excelia-despacho-v1',JSON.stringify({elect:{modoPotencia:'doble',potenciaP1:3.3,potenciaP2:3.3,potenciaTotal:3.3,precioPotP1:.078456,precioPotP2:.003421,precioKwh:.1249,terminoFijo:0,comercializadora:'Compañía de prueba',ivaElect:21}}));
  });
 });
 
-test('fiscal consulta, hogar edita y vuelve al mismo detalle conservando la precisión',async({page})=>{
+test('fiscal consulta, hogar edita y vuelve al mismo detalle conservando la precisión',async({page},info)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('/');
  await page.evaluate(()=>{FISCAL_TAB='despacho';FISCAL_HIP_SUB='elect';openFiscal(2026);});
  for(const tab of ['resumen','detalle','gas','elect']){
@@ -29,6 +31,13 @@ test('fiscal consulta, hogar edita y vuelve al mismo detalle conservando la prec
  await page.locator('#fiscalOverlay [data-nav="household"]').click();await page.locator('[data-hipsub="gas"]').click();
  await page.reload();await page.locator('#householdBtn').click();await expect(page.locator('[data-hipsub="gas"]')).toHaveClass(/active/);
  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('excelia-despacho-v1')).elect.precioKwh)).toBe(.1249);
+ for(const tab of ['gas','elect']){
+  await page.locator('#householdOverlay [data-hipsub="'+tab+'"]').click();
+  const button=page.locator('#householdOverlay .energy-analysis-open');await expect(button).toBeInViewport();
+  const geometry=await button.evaluate(b=>{const r=b.getBoundingClientRect(),section=b.nextElementSibling.getBoundingClientRect(),tabs=b.closest('.sy-body').querySelector('.fiscal-hip-tabs');return {first:b.parentElement.firstElementChild===b,above:r.bottom<=section.top+1,gap:r.top-tabs.getBoundingClientRect().bottom,color:getComputedStyle(b).backgroundColor,accent:getComputedStyle(tabs.querySelector('.active')).color};});expect(geometry.first).toBe(true);expect(geometry.above).toBe(true);expect(geometry.gap).toBeGreaterThanOrEqual(12);expect(geometry.gap).toBeLessThanOrEqual(20);expect(geometry.color).toBe(geometry.accent);
+  await page.screenshot({path:info.outputPath('hogar-'+tab+'.png'),animations:'disabled'});
+  await button.click();await expect(page.locator('#energyAnalysisOverlay')).toContainText(tab==='gas'?'Estudio de gas':'Estudio de electricidad');await page.locator('#energyAnalysisBack').click();
+ }
  expect(errors).toEqual([]);
 });
 

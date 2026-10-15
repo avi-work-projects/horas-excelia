@@ -3359,7 +3359,7 @@ body:has(#bdDateOv.open) .tasks-fab{visibility:hidden}
 #bdFormOv .bday-form-name-row .bday-person-vip{flex:none;gap:4px;margin:0}
 #bdFormOv .bday-form-name-row .bday-person-vip img{width:32px}
 .bday-group-tools summary{color:var(--birthday-tone);border-color:color-mix(in srgb,var(--birthday-tone) 50%,var(--border));background:color-mix(in srgb,var(--birthday-tone) 9%,var(--surface))}
-.app-update-fab{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:380;width:48px;height:48px;padding:0;border:1.5px solid var(--home-tone);border-radius:17px;background:#fff;color:var(--home-tone);box-shadow:0 4px 15px #21163a33;display:grid;place-items:center;cursor:pointer}
+.app-update-fab{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:380;width:48px;height:48px;padding:0;border:1.5px solid var(--home-tone);border-radius:17px;background:var(--home-tone);color:#fff;box-shadow:0 4px 15px #21163a33;display:grid;place-items:center;cursor:pointer}
 .app-update-fab svg{width:27px;height:27px;flex:none}
 .app-update-fab:focus-visible{outline:2px solid var(--text);outline-offset:3px}
 
@@ -3521,7 +3521,7 @@ body:has(#bdGroupEditOv.open) .tasks-fab{visibility:hidden}
 .panel-header-centered h2{grid-column:2;text-align:center}
 .panel-header-centered .sy-back{width:36px;height:36px;margin:0;justify-self:start}
 
-#todayBtn{color:var(--home-tone);border-color:var(--home-tone)}
+#todayBtn{color:var(--home-tone);border-color:var(--home-tone);background:color-mix(in srgb,var(--home-tone) 9%,var(--surface))}
 #todayBtn:active{background:var(--home-tone);color:#fff}
 
 .settings-edit-links{display:grid;gap:8px;padding:10px 12px}
@@ -3644,6 +3644,9 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 .ev-list-search-row .ev-search input{min-width:0;width:100%;font-size:.7rem}
 .ev-stat-period button{border:1px solid var(--border);border-radius:10px;background:var(--surface);padding:10px 4px;color:var(--text-muted);font-size:.75rem}
 .ev-stat-period button.active{border-color:var(--c-green);background:color-mix(in srgb,var(--c-green) 9%,var(--surface));color:var(--c-green);box-shadow:inset 0 0 0 1px var(--c-green)}
+
+/* Mantener la misma composición de texto antes, durante y después del swipe. */
+.weeks-container,.full-overlay .sy-body{will-change:transform}
 
 /* Fuente: css/source/home-sharing.css */
 /* Cabecera de Home opaca, incluso sobre los botones oscuros de las semanas. */
@@ -4080,17 +4083,17 @@ body:has(#evFormOv.open) .tasks-fab{visibility:hidden}
 .rut-addition-sheet>.ev-form-handle,.rut-addition-sheet>.rut-history-head{flex-shrink:0}
 .rut-addition-body{flex:1;min-height:0;overflow-y:auto}
 .rut-addition-body>.rut-recovery-confirm{width:100%;margin-top:12px}
-.ev-up-filters:has(#evBdayAdd){grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);padding:0 2px}
+.ev-up-filters:has(#evBdayAdd){grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);padding:2px}
 .ev-up-filters:has(#evBdayAdd){position:relative}
 .ev-up-filters #evBdayAdd{position:absolute;left:calc(50vw - 16px);top:50%;transform:translate(-50%,-50%);margin:0}
 .sy-hdr-right .ev-period-total{position:static}
-.ev-up-filters:has(#evBdayAdd) #evUpBirthdays{justify-self:end}
+.ev-up-filters:has(#evBdayAdd) #evUpBirthdays{grid-column:3;justify-self:end}
 .ev-up-filters .bday-header-vip{min-width:0;font-size:.64rem}
 .ev-up-order-button{display:grid;place-items:center;flex:none;width:42px;height:42px;min-width:42px;padding:0;border:0;background:transparent;color:var(--upcoming-text);font:inherit;font-size:1.8rem;line-height:1;cursor:pointer}
 .ev-up-order-button:focus-visible{outline:2px solid currentColor;outline-offset:2px;border-radius:8px}
-.ev-up-filters #evUpcomingOrder{grid-column:3;justify-self:end}
+.ev-up-filters #evUpBirthdays{min-width:78px;text-align:center}
 .ev-up-filters .bday-header-vip{justify-self:start;margin:0}
-#eventsContent>.sy-header>.ev-up-order-button,#eventsContent>.sy-header>.ev-up-birthday-toggle{position:absolute;right:20px;top:50%;transform:translateY(-50%);z-index:2}
+#eventsContent>.sy-header>.ev-up-order-button{position:absolute;right:20px;top:50%;transform:translateY(-50%);z-index:2}
 /* El selector de día conserva marco y seis huecos semanales al cambiar de mes. */
 .rut-addition-sheet:has(.rut-dpick-real) .rut-addition-body{display:flex;flex-direction:column;gap:8px;overflow:hidden}
 .rut-addition-body:has(.rut-dpick-real)>:not(.rut-dpick-real){flex-shrink:0}
