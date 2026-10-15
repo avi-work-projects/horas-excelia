@@ -401,13 +401,13 @@
 
 **Funciones:** vacEntitlementForYear:18 · saveVacEntitlement:21 · fhY:27 · fdY:28 · computeYearlySummary:30 · barChart3:104 · computePuentes:131 · isNWD:141 · typeOf:142 · renderSummaryWorkBody:175 (!101) · fmtSigned:263 · renderSummaryPuentesBody:276 (!94) · fdd:283 · renderSummaryTimeOffBody:370 (!92) · fdd:376 · bindSummaryWorkBodyEvents:462 · bindSummaryPuentesBodyEvents:472 · bindSummaryTimeOffBodyEvents:497 · renderSummaryContent:503 · closeSummary:524 · bindSummaryEvents:530 (!83)
 
-### js/swipe-content.js  _(59 líneas)_
-**Estado global:** SWIPE_PREVIEW_STYLES:2 · SWIPE_PREVIEW_SHEET:3 · SWIPE_FIXED_SELECTOR:4
+### js/swipe-content.js  _(62 líneas)_
+**Estado global:** SWIPE_PREVIEW_STYLES:2 · SWIPE_PREVIEW_SHEET:3 · SWIPE_CONTENT_GAP:5 · SWIPE_FIXED_SELECTOR:7
 
-**Funciones:** swipePreviewRoot:5 · swipeContentResolver:16 · fixed:22 · content:23 · swipeContentReset:32 · animateContentSwipe:33
+**Funciones:** swipeContentDistance:6 · swipePreviewRoot:8 · swipeContentResolver:19 · fixed:25 · content:26 · swipeContentReset:35 · animateContentSwipe:36
 
-### js/swipe-live.js  _(58 líneas)_
-**Funciones:** swipeCommonRoot:2 · swipeLiveFrame:5 · createLiveSwipe:19 · restore:26 · clear:27 · prepare:28 · move:37 · finish:42
+### js/swipe-live.js  _(60 líneas)_
+**Funciones:** swipeCommonRoot:2 · swipeLiveFrame:5 · createLiveSwipe:19 · restore:28 · clear:29 · prepare:30 · move:39 · finish:44
 
 ### js/swipe-render.js  _(73 líneas)_
 **Funciones:** swipeWithState:2 · swipeMonth:9 · swipeNext:10 · swipeFrame:11 · swipeKeepsPreviewScroll:12 · swipeCalendarPreview:17 · swipeEventsPreview:25 · swipeRenderPreview:41
