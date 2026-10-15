@@ -334,7 +334,7 @@ var _g4=document.getElementById('exportAllBtn'); if(_g4)_g4.addEventListener('cl
   if(typeof loadEvAlarms==='function')loadEvAlarms();
   var data={version:7,contactData:contactData(),personalNotes:personalNote(),energyTaxes:energyTaxes(),energyBills:energyBills(),energyContracts:energyContracts(),calendarUppercase:appStorage.getItem(EV_ICS_UPPER_KEY)==='true',calendarNotes:appStorage.getItem(EV_ICS_NOTES_KEY)==='true',calendarAuthor:evIcsAuthor(),calendarExports:evIcsRecords(),csvExports:csvExportRecords(),invoices:invoiceData(),bodaConfig:JSON.parse(JSON.stringify(BODA_CONFIG)),mailConfig:_lsJson(MAIL_CFG_SK,null),days:ST,sent:SW,monthH:MONTH_H,rate:DAILY_RATE,
     exclFest:EXCL_FEST,exclVac:EXCL_VAC,vacEntitlement:VAC_ENTITLEMENT,vacByYear:_lsJson(VAC_YEAR_KEY,VAC_BY_YEAR),
-    birthdays:BDAYS,events:EVENTS,
+    birthdays:BDAYS,events:EVENTS,hairdresserNotes:hairdresserNote(),
     bodas:typeof BODA_COUPLES!=='undefined'?BODA_COUPLES:null,
     bodasClosed:typeof BODA_CLOSED!=='undefined'?BODA_CLOSED:null,
     rutinas:typeof RUTINAS!=='undefined'?RUTINAS:null,
@@ -500,6 +500,7 @@ function _applyFullImport(d,mode){
       if(d.evAlarms&&typeof EV_ALARMS_SET!=='undefined'){EV_ALARMS_SET=merge?_mergeMap(EV_ALARMS_SET,d.evAlarms):d.evAlarms;if(typeof saveEvAlarms==='function')saveEvAlarms();}
       if(d.bdayAlarms&&typeof BDAY_ALARM_SET!=='undefined'){BDAY_ALARM_SET=merge?_mergeMap(BDAY_ALARM_SET,d.bdayAlarms):d.bdayAlarms;appStorage.setItem('excelia-bday-alarm-set',JSON.stringify(BDAY_ALARM_SET));}
       if(d.personalNotes!=null)appStorage.setItem(PERSONAL_NOTES_KEY,d.personalNotes);
+      if(d.hairdresserNotes!=null)appStorage.setItem(HAIRDRESSER_NOTES_KEY,d.hairdresserNotes);
       if(d.planOrder!=null)appStorage.setItem(EV_PLAN_ORDER_KEY,JSON.stringify(validateEvPlanOrder(d.planOrder)));
       if(d.contactData){appStorage.setItem(CONTACT_DATA_KEY,JSON.stringify((merge?mergeContactData(contactData(),d.contactData):normalizeContactData(d.contactData))));}
       if(d.mailConfig){appStorage.setItem(MAIL_CFG_SK,JSON.stringify(d.mailConfig));loadMailConfig();}
