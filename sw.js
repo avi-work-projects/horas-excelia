@@ -4,7 +4,7 @@
    → Cambiar CACHE_VER en cada deploy para forzar actualización
    ============================================================ */
 
-var CACHE_VER = 'v476';
+var CACHE_VER = 'v477';
 var CACHE_NAME = 'horas-excelia-' + CACHE_VER;
 
 /* Generado desde app-assets.json: npm run assets */
@@ -26,6 +26,7 @@ var ASSETS = [
   "./js/swipe-content.js",
   "./js/swipe-render.js",
   "./js/swipe-live.js",
+  "./js/swipe-layout.js",
   "./js/export-files.js",
   "./js/events-order.js",
   "./js/time-picker.js",

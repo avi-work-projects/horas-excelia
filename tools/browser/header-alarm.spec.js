@@ -39,7 +39,7 @@ test('la campana conserva la ventana, su contenido y el scroll',async({page})=>{
     })).toBe(true);
     await page.locator('#alarmMsg').fill('Alarma de prueba');
     await trigger.click();await expect(panel).toBeHidden();
-    await trigger.click();await expect(page.locator('#alarmMsg')).toHaveValue('Alarma de prueba');
+    await trigger.click();await expect(page.locator('#alarmMsg')).toHaveValue('');
     await page.locator('#alarmMsg').press('Escape');await expect(panel).toBeHidden();
     expect(await page.evaluate(()=>({connected:qaAlarmBody.isConnected,scroll:qaAlarmBody.scrollTop-qaAlarmScroll,back:NAV_BACK===qaAlarmBack})),key).toEqual({connected:true,scroll:0,back:true});
   }

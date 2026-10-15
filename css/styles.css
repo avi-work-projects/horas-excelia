@@ -2226,6 +2226,8 @@ body:has(#evDetailOv.open) .tasks-fab{visibility:hidden}
 [data-time-picker]{cursor:pointer;min-width:0}
 [data-time-picker]:disabled{cursor:default}
 .time-picker-drums .drum-picker:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
+.alarm-nap-btn{display:flex;align-items:center;justify-content:space-between;gap:12px;width:calc(100% - 24px);margin:8px 12px 12px;padding:10px 12px;border:1px solid color-mix(in srgb,var(--c-purple) 45%,var(--border));border-radius:10px;background:color-mix(in srgb,var(--c-purple) 10%,var(--surface));color:var(--text)}
+.alarm-nap-btn>span{font-weight:600}.alarm-nap-btn>small{font-size:.62rem;color:var(--text-muted)}
 
 #evFormOv .ev-kind-btn{--kind-tone:#9470bc;gap:9px;padding:12px 8px;border-radius:14px;color:var(--kind-tone);border-color:color-mix(in srgb,var(--kind-tone) 35%,var(--border));background:color-mix(in srgb,var(--kind-tone) 5%,var(--surface));position:relative}
 #evFormOv .ev-kind-btn.selected{background:color-mix(in srgb,var(--kind-tone) 16%,var(--surface));border-color:var(--kind-tone);box-shadow:inset 0 0 0 .5px var(--kind-tone)}
@@ -3875,7 +3877,8 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 .energy-window [data-energy-tab="comparar"],.energy-window [data-energy-view="comparar"]{--energy-tone:var(--energy-comparar)}
 .energy-tabs .econ-sub-tab{color:var(--energy-tone);border-bottom-color:transparent;position:relative}
 .energy-tabs .econ-sub-tab.active{color:var(--energy-tone);border-bottom-color:var(--energy-tone);background:color-mix(in srgb,var(--energy-tone) 10%,var(--surface))}
-.energy-window .energy-contract{border:1px solid var(--border);border-top:2px solid color-mix(in srgb,var(--supplier-color,var(--energy-tone)) 45%,var(--border));background:var(--surface);margin:0 0 18px;padding:16px}
+/* Lados explícitos: CSSOM conserva los bordes al copiar la vista al swipe. */
+.energy-window .energy-contract{border-left:1px solid var(--border);border-right:1px solid var(--border);border-bottom:1px solid var(--border);border-top:2px solid color-mix(in srgb,var(--supplier-color,var(--energy-tone)) 45%,var(--border));background:var(--surface);margin:0 0 18px;padding:16px}
 .energy-window .energy-caption{color:var(--text-muted);font-size:.69rem;line-height:1.5}
 .energy-window .energy-section-title{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:5px 12px;margin-bottom:14px}
 .energy-window .energy-section-title h3{margin:0;font-size:.86rem}

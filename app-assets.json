@@ -53,6 +53,9 @@
       "path": "js/swipe-live.js"
     },
     {
+      "path": "js/swipe-layout.js"
+    },
+    {
       "path": "js/export-files.js"
     },
     {
