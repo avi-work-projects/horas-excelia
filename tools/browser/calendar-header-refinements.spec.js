@@ -11,14 +11,14 @@ test('Selectores conservan fuentes y flechas originales; Hoy cuadrado y bombilla
  await expect(page.locator('#todayBtn')).toHaveCSS('border-radius','9px');
  for(const width of [320,360,400,440]){
   await page.setViewportSize({width,height:880});let reference;
-  for(const view of ['cal','quad','annual']){
+  for(const view of ['cal','week','quad','annual']){
    await calendar(page,view);const header=page.locator('.ev-calendar-header');
    await expect(header.locator('.sy-year')).toHaveCSS('font-size',view==='quad'?'11.52px':'16.8px');
    for(const arrow of await header.locator('.sy-nav').all()){const r=await arrow.boundingBox();expect([r.width,r.height]).toEqual([32,32]);}
    const today=await page.locator('#evToday').boundingBox();if(reference)expect(today).toEqual(reference);reference=today;await expect(page.locator('#evToday')).toHaveCSS('border-radius','9px');
    const label=await header.locator('.sy-year').boundingBox();expect(Math.abs(label.x+label.width/2-width/2)).toBeLessThan(1);
    const overlaps=await header.evaluate(el=>{const buttons=[...el.querySelectorAll('button')].map(b=>({id:b.id,r:b.getBoundingClientRect()}));return buttons.flatMap((a,i)=>buttons.slice(i+1).filter(b=>Math.min(a.r.right,b.r.right)-Math.max(a.r.left,b.r.left)>1&&Math.min(a.r.bottom,b.r.bottom)-Math.max(a.r.top,b.r.top)>1).map(b=>[a.id,b.id]));});expect(overlaps,view+' '+width).toEqual([]);
-   if(view==='cal'){
+   if(view==='cal'||view==='week'){
     const light=await page.locator('#evBright').boundingBox(),next=await page.locator('#evNext').boundingBox();
     if(width>=360){expect(light.x).toBeGreaterThan(next.x+next.width);expect(light.x+light.width).toBeLessThan(today.x);expect(Math.abs(light.x+light.width/2-(next.x+next.width+today.x)/2)).toBeLessThan(1);}
     else{expect(light.y+light.height).toBeLessThan(next.y);expect(light.x+light.width).toBeLessThan(today.x);}

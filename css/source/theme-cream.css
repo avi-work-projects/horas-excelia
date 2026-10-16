@@ -1,4 +1,4 @@
-/* Crema: acentos minerales y vegetales, con fondos teñidos sobre marfil.
+/* Crema: petróleo y terracota sobre marfil; oliva y miel como apoyos.
    Solo presentación; no altera los colores guardados de eventos, parejas o rutinas. */
 [data-theme="grey"] .nav-pro-events{color:var(--calendar-tone)}
 [data-theme="grey"] .nav-pro-household{color:var(--household-tone)}
@@ -22,7 +22,7 @@
 [data-theme="grey"] .household-luz{--home-tone:var(--c-yellow);--home-card-color:var(--c-yellow)}
 [data-theme="grey"] .household-gas{--home-tone:var(--c-blue);--home-card-color:var(--c-blue)}
 [data-theme="grey"] .tasks-overlay{--tasks-accent:var(--c-purple);--c-blue:var(--c-purple)}
-[data-theme="grey"] .tasks-fab{background:var(--c-purple);border-color:#ac9bb4;box-shadow:0 4px 15px #493c4726}
+[data-theme="grey"] .tasks-fab{background:var(--c-purple);border-color:#ba969f;box-shadow:0 4px 15px #493c4726}
 [data-theme="grey"] .tasks-count{border-color:#beaec6}
 [data-theme="grey"] .settings-edit-connections{--settings-tone:var(--c-orange)}
 [data-theme="grey"] .settings-edit-invoices{--settings-tone:var(--c-green)}
@@ -49,3 +49,7 @@
 [data-theme="grey"] button.settings-edit-btn{background:var(--settings-tone,var(--c-orange))!important;border-color:var(--settings-tone,var(--c-orange))!important;color:#fff!important}
 [data-theme="grey"] #evFormOv .ev-kind-btn{--kind-tone:var(--c-purple)}
 [data-theme="grey"] .mg-desgrav-toggle{color:var(--c-purple)}
+/* Bordes suaves en reposo; el color completo identifica la selección. */
+[data-theme="grey"] #eventsOverlay .ev-hdr-sub .ev-view-toggle,[data-theme="grey"] :is(.econ-tab-btn,.fiscal-tab-btn,.est-nav .est-btn){border-color:color-mix(in srgb,var(--tab-tone) 32%,var(--border))!important;background:color-mix(in srgb,var(--tab-tone) 4%,var(--surface))!important}
+[data-theme="grey"] #eventsOverlay .ev-hdr-sub .ev-view-toggle.active,[data-theme="grey"] :is(.econ-tab-btn.active,.fiscal-tab-btn.active,.est-nav .est-btn.active){border-color:color-mix(in srgb,var(--tab-tone) 75%,var(--border))!important;background:color-mix(in srgb,var(--tab-tone) 15%,var(--surface))!important}
+[data-theme="grey"] :is(.data-btn.overlay-active,.nav-bar-btn.active,#alarmTestBtn[aria-expanded="true"],.nav-bar-btn[data-nav="alarm"][aria-expanded="true"]){background:color-mix(in srgb,var(--nav-tone) 10%,var(--surface))!important;box-shadow:0 0 0 1.5px color-mix(in srgb,var(--nav-tone) 65%,var(--border))!important}

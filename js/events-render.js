@@ -511,7 +511,7 @@ function renderEvContent(){
   h+='</div>';
   if(EV_VIEW==='bday')return h+renderBdayContent();
   // Header a nivel 3 (with-tabs → top:82px)
-  var _hdrCenterCls=' sy-header-center'+(['cal','quad','annual'].indexOf(EV_VIEW)>=0?' ev-calendar-header':'')+(['week','months','stats'].indexOf(EV_VIEW)>=0?' ev-period-header':'');
+  var _hdrCenterCls=' sy-header-center'+(['cal','quad','annual','week'].indexOf(EV_VIEW)>=0?' ev-calendar-header':'')+(['months','stats'].indexOf(EV_VIEW)>=0?' ev-period-header':'');
   h+='<div class="sy-header with-tabs'+_hdrCenterCls+'">';
   h+='<button class="sy-back" id="evBack">&#8592;</button>';
   if(EV_VIEW==='upcoming'||EV_VIEW==='birthdays'){
@@ -521,7 +521,7 @@ function renderEvContent(){
     h+='<div class="sy-year-nav"><button class="sy-nav" id="evPrev">&#9664;</button>';
     h+='<div class="sy-year sy-year-2line">'+MN[EV_MONTH]+'<span class="sy-year-sub">'+EV_YEAR+'</span></div>';
     h+='<button class="sy-nav" id="evNext">&#9654;</button></div>';
-    h+='<button class="ev-bright-btn ev-bright-mid'+(EV_BRIGHT_PAST?' on':'')+'" id="evBright">\uD83D\uDCA1</button>';
+    h+='<button class="ev-bright-btn ev-bright-mid'+(EV_BRIGHT_PAST?' on':'')+'" id="evBright" aria-label="Resaltar eventos pasados">\uD83D\uDCA1</button>';
     h+='<div class="sy-hdr-right"><button class="today-btn ev-agenda-today" id="evToday">Hoy</button></div>';
   } else if(EV_VIEW==='stats'||EV_VIEW==='months'){
     h+=renderEvYearHeader(EV_VIEW==='stats'?'stats':'list');

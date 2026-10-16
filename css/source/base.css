@@ -39,17 +39,17 @@
 /* Crema suave; conserva la clave grey para las preferencias y backups anteriores. */
 :root[data-theme="grey"]{
 --ev-symbol-outline:#000;
---bg:#f7f1e5;--surface:#fffdf7;--surface2:#eee5d4;--surface3:#e5dac5;
---border:#d7c9ad;--border-light:#bcaa89;
---text:#322c24;--text-muted:#6d604d;--text-dim:#8a795e;
---accent:#5b6d85;--accent-glow:#5b6d8518;--accent-bright:#4e6077;
---sent:#edf0e6;--sent-border:#b3bfa5;--sent-text:#52664b;
---falta:#f3ead6;--falta-border:#c6b28b;
---festivo:#9d5b53;--vacaciones:#816a38;--ausencia:#786583;--normal:#5b6d85;
---c-orange:#936041;--c-red:#9d5b53;--c-green:#5c7054;--c-blue:#5b6d85;--c-purple:#786583;--c-yellow:#816a38;
---home-tone:#8e6071;--birthday-tone:#91606b;--study-tone:#89673f;
---household-tone:#4e7069;--calendar-tone:#5c7054;--alarm-tone:#816a38;
---upcoming-tone:#4f7079;--upcoming-text:#486771;--wm-wine:#866458;
+--bg:#f7f1e5;--surface:#fffdf8;--surface2:#f0eadf;--surface3:#e8dfcf;
+--border:#ddd3c3;--border-light:#c5b69e;
+--text:#34372f;--text-muted:#686657;--text-dim:#8b8270;
+--accent:#356d68;--accent-glow:#356d6818;--accent-bright:#285b57;
+--sent:#edf1e4;--sent-border:#b8c5a3;--sent-text:#526638;
+--falta:#f6edd8;--falta-border:#d2bc88;
+--festivo:#a14f46;--vacaciones:#8b6b2d;--ausencia:#875a66;--normal:#356d68;
+--c-orange:#a65d3c;--c-red:#a14f46;--c-green:#627442;--c-blue:#356d68;--c-purple:#875a66;--c-yellow:#8b6b2d;
+--home-tone:#a45843;--birthday-tone:#a35358;--study-tone:#8b6b2d;
+--household-tone:#356d68;--calendar-tone:#627442;--alarm-tone:#8b6b2d;
+--upcoming-tone:#3d6c78;--upcoming-text:#345f69;--wm-wine:#886044;
 --econ-contribution-tone:var(--c-purple);
 --radius:14px;--radius-sm:10px;
 --font:'DM Sans',sans-serif;--mono:'JetBrains Mono',monospace;

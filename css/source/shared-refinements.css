@@ -1048,7 +1048,7 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
  .ev-calendar-header .sy-hdr-right{top:30px}
  .ev-calendar-header .ev-bright-mid{left:auto;right:84px;top:30px;transform:translateY(-50%)}
 }
-.ev-calendar-header:has(#evBright)+.sy-body{padding-top:4px}
+.ev-calendar-header:has(#evBright)+.sy-body:not(.ev-wk-body){padding-top:4px}
 .ev-calendar-header:has(#evBright)+.sy-body .ev-week-hdr{top:-4px}
 .ev-month-wrap .ev-week-hdr>div{display:grid;place-items:center;min-height:30px;padding:3px 0}
 .ev-current-weekday{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;border:1px solid var(--c-green);background:var(--c-green);color:#fff;letter-spacing:0}

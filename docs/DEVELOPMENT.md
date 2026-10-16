@@ -587,6 +587,11 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 - Ahora en Crear alarma actualiza ambas ruedas con la hora actual, conservando el mensaje y los días elegidos; no crea una alarma.
 - `calendar-notes-controls.spec.js` verifica estos flujos en Edge oculto, las cabeceras a 320/400/440 px, temas claro/oscuro/crema y persistencia de los horarios por día. Las reglas de lógica incluyen su ida y vuelta por backup y rechazan mapas semanales inválidos.
 
+## Agenda y composición del tema crema (v484)
+- Agenda comparte `ev-calendar-header` con los tres calendarios, incluidos tamaño de Hoy, bombilla de 24 px y márgenes adaptativos. El mes usa su ancho natural; el ancho fijo de `ev-period-header` queda para Todos y Estadísticas. El espacio de las iniciales semanales sigue limitado al calendario mensual para no desplazar las subpestañas de Agenda.
+- Por corrección de Ángel, se sustituye la paleta desaturada de v483 por una composición de petróleo y terracota, con oliva, miel y rosa arcilla como apoyos. Se suavizan los bordes inactivos y el resplandor de navegación; la selección conserva una señal de color clara. Las superficies secundarias son más neutras y el texto usa tinta cálida.
+- La comprobación compartida de cabeceras incluye ahora Agenda a 320/360/400/440 px: tamaño, posición de Hoy, centrado, hueco de la bombilla y ausencia de solapamientos.
+
 ## Acentos del tema crema (v483)
 - Crema conserva sus superficies marfil y arena. Sus acentos propios usan rosa empolvado en Inicio y Cumpleaños, salvia en calendarios, azul pizarra en Económico, eucalipto en Hogar, azul petróleo suave en Próximos, malva en Fiscal/Tareas y ocre en Estudios/Alarmas.
 - La paleta vive en `:root[data-theme="grey"]` de `base.css`; `theme-cream.css` conecta los controles que tenían colores fijos o heredaban el tema oscuro. Los textos usan tonos suficientemente profundos sobre crema y los fondos mezclas suaves sobre marfil.
