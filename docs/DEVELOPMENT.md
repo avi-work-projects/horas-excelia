@@ -587,6 +587,12 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 - Ahora en Crear alarma actualiza ambas ruedas con la hora actual, conservando el mensaje y los días elegidos; no crea una alarma.
 - `calendar-notes-controls.spec.js` verifica estos flujos en Edge oculto, las cabeceras a 320/400/440 px, temas claro/oscuro/crema y persistencia de los horarios por día. Las reglas de lógica incluyen su ida y vuelta por backup y rechazan mapas semanales inválidos.
 
+## Acentos del tema crema (v483)
+- Crema conserva sus superficies marfil y arena. Sus acentos propios usan rosa empolvado en Inicio y Cumpleaños, salvia en calendarios, azul pizarra en Económico, eucalipto en Hogar, azul petróleo suave en Próximos, malva en Fiscal/Tareas y ocre en Estudios/Alarmas.
+- La paleta vive en `:root[data-theme="grey"]` de `base.css`; `theme-cream.css` conecta los controles que tenían colores fijos o heredaban el tema oscuro. Los textos usan tonos suficientemente profundos sobre crema y los fondos mezclas suaves sobre marfil.
+- No se modifican los colores personalizados guardados de eventos, parejas, rutinas o tareas. Claro y Oscuro conservan sus paletas. La clave `grey` sigue siendo compatible con preferencias y backups.
+- Revisión visual en Edge oculto a 400 × 880: Inicio, calendario, Próximos, nuevo evento, Hogar, Económico, Tareas y Mis datos.
+
 ## Cabeceras y controles de calendario (v482)
 - Todos los botones Hoy usan esquinas de 9 px. En 1 mes, el día actual se rellena con el mismo verde suave de Hoy, también si cae en fin de semana; se conservan las marcas de festivo o vacaciones.
 - El separador de la cabecera vive dentro de su caja fija (`box-shadow:inset`) para que las copias del swipe no lo cubran. Las iniciales siguen deslizándose con el mes y quedan a 4 px de esa cabecera; su anclaje sticky usa el mismo desplazamiento.

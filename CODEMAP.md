@@ -445,38 +445,38 @@
 
 > `css/styles.css` se genera: editar las fuentes listadas a continuación.
 
-### css/source/base.css  _(359 líneas)_
+### css/source/base.css  _(363 líneas)_
 
 **Secciones:**
 
 - TEMA OSCURO (por defecto):5
 - TEMA CLARO:20
 - Crema suave; conserva la clave grey para las preferencias y backups anteriores.:39
-- HEADER:59
-- JORNADA DEFECTO:73
-- Barra vertical que separa la campana del bloque de navegacion:110
-- Aro de color único por botón (nivel 1) — igual que nav-bar-btn.active[data-nav]:116
-- WEEK CARDS:129
-- WEEK ACTIONS:161
-- BOTTOM SHEET (day type selector):170
-- TOAST:192
-- Tema claro: el fondo oscuro con letra de color no se leia bien:202
-- SW UPDATE BUTTON (en menú ⋯):206
-- Aviso pulsable entero (el de nueva version): se nota que se puede tocar.:210
-- ANIMATIONS:214
-- Las semanas se desplazan con el mes, sin otra entrada vertical.:216
-- Los dias marcados (festivo/vacaciones/ausencia) mandan sobre la jornada:239
-- OVERLAY BASE (summary, econ, bday, events):245
-- SHARED OVERLAY HEADER:250
-- SHARED BODY:271
-- En Proximos la cabecera de semana manda sobre las de dia: va en pastilla:320
-- Vacaciones config:326
-- Quitar festivos/vacaciones checkboxes:330
-- Month summary breakdown:352
-- Ausencia list tag:357
+- HEADER:63
+- JORNADA DEFECTO:77
+- Barra vertical que separa la campana del bloque de navegacion:114
+- Aro de color único por botón (nivel 1) — igual que nav-bar-btn.active[data-nav]:120
+- WEEK CARDS:133
+- WEEK ACTIONS:165
+- BOTTOM SHEET (day type selector):174
+- TOAST:196
+- Tema claro: el fondo oscuro con letra de color no se leia bien:206
+- SW UPDATE BUTTON (en menú ⋯):210
+- Aviso pulsable entero (el de nueva version): se nota que se puede tocar.:214
+- ANIMATIONS:218
+- Las semanas se desplazan con el mes, sin otra entrada vertical.:220
+- Los dias marcados (festivo/vacaciones/ausencia) mandan sobre la jornada:243
+- OVERLAY BASE (summary, econ, bday, events):249
+- SHARED OVERLAY HEADER:254
+- SHARED BODY:275
+- En Proximos la cabecera de semana manda sobre las de dia: va en pastilla:324
+- Vacaciones config:330
+- Quitar festivos/vacaciones checkboxes:334
+- Month summary breakdown:356
+- Ausencia list tag:361
 
 **Rangos por prefijo de clase:**
-.action-btn:163-167 · .app-logo:64-64 · .app-version:127-127 · .bd-export:265-265 · .bottom-sheet:173-174 · .btn-icon:106-106 · .csv-export:79-80 · .data-actions:102-102 · .data-btn:103-118 · .data-menu:120-126 · .day-cell:141-243 · .day-date:146-146 · .day-hours:147-147 · .day-name:145-145 · .day-status:154-154 · .days-grid:140-140 · .default-hours:75-84 · .ev-dot:159-159 · .ev-dots:158-158 · .ev-upcoming:325-325 · .ev-week:321-322 · .excl-item:351-351 · .excl-row:331-331 · .full-overlay:246-247 · .header:60-62 · .header-brand:63-63 · .hour-chip:93-94 · .hour-chips:92-92 · .hour-picker:90-91 · .hours-chip:87-88 · .hours-chips:86-86 · .hours-control:74-74 · .hours-label:85-85 · .hours-panel:89-89 · .ico-doc:81-81 · .ico-exportar:266-266 · .month-nav:65-67 · .month-stat:96-99 · .month-summary:95-95 · .ms-breakdown:353-355 · .ms-hrs:101-101 · .ms-label:100-100 · .ms-num:97-97 · .ms-sep:356-356 · .nav-btn:68-69 · .option-desc:189-189 · .option-dot:182-186 · .option-hours:190-190 · .option-info:187-187 · .option-label:188-188 · .overlay:171-172 · .sent-badge:137-137 · .sheet-handle:175-175 · .sheet-option:179-181 · .sheet-options:178-178 · .sheet-subtitle:177-177 · .sheet-title:176-176 · .sw-upd:207-207 · .sy-back:252-253 · .sy-body:272-272 · .sy-card:283-290 · .sy-cards3:275-275 · .sy-cards4:276-276 · .sy-chart:301-301 · .sy-hdr:257-257 · .sy-header:251-256 · .sy-lbl:292-292 · .sy-list:305-358 · .sy-month:319-319 · .sy-nav:261-269 · .sy-note:302-304 · .sy-pdf:263-264 · .sy-puente:311-315 · .sy-section:273-274 · .sy-spain:277-282 · .sy-suelto:316-318 · .sy-table:293-297 · .sy-td:298-298 · .sy-tr:299-300 · .sy-val:288-291 · .sy-year:254-260 · .toast:193-212 · .toast-undo:209-209 · .today-btn:70-71 · .vac-config:327-329 · .week-actions:162-162 · .week-card:131-225 · .week-header:134-134 · .week-info:135-136 · .week-total:138-138 · .weeks-container:130-130
+.action-btn:167-171 · .app-logo:68-68 · .app-version:131-131 · .bd-export:269-269 · .bottom-sheet:177-178 · .btn-icon:110-110 · .csv-export:83-84 · .data-actions:106-106 · .data-btn:107-122 · .data-menu:124-130 · .day-cell:145-247 · .day-date:150-150 · .day-hours:151-151 · .day-name:149-149 · .day-status:158-158 · .days-grid:144-144 · .default-hours:79-88 · .ev-dot:163-163 · .ev-dots:162-162 · .ev-upcoming:329-329 · .ev-week:325-326 · .excl-item:355-355 · .excl-row:335-335 · .full-overlay:250-251 · .header:64-66 · .header-brand:67-67 · .hour-chip:97-98 · .hour-chips:96-96 · .hour-picker:94-95 · .hours-chip:91-92 · .hours-chips:90-90 · .hours-control:78-78 · .hours-label:89-89 · .hours-panel:93-93 · .ico-doc:85-85 · .ico-exportar:270-270 · .month-nav:69-71 · .month-stat:100-103 · .month-summary:99-99 · .ms-breakdown:357-359 · .ms-hrs:105-105 · .ms-label:104-104 · .ms-num:101-101 · .ms-sep:360-360 · .nav-btn:72-73 · .option-desc:193-193 · .option-dot:186-190 · .option-hours:194-194 · .option-info:191-191 · .option-label:192-192 · .overlay:175-176 · .sent-badge:141-141 · .sheet-handle:179-179 · .sheet-option:183-185 · .sheet-options:182-182 · .sheet-subtitle:181-181 · .sheet-title:180-180 · .sw-upd:211-211 · .sy-back:256-257 · .sy-body:276-276 · .sy-card:287-294 · .sy-cards3:279-279 · .sy-cards4:280-280 · .sy-chart:305-305 · .sy-hdr:261-261 · .sy-header:255-260 · .sy-lbl:296-296 · .sy-list:309-362 · .sy-month:323-323 · .sy-nav:265-273 · .sy-note:306-308 · .sy-pdf:267-268 · .sy-puente:315-319 · .sy-section:277-278 · .sy-spain:281-286 · .sy-suelto:320-322 · .sy-table:297-301 · .sy-td:302-302 · .sy-tr:303-304 · .sy-val:292-295 · .sy-year:258-264 · .toast:197-216 · .toast-undo:213-213 · .today-btn:74-75 · .vac-config:331-333 · .week-actions:166-166 · .week-card:135-229 · .week-header:138-138 · .week-info:139-140 · .week-total:142-142 · .weeks-container:134-134
 
 ### css/source/economics.css  _(681 líneas)_
 
@@ -730,7 +730,7 @@
 **Rangos por prefijo de clase:**
 .ev-shape:19-19 · .rut-add:45-45 · .rut-card:35-43 · .rut-day:51-52 · .rut-days:50-50 · .rut-dot:38-38 · .rut-first:16-16 · .rut-flex:13-21 · .rut-hist:57-60 · .rut-hpd:2-5 · .rut-icon:7-11 · .rut-name:39-39 · .rut-pct:44-44 · .rut-plan:22-34 · .rut-sec:12-12 · .rut-stat:54-56 · .rut-sug:46-49 · .rut-susp:53-53 · .rut-tag:40-41 · .rut-vacio:42-42
 
-### css/source/shared-refinements.css  _(1064 líneas)_
+### css/source/shared-refinements.css  _(1067 líneas)_
 
 **Secciones:**
 
@@ -792,7 +792,7 @@
 - Conservar fuentes y controles a su tamaño habitual, también en móviles estrechos.:1041
 
 **Rangos por prefijo de clase:**
-.alarm-now:1059-1059 · .alarm-panel:1056-1058 · .app-update:734-736 · .bd-detail:655-656 · .bd-panel:609-892 · .bday-category:580-751 · .bday-date:691-790 · .bday-detail:623-867 · .bday-edit:866-866 · .bday-filter:571-647 · .bday-first:593-593 · .bday-form:729-730 · .bday-group:568-733 · .bday-hdr:161-162 · .bday-header:156-505 · .bday-jump:56-95 · .bday-label:599-599 · .bday-list:577-783 · .bday-month:174-797 · .bday-name:657-738 · .bday-next:104-105 · .bday-no:629-629 · .bday-person:575-622 · .bday-show:579-685 · .bday-sub:285-286 · .bday-today:561-782 · .bday-upcoming:54-532 · .bday-vip:533-885 · .boda-catalog:81-89 · .boda-cfg:131-147 · .boda-config:77-128 · .boda-count:85-85 · .boda-date:149-167 · .boda-day:118-118 · .boda-field:119-124 · .boda-filter:59-61 · .boda-mini:67-67 · .boda-pack:86-87 · .boda-pfilters:58-62 · .boda-stat:1060-1060 · .boda-sticky:78-144 · .boda-teachers:106-106 · .contact-add:957-957 · .contact-entry:950-955 · .contact-group:947-949 · .contact-remove:956-956 · .data-actions:344-344 · .data-btn:345-356 · .econ-equiv:478-478 · .econ-tab:327-331 · .econ-tariff:410-480 · .energy-tariff:456-458 · .est-nav:329-330 · .ev-agenda:898-898 · .ev-alarm:815-816 · .ev-annual:550-550 · .ev-bday:287-585 · .ev-bright:446-446 · .ev-btn:817-818 · .ev-calendar:1037-1049 · .ev-car:1035-1035 · .ev-current:1051-1051 · .ev-del:13-14 · .ev-filter:836-1018 · .ev-hairdresser:1054-1055 · .ev-list:2-1022 · .ev-month:517-1053 · .ev-multi:50-72 · .ev-rut:244-311 · .ev-search:3-7 · .ev-sort:8-53 · .ev-stat:978-1024 · .ev-type:431-433 · .ev-types:430-851 · .ev-up:271-975 · .ev-upcoming:976-1010 · .ev-view:66-66 · .ev-wk:226-445 · .export-choice:821-994 · .export-folder:799-833 · .fiscal-hdr:554-554 · .fiscal-hip:407-408 · .fiscal-tab:328-328 · .fiscal-year:1034-1034 · .hip-rate:508-512 · .hip-ro:551-552 · .home-birthday:469-500 · .home-pending:470-476 · .home-popup:485-540 · .home-reminder:464-548 · .imp-mode:17-27 · .invoice-field:1008-1008 · .invoice-sheet:918-918 · .macro-url:70-70 · .nav-icon:364-374 · .nav-pro:338-350 · .nav-style:362-362 · .panel-header:893-894 · .personal-copy:934-934 · .personal-data:933-940 · .personal-note:958-1000 · .personal-notes:1001-1005 · .rate-input:46-46 · .rut-addition:206-223 · .rut-agenda:220-221 · .rut-cancelled:247-306 · .rut-done:819-820 · .rut-history:190-241 · .rut-hpd:188-188 · .rut-icon:172-173 · .rut-recovery:215-224 · .rut-session:225-225 · .rut-skipped:307-308 · .rut-week:189-189 · .selected:371-371 · .settings-copy:926-929 · .settings-details:107-109 · .settings-edit:71-946 · .settings-editor:903-941 · .settings-field:924-943 · .settings-is:913-1030 · .settings-menu:442-442 · .sw-upd:936-936 · .sy-back:37-1033 · .sy-body:35-588 · .sy-card:41-41 · .sy-header:36-507 · .sy-lbl:40-40 · .sy-period:416-423 · .sy-table:42-42 · .sy-tr:43-43 · .sy-val:39-39 · .sy-year:38-38 · .today-btn:1036-1036 · .week-action:887-888 · .week-card:392-392 · .weeks-container:1027-1027 · .wm-logo:92-251
+.alarm-now:1062-1062 · .alarm-panel:1059-1061 · .app-update:734-736 · .bd-detail:655-656 · .bd-panel:609-892 · .bday-category:580-751 · .bday-date:691-790 · .bday-detail:623-867 · .bday-edit:866-866 · .bday-filter:571-647 · .bday-first:593-593 · .bday-form:729-730 · .bday-group:568-733 · .bday-hdr:161-162 · .bday-header:156-505 · .bday-jump:56-95 · .bday-label:599-599 · .bday-list:577-783 · .bday-month:174-797 · .bday-name:657-738 · .bday-next:104-105 · .bday-no:629-629 · .bday-person:575-622 · .bday-show:579-685 · .bday-sub:285-286 · .bday-today:561-782 · .bday-upcoming:54-532 · .bday-vip:533-885 · .boda-catalog:81-89 · .boda-cfg:131-147 · .boda-config:77-128 · .boda-count:85-85 · .boda-date:149-167 · .boda-day:118-118 · .boda-field:119-124 · .boda-filter:59-61 · .boda-mini:67-67 · .boda-pack:86-87 · .boda-pfilters:58-62 · .boda-stat:1063-1063 · .boda-sticky:78-144 · .boda-teachers:106-106 · .contact-add:957-957 · .contact-entry:950-955 · .contact-group:947-949 · .contact-remove:956-956 · .data-actions:344-344 · .data-btn:345-356 · .econ-equiv:478-478 · .econ-tab:327-331 · .econ-tariff:410-480 · .energy-tariff:456-458 · .est-nav:329-330 · .ev-agenda:898-898 · .ev-alarm:815-816 · .ev-annual:550-550 · .ev-bday:287-585 · .ev-bright:446-446 · .ev-btn:817-818 · .ev-calendar:1037-1052 · .ev-car:1035-1035 · .ev-current:1054-1054 · .ev-del:13-14 · .ev-filter:836-1018 · .ev-hairdresser:1057-1058 · .ev-list:2-1022 · .ev-month:517-1056 · .ev-multi:50-72 · .ev-rut:244-311 · .ev-search:3-7 · .ev-sort:8-53 · .ev-stat:978-1024 · .ev-type:431-433 · .ev-types:430-851 · .ev-up:271-975 · .ev-upcoming:976-1010 · .ev-view:66-66 · .ev-wk:226-445 · .export-choice:821-994 · .export-folder:799-833 · .fiscal-hdr:554-554 · .fiscal-hip:407-408 · .fiscal-tab:328-328 · .fiscal-year:1034-1034 · .hip-rate:508-512 · .hip-ro:551-552 · .home-birthday:469-500 · .home-pending:470-476 · .home-popup:485-540 · .home-reminder:464-548 · .imp-mode:17-27 · .invoice-field:1008-1008 · .invoice-sheet:918-918 · .macro-url:70-70 · .nav-icon:364-374 · .nav-pro:338-350 · .nav-style:362-362 · .panel-header:893-894 · .personal-copy:934-934 · .personal-data:933-940 · .personal-note:958-1000 · .personal-notes:1001-1005 · .rate-input:46-46 · .rut-addition:206-223 · .rut-agenda:220-221 · .rut-cancelled:247-306 · .rut-done:819-820 · .rut-history:190-241 · .rut-hpd:188-188 · .rut-icon:172-173 · .rut-recovery:215-224 · .rut-session:225-225 · .rut-skipped:307-308 · .rut-week:189-189 · .selected:371-371 · .settings-copy:926-929 · .settings-details:107-109 · .settings-edit:71-946 · .settings-editor:903-941 · .settings-field:924-943 · .settings-is:913-1030 · .settings-menu:442-442 · .sw-upd:936-936 · .sy-back:37-1033 · .sy-body:35-588 · .sy-card:41-41 · .sy-header:36-507 · .sy-lbl:40-40 · .sy-period:416-423 · .sy-table:42-42 · .sy-tr:43-43 · .sy-val:39-39 · .sy-year:38-38 · .today-btn:1036-1036 · .week-action:887-888 · .week-card:392-392 · .weeks-container:1027-1027 · .wm-logo:92-251
 
 ### css/source/home-sharing.css  _(174 líneas)_
 
@@ -842,6 +842,14 @@
 
 **Rangos por prefijo de clase:**
 .home-invoice:3-5 · .hours-control:1-6 · .hours-export:50-61 · .invoice-actions:21-21 · .invoice-body:10-10 · .invoice-card:12-14 · .invoice-config:19-19 · .invoice-confirm:26-26 · .invoice-day:25-25 · .invoice-document:34-34 · .invoice-error:27-27 · .invoice-eye:46-47 · .invoice-field:16-16 · .invoice-fields:15-37 · .invoice-filename:28-28 · .invoice-kairo:11-11 · .invoice-month:31-43 · .invoice-note:17-17 · .invoice-sheet:8-49 · .invoice-status:18-18 · .invoice-summary:44-45 · .invoice-totals:20-20
+
+### css/source/theme-cream.css  _(52 líneas)_
+
+**Secciones:**
+
+
+**Rangos por prefijo de clase:**
+
 
 ### css/tasks.css  _(97 líneas)_
 
