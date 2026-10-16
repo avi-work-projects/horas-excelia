@@ -586,3 +586,10 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 - Por petición de Ángel, Ver análisis de hipoteca queda solo en Detalle hipoteca, tanto en Hogar como en Fiscal. Sustituye su colocación anterior en Resumen de v479. En Hogar se alinea con Consumo y tarifas de gas y electricidad.
 - Ahora en Crear alarma actualiza ambas ruedas con la hora actual, conservando el mensaje y los días elegidos; no crea una alarma.
 - `calendar-notes-controls.spec.js` verifica estos flujos en Edge oculto, las cabeceras a 320/400/440 px, temas claro/oscuro/crema y persistencia de los horarios por día. Las reglas de lógica incluyen su ida y vuelta por backup y rechazan mapas semanales inválidos.
+
+## Cabeceras y controles de calendario (v482)
+- Todos los botones Hoy usan esquinas de 9 px. En 1 mes, el día actual se rellena con el mismo verde suave de Hoy, también si cae en fin de semana; se conservan las marcas de festivo o vacaciones.
+- El separador de la cabecera vive dentro de su caja fija (`box-shadow:inset`) para que las copias del swipe no lo cubran. Las iniciales siguen deslizándose con el mes y quedan a 4 px de esa cabecera; su anclaje sticky usa el mismo desplazamiento.
+- Por corrección de Ángel a v481, la bombilla vuelve entre la flecha derecha y Hoy. Se eliminan las reducciones de fuente y de flechas de los selectores: mantienen sus tamaños originales y esquinas cuadradas. Por debajo de 360 px, las cabeceras reservan una segunda fila para el selector completo en lugar de encogerlo; Hoy sigue en la misma posición en los tres calendarios.
+- Crear alarma centra su título con columnas laterales simétricas; Ahora tiene margen interior superior y lateral.
+- `calendar-header-refinements.spec.js` comprueba tamaños, alineación y ausencia de solapamientos a 320/360/400/440 px, compara los píxeles de la línea durante el arrastre en ambos sentidos y valida el relleno de Hoy en laborable y domingo. También verifica la cabecera de alarma y la acción de Ahora.

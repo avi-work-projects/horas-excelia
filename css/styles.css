@@ -3663,30 +3663,29 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 .sy-back,.sy-nav,.sy-nav-icon,.nav-btn{border-radius:9px}
 .fiscal-year-arrow{width:32px;height:32px;padding:0;border-radius:9px}
 .ev-car-arrow{border-radius:9px;width:36px;min-width:36px;height:36px;flex:0 0 36px}
-.ev-calendar-header{height:72px;min-height:72px}
+.today-btn,.bday-jump-today{border-radius:9px}
+.ev-calendar-header{height:72px;min-height:72px;box-shadow:inset 0 -1px 0 var(--border)}
 .ev-calendar-header .sy-hdr-right{right:20px}
 .ev-calendar-header #evToday{font-size:.75rem;padding:7px 14px}
-.ev-calendar-year-line{display:flex;align-items:center;justify-content:center;gap:5px}
-.ev-calendar-year-line .ev-bright-btn{font-size:.65rem;line-height:1;padding:1px 3px;margin:0}
-.ev-calendar-header .sy-year-nav{gap:3px}
-.ev-calendar-header:has(#evQuadPrev2) .sy-nav{width:24px;min-width:24px;height:24px;min-height:24px;border-radius:7px}
-.ev-calendar-header:has(#evQuadPrev2) .sy-year-nav{max-width:calc(100% - 126px)}
-.ev-calendar-header .ev-quad-label{min-width:64px}
-@media(max-width:360px){
- .ev-calendar-header .sy-year{font-size:.9rem}
- .ev-calendar-header .sy-year-2line{min-width:78px}
- .ev-calendar-header .sy-nav{width:28px;min-width:28px;height:28px;min-height:28px}
- .ev-calendar-header .ev-quad-label{font-size:.62rem;min-width:50px}
- .ev-calendar-header:has(#evQuadPrev2) .sy-year-nav{gap:2px}
- .ev-calendar-header:has(#evQuadPrev2) .sy-nav{width:24px!important;height:24px!important;min-width:24px!important}
+.ev-calendar-header .ev-bright-mid{left:auto;right:84px;transform:translateY(-50%);width:24px;height:24px;padding:0}
+/* Conservar fuentes y controles a su tamaño habitual, también en móviles estrechos. */
+@media(max-width:359px){
+ .ev-calendar-header{height:112px;min-height:112px;padding-top:12px;align-items:flex-start}
+ .ev-calendar-header.sy-header-center .sy-year-nav{top:60px;max-width:calc(100% - 32px)}
+ .ev-calendar-header .sy-hdr-right{top:30px}
+ .ev-calendar-header .ev-bright-mid{left:auto;right:84px;top:30px;transform:translateY(-50%)}
 }
-.ev-month-wrap .ev-week-hdr>div{display:grid;place-items:center;min-height:30px}
+.ev-calendar-header:has(#evBright)+.sy-body{padding-top:4px}
+.ev-calendar-header:has(#evBright)+.sy-body .ev-week-hdr{top:-4px}
+.ev-month-wrap .ev-week-hdr>div{display:grid;place-items:center;min-height:30px;padding:3px 0}
 .ev-current-weekday{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;border:1px solid var(--c-green);background:var(--c-green);color:#fff;letter-spacing:0}
 .ev-month-wrap .ev-cell.out-m{background:var(--surface3)}
+.ev-month-wrap .ev-cell.today-ev:not(.out-m){background:color-mix(in srgb,var(--c-green) 9%,var(--surface))!important;--ev-marker-halo:color-mix(in srgb,var(--c-green) 9%,var(--surface))}
 .ev-hairdresser-edit{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;border:0;background:none;color:var(--text);font:inherit;font-weight:600;text-align:left;cursor:pointer;margin-bottom:8px}
 .ev-hairdresser-edit span{font-size:.72rem;color:var(--accent-bright);white-space:nowrap}
-.alarm-panel-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
-.alarm-panel-heading .alarm-panel-title{margin:0}
+.alarm-panel-heading{display:grid;grid-template-columns:54px minmax(0,1fr) 54px;align-items:center;gap:4px;margin-bottom:12px;padding:6px 12px 0}
+.alarm-panel-heading .alarm-panel-title{grid-column:2;margin:0;padding:0;text-align:center}
+.alarm-panel-heading .alarm-now-btn{grid-column:3;padding-inline:8px}
 .alarm-now-btn{border:1px solid var(--c-yellow);background:color-mix(in srgb,var(--c-yellow) 10%,var(--surface));color:var(--c-yellow);border-radius:8px;padding:6px 10px;font:inherit;font-size:.75rem;cursor:pointer}
 .boda-stat-link{font:inherit;cursor:pointer;color:inherit}
 #rutWkTimes[hidden]{display:none}

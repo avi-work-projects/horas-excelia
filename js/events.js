@@ -797,6 +797,7 @@ function _positionEvBright(){
   if(!bright.classList.contains('ev-bright-mid'))return;
   var hdr=nextBtn.closest('.sy-header');
   if(!hdr)return;
+  if(nextBtn.getBoundingClientRect().top>=todayBtn.getBoundingClientRect().bottom){bright.style.left='';bright.style.right='';return;}
   var hdrL=hdr.getBoundingClientRect().left;
   var nR=nextBtn.getBoundingClientRect().right-hdrL;
   var tL=todayBtn.getBoundingClientRect().left-hdrL;
