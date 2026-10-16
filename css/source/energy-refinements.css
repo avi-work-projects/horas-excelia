@@ -46,7 +46,7 @@
 .energy-tabs .econ-sub-tab{min-width:0;padding:10px 0;font-size:.62rem;font-weight:600;white-space:nowrap}
 /* Identidad propia de cada pestaña, sin alterar el sistema general. */
 .energy-window{--energy-tone:var(--energy-resumen);--energy-resumen:#65b9bd;--energy-consumo:#84b994;--energy-costes:#d4aa63;--energy-tarifas:#91b4e8;--energy-comparar:#c09bd3}
-[data-theme="light"] .energy-window{--energy-resumen:#267b7e;--energy-consumo:#457a51;--energy-costes:#a2691c;--energy-tarifas:#426aaa;--energy-comparar:#86549b}
+:is([data-theme="light"],[data-theme="grey"]) .energy-window{--energy-resumen:#267b7e;--energy-consumo:#457a51;--energy-costes:#a2691c;--energy-tarifas:#426aaa;--energy-comparar:#86549b}
 .energy-window [data-energy-tab="resumen"],.energy-window [data-energy-view="resumen"]{--energy-tone:var(--energy-resumen)}
 .energy-window [data-energy-tab="consumo"],.energy-window [data-energy-view="consumo"]{--energy-tone:var(--energy-consumo)}
 .energy-window [data-energy-tab="costes"],.energy-window [data-energy-view="costes"]{--energy-tone:var(--energy-costes)}
@@ -225,8 +225,8 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .ev-stats-links .ev-view-toggle{font-weight:600;color:var(--tab-tone);border-color:var(--tab-tone);background:color-mix(in srgb,var(--tab-tone) 8%,var(--surface));font-size:.62rem}
 .ev-stats-links .ev-btn-bodas{--tab-tone:#c08a5a}
 .ev-stats-links .ev-btn-rutinas{--tab-tone:#eceff5}
-[data-theme="light"] .ev-stats-links .ev-btn-bodas{--tab-tone:#8b5e34}
-[data-theme="light"] .ev-stats-links .ev-btn-rutinas{--tab-tone:#1f2937}
+:is([data-theme="light"],[data-theme="grey"]) .ev-stats-links .ev-btn-bodas{--tab-tone:#8b5e34}
+:is([data-theme="light"],[data-theme="grey"]) .ev-stats-links .ev-btn-rutinas{--tab-tone:#1f2937}
 
 .ev-routines-active>strong{display:flex;align-items:center;gap:9px;padding:3px 4px;font-size:.8rem;font-weight:600;color:var(--text)}
 .ev-routines-active>strong .ev-type-dot{width:22px;height:22px;flex:none}

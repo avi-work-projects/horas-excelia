@@ -310,6 +310,9 @@
   var nap=document.getElementById('alarmNapBtn');if(nap)nap.addEventListener('click',function(){
     var target=new Date(Date.now()+22*60000);createHeaderAlarm({hour:target.getHours(),minute:target.getMinutes(),label:'Siesta'});
   });
+  document.getElementById('alarmNowBtn').addEventListener('click',function(){
+    var now=new Date();buildDrumPicker('drumHour',24,now.getHours());buildDrumPicker('drumMin',60,now.getMinutes());
+  });
 
   /* ── Alarma: fallback .ics (recordatorio de calendario, 100% fiable) ── */
 

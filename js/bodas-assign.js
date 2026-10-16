@@ -186,14 +186,14 @@ function _renderBodaStats(){
 
   var h='';
   h+='<div class="boda-stats-row">';
-  h+='<div class="boda-stat"><b>'+dadas.length+'</b><span>dadas</span></div>';
-  h+='<div class="boda-stat"><b>'+proximas.length+'</b><span>próximas</span></div>';
-  h+='<div class="boda-stat"><b>'+all.length+'</b><span>total</span></div>';
+  h+='<div class="boda-stat"><b>'+dadas.length+'</b><span>clases dadas</span></div>';
+  h+='<div class="boda-stat"><b>'+proximas.length+'</b><span>clases próximas</span></div>';
+  h+='<div class="boda-stat"><b>'+all.length+'</b><span>clases en total</span></div>';
   h+='</div>';
   h+='<div class="boda-stats-row">';
-  h+='<div class="boda-stat"><b>'+mediaSem.toFixed(1)+'</b><span>por semana</span></div>';
-  h+='<div class="boda-stat"><b>'+mediaMes.toFixed(1)+'</b><span>por mes</span></div>';
-  h+='<div class="boda-stat"><b>'+BODA_COUPLES.length+'</b><span>parejas</span></div>';
+  h+='<div class="boda-stat"><b>'+mediaSem.toFixed(1)+'</b><span>clases / semana</span></div>';
+  h+='<div class="boda-stat"><b>'+mediaMes.toFixed(1)+'</b><span>clases / mes</span></div>';
+  h+='<button type="button" class="boda-stat boda-stat-link" id="bodaStatsCouples"><b>'+BODA_COUPLES.length+'</b><span>parejas en total →</span></button>';
   h+='</div>';
   h+='<div class="boda-stat-note">Desde el '+_bodaFmt(primera)+' hasta el '+_bodaFmt(ultima)+'</div>';
   h+='<div class="boda-stat-t">Clases por mes <em>(últimos 12)</em></div>';

@@ -97,7 +97,7 @@ button.action-edit.active,button.action-edit:active{background:rgba(251,146,60,.
 .boda-sticky-hd .boda-config-btn.active{color:#b98760;border-bottom:2px solid #b98760}
 
 .boda-sticky-hd{--wm-tab:#cc9294}
-[data-theme="light"] .boda-sticky-hd{--wm-tab:#6b1f20}
+:is([data-theme="light"],[data-theme="grey"]) .boda-sticky-hd{--wm-tab:#6b1f20}
 .boda-sticky-hd .econ-sub-tab,.boda-sticky-hd .boda-config-btn{color:var(--wm-tab)}
 .boda-sticky-hd .econ-sub-tab.active,.boda-sticky-hd .boda-config-btn.active{color:var(--wm-tab);border-bottom-color:var(--wm-tab)}
 .wm-logo-chip{width:30px;height:13px}
@@ -152,7 +152,7 @@ button.action-edit.active,button.action-edit:active{background:rgba(251,146,60,.
 #bodaTeachersOv #bodaTeacherName{margin-top:12px}
 
 .wm-logo-title{color:#b98760}
-[data-theme="light"] .wm-logo-title{color:#6d4826}
+:is([data-theme="light"],[data-theme="grey"]) .wm-logo-title{color:#6d4826}
 .bday-header-vip{display:flex;align-items:center;justify-content:flex-end;margin-left:auto;flex-shrink:0}
 .bday-header-vip .excl-item{gap:5px;margin:0}
 .bday-header-vip img{width:24px;height:auto}
@@ -179,7 +179,7 @@ button.action-edit.action-edit-text:active{background:#f97316!important}
 #eventsOverlay input[type="checkbox"]:checked::after{border-color:var(--surface)}
 #eventsOverlay label:has(#evUpShowRut){color:var(--text)}
 #eventsOverlay label:has(#evUpShowBoda){color:#b98760}
-[data-theme="light"] #eventsOverlay label:has(#evUpShowBoda){color:#80542f}
+:is([data-theme="light"],[data-theme="grey"]) #eventsOverlay label:has(#evUpShowBoda){color:#80542f}
 #eventsOverlay label:has(#syPuentesLibresChk){color:#d870a5}
 #eventsOverlay label:has(#evTypesPast),#eventsOverlay label:has(#syExclPastChk),#eventsOverlay label:has(#bodaShowPast){color:var(--text-muted)}
 #eventsOverlay label:has(#bodaShowClosed){color:var(--wm-wine)}
@@ -253,7 +253,7 @@ button.action-edit.action-edit-text:active{background:#f97316!important}
 .ev-wk-day-bg.even{background:var(--surface2)}
 .ev-wk-date.odd:not(.ev-wk-today){background:var(--surface)}
 .ev-wk-date.even:not(.ev-wk-today){background:var(--surface2)}
-[data-theme="light"] .ev-wk-day-bg.even,[data-theme="light"] .ev-wk-date.even:not(.ev-wk-today){background:#eceef1}
+:is([data-theme="light"],[data-theme="grey"]) .ev-wk-day-bg.even,:is([data-theme="light"],[data-theme="grey"]) .ev-wk-date.even:not(.ev-wk-today){background:#eceef1}
 
 /* Formulario de rutina: ritmo y etiquetas comunes, sin alterar otros paneles. */
 #rutFormOv .ev-form-sheet > .ev-field{margin-bottom:22px;gap:8px}
@@ -289,9 +289,9 @@ button.action-edit.action-edit-text:active{background:#f97316!important}
 #eventsOverlay .ev-hdr-sub .ev-btn-week{--tab-tone:#ff6b6b}
 #eventsOverlay .ev-hdr-sub .ev-btn-bodas{--tab-tone:#c08a5a}
 #eventsOverlay .ev-hdr-sub .ev-btn-rutinas{--tab-tone:#eceff5}
-[data-theme="light"] #eventsOverlay .ev-hdr-sub .ev-btn-week{--tab-tone:#c02626}
-[data-theme="light"] #eventsOverlay .ev-hdr-sub .ev-btn-bodas{--tab-tone:#8b5e34}
-[data-theme="light"] #eventsOverlay .ev-hdr-sub .ev-btn-rutinas{--tab-tone:#1f2937}
+:is([data-theme="light"],[data-theme="grey"]) #eventsOverlay .ev-hdr-sub .ev-btn-week{--tab-tone:#c02626}
+:is([data-theme="light"],[data-theme="grey"]) #eventsOverlay .ev-hdr-sub .ev-btn-bodas{--tab-tone:#8b5e34}
+:is([data-theme="light"],[data-theme="grey"]) #eventsOverlay .ev-hdr-sub .ev-btn-rutinas{--tab-tone:#1f2937}
 #eventsOverlay .ev-hdr-sub .ev-view-toggle.ev-btn-split{--tab-tone:var(--vacaciones);--tab-alpha:13%;background:linear-gradient(to bottom,color-mix(in srgb,#ffb347 var(--tab-alpha),var(--surface)) 50%,color-mix(in srgb,#f472b6 var(--tab-alpha),var(--surface)) 50%)!important}
 #eventsOverlay .ev-hdr-sub .ev-btn-split.active{--tab-alpha:30%}
 #eventsOverlay .boda-cfg-card-controls label{color:var(--wm-wine)}
@@ -339,7 +339,7 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .nav-pro-econ{color:var(--c-blue)}.nav-pro-home{color:var(--home-tone)}.nav-pro-estudio{color:var(--study-tone)}.nav-pro-events{color:#65a367}.nav-pro-bday{color:var(--birthday-tone)}.nav-pro-alarm{color:#e5b600;width:31px;height:31px}
 
 :root{--birthday-tone:#f08bb2;--study-tone:#e4ac72}
-[data-theme="light"]{--birthday-tone:#b43868;--study-tone:#a56625}
+:is([data-theme="light"],[data-theme="grey"]){--birthday-tone:#b43868;--study-tone:#a56625}
 /* Los SVG comparten caja; Home solo es mas grande con los iconos originales. */
 .data-actions:has(.nav-pro-icon){align-items:center}
 .data-btn:has(.nav-pro-icon),.nav-bar-btn:has(.nav-pro-icon),#homeBtn:has(.nav-pro-icon),.nav-bar-btn[data-nav="home"]:has(.nav-pro-icon){width:44px!important;height:44px!important;flex-shrink:0;border-radius:8px!important}
@@ -378,19 +378,19 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 /* Mes y titulo fijo comparten una referencia de altura: sin franja abierta. */
 .ev-wk-month-sep{--ev-month-surface:#242c3d;--ev-month-border:var(--border);flex-shrink:0;height:32px;box-sizing:border-box;display:flex;align-items:center;background:var(--bg);border:0;padding-top:0;padding-bottom:0;isolation:isolate}
 .ev-wk-month-sep::before{content:'';position:absolute;inset:0;z-index:-1;border-radius:16px 16px 0 0;background:var(--ev-month-surface);box-shadow:inset 0 -1px 0 var(--ev-month-border)}
-[data-theme="light"] .ev-wk-month-sep{--ev-month-surface:#dfe5f1;--ev-month-border:#c1ccde;color:#405778}
+:is([data-theme="light"],[data-theme="grey"]) .ev-wk-month-sep{--ev-month-surface:#dfe5f1;--ev-month-border:#c1ccde;color:#405778}
 .ev-wk-date.ev-wk-today{width:100%;margin:0;justify-self:stretch;background:color-mix(in srgb,var(--c-green) 18%,var(--surface));border:1.5px solid var(--c-green);box-shadow:none}
 .ev-wk-date.ev-wk-today .ev-wk-num,.ev-wk-date.ev-wk-today .ev-wk-dow{color:var(--c-green)}
 .ev-wk-day-bg.ev-wk-today{background:#162b25}
-[data-theme="light"] .ev-wk-day-bg.ev-wk-today{background:#edf6f0}
+:is([data-theme="light"],[data-theme="grey"]) .ev-wk-day-bg.ev-wk-today{background:#edf6f0}
 /* Semanas enviadas en claro: verdes suaves, sin pastillas oscuras. */
-[data-theme="light"] .week-card.sent{--sent:#f0f6f2;--sent-border:#c5dacf;--sent-text:#35684a}
-[data-theme="light"] .week-card.sent .week-total{background:#deece2;color:#35684a}
-[data-theme="light"] .week-card.sent .action-btn.sent-toggle{background:#d6e9dd;color:#35684a}
+:is([data-theme="light"],[data-theme="grey"]) .week-card.sent{--sent:#f0f6f2;--sent-border:#c5dacf;--sent-text:#35684a}
+:is([data-theme="light"],[data-theme="grey"]) .week-card.sent .week-total{background:#deece2;color:#35684a}
+:is([data-theme="light"],[data-theme="grey"]) .week-card.sent .action-btn.sent-toggle{background:#d6e9dd;color:#35684a}
 
 /* Borde discreto para identificar semanas enviadas en ambos temas. */
 .week-card.sent{border:1.5px solid #427958}
-[data-theme="light"] .week-card.sent{border-color:#427958}
+:is([data-theme="light"],[data-theme="grey"]) .week-card.sent{border-color:#427958}
 
 /* Filtros junto al buscador sin ensanchar la ventana movil. */
 .ev-list-search-row{display:flex;align-items:stretch;gap:8px}
@@ -416,9 +416,9 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .sy-period-past{--period-tone:#a0a5b0}
 .sy-period-future{--period-tone:#c6a16a}
 .sy-period-total{--period-tone:#75aa99}
-[data-theme="light"] .sy-period-past{--period-tone:#626c7b}
-[data-theme="light"] .sy-period-future{--period-tone:#9a743e}
-[data-theme="light"] .sy-period-total{--period-tone:#397e6b}
+:is([data-theme="light"],[data-theme="grey"]) .sy-period-past{--period-tone:#626c7b}
+:is([data-theme="light"],[data-theme="grey"]) .sy-period-future{--period-tone:#9a743e}
+:is([data-theme="light"],[data-theme="grey"]) .sy-period-total{--period-tone:#397e6b}
 .sy-period-past,.sy-period-future,.sy-period-total{border-color:var(--period-tone);background:color-mix(in srgb,var(--period-tone) 12%,var(--surface))}
 .sy-period-past .sy-val,.sy-period-future .sy-val,.sy-period-total .sy-val{color:var(--period-tone)}
 
@@ -589,7 +589,7 @@ details[open]>summary{margin-bottom:10px}
 .bday-list-body .bday-month-section{gap:0}
 .bday-list-body .bday-today-dock{margin-bottom:-8px;flex-shrink:0}
 
-[data-theme="light"] .bday-person-groups .bday-group-tag{color:hsl(var(--group-hue) 55% 32%)}
+:is([data-theme="light"],[data-theme="grey"]) .bday-person-groups .bday-group-tag{color:hsl(var(--group-hue) 55% 32%)}
 .bday-first-month .bday-month-hdr{margin-top:0}
 
 /* Controles compactos y paneles estables: solo se desplaza su contenido. */
@@ -647,7 +647,7 @@ body:has(#bdDetailOv.open,#bdFormOv.open,#bdCategoryOv.open) .tasks-fab{visibili
 .bday-filter-options .bday-group-chips{margin:8px 0 0}
 .bday-vip-filter-chips>.bday-vip-chip{flex:1 1 0;min-width:0}
 .bday-group-chip,.bday-person-groups .bday-group-tag{--group-ink:hsl(var(--group-hue) 65% 78%);--group-bg:color-mix(in srgb,hsl(var(--group-hue) 60% 55%) 12%,var(--surface));--group-border:color-mix(in srgb,hsl(var(--group-hue) 60% 55%) 30%,var(--border))}
-[data-theme="light"] .bday-group-chip{--group-ink:hsl(var(--group-hue) 55% 32%)}
+:is([data-theme="light"],[data-theme="grey"]) .bday-group-chip{--group-ink:hsl(var(--group-hue) 55% 32%)}
 button.bday-group-chip{color:var(--group-ink);background:var(--group-bg);border-color:var(--group-border)}
 button.bday-group-chip[aria-pressed=true]{color:var(--group-ink);border-color:currentColor;background:color-mix(in srgb,hsl(var(--group-hue) 60% 55%) 23%,var(--surface));box-shadow:inset 0 0 0 1px currentColor;font-weight:600}
 button.bday-group-chip:focus{outline:none}
@@ -919,7 +919,7 @@ body:has(#connectionsOv.open) .tasks-fab{visibility:hidden}
 #exportFolderOv .settings-editor-sheet{height:min(450px,88dvh)}
 
 :root{--home-tone:#f29bc2}
-[data-theme="light"]{--home-tone:#bb3979}
+:is([data-theme="light"],[data-theme="grey"]){--home-tone:#bb3979}
 .settings-edit-macro{--settings-tone:#8a5794}.settings-edit-personal{--settings-tone:var(--home-tone)}
 .settings-field-value{display:flex;align-items:center;gap:6px;min-width:0}
 .settings-field-value input,.settings-field-value textarea,.settings-field-value select{min-width:0;flex:1;width:0}
@@ -1028,3 +1028,37 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 .settings-is-reading .personal-data-row,.settings-is-reading .contact-entry{border-radius:12px;cursor:pointer}
 .settings-is-reading .personal-data-row textarea,.settings-is-reading .contact-entry textarea{cursor:pointer}
 .settings-is-reading .personal-data-row:has([data-personal-select]:checked),.settings-is-reading .contact-entry:has([data-personal-select]:checked){outline:2px solid var(--settings-tone);outline-offset:-2px}
+
+/* Navegación cuadrada, calendarios y accesos de consulta (v481). */
+.sy-back,.sy-nav,.sy-nav-icon,.nav-btn{border-radius:9px}
+.fiscal-year-arrow{width:32px;height:32px;padding:0;border-radius:9px}
+.ev-car-arrow{border-radius:9px;width:36px;min-width:36px;height:36px;flex:0 0 36px}
+.ev-calendar-header{height:72px;min-height:72px}
+.ev-calendar-header .sy-hdr-right{right:20px}
+.ev-calendar-header #evToday{font-size:.75rem;padding:7px 14px}
+.ev-calendar-year-line{display:flex;align-items:center;justify-content:center;gap:5px}
+.ev-calendar-year-line .ev-bright-btn{font-size:.65rem;line-height:1;padding:1px 3px;margin:0}
+.ev-calendar-header .sy-year-nav{gap:3px}
+.ev-calendar-header:has(#evQuadPrev2) .sy-nav{width:24px;min-width:24px;height:24px;min-height:24px;border-radius:7px}
+.ev-calendar-header:has(#evQuadPrev2) .sy-year-nav{max-width:calc(100% - 126px)}
+.ev-calendar-header .ev-quad-label{min-width:64px}
+@media(max-width:360px){
+ .ev-calendar-header .sy-year{font-size:.9rem}
+ .ev-calendar-header .sy-year-2line{min-width:78px}
+ .ev-calendar-header .sy-nav{width:28px;min-width:28px;height:28px;min-height:28px}
+ .ev-calendar-header .ev-quad-label{font-size:.62rem;min-width:50px}
+ .ev-calendar-header:has(#evQuadPrev2) .sy-year-nav{gap:2px}
+ .ev-calendar-header:has(#evQuadPrev2) .sy-nav{width:24px!important;height:24px!important;min-width:24px!important}
+}
+.ev-month-wrap .ev-week-hdr>div{display:grid;place-items:center;min-height:30px}
+.ev-current-weekday{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;border:1px solid var(--c-green);background:var(--c-green);color:#fff;letter-spacing:0}
+.ev-month-wrap .ev-cell.out-m{background:var(--surface3)}
+.ev-hairdresser-edit{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;border:0;background:none;color:var(--text);font:inherit;font-weight:600;text-align:left;cursor:pointer;margin-bottom:8px}
+.ev-hairdresser-edit span{font-size:.72rem;color:var(--accent-bright);white-space:nowrap}
+.alarm-panel-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.alarm-panel-heading .alarm-panel-title{margin:0}
+.alarm-now-btn{border:1px solid var(--c-yellow);background:color-mix(in srgb,var(--c-yellow) 10%,var(--surface));color:var(--c-yellow);border-radius:8px;padding:6px 10px;font:inherit;font-size:.75rem;cursor:pointer}
+.boda-stat-link{font:inherit;cursor:pointer;color:inherit}
+#rutWkTimes[hidden]{display:none}
+#rutWkOv .ev-detail-sheet{height:min(720px,88dvh);max-height:88dvh;overflow-y:auto}
+[data-theme="grey"] .ev-wk-month-sep{--ev-month-surface:#e5dac5;--ev-month-border:#d7c9ad;color:#6d604d}

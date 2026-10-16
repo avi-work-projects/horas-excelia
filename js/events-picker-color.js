@@ -190,7 +190,7 @@ function evShapeSvg(shape){
   } else if(shape==='heart'){
     inner='<path d="M0,8 C-3,5 -9,1 -9,-3 C-9,-9 -2,-10 0,-5 C2,-10 9,-9 9,-3 C9,1 3,5 0,8 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/>';
   } else if(shape==='meal'){
-    inner='<circle r="5.1" fill="currentColor" stroke="#000" stroke-width="1.3"/><circle r="3.4" fill="#fff7e6" stroke="#000" stroke-width=".7"/>'
+    inner='<rect x="-11" y="-9" width="22" height="18" rx="2" fill="#ead6b4" stroke="#b59a72" stroke-width=".7"/><circle r="5.1" fill="currentColor" stroke="#000" stroke-width="1.3"/><circle r="3.4" fill="#fff7e6" stroke="#000" stroke-width=".7"/>'
       +'<path d="M-9,-7 V-3 Q-9,-1 -7.5,-1 Q-6,-1 -6,-3 V-7 M-7.5,-7 V-3 M-7.5,-1 V7" fill="none" stroke="#000" stroke-width="1.25" stroke-linecap="round"/>'
       +'<path d="M8.5,-7 Q6,-5 6,0 H8.5 Z" fill="#e6e9eb" stroke="#000" stroke-width="1.1" stroke-linejoin="round"/><path d="M8.5,0 V7" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>';
   } else if(shape==='dinner'){

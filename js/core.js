@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v480 — Agenda y notas de peluquería';
+var APP_VERSION = 'v481 — Calendarios, accesos y tema crema';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -122,8 +122,8 @@ var THEME=(function(){try{
   if(t==='amoled'){t='grey';try{appStorage.setItem('excelia-theme-v1','grey');}catch(e){}}
   if(t&&['dark','light','grey'].indexOf(t)!==-1)return t;
 }catch(e){}return 'dark';})();
-var THEME_LABELS={dark:'\uD83C\uDF19\u00a0Oscuro',light:'\u2600\uFE0F\u00a0Claro',grey:'\uD83C\uDF2B\uFE0F\u00a0Gris'};
-var THEME_META={dark:'#0a0a0f',light:'#f4f4fa',grey:'#2c2e36'};
+var THEME_LABELS={dark:'\uD83C\uDF19\u00a0Oscuro',light:'\u2600\uFE0F\u00a0Claro',grey:'☕\u00a0Crema'};
+var THEME_META={dark:'#0a0a0f',light:'#f4f4fa',grey:'#f7f1e5'};
 var THEME_SEQUENCE=['dark','light','grey'];
 function applyTheme(t){
   THEME=t;

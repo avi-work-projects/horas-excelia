@@ -1,5 +1,5 @@
 /* Partidas simples y por tramos: misma fila y misma jerarquía visual. */
-[data-theme="light"] #fiscalOverlay{--personal-tone:#79509c}
+:is([data-theme="light"],[data-theme="grey"]) #fiscalOverlay{--personal-tone:#79509c}
 .personal-item-card{border:1px solid var(--border);border-radius:12px;margin:0 0 10px;padding:10px;background:var(--surface);min-width:0}
 .personal-item-main{display:flex;align-items:center;gap:6px;min-width:0}
 .personal-gear{flex:0 0 27px;width:27px;height:30px;border:0;border-radius:7px;padding:0;background:color-mix(in srgb,var(--personal-tone,var(--accent)) 9%,var(--surface));color:var(--personal-tone,var(--accent-bright));font:inherit;font-size:1.05rem;cursor:pointer}

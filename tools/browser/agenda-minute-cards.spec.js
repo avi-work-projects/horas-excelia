@@ -78,7 +78,7 @@ test('Análisis de hipoteca arriba en ambos detalles y con el acento de cada ven
  await page.evaluate(()=>{loadDespacho();DESPACHO.compra=Object.assign(_defaultCompra(),{importePrestamo:120000,tipoInteres:3,plazoAnios:20,fechaInicio:'2024-01-01',entidadBanco:'Banco de prueba'});saveDespacho();});
  for(const fiscal of [false,true])for(const tab of ['resumen','detalle']){
   await page.evaluate(({fiscal,tab})=>{if(fiscal){FISCAL_TAB='despacho';FISCAL_HIP_SUB=tab;openFiscal(2026);}else openHousehold(tab);},{fiscal,tab});await settled(page);
-  const button=page.locator((fiscal?'#fiscalOverlay':'#householdOverlay')+' #hipGoAnalisis');await expect(button).toBeInViewport();
+  const button=page.locator((fiscal?'#fiscalOverlay':'#householdOverlay')+' #hipGoAnalisis');if(tab==='resumen'){await expect(button).toHaveCount(0);continue;}await expect(button).toBeInViewport();
   const state=await button.evaluate(el=>{const s=getComputedStyle(el),probe=document.createElement('i');probe.style.color='var(--accent)';el.append(probe);const accent=getComputedStyle(probe).color;probe.remove();return {first:el.parentNode.firstElementChild===el,fill:s.backgroundColor,accent};});
   expect(state.first).toBe(true);expect(state.fill).toBe(state.accent);await page.screenshot({path:info.outputPath('hipoteca-'+fiscal+'-'+tab+'.png')});
  }

@@ -139,7 +139,7 @@ function renderEvDetail(ev,fromSummary,car,occurrenceDs){
   if(repeatStr&&!isBirthday)h+='<div class="ev-detail-repeat">'+repeatStr+'</div>';
   /* En una rutina la nota repite la hora que ya sale arriba */
   if(ev.note&&!ev._rut&&!isBirthday)h+='<div class="ev-detail-note"><span class="ev-detail-label">Notas</span>'+escHtml(ev.note)+'</div>';
-  if(_evType==='Peluquería'&&hairdresserNote().trim())h+='<div class="ev-detail-note ev-hairdresser-note"><span class="ev-detail-label">Instrucciones para el peluquero</span>'+escHtml(hairdresserNote())+'</div>';
+  if(_evType==='Peluquería')h+='<div class="ev-detail-note ev-hairdresser-note"><button type="button" class="ev-hairdresser-edit" id="evDHairdresser">Instrucciones para el peluquero <span>Editar ↗</span></button>'+escHtml(hairdresserNote()||'Añade tus instrucciones en Mis notas.')+'</div>';
   /* Nota especifica del dia desde el que se abrio (puntuales de varios dias) */
   if(EV_EDIT_DS&&ev.dayNotes&&ev.dayNotes[EV_EDIT_DS]){
     h+='<div class="ev-detail-note ev-detail-daynote"><span class="ev-note-scope">'
@@ -258,6 +258,7 @@ function openEvDetail(ev,container,car,occurrenceDs){
     reutilizar:!!car
   });
   bindEvManagementCheck(wrap,ev);
+  var hairdresserButton=wrap.querySelector('#evDHairdresser');if(hairdresserButton)hairdresserButton.onclick=function(){openPersonalNotes({tab:'hairdresser',edit:true,onClose:function(){if(wrap.isConnected)openEvDetail(ev,container,car,occurrenceDs);}});};
   var alarmButton=wrap.querySelector('#evDAlarm');
   if(alarmButton)alarmButton.onclick=function(){
     var date=evDetailAlarmDate(ev,(car&&car.ds)||occurrenceDs);

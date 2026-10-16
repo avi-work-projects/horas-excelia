@@ -47,7 +47,7 @@
 .boda-mode-btn{flex:1;font-size:.72rem;padding:6px 10px;border-radius:12px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s}
 .boda-mode-btn.active{border-color:#b0714a;background:rgba(176,113,74,.16);color:#e8bd95;font-weight:600}
 /* El marron macizo quedaba demasiado oscuro: ahora es un tinte suave */
-[data-theme="light"] .boda-mode-btn.active{background:rgba(176,113,74,.15);border-color:#b0714a;color:#7a5230}
+:is([data-theme="light"],[data-theme="grey"]) .boda-mode-btn.active{background:rgba(176,113,74,.15);border-color:#b0714a;color:#7a5230}
 .boda-summary{display:flex;gap:8px}
 .boda-sum-item{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 4px;text-align:center;display:flex;flex-direction:column}
 .boda-sum-item b{font-size:1.1rem;color:var(--text)}
@@ -96,7 +96,7 @@
 .boda-chip,.ev-sort-chip{flex:1;min-width:0;font-size:.68rem;padding:7px 8px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;white-space:nowrap;text-align:center}
 .boda-chip b{font-family:var(--mono);font-size:.66rem;opacity:.8;margin-left:3px}
 .boda-chip.active{border-color:#b0714a;background:rgba(176,113,74,.17);color:#e8bd95;font-weight:600}
-[data-theme="light"] .boda-chip.active{background:rgba(176,113,74,.16);border-color:#b0714a;color:#7a5230}
+:is([data-theme="light"],[data-theme="grey"]) .boda-chip.active{background:rgba(176,113,74,.16);border-color:#b0714a;color:#7a5230}
 .boda-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;display:flex;flex-direction:column;gap:6px}
 .boda-card-tap{cursor:pointer;transition:border-color .12s}
 .boda-card-tap:active{border-color:var(--accent)}
@@ -304,8 +304,8 @@
 .ev-bpunto{width:9px;height:9px;border-radius:50%;flex:0 0 auto;border:1px solid rgba(0,0,0,.35)}
 .ev-bfila.warn{background:rgba(201,138,30,.08)}
 .ev-bfila.warn .ev-bfila-val{color:#e0a83c;font-weight:600}
-[data-theme="light"] .ev-bfila.warn{background:rgba(212,148,31,.12)}
-[data-theme="light"] .ev-bfila.warn .ev-bfila-val{color:#8a5c05}
+:is([data-theme="light"],[data-theme="grey"]) .ev-bfila.warn{background:rgba(212,148,31,.12)}
+:is([data-theme="light"],[data-theme="grey"]) .ev-bfila.warn .ev-bfila-val{color:#8a5c05}
 .ev-bver{flex:0 0 auto;margin-left:6px;padding:3px 9px;border-radius:10px;font-size:.66rem;font-weight:700;cursor:pointer;border:1.5px solid var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
 /* Los tres botones de la pareja, en una sola linea */
 .boda-det-actions-row{flex-direction:row;gap:6px}

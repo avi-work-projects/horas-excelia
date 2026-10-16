@@ -128,9 +128,10 @@ function openPersonalData(){
     onSave:function(){appStorage.setItem(CONTACT_DATA_KEY,JSON.stringify(readContactFields(root)));showToast('Datos guardados','success');}
   });
 }
-function openPersonalNotes(){
+function openPersonalNotes(options){
+  options=options||{};if(options.tab)PERSONAL_NOTES_TAB=options.tab;
   closeSettingsMenu();var previous=NAV_BACK;
-  function close(){cerrarPanel('personalNotesWrap','personalNotesOv');if(NAV_BACK===close)NAV_BACK=previous;}
+  function close(){cerrarPanel('personalNotesWrap','personalNotesOv');if(NAV_BACK===close)NAV_BACK=previous;if(options.onClose)setTimeout(options.onClose,320);}
   var body='<div class="econ-sub-tabs personal-notes-tabs" role="tablist" aria-label="Mis notas"><button class="econ-sub-tab" role="tab" id="personalGeneralTab" aria-controls="personalGeneralPanel" data-notes-tab="general">General</button><button class="econ-sub-tab" role="tab" id="personalHairdresserTab" aria-controls="personalHairdresserPanel" data-notes-tab="hairdresser">Peluquería</button></div>';
   body+='<label class="invoice-field personal-note-field" id="personalGeneralPanel" role="tabpanel" aria-labelledby="personalGeneralTab" data-notes-panel="general"><span>Mi Nota</span><textarea id="personalNoteText" rows="14" maxlength="50000" placeholder="Escribe aquí tus notas">'+escHtml(personalNote())+'</textarea></label>';
   body+='<label class="invoice-field personal-note-field" id="personalHairdresserPanel" role="tabpanel" aria-labelledby="personalHairdresserTab" data-notes-panel="hairdresser"><span>Instrucciones para el peluquero</span><textarea id="hairdresserNoteText" rows="14" maxlength="50000" placeholder="Estas instrucciones aparecerán en tus eventos de peluquería">'+escHtml(hairdresserNote())+'</textarea></label>';
@@ -149,4 +150,5 @@ function openPersonalNotes(){
     catch(e){appStorage.cancel();throw e;}
     showToast('Notas guardadas','success');
   }});
+  if(options.edit)root.querySelector('#personalNotesEdit').click();
 }

@@ -39,29 +39,45 @@
 <button class="ev-view-toggle ev-btn-calendar active" id="evViewCal">Calendario<br>1 mes</button>
 <button class="ev-view-toggle ev-btn-rutinas" id="evViewRutinas">Rutinas</button>
 </div>
-<div class="sy-header with-tabs sy-header-center">
+<div class="sy-header with-tabs sy-header-center ev-calendar-header">
 <button class="sy-back" id="evBack">&#8592;</button>
 <div class="sy-year-nav">
 <button class="sy-nav" id="evPrev">&#9664;</button>
-<div class="sy-year sy-year-2line">Agosto<span class="sy-year-sub">2026</span>
+<div class="sy-year sy-year-2line">Agosto<span class="ev-calendar-year-line">
+<span class="sy-year-sub">2026</span>
+<button class="ev-bright-btn" id="evBright" aria-label="Resaltar eventos pasados">💡</button>
+</span>
 </div>
 <button class="sy-nav" id="evNext">&#9654;</button>
 </div>
-<button class="ev-bright-btn ev-bright-mid" id="evBright">💡</button>
 <div class="sy-hdr-right">
-<button class="today-btn" id="evToday" style="font-size:.65rem;padding:4px 10px">Hoy</button>
+<button class="today-btn" id="evToday">Hoy</button>
 </div>
 </div>
 <div class="sy-body">
 <div class="ev-month-wrap">
 <div class="ev-week-hdr">
-<div>L</div>
-<div>M</div>
-<div>X</div>
-<div>J</div>
-<div>V</div>
-<div>S</div>
-<div>D</div>
+<div>
+<span>L</span>
+</div>
+<div>
+<span>M</span>
+</div>
+<div>
+<span>X</span>
+</div>
+<div>
+<span>J</span>
+</div>
+<div>
+<span class="ev-current-weekday" aria-label="Día de la semana actual">V</span>
+</div>
+<div>
+<span>S</span>
+</div>
+<div>
+<span>D</span>
+</div>
 </div>
 <div class="ev-week-outer">
 <div class="ev-week-grid">

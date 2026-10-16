@@ -1,6 +1,17 @@
 const assert=require('assert');const {cargarApp}=require('./entorno');const a=cargarApp({});
 const fixed=()=>({id:'fixed',name:'Prueba',start:'2026-08-01',weekDays:[1,4],time:'18:00',dur:60,weeks:{},skips:{}});
 let r=fixed();a.RUTINAS=[r];
+// Las horas por día sobreviven a excepciones semanales, cambios futuros y backups.
+const perDay={weekDays:[1,2,4],time:'18:00',times:{1:'17:00',2:'19:15',4:'20:30'},dur:60};
+const weekly=a.rutChangeWeek(r,'2026-08-24',perDay);
+const forward=a.rutNewSchedule(r,perDay,'2026-08-24');
+for(const updated of [weekly,forward]){
+ const restored=a.validateImport({rutinas:[JSON.parse(JSON.stringify(updated))]}).rutinas[0];
+ assert.deepEqual(['2026-08-24','2026-08-25','2026-08-27'].map(ds=>a.rutOccursOn(restored,ds)),['17:00','19:15','20:30']);
+ assert.equal(a.rutOccursOn(restored,'2026-08-17'),'18:00');
+ assert.equal(a.rutOccursOn(restored,'2026-08-31'),updated===weekly?'18:00':'17:00');
+}
+for(const times of [{1:'25:00'},{7:'17:00'}])assert.throws(()=>a.validateImport({rutinas:[{...r,weeks:{'2026-08-24':{...perDay,times}}}]}),/Horario semanal/);
 let changed=a.rutEditSession(r,'2026-08-20','19:00',45,false);
 assert(a.rutSessionMoved(changed,a.rutSessionByKey(changed,'2026-08-20')));
 let html=a.renderRutHistorySession(changed,a.rutSessionByKey(changed,'2026-08-20'),'2026-08-21');
