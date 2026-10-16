@@ -843,10 +843,11 @@
 **Rangos por prefijo de clase:**
 .home-invoice:3-5 · .hours-control:1-6 · .hours-export:50-61 · .invoice-actions:21-21 · .invoice-body:10-10 · .invoice-card:12-14 · .invoice-config:19-19 · .invoice-confirm:26-26 · .invoice-day:25-25 · .invoice-document:34-34 · .invoice-error:27-27 · .invoice-eye:46-47 · .invoice-field:16-16 · .invoice-fields:15-37 · .invoice-filename:28-28 · .invoice-kairo:11-11 · .invoice-month:31-43 · .invoice-note:17-17 · .invoice-sheet:8-49 · .invoice-status:18-18 · .invoice-summary:44-45 · .invoice-totals:20-20
 
-### css/source/theme-cream.css  _(52 líneas)_
+### css/source/theme-cream.css  _(56 líneas)_
 
 **Secciones:**
 
+- Bordes suaves en reposo; el color completo identifica la selección.:52
 
 **Rangos por prefijo de clase:**
 
