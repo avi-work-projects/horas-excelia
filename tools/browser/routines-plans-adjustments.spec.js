@@ -7,8 +7,11 @@ test.beforeEach(async({page})=>{
 });
 test('histórico: horario original/nuevo, vuelta al original, cancelación y editor estable',async({page},info)=>{
   await page.evaluate(()=>openRutHistory(RUTINAS[0]));await page.locator('[data-history-edit="2026-10-16"]').click();
-  const sheet=page.locator('#rutHistoryEditOv .ev-form-sheet');await expect(sheet).toBeVisible();const height=(await sheet.boundingBox()).height;
-  const field=await page.locator('.rut-session-fields').boundingBox(),note=await page.locator('#rutHistoryEditOv .sy-note').first().boundingBox();expect(note.y-field.y-field.height).toBeGreaterThanOrEqual(17);
+  const sheet=page.locator('#rutHistoryEditOv .ev-form-sheet');await expect(sheet).toBeVisible();
+  await page.evaluate(async()=>{await new Promise(requestAnimationFrame);await new Promise(requestAnimationFrame);await Promise.all(document.getAnimations().filter(a=>a.effect.getTiming().iterations!==Infinity).map(a=>a.finished.catch(()=>{})));});
+  const height=(await sheet.boundingBox()).height;
+  // Medir ambas cajas en el mismo fotograma: dos lecturas remotas pueden cruzar una transición.
+  const gap=await sheet.evaluate(el=>{const field=el.querySelector('.rut-session-fields').getBoundingClientRect(),note=el.querySelector('.sy-note').getBoundingClientRect();return note.top-field.bottom;});expect(gap).toBeGreaterThanOrEqual(17);
   await page.screenshot({path:info.outputPath('editar-sesion.png'),animations:'disabled'});
   await chooseTime(page,'#rutHistoryTime','17:00');await page.locator('#rutHistorySave').click();await expect(page.locator('#rutHistoryEditWrap')).toHaveCount(0);
   const row=page.locator('[data-history-date="2026-10-16"]');await expect(row).toContainText('Horario original');await expect(row).toContainText('Horario nuevo');await expect(row).toContainText('15:00–16:00');await expect(row).toContainText('17:00–18:00');await expect(page.locator('[data-history-month="2026-10"] .rut-history-month-counts')).toContainText('1 movidas de horario');
