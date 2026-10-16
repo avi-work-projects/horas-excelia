@@ -55,7 +55,7 @@
 .household-detail-link{background:#7834a6;color:#fff}
 .household-analysis-link{width:100%;margin:0;background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
 #fiscalOverlay .household-analysis-link{--accent:var(--c-purple)}
-.household-detail:has(>.household-analysis-link){margin:0 auto}
+.household-detail:has(>.household-analysis-link),.household-detail:has(>.energy-analysis-open){margin:0 auto;padding-top:0}
 @media(max-width:360px){.household-card{padding:14px}.household-investment{flex-wrap:wrap}.household-metrics{gap:10px}}
 
 /* Pares de precios: cifra neta principal, importe con impuestos secundario. */

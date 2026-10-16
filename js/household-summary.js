@@ -80,7 +80,7 @@ function householdMortgageAnalysisButton(){return '<button class="ev-io-btn hous
 function renderHouseholdSummary(editable){
   var comp=DESPACHO.compra||_defaultCompra(),total=['valorCompraTotal','itpMadrid','notariaRegistro','tasacion','reformas','inmobiliaria'].reduce(function(n,k){return n+(comp[k]||0);},0),periods=[];
   for(var i=-1;i<(comp.subrogaciones||[]).length;i++){var p=householdMortgagePeriod(comp,i,new Date());if(p)periods.push(p);}
-  var h='<div class="household-summary">'+(periods.length?householdMortgageAnalysisButton():'');
+  var h='<div class="household-summary">';
   if(total)h+='<div class="household-investment"><span>Inversión en la vivienda<small>Compra, impuestos y gastos</small></span><strong>'+fcPlain(total)+'</strong></div>';
   if(periods.length){
     h+=householdMortgageCard(comp,periods[periods.length-1],editable);

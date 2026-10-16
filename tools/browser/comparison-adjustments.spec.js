@@ -47,6 +47,7 @@ test('gas con tres precios en fila y análisis de hipoteca desde ambas ventanas'
   for(const fiscal of [false,true])for(const tab of ['resumen','detalle']){
     await page.evaluate(({fiscal,tab})=>{closeEcon();if(fiscal){FISCAL_TAB='despacho';FISCAL_HIP_SUB=tab;openFiscal(2026);}else openHousehold(tab);},{fiscal,tab});
     const host=page.locator(fiscal?'#fiscalOverlay':'#householdOverlay');
+    if(tab==='resumen'){await expect(host.locator('#hipGoAnalisis')).toHaveCount(0);continue;}
     await host.locator('#hipGoAnalisis').click();
     await expect(page.locator('#econOverlay')).toHaveClass(/open/);
     await expect(page.locator('#analisisSubHipoteca')).toHaveClass(/active/);

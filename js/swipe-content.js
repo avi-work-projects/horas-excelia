@@ -4,7 +4,7 @@ var SWIPE_PREVIEW_SHEET=null;
 // Espacio visible entre las dos vistas, también al completar la transición.
 var SWIPE_CONTENT_GAP=24;
 function swipeContentDistance(width){return width+SWIPE_CONTENT_GAP;}
-var SWIPE_FIXED_SELECTOR='.econ-sub-tabs,.rut-sub-tabs,.boda-sub-tabs,.ev-annual-controls,.sy-header,.bday-header,.energy-year-nav,.fiscal-hip-tabs,.est-nav,.boda-cal-nav,.ev-dow-row,.ev-week-hdr,.bday-week-hdr';
+var SWIPE_FIXED_SELECTOR='.econ-sub-tabs,.rut-sub-tabs,.boda-sub-tabs,.ev-annual-controls,.sy-header,.bday-header,.energy-year-nav,.fiscal-hip-tabs,.est-nav,.boda-cal-nav,.ev-dow-row,.bday-week-hdr';
 function swipePreviewRoot(frame,copy,source,scene){
   // La copia solo pinta: sus clases tampoco participan en consultas ni listeners de la app.
   if(SWIPE_PREVIEW_STYLES===null)SWIPE_PREVIEW_STYLES=Array.from(document.styleSheets).map(function(sheet){try{return Array.from(sheet.cssRules).map(function(rule){return rule.cssText.replace(/url\((['"]?)([^'"\)]+)\1\)/g,function(_,quote,url){return 'url("'+new URL(url,sheet.href||location.href).href+'")';});}).join('\n');}catch(e){return '';}}).join('\n');

@@ -27,7 +27,7 @@ function _renderEvCalMonth(){
      las 6 semanas de meses como agosto 2026) y acota el sticky de la cabecera */
   var h='<div class="ev-month-wrap">';
   h+='<div class="ev-week-hdr">';
-  DN7.forEach(function(n){h+='<div>'+n+'</div>';});
+  DN7.forEach(function(n,i){var current=EV_YEAR===today.getFullYear()&&EV_MONTH===today.getMonth()&&i===(today.getDay()+6)%7;h+='<div><span'+(current?' class="ev-current-weekday" aria-label="Día de la semana actual"':'')+'>'+n+'</span></div>';});
   h+='</div>';
   var first=new Date(EV_YEAR,EV_MONTH,1);
   var last=new Date(EV_YEAR,EV_MONTH+1,0);

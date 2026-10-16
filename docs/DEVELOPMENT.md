@@ -29,6 +29,8 @@ Las ideas aún no implementadas están en [FUTURO.md](../FUTURO.md).
 
 ## Convenciones visuales de controles
 
+- Los botones de volver y las flechas de navegación usan cajas cuadradas con esquinas redondeadas. Los tres calendarios comparten posición y tamaño de «Hoy». En el calendario mensual las iniciales semanales acompañan al mes durante el swipe; solo el mes actual marca el día de la semana presente en verde. Preferencia de Ángel del 16/10/2026.
+
 - Por defecto, el título de cada menú o panel nuevo se centra respecto al ancho completo de su contenedor, no al espacio sobrante tras la flecha. Reutilizar `.bd-panel-header.panel-header-centered`, con columnas laterales simétricas; si hay acciones más anchas, reservar el mismo ancho en ambos lados. Preferencia de Ángel del 11/10/2026.
 
 - En desplegables, reutilizar los indicadores dibujados de la aplicación (`.ev-tax-chevron` o el chevrón de `details > summary`). No usar caracteres de texto como `⌄` para representar la flecha. Preferencia de Ángel del 11/10/2026.
@@ -574,3 +576,13 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 - `hairdresserNote()` lee `excelia-hairdresser-notes-v1`, que viaja como `hairdresserNotes` en el backup y admite hasta 50 000 caracteres. Los backups antiguos que no incluyen el campo conservan la nota existente. El guardado de ambas notas es atómico.
 - Las fichas de eventos de tipo Peluquería muestran las instrucciones actuales al consultarlas, junto a las notas particulares del evento. No se duplican en cada evento ni se sobreescriben sus notas. El texto se escapa como el resto de las notas.
 - `agenda-hairdresser.spec.js` comprueba las esquinas con contenido detrás, el formato de Hoy, la edición entre pestañas, el carrusel y la ida y vuelta del backup. Las pruebas de lógica cubren compatibilidad, validación, texto escapado y eliminación de las instrucciones.
+
+## Calendarios, accesos y tema crema (v481)
+- La ficha de Peluquería abre directamente Mis notas → Peluquería en edición y actualiza las instrucciones al volver. El enlace también existe cuando la nota está vacía.
+- Los tres calendarios comparten la cabecera y el tamaño de Hoy de Inicio. En 1 mes, la bombilla acompaña al año para reservar espacio a los controles. Las iniciales de los días se desplazan con el mes; solo el mes actual resalta el día de la semana presente. Los días de otros meses usan `--surface3`.
+- Crema sustituye visualmente a Gris; conserva el identificador `grey` por compatibilidad con preferencias y backups. Comparte las reglas de contraste del tema claro. El símbolo de Comida incorpora un mantel beige fijo, también en oscuro.
+- `rutDayTimesHtml` se comparte entre el formulario habitual y el cambio de semana. Las excepciones semanales admiten `times` por día, con prioridad sobre la hora común; el cambio desde una semana guarda ese mapa en el horario habitual. La importación valida ambos mapas, incluidos los históricos.
+- Las cinco primeras cifras de Wedding Moves cuentan clases y la sexta parejas. Esta última abre Parejas → Todas, limpia búsquedas y filtros, y ordena por fecha de boda.
+- Por petición de Ángel, Ver análisis de hipoteca queda solo en Detalle hipoteca, tanto en Hogar como en Fiscal. Sustituye su colocación anterior en Resumen de v479. En Hogar se alinea con Consumo y tarifas de gas y electricidad.
+- Ahora en Crear alarma actualiza ambas ruedas con la hora actual, conservando el mensaje y los días elegidos; no crea una alarma.
+- `calendar-notes-controls.spec.js` verifica estos flujos en Edge oculto, las cabeceras a 320/400/440 px, temas claro/oscuro/crema y persistencia de los horarios por día. Las reglas de lógica incluyen su ida y vuelta por backup y rechazan mapas semanales inválidos.

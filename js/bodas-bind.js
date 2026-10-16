@@ -100,6 +100,7 @@ function bodaRefreshRow(ev){
 
 /* ── Binds de la pestaña ── */
 function bindBodasEvents(){
+  var statsCouples=document.getElementById('bodaStatsCouples');if(statsCouples)statsCouples.onclick=function(){BODA_SUBTAB='parejas';BODA_PAREJAS_FILTER='todas';BODA_PAREJAS_CLASSES='';BODA_PAREJAS_SEARCH='';BODA_PAREJAS_SORT='boda';BODA_CARD_OPEN=null;refreshEvents(false);};
   var exp=document.getElementById('evCalendarExport');if(exp)exp.onclick=openEvCalendarExport;
   bindBodaConfig();
   /* Al salir de la lista se guarda lo pendiente para no perderlo sin avisar */

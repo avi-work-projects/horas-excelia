@@ -151,7 +151,7 @@
 .ev-bright-mid{position:absolute;right:78px;top:50%;transform:translateY(-50%);z-index:3;font-size:.7rem;padding:2px 5px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;opacity:.45;transition:opacity .2s}
 .ev-bright-mid.on{opacity:1;background:#fbbf2433;border-color:#fbbf24}
 .sy-nav-sm{font-size:.7rem !important;min-width:24px !important;padding:4px 5px !important}
-.sy-nav-pill{width:32px !important;height:36px !important;border-radius:10px !important;padding:0 !important;font-size:.75rem !important}
+.sy-nav-pill{width:32px !important;height:32px !important;border-radius:9px !important;padding:0 !important;font-size:.75rem !important}
 /* Quad label 3 lines */
 .ev-quad-label{display:flex;flex-direction:column;align-items:center;line-height:1.1;font-size:.72rem}
 .ev-quad-dash{font-size:.55rem;line-height:.7;color:var(--text-dim)}
@@ -210,7 +210,7 @@
 /* Relleno, para que haga pareja con el naranja de "Editar evento" */
 .ev-btn.danger{background:#c0392f;color:#fff;border:1px solid #c0392f}
 .ev-btn.danger:active{background:#9d2c24}
-[data-theme="light"] .ev-btn.danger{background:#d64541;border-color:#d64541}
+:is([data-theme="light"],[data-theme="grey"]) .ev-btn.danger{background:#d64541;border-color:#d64541}
 .ev-io-row{display:flex;gap:8px;margin-top:8px}
 .ev-io-btn:active{background:var(--surface3)}
 /* Event detail */
@@ -223,7 +223,7 @@
 
 /* El color del título depende de la familia; el símbolo conserva su identidad. */
 .ev-detail-sheet{--ev-detail-management:#34d399;--ev-detail-plan:#fb923c}
-[data-theme="light"] .ev-detail-sheet{--ev-detail-management:#15805e;--ev-detail-plan:#bd5a16}
+:is([data-theme="light"],[data-theme="grey"]) .ev-detail-sheet{--ev-detail-management:#15805e;--ev-detail-plan:#bd5a16}
 .ev-detail-heading{display:flex;align-items:center;gap:10px;margin-bottom:5px}
 .ev-detail-heading .ev-detail-title{flex:1;min-width:0;margin:0}
 .ev-detail-symbol{flex:0 0 28px;width:28px;display:flex;align-items:center;justify-content:center;pointer-events:none}

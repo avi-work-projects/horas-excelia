@@ -2,7 +2,7 @@
 var RUT_HISTORY=null;
 function rutNewSchedule(r,value,from){
   var base=rutScheduleCopy(rutScheduleOn(r,from));
-  var candidate=Object.assign({},r,base,value,{times:null});
+  var candidate=Object.assign({},r,base,value,{times:value.times||null});
   Object.keys(candidate.weeks).forEach(function(wk){
     var end=new Date(wk+'T12:00:00');end.setDate(end.getDate()+6);
     if(evDk(end)>=from)delete candidate.weeks[wk];

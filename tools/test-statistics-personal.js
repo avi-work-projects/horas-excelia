@@ -34,7 +34,7 @@ const haircutBefore=JSON.stringify(haircut),haircutHtml=a.renderEvDetail(haircut
 assert(haircutHtml.includes('Laterales cortos\nArriba: &lt;tijera&gt;'));
 assert(haircutHtml.includes('Nota de esta cita'));assert.equal(JSON.stringify(haircut),haircutBefore);
 assert(!a.renderEvDetail({...haircut,type:'Dentista'}).includes('ev-hairdresser-note'));
-a.applyFullImport({hairdresserNotes:''},'merge');assert(!a.renderEvDetail(haircut).includes('ev-hairdresser-note'));
+a.applyFullImport({hairdresserNotes:''},'merge');assert(a.renderEvDetail(haircut).includes('Añade tus instrucciones en Mis notas.'));
 console.log('Peluquería: notas vinculadas, escape de texto, backup compatible y borrado OK');
 
 const principal=a.normalizeContactData({banks:[{label:"Uno",iban:"UNO",primary:"1"},{label:"Dos",iban:"DOS",primary:"1"}],addresses:[{primary:"1"}]});assert.equal(principal.addresses.length,0);assert.equal(principal.banks.filter(r=>r.primary==="1").length,1);assert.equal(a.mergeContactData(principal,{banks:[{label:"Uno actualizado",iban:"UNO"}]}).banks[0].primary,"1");const changed=a.mergeContactData(principal,{banks:[{label:"Dos",iban:"DOS",primary:"1"}]});assert.equal(changed.banks[1].primary,"1");assert(!changed.banks[0].primary);

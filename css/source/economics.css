@@ -72,9 +72,9 @@
 .econ-sub-tab{flex:1;font-size:.62rem;padding:5px 4px;border-radius:0;border:none;border-bottom:2px solid transparent;background:transparent;color:var(--text-dim);cursor:pointer;transition:all .15s;text-align:center;-webkit-user-select:none;user-select:none}
 .econ-sub-tab.active{border-bottom-color:var(--accent);color:var(--accent-bright);font-weight:600}
 .rut-sub-tabs{--section-tab-tone:#eceff5}
-[data-theme="light"] .rut-sub-tabs{--section-tab-tone:#1f2937}
+:is([data-theme="light"],[data-theme="grey"]) .rut-sub-tabs{--section-tab-tone:#1f2937}
 .ev-sub-puentes{--section-tab-tone:#f291c3}
-[data-theme="light"] .ev-sub-puentes{--section-tab-tone:#b83276}
+:is([data-theme="light"],[data-theme="grey"]) .ev-sub-puentes{--section-tab-tone:#b83276}
 .ev-sub-timeoff{--section-tab-tone:var(--vacaciones)}
 .rut-sub-tabs .econ-sub-tab,.econ-sub-tab.ev-sub-puentes,.econ-sub-tab.ev-sub-timeoff{color:var(--section-tab-tone);font-weight:600}
 .rut-sub-tabs .econ-sub-tab.active,.econ-sub-tab.ev-sub-puentes.active,.econ-sub-tab.ev-sub-timeoff.active{border-bottom-color:var(--section-tab-tone);background:color-mix(in srgb,var(--section-tab-tone) 10%,var(--surface))}

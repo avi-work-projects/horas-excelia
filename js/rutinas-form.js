@@ -177,16 +177,14 @@ function openRutForm(r){
     var base=(document.getElementById('rutFTime')||{}).value||RUT_TIME_DEFAULT;
     var previas={};
     cont.querySelectorAll('input[data-wd]').forEach(function(i){previas[i.dataset.wd]=i.value;});
-    var hh='';
+    var dias=[];
     for(var i=1;i<=7;i++){
       var d=i%7;
       var btn=document.querySelector('#rutFDays .rut-day-btn[data-wd="'+d+'"]');
       if(!btn||!btn.classList.contains('on'))continue;
-      var v=previas[d]||(r&&r.times&&r.times[d])||base;
-      hh+='<div class="rut-hpd-row"><span>'+RUT_DN_LARGO[d]+'</span>'
-        +'<input class="ev-input" type="text" readonly data-time-picker data-time-quarter aria-haspopup="dialog" placeholder="Sin hora" data-wd="'+d+'" value="'+v+'"></div>';
+      dias.push(d);previas[d]=previas[d]||(r&&r.times&&r.times[d])||base;
     }
-    cont.innerHTML=hh||'<div class="rut-vacio">Marca antes los d\u00edas de la semana</div>';
+    cont.innerHTML=rutDayTimesHtml(dias,previas,base);
   }
   var _porDia=document.getElementById('rutFPorDia');
   if(_porDia)_porDia.addEventListener('change',function(){
