@@ -1039,6 +1039,9 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 .ev-calendar-header #evToday{font-size:.75rem;padding:7px 14px}
 .ev-calendar-header .ev-bright-mid{left:auto;right:84px;transform:translateY(-50%);width:24px;height:24px;padding:0}
 /* Conservar fuentes y controles a su tamaño habitual, también en móviles estrechos. */
+@media(min-width:360px) and (max-width:380px){
+ .ev-calendar-header .sy-hdr-right{right:12px}
+}
 @media(max-width:359px){
  .ev-calendar-header{height:112px;min-height:112px;padding-top:12px;align-items:flex-start}
  .ev-calendar-header.sy-header-center .sy-year-nav{top:60px;max-width:calc(100% - 32px)}
