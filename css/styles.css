@@ -39,16 +39,20 @@
 :is([data-theme="light"],[data-theme="grey"]) .week-card{box-shadow:0 2px 8px var(--shadow)}
 :is([data-theme="light"],[data-theme="grey"]) .overlay{background:rgba(0,0,0,.3)}
 /* Crema suave; conserva la clave grey para las preferencias y backups anteriores. */
-[data-theme="grey"]{
+:root[data-theme="grey"]{
 --ev-symbol-outline:#000;
 --bg:#f7f1e5;--surface:#fffdf7;--surface2:#eee5d4;--surface3:#e5dac5;
 --border:#d7c9ad;--border-light:#bcaa89;
 --text:#322c24;--text-muted:#6d604d;--text-dim:#8a795e;
---accent:#5268bb;--accent-glow:#5268bb18;--accent-bright:#40549c;
---sent:#e8f1e4;--sent-border:#a4c09c;--sent-text:#35653b;
---falta:#f8edd1;--falta-border:#d8bb74;
---festivo:#bd3734;--vacaciones:#956716;--ausencia:#805494;--normal:#5268bb;
---c-orange:#af5727;--c-red:#bd3734;--c-green:#317746;--c-blue:#5268bb;--c-purple:#805494;--c-yellow:#916a19;
+--accent:#5b6d85;--accent-glow:#5b6d8518;--accent-bright:#4e6077;
+--sent:#edf0e6;--sent-border:#b3bfa5;--sent-text:#52664b;
+--falta:#f3ead6;--falta-border:#c6b28b;
+--festivo:#9d5b53;--vacaciones:#816a38;--ausencia:#786583;--normal:#5b6d85;
+--c-orange:#936041;--c-red:#9d5b53;--c-green:#5c7054;--c-blue:#5b6d85;--c-purple:#786583;--c-yellow:#816a38;
+--home-tone:#8e6071;--birthday-tone:#91606b;--study-tone:#89673f;
+--household-tone:#4e7069;--calendar-tone:#5c7054;--alarm-tone:#816a38;
+--upcoming-tone:#4f7079;--upcoming-text:#486771;--wm-wine:#866458;
+--econ-contribution-tone:var(--c-purple);
 --radius:14px;--radius-sm:10px;
 --font:'DM Sans',sans-serif;--mono:'JetBrains Mono',monospace;
 --hdr-bg:rgba(247,241,229,.96);--shadow:rgba(67,48,22,.12);
@@ -4227,3 +4231,56 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 .hours-export-sheet .invoice-actions .ico-doc{opacity:1}
 .hours-export-sheet #hoursCsv sup{font-size:.7em;margin-left:2px}
 .hours-export-sheet .hours-export-footnote{color:var(--home-tone)}
+
+/* Fuente: css/source/theme-cream.css */
+/* Crema: acentos minerales y vegetales, con fondos teñidos sobre marfil.
+   Solo presentación; no altera los colores guardados de eventos, parejas o rutinas. */
+[data-theme="grey"] .nav-pro-events{color:var(--calendar-tone)}
+[data-theme="grey"] .nav-pro-household{color:var(--household-tone)}
+[data-theme="grey"] .nav-pro-alarm{color:var(--alarm-tone)}
+[data-theme="grey"] :is(#eventsBtn,.nav-bar-btn[data-nav="events"]){--nav-tone:var(--calendar-tone)}
+[data-theme="grey"] :is(#householdBtn,.nav-bar-btn[data-nav="household"]){--nav-tone:var(--household-tone)}
+[data-theme="grey"] :is(#alarmTestBtn,.nav-bar-btn[data-nav="alarm"]){--nav-tone:var(--alarm-tone)}
+[data-theme="grey"] #eventsOverlay .ev-hdr-sub .ev-btn-calendar{--tab-tone:var(--calendar-tone)}
+[data-theme="grey"] #eventsOverlay .ev-hdr-sub .ev-btn-week{--tab-tone:var(--c-red)}
+[data-theme="grey"] #eventsOverlay .ev-hdr-sub .ev-btn-bodas{--tab-tone:var(--wm-wine)}
+[data-theme="grey"] #eventsOverlay .ev-hdr-sub .ev-btn-rutinas{--tab-tone:var(--text-muted)}
+[data-theme="grey"] #eventsOverlay .ev-hdr-sub .ev-view-toggle.ev-btn-split{background:linear-gradient(to bottom,color-mix(in srgb,var(--vacaciones) var(--tab-alpha),var(--surface)) 50%,color-mix(in srgb,var(--birthday-tone) var(--tab-alpha),var(--surface)) 50%)!important}
+[data-theme="grey"] .est-nav .est-btn{--tab-tone:var(--c-blue)}
+[data-theme="grey"] .est-nav .est-btn.est-casa{--tab-tone:var(--household-tone)}
+[data-theme="grey"] .boda-sticky-hd{--wm-tab:var(--wm-wine)}
+[data-theme="grey"] .wm-logo-title{color:var(--wm-wine)}
+[data-theme="grey"] #fiscalOverlay{--accent:var(--c-purple);--accent-bright:var(--c-purple);--accent-glow:color-mix(in srgb,var(--c-purple) 10%,var(--surface))}
+[data-theme="grey"] #householdOverlay{--accent:var(--household-tone);--accent-bright:var(--household-tone);--accent-glow:color-mix(in srgb,var(--household-tone) 10%,var(--surface))}
+[data-theme="grey"] .household-summary{--home-tone:var(--household-tone);--home-muted:var(--text-muted)}
+[data-theme="grey"] .household-mortgage{--home-card-color:var(--c-green)}
+[data-theme="grey"] .household-luz{--home-tone:var(--c-yellow);--home-card-color:var(--c-yellow)}
+[data-theme="grey"] .household-gas{--home-tone:var(--c-blue);--home-card-color:var(--c-blue)}
+[data-theme="grey"] .tasks-overlay{--tasks-accent:var(--c-purple);--c-blue:var(--c-purple)}
+[data-theme="grey"] .tasks-fab{background:var(--c-purple);border-color:#ac9bb4;box-shadow:0 4px 15px #493c4726}
+[data-theme="grey"] .tasks-count{border-color:#beaec6}
+[data-theme="grey"] .settings-edit-connections{--settings-tone:var(--c-orange)}
+[data-theme="grey"] .settings-edit-invoices{--settings-tone:var(--c-green)}
+[data-theme="grey"] .settings-edit-directory{--settings-tone:var(--c-blue)}
+[data-theme="grey"] .settings-edit-macro{--settings-tone:var(--c-purple)}
+[data-theme="grey"] .settings-edit-notes{--settings-tone:var(--household-tone)}
+[data-theme="grey"] .day-cell.h65,[data-theme="grey"] .day-cell.h65 .day-hours{color:var(--c-orange)}
+[data-theme="grey"] .day-cell.h7,[data-theme="grey"] .day-cell.h7 .day-hours{color:var(--c-yellow)}
+[data-theme="grey"] .day-cell.h8,[data-theme="grey"] .day-cell.h8 .day-hours{color:var(--c-blue)}
+[data-theme="grey"] .day-cell.h9,[data-theme="grey"] .day-cell.h9 .day-hours{color:var(--c-green)}
+[data-theme="grey"] .action-btn.send{background:var(--c-blue);border-color:var(--c-blue);color:#fff}
+[data-theme="grey"] .action-btn.send:active{background:var(--accent-bright)}
+[data-theme="grey"] .week-card.sent{--sent:#edf0e6;--sent-border:#b3bfa5;--sent-text:#52664b;border-color:var(--sent-border)}
+[data-theme="grey"] .week-card.sent :is(.week-total,.action-btn.sent-toggle){background:#e0e7d8;color:var(--sent-text)}
+[data-theme="grey"] .ev-wk-day-bg.even,[data-theme="grey"] .ev-wk-date.even:not(.ev-wk-today){background:#f0eadf}
+[data-theme="grey"] .ev-wk-day-bg.ev-wk-today{background:#e8eddf}
+[data-theme="grey"] .sy-period-past{--period-tone:var(--text-muted)}
+[data-theme="grey"] .sy-period-future{--period-tone:var(--c-yellow)}
+[data-theme="grey"] .sy-period-total{--period-tone:var(--household-tone)}
+[data-theme="grey"] .econ-gear-btn{color:var(--c-purple);border-color:color-mix(in srgb,var(--c-purple) 35%,var(--border));background:color-mix(in srgb,var(--c-purple) 8%,var(--surface))}
+[data-theme="grey"] .econ-gear-btn:active{background:color-mix(in srgb,var(--c-purple) 18%,var(--surface))}
+[data-theme="grey"] .fiscal-save-btn{background:var(--c-purple)}
+[data-theme="grey"] :is(button.hip-edit-btn,button.action-edit.action-edit-text,button.bday-vip-edit-btn:not(.active)){background:var(--c-orange)!important;border-color:var(--c-orange)!important;color:#fff!important}
+[data-theme="grey"] button.settings-edit-btn{background:var(--settings-tone,var(--c-orange))!important;border-color:var(--settings-tone,var(--c-orange))!important;color:#fff!important}
+[data-theme="grey"] #evFormOv .ev-kind-btn{--kind-tone:var(--c-purple)}
+[data-theme="grey"] .mg-desgrav-toggle{color:var(--c-purple)}
