@@ -17,6 +17,8 @@ test('cumpleaños: VIP a la izquierda, Añadir centrado y Eventos en la misma po
 });
 test('orden móvil: descripción separada, controles completos y cabecera estable',async({page},info)=>{
  await page.locator('#evUpcomingOrder').click();
+ await expect(page.locator('#evPlanOrderOv')).toHaveClass(/open/);
+ await expect(page.locator('.ev-order-sheet')).toBeVisible();
  for(const width of [320,400,440]){
   await page.setViewportSize({width,height:880});
   const bounds=await page.locator('.ev-order-sheet').evaluate(el=>{const header=el.querySelector('header').getBoundingClientRect(),note=el.querySelector('.ev-order-note').getBoundingClientRect(),list=el.querySelector('.ev-order-list').getBoundingClientRect();return {gap:note.top-header.bottom,overflow:el.querySelector('.ev-order-list').scrollWidth-list.width,buttons:Array.from(el.querySelectorAll('[data-order-drag],input')).every(button=>{const r=button.getBoundingClientRect();return r.left>=list.left&&r.right<=list.right;})};});
