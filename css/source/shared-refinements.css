@@ -1044,7 +1044,8 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 }
 @media(max-width:359px){
  .ev-calendar-header{height:112px;min-height:112px;padding-top:12px;align-items:flex-start}
- .ev-calendar-header.sy-header-center .sy-year-nav{top:60px;max-width:calc(100% - 32px)}
+ .ev-calendar-header.sy-header-center .sy-year-nav{top:60px;height:36px;max-width:calc(100% - 32px)}
+ #eventsContent>.sy-header.ev-calendar-header>.ev-up-order-button{top:30px}
  .ev-calendar-header .sy-hdr-right{top:30px}
  .ev-calendar-header .ev-bright-mid{left:auto;right:84px;top:30px;transform:translateY(-50%)}
 }

@@ -588,7 +588,7 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 - `calendar-notes-controls.spec.js` verifica estos flujos en Edge oculto, las cabeceras a 320/400/440 px, temas claro/oscuro/crema y persistencia de los horarios por día. Las reglas de lógica incluyen su ida y vuelta por backup y rechazan mapas semanales inválidos.
 
 ## Agenda y composición del tema crema (v484)
-- Agenda comparte `ev-calendar-header` con los tres calendarios, incluidos tamaño de Hoy, bombilla de 24 px y márgenes adaptativos. El mes usa su ancho natural; el ancho fijo de `ev-period-header` queda para Todos y Estadísticas. El espacio de las iniciales semanales sigue limitado al calendario mensual para no desplazar las subpestañas de Agenda.
+- Agenda comparte `ev-calendar-header` con los tres calendarios, incluidos tamaño de Hoy, bombilla de 24 px y márgenes adaptativos. El mismo marco se aplica a Próximos, Cumpleaños, Todos y Estadísticas para mantener fijas las subpestañas al navegar. Agenda, Todos y Estadísticas conservan además el ancho común del selector. El espacio de las iniciales semanales sigue limitado al calendario mensual.
 - Por corrección de Ángel, se sustituye la paleta desaturada de v483 por una composición de petróleo y terracota, con oliva, miel y rosa arcilla como apoyos. Se suavizan los bordes inactivos y el resplandor de navegación; la selección conserva una señal de color clara. Las superficies secundarias son más neutras y el texto usa tinta cálida.
 - La comprobación compartida de cabeceras incluye ahora Agenda a 320/360/400/440 px: tamaño, posición de Hoy, centrado, hueco de la bombilla y ausencia de solapamientos.
 
