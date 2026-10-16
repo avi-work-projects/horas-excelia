@@ -511,7 +511,7 @@ function renderEvContent(){
   h+='</div>';
   if(EV_VIEW==='bday')return h+renderBdayContent();
   // Header a nivel 3 (with-tabs → top:82px)
-  var _hdrCenterCls=' sy-header-center'+(['cal','quad','annual','week'].indexOf(EV_VIEW)>=0?' ev-calendar-header':'')+(['months','stats'].indexOf(EV_VIEW)>=0?' ev-period-header':'');
+  var _hdrCenterCls=' sy-header-center'+(['cal','quad','annual'].indexOf(EV_VIEW)>=0||upcomingViews.indexOf(EV_VIEW)>=0?' ev-calendar-header':'')+(['week','months','stats'].indexOf(EV_VIEW)>=0?' ev-period-header':'');
   h+='<div class="sy-header with-tabs'+_hdrCenterCls+'">';
   h+='<button class="sy-back" id="evBack">&#8592;</button>';
   if(EV_VIEW==='upcoming'||EV_VIEW==='birthdays'){
