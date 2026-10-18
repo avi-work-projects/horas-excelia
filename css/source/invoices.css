@@ -60,8 +60,8 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 .hours-export-sheet #hoursCsv sup{font-size:.7em;margin-left:2px}
 .hours-export-sheet .hours-export-footnote{color:var(--home-tone)}
 
-/* La acción mensual va primero; cálculo y documentos conservan su propio nivel. */
-.invoice-month-sheet .invoice-body{gap:14px}
+/* Revisar jornadas y cálculo antes de las acciones; caben juntos en móvil. */
+.invoice-month-sheet .invoice-body{gap:10px}
 .invoice-send-card{border-color:color-mix(in srgb,var(--c-green) 35%,var(--border));background:color-mix(in srgb,var(--c-green) 5%,var(--surface))}
 .invoice-sheet .invoice-primary-action{background:var(--c-green);color:var(--surface);border-color:var(--c-green);min-height:44px}
 .invoice-send-card>#invoiceGmail{width:100%}
@@ -75,19 +75,33 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 .invoice-action-hint{font-size:.72rem;margin-bottom:0}
 #invoiceKairoMessage:empty{display:none}
 .invoice-calculation-caption{font-size:.76rem;line-height:1.5;color:var(--text-muted);margin:12px 0}
-.invoice-calculation-lines{display:grid;gap:10px}
-.invoice-calculation-line{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}
-.invoice-line-label{display:block;font-size:.76rem;color:var(--text-muted);margin-bottom:6px}
-.invoice-line-formula{display:grid;gap:4px;font-size:.86rem;line-height:1.45;font-variant-numeric:tabular-nums}
+.invoice-calculation-lines{display:grid;gap:6px}
+.invoice-calculation-line{padding:8px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}
+.invoice-line-label{display:block;font-size:.72rem;color:var(--text-muted);margin-bottom:3px}
+.invoice-line-formula{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px;font-size:.82rem;line-height:1.45;font-variant-numeric:tabular-nums}
+.invoice-line-formula>strong{margin-left:auto}
 .invoice-line-formula strong{text-align:right}
 .invoice-equals{color:var(--text-muted);font-weight:400}
 .invoice-money{display:inline-block;min-width:8.5ch;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
 .invoice-totals dt small{display:block;color:var(--text-muted);font-weight:400;font-size:.71rem;line-height:1.4;margin-top:3px}
 .invoice-totals dd{padding-top:1px}
-.invoice-month-summary .invoice-total{padding-top:14px;margin-top:8px;align-items:center}
+.invoice-month-summary .invoice-total{padding-top:10px;margin-top:4px;align-items:center}
 .invoice-calculation-footnote{font-size:.72rem;margin:12px 0 0}
 .invoice-mail-preview{margin-top:12px;padding-top:8px;box-shadow:0 -1px 0 var(--border)}
 .invoice-tool{display:grid;gap:8px;margin-top:12px;padding-top:12px;box-shadow:0 -1px 0 var(--border);font-size:.82rem}
 .invoice-tool p{font-size:.76rem;color:var(--text-muted);line-height:1.5;margin:5px 0}
 .invoice-tool .ev-btn{justify-self:start}
 .invoice-config-link{font-weight:600;min-height:36px;padding:6px 4px;align-self:flex-start}
+.invoice-month-summary .invoice-filename{margin:0 0 8px;color:var(--text-muted)}
+.invoice-totals .invoice-vat{color:var(--c-orange)}
+.invoice-totals .invoice-withholding{color:var(--c-red)}
+.invoice-days{padding:10px 12px}
+.invoice-days>summary{display:flex;justify-content:space-between;gap:8px;font-size:.84rem;padding-right:28px}
+.invoice-days>summary strong{color:var(--c-green);white-space:nowrap}
+.invoice-days-list p{display:flex;justify-content:space-between;gap:12px;font-size:.82rem;line-height:1.4;margin:0;padding:8px 0}
+.invoice-days-list small{display:block;color:var(--text-muted);margin-top:3px}
+.invoice-days-list strong{white-space:nowrap}
+.invoice-days-result{box-shadow:0 -1px 0 var(--border);font-weight:650;color:var(--c-green)}
+.invoice-kairo-card>.invoice-actions{margin:0}
+.invoice-kairo-card .ev-btn{min-height:44px}
+.invoice-kairo-locked .invoice-connection-action{margin-top:8px}

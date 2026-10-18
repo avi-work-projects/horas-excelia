@@ -313,13 +313,13 @@
 ### js/invoices-export.js  _(36 líneas)_
 **Funciones:** invoiceXml:2 · invoiceZip:3 · header:5 · invoiceWorkbook:14 · textCell:15 · numCell:16 · sheet:26
 
-### js/invoices-kairo.js  _(77 líneas)_
+### js/invoices-kairo.js  _(75 líneas)_
 **Estado global:** INVOICE_KAIRO_BUSY:2
 
-**Funciones:** invoiceKairoUrl:3 · invoiceKairoState:9 · invoiceKairoSection:12 · invoiceKairoExchange:25 · finish:28 · receive:29 · bindInvoiceKairo:45
+**Funciones:** invoiceKairoUrl:3 · invoiceKairoState:9 · invoiceKairoSection:12 · invoiceKairoExchange:24 · finish:27 · receive:28 · bindInvoiceKairo:44
 
-### js/invoices-ui.js  _(113 líneas)_
-**Funciones:** invoicePanel:2 · invoiceField:8 · openInvoiceSettings:9 · invoiceSummary:32 · money:33 · number:34 · invoicePrivacyButton:42 · invoiceManualSection:46 · invoiceTools:55 · error:80 · bindPrivacy:83 · openHoursExport:92 · initInvoices:97 · bindInvoiceConfigImport:102 · readFields:103
+### js/invoices-ui.js  _(129 líneas)_
+**Funciones:** invoicePanel:2 · invoiceField:8 · openInvoiceSettings:9 · invoiceSummary:32 · money:33 · number:34 · invoiceDaysSummary:42 · invoicePrivacyButton:58 · invoiceManualSection:62 · invoiceTools:71 · error:97 · bindPrivacy:100 · openHoursExport:108 · initInvoices:113 · bindInvoiceConfigImport:118 · readFields:119
 
 ### js/invoices.js  _(115 líneas)_
 **Estado global:** INVOICE_KEY:2 · INVOICE_MONTH:3 · INVOICE_BACK:4 · INVOICE_OPEN_SEQ:5 · INVOICE_HIDE_AMOUNTS:6
@@ -836,14 +836,14 @@
 **Rangos por prefijo de clase:**
 .boda-asg:106-290 · .boda-det:102-105 · .boda-last:15-19 · .contact-shortcuts:216-219 · .data-actions:139-140 · .energy-bar:91-91 · .energy-caption:2-2 · .energy-choice:12-12 · .energy-compare:133-133 · .energy-contract:4-5 · .energy-cost:87-135 · .energy-coverage:78-78 · .energy-extremes:74-74 · .energy-fee:42-43 · .energy-field:7-7 · .energy-fields:9-9 · .energy-info:63-65 · .energy-inline:84-84 · .energy-legend:92-92 · .energy-metric:125-127 · .energy-metrics:124-124 · .energy-overview:67-69 · .energy-period:70-72 · .energy-price:183-188 · .energy-range:93-93 · .energy-reconciliation:77-77 · .energy-scenario:134-134 · .energy-section:62-62 · .energy-supplier:75-128 · .energy-table:3-3 · .energy-tabs:45-56 · .energy-tariff:80-184 · .energy-tax:73-131 · .energy-vat:129-129 · .energy-window:31-123 · .energy-year:6-99 · .ev-btn:146-146 · .ev-cell:284-285 · .ev-day:286-286 · .ev-io:136-136 · .ev-main:164-165 · .ev-order:241-253 · .ev-routine:237-239 · .ev-routines:231-235 · .ev-stat:220-220 · .ev-stats:221-227 · .ev-type:236-236 · .ev-up:262-271 · .ev-upcoming:173-177 · .ev-wk:16-176 · .home-popup:18-28 · .imp-mode:113-113 · .imp-preview:114-118 · .nav-bar:141-141 · .rut-addition:256-283 · .rut-bulk:194-199 · .rut-card:158-213 · .rut-day:147-153 · .rut-days:150-150 · .rut-dpick:145-281 · .rut-history:190-205 · .rut-hora:154-156 · .rut-month:198-198 · .rut-recovery:144-144 · .rut-routine:160-160 · .rut-sec:214-215 · .rut-session:143-209 · .rut-time:157-157 · .rut-weekdays:151-151 · .sy-body:171-171 · .sy-hdr:265-265
 
-### css/source/invoices.css  _(94 líneas)_
+### css/source/invoices.css  _(108 líneas)_
 
 **Secciones:**
 
-- La acción mensual va primero; cálculo y documentos conservan su propio nivel.:63
+- Revisar jornadas y cálculo antes de las acciones; caben juntos en móvil.:63
 
 **Rangos por prefijo de clase:**
-.home-invoice:3-5 · .hours-control:1-6 · .hours-export:50-61 · .invoice-action:75-75 · .invoice-actions:21-21 · .invoice-body:10-10 · .invoice-calculation:77-88 · .invoice-card:12-14 · .invoice-config:19-93 · .invoice-confirm:26-26 · .invoice-day:25-25 · .invoice-document:34-34 · .invoice-equals:83-83 · .invoice-error:27-27 · .invoice-eye:46-47 · .invoice-field:16-16 · .invoice-fields:15-37 · .invoice-filename:28-28 · .invoice-kairo:68-73 · .invoice-line:80-82 · .invoice-mail:89-89 · .invoice-money:84-84 · .invoice-month:11-87 · .invoice-note:17-17 · .invoice-send:65-67 · .invoice-sheet:8-74 · .invoice-status:18-18 · .invoice-summary:44-45 · .invoice-tool:90-92 · .invoice-totals:20-86
+.home-invoice:3-5 · .hours-control:1-6 · .hours-export:50-61 · .invoice-action:75-75 · .invoice-actions:21-21 · .invoice-body:10-10 · .invoice-calculation:77-89 · .invoice-card:12-14 · .invoice-config:19-94 · .invoice-confirm:26-26 · .invoice-day:25-25 · .invoice-days:98-104 · .invoice-document:34-34 · .invoice-equals:84-84 · .invoice-error:27-27 · .invoice-eye:46-47 · .invoice-field:16-16 · .invoice-fields:15-37 · .invoice-filename:28-28 · .invoice-kairo:68-107 · .invoice-line:80-83 · .invoice-mail:90-90 · .invoice-money:85-85 · .invoice-month:11-95 · .invoice-note:17-17 · .invoice-send:65-67 · .invoice-sheet:8-74 · .invoice-status:18-18 · .invoice-summary:44-45 · .invoice-tool:91-93 · .invoice-totals:20-97
 
 ### css/source/theme-cream.css  _(90 líneas)_
 
