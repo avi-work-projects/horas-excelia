@@ -95,6 +95,26 @@ class BridgeTests(unittest.TestCase):
             self.assertIsNone(db.execute('SELECT approved_hash FROM drafts').fetchone()[0])
         self.assertEqual(len(self.calls), 1)
 
+    def test_revision_dispatch_and_status_remains_read_only(self):
+        self.call()
+        with self.db() as db:db.execute("UPDATE plans SET status='approved',approval='old'")
+        changed=dict(self.source,contentHash='c'*64,revision=2)
+        calls=[]
+        def replace(raw):
+            calls.append(raw)
+            with self.db() as db:
+                db.execute('UPDATE drafts SET snapshot=?,approved_hash=NULL,approved_at=NULL',(raw,))
+                db.execute("UPDATE plans SET data=?,status='review',approval=NULL",(json.dumps(dict(period=changed['period'],source_hash=changed['contentHash'])),))
+        self.service.replace_draft=replace
+        self.assertEqual(self.call(dict(changed,action='status'))['state'],'different')
+        self.assertFalse(calls)
+        self.assertEqual(self.load()['approval'],'old')
+        request=dict(changed,action='prepare',source=json.dumps(changed))
+        self.assertEqual(self.call(request)['state'],'review')
+        self.assertIsNone(self.load()['approval'])
+        self.assertEqual(self.call(request)['state'],'review')
+        self.assertEqual(len(calls),1)
+
     def test_changed_approved_draft_repeat_and_revert_cannot_restore_approval(self):
         self.call()
         with self.db() as db:

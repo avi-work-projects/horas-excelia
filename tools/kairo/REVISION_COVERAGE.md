@@ -1,27 +1,42 @@
-# Draft revision coverage audit — 2026-10-18
+# Draft revision coverage — 2026-10-18
 
-The bridge currently **invalidates and blocks**, rather than updating a draft.
-Do not describe automatic draft replacement as implemented or merely awaiting QA.
+Implemented and deployed controlled replacement of unissued drafts. The earlier
+invalidation-only behavior remains a compatibility fallback for old services.
 
-Existing coverage already included revision invalidation, idempotent import,
-lost reply/retry, issued-document edit/revert protection and pending-mail guards.
-The deployed bridge matches the repository version (SHA-256
-52806e21f276c013c629994ecb653d6a253c30c478ea11650fb45b11ec1a5d91).
+## Current behavior
 
-The added regression covers a previously approved, unissued synthetic month:
-1. A status query showing a difference is read-only.
-2. Explicit changed preparation clears both approval records and blocks the plan.
-3. Retrying that change creates no duplicate or additional import.
-4. Undoing the edit does not resurrect the old approval.
-5. Original snapshot remains intact; one draft remains, with no approval timestamp.
+Explicit preparation of changed content updates the same FacturaScripts document
+and number, clears both approval records, archives a new PDF and creates a fresh
+review plan. Status queries remain read-only. Identical retries are idempotent.
+Issued documents, fiscal intents and active emission/mail states are rejected.
+Old approval digests cannot approve new plans. A failed update stays blocked.
+A durable journal reconciles a lost PHP response without duplicating invoices.
 
-Validation: 11 bridge tests, 4 private candidate HTTP tests, 53 view snapshots and
-55 logic rules passed. The HTTP suite needs the private service path as its argument.
-Tests use temporary SQLite, synthetic data and an importer/validator double; they
-cannot send mail, issue invoices or write the live database. No production code
-was changed or deployed by this audit.
+## Evidence
 
-Remaining feature work: controlled replacement of an unissued draft, refreshed PDF,
-new explicit approval and failure recovery. Validate that feature against an isolated
-real importer once implemented. Do not repeat fiscal issuance or numbering trials
-just to compensate for stale status documentation.
+- 12 bridge tests and 4 private candidate HTTP tests passed.
+- Full `npm test` passed, including 53 view snapshots and 55 logic rules.
+- Real isolated FacturaScripts clone: six synthetic November revisions, same
+  document and number, day/rate changes, adding/removing price-group lines,
+  reverting content, old approval rejection and immutable previous PDFs.
+- Injected lost response after database commit: retry recovered the same draft.
+- Regenerated PDF visually inspected. No fiscal emission or mail occurred.
+
+The clone used a separate database, internal Docker network without Internet and
+no fiscal certificates. Its containers were stopped after testing. Private
+fixtures, snapshots, database dump and credentials are outside Git.
+The scripts `run_revision_integration.py` and `test_revision_recovery.py` require
+that explicitly prepared private clone; they are not standalone generic tests.
+
+## Deployment
+
+The existing private service was patched with exact source anchors and AST checks.
+A backup and before/after evidence were retained privately. Only the review web
+service was restarted; the monthly runner schedule was not changed.
+Production plans, approvals, mails, importer, fiscal record, archived PDFs and
+monthly configuration compared equal after restart. October remained accepted
+and approved, scheduled for October 20 at 08:00 Europe/Madrid.
+
+Remaining acceptance: observe the mobile workflow in the next editable month,
+after October mail closes. Do not use October for replacement tests or repeat
+AEAT issuance/numbering trials without a new reason.

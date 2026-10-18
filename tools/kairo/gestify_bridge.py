@@ -44,6 +44,11 @@ def handle(service, panel, validate_source, data):
     if any(source[k] != data[k] for k in result):
         raise ValueError('La preparación no corresponde a la solicitud')
     if matching:
+        pending_path = service.ROOT / 'revisions' / (data['operationId'] + '.json')
+        pending = json.loads(pending_path.read_text()) if pending_path.exists() else None
+        if (state == 'uncertain' or (state == 'blocked' and pending and pending['phase'] != 'done')) and hasattr(service, 'replace_draft'):
+            service.replace_draft(raw)
+            return result | {'state': service.load()['status']}
         # Local revisions increase when edits are undone. Validated identical
         # content is already registered: keep the original plan and approval.
         # A lost reply or repeated send never reimports or sends mail.
@@ -53,6 +58,12 @@ def handle(service, panel, validate_source, data):
     if any(r['status'] == 'approved' and r['data']['period'] != data['period'] for r in plans):
         raise ValueError('Hay otro mes aprobado; revisa el plan activo')
     if state == 'different':
+        if hasattr(service, 'replace_draft'):
+            service.replace_draft(raw)
+            current = service.load()
+            if current['data']['source_hash'] != data['contentHash'] or current['status'] != 'review' or current['approval']:
+                raise ValueError('Revisión sin confirmar; no aprobar todavía')
+            return result | {'state': 'review'}
         # Existing importer refuses changed revisions. Invalidate approvals, leave
         # original invoice intact and require reconciliation in the existing UI.
         with service.db() as db:
