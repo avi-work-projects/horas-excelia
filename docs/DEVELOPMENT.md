@@ -14,6 +14,11 @@ desplegar al guardar, salvo instrucción explícita en contrario. Incrementar
 `APP_VERSION` y `CACHE_VER` de forma sincronizada en cada publicación. Conservar
 fuera del commit los cambios previos ajenos y los datos privados.
 
+Excepción documental (18/10/2026): si solo cambian normas o documentación, conservar
+`APP_VERSION`, `CACHE_VER` y todos los archivos publicados. Validar que el diff no
+afecta a los recursos de `app-assets.json` ni a `sw.js`. Integrar y sincronizar las
+normas según el flujo habitual; si CI despliega, el contenido de la app es idéntico.
+
 ## Localizar y modificar código
 
 1. Buscar el símbolo en `CODEMAP.md` y leer solo el bloque necesario.
@@ -26,6 +31,49 @@ fuera del commit los cambios previos ajenos y los datos privados.
 responsabilidades cuando se trabaja en ellas, no una orden de reescribirlas todas.
 Los históricos por versión están en [history-through-v388.md](history-through-v388.md).
 Las ideas aún no implementadas están en [FUTURO.md](../FUTURO.md).
+
+## Criterios permanentes de mantenibilidad (18/10/2026)
+
+Leer esta sección al comenzar una sesión, incluso sin contexto previo. Ángel indica
+que la app funciona con fluidez: la prioridad es evitar regresiones y facilitar cambios.
+
+1. **Una responsabilidad, una fuente de verdad.** Centralizar reglas de cálculo,
+   colores semánticos y comportamiento compartido. Reutilizar piezas existentes;
+   parametrizar diferencias reales sin crear componentes universales con muchas excepciones.
+2. **Corregir la causa.** Antes de añadir CSS, condiciones o `!important`, localizar
+   la regla responsable y sus consumidores. Las variantes viven junto a su base.
+   Mantener orden de cascada y especificidad al reorganizar estilos.
+3. **Ordenar por zonas.** Usar extracciones pequeñas y reversibles en el módulo que
+   se trabaja. La longitud es una señal para inspeccionar, no un criterio suficiente
+   para dividir funciones. No migrar de framework, reescribir toda la app ni añadir
+   dependencias sin una necesidad demostrada y alcance autorizado.
+4. **Separar estructura y comportamiento.** Un refactor conserva interfaz, textos,
+   gestos, scroll, foco, valores calculados, precisión y formatos de datos. Primero
+   caracterizar la salida existente; después extraer conservando sus contratos.
+   Una corrección funcional descubierta durante la revisión se registra aparte;
+   no esconderla dentro de un refactor ni darla por autorizada en una auditoría.
+5. **Límites claros.** Separar cálculo, render, interacción y persistencia. Los renders
+   y previsualizaciones deben ser de solo lectura, incluidos estado global y almacenamiento.
+   Acotar selectores al panel responsable y hacer explícitos los datos/borradores que
+   consume cada pieza; no introducir dependencias implícitas entre pantallas.
+6. **Verificar también a los consumidores.** Antes de editar, anotar qué componentes,
+   pantallas y datos comparten la pieza. Comprobar la vista solicitada y las afectadas;
+   según el riesgo, probar guardar/cancelar, reabrir, navegación cruzada y recuperación
+   ante fallo. Mantener fixtures ficticias, censo del backup e invariantes de datos.
+7. **Pruebas proporcionales y con significado.** Añadir caracterización cuando falte
+   cobertura del contrato a extraer. Un refactor debería conservar las instantáneas;
+   nunca usar `--update` para ocultar diferencias inexplicadas. El HTML no comprueba CSS
+   ni listeners: cambios visuales requieren Edge móvil y revisión de los estados afectados.
+   Para documentos, comprobar recursos intactos; no generar capturas sin motivo.
+8. **Rendimiento con evidencia.** Medir antes de optimizar. Preservar la fluidez actual;
+   evitar cachés persistentes o cargas diferidas que compliquen el estado sin beneficio medido.
+9. **Cierre comprensible.** Revisar diff, explicar qué responsabilidad quedó mejor
+   aislada, qué comprobaciones lo acreditan y qué sigue pendiente. Actualizar CODEMAP
+   cuando cambien símbolos y el futuro mapa visual cuando exista y se afecte su interfaz.
+
+Antes de un refactor, dejar una nota breve con: pieza y consumidores, invariantes,
+primer paso acotado y comprobaciones. El informe de prioridades al final de este
+documento orienta el trabajo; no obliga a ejecutar todas las propuestas en cada tarea.
 
 ## Convenciones visuales de controles
 
@@ -633,3 +681,73 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 - Jornadas: lunes a viernes menos festivos, vacaciones y ausencias/bajas, con fechas por motivo. No descontar fines de semana. Incluye planificación, igual que Home. Con PDF definitivo se respeta la selección guardada y no se inventan motivos históricos desde el calendario actual.
 - IVA e IRPF reutilizan `--c-orange` y `--c-red`, como Económico. Eliminar explicaciones duplicadas y el acceso al Excel auxiliar del menú; mantener descarga JSON y flujo manual de PDF/Gmail. No cambia cálculo monetario, contenido firmado ni transporte Kairo.
 - Hipoteca y Consumo y tarifas comparten la regla de geometría de su botón, conservando sus acentos.
+
+## Revisión de prioridades de mantenimiento — 18/10/2026
+
+Base revisada: `084d90d` (v486). Revisión dirigida del índice, estilos, navegación,
+previsualización, rutinas y fiscalidad; no una certificación exhaustiva de toda la app.
+Esta tarea cambia solo documentación. No ejecuta los refactors ni corrige la incidencia
+descrita debajo. No se han usado datos personales.
+
+La base ya dispone de módulos, catálogo único de recursos (`app-assets.json`), construcción
+por lista permitida, helpers de dominio y pruebas de lógica/navegador. Conviene conservar
+esa arquitectura y reducir dependencias implícitas gradualmente. Facturas y Energía
+ya separan varias responsabilidades: no son el primer objetivo por tamaño de archivo.
+
+### Orden recomendado
+
+| Orden | Zona y evidencia en v486 | Primer trabajo acotado | Contrato que comprobar |
+|---|---|---|---|
+| 1 | **Fiscal: dibujo con escritura.** `renderFiscalTabDespachoOnly` en `js/economics-fiscal-hip.js:288` calcula y guarda intereses en la línea 316. `swipeWithState` (`js/swipe-render.js:2`) restaura globales, pero no deshace esa escritura. Caso reproducido abajo. | Primero una prueba de caracterización del caso. Después, una corrección funcional separada que defina cuándo se persiste el interés derivado y permita dibujar sin guardar. No cambiar fórmulas ni redondeos. | Mismo cálculo y HTML; previsualizar/cancelar no altera memoria, claves guardadas ni borradores; guardar explícitamente conserva el resultado correcto. Cubrir intereses automáticos/manuales y varios años. |
+| 2 | **CSS compartido.** `shared-refinements.css` mezcla reglas de muchos módulos en 1.067 líneas. Ejemplo: `.sy-back` nace circular en `base.css:236` y se vuelve cuadrado en `shared-refinements.css:1033`; Hoy tiene otro reparto similar (`base.css:54`, `shared-refinements.css:1036`). | Elegir una familia, por ejemplo Atrás/flechas/Hoy, inventariar todas sus variantes y consolidar la regla efectiva. No mover en bloque el archivo ni alterar el orden de `styleSources` para resolver una pantalla. | Geometría y estilos calculados idénticos en Home, calendarios, Agenda y paneles; temas y estados activo/desactivado afectados; esquinas opacas, scroll y swipe. La comparación de HTML sola no basta. |
+| 3 | **Navegación y fichas de Eventos.** `_bindEvNav` agrupa 202 líneas; `openEvDetail` reúne controles de eventos, cumpleaños, rutinas, bodas y notas. El orden de pestañas se repite en `_evSwipeUpcoming` (`events-bind.js:614`) y `swipeEventsPreview` (`swipe-render.js:25`). | Extraer primero el orden/destino de navegación como datos compartidos entre gesto y vista previa, manteniendo los efectos en el controlador. Después separar binds de la ficha por tipo y acotarlos a `wrap`, una extracción por cambio. | La vista previsualizada coincide con la abierta; mismos límites, Atrás, fecha seleccionada y scroll; no duplicar listeners; cancelar no cambia estado; conservar enlaces hacia rutinas/bodas/notas y pie fijo. |
+| 4 | **Editor semanal de Rutinas.** `_rutWeekRender` (`js/rutinas.js:469`, 95 líneas) construye HTML, abre el panel, captura borrador, enlaza controles, valida y guarda. El dominio ya ofrece `rutChangeWeek` y `rutNewSchedule`. | Extraer render y lectura/validación del borrador manteniendo esos helpers de dominio. Luego aislar los binds y consultas DOM del panel. Es una primera extracción JS manejable, sin rehacer todo Rutinas. | Misma salida y altura; horarios por día; guardar una semana o desde una fecha; cancelar/restablecer; cupos, sesiones pasadas, extras y recuperaciones. Reutilizar `routine-week-layout.spec.js` y las pruebas `test-rutinas-*`. |
+| 5 | **Presentación económica y contexto fiscal/Hogar.** `_renderAnalisisGastos` (`economics-analisis.js:32`, 250 líneas) agrega importes y produce HTML. `economics-fiscal-hip.js` reúne fórmulas, vistas y edición; `reRenderFiscal` cambia de destino según `FISCAL_ENTRY`. | Tras aislar la escritura del punto 1, extraer el modelo de lectura de una vista económica y pasar su resultado al render. Delimitar el host Fiscal/Hogar usando sus helpers existentes; no duplicar fórmulas. | Resultados numéricos y precisión idénticos; cruces de año, tarifas, períodos y subrogaciones; cancelar edición y volver al mismo detalle; backup e importación. |
+
+Los puntos 2–5 son oportunidades de organización, no fallos funcionales demostrados.
+El número de líneas orienta la lectura; el orden responde a efectos secundarios,
+consumidores compartidos y posibilidad de hacer cambios acotados.
+
+### Incidencia reproducida: previsualización fiscal con escritura
+
+En un contexto aislado de `tools/entorno.js`, con una hipoteca ficticia de 100.000,
+3 %, 20 años desde 2025-01-01, año fiscal 2026 e intereses automáticos inicialmente 0,
+dibujar Despacho escribió `excelia-despacho-v1`. Ejecutarlo mediante `swipeWithState`
+restauró la pestaña y el objeto original en memoria (interés 0), pero el almacenamiento
+quedó con interés 2836.6. Se comprobó la ruta de render/previsualización en el entorno
+simulado, no una grabación del gesto en el teléfono. No demuestra pérdidas de datos
+del usuario; sí demuestra un efecto persistente al dibujar que debe aislarse.
+
+Reproducción con datos ficticios, desde la raíz, en Node:
+
+```js
+const a = require('./tools/entorno').cargarApp({});
+require('node:vm').runInContext('window=globalThis;', a);
+a.loadDespacho();
+Object.assign(a.DESPACHO.compra, {
+  importePrestamo: 100000, tipoInteres: 3, plazoAnios: 20, fechaInicio: '2025-01-01'
+});
+a.FISCAL_YEAR = 2026;
+a.FISCAL_TAB = 'gastos_desg'; a.FISCAL_IRPF_SUB = 'despacho';
+a.DESPACHO.hipotecaIntereses = 0; a.DESPACHO.hipotecaInteresesManual = false;
+a.saveDespacho();
+const before = a.appStorage.getItem(a.DESPACHO_SK);
+a.swipeWithState({ FISCAL_TAB: 'irpf_deduc' }, () => a.renderFiscalContent());
+console.log(a.DESPACHO.hipotecaIntereses); // 0: memoria restaurada
+console.log(before === a.appStorage.getItem(a.DESPACHO_SK)); // false: escritura persistente
+```
+
+Las pruebas existentes de swipe comprueban estado, almacenamiento y borradores en
+sus escenarios, pero el caso fiscal revisado empieza en Personal y no caracteriza
+esta combinación de subpestaña Despacho e intereses automáticos. Añadir ese escenario
+es más útil que aumentar pruebas que solo repitan la implementación.
+
+### Qué no priorizar ahora
+
+- Optimizar la velocidad de un swipe que Ángel considera fluido, cambiar animaciones
+  o introducir cachés para resolver un problema de organización.
+- Reescribir los tres calendarios, cambiar de framework o fragmentar todos los archivos
+  largos de una vez. El cálculo de barras y marcadores tiene contratos delicados.
+- Reorganizar primero importación/backup o el protocolo Kairo por estética: tienen
+  validaciones y contratos que conviene conservar. Modificarlos cuando haya una necesidad concreta.
+- Construir ya el mapa de capturas: sigue siendo una propuesta separada, con sus normas.
