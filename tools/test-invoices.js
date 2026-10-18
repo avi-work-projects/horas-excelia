@@ -45,9 +45,20 @@ assert.ok(summary.includes('6,5 horas ×'));assert.ok(summary.includes('Precio p
 assert.ok(!summary.includes('€'));assert.ok(!summary.includes('12,35'));assert.ok(!summary.includes('80,28'));
 g.INVOICE_HIDE_AMOUNTS=false;summary=g.invoiceSummary(p);
 assert.ok(summary.includes('12,35 €'));assert.ok(summary.includes('80,28 €'));
-assert.ok(summary.includes('21 % de la base imponible'));assert.ok(summary.includes('15 % de la base imponible'));assert.ok(summary.includes('Base + IVA − IRPF'));
+assert.ok(summary.includes('IVA · 21 %'));assert.ok(summary.includes('IRPF · 15 %'));assert.ok(summary.includes('Base + IVA − IRPF'));
 const locked=g.invoiceKairoSection(null,{},'','Faltan datos');
 assert.ok(locked.includes('Sin configurar'));assert.ok(locked.includes('invoiceKairoConfig'));assert.ok(!locked.includes('invoiceKairoSend'));
 const incomplete=g.invoiceKairoSection(null,{},'https://synthetic.test.ts.net/facturas/','Faltan datos');
 assert.ok(incomplete.includes('id="invoiceKairoSend" disabled'));assert.ok(incomplete.includes('id="invoiceKairoStatus" disabled'));
 console.log('Desglose: cantidades, tarifas, impuestos, privacidad y Kairo sin configurar OK');
+
+// Solo se descuentan ausencias laborables; la preparación con PDF conserva su selección.
+g.ST={'2026-10-12':{type:'festivo'},'2026-10-15':{type:'ausencia'},'2026-10-17':{type:'festivo'},'2026-10-20':{type:'vacaciones'}};
+const breakdown=g.invoiceDaysSummary('2026-10',null);
+assert.ok(breakdown.includes('19 de 22'));assert.ok(breakdown.includes('12 de octubre'));assert.ok(breakdown.includes('15 de octubre'));assert.ok(breakdown.includes('20 de octubre'));assert.ok(!breakdown.includes('17 de octubre'));
+assert.ok(breakdown.includes('Ausencias / bajas'));assert.ok(!breakdown.includes(' open'));
+const frozen=g.invoiceCalculate('2026-10',cfg,g.invoiceDayRows('2026-10',cfg));
+g.ST={};const savedBreakdown=g.invoiceDaysSummary('2026-10',frozen);
+assert.ok(savedBreakdown.includes('19 de 22'));assert.ok(savedBreakdown.includes('Días no incluidos'));assert.ok(!savedBreakdown.includes('Festivos'));
+assert.ok(g.invoiceDaysSummary('2024-02',null).includes('21 de 21'));
+console.log('Jornadas: motivos, fechas, fines de semana, febrero bisiesto y factura conservada OK');

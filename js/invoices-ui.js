@@ -32,12 +32,28 @@ function openInvoiceSettings(options){
 function invoiceSummary(p){
   function money(value){return '<span class="invoice-money"'+(INVOICE_HIDE_AMOUNTS?' aria-label="Importe oculto"':'')+'>'+(INVOICE_HIDE_AMOUNTS?'••••':invoiceMoney(value))+'</span>';}
   function number(value){return value.toLocaleString('es-ES',{maximumFractionDigits:2});}
-  var h='<p class="invoice-calculation-caption">'+p.days.length+' días incluidos del calendario · jornadas normales.</p><div class="invoice-calculation-lines">';
+  var h='<div class="invoice-calculation-lines">';
   p.lines.forEach(function(line){h+='<div class="invoice-calculation-line"><span class="invoice-line-label">'+(line.unit==='day'?'Precio por día':'Precio por hora')+'</span><div class="invoice-line-formula"><span>'+number(line.quantity100/100)+' '+(line.unit==='day'?'días':'horas')+' × '+money(line.rateCents)+'</span><strong><span class="invoice-equals">= </span>'+money(line.baseCents)+'</strong></div></div>';});
-  h+='</div><dl class="invoice-totals"><div><dt>Base imponible<small>Suma del trabajo incluido</small></dt><dd>'+money(p.baseCents)+'</dd></div>';
-  h+='<div><dt>+ IVA<small>'+number(p.vatBasisPoints/100)+' % de la base imponible</small></dt><dd>'+money(p.vatCents)+'</dd></div>';
-  h+='<div><dt>− Retención IRPF<small>'+number(p.withholdingBasisPoints/100)+' % de la base imponible</small></dt><dd>'+money(p.withholdingCents)+'</dd></div>';
-  return h+'<div class="invoice-total"><dt>Total a cobrar<small>Base + IVA − IRPF</small></dt><dd>'+money(p.totalCents)+'</dd></div></dl><p class="invoice-note invoice-calculation-footnote">Incluye los días normales que figuran en el calendario, también los planificados. Comprueba el mes antes de emitir.</p>';
+  h+='</div><dl class="invoice-totals"><div><dt>Base imponible</dt><dd>'+money(p.baseCents)+'</dd></div>';
+  h+='<div class="invoice-vat"><dt>+ IVA · '+number(p.vatBasisPoints/100)+' %</dt><dd>'+money(p.vatCents)+'</dd></div>';
+  h+='<div class="invoice-withholding"><dt>− IRPF · '+number(p.withholdingBasisPoints/100)+' %</dt><dd>'+money(p.withholdingCents)+'</dd></div>';
+  return h+'<div class="invoice-total"><dt>Total a cobrar<small>Base + IVA − IRPF</small></dt><dd>'+money(p.totalCents)+'</dd></div></dl>';
+}
+function invoiceDaysSummary(period,p){
+  var year=+period.slice(0,4),month=+period.slice(5)-1,included=p?new Set(p.days.map(function(r){return r.date;})):null;
+  var total=0,worked=0,groups={festivo:[],vacaciones:[],ausencia:[],other:[]};
+  for(var day=1;day<=new Date(year,month+1,0).getDate();day++){
+    var date=new Date(year,month,day);if(date.getDay()===0||date.getDay()===6)continue;
+    total++;var ds=dk(date),type=dayT(date);
+    if(included?included.has(ds):type==='normal'){worked++;continue;}
+    // Un PDF conserva sus días originales: no deducir un motivo si el calendario ya cambió.
+    var key=included?'other':type;
+    (groups[key]||groups.other).push(day);
+  }
+  var h='<details class="invoice-card invoice-days" id="invoiceDays"><summary><span>Días trabajados</span><strong>'+worked+' de '+total+'</strong></summary><div class="invoice-days-list"><p><span>Días de lunes a viernes</span><strong>'+total+'</strong></p>';
+  var names={festivo:'Festivos',vacaciones:'Vacaciones',ausencia:'Ausencias / bajas',other:'Días no incluidos'};
+  Object.keys(groups).forEach(function(key){var days=groups[key];if(!days.length)return;h+='<p><span>'+names[key]+'<small>'+days.join(', ')+' de '+MN[month].toLowerCase()+'</small></span><strong>− '+days.length+'</strong></p>';});
+  return h+'<p class="invoice-days-result"><span>Días trabajados</span><strong>= '+worked+'</strong></p></div><p class="invoice-note">'+(included?'Días conservados en la factura.':'Según el calendario del mes, incluidos los días planificados.')+'</p></details>';
 }
 function invoicePrivacyButton(){
   var label=INVOICE_HIDE_AMOUNTS?'Mostrar importes':'Ocultar importes';
@@ -53,7 +69,7 @@ function invoiceManualSection(period,c,record){
   return h+'<label class="invoice-confirm"><input type="checkbox" id="invoiceFinalConfirm">Es el PDF definitivo de AEAT de '+escHtml(invoiceLabel(period))+' y he comprobado sus datos e importes.</label><button class="ev-btn ev-btn-primary" id="invoiceAttach">Guardar PDF y preparar correo</button></details>';
 }
 function invoiceTools(){
-  return '<details class="invoice-card invoice-tools" id="invoiceTools"><summary>Documentos auxiliares</summary><p class="invoice-note">Opcionales: sirven para revisar o trasladar el cálculo. No son la factura oficial.</p><div class="invoice-tool"><div><strong>Excel auxiliar</strong><p>Desglose por día, tarifas e impuestos para revisar las cuentas.</p></div><button class="ev-btn" id="invoiceExcel">Descargar Excel</button></div><div class="invoice-tool"><div><strong>Datos para AEAT · JSON</strong><p>Preparación estructurada para el flujo de emisión. Alternativa al envío directo a Kairo.</p></div><button class="ev-btn" id="invoiceJson">Descargar datos</button></div></details>';
+  return '<button class="invoice-config-link" id="invoiceJson">Descargar datos para AEAT · JSON</button>';
 }
 async function openInvoiceMonth(period){
   INVOICE_HIDE_AMOUNTS=true;
@@ -65,15 +81,16 @@ async function openInvoiceMonth(period){
   }
   if(seq!==INVOICE_OPEN_SEQ)return;
   var h='<p class="invoice-month"><strong>'+escHtml(invoiceLabel(period))+'</strong></p>';
-  h+='<p class="invoice-status">'+(historical?'Referencia histórica · no preparar un nuevo envío':(c.kairoUrl||record.kairo)?'Estado de factura y correo: consulta Kairo':record.final?'PDF definitivo de AEAT incorporado':'Pendiente de emitir en AEAT')+'</p>';
-  if(!historical)h+=invoiceKairoSection(p,record,c.kairoUrl,problem);
-  if(!historical&&!problem&&p&&!record.kairo&&!c.kairoUrl)h+=invoiceManualSection(period,c,record);
+  if(historical||record.final)h+='<p class="invoice-status">'+(historical?'Referencia histórica':'PDF definitivo de AEAT incorporado')+'</p>';
+  h+=invoiceDaysSummary(period,record.final?p:null);
   if(problem)h+='<p class="invoice-note">'+escHtml(problem)+'</p>';
-  h+='<button class="invoice-config-link" id="invoiceConfig">'+(problem?'Completar datos de facturación':'Datos de factura y correo')+'</button>';
-  h+='<section class="invoice-card invoice-month-summary"><header class="invoice-summary-header"><h3>Cómo se calcula</h3>'+(p?'<span id="invoicePrivacyControl">'+invoicePrivacyButton()+'</span>':'')+'</header><p class="invoice-filename"><strong>'+escHtml(p&&p.client?p.client.name:c.client||'Cliente pendiente de configurar')+'</strong><br>'+escHtml(p?p.concept:invoiceText(c.concept,period))+'</p>';
+  h+='<section class="invoice-card invoice-month-summary"><header class="invoice-summary-header"><h3>Cálculo de la factura</h3>'+(p?'<span id="invoicePrivacyControl">'+invoicePrivacyButton()+'</span>':'')+'</header><p class="invoice-filename">'+escHtml(p&&p.client?p.client.name:c.client||'Cliente pendiente de configurar')+'</p>';
   if(p)h+='<div id="invoiceAmounts">'+invoiceSummary(p)+'</div>';
   else h+='<p class="invoice-note">Completa los datos de facturación para ver las jornadas, tarifas y el desglose del mes.</p>';
   h+='</section>';
+  if(!historical)h+=invoiceKairoSection(p,record,c.kairoUrl,problem);
+  if(!historical&&!problem&&p&&!record.kairo&&!c.kairoUrl)h+=invoiceManualSection(period,c,record);
+  h+='<button class="invoice-config-link" id="invoiceConfig">'+(problem?'Completar datos de facturación':'Datos de factura y correo')+'</button>';
   if(p&&!problem&&!historical)h+=invoiceTools();
   h+='<p id="invoiceError" class="invoice-error" role="alert"></p>';var root=invoicePanel('Enviar factura',h);
   root.querySelector('.invoice-sheet').classList.add('invoice-month-sheet');
@@ -81,8 +98,7 @@ async function openInvoiceMonth(period){
   root.querySelector('#invoiceConfig').onclick=openInvoiceSettings;
   var kairoConfig=root.querySelector('#invoiceKairoConfig');if(kairoConfig)kairoConfig.onclick=function(){openInvoiceSettings({connection:true});};
   function bindPrivacy(){root.querySelector('#invoicePrivacy').onclick=function(){INVOICE_HIDE_AMOUNTS=!INVOICE_HIDE_AMOUNTS;root.querySelector('#invoicePrivacyControl').innerHTML=invoicePrivacyButton();root.querySelector('#invoiceAmounts').innerHTML=invoiceSummary(p);bindPrivacy();root.querySelector('#invoicePrivacy').focus();};}if(p)bindPrivacy();
-  if(root.querySelector('#invoiceExcel')){
-    root.querySelector('#invoiceExcel').onclick=function(){shareOrDownload(invoiceWorkbook(p),'calculo-auxiliar-'+period+'.xlsx');};
+  if(root.querySelector('#invoiceJson')){
     root.querySelector('#invoiceJson').onclick=function(){shareOrDownload(new Blob([JSON.stringify(p,null,2)],{type:'application/json'}),'datos-auxiliares-'+period+'.json');};
   }
   if(p&&!historical&&!problem)bindInvoiceKairo(root,p,c.kairoUrl);

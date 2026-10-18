@@ -12,6 +12,12 @@ memoria, para que una idea no se pierda entre dos tandas de cambios.
 
 ---
 
+## Mapa visual de pantallas y menús
+
+Catálogo de capturas generado por escenas, con ruta de acceso, estados importantes y enlaces a los componentes responsables. Facilitar la orientación de Ángel y de agentes en sesiones sin contexto, además de revisar coherencia visual.
+
+Actualizar un menú sin regenerar toda la app; los cambios compartidos actualizan sus dependientes. Reutilizar Edge y datos ficticios estables. La norma de mantenimiento está en docs/DEVELOPMENT.md y CLAUDE.md. Pendiente de implementación; evitar mantenimiento manual de un gran álbum de imágenes.
+
 ## 1. Envío automático de correos con N8N
 
 Hoy el correo semanal se genera y se envía a mano desde Outlook. La idea es que

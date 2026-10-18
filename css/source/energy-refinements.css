@@ -133,7 +133,7 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .energy-compare-chart{display:flex;gap:7px;align-items:flex-end;margin-top:18px}.energy-compare-chart>div{flex:1;min-width:0;text-align:center}.energy-compare-pair{height:130px;display:flex;gap:2px;align-items:flex-end}.energy-compare-pair span{flex:1;border-radius:3px 3px 0 0}.energy-compare-chart small{font-size:.55rem;color:var(--text-muted)}
 .energy-scenario-result{font-weight:700;color:#65a367;margin:16px 0}.energy-tariff-choices summary{padding:10px;border:1px solid var(--border);border-radius:8px;font-size:.8rem;cursor:pointer}
 .energy-cost-segment{cursor:default}.energy-inline-input{font-size:.8rem;display:flex;align-items:center;gap:10px}
-.ev-io-btn.energy-analysis-open{display:block;box-sizing:border-box;flex:0 0 auto;align-self:stretch;width:100%;min-height:39px;padding:9px 12px;font-size:.74rem;margin:12px 0}
+.ev-io-btn.energy-analysis-open,.ev-io-btn.household-analysis-link{display:block;box-sizing:border-box;flex:0 0 auto;align-self:stretch;width:100%;min-height:39px;padding:9px 12px;font-size:.74rem;margin:12px 0}
 
 /* Navegación: la misma geometría en Home y en las ventanas. */
 .data-actions>.data-btn,.data-menu-wrap{flex-shrink:0}

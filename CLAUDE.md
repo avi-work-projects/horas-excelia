@@ -21,6 +21,7 @@
 - No perder historial al editar rutinas. Horarios efectivos, extras, recuperaciones y pausas pasan por las funciones compartidas del dominio.
 - Datos personales, facturas y backups nunca son fixtures ni se publican. Alarmas solo por MacroDroid, con configuración local.
 - Actualizar instantáneas únicamente si el cambio visual es intencionado y se ha revisado el diff.
+- Mapa visual con capturas: idea pendiente, no construido. Cuando exista, cada cambio de interfaz debe actualizar solo las fichas afectadas y sus dependencias compartidas; usar datos ficticios y revisar las capturas. Ver la norma y alcance en docs/DEVELOPMENT.md y FUTURO.md.
 
 ## Dónde ampliar
 - [Arquitectura, catálogo de componentes y flujos](docs/DEVELOPMENT.md).

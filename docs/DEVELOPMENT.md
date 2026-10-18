@@ -610,8 +610,7 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 - El editor semanal de rutinas usa etiquetas `ev-field`, tarjetas de opción pulsables y un cuerpo con scroll interior. Cabecera, selector semanal, pie y tamaño exterior permanecen estables al activar horarios por día. Se conserva la lógica de excepción semanal y de cambio del horario habitual.
 - Crema tiene su paleta completa en `css/source/theme-cream.css`: marfil, ciruela, eucalipto, arcilla y azul pizarra. No hereda los tokens de Claro. Se mantiene `grey` como identificador de persistencia. Los colores personalizados de eventos y rutinas no se reescriben.
 - El contexto de las vistas previas del swipe es un elemento con `data-theme`, dentro de un ShadowRoot. `:root[data-theme="grey"]` no coincidía allí: la copia tomaba los colores de Claro y cambiaba al concluir. Los tokens usan ahora `[data-theme="grey"]`, tanto en la pantalla real como en su copia. `swipe-paint.spec.js` compara los píxeles en Claro y Crema con densidades 1 y 3; `theme-cream.spec.js` comprueba el cambio de tema con la hoja de estilos ya cacheada y el contraste de los acentos.
-- En Enviar factura se muestran primero el envío y la conexión Kairo. Sin dirección configurada, Kairo sigue visible con un estado bloqueado y un enlace directo a su configuración. La lectura de importes empieza oculta en cada apertura; mostrarlos no modifica la preparación guardada.
-- El cálculo explica unidades × tarifa, base imponible, porcentajes y total. Excel y JSON conservan sus funciones, agrupados en Documentos auxiliares. Consultar estado sigue separado de Enviar para poder comprobar un resultado sin repetir la operación. Las pruebas no envían correos ni preparaciones reales.
+- La disposición de Enviar factura de v485 queda sustituida por la revisión compacta de v486, descrita debajo. Se conserva la privacidad inicial y Kairo visible sin configurar.
 
 ### Criterio de mantenimiento tras la revisión del 18/10/2026
 
@@ -619,3 +618,18 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 - Consolidar estilos por componente y tokens de tema. Evitar seguir acumulando correcciones en `shared-refinements.css` cuando se pueda corregir la fuente responsable.
 - Antes de optimizar, medir arranque, preparación del swipe y listas con históricos grandes. La prueba de Energía mide cálculo/render HTML, no fluidez en el móvil. La copia completa del DOM durante el swipe y las bibliotecas PDF cargadas al inicio son candidatos concretos a medir.
 - Propuesta de mapa visual, todavía no implementada: catálogo HTML generado con una escena por pantalla/panel, datos y fecha fijos, y relaciones con componentes compartidos. Un comando por escena actualizaría solo sus capturas; un cambio de fuente, tema o componente regeneraría las escenas dependientes. Reutilizar Edge y las fixtures de Playwright; revisar las capturas antes de aceptarlas como referencia.
+
+### Norma para el futuro mapa visual (18/10/2026)
+
+- Se conserva como idea pendiente en FUTURO.md; no generar ahora un catálogo completo ni exigir capturas de todas las pantallas en cada tarea.
+- Cuando exista, todo cambio visual o de navegación debe actualizar la ficha del menú afectado: captura, ruta de acceso, estados importantes y archivos/componentes relacionados. Altas y eliminaciones actualizan también el índice.
+- Regenerar solo esas escenas; cambios en temas, fuentes o componentes compartidos regeneran las dependientes. Revisar antes de aceptar; no actualizar referencias a ciegas.
+- Usar Edge oculto, viewport móvil fijo, fecha y datos ficticios estables. Registrar el commit de referencia y señalar fichas pendientes para no presentar capturas antiguas como actuales.
+- El mapa ayuda a ubicarse en sesiones nuevas y comprobar coherencia; complementa CODEMAP y pruebas, no los sustituye. Evitar un producto documental paralelo o todas las combinaciones de temas/estados.
+
+## Revisión compacta de factura (v486)
+
+- Orden: días trabajados plegados, cálculo visible y acciones Kairo debajo. En móvil deben verse juntos al entrar; importe oculto por defecto y cabecera fija. El despliegue de días conserva el tamaño exterior y usa scroll interno.
+- Jornadas: lunes a viernes menos festivos, vacaciones y ausencias/bajas, con fechas por motivo. No descontar fines de semana. Incluye planificación, igual que Home. Con PDF definitivo se respeta la selección guardada y no se inventan motivos históricos desde el calendario actual.
+- IVA e IRPF reutilizan `--c-orange` y `--c-red`, como Económico. Eliminar explicaciones duplicadas y el acceso al Excel auxiliar del menú; mantener descarga JSON y flujo manual de PDF/Gmail. No cambia cálculo monetario, contenido firmado ni transporte Kairo.
+- Hipoteca y Consumo y tarifas comparten la regla de geometría de su botón, conservando sus acentos.

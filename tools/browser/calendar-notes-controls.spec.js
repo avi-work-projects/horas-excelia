@@ -51,11 +51,11 @@ test('Wedding Moves diferencia clases y parejas y abre Todas por fecha de boda',
  expect(await page.evaluate(()=>[BODA_SUBTAB,BODA_PAREJAS_FILTER,BODA_PAREJAS_CLASSES,BODA_PAREJAS_SORT,BODA_PAREJAS_SEARCH])).toEqual(['parejas','todas','','boda','']);await expect(page.locator('.boda-name')).toHaveText(['Pareja anterior','Pareja tardía','Sin fecha']);
 });
 test('Hipoteca solo en Detalle y alineada con suministros; Ahora ajusta ruedas sin crear alarma',async({page},info)=>{
- for(const fiscal of [false,true]){let top;
+ for(const fiscal of [false,true]){let top,geometry;
   for(const tab of fiscal?['resumen','detalle']:['resumen','detalle','gas','elect']){
    await page.evaluate(({fiscal,tab})=>{if(fiscal){FISCAL_TAB='despacho';FISCAL_HIP_SUB=tab;openFiscal(2026);}else openHousehold(tab);},{fiscal,tab});await settled(page);
    const host=page.locator(fiscal?'#fiscalOverlay':'#householdOverlay');if(tab==='resumen'){await expect(host.locator('#hipGoAnalisis')).toHaveCount(0);continue;}
-   const button=host.locator(tab==='detalle'?'#hipGoAnalisis':'.energy-analysis-open');const rect=await button.boundingBox();if(top!==undefined)expect(rect.y).toBe(top);top=rect.y;await page.screenshot({path:info.outputPath('hogar-'+fiscal+'-'+tab+'.png')});
+   const button=host.locator(tab==='detalle'?'#hipGoAnalisis':'.energy-analysis-open');const rect=await button.boundingBox();if(top!==undefined){expect(rect.y).toBe(top);expect(rect.width).toBe(geometry.width);expect(rect.height).toBe(geometry.height);}top=rect.y;geometry=rect;await page.screenshot({path:info.outputPath('hogar-'+fiscal+'-'+tab+'.png')});
   }
  }
  await page.evaluate(()=>{document.querySelectorAll('.full-overlay').forEach(el=>{el.classList.remove('open');el.style.display='none';});});await page.locator('#alarmTestBtn').click();await page.locator('#alarmMsg').fill('Conservar');await page.locator('.alarm-day-btn').first().click();

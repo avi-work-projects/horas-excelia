@@ -11,16 +11,15 @@ function invoiceKairoState(state){
 }
 function invoiceKairoSection(p,record,url,problem){
   var locked=!url,disabled=(!p||problem)?' disabled':'';
-  var h='<section class="invoice-card invoice-kairo-card'+(locked?' invoice-kairo-locked':' invoice-send-card')+'"><header class="invoice-kairo-header"><h3>Kairo</h3><span class="invoice-kairo-badge">'+(locked?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Sin configurar':'Conexión configurada')+'</span></header>';
-  h+='<p class="invoice-note">'+(locked?'Conecta Kairo para preparar la factura y su correo desde aquí.':'Envía la preparación. La emisión y el correo se revisan y aprueban en Kairo, con Tailscale conectado.')+'</p>';
-  if(record.kairo)h+='<p class="invoice-note">Última consulta: '+escHtml(invoiceKairoState(record.kairo.state))+(p&&record.kairo.contentHash!==p.contentHash?' La preparación local ha cambiado.':'')+'</p>';
+  var h='<section class="invoice-kairo-card'+(locked?' invoice-card invoice-kairo-locked':'')+'" aria-label="Kairo">';
+  if(locked)h+='<header class="invoice-kairo-header"><h3>Kairo</h3><span class="invoice-kairo-badge">Sin configurar</span></header>';
   if(locked)h+='<button class="ev-btn invoice-connection-action" id="invoiceKairoConfig">Configurar conexión</button>';
   else{
     h+='<div class="invoice-actions">';
     if(!record.final)h+='<button class="ev-btn ev-btn-primary invoice-primary-action" id="invoiceKairoSend"'+disabled+'>Enviar a Kairo</button>';
-    h+='<button class="ev-btn" id="invoiceKairoStatus"'+disabled+'>Consultar estado</button></div><p class="invoice-note invoice-action-hint">Consultar estado comprueba el resultado sin volver a enviar.</p>';
+    h+='<button class="ev-btn" id="invoiceKairoStatus"'+disabled+'>Consultar estado</button></div>';
   }
-  return h+'<p class="invoice-note" id="invoiceKairoMessage" role="status">'+(locked&&record.kairo?'Configura de nuevo la dirección privada para consultar Kairo.':!locked&&disabled?'Completa los datos de facturación para continuar.':'')+'</p></section>';
+  return h+'<p class="invoice-note" id="invoiceKairoMessage" role="status">'+(locked&&record.kairo?'Configura de nuevo la dirección privada para consultar Kairo.':!locked&&disabled?'Completa los datos de facturación para continuar.':record.kairo?escHtml(invoiceKairoState(record.kairo.state))+(p&&record.kairo.contentHash!==p.contentHash?' La preparación local ha cambiado.':''):'')+'</p></section>';
 }
 function invoiceKairoExchange(url,p,action,popup){
   return new Promise(function(resolve,reject){
@@ -68,7 +67,6 @@ function bindInvoiceKairo(root,p,url){
         data=invoiceData();record=data.months[p.period];
         if(record&&record.preparation.contentHash===p.contentHash){record.kairo={operationId:p.operationId,contentHash:p.contentHash,state:result.state};invoiceSave(data);}
         message.textContent=invoiceKairoState(result.state);
-        root.querySelector('.invoice-status').textContent='Última consulta a Kairo: '+invoiceKairoState(result.state);
       }catch(e){message.textContent=e.message;}
       finally{INVOICE_KAIRO_BUSY=false;root.querySelectorAll('#invoiceKairoSend,#invoiceKairoStatus').forEach(function(el){el.disabled=false;});}
     };
