@@ -1,0 +1,32 @@
+/* Atrás, flechas y Hoy: base compartida y variantes vigentes.
+   La disposición de cabeceras/paneles permanece en el módulo que las aloja.
+   Conservar las diferencias de tamaño, tipografía y pulsación: no son un rediseño. */
+.sy-back,.sy-nav,.sy-nav-icon,.nav-btn,.fiscal-year-arrow,.today-btn,.bday-jump-today{border-radius:9px}
+.sy-back,.sy-nav,.sy-nav-icon,.nav-btn{width:32px;height:32px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:.85rem;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.sy-back,.sy-nav,.sy-nav-icon{flex-shrink:0}
+.sy-back:active,.sy-nav:active,.sy-nav-icon:active,.nav-btn:active{background:var(--surface3)}
+.sy-back{width:36px;height:36px;font-size:1rem}
+.sy-nav{min-width:32px;min-height:32px;padding:0;line-height:1;box-sizing:border-box}
+.sy-nav-icon{color:var(--text-muted)}
+.sy-nav-icon,.nav-btn{transition:all .15s}
+.nav-btn{-webkit-user-select:none;user-select:none}
+.nav-btn:active{transform:scale(.93)}
+.sy-nav-icon.active-glow{border-color:var(--vacaciones);color:var(--vacaciones);box-shadow:0 0 8px rgba(255,179,71,.35)}
+/* Variantes compactas de las flechas del cuatrimestre. */
+.sy-nav-sm{font-size:.7rem !important;min-width:24px !important;padding:4px 5px !important}
+.sy-nav-pill{width:32px !important;height:32px !important;border-radius:9px !important;padding:0 !important;font-size:.75rem !important}
+/* Selector fiscal: conserva su fondo y tamaño propios.
+   Las flechas del carrusel combinan .ev-btn; su cascada vive en event-panels.css. */
+.fiscal-year-arrow{width:32px;height:32px;padding:0;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);font-size:.9rem;cursor:pointer;-webkit-user-select:none;user-select:none}
+.fiscal-year-arrow:active{background:var(--accent-glow)}
+
+/* Hoy: base y acentos de cada consumidor, con la especificidad existente. */
+.today-btn{margin-left:auto;font-size:.75rem;font-weight:500;padding:7px 14px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;transition:all .15s}
+.today-btn:active{background:var(--accent);color:#fff}
+#todayBtn{color:var(--home-tone);border-color:var(--home-tone);background:color-mix(in srgb,var(--home-tone) 9%,var(--surface))}
+#todayBtn:active{background:var(--home-tone);color:#fff}
+.ev-agenda-today{background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+#eventsOverlay:has(#evViewCal.active) #evToday,#eventsOverlay:has(#evViewAnnual.active) #evToday,#eventsOverlay:has(#evViewQuad.active) #evToday{border-color:var(--c-green);color:var(--c-green);background:color-mix(in srgb,var(--c-green) 9%,var(--surface))}
+.ev-calendar-header #evToday{font-size:.75rem;padding:7px 14px}
+#bdToday,.bday-jump-today{color:var(--birthday-tone);border-color:var(--birthday-tone);background:color-mix(in srgb,var(--birthday-tone) 12%,var(--surface))}
+.bday-today-dock .today-btn{transform:translateY(6px);pointer-events:auto;width:52px;height:28px;padding:4px 0;background:var(--surface);border:1px solid var(--birthday-tone);color:var(--birthday-tone);box-shadow:0 2px 5px #0002}

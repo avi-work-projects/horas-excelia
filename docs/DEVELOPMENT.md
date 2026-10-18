@@ -272,6 +272,7 @@ generado en `css/`, no respecto a `css/source/`.
 | Necesidad | Pieza existente |
 | --- | --- |
 | Navegación principal | `renderNavBar` / `bindNavBar` / `navigateMain` |
+| Atrás, flechas y Hoy | `css/source/navigation-controls.css`; geometría del carrusel en `event-panels.css` |
 | Ajustes globales sin salir de la ventana | `toggleSettingsMenu` / `closeSettingsMenu` en `settings-menu.js` |
 | Ventana secundaria | `.full-overlay` → navegación → cabecera → `.sy-body` |
 | Subpestañas | `.econ-sub-tabs` / `.econ-sub-tab`, con clase local de la pantalla |
@@ -705,7 +706,7 @@ ya separan varias responsabilidades: no son el primer objetivo por tamaño de ar
 | 5 | **Presentación económica y contexto fiscal/Hogar.** `_renderAnalisisGastos` (`economics-analisis.js:32`, 250 líneas) agrega importes y produce HTML. `economics-fiscal-hip.js` reúne fórmulas, vistas y edición; `reRenderFiscal` cambia de destino según `FISCAL_ENTRY`. | Tras aislar la escritura del punto 1, extraer el modelo de lectura de una vista económica y pasar su resultado al render. Delimitar el host Fiscal/Hogar usando sus helpers existentes; no duplicar fórmulas. | Resultados numéricos y precisión idénticos; cruces de año, tarifas, períodos y subrogaciones; cancelar edición y volver al mismo detalle; backup e importación. |
 
 El punto 1 quedó corregido de forma aislada en v487 (ver resolución debajo).
-Los puntos 2–5 siguen pendientes y son oportunidades de organización, no fallos funcionales demostrados.
+El primer paso del punto 2 (Atrás, flechas y Hoy) queda realizado en v488; el resto del CSS compartido no se reorganiza en bloque. Los puntos 3–5 siguen pendientes y son oportunidades de organización, no fallos funcionales demostrados.
 El número de líneas orienta la lectura; el orden responde a efectos secundarios,
 consumidores compartidos y posibilidad de hacer cambios acotados.
 
@@ -776,3 +777,44 @@ es más útil que aumentar pruebas que solo repitan la implementación.
   20 pruebas de interacción en Edge oculto, incluidas las de Hogar y otros swipes.
   Comparación visual anterior/actual en Edge a 400 × 880: capturas idénticas con
   intereses automáticos y manuales, tras finalizar las transiciones.
+
+
+## Orden de los controles de navegación (v488)
+
+Alcance previo: consolidar Atrás, flechas y Hoy; consumidores Home, calendarios,
+Agenda, Cumpleaños, Fiscal, Energía y paneles de detalle/histórico. Invariantes:
+misma geometría, colores, tipografía, foco, pulsación, navegación y swipe.
+Comparación de estilos calculados y capturas antes/después, más interacciones.
+
+- `css/source/navigation-controls.css` reúne la base y las variantes de los
+  controles compartidos. El catálogo lo inserta tras `base.css` sin reordenar las
+  hojas existentes. No añadir correcciones de esta familia a `shared-refinements.css`.
+- La disposición de cabeceras y las variantes de contexto (p. ej. las flechas de
+  Energía a 34 px o Atrás en la exportación a 34 px) permanecen en sus módulos.
+- El carrusel combina `.ev-car-arrow` con `.ev-btn`. Se conserva expresamente
+  esa cascada en `event-panels.css`: aspecto previo a la base de acción y geometría
+  definitiva después. Su fuente/padding/borde efectivos proceden de `.ev-btn`.
+- Se eliminan los radios circulares sobrescritos y las antiguas reglas verdes de
+  Hoy en Cumpleaños que quedaban anuladas por su acento propio. No se cambia JS, HTML,
+  estructura de datos ni listeners (salvo el identificador de versión).
+
+Observaciones pendientes, sin rediseñarlas en este refactor:
+
+- Hoy de Cumpleaños aún fija fuente y padding inline en `birthdays-render.js`;
+  podría convertirse en una variante CSS explícita en otro cambio.
+- Las flechas conservan tamaños de 32, 34 y 36 px según el contexto; los controles
+  compartidos tampoco fuerzan todos la misma familia tipográfica. Unificar esos
+  valores o ampliar la zona táctil requiere decidir un cambio visual/funcional.
+- El alias `.bday-jump-today` no tiene consumidores en el JS actual; se conserva
+  su estilo final por compatibilidad. Evaluar su retirada junto al antiguo dock,
+  tras revisar rutas/fixtures, en vez de mezclar limpieza de UI con esta extracción.
+
+Verificación: 60 comparaciones antes/después en Edge oculto, con estilos calculados
+y capturas idénticos (10 vistas; claro a 320/400/440/1000 px, oscuro y crema a 400 px).
+Se comparó sustituyendo únicamente la hoja CSS en la misma página ya estabilizada,
+para evitar diferencias de rasterizado entre contextos de navegador. Las 53
+instantáneas HTML permanecen intactas y la suite lógica pasa. El contrato de
+teclado, pulsación, desactivación, Atrás, flechas y Hoy de
+`navigation-controls.spec.js` pasa tanto con la hoja anterior (opción local
+`NAVIGATION_BASELINE_CSS`) como con la actual. Las pruebas de calendarios, Agenda,
+Energía y swipe cubren los consumidores compartidos.
