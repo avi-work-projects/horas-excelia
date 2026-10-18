@@ -1,11 +1,14 @@
 # Gestify: guía de trabajo
 
 ## Antes de cambiar código
+0. En cada sesión, leer los criterios de mantenibilidad de docs/DEVELOPMENT.md y su revisión de prioridades antes de decidir el alcance. Las prioridades son propuestas, no autorización para ejecutar toda la reorganización.
 1. Localizar símbolos en CODEMAP.md y leer solo el bloque necesario.
 2. Reutilizar componentes; separar cálculos, renders y listeners.
 3. Registrar archivos nuevos en app-assets.json. Ejecutar npm run assets y node tools/codemap.js.
 4. Pasar npm test y npm run build; comprobar interacciones y presentación en Edge.
 5. Antes de publicar, incrementar APP_VERSION y CACHE_VER. CI debe aprobar las pruebas de navegador.
+
+Una tarea exclusivamente documental conserva las versiones y los archivos de la app. Ver la excepción de publicación en docs/DEVELOPMENT.md.
 
 ## Reglas vigentes
 - PWA estática sin backend. Mantener la arquitectura actual y la compatibilidad de backups JSON.
@@ -21,6 +24,9 @@
 - No perder historial al editar rutinas. Horarios efectivos, extras, recuperaciones y pausas pasan por las funciones compartidas del dominio.
 - Datos personales, facturas y backups nunca son fixtures ni se publican. Alarmas solo por MacroDroid, con configuración local.
 - Actualizar instantáneas únicamente si el cambio visual es intencionado y se ha revisado el diff.
+- Mantenibilidad: una fuente de verdad por regla/componente; corregir la causa y evitar nuevas capas de excepciones. Ordenar por zonas con cambios pequeños, sin reescrituras generales por defecto.
+- Separar reorganización interna y cambios de comportamiento. Antes de extraer código, identificar consumidores y caracterizar el resultado existente; después comprobar salida, interacciones, persistencia y aspecto de las vistas afectadas.
+- No optimizar por tamaño o por intuición: Ángel considera fluida la app (18/10/2026). Priorizar aislamiento y comprensión; medir antes de modificar rendimiento. La revisión documenta una escritura durante el render fiscal pendiente de corregir por separado.
 - Mapa visual con capturas: idea pendiente, no construido. Cuando exista, cada cambio de interfaz debe actualizar solo las fichas afectadas y sus dependencias compartidas; usar datos ficticios y revisar las capturas. Ver la norma y alcance en docs/DEVELOPMENT.md y FUTURO.md.
 
 ## Dónde ampliar
