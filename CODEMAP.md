@@ -478,7 +478,7 @@
 **Rangos por prefijo de clase:**
 .action-btn:143-147 · .app-logo:48-48 · .app-version:107-107 · .bd-export:241-241 · .bottom-sheet:153-154 · .btn-icon:86-86 · .csv-export:59-60 · .data-actions:82-82 · .data-btn:83-98 · .data-menu:100-106 · .day-cell:121-223 · .day-date:126-126 · .day-hours:127-127 · .day-name:125-125 · .day-status:134-134 · .days-grid:120-120 · .default-hours:55-64 · .ev-dot:139-139 · .ev-dots:138-138 · .ev-upcoming:298-298 · .ev-week:294-295 · .excl-item:324-324 · .excl-row:304-304 · .full-overlay:226-227 · .header:44-46 · .header-brand:47-47 · .hour-chip:73-74 · .hour-chips:72-72 · .hour-picker:70-71 · .hours-chip:67-68 · .hours-chips:66-66 · .hours-control:54-54 · .hours-label:65-65 · .hours-panel:69-69 · .ico-doc:61-61 · .ico-exportar:242-242 · .month-nav:49-51 · .month-stat:76-79 · .month-summary:75-75 · .ms-breakdown:326-328 · .ms-hrs:81-81 · .ms-label:80-80 · .ms-num:77-77 · .ms-sep:329-329 · .option-desc:169-169 · .option-dot:162-166 · .option-hours:170-170 · .option-info:167-167 · .option-label:168-168 · .overlay:151-152 · .sent-badge:117-117 · .sheet-handle:155-155 · .sheet-option:159-161 · .sheet-options:158-158 · .sheet-subtitle:157-157 · .sheet-title:156-156 · .sw-upd:187-187 · .sy-body:245-245 · .sy-card:256-263 · .sy-cards3:248-248 · .sy-cards4:249-249 · .sy-chart:274-274 · .sy-hdr:235-235 · .sy-header:231-234 · .sy-lbl:265-265 · .sy-list:278-331 · .sy-month:292-292 · .sy-note:275-277 · .sy-pdf:239-240 · .sy-puente:284-288 · .sy-section:246-247 · .sy-spain:250-255 · .sy-suelto:289-291 · .sy-table:266-270 · .sy-td:271-271 · .sy-tr:272-273 · .sy-val:261-264 · .sy-year:232-238 · .toast:173-192 · .toast-undo:189-189 · .vac-config:300-302 · .week-actions:142-142 · .week-card:111-205 · .week-header:114-114 · .week-info:115-116 · .week-total:118-118 · .weeks-container:110-110
 
-### css/source/navigation-controls.css  _(33 líneas)_
+### css/source/navigation-controls.css  _(34 líneas)_
 
 **Secciones:**
 
@@ -486,7 +486,7 @@
 - Hoy: base y acentos de cada consumidor, con la especificidad existente.:23
 
 **Rangos por prefijo de clase:**
-.bday-today:32-32 · .ev-agenda:28-28 · .ev-calendar:30-30 · .fiscal-year:20-21 · .nav-btn:12-13 · .sy-back:4-8 · .sy-nav:9-17 · .today-btn:24-25
+.bday-today:33-33 · .ev-agenda:28-28 · .ev-calendar:30-30 · .fiscal-year:20-21 · .nav-btn:12-13 · .sy-back:4-8 · .sy-nav:9-17 · .today-btn:24-25
 
 ### css/source/economics.css  _(679 líneas)_
 

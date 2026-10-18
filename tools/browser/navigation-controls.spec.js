@@ -28,6 +28,13 @@ for(const theme of ['light','dark','grey'])test('Controles compartidos: teclado,
  await page.locator('#evToday').click();expect(await page.evaluate(()=>[EV_YEAR,EV_MONTH])).toEqual([2026,9]);
  await expect(page.locator('#evBack')).toHaveCSS('border-radius','9px');
  await page.locator('#evBack').click();await expect(page.locator('#eventsOverlay')).toBeHidden();
+ await page.evaluate(()=>{EV_VIEW='bday';BDAY_VIEW='cal';BDAY_YEAR=2026;BDAY_MONTH=9;openEventsAt();});
+ const birthdayToday=page.locator('#bdToday');
+ await expect(birthdayToday).toHaveCSS('padding','6px 12px');
+ expect(await birthdayToday.evaluate(el=>parseFloat(getComputedStyle(el).fontSize)/parseFloat(getComputedStyle(document.documentElement).fontSize))).toBeCloseTo(.7);
+ await page.locator('#bdNext').click();expect(await page.evaluate(()=>BDAY_MONTH)).toBe(10);
+ await birthdayToday.click();expect(await page.evaluate(()=>[BDAY_YEAR,BDAY_MONTH])).toEqual([2026,9]);
+ await page.locator('#bdBack').click();await expect(page.locator('#eventsOverlay')).toBeHidden();
  await page.evaluate(()=>{FISCAL_TAB='personal';openFiscal(2026);});
  const fiscal=page.locator('#fiscalYearNext');await expect(fiscal).toHaveCSS('width','32px');await expect(fiscal).toHaveCSS('height','32px');
  await fiscal.click();expect(await page.evaluate(()=>FISCAL_YEAR)).toBe(2027);

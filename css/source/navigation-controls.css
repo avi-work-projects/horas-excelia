@@ -29,4 +29,5 @@
 #eventsOverlay:has(#evViewCal.active) #evToday,#eventsOverlay:has(#evViewAnnual.active) #evToday,#eventsOverlay:has(#evViewQuad.active) #evToday{border-color:var(--c-green);color:var(--c-green);background:color-mix(in srgb,var(--c-green) 9%,var(--surface))}
 .ev-calendar-header #evToday{font-size:.75rem;padding:7px 14px}
 #bdToday,.bday-jump-today{color:var(--birthday-tone);border-color:var(--birthday-tone);background:color-mix(in srgb,var(--birthday-tone) 12%,var(--surface))}
+#bdToday{font-size:.7rem;padding:6px 12px}
 .bday-today-dock .today-btn{transform:translateY(6px);pointer-events:auto;width:52px;height:28px;padding:4px 0;background:var(--surface);border:1px solid var(--birthday-tone);color:var(--birthday-tone);box-shadow:0 2px 5px #0002}

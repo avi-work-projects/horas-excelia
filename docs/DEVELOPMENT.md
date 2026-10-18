@@ -800,8 +800,9 @@ Comparación de estilos calculados y capturas antes/después, más interacciones
 
 Observaciones pendientes, sin rediseñarlas en este refactor:
 
-- Hoy de Cumpleaños aún fija fuente y padding inline en `birthdays-render.js`;
-  podría convertirse en una variante CSS explícita en otro cambio.
+- Resuelto por separado en v489: la fuente y el padding de Hoy de Cumpleaños
+  pasan del HTML a `#bdToday` en `navigation-controls.css`, con los mismos valores.
+  El alias `.bday-jump-today` conserva su tamaño independiente.
 - Las flechas conservan tamaños de 32, 34 y 36 px según el contexto; los controles
   compartidos tampoco fuerzan todos la misma familia tipográfica. Unificar esos
   valores o ampliar la zona táctil requiere decidir un cambio visual/funcional.
@@ -818,3 +819,10 @@ teclado, pulsación, desactivación, Atrás, flechas y Hoy de
 `navigation-controls.spec.js` pasa tanto con la hoja anterior (opción local
 `NAVIGATION_BASELINE_CSS`) como con la actual. Las pruebas de calendarios, Agenda,
 Energía y swipe cubren los consumidores compartidos.
+
+Verificación de v489: estilos calculados y capturas antes/después idénticos en Edge
+oculto (Cumpleaños en claro a 320/400/440 px, oscuro y crema a 400 px). Se restituye
+el atributo inline al comparar la versión anterior. La prueba de navegación cubre
+también avanzar un mes y volver con Hoy en Cumpleaños, en los tres temas. Pasan
+`npm test`, las seis pruebas de navegación/cabeceras y `npm run build`;
+las 53 instantáneas existentes no cambian.

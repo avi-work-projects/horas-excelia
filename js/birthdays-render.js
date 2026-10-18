@@ -206,7 +206,7 @@ function renderBdayContent(){
     h+='<div class="sy-year-nav"><button class="sy-nav" id="bdPrev">&#9664;</button>';
     h+='<div class="sy-year sy-year-2line">'+MN[BDAY_MONTH]+'<span class="sy-year-sub">'+BDAY_YEAR+'</span></div>';
     h+='<button class="sy-nav" id="bdNext">&#9654;</button></div>';
-    h+='<div class="sy-hdr-right bday-calendar-tools"><button class="today-btn" id="bdToday" style="font-size:.7rem;padding:6px 12px">Hoy</button>'+renderBdayVipFilter(true)+'</div>';
+    h+='<div class="sy-hdr-right bday-calendar-tools"><button class="today-btn" id="bdToday">Hoy</button>'+renderBdayVipFilter(true)+'</div>';
   }
   h+='</div>';
   h+='<div class="sy-body ev-bday-body'+(BDAY_VIEW==='list'?' bday-list-body':'')+(BDAY_SHOW_GROUPS?' bday-show-groups':'')+'"'+((BDAY_EDIT_VIP||BDAY_EDIT_GROUP)?' style="padding-bottom:56px"':'')+'>';
