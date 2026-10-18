@@ -46,5 +46,14 @@ Run `python3 test_monitoring.py` on Linux. Six tests use synthetic data and mock
 network calls. Live deployment additionally checked anonymous GET and CSRF rejection,
 and exact equality of invoice plans and mail attempts before and after installation.
 
-Status 2026-10-18: installed, account/Telegram link and real notification tests pending.
+Status 2026-10-18: account and Telegram linked; both real checks armed. The external
+delivery calendar was verified at 08:00 Europe/Madrid with a 300 second grace.
+A separate synthetic check passed explicit failure, recovery and missing-signal
+expiry (60 second interval + 60 second grace). Healthchecks reported Telegram
+notification delivery. Device display/notification permissions require the user's
+confirmation; provider delivery alone does not prove the phone displayed it.
+The exact maintenance/resume code was exercised against the synthetic check with
+temporary local state: remote timeout 3600 seconds, then restored to 300 seconds.
+The synthetic check is now paused. The real availability check was never paused.
+Invoice plans and mail attempts remained byte-equivalent as serialized table rows.
 Without monitor-config.json the timer exits `not_configured` and makes no requests.
