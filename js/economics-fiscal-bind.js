@@ -426,6 +426,10 @@ function _bindTabDesgrav(){
 }
 
 function _bindTabDespachoOnly(){
+  /* Solo al activar la vista real: el render también se usa en previews inertes.
+     Conservar la sincronización habitual que consumen las deducciones fiscales. */
+  var autoInt=_computeAnnualInterest(DESPACHO.compra||_defaultCompra(),FISCAL_YEAR);
+  if(autoInt>0&&!DESPACHO.hipotecaInteresesManual){DESPACHO.hipotecaIntereses=autoInt;saveDespacho();}
   /* Toggle on/off */
   var tog=document.getElementById('despachoToggle');
   if(tog)tog.addEventListener('click',function(){

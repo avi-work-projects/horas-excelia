@@ -37,3 +37,31 @@ assert.equal(a.householdMortgagePeriod(comp,-1,new Date('2026-08-21')).end,'2026
 const summary=a.renderHouseholdSummary(true);assert(summary.indexOf('Banco nuevo')<summary.indexOf('Banco de prueba'));assert(summary.includes('<details class="household-history">'));
 a.DESPACHO.compra=a._defaultCompra();assert(a.renderHouseholdSummary(false).includes('Suministro de prueba'),'Los suministros siguen visibles sin hipoteca');
 console.log('Hogar: consulta sin edición, ventana propia, resumen y precisión íntegra OK');
+
+// Una previsualización fiscal no puede guardar el interés de un año no abierto.
+const f=cargarApp({});require('node:vm').runInContext('window=globalThis;',f);f.loadDespacho();
+require('node:vm').runInContext(require('node:fs').readFileSync(require('node:path').join(__dirname,'../js/economics-fiscal-bind.js'),'utf8'),f);
+Object.assign(f.DESPACHO.compra,{importePrestamo:100000,tipoInteres:3,plazoAnios:20,fechaInicio:'2025-01-01'});
+f.FISCAL_YEAR=2026;f.FISCAL_TAB='gastos_desg';f.FISCAL_IRPF_SUB='despacho';
+f.DESPACHO.hipotecaIntereses=0;f.DESPACHO.hipotecaInteresesManual=false;f.saveDespacho();
+const reference=f.DESPACHO,before=JSON.stringify(f.DESPACHO),stored=f.appStorage.getItem(f.DESPACHO_SK);
+const preview=f.swipeWithState({FISCAL_TAB:'irpf_deduc'},()=>f.renderFiscalContent());
+assert.equal(f.appStorage.getItem(f.DESPACHO_SK),stored,'El swipe fiscal no escribe intereses');
+assert.strictEqual(f.DESPACHO,reference);assert.equal(JSON.stringify(f.DESPACHO),before);assert.equal(f.FISCAL_TAB,'gastos_desg');
+const direct=f.renderFiscalTabDespachoOnly();assert(preview.includes(direct));
+assert.equal(JSON.stringify(f.DESPACHO),before,'El render directo tampoco modifica memoria');
+assert.equal(f.appStorage.getItem(f.DESPACHO_SK),stored);
+assert.equal(f._computeAnnualInterest(f.DESPACHO.compra,2026),2836.6,'Fórmula y redondeo originales');
+assert(direct.includes('value="2836.6"'),'La vista muestra el cálculo aunque no lo guarde');
+// La activación real conserva la sincronización habitual para los consumidores fiscales.
+f._bindTabDespachoOnly();assert.equal(f.DESPACHO.hipotecaIntereses,2836.6);
+assert.equal(JSON.parse(f.appStorage.getItem(f.DESPACHO_SK)).hipotecaIntereses,2836.6);
+f.DESPACHO.pct=10;f.DESPACHO.deducciones={amortizacion:false,ibi:false,hipotecaInt:true,casa:false,suministros:false};
+assert.equal(f.computeDespachoDeduccion(),283.66);
+for(const scenario of [{manual:true,year:2026,value:1234.56},{manual:false,year:2024,value:345.67}]){
+ f.FISCAL_YEAR=scenario.year;f.DESPACHO.hipotecaInteresesManual=scenario.manual;f.DESPACHO.hipotecaIntereses=scenario.value;f.saveDespacho();
+ const saved=f.appStorage.getItem(f.DESPACHO_SK),html=f.renderFiscalTabDespachoOnly();
+ assert(html.includes('value="'+scenario.value+'"'));f._bindTabDespachoOnly();
+ assert.equal(f.appStorage.getItem(f.DESPACHO_SK),saved,'Se conservan el valor manual y el respaldo sin cálculo positivo');
+}
+console.log('Fiscal: render y swipe sin escrituras; activación, manual, respaldo y deducción OK');

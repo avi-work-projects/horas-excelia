@@ -704,11 +704,12 @@ ya separan varias responsabilidades: no son el primer objetivo por tamaño de ar
 | 4 | **Editor semanal de Rutinas.** `_rutWeekRender` (`js/rutinas.js:469`, 95 líneas) construye HTML, abre el panel, captura borrador, enlaza controles, valida y guarda. El dominio ya ofrece `rutChangeWeek` y `rutNewSchedule`. | Extraer render y lectura/validación del borrador manteniendo esos helpers de dominio. Luego aislar los binds y consultas DOM del panel. Es una primera extracción JS manejable, sin rehacer todo Rutinas. | Misma salida y altura; horarios por día; guardar una semana o desde una fecha; cancelar/restablecer; cupos, sesiones pasadas, extras y recuperaciones. Reutilizar `routine-week-layout.spec.js` y las pruebas `test-rutinas-*`. |
 | 5 | **Presentación económica y contexto fiscal/Hogar.** `_renderAnalisisGastos` (`economics-analisis.js:32`, 250 líneas) agrega importes y produce HTML. `economics-fiscal-hip.js` reúne fórmulas, vistas y edición; `reRenderFiscal` cambia de destino según `FISCAL_ENTRY`. | Tras aislar la escritura del punto 1, extraer el modelo de lectura de una vista económica y pasar su resultado al render. Delimitar el host Fiscal/Hogar usando sus helpers existentes; no duplicar fórmulas. | Resultados numéricos y precisión idénticos; cruces de año, tarifas, períodos y subrogaciones; cancelar edición y volver al mismo detalle; backup e importación. |
 
-Los puntos 2–5 son oportunidades de organización, no fallos funcionales demostrados.
+El punto 1 quedó corregido de forma aislada en v487 (ver resolución debajo).
+Los puntos 2–5 siguen pendientes y son oportunidades de organización, no fallos funcionales demostrados.
 El número de líneas orienta la lectura; el orden responde a efectos secundarios,
 consumidores compartidos y posibilidad de hacer cambios acotados.
 
-### Incidencia reproducida: previsualización fiscal con escritura
+### Incidencia reproducida en v486 (corregida en v487): previsualización fiscal con escritura
 
 En un contexto aislado de `tools/entorno.js`, con una hipoteca ficticia de 100.000,
 3 %, 20 años desde 2025-01-01, año fiscal 2026 e intereses automáticos inicialmente 0,
@@ -751,3 +752,27 @@ es más útil que aumentar pruebas que solo repitan la implementación.
 - Reorganizar primero importación/backup o el protocolo Kairo por estética: tienen
   validaciones y contratos que conviene conservar. Modificarlos cuando haya una necesidad concreta.
 - Construir ya el mapa de capturas: sigue siendo una propuesta separada, con sus normas.
+
+
+## Previsualización fiscal sin escrituras (v487)
+
+- Corrección aislada del punto 1 de la revisión. El ejemplo anterior describe v486;
+  ahora la comparación del almacenamiento devuelve `true`.
+- `renderFiscalTabDespachoOnly` calcula el importe mostrado en una variable local,
+  sin modificar `DESPACHO` ni llamar a `saveDespacho`.
+- La sincronización automática anterior se ejecuta en `_bindTabDespachoOnly`, solo
+  al activar la vista real. Se mantiene ese momento de actualización para conservar
+  los consumidores fiscales existentes; no se cambia el modelo de persistencia ni
+  se recalcula al abrir Hogar. Previsualizar o cancelar no activa ese controlador.
+- Se conservan la fórmula, el redondeo, el valor manual y el respaldo cuando el
+  cálculo no es positivo. Sin cambios de HTML, CSS, animación ni formato de backup.
+- Regresión en `tools/test-household.js`: fallaba con v486 por escritura durante
+  swipe; ahora verifica render directo, identidad y contenido en memoria, persistencia,
+  activación real, importe manual, año sin intereses y consumo por la deducción.
+  `swipe-live.spec.js` añade el gesto cancelado/confirmado, cambio de año, manual,
+  Recalcular y Guardar configuración en navegador.
+- Verificación: HTML anterior/nuevo idéntico en 12 escenarios (tres años, manual/auto,
+  con/sin subrogación); 53 instantáneas sin actualizar, suite lógica completa y
+  20 pruebas de interacción en Edge oculto, incluidas las de Hogar y otros swipes.
+  Comparación visual anterior/actual en Edge a 400 × 880: capturas idénticas con
+  intereses automáticos y manuales, tras finalizar las transiciones.
