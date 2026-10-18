@@ -1,0 +1,9 @@
+[Unit]
+Description=Observe availability and monthly delivery
+[Timer]
+OnCalendar=*-*-* *:*:15
+AccuracySec=1s
+Persistent=false
+Unit=kairo-monitor.service
+[Install]
+WantedBy=timers.target

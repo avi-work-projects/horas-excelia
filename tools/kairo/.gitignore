@@ -1,1 +1,6 @@
 __pycache__/
+monitor-config.json
+monitor-config.json.tmp
+monitor-state.json
+monitor-state.json.tmp
+monitor.lock

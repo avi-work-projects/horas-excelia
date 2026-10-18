@@ -1,0 +1,10 @@
+[Unit]
+Description=Independent Healthchecks observer
+After=network-online.target
+[Service]
+Type=oneshot
+# Set User and WorkingDirectory to the private installation.
+ExecStart=/usr/bin/python3 monitoring.py
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
