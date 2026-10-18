@@ -313,12 +313,12 @@ function renderFiscalTabDespachoOnly(){
   }
   /* Auto-calcular intereses si hay datos suficientes */
   var _autoInt=_computeAnnualInterest(comp,FISCAL_YEAR);
-  if(_autoInt>0&&!DESPACHO.hipotecaInteresesManual){DESPACHO.hipotecaIntereses=_autoInt;saveDespacho();}
+  var _shownInt=_autoInt>0&&!DESPACHO.hipotecaInteresesManual?_autoInt:DESPACHO.hipotecaIntereses;
   var _intLabel='Intereses hipotecarios anuales ('+FISCAL_YEAR+')';
   if(_autoInt>0){
     _intLabel+=DESPACHO.hipotecaInteresesManual?' \u2014 <span style="font-size:.65rem;color:var(--c-orange)">manual</span>':' \u2014 <span style="font-size:.65rem;color:var(--c-green)">calculado</span>';
   }
-  h+=_despFieldMoney('hipotecaIntereses',_intLabel,DESPACHO.hipotecaIntereses);
+  h+=_despFieldMoney('hipotecaIntereses',_intLabel,_shownInt);
   if(DESPACHO.hipotecaInteresesManual&&_autoInt>0){
     h+='<div style="font-size:.66rem;color:var(--text-dim);padding:0 4px 4px"><button class="fiscal-link-btn" id="despRecalcInt" style="font-size:.66rem;color:var(--accent-bright);background:none;border:none;cursor:pointer;text-decoration:underline;padding:0">\u21bb Recalcular ('+fcPlain(_autoInt)+')</button></div>';
   }

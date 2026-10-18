@@ -26,7 +26,7 @@ Una tarea exclusivamente documental conserva las versiones y los archivos de la 
 - Actualizar instantáneas únicamente si el cambio visual es intencionado y se ha revisado el diff.
 - Mantenibilidad: una fuente de verdad por regla/componente; corregir la causa y evitar nuevas capas de excepciones. Ordenar por zonas con cambios pequeños, sin reescrituras generales por defecto.
 - Separar reorganización interna y cambios de comportamiento. Antes de extraer código, identificar consumidores y caracterizar el resultado existente; después comprobar salida, interacciones, persistencia y aspecto de las vistas afectadas.
-- No optimizar por tamaño o por intuición: Ángel considera fluida la app (18/10/2026). Priorizar aislamiento y comprensión; medir antes de modificar rendimiento. La revisión documenta una escritura durante el render fiscal pendiente de corregir por separado.
+- No optimizar por tamaño o por intuición: Ángel considera fluida la app (18/10/2026). Priorizar aislamiento y comprensión; medir antes de modificar rendimiento. La escritura durante la previsualización fiscal quedó corregida en v487; las demás prioridades de la revisión siguen pendientes.
 - Mapa visual con capturas: idea pendiente, no construido. Cuando exista, cada cambio de interfaz debe actualizar solo las fichas afectadas y sus dependencias compartidas; usar datos ficticios y revisar las capturas. Ver la norma y alcance en docs/DEVELOPMENT.md y FUTURO.md.
 
 ## Dónde ampliar

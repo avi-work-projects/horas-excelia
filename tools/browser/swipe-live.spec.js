@@ -8,6 +8,35 @@ async function openEvents(page,view){if(!await page.locator('#eventsOverlay').ev
 async function state(page){return page.evaluate(()=>({view:EV_VIEW,month:EV_MONTH,year:EV_YEAR,rut:RUT_SUBTAB,boda:BODA_SUBTAB,storage:JSON.stringify(Object.keys(localStorage).sort().map(k=>[k,localStorage.getItem(k)])),personal:JSON.stringify(PERSONAL_DATA),despacho:JSON.stringify(DESPACHO),pending:JSON.stringify(BODA_PENDING)}));}
 async function previewIsInFrame(page){expect(await page.evaluate(()=>{const a=peek.getBoundingClientRect(),b=document.querySelector('.swipe-live-incoming').getBoundingClientRect();return a.top<b.bottom&&a.bottom>b.top&&a.left<b.right&&a.right>b.left;})).toBe(true);}
 async function expectGap(page,selector,direction){expect(await page.evaluate(direction=>{const a=document.querySelector('.swipe-live-outgoing').getBoundingClientRect(),b=document.querySelector('.swipe-live-incoming').getBoundingClientRect();return direction<0?b.left-a.right:a.left-b.right;},direction)).toBeCloseTo(24,0);}
+test('Fiscal: previsualizar intereses y cancelar no guarda; entrar conserva cálculo, manual y año',async({page},info)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.evaluate(()=>{
+  loadDespacho();Object.assign(DESPACHO.compra,{importePrestamo:100000,tipoInteres:3,plazoAnios:20,fechaInicio:'2025-01-01'});
+  DESPACHO.hipotecaIntereses=0;DESPACHO.hipotecaInteresesManual=false;saveDespacho();
+  FISCAL_TAB='gastos_desg';FISCAL_IRPF_SUB='despacho';openFiscal(2026);
+ });await settle(page);
+ const original=await state(page);
+ await startDrag(page,'#fiscalOverlay .sy-body',-120);await previewIsInFrame(page);
+ expect(await state(page)).toEqual(original);
+ expect(await page.evaluate(()=>peek.querySelector('#desp-hipotecaIntereses').value)).toBe('2836.6');
+ await page.screenshot({path:info.outputPath('fiscal-intereses-preview.png')});
+ await endDrag(page,-120,true);expect(await state(page)).toEqual(original);
+ await startDrag(page,'#fiscalOverlay .sy-body',-120);await endDrag(page,-120);
+ await expect(page.locator('#desp-hipotecaIntereses')).toHaveValue('2836.6');
+ expect(await page.evaluate(()=>JSON.parse(localStorage.getItem(DESPACHO_SK)).hipotecaIntereses)).toBe(2836.6);
+ await page.screenshot({path:info.outputPath('fiscal-intereses-confirmado.png'),animations:'disabled'});
+ await page.locator('#fiscalYearNext').click();
+ const next=await page.evaluate(()=>_computeAnnualInterest(DESPACHO.compra,2027));
+ await expect(page.locator('#desp-hipotecaIntereses')).toHaveValue(String(next));
+ expect(await page.evaluate(()=>JSON.parse(localStorage.getItem(DESPACHO_SK)).hipotecaIntereses)).toBe(next);
+ await page.evaluate(()=>{DESPACHO.hipotecaIntereses=1234.56;DESPACHO.hipotecaInteresesManual=true;saveDespacho();reRenderFiscal();});
+ await page.locator('#fiscalYearPrev').click();await expect(page.locator('#desp-hipotecaIntereses')).toHaveValue('1234.56');
+ expect(await page.evaluate(()=>JSON.parse(localStorage.getItem(DESPACHO_SK)).hipotecaIntereses)).toBe(1234.56);
+ await page.locator('#despRecalcInt').click();await expect(page.locator('#desp-hipotecaIntereses')).toHaveValue('2836.6');
+ await page.locator('#fiscalSave').click();
+ expect(await page.evaluate(()=>JSON.parse(localStorage.getItem(DESPACHO_SK)).hipotecaIntereses)).toBe(2836.6);
+ expect(errors).toEqual([]);
+});
 for(const view of ['upcoming','cal','rutinas','bodas'])test('Previsualiza '+view+' mientras el dedo sigue apoyado, sin navegar ni guardar',async({page},info)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));await openEvents(page,view);const original=await state(page);
  for(const width of [320,400,440]){await page.setViewportSize({width,height:880});const tabs=page.locator('#eventsOverlay .econ-sub-tabs').first(),tabbox=await tabs.count()?await tabs.boundingBox():null;const transitions=await page.locator('#eventsOverlay').evaluate(el=>swipeContentResolver(el)().map(n=>[n.style.getPropertyValue('transition'),n.style.getPropertyPriority('transition')]));await startDrag(page,'#eventsOverlay .sy-body',-60);await expect(page.locator('.swipe-live-incoming')).toHaveCount(1);expect(await state(page)).toEqual(original);if(tabbox)expect(await tabs.boundingBox()).toEqual(tabbox);
