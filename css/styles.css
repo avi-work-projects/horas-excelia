@@ -51,10 +51,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .month-nav{display:flex;align-items:center;gap:6px;margin-top:14px}
 .month-nav .month-label{font-size:1.05rem;font-weight:600;text-transform:capitalize;text-align:center;white-space:nowrap}
 .month-nav-center{display:flex;align-items:center;gap:4px;flex:1;justify-content:center}
-.nav-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:.85rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none}
-.nav-btn:active{background:var(--surface3);transform:scale(.93)}
-.today-btn{margin-left:auto;font-size:.75rem;font-weight:500;padding:7px 14px;border-radius:20px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;transition:all .15s}
-.today-btn:active{background:var(--accent);color:#fff}
 
 /* ── JORNADA DEFECTO ── */
 .hours-control{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
@@ -235,8 +231,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 
 /* ── SHARED OVERLAY HEADER ── */
 .sy-header{background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 1px 0 var(--border);padding:14px 20px;display:flex;align-items:center;gap:10px;flex-shrink:0;position:relative}
-.sy-back{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
-.sy-back:active{background:var(--surface3)}
 .sy-year-nav{display:flex;align-items:center;gap:5px;flex:1;justify-content:center}
 .sy-header.sy-header-center .sy-year-nav{position:absolute;left:50%;transform:translateX(-50%);max-width:calc(100% - 130px)}
 .sy-header.sy-header-center .sy-back{position:relative;z-index:1}
@@ -244,15 +238,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .sy-year{font-size:1.05rem;font-weight:600;min-width:60px;text-align:center;color:var(--text)}
 .sy-year-2line{display:flex;flex-direction:column;align-items:center;line-height:1.15;min-width:91px}
 .sy-year-sub{font-size:.7rem;font-weight:400;color:var(--text-dim)}
-.sy-nav{width:32px;height:32px;min-width:32px;min-height:32px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:.85rem;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;line-height:1;flex-shrink:0;box-sizing:border-box}
-.sy-nav:active{background:var(--surface3)}
 .sy-pdf{font-size:.72rem;padding:6px 12px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);cursor:pointer;white-space:nowrap;flex-shrink:0}
 .sy-pdf:active{background:var(--surface3)}
 .bd-export-btn{display:flex;align-items:center;justify-content:center;width:34px;height:34px;padding:0;border-radius:50%;color:var(--text-muted)}
 .ico-exportar{width:19px;height:19px;display:block}
-.sy-nav-icon{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);font-size:.85rem;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s}
-.sy-nav-icon:active{background:var(--surface3)}
-.sy-nav-icon.active-glow{border-color:var(--vacaciones);color:var(--vacaciones);box-shadow:0 0 8px rgba(255,179,71,.35)}
 
 /* ── SHARED BODY ── */
 .sy-body{flex:1;min-height:0;overflow-y:auto;padding:16px 16px 40px;display:flex;flex-direction:column;gap:16px}
@@ -342,6 +331,40 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .ms-sep{color:var(--border-light)}
 /* Ausencia list tag */
 .sy-list-tag.ausencia{background:rgba(192,132,252,.15);color:var(--ausencia)}
+
+/* Fuente: css/source/navigation-controls.css */
+/* Atrás, flechas y Hoy: base compartida y variantes vigentes.
+   La disposición de cabeceras/paneles permanece en el módulo que las aloja.
+   Conservar las diferencias de tamaño, tipografía y pulsación: no son un rediseño. */
+.sy-back,.sy-nav,.sy-nav-icon,.nav-btn,.fiscal-year-arrow,.today-btn,.bday-jump-today{border-radius:9px}
+.sy-back,.sy-nav,.sy-nav-icon,.nav-btn{width:32px;height:32px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:.85rem;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.sy-back,.sy-nav,.sy-nav-icon{flex-shrink:0}
+.sy-back:active,.sy-nav:active,.sy-nav-icon:active,.nav-btn:active{background:var(--surface3)}
+.sy-back{width:36px;height:36px;font-size:1rem}
+.sy-nav{min-width:32px;min-height:32px;padding:0;line-height:1;box-sizing:border-box}
+.sy-nav-icon{color:var(--text-muted)}
+.sy-nav-icon,.nav-btn{transition:all .15s}
+.nav-btn{-webkit-user-select:none;user-select:none}
+.nav-btn:active{transform:scale(.93)}
+.sy-nav-icon.active-glow{border-color:var(--vacaciones);color:var(--vacaciones);box-shadow:0 0 8px rgba(255,179,71,.35)}
+/* Variantes compactas de las flechas del cuatrimestre. */
+.sy-nav-sm{font-size:.7rem !important;min-width:24px !important;padding:4px 5px !important}
+.sy-nav-pill{width:32px !important;height:32px !important;border-radius:9px !important;padding:0 !important;font-size:.75rem !important}
+/* Selector fiscal: conserva su fondo y tamaño propios.
+   Las flechas del carrusel combinan .ev-btn; su cascada vive en event-panels.css. */
+.fiscal-year-arrow{width:32px;height:32px;padding:0;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);font-size:.9rem;cursor:pointer;-webkit-user-select:none;user-select:none}
+.fiscal-year-arrow:active{background:var(--accent-glow)}
+
+/* Hoy: base y acentos de cada consumidor, con la especificidad existente. */
+.today-btn{margin-left:auto;font-size:.75rem;font-weight:500;padding:7px 14px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;transition:all .15s}
+.today-btn:active{background:var(--accent);color:#fff}
+#todayBtn{color:var(--home-tone);border-color:var(--home-tone);background:color-mix(in srgb,var(--home-tone) 9%,var(--surface))}
+#todayBtn:active{background:var(--home-tone);color:#fff}
+.ev-agenda-today{background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+#eventsOverlay:has(#evViewCal.active) #evToday,#eventsOverlay:has(#evViewAnnual.active) #evToday,#eventsOverlay:has(#evViewQuad.active) #evToday{border-color:var(--c-green);color:var(--c-green);background:color-mix(in srgb,var(--c-green) 9%,var(--surface))}
+.ev-calendar-header #evToday{font-size:.75rem;padding:7px 14px}
+#bdToday,.bday-jump-today{color:var(--birthday-tone);border-color:var(--birthday-tone);background:color-mix(in srgb,var(--birthday-tone) 12%,var(--surface))}
+.bday-today-dock .today-btn{transform:translateY(6px);pointer-events:auto;width:52px;height:28px;padding:4px 0;background:var(--surface);border:1px solid var(--birthday-tone);color:var(--birthday-tone);box-shadow:0 2px 5px #0002}
 
 /* Fuente: css/source/economics.css */
 /* ── ECONOMICS ── */
@@ -488,8 +511,6 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .mg-desgrav-toggle{display:flex;align-items:center;gap:6px;font-size:.68rem;color:#c084fc;margin-top:8px;cursor:pointer}
 /* Year selector for per-year fiscal tabs */
 .fiscal-year-selector{display:flex;align-items:center;justify-content:center;gap:12px;padding:8px 0 10px;flex-shrink:0;background:var(--bg);box-shadow:0 1px 0 var(--border)}
-.fiscal-year-arrow{background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text-muted);font-size:.9rem;padding:4px 10px;cursor:pointer;-webkit-user-select:none;user-select:none}
-.fiscal-year-arrow:active{background:var(--accent-glow)}
 .fiscal-year-label{font-size:.9rem;font-weight:700;color:var(--text-main);min-width:50px;text-align:center}
 .fiscal-copy-year-wrap{display:flex;align-items:center;gap:6px;padding:0 0 10px;flex-wrap:wrap}
 .fiscal-copy-year-btn{font-size:.7rem;padding:3px 8px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);color:var(--accent);cursor:pointer}
@@ -1745,7 +1766,8 @@ button.bday-group-tag{cursor:pointer;min-height:44px;text-align:left}
 /* Fila de flechas compacta: antes ocupaba 42 px de alto para dos botones
    que solo pasan de evento */
 .ev-car-nav{display:flex;align-items:center;gap:8px;margin:6px 0 2px}
-.ev-car-arrow{flex:0 0 auto;width:34px;height:26px;padding:0;font-size:.62rem;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted)}
+/* El aspecto base precede a .ev-btn; la geometría final va después de su base. */
+.ev-car-arrow{padding:0;font-size:.62rem;display:flex;align-items:center;justify-content:center;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted)}
 .ev-car-arrow:active{background:var(--surface3)}
 .ev-car-dots{flex:1;display:flex;justify-content:center;align-items:center;gap:6px}
 .ev-car-dot{width:6px;height:6px;border-radius:50%;background:var(--border-light)}
@@ -1835,8 +1857,6 @@ button.bday-group-tag{cursor:pointer;min-height:44px;text-align:left}
 /* Bombilla en 1-mes y agenda semanal: posicionada en el centro entre el ▶ y "Hoy" */
 .ev-bright-mid{position:absolute;right:78px;top:50%;transform:translateY(-50%);z-index:3;font-size:.7rem;padding:2px 5px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;opacity:.45;transition:opacity .2s}
 .ev-bright-mid.on{opacity:1;background:#fbbf2433;border-color:#fbbf24}
-.sy-nav-sm{font-size:.7rem !important;min-width:24px !important;padding:4px 5px !important}
-.sy-nav-pill{width:32px !important;height:32px !important;border-radius:9px !important;padding:0 !important;font-size:.75rem !important}
 /* Quad label 3 lines */
 .ev-quad-label{display:flex;flex-direction:column;align-items:center;line-height:1.1;font-size:.72rem}
 .ev-quad-dash{font-size:.55rem;line-height:.7;color:var(--text-dim)}
@@ -1886,6 +1906,8 @@ button.bday-group-tag{cursor:pointer;min-height:44px;text-align:left}
 .ev-wd-btn.on{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
 .ev-form-actions{display:flex;gap:8px;margin-top:16px}
 .ev-btn{flex:1;padding:12px;border-radius:var(--radius-sm);border:none;font-family:var(--font);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s}
+/* Flechas de carrusel: mantener el padding, fuente y borde heredados de .ev-btn. */
+.ev-car-arrow{border-radius:9px;width:36px;min-width:36px;height:36px;flex:0 0 36px}
 .ev-btn.primary{background:var(--accent);color:#fff}
 .ev-btn.primary:active{background:var(--accent-bright)}
 .ev-edit-orange{background:#fb923c !important;color:#fff !important;border-color:#fb923c !important}
@@ -2704,7 +2726,6 @@ body:has(#rutWkOv.open) .tasks-fab{visibility:hidden}
 .ev-sort-chip.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright);font-weight:600}
 .bday-upcoming-name,.bday-list-day{color:var(--text)}
 
-.bday-jump-today{color:var(--c-green);border-color:var(--c-green)}
 
 .boda-pfilters{padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
 .boda-filter-label{font-size:.65rem;font-weight:600;color:var(--text-muted);margin-bottom:6px}
@@ -2743,7 +2764,6 @@ button.action-edit.active,button.action-edit:active{background:rgba(251,146,60,.
 .wm-logo{display:inline-block;width:44px;height:19px;background:currentColor;mask:url(wedding-moves.png) center/contain no-repeat;-webkit-mask:url(wedding-moves.png) center/contain no-repeat;vertical-align:middle;flex-shrink:0}
 .wm-logo-title{width:76px;height:28px;color:var(--text)}
 .wm-logo-chip{width:18px;height:12px}
-.bday-jump-today{background:color-mix(in srgb,var(--c-green) 16%,var(--surface))}
 .boda-sticky-hd .boda-config-btn{width:auto;justify-self:stretch;height:auto;border:0;border-radius:0;background:transparent;color:#b98760;font-size:19px}
 .boda-sticky-hd .boda-config-btn.active{color:#b98760;border-bottom:2px solid #b98760}
 
@@ -3154,7 +3174,6 @@ details[open]>summary{margin-bottom:10px}
 /* Los controles de cumpleaños heredan el tema de la vista que los aloja. */
 .bday-header-vip{--chk:var(--birthday-tone)}
 .bday-header-vip.bday-vip-compact{--chk:var(--birthday-tone)}
-#bdToday,.bday-jump-today{color:var(--birthday-tone);border-color:var(--birthday-tone);background:color-mix(in srgb,var(--birthday-tone) 12%,var(--surface))}
 .sy-header:has(#evBdayAdd){--birthday-tone:var(--accent-bright)}
 .hip-rate-detail{display:grid;gap:9px;margin:12px 0;padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--surface2)}
 .hip-rate-detail>div{display:flex;justify-content:space-between;align-items:baseline;gap:14px;font-size:.72rem;color:var(--text-muted)}
@@ -3176,7 +3195,6 @@ details[open]>summary{margin-bottom:10px}
 .ev-month-wrap .ev-cell.today-ev .ev-num{width:18px;height:13px;font-size:.65rem;margin-top:-3px;margin-bottom:3px;justify-content:center;border-radius:5px;background:var(--calendar-tone);color:#fff;font-weight:700}
 .ev-month-wrap .ev-cell:active{outline:2px solid var(--calendar-tone);outline-offset:-2px}
 .ev-month-wrap .ev-week-hdr div{font-size:.6rem;letter-spacing:.06em;padding:6px 0;color:var(--text-muted)}
-#eventsOverlay:has(#evViewCal.active) #evToday,#eventsOverlay:has(#evViewAnnual.active) #evToday,#eventsOverlay:has(#evViewQuad.active) #evToday{border-color:var(--c-green);color:var(--c-green);background:color-mix(in srgb,var(--c-green) 9%,var(--surface))}
 #eventsOverlay:has(#evViewCal.active) input[type="date"]{accent-color:var(--c-green)}
 .ev-up-mark .ev-management-mark{background:none;box-shadow:none;border-radius:0}
 .ev-up-vip-icon{width:30px;height:30px;object-fit:contain}
@@ -3232,7 +3250,6 @@ details[open]>summary{margin-bottom:10px}
 #bdCategoryOv{z-index:420}
 #bdCategoryOv .bd-form-sheet{max-height:88dvh}
 .bday-today-dock{position:sticky;top:var(--bday-tabs-height,58px);height:0;z-index:5;display:flex;justify-content:flex-end;pointer-events:none}
-.bday-today-dock .today-btn{transform:translateY(6px);pointer-events:auto;height:28px;padding:4px 14px;background:var(--surface);border:1px solid var(--birthday-tone);color:var(--birthday-tone);box-shadow:0 2px 5px #0002}
 .ev-bday-body .bday-month-hdr{padding-right:74px;height:40px;display:flex;align-items:center}
 #bdShowGroups[aria-pressed=true]{border-color:var(--birthday-tone);color:var(--birthday-tone)}
 
@@ -3331,7 +3348,6 @@ button.bday-group-chip:focus-visible{outline:2px dashed currentColor;outline-off
 [data-bd-filter="__none"]{--group-ink:var(--text-muted);--group-bg:var(--surface2);--group-border:var(--border)}
 
 /* Ficha compacta, acciones compartidas y fecha sin controles nativos. */
-.bday-today-dock .today-btn{width:52px;padding-inline:0}
 .bday-month-section .bday-list-item{padding-left:8px;gap:18px}
 .bday-show-groups .bday-list-item{gap:18px}
 #bdDetailOv .bd-detail-sheet{height:min(310px,86dvh)}
@@ -3544,9 +3560,6 @@ body:has(#bdGroupEditOv.open) .tasks-fab{visibility:hidden}
 .panel-header-centered h2{grid-column:2;text-align:center}
 .panel-header-centered .sy-back{width:36px;height:36px;margin:0;justify-self:start}
 
-#todayBtn{color:var(--home-tone);border-color:var(--home-tone);background:color-mix(in srgb,var(--home-tone) 9%,var(--surface))}
-#todayBtn:active{background:var(--home-tone);color:#fff}
-.ev-agenda-today{background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
 
 .settings-edit-links{display:grid;gap:8px;padding:10px 12px}
 .settings-edit-links .settings-edit-btn{margin:0;white-space:normal;padding:11px 12px;text-align:left;font-weight:600;background:var(--settings-tone)!important;border-color:var(--settings-tone)!important;color:#fff!important}
@@ -3681,13 +3694,8 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 .settings-is-reading .personal-data-row:has([data-personal-select]:checked),.settings-is-reading .contact-entry:has([data-personal-select]:checked){outline:2px solid var(--settings-tone);outline-offset:-2px}
 
 /* Navegación cuadrada, calendarios y accesos de consulta (v481). */
-.sy-back,.sy-nav,.sy-nav-icon,.nav-btn{border-radius:9px}
-.fiscal-year-arrow{width:32px;height:32px;padding:0;border-radius:9px}
-.ev-car-arrow{border-radius:9px;width:36px;min-width:36px;height:36px;flex:0 0 36px}
-.today-btn,.bday-jump-today{border-radius:9px}
 .ev-calendar-header{height:72px;min-height:72px;box-shadow:inset 0 -1px 0 var(--border)}
 .ev-calendar-header .sy-hdr-right{right:20px}
-.ev-calendar-header #evToday{font-size:.75rem;padding:7px 14px}
 .ev-calendar-header .ev-bright-mid{left:auto;right:84px;transform:translateY(-50%);width:24px;height:24px;padding:0}
 /* Conservar fuentes y controles a su tamaño habitual, también en móviles estrechos. */
 @media(min-width:360px) and (max-width:380px){

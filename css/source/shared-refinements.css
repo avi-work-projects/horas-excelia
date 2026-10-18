@@ -53,7 +53,6 @@
 .ev-sort-chip.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright);font-weight:600}
 .bday-upcoming-name,.bday-list-day{color:var(--text)}
 
-.bday-jump-today{color:var(--c-green);border-color:var(--c-green)}
 
 .boda-pfilters{padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
 .boda-filter-label{font-size:.65rem;font-weight:600;color:var(--text-muted);margin-bottom:6px}
@@ -92,7 +91,6 @@ button.action-edit.active,button.action-edit:active{background:rgba(251,146,60,.
 .wm-logo{display:inline-block;width:44px;height:19px;background:currentColor;mask:url(wedding-moves.png) center/contain no-repeat;-webkit-mask:url(wedding-moves.png) center/contain no-repeat;vertical-align:middle;flex-shrink:0}
 .wm-logo-title{width:76px;height:28px;color:var(--text)}
 .wm-logo-chip{width:18px;height:12px}
-.bday-jump-today{background:color-mix(in srgb,var(--c-green) 16%,var(--surface))}
 .boda-sticky-hd .boda-config-btn{width:auto;justify-self:stretch;height:auto;border:0;border-radius:0;background:transparent;color:#b98760;font-size:19px}
 .boda-sticky-hd .boda-config-btn.active{color:#b98760;border-bottom:2px solid #b98760}
 
@@ -503,7 +501,6 @@ details[open]>summary{margin-bottom:10px}
 /* Los controles de cumpleaños heredan el tema de la vista que los aloja. */
 .bday-header-vip{--chk:var(--birthday-tone)}
 .bday-header-vip.bday-vip-compact{--chk:var(--birthday-tone)}
-#bdToday,.bday-jump-today{color:var(--birthday-tone);border-color:var(--birthday-tone);background:color-mix(in srgb,var(--birthday-tone) 12%,var(--surface))}
 .sy-header:has(#evBdayAdd){--birthday-tone:var(--accent-bright)}
 .hip-rate-detail{display:grid;gap:9px;margin:12px 0;padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--surface2)}
 .hip-rate-detail>div{display:flex;justify-content:space-between;align-items:baseline;gap:14px;font-size:.72rem;color:var(--text-muted)}
@@ -525,7 +522,6 @@ details[open]>summary{margin-bottom:10px}
 .ev-month-wrap .ev-cell.today-ev .ev-num{width:18px;height:13px;font-size:.65rem;margin-top:-3px;margin-bottom:3px;justify-content:center;border-radius:5px;background:var(--calendar-tone);color:#fff;font-weight:700}
 .ev-month-wrap .ev-cell:active{outline:2px solid var(--calendar-tone);outline-offset:-2px}
 .ev-month-wrap .ev-week-hdr div{font-size:.6rem;letter-spacing:.06em;padding:6px 0;color:var(--text-muted)}
-#eventsOverlay:has(#evViewCal.active) #evToday,#eventsOverlay:has(#evViewAnnual.active) #evToday,#eventsOverlay:has(#evViewQuad.active) #evToday{border-color:var(--c-green);color:var(--c-green);background:color-mix(in srgb,var(--c-green) 9%,var(--surface))}
 #eventsOverlay:has(#evViewCal.active) input[type="date"]{accent-color:var(--c-green)}
 .ev-up-mark .ev-management-mark{background:none;box-shadow:none;border-radius:0}
 .ev-up-vip-icon{width:30px;height:30px;object-fit:contain}
@@ -581,7 +577,6 @@ details[open]>summary{margin-bottom:10px}
 #bdCategoryOv{z-index:420}
 #bdCategoryOv .bd-form-sheet{max-height:88dvh}
 .bday-today-dock{position:sticky;top:var(--bday-tabs-height,58px);height:0;z-index:5;display:flex;justify-content:flex-end;pointer-events:none}
-.bday-today-dock .today-btn{transform:translateY(6px);pointer-events:auto;height:28px;padding:4px 14px;background:var(--surface);border:1px solid var(--birthday-tone);color:var(--birthday-tone);box-shadow:0 2px 5px #0002}
 .ev-bday-body .bday-month-hdr{padding-right:74px;height:40px;display:flex;align-items:center}
 #bdShowGroups[aria-pressed=true]{border-color:var(--birthday-tone);color:var(--birthday-tone)}
 
@@ -680,7 +675,6 @@ button.bday-group-chip:focus-visible{outline:2px dashed currentColor;outline-off
 [data-bd-filter="__none"]{--group-ink:var(--text-muted);--group-bg:var(--surface2);--group-border:var(--border)}
 
 /* Ficha compacta, acciones compartidas y fecha sin controles nativos. */
-.bday-today-dock .today-btn{width:52px;padding-inline:0}
 .bday-month-section .bday-list-item{padding-left:8px;gap:18px}
 .bday-show-groups .bday-list-item{gap:18px}
 #bdDetailOv .bd-detail-sheet{height:min(310px,86dvh)}
@@ -893,9 +887,6 @@ body:has(#bdGroupEditOv.open) .tasks-fab{visibility:hidden}
 .panel-header-centered h2{grid-column:2;text-align:center}
 .panel-header-centered .sy-back{width:36px;height:36px;margin:0;justify-self:start}
 
-#todayBtn{color:var(--home-tone);border-color:var(--home-tone);background:color-mix(in srgb,var(--home-tone) 9%,var(--surface))}
-#todayBtn:active{background:var(--home-tone);color:#fff}
-.ev-agenda-today{background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
 
 .settings-edit-links{display:grid;gap:8px;padding:10px 12px}
 .settings-edit-links .settings-edit-btn{margin:0;white-space:normal;padding:11px 12px;text-align:left;font-weight:600;background:var(--settings-tone)!important;border-color:var(--settings-tone)!important;color:#fff!important}
@@ -1030,13 +1021,8 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 .settings-is-reading .personal-data-row:has([data-personal-select]:checked),.settings-is-reading .contact-entry:has([data-personal-select]:checked){outline:2px solid var(--settings-tone);outline-offset:-2px}
 
 /* Navegación cuadrada, calendarios y accesos de consulta (v481). */
-.sy-back,.sy-nav,.sy-nav-icon,.nav-btn{border-radius:9px}
-.fiscal-year-arrow{width:32px;height:32px;padding:0;border-radius:9px}
-.ev-car-arrow{border-radius:9px;width:36px;min-width:36px;height:36px;flex:0 0 36px}
-.today-btn,.bday-jump-today{border-radius:9px}
 .ev-calendar-header{height:72px;min-height:72px;box-shadow:inset 0 -1px 0 var(--border)}
 .ev-calendar-header .sy-hdr-right{right:20px}
-.ev-calendar-header #evToday{font-size:.75rem;padding:7px 14px}
 .ev-calendar-header .ev-bright-mid{left:auto;right:84px;transform:translateY(-50%);width:24px;height:24px;padding:0}
 /* Conservar fuentes y controles a su tamaño habitual, también en móviles estrechos. */
 @media(min-width:360px) and (max-width:380px){

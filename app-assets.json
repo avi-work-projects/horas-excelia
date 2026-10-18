@@ -1,6 +1,7 @@
 {
   "styleSources": [
     "css/source/base.css",
+    "css/source/navigation-controls.css",
     "css/source/economics.css",
     "css/source/birthdays.css",
     "css/source/event-calendar.css",
