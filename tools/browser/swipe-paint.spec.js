@@ -17,21 +17,21 @@ async function settled(page){
   await Promise.all(document.getAnimations().filter(a=>a.effect.getTiming().iterations!==Infinity).map(a=>a.finished.catch(()=>{})));
  });
 }
-async function openView(page,view){
+async function openView(page,view,theme='light'){
  await page.clock.setFixedTime(new Date('2026-10-15T12:00:00+02:00'));
- await page.addInitScript(()=>{
+ await page.addInitScript(theme=>{
   sessionStorage.setItem('excelia-popup-dismissed','1');
-  localStorage.setItem('excelia-theme-v1','light');localStorage.setItem('excelia-nav-icons-v1','professional');
- });
+  localStorage.setItem('excelia-theme-v1',theme);localStorage.setItem('excelia-nav-icons-v1','professional');
+ },theme);
  await page.goto('/');
  await page.evaluate(view=>{if(view!=='home'){EV_VIEW=view==='agenda'?'upcoming':'cal';EV_YEAR=2026;EV_MONTH=9;openEventsAt();}},view);
  await settled(page);
 }
 
-for(const profile of [{name:'normal',width:400,scale:1},{name:'móvil denso',width:440,scale:3}])test.describe(profile.name,()=>{
+for(const profile of [{name:'normal',width:400,scale:1},{name:'móvil denso',width:440,scale:3},{name:'crema',theme:'grey',width:400,scale:1},{name:'crema móvil denso',theme:'grey',width:440,scale:3}])test.describe(profile.name,()=>{
  test.use({viewport:{width:profile.width,height:880},deviceScaleFactor:profile.scale,isMobile:true});
  for(const view of ['home','cal','agenda'])test('El relevo visual conserva los píxeles en '+view,async({page},info)=>{
-  await openView(page,view);
+  await openView(page,view,profile.theme);
   // Una fase intermedia del aviso pulsante también debe conservarse en la copia.
   await page.evaluate(()=>document.getAnimations().filter(a=>a.effect.getTiming().iterations===Infinity).forEach(a=>{a.pause();a.currentTime=650;}));
   const clip=await page.evaluate(view=>{

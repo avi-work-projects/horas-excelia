@@ -3,7 +3,7 @@ var INVOICE_KEY='excelia-invoices-v1';
 var INVOICE_MONTH=null;
 var INVOICE_BACK=null;
 var INVOICE_OPEN_SEQ=0;
-var INVOICE_HIDE_AMOUNTS=false; // Preferencia durante esta sesión.
+var INVOICE_HIDE_AMOUNTS=true; // Se reinicia al entrar en Enviar factura.
 function invoiceDefaults(){return {kairoUrl:'',issuer:'',issuerTax:'',issuerAddress:'',iban:'',client:'',clientTax:'',clientAddress:'',project:'',concept:'Servicios de consultoría · {mes} {anio}',unit:'day',rate:'',vat:'21',withholding:'15',from:'',to:'',cc:'',subject:'Factura · {mes} {anio}',body:'Buenos días!\n\nAdjunto la factura relativa a {mes}.\n\nConfirmad recepción,\n\nMuchas gracias,\n\nBuena semana!'};}
 function invoiceData(){var raw=appStorage.getItem(INVOICE_KEY);return raw?invoiceValidate(JSON.parse(raw)):{config:invoiceDefaults(),months:{}};}
 function invoiceValidate(data){

@@ -339,7 +339,7 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .nav-pro-econ{color:var(--c-blue)}.nav-pro-home{color:var(--home-tone)}.nav-pro-estudio{color:var(--study-tone)}.nav-pro-events{color:#65a367}.nav-pro-bday{color:var(--birthday-tone)}.nav-pro-alarm{color:#e5b600;width:31px;height:31px}
 
 :root{--birthday-tone:#f08bb2;--study-tone:#e4ac72}
-:is([data-theme="light"],[data-theme="grey"]){--birthday-tone:#b43868;--study-tone:#a56625}
+[data-theme="light"]{--birthday-tone:#b43868;--study-tone:#a56625}
 /* Los SVG comparten caja; Home solo es mas grande con los iconos originales. */
 .data-actions:has(.nav-pro-icon){align-items:center}
 .data-btn:has(.nav-pro-icon),.nav-bar-btn:has(.nav-pro-icon),#homeBtn:has(.nav-pro-icon),.nav-bar-btn[data-nav="home"]:has(.nav-pro-icon){width:44px!important;height:44px!important;flex-shrink:0;border-radius:8px!important}
@@ -919,7 +919,7 @@ body:has(#connectionsOv.open) .tasks-fab{visibility:hidden}
 #exportFolderOv .settings-editor-sheet{height:min(450px,88dvh)}
 
 :root{--home-tone:#f29bc2}
-:is([data-theme="light"],[data-theme="grey"]){--home-tone:#bb3979}
+[data-theme="light"]{--home-tone:#bb3979}
 .settings-edit-macro{--settings-tone:#8a5794}.settings-edit-personal{--settings-tone:var(--home-tone)}
 .settings-field-value{display:flex;align-items:center;gap:6px;min-width:0}
 .settings-field-value input,.settings-field-value textarea,.settings-field-value select{min-width:0;flex:1;width:0}
@@ -1064,4 +1064,3 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 .boda-stat-link{font:inherit;cursor:pointer;color:inherit}
 #rutWkTimes[hidden]{display:none}
 #rutWkOv .ev-detail-sheet{height:min(720px,88dvh);max-height:88dvh;overflow-y:auto}
-[data-theme="grey"] .ev-wk-month-sep{--ev-month-surface:#e5dac5;--ev-month-border:#d7c9ad;color:#6d604d}

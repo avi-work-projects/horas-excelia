@@ -12,7 +12,7 @@
 @media(prefers-reduced-motion:reduce){.home-submission.pending{animation:none}}
 
 :root{--upcoming-tone:#71c9ed;--upcoming-text:#91d9f6}
-:is([data-theme="light"],[data-theme="grey"]){--upcoming-tone:#56b6e0;--upcoming-text:#227fa8}
+[data-theme="light"]{--upcoming-tone:#56b6e0;--upcoming-text:#227fa8}
 #eventsOverlay .ev-hdr-sub #evViewUpcoming{--tab-tone:var(--upcoming-tone)}
 .home-submission.complete{display:grid;grid-template-columns:18px 70px minmax(0,1fr);gap:8px}
 .home-summary-compact{justify-self:end;width:max-content;max-width:100%;box-sizing:border-box;padding:6px 7px;border:1px solid var(--border);border-radius:8px;background:var(--surface);gap:3px;min-width:0}

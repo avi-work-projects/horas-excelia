@@ -35,7 +35,7 @@ test('Tema crema y mantel de Comida legibles; navegación cuadrada',async({page}
   await expect(page.locator('.ev-detail-symbol rect[fill="#ead6b4"]')).toHaveCount(1);await page.screenshot({path:info.outputPath('comida-'+theme+'.png')});await page.locator('#evDClose').click();await expect(page.locator('#evDetailOv')).toHaveCount(0);
  }
  await page.reload();await expect(page.locator('html')).toHaveAttribute('data-theme','grey');expect(await page.evaluate(()=>THEME_LABELS.grey)).toContain('Crema');
- expect(await page.evaluate(()=>getComputedStyle(document.documentElement).getPropertyValue('--bg').trim())).toBe('#f7f1e5');
+ expect(await page.evaluate(()=>getComputedStyle(document.documentElement).getPropertyValue('--bg').trim())).toBe('#fbf6ec');
 });
 for(const forward of [false,true])test('Rutina con horas por día: '+(forward?'desde la semana':'solo la semana'),async({page},info)=>{
  await page.evaluate(()=>{RUTINAS=[{id:'r',name:'Pádel',icon:'padel',start:'2026-10-01',weekDays:[1,4],time:'18:00',dur:60,weeks:{},skips:{},color:'#65a367'}];EV_VIEW='rutinas';openEventsAt();RUT_WEEK_SEL='2026-10-19';_rutWeekRender(RUTINAS[0]);});

@@ -592,9 +592,9 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 - Por corrección de Ángel, se sustituye la paleta desaturada de v483 por una composición de petróleo y terracota, con oliva, miel y rosa arcilla como apoyos. Se suavizan los bordes inactivos y el resplandor de navegación; la selección conserva una señal de color clara. Las superficies secundarias son más neutras y el texto usa tinta cálida.
 - La comprobación compartida de cabeceras incluye ahora Agenda a 320/360/400/440 px: tamaño, posición de Hoy, centrado, hueco de la bombilla y ausencia de solapamientos.
 
-## Acentos del tema crema (v483)
+## Acentos del tema crema (v483, sustituidos en v485)
 - Crema conserva sus superficies marfil y arena. Sus acentos propios usan rosa empolvado en Inicio y Cumpleaños, salvia en calendarios, azul pizarra en Económico, eucalipto en Hogar, azul petróleo suave en Próximos, malva en Fiscal/Tareas y ocre en Estudios/Alarmas.
-- La paleta vive en `:root[data-theme="grey"]` de `base.css`; `theme-cream.css` conecta los controles que tenían colores fijos o heredaban el tema oscuro. Los textos usan tonos suficientemente profundos sobre crema y los fondos mezclas suaves sobre marfil.
+- Esta versión colocaba la paleta en `:root[data-theme="grey"]` de `base.css`. En v485 se mueve a `theme-cream.css` con un selector que también funciona en las vistas previas aisladas del swipe.
 - No se modifican los colores personalizados guardados de eventos, parejas, rutinas o tareas. Claro y Oscuro conservan sus paletas. La clave `grey` sigue siendo compatible con preferencias y backups.
 - Revisión visual en Edge oculto a 400 × 880: Inicio, calendario, Próximos, nuevo evento, Hogar, Económico, Tareas y Mis datos.
 
@@ -604,3 +604,18 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 - Por corrección de Ángel a v481, la bombilla vuelve entre la flecha derecha y Hoy. Se eliminan las reducciones de fuente y de flechas de los selectores: mantienen sus tamaños originales y esquinas cuadradas. Por debajo de 360 px, las cabeceras reservan una segunda fila para el selector completo en lugar de encogerlo; Hoy sigue en la misma posición en los tres calendarios.
 - Crear alarma centra su título con columnas laterales simétricas; Ahora tiene margen interior superior y lateral.
 - `calendar-header-refinements.spec.js` comprueba tamaños, alineación y ausencia de solapamientos a 320/360/400/440 px, compara los píxeles de la línea durante el arrastre en ambos sentidos y valida el relleno de Hoy en laborable y domingo. También verifica la cabecera de alarma y la acción de Ahora.
+
+## Horarios, crema y preparación de factura (v485)
+
+- El editor semanal de rutinas usa etiquetas `ev-field`, tarjetas de opción pulsables y un cuerpo con scroll interior. Cabecera, selector semanal, pie y tamaño exterior permanecen estables al activar horarios por día. Se conserva la lógica de excepción semanal y de cambio del horario habitual.
+- Crema tiene su paleta completa en `css/source/theme-cream.css`: marfil, ciruela, eucalipto, arcilla y azul pizarra. No hereda los tokens de Claro. Se mantiene `grey` como identificador de persistencia. Los colores personalizados de eventos y rutinas no se reescriben.
+- El contexto de las vistas previas del swipe es un elemento con `data-theme`, dentro de un ShadowRoot. `:root[data-theme="grey"]` no coincidía allí: la copia tomaba los colores de Claro y cambiaba al concluir. Los tokens usan ahora `[data-theme="grey"]`, tanto en la pantalla real como en su copia. `swipe-paint.spec.js` compara los píxeles en Claro y Crema con densidades 1 y 3; `theme-cream.spec.js` comprueba el cambio de tema con la hoja de estilos ya cacheada y el contraste de los acentos.
+- En Enviar factura se muestran primero el envío y la conexión Kairo. Sin dirección configurada, Kairo sigue visible con un estado bloqueado y un enlace directo a su configuración. La lectura de importes empieza oculta en cada apertura; mostrarlos no modifica la preparación guardada.
+- El cálculo explica unidades × tarifa, base imponible, porcentajes y total. Excel y JSON conservan sus funciones, agrupados en Documentos auxiliares. Consultar estado sigue separado de Enviar para poder comprobar un resultado sin repetir la operación. Las pruebas no envían correos ni preparaciones reales.
+
+### Criterio de mantenimiento tras la revisión del 18/10/2026
+
+- Mantener las pruebas con datos ficticios, el censo de claves del backup y la lista de recursos de publicación. Separar presentación, cálculo y persistencia al tocar módulos; no iniciar una reescritura completa.
+- Consolidar estilos por componente y tokens de tema. Evitar seguir acumulando correcciones en `shared-refinements.css` cuando se pueda corregir la fuente responsable.
+- Antes de optimizar, medir arranque, preparación del swipe y listas con históricos grandes. La prueba de Energía mide cálculo/render HTML, no fluidez en el móvil. La copia completa del DOM durante el swipe y las bibliotecas PDF cargadas al inicio son candidatos concretos a medir.
+- Propuesta de mapa visual, todavía no implementada: catálogo HTML generado con una escena por pantalla/panel, datos y fecha fijos, y relaciones con componentes compartidos. Un comando por escena actualizaría solo sus capturas; un cambio de fuente, tema o componente regeneraría las escenas dependientes. Reutilizar Edge y las fixtures de Playwright; revisar las capturas antes de aceptarlas como referencia.

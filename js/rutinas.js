@@ -464,7 +464,7 @@ function _rutWeekPick(r,opts){
   }
 }
 function rutDayTimesHtml(days,times,base){
-  return [1,2,3,4,5,6,0].filter(function(d){return days.indexOf(d)!==-1;}).map(function(d){return '<div class="rut-hpd-row"><span>'+RUT_DN_LARGO[d]+'</span><input class="ev-input" type="text" readonly data-time-picker data-time-quarter aria-haspopup="dialog" placeholder="Sin hora" data-wd="'+d+'" value="'+escHtml(times[d]||base)+'"></div>';}).join('')||'<div class="rut-vacio">Marca antes los días de la semana</div>';
+  return [1,2,3,4,5,6,0].filter(function(d){return days.indexOf(d)!==-1;}).map(function(d){return '<div class="rut-hpd-row"><span>'+RUT_DN_LARGO[d]+'</span><input class="ev-input" type="text" readonly data-time-picker data-time-quarter aria-haspopup="dialog" aria-label="Hora del '+RUT_DN_LARGO[d].toLowerCase()+'" placeholder="Sin hora" data-wd="'+d+'" value="'+escHtml(times[d]||base)+'"></div>';}).join('')||'<div class="rut-vacio">Marca antes los días de la semana</div>';
 }
 function _rutWeekRender(r){
   var wk=RUT_WEEK_SEL;
@@ -475,31 +475,31 @@ function _rutWeekRender(r){
   var hora=effective.time;
   var dayTimes={};dias.forEach(function(wd){var date=new Date(wk+'T12:00:00');date.setDate(date.getDate()+(wd+6)%7);dayTimes[wd]=rutWeekCfg(r,evDk(date)).time;});
   var separate=dias.some(function(wd){return dayTimes[wd]!==hora;});
-  var h='<div class="ev-detail-overlay" id="rutWkOv"><div class="ev-detail-sheet">';
+  var h='<div class="ev-detail-overlay" id="rutWkOv"><div class="ev-detail-sheet rut-week-sheet">';
   h+='<div class="ev-detail-handle"></div>';
-  h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">';
-  h+='<button class="sy-back" id="rutWkClose">&#8592;</button>';
-  h+='<div style="flex:1;font-size:.88rem;font-weight:600;text-align:center;color:'+rutDisplayColor(r)+'">'+escHtml(r.name)+' — una semana</div>';
-  h+='<div style="width:36px"></div></div>';
-  h+='<div class="boda-asg-nav">';
-  h+='<button class="sy-nav" id="rutWkPrev">&#9664;</button>';
+  h+='<div class="rut-week-heading">';
+  h+='<button class="sy-back" id="rutWkClose" aria-label="Volver a elegir semana">&#8592;</button>';
+  h+='<div class="rut-week-title"><strong>'+escHtml(r.name)+'</strong><span>Cambiar horario</span></div>';
+  h+='<span class="rut-week-icon" aria-hidden="true">'+rutIconSvg(rutIconOf(r),rutDisplayColor(r))+'</span></div>';
+  h+='<div class="boda-asg-nav rut-week-nav">';
+  h+='<button class="sy-nav" id="rutWkPrev" aria-label="Semana anterior">&#9664;</button>';
   h+='<div class="boda-asg-month">'+_rutFmt(wk).slice(0,5)+' — '+_rutFmt(evDk(fin)).slice(0,5)+'</div>';
-  h+='<button class="sy-nav" id="rutWkNext">&#9654;</button>';
+  h+='<button class="sy-nav" id="rutWkNext" aria-label="Semana siguiente">&#9654;</button>';
   h+='</div>';
+  h+='<div class="rut-week-body"><div class="rut-week-days"><h3>Días de clase</h3>';
   h+='<div class="rut-days-pick" id="rutWkDays">';
   for(var i=1;i<=7;i++){
     var d=i%7;
-    h+='<button type="button" class="rut-day-btn'+(dias.indexOf(d)!==-1?' on':'')+'" data-wd="'+d+'">'+RUT_DN[d]+'</button>';
+    h+='<button type="button" class="rut-day-btn'+(dias.indexOf(d)!==-1?' on':'')+'" data-wd="'+d+'" aria-label="'+RUT_DN_LARGO[d]+'" aria-pressed="'+(dias.indexOf(d)!==-1)+'">'+RUT_DN[d]+'</button>';
   }
-  h+='</div>';
-  h+='<div class="ev-date-row" style="margin-top:12px"><div><label>Hora</label>';
+  h+='</div></div>';
+  h+='<div class="ev-date-row rut-week-fields"><div class="ev-field"><label for="rutWkTime" id="rutWkTimeLabel">'+(separate?'Hora por defecto':'Hora')+'</label>';
   h+='<input class="ev-input" id="rutWkTime" type="text" readonly data-time-picker data-time-quarter aria-haspopup="dialog" placeholder="Sin hora" value="'+hora+'"></div>';
-  h+='<div><label>Duración (min)</label><input class="ev-input" id="rutWkDur" type="number" min="15" max="480" step="15" value="'+effective.dur+'"></div></div>';
-  h+='<label class="excl-item"><input type="checkbox" id="rutWkPerDay"'+(separate?' checked':'')+'> Horario distinto según el día</label><div class="rut-hpd-rows" id="rutWkTimes"'+(separate?'':' hidden')+'>'+rutDayTimesHtml(dias,dayTimes,hora)+'</div>';
-  h+='<label class="excl-item rut-week-forward"><input type="checkbox" id="rutWkForward"> Cambiar desde esta semana en adelante</label>';
-  h+='<div class="sy-note" id="rutWkScope">Solo afecta a esta semana. El horario habitual se mantiene.</div>';
-  h+='<div class="ev-detail-actions">';
-  if(o)h+='<button class="ev-btn" id="rutWkReset">Quitar el cambio</button>';
+  h+='<div class="ev-field"><label for="rutWkDur">Duración (min)</label><input class="ev-input" id="rutWkDur" type="number" min="15" max="480" step="15" value="'+effective.dur+'"></div></div>';
+  h+='<div class="rut-week-time-options"><label class="rut-week-option"><input type="checkbox" id="rutWkPerDay"'+(separate?' checked':'')+'><span><strong>Horario distinto según el día</strong><small>Elige una hora para cada día de clase.</small></span></label><div class="rut-hpd-rows" id="rutWkTimes"'+(separate?'':' hidden')+'>'+rutDayTimesHtml(dias,dayTimes,hora)+'</div></div>';
+  h+='<div class="rut-week-scope"><h3>Aplicar el cambio</h3><label class="rut-week-option"><input type="checkbox" id="rutWkForward"><span><strong>Desde esta semana en adelante</strong><small id="rutWkScope">Solo afecta a esta semana. El horario habitual se mantiene.</small></span></label></div>';
+  h+='</div><div class="ev-detail-actions rut-week-actions">';
+  if(o)h+='<button class="ev-btn cancel" id="rutWkReset">Quitar el cambio</button>';
   h+='<button class="ev-btn primary" id="rutWkSave">Guardar semana</button>';
   h+='</div></div></div>';
   abrirPanel('rutWkWrap',h,{overlay:'rutWkOv',alCerrar:closeRutWeek});
@@ -507,6 +507,7 @@ function _rutWeekRender(r){
     var box=document.getElementById('rutWkTimes');box.querySelectorAll('[data-wd]').forEach(function(input){dayTimes[input.dataset.wd]=input.value;});
     var selected=Array.from(document.querySelectorAll('#rutWkDays .on')).map(function(btn){return +btn.dataset.wd;});
     box.innerHTML=rutDayTimesHtml(selected,dayTimes,document.getElementById('rutWkTime').value||hora);box.hidden=!document.getElementById('rutWkPerDay').checked;
+    document.getElementById('rutWkTimeLabel').textContent=box.hidden?'Hora':'Hora por defecto';
   }
   document.getElementById('rutWkPerDay').onchange=paintTimes;
   document.getElementById('rutWkForward').addEventListener('change',function(){
@@ -515,7 +516,7 @@ function _rutWeekRender(r){
   });
   document.getElementById('rutWkClose').addEventListener('click',function(){_rutWeekPick(r);});
   document.querySelectorAll('#rutWkDays .rut-day-btn').forEach(function(b){
-    b.addEventListener('click',function(){b.classList.toggle('on');paintTimes();});
+    b.addEventListener('click',function(){b.classList.toggle('on');b.setAttribute('aria-pressed',b.classList.contains('on'));paintTimes();});
   });
   document.getElementById('rutWkPrev').addEventListener('click',function(){
     var d=new Date(RUT_WEEK_SEL+'T00:00:00');d.setDate(d.getDate()-7);
