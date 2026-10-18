@@ -37,3 +37,17 @@ const bankConfig=g.invoiceConfigImport({format:'gestify-invoice-settings',versio
 g.invoiceSave({config:bankConfig,months:{}});assert.equal(g.invoiceData().config.iban,sampleIban);
 assert.equal(g.invoiceCalculate('2026-10',bankConfig,[{date:'2026-10-01',selected:true,rate:'320',unit:'day',hours:9}]).payment.iban,sampleIban);
 console.log('IBAN: normalización, dígitos de control, importación y preparación OK');
+
+// El desglose explica la unidad real y oculta también las tarifas y subtotales.
+g.INVOICE_HIDE_AMOUNTS=true;
+let summary=g.invoiceSummary(p);
+assert.ok(summary.includes('6,5 horas ×'));assert.ok(summary.includes('Precio por hora'));
+assert.ok(!summary.includes('€'));assert.ok(!summary.includes('12,35'));assert.ok(!summary.includes('80,28'));
+g.INVOICE_HIDE_AMOUNTS=false;summary=g.invoiceSummary(p);
+assert.ok(summary.includes('12,35 €'));assert.ok(summary.includes('80,28 €'));
+assert.ok(summary.includes('21 % de la base imponible'));assert.ok(summary.includes('15 % de la base imponible'));assert.ok(summary.includes('Base + IVA − IRPF'));
+const locked=g.invoiceKairoSection(null,{},'','Faltan datos');
+assert.ok(locked.includes('Sin configurar'));assert.ok(locked.includes('invoiceKairoConfig'));assert.ok(!locked.includes('invoiceKairoSend'));
+const incomplete=g.invoiceKairoSection(null,{},'https://synthetic.test.ts.net/facturas/','Faltan datos');
+assert.ok(incomplete.includes('id="invoiceKairoSend" disabled'));assert.ok(incomplete.includes('id="invoiceKairoStatus" disabled'));
+console.log('Desglose: cantidades, tarifas, impuestos, privacidad y Kairo sin configurar OK');

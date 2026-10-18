@@ -313,13 +313,13 @@
 ### js/invoices-export.js  _(36 líneas)_
 **Funciones:** invoiceXml:2 · invoiceZip:3 · header:5 · invoiceWorkbook:14 · textCell:15 · numCell:16 · sheet:26
 
-### js/invoices-kairo.js  _(72 líneas)_
+### js/invoices-kairo.js  _(77 líneas)_
 **Estado global:** INVOICE_KAIRO_BUSY:2
 
-**Funciones:** invoiceKairoUrl:3 · invoiceKairoState:9 · invoiceKairoSection:12 · invoiceKairoExchange:20 · finish:23 · receive:24 · bindInvoiceKairo:40
+**Funciones:** invoiceKairoUrl:3 · invoiceKairoState:9 · invoiceKairoSection:12 · invoiceKairoExchange:25 · finish:28 · receive:29 · bindInvoiceKairo:45
 
-### js/invoices-ui.js  _(98 líneas)_
-**Funciones:** invoicePanel:2 · invoiceField:8 · openInvoiceSettings:9 · invoiceSummary:27 · money:28 · invoicePrivacyButton:33 · error:66 · bindPrivacy:68 · openHoursExport:77 · initInvoices:82 · bindInvoiceConfigImport:87 · readFields:88
+### js/invoices-ui.js  _(113 líneas)_
+**Funciones:** invoicePanel:2 · invoiceField:8 · openInvoiceSettings:9 · invoiceSummary:32 · money:33 · number:34 · invoicePrivacyButton:42 · invoiceManualSection:46 · invoiceTools:55 · error:80 · bindPrivacy:83 · openHoursExport:92 · initInvoices:97 · bindInvoiceConfigImport:102 · readFields:103
 
 ### js/invoices.js  _(115 líneas)_
 **Estado global:** INVOICE_KEY:2 · INVOICE_MONTH:3 · INVOICE_BACK:4 · INVOICE_OPEN_SEQ:5 · INVOICE_HIDE_AMOUNTS:6
@@ -381,10 +381,10 @@
 ### js/rutinas-sessions.js  _(132 líneas)_
 **Funciones:** rutSessionsOn:3 · rutSessionByKey:9 · rutRecoveryFor:14 · rutSessionTag:15 · rutRecoveryNote:20 · rutRecoveryHtml:24 · rutDoneCandidate:30 · rutChangeFromDetail:40 · apply:42 · close:48 · rutValidateAddition:55 · rutAddSession:60 · rutValidateExtraSessions:81 · rutSaveSessionChange:97 · rutDeleteSession:104 · openRutSessionDelete:118 · close:125
 
-### js/rutinas.js  _(611 líneas)_
+### js/rutinas.js  _(612 líneas)_
 **Estado global:** RUT_SK:20 · RUTINAS:21 · RUT_SUGERENCIAS:28 · RUT_DUR_DEFAULT:33 · RUT_TIME_DEFAULT:34 · RUT_DN:35 · RUT_DN_LARGO:36 · RUT_SUBTAB:266 · RUT_WEEK_SEL:399 · RUT_WEEK_CAL:400
 
-**Funciones:** saveRutinas:25 · rutMarkerHtml:39 · rutMarkerGroups:47 · rutDayMarkersHtml:54 · rutById:59 · rutWeekKey:64 · rutTimeOfDay:73 · rutTieneHorarios:78 · rutScheduleOn:86 · rutScheduleCopy:91 · rutDurationOn:95 · rutChangeFrom:100 · rutChangeWeek:124 · update:128 · rutWeekCfg:140 · rutSuspendedOn:151 · rutDiaLleno:161 · rutOccursOn:165 · rutIsSkipped:176 · rutToggleSkip:177 · rutFin:197 · rutEventsOn:205 · rutEventFromId:222 · rutSessions:231 · rutStats:245 · rutProximas:259 · renderRutinasBody:269 · _rutTimeRange:282 · _renderRutSchedule:286 · _renderRutLista:300 · _rutFmt:339 · _rutFmtCorto:340 · _renderRutStats:346 · openRutWeek:401 · _rutWeekPick:410 · back:435 · rutDayTimesHtml:466 · _rutWeekRender:469 (!94) · paintTimes:506 · closeRutWeek:563 · openRutSesion:566 · closeRutSesion:570 · bindRutinasEvents:573
+**Funciones:** saveRutinas:25 · rutMarkerHtml:39 · rutMarkerGroups:47 · rutDayMarkersHtml:54 · rutById:59 · rutWeekKey:64 · rutTimeOfDay:73 · rutTieneHorarios:78 · rutScheduleOn:86 · rutScheduleCopy:91 · rutDurationOn:95 · rutChangeFrom:100 · rutChangeWeek:124 · update:128 · rutWeekCfg:140 · rutSuspendedOn:151 · rutDiaLleno:161 · rutOccursOn:165 · rutIsSkipped:176 · rutToggleSkip:177 · rutFin:197 · rutEventsOn:205 · rutEventFromId:222 · rutSessions:231 · rutStats:245 · rutProximas:259 · renderRutinasBody:269 · _rutTimeRange:282 · _renderRutSchedule:286 · _renderRutLista:300 · _rutFmt:339 · _rutFmtCorto:340 · _renderRutStats:346 · openRutWeek:401 · _rutWeekPick:410 · back:435 · rutDayTimesHtml:466 · _rutWeekRender:469 (!95) · paintTimes:506 · closeRutWeek:564 · openRutSesion:567 · closeRutSesion:571 · bindRutinasEvents:574
 
 ### js/settings-menu.js  _(108 líneas)_
 **Estado global:** SETTINGS_MENU_ANCHOR:3 · SETTINGS_MENU_BACK:4 · SETTINGS_EDITOR_MODES:5
@@ -445,38 +445,38 @@
 
 > `css/styles.css` se genera: editar las fuentes listadas a continuación.
 
-### css/source/base.css  _(363 líneas)_
+### css/source/base.css  _(343 líneas)_
 
 **Secciones:**
 
 - TEMA OSCURO (por defecto):5
 - TEMA CLARO:20
-- Crema suave; conserva la clave grey para las preferencias y backups anteriores.:39
-- HEADER:63
-- JORNADA DEFECTO:77
-- Barra vertical que separa la campana del bloque de navegacion:114
-- Aro de color único por botón (nivel 1) — igual que nav-bar-btn.active[data-nav]:120
-- WEEK CARDS:133
-- WEEK ACTIONS:165
-- BOTTOM SHEET (day type selector):174
-- TOAST:196
-- Tema claro: el fondo oscuro con letra de color no se leia bien:206
-- SW UPDATE BUTTON (en menú ⋯):210
-- Aviso pulsable entero (el de nueva version): se nota que se puede tocar.:214
-- ANIMATIONS:218
-- Las semanas se desplazan con el mes, sin otra entrada vertical.:220
-- Los dias marcados (festivo/vacaciones/ausencia) mandan sobre la jornada:243
-- OVERLAY BASE (summary, econ, bday, events):249
-- SHARED OVERLAY HEADER:254
-- SHARED BODY:275
-- En Proximos la cabecera de semana manda sobre las de dia: va en pastilla:324
-- Vacaciones config:330
-- Quitar festivos/vacaciones checkboxes:334
-- Month summary breakdown:356
-- Ausencia list tag:361
+- El tema crema tiene sus propios tokens en theme-cream.css.:39
+- HEADER:43
+- JORNADA DEFECTO:57
+- Barra vertical que separa la campana del bloque de navegacion:94
+- Aro de color único por botón (nivel 1) — igual que nav-bar-btn.active[data-nav]:100
+- WEEK CARDS:113
+- WEEK ACTIONS:145
+- BOTTOM SHEET (day type selector):154
+- TOAST:176
+- Tema claro: el fondo oscuro con letra de color no se leia bien:186
+- SW UPDATE BUTTON (en menú ⋯):190
+- Aviso pulsable entero (el de nueva version): se nota que se puede tocar.:194
+- ANIMATIONS:198
+- Las semanas se desplazan con el mes, sin otra entrada vertical.:200
+- Los dias marcados (festivo/vacaciones/ausencia) mandan sobre la jornada:223
+- OVERLAY BASE (summary, econ, bday, events):229
+- SHARED OVERLAY HEADER:234
+- SHARED BODY:255
+- En Proximos la cabecera de semana manda sobre las de dia: va en pastilla:304
+- Vacaciones config:310
+- Quitar festivos/vacaciones checkboxes:314
+- Month summary breakdown:336
+- Ausencia list tag:341
 
 **Rangos por prefijo de clase:**
-.action-btn:167-171 · .app-logo:68-68 · .app-version:131-131 · .bd-export:269-269 · .bottom-sheet:177-178 · .btn-icon:110-110 · .csv-export:83-84 · .data-actions:106-106 · .data-btn:107-122 · .data-menu:124-130 · .day-cell:145-247 · .day-date:150-150 · .day-hours:151-151 · .day-name:149-149 · .day-status:158-158 · .days-grid:144-144 · .default-hours:79-88 · .ev-dot:163-163 · .ev-dots:162-162 · .ev-upcoming:329-329 · .ev-week:325-326 · .excl-item:355-355 · .excl-row:335-335 · .full-overlay:250-251 · .header:64-66 · .header-brand:67-67 · .hour-chip:97-98 · .hour-chips:96-96 · .hour-picker:94-95 · .hours-chip:91-92 · .hours-chips:90-90 · .hours-control:78-78 · .hours-label:89-89 · .hours-panel:93-93 · .ico-doc:85-85 · .ico-exportar:270-270 · .month-nav:69-71 · .month-stat:100-103 · .month-summary:99-99 · .ms-breakdown:357-359 · .ms-hrs:105-105 · .ms-label:104-104 · .ms-num:101-101 · .ms-sep:360-360 · .nav-btn:72-73 · .option-desc:193-193 · .option-dot:186-190 · .option-hours:194-194 · .option-info:191-191 · .option-label:192-192 · .overlay:175-176 · .sent-badge:141-141 · .sheet-handle:179-179 · .sheet-option:183-185 · .sheet-options:182-182 · .sheet-subtitle:181-181 · .sheet-title:180-180 · .sw-upd:211-211 · .sy-back:256-257 · .sy-body:276-276 · .sy-card:287-294 · .sy-cards3:279-279 · .sy-cards4:280-280 · .sy-chart:305-305 · .sy-hdr:261-261 · .sy-header:255-260 · .sy-lbl:296-296 · .sy-list:309-362 · .sy-month:323-323 · .sy-nav:265-273 · .sy-note:306-308 · .sy-pdf:267-268 · .sy-puente:315-319 · .sy-section:277-278 · .sy-spain:281-286 · .sy-suelto:320-322 · .sy-table:297-301 · .sy-td:302-302 · .sy-tr:303-304 · .sy-val:292-295 · .sy-year:258-264 · .toast:197-216 · .toast-undo:213-213 · .today-btn:74-75 · .vac-config:331-333 · .week-actions:166-166 · .week-card:135-229 · .week-header:138-138 · .week-info:139-140 · .week-total:142-142 · .weeks-container:134-134
+.action-btn:147-151 · .app-logo:48-48 · .app-version:111-111 · .bd-export:249-249 · .bottom-sheet:157-158 · .btn-icon:90-90 · .csv-export:63-64 · .data-actions:86-86 · .data-btn:87-102 · .data-menu:104-110 · .day-cell:125-227 · .day-date:130-130 · .day-hours:131-131 · .day-name:129-129 · .day-status:138-138 · .days-grid:124-124 · .default-hours:59-68 · .ev-dot:143-143 · .ev-dots:142-142 · .ev-upcoming:309-309 · .ev-week:305-306 · .excl-item:335-335 · .excl-row:315-315 · .full-overlay:230-231 · .header:44-46 · .header-brand:47-47 · .hour-chip:77-78 · .hour-chips:76-76 · .hour-picker:74-75 · .hours-chip:71-72 · .hours-chips:70-70 · .hours-control:58-58 · .hours-label:69-69 · .hours-panel:73-73 · .ico-doc:65-65 · .ico-exportar:250-250 · .month-nav:49-51 · .month-stat:80-83 · .month-summary:79-79 · .ms-breakdown:337-339 · .ms-hrs:85-85 · .ms-label:84-84 · .ms-num:81-81 · .ms-sep:340-340 · .nav-btn:52-53 · .option-desc:173-173 · .option-dot:166-170 · .option-hours:174-174 · .option-info:171-171 · .option-label:172-172 · .overlay:155-156 · .sent-badge:121-121 · .sheet-handle:159-159 · .sheet-option:163-165 · .sheet-options:162-162 · .sheet-subtitle:161-161 · .sheet-title:160-160 · .sw-upd:191-191 · .sy-back:236-237 · .sy-body:256-256 · .sy-card:267-274 · .sy-cards3:259-259 · .sy-cards4:260-260 · .sy-chart:285-285 · .sy-hdr:241-241 · .sy-header:235-240 · .sy-lbl:276-276 · .sy-list:289-342 · .sy-month:303-303 · .sy-nav:245-253 · .sy-note:286-288 · .sy-pdf:247-248 · .sy-puente:295-299 · .sy-section:257-258 · .sy-spain:261-266 · .sy-suelto:300-302 · .sy-table:277-281 · .sy-td:282-282 · .sy-tr:283-284 · .sy-val:272-275 · .sy-year:238-244 · .toast:177-196 · .toast-undo:193-193 · .today-btn:54-55 · .vac-config:311-313 · .week-actions:146-146 · .week-card:115-209 · .week-header:118-118 · .week-info:119-120 · .week-total:122-122 · .weeks-container:114-114
 
 ### css/source/economics.css  _(681 líneas)_
 
@@ -720,17 +720,18 @@
 **Rangos por prefijo de clase:**
 .boda-actions:192-192 · .boda-add:194-194 · .boda-asg:217-239 · .boda-buscar:314-316 · .boda-cal:241-266 · .boda-card:100-322 · .boda-chip:96-98 · .boda-chips:95-95 · .boda-cl:154-191 · .boda-class:78-153 · .boda-controls:56-56 · .boda-couple:136-138 · .boda-cpk:208-216 · .boda-date:193-193 · .boda-day:72-116 · .boda-det:199-312 · .boda-dia:143-145 · .boda-dot:104-104 · .boda-falta:111-111 · .boda-filters:59-59 · .boda-fsel:60-63 · .boda-ftoggles:64-65 · .boda-hd:187-189 · .boda-inp:131-131 · .boda-iss:28-30 · .boda-issue:15-26 · .boda-issues:14-14 · .boda-legend:195-198 · .boda-mini:181-182 · .boda-mode:46-48 · .boda-multi:146-151 · .boda-name:105-105 · .boda-ok:112-112 · .boda-place:139-164 · .boda-prog:107-108 · .boda-ro:155-163 · .boda-save:92-93 · .boda-savebar:88-91 · .boda-search:317-317 · .boda-sec:12-12 · .boda-sobra:113-113 · .boda-sort:318-318 · .boda-stat:33-38 · .boda-stats:32-32 · .boda-sticky:8-10 · .boda-sum:52-55 · .boda-summary:51-51 · .boda-swap:121-128 · .boda-time:132-132 · .boda-tp:270-273 · .boda-wed:106-106 · .ev-alarm:170-176 · .ev-bficha:296-296 · .ev-bfila:297-306 · .ev-bpunto:304-304 · .ev-bver:309-309 · .ev-car:292-293 · .ev-detail:290-290 · .ev-upcoming:166-168 · .ev-wk:178-180 · .hbar-lbl:42-42 · .hbar-row:41-41 · .hbar-rows:40-40 · .hbar-track:43-44 · .hbar-val:45-45 · .rut-wpick:283-288 · .sy-body:5-11
 
-### css/source/routines.css  _(61 líneas)_
+### css/source/routines.css  _(98 líneas)_
 
 **Secciones:**
 
 - Horario distinto segun el dia:1
 - Selector de icono de rutina:6
+- Editor semanal: controles comunes, opciones legibles y marco estable.:62
 
 **Rangos por prefijo de clase:**
-.ev-shape:19-19 · .rut-add:45-45 · .rut-card:35-43 · .rut-day:51-52 · .rut-days:50-50 · .rut-dot:38-38 · .rut-first:16-16 · .rut-flex:13-21 · .rut-hist:57-60 · .rut-hpd:2-5 · .rut-icon:7-11 · .rut-name:39-39 · .rut-pct:44-44 · .rut-plan:22-34 · .rut-sec:12-12 · .rut-stat:54-56 · .rut-sug:46-49 · .rut-susp:53-53 · .rut-tag:40-41 · .rut-vacio:42-42
+.ev-shape:19-19 · .rut-add:45-45 · .rut-card:35-43 · .rut-day:51-52 · .rut-days:50-50 · .rut-dot:38-38 · .rut-first:16-16 · .rut-flex:13-21 · .rut-hist:57-60 · .rut-hpd:2-5 · .rut-icon:7-11 · .rut-name:39-39 · .rut-pct:44-44 · .rut-plan:22-34 · .rut-sec:12-12 · .rut-stat:54-56 · .rut-sug:46-49 · .rut-susp:53-53 · .rut-tag:40-41 · .rut-vacio:42-42 · .rut-week:64-95
 
-### css/source/shared-refinements.css  _(1068 líneas)_
+### css/source/shared-refinements.css  _(1067 líneas)_
 
 **Secciones:**
 
@@ -835,19 +836,20 @@
 **Rangos por prefijo de clase:**
 .boda-asg:106-290 · .boda-det:102-105 · .boda-last:15-19 · .contact-shortcuts:216-219 · .data-actions:139-140 · .energy-bar:91-91 · .energy-caption:2-2 · .energy-choice:12-12 · .energy-compare:133-133 · .energy-contract:4-5 · .energy-cost:87-135 · .energy-coverage:78-78 · .energy-extremes:74-74 · .energy-fee:42-43 · .energy-field:7-7 · .energy-fields:9-9 · .energy-info:63-65 · .energy-inline:84-84 · .energy-legend:92-92 · .energy-metric:125-127 · .energy-metrics:124-124 · .energy-overview:67-69 · .energy-period:70-72 · .energy-price:183-188 · .energy-range:93-93 · .energy-reconciliation:77-77 · .energy-scenario:134-134 · .energy-section:62-62 · .energy-supplier:75-128 · .energy-table:3-3 · .energy-tabs:45-56 · .energy-tariff:80-184 · .energy-tax:73-131 · .energy-vat:129-129 · .energy-window:31-123 · .energy-year:6-99 · .ev-btn:146-146 · .ev-cell:284-285 · .ev-day:286-286 · .ev-io:136-136 · .ev-main:164-165 · .ev-order:241-253 · .ev-routine:237-239 · .ev-routines:231-235 · .ev-stat:220-220 · .ev-stats:221-227 · .ev-type:236-236 · .ev-up:262-271 · .ev-upcoming:173-177 · .ev-wk:16-176 · .home-popup:18-28 · .imp-mode:113-113 · .imp-preview:114-118 · .nav-bar:141-141 · .rut-addition:256-283 · .rut-bulk:194-199 · .rut-card:158-213 · .rut-day:147-153 · .rut-days:150-150 · .rut-dpick:145-281 · .rut-history:190-205 · .rut-hora:154-156 · .rut-month:198-198 · .rut-recovery:144-144 · .rut-routine:160-160 · .rut-sec:214-215 · .rut-session:143-209 · .rut-time:157-157 · .rut-weekdays:151-151 · .sy-body:171-171 · .sy-hdr:265-265
 
-### css/source/invoices.css  _(62 líneas)_
+### css/source/invoices.css  _(94 líneas)_
 
 **Secciones:**
 
+- La acción mensual va primero; cálculo y documentos conservan su propio nivel.:63
 
 **Rangos por prefijo de clase:**
-.home-invoice:3-5 · .hours-control:1-6 · .hours-export:50-61 · .invoice-actions:21-21 · .invoice-body:10-10 · .invoice-card:12-14 · .invoice-config:19-19 · .invoice-confirm:26-26 · .invoice-day:25-25 · .invoice-document:34-34 · .invoice-error:27-27 · .invoice-eye:46-47 · .invoice-field:16-16 · .invoice-fields:15-37 · .invoice-filename:28-28 · .invoice-kairo:11-11 · .invoice-month:31-43 · .invoice-note:17-17 · .invoice-sheet:8-49 · .invoice-status:18-18 · .invoice-summary:44-45 · .invoice-totals:20-20
+.home-invoice:3-5 · .hours-control:1-6 · .hours-export:50-61 · .invoice-action:75-75 · .invoice-actions:21-21 · .invoice-body:10-10 · .invoice-calculation:77-88 · .invoice-card:12-14 · .invoice-config:19-93 · .invoice-confirm:26-26 · .invoice-day:25-25 · .invoice-document:34-34 · .invoice-equals:83-83 · .invoice-error:27-27 · .invoice-eye:46-47 · .invoice-field:16-16 · .invoice-fields:15-37 · .invoice-filename:28-28 · .invoice-kairo:68-73 · .invoice-line:80-82 · .invoice-mail:89-89 · .invoice-money:84-84 · .invoice-month:11-87 · .invoice-note:17-17 · .invoice-send:65-67 · .invoice-sheet:8-74 · .invoice-status:18-18 · .invoice-summary:44-45 · .invoice-tool:90-92 · .invoice-totals:20-86
 
-### css/source/theme-cream.css  _(56 líneas)_
+### css/source/theme-cream.css  _(90 líneas)_
 
 **Secciones:**
 
-- Bordes suaves en reposo; el color completo identifica la selección.:52
+- Bordes suaves en reposo; el color completo identifica la selección.:86
 
 **Rangos por prefijo de clase:**
 

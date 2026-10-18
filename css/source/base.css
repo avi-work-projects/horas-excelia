@@ -18,7 +18,7 @@
 --hdr-bg:rgba(10,10,15,.92);--shadow:rgba(0,0,0,.5);
 }
 /* ── TEMA CLARO ── */
-:is([data-theme="light"],[data-theme="grey"]){
+[data-theme="light"]{
 --ev-symbol-outline:#000;
 --bg:#f4f4fa;--surface:#ffffff;--surface2:#ededf6;--surface3:#e3e3ef;
 --border:#d0d0e2;--border-light:#c0c0d4;
@@ -36,27 +36,7 @@
 :is([data-theme="light"],[data-theme="grey"]) .data-menu{box-shadow:0 8px 24px var(--shadow)}
 :is([data-theme="light"],[data-theme="grey"]) .week-card{box-shadow:0 2px 8px var(--shadow)}
 :is([data-theme="light"],[data-theme="grey"]) .overlay{background:rgba(0,0,0,.3)}
-/* Crema suave; conserva la clave grey para las preferencias y backups anteriores. */
-:root[data-theme="grey"]{
---ev-symbol-outline:#000;
---bg:#f7f1e5;--surface:#fffdf8;--surface2:#f0eadf;--surface3:#e8dfcf;
---border:#ddd3c3;--border-light:#c5b69e;
---text:#34372f;--text-muted:#686657;--text-dim:#8b8270;
---accent:#356d68;--accent-glow:#356d6818;--accent-bright:#285b57;
---sent:#edf1e4;--sent-border:#b8c5a3;--sent-text:#526638;
---falta:#f6edd8;--falta-border:#d2bc88;
---festivo:#a14f46;--vacaciones:#8b6b2d;--ausencia:#875a66;--normal:#356d68;
---c-orange:#a65d3c;--c-red:#a14f46;--c-green:#627442;--c-blue:#356d68;--c-purple:#875a66;--c-yellow:#8b6b2d;
---home-tone:#a45843;--birthday-tone:#a35358;--study-tone:#8b6b2d;
---household-tone:#356d68;--calendar-tone:#627442;--alarm-tone:#8b6b2d;
---upcoming-tone:#3d6c78;--upcoming-text:#345f69;--wm-wine:#886044;
---econ-contribution-tone:var(--c-purple);
---radius:14px;--radius-sm:10px;
---font:'DM Sans',sans-serif;--mono:'JetBrains Mono',monospace;
---hdr-bg:rgba(247,241,229,.96);--shadow:rgba(67,48,22,.12);
-}
-[data-theme="grey"] .header{background:var(--hdr-bg)}
-[data-theme="grey"] .week-card{box-shadow:0 2px 8px var(--shadow)}
+/* El tema crema tiene sus propios tokens en theme-cream.css. */
 html{font-size:16px;-webkit-tap-highlight-color:transparent}
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100dvh;padding-bottom:env(safe-area-inset-bottom,20px);overflow-x:hidden}
 

@@ -20,7 +20,7 @@
 --hdr-bg:rgba(10,10,15,.92);--shadow:rgba(0,0,0,.5);
 }
 /* ── TEMA CLARO ── */
-:is([data-theme="light"],[data-theme="grey"]){
+[data-theme="light"]{
 --ev-symbol-outline:#000;
 --bg:#f4f4fa;--surface:#ffffff;--surface2:#ededf6;--surface3:#e3e3ef;
 --border:#d0d0e2;--border-light:#c0c0d4;
@@ -38,27 +38,7 @@
 :is([data-theme="light"],[data-theme="grey"]) .data-menu{box-shadow:0 8px 24px var(--shadow)}
 :is([data-theme="light"],[data-theme="grey"]) .week-card{box-shadow:0 2px 8px var(--shadow)}
 :is([data-theme="light"],[data-theme="grey"]) .overlay{background:rgba(0,0,0,.3)}
-/* Crema suave; conserva la clave grey para las preferencias y backups anteriores. */
-:root[data-theme="grey"]{
---ev-symbol-outline:#000;
---bg:#f7f1e5;--surface:#fffdf8;--surface2:#f0eadf;--surface3:#e8dfcf;
---border:#ddd3c3;--border-light:#c5b69e;
---text:#34372f;--text-muted:#686657;--text-dim:#8b8270;
---accent:#356d68;--accent-glow:#356d6818;--accent-bright:#285b57;
---sent:#edf1e4;--sent-border:#b8c5a3;--sent-text:#526638;
---falta:#f6edd8;--falta-border:#d2bc88;
---festivo:#a14f46;--vacaciones:#8b6b2d;--ausencia:#875a66;--normal:#356d68;
---c-orange:#a65d3c;--c-red:#a14f46;--c-green:#627442;--c-blue:#356d68;--c-purple:#875a66;--c-yellow:#8b6b2d;
---home-tone:#a45843;--birthday-tone:#a35358;--study-tone:#8b6b2d;
---household-tone:#356d68;--calendar-tone:#627442;--alarm-tone:#8b6b2d;
---upcoming-tone:#3d6c78;--upcoming-text:#345f69;--wm-wine:#886044;
---econ-contribution-tone:var(--c-purple);
---radius:14px;--radius-sm:10px;
---font:'DM Sans',sans-serif;--mono:'JetBrains Mono',monospace;
---hdr-bg:rgba(247,241,229,.96);--shadow:rgba(67,48,22,.12);
-}
-[data-theme="grey"] .header{background:var(--hdr-bg)}
-[data-theme="grey"] .week-card{box-shadow:0 2px 8px var(--shadow)}
+/* El tema crema tiene sus propios tokens en theme-cream.css. */
 html{font-size:16px;-webkit-tap-highlight-color:transparent}
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100dvh;padding-bottom:env(safe-area-inset-bottom,20px);overflow-x:hidden}
 
@@ -2631,6 +2611,43 @@ body:has(#evDetailOv.open) .tasks-fab{visibility:hidden}
 .rut-hist-i.skip{border-color:var(--c-orange);background:rgba(251,146,60,.12);color:var(--c-orange);text-decoration:line-through}
 .rut-hist-lbl{font-size:.58rem;color:var(--text-dim);margin-top:4px}
 
+/* Editor semanal: controles comunes, opciones legibles y marco estable. */
+#rutWkOv .ev-detail-sheet.rut-week-sheet{height:min(720px,88dvh);max-height:88dvh;display:flex;flex-direction:column;overflow:hidden;font-family:var(--font);padding-bottom:calc(20px + env(safe-area-inset-bottom,0px))}
+.rut-week-sheet>*{flex-shrink:0}
+.rut-week-heading{display:grid;grid-template-columns:36px minmax(0,1fr) 36px;align-items:center;gap:12px;margin:2px 0 16px}
+.rut-week-title{min-width:0;display:flex;flex-direction:column;gap:3px;text-align:center}
+.rut-week-title strong{font-size:.98rem;font-weight:700;color:var(--text);overflow-wrap:anywhere;line-height:1.3}
+.rut-week-title>span{font-size:.72rem;color:var(--text-muted);line-height:1.4}
+.rut-week-icon{display:flex;align-items:center;justify-content:center}
+.rut-week-icon svg{width:30px;height:30px}
+.rut-week-sheet .rut-week-nav{margin:0 0 18px}
+.rut-week-nav .boda-asg-month{font-family:var(--font);font-size:.9rem;font-weight:600;font-variant-numeric:tabular-nums}
+.rut-week-sheet .rut-week-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:20px;padding:0 2px 18px;scrollbar-width:thin}
+.rut-week-body>*{flex-shrink:0}
+.rut-week-body h3,.rut-week-fields .ev-field label{font-family:var(--font);font-size:.76rem;font-weight:600;line-height:1.4;color:var(--text-muted)}
+.rut-week-body h3{margin:0 0 9px}
+.rut-week-body .rut-days-pick{margin:0;gap:6px}
+.rut-week-body .rut-day-btn{min-width:0;min-height:40px;padding:8px 0}
+.rut-week-fields{gap:12px}
+.rut-week-fields .ev-field{min-width:0;margin:0;gap:7px}
+.rut-week-body .ev-input{min-height:44px;font-size:.88rem;font-family:var(--font);font-variant-numeric:tabular-nums}
+.rut-week-option{display:flex;align-items:flex-start;gap:12px;padding:13px 12px;border:1px solid var(--border);border-radius:12px;background:var(--surface2);cursor:pointer;color:var(--accent)}
+.rut-week-option:has(input:checked){border-color:var(--accent);background:color-mix(in srgb,var(--accent) 6%,var(--surface))}
+.rut-week-option:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.rut-week-option input[type="checkbox"]{--chk:var(--accent);flex:0 0 20px;margin:1px 0 0}
+.rut-week-option>span{min-width:0;display:flex;flex-direction:column;gap:5px}
+.rut-week-option strong{font-size:.76rem;font-weight:600;line-height:1.4;color:var(--text)}
+.rut-week-option small{font-size:.7rem;line-height:1.5;color:var(--text-muted)}
+.rut-week-body .rut-hpd-rows{gap:8px;margin-top:12px;padding:0 2px}
+.rut-week-body .rut-hpd-row{gap:14px}
+.rut-week-body .rut-hpd-row>span{font-size:.76rem;color:var(--text);font-weight:500}
+.rut-week-body .rut-hpd-row .ev-input{flex:0 0 44%;min-width:0;text-align:center}
+.rut-week-body .rut-vacio{font-size:.72rem;line-height:1.5}
+.rut-week-sheet .rut-week-actions{flex-shrink:0;margin:0;padding-top:14px;box-shadow:0 -1px 0 var(--border);background:var(--surface);gap:10px}
+.rut-week-actions .ev-btn{min-height:46px;font-size:.8rem;line-height:1.35}
+#rutWkOv [hidden]{display:none!important}
+body:has(#rutWkOv.open) .tasks-fab{visibility:hidden}
+
 /* Fuente: css/source/shared-refinements.css */
 /* ── Lista "Todos": buscador, orden y borrado con pulsacion larga ── */
 .ev-list-tools{display:flex;flex-direction:column;gap:7px;padding-bottom:4px}
@@ -2973,7 +2990,7 @@ input[type="checkbox"]:not(:checked){border-color:var(--chk,currentColor)}
 .nav-pro-econ{color:var(--c-blue)}.nav-pro-home{color:var(--home-tone)}.nav-pro-estudio{color:var(--study-tone)}.nav-pro-events{color:#65a367}.nav-pro-bday{color:var(--birthday-tone)}.nav-pro-alarm{color:#e5b600;width:31px;height:31px}
 
 :root{--birthday-tone:#f08bb2;--study-tone:#e4ac72}
-:is([data-theme="light"],[data-theme="grey"]){--birthday-tone:#b43868;--study-tone:#a56625}
+[data-theme="light"]{--birthday-tone:#b43868;--study-tone:#a56625}
 /* Los SVG comparten caja; Home solo es mas grande con los iconos originales. */
 .data-actions:has(.nav-pro-icon){align-items:center}
 .data-btn:has(.nav-pro-icon),.nav-bar-btn:has(.nav-pro-icon),#homeBtn:has(.nav-pro-icon),.nav-bar-btn[data-nav="home"]:has(.nav-pro-icon){width:44px!important;height:44px!important;flex-shrink:0;border-radius:8px!important}
@@ -3553,7 +3570,7 @@ body:has(#connectionsOv.open) .tasks-fab{visibility:hidden}
 #exportFolderOv .settings-editor-sheet{height:min(450px,88dvh)}
 
 :root{--home-tone:#f29bc2}
-:is([data-theme="light"],[data-theme="grey"]){--home-tone:#bb3979}
+[data-theme="light"]{--home-tone:#bb3979}
 .settings-edit-macro{--settings-tone:#8a5794}.settings-edit-personal{--settings-tone:var(--home-tone)}
 .settings-field-value{display:flex;align-items:center;gap:6px;min-width:0}
 .settings-field-value input,.settings-field-value textarea,.settings-field-value select{min-width:0;flex:1;width:0}
@@ -3698,7 +3715,6 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 .boda-stat-link{font:inherit;cursor:pointer;color:inherit}
 #rutWkTimes[hidden]{display:none}
 #rutWkOv .ev-detail-sheet{height:min(720px,88dvh);max-height:88dvh;overflow-y:auto}
-[data-theme="grey"] .ev-wk-month-sep{--ev-month-surface:#e5dac5;--ev-month-border:#d7c9ad;color:#6d604d}
 
 /* Fuente: css/source/home-sharing.css */
 /* Cabecera de Home opaca, incluso sobre los botones oscuros de las semanas. */
@@ -3715,7 +3731,7 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 @media(prefers-reduced-motion:reduce){.home-submission.pending{animation:none}}
 
 :root{--upcoming-tone:#71c9ed;--upcoming-text:#91d9f6}
-:is([data-theme="light"],[data-theme="grey"]){--upcoming-tone:#56b6e0;--upcoming-text:#227fa8}
+[data-theme="light"]{--upcoming-tone:#56b6e0;--upcoming-text:#227fa8}
 #eventsOverlay .ev-hdr-sub #evViewUpcoming{--tab-tone:var(--upcoming-tone)}
 .home-submission.complete{display:grid;grid-template-columns:18px 70px minmax(0,1fr);gap:8px}
 .home-summary-compact{justify-self:end;width:max-content;max-width:100%;box-sizing:border-box;padding:6px 7px;border:1px solid var(--border);border-radius:8px;background:var(--surface);gap:3px;min-width:0}
@@ -4181,16 +4197,16 @@ body:has(#evDetailOv.open .ev-car-sheet #evDRutSes) .toast{bottom:calc(56dvh + 1
 .invoice-sheet{width:min(560px,100%);max-height:90dvh;display:flex;flex-direction:column;padding:16px!important;box-sizing:border-box}
 .invoice-sheet .bd-panel-header{flex-shrink:0;margin-bottom:10px}.invoice-sheet h2{font-size:1.05rem}
 .invoice-body{overflow-y:auto;min-height:0;display:flex;flex-direction:column;gap:12px;padding:2px}
-.invoice-kairo-sheet{height:90dvh}
+.invoice-month-sheet{height:90dvh}
 .invoice-card{padding:14px;border:1px solid var(--border);border-radius:16px;background:var(--surface);margin:0}
 .invoice-card h3{font-size:.95rem;margin:0 0 10px}.invoice-card summary,.invoice-days summary{cursor:pointer;font-weight:650;padding:5px 22px 5px 0;position:relative}
 .invoice-card summary::marker,.invoice-days summary::marker{content:''}
 .invoice-fields{display:grid;gap:12px;padding-top:12px}.invoice-field{display:grid;gap:6px;margin:10px 0;font-size:.82rem;color:var(--text-muted)}
 .invoice-field input,.invoice-field textarea{width:100%;box-sizing:border-box;min-height:40px;padding:10px;border:1px solid var(--border);border-radius:9px;color:var(--text);background:var(--bg);font:inherit}
 .invoice-note{font-size:.8rem;color:var(--text-muted);line-height:1.5;margin:8px 0}.invoice-month{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.invoice-status{font-size:.83rem;color:var(--text);padding:10px 12px;background:color-mix(in srgb,#279b64 10%,var(--bg));border-radius:10px;margin:0}
+.invoice-status{font-size:.83rem;color:var(--text);padding:10px 12px;background:color-mix(in srgb,var(--c-green) 10%,var(--bg));border-radius:10px;margin:0}
 .invoice-config-link{border:0;background:none;color:var(--accent);text-align:left;font:inherit;font-size:.83rem;padding:4px}
-.invoice-totals{margin:12px 0}.invoice-totals div{display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-size:.86rem}.invoice-totals dd{margin:0;font-weight:650}.invoice-total{font-weight:700;margin-top:4px;color:#279b64}
+.invoice-totals{margin:12px 0}.invoice-totals div{display:flex;justify-content:space-between;gap:12px;padding:8px 0;font-size:.86rem}.invoice-totals dd{margin:0;font-weight:650;flex-shrink:0}.invoice-total{font-weight:700;margin-top:4px;color:var(--c-green)}
 .invoice-actions{display:flex;gap:8px;margin-top:10px}.invoice-actions>*{flex:1}.invoice-sheet .ev-btn{min-height:40px;padding:10px;font-size:.84rem}
 .invoice-sheet .ev-btn{border:1px solid var(--border);border-radius:10px;background:var(--surface2);color:var(--text);font-family:inherit;font-weight:600;cursor:pointer}
 .invoice-sheet .ev-btn-primary{background:color-mix(in srgb,var(--c-green) 12%,var(--surface));border-color:var(--c-green);color:var(--c-green)}
@@ -4233,9 +4249,62 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 .hours-export-sheet #hoursCsv sup{font-size:.7em;margin-left:2px}
 .hours-export-sheet .hours-export-footnote{color:var(--home-tone)}
 
+/* La acción mensual va primero; cálculo y documentos conservan su propio nivel. */
+.invoice-month-sheet .invoice-body{gap:14px}
+.invoice-send-card{border-color:color-mix(in srgb,var(--c-green) 35%,var(--border));background:color-mix(in srgb,var(--c-green) 5%,var(--surface))}
+.invoice-sheet .invoice-primary-action{background:var(--c-green);color:var(--surface);border-color:var(--c-green);min-height:44px}
+.invoice-send-card>#invoiceGmail{width:100%}
+.invoice-kairo-header{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.invoice-kairo-header h3{margin:0}
+.invoice-kairo-badge{display:inline-flex;align-items:center;gap:5px;border-radius:7px;padding:4px 6px;background:var(--surface2);color:var(--text-muted);font-size:.68rem;line-height:1.3}
+.invoice-kairo-badge svg{height:14px;width:14px;flex-shrink:0}
+.invoice-kairo-locked{background:var(--surface2)}
+.invoice-kairo-locked .invoice-kairo-badge{background:var(--surface)}
+.invoice-sheet .invoice-connection-action{width:100%;background:var(--surface);border-color:var(--border-light);min-height:42px}
+.invoice-action-hint{font-size:.72rem;margin-bottom:0}
+#invoiceKairoMessage:empty{display:none}
+.invoice-calculation-caption{font-size:.76rem;line-height:1.5;color:var(--text-muted);margin:12px 0}
+.invoice-calculation-lines{display:grid;gap:10px}
+.invoice-calculation-line{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}
+.invoice-line-label{display:block;font-size:.76rem;color:var(--text-muted);margin-bottom:6px}
+.invoice-line-formula{display:grid;gap:4px;font-size:.86rem;line-height:1.45;font-variant-numeric:tabular-nums}
+.invoice-line-formula strong{text-align:right}
+.invoice-equals{color:var(--text-muted);font-weight:400}
+.invoice-money{display:inline-block;min-width:8.5ch;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+.invoice-totals dt small{display:block;color:var(--text-muted);font-weight:400;font-size:.71rem;line-height:1.4;margin-top:3px}
+.invoice-totals dd{padding-top:1px}
+.invoice-month-summary .invoice-total{padding-top:14px;margin-top:8px;align-items:center}
+.invoice-calculation-footnote{font-size:.72rem;margin:12px 0 0}
+.invoice-mail-preview{margin-top:12px;padding-top:8px;box-shadow:0 -1px 0 var(--border)}
+.invoice-tool{display:grid;gap:8px;margin-top:12px;padding-top:12px;box-shadow:0 -1px 0 var(--border);font-size:.82rem}
+.invoice-tool p{font-size:.76rem;color:var(--text-muted);line-height:1.5;margin:5px 0}
+.invoice-tool .ev-btn{justify-self:start}
+.invoice-config-link{font-weight:600;min-height:36px;padding:6px 4px;align-self:flex-start}
+
 /* Fuente: css/source/theme-cream.css */
-/* Crema: petróleo y terracota sobre marfil; oliva y miel como apoyos.
-   Solo presentación; no altera los colores guardados de eventos, parejas o rutinas. */
+/* Tema Crema: marfil, ciruela, eucalipto, arcilla y azul pizarra.
+   Paleta independiente, no filtro. La clave grey conserva preferencias y backups.
+   El selector también coincide en el contexto aislado de las vistas de swipe:
+   :root no existe dentro de un ShadowRoot. No cambiarlo por :root[data-theme].
+   Solo presentación; no altera colores guardados de eventos, parejas o rutinas. */
+[data-theme="grey"]{
+--ev-symbol-outline:#252321;
+--bg:#fbf6ec;--surface:#fffcf7;--surface2:#f2eade;--surface3:#e9dfd0;
+--border:#ded3c2;--border-light:#c8b8a3;
+--text:#3f3437;--text-muted:#75666a;--text-dim:#8b7c79;
+--accent:#73536f;--accent-glow:#73536f18;--accent-bright:#60425d;
+--sent:#edf2e9;--sent-border:#becfba;--sent-text:#44674e;
+--falta:#f8eedb;--falta-border:#dbc49c;
+--festivo:#ac514e;--vacaciones:#906b30;--ausencia:#73536f;--normal:#536f8a;
+--c-orange:#aa5d43;--c-red:#ac514e;--c-green:#466f62;--c-blue:#536f8a;--c-purple:#73536f;--c-yellow:#906b30;
+--home-tone:#aa5d43;--birthday-tone:#a3536e;--study-tone:#906b30;
+--household-tone:#536f8a;--calendar-tone:#466f62;--alarm-tone:#906b30;
+--upcoming-tone:#536f8a;--upcoming-text:#456078;--wm-wine:#856148;
+--econ-contribution-tone:var(--c-purple);
+--radius:14px;--radius-sm:10px;
+--font:'DM Sans',sans-serif;--mono:'JetBrains Mono',monospace;
+--hdr-bg:#fbf6ec;--shadow:rgba(72,49,47,.09);
+}
 [data-theme="grey"] .nav-pro-events{color:var(--calendar-tone)}
 [data-theme="grey"] .nav-pro-household{color:var(--household-tone)}
 [data-theme="grey"] .nav-pro-alarm{color:var(--alarm-tone)}
@@ -4258,7 +4327,7 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 [data-theme="grey"] .household-luz{--home-tone:var(--c-yellow);--home-card-color:var(--c-yellow)}
 [data-theme="grey"] .household-gas{--home-tone:var(--c-blue);--home-card-color:var(--c-blue)}
 [data-theme="grey"] .tasks-overlay{--tasks-accent:var(--c-purple);--c-blue:var(--c-purple)}
-[data-theme="grey"] .tasks-fab{background:var(--c-purple);border-color:#ba969f;box-shadow:0 4px 15px #493c4726}
+[data-theme="grey"] .tasks-fab{background:var(--c-purple);border-color:#b7a0b4;box-shadow:0 4px 15px #493c4726}
 [data-theme="grey"] .tasks-count{border-color:#beaec6}
 [data-theme="grey"] .settings-edit-connections{--settings-tone:var(--c-orange)}
 [data-theme="grey"] .settings-edit-invoices{--settings-tone:var(--c-green)}
@@ -4271,10 +4340,22 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 [data-theme="grey"] .day-cell.h9,[data-theme="grey"] .day-cell.h9 .day-hours{color:var(--c-green)}
 [data-theme="grey"] .action-btn.send{background:var(--c-blue);border-color:var(--c-blue);color:#fff}
 [data-theme="grey"] .action-btn.send:active{background:var(--accent-bright)}
-[data-theme="grey"] .week-card.sent{--sent:#edf0e6;--sent-border:#b3bfa5;--sent-text:#52664b;border-color:var(--sent-border)}
-[data-theme="grey"] .week-card.sent :is(.week-total,.action-btn.sent-toggle){background:#e0e7d8;color:var(--sent-text)}
-[data-theme="grey"] .ev-wk-day-bg.even,[data-theme="grey"] .ev-wk-date.even:not(.ev-wk-today){background:#f0eadf}
-[data-theme="grey"] .ev-wk-day-bg.ev-wk-today{background:#e8eddf}
+[data-theme="grey"] .week-card.sent{--sent:#edf2e9;--sent-border:#becfba;--sent-text:#44674e;border-color:var(--sent-border)}
+[data-theme="grey"] .week-card.sent :is(.week-total,.action-btn.sent-toggle){background:#dce7d8;color:var(--sent-text)}
+[data-theme="grey"] .ev-wk-day-bg.even,[data-theme="grey"] .ev-wk-date.even:not(.ev-wk-today){background:var(--surface2)}
+[data-theme="grey"] .ev-wk-day-bg.ev-wk-today{background:#e5eee5}
+[data-theme="grey"] .ev-wk-month-sep{--ev-month-surface:#e7e2dc;--ev-month-border:#d2c9bf;color:var(--upcoming-text)}
+[data-theme="grey"] .energy-window{--energy-resumen:var(--c-blue);--energy-consumo:var(--c-green);--energy-costes:var(--c-yellow);--energy-tarifas:var(--c-orange);--energy-comparar:var(--c-purple)}
+[data-theme="grey"] .ev-week-sep{background:var(--surface3);color:var(--text)}
+[data-theme="grey"] .ev-week-sep.now{background:var(--accent);color:#fff}
+[data-theme="grey"] .rut-sub-tabs{--section-tab-tone:var(--text)}
+[data-theme="grey"] .ev-sub-puentes{--section-tab-tone:var(--birthday-tone)}
+[data-theme="grey"] input[type="checkbox"]{background:var(--surface);border-color:var(--border-light)}
+[data-theme="grey"] input[type="checkbox"]:checked{background:var(--chk,var(--accent));border-color:var(--chk,var(--accent))}
+[data-theme="grey"] .toast{box-shadow:0 4px 16px var(--shadow)}
+[data-theme="grey"] .toast.error{border-color:color-mix(in srgb,var(--c-red) 40%,var(--border));background:color-mix(in srgb,var(--c-red) 8%,var(--surface));color:var(--c-red)}
+[data-theme="grey"] .toast.info{border-color:color-mix(in srgb,var(--c-blue) 40%,var(--border));background:color-mix(in srgb,var(--c-blue) 8%,var(--surface));color:var(--c-blue)}
+[data-theme="grey"] .toast.success{border-color:color-mix(in srgb,var(--c-green) 40%,var(--border));background:color-mix(in srgb,var(--c-green) 8%,var(--surface));color:var(--c-green)}
 [data-theme="grey"] .sy-period-past{--period-tone:var(--text-muted)}
 [data-theme="grey"] .sy-period-future{--period-tone:var(--c-yellow)}
 [data-theme="grey"] .sy-period-total{--period-tone:var(--household-tone)}
@@ -4285,6 +4366,7 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 [data-theme="grey"] button.settings-edit-btn{background:var(--settings-tone,var(--c-orange))!important;border-color:var(--settings-tone,var(--c-orange))!important;color:#fff!important}
 [data-theme="grey"] #evFormOv .ev-kind-btn{--kind-tone:var(--c-purple)}
 [data-theme="grey"] .mg-desgrav-toggle{color:var(--c-purple)}
+[data-theme="grey"] .ev-btn.danger{background:var(--c-red);border-color:var(--c-red)}
 /* Bordes suaves en reposo; el color completo identifica la selección. */
 [data-theme="grey"] #eventsOverlay .ev-hdr-sub .ev-view-toggle,[data-theme="grey"] :is(.econ-tab-btn,.fiscal-tab-btn,.est-nav .est-btn){border-color:color-mix(in srgb,var(--tab-tone) 32%,var(--border))!important;background:color-mix(in srgb,var(--tab-tone) 4%,var(--surface))!important}
 [data-theme="grey"] #eventsOverlay .ev-hdr-sub .ev-view-toggle.active,[data-theme="grey"] :is(.econ-tab-btn.active,.fiscal-tab-btn.active,.est-nav .est-btn.active){border-color:color-mix(in srgb,var(--tab-tone) 75%,var(--border))!important;background:color-mix(in srgb,var(--tab-tone) 15%,var(--surface))!important}
