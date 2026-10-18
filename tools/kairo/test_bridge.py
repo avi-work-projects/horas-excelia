@@ -95,6 +95,34 @@ class BridgeTests(unittest.TestCase):
             self.assertIsNone(db.execute('SELECT approved_hash FROM drafts').fetchone()[0])
         self.assertEqual(len(self.calls), 1)
 
+    def test_changed_approved_draft_repeat_and_revert_cannot_restore_approval(self):
+        self.call()
+        with self.db() as db:
+            db.execute("UPDATE plans SET status='approved',approval='old-approval'")
+            db.execute("UPDATE drafts SET approved_hash='old-approval',approved_at='yesterday'")
+            original_snapshot = db.execute('SELECT snapshot FROM drafts').fetchone()[0]
+        original_data = self.load()['data']
+        changed = dict(self.source, contentHash='c'*64, revision=2)
+        # Query is read-only, including when it reveals a difference.
+        self.assertEqual(self.call(dict(changed, action='status'))['state'], 'different')
+        self.assertEqual(self.load()['approval'], 'old-approval')
+        # Explicit preparation invalidates approval, but does not replace the invoice.
+        for _ in range(2):
+            self.assertEqual(self.call(dict(changed, action='prepare', source=json.dumps(changed)))['state'], 'blocked')
+            self.assertIsNone(self.load()['approval'])
+            self.assertEqual(self.load()['data'], original_data)
+        # Undoing the edit must not silently resurrect the previously granted approval.
+        restored = dict(self.source, revision=3)
+        self.assertEqual(self.call(dict(restored, action='prepare', source=json.dumps(restored)))['state'], 'blocked')
+        self.assertIsNone(self.load()['approval'])
+        with self.db() as db:
+            row = db.execute('SELECT * FROM drafts').fetchone()
+            self.assertEqual(row['snapshot'], original_snapshot)
+            self.assertIsNone(row['approved_hash'])
+            self.assertIsNone(row['approved_at'])
+            self.assertEqual(db.execute('SELECT COUNT(*) FROM drafts').fetchone()[0], 1)
+        self.assertEqual(len(self.calls), 1)
+
     def test_issued_month_and_other_month_blocked_without_mutation(self):
         self.call()
         for state in ('accepted','sent','email_cancelled','sending','uncertain','emitting','queued'):
