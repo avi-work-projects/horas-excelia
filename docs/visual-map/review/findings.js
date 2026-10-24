@@ -1,4 +1,4 @@
-// Fuente editorial compartida. resolved conserva el antes y muestra el resultado real.
+// Fuente editorial compartida; cada resolución conserva su versión y sus evidencias.
 window.VISUAL_REVIEW={
   "date": "2026-10-25",
   "reference": "9532bfb",
@@ -56,7 +56,8 @@ window.VISUAL_REVIEW={
         "js/core.js"
       ],
       "status": "resolved",
-      "result": "Tareas se oculta mientras hay un panel secundario abierto y recupera su estado al cerrarlo. Guardar y Eliminar quedan libres, conservando la posición y la preferencia del botón."
+      "result": "Tareas se oculta mientras hay un panel secundario abierto y recupera su estado al cerrarlo. Guardar y Eliminar quedan libres, conservando la posición y la preferencia del botón.",
+      "resolvedVersion": "v498"
     },
     {
       "id": "A02",
@@ -83,7 +84,8 @@ window.VISUAL_REVIEW={
         "js/events-alarm-policy.js"
       ],
       "status": "resolved",
-      "result": "La ficha, Próximos y la confirmación comparten la comprobación de fecha y hora. Se bloquea al llegar el inicio y se conserva una vuelta futura. Los avisos necesitan al menos cinco minutos de margen."
+      "result": "La ficha, Próximos y la confirmación comparten la comprobación de fecha y hora. Se bloquea al llegar el inicio y se conserva una vuelta futura. Los avisos necesitan al menos cinco minutos de margen.",
+      "resolvedVersion": "v498"
     },
     {
       "id": "A03",
@@ -109,7 +111,8 @@ window.VISUAL_REVIEW={
         "js/rutinas-addition.js"
       ],
       "status": "resolved",
-      "result": "Se puede guardar una recuperación antes o después de la original y volver a importarla sin perder el vínculo. Permanecen los límites diarios y la protección frente a duplicados."
+      "result": "Se puede guardar una recuperación antes o después de la original y volver a importarla sin perder el vínculo. Permanecen los límites diarios y la protección frente a duplicados.",
+      "resolvedVersion": "v498"
     },
     {
       "id": "A04",
@@ -140,7 +143,8 @@ window.VISUAL_REVIEW={
         "css/source/event-panels.css"
       ],
       "status": "resolved",
-      "result": "La ficha utiliza una fila con el emoji 🔔, Alarma, estado y Configurar. El panel distingue el estado manual de la creación real; el carrusel conserva su tamaño exterior con scroll interior."
+      "result": "La ficha utiliza una fila con el emoji 🔔, Alarma, estado y Configurar. El panel distingue el estado manual de la creación real; el carrusel conserva su tamaño exterior con scroll interior.",
+      "resolvedVersion": "v498"
     },
     {
       "id": "A05",
@@ -166,7 +170,8 @@ window.VISUAL_REVIEW={
         "js/events.js"
       ],
       "status": "resolved",
-      "result": "La ficha agrupa Desde/Hasta, inicio del evento y tarjetas de ida/vuelta, cada una con fecha, hora de salida, transporte y conductor cuando existe."
+      "result": "La ficha agrupa Desde/Hasta, inicio del evento y tarjetas de ida/vuelta, cada una con fecha, hora de salida, transporte y conductor cuando existe.",
+      "resolvedVersion": "v498"
     },
     {
       "id": "A06",
@@ -193,7 +198,8 @@ window.VISUAL_REVIEW={
         "js/events-cal.js"
       ],
       "status": "resolved",
-      "result": "Los tres calendarios comienzan la barra en el borde antes de las 13:00 y en media casilla desde las 13:00. Se conserva el final y se combina con los relevos y solapamientos existentes."
+      "result": "Los tres calendarios comienzan la barra en el borde antes de las 13:00 y en media casilla desde las 13:00. Se conserva el final y se combina con los relevos y solapamientos existentes.",
+      "resolvedVersion": "v498"
     },
     {
       "id": "A07",
@@ -204,19 +210,30 @@ window.VISUAL_REVIEW={
       "proposal": "Mostrar un nombre corto o una sola línea con elipsis y un contador cuando no quepan; abrir el listado completo del día al pulsar. Mantener VIP y evitar que el texto fuerce la geometría del mes.",
       "validation": "Nombres cortos/largos y una, tres y más personas en un día; legibilidad, VIP, pulsación y acceso a la ficha.",
       "scenes": [
-        "birthday-calendar"
+        "birthday-calendar",
+        "birthday-day-list"
       ],
       "evidence": [
         [
           "evidence/before-birthday-calendar.png",
           "Antes · nombres fragmentados en las casillas"
+        ],
+        [
+          "evidence/birthday-after.png",
+          "Después · Calendario con nombres compactos"
+        ],
+        [
+          "evidence/birthday-day-list-after.png",
+          "Después · Listado completo del día"
         ]
       ],
       "sources": [
         "js/birthdays-render.js",
         "css/source/birthdays.css"
       ],
-      "status": "pending"
+      "status": "resolved",
+      "resolvedVersion": "v499",
+      "result": "El calendario ocupa el ancho disponible y muestra dos nombres cortos en una línea, con elipsis y contador. El contador o el día abren el listado completo con nombres y VIP; cada persona conserva su ficha."
     },
     {
       "id": "A08",
@@ -237,15 +254,25 @@ window.VISUAL_REVIEW={
           "Antes · la acción queda debajo de la paleta"
         ],
         [
+          "evidence/couple-after.png",
+          "Después · Pareja con acciones fijas"
+        ],
+        [
           "evidence/before-routine-new.png",
           "Antes · Guardar está fuera de la vista inicial"
+        ],
+        [
+          "evidence/routine-after.png",
+          "Después · Rutina con acciones fijas"
         ]
       ],
       "sources": [
         "js/bodas-bind.js",
         "js/rutinas-form.js"
       ],
-      "status": "pending"
+      "status": "resolved",
+      "resolvedVersion": "v499",
+      "result": "Los formularios de pareja y rutina reutilizan el marco fijo: cabecera, cuerpo con scroll y pie con Cancelar y Guardar. La paleta y los campos siguen disponibles sin desplazar las acciones."
     },
     {
       "id": "A09",
@@ -256,18 +283,30 @@ window.VISUAL_REVIEW={
       "proposal": "Conservar la vista anual como resumen y ofrecer un mes ampliado para seleccionar con comodidad. Mantener la selección múltiple y el contador; reservar seis filas al navegar entre meses.",
       "validation": "Selección/deshacer con dedo, meses de cuatro a seis semanas y vuelta al resumen conservando todos los días elegidos.",
       "scenes": [
-        "dates"
+        "dates",
+        "dates-overview",
+        "dates-selected"
       ],
       "evidence": [
         [
           "evidence/before-dates.png",
           "Antes · doce meses en 400 px"
+        ],
+        [
+          "evidence/dates-after.png",
+          "Después · Selección mensual ampliada"
+        ],
+        [
+          "evidence/dates-overview-after.png",
+          "Después · Resumen anual para elegir mes"
         ]
       ],
       "sources": [
         "js/events-picker-date.js"
       ],
-      "status": "pending"
+      "status": "resolved",
+      "resolvedVersion": "v499",
+      "result": "Multidía abre un mes con botones de 44 px de alto y seis filas reservadas. El resumen anual permite elegir un mes; se conserva la selección entre meses y años. Solo Aceptar aplica el borrador."
     },
     {
       "id": "A10",
@@ -284,12 +323,18 @@ window.VISUAL_REVIEW={
         [
           "evidence/before-energy-luz.png",
           "Antes · tres segmentos iguales sin desglose"
+        ],
+        [
+          "evidence/energy-after.png",
+          "Después · Estado neutro sin reparto inventado"
         ]
       ],
       "sources": [
         "js/energy-study.js"
       ],
-      "status": "pending"
+      "status": "resolved",
+      "resolvedVersion": "v499",
+      "result": "Sin lecturas se muestra una explicación neutra, sin segmentos ni porcentajes ficticios. Con lecturas se mantiene el reparto medido; la cobertura parcial queda indicada y el cero real se distingue de un dato ausente."
     },
     {
       "id": "A11",
@@ -310,12 +355,18 @@ window.VISUAL_REVIEW={
         [
           "evidence/before-macro.png",
           "Antes · se vuelve a pedir Editar"
+        ],
+        [
+          "evidence/settings-after.png",
+          "Después · Accesos que describen la consulta"
         ]
       ],
       "sources": [
         "js/settings-menu.js"
       ],
-      "status": "pending"
+      "status": "resolved",
+      "resolvedVersion": "v499",
+      "result": "Los accesos se llaman Correo de horas, MacroDroid y Facturas y correo. Abren la consulta protegida; la edición y el guardado siguen siendo explícitos dentro del panel."
     },
     {
       "id": "A12",
@@ -379,5 +430,5 @@ window.VISUAL_REVIEW={
       "status": "pending"
     }
   ],
-  "implementedVersion": "v498"
+  "implementedVersion": "v499"
 };

@@ -77,14 +77,14 @@ function renderRutForm(r){
   var locked=rutSetupLocked(r);
   var col=isEdit&&rutIconOf(r)==='gen'?rutDisplayColor(r):'#a78bfa';
   var dias=isEdit?(r.weekDays||[]):[];
-  var h='<div class="ev-form-overlay" id="rutFormOv"><div class="ev-form-sheet">';
+  var h='<div class="ev-form-overlay" id="rutFormOv"><div class="ev-form-sheet ev-fixed-form-sheet">';
   h+='<div class="ev-form-handle"></div>';
-  h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">';
+  h+='<header class="bd-panel-header panel-header-centered ev-fixed-form-header">';
   h+='<button class="sy-back" id="rutFClose">&#8592;</button>';
-  h+='<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">'+(isEdit?'Editar rutina':'Nueva rutina')+'</div>';
+  h+='<h2>'+(isEdit?'Editar rutina':'Nueva rutina')+'</h2>';
   if(isEdit)h+='<button class="ev-btn danger" id="rutFDel" style="flex:none;padding:6px 12px;font-size:.75rem">Eliminar</button>';
   else h+='<div style="width:36px"></div>';
-  h+='</div>';
+  h+='</header><div class="bd-panel-body ev-fixed-form-body">';
   h+='<div class="ev-field"><label>Actividad</label>';
   h+='<input class="ev-input" id="rutFName" type="text" maxlength="40" placeholder="Ej: Gimnasio" value="'+(isEdit?escHtml(r.name):'')+'"></div>';
   h+=rutFlexOptionsHtml(r);
@@ -135,7 +135,7 @@ function renderRutForm(r){
     if(susp)h+='<button type="button" class="ev-btn" id="rutFSuspClear" style="margin-top:6px">Reanudar ahora</button>';
     h+='</div>';
   }
-  h+='<div class="ev-form-actions"><button class="ev-btn primary" id="rutFSave">Guardar</button></div>';
+  h+='</div><footer class="bd-panel-footer ev-fixed-form-actions"><button class="ev-btn" id="rutFCancel">Cancelar</button><button class="ev-btn primary" id="rutFSave">Guardar</button></footer>';
   h+='</div></div>';
   return h;
 }
@@ -169,6 +169,7 @@ function openRutForm(r){
   var _cpHex=document.getElementById('rutCpHex');
   if(_cpHex)_cpHex.addEventListener('input',function(){setTimeout(_rutRepaintIcons,0);});
   document.getElementById('rutFClose').addEventListener('click',closeRutForm);
+  document.getElementById('rutFCancel').addEventListener('click',closeRutForm);
   /* Una fila por dia marcado, con su hora. Se repinta al tocar los dias para
      que no queden filas de dias que ya no tocan. */
   function _rutPintaHoras(){

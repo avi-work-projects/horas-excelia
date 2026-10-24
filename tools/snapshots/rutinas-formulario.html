@@ -1,12 +1,13 @@
 <div class="ev-form-overlay" id="rutFormOv">
-<div class="ev-form-sheet">
+<div class="ev-form-sheet ev-fixed-form-sheet">
 <div class="ev-form-handle">
 </div>
-<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+<header class="bd-panel-header panel-header-centered ev-fixed-form-header">
 <button class="sy-back" id="rutFClose">&#8592;</button>
-<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">Editar rutina</div>
+<h2>Editar rutina</h2>
 <button class="ev-btn danger" id="rutFDel" style="flex:none;padding:6px 12px;font-size:.75rem">Eliminar</button>
-</div>
+</header>
+<div class="bd-panel-body ev-fixed-form-body">
 <div class="ev-field">
 <label>Actividad</label>
 <input class="ev-input" id="rutFName" type="text" maxlength="40" placeholder="Ej: Gimnasio" value="Gimnasio">
@@ -25,8 +26,10 @@
 </div>
 </div>
 </div>
-<div class="ev-form-actions">
-<button class="ev-btn primary" id="rutFSave">Guardar</button>
 </div>
+<footer class="bd-panel-footer ev-fixed-form-actions">
+<button class="ev-btn" id="rutFCancel">Cancelar</button>
+<button class="ev-btn primary" id="rutFSave">Guardar</button>
+</footer>
 </div>
 </div>

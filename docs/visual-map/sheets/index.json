@@ -118,7 +118,9 @@
       "started-detail",
       "event-alarm",
       "edit--scroll-plan-picker",
-      "plan-picker"
+      "plan-picker",
+      "dates-overview",
+      "dates-selected"
     ]
   },
   {
@@ -268,13 +270,13 @@
       "birthdays",
       "birthday-list",
       "birthday-calendar",
+      "birthday-day-list",
+      "birthday-day-person",
       "birthday-person",
       "birthday-form",
       "birthday-alarm",
       "birthday-groups",
-      "birthday-day",
-      "birthday-month",
-      "birthday-group-edit"
+      "birthday-day"
     ]
   },
   {
@@ -282,7 +284,9 @@
     "title": "Cumpleaños · 2/2",
     "image": "sheets/area-8-1.png",
     "scenes": [
-      "birthday-list",
+      "birthday-form",
+      "birthday-month",
+      "birthday-group-edit",
       "birthday-filters",
       "birthday-vip"
     ]

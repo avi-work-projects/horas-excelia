@@ -60,8 +60,8 @@ test('cumpleaños VIP con nombre, color y filtro exclusivo de calendario',async(
  await page.getByRole('button',{name:'Calendario',exact:true}).click();
  await expect(page.locator('.bday-badge')).toHaveCount(2);await expect(page.locator('.bday-badge-vip img[alt="VIP"]')).toHaveCount(1);
  await page.getByRole('checkbox',{name:'Solo VIPs',exact:true}).check();await expect(page.locator('.bday-badge')).toHaveCount(1);
- await expect(page.locator('.bday-badge-name')).toContainText('Un Cumpleaños Vip');
+ await expect(page.locator('.bday-badge-name')).toHaveText('Un');await expect(page.locator('.bday-badge')).toHaveAttribute('title',/Un Cumpleaños Vip De Nombre Muy Largo/);
  await page.getByRole('checkbox',{name:'Solo VIPs',exact:true}).uncheck();await expect(page.locator('.bday-badge')).toHaveCount(2);
- const lines=await page.locator('.bday-badge-name').first().evaluate(e=>getComputedStyle(e).webkitLineClamp);expect(lines).toBe('4');
+ await expect(page.locator('.bday-badge-name').first()).toHaveCSS('white-space','nowrap');
  const header=await page.evaluate(()=>({next:document.querySelector('#bdNext').getBoundingClientRect().right,tools:document.querySelector('.bday-calendar-tools').getBoundingClientRect().left}));expect(header.tools).toBeGreaterThan(header.next);
 });

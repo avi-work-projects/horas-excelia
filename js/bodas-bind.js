@@ -1,14 +1,14 @@
 function renderBodaCoupleForm(c){
   var isEdit=!!c;
   var col=isEdit?c.color:bodaNextColor();
-  var h='<div class="ev-form-overlay" id="bodaCFormOv"><div class="ev-form-sheet">';
+  var h='<div class="ev-form-overlay" id="bodaCFormOv"><div class="ev-form-sheet ev-fixed-form-sheet">';
   h+='<div class="ev-form-handle"></div>';
-  h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">';
+  h+='<header class="bd-panel-header panel-header-centered ev-fixed-form-header">';
   h+='<button class="sy-back" id="bodaCClose">&#8592;</button>';
-  h+='<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">'+(isEdit?'Editar pareja':'Nueva pareja')+'</div>';
+  h+='<h2>'+(isEdit?'Editar pareja':'Nueva pareja')+'</h2>';
   if(isEdit)h+='<button class="ev-btn danger" id="bodaCDel" style="flex:none;padding:6px 12px;font-size:.75rem">Eliminar</button>';
   else h+='<div style="width:36px"></div>';
-  h+='</div>';
+  h+='</header><div class="bd-panel-body ev-fixed-form-body">';
   h+='<div class="ev-field"><label>Pareja</label><input class="ev-input" id="bodaCName" type="text" maxlength="40" placeholder="Ej: Marta y Juan" value="'+(isEdit?escHtml(c.name):'')+'"></div>';
   h+='<div class="ev-field"><label class="boda-future-check" style="--chk:#8b5e34"><input type="checkbox" id="bodaCFuture"'+(c&&c.future?' checked':'')+'> Pareja futura</label><div class="sy-note">Reserva pendiente de concretar. No aparece en Activas hasta que desmarques esta opción.</div></div>';
   var selected=isEdit?bodaPackOf(c):(BODA_CONFIG.packs.find(function(p){return p.active!==false&&p.classes===4;})||BODA_CONFIG.packs.find(function(p){return p.active!==false;}));
@@ -23,7 +23,7 @@ function renderBodaCoupleForm(c){
   h+='<div class="ev-field"><label>&#127912; Color (aspas de arriba)'+(isEdit?'':' <span class="ev-note-scope">— asignado automáticamente</span>')+'</label>';
   h+=_renderColorPicker(col,false,false,'bodaCp');
   h+='</div>';
-  h+='<div class="ev-form-actions"><button class="ev-btn primary" id="bodaCSave">Guardar</button></div>';
+  h+='</div><footer class="bd-panel-footer ev-fixed-form-actions"><button class="ev-btn" id="bodaCCancel">Cancelar</button><button class="ev-btn primary" id="bodaCSave">Guardar</button></footer>';
   h+='</div></div>';
   return h;
 }
@@ -34,6 +34,7 @@ function openBodaCoupleForm(c){
   var noteEl=document.getElementById('bodaCNote'),cnt=document.getElementById('bodaCCnt');
   noteEl.addEventListener('input',function(){cnt.textContent=noteEl.value.length+'/200';});
   document.getElementById('bodaCClose').addEventListener('click',closeBodaCoupleForm);
+  document.getElementById('bodaCCancel').addEventListener('click',closeBodaCoupleForm);
   var del=document.getElementById('bodaCDel');
   if(del)del.addEventListener('click',function(){
     /* Las clases de la pareja no se borran: quedan sin asignar */

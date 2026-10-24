@@ -1,12 +1,13 @@
 <div class="ev-form-overlay" id="bodaCFormOv">
-<div class="ev-form-sheet">
+<div class="ev-form-sheet ev-fixed-form-sheet">
 <div class="ev-form-handle">
 </div>
-<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+<header class="bd-panel-header panel-header-centered ev-fixed-form-header">
 <button class="sy-back" id="bodaCClose">&#8592;</button>
-<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">Editar pareja</div>
+<h2>Editar pareja</h2>
 <button class="ev-btn danger" id="bodaCDel" style="flex:none;padding:6px 12px;font-size:.75rem">Eliminar</button>
-</div>
+</header>
+<div class="bd-panel-body ev-fixed-form-body">
 <div class="ev-field">
 <label>Pareja</label>
 <input class="ev-input" id="bodaCName" type="text" maxlength="40" placeholder="Ej: Marta y Juan" value="Pareja Uno">
@@ -155,8 +156,10 @@
 </div>
 </div>
 </div>
-<div class="ev-form-actions">
-<button class="ev-btn primary" id="bodaCSave">Guardar</button>
 </div>
+<footer class="bd-panel-footer ev-fixed-form-actions">
+<button class="ev-btn" id="bodaCCancel">Cancelar</button>
+<button class="ev-btn primary" id="bodaCSave">Guardar</button>
+</footer>
 </div>
 </div>

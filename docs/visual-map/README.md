@@ -1,7 +1,7 @@
 # Mapa visual de Gestify
 
-Atlas ampliado el 24/10/2026 tras aprobar Ángel el piloto: **156 capturas,
-158 relaciones y 13 áreas**, repartidas en láminas legibles.
+Atlas ampliado el 24/10/2026 tras aprobar Ángel el piloto: **160 capturas,
+164 relaciones y 13 áreas**, repartidas en láminas legibles.
 
 ```sh
 npm ci
@@ -101,10 +101,10 @@ posterior no invalida capturas cuyas fuentes siguen idénticas.
 
 Documentación y herramientas independientes de la PWA: no entran en
 `app-assets.json`, `dist/` ni el service worker, ni incrementan la versión.
-Las correcciones autorizadas A01–A06 se integran con v498. El resto permanece pendiente de revisión con Ángel.
+Las correcciones A01–A06 se integraron con v498 y A07–A11 con v499. A12–A13 (P3) permanecen pendientes de revisión con Ángel.
 
 La revisión visual de las 150 capturas está en `review/index.html`: 13 casos
-priorizados, con evidencia histórica y capturas reales del resultado de A01–A06. La fuente
+priorizados, con evidencia histórica y capturas reales del resultado de A01–A11. La fuente
 editorial es `review/findings.js`; `review-notes.js` deriva sus anotaciones para el
 mapa. `review/coverage.json` conserva las huellas de las 150 imágenes revisadas,
 para no confundir esta revisión con una certificación de capturas posteriores.
@@ -116,3 +116,5 @@ Revisar las escenas afectadas, regenerar láminas y cerrar hallazgos resueltos j
 al cambio. Si no cambia la salida visual, comprobar y documentar su vigencia sin
 repetir capturas innecesarias. `node tools/visual-map/verify-review.cjs` comprueba
 el informe; `review-evidence.cjs` conserva los seis resultados reales desde las escenas regeneradas del atlas. La cobertura inicial se verifica contra su commit histórico, sin confundirla con la revisión de estados nuevos.
+
+`node tools/visual-map/p2-evidence.cjs` conserva las capturas reales de los P2 desde el atlas regenerado. `verify-review.cjs` exporta sus comparativas de antes y después.

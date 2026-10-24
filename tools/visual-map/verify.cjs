@@ -23,7 +23,7 @@ async function main(){
     await page.locator('[data-scene="calendar"] img').click();await expect(page.locator('#screenDialog')).toBeVisible();await page.locator('.close-dialog').click();
     await page.locator('#zoomIn').click();const z=await page.locator('#zoomValue').textContent();await page.locator('#zoomOut').click();if(z===await page.locator('#zoomValue').textContent())throw new Error('No cambia el zoom');
     await page.locator('[data-view="compare"]').click();await expect(page.locator('#compareGrid img')).toHaveCount(3);await page.screenshot({path:path.join(qa,'preview-comparison.png'),fullPage:true});
-    await page.locator('[data-view="inventory"]').click();await page.locator('#inventorySearch').fill('Multidía');await expect(page.locator('#inventoryTable tbody tr')).toHaveCount(1);await expect(page.locator('#inventoryTable')).toContainText('Ver captura');
+    await page.locator('[data-view="inventory"]').click();await page.locator('#inventorySearch').fill('Multidía');await expect(page.locator('#inventoryTable tbody tr')).toHaveCount(3);await expect(page.locator('#inventoryTable')).toContainText('Ver captura');
     await page.locator('[data-inventory-scene="dates"]').click();await expect(page.locator('#selectedTitle')).toHaveText('Selección Multidía');
     await page.locator('#fit').click();const downloadPromise=page.waitForEvent('download');await page.locator('#export').click();const download=await downloadPromise;const svg=fs.readFileSync(await download.path(),'utf8');if(!svg.includes('data:image/png;base64,')||!svg.includes('marker-end'))throw new Error('SVG incompleto');
     await download.saveAs(path.join(out,'map-flow.svg'));
