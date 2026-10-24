@@ -1,8 +1,51 @@
-# Drive publication — WIP, not commissioned
+# Drive publication — commissioned 2026-10-24
 
-Prepared 2026-10-24. This is not a completed Kairo→Drive→PC integration.
-Google login/own OAuth client and authorization are still required. Existing
-daily Windows archive collection must remain enabled until the full probe passes.
+## Current operational status (supersedes historical notes below)
+
+- Google OAuth app is In production. The document account renewed consent; exact
+  existing AUTONOMO folder checked. Automatic access-token refresh was tested using
+  a temporary private config with an expired access token and succeeded.
+- Kairo -> Drive upload/readback -> existing mini Drive mirror passed SHA-256 checks.
+  The harmless probe was subsequently moved to Drive Trash and disappeared from the
+  mini; it does not remain as clutter in AUTONOMO.
+- October final PDF reconciled with the existing unique cloud object. Cloud and
+  mini hashes match; no invoice was regenerated and no mail sent. All three invoice,
+  workflow and mail database file hashes remained unchanged during commissioning.
+- Publisher service and path unit installed/enabled. Actual request-file event and
+  repeated service execution passed; one verified invoice receipt remains unchanged.
+- Dashboard summary and invoice detail display verified/pending/error archive state.
+  Verified Drive archival does not assert the mini is currently online.
+- Old Windows daily/login collection task exported and DISABLED, not deleted.
+  No periodic copy poll runs on the mini. Its existing Drive desktop client remains.
+- Tests: 17 isolated publisher/dashboard checks passed on mini and Kairo, covering
+  year rollover, delayed December upload, directory creation, conflicts, lost reply,
+  archive notification failure and read-only status. Gestify public page passed unit,
+  build and 302 local browser checks plus successful GitHub Pages CI deployment.
+
+## Runtime and recovery
+
+Runtime: /home/angel/gestify-facturacion. Private files: rclone-drive.conf (0600),
+drive-publish-config.json and drive-publish-state.json. Never commit their contents.
+Units: kairo-drive-publish.path watches drive-publish-request; service executes once
+at boot and on events. Failed executions retry every 900 seconds; success stops.
+The observer reads immutable accepted PDFs and does not call AEAT or SMTP.
+Destination year comes from validated invoice period and matching number, never
+upload date. January creates its new year folder; December retries stay in December's
+original year. Existing differing files and duplicate names require review.
+
+Local backup: backups/drive-commission-20261024T203323Z under the runtime.
+Old task XML and cutover evidence: local Windows GestifyFacturacion/backups/
+drive-cutover-20261024 (outside AUTONOMO and Git).
+Rollback: stop/disable both kairo-drive-publish units; restore backed-up panel.py
+and invoice_dashboard.py, restart kairo-facturas.service, and enable the saved
+Windows task. Do not reissue or resend invoices. Retain Drive files and receipts.
+OAuth can still be revoked by the user or Google; production status removes Testing's
+weekly grant expiry, not all possible authorization failures. The panel reports
+archive failure and the service retries; existing Telegram rules were not changed.
+
+## Historical preparation log
+
+The notes below document earlier phases; their pending-state statements are historical.
 
 ## Preparation completed
 
