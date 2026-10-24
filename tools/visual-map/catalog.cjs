@@ -43,4 +43,5 @@ const sections=[
   ['Energía','Resumen de gas|Consumo de gas|Coste de gas|Tarifas de gas|Escenarios de gas|Archivo de gas|Resumen de electricidad|Consumo de electricidad|Coste de electricidad|Tarifas de electricidad|Escenarios de electricidad|Archivo de electricidad|Editor de tarifa','js/energy-analysis-view.js'],
   ['Ajustes','Más opciones|Crear alarma|Correo de horas|Conexión MacroDroid|Datos personales|Notas generales|Notas de peluquería|Estilo de iconos|Carpeta de exportación|Modo de exportación|Previsualización de importación|Añadir o reemplazar al importar|Tareas pendientes y completadas','js/settings-menu.js']
 ];
+require('./extend.cjs')({scenes,edges,sections});
 module.exports={scenes,edges,sections};

@@ -12,11 +12,11 @@ memoria, para que una idea no se pierda entre dos tandas de cambios.
 
 ---
 
-## Ampliación del mapa visual de pantallas y menús
+## Revisión de coherencia visual con el mapa
 
-Piloto construido el 24/10/2026 en docs/visual-map/: navegación principal y recorrido de edición de un evento, con capturas, zonas pulsables, flechas, comparativa e inventario inicial. Pendiente de la revisión de Ángel antes de extenderlo al resto de la app.
+Atlas ampliado el 24/10/2026 en docs/visual-map/, después de aprobar Ángel el formato del piloto. Las áreas y paneles inventariados tienen capturas y rutas; los archivos de energía sin entrada visible y los selectores del navegador quedan identificados.
 
-Ampliar por zonas tras revisar el piloto, comprobar los caminos todavía localizados solo en código y registrar las incoherencias visuales que se detecten. Mantener la actualización por escenas y dependencias con Edge oculto y datos ficticios. La norma está en docs/DEVELOPMENT.md; uso y límites en docs/visual-map/README.md.
+Revisar las nuevas láminas con Ángel y registrar las incoherencias de cabeceras, espacios, botones y paneles que se decidan corregir. La generación no clasifica automáticamente el aspecto ni autoriza rediseños. Mantener la actualización por escenas y dependencias con Edge oculto y datos ficticios. La norma está en docs/DEVELOPMENT.md; uso y límites en docs/visual-map/README.md.
 
 ## 1. Envío automático de correos con N8N
 
