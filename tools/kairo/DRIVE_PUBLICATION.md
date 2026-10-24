@@ -174,3 +174,9 @@ with the published-page URLs and avi-work-projects.github.io domain; Publish app
 completed and Audience now says En producción. New authorization for the document
 account is waiting for the user's Continue in Edge (same Drive scope, outside Testing).
 Do not treat the old test-mode token as renewed until callback and verification succeed.
+
+Public page deployment succeeded (GitHub Actions 40129586090), including CI browser
+checks. Live page and privacy text verified in Edge. Production OAuth status also
+verified. Account reauthorization awaits user's Continue; no service installed and
+Windows collection still active. Source d473877 is published on main. The staged
+Kairo code remains on trabajo/kairo-drive, separate from the PWA deployment.
