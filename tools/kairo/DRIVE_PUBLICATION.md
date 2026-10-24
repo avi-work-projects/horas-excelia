@@ -111,3 +111,40 @@ Still NOT commissioned: OAuth remains Testing and Google disables Publish app
 pending branding completion. User is choosing where to host public informational
 and privacy pages. Keep daily Windows copy enabled until permanent auth plus
 publisher service/event hook and visible failure reporting are validated.
+
+## Year rollover checked (2026-10-24)
+
+Archive destinations use the validated invoice period, never the current clock.
+The number must agree with that period; mismatches stop publication for review.
+December 2026 stays in FACTURAS/2026 even when uploaded/retried after January.
+January 2027 goes into FACTURAS/2027/A - FACTURAS INGRESOS, created if absent.
+Existing folders are reused; no copies or invoices are generated for a new year.
+Nine isolated tests passed on Windows and Kairo, including rollover, late retry,
+missing year folder creation, repeated uploads and inconsistent metadata rejection.
+The staged worker was updated; production services remain unchanged.
+
+OAuth checked again in Edge: Publish app is disabled and directs to Branding.
+Homepage/privacy links and authorized domains are empty. No settings changed.
+The user previously deferred public pages pending review; do not publish them
+without resolving that decision. Existing Windows copy remains enabled.
+
+### Proposed public information (draft, not published)
+
+Kairo Drive — archivador personal
+Herramienta de uso personal para archivar documentos seleccionados en Google Drive.
+No ofrece registro de usuarios ni acceso público a los documentos.
+
+Privacidad
+Kairo Drive utiliza una autorización de Google para copiar y comprobar documentos
+seleccionados en la cuenta de su titular. La configuración de archivo se limita a
+AUTONOMO; el permiso OAuth concedido por Google puede abarcar el resto de Drive.
+Los documentos se conservan en los equipos del titular y en su cuenta de Google
+Drive. Esta página informativa no muestra documentos ni credenciales. La herramienta
+no vende datos ni los utiliza con fines publicitarios. El titular puede revocar el
+acceso desde la sección de conexiones con terceros de su cuenta de Google; revocar
+el acceso no borra los archivos ya guardados. Su eliminación se gestiona en Drive
+y en los archivos locales del titular.
+
+Proposed host: a dedicated informational path on the existing Gestify GitHub Pages.
+No public Kairo endpoint, invoices, email addresses or identifiers in this text.
+Hosting and final publication still require the user's deferred decision.

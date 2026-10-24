@@ -1,6 +1,9 @@
 import hashlib
 import unittest
-from drive_publish import publish_one
+import tempfile
+from pathlib import Path
+from unittest.mock import patch
+from drive_publish import publish_one, publish_archive, archive_target, Drive
 
 
 class FakeDrive:
@@ -39,6 +42,47 @@ class PublishTests(unittest.TestCase):
         for target in ['../secrets','FACTURAS/../../secrets','another-folder/file']:
             with self.assertRaises(ValueError):publish_one(d,target,b'test')
         self.assertEqual(d.uploads,0)
+
+    def test_year_rollover_and_late_retry(self):
+        items = [dict(accepted=True, row={'data': dict(period=p, number=n)})
+                 for p,n in [('2027-01','01-01/2027'),('2026-12','01-12/2026')]]
+        def pdf(root, row, kind):
+            n=row['data']['number'].replace('/', '_')
+            return ('%PDF '+n).encode(), 'Factura_'+n+'.pdf'
+        d=FakeDrive();state={'files':{}}
+        with tempfile.TemporaryDirectory() as tmp, \
+                patch('invoice_catalog.catalog',return_value=items), \
+                patch('invoice_catalog.archived_pdf',side_effect=pdf):
+            publish_archive(Path(tmp),d,state)
+            publish_archive(Path(tmp),d,state)
+        self.assertEqual(set(d.files), {
+            'FACTURAS/2027/A - FACTURAS INGRESOS/Factura_01-01_2027.pdf',
+            'FACTURAS/2026/A - FACTURAS INGRESOS/Factura_01-12_2026.pdf'})
+        self.assertEqual(d.uploads,2)
+
+    def test_inconsistent_period_refused(self):
+        for period,number in [('2027-01','01-12/2026'),('2027-13','01-13/2027'),
+                              ('2027/01','01-01/2027')]:
+            with self.assertRaises(ValueError):
+                archive_target(dict(period=period,number=number),
+                               'Factura_'+number.replace('/','_')+'.pdf')
+        with self.assertRaises(ValueError):
+            archive_target(dict(period='2027-01',number='01-01/2027'),'other.pdf')
+
+    def test_missing_year_directory_created_once(self):
+        drive=object.__new__(Drive);drive.prefix='test:'
+        folders={'': [{'Name':'FACTURAS','IsDir':True}], 'FACTURAS':[]}
+        created=[]
+        drive.entries=lambda p: folders[p]
+        def run(action,target):
+            self.assertEqual(action,'mkdir')
+            p=target.removeprefix('test:');parent,name=p.rsplit('/',1)
+            folders[parent].append({'Name':name,'IsDir':True});folders[p]=[]
+            created.append(p)
+        drive.run=run
+        drive.folder('FACTURAS/2027/A - FACTURAS INGRESOS')
+        drive.folder('FACTURAS/2027/A - FACTURAS INGRESOS')
+        self.assertEqual(created,['FACTURAS/2027','FACTURAS/2027/A - FACTURAS INGRESOS'])
 
 
 if __name__=='__main__':unittest.main()
