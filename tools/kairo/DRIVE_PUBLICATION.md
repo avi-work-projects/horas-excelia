@@ -168,3 +168,9 @@ matching final PDF hash in the Drive receipt; it does not assert mini download.
 17 isolated publisher/dashboard tests pass on Windows and Kairo, including hook
 failure, year rollover and read-only status. Candidates staged, not commissioned.
 Do not disable the daily mini copy until permanent OAuth and live service tests pass.
+
+OAuth production status confirmed in Google Cloud on 2026-10-24. Branding saved
+with the published-page URLs and avi-work-projects.github.io domain; Publish app
+completed and Audience now says En producción. New authorization for the document
+account is waiting for the user's Continue in Edge (same Drive scope, outside Testing).
+Do not treat the old test-mode token as renewed until callback and verification succeed.
