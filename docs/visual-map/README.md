@@ -104,7 +104,16 @@ Documentación y herramientas independientes de la PWA: no entran en
 La rama sigue separada de producción. La revisión de coherencia con Ángel y las
 correcciones que se acuerden quedan como trabajo posterior.
 
-Las observaciones comprobadas a partir de capturas viven en `review-notes.js`.
-Actualmente se señala el solapamiento del botón flotante de Tareas sobre el
-extremo de Guardar al crear o editar una clase de Bodas. Son anotaciones del
-atlas; no se ha corregido ni modificado la interfaz de la app.
+La revisión visual de las 150 capturas está en `review/index.html`: 13 casos
+priorizados, con evidencias y dos maquetas aisladas sin aplicar a la PWA. La fuente
+editorial es `review/findings.js`; `review-notes.js` deriva sus anotaciones para el
+mapa. `review/coverage.json` conserva las huellas de las 150 imágenes revisadas,
+para no confundir esta revisión con una certificación de capturas posteriores.
+Las pruebas y reproducciones adicionales usan exclusivamente datos ficticios.
+
+Norma reafirmada por Ángel el 25/10/2026: cada cambio visual o funcional que afecte
+a un menú actualiza sus fichas, estados, validaciones y recorridos dependientes.
+Revisar las escenas afectadas, regenerar láminas y cerrar hallazgos resueltos junto
+al cambio. Si no cambia la salida visual, comprobar y documentar su vigencia sin
+repetir capturas innecesarias. `node tools/visual-map/verify-review.cjs` comprueba
+el informe; `review-evidence.cjs` reproduce sus casos y maquetas en Edge oculto.
