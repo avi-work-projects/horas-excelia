@@ -4,7 +4,7 @@
    → Cambiar CACHE_VER en cada deploy para forzar actualización
    ============================================================ */
 
-var CACHE_VER = 'v496';
+var CACHE_VER = 'v497';
 var CACHE_NAME = 'horas-excelia-' + CACHE_VER;
 
 /* Generado desde app-assets.json: npm run assets */
@@ -131,7 +131,8 @@ var ASSETS = [
   "./icon-alarm.png",
   "./icon-bday.png",
   "./icon-events.png",
-  "./icon-estudio.png"
+  "./icon-estudio.png",
+  "./kairo-drive/index.html"
 ];
 
 /* ── Instalar: cachear todos los assets ── */
