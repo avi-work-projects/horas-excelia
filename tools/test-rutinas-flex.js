@@ -173,3 +173,33 @@ assert.equal(edited.monthTargets['2026-08'],0);
 assert.equal(edited.sessions['2026-09-01'].time,'12:00');
 assert.equal(JSON.stringify(zero),beforeEdit);
 console.log('Rutinas flexibles: cupos, formulario, primer mes, sesiones pasadas hechas, cancelación, fechas, calendario, recarga, backup y límite diario OK');
+
+// Planificación múltiple atómica: no reemplaza clases ni deja un alta parcial.
+const batch={...r,id:'batch',start:'2026-09-01',skips:{},keptSessions:{},flex:{period:'month',target:2,weeklyTarget:1,sessions:{}}};
+a.RUTINAS=[batch];
+const batchBefore=JSON.stringify(batch);
+assert.throws(()=>a.rutFlexPlanSessions(batch,['2026-09-03','2026-09-04','2026-09-05'],'19:00',60),/cupo/);
+assert.equal(JSON.stringify(batch),batchBefore);
+const planned=a.rutFlexPlanSessions(batch,['2026-09-03','2026-09-04'],'19:00',60);
+assert.deepEqual(Object.keys(planned.flex.sessions),['2026-09-03','2026-09-04']);
+assert.equal(JSON.stringify(batch),batchBefore);
+assert.throws(()=>a.rutFlexPlanSessions(planned,['2026-09-03'],'20:00',60),/Ya hay/);
+assert.throws(()=>a.rutFlexPlanSessions(batch,[],'19:00',60),/Selecciona/);
+// Mover solo una clase preserva el origen del histórico y permite deshacer A → B → A.
+a.RUTINAS=[planned];
+const moved=a.rutRescheduleSession(planned,'2026-09-03','2026-09-07','20:00',45);
+assert.equal(moved.flex.sessions['2026-09-03'],undefined);
+assert.equal(moved.flex.sessions['2026-09-07'].time,'20:00');
+assert.equal(moved.keptSessions['2026-09-07'].originalDate,'2026-09-03');
+assert.equal(planned.flex.sessions['2026-09-03'].time,'19:00');
+assert.equal(moved.flex.sessions['2026-09-04'].time,'19:00');
+assert.equal(a.rutSessionMoved(moved,a.rutSessionByKey(moved,'2026-09-07')),true);
+const back=a.rutRescheduleSession(moved,'2026-09-07','2026-09-03','19:00',60);
+assert.equal(a.rutSessionMoved(back,a.rutSessionByKey(back,'2026-09-03')),false);
+assert.equal(back.keptSessions['2026-09-07'],undefined);
+assert.throws(()=>a.rutRescheduleSession(planned,'2026-09-03','2026-09-04','20:00',60),/Ya hay/);
+const paused=JSON.parse(JSON.stringify(planned));paused.suspend={from:'2026-09-06',to:'2026-09-08'};
+assert.throws(()=>a.rutRescheduleSession(paused,'2026-09-03','2026-09-07','20:00',60),/pausa/);
+const movedRoundtrip=a.validateImport(JSON.parse(JSON.stringify({rutinas:[moved]}))).rutinas[0];
+assert.equal(movedRoundtrip.keptSessions['2026-09-07'].originalDate,'2026-09-03');
+console.log('Planificación múltiple atómica, cambio individual de día, reversión e importación OK');

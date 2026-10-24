@@ -290,7 +290,7 @@ function openEvDetail(ev,container,car,occurrenceDs){
   var _re=document.getElementById('evDRutEdit');
   if(_re)_re.addEventListener('click',function(){
     closeEvDetail();
-    setTimeout(function(){if(typeof openRutForm==='function')openRutForm(ev._rut);},310);
+    setTimeout(function(){openRutHistoryEdit(ev._rut,ev._rutKey||ev.start,function(){refreshEvents();});},310);
   });
   /* Filas de la ficha de un ensayo: cada una abre su selector y, al volver,
      se repinta la ficha con el dato ya guardado. */
