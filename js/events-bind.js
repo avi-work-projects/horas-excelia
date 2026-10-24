@@ -3,6 +3,28 @@
    Se carga el ULTIMO: usa funciones de todos los demas.
    ============================================================ */
 
+/* La PWA puede seguir viva durante varios días: Hoy depende del reloj, no del arranque. */
+var EV_RENDER_DAY=evDk(new Date());
+function refreshCalendarDate(){
+  var day=evDk(new Date());if(day===EV_RENDER_DAY)return;
+  EV_RENDER_DAY=day;
+  var ov=document.getElementById('eventsOverlay');
+  if(ov&&ov.classList.contains('open')&&['cal','annual','quad','week'].indexOf(EV_VIEW)>=0)refreshEvents();
+}
+function initCalendarDateRefresh(){
+  var timer;
+  function resume(){
+    clearTimeout(timer);
+    if(document.hidden)return;
+    refreshCalendarDate();
+    var now=new Date(),next=new Date(now);next.setHours(24,0,0,50);
+    timer=setTimeout(resume,next-now);
+  }
+  document.addEventListener('visibilitychange',resume);
+  window.addEventListener('pageshow',resume);
+  window.addEventListener('focus',resume);
+  resume();
+}
 function _switchEvView(newView){
   if(typeof tasksDock==='function')tasksDock();
   EV_SCROLL_RESET=true;   /* el proximo refresh empieza arriba */

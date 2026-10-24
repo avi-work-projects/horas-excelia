@@ -826,3 +826,36 @@ el atributo inline al comparar la versión anterior. La prueba de navegación cu
 también avanzar un mes y volver con Hoy en Cumpleaños, en los tres temas. Pasan
 `npm test`, las seis pruebas de navegación/cabeceras y `npm run build`;
 las 53 instantáneas existentes no cambian.
+
+## Clases concretas, planificación y cambio de día (v490)
+
+- El botón Editar de una sesión en el detalle del calendario reutiliza el editor
+  del histórico. Modifica esa clase, no la configuración completa. Las flexibles
+  planificadas admiten cambiar el día; las fijas conservan su día y permiten cambiar
+  hora/duración. Extras y recuperaciones mantienen sus reglas y vínculos existentes.
+- `rutRescheduleSession` valida sobre una copia, conserva el origen para el histórico
+  y elimina la marca de cambio al volver al día/hora/duración originales. No mueve
+  una sesión vinculada a una recuperación ni sobrescribe otra clase.
+- Planificar sesiones permite seleccionar varios días y guardar un horario común
+  una sola vez. `rutFlexPlanSessions` reutiliza la validación individual sobre una
+  copia y devuelve el lote completo: errores de cupo, pausa o colisión no guardan
+  altas parciales. Cerrar descarta la selección sin guardar.
+- Las clases ya planificadas abren el mismo editor individual. Se retira de este
+  panel la antigua cancelación de flexibles, que contradecía la regla vigente de
+  cancelación exclusiva para rutinas fijas. Las canceladas importadas siguen
+  admitiendo reactivación desde su editor.
+- El planificador tiene cabecera/pie fijos, scroll interior y seis filas de días.
+  El acceso flotante a tareas se oculta mientras está abierto para no tapar Guardar.
+- `initCalendarDateRefresh` repinta calendarios abiertos al cambiar el día local:
+  medianoche, vuelta a primer plano, foco o restauración de la página. Conserva
+  el mes consultado, scroll y formularios; no fuerza recargar la PWA ni guarda datos.
+- Recordatorios: propuesta visual pendiente de decisión, sin cambiar el panel
+  publicado. Cumpleaños arriba, eventos grandes en bloque compacto, Hoy/Mañana
+  agrupados y ordenados por hora, notas plegadas y pendientes resumidos al final.
+  Ejemplos exclusivamente ficticios. Evitar repetir «Hoy» en cada tarjeta y
+  mantener filas compactas; los títulos largos deben poder consultarse completos.
+
+Validación: pruebas de lote atómico/cupos, movimiento/reversión y backup; Edge
+oculto con alta múltiple, cierre sin guardar, edición flexible/fija, recarga y
+cambio de fecha (incluido cambio de hora de octubre). Revisión visual móvil en
+claro a 320 y 400 px y comprobación adicional del tema oscuro.

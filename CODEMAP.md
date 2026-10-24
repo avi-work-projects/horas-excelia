@@ -204,8 +204,10 @@
 
 **Funciones:** evAppearanceDefaults:10 · validateEventAppearance:13 · loadEventAppearance:19 · applyEventAppearance:24 · setEventAppearance:28 · evSymbolStroke:37
 
-### js/events-bind.js  _(634 líneas)_
-**Funciones:** _switchEvView:6 · openEvents:24 · closeEvents:34 · openEventsAt:41 · refreshEvents:48 · bindEvYearHeader:69 · setYear:73 · bindEvEvents:86 · _bindEvNav:95 (!202) · _scrollWeekToMonth:104 · _scrollWeekToToday:151 · doScroll:161 · _bindEvCal:297 (!93) · evLayoutWeekTitles:390 · _bindEvWeekTitleBackground:412 · update:418 · schedule:419 · evFilterCategories:424 · evFilterCategoryFor:433 · evListFilterLabel:434 · evListFilterMatches:442 · evToggleListFilter:448 · openEvTypeFilter:460 · isSelected:462 · option:463 · close:472 · paint:475 · _bindEvListas:479 (!122) · apply:589 · _bindEvGestos:601 · _evSwipeUpcoming:614 · _evSwipeBodas:621 · _evSwipeRutinas:628
+### js/events-bind.js  _(656 líneas)_
+**Estado global:** EV_RENDER_DAY:7
+
+**Funciones:** refreshCalendarDate:8 · initCalendarDateRefresh:14 · resume:16 · _switchEvView:28 · openEvents:46 · closeEvents:56 · openEventsAt:63 · refreshEvents:70 · bindEvYearHeader:91 · setYear:95 · bindEvEvents:108 · _bindEvNav:117 (!202) · _scrollWeekToMonth:126 · _scrollWeekToToday:173 · doScroll:183 · _bindEvCal:319 (!93) · evLayoutWeekTitles:412 · _bindEvWeekTitleBackground:434 · update:440 · schedule:441 · evFilterCategories:446 · evFilterCategoryFor:455 · evListFilterLabel:456 · evListFilterMatches:464 · evToggleListFilter:470 · openEvTypeFilter:482 · isSelected:484 · option:485 · close:494 · paint:497 · _bindEvListas:501 (!122) · apply:611 · _bindEvGestos:623 · _evSwipeUpcoming:636 · _evSwipeBodas:643 · _evSwipeRutinas:650
 
 ### js/events-cal.js  _(374 líneas)_
 **Estado global:** DN7:25
@@ -305,10 +307,10 @@
 ### js/import-preview.js  _(19 líneas)_
 **Funciones:** renderImportPreview:2 · add:4
 
-### js/init.js  _(453 líneas)_
-**Estado global:** DRUM_ITEM_H:133 · DN_ES:288
+### js/init.js  _(454 líneas)_
+**Estado global:** DRUM_ITEM_H:134 · DN_ES:289
 
-**Funciones:** _updateHeaderActive:31 · buildDrumPicker:134 · updateDrumSelected:166 · getDrumValue:171 · checkDrumMinuteWrap:177 · buildAlarmDayBtns:207 · showAlarmPastConfirm:233 · createHeaderAlarm:254 · proceed:274 · aplicarActualizacion:377 · reload:383 · _showUpdateBar:405 · _buscar:440
+**Funciones:** _updateHeaderActive:32 · buildDrumPicker:135 · updateDrumSelected:167 · getDrumValue:172 · checkDrumMinuteWrap:178 · buildAlarmDayBtns:208 · showAlarmPastConfirm:234 · createHeaderAlarm:255 · proceed:275 · aplicarActualizacion:378 · reload:384 · _showUpdateBar:406 · _buscar:441
 
 ### js/invoices-export.js  _(36 líneas)_
 **Funciones:** invoiceXml:2 · invoiceZip:3 · header:5 · invoiceWorkbook:14 · textCell:15 · numCell:16 · sheet:26
@@ -355,18 +357,18 @@
 ### js/rutinas-bulk.js  _(61 líneas)_
 **Funciones:** rutBulkChange:3 · rutOffsetDate:11 · rutPauseAfter:12 · rutHistorySelectionHtml:19 · bindRutHistorySelection:25 · openRutBulkConfirm:37 · close:49
 
-### js/rutinas-flex.js  _(145 líneas)_
+### js/rutinas-flex.js  _(154 líneas)_
 **Estado global:** RUT_PLAN:2
 
-**Funciones:** rutFlexible:3 · rutFlexEarliest:4 · rutFlexTarget:5 · rutFlexRange:9 · rutFlexCount:15 · rutFlexStatus:18 · rutFlexWarnings:25 · rutFlexSummary:31 · rutFlexOptionsHtml:36 · bindRutFlexOptions:51 · paint:53 · rutFlexRead:71 · rutFlexSetSession:90 · renderRutPlan:108 · openRutPlan:131 · closeRutPlan:132 · refreshRutPlan:133 · mutate:140
+**Funciones:** rutFlexible:3 · rutFlexEarliest:4 · rutFlexTarget:5 · rutFlexRange:9 · rutFlexCount:15 · rutFlexStatus:18 · rutFlexWarnings:25 · rutFlexSummary:31 · rutFlexOptionsHtml:36 · bindRutFlexOptions:51 · paint:53 · rutFlexRead:71 · rutFlexSetSession:90 · rutFlexPlanSessions:109 · renderRutPlan:115 · openRutPlan:137 · closeRutPlan:138 · refreshRutPlan:139 · read:143 · edit:144
 
 ### js/rutinas-form.js  _(239 líneas)_
 **Funciones:** rutSetupLocked:3 · rutFormCandidate:11 · rutReadForm:41 · renderRutForm:75 · openRutForm:142 (!96) · _rutRepaintIcons:149 · _rutPintaHoras:174 · closeRutForm:238
 
-### js/rutinas-history.js  _(178 líneas)_
+### js/rutinas-history.js  _(192 líneas)_
 **Estado global:** RUT_HISTORY:2
 
-**Funciones:** rutNewSchedule:3 · rutScheduleSignature:12 · rutHistoryPeriods:15 · rutHistorySessions:27 · rutHistoryLabel:36 · rutHistoryMonthGroups:41 · renderRutHistorySession:47 · renderRutHistory:59 · rutHistoryScrollToday:82 · openRutHistory:87 · closeRutHistory:113 · rutSessionOriginal:114 · rutSessionMoved:123 · rutEditSession:127 · openRutHistoryEdit:147 · close:160
+**Funciones:** rutNewSchedule:3 · rutScheduleSignature:12 · rutHistoryPeriods:15 · rutHistorySessions:27 · rutHistoryLabel:36 · rutHistoryMonthGroups:41 · renderRutHistorySession:47 · renderRutHistory:59 · rutHistoryScrollToday:82 · openRutHistory:87 · closeRutHistory:113 · rutSessionOriginal:114 · rutSessionMoved:123 · rutEditSession:127 · rutRescheduleSession:147 · openRutHistoryEdit:159 · close:173
 
 ### js/rutinas-icons.js  _(95 líneas)_
 **Estado global:** RUT_ICONS:7 · RUT_APPEARANCE_KEY:8 · RUT_GYM_COLOR:9 · RUT_FIXED_COLOR:10 · RUT_ICON_LABEL:13
@@ -732,16 +734,16 @@
 **Rangos por prefijo de clase:**
 .boda-actions:192-192 · .boda-add:194-194 · .boda-asg:217-239 · .boda-buscar:314-316 · .boda-cal:241-266 · .boda-card:100-322 · .boda-chip:96-98 · .boda-chips:95-95 · .boda-cl:154-191 · .boda-class:78-153 · .boda-controls:56-56 · .boda-couple:136-138 · .boda-cpk:208-216 · .boda-date:193-193 · .boda-day:72-116 · .boda-det:199-312 · .boda-dia:143-145 · .boda-dot:104-104 · .boda-falta:111-111 · .boda-filters:59-59 · .boda-fsel:60-63 · .boda-ftoggles:64-65 · .boda-hd:187-189 · .boda-inp:131-131 · .boda-iss:28-30 · .boda-issue:15-26 · .boda-issues:14-14 · .boda-legend:195-198 · .boda-mini:181-182 · .boda-mode:46-48 · .boda-multi:146-151 · .boda-name:105-105 · .boda-ok:112-112 · .boda-place:139-164 · .boda-prog:107-108 · .boda-ro:155-163 · .boda-save:92-93 · .boda-savebar:88-91 · .boda-search:317-317 · .boda-sec:12-12 · .boda-sobra:113-113 · .boda-sort:318-318 · .boda-stat:33-38 · .boda-stats:32-32 · .boda-sticky:8-10 · .boda-sum:52-55 · .boda-summary:51-51 · .boda-swap:121-128 · .boda-time:132-132 · .boda-tp:270-273 · .boda-wed:106-106 · .ev-alarm:170-176 · .ev-bficha:296-296 · .ev-bfila:297-306 · .ev-bpunto:304-304 · .ev-bver:309-309 · .ev-car:292-293 · .ev-detail:290-290 · .ev-upcoming:166-168 · .ev-wk:178-180 · .hbar-lbl:42-42 · .hbar-row:41-41 · .hbar-rows:40-40 · .hbar-track:43-44 · .hbar-val:45-45 · .rut-wpick:283-288 · .sy-body:5-11
 
-### css/source/routines.css  _(98 líneas)_
+### css/source/routines.css  _(109 líneas)_
 
 **Secciones:**
 
 - Horario distinto segun el dia:1
 - Selector de icono de rutina:6
-- Editor semanal: controles comunes, opciones legibles y marco estable.:62
+- Editor semanal: controles comunes, opciones legibles y marco estable.:73
 
 **Rangos por prefijo de clase:**
-.ev-shape:19-19 · .rut-add:45-45 · .rut-card:35-43 · .rut-day:51-52 · .rut-days:50-50 · .rut-dot:38-38 · .rut-first:16-16 · .rut-flex:13-21 · .rut-hist:57-60 · .rut-hpd:2-5 · .rut-icon:7-11 · .rut-name:39-39 · .rut-pct:44-44 · .rut-plan:22-34 · .rut-sec:12-12 · .rut-stat:54-56 · .rut-sug:46-49 · .rut-susp:53-53 · .rut-tag:40-41 · .rut-vacio:42-42 · .rut-week:64-95
+.ev-shape:19-19 · .rut-add:56-56 · .rut-card:46-54 · .rut-day:62-63 · .rut-days:61-61 · .rut-dot:49-49 · .rut-first:16-16 · .rut-flex:13-21 · .rut-hist:68-71 · .rut-hpd:2-5 · .rut-icon:7-11 · .rut-name:50-50 · .rut-pct:55-55 · .rut-plan:22-45 · .rut-sec:12-12 · .rut-session:42-42 · .rut-stat:65-67 · .rut-sug:57-60 · .rut-susp:64-64 · .rut-tag:51-52 · .rut-vacio:53-53 · .rut-week:75-106
 
 ### css/source/shared-refinements.css  _(1053 líneas)_
 
