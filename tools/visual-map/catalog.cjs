@@ -7,7 +7,7 @@ const scenes=[
   {id:'home',title:'Inicio',group:'Inicio',route:home,ready:'#homeBtn',sources:['js/core.js','js/init.js'],layout:[850,65]},
   {id:'household',title:'Gastos del hogar',group:'Hogar',route:['#householdBtn'],ready:'#householdOverlay.open',sources:['js/household.js','js/household-summary.js','js/economics-fiscal-hip.js','css/household.css'],layout:[40,705]},
   {id:'study',title:'Herramientas de comparación',group:'Herramientas',route:['#estudioBtn'],ready:'#estudioOverlay.open',sources:['js/economics-estudio.js','js/economics-comp.js','js/economics-sim.js'],layout:[365,705]},
-  {id:'events',title:'Eventos · Próximos',group:'Eventos',route:events,ready:'#eventsOverlay.open',sources:['js/events-render.js','js/events-bind.js','js/events.js'],layout:[690,705]},
+  {id:'events',title:'Eventos · Próximos',group:'Eventos',route:events,ready:'#eventsOverlay.open',sources:['js/events-render.js','js/events-bind.js','js/events.js','js/events-alarm-policy.js'],layout:[690,705]},
   {id:'economics',title:'Resumen económico',group:'Economía',route:['#econBtn'],ready:'#econOverlay.open',sources:['js/economics.js','js/economics-fiscal-datos.js'],layout:[1015,705]},
   {id:'alarm',title:'Crear alarma',group:'Ajustes',route:['#alarmTestBtn'],ready:'#alarmPanel.open',sources:['js/alarm-panel.js','js/init.js'],layout:[1340,705]},
   {id:'settings',title:'Más opciones',group:'Ajustes',route:['#menuBtn'],ready:'#dataMenu.open',sources:['js/settings-menu.js'],layout:[1665,705]},

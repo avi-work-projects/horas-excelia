@@ -37,6 +37,8 @@ module.exports=function extend({scenes,edges}){
   add('event-order','Orden de Próximos','Eventos','events','#evUpcomingOrder','#evPlanOrderOv.open',{sources:['js/events-order.js']});
   add('event-new','Nuevo evento','Eventos','events','#evAdd','#evFTitle',{scroll:true,sources:['js/events-form.js','js/events-form-controls.js','js/events-form-schedule.js'],region:'.ev-event-form-body'});
   add('event-delete','Eliminar evento','Eventos','all-events',{hold:'.ev-list-item[data-id="map-demo"]'},'#evDelOv.open',{sources:['js/events-detail.js'],label:'Pulsación larga del evento'});
+  add('large-detail','Ficha de evento grande','Eventos','calendar',{click:'.ev-multi-bar[data-id="map-trip"]',position:{x:8,y:8}},'#evDetailOv.open',{sources:['js/events-detail.js','js/events-alarm-policy.js']});
+  add('started-detail','Evento ya iniciado','Eventos','calendar','.ev-cell[data-ds="2026-08-21"] [data-id="map-started"]','#evDetailOv.open',{sources:['js/events-detail.js','js/events-alarm-policy.js']});
   add('event-alarm','Alarma de evento','Eventos','day','#evDAlarm','#evAlarmOv.open',{sources:['js/events-detail.js']});
   add('routine-session','Ficha de sesión','Rutinas','calendar','.ev-cell[data-ds="2026-08-21"] [data-id="rut-fx-rut-gym-2026-08-21"]','#evDetailOv.open',{sources:['js/events-detail.js','js/rutinas.js']});
   add('plan-picker','Selector de planes','Eventos','edit','.ev-plan-more[data-picker="plans"]','#evPlanPickerOv.open',{scroll:true,sources:['js/events-plan-picker.js'],region:'.ev-event-form-body'});
@@ -81,6 +83,10 @@ module.exports=function extend({scenes,edges}){
   add('routine-bulk-confirm','Confirmación de acciones múltiples','Rutinas','routine-bulk-selected','[data-rut-bulk-action="delete"]','#rutBulkOv.open');
   add('routine-addition','Clase extra o recuperación','Rutinas','routine-history','#rutHistoryAdd','[data-addition-mode="recover"]',{sources:['js/rutinas-addition.js']});
   add('routine-recoveries','Lista de recuperaciones','Rutinas','routine-addition','[data-addition-mode="recover"]','#rutRecoveryExcludePast',{sources:['js/rutinas-recovery.js']});
+  add('routine-earlier-picker','Recuperar una clase antes de la original','Rutinas','routine-recoveries','[data-recover-origin]','#rutRecoveryConfirm',{sources:['js/rutinas-recovery.js','js/rutinas-sessions.js']});
+  add('routine-earlier-selected','Recuperación elegida el día anterior','Rutinas','routine-earlier-picker','.rut-dpick-real .ev-cell[data-ds="2026-08-04"]','#rutRecoveryConfirm:not([disabled])');
+  add('routine-earlier-form','Confirmar recuperación anterior','Rutinas','routine-earlier-selected','#rutRecoveryConfirm','#rutExtraSave',{sources:['js/rutinas-addition.js','js/rutinas-sessions.js']});
+  add('routine-earlier-saved','Recuperación anterior guardada','Rutinas','routine-earlier-form','#rutExtraSave','#rutHistoryOv.open',{sources:['js/rutinas-history.js','js/rutinas-sessions.js']});
   add('routine-extra','Elegir día de recuperación','Rutinas','routines','[data-rextra="fx-rut-gym"]','#rutAdditionOv.open',{sources:['js/rutinas-recovery.js']});
   add('routine-extra-selected','Día elegido para la clase extra','Rutinas','routine-extra','.rut-dpick-real .ev-cell[data-ds="2026-08-24"]','#rutRecoveryConfirm:not([disabled])');
   add('routine-extra-day','Añadir clase extra','Rutinas','routine-extra-selected','#rutRecoveryConfirm','#rutExtraSave',{sources:['js/rutinas-addition.js']});

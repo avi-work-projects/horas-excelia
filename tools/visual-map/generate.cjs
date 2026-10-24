@@ -39,17 +39,26 @@ function inventory(captures){
 function assemble(captures){
   return {schemaVersion:1,title:'Gestify · mapa visual',generatedAt:new Date().toISOString(),referenceCommit:sha(),date:DATE,viewport:VIEWPORT,theme:'light',icons:'professional',scope:'Atlas de las secciones de la app y sus paneles secundarios, con capturas reales y recorridos comprobados. Estados condicionales y selectores nativos se identifican en el inventario.',scenes:scenes.map(s=>({...s,...captures[s.id],fresh:!!captures[s.id]&&!captures[s.id].dependencies.some(d=>!fs.existsSync(path.join(ROOT,d.file))||hash(d.file)!==d.hash),route:s.route})),edges,inventory:inventory(captures),openers:census()};
 }
+function writeAtomically(file,content){
+  const temporary=file+'.tmp';fs.writeFileSync(temporary,content);
+  for(let attempt=0;;attempt++){
+    try{fs.renameSync(temporary,file);return;}catch(error){
+      if(attempt>=8)throw error;
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,25*(attempt+1));
+    }
+  }
+}
 function writeData(captures){
   const data=assemble(captures);fs.mkdirSync(OUT,{recursive:true});
-  fs.writeFileSync(path.join(OUT,'map-data.json'),JSON.stringify(data,null,2)+'\n');
-  fs.writeFileSync(path.join(OUT,'map-data.js'),'window.VISUAL_MAP = '+JSON.stringify(data).replace(/</g,'\\u003c')+';\n');
+  writeAtomically(path.join(OUT,'map-data.json'),JSON.stringify(data,null,2)+'\n');
+  writeAtomically(path.join(OUT,'map-data.js'),'window.VISUAL_MAP = '+JSON.stringify(data).replace(/</g,'\\u003c')+';\n');
 }
 function currentCaptures(){try{return Object.fromEntries(JSON.parse(fs.readFileSync(path.join(OUT,'map-data.json'),'utf8')).scenes.filter(s=>s.image).map(s=>[s.id,({image:s.image,anchors:s.anchors,entryBox:s.entryBox,dependencies:s.dependencies,commit:s.commit,review:s.review,verifiedEdges:s.verifiedEdges})]));}catch{return {};}}
 function stale(captures){return scenes.filter(s=>!captures[s.id]||captures[s.id].dependencies.some(d=>!fs.existsSync(path.join(ROOT,d.file))||hash(d.file)!==d.hash)).map(s=>s.id);}
 async function perform(page,action){
   if(typeof action==='string')await page.locator(action).first().click();
   else if(action.hold)await page.locator(action.hold).first().click({delay:750});
-  else if(action.click)await page.locator(action.click).first().click();
+  else if(action.click)await page.locator(action.click).first().click(action.position?{position:action.position}:{});
   else if(action.fill)await page.locator(action.fill).first().fill(action.value);
   else if(action.file)await page.locator(action.file).setInputFiles({name:action.name,mimeType:action.mimeType||'application/json',buffer:Buffer.from(JSON.stringify(action.data))});
   else await page.locator(action.scroll).first().scrollIntoViewIfNeeded();
@@ -97,6 +106,7 @@ async function main(){
           let b=await page.locator(edge.selector).first().boundingBox();
           if(b&&edge.action==='scroll'){const right=Math.min(VIEWPORT.width,b.x+b.width),bottom=Math.min(VIEWPORT.height,b.y+b.height);b={x:Math.max(0,b.x),y:Math.max(0,b.y),width:right-Math.max(0,b.x),height:bottom-Math.max(0,b.y)};}
           if(!b||b.x<0||b.y<0||b.x+b.width>VIEWPORT.width+1||b.y+b.height>VIEWPORT.height+1)throw new Error('Origen fuera de captura: '+scene.id+' → '+edge.to);
+          if(edge.step&&edge.step.position)b={x:b.x+edge.step.position.x-3,y:b.y+edge.step.position.y-3,width:6,height:6};
           anchors[edge.to]=edge.action==='scroll'?{x:b.x+b.width-10,y:b.y+b.height*.55,width:8,height:Math.min(100,b.height*.25)}:{x:b.x,y:b.y,width:b.width,height:b.height};
         }
         const image='captures/'+scene.id+'.png';await page.screenshot({path:path.join(OUT,image),animations:'disabled'});
@@ -117,6 +127,7 @@ async function main(){
         if(errors.length)throw new Error(errors.join('\n'));
         const entryBox=scene.entry?await page.locator(scene.entry).first().boundingBox():null;
         captures[scene.id]={image,anchors,entryBox,dependencies:dependencies(scene),commit:sha(),review:'Sin revisar',verifiedEdges};
+        if(Object.keys(captures).length&&selected.indexOf(scene)%10===0)writeData(captures);
         console.log('Capturada: '+scene.id);
       }catch(error){failures.push(scene.id+': '+error.message);console.error('FALLO '+scene.id+': '+error.message.split('\n')[0]);}finally{await context.close();}
     }}));

@@ -504,7 +504,7 @@ function _evAssignRow(it,rowOcc){
    dia se comparte, se comparte se pinte donde se pinte. */
 function _evMarcarMitades(lista){
   lista.forEach(function(a){
-    a.halfL=false;a.halfR=false;
+    a.halfL=!!(a.starts&&evMinutosDe(evStartTime(a.ev))>=13*60);a.halfR=false;
     if(a.row<0)return;
     lista.forEach(function(b){
       if(a===b||b.row<0)return;
@@ -630,11 +630,14 @@ function _evSteppedBar(it,segments,annual,showTitle,week,today){
   if(titleGroup<0)titleGroup=0;
   return groups.map(function(g,gi){
     var first=g[0],last=g[g.length-1],days=last.ce-first.cs+1;
+    var leftInset=it.halfL&&first.cs===it.cs?.5:0,rightInset=it.halfR&&last.ce===it.ce?.5:0;
+    var visibleDays=days-leftInset-rightInset;
+    function position(column){return Math.max(0,Math.min(1000,1000*(column-first.cs-leftInset)/visibleDays));}
     var dc=getEvDisplayColor(it.ev);
     var stroke=_evBarMutedColor(dc,first.dentro),fill=_evBarMutedColor(fakeTrans(dc,.65),first.dentro);
     var pts=g.map(function(tr){
       var extent=_evBarExtent(it.ev,tr,annual);
-      return {x:1000*(tr.cs-first.cs)/days,end:1000*(tr.ce+1-first.cs)/days,
+      return {x:position(tr.cs),end:position(tr.ce+1),
         top:10*extent.top,bottom:10*extent.bottom};
     });
     var vertices=[];
@@ -651,7 +654,7 @@ function _evSteppedBar(it,segments,annual,showTitle,week,today){
     if(commonBottom-commonTop>=70)label={x:0,end:1000,top:commonTop,bottom:commonBottom};
     var halo='<path d="'+path+'" fill="none" stroke="var(--bg)" stroke-width="4" vector-effect="non-scaling-stroke"/>';
     if(evBarSize(it.ev)==='lg')halo=g.filter(function(tr){return tr.overlap;}).map(function(tr){
-      var left=100*(tr.cs-first.cs)/days,right=100*(last.ce-tr.ce)/days;
+      var left=position(tr.cs)/10,right=100-position(tr.ce+1)/10;
       return '<g style="clip-path:inset(0 '+right+'% 0 '+left+'%)">'+halo+'</g>';
     }).join('');
     var past=_evBarPast({cs:first.cs,ce:last.ce,halfL:it.halfL&&first.cs===it.cs,halfR:it.halfR&&last.ce===it.ce},week,today,first.dentro);

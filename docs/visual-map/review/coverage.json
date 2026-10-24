@@ -1,7 +1,7 @@
 {
   "reviewedAt": "2026-10-25",
   "referenceCommit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
-  "method": "Inspección visual de las 150 capturas a escala de 400 px, en láminas de cuatro imágenes; ampliación y reproducción de los casos destacados.",
+  "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados.",
   "screens": [
     {
       "id": "home",
@@ -21,7 +21,7 @@
     },
     {
       "id": "study",
-      "title": "Herramientas de comparación",
+      "title": "Herramientas de comparaciÃ³n",
       "group": "Herramientas",
       "image": "../captures/study.png",
       "sha256": "f555eccf201b24223ab7396d4e99cc68cbb6023d79383379cc0f2e3ca0e9a397",
@@ -29,7 +29,7 @@
     },
     {
       "id": "events",
-      "title": "Eventos · Próximos",
+      "title": "Eventos Â· PrÃ³ximos",
       "group": "Eventos",
       "image": "../captures/events.png",
       "sha256": "202ca28da5dd617d2ad608c365ccaf91950a57a831a989cd220ecea2186814df",
@@ -37,8 +37,8 @@
     },
     {
       "id": "economics",
-      "title": "Resumen económico",
-      "group": "Economía",
+      "title": "Resumen econÃ³mico",
+      "group": "EconomÃ­a",
       "image": "../captures/economics.png",
       "sha256": "6fdc8d5f264f947092b448f39eedd5a02387ce8745c7c4dcb5bfd78ccaeeb012",
       "status": "Revisada visualmente"
@@ -53,7 +53,7 @@
     },
     {
       "id": "settings",
-      "title": "Más opciones",
+      "title": "MÃ¡s opciones",
       "group": "Ajustes",
       "image": "../captures/settings.png",
       "sha256": "deeb715c88309b1ff84c681d200c93755d3d9c3ce5ab0dc731fb23d3b0a8cdd0",
@@ -61,7 +61,7 @@
     },
     {
       "id": "calendar",
-      "title": "Calendario · 1 mes",
+      "title": "Calendario Â· 1 mes",
       "group": "Eventos",
       "image": "../captures/calendar.png",
       "sha256": "ce36df7c59121efb15bfc5a6702a69eccb270e6d45d840c8c03d3ee87c73378c",
@@ -69,7 +69,7 @@
     },
     {
       "id": "day",
-      "title": "Ficha del día",
+      "title": "Ficha del dÃ­a",
       "group": "Eventos",
       "image": "../captures/day.png",
       "sha256": "036af1f816a22008ed60dc8a8207d466a94393c52b81b63b6bec22d53721d0a3",
@@ -77,7 +77,7 @@
     },
     {
       "id": "edit",
-      "title": "Editar evento · inicio",
+      "title": "Editar evento Â· inicio",
       "group": "Eventos",
       "image": "../captures/edit.png",
       "sha256": "e1063bfaffc44f663acc116e589d177cc5ff0cd116b14069ef48a9a0c90dc9be",
@@ -93,7 +93,7 @@
     },
     {
       "id": "edit-scroll",
-      "title": "Editar evento · categorías",
+      "title": "Editar evento Â· categorÃ­as",
       "group": "Eventos",
       "image": "../captures/edit-scroll.png",
       "sha256": "92bd7f4d24e32a7e8e6e78ac100d42f7bfb3901829056a2cc5a55526d3c4a55d",
@@ -101,7 +101,7 @@
     },
     {
       "id": "dates",
-      "title": "Selección Multidía",
+      "title": "SelecciÃ³n MultidÃ­a",
       "group": "Eventos",
       "image": "../captures/dates.png",
       "sha256": "17d4319256e6b1aaa10869b19951dc1464c76a11fe790344d3d57849c33859b1",
@@ -117,7 +117,7 @@
     },
     {
       "id": "workday",
-      "title": "Ficha de jornada de un día",
+      "title": "Ficha de jornada de un dÃ­a",
       "group": "Inicio",
       "image": "../captures/workday.png",
       "sha256": "ff1eedb7bd05929ae755ccb1e63d42d9510c5a43d694eb1dfe28e364af728f8c",
@@ -149,7 +149,7 @@
     },
     {
       "id": "invoice-config",
-      "title": "Configuración de facturas",
+      "title": "ConfiguraciÃ³n de facturas",
       "group": "Inicio",
       "image": "../captures/invoice-config.png",
       "sha256": "657ccb560c506d2987827c70777ed7d520473e56c828ac86319a0d512b9aad6d",
@@ -157,7 +157,7 @@
     },
     {
       "id": "invoice-config-edit",
-      "title": "Editar datos de facturación",
+      "title": "Editar datos de facturaciÃ³n",
       "group": "Inicio",
       "image": "../captures/invoice-config-edit.png",
       "sha256": "1dd58c83fd0b5894a62f5bec515f9bd3168e247c442ff509516a5f91ddcfd9ce",
@@ -165,7 +165,7 @@
     },
     {
       "id": "home-september",
-      "title": "Inicio · septiembre",
+      "title": "Inicio Â· septiembre",
       "group": "Inicio",
       "image": "../captures/home-september.png",
       "sha256": "93bb54a1f5e1bb88b7278b8452803d38af8668a5884694d933f661a134fabb3a",
@@ -173,7 +173,7 @@
     },
     {
       "id": "home-october",
-      "title": "Inicio · octubre",
+      "title": "Inicio Â· octubre",
       "group": "Inicio",
       "image": "../captures/home-october.png",
       "sha256": "bdc738d2040da1c32d05ce9b091eb1f09d1871bcfc9b342c24d6c66b51c4c7e0",
@@ -189,7 +189,7 @@
     },
     {
       "id": "invoice-current--scroll-invoice-document",
-      "title": "Preparar factura del mes · más abajo",
+      "title": "Preparar factura del mes Â· mÃ¡s abajo",
       "group": "Inicio",
       "image": "../captures/invoice-current--scroll-invoice-document.png",
       "sha256": "6aece1b729acd2c31d4cc1ade2065dd519d4f37dfb3a35628f1c2222a9124b8a",
@@ -253,7 +253,7 @@
     },
     {
       "id": "event-stats",
-      "title": "Estadísticas",
+      "title": "EstadÃ­sticas",
       "group": "Eventos",
       "image": "../captures/event-stats.png",
       "sha256": "bc38bbd1e639c2d187a263bb1fa0d9a25e04ec37fd3402e33aae8d0f7ecb2f61",
@@ -261,7 +261,7 @@
     },
     {
       "id": "event-birthdays",
-      "title": "Cumpleaños en Próximos",
+      "title": "CumpleaÃ±os en PrÃ³ximos",
       "group": "Eventos",
       "image": "../captures/event-birthdays.png",
       "sha256": "46c5fb6a35f4d395005cc551955988a3a7d058114b5eea433007bdbe7ebd85db",
@@ -277,7 +277,7 @@
     },
     {
       "id": "event-order",
-      "title": "Orden de Próximos",
+      "title": "Orden de PrÃ³ximos",
       "group": "Eventos",
       "image": "../captures/event-order.png",
       "sha256": "b99c0d32d625676290f04c98ee179c2a3555c72d228f1e4314b04c6ef7914263",
@@ -285,7 +285,7 @@
     },
     {
       "id": "events--scroll-event-new",
-      "title": "Eventos · Próximos · más abajo",
+      "title": "Eventos Â· PrÃ³ximos Â· mÃ¡s abajo",
       "group": "Eventos",
       "image": "../captures/events--scroll-event-new.png",
       "sha256": "0ec463e5dd8a0eceeece5d798f2b91819642d6b6e9592351a37873ebe9e21d92",
@@ -317,7 +317,7 @@
     },
     {
       "id": "routine-session",
-      "title": "Ficha de sesión",
+      "title": "Ficha de sesiÃ³n",
       "group": "Rutinas",
       "image": "../captures/routine-session.png",
       "sha256": "58a9838797d75915ee97b9dac9ef0e8cfe9a37eae6f987b2c14aba5d4f7629dd",
@@ -325,7 +325,7 @@
     },
     {
       "id": "edit--scroll-plan-picker",
-      "title": "Editar evento · inicio · más abajo",
+      "title": "Editar evento Â· inicio Â· mÃ¡s abajo",
       "group": "Eventos",
       "image": "../captures/edit--scroll-plan-picker.png",
       "sha256": "215aabf0dd311792dd9a8b36afa158f0fcf3877433ac558f4585e4db193b6ca8",
@@ -373,7 +373,7 @@
     },
     {
       "id": "wedding-stats",
-      "title": "Estadísticas de bodas",
+      "title": "EstadÃ­sticas de bodas",
       "group": "Bodas",
       "image": "../captures/wedding-stats.png",
       "sha256": "15592187da57cc5dd77b77ca1a968fdd046437f34fa009b8f3417d5f181d6b59",
@@ -381,7 +381,7 @@
     },
     {
       "id": "wedding-config",
-      "title": "Configuración de bodas",
+      "title": "ConfiguraciÃ³n de bodas",
       "group": "Bodas",
       "image": "../captures/wedding-config.png",
       "sha256": "3816a030978bd4fb45686ae58c31ef701da2bc5e7dd5ca4c65ead7dcfb8a3d73",
@@ -389,7 +389,7 @@
     },
     {
       "id": "wedding-edit",
-      "title": "Edición de clases",
+      "title": "EdiciÃ³n de clases",
       "group": "Bodas",
       "image": "../captures/wedding-edit.png",
       "sha256": "07aaeec7b2320a99de7507db557faa2e2f7676e91b3781ac2913aeb407e8cc12",
@@ -429,7 +429,7 @@
     },
     {
       "id": "wedding-duration",
-      "title": "Elegir duración",
+      "title": "Elegir duraciÃ³n",
       "group": "Bodas",
       "image": "../captures/wedding-duration.png",
       "sha256": "11a81921313c5c972bd3c91039fc1b26325db5a64b4cf7c5ad28c9b6854011a0",
@@ -461,7 +461,7 @@
     },
     {
       "id": "wedding-new",
-      "title": "Añadir clase",
+      "title": "AÃ±adir clase",
       "group": "Bodas",
       "image": "../captures/wedding-new.png",
       "sha256": "aeb732e9ad2856e7055d41338b4624ee8163b24a9d644762ebf08f00455b8975",
@@ -469,7 +469,7 @@
     },
     {
       "id": "couple-new",
-      "title": "Añadir pareja",
+      "title": "AÃ±adir pareja",
       "group": "Bodas",
       "image": "../captures/couple-new.png",
       "sha256": "c7def5a31286a4d4ab746b6eaebf65c78fcb8f2a4a2b1a1dc33dab3f335b63d3",
@@ -493,7 +493,7 @@
     },
     {
       "id": "wedding-config--scroll-wedding-pack",
-      "title": "Configuración de bodas · más abajo",
+      "title": "ConfiguraciÃ³n de bodas Â· mÃ¡s abajo",
       "group": "Bodas",
       "image": "../captures/wedding-config--scroll-wedding-pack.png",
       "sha256": "3816a030978bd4fb45686ae58c31ef701da2bc5e7dd5ca4c65ead7dcfb8a3d73",
@@ -501,7 +501,7 @@
     },
     {
       "id": "wedding-pack",
-      "title": "Catálogo de packs",
+      "title": "CatÃ¡logo de packs",
       "group": "Bodas",
       "image": "../captures/wedding-pack.png",
       "sha256": "e3bd626707e231be2abe80296c5fec9114aa4592512f50f16a356959240a0bc9",
@@ -509,7 +509,7 @@
     },
     {
       "id": "wedding-config--scroll-wedding-length",
-      "title": "Configuración de bodas · más abajo",
+      "title": "ConfiguraciÃ³n de bodas Â· mÃ¡s abajo",
       "group": "Bodas",
       "image": "../captures/wedding-config--scroll-wedding-length.png",
       "sha256": "74d15e192907bb9366cef1159d13b98995b2befdd304a765163ce34b97780c5b",
@@ -517,7 +517,7 @@
     },
     {
       "id": "wedding-length",
-      "title": "Catálogo de duraciones",
+      "title": "CatÃ¡logo de duraciones",
       "group": "Bodas",
       "image": "../captures/wedding-length.png",
       "sha256": "fb755b1d82f049bbbd31fd1bbf0853bf98444d0d3e5806c98332f765c9dae6c8",
@@ -525,7 +525,7 @@
     },
     {
       "id": "wedding-config--scroll-wedding-room",
-      "title": "Configuración de bodas · más abajo",
+      "title": "ConfiguraciÃ³n de bodas Â· mÃ¡s abajo",
       "group": "Bodas",
       "image": "../captures/wedding-config--scroll-wedding-room.png",
       "sha256": "1e618894a0a7e39d449318a69a6106614370518f9f254255d71e451100864343",
@@ -533,7 +533,7 @@
     },
     {
       "id": "wedding-room",
-      "title": "Catálogo de salas",
+      "title": "CatÃ¡logo de salas",
       "group": "Bodas",
       "image": "../captures/wedding-room.png",
       "sha256": "4b29fc85b499f80d360e68dba50b6f8c16984d01bcda14a535e26e1aad7dcecd",
@@ -541,24 +541,24 @@
     },
     {
       "id": "birthdays",
-      "title": "Próximos cumpleaños",
-      "group": "Cumpleaños",
+      "title": "PrÃ³ximos cumpleaÃ±os",
+      "group": "CumpleaÃ±os",
       "image": "../captures/birthdays.png",
       "sha256": "b183ebaef013388fb1de6347cbb36458eaa3a5376da3379e6fedd2399a255ecd",
       "status": "Revisada visualmente"
     },
     {
       "id": "birthday-list",
-      "title": "Lista de cumpleaños",
-      "group": "Cumpleaños",
+      "title": "Lista de cumpleaÃ±os",
+      "group": "CumpleaÃ±os",
       "image": "../captures/birthday-list.png",
       "sha256": "2d2842cd81f8191966f257fb28034698e422727fd9fcf74b1d00770b7e0d9f9a",
       "status": "Revisada visualmente"
     },
     {
       "id": "birthday-calendar",
-      "title": "Calendario de cumpleaños",
-      "group": "Cumpleaños",
+      "title": "Calendario de cumpleaÃ±os",
+      "group": "CumpleaÃ±os",
       "image": "../captures/birthday-calendar.png",
       "sha256": "4c69f1d7e6dc9bb8ebbc641cddde9d0057976a22f970bc5ab37bc39f3b1b11ea",
       "status": "Revisada visualmente"
@@ -566,23 +566,23 @@
     {
       "id": "birthday-person",
       "title": "Ficha de persona",
-      "group": "Cumpleaños",
+      "group": "CumpleaÃ±os",
       "image": "../captures/birthday-person.png",
       "sha256": "d746ffebd6c7480fa059c18ca44cf6794577dff70066293dbdb05ee39150fddf",
       "status": "Revisada visualmente"
     },
     {
       "id": "birthday-form",
-      "title": "Añadir o editar persona",
-      "group": "Cumpleaños",
+      "title": "AÃ±adir o editar persona",
+      "group": "CumpleaÃ±os",
       "image": "../captures/birthday-form.png",
       "sha256": "83842f041a148c00f7bcf5527f18799889970d8468a92ab478e99cdf2c0e3699",
       "status": "Revisada visualmente"
     },
     {
       "id": "birthday-alarm",
-      "title": "Alarma de cumpleaños",
-      "group": "Cumpleaños",
+      "title": "Alarma de cumpleaÃ±os",
+      "group": "CumpleaÃ±os",
       "image": "../captures/birthday-alarm.png",
       "sha256": "cacae4a66853d7c57ef4d5faec03fe6a4cc5cecc64178a83f453eb87e83b854f",
       "status": "Revisada visualmente"
@@ -590,15 +590,15 @@
     {
       "id": "birthday-groups",
       "title": "Selector de grupos",
-      "group": "Cumpleaños",
+      "group": "CumpleaÃ±os",
       "image": "../captures/birthday-groups.png",
       "sha256": "39f0a796463206c88fc8a54e555e642773cbdb0a9a98268a17900cbff7ff6895",
       "status": "Revisada visualmente"
     },
     {
       "id": "birthday-day",
-      "title": "Selector de día",
-      "group": "Cumpleaños",
+      "title": "Selector de dÃ­a",
+      "group": "CumpleaÃ±os",
       "image": "../captures/birthday-day.png",
       "sha256": "30ab90ea5d0ef3abde22735efd94793c2f12a3459febfe57f4e35b57898ab3f8",
       "status": "Revisada visualmente"
@@ -606,15 +606,15 @@
     {
       "id": "birthday-month",
       "title": "Selector de mes",
-      "group": "Cumpleaños",
+      "group": "CumpleaÃ±os",
       "image": "../captures/birthday-month.png",
       "sha256": "09b155bb0ff44ccbb941b8dc998f5ba8e7f96f7908ed0a49a73a359a65a4a603",
       "status": "Revisada visualmente"
     },
     {
       "id": "birthday-group-edit",
-      "title": "Edición de grupos",
-      "group": "Cumpleaños",
+      "title": "EdiciÃ³n de grupos",
+      "group": "CumpleaÃ±os",
       "image": "../captures/birthday-group-edit.png",
       "sha256": "3ff4471d1085843623a0a4106f3c962b4ab4696a2c8df2b0760636b9870f2535",
       "status": "Revisada visualmente"
@@ -622,15 +622,15 @@
     {
       "id": "birthday-filters",
       "title": "Filtros de grupos",
-      "group": "Cumpleaños",
+      "group": "CumpleaÃ±os",
       "image": "../captures/birthday-filters.png",
       "sha256": "1e9612a7ff3be39755880ca8dfc170c2ee8eb6853a5c70c529a6280945c271bc",
       "status": "Revisada visualmente"
     },
     {
       "id": "birthday-vip",
-      "title": "Edición de VIPs",
-      "group": "Cumpleaños",
+      "title": "EdiciÃ³n de VIPs",
+      "group": "CumpleaÃ±os",
       "image": "../captures/birthday-vip.png",
       "sha256": "c7961fdeba30ec3dad68e41399a9189108c807fc10ef9cbee2575ca1f318fa7a",
       "status": "Revisada visualmente"
@@ -645,7 +645,7 @@
     },
     {
       "id": "routine-stats",
-      "title": "Estadísticas de rutinas",
+      "title": "EstadÃ­sticas de rutinas",
       "group": "Rutinas",
       "image": "../captures/routine-stats.png",
       "sha256": "a190ac2c3965d3715ff9476d006cbbddd98a1436ea21eb4146b70bce40704b3a",
@@ -653,7 +653,7 @@
     },
     {
       "id": "routine-form",
-      "title": "Añadir o editar rutina",
+      "title": "AÃ±adir o editar rutina",
       "group": "Rutinas",
       "image": "../captures/routine-form.png",
       "sha256": "d9e1d89862c55a6b47aaab7ffbd2504e77e1c4b9af0c2cb67e2a6b94e5e7da76",
@@ -661,7 +661,7 @@
     },
     {
       "id": "routine-week",
-      "title": "Selección de semana",
+      "title": "SelecciÃ³n de semana",
       "group": "Rutinas",
       "image": "../captures/routine-week.png",
       "sha256": "b2727d68eda3b662f46fb39a56ca1281f4c42e40e817c770cdad494d34270d90",
@@ -669,7 +669,7 @@
     },
     {
       "id": "routine-week-edit",
-      "title": "Edición de semana",
+      "title": "EdiciÃ³n de semana",
       "group": "Rutinas",
       "image": "../captures/routine-week-edit.png",
       "sha256": "c2b32ac615f88964858d62b8e6bd4ecd84ac94454103c4c5c5b08f861d896629",
@@ -677,7 +677,7 @@
     },
     {
       "id": "routine-history",
-      "title": "Histórico de sesiones",
+      "title": "HistÃ³rico de sesiones",
       "group": "Rutinas",
       "image": "../captures/routine-history.png",
       "sha256": "dde0c2b099c1ddc99503e792c037f9833966c9086471e92abc31bb881f5b78e0",
@@ -685,7 +685,7 @@
     },
     {
       "id": "routine-history-edit",
-      "title": "Editar sesión histórica",
+      "title": "Editar sesiÃ³n histÃ³rica",
       "group": "Rutinas",
       "image": "../captures/routine-history-edit.png",
       "sha256": "4978547f6101134cca47a83bf882bbaf7bc40ffd0d7b65b85201b6dac6ca8b50",
@@ -693,7 +693,7 @@
     },
     {
       "id": "routine-delete",
-      "title": "Eliminar sesión",
+      "title": "Eliminar sesiÃ³n",
       "group": "Rutinas",
       "image": "../captures/routine-delete.png",
       "sha256": "7cffd0bde326ade41edcf1221050e3d9c7c6603be9d5b7556102fd3d4db9d071",
@@ -709,7 +709,7 @@
     },
     {
       "id": "routine-bulk-selected",
-      "title": "Selección de sesiones",
+      "title": "SelecciÃ³n de sesiones",
       "group": "Rutinas",
       "image": "../captures/routine-bulk-selected.png",
       "sha256": "a9352c29983d74dd18b0eb043ef99e13247c3d8ad439d84be6d930a9432caa8e",
@@ -717,7 +717,7 @@
     },
     {
       "id": "routine-bulk-confirm",
-      "title": "Confirmación de acciones múltiples",
+      "title": "ConfirmaciÃ³n de acciones mÃºltiples",
       "group": "Rutinas",
       "image": "../captures/routine-bulk-confirm.png",
       "sha256": "c820ff6f331097577c86f6a498bac15cfb5ef28bb2c0a41029d35a2df2b6cd4c",
@@ -725,7 +725,7 @@
     },
     {
       "id": "routine-addition",
-      "title": "Clase extra o recuperación",
+      "title": "Clase extra o recuperaciÃ³n",
       "group": "Rutinas",
       "image": "../captures/routine-addition.png",
       "sha256": "638f20518a425f1cacfc754fe44f0abdeaa2b5ea722c8c4a3a76d29de8ce4de2",
@@ -741,7 +741,7 @@
     },
     {
       "id": "routine-extra",
-      "title": "Elegir día de recuperación",
+      "title": "Elegir dÃ­a de recuperaciÃ³n",
       "group": "Rutinas",
       "image": "../captures/routine-extra.png",
       "sha256": "0e8ce9ad023791881a35712e8c31ed243026c00928a5a7616f4f628861efc6ae",
@@ -749,7 +749,7 @@
     },
     {
       "id": "routine-extra-selected",
-      "title": "Día elegido para la clase extra",
+      "title": "DÃ­a elegido para la clase extra",
       "group": "Rutinas",
       "image": "../captures/routine-extra-selected.png",
       "sha256": "5e698ee4efc35f4d7ccef3c648e8467fe6d31644675a863edca33e92c346dd0d",
@@ -757,7 +757,7 @@
     },
     {
       "id": "routine-extra-day",
-      "title": "Añadir clase extra",
+      "title": "AÃ±adir clase extra",
       "group": "Rutinas",
       "image": "../captures/routine-extra-day.png",
       "sha256": "e3446aa556fa6b67e315804da4869b0bb8ef987f003aa0f425d7bd92cff11cc3",
@@ -765,7 +765,7 @@
     },
     {
       "id": "routines--scroll-routine-flex",
-      "title": "Lista de rutinas · más abajo",
+      "title": "Lista de rutinas Â· mÃ¡s abajo",
       "group": "Rutinas",
       "image": "../captures/routines--scroll-routine-flex.png",
       "sha256": "f07125fd8804b081da0d1a298f43598baf5ca3c90bab328bf78739425e55c103",
@@ -773,7 +773,7 @@
     },
     {
       "id": "routine-flex",
-      "title": "Planificación flexible",
+      "title": "PlanificaciÃ³n flexible",
       "group": "Rutinas",
       "image": "../captures/routine-flex.png",
       "sha256": "19907566fc8c53828feef0c042315f1ffd5be15acf6603f032b30b985ffb567f",
@@ -781,7 +781,7 @@
     },
     {
       "id": "routines--scroll-routine-new",
-      "title": "Lista de rutinas · más abajo",
+      "title": "Lista de rutinas Â· mÃ¡s abajo",
       "group": "Rutinas",
       "image": "../captures/routines--scroll-routine-new.png",
       "sha256": "f07125fd8804b081da0d1a298f43598baf5ca3c90bab328bf78739425e55c103",
@@ -829,7 +829,7 @@
     },
     {
       "id": "purchase-edit",
-      "title": "Edición compra",
+      "title": "EdiciÃ³n compra",
       "group": "Hogar",
       "image": "../captures/purchase-edit.png",
       "sha256": "42a656f817245e106f5e172a5c0aa255945c243193887e66f4cd97ae91f8404c",
@@ -837,7 +837,7 @@
     },
     {
       "id": "mortgage--scroll-loan-edit",
-      "title": "Detalle hipoteca · más abajo",
+      "title": "Detalle hipoteca Â· mÃ¡s abajo",
       "group": "Hogar",
       "image": "../captures/mortgage--scroll-loan-edit.png",
       "sha256": "0947c8a602f86aa0cc83c8130b431ec3ebe987dc8792953ca6aadff3ce1c16ce",
@@ -845,7 +845,7 @@
     },
     {
       "id": "loan-edit",
-      "title": "Edición préstamo",
+      "title": "EdiciÃ³n prÃ©stamo",
       "group": "Hogar",
       "image": "../captures/loan-edit.png",
       "sha256": "79175166face5c1944218a494fb1c986a599929d8bb316fe6dc76ff88331c55d",
@@ -853,7 +853,7 @@
     },
     {
       "id": "mortgage--scroll-switch-edit",
-      "title": "Detalle hipoteca · más abajo",
+      "title": "Detalle hipoteca Â· mÃ¡s abajo",
       "group": "Hogar",
       "image": "../captures/mortgage--scroll-switch-edit.png",
       "sha256": "c1dd3fb4f28a5300e57bf06e09ee4e2cc4c6195fc05601647c5666050baa01af",
@@ -861,7 +861,7 @@
     },
     {
       "id": "switch-edit",
-      "title": "Edición subrogación",
+      "title": "EdiciÃ³n subrogaciÃ³n",
       "group": "Hogar",
       "image": "../captures/switch-edit.png",
       "sha256": "81608ab0a07f031652b996c72e3e60b5ba4a328681fd07520823f70a7978b1a2",
@@ -869,7 +869,7 @@
     },
     {
       "id": "mortgage-analysis",
-      "title": "Análisis de hipoteca",
+      "title": "AnÃ¡lisis de hipoteca",
       "group": "Hogar",
       "image": "../captures/mortgage-analysis.png",
       "sha256": "985563d733b906062a7886ee15a4103dd9bafad8aac5872dea025374d5dc9abf",
@@ -885,7 +885,7 @@
     },
     {
       "id": "gas--scroll-gas-flat-edit",
-      "title": "Detalle gas · más abajo",
+      "title": "Detalle gas Â· mÃ¡s abajo",
       "group": "Hogar",
       "image": "../captures/gas--scroll-gas-flat-edit.png",
       "sha256": "538ab7ffdd8fb8592e97a16ac5657a2d6c22454ed4c8ba94b06d76e904d4adab",
@@ -910,7 +910,7 @@
     {
       "id": "energy-gas",
       "title": "Resumen de gas",
-      "group": "Energía · gas",
+      "group": "EnergÃ­a Â· gas",
       "image": "../captures/energy-gas.png",
       "sha256": "33f01b859c77ee443317e275adde4bf92195b8cd9b3008fac7a5541bf817318f",
       "status": "Revisada visualmente"
@@ -918,7 +918,7 @@
     {
       "id": "energy-gas-consumo",
       "title": "Consumo de gas",
-      "group": "Energía · gas",
+      "group": "EnergÃ­a Â· gas",
       "image": "../captures/energy-gas-consumo.png",
       "sha256": "b24dd5edf45c660a4cd245804acd12c9f0f0314391e06b3bb54f9888c3f8c99c",
       "status": "Revisada visualmente"
@@ -926,7 +926,7 @@
     {
       "id": "energy-gas-costes",
       "title": "Coste de gas",
-      "group": "Energía · gas",
+      "group": "EnergÃ­a Â· gas",
       "image": "../captures/energy-gas-costes.png",
       "sha256": "b8031947adc8c9c134224022ca2d2c55b5ccb0f27cc662bce735297911d82444",
       "status": "Revisada visualmente"
@@ -934,7 +934,7 @@
     {
       "id": "energy-gas-tarifas",
       "title": "Tarifas de gas",
-      "group": "Energía · gas",
+      "group": "EnergÃ­a Â· gas",
       "image": "../captures/energy-gas-tarifas.png",
       "sha256": "7342f78823bdf17e3819cd2d1fd777a2e4d06549af1a037eecec9432a8dcc9dc",
       "status": "Revisada visualmente"
@@ -942,7 +942,7 @@
     {
       "id": "energy-gas-comparar",
       "title": "Escenarios de gas",
-      "group": "Energía · gas",
+      "group": "EnergÃ­a Â· gas",
       "image": "../captures/energy-gas-comparar.png",
       "sha256": "cf0751c832a07a9bdebd9df7cdff5ec803327a67a09ab49a11704388c8ed379c",
       "status": "Revisada visualmente"
@@ -950,7 +950,7 @@
     {
       "id": "energy-luz",
       "title": "Resumen de electricidad",
-      "group": "Energía · electricidad",
+      "group": "EnergÃ­a Â· electricidad",
       "image": "../captures/energy-luz.png",
       "sha256": "9df62c4e0be54a1cd8781d3c1f3e57b6e04eeac940df9e5ef1f2152a6950f1b1",
       "status": "Revisada visualmente"
@@ -958,7 +958,7 @@
     {
       "id": "energy-luz-consumo",
       "title": "Consumo de electricidad",
-      "group": "Energía · electricidad",
+      "group": "EnergÃ­a Â· electricidad",
       "image": "../captures/energy-luz-consumo.png",
       "sha256": "026cf4c5920f3136cbd65a66b8fd29d5665b1bc8370c5f2bf32c0bdc963c15d2",
       "status": "Revisada visualmente"
@@ -966,7 +966,7 @@
     {
       "id": "energy-luz-costes",
       "title": "Coste de electricidad",
-      "group": "Energía · electricidad",
+      "group": "EnergÃ­a Â· electricidad",
       "image": "../captures/energy-luz-costes.png",
       "sha256": "7b648fe54766877d843d379cb0d7ddf2543db3844d10560eeb1ec8013ac6b16c",
       "status": "Revisada visualmente"
@@ -974,7 +974,7 @@
     {
       "id": "energy-luz-tarifas",
       "title": "Tarifas de electricidad",
-      "group": "Energía · electricidad",
+      "group": "EnergÃ­a Â· electricidad",
       "image": "../captures/energy-luz-tarifas.png",
       "sha256": "8bebbed30f2f9e05dce3a6289308123ec561ad9bdcc5b47555531fe161a70cba",
       "status": "Revisada visualmente"
@@ -982,7 +982,7 @@
     {
       "id": "energy-luz-comparar",
       "title": "Escenarios de electricidad",
-      "group": "Energía · electricidad",
+      "group": "EnergÃ­a Â· electricidad",
       "image": "../captures/energy-luz-comparar.png",
       "sha256": "d23d930ef419212187e5a6ca8d4e3b31544317505eb0ac94e23530b57693874d",
       "status": "Revisada visualmente"
@@ -1021,7 +1021,7 @@
     },
     {
       "id": "study-gas--scroll-energy-tariff",
-      "title": "Comparar gas · más abajo",
+      "title": "Comparar gas Â· mÃ¡s abajo",
       "group": "Herramientas",
       "image": "../captures/study-gas--scroll-energy-tariff.png",
       "sha256": "76e185324f777fbfe950f0b88ea1cdcf977a1f499cf42eb3b8d59ff0709eece8",
@@ -1037,31 +1037,31 @@
     },
     {
       "id": "econ-days",
-      "title": "Resumen horas y días",
-      "group": "Economía",
+      "title": "Resumen horas y dÃ­as",
+      "group": "EconomÃ­a",
       "image": "../captures/econ-days.png",
       "sha256": "6bf3a79a77f44266ed686aebf29aa1b3deb8aae96ad42c5b756cd0d646b4b753",
       "status": "Revisada visualmente"
     },
     {
       "id": "econ-tax",
-      "title": "Análisis gastos y renta",
-      "group": "Economía",
+      "title": "AnÃ¡lisis gastos y renta",
+      "group": "EconomÃ­a",
       "image": "../captures/econ-tax.png",
       "sha256": "249bfa1901bc3ae3a888eb41e3919100d938648600358605fbd5c420a9721d9e",
       "status": "Revisada visualmente"
     },
     {
       "id": "econ-personal",
-      "title": "Análisis economía personal",
-      "group": "Economía",
+      "title": "AnÃ¡lisis economÃ­a personal",
+      "group": "EconomÃ­a",
       "image": "../captures/econ-personal.png",
       "sha256": "7ee8d475ea98392d51ff6243b8da6bb948db4e893e3bcb28b3d925c5e87ec050",
       "status": "Revisada visualmente"
     },
     {
       "id": "fiscal",
-      "title": "Economía personal",
+      "title": "EconomÃ­a personal",
       "group": "Fiscal",
       "image": "../captures/fiscal.png",
       "sha256": "6cd5a8978498135fbb293cd01ff63b45183e5778c2834eea410ff8b3abd42acb",
@@ -1093,7 +1093,7 @@
     },
     {
       "id": "fiscal--scroll-personal-periods",
-      "title": "Economía personal · más abajo",
+      "title": "EconomÃ­a personal Â· mÃ¡s abajo",
       "group": "Fiscal",
       "image": "../captures/fiscal--scroll-personal-periods.png",
       "sha256": "6cd5a8978498135fbb293cd01ff63b45183e5778c2834eea410ff8b3abd42acb",
@@ -1101,7 +1101,7 @@
     },
     {
       "id": "personal-periods",
-      "title": "Editor de períodos personales",
+      "title": "Editor de perÃ­odos personales",
       "group": "Fiscal",
       "image": "../captures/personal-periods.png",
       "sha256": "281290c4d34798c18f8a6c28528debc3d97ee3645f4328bcb78a9478de560dd1",
@@ -1117,7 +1117,7 @@
     },
     {
       "id": "macro",
-      "title": "Conexión MacroDroid",
+      "title": "ConexiÃ³n MacroDroid",
       "group": "Ajustes",
       "image": "../captures/macro.png",
       "sha256": "5e6a9d2a94c07d141283f92e49e2df07aea452ad12f4646347655dea765f6b8f",
@@ -1149,7 +1149,7 @@
     },
     {
       "id": "hairdresser",
-      "title": "Notas de peluquería",
+      "title": "Notas de peluquerÃ­a",
       "group": "Ajustes",
       "image": "../captures/hairdresser.png",
       "sha256": "6f96a4d5fc7b86c1299dda9793bc0024ba4a97eee49b99a2ae87d4787340dafd",
@@ -1157,7 +1157,7 @@
     },
     {
       "id": "export-folder",
-      "title": "Carpeta de exportación",
+      "title": "Carpeta de exportaciÃ³n",
       "group": "Ajustes",
       "image": "../captures/export-folder.png",
       "sha256": "4819731417928992acb4515a0baa8f16c1632ce0a2cc3cb7894a0478dd589c3a",
@@ -1165,7 +1165,7 @@
     },
     {
       "id": "export-mode",
-      "title": "Modo de exportación",
+      "title": "Modo de exportaciÃ³n",
       "group": "Ajustes",
       "image": "../captures/export-mode.png",
       "sha256": "1f8dc1e15f39e34890fce9d685559011a9947a7f21e3a9129a6d5c8e2a8dc15e",
@@ -1173,7 +1173,7 @@
     },
     {
       "id": "import-preview",
-      "title": "Previsualización y modo de importación",
+      "title": "PrevisualizaciÃ³n y modo de importaciÃ³n",
       "group": "Ajustes",
       "image": "../captures/import-preview.png",
       "sha256": "8b6bf165b977a0b9799de0fa64ed683743f2f541bdd8af6d9a5275e694ef4c33",
@@ -1203,5 +1203,6 @@
       "sha256": "35e945867909ed9203e75663ceb873bd77833dfc27088951084fd10b3b2e87cc",
       "status": "Revisada visualmente"
     }
-  ]
+  ],
+  "scope": "Revisión histórica de la base indicada. Las huellas se verifican contra Git; no certifican como revisadas las capturas regeneradas de v498."
 }

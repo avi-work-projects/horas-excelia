@@ -3,6 +3,9 @@
 .tasks-open .toast{z-index:1700}
 .tasks-fab{--tasks-safe-bottom:env(safe-area-inset-bottom,0px);position:fixed;z-index:380;width:48px;height:48px;border:1.5px solid #9285bd;border-radius:17px;background:#70609e;color:#fff;box-shadow:0 4px 15px #21163a33;display:grid;place-items:center;cursor:grab;touch-action:none;user-select:none;transition:left .25s ease,top .25s ease,border-radius .2s;isolation:isolate}
 .tasks-fab[hidden]{display:none}
+/* Un panel secundario tiene prioridad sobre el acceso flotante. Al cerrar el
+   último se restaura sin alterar la preferencia local ni su posición. */
+body:has(.app-panel>.open,#bottomSheet.active,#fiscalOverlay.open,#alarmPanel.open,.imp-mode-ov.open) .tasks-fab{visibility:hidden;pointer-events:none}
 .tasks-fab svg{width:27px;height:27px}
 .tasks-fab.tasks-docked{box-shadow:0 2px 8px #21163a26}
 .tasks-drop-zone{position:fixed;z-index:1500;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:6px;width:150px;padding:18px 12px;border:2px solid #dc4545;border-radius:22px;background:#b92323;color:white;text-align:center;box-shadow:0 8px 35px #0004;pointer-events:none;font-size:.75rem}

@@ -49,7 +49,7 @@ test('el marco y la cabecera del carrusel permanecen quietos durante el arrastre
  const original=await sheet.boundingBox();const heading=await page.locator('#evDTitle').boundingBox();const x=heading.x+20,y=heading.y+10;const toolbar=await page.locator('.ev-detail-toolbar').boundingBox();
  await page.mouse.move(x,y);await page.mouse.down();await page.mouse.move(x-45,y,{steps:5});await expect(page.locator('.ev-car-preview')).toHaveCount(2);
  expect(await sheet.boundingBox()).toEqual(original);expect(await page.locator('.ev-detail-toolbar').boundingBox()).toEqual(toolbar);expect(await page.locator('.ev-car-content:not(.ev-car-preview)').evaluate(el=>el.style.transform)).toContain('-45px');
- await expect(page.locator('#evDAlarm')).toHaveText('🔔');await expect(page.locator('#evDAlarm')).toHaveCSS('border-radius','9px');await page.screenshot({path:info.outputPath('contenido-en-arrastre.png')});
+ await expect(page.locator('#evDAlarm')).toContainText('🔔');await expect(page.locator('#evDAlarm')).toHaveCSS('border-radius','14px');await page.screenshot({path:info.outputPath('contenido-en-arrastre.png')});
  await page.mouse.up();await expect(page.locator('.ev-car-preview')).toHaveCount(0);await expect(page.locator('#evDTitle')).toHaveText('Primera ficha');
  await page.mouse.move(x,y);await page.mouse.down();await page.mouse.move(x-150,y,{steps:8});await page.mouse.up();await expect(page.locator('#evDTitle')).toHaveText('Segunda ficha');expect(await sheet.boundingBox()).toEqual(original);expect(await page.evaluate(()=>EV_MONTH)).toBe(9);await page.screenshot({path:info.outputPath('segunda-ficha.png'),animations:'disabled'});
 });

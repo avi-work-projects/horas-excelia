@@ -961,3 +961,12 @@ Corrección de la propuesta tras revisar las capturas con Ángel:
   Cumpleaños y eventos grandes conservan la edición directa mediante pulsación larga.
 - Verificación: gesto táctil, cancelación, cambio de fila, teclado, notas, editores
   específicos, navegación y geometría móvil a 320/400 px. Sin cambios de persistencia.
+
+## Revisión visual v498: decisiones aplicadas
+
+- El botón flotante de Tareas se oculta temporalmente mientras está abierto un panel secundario creado por `abrirPanel`, el editor de jornada, el panel de alarma o Fiscal. La preferencia y posición del botón se conservan; al cerrar recupera su visibilidad habitual.
+- `events-alarm-policy.js` decide las ocurrencias y trayectos elegibles, compartido por ficha, Próximos y confirmación. Un evento con hora deja de admitir alarmas exactamente al inicio. Sin hora se mantiene el criterio por fecha; la vuelta futura se evalúa separadamente. Al confirmar se vuelve a comprobar el inicio y un margen mínimo de cinco minutos para el aviso. Los atajos conservan el día anterior cuando cruzan medianoche.
+- El acceso a la alarma usa emoji 🔔, texto y estado. La ficha de un evento grande agrupa fechas, hora del evento y las salidas de transporte por separado. El carrusel conserva un alto exterior de 64dvh y scroll interior.
+- Una barra grande comienza en el borde antes de las 13:00 y en la mitad de la primera casilla desde las 13:00; sin hora ocupa la casilla completa. Esta mitad se combina con los relevos existentes sin descontarla dos veces. La hora de transporte no sustituye a la hora del evento.
+- Una recuperación puede ser anterior o posterior a la original, también el mismo día a otra hora. Se conservan el inicio de la rutina, los límites diarios, la unicidad y el vínculo con la original cancelada, tanto al guardar como al importar.
+- El informe conserva las pruebas anteriores y añade capturas reales del resultado. A01–A06 quedan resueltos; A07–A13 siguen pendientes. La cobertura de 150 capturas iniciales es histórica, verificable contra su commit; regenerar el mapa no equivale a aprobar visualmente todos los estados futuros.

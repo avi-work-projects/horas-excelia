@@ -93,7 +93,7 @@ function renderEvUpcoming(){
     }
     s+='</div>';
     s+='<div class="ev-upcoming-right">';
-    s+='<span class="ev-upcoming-bell'+(_bellSet?' set':'')+'">&#128276;</span>';
+    if(_isVip||evAlarmOptions(ev,evIsoDate(item.firstDate)).length)s+='<span class="ev-upcoming-bell'+(_bellSet?' set':'')+'">&#128276;</span>';
     s+='<div class="'+lblCls+'">'+lbl+'</div>';
     s+='</div>';
     s+='</div>';

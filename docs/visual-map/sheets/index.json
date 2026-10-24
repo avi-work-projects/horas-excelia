@@ -113,7 +113,9 @@
     "title": "Eventos · 3/3",
     "image": "sheets/area-3-2.png",
     "scenes": [
-      "day",
+      "calendar",
+      "large-detail",
+      "started-detail",
       "event-alarm",
       "edit--scroll-plan-picker",
       "plan-picker"
@@ -186,12 +188,12 @@
       "routine-bulk-confirm",
       "routine-addition",
       "routine-recoveries",
+      "routine-earlier-picker",
+      "routine-earlier-selected",
+      "routine-earlier-form",
+      "routine-earlier-saved",
       "routine-extra",
-      "routine-extra-selected",
-      "routine-extra-day",
-      "routines--scroll-routine-flex",
-      "routine-flex",
-      "routines--scroll-routine-new"
+      "routine-extra-selected"
     ]
   },
   {
@@ -199,6 +201,10 @@
     "title": "Rutinas · 3/3",
     "image": "sheets/area-6-2.png",
     "scenes": [
+      "routine-extra-selected",
+      "routine-extra-day",
+      "routines--scroll-routine-flex",
+      "routine-flex",
       "routines--scroll-routine-new",
       "routine-new",
       "routine-time"

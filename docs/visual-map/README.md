@@ -1,7 +1,7 @@
 # Mapa visual de Gestify
 
-Atlas ampliado el 24/10/2026 tras aprobar Ángel el piloto: **150 capturas,
-152 relaciones y 13 áreas**, repartidas en láminas legibles.
+Atlas ampliado el 24/10/2026 tras aprobar Ángel el piloto: **156 capturas,
+158 relaciones y 13 áreas**, repartidas en láminas legibles.
 
 ```sh
 npm ci
@@ -83,7 +83,7 @@ segundo plano. Tras regenerar escenas, ejecutar `map:verify` para actualizar lá
 Edge **headless**, perfil efímero, 400 × 880, escala 1, tema claro, iconos profesionales
 y fecha fija **21/08/2026**. Personas, facturas, suministros y eventos ficticios. No
 se lee el perfil ni almacenamiento del usuario. Se bloquean peticiones externas
-salvo las fuentes de Google. Los recorridos se detienen antes de guardar, borrar,
+salvo las fuentes de Google. Salvo la recuperación anterior guardada en el perfil temporal ficticio para verificar su resultado, los recorridos se detienen antes de guardar, borrar,
 confirmar importaciones, compartir, enviar correos o crear alarmas. El modo de
 exportación se abre con un archivo del fixture, sin guardarlo ni compartirlo.
 
@@ -101,11 +101,10 @@ posterior no invalida capturas cuyas fuentes siguen idénticas.
 
 Documentación y herramientas independientes de la PWA: no entran en
 `app-assets.json`, `dist/` ni el service worker, ni incrementan la versión.
-La rama sigue separada de producción. La revisión de coherencia con Ángel y las
-correcciones que se acuerden quedan como trabajo posterior.
+Las correcciones autorizadas A01–A06 se integran con v498. El resto permanece pendiente de revisión con Ángel.
 
 La revisión visual de las 150 capturas está en `review/index.html`: 13 casos
-priorizados, con evidencias y dos maquetas aisladas sin aplicar a la PWA. La fuente
+priorizados, con evidencia histórica y capturas reales del resultado de A01–A06. La fuente
 editorial es `review/findings.js`; `review-notes.js` deriva sus anotaciones para el
 mapa. `review/coverage.json` conserva las huellas de las 150 imágenes revisadas,
 para no confundir esta revisión con una certificación de capturas posteriores.
@@ -116,4 +115,4 @@ a un menú actualiza sus fichas, estados, validaciones y recorridos dependientes
 Revisar las escenas afectadas, regenerar láminas y cerrar hallazgos resueltos junto
 al cambio. Si no cambia la salida visual, comprobar y documentar su vigencia sin
 repetir capturas innecesarias. `node tools/visual-map/verify-review.cjs` comprueba
-el informe; `review-evidence.cjs` reproduce sus casos y maquetas en Edge oculto.
+el informe; `review-evidence.cjs` conserva los seis resultados reales desde las escenas regeneradas del atlas. La cobertura inicial se verifica contra su commit histórico, sin confundirla con la revisión de estados nuevos.

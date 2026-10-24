@@ -46,18 +46,25 @@ function evDetailTitleColor(ev){
   }
   return 'var(--text)';
 }
-function evDetailAlarmDate(ev,ds){
-  if(ev._rutSkip||ev.id.indexOf('ev-bday-vip-')===0)return null;
-  var today=new Date();today.setHours(0,0,0,0);
-  var limit=new Date(today);limit.setDate(limit.getDate()+14);
-  if(ds){
-    var selected=new Date(ds+'T00:00:00');
-    return selected>=today&&selected<=limit&&eventOccursOn(ev,ds)?selected:null;
-  }
-  for(var day=new Date(today);day<=limit;day.setDate(day.getDate()+1)){
-    if(eventOccursOn(ev,evDk(day)))return new Date(day);
-  }
-  return null;
+function renderEvDetailAlarm(ev,ds){
+  if(!evDetailAlarmDate(ev,ds))return '';
+  return '<button class="ev-detail-alarm" id="evDAlarm" aria-label="Configurar alarma"><span class="ev-detail-alarm-icon" aria-hidden="true">🔔</span>'
+    +'<span class="ev-detail-alarm-copy"><strong>Alarma</strong><small>'+(isEvAlarmSet(ev.id)?'Marcada como configurada':'Sin configurar')+'</small></span>'
+    +'<span class="ev-detail-alarm-action">Configurar</span></button>';
+}
+function evDetailDateText(ds){var d=new Date(ds+'T00:00:00');return d.getDate()+' '+MN_SHORT[d.getMonth()].toLowerCase()+' '+d.getFullYear();}
+function renderEvLargeFacts(ev){
+  var h='<div class="ev-large-facts"><div class="ev-large-range"><div><span class="ev-detail-label">Desde</span><strong>'+evDetailDateText(ev.start)+'</strong></div>'
+    +'<div><span class="ev-detail-label">Hasta</span><strong>'+evDetailDateText(ev.end||ev.start)+'</strong></div></div>';
+  if(evStartTime(ev))h+='<div class="ev-large-start"><span>Inicio del evento</span><strong>'+evStartTime(ev)+'</strong></div>';
+  if(evEndTime(ev))h+='<div class="ev-large-start"><span>Fin del evento</span><strong>'+evEndTime(ev)+'</strong></div>';
+  evTramos(ev).forEach(function(tr){
+    var mode=EV_TRANSPORTES.find(function(t){return t.k===tr.t.modo;});
+    h+='<section class="ev-large-trip"><div><strong>'+tr.lbl+'</strong><b>'+(tr.t.time||'Sin hora')+'</b></div>'
+      +'<span>'+evDetailDateText(tr.ds)+'</span><small>'+(mode?mode.e+' '+mode.l:'Transporte sin indicar')
+      +(tr.t.modo==='coche'&&tr.t.conductor?' · '+escHtml(tr.t.conductor):'')+(tr.t.time?' · Salida':'')+'</small></section>';
+  });
+  return h+'</div>';
 }
 
 function renderEvDetail(ev,fromSummary,car,occurrenceDs){
@@ -93,7 +100,6 @@ function renderEvDetail(ev,fromSummary,car,occurrenceDs){
   }
   h+='<div class="ev-detail-tools">';
   if(car)h+='<div class="ev-car-count">'+(car.i+1)+' / '+car.n+'</div>';
-  if(evDetailAlarmDate(ev,(car&&car.ds)||occurrenceDs))h+='<button class="ev-detail-alarm" id="evDAlarm" aria-label="Configurar Alarma" title="Configurar Alarma">🔔</button>';
   h+='</div>';
   h+='</div>';
   if(car&&car.n>1){
@@ -128,14 +134,15 @@ function renderEvDetail(ev,fromSummary,car,occurrenceDs){
   h+=_renderColorPicker(_ddc,false,false,'evDCp');
   h+='<button class="econ-calc-btn" id="evDColorApply" style="margin-top:8px;font-size:.78rem;padding:8px 0">Probar color</button>';
   h+='</div>';
+  if(getEvKind(ev)==='grande')h+=renderEvLargeFacts(ev);
+  else{
   h+='<div class="ev-detail-facts"><div class="ev-detail-date-status"><div class="ev-detail-date"><span class="ev-detail-label">Fecha</span><strong>'+dateStr+'</strong></div>'+managementCheck+'</div>';
   /* En una clase de boda la hora sale abajo en su pastilla, no aqui */
   var _dt=(getEvType(ev)==='Ensayos boda')?'':evTimeLabel(ev);
   if(_dt)h+='<div class="ev-detail-date"><span class="ev-detail-label">Horario</span><strong>'+_dt+'</strong></div>';
-  evTramos(ev).forEach(function(tr){
-    h+='<div class="ev-detail-repeat">'+evTramoTexto(tr)+'</div>';
-  });
   h+='</div>';
+  }
+  h+=renderEvDetailAlarm(ev,(car&&car.ds)||occurrenceDs);
   if(repeatStr&&!isBirthday)h+='<div class="ev-detail-repeat">'+repeatStr+'</div>';
   /* En una rutina la nota repite la hora que ya sale arriba */
   if(ev.note&&!ev._rut&&!isBirthday)h+='<div class="ev-detail-note"><span class="ev-detail-label">Notas</span>'+escHtml(ev.note)+'</div>';
@@ -435,7 +442,7 @@ function renderEvAlarmPanel(ev,firstDate){
   h+='</div>';
   // Permanent 3-zone alarm marker
   h+='<div class="bd-alarm-marker-row">';
-  h+='<div class="bd-alarm-marker-text">Marcar alarma como configurada</div>';
+  h+='<div class="bd-alarm-marker-text">Estado manual<small>Solo marca el estado; no programa una alarma</small></div>';
   h+='<div class="bd-alarm-marker-bell">'+(isSet?'&#128276;':'&#128277;')+'</div>';
   h+='<div class="bd-alarm-marker-btns">';
   h+='<button class="bd-alarm-marker-btn quitar'+(isSet?'':' active')+'" id="evAlarmUnmark">Quitar</button>';
@@ -446,45 +453,20 @@ function renderEvAlarmPanel(ev,firstDate){
      hora: clases de boda, puntuales con hora de inicio y, en los eventos
      grandes, para CADA trayecto (ida y vuelta) por separado. Se pueden marcar
      varios y se crea una alarma por cada uno. */
-  var _bloques=[];
-  var _tramos=evTramos(ev);
-  if(_tramos.length){
-    var _hoyDs=evDk(new Date());
-    _tramos.forEach(function(tr){
-      /* Si el viaje ya ha empezado, la ida no tiene sentido */
-      if(tr.k==='ida'&&tr.ds<_hoyDs)return;
-      /* Sin hora no hay de que restar la antelacion */
-      if(!tr.t.time)return;
-      _bloques.push({titulo:evTramoTexto(tr),min:evMinutosDe(tr.t.time),ds:tr.ds,suf:tr.lbl.toLowerCase()});
-    });
-  } else {
-    var _t0=evStartTime(ev);
-    if(_t0){
-      var _esClase=(getEvType(ev)==='Ensayos boda');
-      _bloques.push({titulo:(_esClase?'Ensayo':'Empieza')+' a las <b>'+_t0+'</b>',
-        min:evMinutosDe(_t0),ds:evIsoDate(firstDate),suf:''});
-    }
-  }
-  var _evT;
-  if(_bloques.length&&_bloques[0].min!=null){
-    var _pre=Math.max(0,_bloques[0].min-60);
-    _evT={h:Math.floor(_pre/60),m:_pre%60};
-  } else {
-    _evT=typeof nextAlarmTime==='function'?nextAlarmTime(firstDate,15,2):{h:15,m:2};
-  }
-  _bloques.forEach(function(bl,bi){
-    if(bl.min==null)return;
-    h+='<div class="ev-alarm-pre">';
-    h+='<div class="ev-alarm-pre-t">'+bl.titulo+' — avisarme:</div>';
-    h+='<div class="ev-alarm-pre-row">';
+  var targets=evAlarmOptions(ev,evIsoDate(firstDate)),chosen=false;
+  var _evT=typeof nextAlarmTime==='function'?nextAlarmTime(firstDate,15,2):{h:15,m:2};
+  targets.filter(function(t){return t.time;}).forEach(function(target){
+    h+='<div class="ev-alarm-pre"><div class="ev-alarm-pre-t">'
+      +(target.part?((target.part==='ida'?'Ida':'Vuelta')+' · '+evDetailDateText(target.ds)):'Empieza')+' · '+target.time+' — avisarme:</div><div class="ev-alarm-pre-row">';
     [[60,'1 hora antes'],[30,'30 min antes']].forEach(function(o){
-      var mm=Math.max(0,bl.min-o[0]);
-      var lbl=String(Math.floor(mm/60)).padStart(2,'0')+':'+String(mm%60).padStart(2,'0');
-      var sufTxt=(bl.suf?bl.suf+', ':'')+(o[0]===60?'1 h':'30 min')+' antes';
-      h+='<button class="ev-alarm-pre-btn'+((bi===0&&o[0]===60)?' on':'')+'" data-pre="'+o[0]
-        +'" data-hh="'+Math.floor(mm/60)+'" data-mm="'+(mm%60)+'"'
-        +' data-ds="'+bl.ds+'" data-suf="'+escHtml(sufTxt)+'">'
-        +o[1]+'<span>'+lbl+'</span></button>';
+      var when=evAlarmNotice(target,o[0]),allowed=evAlarmCreationAllowed(ev,target,when);
+      var active=allowed&&!chosen;if(active){chosen=true;_evT={h:when.getHours(),m:when.getMinutes()};}
+      var label=String(when.getHours()).padStart(2,'0')+':'+String(when.getMinutes()).padStart(2,'0');
+      h+='<button class="ev-alarm-pre-btn'+(active?' on':'')+'"'+(allowed?'':' disabled')+' data-pre="'+o[0]
+        +'" data-hh="'+when.getHours()+'" data-mm="'+when.getMinutes()+'" data-ds="'+evIsoDate(when)
+        +'" data-event-ds="'+target.ds+'" data-part="'+target.part+'" data-time="'+target.time
+        +'" data-suf="'+(target.part?target.part+', ':'')+(o[0]===60?'1 h':'30 min')+' antes">'
+        +o[1]+'<span>'+label+(evIsoDate(when)!==target.ds?' · '+fd2(when):'')+(allowed?'':' · No disponible')+'</span></button>';
     });
     h+='</div></div>';
   });
@@ -500,6 +482,11 @@ function renderEvAlarmPanel(ev,firstDate){
 }
 
 function openEvAlarm(ev,firstDate,container){
+  var options=evAlarmOptions(ev,evIsoDate(firstDate));
+  if(!options.length){
+    showToast('Este evento ya no admite alarmas','error');openEvDetail(ev,container,null,evIsoDate(firstDate));return;
+  }
+  firstDate=new Date(options[0].ds+'T00:00:00');
   abrirPanel('evAlarmWrap',renderEvAlarmPanel(ev,firstDate),
     {contenedor:container,overlay:'evAlarmOv',alCerrar:closeEvAlarm});
   bindEvAlarmEvents(ev,firstDate);
@@ -556,6 +543,7 @@ function bindEvAlarmEvents(ev,firstDate){
      de abajo lo refleja y sigue siendo editable (editarla a mano los desmarca).
      Con los dos marcados se crean DOS alarmas. */
   var _preBtns=[].slice.call(document.querySelectorAll('.ev-alarm-pre-btn'));
+  var manualTarget=evAlarmOptions(ev,evIsoDate(firstDate))[0];
   function _syncPre(){
     var on=_preBtns.filter(function(b){return b.classList.contains('on');});
     var hI=document.getElementById('evAlarmH'),mI=document.getElementById('evAlarmM');
@@ -597,14 +585,18 @@ function bindEvAlarmEvents(ev,firstDate){
         var _d=b.dataset.ds?new Date(b.dataset.ds+'T00:00:00'):firstDate;
         var _sf=b.dataset.suf||((b.dataset.pre==='60'?'1 h':'30 min')+' antes');
         alarmas.push({h:parseInt(b.dataset.hh,10),m:parseInt(b.dataset.mm,10),
-          suf:' ('+_sf+')',fecha:_d});
+          suf:' ('+_sf+')',fecha:_d,target:{ds:b.dataset.eventDs,time:b.dataset.time,part:b.dataset.part}});
       });
     } else {
       var hr=parseInt(document.getElementById('evAlarmH').value,10);
       var mr=parseInt(document.getElementById('evAlarmM').value,10);
       alarmas.push({h:isNaN(hr)?15:Math.min(23,Math.max(0,hr)),
-        m:isNaN(mr)?2:Math.min(59,Math.max(0,mr)),suf:'',fecha:firstDate});
+        m:isNaN(mr)?2:Math.min(59,Math.max(0,mr)),suf:'',fecha:new Date(manualTarget.ds+'T00:00:00'),target:manualTarget});
     }
+    if(!alarmas.every(function(a){
+      var when=new Date(a.fecha);when.setHours(a.h,a.m,0,0);
+      return evAlarmCreationAllowed(ev,a.target,when);
+    })){showToast('El evento ya ha empezado o el aviso no deja al menos 5 minutos','error');return;}
     alarmas.forEach(function(a){
       var _f=a.fecha||firstDate;
       var _fTxt=String(_f.getDate()).padStart(2,'0')+'/'+String(_f.getMonth()+1).padStart(2,'0');
