@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v495 — Recordatorios: accesos y edición directa';
+var APP_VERSION = 'v496 — Recordatorios: edición desde la tarjeta';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
