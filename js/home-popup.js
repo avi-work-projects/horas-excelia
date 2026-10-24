@@ -36,7 +36,7 @@ function homeReminderEvents(today){
 }
 function homeReminderTasksHtml(){
   var pending=tasksItems(tasksData(),'pending');
-  var h='<section class="home-pending-tasks" aria-label="Tareas pendientes"><div class="home-pending-heading"><strong>Tareas pendientes</strong><button type="button" id="homeTasksOpen">Mis tareas'+(pending.length>3?' ('+pending.length+')':'')+' →</button></div>';
+  var h='<section class="home-pending-tasks" aria-label="Tareas pendientes"><div class="home-pending-heading"><strong>Tareas pendientes</strong><button type="button" id="homeTasksOpen">Mis tareas'+(pending.length>2?' ('+pending.length+')':'')+' →</button></div>';
   if(pending.length){h+='<ul>';pending.slice(0,3).forEach(function(t){h+='<li>'+escHtml(t.title)+'</li>';});h+='</ul>';}
   else h+='<p>No tienes tareas pendientes.</p>';
   return h+'</section>';
