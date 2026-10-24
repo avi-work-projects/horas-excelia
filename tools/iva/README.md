@@ -67,3 +67,16 @@ https://sede.agenciatributaria.gob.es/Sede/iva/pre-303/nuevo-servicio-pre303-imp
 
 Simulador 2026:
 https://www2.agenciatributaria.gob.es/wlpl/A303-FWME/E2026/OPEN/index.zul
+
+## Metadatos de importacion
+
+El exportador usa el proveedor documental; no reutiliza `legacy_tax_id` ni
+`legacy_party`. Para identificaciones extranjeras requiere `lsi_identity` con
+`type`, `country`, `id` y `source` explicitos. Un NIF nacional con prefijo ES
+se normaliza sin cambiar el proveedor. Esto no verifica su deducibilidad.
+
+Cada gasto requiere `receipt_date` y `receipt_date_source`. No se deduce la
+recepcion de la fecha de emision, del pago, ni de un campo generico Fecha.
+La prevalidacion falla antes de escribir salidas si falta informacion.
+Los antiguos metadatos permanecen solo como evidencia del ensayo historico.
+Pruebas del adaptador: `node --test tools/iva/test_lsi_fields.mjs`.

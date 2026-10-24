@@ -1,11 +1,17 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {Workbook, SpreadsheetFile} from '@oai/artifact-tool';
+import {identity,receiptDate} from './lsi_fields.mjs';
 
 const [input, outputDir, headersFile, period='3T'] = process.argv.slice(2);
 if (!input || !outputDir || !headersFile || !/^[1-4]T$/.test(period)) throw Error('input outputDir headers.json [period] required');
 const d=JSON.parse(await fs.readFile(input,'utf8'));
 const headers=JSON.parse(await fs.readFile(headersFile,'utf8'));
+// Fail before writing any workbook when a requested import lacks required metadata.
+if(!process.argv.includes('--annual-only')) for(const r of d.records.filter(r=>r.include&&Number(r.period[0])<=Number(period[0]))){
+ identity(r);
+ if(r.kind==='expense')receiptDate(r);
+}
 await fs.mkdir(outputDir,{recursive:true});
 const col=n=>{let s='';while(n){n--;s=String.fromCharCode(65+n%26)+s;n=Math.floor(n/26)}return s};
 const num=v=>v===null||v===undefined?null:Number(v);
@@ -75,7 +81,7 @@ for(const [name,range] of [['Resumen 303','A1:I10'],['Ingresos','A1:J7'],['Gasto
  const img=await w.render({sheetName:name,range,scale:1,format:'png'});await fs.writeFile(path.join(outputDir,name+'.png'),new Uint8Array(await img.arrayBuffer()));
 }
 
-// LSI export: explicit historical supplier mapping is kept separate from documentary identity.
+// LSI export uses documented identities, independently of historical demo mappings.
 // No guessing a missing taxpayer ID. This export is an incomplete annual simulation.
 if(process.argv.includes('--annual-only')){
  console.log('Annual workbook saved. LSI export intentionally not regenerated.');
@@ -86,19 +92,19 @@ for(const [name,kind] of [['EXPEDIDAS_INGRESOS','income'],['RECIBIDAS_GASTOS','e
  const rows=d.records.filter(r=>r.kind===kind&&r.include&&Number(r.period[0])<=Number(period[0])).map((r,i)=>{
   const a=Array(kind==='income'?36:42).fill(null),income=kind==='income';
   Object.assign(a,{0:d.year,1:r.period,2:d.activity.code,3:d.activity.type,4:d.activity.group,5:'F1',6:income?'I01':'G03',7:num(r.base),8:serial(r.date)});
-  if(income)Object.assign(a,{11:r.number,15:r.tax_id,16:r.party,17:'01',18:'S1',20:num(r.base)+num(r.vat),21:num(r.base),22:num(r.rate),23:num(r.vat),30:num(r.withholding)?15:0,31:num(r.withholding),35:'ENSAYO NO PRESENTAR: acumulado incompleto'});
+  if(income){const customer=identity(r);Object.assign(a,{11:r.number,13:customer.type,14:customer.country,15:customer.id,16:customer.name,17:'01',18:'S1',20:num(r.base)+num(r.vat),21:num(r.base),22:num(r.rate),23:num(r.vat),30:num(r.withholding)?15:0,31:num(r.withholding),35:'ENSAYO NO PRESENTAR: acumulado incompleto'});}
   else{
-   if(!r.legacy_tax_id||!r.registration_date)throw Error('Historical export identity/receipt must be explicit');
-   Object.assign(a,{10:r.number,12:serial(r.registration_date),13:String(i+1),17:r.legacy_tax_id,18:r.legacy_party,19:'01',20:'N',21:'N',22:'N',25:num(r.total),26:num(r.base),27:num(r.rate),28:num(r.vat),29:num(r.vat),41:'ENSAYO NO PRESENTAR: identidad histórica, cuota PDF'});
+   const supplier=identity(r);
+   Object.assign(a,{10:r.number,12:serial(receiptDate(r)),13:String(i+1),15:supplier.type,16:supplier.country,17:supplier.id,18:supplier.name,19:'01',20:'N',21:'N',22:'N',25:num(r.total),26:num(r.base),27:num(r.rate),28:num(r.vat),29:num(r.vat),41:'ENSAYO NO PRESENTAR: identidad y cuota documentales'});
   }
   return a;
  });
  const count=headers[name][0].length;
  const sh=table(lsi,name,[...headers[name],...rows],Array(count).fill(19));
- sh.getRange(`C3:E${rows.length+2}`).setNumberFormat('@');
+ if(rows.length)sh.getRange(`C3:E${rows.length+2}`).setNumberFormat('@');
  sh.getRange(`A1:${col(count)}2`).format.rowHeight=85;
- sh.getRange(`I3:I${rows.length+2}`).setNumberFormat('dd/mm/yyyy');
- if(kind==='expense')sh.getRange(`M3:M${rows.length+2}`).setNumberFormat('dd/mm/yyyy');
+ if(rows.length)sh.getRange(`I3:I${rows.length+2}`).setNumberFormat('dd/mm/yyyy');
+ if(kind==='expense'&&rows.length)sh.getRange(`M3:M${rows.length+2}`).setNumberFormat('dd/mm/yyyy');
  const img=await lsi.render({sheetName:name,range:'A1:I5',scale:1,format:'png'});
  await fs.writeFile(path.join(outputDir,name+'.png'),new Uint8Array(await img.arrayBuffer()));
 }
