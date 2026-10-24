@@ -68,3 +68,19 @@ Dedicated Google Cloud project `kairo-drive` created without enabling billing.
 OAuth app identity/contact form prepared; final Google user-data policy acceptance
 is awaiting the user in Edge. No OAuth client, token or Drive grant created yet.
 Continue with Drive API and Desktop OAuth client after the user completes this step.
+
+## OAuth preparation update (2026-10-24, evening)
+
+User accepted Google API user data policy. Desktop OAuth client created and
+Drive API enabled. Credentials stored privately outside Git on mini and Kairo.
+Only owner's account added as test user. Edge is waiting at Google's unverified
+app warning; user must review and grant actual Drive access. No token confirmed.
+
+Production publication remains disabled by Google pending branding completion.
+Test-mode Drive refresh tokens expire after seven days; do not commission this
+as unattended production or disable the daily copy in that state.
+Reference: https://support.google.com/cloud/answer/15549945
+
+An SSH loopback authorization session was started (local 127.0.0.1:53682 only).
+If expired, restart rclone config reconnect with the same private config and
+SSH loopback forwarding. Never put tokens or client secrets in documentation.
