@@ -23,6 +23,9 @@
 - Actualizar instantáneas únicamente si el cambio visual es intencionado y se ha revisado el diff.
 
 ## Dónde ampliar
+- [Contrato de archivo AUTONOMO entre mini, Drive y Kairo](docs/AUTONOMO-ARCHIVE.md).
+  Leer antes de cambiar rutas, nombres o datos del flujo contable; documentar
+  impacto, migración y verificación en todos los consumidores, no solo en el mini.
 - [Arquitectura, catálogo de componentes y flujos](docs/DEVELOPMENT.md).
 - [Índice de funciones y estilos](CODEMAP.md), generado desde las fuentes editables.
 - [Notas históricas hasta v388](docs/history-through-v388.md), conservadas como referencia, no como reglas nuevas.
