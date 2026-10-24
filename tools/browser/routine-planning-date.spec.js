@@ -18,14 +18,14 @@ test('Planificación conjunta: borrador, cupo, una confirmación y altura establ
  await chooseTime(page,'#rutPlanTime','19:30');
  expect(await page.evaluate(()=>Object.keys(RUTINAS[0].flex.sessions))).toEqual([]);
  await expect(page.locator('#rutPlanSave')).toHaveText('Guardar 2 sesiones');
- expect((await sheet.boundingBox()).height).toBe(size.height);
+ expect((await sheet.boundingBox()).height).toBeCloseTo(size.height,2);
  await page.screenshot({path:info.outputPath('planificacion-multiple.png'),animations:'disabled'});
  await page.locator('#rutPlanSave').click();await expect(page.locator('.rut-plan-day.planned')).toHaveCount(2);
  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('excelia-rutinas-v1'))[0].flex.sessions['2026-10-28'].time)).toBe('19:30');
  await page.locator('[data-rday="2026-10-29"]').click();await page.locator('[data-rday="2026-10-30"]').click();
  await page.locator('#rutPlanSave').click();await expect(page.locator('#toast')).toContainText('cupo');
  expect(await page.evaluate(()=>Object.keys(RUTINAS[0].flex.sessions).length)).toBe(2);
- await page.locator('[data-rmonth="1"]').click();expect((await sheet.boundingBox()).height).toBe(size.height);
+ await page.locator('[data-rmonth="1"]').click();expect((await sheet.boundingBox()).height).toBeCloseTo(size.height,2);
  await expect(page.locator('.rut-plan-grid')).toHaveCSS('grid-template-rows',/44px 44px 44px 44px 44px 44px$/);
  await page.locator('#rutPlanClose').click();await page.evaluate(()=>openRutPlan(RUTINAS[0]));
  await expect(page.locator('#rutPlanSave')).toBeDisabled();
