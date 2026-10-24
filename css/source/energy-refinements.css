@@ -286,3 +286,8 @@ body:has(#evFormOv.open) .tasks-fab{visibility:hidden}
 /* Deshacer acompaña a la ficha de sesión sin tapar sus controles de estado. */
 body:has(#evDetailOv.open #evDRutSes) .toast{bottom:calc(min(360px,88dvh) + 12px)}
 body:has(#evDetailOv.open .ev-car-sheet #evDRutSes) .toast{bottom:calc(56dvh + 12px)}
+
+/* Coste sin cobertura calculable: explicación en lugar de un gráfico vacío. */
+.energy-cost-empty{padding:14px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border);margin-top:12px}
+.energy-cost-empty h3{font-size:.9rem;margin:0 0 8px;color:var(--text)}
+.energy-cost-empty p{font-size:.78rem;line-height:1.5;color:var(--text-muted);margin:8px 0 0}

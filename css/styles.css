@@ -108,7 +108,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .data-menu-item:hover,.data-menu-item:active{background:var(--surface3)}
 .settings-quick-row{display:flex;align-items:stretch;gap:8px;padding:4px}
 .settings-quick-row>#themeBtn{flex:1;min-width:0}
-.settings-reminders-button{width:90px;min-height:58px}
+.settings-reminders-button{width:90px;height:44px;min-height:44px;box-sizing:border-box}
 .app-version-label{font-size:.62rem;color:var(--text-muted);padding:4px 12px 8px;opacity:.55;border-top:1px solid var(--border);margin-top:2px;letter-spacing:.02em}
 
 /* ── WEEK CARDS ── */
@@ -438,7 +438,7 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 
 /* ── ECONOMICS v2: tabs + nuevas secciones ── */
 .econ-hdr-sub{flex-shrink:0;display:flex;align-items:stretch;padding:5px 6px;gap:5px;box-shadow:0 1px 0 var(--border);overflow-x:hidden;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
-.econ-tab-btn{flex:1;font-size:.56rem;padding:5px 2px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;text-align:center;line-height:1.35;white-space:normal;word-break:break-word}
+.econ-tab-btn{flex:1;min-height:44px;font-size:.68rem;padding:6px 2px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;text-align:center;line-height:1.35;white-space:normal;word-break:normal}
 .econ-tab-btn.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
 .econ-sub-tabs{display:flex;gap:6px;padding:10px 16px;box-shadow:0 1px 0 var(--border);align-items:center;position:sticky;top:0;z-index:5;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 .econ-sub-tabs::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:rgba(192,132,252,.2);z-index:10}
@@ -454,13 +454,17 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .econ-sub-tab.est-casa{color:var(--text-dim)}
 .econ-sub-tab.est-casa.active{border-color:#14b8a6;background:rgba(20,184,166,.1);color:#14b8a6}
 /* Estudio Cambio — grouped nav */
-.est-nav{display:flex;gap:8px;padding:8px 10px;box-shadow:0 1px 0 var(--border)}
-.est-group{display:flex;flex-direction:column;gap:4px;flex:1}
-.est-group-label{font-size:.58rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;text-align:center;margin-bottom:2px}
+#estudioOverlay .sy-body{gap:12px}
+.study-intro,.fiscal-intro{margin:0}
+.study-intro h2,.fiscal-intro h2{font-size:1.1rem;line-height:1.35;margin:0 0 6px;color:var(--text)}
+.study-intro p,.fiscal-intro p{font-size:.78rem;line-height:1.5;color:var(--text-muted);margin:0}
+.est-nav{display:flex;gap:12px;padding:0 0 12px;box-shadow:0 1px 0 var(--border)}
+.est-group{display:flex;flex-direction:column;gap:10px;flex:1;min-width:0}
+.est-group-label{font-size:.68rem;color:var(--text-muted);font-weight:600;text-align:left;margin-bottom:2px}
 .est-btn:not(.est-casa):not(.active){background:rgba(96,165,250,.07);border-color:rgba(96,165,250,.25);color:rgba(96,165,250,.85)}
 .est-group-casa .est-btn:not(.active){background:rgba(20,184,166,.07);border-color:rgba(20,184,166,.25);color:rgba(20,184,166,.85)}
 .est-group-casa .est-btn.active{border-color:#14b8a6!important;background:rgba(20,184,166,.22)!important;color:#14b8a6!important}
-.est-btn{font-size:.66rem;padding:6px 4px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;text-align:center;-webkit-user-select:none;user-select:none}
+.est-btn{min-height:44px;font-size:.75rem;padding:8px 6px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;text-align:center;-webkit-user-select:none;user-select:none}
 .est-btn.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
 /* Estudio — tariff comparison cards */
 .est-section-hdr{display:flex;align-items:center;justify-content:space-between;gap:8px}
@@ -670,8 +674,11 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 /* ── Fiscal config modal — purple theme override ── */
 #fiscalOverlay{--accent:#c084fc;--accent-glow:#c084fc22;--accent-bright:#d4a5ff}
 /* ── Fiscal config modal ── */
+.fiscal-body{padding:16px;gap:12px}
 .fiscal-section{margin-bottom:18px}
+.fiscal-body .fiscal-section{padding:14px;margin-bottom:0;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface)}
 .fiscal-section-title{font-size:.65rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.fiscal-body .fiscal-section-title{font-size:.8rem;color:var(--text-muted);text-transform:none;letter-spacing:normal;margin-bottom:10px;padding-bottom:8px;border-bottom:0;box-shadow:0 1px 0 var(--border)}
 .fiscal-radio-row{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
 .fiscal-radio-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius-sm);border:1px solid var(--border);cursor:pointer;font-size:.84rem;transition:all .15s;-webkit-user-select:none;user-select:none}
 .fiscal-radio-item.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
@@ -825,21 +832,21 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .econ-donut-bd-amt{font-family:var(--mono);white-space:nowrap}
 .econ-donut-bd-pct{font-size:.62rem;color:var(--text-dim);margin-left:4px}
 /* Fiscal config: gastos items */
-.fiscal-gasto-item{display:flex;align-items:center;gap:6px;padding:7px 0;border-bottom:1px solid var(--border)}
+.fiscal-gasto-item{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)}
 .fiscal-gasto-item:last-child{border-bottom:none}
-.fiscal-gasto-lbl{flex:1;font-size:.8rem;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.fiscal-gasto-lbl{flex:1 0 100%;font-size:.8rem;color:var(--text);white-space:normal;min-width:0}
 .fiscal-gasto-lbl-input{flex:1;font-size:.8rem;padding:4px 6px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);color:var(--text);outline:none;min-width:60px}
 .fiscal-gasto-lbl-input:focus{border-color:var(--accent)}
-.fiscal-gasto-amt{font-family:var(--mono);font-size:.8rem;width:72px;padding:4px 6px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text);text-align:right;outline:none;flex-shrink:0}
+.fiscal-gasto-amt{font-family:var(--mono);font-size:.85rem;width:88px;min-height:40px;box-sizing:border-box;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);text-align:right;outline:none;flex-shrink:0}
 .fiscal-gasto-amt:focus{border-color:var(--accent)}
-.fiscal-gasto-period{display:flex;gap:2px;flex-shrink:0}
-.fiscal-period-btn{padding:3px 7px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);color:var(--text-dim);font-size:.62rem;cursor:pointer;-webkit-user-select:none;user-select:none;transition:all .12s}
+.fiscal-gasto-period{display:flex;gap:6px;flex-shrink:0}
+.fiscal-period-btn{min-height:40px;padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);font-size:.72rem;cursor:pointer;-webkit-user-select:none;user-select:none;transition:all .12s}
 .fiscal-period-btn.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
 .fiscal-gasto-del{width:22px;height:22px;border:none;background:transparent;color:var(--c-red);font-size:.8rem;cursor:pointer;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 /* Fiscal: tab bar */
 .fiscal-hdr{box-shadow:0 1px 0 #c084fc33;border-top:2px solid #c084fc}
-.fiscal-tab-bar{flex-shrink:0;display:flex;align-items:stretch;padding:5px 6px;gap:5px;box-shadow:0 1px 0 #c084fc33;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
-.fiscal-tab-btn{flex:1;font-size:.56rem;padding:5px 2px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;text-align:center;line-height:1.35;white-space:normal;word-break:break-word}
+.fiscal-tab-bar{flex-shrink:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;padding:10px 16px;gap:10px;box-shadow:0 1px 0 #c084fc33;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.fiscal-tab-btn{font-size:.74rem;min-height:44px;padding:7px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;text-align:center;line-height:1.35;white-space:normal;word-break:normal}
 .fiscal-tab-btn.active{border-color:#c084fc;background:#c084fc18;color:#c084fc}
 /* Fiscal: sticky save */
 .fiscal-sticky-save{flex-shrink:0;padding:10px 16px 14px;border-top:1px solid #c084fc33;background:var(--surface)}
@@ -1424,7 +1431,7 @@ button.bday-group-tag{cursor:pointer;min-height:44px;text-align:left}
 .dp-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1500;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
 .dp-overlay.open{opacity:1;pointer-events:auto}
 .dp-sheet{background:var(--surface);border-top-left-radius:18px;border-top-right-radius:18px;width:100%;max-width:520px;height:min(740px,92dvh);max-height:92dvh;display:flex;flex-direction:column;padding:8px 12px 12px;transform:translateY(100%);transition:transform .25s ease;box-shadow:0 -8px 24px rgba(0,0,0,.4)}
-.dp-sheet>:not(.dp-content){flex-shrink:0}
+.dp-sheet>:not(.dp-grid){flex-shrink:0}
 .dp-overlay.open .dp-sheet{transform:translateY(0)}
 .dp-handle{width:38px;height:4px;background:var(--border);border-radius:2px;margin:4px auto 8px}
 .dp-hdr{display:flex;align-items:center;gap:10px;margin-bottom:8px}
@@ -1433,17 +1440,16 @@ button.bday-group-tag{cursor:pointer;min-height:44px;text-align:left}
 .dp-yearnav button{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-size:.85rem;padding:3px 10px;border-radius:6px;cursor:pointer}
 .dp-counter{text-align:center;font-size:.7rem;color:var(--text-muted);margin-bottom:8px}
 .dp-counter b{color:var(--accent-bright);font-size:.85rem}
-.dp-content{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:2px}
-.dp-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.dp-month{font-family:inherit;color:var(--text);cursor:pointer;min-width:0;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px}
+.dp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;overflow-y:auto;flex:1;min-height:0;padding:2px}
+.dp-month{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px}
 .dp-mname{font-size:.65rem;font-weight:600;color:var(--text);text-align:center;margin-bottom:3px}
 .dp-mhdr{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;margin-bottom:1px}
 .dp-mhdr-c{font-size:.5rem;color:var(--text-dim);text-align:center}
 .dp-days{display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
-.dp-day{font-family:inherit;min-height:44px;font-size:.85rem;text-align:center;padding:6px 0;border:1px solid transparent;border-radius:3px;color:var(--text);background:var(--surface);cursor:pointer;line-height:1;user-select:none}
+.dp-day{font-size:.55rem;text-align:center;padding:3px 0;border:1px solid transparent;border-radius:3px;color:var(--text);background:var(--surface);cursor:pointer;line-height:1;user-select:none}
 .dp-day.out{visibility:hidden}
 .dp-day.wk{color:var(--text-dim)}
-@media(hover:hover){.dp-day:hover{border-color:var(--accent)}}
+.dp-day:hover{border-color:var(--accent)}
 .dp-day.sel{font-weight:700}
 .dp-actions{display:flex;gap:8px;margin-top:10px}
 .dp-actions .ev-btn{flex:1}
@@ -1597,18 +1603,6 @@ button.bday-group-tag{cursor:pointer;min-height:44px;text-align:left}
 .ev-type-picker .ev-quick-group .ev-color-swatch.selected .ev-type-name{font-weight:700;color:var(--picker-accent)}
 .ev-tax-chevron{width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);margin:0 4px 4px;flex-shrink:0;transition:transform .18s}
 [aria-expanded=true]>.ev-tax-chevron{transform:rotate(225deg);margin-bottom:0}
-
-.dp-hdr{display:grid;grid-template-columns:36px minmax(0,1fr) 36px}
-.dp-monthnav{display:grid;grid-template-columns:36px minmax(0,1fr) 36px;align-items:center;text-align:center;margin:4px 0}
-.dp-sheet>.dp-view{flex:0 0 auto;min-height:36px;align-self:center;background:var(--surface2);border:1px solid var(--border);color:var(--text);margin:4px 0;font-size:.72rem;padding:7px 14px}
-.dp-month-expanded .dp-mhdr{margin:8px 0}
-.dp-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-template-rows:repeat(6,44px);gap:4px 2px}
-.dp-mini-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}
-.dp-mini-day{font-size:.55rem;line-height:1.5;text-align:center;border-radius:3px}
-.dp-mini-day.out{visibility:hidden}
-.dp-month .dp-mname{display:block;margin-bottom:8px}
-
-.dp-monthnav button:disabled{opacity:.35;cursor:default}
 
 /* Fuente: css/source/navigation-alarms.css */
 /* Shared overlay nav bar — nivel 1, siempre visible en lo alto del overlay */
@@ -4200,6 +4194,11 @@ body:has(#evFormOv.open) .tasks-fab{visibility:hidden}
 /* Deshacer acompaña a la ficha de sesión sin tapar sus controles de estado. */
 body:has(#evDetailOv.open #evDRutSes) .toast{bottom:calc(min(360px,88dvh) + 12px)}
 body:has(#evDetailOv.open .ev-car-sheet #evDRutSes) .toast{bottom:calc(56dvh + 12px)}
+
+/* Coste sin cobertura calculable: explicación en lugar de un gráfico vacío. */
+.energy-cost-empty{padding:14px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border);margin-top:12px}
+.energy-cost-empty h3{font-size:.9rem;margin:0 0 8px;color:var(--text)}
+.energy-cost-empty p{font-size:.78rem;line-height:1.5;color:var(--text-muted);margin:8px 0 0}
 
 /* Fuente: css/source/home-reminders.css */
 /* Recordatorios de inicio: marco fijo, filas compactas y detalles interiores. */

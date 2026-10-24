@@ -5,7 +5,7 @@ const root=path.resolve(__dirname,'../..'),out=path.join(root,'docs/visual-map/r
 async function main(){
  const scope={window:{}};vm.runInNewContext(fs.readFileSync(path.join(out,'findings.js'),'utf8'),scope);
  const findings=scope.window.VISUAL_REVIEW.findings,coverage=JSON.parse(fs.readFileSync(path.join(out,'coverage.json'),'utf8'));
- if(findings.filter(f=>f.status==='resolved').length!==11)throw Error('Faltan las once correcciones acordadas');
+ if(findings.filter(f=>f.status==='resolved').length!==12||findings.filter(f=>f.status==='reverted').length!==1)throw Error('Se esperan doce correcciones y A09 revertido');
  if(coverage.screens.length!==150||new Set(coverage.screens.map(s=>s.id)).size!==150)throw Error('Cobertura de revisión incompleta');
  for(const s of coverage.screens){const hash=crypto.createHash('sha256').update(execFileSync('git',['show',coverage.referenceCommit+':docs/visual-map/captures/'+s.id+'.png'],{cwd:root,maxBuffer:4*1024*1024})).digest('hex');if(hash!==s.sha256)throw Error('Huella histórica incorrecta: '+s.id);}
  for(const f of findings){for(const source of f.sources)if(!fs.existsSync(path.join(root,source)))throw Error('Fuente inexistente: '+source);for(const [file]of f.evidence)if(!fs.existsSync(path.resolve(out,file)))throw Error('Falta evidencia: '+file);}
@@ -20,7 +20,7 @@ async function main(){
   // Las capturas de las maquetas y el resumen se pueden mostrar sin abrir la PWA real.
   await page.locator('#A04').scrollIntoViewIfNeeded();await page.locator('#A04 .evidence-grid').screenshot({path:path.join(out,'alarm-comparison.png')});
   await page.locator('#A05').scrollIntoViewIfNeeded();await page.locator('#A05 .evidence-grid').screenshot({path:path.join(out,'large-comparison.png')});
-  for(const [id,name]of [['A07','birthday'],['A08','forms'],['A09','dates'],['A10','energy'],['A11','settings']]){
+  for(const [id,name]of [['A07','birthday'],['A08','forms'],['A09','dates'],['A10','energy'],['A11','settings'],['A12','tools-fiscal'],['A13','energy-costs']]){
     await page.locator('#'+id).scrollIntoViewIfNeeded();await page.locator('#'+id+' .evidence-grid').screenshot({path:path.join(out,name+'-comparison.png')});
   }
   await page.locator('#A06 .diagram').screenshot({path:path.join(out,'large-start-diagram.png')});

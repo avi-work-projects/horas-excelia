@@ -29,20 +29,6 @@ for(const width of [320,400,440])test(`formularios: pies fijos y borradores canc
   expect(await page.evaluate(()=>JSON.stringify(localStorage))).toBe(before);
  }
 });
-test('Multidía: mes táctil, resumen anual, seis filas estables y aceptar/cancelar',async({page})=>{
- await page.evaluate(()=>{window.picked=null;openOtrosDatePicker(['2026-10-11'],'#ffcc00',2026,days=>window.picked=days);});
- const sheet=page.locator('.dp-sheet');await expect(page.locator('#dpOv')).toHaveClass(/open/);await expect(sheet).toHaveCSS('transform','matrix(1, 0, 0, 1, 0, 0)');await expect(sheet).toBeVisible();await sheet.evaluate(el=>Promise.all(el.getAnimations().map(a=>a.finished)));
- const frame=await sheet.boundingBox(),original=await sheet.elementHandle();
- await expect(page.locator('.dp-day[data-ds="2026-10-31"]')).toBeInViewport();expect((await page.locator('#dpViewToggle').boundingBox()).height).toBeLessThanOrEqual(44);
- const cell=page.locator('.dp-day[data-ds="2026-10-16"]');expect((await cell.boundingBox()).height).toBeGreaterThanOrEqual(44);
- await cell.click();await page.locator('#dpViewToggle').click();await expect(page.locator('[data-month]')).toHaveCount(12);
- await page.locator('#dpYrNext').click();await page.locator('[data-month="1"]').click();
- await expect(page.locator('.dp-calendar .dp-day')).toHaveCount(42);await page.locator('[data-ds="2027-02-12"]').click();
- await page.locator('#dpMonthNext').click();expect(await sheet.boundingBox()).toEqual(frame);expect(await original.evaluate(el=>el.isConnected)).toBe(true);
- await expect(page.locator('.dp-calendar .dp-day')).toHaveCount(42);await page.locator('#dpMonthPrev').click();await expect(page.locator('[data-ds="2027-02-12"]')).toHaveAttribute('aria-pressed','true');
- await page.locator('#dpAccept').click();expect(await page.evaluate(()=>picked)).toEqual(['2026-10-11','2026-10-16','2027-02-12']);
- await expect(sheet).toHaveCount(0);await page.evaluate(()=>openOtrosDatePicker([],null,2026,days=>window.picked=days));await page.locator('[data-ds="2026-10-12"]').click();await page.locator('#dpClose').click();expect(await page.evaluate(()=>picked)).toHaveLength(3);
-});
 test('Ajustes: nombres de consulta y edición explícita sin guardar al entrar',async({page})=>{
  const before=await page.evaluate(()=>JSON.stringify(localStorage));await page.locator('#eventsOverlay [data-nav="menu"]').click();
  await expect(page.locator('#editConnectionsBtn')).toHaveText('Correo de horas');await expect(page.locator('#editMacroBtn')).toHaveText('MacroDroid');await expect(page.locator('#invoiceSettingsBtn')).toHaveText('Facturas y correo');
