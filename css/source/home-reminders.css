@@ -9,9 +9,13 @@
 .home-reminder-group h3 small{font-size:.63rem;color:var(--text-muted);font-weight:400}
 .home-reminder-rows{display:grid;gap:10px}
 .home-popup-item{font-size:.76rem;border:1px solid var(--border);border-radius:11px;background:var(--surface);color:var(--text);margin:0;min-width:0;overflow:hidden}
-.home-popup-item.bday,.home-popup-item.vip{border-color:color-mix(in srgb,var(--birthday-tone) 32%,var(--border));padding:8px 10px}
+.home-reminder-birthdays>h3{color:var(--birthday-tone)}
+.home-popup-item.bday,.home-popup-item.vip{border-color:color-mix(in srgb,var(--birthday-tone) 45%,var(--border));background:color-mix(in srgb,var(--birthday-tone) 8%,var(--surface));padding:8px 10px}
 .home-popup-item.event{border-color:color-mix(in srgb,var(--reminder-color) 35%,var(--border))}
-.home-reminder-disclosure>summary{display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:4px 9px;align-items:center;min-height:42px;padding:7px 10px!important;margin:0!important;list-style:none;border:0;border-radius:inherit;background:none;box-shadow:none;font-weight:400;color:inherit;cursor:pointer}
+.home-reminder-row{display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:4px 9px;align-items:center;min-height:42px;padding:7px 10px!important;margin:0!important;list-style:none;border:0;border-radius:inherit;background:none;box-shadow:none;font-weight:400;color:inherit}
+.home-reminder-disclosure>summary{grid-template-columns:24px minmax(0,1fr) auto 16px;cursor:pointer}
+.home-reminder-toggle{grid-column:4;grid-row:1;display:flex;align-items:center;justify-content:center;width:16px;height:16px;border:1px solid currentColor;border-radius:5px;color:var(--day-tone,var(--text-muted));font-size:.8rem;line-height:1}
+.home-reminder-toggle::before{content:'+'}.home-reminder-disclosure[open] .home-reminder-toggle::before{content:'−'}
 .home-reminder-disclosure>summary::before,.home-reminder-disclosure>summary::after,.home-reminder-disclosure>summary::-webkit-details-marker{display:none}
 .home-reminder-disclosure>summary:hover{background:color-mix(in srgb,var(--accent) 5%,transparent)}
 .home-reminder-text{min-width:0}.home-reminder-text .home-reminder-content{display:block;white-space:normal;overflow-wrap:anywhere;font-weight:600;line-height:1.45}
@@ -23,9 +27,9 @@
 .home-reminder-symbol .ev-chip-flag{width:22px;height:16px}
 .home-reminder-asturias{display:flex;align-items:center;justify-content:center;border:1px solid #1689ed;border-radius:5px;padding:1px}
 .home-reminder-period{grid-column:2/-1;font-size:.65rem;line-height:1.4;color:var(--text-muted)}
-.home-reminder-group[aria-label="Planes de varios días"] .home-popup-item{border-left:4px solid var(--reminder-color);background:color-mix(in srgb,var(--reminder-color) 6%,var(--surface))}
+.home-reminder-plans>h3{color:var(--text-muted)}
+.home-reminder-plans .home-popup-item{border-color:color-mix(in srgb,var(--text-muted) 35%,var(--border));border-left:3px solid var(--text-muted);background:color-mix(in srgb,var(--text-muted) 5%,var(--surface))}
 .home-reminder-expanded{padding:2px 12px 12px 43px;font-size:.72rem;overflow-wrap:anywhere}
-.home-reminder-expanded>strong{display:block;margin-bottom:6px;line-height:1.5}
 .home-reminder-description{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5;margin:0;color:var(--text-muted);cursor:pointer}
 .home-reminder-day-note+.home-reminder-day-note{margin-top:10px}.home-reminder-day-note>small{display:block;margin-bottom:4px;color:var(--text-muted)}
 .home-popup-item .boda-last-rehearsal{grid-column:2/-1;margin:3px 0 0;font-size:.62rem;white-space:normal}
@@ -55,4 +59,4 @@
 .home-pending-tasks ul{padding-left:17px;margin:4px 0 0}.home-pending-tasks li{padding:2px 0;line-height:1.4;overflow-wrap:anywhere}.home-pending-tasks p{margin:4px 0 0;color:var(--text-muted)}
 .home-pending-warnings{padding-top:6px;border-top:1px solid color-mix(in srgb,var(--c-red) 20%,var(--border))}
 .home-popup-item.warn{padding:3px 0;color:var(--c-red);border:0;border-radius:0;background:transparent;font-size:.69rem;line-height:1.45;overflow-wrap:anywhere}
-@media(max-width:360px){#homePopupContent{padding:12px}.home-reminder-meta{max-width:108px;flex-wrap:wrap;gap:3px}.home-reminder-when{font-size:.6rem}.home-reminder-disclosure>summary{gap:4px 7px}}
+@media(max-width:360px){#homePopupContent{padding:12px}.home-reminder-meta{max-width:108px;flex-wrap:wrap;gap:3px}.home-reminder-when{font-size:.6rem}.home-reminder-row{gap:4px 7px}}

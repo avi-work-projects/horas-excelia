@@ -914,3 +914,17 @@ Corrección de la propuesta tras revisar las capturas con Ángel:
   bodaPackStats conserva el cálculo de extras y los packs históricos.
 - Verificación: límites horarios de hoy, sin hora, sin pareja, cero clases/parejas,
   enlaces de estados, altas desde Clases, persistencia y colores en Edge móvil.
+
+## Recordatorios: color y desplegables útiles (v494)
+
+- Cumpleaños usa su acento en el título, los contornos y un fondo suave. Hoy y
+  Mañana conservan sus listas compactas azul y verde.
+- «Planes en curso y próximos» sustituye a «Planes de varios días». Su marco
+  usa un tono neutro del tema, independiente del color de cada evento.
+- Solo las tarjetas con notas generales o del día se despliegan. Los campos
+  vacíos o con espacios no crean un desplegable; las demás filas no reaccionan
+  al pulsar. Un signo + identifica las notas y cambia a − al abrirlas.
+- El contenido desplegado muestra las notas sin repetir el título. Los planes
+  grandes conservan las notas de hoy y mañana, dentro del mismo marco estable.
+- Validación en Edge oculto a 400 y 320 px: notas y texto escapado, teclado,
+  tarjetas sin descripción, alto estable, títulos largos y consumidores compartidos.

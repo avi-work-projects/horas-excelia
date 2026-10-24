@@ -7,7 +7,7 @@ function homeReminderEventText(time,content,ev){
   return '<span class="home-reminder-symbol" aria-hidden="true">'+marker+'</span><span class="home-reminder-text"><span class="home-reminder-content">'+escHtml(content)+'</span></span><span class="home-reminder-meta"><span class="home-reminder-when">'+escHtml(time||'Sin hora')+'</span>'+alarm+'</span>';
 }
 function homeReminderNoteHtml(ev,ds){
-  var notes=[ev.note,ev.dayNotes&&ev.dayNotes[ds]].filter(Boolean);
+  var notes=[ev.note,ev.dayNotes&&ev.dayNotes[ds]].filter(function(note){return typeof note==='string'&&note.trim();});
   return notes.length?'<p class="home-reminder-description">'+escHtml(notes.join('\n\n'))+'</p>':'';
 }
 function homeReminderEvents(today){
@@ -42,12 +42,15 @@ function homeReminderTasksHtml(){
   return h+'</section>';
 }
 function homeReminderCardHtml(it){
-  var attrs=' class="home-popup-item '+it.type+(it.type==='event'?' home-reminder-disclosure':'')+'"'+(it.color?' style="--reminder-color:'+it.color+'"':'');
+  var hasNotes=it.type==='event'&&!!it.note;
+  var attrs=' class="home-popup-item '+it.type+(hasNotes?' home-reminder-disclosure':'')+'"'+(it.color?' style="--reminder-color:'+it.color+'"':'');
   if(it.type!=='event')return '<div'+attrs+'>'+it.text+'</div>';
-  return '<details'+attrs+' data-reminder-id="'+escHtml(it.event.id)+'"><summary aria-label="Mostrar u ocultar detalles">'+it.text+'</summary><div class="home-reminder-expanded"><strong>'+escHtml(it.title||it.event.title||getEvType(it.event))+'</strong>'+it.note+'</div></details>';
+  attrs+=' data-reminder-id="'+escHtml(it.event.id)+'"';
+  if(!hasNotes)return '<div'+attrs+'><div class="home-reminder-row">'+it.text+'</div></div>';
+  return '<details'+attrs+'><summary class="home-reminder-row" aria-label="Notas de '+escHtml(it.title||it.event.title||getEvType(it.event))+'">'+it.text+'<span class="home-reminder-toggle" aria-hidden="true"></span></summary><div class="home-reminder-expanded">'+it.note+'</div></details>';
 }
-function homeReminderGroup(title,content,extra,day){
-  return '<section class="home-reminder-group'+(day?' home-reminder-day home-reminder-'+day:'')+'" aria-label="'+title+'"><h3>'+title+(extra?'<small>'+extra+'</small>':'')+'</h3><div class="home-reminder-rows">'+content+'</div></section>';
+function homeReminderGroup(title,content,extra,tone){
+  return '<section class="home-reminder-group'+(tone?' home-reminder-'+tone:'')+(['today','tomorrow'].indexOf(tone)!==-1?' home-reminder-day':'')+'" aria-label="'+title+'"><h3>'+title+(extra?'<small>'+extra+'</small>':'')+'</h3><div class="home-reminder-rows">'+content+'</div></section>';
 }
 function homeReminderPendingHtml(warnings){
   var count=tasksItems(tasksData(),'pending').length;
@@ -76,10 +79,10 @@ function homeReminderItemsHtml(items,birthdayCount){
   if(birthdays.length){
     var cards=birthdays.slice(0,2).map(homeReminderCardHtml).join('');
     if(birthdays.length>2)cards+='<div id="homeBirthdayExtra" hidden>'+birthdays.slice(2).map(homeReminderCardHtml).join('')+'</div><button type="button" class="home-birthday-more" id="homeBirthdayToggle" aria-controls="homeBirthdayExtra" aria-expanded="false">Ver '+(birthdayCount-2)+' cumpleaños más <span class="ev-tax-chevron" aria-hidden="true"></span></button>';
-    h+=homeReminderGroup('Cumpleaños',cards,'Próximos 7 días');
+    h+=homeReminderGroup('Cumpleaños',cards,'Próximos 7 días','birthdays');
   }
   var large=events.filter(function(it){return isEvBarAlways(it.event);});
-  if(large.length)h+=homeReminderGroup('Planes de varios días',homeReminderLargeHtml(large));
+  if(large.length)h+=homeReminderGroup('Planes en curso y próximos',homeReminderLargeHtml(large),'','plans');
   [0,1].forEach(function(day){
     var list=events.filter(function(it){return it.days===day&&!isEvBarAlways(it.event);});
     if(list.length)h+=homeReminderGroup(day?'Mañana':'Hoy',list.map(homeReminderCardHtml).join(''),list.length+' '+(list.length===1?'evento':'eventos'),day?'tomorrow':'today');
