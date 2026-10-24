@@ -84,3 +84,14 @@ Reference: https://support.google.com/cloud/answer/15549945
 An SSH loopback authorization session was started (local 127.0.0.1:53682 only).
 If expired, restart rclone config reconnect with the same private config and
 SSH loopback forwarding. Never put tokens or client secrets in documentation.
+
+## Authorization result (2026-10-24)
+
+OAuth succeeded: access and refresh tokens are present in private Kairo config.
+Read-only Drive API verified the authorized user's email. However, its My Drive
+root differs from the desktop mirror root; the configured existing AUTONOMO ID
+returns 404 and a name query finds neither AUTONOMO nor the mini probe file.
+Do NOT upload into this account or create a replacement AUTONOMO folder.
+Await the user identifying the desktop Drive account; then authorize that account
+and verify the existing folder. No cloud probe uploaded, publisher not enabled,
+old daily collection still retained. Production OAuth branding remains pending.
