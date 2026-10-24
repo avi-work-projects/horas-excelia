@@ -35,7 +35,7 @@ test('carrusel: arrastre muestra la siguiente ficha, cancela, navega y mantiene 
 test('las cuatro gestiones aparecen como tareas verdes dentro de su mes y se completan una sola vez',async({page})=>{
  await page.evaluate(()=>{EVENTS=['Enviar factura','Pago','Pago Hacienda','Presentar Modelo'].map((type,i)=>({id:'m'+i,kind:'puntual',type,title:type,start:'2026-10-28'})).concat([{id:'next',kind:'puntual',type:'Pago',title:'Noviembre',start:'2026-11-01'}]);});
  expect(await page.evaluate(()=>tasksItems(tasksData(),'pending').map(t=>t.color))).toEqual(['green','green','green','green']);
- await page.evaluate(()=>openHomePopup(true));await expect(page.locator('.home-pending-tasks')).toContainText('Mis tareas (4)');
- await page.evaluate(()=>{tasksSetEventDone(EVENTS[0],'2026-10-28',true);openHomePopup(true);});await expect(page.locator('.home-pending-tasks')).toContainText('Mis tareas (3)');
+ await page.evaluate(()=>openHomePopup(true));await expect(page.locator('#homeTasksOpen')).toContainText('Mis tareas (4)');
+ await page.evaluate(()=>{tasksSetEventDone(EVENTS[0],'2026-10-28',true);openHomePopup(true);});await expect(page.locator('#homeTasksOpen')).toContainText('Mis tareas (3)');
  expect(await page.evaluate(()=>tasksData().items.length)).toBe(4);
 });
