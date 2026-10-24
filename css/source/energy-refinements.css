@@ -15,17 +15,11 @@
 .boda-last-rehearsal{display:block;width:max-content;max-width:100%;font-size:.58rem;font-weight:800;letter-spacing:.045em;color:#92334d;background:#f8e8ed;border-radius:4px;padding:2px 5px;margin:2px 0 4px}
 .ev-wk-chip:has(.boda-last-rehearsal){flex-wrap:wrap}
 .ev-wk-chip>.boda-last-rehearsal{flex-basis:100%;width:auto;background:transparent;color:inherit;margin:2px 0 0;padding:0;font-size:.55rem}
-.home-popup-item .boda-last-rehearsal{margin:5px 0 0}
 .boda-last-marker{animation:boda-last-pulse 4s ease-in-out infinite}
 @keyframes boda-last-pulse{0%,72%,100%{filter:opacity(1)}84%{filter:opacity(.25)}}
 @media(prefers-reduced-motion:reduce){.boda-last-marker{animation:none;outline:1px solid #92334d;border-radius:4px}}
-.home-popup-item:has(.boda-last-rehearsal){flex-wrap:wrap}
-.home-popup-item:has(.boda-last-rehearsal)>.home-reminder-text{flex-basis:100%}
-.home-popup-item .boda-last-rehearsal{flex-shrink:0;white-space:nowrap}
 .ev-wk-chip>.boda-last-rehearsal{color:#fff}
 
-.home-popup-item.event{border-color:var(--reminder-color,#38bdf8);background:color-mix(in srgb,var(--reminder-color,#38bdf8) 12%,var(--surface));color:var(--text)}
-.home-popup-item.event .home-reminder-when{color:var(--text);font-weight:700}
 
 /* Ventana energética: cabecera fija, scroll del cuerpo, gráficos de un año. */
 .energy-window{display:flex!important;flex-direction:column;z-index:320;background:var(--bg);overflow:hidden}

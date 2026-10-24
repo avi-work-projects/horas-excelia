@@ -77,16 +77,6 @@
 .bd-alarm-create-btn{flex-shrink:0;white-space:nowrap}
 .bd-alarm-count-single .bd-alarm-create-btn{flex:1}
 /* ── ALARM MANAGEMENT OVERLAY ── */
-/* ── HOME POPUP (semanas pendientes / VIP sin alarma) ── */
-.home-popup-overlay{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.6);display:flex;align-items:flex-start;justify-content:center;padding-top:80px}
-.home-popup{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px 20px;max-width:360px;width:calc(100% - 32px);max-height:70vh;overflow-y:auto;position:relative;box-shadow:0 16px 48px var(--shadow)}
-.home-popup-close{position:absolute;top:10px;right:12px;width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.home-popup-title{font-size:.88rem;font-weight:700;color:var(--text);margin-bottom:10px;padding-right:30px}
-.home-popup-item{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;font-size:.8rem}
-.home-popup-item.warn{border-color:var(--c-orange);background:rgba(251,146,60,.08);color:var(--c-orange)}
-.home-popup-item.vip{border-color:var(--c-yellow);background:color-mix(in srgb,var(--c-yellow) 8%,var(--surface));color:var(--c-yellow)}
-.home-popup-item.bday{border-color:var(--c-blue);background:color-mix(in srgb,var(--c-blue) 8%,var(--surface));color:var(--c-blue)}
-.home-popup-dismiss{width:100%;margin-top:8px;padding:9px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);font-size:.78rem;cursor:pointer}
 /* ── MACRO URL EN MENÚ ── */
 .macro-section{padding:6px 12px 4px;border-top:1px solid var(--border);margin-top:4px}
 .macro-section-lbl{font-size:.62rem;color:var(--text-dim);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}

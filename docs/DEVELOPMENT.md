@@ -849,13 +849,27 @@ las 53 instantáneas existentes no cambian.
 - `initCalendarDateRefresh` repinta calendarios abiertos al cambiar el día local:
   medianoche, vuelta a primer plano, foco o restauración de la página. Conserva
   el mes consultado, scroll y formularios; no fuerza recargar la PWA ni guarda datos.
-- Recordatorios: propuesta visual pendiente de decisión, sin cambiar el panel
-  publicado. Cumpleaños arriba, eventos grandes en bloque compacto, Hoy/Mañana
-  agrupados y ordenados por hora, notas plegadas y pendientes resumidos al final.
-  Ejemplos exclusivamente ficticios. Evitar repetir «Hoy» en cada tarjeta y
-  mantener filas compactas; los títulos largos deben poder consultarse completos.
+- Recordatorios: propuesta visual presentada en v490, aprobada y aplicada en
+  v491 con pendientes primero (ver apartado siguiente).
 
 Validación: pruebas de lote atómico/cupos, movimiento/reversión y backup; Edge
 oculto con alta múltiple, cierre sin guardar, edición flexible/fija, recarga y
 cambio de fecha (incluido cambio de hora de octubre). Revisión visual móvil en
 claro a 320 y 400 px y comprobación adicional del tema oscuro.
+
+## Recordatorios agrupados (v491)
+
+- Pendientes es el primer bloque, antes de Cumpleaños: resumen rojo y desplegable
+  para tareas, semanas sin enviar y los avisos existentes. No cambia su cálculo.
+- Cumpleaños conserva sus símbolos propios y VIP, dos personas visibles y el
+  desplegable de las restantes. Los eventos puntuales se agrupan por Hoy/Mañana,
+  con el orden compartido del calendario, sin repetir el día en cada tarjeta.
+- Los eventos grandes tienen una sola tarjeta, periodo y trayectos de hoy/mañana;
+  al desplegarla se conservan las notas de ambas ocurrencias. Los títulos completos
+  y notas quedan accesibles sin hacer más altas las filas cerradas.
+- La alarma ⏰ consulta el indicador persistido existente por evento. Se carga al
+  abrir Recordatorios, incluso antes de abrir Calendario; no crea ni modifica alarmas.
+- Estilos propios en css/source/home-reminders.css, retirando las antiguas reglas
+  repartidas. Cabecera y tamaño exterior estables; el contenido tiene scroll interior.
+- Verificación: Edge oculto a 400 y 320 px, grupos, símbolos, alarmas al arrancar,
+  expansión sin saltos, notas de ida/vuelta y accesos a tareas. Sin cambios de backup.
