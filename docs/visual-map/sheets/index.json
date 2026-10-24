@@ -118,9 +118,7 @@
       "started-detail",
       "event-alarm",
       "edit--scroll-plan-picker",
-      "plan-picker",
-      "dates-overview",
-      "dates-selected"
+      "plan-picker"
     ]
   },
   {
@@ -301,7 +299,9 @@
       "energy-gas-consumo",
       "energy-gas-costes",
       "energy-gas-tarifas",
-      "energy-gas-comparar"
+      "energy-gas-comparar",
+      "energy-gas-costes-neto",
+      "energy-gas-costes-constante"
     ]
   },
   {
@@ -314,7 +314,9 @@
       "energy-luz-consumo",
       "energy-luz-costes",
       "energy-luz-tarifas",
-      "energy-luz-comparar"
+      "energy-luz-comparar",
+      "energy-luz-costes-neto",
+      "energy-luz-costes-constante"
     ]
   },
   {

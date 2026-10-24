@@ -597,7 +597,7 @@ function _renderSubSection(comp,sub,idx,isEditing,editable){
 }
 
 /* ── Main tab dispatcher ──────────────────────────────────── */
-function renderFiscalTabDespacho(editable){
+function renderFiscalTabDespacho(editable,intro){
   var h='';
   h+='<div class="econ-sub-tabs fiscal-hip-tabs">';
   h+='<button class="econ-sub-tab'+(FISCAL_HIP_SUB==='resumen'?' active':'')+'" data-hipsub="resumen">Resumen</button>';
@@ -605,6 +605,7 @@ function renderFiscalTabDespacho(editable){
   h+='<button class="econ-sub-tab est-hip'+(FISCAL_HIP_SUB==='gas'?' active':'')+'" data-hipsub="gas">Detalle<br>Gas</button>';
   h+='<button class="econ-sub-tab est-hip'+(FISCAL_HIP_SUB==='elect'?' active':'')+'" data-hipsub="elect">Detalle<br>Electricidad</button>';
   h+='</div>';
+  h+=intro||'';
   if(FISCAL_HIP_SUB!=='resumen')h+='<div class="household-detail household-detail-'+FISCAL_HIP_SUB+'">';
   if(FISCAL_HIP_SUB==='resumen')h+=_renderHipResumen(editable);
   else if(FISCAL_HIP_SUB==='detalle')h+=_renderHipDetalle(editable);

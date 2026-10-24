@@ -281,11 +281,9 @@ window.VISUAL_REVIEW={
       "title": "Multidía presenta objetivos de pulsación diminutos",
       "problem": "Las casillas de día miden aproximadamente 15 × 17 px. Los doce meses permiten una visión anual, pero elegir días con el dedo tiene poco margen de error.",
       "proposal": "Conservar la vista anual como resumen y ofrecer un mes ampliado para seleccionar con comodidad. Mantener la selección múltiple y el contador; reservar seis filas al navegar entre meses.",
-      "validation": "Selección/deshacer con dedo, meses de cuatro a seis semanas y vuelta al resumen conservando todos los días elegidos.",
+      "validation": "Restauración del código y CSS previos a A09; seleccionar entre años, aceptar, vaciar y cancelar; consumidores Otros y Ensayos Boda.",
       "scenes": [
-        "dates",
-        "dates-overview",
-        "dates-selected"
+        "dates"
       ],
       "evidence": [
         [
@@ -294,19 +292,24 @@ window.VISUAL_REVIEW={
         ],
         [
           "evidence/dates-after.png",
-          "Después · Selección mensual ampliada"
+          "v499 · propuesta mensual retirada"
         ],
         [
           "evidence/dates-overview-after.png",
-          "Después · Resumen anual para elegir mes"
+          "v499 · resumen de la propuesta retirada"
+        ],
+        [
+          "evidence/dates-restored-v500.png",
+          "v500 · selector anual restaurado a petición de Ángel"
         ]
       ],
       "sources": [
         "js/events-picker-date.js"
       ],
-      "status": "resolved",
+      "status": "reverted",
       "resolvedVersion": "v499",
-      "result": "Multidía abre un mes con botones de 44 px de alto y seis filas reservadas. El resumen anual permite elegir un mes; se conserva la selección entre meses y años. Solo Aceptar aplica el borrador."
+      "result": "Por petición expresa de Ángel, v500 restaura el selector anual anterior, con los doce meses y selección directa de días. Se retira la propuesta mensual de v499; no queda pendiente de reaplicación. Aceptar, Vaciar, selección entre años y Cancelar conservan su comportamiento original.",
+      "revertedVersion": "v500"
     },
     {
       "id": "A10",
@@ -359,6 +362,14 @@ window.VISUAL_REVIEW={
         [
           "evidence/settings-after.png",
           "Después · Accesos que describen la consulta"
+        ],
+        [
+          "evidence/settings-v499.png",
+          "v499 · Recordatorios de 58 px"
+        ],
+        [
+          "evidence/settings-v500.png",
+          "v500 · Recordatorios de 44 px"
         ]
       ],
       "sources": [
@@ -366,7 +377,7 @@ window.VISUAL_REVIEW={
       ],
       "status": "resolved",
       "resolvedVersion": "v499",
-      "result": "Los accesos se llaman Correo de horas, MacroDroid y Facturas y correo. Abren la consulta protegida; la edición y el guardado siguen siendo explícitos dentro del panel."
+      "result": "Los accesos se llaman Correo de horas, MacroDroid y Facturas y correo. Abren la consulta protegida; la edición y el guardado siguen siendo explícitos dentro del panel. En v500, Recordatorios reduce su altura de 58 a 44 px a petición de Ángel."
     },
     {
       "id": "A12",
@@ -398,13 +409,26 @@ window.VISUAL_REVIEW={
         [
           "evidence/before-fiscal-expenses.png",
           "Antes · Configuración fiscal"
+        ],
+        [
+          "evidence/study-v500.png",
+          "Después · Herramientas y grupos de comparación"
+        ],
+        [
+          "evidence/fiscal-expenses-v500.png",
+          "Después · Configuración fiscal y campos"
         ]
       ],
       "sources": [
         "js/economics-estudio.js",
-        "js/economics-fiscal.js"
+        "js/economics-fiscal.js",
+        "js/economics.js",
+        "css/source/economics.css",
+        "js/economics-fiscal-hip.js"
       ],
-      "status": "pending"
+      "status": "resolved",
+      "resolvedVersion": "v500",
+      "result": "Herramientas explica su propósito antes de las opciones y agrupa Trabajo e ingresos / Hogar y contratos con botones más legibles. Economía usa nombres completos. Fiscal organiza las cuatro entradas en una rejilla de dos columnas, introduce cada sección y presenta gastos en tarjetas con campos y períodos mayores. Se conservan colores, cálculos y guardado."
     },
     {
       "id": "A13",
@@ -416,19 +440,37 @@ window.VISUAL_REVIEW={
       "validation": "Estado sin IVA, datos parciales y datos completos; no atribuir a los datos reales los huecos del fixture.",
       "scenes": [
         "energy-gas-costes",
-        "energy-luz-costes"
+        "energy-luz-costes",
+        "energy-gas-costes-neto",
+        "energy-gas-costes-constante",
+        "energy-luz-costes-neto",
+        "energy-luz-costes-constante"
       ],
       "evidence": [
         [
           "evidence/before-energy-gas-costes.png",
           "Antes · ejemplo ficticio sin IVA documentado"
+        ],
+        [
+          "evidence/energy-gas-costes-v500.png",
+          "Después · Sin IVA documentado (datos ficticios)"
+        ],
+        [
+          "evidence/energy-luz-costes-v500.png",
+          "Después · Electricidad sin cobertura calculable"
+        ],
+        [
+          "evidence/energy-gas-costes-neto-v500.png",
+          "Después · Estimación explícita sin IVA y ocho meses de cobertura"
         ]
       ],
       "sources": [
         "js/energy-analysis-view.js"
       ],
-      "status": "pending"
+      "status": "resolved",
+      "resolvedVersion": "v500",
+      "result": "Cuando ningún mes es calculable, una explicación compacta sustituye al gráfico vacío e indica las causas documentadas. El selector de IVA sigue disponible para explorar estimaciones explícitas. Con meses parciales se conserva el gráfico y se explica la cobertura; el cero calculado sigue siendo un dato válido. La comparación histórica sin cobertura muestra una sola explicación."
     }
   ],
-  "implementedVersion": "v499"
+  "implementedVersion": "v500"
 };

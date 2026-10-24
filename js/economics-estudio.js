@@ -4,14 +4,14 @@
 
 /* ── Estudio Cambio (sub-tabs) ─────────────────────────────── */
 function renderEconEstudio(){
-  var h='<div class="est-nav">';
+  var h='<div class="study-intro"><h2>Herramientas de comparación</h2><p>Explora alternativas antes de decidir. Compara ingresos y contratos con tus datos de referencia.</p></div><div class="est-nav">';
   h+='<div class="est-group">';
-  h+='<div class="est-group-label">Aut\u00f3nomo</div>';
+  h+='<div class="est-group-label">Trabajo · ingresos</div>';
   h+='<button class="est-btn'+(ECON_ESTUDIO_SUB==='comparador'?' active':'')+'" id="ecSubComp">Comparar Escenarios</button>';
   h+='<button class="est-btn'+(ECON_ESTUDIO_SUB==='simulador'?' active':'')+'" id="ecSubSim">Calcular Tarifa</button>';
   h+='</div>';
   h+='<div class="est-group est-group-casa">';
-  h+='<div class="est-group-label">Casa</div>';
+  h+='<div class="est-group-label">Hogar · contratos</div>';
   h+='<button class="est-btn est-casa'+(ECON_ESTUDIO_SUB==='hipoteca'?' active':'')+'" id="ecSubHip">Comparar Hipotecas</button>';
   h+='<button class="est-btn est-casa'+(ECON_ESTUDIO_SUB==='gas'?' active':'')+'" id="ecSubGas">Comparar Gas</button>';
   h+='<button class="est-btn est-casa'+(ECON_ESTUDIO_SUB==='elect'?' active':'')+'" id="ecSubElect">Comparar Electricidad</button>';
@@ -516,7 +516,7 @@ function renderEstudioContent(){
   h+='<div class="sy-header with-tabs">';
   h+='<button class="sy-back" id="estBack">&#8592;</button>';
   h+='<div class="sy-year-nav"><button class="sy-nav" id="estPrev">&#9664;</button><div class="sy-year">'+ESTUDIO_YEAR+'</div><button class="sy-nav" id="estNext">&#9654;</button></div>';
-  h+='<button class="econ-gear-btn" id="estGearFiscal">&#9881;</button>';
+  h+='<button class="econ-gear-btn" id="estGearFiscal" aria-label="Abrir configuración fiscal" title="Configuración fiscal">&#9881;</button>';
   h+='</div>';
   h+='<div class="sy-body">';
   h+=renderEconEstudio();

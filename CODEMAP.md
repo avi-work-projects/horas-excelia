@@ -110,15 +110,15 @@
 
 **Funciones:** _ensureGasScenarios:6 · _renderGasDetalle:14 · _bindGasDetalle:69
 
-### js/economics-fiscal-hip.js  _(862 líneas)_
+### js/economics-fiscal-hip.js  _(863 líneas)_
 **Estado global:** DESPACHO_SK:5 · DESPACHO:6 · GROUP_CASA:110 · GROUP_UTIL:111
 
-**Funciones:** _defaultCompra:8 · _defaultSubrogacion:9 · loadDespacho:10 · saveDespacho:62 · _despachoGetPct:65 · computeDespachoDeduccion:70 · computeDeclResult:124 · computeIrpfBrackets:177 · _hipEffRate:194 · _buildMortgageSwitches:200 · _computeAnnualInterest:221 · _computeBalanceAtDate:255 · renderFiscalTabDespachoOnly:288 · _getActiveMortgage:352 · _fmtDuration:359 · _hipROvinc:364 · _calcInsOvercost:374 · _renderInlineOvercost:385 · _renderHipResumen:404 · _renderHipDetalle:407 · _renderHipSectionContent:433 · _renderCompraSection:445 · _hipRateDetail:474 · fmt:477 · _renderPrestamoSection:484 · _renderSubSection:530 · renderFiscalTabDespacho:600 · _bindTabDespacho:618 · _bindHipResumen:645 · _bindHipAnalysis:661 · _bindHipDetalle:671 · _rerenderSection:742 · _readSectionInputs:751 · _rv:752 · _rv_s:753 · _bindEditingSection:811
+**Funciones:** _defaultCompra:8 · _defaultSubrogacion:9 · loadDespacho:10 · saveDespacho:62 · _despachoGetPct:65 · computeDespachoDeduccion:70 · computeDeclResult:124 · computeIrpfBrackets:177 · _hipEffRate:194 · _buildMortgageSwitches:200 · _computeAnnualInterest:221 · _computeBalanceAtDate:255 · renderFiscalTabDespachoOnly:288 · _getActiveMortgage:352 · _fmtDuration:359 · _hipROvinc:364 · _calcInsOvercost:374 · _renderInlineOvercost:385 · _renderHipResumen:404 · _renderHipDetalle:407 · _renderHipSectionContent:433 · _renderCompraSection:445 · _hipRateDetail:474 · fmt:477 · _renderPrestamoSection:484 · _renderSubSection:530 · renderFiscalTabDespacho:600 · _bindTabDespacho:619 · _bindHipResumen:646 · _bindHipAnalysis:662 · _bindHipDetalle:672 · _rerenderSection:743 · _readSectionInputs:752 · _rv:753 · _rv_s:754 · _bindEditingSection:812
 
-### js/economics-fiscal.js  _(430 líneas)_
-**Estado global:** GROUP_CASA_DESP:293 · GROUP_UTIL_DESP:294
+### js/economics-fiscal.js  _(435 líneas)_
+**Estado global:** GROUP_CASA_DESP:298 · GROUP_UTIL_DESP:299
 
-**Funciones:** renderFiscalContent:8 · _renderYearSelector:34 · _renderCopyYearBtn:43 · _personalListHtml:66 · _personalTripFilter:69 · _personalTotal:78 · _personalTotalWeekly:82 · renderFiscalTabPersonal:86 · renderFiscalTabIrpf:127 · renderFiscalTabGastosDesg:174 · renderComprasList:205 · renderFiscalTabIrpfDeduc:254 · renderFiscalTabDesgrav:267 · renderDesgravDespachoInfo:289 · _dedCard:330 · renderDesgravList:365
+**Funciones:** renderFiscalContent:8 · _renderYearSelector:38 · _renderCopyYearBtn:47 · _personalListHtml:70 · _personalTripFilter:73 · _personalTotal:82 · _personalTotalWeekly:86 · renderFiscalTabPersonal:90 · renderFiscalTabIrpf:131 · renderFiscalTabGastosDesg:178 · renderComprasList:209 · renderFiscalTabIrpfDeduc:258 · renderFiscalTabDesgrav:272 · renderDesgravDespachoInfo:294 · _dedCard:335 · renderDesgravList:370
 
 ### js/economics-gastos.js  _(701 líneas)_
 **Estado global:** GASTOS_TOGGLES_SK:5 · GASTOS_TOGGLES:6 · GROUP_SEMIOBL:96 · GROUP_CASA:97 · GROUP_OTROS_IMP:98 · GROUP_S:472 · GROUP_C:473 · GROUP_S2:571 · GROUP_C2:572
@@ -149,10 +149,10 @@
 ### js/energy-analysis-bind.js  _(61 líneas)_
 **Funciones:** bindEnergyAnalysis:2 · refresh:5 · year:8 · tab:11 · energyBindSwipe:32 · cancel:57
 
-### js/energy-analysis-view.js  _(99 líneas)_
+### js/energy-analysis-view.js  _(111 líneas)_
 **Estado global:** ENERGY_ANALYSIS_TAB:2 · ENERGY_ANALYSIS_YEAR:3 · ENERGY_SUMMARY_TOTAL:4 · ENERGY_ANALYSIS_KIND:5 · ENERGY_RETURN:6 · ENERGY_ANALYSIS_TABS:7
 
-**Funciones:** energyAnalysisHtml:8 · _energyAnalysisHtml:11 · energyConsumptionHtml:27 · energyCostsHtml:35 · energyTariffsHtml:49 · energyScenarioOptions:74 · energyComparisonHtml:78 · energyArchiveHtml:86 · closeEnergyAnalysis:91 · openEnergyAnalysis:92 · energyRefreshAnalysis:98
+**Funciones:** energyAnalysisHtml:8 · _energyAnalysisHtml:11 · energyConsumptionHtml:27 · energyCostsHtml:35 · energyTariffsHtml:61 · energyScenarioOptions:86 · energyComparisonHtml:90 · energyArchiveHtml:98 · closeEnergyAnalysis:103 · openEnergyAnalysis:104 · energyRefreshAnalysis:110
 
 ### js/energy-analysis.js  _(90 líneas)_
 **Estado global:** ENERGY_TAX_KEY:3
@@ -253,10 +253,10 @@
 
 **Funciones:** evIsManagement:44 · evIsPlan:45 · evFixedSymbol:46 · evOtherShapeColor:104 · evBarSize:116 · evBarSizeCls:122 · evTypeKey:123 · evTypeColor:124 · getEvKind:127 · evPlanShapeInner:143 · evShapeSvg:164 (!87) · evMorePlusSvg:251 · evTravelColor:260 · getEvType:266 · isEvBarAlways:278 · getEvDisplayColor:280 · _renderColorPicker:302 · _bindColorPicker:325 · updatePreview:335
 
-### js/events-picker-date.js  _(69 líneas)_
-**Estado global:** EV_DATE_PICKER:2
+### js/events-picker-date.js  _(103 líneas)_
+**Estado global:** MNS:12
 
-**Funciones:** evDatePickerMonth:3 · renderOtrosDatePickerContent:14 · renderOtrosDatePicker:21 · refreshOtrosDatePicker:29 · closeOtrosDatePicker:38 · moveOtrosDatePickerMonth:39 · bindOtrosDatePicker:43 · openOtrosDatePicker:62
+**Funciones:** openOtrosDatePicker:7 (!96) · _evDk:13 · _count:14 · _render:15 · _attach:56 · _rerender:87 · _close:93
 
 ### js/events-plan-picker.js  _(87 líneas)_
 **Estado global:** EV_PLAN_PICK:2 · EV_QUICK_PLANS:3 · EV_PICKER_GROUPS:4 · EV_CULTURE_OPTIONS:75
@@ -493,7 +493,7 @@
 **Rangos por prefijo de clase:**
 .bday-today:33-33 · .ev-agenda:28-28 · .ev-calendar:30-30 · .fiscal-year:20-21 · .nav-btn:12-13 · .sy-back:4-8 · .sy-nav:9-17 · .today-btn:24-25
 
-### css/source/economics.css  _(679 líneas)_
+### css/source/economics.css  _(686 líneas)_
 
 **Secciones:**
 
@@ -503,56 +503,56 @@
 - Ingresado box (formerly cobrado) — neutral:32
 - ECONOMICS v2: tabs + nuevas secciones:66
 - Estudio Cambio — grouped nav:83
-- Estudio — tariff comparison cards:92
-- Análisis hipoteca — secciones organizadas:113
-- Mis gastos — budget table:130
-- Year selector for per-year fiscal tabs:143
-- §1.1 Tarifa dual:152
-- §1.3 Stats por hora/día:164
-- §1.4 Toggles:171
-- §1.5 Declaración IRPF:176
-- Tab 2: Comparador:189
-- Calcular Tarifa (sim):217
-- Scenario zones (Comparar Escenarios):235
-- Análisis Ec. Personal:252
-- Bloques de la Subrogación:254
-- Fiscal config modal — purple theme override:297
-- Fiscal config modal:299
-- ECONOMICS v3: opt-buttons, cascade, gastos:325
-- Cascade ingresos/gastos:332
-- Media mensual: cards:342
-- Tab 4: Análisis:352
-- IRPF Breakdown visual:366
-- Card "A pagar / Devolución" más ancha cuando lleva sub-líneas integradas:393
-- Sub-línea de deducciones integrada (antes era una tarjeta verde suelta):395
-- Desglose item-por-item del Ahorro por desgravaciones (ordenado desc):419
-- Anotación inline en Cálculo de base mostrando el ahorro real en IRPF que produce cada reducción:428
-- Resumen fiscal al final de Ingresos y Gastos:430
-- Donut chart:437
-- Breakdown del sector seleccionado (IRPF/IVA dentro de Impuestos, etc.):447
-- Fiscal config: gastos items:454
-- Fiscal: tab bar:466
-- Fiscal: sticky save:471
-- Fiscal: section title income/expense colors:473
-- Fiscal: desgravaciones:483
-- Fiscal: compras profesionales:510
-- Desgravaciones: notas + tabla despacho info:518
-- Nota IVA compras:538
-- IVA por item en compras:540
-- Fiscal: despacho en casa:547
-- Hipoteca — resumen visual:570
-- Hipoteca — compact 2-col grid:593
-- Hipoteca — compact vinculaciones:601
-- Hipoteca — read-only fields:612
-- Hipoteca — edit/detail buttons:621
-- Hipoteca — period summary card:627
-- Multi-rate period cards:640
-- Distribución de ingresos:656
-- Comparador: reorder buttons:672
-- Rate input styled:676
+- Estudio — tariff comparison cards:96
+- Análisis hipoteca — secciones organizadas:117
+- Mis gastos — budget table:134
+- Year selector for per-year fiscal tabs:147
+- §1.1 Tarifa dual:156
+- §1.3 Stats por hora/día:168
+- §1.4 Toggles:175
+- §1.5 Declaración IRPF:180
+- Tab 2: Comparador:193
+- Calcular Tarifa (sim):221
+- Scenario zones (Comparar Escenarios):239
+- Análisis Ec. Personal:256
+- Bloques de la Subrogación:258
+- Fiscal config modal — purple theme override:301
+- Fiscal config modal:303
+- ECONOMICS v3: opt-buttons, cascade, gastos:332
+- Cascade ingresos/gastos:339
+- Media mensual: cards:349
+- Tab 4: Análisis:359
+- IRPF Breakdown visual:373
+- Card "A pagar / Devolución" más ancha cuando lleva sub-líneas integradas:400
+- Sub-línea de deducciones integrada (antes era una tarjeta verde suelta):402
+- Desglose item-por-item del Ahorro por desgravaciones (ordenado desc):426
+- Anotación inline en Cálculo de base mostrando el ahorro real en IRPF que produce cada reducción:435
+- Resumen fiscal al final de Ingresos y Gastos:437
+- Donut chart:444
+- Breakdown del sector seleccionado (IRPF/IVA dentro de Impuestos, etc.):454
+- Fiscal config: gastos items:461
+- Fiscal: tab bar:473
+- Fiscal: sticky save:478
+- Fiscal: section title income/expense colors:480
+- Fiscal: desgravaciones:490
+- Fiscal: compras profesionales:517
+- Desgravaciones: notas + tabla despacho info:525
+- Nota IVA compras:545
+- IVA por item en compras:547
+- Fiscal: despacho en casa:554
+- Hipoteca — resumen visual:577
+- Hipoteca — compact 2-col grid:600
+- Hipoteca — compact vinculaciones:608
+- Hipoteca — read-only fields:619
+- Hipoteca — edit/detail buttons:628
+- Hipoteca — period summary card:634
+- Multi-rate period cards:647
+- Distribución de ingresos:663
+- Comparador: reorder buttons:679
+- Rate input styled:683
 
 **Rangos por prefijo de clase:**
-.ah-cuota:117-119 · .ah-donut:127-129 · .ah-section:114-116 · .ah-total:124-126 · .ah-vs:120-123 · .analisis-card:264-266 · .analisis-cards:253-253 · .analisis-hbar:267-272 · .analisis-input:282-285 · .analisis-ins:291-296 · .analisis-insurance:290-290 · .analisis-mortgage:273-289 · .econ-add:199-200 · .econ-ahorro:420-427 · .econ-annual:25-25 · .econ-avg:26-347 · .econ-bracket:182-188 · .econ-calc:330-331 · .econ-casc:334-341 · .econ-cascade:333-333 · .econ-chart:212-213 · .econ-comp:190-214 · .econ-decl:177-351 · .econ-distrib:657-671 · .econ-donut:438-453 · .econ-equiv:652-655 · .econ-fiscal:431-436 · .econ-formula:45-48 · .econ-gastos:353-365 · .econ-gear:149-150 · .econ-hdr:67-151 · .econ-ingresado:33-33 · .econ-irpf:367-429 · .econ-legend:215-216 · .econ-line:210-211 · .econ-month:50-63 · .econ-mr:649-650 · .econ-multi:641-651 · .econ-opt:326-329 · .econ-qcard:15-22 · .econ-qcell:11-14 · .econ-qm:20-20 · .econ-qmonth:18-19 · .econ-quarter:7-10 · .econ-rate:153-161 · .econ-row:34-44 · .econ-sc:192-678 · .econ-scenario:191-191 · .econ-section:64-64 · .econ-sim:218-228 · .econ-stats:165-170 · .econ-sub:70-82 · .econ-tab:68-69 · .econ-toggle:172-175 · .econ-val:49-49 · .est-btn:87-91 · .est-card:97-99 · .est-detail:94-94 · .est-field:106-112 · .est-fields:105-105 · .est-group:85-89 · .est-modo:100-100 · .est-nav:84-84 · .est-section:93-93 · .est-tariff:95-104 · .ev-sub:76-78 · .excl-item:163-163 · .excl-row:162-162 · .fiscal-add:319-482 · .fiscal-bracket:310-318 · .fiscal-compras:511-546 · .fiscal-copy:146-148 · .fiscal-custom:307-307 · .fiscal-ded:521-535 · .fiscal-desgrav:484-536 · .fiscal-despacho:548-569 · .fiscal-error:323-323 · .fiscal-gasto:455-517 · .fiscal-gastos:537-537 · .fiscal-hdr:467-467 · .fiscal-highlight:508-508 · .fiscal-onoff:550-551 · .fiscal-pct:308-317 · .fiscal-period:463-464 · .fiscal-radio:302-306 · .fiscal-save:321-322 · .fiscal-section:300-475 · .fiscal-sticky:472-472 · .fiscal-subsection:476-477 · .fiscal-tab:468-470 · .fiscal-viaje:478-479 · .fiscal-vinc:561-562 · .fiscal-year:144-145 · .hip-add:639-639 · .hip-auto:590-590 · .hip-bar:576-583 · .hip-cancel:626-626 · .hip-cf:595-600 · .hip-edit:622-624 · .hip-g2:594-594 · .hip-grid:588-588 · .hip-period:628-637 · .hip-resumen:571-575 · .hip-ro:613-620 · .hip-save:625-625 · .hip-section:589-638 · .hip-stat:585-587 · .hip-stats:584-584 · .hip-sub:592-592 · .hip-vinc:591-591 · .hip-vr:602-611 · .mg-budget:131-140 · .mg-cat:141-141 · .mg-desgrav:142-142 · .mg-sort:137-137 · .rate-input:4-4 · .rate-label:3-3 · .rate-row:2-2 · .rate-suffix:5-5 · .rut-sub:74-80 · .sim-combo:230-234 · .sim-field:219-220 · .sim-hr:229-229 · .sim-period:226-226 · .sim-target:221-225 · .sub-block:255-256 · .sub-row:257-263 · .sy-sublbl:24-24
+.ah-cuota:121-123 · .ah-donut:131-133 · .ah-section:118-120 · .ah-total:128-130 · .ah-vs:124-127 · .analisis-card:268-270 · .analisis-cards:257-257 · .analisis-hbar:271-276 · .analisis-input:286-289 · .analisis-ins:295-300 · .analisis-insurance:294-294 · .analisis-mortgage:277-293 · .econ-add:203-204 · .econ-ahorro:427-434 · .econ-annual:25-25 · .econ-avg:26-354 · .econ-bracket:186-192 · .econ-calc:337-338 · .econ-casc:341-348 · .econ-cascade:340-340 · .econ-chart:216-217 · .econ-comp:194-218 · .econ-decl:181-358 · .econ-distrib:664-678 · .econ-donut:445-460 · .econ-equiv:659-662 · .econ-fiscal:438-443 · .econ-formula:45-48 · .econ-gastos:360-372 · .econ-gear:153-154 · .econ-hdr:67-155 · .econ-ingresado:33-33 · .econ-irpf:374-436 · .econ-legend:219-220 · .econ-line:214-215 · .econ-month:50-63 · .econ-mr:656-657 · .econ-multi:648-658 · .econ-opt:333-336 · .econ-qcard:15-22 · .econ-qcell:11-14 · .econ-qm:20-20 · .econ-qmonth:18-19 · .econ-quarter:7-10 · .econ-rate:157-165 · .econ-row:34-44 · .econ-sc:196-685 · .econ-scenario:195-195 · .econ-section:64-64 · .econ-sim:222-232 · .econ-stats:169-174 · .econ-sub:70-82 · .econ-tab:68-69 · .econ-toggle:176-179 · .econ-val:49-49 · .est-btn:91-95 · .est-card:101-103 · .est-detail:98-98 · .est-field:110-116 · .est-fields:109-109 · .est-group:89-93 · .est-modo:104-104 · .est-nav:88-88 · .est-section:97-97 · .est-tariff:99-108 · .ev-sub:76-78 · .excl-item:167-167 · .excl-row:166-166 · .fiscal-add:326-489 · .fiscal-body:304-308 · .fiscal-bracket:317-325 · .fiscal-compras:518-553 · .fiscal-copy:150-152 · .fiscal-custom:314-314 · .fiscal-ded:528-542 · .fiscal-desgrav:491-543 · .fiscal-despacho:555-576 · .fiscal-error:330-330 · .fiscal-gasto:462-524 · .fiscal-gastos:544-544 · .fiscal-hdr:474-474 · .fiscal-highlight:515-515 · .fiscal-onoff:557-558 · .fiscal-pct:315-324 · .fiscal-period:470-471 · .fiscal-radio:309-313 · .fiscal-save:328-329 · .fiscal-section:305-482 · .fiscal-sticky:479-479 · .fiscal-subsection:483-484 · .fiscal-tab:475-477 · .fiscal-viaje:485-486 · .fiscal-vinc:568-569 · .fiscal-year:148-149 · .hip-add:646-646 · .hip-auto:597-597 · .hip-bar:583-590 · .hip-cancel:633-633 · .hip-cf:602-607 · .hip-edit:629-631 · .hip-g2:601-601 · .hip-grid:595-595 · .hip-period:635-644 · .hip-resumen:578-582 · .hip-ro:620-627 · .hip-save:632-632 · .hip-section:596-645 · .hip-stat:592-594 · .hip-stats:591-591 · .hip-sub:599-599 · .hip-vinc:598-598 · .hip-vr:609-618 · .mg-budget:135-144 · .mg-cat:145-145 · .mg-desgrav:146-146 · .mg-sort:141-141 · .rate-input:4-4 · .rate-label:3-3 · .rate-row:2-2 · .rate-suffix:5-5 · .rut-sub:74-80 · .sim-combo:234-238 · .sim-field:223-224 · .sim-hr:233-233 · .sim-period:230-230 · .sim-target:225-229 · .study-intro:85-87 · .sub-block:259-260 · .sub-row:261-267 · .sy-sublbl:24-24
 
 ### css/source/birthdays.css  _(159 líneas)_
 
@@ -572,7 +572,7 @@
 **Rangos por prefijo de clase:**
 .bd-detail:149-155 · .bday-add:102-103 · .bday-alarm:152-152 · .bday-badge:18-21 · .bday-buscar:64-66 · .bday-calendar:7-23 · .bday-cancel:49-50 · .bday-cell:11-105 · .bday-day:154-158 · .bday-detail:141-141 · .bday-filter:145-147 · .bday-group:126-148 · .bday-hdr:6-6 · .bday-header:24-33 · .bday-io:70-86 · .bday-list:36-60 · .bday-month:35-35 · .bday-num:15-15 · .bday-person:144-144 · .bday-search:67-69 · .bday-symbol:2-2 · .bday-upcoming:3-101 · .bday-vip:26-47 · .bday-week:8-10 · .data-btn:5-5 · .ev-btn:4-4 · .ev-cell:106-123 · .ev-io:72-72 · .io-peligro:77-85 · .io-primaria:76-83 · .vip-no:44-45
 
-### css/source/event-calendar.css  _(399 líneas)_
+### css/source/event-calendar.css  _(386 líneas)_
 
 **Secciones:**
 
@@ -600,23 +600,23 @@
 - Tamaños en Calendario 1 mes: "lg" en la esquina, "ovf" en la fila de desborde:202
 - Inicio/Fin bloqueados cuando hay Selección Multidía:205
 - Mini-overlay para elegir días específicos (Otros):210
-- Estrella VIP vectorial (SVG): tamaño homogéneo con el resto de markers:239
-- Marcador "+" (más de 4 eventos puntuales en el mismo día):243
-- Barras multi-día en calendario anual/4meses: ocupa una franja vertical y se divide en filas con grid:245
-- Perímetro de días puente en vista anual: z-index:1, debajo de eventos:251
-- Calendario 4 meses: 2 columnas × 2 filas:253
-- Botón ir al calendario mensual en puentes del resumen:255
-- Botón editar (lápiz) en Anual/Quad — mismo aspecto que la bombilla pequeña de 1-mes/Semanal:267
-- Diagonales en anual/quad: attachment:fixed para que el patrón sea continuo entre celdas:271
-- Festivos/vac en vista anual: borde brillante + relleno suave por día individual:289
-- Dropdown de vista anual:296
-- Linea que separa los chips de eventos grandes de los puntuales:305
-- Planes: cuatro accesos y cuadrícula ampliada con confirmación fija.:330
-- La selección pertenece al grupo; el símbolo conserva su color propio.:362
-- Selección rápida visible sin alterar los colores de cada símbolo.:382
+- Estrella VIP vectorial (SVG): tamaño homogéneo con el resto de markers:238
+- Marcador "+" (más de 4 eventos puntuales en el mismo día):242
+- Barras multi-día en calendario anual/4meses: ocupa una franja vertical y se divide en filas con grid:244
+- Perímetro de días puente en vista anual: z-index:1, debajo de eventos:250
+- Calendario 4 meses: 2 columnas × 2 filas:252
+- Botón ir al calendario mensual en puentes del resumen:254
+- Botón editar (lápiz) en Anual/Quad — mismo aspecto que la bombilla pequeña de 1-mes/Semanal:266
+- Diagonales en anual/quad: attachment:fixed para que el patrón sea continuo entre celdas:270
+- Festivos/vac en vista anual: borde brillante + relleno suave por día individual:288
+- Dropdown de vista anual:295
+- Linea que separa los chips de eventos grandes de los puntuales:304
+- Planes: cuatro accesos y cuadrícula ampliada con confirmación fija.:329
+- La selección pertenece al grupo; el símbolo conserva su color propio.:361
+- Selección rápida visible sin alterar los colores de cada símbolo.:381
 
 **Rangos por prefijo de clase:**
-.dp-actions:235-236 · .dp-calendar:392-392 · .dp-content:223-223 · .dp-counter:221-222 · .dp-day:230-234 · .dp-days:229-229 · .dp-grid:224-224 · .dp-handle:216-216 · .dp-hdr:217-388 · .dp-mhdr:227-228 · .dp-mini:393-395 · .dp-mname:226-226 · .dp-month:225-396 · .dp-monthnav:389-398 · .dp-overlay:211-215 · .dp-sheet:213-390 · .dp-title:218-218 · .dp-yearnav:219-220 · .ev-ann:268-304 · .ev-annual:19-326 · .ev-barsize:184-193 · .ev-category:95-114 · .ev-chip:312-312 · .ev-color:108-132 · .ev-dates:206-208 · .ev-detail:134-335 · .ev-edit:259-265 · .ev-filter:306-327 · .ev-hora:23-23 · .ev-io:266-266 · .ev-management:178-360 · .ev-otros:182-182 · .ev-picker:358-358 · .ev-plan:331-364 · .ev-quad:254-254 · .ev-quick:366-380 · .ev-sep:46-46 · .ev-shape:194-201 · .ev-tax:373-385 · .ev-type:89-384 · .ev-up:8-21 · .ev-upcoming:6-45 · .ev-viaje:24-32 · .ev-wk:33-87 · .sy-body:51-51 · .sy-puente:2-257
+.dp-actions:234-235 · .dp-counter:221-222 · .dp-day:229-233 · .dp-days:228-228 · .dp-grid:223-223 · .dp-handle:216-216 · .dp-hdr:217-217 · .dp-mhdr:226-227 · .dp-mname:225-225 · .dp-month:224-224 · .dp-overlay:211-215 · .dp-sheet:213-214 · .dp-title:218-218 · .dp-yearnav:219-220 · .ev-ann:267-303 · .ev-annual:19-325 · .ev-barsize:184-193 · .ev-category:95-114 · .ev-chip:311-311 · .ev-color:108-132 · .ev-dates:206-208 · .ev-detail:134-334 · .ev-edit:258-264 · .ev-filter:305-326 · .ev-hora:23-23 · .ev-io:265-265 · .ev-management:178-359 · .ev-otros:182-182 · .ev-picker:357-357 · .ev-plan:330-363 · .ev-quad:253-253 · .ev-quick:365-379 · .ev-sep:46-46 · .ev-shape:194-201 · .ev-tax:372-384 · .ev-type:89-383 · .ev-up:8-21 · .ev-upcoming:6-45 · .ev-viaje:24-32 · .ev-wk:33-87 · .sy-body:51-51 · .sy-puente:2-256
 
 ### css/source/navigation-alarms.css  _(105 líneas)_
 
@@ -828,7 +828,7 @@
 **Rangos por prefijo de clase:**
 .boda-future:78-78 · .contact-address:124-136 · .contact-entry:123-123 · .contact-primary:134-140 · .contact-shortcuts:129-152 · .energy-contract:105-106 · .energy-field:108-109 · .energy-history:103-104 · .energy-price:107-112 · .energy-sheet:102-102 · .energy-tax:110-110 · .ev-cal:32-101 · .ev-field:77-77 · .ev-list:118-147 · .ev-period:161-164 · .ev-share:30-31 · .ev-stat:116-117 · .ev-stats:148-153 · .ev-up:144-168 · .ev-week:64-79 · .ev-wk:3-3 · .header:2-2 · .home-submission:4-17 · .home-summary:18-26 · .month-summary:20-21
 
-### css/source/energy-refinements.css  _(289 líneas)_
+### css/source/energy-refinements.css  _(294 líneas)_
 
 **Secciones:**
 
@@ -847,9 +847,10 @@
 - El selector de día conserva marco y seis huecos semanales al cambiar de mes.:268
 - El ancho del nombre del mes no desplaza las flechas compartidas.:283
 - Deshacer acompaña a la ficha de sesión sin tapar sus controles de estado.:286
+- Coste sin cobertura calculable: explicación en lugar de un gráfico vacío.:290
 
 **Rangos por prefijo de clase:**
-.boda-asg:101-285 · .boda-det:97-100 · .boda-last:15-18 · .contact-shortcuts:211-214 · .data-actions:134-135 · .energy-bar:86-86 · .energy-caption:2-2 · .energy-choice:12-12 · .energy-compare:128-128 · .energy-contract:4-5 · .energy-cost:82-130 · .energy-coverage:73-73 · .energy-extremes:69-69 · .energy-fee:36-37 · .energy-field:7-7 · .energy-fields:9-9 · .energy-info:57-59 · .energy-inline:79-79 · .energy-legend:87-87 · .energy-metric:120-122 · .energy-metrics:119-119 · .energy-overview:61-63 · .energy-period:64-67 · .energy-price:178-183 · .energy-range:88-88 · .energy-reconciliation:72-72 · .energy-scenario:129-129 · .energy-section:56-56 · .energy-supplier:70-123 · .energy-table:3-3 · .energy-tabs:39-50 · .energy-tariff:75-179 · .energy-tax:68-126 · .energy-vat:124-124 · .energy-window:25-118 · .energy-year:6-94 · .ev-btn:141-141 · .ev-cell:279-280 · .ev-day:281-281 · .ev-io:131-131 · .ev-main:159-160 · .ev-order:236-248 · .ev-routine:232-234 · .ev-routines:226-230 · .ev-stat:215-215 · .ev-stats:216-222 · .ev-type:231-231 · .ev-up:257-266 · .ev-upcoming:168-172 · .ev-wk:16-171 · .imp-mode:108-108 · .imp-preview:109-113 · .nav-bar:136-136 · .rut-addition:251-278 · .rut-bulk:189-194 · .rut-card:153-208 · .rut-day:142-148 · .rut-days:145-145 · .rut-dpick:140-276 · .rut-history:185-200 · .rut-hora:149-151 · .rut-month:193-193 · .rut-recovery:139-139 · .rut-routine:155-155 · .rut-sec:209-210 · .rut-session:138-204 · .rut-time:152-152 · .rut-weekdays:146-146 · .sy-body:166-166 · .sy-hdr:260-260
+.boda-asg:101-285 · .boda-det:97-100 · .boda-last:15-18 · .contact-shortcuts:211-214 · .data-actions:134-135 · .energy-bar:86-86 · .energy-caption:2-2 · .energy-choice:12-12 · .energy-compare:128-128 · .energy-contract:4-5 · .energy-cost:82-293 · .energy-coverage:73-73 · .energy-extremes:69-69 · .energy-fee:36-37 · .energy-field:7-7 · .energy-fields:9-9 · .energy-info:57-59 · .energy-inline:79-79 · .energy-legend:87-87 · .energy-metric:120-122 · .energy-metrics:119-119 · .energy-overview:61-63 · .energy-period:64-67 · .energy-price:178-183 · .energy-range:88-88 · .energy-reconciliation:72-72 · .energy-scenario:129-129 · .energy-section:56-56 · .energy-supplier:70-123 · .energy-table:3-3 · .energy-tabs:39-50 · .energy-tariff:75-179 · .energy-tax:68-126 · .energy-vat:124-124 · .energy-window:25-118 · .energy-year:6-94 · .ev-btn:141-141 · .ev-cell:279-280 · .ev-day:281-281 · .ev-io:131-131 · .ev-main:159-160 · .ev-order:236-248 · .ev-routine:232-234 · .ev-routines:226-230 · .ev-stat:215-215 · .ev-stats:216-222 · .ev-type:231-231 · .ev-up:257-266 · .ev-upcoming:168-172 · .ev-wk:16-171 · .imp-mode:108-108 · .imp-preview:109-113 · .nav-bar:136-136 · .rut-addition:251-278 · .rut-bulk:189-194 · .rut-card:153-208 · .rut-day:142-148 · .rut-days:145-145 · .rut-dpick:140-276 · .rut-history:185-200 · .rut-hora:149-151 · .rut-month:193-193 · .rut-recovery:139-139 · .rut-routine:155-155 · .rut-sec:209-210 · .rut-session:138-204 · .rut-time:152-152 · .rut-weekdays:146-146 · .sy-body:166-166 · .sy-hdr:260-260
 
 ### css/source/home-reminders.css  _(75 líneas)_
 

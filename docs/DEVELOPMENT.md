@@ -979,3 +979,11 @@ Corrección de la propuesta tras revisar las capturas con Ángel:
 - A10: el reparto eléctrico solo dibuja proporciones cuando hay consumo desglosado positivo. Sin lecturas muestra un estado neutro; con lecturas de cero muestra cero sin inventar porcentajes. La cobertura parcial se indica y las proporciones se refieren solo a los días documentados. No se modifican cálculos, lecturas ni estimaciones.
 - A11: Ajustes nombra sus accesos Correo de horas, MacroDroid y Facturas y correo, conservando consulta protegida, edición explícita y guardado.
 - El atlas añade los recorridos de resumen anual y selección mensual de Multidía, listado del día de cumpleaños y salto a una persona. El informe conserva las comparativas históricas de v498 y añade los resultados de v499. Solo A12 y A13 (P3) quedan pendientes; no se avanza sobre ellos en esta fase.
+
+## Revisión visual v500: P3 y ajustes solicitados
+
+- A12: Herramientas introduce el propósito de los escenarios y separa Trabajo/Hogar con controles mayores. Economía elimina abreviaturas en pestañas. Fiscal usa dos columnas para entradas legibles, títulos de sección, tarjetas y campos/períodos mayores; se mantienen los cálculos, datos y guardado.
+- A13: Coste distingue todos los meses no calculables (explicación compacta con motivos), cobertura parcial (gráfico y nota) y cero conocido (valor válido). IVA real/sin IVA/constante siguen explícitos; la comparación con facturas usa siempre IVA histórico.
+- Recordatorios en Ajustes mide 44 px de alto, como los iconos profesionales.
+- Ángel pide deshacer A09: se restaura exactamente el selector anual y su CSS anteriores a v499. Esta petición sustituye la regla mensual de la sección histórica v499; no queda pendiente de reaplicación. Se mantienen los demás P2.
+- Atlas actual: 162 capturas y 165 relaciones tras retirar los dos estados exclusivos de la propuesta mensual y añadir cuatro recorridos de estimación explícita del coste. Se conserva toda la evidencia de v498/v499 y la cobertura inicial de 150 capturas.

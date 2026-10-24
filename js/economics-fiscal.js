@@ -18,11 +18,15 @@ function renderFiscalContent(){
   h+='<button class="fiscal-tab-btn'+(FISCAL_TAB==='despacho'?' active':'')+'" id="fiscalTabDespacho">Hipoteca<br>y Facturas</button>';
   h+='</div>';
   if(FISCAL_TAB!=='despacho')h+=_renderYearSelector();
-  h+='<div class="sy-body" style="padding:16px">';
+  var descriptions={personal:['Economía personal','Organiza tus ingresos y gastos personales del año.'],gastos_desg:['Gastos desgravables','Configura aportaciones y gastos para tus cálculos fiscales.'],irpf_deduc:['IRPF y deducciones','Revisa la retención y los criterios de cálculo de la renta.'],despacho:['Hipoteca y facturas','Consulta los datos del hogar. Abre el detalle para editarlos.']};
+  var description=descriptions[FISCAL_TAB];
+  var intro='<div class="fiscal-intro"><h2>'+description[0]+'</h2><p>'+description[1]+'</p></div>';
+  h+='<div class="sy-body fiscal-body">';
+  if(FISCAL_TAB!=='irpf_deduc'&&FISCAL_TAB!=='despacho')h+=intro;
   if(FISCAL_TAB==='personal')h+=renderFiscalTabPersonal();
   else if(FISCAL_TAB==='gastos_desg')h+=renderFiscalTabGastosDesg();
-  else if(FISCAL_TAB==='irpf_deduc')h+=renderFiscalTabIrpfDeduc();
-  else if(FISCAL_TAB==='despacho')h+=renderFiscalTabDespacho(false);
+  else if(FISCAL_TAB==='irpf_deduc')h+=renderFiscalTabIrpfDeduc(intro);
+  else if(FISCAL_TAB==='despacho')h+=renderFiscalTabDespacho(false,intro);
   h+='</div>';
   h+='<div class="fiscal-sticky-save"'+(FISCAL_TAB==='personal'?' id="personalSaveFooter"'+(personalHasChanges()?'':' hidden'):'')+'>';
   h+=FISCAL_TAB==='despacho'?'<button class="fiscal-save-btn household-detail-link" id="householdDetailLink">Editar / Ver en detalle</button>':'<button class="fiscal-save-btn" id="fiscalSave">Guardar configuraci\u00f3n</button>';
@@ -251,12 +255,13 @@ function renderComprasList(){
 }
 
 /* ── Tab IRPF y Deducciones (con sub-tabs) ────────────────── */
-function renderFiscalTabIrpfDeduc(){
+function renderFiscalTabIrpfDeduc(intro){
   var h='<div class="econ-sub-tabs">';
   h+='<button class="econ-sub-tab'+(FISCAL_IRPF_SUB==='desgrav'?' active':'')+'" data-firsub="desgrav">Desgravaciones</button>';
-  h+='<button class="econ-sub-tab'+(FISCAL_IRPF_SUB==='irpf'?' active':'')+'" data-firsub="irpf">Config IRPF</button>';
+  h+='<button class="econ-sub-tab'+(FISCAL_IRPF_SUB==='irpf'?' active':'')+'" data-firsub="irpf">Retención y tramos</button>';
   h+='<button class="econ-sub-tab'+(FISCAL_IRPF_SUB==='despacho'?' active':'')+'" data-firsub="despacho">Despacho</button>';
   h+='</div>';
+  h+=intro||'';
   if(FISCAL_IRPF_SUB==='irpf')h+=renderFiscalTabIrpf();
   else if(FISCAL_IRPF_SUB==='despacho')h+=renderFiscalTabDespachoOnly();
   else h+=renderFiscalTabDesgrav();

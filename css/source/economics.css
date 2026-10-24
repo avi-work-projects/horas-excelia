@@ -65,7 +65,7 @@
 
 /* ── ECONOMICS v2: tabs + nuevas secciones ── */
 .econ-hdr-sub{flex-shrink:0;display:flex;align-items:stretch;padding:5px 6px;gap:5px;box-shadow:0 1px 0 var(--border);overflow-x:hidden;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
-.econ-tab-btn{flex:1;font-size:.56rem;padding:5px 2px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;text-align:center;line-height:1.35;white-space:normal;word-break:break-word}
+.econ-tab-btn{flex:1;min-height:44px;font-size:.68rem;padding:6px 2px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;text-align:center;line-height:1.35;white-space:normal;word-break:normal}
 .econ-tab-btn.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
 .econ-sub-tabs{display:flex;gap:6px;padding:10px 16px;box-shadow:0 1px 0 var(--border);align-items:center;position:sticky;top:0;z-index:5;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 .econ-sub-tabs::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:rgba(192,132,252,.2);z-index:10}
@@ -81,13 +81,17 @@
 .econ-sub-tab.est-casa{color:var(--text-dim)}
 .econ-sub-tab.est-casa.active{border-color:#14b8a6;background:rgba(20,184,166,.1);color:#14b8a6}
 /* Estudio Cambio — grouped nav */
-.est-nav{display:flex;gap:8px;padding:8px 10px;box-shadow:0 1px 0 var(--border)}
-.est-group{display:flex;flex-direction:column;gap:4px;flex:1}
-.est-group-label{font-size:.58rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;text-align:center;margin-bottom:2px}
+#estudioOverlay .sy-body{gap:12px}
+.study-intro,.fiscal-intro{margin:0}
+.study-intro h2,.fiscal-intro h2{font-size:1.1rem;line-height:1.35;margin:0 0 6px;color:var(--text)}
+.study-intro p,.fiscal-intro p{font-size:.78rem;line-height:1.5;color:var(--text-muted);margin:0}
+.est-nav{display:flex;gap:12px;padding:0 0 12px;box-shadow:0 1px 0 var(--border)}
+.est-group{display:flex;flex-direction:column;gap:10px;flex:1;min-width:0}
+.est-group-label{font-size:.68rem;color:var(--text-muted);font-weight:600;text-align:left;margin-bottom:2px}
 .est-btn:not(.est-casa):not(.active){background:rgba(96,165,250,.07);border-color:rgba(96,165,250,.25);color:rgba(96,165,250,.85)}
 .est-group-casa .est-btn:not(.active){background:rgba(20,184,166,.07);border-color:rgba(20,184,166,.25);color:rgba(20,184,166,.85)}
 .est-group-casa .est-btn.active{border-color:#14b8a6!important;background:rgba(20,184,166,.22)!important;color:#14b8a6!important}
-.est-btn{font-size:.66rem;padding:6px 4px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;text-align:center;-webkit-user-select:none;user-select:none}
+.est-btn{min-height:44px;font-size:.75rem;padding:8px 6px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;text-align:center;-webkit-user-select:none;user-select:none}
 .est-btn.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
 /* Estudio — tariff comparison cards */
 .est-section-hdr{display:flex;align-items:center;justify-content:space-between;gap:8px}
@@ -297,8 +301,11 @@
 /* ── Fiscal config modal — purple theme override ── */
 #fiscalOverlay{--accent:#c084fc;--accent-glow:#c084fc22;--accent-bright:#d4a5ff}
 /* ── Fiscal config modal ── */
+.fiscal-body{padding:16px;gap:12px}
 .fiscal-section{margin-bottom:18px}
+.fiscal-body .fiscal-section{padding:14px;margin-bottom:0;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface)}
 .fiscal-section-title{font-size:.65rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.fiscal-body .fiscal-section-title{font-size:.8rem;color:var(--text-muted);text-transform:none;letter-spacing:normal;margin-bottom:10px;padding-bottom:8px;border-bottom:0;box-shadow:0 1px 0 var(--border)}
 .fiscal-radio-row{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
 .fiscal-radio-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius-sm);border:1px solid var(--border);cursor:pointer;font-size:.84rem;transition:all .15s;-webkit-user-select:none;user-select:none}
 .fiscal-radio-item.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
@@ -452,21 +459,21 @@
 .econ-donut-bd-amt{font-family:var(--mono);white-space:nowrap}
 .econ-donut-bd-pct{font-size:.62rem;color:var(--text-dim);margin-left:4px}
 /* Fiscal config: gastos items */
-.fiscal-gasto-item{display:flex;align-items:center;gap:6px;padding:7px 0;border-bottom:1px solid var(--border)}
+.fiscal-gasto-item{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)}
 .fiscal-gasto-item:last-child{border-bottom:none}
-.fiscal-gasto-lbl{flex:1;font-size:.8rem;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.fiscal-gasto-lbl{flex:1 0 100%;font-size:.8rem;color:var(--text);white-space:normal;min-width:0}
 .fiscal-gasto-lbl-input{flex:1;font-size:.8rem;padding:4px 6px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);color:var(--text);outline:none;min-width:60px}
 .fiscal-gasto-lbl-input:focus{border-color:var(--accent)}
-.fiscal-gasto-amt{font-family:var(--mono);font-size:.8rem;width:72px;padding:4px 6px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text);text-align:right;outline:none;flex-shrink:0}
+.fiscal-gasto-amt{font-family:var(--mono);font-size:.85rem;width:88px;min-height:40px;box-sizing:border-box;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);text-align:right;outline:none;flex-shrink:0}
 .fiscal-gasto-amt:focus{border-color:var(--accent)}
-.fiscal-gasto-period{display:flex;gap:2px;flex-shrink:0}
-.fiscal-period-btn{padding:3px 7px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);color:var(--text-dim);font-size:.62rem;cursor:pointer;-webkit-user-select:none;user-select:none;transition:all .12s}
+.fiscal-gasto-period{display:flex;gap:6px;flex-shrink:0}
+.fiscal-period-btn{min-height:40px;padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);font-size:.72rem;cursor:pointer;-webkit-user-select:none;user-select:none;transition:all .12s}
 .fiscal-period-btn.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
 .fiscal-gasto-del{width:22px;height:22px;border:none;background:transparent;color:var(--c-red);font-size:.8rem;cursor:pointer;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 /* Fiscal: tab bar */
 .fiscal-hdr{box-shadow:0 1px 0 #c084fc33;border-top:2px solid #c084fc}
-.fiscal-tab-bar{flex-shrink:0;display:flex;align-items:stretch;padding:5px 6px;gap:5px;box-shadow:0 1px 0 #c084fc33;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
-.fiscal-tab-btn{flex:1;font-size:.56rem;padding:5px 2px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;text-align:center;line-height:1.35;white-space:normal;word-break:break-word}
+.fiscal-tab-bar{flex-shrink:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;padding:10px 16px;gap:10px;box-shadow:0 1px 0 #c084fc33;background:var(--hdr-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.fiscal-tab-btn{font-size:.74rem;min-height:44px;padding:7px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;text-align:center;line-height:1.35;white-space:normal;word-break:normal}
 .fiscal-tab-btn.active{border-color:#c084fc;background:#c084fc18;color:#c084fc}
 /* Fiscal: sticky save */
 .fiscal-sticky-save{flex-shrink:0;padding:10px 16px 14px;border-top:1px solid #c084fc33;background:var(--surface)}

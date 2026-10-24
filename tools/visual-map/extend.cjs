@@ -42,8 +42,6 @@ module.exports=function extend({scenes,edges}){
   add('event-alarm','Alarma de evento','Eventos','day','#evDAlarm','#evAlarmOv.open',{sources:['js/events-detail.js']});
   add('routine-session','Ficha de sesión','Rutinas','calendar','.ev-cell[data-ds="2026-08-21"] [data-id="rut-fx-rut-gym-2026-08-21"]','#evDetailOv.open',{sources:['js/events-detail.js','js/rutinas.js']});
   add('plan-picker','Selector de planes','Eventos','edit','.ev-plan-more[data-picker="plans"]','#evPlanPickerOv.open',{scroll:true,sources:['js/events-plan-picker.js'],region:'.ev-event-form-body'});
-  add('dates-overview','Multidía · resumen anual','Eventos','dates','#dpViewToggle','#dpOv [data-month]',{sources:['js/events-picker-date.js'],back:'#dpViewToggle'});
-  add('dates-selected','Multidía · selección mensual','Eventos','dates','.dp-day[data-ds="2026-08-22"]','.dp-day[data-ds="2026-08-22"][aria-pressed="true"]',{sources:['js/events-picker-date.js']});
   // Bodas: rutas de consulta y formularios compartidos.
   add('weddings','Consulta de clases','Bodas','events','#evViewBodas','[data-bsub="clases"].active',{sources:['js/bodas.js','js/bodas-bind.js']});
   add('calendar-export','Exportar calendario','Bodas','weddings','#evCalendarExport','#evCalendarExportOv.open',{sources:['js/events-calendar-export.js']});
@@ -107,8 +105,10 @@ module.exports=function extend({scenes,edges}){
   add('gas-flat-edit','Editar cuota fija de gas','Hogar','gas','[data-gasedit="fijo"]','[data-gassave="fijo"]',{scroll:true});
   add('electric-edit','Editar tarifa de electricidad','Hogar','electric','#electEditBtn','#electSaveBtn');
   for(const [kind,parent,group]of [['gas','gas','Energía · gas'],['luz','electric','Energía · electricidad']]){
-    const id='energy-'+kind;add(id,'Resumen de '+(kind==='gas'?'gas':'electricidad'),group,parent,'.energy-analysis-open','#energyAnalysisOverlay.open',{sources:['js/energy-analysis-view.js','js/energy-analysis-bind.js','js/energy-study.js'],region:'#energyAnalysisOverlay .sy-body'});
+    const id='energy-'+kind;add(id,'Resumen de '+(kind==='gas'?'gas':'electricidad'),group,parent,'.energy-analysis-open','#energyAnalysisOverlay.open',{sources:['js/energy-analysis-view.js','js/energy-analysis-bind.js','js/energy-study.js','js/energy-costs.js'],region:'#energyAnalysisOverlay .sy-body'});
     for(const [key,label]of [['consumo','Consumo'],['costes','Coste'],['tarifas','Tarifas'],['comparar','Escenarios']])add(id+'-'+key,label+' de '+(kind==='gas'?'gas':'electricidad'),group,id,'[data-energy-tab="'+key+'"]','[data-energy-tab="'+key+'"].active');
+    add(id+'-costes-neto','Coste · estimación sin IVA',group,id+'-costes','#energyVatCycle','.energy-cost-chart',{note:'Estimación explícita sin IVA. El fixture cubre ocho meses; no se rellenan los cuatro restantes.'});
+    add(id+'-costes-constante','Coste · estimación con IVA constante',group,id+'-costes-neto','#energyVatCycle','.energy-tax-controls label:not([hidden]) #energyCostRate',{note:'IVA constante para explorar el escenario; no modifica los impuestos históricos ni la comparación con facturas.'});
   }
   // Herramientas y economía/fiscal.
   for(const [id,title,button]of [['study-rate','Calcular tarifa','#ecSubSim'],['study-mortgage','Comparar hipotecas','#ecSubHip'],['study-gas','Comparar gas','#ecSubGas'],['study-electric','Comparar electricidad','#ecSubElect']])add(id,title,'Herramientas','study',button,button+'.active');

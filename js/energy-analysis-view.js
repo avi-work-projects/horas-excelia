@@ -35,11 +35,23 @@ function energyConsumptionHtml(kind,months,year){
 function energyCostsHtml(kind,year){
   var bills=energyBills(),contracts=energyContracts(),taxes=energyTaxes(),real=energyCostMonths(bills,contracts,taxes,year,kind),months=ENERGY_COST_VAT==='historical'?real:energyCostMonths(bills,contracts,taxes,year,kind,{vatMode:ENERGY_COST_VAT,vat:ENERGY_COST_RATE}),suppliers={};
   months.forEach(function(m){m.groups.forEach(function(g){suppliers[g.supplier]=true;});});
+  var calculated=months.filter(function(m){return m.gross!==null;}).length;
   var label=ENERGY_COST_VAT==='historical'?'IVA real':ENERGY_COST_VAT==='none'?'Sin IVA':'IVA cte '+ENERGY_COST_RATE+' %';
-  var h='<section class="energy-contract energy-year-chart">'+energySectionTitle('Coste mensual','Estimado · €')+'<div class="energy-tax-controls"><label><input id="energyVatCycle" type="checkbox"'+(ENERGY_COST_VAT!=='none'?' checked':'')+'> '+label+'</label><label'+(ENERGY_COST_VAT!=='constant'?' hidden':'')+'>IVA % <input id="energyCostRate" type="number" min="0" max="100" value="'+ENERGY_COST_RATE+'"></label></div>'+energyVatStrip(months,year)+energyCostChart(months)+'<div class="energy-legend">';
+  var h='<section class="energy-contract energy-year-chart">'+energySectionTitle('Coste mensual','Estimado · €')+'<div class="energy-tax-controls"><label><input id="energyVatCycle" type="checkbox"'+(ENERGY_COST_VAT!=='none'?' checked':'')+'> '+label+'</label><label'+(ENERGY_COST_VAT!=='constant'?' hidden':'')+'>IVA % <input id="energyCostRate" type="number" min="0" max="100" value="'+ENERGY_COST_RATE+'"></label></div>';
+  if(calculated){
+    h+=energyVatStrip(months,year)+energyCostChart(months);
+    if(calculated<12)h+='<p class="energy-coverage-note">'+calculated+' de 12 meses calculables. Los guiones indican datos incompletos, no un coste de cero.</p>';
+  }else{
+    var reasons=[];
+    months.filter(function(m){return m.days>0;}).forEach(function(m){m.missing.forEach(function(reason){if(reasons.indexOf(reason)<0)reasons.push(reason);});});
+    h+='<div class="energy-cost-empty" role="status"><h3>Coste pendiente de cálculo</h3><p>'+escHtml(reasons.length?reasons.join(' · '):'Faltan lecturas o cobertura de consumo para este año')+'.</p><p>Revisa los datos importados y las condiciones de tus contratos. Puedes explorar un cálculo sin IVA o con IVA constante mediante la casilla superior; se mostrará como estimación.</p></div>';
+  }
+  h+='<div class="energy-legend">';
   Object.keys(suppliers).forEach(function(x){h+='<span><i style="background:'+energySupplierColor(x)+'"></i>'+escHtml(x)+'</span>';});h+='</div></section>';
   var comparison=energyReconcile(bills,real,year,kind),diff=comparison.difference,total=comparison.actual;
-  h+='<section class="energy-contract">'+energySectionTitle('Estimado y facturado',comparison.days+' días comparables')+'<div class="energy-metrics energy-reconciliation">'+energyMetric('Estimado · IVA real',energyNumber(comparison.estimate,'€'),'')+energyMetric('Facturado',energyNumber(total,'€'),'Solo suministro')+energyMetric('Diferencia',energyNumber(diff,'€'),diff!==null&&total!==0?(diff/Math.abs(total)*100).toFixed(1)+' % del facturado':'')+'</div>';
+  h+='<section class="energy-contract">'+energySectionTitle('Estimado y facturado',comparison.days+' días comparables');
+  if(comparison.estimate===null)h+='<p class="energy-coverage-note">Aún no hay días con datos completos para comparar el coste estimado con el facturado. La comparación requiere IVA histórico, incluso al explorar otros escenarios.</p>';
+  else h+='<div class="energy-metrics energy-reconciliation">'+energyMetric('Estimado · IVA real',energyNumber(comparison.estimate,'€'),'')+energyMetric('Facturado',energyNumber(total,'€'),'Solo suministro')+energyMetric('Diferencia',energyNumber(diff,'€'),diff!==null&&total!==0?(diff/Math.abs(total)*100).toFixed(1)+' % del facturado':'')+'</div>';
   if(comparison.omitted)h+='<p class="energy-coverage-note">'+comparison.omitted+' días excluidos por datos incompletos.</p>';
   h+=energyInfoHtml('Criterios y totales de facturación','<p>Se comparan los mismos días de consumo con IVA histórico, aunque la factura o el abono se emitiesen en otro año. Se excluyen mantenimiento y otros servicios. Las cuotas fijas pueden calcularse sin lectura.</p><p>Por fecha de emisión: suministro '+energyNumber(comparison.issuedSupply,'€')+' · servicios adicionales '+energyNumber(comparison.services,'€')+'.</p>')+'</section>';
   var table='<div class="energy-table-scroll"><table class="sy-table"><thead><tr><th>Mes</th><th>Estimado</th><th>Cobertura / compañías</th></tr></thead><tbody>';

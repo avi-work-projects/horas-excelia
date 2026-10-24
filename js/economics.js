@@ -445,8 +445,8 @@ function renderEconContent(){
   h+='<div class="econ-hdr-sub">';
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='resumen'?' active':'')+'" id="ecTabResumen">Resumen<br>Econ\u00f3mico</button>';
   h+='<button class="econ-tab-btn'+(ECON_VIEW==='dias'?' active':'')+'" id="ecTabDias">Resumen<br>Horas/D\u00edas</button>';
-  h+='<button class="econ-tab-btn'+(ECON_VIEW==='gastos'?' active':'')+'" id="ecTabGastos">An\u00e1lisis Gastos<br>Dec. Renta</button>';
-  h+='<button class="econ-tab-btn'+(ECON_VIEW==='analisis'?' active':'')+'" id="ecTabAnalisis">An\u00e1lisis<br>Ec. Personal</button>';
+  h+='<button class="econ-tab-btn'+(ECON_VIEW==='gastos'?' active':'')+'" id="ecTabGastos">Gastos<br>y renta</button>';
+  h+='<button class="econ-tab-btn'+(ECON_VIEW==='analisis'?' active':'')+'" id="ecTabAnalisis">Economía<br>personal</button>';
   h+='</div>';
   h+='<div class="sy-header with-tabs">';
   h+='<button class="econ-gear-btn" id="ecGear">&#9881;</button>';
