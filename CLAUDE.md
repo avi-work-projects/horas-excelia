@@ -28,7 +28,7 @@ Una tarea exclusivamente documental conserva las versiones y los archivos de la 
 - Mantenibilidad: una fuente de verdad por regla/componente; corregir la causa y evitar nuevas capas de excepciones. Ordenar por zonas con cambios pequeños, sin reescrituras generales por defecto.
 - Separar reorganización interna y cambios de comportamiento. Antes de extraer código, identificar consumidores y caracterizar el resultado existente; después comprobar salida, interacciones, persistencia y aspecto de las vistas afectadas.
 - No optimizar por tamaño o por intuición: Ángel considera fluida la app (18/10/2026). Priorizar aislamiento y comprensión; medir antes de modificar rendimiento. La escritura de la previsualización fiscal quedó corregida en v487 y Atrás/flechas/Hoy se consolidaron en v488; las demás prioridades siguen pendientes.
-- Mapa visual con capturas: idea pendiente, no construido. Cuando exista, cada cambio de interfaz debe actualizar solo las fichas afectadas y sus dependencias compartidas; usar datos ficticios y revisar las capturas. Ver la norma y alcance en docs/DEVELOPMENT.md y FUTURO.md.
+- Mapa visual con capturas: piloto documental en docs/visual-map/ (24/10/2026), pendiente de revisión de Ángel y de ampliar cobertura. npm run map:serve abre el visor local; map:changed actualiza escenas afectadas y map:verify regenera las láminas. Usar datos ficticios, revisar capturas y conservar explícitas las pantallas pendientes. Ver docs/visual-map/README.md y la norma de docs/DEVELOPMENT.md.
 
 ## Dónde ampliar
 - [Arquitectura, catálogo de componentes y flujos](docs/DEVELOPMENT.md).
