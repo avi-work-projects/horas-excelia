@@ -64,13 +64,13 @@ test('acceso de tareas: margen inferior, ocultar por arrastre, persistir y recup
  await page.locator('#menuBtn').click();await expect(page.locator('#tasksMenuOpen')).toHaveCount(0);
 });
 
-test('recordatorios con bordes uniformes y colores de cumpleaños y gestiones distintos',async({page})=>{
+test('recordatorios con contornos por grupo y colores de cumpleaños y día distintos',async({page})=>{
  await page.addInitScript(()=>{
   sessionStorage.removeItem('excelia-popup-dismissed');
   localStorage.setItem('excelia-bdays-v1',JSON.stringify([{name:'Cumple de prueba',day:1,month:10},{name:'VIP de prueba',day:2,month:10,vip:true}]));
   localStorage.setItem('excelia-events-v1',JSON.stringify([{id:'gestion',kind:'puntual',type:'Rec. Gestiones',title:'Gestión de prueba',start:'2026-10-01',end:'2026-10-01',color:'#34d399'}]));
  });
  await page.goto('/');await expect(page.locator('.home-popup-item.bday')).toBeVisible();await expect(page.locator('.home-popup-item.event')).toBeVisible();
- const widths=await page.locator('.home-popup-item').evaluateAll(es=>es.map(e=>getComputedStyle(e).borderTopWidth));expect(new Set(widths).size).toBe(1);expect(parseFloat(widths[0])).toBeGreaterThanOrEqual(1);
- const colors=await page.locator('.home-popup-item.bday,.home-popup-item.event').evaluateAll(es=>es.map(e=>getComputedStyle(e).borderTopColor));expect(colors[0]).not.toBe(colors[1]);
+ const widths=await page.locator('.home-popup-item.bday,.home-popup-item.vip,.home-reminder-day>.home-reminder-rows').evaluateAll(es=>es.map(e=>getComputedStyle(e).borderTopWidth));expect(new Set(widths).size).toBe(1);expect(parseFloat(widths[0])).toBeGreaterThanOrEqual(1);
+ const colors=await page.locator('.home-popup-item.bday,.home-reminder-day>.home-reminder-rows').evaluateAll(es=>es.map(e=>getComputedStyle(e).borderTopColor));expect(colors[0]).not.toBe(colors[1]);
 });

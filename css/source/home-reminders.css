@@ -11,10 +11,10 @@
 .home-popup-item{font-size:.76rem;border:1px solid var(--border);border-radius:11px;background:var(--surface);color:var(--text);margin:0;min-width:0;overflow:hidden}
 .home-popup-item.bday,.home-popup-item.vip{border-color:color-mix(in srgb,var(--birthday-tone) 32%,var(--border));padding:8px 10px}
 .home-popup-item.event{border-color:color-mix(in srgb,var(--reminder-color) 35%,var(--border))}
-.home-reminder-disclosure>summary{display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:4px 9px;align-items:center;min-height:48px;padding:8px 10px!important;margin:0!important;list-style:none;border:0;border-radius:inherit;background:none;box-shadow:none;font-weight:400;color:inherit;cursor:pointer}
+.home-reminder-disclosure>summary{display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:4px 9px;align-items:center;min-height:42px;padding:7px 10px!important;margin:0!important;list-style:none;border:0;border-radius:inherit;background:none;box-shadow:none;font-weight:400;color:inherit;cursor:pointer}
 .home-reminder-disclosure>summary::before,.home-reminder-disclosure>summary::after,.home-reminder-disclosure>summary::-webkit-details-marker{display:none}
-.home-reminder-disclosure>summary:hover{background:var(--surface2)}
-.home-reminder-text{min-width:0}.home-reminder-text .home-reminder-content{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;line-height:1.5}
+.home-reminder-disclosure>summary:hover{background:color-mix(in srgb,var(--accent) 5%,transparent)}
+.home-reminder-text{min-width:0}.home-reminder-text .home-reminder-content{display:block;white-space:normal;overflow-wrap:anywhere;font-weight:600;line-height:1.45}
 .home-reminder-meta{display:flex;align-items:center;justify-content:flex-end;gap:5px;max-width:125px}
 .home-reminder-when{font-size:.65rem;font-weight:400;color:var(--text-muted);white-space:nowrap;font-variant-numeric:tabular-nums}
 .home-reminder-alarm{font-size:1rem;line-height:1;flex-shrink:0}
@@ -36,16 +36,23 @@
 .home-birthday-more{display:flex;align-items:center;justify-content:center;gap:8px;justify-self:end;margin:2px 0 0;padding:6px 9px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--accent-bright);font:inherit;font-size:.66rem;cursor:pointer}
 .home-birthday-more[aria-expanded="true"] .ev-tax-chevron{transform:rotate(225deg)}
 #homeBirthdayExtra[hidden]{display:none}#homeBirthdayExtra{display:grid;gap:10px}
-.home-reminder-pending{border:1px solid var(--border);border-radius:12px;background:var(--surface2);color:var(--text)}
-.home-reminder-pending.has-pending{border-color:var(--c-red);background:color-mix(in srgb,var(--c-red) 10%,var(--surface));color:var(--c-red)}
-.home-reminder-pending>summary{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px!important;margin:0!important;border:0;background:none;box-shadow:none;border-radius:inherit;color:inherit;list-style:none;cursor:pointer}
-.home-reminder-pending>summary::before,.home-reminder-pending>summary::after,.home-reminder-pending>summary::-webkit-details-marker{display:none}
-.home-reminder-pending>summary strong{font-size:.82rem}.home-reminder-pending>summary small{display:block;font-size:.68rem;font-weight:400;margin-top:3px}
-.home-reminder-pending[open]>summary .ev-tax-chevron{transform:rotate(225deg)}
-.home-pending-body{padding:0 12px 12px;display:grid;gap:8px;color:var(--text)}
-.home-pending-tasks{padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:9px;font-size:.72rem}
-.home-pending-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}.home-pending-heading strong{font-size:.74rem}
-.home-pending-heading button{background:none;border:0;color:var(--accent-bright);font:inherit;font-size:.67rem;padding:5px 0;cursor:pointer;white-space:nowrap}
-.home-pending-tasks ul{padding-left:18px;margin:6px 0 0}.home-pending-tasks li{padding:3px 0;overflow-wrap:anywhere}.home-pending-tasks p{margin:6px 0 0;color:var(--text-muted)}
-.home-popup-item.warn{padding:9px 10px;color:var(--c-red);border-color:color-mix(in srgb,var(--c-red) 40%,var(--border));background:var(--surface);font-size:.7rem;overflow-wrap:anywhere}
+/* Excepción de filas unidas: el contorno y el color pertenecen al día. */
+.home-reminder-today{--day-tone:var(--c-blue)}
+.home-reminder-tomorrow{--day-tone:var(--c-green)}
+.home-reminder-day>h3{color:var(--day-tone)}
+.home-reminder-day>.home-reminder-rows{display:block;border:1px solid color-mix(in srgb,var(--day-tone) 45%,var(--border));border-radius:12px;overflow:hidden;background:color-mix(in srgb,var(--day-tone) 5%,var(--surface))}
+.home-reminder-day .home-popup-item.event{border:0;border-radius:0;background:transparent}
+.home-reminder-day .home-popup-item.event+.home-popup-item.event{border-top:1px solid color-mix(in srgb,var(--day-tone) 25%,var(--border))}
+.home-reminder-day .home-reminder-disclosure>summary:hover{background:color-mix(in srgb,var(--day-tone) 10%,transparent)}
+.home-reminder-pending{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--surface);color:var(--text)}
+.home-reminder-pending.has-pending{border-color:color-mix(in srgb,var(--c-red) 60%,var(--border));background:color-mix(in srgb,var(--c-red) 5%,var(--surface));color:var(--c-red)}
+.home-pending-header{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:10px 12px 7px}
+.home-pending-header strong{font-size:.82rem}.home-pending-header small{font-size:.65rem;font-weight:400}
+.home-pending-body{padding:0 12px 10px;display:grid;gap:8px;color:var(--text)}
+.home-pending-tasks{font-size:.72rem}
+.home-pending-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}.home-pending-heading strong{font-size:.7rem;font-weight:500;color:var(--text-muted)}
+.home-pending-heading button{background:none;border:0;color:var(--c-red);font:inherit;font-size:.67rem;padding:3px 0;cursor:pointer;white-space:nowrap}
+.home-pending-tasks ul{padding-left:17px;margin:4px 0 0}.home-pending-tasks li{padding:2px 0;line-height:1.4;overflow-wrap:anywhere}.home-pending-tasks p{margin:4px 0 0;color:var(--text-muted)}
+.home-pending-warnings{padding-top:6px;border-top:1px solid color-mix(in srgb,var(--c-red) 20%,var(--border))}
+.home-popup-item.warn{padding:3px 0;color:var(--c-red);border:0;border-radius:0;background:transparent;font-size:.69rem;line-height:1.45;overflow-wrap:anywhere}
 @media(max-width:360px){#homePopupContent{padding:12px}.home-reminder-meta{max-width:108px;flex-wrap:wrap;gap:3px}.home-reminder-when{font-size:.6rem}.home-reminder-disclosure>summary{gap:4px 7px}}

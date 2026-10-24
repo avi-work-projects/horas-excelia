@@ -109,7 +109,7 @@ test('raquetas compuestas, VIP compacto y categorías de gestión con color fijo
   await page.locator('[data-picker=management]').click();await page.locator('#evPlanPickerOv [data-type="Dentista"]').click();await page.locator('#evPlanConfirm').click();await expect(page.locator('#evPlanPickerWrap')).toHaveCount(0);await expect(page.locator('#evFColorSection')).toBeHidden();await expect(page.locator('#evFTitle')).toHaveValue('Dentista');await page.locator('#evFSave').click();
   await page.locator('#evViewCal').click();await expect(page.locator('.ev-shape-tooth')).toBeVisible();
 });
-test('recordatorios: acceso desde tareas, dos pendientes, cumpleaños plegables y todas las ocurrencias',async({page})=>{
+test('recordatorios: acceso desde tareas, tres pendientes, cumpleaños plegables y todas las ocurrencias',async({page})=>{
  await page.addInitScript(()=>{
   const now=Date.now();
   localStorage.setItem('excelia-tasks-v1',JSON.stringify({items:['Primera tarea','Segunda tarea','Tercera tarea'].map((title,i)=>({id:'pending'+i,title,createdAt:now,updatedAt:now,completedAt:null,deletedAt:null})),weeklyReminder:false,reminderWeek:'2026-09-28'}));
@@ -121,7 +121,7 @@ test('recordatorios: acceso desde tareas, dos pendientes, cumpleaños plegables 
  await expect(page.locator('#tasksReminders')).toBeVisible();
  await page.locator('#tasksReminders').click();await expect(page.locator('#homePopup')).toBeVisible();
  await expect(page.getByRole('button',{name:'Entendido',exact:true})).toHaveCount(0);
- await expect(page.locator('.home-pending-tasks li')).toHaveText(['Gestión repetida','Primera tarea']);
+ await expect(page.locator('.home-pending-tasks li')).toHaveText(['Gestión repetida','Primera tarea','Segunda tarea']);
  await expect(page.locator('#homePopupContent')).toContainText('Gestión repetida');
  await expect(page.locator('#homePopupContent')).toContainText('Rutina de prueba');
  await expect(page.locator('.home-reminder-group[aria-label="Mañana"]')).toContainText('Plan de mañana');
@@ -139,7 +139,7 @@ test('recordatorios: acceso desde tareas, dos pendientes, cumpleaños plegables 
  const lines=await page.locator('.home-popup-item.event').first().evaluate(el=>({title:el.querySelector('.home-reminder-content').getBoundingClientRect().y,when:el.querySelector('.home-reminder-when').getBoundingClientRect().y}));expect(Math.abs(lines.title-lines.when)).toBeLessThan(5);
  await expect(page.locator('#homeBirthdayToggle')).toHaveText(/Mostrar menos/);
  await page.locator('#homeBirthdayToggle').click();await expect(third).toBeHidden();
- await page.locator('.home-reminder-pending>summary').click();await page.locator('#homeTasksOpen').click();await expect(page.locator('#tasksOverlay')).toBeVisible();await expect(page.locator('.task-title')).toHaveCount(4);
+ await page.locator('#homeTasksOpen').click();await expect(page.locator('#tasksOverlay')).toBeVisible();await expect(page.locator('.task-title')).toHaveCount(4);
  await page.locator('#tasksReminders').click();await expect(page.locator('#homePopup')).toBeVisible();await page.locator('#homePopupClose').click();
  await page.locator('#tasksFab').click();await page.locator('#tasksReminders').click();await page.locator('#homePopup').click({position:{x:3,y:3}});await expect(page.locator('#homePopup')).toBeHidden();
  await page.locator('#econBtn').click();await expect(page.locator('.econ-equiv-metric').first()).toContainText('Por día');

@@ -18,7 +18,7 @@ Una tarea exclusivamente documental conserva las versiones y los archivos de la 
 - appStorage para persistencia, validación previa e importaciones atómicas con restauración. Toda clave nueva se declara en el censo de backup.
 - Energía reutiliza lecturas/cálculos solo dentro de withEnergyData. No mutar sus resultados ni mantener cachés entre renders. Preservar precisión; redondear únicamente al mostrar.
 - El scroll de una ventana vive en .sy-body. Navegación y cabeceras no se encogen ni desaparecen. Reutilizar abrirPanel/cerrarPanel y conservar scroll al refrescar.
-- Los campos con caja, selectores y tarjetas consecutivas deben separarse 10–12 px reales con gap. Verificar móvil y escritorio.
+- Los campos con caja, selectores y tarjetas consecutivas deben separarse 10–12 px reales con gap. Excepción explícita: Recordatorios agrupa los eventos de Hoy/Mañana en listas continuas, sin huecos entre filas, con separadores interiores y un color por día. Verificar móvil y escritorio.
 - Los ajustes de subpestañas se acotan a su pantalla. No cambiar el sistema global para corregir Energía, Próximos o Rutinas.
 - En botones de pestaña, selección por fondo; conservar color de fuente y borde. Naranja suave solo para lápices sin texto.
 - Categoría de evento = kind + type. Usar getEvDisplayColor, evStartTime y evSortMarks; no duplicar su política en una vista.

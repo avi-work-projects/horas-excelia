@@ -36,8 +36,8 @@ function homeReminderEvents(today){
 }
 function homeReminderTasksHtml(){
   var pending=tasksItems(tasksData(),'pending');
-  var h='<section class="home-pending-tasks" aria-label="Tareas pendientes"><div class="home-pending-heading"><strong>Tareas pendientes</strong><button type="button" id="homeTasksOpen">Mis tareas'+(pending.length>2?' ('+pending.length+')':'')+' →</button></div>';
-  if(pending.length){h+='<ul>';pending.slice(0,2).forEach(function(t){h+='<li>'+escHtml(t.title)+'</li>';});h+='</ul>';}
+  var h='<section class="home-pending-tasks" aria-label="Tareas pendientes"><div class="home-pending-heading"><strong>Tareas pendientes</strong><button type="button" id="homeTasksOpen">Mis tareas'+(pending.length>3?' ('+pending.length+')':'')+' →</button></div>';
+  if(pending.length){h+='<ul>';pending.slice(0,3).forEach(function(t){h+='<li>'+escHtml(t.title)+'</li>';});h+='</ul>';}
   else h+='<p>No tienes tareas pendientes.</p>';
   return h+'</section>';
 }
@@ -46,13 +46,13 @@ function homeReminderCardHtml(it){
   if(it.type!=='event')return '<div'+attrs+'>'+it.text+'</div>';
   return '<details'+attrs+' data-reminder-id="'+escHtml(it.event.id)+'"><summary aria-label="Mostrar u ocultar detalles">'+it.text+'</summary><div class="home-reminder-expanded"><strong>'+escHtml(it.title||it.event.title||getEvType(it.event))+'</strong>'+it.note+'</div></details>';
 }
-function homeReminderGroup(title,content,extra){
-  return '<section class="home-reminder-group" aria-label="'+title+'"><h3>'+title+(extra?'<small>'+extra+'</small>':'')+'</h3><div class="home-reminder-rows">'+content+'</div></section>';
+function homeReminderGroup(title,content,extra,day){
+  return '<section class="home-reminder-group'+(day?' home-reminder-day home-reminder-'+day:'')+'" aria-label="'+title+'"><h3>'+title+(extra?'<small>'+extra+'</small>':'')+'</h3><div class="home-reminder-rows">'+content+'</div></section>';
 }
 function homeReminderPendingHtml(warnings){
   var count=tasksItems(tasksData(),'pending').length;
   var label=[count?count+' '+(count===1?'tarea':'tareas'):'',warnings.length?warnings.length+' '+(warnings.length===1?'aviso':'avisos'):''].filter(Boolean).join(' · ')||'Todo al día';
-  return '<details class="home-reminder-pending'+(count||warnings.length?' has-pending':'')+'"><summary><span><strong>Pendientes</strong><small>'+label+'</small></span><span class="ev-tax-chevron" aria-hidden="true"></span></summary><div class="home-pending-body">'+homeReminderTasksHtml()+warnings.map(homeReminderCardHtml).join('')+'</div></details>';
+  return '<section class="home-reminder-pending'+(count||warnings.length?' has-pending':'')+'" aria-label="Pendientes"><div class="home-pending-header"><strong>Pendientes</strong><small>'+label+'</small></div><div class="home-pending-body">'+homeReminderTasksHtml()+(warnings.length?'<div class="home-pending-warnings" aria-label="Avisos pendientes">'+warnings.map(homeReminderCardHtml).join('')+'</div>':'')+'</div></section>';
 }
 function homeReminderLargeHtml(items){
   var grouped=new Map();
@@ -82,7 +82,7 @@ function homeReminderItemsHtml(items,birthdayCount){
   if(large.length)h+=homeReminderGroup('Planes de varios días',homeReminderLargeHtml(large));
   [0,1].forEach(function(day){
     var list=events.filter(function(it){return it.days===day&&!isEvBarAlways(it.event);});
-    if(list.length)h+=homeReminderGroup(day?'Mañana':'Hoy',list.map(homeReminderCardHtml).join(''),list.length+' '+(list.length===1?'evento':'eventos'));
+    if(list.length)h+=homeReminderGroup(day?'Mañana':'Hoy',list.map(homeReminderCardHtml).join(''),list.length+' '+(list.length===1?'evento':'eventos'),day?'tomorrow':'today');
   });
   return h;
 }

@@ -873,3 +873,20 @@ claro a 320 y 400 px y comprobación adicional del tema oscuro.
   repartidas. Cabecera y tamaño exterior estables; el contenido tiene scroll interior.
 - Verificación: Edge oculto a 400 y 320 px, grupos, símbolos, alarmas al arrancar,
   expansión sin saltos, notas de ida/vuelta y accesos a tareas. Sin cambios de backup.
+
+## Recordatorios compactos y pendientes visibles (v492)
+
+Corrección de la propuesta tras revisar las capturas con Ángel:
+- Pendientes deja de ser un desplegable. Muestra siempre las tres primeras tareas
+  realmente pendientes, en el orden compartido de Mis tareas, y todos los avisos
+  de semanas sin enviar. Las completadas no entran en esa selección.
+- Se retira el summary y su interacción de Pendientes: la regla global de hover
+  ya no puede pintar el rectángulo gris sobre la cabecera roja.
+- Hoy y Mañana son listas continuas con contorno común y separadores interiores.
+  Hoy usa el azul del tema; Mañana, el verde. Los iconos conservan su identidad.
+  Es una excepción autorizada a la separación general de 10–12 px entre tarjetas.
+- Los títulos de planes se muestran íntegros, en tantas líneas como necesiten.
+  Las notas siguen desplegándose dentro del marco fijo del menú.
+- Verificación Edge móvil: tres pendientes en orden excluyendo completadas,
+  semanas visibles sin pulsar, colores distintos por día, filas unidas, textos
+  de más de dos líneas sin recorte, símbolos, alarmas y acceso a Mis tareas.
