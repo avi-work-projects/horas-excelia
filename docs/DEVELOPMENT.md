@@ -890,3 +890,27 @@ Corrección de la propuesta tras revisar las capturas con Ángel:
 - Verificación Edge móvil: tres pendientes en orden excluyendo completadas,
   semanas visibles sin pulsar, colores distintos por día, filas unidas, textos
   de más de dos líneas sin recorte, símbolos, alarmas y acceso a Mis tareas.
+
+## Wedding Moves: acciones y estadísticas (v493)
+
+- Clases ofrece Añadir clase y Añadir pareja en una misma fila, con iguales
+  dimensiones. Ambos reutilizan los formularios y guardados existentes; crear una
+  pareja desde Clases conserva esa subpestaña.
+- Las acciones principales, Guardar y los controles seleccionados usan --wm-wine,
+  también en los paneles de Bodas. La base compartida de io-primaria admite
+  --io-primary/--io-primary-ink, conservando sus colores previos fuera de Bodas.
+- Resumen de parejas separado del de clases: total, pasadas, en curso y próximas.
+  Usa bodaMatchesDate, igual que los filtros de Parejas; próximas significa future.
+  Todos los recuentos de parejas enlazan al filtro correspondiente, por fecha de boda.
+  Se informa aparte de cuántas parejas tienen alguna clase impartida.
+- bodaStatsOverview reutiliza bodaTaken para impartidas (pareja asignada y clase
+  finalizada, incluida la hora/duración de hoy). Las otras clases asignadas son
+  pendientes; las no asignadas se muestran por separado. Las tres cifras suman el total.
+  Corrige la antigua diferencia con la distribución, que sí consultaba la hora de fin.
+- Ritmo programado conserva las medias y aclara que incluyen todos los registros,
+  incluso futuros y huecos sin pareja. Gráficos mensuales/semanales sin cambios de fórmula.
+- Distribución por clases impartidas: filas con clases recibidas y número de parejas,
+  barras proporcionales y fila Sin empezar (cero clases). Incluye todas las parejas;
+  bodaPackStats conserva el cálculo de extras y los packs históricos.
+- Verificación: límites horarios de hoy, sin hora, sin pareja, cero clases/parejas,
+  enlaces de estados, altas desde Clases, persistencia y colores en Edge móvil.

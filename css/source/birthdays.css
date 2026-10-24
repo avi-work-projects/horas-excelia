@@ -79,7 +79,7 @@
    estaba repartido por varias pantallas. */
 .bday-io-btn,.ev-io-btn{flex:1;font-size:.75rem;padding:9px 8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;text-align:center;transition:all .15s;font-family:var(--font)}
 .bday-io-btn:active,.ev-io-btn:active{background:var(--surface3)}
-.io-primaria,.bday-io-btn-add{background:var(--c-blue)!important;color:#fff!important;border-color:var(--c-blue)!important;font-weight:600}
+.io-primaria,.bday-io-btn-add{background:var(--io-primary,var(--c-blue))!important;color:var(--io-primary-ink,#fff)!important;border-color:var(--io-primary,var(--c-blue))!important;font-weight:600}
 .io-primaria:active,.bday-io-btn-add:active{opacity:.85}
 .io-peligro{background:#c0392f!important;color:#fff!important;border-color:#c0392f!important;font-weight:600}
 .io-peligro:active{background:#9d2c24!important}

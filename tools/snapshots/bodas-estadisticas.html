@@ -8,35 +8,64 @@
 </div>
 </div>
 <div class="boda-sec">
-<div class="boda-stats-row">
-<div class="boda-stat">
+<section class="boda-overview" aria-label="Resumen de parejas">
+<header>
+<h3>Parejas</h3>
+<button id="bodaStatsCouples" class="boda-overview-total" data-stats-couples="todas">
+<b>3</b>
+<span>en total →</span>
+</button>
+</header>
+<div class="boda-overview-grid">
+<button type="button" data-stats-couples="pasadas">
 <b>0</b>
-<span>clases dadas</span>
-</div>
-<div class="boda-stat">
+<span>Pasadas</span>
+</button>
+<button type="button" data-stats-couples="activas">
 <b>3</b>
-<span>clases próximas</span>
-</div>
-<div class="boda-stat">
-<b>3</b>
-<span>clases en total</span>
-</div>
-</div>
-<div class="boda-stats-row">
-<div class="boda-stat">
-<b>2.6</b>
-<span>clases / semana</span>
-</div>
-<div class="boda-stat">
-<b>11.4</b>
-<span>clases / mes</span>
-</div>
-<button type="button" class="boda-stat boda-stat-link" id="bodaStatsCouples">
-<b>3</b>
-<span>parejas en total →</span>
+<span>En curso</span>
+</button>
+<button type="button" data-stats-couples="futuras">
+<b>0</b>
+<span>Próximas</span>
 </button>
 </div>
-<div class="boda-stat-note">Desde el 24/08/2026 hasta el 31/08/2026</div>
+<p>0 parejas con clases impartidas. Próximas: reservas marcadas como futuras.</p>
+</section>
+<section class="boda-overview" aria-label="Resumen de clases">
+<header>
+<h3>Clases</h3>
+<div class="boda-overview-total">
+<b>3</b>
+<span>registradas</span>
+</div>
+</header>
+<div class="boda-overview-grid">
+<div>
+<b>0</b>
+<span>Impartidas</span>
+</div>
+<div>
+<b>2</b>
+<span>Pendientes</span>
+</div>
+<div>
+<b>1</b>
+<span>Sin pareja</span>
+</div>
+</div>
+<p>Impartidas: con pareja y finalizadas. Pendientes: asignadas, aún sin finalizar.</p>
+</section>
+<section class="boda-stats-pace" aria-label="Ritmo de programación">
+<h3>Ritmo programado</h3>
+<div>
+<span>
+<b>2.6</b> clases / semana</span>
+<span>
+<b>11.4</b> clases / mes</span>
+</div>
+<p>Del 24/08/2026 al 31/08/2026. Incluye todas las clases registradas, también futuras y sin pareja.</p>
+</section>
 <div class="boda-stat-t">Clases por mes <em>(últimos 12)</em>
 </div>
 <div class="sy-chart">
@@ -73,10 +102,22 @@
 <text x="304.9" y="99" text-anchor="middle" font-size="6.5" fill="#7a7a92">17/08</text>
 </svg>
 </div>
-<div class="boda-stat-t">Parejas por clases tomadas</div>
-<p class="boda-stat-note">Clases ya finalizadas según fecha, hora y duración. No cuenta las futuras ni huecos sin pareja.</p>
-<div class="boda-stats-row boda-count-grid">
+<section class="boda-distribution" aria-label="Clases impartidas por pareja">
+<h3>Clases impartidas por pareja</h3>
+<p>Cuántas parejas han recibido cada número de clases. Incluye las que aún no han empezado.</p>
+<div class="boda-distribution-head">
+<span>Clases recibidas</span>
+<span>Parejas</span>
 </div>
+<div class="boda-distribution-row">
+<span>Sin empezar</span>
+<span class="boda-distribution-track" aria-hidden="true">
+<i style="width:100%">
+</i>
+</span>
+<strong>3</strong>
+</div>
+</section>
 <div class="boda-stat-t">0 parejas con clases extras</div>
 <p class="boda-stat-note">Extras = clases tomadas por encima de las incluidas al contratar el pack.</p>
 <div class="boda-pack-stat">
