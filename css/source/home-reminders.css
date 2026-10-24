@@ -1,6 +1,5 @@
 /* Recordatorios de inicio: marco fijo, filas compactas y detalles interiores. */
 .reminders-access{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;flex-shrink:0;border:1px solid color-mix(in srgb,var(--c-yellow) 50%,var(--border));background:color-mix(in srgb,var(--c-yellow) 10%,var(--surface));color:var(--c-yellow);border-radius:10px;padding:6px 8px;font:600 .62rem var(--font);cursor:pointer}
-.reminders-access>span:first-child{font-size:1.25rem;line-height:1.1}
 .home-popup-overlay{position:fixed;inset:0;z-index:400;background:#1f243466;align-items:center;justify-content:center;padding:12px}
 .home-popup{display:flex;flex-direction:column;width:100%;max-width:410px;height:min(790px,calc(100dvh - 24px));max-height:100%;overflow:hidden;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:22px;box-shadow:0 16px 48px var(--shadow)}
 .home-popup-header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0;padding:16px 18px;box-shadow:0 1px 0 var(--border)}
@@ -22,6 +21,12 @@
 .home-reminder-disclosure>summary{grid-template-columns:24px minmax(0,1fr) auto 16px;cursor:pointer}
 .home-reminder-toggle{grid-column:4;grid-row:1;display:flex;align-items:center;justify-content:center;width:16px;height:16px;border:1px solid currentColor;border-radius:5px;color:var(--day-tone,var(--text-muted));font-size:.8rem;line-height:1}
 .home-reminder-toggle::before{content:'+'}.home-reminder-disclosure[open] .home-reminder-toggle::before{content:'−'}
+.home-reminder-edit-actions[hidden]{display:none}
+.home-reminder-edit-actions{grid-column:3/-1;grid-row:1;display:flex;align-items:center;gap:5px}
+.home-reminder-edit-actions button{min-height:30px;padding:4px 8px;border:1px solid currentColor;border-radius:7px;background:var(--surface);color:var(--day-tone,var(--accent));font:600 .65rem var(--font);cursor:pointer}
+.home-reminder-edit-actions [data-reminder-cancel]{width:30px;padding:0;font-size:1rem;color:var(--text-muted)}
+.home-reminder-choosing>.home-reminder-row{grid-template-columns:24px minmax(0,1fr) auto}
+.home-reminder-choosing .home-reminder-meta,.home-reminder-choosing .home-reminder-toggle{display:none}
 .home-reminder-disclosure>summary::before,.home-reminder-disclosure>summary::after,.home-reminder-disclosure>summary::-webkit-details-marker{display:none}
 .home-reminder-disclosure>summary:hover{background:color-mix(in srgb,var(--accent) 5%,transparent)}
 .home-reminder-text{min-width:0}.home-reminder-text .home-reminder-content{display:block;white-space:normal;overflow-wrap:anywhere;font-weight:600;line-height:1.45}
@@ -56,8 +61,8 @@
 .home-reminder-day .home-reminder-disclosure>summary:hover{background:color-mix(in srgb,var(--day-tone) 10%,transparent)}
 .home-reminder-pending{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--surface);color:var(--text)}
 .home-reminder-pending.has-pending{border-color:color-mix(in srgb,var(--c-red) 60%,var(--border));background:color-mix(in srgb,var(--c-red) 5%,var(--surface));color:var(--c-red)}
-.home-pending-header{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:10px 12px 7px}
-.home-pending-header strong{font-size:.82rem}.home-pending-header small{font-size:.65rem;font-weight:400}
+.home-pending-header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px 7px}
+.home-pending-header strong{font-size:.82rem}
 .home-pending-body{padding:0 12px 10px;display:grid;gap:8px;color:var(--text)}
 .home-pending-tasks{font-size:.72rem}
 .home-pending-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}.home-pending-heading strong{font-size:.7rem;font-weight:500;color:var(--text-muted)}

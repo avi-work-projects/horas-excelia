@@ -5,7 +5,7 @@ function renderTasks(data,view){
   var items=view==='pending'?tasksPendingRows(data):tasksItems(data,'done'),pending=tasksItems(data,'pending').length;
   var checked=tasksPendingRows(data).filter(function(t){return t.completedAt!==null;}).length;
   var h='<div class="tasks-overlay" id="tasksOverlay"><section class="tasks-sheet" role="dialog" aria-modal="true" aria-labelledby="tasksTitle">';
-  h+='<header class="tasks-header"><span class="tasks-heading-icon">'+TASKS_ICON+'</span><div><h2 id="tasksTitle">Mis tareas</h2><p>'+pending+' pendiente'+(pending===1?'':'s')+'</p></div><button type="button" class="reminders-access tasks-reminders-button" id="tasksReminders"><span aria-hidden="true">🔔</span><span>Recordatorios</span></button><button type="button" class="sy-back" id="tasksClose" aria-label="Cerrar tareas">×</button></header>';
+  h+='<header class="tasks-header"><span class="tasks-heading-icon">'+TASKS_ICON+'</span><div><h2 id="tasksTitle">Mis tareas</h2><p>'+pending+' pendiente'+(pending===1?'':'s')+'</p></div><button type="button" class="reminders-access tasks-reminders-button" id="tasksReminders"><span>Recordatorios</span></button><button type="button" class="sy-back" id="tasksClose" aria-label="Cerrar tareas">×</button></header>';
   h+='<div class="tasks-tabs" role="tablist" aria-label="Estado de las tareas">';
   [['pending','Pendientes'],['done','Completadas']].forEach(function(v){h+='<button type="button" role="tab" aria-selected="'+(view===v[0])+'" data-tasks-view="'+v[0]+'" class="'+(view===v[0]?'active':'')+'">'+v[1]+' <span>'+tasksItems(data,v[0]).length+'</span></button>';});
   h+='</div>';
