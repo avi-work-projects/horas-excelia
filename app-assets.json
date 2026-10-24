@@ -258,6 +258,9 @@
       "path": "js/events.js"
     },
     {
+      "path": "js/events-alarm-policy.js"
+    },
+    {
       "path": "js/events-calendar-export.js"
     },
     {

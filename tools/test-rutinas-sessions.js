@@ -137,3 +137,14 @@ assert.throws(()=>a.rutDoneCandidate(pending,'2026-08-20'),/Elige/);
 const asExtra=a.rutDoneCandidate(pending,'2026-08-20','extra');assert(!asExtra.skips['2026-08-20']);assert.equal(asExtra.extraSessions.length,1);assert(!asExtra.extraSessions[0].recoveryOf);a.rutValidateExtraSessions(asExtra);
 const removed=a.rutDoneCandidate(pending,'2026-08-20','delete');assert(!removed.skips['2026-08-20']);assert.equal(removed.extraSessions.length,0);a.rutValidateExtraSessions(removed);
 assert.equal(JSON.stringify(pending),originalJSON);
+
+// Recuperar antes, después o el mismo día no cambia el vínculo ni el backup.
+for(const [date,time] of [['2026-08-19','17:00'],['2026-08-20','17:00'],['2026-08-21','17:00']]){
+ const base={...original,skips:{},extraSessions:[]};a.RUTINAS=[base];
+ const recovered=a.rutAddSession(base,{date,time,dur:60},'2026-08-20');
+ assert(recovered.skips['2026-08-20']);assert(!base.skips['2026-08-20']);
+ const imported=a.validateImport({rutinas:[recovered]}).rutinas[0];
+ assert.equal(imported.extraSessions[0].date,date);assert.equal(imported.extraSessions[0].recoveryOf,'2026-08-20');
+ assert.throws(()=>a.rutAddSession(imported,{date:'2026-08-25',time:'17:00',dur:60},'2026-08-20'),/ya tiene/);
+}
+console.log('Recuperaciones anteriores, posteriores y mismo día conservan vínculo y backup OK');

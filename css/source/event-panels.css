@@ -264,7 +264,6 @@
 .ev-detail-modern .ev-detail-symbol .ev-month-vip{background:none;box-shadow:none;filter:none}
 .ev-detail-modern .ev-detail-symbol .ev-month-vip img{transform:scale(1.4)}
 .ev-detail-modern .ev-detail-symbol .ev-management-mark{background:none;box-shadow:none;border-radius:0}
-.ev-detail-sheet.ev-detail-modern.ev-car-sheet{height:min(420px,72dvh);min-height:0;max-height:90dvh;overflow:hidden}
 .ev-detail-modern.ev-car-sheet>.ev-detail-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:0 2px;flex-shrink:1}
 .ev-detail-modern.ev-car-sheet>.ev-detail-actions{flex-shrink:0;margin-top:0}
 
@@ -291,14 +290,26 @@
 .ev-detail-modern.ev-car-sheet{padding:8px 16px 16px;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
 .ev-detail-modern .ev-car-nav{margin:0 0 8px}
 
-body:has(#evDetailOv.open) .tasks-fab{visibility:hidden}
 
 .ev-detail-modern .ev-detail-toolbar{display:grid;grid-template-columns:76px minmax(0,1fr) 76px;gap:4px;min-height:36px}
 .ev-detail-day-title{text-align:center;font-size:.9rem;font-weight:600;line-height:1.2}
 .ev-detail-tools{display:flex;align-items:center;justify-content:flex-end;gap:5px}
 .ev-detail-tools .ev-car-count{min-width:0;font-size:.62rem;white-space:nowrap}
-.ev-detail-alarm{display:flex;align-items:center;justify-content:center;flex:none;width:34px;height:34px;padding:6px;border-radius:9px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer}
-.ev-detail-alarm svg{width:21px;height:21px}
+.ev-detail-alarm{display:flex;align-items:center;gap:12px;width:100%;min-height:60px;margin:12px 0;padding:12px;border-radius:14px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;text-align:left;font-family:var(--font)}
+.ev-detail-alarm-icon{flex:none;font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;font-size:23px}
+.ev-detail-alarm-copy{flex:1;min-width:0}
+.ev-detail-alarm-copy strong{display:block;font-size:.85rem}
+.ev-detail-alarm-copy small{display:block;margin-top:3px;font-size:.72rem;color:var(--text-muted)}
+.ev-detail-alarm-action{display:flex;align-items:center;gap:8px;font-size:.73rem;font-weight:600;color:var(--accent)}
+.ev-detail-alarm-action::after{content:'';width:6px;height:6px;border-top:1.5px solid currentColor;border-right:1.5px solid currentColor;transform:rotate(45deg)}
+.ev-large-facts{display:flex;flex-direction:column;gap:12px;padding:14px;border:1px solid var(--border);border-radius:14px;margin-bottom:8px}
+.ev-large-range{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ev-large-range strong{display:block;font-size:1rem;margin-top:5px}
+.ev-large-start{display:flex;justify-content:space-between;gap:12px;font-size:.8rem;padding-top:10px;box-shadow:0 -1px 0 var(--border)}
+.ev-large-trip{padding:12px;border-radius:12px;background:var(--surface2);display:flex;flex-direction:column;gap:6px}
+.ev-large-trip>div{display:flex;justify-content:space-between;gap:10px;font-size:.9rem}
+.ev-large-trip>span{font-size:.76rem;color:var(--text)}
+.ev-large-trip>small{font-size:.72rem;color:var(--text-muted);line-height:1.5;overflow-wrap:anywhere}
 .ev-car-sheet{touch-action:pan-y}
 #evDetailOv{overflow:hidden}
 #evDetailOv .ev-car-preview{position:absolute;bottom:0;margin:0;pointer-events:none}
@@ -338,14 +349,13 @@ body:has(#evDetailOv.open) .tasks-fab{visibility:hidden}
 .ev-form-legacy{margin:0 0 14px;font-size:.65rem}
 @media(max-width:360px){.ev-form-lead{grid-template-columns:minmax(0,1fr) 120px;gap:9px}.ev-schedule-control>strong{font-size:.69rem}}
 /* Solo el contenido de la ficha acompaña el dedo. */
-.ev-detail-modern.ev-car-sheet{height:56dvh;min-height:56dvh;max-height:90dvh;overflow:hidden}
+.ev-detail-sheet.ev-detail-modern.ev-car-sheet{height:64dvh;min-height:64dvh;max-height:90dvh;overflow:hidden}
 .ev-car-sheet>.ev-detail-handle,.ev-car-sheet>.ev-detail-toolbar,.ev-car-sheet>.ev-car-nav{flex-shrink:0}
 .ev-car-viewport{position:relative;flex:1;min-height:0;overflow:hidden}
 .ev-car-content{height:100%;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;touch-action:pan-y}
 .ev-car-content>*{flex-shrink:0}
 .ev-car-content>.ev-detail-actions{margin-top:auto}
 #evDetailOv .ev-car-content.ev-car-preview{position:absolute;inset:0;margin:0;pointer-events:none}
-.ev-detail-alarm .nav-pro-icon,.ev-detail-alarm .btn-icon{width:21px;height:21px;object-fit:contain}
 
 /* Las etiquetas comparten la línea de Título/Notas; solo el dato ocupa la tarjeta. */
 .ev-schedule-field{display:flex;flex-direction:column;min-width:0;gap:6px}
@@ -360,7 +370,6 @@ body:has(#evDetailOv.open) .tasks-fab{visibility:hidden}
 .ev-delete-icon{width:17px;height:17px;flex:none;vertical-align:middle}
 .ev-detail-actions>.danger{display:flex;align-items:center;justify-content:center;gap:6px}
 .ev-routine-state-actions{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
-.ev-detail-alarm{font-family:"Segoe UI Emoji","Apple Color Emoji",sans-serif;font-size:22px}
 .ev-rut-mark.rut-skip-slash::after{display:none}
 .ev-rut-mark.rut-skip-slash::before{transform:rotate(45deg);height:1.5px;background:#f03737}
 
@@ -380,3 +389,7 @@ body:has(#evDetailOv.open) .tasks-fab{visibility:hidden}
 #bodaAsgSheet>:not(.boda-asg-grid){flex-shrink:0}
 #bodaAsgSheet>.boda-asg-grid{flex:1;min-height:0;grid-template-rows:repeat(6,minmax(32px,1fr));overflow-y:auto;overflow-x:hidden}
 #bodaAsgSheet .boda-asg-day{min-height:0}
+
+.ev-alarm-pre-btn:disabled{opacity:.45;cursor:default}
+
+#evAlarmOv .bd-alarm-marker-text small{display:block;font-size:.65rem;font-weight:400;line-height:1.4;margin-top:4px;color:var(--text-muted)}

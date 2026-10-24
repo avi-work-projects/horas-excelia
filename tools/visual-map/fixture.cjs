@@ -2,8 +2,9 @@
 module.exports=function visualFixture(){
   const f=structuredClone(require('../fixture.json'));
   f['excelia-events-v1'].push(
+    {id:'map-started',kind:'puntual',type:'Otros',title:'Cita ya iniciada',start:'2026-08-21',end:'2026-08-21',time:'08:00',endTime:'09:00',color:'#537b78'},
     {id:'map-demo',kind:'puntual',type:'Otros',title:'Café de ejemplo',note:'Datos ficticios para revisar la interfaz.',start:'2026-08-21',end:'2026-08-21',color:'#537b78',time:'18:30',endTime:'19:30',shape:'circle'},
-    {id:'map-trip',kind:'grande',type:'Viaje',title:'Viaje de ejemplo',start:'2026-08-24',end:'2026-08-28',color:'#5b7db5'}
+    {id:'map-trip',kind:'grande',type:'Viaje',title:'Viaje de ejemplo',start:'2026-08-24',end:'2026-08-28',color:'#5b7db5',time:'15:00',note:'Estancia de ejemplo. Las horas de transporte son salidas.',viaje:{ida:{time:'15:00',modo:'coche',conductor:'Conductor de ejemplo'},vuelta:{time:'10:00',modo:'tren'}}}
   );
   f['excelia-horas-v3'].econYearConfig={'2026':{rate:315,multiRate:false,ratePeriods:[]}};
   f['excelia-invoices-v1']={config:{kairoUrl:'',issuer:'Persona de ejemplo',issuerTax:'PRUEBA-EMISOR',issuerAddress:'Dirección ficticia',iban:'',client:'Cliente de ejemplo',clientTax:'PRUEBA-CLIENTE',clientAddress:'Dirección ficticia',project:'Proyecto de ejemplo',concept:'Servicios de ejemplo · {mes} {anio}',unit:'day',rate:'315',vat:'21',withholding:'15',from:'demo@example.test',to:'cliente@example.test',cc:'',subject:'Factura de ejemplo · {mes} {anio}',body:'Documento ficticio para revisar la interfaz.'},months:{}};

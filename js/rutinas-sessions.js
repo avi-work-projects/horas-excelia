@@ -64,7 +64,6 @@ function rutAddSession(r,data,sourceKey){
   if(source&&source.extra&&!source.recoveryOf)throw new Error('Las clases extras no se pueden recuperar.');
   if(source&&!source.skip&&rutFlexible(r))throw new Error('Solo las rutinas de horario fijo pueden marcarse como canceladas.');
   if(source&&rutRecoveryFor(copy,sourceKey))throw new Error('Esta sesión ya tiene una recuperación asignada.');
-  if(source&&(data.date<source.ds||(data.date===source.ds&&data.time<=source.time)))throw new Error('La recuperación debe ser posterior a la sesión original.');
   if(rutDayCount(data.date,r.id)+rutSessionsOn(copy,data.date).length>=EV_MAX_RUT_DIA)throw new Error('Ese día ya tiene el máximo de '+EV_MAX_RUT_DIA+' sesiones de rutina.');
   if(rutSessionsOn(copy,data.date).some(function(s){return !s.skip&&s.time===data.time;}))throw new Error('Ya tienes una sesión de esta rutina a esa hora.');
   copy.extraSessions=copy.extraSessions||[];
@@ -90,7 +89,7 @@ function rutValidateExtraSessions(r){
   r.extraSessions.forEach(function(s){
     if(!s.recoveryOf)return;
     var original=rutSessionByKey(r,s.recoveryOf);
-    if(!original||(!s.skip&&!original.skip)||s.date<original.ds||(s.date===original.ds&&s.time<=original.time)||(!s.skip&&linked[s.recoveryOf]))throw new Error('Vínculo de recuperación no válido.');
+    if(!original||(!s.skip&&!original.skip)||(!s.skip&&linked[s.recoveryOf]))throw new Error('Vínculo de recuperación no válido.');
     if(!s.skip)linked[s.recoveryOf]=true;
   });
 }

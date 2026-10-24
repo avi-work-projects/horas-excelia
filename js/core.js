@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v497 — Información de Kairo Drive';
+var APP_VERSION = 'v498 — Fichas, alarmas y recuperaciones';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -751,6 +751,7 @@ function abrirPanel(id, html, opciones){
     wrap.id = id;
     cont.appendChild(wrap);
   }
+  wrap.classList.add('app-panel');
   wrap.innerHTML = html;
   var cerrar = o.alCerrar || function(){ cerrarPanel(id, o.overlay); };
   function engancharFondo(){

@@ -49,7 +49,7 @@ async function main(){
     // Seguir un enlace entre secciones y volver desde su procedencia.
     await page.locator('[data-view="inventory"]').click();await page.locator('#inventorySearch').fill('Ficha de sesión');await page.locator('[data-inventory-scene="routine-session"]').click();await expect(page.locator('#selectedTitle')).toHaveText('Ficha de sesión');
     await page.locator('#destinations [data-target="calendar"]').click();await expect(page.locator('#selectedTitle')).toHaveText('Calendario · 1 mes');
-    await page.locator('[data-view="inventory"]').click();await page.locator('#inventorySearch').fill('Ficha de clase');await page.locator('[data-inventory-scene="wedding-class"]').click();await expect(page.locator('#selectedNote')).toContainText('botón flotante de Tareas');
+    await page.locator('[data-view="inventory"]').click();await page.locator('#inventorySearch').fill('Ficha de clase');await page.locator('[data-inventory-scene="wedding-class"]').click();await expect(page.locator('#selectedNote')).not.toContainText('P1');
     await page.locator('[data-view="compare"]').click();await page.locator('#compareGroup').selectOption('Rutinas');if(await page.locator('#compareChoices input').count()<10)throw Error('Falta filtro de comparación por sección');
     await page.locator('[data-view="general"]').click();
     await page.setViewportSize({width:440,height:950});await page.screenshot({path:path.join(root,'test-results/visual-map-mobile.png'),fullPage:true});
