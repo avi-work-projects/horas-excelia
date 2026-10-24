@@ -78,5 +78,20 @@ class DashboardTests(unittest.TestCase):
             self.assertEqual(response(Path(folder),'/facturas/')[0],200)
             self.assertEqual(list(Path(folder).iterdir()),[])
 
+    def test_drive_status_requires_matching_pdf_and_is_read_only(self):
+        from drive_publish import archive_target
+        (self.root/'drive-publish-config.json').write_text('{"enabled":true}')
+        target=archive_target(self.p,'Factura_01-10_2026.pdf')
+        state=self.root/'drive-publish-state.json'
+        state.write_text(json.dumps({'ok':False,'files':{}}))
+        self.assertIn('último intento fallido',response(self.root,'/facturas/')[1])
+        state.write_text(json.dumps({'ok':True,'files':{target:{'sha256':'wrong'}}}))
+        self.assertNotIn('Archivada y verificada',response(self.root,'/facturas/factura/1')[1])
+        state.write_text(json.dumps({'ok':True,'files':{target:{'sha256':hashlib.sha256(self.final).hexdigest()}}}))
+        before=self.hashes()
+        for url in ['/facturas/','/facturas/factura/1']:
+            self.assertIn('Archivada y verificada',response(self.root,url)[1])
+        self.assertEqual(before,self.hashes())
+
 
 if __name__=='__main__':unittest.main()

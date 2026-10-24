@@ -148,3 +148,23 @@ y en los archivos locales del titular.
 Proposed host: a dedicated informational path on the existing Gestify GitHub Pages.
 No public Kairo endpoint, invoices, email addresses or identifiers in this text.
 Hosting and final publication still require the user's deferred decision.
+
+## Commissioning preparation (2026-10-24)
+
+User approved publishing the informational page and proceeding with rclone.
+Public page is being deployed from the current main through branch
+trabajo/kairo-drive-info (d473877), without merging the older Kairo code branch.
+URL: https://avi-work-projects.github.io/horas-excelia/kairo-drive/
+Privacy anchor: #privacidad. No private data or Kairo address in the published page.
+
+The archive notification candidate now targets panel.archive_accepted after its
+manifest and approved-summary are written, matching the actual production code.
+An unavailable notification file does not interrupt fiscal archiving. Boot scan
+reconciles missed events. Service retries on failure every 15 minutes without a
+start-rate cutoff; after success it stops until the next event or system boot.
+Dashboard candidate shows per-invoice verified/pending/failed Drive state without
+writing data or importing the fiscal/SMTP execution code. A success requires a
+matching final PDF hash in the Drive receipt; it does not assert mini download.
+17 isolated publisher/dashboard tests pass on Windows and Kairo, including hook
+failure, year rollover and read-only status. Candidates staged, not commissioned.
+Do not disable the daily mini copy until permanent OAuth and live service tests pass.

@@ -3,8 +3,7 @@
 Description=Publish verified Kairo invoice PDFs to Drive
 Wants=network-online.target
 After=network-online.target
-StartLimitIntervalSec=3600
-StartLimitBurst=4
+StartLimitIntervalSec=0
 
 [Service]
 Type=oneshot
@@ -14,7 +13,7 @@ ExecStart=/home/angel/gestify-facturacion/venv/bin/python drive_publish.py
 UMask=0077
 NoNewPrivileges=true
 Restart=on-failure
-RestartSec=300
+RestartSec=900
 
 [Install]
 WantedBy=multi-user.target

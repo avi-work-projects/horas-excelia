@@ -1,5 +1,7 @@
 """Responsive server-rendered overview, history and immutable document routes."""
 import html
+import json
+import hashlib
 import re
 from datetime import date
 from pathlib import Path
@@ -43,7 +45,38 @@ def invoice_link(item):
     return '/facturas/factura/' + str(item['docid'])
 
 
-def summary(items):
+def drive_card(root, item):
+    if root is None:return ''
+    root=Path(root)
+    if not (root/'drive-publish-config.json').exists():return ''
+    title='Pendiente de archivar en Drive'
+    note='La copia se realiza por separado de la emisión y del correo.'
+    try:
+        cfg=json.loads((root/'drive-publish-config.json').read_text())
+        state_path=root/'drive-publish-state.json'
+        state=json.loads(state_path.read_text()) if state_path.exists() else {}
+        if not cfg.get('enabled'):
+            title='Conexión con Drive en preparación'
+        elif not item['accepted']:
+            title='Se archivará al emitir la factura'
+        else:
+            from drive_publish import archive_target
+            pdf,name=archived_pdf(root,item['row'],'final')
+            target=archive_target(item['row']['data'],name)
+            record=state.get('files',{}).get(target,{})
+            if record.get('sha256')==hashlib.sha256(pdf).hexdigest():
+                title='Archivada y verificada en Drive'
+                note=target+' · La descarga al mini depende de su conexión con Drive.'
+            elif state.get('ok') is False:
+                title='Archivo en Drive pendiente: último intento fallido'
+                note='El servicio reintenta automáticamente. La factura y el correo no se repiten.'
+    except (ValueError,OSError,KeyError,TypeError):
+        title='Estado del archivo en Drive no verificable'
+        note='Requiere revisión; esta consulta no modifica ni vuelve a emitir la factura.'
+    return '<article class="card"><h2>Archivo en Drive</h2><p><strong>'+e(title)+'</strong></p><p class="muted">'+e(note)+'</p></article>'
+
+
+def summary(items, root=None):
     item = next((x for x in items if x['active']), None)
     if not item:
         return shell('<h1>Tu facturación</h1><p>No hay facturas preparadas todavía.</p><p>Envía la preparación desde Gestify para comenzar.</p>', 'summary')
@@ -51,7 +84,7 @@ def summary(items):
     scheduled=item['mail']=='Programado'
     title='Próximo envío' if scheduled else 'Mes activo'
     action='Ver factura y envío' if item['accepted'] else 'Ver y revisar borrador'
-    return shell(f'''<h1>{e(period(p['period']))}</h1><p class="muted">{'La factura está emitida; consulta aquí su envío.' if item['accepted'] else 'Revisa esta versión antes de aprobar su emisión.'}</p><article class="card"><div class="row"><span class="eyebrow">{title}</span><span class="badge wait">{e(item['mail'])}</span></div>{f'<p class="date">{e(day(p["send_date"]))} · 08:00</p><p class="muted">Hora de Madrid</p>' if scheduled else ''}<hr><div class="row"><h2>{e(item['client'])}</h2><span class="muted">{e(p['number'])}</span></div><p class="amount">{money(f.get('total'))}</p><p class="muted">Total a cobrar · {e(f.get('days','—'))} jornadas</p><a class="button" href="{invoice_link(item)}">{action} →</a></article><ul class="steps"><li><span>{'✓' if item['accepted'] else '○'}</span><div><strong>{e(label(item))}</strong><p class="muted">{'Registro VeriFactu aceptado' if item['accepted'] else 'La aprobación solo corresponde a esta versión'}</p></div></li><li><span>◷</span><div><strong>Correo: {e(item['mail'].lower())}</strong><p class="muted">{'Enviado no significa leído ni cobrado.' if item['mail']=='Enviado' else 'Consulta el detalle antes de modificar la programación.'}</p></div></li></ul><a class="button secondary" href="/facturas/historico">Ver histórico · {len(items)} {'factura' if len(items)==1 else 'facturas'}</a>''', 'summary')
+    return shell(f'''<h1>{e(period(p['period']))}</h1><p class="muted">{'La factura está emitida; consulta aquí su envío.' if item['accepted'] else 'Revisa esta versión antes de aprobar su emisión.'}</p><article class="card"><div class="row"><span class="eyebrow">{title}</span><span class="badge wait">{e(item['mail'])}</span></div>{f'<p class="date">{e(day(p["send_date"]))} · 08:00</p><p class="muted">Hora de Madrid</p>' if scheduled else ''}<hr><div class="row"><h2>{e(item['client'])}</h2><span class="muted">{e(p['number'])}</span></div><p class="amount">{money(f.get('total'))}</p><p class="muted">Total a cobrar · {e(f.get('days','—'))} jornadas</p><a class="button" href="{invoice_link(item)}">{action} →</a></article><ul class="steps"><li><span>{'✓' if item['accepted'] else '○'}</span><div><strong>{e(label(item))}</strong><p class="muted">{'Registro VeriFactu aceptado' if item['accepted'] else 'La aprobación solo corresponde a esta versión'}</p></div></li><li><span>◷</span><div><strong>Correo: {e(item['mail'].lower())}</strong><p class="muted">{'Enviado no significa leído ni cobrado.' if item['mail']=='Enviado' else 'Consulta el detalle antes de modificar la programación.'}</p></div></li></ul>{drive_card(root,item)}<a class="button secondary" href="/facturas/historico">Ver histórico · {len(items)} {'factura' if len(items)==1 else 'facturas'}</a>''', 'summary')
 
 
 def history(items, query):
@@ -71,7 +104,7 @@ def detail(root, item):
     versions=''.join(f'<li>Preparación {i+1} · {"versión actual" if v["id"]==row["id"] else "anterior"} '+(f'<a href="/facturas/documento/{v["id"]}/draft" target="_blank" rel="noopener">Ver borrador PDF</a>' if pdf_available(root,v,'draft') else '<span class="muted">Sin PDF verificable</span>')+'</li>' for i,v in enumerate(reversed(item['versions'])))
     manage='<a class="button secondary" href="/facturas/revision">Revisar aprobación y programación</a>' if item['active'] else '<p class="muted">Factura histórica · consulta sin modificar.</p>'
     content=f'''<a class="back" href="/facturas/historico">← Histórico</a><div class="row"><h1>{e(period(p['period']))}</h1><span class="badge">{e(label(item))}</span></div><p class="muted">{e(p['number'])} · {e(item['client'])}</p><p class="amount">{money(f.get('total'))}</p><p class="muted">Total a cobrar · no confirma el cobro bancario</p><article class="card"><h2>Importes</h2><dl><div><dt>Jornadas</dt><dd>{e(f.get('days','—'))}</dd></div>{amounts}<div><dt>Total con IVA</dt><dd>{money(float(f['base'])+float(f['vat'])) if f.get('base') is not None and f.get('vat') is not None else '—'}</dd></div></dl></article><article class="card"><h2>Emisión y envío</h2><dl><div><dt>Expedición</dt><dd>{e(day(p.get('issue_date'))) if item['accepted'] else 'Sin emitir'}</dd></div><div><dt>Vencimiento</dt><dd>{e(f.get('due_date','No registrado'))}</dd></div><div><dt>VeriFactu</dt><dd>{'Registro aceptado' if item['accepted'] else 'Sin aceptación confirmada'}</dd></div><div><dt>Correo</dt><dd>{e(item['mail'])}</dd></div></dl><p class="muted">Fecha prevista: {e(day(p.get('send_date')))} · 08:00 Madrid</p><details><summary>Destinatarios y mensaje</summary><p>{'<br>'.join(e(v) for v in p.get('to',[]))}</p><strong>{e(p.get('subject',''))}</strong><pre>{e(p.get('body',''))}</pre></details></article>{document}{manage}<details><summary>Preparaciones y actividad · {len(item['versions'])}</summary><ul class="versions">{versions}</ul><p class="muted">{item['review_mails']} correos de revisión enviados. Se contabilizan por separado del envío definitivo.</p></details>'''
-    return shell(content,'history')
+    return shell(content+drive_card(root,item),'history')
 
 
 def response(root, url):
@@ -79,7 +112,7 @@ def response(root, url):
     if path not in ('/','/historico') and not re.fullmatch(r'/factura/\d+|/documento/\d+/(draft|final)',path):
         return None
     items=catalog(root)
-    if path=='/':return 200,summary(items)
+    if path=='/':return 200,summary(items,root)
     if path=='/historico':return 200,history(items,parse_qs(parsed.query))
     if path.startswith('/factura/'):
         item=next((x for x in items if x['docid']==int(path.split('/')[-1])),None)

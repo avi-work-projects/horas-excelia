@@ -84,5 +84,17 @@ class PublishTests(unittest.TestCase):
         drive.folder('FACTURAS/2027/A - FACTURAS INGRESOS')
         self.assertEqual(created,['FACTURAS/2027','FACTURAS/2027/A - FACTURAS INGRESOS'])
 
+    def test_archive_notification_does_not_block_archive_on_failure(self):
+        from prepare_drive_archive_candidate import patch as add_notification
+        source="def archive(folder,row,pdf):\n (folder/'approved-summary.json').write_text(row['snapshot'],encoding='utf-8')\n return pdf\n"
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);scope={'ROOT':root}
+            exec(add_notification(source),scope)
+            self.assertEqual(scope['archive'](root,{'snapshot':'{}'},b'pdf'),b'pdf')
+            self.assertTrue((root/'drive-publish-request').exists())
+            with patch.object(Path,'touch',side_effect=OSError('unavailable')):
+                self.assertEqual(scope['archive'](root,{'snapshot':'{}'},b'pdf'),b'pdf')
+        with self.assertRaises(ValueError):add_notification('def changed(): pass')
+
 
 if __name__=='__main__':unittest.main()
