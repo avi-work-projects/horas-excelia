@@ -577,7 +577,7 @@ REGLAS.push(['planes: referencias invisibles y hora explícita prioritaria',func
 }]);
 
 REGLAS.push(['inicio: todos los cumpleanos a 7 dias, con o sin alarma',function(){
-  const ctx=cargarApp(claves),content={innerHTML:''};
+  const ctx=cargarApp(claves),content={innerHTML:'',querySelectorAll:()=>[]};
   ctx.BDAYS=[{name:'Normal cercano',month:8,day:28},{name:'VIP cercano',month:8,day:22,vip:true},{name:'Ya avisado',month:8,day:21},{name:'Fuera plazo',month:8,day:29}];
   ctx.isBdayAlarmSet=b=>b.name==='Ya avisado';
   ctx.sessionStorage={getItem:()=>null};
@@ -587,7 +587,7 @@ REGLAS.push(['inicio: todos los cumpleanos a 7 dias, con o sin alarma',function(
 }]);
 
 REGLAS.push(['inicio: ensayo con fecha, hora y pareja actual; sin hora explicita',function(){
-  const ctx=cargarApp(claves),content={innerHTML:''};
+  const ctx=cargarApp(claves),content={innerHTML:'',querySelectorAll:()=>[]};
   ctx.BDAYS=[];
   ctx.BODA_COUPLES=[{id:'popup-couple',name:'Pareja <actual>'}];
   ctx.EVENTS=[
@@ -603,7 +603,7 @@ REGLAS.push(['inicio: ensayo con fecha, hora y pareja actual; sin hora explicita
 }]);
 
 REGLAS.push(['inicio: tres semanas futuras, dos cumpleaños próximos visibles y eventos sin hora antes de horas',function(){
-  const ctx=cargarApp(claves),content={innerHTML:''};
+  const ctx=cargarApp(claves),content={innerHTML:'',querySelectorAll:()=>[]};
   ctx.SW={};ctx.dayT=()=> 'normal';ctx.csvPendingWarnings=()=>[];
   ctx.BDAYS=[{name:'NormalHoy',month:8,day:21},{name:'VipLejano',month:8,day:28,vip:true},{name:'VipHoy',month:8,day:21,vip:true}];
   ctx.isBdayAlarmSet=()=>false;
@@ -622,7 +622,7 @@ REGLAS.push(['inicio: tres semanas futuras, dos cumpleaños próximos visibles y
 }]);
 
 REGLAS.push(['recordatorios: ocurrencias repetidas, multidía, viajes en curso y rutinas sin duplicar cumpleaños',function(){
-  const ctx=cargarApp(claves),content={innerHTML:''};
+  const ctx=cargarApp(claves),content={innerHTML:'',querySelectorAll:()=>[]};
   ctx.BDAYS=[];ctx.RUTINAS=[];
   ctx.EVENTS=[
     {id:'weekly',kind:'puntual',type:'Rec. Gestiones',title:'Repetición',start:'2026-08-01',repeat:{type:'weekly',weekDays:[5]}},
@@ -637,7 +637,7 @@ REGLAS.push(['recordatorios: ocurrencias repetidas, multidía, viajes en curso y
   return items.length===6&&items.filter(x=>x.text.includes('Multidía')).length===2&&items.some(x=>x.text.includes('Repetición'))&&items.some(x=>x.text.includes('Gimnasio'))&&items.some(x=>x.text.includes('Fin · Viaje en curso'))&&!items.some(x=>x.text.includes('VIP duplicado'));
 }]);
 REGLAS.push(['recordatorios: acceso manual tras cerrar y bloque de tareas siempre presente',function(){
-  const ctx=cargarApp(claves),content={innerHTML:''};
+  const ctx=cargarApp(claves),content={innerHTML:'',querySelectorAll:()=>[]};
   ctx.sessionStorage={getItem:()=> '1'};ctx.tasksReminder=()=>[];ctx.csvPendingWarnings=()=>[];ctx.rutFlexWarnings=()=>[];
   ctx.document.getElementById=id=>id==='homePopupContent'?content:id==='homePopup'?{style:{}}:null;
   require('vm').runInContext(fs.readFileSync(path.join(RAIZ,'js/home-popup.js'),'utf8'),ctx);

@@ -928,3 +928,21 @@ Corrección de la propuesta tras revisar las capturas con Ángel:
   grandes conservan las notas de hoy y mañana, dentro del mismo marco estable.
 - Validación en Edge oculto a 400 y 320 px: notas y texto escapado, teclado,
   tarjetas sin descripción, alto estable, títulos largos y consumidores compartidos.
+
+## Recordatorios: accesos y edición directa (v495)
+
+- Cumpleaños se agrupa en un único panel con su color y separadores interiores,
+  también al mostrar los cumpleaños adicionales. Conserva los símbolos y el orden.
+- Mantener pulsada una fila abre el editor existente de cumpleaños, evento,
+  sesión concreta de rutina o clase de boda. F2 ofrece la misma acción con teclado.
+  Se reutiliza addLongPress: mover el dedo cancela el gesto; soltar tras una
+  pulsación larga no debe desplegar las notas. La pulsación corta no cambia.
+- La navegación usa navigateMain con un destino opcional para abrir la ficha en
+  Calendario 1 mes. Conserva el cierre común de las otras ventanas, incluso al
+  entrar en Recordatorios desde Ajustes de Hogar u otra sección.
+- Mis tareas y Ajustes comparten .reminders-access: campana y texto sobre el
+  acento amarillo del tema. Ajustes lo coloca a la derecha del selector de tema.
+  Mis tareas dentro de Pendientes es un botón con icono, contorno y color propio.
+- Pruebas con datos ficticios: tres tareas y una semana sin marcas ni envío,
+  cumpleaños plegados/desplegados, accesos a 320/400 px, guardar/cancelar desde
+  los editores, cancelación del gesto al desplazar y navegación entre ventanas.

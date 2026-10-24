@@ -99,6 +99,7 @@ function initSettingsMenu(){
   document.getElementById('editMacroBtn').onclick=function(){openConnectionsSettings('macro');};
   document.getElementById('personalDataBtn').onclick=openPersonalData;
   document.getElementById('personalNotesBtn').onclick=openPersonalNotes;
+  document.getElementById('settingsReminders').onclick=function(){closeSettingsMenu();openHomePopup(true);};
   document.addEventListener('keydown',function(e){
     if(e.key==='Escape'&&menu.classList.contains('open')){e.preventDefault();e.stopPropagation();closeSettingsMenu(true);}
   },true);

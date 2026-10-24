@@ -39,7 +39,7 @@ test('recordatorios agrupados: pendientes primero, símbolos propios y alarmas p
   await expect(dinner.locator('.home-reminder-description')).toBeVisible();
   await expect(dinner.locator('.home-reminder-expanded')).toHaveText('Reservar mesa <interior>');
   await page.keyboard.press('Enter');await expect(dinner).not.toHaveAttribute('open');
-  const birthdayColor=await page.locator('.home-popup-item.bday').evaluate(el=>getComputedStyle(el).backgroundColor);
+  const birthdayColor=await page.locator('.home-reminder-birthdays>.home-reminder-rows').evaluate(el=>getComputedStyle(el).backgroundColor);
   expect(birthdayColor).not.toBe(await page.locator('.home-popup').evaluate(el=>getComputedStyle(el).backgroundColor));
   const before=await page.locator('.home-popup').boundingBox();
   await expect(page.locator('.home-pending-tasks li')).toHaveText(['Comprar pintura','Revisar recibos','Reservar cita']);

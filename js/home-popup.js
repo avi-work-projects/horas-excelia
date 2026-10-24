@@ -36,7 +36,7 @@ function homeReminderEvents(today){
 }
 function homeReminderTasksHtml(){
   var pending=tasksItems(tasksData(),'pending');
-  var h='<section class="home-pending-tasks" aria-label="Tareas pendientes"><div class="home-pending-heading"><strong>Tareas pendientes</strong><button type="button" id="homeTasksOpen">Mis tareas'+(pending.length>2?' ('+pending.length+')':'')+' →</button></div>';
+  var h='<section class="home-pending-tasks" aria-label="Tareas pendientes"><div class="home-pending-heading"><strong>Tareas pendientes</strong><button type="button" id="homeTasksOpen" class="home-tasks-button">'+TASKS_ICON+'<span>Mis tareas'+(pending.length>2?' ('+pending.length+')':'')+'</span><span aria-hidden="true">›</span></button></div>';
   if(pending.length){h+='<ul>';pending.slice(0,3).forEach(function(t){h+='<li>'+escHtml(t.title)+'</li>';});h+='</ul>';}
   else h+='<p>No tienes tareas pendientes.</p>';
   return h+'</section>';
@@ -44,8 +44,9 @@ function homeReminderTasksHtml(){
 function homeReminderCardHtml(it){
   var hasNotes=it.type==='event'&&!!it.note;
   var attrs=' class="home-popup-item '+it.type+(hasNotes?' home-reminder-disclosure':'')+'"'+(it.color?' style="--reminder-color:'+it.color+'"':'');
+  if(it.person)attrs+=' data-reminder-birthday="'+BDAYS.indexOf(it.person)+'"';
   if(it.type!=='event')return '<div'+attrs+'>'+it.text+'</div>';
-  attrs+=' data-reminder-id="'+escHtml(it.event.id)+'"';
+  attrs+=' data-reminder-id="'+escHtml(it.event.id)+'" data-reminder-date="'+it.date+'"';
   if(!hasNotes)return '<div'+attrs+'><div class="home-reminder-row">'+it.text+'</div></div>';
   return '<details'+attrs+'><summary class="home-reminder-row" aria-label="Notas de '+escHtml(it.title||it.event.title||getEvType(it.event))+'">'+it.text+'<span class="home-reminder-toggle" aria-hidden="true"></span></summary><div class="home-reminder-expanded">'+it.note+'</div></details>';
 }
@@ -93,6 +94,30 @@ function closeHomePopup(){
   document.getElementById('homePopup').style.display='none';
   try{sessionStorage.setItem('excelia-popup-dismissed','1');}catch(e){}
 }
+/* Abrir los editores existentes, sin escribir datos al mantener pulsado. */
+function homeReminderEdit(item){
+  closeHomePopup();
+  navigateMain('events',function(){
+    _switchEvView('cal');EV_YEAR=+item.date.slice(0,4);EV_MONTH=+item.date.slice(5,7)-1;
+    openEventsAt();
+    if(item.person){openBdayForm(item.person);return;}
+    var ev=item.event;
+    if(ev._rut){openRutHistoryEdit(ev._rut,ev._rutKey||ev.start,function(){refreshEvents();});return;}
+    if(getEvType(ev)==='Ensayos boda'){openBodaClaseForm(ev,function(){refreshEvents();});return;}
+    EV_EDIT_DS=item.date;openEvForm(ev);
+  });
+}
+function bindHomeReminderEditing(content,items){
+  content.querySelectorAll('[data-reminder-id],[data-reminder-birthday]').forEach(function(card){
+    var item=items.find(function(it){return it.person?String(BDAYS.indexOf(it.person))===card.dataset.reminderBirthday:it.event&&it.event.id===card.dataset.reminderId&&it.date===card.dataset.reminderDate;});
+    if(!item)return;
+    card.classList.add('home-reminder-editable');card.title='Mantén pulsado para editar';
+    var target=card.querySelector('summary')||card;target.tabIndex=0;target.setAttribute('aria-keyshortcuts','F2');
+    addLongPress(card,function(){homeReminderEdit(item);});
+    card.addEventListener('click',function(e){if(card._lpFired){card._lpFired=0;e.preventDefault();e.stopImmediatePropagation();}},true);
+    card.addEventListener('keydown',function(e){if(e.key==='F2'){e.preventDefault();e.stopPropagation();homeReminderEdit(item);}});
+  });
+}
 function openHomePopup(force){
   loadEvAlarms();
   var csvWarnings=csvPendingWarnings(new Date()),routineWarnings=rutFlexWarnings(evDk(new Date())),pendingTasks=tasksReminder(new Date());
@@ -117,7 +142,7 @@ function openHomePopup(force){
     var bd=new Date(today.getFullYear(),b.month-1,b.day);if(bd<today)bd.setFullYear(today.getFullYear()+1);
     var diff=Math.round((bd-today)/86400000);if(diff>7)return;
     var when=diff===0?'Hoy':diff===1?'Mañana':'En '+diff+' días';
-    birthdays.push({days:diff,type:b.vip?'vip':'bday',text:'<span class="home-birthday-line">'+(b.vip?'<img class="home-reminder-vip" src="./VIP.png" alt="VIP">':bdaySymbolHtml())+'<span class="home-birthday-name" title="'+escHtml(b.name)+'"><strong>'+escHtml(b.name)+'</strong><span class="home-reminder-content">'+(isBdayAlarmSet(b)?'Alarma creada':'Sin alarma')+'</span></span><span class="home-reminder-when">'+when+'</span></span>'});
+    birthdays.push({days:diff,person:b,date:evDk(bd),type:b.vip?'vip':'bday',text:'<span class="home-birthday-line">'+(b.vip?'<img class="home-reminder-vip" src="./VIP.png" alt="VIP">':bdaySymbolHtml())+'<span class="home-birthday-name" title="'+escHtml(b.name)+'"><strong>'+escHtml(b.name)+'</strong><span class="home-reminder-content">'+(isBdayAlarmSet(b)?'Alarma creada':'Sin alarma')+'</span></span><span class="home-reminder-when">'+when+'</span></span>'});
   });
   birthdays.sort(function(a,b){return a.days-b.days||(a.type==='vip'?0:1)-(b.type==='vip'?0:1);});
   items=items.concat(birthdays,homeReminderEvents(today));
@@ -125,6 +150,7 @@ function openHomePopup(force){
   var content=document.getElementById('homePopupContent');if(!content)return;
   HOME_BIRTHDAYS_OPEN=false;
   content.innerHTML=homeReminderItemsHtml(items,birthdays.length);
+  bindHomeReminderEditing(content,items);
   content.scrollTop=0;
   document.getElementById('homePopup').style.display='flex';
   if(pendingTasks.length)tasksReminderSeen(new Date());
