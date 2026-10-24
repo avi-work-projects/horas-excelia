@@ -17,12 +17,19 @@ son herramientas de escritorio, no recursos públicos de la PWA.
 3. `python ledger.py actualizado.json --root AUTONOMO --output calculado.json`.
 4. Con Node y `@oai/artifact-tool` disponibles:
    `node build_workbooks.mjs calculado.json salidas cabeceras-lsi.json 3T`.
+   Añadir `--annual-only` para actualizar el libro sin generar LSI cuando faltan
+   campos de importación. No inventar identidades ni fechas de recepción.
    Las cabeceras son las dos filas originales de la plantilla oficial, claves
    `EXPEDIDAS_INGRESOS` (36 columnas) y `RECIBIDAS_GASTOS` (42).
 5. Revisar cobertura, diferencias, fórmulas y pendientes; ensayar importación
    en OPEN. La aceptación informática no confirma la corrección fiscal.
 
 ## Datos y límites
+
+Respetar [el contrato de archivo entre equipos](../../docs/AUTONOMO-ARCHIVE.md).
+Los gastos se toman de la carpeta Amazon por instrucción del usuario; no requieren
+contraste previo con Declarando. La revisión fiscal y las exclusiones expresas
+siguen separadas de la incorporación documental.
 
 Cada registro identifica tipo, número, proveedor/cliente, NIF documental, fecha,
 periodo explícito, base, IVA, retención y total (cadenas decimales con dos cifras),

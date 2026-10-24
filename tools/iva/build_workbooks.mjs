@@ -77,6 +77,10 @@ for(const [name,range] of [['Resumen 303','A1:I10'],['Ingresos','A1:J7'],['Gasto
 
 // LSI export: explicit historical supplier mapping is kept separate from documentary identity.
 // No guessing a missing taxpayer ID. This export is an incomplete annual simulation.
+if(process.argv.includes('--annual-only')){
+ console.log('Annual workbook saved. LSI export intentionally not regenerated.');
+ process.exit(0);
+}
 const lsi=Workbook.create();
 for(const [name,kind] of [['EXPEDIDAS_INGRESOS','income'],['RECIBIDAS_GASTOS','expense']]){
  const rows=d.records.filter(r=>r.kind===kind&&r.include&&Number(r.period[0])<=Number(period[0])).map((r,i)=>{
