@@ -10,7 +10,7 @@ const sha=()=>execFileSync('git',['rev-parse','HEAD'],{cwd:ROOT,encoding:'utf8'}
 // Las fuentes son texto; CRLF/LF no deben invalidar el mapa al cambiar de equipo.
 const hash=file=>crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT,file),'utf8').replace(/\r\n/g,'\n')).digest('hex');
 const fileData=file=>({file,hash:hash(file)});
-function sharedSources(){return ['index.html','js/nav-icons.js','js/core.js','js/data-integrity.js','tools/fixture.json','tools/visual-map/catalog.cjs','tools/visual-map/generate.cjs',...require('../../app-assets.json').styleSources,...require('../../app-assets.json').styles.filter(x=>x!=='css/styles.css')];}
+function sharedSources(){return ['index.html','js/nav-icons.js','js/core.js','js/data-integrity.js','tools/fixture.json','tools/visual-map/fixture.cjs','tools/visual-map/catalog.cjs','tools/visual-map/extend.cjs','tools/visual-map/generate.cjs',...require('../../app-assets.json').styleSources,...require('../../app-assets.json').styles.filter(x=>x!=='css/styles.css')];}
 function dependencies(scene){
   const parents=scenes.filter(s=>s.route.length<=scene.route.length&&JSON.stringify(s.route)===JSON.stringify(scene.route.slice(0,s.route.length)));
   return [...new Set([...sharedSources(),...parents.flatMap(s=>s.sources)])].map(fileData);
@@ -28,13 +28,16 @@ function census(){
 function inventory(captures){
   const result=[];
   for(const [group,titles,file]of sections)for(const title of titles.split('|'))result.push({group,title,file,status:'Pendiente de captura'});
-  // Conservar las variantes del piloto sin afirmar que se ha recorrido todo el inventario.
   const aliases={home:'Jornada y horas del mes',household:'Resumen del hogar',study:'Comparar escenarios',events:'Próximos',economics:'Resumen económico',calendar:'Calendario 1 mes',day:'Ficha del día',edit:'Editar evento',time:'Elegir hora'};
-  for(const scene of scenes){const match=result.find(x=>x.group===scene.group&&x.title===(aliases[scene.id]||scene.title));if(match){match.scene=scene.id;match.status='Capturada · sin revisar';}else result.push({group:scene.group,title:scene.title,file:scene.sources[0],scene:scene.id,status:'Capturada · sin revisar'});}
+  const canonical=g=>g==='Fiscal'?'Economía':g.startsWith('Energía')?'Energía':g;
+  const coverage={'Eventos|Exportar calendario':'calendar-export','Eventos|Detalle evento':'day','Eventos|Asignar sesión de rutina':'routine-extra-day','Bodas|Catálogos de bodas':'wedding-pack','Cumpleaños|Selector de día o mes':'birthday-day','Economía|Configuración fiscal':'fiscal','Energía|Editor de tarifa':'energy-tariff','Ajustes|Previsualización de importación':'import-preview','Ajustes|Añadir o reemplazar al importar':'import-preview','Ajustes|Tareas pendientes y completadas':'tasks'};
+  for(const row of result){const id=coverage[row.group+'|'+row.title];if(id){row.scene=id;row.status='Capturada · sin revisar';}if(row.title.startsWith('Archivo de ')){row.status='Sin entrada visible';row.note='Existe la función de archivo en código, pero la versión actual no presenta un botón ni pestaña que la abra. No se ha inventado un acceso.';}}
+  for(const scene of scenes){const match=result.find(x=>x.group===canonical(scene.group)&&x.title===(aliases[scene.id]||scene.title));if(match){match.scene=scene.id;match.status='Capturada · sin revisar';}else if(!result.some(x=>x.scene===scene.id))result.push({group:canonical(scene.group),title:scene.title,file:scene.sources[0],scene:scene.id,status:'Capturada · sin revisar'});}
+  result.push({group:'Ajustes',title:'Selectores nativos y aplicaciones externas',status:'Límite del atlas',note:'Los selectores de fecha, archivo y carpeta y el destino de compartir/correo pertenecen al navegador o al sistema. Se captura el control y el panel de la app hasta ese límite.'});
   return result.map(x=>x.scene&&!captures[x.scene]?{...x,status:'Pendiente de captura',scene:undefined}:x);
 }
 function assemble(captures){
-  return {schemaVersion:1,title:'Gestify · mapa visual',generatedAt:new Date().toISOString(),referenceCommit:sha(),date:DATE,viewport:VIEWPORT,theme:'light',icons:'professional',scope:'Piloto: navegación principal y recorrido de edición de un evento. Inventario inicial localizado en código; no auditado visualmente al completo.',scenes:scenes.map(s=>({...s,...captures[s.id],fresh:!!captures[s.id]&&!captures[s.id].dependencies.some(d=>!fs.existsSync(path.join(ROOT,d.file))||hash(d.file)!==d.hash),route:s.route})),edges,inventory:inventory(captures),openers:census()};
+  return {schemaVersion:1,title:'Gestify · mapa visual',generatedAt:new Date().toISOString(),referenceCommit:sha(),date:DATE,viewport:VIEWPORT,theme:'light',icons:'professional',scope:'Atlas de las secciones de la app y sus paneles secundarios, con capturas reales y recorridos comprobados. Estados condicionales y selectores nativos se identifican en el inventario.',scenes:scenes.map(s=>({...s,...captures[s.id],fresh:!!captures[s.id]&&!captures[s.id].dependencies.some(d=>!fs.existsSync(path.join(ROOT,d.file))||hash(d.file)!==d.hash),route:s.route})),edges,inventory:inventory(captures),openers:census()};
 }
 function writeData(captures){
   const data=assemble(captures);fs.mkdirSync(OUT,{recursive:true});
@@ -45,6 +48,10 @@ function currentCaptures(){try{return Object.fromEntries(JSON.parse(fs.readFileS
 function stale(captures){return scenes.filter(s=>!captures[s.id]||captures[s.id].dependencies.some(d=>!fs.existsSync(path.join(ROOT,d.file))||hash(d.file)!==d.hash)).map(s=>s.id);}
 async function perform(page,action){
   if(typeof action==='string')await page.locator(action).first().click();
+  else if(action.hold)await page.locator(action.hold).first().click({delay:750});
+  else if(action.click)await page.locator(action.click).first().click();
+  else if(action.fill)await page.locator(action.fill).first().fill(action.value);
+  else if(action.file)await page.locator(action.file).setInputFiles({name:action.name,mimeType:action.mimeType||'application/json',buffer:Buffer.from(JSON.stringify(action.data))});
   else await page.locator(action.scroll).first().scrollIntoViewIfNeeded();
   await settle(page);
 }
@@ -57,18 +64,19 @@ async function setup(browser,url){
   });
   const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.clock.setFixedTime(new Date(DATE));
-  const fixture=JSON.parse(fs.readFileSync(path.join(ROOT,'tools/fixture.json'),'utf8'));
-  fixture['excelia-events-v1']=[{id:'map-demo',kind:'puntual',type:'Otros',title:'Café de ejemplo',note:'Datos ficticios para revisar la interfaz.',start:'2026-08-21',end:'2026-08-21',color:'#537b78',time:'18:30',endTime:'19:30',shape:'circle'},{id:'map-trip',kind:'grande',type:'Viaje',title:'Viaje de ejemplo',start:'2026-08-24',end:'2026-08-28',color:'#5b7db5'}];
+  const fixture=require('./fixture.cjs')();
   await page.addInitScript(data=>{sessionStorage.setItem('excelia-popup-dismissed','1');for(const [key,value]of Object.entries(data))if(key.startsWith('excelia-'))localStorage.setItem(key,JSON.stringify(value));localStorage.setItem('excelia-theme-v1','light');localStorage.setItem('excelia-nav-icons-v1','professional');localStorage.setItem('excelia-household-tab-v1','resumen');},fixture);
-  await page.goto(url);await page.evaluate(()=>document.fonts.ready);await settle(page);
+  await page.goto(url+'/index.html');await page.evaluate(()=>document.fonts.ready);await settle(page);
+  if(await page.locator('#homePopupClose').isVisible()){await page.locator('#homePopupClose').click();await settle(page);}
   return {context,page,errors};
 }
 async function main(){
   const captures=currentCaptures();
   if(options.includes('--index')){writeData(captures);console.log('Índice actualizado; las capturas antiguas se señalan como pendientes.');return;}
-  if(options.includes('--check')){const pending=stale(captures);console.log(pending.length?'Pendientes de actualizar: '+pending.join(', '):'Las 13 capturas corresponden a sus fuentes.');process.exitCode=pending.length?1:0;return;}
-  if(only&&!scenes.some(s=>s.id===only))throw new Error('Escena desconocida: '+only);
-  const selected=only?scenes.filter(s=>s.id===only):options.includes('--changed')?scenes.filter(s=>stale(captures).includes(s.id)):scenes;
+  if(options.includes('--check')){const pending=stale(captures);console.log(pending.length?'Pendientes de actualizar: '+pending.join(', '):'Las '+scenes.length+' capturas corresponden a sus fuentes.');process.exitCode=pending.length?1:0;return;}
+  const ids=only?.split(',');if(ids)for(const id of ids)if(!scenes.some(s=>s.id===id))throw new Error('Escena desconocida: '+id);
+  const selected=ids?scenes.filter(s=>ids.includes(s.id)):options.includes('--changed')?scenes.filter(s=>stale(captures).includes(s.id)):scenes;
+  for(const s of selected)dependencies(s);
   if(!selected.length){writeData(captures);console.log('No hay escenas pendientes.');return;}
   fs.mkdirSync(path.join(OUT,'captures'),{recursive:true});
   const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.png':'image/png','.svg':'image/svg+xml','.woff2':'font/woff2'};
@@ -77,26 +85,30 @@ async function main(){
   let browser;
   try{
     browser=await chromium.launch({channel:process.platform==='win32'?'msedge':undefined,headless:true});
-    for(const scene of selected){
+    let cursor=0;const failures=[];
+    await Promise.all(Array.from({length:3},async()=>{while(cursor<selected.length){const scene=selected[cursor++];
       const {context,page,errors}=await setup(browser,url);
+      page.setDefaultTimeout(3500);
       try{
         for(const action of scene.route)await perform(page,action);
         await expect(page.locator(scene.ready).first()).toBeVisible();await settle(page);
         const outgoing=edges.filter(e=>e.from===scene.id),anchors={};
         for(const edge of outgoing){
-          const b=await page.locator(edge.selector).first().boundingBox();
+          let b=await page.locator(edge.selector).first().boundingBox();
+          if(b&&edge.action==='scroll'){const right=Math.min(VIEWPORT.width,b.x+b.width),bottom=Math.min(VIEWPORT.height,b.y+b.height);b={x:Math.max(0,b.x),y:Math.max(0,b.y),width:right-Math.max(0,b.x),height:bottom-Math.max(0,b.y)};}
           if(!b||b.x<0||b.y<0||b.x+b.width>VIEWPORT.width+1||b.y+b.height>VIEWPORT.height+1)throw new Error('Origen fuera de captura: '+scene.id+' → '+edge.to);
           anchors[edge.to]=edge.action==='scroll'?{x:b.x+b.width-10,y:b.y+b.height*.55,width:8,height:Math.min(100,b.height*.25)}:{x:b.x,y:b.y,width:b.width,height:b.height};
         }
         const image='captures/'+scene.id+'.png';await page.screenshot({path:path.join(OUT,image),animations:'disabled'});
-        // Verificar cada relación desde su estado de origen. No ejecutar Guardar, alarmas ni exportaciones.
+        // Las rutas hijas reproducen la transición al capturarse. Los regresos requieren otra ejecución.
         const verifiedEdges=[];
         for(const edge of outgoing){
+          const target=scenes.find(s=>s.id===edge.to);
+          if(target.route.length===scene.route.length+1&&JSON.stringify(target.route.slice(0,-1))===JSON.stringify(scene.route))continue;
           const check=await setup(browser,url);
           try{
             for(const action of scene.route)await perform(check.page,action);
-            const target=scenes.find(s=>s.id===edge.to);
-            await perform(check.page,edge.action==='scroll'?target.route.at(-1):edge.selector);
+            await perform(check.page,edge.step||(edge.action==='scroll'?target.route.at(-1):edge.selector));
             await expect(check.page.locator(target.ready).first()).toBeVisible();
             if(edge.view==='return')await expect(check.page.locator(scene.ready).first()).not.toBeVisible();
             if(check.errors.length)throw new Error(check.errors.join('\n'));verifiedEdges.push(edge.to);
@@ -105,9 +117,13 @@ async function main(){
         if(errors.length)throw new Error(errors.join('\n'));
         const entryBox=scene.entry?await page.locator(scene.entry).first().boundingBox():null;
         captures[scene.id]={image,anchors,entryBox,dependencies:dependencies(scene),commit:sha(),review:'Sin revisar',verifiedEdges};
-        writeData(captures);console.log('Capturada y navegación comprobada: '+scene.id);
-      }finally{await context.close();}
-    }
+        console.log('Capturada: '+scene.id);
+      }catch(error){failures.push(scene.id+': '+error.message);console.error('FALLO '+scene.id+': '+error.message.split('\n')[0]);}finally{await context.close();}
+    }}));
+    for(const edge of edges){const s=scenes.find(s=>s.id===edge.from),t=scenes.find(s=>s.id===edge.to),c=captures[s.id];if(c&&captures[t.id]&&!failures.some(x=>x.startsWith(t.id+':')||x.startsWith(s.id+':'))&&t.route.length===s.route.length+1&&JSON.stringify(t.route.slice(0,-1))===JSON.stringify(s.route)&&!c.verifiedEdges.includes(t.id))c.verifiedEdges.push(t.id);}
+    writeData(captures);
+    if(failures.length)throw Error(failures.join('\n'));
   }finally{if(browser)await browser.close();await new Promise(resolve=>server.close(resolve));}
 }
-main().catch(error=>{console.error(error);process.exitCode=1;});
+module.exports={setup,perform,settle};
+if(require.main===module)main().catch(error=>{console.error(error);process.exitCode=1;});
