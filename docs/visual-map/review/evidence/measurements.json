@@ -1,0 +1,42 @@
+{
+  "alarmButton": {
+    "x": 350,
+    "y": 487,
+    "width": 34,
+    "height": 34
+  },
+  "startedAlarm": true,
+  "startedTime": "Fecha\n21/08/2026\nHorario\n08:00–09:00",
+  "recoveryEarlier": "La recuperación debe ser posterior a la sesión original.",
+  "fab": {
+    "x": 334,
+    "y": 812,
+    "width": 48,
+    "height": 48
+  },
+  "classSave": {
+    "x": 205,
+    "y": 807,
+    "width": 175,
+    "height": 43
+  },
+  "fabHit": "tasksFab",
+  "coupleSave": {
+    "x": 20,
+    "y": 950,
+    "width": 360,
+    "height": 41
+  },
+  "routineSave": {
+    "x": 20,
+    "y": 1109.28125,
+    "width": 360,
+    "height": 41
+  },
+  "multidayCell": {
+    "x": 65.984375,
+    "y": 303,
+    "width": 14.671875,
+    "height": 16.796875
+  }
+}

@@ -4,7 +4,7 @@
   const state={view:'general',selected:'home',scale:.5,x:0,y:0,returns:false,compare:['household','study','economics']};
   const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const notes=window.VISUAL_MAP_NOTES||{};
-  const status=s=>!s.image?'Pendiente':!s.fresh?'Actualizar captura':notes[s.id]?'Revisar · solapamiento':s.review;
+  const status=s=>!s.image?'Pendiente':!s.fresh?'Actualizar captura':notes[s.id]?'Revisar · '+window.VISUAL_MAP_PRIORITIES[s.id]:s.review;
   const scene=id=>data.scenes.find(s=>s.id===id),maps=new Map();
   maps.set('general',{title:'Los accesos principales',ids:data.scenes.filter(s=>s.layout).map(s=>s.id)});
   maps.set('flow',{title:'Del calendario a los selectores',ids:data.scenes.filter(s=>s.flow).map(s=>s.id)});
@@ -93,7 +93,7 @@
   [...new Set(data.inventory.map(x=>x.group))].forEach(g=>{const option=document.createElement('option');option.value=g;option.textContent=g;$('inventoryGroup').append(option);});$('censusCount').textContent='Censo técnico · '+data.openers.length+' funciones de apertura';$('census').innerHTML=data.openers.map(x=>'<p><code>'+escape(x.symbol)+'</code><br>'+escape(x.file)+':'+x.line+'</p>').join('');
   $('export').onclick=async()=>{
     const list=visible(),{width,height}=dimensions(),parts=[];
-    for(const s of list){const [x,y]=position(s),blob=await(await fetch(s.image)).blob(),uri=await new Promise(resolve=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.readAsDataURL(blob);});parts.push(`<text x="${x}" y="${y+25}" fill="#24352f" font-size="15">${escape(s.title)}</text><image x="${x}" y="${y+TOP}" width="${W}" height="${H}" href="${uri}"/>`+(notes[s.id]?`<text x="${x}" y="${y+TOP+H+22}" fill="#976315" font-size="12">Revisar: Tareas sobre Guardar</text>`:''));}
+    for(const s of list){const [x,y]=position(s),blob=await(await fetch(s.image)).blob(),uri=await new Promise(resolve=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.readAsDataURL(blob);});parts.push(`<text x="${x}" y="${y+25}" fill="#24352f" font-size="15">${escape(s.title)}</text><image x="${x}" y="${y+TOP}" width="${W}" height="${H}" href="${uri}"/>`+(notes[s.id]?`<text x="${x}" y="${y+TOP+H+22}" fill="#976315" font-size="12">Revisar · ${window.VISUAL_MAP_PRIORITIES[s.id]}</text>`:''));}
     const paths=$('connections').innerHTML,svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" font-family="system-ui,sans-serif"><rect width="100%" height="100%" fill="#f6f5f0"/><text x="40" y="30" font-size="16" fill="#24352f">Gestify · ${escape($('viewTitle').textContent)} · datos ficticios</text>${parts.join('')}${paths}<text x="40" y="${height-14}" font-size="12" fill="#68776e">Base ${data.referenceCommit.slice(0,7)} · escenas del 21/08/2026 · Claro · Profesional · Pendiente de revisión de Ángel</text></svg>`,url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'})),a=document.createElement('a');a.href=url;a.download='gestify-mapa-'+state.view+'.svg';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
   };
   $('areaSelect').onchange=e=>{if(e.target.value)activate(e.target.value);};$('compareGroup').onchange=renderComparison;$('focusEdges').onchange=drawEdges;

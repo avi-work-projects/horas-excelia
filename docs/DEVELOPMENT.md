@@ -671,10 +671,11 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 ### Norma para el mapa visual (18/10/2026; piloto 24/10/2026)
 
 - Ángel aprobó el piloto y autorizó ampliar al resto de la app el 24/10/2026. El atlas cubre las áreas principales y los paneles secundarios inventariados. Las capturas nuevas siguen pendientes de su revisión visual; no exigir capturas de todas las pantallas en cada tarea ni todas las combinaciones de datos.
-- Cuando exista, todo cambio visual o de navegación debe actualizar la ficha del menú afectado: captura, ruta de acceso, estados importantes y archivos/componentes relacionados. Altas y eliminaciones actualizan también el índice.
+- Preferencia permanente de Ángel, reafirmada el 25/10/2026: conservar el atlas y actualizarlo con cada cambio visual o funcional que afecte a un menú, sus estados, validaciones o navegación. No dar por cerrado ese cambio sin comprobar las fichas y recorridos afectados, sus dependencias compartidas y las flechas. Altas y eliminaciones actualizan también el índice. Si no cambia la salida visual, comprobar y documentar la vigencia sin repetir capturas innecesarias.
 - Regenerar solo esas escenas; cambios en temas, fuentes o componentes compartidos regeneran las dependientes. Revisar antes de aceptar; no actualizar referencias a ciegas.
 - Usar Edge oculto, viewport móvil fijo, fecha y datos ficticios estables. Registrar el commit de referencia y señalar fichas pendientes para no presentar capturas antiguas como actuales.
 - El mapa ayuda a ubicarse en sesiones nuevas y comprobar coherencia; complementa CODEMAP y pruebas, no los sustituye. Evitar un producto documental paralelo o todas las combinaciones de temas/estados.
+- La revisión del 25/10/2026 está en `docs/visual-map/review/`: 150 capturas inspeccionadas, hallazgos priorizados, reproducciones ficticias y maquetas aisladas. No se han aplicado correcciones de la PWA como parte de la revisión. Los hallazgos resueltos se retiran o actualizan al regenerar las escenas correspondientes; no conservar avisos de defectos ya corregidos ni dar por revisadas capturas futuras con la revisión antigua.
 
 ## Revisión compacta de factura (v486)
 

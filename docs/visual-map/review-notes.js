@@ -1,5 +1,10 @@
-// Observaciones documentales basadas en las capturas; no alteran ni invalidan sus píxeles.
-window.VISUAL_MAP_NOTES = {
-  'wedding-class': 'Revisar: el botón flotante de Tareas se superpone al extremo derecho del botón Guardar en la ficha de clase (400 × 880).',
-  'wedding-new': 'Revisar: el botón flotante de Tareas se superpone al extremo derecho del botón Guardar al añadir una clase (400 × 880).'
-};
+// Anotaciones derivadas del informe: una sola fuente editorial para mapa y revisión.
+window.VISUAL_MAP_NOTES={};window.VISUAL_MAP_PRIORITIES={};
+for(const finding of window.VISUAL_REVIEW.findings){
+  for(const id of finding.scenes){
+    const previous=window.VISUAL_MAP_NOTES[id];
+    window.VISUAL_MAP_NOTES[id]=(previous?previous+'\n\n':'')+finding.priority+' · '+finding.id+': '+finding.problem;
+    const priority=window.VISUAL_MAP_PRIORITIES[id];
+    if(!priority||finding.priority<priority)window.VISUAL_MAP_PRIORITIES[id]=finding.priority;
+  }
+}

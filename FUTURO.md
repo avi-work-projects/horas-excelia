@@ -16,7 +16,7 @@ memoria, para que una idea no se pierda entre dos tandas de cambios.
 
 Atlas ampliado el 24/10/2026 en docs/visual-map/, después de aprobar Ángel el formato del piloto. Las áreas y paneles inventariados tienen capturas y rutas; los archivos de energía sin entrada visible y los selectores del navegador quedan identificados.
 
-Revisar las nuevas láminas con Ángel y registrar las incoherencias de cabeceras, espacios, botones y paneles que se decidan corregir. La generación no clasifica automáticamente el aspecto ni autoriza rediseños. Mantener la actualización por escenas y dependencias con Edge oculto y datos ficticios. La norma está en docs/DEVELOPMENT.md; uso y límites en docs/visual-map/README.md.
+Revisión de las 150 capturas realizada el 25/10/2026 en docs/visual-map/review/: 13 casos priorizados con ejemplos y maquetas sin aplicar. Pendiente revisar con Ángel y ejecutar las correcciones acordadas, empezando por la superposición de Tareas y las reglas solicitadas para alarmas de ocurrencias iniciadas y recuperaciones anteriores. Las propuestas incluyen acceso a alarmas con texto/estado, ficha de eventos grandes y comienzo por media casilla según la hora. La generación no clasifica automáticamente el aspecto ni autoriza rediseños. Mantener la actualización por escenas y dependencias con Edge oculto y datos ficticios. La norma está en docs/DEVELOPMENT.md; uso y límites en docs/visual-map/README.md.
 
 ## 1. Envío automático de correos con N8N
 

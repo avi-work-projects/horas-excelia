@@ -1,0 +1,1207 @@
+{
+  "reviewedAt": "2026-10-25",
+  "referenceCommit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
+  "method": "Inspección visual de las 150 capturas a escala de 400 px, en láminas de cuatro imágenes; ampliación y reproducción de los casos destacados.",
+  "screens": [
+    {
+      "id": "home",
+      "title": "Inicio",
+      "group": "Inicio",
+      "image": "../captures/home.png",
+      "sha256": "3493bf6888e56c26aa0080cd30012227abc1b4f452587c63e94dd312106716b2",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "household",
+      "title": "Gastos del hogar",
+      "group": "Hogar",
+      "image": "../captures/household.png",
+      "sha256": "2fa2ea20db4ee69027d06308a15271cd6dde44e65ec527b5ac8a08131dd325f5",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "study",
+      "title": "Herramientas de comparación",
+      "group": "Herramientas",
+      "image": "../captures/study.png",
+      "sha256": "f555eccf201b24223ab7396d4e99cc68cbb6023d79383379cc0f2e3ca0e9a397",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "events",
+      "title": "Eventos · Próximos",
+      "group": "Eventos",
+      "image": "../captures/events.png",
+      "sha256": "202ca28da5dd617d2ad608c365ccaf91950a57a831a989cd220ecea2186814df",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "economics",
+      "title": "Resumen económico",
+      "group": "Economía",
+      "image": "../captures/economics.png",
+      "sha256": "6fdc8d5f264f947092b448f39eedd5a02387ce8745c7c4dcb5bfd78ccaeeb012",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "alarm",
+      "title": "Crear alarma",
+      "group": "Ajustes",
+      "image": "../captures/alarm.png",
+      "sha256": "fdca0b01beee4aafd42795d8be14e0ee13ddef13279b1c58c1b6c1edc83c5e7b",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "settings",
+      "title": "Más opciones",
+      "group": "Ajustes",
+      "image": "../captures/settings.png",
+      "sha256": "deeb715c88309b1ff84c681d200c93755d3d9c3ce5ab0dc731fb23d3b0a8cdd0",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "calendar",
+      "title": "Calendario · 1 mes",
+      "group": "Eventos",
+      "image": "../captures/calendar.png",
+      "sha256": "ce36df7c59121efb15bfc5a6702a69eccb270e6d45d840c8c03d3ee87c73378c",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "day",
+      "title": "Ficha del día",
+      "group": "Eventos",
+      "image": "../captures/day.png",
+      "sha256": "036af1f816a22008ed60dc8a8207d466a94393c52b81b63b6bec22d53721d0a3",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "edit",
+      "title": "Editar evento · inicio",
+      "group": "Eventos",
+      "image": "../captures/edit.png",
+      "sha256": "e1063bfaffc44f663acc116e589d177cc5ff0cd116b14069ef48a9a0c90dc9be",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "time",
+      "title": "Elegir hora",
+      "group": "Eventos",
+      "image": "../captures/time.png",
+      "sha256": "54dd14755273193d4801bb7d3cfaa48108d0e4955c5446ed7ddff72e895d47c1",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "edit-scroll",
+      "title": "Editar evento · categorías",
+      "group": "Eventos",
+      "image": "../captures/edit-scroll.png",
+      "sha256": "92bd7f4d24e32a7e8e6e78ac100d42f7bfb3901829056a2cc5a55526d3c4a55d",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "dates",
+      "title": "Selección Multidía",
+      "group": "Eventos",
+      "image": "../captures/dates.png",
+      "sha256": "17d4319256e6b1aaa10869b19951dc1464c76a11fe790344d3d57849c33859b1",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "hours",
+      "title": "Editar jornada del mes",
+      "group": "Inicio",
+      "image": "../captures/hours.png",
+      "sha256": "efdba1d205425f3096d9781f90e057b4318b51364578fd84829478adf31790fa",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "workday",
+      "title": "Ficha de jornada de un día",
+      "group": "Inicio",
+      "image": "../captures/workday.png",
+      "sha256": "ff1eedb7bd05929ae755ccb1e63d42d9510c5a43d694eb1dfe28e364af728f8c",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "reminders",
+      "title": "Recordatorios",
+      "group": "Inicio",
+      "image": "../captures/reminders.png",
+      "sha256": "f1bce434df71dd2e1eabc45347ae2a4b046caa2d58c41abd99e8a5de7315e73e",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "hours-export",
+      "title": "Exportar horas",
+      "group": "Inicio",
+      "image": "../captures/hours-export.png",
+      "sha256": "362bd553686471329e5704aa6c7c9f39c7e7c1ecb7793c5cbb7929c60e2779d8",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "invoice",
+      "title": "Enviar factura",
+      "group": "Inicio",
+      "image": "../captures/invoice.png",
+      "sha256": "648f53a9cf4b09dcd0d5bf0ffeabe84ebace6b18b49e663f47efcb1dd2897c13",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "invoice-config",
+      "title": "Configuración de facturas",
+      "group": "Inicio",
+      "image": "../captures/invoice-config.png",
+      "sha256": "657ccb560c506d2987827c70777ed7d520473e56c828ac86319a0d512b9aad6d",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "invoice-config-edit",
+      "title": "Editar datos de facturación",
+      "group": "Inicio",
+      "image": "../captures/invoice-config-edit.png",
+      "sha256": "1dd58c83fd0b5894a62f5bec515f9bd3168e247c442ff509516a5f91ddcfd9ce",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "home-september",
+      "title": "Inicio · septiembre",
+      "group": "Inicio",
+      "image": "../captures/home-september.png",
+      "sha256": "93bb54a1f5e1bb88b7278b8452803d38af8668a5884694d933f661a134fabb3a",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "home-october",
+      "title": "Inicio · octubre",
+      "group": "Inicio",
+      "image": "../captures/home-october.png",
+      "sha256": "bdc738d2040da1c32d05ce9b091eb1f09d1871bcfc9b342c24d6c66b51c4c7e0",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "invoice-current",
+      "title": "Preparar factura del mes",
+      "group": "Inicio",
+      "image": "../captures/invoice-current.png",
+      "sha256": "6aece1b729acd2c31d4cc1ade2065dd519d4f37dfb3a35628f1c2222a9124b8a",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "invoice-current--scroll-invoice-document",
+      "title": "Preparar factura del mes · más abajo",
+      "group": "Inicio",
+      "image": "../captures/invoice-current--scroll-invoice-document.png",
+      "sha256": "6aece1b729acd2c31d4cc1ade2065dd519d4f37dfb3a35628f1c2222a9124b8a",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "invoice-document",
+      "title": "Adjuntar factura definitiva",
+      "group": "Inicio",
+      "image": "../captures/invoice-document.png",
+      "sha256": "d118a957677ba4e833c23b6da3aa73e78710ce64d1d8749056fbbb68a35863e4",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "annual",
+      "title": "Calendario anual",
+      "group": "Eventos",
+      "image": "../captures/annual.png",
+      "sha256": "41ce41d50d415dcde44f93d194b2cd29ca009d07405bebe78f7baa5a85859474",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "quad",
+      "title": "Calendario 4 meses",
+      "group": "Eventos",
+      "image": "../captures/quad.png",
+      "sha256": "72e575ceb09178d83d805215f1ecd3bb886c5e0779dd787f0dddf4ea87638eb9",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "timeoff",
+      "title": "Vacaciones y festivos",
+      "group": "Eventos",
+      "image": "../captures/timeoff.png",
+      "sha256": "c2675c09814e5fc7723766d247aa0456cba20c27bf93eb929e267fdc5d449977",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "bridges",
+      "title": "Puentes",
+      "group": "Eventos",
+      "image": "../captures/bridges.png",
+      "sha256": "c2675c09814e5fc7723766d247aa0456cba20c27bf93eb929e267fdc5d449977",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "agenda",
+      "title": "Agenda",
+      "group": "Eventos",
+      "image": "../captures/agenda.png",
+      "sha256": "1c3ef39c34f19d0699cd2382155c9f61aa906c778d9f72a784c1f48d4f1a4537",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "all-events",
+      "title": "Todos",
+      "group": "Eventos",
+      "image": "../captures/all-events.png",
+      "sha256": "4e000800fbe483e8ba337ec8d74cf815aec48c2805f87bbd9667bace388f5e30",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "event-stats",
+      "title": "Estadísticas",
+      "group": "Eventos",
+      "image": "../captures/event-stats.png",
+      "sha256": "bc38bbd1e639c2d187a263bb1fa0d9a25e04ec37fd3402e33aae8d0f7ecb2f61",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "event-birthdays",
+      "title": "Cumpleaños en Próximos",
+      "group": "Eventos",
+      "image": "../captures/event-birthdays.png",
+      "sha256": "46c5fb6a35f4d395005cc551955988a3a7d058114b5eea433007bdbe7ebd85db",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "event-filter",
+      "title": "Filtros de eventos",
+      "group": "Eventos",
+      "image": "../captures/event-filter.png",
+      "sha256": "80f94698507ce701658b645396a912c4e10b38d30a4eb9688080965c61a033b9",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "event-order",
+      "title": "Orden de Próximos",
+      "group": "Eventos",
+      "image": "../captures/event-order.png",
+      "sha256": "b99c0d32d625676290f04c98ee179c2a3555c72d228f1e4314b04c6ef7914263",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "events--scroll-event-new",
+      "title": "Eventos · Próximos · más abajo",
+      "group": "Eventos",
+      "image": "../captures/events--scroll-event-new.png",
+      "sha256": "0ec463e5dd8a0eceeece5d798f2b91819642d6b6e9592351a37873ebe9e21d92",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "event-new",
+      "title": "Nuevo evento",
+      "group": "Eventos",
+      "image": "../captures/event-new.png",
+      "sha256": "e705dab5cbf03da9de5cf9a54703a825863ac3f2183f5f431d9e1d861fa00ae4",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "event-delete",
+      "title": "Eliminar evento",
+      "group": "Eventos",
+      "image": "../captures/event-delete.png",
+      "sha256": "d1c4770b8f291019430132d880d6e4d386f0c19aa450343b04e8ec8ccdb58008",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "event-alarm",
+      "title": "Alarma de evento",
+      "group": "Eventos",
+      "image": "../captures/event-alarm.png",
+      "sha256": "060ab3a255f259cfd0fc519bc17d04cb2660ccb2f49dc78983bbd03392da1e59",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "routine-session",
+      "title": "Ficha de sesión",
+      "group": "Rutinas",
+      "image": "../captures/routine-session.png",
+      "sha256": "58a9838797d75915ee97b9dac9ef0e8cfe9a37eae6f987b2c14aba5d4f7629dd",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "edit--scroll-plan-picker",
+      "title": "Editar evento · inicio · más abajo",
+      "group": "Eventos",
+      "image": "../captures/edit--scroll-plan-picker.png",
+      "sha256": "215aabf0dd311792dd9a8b36afa158f0fcf3877433ac558f4585e4db193b6ca8",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "plan-picker",
+      "title": "Selector de planes",
+      "group": "Eventos",
+      "image": "../captures/plan-picker.png",
+      "sha256": "6a49c5fea7e0a4a4871ae8d248a4e5597217f46bffd7d827aa5a6bee11ad85be",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "weddings",
+      "title": "Consulta de clases",
+      "group": "Bodas",
+      "image": "../captures/weddings.png",
+      "sha256": "2292faa61383c1170401d52838b2a871014dcc4b062e143fd0dce1fbcfb0d79d",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "calendar-export",
+      "title": "Exportar calendario",
+      "group": "Bodas",
+      "image": "../captures/calendar-export.png",
+      "sha256": "6da2f9cb589248f9f54b4631bbe31b68e4fc07d7ff6ce977cc5801652cce449a",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "couples",
+      "title": "Parejas",
+      "group": "Bodas",
+      "image": "../captures/couples.png",
+      "sha256": "cf1eec296739484278b8f8a53d6a84f3c1e413fac3a2f4f57aad269ff315d34d",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "wedding-calendar",
+      "title": "Calendario de clases",
+      "group": "Bodas",
+      "image": "../captures/wedding-calendar.png",
+      "sha256": "843f7775ad50f3456a4c2f7655911c4529e21ef8856ec0060f9d8c5a7ba9486c",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "wedding-stats",
+      "title": "Estadísticas de bodas",
+      "group": "Bodas",
+      "image": "../captures/wedding-stats.png",
+      "sha256": "15592187da57cc5dd77b77ca1a968fdd046437f34fa009b8f3417d5f181d6b59",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "wedding-config",
+      "title": "Configuración de bodas",
+      "group": "Bodas",
+      "image": "../captures/wedding-config.png",
+      "sha256": "3816a030978bd4fb45686ae58c31ef701da2bc5e7dd5ca4c65ead7dcfb8a3d73",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "wedding-edit",
+      "title": "Edición de clases",
+      "group": "Bodas",
+      "image": "../captures/wedding-edit.png",
+      "sha256": "07aaeec7b2320a99de7507db557faa2e2f7676e91b3781ac2913aeb407e8cc12",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "wedding-class",
+      "title": "Ficha de clase",
+      "group": "Bodas",
+      "image": "../captures/wedding-class.png",
+      "sha256": "350e06855ae90f5f01301323ef64568c44bde4d78c22e090a98f1c9066eab37d",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "wedding-time",
+      "title": "Elegir hora de clase",
+      "group": "Bodas",
+      "image": "../captures/wedding-time.png",
+      "sha256": "b2a0f22e1c02996d6c312fd9e80bd664b0dec445cb8e952834d84c01f306fb71",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "wedding-place",
+      "title": "Elegir sala",
+      "group": "Bodas",
+      "image": "../captures/wedding-place.png",
+      "sha256": "a0b9405d20f01ce6a49c41c883e55d7e0432bf03518e413782e8dae3416e36ef",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "wedding-couple",
+      "title": "Elegir pareja",
+      "group": "Bodas",
+      "image": "../captures/wedding-couple.png",
+      "sha256": "7c427c14afc38c7f57e616526dd4e38f7db6b80220fe408e3e2ae613883d3239",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "wedding-duration",
+      "title": "Elegir duración",
+      "group": "Bodas",
+      "image": "../captures/wedding-duration.png",
+      "sha256": "11a81921313c5c972bd3c91039fc1b26325db5a64b4cf7c5ad28c9b6854011a0",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "wedding-teachers",
+      "title": "Elegir profesores",
+      "group": "Bodas",
+      "image": "../captures/wedding-teachers.png",
+      "sha256": "f103adc5dc1d11bf116e9b7642cc471a7559ee8313af54ed5e34f87bec0ae275",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "couple-card",
+      "title": "Pareja desplegada",
+      "group": "Bodas",
+      "image": "../captures/couple-card.png",
+      "sha256": "ff86f170008bcb25a6e75b8e13bdfb7a5f9799832be97cb8e7ffb46f4bbe29b0",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "couple-form",
+      "title": "Ficha de pareja",
+      "group": "Bodas",
+      "image": "../captures/couple-form.png",
+      "sha256": "7bfcc234dff721c8423314f2423727412d30e6577fe7ff02da661b7e6ed06a01",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "wedding-new",
+      "title": "Añadir clase",
+      "group": "Bodas",
+      "image": "../captures/wedding-new.png",
+      "sha256": "aeb732e9ad2856e7055d41338b4624ee8163b24a9d644762ebf08f00455b8975",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "couple-new",
+      "title": "Añadir pareja",
+      "group": "Bodas",
+      "image": "../captures/couple-new.png",
+      "sha256": "c7def5a31286a4d4ab746b6eaebf65c78fcb8f2a4a2b1a1dc33dab3f335b63d3",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "wedding-assign",
+      "title": "Asignar clases",
+      "group": "Bodas",
+      "image": "../captures/wedding-assign.png",
+      "sha256": "e3249e53f0eb147814e6b024e16dc52c4251f26810e937600082ca18e6017f6b",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "wedding-issues",
+      "title": "Incidencias de clases",
+      "group": "Bodas",
+      "image": "../captures/wedding-issues.png",
+      "sha256": "8db9b861647252563dd040f293438fd223940fa2fae2810e26c857ff21b56c4b",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "wedding-config--scroll-wedding-pack",
+      "title": "Configuración de bodas · más abajo",
+      "group": "Bodas",
+      "image": "../captures/wedding-config--scroll-wedding-pack.png",
+      "sha256": "3816a030978bd4fb45686ae58c31ef701da2bc5e7dd5ca4c65ead7dcfb8a3d73",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "wedding-pack",
+      "title": "Catálogo de packs",
+      "group": "Bodas",
+      "image": "../captures/wedding-pack.png",
+      "sha256": "e3bd626707e231be2abe80296c5fec9114aa4592512f50f16a356959240a0bc9",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "wedding-config--scroll-wedding-length",
+      "title": "Configuración de bodas · más abajo",
+      "group": "Bodas",
+      "image": "../captures/wedding-config--scroll-wedding-length.png",
+      "sha256": "74d15e192907bb9366cef1159d13b98995b2befdd304a765163ce34b97780c5b",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "wedding-length",
+      "title": "Catálogo de duraciones",
+      "group": "Bodas",
+      "image": "../captures/wedding-length.png",
+      "sha256": "fb755b1d82f049bbbd31fd1bbf0853bf98444d0d3e5806c98332f765c9dae6c8",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "wedding-config--scroll-wedding-room",
+      "title": "Configuración de bodas · más abajo",
+      "group": "Bodas",
+      "image": "../captures/wedding-config--scroll-wedding-room.png",
+      "sha256": "1e618894a0a7e39d449318a69a6106614370518f9f254255d71e451100864343",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "wedding-room",
+      "title": "Catálogo de salas",
+      "group": "Bodas",
+      "image": "../captures/wedding-room.png",
+      "sha256": "4b29fc85b499f80d360e68dba50b6f8c16984d01bcda14a535e26e1aad7dcecd",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "birthdays",
+      "title": "Próximos cumpleaños",
+      "group": "Cumpleaños",
+      "image": "../captures/birthdays.png",
+      "sha256": "b183ebaef013388fb1de6347cbb36458eaa3a5376da3379e6fedd2399a255ecd",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "birthday-list",
+      "title": "Lista de cumpleaños",
+      "group": "Cumpleaños",
+      "image": "../captures/birthday-list.png",
+      "sha256": "2d2842cd81f8191966f257fb28034698e422727fd9fcf74b1d00770b7e0d9f9a",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "birthday-calendar",
+      "title": "Calendario de cumpleaños",
+      "group": "Cumpleaños",
+      "image": "../captures/birthday-calendar.png",
+      "sha256": "4c69f1d7e6dc9bb8ebbc641cddde9d0057976a22f970bc5ab37bc39f3b1b11ea",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "birthday-person",
+      "title": "Ficha de persona",
+      "group": "Cumpleaños",
+      "image": "../captures/birthday-person.png",
+      "sha256": "d746ffebd6c7480fa059c18ca44cf6794577dff70066293dbdb05ee39150fddf",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "birthday-form",
+      "title": "Añadir o editar persona",
+      "group": "Cumpleaños",
+      "image": "../captures/birthday-form.png",
+      "sha256": "83842f041a148c00f7bcf5527f18799889970d8468a92ab478e99cdf2c0e3699",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "birthday-alarm",
+      "title": "Alarma de cumpleaños",
+      "group": "Cumpleaños",
+      "image": "../captures/birthday-alarm.png",
+      "sha256": "cacae4a66853d7c57ef4d5faec03fe6a4cc5cecc64178a83f453eb87e83b854f",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "birthday-groups",
+      "title": "Selector de grupos",
+      "group": "Cumpleaños",
+      "image": "../captures/birthday-groups.png",
+      "sha256": "39f0a796463206c88fc8a54e555e642773cbdb0a9a98268a17900cbff7ff6895",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "birthday-day",
+      "title": "Selector de día",
+      "group": "Cumpleaños",
+      "image": "../captures/birthday-day.png",
+      "sha256": "30ab90ea5d0ef3abde22735efd94793c2f12a3459febfe57f4e35b57898ab3f8",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "birthday-month",
+      "title": "Selector de mes",
+      "group": "Cumpleaños",
+      "image": "../captures/birthday-month.png",
+      "sha256": "09b155bb0ff44ccbb941b8dc998f5ba8e7f96f7908ed0a49a73a359a65a4a603",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "birthday-group-edit",
+      "title": "Edición de grupos",
+      "group": "Cumpleaños",
+      "image": "../captures/birthday-group-edit.png",
+      "sha256": "3ff4471d1085843623a0a4106f3c962b4ab4696a2c8df2b0760636b9870f2535",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "birthday-filters",
+      "title": "Filtros de grupos",
+      "group": "Cumpleaños",
+      "image": "../captures/birthday-filters.png",
+      "sha256": "1e9612a7ff3be39755880ca8dfc170c2ee8eb6853a5c70c529a6280945c271bc",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "birthday-vip",
+      "title": "Edición de VIPs",
+      "group": "Cumpleaños",
+      "image": "../captures/birthday-vip.png",
+      "sha256": "c7961fdeba30ec3dad68e41399a9189108c807fc10ef9cbee2575ca1f318fa7a",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "routines",
+      "title": "Lista de rutinas",
+      "group": "Rutinas",
+      "image": "../captures/routines.png",
+      "sha256": "0223b987a64c0ccae2056d59dbdfccbceffea78bef55b6bf6c6209e8ebfd8a02",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "routine-stats",
+      "title": "Estadísticas de rutinas",
+      "group": "Rutinas",
+      "image": "../captures/routine-stats.png",
+      "sha256": "a190ac2c3965d3715ff9476d006cbbddd98a1436ea21eb4146b70bce40704b3a",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "routine-form",
+      "title": "Añadir o editar rutina",
+      "group": "Rutinas",
+      "image": "../captures/routine-form.png",
+      "sha256": "d9e1d89862c55a6b47aaab7ffbd2504e77e1c4b9af0c2cb67e2a6b94e5e7da76",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "routine-week",
+      "title": "Selección de semana",
+      "group": "Rutinas",
+      "image": "../captures/routine-week.png",
+      "sha256": "b2727d68eda3b662f46fb39a56ca1281f4c42e40e817c770cdad494d34270d90",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "routine-week-edit",
+      "title": "Edición de semana",
+      "group": "Rutinas",
+      "image": "../captures/routine-week-edit.png",
+      "sha256": "c2b32ac615f88964858d62b8e6bd4ecd84ac94454103c4c5c5b08f861d896629",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "routine-history",
+      "title": "Histórico de sesiones",
+      "group": "Rutinas",
+      "image": "../captures/routine-history.png",
+      "sha256": "dde0c2b099c1ddc99503e792c037f9833966c9086471e92abc31bb881f5b78e0",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "routine-history-edit",
+      "title": "Editar sesión histórica",
+      "group": "Rutinas",
+      "image": "../captures/routine-history-edit.png",
+      "sha256": "4978547f6101134cca47a83bf882bbaf7bc40ffd0d7b65b85201b6dac6ca8b50",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "routine-delete",
+      "title": "Eliminar sesión",
+      "group": "Rutinas",
+      "image": "../captures/routine-delete.png",
+      "sha256": "7cffd0bde326ade41edcf1221050e3d9c7c6603be9d5b7556102fd3d4db9d071",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "routine-bulk",
+      "title": "Acciones en varias sesiones",
+      "group": "Rutinas",
+      "image": "../captures/routine-bulk.png",
+      "sha256": "f8742e1b2bfe210c97534709c156dedc35d69199a0d5a6c5240718479f459307",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "routine-bulk-selected",
+      "title": "Selección de sesiones",
+      "group": "Rutinas",
+      "image": "../captures/routine-bulk-selected.png",
+      "sha256": "a9352c29983d74dd18b0eb043ef99e13247c3d8ad439d84be6d930a9432caa8e",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "routine-bulk-confirm",
+      "title": "Confirmación de acciones múltiples",
+      "group": "Rutinas",
+      "image": "../captures/routine-bulk-confirm.png",
+      "sha256": "c820ff6f331097577c86f6a498bac15cfb5ef28bb2c0a41029d35a2df2b6cd4c",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "routine-addition",
+      "title": "Clase extra o recuperación",
+      "group": "Rutinas",
+      "image": "../captures/routine-addition.png",
+      "sha256": "638f20518a425f1cacfc754fe44f0abdeaa2b5ea722c8c4a3a76d29de8ce4de2",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "routine-recoveries",
+      "title": "Lista de recuperaciones",
+      "group": "Rutinas",
+      "image": "../captures/routine-recoveries.png",
+      "sha256": "d125d5590c9027a349818215b96b4f502d7717ec80dd25e2117d0248d422c389",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "routine-extra",
+      "title": "Elegir día de recuperación",
+      "group": "Rutinas",
+      "image": "../captures/routine-extra.png",
+      "sha256": "0e8ce9ad023791881a35712e8c31ed243026c00928a5a7616f4f628861efc6ae",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "routine-extra-selected",
+      "title": "Día elegido para la clase extra",
+      "group": "Rutinas",
+      "image": "../captures/routine-extra-selected.png",
+      "sha256": "5e698ee4efc35f4d7ccef3c648e8467fe6d31644675a863edca33e92c346dd0d",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "routine-extra-day",
+      "title": "Añadir clase extra",
+      "group": "Rutinas",
+      "image": "../captures/routine-extra-day.png",
+      "sha256": "e3446aa556fa6b67e315804da4869b0bb8ef987f003aa0f425d7bd92cff11cc3",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "routines--scroll-routine-flex",
+      "title": "Lista de rutinas · más abajo",
+      "group": "Rutinas",
+      "image": "../captures/routines--scroll-routine-flex.png",
+      "sha256": "f07125fd8804b081da0d1a298f43598baf5ca3c90bab328bf78739425e55c103",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "routine-flex",
+      "title": "Planificación flexible",
+      "group": "Rutinas",
+      "image": "../captures/routine-flex.png",
+      "sha256": "19907566fc8c53828feef0c042315f1ffd5be15acf6603f032b30b985ffb567f",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "routines--scroll-routine-new",
+      "title": "Lista de rutinas · más abajo",
+      "group": "Rutinas",
+      "image": "../captures/routines--scroll-routine-new.png",
+      "sha256": "f07125fd8804b081da0d1a298f43598baf5ca3c90bab328bf78739425e55c103",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "routine-new",
+      "title": "Nueva rutina",
+      "group": "Rutinas",
+      "image": "../captures/routine-new.png",
+      "sha256": "c6f6b7088584ed752e88985f1e50be2a8292c1e1193e172dfec3cf60fe0fd025",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "routine-time",
+      "title": "Hora de una rutina",
+      "group": "Rutinas",
+      "image": "../captures/routine-time.png",
+      "sha256": "17832bbe0cf6b6c22eecf2b427e2cb762dc7b3fbfdac33c2f2a7ab78d0815240",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "mortgage",
+      "title": "Detalle hipoteca",
+      "group": "Hogar",
+      "image": "../captures/mortgage.png",
+      "sha256": "0947c8a602f86aa0cc83c8130b431ec3ebe987dc8792953ca6aadff3ce1c16ce",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "gas",
+      "title": "Detalle gas",
+      "group": "Hogar",
+      "image": "../captures/gas.png",
+      "sha256": "538ab7ffdd8fb8592e97a16ac5657a2d6c22454ed4c8ba94b06d76e904d4adab",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "electric",
+      "title": "Detalle electricidad",
+      "group": "Hogar",
+      "image": "../captures/electric.png",
+      "sha256": "35b5c1438e788a2dce3eda3198fb7fcb4204e18438aee46d0cc7160418fa4b59",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "purchase-edit",
+      "title": "Edición compra",
+      "group": "Hogar",
+      "image": "../captures/purchase-edit.png",
+      "sha256": "42a656f817245e106f5e172a5c0aa255945c243193887e66f4cd97ae91f8404c",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "mortgage--scroll-loan-edit",
+      "title": "Detalle hipoteca · más abajo",
+      "group": "Hogar",
+      "image": "../captures/mortgage--scroll-loan-edit.png",
+      "sha256": "0947c8a602f86aa0cc83c8130b431ec3ebe987dc8792953ca6aadff3ce1c16ce",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "loan-edit",
+      "title": "Edición préstamo",
+      "group": "Hogar",
+      "image": "../captures/loan-edit.png",
+      "sha256": "79175166face5c1944218a494fb1c986a599929d8bb316fe6dc76ff88331c55d",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "mortgage--scroll-switch-edit",
+      "title": "Detalle hipoteca · más abajo",
+      "group": "Hogar",
+      "image": "../captures/mortgage--scroll-switch-edit.png",
+      "sha256": "c1dd3fb4f28a5300e57bf06e09ee4e2cc4c6195fc05601647c5666050baa01af",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "switch-edit",
+      "title": "Edición subrogación",
+      "group": "Hogar",
+      "image": "../captures/switch-edit.png",
+      "sha256": "81608ab0a07f031652b996c72e3e60b5ba4a328681fd07520823f70a7978b1a2",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "mortgage-analysis",
+      "title": "Análisis de hipoteca",
+      "group": "Hogar",
+      "image": "../captures/mortgage-analysis.png",
+      "sha256": "985563d733b906062a7886ee15a4103dd9bafad8aac5872dea025374d5dc9abf",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "gas-edit",
+      "title": "Editar tarifa de gas",
+      "group": "Hogar",
+      "image": "../captures/gas-edit.png",
+      "sha256": "ca79cf9c3b8623b9bdecc6e8d9383a69463656a7af49070be74913764e6b7083",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "gas--scroll-gas-flat-edit",
+      "title": "Detalle gas · más abajo",
+      "group": "Hogar",
+      "image": "../captures/gas--scroll-gas-flat-edit.png",
+      "sha256": "538ab7ffdd8fb8592e97a16ac5657a2d6c22454ed4c8ba94b06d76e904d4adab",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "gas-flat-edit",
+      "title": "Editar cuota fija de gas",
+      "group": "Hogar",
+      "image": "../captures/gas-flat-edit.png",
+      "sha256": "caeda02f37519f09387cab2cb737022d3fee9ef7061125d02d45a2c6da1db272",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "electric-edit",
+      "title": "Editar tarifa de electricidad",
+      "group": "Hogar",
+      "image": "../captures/electric-edit.png",
+      "sha256": "e90975e63b40337c02c98f5027e0672130948a8152862ae7728371d9af37f93d",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "energy-gas",
+      "title": "Resumen de gas",
+      "group": "Energía · gas",
+      "image": "../captures/energy-gas.png",
+      "sha256": "33f01b859c77ee443317e275adde4bf92195b8cd9b3008fac7a5541bf817318f",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "energy-gas-consumo",
+      "title": "Consumo de gas",
+      "group": "Energía · gas",
+      "image": "../captures/energy-gas-consumo.png",
+      "sha256": "b24dd5edf45c660a4cd245804acd12c9f0f0314391e06b3bb54f9888c3f8c99c",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "energy-gas-costes",
+      "title": "Coste de gas",
+      "group": "Energía · gas",
+      "image": "../captures/energy-gas-costes.png",
+      "sha256": "b8031947adc8c9c134224022ca2d2c55b5ccb0f27cc662bce735297911d82444",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "energy-gas-tarifas",
+      "title": "Tarifas de gas",
+      "group": "Energía · gas",
+      "image": "../captures/energy-gas-tarifas.png",
+      "sha256": "7342f78823bdf17e3819cd2d1fd777a2e4d06549af1a037eecec9432a8dcc9dc",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "energy-gas-comparar",
+      "title": "Escenarios de gas",
+      "group": "Energía · gas",
+      "image": "../captures/energy-gas-comparar.png",
+      "sha256": "cf0751c832a07a9bdebd9df7cdff5ec803327a67a09ab49a11704388c8ed379c",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "energy-luz",
+      "title": "Resumen de electricidad",
+      "group": "Energía · electricidad",
+      "image": "../captures/energy-luz.png",
+      "sha256": "9df62c4e0be54a1cd8781d3c1f3e57b6e04eeac940df9e5ef1f2152a6950f1b1",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "energy-luz-consumo",
+      "title": "Consumo de electricidad",
+      "group": "Energía · electricidad",
+      "image": "../captures/energy-luz-consumo.png",
+      "sha256": "026cf4c5920f3136cbd65a66b8fd29d5665b1bc8370c5f2bf32c0bdc963c15d2",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "energy-luz-costes",
+      "title": "Coste de electricidad",
+      "group": "Energía · electricidad",
+      "image": "../captures/energy-luz-costes.png",
+      "sha256": "7b648fe54766877d843d379cb0d7ddf2543db3844d10560eeb1ec8013ac6b16c",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "energy-luz-tarifas",
+      "title": "Tarifas de electricidad",
+      "group": "Energía · electricidad",
+      "image": "../captures/energy-luz-tarifas.png",
+      "sha256": "8bebbed30f2f9e05dce3a6289308123ec561ad9bdcc5b47555531fe161a70cba",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "energy-luz-comparar",
+      "title": "Escenarios de electricidad",
+      "group": "Energía · electricidad",
+      "image": "../captures/energy-luz-comparar.png",
+      "sha256": "d23d930ef419212187e5a6ca8d4e3b31544317505eb0ac94e23530b57693874d",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "study-rate",
+      "title": "Calcular tarifa",
+      "group": "Herramientas",
+      "image": "../captures/study-rate.png",
+      "sha256": "f892ed551df68f0de4246afa3af453f2fd18e9696b762b199b2cfc51ece3b8fe",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "study-mortgage",
+      "title": "Comparar hipotecas",
+      "group": "Herramientas",
+      "image": "../captures/study-mortgage.png",
+      "sha256": "e9cfac2265433bcd42ca6db267e58eada4a56f00014791f7041193bdc84a7ae0",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "study-gas",
+      "title": "Comparar gas",
+      "group": "Herramientas",
+      "image": "../captures/study-gas.png",
+      "sha256": "db1f546c8fc463c9165f81281c4918b5a4002b5b38190cab0f572eaf16571dec",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "study-electric",
+      "title": "Comparar electricidad",
+      "group": "Herramientas",
+      "image": "../captures/study-electric.png",
+      "sha256": "196ccdaafa758224f2632979aec4aebb3d3fa7c825ea1e0cdd5f01d372e93a5e",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "study-gas--scroll-energy-tariff",
+      "title": "Comparar gas · más abajo",
+      "group": "Herramientas",
+      "image": "../captures/study-gas--scroll-energy-tariff.png",
+      "sha256": "76e185324f777fbfe950f0b88ea1cdcf977a1f499cf42eb3b8d59ff0709eece8",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "energy-tariff",
+      "title": "Editor de tarifa",
+      "group": "Herramientas",
+      "image": "../captures/energy-tariff.png",
+      "sha256": "94f2d9a09176417b8db8830442c021ad14509ac3bfc9688fd4eca634569937ef",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "econ-days",
+      "title": "Resumen horas y días",
+      "group": "Economía",
+      "image": "../captures/econ-days.png",
+      "sha256": "6bf3a79a77f44266ed686aebf29aa1b3deb8aae96ad42c5b756cd0d646b4b753",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "econ-tax",
+      "title": "Análisis gastos y renta",
+      "group": "Economía",
+      "image": "../captures/econ-tax.png",
+      "sha256": "249bfa1901bc3ae3a888eb41e3919100d938648600358605fbd5c420a9721d9e",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "econ-personal",
+      "title": "Análisis economía personal",
+      "group": "Economía",
+      "image": "../captures/econ-personal.png",
+      "sha256": "7ee8d475ea98392d51ff6243b8da6bb948db4e893e3bcb28b3d925c5e87ec050",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "fiscal",
+      "title": "Economía personal",
+      "group": "Fiscal",
+      "image": "../captures/fiscal.png",
+      "sha256": "6cd5a8978498135fbb293cd01ff63b45183e5778c2834eea410ff8b3abd42acb",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "fiscal-expenses",
+      "title": "Gastos desgravables",
+      "group": "Fiscal",
+      "image": "../captures/fiscal-expenses.png",
+      "sha256": "5e812818c1ab3cec261674881145eeab460fd7321d8326bf523e19c137c95f77",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "fiscal-irpf",
+      "title": "IRPF y deducciones",
+      "group": "Fiscal",
+      "image": "../captures/fiscal-irpf.png",
+      "sha256": "21cb48b9e4511bc0caf2f8ff72cb9a1fa472e6d3adb2206d06a5faade5d2846a",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "fiscal-home",
+      "title": "Hipoteca y facturas en consulta",
+      "group": "Fiscal",
+      "image": "../captures/fiscal-home.png",
+      "sha256": "b324d74adf43cb1f661ed16e0b14643d7b1948e1c5faee2ba44ea63a02bed5af",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "fiscal--scroll-personal-periods",
+      "title": "Economía personal · más abajo",
+      "group": "Fiscal",
+      "image": "../captures/fiscal--scroll-personal-periods.png",
+      "sha256": "6cd5a8978498135fbb293cd01ff63b45183e5778c2834eea410ff8b3abd42acb",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "personal-periods",
+      "title": "Editor de períodos personales",
+      "group": "Fiscal",
+      "image": "../captures/personal-periods.png",
+      "sha256": "281290c4d34798c18f8a6c28528debc3d97ee3645f4328bcb78a9478de560dd1",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "mail",
+      "title": "Correo de horas",
+      "group": "Ajustes",
+      "image": "../captures/mail.png",
+      "sha256": "42ede0b31dc3b8977ce1a89be34a461fbdd1066c669f78e828163b88c8d7273a",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "macro",
+      "title": "Conexión MacroDroid",
+      "group": "Ajustes",
+      "image": "../captures/macro.png",
+      "sha256": "5e6a9d2a94c07d141283f92e49e2df07aea452ad12f4646347655dea765f6b8f",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "contacts",
+      "title": "Datos personales",
+      "group": "Ajustes",
+      "image": "../captures/contacts.png",
+      "sha256": "077faca83fea3a57f8f8fb11dab44138ae063ab37e793b0ddc43626ae5a624cb",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "notes",
+      "title": "Notas generales",
+      "group": "Ajustes",
+      "image": "../captures/notes.png",
+      "sha256": "c483958257f8882e85190dc293a085b4426903221d8f35ce2dcb0e85e43c6114",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "icons",
+      "title": "Estilo de iconos",
+      "group": "Ajustes",
+      "image": "../captures/icons.png",
+      "sha256": "c98337b19035fdd0911d9637a7d12f2eabe3d9d2d8824dc8ed93e234bd03b52d",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "hairdresser",
+      "title": "Notas de peluquería",
+      "group": "Ajustes",
+      "image": "../captures/hairdresser.png",
+      "sha256": "6f96a4d5fc7b86c1299dda9793bc0024ba4a97eee49b99a2ae87d4787340dafd",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "export-folder",
+      "title": "Carpeta de exportación",
+      "group": "Ajustes",
+      "image": "../captures/export-folder.png",
+      "sha256": "4819731417928992acb4515a0baa8f16c1632ce0a2cc3cb7894a0478dd589c3a",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "export-mode",
+      "title": "Modo de exportación",
+      "group": "Ajustes",
+      "image": "../captures/export-mode.png",
+      "sha256": "1f8dc1e15f39e34890fce9d685559011a9947a7f21e3a9129a6d5c8e2a8dc15e",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "import-preview",
+      "title": "Previsualización y modo de importación",
+      "group": "Ajustes",
+      "image": "../captures/import-preview.png",
+      "sha256": "8b6bf165b977a0b9799de0fa64ed683743f2f541bdd8af6d9a5275e694ef4c33",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "tasks",
+      "title": "Tareas pendientes",
+      "group": "Tareas",
+      "image": "../captures/tasks.png",
+      "sha256": "3d2b1b60db0280aebaf30b48895d73775793feda58ed531c550ba25c858b1774",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "tasks-completed",
+      "title": "Tareas completadas",
+      "group": "Tareas",
+      "image": "../captures/tasks-completed.png",
+      "sha256": "a54efa21abcbbd82994566ffeaf24b22eabc38b99ec3cb59fe78f9add6bf2e2b",
+      "status": "Revisada visualmente"
+    },
+    {
+      "id": "task-edit",
+      "title": "Editar tarea y color",
+      "group": "Tareas",
+      "image": "../captures/task-edit.png",
+      "sha256": "35e945867909ed9203e75663ceb873bd77833dfc27088951084fd10b3b2e87cc",
+      "status": "Revisada visualmente"
+    }
+  ]
+}
