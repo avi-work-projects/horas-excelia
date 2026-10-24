@@ -566,8 +566,8 @@ function _renderBodaClases(){
   h+='<div class="boda-buscar-bar">';
   h+='<div class="bday-search-wrap boda-search"><input class="bday-search-input" id="bodaClSearch" '
     +'type="text" placeholder="Buscar pareja\u2026" value="'+escHtml(BODA_CLASES_SEARCH)+'"></div>';
-  h+='<button class="bday-io-btn bday-io-btn-add" id="bodaAddClass">+ A\u00f1adir</button>';
   h+='</div>';
+  h+='<div class="boda-create-actions" aria-label="Añadir a Wedding Moves"><button class="bday-io-btn io-primaria" id="bodaAddClass">+ Añadir clase</button><button class="bday-io-btn io-primaria" id="bodaAddCouple">+ Añadir pareja</button></div>';
   /* Mismo formato que "Excluir pasados" o "Solo libres" de Vacaciones Festivos */
   h+='<div class="excl-row">';
   h+='<label class="excl-item"><input type="checkbox" id="bodaShowPast"'+(BODA_HIDE_PAST?'':' checked')+'> Ver pasadas</label>';
@@ -577,7 +577,7 @@ function _renderBodaClases(){
   h+='</div>';
   h+='</div>';
   if(!list.length){
-    h+='<div class="sy-note">No hay clases'+(BODA_HIDE_PAST?' futuras':'')+'. Créalas marcando días en el Calendario 1 mes, o con el botón de abajo.</div>';
+    h+='<div class="sy-note">No hay clases'+(BODA_HIDE_PAST?' futuras':'')+'. Créalas marcando días en el Calendario 1 mes, o con Añadir clase.</div>';
   }
   var byDay={},order=[];
   list.forEach(function(ev){if(!byDay[ev.start]){byDay[ev.start]=[];order.push(ev.start);}byDay[ev.start].push(ev);});

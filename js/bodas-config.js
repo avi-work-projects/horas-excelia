@@ -86,7 +86,7 @@ function bodaPackStats(){
   var counts={},extras=0,byPack={};
   BODA_COUPLES.forEach(function(c){
     var n=bodaClassesOfCouple(c.id).filter(bodaTaken).length;
-    if(n)counts[n]=(counts[n]||0)+1;
+    counts[n]=(counts[n]||0)+1;
     var extra=Math.max(0,n-(c.packClasses==null?(c.contracted||0):c.packClasses));
     if(!extra)return;extras++;
     var p=bodaPackOf(c),id=p?p.id:'unknown';
@@ -103,9 +103,15 @@ function bodaTeacherStats(){
   });return counts;
 }
 function renderBodaPackStats(){
-  var s=bodaPackStats(),h='<div class="boda-stat-t">Parejas por clases tomadas</div><p class="boda-stat-note">Clases ya finalizadas según fecha, hora y duración. No cuenta las futuras ni huecos sin pareja.</p>';
-  var nums=[2,3,4,5,6,7,8];Object.keys(s.counts).forEach(function(n){if(nums.indexOf(+n)<0)nums.push(+n);});nums.sort(function(a,b){return a-b;});
-  h+='<div class="boda-stats-row boda-count-grid">'+nums.filter(function(n){return s.counts[n]>0;}).map(function(n){return '<div class="boda-stat"><b>'+(s.counts[n]||0)+'</b><span>'+n+' clases</span></div>';}).join('')+'</div>';
+  var s=bodaPackStats(),h='<section class="boda-distribution" aria-label="Clases impartidas por pareja"><h3>Clases impartidas por pareja</h3><p>Cuántas parejas han recibido cada número de clases. Incluye las que aún no han empezado.</p>';
+  var nums=Object.keys(s.counts).map(Number).sort(function(a,b){return a-b;});
+  if(!nums.length)h+='<p>Todavía no hay parejas registradas.</p>';
+  else{
+    h+='<div class="boda-distribution-head"><span>Clases recibidas</span><span>Parejas</span></div>';
+    var max=Math.max.apply(null,nums.map(function(n){return s.counts[n];}));
+    nums.forEach(function(n){h+='<div class="boda-distribution-row"><span>'+(n===0?'Sin empezar':n+' '+(n===1?'clase':'clases'))+'</span><span class="boda-distribution-track" aria-hidden="true"><i style="width:'+(s.counts[n]/max*100)+'%"></i></span><strong>'+s.counts[n]+'</strong></div>';});
+  }
+  h+='</section>';
   h+='<div class="boda-stat-t">'+s.extras+(s.extras===1?' pareja':' parejas')+' con clases extras</div><p class="boda-stat-note">Extras = clases tomadas por encima de las incluidas al contratar el pack.</p>';
   BODA_CONFIG.packs.forEach(function(p){var row=s.byPack[p.id]||{couples:0,classes:0};h+='<div class="boda-pack-stat"><b>'+escHtml(p.name)+'</b><span>'+row.couples+' parejas · '+row.classes+' extras</span></div>';});
   var teachers=bodaTeacherStats();

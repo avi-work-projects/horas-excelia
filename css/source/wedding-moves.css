@@ -10,6 +10,26 @@
 .boda-sticky-hd .boda-mode-row{padding:0 16px 8px}
 .sy-body:has(> .boda-sticky-hd:first-child){padding-top:0!important}
 .boda-sec{display:flex;flex-direction:column;gap:8px}
+/* Acento de acciones propio; los botones compartidos conservan su color por defecto fuera de Bodas. */
+.boda-sec,:is(.ev-detail-overlay,.ev-form-overlay)[id^="boda"]{--io-primary:var(--wm-wine);--io-primary-ink:#fff;--accent:var(--wm-wine);--accent-bright:var(--wm-wine);--accent-glow:color-mix(in srgb,var(--wm-wine) 12%,transparent)}
+[data-theme="dark"] :is(.boda-sec,.ev-detail-overlay[id^="boda"],.ev-form-overlay[id^="boda"]){--io-primary-ink:#231719}
+.boda-sec .ev-btn.primary,:is(.ev-detail-overlay,.ev-form-overlay)[id^="boda"] .ev-btn.primary,.boda-sec .boda-save-ok{color:var(--io-primary-ink)}
+.boda-create-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:4px 0}
+.boda-create-actions .bday-io-btn{width:100%;min-width:0;min-height:42px;padding:10px 6px;font-size:.75rem;white-space:normal}
+.boda-sec .boda-det-btn{color:var(--wm-wine);border-color:var(--wm-wine);background:color-mix(in srgb,var(--wm-wine) 8%,var(--surface))}
+.boda-overview,.boda-distribution,.boda-stats-pace{border:1px solid var(--border);border-radius:14px;background:var(--surface);padding:12px;margin:0 0 4px}
+.boda-overview header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.boda-overview h3,.boda-distribution h3,.boda-stats-pace h3{font-size:.83rem;color:var(--wm-wine);margin:0;font-weight:700}
+.boda-overview-total{display:flex;align-items:baseline;gap:6px;padding:0;border:0;background:none;color:var(--wm-wine);font:inherit}
+button.boda-overview-total{cursor:pointer}.boda-overview-total b{font-size:1.5rem;font-variant-numeric:tabular-nums}.boda-overview-total span{font-size:.66rem}
+.boda-overview-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.boda-overview-grid>button,.boda-overview-grid>div{display:flex;flex-direction:column;gap:4px;align-items:center;padding:10px 3px;border:1px solid color-mix(in srgb,var(--wm-wine) 25%,var(--border));border-radius:10px;background:color-mix(in srgb,var(--wm-wine) 5%,var(--surface));font:inherit;color:var(--text);min-width:0}
+.boda-overview-grid>button{cursor:pointer}.boda-overview-grid b{font-size:1.25rem;font-variant-numeric:tabular-nums}.boda-overview-grid span{font-size:.65rem}
+.boda-overview p,.boda-distribution p,.boda-stats-pace p{font-size:.65rem;line-height:1.5;color:var(--text-muted);margin:9px 0 0}
+.boda-stats-pace>div{display:flex;justify-content:space-between;gap:10px;margin-top:9px;font-size:.7rem}.boda-stats-pace b{font-size:1rem;color:var(--wm-wine)}
+.boda-distribution-head{display:flex;justify-content:space-between;font-size:.63rem;color:var(--text-muted);margin:12px 0 5px}
+.boda-distribution-row{display:grid;grid-template-columns:82px minmax(0,1fr) 30px;align-items:center;gap:10px;font-size:.73rem;padding:7px 0}
+.boda-distribution-row strong{text-align:right;font-variant-numeric:tabular-nums}.boda-distribution-track{height:8px;border-radius:4px;background:var(--surface2);overflow:hidden}.boda-distribution-track i{display:block;height:100%;border-radius:inherit;background:var(--wm-wine)}
 /* Tarjetas de avisos (huecos / parejas pendientes / info incompleta) */
 .boda-issues{display:flex;gap:8px}
 .boda-issue{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:1px;padding:9px 4px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface);cursor:pointer;transition:all .15s;text-align:center}
@@ -45,9 +65,7 @@
 .hbar-val{width:28px;text-align:right;font-family:var(--mono);font-size:.66rem;color:var(--text)}
 .boda-mode-row{display:flex;gap:6px}
 .boda-mode-btn{flex:1;font-size:.72rem;padding:6px 10px;border-radius:12px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s}
-.boda-mode-btn.active{border-color:#b0714a;background:rgba(176,113,74,.16);color:#e8bd95;font-weight:600}
-/* El marron macizo quedaba demasiado oscuro: ahora es un tinte suave */
-:is([data-theme="light"],[data-theme="grey"]) .boda-mode-btn.active{background:rgba(176,113,74,.15);border-color:#b0714a;color:#7a5230}
+.boda-mode-btn.active{border-color:var(--wm-wine);background:color-mix(in srgb,var(--wm-wine) 10%,var(--surface));color:var(--wm-wine);font-weight:600}
 .boda-summary{display:flex;gap:8px}
 .boda-sum-item{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 4px;text-align:center;display:flex;flex-direction:column}
 .boda-sum-item b{font-size:1.1rem;color:var(--text)}
@@ -95,8 +113,7 @@
 .boda-chips{display:flex;gap:6px;flex-wrap:wrap}
 .boda-chip,.ev-sort-chip{flex:1;min-width:0;font-size:.68rem;padding:7px 8px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;white-space:nowrap;text-align:center}
 .boda-chip b{font-family:var(--mono);font-size:.66rem;opacity:.8;margin-left:3px}
-.boda-chip.active{border-color:#b0714a;background:rgba(176,113,74,.17);color:#e8bd95;font-weight:600}
-:is([data-theme="light"],[data-theme="grey"]) .boda-chip.active{background:rgba(176,113,74,.16);border-color:#b0714a;color:#7a5230}
+.boda-chip.active{border-color:var(--wm-wine);background:color-mix(in srgb,var(--wm-wine) 10%,var(--surface));color:var(--wm-wine);font-weight:600}
 .boda-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;display:flex;flex-direction:column;gap:6px}
 .boda-card-tap{cursor:pointer;transition:border-color .12s}
 .boda-card-tap:active{border-color:var(--accent)}
@@ -146,7 +163,8 @@
 .boda-multi-btn{flex:0 0 auto;font-family:var(--font);font-size:.7rem;font-weight:600;
   padding:8px 10px;border-radius:var(--radius-sm);border:1px solid var(--border);
   background:var(--surface2);color:var(--text-muted);cursor:pointer;white-space:nowrap}
-.boda-multi-btn.on{background:var(--c-blue);border-color:var(--c-blue);color:#fff}
+.boda-multi-btn.on{background:var(--wm-wine);border-color:var(--wm-wine);color:var(--io-primary-ink,#fff)}
+.boda-mini-btn.boda-day-add{border-color:var(--wm-wine);color:var(--wm-wine);background:color-mix(in srgb,var(--wm-wine) 8%,var(--surface))}
 .boda-multi-lista{margin-top:6px;font-size:.64rem;line-height:1.5;color:var(--text-muted)}
 .boda-multi-x{font-family:var(--font);font-size:.62rem;color:var(--c-orange);
   background:none;border:none;padding:0 2px;cursor:pointer;text-decoration:underline}
