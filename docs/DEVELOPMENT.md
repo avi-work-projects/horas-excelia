@@ -666,11 +666,11 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 - Mantener las pruebas con datos ficticios, el censo de claves del backup y la lista de recursos de publicación. Separar presentación, cálculo y persistencia al tocar módulos; no iniciar una reescritura completa.
 - Consolidar estilos por componente y tokens de tema. Evitar seguir acumulando correcciones en `shared-refinements.css` cuando se pueda corregir la fuente responsable.
 - Antes de optimizar, medir arranque, preparación del swipe y listas con históricos grandes. La prueba de Energía mide cálculo/render HTML, no fluidez en el móvil. La copia completa del DOM durante el swipe y las bibliotecas PDF cargadas al inicio son candidatos concretos a medir.
-- Propuesta de mapa visual, todavía no implementada: catálogo HTML generado con una escena por pantalla/panel, datos y fecha fijos, y relaciones con componentes compartidos. Un comando por escena actualizaría solo sus capturas; un cambio de fuente, tema o componente regeneraría las escenas dependientes. Reutilizar Edge y las fixtures de Playwright; revisar las capturas antes de aceptarlas como referencia.
+- Mapa visual: piloto documental implementado el 24/10/2026 en `docs/visual-map/`, tras autorización de Ángel. Incluye catálogo HTML por escenas, fecha y datos ficticios fijos, flechas desde controles medidos y comparativa. `npm run map:serve` abre el visor; `map:changed` actualiza escenas dependientes y `map:verify` comprueba el visor y regenera las láminas. Alcance y límites en `docs/visual-map/README.md`. Pendiente de revisión de Ángel antes de ampliar.
 
-### Norma para el futuro mapa visual (18/10/2026)
+### Norma para el mapa visual (18/10/2026; piloto 24/10/2026)
 
-- Se conserva como idea pendiente en FUTURO.md; no generar ahora un catálogo completo ni exigir capturas de todas las pantallas en cada tarea.
+- El piloto autorizado cubre navegación principal y un recorrido de eventos. La ampliación queda pendiente en FUTURO.md: no generar el catálogo completo antes de que Ángel revise el piloto ni exigir capturas de todas las pantallas en cada tarea.
 - Cuando exista, todo cambio visual o de navegación debe actualizar la ficha del menú afectado: captura, ruta de acceso, estados importantes y archivos/componentes relacionados. Altas y eliminaciones actualizan también el índice.
 - Regenerar solo esas escenas; cambios en temas, fuentes o componentes compartidos regeneran las dependientes. Revisar antes de aceptar; no actualizar referencias a ciegas.
 - Usar Edge oculto, viewport móvil fijo, fecha y datos ficticios estables. Registrar el commit de referencia y señalar fichas pendientes para no presentar capturas antiguas como actuales.

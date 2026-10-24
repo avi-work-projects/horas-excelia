@@ -7,7 +7,13 @@
     "build": "node tools/build.js",
     "assets": "node tools/assets.js",
     "check:assets": "node tools/assets.js --check",
-    "benchmark:energy": "node tools/benchmark-energy.js"
+    "benchmark:energy": "node tools/benchmark-energy.js",
+    "map:capture": "node tools/visual-map/generate.cjs",
+    "map:changed": "node tools/visual-map/generate.cjs --changed",
+    "map:index": "node tools/visual-map/generate.cjs --index",
+    "map:check": "node tools/visual-map/generate.cjs --check",
+    "map:verify": "node tools/visual-map/verify.cjs",
+    "map:serve": "node tools/visual-map/serve.cjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0"

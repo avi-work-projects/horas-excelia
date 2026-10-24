@@ -1,0 +1,3413 @@
+{
+  "schemaVersion": 1,
+  "title": "Gestify · mapa visual",
+  "generatedAt": "2026-10-24T20:25:11.908Z",
+  "referenceCommit": "f524e3a5754cbe44441825960c66cfef177b9ed3",
+  "date": "2026-08-21T10:00:00+02:00",
+  "viewport": {
+    "width": 400,
+    "height": 880
+  },
+  "theme": "light",
+  "icons": "professional",
+  "scope": "Piloto: navegación principal y recorrido de edición de un evento. Inventario inicial localizado en código; no auditado visualmente al completo.",
+  "scenes": [
+    {
+      "id": "home",
+      "title": "Inicio",
+      "group": "Inicio",
+      "route": [],
+      "ready": "#homeBtn",
+      "sources": [
+        "js/core.js",
+        "js/init.js"
+      ],
+      "layout": [
+        850,
+        65
+      ],
+      "image": "captures/home.png",
+      "anchors": {
+        "household": {
+          "x": 16,
+          "y": 10,
+          "width": 44,
+          "height": 44
+        },
+        "study": {
+          "x": 64,
+          "y": 10,
+          "width": 44,
+          "height": 44
+        },
+        "events": {
+          "x": 160,
+          "y": 10,
+          "width": 44,
+          "height": 44
+        },
+        "economics": {
+          "x": 208,
+          "y": 10,
+          "width": 44,
+          "height": 44
+        },
+        "alarm": {
+          "x": 300,
+          "y": 10,
+          "width": 44,
+          "height": 44
+        },
+        "settings": {
+          "x": 348,
+          "y": 14,
+          "width": 36,
+          "height": 36
+        }
+      },
+      "entryBox": null,
+      "dependencies": [
+        {
+          "file": "index.html",
+          "hash": "b28033ab9c7294a0df25c884f60f62f5daec2c203a5db8b89ccc059bfabf23af"
+        },
+        {
+          "file": "js/nav-icons.js",
+          "hash": "d45ad268333bf5dfda75d71902da1d7572bbec27e15e5b412fb3f785c0808c42"
+        },
+        {
+          "file": "js/core.js",
+          "hash": "f9a184dfae0df20d91f6a4de84e66c4c0d04b4296c5c9aee8eb1bdf5e91021b4"
+        },
+        {
+          "file": "js/data-integrity.js",
+          "hash": "34bfc80472270238e11eb0e194fef19e56c7fbb81a35ff5fde23a8ae23e5e9f0"
+        },
+        {
+          "file": "tools/fixture.json",
+          "hash": "98d54e4adf481a811b8b05627515272fb623f8b78db75b294d07ceed739cd07d"
+        },
+        {
+          "file": "tools/visual-map/catalog.cjs",
+          "hash": "e9e3aed799dceb4882d9783f9be393a60451f3561f2a2548634ce64fc5831078"
+        },
+        {
+          "file": "tools/visual-map/generate.cjs",
+          "hash": "bfa10e05645dc8c2f447e7fb5cf50139059204f767d3c28c0eae5243b1323aa8"
+        },
+        {
+          "file": "css/source/base.css",
+          "hash": "fe89ce1a41f8071c2c92cd0c1fe13382ac09b8d9c62e1fdc288b79d239767c27"
+        },
+        {
+          "file": "css/source/navigation-controls.css",
+          "hash": "dbc077d7421c40475885ad1ee8f146743a0e25ab5f6f0d4f0a9a050765add898"
+        },
+        {
+          "file": "css/source/economics.css",
+          "hash": "6f9b6253474e9a8beb117505c300488bf8e830cda6e63f1825b6043596b85b6b"
+        },
+        {
+          "file": "css/source/birthdays.css",
+          "hash": "72ada340dc34ff1b975b7f6076a082e2f658f968607c39f1a80ad0783a94e09b"
+        },
+        {
+          "file": "css/source/event-calendar.css",
+          "hash": "8073f4f6b14bc77152e726a3151ac05bc1fb365e6840a0778582f9b903a434b1"
+        },
+        {
+          "file": "css/source/navigation-alarms.css",
+          "hash": "47d9432b0b15346910793923df7135606c982cf934ab492aaff6aa33777d0227"
+        },
+        {
+          "file": "css/source/event-panels.css",
+          "hash": "6f2fee142f2f0e68d7542366000a3a520705f1b280fc13baa471f9873ce19cf1"
+        },
+        {
+          "file": "css/source/dialogs-responsive.css",
+          "hash": "557d68bac2670445c7edd35896d6a8e90cab5efbc85c6d1684ea31da9451e4b3"
+        },
+        {
+          "file": "css/source/wedding-moves.css",
+          "hash": "dde90ad011c76ce1e638a37b22119288a591374682d49fcead3e229701f2e225"
+        },
+        {
+          "file": "css/source/routines.css",
+          "hash": "54638039dc50d54dfb50a24d295ea76d747f7327321b17e32eeb34457cc2ac55"
+        },
+        {
+          "file": "css/source/shared-refinements.css",
+          "hash": "53900252ff8ecf4662103639b254f3137af07d717028af8853608dd2cc0ea2c2"
+        },
+        {
+          "file": "css/source/home-sharing.css",
+          "hash": "4dc84848aac0cc51a3035558539ad1a197836e6c68025b3594edcbdb531c62f7"
+        },
+        {
+          "file": "css/source/energy-refinements.css",
+          "hash": "001464121116785001eea403e2c6192aae4cc6ef862e74c5c7e76ec15b249acb"
+        },
+        {
+          "file": "css/source/home-reminders.css",
+          "hash": "aa4c63d44fa08de6eba1c12c78a459a3ef708ea4f63424b0037630749a1fad90"
+        },
+        {
+          "file": "css/source/invoices.css",
+          "hash": "dfa46f54f2ef7eec8eaee8686afd3c4b7e740cffc37e314d9b6de50a557e61c5"
+        },
+        {
+          "file": "css/source/theme-cream.css",
+          "hash": "d5d09d0ae2535163aac0b663ebe8abc3c8661d0d910fa0674bcd2c42d8e83949"
+        },
+        {
+          "file": "css/tasks.css",
+          "hash": "9a8a40cce5ae3b5fcbde7bf235f55ead1c7f25639e370b0b2a937b76de4508a7"
+        },
+        {
+          "file": "css/household.css",
+          "hash": "b99cd61ee54c318b99fada3687f622b3b79a95dfed904e584bc5ced2bca7d842"
+        },
+        {
+          "file": "css/electricity-comparator.css",
+          "hash": "7c2b3b94a8209464b60bb55a8a8ffed4cefbdabb1fc159974215e9e6aa7c93b8"
+        },
+        {
+          "file": "css/finance-views.css",
+          "hash": "78011cafc4c93a987ce9dc78cadae2dc566849bf9b280c1de745d5edecc300f5"
+        },
+        {
+          "file": "css/personal-periods.css",
+          "hash": "6398467d045a6e74cec2b70a60904de8bc41a911cce7fc3c6f6fa534884c71b6"
+        },
+        {
+          "file": "js/init.js",
+          "hash": "2402274c8aea9cc86a031ed7d86d1543ecc0668e8a96e1f79c70c1cd0c66a1eb"
+        }
+      ],
+      "commit": "f524e3a5754cbe44441825960c66cfef177b9ed3",
+      "review": "Sin revisar",
+      "verifiedEdges": [
+        "household",
+        "study",
+        "events",
+        "economics",
+        "alarm",
+        "settings"
+      ],
+      "fresh": true
+    },
+    {
+      "id": "household",
+      "title": "Gastos del hogar",
+      "group": "Hogar",
+      "route": [
+        "#householdBtn"
+      ],
+      "ready": "#householdOverlay.open",
+      "sources": [
+        "js/household.js",
+        "js/household-summary.js",
+        "js/economics-fiscal-hip.js",
+        "css/household.css"
+      ],
+      "layout": [
+        40,
+        705
+      ],
+      "image": "captures/household.png",
+      "anchors": {},
+      "entryBox": null,
+      "dependencies": [
+        {
+          "file": "index.html",
+          "hash": "b28033ab9c7294a0df25c884f60f62f5daec2c203a5db8b89ccc059bfabf23af"
+        },
+        {
+          "file": "js/nav-icons.js",
+          "hash": "d45ad268333bf5dfda75d71902da1d7572bbec27e15e5b412fb3f785c0808c42"
+        },
+        {
+          "file": "js/core.js",
+          "hash": "f9a184dfae0df20d91f6a4de84e66c4c0d04b4296c5c9aee8eb1bdf5e91021b4"
+        },
+        {
+          "file": "js/data-integrity.js",
+          "hash": "34bfc80472270238e11eb0e194fef19e56c7fbb81a35ff5fde23a8ae23e5e9f0"
+        },
+        {
+          "file": "tools/fixture.json",
+          "hash": "98d54e4adf481a811b8b05627515272fb623f8b78db75b294d07ceed739cd07d"
+        },
+        {
+          "file": "tools/visual-map/catalog.cjs",
+          "hash": "e9e3aed799dceb4882d9783f9be393a60451f3561f2a2548634ce64fc5831078"
+        },
+        {
+          "file": "tools/visual-map/generate.cjs",
+          "hash": "bfa10e05645dc8c2f447e7fb5cf50139059204f767d3c28c0eae5243b1323aa8"
+        },
+        {
+          "file": "css/source/base.css",
+          "hash": "fe89ce1a41f8071c2c92cd0c1fe13382ac09b8d9c62e1fdc288b79d239767c27"
+        },
+        {
+          "file": "css/source/navigation-controls.css",
+          "hash": "dbc077d7421c40475885ad1ee8f146743a0e25ab5f6f0d4f0a9a050765add898"
+        },
+        {
+          "file": "css/source/economics.css",
+          "hash": "6f9b6253474e9a8beb117505c300488bf8e830cda6e63f1825b6043596b85b6b"
+        },
+        {
+          "file": "css/source/birthdays.css",
+          "hash": "72ada340dc34ff1b975b7f6076a082e2f658f968607c39f1a80ad0783a94e09b"
+        },
+        {
+          "file": "css/source/event-calendar.css",
+          "hash": "8073f4f6b14bc77152e726a3151ac05bc1fb365e6840a0778582f9b903a434b1"
+        },
+        {
+          "file": "css/source/navigation-alarms.css",
+          "hash": "47d9432b0b15346910793923df7135606c982cf934ab492aaff6aa33777d0227"
+        },
+        {
+          "file": "css/source/event-panels.css",
+          "hash": "6f2fee142f2f0e68d7542366000a3a520705f1b280fc13baa471f9873ce19cf1"
+        },
+        {
+          "file": "css/source/dialogs-responsive.css",
+          "hash": "557d68bac2670445c7edd35896d6a8e90cab5efbc85c6d1684ea31da9451e4b3"
+        },
+        {
+          "file": "css/source/wedding-moves.css",
+          "hash": "dde90ad011c76ce1e638a37b22119288a591374682d49fcead3e229701f2e225"
+        },
+        {
+          "file": "css/source/routines.css",
+          "hash": "54638039dc50d54dfb50a24d295ea76d747f7327321b17e32eeb34457cc2ac55"
+        },
+        {
+          "file": "css/source/shared-refinements.css",
+          "hash": "53900252ff8ecf4662103639b254f3137af07d717028af8853608dd2cc0ea2c2"
+        },
+        {
+          "file": "css/source/home-sharing.css",
+          "hash": "4dc84848aac0cc51a3035558539ad1a197836e6c68025b3594edcbdb531c62f7"
+        },
+        {
+          "file": "css/source/energy-refinements.css",
+          "hash": "001464121116785001eea403e2c6192aae4cc6ef862e74c5c7e76ec15b249acb"
+        },
+        {
+          "file": "css/source/home-reminders.css",
+          "hash": "aa4c63d44fa08de6eba1c12c78a459a3ef708ea4f63424b0037630749a1fad90"
+        },
+        {
+          "file": "css/source/invoices.css",
+          "hash": "dfa46f54f2ef7eec8eaee8686afd3c4b7e740cffc37e314d9b6de50a557e61c5"
+        },
+        {
+          "file": "css/source/theme-cream.css",
+          "hash": "d5d09d0ae2535163aac0b663ebe8abc3c8661d0d910fa0674bcd2c42d8e83949"
+        },
+        {
+          "file": "css/tasks.css",
+          "hash": "9a8a40cce5ae3b5fcbde7bf235f55ead1c7f25639e370b0b2a937b76de4508a7"
+        },
+        {
+          "file": "css/household.css",
+          "hash": "b99cd61ee54c318b99fada3687f622b3b79a95dfed904e584bc5ced2bca7d842"
+        },
+        {
+          "file": "css/electricity-comparator.css",
+          "hash": "7c2b3b94a8209464b60bb55a8a8ffed4cefbdabb1fc159974215e9e6aa7c93b8"
+        },
+        {
+          "file": "css/finance-views.css",
+          "hash": "78011cafc4c93a987ce9dc78cadae2dc566849bf9b280c1de745d5edecc300f5"
+        },
+        {
+          "file": "css/personal-periods.css",
+          "hash": "6398467d045a6e74cec2b70a60904de8bc41a911cce7fc3c6f6fa534884c71b6"
+        },
+        {
+          "file": "js/init.js",
+          "hash": "2402274c8aea9cc86a031ed7d86d1543ecc0668e8a96e1f79c70c1cd0c66a1eb"
+        },
+        {
+          "file": "js/household.js",
+          "hash": "5a535808e512608fde59dd7bc2e3139136b6449ef50f0288bdd0edc68f09031b"
+        },
+        {
+          "file": "js/household-summary.js",
+          "hash": "47455d80a7770387ca6abee6233e5839d93e61f3cfcb66411d8ecfad9b382366"
+        },
+        {
+          "file": "js/economics-fiscal-hip.js",
+          "hash": "295c48417567375080219386938dfec1779849ed5968bcebd37db6a2486236b9"
+        }
+      ],
+      "commit": "f524e3a5754cbe44441825960c66cfef177b9ed3",
+      "review": "Sin revisar",
+      "verifiedEdges": [],
+      "fresh": true
+    },
+    {
+      "id": "study",
+      "title": "Herramientas de comparación",
+      "group": "Herramientas",
+      "route": [
+        "#estudioBtn"
+      ],
+      "ready": "#estudioOverlay.open",
+      "sources": [
+        "js/economics-estudio.js",
+        "js/economics-comp.js",
+        "js/economics-sim.js"
+      ],
+      "layout": [
+        365,
+        705
+      ],
+      "image": "captures/study.png",
+      "anchors": {},
+      "entryBox": null,
+      "dependencies": [
+        {
+          "file": "index.html",
+          "hash": "b28033ab9c7294a0df25c884f60f62f5daec2c203a5db8b89ccc059bfabf23af"
+        },
+        {
+          "file": "js/nav-icons.js",
+          "hash": "d45ad268333bf5dfda75d71902da1d7572bbec27e15e5b412fb3f785c0808c42"
+        },
+        {
+          "file": "js/core.js",
+          "hash": "f9a184dfae0df20d91f6a4de84e66c4c0d04b4296c5c9aee8eb1bdf5e91021b4"
+        },
+        {
+          "file": "js/data-integrity.js",
+          "hash": "34bfc80472270238e11eb0e194fef19e56c7fbb81a35ff5fde23a8ae23e5e9f0"
+        },
+        {
+          "file": "tools/fixture.json",
+          "hash": "98d54e4adf481a811b8b05627515272fb623f8b78db75b294d07ceed739cd07d"
+        },
+        {
+          "file": "tools/visual-map/catalog.cjs",
+          "hash": "e9e3aed799dceb4882d9783f9be393a60451f3561f2a2548634ce64fc5831078"
+        },
+        {
+          "file": "tools/visual-map/generate.cjs",
+          "hash": "bfa10e05645dc8c2f447e7fb5cf50139059204f767d3c28c0eae5243b1323aa8"
+        },
+        {
+          "file": "css/source/base.css",
+          "hash": "fe89ce1a41f8071c2c92cd0c1fe13382ac09b8d9c62e1fdc288b79d239767c27"
+        },
+        {
+          "file": "css/source/navigation-controls.css",
+          "hash": "dbc077d7421c40475885ad1ee8f146743a0e25ab5f6f0d4f0a9a050765add898"
+        },
+        {
+          "file": "css/source/economics.css",
+          "hash": "6f9b6253474e9a8beb117505c300488bf8e830cda6e63f1825b6043596b85b6b"
+        },
+        {
+          "file": "css/source/birthdays.css",
+          "hash": "72ada340dc34ff1b975b7f6076a082e2f658f968607c39f1a80ad0783a94e09b"
+        },
+        {
+          "file": "css/source/event-calendar.css",
+          "hash": "8073f4f6b14bc77152e726a3151ac05bc1fb365e6840a0778582f9b903a434b1"
+        },
+        {
+          "file": "css/source/navigation-alarms.css",
+          "hash": "47d9432b0b15346910793923df7135606c982cf934ab492aaff6aa33777d0227"
+        },
+        {
+          "file": "css/source/event-panels.css",
+          "hash": "6f2fee142f2f0e68d7542366000a3a520705f1b280fc13baa471f9873ce19cf1"
+        },
+        {
+          "file": "css/source/dialogs-responsive.css",
+          "hash": "557d68bac2670445c7edd35896d6a8e90cab5efbc85c6d1684ea31da9451e4b3"
+        },
+        {
+          "file": "css/source/wedding-moves.css",
+          "hash": "dde90ad011c76ce1e638a37b22119288a591374682d49fcead3e229701f2e225"
+        },
+        {
+          "file": "css/source/routines.css",
+          "hash": "54638039dc50d54dfb50a24d295ea76d747f7327321b17e32eeb34457cc2ac55"
+        },
+        {
+          "file": "css/source/shared-refinements.css",
+          "hash": "53900252ff8ecf4662103639b254f3137af07d717028af8853608dd2cc0ea2c2"
+        },
+        {
+          "file": "css/source/home-sharing.css",
+          "hash": "4dc84848aac0cc51a3035558539ad1a197836e6c68025b3594edcbdb531c62f7"
+        },
+        {
+          "file": "css/source/energy-refinements.css",
+          "hash": "001464121116785001eea403e2c6192aae4cc6ef862e74c5c7e76ec15b249acb"
+        },
+        {
+          "file": "css/source/home-reminders.css",
+          "hash": "aa4c63d44fa08de6eba1c12c78a459a3ef708ea4f63424b0037630749a1fad90"
+        },
+        {
+          "file": "css/source/invoices.css",
+          "hash": "dfa46f54f2ef7eec8eaee8686afd3c4b7e740cffc37e314d9b6de50a557e61c5"
+        },
+        {
+          "file": "css/source/theme-cream.css",
+          "hash": "d5d09d0ae2535163aac0b663ebe8abc3c8661d0d910fa0674bcd2c42d8e83949"
+        },
+        {
+          "file": "css/tasks.css",
+          "hash": "9a8a40cce5ae3b5fcbde7bf235f55ead1c7f25639e370b0b2a937b76de4508a7"
+        },
+        {
+          "file": "css/household.css",
+          "hash": "b99cd61ee54c318b99fada3687f622b3b79a95dfed904e584bc5ced2bca7d842"
+        },
+        {
+          "file": "css/electricity-comparator.css",
+          "hash": "7c2b3b94a8209464b60bb55a8a8ffed4cefbdabb1fc159974215e9e6aa7c93b8"
+        },
+        {
+          "file": "css/finance-views.css",
+          "hash": "78011cafc4c93a987ce9dc78cadae2dc566849bf9b280c1de745d5edecc300f5"
+        },
+        {
+          "file": "css/personal-periods.css",
+          "hash": "6398467d045a6e74cec2b70a60904de8bc41a911cce7fc3c6f6fa534884c71b6"
+        },
+        {
+          "file": "js/init.js",
+          "hash": "2402274c8aea9cc86a031ed7d86d1543ecc0668e8a96e1f79c70c1cd0c66a1eb"
+        },
+        {
+          "file": "js/economics-estudio.js",
+          "hash": "83e3092017c02345bc8cfcabc47b9dac9f6fbc11b29bc92cac8a609017ce0c1d"
+        },
+        {
+          "file": "js/economics-comp.js",
+          "hash": "8cbdbb61e195b8128930ace4e23331315f308192e35bca0ac81a259d670de2fc"
+        },
+        {
+          "file": "js/economics-sim.js",
+          "hash": "bbe0c7e2651bf7660543b0b1140c15ccdd5d032d1f153f544f423b2dadca23f8"
+        }
+      ],
+      "commit": "f524e3a5754cbe44441825960c66cfef177b9ed3",
+      "review": "Sin revisar",
+      "verifiedEdges": [],
+      "fresh": true
+    },
+    {
+      "id": "events",
+      "title": "Eventos · Próximos",
+      "group": "Eventos",
+      "route": [
+        "#eventsBtn"
+      ],
+      "ready": "#eventsOverlay.open",
+      "sources": [
+        "js/events-render.js",
+        "js/events-bind.js",
+        "js/events.js"
+      ],
+      "layout": [
+        690,
+        705
+      ],
+      "image": "captures/events.png",
+      "anchors": {
+        "calendar": {
+          "x": 202.5,
+          "y": 109,
+          "width": 93.25,
+          "height": 42
+        }
+      },
+      "entryBox": null,
+      "dependencies": [
+        {
+          "file": "index.html",
+          "hash": "b28033ab9c7294a0df25c884f60f62f5daec2c203a5db8b89ccc059bfabf23af"
+        },
+        {
+          "file": "js/nav-icons.js",
+          "hash": "d45ad268333bf5dfda75d71902da1d7572bbec27e15e5b412fb3f785c0808c42"
+        },
+        {
+          "file": "js/core.js",
+          "hash": "f9a184dfae0df20d91f6a4de84e66c4c0d04b4296c5c9aee8eb1bdf5e91021b4"
+        },
+        {
+          "file": "js/data-integrity.js",
+          "hash": "34bfc80472270238e11eb0e194fef19e56c7fbb81a35ff5fde23a8ae23e5e9f0"
+        },
+        {
+          "file": "tools/fixture.json",
+          "hash": "98d54e4adf481a811b8b05627515272fb623f8b78db75b294d07ceed739cd07d"
+        },
+        {
+          "file": "tools/visual-map/catalog.cjs",
+          "hash": "e9e3aed799dceb4882d9783f9be393a60451f3561f2a2548634ce64fc5831078"
+        },
+        {
+          "file": "tools/visual-map/generate.cjs",
+          "hash": "bfa10e05645dc8c2f447e7fb5cf50139059204f767d3c28c0eae5243b1323aa8"
+        },
+        {
+          "file": "css/source/base.css",
+          "hash": "fe89ce1a41f8071c2c92cd0c1fe13382ac09b8d9c62e1fdc288b79d239767c27"
+        },
+        {
+          "file": "css/source/navigation-controls.css",
+          "hash": "dbc077d7421c40475885ad1ee8f146743a0e25ab5f6f0d4f0a9a050765add898"
+        },
+        {
+          "file": "css/source/economics.css",
+          "hash": "6f9b6253474e9a8beb117505c300488bf8e830cda6e63f1825b6043596b85b6b"
+        },
+        {
+          "file": "css/source/birthdays.css",
+          "hash": "72ada340dc34ff1b975b7f6076a082e2f658f968607c39f1a80ad0783a94e09b"
+        },
+        {
+          "file": "css/source/event-calendar.css",
+          "hash": "8073f4f6b14bc77152e726a3151ac05bc1fb365e6840a0778582f9b903a434b1"
+        },
+        {
+          "file": "css/source/navigation-alarms.css",
+          "hash": "47d9432b0b15346910793923df7135606c982cf934ab492aaff6aa33777d0227"
+        },
+        {
+          "file": "css/source/event-panels.css",
+          "hash": "6f2fee142f2f0e68d7542366000a3a520705f1b280fc13baa471f9873ce19cf1"
+        },
+        {
+          "file": "css/source/dialogs-responsive.css",
+          "hash": "557d68bac2670445c7edd35896d6a8e90cab5efbc85c6d1684ea31da9451e4b3"
+        },
+        {
+          "file": "css/source/wedding-moves.css",
+          "hash": "dde90ad011c76ce1e638a37b22119288a591374682d49fcead3e229701f2e225"
+        },
+        {
+          "file": "css/source/routines.css",
+          "hash": "54638039dc50d54dfb50a24d295ea76d747f7327321b17e32eeb34457cc2ac55"
+        },
+        {
+          "file": "css/source/shared-refinements.css",
+          "hash": "53900252ff8ecf4662103639b254f3137af07d717028af8853608dd2cc0ea2c2"
+        },
+        {
+          "file": "css/source/home-sharing.css",
+          "hash": "4dc84848aac0cc51a3035558539ad1a197836e6c68025b3594edcbdb531c62f7"
+        },
+        {
+          "file": "css/source/energy-refinements.css",
+          "hash": "001464121116785001eea403e2c6192aae4cc6ef862e74c5c7e76ec15b249acb"
+        },
+        {
+          "file": "css/source/home-reminders.css",
+          "hash": "aa4c63d44fa08de6eba1c12c78a459a3ef708ea4f63424b0037630749a1fad90"
+        },
+        {
+          "file": "css/source/invoices.css",
+          "hash": "dfa46f54f2ef7eec8eaee8686afd3c4b7e740cffc37e314d9b6de50a557e61c5"
+        },
+        {
+          "file": "css/source/theme-cream.css",
+          "hash": "d5d09d0ae2535163aac0b663ebe8abc3c8661d0d910fa0674bcd2c42d8e83949"
+        },
+        {
+          "file": "css/tasks.css",
+          "hash": "9a8a40cce5ae3b5fcbde7bf235f55ead1c7f25639e370b0b2a937b76de4508a7"
+        },
+        {
+          "file": "css/household.css",
+          "hash": "b99cd61ee54c318b99fada3687f622b3b79a95dfed904e584bc5ced2bca7d842"
+        },
+        {
+          "file": "css/electricity-comparator.css",
+          "hash": "7c2b3b94a8209464b60bb55a8a8ffed4cefbdabb1fc159974215e9e6aa7c93b8"
+        },
+        {
+          "file": "css/finance-views.css",
+          "hash": "78011cafc4c93a987ce9dc78cadae2dc566849bf9b280c1de745d5edecc300f5"
+        },
+        {
+          "file": "css/personal-periods.css",
+          "hash": "6398467d045a6e74cec2b70a60904de8bc41a911cce7fc3c6f6fa534884c71b6"
+        },
+        {
+          "file": "js/init.js",
+          "hash": "2402274c8aea9cc86a031ed7d86d1543ecc0668e8a96e1f79c70c1cd0c66a1eb"
+        },
+        {
+          "file": "js/events-render.js",
+          "hash": "8fcb21835a8c2b257e77dd3c3f56b569185d64cc47c7357548911228860ae075"
+        },
+        {
+          "file": "js/events-bind.js",
+          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+        },
+        {
+          "file": "js/events.js",
+          "hash": "e4c0376dc9b1296aacd83b67a81c219806d133794b84362c98cd2e73add84d66"
+        }
+      ],
+      "commit": "f524e3a5754cbe44441825960c66cfef177b9ed3",
+      "review": "Sin revisar",
+      "verifiedEdges": [
+        "calendar"
+      ],
+      "fresh": true
+    },
+    {
+      "id": "economics",
+      "title": "Resumen económico",
+      "group": "Economía",
+      "route": [
+        "#econBtn"
+      ],
+      "ready": "#econOverlay.open",
+      "sources": [
+        "js/economics.js",
+        "js/economics-fiscal-datos.js"
+      ],
+      "layout": [
+        1015,
+        705
+      ],
+      "image": "captures/economics.png",
+      "anchors": {},
+      "entryBox": null,
+      "dependencies": [
+        {
+          "file": "index.html",
+          "hash": "b28033ab9c7294a0df25c884f60f62f5daec2c203a5db8b89ccc059bfabf23af"
+        },
+        {
+          "file": "js/nav-icons.js",
+          "hash": "d45ad268333bf5dfda75d71902da1d7572bbec27e15e5b412fb3f785c0808c42"
+        },
+        {
+          "file": "js/core.js",
+          "hash": "f9a184dfae0df20d91f6a4de84e66c4c0d04b4296c5c9aee8eb1bdf5e91021b4"
+        },
+        {
+          "file": "js/data-integrity.js",
+          "hash": "34bfc80472270238e11eb0e194fef19e56c7fbb81a35ff5fde23a8ae23e5e9f0"
+        },
+        {
+          "file": "tools/fixture.json",
+          "hash": "98d54e4adf481a811b8b05627515272fb623f8b78db75b294d07ceed739cd07d"
+        },
+        {
+          "file": "tools/visual-map/catalog.cjs",
+          "hash": "e9e3aed799dceb4882d9783f9be393a60451f3561f2a2548634ce64fc5831078"
+        },
+        {
+          "file": "tools/visual-map/generate.cjs",
+          "hash": "bfa10e05645dc8c2f447e7fb5cf50139059204f767d3c28c0eae5243b1323aa8"
+        },
+        {
+          "file": "css/source/base.css",
+          "hash": "fe89ce1a41f8071c2c92cd0c1fe13382ac09b8d9c62e1fdc288b79d239767c27"
+        },
+        {
+          "file": "css/source/navigation-controls.css",
+          "hash": "dbc077d7421c40475885ad1ee8f146743a0e25ab5f6f0d4f0a9a050765add898"
+        },
+        {
+          "file": "css/source/economics.css",
+          "hash": "6f9b6253474e9a8beb117505c300488bf8e830cda6e63f1825b6043596b85b6b"
+        },
+        {
+          "file": "css/source/birthdays.css",
+          "hash": "72ada340dc34ff1b975b7f6076a082e2f658f968607c39f1a80ad0783a94e09b"
+        },
+        {
+          "file": "css/source/event-calendar.css",
+          "hash": "8073f4f6b14bc77152e726a3151ac05bc1fb365e6840a0778582f9b903a434b1"
+        },
+        {
+          "file": "css/source/navigation-alarms.css",
+          "hash": "47d9432b0b15346910793923df7135606c982cf934ab492aaff6aa33777d0227"
+        },
+        {
+          "file": "css/source/event-panels.css",
+          "hash": "6f2fee142f2f0e68d7542366000a3a520705f1b280fc13baa471f9873ce19cf1"
+        },
+        {
+          "file": "css/source/dialogs-responsive.css",
+          "hash": "557d68bac2670445c7edd35896d6a8e90cab5efbc85c6d1684ea31da9451e4b3"
+        },
+        {
+          "file": "css/source/wedding-moves.css",
+          "hash": "dde90ad011c76ce1e638a37b22119288a591374682d49fcead3e229701f2e225"
+        },
+        {
+          "file": "css/source/routines.css",
+          "hash": "54638039dc50d54dfb50a24d295ea76d747f7327321b17e32eeb34457cc2ac55"
+        },
+        {
+          "file": "css/source/shared-refinements.css",
+          "hash": "53900252ff8ecf4662103639b254f3137af07d717028af8853608dd2cc0ea2c2"
+        },
+        {
+          "file": "css/source/home-sharing.css",
+          "hash": "4dc84848aac0cc51a3035558539ad1a197836e6c68025b3594edcbdb531c62f7"
+        },
+        {
+          "file": "css/source/energy-refinements.css",
+          "hash": "001464121116785001eea403e2c6192aae4cc6ef862e74c5c7e76ec15b249acb"
+        },
+        {
+          "file": "css/source/home-reminders.css",
+          "hash": "aa4c63d44fa08de6eba1c12c78a459a3ef708ea4f63424b0037630749a1fad90"
+        },
+        {
+          "file": "css/source/invoices.css",
+          "hash": "dfa46f54f2ef7eec8eaee8686afd3c4b7e740cffc37e314d9b6de50a557e61c5"
+        },
+        {
+          "file": "css/source/theme-cream.css",
+          "hash": "d5d09d0ae2535163aac0b663ebe8abc3c8661d0d910fa0674bcd2c42d8e83949"
+        },
+        {
+          "file": "css/tasks.css",
+          "hash": "9a8a40cce5ae3b5fcbde7bf235f55ead1c7f25639e370b0b2a937b76de4508a7"
+        },
+        {
+          "file": "css/household.css",
+          "hash": "b99cd61ee54c318b99fada3687f622b3b79a95dfed904e584bc5ced2bca7d842"
+        },
+        {
+          "file": "css/electricity-comparator.css",
+          "hash": "7c2b3b94a8209464b60bb55a8a8ffed4cefbdabb1fc159974215e9e6aa7c93b8"
+        },
+        {
+          "file": "css/finance-views.css",
+          "hash": "78011cafc4c93a987ce9dc78cadae2dc566849bf9b280c1de745d5edecc300f5"
+        },
+        {
+          "file": "css/personal-periods.css",
+          "hash": "6398467d045a6e74cec2b70a60904de8bc41a911cce7fc3c6f6fa534884c71b6"
+        },
+        {
+          "file": "js/init.js",
+          "hash": "2402274c8aea9cc86a031ed7d86d1543ecc0668e8a96e1f79c70c1cd0c66a1eb"
+        },
+        {
+          "file": "js/economics.js",
+          "hash": "7c10b8a768123153b14b33b1aa9731813838f0633083003641c4374f80281cbe"
+        },
+        {
+          "file": "js/economics-fiscal-datos.js",
+          "hash": "5f42f6dd8e52d23bd3b5e1973809ca7daf1961e7668a16cffe83dcf9e89c15fc"
+        }
+      ],
+      "commit": "f524e3a5754cbe44441825960c66cfef177b9ed3",
+      "review": "Sin revisar",
+      "verifiedEdges": [],
+      "fresh": true
+    },
+    {
+      "id": "alarm",
+      "title": "Crear alarma",
+      "group": "Ajustes",
+      "route": [
+        "#alarmTestBtn"
+      ],
+      "ready": "#alarmPanel.open",
+      "sources": [
+        "js/alarm-panel.js",
+        "js/init.js"
+      ],
+      "layout": [
+        1340,
+        705
+      ],
+      "image": "captures/alarm.png",
+      "anchors": {},
+      "entryBox": null,
+      "dependencies": [
+        {
+          "file": "index.html",
+          "hash": "b28033ab9c7294a0df25c884f60f62f5daec2c203a5db8b89ccc059bfabf23af"
+        },
+        {
+          "file": "js/nav-icons.js",
+          "hash": "d45ad268333bf5dfda75d71902da1d7572bbec27e15e5b412fb3f785c0808c42"
+        },
+        {
+          "file": "js/core.js",
+          "hash": "f9a184dfae0df20d91f6a4de84e66c4c0d04b4296c5c9aee8eb1bdf5e91021b4"
+        },
+        {
+          "file": "js/data-integrity.js",
+          "hash": "34bfc80472270238e11eb0e194fef19e56c7fbb81a35ff5fde23a8ae23e5e9f0"
+        },
+        {
+          "file": "tools/fixture.json",
+          "hash": "98d54e4adf481a811b8b05627515272fb623f8b78db75b294d07ceed739cd07d"
+        },
+        {
+          "file": "tools/visual-map/catalog.cjs",
+          "hash": "e9e3aed799dceb4882d9783f9be393a60451f3561f2a2548634ce64fc5831078"
+        },
+        {
+          "file": "tools/visual-map/generate.cjs",
+          "hash": "bfa10e05645dc8c2f447e7fb5cf50139059204f767d3c28c0eae5243b1323aa8"
+        },
+        {
+          "file": "css/source/base.css",
+          "hash": "fe89ce1a41f8071c2c92cd0c1fe13382ac09b8d9c62e1fdc288b79d239767c27"
+        },
+        {
+          "file": "css/source/navigation-controls.css",
+          "hash": "dbc077d7421c40475885ad1ee8f146743a0e25ab5f6f0d4f0a9a050765add898"
+        },
+        {
+          "file": "css/source/economics.css",
+          "hash": "6f9b6253474e9a8beb117505c300488bf8e830cda6e63f1825b6043596b85b6b"
+        },
+        {
+          "file": "css/source/birthdays.css",
+          "hash": "72ada340dc34ff1b975b7f6076a082e2f658f968607c39f1a80ad0783a94e09b"
+        },
+        {
+          "file": "css/source/event-calendar.css",
+          "hash": "8073f4f6b14bc77152e726a3151ac05bc1fb365e6840a0778582f9b903a434b1"
+        },
+        {
+          "file": "css/source/navigation-alarms.css",
+          "hash": "47d9432b0b15346910793923df7135606c982cf934ab492aaff6aa33777d0227"
+        },
+        {
+          "file": "css/source/event-panels.css",
+          "hash": "6f2fee142f2f0e68d7542366000a3a520705f1b280fc13baa471f9873ce19cf1"
+        },
+        {
+          "file": "css/source/dialogs-responsive.css",
+          "hash": "557d68bac2670445c7edd35896d6a8e90cab5efbc85c6d1684ea31da9451e4b3"
+        },
+        {
+          "file": "css/source/wedding-moves.css",
+          "hash": "dde90ad011c76ce1e638a37b22119288a591374682d49fcead3e229701f2e225"
+        },
+        {
+          "file": "css/source/routines.css",
+          "hash": "54638039dc50d54dfb50a24d295ea76d747f7327321b17e32eeb34457cc2ac55"
+        },
+        {
+          "file": "css/source/shared-refinements.css",
+          "hash": "53900252ff8ecf4662103639b254f3137af07d717028af8853608dd2cc0ea2c2"
+        },
+        {
+          "file": "css/source/home-sharing.css",
+          "hash": "4dc84848aac0cc51a3035558539ad1a197836e6c68025b3594edcbdb531c62f7"
+        },
+        {
+          "file": "css/source/energy-refinements.css",
+          "hash": "001464121116785001eea403e2c6192aae4cc6ef862e74c5c7e76ec15b249acb"
+        },
+        {
+          "file": "css/source/home-reminders.css",
+          "hash": "aa4c63d44fa08de6eba1c12c78a459a3ef708ea4f63424b0037630749a1fad90"
+        },
+        {
+          "file": "css/source/invoices.css",
+          "hash": "dfa46f54f2ef7eec8eaee8686afd3c4b7e740cffc37e314d9b6de50a557e61c5"
+        },
+        {
+          "file": "css/source/theme-cream.css",
+          "hash": "d5d09d0ae2535163aac0b663ebe8abc3c8661d0d910fa0674bcd2c42d8e83949"
+        },
+        {
+          "file": "css/tasks.css",
+          "hash": "9a8a40cce5ae3b5fcbde7bf235f55ead1c7f25639e370b0b2a937b76de4508a7"
+        },
+        {
+          "file": "css/household.css",
+          "hash": "b99cd61ee54c318b99fada3687f622b3b79a95dfed904e584bc5ced2bca7d842"
+        },
+        {
+          "file": "css/electricity-comparator.css",
+          "hash": "7c2b3b94a8209464b60bb55a8a8ffed4cefbdabb1fc159974215e9e6aa7c93b8"
+        },
+        {
+          "file": "css/finance-views.css",
+          "hash": "78011cafc4c93a987ce9dc78cadae2dc566849bf9b280c1de745d5edecc300f5"
+        },
+        {
+          "file": "css/personal-periods.css",
+          "hash": "6398467d045a6e74cec2b70a60904de8bc41a911cce7fc3c6f6fa534884c71b6"
+        },
+        {
+          "file": "js/init.js",
+          "hash": "2402274c8aea9cc86a031ed7d86d1543ecc0668e8a96e1f79c70c1cd0c66a1eb"
+        },
+        {
+          "file": "js/alarm-panel.js",
+          "hash": "dede8cb079ef10d43d655157ae6a66957e3ef485f6adeec6700ba3f075aa5eef"
+        }
+      ],
+      "commit": "f524e3a5754cbe44441825960c66cfef177b9ed3",
+      "review": "Sin revisar",
+      "verifiedEdges": [],
+      "fresh": true
+    },
+    {
+      "id": "settings",
+      "title": "Más opciones",
+      "group": "Ajustes",
+      "route": [
+        "#menuBtn"
+      ],
+      "ready": "#dataMenu.open",
+      "sources": [
+        "js/settings-menu.js"
+      ],
+      "layout": [
+        1665,
+        705
+      ],
+      "image": "captures/settings.png",
+      "anchors": {},
+      "entryBox": null,
+      "dependencies": [
+        {
+          "file": "index.html",
+          "hash": "b28033ab9c7294a0df25c884f60f62f5daec2c203a5db8b89ccc059bfabf23af"
+        },
+        {
+          "file": "js/nav-icons.js",
+          "hash": "d45ad268333bf5dfda75d71902da1d7572bbec27e15e5b412fb3f785c0808c42"
+        },
+        {
+          "file": "js/core.js",
+          "hash": "f9a184dfae0df20d91f6a4de84e66c4c0d04b4296c5c9aee8eb1bdf5e91021b4"
+        },
+        {
+          "file": "js/data-integrity.js",
+          "hash": "34bfc80472270238e11eb0e194fef19e56c7fbb81a35ff5fde23a8ae23e5e9f0"
+        },
+        {
+          "file": "tools/fixture.json",
+          "hash": "98d54e4adf481a811b8b05627515272fb623f8b78db75b294d07ceed739cd07d"
+        },
+        {
+          "file": "tools/visual-map/catalog.cjs",
+          "hash": "e9e3aed799dceb4882d9783f9be393a60451f3561f2a2548634ce64fc5831078"
+        },
+        {
+          "file": "tools/visual-map/generate.cjs",
+          "hash": "bfa10e05645dc8c2f447e7fb5cf50139059204f767d3c28c0eae5243b1323aa8"
+        },
+        {
+          "file": "css/source/base.css",
+          "hash": "fe89ce1a41f8071c2c92cd0c1fe13382ac09b8d9c62e1fdc288b79d239767c27"
+        },
+        {
+          "file": "css/source/navigation-controls.css",
+          "hash": "dbc077d7421c40475885ad1ee8f146743a0e25ab5f6f0d4f0a9a050765add898"
+        },
+        {
+          "file": "css/source/economics.css",
+          "hash": "6f9b6253474e9a8beb117505c300488bf8e830cda6e63f1825b6043596b85b6b"
+        },
+        {
+          "file": "css/source/birthdays.css",
+          "hash": "72ada340dc34ff1b975b7f6076a082e2f658f968607c39f1a80ad0783a94e09b"
+        },
+        {
+          "file": "css/source/event-calendar.css",
+          "hash": "8073f4f6b14bc77152e726a3151ac05bc1fb365e6840a0778582f9b903a434b1"
+        },
+        {
+          "file": "css/source/navigation-alarms.css",
+          "hash": "47d9432b0b15346910793923df7135606c982cf934ab492aaff6aa33777d0227"
+        },
+        {
+          "file": "css/source/event-panels.css",
+          "hash": "6f2fee142f2f0e68d7542366000a3a520705f1b280fc13baa471f9873ce19cf1"
+        },
+        {
+          "file": "css/source/dialogs-responsive.css",
+          "hash": "557d68bac2670445c7edd35896d6a8e90cab5efbc85c6d1684ea31da9451e4b3"
+        },
+        {
+          "file": "css/source/wedding-moves.css",
+          "hash": "dde90ad011c76ce1e638a37b22119288a591374682d49fcead3e229701f2e225"
+        },
+        {
+          "file": "css/source/routines.css",
+          "hash": "54638039dc50d54dfb50a24d295ea76d747f7327321b17e32eeb34457cc2ac55"
+        },
+        {
+          "file": "css/source/shared-refinements.css",
+          "hash": "53900252ff8ecf4662103639b254f3137af07d717028af8853608dd2cc0ea2c2"
+        },
+        {
+          "file": "css/source/home-sharing.css",
+          "hash": "4dc84848aac0cc51a3035558539ad1a197836e6c68025b3594edcbdb531c62f7"
+        },
+        {
+          "file": "css/source/energy-refinements.css",
+          "hash": "001464121116785001eea403e2c6192aae4cc6ef862e74c5c7e76ec15b249acb"
+        },
+        {
+          "file": "css/source/home-reminders.css",
+          "hash": "aa4c63d44fa08de6eba1c12c78a459a3ef708ea4f63424b0037630749a1fad90"
+        },
+        {
+          "file": "css/source/invoices.css",
+          "hash": "dfa46f54f2ef7eec8eaee8686afd3c4b7e740cffc37e314d9b6de50a557e61c5"
+        },
+        {
+          "file": "css/source/theme-cream.css",
+          "hash": "d5d09d0ae2535163aac0b663ebe8abc3c8661d0d910fa0674bcd2c42d8e83949"
+        },
+        {
+          "file": "css/tasks.css",
+          "hash": "9a8a40cce5ae3b5fcbde7bf235f55ead1c7f25639e370b0b2a937b76de4508a7"
+        },
+        {
+          "file": "css/household.css",
+          "hash": "b99cd61ee54c318b99fada3687f622b3b79a95dfed904e584bc5ced2bca7d842"
+        },
+        {
+          "file": "css/electricity-comparator.css",
+          "hash": "7c2b3b94a8209464b60bb55a8a8ffed4cefbdabb1fc159974215e9e6aa7c93b8"
+        },
+        {
+          "file": "css/finance-views.css",
+          "hash": "78011cafc4c93a987ce9dc78cadae2dc566849bf9b280c1de745d5edecc300f5"
+        },
+        {
+          "file": "css/personal-periods.css",
+          "hash": "6398467d045a6e74cec2b70a60904de8bc41a911cce7fc3c6f6fa534884c71b6"
+        },
+        {
+          "file": "js/init.js",
+          "hash": "2402274c8aea9cc86a031ed7d86d1543ecc0668e8a96e1f79c70c1cd0c66a1eb"
+        },
+        {
+          "file": "js/settings-menu.js",
+          "hash": "cf6e3f5183dbce65cc0b7ce1cffe411317fc092d06eaaa1706aa9a16ca67d0f6"
+        }
+      ],
+      "commit": "f524e3a5754cbe44441825960c66cfef177b9ed3",
+      "review": "Sin revisar",
+      "verifiedEdges": [],
+      "fresh": true
+    },
+    {
+      "id": "calendar",
+      "title": "Calendario · 1 mes",
+      "group": "Eventos",
+      "route": [
+        "#eventsBtn",
+        "#evViewCal"
+      ],
+      "ready": ".ev-cell[data-ds=\"2026-08-21\"]",
+      "sources": [
+        "js/events-cal.js",
+        "js/events-bind.js",
+        "js/events.js"
+      ],
+      "flow": [
+        40,
+        65
+      ],
+      "image": "captures/calendar.png",
+      "anchors": {
+        "day": {
+          "x": 262.28125,
+          "y": 497,
+          "width": 12,
+          "height": 12
+        }
+      },
+      "entryBox": null,
+      "dependencies": [
+        {
+          "file": "index.html",
+          "hash": "b28033ab9c7294a0df25c884f60f62f5daec2c203a5db8b89ccc059bfabf23af"
+        },
+        {
+          "file": "js/nav-icons.js",
+          "hash": "d45ad268333bf5dfda75d71902da1d7572bbec27e15e5b412fb3f785c0808c42"
+        },
+        {
+          "file": "js/core.js",
+          "hash": "f9a184dfae0df20d91f6a4de84e66c4c0d04b4296c5c9aee8eb1bdf5e91021b4"
+        },
+        {
+          "file": "js/data-integrity.js",
+          "hash": "34bfc80472270238e11eb0e194fef19e56c7fbb81a35ff5fde23a8ae23e5e9f0"
+        },
+        {
+          "file": "tools/fixture.json",
+          "hash": "98d54e4adf481a811b8b05627515272fb623f8b78db75b294d07ceed739cd07d"
+        },
+        {
+          "file": "tools/visual-map/catalog.cjs",
+          "hash": "e9e3aed799dceb4882d9783f9be393a60451f3561f2a2548634ce64fc5831078"
+        },
+        {
+          "file": "tools/visual-map/generate.cjs",
+          "hash": "bfa10e05645dc8c2f447e7fb5cf50139059204f767d3c28c0eae5243b1323aa8"
+        },
+        {
+          "file": "css/source/base.css",
+          "hash": "fe89ce1a41f8071c2c92cd0c1fe13382ac09b8d9c62e1fdc288b79d239767c27"
+        },
+        {
+          "file": "css/source/navigation-controls.css",
+          "hash": "dbc077d7421c40475885ad1ee8f146743a0e25ab5f6f0d4f0a9a050765add898"
+        },
+        {
+          "file": "css/source/economics.css",
+          "hash": "6f9b6253474e9a8beb117505c300488bf8e830cda6e63f1825b6043596b85b6b"
+        },
+        {
+          "file": "css/source/birthdays.css",
+          "hash": "72ada340dc34ff1b975b7f6076a082e2f658f968607c39f1a80ad0783a94e09b"
+        },
+        {
+          "file": "css/source/event-calendar.css",
+          "hash": "8073f4f6b14bc77152e726a3151ac05bc1fb365e6840a0778582f9b903a434b1"
+        },
+        {
+          "file": "css/source/navigation-alarms.css",
+          "hash": "47d9432b0b15346910793923df7135606c982cf934ab492aaff6aa33777d0227"
+        },
+        {
+          "file": "css/source/event-panels.css",
+          "hash": "6f2fee142f2f0e68d7542366000a3a520705f1b280fc13baa471f9873ce19cf1"
+        },
+        {
+          "file": "css/source/dialogs-responsive.css",
+          "hash": "557d68bac2670445c7edd35896d6a8e90cab5efbc85c6d1684ea31da9451e4b3"
+        },
+        {
+          "file": "css/source/wedding-moves.css",
+          "hash": "dde90ad011c76ce1e638a37b22119288a591374682d49fcead3e229701f2e225"
+        },
+        {
+          "file": "css/source/routines.css",
+          "hash": "54638039dc50d54dfb50a24d295ea76d747f7327321b17e32eeb34457cc2ac55"
+        },
+        {
+          "file": "css/source/shared-refinements.css",
+          "hash": "53900252ff8ecf4662103639b254f3137af07d717028af8853608dd2cc0ea2c2"
+        },
+        {
+          "file": "css/source/home-sharing.css",
+          "hash": "4dc84848aac0cc51a3035558539ad1a197836e6c68025b3594edcbdb531c62f7"
+        },
+        {
+          "file": "css/source/energy-refinements.css",
+          "hash": "001464121116785001eea403e2c6192aae4cc6ef862e74c5c7e76ec15b249acb"
+        },
+        {
+          "file": "css/source/home-reminders.css",
+          "hash": "aa4c63d44fa08de6eba1c12c78a459a3ef708ea4f63424b0037630749a1fad90"
+        },
+        {
+          "file": "css/source/invoices.css",
+          "hash": "dfa46f54f2ef7eec8eaee8686afd3c4b7e740cffc37e314d9b6de50a557e61c5"
+        },
+        {
+          "file": "css/source/theme-cream.css",
+          "hash": "d5d09d0ae2535163aac0b663ebe8abc3c8661d0d910fa0674bcd2c42d8e83949"
+        },
+        {
+          "file": "css/tasks.css",
+          "hash": "9a8a40cce5ae3b5fcbde7bf235f55ead1c7f25639e370b0b2a937b76de4508a7"
+        },
+        {
+          "file": "css/household.css",
+          "hash": "b99cd61ee54c318b99fada3687f622b3b79a95dfed904e584bc5ced2bca7d842"
+        },
+        {
+          "file": "css/electricity-comparator.css",
+          "hash": "7c2b3b94a8209464b60bb55a8a8ffed4cefbdabb1fc159974215e9e6aa7c93b8"
+        },
+        {
+          "file": "css/finance-views.css",
+          "hash": "78011cafc4c93a987ce9dc78cadae2dc566849bf9b280c1de745d5edecc300f5"
+        },
+        {
+          "file": "css/personal-periods.css",
+          "hash": "6398467d045a6e74cec2b70a60904de8bc41a911cce7fc3c6f6fa534884c71b6"
+        },
+        {
+          "file": "js/init.js",
+          "hash": "2402274c8aea9cc86a031ed7d86d1543ecc0668e8a96e1f79c70c1cd0c66a1eb"
+        },
+        {
+          "file": "js/events-render.js",
+          "hash": "8fcb21835a8c2b257e77dd3c3f56b569185d64cc47c7357548911228860ae075"
+        },
+        {
+          "file": "js/events-bind.js",
+          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+        },
+        {
+          "file": "js/events.js",
+          "hash": "e4c0376dc9b1296aacd83b67a81c219806d133794b84362c98cd2e73add84d66"
+        },
+        {
+          "file": "js/events-cal.js",
+          "hash": "30b3bffe5309a5b61ecc1478a33c739e6ea8c578f4668f266fe935f7e2c3894d"
+        }
+      ],
+      "commit": "f524e3a5754cbe44441825960c66cfef177b9ed3",
+      "review": "Sin revisar",
+      "verifiedEdges": [
+        "day"
+      ],
+      "fresh": true
+    },
+    {
+      "id": "day",
+      "title": "Ficha del día",
+      "group": "Eventos",
+      "route": [
+        "#eventsBtn",
+        "#evViewCal",
+        ".ev-cell[data-ds=\"2026-08-21\"] [data-id=\"map-demo\"]"
+      ],
+      "ready": "#evDetailOv.open",
+      "entry": ".ev-car-sheet",
+      "sources": [
+        "js/events-detail.js",
+        "js/events.js"
+      ],
+      "flow": [
+        390,
+        65
+      ],
+      "image": "captures/day.png",
+      "anchors": {
+        "edit": {
+          "x": 16,
+          "y": 821,
+          "width": 180,
+          "height": 43
+        }
+      },
+      "entryBox": {
+        "x": 0,
+        "y": 460,
+        "width": 400,
+        "height": 420
+      },
+      "dependencies": [
+        {
+          "file": "index.html",
+          "hash": "b28033ab9c7294a0df25c884f60f62f5daec2c203a5db8b89ccc059bfabf23af"
+        },
+        {
+          "file": "js/nav-icons.js",
+          "hash": "d45ad268333bf5dfda75d71902da1d7572bbec27e15e5b412fb3f785c0808c42"
+        },
+        {
+          "file": "js/core.js",
+          "hash": "f9a184dfae0df20d91f6a4de84e66c4c0d04b4296c5c9aee8eb1bdf5e91021b4"
+        },
+        {
+          "file": "js/data-integrity.js",
+          "hash": "34bfc80472270238e11eb0e194fef19e56c7fbb81a35ff5fde23a8ae23e5e9f0"
+        },
+        {
+          "file": "tools/fixture.json",
+          "hash": "98d54e4adf481a811b8b05627515272fb623f8b78db75b294d07ceed739cd07d"
+        },
+        {
+          "file": "tools/visual-map/catalog.cjs",
+          "hash": "e9e3aed799dceb4882d9783f9be393a60451f3561f2a2548634ce64fc5831078"
+        },
+        {
+          "file": "tools/visual-map/generate.cjs",
+          "hash": "bfa10e05645dc8c2f447e7fb5cf50139059204f767d3c28c0eae5243b1323aa8"
+        },
+        {
+          "file": "css/source/base.css",
+          "hash": "fe89ce1a41f8071c2c92cd0c1fe13382ac09b8d9c62e1fdc288b79d239767c27"
+        },
+        {
+          "file": "css/source/navigation-controls.css",
+          "hash": "dbc077d7421c40475885ad1ee8f146743a0e25ab5f6f0d4f0a9a050765add898"
+        },
+        {
+          "file": "css/source/economics.css",
+          "hash": "6f9b6253474e9a8beb117505c300488bf8e830cda6e63f1825b6043596b85b6b"
+        },
+        {
+          "file": "css/source/birthdays.css",
+          "hash": "72ada340dc34ff1b975b7f6076a082e2f658f968607c39f1a80ad0783a94e09b"
+        },
+        {
+          "file": "css/source/event-calendar.css",
+          "hash": "8073f4f6b14bc77152e726a3151ac05bc1fb365e6840a0778582f9b903a434b1"
+        },
+        {
+          "file": "css/source/navigation-alarms.css",
+          "hash": "47d9432b0b15346910793923df7135606c982cf934ab492aaff6aa33777d0227"
+        },
+        {
+          "file": "css/source/event-panels.css",
+          "hash": "6f2fee142f2f0e68d7542366000a3a520705f1b280fc13baa471f9873ce19cf1"
+        },
+        {
+          "file": "css/source/dialogs-responsive.css",
+          "hash": "557d68bac2670445c7edd35896d6a8e90cab5efbc85c6d1684ea31da9451e4b3"
+        },
+        {
+          "file": "css/source/wedding-moves.css",
+          "hash": "dde90ad011c76ce1e638a37b22119288a591374682d49fcead3e229701f2e225"
+        },
+        {
+          "file": "css/source/routines.css",
+          "hash": "54638039dc50d54dfb50a24d295ea76d747f7327321b17e32eeb34457cc2ac55"
+        },
+        {
+          "file": "css/source/shared-refinements.css",
+          "hash": "53900252ff8ecf4662103639b254f3137af07d717028af8853608dd2cc0ea2c2"
+        },
+        {
+          "file": "css/source/home-sharing.css",
+          "hash": "4dc84848aac0cc51a3035558539ad1a197836e6c68025b3594edcbdb531c62f7"
+        },
+        {
+          "file": "css/source/energy-refinements.css",
+          "hash": "001464121116785001eea403e2c6192aae4cc6ef862e74c5c7e76ec15b249acb"
+        },
+        {
+          "file": "css/source/home-reminders.css",
+          "hash": "aa4c63d44fa08de6eba1c12c78a459a3ef708ea4f63424b0037630749a1fad90"
+        },
+        {
+          "file": "css/source/invoices.css",
+          "hash": "dfa46f54f2ef7eec8eaee8686afd3c4b7e740cffc37e314d9b6de50a557e61c5"
+        },
+        {
+          "file": "css/source/theme-cream.css",
+          "hash": "d5d09d0ae2535163aac0b663ebe8abc3c8661d0d910fa0674bcd2c42d8e83949"
+        },
+        {
+          "file": "css/tasks.css",
+          "hash": "9a8a40cce5ae3b5fcbde7bf235f55ead1c7f25639e370b0b2a937b76de4508a7"
+        },
+        {
+          "file": "css/household.css",
+          "hash": "b99cd61ee54c318b99fada3687f622b3b79a95dfed904e584bc5ced2bca7d842"
+        },
+        {
+          "file": "css/electricity-comparator.css",
+          "hash": "7c2b3b94a8209464b60bb55a8a8ffed4cefbdabb1fc159974215e9e6aa7c93b8"
+        },
+        {
+          "file": "css/finance-views.css",
+          "hash": "78011cafc4c93a987ce9dc78cadae2dc566849bf9b280c1de745d5edecc300f5"
+        },
+        {
+          "file": "css/personal-periods.css",
+          "hash": "6398467d045a6e74cec2b70a60904de8bc41a911cce7fc3c6f6fa534884c71b6"
+        },
+        {
+          "file": "js/init.js",
+          "hash": "2402274c8aea9cc86a031ed7d86d1543ecc0668e8a96e1f79c70c1cd0c66a1eb"
+        },
+        {
+          "file": "js/events-render.js",
+          "hash": "8fcb21835a8c2b257e77dd3c3f56b569185d64cc47c7357548911228860ae075"
+        },
+        {
+          "file": "js/events-bind.js",
+          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+        },
+        {
+          "file": "js/events.js",
+          "hash": "e4c0376dc9b1296aacd83b67a81c219806d133794b84362c98cd2e73add84d66"
+        },
+        {
+          "file": "js/events-cal.js",
+          "hash": "30b3bffe5309a5b61ecc1478a33c739e6ea8c578f4668f266fe935f7e2c3894d"
+        },
+        {
+          "file": "js/events-detail.js",
+          "hash": "02e3f78e1557d9a7afb73b063c88eb2e88fced1e023cdda3adb3ab97128ff178"
+        }
+      ],
+      "commit": "f524e3a5754cbe44441825960c66cfef177b9ed3",
+      "review": "Sin revisar",
+      "verifiedEdges": [
+        "edit"
+      ],
+      "fresh": true
+    },
+    {
+      "id": "edit",
+      "title": "Editar evento · inicio",
+      "group": "Eventos",
+      "route": [
+        "#eventsBtn",
+        "#evViewCal",
+        ".ev-cell[data-ds=\"2026-08-21\"] [data-id=\"map-demo\"]",
+        "#evDEdit"
+      ],
+      "ready": "#evFormOv.open",
+      "entry": ".ev-event-form-header",
+      "sources": [
+        "js/events-form.js",
+        "js/events-form-schedule.js",
+        "js/events-form-controls.js"
+      ],
+      "flow": [
+        740,
+        65
+      ],
+      "image": "captures/edit.png",
+      "anchors": {
+        "time": {
+          "x": 243,
+          "y": 200,
+          "width": 64,
+          "height": 36
+        },
+        "edit-scroll": {
+          "x": 390,
+          "y": 518.95,
+          "width": 8,
+          "height": 100
+        },
+        "calendar": {
+          "x": 20,
+          "y": 114,
+          "width": 36,
+          "height": 36
+        }
+      },
+      "entryBox": {
+        "x": 0,
+        "y": 114,
+        "width": 400,
+        "height": 48
+      },
+      "dependencies": [
+        {
+          "file": "index.html",
+          "hash": "b28033ab9c7294a0df25c884f60f62f5daec2c203a5db8b89ccc059bfabf23af"
+        },
+        {
+          "file": "js/nav-icons.js",
+          "hash": "d45ad268333bf5dfda75d71902da1d7572bbec27e15e5b412fb3f785c0808c42"
+        },
+        {
+          "file": "js/core.js",
+          "hash": "f9a184dfae0df20d91f6a4de84e66c4c0d04b4296c5c9aee8eb1bdf5e91021b4"
+        },
+        {
+          "file": "js/data-integrity.js",
+          "hash": "34bfc80472270238e11eb0e194fef19e56c7fbb81a35ff5fde23a8ae23e5e9f0"
+        },
+        {
+          "file": "tools/fixture.json",
+          "hash": "98d54e4adf481a811b8b05627515272fb623f8b78db75b294d07ceed739cd07d"
+        },
+        {
+          "file": "tools/visual-map/catalog.cjs",
+          "hash": "e9e3aed799dceb4882d9783f9be393a60451f3561f2a2548634ce64fc5831078"
+        },
+        {
+          "file": "tools/visual-map/generate.cjs",
+          "hash": "bfa10e05645dc8c2f447e7fb5cf50139059204f767d3c28c0eae5243b1323aa8"
+        },
+        {
+          "file": "css/source/base.css",
+          "hash": "fe89ce1a41f8071c2c92cd0c1fe13382ac09b8d9c62e1fdc288b79d239767c27"
+        },
+        {
+          "file": "css/source/navigation-controls.css",
+          "hash": "dbc077d7421c40475885ad1ee8f146743a0e25ab5f6f0d4f0a9a050765add898"
+        },
+        {
+          "file": "css/source/economics.css",
+          "hash": "6f9b6253474e9a8beb117505c300488bf8e830cda6e63f1825b6043596b85b6b"
+        },
+        {
+          "file": "css/source/birthdays.css",
+          "hash": "72ada340dc34ff1b975b7f6076a082e2f658f968607c39f1a80ad0783a94e09b"
+        },
+        {
+          "file": "css/source/event-calendar.css",
+          "hash": "8073f4f6b14bc77152e726a3151ac05bc1fb365e6840a0778582f9b903a434b1"
+        },
+        {
+          "file": "css/source/navigation-alarms.css",
+          "hash": "47d9432b0b15346910793923df7135606c982cf934ab492aaff6aa33777d0227"
+        },
+        {
+          "file": "css/source/event-panels.css",
+          "hash": "6f2fee142f2f0e68d7542366000a3a520705f1b280fc13baa471f9873ce19cf1"
+        },
+        {
+          "file": "css/source/dialogs-responsive.css",
+          "hash": "557d68bac2670445c7edd35896d6a8e90cab5efbc85c6d1684ea31da9451e4b3"
+        },
+        {
+          "file": "css/source/wedding-moves.css",
+          "hash": "dde90ad011c76ce1e638a37b22119288a591374682d49fcead3e229701f2e225"
+        },
+        {
+          "file": "css/source/routines.css",
+          "hash": "54638039dc50d54dfb50a24d295ea76d747f7327321b17e32eeb34457cc2ac55"
+        },
+        {
+          "file": "css/source/shared-refinements.css",
+          "hash": "53900252ff8ecf4662103639b254f3137af07d717028af8853608dd2cc0ea2c2"
+        },
+        {
+          "file": "css/source/home-sharing.css",
+          "hash": "4dc84848aac0cc51a3035558539ad1a197836e6c68025b3594edcbdb531c62f7"
+        },
+        {
+          "file": "css/source/energy-refinements.css",
+          "hash": "001464121116785001eea403e2c6192aae4cc6ef862e74c5c7e76ec15b249acb"
+        },
+        {
+          "file": "css/source/home-reminders.css",
+          "hash": "aa4c63d44fa08de6eba1c12c78a459a3ef708ea4f63424b0037630749a1fad90"
+        },
+        {
+          "file": "css/source/invoices.css",
+          "hash": "dfa46f54f2ef7eec8eaee8686afd3c4b7e740cffc37e314d9b6de50a557e61c5"
+        },
+        {
+          "file": "css/source/theme-cream.css",
+          "hash": "d5d09d0ae2535163aac0b663ebe8abc3c8661d0d910fa0674bcd2c42d8e83949"
+        },
+        {
+          "file": "css/tasks.css",
+          "hash": "9a8a40cce5ae3b5fcbde7bf235f55ead1c7f25639e370b0b2a937b76de4508a7"
+        },
+        {
+          "file": "css/household.css",
+          "hash": "b99cd61ee54c318b99fada3687f622b3b79a95dfed904e584bc5ced2bca7d842"
+        },
+        {
+          "file": "css/electricity-comparator.css",
+          "hash": "7c2b3b94a8209464b60bb55a8a8ffed4cefbdabb1fc159974215e9e6aa7c93b8"
+        },
+        {
+          "file": "css/finance-views.css",
+          "hash": "78011cafc4c93a987ce9dc78cadae2dc566849bf9b280c1de745d5edecc300f5"
+        },
+        {
+          "file": "css/personal-periods.css",
+          "hash": "6398467d045a6e74cec2b70a60904de8bc41a911cce7fc3c6f6fa534884c71b6"
+        },
+        {
+          "file": "js/init.js",
+          "hash": "2402274c8aea9cc86a031ed7d86d1543ecc0668e8a96e1f79c70c1cd0c66a1eb"
+        },
+        {
+          "file": "js/events-render.js",
+          "hash": "8fcb21835a8c2b257e77dd3c3f56b569185d64cc47c7357548911228860ae075"
+        },
+        {
+          "file": "js/events-bind.js",
+          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+        },
+        {
+          "file": "js/events.js",
+          "hash": "e4c0376dc9b1296aacd83b67a81c219806d133794b84362c98cd2e73add84d66"
+        },
+        {
+          "file": "js/events-cal.js",
+          "hash": "30b3bffe5309a5b61ecc1478a33c739e6ea8c578f4668f266fe935f7e2c3894d"
+        },
+        {
+          "file": "js/events-detail.js",
+          "hash": "02e3f78e1557d9a7afb73b063c88eb2e88fced1e023cdda3adb3ab97128ff178"
+        },
+        {
+          "file": "js/events-form.js",
+          "hash": "ad011f9bb1627e7dcfce133a74bad3588e357d432f6091bcb53469bf0b25a410"
+        },
+        {
+          "file": "js/events-form-schedule.js",
+          "hash": "8aaeba5654a8c1f123b053120c52f253f128907df8d43894d4e4f6987fe9e43d"
+        },
+        {
+          "file": "js/events-form-controls.js",
+          "hash": "e88275e0a787237dc4ce5b0df5c793343cf2a5dfd96a86580a56ea8065c851b1"
+        }
+      ],
+      "commit": "f524e3a5754cbe44441825960c66cfef177b9ed3",
+      "review": "Sin revisar",
+      "verifiedEdges": [
+        "time",
+        "edit-scroll",
+        "calendar"
+      ],
+      "fresh": true
+    },
+    {
+      "id": "time",
+      "title": "Elegir hora",
+      "group": "Eventos",
+      "route": [
+        "#eventsBtn",
+        "#evViewCal",
+        ".ev-cell[data-ds=\"2026-08-21\"] [data-id=\"map-demo\"]",
+        "#evDEdit",
+        "#evFTime"
+      ],
+      "ready": "#timePickerOv.open",
+      "entry": ".time-picker-sheet",
+      "sources": [
+        "js/time-picker.js"
+      ],
+      "flow": [
+        1090,
+        65
+      ],
+      "image": "captures/time.png",
+      "anchors": {
+        "edit": {
+          "x": 20,
+          "y": 809,
+          "width": 114.65625,
+          "height": 41
+        }
+      },
+      "entryBox": {
+        "x": 0,
+        "y": 555,
+        "width": 400,
+        "height": 325
+      },
+      "dependencies": [
+        {
+          "file": "index.html",
+          "hash": "b28033ab9c7294a0df25c884f60f62f5daec2c203a5db8b89ccc059bfabf23af"
+        },
+        {
+          "file": "js/nav-icons.js",
+          "hash": "d45ad268333bf5dfda75d71902da1d7572bbec27e15e5b412fb3f785c0808c42"
+        },
+        {
+          "file": "js/core.js",
+          "hash": "f9a184dfae0df20d91f6a4de84e66c4c0d04b4296c5c9aee8eb1bdf5e91021b4"
+        },
+        {
+          "file": "js/data-integrity.js",
+          "hash": "34bfc80472270238e11eb0e194fef19e56c7fbb81a35ff5fde23a8ae23e5e9f0"
+        },
+        {
+          "file": "tools/fixture.json",
+          "hash": "98d54e4adf481a811b8b05627515272fb623f8b78db75b294d07ceed739cd07d"
+        },
+        {
+          "file": "tools/visual-map/catalog.cjs",
+          "hash": "e9e3aed799dceb4882d9783f9be393a60451f3561f2a2548634ce64fc5831078"
+        },
+        {
+          "file": "tools/visual-map/generate.cjs",
+          "hash": "bfa10e05645dc8c2f447e7fb5cf50139059204f767d3c28c0eae5243b1323aa8"
+        },
+        {
+          "file": "css/source/base.css",
+          "hash": "fe89ce1a41f8071c2c92cd0c1fe13382ac09b8d9c62e1fdc288b79d239767c27"
+        },
+        {
+          "file": "css/source/navigation-controls.css",
+          "hash": "dbc077d7421c40475885ad1ee8f146743a0e25ab5f6f0d4f0a9a050765add898"
+        },
+        {
+          "file": "css/source/economics.css",
+          "hash": "6f9b6253474e9a8beb117505c300488bf8e830cda6e63f1825b6043596b85b6b"
+        },
+        {
+          "file": "css/source/birthdays.css",
+          "hash": "72ada340dc34ff1b975b7f6076a082e2f658f968607c39f1a80ad0783a94e09b"
+        },
+        {
+          "file": "css/source/event-calendar.css",
+          "hash": "8073f4f6b14bc77152e726a3151ac05bc1fb365e6840a0778582f9b903a434b1"
+        },
+        {
+          "file": "css/source/navigation-alarms.css",
+          "hash": "47d9432b0b15346910793923df7135606c982cf934ab492aaff6aa33777d0227"
+        },
+        {
+          "file": "css/source/event-panels.css",
+          "hash": "6f2fee142f2f0e68d7542366000a3a520705f1b280fc13baa471f9873ce19cf1"
+        },
+        {
+          "file": "css/source/dialogs-responsive.css",
+          "hash": "557d68bac2670445c7edd35896d6a8e90cab5efbc85c6d1684ea31da9451e4b3"
+        },
+        {
+          "file": "css/source/wedding-moves.css",
+          "hash": "dde90ad011c76ce1e638a37b22119288a591374682d49fcead3e229701f2e225"
+        },
+        {
+          "file": "css/source/routines.css",
+          "hash": "54638039dc50d54dfb50a24d295ea76d747f7327321b17e32eeb34457cc2ac55"
+        },
+        {
+          "file": "css/source/shared-refinements.css",
+          "hash": "53900252ff8ecf4662103639b254f3137af07d717028af8853608dd2cc0ea2c2"
+        },
+        {
+          "file": "css/source/home-sharing.css",
+          "hash": "4dc84848aac0cc51a3035558539ad1a197836e6c68025b3594edcbdb531c62f7"
+        },
+        {
+          "file": "css/source/energy-refinements.css",
+          "hash": "001464121116785001eea403e2c6192aae4cc6ef862e74c5c7e76ec15b249acb"
+        },
+        {
+          "file": "css/source/home-reminders.css",
+          "hash": "aa4c63d44fa08de6eba1c12c78a459a3ef708ea4f63424b0037630749a1fad90"
+        },
+        {
+          "file": "css/source/invoices.css",
+          "hash": "dfa46f54f2ef7eec8eaee8686afd3c4b7e740cffc37e314d9b6de50a557e61c5"
+        },
+        {
+          "file": "css/source/theme-cream.css",
+          "hash": "d5d09d0ae2535163aac0b663ebe8abc3c8661d0d910fa0674bcd2c42d8e83949"
+        },
+        {
+          "file": "css/tasks.css",
+          "hash": "9a8a40cce5ae3b5fcbde7bf235f55ead1c7f25639e370b0b2a937b76de4508a7"
+        },
+        {
+          "file": "css/household.css",
+          "hash": "b99cd61ee54c318b99fada3687f622b3b79a95dfed904e584bc5ced2bca7d842"
+        },
+        {
+          "file": "css/electricity-comparator.css",
+          "hash": "7c2b3b94a8209464b60bb55a8a8ffed4cefbdabb1fc159974215e9e6aa7c93b8"
+        },
+        {
+          "file": "css/finance-views.css",
+          "hash": "78011cafc4c93a987ce9dc78cadae2dc566849bf9b280c1de745d5edecc300f5"
+        },
+        {
+          "file": "css/personal-periods.css",
+          "hash": "6398467d045a6e74cec2b70a60904de8bc41a911cce7fc3c6f6fa534884c71b6"
+        },
+        {
+          "file": "js/init.js",
+          "hash": "2402274c8aea9cc86a031ed7d86d1543ecc0668e8a96e1f79c70c1cd0c66a1eb"
+        },
+        {
+          "file": "js/events-render.js",
+          "hash": "8fcb21835a8c2b257e77dd3c3f56b569185d64cc47c7357548911228860ae075"
+        },
+        {
+          "file": "js/events-bind.js",
+          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+        },
+        {
+          "file": "js/events.js",
+          "hash": "e4c0376dc9b1296aacd83b67a81c219806d133794b84362c98cd2e73add84d66"
+        },
+        {
+          "file": "js/events-cal.js",
+          "hash": "30b3bffe5309a5b61ecc1478a33c739e6ea8c578f4668f266fe935f7e2c3894d"
+        },
+        {
+          "file": "js/events-detail.js",
+          "hash": "02e3f78e1557d9a7afb73b063c88eb2e88fced1e023cdda3adb3ab97128ff178"
+        },
+        {
+          "file": "js/events-form.js",
+          "hash": "ad011f9bb1627e7dcfce133a74bad3588e357d432f6091bcb53469bf0b25a410"
+        },
+        {
+          "file": "js/events-form-schedule.js",
+          "hash": "8aaeba5654a8c1f123b053120c52f253f128907df8d43894d4e4f6987fe9e43d"
+        },
+        {
+          "file": "js/events-form-controls.js",
+          "hash": "e88275e0a787237dc4ce5b0df5c793343cf2a5dfd96a86580a56ea8065c851b1"
+        },
+        {
+          "file": "js/time-picker.js",
+          "hash": "03a234420d4e6603f19aad47e414a4f292bec6a7ddc22be33daa7535f74614e5"
+        }
+      ],
+      "commit": "f524e3a5754cbe44441825960c66cfef177b9ed3",
+      "review": "Sin revisar",
+      "verifiedEdges": [
+        "edit"
+      ],
+      "fresh": true
+    },
+    {
+      "id": "edit-scroll",
+      "title": "Editar evento · categorías",
+      "group": "Eventos",
+      "route": [
+        "#eventsBtn",
+        "#evViewCal",
+        ".ev-cell[data-ds=\"2026-08-21\"] [data-id=\"map-demo\"]",
+        "#evDEdit",
+        {
+          "scroll": "#evFTypePicker [data-ev-multiday=\"Otros\"]"
+        }
+      ],
+      "ready": "#evFTypePicker [data-ev-multiday=\"Otros\"]",
+      "entry": ".ev-event-form-header",
+      "sources": [
+        "js/events-form.js",
+        "js/events-form-schedule.js",
+        "js/events-form-controls.js"
+      ],
+      "flow": [
+        740,
+        705
+      ],
+      "note": "Mismo formulario, desplazado hasta el botón Multidía.",
+      "image": "captures/edit-scroll.png",
+      "anchors": {
+        "dates": {
+          "x": 310.3125,
+          "y": 469.84375,
+          "width": 58.6875,
+          "height": 34
+        }
+      },
+      "entryBox": {
+        "x": 0,
+        "y": 114,
+        "width": 400,
+        "height": 48
+      },
+      "dependencies": [
+        {
+          "file": "index.html",
+          "hash": "b28033ab9c7294a0df25c884f60f62f5daec2c203a5db8b89ccc059bfabf23af"
+        },
+        {
+          "file": "js/nav-icons.js",
+          "hash": "d45ad268333bf5dfda75d71902da1d7572bbec27e15e5b412fb3f785c0808c42"
+        },
+        {
+          "file": "js/core.js",
+          "hash": "f9a184dfae0df20d91f6a4de84e66c4c0d04b4296c5c9aee8eb1bdf5e91021b4"
+        },
+        {
+          "file": "js/data-integrity.js",
+          "hash": "34bfc80472270238e11eb0e194fef19e56c7fbb81a35ff5fde23a8ae23e5e9f0"
+        },
+        {
+          "file": "tools/fixture.json",
+          "hash": "98d54e4adf481a811b8b05627515272fb623f8b78db75b294d07ceed739cd07d"
+        },
+        {
+          "file": "tools/visual-map/catalog.cjs",
+          "hash": "e9e3aed799dceb4882d9783f9be393a60451f3561f2a2548634ce64fc5831078"
+        },
+        {
+          "file": "tools/visual-map/generate.cjs",
+          "hash": "bfa10e05645dc8c2f447e7fb5cf50139059204f767d3c28c0eae5243b1323aa8"
+        },
+        {
+          "file": "css/source/base.css",
+          "hash": "fe89ce1a41f8071c2c92cd0c1fe13382ac09b8d9c62e1fdc288b79d239767c27"
+        },
+        {
+          "file": "css/source/navigation-controls.css",
+          "hash": "dbc077d7421c40475885ad1ee8f146743a0e25ab5f6f0d4f0a9a050765add898"
+        },
+        {
+          "file": "css/source/economics.css",
+          "hash": "6f9b6253474e9a8beb117505c300488bf8e830cda6e63f1825b6043596b85b6b"
+        },
+        {
+          "file": "css/source/birthdays.css",
+          "hash": "72ada340dc34ff1b975b7f6076a082e2f658f968607c39f1a80ad0783a94e09b"
+        },
+        {
+          "file": "css/source/event-calendar.css",
+          "hash": "8073f4f6b14bc77152e726a3151ac05bc1fb365e6840a0778582f9b903a434b1"
+        },
+        {
+          "file": "css/source/navigation-alarms.css",
+          "hash": "47d9432b0b15346910793923df7135606c982cf934ab492aaff6aa33777d0227"
+        },
+        {
+          "file": "css/source/event-panels.css",
+          "hash": "6f2fee142f2f0e68d7542366000a3a520705f1b280fc13baa471f9873ce19cf1"
+        },
+        {
+          "file": "css/source/dialogs-responsive.css",
+          "hash": "557d68bac2670445c7edd35896d6a8e90cab5efbc85c6d1684ea31da9451e4b3"
+        },
+        {
+          "file": "css/source/wedding-moves.css",
+          "hash": "dde90ad011c76ce1e638a37b22119288a591374682d49fcead3e229701f2e225"
+        },
+        {
+          "file": "css/source/routines.css",
+          "hash": "54638039dc50d54dfb50a24d295ea76d747f7327321b17e32eeb34457cc2ac55"
+        },
+        {
+          "file": "css/source/shared-refinements.css",
+          "hash": "53900252ff8ecf4662103639b254f3137af07d717028af8853608dd2cc0ea2c2"
+        },
+        {
+          "file": "css/source/home-sharing.css",
+          "hash": "4dc84848aac0cc51a3035558539ad1a197836e6c68025b3594edcbdb531c62f7"
+        },
+        {
+          "file": "css/source/energy-refinements.css",
+          "hash": "001464121116785001eea403e2c6192aae4cc6ef862e74c5c7e76ec15b249acb"
+        },
+        {
+          "file": "css/source/home-reminders.css",
+          "hash": "aa4c63d44fa08de6eba1c12c78a459a3ef708ea4f63424b0037630749a1fad90"
+        },
+        {
+          "file": "css/source/invoices.css",
+          "hash": "dfa46f54f2ef7eec8eaee8686afd3c4b7e740cffc37e314d9b6de50a557e61c5"
+        },
+        {
+          "file": "css/source/theme-cream.css",
+          "hash": "d5d09d0ae2535163aac0b663ebe8abc3c8661d0d910fa0674bcd2c42d8e83949"
+        },
+        {
+          "file": "css/tasks.css",
+          "hash": "9a8a40cce5ae3b5fcbde7bf235f55ead1c7f25639e370b0b2a937b76de4508a7"
+        },
+        {
+          "file": "css/household.css",
+          "hash": "b99cd61ee54c318b99fada3687f622b3b79a95dfed904e584bc5ced2bca7d842"
+        },
+        {
+          "file": "css/electricity-comparator.css",
+          "hash": "7c2b3b94a8209464b60bb55a8a8ffed4cefbdabb1fc159974215e9e6aa7c93b8"
+        },
+        {
+          "file": "css/finance-views.css",
+          "hash": "78011cafc4c93a987ce9dc78cadae2dc566849bf9b280c1de745d5edecc300f5"
+        },
+        {
+          "file": "css/personal-periods.css",
+          "hash": "6398467d045a6e74cec2b70a60904de8bc41a911cce7fc3c6f6fa534884c71b6"
+        },
+        {
+          "file": "js/init.js",
+          "hash": "2402274c8aea9cc86a031ed7d86d1543ecc0668e8a96e1f79c70c1cd0c66a1eb"
+        },
+        {
+          "file": "js/events-render.js",
+          "hash": "8fcb21835a8c2b257e77dd3c3f56b569185d64cc47c7357548911228860ae075"
+        },
+        {
+          "file": "js/events-bind.js",
+          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+        },
+        {
+          "file": "js/events.js",
+          "hash": "e4c0376dc9b1296aacd83b67a81c219806d133794b84362c98cd2e73add84d66"
+        },
+        {
+          "file": "js/events-cal.js",
+          "hash": "30b3bffe5309a5b61ecc1478a33c739e6ea8c578f4668f266fe935f7e2c3894d"
+        },
+        {
+          "file": "js/events-detail.js",
+          "hash": "02e3f78e1557d9a7afb73b063c88eb2e88fced1e023cdda3adb3ab97128ff178"
+        },
+        {
+          "file": "js/events-form.js",
+          "hash": "ad011f9bb1627e7dcfce133a74bad3588e357d432f6091bcb53469bf0b25a410"
+        },
+        {
+          "file": "js/events-form-schedule.js",
+          "hash": "8aaeba5654a8c1f123b053120c52f253f128907df8d43894d4e4f6987fe9e43d"
+        },
+        {
+          "file": "js/events-form-controls.js",
+          "hash": "e88275e0a787237dc4ce5b0df5c793343cf2a5dfd96a86580a56ea8065c851b1"
+        }
+      ],
+      "commit": "f524e3a5754cbe44441825960c66cfef177b9ed3",
+      "review": "Sin revisar",
+      "verifiedEdges": [
+        "dates"
+      ],
+      "fresh": true
+    },
+    {
+      "id": "dates",
+      "title": "Selección Multidía",
+      "group": "Eventos",
+      "route": [
+        "#eventsBtn",
+        "#evViewCal",
+        ".ev-cell[data-ds=\"2026-08-21\"] [data-id=\"map-demo\"]",
+        "#evDEdit",
+        {
+          "scroll": "#evFTypePicker [data-ev-multiday=\"Otros\"]"
+        },
+        "#evFTypePicker [data-ev-multiday=\"Otros\"]"
+      ],
+      "ready": "#dpOv.open",
+      "entry": ".dp-hdr",
+      "sources": [
+        "js/events-picker-date.js"
+      ],
+      "flow": [
+        1090,
+        705
+      ],
+      "image": "captures/dates.png",
+      "anchors": {
+        "edit-scroll": {
+          "x": 12,
+          "y": 164,
+          "width": 36,
+          "height": 36
+        }
+      },
+      "entryBox": {
+        "x": 12,
+        "y": 164,
+        "width": 376,
+        "height": 36
+      },
+      "dependencies": [
+        {
+          "file": "index.html",
+          "hash": "b28033ab9c7294a0df25c884f60f62f5daec2c203a5db8b89ccc059bfabf23af"
+        },
+        {
+          "file": "js/nav-icons.js",
+          "hash": "d45ad268333bf5dfda75d71902da1d7572bbec27e15e5b412fb3f785c0808c42"
+        },
+        {
+          "file": "js/core.js",
+          "hash": "f9a184dfae0df20d91f6a4de84e66c4c0d04b4296c5c9aee8eb1bdf5e91021b4"
+        },
+        {
+          "file": "js/data-integrity.js",
+          "hash": "34bfc80472270238e11eb0e194fef19e56c7fbb81a35ff5fde23a8ae23e5e9f0"
+        },
+        {
+          "file": "tools/fixture.json",
+          "hash": "98d54e4adf481a811b8b05627515272fb623f8b78db75b294d07ceed739cd07d"
+        },
+        {
+          "file": "tools/visual-map/catalog.cjs",
+          "hash": "e9e3aed799dceb4882d9783f9be393a60451f3561f2a2548634ce64fc5831078"
+        },
+        {
+          "file": "tools/visual-map/generate.cjs",
+          "hash": "bfa10e05645dc8c2f447e7fb5cf50139059204f767d3c28c0eae5243b1323aa8"
+        },
+        {
+          "file": "css/source/base.css",
+          "hash": "fe89ce1a41f8071c2c92cd0c1fe13382ac09b8d9c62e1fdc288b79d239767c27"
+        },
+        {
+          "file": "css/source/navigation-controls.css",
+          "hash": "dbc077d7421c40475885ad1ee8f146743a0e25ab5f6f0d4f0a9a050765add898"
+        },
+        {
+          "file": "css/source/economics.css",
+          "hash": "6f9b6253474e9a8beb117505c300488bf8e830cda6e63f1825b6043596b85b6b"
+        },
+        {
+          "file": "css/source/birthdays.css",
+          "hash": "72ada340dc34ff1b975b7f6076a082e2f658f968607c39f1a80ad0783a94e09b"
+        },
+        {
+          "file": "css/source/event-calendar.css",
+          "hash": "8073f4f6b14bc77152e726a3151ac05bc1fb365e6840a0778582f9b903a434b1"
+        },
+        {
+          "file": "css/source/navigation-alarms.css",
+          "hash": "47d9432b0b15346910793923df7135606c982cf934ab492aaff6aa33777d0227"
+        },
+        {
+          "file": "css/source/event-panels.css",
+          "hash": "6f2fee142f2f0e68d7542366000a3a520705f1b280fc13baa471f9873ce19cf1"
+        },
+        {
+          "file": "css/source/dialogs-responsive.css",
+          "hash": "557d68bac2670445c7edd35896d6a8e90cab5efbc85c6d1684ea31da9451e4b3"
+        },
+        {
+          "file": "css/source/wedding-moves.css",
+          "hash": "dde90ad011c76ce1e638a37b22119288a591374682d49fcead3e229701f2e225"
+        },
+        {
+          "file": "css/source/routines.css",
+          "hash": "54638039dc50d54dfb50a24d295ea76d747f7327321b17e32eeb34457cc2ac55"
+        },
+        {
+          "file": "css/source/shared-refinements.css",
+          "hash": "53900252ff8ecf4662103639b254f3137af07d717028af8853608dd2cc0ea2c2"
+        },
+        {
+          "file": "css/source/home-sharing.css",
+          "hash": "4dc84848aac0cc51a3035558539ad1a197836e6c68025b3594edcbdb531c62f7"
+        },
+        {
+          "file": "css/source/energy-refinements.css",
+          "hash": "001464121116785001eea403e2c6192aae4cc6ef862e74c5c7e76ec15b249acb"
+        },
+        {
+          "file": "css/source/home-reminders.css",
+          "hash": "aa4c63d44fa08de6eba1c12c78a459a3ef708ea4f63424b0037630749a1fad90"
+        },
+        {
+          "file": "css/source/invoices.css",
+          "hash": "dfa46f54f2ef7eec8eaee8686afd3c4b7e740cffc37e314d9b6de50a557e61c5"
+        },
+        {
+          "file": "css/source/theme-cream.css",
+          "hash": "d5d09d0ae2535163aac0b663ebe8abc3c8661d0d910fa0674bcd2c42d8e83949"
+        },
+        {
+          "file": "css/tasks.css",
+          "hash": "9a8a40cce5ae3b5fcbde7bf235f55ead1c7f25639e370b0b2a937b76de4508a7"
+        },
+        {
+          "file": "css/household.css",
+          "hash": "b99cd61ee54c318b99fada3687f622b3b79a95dfed904e584bc5ced2bca7d842"
+        },
+        {
+          "file": "css/electricity-comparator.css",
+          "hash": "7c2b3b94a8209464b60bb55a8a8ffed4cefbdabb1fc159974215e9e6aa7c93b8"
+        },
+        {
+          "file": "css/finance-views.css",
+          "hash": "78011cafc4c93a987ce9dc78cadae2dc566849bf9b280c1de745d5edecc300f5"
+        },
+        {
+          "file": "css/personal-periods.css",
+          "hash": "6398467d045a6e74cec2b70a60904de8bc41a911cce7fc3c6f6fa534884c71b6"
+        },
+        {
+          "file": "js/init.js",
+          "hash": "2402274c8aea9cc86a031ed7d86d1543ecc0668e8a96e1f79c70c1cd0c66a1eb"
+        },
+        {
+          "file": "js/events-render.js",
+          "hash": "8fcb21835a8c2b257e77dd3c3f56b569185d64cc47c7357548911228860ae075"
+        },
+        {
+          "file": "js/events-bind.js",
+          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+        },
+        {
+          "file": "js/events.js",
+          "hash": "e4c0376dc9b1296aacd83b67a81c219806d133794b84362c98cd2e73add84d66"
+        },
+        {
+          "file": "js/events-cal.js",
+          "hash": "30b3bffe5309a5b61ecc1478a33c739e6ea8c578f4668f266fe935f7e2c3894d"
+        },
+        {
+          "file": "js/events-detail.js",
+          "hash": "02e3f78e1557d9a7afb73b063c88eb2e88fced1e023cdda3adb3ab97128ff178"
+        },
+        {
+          "file": "js/events-form.js",
+          "hash": "ad011f9bb1627e7dcfce133a74bad3588e357d432f6091bcb53469bf0b25a410"
+        },
+        {
+          "file": "js/events-form-schedule.js",
+          "hash": "8aaeba5654a8c1f123b053120c52f253f128907df8d43894d4e4f6987fe9e43d"
+        },
+        {
+          "file": "js/events-form-controls.js",
+          "hash": "e88275e0a787237dc4ce5b0df5c793343cf2a5dfd96a86580a56ea8065c851b1"
+        },
+        {
+          "file": "js/events-picker-date.js",
+          "hash": "063ef38cab57bc733757ec325523d136ab993e6c8eb4f94a9d34f5ea2f34fded"
+        }
+      ],
+      "commit": "f524e3a5754cbe44441825960c66cfef177b9ed3",
+      "review": "Sin revisar",
+      "verifiedEdges": [
+        "edit-scroll"
+      ],
+      "fresh": true
+    }
+  ],
+  "edges": [
+    {
+      "from": "home",
+      "to": "household",
+      "selector": "#householdBtn",
+      "label": "Gastos del hogar",
+      "view": "general"
+    },
+    {
+      "from": "home",
+      "to": "study",
+      "selector": "#estudioBtn",
+      "label": "Comparación",
+      "view": "general"
+    },
+    {
+      "from": "home",
+      "to": "events",
+      "selector": "#eventsBtn",
+      "label": "Eventos",
+      "view": "general"
+    },
+    {
+      "from": "home",
+      "to": "economics",
+      "selector": "#econBtn",
+      "label": "Resumen económico",
+      "view": "general"
+    },
+    {
+      "from": "home",
+      "to": "alarm",
+      "selector": "#alarmTestBtn",
+      "label": "Campana",
+      "view": "general"
+    },
+    {
+      "from": "home",
+      "to": "settings",
+      "selector": "#menuBtn",
+      "label": "Más opciones",
+      "view": "general"
+    },
+    {
+      "from": "events",
+      "to": "calendar",
+      "selector": "#evViewCal",
+      "label": "Calendario 1 mes",
+      "view": "bridge"
+    },
+    {
+      "from": "calendar",
+      "to": "day",
+      "selector": ".ev-cell[data-ds=\"2026-08-21\"] [data-id=\"map-demo\"]",
+      "label": "Pulsar el marcador",
+      "view": "flow"
+    },
+    {
+      "from": "day",
+      "to": "edit",
+      "selector": "#evDEdit",
+      "label": "Editar evento",
+      "view": "flow"
+    },
+    {
+      "from": "edit",
+      "to": "time",
+      "selector": "#evFTime",
+      "label": "Hora",
+      "view": "flow"
+    },
+    {
+      "from": "edit",
+      "to": "edit-scroll",
+      "selector": ".ev-event-form-body",
+      "label": "Deslizar hacia abajo",
+      "action": "scroll",
+      "view": "flow"
+    },
+    {
+      "from": "edit-scroll",
+      "to": "dates",
+      "selector": "#evFTypePicker [data-ev-multiday=\"Otros\"]",
+      "label": "Multidía",
+      "view": "flow"
+    },
+    {
+      "from": "time",
+      "to": "edit",
+      "selector": "#timePickerCancel",
+      "label": "Cancelar · volver",
+      "view": "return"
+    },
+    {
+      "from": "dates",
+      "to": "edit-scroll",
+      "selector": "#dpClose",
+      "label": "Atrás · volver",
+      "view": "return"
+    },
+    {
+      "from": "edit",
+      "to": "calendar",
+      "selector": "#evFClose",
+      "label": "Atrás · calendario",
+      "view": "return"
+    }
+  ],
+  "inventory": [
+    {
+      "group": "Inicio",
+      "title": "Jornada y horas del mes",
+      "file": "js/core.js",
+      "status": "Capturada · sin revisar",
+      "scene": "home"
+    },
+    {
+      "group": "Inicio",
+      "title": "Ficha de jornada de un día",
+      "file": "js/core.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Inicio",
+      "title": "Recordatorios",
+      "file": "js/core.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Inicio",
+      "title": "Exportar horas",
+      "file": "js/core.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Inicio",
+      "title": "Enviar factura",
+      "file": "js/core.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Inicio",
+      "title": "Configuración de facturas",
+      "file": "js/core.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Hogar",
+      "title": "Resumen del hogar",
+      "file": "js/economics-fiscal-hip.js",
+      "status": "Capturada · sin revisar",
+      "scene": "household"
+    },
+    {
+      "group": "Hogar",
+      "title": "Detalle hipoteca",
+      "file": "js/economics-fiscal-hip.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Hogar",
+      "title": "Detalle gas",
+      "file": "js/economics-fiscal-hip.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Hogar",
+      "title": "Detalle electricidad",
+      "file": "js/economics-fiscal-hip.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Hogar",
+      "title": "Edición compra",
+      "file": "js/economics-fiscal-hip.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Hogar",
+      "title": "Edición préstamo",
+      "file": "js/economics-fiscal-hip.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Hogar",
+      "title": "Edición subrogación",
+      "file": "js/economics-fiscal-hip.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Hogar",
+      "title": "Análisis de hipoteca",
+      "file": "js/economics-fiscal-hip.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Herramientas",
+      "title": "Comparar escenarios",
+      "file": "js/economics-estudio.js",
+      "status": "Capturada · sin revisar",
+      "scene": "study"
+    },
+    {
+      "group": "Herramientas",
+      "title": "Calcular tarifa",
+      "file": "js/economics-estudio.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Herramientas",
+      "title": "Comparar hipotecas",
+      "file": "js/economics-estudio.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Herramientas",
+      "title": "Comparar gas",
+      "file": "js/economics-estudio.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Herramientas",
+      "title": "Comparar electricidad",
+      "file": "js/economics-estudio.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Eventos",
+      "title": "Próximos",
+      "file": "js/events-render.js",
+      "status": "Capturada · sin revisar",
+      "scene": "events"
+    },
+    {
+      "group": "Eventos",
+      "title": "Agenda",
+      "file": "js/events-render.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Eventos",
+      "title": "Todos",
+      "file": "js/events-render.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Eventos",
+      "title": "Estadísticas",
+      "file": "js/events-render.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Eventos",
+      "title": "Calendario 1 mes",
+      "file": "js/events-render.js",
+      "status": "Capturada · sin revisar",
+      "scene": "calendar"
+    },
+    {
+      "group": "Eventos",
+      "title": "Calendario 4 meses",
+      "file": "js/events-render.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Eventos",
+      "title": "Calendario anual",
+      "file": "js/events-render.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Eventos",
+      "title": "Vacaciones y festivos",
+      "file": "js/events-render.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Eventos",
+      "title": "Puentes",
+      "file": "js/events-render.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Eventos",
+      "title": "Orden de Próximos",
+      "file": "js/events-render.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Eventos",
+      "title": "Filtros de eventos",
+      "file": "js/events-render.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Eventos",
+      "title": "Exportar calendario",
+      "file": "js/events-render.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Eventos",
+      "title": "Ficha del día",
+      "file": "js/events-render.js",
+      "status": "Capturada · sin revisar",
+      "scene": "day"
+    },
+    {
+      "group": "Eventos",
+      "title": "Detalle evento",
+      "file": "js/events-render.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Eventos",
+      "title": "Nuevo evento",
+      "file": "js/events-render.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Eventos",
+      "title": "Editar evento",
+      "file": "js/events-render.js",
+      "status": "Capturada · sin revisar",
+      "scene": "edit"
+    },
+    {
+      "group": "Eventos",
+      "title": "Eliminar evento",
+      "file": "js/events-render.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Eventos",
+      "title": "Alarma de evento",
+      "file": "js/events-render.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Eventos",
+      "title": "Selección Multidía",
+      "file": "js/events-render.js",
+      "status": "Capturada · sin revisar",
+      "scene": "dates"
+    },
+    {
+      "group": "Eventos",
+      "title": "Elegir hora",
+      "file": "js/events-render.js",
+      "status": "Capturada · sin revisar",
+      "scene": "time"
+    },
+    {
+      "group": "Eventos",
+      "title": "Selector de planes",
+      "file": "js/events-render.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Eventos",
+      "title": "Asignar sesión de rutina",
+      "file": "js/events-render.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Bodas",
+      "title": "Calendario de clases",
+      "file": "js/bodas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Bodas",
+      "title": "Parejas",
+      "file": "js/bodas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Bodas",
+      "title": "Consulta de clases",
+      "file": "js/bodas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Bodas",
+      "title": "Estadísticas de bodas",
+      "file": "js/bodas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Bodas",
+      "title": "Configuración de bodas",
+      "file": "js/bodas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Bodas",
+      "title": "Ficha de pareja",
+      "file": "js/bodas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Bodas",
+      "title": "Ficha de clase",
+      "file": "js/bodas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Bodas",
+      "title": "Asignar clases",
+      "file": "js/bodas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Bodas",
+      "title": "Elegir pareja",
+      "file": "js/bodas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Bodas",
+      "title": "Elegir sala",
+      "file": "js/bodas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Bodas",
+      "title": "Elegir hora de clase",
+      "file": "js/bodas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Bodas",
+      "title": "Elegir duración",
+      "file": "js/bodas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Bodas",
+      "title": "Elegir profesores",
+      "file": "js/bodas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Bodas",
+      "title": "Catálogos de bodas",
+      "file": "js/bodas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Bodas",
+      "title": "Incidencias de clases",
+      "file": "js/bodas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Cumpleaños",
+      "title": "Próximos cumpleaños",
+      "file": "js/birthdays-render.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Cumpleaños",
+      "title": "Lista de cumpleaños",
+      "file": "js/birthdays-render.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Cumpleaños",
+      "title": "Ficha de persona",
+      "file": "js/birthdays-render.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Cumpleaños",
+      "title": "Añadir o editar persona",
+      "file": "js/birthdays-render.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Cumpleaños",
+      "title": "Alarma de cumpleaños",
+      "file": "js/birthdays-render.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Cumpleaños",
+      "title": "Selector de día o mes",
+      "file": "js/birthdays-render.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Cumpleaños",
+      "title": "Selector de grupos",
+      "file": "js/birthdays-render.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Cumpleaños",
+      "title": "Edición de grupos",
+      "file": "js/birthdays-render.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Rutinas",
+      "title": "Lista de rutinas",
+      "file": "js/rutinas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Rutinas",
+      "title": "Estadísticas de rutinas",
+      "file": "js/rutinas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Rutinas",
+      "title": "Añadir o editar rutina",
+      "file": "js/rutinas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Rutinas",
+      "title": "Selección de semana",
+      "file": "js/rutinas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Rutinas",
+      "title": "Edición de semana",
+      "file": "js/rutinas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Rutinas",
+      "title": "Ficha de sesión",
+      "file": "js/rutinas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Rutinas",
+      "title": "Planificación flexible",
+      "file": "js/rutinas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Rutinas",
+      "title": "Histórico de sesiones",
+      "file": "js/rutinas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Rutinas",
+      "title": "Editar sesión histórica",
+      "file": "js/rutinas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Rutinas",
+      "title": "Añadir clase extra",
+      "file": "js/rutinas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Rutinas",
+      "title": "Lista de recuperaciones",
+      "file": "js/rutinas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Rutinas",
+      "title": "Elegir día de recuperación",
+      "file": "js/rutinas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Rutinas",
+      "title": "Acciones en varias sesiones",
+      "file": "js/rutinas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Rutinas",
+      "title": "Eliminar sesión",
+      "file": "js/rutinas.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Economía",
+      "title": "Resumen económico",
+      "file": "js/economics.js",
+      "status": "Capturada · sin revisar",
+      "scene": "economics"
+    },
+    {
+      "group": "Economía",
+      "title": "Resumen horas y días",
+      "file": "js/economics.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Economía",
+      "title": "Análisis gastos y renta",
+      "file": "js/economics.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Economía",
+      "title": "Análisis economía personal",
+      "file": "js/economics.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Economía",
+      "title": "Configuración fiscal",
+      "file": "js/economics.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Economía",
+      "title": "Economía personal",
+      "file": "js/economics.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Economía",
+      "title": "Gastos desgravables",
+      "file": "js/economics.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Economía",
+      "title": "IRPF y deducciones",
+      "file": "js/economics.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Economía",
+      "title": "Hipoteca y facturas en consulta",
+      "file": "js/economics.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Economía",
+      "title": "Editor de períodos personales",
+      "file": "js/economics.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Energía",
+      "title": "Resumen de gas",
+      "file": "js/energy-analysis-view.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Energía",
+      "title": "Consumo de gas",
+      "file": "js/energy-analysis-view.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Energía",
+      "title": "Coste de gas",
+      "file": "js/energy-analysis-view.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Energía",
+      "title": "Tarifas de gas",
+      "file": "js/energy-analysis-view.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Energía",
+      "title": "Escenarios de gas",
+      "file": "js/energy-analysis-view.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Energía",
+      "title": "Archivo de gas",
+      "file": "js/energy-analysis-view.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Energía",
+      "title": "Resumen de electricidad",
+      "file": "js/energy-analysis-view.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Energía",
+      "title": "Consumo de electricidad",
+      "file": "js/energy-analysis-view.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Energía",
+      "title": "Coste de electricidad",
+      "file": "js/energy-analysis-view.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Energía",
+      "title": "Tarifas de electricidad",
+      "file": "js/energy-analysis-view.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Energía",
+      "title": "Escenarios de electricidad",
+      "file": "js/energy-analysis-view.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Energía",
+      "title": "Archivo de electricidad",
+      "file": "js/energy-analysis-view.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Energía",
+      "title": "Editor de tarifa",
+      "file": "js/energy-analysis-view.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Ajustes",
+      "title": "Más opciones",
+      "file": "js/settings-menu.js",
+      "status": "Capturada · sin revisar",
+      "scene": "settings"
+    },
+    {
+      "group": "Ajustes",
+      "title": "Crear alarma",
+      "file": "js/settings-menu.js",
+      "status": "Capturada · sin revisar",
+      "scene": "alarm"
+    },
+    {
+      "group": "Ajustes",
+      "title": "Correo de horas",
+      "file": "js/settings-menu.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Ajustes",
+      "title": "Conexión MacroDroid",
+      "file": "js/settings-menu.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Ajustes",
+      "title": "Datos personales",
+      "file": "js/settings-menu.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Ajustes",
+      "title": "Notas generales",
+      "file": "js/settings-menu.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Ajustes",
+      "title": "Notas de peluquería",
+      "file": "js/settings-menu.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Ajustes",
+      "title": "Estilo de iconos",
+      "file": "js/settings-menu.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Ajustes",
+      "title": "Carpeta de exportación",
+      "file": "js/settings-menu.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Ajustes",
+      "title": "Modo de exportación",
+      "file": "js/settings-menu.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Ajustes",
+      "title": "Previsualización de importación",
+      "file": "js/settings-menu.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Ajustes",
+      "title": "Añadir o reemplazar al importar",
+      "file": "js/settings-menu.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Ajustes",
+      "title": "Tareas pendientes y completadas",
+      "file": "js/settings-menu.js",
+      "status": "Pendiente de captura"
+    },
+    {
+      "group": "Eventos",
+      "title": "Editar evento · categorías",
+      "file": "js/events-form.js",
+      "scene": "edit-scroll",
+      "status": "Capturada · sin revisar"
+    }
+  ],
+  "openers": [
+    {
+      "symbol": "toggleAlarmPanel",
+      "file": "js/alarm-panel.js",
+      "line": 20
+    },
+    {
+      "symbol": "openBday",
+      "file": "js/birthdays-bind.js",
+      "line": 49
+    },
+    {
+      "symbol": "openBdayCategoryPicker",
+      "file": "js/birthdays-groups.js",
+      "line": 37
+    },
+    {
+      "symbol": "openBdayGroupEdit",
+      "file": "js/birthdays-groups.js",
+      "line": 71
+    },
+    {
+      "symbol": "openBdayAlarm",
+      "file": "js/birthdays-panels.js",
+      "line": 94
+    },
+    {
+      "symbol": "openBdayDetail",
+      "file": "js/birthdays-panels.js",
+      "line": 285
+    },
+    {
+      "symbol": "openBdayForm",
+      "file": "js/birthdays-panels.js",
+      "line": 308
+    },
+    {
+      "symbol": "openBdayDatePicker",
+      "file": "js/birthdays-panels.js",
+      "line": 342
+    },
+    {
+      "symbol": "openBodaIssue",
+      "file": "js/bodas-assign.js",
+      "line": 55
+    },
+    {
+      "symbol": "openBodaAssign",
+      "file": "js/bodas-assign.js",
+      "line": 232
+    },
+    {
+      "symbol": "openBodaPlacePicker",
+      "file": "js/bodas-assign.js",
+      "line": 411
+    },
+    {
+      "symbol": "openBodaCoupleForm",
+      "file": "js/bodas-bind.js",
+      "line": 30
+    },
+    {
+      "symbol": "openBodaClaseForm",
+      "file": "js/bodas-class-form.js",
+      "line": 2
+    },
+    {
+      "symbol": "openBodaCouplePicker",
+      "file": "js/bodas-class-form.js",
+      "line": 167
+    },
+    {
+      "symbol": "openBodaTimePicker",
+      "file": "js/bodas-class-form.js",
+      "line": 215
+    },
+    {
+      "symbol": "openBodaDurationPicker",
+      "file": "js/bodas-class-form.js",
+      "line": 303
+    },
+    {
+      "symbol": "openBodaTeachersPicker",
+      "file": "js/bodas-class-form.js",
+      "line": 316
+    },
+    {
+      "symbol": "openBodaConfig",
+      "file": "js/bodas-config.js",
+      "line": 142
+    },
+    {
+      "symbol": "openBodaCatalogForm",
+      "file": "js/bodas-config.js",
+      "line": 152
+    },
+    {
+      "symbol": "openSheet",
+      "file": "js/core.js",
+      "line": 593
+    },
+    {
+      "symbol": "openEstudio",
+      "file": "js/economics-estudio.js",
+      "line": 526
+    },
+    {
+      "symbol": "openFiscal",
+      "file": "js/economics-fiscal-bind.js",
+      "line": 9
+    },
+    {
+      "symbol": "openEcon",
+      "file": "js/economics.js",
+      "line": 465
+    },
+    {
+      "symbol": "openEnergyAnalysis",
+      "file": "js/energy-analysis-view.js",
+      "line": 92
+    },
+    {
+      "symbol": "openEnergyBills",
+      "file": "js/energy-bills-view.js",
+      "line": 12
+    },
+    {
+      "symbol": "openEnergyHistory",
+      "file": "js/energy-history.js",
+      "line": 50
+    },
+    {
+      "symbol": "openEnergyTariff",
+      "file": "js/energy-tariff-editor.js",
+      "line": 21
+    },
+    {
+      "symbol": "openEvents",
+      "file": "js/events-bind.js",
+      "line": 46
+    },
+    {
+      "symbol": "openEventsAt",
+      "file": "js/events-bind.js",
+      "line": 63
+    },
+    {
+      "symbol": "openEvTypeFilter",
+      "file": "js/events-bind.js",
+      "line": 482
+    },
+    {
+      "symbol": "openEvCalendarExport",
+      "file": "js/events-calendar-export.js",
+      "line": 160
+    },
+    {
+      "symbol": "openEvDeleteSheet",
+      "file": "js/events-detail.js",
+      "line": 7
+    },
+    {
+      "symbol": "openEvDayCarousel",
+      "file": "js/events-detail.js",
+      "line": 234
+    },
+    {
+      "symbol": "openEvDetail",
+      "file": "js/events-detail.js",
+      "line": 249
+    },
+    {
+      "symbol": "openEvAlarm",
+      "file": "js/events-detail.js",
+      "line": 502
+    },
+    {
+      "symbol": "openBdayAlarmFromEvents",
+      "file": "js/events-detail.js",
+      "line": 516
+    },
+    {
+      "symbol": "openEvForm",
+      "file": "js/events-form.js",
+      "line": 169
+    },
+    {
+      "symbol": "openEvPlanOrder",
+      "file": "js/events-order.js",
+      "line": 59
+    },
+    {
+      "symbol": "openOtrosDatePicker",
+      "file": "js/events-picker-date.js",
+      "line": 7
+    },
+    {
+      "symbol": "openEvPlanPicker",
+      "file": "js/events-plan-picker.js",
+      "line": 48
+    },
+    {
+      "symbol": "openEvRoutineSession",
+      "file": "js/events-routines.js",
+      "line": 46
+    },
+    {
+      "symbol": "openExportDirectory",
+      "file": "js/export-files.js",
+      "line": 52
+    },
+    {
+      "symbol": "openExportChoice",
+      "file": "js/export-files.js",
+      "line": 79
+    },
+    {
+      "symbol": "openHomePopup",
+      "file": "js/home-popup.js",
+      "line": 121
+    },
+    {
+      "symbol": "openHousehold",
+      "file": "js/household.js",
+      "line": 8
+    },
+    {
+      "symbol": "askImportMode",
+      "file": "js/import-export.js",
+      "line": 246
+    },
+    {
+      "symbol": "openInvoiceSettings",
+      "file": "js/invoices-ui.js",
+      "line": 9
+    },
+    {
+      "symbol": "openHoursExport",
+      "file": "js/invoices-ui.js",
+      "line": 108
+    },
+    {
+      "symbol": "openNavIconPicker",
+      "file": "js/nav-icons.js",
+      "line": 33
+    },
+    {
+      "symbol": "openPersonalPeriodEditor",
+      "file": "js/personal-periods-editor.js",
+      "line": 16
+    },
+    {
+      "symbol": "openRutAddition",
+      "file": "js/rutinas-addition.js",
+      "line": 10
+    },
+    {
+      "symbol": "openRutBulkConfirm",
+      "file": "js/rutinas-bulk.js",
+      "line": 37
+    },
+    {
+      "symbol": "openRutPlan",
+      "file": "js/rutinas-flex.js",
+      "line": 137
+    },
+    {
+      "symbol": "openRutForm",
+      "file": "js/rutinas-form.js",
+      "line": 142
+    },
+    {
+      "symbol": "openRutHistory",
+      "file": "js/rutinas-history.js",
+      "line": 87
+    },
+    {
+      "symbol": "openRutHistoryEdit",
+      "file": "js/rutinas-history.js",
+      "line": 159
+    },
+    {
+      "symbol": "openRutRecoveryList",
+      "file": "js/rutinas-recovery.js",
+      "line": 9
+    },
+    {
+      "symbol": "openRutRecoveryDay",
+      "file": "js/rutinas-recovery.js",
+      "line": 26
+    },
+    {
+      "symbol": "openRutSessionDelete",
+      "file": "js/rutinas-sessions.js",
+      "line": 118
+    },
+    {
+      "symbol": "openRutWeek",
+      "file": "js/rutinas.js",
+      "line": 401
+    },
+    {
+      "symbol": "openRutSesion",
+      "file": "js/rutinas.js",
+      "line": 567
+    },
+    {
+      "symbol": "toggleSettingsMenu",
+      "file": "js/settings-menu.js",
+      "line": 27
+    },
+    {
+      "symbol": "openConnectionsSettings",
+      "file": "js/settings-menu.js",
+      "line": 79
+    },
+    {
+      "symbol": "openPersonalData",
+      "file": "js/settings-personal.js",
+      "line": 100
+    },
+    {
+      "symbol": "openPersonalNotes",
+      "file": "js/settings-personal.js",
+      "line": 131
+    },
+    {
+      "symbol": "openTasks",
+      "file": "js/tasks-view.js",
+      "line": 55
+    },
+    {
+      "symbol": "openTimePicker",
+      "file": "js/time-picker.js",
+      "line": 90
+    }
+  ]
+}
