@@ -79,7 +79,7 @@ def publish_one(drive, target, data):
     def existing():
         hits=[x for x in drive.entries(parent) if x['Name']==path.name]
         if len(hits)>1:raise ValueError('Duplicate filename in Drive; manual review required')
-        if hits and (hits[0]['IsDir'] or hits[0].get('Size')!=len(data) or hits[0].get('Hashes',{}).get('MD5','').lower()!=md5):
+        if hits and (hits[0]['IsDir'] or hits[0].get('Size')!=len(data) or {k.lower():v for k,v in hits[0].get('Hashes',{}).items()}.get('md5','').lower()!=md5):
             raise ValueError('Existing Drive file differs; never overwrite')
         return hits
     hits=existing()
