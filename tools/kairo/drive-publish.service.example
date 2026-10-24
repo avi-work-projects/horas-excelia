@@ -1,0 +1,20 @@
+# Install only after OAuth, remote folder verification and end-to-end probe.
+[Unit]
+Description=Publish verified Kairo invoice PDFs to Drive
+Wants=network-online.target
+After=network-online.target
+StartLimitIntervalSec=3600
+StartLimitBurst=4
+
+[Service]
+Type=oneshot
+User=angel
+WorkingDirectory=/home/angel/gestify-facturacion
+ExecStart=/home/angel/gestify-facturacion/venv/bin/python drive_publish.py
+UMask=0077
+NoNewPrivileges=true
+Restart=on-failure
+RestartSec=300
+
+[Install]
+WantedBy=multi-user.target

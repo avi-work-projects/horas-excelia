@@ -1,0 +1,9 @@
+[Unit]
+Description=Watch for newly archived final invoice PDFs
+
+[Path]
+PathChanged=/home/angel/gestify-facturacion/drive-publish-request
+Unit=kairo-drive-publish.service
+
+[Install]
+WantedBy=multi-user.target
