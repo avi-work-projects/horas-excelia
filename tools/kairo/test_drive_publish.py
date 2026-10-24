@@ -7,7 +7,7 @@ class FakeDrive:
     def __init__(self):self.files={};self.uploads=0;self.duplicate=False;self.corrupt=False;self.lose_reply=False
     def folder(self,path):pass
     def entries(self,parent):
-        result=[dict(Name=p.split('/')[-1],IsDir=False,Size=len(b),Hashes={'MD5':hashlib.md5(b).hexdigest()},ID=p) for p,b in self.files.items() if p.rsplit('/',1)[0]==parent]
+        result=[dict(Name=p.split('/')[-1],IsDir=False,Size=len(b),Hashes={'md5':hashlib.md5(b).hexdigest()},ID=p) for p,b in self.files.items() if p.rsplit('/',1)[0]==parent]
         return result*2 if self.duplicate else result
     def upload(self,path,target):
         self.files.setdefault(target,path.read_bytes());self.uploads+=1

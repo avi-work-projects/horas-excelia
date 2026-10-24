@@ -95,3 +95,19 @@ Do NOT upload into this account or create a replacement AUTONOMO folder.
 Await the user identifying the desktop Drive account; then authorize that account
 and verify the existing folder. No cloud probe uploaded, publisher not enabled,
 old daily collection still retained. Production OAuth branding remains pending.
+
+## End-to-end probe passed (2026-10-24)
+
+Correct document account authorized and existing AUTONOMO folder confirmed by
+Drive API. Test text uploaded from Kairo, downloaded back from Drive, and arrived
+in the existing desktop mirror with identical SHA-256. Re-running verification
+reused the same cloud object without uploading a duplicate.
+
+Live rclone emits hash keys in lowercase. Publisher now normalizes hash names;
+tests use the actual lowercase shape. Six isolated tests passed on Windows and
+Kairo. No fiscal or mail production code changed.
+
+Still NOT commissioned: OAuth remains Testing and Google disables Publish app
+pending branding completion. User is choosing where to host public informational
+and privacy pages. Keep daily Windows copy enabled until permanent auth plus
+publisher service/event hook and visible failure reporting are validated.
