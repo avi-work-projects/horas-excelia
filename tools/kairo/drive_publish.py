@@ -92,12 +92,26 @@ def publish_one(drive, target, data):
     return {'id':hits[0]['ID'],'sha256':sha(data),'bytes':len(data),'verified_at':datetime.now(timezone.utc).isoformat()}
 
 
+def archive_target(plan, filename):
+    """Archive by invoice period, never by upload time (including late retries)."""
+    period = plan.get('period', '')
+    if not re.fullmatch(r'20\d{2}-(0[1-9]|1[0-2])', period):
+        raise ValueError('Invalid invoice period; no archive destination selected')
+    number = re.fullmatch(r'(\d{2,})-(\d{2})/(20\d{2})', plan.get('number', ''))
+    if not number or f'{number[3]}-{number[2]}' != period:
+        raise ValueError('Invoice number and period disagree; review before archiving')
+    expected = 'Factura_' + plan['number'].replace('/', '_') + '.pdf'
+    if filename != expected:
+        raise ValueError('Archive filename does not match invoice number')
+    return f'FACTURAS/{period[:4]}/A - FACTURAS INGRESOS/{filename}'
+
+
 def publish_archive(root, drive, state):
     from invoice_catalog import catalog,archived_pdf
     for item in catalog(root):
         if not item['accepted']:continue
         row=item['row'];p=row['data'];pdf,name=archived_pdf(root,row,'final')
-        target='FACTURAS/'+p['period'][:4]+'/A - FACTURAS INGRESOS/'+name
+        target=archive_target(p,name)
         previous=state.get('files',{}).get(target)
         if previous:
             if previous['sha256']!=sha(pdf):raise ValueError('Verified local invoice changed')
