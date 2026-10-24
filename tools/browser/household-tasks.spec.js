@@ -71,6 +71,6 @@ test('recordatorios con contornos por grupo y colores de cumpleaños y día dist
   localStorage.setItem('excelia-events-v1',JSON.stringify([{id:'gestion',kind:'puntual',type:'Rec. Gestiones',title:'Gestión de prueba',start:'2026-10-01',end:'2026-10-01',color:'#34d399'}]));
  });
  await page.goto('/');await expect(page.locator('.home-popup-item.bday')).toBeVisible();await expect(page.locator('.home-popup-item.event')).toBeVisible();
- const widths=await page.locator('.home-popup-item.bday,.home-popup-item.vip,.home-reminder-day>.home-reminder-rows').evaluateAll(es=>es.map(e=>getComputedStyle(e).borderTopWidth));expect(new Set(widths).size).toBe(1);expect(parseFloat(widths[0])).toBeGreaterThanOrEqual(1);
- const colors=await page.locator('.home-popup-item.bday,.home-reminder-day>.home-reminder-rows').evaluateAll(es=>es.map(e=>getComputedStyle(e).borderTopColor));expect(colors[0]).not.toBe(colors[1]);
+ const widths=await page.locator('.home-reminder-birthdays>.home-reminder-rows,.home-reminder-day>.home-reminder-rows').evaluateAll(es=>es.map(e=>getComputedStyle(e).borderTopWidth));expect(new Set(widths).size).toBe(1);expect(parseFloat(widths[0])).toBeGreaterThanOrEqual(1);
+ const colors=await page.locator('.home-reminder-birthdays>.home-reminder-rows,.home-reminder-day>.home-reminder-rows').evaluateAll(es=>es.map(e=>getComputedStyle(e).borderTopColor));expect(colors[0]).not.toBe(colors[1]);
 });

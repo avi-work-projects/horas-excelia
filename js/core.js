@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v494 — Recordatorios: color y notas útiles';
+var APP_VERSION = 'v495 — Recordatorios: accesos y edición directa';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -806,7 +806,8 @@ function bindNavBar(current,closeFn){
   });
 }
 var NAV_SWITCH_TIMER=null;
-function navigateMain(key){
+/* openDestination conserva el cierre compartido al enlazar a una ficha concreta. */
+function navigateMain(key,openDestination){
   if(key==='menu'){toggleSettingsMenu(document.querySelector('.full-overlay.open [data-nav="menu"]')||document.getElementById('menuBtn'));return;}
   if(key==='alarm'){toggleAlarmPanel(document.querySelector('.full-overlay.open [data-nav="alarm"]')||document.getElementById('alarmTestBtn'));return;}
   var routes={household:openHousehold,econ:openEcon,events:openEvents,estudio:openEstudio};
@@ -818,7 +819,7 @@ function navigateMain(key){
   var opened=document.querySelectorAll('.full-overlay.open');
   opened.forEach(function(ov){ov.classList.remove('open');setTimeout(function(){if(!ov.classList.contains('open'))ov.style.display='none';},320);});
   function open(){
-    if(routes[key])routes[key]();
+    if(routes[key]){if(openDestination)openDestination();else routes[key]();}
     else if(key==='home')window.scrollTo({top:0,behavior:'instant'});
   }
   if(opened.length)NAV_SWITCH_TIMER=setTimeout(open,330);else open();
