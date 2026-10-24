@@ -1,5 +1,6 @@
 /* Recordatorios: todas las ocurrencias de hoy/mañana y cumpleaños a siete días. */
 var HOME_BIRTHDAYS_OPEN=false;
+var HOME_REMINDER_EDITING=null; // Fila puntual que ofrece Editar/Cancelar, sin modificar datos.
 function homeReminderColor(ev){return ev._rut?getEvDisplayColor(ev):getEvType(ev)==='Ensayos boda'?'#92334d':evTypeColor(getEvKind(ev),getEvType(ev));}
 function homeReminderEventText(time,content,ev){
   var marker=ev?(getEvType(ev)==='Asturias'?'<span class="home-reminder-asturias" style="background:'+fakeTrans(EV_TYPE_COLORS['grande|Asturias'],.65)+'">'+EV_FILTER_SHORT.Asturias+'</span>':evUpcomingMarkHtml(ev)):'&#128197;';
@@ -36,7 +37,7 @@ function homeReminderEvents(today){
 }
 function homeReminderTasksHtml(){
   var pending=tasksItems(tasksData(),'pending');
-  var h='<section class="home-pending-tasks" aria-label="Tareas pendientes"><div class="home-pending-heading"><strong>Tareas pendientes</strong><button type="button" id="homeTasksOpen" class="home-tasks-button">'+TASKS_ICON+'<span>Mis tareas'+(pending.length>2?' ('+pending.length+')':'')+'</span><span aria-hidden="true">›</span></button></div>';
+  var h='<section class="home-pending-tasks" aria-label="Tareas pendientes"><div class="home-pending-heading"><strong>Tareas pendientes</strong></div>';
   if(pending.length){h+='<ul>';pending.slice(0,3).forEach(function(t){h+='<li>'+escHtml(t.title)+'</li>';});h+='</ul>';}
   else h+='<p>No tienes tareas pendientes.</p>';
   return h+'</section>';
@@ -47,16 +48,17 @@ function homeReminderCardHtml(it){
   if(it.person)attrs+=' data-reminder-birthday="'+BDAYS.indexOf(it.person)+'"';
   if(it.type!=='event')return '<div'+attrs+'>'+it.text+'</div>';
   attrs+=' data-reminder-id="'+escHtml(it.event.id)+'" data-reminder-date="'+it.date+'"';
-  if(!hasNotes)return '<div'+attrs+'><div class="home-reminder-row">'+it.text+'</div></div>';
-  return '<details'+attrs+'><summary class="home-reminder-row" aria-label="Notas de '+escHtml(it.title||it.event.title||getEvType(it.event))+'">'+it.text+'<span class="home-reminder-toggle" aria-hidden="true"></span></summary><div class="home-reminder-expanded">'+it.note+'</div></details>';
+  var actions=isEvBarAlways(it.event)?'':'<span class="home-reminder-edit-actions" hidden><button type="button" data-reminder-edit>Editar</button><button type="button" data-reminder-cancel aria-label="Cancelar edición">×</button></span>';
+  if(!hasNotes)return '<div'+attrs+'><div class="home-reminder-row">'+it.text+actions+'</div></div>';
+  return '<details'+attrs+'><summary class="home-reminder-row" aria-label="Notas de '+escHtml(it.title||it.event.title||getEvType(it.event))+'">'+it.text+'<span class="home-reminder-toggle" aria-hidden="true"></span>'+actions+'</summary><div class="home-reminder-expanded">'+it.note+'</div></details>';
 }
 function homeReminderGroup(title,content,extra,tone){
   return '<section class="home-reminder-group'+(tone?' home-reminder-'+tone:'')+(['today','tomorrow'].indexOf(tone)!==-1?' home-reminder-day':'')+'" aria-label="'+title+'"><h3>'+title+(extra?'<small>'+extra+'</small>':'')+'</h3><div class="home-reminder-rows">'+content+'</div></section>';
 }
 function homeReminderPendingHtml(warnings){
   var count=tasksItems(tasksData(),'pending').length;
-  var label=[count?count+' '+(count===1?'tarea':'tareas'):'',warnings.length?warnings.length+' '+(warnings.length===1?'aviso':'avisos'):''].filter(Boolean).join(' · ')||'Todo al día';
-  return '<section class="home-reminder-pending'+(count||warnings.length?' has-pending':'')+'" aria-label="Pendientes"><div class="home-pending-header"><strong>Pendientes</strong><small>'+label+'</small></div><div class="home-pending-body">'+homeReminderTasksHtml()+(warnings.length?'<div class="home-pending-warnings" aria-label="Avisos pendientes">'+warnings.map(homeReminderCardHtml).join('')+'</div>':'')+'</div></section>';
+  var button='<button type="button" id="homeTasksOpen" class="home-tasks-button">'+TASKS_ICON+'<span>Mis tareas'+(count?' ('+count+')':'')+'</span><span aria-hidden="true">›</span></button>';
+  return '<section class="home-reminder-pending'+(count||warnings.length?' has-pending':'')+'" aria-label="Pendientes"><div class="home-pending-header"><strong>Pendientes</strong>'+button+'</div><div class="home-pending-body">'+homeReminderTasksHtml()+(warnings.length?'<div class="home-pending-warnings" aria-label="Avisos pendientes">'+warnings.map(homeReminderCardHtml).join('')+'</div>':'')+'</div></section>';
 }
 function homeReminderLargeHtml(items){
   var grouped=new Map();
@@ -91,6 +93,7 @@ function homeReminderItemsHtml(items,birthdayCount){
   return h;
 }
 function closeHomePopup(){
+  HOME_REMINDER_EDITING=null;
   document.getElementById('homePopup').style.display='none';
   try{sessionStorage.setItem('excelia-popup-dismissed','1');}catch(e){}
 }
@@ -107,15 +110,31 @@ function homeReminderEdit(item){
     EV_EDIT_DS=item.date;openEvForm(ev);
   });
 }
+function homeReminderSelectEdit(content,item){
+  HOME_REMINDER_EDITING=item||null;
+  content.querySelectorAll('[data-reminder-id]').forEach(function(card){
+    var active=!!item&&card.dataset.reminderId===item.event.id&&card.dataset.reminderDate===item.date;
+    card.classList.toggle('home-reminder-choosing',active);
+    var actions=card.querySelector('.home-reminder-edit-actions');if(actions)actions.hidden=!active;
+  });
+}
 function bindHomeReminderEditing(content,items){
   content.querySelectorAll('[data-reminder-id],[data-reminder-birthday]').forEach(function(card){
     var item=items.find(function(it){return it.person?String(BDAYS.indexOf(it.person))===card.dataset.reminderBirthday:it.event&&it.event.id===card.dataset.reminderId&&it.date===card.dataset.reminderDate;});
     if(!item)return;
     card.classList.add('home-reminder-editable');card.title='Mantén pulsado para editar';
     var target=card.querySelector('summary')||card;target.tabIndex=0;target.setAttribute('aria-keyshortcuts','F2');
-    addLongPress(card,function(){homeReminderEdit(item);});
+    var edit=card.querySelector('[data-reminder-edit]'),cancel=card.querySelector('[data-reminder-cancel]');
+    function choose(){if(edit)homeReminderSelectEdit(content,item);else homeReminderEdit(item);}
+    addLongPress(card,choose);
+    card.addEventListener('pointerdown',function(){card._lpFired=0;},true);
     card.addEventListener('click',function(e){if(card._lpFired){card._lpFired=0;e.preventDefault();e.stopImmediatePropagation();}},true);
-    card.addEventListener('keydown',function(e){if(e.key==='F2'){e.preventDefault();e.stopPropagation();homeReminderEdit(item);}});
+    if(edit)edit.onclick=function(e){e.preventDefault();e.stopPropagation();homeReminderEdit(item);};
+    if(cancel)cancel.onclick=function(e){e.preventDefault();e.stopPropagation();homeReminderSelectEdit(content,null);target.focus({preventScroll:true});};
+    card.addEventListener('keydown',function(e){
+      if(e.key==='F2'){e.preventDefault();e.stopPropagation();choose();if(edit)edit.focus({preventScroll:true});}
+      else if(e.key==='Escape'&&HOME_REMINDER_EDITING){e.preventDefault();e.stopPropagation();homeReminderSelectEdit(content,null);target.focus({preventScroll:true});}
+    });
   });
 }
 function openHomePopup(force){
@@ -149,6 +168,7 @@ function openHomePopup(force){
   if(!force&&!items.length&&!pendingTasks.length)return;
   var content=document.getElementById('homePopupContent');if(!content)return;
   HOME_BIRTHDAYS_OPEN=false;
+  HOME_REMINDER_EDITING=null;
   content.innerHTML=homeReminderItemsHtml(items,birthdays.length);
   bindHomeReminderEditing(content,items);
   content.scrollTop=0;

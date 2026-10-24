@@ -946,3 +946,17 @@ Corrección de la propuesta tras revisar las capturas con Ángel:
 - Pruebas con datos ficticios: tres tareas y una semana sin marcas ni envío,
   cumpleaños plegados/desplegados, accesos a 320/400 px, guardar/cancelar desde
   los editores, cancelación del gesto al desplazar y navegación entre ventanas.
+
+## Recordatorios: edición desde la tarjeta (v496)
+
+- Los accesos a Recordatorios en Tareas y Ajustes muestran solo texto, sin campana.
+- Mis tareas pasa a la derecha de la cabecera de Pendientes. Su botón contiene
+  el recuento; se retira el resumen numérico duplicado de tareas/avisos.
+- En eventos puntuales, incluidos ensayos y sesiones de rutina, mantener pulsado
+  o usar F2 muestra Editar y × a la derecha de la fila. Solo Editar abre la ficha.
+  × o Escape cancelan sin abrir ni guardar; solo una fila ofrece estas acciones.
+- La selección es estado temporal HOME_REMINDER_EDITING y se limpia al abrir o
+  cerrar Recordatorios. Las notas conservan su pulsación corta y estado desplegado.
+  Cumpleaños y eventos grandes conservan la edición directa mediante pulsación larga.
+- Verificación: gesto táctil, cancelación, cambio de fila, teclado, notas, editores
+  específicos, navegación y geometría móvil a 320/400 px. Sin cambios de persistencia.
