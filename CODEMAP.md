@@ -848,14 +848,15 @@
 **Rangos por prefijo de clase:**
 .boda-asg:100-284 · .boda-det:96-99 · .boda-last:15-18 · .contact-shortcuts:210-213 · .data-actions:133-134 · .energy-bar:85-85 · .energy-caption:2-2 · .energy-choice:12-12 · .energy-compare:127-127 · .energy-contract:4-5 · .energy-cost:81-129 · .energy-coverage:72-72 · .energy-extremes:68-68 · .energy-fee:36-37 · .energy-field:7-7 · .energy-fields:9-9 · .energy-info:57-59 · .energy-inline:78-78 · .energy-legend:86-86 · .energy-metric:119-121 · .energy-metrics:118-118 · .energy-overview:61-63 · .energy-period:64-66 · .energy-price:177-182 · .energy-range:87-87 · .energy-reconciliation:71-71 · .energy-scenario:128-128 · .energy-section:56-56 · .energy-supplier:69-122 · .energy-table:3-3 · .energy-tabs:39-50 · .energy-tariff:74-178 · .energy-tax:67-125 · .energy-vat:123-123 · .energy-window:25-117 · .energy-year:6-93 · .ev-btn:140-140 · .ev-cell:278-279 · .ev-day:280-280 · .ev-io:130-130 · .ev-main:158-159 · .ev-order:235-247 · .ev-routine:231-233 · .ev-routines:225-229 · .ev-stat:214-214 · .ev-stats:215-221 · .ev-type:230-230 · .ev-up:256-265 · .ev-upcoming:167-171 · .ev-wk:16-170 · .imp-mode:107-107 · .imp-preview:108-112 · .nav-bar:135-135 · .rut-addition:250-277 · .rut-bulk:188-193 · .rut-card:152-207 · .rut-day:141-147 · .rut-days:144-144 · .rut-dpick:139-275 · .rut-history:184-199 · .rut-hora:148-150 · .rut-month:192-192 · .rut-recovery:138-138 · .rut-routine:154-154 · .rut-sec:208-209 · .rut-session:137-203 · .rut-time:151-151 · .rut-weekdays:145-145 · .sy-body:165-165 · .sy-hdr:259-259
 
-### css/source/home-reminders.css  _(52 líneas)_
+### css/source/home-reminders.css  _(59 líneas)_
 
 **Secciones:**
 
 - Recordatorios de inicio: marco fijo, filas compactas y detalles interiores.:1
+- Excepción de filas unidas: el contorno y el color pertenecen al día.:39
 
 **Rangos por prefijo de clase:**
-.home-birthday:32-37 · .home-pending:45-49 · .home-popup:2-50 · .home-reminder:8-44
+.home-birthday:32-37 · .home-pending:49-56 · .home-popup:2-57 · .home-reminder:8-48
 
 ### css/source/invoices.css  _(108 líneas)_
 
