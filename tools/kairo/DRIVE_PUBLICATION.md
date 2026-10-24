@@ -1,0 +1,70 @@
+# Drive publication — WIP, not commissioned
+
+Prepared 2026-10-24. This is not a completed Kairo→Drive→PC integration.
+Google login/own OAuth client and authorization are still required. Existing
+daily Windows archive collection must remain enabled until the full probe passes.
+
+## Preparation completed
+
+- Google Drive for desktop restarted on the mini; startup entry already existed.
+- A new harmless test file was created under AUTONOMO/REVISIONES/PRUEBAS_SINCRONIZACION.
+  Drive's local mirror database acknowledged cloud size and MD5 matching the local
+  bytes. This is client evidence, not an independent Drive API download.
+- AUTONOMO folder ID identified in Drive's local metadata; the chat's separate
+  connector cannot access it. Verify it through the authorized Kairo account.
+- Debian's packaged rclone installed on Kairo (1.60.1+dfsg-4, binary reports DEV).
+- Six isolated publisher tests pass: new/repeated upload, conflict preservation,
+  duplicate-name refusal, corrupted readback, lost reply and path confinement.
+- No new service enabled; no invoice/mail/production database changed.
+
+## Design
+
+`drive_publish.py` reads accepted invoices and verified immutable archived PDFs
+through invoice_catalog. It publishes only to FACTURAS/year/A - FACTURAS INGRESOS.
+`--probe` creates a harmless text file under REVISIONES/PRUEBAS_SINCRONIZACION.
+
+Use a dedicated private rclone config with its root_folder_id set to the verified
+AUTONOMO ID. This limits tool paths, not the account-level OAuth grant. Explain
+Google's actual permission scope at authorization time. Do not copy Desktop Drive
+tokens or ChatGPT connector credentials. Own OAuth client required: rclone's shared
+client is being retired in 2026 (https://rclone.org/drive/).
+
+Existing directories and filenames must be unique. An existing different file is
+never overwritten. Upload uses ignore-existing/immutable/checksum, followed by
+listing and SHA-256 verification of downloaded bytes. Publication state is saved
+atomically only after verification. A lost upload reply can retry without duplicate
+uploads. A verified unchanged file is skipped without new network calls.
+
+Publication is separate from fiscal issuance and SMTP. The proposed archive hook
+touches a request file only when a final PDF is newly archived; a systemd path
+triggers the publisher. Boot-time run reconciles missed requests. Failures retry
+at five-minute intervals, bounded by systemd start limits; no periodic normal poll.
+Failure reporting/monitoring should be reviewed before commissioning. Do not
+silently describe a failed or disabled publisher as ready.
+
+## Remaining steps
+
+1. User logs into Google Cloud; prepare own OAuth application and enable Drive API.
+   User handles required terms/permission approvals. Do not activate paid billing.
+   Avoid testing-mode weekly expiry for unattended use; review personal-use OAuth
+   publication requirements with the user.
+2. Authorize Kairo through loopback SSH forwarding; store credentials privately,
+   never in Git, command output or chat. Verify account and exact AUTONOMO folder.
+3. Stage private config (enabled=false, remote, folder_id, rclone_config path).
+   Run --probe, verify Drive readback and mini's downloaded file with same SHA-256.
+4. Reconcile existing October PDF without overwriting or re-emitting it.
+5. Validate/install event hook and path/service; add visible failure reporting.
+   Enable publisher only after successful probe. Snapshot invoice/mail state.
+6. Export then disable (not delete) the old Windows collection task. Verify no
+   duplicate publisher and document rollback to the saved Windows task.
+
+The service/path files and archive patch are candidates, not installed. The worker
+is staged privately on Kairo; production code and the current copy task are intact.
+
+## Authorization handoff (2026-10-24)
+
+Edge is the user's chosen browser. Correct Google account already signed in.
+Dedicated Google Cloud project `kairo-drive` created without enabling billing.
+OAuth app identity/contact form prepared; final Google user-data policy acceptance
+is awaiting the user in Edge. No OAuth client, token or Drive grant created yet.
+Continue with Drive API and Desktop OAuth client after the user completes this step.
