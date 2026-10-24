@@ -195,11 +195,14 @@ function bindBdayEvents(){
   // Clic en día vacío del calendario → abre formulario con día/mes pre-rellenos
   document.querySelectorAll('.bday-cell[data-cal-day]').forEach(function(cell){
     cell.addEventListener('click',function(e){
-      if(e.target.closest('.bday-badge'))return; // dejar que el badge maneje su propio clic
+      if(e.target.closest('.bday-badge,.bday-day-more'))return; // dejar que el badge maneje su propio clic
       var day=parseInt(cell.dataset.calDay,10);
       var month=parseInt(cell.dataset.calMonth,10);
-      if(!isNaN(day)&&!isNaN(month))openBdayForm(null,day,month);
+      if(!isNaN(day)&&!isNaN(month)){if(bdayCalendarPeople(day,month).length)openBdayCalendarDay(day,month);else openBdayForm(null,day,month);}
     });
+  });
+  document.querySelectorAll('[data-bday-day-list]').forEach(function(button){
+    button.onclick=function(e){e.stopPropagation();openBdayCalendarDay(+button.dataset.bdayDayList,+button.dataset.month);};
   });
   // Clicks en badges del calendario
   document.querySelectorAll('.bday-badge[data-bday-name]').forEach(function(badge){
@@ -338,4 +341,14 @@ function bindBdayUpcoming(root){
 function bdayPanelHost(){
   var events=document.getElementById('eventsOverlay');
   return events&&events.classList.contains('open')?events:document.body;
+}
+
+function openBdayCalendarDay(day,month){
+  function close(){cerrarPanel('bdDayWrap','bdDayOv');}
+  var wrap=abrirPanel('bdDayWrap',renderBdayCalendarDay(day,month),{contenedor:bdayPanelHost(),overlay:'bdDayOv',alCerrar:close});
+  wrap.querySelector('#bdDayClose').onclick=close;
+  wrap.querySelectorAll('[data-day-person]').forEach(function(button){button.onclick=function(){
+    bdaySwitchPanel('bdDayWrap',function(){openBdayDetail(BDAYS[+button.dataset.dayPerson]);});
+  };});
+  wrap.querySelector('#bdDayAdd').onclick=function(){bdaySwitchPanel('bdDayWrap',function(){openBdayForm(null,day,month);});};
 }

@@ -42,6 +42,8 @@ module.exports=function extend({scenes,edges}){
   add('event-alarm','Alarma de evento','Eventos','day','#evDAlarm','#evAlarmOv.open',{sources:['js/events-detail.js']});
   add('routine-session','Ficha de sesión','Rutinas','calendar','.ev-cell[data-ds="2026-08-21"] [data-id="rut-fx-rut-gym-2026-08-21"]','#evDetailOv.open',{sources:['js/events-detail.js','js/rutinas.js']});
   add('plan-picker','Selector de planes','Eventos','edit','.ev-plan-more[data-picker="plans"]','#evPlanPickerOv.open',{scroll:true,sources:['js/events-plan-picker.js'],region:'.ev-event-form-body'});
+  add('dates-overview','Multidía · resumen anual','Eventos','dates','#dpViewToggle','#dpOv [data-month]',{sources:['js/events-picker-date.js'],back:'#dpViewToggle'});
+  add('dates-selected','Multidía · selección mensual','Eventos','dates','.dp-day[data-ds="2026-08-22"]','.dp-day[data-ds="2026-08-22"][aria-pressed="true"]',{sources:['js/events-picker-date.js']});
   // Bodas: rutas de consulta y formularios compartidos.
   add('weddings','Consulta de clases','Bodas','events','#evViewBodas','[data-bsub="clases"].active',{sources:['js/bodas.js','js/bodas-bind.js']});
   add('calendar-export','Exportar calendario','Bodas','weddings','#evCalendarExport','#evCalendarExportOv.open',{sources:['js/events-calendar-export.js']});
@@ -50,7 +52,7 @@ module.exports=function extend({scenes,edges}){
   add('wedding-class','Ficha de clase','Bodas','weddings','.boda-cl-edit','#bodaFormOv.open',{sources:['js/bodas-class-form.js']});
   for(const [id,title,button,ready]of [['wedding-time','Elegir hora de clase','[data-fcampo="hora"]','#bodaTpOv.open'],['wedding-place','Elegir sala','[data-fcampo="sala"]','#bodaPpkOv.open'],['wedding-couple','Elegir pareja','[data-fcampo="pareja"]','#bodaCpkOv.open'],['wedding-duration','Elegir duración','#bodaFormDuration','#bodaDurationOv.open'],['wedding-teachers','Elegir profesores','#bodaFormTeachers','#bodaTeachersOv.open']])add(id,title,'Bodas','wedding-class',button,ready,{sources:['js/bodas-class-form.js','js/bodas-assign.js']});
   add('couple-card','Pareja desplegada','Bodas','couples','.boda-card-hd','.boda-card.abierta');
-  add('couple-form','Ficha de pareja','Bodas','couple-card','.boda-c-edit','#bodaCFormOv.open',{sources:['js/bodas-bind.js']});
+  add('couple-form','Ficha de pareja','Bodas','couple-card','.boda-c-edit','#bodaCFormOv.open',{sources:['js/bodas-bind.js'],region:'.ev-fixed-form-body'});
   add('wedding-new','Añadir clase','Bodas','weddings','#bodaAddClass','#bodaFormOv.open',{sources:['js/bodas-class-form.js']});
   add('couple-new','Añadir pareja','Bodas','couples','#bodaAddCouple','#bodaCFormOv.open');
   add('wedding-assign','Asignar clases','Bodas','couple-card','.boda-c-asig','#bodaAsgOv.open',{sources:['js/bodas-assign.js']});
@@ -60,6 +62,8 @@ module.exports=function extend({scenes,edges}){
   add('birthdays','Próximos cumpleaños','Cumpleaños','events','#evViewBday','#bdViewUpcoming.active',{sources:['js/birthdays-render.js','js/birthdays-bind.js']});
   add('birthday-list','Lista de cumpleaños','Cumpleaños','birthdays','#bdViewList','#bdViewList.active');
   add('birthday-calendar','Calendario de cumpleaños','Cumpleaños','birthdays','#bdViewCal','#bdViewCal.active');
+  add('birthday-day-list','Cumpleaños del día','Cumpleaños','birthday-calendar','[data-bday-day-list]','#bdDayOv.open',{sources:['js/birthdays-render.js','js/birthdays-bind.js'],back:'#bdDayClose'});
+  add('birthday-day-person','Persona desde el listado del día','Cumpleaños','birthday-day-list','[data-day-person]','#bdDetailOv.open',{sources:['js/birthdays-panels.js']});
   add('birthday-person','Ficha de persona','Cumpleaños','birthday-list','.bday-list-item[data-bday-idx="0"]','#bdDetailOv.open',{sources:['js/birthdays-panels.js']});
   add('birthday-form','Añadir o editar persona','Cumpleaños','birthday-person','#bdDEdit','#bdFormOv.open');
   add('birthday-alarm','Alarma de cumpleaños','Cumpleaños','birthday-person','#bdDAlarm','#bdAlarmOv.open');

@@ -90,6 +90,15 @@ function renderBdayUpcoming(){
 }
 
 /* ── Calendario mensual ───────────────────────────────────── */
+function bdayCalendarPeople(day,month){
+  return getBdaysOn(month,day).filter(function(b){return !BDAY_CAL_VIP||b.vip;}).slice().sort(function(a,b){return +!!b.vip-+!!a.vip;});
+}
+function renderBdayCalendarDay(day,month){
+  var people=bdayCalendarPeople(day,month);
+  return '<div class="bd-detail-overlay" id="bdDayOv"><div class="bd-detail-sheet bday-day-sheet"><header class="bd-panel-header panel-header-centered"><button class="sy-back" id="bdDayClose" aria-label="Volver">&#8592;</button><h2>'+day+' '+MN[month-1].toLowerCase()+'</h2><span></span></header><div class="bd-panel-body">'
+    +people.map(function(b){return '<button class="bday-day-person" data-day-person="'+BDAYS.indexOf(b)+'"><span>'+bdName(b.name)+'</span>'+(b.vip?'<img src="./VIP.png" alt="VIP">':'')+'<span class="ev-tax-chevron" aria-hidden="true"></span></button>';}).join('')
+    +'</div><footer class="bd-panel-footer"><button class="ev-btn primary" id="bdDayAdd">Añadir cumpleaños</button></footer></div></div>';
+}
 function renderBdayCalMonth(){
   var today=new Date();today.setHours(0,0,0,0);
   var DN7=['L','M','X','J','V','S','D'];
@@ -108,19 +117,20 @@ function renderBdayCalMonth(){
       var inM=d.getMonth()===BDAY_MONTH;
       var isTod=d.getTime()===today.getTime();
       var past=inM&&d<today;
-      var bds=getBdaysOn(d.getMonth()+1,d.getDate()).filter(function(b){return !BDAY_CAL_VIP||b.vip;});
+      var bds=bdayCalendarPeople(d.getDate(),d.getMonth()+1);
       var bdow=d.getDay();
       var cls='bday-cell'+(inM?'':' out-m')+(isTod?' today-bday':'')+(past?' past-cal-day':'')+(bdow===0||bdow===6?' weekend':'');
       var dataAttrs=inM?' data-cal-day="'+d.getDate()+'" data-cal-month="'+(d.getMonth()+1)+'"':'';
       h+='<div class="'+cls+'"'+dataAttrs+'>';
       h+='<div class="bday-num">'+d.getDate()+'</div>';
-      bds.forEach(function(b){
+      bds.slice(0,2).forEach(function(b){
         var color=getBdayColor(b);
-        var sn=bdName(b.name);   /* nombre completo: hasta cuatro líneas */
+        var sn=bdName(b.name.trim().split(/\s+/)[0]);
         var bidx=BDAYS.indexOf(b);
         var vipCls=b.vip?' bday-badge-vip':'';
         h+='<div class="bday-badge'+vipCls+'" data-bday-idx="'+bidx+'" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" style="--bday-color:'+color+'" title="'+bdName(b.name)+(b.vip?' VIP':'')+'">'+(b.vip?'<img class="bday-calendar-vip" src="./VIP.png" alt="VIP">':'')+'<span class="bday-badge-name">'+sn+'</span></div>';
       });
+      if(bds.length>2)h+='<button class="bday-day-more" data-bday-day-list="'+d.getDate()+'" data-month="'+(d.getMonth()+1)+'" aria-label="Ver los '+bds.length+' cumpleaños del día">+'+(bds.length-2)+' más</button>';
       h+='</div>';
       cur.setDate(cur.getDate()+1);
     }

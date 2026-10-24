@@ -26,11 +26,13 @@ function energyInfoHtml(title,body){return '<details class="energy-info"><summar
 function energySectionTitle(title,meta){return '<div class="energy-section-title"><h3>'+escHtml(title)+'</h3>'+(meta?'<span>'+escHtml(meta)+'</span>':'')+'</div>';}
 function energyPeriodsHtml(s){
   var names=['Punta','Llano','Valle'],total=s.periods.reduce(function(a,b){return a+b;},0);
-  var h='<section class="energy-contract">'+energySectionTitle('Reparto por tramos',s.periodDays+' días desglosados')+'<div class="energy-period-track" aria-hidden="true">';
-  s.periods.forEach(function(v,i){h+='<span class="energy-period-'+i+'" style="flex-grow:'+(total?v/total:1)+'"></span>';});
-  h+='</div><div class="energy-period-values">';
-  names.forEach(function(n,i){h+='<div class="energy-period-'+i+'"><span>'+n+'</span><strong>'+energyNumber(s.periodDays?s.periods[i]:null,'kWh')+'</strong><small>'+(s.periodDays&&total?(s.periods[i]/total*100).toFixed(0)+' %':'Sin desglose')+'</small></div>';});
+  var h='<section class="energy-contract">'+energySectionTitle('Reparto por tramos',s.periodDays+' días desglosados')+(total>0&&s.periodDays?'<div class="energy-period-track" aria-hidden="true">':'<div class="energy-period-empty">'+(s.periodDays?'Consumo desglosado: 0 kWh. Sin proporciones que representar.':'Sin lecturas por tramos. El reparto se mostrará cuando haya un desglose documentado.')+'</div>');
+  if(total>0&&s.periodDays)s.periods.forEach(function(v,i){h+='<span class="energy-period-'+i+'" style="flex-grow:'+(total?v/total:1)+'"></span>';});
+  if(total>0&&s.periodDays)h+='</div>';
+  h+='<div class="energy-period-values">';
+  names.forEach(function(n,i){h+='<div class="energy-period-'+i+'"><span>'+n+'</span><strong>'+energyNumber(s.periodDays?s.periods[i]:null,'kWh')+'</strong><small>'+(s.periodDays?(total?(s.periods[i]/total*100).toFixed(0)+' %':'Sin consumo'):'Sin desglose')+'</small></div>';});
   h+='</div>';
+  h+='<p class="sy-note">'+(s.periodDays&&s.periodDays<s.days?'Desglose parcial: '+s.periodDays+' de '+s.days+' días con lectura. Las proporciones corresponden solo a esos días.':'Solo lecturas con los tres tramos informados.')+'</p>';
   var note='<p>Solo lecturas con los tres tramos informados.</p>';
   names.forEach(function(n,i){var daily=s.periodDays?s.periods[i]/s.periodDays:null;note+='<p>'+n+': '+energyNumber(daily,'kWh',1)+'/día · '+energyNumber(daily===null?null:daily*365.25/12,'kWh')+'/mes equivalente.</p>';});
   return h+energyInfoHtml('Medias por tramo',note)+'</section>';

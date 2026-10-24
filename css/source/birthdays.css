@@ -4,21 +4,21 @@
 .ev-btn-bday .bday-symbol{width:26px;height:26px}
 .data-btn.bday-active{color:var(--vacaciones)!important;border-radius:8px}
 .bday-hdr-sub{display:flex;align-items:stretch;padding:5px 6px;gap:5px;box-shadow:0 1px 0 var(--border);overflow-x:hidden}
-.bday-calendar{max-width:900px;margin:0 auto}
+.bday-calendar{width:100%;flex-shrink:0;max-width:900px;margin:0 auto}
 .bday-week-hdr{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-bottom:6px}
 .bday-week-hdr div{text-align:center;font-size:.64rem;color:var(--text-muted);padding:8px 0;font-weight:600}
 .bday-week-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-bottom:4px}
-.bday-cell{min-height:72px;padding:5px 2px;background:var(--surface);border:1px solid var(--border);border-radius:8px;display:flex;flex-direction:column;gap:4px;cursor:pointer;transition:background .12s}
+.bday-cell{height:112px;min-height:112px;min-width:0;padding:5px 2px;background:var(--surface);border:1px solid var(--border);border-radius:8px;display:flex;flex-direction:column;gap:4px;cursor:pointer;transition:background .12s}
 .bday-cell.out-m{opacity:.38}
 .bday-cell.past-cal-day .bday-num{color:var(--text-dim)}
 .bday-cell.today-bday{border-color:var(--birthday-tone);box-shadow:inset 0 0 0 1px var(--birthday-tone)}
 .bday-num{display:flex;align-items:center;justify-content:center;align-self:flex-start;min-width:23px;height:23px;font-size:.73rem;font-family:var(--mono);line-height:1;color:var(--text-muted)}
 .bday-calendar .bday-cell.today-bday .bday-num{background:var(--birthday-tone);color:var(--surface);border-radius:50%;font-weight:700}
-/* El nombre admite hasta cuatro líneas. */
-.bday-badge{position:relative;font-size:.57rem;letter-spacing:-.015em;border-radius:4px;padding:3px 2px;line-height:1.25;white-space:normal;overflow-wrap:anywhere;hyphens:auto;overflow:hidden;border:1px solid color-mix(in srgb,var(--bday-color) 65%,var(--border));background:color-mix(in srgb,var(--bday-color) 15%,var(--surface));color:var(--text);font-weight:500;cursor:pointer;transition:opacity .1s;text-align:center}
-.bday-badge-name{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+/* Vista compacta: dos nombres y acceso al listado completo, sin alterar la casilla. */
+.bday-badge{position:relative;font-size:.64rem;letter-spacing:-.015em;border-radius:4px;padding:3px 2px;line-height:1.25;white-space:nowrap;min-width:0;flex-shrink:0;overflow:hidden;border:1px solid color-mix(in srgb,var(--bday-color) 65%,var(--border));background:color-mix(in srgb,var(--bday-color) 15%,var(--surface));color:var(--text);font-weight:500;cursor:pointer;transition:opacity .1s;text-align:center}
+.bday-badge-name{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bday-badge:active{opacity:.7}
-.bday-badge.bday-badge-vip{background:#ffdf70;border-color:#d8ab28;color:#543e08;font-weight:700;overflow:visible;margin:5px 3px 1px 0;padding:5px 2px}
+.bday-badge.bday-badge-vip{background:#ffdf70;border-color:#d8ab28;color:#543e08;font-weight:700;overflow:visible;margin:3px 3px 0 0;padding:3px 2px}
 .bday-calendar-vip{position:absolute;top:0;right:0;transform:translate(50%,-50%);width:24px;height:24px;object-fit:contain;z-index:1;pointer-events:none}
 .bday-calendar-tools{display:flex;flex-direction:column;align-items:center;gap:7px}
 .bday-header-vip.bday-vip-compact{margin:0;--chk:#c2911c}
@@ -150,3 +150,9 @@ button.bday-group-tag{cursor:pointer;min-height:44px;text-align:left}
 #bdDAlarm{margin-top:18px;width:100%}
 
 .bday-alarm-hint{margin:16px 0 0;color:var(--text-muted);font-size:.76rem;line-height:1.5}
+
+.bday-day-more{font:inherit;font-size:.62rem;font-weight:600;padding:2px 0;min-height:20px;border:0;background:none;color:var(--accent);cursor:pointer;flex-shrink:0}
+.bd-detail-sheet.bday-day-sheet{height:64dvh;display:flex;flex-direction:column;gap:16px;overflow:hidden}
+.bday-day-person{width:100%;display:flex;align-items:center;gap:10px;min-height:52px;padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--surface2);color:var(--text);text-align:left;margin-bottom:10px;cursor:pointer}
+.bday-day-person>span:first-child{flex:1;min-width:0;overflow-wrap:anywhere}
+.bday-day-person img{width:24px;height:24px}

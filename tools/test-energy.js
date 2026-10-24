@@ -209,3 +209,14 @@ const defaults=refApp.energyComparisonDefaults({},'luz');assert.equal(defaults.p
 const custom=refApp.energyComparisonDefaults({potenciaP1:4.6,periodWeights:[20,40,40]},'luz');assert.equal(custom.potenciaP1,4.6);assert.deepEqual(Array.from(custom.periodWeights),[20,40,40]);
 near(refApp._calcElectCost({...rt,useOwnPower:true,potenciaP1:4.6,potenciaP2:3.3},{},270,30)-refApp._calcElectCost({...rt,useOwnPower:true,potenciaP1:3.3,potenciaP2:3.3},{},270,30),1.3*.09*30*1.05);
 console.log('Energía: referencias con impuestos, consumo documentado y potencia/tramos editables OK');
+
+// La representación distingue datos ausentes, cero real y cobertura parcial.
+{
+ const app=require('./entorno').cargarApp({});
+ const base={periods:[0,0,0],periodDays:0,days:30};
+ const missing=app.energyPeriodsHtml(base);assert(!missing.includes('energy-period-track'));assert(missing.includes('Sin lecturas por tramos'));assert(!missing.includes('33 %'));
+ const zero=app.energyPeriodsHtml({...base,periodDays:30});assert(!zero.includes('energy-period-track'));assert(zero.includes('0 kWh'));
+ const partial=app.energyPeriodsHtml({...base,periods:[10,20,70],periodDays:10});assert(partial.includes('flex-grow:0.1'));assert(partial.includes('10 de 30 días'));assert(partial.includes('70 %'));
+ const complete=app.energyPeriodsHtml({...base,periods:[20,30,50],periodDays:30});assert(complete.includes('50 %'));assert(!complete.includes('Desglose parcial'));
+}
+console.log('Tramos: sin proporciones inventadas, cero real, lecturas parciales y completas OK');

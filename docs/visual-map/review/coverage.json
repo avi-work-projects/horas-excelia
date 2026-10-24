@@ -1204,5 +1204,5 @@
       "status": "Revisada visualmente"
     }
   ],
-  "scope": "Revisión histórica de la base indicada. Las huellas se verifican contra Git; no certifican como revisadas las capturas regeneradas de v498."
+  "scope": "Revisión histórica de la base indicada. Las huellas se verifican contra Git; no certifican como revisadas las capturas regeneradas de versiones posteriores."
 }

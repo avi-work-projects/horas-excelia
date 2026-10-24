@@ -61,6 +61,7 @@
 .energy-overview>span{font-size:.75rem;color:var(--text-muted)}.energy-overview>strong{font-size:1.85rem;letter-spacing:-.05em;line-height:1.15;color:var(--energy-tone);overflow-wrap:anywhere}.energy-overview>small{font-size:.67rem;color:var(--text-muted)}
 .energy-overview-averages{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px}
 .energy-overview .energy-metric{padding:10px 0;border:0;background:transparent;box-shadow:0 -1px 0 color-mix(in srgb,var(--energy-tone) 20%,var(--border));border-radius:0}.energy-overview .energy-info{margin:0}
+.energy-period-empty{padding:14px;border:1px dashed var(--border);border-radius:10px;background:var(--surface2);color:var(--text-muted);font-size:.76rem;line-height:1.5;margin:14px 0}
 .energy-period-track{display:flex;height:10px;gap:3px;border-radius:5px;overflow:hidden;margin:14px 0}.energy-period-track>span{flex-basis:0;background:var(--period-tone)}
 .energy-period-0{--period-tone:#bd7075}.energy-period-1{--period-tone:#c99a40}.energy-period-2{--period-tone:#4f9c90}
 .energy-period-values{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.energy-period-values>div{display:flex;flex-direction:column;gap:7px;font-size:.66rem;border-top:2px solid var(--period-tone);padding-top:8px;min-width:0}.energy-period-values strong{font-size:.8rem;overflow-wrap:anywhere}.energy-period-values small{color:var(--text-muted)}
