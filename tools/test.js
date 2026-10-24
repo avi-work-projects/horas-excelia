@@ -597,8 +597,8 @@ REGLAS.push(['inicio: ensayo con fecha, hora y pareja actual; sin hora explicita
   ctx.sessionStorage={getItem:()=>null};
   ctx.document.getElementById=id=>id==='homePopupContent'?content:id==='homePopup'?{style:{}}:null;
   require('vm').runInContext(fs.readFileSync(path.join(RAIZ,'js/home-popup.js'),'utf8'),ctx);
-  return content.innerHTML.includes('Mañana · 18:00–19:00</strong> <span class="home-reminder-content">Ensayo - Pareja &lt;actual&gt;')
-    &&content.innerHTML.includes('Hoy · Sin hora</strong> <span class="home-reminder-content">Ensayo sin pareja asignada')
+  return content.innerHTML.includes('aria-label="Mañana"')&&content.innerHTML.includes('18:00–19:00')&&content.innerHTML.includes('Ensayo - Pareja &lt;actual&gt;')
+    &&content.innerHTML.includes('aria-label="Hoy"')&&content.innerHTML.includes('Sin hora')&&content.innerHTML.includes('Ensayo sin pareja asignada')
     &&!content.innerHTML.includes('Nombre antiguo');
 }]);
 

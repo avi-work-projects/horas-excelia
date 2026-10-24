@@ -24,8 +24,8 @@ a.evCycleFilters();assert.equal(a.EV_ANNUAL_FILTER_HIDDEN.length,a.EV_FILTER_GRO
 a.evCycleFilters();assert.equal(a.EV_ANNUAL_FILTER_HIDDEN.length,0);
 a.evCycleFilters();assert.equal(JSON.stringify(a.EV_ANNUAL_FILTER_HIDDEN),'["Asturias","Resto"]');
 assert.equal(a.EV_FILTER_CYCLE,0);
-assert.ok(!a.homeReminderEventText('Hoy','','Viaje').includes('Sin hora'));
-assert.ok(a.homeReminderEventText('Hoy','','Ensayo',true).includes('Sin hora'));
+assert.ok(!a.homeReminderEventText('En curso','Viaje').includes('Sin hora'));
+assert.ok(a.homeReminderEventText('','Ensayo').includes('Sin hora'));
 // Otro hueco en un día ocupado y cerrado: no sustituir la pareja, reabrir y no inventar hora.
 a.BODA_COUPLES=[{id:'p',name:'Pareja de prueba',contracted:2}];
 a.EVENTS=[ev('existing','2026-09-23','p')];a.BODA_CLOSED={'2026-09-23':1};

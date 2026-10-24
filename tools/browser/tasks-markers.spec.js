@@ -124,7 +124,7 @@ test('recordatorios: acceso desde tareas, dos pendientes, cumpleaños plegables 
  await expect(page.locator('.home-pending-tasks li')).toHaveText(['Gestión repetida','Primera tarea']);
  await expect(page.locator('#homePopupContent')).toContainText('Gestión repetida');
  await expect(page.locator('#homePopupContent')).toContainText('Rutina de prueba');
- await expect(page.locator('.home-reminder-next-day')).toContainText('Plan de mañana');
+ await expect(page.locator('.home-reminder-group[aria-label="Mañana"]')).toContainText('Plan de mañana');
  await expect(page.locator('.home-reminder-symbol .ev-management-mark')).toHaveCSS('box-shadow','none');
  const third=page.locator('.home-popup-item').filter({hasText:'Tercera cumple'});
  await expect(third).toBeHidden();await page.locator('#homeBirthdayToggle').click();await expect(third).toBeVisible();
@@ -136,10 +136,10 @@ test('recordatorios: acceso desde tareas, dos pendientes, cumpleaños plegables 
  await note.locator('p').click();await expect(note.locator('p')).toBeHidden();
  await note.locator('.home-reminder-content').click();await expect(note.locator('p')).toBeVisible();await note.locator('summary').press('Enter');await expect(note.locator('p')).toBeHidden();
  await expect(page.locator('#homePopupClose')).toBeInViewport();
- const lines=await page.locator('.home-popup-item.event').first().evaluate(el=>({title:el.querySelector('.home-reminder-content').getBoundingClientRect().y,when:el.querySelector('.home-reminder-when').getBoundingClientRect().y}));expect(lines.title).toBeGreaterThan(lines.when);
+ const lines=await page.locator('.home-popup-item.event').first().evaluate(el=>({title:el.querySelector('.home-reminder-content').getBoundingClientRect().y,when:el.querySelector('.home-reminder-when').getBoundingClientRect().y}));expect(Math.abs(lines.title-lines.when)).toBeLessThan(5);
  await expect(page.locator('#homeBirthdayToggle')).toHaveText(/Mostrar menos/);
  await page.locator('#homeBirthdayToggle').click();await expect(third).toBeHidden();
- await page.locator('#homeTasksOpen').click();await expect(page.locator('#tasksOverlay')).toBeVisible();await expect(page.locator('.task-title')).toHaveCount(4);
+ await page.locator('.home-reminder-pending>summary').click();await page.locator('#homeTasksOpen').click();await expect(page.locator('#tasksOverlay')).toBeVisible();await expect(page.locator('.task-title')).toHaveCount(4);
  await page.locator('#tasksReminders').click();await expect(page.locator('#homePopup')).toBeVisible();await page.locator('#homePopupClose').click();
  await page.locator('#tasksFab').click();await page.locator('#tasksReminders').click();await page.locator('#homePopup').click({position:{x:3,y:3}});await expect(page.locator('#homePopup')).toBeHidden();
  await page.locator('#econBtn').click();await expect(page.locator('.econ-equiv-metric').first()).toContainText('Por día');

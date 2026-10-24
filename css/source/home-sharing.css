@@ -58,9 +58,6 @@
 .ev-cal-export-footer .ev-io-btn{width:100%;padding:10px}
 .ev-cal-export-footer .ev-io-btn:disabled{opacity:.45;cursor:default}
 
-.home-reminder-text{min-width:0;display:block;width:100%}
-.home-reminder-when{white-space:nowrap}
-.home-reminder-content{display:inline-block;max-width:100%;vertical-align:top}
 .ev-cal-export-status.changed{color:var(--c-orange)}
 
 /* Colores por tramo, compartidos entre las dos vistas de próximos cumpleaños. */
