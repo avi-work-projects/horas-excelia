@@ -13,7 +13,10 @@ ExecStart=/home/angel/gestify-facturacion/venv/bin/python drive_publish.py
 UMask=0077
 NoNewPrivileges=true
 Restart=on-failure
+# systemd >=254: 15m, about 69m, about 5h15m, then at most once a day.
 RestartSec=900
+RestartSteps=3
+RestartMaxDelaySec=24h
 
 [Install]
 WantedBy=multi-user.target

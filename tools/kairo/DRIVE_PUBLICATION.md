@@ -27,7 +27,10 @@
 Runtime: /home/angel/gestify-facturacion. Private files: rclone-drive.conf (0600),
 drive-publish-config.json and drive-publish-state.json. Never commit their contents.
 Units: kairo-drive-publish.path watches drive-publish-request; service executes once
-at boot and on events. Failed executions retry every 900 seconds; success stops.
+at boot and on events. Since 2026-10-25, failures back off from 15 minutes through
+about 69 minutes and 5h15m to a one-day maximum (systemd >=254, RestartSteps=3).
+Success stops retries. Existing path events and boot activation remain unchanged;
+this is not a daily polling task after success. No per-attempt notification is added.
 The observer reads immutable accepted PDFs and does not call AEAT or SMTP.
 Destination year comes from validated invoice period and matching number, never
 upload date. January creates its new year folder; December retries stay in December's
@@ -223,3 +226,20 @@ checks. Live page and privacy text verified in Edge. Production OAuth status als
 verified. Account reauthorization awaits user's Continue; no service installed and
 Windows collection still active. Source d473877 is published on main. The staged
 Kairo code remains on trabajo/kairo-drive, separate from the PWA deployment.
+
+## Retry backoff verification — 2026-10-25
+
+An isolated systemd oneshot, with PrivateNetwork=true and no invoice dependencies,
+failed five times then succeeded. Scaled parameters (1s, 3 steps, 8s maximum)
+produced gaps 1.21, 2.24, 4.26, 8.26 and 8.23 seconds, confirming escalation,
+the cap and a successful stop. Production unit parsing and loaded properties
+were verified: 15min, 3 steps, 1d, inactive. The publisher was not run as part of
+this deployment; all four production SQLite hashes stayed unchanged.
+Only the service definition was replaced and systemd reloaded. Private rollback
+unit and evidence are in runtime backups/retry-20261025. The temporary test unit
+was removed. No Gestify reminder or new Telegram alert was implemented.
+
+The systemd backoff is in memory: explicit activation/boot can start a fresh
+sequence. It is not a persisted business retry schedule. Both transient and
+validation failures currently back off; manual repair remains necessary for
+permission failures or conflicting files.
