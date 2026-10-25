@@ -55,7 +55,7 @@ function _renderEvCalMonth(){
       it.row=0;
       it.labelTop=evBarSize(it.ev)==='lg'&&wMulti.some(function(other){return evBarSize(other.ev)==='md'&&other.cs<=it.ce&&other.ce>=it.cs;});
     });
-    _evMarcarMitades(wMulti);
+    _evMarcarMitades(wMulti,true);
     var activeRows=0;wMulti.forEach(function(it){if(it.row>=0)activeRows=Math.max(activeRows,it.row+1);});
     // Pre-compute which columns are in-month (for bar dimming)
     var inMCols=[];for(var ci=0;ci<7;ci++){inMCols.push(wk[ci].getMonth()===EV_MONTH);}

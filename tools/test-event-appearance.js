@@ -14,6 +14,33 @@ assert.equal(a._evBarPast({cs:0,ce:6,halfL:true,halfR:true},week,today).style,';
 assert.equal(a._evBarPast({cs:0,ce:3},week,today,false).cls,'');
 assert.equal(a._evBarPast({cs:0,ce:6},week,today,false).style,'');
 assert.equal(a._evBarPast({cs:0,ce:6},week,today,true).cls,' ev-part-past');
+
+// Calendario mensual: las horas de transporte mandan sobre la hora general.
+for(const type of ['Viaje','Asturias','Casa Rural','Otros']){
+ for(const [start,end,left,right] of [['00:00','00:00',false,true],['12:59','12:59',false,true],['13:00','13:00',true,false],['15:00','10:00',true,true],[null,null,false,false]]){
+  const ev={id:'hours',kind:'grande',type,start:'2026-08-24',end:'2026-08-28',viaje:{ida:{time:start},vuelta:{time:end}}};
+  const row={ev,cs:0,ce:4,starts:true,ends:true,row:0};a._evMarcarMitades([row],true);
+  assert.equal(row.halfL,left,type+' ida '+start);assert.equal(row.halfR,right,type+' vuelta '+end);
+  const middle={...row,starts:false,ends:false};a._evMarcarMitades([middle],true);assert.equal(middle.halfL,false);assert.equal(middle.halfR,false);
+ }
+}
+const timed={id:'hours',kind:'grande',type:'Viaje',title:'Viaje ficticio',color:'#5b7db5',start:'2026-08-24',end:'2026-08-28',time:'09:00',endTime:'19:00',viaje:{ida:{time:'15:00'},vuelta:{time:'10:00'}}};
+assert.equal(a.evBarTravelTimes(timed).start,'15:00');assert.equal(a.evBarTravelTimes(timed).end,'10:00');
+assert.equal(a.evBarTravelTimes({...timed,viaje:{ida:{time:null,modo:'tren'}}}).start,'09:00');
+const oneDay={ev:{...timed,end:timed.start},cs:0,ce:0,starts:true,ends:true,row:0};a._evMarcarMitades([oneDay],true);
+assert.equal(oneDay.halfL,true);assert.equal(oneDay.halfR,false);
+const original={ev:timed,cs:0,ce:4,starts:true,ends:true,row:0};a._evMarcarMitades([original]);assert.equal(original.halfL,false);assert.equal(original.halfR,false);
+
+a.EVENTS=[timed];a.EV_YEAR=2026;a.EV_MONTH=7;a.EV_QUAD_YEAR=2026;a.EV_QUAD_MONTH=7;
+const untouched=JSON.stringify(a.EVENTS),monthly=a.renderEvCalMonth();
+assert.match(monthly,/margin-left:calc\(50% \/ 5\)/);assert.match(monthly,/margin-right:calc\(50% \/ 5\)/);
+assert.equal(JSON.stringify(a.EVENTS),untouched);
+for(const render of ['renderEvQuad','renderEvAnnual'])assert.doesNotMatch(a[render](),/margin-(left|right):calc\(50% \/ 5\)/);
+a.EVENTS=[timed,{...timed,id:'overlap',start:'2026-08-26',end:'2026-08-27',viaje:null,time:null,endTime:null}];
+const stepped=a.renderEvCalMonth();assert.match(stepped,/ev-stepped-bar/);assert.doesNotMatch(stepped,/NaN|Infinity/);assert.match(stepped,/margin-right:calc\(50% \/ 5\)/);
+// El corte de semana y mes no repite el recorte en los tramos interiores.
+a.EVENTS=[{...timed,start:'2026-08-30',end:'2026-09-02'}];
+const split=a.renderEvCalMonth();assert.equal((split.match(/margin-left:calc\(50% \/ /g)||[]).length,1);assert.equal((split.match(/margin-right:calc\(50% \/ /g)||[]).length,1);
 a.EVENTS=[{id:'test-trip',kind:'grande',type:'Viaje',title:'Viaje en curso',start:'2026-08-19',end:'2026-08-24',color:'#38bdf8'}];
 a.EV_YEAR=2026;a.EV_MONTH=7;a.EV_QUAD_YEAR=2026;a.EV_QUAD_MONTH=7;
 for(const render of ['renderEvCalMonth','renderEvQuad','renderEvAnnual'])assert.match(a[render](),/ev-part-past[^>]+data-id="test-trip"/);
