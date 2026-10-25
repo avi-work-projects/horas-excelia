@@ -1001,3 +1001,30 @@ Corrección de la propuesta tras revisar las capturas con Ángel:
 - Añadir clase y Añadir pareja comparten acento suave con la subpestaña activa, tanto en Clases como en Parejas; Guardar conserva la jerarquía de confirmación. La variante primaria acepta `--io-primary-border` con el mismo valor anterior como respaldo para el resto de consumidores.
 - `statistics-ui.js` y `statistics.css` son la fuente del marco común: título, métricas, contenido y notas. Wedding Moves aplica ese marco también a gráficos por período, extras, profesores y distribuciones; Rutinas y Próximos lo reutilizan con sus métricas y colores. No se han cambiado las fórmulas, períodos, recuentos, filtros, datos ni enlaces de edición.
 - El atlas añade el estado de tarea marcada y los recorridos inferiores de las tres estadísticas, con flechas de scroll y los enlaces cruzados a Rutinas/Wedding Moves. La comparación v501/v502 conserva datos ficticios equivalentes y código histórico cuando se muestra el formato anterior.
+
+
+## Mantenimiento incremental del atlas (25/10/2026)
+
+Pieza y consumidores: selección y metadatos de `tools/visual-map/generate.cjs`,
+visor e imágenes exportadas del atlas. Invariantes: mismas rutas reales, datos
+ficticios, flechas medidas, detección de cambios compartidos y separación entre
+inspección técnica y aceptación del usuario. No cambia ningún recurso de la PWA.
+
+`tracking.cjs` concentra planes y huellas con cachés limitadas a la ejecución.
+Los contratos del catálogo se comparan por escena, los estilos aislados declaran
+sus grupos y los estilos nuevos/mixtos permanecen globales. La versión visible
+se separa de la lógica de core. `map:plan` permite comprobar el alcance sin
+capturar. `map:verify` mantiene la verificación completa del visor y reutiliza las
+exportaciones de contenido idéntico. No regenerar referencias a ciegas.
+
+La revisión sigue a la huella de la imagen: se conserva si no cambia y pasa al
+historial si la nueva captura es distinta. La migración contrasta fuentes y
+recorridos antes de sustituir las antiguas dependencias generales; no toma el
+commit documental como una modificación de la app. La inspección de las 150
+capturas iniciales conserva su evidencia histórica, sin aprobar estados nuevos.
+
+Comprobaciones: contratos de selección, caché, fuentes añadidas/eliminadas,
+versiones, cambios compartidos, revisión e independencia de las exportaciones;
+recaptura aislada en Edge; verificación del visor y pasada posterior sin cambios;
+pruebas generales y build. Las herramientas y documentos no incrementan la
+versión ni forman parte de `dist/`.
