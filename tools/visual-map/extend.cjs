@@ -37,6 +37,7 @@ module.exports=function extend({scenes,edges}){
   add('event-filter','Filtros de eventos','Eventos','all-events','#evTypesFilter','#evTypeFilterOv.open',{sources:['js/events-bind.js']});
   add('event-order','Orden de Próximos','Eventos','events','#evUpcomingOrder','#evPlanOrderOv.open',{sources:['js/events-order.js']});
   add('event-new','Nuevo evento','Eventos','events','#evAdd','#evFTitle',{scroll:true,sources:['js/events-form.js','js/events-form-controls.js','js/events-form-schedule.js'],region:'.ev-event-form-body'});
+  add('event-new-details','Nuevo evento · nombre, notas y horario','Eventos','event-new',{scroll:'.ev-form-lead'},'#evFTitle',{label:'Deslizar · completar los datos'});
   add('event-delete','Eliminar evento','Eventos','all-events',{hold:'.ev-list-item[data-id="map-demo"]'},'#evDelOv.open',{sources:['js/events-detail.js'],label:'Pulsación larga del evento'});
   add('large-detail','Ficha de evento grande','Eventos','calendar',{click:'.ev-multi-bar[data-id="map-trip"]',position:{x:8,y:8}},'#evDetailOv.open',{sources:['js/events-detail.js','js/events-alarm-policy.js']});
   add('started-detail','Evento ya iniciado','Eventos','calendar','.ev-cell[data-ds="2026-08-21"] [data-id="map-started"]','#evDetailOv.open',{sources:['js/events-detail.js','js/events-alarm-policy.js']});

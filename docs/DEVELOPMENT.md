@@ -1071,3 +1071,19 @@ Las 53 instantáneas quedan iguales. La caracterización pasa antes y después:
 24 transiciones/límites, alias Cumpleaños, fecha recordada y filtros; la batería
 de gestos y previsualización pasa sus 18 casos. El mapa declara la dependencia
 de `swipe-render.js` desde Eventos y se actualiza al cerrar la publicación v504.
+
+
+## Alta de eventos por categoría (v504)
+
+Preferencia de Ángel del 26/10/2026: al crear, elegir primero clase y categoría;
+el bloque de nombre, notas, fecha y horas queda al final. `renderEvFormLead` se
+ensambla una sola vez y se coloca al principio al editar o al final al crear.
+No se duplican campos, se cambian bindings ni se altera el guardado. Los datos
+específicos de la categoría, colores y trayectos conservan sus controles.
+La cabecera y Guardar siguen fijos y el desplazamiento vive dentro del panel.
+
+La instantánea de edición y las otras 52 previas se conservan. Se añade una
+referencia del formulario vacío nuevo y pruebas móviles a 320/400/440 px de
+orden, tamaño exterior, autocompletado de categoría, horas, guardado, recarga y
+cancelación. El atlas añade la escena de datos al final del alta, enlazada con
+la entrada por una flecha de desplazamiento.

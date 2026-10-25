@@ -1,7 +1,7 @@
 # Mapa visual de Gestify
 
-Atlas ampliado el 24/10/2026 tras aprobar Ángel el piloto: **169 capturas,
-174 relaciones y 13 áreas**, repartidas en láminas legibles.
+Atlas ampliado el 24/10/2026 tras aprobar Ángel el piloto: **170 capturas,
+175 relaciones y 13 áreas**, repartidas en láminas legibles.
 
 ```sh
 npm ci
@@ -169,3 +169,15 @@ apagados y barra delimitada por las horas de ida/vuelta. La reproducción usa la
 mismas fechas y trayectos en v502/v503, sin hora general del evento.
 `node tools/visual-map/calendar-evidence.cjs` conserva esa comparación aislada;
 no reescribe las evidencias anteriores ni usa datos personales.
+
+
+### Alta por categoría y navegación v504
+
+El alta de un evento empieza por clase/categoría y termina con nombre, notas y
+horario. La edición conserva su disposición previa. La escena `event-new`
+muestra la entrada; su flecha de desplazamiento conduce a `event-new-details`.
+Ambas son capturas del mismo formulario, con cabecera y Guardar fijos.
+
+Próximos, Wedding Moves y Rutinas comparten `EV_SWIPE_ORDER` entre controladores
+y previsualización. El refactor mantiene orden, límites, fechas y filtros;
+el catálogo declara la dependencia de `swipe-render.js` desde Eventos.
