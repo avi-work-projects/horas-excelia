@@ -60,25 +60,61 @@ no clasifica una pantalla como bonita, anticuada o incoherente ni autoriza redis
 
 `tools/visual-map/catalog.cjs` conserva el piloto y el inventario; `extend.cjs`
 añade escenas por áreas con un único constructor de rutas. `fixture.cjs` prepara
-datos inventados sobre `tools/fixture.json`. `map-data.json` y `map-data.js` se
+datos inventados sobre `tools/fixture.json`. `capture.cjs` reúne la preparación,
+medición y fotografía; su archivo completo es una dependencia compartida. `map-data.json` y `map-data.js` se
 generan, no se editan a mano.
 
 ```sh
 npm run map:capture                         # atlas entero, tres contextos aislados
 npm run map:capture -- --scene=calendar     # una escena
 npm run map:capture -- --scene=day,time     # varias escenas
+npm run map:plan                            # alcance y lecturas, sin escribir ni abrir Edge
 npm run map:changed                         # fuentes modificadas y dependientes
 npm run map:index                           # cobertura/antigüedad sin capturar
 npm run map:check                           # falla si faltan capturas o cambió una fuente
-npm run map:verify                          # visor, relaciones y láminas PNG/SVG
+npm run map:verify                          # visor, relaciones y exportaciones afectadas
+npm run map:verify -- --force-exports        # reconstrucción explícita de todas las láminas
+npm run test:map                            # contratos de vigencia, revisión y exportación
 node tools/visual-map/probe.cjs             # diagnóstico de rutas sin capturas
 ```
 
-Las huellas incluyen fuentes de la ruta de acceso, componentes base, CSS, fixture
-y generador. Los cambios compartidos pueden afectar a todas las escenas; un módulo
-concreto afecta a su escena y descendientes. El índice señala **Actualizar captura**
-cuando cambian las fuentes. Es una comprobación por comando, no vigilancia en
-segundo plano. Tras regenerar escenas, ejecutar `map:verify` para actualizar láminas.
+Las huellas incluyen fuentes de la ruta de acceso, componentes base, CSS,
+fixture y contrato de captura (fecha, viewport, preparación, medición y fotografía).
+Cada archivo se lee una sola vez por ejecución y cada plan de dependencias se
+calcula una vez. El catálogo aporta un contrato por escena: modificar otra ruta,
+un título o la selección incremental no obliga a fotografiar todo el atlas.
+Añadir una fuente a `sources` también invalida sus consumidoras, aunque la fuente
+ya existiera antes.
+
+`tracking.cjs` delimita las hojas aisladas por los grupos presentes en la ruta;
+Estadísticas sigue a sus consumidores de `statistics-ui.js`. Las hojas mixtas,
+base, temas y cualquier hoja nueva siguen siendo globales por precaución. No
+acotar una hoja si incorpora componentes globales; actualizar sus consumidores
+al cambiar este reparto. El texto de APP_VERSION se registra aparte para los
+recorridos de Ajustes que pueden mostrarlo; cualquier otro cambio en core sigue
+afectando a todas las escenas. No se ignoran cambios de lógica porque no alteren
+inmediatamente un píxel.
+
+El índice señala **Actualizar captura** al cambiar las fuentes. Es una
+comprobación por comando, sin vigilancia en segundo plano. Tras regenerar escenas,
+ejecutar `map:verify`: comprueba el visor y todas sus relaciones, pero exporta
+solo las láminas cuyo contenido o renderizador cambiaron, faltan o están alteradas.
+`export-state.json` conserva las huellas de cada exportación. Un comando sin
+cambios conserva las imágenes, los índices y sus fechas de archivo.
+
+La revisión pertenece a una imagen concreta. Una recaptura idéntica conserva
+su estado y evidencia; una imagen distinta queda **Sin revisar** y guarda la
+revisión anterior en `reviewHistory`, visible en la ficha del visor. Antes de
+sobrescribir una imagen revisada se archiva en `captures/reviewed/`, por su huella. Esto no
+convierte una revisión visual técnica en aceptación de Ángel. Durante la migración
+se recuperó la inspección histórica de `review/coverage.json` solo para imágenes
+con la misma huella; las demás conservan esa inspección como historia.
+
+`node tools/visual-map/generate.cjs --migrate` migra el formato anterior sin
+recapturar: exige fuentes y contratos de recorrido iguales, contrastando con el
+commit de captura cuando hace falta. Falla ante cambios sin acreditar; no es un
+atajo para dar por vigentes capturas antiguas. El uso habitual es `map:plan`,
+`map:changed` y `map:verify`.
 
 Edge **headless**, perfil efímero, 400 × 880, escala 1, tema claro, iconos profesionales
 y fecha fija **21/08/2026**. Personas, facturas, suministros y eventos ficticios. No
