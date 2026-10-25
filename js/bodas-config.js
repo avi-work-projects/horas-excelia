@@ -103,21 +103,21 @@ function bodaTeacherStats(){
   });return counts;
 }
 function renderBodaPackStats(){
-  var s=bodaPackStats(),h='<section class="boda-distribution" aria-label="Clases impartidas por pareja"><h3>Clases impartidas por pareja</h3><p>Cuántas parejas han recibido cada número de clases. Incluye las que aún no han empezado.</p>';
+  var s=bodaPackStats(),h='<section class="stats-section boda-distribution" aria-label="Clases impartidas por pareja"><header class="stats-head"><h3>Clases impartidas por pareja</h3></header><p class="stats-note">Cuántas parejas han recibido cada número de clases. Incluye las que aún no han empezado.</p>';
   var nums=Object.keys(s.counts).map(Number).sort(function(a,b){return a-b;});
-  if(!nums.length)h+='<p>Todavía no hay parejas registradas.</p>';
+  if(!nums.length)h+='<p class="stats-note">Todavía no hay parejas registradas.</p>';
   else{
     h+='<div class="boda-distribution-head"><span>Clases recibidas</span><span>Parejas</span></div>';
     var max=Math.max.apply(null,nums.map(function(n){return s.counts[n];}));
     nums.forEach(function(n){h+='<div class="boda-distribution-row"><span>'+(n===0?'Sin empezar':n+' '+(n===1?'clase':'clases'))+'</span><span class="boda-distribution-track" aria-hidden="true"><i style="width:'+(s.counts[n]/max*100)+'%"></i></span><strong>'+s.counts[n]+'</strong></div>';});
   }
   h+='</section>';
-  h+='<div class="boda-stat-t">'+s.extras+(s.extras===1?' pareja':' parejas')+' con clases extras</div><p class="boda-stat-note">Extras = clases tomadas por encima de las incluidas al contratar el pack.</p>';
-  BODA_CONFIG.packs.forEach(function(p){var row=s.byPack[p.id]||{couples:0,classes:0};h+='<div class="boda-pack-stat"><b>'+escHtml(p.name)+'</b><span>'+row.couples+' parejas · '+row.classes+' extras</span></div>';});
+  var packs='<p class="stats-note">'+s.extras+(s.extras===1?' pareja':' parejas')+' con clases extras.</p>';
+  BODA_CONFIG.packs.forEach(function(p){var row=s.byPack[p.id]||{couples:0,classes:0};packs+='<div class="stats-list-row boda-pack-stat"><b>'+escHtml(p.name)+'</b><span>'+row.couples+' parejas · '+row.classes+' extras</span></div>';});
+  h+=renderStatsCard('Clases extras por pack',packs,'Extras = clases tomadas por encima de las incluidas al contratar el pack.');
   var teachers=bodaTeacherStats();
-  h+='<div class="boda-stat-t">Clases dadas por profesores</div><div class="boda-stats-row boda-count-grid">';
-  [['both',bodaTeacherName('angel')+' y '+bodaTeacherName('celia')],['celia','Solo '+bodaTeacherName('celia')],['angel','Solo '+bodaTeacherName('angel')],['substitute','Con sustituto']].forEach(function(t){h+='<div class="boda-stat"><b>'+teachers[t[0]]+'</b><span>'+escHtml(t[1])+'</span></div>';});
-  h+='</div><p class="boda-stat-note">Cada clase cuenta una vez. Con sustituto incluye tanto las clases en solitario como acompañado. Las clases sin selección guardada se cuentan con ambos profesores principales.</p>';
+  var items=[['both',bodaTeacherName('angel')+' y '+bodaTeacherName('celia')],['celia','Solo '+bodaTeacherName('celia')],['angel','Solo '+bodaTeacherName('angel')],['substitute','Con sustituto']].map(function(t){return [teachers[t[0]],t[1]];});
+  h+=renderStatsCard('Clases dadas por profesores',renderStatsMetrics(items),'Cada clase cuenta una vez. Con sustituto incluye tanto las clases en solitario como acompañado. Las clases sin selección guardada se cuentan con ambos profesores principales.');
   return h;
 }
 function renderBodaConfig(){

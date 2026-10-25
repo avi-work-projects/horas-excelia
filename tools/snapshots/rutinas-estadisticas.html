@@ -7,29 +7,37 @@
 </button>
 </div>
 <div class="rut-sec">
-<div class="boda-stats-row">
-<div class="boda-stat">
-<b>16</b>
-<span>hechas</span>
+<div class="stats-stack stats-stack-routines">
+<section class="stats-section">
+<header class="stats-head">
+<h3>Resumen de actividad</h3>
+</header>
+<div class="stats-metrics">
+<div class="stats-metric">
+<strong>16</strong> <span>hechas</span>
 </div>
-<div class="boda-stat">
-<b>1</b>
-<span>canceladas</span>
+<div class="stats-metric">
+<strong>1</strong> <span>canceladas</span>
 </div>
-<div class="boda-stat">
-<b>0</b>
-<span>recuperadas</span>
+<div class="stats-metric">
+<strong>0</strong> <span>recuperadas</span>
 </div>
-<div class="boda-stat">
-<b>0</b>
-<span>extras</span>
+<div class="stats-metric">
+<strong>0</strong> <span>extras</span>
 </div>
-<div class="boda-stat">
-<b>94%</b>
-<span>cumplimiento</span>
+<div class="stats-metric">
+<strong>17</strong> <span>previstas</span>
+</div>
+<div class="stats-metric">
+<strong>94%</strong> <span>cumplimiento</span>
 </div>
 </div>
-<div class="boda-stat-t">Por rutina</div>
+<p class="stats-note">Cumplimiento = (hechas + recuperadas + extras) / previstas.</p>
+</section>
+<section class="stats-section">
+<header class="stats-head">
+<h3>Actividad por rutina</h3>
+</header>
 <div class="hbar-rows">
 <div class="hbar-row">
 <span class="hbar-lbl">Gimnasio</span>
@@ -56,15 +64,30 @@
 <span class="hbar-val">3</span>
 </div>
 </div>
-<div class="rut-stat-card">
-<div class="rut-card-hd">
+<p class="stats-note">Sesiones hechas, recuperadas y extras.</p>
+</section>
+<section class="stats-section rut-stat-card">
+<header class="stats-head rut-card-hd">
 <span class="rut-dot" style="background:#38bdf8">
 </span>
-<span class="rut-name">Gimnasio</span>
+<h3 class="rut-name">Gimnasio</h3>
 <span class="rut-pct">88%</span>
+</header>
+<div class="stats-metrics">
+<div class="stats-metric">
+<strong>7</strong> <span>hechas</span>
 </div>
-<div class="rut-stat-line">7 hechas · 1 canceladas · 0 recuperadas · 0 extras · 8 previstas <em>desde 01/08/2026</em>
+<div class="stats-metric">
+<strong>1</strong> <span>canceladas</span>
 </div>
+<div class="stats-metric">
+<strong>0</strong> <span>recuperadas</span>
+</div>
+<div class="stats-metric">
+<strong>0</strong> <span>extras</span>
+</div>
+</div>
+<p class="stats-note">8 previstas desde 01/08/2026.</p>
 <div class="rut-hist">
 <button class="rut-hist-i" data-rid="fx-rut-gym" data-ds="2026-08-03" data-session="2026-08-03" title="Realizada — pulsa para editar">03/08</button>
 <button class="rut-hist-i skip" data-rid="fx-rut-gym" data-ds="2026-08-05" data-session="2026-08-05" title="Cancelada — pulsa para editar">05/08</button>
@@ -75,17 +98,30 @@
 <button class="rut-hist-i" data-rid="fx-rut-gym" data-ds="2026-08-17" data-session="2026-08-17" title="Realizada — pulsa para editar">17/08</button>
 <button class="rut-hist-i" data-rid="fx-rut-gym" data-ds="2026-08-19" data-session="2026-08-19" title="Realizada — pulsa para editar">19/08</button>
 </div>
-<div class="rut-hist-lbl">Pulsa una sesión para editarla. Cumplimiento = (hechas + recuperadas + extras) / previstas.</div>
-</div>
-<div class="rut-stat-card">
-<div class="rut-card-hd">
+<p class="stats-note">Últimas 8 sesiones anteriores a hoy, dentro de los últimos 70 días. Pulsa una sesión para editarla.</p>
+</section>
+<section class="stats-section rut-stat-card">
+<header class="stats-head rut-card-hd">
 <span class="rut-dot" style="background:#e03131">
 </span>
-<span class="rut-name">Baile</span>
+<h3 class="rut-name">Baile</h3>
 <span class="rut-pct">100%</span>
+</header>
+<div class="stats-metrics">
+<div class="stats-metric">
+<strong>6</strong> <span>hechas</span>
 </div>
-<div class="rut-stat-line">6 hechas · 0 canceladas · 0 recuperadas · 0 extras · 6 previstas <em>desde 01/08/2026</em>
+<div class="stats-metric">
+<strong>0</strong> <span>canceladas</span>
 </div>
+<div class="stats-metric">
+<strong>0</strong> <span>recuperadas</span>
+</div>
+<div class="stats-metric">
+<strong>0</strong> <span>extras</span>
+</div>
+</div>
+<p class="stats-note">6 previstas desde 01/08/2026.</p>
 <div class="rut-hist">
 <button class="rut-hist-i" data-rid="fx-rut-baile" data-ds="2026-08-04" data-session="2026-08-04" title="Realizada — pulsa para editar">04/08</button>
 <button class="rut-hist-i" data-rid="fx-rut-baile" data-ds="2026-08-06" data-session="2026-08-06" title="Realizada — pulsa para editar">06/08</button>
@@ -94,22 +130,36 @@
 <button class="rut-hist-i" data-rid="fx-rut-baile" data-ds="2026-08-18" data-session="2026-08-18" title="Realizada — pulsa para editar">18/08</button>
 <button class="rut-hist-i" data-rid="fx-rut-baile" data-ds="2026-08-20" data-session="2026-08-20" title="Realizada — pulsa para editar">20/08</button>
 </div>
-<div class="rut-hist-lbl">Pulsa una sesión para editarla. Cumplimiento = (hechas + recuperadas + extras) / previstas.</div>
-</div>
-<div class="rut-stat-card">
-<div class="rut-card-hd">
+<p class="stats-note">Últimas 6 sesiones anteriores a hoy, dentro de los últimos 70 días. Pulsa una sesión para editarla.</p>
+</section>
+<section class="stats-section rut-stat-card">
+<header class="stats-head rut-card-hd">
 <span class="rut-dot" style="background:#a3e635">
 </span>
-<span class="rut-name">Padel</span>
+<h3 class="rut-name">Padel</h3>
 <span class="rut-pct">100%</span>
+</header>
+<div class="stats-metrics">
+<div class="stats-metric">
+<strong>3</strong> <span>hechas</span>
 </div>
-<div class="rut-stat-line">3 hechas · 0 canceladas · 0 recuperadas · 0 extras · 3 previstas <em>desde 01/08/2026</em>
+<div class="stats-metric">
+<strong>0</strong> <span>canceladas</span>
 </div>
+<div class="stats-metric">
+<strong>0</strong> <span>recuperadas</span>
+</div>
+<div class="stats-metric">
+<strong>0</strong> <span>extras</span>
+</div>
+</div>
+<p class="stats-note">3 previstas desde 01/08/2026.</p>
 <div class="rut-hist">
 <button class="rut-hist-i" data-rid="fx-rut-padel" data-ds="2026-08-01" data-session="2026-08-01" title="Realizada — pulsa para editar">01/08</button>
 <button class="rut-hist-i" data-rid="fx-rut-padel" data-ds="2026-08-08" data-session="2026-08-08" title="Realizada — pulsa para editar">08/08</button>
 <button class="rut-hist-i" data-rid="fx-rut-padel" data-ds="2026-08-15" data-session="2026-08-15" title="Realizada — pulsa para editar">15/08</button>
 </div>
-<div class="rut-hist-lbl">Pulsa una sesión para editarla. Cumplimiento = (hechas + recuperadas + extras) / previstas.</div>
+<p class="stats-note">Últimas 3 sesiones anteriores a hoy, dentro de los últimos 70 días. Pulsa una sesión para editarla.</p>
+</section>
 </div>
 </div>

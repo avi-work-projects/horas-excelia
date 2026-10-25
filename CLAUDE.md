@@ -19,6 +19,7 @@ Una tarea exclusivamente documental conserva las versiones y los archivos de la 
 - Energía reutiliza lecturas/cálculos solo dentro de withEnergyData. No mutar sus resultados ni mantener cachés entre renders. Preservar precisión; redondear únicamente al mostrar.
 - El scroll de una ventana vive en .sy-body. Navegación y cabeceras no se encogen ni desaparecen. Reutilizar abrirPanel/cerrarPanel y conservar scroll al refrescar.
 - Los campos con caja, selectores y tarjetas consecutivas deben separarse 10–12 px reales con gap. Excepción explícita: Recordatorios agrupa Cumpleaños y los eventos de Hoy/Mañana en paneles continuos, sin huecos entre filas, con separadores interiores y un color por grupo. Verificar móvil y escritorio.
+- Estadísticas de Bodas, Rutinas y Próximos comparten `renderStatsCard` / `renderStatsMetrics` y `statistics.css`; conservar los cálculos y acciones de cada dominio. Recordatorios comparte la medida compacta entre Ajustes y Tareas.
 - Los ajustes de subpestañas se acotan a su pantalla. No cambiar el sistema global para corregir Energía, Próximos o Rutinas.
 - En botones de pestaña, selección por fondo; conservar color de fuente y borde. Naranja suave solo para lápices sin texto.
 - Categoría de evento = kind + type. Usar getEvDisplayColor, evStartTime y evSortMarks; no duplicar su política en una vista.

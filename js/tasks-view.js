@@ -41,7 +41,7 @@ function renderTaskRow(t,i,count,view){
   var h='<article style="'+(tone.hex?'--task-tint:'+tone.hex+';':'')+'" class="task-row'+(done?' task-done':'')+'" data-task-id="'+id+'">';
   if(view==='pending')h+='<button type="button" class="task-grip" data-task-drag="'+id+'" aria-label="Reordenar '+title+'" title="Arrastra o usa las flechas del teclado">⠿</button>';
   h+='<input type="checkbox" data-task-action="complete" aria-label="'+(done?'Reabrir':'Completar')+' '+title+'"'+(done?' checked':'')+'>';
-  h+='<div class="task-content"><button type="button" class="task-title" data-task-action="edit" aria-expanded="'+editing+'">'+title+'</button>'+(t.eventRef?'<small>Gestión · '+tasksDateLabel(new Date(t.eventRef.date+'T00:00:00').getTime(),true)+'</small>':'')+'</div><button type="button" class="task-more" data-task-action="edit" aria-label="Opciones de '+title+'">⋯</button>';
+  h+='<div class="task-content"><button type="button" class="task-title" data-task-action="complete" aria-pressed="'+done+'">'+title+'</button>'+(t.eventRef?'<small>Gestión · '+tasksDateLabel(new Date(t.eventRef.date+'T00:00:00').getTime(),true)+'</small>':'')+'</div><button type="button" class="task-more" data-task-action="edit" aria-expanded="'+editing+'" aria-label="Opciones de '+title+'">⋯</button>';
   if(editing){
     h+='<form class="task-editor">'+(t.eventRef?'<p class="task-linked-note">El título se edita desde el evento del calendario.</p>':'<label>Texto de la tarea<input class="ev-input" name="title" maxlength="160" value="'+title+'"></label>')+'<div class="task-actions">';
     h+=renderTaskColors(t);
@@ -92,6 +92,10 @@ function renderTasksPanel(){
     document.querySelector('[data-tasks-view="pending"]').focus({preventScroll:true});
   };
   wrap.querySelectorAll('[data-task-action]').forEach(function(b){b.onclick=function(){tasksRowAction(b);};});
+  wrap.querySelectorAll('.task-row').forEach(function(row){row.onclick=function(e){
+    if(e.defaultPrevented||e.target.closest('button,input,select,textarea,a,form,.task-date-choice'))return;
+    tasksRowAction(row.querySelector('input[data-task-action="complete"]'));
+  };});
   wrap.querySelectorAll('.task-editor').forEach(function(f){f.onsubmit=function(e){e.preventDefault();var id=f.closest('[data-task-id]').dataset.taskId;tasksPerform(function(){if(f.elements.title)tasksChange(id,'title',f.elements.title.value);TASKS_EDIT=null;},'Tarea guardada');};});
   bindTasksReorder(wrap);
 }

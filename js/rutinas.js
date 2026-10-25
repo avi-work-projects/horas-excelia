@@ -344,53 +344,27 @@ function _rutFmtCorto(ds){
 
 /* ══ Estadísticas ══ */
 function _renderRutStats(){
-  if(!RUTINAS.length)return '<div class="sy-note">Sin rutinas todavía.</div>';
-  var hoy=new Date(), hoyDs=evDk(hoy);
-  var h='';
-  /* Totales */
-  var tH=0,tS=0,tR=0,tE=0,tP=0;
+  if(!RUTINAS.length)return '<div class="stats-stack stats-stack-routines">'+renderStatsCard('Actividad de rutinas','<p class="stats-empty">Sin rutinas todavía.</p>')+'</div>';
+  var hoy=new Date(),hoyDs=evDk(hoy),tH=0,tS=0,tR=0,tE=0,tP=0;
   RUTINAS.forEach(function(r){var s=rutStats(r);tH+=s.hechas;tS+=s.saltadas;tR+=s.recuperadas;tE+=s.extras;tP+=s.total;});
-  h+='<div class="boda-stats-row">';
-  h+='<div class="boda-stat"><b>'+tH+'</b><span>hechas</span></div>';
-  h+='<div class="boda-stat"><b>'+tS+'</b><span>canceladas</span></div>';
-  h+='<div class="boda-stat"><b>'+tR+'</b><span>recuperadas</span></div>';
-  h+='<div class="boda-stat"><b>'+tE+'</b><span>extras</span></div>';
-  h+='<div class="boda-stat"><b>'+(tP?Math.round((tH+tR+tE)*100/tP):0)+'%</b><span>cumplimiento</span></div>';
-  h+='</div>';
-  /* Por rutina */
-  h+='<div class="boda-stat-t">Por rutina</div>';
-  h+=hBarRows(RUTINAS.map(function(r){
-    var s=rutStats(r);
-    return {label:r.name,value:s.hechas+s.recuperadas+s.extras,color:rutDisplayColor(r)};
-  }),{});
-  /* Detalle por rutina */
+  var h=renderStatsCard('Resumen de actividad',renderStatsMetrics([[tH,'hechas'],[tS,'canceladas'],[tR,'recuperadas'],[tE,'extras'],[tP,'previstas'],[(tP?Math.round((tH+tR+tE)*100/tP):0)+'%','cumplimiento']]),'Cumplimiento = (hechas + recuperadas + extras) / previstas.');
+  h+=renderStatsCard('Actividad por rutina',hBarRows(RUTINAS.map(function(r){var s=rutStats(r);return {label:r.name,value:s.hechas+s.recuperadas+s.extras,color:rutDisplayColor(r)};}),{}),'Sesiones hechas, recuperadas y extras.');
   RUTINAS.forEach(function(r){
     var s=rutStats(r);
-    h+='<div class="rut-stat-card">';
-    h+='<div class="rut-card-hd"><span class="rut-dot" style="background:'+rutDisplayColor(r)+'"></span>';
-    h+='<span class="rut-name">'+escHtml(r.name)+'</span>';
-    h+='<span class="rut-pct">'+(s.total?s.pct+'%':'—')+'</span></div>';
-    h+='<div class="rut-stat-line">'+s.hechas+' hechas · '+s.saltadas+' canceladas · '+s.recuperadas+' recuperadas · '+s.extras+' extras · '+s.total+' previstas';
-    if(r.start)h+=' <em>desde '+_rutFmt(r.start)+'</em>';
-    h+='</div>';
-    /* Ultimas 8 sesiones pasadas, para poder corregir */
+    h+='<section class="stats-section rut-stat-card"><header class="stats-head rut-card-hd"><span class="rut-dot" style="background:'+rutDisplayColor(r)+'"></span><h3 class="rut-name">'+escHtml(r.name)+'</h3><span class="rut-pct">'+(s.total?s.pct+'%':'—')+'</span></header>';
+    h+=renderStatsMetrics([[s.hechas,'hechas'],[s.saltadas,'canceladas'],[s.recuperadas,'recuperadas'],[s.extras,'extras']]);
+    h+='<p class="stats-note">'+s.total+' previstas'+(r.start?' desde '+_rutFmt(r.start):'')+'.</p>';
     var atras=new Date(hoy.getTime());atras.setDate(atras.getDate()-70);
     var pas=rutSessions(r,evDk(atras),hoyDs).filter(function(x){return x.ds<hoyDs;}).slice(-8);
     if(pas.length){
       h+='<div class="rut-hist">';
-      pas.forEach(function(x){
-        h+='<button class="rut-hist-i'+(x.skip?' skip':'')+'" data-rid="'+r.id+'" data-ds="'+x.ds+'" data-session="'+x.key+'" title="'
-          +(x.skip?'Cancelada':'Realizada')+' — pulsa para editar">'
-          +x.ds.slice(8)+'/'+x.ds.slice(5,7)+'</button>';
-      });
-      h+='</div>';
-      h+='<div class="rut-hist-lbl">Pulsa una sesión para editarla. Cumplimiento = (hechas + recuperadas + extras) / previstas.</div>';
+      pas.forEach(function(x){h+='<button class="rut-hist-i'+(x.skip?' skip':'')+'" data-rid="'+r.id+'" data-ds="'+x.ds+'" data-session="'+x.key+'" title="'+(x.skip?'Cancelada':'Realizada')+' — pulsa para editar">'+x.ds.slice(8)+'/'+x.ds.slice(5,7)+'</button>';});
+      h+='</div><p class="stats-note">Últimas '+pas.length+' sesiones anteriores a hoy, dentro de los últimos 70 días. Pulsa una sesión para editarla.</p>';
     }
-    h+='</div>';
+    h+='</section>';
   });
-  return h;
+  return '<div class="stats-stack stats-stack-routines">'+h+'</div>';
 }
-
 
 
 /* == Cambiar los dias/hora de UNA semana concreta ==

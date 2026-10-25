@@ -118,7 +118,9 @@
       "started-detail",
       "event-alarm",
       "edit--scroll-plan-picker",
-      "plan-picker"
+      "plan-picker",
+      "event-stats-breakdown",
+      "event-stats-links"
     ]
   },
   {
@@ -207,7 +209,8 @@
       "routine-flex",
       "routines--scroll-routine-new",
       "routine-new",
-      "routine-time"
+      "routine-time",
+      "routine-stats-detail"
     ]
   },
   {
@@ -256,7 +259,10 @@
       "wedding-config--scroll-wedding-length",
       "wedding-length",
       "wedding-config--scroll-wedding-room",
-      "wedding-room"
+      "wedding-room",
+      "wedding-stats-charts",
+      "wedding-stats-packs",
+      "wedding-stats-teachers"
     ]
   },
   {
@@ -341,7 +347,8 @@
       "home",
       "tasks",
       "tasks-completed",
-      "task-edit"
+      "task-edit",
+      "tasks-selected"
     ]
   }
 ]

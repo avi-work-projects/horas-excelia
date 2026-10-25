@@ -19,19 +19,22 @@ test('acciones de Clases y Parejas comparten acento y abren sus formularios',asy
     expect(boxes[0].y).toBe(boxes[1].y);expect(boxes[0].width).toBe(boxes[1].width);expect(boxes[0].height).toBe(boxes[1].height);expect(boxes[0].bg).toBe(boxes[1].bg);
   }
   const color=await page.locator('#bodaAddClass').evaluate(el=>getComputedStyle(el).backgroundColor);
-  await expect(page.locator('#bodaAddClass')).toHaveCSS('background-color','rgb(107, 31, 32)');
+  const wine=await page.locator('[data-bsub=clases]').evaluate(el=>getComputedStyle(el).color);
+  expect(color).toBe(await page.locator('[data-bsub=clases]').evaluate(el=>getComputedStyle(el).backgroundColor));
+  await expect(page.locator('#bodaAddClass')).toHaveCSS('color',wine);
   await page.screenshot({path:'test-results/wedding-clases.png'});
-  await page.locator('#bodaAddClass').click();await expect(page.locator('#bodaFormOv')).toBeVisible();await expect(page.locator('#bodaFormSave')).toHaveCSS('background-color',color);await page.locator('#bodaFormClose').click();
-  await page.locator('#bodaAddCouple').click();await expect(page.locator('#bodaCFormOv')).toBeVisible();await expect(page.locator('#bodaCSave')).toHaveCSS('background-color',color);
+  await page.locator('#bodaAddClass').click();await expect(page.locator('#bodaFormOv')).toBeVisible();await expect(page.locator('#bodaFormSave')).toHaveCSS('background-color',wine);await page.locator('#bodaFormClose').click();
+  await page.locator('#bodaAddCouple').click();await expect(page.locator('#bodaCFormOv')).toBeVisible();await expect(page.locator('#bodaCSave')).toHaveCSS('background-color',wine);
   await page.locator('#bodaCName').fill('Pareja creada desde Clases');await page.locator('#bodaCFuture').check();await page.locator('#bodaCSave').click();
   await expect.poll(()=>page.evaluate(()=>BODA_COUPLES.length)).toBe(5);expect(await page.evaluate(()=>BODA_SUBTAB)).toBe('clases');
   expect(await page.evaluate(()=>JSON.parse(localStorage.getItem(BODAS_SK)).some(c=>c.name==='Pareja creada desde Clases'))).toBe(true);
   await page.locator('[data-bsub=parejas]').click();await expect(page.locator('#bodaAddCouple')).toHaveCSS('background-color',color);
-  await page.locator('[data-bsub=config]').click();await expect(page.locator('#bodaSaveTeacherNames')).toHaveCSS('background-color',color);
+  await page.locator('[data-bsub=config]').click();await expect(page.locator('#bodaSaveTeacherNames')).toHaveCSS('background-color',wine);
   for(const theme of ['grey','dark']){
     await page.evaluate(t=>applyTheme(t),theme);await page.locator('[data-bsub=clases]').click();
     await page.screenshot({path:'test-results/wedding-clases-'+theme+'.png'});
-    await expect(page.locator('#bodaAddClass')).toHaveCSS('color',theme==='dark'?'rgb(35, 23, 25)':'rgb(255, 255, 255)');
+    expect(await page.locator('#bodaAddClass').evaluate(el=>getComputedStyle(el).backgroundColor)).toBe(await page.locator('[data-bsub=clases]').evaluate(el=>getComputedStyle(el).backgroundColor));
+    expect(await page.locator('#bodaAddClass').evaluate(el=>getComputedStyle(el).color)).toBe(await page.locator('[data-bsub=clases]').evaluate(el=>getComputedStyle(el).color));
   }
 });
 

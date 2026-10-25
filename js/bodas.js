@@ -460,7 +460,7 @@ function _renderBodaParejas(){
   });
   h+='</div></div>';
   h+='<div class="boda-buscar-bar"><div class="bday-search-wrap boda-search"><input class="bday-search-input" id="bodaPSearch" type="text" '
-    +'placeholder="Buscar pareja\u2026" value="'+escHtml(BODA_PAREJAS_SEARCH)+'"></div><button class="bday-io-btn io-primaria" id="bodaAddCouple">+ Añadir pareja</button></div>';
+    +'placeholder="Buscar pareja\u2026" value="'+escHtml(BODA_PAREJAS_SEARCH)+'"></div><button class="bday-io-btn io-primaria boda-create-button" id="bodaAddCouple">+ Añadir pareja</button></div>';
   h+='<div class="boda-chips boda-sort-chips">';
   var _sa=(BODA_PAREJAS_SORT==='az')?' A\u2191':(BODA_PAREJAS_SORT==='za')?' Z\u2193':'';
   var _sf=(BODA_PAREJAS_SORT==='new')?' recientes' : (BODA_PAREJAS_SORT==='old')?' antiguas' : '';
@@ -567,7 +567,7 @@ function _renderBodaClases(){
   h+='<div class="bday-search-wrap boda-search"><input class="bday-search-input" id="bodaClSearch" '
     +'type="text" placeholder="Buscar pareja\u2026" value="'+escHtml(BODA_CLASES_SEARCH)+'"></div>';
   h+='</div>';
-  h+='<div class="boda-create-actions" aria-label="Añadir a Wedding Moves"><button class="bday-io-btn io-primaria" id="bodaAddClass">+ Añadir clase</button><button class="bday-io-btn io-primaria" id="bodaAddCouple">+ Añadir pareja</button></div>';
+  h+='<div class="boda-create-actions" aria-label="Añadir a Wedding Moves"><button class="bday-io-btn io-primaria boda-create-button" id="bodaAddClass">+ Añadir clase</button><button class="bday-io-btn io-primaria boda-create-button" id="bodaAddCouple">+ Añadir pareja</button></div>';
   /* Mismo formato que "Excluir pasados" o "Solo libres" de Vacaciones Festivos */
   h+='<div class="excl-row">';
   h+='<label class="excl-item"><input type="checkbox" id="bodaShowPast"'+(BODA_HIDE_PAST?'':' checked')+'> Ver pasadas</label>';

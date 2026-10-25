@@ -154,17 +154,17 @@ function bodaStatsOverview(all){
     taught:new Set(taken.map(function(ev){return ev.boda.coupleId;}).filter(function(id){return !!bodaCouple(id);})).size};
 }
 function renderBodaStatsOverview(s){
-  var h='<section class="boda-overview" aria-label="Resumen de parejas"><header><h3>Parejas</h3><button id="bodaStatsCouples" class="boda-overview-total" data-stats-couples="todas"><b>'+s.couples+'</b><span>en total →</span></button></header><div class="boda-overview-grid">';
-  [['pasadas','Pasadas',s.past],['activas','En curso',s.active],['futuras','Próximas',s.future]].forEach(function(x){h+='<button type="button" data-stats-couples="'+x[0]+'"><b>'+x[2]+'</b><span>'+x[1]+'</span></button>';});
-  h+='</div><p>'+s.taught+' '+(s.taught===1?'pareja con clases impartidas':'parejas con clases impartidas')+'. Próximas: reservas marcadas como futuras.</p></section>';
-  h+='<section class="boda-overview" aria-label="Resumen de clases"><header><h3>Clases</h3><div class="boda-overview-total"><b>'+s.total+'</b><span>registradas</span></div></header><div class="boda-overview-grid">';
-  [['Impartidas',s.taken],['Pendientes',s.pending],['Sin pareja',s.unassigned]].forEach(function(x){h+='<div><b>'+x[1]+'</b><span>'+x[0]+'</span></div>';});
-  return h+'</div><p>Impartidas: con pareja y finalizadas. Pendientes: asignadas, aún sin finalizar.</p></section>';
+  var h='<section class="stats-section boda-overview" aria-label="Resumen de parejas"><header class="stats-head"><h3>Parejas</h3><button id="bodaStatsCouples" class="boda-overview-total" data-stats-couples="todas"><b>'+s.couples+'</b><span>en total →</span></button></header><div class="stats-metrics stats-metrics-three boda-overview-grid">';
+  [['pasadas','Pasadas',s.past],['activas','En curso',s.active],['futuras','Próximas',s.future]].forEach(function(x){h+='<button type="button" class="stats-metric" data-stats-couples="'+x[0]+'"><b>'+x[2]+'</b><span>'+x[1]+'</span></button>';});
+  h+='</div><p class="stats-note">'+s.taught+' '+(s.taught===1?'pareja con clases impartidas':'parejas con clases impartidas')+'. Próximas: reservas marcadas como futuras.</p></section>';
+  h+='<section class="stats-section boda-overview" aria-label="Resumen de clases"><header class="stats-head"><h3>Clases</h3><div class="boda-overview-total"><b>'+s.total+'</b><span>registradas</span></div></header><div class="stats-metrics stats-metrics-three boda-overview-grid">';
+  [['Impartidas',s.taken],['Pendientes',s.pending],['Sin pareja',s.unassigned]].forEach(function(x){h+='<div class="stats-metric"><b>'+x[1]+'</b><span>'+x[0]+'</span></div>';});
+  return h+'</div><p class="stats-note">Impartidas: con pareja y finalizadas. Pendientes: asignadas, aún sin finalizar.</p></section>';
 }
 function _renderBodaStats(){
   var all=bodaSortClasses(bodaClasses());
   var overview=renderBodaStatsOverview(bodaStatsOverview(all));
-  if(!all.length)return overview+renderBodaPackStats();
+  if(!all.length)return '<div class="stats-stack stats-stack-wedding">'+overview+renderBodaPackStats()+'</div>';
   /* Reparto por mes (ultimos 12 meses hasta hoy) */
   var hoy=new Date();
   var meses=[],mLabels=[],mVals=[];
@@ -201,22 +201,20 @@ function _renderBodaStats(){
   }).filter(function(r){return r.value>0;});
 
   var h=overview;
-  h+='<section class="boda-stats-pace" aria-label="Ritmo de programación"><h3>Ritmo programado</h3><div><span><b>'+mediaSem.toFixed(1)+'</b> clases / semana</span><span><b>'+mediaMes.toFixed(1)+'</b> clases / mes</span></div><p>Del '+_bodaFmt(primera)+' al '+_bodaFmt(ultima)+'. Incluye todas las clases registradas, también futuras y sin pareja.</p></section>';
-  h+='<div class="boda-stat-t">Clases por mes <em>(últimos 12)</em></div>';
-  h+='<div class="sy-chart">'+simpleBarChart(mVals,mLabels,'#c08a5a',{highlight:11})+'</div>';
-  h+='<div class="boda-stat-t">Clases por semana <em>(últimas 10)</em></div>';
-  h+='<div class="sy-chart">'+simpleBarChart(wVals,wLabels,'#e879a8',{highlight:9})+'</div>';
+  h+=renderStatsCard('Ritmo programado',renderStatsMetrics([[mediaSem.toFixed(1),'clases / semana'],[mediaMes.toFixed(1),'clases / mes']]),'Del '+_bodaFmt(primera)+' al '+_bodaFmt(ultima)+'. Incluye todas las clases registradas, también futuras y sin pareja.','boda-stats-pace');
+  h+=renderStatsCard('Clases por mes','<div class="sy-chart">'+simpleBarChart(mVals,mLabels,'#c08a5a',{highlight:11})+'</div>','Últimos 12 meses hasta el mes actual.');
+  h+=renderStatsCard('Clases por semana','<div class="sy-chart">'+simpleBarChart(wVals,wLabels,'#e879a8',{highlight:9})+'</div>','Últimas 10 semanas.');
   h+=renderBodaPackStats();
   if(porFranja.length){
-    h+='<div class="boda-stat-t">Por franja horaria</div>'+hBarRows(porFranja);
+    h+=renderStatsCard('Por franja horaria',hBarRows(porFranja));
   }
   if(porDia.length){
-    h+='<div class="boda-stat-t">Por día de la semana</div>'+hBarRows(porDia,{});
+    h+=renderStatsCard('Por día de la semana',hBarRows(porDia,{}));
   }
   if(porLugar.length){
-    h+='<div class="boda-stat-t">Por lugar</div>'+hBarRows(porLugar,{});
+    h+=renderStatsCard('Por lugar',hBarRows(porLugar,{}));
   }
-  return h;
+  return '<div class="stats-stack stats-stack-wedding">'+h+'</div>';
 }
 
 /* ══ Modal: detalle de pareja (días y horas asignados) ══ */

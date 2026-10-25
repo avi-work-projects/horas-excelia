@@ -81,9 +81,6 @@ button.action-edit.active,button.action-edit:active{background:rgba(251,146,60,.
 .boda-catalog-row>span{flex:1;min-width:150px;color:var(--text)}
 .boda-catalog-row small{display:block;color:var(--text-muted);font-size:.7rem;margin-top:4px}
 .boda-catalog-row label{font-size:.72rem;display:flex;gap:5px;align-items:center;--chk:#b98760}
-.boda-count-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-.boda-pack-stat{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:.76rem}
-.boda-pack-stat span{color:var(--text-muted)}
 
 .boda-catalog-row .ev-io-btn{flex:0 0 auto;padding:6px 9px;font-size:.7rem}
 
@@ -923,21 +920,11 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 .ev-stat-controls select{flex:1;min-width:0;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px;font:inherit}
 .ev-stat-period{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:none;padding:0}
 .ev-stat-period button{margin:0;min-width:0}
-.ev-stat-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
-.ev-stat-cards .sy-card{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 8px}
-.ev-stat-cards strong{font-size:1.7rem;color:var(--c-green)}.ev-stat-cards span{font-size:.75rem}
-.ev-stat-section{margin:18px 0;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--surface)}
-.ev-stat-section h3{font-size:.9rem;margin:0;padding:14px;background:var(--surface2)}
-.ev-stat-section table{width:100%;border-collapse:collapse;font-size:.74rem}
-.ev-stat-section th,.ev-stat-section td{padding:10px 8px;text-align:right;border-bottom:1px solid var(--border)}
-.ev-stat-section th:first-child{text-align:left;font-weight:500;width:55%;overflow-wrap:anywhere}
-.ev-stat-section thead{color:var(--text-muted);font-size:.65rem}
 .ev-stat-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px}
 .ev-stat-note{font-size:.72rem;line-height:1.5;margin:10px 0}
 .export-choice-badge{margin-left:auto;flex:0 1 110px;text-align:center;font-size:.62rem;line-height:1.35;padding:5px 7px;border:1px solid var(--home-tone);border-radius:7px;color:var(--home-tone);background:var(--surface)}
 
 .ev-stat-note{background:none;border:0;padding:0;margin:8px 0!important}
-.ev-stat-cards .sy-card{padding:12px 8px}.ev-stat-cards strong{font-size:1.4rem}
 .personal-note-field{height:100%;display:flex;flex-direction:column;box-sizing:border-box}
 .personal-note-field>.settings-field-value{flex:1;min-height:0}
 .personal-note-field textarea{height:100%;min-height:0;resize:none;box-sizing:border-box}
@@ -951,7 +938,7 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 .invoice-field.personal-note-field{display:flex;margin:0;gap:8px}
 
 .ev-upcoming-content:has(>.ev-stat-controls){gap:12px}
-.ev-stat-controls,.ev-stat-cards{margin:0}.ev-stat-section{margin:4px 0}.ev-stat-note{margin:0!important}
+.ev-stat-controls{margin:0}
 
 /* v457: selección de categoría separada de su desplegable. */
 .ev-filter-category-group>summary{padding:0 40px 0 0!important;align-items:stretch}

@@ -1,0 +1,26 @@
+/* Marco único para Bodas, Rutinas y Eventos. Los datos conservan su dominio. */
+.stats-stack{display:flex;flex-direction:column;gap:12px;--stats-tone:var(--text)}
+.stats-stack-wedding{--stats-tone:var(--wm-wine)}
+.stats-stack-routines{--stats-tone:var(--text)}
+.stats-stack-events{--stats-tone:var(--upcoming-text)}
+.stats-section{padding:14px;margin:0;border:1px solid var(--border);border-radius:14px;background:var(--surface);min-width:0}
+.stats-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.stats-head h3{font-size:.86rem;line-height:1.4;color:var(--stats-tone);margin:0;font-weight:700}
+.stats-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.stats-metrics-three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.stats-metric{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:0;padding:11px 5px;border:1px solid color-mix(in srgb,var(--stats-tone) 20%,var(--border));border-radius:10px;background:color-mix(in srgb,var(--stats-tone) 5%,var(--surface));color:var(--text);font:inherit;text-align:center;box-sizing:border-box}
+button.stats-metric{cursor:pointer}
+.stats-metric :is(b,strong){font-size:1.3rem;font-variant-numeric:tabular-nums;line-height:1.2;color:var(--stats-tone)}
+.stats-metric span{font-size:.69rem;line-height:1.4;overflow-wrap:anywhere}
+.stats-note{font-size:.7rem;line-height:1.5;color:var(--text-muted);margin:12px 0 0}
+.stats-section>.sy-chart{margin:0;background:transparent;padding:0}
+.stats-section .hbar-rows{gap:10px}.stats-section .hbar-lbl{width:100px;white-space:normal;overflow-wrap:anywhere}
+.stats-table{width:100%;border-collapse:collapse;font-size:.74rem}
+.stats-table :is(th,td){padding:10px 5px;text-align:right;border-bottom:1px solid var(--border)}
+.stats-table th:first-child{text-align:left;font-weight:500;overflow-wrap:anywhere}
+.stats-table thead{color:var(--text-muted);font-size:.65rem}
+.stats-table tfoot{font-weight:700}.stats-table tfoot :is(th,td){border-bottom:0}
+.stats-empty{font-size:.78rem;line-height:1.5;color:var(--text-muted);margin:0}
+.stats-list-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:.76rem}
+.stats-list-row:last-child{border-bottom:0}.stats-list-row>span{color:var(--text-muted);text-align:right}
+.stats-section .rut-card-hd{margin-bottom:12px}.stats-section .rut-hist{gap:6px;margin-top:12px}

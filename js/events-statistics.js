@@ -36,17 +36,18 @@ function renderEventStatistics(){
   var now=new Date(),stats=computeEventStatistics(EVENTS,EV_STATS_YEAR,EV_STATS_PERIOD,now);
   var h='<div class="ev-stat-controls"><div class="ev-stat-period">';
   [['past','Realizados'],['future','Futuros'],['all','Ambos']].forEach(function(p){h+='<button class="ev-sort-chip'+(EV_STATS_PERIOD===p[0]?' active':'')+'" aria-pressed="'+(EV_STATS_PERIOD===p[0])+'" data-stats-period="'+p[0]+'">'+p[1]+'</button>';});h+='</div></div>';
-  h+='<p class="sy-note ev-stat-note">'+(EV_STATS_YEAR==='all'?'Todos los años':EV_STATS_YEAR)+' · Por fechas registradas · Inicio y fin incluidos.</p>';
-  h+='<div class="ev-stat-cards">';
-  [[stats.trips,'Viajes'],[stats.asturias,'Visitas a Asturias'],[stats.rural,'Casas Rurales'],[stats.travelDays,'Días Fuera'],[stats.plansDays,'Días de Planes'],[stats.ruralDays,'Días de Casa Rural']].forEach(function(c){h+='<div class="sy-card"><strong>'+c[0]+'</strong><span>'+c[1]+'</span></div>';});h+='</div>';
-  h+='<div class="ev-stats-links"><span>Ver otras estadísticas:</span><button class="ev-view-toggle ev-btn-bodas" id="evStatsRehearsals" aria-label="Estadísticas de Wedding Moves"><span class="wm-logo" aria-hidden="true"></span></button><button class="ev-view-toggle ev-btn-rutinas" id="evStatsRoutines">Rutinas</button></div>';
-  if(!stats.rows.length)return h+'<p class="sy-note">No hay eventos registrados en este período.</p>';
+  h+=renderStatsCard('Resumen del período','<div class="ev-stat-cards">'+renderStatsMetrics([[stats.trips,'Viajes'],[stats.asturias,'Visitas a Asturias'],[stats.rural,'Casas Rurales'],[stats.travelDays,'Días Fuera'],[stats.plansDays,'Días de Planes'],[stats.ruralDays,'Días de Casa Rural']])+'</div>',(EV_STATS_YEAR==='all'?'Todos los años':EV_STATS_YEAR)+' · Por fechas registradas · Inicio y fin incluidos.');
+  if(!stats.rows.length)h+=renderStatsCard('Eventos registrados','<p class="stats-empty">No hay eventos registrados en este período.</p>');
   [['grandes','Viajes y Estancias'],['management','Recordatorio Gestiones'],['plans','Planes y Quedadas'],['other','Otros Puntuales']].forEach(function(g){
     var rows=stats.rows.filter(function(r){return g[0]==='grandes'?r.kind==='grande':r.group===g[0];}).sort(function(a,b){return b.days-a.days||a.type.localeCompare(b.type,'es');});if(!rows.length)return;
     var showDays=g[0]!=='management'&&g[0]!=='plans';
-    h+='<section class="ev-stat-section"><h3>'+g[1]+'</h3><table><thead><tr><th>Evento</th><th>'+(g[0]==='grandes'?'Viajes / Eventos':'Veces')+'</th>'+(showDays?'<th>Días</th>':'')+'</tr></thead><tbody>';
-    rows.forEach(function(r){h+='<tr><th scope="row"><span class="ev-stat-dot" style="background:'+r.color+'"></span>'+escHtml(menuTitle(r.type))+'</th><td>'+r.count+'</td>'+(showDays?'<td>'+r.days+'</td>':'')+'</tr>';});h+='</tbody><tfoot><tr><th>Total</th><td>'+stats.groups[g[0]].count+'</td>'+(showDays?'<td>'+stats.groups[g[0]].days+'</td>':'')+'</tr></tfoot></table></section>';
-  });return h+'<p class="sy-note ev-stat-note">'+(EV_STATS_PERIOD!=='past'&&EV_STATS_YEAR==='all'?'Las repeticiones previstas abarcan los próximos 12 meses. ':'')+'Los viajes en curso aportan solo los días del período elegido. Días Fuera reúne Viajes, Asturias y Casa Rural sin duplicar fechas. En puntuales, cada evento cuenta una vez por día activo; dos planes el mismo día son dos veces y un día.</p>';
+    var table='<table class="stats-table"><thead><tr><th>Evento</th><th>'+(g[0]==='grandes'?'Viajes / Eventos':'Veces')+'</th>'+(showDays?'<th>Días</th>':'')+'</tr></thead><tbody>';
+    rows.forEach(function(r){table+='<tr><th scope="row"><span class="ev-stat-dot" style="background:'+r.color+'"></span>'+escHtml(menuTitle(r.type))+'</th><td>'+r.count+'</td>'+(showDays?'<td>'+r.days+'</td>':'')+'</tr>';});table+='</tbody><tfoot><tr><th>Total</th><td>'+stats.groups[g[0]].count+'</td>'+(showDays?'<td>'+stats.groups[g[0]].days+'</td>':'')+'</tr></tfoot></table>';
+    h+=renderStatsCard(g[1],table,'','ev-stat-section');
+  });
+  h+=renderStatsCard('Criterios del recuento','<p class="stats-note">'+(EV_STATS_PERIOD!=='past'&&EV_STATS_YEAR==='all'?'Las repeticiones previstas abarcan los próximos 12 meses. ':'')+'Los viajes en curso aportan solo los días del período elegido. Días Fuera reúne Viajes, Asturias y Casa Rural sin duplicar fechas. En puntuales, cada evento cuenta una vez por día activo; dos planes el mismo día son dos veces y un día.</p>');
+  h+=renderStatsCard('Otras estadísticas','<div class="ev-stats-links"><button class="ev-view-toggle ev-btn-bodas" id="evStatsRehearsals" aria-label="Estadísticas de Wedding Moves"><span class="wm-logo" aria-hidden="true"></span></button><button class="ev-view-toggle ev-btn-rutinas" id="evStatsRoutines">Rutinas</button></div>');
+  return '<div class="stats-stack stats-stack-events">'+h+'</div>';
 }
 function bindEventStatistics(){
   if(!document.getElementById('evStatsTotal'))return;

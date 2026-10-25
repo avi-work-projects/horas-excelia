@@ -283,6 +283,8 @@ generado en `css/`, no respecto a `css/source/`.
 | Hora de ensayo | `openBodaTimePicker` |
 | Importación | `askImportMode`, previsualización y validación antes de escribir |
 | Gráficas | `simpleBarChart`, `hBarRows` y los renders energéticos compartidos |
+| Tarjetas de estadísticas | `renderStatsCard`, `renderStatsMetrics` en `statistics-ui.js`; marco en `css/source/statistics.css` |
+| Acceso a Recordatorios | `.reminders-access`: medida compacta compartida de 90 × 33 px en Ajustes y Tareas |
 
 El scroll vive en `.sy-body`, nunca en `.full-overlay`. Cabeceras y navegación
 mantienen su altura; no se encogen ni desaparecen. Usar el patrón existente de
@@ -991,3 +993,11 @@ Corrección de la propuesta tras revisar las capturas con Ángel:
 ## Ajustes compactos v501
 
 Ángel aclara que Tema debe recuperar su grosor original y Recordatorios debe ser todavía menor que en v500. Se elimina la altura/min-height forzada de Recordatorios: la fila vuelve a tomar la altura natural de Tema (33 px en la referencia), y ambos quedan iguales. Esta petición sustituye el objetivo inicial de 44 px, sin imponer una nueva altura absoluta dependiente de la fuente. El mapa y el informe conservan las capturas v499/v500 y añaden v501. La escritura de PNG del atlas reutiliza el guardado atómico para soportar bloqueos transitorios de archivos en Windows.
+
+## Tareas, Wedding Moves y estadísticas v502
+
+- Recordatorios comparte la caja de 90 × 33 px entre Ajustes y Tareas. La petición de igualar ambos accesos sustituye la dependencia de la altura natural de la fila de Tema de v501; Tema conserva su grosor.
+- Pulsar texto o fondo de una tarjeta de tarea usa la misma acción que su checkbox. Solo los tres puntos abren o cierran el editor. Los controles internos y el arrastre no propagan una segunda selección; se conservan Mover explícito, Deshacer, recuperación de fechas e identidad de gestiones enlazadas.
+- Añadir clase y Añadir pareja comparten acento suave con la subpestaña activa, tanto en Clases como en Parejas; Guardar conserva la jerarquía de confirmación. La variante primaria acepta `--io-primary-border` con el mismo valor anterior como respaldo para el resto de consumidores.
+- `statistics-ui.js` y `statistics.css` son la fuente del marco común: título, métricas, contenido y notas. Wedding Moves aplica ese marco también a gráficos por período, extras, profesores y distribuciones; Rutinas y Próximos lo reutilizan con sus métricas y colores. No se han cambiado las fórmulas, períodos, recuentos, filtros, datos ni enlaces de edición.
+- El atlas añade el estado de tarea marcada y los recorridos inferiores de las tres estadísticas, con flechas de scroll y los enlaces cruzados a Rutinas/Wedding Moves. La comparación v501/v502 conserva datos ficticios equivalentes y código histórico cuando se muestra el formato anterior.

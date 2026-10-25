@@ -29,8 +29,8 @@ body:has(.app-panel>.open,#bottomSheet.active,#fiscalOverlay.open,#alarmPanel.op
 .tasks-header h2{margin:0;font-size:1.06rem;line-height:1.25}
 .tasks-header p{margin:3px 0 0;color:var(--text-muted);font-size:.7rem}
 .tasks-header>.sy-back{margin-left:0}
-.tasks-reminders-button{margin-left:auto;min-width:84px;min-height:50px}
-@media(max-width:380px){.tasks-header{gap:8px;padding-left:14px;padding-right:14px}.tasks-heading-icon{width:30px;height:34px;flex-shrink:0}.tasks-heading-icon svg{width:22px;height:22px}.tasks-header h2{font-size:.93rem}.tasks-reminders-button{font-size:.59rem;padding:6px 5px;min-width:78px}}
+.tasks-reminders-button{margin-left:auto}
+@media(max-width:380px){.tasks-header{gap:8px;padding-left:14px;padding-right:14px}.tasks-heading-icon{width:30px;height:34px;flex-shrink:0}.tasks-heading-icon svg{width:22px;height:22px}.tasks-header h2{font-size:.93rem}}
 .tasks-tabs{display:flex;gap:6px;margin:0 20px 16px;background:var(--surface2);border-radius:12px;padding:4px}
 .tasks-tabs button{flex:1;min-width:0;padding:9px 2px;border:0;border-radius:9px;background:none;color:var(--text-muted);font:inherit;font-size:.72rem;cursor:pointer}
 .tasks-tabs button.active{background:var(--surface);color:var(--tasks-accent);box-shadow:0 1px 4px #0002;font-weight:600}
@@ -40,7 +40,7 @@ body:has(.app-panel>.open,#bottomSheet.active,#fiscalOverlay.open,#alarmPanel.op
 .tasks-add button{flex:none;width:42px;padding:0;font-size:1.35rem;background:var(--tasks-accent);border-color:var(--tasks-accent);color:var(--surface)}
 [data-theme=light] .tasks-add button{color:#fff}
 .tasks-list{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:0 20px 12px;scrollbar-gutter:stable}
-.task-row{position:relative;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;padding:6px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:13px}
+.task-row{position:relative;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;padding:6px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:13px;cursor:pointer}
 .task-row input[type=checkbox]{flex-shrink:0;--chk:var(--tasks-accent)}
 .task-content{flex:1;min-width:0}
 .task-title{border:0;background:none;color:var(--text);font:inherit;font-size:.82rem;line-height:1.45;text-align:left;padding:0;width:100%;overflow-wrap:anywhere;cursor:pointer}
@@ -54,7 +54,7 @@ body:has(.app-panel>.open,#bottomSheet.active,#fiscalOverlay.open,#alarmPanel.op
 .task-grip,.task-more{flex:none;border:0;background:none;color:var(--text-muted);cursor:pointer;padding:0;min-height:32px}
 .task-grip{font-size:1.2rem;width:20px;touch-action:none;cursor:grab;color:var(--text-dim)}
 .task-more{font-size:1.2rem;width:28px}
-.task-editor{flex-basis:100%;padding-top:10px;box-shadow:0 -1px 0 var(--border);margin-top:4px}
+.task-editor{flex-basis:100%;padding-top:10px;box-shadow:0 -1px 0 var(--border);margin-top:4px;cursor:default}
 .task-editor label{display:block;font-size:.67rem;color:var(--text-muted)}
 .task-editor input{margin-top:6px;font-size:.8rem}
 .task-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}

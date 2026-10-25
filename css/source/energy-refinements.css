@@ -206,8 +206,6 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .rut-card-actions:has([data-rextra]){grid-template-columns:repeat(3,minmax(0,1fr))}
 .rut-card-actions [data-rextra]{--rut-action:#9272b9}
 .rut-card-ft>span:first-child{line-height:1.6}
-.rut-sec>.boda-stats-row{flex-wrap:wrap}
-.rut-sec>.boda-stats-row>.boda-stat{flex:1 1 28%}
 .contact-shortcuts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
 .contact-shortcuts button{min-width:0;min-height:70px;justify-content:center;text-align:center;background:var(--settings-tone);border-color:var(--settings-tone);color:#fff;padding:9px 6px;font-size:.65rem;font-weight:700;line-height:1.35}
 .contact-shortcuts button.copied{color:#fff;background:var(--settings-tone)}

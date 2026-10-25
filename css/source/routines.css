@@ -62,9 +62,6 @@ body:has(#rutPlanOv.open) .tasks-fab{visibility:hidden}
 .rut-day-btn{flex:1;padding:9px 0;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text-muted);font-size:.72rem;cursor:pointer;font-family:var(--font)}
 .rut-day-btn.on{border-color:var(--accent-bright);background:var(--accent-glow);color:var(--accent-bright);font-weight:700}
 .rut-susp-box{border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;background:var(--surface)}
-.rut-stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-top:8px}
-.rut-stat-line{font-size:.7rem;color:var(--text-muted);margin-top:4px}
-.rut-stat-line em{font-style:normal;color:var(--text-dim)}
 .rut-hist{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}
 .rut-hist-i{font-size:.6rem;font-family:var(--mono);padding:3px 6px;border-radius:6px;border:1px solid var(--c-green);background:rgba(52,211,153,.12);color:var(--c-green);cursor:pointer}
 .rut-hist-i.skip{border-color:var(--c-orange);background:rgba(251,146,60,.12);color:var(--c-orange);text-decoration:line-through}
