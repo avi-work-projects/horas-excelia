@@ -14,6 +14,7 @@ Una tarea exclusivamente documental conserva las versiones y los archivos de la 
 - PWA estática sin backend. Mantener la arquitectura actual y la compatibilidad de backups JSON.
 - css/styles.css es generado. Editar css/source/; las otras hojas CSS siguen siendo editables. No alterar el orden de cascada del catálogo por comodidad.
 - Atrás, flechas y Hoy: base y variantes en css/source/navigation-controls.css; disposición de cabeceras en su módulo. El carrusel conserva su combinación con .ev-btn en event-panels.css. No añadir parches de estos controles a shared-refinements.css.
+- El orden de swipe de Próximos, Wedding Moves y Rutinas vive solo en EV_SWIPE_ORDER (swipe-render.js); controladores y previsualización comparten esas listas y conservan sus efectos separados.
 - Renders sin escrituras. Estado de pantalla explícito y listeners separados; consultas del formulario acotadas a su hoja.
 - appStorage para persistencia, validación previa e importaciones atómicas con restauración. Toda clave nueva se declara en el censo de backup.
 - Energía reutiliza lecturas/cálculos solo dentro de withEnergyData. No mutar sus resultados ni mantener cachés entre renders. Preservar precisión; redondear únicamente al mostrar.

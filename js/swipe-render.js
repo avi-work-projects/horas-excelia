@@ -1,4 +1,10 @@
 /* Previsualizaciones: ensamblar renders existentes sin navegar, guardar ni perder borradores. */
+// Mismo orden para lo que asoma al arrastrar y para el destino al soltar.
+var EV_SWIPE_ORDER = {
+  upcoming:['upcoming','week','months','stats'],
+  bodas:['clases','parejas','calendario','stats','config'],
+  rutinas:['lista','stats']
+};
 function swipeWithState(changes,render){
   var saved={};Object.keys(window).filter(function(k){return /^_?[A-Z][A-Z0-9_]*$/.test(k);}).forEach(function(k){saved[k]=window[k];});
   try{
@@ -24,12 +30,12 @@ function swipeCalendarPreview(year,month,kind){
 }
 function swipeEventsPreview(step){
   var changes={},next,month;
-  if(EV_VIEW==='rutinas'){next=swipeNext(['lista','stats'],RUT_SUBTAB,step);if(!next)return null;changes.RUT_SUBTAB=next;}
+  if(EV_VIEW==='rutinas'){next=swipeNext(EV_SWIPE_ORDER.rutinas,RUT_SUBTAB,step);if(!next)return null;changes.RUT_SUBTAB=next;}
   else if(EV_VIEW==='bodas'){
-    next=swipeNext(['clases','parejas','calendario','stats','config'],BODA_SUBTAB,step);if(!next)return null;changes.BODA_SUBTAB=next;
+    next=swipeNext(EV_SWIPE_ORDER.bodas,BODA_SUBTAB,step);if(!next)return null;changes.BODA_SUBTAB=next;
     if(next==='parejas'){changes.BODA_PAREJAS_FILTER='activas';changes.BODA_PAREJAS_CLASSES=null;changes.BODA_PAREJAS_SORT='boda';}
-  }else if(['upcoming','birthdays','week','months','stats'].indexOf(EV_VIEW)>=0){
-    next=swipeNext(['upcoming','week','months','stats'],EV_VIEW==='birthdays'?'upcoming':EV_VIEW,step);if(!next)return null;
+  }else if(EV_VIEW==='birthdays'||EV_SWIPE_ORDER.upcoming.indexOf(EV_VIEW)>=0){
+    next=swipeNext(EV_SWIPE_ORDER.upcoming,EV_VIEW==='birthdays'?'upcoming':EV_VIEW,step);if(!next)return null;
     changes.EV_VIEW=next;changes.EV_EDIT_MODE=false;
     if(EV_VIEW_STATE[next]){if(EV_VIEW_STATE[next].year!=null)changes.EV_YEAR=EV_VIEW_STATE[next].year;if(EV_VIEW_STATE[next].month!=null)changes.EV_MONTH=EV_VIEW_STATE[next].month;}
   }else if(['annual','puentes','time-off'].indexOf(EV_VIEW)>=0)changes.EV_YEAR=EV_YEAR+step;

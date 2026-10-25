@@ -420,8 +420,10 @@
 ### js/swipe-live.js  _(50 líneas)_
 **Funciones:** swipeCommonRoot:2 · createLiveSwipe:5 · pauseMotion:9 · hide:14 · reveal:15 · clear:20 · prepare:24 · move:28 · finish:33
 
-### js/swipe-render.js  _(73 líneas)_
-**Funciones:** swipeWithState:2 · swipeMonth:9 · swipeNext:10 · swipeFrame:11 · swipeKeepsPreviewScroll:12 · swipeCalendarPreview:17 · swipeEventsPreview:25 · swipeRenderPreview:41
+### js/swipe-render.js  _(79 líneas)_
+**Estado global:** EV_SWIPE_ORDER:3
+
+**Funciones:** swipeWithState:8 · swipeMonth:15 · swipeNext:16 · swipeFrame:17 · swipeKeepsPreviewScroll:18 · swipeCalendarPreview:23 · swipeEventsPreview:31 · swipeRenderPreview:47
 
 ### js/tasks-drag.js  _(71 líneas)_
 **Estado global:** TASKS_DRAG_CANCEL:2

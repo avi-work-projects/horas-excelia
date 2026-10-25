@@ -709,7 +709,7 @@ ya separan varias responsabilidades: no son el primer objetivo por tamaño de ar
 | 5 | **Presentación económica y contexto fiscal/Hogar.** `_renderAnalisisGastos` (`economics-analisis.js:32`, 250 líneas) agrega importes y produce HTML. `economics-fiscal-hip.js` reúne fórmulas, vistas y edición; `reRenderFiscal` cambia de destino según `FISCAL_ENTRY`. | Tras aislar la escritura del punto 1, extraer el modelo de lectura de una vista económica y pasar su resultado al render. Delimitar el host Fiscal/Hogar usando sus helpers existentes; no duplicar fórmulas. | Resultados numéricos y precisión idénticos; cruces de año, tarifas, períodos y subrogaciones; cancelar edición y volver al mismo detalle; backup e importación. |
 
 El punto 1 quedó corregido de forma aislada en v487 (ver resolución debajo).
-El primer paso del punto 2 (Atrás, flechas y Hoy) queda realizado en v488; el resto del CSS compartido no se reorganiza en bloque. Los puntos 3–5 siguen pendientes y son oportunidades de organización, no fallos funcionales demostrados.
+El primer paso del punto 2 (Atrás, flechas y Hoy) queda realizado en v488; el resto del CSS compartido no se reorganiza en bloque. El primer paso del punto 3 (orden compartido entre swipe y vista previa) queda realizado en v504. Los binds por tipo de ficha del punto 3 y los puntos 4–5 siguen pendientes; son oportunidades de organización, no fallos funcionales demostrados.
 El número de líneas orienta la lectura; el orden responde a efectos secundarios,
 consumidores compartidos y posibilidad de hacer cambios acotados.
 
@@ -1051,3 +1051,23 @@ hora de trayecto y render sin escrituras. Comparación con v502 en
 hora general del viaje para no enmascarar esta regresión. La unificación del
 orden entre swipe y vista previa sigue pendiente: esta tarea solo explica esa
 propuesta y corrige las dos incidencias solicitadas.
+
+
+## Orden compartido de swipe (v504, 26/10/2026)
+
+Pieza y consumidores: listas de Próximos, Wedding Moves y Rutinas en
+`swipeEventsPreview` y `_evSwipeUpcoming` / `_evSwipeBodas` / `_evSwipeRutinas`.
+Invariantes: mismo orden, extremos sin vuelta al inicio, alias Cumpleaños,
+restauración de fecha y scroll, filtros de parejas y previsualización sin
+escrituras. Primer paso: compartir únicamente las listas, conservando los
+efectos de navegación en cada controlador. Caracterizar todas las transiciones
+y límites antes y después, y conservar las instantáneas. La reorganización del
+formulario de alta se registra en un cambio funcional separado.
+
+
+Resultado del primer paso: `EV_SWIPE_ORDER` en `swipe-render.js` es la única
+fuente de las tres listas; los controladores mantienen sus efectos previos.
+Las 53 instantáneas quedan iguales. La caracterización pasa antes y después:
+24 transiciones/límites, alias Cumpleaños, fecha recordada y filtros; la batería
+de gestos y previsualización pasa sus 18 casos. El mapa declara la dependencia
+de `swipe-render.js` desde Eventos y se actualiza al cerrar la publicación v504.
