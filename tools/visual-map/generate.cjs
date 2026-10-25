@@ -109,7 +109,8 @@ async function main(){
           if(edge.step&&edge.step.position)b={x:b.x+edge.step.position.x-3,y:b.y+edge.step.position.y-3,width:6,height:6};
           anchors[edge.to]=edge.action==='scroll'?{x:b.x+b.width-10,y:b.y+b.height*.55,width:8,height:Math.min(100,b.height*.25)}:{x:b.x,y:b.y,width:b.width,height:b.height};
         }
-        const image='captures/'+scene.id+'.png';await page.screenshot({path:path.join(OUT,image),animations:'disabled'});
+        // Evitar PNG truncados o bloqueos transitorios al reemplazar capturas en Windows.
+        const image='captures/'+scene.id+'.png';writeAtomically(path.join(OUT,image),await page.screenshot({animations:'disabled'}));
         // Las rutas hijas reproducen la transición al capturarse. Los regresos requieren otra ejecución.
         const verifiedEdges=[];
         for(const edge of outgoing){

@@ -106,7 +106,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .data-menu-item:hover,.data-menu-item:active{background:var(--surface3)}
 .settings-quick-row{display:flex;align-items:stretch;gap:8px;padding:4px}
 .settings-quick-row>#themeBtn{flex:1;min-width:0}
-.settings-reminders-button{width:90px;height:44px;min-height:44px;box-sizing:border-box}
+.settings-reminders-button{width:90px}
 .app-version-label{font-size:.62rem;color:var(--text-muted);padding:4px 12px 8px;opacity:.55;border-top:1px solid var(--border);margin-top:2px;letter-spacing:.02em}
 
 /* ── WEEK CARDS ── */
