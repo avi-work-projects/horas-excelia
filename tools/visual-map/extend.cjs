@@ -12,7 +12,8 @@ module.exports=function extend({scenes,edges}){
     const route=[...source.route,...(Array.isArray(action)?action:[action])];
     const s={id,title,group,route,ready,sources:opts.sources||source.sources,entry:opts.entry,region:opts.region||source.region,note:opts.note};scenes.push(s);
     const last=Array.isArray(action)?action.at(-1):action;
-    edges.push({from:source.id,to:id,selector:typeof last==='string'?last:last.click||last.hold||last.fill||last.file,label:opts.label||title,view:'area',action:typeof last==='object'&&last.file?'file':undefined,step:last});
+    const scrolling=typeof last==='object'&&last.scroll;
+    edges.push({from:source.id,to:id,selector:scrolling?(source.region||'#eventsOverlay .sy-body'):typeof last==='string'?last:last.click||last.hold||last.fill||last.file,label:opts.label||title,view:'area',action:scrolling?'scroll':typeof last==='object'&&last.file?'file':undefined,step:last});
     if(opts.back)edges.push({from:id,to:source.id,selector:opts.back,label:'Atrás / Cancelar',view:'return'});
     return s;
   }
@@ -127,5 +128,14 @@ module.exports=function extend({scenes,edges}){
   edges.at(-1).selector='#importAllBtn';
   add('tasks','Tareas pendientes','Tareas','home','#tasksFab','#tasksOverlay.open',{sources:['js/tasks-view.js','js/tasks.js'],region:'#tasksList'});
   add('tasks-completed','Tareas completadas','Tareas','tasks','[data-tasks-view="done"]','[data-tasks-view="done"].active');
-  add('task-edit','Editar tarea y color','Tareas','tasks','[data-task-action="edit"]','.task-editor');
+  add('task-edit','Editar tarea y color','Tareas','tasks','.task-more','.task-editor',{label:'⋯ Opciones · editar tarea'});
+  add('tasks-selected','Tarea marcada para mover','Tareas','tasks','.task-title','.task-row input:checked',{label:'Pulsar el texto · marcar tarea',sources:['js/tasks-view.js','js/tasks.js']});
+  for(const [id,sources]of [['wedding-stats',['js/bodas-assign.js','js/bodas-config.js']],['routine-stats',['js/rutinas.js']],['event-stats',['js/events-statistics.js']]])get(id).sources=[...new Set([...get(id).sources,...sources,'js/statistics-ui.js'])];
+  add('wedding-stats-charts','Estadísticas · meses y semanas','Bodas','wedding-stats',{scroll:'.stats-section:has(h3:text-is("Clases por mes"))'},'.stats-section:has(h3:text-is("Clases por mes"))',{label:'Deslizar · gráficos por período'});
+  add('wedding-stats-packs','Estadísticas · distribución y packs','Bodas','wedding-stats-charts',{scroll:'.boda-distribution'},'.boda-distribution',{label:'Deslizar · distribución y extras'});
+  add('wedding-stats-teachers','Estadísticas · profesores y reparto','Bodas','wedding-stats-packs',{scroll:'.stats-section:has(h3:text-is("Clases dadas por profesores"))'},'.stats-section:has(h3:text-is("Clases dadas por profesores"))',{label:'Deslizar · profesores y reparto'});
+  add('routine-stats-detail','Estadísticas · detalle de una rutina','Rutinas','routine-stats',{scroll:'.rut-stat-card'},'.rut-stat-card',{label:'Deslizar · actividad e historial'});
+  add('event-stats-breakdown','Estadísticas · desglose por categoría','Eventos','event-stats',{scroll:'.ev-stat-section'},'.ev-stat-section',{label:'Deslizar · desglose de eventos'});
+  add('event-stats-links','Estadísticas · criterios y enlaces','Eventos','event-stats-breakdown',{scroll:'#evStatsRoutines'},'#evStatsRoutines',{label:'Deslizar · criterios y otras estadísticas'});
+  edges.push({from:'event-stats-links',to:'routine-stats',selector:'#evStatsRoutines',label:'Estadísticas de Rutinas',view:'area'},{from:'event-stats-links',to:'wedding-stats',selector:'#evStatsRehearsals',label:'Estadísticas de Wedding Moves',view:'area'});
 };

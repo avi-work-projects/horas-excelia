@@ -14,19 +14,12 @@
 .boda-sec,:is(.ev-detail-overlay,.ev-form-overlay)[id^="boda"]{--io-primary:var(--wm-wine);--io-primary-ink:#fff;--accent:var(--wm-wine);--accent-bright:var(--wm-wine);--accent-glow:color-mix(in srgb,var(--wm-wine) 12%,transparent)}
 [data-theme="dark"] :is(.boda-sec,.ev-detail-overlay[id^="boda"],.ev-form-overlay[id^="boda"]){--io-primary-ink:#231719}
 .boda-sec .ev-btn.primary,:is(.ev-detail-overlay,.ev-form-overlay)[id^="boda"] .ev-btn.primary,.boda-sec .boda-save-ok{color:var(--io-primary-ink)}
+.boda-create-button{--io-primary:color-mix(in srgb,var(--wm-wine) 10%,var(--surface));--io-primary-border:color-mix(in srgb,var(--wm-wine) 35%,var(--border));--io-primary-ink:var(--wm-wine);}
 .boda-create-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:4px 0}
 .boda-create-actions .bday-io-btn{width:100%;min-width:0;min-height:42px;padding:10px 6px;font-size:.75rem;white-space:normal}
 .boda-sec .boda-det-btn{color:var(--wm-wine);border-color:var(--wm-wine);background:color-mix(in srgb,var(--wm-wine) 8%,var(--surface))}
-.boda-overview,.boda-distribution,.boda-stats-pace{border:1px solid var(--border);border-radius:14px;background:var(--surface);padding:12px;margin:0 0 4px}
-.boda-overview header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
-.boda-overview h3,.boda-distribution h3,.boda-stats-pace h3{font-size:.83rem;color:var(--wm-wine);margin:0;font-weight:700}
-.boda-overview-total{display:flex;align-items:baseline;gap:6px;padding:0;border:0;background:none;color:var(--wm-wine);font:inherit}
+.boda-overview-total{display:flex;align-items:baseline;gap:6px;padding:0;border:0;background:none;color:var(--stats-tone);font:inherit}
 button.boda-overview-total{cursor:pointer}.boda-overview-total b{font-size:1.5rem;font-variant-numeric:tabular-nums}.boda-overview-total span{font-size:.66rem}
-.boda-overview-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.boda-overview-grid>button,.boda-overview-grid>div{display:flex;flex-direction:column;gap:4px;align-items:center;padding:10px 3px;border:1px solid color-mix(in srgb,var(--wm-wine) 25%,var(--border));border-radius:10px;background:color-mix(in srgb,var(--wm-wine) 5%,var(--surface));font:inherit;color:var(--text);min-width:0}
-.boda-overview-grid>button{cursor:pointer}.boda-overview-grid b{font-size:1.25rem;font-variant-numeric:tabular-nums}.boda-overview-grid span{font-size:.65rem}
-.boda-overview p,.boda-distribution p,.boda-stats-pace p{font-size:.65rem;line-height:1.5;color:var(--text-muted);margin:9px 0 0}
-.boda-stats-pace>div{display:flex;justify-content:space-between;gap:10px;margin-top:9px;font-size:.7rem}.boda-stats-pace b{font-size:1rem;color:var(--wm-wine)}
 .boda-distribution-head{display:flex;justify-content:space-between;font-size:.63rem;color:var(--text-muted);margin:12px 0 5px}
 .boda-distribution-row{display:grid;grid-template-columns:82px minmax(0,1fr) 30px;align-items:center;gap:10px;font-size:.73rem;padding:7px 0}
 .boda-distribution-row strong{text-align:right;font-variant-numeric:tabular-nums}.boda-distribution-track{height:8px;border-radius:4px;background:var(--surface2);overflow:hidden}.boda-distribution-track i{display:block;height:100%;border-radius:inherit;background:var(--wm-wine)}
@@ -49,10 +42,6 @@ button.boda-overview-total{cursor:pointer}.boda-overview-total b{font-size:1.5re
 .boda-iss-main{flex:1;min-width:0;display:flex;flex-direction:column;font-size:.78rem;color:var(--text)}
 .boda-iss-main em{font-style:normal;font-size:.64rem;color:var(--text-dim)}
 /* Estadisticas */
-.boda-stats-row{display:flex;gap:8px}
-.boda-stat{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 4px;text-align:center;display:flex;flex-direction:column}
-.boda-stat b{font-size:1.15rem;color:var(--text);font-family:var(--mono)}
-.boda-stat span{font-size:.6rem;color:var(--text-dim)}
 .boda-stat-note{font-size:.62rem;color:var(--text-dim);text-align:center}
 .boda-stat-t{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-muted);margin-top:6px}
 .boda-stat-t em{font-style:normal;font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-dim)}

@@ -1,7 +1,7 @@
 # Mapa visual de Gestify
 
-Atlas ampliado el 24/10/2026 tras aprobar Ángel el piloto: **162 capturas,
-165 relaciones y 13 áreas**, repartidas en láminas legibles.
+Atlas ampliado el 24/10/2026 tras aprobar Ángel el piloto: **169 capturas,
+174 relaciones y 13 áreas**, repartidas en láminas legibles.
 
 ```sh
 npm ci
@@ -118,3 +118,9 @@ repetir capturas innecesarias. `node tools/visual-map/verify-review.cjs` comprue
 el informe; `review-evidence.cjs` conserva los seis resultados reales desde las escenas regeneradas del atlas. La cobertura inicial se verifica contra su commit histórico, sin confundirla con la revisión de estados nuevos.
 
 `node tools/visual-map/p3-evidence.cjs` conserva los resultados históricos de v500; `--settings-v501` captura el ajuste posterior de Ajustes sin sobrescribirlos. Las evidencias de v499 se mantienen como historia; `p2-evidence.cjs` corresponde a esa edición y no se debe ejecutar sobre el atlas actual. Este último conservaba las capturas reales de los P2 desde el atlas regenerado. `verify-review.cjs` exporta sus comparativas de antes y después.
+
+### Ajustes de Tareas y estadísticas v502
+
+La comparación está en `review/updates-v502.html`: Recordatorios compacto, selección desde toda la tarjeta de tareas, acciones suaves de Wedding Moves y tarjetas de estadísticas compartidas entre Bodas, Rutinas y Próximos.
+
+`node tools/visual-map/updates-evidence.cjs --before` conserva las referencias v501 (commit `9706617`) y reproduce tres zonas inferiores con su código histórico y el mismo fixture. Tras regenerar el atlas, ejecutar sin argumentos para añadir las capturas actuales y generar el informe; `verify-updates.cjs` comprueba la comparativa y exporta sus imágenes. No se sobrescriben las evidencias de las revisiones anteriores.

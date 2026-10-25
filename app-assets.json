@@ -8,6 +8,7 @@
     "css/source/navigation-alarms.css",
     "css/source/event-panels.css",
     "css/source/dialogs-responsive.css",
+    "css/source/statistics.css",
     "css/source/wedding-moves.css",
     "css/source/routines.css",
     "css/source/shared-refinements.css",
@@ -45,6 +46,9 @@
     },
     {
       "path": "js/core.js"
+    },
+    {
+      "path": "js/statistics-ui.js"
     },
     {
       "path": "js/swipe-content.js"
