@@ -13,7 +13,8 @@ test.beforeEach(async({page})=>{
 for(const width of [320,400,440])test(`P3: navegación, campos y Recordatorios en ${width}px`,async({page},info)=>{
  await page.setViewportSize({width,height:880});
  await page.locator('#menuBtn').click();const reminders=page.locator('#settingsReminders');
- expect((await reminders.boundingBox()).height).toBe(44);
+ const reminderHeight=(await reminders.boundingBox()).height,themeHeight=(await page.locator('#themeBtn').boundingBox()).height;
+ expect(reminderHeight).toBe(themeHeight);expect(themeHeight).toBeLessThanOrEqual(34);
  await reminders.click();await expect(page.locator('#homePopup')).toBeVisible();await page.locator('#homePopupClose').click();
  await page.locator('#estudioBtn').click();await expect(page.locator('#estudioOverlay')).toHaveCSS('transform','matrix(1, 0, 0, 1, 0, 0)');
  await expect(page.locator('.study-intro h2')).toHaveText('Herramientas de comparación');

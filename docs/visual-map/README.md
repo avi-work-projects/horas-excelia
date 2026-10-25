@@ -101,7 +101,7 @@ posterior no invalida capturas cuyas fuentes siguen idénticas.
 
 Documentación y herramientas independientes de la PWA: no entran en
 `app-assets.json`, `dist/` ni el service worker, ni incrementan la versión.
-Las correcciones A01–A06 se integraron con v498 y A07–A11 con v499. A12–A13 (P3) se corrigen en v500. A09 vuelve al selector anual a petición de Ángel; la propuesta mensual de v499 queda retirada. Recordatorios se reduce a 44 px.
+Las correcciones A01–A06 se integraron con v498 y A07–A11 con v499. A12–A13 (P3) se corrigen en v500. A09 vuelve al selector anual a petición de Ángel; la propuesta mensual de v499 queda retirada. v501 recupera la altura natural del botón del tema y ajusta Recordatorios a ella (33 px en la referencia), sustituyendo los 44 px iniciales.
 
 La revisión visual de las 150 capturas está en `review/index.html`: 13 casos
 priorizados, con evidencia histórica y capturas reales del resultado de A01–A13 (con A09 revertido). La fuente
@@ -117,4 +117,4 @@ al cambio. Si no cambia la salida visual, comprobar y documentar su vigencia sin
 repetir capturas innecesarias. `node tools/visual-map/verify-review.cjs` comprueba
 el informe; `review-evidence.cjs` conserva los seis resultados reales desde las escenas regeneradas del atlas. La cobertura inicial se verifica contra su commit histórico, sin confundirla con la revisión de estados nuevos.
 
-`node tools/visual-map/p3-evidence.cjs` conserva los resultados de v500. Las evidencias de v499 se mantienen como historia; `p2-evidence.cjs` corresponde a esa edición y no se debe ejecutar sobre el atlas actual. Este último conservaba las capturas reales de los P2 desde el atlas regenerado. `verify-review.cjs` exporta sus comparativas de antes y después.
+`node tools/visual-map/p3-evidence.cjs` conserva los resultados históricos de v500; `--settings-v501` captura el ajuste posterior de Ajustes sin sobrescribirlos. Las evidencias de v499 se mantienen como historia; `p2-evidence.cjs` corresponde a esa edición y no se debe ejecutar sobre el atlas actual. Este último conservaba las capturas reales de los P2 desde el atlas regenerado. `verify-review.cjs` exporta sus comparativas de antes y después.

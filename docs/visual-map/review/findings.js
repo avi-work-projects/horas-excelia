@@ -370,6 +370,10 @@ window.VISUAL_REVIEW={
         [
           "evidence/settings-v500.png",
           "v500 · Recordatorios de 44 px"
+        ],
+        [
+          "evidence/settings-v501.png",
+          "v501 · Altura natural de Tema y Recordatorios, 33 px"
         ]
       ],
       "sources": [
@@ -377,7 +381,7 @@ window.VISUAL_REVIEW={
       ],
       "status": "resolved",
       "resolvedVersion": "v499",
-      "result": "Los accesos se llaman Correo de horas, MacroDroid y Facturas y correo. Abren la consulta protegida; la edición y el guardado siguen siendo explícitos dentro del panel. En v500, Recordatorios reduce su altura de 58 a 44 px a petición de Ángel."
+      "result": "Los accesos se llaman Correo de horas, MacroDroid y Facturas y correo. Abren la consulta protegida; la edición y el guardado siguen siendo explícitos dentro del panel. En v500, Recordatorios reduce su altura de 58 a 44 px a petición de Ángel. La aclaración posterior de Ángel en v501 elimina la altura forzada: Tema recupera su tamaño natural (33 px en la referencia) y Recordatorios se ajusta a esa misma altura."
     },
     {
       "id": "A12",
@@ -472,5 +476,5 @@ window.VISUAL_REVIEW={
       "result": "Cuando ningún mes es calculable, una explicación compacta sustituye al gráfico vacío e indica las causas documentadas. El selector de IVA sigue disponible para explorar estimaciones explícitas. Con meses parciales se conserva el gráfico y se explica la cobertura; el cero calculado sigue siendo un dato válido. La comparación histórica sin cobertura muestra una sola explicación."
     }
   ],
-  "implementedVersion": "v500"
+  "implementedVersion": "v501"
 };

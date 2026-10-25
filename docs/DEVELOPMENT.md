@@ -987,3 +987,7 @@ Corrección de la propuesta tras revisar las capturas con Ángel:
 - Recordatorios en Ajustes mide 44 px de alto, como los iconos profesionales.
 - Ángel pide deshacer A09: se restaura exactamente el selector anual y su CSS anteriores a v499. Esta petición sustituye la regla mensual de la sección histórica v499; no queda pendiente de reaplicación. Se mantienen los demás P2.
 - Atlas actual: 162 capturas y 165 relaciones tras retirar los dos estados exclusivos de la propuesta mensual y añadir cuatro recorridos de estimación explícita del coste. Se conserva toda la evidencia de v498/v499 y la cobertura inicial de 150 capturas.
+
+## Ajustes compactos v501
+
+Ángel aclara que Tema debe recuperar su grosor original y Recordatorios debe ser todavía menor que en v500. Se elimina la altura/min-height forzada de Recordatorios: la fila vuelve a tomar la altura natural de Tema (33 px en la referencia), y ambos quedan iguales. Esta petición sustituye el objetivo inicial de 44 px, sin imponer una nueva altura absoluta dependiente de la fuente. El mapa y el informe conservan las capturas v499/v500 y añaden v501. La escritura de PNG del atlas reutiliza el guardado atómico para soportar bloqueos transitorios de archivos en Windows.
