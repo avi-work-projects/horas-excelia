@@ -1,6 +1,7 @@
 // Vigencia documental: cachés por ejecución, contratos por escena y revisión por imagen.
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const {execFileSync}=require('node:child_process');
+const {isDeepStrictEqual}=require('node:util');
 const digest=value=>crypto.createHash('sha256').update(value).digest('hex');
 const normalize=value=>value.replace(/\r\n/g,'\n');
 // Solo hojas aisladas. Las mixtas, nuevas o compartidas siguen siendo globales.
@@ -92,4 +93,8 @@ function exportFingerprint(data,ids,renderer){
   const selected=new Set(ids);
   return digest(JSON.stringify({renderer,scenes:ids.map(id=>{const s=data.scenes.find(s=>s.id===id);return {id,title:s.title,group:s.group,imageHash:s.imageHash,anchors:s.anchors,entryBox:s.entryBox,layout:s.layout,flow:s.flow,review:s.review,fresh:s.fresh};}),edges:data.edges.filter(e=>selected.has(e.from)&&selected.has(e.to))}));
 }
-module.exports={createTracker,retainReview,importHistoricalReview,exportFingerprint,digest,STYLE_GROUPS};
+function sameMapContent(a,b){
+  const stable=value=>JSON.parse(JSON.stringify({...value,generatedAt:null,referenceCommit:null}));
+  return isDeepStrictEqual(stable(a),stable(b));
+}
+module.exports={createTracker,retainReview,importHistoricalReview,exportFingerprint,sameMapContent,digest,STYLE_GROUPS};

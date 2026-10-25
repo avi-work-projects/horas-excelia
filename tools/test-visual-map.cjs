@@ -1,5 +1,5 @@
 const {test}=require('node:test'),assert=require('node:assert/strict');
-const {createTracker,retainReview,importHistoricalReview,exportFingerprint}=require('./visual-map/tracking.cjs');
+const {createTracker,retainReview,importHistoricalReview,exportFingerprint,sameMapContent}=require('./visual-map/tracking.cjs');
 const scenes=[
   {id:'home',group:'Inicio',route:[],ready:'#home',sources:['js/init.js']},
   {id:'settings',group:'Ajustes',route:['#menuBtn'],ready:'#menu',sources:['js/settings-menu.js']},
@@ -68,4 +68,11 @@ test('láminas dependen de su contenido, no de fechas, commits ni huellas de otr
   assert.equal(exportFingerprint(next,['tasks','editor'],'renderer'),hash);
   next.scenes[2].imageHash='changed';assert.notEqual(exportFingerprint(next,['tasks','editor'],'renderer'),hash);
   assert.notEqual(exportFingerprint(data,['tasks','editor'],'new renderer'),hash);
+});
+test('recapturar y recargar metadatos con otro orden de campos no reescribe el índice',()=>{
+  const captured={generatedAt:'before',referenceCommit:'old',scenes:[{id:'new',image:'new.png',anchors:{next:{x:1,y:2}},imageHash:'abc',review:'Sin revisar',note:undefined}]};
+  const reloaded={scenes:[{id:'new',imageHash:'abc',image:'new.png',review:'Sin revisar',anchors:{next:{y:2,x:1}}}],referenceCommit:'new',generatedAt:'after'};
+  assert.equal(sameMapContent(captured,reloaded),true);
+  for(const field of ['imageHash','review']){const changed=structuredClone(reloaded);changed.scenes[0][field]='changed';assert.equal(sameMapContent(captured,changed),false);}
+  const changed=structuredClone(reloaded);changed.scenes[0].anchors.next.x=9;assert.equal(sameMapContent(captured,changed),false);
 });
