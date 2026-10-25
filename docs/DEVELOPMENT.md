@@ -1087,3 +1087,10 @@ referencia del formulario vacío nuevo y pruebas móviles a 320/400/440 px de
 orden, tamaño exterior, autocompletado de categoría, horas, guardado, recarga y
 cancelación. El atlas añade la escena de datos al final del alta, enlazada con
 la entrada por una flecha de desplazamiento.
+
+
+El cierre de v504 añade una regresión del mantenimiento: al recapturar, el orden
+interno de los campos puede diferir del que se obtiene al recargar el JSON. La
+comparación del índice usa igualdad estructural (conserva orden de arrays e ignora
+solo fecha/commit globales), para no reescribir contenido idéntico por el orden de
+las propiedades. Una huella, revisión o flecha distinta sigue actualizando el índice.

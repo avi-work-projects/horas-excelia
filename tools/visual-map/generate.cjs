@@ -4,7 +4,7 @@ const {execFileSync}=require('node:child_process');
 const {chromium,expect}=require('@playwright/test');
 const {setup,perform,settle,measure,VIEWPORT,DATE}=require('./capture.cjs');
 const {scenes,edges,sections}=require('./catalog.cjs');
-const {createTracker,retainReview,importHistoricalReview,digest}=require('./tracking.cjs');
+const {createTracker,retainReview,importHistoricalReview,sameMapContent,digest}=require('./tracking.cjs');
 const ROOT=path.resolve(__dirname,'../..'),OUT=path.join(ROOT,'docs/visual-map');
 const options=process.argv.slice(2),only=options.find(x=>x.startsWith('--scene='))?.slice(8);
 let referenceCommit;
@@ -47,7 +47,7 @@ function writeAtomically(file,content){
 }
 function writeData(captures){
   const data=assemble(captures);fs.mkdirSync(OUT,{recursive:true});
-  try{const previous=JSON.parse(fs.readFileSync(path.join(OUT,'map-data.json'),'utf8'));const stable=value=>JSON.stringify({...value,generatedAt:null,referenceCommit:null});if(stable(data)===stable(previous))return;}catch(error){if(error.code!=='ENOENT')throw error;}
+  try{const previous=JSON.parse(fs.readFileSync(path.join(OUT,'map-data.json'),'utf8'));if(sameMapContent(data,previous))return;}catch(error){if(error.code!=='ENOENT')throw error;}
   writeAtomically(path.join(OUT,'map-data.json'),JSON.stringify(data,null,2)+'\n');
   writeAtomically(path.join(OUT,'map-data.js'),'window.VISUAL_MAP = '+JSON.stringify(data).replace(/</g,'\\u003c')+';\n');
 }
