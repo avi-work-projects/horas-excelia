@@ -634,7 +634,7 @@ function _bindEvGestos(){
 
 /* Orden visual de las cuatro subpestañas; no se vuelve al inicio al llegar al borde. */
 function _evSwipeUpcoming(step){
-  var views=['upcoming','week','months','stats'],i=views.indexOf(EV_VIEW==='birthdays'?'upcoming':EV_VIEW);
+  var views=EV_SWIPE_ORDER.upcoming,i=views.indexOf(EV_VIEW==='birthdays'?'upcoming':EV_VIEW);
   if(i<0)return false;
   if(views[i+step]){_switchEvView(views[i+step]);refreshEvents(false);}
   return true;
@@ -642,14 +642,14 @@ function _evSwipeUpcoming(step){
 
 function _evSwipeBodas(step){
   if(EV_VIEW!=='bodas')return false;
-  var tabs=['clases','parejas','calendario','stats','config'],next=tabs[tabs.indexOf(BODA_SUBTAB)+step];
+  var tabs=EV_SWIPE_ORDER.bodas,next=tabs[tabs.indexOf(BODA_SUBTAB)+step];
   if(next){var btn=document.querySelector('[data-bsub="'+next+'"]');if(btn)btn.click();}
   return true;
 }
 
 function _evSwipeRutinas(step){
   if(EV_VIEW!=='rutinas')return false;
-  var tabs=['lista','stats'],next=tabs[tabs.indexOf(RUT_SUBTAB)+step];
+  var tabs=EV_SWIPE_ORDER.rutinas,next=tabs[tabs.indexOf(RUT_SUBTAB)+step];
   if(next){RUT_SUBTAB=next;refreshEvents(false);}
   return true;
 }
