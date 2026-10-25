@@ -23,6 +23,7 @@ Una tarea exclusivamente documental conserva las versiones y los archivos de la 
 - Estadísticas de Bodas, Rutinas y Próximos comparten `renderStatsCard` / `renderStatsMetrics` y `statistics.css`; conservar los cálculos y acciones de cada dominio. Recordatorios comparte la medida compacta entre Ajustes y Tareas.
 - Los ajustes de subpestañas se acotan a su pantalla. No cambiar el sistema global para corregir Energía, Próximos o Rutinas.
 - En botones de pestaña, selección por fondo; conservar color de fuente y borde. Naranja suave solo para lápices sin texto.
+- Alta de eventos: clase/categoría primero; nombre, notas y horario al final. Al editar se conserva el bloque de datos arriba; ambos reutilizan renderEvFormLead sin duplicar controles.
 - Categoría de evento = kind + type. Usar getEvDisplayColor, evStartTime y evSortMarks; no duplicar su política en una vista.
 - No perder historial al editar rutinas. Horarios efectivos, extras, recuperaciones y pausas pasan por las funciones compartidas del dominio.
 - Datos personales, facturas y backups nunca son fixtures ni se publican. Alarmas solo por MacroDroid, con configuración local.

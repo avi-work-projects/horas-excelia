@@ -75,6 +75,7 @@ const VISTAS = [
   ['puentes', () => app.renderSummaryPuentesBody(2026)],
   ['vacaciones-festivos', () => app.renderSummaryTimeOffBody(2026)],
   ['formulario-evento', () => app.renderEvForm(app.EVENTS.find(e => e.id === 'fx-roce-a'))],
+  ['formulario-evento-nuevo', () => app.renderEvForm(null)],
 
   /* ── Ventana economica y Resumen ──────────────────────────────
      Se vigilan por la puerta de arriba (renderEconContent y compania) en vez

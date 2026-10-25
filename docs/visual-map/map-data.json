@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
   "title": "Gestify · mapa visual",
-  "generatedAt": "2026-10-25T22:54:59.362Z",
-  "referenceCommit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+  "generatedAt": "2026-10-25T23:24:01.364Z",
+  "referenceCommit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
   "date": "2026-08-21T10:00:00+02:00",
   "viewport": {
     "width": 400,
@@ -28,6 +28,7 @@
       ],
       "region": "body",
       "image": "captures/home.png",
+      "imageHash": "1545f2285920b3711273584d0ad4b3f32fe21588f17c59293aa81581a395281f",
       "anchors": {
         "household": {
           "x": 16,
@@ -209,6 +210,19 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "review": "Sin revisar",
+      "reviewHistory": [
+        {
+          "imageHash": "3493bf6888e56c26aa0080cd30012227abc1b4f452587c63e94dd312106716b2",
+          "review": "Revisada visualmente",
+          "commit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
+          "reviewEvidence": {
+            "referenceCommit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
+            "reviewedAt": "2026-10-25",
+            "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
+          }
+        }
+      ],
       "verifiedEdges": [
         "household",
         "study",
@@ -222,20 +236,6 @@
         "invoice",
         "home-september",
         "tasks"
-      ],
-      "imageHash": "1545f2285920b3711273584d0ad4b3f32fe21588f17c59293aa81581a395281f",
-      "review": "Sin revisar",
-      "reviewHistory": [
-        {
-          "imageHash": "3493bf6888e56c26aa0080cd30012227abc1b4f452587c63e94dd312106716b2",
-          "review": "Revisada visualmente",
-          "commit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
-          "reviewEvidence": {
-            "referenceCommit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
-            "reviewedAt": "2026-10-25",
-            "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
-          }
-        }
       ],
       "fresh": true
     },
@@ -259,6 +259,7 @@
       ],
       "region": "#householdOverlay .sy-body",
       "image": "captures/household.png",
+      "imageHash": "059ebe342826ff2bd88daf5bd259d6209fb2d742d2eff9a1930336a6165f21d0",
       "anchors": {
         "mortgage": {
           "x": 109.5,
@@ -402,12 +403,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [
-        "mortgage",
-        "gas",
-        "electric"
-      ],
-      "imageHash": "059ebe342826ff2bd88daf5bd259d6209fb2d742d2eff9a1930336a6165f21d0",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -420,6 +415,11 @@
             "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
           }
         }
+      ],
+      "verifiedEdges": [
+        "mortgage",
+        "gas",
+        "electric"
       ],
       "fresh": true
     },
@@ -442,6 +442,7 @@
       ],
       "region": "#estudioOverlay .sy-body",
       "image": "captures/study.png",
+      "imageHash": "8c0e89bbc598ca448f25b7792b4809c01f6756c768ce0b39279826ddcf3d5e97",
       "anchors": {
         "study-rate": {
           "x": 16,
@@ -599,13 +600,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [
-        "study-rate",
-        "study-mortgage",
-        "study-gas",
-        "study-electric"
-      ],
-      "imageHash": "8c0e89bbc598ca448f25b7792b4809c01f6756c768ce0b39279826ddcf3d5e97",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -618,6 +612,12 @@
             "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
           }
         }
+      ],
+      "verifiedEdges": [
+        "study-rate",
+        "study-mortgage",
+        "study-gas",
+        "study-electric"
       ],
       "fresh": true
     },
@@ -632,6 +632,7 @@
       "sources": [
         "js/events-render.js",
         "js/events-bind.js",
+        "js/swipe-render.js",
         "js/events.js",
         "js/events-alarm-policy.js"
       ],
@@ -825,7 +826,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -846,7 +851,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "calendar",
         "annual",
@@ -862,7 +867,7 @@
         "birthdays",
         "routines"
       ],
-      "imageHash": "ae144afe326c99fa8ee166ee6295da8a76e7c0ec31144f5cfc81667cc86a795d",
+      "imageHash": "1148aa7bf4d8b427bd9d4d0f517b9764ae01b78e2b243d5f14f6b027fe682bdd",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -896,6 +901,7 @@
       ],
       "region": "#econOverlay .sy-body",
       "image": "captures/economics.png",
+      "imageHash": "429c4284ac13a492100b4badf7ecf521a29565dc8226ae6c331f53d2026eab73",
       "anchors": {
         "econ-days": {
           "x": 104.25,
@@ -1041,13 +1047,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [
-        "econ-days",
-        "econ-tax",
-        "econ-personal",
-        "fiscal"
-      ],
-      "imageHash": "429c4284ac13a492100b4badf7ecf521a29565dc8226ae6c331f53d2026eab73",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -1060,6 +1059,12 @@
             "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
           }
         }
+      ],
+      "verifiedEdges": [
+        "econ-days",
+        "econ-tax",
+        "econ-personal",
+        "fiscal"
       ],
       "fresh": true
     },
@@ -1080,6 +1085,7 @@
         705
       ],
       "image": "captures/alarm.png",
+      "imageHash": "cfeb74385d879df70fdd0fbf5a7d4f69d51f7107693abed6ff4a51ec85f10310",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -1192,8 +1198,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "cfeb74385d879df70fdd0fbf5a7d4f69d51f7107693abed6ff4a51ec85f10310",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -1207,6 +1211,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -1377,7 +1382,7 @@
         {
           "file": "js/core.js",
           "part": "app-version",
-          "hash": "f8a1f047692be5b54ca9f70549391f63414b5a45ab142dbc87e90c381a049040"
+          "hash": "f5eb6823175ed0818dd134402cb82a564ea76cee6d23b6aba5fc80adafd3af1d"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -1390,7 +1395,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "reminders",
         "mail",
@@ -1401,7 +1406,7 @@
         "export-folder",
         "import-preview"
       ],
-      "imageHash": "e7fb9b4189801fa9ca33a98c7bd6ed5c2daed7f67b11140a34824383c29ae877",
+      "imageHash": "dd0f4b25681cb00f187cef3825d517bc6c24bb4205b25d22063860198f9e2536",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -1567,7 +1572,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -1592,14 +1601,14 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "day",
         "large-detail",
         "started-detail",
         "routine-session"
       ],
-      "imageHash": "940c03892c95a69ce519752925eb21a77533afded175be9c868234851d26656e",
+      "imageHash": "8bd708cc8529911bd03ef7a01622f4a2008eb282d52e2400a49e0882c3c350ff",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -1759,7 +1768,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -1788,12 +1801,12 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "edit",
         "event-alarm"
       ],
-      "imageHash": "68d47adbae411277e8c0bea1c18bdcd9bb10cd0aba4666636cc52169a6eaa55f",
+      "imageHash": "91ad5fc021c3cd37c4a4ef7e65e33c0dc554d8c6042e62f45d550994ea4aef04",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -1967,7 +1980,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -1987,7 +2004,7 @@
         },
         {
           "file": "js/events-form.js",
-          "hash": "ad011f9bb1627e7dcfce133a74bad3588e357d432f6091bcb53469bf0b25a410"
+          "hash": "645e2bdbf12612cdbf3ffbe2fdc4e7c7692a40239d9b270b8cfabb6bec8ee6fa"
         },
         {
           "file": "js/events-form-schedule.js",
@@ -2008,14 +2025,14 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "calendar",
         "time",
         "edit-scroll",
         "edit--scroll-plan-picker"
       ],
-      "imageHash": "af359bdd95d3cdc1a14299f28df6b6b99bbd3acbd7b43ca10b4c920e801bf220",
+      "imageHash": "e1063bfaffc44f663acc116e589d177cc5ff0cd116b14069ef48a9a0c90dc9be",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -2170,7 +2187,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -2190,7 +2211,7 @@
         },
         {
           "file": "js/events-form.js",
-          "hash": "ad011f9bb1627e7dcfce133a74bad3588e357d432f6091bcb53469bf0b25a410"
+          "hash": "645e2bdbf12612cdbf3ffbe2fdc4e7c7692a40239d9b270b8cfabb6bec8ee6fa"
         },
         {
           "file": "js/events-form-schedule.js",
@@ -2215,11 +2236,11 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "edit"
       ],
-      "imageHash": "8c8edd98bb73b64fe4766c72ad08e07fe6ddfeaed45156ec65bf1270b7fd199e",
+      "imageHash": "54dd14755273193d4801bb7d3cfaa48108d0e4955c5446ed7ddff72e895d47c1",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -2379,7 +2400,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -2399,7 +2424,7 @@
         },
         {
           "file": "js/events-form.js",
-          "hash": "ad011f9bb1627e7dcfce133a74bad3588e357d432f6091bcb53469bf0b25a410"
+          "hash": "645e2bdbf12612cdbf3ffbe2fdc4e7c7692a40239d9b270b8cfabb6bec8ee6fa"
         },
         {
           "file": "js/events-form-schedule.js",
@@ -2420,11 +2445,11 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "dates"
       ],
-      "imageHash": "c25b394bab35953dff72b7426baf1ec371de876cd9277069dcf4aecdf69a6603",
+      "imageHash": "b8fd01f5af5a08bad0f238a354fd48b381420c47cf256b352b70b2c5bac1482a",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -2582,7 +2607,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -2602,7 +2631,7 @@
         },
         {
           "file": "js/events-form.js",
-          "hash": "ad011f9bb1627e7dcfce133a74bad3588e357d432f6091bcb53469bf0b25a410"
+          "hash": "645e2bdbf12612cdbf3ffbe2fdc4e7c7692a40239d9b270b8cfabb6bec8ee6fa"
         },
         {
           "file": "js/events-form-schedule.js",
@@ -2627,11 +2656,11 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "edit-scroll"
       ],
-      "imageHash": "391f5c1b931cfaf96225aa2373c5ee50ae13d6c18b7acf2af892bdbc04685c39",
+      "imageHash": "19c18a3e3c56a6b9397b7fe640bd0c93ca926f9e7f5bb03639a08950c6af169e",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -2661,6 +2690,7 @@
       ],
       "region": "body",
       "image": "captures/hours.png",
+      "imageHash": "0f3d0b5e0485f3c4845b03548087e9dc14460146f81bffdd2f19d8a025fa30b4",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -2769,8 +2799,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "0f3d0b5e0485f3c4845b03548087e9dc14460146f81bffdd2f19d8a025fa30b4",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -2784,6 +2812,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -2799,6 +2828,7 @@
       ],
       "region": "body",
       "image": "captures/workday.png",
+      "imageHash": "936172864dbad4cbb7304bc32af05ecb0b031bd2656d2fa1f7a73262e4ae4fbf",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -2907,8 +2937,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "936172864dbad4cbb7304bc32af05ecb0b031bd2656d2fa1f7a73262e4ae4fbf",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -2922,6 +2950,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -3044,7 +3073,7 @@
         {
           "file": "js/core.js",
           "part": "app-version",
-          "hash": "f8a1f047692be5b54ca9f70549391f63414b5a45ab142dbc87e90c381a049040"
+          "hash": "f5eb6823175ed0818dd134402cb82a564ea76cee6d23b6aba5fc80adafd3af1d"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -3057,9 +3086,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
-      "imageHash": "3937db4c9dc9c47485d93ad055b44f5ed821c6700a24feeb2520b2123dbe4ffb",
+      "imageHash": "b91ec0af6517f6d543ecd74fbfd8211435e27d79373307f502c9c75be6c0623f",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -3088,6 +3117,7 @@
       ],
       "region": "body",
       "image": "captures/hours-export.png",
+      "imageHash": "93e41a1c9d4a4065133244d901d2204c220fb5b10095de498370a11ff3db124a",
       "anchors": {
         "export-mode": {
           "x": 38,
@@ -3207,10 +3237,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [
-        "export-mode"
-      ],
-      "imageHash": "93e41a1c9d4a4065133244d901d2204c220fb5b10095de498370a11ff3db124a",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -3224,6 +3250,9 @@
             "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
           }
         }
+      ],
+      "verifiedEdges": [
+        "export-mode"
       ],
       "fresh": true
     },
@@ -3242,6 +3271,7 @@
       "region": ".invoice-body",
       "note": "Agosto de 2026 se presenta como referencia histórica.",
       "image": "captures/invoice.png",
+      "imageHash": "c38ca647449aef5a0ac8405a637c98032f81ae19b337c05cad12bf09ce25002d",
       "anchors": {
         "invoice-config": {
           "x": 18,
@@ -3365,10 +3395,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [
-        "invoice-config"
-      ],
-      "imageHash": "c38ca647449aef5a0ac8405a637c98032f81ae19b337c05cad12bf09ce25002d",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -3382,6 +3408,9 @@
             "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
           }
         }
+      ],
+      "verifiedEdges": [
+        "invoice-config"
       ],
       "fresh": true
     },
@@ -3400,6 +3429,7 @@
       ],
       "region": ".invoice-body",
       "image": "captures/invoice-config.png",
+      "imageHash": "789ca22d74b0532bc20eaab23cbd29f719425220045b1bcdeef5374fddad0379",
       "anchors": {
         "invoice-config-edit": {
           "x": 28,
@@ -3523,10 +3553,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [
-        "invoice-config-edit"
-      ],
-      "imageHash": "789ca22d74b0532bc20eaab23cbd29f719425220045b1bcdeef5374fddad0379",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -3539,6 +3565,9 @@
             "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
           }
         }
+      ],
+      "verifiedEdges": [
+        "invoice-config-edit"
       ],
       "fresh": true
     },
@@ -3558,6 +3587,7 @@
       ],
       "region": ".invoice-body",
       "image": "captures/invoice-config-edit.png",
+      "imageHash": "abdbc17c039a0cf3f327fd549ae1a1dc029ad82e1097e431375da1a85027ac0e",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -3674,8 +3704,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "abdbc17c039a0cf3f327fd549ae1a1dc029ad82e1097e431375da1a85027ac0e",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -3689,6 +3717,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -3705,6 +3734,7 @@
       ],
       "region": "body",
       "image": "captures/home-september.png",
+      "imageHash": "e116b59a2ebc21c30ef1a3fea4d6bbe1a9dc190afa96e475388ff14352375738",
       "anchors": {
         "home-october": {
           "x": 244.671875,
@@ -3820,10 +3850,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [
-        "home-october"
-      ],
-      "imageHash": "e116b59a2ebc21c30ef1a3fea4d6bbe1a9dc190afa96e475388ff14352375738",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -3836,6 +3862,9 @@
             "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
           }
         }
+      ],
+      "verifiedEdges": [
+        "home-october"
       ],
       "fresh": true
     },
@@ -3854,6 +3883,7 @@
       ],
       "region": "body",
       "image": "captures/home-october.png",
+      "imageHash": "844cbfd112bd916553f9be8f5da67f3cb30f54eb329c0d4ce02fdcedfc0b72f4",
       "anchors": {
         "invoice-current": {
           "x": 269.78125,
@@ -3969,10 +3999,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [
-        "invoice-current"
-      ],
-      "imageHash": "844cbfd112bd916553f9be8f5da67f3cb30f54eb329c0d4ce02fdcedfc0b72f4",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -3985,6 +4011,9 @@
             "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
           }
         }
+      ],
+      "verifiedEdges": [
+        "invoice-current"
       ],
       "fresh": true
     },
@@ -4004,6 +4033,7 @@
       ],
       "region": ".invoice-body",
       "image": "captures/invoice-current.png",
+      "imageHash": "e6f4dd65fb18cca38d0138121d068c6a0379a79fa5f02a8f2c1eda4ca8e6ebab",
       "anchors": {
         "invoice-current--scroll-invoice-document": {
           "x": 374,
@@ -4127,10 +4157,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [
-        "invoice-current--scroll-invoice-document"
-      ],
-      "imageHash": "e6f4dd65fb18cca38d0138121d068c6a0379a79fa5f02a8f2c1eda4ca8e6ebab",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -4143,6 +4169,9 @@
             "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
           }
         }
+      ],
+      "verifiedEdges": [
+        "invoice-current--scroll-invoice-document"
       ],
       "fresh": true
     },
@@ -4166,6 +4195,7 @@
       "note": "Misma pantalla, desplazada hasta el control indicado.",
       "region": ".invoice-body",
       "image": "captures/invoice-current--scroll-invoice-document.png",
+      "imageHash": "e6f4dd65fb18cca38d0138121d068c6a0379a79fa5f02a8f2c1eda4ca8e6ebab",
       "anchors": {
         "invoice-document": {
           "x": 33,
@@ -4289,10 +4319,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [
-        "invoice-document"
-      ],
-      "imageHash": "e6f4dd65fb18cca38d0138121d068c6a0379a79fa5f02a8f2c1eda4ca8e6ebab",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -4305,6 +4331,9 @@
             "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
           }
         }
+      ],
+      "verifiedEdges": [
+        "invoice-document"
       ],
       "fresh": true
     },
@@ -4328,6 +4357,7 @@
       ],
       "region": ".invoice-body",
       "image": "captures/invoice-document.png",
+      "imageHash": "548c71790e7a5f38b1ef48ce4b2f68a6a56d9ae67381d270e1cd05af8b33efa1",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -4444,8 +4474,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "548c71790e7a5f38b1ef48ce4b2f68a6a56d9ae67381d270e1cd05af8b33efa1",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -4459,6 +4487,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -4473,6 +4502,7 @@
       "sources": [
         "js/events-render.js",
         "js/events-bind.js",
+        "js/swipe-render.js",
         "js/events.js",
         "js/events-alarm-policy.js"
       ],
@@ -4583,7 +4613,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -4604,9 +4638,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
-      "imageHash": "cde64e6a9b730b7794f209a7dfbca87febe0d779122a81c2d6505e0806e74b69",
+      "imageHash": "7666c4d39fecda6ccb64aff3f826fb7bdbdb39d100617cadb29d6cb5a2bf59d5",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -4634,6 +4668,7 @@
       "sources": [
         "js/events-render.js",
         "js/events-bind.js",
+        "js/swipe-render.js",
         "js/events.js",
         "js/events-alarm-policy.js"
       ],
@@ -4744,7 +4779,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -4765,9 +4804,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
-      "imageHash": "1eccf098033a9d91a865f43dde346a6b283a353ae128d9ce6747a13dde1d3ca3",
+      "imageHash": "bd132a66f878302c7dac5794923e2e123d6082c87dd8b379c79b33e264a3be02",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -4795,6 +4834,7 @@
       "sources": [
         "js/events-render.js",
         "js/events-bind.js",
+        "js/swipe-render.js",
         "js/events.js",
         "js/events-alarm-policy.js"
       ],
@@ -4912,7 +4952,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -4933,11 +4977,11 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "bridges"
       ],
-      "imageHash": "74cc74a3cd24942866cc906053e6f3fb307b1b098fd10677cf2b4414c89c5b91",
+      "imageHash": "cdea2cb7938d832f2061e1f90b364e18d6ddf3d9639d198498b4cce471412b05",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -5073,7 +5117,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -5098,9 +5146,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
-      "imageHash": "74cc74a3cd24942866cc906053e6f3fb307b1b098fd10677cf2b4414c89c5b91",
+      "imageHash": "cdea2cb7938d832f2061e1f90b364e18d6ddf3d9639d198498b4cce471412b05",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -5128,6 +5176,7 @@
       "sources": [
         "js/events-render.js",
         "js/events-bind.js",
+        "js/swipe-render.js",
         "js/events.js",
         "js/events-alarm-policy.js"
       ],
@@ -5238,7 +5287,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -5259,9 +5312,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
-      "imageHash": "32097c236dc810fd3f1b435afacdbab40380a10ab5c8d8efe485d61e267db6c0",
+      "imageHash": "dd07beb9b997b8679f68870075852264edaeab5681cdf9a44a37a992c81d56a4",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -5289,6 +5342,7 @@
       "sources": [
         "js/events-render.js",
         "js/events-bind.js",
+        "js/swipe-render.js",
         "js/events.js",
         "js/events-alarm-policy.js"
       ],
@@ -5412,7 +5466,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -5433,12 +5491,12 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "event-filter",
         "event-delete"
       ],
-      "imageHash": "6599fbafe363373eaf7293cde339a94a73051ffd7d4208651e638d8d9b7941eb",
+      "imageHash": "620a68d6baaf78ae2118bd433c4addabed7847a6a3eba342f82a08bac4e37b45",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -5466,6 +5524,7 @@
       "sources": [
         "js/events-render.js",
         "js/events-bind.js",
+        "js/swipe-render.js",
         "js/events.js",
         "js/events-alarm-policy.js",
         "js/events-statistics.js",
@@ -5589,7 +5648,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -5618,11 +5681,11 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "event-stats-breakdown"
       ],
-      "imageHash": "62d783a6ad1c5b67abc34cf227639f4d58e73e406a589814a6968e937f971869",
+      "imageHash": "5105ddf9d9c4a3f7483467c16ce57e80fe95d3c6676c45ed59c95ecbbaa8f11d",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -5650,6 +5713,7 @@
       "sources": [
         "js/events-render.js",
         "js/events-bind.js",
+        "js/swipe-render.js",
         "js/events.js",
         "js/events-alarm-policy.js"
       ],
@@ -5760,7 +5824,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -5781,9 +5849,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
-      "imageHash": "d0c5d3d300e6f0eaeef9e02b89a371e26154ba809c68eeab9d3e8f4ca4f49924",
+      "imageHash": "066ef5b0acf1f7dde36929ccd4c55238f2fc79a56519431c172cf2ccfd0019bf",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -5919,7 +5987,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -5940,9 +6012,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
-      "imageHash": "47554564c52650e079319c2e3eae07b2422e8481021ec40f137ee68c53444eba",
+      "imageHash": "979211f0a20af721f8025b2f35d721775e6a00d18db72074d9baf02d1c44d3f7",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -6077,7 +6149,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -6102,9 +6178,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
-      "imageHash": "e32ba0e9daa251743c58fe3859d0aff1eb2a7de45ffb8c012f546c8966a42198",
+      "imageHash": "b99c0d32d625676290f04c98ee179c2a3555c72d228f1e4314b04c6ef7914263",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -6135,6 +6211,7 @@
       "sources": [
         "js/events-render.js",
         "js/events-bind.js",
+        "js/swipe-render.js",
         "js/events.js",
         "js/events-alarm-policy.js"
       ],
@@ -6253,7 +6330,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -6274,11 +6355,11 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "event-new"
       ],
-      "imageHash": "c476ce08d17ad05a09950fd5ae4143515babe956598434f6d310bfc461289b0d",
+      "imageHash": "892c3f20e6c92e56f52ef271ae9f795f272bdc7b9c54eafff9a65442a57af951",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -6313,6 +6394,199 @@
       ],
       "region": ".ev-event-form-body",
       "image": "captures/event-new.png",
+      "anchors": {
+        "event-new-details": {
+          "x": 390,
+          "y": 518.95,
+          "width": 8,
+          "height": 100
+        }
+      },
+      "entryBox": null,
+      "dependencies": [
+        {
+          "file": "index.html",
+          "hash": "7f2f4cb7bbd2cdcbe416f3045c489e627193d0ade4f2cfa51cff11dad84f009a"
+        },
+        {
+          "file": "js/nav-icons.js",
+          "hash": "d45ad268333bf5dfda75d71902da1d7572bbec27e15e5b412fb3f785c0808c42"
+        },
+        {
+          "file": "js/core.js",
+          "part": "core-runtime",
+          "hash": "e6c93002a99906dca8617f7cc643931169c2eb9064023394cc69c7864afc4c5b"
+        },
+        {
+          "file": "js/data-integrity.js",
+          "hash": "34bfc80472270238e11eb0e194fef19e56c7fbb81a35ff5fde23a8ae23e5e9f0"
+        },
+        {
+          "file": "tools/fixture.json",
+          "hash": "98d54e4adf481a811b8b05627515272fb623f8b78db75b294d07ceed739cd07d"
+        },
+        {
+          "file": "tools/visual-map/fixture.cjs",
+          "hash": "a2b45ddc347d9a4d78c7584ee02a15ce9a6d37f6249223131ba78b411b459097"
+        },
+        {
+          "file": "css/source/base.css",
+          "hash": "58e9b402d3d746f8c8756dfd1904f3f62d7e3dd59ad6dc79287f971bd904e28c"
+        },
+        {
+          "file": "css/source/navigation-controls.css",
+          "hash": "dbc077d7421c40475885ad1ee8f146743a0e25ab5f6f0d4f0a9a050765add898"
+        },
+        {
+          "file": "css/source/economics.css",
+          "hash": "0139ec7d50ccc8cc00bf4607bcf6563a2989cf20f9655d5d52fa2db223ca0bd8"
+        },
+        {
+          "file": "css/source/birthdays.css",
+          "hash": "aae1fa4fe0c4b46f60b613e96a1db5cdac9664712da500d4d4c1c45ceb8daacf"
+        },
+        {
+          "file": "css/source/event-calendar.css",
+          "hash": "8073f4f6b14bc77152e726a3151ac05bc1fb365e6840a0778582f9b903a434b1"
+        },
+        {
+          "file": "css/source/navigation-alarms.css",
+          "hash": "47d9432b0b15346910793923df7135606c982cf934ab492aaff6aa33777d0227"
+        },
+        {
+          "file": "css/source/event-panels.css",
+          "hash": "bde8a83d642d21d6529b714b4c80a1a585a74a1520bbd97c948ace5d879b0a3c"
+        },
+        {
+          "file": "css/source/dialogs-responsive.css",
+          "hash": "557d68bac2670445c7edd35896d6a8e90cab5efbc85c6d1684ea31da9451e4b3"
+        },
+        {
+          "file": "css/source/wedding-moves.css",
+          "hash": "5b43e0e0a12fb300f91f7f493ec6b55868daa63844184bf44d7df40a0bd2ed9a"
+        },
+        {
+          "file": "css/source/routines.css",
+          "hash": "61c20b228e9cb5a57d9b2a2c35d86360fb4b1859c2344220375ae4d49d8b051d"
+        },
+        {
+          "file": "css/source/shared-refinements.css",
+          "hash": "79ec40cb8bd635408ea7c279f4eae09970f4c36fee368263bf0f42bb1d46aebd"
+        },
+        {
+          "file": "css/source/home-sharing.css",
+          "hash": "4dc84848aac0cc51a3035558539ad1a197836e6c68025b3594edcbdb531c62f7"
+        },
+        {
+          "file": "css/source/energy-refinements.css",
+          "hash": "b07b027bafa68df7ed4d69283f5d10d06be0b34b45c0fe2750c9f37ba37400a5"
+        },
+        {
+          "file": "css/source/home-reminders.css",
+          "hash": "38bdefdcfdfe66af20e803d5e0beabd19dab36551d01c0345bcdc61bd824853d"
+        },
+        {
+          "file": "css/source/invoices.css",
+          "hash": "dfa46f54f2ef7eec8eaee8686afd3c4b7e740cffc37e314d9b6de50a557e61c5"
+        },
+        {
+          "file": "css/source/theme-cream.css",
+          "hash": "d5d09d0ae2535163aac0b663ebe8abc3c8661d0d910fa0674bcd2c42d8e83949"
+        },
+        {
+          "file": "css/tasks.css",
+          "hash": "96b4dc532dd2d7eeb82fe5d4c971b8599542860e95b3e8655f45f1922d4365aa"
+        },
+        {
+          "file": "js/init.js",
+          "hash": "2402274c8aea9cc86a031ed7d86d1543ecc0668e8a96e1f79c70c1cd0c66a1eb"
+        },
+        {
+          "file": "js/events-render.js",
+          "hash": "c574c563bf0442c0394aea0838a3f3e56fd52ffca8bf51a395d3953b0008d62b"
+        },
+        {
+          "file": "js/events-bind.js",
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
+        },
+        {
+          "file": "js/events.js",
+          "hash": "46d66ac6be96a685ef52eea9087d25fcff71e1d645c71b893d3b98f996a9308d"
+        },
+        {
+          "file": "js/events-alarm-policy.js",
+          "hash": "3f8f3c367ce4e164aef591f3380095991305f7a8e4ed1bbddef2ac0d5b36cc29"
+        },
+        {
+          "file": "js/events-form.js",
+          "hash": "645e2bdbf12612cdbf3ffbe2fdc4e7c7692a40239d9b270b8cfabb6bec8ee6fa"
+        },
+        {
+          "file": "js/events-form-controls.js",
+          "hash": "e88275e0a787237dc4ce5b0df5c793343cf2a5dfd96a86580a56ea8065c851b1"
+        },
+        {
+          "file": "js/events-form-schedule.js",
+          "hash": "8aaeba5654a8c1f123b053120c52f253f128907df8d43894d4e4f6987fe9e43d"
+        },
+        {
+          "file": "tools/visual-map/capture.cjs",
+          "hash": "ddd175b636479ffd6fc6d38f918a914c6b6a5fd89a58cd664add6c4037047dd8"
+        },
+        {
+          "file": "tools/visual-map/catalog.cjs",
+          "part": "scene:event-new",
+          "hash": "309b5a67e2f872d48fce71cbcce8c778336f21cbcaed0c806a768531ea57d7b9"
+        }
+      ],
+      "dependencyVersion": 2,
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
+      "verifiedEdges": [
+        "event-new-details"
+      ],
+      "imageHash": "f895d7aed019089bfae844a8265ef8d07872b08310faa131ae579a65f909975b",
+      "review": "Sin revisar",
+      "reviewHistory": [
+        {
+          "imageHash": "e705dab5cbf03da9de5cf9a54703a825863ac3f2183f5f431d9e1d861fa00ae4",
+          "review": "Revisada visualmente",
+          "commit": "9706617bcb63c475c3dd3a63b804e5121180da89",
+          "image": "captures/reviewed/e705dab5cbf03da9de5cf9a54703a825863ac3f2183f5f431d9e1d861fa00ae4.png",
+          "reviewEvidence": {
+            "referenceCommit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
+            "reviewedAt": "2026-10-25",
+            "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
+          }
+        }
+      ],
+      "fresh": true
+    },
+    {
+      "id": "event-new-details",
+      "title": "Nuevo evento · nombre, notas y horario",
+      "group": "Eventos",
+      "route": [
+        "#eventsBtn",
+        {
+          "scroll": "#evAdd"
+        },
+        "#evAdd",
+        {
+          "scroll": ".ev-form-lead"
+        }
+      ],
+      "ready": "#evFTitle",
+      "sources": [
+        "js/events-form.js",
+        "js/events-form-controls.js",
+        "js/events-form-schedule.js"
+      ],
+      "region": ".ev-event-form-body",
+      "image": "captures/event-new-details.png",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -6419,7 +6693,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -6431,7 +6709,7 @@
         },
         {
           "file": "js/events-form.js",
-          "hash": "ad011f9bb1627e7dcfce133a74bad3588e357d432f6091bcb53469bf0b25a410"
+          "hash": "645e2bdbf12612cdbf3ffbe2fdc4e7c7692a40239d9b270b8cfabb6bec8ee6fa"
         },
         {
           "file": "js/events-form-controls.js",
@@ -6447,28 +6725,15 @@
         },
         {
           "file": "tools/visual-map/catalog.cjs",
-          "part": "scene:event-new",
-          "hash": "bfcf25f5372f4bb0da8343da12ab6b9598e09fdd05ae9d35f5ad5294166f1094"
+          "part": "scene:event-new-details",
+          "hash": "a1b1b5dede2bc8616e2639fb37f75a7cdb347923bf59d570a74e1ce4d594d35a"
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
-      "imageHash": "f93c8f9e69f3c36ebeb89b73f35c258889c9a737ce25a0c0eeb154f8b25299d6",
+      "imageHash": "f7a93154b564e0c0fcc41a882bcd44e120862039f518304e579e85a8a543d4dc",
       "review": "Sin revisar",
-      "reviewHistory": [
-        {
-          "imageHash": "e705dab5cbf03da9de5cf9a54703a825863ac3f2183f5f431d9e1d861fa00ae4",
-          "review": "Revisada visualmente",
-          "commit": "9706617bcb63c475c3dd3a63b804e5121180da89",
-          "image": "captures/reviewed/e705dab5cbf03da9de5cf9a54703a825863ac3f2183f5f431d9e1d861fa00ae4.png",
-          "reviewEvidence": {
-            "referenceCommit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
-            "reviewedAt": "2026-10-25",
-            "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
-          }
-        }
-      ],
       "fresh": true
     },
     {
@@ -6593,7 +6858,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -6618,9 +6887,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
-      "imageHash": "481ce73e25dfb1fe4ccc45744f99cb268e465f21fc8b8baba78a0a5f09b0d949",
+      "imageHash": "c53e76c7fc0f7a21b80f1d9ccbd7cb495b22f6e7d93c8df34adc5913aa0ef9bb",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -6763,7 +7032,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -6792,9 +7065,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
-      "imageHash": "cdce730aa8134cd3ee4529b63a54e6147f72d84af364ad683431cb53c8082e3d",
+      "imageHash": "d22744134d9dfb690d274a5c36e384eb34f3c55649887ec1c9c5ca6437b8f2ce",
       "review": "Sin revisar",
       "fresh": true
     },
@@ -6919,7 +7192,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -6948,7 +7225,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "a51c251265962bd4d47edb5a0a60fc41539db343e760c30e9b0287355549765e",
       "review": "Sin revisar",
@@ -7075,7 +7352,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -7104,9 +7385,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
-      "imageHash": "e16f063a67243c0ae224a345d97bea476b4744d2cdb2e9af6de3f7fec2c1b5e8",
+      "imageHash": "d32709c743baf32baa3f69f87e42e8d81bf1df7b12bc1c9359bf54d1ddb078c8",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -7243,7 +7524,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -7276,7 +7561,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "776d5e2acdb012c16a5e3f10b24e13a5f933e1fc92e8a28d523d54989f29b87d",
       "review": "Sin revisar",
@@ -7428,7 +7713,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -7448,7 +7737,7 @@
         },
         {
           "file": "js/events-form.js",
-          "hash": "ad011f9bb1627e7dcfce133a74bad3588e357d432f6091bcb53469bf0b25a410"
+          "hash": "645e2bdbf12612cdbf3ffbe2fdc4e7c7692a40239d9b270b8cfabb6bec8ee6fa"
         },
         {
           "file": "js/events-form-schedule.js",
@@ -7469,7 +7758,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "plan-picker"
       ],
@@ -7608,7 +7897,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -7628,7 +7921,7 @@
         },
         {
           "file": "js/events-form.js",
-          "hash": "ad011f9bb1627e7dcfce133a74bad3588e357d432f6091bcb53469bf0b25a410"
+          "hash": "645e2bdbf12612cdbf3ffbe2fdc4e7c7692a40239d9b270b8cfabb6bec8ee6fa"
         },
         {
           "file": "js/events-form-schedule.js",
@@ -7653,7 +7946,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "6a49c5fea7e0a4a4871ae8d248a4e5597217f46bffd7d827aa5a6bee11ad85be",
       "review": "Revisada visualmente",
@@ -7839,7 +8132,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -7868,7 +8165,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "calendar-export",
         "couples",
@@ -7880,7 +8177,7 @@
         "wedding-new",
         "wedding-issues"
       ],
-      "imageHash": "4ea9a9dd725dfd9a8d38e3d5ac232668f4a3404f63ee684b03313b075b101282",
+      "imageHash": "30c70c3153172f78afa0bd0fdd23ac6602bf8ec616aa1fbcf5f04182b8646227",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -8016,7 +8313,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -8049,7 +8350,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "48ae37c7a139397e4b5eb7dcf48f96116e445847a3ee995198099cccace7d591",
       "review": "Sin revisar",
@@ -8201,7 +8502,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -8230,12 +8535,12 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "couple-card",
         "couple-new"
       ],
-      "imageHash": "4c190f8c6e8b27d807aa1ed1149f5eae790c1ec0c70f7f764d7053d29f4a065d",
+      "imageHash": "a6d79038414b466b289f1fd7e51379c228253423dc7dfba0de5372b08357f391",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -8372,7 +8677,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -8401,9 +8710,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
-      "imageHash": "e9a2bf6674a92849f771a526957fc70dbb3b4a1d833dade20bdee753f200e465",
+      "imageHash": "843f7775ad50f3456a4c2f7655911c4529e21ef8856ec0060f9d8c5a7ba9486c",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -8555,7 +8864,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -8596,11 +8909,11 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "wedding-stats-charts"
       ],
-      "imageHash": "e2ab00786c93c3fe5d0f8128576fa83f6a39e386584dab7f703516c6eda34c4f",
+      "imageHash": "5bc20b6be11f06b94256ce22ae81296ae693f8604675dcfe6df48debd05fcbc5",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -8756,7 +9069,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -8785,13 +9102,13 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "wedding-config--scroll-wedding-pack",
         "wedding-config--scroll-wedding-length",
         "wedding-config--scroll-wedding-room"
       ],
-      "imageHash": "099810988fc09b72fd465350f1b3d753608871eb2908175b6cc2adbabe780bd7",
+      "imageHash": "3816a030978bd4fb45686ae58c31ef701da2bc5e7dd5ca4c65ead7dcfb8a3d73",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -8929,7 +9246,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -8958,9 +9279,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
-      "imageHash": "99366805d6ac59f10eab66344ebc83c5931ea80a133a05fa536ad758b774d498",
+      "imageHash": "d70770d65369f00a699e68d5c11bcde89e09885b6e3633173c16814e85d5684e",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -9127,7 +9448,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -9160,7 +9485,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "wedding-time",
         "wedding-place",
@@ -9306,7 +9631,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -9343,7 +9672,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "0322c3e7b8243259be90678790ff34901cf7ec6a41c1a81fabf4e658474872c2",
       "review": "Sin revisar",
@@ -9483,7 +9812,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -9520,7 +9853,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "2f290d031ed5ee7be2f211f988995ea02773c70f6e262469634e773a250916fc",
       "review": "Sin revisar",
@@ -9660,7 +9993,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -9697,9 +10034,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
-      "imageHash": "8b8a34980ed675e6d826810776fb2192628adca7cf79766fac059b610dce497a",
+      "imageHash": "19cb5a6d0a4ff45f8f691416f3ab354ca4cc707a1d1ca23c9b89e3eabd930fa3",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -9837,7 +10174,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -9874,7 +10215,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "5950d2f18e435789e3460b6dba8f67749e8890eb0f1b5d89b339815733757902",
       "review": "Sin revisar",
@@ -10014,7 +10355,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -10051,7 +10396,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "fc3bcbe4a44baf2c64d2732f4dba91a2b81d25bdb9618424374c5e608ef43ee6",
       "review": "Sin revisar",
@@ -10204,7 +10549,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -10233,12 +10582,12 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "couple-form",
         "wedding-assign"
       ],
-      "imageHash": "25398997f18361e0847fe9322b61f6984c51bd8367c30eba883719338ce8bd0d",
+      "imageHash": "711f7ce0a811c27188f69e112f5b1f4e2c6fc950ec6203dcd6fb10261ad6769b",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -10377,7 +10726,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -10406,7 +10759,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "724605f539722845a0052db29c4d4e0ecd7f17877879f554d2a447e0f73fe8bd",
       "review": "Sin revisar",
@@ -10544,7 +10897,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -10577,9 +10934,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
-      "imageHash": "2a49ed9c6113d97cd1071e0e9d78cc696cee963a867bd0dfb1a9d92523dd63a4",
+      "imageHash": "bb7d70e2da60313c771d841d68cfdf970f373754f9e73d3e45413c483c5cde6a",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -10717,7 +11074,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -10746,9 +11107,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
-      "imageHash": "9341d90231094acd7828835ebebf1c6b13fe050dc4a5045264b94d9bac23ca84",
+      "imageHash": "f9be9f722ded25b54ea611f9042ee25318b3d01ceb053da57f0e3fc0c74ccbd8",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -10886,7 +11247,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -10919,7 +11284,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "ebebb28698e78d3717ddbf180d15eccc33715881a491ffddf5db59e06a659422",
       "review": "Sin revisar",
@@ -11057,7 +11422,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -11090,7 +11459,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "86581f073aaecbd7bb1ff235232727a49ebadc9bc95476aac1730011602e3de1",
       "review": "Sin revisar",
@@ -11240,7 +11609,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -11269,7 +11642,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "wedding-pack"
       ],
@@ -11413,7 +11786,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -11446,7 +11823,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "2fac8da3ff107a3ebeff34ca45c43e4f8f7432ec8e285d759b5c43f55aa7afdc",
       "review": "Sin revisar",
@@ -11596,7 +11973,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -11625,7 +12006,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "wedding-length"
       ],
@@ -11769,7 +12150,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -11802,7 +12187,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "1ac97bc4bc51ba3833ae5ce5fa4367badcfd282a5550b780f66dbe96ff0f6822",
       "review": "Sin revisar",
@@ -11841,9 +12226,9 @@
       "image": "captures/wedding-config--scroll-wedding-room.png",
       "anchors": {
         "wedding-room": {
-          "x": 317.859375,
+          "x": 317.828125,
           "y": 532,
-          "width": 66.140625,
+          "width": 66.171875,
           "height": 36
         }
       },
@@ -11952,7 +12337,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -11981,11 +12370,11 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "wedding-room"
       ],
-      "imageHash": "e562cacf3d87d0eaeeaad9712040d5957b1417572cdb67e92fc731ed8fc65548",
+      "imageHash": "1e618894a0a7e39d449318a69a6106614370518f9f254255d71e451100864343",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -12125,7 +12514,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -12158,9 +12551,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
-      "imageHash": "6592b6e389ebd696d8db1c6c45a925a526c1b710710a7ae87b7051497b108f5a",
+      "imageHash": "3b23e018d1f6c7cf54d8c41d1e6b1ca9587c2f7992b899b5ea33ecdadd8f4abe",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -12309,7 +12702,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -12338,7 +12735,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "birthday-list",
         "birthday-calendar"
@@ -12505,7 +12902,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -12534,14 +12935,14 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "birthday-person",
         "birthday-group-edit",
         "birthday-filters",
         "birthday-vip"
       ],
-      "imageHash": "96924a89091f80c7608d3070bf7860e58764e191156f12e8ed6ec0a8a4c15d7e",
+      "imageHash": "2d2842cd81f8191966f257fb28034698e422727fd9fcf74b1d00770b7e0d9f9a",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -12685,7 +13086,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -12714,7 +13119,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "birthday-day-list"
       ],
@@ -12869,7 +13274,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -12898,7 +13307,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "birthday-calendar",
         "birthday-day-person"
@@ -13029,7 +13438,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -13062,7 +13475,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "855b2b082be0b773120810ed8099cddd4f5b003902171503d93cfcbbac197aa6",
       "review": "Sin revisar",
@@ -13208,7 +13621,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -13241,7 +13658,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "birthday-form",
         "birthday-alarm",
@@ -13398,7 +13815,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -13431,7 +13852,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "birthday-day",
         "birthday-month"
@@ -13574,7 +13995,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -13607,7 +14032,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "cacae4a66853d7c57ef4d5faec03fe6a4cc5cecc64178a83f453eb87e83b854f",
       "review": "Sin revisar",
@@ -13747,7 +14172,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -13784,7 +14213,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "39f0a796463206c88fc8a54e555e642773cbdb0a9a98268a17900cbff7ff6895",
       "review": "Sin revisar",
@@ -13925,7 +14354,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -13958,9 +14391,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
-      "imageHash": "e48ee499ac40aea9e369e80fa5eeaa70f6c03d0c9f56434aed39d6693aceed93",
+      "imageHash": "30ab90ea5d0ef3abde22735efd94793c2f12a3459febfe57f4e35b57898ab3f8",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -14099,7 +14532,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -14132,7 +14569,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "09b155bb0ff44ccbb941b8dc998f5ba8e7f96f7908ed0a49a73a359a65a4a603",
       "review": "Sin revisar",
@@ -14271,7 +14708,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -14304,7 +14745,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "3ff4471d1085843623a0a4106f3c962b4ab4696a2c8df2b0760636b9870f2535",
       "review": "Sin revisar",
@@ -14444,7 +14885,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -14473,9 +14918,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
-      "imageHash": "2b0eff05568ec52e34e6a1bab63da5d900a15141677467e3a4b42a844557877b",
+      "imageHash": "1e9612a7ff3be39755880ca8dfc170c2ee8eb6853a5c70c529a6280945c271bc",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -14613,7 +15058,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -14642,9 +15091,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
-      "imageHash": "b73a7e1351c32c692f1ff569fb078b40f19606c9b8865131709dde5c544eea26",
+      "imageHash": "c7961fdeba30ec3dad68e41399a9189108c807fc10ef9cbee2575ca1f318fa7a",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -14822,7 +15271,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -14847,7 +15300,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "routine-stats",
         "routine-form",
@@ -14857,7 +15310,7 @@
         "routines--scroll-routine-flex",
         "routines--scroll-routine-new"
       ],
-      "imageHash": "1807dda5405773b2aab851fbd2e9840e20889444573b3ca35c9462f922265a0e",
+      "imageHash": "0223b987a64c0ccae2056d59dbdfccbceffea78bef55b6bf6c6209e8ebfd8a02",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -15005,7 +15458,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -15034,11 +15491,11 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "routine-stats-detail"
       ],
-      "imageHash": "cf204e512baa29d2a3b73e006e3f188b3ee8c7836657bb8deaedde0acef6ba85",
+      "imageHash": "324c48a09c963ff58fd93c8c45cb7eff91d2fcb267b18da22f2f4a33372091e9",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -15175,7 +15632,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -15204,7 +15665,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "13abdb3cf0307524649b7a8ebbf3910fbcecd7140bbc3f53c82a4f9a0764c98d",
       "review": "Sin revisar",
@@ -15349,7 +15810,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -15374,11 +15839,11 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "routine-week-edit"
       ],
-      "imageHash": "c9272f8ecd1afb364dc7e464f5897066c23a7d7bbacb95b0da0076175a80232c",
+      "imageHash": "7f3596cd5ce81388a02959ed24a46195275684ec72ed8e31668d0930970e037a",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -15515,7 +15980,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -15540,7 +16009,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "c2b32ac615f88964858d62b8e6bd4ecd84ac94454103c4c5c5b08f861d896629",
       "review": "Sin revisar",
@@ -15698,7 +16167,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -15727,7 +16200,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "routine-history-edit",
         "routine-bulk",
@@ -15878,7 +16351,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -15907,7 +16384,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "routine-delete"
       ],
@@ -16050,7 +16527,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -16083,7 +16564,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "7cffd0bde326ade41edcf1221050e3d9c7c6603be9d5b7556102fd3d4db9d071",
       "review": "Revisada visualmente",
@@ -16223,7 +16704,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -16256,7 +16741,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "routine-bulk-selected"
       ],
@@ -16406,7 +16891,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -16439,7 +16928,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "routine-bulk-confirm"
       ],
@@ -16583,7 +17072,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -16616,7 +17109,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "e3bc6a04978d14031f8d31a8cb3d7410ee0eaa8558cb8973e8d72a35a9f51372",
       "review": "Sin revisar",
@@ -16763,7 +17256,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -16796,7 +17293,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "routine-recoveries"
       ],
@@ -16939,7 +17436,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -16976,7 +17477,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "routine-earlier-picker"
       ],
@@ -17121,7 +17622,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -17162,7 +17667,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "routine-earlier-selected"
       ],
@@ -17303,7 +17808,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -17344,7 +17853,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "routine-earlier-form"
       ],
@@ -17486,7 +17995,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -17527,7 +18040,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "routine-earlier-saved"
       ],
@@ -17663,7 +18176,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -17704,7 +18221,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "e09d144e5e19f74f9dc5ab27bd814dd2d2146318d1e936e810263c45d92db805",
       "review": "Sin revisar",
@@ -17837,7 +18354,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -17866,11 +18387,11 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "routine-extra-selected"
       ],
-      "imageHash": "8dd2bcfff86d6435da957a6a8071e69bf106107983c025cf2fde22543f47bacc",
+      "imageHash": "50c93132eb13eaac86d466be0a26b40fd778304b40cc0f8d98d1624f37a9055f",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -18014,7 +18535,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -18043,11 +18568,11 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "routine-extra-day"
       ],
-      "imageHash": "7d7a2aab6a7828a88c39894d62a87c0e79a49461d72f9ccd62490b16a205eb28",
+      "imageHash": "0caeedd1f9bf164254b030a100a87a1bbb5ce4d407510e6c5ed6904d0912ba60",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -18185,7 +18710,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -18218,7 +18747,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "b5d06fdc2be6c1f5b4edab683c3c7c683a6917bcaea7f0059efdc2500810669b",
       "review": "Sin revisar",
@@ -18366,7 +18895,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -18391,7 +18924,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "routine-flex"
       ],
@@ -18534,7 +19067,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -18563,7 +19100,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "7d61f093b856ac336b5108fe6d550d9667e038dd3a91b6873e350c77cd844e4c",
       "review": "Sin revisar",
@@ -18711,7 +19248,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -18736,11 +19277,11 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "routine-new"
       ],
-      "imageHash": "81814f624b19ec5f564cc8dcd4b88c1bbb987f8f33e09edd537e726a554189ab",
+      "imageHash": "0f800fe1daba8090f63de29a1347e40055fc8b4c419bd556991a218cc13bbbef",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -18887,7 +19428,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -18916,7 +19461,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "routine-time"
       ],
@@ -19061,7 +19606,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -19094,7 +19643,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "620f678b3ec473dde7e7058db96078c4a93041b4372ec6c21f275404d00d9aaa",
       "review": "Sin revisar",
@@ -19128,6 +19677,7 @@
       ],
       "region": "#householdOverlay .sy-body",
       "image": "captures/mortgage.png",
+      "imageHash": "3ca8c98cf013f12508d546a081898ae687fe9580eec5b96517a335df118ba14c",
       "anchors": {
         "purchase-edit": {
           "x": 318.40625,
@@ -19285,13 +19835,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [
-        "purchase-edit",
-        "mortgage--scroll-loan-edit",
-        "mortgage--scroll-switch-edit",
-        "mortgage-analysis"
-      ],
-      "imageHash": "3ca8c98cf013f12508d546a081898ae687fe9580eec5b96517a335df118ba14c",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -19304,6 +19847,12 @@
             "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
           }
         }
+      ],
+      "verifiedEdges": [
+        "purchase-edit",
+        "mortgage--scroll-loan-edit",
+        "mortgage--scroll-switch-edit",
+        "mortgage-analysis"
       ],
       "fresh": true
     },
@@ -19323,6 +19872,7 @@
       ],
       "region": "#householdOverlay .sy-body",
       "image": "captures/gas.png",
+      "imageHash": "621c1456c8b0e1b2387e86928128c5ff698921f8569b417cc3141d35a89d613f",
       "anchors": {
         "gas-edit": {
           "x": 318.40625,
@@ -19474,12 +20024,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [
-        "gas-edit",
-        "gas--scroll-gas-flat-edit",
-        "energy-gas"
-      ],
-      "imageHash": "621c1456c8b0e1b2387e86928128c5ff698921f8569b417cc3141d35a89d613f",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -19492,6 +20036,11 @@
             "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
           }
         }
+      ],
+      "verifiedEdges": [
+        "gas-edit",
+        "gas--scroll-gas-flat-edit",
+        "energy-gas"
       ],
       "fresh": true
     },
@@ -19511,6 +20060,7 @@
       ],
       "region": "#householdOverlay .sy-body",
       "image": "captures/electric.png",
+      "imageHash": "4c8ad2f71acd27d9dceea0043091f67cdf4c0edde7861746989f29688c9a5668",
       "anchors": {
         "electric-edit": {
           "x": 318.40625,
@@ -19656,11 +20206,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [
-        "electric-edit",
-        "energy-luz"
-      ],
-      "imageHash": "4c8ad2f71acd27d9dceea0043091f67cdf4c0edde7861746989f29688c9a5668",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -19673,6 +20218,10 @@
             "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
           }
         }
+      ],
+      "verifiedEdges": [
+        "electric-edit",
+        "energy-luz"
       ],
       "fresh": true
     },
@@ -19693,6 +20242,7 @@
       ],
       "region": "#householdOverlay .sy-body",
       "image": "captures/purchase-edit.png",
+      "imageHash": "9f580d1facaf43024a04879bcc86c2a6d6ea8d4a12540de44cf70d5e06fd5b3a",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -19825,8 +20375,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "9f580d1facaf43024a04879bcc86c2a6d6ea8d4a12540de44cf70d5e06fd5b3a",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -19840,6 +20388,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -19862,6 +20411,7 @@
       "note": "Misma pantalla, desplazada hasta el control indicado.",
       "region": "#householdOverlay .sy-body",
       "image": "captures/mortgage--scroll-loan-edit.png",
+      "imageHash": "3ca8c98cf013f12508d546a081898ae687fe9580eec5b96517a335df118ba14c",
       "anchors": {
         "loan-edit": {
           "x": 318.40625,
@@ -20001,10 +20551,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [
-        "loan-edit"
-      ],
-      "imageHash": "3ca8c98cf013f12508d546a081898ae687fe9580eec5b96517a335df118ba14c",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -20018,6 +20564,9 @@
             "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
           }
         }
+      ],
+      "verifiedEdges": [
+        "loan-edit"
       ],
       "fresh": true
     },
@@ -20041,6 +20590,7 @@
       ],
       "region": "#householdOverlay .sy-body",
       "image": "captures/loan-edit.png",
+      "imageHash": "624b2ca983c77e0ea1ad3543a9b0685b708535d0b1509adacc897d691bab6c6b",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -20173,8 +20723,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "624b2ca983c77e0ea1ad3543a9b0685b708535d0b1509adacc897d691bab6c6b",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -20189,6 +20737,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -20211,6 +20760,7 @@
       "note": "Misma pantalla, desplazada hasta el control indicado.",
       "region": "#householdOverlay .sy-body",
       "image": "captures/mortgage--scroll-switch-edit.png",
+      "imageHash": "b84640bca61eaa2f11948977b2c54ca9b4869e766dfa2ab62721c89fc5718072",
       "anchors": {
         "switch-edit": {
           "x": 318.40625,
@@ -20350,10 +20900,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [
-        "switch-edit"
-      ],
-      "imageHash": "b84640bca61eaa2f11948977b2c54ca9b4869e766dfa2ab62721c89fc5718072",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -20367,6 +20913,9 @@
             "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
           }
         }
+      ],
+      "verifiedEdges": [
+        "switch-edit"
       ],
       "fresh": true
     },
@@ -20390,6 +20939,7 @@
       ],
       "region": "#householdOverlay .sy-body",
       "image": "captures/switch-edit.png",
+      "imageHash": "d3e15c28db3e64ca50f1d1da002031ee9b7358f3e623f6c5b32f4fc19d211973",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -20522,8 +21072,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "d3e15c28db3e64ca50f1d1da002031ee9b7358f3e623f6c5b32f4fc19d211973",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -20538,6 +21086,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -20557,6 +21106,7 @@
       ],
       "region": "#householdOverlay .sy-body",
       "image": "captures/mortgage-analysis.png",
+      "imageHash": "a6f828cb12766dca871495f45789e10f57cc1cd71547888765de7f8610a5d0e7",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -20689,8 +21239,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "a6f828cb12766dca871495f45789e10f57cc1cd71547888765de7f8610a5d0e7",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -20704,6 +21252,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -20723,6 +21272,7 @@
       ],
       "region": "#householdOverlay .sy-body",
       "image": "captures/gas-edit.png",
+      "imageHash": "fc7de6f1f9935262114d144cfa86c2a882af17ad5c9b6126a7b2d371a1a14084",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -20855,8 +21405,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "fc7de6f1f9935262114d144cfa86c2a882af17ad5c9b6126a7b2d371a1a14084",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -20871,6 +21419,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -20893,6 +21442,7 @@
       "note": "Misma pantalla, desplazada hasta el control indicado.",
       "region": "#householdOverlay .sy-body",
       "image": "captures/gas--scroll-gas-flat-edit.png",
+      "imageHash": "621c1456c8b0e1b2387e86928128c5ff698921f8569b417cc3141d35a89d613f",
       "anchors": {
         "gas-flat-edit": {
           "x": 318.40625,
@@ -21032,10 +21582,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [
-        "gas-flat-edit"
-      ],
-      "imageHash": "621c1456c8b0e1b2387e86928128c5ff698921f8569b417cc3141d35a89d613f",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -21049,6 +21595,9 @@
             "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
           }
         }
+      ],
+      "verifiedEdges": [
+        "gas-flat-edit"
       ],
       "fresh": true
     },
@@ -21072,6 +21621,7 @@
       ],
       "region": "#householdOverlay .sy-body",
       "image": "captures/gas-flat-edit.png",
+      "imageHash": "6870c146b6500e0501880307571602f81a9b1b19a95b38dbc4132dc752456485",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -21204,8 +21754,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "6870c146b6500e0501880307571602f81a9b1b19a95b38dbc4132dc752456485",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -21220,6 +21768,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -21239,6 +21788,7 @@
       ],
       "region": "#householdOverlay .sy-body",
       "image": "captures/electric-edit.png",
+      "imageHash": "cd1ef2d7c11f1aa6cf8fe4e0e9686e289ee473e3446fff4b86144e1b435245cd",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -21371,8 +21921,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "cd1ef2d7c11f1aa6cf8fe4e0e9686e289ee473e3446fff4b86144e1b435245cd",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -21387,6 +21935,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -21407,6 +21956,7 @@
       ],
       "region": "#energyAnalysisOverlay .sy-body",
       "image": "captures/energy-gas.png",
+      "imageHash": "4c6905a1873649ccf1cefbcdbeec9e8ac48bcad7bfb5fdd2ba32ae5d38a815f3",
       "anchors": {
         "energy-gas-consumo": {
           "x": 88,
@@ -21580,13 +22130,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [
-        "energy-gas-consumo",
-        "energy-gas-costes",
-        "energy-gas-tarifas",
-        "energy-gas-comparar"
-      ],
-      "imageHash": "4c6905a1873649ccf1cefbcdbeec9e8ac48bcad7bfb5fdd2ba32ae5d38a815f3",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -21599,6 +22142,12 @@
             "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
           }
         }
+      ],
+      "verifiedEdges": [
+        "energy-gas-consumo",
+        "energy-gas-costes",
+        "energy-gas-tarifas",
+        "energy-gas-comparar"
       ],
       "fresh": true
     },
@@ -21621,6 +22170,7 @@
       ],
       "region": "#energyAnalysisOverlay .sy-body",
       "image": "captures/energy-gas-consumo.png",
+      "imageHash": "d79bab00e3509655e8ddeb2f1c626c1df0c2dcd05743c34bed10eb32c21f3467",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -21769,8 +22319,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "d79bab00e3509655e8ddeb2f1c626c1df0c2dcd05743c34bed10eb32c21f3467",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -21784,6 +22332,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -21805,6 +22354,7 @@
       ],
       "region": "#energyAnalysisOverlay .sy-body",
       "image": "captures/energy-gas-costes.png",
+      "imageHash": "7a31d5007a9de8a3b85b3c2cbef9b32ee2c75c68acff06f8b24d6af3fa2ceac2",
       "anchors": {
         "energy-gas-costes-neto": {
           "x": 33,
@@ -21960,10 +22510,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [
-        "energy-gas-costes-neto"
-      ],
-      "imageHash": "7a31d5007a9de8a3b85b3c2cbef9b32ee2c75c68acff06f8b24d6af3fa2ceac2",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -21976,6 +22522,9 @@
             "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
           }
         }
+      ],
+      "verifiedEdges": [
+        "energy-gas-costes-neto"
       ],
       "fresh": true
     },
@@ -21998,6 +22547,7 @@
       ],
       "region": "#energyAnalysisOverlay .sy-body",
       "image": "captures/energy-gas-tarifas.png",
+      "imageHash": "7b07d0874d185f3f22485e077c87195d0adb2e4ff06e66fd8da51e96c2178172",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -22146,8 +22696,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "7b07d0874d185f3f22485e077c87195d0adb2e4ff06e66fd8da51e96c2178172",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -22161,6 +22709,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -22182,6 +22731,7 @@
       ],
       "region": "#energyAnalysisOverlay .sy-body",
       "image": "captures/energy-gas-comparar.png",
+      "imageHash": "201542299ca6cd81c51cd7c50a7dd1e27effb24a46bce865bf440b1148eaefee",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -22330,8 +22880,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "201542299ca6cd81c51cd7c50a7dd1e27effb24a46bce865bf440b1148eaefee",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -22345,6 +22893,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -22368,6 +22917,7 @@
       "region": "#energyAnalysisOverlay .sy-body",
       "note": "Estimación explícita sin IVA. El fixture cubre ocho meses; no se rellenan los cuatro restantes.",
       "image": "captures/energy-gas-costes-neto.png",
+      "imageHash": "80d84f34041a8a224d554244abf5331bcb3bd6e923615d897c34c64cf605b263",
       "anchors": {
         "energy-gas-costes-constante": {
           "x": 33,
@@ -22523,11 +23073,10 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "review": "Sin revisar",
       "verifiedEdges": [
         "energy-gas-costes-constante"
       ],
-      "imageHash": "80d84f34041a8a224d554244abf5331bcb3bd6e923615d897c34c64cf605b263",
-      "review": "Sin revisar",
       "fresh": true
     },
     {
@@ -22552,6 +23101,7 @@
       "region": "#energyAnalysisOverlay .sy-body",
       "note": "IVA constante para explorar el escenario; no modifica los impuestos históricos ni la comparación con facturas.",
       "image": "captures/energy-gas-costes-constante.png",
+      "imageHash": "222df1a2a4440df20ef4b9a38850b365afe20c58d262f373466dcff2385abb4f",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -22700,9 +23250,8 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "222df1a2a4440df20ef4b9a38850b365afe20c58d262f373466dcff2385abb4f",
       "review": "Sin revisar",
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -22723,6 +23272,7 @@
       ],
       "region": "#energyAnalysisOverlay .sy-body",
       "image": "captures/energy-luz.png",
+      "imageHash": "6a035be2bef6c90751380cdbacc5d8373606bf045da7acd8bd8b761d1b6795e5",
       "anchors": {
         "energy-luz-consumo": {
           "x": 88,
@@ -22896,13 +23446,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [
-        "energy-luz-consumo",
-        "energy-luz-costes",
-        "energy-luz-tarifas",
-        "energy-luz-comparar"
-      ],
-      "imageHash": "6a035be2bef6c90751380cdbacc5d8373606bf045da7acd8bd8b761d1b6795e5",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -22915,6 +23458,12 @@
             "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
           }
         }
+      ],
+      "verifiedEdges": [
+        "energy-luz-consumo",
+        "energy-luz-costes",
+        "energy-luz-tarifas",
+        "energy-luz-comparar"
       ],
       "fresh": true
     },
@@ -22937,6 +23486,7 @@
       ],
       "region": "#energyAnalysisOverlay .sy-body",
       "image": "captures/energy-luz-consumo.png",
+      "imageHash": "3a8c3bf26e078c21e0f7a537f157dccdac854c60097698514e736859344c492d",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -23085,8 +23635,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "3a8c3bf26e078c21e0f7a537f157dccdac854c60097698514e736859344c492d",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -23100,6 +23648,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -23121,6 +23670,7 @@
       ],
       "region": "#energyAnalysisOverlay .sy-body",
       "image": "captures/energy-luz-costes.png",
+      "imageHash": "7ad13b8c411fd680870c4638cb2c422e8767145c4a8dc09bec1a55812667b0a2",
       "anchors": {
         "energy-luz-costes-neto": {
           "x": 33,
@@ -23276,10 +23826,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [
-        "energy-luz-costes-neto"
-      ],
-      "imageHash": "7ad13b8c411fd680870c4638cb2c422e8767145c4a8dc09bec1a55812667b0a2",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -23292,6 +23838,9 @@
             "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
           }
         }
+      ],
+      "verifiedEdges": [
+        "energy-luz-costes-neto"
       ],
       "fresh": true
     },
@@ -23314,6 +23863,7 @@
       ],
       "region": "#energyAnalysisOverlay .sy-body",
       "image": "captures/energy-luz-tarifas.png",
+      "imageHash": "ba67ad51ba15b09048dafdeed9639ea09d68e2e07f642c93a00b65743fc3faaf",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -23462,8 +24012,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "ba67ad51ba15b09048dafdeed9639ea09d68e2e07f642c93a00b65743fc3faaf",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -23477,6 +24025,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -23498,6 +24047,7 @@
       ],
       "region": "#energyAnalysisOverlay .sy-body",
       "image": "captures/energy-luz-comparar.png",
+      "imageHash": "3a64a6f4ef08f634b7db0777e3082c8778d57faace7dcdb93466ba9541e8f7b7",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -23646,8 +24196,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "3a64a6f4ef08f634b7db0777e3082c8778d57faace7dcdb93466ba9541e8f7b7",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -23661,6 +24209,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -23684,6 +24233,7 @@
       "region": "#energyAnalysisOverlay .sy-body",
       "note": "Estimación explícita sin IVA. El fixture cubre ocho meses; no se rellenan los cuatro restantes.",
       "image": "captures/energy-luz-costes-neto.png",
+      "imageHash": "3eb4669fac9bfcc36cfd32bebbe5795904cacb1a672af89b0d16b24cb25db4d3",
       "anchors": {
         "energy-luz-costes-constante": {
           "x": 33,
@@ -23839,11 +24389,10 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "review": "Sin revisar",
       "verifiedEdges": [
         "energy-luz-costes-constante"
       ],
-      "imageHash": "3eb4669fac9bfcc36cfd32bebbe5795904cacb1a672af89b0d16b24cb25db4d3",
-      "review": "Sin revisar",
       "fresh": true
     },
     {
@@ -23868,6 +24417,7 @@
       "region": "#energyAnalysisOverlay .sy-body",
       "note": "IVA constante para explorar el escenario; no modifica los impuestos históricos ni la comparación con facturas.",
       "image": "captures/energy-luz-costes-constante.png",
+      "imageHash": "16ce75f9db671b875cf01501212dac6e18748efaa98263795d090a30f632e8b2",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -24016,9 +24566,8 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "16ce75f9db671b875cf01501212dac6e18748efaa98263795d090a30f632e8b2",
       "review": "Sin revisar",
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -24037,6 +24586,7 @@
       ],
       "region": "#estudioOverlay .sy-body",
       "image": "captures/study-rate.png",
+      "imageHash": "d3a7031eb6e692b352317e4b4c68723e20ba18dde12c7da8598ca955b1f2f393",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -24169,8 +24719,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "d3a7031eb6e692b352317e4b4c68723e20ba18dde12c7da8598ca955b1f2f393",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -24184,6 +24732,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -24202,6 +24751,7 @@
       ],
       "region": "#estudioOverlay .sy-body",
       "image": "captures/study-mortgage.png",
+      "imageHash": "abe3e755c73c8f8565d690442b47307697d68b7696eb935ce8c58d1143a22760",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -24334,8 +24884,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "abe3e755c73c8f8565d690442b47307697d68b7696eb935ce8c58d1143a22760",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -24349,6 +24897,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -24367,6 +24916,7 @@
       ],
       "region": "#estudioOverlay .sy-body",
       "image": "captures/study-gas.png",
+      "imageHash": "ea9b8fbc79c226fceffca5731265c04d57f253c7e5ea590c6298bee6938b7dd7",
       "anchors": {
         "study-gas--scroll-energy-tariff": {
           "x": 390,
@@ -24506,10 +25056,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [
-        "study-gas--scroll-energy-tariff"
-      ],
-      "imageHash": "ea9b8fbc79c226fceffca5731265c04d57f253c7e5ea590c6298bee6938b7dd7",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -24522,6 +25068,9 @@
             "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
           }
         }
+      ],
+      "verifiedEdges": [
+        "study-gas--scroll-energy-tariff"
       ],
       "fresh": true
     },
@@ -24541,6 +25090,7 @@
       ],
       "region": "#estudioOverlay .sy-body",
       "image": "captures/study-electric.png",
+      "imageHash": "a682c6d1d47144aa7ba3d3b67d0b836e9f8fb60565b2251da981210027e47e87",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -24673,8 +25223,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "a682c6d1d47144aa7ba3d3b67d0b836e9f8fb60565b2251da981210027e47e87",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -24688,6 +25236,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -24710,6 +25259,7 @@
       "note": "Misma pantalla, desplazada hasta el control indicado.",
       "region": "#estudioOverlay .sy-body",
       "image": "captures/study-gas--scroll-energy-tariff.png",
+      "imageHash": "38e1be137406556dfa0067cdd9a22adf33f8ebad1c7ad970d6ca7652c9dde370",
       "anchors": {
         "energy-tariff": {
           "x": 48,
@@ -24849,10 +25399,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [
-        "energy-tariff"
-      ],
-      "imageHash": "38e1be137406556dfa0067cdd9a22adf33f8ebad1c7ad970d6ca7652c9dde370",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -24865,6 +25411,9 @@
             "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
           }
         }
+      ],
+      "verifiedEdges": [
+        "energy-tariff"
       ],
       "fresh": true
     },
@@ -24886,6 +25435,7 @@
       ],
       "region": "#estudioOverlay .sy-body",
       "image": "captures/energy-tariff.png",
+      "imageHash": "4177be6774a1e0d78fd9970e330c0ce6dd82c65f8a6bdb0d3e433045b287b0ef",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -25022,8 +25572,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "4177be6774a1e0d78fd9970e330c0ce6dd82c65f8a6bdb0d3e433045b287b0ef",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -25037,6 +25585,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -25054,6 +25603,7 @@
       ],
       "region": "#econOverlay .sy-body",
       "image": "captures/econ-days.png",
+      "imageHash": "db92e6a0cacfce016983de08093f1541dd7dc3f3829b52fff67d6da08a13414b",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -25174,8 +25724,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "db92e6a0cacfce016983de08093f1541dd7dc3f3829b52fff67d6da08a13414b",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -25189,6 +25737,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -25206,6 +25755,7 @@
       ],
       "region": "#econOverlay .sy-body",
       "image": "captures/econ-tax.png",
+      "imageHash": "252cba5d1be4da6cd46e1d3ab590728d1528fdbf99deb872abedbb83e9ffb340",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -25326,8 +25876,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "252cba5d1be4da6cd46e1d3ab590728d1528fdbf99deb872abedbb83e9ffb340",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -25341,6 +25889,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -25358,6 +25907,7 @@
       ],
       "region": "#econOverlay .sy-body",
       "image": "captures/econ-personal.png",
+      "imageHash": "b1c9067cf38dfb5a7b2af37c56ed2e20ee7625f2382522eea94e4a19095f1bfb",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -25478,8 +26028,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "b1c9067cf38dfb5a7b2af37c56ed2e20ee7625f2382522eea94e4a19095f1bfb",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -25493,6 +26041,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -25510,6 +26059,7 @@
       ],
       "region": "#fiscalOverlay .sy-body",
       "image": "captures/fiscal.png",
+      "imageHash": "12725f56d3f3f081f0ba8eff8f680b0a565562b3cf1e049a1bf99210a4cd0c5e",
       "anchors": {
         "fiscal-expenses": {
           "x": 205,
@@ -25671,13 +26221,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [
-        "fiscal-expenses",
-        "fiscal-irpf",
-        "fiscal-home",
-        "fiscal--scroll-personal-periods"
-      ],
-      "imageHash": "12725f56d3f3f081f0ba8eff8f680b0a565562b3cf1e049a1bf99210a4cd0c5e",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -25690,6 +26233,12 @@
             "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
           }
         }
+      ],
+      "verifiedEdges": [
+        "fiscal-expenses",
+        "fiscal-irpf",
+        "fiscal-home",
+        "fiscal--scroll-personal-periods"
       ],
       "fresh": true
     },
@@ -25709,6 +26258,7 @@
       ],
       "region": "#fiscalOverlay .sy-body",
       "image": "captures/fiscal-expenses.png",
+      "imageHash": "482535926444d47c5c06878963acb36103a8a0554a4e35930d5681c63a515146",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -25845,8 +26395,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "482535926444d47c5c06878963acb36103a8a0554a4e35930d5681c63a515146",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -25860,6 +26408,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -25878,6 +26427,7 @@
       ],
       "region": "#fiscalOverlay .sy-body",
       "image": "captures/fiscal-irpf.png",
+      "imageHash": "1f639cefd3e4221831c39b685b07b8ca608638ea8fb3a4755b027cc9216fc620",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -26014,8 +26564,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "1f639cefd3e4221831c39b685b07b8ca608638ea8fb3a4755b027cc9216fc620",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -26029,6 +26577,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -26047,6 +26596,7 @@
       ],
       "region": "#fiscalOverlay .sy-body",
       "image": "captures/fiscal-home.png",
+      "imageHash": "0c84441628445b9125401e4adecf058f373f153745cbf665a79ac7c57f749e3f",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -26183,8 +26733,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "0c84441628445b9125401e4adecf058f373f153745cbf665a79ac7c57f749e3f",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -26198,6 +26746,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -26219,6 +26768,7 @@
       "note": "Misma pantalla, desplazada hasta el control indicado.",
       "region": "#fiscalOverlay .sy-body",
       "image": "captures/fiscal--scroll-personal-periods.png",
+      "imageHash": "12725f56d3f3f081f0ba8eff8f680b0a565562b3cf1e049a1bf99210a4cd0c5e",
       "anchors": {
         "personal-periods": {
           "x": 42,
@@ -26362,10 +26912,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [
-        "personal-periods"
-      ],
-      "imageHash": "12725f56d3f3f081f0ba8eff8f680b0a565562b3cf1e049a1bf99210a4cd0c5e",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -26378,6 +26924,9 @@
             "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
           }
         }
+      ],
+      "verifiedEdges": [
+        "personal-periods"
       ],
       "fresh": true
     },
@@ -26399,6 +26948,7 @@
       ],
       "region": "#fiscalOverlay .sy-body",
       "image": "captures/personal-periods.png",
+      "imageHash": "f680b8e59919289c6d93b66be3337862f38f6e3daefe0bf941bfbe82e8a5a880",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -26539,8 +27089,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "f680b8e59919289c6d93b66be3337862f38f6e3daefe0bf941bfbe82e8a5a880",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -26554,6 +27102,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -26673,7 +27222,7 @@
         {
           "file": "js/core.js",
           "part": "app-version",
-          "hash": "f8a1f047692be5b54ca9f70549391f63414b5a45ab142dbc87e90c381a049040"
+          "hash": "f5eb6823175ed0818dd134402cb82a564ea76cee6d23b6aba5fc80adafd3af1d"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -26686,9 +27235,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
-      "imageHash": "42ede0b31dc3b8977ce1a89be34a461fbdd1066c669f78e828163b88c8d7273a",
+      "imageHash": "f7f521bdcbd14a6b36f4836db2c16b7a802f9b4eb8a90dd8cadfb9bb2afa01e0",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -26821,7 +27370,7 @@
         {
           "file": "js/core.js",
           "part": "app-version",
-          "hash": "f8a1f047692be5b54ca9f70549391f63414b5a45ab142dbc87e90c381a049040"
+          "hash": "f5eb6823175ed0818dd134402cb82a564ea76cee6d23b6aba5fc80adafd3af1d"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -26834,9 +27383,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
-      "imageHash": "36cce6b6401e7cffe63262344a4b67fe398c75ce587c373f13dbe76d11b5cae5",
+      "imageHash": "c36084f4cd91b091d586f5a23a548392d23049116c3102d13514c5bbcff76241",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -26973,7 +27522,7 @@
         {
           "file": "js/core.js",
           "part": "app-version",
-          "hash": "f8a1f047692be5b54ca9f70549391f63414b5a45ab142dbc87e90c381a049040"
+          "hash": "f5eb6823175ed0818dd134402cb82a564ea76cee6d23b6aba5fc80adafd3af1d"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -26986,9 +27535,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
-      "imageHash": "30dfcb3237d1d9be873289e996b1e66aae90234baa90780cb998227de84456f5",
+      "imageHash": "077faca83fea3a57f8f8fb11dab44138ae063ab37e793b0ddc43626ae5a624cb",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -27132,7 +27681,7 @@
         {
           "file": "js/core.js",
           "part": "app-version",
-          "hash": "f8a1f047692be5b54ca9f70549391f63414b5a45ab142dbc87e90c381a049040"
+          "hash": "f5eb6823175ed0818dd134402cb82a564ea76cee6d23b6aba5fc80adafd3af1d"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -27145,11 +27694,11 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "hairdresser"
       ],
-      "imageHash": "cb5eb9910302a70fe6f6862da43e381be84f8ee92306fe3bdd8e2ed6836317ba",
+      "imageHash": "c483958257f8882e85190dc293a085b4426903221d8f35ce2dcb0e85e43c6114",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -27282,7 +27831,7 @@
         {
           "file": "js/core.js",
           "part": "app-version",
-          "hash": "f8a1f047692be5b54ca9f70549391f63414b5a45ab142dbc87e90c381a049040"
+          "hash": "f5eb6823175ed0818dd134402cb82a564ea76cee6d23b6aba5fc80adafd3af1d"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -27295,7 +27844,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "07fc83307d0b6996e534b360dd6aa04217c7fe476e3b086a93f81239b8e5e1ca",
       "review": "Sin revisar",
@@ -27435,7 +27984,7 @@
         {
           "file": "js/core.js",
           "part": "app-version",
-          "hash": "f8a1f047692be5b54ca9f70549391f63414b5a45ab142dbc87e90c381a049040"
+          "hash": "f5eb6823175ed0818dd134402cb82a564ea76cee6d23b6aba5fc80adafd3af1d"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -27448,7 +27997,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "6f96a4d5fc7b86c1299dda9793bc0024ba4a97eee49b99a2ae87d4787340dafd",
       "review": "Sin revisar",
@@ -27587,7 +28136,7 @@
         {
           "file": "js/core.js",
           "part": "app-version",
-          "hash": "f8a1f047692be5b54ca9f70549391f63414b5a45ab142dbc87e90c381a049040"
+          "hash": "f5eb6823175ed0818dd134402cb82a564ea76cee6d23b6aba5fc80adafd3af1d"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -27600,7 +28149,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "4819731417928992acb4515a0baa8f16c1632ce0a2cc3cb7894a0478dd589c3a",
       "review": "Sin revisar",
@@ -27633,6 +28182,7 @@
       "region": "body",
       "note": "Opciones del archivo ficticio. El recorrido se detiene antes de guardar o compartir.",
       "image": "captures/export-mode.png",
+      "imageHash": "9356942555d547f50441f9d7f0ffab517ebbe82b9300f1824a3c6d62dc8c8e04",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -27749,8 +28299,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "9356942555d547f50441f9d7f0ffab517ebbe82b9300f1824a3c6d62dc8c8e04",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -27764,6 +28312,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -27909,7 +28458,7 @@
         {
           "file": "js/core.js",
           "part": "app-version",
-          "hash": "f8a1f047692be5b54ca9f70549391f63414b5a45ab142dbc87e90c381a049040"
+          "hash": "f5eb6823175ed0818dd134402cb82a564ea76cee6d23b6aba5fc80adafd3af1d"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -27922,7 +28471,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "21ab7bcf0f3686b73a330eadfed7baf799598e7ece32166feb546cae96aa40bf",
       "review": "Sin revisar",
@@ -27954,6 +28503,7 @@
       ],
       "region": "#tasksList",
       "image": "captures/tasks.png",
+      "imageHash": "bce62806cc3ed9fcec510d9e474fb26882d7efca4ce3281f43a1533c17e8edaf",
       "anchors": {
         "tasks-completed": {
           "x": 203,
@@ -28089,12 +28639,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [
-        "tasks-completed",
-        "task-edit",
-        "tasks-selected"
-      ],
-      "imageHash": "bce62806cc3ed9fcec510d9e474fb26882d7efca4ce3281f43a1533c17e8edaf",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -28107,6 +28651,11 @@
             "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
           }
         }
+      ],
+      "verifiedEdges": [
+        "tasks-completed",
+        "task-edit",
+        "tasks-selected"
       ],
       "fresh": true
     },
@@ -28125,6 +28674,7 @@
       ],
       "region": "#tasksList",
       "image": "captures/tasks-completed.png",
+      "imageHash": "124b91c883bcd2738d598bf16886e0a11be7a4a45058518dd51fd82d560a27ff",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -28241,8 +28791,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "124b91c883bcd2738d598bf16886e0a11be7a4a45058518dd51fd82d560a27ff",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -28256,6 +28804,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -28273,6 +28822,7 @@
       ],
       "region": "#tasksList",
       "image": "captures/task-edit.png",
+      "imageHash": "875ce3f95619443710348b1b7154f19f603dfe560b597334dcebefa5a0145179",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -28389,8 +28939,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "875ce3f95619443710348b1b7154f19f603dfe560b597334dcebefa5a0145179",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -28404,6 +28952,7 @@
           }
         }
       ],
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -28421,6 +28970,7 @@
       ],
       "region": "#tasksList",
       "image": "captures/tasks-selected.png",
+      "imageHash": "61564a78cdd23bb23d0a1268116851ccece4547d923d944fea026840812a5778",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -28537,9 +29087,8 @@
       ],
       "dependencyVersion": 2,
       "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
-      "verifiedEdges": [],
-      "imageHash": "61564a78cdd23bb23d0a1268116851ccece4547d923d944fea026840812a5778",
       "review": "Sin revisar",
+      "verifiedEdges": [],
       "fresh": true
     },
     {
@@ -28680,7 +29229,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -28721,7 +29274,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "wedding-stats-packs"
       ],
@@ -28870,7 +29423,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -28911,7 +29468,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "wedding-stats-teachers"
       ],
@@ -29056,7 +29613,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -29097,7 +29658,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "baf480e3ca608c0dc965aa74100ffb4d8d4070ce0676d4208bb51e69e3483300",
       "review": "Sin revisar",
@@ -29231,7 +29792,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -29260,7 +29825,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [],
       "imageHash": "35c31c07de0ac9ea3205a799649e0ca52446dd9d7ae000f1fc26e1d70731ef01",
       "review": "Sin revisar",
@@ -29281,6 +29846,7 @@
       "sources": [
         "js/events-render.js",
         "js/events-bind.js",
+        "js/swipe-render.js",
         "js/events.js",
         "js/events-alarm-policy.js",
         "js/events-statistics.js",
@@ -29404,7 +29970,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -29433,7 +30003,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "event-stats-links"
       ],
@@ -29459,6 +30029,7 @@
       "sources": [
         "js/events-render.js",
         "js/events-bind.js",
+        "js/swipe-render.js",
         "js/events.js",
         "js/events-alarm-policy.js",
         "js/events-statistics.js",
@@ -29588,7 +30159,11 @@
         },
         {
           "file": "js/events-bind.js",
-          "hash": "57be3e6303814bab82b860405e52b25b1fe3d6b5884bef8a7ffba83e2f0165b3"
+          "hash": "c0aa76140f67d0ad7732d18251985206892bcfedc62d0980e765422f67bbe2de"
+        },
+        {
+          "file": "js/swipe-render.js",
+          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
         },
         {
           "file": "js/events.js",
@@ -29617,7 +30192,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "58e5ddfe504d1e36865c69b3976b7bbf0c10b25f",
+      "commit": "6788b43c27d1956c69d35b65774c816dbbfdafd9",
       "verifiedEdges": [
         "routine-stats",
         "wedding-stats"
@@ -29925,6 +30500,17 @@
       "label": "Nuevo evento",
       "view": "area",
       "step": "#evAdd"
+    },
+    {
+      "from": "event-new",
+      "to": "event-new-details",
+      "selector": ".ev-event-form-body",
+      "label": "Deslizar · completar los datos",
+      "view": "area",
+      "action": "scroll",
+      "step": {
+        "scroll": ".ev-form-lead"
+      }
     },
     {
       "from": "all-events",
@@ -31919,6 +32505,13 @@
     },
     {
       "group": "Eventos",
+      "title": "Nuevo evento · nombre, notas y horario",
+      "file": "js/events-form.js",
+      "scene": "event-new-details",
+      "status": "Capturada · Sin revisar"
+    },
+    {
+      "group": "Eventos",
       "title": "Ficha de evento grande",
       "file": "js/events-detail.js",
       "scene": "large-detail",
@@ -32428,7 +33021,7 @@
     {
       "symbol": "openEvForm",
       "file": "js/events-form.js",
-      "line": 169
+      "line": 171
     },
     {
       "symbol": "openEvPlanOrder",

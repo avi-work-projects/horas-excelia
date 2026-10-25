@@ -65,11 +65,12 @@ function renderEvForm(ev){
   var _dayList=evPuntualDays(ev);
   var showDayNote=isEdit&&curKind==='puntual'&&EV_EDIT_DS&&_dayList.length>1&&_dayList.indexOf(EV_EDIT_DS)!==-1;
   var dayNote=showDayNote?((ev.dayNotes&&ev.dayNotes[EV_EDIT_DS])||''):'';
+  var lead=renderEvFormLead(ev,showDayNote);
   var h='<div class="ev-form-overlay" id="evFormOv">';
   h+='<div class="ev-form-sheet ev-event-form-sheet"><div class="ev-form-handle"></div>';
   h+='<header class="bd-panel-header panel-header-centered ev-event-form-header"><button class="sy-back" id="evFClose" aria-label="Volver">&#8592;</button><h2 id="evFHeadingTitle">'+escHtml(title||(isEdit?'Editar Evento':'Nuevo Evento'))+'</h2>';
   h+=isEdit?'<button class="ev-btn danger" id="evFDel">Eliminar</button>':'<span></span>';
-  h+='</header><div class="ev-event-form-body">'+renderEvFormLead(ev,showDayNote);
+  h+='</header><div class="ev-event-form-body">'+(isEdit?lead:'');
   /* Nota especifica de ESTE dia */
   if(showDayNote){
     h+='<div class="ev-field ev-daynote-field"><label>Nota de este d\u00eda <span class="ev-note-scope">('+EV_EDIT_DS.slice(8)+'/'+EV_EDIT_DS.slice(5,7)+')</span> '
@@ -160,6 +161,7 @@ function renderEvForm(ev){
   });
   h+='<div class="ev-viaje-note">La hora es la de <b>salida</b>: desde Pr\u00f3ximos podr\u00e1s crear una alarma para cada trayecto.</div>';
   h+='</div>';
+  if(!isEdit)h+=lead;
   h+='</div><div class="ev-form-actions ev-event-form-actions"><button class="ev-btn primary" id="evFSave">Guardar</button></div>';
   h+='</div></div>';
   return h;

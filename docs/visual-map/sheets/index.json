@@ -105,7 +105,7 @@
       "event-order",
       "events--scroll-event-new",
       "event-new",
-      "event-delete"
+      "event-new-details"
     ]
   },
   {
@@ -113,7 +113,8 @@
     "title": "Eventos · 3/3",
     "image": "sheets/area-3-2.png",
     "scenes": [
-      "calendar",
+      "all-events",
+      "event-delete",
       "large-detail",
       "started-detail",
       "event-alarm",
