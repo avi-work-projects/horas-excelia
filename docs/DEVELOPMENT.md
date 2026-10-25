@@ -1028,3 +1028,26 @@ versiones, cambios compartidos, revisión e independencia de las exportaciones;
 recaptura aislada en Edge; verificación del visor y pasada posterior sin cambios;
 pruebas generales y build. Las herramientas y documentos no incrementan la
 versión ni forman parte de `dist/`.
+
+
+## Calendario mensual y trayectos (v503)
+
+Los fines de semana ajenos al mes conservan el mismo fondo apagado y halo de
+marcadores que los otros días fuera del mes. La variante de fin de semana se
+limita a las casillas del mes para que su especificidad no anule ese estado.
+
+`evBarTravelTimes` lee las horas de ida/vuelta mediante `evTramos`, con las horas
+generales como respaldo. El calendario de un mes pasa ese criterio a
+`_evMarcarMitades`: ida desde las 13:00, media casilla inicial; vuelta antes de
+las 13:00, media casilla final. Solo se recortan los extremos reales, no cada
+corte de semana o mes. Las fechas y horas guardadas no cambian; anual y cuatro
+meses conservan su criterio previo. Una combinación antigua contradictoria en
+un único día mantiene la barra visible.
+
+Pruebas de geometría a 320/400/440 px, días ajenos al principio/final del mes,
+prioridad de transporte, las cuatro categorías grandes, cortes, respaldo sin
+hora de trayecto y render sin escrituras. Comparación con v502 en
+`docs/visual-map/review/calendar-v503.html`; el fixture del atlas prescinde de la
+hora general del viaje para no enmascarar esta regresión. La unificación del
+orden entre swipe y vista previa sigue pendiente: esta tarea solo explica esa
+propuesta y corrige las dos incidencias solicitadas.

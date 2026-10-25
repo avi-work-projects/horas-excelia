@@ -476,7 +476,7 @@ details[open]>summary{margin-bottom:10px}
 /* Calendario mensual: malla tranquila; conserva la geometría de eventos y puentes. */
 .ev-month-wrap{--calendar-tone:var(--c-green)}
 .ev-month-wrap .ev-cell{border-radius:6px;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--border) 55%,transparent)}
-.ev-month-wrap .ev-cell.weekend:not(.ev-puente):not(.ev-day-festivo):not(.ev-day-vacaciones):not(.ev-day-ausencia){background:color-mix(in srgb,var(--text-muted) 7%,var(--surface));--ev-marker-halo:color-mix(in srgb,var(--text-muted) 7%,var(--surface))}
+.ev-month-wrap .ev-cell.weekend:not(.out-m):not(.ev-puente):not(.ev-day-festivo):not(.ev-day-vacaciones):not(.ev-day-ausencia){background:color-mix(in srgb,var(--text-muted) 7%,var(--surface));--ev-marker-halo:color-mix(in srgb,var(--text-muted) 7%,var(--surface))}
 .ev-month-wrap .ev-cell.ev-puente{box-shadow:none}
 .ev-month-wrap .ev-cell.ev-day-festivo{box-shadow:inset 0 3px var(--festivo)}
 .ev-month-wrap .ev-cell.ev-day-vacaciones{box-shadow:inset 0 3px var(--vacaciones)}
@@ -978,7 +978,7 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 .ev-calendar-header:has(#evBright)+.sy-body .ev-week-hdr{top:-4px}
 .ev-month-wrap .ev-week-hdr>div{display:grid;place-items:center;min-height:30px;padding:3px 0}
 .ev-current-weekday{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;border:1px solid var(--c-green);background:var(--c-green);color:#fff;letter-spacing:0}
-.ev-month-wrap .ev-cell.out-m{background:var(--surface3)}
+.ev-month-wrap .ev-cell.out-m{background:var(--surface3);--ev-marker-halo:var(--surface3)}
 .ev-month-wrap .ev-cell.today-ev:not(.out-m){background:color-mix(in srgb,var(--c-green) 9%,var(--surface))!important;--ev-marker-halo:color-mix(in srgb,var(--c-green) 9%,var(--surface))}
 .ev-hairdresser-edit{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;border:0;background:none;color:var(--text);font:inherit;font-weight:600;text-align:left;cursor:pointer;margin-bottom:8px}
 .ev-hairdresser-edit span{font-size:.72rem;color:var(--accent-bright);white-space:nowrap}

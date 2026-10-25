@@ -160,3 +160,12 @@ el informe; `review-evidence.cjs` conserva los seis resultados reales desde las 
 La comparación está en `review/updates-v502.html`: Recordatorios compacto, selección desde toda la tarjeta de tareas, acciones suaves de Wedding Moves y tarjetas de estadísticas compartidas entre Bodas, Rutinas y Próximos.
 
 `node tools/visual-map/updates-evidence.cjs --before` conserva las referencias v501 (commit `9706617`) y reproduce tres zonas inferiores con su código histórico y el mismo fixture. Tras regenerar el atlas, ejecutar sin argumentos para añadir las capturas actuales y generar el informe; `verify-updates.cjs` comprueba la comparativa y exporta sus imágenes. No se sobrescriben las evidencias de las revisiones anteriores.
+
+
+### Calendario mensual v503
+
+Comparación en `review/calendar-v503.html`: fines de semana ajenos al mes
+apagados y barra delimitada por las horas de ida/vuelta. La reproducción usa las
+mismas fechas y trayectos en v502/v503, sin hora general del evento.
+`node tools/visual-map/calendar-evidence.cjs` conserva esa comparación aislada;
+no reescribe las evidencias anteriores ni usa datos personales.

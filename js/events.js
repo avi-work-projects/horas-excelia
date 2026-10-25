@@ -502,9 +502,19 @@ function _evAssignRow(it,rowOcc){
 /* Marca que barras tienen que ceder media casilla en su primer o ultimo dia.
    Se mira contra TODAS las barras de la semana, no solo las de su fila: si el
    dia se comparte, se comparte se pinte donde se pinte. */
-function _evMarcarMitades(lista){
+function evBarTravelTimes(ev){
+  var times={start:evStartTime(ev),end:evEndTime(ev)};
+  evTramos(ev).forEach(function(tr){if(tr.t.time)times[tr.k==='ida'?'start':'end']=tr.t.time;});
+  return times;
+}
+function _evMarcarMitades(lista,travelTimes){
   lista.forEach(function(a){
-    a.halfL=!!(a.starts&&evMinutosDe(evStartTime(a.ev))>=13*60);a.halfR=false;
+    var times=travelTimes?evBarTravelTimes(a.ev):{start:evStartTime(a.ev),end:null};
+    var end=evMinutosDe(times.end);
+    a.halfL=!!(a.starts&&evMinutosDe(times.start)>=13*60);
+    a.halfR=!!(a.ends&&end!==null&&end<13*60);
+    // Datos antiguos contradictorios en un solo día no deben ocultar la barra.
+    if(a.ev.start===(a.ev.end||a.ev.start)&&a.halfL&&a.halfR)a.halfR=false;
     if(a.row<0)return;
     lista.forEach(function(b){
       if(a===b||b.row<0)return;
