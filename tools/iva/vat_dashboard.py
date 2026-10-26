@@ -43,7 +43,7 @@ def response(root, url):
             raise ValueError('Year mismatch')
         quarter = query.get('periodo', ['2T'])[0]
         section = query.get('paso', ['revision'])[0]
-        if quarter not in report['quarters'] or section not in ('documentos', 'revision', 'archivos'):
+        if quarter not in report['quarters'] or section not in ('documentos', 'revision', 'archivos', 'anual'):
             return (400, 'Periodo o paso no válido')
         return (200, render(index, report, ledger, quarter, section))
     except (OSError, ValueError, KeyError, TypeError):
@@ -62,6 +62,7 @@ def render(index, report, ledger, quarter, section):
     quarters = ''.join(f'<a class="pill" href="{link(q,section)}" {"aria-current=page" if q==quarter else ""}>{q}</a>' for q in report['quarters'])
     tabs = ''.join(f'<a href="{link(quarter,key)}" {"aria-current=step" if key==section else ""}>{n}. {title}</a>'
                    for n,key,title in [(1,'documentos','Documentos'),(2,'revision','Revisión'),(3,'archivos','Archivos')])
+    tabs += f'<a href="{link(quarter,"anual")}" {"aria-current=page" if section=="anual" else ""}>Anual · 390</a>'
     if section == 'documentos':
         rows = [r for r in ledger['records'] if r['period'] == quarter]
         cards = ''.join(f'<article><strong>{e(r["number"])}</strong><p>{e(r["party"])}</p><p>{"Ingreso" if r["kind"]=="income" else "Gasto"} · {e(r["date"])} · {e(euro(r["total"]))}</p><span class="badge">{"Incorporado al cálculo" if r["include"] else "Excluido / pendiente"}</span><details><summary>Documento de origen</summary><p class="path">{e(r["source"])}</p><p>{e(r.get("note", ""))}</p></details></article>' for r in rows)
@@ -73,6 +74,17 @@ def render(index, report, ledger, quarter, section):
             ('Referencia presentada',selected['reference'].get('71')),('Diferencia',selected['difference'].get('71'))])
         missing = [r for r in report['missing_receipt_metadata'] if r['period']==quarter]
         content = f'<h2>Revisión del {quarter}</h2><div class="cards">{metrics}</div><article><h3>Cobertura</h3><p>{e(selected["coverage"])}</p><p>{len(missing)} gastos con metadatos de recepción pendientes para importar el libro.</p><p>La revisión fiscal sigue pendiente. Se mantienen los importes documentales y las diferencias visibles.</p></article>'
+    elif section == 'anual':
+        annual = report.get('preparation_390')
+        if not annual:
+            content = '<article><h2>Preparación anual pendiente</h2><p>Regenerar la revisión del libro para incorporar este apartado.</p></article>'
+        else:
+            metrics = ''.join(f'<article><small>{label}</small><strong class="amount">{e(euro(annual["documentary_totals"][box]))}</strong></article>'
+                              for box, label in [('07','Base de ingresos'),('09','IVA de ingresos'),('28','Base de gastos incorporados'),('29','IVA de gastos incorporados')])
+            differences = ''.join(f'<li>{e(row["period"])}: ' + '; '.join(f'casilla {e(k)}: {e(euro(v))}' for k,v in row['differences'].items()) + '</li>' for row in annual['quarterly_differences']) or '<li>Sin diferencias en las referencias disponibles</li>'
+            pending = ''.join(f'<li>{e(x)}</li>' for x in annual['pending'])
+            missing = ', '.join(annual['missing_filed_references']) or 'Ninguna'
+            content = f'<h2>Preparación anual · {report["year"]}</h2><p class="notice">{e(annual["status"])}. Datos hasta {e(report["as_of"])}.</p><div class="cards">{metrics}</div><article><h3>Conciliación de los 303</h3><ul>{differences}</ul><p>Referencias presentadas pendientes: {e(missing)}.</p><p>Las diferencias se conservan por trimestre aunque su suma sea cero.</p></article><article><h3>Antes de generar el 390</h3><ul>{pending}</ul><p>{e(annual["scope"])}</p></article>'
     else:
         items = [(key,item) for key,item in index['downloads'].items() if item['period']==quarter]
         downloads = ''.join(f'<article><h3>{e(item["label"])}</h3><p>{e(item["note"])}</p><a class="button" href="{BASE}/descargar?id={e(key)}">Descargar {e(item["label"])}</a></article>' for key,item in items)
