@@ -1,7 +1,7 @@
 # Mapa visual de Gestify
 
 Atlas ampliado el 24/10/2026 tras aprobar Ángel el piloto: **172 capturas,
-177 relaciones y 13 áreas**, repartidas en láminas legibles.
+178 relaciones y 13 áreas**, repartidas en láminas legibles.
 
 ```sh
 npm ci
@@ -204,3 +204,9 @@ innecesarias. Se llega desde `calendar` con la flecha de mes siguiente.
 (21 de agosto) hasta el 6 de septiembre, última casilla visible. Incluye el
 escalón entre semanas y conserva la identificación de hoy. Al cambiar de mes
 desaparece; los selectores de rutinas mantienen su presentación anterior.
+
+### Entrada de Eventos v508
+
+La flecha de Inicio → Eventos llega a `calendar`, Calendario 1 mes en el mes
+actual. `events` conserva la captura de Próximos y se alcanza pulsando su botón
+desde el calendario. Los recorridos hacia el resto de pantallas son explícitos.

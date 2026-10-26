@@ -3,7 +3,7 @@ test.beforeEach(async({page})=>{
  await page.clock.setFixedTime(new Date('2026-10-14T12:00:00+02:00'));
  await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-theme-v1','light');localStorage.setItem('excelia-nav-icons-v1','professional');});
  await page.goto('/');await page.evaluate(()=>{RUTINAS=[{id:'fixed',name:'Pádel',icon:'padel',color:'#a3e635',start:'2026-09-01',weekDays:[1,5],time:'15:00',dur:60,weeks:{},skips:{'2026-10-12':true},extraSessions:[]},{id:'flex',name:'Baile flexible',icon:'baile',color:'#e03131',start:'2026-09-01',weekDays:[],time:'18:00',dur:60,weeks:{},skips:{},flex:{period:'week',target:2,weeklyTarget:2,sessions:{}}}];saveRutinas();});
- await page.locator('#eventsBtn').click();await expect(page.locator('#eventsOverlay')).toHaveClass(/open/);await page.locator('#eventsOverlay').evaluate(el=>Promise.all(el.getAnimations().map(a=>a.finished)));
+ await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await expect(page.locator('#eventsOverlay')).toHaveClass(/open/);await page.locator('#eventsOverlay').evaluate(el=>Promise.all(el.getAnimations().map(a=>a.finished)));
 });
 test('cumpleaños: VIP a la izquierda, Añadir centrado y Eventos en la misma posición que Cumpleaños',async({page},info)=>{
  for(const width of [320,400,440]){

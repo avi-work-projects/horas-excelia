@@ -30,8 +30,9 @@ async function main(){
     await page.goto(url+'/docs/visual-map/index.html');await page.locator('#nodes img').first().waitFor();
     await expect(page.locator('.screen-node')).toHaveCount(7);await expect(page.locator('#connections > g')).toHaveCount(6);
     await page.screenshot({path:path.join(qa,'preview-general.png'),fullPage:true});
-    await page.locator('[data-scene="home"] [data-target="events"]').click();await expect(page.locator('#selectedTitle')).toHaveText('Eventos · Próximos');
-    await page.locator('#destinations [data-target="calendar"]').click();await expect(page.locator('[data-view="flow"]')).toHaveAttribute('aria-pressed','true');
+    await page.locator('[data-scene="home"] [data-target="calendar"]').click();await expect(page.locator('#selectedTitle')).toHaveText('Calendario · 1 mes');
+    await page.locator('[data-view="flow"]').click();
+    await expect(page.locator('[data-view="flow"]')).toHaveAttribute('aria-pressed','true');
     await expect(page.locator('.screen-node')).toHaveCount(6);await page.locator('#fit').click();await page.screenshot({path:path.join(qa,'preview-flow.png'),fullPage:true});
     await page.locator('#returns').check();await expect(page.locator('#connections > g')).toHaveCount(8);await page.locator('#returns').uncheck();
     await page.locator('[data-scene="calendar"] img').click();await expect(page.locator('#screenDialog')).toBeVisible();await page.locator('.close-dialog').click();

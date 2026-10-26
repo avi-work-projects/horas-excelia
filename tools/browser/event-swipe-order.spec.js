@@ -13,17 +13,17 @@ async function gesture(page,locator,dx,mid){
  await locator.evaluate((el,{x,y,dx})=>el.dispatchEvent(new TouchEvent('touchend',{bubbles:true,changedTouches:[new Touch({identifier:1,target:el,clientX:x+dx,clientY:y})]})),{x,y,dx});
 }
 test('Sin hora: se borra desde ruedas, arrastra por posición, persiste e importa sin reloj inventado',async({page},info)=>{
- await page.locator('#eventsBtn').click();await page.locator('#evUpcomingOrder').click();await expect(page.locator('[data-order-move]')).toHaveCount(0);
+ await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await page.locator('#evUpcomingOrder').click();await expect(page.locator('[data-order-move]')).toHaveCount(0);
  const row=page.locator('[data-order-type="Desayunar"]');await row.locator('input').click();await page.locator('#timePickerClear').click();await expect(row.locator('input')).toHaveValue('');await expect(row.locator('input')).toHaveAttribute('placeholder','Sin hora');
  await row.locator('[data-order-drag]').focus();await page.keyboard.press('ArrowDown');await page.keyboard.press('ArrowDown');await expect(row.locator('input')).toHaveValue('');
  const rank=await page.evaluate(()=>EV_PLAN_ORDER_DRAFT.findIndex(r=>r.type==='Desayunar'));expect(rank).toBe(3);
  const before=page.locator('[data-order-type="Carrera"]');expect(await row.boundingBox()).toMatchObject({x:(await before.boundingBox()).x});await page.screenshot({path:info.outputPath('orden-sin-hora.png'),animations:'disabled'});
  await page.locator('#evOrderSave').click();await expect(page.locator('#evPlanOrderWrap')).toHaveCount(0);await page.reload();expect(await page.evaluate(()=>evPlanReferenceTime('Desayunar'))).toBeNull();
  const check=await page.evaluate(()=>{const ds='2026-10-14',p=type=>({id:type,title:type,type,kind:'puntual',start:ds,end:ds}),rows=['Desayunar','Brunch','Carrera'].map(p),real={...p('Otros'),time:'10:40'};return {sorted:rows.sort(evCompareOrder).map(e=>e.type),real:evCompareOrder(real,p('Desayunar'))>0,backup:validateImport({planOrder:evPlanOrderData()}).planOrder.find(r=>r.type==='Desayunar'),visible:evTimeLabel(p('Desayunar'))};});expect(check.sorted).toEqual(['Carrera','Desayunar','Brunch']);expect(check.real).toBe(true);expect(check.backup.time).toBeNull();expect(check.visible).toBe('');
- await page.locator('#eventsBtn').click();await page.locator('#evUpcomingOrder').click();expect(await page.evaluate(()=>EV_PLAN_ORDER_DRAFT.findIndex(r=>r.type==='Desayunar'))).toBe(rank);
+ await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await page.locator('#evUpcomingOrder').click();expect(await page.evaluate(()=>EV_PLAN_ORDER_DRAFT.findIndex(r=>r.type==='Desayunar'))).toBe(rank);
 });
 test('Todos los planes sin referencia conservan su orden; asignar una hora vuelve a ordenar',async({page})=>{
- await page.evaluate(()=>{const rows=evPlanOrderDefaults().map(r=>({...r,time:null}));rows.reverse();appStorage.setItem(EV_PLAN_ORDER_KEY,JSON.stringify(rows));openEvents();});await page.locator('#evUpcomingOrder').click();
+ await page.evaluate(()=>{const rows=evPlanOrderDefaults().map(r=>({...r,time:null}));rows.reverse();appStorage.setItem(EV_PLAN_ORDER_KEY,JSON.stringify(rows));openEvents();});await page.locator('#evViewUpcoming').click();await page.locator('#evUpcomingOrder').click();
  const types=await page.locator('.ev-order-row').evaluateAll(es=>es.map(e=>e.dataset.orderType));expect(await page.evaluate(()=>evPlanOrderData().map(r=>({type:r.type,kind:'puntual'})).sort(evCompareOrder).map(e=>e.type))).toEqual(types);
  const first=types[0];await chooseTime(page,'[data-order-type="'+first+'"] input','12:30');await page.locator('#evOrderSave').click();expect(await page.evaluate(type=>evPlanReferenceTime(type),first)).toBe('12:30');
 });
@@ -44,7 +44,7 @@ for(const view of ['cal','upcoming','rutinas','bodas'])test('Swipe '+view+': sol
  const content=page.locator('#eventsOverlay .sy-body').locator(':scope > :last-child');await gesture(page,content,-90,async()=>{expect(await header.boundingBox()).toEqual(box);if(tabbox)expect(await tabs.boundingBox()).toEqual(tabbox);expect(await root.evaluate(el=>swipeContentResolver(el)().some(n=>n.style.translate==='-90px'))).toBe(true);await page.screenshot({path:info.outputPath('swipe-'+view+'.png')});});
  await expect(page.locator('.swipe-content-preview').first()).toBeAttached();expect(await header.boundingBox()).toEqual(box);if(tabbox)expect(await tabs.boundingBox()).toEqual(tabbox);await expect(page.locator('.swipe-content-preview')).toHaveCount(0);expect(errors).toEqual([]);
 });
-test('Reducir movimiento conserva la navegación y evita capas de transición',async({page})=>{await page.emulateMedia({reducedMotion:'reduce'});await page.locator('#eventsBtn').click();await gesture(page,page.locator('#eventsOverlay .sy-body'),-100);await expect(page.locator('#evSubAgenda')).toHaveClass(/active/);await expect(page.locator('.swipe-content-preview')).toHaveCount(0);});
+test('Reducir movimiento conserva la navegación y evita capas de transición',async({page})=>{await page.emulateMedia({reducedMotion:'reduce'});await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await gesture(page,page.locator('#eventsOverlay .sy-body'),-100);await expect(page.locator('#evSubAgenda')).toHaveClass(/active/);await expect(page.locator('.swipe-content-preview')).toHaveCount(0);});
 for(const item of [
  {key:'econ',open:()=>{ECON_VIEW='resumen';openEcon();},root:'#econOverlay',state:()=>ECON_VIEW,next:'dias',close:()=>closeEcon()},
  {key:'fiscal',open:()=>{FISCAL_TAB='personal';openFiscal();},root:'#fiscalOverlay',state:()=>FISCAL_TAB,next:'gastos_desg',close:()=>closeFiscal()},

@@ -1169,3 +1169,14 @@ Los dos selectores de rutinas que reutilizan el calendario pasan
 almacenamiento nuevos. Se revisan las dos referencias HTML mensuales afectadas,
 el atlas y capturas de Edge a 320/400/440 px: bloque final del 26/10 al 1/11,
 inicio a mitad de semana, cambio de mes/año, cambio horario y malla sin saltos.
+
+## Apertura de Eventos (v508)
+
+`openEvents` selecciona `cal` y el mes actual cada vez que se abre la ventana
+desde su navegación principal. El estado inicial ya usaba `cal`; se elimina
+la asignación de `upcoming` que la apertura imponía. `openEventsAt` conserva
+los destinos y fechas explícitos de los demás accesos.
+
+El atlas conecta Inicio directamente con Calendario 1 mes. Próximos sigue
+disponible desde su botón, con una ruta explícita en las capturas que lo usan.
+Las pruebas de swipe de Próximos entran expresamente en esa vista.
