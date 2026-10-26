@@ -40,7 +40,16 @@ a.EVENTS=[timed,{...timed,id:'overlap',start:'2026-08-26',end:'2026-08-27',viaje
 const stepped=a.renderEvCalMonth();assert.match(stepped,/ev-stepped-bar/);assert.doesNotMatch(stepped,/NaN|Infinity/);assert.match(stepped,/margin-right:calc\(50% \/ 5\)/);
 // El corte de semana y mes no repite el recorte en los tramos interiores.
 a.EVENTS=[{...timed,start:'2026-08-30',end:'2026-09-02'}];
-const split=a.renderEvCalMonth();assert.equal((split.match(/margin-left:calc\(50% \/ /g)||[]).length,1);assert.equal((split.match(/margin-right:calc\(50% \/ /g)||[]).length,1);
+const split=a.renderEvCalMonth(),paint=(split.match(/<div class="ev-multi-bar[^>]*>/g)||[]).join('');assert.equal((paint.match(/margin-left:calc\(50% \/ /g)||[]).length,1);assert.equal((paint.match(/margin-right:calc\(50% \/ /g)||[]).length,1);
+const sunday={ev:{...timed,title:'Asturias',start:'2026-09-06',end:'2026-09-12'},cs:6,ce:6,starts:true,ends:false,halfL:true,row:0};
+const sundayWeek=Array.from({length:7},(_,i)=>new Date(2026,7,31+i));
+assert.equal(a._evMonthBarTitleRepeats(sunday,sundayWeek,new Date(2026,8,1),new Date(2026,8,30)),true);
+const isolated={...sunday,ev:{...sunday.ev,end:sunday.ev.start},ends:true};
+assert.equal(a._evMonthBarTitleRepeats(isolated,sundayWeek,new Date(2026,8,1),new Date(2026,8,30)),false);
+const edge={...sunday,ev:{...sunday.ev,start:'2026-05-31',end:'2026-06-06'}};
+assert.equal(a._evMonthBarTitleRepeats(edge,Array.from({length:7},(_,i)=>new Date(2026,4,25+i)),new Date(2026,4,1),new Date(2026,4,31)),false);
+const equal={...sunday,ev:{...sunday.ev,end:'2026-09-07',viaje:{ida:{time:'15:00'},vuelta:{time:'10:00'}}}};
+assert.equal(a._evMonthBarTitleRepeats(equal,sundayWeek,new Date(2026,8,1),new Date(2026,8,30)),false);
 a.EVENTS=[{id:'test-trip',kind:'grande',type:'Viaje',title:'Viaje en curso',start:'2026-08-19',end:'2026-08-24',color:'#38bdf8'}];
 a.EV_YEAR=2026;a.EV_MONTH=7;a.EV_QUAD_YEAR=2026;a.EV_QUAD_MONTH=7;
 for(const render of ['renderEvCalMonth','renderEvQuad','renderEvAnnual'])assert.match(a[render](),/ev-part-past[^>]+data-id="test-trip"/);

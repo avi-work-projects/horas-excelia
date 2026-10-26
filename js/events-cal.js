@@ -147,16 +147,13 @@ function _renderEvCalMonth(){
            se sale se apaga como las casillas que cubre; si no se partiera, una
            barra hasta el 4 de octubre se veria a todo color sobre unos dias en
            gris. */
-        var trozos=_evBarSegments(it,wMulti,inMCols),ci;
+        var trozos=_evBarSegments(it,wMulti,inMCols);
+        var title=_evMonthBarTitle(it,trozos,showT,wk,today,first,last);
         if(trozos.some(function(tr){return tr.n>1||tr.n!==trozos[0].n||tr.lane!==trozos[0].lane||tr.overlap!==trozos[0].overlap;})){
-          h+=_evSteppedBar(it,trozos,false,showT,wk,today);
+          h+=_evSteppedBar(it,trozos,false,false,wk,today)+title;
           return;
         }
-        /* El titulo, una sola vez y en el primer trozo dentro del mes. */
-        var iTit=-1;
-        for(ci=0;ci<trozos.length;ci++){if(trozos[ci].dentro){iTit=ci;break;}}
-        if(iTit<0)iTit=0;
-        trozos.forEach(function(tr,i){
+        trozos.forEach(function(tr){
           /* Las esquinas redondeadas solo en el extremo de verdad: los cortes
              interiores del mes van rectos. */
           var abre=it.starts&&tr.cs===it.cs, cierra=it.ends&&tr.ce===it.ce;
@@ -166,8 +163,9 @@ function _renderEvCalMonth(){
           var past=_evBarPast({cs:tr.cs,ce:tr.ce,halfL:it.halfL&&tr.cs===it.cs,halfR:it.halfR&&tr.ce===it.ce},wk,today,tr.dentro);
           h+='<div class="ev-multi-bar '+evBarSizeCls(ev)+(!tr.overlap?' ev-bar-alone':'')+sc+past.cls+(it.labelTop?' ev-label-top':'')+'" data-id="'+ev.id+'"'
             +' style="grid-column:'+(tr.cs+1)+'/'+(tr.ce+2)+';grid-row:'+(it.row+1)+';z-index:'+evBarZ(ev)+';border:1.5px solid '+_evBarMutedColor(_dc,tr.dentro)+';background:'+_evBarMutedColor(fakeTrans(_dc,0.65),tr.dentro)+';color:#fff'+med+past.style+_evBarSegmentStyle(ev,tr,false)+'">'
-            +(showT&&i===iTit?'<span class="ev-bar-label" title="'+escHtml(ev.title)+'">'+escHtml(ev.title)+'</span>':'')+'</div>';
+            +'</div>';
         });
+        h+=title;
       });
       h+='</div>';
     }
