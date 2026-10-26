@@ -1,9 +1,20 @@
 import unittest
 from unittest.mock import patch
-from export_303_test import field, page, serialize
+from export_303_test import field, page, serialize, payment_fields
 
 
 class TxtTests(unittest.TestCase):
+    def test_explicit_payment_and_checksum(self):
+        # Public synthetic IBAN example, never the user's account.
+        mode, fields = payment_fields({'mode':'direct_debit','iban':'ES91 2100 0418 4502 0005 1332'})
+        self.assertEqual(mode,'U')
+        self.assertEqual(fields,{6:'ES9121000418450200051332'})
+        self.assertEqual(payment_fields(None),('I',{}))
+        for iban in ['ES0021000418450200051332','ES91','GB82WEST12345698765432']:
+            with self.assertRaises(ValueError):
+                payment_fields({'mode':'direct_debit','iban':iban})
+        with self.assertRaises(ValueError):
+            payment_fields({'mode':'unexpected','iban':'ES9121000418450200051332'})
     def test_fixed_width_and_latin1(self):
         self.assertEqual(field('12', 5, True), '00012')
         self.assertEqual(field('ÁNGEL', 8).encode('latin1'), b'\xc1NGEL   ')

@@ -89,7 +89,12 @@ y `monthly_refund:false`, acreditados para el ensayo. No guardar datos reales
 en Git. El perfil y los originales se verifican con `prepare_open`.
 
 Alcance cerrado: 2026, 1T–3T, régimen general exclusivo, 100 % Estado, resultado
-positivo y sin ajustes. Tipo I (ingreso), sin cuenta bancaria ni domiciliación.
+positivo y sin ajustes. Por defecto tipo I (ingreso), sin cuenta bancaria.
+Con `--payment pago-privado.json` y `{ "mode": "direct_debit", "iban": "..." }`
+se genera tipo U con IBAN español validado por formato y módulo 97 en DID campo 6.
+La configuración se guarda fuera de Git; no presume titularidad, aceptación
+bancaria ni plazo de domiciliación. El panel muestra únicamente cuenta enmascarada.
+La variante U tiene comprobaciones locales; requiere su propia validación OPEN.
 No presenta, no firma, no sustituye una autorización de pago. No soporta 4T,
 compensaciones, devoluciones ni rectificativas. El TXT de ensayo contiene datos
 fiscales reales: usar exclusivamente OPEN, nunca la pantalla CONT de presentación.
