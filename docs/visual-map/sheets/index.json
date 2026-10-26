@@ -120,6 +120,7 @@
       "event-alarm",
       "edit--scroll-plan-picker",
       "plan-picker",
+      "plan-picker-new-plans",
       "event-stats-breakdown",
       "event-stats-links"
     ]

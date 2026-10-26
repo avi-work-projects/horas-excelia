@@ -20,7 +20,7 @@ module.exports=function extend({scenes,edges}){
   get('home').region='body';get('household').region='#householdOverlay .sy-body';get('study').region='#estudioOverlay .sy-body';get('economics').region='#econOverlay .sy-body';
   add('hours','Editar jornada del mes','Inicio','home','#editHoursBtn','#hoursPanel.open',{sources:['js/init.js','js/core.js']});
   add('workday','Ficha de jornada de un día','Inicio','home','.day-cell','#bottomSheet.active',{sources:['js/core.js']});
-  add('reminders','Recordatorios','Inicio','settings','#settingsReminders','#homePopup',{sources:['js/home-popup.js']});
+  add('reminders','Recordatorios','Inicio','settings','#settingsReminders','#homePopup',{sources:['js/home-popup.js','js/events-picker-color.js','js/events-order.js']});
   add('hours-export','Exportar horas','Inicio','home','#hoursExportBtn','#hoursCsv',{sources:['js/invoices-ui.js']});
   add('invoice','Enviar factura','Inicio','home','#invoiceHomeBtn','#invoiceConfig',{sources:['js/invoices-ui.js','js/invoices.js'],region:'.invoice-body',note:'Agosto de 2026 se presenta como referencia histórica.'});
   add('invoice-config','Configuración de facturas','Inicio','invoice','#invoiceConfig','#invoiceSettingsEdit',{sources:['js/invoices-ui.js','js/invoices.js']});
@@ -43,7 +43,8 @@ module.exports=function extend({scenes,edges}){
   add('started-detail','Evento ya iniciado','Eventos','calendar','.ev-cell[data-ds="2026-08-21"] [data-id="map-started"]','#evDetailOv.open',{sources:['js/events-detail.js','js/events-alarm-policy.js']});
   add('event-alarm','Alarma de evento','Eventos','day','#evDAlarm','#evAlarmOv.open',{sources:['js/events-detail.js']});
   add('routine-session','Ficha de sesión','Rutinas','calendar','.ev-cell[data-ds="2026-08-21"] [data-id="rut-fx-rut-gym-2026-08-21"]','#evDetailOv.open',{sources:['js/events-detail.js','js/rutinas.js']});
-  add('plan-picker','Selector de planes','Eventos','edit','.ev-plan-more[data-picker="plans"]','#evPlanPickerOv.open',{scroll:true,sources:['js/events-plan-picker.js'],region:'.ev-event-form-body'});
+  add('plan-picker','Selector de planes','Eventos','edit','.ev-plan-more[data-picker="plans"]','#evPlanPickerOv.open',{scroll:true,sources:['js/events-plan-picker.js'],region:'#evPlanPickerOv .ev-plan-options'});
+  add('plan-picker-new-plans','Planes · nuevas opciones','Eventos','plan-picker',{scroll:'#evPlanPickerOv [data-type="Fútbol"]'},'#evPlanPickerOv [data-type="Fútbol"]',{label:'Deslizar · nuevos planes',region:'#evPlanPickerOv .ev-plan-options'});
   // Bodas: rutas de consulta y formularios compartidos.
   add('weddings','Consulta de clases','Bodas','events','#evViewBodas','[data-bsub="clases"].active',{sources:['js/bodas.js','js/bodas-bind.js']});
   add('calendar-export','Exportar calendario','Bodas','weddings','#evCalendarExport','#evCalendarExportOv.open',{sources:['js/events-calendar-export.js']});

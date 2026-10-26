@@ -243,15 +243,15 @@
 ### js/events-management.js  _(33 líneas)_
 **Funciones:** evPaymentCoinsSvg:1 · evTaxBuildingSvg:2 · evUtilityHomeSvg:3 · evManagementShapeInner:5 · evManagementCheckable:18 · evManagementDate:19 · evManagementDone:20 · evManagementCheckHtml:21 · bindEvManagementCheck:26
 
-### js/events-order.js  _(80 líneas)_
+### js/events-order.js  _(85 líneas)_
 **Estado global:** EV_PLAN_ORDER_KEY:2 · EV_PLAN_ORDER_DRAFT:3 · EV_PLAN_ORDER_CACHE:4 · EV_PLAN_ORDER_STOP:5
 
-**Funciones:** renderEvPlanOrderButton:6 · evPlanOrderDefaults:7 · validateEvPlanOrder:11 · evPlanOrderData:16 · evPlanReferenceTime:24 · evCompareOrder:27 · evPlanOrderPosition:37 · minutes:38 · closeEvPlanOrder:48 · evPlanOrderReorder:49 · openEvPlanOrder:59 · renderEvPlanOrder:60
+**Funciones:** renderEvPlanOrderButton:6 · evPlanOrderDefaults:7 · validateEvPlanOrder:11 · evPlanOrderData:20 · evPlanReferenceTime:28 · evCompareOrder:32 · evPlanOrderPosition:42 · minutes:43 · closeEvPlanOrder:53 · evPlanOrderReorder:54 · openEvPlanOrder:64 · renderEvPlanOrder:65
 
-### js/events-picker-color.js  _(373 líneas)_
-**Estado global:** EV_COLOR_GRID:6 · EV_COLOR_TYPES:25 · EV_MANAGEMENT_SUBTYPES:42 · EV_PLAN_SUBTYPES:43 · EV_KINDS:47 · EV_TYPE_COLORS:52 · EV_FREE_COLOR:100 · EV_FREE_SHAPE:101 · EV_OTHER_FIXED_COLORS:103 · EV_FREE_DATES:107 · EV_BAR_SIZES:110 · EV_FREE_BARSIZE:111 · EV_DOT_SOLID:115 · EV_SHAPE_BW:142
+### js/events-picker-color.js  _(385 líneas)_
+**Estado global:** EV_COLOR_GRID:6 · EV_COLOR_TYPES:25 · EV_MANAGEMENT_SUBTYPES:42 · EV_PLAN_SUBTYPES:43 · EV_KINDS:49 · EV_TYPE_COLORS:54 · EV_FREE_COLOR:107 · EV_FREE_SHAPE:108 · EV_OTHER_FIXED_COLORS:110 · EV_FREE_DATES:114 · EV_BAR_SIZES:117 · EV_FREE_BARSIZE:118 · EV_DOT_SOLID:122 · EV_SHAPE_BW:149
 
-**Funciones:** evIsManagement:44 · evIsPlan:45 · evFixedSymbol:46 · evOtherShapeColor:104 · evBarSize:116 · evBarSizeCls:122 · evTypeKey:123 · evTypeColor:124 · getEvKind:127 · evPlanShapeInner:143 · evShapeSvg:164 (!87) · evMorePlusSvg:251 · evTravelColor:260 · getEvType:266 · isEvBarAlways:278 · getEvDisplayColor:280 · _renderColorPicker:302 · _bindColorPicker:325 · updatePreview:335
+**Funciones:** evPlanType:45 · evIsManagement:46 · evIsPlan:47 · evFixedSymbol:48 · evOtherShapeColor:111 · evBarSize:123 · evBarSizeCls:129 · evTypeKey:130 · evTypeColor:131 · getEvKind:134 · evPlanShapeInner:150 · evShapeSvg:176 (!87) · evMorePlusSvg:263 · evTravelColor:272 · getEvType:278 · isEvBarAlways:290 · getEvDisplayColor:292 · _renderColorPicker:314 · _bindColorPicker:337 · updatePreview:347
 
 ### js/events-picker-date.js  _(103 líneas)_
 **Estado global:** MNS:12

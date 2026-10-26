@@ -40,10 +40,12 @@ var EV_COLOR_TYPES = {
    - puntual: se dibuja UN MARCADOR POR D\u00cdA (aunque abarque varios d\u00edas)
    - grande:  se dibuja como BARRA continua (formato actual de Viaje/Asturias) */
 var EV_MANAGEMENT_SUBTYPES={'Llamada':'phone','Peluquería':'scissors','Médico':'medical','Dentista':'tooth','Pago Hacienda':'tax','Pago':'payment','Contratar seguro':'insurance','Contratar gas/electricidad':'utilities','Enviar factura':'invoice','Cita':'appointment','Presentar Modelo':'tax-form','Contratar gas':'gas-home','Contratar electricidad':'electric-home'};
-var EV_PLAN_SUBTYPES={'Plan romántico':'heart','Comida':'meal','Cena':'dinner','Salir de fiesta':'disco','Copas':'party','Tomar algo':'beer','Montaña':'mountain','Barbacoa':'barbecue','Cumpleaños':'cake','Brunch':'brunch','Bolos':'bowling','Cine':'cinema','Ping pong':'pingpong','Ver partido fútbol':'football-tv','Juegos de mesa':'boardgames','Ponencia':'lecture','Carrera':'race','Merendar':'snack','Plan cultural':'culture','Desayunar':'breakfast','Salir a Correr':'running','Pádel':'plan-padel','Baile':'plan-dance','Boda':'rings'};
+var EV_PLAN_SUBTYPES={'Plan romántico':'heart','Comida':'meal','Cena':'dinner','Salir de fiesta':'disco','Copas':'party','Tomar algo':'beer','Montaña':'mountain','Barbacoa':'barbecue','Cumpleaños':'cake','Brunch':'brunch','Bolos':'bowling','Cine':'cinema','Ping pong':'pingpong','Ver partido fútbol':'football-tv','Juegos de mesa':'boardgames','Ponencia':'lecture','Carrera':'race','Merendar':'snack','Plan cultural':'culture','Desayunar':'breakfast','Salir a Correr':'running','Pádel':'plan-padel','Salir a bailar':'plan-dance','Boda':'rings','Fiesta':'celebration','Plan exterior':'outdoors','Navidad':'christmas','Torneo':'trophy','Fútbol':'football'};
+// Alias de lectura: conserva eventos y preferencias anteriores sin reescribirlos.
+function evPlanType(type){return type==='Baile'?'Salir a bailar':type;}
 function evIsManagement(type){return type==='Rec. Gestiones'||Object.prototype.hasOwnProperty.call(EV_MANAGEMENT_SUBTYPES,type);}
-function evIsPlan(type){return type==='Plan/Quedada'||Object.prototype.hasOwnProperty.call(EV_PLAN_SUBTYPES,type);}
-function evFixedSymbol(type){return EV_MANAGEMENT_SUBTYPES[type]||EV_PLAN_SUBTYPES[type]||null;}
+function evIsPlan(type){return type==='Plan/Quedada'||Object.prototype.hasOwnProperty.call(EV_PLAN_SUBTYPES,evPlanType(type));}
+function evFixedSymbol(type){return EV_MANAGEMENT_SUBTYPES[type]||EV_PLAN_SUBTYPES[evPlanType(type)]||null;}
 var EV_KINDS = {
   puntual:{label:'Puntual', types:['Rec. Gestiones'].concat(Object.keys(EV_MANAGEMENT_SUBTYPES),['Plan/Quedada'],Object.keys(EV_PLAN_SUBTYPES),['Ensayos boda','Otros'])},
   grande: {label:'Grande',  types:['Viaje','Asturias','Casa Rural','Otros']}
@@ -87,8 +89,13 @@ var EV_TYPE_COLORS = {
   'puntual|Desayunar':'#d59b44',
   'puntual|Salir a Correr':'#38bdf8',
   'puntual|Pádel':'#a3e635',
-  'puntual|Baile':'#e03131',
+  'puntual|Salir a bailar':'#e03131',
   'puntual|Boda':'#d6a335',
+  'puntual|Fiesta':'#bd6aab',
+  'puntual|Plan exterior':'#6e9f69',
+  'puntual|Navidad':'#41855a',
+  'puntual|Torneo':'#bf963e',
+  'puntual|Fútbol':'#4b8c72',
   'puntual|Ensayos boda'  :'#c084fc',
   'puntual|Otros'         :'#ffe066',
   'grande|Viaje'          :'#38bdf8',
@@ -120,7 +127,7 @@ function evBarSize(ev){
   return 'md';
 }
 function evBarSizeCls(ev){return 'ev-bar-'+evBarSize(ev);}
-function evTypeKey(kind,type){return kind+'|'+type;}
+function evTypeKey(kind,type){return kind+'|'+evPlanType(type);}
 function evTypeColor(kind,type){return EV_TYPE_COLORS[evTypeKey(kind,type)]||'#a3e635';}
 /* Clase de un evento: ev.kind si existe; si no, se deduce del tipo/duraci\u00f3n
    (migraci\u00f3n de eventos anteriores a v241 \u2014 ver migrateEvKinds en events.js) */
@@ -143,6 +150,11 @@ var EV_SHAPE_BW = 2;
 function evPlanShapeInner(shape){
   var outline=' stroke="#000" '+evSymbolStroke(EV_SHAPE_BW)+' stroke-linejoin="round"';
   var shapes={
+    celebration:'<path d="M-9,9 L-5,-3 L3,5 Z" fill="currentColor"'+outline+'/><path d="M-6,4 L-3,7 M-5,0 L0,5" stroke="#f6d88b" stroke-width="2"/><path d="M-1,0 Q-1,-7 5,-8 M2,3 Q8,2 9,-3 M-7,-6 L-5,-8 M7,7 L9,9" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"/><circle cx="1" cy="-8" r="1.4" fill="#e4b74f"/><circle cx="8" cy="1" r="1.4" fill="#e77867"/>',
+    outdoors:'<circle cx="6" cy="-6" r="3" fill="#f2c756"'+outline+'/><path d="M-4,1 V8" stroke="#694c34" stroke-width="3"/><path d="M-4,-8 C-10,-8 -11,-1 -7,2 C-5,5 2,3 2,-1 C5,-6 -1,-10 -4,-8 Z" fill="currentColor"'+outline+'/><path d="M-10,9 Q0,6 10,9" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>',
+    christmas:'<path d="M-2,5 H2 V10 H-2 Z" fill="#98704a"'+outline+'/><path d="M0,-9 L-5,-3 H-2 L-8,3 H-4 L-10,8 H10 L4,3 H8 L2,-3 H5 Z" fill="currentColor"'+outline+'/><path d="M0,-11 L1,-8 L4,-8 L2,-6 L3,-3 L0,-5 L-3,-3 L-2,-6 L-4,-8 L-1,-8 Z" fill="#f4ca55" stroke="#000" stroke-width=".9"/><circle cx="-3" cy="1" r="1.3" fill="#e77a6a"/><circle cx="3" cy="4" r="1.3" fill="#f4ca55"/><circle cx="-4" cy="6" r="1.2" fill="#f4ca55"/>',
+    trophy:'<path d="M-5,-8 H5 V-2 Q5,3 0,4 Q-5,3 -5,-2 Z" fill="currentColor"'+outline+'/><path d="M-5,-6 H-9 V-2 Q-9,1 -4,1 M5,-6 H9 V-2 Q9,1 4,1 M0,4 V8 M-5,9 H5" fill="none"'+outline+' stroke-linecap="round"/><path d="M0,-5 L1,-3 L3,-3 L1.5,-1 L2,1 L0,0 L-2,1 L-1.5,-1 L-3,-3 L-1,-3 Z" fill="#fff2b4"/>',
+    football:'<circle r="9" fill="#fff"'+outline+'/><path d="M0,-4 L4,-1 L2.5,3 H-2.5 L-4,-1 Z M-7,-6 L-8,-2 L-9,-2 M7,-6 L8,-2 L9,-2 M-6,7 L-3,8 L-2,9 M6,7 L3,8 L2,9" fill="#20252b"/><path d="M0,-9 V-4 M-4,-1 L-8,-2 M4,-1 L8,-2 M-2.5,3 L-6,7 M2.5,3 L6,7" fill="none" stroke="#20252b" stroke-width="1.1"/>',
     breakfast:'<path d="M-7,7 V-2 C-11,-7 -3,-11 1,-7 C5,-9 9,-5 5,-2 V7 Z" fill="#c48b45"'+outline+'/><path d="M-3,9 V0 C-7,-5 1,-9 5,-5 C9,-7 12,-3 8,0 V9 Z" fill="#f6d99a"'+outline+'/><path d="M0,6 V1 Q3,-2 5,1 V6 Z" fill="#e7ae5c"/><rect x="1" y="2" width="4" height="3" rx=".7" fill="#ffe066"/>',
     'plan-padel':'<g transform="rotate(-28)"><path d="M-1.5,2 H1.5 V9 H-1.5 Z" fill="#e5b275"'+outline+'/><ellipse cy="-3" rx="5.8" ry="6.5" fill="currentColor"'+outline+'/><g fill="#263328"><circle cx="-2" cy="-5" r=".7"/><circle cx="2" cy="-5" r=".7"/><circle cx="-2" cy="-1" r=".7"/><circle cx="2" cy="-1" r=".7"/><circle cy="-3" r=".7"/></g></g><circle cx="6.5" cy="5.5" r="3" fill="#ffe066"'+outline+'/><path d="M5,3 Q8,5 7,8" fill="none" stroke="#fff" stroke-width="1"/>',
     'plan-dance':'<circle cx="-4" cy="-7" r="2.1" fill="#f2c49f"'+outline+'/><circle cx="4" cy="-6" r="2.1" fill="#f2c49f"'+outline+'/><path d="M-6,-4 H-2 L0,2 H-6 Z" fill="#325ab3"'+outline+'/><path d="M2,-3 H6 L9,5 H0 Z" fill="currentColor"'+outline+'/><path d="M-5,2 L-7,9 M-2,2 L0,8 M2,5 L1,9 M6,5 L8,8 M-6,-3 L-9,-6 M-2,-3 L2,-2 M6,-2 L9,-5" fill="none"'+outline+' stroke-linecap="round"/>',
@@ -270,7 +282,7 @@ function getEvType(ev){
   if(t==='Actividad cultural')t='Plan cultural';
   if(t==='Otros'&&getEvKind(ev)==='puntual'&&['gym','padel','baile'].indexOf(ev.shape)>=0)t={gym:'Salir a Correr',padel:'Pádel',baile:'Baile'}[ev.shape];
   if(t==='Cerveza')t='Tomar algo'; // Alias: conserva ids, títulos y fechas de eventos antiguos.
-  return t;
+  return evPlanType(t);
 }
 // ¿Se dibuja como BARRA? Desde v241 lo decide la clase: todos los "grandes"
 // (Viaje, Asturias, Casa Rural, Otros-grande) son barra, duren 1 día o varios.

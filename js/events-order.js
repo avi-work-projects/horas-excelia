@@ -10,8 +10,12 @@ function evPlanOrderDefaults(){
 }
 function validateEvPlanOrder(value){
   if(!Array.isArray(value)||value.length>100)throw new Error('Orden de planes no válido.');
-  var seen={},last='';value.forEach(function(row){if(!row||typeof row.type!=='string'||!Object.prototype.hasOwnProperty.call(EV_PLAN_SUBTYPES,row.type)||seen[row.type]||(row.time!=null&&row.time!==''&&(!/^([01]\d|2[0-3]):[0-5]\d$/.test(row.time)||row.time<last)))throw new Error('Revisa los tipos y las horas de referencia.');seen[row.type]=true;if(row.time)last=row.time;});
-  return value.map(function(row,i){return {type:row.type,time:row.time||null,order:i};});
+  var seen={},last='';return value.map(function(row,i){
+    var type=row&&typeof row.type==='string'?evPlanType(row.type):null;
+    if(!type||!Object.prototype.hasOwnProperty.call(EV_PLAN_SUBTYPES,type)||seen[type]||(row.time!=null&&row.time!==''&&(!/^([01]\d|2[0-3]):[0-5]\d$/.test(row.time)||row.time<last)))throw new Error('Revisa los tipos y las horas de referencia.');
+    seen[type]=true;if(row.time)last=row.time;
+    return {type:type,time:row.time||null,order:i};
+  });
 }
 function evPlanOrderData(){
   var raw=appStorage.getItem(EV_PLAN_ORDER_KEY)||'[]';
@@ -22,6 +26,7 @@ function evPlanOrderData(){
   EV_PLAN_ORDER_CACHE={raw:raw,rows:rows};return rows.map(function(row){return Object.assign({},row);});
 }
 function evPlanReferenceTime(type){
+  type=evPlanType(type);
   var row=evPlanOrderData().find(function(row){return row.type===type;});return row?row.time:null;
 }
 function evCompareOrder(a,b){
