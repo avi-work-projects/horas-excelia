@@ -325,6 +325,9 @@
       "path": "js/invoices.js"
     },
     {
+      "path": "js/invoices-home.js"
+    },
+    {
       "path": "js/invoices-export.js"
     },
     {

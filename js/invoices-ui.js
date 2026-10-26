@@ -1,6 +1,6 @@
 /* Home → preparación mensual → PDF de AEAT → correo revisado por el usuario. */
 function invoicePanel(title,body){
-  var previous=NAV_BACK;function close(){INVOICE_OPEN_SEQ++;cerrarPanel('invoiceWrap','invoiceOv');if(NAV_BACK===close)NAV_BACK=previous;}
+  var previous=NAV_BACK;function close(){INVOICE_OPEN_SEQ++;cerrarPanel('invoiceWrap','invoiceOv');if(NAV_BACK===close)NAV_BACK=previous;if(typeof syncHomeInvoiceStatus==='function')syncHomeInvoiceStatus(true);}
   if(document.getElementById('invoiceWrap'))previous=INVOICE_BACK||null;INVOICE_BACK=previous;
   var root=abrirPanel('invoiceWrap','<div class="bd-form-overlay" id="invoiceOv"><section class="bd-form-sheet invoice-sheet" role="dialog" aria-modal="true" aria-labelledby="invoiceTitle"><header class="bd-panel-header"><button class="sy-back" id="invoiceBack" aria-label="Volver">←</button><h2 id="invoiceTitle">'+title+'</h2></header><div class="invoice-body">'+body+'</div></section></div>',{contenedor:document.body,overlay:'invoiceOv',alCerrar:close,reutilizar:true});
   root.querySelector('#invoiceBack').onclick=close;NAV_BACK=close;return root;
@@ -74,7 +74,7 @@ function invoiceTools(){
 async function openInvoiceMonth(period){
   INVOICE_HIDE_AMOUNTS=true;
   INVOICE_MONTH=period||mkey(CY,CM);period=INVOICE_MONTH;
-  var seq=++INVOICE_OPEN_SEQ,data=invoiceData(),c=data.config,record=data.months[period]||{},historical=period<'2026-10',p=record.preparation,problem='';
+  var seq=++INVOICE_OPEN_SEQ,data=invoiceData(),c=data.config,record=data.months[period]||{},historical=period<INVOICE_FIRST_PERIOD,p=record.preparation,problem='';
   if(!record.final){
     try{var rows=invoiceDayRows(period,c);p=invoiceCalculate(period,c,rows);if(!historical)p=await invoicePrepare(period,c,rows);}
     catch(e){problem=e.message;}
