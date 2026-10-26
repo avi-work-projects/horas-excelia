@@ -54,6 +54,17 @@ del alcance de esta primera implementación.
 
 ## Verificación
 
+Revisión anual reproducible en un comando (datos y salidas siempre privados):
+`python tools/iva/review_year.py privado.json --root AUTONOMO --output-dir salida --open-report Info_LR.csv --period 2T`.
+Comprueba huellas, calcula los cuatro trimestres y genera un informe HTML y JSON.
+El CSV opcional de OPEN se coteja fila a fila con el orden exacto del exportador
+LSI: rechaza diferencias, duplicados, omisiones o exclusiones inesperadas.
+Las exclusiones de periodos anteriores del acumulado se comprueban también.
+No acredita la casilla 71 ni sustituye la validación global del formulario.
+Las fechas de recepción pendientes se muestran sin inventarlas. La prevalidación
+LSI sigue siendo quien comprueba además las identidades antes de exportar.
+El acumulado anual no se etiqueta como 390 ni como cierre completo.
+
 Para conservar la preparación histórica de OPEN:
 `python tools/iva/prepare_open.py privado.json --profile perfil-historico.json --root AUTONOMO --output recuperacion.json`.
 Verifica las huellas de documentos y justificante, el ejercicio, el perfil
