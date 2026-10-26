@@ -54,6 +54,31 @@ del alcance de esta primera implementación.
 
 ## TXT experimental para OPEN
 
+## Panel privado de consulta
+
+`vat_dashboard.response(consulta_root, request_path)` devuelve una respuesta
+para `/facturas/modelos` y `/facturas/modelos/descargar`. Acepta también rutas
+sin `/facturas`, porque Tailscale Serve elimina ese prefijo. Se monta en el GET
+del servicio existente **después** de su comprobación de usuario/Host y antes
+del enrutador de facturas. No añadirlo a POST ni a recursos públicos de Gestify.
+Añadir enlace «Modelos» a la navegación existente. El módulo no importa el motor
+de emisión ni accede a sus bases de datos.
+
+Lee `modelos-index.json` en la raíz de consulta: `updated`, `report`, `ledger`
+y `downloads` (mapa de IDs). Cada entrada lleva `path` relativo y `sha256`.
+Descargas: también `period`, `label`, `note`, `filename` y `mime`.
+El índice canónico privado se archiva en `REVISIONES/año/modelos-index.json`;
+tras verificar la copia de Drive se activa como `consulta_root/modelos-index.json`.
+Nunca versionar ese índice real. Si cambia un archivo sin actualizar su huella,
+se devuelve 503. No hay carga de gastos, regeneración ni aprobación desde esta
+primera vista: solo consulta de instantáneas verificadas y descarga de ensayos.
+Antes de desplegar, respaldar los dos archivos del servicio que reciben la ruta
+y el enlace; verificar que no cambiaron desde la lectura. Reiniciar únicamente
+el servicio web, no su temporizador de emisión/envío. Reversión: restaurar esos
+dos archivos y reiniciar el servicio web. Comprobar HTTP403 sin autenticación.
+
+## Generación del TXT
+
 `python tools/iva/export_303_test.py privado.json --profile perfil-historico.json --identity identidad-privada.json --design DR303e26v101.xlsx --root AUTONOMO --output 303_ENSAYO.txt --open-rehearsal`
 
 Genera el formato de posiciones fijas ISO-8859-1 con identificación, páginas
