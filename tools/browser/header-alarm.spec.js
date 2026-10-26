@@ -13,7 +13,7 @@ test('la campana conserva la ventana, su contenido y el scroll',async({page})=>{
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   const panel=page.locator('#alarmPanel');
   await page.clock.install();
-  await page.locator('#eventsBtn').click();
+  await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();
   await page.locator('#evSubAgenda').click();
   // Dejar terminar el posicionamiento inicial de Agenda antes de fijar el scroll de prueba.
   await page.clock.runFor(700);
@@ -51,7 +51,7 @@ test('la campana conserva la ventana, su contenido y el scroll',async({page})=>{
 });
 
 test('campana y ajustes se sustituyen; cerrar no activa el control de detrás',async({page})=>{
-  await page.locator('#eventsBtn').click();await page.locator('#evViewRutinas').click();
+  await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await page.locator('#evViewRutinas').click();
   const bell=page.locator('#eventsOverlay [data-nav="alarm"]'),menu=page.locator('#eventsOverlay [data-nav="menu"]');
   await page.evaluate(()=>window.qaAlarmBack=NAV_BACK);
   await menu.click();await bell.click();
@@ -66,7 +66,7 @@ test('crear una alarma no cierra Eventos (envío simulado)',async({page})=>{
   const requests=[];
   await page.route('https://example.invalid/qa393/**',async route=>{requests.push(route.request().url());await route.fulfill({status:200,body:'ok'});});
   await page.evaluate(()=>appStorage.setItem('excelia-alarm-url','https://example.invalid/qa393'));
-  await page.locator('#eventsBtn').click();await page.locator('#evViewRutinas').click();
+  await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await page.locator('#evViewRutinas').click();
   await page.locator('#eventsOverlay [data-nav="alarm"]').click();
   await expect(page.locator('#drumMin .drum-selected')).toHaveText('20');
   await page.locator('#alarmMsg').fill('Solo prueba local');

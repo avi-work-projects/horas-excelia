@@ -3,7 +3,7 @@ test.beforeEach(async({page})=>{
  await page.clock.setFixedTime(new Date(2026,9,13,12));await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-theme-v1','light');localStorage.setItem('excelia-nav-icons-v1','professional');});await page.goto('/');
 });
 test('cumpleaños de Próximos: título, VIP celeste y Añadir centrado',async({page},info)=>{
- await page.locator('#eventsBtn').click();await page.locator('#evUpBirthdays').click();
+ await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await page.locator('#evUpBirthdays').click();
  for(const width of [320,400]){
   await page.setViewportSize({width,height:880});await expect(page.locator('#eventsContent>.sy-header .sy-year')).toHaveText('Próximos Cumpleaños');
   const vip=page.locator('.ev-up-filters .bday-header-vip'),add=page.locator('#evBdayAdd');const v=await vip.boundingBox(),a=await add.boundingBox();expect(Math.abs(a.x+a.width/2-width/2)).toBeLessThan(1);expect(Math.abs(a.y+a.height/2-v.y-v.height/2)).toBeLessThan(1);
@@ -13,7 +13,7 @@ test('cumpleaños de Próximos: título, VIP celeste y Añadir centrado',async({
  await page.locator('#evBdayAdd').click();await expect(page.locator('#bdFName')).toBeVisible();
 });
 test('carrusel: arrastre muestra la siguiente ficha, cancela, navega y mantiene el día',async({page},info)=>{
- await page.locator('#eventsBtn').click();await page.evaluate(()=>{
+ await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await page.evaluate(()=>{
   EVENTS=[{id:'one',kind:'puntual',type:'Pago',title:'Primera gestión',start:'2026-10-13',end:'2026-10-13',color:'#dcae3e'},{id:'two',kind:'puntual',type:'Otros',shape:'leaf',title:'Limpieza de prueba',start:'2026-10-13',end:'2026-10-13',color:'#3ba780'}];EV_VIEW='cal';EV_YEAR=2026;EV_MONTH=9;refreshEvents();openEvDayCarousel('2026-10-13','one');
  });
  const sheet=page.locator('#evDetailOv>.ev-car-sheet:not(.ev-car-preview)'),title=page.locator('#evDTitle');

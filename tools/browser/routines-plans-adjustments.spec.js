@@ -3,7 +3,7 @@ test.beforeEach(async({page})=>{
   await page.clock.setFixedTime(new Date('2026-10-14T12:00:00+02:00'));
   await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-theme-v1','light');localStorage.setItem('excelia-nav-icons-v1','professional');Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async text=>window.copiedText=text}});});
   await page.goto('/');await page.evaluate(()=>{RUTINAS=[{id:'fixed',name:'Pádel',icon:'padel',color:'#a3e635',start:'2026-09-01',weekDays:[1,5],time:'15:00',dur:60,weeks:{},skips:{},extraSessions:[{id:'extra-test',date:'2026-10-15',time:'16:00',dur:60,skip:false}]},{id:'flex',name:'Baile flexible',icon:'baile',color:'#e03131',start:'2026-09-01',weekDays:[],time:'18:00',dur:60,weeks:{},skips:{},flex:{period:'week',target:2,weeklyTarget:2,sessions:{'2026-10-13':{time:'18:00',dur:60}}}}];saveRutinas();});
-  await page.locator('#eventsBtn').click();
+  await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();
 });
 test('histórico: horario original/nuevo, vuelta al original, cancelación y editor estable',async({page},info)=>{
   await page.evaluate(()=>openRutHistory(RUTINAS[0]));await page.locator('[data-history-edit="2026-10-16"]').click();

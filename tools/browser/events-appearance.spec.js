@@ -102,7 +102,7 @@ test('cambio de mes: no atenuar dos veces el tramo exterior de una barra',async(
 });
 
 test('Rutinas, WM y Próximos seleccionan la casilla completa sin mover los títulos',async({page})=>{
-  await page.locator('#eventsBtn').click();
+  await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();
   for(const width of [320,400]){
     await page.setViewportSize({width,height:880});
     for(const view of [

@@ -28,6 +28,7 @@ Una tarea exclusivamente documental conserva las versiones y los archivos de la 
 - Orden de planes: conservar tipos, posiciones y horas guardadas; los tipos nuevos se añaden al final sin referencia cuando hay preferencias. Todo renombre persistido necesita compatibilidad en lectura y validación (Baile → Salir a bailar mediante evPlanType).
 - Barras del calendario mensual: título semanal separado de los cortes de color del mes; aprovechar el ancho continuo y omitir abreviaturas en fragmentos cortos solo si hay una continuación mayor visible. Mantener los extremos de media casilla y las pulsaciones sobre la barra.
 - Mes actual: un único contorno verde agrupa desde hoy hasta la última casilla visible, incluidos los días del mes siguiente. Conservar el fondo y el número de hoy sin su recuadro individual; los selectores de rutinas desactivan el contorno con `{remaining:false}`.
+- Al abrir Eventos mediante su navegación principal, seleccionar Calendario 1 mes en el mes actual. `openEventsAt` conserva los destinos explícitos de otros accesos.
 - Categoría de evento = kind + type. Usar getEvDisplayColor, evStartTime y evSortMarks; no duplicar su política en una vista.
 - No perder historial al editar rutinas. Horarios efectivos, extras, recuperaciones y pausas pasan por las funciones compartidas del dominio.
 - Datos personales, facturas y backups nunca son fixtures ni se publican. Alarmas solo por MacroDroid, con configuración local.

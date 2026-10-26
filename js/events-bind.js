@@ -46,7 +46,7 @@ function _switchEvView(newView){
 function openEvents(){
   NAV_BACK=null;
   loadEvAlarms();
-  var now=new Date();EV_YEAR=now.getFullYear();EV_MONTH=now.getMonth();EV_VIEW='upcoming';
+  var now=new Date();EV_YEAR=now.getFullYear();EV_MONTH=now.getMonth();EV_VIEW='cal';
   var ov=document.getElementById('eventsOverlay');
   document.getElementById('eventsContent').innerHTML=renderEvContent();
   ov.style.display='flex';

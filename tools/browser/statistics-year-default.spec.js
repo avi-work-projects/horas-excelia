@@ -3,7 +3,7 @@ test('Agenda, Todos y Estadísticas comparten geometría y flechas neutras; año
  await page.clock.setFixedTime(new Date(2026,9,12,12));
  await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-theme-v1','light');localStorage.setItem('excelia-nav-icons-v1','professional');});await page.goto('/');
  await page.evaluate(()=>{EV_TYPES_PAST=false;EVENTS=[{id:'old',kind:'grande',type:'Viaje',title:'Viaje anterior',start:'2025-01-01',end:'2025-01-02',color:'#328a70'},{id:'current',kind:'grande',type:'Viaje',title:'Viaje actual',start:'2026-01-01',end:'2026-01-02',color:'#328a70'}];});
- await page.locator('#eventsBtn').click();
+ await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();
  for(const width of [320,400]){
   await page.setViewportSize({width,height:880});await page.locator('#evSubAgenda').click();
   const header=page.locator('#eventsContent .sy-header'),tabs=page.locator('.ev-upcoming-tabs');
