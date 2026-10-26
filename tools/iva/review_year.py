@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 from ledger import calculate, verify_sources
 from reconcile_open import reconcile
+from prepare_390 import prepare
 
 
 def review(data, root, report=None, period=None):
@@ -32,6 +33,7 @@ def review(data, root, report=None, period=None):
             text = raw.decode('cp1252')
         result['open_report'] = reconcile(data, period, text)
         result['open_report']['sha256'] = hashlib.sha256(raw).hexdigest()
+    result['preparation_390'] = prepare(result)
     return result
 
 

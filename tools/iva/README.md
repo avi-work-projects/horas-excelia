@@ -113,6 +113,14 @@ https://www3.agenciatributaria.gob.es/static_files/Sede/Disenyo_registro/DR_300_
 
 ## Verificación
 
+La revisión anual incorpora `preparation_390`, un dossier documental preparatorio,
+visible en Kairo en «Anual · 390». No es un fichero de presentación: conserva
+las diferencias trimestrales por separado y no convierte referencias ausentes
+en declaraciones a cero. No asigna casillas del 390 sin un adaptador específico.
+El servicio oficial consultado el 26/10/2026 ofrece el ejercicio 2025; verificar
+el diseño aplicable antes de desarrollar el exportador 2026. Completar el año
+es una tarea de datos distinta de implementar el mecanismo reutilizable.
+
 Revisión anual reproducible en un comando (datos y salidas siempre privados):
 `python tools/iva/review_year.py privado.json --root AUTONOMO --output-dir salida --open-report Info_LR.csv --period 2T`.
 Comprueba huellas, calcula los cuatro trimestres y genera un informe HTML y JSON.
