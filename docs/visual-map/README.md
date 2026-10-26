@@ -1,7 +1,7 @@
 # Mapa visual de Gestify
 
-Atlas ampliado el 24/10/2026 tras aprobar Ángel el piloto: **172 capturas,
-178 relaciones y 13 áreas**, repartidas en láminas legibles.
+Atlas ampliado el 24/10/2026 tras aprobar Ángel el piloto: **173 capturas,
+179 relaciones y 13 áreas**, repartidas en láminas legibles.
 
 ```sh
 npm ci
@@ -210,3 +210,24 @@ desaparece; los selectores de rutinas mantienen su presentación anterior.
 La flecha de Inicio → Eventos llega a `calendar`, Calendario 1 mes en el mes
 actual. `events` conserva la captura de Próximos y se alcanza pulsando su botón
 desde el calendario. Los recorridos hacia el resto de pantallas son explícitos.
+
+### Home y factura v509
+
+La revisión [v509](review/updates-v509.html) conserva ejemplos ficticios del
+resumen compacto, factura pendiente y programación. `home-october` muestra la
+consulta sin configurar y `home-invoice-connection` abre la conexión privada.
+Los estados remotos y fallos se prueban con respuestas sintéticas; las capturas
+del atlas no incorporan facturas ni direcciones privadas reales.
+
+El estado remoto se ha aislado en `invoices-home.js`. Las entradas declaradas
+`hidesHome` conservan las dependencias compartidas pero no heredan los módulos
+de factura que solo se ven en Home. Las rutas desconocidas son conservadoras;
+una escena descendiente puede declarar que Home vuelve a ser visible. Esto
+evita recapturar ventanas opacas ante un cambio exclusivo del aviso. Cambiar
+core o CSS compartido sigue ampliando el plan cuando corresponde.
+
+Capturas y exportaciones comparten el mismo escritor atómico: conservan el
+archivo anterior hasta completar el reemplazo y toleran bloqueos breves de
+Windows. La verificación no trunca una lámina o el manifiesto mientras otro
+lector los tiene abiertos, evitando perder la referencia de exportación y
+repetir láminas ya generadas.

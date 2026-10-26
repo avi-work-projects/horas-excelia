@@ -75,6 +75,25 @@ Antes de un refactor, dejar una nota breve con: pieza y consumidores, invariante
 primer paso acotado y comprobaciones. El informe de prioridades al final de este
 documento orienta el trabajo; no obliga a ejecutar todas las propuestas en cada tarea.
 
+## Comprobaciones proporcionadas y entrega ágil (26/10/2026)
+
+Ángel pide recuperar agilidad conservando comprobaciones útiles. Un ajuste pequeño
+requiere `npm test`, build y pruebas visuales/de interacción de las vistas afectadas;
+no ejecutar toda la batería de navegador local y después repetirla en GitHub.
+La batería completa sigue como puerta de publicación en CI, una vez por entrega.
+En cambios de importación, persistencia, dinero o integración se añaden sus pruebas
+de dominio y errores; no ampliar a zonas ajenas por rutina. Una prueba visual nueva
+debe comprobar los componentes modificados, sin convertir defectos previos ajenos
+en una ampliación silenciosa de alcance.
+
+Preparar `dist` antes de las pruebas. No hacer build, regeneración ni otra operación
+que cambie esa carpeta mientras el navegador la consume. Mostrar una captura o
+previsualización local cuando esté lista, separando ese resultado de la confirmación
+posterior del despliegue. Agrupar correcciones antes de publicar para no encadenar
+ejecuciones completas evitables. Para el mapa, revisar `map:plan`, usar `map:changed`
+y mantener las revisiones por huella; una dependencia compartida aún puede ampliar
+el alcance conservador del capturador y debe explicarse sin afirmar que todo cambió.
+
 ## Convenciones visuales de controles
 
 - Los botones de volver y las flechas de navegación usan cajas cuadradas con esquinas redondeadas. Los tres calendarios comparten posición y tamaño de «Hoy». En el calendario mensual las iniciales semanales acompañan al mes durante el swipe; solo el mes actual marca el día de la semana presente en verde. Preferencia de Ángel del 16/10/2026.
@@ -1180,3 +1199,33 @@ los destinos y fechas explícitos de los demás accesos.
 El atlas conecta Inicio directamente con Calendario 1 mes. Próximos sigue
 disponible desde su botón, con una ruta explícita en las capturas que lo usan.
 Las pruebas de swipe de Próximos entran expresamente en esa vista.
+
+## Resumen Home y consulta de facturas (v509)
+
+El resumen conserva los cálculos existentes: total mensual primero, días no
+trabajados y su desglose después, y días/horas trabajados al final. Las horas
+son el dato más grande y en negrita. El mismo HTML se usa en el pie y en la
+copia compacta de «Todo enviado».
+
+`invoices-home.js` separa el modelo y render puro de la consulta asíncrona.
+Usa la conexión Kairo ya configurada y distingue borrador, emitida pendiente
+de correo, programada, enviada, proceso, revisión y ausencia de factura. La
+consulta se hace al renderizar/volver a Home, recuperar foco/conexión y mediante
+el botón de actualizar; se agrupan intentos durante un minuto y se muestra la
+fecha/hora de la última consulta confirmada. No hay sondeo permanente ni
+almacenamiento nuevo. Las respuestas de meses anteriores no sustituyen el mes
+visible. Una falta de conexión o respuesta inválida nunca equivale a «pendiente».
+
+El circuito empieza en `INVOICE_FIRST_PERIOD`, compartido con Enviar factura.
+Un mes futuro sin factura no se presenta como un envío vencido. Sin URL, el
+aviso abre la configuración privada existente. El navegador puede exigir
+permiso de red local; no se modifica el permiso del perfil del usuario.
+
+Kairo ofrece un GET mínimo de lectura autenticado por Tailscale y Origin exacto;
+ver [el contrato](KAIRO-DEVELOPMENT.md). Las 8 pruebas Python cubren estados,
+ambigüedad, CORS, identidad y preservación de POST. Edge comprueba 320/400/440 px,
+altura estable, cálculo conservado, ausencia de escrituras, fallo de red,
+configuración y respuestas tardías. Las pruebas existentes del transporte de
+preparación y facturas siguen pasando. El nuevo módulo no invalida en el atlas
+las ventanas declaradas opacas que ocultan Home; las dependencias desconocidas
+se mantienen conservadoras.

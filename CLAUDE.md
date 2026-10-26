@@ -7,6 +7,7 @@
 3. Registrar archivos nuevos en app-assets.json. Ejecutar npm run assets y node tools/codemap.js.
 4. Pasar npm test y npm run build; comprobar interacciones y presentación en Edge.
 5. Antes de publicar, incrementar APP_VERSION y CACHE_VER. CI debe aprobar las pruebas de navegador.
+6. Agilidad (26/10/2026): en local ejecutar las pruebas de navegador afectadas; reservar la batería completa para CI y no duplicarla por rutina. Construir `dist` antes de abrir el servidor de pruebas y no reconstruirlo mientras esté en uso. Enseñar el resultado local antes de esperar el despliegue. Usar `map:plan`/`map:changed`, conservar revisiones y ampliar solo ante cambios compartidos o fallos concretos.
 
 Una tarea exclusivamente documental conserva las versiones y los archivos de la app. Ver la excepción de publicación en docs/DEVELOPMENT.md.
 

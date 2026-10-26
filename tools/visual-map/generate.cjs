@@ -5,6 +5,7 @@ const {chromium,expect}=require('@playwright/test');
 const {setup,perform,settle,measure,VIEWPORT,DATE}=require('./capture.cjs');
 const {scenes,edges,sections}=require('./catalog.cjs');
 const {createTracker,retainReview,importHistoricalReview,sameMapContent,digest}=require('./tracking.cjs');
+const {writeAtomically}=require('./files.cjs');
 const ROOT=path.resolve(__dirname,'../..'),OUT=path.join(ROOT,'docs/visual-map');
 const options=process.argv.slice(2),only=options.find(x=>x.startsWith('--scene='))?.slice(8);
 let referenceCommit;
@@ -34,16 +35,6 @@ function inventory(captures){
 }
 function assemble(captures){
   return {schemaVersion:2,title:'Gestify · mapa visual',generatedAt:new Date().toISOString(),referenceCommit:sha(),date:DATE,viewport:VIEWPORT,theme:'light',icons:'professional',scope:'Atlas de las secciones de la app y sus paneles secundarios, con capturas reales y recorridos comprobados. Estados condicionales y selectores nativos se identifican en el inventario.',scenes:scenes.map(s=>({...s,...captures[s.id],fresh:tracker.fresh(s,captures[s.id]),route:s.route})),edges,inventory:inventory(captures),openers:census()};
-}
-function writeAtomically(file,content){
-  if(fs.existsSync(file)&&fs.readFileSync(file).equals(Buffer.from(content)))return false;
-  const temporary=file+'.tmp';fs.writeFileSync(temporary,content);
-  for(let attempt=0;;attempt++){
-    try{fs.renameSync(temporary,file);return;}catch(error){
-      if(attempt>=8)throw error;
-      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,25*(attempt+1));
-    }
-  }
 }
 function writeData(captures){
   const data=assemble(captures);fs.mkdirSync(OUT,{recursive:true});

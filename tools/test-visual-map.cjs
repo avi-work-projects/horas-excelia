@@ -1,5 +1,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const {createTracker,retainReview,importHistoricalReview,exportFingerprint,sameMapContent}=require('./visual-map/tracking.cjs');
+const fs=require('node:fs'),os=require('node:os'),path=require('node:path');
+const {writeAtomically}=require('./visual-map/files.cjs');
 const scenes=[
   {id:'home',group:'Inicio',route:[],ready:'#home',sources:['js/init.js']},
   {id:'settings',group:'Ajustes',route:['#menuBtn'],ready:'#menu',sources:['js/settings-menu.js']},
@@ -13,6 +15,16 @@ const contents={
   'tools/visual-map/generate.cjs':"const VIEWPORT={width:400,height:880},DATE='fixed';\nasync function perform(){return 'click';}\nasync function main(){return 'selection';}"
 };
 const tracker=(changes={},catalog=scenes,edges=[])=>createTracker({root:'.',scenes:catalog,edges,assets,read:file=>Object.hasOwn(changes,file)?changes[file]:contents[file]||file+' original'});
+test('el guardado atómico conserva la lámina anterior durante un bloqueo y no reescribe contenido idéntico',()=>{
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'gestify-map-')),file=path.join(dir,'sheet.png');
+  const rename=fs.renameSync;let attempts=0;
+  try{
+    fs.writeFileSync(file,'old');
+    fs.renameSync=(from,to)=>{if(attempts++<2){assert.equal(fs.readFileSync(file,'utf8'),'old');throw Object.assign(new Error('locked'),{code:'EPERM'});}return rename(from,to);};
+    assert.equal(writeAtomically(file,'new'),true);assert.equal(fs.readFileSync(file,'utf8'),'new');
+    assert.equal(writeAtomically(file,'new'),false);assert.deepEqual(fs.readdirSync(dir),['sheet.png']);
+  }finally{fs.renameSync=rename;fs.unlinkSync(file);fs.rmdirSync(dir);}
+});
 function baseline(t=tracker()){return Object.fromEntries(scenes.map(s=>[s.id,{dependencyVersion:2,dependencies:t.dependencies(s)}]));}
 test('lee cada fuente una vez y calcula cada variante una vez por ejecución',()=>{
   const t=tracker(),captures=baseline(t);for(let i=0;i<10;i++)assert.deepEqual(t.stale(captures),[]);
@@ -31,6 +43,14 @@ test('cambiar solo versión afecta al menú que la presenta; cambiar core afecta
   const captures=baseline();
   assert.deepEqual(tracker({'js/core.js':contents['js/core.js'].replace('v502','v503')}).stale(captures),['settings']);
   assert.equal(tracker({'js/core.js':contents['js/core.js']+'\nfunction nueva(){}'}).stale(captures).length,scenes.length);
+});
+
+test('el estado de factura solo invalida Home visible; las entradas desconocidas son conservadoras',()=>{
+  const catalog=scenes.map(s=>s.id==='stats'?{...s,hidesHome:true}:s);
+  const old=tracker({},catalog),captures=Object.fromEntries(catalog.map(s=>[s.id,{dependencyVersion:2,dependencies:old.dependencies(s)}]));
+  assert.deepEqual(tracker({'js/invoices-home.js':'nuevo estado'},catalog).stale(captures),['home','settings','tasks','editor']);
+  const reopen=[...catalog,{id:'return-home',group:'Inicio',route:['#events','#home'],ready:'#home',sources:[],hidesHome:false}];
+  assert(tracker({},reopen).dependencies(reopen.at(-1)).some(d=>d.file==='js/invoices-home.js'));
 });
 test('cambio editorial/selector de generación no invalida píxeles; cambio de ruta o capturador sí',()=>{
   const captures=baseline(),changed=scenes.map(s=>s.id==='tasks'?{...s,title:'Otro título'}:s);

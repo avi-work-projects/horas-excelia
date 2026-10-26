@@ -5,13 +5,13 @@ const edit=[...day,'#evDEdit'];
 const lower=[...edit,{scroll:'#evFTypePicker [data-ev-multiday="Otros"]'}];
 const scenes=[
   {id:'home',title:'Inicio',group:'Inicio',route:home,ready:'#homeBtn',sources:['js/core.js','js/init.js'],layout:[850,65]},
-  {id:'household',title:'Gastos del hogar',group:'Hogar',route:['#householdBtn'],ready:'#householdOverlay.open',sources:['js/household.js','js/household-summary.js','js/economics-fiscal-hip.js','css/household.css'],layout:[40,705]},
-  {id:'study',title:'Herramientas de comparación',group:'Herramientas',route:['#estudioBtn'],ready:'#estudioOverlay.open',sources:['js/economics-estudio.js','js/economics-comp.js','js/economics-sim.js'],layout:[365,705]},
+  {id:'household',hidesHome:true,title:'Gastos del hogar',group:'Hogar',route:['#householdBtn'],ready:'#householdOverlay.open',sources:['js/household.js','js/household-summary.js','js/economics-fiscal-hip.js','css/household.css'],layout:[40,705]},
+  {id:'study',hidesHome:true,title:'Herramientas de comparación',group:'Herramientas',route:['#estudioBtn'],ready:'#estudioOverlay.open',sources:['js/economics-estudio.js','js/economics-comp.js','js/economics-sim.js'],layout:[365,705]},
   {id:'events',title:'Eventos · Próximos',group:'Eventos',route:events,ready:'#evViewUpcoming.active',sources:['js/events-render.js','js/events-bind.js','js/swipe-render.js','js/events-picker-color.js','js/events-order.js','js/events.js','js/events-alarm-policy.js']},
-  {id:'economics',title:'Resumen económico',group:'Economía',route:['#econBtn'],ready:'#econOverlay.open',sources:['js/economics.js','js/economics-fiscal-datos.js'],layout:[1015,705]},
+  {id:'economics',hidesHome:true,title:'Resumen económico',group:'Economía',route:['#econBtn'],ready:'#econOverlay.open',sources:['js/economics.js','js/economics-fiscal-datos.js'],layout:[1015,705]},
   {id:'alarm',title:'Crear alarma',group:'Ajustes',route:['#alarmTestBtn'],ready:'#alarmPanel.open',sources:['js/alarm-panel.js','js/init.js'],layout:[1340,705]},
   {id:'settings',title:'Más opciones',group:'Ajustes',route:['#menuBtn'],ready:'#dataMenu.open',sources:['js/settings-menu.js'],layout:[1665,705]},
-  {id:'calendar',title:'Calendario · 1 mes',group:'Eventos',route:calendar,ready:'.ev-cell[data-ds="2026-08-21"]',sources:['js/events-cal.js','js/events-render.js','js/events-bind.js','js/events.js'],layout:[690,705],flow:[40,65]},
+  {id:'calendar',hidesHome:true,title:'Calendario · 1 mes',group:'Eventos',route:calendar,ready:'.ev-cell[data-ds="2026-08-21"]',sources:['js/events-cal.js','js/events-render.js','js/events-bind.js','js/events.js'],layout:[690,705],flow:[40,65]},
   {id:'day',title:'Ficha del día',group:'Eventos',route:day,ready:'#evDetailOv.open',entry:'.ev-car-sheet',sources:['js/events-detail.js','js/events.js'],flow:[390,65]},
   {id:'edit',title:'Editar evento · inicio',group:'Eventos',route:edit,ready:'#evFormOv.open',entry:'.ev-event-form-header',sources:['js/events-form.js','js/events-form-schedule.js','js/events-form-controls.js'],flow:[740,65]},
   {id:'time',title:'Elegir hora',group:'Eventos',route:[...edit,'#evFTime'],ready:'#timePickerOv.open',entry:'.time-picker-sheet',sources:['js/time-picker.js'],flow:[1090,65]},
