@@ -43,7 +43,7 @@ def candidate(config, period, payment_mode):
     checked = prepare(data, profile, root)  # checks every original hash and historical profile
     payment = read(paths['payment']) if payment_mode == 'U' else None
     payload = serialize(load_design(Path(config['design'])), checked['expected_boxes'], identity,
-                        data['year'], period, payment)
+                        data['year'], period, payment, profile.get('annual_closing'))
     basis = {k: digest(p.read_bytes()) for k, p in paths.items()}
     basis['engine'] = digest(b''.join(Path(__file__).with_name(n).read_bytes() for n in
                                     ('closing.py', 'ledger.py', 'prepare_open.py', 'export_303_test.py')))
@@ -52,7 +52,7 @@ def candidate(config, period, payment_mode):
     revision = digest(json.dumps(basis, sort_keys=True).encode())
     return dict(year=data['year'], period=period, revision=revision, mode=payment_mode,
                 boxes=checked['expected_boxes'], difference=checked['difference'],
-                filed_result=profile['filed_result'],
+                filed_result=profile.get('filed_result'), preparation_kind=profile.get('preparation_kind','historical'),
                 account=('ES•• ···· ' + payment['iban'].replace(' ', '')[-4:]) if payment else 'Sin cuenta',
                 filename=f'303_{data["year"]}_{period}_GENERADO_ENSAYO.txt',
                 payload=base64.b64encode(payload).decode(), payload_sha256=digest(payload),

@@ -55,8 +55,9 @@ def render(year, period, row, available, stale, problem, csrf):
     names = {'none':'Sin preparar', 'prepared':'Pendiente de aprobación', 'approved':'Resumen aprobado',
              'generated':'Archivo generado', 'cancelled':'Aprobación cancelada'}
     status = 'Datos cambiados: requiere nueva revisión' if stale else names[state]
-    notice = ('Ensayo histórico. Este periodo ya fue presentado: no volver a presentarlo. '
-              if available else 'Periodo no habilitado para generar. ')
+    notice = 'Ensayo para OPEN. No vuelvas a presentar un periodo ya declarado. '
+    if period == '4T' and year == 2026:
+        problem = 'Última prueba oficial, 26/10/2026: OPEN rechaza la selección del 4T («El periodo seleccionado no está permitido»). La validación está pendiente; las pruebas locales no la sustituyen.'
     def button(action, label, enabled):
         return f'<button type="button" data-action="{action}" {"" if enabled else "disabled"}>{label}</button>'
     summary = ''
@@ -64,7 +65,7 @@ def render(year, period, row, available, stale, problem, csrf):
         summary = '<section><h2>Resumen que estás revisando</h2><dl>' + ''.join(
             f'<dt>{label}</dt><dd>{e(value)}</dd>' for label,value in [
                 ('Ejercicio y periodo', f'{year} · {period}'), ('Resultado calculado (€)',snapshot['boxes']['71']),
-                ('Presentado históricamente (€)',snapshot['filed_result']),('Diferencia (€)',snapshot['difference']),
+                ('Presentado históricamente (€)',snapshot['filed_result'] if snapshot['filed_result'] is not None else 'No aplica'),('Diferencia (€)',snapshot['difference'] if snapshot['difference'] is not None else 'No aplica'),
                 ('Modalidad', 'Domiciliación (ensayo)' if snapshot['mode']=='U' else 'Ingreso sin cuenta (ensayo)'),
                 ('Cuenta',snapshot['account'])]) + '</dl><p>Versión: <code>' + e(snapshot['revision'][:12]) + '</code></p></section>'
     controls = button('prepare','1. Preparar resumen', available)
@@ -77,7 +78,7 @@ def render(year, period, row, available, stale, problem, csrf):
 <title>Cierre trimestral · Kairo</title><style>*{{box-sizing:border-box}}body{{margin:0;background:#f2f6f5;color:#17352f;font:16px system-ui;line-height:1.55}}main{{max-width:800px;padding:20px;margin:auto}}section{{background:white;border:1px solid #dce7e3;border-radius:14px;padding:20px;margin:18px 0}}h1{{font-size:28px}}h2{{font-size:20px}}a{{color:#12665e}}.notice{{padding:16px;background:#fff4da;border-radius:10px}}.actions{{display:grid;gap:12px}}button,.download{{font:inherit;border:0;border-radius:9px;background:#12665e;color:white;padding:14px;text-align:center;text-decoration:none}}button:disabled{{background:#dbe4e1;color:#51645f}}label{{display:block;margin:12px 0}}select{{font:inherit;padding:10px;max-width:100%}}dt{{color:#52695f}}dd{{font-weight:600;margin:0 0 12px}}code{{overflow-wrap:anywhere}}</style>
 <main><a href="/facturas/modelos?periodo={period}&paso=revision">← Volver a Modelos</a><h1>Cierre trimestral · {year} · {period}</h1>
 <p class="notice">{notice}Aprobar aquí solo permite generar un archivo para OPEN; no firma una declaración ni solicita domiciliación.</p>
-<section><h2>{e(status)}</h2><p>{e(problem)}</p><p>{'Perfil histórico disponible.' if available else 'Falta habilitar y acreditar el perfil de este periodo y, para 4T, el adaptador de cierre anual. No se reutiliza automáticamente el perfil del 2T.'}</p>
+<section><h2>{e(status)}</h2><p>{e(problem)}</p><p>{'Perfil configurado disponible.' if available else 'Falta acreditar el perfil y confirmar que los datos del periodo están completos. El adaptador 4T tiene alcance limitado: régimen general, resultado positivo, sin ajustes anuales y con obligación de 390. No se reutiliza automáticamente el perfil del 2T.'}</p>
 <label for="mode">Modalidad para preparar el próximo resumen</label><select id="mode"><option value="U" {'selected' if snapshot.get('mode','U')=='U' else ''}>Domiciliación · cuenta configurada</option><option value="I" {'selected' if snapshot.get('mode')=='I' else ''}>Ingreso sin cuenta</option></select><p>Cambiar modalidad requiere preparar y aprobar otra versión. La variante con domiciliación está pendiente de validación en OPEN.</p></section>
 {summary}<section class="actions">{controls}{download}</section><p id="result" role="status"></p></main>
 <script>const ctx={script_data};document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',async()=>{{const action=b.dataset.action;document.querySelectorAll('button').forEach(x=>x.disabled=true);try{{const r=await fetch('{BASE}',{{method:'POST',headers:{{'Content-Type':'application/json','X-CSRF':ctx.csrf}},body:JSON.stringify({{period:ctx.period,revision:ctx.revision,mode:action==='prepare'?document.getElementById('mode').value:ctx.mode,action}})}});const d=await r.json();if(!r.ok)throw new Error(d.message||'No se pudo completar');location.reload();}}catch(err){{document.getElementById('result').textContent=err.message+' Recarga la página para revisar el estado.';}}}}));</script></html>'''

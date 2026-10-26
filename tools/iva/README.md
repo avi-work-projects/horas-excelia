@@ -88,14 +88,22 @@ La identidad privada contiene `nif`, `name`, `developer_nif`, `foral_only:false`
 y `monthly_refund:false`, acreditados para el ensayo. No guardar datos reales
 en Git. El perfil y los originales se verifican con `prepare_open`.
 
-Alcance cerrado: 2026, 1T–3T, régimen general exclusivo, 100 % Estado, resultado
+Alcance cerrado: 2026, 1T–4T, régimen general exclusivo, 100 % Estado, resultado
 positivo y sin ajustes. Por defecto tipo I (ingreso), sin cuenta bancaria.
 Con `--payment pago-privado.json` y `{ "mode": "direct_debit", "iban": "..." }`
 se genera tipo U con IBAN español validado por formato y módulo 97 en DID campo 6.
 La configuración se guarda fuera de Git; no presume titularidad, aceptación
 bancaria ni plazo de domiciliación. El panel muestra únicamente cuenta enmascarada.
 La variante U tiene comprobaciones locales; requiere su propia validación OPEN.
-No presenta, no firma, no sustituye una autorización de pago. No soporta 4T,
+El 4T requiere `annual_closing` explícito: reviewed=true y exempt_390,
+special_prorata_option, special_prorata_revocation, annual_deduction_adjustment,
+investment_goods_adjustment, foral_annual_adjustment todos false. No extrapolar
+ese supuesto a otros perfiles. Campo23=2 (no exonerado390) y24=0 según diseño.
+Estado del 4T al26/10/2026: pruebas locales correctas; OPEN rechaza incluso su
+selección manual con «El periodo seleccionado no está permitido». No está
+validado oficialmente ni habilitado sobre el libro real. Repetir cuando el
+servicio permita el periodo. Ensayo separado con `rehearse_fourth.py`.
+No presenta, no firma, no sustituye una autorización de pago. No soporta
 compensaciones, devoluciones ni rectificativas. El TXT de ensayo contiene datos
 fiscales reales: usar exclusivamente OPEN, nunca la pantalla CONT de presentación.
 Generar correctamente el archivo no equivale a validarlo en Hacienda.
@@ -117,8 +125,9 @@ https://www3.agenciatributaria.gob.es/static_files/Sede/Disenyo_registro/DR_300_
 preparar/aprobar/generar/descargar y cancelación. Se montan tras la autenticación,
 Origin y CSRF existentes de Kairo; nunca dentro de la PWA pública. La aprobación
 se vincula a huellas del libro, perfil, identidad, cuenta, motor y contenido.
-El único perfil inicialmente habilitado es el histórico 2T; no se ha ampliado
-el alcance fiscal del exportador. Véase `docs/IVA-CLOSING.md` para estado,
+El único perfil operativo inicialmente habilitado es el histórico 2T. El motor
+admite preparar periodos nuevos con confirmación de cobertura y el supuesto4T
+descrito arriba, sin activarlos sobre el libro real. Véase `docs/IVA-CLOSING.md` para estado,
 distribución y reversión. Dependencia de lectura del diseño: openpyxl==3.1.5.
 
 La revisión anual incorpora `preparation_390`, un dossier documental preparatorio,

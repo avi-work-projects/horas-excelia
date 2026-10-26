@@ -26,6 +26,22 @@ def prepare(data, profile, root):
     if result['boxes']['71'] is None:
         raise ValueError('Remaining adjustments must be documented in ledger profile')
     expected = result['boxes']['71']
+    kind = profile.get('preparation_kind', 'historical')
+    if kind not in ('historical', 'new_period'):
+        raise ValueError('Unknown preparation kind')
+    if kind == 'new_period':
+        if profile.get('period_complete') is not True:
+            raise ValueError('Period completeness must be explicitly reviewed')
+        if result['reference']:
+            raise ValueError('Already filed period cannot use the new-period workflow')
+        if period == '4T':
+            # Import at call time avoids circular module initialization.
+            from export_303_test import year_end_fields
+            year_end_fields(period, profile.get('annual_closing'))
+        return dict(year=data['year'], period=period, filing_ready=False,
+                    preparation_kind=kind, profile=profile, expected_boxes=result['boxes'],
+                    difference=None, filed_result=None,
+                    format='OPEN preparation only; approval and official validation remain separate')
     if money(expected) != money(profile['expected_result']):
         raise ValueError('Ledger changed since historical validation; review again')
     difference = str(money(expected) - money(profile['filed_result']))
