@@ -2,7 +2,7 @@ const {test,expect}=require('@playwright/test');
 test.beforeEach(async({page})=>{
  await page.clock.setFixedTime(new Date('2026-10-15T12:00:00+02:00'));
  await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-theme-v1','light');localStorage.setItem('excelia-nav-icons-v1','professional');});
- await page.goto('/');await page.locator('#eventsBtn').click();await page.evaluate(()=>{RUTINAS=[{id:'pad',name:'Pádel',icon:'padel',start:'2026-10-01',weekDays:[3],time:'15:00',dur:60,weeks:{},skips:{}}];});await page.locator('#evAdd').click();
+ await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await page.evaluate(()=>{RUTINAS=[{id:'pad',name:'Pádel',icon:'padel',start:'2026-10-01',weekDays:[3],time:'15:00',dur:60,weeks:{},skips:{}}];});await page.locator('#evAdd').click();
 });
 for(const width of [320,400,440])test('Formulario a '+width+': etiquetas centradas, fuente compartida y Multidía dentro del panel',async({page},info)=>{
  await page.setViewportSize({width,height:880});

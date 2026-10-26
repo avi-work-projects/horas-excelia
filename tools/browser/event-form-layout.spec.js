@@ -2,7 +2,7 @@ const {test,expect}=require('@playwright/test');const {chooseTime}=require('./ti
 test.beforeEach(async({page})=>{
  await page.clock.setFixedTime(new Date('2026-10-14T12:00:00+02:00'));
  await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-theme-v1','light');localStorage.setItem('excelia-nav-icons-v1','professional');});
- await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evAdd').click();
+ await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await page.locator('#evAdd').click();
 });
 test('cabecera fija y dinámica, controles a la derecha y cuerpo con scroll móvil',async({page},info)=>{
  const title=page.locator('#evFHeadingTitle');await expect(title).toHaveText('Nuevo Evento');await expect(page.locator('#evFRepeat')).toHaveCount(0);await expect(page.locator('[data-ev-multiday]:not(:disabled)')).toHaveCount(0);
