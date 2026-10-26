@@ -94,6 +94,14 @@ ejecuciones completas evitables. Para el mapa, revisar `map:plan`, usar `map:cha
 y mantener las revisiones por huella; una dependencia compartida aún puede ampliar
 el alcance conservador del capturador y debe explicarse sin afirmar que todo cambió.
 
+CI usa Chrome preinstalado en `ubuntu-24.04` mediante
+`GESTIFY_BROWSER_CHANNEL=chrome`. Se conserva la batería completa y se comprueba
+la versión del navegador antes de ejecutarla. Se elimina la instalación de
+Chromium/dependencias que en la entrega v509 superó ocho minutos antes de empezar
+las pruebas. Windows sigue usando Edge; Linux local conserva el valor por defecto
+si no se declara el canal. Referencias: [imagen oficial](https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md)
+y [canales admitidos por Playwright](https://playwright.dev/docs/browsers#google-chrome--microsoft-edge).
+
 ## Convenciones visuales de controles
 
 - Los botones de volver y las flechas de navegación usan cajas cuadradas con esquinas redondeadas. Los tres calendarios comparten posición y tamaño de «Hoy». En el calendario mensual las iniciales semanales acompañan al mes durante el swipe; solo el mes actual marca el día de la semana presente en verde. Preferencia de Ángel del 16/10/2026.
