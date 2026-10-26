@@ -4,8 +4,8 @@ const {chromium,expect}=require('@playwright/test');
 const {startServer}=require('./serve.cjs');
 const {createTracker,exportFingerprint,digest}=require('./tracking.cjs');
 const {scenes,edges}=require('./catalog.cjs');
+const {writeAtomically:writeChanged}=require('./files.cjs');
 const root=path.resolve(__dirname,'../..'),out=path.join(root,'docs/visual-map'),qa=path.join(root,'test-results/visual-map');
-function writeChanged(file,content){const bytes=Buffer.from(content);if(!fs.existsSync(file)||!fs.readFileSync(file).equals(bytes))fs.writeFileSync(file,bytes);}
 async function main(){
   const data=JSON.parse(fs.readFileSync(path.join(out,'map-data.json'),'utf8'));
   const tracker=createTracker({root,scenes,edges,assets:require('../../app-assets.json')});

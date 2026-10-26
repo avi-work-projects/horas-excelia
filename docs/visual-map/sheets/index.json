@@ -22,6 +22,7 @@
     "image": "sheets/area-0-1.png",
     "scenes": [
       "home-october",
+      "home-invoice-connection",
       "invoice-current",
       "invoice-current--scroll-invoice-document",
       "invoice-document"

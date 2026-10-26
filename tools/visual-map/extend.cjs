@@ -27,6 +27,7 @@ module.exports=function extend({scenes,edges}){
   add('invoice-config-edit','Editar datos de facturación','Inicio','invoice-config','#invoiceSettingsEdit','#invoiceSettingsSave');
   add('home-september','Inicio · septiembre','Inicio','home','#nextBtn','#invoiceHomeBtn');
   add('home-october','Inicio · octubre','Inicio','home-september','#nextBtn','#invoiceHomeBtn');
+  add('home-invoice-connection','Inicio · conectar estado de factura','Inicio','home-october','[data-home-invoice="configure"]','#invoiceSettingsSave',{sources:['js/invoices-home.js','js/invoices-ui.js','js/invoices.js'],region:'.invoice-body',note:'Consulta sin configurar: el botón abre la conexión privada existente.'});
   add('invoice-current','Preparar factura del mes','Inicio','home-october','#invoiceHomeBtn','#invoiceJson',{sources:['js/invoices-ui.js','js/invoices.js'],region:'.invoice-body'});
   add('invoice-document','Adjuntar factura definitiva','Inicio','invoice-current','#invoiceDocument summary','#invoiceFinalFile',{scroll:true});
   // Calendarios y pestañas de Eventos.
