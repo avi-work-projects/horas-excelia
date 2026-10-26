@@ -401,7 +401,7 @@ function _rutWeekPick(r,opts){
      devuelven para no mover la vista que el usuario tenga detras. */
   var _y0=EV_YEAR,_m0=EV_MONTH;
   EV_YEAR=y;EV_MONTH=m;
-  var cal=renderEvCalMonth();
+  var cal=renderEvCalMonth({remaining:false});
   EV_YEAR=_y0;EV_MONTH=_m0;
   h+='<div class="rut-wpick-real">'+cal+'</div>';
   h+='<div class="sy-note rut-week-help">'+(opts.hint||'Pulsa cualquier semana para cambiarla. Las que ya tienen un cambio guardado salen recuadradas.')+'</div>';

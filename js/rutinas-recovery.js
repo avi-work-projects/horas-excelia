@@ -32,7 +32,7 @@ function openRutRecoveryDay(r,key,date,back,onSaved){
   var wrap=rutAdditionPanel(r.name+' - elige día',h,back||function(){openRutAddition(r);});
   function render(){
     var y=EV_YEAR,m=EV_MONTH,cal;
-    try{EV_YEAR=state.year;EV_MONTH=state.month;cal=renderEvCalMonth();}finally{EV_YEAR=y;EV_MONTH=m;}
+    try{EV_YEAR=state.year;EV_MONTH=state.month;cal=renderEvCalMonth({remaining:false});}finally{EV_YEAR=y;EV_MONTH=m;}
     wrap.querySelector('#rutRecoveryMonth').textContent=MN[state.month]+' '+state.year;
     wrap.querySelector('.rut-dpick-real').innerHTML=cal;
     var month=wrap.querySelector('.ev-month-wrap'),weeks=month.querySelectorAll('.ev-week-outer').length;
