@@ -79,9 +79,25 @@ def payment_fields(payment):
     return 'U', {6: iban}
 
 
-def serialize(design, boxes, identity, year, period, payment=None):
-    if year != 2026 or period not in ('1T', '2T', '3T'):
-        raise ValueError('Only reviewed 2026 quarters 1T-3T are supported')
+def year_end_fields(period, closing):
+    if period != '4T':
+        if closing is not None:
+            raise ValueError('Annual closing only applies to 4T')
+        return {23: '0', 24: '0'}
+    if not isinstance(closing, dict) or closing.get('reviewed') is not True:
+        raise ValueError('Explicit annual closing review required')
+    if any(closing.get(key) is not False for key in (
+        'exempt_390', 'special_prorata_option', 'special_prorata_revocation',
+        'annual_deduction_adjustment', 'investment_goods_adjustment', 'foral_annual_adjustment')):
+        raise ValueError('Annual closing has missing or unsupported special circumstances')
+    # Official DP30301 notes 3/4: non-exempt 4T => 23=NO(2), 24=not applicable(0).
+    return {23: '2', 24: '0'}
+
+
+def serialize(design, boxes, identity, year, period, payment=None, annual_closing=None):
+    if year != 2026 or period not in ('1T', '2T', '3T', '4T'):
+        raise ValueError('Only reviewed 2026 quarterly structure is supported')
+    annual_fields = year_end_fields(period, annual_closing)
     if identity.get('foral_only') is not False or identity.get('monthly_refund') is not False:
         raise ValueError('Explicit historical non-foral and non-REDEME profile required')
     nif, name, developer = identity['nif'], identity['name'], identity['developer_nif']
@@ -102,6 +118,7 @@ def serialize(design, boxes, identity, year, period, payment=None):
              17: '2', 18: '2', 19: '2', 22: '2', 23: '0', 24: '0', 25: '0',
              41: cents('07'), 43: cents('09'), 54: '00050', 67: cents('09'),
              68: cents('28'), 69: cents('29'), 85: cents('45'), 86: cents('46')}
+    first.update(annual_fields)
     third = {16: cents('46'), 17: '10000', 18: cents('46'), 25: cents('71'), 29: cents('71')}
     header = f'<T3030{year}{period}0000><AUX>' + ' ' * 70 + '0001' + ' ' * 4 + developer + ' ' * 213 + '</AUX>'
     if len(header) != 328:
@@ -121,7 +138,7 @@ def main():
     read = lambda path: json.loads(path.read_text(encoding='utf-8-sig'))
     data, profile = read(a.input), read(a.profile)
     checked = prepare(data, profile, a.root)
-    payload = serialize(load_design(a.design), checked['expected_boxes'], read(a.identity), data['year'], profile['period'], read(a.payment) if a.payment else None)
+    payload = serialize(load_design(a.design), checked['expected_boxes'], read(a.identity), data['year'], profile['period'], read(a.payment) if a.payment else None, profile.get('annual_closing'))
     if 'ENSAYO' not in a.output.name.upper():
         raise ValueError('Output name must explicitly identify ENSAYO')
     a.output.parent.mkdir(parents=True, exist_ok=True)

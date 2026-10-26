@@ -1,9 +1,29 @@
 import unittest
 from unittest.mock import patch
-from export_303_test import field, page, serialize, payment_fields
+from export_303_test import field, page, serialize, payment_fields, year_end_fields
 
 
 class TxtTests(unittest.TestCase):
+    def test_fourth_quarter_requires_explicit_non_exempt_no_adjustment_review(self):
+        closing = dict(reviewed=True,exempt_390=False,special_prorata_option=False,
+                       special_prorata_revocation=False,annual_deduction_adjustment=False,
+                       investment_goods_adjustment=False,foral_annual_adjustment=False)
+        self.assertEqual(year_end_fields('4T',closing),{23:'2',24:'0'})
+        self.assertEqual(year_end_fields('3T',None),{23:'0',24:'0'})
+        for key in closing:
+            bad = dict(closing)
+            del bad[key]
+            with self.assertRaises(ValueError):year_end_fields('4T',bad)
+        for key in closing:
+            with self.assertRaises(ValueError):year_end_fields('4T',closing | {key:not closing[key]})
+        with self.assertRaises(ValueError):year_end_fields('3T',closing)
+        boxes={'07':'100.00','09':'21.00','28':'0.00','29':'0.00','45':'0.00','46':'21.00','71':'21.00'}
+        identity=dict(nif='00000000T',name='ENSAYO',developer_nif='00000000T',foral_only=False,monthly_refund=False)
+        with patch('export_303_test.page', return_value='') as render:
+            payload=serialize({'DP30301':[],'DP30303':[],'DP303DID':[]},boxes,identity,2026,'4T',annual_closing=closing)
+        self.assertIn(b'20264T',payload)
+        self.assertEqual(render.call_args_list[0].args[1][23],'2')
+        self.assertEqual(render.call_args_list[0].args[1][24],'0')
     def test_explicit_payment_and_checksum(self):
         # Public synthetic IBAN example, never the user's account.
         mode, fields = payment_fields({'mode':'direct_debit','iban':'ES91 2100 0418 4502 0005 1332'})

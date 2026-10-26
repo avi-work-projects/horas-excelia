@@ -1,10 +1,19 @@
 # Cierre guiado del IVA: alcance y despliegue
 
 Implementación privada de ensayo, 26/10/2026. No pertenece a los assets de la
-PWA. Conserva el motor validado y sus límites: 2026, 1T–3T, régimen general
-soportado. La configuración inicial solo habilita el perfil acreditado del 2T.
-Los otros periodos explican qué falta. No es todavía el cierre de un trimestre
-nuevo ni el exportador de 4T. No hay integración de presentación con Hacienda.
+PWA. Conserva el motor y sus límites: 2026, régimen general soportado, resultado
+positivo y sin ajustes. El adaptador admite 4T con revisión anual explícita:
+obligación de 390, sin opción/revocación de prorrata especial ni ajustes anuales.
+DP30301 notas3/4: campo23=2, campo24=0 para este supuesto. No admite exonerados.
+La configuración operativa solo habilita el perfil acreditado del 2T.
+Los otros periodos explican qué falta. No hay integración de presentación.
+
+Para periodos nuevos `preparation_kind=new_period` exige `period_complete=true`,
+perfil acreditado por documento, ausencia de referencia ya presentada y los
+ajustes restantes confirmados en el libro. No se infiere cierre por tener alguna
+factura. `rehearse_fourth.py` construye un supuesto separado de189 euros; nunca
+modifica el libro anual real. Las confirmaciones de su perfil son hipótesis de
+prueba y no deben copiarse al perfil real.
 
 ## Estados y garantías
 
@@ -46,3 +55,20 @@ rechazo sin CSRF/Origin/propietario, generación con motor real en directorio
 aislado; en panel operativo preparar únicamente, dejar aprobación al usuario.
 Pendientes: validación OPEN de variante U, perfiles nuevos y cierre 4T,
 generación del 390, archivo final aprobado y justificante tras presentación.
+
+## Resultado del ensayo del 26/10/2026
+
+OPEN leyó la variante U del 2T y devolvió E010063 (plazo de domiciliación),
+junto con aviso de que borraría los datos de pago incompatibles con el entorno.
+Esto no acredita aceptación bancaria ni validación completa de U. No cambiar
+fecha/ejercicio para aparentar que ese ensayo está dentro de plazo.
+
+Primer intento de importar el 4T ficticio: FRECH, E010100 (periodo), MALINI4
+(cabecera). La cabecera local coincide en posiciones/longitud con DP30300.
+Diagnóstico posterior: el selector ofrece4T, pero al seleccionarlo manualmente,
+sin importar fichero, OPEN responde «El periodo seleccionado no está permitido».
+La validación oficial queda bloqueada por el periodo en el servicio actual;
+el ensayo debe repetirse cuando sea admitido, sin asumir que no aparecerán otros
+errores después. No cambiar el ejercicio para simular una validación2026.
+No hace falta que el usuario cargue manualmente el archivo ahora. No habilitar
+el perfil real. Evidencias en REVISIONES/2026-4T/ENSAYO_SINTETICO.
