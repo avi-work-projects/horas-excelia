@@ -64,7 +64,22 @@ def page(rows, overrides):
     return ''.join(output)
 
 
-def serialize(design, boxes, identity, year, period):
+def payment_fields(payment):
+    if payment is None:
+        return 'I', {}
+    if payment.get('mode') != 'direct_debit':
+        raise ValueError('Unsupported payment mode')
+    iban = re.sub(r'\s+', '', payment.get('iban', '')).upper()
+    if not re.fullmatch(r'ES[0-9]{22}', iban):
+        raise ValueError('A Spanish IBAN is required')
+    rearranged = iban[4:] + iban[:4]
+    digits = ''.join(str(ord(c)-55) if c.isalpha() else c for c in rearranged)
+    if int(digits) % 97 != 1:
+        raise ValueError('IBAN checksum invalid')
+    return 'U', {6: iban}
+
+
+def serialize(design, boxes, identity, year, period, payment=None):
     if year != 2026 or period not in ('1T', '2T', '3T'):
         raise ValueError('Only reviewed 2026 quarters 1T-3T are supported')
     if identity.get('foral_only') is not False or identity.get('monthly_refund') is not False:
@@ -81,7 +96,8 @@ def serialize(design, boxes, identity, year, period):
         if value < 0:
             raise ValueError('Negative values outside reviewed scope')
         return str(int(value * 100))
-    first = {6: 'I', 7: nif, 8: name, 9: str(year), 10: period,
+    payment_type, bank_fields = payment_fields(payment)
+    first = {6: payment_type, 7: nif, 8: name, 9: str(year), 10: period,
              11: '2', 12: '2', 13: '3', 14: '2', 15: '2', 16: '2',
              17: '2', 18: '2', 19: '2', 22: '2', 23: '0', 24: '0', 25: '0',
              41: cents('07'), 43: cents('09'), 54: '00050', 67: cents('09'),
@@ -91,7 +107,7 @@ def serialize(design, boxes, identity, year, period):
     if len(header) != 328:
         raise ValueError('Envelope length mismatch')
     return (header + page(design['DP30301'], first) + page(design['DP30303'], third)
-            + page(design['DP303DID'], {}) + f'</T3030{year}{period}0000>').encode('iso-8859-1')
+            + page(design['DP303DID'], bank_fields) + f'</T3030{year}{period}0000>').encode('iso-8859-1')
 
 
 def main():
@@ -100,11 +116,12 @@ def main():
     for name in ('profile', 'identity', 'design', 'root', 'output'):
         p.add_argument('--' + name, required=True, type=Path)
     p.add_argument('--open-rehearsal', required=True, action='store_true')
+    p.add_argument('--payment', type=Path, help='Private explicit direct-debit configuration; never submits')
     a = p.parse_args()
     read = lambda path: json.loads(path.read_text(encoding='utf-8-sig'))
     data, profile = read(a.input), read(a.profile)
     checked = prepare(data, profile, a.root)
-    payload = serialize(load_design(a.design), checked['expected_boxes'], read(a.identity), data['year'], profile['period'])
+    payload = serialize(load_design(a.design), checked['expected_boxes'], read(a.identity), data['year'], profile['period'], read(a.payment) if a.payment else None)
     if 'ENSAYO' not in a.output.name.upper():
         raise ValueError('Output name must explicitly identify ENSAYO')
     a.output.parent.mkdir(parents=True, exist_ok=True)
