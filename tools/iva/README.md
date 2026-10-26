@@ -54,6 +54,17 @@ del alcance de esta primera implementación.
 
 ## Verificación
 
+Para conservar la preparación histórica de OPEN:
+`python tools/iva/prepare_open.py privado.json --profile perfil-historico.json --root AUTONOMO --output recuperacion.json`.
+Verifica las huellas de documentos y justificante, el ejercicio, el perfil
+soportado y la comparación con el resultado histórico antes de generar la guía.
+La guía JSON no es una sesión `.ses` ni un archivo que se importe en Hacienda.
+El perfil histórico no se aplica automáticamente a ejercicios o periodos nuevos.
+La sesión nativa se guarda desde OPEN con «Guardar datos trabajo (.ses)» y debe
+completarse en el navegador antes de archivarla; un `.crdownload` no cuenta como
+sesión guardada. Para un XLSX usar «Importación de libros de registro», nunca el
+botón inicial «Importar» que espera un fichero de declaración.
+
 `python -m unittest discover -s tools/iva -v` desde la raíz (requiere pypdf).
 Pruebas con datos ficticios: duplicados, cambio de originales, céntimos,
 retenciones, exclusiones, cambio de trimestre/año, perfiles incompletos,
