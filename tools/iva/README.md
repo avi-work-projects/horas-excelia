@@ -52,6 +52,35 @@ Excel no actualiza el JSON. No editar el código para cambiar importes trimestra
 El libro LSI es entrada para Pre303, no un TXT 303 presentable. El 390 queda fuera
 del alcance de esta primera implementación.
 
+## TXT experimental para OPEN
+
+`python tools/iva/export_303_test.py privado.json --profile perfil-historico.json --identity identidad-privada.json --design DR303e26v101.xlsx --root AUTONOMO --output 303_ENSAYO.txt --open-rehearsal`
+
+Genera el formato de posiciones fijas ISO-8859-1 con identificación, páginas
+01/03/DID y resultados. Requiere la versión oficial 1.01 de 2026, comprobada por
+SHA256. Usa `openpyxl` exclusivamente para leer ese diseño; no crea libros.
+La identidad privada contiene `nif`, `name`, `developer_nif`, `foral_only:false`
+y `monthly_refund:false`, acreditados para el ensayo. No guardar datos reales
+en Git. El perfil y los originales se verifican con `prepare_open`.
+
+Alcance cerrado: 2026, 1T–3T, régimen general exclusivo, 100 % Estado, resultado
+positivo y sin ajustes. Tipo I (ingreso), sin cuenta bancaria ni domiciliación.
+No presenta, no firma, no sustituye una autorización de pago. No soporta 4T,
+compensaciones, devoluciones ni rectificativas. El TXT de ensayo contiene datos
+fiscales reales: usar exclusivamente OPEN, nunca la pantalla CONT de presentación.
+Generar correctamente el archivo no equivale a validarlo en Hacienda.
+
+Ensayo real confirmado el 26/10/2026: TXT del 2T importado en OPEN 2026,
+perfil cargado y validación 00001 «No existen errores». Casilla 71 coincide
+con el motor documental. Aviso general 31190 conservado. Corregida la constante
+de tipo de la casilla 169 (0,5 %), requerida incluso con base cero, y cubierta
+con prueba de regresión. Evidencia y datos reales en AUTONOMO, fuera de Git.
+También se comprobó la recarga de la sesión .ses y su validación independiente.
+Esto no acredita presentación, domiciliación, otros trimestres ni revisión fiscal.
+
+Diseño oficial:
+https://www3.agenciatributaria.gob.es/static_files/Sede/Disenyo_registro/DR_300_399/archivos_26/DR303e26v101.xlsx
+
 ## Verificación
 
 Revisión anual reproducible en un comando (datos y salidas siempre privados):
