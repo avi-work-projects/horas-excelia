@@ -1,5 +1,6 @@
 /* Preparación mensual auxiliar. La emisión oficial se realiza fuera de Gestify. */
 var INVOICE_KEY='excelia-invoices-v1';
+var INVOICE_FIRST_PERIOD='2026-10';
 var INVOICE_MONTH=null;
 var INVOICE_BACK=null;
 var INVOICE_OPEN_SEQ=0;
@@ -15,7 +16,7 @@ function invoiceValidate(data){
   var months={};Object.keys(data.months||{}).forEach(function(k){
     if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(k))throw new Error('Mes de facturación no válido');
     var r=data.months[k];if(!r||typeof r!=='object'||Array.isArray(r))throw new Error('Registro mensual no válido');
-    if(r.final){var f=r.final;if(typeof f.pdf!=='string'||f.pdf.length>2800000||!/^data:application\/pdf;base64,JVBERi0[A-Za-z0-9+/=\r\n]*$/.test(f.pdf)||typeof f.number!=='string'||typeof f.name!=='string'||typeof f.hash!=='string'||!validIsoDate(f.date)||k<'2026-10')throw new Error('PDF definitivo o referencia no válidos');}
+    if(r.final){var f=r.final;if(typeof f.pdf!=='string'||f.pdf.length>2800000||!/^data:application\/pdf;base64,JVBERi0[A-Za-z0-9+/=\r\n]*$/.test(f.pdf)||typeof f.number!=='string'||typeof f.name!=='string'||typeof f.hash!=='string'||!validIsoDate(f.date)||k<INVOICE_FIRST_PERIOD)throw new Error('PDF definitivo o referencia no válidos');}
     if(r.preparation){
       var p=r.preparation;if(!Array.isArray(p.lines)||p.period!==k||!Array.isArray(p.days)||p.kind!=='auxiliary'||!p.issuer||!p.client||typeof p.issuer.name!=='string'||typeof p.client.name!=='string'||typeof p.concept!=='string')throw new Error('Preparación mensual no válida');
       ['baseCents','vatCents','withholdingCents','totalCents','vatBasisPoints','withholdingBasisPoints','revision'].forEach(function(key){if(!Number.isSafeInteger(p[key])||p[key]<0)throw new Error('Importes de preparación no válidos');});

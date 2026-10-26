@@ -3773,13 +3773,17 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 .home-submission.complete{display:grid;grid-template-columns:18px 70px minmax(0,1fr);gap:8px}
 .home-summary-compact{justify-self:end;width:max-content;max-width:100%;box-sizing:border-box;padding:6px 7px;border:1px solid var(--border);border-radius:8px;background:var(--surface);gap:3px;min-width:0}
 .home-summary-compact .month-stat{justify-content:flex-start;text-align:left;gap:3px;flex-wrap:nowrap;white-space:nowrap}
-.month-summary .month-stat.total{border-top:1px solid var(--border);padding-top:3px}
-.month-summary .month-stat.total .ms-num{font-weight:600}
-.home-summary-compact .month-stat.total .ms-num{font-size:.9rem;font-weight:600}
+.month-summary .month-stat.total .ms-num{font-weight:500;color:var(--text-muted)}
+.home-worked-total{border-top:1px solid var(--border);padding-top:5px;margin-top:2px}
+.month-summary .worked-hours{flex-wrap:wrap;column-gap:6px}
+.month-summary .worked-hours .ms-num{font-size:1.6rem;font-weight:700;color:var(--c-green);line-height:1.2}
+.home-summary-compact .month-stat.total .ms-num{font-size:.8rem;font-weight:500}
 .home-summary-compact .month-stat{font-size:.65rem;line-height:1.35}
 .home-summary-compact .ms-num{font-size:.8rem}
 .home-summary-compact .ms-label,.home-summary-compact .ms-hrs{font-size:.62rem}
 .home-summary-compact .ms-breakdown{font-size:.6rem}
+.home-summary-compact .worked-hours{flex-wrap:wrap;white-space:normal}
+.home-summary-compact .worked-hours .ms-num{font-size:1.15rem;font-weight:700}
 
 /* Selector de eventos para compartir por iCalendar */
 /* Selector de exportación: controles compactos y lista con espacio propio. */
@@ -4402,6 +4406,17 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 .invoice-kairo-card>.invoice-actions{margin:0}
 .invoice-kairo-card .ev-btn{min-height:44px}
 .invoice-kairo-locked .invoice-connection-action{margin-top:8px}
+.home-invoice-status{--invoice-tone:var(--text-muted);display:grid;grid-template-columns:18px minmax(0,1fr) auto;align-items:center;gap:9px;min-height:112px;box-sizing:border-box;padding:11px 13px;border:1px solid color-mix(in srgb,var(--invoice-tone) 65%,var(--border));border-radius:10px;background:color-mix(in srgb,var(--invoice-tone) 7%,var(--surface));color:var(--invoice-tone)}
+.home-invoice-status.pending{--invoice-tone:var(--c-orange)}
+.home-invoice-status.complete{--invoice-tone:var(--c-green)}
+.home-invoice-status.scheduled{--invoice-tone:var(--upcoming-text)}
+.home-invoice-copy{min-width:0}
+.home-invoice-copy strong{display:block;font-size:.78rem;font-weight:600}
+.home-invoice-copy>span{display:block;font-size:.67rem;line-height:1.4;min-height:2.8em;color:var(--text-muted);margin-top:3px}
+.home-invoice-copy a{display:inline-block;font-size:.67rem;color:var(--invoice-tone);margin-top:2px;text-underline-offset:2px}
+.home-invoice-refresh{min-width:32px;min-height:32px;padding:4px 6px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font:inherit;font-size:.65rem;cursor:pointer}
+.home-invoice-refresh[data-home-invoice="refresh"]{font-size:1.15rem}
+.home-invoice-refresh:disabled{opacity:.5;cursor:wait}
 
 /* Fuente: css/source/theme-cream.css */
 /* Tema Crema: marfil, ciruela, eucalipto, arcilla y azul pizarra.

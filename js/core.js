@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v508 — Eventos abre el calendario mensual';
+var APP_VERSION = 'v509 — Resumen de horas y estado de factura';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -498,12 +498,13 @@ function render(){
   }
 
   buildHomeCalendar(document.getElementById('weeksContainer'));
+  if(typeof syncHomeInvoiceStatus==='function')syncHomeInvoiceStatus();
 }
 
 /* El mismo calendario se ensambla en la Home y en una previsualización inerte. */
 function buildHomeCalendar(c){
   var wks=weeks(CY,CM);
-  c.innerHTML=renderHomeSubmissionStatus(CY,CM);
+  c.innerHTML=renderHomeSubmissionStatus(CY,CM)+(typeof renderHomeInvoiceStatus==='function'?renderHomeInvoiceStatus(CY,CM):'');
 
   wks.forEach(function(wk){
     var mon=wk[0],sun=wk[6],wkey=dk(mon),sent=!!SW[wkey],dias=0;
@@ -581,9 +582,10 @@ function buildHomeCalendar(c){
   }
   var footer=document.createElement('div'); footer.className='month-summary';
   var noLabHrsStr='<span class="ms-hrs"> ('+fmtH(horasNoLab)+'h)</span>';
-  footer.innerHTML='<div class="month-stat worked"><span class="ms-num">'+diasTrabajados+'</span><span class="ms-label"> d\u00edas trabajados</span><span class="ms-hrs"> ('+hStr+'h)</span></div>'+
-    '<div class="month-stat off"><span class="ms-num">'+diasNoLaborables+'</span><span class="ms-label"> d\u00edas no trabajados</span>'+noLabHrsStr+'</div>'+dsglose+
-    '<div class="month-stat total"><span class="ms-num">'+fmtH(horasTotal)+'h</span><span class="ms-label"> total mensual</span></div>';
+  footer.innerHTML='<div class="month-stat total"><span class="ms-num">'+fmtH(horasTotal)+'h</span><span class="ms-label"> total mensual</span></div>'+
+    '<div class="month-stat off"><span aria-hidden="true">−</span><span class="ms-num">'+diasNoLaborables+'</span><span class="ms-label"> d\u00eda'+(diasNoLaborables===1?'':'s')+' no trabajado'+(diasNoLaborables===1?'':'s')+'</span>'+noLabHrsStr+'</div>'+dsglose+
+    '<div class="home-worked-total"><div class="month-stat worked"><span class="ms-num">'+diasTrabajados+'</span><span class="ms-label"> d\u00eda'+(diasTrabajados===1?'':'s')+' trabajado'+(diasTrabajados===1?'':'s')+'</span></div>'+
+    '<div class="month-stat worked-hours"><strong class="ms-num">'+hStr+'h</strong><span class="ms-label">horas trabajadas</span></div></div>';
   c.appendChild(footer);
   var complete=c.querySelector('.home-submission.complete');
   if(complete){var compact=footer.cloneNode(true);compact.classList.add('home-summary-compact');complete.appendChild(compact);}
@@ -821,7 +823,7 @@ function navigateMain(key,openDestination){
   opened.forEach(function(ov){ov.classList.remove('open');setTimeout(function(){if(!ov.classList.contains('open'))ov.style.display='none';},320);});
   function open(){
     if(routes[key]){if(openDestination)openDestination();else routes[key]();}
-    else if(key==='home')window.scrollTo({top:0,behavior:'instant'});
+    else if(key==='home'){window.scrollTo({top:0,behavior:'instant'});if(typeof syncHomeInvoiceStatus==='function')syncHomeInvoiceStatus();}
   }
   if(opened.length)NAV_SWITCH_TIMER=setTimeout(open,330);else open();
 }

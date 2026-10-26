@@ -3,8 +3,8 @@
 ## Hallazgos y alcance
 
 El servicio privado existente autentica al usuario mediante Tailscale Serve,
-valida Host y exige Origin propio + X-CSRF para los POST. No ofrece CORS para
-GitHub Pages. Su `/upload` importa con `import_json`, que puede enviar un correo
+valida Host y exige Origin propio + X-CSRF para los POST. Fuera de la consulta
+de solo lectura v509 descrita al final, no ofrece CORS para GitHub Pages. Su `/upload` importa con `import_json`, que puede enviar un correo
 de revisión. Mantiene un único plan activo. El importador ya verifica las huellas
 y rechaza revisiones distintas de una operación existente: no se sustituye por
 otro importador ni se añade una base de datos paralela.
@@ -19,7 +19,7 @@ No hay operaciones de emisión, aprobación, correo ni impuestos en el puente.
    Debe ser HTTPS en un host `.ts.net`, ruta `/facturas/`, sin claves, query ni
    fragmento. Empieza vacío; se conserva en el backup y export de configuración.
 2. Enviar abre `/facturas/gestify` mediante un gesto del usuario. El receptor se
-   sirve con la autenticación existente. La PWA no hace fetch a una red privada:
+   sirve con la autenticación existente. Para enviar preparaciones la PWA no hace fetch a una red privada:
    intercambia mensajes con esa ventana, validando origen exacto, ventana e ID
    aleatorio; la preparación nunca viaja en la URL. No se habilita CORS.
 3. El receptor solo acepta el origen configurado de GitHub Pages y su opener.
@@ -158,3 +158,37 @@ Regresiones: editar/restaurar un día, revision+2 con hash original, consulta si
 importaciones, recepción idéntica tras restaurar, aprobación conservada, hash
 inválido rechazado. Pruebas del navegador usan la plantilla real, no una página
 sustituta; capturas a 320/393/412/1024 px.
+
+## Consulta mensual de Home v509 (26/10/2026)
+
+`home_invoice_status.py` reutiliza el catálogo existente, que abre SQLite con
+`mode=ro`. `GET /facturas/gestify-status?period=YYYY-MM` devuelve únicamente mes,
+estado, indicadores de preparada/emitida/programada/enviada y fecha programada.
+No expone números, importes, contactos, documentos, huellas fiscales ni claves.
+Varias facturas en un mes requieren revisión; una base no disponible devuelve
+503, nunca una falsa ausencia de factura.
+
+Esta es una excepción de lectura a la ausencia de CORS del transporte original:
+se exige la identidad y Host existentes y `Origin` igual a `gestify_origin`.
+Solo se autoriza GET; OPTIONS acepta exclusivamente ese método y origen,
+incluida la negociación de red privada cuando el navegador la solicita. No
+se permiten credenciales CORS, comodines ni cabeceras arbitrarias. Respuestas
+sin caché. Los POST, CSRF, X-Frame-Options y aprobación/emisión/correo mantienen
+el código anterior, comprobado también por el preparador del candidato.
+
+`prepare_home_status.py` prepara una copia con las dos rutas de lectura; rechaza
+inserciones duplicadas y verifica por AST que POST, identidad y cabeceras no
+cambien. El receptor requiere el `invoice_catalog.py` ya instalado. No necesita
+configuración, puerto, identidad ni temporizador nuevos.
+
+Activación realizada sobre el servicio vigente tras comparar su hash. Copia
+privada para reversión y reinicio solo del servicio web. Hashes lógicos de las
+tres bases, configuración y estado del runner antes/después: idénticos.
+Una consulta real coincide con el registro, sin emitir ni reenviar nada. GET real 200,
+origen ajeno 403. Edge desde el origen público confirma la lectura tras conceder
+permiso de red local en un perfil de prueba efímero; sin permiso la petición se
+bloquea y Gestify conserva estado sin confirmar. La primera autorización del
+navegador del móvil corresponde al usuario.
+
+Pruebas: `python tools/kairo/test_home_status.py`, incluidas en CI, y
+`tools/browser/home-invoice-status.spec.js`. Los fixtures son ficticios.
