@@ -1,8 +1,9 @@
 const {exportFile}=require('./export-helper');
 const {test,expect}=require('@playwright/test');
+const {fullChannel}=require('./browser-channel.cjs');
 // Usa el navegador completo para probar handles de carpetas reales al recargar,
 // también en Linux; sigue ejecutándose sin ventanas visibles.
-test.use({viewport:{width:400,height:880},isMobile:true,hasTouch:true,channel:process.platform==='win32'?'msedge':'chromium'});
+test.use({viewport:{width:400,height:880},isMobile:true,hasTouch:true,channel:fullChannel});
 async function prepareExports(page){
  await page.clock.setFixedTime(new Date(2026,9,11,12));
  await page.addInitScript(()=>{
@@ -56,7 +57,7 @@ test('sin compartir descarga; permiso revocado no pierde el archivo',async({page
 test('la carpeta se recuerda localmente y los nombres no se repiten',async({playwright},testInfo)=>{
  // La carpeta pertenece a un perfil de navegador: probar persistencia fuera del
  // contexto de incógnito de Playwright, con un perfil aislado y datos inventados.
- const context=await playwright.chromium.launchPersistentContext(testInfo.outputPath('profile'),{headless:true,channel:process.platform==='win32'?'msedge':'chromium',viewport:{width:400,height:880}});
+ const context=await playwright.chromium.launchPersistentContext(testInfo.outputPath('profile'),{headless:true,channel:fullChannel,viewport:{width:400,height:880}});
  const page=await context.newPage();
  try{
  await prepareExports(page);
