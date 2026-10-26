@@ -1741,6 +1741,13 @@ button.bday-group-tag{cursor:pointer;min-height:44px;text-align:left}
 .ev-week-hdr div{text-align:center;font-size:.55rem;color:var(--text-dim);text-transform:uppercase;padding:2px 0 3px;font-weight:600;line-height:1}
 /* Contenedor semana: barras multi-día ENCIMA (position:absolute) de las celdas */
 .ev-week-outer{margin-bottom:3px;position:relative;isolation:isolate}
+/* Un contorno para hoy y lo pendiente, incluidos los días del mes vecino.
+   Las semanas solo aportan el borde exterior; el escalón enlaza con hoy. */
+.ev-pending-outline{position:absolute;top:-1.5px;bottom:-1.5px;left:calc(var(--ev-pending-from) * (100% + 2px) / 7);right:0;border:2px solid var(--calendar-tone);border-top:0;border-bottom:0;pointer-events:none;z-index:6}
+.ev-pending-start{top:0;border-top:2px solid var(--calendar-tone);border-radius:6px 6px 0 0}
+.ev-pending-end{bottom:0;border-bottom:2px solid var(--calendar-tone);border-radius:0 0 6px 6px}
+.ev-pending-start.ev-pending-end{border-radius:6px}
+.ev-pending-step::before{content:"";position:absolute;left:-2px;top:0;width:calc(var(--ev-pending-step) * (100% + 6px) / 7 + 2px);border-top:2px solid var(--calendar-tone)}
 /* Barras multi-día: 65% de la celda, centradas verticalmente, encima de números */
 .ev-bars-row{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;position:absolute;top:19px;left:0;right:0;bottom:4px;z-index:3;pointer-events:none;grid-auto-rows:1fr;align-items:center}
 /* La geometria de las barras se calcula por tramo en _evBarSegmentStyle:
@@ -3237,7 +3244,7 @@ details[open]>summary{margin-bottom:10px}
 .ev-month-wrap .ev-cell.ev-day-festivo{box-shadow:inset 0 3px var(--festivo)}
 .ev-month-wrap .ev-cell.ev-day-vacaciones{box-shadow:inset 0 3px var(--vacaciones)}
 .ev-month-wrap .ev-cell.ev-day-ausencia{box-shadow:inset 0 3px var(--ausencia)}
-.ev-month-wrap .ev-cell.today-ev{outline:2.5px solid var(--calendar-tone);outline-offset:-2.5px}
+.ev-month-wrap:not(.ev-month-current) .ev-cell.today-ev{outline:2.5px solid var(--calendar-tone);outline-offset:-2.5px}
 .ev-month-wrap .ev-cell.today-ev .ev-num{width:18px;height:13px;font-size:.65rem;margin-top:-3px;margin-bottom:3px;justify-content:center;border-radius:5px;background:var(--calendar-tone);color:#fff;font-weight:700}
 .ev-month-wrap .ev-cell:active{outline:2px solid var(--calendar-tone);outline-offset:-2px}
 .ev-month-wrap .ev-week-hdr div{font-size:.6rem;letter-spacing:.06em;padding:6px 0;color:var(--text-muted)}

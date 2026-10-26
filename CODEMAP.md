@@ -212,10 +212,10 @@
 
 **Funciones:** refreshCalendarDate:8 · initCalendarDateRefresh:14 · resume:16 · _switchEvView:28 · openEvents:46 · closeEvents:56 · openEventsAt:63 · refreshEvents:70 · bindEvYearHeader:91 · setYear:95 · bindEvEvents:108 · _bindEvNav:117 (!202) · _scrollWeekToMonth:126 · _scrollWeekToToday:173 · doScroll:183 · _bindEvCal:319 (!93) · evLayoutWeekTitles:412 · _bindEvWeekTitleBackground:434 · update:440 · schedule:441 · evFilterCategories:446 · evFilterCategoryFor:455 · evListFilterLabel:456 · evListFilterMatches:464 · evToggleListFilter:470 · openEvTypeFilter:482 · isSelected:484 · option:485 · close:494 · paint:497 · _bindEvListas:501 (!122) · apply:611 · _bindEvGestos:623 · _evSwipeUpcoming:636 · _evSwipeBodas:643 · _evSwipeRutinas:650
 
-### js/events-cal.js  _(372 líneas)_
-**Estado global:** DN7:25
+### js/events-cal.js  _(384 líneas)_
+**Estado global:** DN7:26
 
-**Funciones:** _renderEvCalMonth:14 (!165) · _renderEvMonthCard:179 (!161) · _renderEvAnnual:340 · _renderEvQuad:349 · renderEvCalMonth:369 · renderEvAnnual:370 · renderEvQuad:371
+**Funciones:** _renderEvCalMonth:14 (!167) · _renderEvMonthCard:181 (!161) · _renderEvAnnual:342 · _renderEvQuad:351 · _evMonthRemainingOutline:373 · renderEvCalMonth:381 · renderEvAnnual:382 · renderEvQuad:383
 
 ### js/events-calendar-export.js  _(230 líneas)_
 **Estado global:** EV_CAL_EXPORT:3 · EV_ICS_KEY:4 · EV_ICS_UPPER_KEY:5 · EV_ICS_NOTES_KEY:6 · EV_ICS_AUTHOR_KEY:7
@@ -643,7 +643,7 @@
 **Rangos por prefijo de clase:**
 .bd-alarm:26-78 · .bd-detail:97-104 · .bday-hdr:6-6 · .bday-upcoming:24-24 · .bday-vip:23-23 · .ev-alarm:49-55 · .ev-hdr:7-7 · .ev-upcoming:29-32 · .macro-section:81-82 · .macro-url:83-85 · .nav-bar:3-95 · .overlay-nav:2-4 · .sy-puente:14-21 · .sy-tab:9-12
 
-### css/source/event-panels.css  _(417 líneas)_
+### css/source/event-panels.css  _(424 líneas)_
 
 **Secciones:**
 
@@ -652,36 +652,36 @@
 - Zone B: calendar grid views — subtle teal tint, active = green:10
 - Feat 2: Lista de Eventos subtabs:13
 - Contenedor semana: barras multi-día ENCIMA (position:absolute) de las celdas:30
-- Barras multi-día: 65% de la celda, centradas verticalmente, encima de números:32
-- Si hay columna de marcadores en la esquina, la fila se queda a su izquierda:44
-- Marcadores desbordados: SEGUNDA COLUMNA (uno debajo de otro), no en fila:48
-- Carrusel del dia (estrellas VIP / "+" del calendario de 1 mes):54
-- El aspecto base precede a .ev-btn; la geometría final va después de su base.:63
-- Rutinas en anual y 4 meses: puntitos en fila arriba del dia:70
-- Conservar espacio cuando la pila está llena.:79
-- Los cumpleaños VIP se solapan al 75% (12px de marcador -> -9px):82
-- Sin z-index propio para no crear stacking context — permite que ev-badge (z-index:4) quede encima de ev-bars-row (z-index:3):130
-- Perímetro puente: capa inferior a eventos:132
-- Bright past: bombilla override:152
-- Bombilla en Anual/Quad — mismo estilo que la pequeña inline del 1-mes/Semanal:159
-- Bombilla en 1-mes y agenda semanal: posicionada en el centro entre el ▶ y "Hoy":164
-- Quad label 3 lines:167
-- ev-num con altura fija para alinear perfectamente todos los números de la misma semana:174
-- ev-badge: z-index:4 > ev-bars-row z-index:3 → los badges 1-día quedan encima de barras multi-día:176
-- Events list view:178
-- Event form overlay (inside eventsOverlay):192
-- Flechas de carrusel: mantener el padding, fuente y borde heredados de .ev-btn.:216
-- Relleno, para que haga pareja con el naranja de "Editar evento":224
-- Event detail:230
-- El color del título depende de la familia; el símbolo conserva su identidad.:238
-- Fichas de consulta: jerarquía común, datos legibles y controles discretos.:246
-- Consulta compacta: fecha y estado comparten fila; el carrusel no cambia de alto.:283
-- Formulario de evento: marco fijo, texto a la izquierda y agenda a la derecha.:332
-- Solo el contenido de la ficha acompaña el dedo.:372
-- Las etiquetas comparten la línea de Título/Notas; solo el dato ocupa la tarjeta.:381
+- Barras multi-día: 65% de la celda, centradas verticalmente, encima de números:39
+- Si hay columna de marcadores en la esquina, la fila se queda a su izquierda:51
+- Marcadores desbordados: SEGUNDA COLUMNA (uno debajo de otro), no en fila:55
+- Carrusel del dia (estrellas VIP / "+" del calendario de 1 mes):61
+- El aspecto base precede a .ev-btn; la geometría final va después de su base.:70
+- Rutinas en anual y 4 meses: puntitos en fila arriba del dia:77
+- Conservar espacio cuando la pila está llena.:86
+- Los cumpleaños VIP se solapan al 75% (12px de marcador -> -9px):89
+- Sin z-index propio para no crear stacking context — permite que ev-badge (z-index:4) quede encima de ev-bars-row (z-index:3):137
+- Perímetro puente: capa inferior a eventos:139
+- Bright past: bombilla override:159
+- Bombilla en Anual/Quad — mismo estilo que la pequeña inline del 1-mes/Semanal:166
+- Bombilla en 1-mes y agenda semanal: posicionada en el centro entre el ▶ y "Hoy":171
+- Quad label 3 lines:174
+- ev-num con altura fija para alinear perfectamente todos los números de la misma semana:181
+- ev-badge: z-index:4 > ev-bars-row z-index:3 → los badges 1-día quedan encima de barras multi-día:183
+- Events list view:185
+- Event form overlay (inside eventsOverlay):199
+- Flechas de carrusel: mantener el padding, fuente y borde heredados de .ev-btn.:223
+- Relleno, para que haga pareja con el naranja de "Editar evento":231
+- Event detail:237
+- El color del título depende de la familia; el símbolo conserva su identidad.:245
+- Fichas de consulta: jerarquía común, datos legibles y controles discretos.:253
+- Consulta compacta: fecha y estado comparten fila; el carrusel no cambia de alto.:290
+- Formulario de evento: marco fijo, texto a la izquierda y agenda a la derecha.:339
+- Solo el contenido de la ficha acompaña el dedo.:379
+- Las etiquetas comparten la línea de Título/Notas; solo el dato ocupa la tarjeta.:388
 
 **Rangos por prefijo de clase:**
-.data-btn:2-2 · .ev-alarm:414-414 · .ev-ann:75-77 · .ev-annual:129-151 · .ev-badge:177-177 · .ev-badges:40-40 · .ev-bar:111-111 · .ev-bars:33-33 · .ev-bright:124-166 · .ev-btn:215-226 · .ev-car:55-390 · .ev-category:385-388 · .ev-cell:137-173 · .ev-char:204-204 · .ev-checkbox:209-209 · .ev-chip:92-92 · .ev-colors:205-205 · .ev-date:206-206 · .ev-day:43-102 · .ev-delete:391-391 · .ev-detail:231-392 · .ev-edit:220-221 · .ev-event:334-340 · .ev-field:198-199 · .ev-fixed:341-347 · .ev-form:193-370 · .ev-hdr:3-5 · .ev-input:200-201 · .ev-io:228-229 · .ev-kind:389-389 · .ev-large:318-325 · .ev-list:14-191 · .ev-main:6-6 · .ev-management:266-268 · .ev-month:22-123 · .ev-multi:37-145 · .ev-num:175-175 · .ev-otros:53-107 · .ev-part:154-154 · .ev-puente:133-133 · .ev-quad:168-169 · .ev-repeat:210-210 · .ev-routine:393-393 · .ev-rut:98-395 · .ev-schedule:363-384 · .ev-stepped:126-128 · .ev-textarea:202-203 · .ev-title:120-121 · .ev-toggle:207-208 · .ev-types:17-19 · .ev-view:4-8 · .ev-wd:212-213 · .ev-week:28-131 · .ev-weekday:211-211 · .rut-marker:94-97 · .rut-week:400-402 · .rut-wpick:403-407 · .swipe-content:398-398 · .sy-body:397-397
+.data-btn:2-2 · .ev-alarm:421-421 · .ev-ann:82-84 · .ev-annual:136-158 · .ev-badge:184-184 · .ev-badges:47-47 · .ev-bar:118-118 · .ev-bars:40-40 · .ev-bright:131-173 · .ev-btn:222-233 · .ev-car:62-397 · .ev-category:392-395 · .ev-cell:144-180 · .ev-char:211-211 · .ev-checkbox:216-216 · .ev-chip:99-99 · .ev-colors:212-212 · .ev-date:213-213 · .ev-day:50-109 · .ev-delete:398-398 · .ev-detail:238-399 · .ev-edit:227-228 · .ev-event:341-347 · .ev-field:205-206 · .ev-fixed:348-354 · .ev-form:200-377 · .ev-hdr:3-5 · .ev-input:207-208 · .ev-io:235-236 · .ev-kind:396-396 · .ev-large:325-332 · .ev-list:14-198 · .ev-main:6-6 · .ev-management:273-275 · .ev-month:22-130 · .ev-multi:44-152 · .ev-num:182-182 · .ev-otros:60-114 · .ev-part:161-161 · .ev-pending:34-38 · .ev-puente:140-140 · .ev-quad:175-176 · .ev-repeat:217-217 · .ev-routine:400-400 · .ev-rut:105-402 · .ev-schedule:370-391 · .ev-stepped:133-135 · .ev-textarea:209-210 · .ev-title:127-128 · .ev-toggle:214-215 · .ev-types:17-19 · .ev-view:4-8 · .ev-wd:219-220 · .ev-week:28-138 · .ev-weekday:218-218 · .rut-marker:101-104 · .rut-week:407-409 · .rut-wpick:410-414 · .swipe-content:405-405 · .sy-body:404-404
 
 ### css/source/dialogs-responsive.css  _(159 líneas)_
 

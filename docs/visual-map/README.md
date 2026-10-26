@@ -197,3 +197,10 @@ de horas de referencia anterior; el orden del selector es independiente.
 y un viaje que cruza el cambio de mes con otra barra fina. El título aprovecha
 el ancho de la semana y el fragmento pequeño deja de mostrar abreviaturas
 innecesarias. Se llega desde `calendar` con la flecha de mes siguiente.
+
+### Días pendientes v507
+
+`calendar` muestra el contorno verde conjunto desde el día ficticio actual
+(21 de agosto) hasta el 6 de septiembre, última casilla visible. Incluye el
+escalón entre semanas y conserva la identificación de hoy. Al cambiar de mes
+desaparece; los selectores de rutinas mantienen su presentación anterior.

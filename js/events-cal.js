@@ -11,8 +11,9 @@
    ============================================================ */
 
 /* ── Render: calendario mensual ─────────────────────────── */
-function _renderEvCalMonth(){
+function _renderEvCalMonth(opts){
   var today=new Date();today.setHours(0,0,0,0);
+  var remaining=(!opts||opts.remaining!==false)&&EV_YEAR===today.getFullYear()&&EV_MONTH===today.getMonth();
   var puenteMap={};
   if(typeof computePuentes==='function'){
     computePuentes(EV_YEAR).puentes.forEach(function(seq){
@@ -25,7 +26,7 @@ function _renderEvCalMonth(){
   var DN7=['L','M','X','J','V','S','D'];
   /* Contenedor propio: evita el gap:16px de .sy-body entre semanas (así caben
      las 6 semanas de meses como agosto 2026) y acota el sticky de la cabecera */
-  var h='<div class="ev-month-wrap">';
+  var h='<div class="ev-month-wrap'+(remaining?' ev-month-current':'')+'">';
   h+='<div class="ev-week-hdr">';
   DN7.forEach(function(n,i){var current=EV_YEAR===today.getFullYear()&&EV_MONTH===today.getMonth()&&i===(today.getDay()+6)%7;h+='<div><span'+(current?' class="ev-current-weekday" aria-label="Día de la semana actual"':'')+'>'+n+'</span></div>';});
   h+='</div>';
@@ -169,6 +170,7 @@ function _renderEvCalMonth(){
       });
       h+='</div>';
     }
+    if(remaining)h+=_evMonthRemainingOutline(wk,today,last);
     h+='</div>'; // ev-week-outer
     cur.setDate(cur.getDate()+7);
   }
@@ -366,6 +368,16 @@ function _renderEvQuad(){
   return h+'</div>';
 }
 
-function renderEvCalMonth(){return withEventDateIndex(new Date(EV_YEAR,EV_MONTH, -6),new Date(EV_YEAR,EV_MONTH+1,7),_renderEvCalMonth);}
+/* Los laterales enlazan por el centro del hueco entre semanas: un solo
+   perímetro, sin líneas interiores ni medidas del DOM. */
+function _evMonthRemainingOutline(week,today,last){
+  if(week[6]<today)return '';
+  var starts=week[0]<=today,ends=week[6]>=last;
+  var column=(today.getDay()+6)%7;
+  var since=Math.round((week[0]-today)/86400000);
+  var step=since>0&&since<7?column:0;
+  return '<div aria-hidden="true" class="ev-pending-outline'+(starts?' ev-pending-start':'')+(ends?' ev-pending-end':'')+(step?' ev-pending-step':'')+'" style="--ev-pending-from:'+(starts?column:0)+';--ev-pending-step:'+step+'"></div>';
+}
+function renderEvCalMonth(opts){return withEventDateIndex(new Date(EV_YEAR,EV_MONTH, -6),new Date(EV_YEAR,EV_MONTH+1,7),function(){return _renderEvCalMonth(opts);});}
 function renderEvAnnual(){return withEventDateIndex(new Date(EV_YEAR,0,1),new Date(EV_YEAR,11,31),_renderEvAnnual);}
 function renderEvQuad(){return withEventDateIndex(new Date(EV_QUAD_YEAR,EV_QUAD_MONTH,1),new Date(EV_QUAD_YEAR,EV_QUAD_MONTH+4,0),_renderEvQuad);}

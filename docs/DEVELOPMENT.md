@@ -1149,3 +1149,23 @@ tramo aislado, corte fuera del mes visible y contraste pasado/bombilla; medidas
 y capturas en Edge a 320/400/440 px, incluyendo apertura desde el texto. Se revisan
 y actualizan solo las tres referencias mensuales afectadas. El atlas añade una
 captura de septiembre con estos casos; no incorpora la imagen privada del usuario.
+
+## Días pendientes del mes actual (v507)
+
+El calendario de un mes agrupa hoy y todos los días visibles posteriores con
+un contorno verde, incluidos los del mes siguiente. Solo se muestra al consultar
+el mes y año actuales. El fondo y el número de hoy permanecen; su recuadro
+individual da paso al contorno conjunto. No cambia las fechas ni los eventos.
+
+`_evMonthRemainingOutline` aporta los bordes exteriores de cada semana y un
+escalón tras la primera semana parcial. Los laterales se unen en el centro del
+hueco entre semanas, sin líneas horizontales interiores. Cada pieza se adapta
+a la altura real de su semana mediante CSS, sin medir el DOM ni usar observadores.
+La capa es decorativa y no intercepta pulsaciones. El render sigue siendo puro
+y el mismo HTML acompaña las previsualizaciones de swipe.
+
+Los dos selectores de rutinas que reutilizan el calendario pasan
+`{remaining:false}` para conservar su presentación. No hay estado ni claves de
+almacenamiento nuevos. Se revisan las dos referencias HTML mensuales afectadas,
+el atlas y capturas de Edge a 320/400/440 px: bloque final del 26/10 al 1/11,
+inicio a mitad de semana, cambio de mes/año, cambio horario y malla sin saltos.
