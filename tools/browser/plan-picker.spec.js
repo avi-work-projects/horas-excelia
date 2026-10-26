@@ -1,7 +1,7 @@
 const {test,expect}=require('@playwright/test');
 test('planes: cuatro accesos, selección provisional, confirmar fijo y persistencia',async({page})=>{
   await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));
-  await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await page.locator('#evAdd').click();
+  await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await page.locator('#evViewUpcoming').click();await page.locator('#evAdd').click();
   const quick=page.locator('[data-quick=plans]>button');await expect(quick).toHaveCount(4);
   expect(await quick.allTextContents()).toEqual(['Comida','Tomar Algo','Cena','Más Opciones']);
   await page.locator('#evFTypePicker [data-type="Cena"]').click();
@@ -27,7 +27,7 @@ test('planes: cuatro accesos, selección provisional, confirmar fijo y persisten
 
 test('nuevos planes: símbolos y selección en móvil',async({page},info)=>{
  await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-theme-v1','light');localStorage.setItem('excelia-nav-icons-v1','professional');});
- await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evAdd').click();
+ await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await page.locator('#evAdd').click();
  for(const width of [320,400]){
   await page.setViewportSize({width,height:880});await page.locator('[data-picker=plans]').click();
   for(const type of ['Carrera','Merendar','Plan cultural'])await expect(page.locator('#evPlanPickerOv [data-type="'+type+'"] svg')).toBeVisible();

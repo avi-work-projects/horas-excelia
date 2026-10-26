@@ -1,7 +1,7 @@
 const {test,expect}=require('@playwright/test');const {chooseTime}=require('./time-picker-helper');
 test.beforeEach(async({page})=>{
  await page.clock.setFixedTime(new Date('2026-10-14T12:00:00+02:00'));await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-theme-v1','light');localStorage.setItem('excelia-nav-icons-v1','professional');});
- await page.goto('/');await page.locator('#eventsBtn').click();await expect(page.locator('#eventsOverlay')).toHaveClass(/open/);await page.locator('#evAdd').click();
+ await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await expect(page.locator('#eventsOverlay')).toHaveClass(/open/);await page.locator('#evAdd').click();
 });
 async function selectDays(page,days){
  await page.locator('[data-ev-multiday]:not(:disabled)').click();await expect(page.locator('.dp-sheet')).toBeVisible();
@@ -19,7 +19,7 @@ test('Otros conserva días sueltos y horas; permite volver a un solo día al edi
  await page.locator('#evFTypePicker [data-type="Otros"]').click();await page.locator('#evFTitle').fill('Días de prueba');await chooseTime(page,'#evFTime','16:00');await chooseTime(page,'#evFEndTime','17:00');await selectDays(page,['2026-10-16','2026-10-20']);
  await expect(page.locator('[data-ev-multiday]:not(:disabled) small')).toHaveText('2 días');await expect(page.locator('#evFStart')).toBeDisabled();await expect(page.locator('#evFEnd')).toBeDisabled();await page.locator('.ev-event-form-body').evaluate(el=>el.scrollTop=0);await page.screenshot({path:info.outputPath('otros-multidia.png'),animations:'disabled'});await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);
  const saved=await page.evaluate(()=>({event:EVENTS[0],between:eventOccursOn(EVENTS[0],new Date('2026-10-17T12:00:00'))}));expect(saved.event).toMatchObject({type:'Otros',start:'2026-10-16',end:'2026-10-16',dates:['2026-10-16','2026-10-20'],time:'16:00',endTime:'17:00',repeat:null});expect(saved.between).toBe(false);
- await page.reload();await page.locator('#eventsBtn').click();await expect(page.locator('#eventsOverlay')).toHaveClass(/open/);await page.evaluate(()=>openEvForm(EVENTS[0]));await expect(page.locator('[data-ev-multiday]:not(:disabled) small')).toHaveText('2 días');await selectDays(page,['2026-10-20']);await expect(page.locator('[data-ev-multiday]:not(:disabled) small')).toHaveText('1 día');await expect(page.locator('#evFStart')).toBeEnabled();await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);
+ await page.reload();await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await expect(page.locator('#eventsOverlay')).toHaveClass(/open/);await page.evaluate(()=>openEvForm(EVENTS[0]));await expect(page.locator('[data-ev-multiday]:not(:disabled) small')).toHaveText('2 días');await selectDays(page,['2026-10-20']);await expect(page.locator('[data-ev-multiday]:not(:disabled) small')).toHaveText('1 día');await expect(page.locator('#evFStart')).toBeEnabled();await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);
  expect(await page.evaluate(()=>({start:EVENTS[0].start,end:EVENTS[0].end,dates:EVENTS[0].dates||null}))).toEqual({start:'2026-10-16',end:'2026-10-16',dates:null});
 });
 test('Cancelar no aplica días; cambiar de año conserva el marco y los días provisionales',async({page},info)=>{
