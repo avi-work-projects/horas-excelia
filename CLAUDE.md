@@ -24,6 +24,8 @@ Una tarea exclusivamente documental conserva las versiones y los archivos de la 
 - Los ajustes de subpestañas se acotan a su pantalla. No cambiar el sistema global para corregir Energía, Próximos o Rutinas.
 - En botones de pestaña, selección por fondo; conservar color de fuente y borde. Naranja suave solo para lápices sin texto.
 - Alta de eventos: clase/categoría primero; nombre, notas y horario al final. Al editar se conserva el bloque de datos arriba; ambos reutilizan renderEvFormLead sin duplicar controles.
+- Selector de planes ampliado: panel estable, tarjetas legibles y scroll interior al crecer el catálogo; sustituye la cuadrícula completa sin scroll de v471 desde v505.
+- Orden de planes: conservar tipos, posiciones y horas guardadas; los tipos nuevos se añaden al final sin referencia cuando hay preferencias. Todo renombre persistido necesita compatibilidad en lectura y validación (Baile → Salir a bailar mediante evPlanType).
 - Categoría de evento = kind + type. Usar getEvDisplayColor, evStartTime y evSortMarks; no duplicar su política en una vista.
 - No perder historial al editar rutinas. Horarios efectivos, extras, recuperaciones y pausas pasan por las funciones compartidas del dominio.
 - Datos personales, facturas y backups nunca son fixtures ni se publican. Alarmas solo por MacroDroid, con configuración local.

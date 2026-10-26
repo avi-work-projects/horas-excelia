@@ -1,7 +1,7 @@
 # Mapa visual de Gestify
 
-Atlas ampliado el 24/10/2026 tras aprobar Ángel el piloto: **170 capturas,
-175 relaciones y 13 áreas**, repartidas en láminas legibles.
+Atlas ampliado el 24/10/2026 tras aprobar Ángel el piloto: **171 capturas,
+176 relaciones y 13 áreas**, repartidas en láminas legibles.
 
 ```sh
 npm ci
@@ -181,3 +181,11 @@ Ambas son capturas del mismo formulario, con cabecera y Guardar fijos.
 Próximos, Wedding Moves y Rutinas comparten `EV_SWIPE_ORDER` entre controladores
 y previsualización. El refactor mantiene orden, límites, fechas y filtros;
 el catálogo declara la dependencia de `swipe-render.js` desde Eventos.
+
+
+### Catálogo de planes v505
+
+`plan-picker-new-plans` muestra Fiesta, Plan exterior, Navidad, Torneo y Fútbol
+al final de Más Opciones; se llega desde `plan-picker` mediante su flecha de
+scroll. Salir a bailar conserva la identidad compatible con Baile y el orden
+de horas de referencia anterior; el orden del selector es independiente.

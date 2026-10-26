@@ -1,0 +1,30 @@
+const assert=require('node:assert/strict'),{cargarApp}=require('./entorno');
+const a=cargarApp({}),added=['Fiesta','Plan exterior','Navidad','Torneo','Fútbol'];
+const oldTypes=['Cena','Baile','Comida',...Object.keys(a.EV_PLAN_SUBTYPES).filter(t=>!added.includes(t)&&!['Cena','Salir a bailar','Comida'].includes(t))];
+const oldRows=oldTypes.map((type,i)=>({type,time:i===0?'07:20':i===1?'10:35':i===2?null:'19:45'}));
+const raw=JSON.stringify(oldRows);a.appStorage.setItem(a.EV_PLAN_ORDER_KEY,raw);
+const expected=oldRows.map(row=>({...row,type:row.type==='Baile'?'Salir a bailar':row.type}));
+const data=JSON.parse(JSON.stringify(a.evPlanOrderData()));
+assert.deepEqual(data.slice(0,oldRows.length).map(({type,time})=>({type,time})),expected);
+assert.deepEqual(data.slice(oldRows.length).map(({type,time})=>({type,time})),added.map(type=>({type,time:null})));
+assert.equal(a.appStorage.getItem(a.EV_PLAN_ORDER_KEY),raw);
+assert.equal(a.evPlanReferenceTime('Baile'),'10:35');assert.equal(a.evPlanReferenceTime('Salir a bailar'),'10:35');
+assert(a.evCompareOrder({type:'Baile'},{type:'Comida'})<0);
+a.evPlanOrderData()[0].time='00:01';assert.equal(a.evPlanOrderData()[0].time,'07:20');
+for(const type of added){
+ assert(a.evIsPlan(type));assert(a.EV_KINDS.puntual.types.includes(type));assert(a.EV_PICKER_GROUPS.plans.types.includes(type));
+ assert(a.evFixedSymbol(type));assert.equal(a.evDefaultShape({kind:'puntual',type}),a.evFixedSymbol(type));assert.match(a.evShapeSvg(a.evFixedSymbol(type)),/<(path|circle)/);
+ assert.equal(a.evPlanReferenceTime(type),null);
+ assert.equal(a.evStartTime({type}),null);
+}
+const oldEvent={id:'dance-old',type:'Baile',kind:'puntual',title:'Nombre personalizado',start:'2026-08-22',end:'2026-08-22',time:'20:30',color:'#e03131',note:'Conservar'};
+const before=JSON.stringify(oldEvent);assert.equal(a.getEvType(oldEvent),'Salir a bailar');assert.equal(JSON.stringify(oldEvent),before);
+assert.equal(a.getEvType({type:'Otros',kind:'puntual',shape:'baile'}),'Salir a bailar');
+assert.equal(a.evFixedSymbol('Baile'),a.evFixedSymbol('Salir a bailar'));assert.equal(a.evTypeColor('puntual','Baile'),'#e03131');
+assert.match(a.renderEvForm(oldEvent),/data-cur-type="Salir a bailar"/);assert(a.renderEvPlanOptions('Salir a bailar').includes('data-type="Salir a bailar"'));
+const backup={events:[oldEvent],planOrder:oldRows};assert.doesNotThrow(()=>a.validateImport(backup));assert.equal(JSON.stringify(backup.events[0]),before);
+assert.deepEqual(JSON.parse(JSON.stringify(a.validateEvPlanOrder(oldRows))).map(({type,time})=>({type,time})),expected);
+assert.throws(()=>a.validateEvPlanOrder([{type:'Baile',time:'10:00'},{type:'Salir a bailar',time:'11:00'}]),/horas/);
+assert.throws(()=>a.validateEvPlanOrder([{type:'Cena',time:'12:00'},{type:'Comida',time:'11:00'}]),/horas/);
+assert.notEqual(a.evFixedSymbol('Fiesta'),a.evFixedSymbol('Salir de fiesta'));assert.notEqual(a.evFixedSymbol('Fútbol'),a.evFixedSymbol('Ver partido fútbol'));
+console.log('Planes: catálogo, alias Baile, preferencias intactas, altas al final sin hora y backup anterior OK');

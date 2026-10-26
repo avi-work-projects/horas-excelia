@@ -334,7 +334,7 @@
 .ev-detail-overlay.ev-plan-overlay{position:fixed;z-index:20000;justify-content:center}
 .ev-plan-sheet{display:flex;flex-direction:column;max-width:600px;max-height:85dvh;padding:0;overflow:hidden}
 .ev-plan-sheet[data-picker-kind="plans"]{height:min(680px,90dvh);max-height:90dvh}
-.ev-plan-sheet[data-picker-kind="plans"] .ev-plan-options{flex:1;grid-auto-rows:minmax(0,1fr);gap:6px;padding:4px 14px 14px}
+.ev-plan-sheet[data-picker-kind="plans"] .ev-plan-options{flex:1;grid-auto-rows:minmax(86px,1fr);gap:6px;padding:4px 14px 14px}
 .ev-plan-sheet[data-picker-kind="plans"] .ev-plan-option>.ev-color-swatch{min-height:0;padding:6px 2px;gap:5px}
 @media(max-width:360px){.ev-plan-sheet[data-picker-kind="plans"] .ev-type-name{font-size:.64rem;overflow-wrap:normal}}
 .ev-plan-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;flex-shrink:0}

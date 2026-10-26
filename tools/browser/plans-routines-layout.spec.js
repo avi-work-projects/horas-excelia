@@ -46,15 +46,15 @@ test('arrastre cancelado y teclado mantienen el borrador y Guardar explícito',a
  await grip.focus();await page.keyboard.press('ArrowUp');expect(await page.locator('.ev-order-row').first().getAttribute('data-order-type')).toBe('Desayunar');expect(await page.evaluate(()=>appStorage.getItem(EV_PLAN_ORDER_KEY))).toBeNull();
  await page.locator('#evOrderClose').click();await expect(page.locator('#evPlanOrderWrap')).toHaveCount(0);await page.locator('#evUpcomingOrder').click();expect(await page.locator('.ev-order-row').first().getAttribute('data-order-type')).toBe('Montaña');
 });
-test('planes completos de un vistazo: barbacoa cuarta, tostadas en segunda fila y actividades sin marco',async({page},info)=>{
+test('planes ampliados: orden visual, scroll interior y actividades sin marco',async({page},info)=>{
  await page.locator('#evAdd').click();
  for(const width of [320,400,440]){
   await page.setViewportSize({width,height:800});await page.locator('[data-picker="plans"]').click();
   expect((await page.locator('.ev-plan-options [data-type]').evaluateAll(els=>els.map(el=>el.dataset.type))).slice(0,8)).toEqual(['Comida','Tomar algo','Cena','Barbacoa','Desayunar','Brunch','Merendar','Cumpleaños']);
-  expect(await page.locator('.ev-plan-options [data-type]').evaluateAll(es=>[es[11].dataset.type,es[15].dataset.type,es[22].dataset.type])).toEqual(['Baile','Cine','Ping pong']);
-  for(const type of ['Salir a Correr','Pádel','Baile'])await expect(page.locator('#evPlanPickerOv [data-type="'+type+'"]')).toBeInViewport();
-  expect(await page.locator('.ev-plan-options').evaluate(el=>el.scrollHeight-el.clientHeight)).toBeLessThanOrEqual(1);
-  for(const type of ['Pádel','Baile'])await expect(page.locator('#evPlanPickerOv [data-type="'+type+'"] svg>rect[fill="#fff"]')).toHaveCount(0);
+  expect(await page.locator('.ev-plan-options [data-type]').evaluateAll(es=>[es[11].dataset.type,es[15].dataset.type,es[22].dataset.type])).toEqual(['Salir a bailar','Cine','Ping pong']);
+  for(const type of ['Salir a Correr','Pádel','Salir a bailar']){const option=page.locator('#evPlanPickerOv [data-type="'+type+'"]');await option.scrollIntoViewIfNeeded();await expect(option).toBeInViewport();expect((await option.boundingBox()).height).toBeGreaterThanOrEqual(80);}
+  expect(await page.locator('.ev-plan-options').evaluate(el=>el.scrollHeight-el.clientHeight)).toBeGreaterThan(1);await expect(page.locator('#evPlanConfirm')).toBeInViewport();
+  for(const type of ['Pádel','Salir a bailar'])await expect(page.locator('#evPlanPickerOv [data-type="'+type+'"] svg>rect[fill="#fff"]')).toHaveCount(0);
   await page.screenshot({path:info.outputPath('planes-'+width+'.png'),animations:'disabled'});await page.locator('#evPlanCancel').click();await expect(page.locator('#evPlanPickerWrap')).toHaveCount(0);
  }
  const group=page.locator('.ev-routines-active');await group.scrollIntoViewIfNeeded();expect((await group.boundingBox()).height).toBeLessThan(120);await page.screenshot({path:info.outputPath('rutinas-compactas.png'),animations:'disabled'});

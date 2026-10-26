@@ -208,7 +208,7 @@ function bindEvFormEvents(){
   var form={root:root,edit:edit,day:EV_EDIT_DS,autoTitle:edit?null:'',quickExtras:{},
     colorPicker:_bindColorPicker(root,'evFCp',function(){_evFormShapePreviews(form);}),shape:edit&&edit.shape||'circle',
     dates:edit&&Array.isArray(edit.dates)?edit.dates.slice():[],multiChanged:false,barSize:edit&&edit.barSize||null};
-  Object.keys(EV_PICKER_GROUPS).forEach(function(k){if(edit&&evQuickSelection(edit.type,EV_PICKER_GROUPS[k]))form.quickExtras[k]=edit.type;});
+  Object.keys(EV_PICKER_GROUPS).forEach(function(k){if(edit&&evQuickSelection(getEvType(edit),EV_PICKER_GROUPS[k]))form.quickExtras[k]=getEvType(edit);});
   evFormRenderTypes(form,_evFormKind(form),root.querySelector('.ev-kind-picker').dataset.curType);
   bindEvTaxFields(form);_bindEvFormCategories(form);_bindEvFormAppearance(form);
   bindEvFormSchedule(form);_bindEvFormDetails(form);_bindEvFormActions(form);

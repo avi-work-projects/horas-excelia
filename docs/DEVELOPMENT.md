@@ -561,7 +561,7 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 ## Planes, prioridades y calendarios estables (v471)
 - Próximos Cumpleaños alinea VIP a la izquierda, Añadir al centro de la pantalla y configuración a la derecha. La configuración usa el acento de Próximos sin recuadro. Eventos vuelve desde la cabecera.
 - El orden de planes comparte `bindListReorder` con Mis Tareas: arrastre con ratón y táctil, cancelación, auto-scroll y flechas del teclado. Arrastre y botones ajustan la hora de referencia del plan movido al intervalo de sus vecinos; el listado siempre conserva el orden horario. Guardar confirma el borrador; salir lo descarta. Las horas reales siguen mandando en eventos, agenda y recordatorios. Este criterio sustituye el bloqueo anterior al reordenar horas diferentes.
-- El selector muestra Barbacoa cuarta y Desayunar primero en la segunda fila, con tostadas. Los planes de Pádel y Baile usan símbolos propios sin marco; las rutinas conservan el marco blanco. La cuadrícula reserva espacio para todas las opciones y las rutinas activas usan tarjetas compactas.
+- El selector muestra Barbacoa cuarta y Desayunar primero en la segunda fila, con tostadas. Los planes de Pádel y Baile usan símbolos propios sin marco; las rutinas conservan el marco blanco. La cuadrícula reservaba espacio para todas las opciones; al pasar a 29 en v505 conserva el tamaño de tarjeta con scroll interior. Las rutinas activas siguen usando tarjetas compactas.
 - Otros puntual arranca con amarillo claro. La paleta, el selector nativo y el hexadecimal actualizan las formas y el símbolo seleccionado mediante el callback compartido del selector de color. Los colores ya guardados se conservan al editar.
 - Todas las rutinas, fijas y flexibles, ofrecen Añadir Clase Extra junto a Consultar Histórico. El selector de día mantiene su marco, seis filas semanales y Confirmar visible al cambiar de mes con flechas o swipe; solo se repinta el calendario interior. Mis Datos mantiene los tres atajos con texto en negrita.
 - `tools/browser/plans-routines-layout.spec.js` cubre geometría móvil, arrastre y persistencia, cancelación, teclado, colores, alta de extras, recuperación y estabilidad de meses de cuatro, cinco y seis semanas. Revisión visual en Edge oculto con tema claro e iconos profesionales.
@@ -1094,3 +1094,33 @@ interno de los campos puede diferir del que se obtiene al recargar el JSON. La
 comparación del índice usa igualdad estructural (conserva orden de arrays e ignora
 solo fecha/commit globales), para no reescribir contenido idéntico por el orden de
 las propiedades. Una huella, revisión o flecha distinta sigue actualizando el índice.
+
+
+## Planes nuevos y compatibilidad del orden (v505)
+
+Se incorporan Fiesta, Plan exterior, Navidad (abeto decorado), Torneo (copa) y
+Fútbol (balón independiente de Ver partido fútbol), con el mismo sistema SVG
+que los demás planes. Baile pasa a Salir a bailar en el catálogo de planes.
+`evPlanType` reconoce el nombre anterior en eventos, colores, símbolos y
+preferencias de orden. No modifica títulos personalizados ni los nombres de rutinas.
+
+Al añadir categorías, `evPlanOrderData` conserva primero las filas guardadas,
+con sus referencias y posiciones; los tipos nuevos se añaden al final sin hora
+si ya existen preferencias. El catálogo visual de Más Opciones es independiente
+de ese orden personal. `validateEvPlanOrder` normaliza el alias antes de validar
+para evitar que el nombre antiguo invalide la configuración completa; sigue
+rechazando duplicados canónicos y horas inválidas/decrecientes. Leer el orden no
+reescribe localStorage, y los backups anteriores siguen admitidos.
+
+La comprobación cubre el catálogo completo, configuración antigua con Baile,
+referencias nulas, lectura sin escrituras, representación heredada e importación;
+en Edge a 320/400/440 px se comprueban las opciones, guardar/recargar y el panel
+de referencias. El atlas añade una escena al final del selector para mostrar
+los cinco planes nuevos y declara sus dependencias de catálogo y orden.
+
+
+Cambio de criterio comunicado en v505: la vista completa sin scroll de v471
+correspondía al catálogo anterior. Con 29 opciones se conserva el panel fijo y
+las tarjetas de al menos 86 px; el exceso se resuelve en `.ev-plan-options`,
+sin encoger iconos/textos ni mover la cabecera o Confirmar. La prueba antigua
+se actualiza a ese contrato, manteniendo posiciones iniciales y símbolos.
