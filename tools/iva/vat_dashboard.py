@@ -63,6 +63,7 @@ def render(index, report, ledger, quarter, section):
     tabs = ''.join(f'<a href="{link(quarter,key)}" {"aria-current=step" if key==section else ""}>{n}. {title}</a>'
                    for n,key,title in [(1,'documentos','Documentos'),(2,'revision','Revisión'),(3,'archivos','Archivos')])
     tabs += f'<a href="{link(quarter,"anual")}" {"aria-current=page" if section=="anual" else ""}>Anual · 390</a>'
+    tabs += f'<a href="{BASE}/cierre?periodo={quarter}">4. Cierre de ensayo</a>'
     if section == 'documentos':
         rows = [r for r in ledger['records'] if r['period'] == quarter]
         cards = ''.join(f'<article><strong>{e(r["number"])}</strong><p>{e(r["party"])}</p><p>{"Ingreso" if r["kind"]=="income" else "Gasto"} · {e(r["date"])} · {e(euro(r["total"]))}</p><span class="badge">{"Incorporado al cálculo" if r["include"] else "Excluido / pendiente"}</span><details><summary>Documento de origen</summary><p class="path">{e(r["source"])}</p><p>{e(r.get("note", ""))}</p></details></article>' for r in rows)
