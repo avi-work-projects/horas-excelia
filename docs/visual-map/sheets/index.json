@@ -97,6 +97,7 @@
     "scenes": [
       "timeoff",
       "bridges",
+      "calendar-bar-titles",
       "agenda",
       "all-events",
       "event-stats",
@@ -104,8 +105,7 @@
       "event-filter",
       "event-order",
       "events--scroll-event-new",
-      "event-new",
-      "event-new-details"
+      "event-new"
     ]
   },
   {
@@ -113,7 +113,8 @@
     "title": "Eventos · 3/3",
     "image": "sheets/area-3-2.png",
     "scenes": [
-      "all-events",
+      "event-new",
+      "event-new-details",
       "event-delete",
       "large-detail",
       "started-detail",

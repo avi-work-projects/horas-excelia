@@ -595,7 +595,8 @@ function _evRoundedOutline(vertices,rx,ry,days,roundStart,roundEnd){
   });
   function near(p,q,rX,rY){
     var dx=q[0]-p[0],dy=q[1]-p[1];
-    var f=Math.min(.5,dx?rX/Math.abs(dx):rY/Math.abs(dy));
+    var squareEnd=(q[0]===0&&!roundStart)||(q[0]===1000&&!roundEnd);
+    var f=Math.min(squareEnd?1:.5,dx?rX/Math.abs(dx):rY/Math.abs(dy));
     return [p[0]+dx*f,p[1]+dy*f];
   }
   return points.map(function(p,i){
@@ -653,7 +654,7 @@ function _evSteppedBar(it,segments,annual,showTitle,week,today){
     var vertices=[];
     pts.forEach(function(p){vertices.push([p.x,p.top],[p.end,p.top]);});
     pts.slice().reverse().forEach(function(p){vertices.push([p.end,p.bottom],[p.x,p.bottom]);});
-    var path=_evRoundedOutline(vertices,60/days,annual?30:60,days,
+    var path=_evRoundedOutline(vertices,60/(annual?days:visibleDays),annual?30:60,annual?days:visibleDays,
       it.starts&&first.cs===it.cs,it.ends&&last.ce===it.ce);
     var med=_evMitadesStyle({cs:first.cs,ce:last.ce,
       halfL:it.halfL&&first.cs===it.cs,halfR:it.halfR&&last.ce===it.ce});
@@ -673,6 +674,48 @@ function _evSteppedBar(it,segments,annual,showTitle,week,today){
       +'<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">'+halo+'<path d="'+path+'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+(annual?1:1.5)+'" vector-effect="non-scaling-stroke"/></svg>'
       +(showTitle&&gi===titleGroup?'<span title="'+escHtml(it.ev.title)+'" style="left:'+label.x/10+'%;width:'+(label.end-label.x)/10+'%;top:'+label.top/10+'%;height:'+(label.bottom-label.top)/10+'%;'+(it.labelTop?'align-content:start;padding-top:1px;':'')+'">'+escHtml(it.ev.title)+'</span>':'')+'</div>';
   }).join('');
+}
+
+/* Un rótulo por semana, independiente de los cortes de color del mes. */
+function _evMonthBarTitle(it,segments,showTitle,week,today,monthFirst,monthLast){
+  if(!showTitle||!it.ev.title)return '';
+  var runs=[];
+  segments.forEach(function(tr){
+    var extent=_evBarExtent(it.ev,tr,false),previous=runs[runs.length-1];
+    if(previous&&previous.ce+1===tr.cs&&previous.top===extent.top&&previous.bottom===extent.bottom)previous.ce=tr.ce;
+    else runs.push({cs:tr.cs,ce:tr.ce,top:extent.top,bottom:extent.bottom});
+  });
+  var top=Math.max.apply(null,runs.map(function(r){return r.top;}));
+  var bottom=Math.min.apply(null,runs.map(function(r){return r.bottom;}));
+  function width(r){return r.ce-r.cs+1-(r.cs===it.cs&&it.halfL?.5:0)-(r.ce===it.ce&&it.halfR?.5:0);}
+  // Una línea necesita ~10 px: 20% de la fila mensual mínima de 50 px.
+  var label=bottom-top>=20?{cs:it.cs,ce:it.ce,top:top,bottom:bottom}:runs.reduce(function(best,r){return width(r)>width(best)?r:best;},runs[0]);
+  var left=it.halfL?.5:0,right=it.halfR?.5:0,days=it.ce-it.cs+1-left-right;
+  var start=Math.max(0,100*(label.cs-it.cs-left)/days),end=Math.min(100,100*(label.ce+1-it.cs-left)/days);
+  var optional=_evMonthBarTitleRepeats(it,week,monthFirst,monthLast);
+  var past=_evBarPast(it,week,today,true);
+  return '<div class="ev-month-title'+past.cls+(it.labelTop?' ev-label-top':'')+'" data-title-for="'+escHtml(it.ev.id)+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:1;z-index:'+evBarZ(it.ev)+_evMitadesStyle(it)+past.style+'">'
+    +'<span class="ev-month-title-label'+(optional?' ev-title-optional':'')+'" style="left:'+start+'%;width:'+(end-start)+'%;top:'+label.top+'%;height:'+(label.bottom-label.top)+'%"><span class="ev-month-title-text">'+escHtml(it.ev.title)+'</span></span></div>';
+}
+/* Ocultar una abreviatura solo si hay una continuación mayor dentro del mes
+   visible. La semana más amplia conserva siempre su título, aunque sea largo. */
+function _evMonthBarTitleRepeats(it,week,monthFirst,monthLast){
+  var days=it.ce-it.cs+1-(it.halfL?.5:0)-(it.halfR?.5:0);
+  if(days>1)return false;
+  var cursor=new Date(monthFirst);cursor.setDate(cursor.getDate()-(cursor.getDay()+6)%7);
+  var start=new Date(it.ev.start+'T00:00:00'),end=new Date((it.ev.end||it.ev.start)+'T00:00:00');
+  while(cursor<=monthLast){
+    if(cursor.getTime()!==week[0].getTime()){
+      var cs=Math.max(0,Math.round((start-cursor)/86400000)),ce=Math.min(6,Math.round((end-cursor)/86400000));
+      if(cs<=ce){
+        var part={ev:it.ev,cs:cs,ce:ce,starts:cs===Math.round((start-cursor)/86400000),ends:ce===Math.round((end-cursor)/86400000),row:0};
+        _evMarcarMitades([part],true);
+        if(ce-cs+1-(part.halfL?.5:0)-(part.halfR?.5:0)>days+.5)return true;
+      }
+    }
+    cursor.setDate(cursor.getDate()+7);
+  }
+  return false;
 }
 
 /* ── Render: tarjeta de un mes (compartida por Anual y 4 meses) ────

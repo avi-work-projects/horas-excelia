@@ -32,6 +32,7 @@ module.exports=function extend({scenes,edges}){
   // Calendarios y pestañas de Eventos.
   for(const [id,title,button]of [['annual','Calendario anual','#evViewAnnual'],['quad','Calendario 4 meses','#evViewQuad'],['timeoff','Vacaciones y festivos','#evViewTimeOff']])add(id,title,'Eventos','events',button,button+'.active');
   add('bridges','Puentes','Eventos','timeoff','#evSubPuentes','#evSubPuentes.active',{sources:['js/summary.js']});
+  add('calendar-bar-titles','Calendario · títulos en barras grandes','Eventos','calendar','#evNext','.ev-cell[data-ds="2026-09-30"]',{sources:['js/events-cal.js','js/events.js'],region:'#eventsOverlay .sy-body'});
   for(const [id,title,button]of [['agenda','Agenda','#evSubAgenda'],['all-events','Todos','#evSubTodos'],['event-stats','Estadísticas','#evSubStats']])add(id,title,'Eventos','events',button,button+'.active');
   add('event-birthdays','Cumpleaños en Próximos','Eventos','events','#evUpBirthdays','#evBdayAdd');
   add('event-filter','Filtros de eventos','Eventos','all-events','#evTypesFilter','#evTypeFilterOv.open',{sources:['js/events-bind.js']});

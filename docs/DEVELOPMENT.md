@@ -1124,3 +1124,28 @@ correspondía al catálogo anterior. Con 29 opciones se conserva el panel fijo y
 las tarjetas de al menos 86 px; el exceso se resuelve en `.ev-plan-options`,
 sin encoger iconos/textos ni mover la cabecera o Confirmar. La prueba antigua
 se actualiza a ese contrato, manteniendo posiciones iniciales y símbolos.
+
+
+## Rótulos de barras mensuales y medias casillas (v506)
+
+La corrección separa el título semanal de los segmentos de pintura que atenúan
+los días ajenos al mes. `_evMonthBarTitle` utiliza la franja común de los tramos
+o su sección más amplia; el texto puede continuar a la derecha al cambiar el
+color del mes. La capa de título no intercepta pulsaciones y conserva el contraste
+del texto sobre barras pasadas, con la bombilla de resaltado.
+
+Los fragmentos de hasta una casilla solo ocultan una abreviatura cuando hay una
+continuación mayor en otra semana visible. CSS comprueba el espacio real mediante
+el salto de línea del texto completo; sin una alternativa mayor se conserva la
+elipsis. No se añaden medidas DOM, observadores ni escrituras a los renders.
+
+El contorno SVG usa la longitud visible tras recortar las medias casillas. Un
+extremo recto no reserva espacio para una segunda esquina redondeada. Las horas,
+fechas, colores y reglas de solapamiento no cambian. Los rótulos de anual/cuatro
+meses conservan su ensamblado anterior.
+
+Comprobación: escenarios ficticios de fin de semana, cambio de mes con solape,
+tramo aislado, corte fuera del mes visible y contraste pasado/bombilla; medidas
+y capturas en Edge a 320/400/440 px, incluyendo apertura desde el texto. Se revisan
+y actualizan solo las tres referencias mensuales afectadas. El atlas añade una
+captura de septiembre con estos casos; no incorpora la imagen privada del usuario.

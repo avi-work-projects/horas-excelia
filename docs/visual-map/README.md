@@ -1,7 +1,7 @@
 # Mapa visual de Gestify
 
-Atlas ampliado el 24/10/2026 tras aprobar Ángel el piloto: **171 capturas,
-176 relaciones y 13 áreas**, repartidas en láminas legibles.
+Atlas ampliado el 24/10/2026 tras aprobar Ángel el piloto: **172 capturas,
+177 relaciones y 13 áreas**, repartidas en láminas legibles.
 
 ```sh
 npm ci
@@ -189,3 +189,11 @@ el catálogo declara la dependencia de `swipe-render.js` desde Eventos.
 al final de Más Opciones; se llega desde `plan-picker` mediante su flecha de
 scroll. Salir a bailar conserva la identidad compatible con Baile y el orden
 de horas de referencia anterior; el orden del selector es independiente.
+
+
+### Barras mensuales v506
+
+`calendar-bar-titles` reproduce con eventos inventados un comienzo de domingo
+y un viaje que cruza el cambio de mes con otra barra fina. El título aprovecha
+el ancho de la semana y el fragmento pequeño deja de mostrar abreviaturas
+innecesarias. Se llega desde `calendar` con la flecha de mes siguiente.

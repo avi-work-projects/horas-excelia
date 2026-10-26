@@ -1821,6 +1821,19 @@ button.bday-group-tag{cursor:pointer;min-height:44px;text-align:left}
 .ev-multi-bar.ends{border-top-left-radius:0;border-bottom-left-radius:0}
 .ev-multi-bar.continues{border-radius:0}
 .ev-bar-label{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1}
+.ev-month-title{position:relative;align-self:start;height:100%;min-width:0;pointer-events:none;font-size:.52rem;font-weight:600;color:#fff}
+.ev-month-title.past-bar,.ev-month-title.ev-part-past{color:color-mix(in srgb,#fff 40%,var(--bg))}
+.ev-month-title.ev-part-past{mask-image:none}
+.ev-month-title-label{position:absolute;display:flex;align-items:center;box-sizing:border-box;padding:0 6px;overflow:hidden;white-space:nowrap;line-height:1.1}
+.ev-month-title-text{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* El testigo de ancho cero ocupa la primera línea: si no cabe la palabra
+   completa, pasa a la segunda y queda recortada. Solo para títulos repetidos. */
+.ev-month-title-label.ev-title-optional{flex-wrap:wrap;align-content:flex-start;align-items:flex-start}
+.ev-title-optional::before{content:"";flex:0 0 0;height:100%}
+.ev-title-optional .ev-month-title-text{flex:0 0 auto;min-width:max-content;height:100%;display:flex;align-items:center;overflow:visible}
+.ev-month-title.ev-label-top .ev-month-title-label{align-items:flex-start;padding-top:1px}
+.ev-month-title.ev-label-top .ev-month-title-text{align-items:flex-start}
+.ev-bright-past .ev-month-title{color:#fff}
 .ev-multi-bar.ev-stepped-bar,.ev-annual-mbar.ev-stepped-bar{height:100%;min-height:0;position:relative;align-self:start;padding:0;border:0;border-radius:0;background:none;overflow:visible;pointer-events:none}
 .ev-stepped-bar svg{display:block;position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
 .ev-stepped-bar path{pointer-events:visiblePainted;cursor:pointer}
