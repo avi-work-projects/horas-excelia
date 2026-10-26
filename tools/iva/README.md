@@ -113,6 +113,14 @@ https://www3.agenciatributaria.gob.es/static_files/Sede/Disenyo_registro/DR_300_
 
 ## Verificación
 
+`closing.py` y `closing_web.py` implementan el flujo privado de ensayo
+preparar/aprobar/generar/descargar y cancelación. Se montan tras la autenticación,
+Origin y CSRF existentes de Kairo; nunca dentro de la PWA pública. La aprobación
+se vincula a huellas del libro, perfil, identidad, cuenta, motor y contenido.
+El único perfil inicialmente habilitado es el histórico 2T; no se ha ampliado
+el alcance fiscal del exportador. Véase `docs/IVA-CLOSING.md` para estado,
+distribución y reversión. Dependencia de lectura del diseño: openpyxl==3.1.5.
+
 La revisión anual incorpora `preparation_390`, un dossier documental preparatorio,
 visible en Kairo en «Anual · 390». No es un fichero de presentación: conserva
 las diferencias trimestrales por separado y no convierte referencias ausentes
