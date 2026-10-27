@@ -64,12 +64,32 @@ datos inventados sobre `tools/fixture.json`. `capture.cjs` reúne la preparació
 medición y fotografía; su archivo completo es una dependencia compartida. `map-data.json` y `map-data.js` se
 generan, no se editan a mano.
 
+### Criterio vigente de actualización (27/10/2026)
+
+Las imágenes son referencias representativas. Solo se actualizan por rediseño,
+modificación sustancial de estructura/interacción o diferencias acumuladas
+importantes. Un plan nuevo aislado o un ajuste menor no lo requiere. Varias
+opciones nuevas pueden justificarlo si la referencia ya difiere mucho; no hay
+un umbral numérico fijo.
+
+Elegir primero los menús sustancialmente afectados. Los archivos compartidos y
+las pantallas por las que se pasa para llegar a ellos no obligan a repetir esas
+capturas. Ampliar únicamente si el cambio real también es sustancial allí.
+
+`map:plan`, `map:changed` y `map:check` trabajan con huellas técnicas de fuentes:
+no distinguen automáticamente un cambio menor de un rediseño. Sus candidatos
+no son una orden de recaptura ni una declaración de incoherencia visual. Para
+el uso habitual, seleccionar escenas con `--scene` tras esa valoración; reservar
+`map:changed` para un alcance técnico ya revisado y pertinente. Conservar las
+imágenes aceptadas y su fecha/huella originales, sin fingir una revisión nueva.
+Esto no elimina las pruebas funcionales necesarias ni sus propias instantáneas.
+
 ```sh
 npm run map:capture                         # atlas entero, tres contextos aislados
 npm run map:capture -- --scene=calendar     # una escena
 npm run map:capture -- --scene=day,time     # varias escenas
-npm run map:plan                            # alcance y lecturas, sin escribir ni abrir Edge
-npm run map:changed                         # fuentes modificadas y dependientes
+npm run map:plan                            # candidatos técnicos, sin decidir su relevancia visual
+npm run map:changed                         # lote técnico; solo tras revisar su relevancia visual
 npm run map:index                           # cobertura/antigüedad sin capturar
 npm run map:check                           # falla si faltan capturas o cambió una fuente
 npm run map:verify                          # visor, relaciones y exportaciones afectadas
@@ -113,8 +133,9 @@ con la misma huella; las demás conservan esa inspección como historia.
 `node tools/visual-map/generate.cjs --migrate` migra el formato anterior sin
 recapturar: exige fuentes y contratos de recorrido iguales, contrastando con el
 commit de captura cuando hace falta. Falla ante cambios sin acreditar; no es un
-atajo para dar por vigentes capturas antiguas. El uso habitual es `map:plan`,
-`map:changed` y `map:verify`.
+atajo para dar por vigentes capturas antiguas. El criterio editorial del 27/10
+precede a cualquier recaptura; las comprobaciones de fuentes y la aceptación
+visual son estados distintos.
 
 Edge **headless**, perfil efímero, 400 × 880, escala 1, tema claro, iconos profesionales
 y fecha fija **21/08/2026**. Personas, facturas, suministros y eventos ficticios. No
