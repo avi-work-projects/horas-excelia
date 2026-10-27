@@ -48,6 +48,12 @@
       "path": "js/core.js"
     },
     {
+      "path": "js/home-hours.js"
+    },
+    {
+      "path": "js/home-weeks.js"
+    },
+    {
       "path": "js/statistics-ui.js"
     },
     {

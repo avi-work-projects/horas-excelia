@@ -44,7 +44,7 @@ function createTracker({root,scenes,edges,assets,read=file=>fs.readFileSync(path
     // Solo las entradas declaradas a pantalla completa ocultan Home. Lo
     // desconocido conserva sus dependencias; un descendiente puede reabrirla.
     const coverage=parents.filter(s=>typeof s.hidesHome==='boolean').sort((a,b)=>b.route.length-a.route.length)[0];
-    const homeSources=coverage?.hidesHome?[]:['js/invoices-home.js','js/invoices.js','js/invoices-kairo.js'];
+    const homeSources=coverage?.hidesHome?[]:['js/home-hours.js','js/home-weeks.js','js/invoices-home.js','js/invoices.js','js/invoices-kairo.js'];
     const styles=[...assets.styleSources,...assets.styles.filter(x=>x!=='css/styles.css')].filter(file=>file==='css/source/statistics.css'?parents.some(s=>s.sources.includes('js/statistics-ui.js')):!STYLE_GROUPS[file]||STYLE_GROUPS[file].some(group=>groups.has(group)));
     const sources=[...new Set(['index.html','js/nav-icons.js','js/core.js','js/data-integrity.js','tools/fixture.json','tools/visual-map/fixture.cjs',...styles,...homeSources,...parents.flatMap(s=>s.sources)])];
     const result=sources.map(file=>{const part=file==='js/core.js'?'core-runtime':undefined;return {file,...(part?{part}:{}),hash:fingerprint(file,part)};});

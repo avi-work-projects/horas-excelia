@@ -75,12 +75,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .hour-chip-day{font-family:var(--mono);font-size:.85rem;font-weight:500;padding:9px 22px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;flex:1}
 .hour-chip-day.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
 .month-summary{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;display:flex;flex-direction:column;gap:5px}
-.month-stat{display:flex;align-items:baseline;gap:4px}
-.ms-num{font-family:var(--mono);font-size:1.2rem;font-weight:500}
-.month-stat.worked .ms-num{color:var(--accent-bright)}
-.month-stat.off .ms-num{color:var(--text-muted)}
-.ms-label{font-size:.82rem;color:var(--text-muted)}
-.ms-hrs{font-family:var(--mono);font-size:.78rem;color:var(--text-dim)}
 .data-actions{display:flex;gap:6px;flex-wrap:nowrap;align-items:center}
 .data-btn{width:44px;height:44px;border-radius:8px;border:none;background:transparent;color:var(--text-muted);font-size:1.35rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,color .15s,box-shadow .15s;-webkit-user-select:none;user-select:none;position:relative}
 .data-btn:has(.btn-icon){width:66px;height:66px;border-radius:12px}
@@ -327,9 +321,6 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 :is([data-theme="light"],[data-theme="grey"]) input[type="checkbox"]:checked{background:var(--chk,var(--accent));border-color:var(--chk,var(--accent))}
 .excl-item{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--text-muted);cursor:pointer;-webkit-user-select:none;user-select:none}
 /* Month summary breakdown */
-.ms-breakdown>span{display:block;padding-left:12px}
-.ms-breakdown>span::before{content:"– ";}
-.ms-breakdown{font-size:.72rem;color:var(--text-dim);margin-top:0;line-height:1.6}
 .ms-sep{color:var(--border-light)}
 /* Ausencia list tag */
 .sy-list-tag.ausencia{background:rgba(192,132,252,.15);color:var(--ausencia)}
@@ -3757,33 +3748,37 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 /* Cabecera de Home opaca, incluso sobre los botones oscuros de las semanas. */
 .header,:is([data-theme="light"],[data-theme="grey"]) .header,[data-theme="grey"] .header{background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none}
 .ev-wk-travel-row:not(.ev-wk-travel-footer) > .ev-wk-travel{gap:0}
-.home-submission{display:flex;align-items:center;gap:10px;padding:11px 13px;border:1px solid var(--status-tone);border-radius:10px;background:color-mix(in srgb,var(--status-tone) 9%,var(--surface));color:var(--status-tone)}
+.home-submission{display:grid;grid-template-columns:18px minmax(0,1fr);align-items:center;gap:8px;padding:11px 13px;border:1px solid var(--status-tone);border-radius:10px;background:color-mix(in srgb,var(--status-tone) 9%,var(--surface));color:var(--status-tone)}
 .home-submission.pending{--status-tone:var(--c-orange)}
 .home-submission.complete{--status-tone:var(--c-green)}
 .home-submission strong{display:block;font-size:.78rem;font-weight:600}
 .home-submission-message > span{display:block;font-size:.68rem;line-height:1.4;margin-top:3px;color:var(--text-muted)}
 .home-submission-icon{font-size:1.1rem;flex-shrink:0}
-.home-submission.pending{animation:home-pending-pulse 1.8s ease-in-out infinite}
+.home-submission.pending>.home-submission-icon,.home-submission.pending>.home-submission-message{animation:home-pending-pulse 1.8s ease-in-out infinite}
 @keyframes home-pending-pulse{0%,100%{opacity:1}50%{opacity:.3}}
-@media(prefers-reduced-motion:reduce){.home-submission.pending{animation:none}}
+@media(prefers-reduced-motion:reduce){.home-submission.pending>.home-submission-icon,.home-submission.pending>.home-submission-message{animation:none}}
 
 :root{--upcoming-tone:#71c9ed;--upcoming-text:#91d9f6}
 [data-theme="light"]{--upcoming-tone:#56b6e0;--upcoming-text:#227fa8}
 #eventsOverlay .ev-hdr-sub #evViewUpcoming{--tab-tone:var(--upcoming-tone)}
-.home-submission.complete{display:grid;grid-template-columns:18px 70px minmax(0,1fr);gap:8px}
-.home-summary-compact{justify-self:end;width:max-content;max-width:100%;box-sizing:border-box;padding:6px 7px;border:1px solid var(--border);border-radius:8px;background:var(--surface);gap:3px;min-width:0}
-.home-summary-compact .month-stat{justify-content:flex-start;text-align:left;gap:3px;flex-wrap:nowrap;white-space:nowrap}
-.month-summary .month-stat.total .ms-num{font-weight:500;color:var(--text-muted)}
-.home-worked-total{border-top:1px solid var(--border);padding-top:5px;margin-top:2px}
-.month-summary .worked-hours{flex-wrap:wrap;column-gap:6px}
-.month-summary .worked-hours .ms-num{font-size:1.6rem;font-weight:700;color:var(--c-green);line-height:1.2}
-.home-summary-compact .month-stat.total .ms-num{font-size:.8rem;font-weight:500}
-.home-summary-compact .month-stat{font-size:.65rem;line-height:1.35}
-.home-summary-compact .ms-num{font-size:.8rem}
-.home-summary-compact .ms-label,.home-summary-compact .ms-hrs{font-size:.62rem}
-.home-summary-compact .ms-breakdown{font-size:.6rem}
-.home-summary-compact .worked-hours{flex-wrap:wrap;white-space:normal}
-.home-summary-compact .worked-hours .ms-num{font-size:1.15rem;font-weight:700}
+.home-summary-compact{grid-column:1/-1;width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);min-width:0}
+.home-hours-columns,.home-hours-row{display:grid;grid-template-columns:minmax(0,1fr) 56px 85px;gap:8px;align-items:baseline;font-size:.8rem;line-height:1.45}
+.home-hours-columns{font-size:.62rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+.home-hours-columns>:nth-child(n+2){text-align:right}
+.home-hours-label{color:var(--text-muted);min-width:0}
+.home-hours-days,.home-hours-value{text-align:right;white-space:nowrap;font-family:var(--mono);font-size:.88rem;font-weight:500;color:var(--text)}
+.home-hours-days small{font:inherit;position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.home-hours-row.off{--deduction:var(--text-muted)}
+.home-hours-row.festivo{--deduction:var(--festivo)}
+.home-hours-row.vacaciones{--deduction:var(--vacaciones)}
+.home-hours-row.ausencia{--deduction:var(--ausencia)}
+.home-hours-row.off .home-hours-label{color:var(--deduction)}
+.home-hours-row.off .home-hours-days,.home-hours-row.off .home-hours-value,.home-hours-row.adjustment .home-hours-days,.home-hours-row.adjustment .home-hours-value{color:var(--text-muted)}
+.home-hours-row.worked{border-top:1px solid var(--border);padding-top:8px;margin-top:4px;align-items:center}
+.home-hours-row.worked .home-hours-label{font-weight:600;color:var(--c-green)}
+.home-hours-row.worked .home-hours-days{font-size:1.06rem;font-weight:600;color:var(--c-green)}
+.home-hours-row.worked .home-hours-value{font-size:1.45rem;font-weight:700;line-height:1.2;color:var(--c-green)}
+.home-summary-compact .home-hours-row{font-size:.75rem}
 
 /* Selector de eventos para compartir por iCalendar */
 /* Selector de exportación: controles compactos y lista con espacio propio. */

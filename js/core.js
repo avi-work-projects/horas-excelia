@@ -343,16 +343,16 @@ function weeks(y,m){
   return ws;
 }
 
-/* Mes visible mas una semana adicional, sin contar dos veces la semana puente. */
+/* El aviso y la futura programación consumen el mismo alcance. */
 function homeSubmissionStatus(year,month){
-  var current=weeks(year,month),extra=ad(current[current.length-1][0],7);
-  var missing=current.filter(function(w){return !SW[dk(w[0])];});
-  return {missing:missing.length,extra:extra,extraSent:!!SW[dk(extra)],complete:missing.length===0&&!!SW[dk(extra)]};
+  var scope=homeSubmissionWeeks(year,month);
+  var pending=scope.filter(function(week){return !SW[week.key];});
+  return {missing:pending.filter(function(week){return !week.extra;}).length,extras:pending.filter(function(week){return week.extra;}),complete:pending.length===0};
 }
 function renderHomeSubmissionStatus(year,month){
   var state=homeSubmissionStatus(year,month);
   var detail=state.missing?(state.missing+' semana'+(state.missing===1?'':'s')+' del mes sin enviar'):'';
-  if(!state.extraSent)detail+=(detail?' · ':'')+'Falta la semana adicional del '+fd(state.extra)+' al '+fd(ad(state.extra,6));
+  state.extras.forEach(function(week){detail+=(detail?' · ':'')+'Falta la semana adicional del '+fd(week.mon)+' al '+fd(ad(week.mon,6));});
   return '<div class="home-submission '+(state.complete?'complete':'pending')+'" role="status"><span class="home-submission-icon" aria-hidden="true">'+(state.complete?'&#10003;':'&#9888;')+'</span><div class="home-submission-message"><strong>'+(state.complete?'Todo enviado':'Semanas pendientes de enviar')+'</strong>'+(state.complete?'':'<span>'+detail+'</span>')+'</div></div>';
 }
 
@@ -551,44 +551,12 @@ function buildHomeCalendar(c){
     card.appendChild(acts); c.appendChild(card);
   });
 
-  // Resumen mensual
-  var diasTrabajados=0,horasTotales=0,diasNoLaborables=0,diasFest=0,diasVac=0,diasAus=0;
-  var horasFest=0,horasVac=0,horasAus=0;
-  wks.forEach(function(wk){
-    for(var i=0;i<5;i++){
-      var d=wk[i]; if(d.getMonth()!==CM)continue;
-      var t=dayT(d),h=dayH(d);
-      if(t==='normal'){diasTrabajados++;horasTotales+=h;}
-      else{
-        diasNoLaborables++;
-        var dh=defH(d);
-        if(t==='festivo'){diasFest++;horasFest+=dh;}
-        else if(t==='vacaciones'){diasVac++;horasVac+=dh;}
-        else if(t==='ausencia'){diasAus++;horasAus+=dh;}
-      }
-    }
-  });
-  var fmtH=function(h){return (h%1===0?String(h):h.toFixed(1).replace('.',','));};
-  var hStr=fmtH(horasTotales);
-  var horasNoLab=horasFest+horasVac+horasAus;
-  var horasTotal=horasTotales+horasNoLab;
-  var dsglose='';
-  if(diasNoLaborables>0){
-    var dparts=[];
-    if(diasFest)dparts.push('<span style="color:var(--festivo)">'+diasFest+' festivo'+(diasFest>1?'s':'')+' ('+fmtH(horasFest)+'h)</span>');
-    if(diasVac)dparts.push('<span style="color:var(--vacaciones)">'+diasVac+' vacaciones ('+fmtH(horasVac)+'h)</span>');
-    if(diasAus)dparts.push('<span style="color:var(--ausencia)">'+diasAus+' ausencia'+(diasAus>1?'s':'')+' ('+fmtH(horasAus)+'h)</span>');
-    if(dparts.length)dsglose='<div class="ms-breakdown">'+dparts.join('')+'</div>';
-  }
-  var footer=document.createElement('div'); footer.className='month-summary';
-  var noLabHrsStr='<span class="ms-hrs"> ('+fmtH(horasNoLab)+'h)</span>';
-  footer.innerHTML='<div class="month-stat total"><span class="ms-num">'+fmtH(horasTotal)+'h</span><span class="ms-label"> total mensual</span></div>'+
-    '<div class="month-stat off"><span aria-hidden="true">−</span><span class="ms-num">'+diasNoLaborables+'</span><span class="ms-label"> d\u00eda'+(diasNoLaborables===1?'':'s')+' no trabajado'+(diasNoLaborables===1?'':'s')+'</span>'+noLabHrsStr+'</div>'+dsglose+
-    '<div class="home-worked-total"><div class="month-stat worked"><span class="ms-num">'+diasTrabajados+'</span><span class="ms-label"> d\u00eda'+(diasTrabajados===1?'':'s')+' trabajado'+(diasTrabajados===1?'':'s')+'</span></div>'+
-    '<div class="month-stat worked-hours"><strong class="ms-num">'+hStr+'h</strong><span class="ms-label">horas trabajadas</span></div></div>';
+  // Un modelo y el mismo render para el panel superior y el resumen al pie.
+  var footer=document.createElement('div');footer.className='month-summary';
+  footer.innerHTML=renderHomeMonthHours(homeMonthHours(CY,CM));
   c.appendChild(footer);
-  var complete=c.querySelector('.home-submission.complete');
-  if(complete){var compact=footer.cloneNode(true);compact.classList.add('home-summary-compact');complete.appendChild(compact);}
+  var status=c.querySelector('.home-submission');
+  if(status){var compact=footer.cloneNode(true);compact.classList.add('home-summary-compact');status.appendChild(compact);}
 }
 
 // ── Bottom sheet (selector de tipo de día) ───────────────────

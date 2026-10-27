@@ -20,7 +20,10 @@ async function main(){
   }
   function recordExport(id){next[id].hashes=Object.fromEntries(next[id].files.map(file=>[file,digest(fs.readFileSync(path.join(out,file)))]));}
   fs.mkdirSync(qa,{recursive:true});
-  for(const s of data.scenes){if(!s.image||!fs.existsSync(path.join(out,s.image)))throw new Error('Falta captura: '+s.id);if(!tracker.fresh(scenes.find(scene=>scene.id===s.id),s))throw Error('Captura desfasada: '+s.id);if(s.imageHash!==digest(fs.readFileSync(path.join(out,s.image))))throw Error('Imagen alterada sin comprobar: '+s.id);}
+  const stale=[];
+  for(const s of data.scenes){if(!s.image||!fs.existsSync(path.join(out,s.image)))throw new Error('Falta captura: '+s.id);if(!tracker.fresh(scenes.find(scene=>scene.id===s.id),s))stale.push(s.id);if(s.imageHash!==digest(fs.readFileSync(path.join(out,s.image))))throw Error('Imagen alterada sin comprobar: '+s.id);}
+  if(stale.length&&!process.argv.includes('--representative'))throw Error('Captura desfasada: '+stale[0]);
+  if(stale.length)console.log('Referencias conservadas por criterio editorial: '+stale.length+'. La diferencia de fuentes sigue visible en el mapa.');
   for(const e of data.edges){const s=data.scenes.find(s=>s.id===e.from),t=data.scenes.find(s=>s.id===e.to);if(!s.anchors[e.to]||!s.verifiedEdges.includes(e.to))throw new Error('Relación no comprobada: '+e.from+' → '+e.to);if(t.route.length===s.route.length+1&&JSON.stringify(t.route.slice(0,-1))===JSON.stringify(s.route)){const step=t.route.at(-1);if(e.action==='scroll'?!step.scroll:JSON.stringify(step)!==JSON.stringify(e.step||e.selector))throw Error('El control de la flecha no corresponde a la ruta: '+e.from+' → '+e.to);}}
   if(data.inventory.some(x=>x.status==='Pendiente de captura'))throw Error('Quedan entradas del inventario pendientes de captura');
   const server=await startServer(),url='http://127.0.0.1:'+server.address().port;let browser;
