@@ -33,8 +33,14 @@ test('acciones de Clases y Parejas comparten acento y abren sus formularios',asy
   for(const theme of ['grey','dark']){
     await page.evaluate(t=>applyTheme(t),theme);await page.locator('[data-bsub=clases]').click();
     await page.screenshot({path:'test-results/wedding-clases-'+theme+'.png'});
-    expect(await page.locator('#bodaAddClass').evaluate(el=>getComputedStyle(el).backgroundColor)).toBe(await page.locator('[data-bsub=clases]').evaluate(el=>getComputedStyle(el).backgroundColor));
-    expect(await page.locator('#bodaAddClass').evaluate(el=>getComputedStyle(el).color)).toBe(await page.locator('[data-bsub=clases]').evaluate(el=>getComputedStyle(el).color));
+    // El cambio de tema repinta la vista: comparar nodos actuales en el mismo
+    // turno, sin aceptar dos estilos vacíos de elementos ya desconectados.
+    await expect.poll(()=>page.evaluate(()=>{
+      const button=document.querySelector('#bodaAddClass'),tab=document.querySelector('[data-bsub=clases]');
+      if(!button?.isConnected||!tab?.isConnected)return false;
+      const a=getComputedStyle(button),b=getComputedStyle(tab);
+      return !!a.backgroundColor&&!!a.color&&a.backgroundColor===b.backgroundColor&&a.color===b.color;
+    })).toBe(true);
   }
 });
 
