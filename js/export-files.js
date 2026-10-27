@@ -50,8 +50,8 @@ async function saveExportCopy(blob,filename){
   }
 }
 function openExportDirectory(onClosed){
-  closeSettingsMenu();var previous=NAV_BACK,draft=null;
-  function close(){cerrarPanel('exportFolderWrap','exportFolderOv');if(NAV_BACK===close)NAV_BACK=previous;if(typeof onClosed==='function')onClosed();}
+  var restore=settingsPanelBack(),draft=null;
+  function close(){cerrarPanel('exportFolderWrap','exportFolderOv');if(NAV_BACK===close)restore();if(typeof onClosed==='function')onClosed();}
   var supported=typeof window.showDirectoryPicker==='function';
   var body='<section class="settings-editor-section"><h3>Destino de las copias</h3><div class="settings-field-value"><p id="exportFolderStatus" role="status"></p><button type="button" class="settings-copy" id="exportFolderCopy" aria-label="Copiar Carpeta" data-copy-label="Copiar Carpeta"></button></div><button class="ev-btn" id="exportFolderChoose" data-settings-edit-only'+(supported?'':' disabled')+'>Elegir o Cambiar Carpeta</button><label class="invoice-field"><span>Ubicación descriptiva</span><input class="ev-input" id="exportFolderLabel" maxlength="200" placeholder="Sin referencia"></label><p class="settings-editor-note">Referencia escrita por ti. El navegador no permite consultar las carpetas superiores.</p></section>'+(supported?'':'<p class="settings-editor-note">Este navegador no permite elegir carpetas. La copia se descargará en la ubicación configurada por el navegador.</p>');
   var root=abrirPanel('exportFolderWrap',settingsPanelHtml('exportFolder','Ruta de Guardado',body,'var(--c-blue)'),{contenedor:document.body,overlay:'exportFolderOv',alCerrar:close});

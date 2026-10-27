@@ -1264,3 +1264,29 @@ configuración y respuestas tardías. Las pruebas existentes del transporte de
 preparación y facturas siguen pasando. El nuevo módulo no invalida en el atlas
 las ventanas declaradas opacas que ocultan Home; las dependencias desconocidas
 se mantienen conservadoras.
+
+
+## Regreso a Ajustes y entrega de alarmas (v510)
+
+settingsPanelBack (settings-menu.js) conserva el anclaje, scroll y navegación
+anterior de Configuración. Correo, MacroDroid, Facturas, Ruta de guardado, Mis
+Datos y Notas restauran ese origen al pulsar Atrás. Los accesos directos conservan
+su destino anterior; repintar una factura abierta conserva el mismo retorno y
+reabrir durante los 300 ms de cierre captura un origen nuevo. No se cambia el
+aspecto de los menús: las capturas del atlas siguen siendo representativas.
+
+requestMacroAlarm (alarms.js) centraliza los envíos de campana/Siesta, eventos
+y cumpleaños: GET sin caché, sin reintentos automáticos y respuesta opaca sin
+interpretarla como creación confirmada. El registro se añade tras terminar la
+petición del navegador; un fallo conocido no marca el evento como enviado. En
+lotes puede quedar constancia de las peticiones completadas antes de un fallo.
+Una petición que siga pendiente tras 10 s muestra un aviso, sin abortarla ni
+reenviarla. No detecta el retraso posterior en FCM, MacroDroid o el reloj.
+ALARM_REQUESTS conserva en memoria los últimos 20 intentos con fecha, duración
+y estado, sin URL, texto, horas de la alarma ni datos privados. No es un acuse
+del teléfono y no se exporta al backup.
+
+Las pruebas de navegador interceptan todos los webhooks. La investigación
+controlada del móvil y sus límites están en docs/macrodroid.md. El trabajo
+de programación semanal de Outlook y el nuevo resumen de Home siguen en su
+rama WIP; esta entrega no los publica.

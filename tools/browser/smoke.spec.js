@@ -157,8 +157,8 @@ test('ajustes bloqueados, guardado explicito y backup con conexiones',async({pag
  await page.locator('#mailToLocal').fill('test@example.invalid');await page.locator('#mailNameLocal').fill('Prueba');
 
  expect(await page.evaluate(()=>localStorage.getItem('excelia-mail-config-v1'))).toBeNull();
- await page.locator('#connectionsSave').click();await expect(page.locator('#mailToLocal')).toHaveAttribute('readonly','');await page.locator('#connectionsClose').click();await expect(page.locator('#connectionsWrap')).toHaveCount(0);await page.locator('#menuBtn').click();
- await page.locator('#editMacroBtn').click();await page.locator('#connectionsEdit').click();await page.locator('#macroAlarmUrlMenu').fill('https://trigger.macrodroid.com/TEST');await page.locator('#connectionsSave').click();await page.locator('#connectionsClose').click();await expect(page.locator('#connectionsWrap')).toHaveCount(0);await page.locator('#menuBtn').click();
+ await page.locator('#connectionsSave').click();await expect(page.locator('#mailToLocal')).toHaveAttribute('readonly','');await page.locator('#connectionsClose').click();await expect(page.locator('#connectionsWrap')).toHaveCount(0);await expect(page.locator('#dataMenu')).toHaveClass(/open/);
+ await page.locator('#editMacroBtn').click();await page.locator('#connectionsEdit').click();await page.locator('#macroAlarmUrlMenu').fill('https://trigger.macrodroid.com/TEST');await page.locator('#connectionsSave').click();await page.locator('#connectionsClose').click();await expect(page.locator('#connectionsWrap')).toHaveCount(0);await expect(page.locator('#dataMenu')).toHaveClass(/open/);
  const [download]=await Promise.all([page.waitForEvent('download'),exportFile(page,'#exportAllBtn','save')]);
  const data=JSON.parse(require('fs').readFileSync(await download.path(),'utf8'));
  expect(data.mailConfig.to).toBe('test@example.invalid');expect(data.macroUrl).toBe('https://trigger.macrodroid.com/TEST');
