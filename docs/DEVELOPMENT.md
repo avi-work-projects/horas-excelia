@@ -90,9 +90,10 @@ Preparar `dist` antes de las pruebas. No hacer build, regeneración ni otra oper
 que cambie esa carpeta mientras el navegador la consume. Mostrar una captura o
 previsualización local cuando esté lista, separando ese resultado de la confirmación
 posterior del despliegue. Agrupar correcciones antes de publicar para no encadenar
-ejecuciones completas evitables. Para el mapa, revisar `map:plan`, usar `map:changed`
-y mantener las revisiones por huella; una dependencia compartida aún puede ampliar
-el alcance conservador del capturador y debe explicarse sin afirmar que todo cambió.
+ejecuciones completas evitables. Para el mapa, aplicar primero el criterio sustancial del 27/10 descrito debajo.
+`map:plan` solo propone candidatos por dependencias; no obliga a capturarlos.
+Elegir escenas concretas y mantener las revisiones por huella. Un archivo
+compartido no demuestra por sí solo que todos sus menús necesiten otra imagen.
 
 CI usa Chrome preinstalado en `ubuntu-24.04` mediante
 `GESTIFY_BROWSER_CHANNEL=chrome`. Se conserva la batería completa y se comprueba
@@ -101,6 +102,32 @@ Chromium/dependencias que en la entrega v509 superó ocho minutos antes de empez
 las pruebas. Windows sigue usando Edge; Linux local conserva el valor por defecto
 si no se declara el canal. Referencias: [imagen oficial](https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md)
 y [canales admitidos por Playwright](https://playwright.dev/docs/browsers#google-chrome--microsoft-edge).
+
+## Capturas representativas y alcance (27/10/2026)
+
+El atlas es una referencia visual de menús y recorridos, no una réplica exacta
+obligatoria de cada versión. Esta preferencia sustituye la actualización por
+cualquier cambio visual/funcional definida el 25/10.
+
+- Conservar la captura ante un plan nuevo aislado, textos menores o una corrección
+  de lógica que no cambie de forma relevante la estructura o interacción del menú.
+- Actualizarla si hay rediseño, controles/interacciones sustancialmente distintos
+  o diferencias acumuladas que la vuelvan poco representativa. Varias opciones
+  nuevas (por ejemplo cinco planes) pueden justificarlo por el efecto conjunto,
+  sin convertir el número cinco en un automatismo.
+- Seleccionar solo los menús que realmente hayan cambiado de esa forma. Abrir
+  otras pantallas para llegar al menú no obliga a volver a fotografiarlas.
+- Si una pieza compartida se rediseña y afecta de forma relevante a varios menús,
+  actualizar esos menús concretos. Un fondo apenas distinto detrás de una hoja
+  no exige por sí solo repetir la hoja ni toda la cadena de acceso.
+- Las huellas del capturador detectan cambios técnicos, no su importancia visual.
+  `map:plan`/`map:check` pueden señalar referencias cuyo código cambió aunque la
+  imagen siga cumpliendo su función. Ese aviso no justifica una recaptura masiva
+  ni bloquea por sí solo una entrega menor. No falsear huellas, fechas de captura
+  ni aceptación visual: conservar la referencia y anotar el desfase menor tolerado
+  cuando sea necesario. La selección editorial precede al generador.
+- Mantener las pruebas apropiadas de funcionamiento y persistencia. No confundir
+  las capturas documentales del atlas con las pruebas HTML/visuales de regresión.
 
 ## Convenciones visuales de controles
 
@@ -700,7 +727,7 @@ Guardar copia desde Exportar Horas cierra ambos paneles y devuelve a Home.
 ### Norma para el mapa visual (18/10/2026; piloto 24/10/2026)
 
 - Ángel aprobó el piloto y autorizó ampliar al resto de la app el 24/10/2026. El atlas cubre las áreas principales y los paneles secundarios inventariados. Las capturas nuevas siguen pendientes de su revisión visual; no exigir capturas de todas las pantallas en cada tarea ni todas las combinaciones de datos.
-- Preferencia permanente de Ángel, reafirmada el 25/10/2026: conservar el atlas y actualizarlo con cada cambio visual o funcional que afecte a un menú, sus estados, validaciones o navegación. No dar por cerrado ese cambio sin comprobar las fichas y recorridos afectados, sus dependencias compartidas y las flechas. Altas y eliminaciones actualizan también el índice. Si no cambia la salida visual, comprobar y documentar la vigencia sin repetir capturas innecesarias.
+- Preferencia vigente de Ángel (27/10/2026; sustituye la regla amplia del 25/10): conservar el atlas como referencia representativa. Actualizar imágenes solo por rediseños, modificaciones sustanciales del menú o diferencias acumuladas importantes. Cambios menores de catálogo, texto o lógica no obligan a recapturar. Ver el criterio de alcance de esta guía. Las pruebas funcionales y los cambios de navegación que requieran ajustar flechas/índice se revisan por separado, sin convertirlos automáticamente en una recaptura general.
 - Regenerar solo esas escenas; cambios en temas, fuentes o componentes compartidos regeneran las dependientes. Revisar antes de aceptar; no actualizar referencias a ciegas.
 - Usar Edge oculto, viewport móvil fijo, fecha y datos ficticios estables. Registrar el commit de referencia y señalar fichas pendientes para no presentar capturas antiguas como actuales.
 - El mapa ayuda a ubicarse en sesiones nuevas y comprobar coherencia; complementa CODEMAP y pruebas, no los sustituye. Evitar un producto documental paralelo o todas las combinaciones de temas/estados.
