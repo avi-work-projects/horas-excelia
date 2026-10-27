@@ -1264,3 +1264,52 @@ configuración y respuestas tardías. Las pruebas existentes del transporte de
 preparación y facturas siguen pasando. El nuevo módulo no invalida en el atlas
 las ventanas declaradas opacas que ocultan Home; las dependencias desconocidas
 se mantienen conservadoras.
+
+
+## Home y programación de horas — preparación del 27/10/2026
+
+Trabajo todavía incompleto: no activar ni presentar como implementada la
+programación automática. La producción conserva v509 hasta completar la
+validación y publicación. Los cambios están en la rama de la tarea.
+
+- Home usa homeMonthHours/renderHomeMonthHours (js/home-hours.js): base de
+  lunes a viernes, descuentos con sus días/horas y resultado alineado; las horas
+  personalizadas se explican como ajuste, sin cambiar las horas trabajadas. El
+  mismo render alimenta el resumen superior, el pie y la previsualización.
+- homeSubmissionWeeks (js/home-weeks.js) define las semanas del mes visible
+  más dos completas posteriores, sin repetir la semana puente. Aviso y futura
+  programación deben consumir esta lista. Por ahora, el aviso conserva los
+  estados locales SW: aún no es una confirmación de Outlook.
+- homeWeekSchedule define el último día realmente trabajado de esa semana a
+  las 08:00 Europe/Madrid. Si ha vencido o no hay días trabajados, dejar pendiente
+  para decidir. El huso del navegador no debe decidir la hora de envío.
+- El remitente será la cuenta corporativa que Ángel ha indicado en la conversación;
+  Para/CC se toman de Correo de horas. Nunca copiar cuentas reales al código,
+  fixture, mapa o Git. La cuenta real de Outlook queda en el perfil privado.
+
+Ángel prefiere automatizar Outlook web mediante Chromium en Kairo; no puede
+registrar una aplicación corporativa sin un trámite de TI. La primera fase es
+una sesión iniciada manualmente por él y una comprobación solo de lectura. No
+se pide ni almacena una contraseña en el repositorio. El perfil dedicado queda
+fuera de Git y con modo 700; el navegador recuerda la sesión y, si caduca, se
+debe pedir renovarla. Aún hay que demostrar en la cuenta real la lectura de las
+programaciones creadas en Android y comprobar las condiciones de autenticación.
+
+Herramienta: tools/kairo/outlook-session.sh. Requiere Chromium, Xvfb, xauth,
+x11vnc, noVNC y websockify en Kairo. Usa un servicio temporal independiente
+(gestify-outlook-session), sin habilitar inicio automático. El visor escucha
+en 127.0.0.1:6091, VNC en 127.0.0.1:5901 y CDP en 127.0.0.1:9223. Acceso
+solo mediante túnel SSH; no publicar esos puertos en Tailscale Serve ni Internet.
+No modificar kairo-facturas ni su temporizador para esta integración. Para
+cerrar esta prueba: sudo systemctl stop gestify-outlook-session.service.
+
+Pendiente antes de activar envíos: reconocer cada semana por su lunes (con año),
+conciliar enviados/programados existentes, mantener estado persistente único
+por semana en Kairo, verificar que la anterior esté enviada/programada, crear
+en orden cronológico, mantener el recorrido individual y evitar duplicados
+incluso tras cambios de fecha/horas. Si una programación cambia, mostrar la
+diferencia y pedir actualizar esa misma programación. Un resultado de envío
+incierto se revisa antes de reintentar. Abrir Outlook no confirma un envío:
+corregir ese comportamiento en el recorrido individual cuando exista lectura
+fiable del buzón. Todas las pruebas de escritura se harán con datos y destinos
+sintéticos; esta preparación no envía ni programa correos reales.

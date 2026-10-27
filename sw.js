@@ -23,6 +23,8 @@ var ASSETS = [
   "./js/energy-data.js",
   "./js/nav-icons.js",
   "./js/core.js",
+  "./js/home-hours.js",
+  "./js/home-weeks.js",
   "./js/statistics-ui.js",
   "./js/swipe-content.js",
   "./js/swipe-render.js",

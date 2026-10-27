@@ -183,11 +183,13 @@ for(const [year,month] of [[2026,8],[2026,11],[2027,1]]){
  assert.equal(state.missing,current.length);assert.equal(state.complete,false);
  current.forEach(w=>a.SW[a.dk(w[0])]=true);state=a.homeSubmissionStatus(year,month);
  assert.equal(state.missing,0);assert.equal(state.complete,false);
- assert.equal(a.dk(state.extra),a.dk(a.ad(current[current.length-1][0],7)));
- a.SW[a.dk(state.extra)]=true;assert.equal(a.homeSubmissionStatus(year,month).complete,true);
+ assert.equal(state.extras.length,2);
+ assert.equal(state.extras[0].key,a.dk(a.ad(current[current.length-1][0],7)));
+ a.SW[state.extras[0].key]=true;assert.equal(a.homeSubmissionStatus(year,month).complete,false);
+ a.SW[state.extras[1].key]=true;assert.equal(a.homeSubmissionStatus(year,month).complete,true);
  delete a.SW[a.dk(current[0][0])];assert.equal(a.homeSubmissionStatus(year,month).complete,false);
 }
-console.log('Home: mes enviado mas semana adicional sin duplicados OK');
+console.log('Home: mes enviado más dos semanas adicionales sin duplicados OK');
 
 // CSV: comparar datos exportados, no el numero de ediciones de la Home.
 a.ST={};a.appStorage.removeItem(a.CSV_EXPORT_KEY);

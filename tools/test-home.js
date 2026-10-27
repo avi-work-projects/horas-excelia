@@ -1,0 +1,37 @@
+const assert=require('node:assert/strict');
+const {cargarApp}=require('./entorno');
+const a=cargarApp({});
+const plain=value=>JSON.parse(JSON.stringify(value));
+a.ST={'2026-10-12':{type:'festivo'},'2026-10-13':{type:'vacaciones'},'2026-10-14':{type:'ausencia'}};
+a.MONTH_H={'2026-10':9};
+let data=a.homeMonthHours(2026,9);
+assert.deepEqual(plain(data),{days:22,hours:185.5,workedDays:19,workedHours:158.5,adjustment:0,off:[{type:'festivo',label:'Festivos',days:1,hours:9},{type:'vacaciones',label:'Vacaciones',days:1,hours:9},{type:'ausencia',label:'Ausencias',days:1,hours:9}]});
+a.ST['2026-10-15']={hours:4};data=a.homeMonthHours(2026,9);
+assert.equal(data.hours,185.5);assert.equal(data.adjustment,-5);assert.equal(data.workedHours,153.5);
+assert.equal(data.hours-data.off.reduce((sum,row)=>sum+row.hours,0)+data.adjustment,data.workedHours);
+const before=JSON.stringify(a.ST),storage=JSON.stringify(a.localStorage);
+assert.match(a.renderHomeMonthHours(data),/Ajuste de jornada/);
+assert.equal(JSON.stringify(a.ST),before);assert.equal(JSON.stringify(a.localStorage),storage);
+a.ST={};a.SW={};
+for(let year=2025;year<=2028;year++)for(let month=0;month<12;month++){
+  const scope=a.homeSubmissionWeeks(year,month),current=a.weeks(year,month);
+  assert.equal(scope.length,current.length+2);assert.equal(new Set(scope.map(w=>w.key)).size,scope.length);
+  assert.equal(scope.filter(w=>w.extra).length,2);
+  assert.equal(scope.at(-1).key,a.dk(a.ad(current.at(-1)[0],14)));
+  scope.forEach(w=>assert.equal(w.mon.getDay(),1));
+}
+const future=new Date('2026-10-26T06:00:00Z');
+assert.deepEqual(plain(a.homeWeekSchedule('2026-10-26',future)),{week:'2026-10-26',date:'2026-10-30',time:'08:00',timeZone:'Europe/Madrid',reason:null});
+a.ST['2026-10-30']={type:'festivo'};a.ST['2026-10-29']={type:'vacaciones'};
+assert.equal(a.homeWeekSchedule('2026-10-26',future).date,'2026-10-28');
+assert.equal(a.homeWeekSchedule('2026-10-26',new Date('2026-10-28T06:59:59Z')).reason,null);
+assert.equal(a.homeWeekSchedule('2026-10-26',new Date('2026-10-28T07:00:00Z')).reason,'past-due');
+['26','27','28'].forEach(day=>a.ST['2026-10-'+day]={type:'vacaciones'});
+assert.equal(a.homeWeekSchedule('2026-10-26',future).reason,'no-workdays');
+assert.equal(a.homeWeekSchedule('2026-10-26',future).date,null);
+a.ST={};
+assert.equal(a.homeWeekSchedule('2026-03-23',new Date('2026-03-27T07:00:00Z')).reason,'past-due');
+assert.equal(a.homeWeekSchedule('2026-03-30',new Date('2026-04-03T05:59:59Z')).reason,null);
+assert.equal(a.homeWeekSchedule('2026-03-30',new Date('2026-04-03T06:00:00Z')).reason,'past-due');
+for(const invalid of ['2026-10-27','2026-02-30','2026-1-5','bad'])assert.throws(()=>a.homeWeekSchedule(invalid,future));
+console.log('Home: resumen aritmético, alcance de dos semanas y programación civil Madrid OK');

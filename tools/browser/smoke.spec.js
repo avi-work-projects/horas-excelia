@@ -554,22 +554,22 @@ test('Home: aviso de semanas y estado completo, cabecera opaca',async({page})=>{
  await page.screenshot({path:'.local-preview/home-pending.png',animations:'disabled'});
  await page.evaluate(()=>{weeks(CY,CM).forEach(w=>SW[dk(w[0])]=true);render();});
  await expect(page.locator('.home-submission.pending')).toContainText('05/10 al 11/10');
- await page.evaluate(()=>{SW[dk(homeSubmissionStatus(CY,CM).extra)]=true;render();});
+ await page.evaluate(()=>{homeSubmissionWeeks(CY,CM).forEach(w=>SW[w.key]=true);render();});
  await expect(page.locator('.home-submission.complete')).toContainText('Todo enviado');
  await page.screenshot({path:'.local-preview/home-complete.png',animations:'disabled'});
  await page.evaluate(()=>{
   CY=2026;CM=4;ST={};MONTH_H['2026-05']=9;SW={};
   ['2026-05-01','2026-05-15'].forEach(d=>ST[d]={type:'festivo'});
   ['04','08','11','12','13','14','18'].forEach(d=>ST['2026-05-'+d]={type:'vacaciones'});
-  weeks(CY,CM).forEach(w=>SW[dk(w[0])]=true);SW[dk(homeSubmissionStatus(CY,CM).extra)]=true;render();
+  weeks(CY,CM).forEach(w=>SW[dk(w[0])]=true);homeSubmissionWeeks(CY,CM).forEach(w=>SW[w.key]=true);render();
  });
  const compact=page.locator('.home-summary-compact');
- await expect(compact.locator('.ms-breakdown > span')).toHaveCount(2);
- for(const row of await compact.locator('.month-stat').all()){
-  const boxes=await row.locator('span').evaluateAll(els=>els.map(el=>el.getBoundingClientRect().bottom));
-  expect(Math.max(...boxes)-Math.min(...boxes)).toBeLessThan(6);
+ await expect(compact.locator('.home-hours-row.off')).toHaveCount(2);
+ for(const row of await compact.locator('.home-hours-row').all()){
+  const boxes=await row.locator(':scope > *').evaluateAll(els=>els.map(el=>el.getBoundingClientRect().bottom));
+  expect(Math.max(...boxes)-Math.min(...boxes)).toBeLessThan(16);
  }
- await expect(page.locator('.month-summary:not(.home-summary-compact) .ms-breakdown > span')).toHaveCount(2);
+ await expect(page.locator('.month-summary:not(.home-summary-compact) .home-hours-row.off')).toHaveCount(2);
  await page.screenshot({path:'.local-preview/home-may-breakdown.png',animations:'disabled'});
  await page.locator('.month-summary:not(.home-summary-compact)').scrollIntoViewIfNeeded();
  await page.screenshot({path:'.local-preview/home-footer-breakdown.png',animations:'disabled'});

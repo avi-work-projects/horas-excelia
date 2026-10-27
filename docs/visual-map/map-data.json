@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
   "title": "Gestify · mapa visual",
-  "generatedAt": "2026-10-26T13:27:22.306Z",
-  "referenceCommit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
+  "generatedAt": "2026-10-27T11:06:43.341Z",
+  "referenceCommit": "cb5a928d4b85c28d10d177dbc6ae95233268e977",
   "date": "2026-08-21T10:00:00+02:00",
   "viewport": {
     "width": 400,
@@ -73,7 +73,7 @@
         },
         "workday": {
           "x": 17,
-          "y": 337.21875,
+          "y": 556.46875,
           "width": 72.390625,
           "height": 85
         },
@@ -106,7 +106,7 @@
       "dependencies": [
         {
           "file": "index.html",
-          "hash": "4b451a71e39f8db2fa2c200baae35aa9baa68368c8a96fedf8a8a61083b15b21"
+          "hash": "09f58768f1f4cb5366b9f436cc81a5bae6720d6b13f621278bcdbbbbfed70d3c"
         },
         {
           "file": "js/nav-icons.js",
@@ -115,7 +115,7 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "7c6d91dc880311b1d887b5ef090b4e9ca0de9d425bf499eb71fd55f991b03599"
+          "hash": "0594d4e7c21ecc908bf4362b887e9d930d497cc4d9fc6793128773accebc4483"
         },
         {
           "file": "js/data-integrity.js",
@@ -131,7 +131,7 @@
         },
         {
           "file": "css/source/base.css",
-          "hash": "58e9b402d3d746f8c8756dfd1904f3f62d7e3dd59ad6dc79287f971bd904e28c"
+          "hash": "ce8a41064a21edb8afa9a057061af28ac9ce71abec53d5330a4f23677cc87a6d"
         },
         {
           "file": "css/source/navigation-controls.css",
@@ -171,7 +171,7 @@
         },
         {
           "file": "css/source/home-sharing.css",
-          "hash": "caac3c233ab62466329f3086e2fc904d5fb79fb541fd7d591cec0f3684b53cc3"
+          "hash": "3f559773af25296ae9daf6e3729b82d876ce614f942c1ec03df4bb03882a9980"
         },
         {
           "file": "css/source/energy-refinements.css",
@@ -192,6 +192,14 @@
         {
           "file": "css/tasks.css",
           "hash": "96b4dc532dd2d7eeb82fe5d4c971b8599542860e95b3e8655f45f1922d4365aa"
+        },
+        {
+          "file": "js/home-hours.js",
+          "hash": "a65c4b5bb0aebe28c33166740cdf421ceeef926b0e081491c1c5dcdb6139a16d"
+        },
+        {
+          "file": "js/home-weeks.js",
+          "hash": "b4679e2042ada692fc60539fd6ea487aeb71a46ff21d670cce136994f8e98ada"
         },
         {
           "file": "js/invoices-home.js",
@@ -220,7 +228,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
+      "commit": "cb5a928d4b85c28d10d177dbc6ae95233268e977",
       "verifiedEdges": [
         "household",
         "study",
@@ -235,7 +243,7 @@
         "home-september",
         "tasks"
       ],
-      "imageHash": "78be1f34f6eb466c08b75648f6ea620e0893fdc860c003960c84dbd54299aae9",
+      "imageHash": "1fc869fd1ca2f4d91a6f1899cff8a8e8299a2e93812768567a94e3366278e9a4",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -434,7 +442,7 @@
         "gas",
         "electric"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "study",
@@ -633,7 +641,7 @@
         "study-gas",
         "study-electric"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "events",
@@ -906,7 +914,7 @@
         "birthdays",
         "routines"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "economics",
@@ -1092,7 +1100,7 @@
         "econ-personal",
         "fiscal"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "alarm",
@@ -1111,6 +1119,7 @@
         705
       ],
       "image": "captures/alarm.png",
+      "imageHash": "492eebe389d290d5e71a426d9765dcbdb7dcab4cde457649794883ff4a291c5c",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -1235,8 +1244,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "verifiedEdges": [],
-      "imageHash": "492eebe389d290d5e71a426d9765dcbdb7dcab4cde457649794883ff4a291c5c",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -1250,7 +1257,8 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [],
+      "fresh": false
     },
     {
       "id": "settings",
@@ -1268,6 +1276,7 @@
         705
       ],
       "image": "captures/settings.png",
+      "imageHash": "2c513978c6ed9a04520363ad1ff324a1b5a687aafdb02d51b77bdb6c6ebbf60f",
       "anchors": {
         "reminders": {
           "x": 285,
@@ -1446,17 +1455,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "verifiedEdges": [
-        "reminders",
-        "mail",
-        "macro",
-        "contacts",
-        "notes",
-        "icons",
-        "export-folder",
-        "import-preview"
-      ],
-      "imageHash": "2c513978c6ed9a04520363ad1ff324a1b5a687aafdb02d51b77bdb6c6ebbf60f",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -1470,7 +1468,17 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [
+        "reminders",
+        "mail",
+        "macro",
+        "contacts",
+        "notes",
+        "icons",
+        "export-folder",
+        "import-preview"
+      ],
+      "fresh": false
     },
     {
       "id": "calendar",
@@ -1683,7 +1691,7 @@
         "started-detail",
         "routine-session"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "day",
@@ -1872,7 +1880,7 @@
         "edit",
         "event-alarm"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "edit",
@@ -2089,7 +2097,7 @@
         "edit-scroll",
         "edit--scroll-plan-picker"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "time",
@@ -2288,7 +2296,7 @@
       "verifiedEdges": [
         "edit"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "edit-scroll",
@@ -2488,7 +2496,7 @@
       "verifiedEdges": [
         "dates"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "dates",
@@ -2690,7 +2698,7 @@
       "verifiedEdges": [
         "edit-scroll"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "hours",
@@ -2706,6 +2714,7 @@
       ],
       "region": "body",
       "image": "captures/hours.png",
+      "imageHash": "7f5d8eb495c1fa9dffda246fbb8fd2f94e4ee51332255f4c63e8fdf15c37ed86",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -2826,8 +2835,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "verifiedEdges": [],
-      "imageHash": "7f5d8eb495c1fa9dffda246fbb8fd2f94e4ee51332255f4c63e8fdf15c37ed86",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -2841,7 +2848,8 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [],
+      "fresh": false
     },
     {
       "id": "workday",
@@ -2856,6 +2864,7 @@
       ],
       "region": "body",
       "image": "captures/workday.png",
+      "imageHash": "3e1ce149d683322aca37d45479033f710a34155d03ea297186dade9af1e66478",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -2976,8 +2985,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "verifiedEdges": [],
-      "imageHash": "3e1ce149d683322aca37d45479033f710a34155d03ea297186dade9af1e66478",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -2991,7 +2998,8 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [],
+      "fresh": false
     },
     {
       "id": "reminders",
@@ -3008,6 +3016,7 @@
         "js/events-order.js"
       ],
       "image": "captures/reminders.png",
+      "imageHash": "d349361c077c8dfbb2c5d3eb722539ed78987794e6ed27fc33c2412c7f56da5a",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -3149,8 +3158,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "verifiedEdges": [],
-      "imageHash": "d349361c077c8dfbb2c5d3eb722539ed78987794e6ed27fc33c2412c7f56da5a",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -3164,7 +3171,8 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [],
+      "fresh": false
     },
     {
       "id": "hours-export",
@@ -3179,6 +3187,7 @@
       ],
       "region": "body",
       "image": "captures/hours-export.png",
+      "imageHash": "362bd553686471329e5704aa6c7c9f39c7e7c1ecb7793c5cbb7929c60e2779d8",
       "anchors": {
         "export-mode": {
           "x": 38,
@@ -3310,10 +3319,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "verifiedEdges": [
-        "export-mode"
-      ],
-      "imageHash": "362bd553686471329e5704aa6c7c9f39c7e7c1ecb7793c5cbb7929c60e2779d8",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -3328,7 +3333,10 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [
+        "export-mode"
+      ],
+      "fresh": false
     },
     {
       "id": "invoice",
@@ -3345,6 +3353,7 @@
       "region": ".invoice-body",
       "note": "Agosto de 2026 se presenta como referencia histórica.",
       "image": "captures/invoice.png",
+      "imageHash": "648f53a9cf4b09dcd0d5bf0ffeabe84ebace6b18b49e663f47efcb1dd2897c13",
       "anchors": {
         "invoice-config": {
           "x": 18,
@@ -3476,10 +3485,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "verifiedEdges": [
-        "invoice-config"
-      ],
-      "imageHash": "648f53a9cf4b09dcd0d5bf0ffeabe84ebace6b18b49e663f47efcb1dd2897c13",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -3494,7 +3499,10 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [
+        "invoice-config"
+      ],
+      "fresh": false
     },
     {
       "id": "invoice-config",
@@ -3511,6 +3519,7 @@
       ],
       "region": ".invoice-body",
       "image": "captures/invoice-config.png",
+      "imageHash": "6df7cab4c15095fc5c4b7b300fe0a13fef0d888a8e68209337eca502f5bf55ae",
       "anchors": {
         "invoice-config-edit": {
           "x": 28,
@@ -3642,10 +3651,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "verifiedEdges": [
-        "invoice-config-edit"
-      ],
-      "imageHash": "6df7cab4c15095fc5c4b7b300fe0a13fef0d888a8e68209337eca502f5bf55ae",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -3659,7 +3664,10 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [
+        "invoice-config-edit"
+      ],
+      "fresh": false
     },
     {
       "id": "invoice-config-edit",
@@ -3677,6 +3685,7 @@
       ],
       "region": ".invoice-body",
       "image": "captures/invoice-config-edit.png",
+      "imageHash": "cc09215aa238cd642f233a730de845802bb44327cb3ea431210a64f0b1df9f35",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -3801,8 +3810,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "verifiedEdges": [],
-      "imageHash": "cc09215aa238cd642f233a730de845802bb44327cb3ea431210a64f0b1df9f35",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -3816,7 +3823,8 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [],
+      "fresh": false
     },
     {
       "id": "home-september",
@@ -3844,7 +3852,7 @@
       "dependencies": [
         {
           "file": "index.html",
-          "hash": "4b451a71e39f8db2fa2c200baae35aa9baa68368c8a96fedf8a8a61083b15b21"
+          "hash": "09f58768f1f4cb5366b9f436cc81a5bae6720d6b13f621278bcdbbbbfed70d3c"
         },
         {
           "file": "js/nav-icons.js",
@@ -3853,7 +3861,7 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "7c6d91dc880311b1d887b5ef090b4e9ca0de9d425bf499eb71fd55f991b03599"
+          "hash": "0594d4e7c21ecc908bf4362b887e9d930d497cc4d9fc6793128773accebc4483"
         },
         {
           "file": "js/data-integrity.js",
@@ -3869,7 +3877,7 @@
         },
         {
           "file": "css/source/base.css",
-          "hash": "58e9b402d3d746f8c8756dfd1904f3f62d7e3dd59ad6dc79287f971bd904e28c"
+          "hash": "ce8a41064a21edb8afa9a057061af28ac9ce71abec53d5330a4f23677cc87a6d"
         },
         {
           "file": "css/source/navigation-controls.css",
@@ -3909,7 +3917,7 @@
         },
         {
           "file": "css/source/home-sharing.css",
-          "hash": "caac3c233ab62466329f3086e2fc904d5fb79fb541fd7d591cec0f3684b53cc3"
+          "hash": "3f559773af25296ae9daf6e3729b82d876ce614f942c1ec03df4bb03882a9980"
         },
         {
           "file": "css/source/energy-refinements.css",
@@ -3930,6 +3938,14 @@
         {
           "file": "css/tasks.css",
           "hash": "96b4dc532dd2d7eeb82fe5d4c971b8599542860e95b3e8655f45f1922d4365aa"
+        },
+        {
+          "file": "js/home-hours.js",
+          "hash": "a65c4b5bb0aebe28c33166740cdf421ceeef926b0e081491c1c5dcdb6139a16d"
+        },
+        {
+          "file": "js/home-weeks.js",
+          "hash": "b4679e2042ada692fc60539fd6ea487aeb71a46ff21d670cce136994f8e98ada"
         },
         {
           "file": "js/invoices-home.js",
@@ -3958,11 +3974,11 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
+      "commit": "cb5a928d4b85c28d10d177dbc6ae95233268e977",
       "verifiedEdges": [
         "home-october"
       ],
-      "imageHash": "33c7169ebd6588e43ba8b7f40d126068e01f7b8a22a40664b248ea505898cc34",
+      "imageHash": "88cb5d79ac29540dac657b9503c9baadc729bfbd27dee613ee3866ce417bdb1b",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -3996,7 +4012,7 @@
       "anchors": {
         "home-invoice-connection": {
           "x": 310.765625,
-          "y": 313.21875,
+          "y": 430.84375,
           "width": 59.234375,
           "height": 32
         },
@@ -4011,7 +4027,7 @@
       "dependencies": [
         {
           "file": "index.html",
-          "hash": "4b451a71e39f8db2fa2c200baae35aa9baa68368c8a96fedf8a8a61083b15b21"
+          "hash": "09f58768f1f4cb5366b9f436cc81a5bae6720d6b13f621278bcdbbbbfed70d3c"
         },
         {
           "file": "js/nav-icons.js",
@@ -4020,7 +4036,7 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "7c6d91dc880311b1d887b5ef090b4e9ca0de9d425bf499eb71fd55f991b03599"
+          "hash": "0594d4e7c21ecc908bf4362b887e9d930d497cc4d9fc6793128773accebc4483"
         },
         {
           "file": "js/data-integrity.js",
@@ -4036,7 +4052,7 @@
         },
         {
           "file": "css/source/base.css",
-          "hash": "58e9b402d3d746f8c8756dfd1904f3f62d7e3dd59ad6dc79287f971bd904e28c"
+          "hash": "ce8a41064a21edb8afa9a057061af28ac9ce71abec53d5330a4f23677cc87a6d"
         },
         {
           "file": "css/source/navigation-controls.css",
@@ -4076,7 +4092,7 @@
         },
         {
           "file": "css/source/home-sharing.css",
-          "hash": "caac3c233ab62466329f3086e2fc904d5fb79fb541fd7d591cec0f3684b53cc3"
+          "hash": "3f559773af25296ae9daf6e3729b82d876ce614f942c1ec03df4bb03882a9980"
         },
         {
           "file": "css/source/energy-refinements.css",
@@ -4097,6 +4113,14 @@
         {
           "file": "css/tasks.css",
           "hash": "96b4dc532dd2d7eeb82fe5d4c971b8599542860e95b3e8655f45f1922d4365aa"
+        },
+        {
+          "file": "js/home-hours.js",
+          "hash": "a65c4b5bb0aebe28c33166740cdf421ceeef926b0e081491c1c5dcdb6139a16d"
+        },
+        {
+          "file": "js/home-weeks.js",
+          "hash": "b4679e2042ada692fc60539fd6ea487aeb71a46ff21d670cce136994f8e98ada"
         },
         {
           "file": "js/invoices-home.js",
@@ -4125,12 +4149,12 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
+      "commit": "cb5a928d4b85c28d10d177dbc6ae95233268e977",
       "verifiedEdges": [
         "home-invoice-connection",
         "invoice-current"
       ],
-      "imageHash": "42e6a4f4e57336a59b36e5ab5bfbccd49603956ea5d4cf25d14f520019a29322",
+      "imageHash": "5e11771d159436532c69b4f2870eb32e46e85edc6334ef863b4bab72e501a9a8",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -4164,6 +4188,7 @@
       "region": ".invoice-body",
       "note": "Consulta sin configurar: el botón abre la conexión privada existente.",
       "image": "captures/home-invoice-connection.png",
+      "imageHash": "8794b105d9df28b377234fae2015de85d64e95cfecfe494554d6cb8a38aadf8d",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -4288,10 +4313,9 @@
       ],
       "dependencyVersion": 2,
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "verifiedEdges": [],
-      "imageHash": "8794b105d9df28b377234fae2015de85d64e95cfecfe494554d6cb8a38aadf8d",
       "review": "Sin revisar",
-      "fresh": true
+      "verifiedEdges": [],
+      "fresh": false
     },
     {
       "id": "invoice-current",
@@ -4309,6 +4333,7 @@
       ],
       "region": ".invoice-body",
       "image": "captures/invoice-current.png",
+      "imageHash": "d22d5f8d14dfbade3b141806b6d708d847180cb81eeda7ae6119f90f048bb8c8",
       "anchors": {
         "invoice-current--scroll-invoice-document": {
           "x": 374,
@@ -4440,10 +4465,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "verifiedEdges": [
-        "invoice-current--scroll-invoice-document"
-      ],
-      "imageHash": "d22d5f8d14dfbade3b141806b6d708d847180cb81eeda7ae6119f90f048bb8c8",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -4457,7 +4478,10 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [
+        "invoice-current--scroll-invoice-document"
+      ],
+      "fresh": false
     },
     {
       "id": "invoice-current--scroll-invoice-document",
@@ -4479,6 +4503,7 @@
       "note": "Misma pantalla, desplazada hasta el control indicado.",
       "region": ".invoice-body",
       "image": "captures/invoice-current--scroll-invoice-document.png",
+      "imageHash": "d22d5f8d14dfbade3b141806b6d708d847180cb81eeda7ae6119f90f048bb8c8",
       "anchors": {
         "invoice-document": {
           "x": 33,
@@ -4610,10 +4635,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "verifiedEdges": [
-        "invoice-document"
-      ],
-      "imageHash": "d22d5f8d14dfbade3b141806b6d708d847180cb81eeda7ae6119f90f048bb8c8",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -4627,7 +4648,10 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [
+        "invoice-document"
+      ],
+      "fresh": false
     },
     {
       "id": "invoice-document",
@@ -4649,6 +4673,7 @@
       ],
       "region": ".invoice-body",
       "image": "captures/invoice-document.png",
+      "imageHash": "c8c372fa26d97ca4c3fbcd46aaef7a14de0237e16efd558d29d29db0a32d0fdb",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -4773,8 +4798,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "verifiedEdges": [],
-      "imageHash": "c8c372fa26d97ca4c3fbcd46aaef7a14de0237e16efd558d29d29db0a32d0fdb",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -4788,7 +4811,8 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [],
+      "fresh": false
     },
     {
       "id": "annual",
@@ -4969,7 +4993,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "quad",
@@ -5150,7 +5174,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "timeoff",
@@ -5340,7 +5364,7 @@
       "verifiedEdges": [
         "bridges"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "bridges",
@@ -5520,7 +5544,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "calendar-bar-titles",
@@ -5668,7 +5692,7 @@
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
       "review": "Sin revisar",
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "agenda",
@@ -5849,7 +5873,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "all-events",
@@ -6046,7 +6070,7 @@
         "event-filter",
         "event-delete"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "event-stats",
@@ -6250,7 +6274,7 @@
       "verifiedEdges": [
         "event-stats-breakdown"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "event-birthdays",
@@ -6431,7 +6455,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "event-filter",
@@ -6607,7 +6631,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "event-order",
@@ -6783,7 +6807,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "events--scroll-event-new",
@@ -6976,7 +7000,7 @@
       "verifiedEdges": [
         "event-new"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "event-new",
@@ -7179,7 +7203,7 @@
       "verifiedEdges": [
         "event-new-details"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "event-new-details",
@@ -7363,7 +7387,7 @@
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
       "review": "Sin revisar",
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "event-delete",
@@ -7545,7 +7569,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "large-detail",
@@ -7706,7 +7730,7 @@
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
       "review": "Sin revisar",
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "started-detail",
@@ -7861,7 +7885,7 @@
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
       "review": "Sin revisar",
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "event-alarm",
@@ -8024,7 +8048,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routine-session",
@@ -8191,7 +8215,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "edit--scroll-plan-picker",
@@ -8382,7 +8406,7 @@
       "verifiedEdges": [
         "plan-picker"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "plan-picker",
@@ -8576,7 +8600,7 @@
       "verifiedEdges": [
         "plan-picker-new-plans"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "plan-picker-new-plans",
@@ -8751,7 +8775,7 @@
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
       "review": "Sin revisar",
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "weddings",
@@ -9000,7 +9024,7 @@
         "wedding-new",
         "wedding-issues"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "calendar-export",
@@ -9188,7 +9212,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "couples",
@@ -9389,7 +9413,7 @@
         "couple-card",
         "couple-new"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "wedding-calendar",
@@ -9575,7 +9599,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "wedding-stats",
@@ -9788,7 +9812,7 @@
       "verifiedEdges": [
         "wedding-stats-charts"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "wedding-config",
@@ -9997,7 +10021,7 @@
         "wedding-config--scroll-wedding-length",
         "wedding-config--scroll-wedding-room"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "wedding-edit",
@@ -10182,7 +10206,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "wedding-class",
@@ -10407,7 +10431,7 @@
         "wedding-duration",
         "wedding-teachers"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "wedding-time",
@@ -10601,7 +10625,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "wedding-place",
@@ -10795,7 +10819,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "wedding-couple",
@@ -10989,7 +11013,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "wedding-duration",
@@ -11183,7 +11207,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "wedding-teachers",
@@ -11377,7 +11401,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "couple-card",
@@ -11579,7 +11603,7 @@
         "couple-form",
         "wedding-assign"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "couple-form",
@@ -11766,7 +11790,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "wedding-new",
@@ -11954,7 +11978,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "couple-new",
@@ -12140,7 +12164,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "wedding-assign",
@@ -12330,7 +12354,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "wedding-issues",
@@ -12518,7 +12542,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "wedding-config--scroll-wedding-pack",
@@ -12716,7 +12740,7 @@
       "verifiedEdges": [
         "wedding-pack"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "wedding-pack",
@@ -12908,7 +12932,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "wedding-config--scroll-wedding-length",
@@ -13106,7 +13130,7 @@
       "verifiedEdges": [
         "wedding-length"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "wedding-length",
@@ -13298,7 +13322,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "wedding-config--scroll-wedding-room",
@@ -13496,7 +13520,7 @@
       "verifiedEdges": [
         "wedding-room"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "wedding-room",
@@ -13688,7 +13712,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "birthdays",
@@ -13888,7 +13912,7 @@
         "birthday-list",
         "birthday-calendar"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "birthday-list",
@@ -14103,7 +14127,7 @@
         "birthday-filters",
         "birthday-vip"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "birthday-calendar",
@@ -14297,7 +14321,7 @@
       "verifiedEdges": [
         "birthday-day-list"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "birthday-day-list",
@@ -14487,7 +14511,7 @@
         "birthday-calendar",
         "birthday-day-person"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "birthday-day-person",
@@ -14665,7 +14689,7 @@
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
       "review": "Sin revisar",
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "birthday-person",
@@ -14877,7 +14901,7 @@
         "birthday-alarm",
         "birthday-groups"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "birthday-form",
@@ -15083,7 +15107,7 @@
         "birthday-day",
         "birthday-month"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "birthday-alarm",
@@ -15273,7 +15297,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "birthday-groups",
@@ -15467,7 +15491,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "birthday-day",
@@ -15658,7 +15682,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "birthday-month",
@@ -15849,7 +15873,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "birthday-group-edit",
@@ -16038,7 +16062,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "birthday-filters",
@@ -16224,7 +16248,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "birthday-vip",
@@ -16410,7 +16434,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routines",
@@ -16640,7 +16664,7 @@
         "routines--scroll-routine-flex",
         "routines--scroll-routine-new"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routine-stats",
@@ -16838,7 +16862,7 @@
       "verifiedEdges": [
         "routine-stats-detail"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routine-form",
@@ -17023,7 +17047,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routine-week",
@@ -17212,7 +17236,7 @@
       "verifiedEdges": [
         "routine-week-edit"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routine-week-edit",
@@ -17393,7 +17417,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routine-history",
@@ -17601,7 +17625,7 @@
         "routine-bulk",
         "routine-addition"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routine-history-edit",
@@ -17796,7 +17820,7 @@
       "verifiedEdges": [
         "routine-delete"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routine-delete",
@@ -17988,7 +18012,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routine-bulk",
@@ -18187,7 +18211,7 @@
       "verifiedEdges": [
         "routine-bulk-selected"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routine-bulk-selected",
@@ -18387,7 +18411,7 @@
       "verifiedEdges": [
         "routine-bulk-confirm"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routine-bulk-confirm",
@@ -18579,7 +18603,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routine-addition",
@@ -18779,7 +18803,7 @@
       "verifiedEdges": [
         "routine-recoveries"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routine-recoveries",
@@ -18984,7 +19008,7 @@
       "verifiedEdges": [
         "routine-earlier-picker"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routine-earlier-picker",
@@ -19182,7 +19206,7 @@
       "verifiedEdges": [
         "routine-earlier-selected"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routine-earlier-selected",
@@ -19381,7 +19405,7 @@
       "verifiedEdges": [
         "routine-earlier-form"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routine-earlier-form",
@@ -19581,7 +19605,7 @@
       "verifiedEdges": [
         "routine-earlier-saved"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routine-earlier-saved",
@@ -19773,7 +19797,7 @@
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
       "review": "Sin revisar",
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routine-extra",
@@ -19966,7 +19990,7 @@
       "verifiedEdges": [
         "routine-extra-selected"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routine-extra-selected",
@@ -20160,7 +20184,7 @@
       "verifiedEdges": [
         "routine-extra-day"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routine-extra-day",
@@ -20350,7 +20374,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routines--scroll-routine-flex",
@@ -20542,7 +20566,7 @@
       "verifiedEdges": [
         "routine-flex"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routine-flex",
@@ -20729,7 +20753,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routines--scroll-routine-new",
@@ -20921,7 +20945,7 @@
       "verifiedEdges": [
         "routine-new"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routine-new",
@@ -21118,7 +21142,7 @@
       "verifiedEdges": [
         "routine-time"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routine-time",
@@ -21311,7 +21335,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "mortgage",
@@ -21506,7 +21530,7 @@
         "mortgage--scroll-switch-edit",
         "mortgage-analysis"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "gas",
@@ -21694,7 +21718,7 @@
         "gas--scroll-gas-flat-edit",
         "energy-gas"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "electric",
@@ -21875,7 +21899,7 @@
         "electric-edit",
         "energy-luz"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "purchase-edit",
@@ -22041,7 +22065,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "mortgage--scroll-loan-edit",
@@ -22220,7 +22244,7 @@
       "verifiedEdges": [
         "loan-edit"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "loan-edit",
@@ -22390,7 +22414,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "mortgage--scroll-switch-edit",
@@ -22569,7 +22593,7 @@
       "verifiedEdges": [
         "switch-edit"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "switch-edit",
@@ -22739,7 +22763,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "mortgage-analysis",
@@ -22905,7 +22929,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "gas-edit",
@@ -23072,7 +23096,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "gas--scroll-gas-flat-edit",
@@ -23251,7 +23275,7 @@
       "verifiedEdges": [
         "gas-flat-edit"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "gas-flat-edit",
@@ -23421,7 +23445,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "electric-edit",
@@ -23588,7 +23612,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "energy-gas",
@@ -23801,7 +23825,7 @@
         "energy-gas-tarifas",
         "energy-gas-comparar"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "energy-gas-consumo",
@@ -23985,7 +24009,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "energy-gas-costes",
@@ -24178,7 +24202,7 @@
       "verifiedEdges": [
         "energy-gas-costes-neto"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "energy-gas-tarifas",
@@ -24362,7 +24386,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "energy-gas-comparar",
@@ -24546,7 +24570,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "energy-gas-costes-neto",
@@ -24729,7 +24753,7 @@
       "verifiedEdges": [
         "energy-gas-costes-constante"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "energy-gas-costes-constante",
@@ -24904,7 +24928,7 @@
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
       "review": "Sin revisar",
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "energy-luz",
@@ -25117,7 +25141,7 @@
         "energy-luz-tarifas",
         "energy-luz-comparar"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "energy-luz-consumo",
@@ -25301,7 +25325,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "energy-luz-costes",
@@ -25494,7 +25518,7 @@
       "verifiedEdges": [
         "energy-luz-costes-neto"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "energy-luz-tarifas",
@@ -25678,7 +25702,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "energy-luz-comparar",
@@ -25862,7 +25886,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "energy-luz-costes-neto",
@@ -26045,7 +26069,7 @@
       "verifiedEdges": [
         "energy-luz-costes-constante"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "energy-luz-costes-constante",
@@ -26220,7 +26244,7 @@
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
       "review": "Sin revisar",
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "study-rate",
@@ -26385,7 +26409,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "study-mortgage",
@@ -26550,7 +26574,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "study-gas",
@@ -26724,7 +26748,7 @@
       "verifiedEdges": [
         "study-gas--scroll-energy-tariff"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "study-electric",
@@ -26889,7 +26913,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "study-gas--scroll-energy-tariff",
@@ -27067,7 +27091,7 @@
       "verifiedEdges": [
         "energy-tariff"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "energy-tariff",
@@ -27238,7 +27262,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "econ-days",
@@ -27390,7 +27414,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "econ-tax",
@@ -27542,7 +27566,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "econ-personal",
@@ -27694,7 +27718,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "fiscal",
@@ -27892,7 +27916,7 @@
         "fiscal-home",
         "fiscal--scroll-personal-periods"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "fiscal-expenses",
@@ -28061,7 +28085,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "fiscal-irpf",
@@ -28230,7 +28254,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "fiscal-home",
@@ -28399,7 +28423,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "fiscal--scroll-personal-periods",
@@ -28580,7 +28604,7 @@
       "verifiedEdges": [
         "personal-periods"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "personal-periods",
@@ -28755,7 +28779,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "mail",
@@ -28771,6 +28795,7 @@
       ],
       "region": "body",
       "image": "captures/mail.png",
+      "imageHash": "a6ab456ecae4bcdc02b06f36397f61ddbf0a68b9c24646933942d4afc55ac3ea",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -28900,8 +28925,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "verifiedEdges": [],
-      "imageHash": "a6ab456ecae4bcdc02b06f36397f61ddbf0a68b9c24646933942d4afc55ac3ea",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -28915,7 +28938,8 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [],
+      "fresh": false
     },
     {
       "id": "macro",
@@ -28931,6 +28955,7 @@
       ],
       "region": "body",
       "image": "captures/macro.png",
+      "imageHash": "3441fd79e0452551779cc4ce4671c3e7f0a726be6e1bef2be172ddaa4605a231",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -29060,8 +29085,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "verifiedEdges": [],
-      "imageHash": "3441fd79e0452551779cc4ce4671c3e7f0a726be6e1bef2be172ddaa4605a231",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -29075,7 +29098,8 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [],
+      "fresh": false
     },
     {
       "id": "contacts",
@@ -29091,6 +29115,7 @@
       ],
       "region": "body",
       "image": "captures/contacts.png",
+      "imageHash": "22a3d424dc170f550d88949ec670ca5de8d489f17fd1de4569e5ea40e47910eb",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -29224,8 +29249,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "verifiedEdges": [],
-      "imageHash": "22a3d424dc170f550d88949ec670ca5de8d489f17fd1de4569e5ea40e47910eb",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -29239,7 +29262,8 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [],
+      "fresh": false
     },
     {
       "id": "notes",
@@ -29255,6 +29279,7 @@
       ],
       "region": "body",
       "image": "captures/notes.png",
+      "imageHash": "b89360e7fdf6d43bf8023219c7cf64512f79bf1e0c2edcb04108ffd271a6b8bd",
       "anchors": {
         "hairdresser": {
           "x": 203,
@@ -29395,10 +29420,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "verifiedEdges": [
-        "hairdresser"
-      ],
-      "imageHash": "b89360e7fdf6d43bf8023219c7cf64512f79bf1e0c2edcb04108ffd271a6b8bd",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -29412,7 +29433,10 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [
+        "hairdresser"
+      ],
+      "fresh": false
     },
     {
       "id": "icons",
@@ -29428,6 +29452,7 @@
       ],
       "region": "body",
       "image": "captures/icons.png",
+      "imageHash": "bf98ce7fc75d7383c72e27d71ea382c724d4e881dfe628b31106353143188ed3",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -29557,8 +29582,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "verifiedEdges": [],
-      "imageHash": "bf98ce7fc75d7383c72e27d71ea382c724d4e881dfe628b31106353143188ed3",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -29572,7 +29595,8 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [],
+      "fresh": false
     },
     {
       "id": "hairdresser",
@@ -29589,6 +29613,7 @@
       ],
       "region": "body",
       "image": "captures/hairdresser.png",
+      "imageHash": "32e6dfa1384ad8cd5ae2a734e8ed3456a9167d78f5104c97228dea18413f6fd4",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -29722,8 +29747,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "verifiedEdges": [],
-      "imageHash": "32e6dfa1384ad8cd5ae2a734e8ed3456a9167d78f5104c97228dea18413f6fd4",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -29737,7 +29760,8 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [],
+      "fresh": false
     },
     {
       "id": "export-folder",
@@ -29753,6 +29777,7 @@
       ],
       "note": "El siguiente paso abre el selector nativo de carpetas del navegador; queda fuera de las capturas de la app.",
       "image": "captures/export-folder.png",
+      "imageHash": "11b713d02bf86c5a228361c0191c4aab4a83f2f8afca32dd8a5dd1998bc3504f",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -29886,8 +29911,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "verifiedEdges": [],
-      "imageHash": "11b713d02bf86c5a228361c0191c4aab4a83f2f8afca32dd8a5dd1998bc3504f",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -29901,7 +29924,8 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [],
+      "fresh": false
     },
     {
       "id": "export-mode",
@@ -29918,6 +29942,7 @@
       "region": "body",
       "note": "Opciones del archivo ficticio. El recorrido se detiene antes de guardar o compartir.",
       "image": "captures/export-mode.png",
+      "imageHash": "1620fdbbb3be8182b45198e5859e2a3dd2d7b001b85cff68bd00c1f4f9a8b99f",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -30046,8 +30071,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "verifiedEdges": [],
-      "imageHash": "1620fdbbb3be8182b45198e5859e2a3dd2d7b001b85cff68bd00c1f4f9a8b99f",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -30061,7 +30084,8 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [],
+      "fresh": false
     },
     {
       "id": "import-preview",
@@ -30095,6 +30119,7 @@
       ],
       "note": "Archivo ficticio seleccionado en un perfil aislado; no se confirma Añadir ni Reemplazar.",
       "image": "captures/import-preview.png",
+      "imageHash": "ca9a002bcdc0422c644dd863c77cfd842f8bcf47edd17caa061eaa72271086c9",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -30232,8 +30257,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "verifiedEdges": [],
-      "imageHash": "ca9a002bcdc0422c644dd863c77cfd842f8bcf47edd17caa061eaa72271086c9",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -30247,7 +30270,8 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [],
+      "fresh": false
     },
     {
       "id": "tasks",
@@ -30263,6 +30287,7 @@
       ],
       "region": "#tasksList",
       "image": "captures/tasks.png",
+      "imageHash": "462b511661c7ee01d0a89f228f6bd9a408c31d72f331596da5619f83f2778e11",
       "anchors": {
         "tasks-completed": {
           "x": 203,
@@ -30410,12 +30435,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "verifiedEdges": [
-        "tasks-completed",
-        "task-edit",
-        "tasks-selected"
-      ],
-      "imageHash": "462b511661c7ee01d0a89f228f6bd9a408c31d72f331596da5619f83f2778e11",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -30429,7 +30448,12 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [
+        "tasks-completed",
+        "task-edit",
+        "tasks-selected"
+      ],
+      "fresh": false
     },
     {
       "id": "tasks-completed",
@@ -30446,6 +30470,7 @@
       ],
       "region": "#tasksList",
       "image": "captures/tasks-completed.png",
+      "imageHash": "e4ee7c1b513f6e25e1149f6d45b6f613935fd00f25cefadeb04b9dd5d79a435c",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -30574,8 +30599,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "verifiedEdges": [],
-      "imageHash": "e4ee7c1b513f6e25e1149f6d45b6f613935fd00f25cefadeb04b9dd5d79a435c",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -30589,7 +30612,8 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [],
+      "fresh": false
     },
     {
       "id": "task-edit",
@@ -30606,6 +30630,7 @@
       ],
       "region": "#tasksList",
       "image": "captures/task-edit.png",
+      "imageHash": "920d57d171b903ee0fb376062153ee5c0369b5ce922e9516720f91704a2b6c13",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -30734,8 +30759,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "verifiedEdges": [],
-      "imageHash": "920d57d171b903ee0fb376062153ee5c0369b5ce922e9516720f91704a2b6c13",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -30749,7 +30772,8 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [],
+      "fresh": false
     },
     {
       "id": "tasks-selected",
@@ -30766,6 +30790,7 @@
       ],
       "region": "#tasksList",
       "image": "captures/tasks-selected.png",
+      "imageHash": "216d1e4bb0cd7152a369c919024d1cbc5a02278c77fa04e33ee5dccb96510cef",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -30894,10 +30919,9 @@
       ],
       "dependencyVersion": 2,
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "verifiedEdges": [],
-      "imageHash": "216d1e4bb0cd7152a369c919024d1cbc5a02278c77fa04e33ee5dccb96510cef",
       "review": "Sin revisar",
-      "fresh": true
+      "verifiedEdges": [],
+      "fresh": false
     },
     {
       "id": "wedding-stats-charts",
@@ -31101,7 +31125,7 @@
       "verifiedEdges": [
         "wedding-stats-packs"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "wedding-stats-packs",
@@ -31308,7 +31332,7 @@
       "verifiedEdges": [
         "wedding-stats-teachers"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "wedding-stats-teachers",
@@ -31509,7 +31533,7 @@
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
       "review": "Sin revisar",
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routine-stats-detail",
@@ -31689,7 +31713,7 @@
       "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
       "review": "Sin revisar",
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "event-stats-breakdown",
@@ -31884,7 +31908,7 @@
       "verifiedEdges": [
         "event-stats-links"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "event-stats-links",
@@ -32089,7 +32113,7 @@
         "routine-stats",
         "wedding-stats"
       ],
-      "fresh": true
+      "fresh": false
     }
   ],
   "edges": [
@@ -34881,7 +34905,7 @@
     {
       "symbol": "openSheet",
       "file": "js/core.js",
-      "line": 595
+      "line": 563
     },
     {
       "symbol": "openEstudio",

@@ -93,10 +93,17 @@ npm run map:changed                         # lote técnico; solo tras revisar s
 npm run map:index                           # cobertura/antigüedad sin capturar
 npm run map:check                           # falla si faltan capturas o cambió una fuente
 npm run map:verify                          # visor, relaciones y exportaciones afectadas
+npm run map:verify -- --representative       # conserva referencias editoriales aunque cambien fuentes
 npm run map:verify -- --force-exports        # reconstrucción explícita de todas las láminas
 npm run test:map                            # contratos de vigencia, revisión y exportación
 node tools/visual-map/probe.cjs             # diagnóstico de rutas sin capturas
 ```
+
+`--representative` no captura ni declara revisadas las imágenes conservadas:
+mantiene sus huellas originales y su diferencia de fuentes visible. Se utiliza
+después de elegir los menús con cambios sustanciales; sigue exigiendo integridad
+de las imágenes, rutas y relaciones. Sin ese argumento, la comprobación técnica
+de fuentes sigue siendo estricta.
 
 Las huellas incluyen fuentes de la ruta de acceso, componentes base, CSS,
 fixture y contrato de captura (fecha, viewport, preparación, medición y fotografía).
