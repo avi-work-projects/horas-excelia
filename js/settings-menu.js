@@ -34,6 +34,20 @@ function toggleSettingsMenu(anchor){
   SETTINGS_MENU_ANCHOR.setAttribute('aria-expanded','true');
   positionSettingsMenu();
 }
+/* Cada panel conserva su origen: cerrar desde Home sigue en Home; entrar
+   desde Ajustes devuelve el mismo menú, anclaje y posición de lectura. */
+function settingsPanelBack(){
+  var menu=document.getElementById('dataMenu'),anchor=SETTINGS_MENU_ANCHOR;
+  var fromMenu=!!(menu&&menu.classList.contains('open'));
+  var scroll=fromMenu?menu.scrollTop:0,focused=fromMenu?document.activeElement:null;
+  closeSettingsMenu();var previous=NAV_BACK;
+  return function(){
+    NAV_BACK=previous;
+    if(!fromMenu||!anchor||!anchor.isConnected)return;
+    toggleSettingsMenu(anchor);menu.scrollTop=scroll;
+    if(focused&&menu.contains(focused))focused.focus({preventScroll:true});
+  };
+}
 function settingsEditorActions(prefix){
   return '<footer class="settings-editor-actions"><button class="ev-btn" id="'+prefix+'Edit">Editar</button><button class="ev-btn" id="'+prefix+'Cancel" hidden>Cancelar</button><button class="ev-btn primary" id="'+prefix+'Save" hidden>Guardar</button></footer>';
 }
@@ -77,8 +91,8 @@ function bindSettingsCopy(root,fields){
   });
 }
 function openConnectionsSettings(kind){
-  kind=kind==='macro'?'macro':'mail';closeSettingsMenu();var previous=NAV_BACK;
-  function close(){cerrarPanel('connectionsWrap','connectionsOv');if(NAV_BACK===close)NAV_BACK=previous;}
+  kind=kind==='macro'?'macro':'mail';var restore=settingsPanelBack();
+  function close(){cerrarPanel('connectionsWrap','connectionsOv');if(NAV_BACK===close)restore();}
   var values=kind==='macro'?[normalizeMacroBase(appStorage.getItem('excelia-alarm-url')||'')]:[TO,CC.join(', '),AUTHOR_NAME];
   var fields=kind==='macro'?[['macroAlarmUrlMenu','URL base de MacroDroid','url']]:[['mailToLocal','Destinatario','email'],['mailCcLocal','CC (separados por comas)','text'],['mailNameLocal','Tu nombre','text']];
   var title=kind==='macro'?'MacroDroid':'Correo de Horas',body='<section class="settings-editor-section"><h3>'+title+'</h3>';

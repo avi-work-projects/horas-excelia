@@ -40,7 +40,7 @@ test('carpeta elegida guarda la misma copia sin impedir compartir',async({page},
  });
  await page.locator('#menuBtn').click();await page.locator('#exportFolderBtn').click();
  await page.locator('#exportFolderEdit').click();await page.locator('#exportFolderChoose').click();await page.locator('#exportFolderSave').click();await expect(page.locator('#exportFolderStatus')).toHaveText('Carpeta: Gestify');
- await page.screenshot({path:testInfo.outputPath('carpeta.png')});await page.locator('#exportFolderClose').click();
+ await page.screenshot({path:testInfo.outputPath('carpeta.png')});await page.locator('#exportFolderClose').click();await expect(page.locator('#dataMenu')).toHaveClass(/open/);await page.keyboard.press('Escape');
  await exportFile(page,'#csvExportBtn','both');
  await expect.poll(()=>page.evaluate(()=>copies.length)).toBe(1);await expect.poll(()=>page.evaluate(()=>sharedFiles.length)).toBe(1);
  expect(await page.evaluate(()=>copies[0])).toEqual(await page.evaluate(()=>({name:sharedFiles[0].name,text:sharedFiles[0].text})));

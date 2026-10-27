@@ -597,7 +597,9 @@ function bindEvAlarmEvents(ev,firstDate){
       var when=new Date(a.fecha);when.setHours(a.h,a.m,0,0);
       return evAlarmCreationAllowed(ev,a.target,when);
     })){showToast('El evento ya ha empezado o el aviso no deja al menos 5 minutos','error');return;}
-    alarmas.forEach(function(a){
+    var createBtn=document.getElementById('evAlarmCreate');createBtn.disabled=true;
+    showToast('Enviando solicitud a MacroDroid\u2026');
+    var requests=alarmas.map(function(a){
       var _f=a.fecha||firstDate;
       var _fTxt=String(_f.getDate()).padStart(2,'0')+'/'+String(_f.getMonth()+1).padStart(2,'0');
       /* Dia de la semana = alarma que se REPITE esa fecha todas las semanas.
@@ -612,17 +614,16 @@ function bindEvAlarmEvents(ev,firstDate){
       var _unaVez=(_faltan>=5*60000&&_faltan<=24*3600000);
       var _dow=_unaVez?null:(_f.getDay()+1);
       var msg='\uD83D\uDCC5 '+ev.title+' '+_fTxt+a.suf;
-      if(typeof addAlarm==='function'){
-        addAlarm({type:'event',label:msg,hour:a.h,minute:a.m,days:_dow?[_dow]:null,targetDate:fmtD(_f)});
-      }
       var url=base+'/generar_alarma1?alarmH='+a.h+'&alarmM='+a.m
         +'&alarmMsg='+encodeURIComponent(msg)+'&alarmDays='+(_dow||'');
-      fetch(url,{mode:'no-cors'}).catch(function(){});
+      return requestMacroAlarm(url).then(function(){addAlarm({type:'event',label:msg,hour:a.h,minute:a.m,days:_dow?[_dow]:null,targetDate:fmtD(_f)});});
     });
-    setEvAlarmState(ev.id,true);
-    showToast(alarmas.length>1?('\u23f0 '+alarmas.length+' alarmas creadas')
-      :('\u23f0 Alarma creada \u2014 '+escHtml(ev.title)),'success');
-    closeEvAlarm();setTimeout(refreshEvents,320);
+    Promise.all(requests).then(function(){
+      setEvAlarmState(ev.id,true);
+      showToast('Solicitud'+(alarmas.length>1?'es':'')+' enviada'+(alarmas.length>1?'s':'')+' a MacroDroid. Comprueba el reloj.','success');
+      if(createBtn.isConnected){closeEvAlarm();setTimeout(refreshEvents,320);}
+    }).catch(function(){showToast('Entrega sin confirmar. Comprueba el reloj antes de repetir.','error');})
+      .finally(function(){createBtn.disabled=false;});
   });
   var _info=document.getElementById('evAlarmInfo');
   if(_info)_info.addEventListener('click',function(){

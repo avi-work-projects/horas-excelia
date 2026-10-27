@@ -276,13 +276,11 @@
       closeAlarmPanel();
       // alarmDays siempre presente: valor vacío = sin días (alarma puntual), evita que MacroDroid no sustituya {v=alarmDays}
       var url=macroBase+'/generar_alarma1?alarmH='+h+'&alarmM='+m+'&alarmMsg='+encodeURIComponent(msg)+'&alarmDays='+(selDays.length?selDays.join(','):'');
-      if(typeof addAlarm==='function'){
-        addAlarm({type:'other',label:msg,hour:h,minute:m,days:selDays.length?selDays.slice():null,targetDate:null});
-      }
       showToast('Enviando a MacroDroid\u2026','success');
-      fetch(url,{mode:'no-cors'})
-        .then(function(){showToast('\u23f0 Alarma enviada \u2014 '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),'success');})
-        .catch(function(){showToast('Error al contactar MacroDroid','error');});
+      requestMacroAlarm(url).then(function(){
+        addAlarm({type:'other',label:msg,hour:h,minute:m,days:selDays.length?selDays.slice():null,targetDate:null});
+        showToast('Solicitud enviada a MacroDroid \u2014 '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+'. Comprueba el reloj.','success');
+      }).catch(function(){showToast('Entrega sin confirmar. Comprueba el reloj antes de repetir.','error');});
     }
     if(needsConfirm){
       // Calcular cuándo sonará por primera vez entre todos los días seleccionados
