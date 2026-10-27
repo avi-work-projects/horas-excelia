@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Kairo · Escritorio privado</title>
+<style>
+  :root{color-scheme:dark;font:15px system-ui,sans-serif;background:#181b22;color:#edf0f6}
+  *{box-sizing:border-box}body{margin:0;height:100dvh;display:flex;flex-direction:column}
+  header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 16px;background:#242933;border-bottom:1px solid #434b5a}
+  h1{font-size:16px;margin:0 auto 0 0}button{font:inherit;color:inherit;background:#343c4a;border:1px solid #68788d;border-radius:8px;padding:7px 12px;cursor:pointer}
+  button:focus-visible{outline:3px solid #9bc5ff;outline-offset:2px}button:disabled{opacity:.45;cursor:default}
+  #connection{color:#c4cfdd;font-size:13px}#caps{font-size:13px;color:#c4cfdd}#caps[data-on="true"]{color:#ffdf8b;font-weight:700}
+  #message{margin:0;padding:8px 16px;min-height:36px;color:#c4cfdd;font-size:13px;background:#20252e}
+  #message[data-error="true"]{color:#ffccc4}#screen{flex:1;min-height:0;overflow:hidden;background:#101217}
+  footer{font-size:12px;color:#aebacb;padding:5px 16px;border-top:1px solid #343c4a}
+</style>
+<header>
+  <h1>Kairo · Escritorio privado</h1>
+  <span id="connection" role="status">Conectando…</span>
+  <span id="caps">Bloq Mayús: pulsa una tecla para comprobarlo</span>
+  <button id="copy" type="button" disabled>Copiar selección</button>
+  <button id="paste" type="button" disabled>Pegar en Kairo</button>
+  <button id="reconnect" type="button" hidden>Reconectar</button>
+</header>
+<p id="message" role="status">Haz clic en el escritorio. Ctrl+C y Ctrl+V copian y pegan texto entre este equipo y Kairo.</p>
+<main id="screen" aria-label="Escritorio de Kairo"></main>
+<footer>El acceso utiliza el túnel privado existente. El portapapeles se transfiere al copiar o pegar.</footer>
+<script type="module" src="./viewer.js"></script>
+</html>

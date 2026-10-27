@@ -1292,8 +1292,12 @@ registrar una aplicación corporativa sin un trámite de TI. La primera fase es
 una sesión iniciada manualmente por él y una comprobación solo de lectura. No
 se pide ni almacena una contraseña en el repositorio. El perfil dedicado queda
 fuera de Git y con modo 700; el navegador recuerda la sesión y, si caduca, se
-debe pedir renovarla. Aún hay que demostrar en la cuenta real la lectura de las
-programaciones creadas en Android y comprobar las condiciones de autenticación.
+debe pedir renovarla. Se ha confirmado en la cuenta real que Outlook web muestra
+en Borradores los mensajes programados desde Android, con etiqueta Programado,
+asunto, semana, contenido y un aviso de fecha/hora de envío en el panel de lectura.
+También se han consultado las semanas anteriores en Elementos enviados. Estas
+lecturas validan la viabilidad del acceso, no la conciliación automática completa.
+La comprobación fue de solo lectura, sin cancelar, modificar ni crear correos.
 
 Herramienta: tools/kairo/outlook-session.sh. Requiere Chromium, Xvfb, xauth,
 x11vnc, noVNC y websockify en Kairo. Usa un servicio temporal independiente
@@ -1313,3 +1317,43 @@ incierto se revisa antes de reintentar. Abrir Outlook no confirma un envío:
 corregir ese comportamiento en el recorrido individual cuando exista lectura
 fiable del buzón. Todas las pruebas de escritura se harán con datos y destinos
 sintéticos; esta preparación no envía ni programa correos reales.
+
+### Teclado y portapapeles del visor privado de Kairo
+
+La sesión manual ya ha alcanzado el buzón de Outlook. No se ha activado el
+programador de correos. Un rechazo 50126 se debió al comportamiento de Bloq
+Mayús en el acceso remoto; la prueba anterior con Shift no caracterizaba ese
+bloqueo. noVNC 1.6 sincroniza los bloqueos con el servidor. El lanzador añade
+`-capslock` a x11vnc para que su ajuste de modificadores no aplique Shift dos
+veces al recibir letras mayúsculas con CapsLock activo. Se puede aplicar al
+servidor existente con `x11vnc -sync -R capslock -query_retries 5:1`, conservando
+Chromium y su perfil; comprobar después `x11vnc -Q capslock`. Usar el DISPLAY y
+XAUTHORITY reales de esa sesión. Se ha verificado la secuencia `aAaA`: minúscula,
+Bloq Mayús, Bloq Mayús + Shift y Shift sin bloqueo; al terminar no quedan
+modificadores retenidos ni Bloq Mayús activo en Kairo.
+
+`tools/kairo/install-viewer.sh` instala solo los cuatro recursos públicos de
+`tools/kairo/viewer/` en `/usr/share/novnc/gestify/`. Reutilizan la biblioteca
+noVNC instalada, el WebSocket del mismo origen y el túnel existente. El nuevo
+visor se abre en `/gestify/index.html`; el noVNC habitual continúa disponible.
+Ctrl+V transfiere el texto del evento de pegado antes del atajo remoto. Ctrl+C
+solo escribe en el portapapeles local tras una petición explícita de copia;
+recibir datos por RFB no autoriza sobrescribirlo. Los botones Copiar/Pegar
+ofrecen el mismo recorrido mediante un gesto explícito. Si el navegador bloquea
+el portapapeles, se informa del permiso requerido. También se atiende el evento
+copy de los navegadores/menús que no emiten keydown. El texto no se registra,
+no se guarda en localStorage y se descarta al desconectar.
+
+La combinación comprobada es noVNC 1.6.0 y x11vnc 0.9.17: este último entrega
+UTF-8 por CutText clásico y noVNC lo trata como Latin-1. El adaptador conserva
+los bytes en ambos sentidos, sin modificar la biblioteca instalada. Revalidar
+la codificación si cambia el servidor. `/gestify/input-test.html` contiene solo
+texto ficticio, sin scripts ni almacenamiento, para probar fuera del correo.
+Se verificaron Ctrl+C/Ctrl+V, los botones, cambios de contenido y el recorrido
+completo con acentos, ñ, euro, emoji y saltos de línea. Las siete pruebas de
+`npm run test:kairo-viewer`, `npm test` y el build pasan. El programador automático
+y la conciliación persistente de semanas siguen pendientes; ver mensajes
+existentes en Outlook no equivale todavía a tener implementado ese circuito.
+
+Estos recursos son una herramienta privada de administración, fuera del catálogo
+de la PWA. No modifican Gestify, sus capturas ni los servicios de facturas.

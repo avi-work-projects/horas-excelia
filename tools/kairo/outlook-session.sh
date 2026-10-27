@@ -29,7 +29,8 @@ cleanup(){
   done
 }
 trap cleanup EXIT INT TERM
-x11vnc -display "$DISPLAY" -auth "$XAUTHORITY" -localhost -listen 127.0.0.1 -no6 -rfbport 5901 -forever -shared -nopw -quiet > "$state_dir/vnc.log" 2>&1 &
+# noVNC sincroniza CapsLock; evitar aplicar Shift dos veces cuando está activo.
+x11vnc -display "$DISPLAY" -auth "$XAUTHORITY" -localhost -listen 127.0.0.1 -no6 -rfbport 5901 -forever -shared -capslock -nopw -quiet > "$state_dir/vnc.log" 2>&1 &
 vnc_pid=$!
 websockify --web=/usr/share/novnc 127.0.0.1:6091 127.0.0.1:5901 > "$state_dir/viewer.log" 2>&1 &
 web_pid=$!
