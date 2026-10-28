@@ -18,7 +18,8 @@ async function setup(page,context,{queued=false}={}){
   await context.route(origin+'horas/jobs/**',route=>{calls.jobs++;if(offline)return route.abort();return route.fulfill({json:{jobId,kind:'status',phase,...(phase==='done'?{result:bundle}:{})},headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}});});
   await page.goto('/');
   await expect.poll(()=>calls.hours).toBe(1);
-  if(!queued)await expect(page.locator('.home-submission.complete')).toContainText('Correos al día');
+  if(queued)await expect.poll(()=>page.evaluate(()=>HOURS_JOBS.length)).toBe(1);
+  else await expect(page.locator('.home-submission.complete')).toContainText('Correos al día');
   await expect.poll(()=>calls.invoices.length).toBe(3);
   return {calls,finish(){phase='done';},offline(){offline=true;},online(){offline=false;}};
 }

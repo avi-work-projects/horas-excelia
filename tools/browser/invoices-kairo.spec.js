@@ -40,7 +40,7 @@ test('envío privado, repetido, consulta y vista móvil sin flujo Gmail paralelo
   const popup=await exchange(page,'#invoiceKairoSend');
   expect(popup.url()).toBe(base+'gestify');
   await expect(page.locator('#invoiceKairoMessage')).toContainText('Preparación recibida');
-  await expect.poll(()=>page.evaluate(()=>INVOICE_HOME_CACHE.periods['2027-02']?.data.generated)).toBe(true);
+  await expect.poll(()=>page.evaluate(()=>INVOICE_HOME_CACHE.periods['2027-02']?.data?.generated)).toBe(true);
   expect((await page.locator('.invoice-sheet').boundingBox()).height).toBe(height);
   await popup.close();
   const again=await exchange(page,'#invoiceKairoSend');await expect(page.locator('#invoiceKairoMessage')).toContainText('Preparación recibida');await again.close();
