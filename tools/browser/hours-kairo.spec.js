@@ -7,6 +7,9 @@ test.beforeAll(async()=>{
   await new Promise((resolve,reject)=>{demo.stdout.once('data',resolve);demo.once('error',reject);demo.once('exit',code=>reject(Error('Demo no disponible: '+code)));});
 });
 test.afterAll(()=>{demo?.kill();});
+// La caché puede mostrar el resultado antes de terminar una consulta en curso.
+// Esperar al proxy antes de que Playwright cierre su APIRequestContext.
+test.afterEach(async({context})=>{await context.unrouteAll({behavior:'wait'});});
 test.describe.configure({mode:'serial'});
 
 async function setup(page,context,scenario='mixed'){
