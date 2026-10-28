@@ -33,7 +33,7 @@ const edges=[
 ];
 // Estados de pestañas no representados por una función openXxx independiente.
 const sections=[
-  ['Inicio','Jornada y horas del mes|Ficha de jornada de un día|Recordatorios|Exportar horas|Enviar factura|Configuración de facturas','js/core.js'],
+  ['Inicio','Jornada y horas del mes|Correos al día y programación individual/conjunta|Actualización manual de estados|Ficha de jornada de un día|Recordatorios|Exportar horas|Estado y envío de factura|Configuración de facturas','js/core.js'],
   ['Hogar','Resumen del hogar|Detalle hipoteca|Detalle gas|Detalle electricidad|Edición compra|Edición préstamo|Edición subrogación|Análisis de hipoteca','js/economics-fiscal-hip.js'],
   ['Herramientas','Comparar escenarios|Calcular tarifa|Comparar hipotecas|Comparar gas|Comparar electricidad','js/economics-estudio.js'],
   ['Eventos','Próximos|Agenda|Todos|Estadísticas|Calendario 1 mes|Calendario 4 meses|Calendario anual|Vacaciones y festivos|Puentes|Orden de Próximos|Filtros de eventos|Exportar calendario|Ficha del día|Detalle evento|Nuevo evento|Editar evento|Eliminar evento|Alarma de evento|Selección Multidía|Elegir hora|Selector de planes|Asignar sesión de rutina','js/events-render.js'],
