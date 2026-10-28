@@ -603,7 +603,7 @@ REGLAS.push(['inicio: ensayo con fecha, hora y pareja actual; sin hora explicita
     &&!content.innerHTML.includes('Nombre antiguo');
 }]);
 
-REGLAS.push(['inicio: tres semanas futuras, dos cumpleaños próximos visibles y eventos sin hora antes de horas',function(){
+REGLAS.push(['inicio: mes y dos semanas extra, dos cumpleaños próximos visibles y eventos sin hora antes de horas',function(){
   const ctx=cargarApp(claves),content={innerHTML:'',querySelectorAll:()=>[]};
   ctx.SW={};ctx.dayT=()=> 'normal';ctx.csvPendingWarnings=()=>[];
   ctx.BDAYS=[{name:'NormalHoy',month:8,day:21},{name:'VipLejano',month:8,day:28,vip:true},{name:'VipHoy',month:8,day:21,vip:true}];
@@ -614,7 +614,7 @@ REGLAS.push(['inicio: tres semanas futuras, dos cumpleaños próximos visibles y
   ctx.document.getElementById=id=>id==='homePopupContent'?content:id==='homePopup'?{style:{}}:null;
   require('vm').runInContext(fs.readFileSync(path.join(RAIZ,'js/home-popup.js'),'utf8'),ctx);
   const html=content.innerHTML,order=['VipHoy','NormalHoy','VipLejano','SinHoraHoy','TempranoHoy','TardeHoy','SinHoraManana','TempranoManana'];
-  return html.includes('Semana del 07/09</strong> sin enviar')&&!html.includes('Semana del 14/09</strong> sin enviar')
+  return html.includes('Semana del 07/09</strong> sin enviar')&&html.includes('Semana del 14/09</strong> sin enviar')&&!html.includes('Semana del 21/09</strong> sin enviar')
     &&html.indexOf('NormalHoy')<html.indexOf('<div id="homeBirthdayExtra" hidden>')
     &&html.indexOf('<div id="homeBirthdayExtra" hidden>')<html.indexOf('VipLejano')
     &&html.includes('Ver 1 cumpleaños más')&&html.indexOf('homeBirthdayToggle')>html.indexOf('VipLejano')

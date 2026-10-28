@@ -77,6 +77,20 @@ test('si Gestify cambia tras revisar, no permite confirmar el lote antiguo',asyn
   expect(calls.some(c=>c.path.endsWith('/commit'))).toBe(false);
 });
 
+test('Recordatorios comparte las dos semanas extra y reconoce enviadas y programadas',async({page,context})=>{
+  await setup(page,context);
+  const popup=await open(page,page.locator('[data-hours-review]'));
+  await popup.close();
+  await page.evaluate(()=>openHomePopup(true));
+  const warnings=page.locator('#homePopupContent');
+  await expect(warnings).toContainText('Semana del 15/02');
+  await expect(warnings).toContainText('por revisar');
+  await expect(warnings).toContainText('Semana del 01/03');
+  await expect(warnings).toContainText('Semana del 08/03');
+  await expect(warnings).not.toContainText('Semana del 08/02');
+  await expect(warnings).not.toContainText('Semana del 15/03');
+});
+
 for(const width of [320,400])test('revisión de horas legible a '+width,async({page,context},info)=>{
   await page.setViewportSize({width,height:880});await setup(page,context);
   await page.screenshot({path:info.outputPath('hours-home-'+width+'.png'),animations:'disabled'});
