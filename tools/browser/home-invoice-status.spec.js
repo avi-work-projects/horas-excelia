@@ -25,9 +25,9 @@ for(const width of [320,400,440])test('Home: total, descuentos y horas destacada
     expect(Math.max(...boxes.map(b=>b.top))).toBeLessThan(Math.min(...boxes.map(b=>b.bottom)));
   }
   expect(await summary.locator('.off').evaluate(el=>Array.from(el.children).every(child=>getComputedStyle(child).color===getComputedStyle(el).color))).toBe(true);
-  const storage=await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>![HOURS_CACHE_KEY,HOURS_JOBS_KEY,INVOICE_HOME_CACHE_KEY].includes(key)))));
+  const storage=await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>![HOURS_CACHE_KEY,HOURS_JOBS_KEY,INVOICE_HOME_CACHE_KEY].includes(key)).sort(([a],[b])=>a.localeCompare(b)))));
   for(const [state,label]of [['scheduled','Factura programada'],['sent','Factura enviada'],['missing','Factura sin enviar']]){api.set(result(state));await page.getByRole('button',{name:'Actualizar estado de correos y factura',exact:true}).click();await expect(status).toContainText(label);}
-  expect(api.calls.every(r=>r.method()==='GET'&&r.postData()===null)).toBe(true);expect(await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>![HOURS_CACHE_KEY,HOURS_JOBS_KEY,INVOICE_HOME_CACHE_KEY].includes(key)))))).toBe(storage);
+  expect(api.calls.every(r=>r.method()==='GET'&&r.postData()===null)).toBe(true);expect(await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>![HOURS_CACHE_KEY,HOURS_JOBS_KEY,INVOICE_HOME_CACHE_KEY].includes(key)).sort(([a],[b])=>a.localeCompare(b)))))).toBe(storage);
   expect(await summary.evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);expect(await status.evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
   await page.screenshot({path:info.outputPath('home-factura-'+width+'.png'),animations:'disabled'});
   api.set(result('scheduled'));await page.getByRole('button',{name:'Actualizar estado de correos y factura',exact:true}).click();await expect(status).toContainText('Factura programada');await page.screenshot({path:info.outputPath('home-programada-'+width+'.png'),animations:'disabled'});

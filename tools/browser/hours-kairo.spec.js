@@ -44,7 +44,7 @@ test('Android instalado conserva la revisión en Gestify y vuelve a Home',async(
     Object.defineProperty(navigator,'userAgent',{get:()=> 'Mozilla/5.0 Android Gestify'});
     const media=window.matchMedia.bind(window);window.matchMedia=query=>query==='(display-mode: standalone)'?{matches:true}:media(query);
   });
-  const calls=await setup(page,context),before=await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>![HOURS_CACHE_KEY,HOURS_JOBS_KEY,INVOICE_HOME_CACHE_KEY].includes(key)))));
+  const calls=await setup(page,context),before=await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>![HOURS_CACHE_KEY,HOURS_JOBS_KEY,INVOICE_HOME_CACHE_KEY].includes(key)).sort(([a],[b])=>a.localeCompare(b)))));
   const popups=[];page.on('popup',popup=>popups.push(popup));
   await page.getByRole('button',{name:'Actualizar estado de correos y factura',exact:true}).click();
   await expect(page.locator('.home-submission')).toContainText('Hay cambios');
@@ -63,7 +63,7 @@ test('Android instalado conserva la revisión en Gestify y vuelve a Home',async(
   await expect(page.locator('.hours-review-dialog')).toHaveCount(0);
   expect(popups).toHaveLength(0);
   expect(calls.some(c=>c.path.endsWith('/commit')||c.path.endsWith('/simulate'))).toBe(false);
-  expect(await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>![HOURS_CACHE_KEY,HOURS_JOBS_KEY,INVOICE_HOME_CACHE_KEY].includes(key)))))).toBe(before);
+  expect(await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>![HOURS_CACHE_KEY,HOURS_JOBS_KEY,INVOICE_HOME_CACHE_KEY].includes(key)).sort(([a],[b])=>a.localeCompare(b)))))).toBe(before);
 });
 
 test('lote e individual conservan alcance; revisión muestra cambios y simula sin correos reales',async({page,context},info)=>{
@@ -108,12 +108,12 @@ test('la revisión comunica estados aunque el navegador bloquee la consulta auto
 });
 
 test('comprobar vuelve a Home sin confirmar ni cambiar correos',async({page,context})=>{
-  const calls=await setup(page,context),before=await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>![HOURS_CACHE_KEY,HOURS_JOBS_KEY,INVOICE_HOME_CACHE_KEY].includes(key)))));
+  const calls=await setup(page,context),before=await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>![HOURS_CACHE_KEY,HOURS_JOBS_KEY,INVOICE_HOME_CACHE_KEY].includes(key)).sort(([a],[b])=>a.localeCompare(b)))));
   await page.getByRole('button',{name:'Actualizar estado de correos y factura',exact:true}).click();
   await expect(page.locator('.hours-review-dialog')).toHaveCount(0);
   await expect(page.locator('.home-submission')).toContainText('Hay cambios');
   expect(calls.some(c=>c.path.endsWith('/commit')||c.path.endsWith('/simulate'))).toBe(false);
-  expect(await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>![HOURS_CACHE_KEY,HOURS_JOBS_KEY,INVOICE_HOME_CACHE_KEY].includes(key)))))).toBe(before);
+  expect(await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>![HOURS_CACHE_KEY,HOURS_JOBS_KEY,INVOICE_HOME_CACHE_KEY].includes(key)).sort(([a],[b])=>a.localeCompare(b)))))).toBe(before);
 });
 
 test('Home compara la programación con los días actuales y detecta cambios locales',async({page,context},info)=>{
