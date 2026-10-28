@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v514 — Resumen compacto y comprobaciones conservadas';
+var APP_VERSION = 'v515 — Resumen afinado y continuidad entre meses';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

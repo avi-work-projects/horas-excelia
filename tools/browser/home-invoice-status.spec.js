@@ -19,6 +19,7 @@ for(const width of [320,400,440])test('Home: total, descuentos y horas destacada
   await expect(summary.locator('.total')).toContainText('22 días laborables');await expect(summary.locator('.total')).toContainText('185,5h');await expect(summary.locator('.off')).toContainText('− 1 festivo');await expect(summary.locator('.off')).toContainText('9h');await expect(summary.locator('.worked')).toContainText('21 días trabajados');await expect(summary.locator('.worked strong')).toHaveText('176,5h');
   const order=await summary.locator(':scope > *').evaluateAll(els=>els.map(e=>e.className));expect(order[0]).toBe('month-total');expect(order.at(-1)).toContain('home-worked-total');
   const hours=summary.locator('.worked strong');expect(await hours.evaluate(el=>+getComputedStyle(el).fontWeight)).toBeGreaterThanOrEqual(700);expect(await hours.evaluate(el=>parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThan(await summary.locator('.total .ms-num').evaluate(el=>parseFloat(getComputedStyle(el).fontSize)));
+  expect(await summary.locator('.worked .ms-days').evaluate(el=>getComputedStyle(el).color)).toBe(await hours.evaluate(el=>getComputedStyle(el).color));
   for(const row of await summary.locator('.month-stat').all()){
     const boxes=await row.locator(':scope > *').evaluateAll(els=>els.map(el=>({top:el.getBoundingClientRect().top,bottom:el.getBoundingClientRect().bottom})));
     expect(Math.max(...boxes.map(b=>b.top))).toBeLessThan(Math.min(...boxes.map(b=>b.bottom)));
@@ -32,10 +33,12 @@ for(const width of [320,400,440])test('Home: total, descuentos y horas destacada
   api.set(result('scheduled'));await page.getByRole('button',{name:'Actualizar estado de factura',exact:true}).click();await expect(status).toContainText('Factura programada');await page.screenshot({path:info.outputPath('home-programada-'+width+'.png'),animations:'disabled'});
   api.set(result('sent'));await page.evaluate(()=>window.dispatchEvent(new Event('focus')));await expect(status).toContainText('Factura enviada');
   await page.evaluate(()=>{ST['2026-10-13']={type:'vacaciones'};ST['2026-10-14']={type:'ausencia'};render();});await expect(summary.locator('.off')).toHaveCount(3);
+  await expect(summary.locator('.off.vacaciones')).toContainText('− 1 vacaciones');await expect(summary.locator('.off.vacaciones')).not.toContainText('día');
   expect(await summary.evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
   for(const row of await summary.locator('.off').all())expect(await row.evaluate(el=>Array.from(el.children).every(child=>getComputedStyle(child).color===getComputedStyle(el).color))).toBe(true);
   await page.screenshot({path:info.outputPath('home-desglose-'+width+'.png'),animations:'disabled'});
   await page.evaluate(()=>{ST={};render();});await expect(summary.locator('.total')).toHaveCount(0);await expect(summary.locator('.off')).toHaveCount(0);await expect(summary.locator('.worked')).toHaveText('22 días trabajados185,5h');await expect(summary.locator('.ms-no-off')).toHaveText('* sin días no trabajados');
+  await expect(summary.locator('.ms-no-off em')).toHaveCSS('font-style','italic');
   expect(await summary.evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
   await page.screenshot({path:info.outputPath('home-sin-descuentos-'+width+'.png'),animations:'disabled'});
 });

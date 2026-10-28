@@ -212,10 +212,10 @@
 
 **Funciones:** refreshCalendarDate:8 · initCalendarDateRefresh:14 · resume:16 · _switchEvView:28 · openEvents:46 · closeEvents:56 · openEventsAt:63 · refreshEvents:70 · bindEvYearHeader:91 · setYear:95 · bindEvEvents:108 · _bindEvNav:117 (!202) · _scrollWeekToMonth:126 · _scrollWeekToToday:173 · doScroll:183 · _bindEvCal:319 (!93) · evLayoutWeekTitles:412 · _bindEvWeekTitleBackground:434 · update:440 · schedule:441 · evFilterCategories:446 · evFilterCategoryFor:455 · evListFilterLabel:456 · evListFilterMatches:464 · evToggleListFilter:470 · openEvTypeFilter:482 · isSelected:484 · option:485 · close:494 · paint:497 · _bindEvListas:501 (!122) · apply:611 · _bindEvGestos:623 · _evSwipeUpcoming:636 · _evSwipeBodas:643 · _evSwipeRutinas:650
 
-### js/events-cal.js  _(384 líneas)_
-**Estado global:** DN7:26
+### js/events-cal.js  _(383 líneas)_
+**Estado global:** DN7:30
 
-**Funciones:** _renderEvCalMonth:14 (!167) · _renderEvMonthCard:181 (!161) · _renderEvAnnual:342 · _renderEvQuad:351 · _evMonthRemainingOutline:373 · renderEvCalMonth:381 · renderEvAnnual:382 · renderEvQuad:383
+**Funciones:** _renderEvCalMonth:14 (!166) · _renderEvMonthCard:180 (!161) · _renderEvAnnual:341 · _renderEvQuad:350 · _evMonthRemainingOutline:372 · renderEvCalMonth:380 · renderEvAnnual:381 · renderEvQuad:382
 
 ### js/events-calendar-export.js  _(230 líneas)_
 **Estado global:** EV_CAL_EXPORT:3 · EV_ICS_KEY:4 · EV_ICS_UPPER_KEY:5 · EV_ICS_NOTES_KEY:6 · EV_ICS_AUTHOR_KEY:7
@@ -845,23 +845,23 @@
 **Rangos por prefijo de clase:**
 .alarm-now:988-988 · .alarm-panel:985-987 · .app-update:677-679 · .bd-detail:599-600 · .bd-panel:553-835 · .bday-category:525-694 · .bday-date:634-733 · .bday-detail:567-810 · .bday-edit:809-809 · .bday-filter:516-591 · .bday-first:537-537 · .bday-form:672-673 · .bday-group:513-676 · .bday-hdr:156-157 · .bday-header:151-466 · .bday-label:543-543 · .bday-list:522-726 · .bday-month:169-740 · .bday-name:601-681 · .bday-next:99-100 · .bday-no:573-573 · .bday-person:520-566 · .bday-show:524-628 · .bday-sub:280-281 · .bday-today:506-725 · .bday-upcoming:54-491 · .bday-vip:492-828 · .boda-catalog:80-85 · .boda-cfg:126-142 · .boda-config:76-123 · .boda-date:144-162 · .boda-day:113-113 · .boda-field:114-119 · .boda-filter:58-60 · .boda-mini:66-66 · .boda-pfilters:57-61 · .boda-stat:989-989 · .boda-sticky:77-139 · .boda-teachers:101-101 · .contact-add:897-897 · .contact-entry:890-895 · .contact-group:887-889 · .contact-remove:896-896 · .data-actions:339-339 · .data-btn:340-351 · .econ-equiv:460-460 · .econ-tab:322-326 · .econ-tariff:405-462 · .energy-tariff:451-453 · .est-nav:324-325 · .ev-alarm:758-759 · .ev-annual:495-495 · .ev-bday:282-529 · .ev-bright:441-441 · .ev-btn:760-761 · .ev-calendar:963-978 · .ev-current:980-980 · .ev-del:13-14 · .ev-filter:779-948 · .ev-hairdresser:983-984 · .ev-list:2-952 · .ev-month:477-982 · .ev-multi:50-71 · .ev-rut:239-306 · .ev-search:3-7 · .ev-sort:8-53 · .ev-stat:918-954 · .ev-type:426-428 · .ev-types:425-794 · .ev-up:266-915 · .ev-upcoming:916-940 · .ev-view:65-65 · .ev-wk:221-440 · .export-choice:764-925 · .export-folder:742-776 · .fiscal-hdr:499-499 · .fiscal-hip:402-403 · .fiscal-tab:323-323 · .hip-rate:468-472 · .hip-ro:496-497 · .imp-mode:17-27 · .invoice-field:938-938 · .invoice-sheet:858-858 · .macro-url:69-69 · .nav-icon:359-369 · .nav-pro:333-345 · .nav-style:357-357 · .panel-header:836-837 · .personal-copy:874-874 · .personal-data:873-880 · .personal-note:898-930 · .personal-notes:931-935 · .rate-input:46-46 · .rut-addition:201-218 · .rut-agenda:215-216 · .rut-cancelled:242-301 · .rut-done:762-763 · .rut-history:185-236 · .rut-hpd:183-183 · .rut-icon:167-168 · .rut-recovery:210-219 · .rut-session:220-220 · .rut-skipped:302-303 · .rut-week:184-184 · .selected:366-366 · .settings-copy:866-869 · .settings-details:102-104 · .settings-edit:70-886 · .settings-editor:843-881 · .settings-field:864-883 · .settings-is:853-960 · .settings-menu:437-437 · .sw-upd:876-876 · .sy-back:37-37 · .sy-body:35-532 · .sy-card:41-41 · .sy-header:36-467 · .sy-lbl:40-40 · .sy-period:411-418 · .sy-table:42-42 · .sy-tr:43-43 · .sy-val:39-39 · .sy-year:38-38 · .week-action:830-831 · .week-card:387-387 · .weeks-container:957-957 · .wm-logo:88-246
 
-### css/source/home-sharing.css  _(177 líneas)_
+### css/source/home-sharing.css  _(178 líneas)_
 
 **Secciones:**
 
 - Cabecera de Home opaca, incluso sobre los botones oscuros de las semanas.:1
-- Selector de eventos para compartir por iCalendar:34
-- Selector de exportación: controles compactos y lista con espacio propio.:35
-- Colores por tramo, compartidos entre las dos vistas de próximos cumpleaños.:69
-- Compartir: cabecera centrada, categorías completas y lista compacta.:87
-- Próximos comparte identidad celeste en sus cuatro subpestañas.:120
-- Mis Datos: atajos, registros plegables y contenido multilínea completo.:134
-- Próximos: contraste, alternancia y año centrado.:148
-- Año de Estadísticas centrado sin desplazar las pestañas ni cambiar las flechas.:164
-- Agenda y consultas anuales: cabecera estable y flechas neutras compartidas.:166
+- Selector de eventos para compartir por iCalendar:35
+- Selector de exportación: controles compactos y lista con espacio propio.:36
+- Colores por tramo, compartidos entre las dos vistas de próximos cumpleaños.:70
+- Compartir: cabecera centrada, categorías completas y lista compacta.:88
+- Próximos comparte identidad celeste en sus cuatro subpestañas.:121
+- Mis Datos: atajos, registros plegables y contenido multilínea completo.:135
+- Próximos: contraste, alternancia y año centrado.:149
+- Año de Estadísticas centrado sin desplazar las pestañas ni cambiar las flechas.:165
+- Agenda y consultas anuales: cabecera estable y flechas neutras compartidas.:167
 
 **Rangos por prefijo de clase:**
-.boda-future:84-84 · .contact-address:130-142 · .contact-entry:129-129 · .contact-primary:140-146 · .contact-shortcuts:135-158 · .energy-contract:111-112 · .energy-field:114-115 · .energy-history:109-110 · .energy-price:113-118 · .energy-sheet:108-108 · .energy-tax:116-116 · .ev-cal:38-107 · .ev-field:83-83 · .ev-list:124-153 · .ev-period:167-170 · .ev-share:36-37 · .ev-stat:122-123 · .ev-stats:154-159 · .ev-up:150-174 · .ev-week:70-85 · .ev-wk:3-3 · .header:2-2 · .home-submission:4-17 · .home-summary:18-31 · .home-worked:25-25 · .month-summary:19-26
+.boda-future:85-85 · .contact-address:131-143 · .contact-entry:130-130 · .contact-primary:141-147 · .contact-shortcuts:136-159 · .energy-contract:112-113 · .energy-field:115-116 · .energy-history:110-111 · .energy-price:114-119 · .energy-sheet:109-109 · .energy-tax:117-117 · .ev-cal:39-108 · .ev-field:84-84 · .ev-list:125-154 · .ev-period:168-171 · .ev-share:37-38 · .ev-stat:123-124 · .ev-stats:155-160 · .ev-up:151-175 · .ev-week:71-86 · .ev-wk:3-3 · .header:2-2 · .home-submission:4-17 · .home-summary:18-32 · .home-worked:26-26 · .month-summary:19-27
 
 ### css/source/hours-kairo.css  _(20 líneas)_
 

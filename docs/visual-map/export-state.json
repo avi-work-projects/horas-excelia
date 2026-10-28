@@ -11,7 +11,7 @@
     }
   },
   "general": {
-    "fingerprint": "3715557389933ef55ba53c22cf431a94016f9f0b4af9711d558d5fc65d4041cf",
+    "fingerprint": "861f7823e7dad7beb0812c82065a79cc4a6652f302df4fcae51c2b9cdcae9965",
     "files": [
       "map-general.svg",
       "map-general.png"
@@ -22,7 +22,7 @@
     }
   },
   "area-0-0": {
-    "fingerprint": "02172e5e0ae38aeb982afddf84a07e8d774c1785e0414ace1b81c74b332dd3f0",
+    "fingerprint": "80e0ac47caf83e71befb7db6a687d97e48cb245855be0ca409845a2eef4ebc90",
     "files": [
       "sheets/area-0-0.png"
     ],
@@ -31,7 +31,7 @@
     }
   },
   "area-0-1": {
-    "fingerprint": "04217fe665c9298fec7f276b58b72206733059819fc84c46f92556085dc8611b",
+    "fingerprint": "82e256fe6a804899d65c0b8d7ae74ae452e8c27717c1bbb5134e1f42ce79bfa6",
     "files": [
       "sheets/area-0-1.png"
     ],
@@ -40,7 +40,7 @@
     }
   },
   "area-1-0": {
-    "fingerprint": "b663435bb3372f3528801b6c551bc3f424af047904d0341264eaaac277fbfbfa",
+    "fingerprint": "bf0aeeeb46d9959aaecf4bf71dc5ba4c954555fbbbb4da91aeb5eddf9a31a95a",
     "files": [
       "sheets/area-1-0.png"
     ],
@@ -58,7 +58,7 @@
     }
   },
   "area-2-0": {
-    "fingerprint": "9dcceca706ae80a69bed6b59805aac1201bf35e6518d540465c83eb9640e8e35",
+    "fingerprint": "f9c1e852cf33aa8c5896749358759330b73948a6a16751d2bc7deb78d83876a5",
     "files": [
       "sheets/area-2-0.png"
     ],
@@ -94,7 +94,7 @@
     }
   },
   "area-4-0": {
-    "fingerprint": "fb497f2628b7e931eca3dd563e84bc8753bb16f0948c671ccc69d38415746cbe",
+    "fingerprint": "8cbc739998520a90a03446d4e97ef19f3e6490abc98bf962d70483a9d0be58d5",
     "files": [
       "sheets/area-4-0.png"
     ],
@@ -103,7 +103,7 @@
     }
   },
   "area-5-0": {
-    "fingerprint": "e31e639c6d8dc45d83ef38a28db102683e83dffb2428456209e01749829e8b6a",
+    "fingerprint": "5613b878a6a8586d900a8d492487a6c2d853c46dcf7a715652aa92317b48c103",
     "files": [
       "sheets/area-5-0.png"
     ],
@@ -220,7 +220,7 @@
     }
   },
   "area-12-0": {
-    "fingerprint": "3832a8d4e6befa2da4192b10c725c3a9673756400c6ee9850208db9d1c27fae1",
+    "fingerprint": "39f89766297030407da0f88064e7f6e51d5672fecda543f038e8f2cfbe3a99e2",
     "files": [
       "sheets/area-12-0.png"
     ],

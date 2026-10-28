@@ -35,7 +35,7 @@ for(const width of [320,400,440])test('Un contorno continuo desde hoy, con escal
   await expect(outlines).toHaveCount(0);expect(await page.locator('.ev-month-wrap').boundingBox()).toEqual(before);
 });
 
-test('Solo el mes actual, incluidos fin de año y cambio horario',async({page})=>{
+test('Mes actual y siguiente si incluye hoy, también al cambiar de año',async({page})=>{
   for(const [date,year,month,lastVisible] of [
     ['2026-10-31T12:00:00+01:00',2026,9,'2026-11-01'],
     ['2026-11-01T12:00:00+01:00',2026,10,'2026-12-06'],
@@ -45,7 +45,23 @@ test('Solo el mes actual, incluidos fin de año y cambio horario',async({page})=
     await page.clock.setFixedTime(new Date(date));await page.evaluate(({year,month})=>{EV_YEAR=year;EV_MONTH=month;refreshEvents(false);},{year,month});
     const last=await page.locator('.ev-pending-end').boundingBox(),cell=await page.locator('.ev-cell[data-ds="'+lastVisible+'"]').boundingBox();expect(Math.abs(last.y+last.height-cell.y-cell.height)).toBeLessThan(1);
     await page.evaluate(()=>{EV_MONTH--;refreshEvents(false);});await expect(page.locator('.ev-pending-outline')).toHaveCount(0);
-    await page.evaluate(()=>{EV_MONTH+=2;refreshEvents(false);});await expect(page.locator('.ev-pending-outline')).toHaveCount(0);
+    await page.evaluate(()=>{EV_MONTH+=2;refreshEvents(false);});
+    const visibleToday=await page.locator('.ev-cell.today-ev').count();
+    if(visibleToday)await expect(page.locator('.ev-pending-start')).toHaveCount(1);
+    else await expect(page.locator('.ev-pending-outline')).toHaveCount(0);
   }
   await page.clock.setFixedTime(new Date('2026-10-24T12:00:00+02:00'));await page.evaluate(()=>{EV_YEAR=2026;EV_MONTH=9;refreshEvents(false);});await expect(page.locator('.ev-pending-step')).toHaveCount(1);
+});
+
+for(const width of [320,400,440])test('Mes siguiente continúa el contorno desde hoy en la semana compartida '+width,async({page},info)=>{
+  await page.setViewportSize({width,height:880});await page.clock.setFixedTime(new Date('2026-10-28T12:00:00+01:00'));
+  await page.evaluate(()=>{EV_MONTH=10;refreshEvents(false);});
+  const today=await page.locator('.ev-cell[data-ds="2026-10-28"]').boundingBox(),first=await page.locator('.ev-pending-start').boundingBox();
+  expect(Math.abs(first.x-today.x)).toBeLessThan(1);expect(Math.abs(first.y-today.y)).toBeLessThan(3);
+  const second=await page.locator('.ev-pending-outline').nth(1).boundingBox();expect(Math.abs(first.y+first.height-second.y)).toBeLessThan(1);
+  await expect(page.locator('.ev-pending-step')).toHaveCount(1);
+  const end=await page.locator('.ev-pending-end').boundingBox(),last=await page.locator('.ev-cell[data-ds="2026-12-06"]').boundingBox();expect(Math.abs(end.y+end.height-last.y-last.height)).toBeLessThan(1);
+  await expect(page.locator('.ev-cell[data-ds="2026-10-28"]')).toHaveCSS('outline-style','none');
+  await page.screenshot({path:info.outputPath('pendientes-mes-siguiente-'+width+'.png'),animations:'disabled'});
+  await page.evaluate(()=>{EV_MONTH=11;refreshEvents(false);});await expect(page.locator('.ev-pending-outline')).toHaveCount(0);
 });
