@@ -1549,3 +1549,21 @@ La interfaz actualiza indicadores sin reemplazar las tarjetas durante el foco.
 Facturas muestra fecha/estado confirmado por Kairo y compara el día 20 o laboral
 anterior con el calendario local. Una discrepancia se señala, sin alterar una
 factura aprobada. La integración existente de Kairo ya utiliza día 20 y festivos.
+
+## Hoy visible al consultar el mes siguiente (v517)
+
+El calendario mensual comparte `showsToday` para reconocer el mes actual y la
+primera semana compartida del siguiente. Su cabecera marca el día de la semana
+actual en ambos casos. El fondo verde y el número de hoy conservan su intensidad
+aunque la celda tenga `out-m`; los otros días externos siguen atenuados. El mes
+anterior y los meses que no contienen hoy conservan su comportamiento.
+Pruebas: tres anchos, Claro/Oscuro/Crema, fin de semana y cambio de año.
+
+El circuito vigente de horas y facturas está descrito para consulta en
+[Gestify y Kairo: funcionamiento y límites](gestify-kairo-flujo.md). Se confirmó
+en Kairo la caché SQLite de tres meses mediante una respuesta HTTP 200 en
+20,5 ms, sin pedir refresco ni iniciar un nuevo barrido de Outlook. Esta entrega
+no añade otra caché ni configura un secreto de autenticación nuevo.
+
+Se conserva el atlas representativo: este ajuste puntual añade un único ejemplo
+en la revisión v517, sin recapturar los menús anteriores.

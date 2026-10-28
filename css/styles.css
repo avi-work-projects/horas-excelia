@@ -3738,7 +3738,8 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 .ev-month-wrap .ev-week-hdr>div{display:grid;place-items:center;min-height:30px;padding:3px 0}
 .ev-current-weekday{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;border:1px solid var(--c-green);background:var(--c-green);color:#fff;letter-spacing:0}
 .ev-month-wrap .ev-cell.out-m{background:var(--surface3);--ev-marker-halo:var(--surface3)}
-.ev-month-wrap .ev-cell.today-ev:not(.out-m){background:color-mix(in srgb,var(--c-green) 9%,var(--surface))!important;--ev-marker-halo:color-mix(in srgb,var(--c-green) 9%,var(--surface))}
+.ev-month-wrap .ev-cell.today-ev:not(.out-m),.ev-month-current .ev-cell.today-ev{background:color-mix(in srgb,var(--c-green) 9%,var(--surface))!important;--ev-marker-halo:color-mix(in srgb,var(--c-green) 9%,var(--surface))}
+.ev-month-current .ev-cell.today-ev>.ev-num{opacity:1}
 .ev-hairdresser-edit{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;border:0;background:none;color:var(--text);font:inherit;font-weight:600;text-align:left;cursor:pointer;margin-bottom:8px}
 .ev-hairdresser-edit span{font-size:.72rem;color:var(--accent-bright);white-space:nowrap}
 .alarm-panel-heading{display:grid;grid-template-columns:54px minmax(0,1fr) 54px;align-items:center;gap:4px;margin-bottom:12px;padding:6px 12px 0}

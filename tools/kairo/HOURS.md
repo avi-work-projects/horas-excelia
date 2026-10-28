@@ -7,6 +7,9 @@ instalar código no programa correos por sí solo. La clave de paso queda pendie
 Las secciones siguientes conservan el historial de preparación; el estado de
 integración más reciente figura al final.
 
+El contrato de uso vigente, con cachés de móvil y Kairo, facturas, trabajos y
+límites de la sesión, está en [Gestify y Kairo: funcionamiento y límites](../../docs/gestify-kairo-flujo.md).
+
 ## Reglas compartidas
 
 - Mes visible, incluida su semana puente, más dos semanas completas posteriores.
