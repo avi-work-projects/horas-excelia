@@ -53,7 +53,7 @@ for(const width of [360,400,440])for(const theme of ['dark','light']){
   await expect(page.locator('#bdDetailOv .bd-panel-header #bdDAlarm')).toHaveCount(0);
   await expect(page.locator('.bday-detail-alarm .ev-upcoming-bell')).toBeVisible();
   const alarmBox=await page.locator('.bday-detail-alarm').boundingBox(),categoryBox=await page.locator('#bdDetailOv .bday-detail-groups').boundingBox();expect(alarmBox.y-categoryBox.y-categoryBox.height).toBeGreaterThanOrEqual(8);
-  await expect(page.locator('#bdCategories')).toHaveText('✎');await expect(page.locator('#bdCategories')).toHaveClass(/boda-cl-edit/);
+  await expect(page.locator('#bdCategories .edit-pencil')).toBeVisible();await expect(page.locator('#bdCategories')).toHaveClass(/boda-cl-edit/);
   expect((await page.locator('#bdCategories').boundingBox()).width).toBe(24);
   await page.screenshot({animations:'disabled',path:testInfo.outputPath('panel-review.png')});
   expect(await page.locator('#bdDetailOv .bd-panel-body').evaluate(el=>el.scrollHeight<=el.clientHeight+1)).toBe(true);
