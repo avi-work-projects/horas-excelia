@@ -309,7 +309,7 @@
 
 **Funciones:** hoursScopeKeys:5 · hoursCacheRead:9 · hoursCacheRow:30 · hoursCacheSave:38 · hoursCachedWeek:46 · hoursSourceSignature:49 · hoursSettingsSignature:52 · hoursCacheRemember:57 · hoursCacheDue:64 · hoursCacheInvalidate:67
 
-### js/hours-jobs.js  _(50 líneas)_
+### js/hours-jobs.js  _(51 líneas)_
 **Estado global:** HOURS_JOBS_KEY:3 · HOURS_JOBS:7
 
 **Funciones:** hoursJobsRead:4 · hoursJobsSave:8 · hoursAcceptSnapshot:9 · hoursAcceptJobResult:17 · hoursTrackJob:24

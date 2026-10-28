@@ -1,6 +1,6 @@
 /* Only job identifiers and connection-scoped derived facts live on the device.
    Closing a tab never cancels browser work accepted by Kairo. */
-var HOURS_JOBS_KEY='excelia-hours-jobs-v1',HOURS_JOB_POLL=null,HOURS_JOB_ERROR='';
+var HOURS_JOBS_KEY='excelia-hours-jobs-v1',HOURS_JOB_POLL=null,HOURS_JOB_ERROR='',HOURS_JOB_NETWORK_ERROR=false;
 function hoursJobsRead(){
   try{var rows=JSON.parse(localStorage.getItem(HOURS_JOBS_KEY)||'[]');return Array.isArray(rows)?rows.filter(function(j){return j&&/^[a-f0-9-]{36}$/.test(j.id)&&['status','preview','commit','simulate'].includes(j.kind)&&typeof j.url==='string'&&j.url.length<1000&&/^\d{4}-\d{2}$/.test(j.period);}).slice(-24):[];}catch(e){return [];}
 }
@@ -25,22 +25,23 @@ function hoursTrackJob(value,request,url){
   if(!value||!value.jobId||!['status','preview','commit','simulate'].includes(value.kind))return;
   if(!/^[a-f0-9-]{36}$/.test(value.jobId))throw new Error('Identificador de trabajo no válido');
   if(!HOURS_JOBS.some(function(j){return j.id===value.jobId;}))HOURS_JOBS.push({id:value.jobId,url:url,period:request.period,kind:value.kind,settings:hoursSettingsSignature()});
-  HOURS_JOBS=HOURS_JOBS.slice(-24);HOURS_JOB_ERROR='';hoursJobsSave();hoursResumeJobs();paintHoursStatus();
+  HOURS_JOBS=HOURS_JOBS.slice(-24);HOURS_JOB_ERROR='';HOURS_JOB_NETWORK_ERROR=false;hoursJobsSave();hoursResumeJobs();paintHoursStatus();
 }
 async function hoursResumeJobs(){
   if(HOURS_JOB_POLL||!HOURS_JOBS.length)return;
   HOURS_JOB_POLL=true;
   try{
-    var url=hoursKairoUrl(),pending=HOURS_JOBS.filter(function(j){return j.url===url;});
+    var url=hoursKairoUrl(),pending=HOURS_JOBS.filter(function(j){return j.url===url;}),networkFailed=false;
     for(var job of pending){
       try{
         var response=await fetch(job.url+'jobs/'+job.id,{mode:'cors',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',targetAddressSpace:'local'});
         if(!response.ok)throw new Error('Kairo no está disponible');
         var data=await response.json();if(data.jobId!==job.id||!['queued','running','done','error'].includes(data.phase))throw new Error('Trabajo no válido');
         if(data.phase==='done'){hoursAcceptJobResult(job,data.result);HOURS_JOBS=HOURS_JOBS.filter(function(j){return j.id!==job.id;});}
-        else if(data.phase==='error'){HOURS_JOB_ERROR='Kairo requiere revisión. Se conserva el último estado confirmado.';HOURS_JOBS=HOURS_JOBS.filter(function(j){return j.id!==job.id;});}
-      }catch(e){HOURS_JOB_ERROR='Sin conexión con Kairo. El trabajo y los estados guardados se conservan.';}
+        else if(data.phase==='error'){HOURS_JOB_ERROR='Kairo requiere revisión. Se conserva el último estado confirmado.';HOURS_JOB_NETWORK_ERROR=false;HOURS_JOBS=HOURS_JOBS.filter(function(j){return j.id!==job.id;});}
+      }catch(e){networkFailed=true;if(!HOURS_JOB_ERROR||HOURS_JOB_NETWORK_ERROR){HOURS_JOB_ERROR='Sin conexión con Kairo. El trabajo y los estados guardados se conservan.';HOURS_JOB_NETWORK_ERROR=true;}}
     }
+    if(pending.length&&!networkFailed&&HOURS_JOB_NETWORK_ERROR){HOURS_JOB_ERROR='';HOURS_JOB_NETWORK_ERROR=false;}
     hoursJobsSave();paintHoursStatus();
   }finally{
     HOURS_JOB_POLL=null;
