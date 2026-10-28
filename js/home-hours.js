@@ -31,7 +31,7 @@ function renderHomeMonthSummary(data){
   var html='';
   if(data.off.length){
     html='<div class="month-total"><span class="ms-caption">Total mensual</span><div class="month-stat total"><span class="ms-days">'+data.days+' días laborables</span><span class="ms-num">'+hours(data.hours)+'</span></div></div><div class="ms-breakdown">';
-    var labels={festivo:['festivo','festivos'],vacaciones:['día de vacaciones','días de vacaciones'],ausencia:['ausencia','ausencias']};
+    var labels={festivo:['festivo','festivos'],vacaciones:['vacaciones','vacaciones'],ausencia:['ausencia','ausencias']};
     data.off.forEach(function(group){
       html+='<span class="month-stat off '+group.type+'" style="color:var(--'+group.type+')"><span>− '+group.days+' '+labels[group.type][group.days===1?0:1]+'</span><span class="ms-value">'+hours(group.hours)+'</span></span>';
     });
@@ -39,6 +39,6 @@ function renderHomeMonthSummary(data){
     html+='</div>';
   }
   html+='<div class="month-stat worked'+(data.off.length?' home-worked-total':'')+'" aria-label="'+data.workedDays+' días trabajados, '+hours(data.workedHours)+' trabajadas"><span class="ms-days">'+data.workedDays+' día'+(data.workedDays===1?'':'s')+' trabajado'+(data.workedDays===1?'':'s')+'</span><strong class="ms-num">'+hours(data.workedHours)+'</strong></div>';
-  if(!data.off.length)html+='<small class="ms-no-off">* sin días no trabajados</small>';
+  if(!data.off.length)html+='<small class="ms-no-off"><em>* sin días no trabajados</em></small>';
   return html;
 }

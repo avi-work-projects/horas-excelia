@@ -13,7 +13,11 @@
 /* ── Render: calendario mensual ─────────────────────────── */
 function _renderEvCalMonth(opts){
   var today=new Date();today.setHours(0,0,0,0);
-  var remaining=(!opts||opts.remaining!==false)&&EV_YEAR===today.getFullYear()&&EV_MONTH===today.getMonth();
+  var first=new Date(EV_YEAR,EV_MONTH,1),last=new Date(EV_YEAR,EV_MONTH+1,0),cur=new Date(first);
+  var dow=cur.getDay();var off=dow===0?6:dow-1;
+  cur.setDate(cur.getDate()-off);
+  // También en el mes siguiente si hoy está en su primera semana compartida.
+  var remaining=(!opts||opts.remaining!==false)&&today>=cur&&today<=last;
   var puenteMap={};
   if(typeof computePuentes==='function'){
     computePuentes(EV_YEAR).puentes.forEach(function(seq){
@@ -30,11 +34,6 @@ function _renderEvCalMonth(opts){
   h+='<div class="ev-week-hdr">';
   DN7.forEach(function(n,i){var current=EV_YEAR===today.getFullYear()&&EV_MONTH===today.getMonth()&&i===(today.getDay()+6)%7;h+='<div><span'+(current?' class="ev-current-weekday" aria-label="Día de la semana actual"':'')+'>'+n+'</span></div>';});
   h+='</div>';
-  var first=new Date(EV_YEAR,EV_MONTH,1);
-  var last=new Date(EV_YEAR,EV_MONTH+1,0);
-  var cur=new Date(first);
-  var dow=cur.getDay();var off=dow===0?6:dow-1;
-  cur.setDate(cur.getDate()-off);
   while(cur<=last){
     // Build week days array
     var wk=[];

@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
   "title": "Gestify · mapa visual",
-  "generatedAt": "2026-10-28T14:57:03.410Z",
-  "referenceCommit": "f4f03731e8eca2b352d83262fd0a140adb934cf0",
+  "generatedAt": "2026-10-28T15:23:37.517Z",
+  "referenceCommit": "f9e7eebc767e473608f0acc50e4d49ab6680a196",
   "date": "2026-08-21T10:00:00+02:00",
   "viewport": {
     "width": 400,
@@ -28,6 +28,7 @@
       ],
       "region": "body",
       "image": "captures/home.png",
+      "imageHash": "b436ee75a2720604c973efa2ac3c8429c133ba297c27ef9d2135fb0c7495626d",
       "anchors": {
         "household": {
           "x": 16,
@@ -241,6 +242,19 @@
       ],
       "dependencyVersion": 2,
       "commit": "f4f03731e8eca2b352d83262fd0a140adb934cf0",
+      "review": "Sin revisar",
+      "reviewHistory": [
+        {
+          "imageHash": "3493bf6888e56c26aa0080cd30012227abc1b4f452587c63e94dd312106716b2",
+          "review": "Revisada visualmente",
+          "commit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
+          "reviewEvidence": {
+            "referenceCommit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
+            "reviewedAt": "2026-10-25",
+            "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
+          }
+        }
+      ],
       "verifiedEdges": [
         "household",
         "study",
@@ -255,21 +269,7 @@
         "home-september",
         "tasks"
       ],
-      "imageHash": "b436ee75a2720604c973efa2ac3c8429c133ba297c27ef9d2135fb0c7495626d",
-      "review": "Sin revisar",
-      "reviewHistory": [
-        {
-          "imageHash": "3493bf6888e56c26aa0080cd30012227abc1b4f452587c63e94dd312106716b2",
-          "review": "Revisada visualmente",
-          "commit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
-          "reviewEvidence": {
-            "referenceCommit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
-            "reviewedAt": "2026-10-25",
-            "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
-          }
-        }
-      ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "household",
@@ -3852,6 +3852,7 @@
       ],
       "region": "body",
       "image": "captures/home-september.png",
+      "imageHash": "eee15df6e75f9e992266cc362e00cf72c83b885a659eee6840b80fea018f3ccb",
       "anchors": {
         "home-october": {
           "x": 244.671875,
@@ -3999,10 +4000,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "f4f03731e8eca2b352d83262fd0a140adb934cf0",
-      "verifiedEdges": [
-        "home-october"
-      ],
-      "imageHash": "eee15df6e75f9e992266cc362e00cf72c83b885a659eee6840b80fea018f3ccb",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -4016,7 +4013,10 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [
+        "home-october"
+      ],
+      "fresh": false
     },
     {
       "id": "home-october",
@@ -4033,6 +4033,7 @@
       ],
       "region": "body",
       "image": "captures/home-october.png",
+      "imageHash": "fdd2324ce9c48614ee6b2c26897648eecfe1922d5b8ea224cd12f05002b52b65",
       "anchors": {
         "home-invoice-connection": {
           "x": 310.765625,
@@ -4186,11 +4187,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "f4f03731e8eca2b352d83262fd0a140adb934cf0",
-      "verifiedEdges": [
-        "home-invoice-connection",
-        "invoice-current"
-      ],
-      "imageHash": "fdd2324ce9c48614ee6b2c26897648eecfe1922d5b8ea224cd12f05002b52b65",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -4204,7 +4200,11 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [
+        "home-invoice-connection",
+        "invoice-current"
+      ],
+      "fresh": false
     },
     {
       "id": "home-invoice-connection",

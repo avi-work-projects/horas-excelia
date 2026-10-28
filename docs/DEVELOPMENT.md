@@ -1503,3 +1503,17 @@ diario contra duplicados de Kairo mantienen sus comprobaciones independientes.
 Las modificaciones hechas directamente en Outlook se descubren en una nueva
 consulta, no por la caché. Solo se recapturan las tres escenas de Home; se
 conservan las demás referencias y revisiones del mapa.
+
+## Ajustes de Home y continuidad del mes (v515)
+
+El resumen abrevia Vacaciones, muestra la nota sin días no trabajados en cursiva
+y comparte el color entre días y horas del resultado. El contorno de pendientes
+del calendario mensual también se dibuja al consultar el mes siguiente si hoy
+está en la semana inicial compartida. El límite inicial se calcula con la primera
+celda visible; el final sigue siendo el último día del mes. Así el mes anterior
+no activa el contorno por mostrar hoy entre sus días finales de relleno. Los
+selectores de rutinas siguen excluyéndolo mediante remaining:false.
+
+Se comprueban los tres anchos de móvil, cambio de año y cambio horario. Son
+ajustes puntuales: se mantienen las capturas generales y se añaden únicamente
+ejemplos a la revisión existente, conservando su historial.

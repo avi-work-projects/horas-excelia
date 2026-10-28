@@ -3773,6 +3773,7 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 .home-summary-compact{grid-column:3;grid-row:1;justify-self:end;width:max-content;max-width:100%;box-sizing:border-box;padding:6px 7px;border:1px solid var(--border);border-radius:8px;background:var(--surface);gap:3px;min-width:0}
 .month-summary .month-stat{justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:nowrap;white-space:nowrap}
 .month-summary .ms-days{font-size:.8rem;color:var(--text-muted)}
+.month-summary .worked .ms-days{color:var(--c-green)}
 .month-summary .ms-caption{display:block;font-size:.65rem;color:var(--text-dim);margin-bottom:3px}
 .month-summary .ms-value{font-family:var(--mono);white-space:nowrap}
 .month-summary .ms-no-off{font-size:.67rem;color:var(--text-dim)}

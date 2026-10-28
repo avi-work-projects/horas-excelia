@@ -314,3 +314,25 @@ fresca, las comprobaciones de duplicados y el diario. Al confirmar, Gestify elim
 los hechos afectados hasta recibir el nuevo estado. La revisión individual
 invalida solo su semana; un error de consulta no borra las verificaciones previas.
 No cambian el servicio de Kairo ni la política de programación en esta entrega.
+
+## Estado operativo revisado con v515
+
+Comprobación de solo lectura: servicio de horas activo, escrituras habilitadas y
+consulta HTTPS de conciliación correcta con cuenta e inventario verificados.
+La sesión sigue siendo la abierta manualmente por el propietario en Chromium
+de Kairo; el adaptador reutiliza ese perfil, no guarda una contraseña en Gestify
+ni implementa un inicio de sesión automático nuevo. Si Microsoft exige volver
+a entrar o aprobar MFA, debe hacerlo el propietario en ese navegador.
+
+Para consultar o crear programaciones se necesita Kairo encendido, sus servicios,
+sesión válida, Internet y conexión Tailscale desde el dispositivo. El USB no
+interviene. Gestify inicia la revisión desde el botón; el usuario confirma y
+Kairo crea las programaciones en Outlook. No hay una tarea mensual que pulse el
+botón por sí sola. Una vez aceptadas por Outlook web, el envío a la hora prevista
+depende de Outlook, no de mantener Gestify abierto.
+
+El servicio de horas y la unidad permanente del navegador están habilitados al
+arrancar, con linger. El navegador actual continúa en la unidad temporal anterior
+para conservar la sesión; no se debe arrancar otro sobre el mismo perfil. Sigue
+sin ensayarse el reinicio completo de Kairo. En esta comprobación no se cambian
+servicios ni se crean, actualizan o cancelan correos.
