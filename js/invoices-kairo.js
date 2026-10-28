@@ -65,7 +65,7 @@ function bindInvoiceKairo(root,p,url){
         message.textContent='Conectando con Kairo… Mantén abierta su ventana.';
         var result=await invoiceKairoExchange(url,p,suffix==='Send'?'prepare':'status',popup);
         data=invoiceData();record=data.months[p.period];
-        if(record&&record.preparation.contentHash===p.contentHash){record.kairo={operationId:p.operationId,contentHash:p.contentHash,state:result.state};invoiceSave(data);}
+        if(record&&record.preparation.contentHash===p.contentHash){record.kairo={operationId:p.operationId,contentHash:p.contentHash,state:result.state};invoiceSave(data);if(data.config.kairoUrl&&invoiceKairoUrl(data.config.kairoUrl)===url&&typeof fetchHomeInvoiceStatus==='function')fetchHomeInvoiceStatus(p.period,data.config.kairoUrl,true);}
         message.textContent=invoiceKairoState(result.state);
       }catch(e){message.textContent=e.message;}
       finally{INVOICE_KAIRO_BUSY=false;root.querySelectorAll('#invoiceKairoSend,#invoiceKairoStatus').forEach(function(el){el.disabled=false;});}

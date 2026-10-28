@@ -42,7 +42,7 @@ completa de navegador queda para CI; en local se ejecuta la cobertura afectada.
 
 ## Estado
 
-Implementado sobre la integración existente. En validación antes de publicar.
+Implementado sobre la integración existente.
 
 La cola SQLite comparte el bloqueo del navegador y el diario previo a escribir.
 Una confirmación repetida recupera el mismo trabajo; un reinicio recupera las
@@ -52,6 +52,16 @@ final se recalcula con el diario ya confirmado, sin otro barrido de Outlook.
 La actualización de indicadores conserva los botones y las celdas: reemplazar
 las tarjetas al recuperar el foco podía perder una pulsación al salir del iframe.
 El desbloqueo local se mantiene separado del hecho remoto observado.
+
+Las acciones explícitas de preparación/consulta de factura refrescan su mes
+cuando Kairo confirma la respuesta. Una conexión cambiada o borrada no hereda
+ese resultado. Fuera de esas acciones y del refresco manual, se conserva la caché.
+
+Validación local: npm test y build; 35 pruebas Python; pruebas de Home, cachés,
+Android instalado simulado, programación individual/conjunta, respuestas tardías,
+conexiones, facturas y geometría móvil. La revisión real del escritor usa una
+instancia aislada de Chromium con red desactivada. La batería completa queda
+como puerta de publicación en CI.
 
 Prueba real de lectura el 28/10: auditoría conjunta anterior/actual/siguiente en
 27,06 s; aceptación en 38 ms y recuperación posterior en 3 ms. La sesión existente

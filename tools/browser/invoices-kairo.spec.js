@@ -10,6 +10,7 @@ async function setup(page,context,{loseReply=false}={}){
   let stored=null,calls=0;
   await context.route('https://synthetic-kairo.test.ts.net/**',async route=>{
     const req=route.request();
+    if(req.method()==='GET'&&new URL(req.url()).pathname.endsWith('/gestify-status')){const period=new URL(req.url()).searchParams.get('period');return route.fulfill({json:{period,state:stored?'draft':'missing',generated:!!stored,issued:false,scheduled:false,sent:false,scheduledDate:null},headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}});}
     if(req.method()==='GET')return route.fulfill({contentType:'text/html',body:receiverHtml});
     const data=req.postDataJSON();expect(req.headers()['x-csrf']).toBe('synthetic');
     if(data.action==='prepare'){
@@ -39,6 +40,7 @@ test('envío privado, repetido, consulta y vista móvil sin flujo Gmail paralelo
   const popup=await exchange(page,'#invoiceKairoSend');
   expect(popup.url()).toBe(base+'gestify');
   await expect(page.locator('#invoiceKairoMessage')).toContainText('Preparación recibida');
+  await expect.poll(()=>page.evaluate(()=>INVOICE_HOME_CACHE.periods['2027-02']?.data.generated)).toBe(true);
   expect((await page.locator('.invoice-sheet').boundingBox()).height).toBe(height);
   await popup.close();
   const again=await exchange(page,'#invoiceKairoSend');await expect(page.locator('#invoiceKairoMessage')).toContainText('Preparación recibida');await again.close();
