@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
   "title": "Gestify · mapa visual",
-  "generatedAt": "2026-10-28T13:09:08.418Z",
-  "referenceCommit": "d9440acd3a274dc334252ceb8790d7c9d7a27507",
+  "generatedAt": "2026-10-28T14:57:03.410Z",
+  "referenceCommit": "f4f03731e8eca2b352d83262fd0a140adb934cf0",
   "date": "2026-08-21T10:00:00+02:00",
   "viewport": {
     "width": 400,
@@ -106,7 +106,7 @@
       "dependencies": [
         {
           "file": "index.html",
-          "hash": "95a3ba533815749b8b82c3f7520bf0628d021ff2fad40de921853f13621fc8b5"
+          "hash": "98dcba22ca3b934d7daf793d39c73e3085c52e3689634e78ff456b7ecc925922"
         },
         {
           "file": "js/nav-icons.js",
@@ -115,7 +115,7 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "5e97ab054e1862ed668b83c9f824f719cd7cafee0a14898f1debcc019c0d64a8"
+          "hash": "3161ad6fd0653746864573c61b64a431ab597656fb7d89c0b264295da892ec86"
         },
         {
           "file": "js/data-integrity.js",
@@ -131,7 +131,7 @@
         },
         {
           "file": "css/source/base.css",
-          "hash": "58e9b402d3d746f8c8756dfd1904f3f62d7e3dd59ad6dc79287f971bd904e28c"
+          "hash": "6e7807962c6aacbca9bc650f13d0d92e1e520afec872c289d7d16c2fe81c48de"
         },
         {
           "file": "css/source/navigation-controls.css",
@@ -171,11 +171,11 @@
         },
         {
           "file": "css/source/home-sharing.css",
-          "hash": "8341362ccc0fefecc4b8d59bded4360b9ae0fa6ada4a33fd8b41aa56db8231fa"
+          "hash": "642d92e1540aa56d716c103987b0b740242bf58946d4c6006ccb07773c47d71a"
         },
         {
           "file": "css/source/hours-kairo.css",
-          "hash": "83c6e241ca0bf9dcaab9f2bc4579ec9d724d242b67784d1fea7b93e4ab205931"
+          "hash": "af45c189fcd2e4eded0129b47f17a7e4dd6366dd7d3e0df47ca0ff1a89b417ed"
         },
         {
           "file": "css/source/energy-refinements.css",
@@ -199,7 +199,7 @@
         },
         {
           "file": "js/home-hours.js",
-          "hash": "a65c4b5bb0aebe28c33166740cdf421ceeef926b0e081491c1c5dcdb6139a16d"
+          "hash": "c6719879fb1c9c59d688d7395ed8a9387d426fbc3ec9674ce98828600fa95530"
         },
         {
           "file": "js/home-weeks.js",
@@ -207,7 +207,11 @@
         },
         {
           "file": "js/hours-kairo.js",
-          "hash": "25104222e695d11096a786aa1479b0d78090522820480654d97196e9864107ac"
+          "hash": "381827284d34fd9627457a1384898b7334c8794d4ac89a615308530611ad6c09"
+        },
+        {
+          "file": "js/hours-cache.js",
+          "hash": "35108d71492f5213683fb6945ec85cd9ba9ee446213e0ca0442e39d6f34f4e8d"
         },
         {
           "file": "js/invoices-home.js",
@@ -236,7 +240,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "d9440acd3a274dc334252ceb8790d7c9d7a27507",
+      "commit": "f4f03731e8eca2b352d83262fd0a140adb934cf0",
       "verifiedEdges": [
         "household",
         "study",
@@ -251,7 +255,7 @@
         "home-september",
         "tasks"
       ],
-      "imageHash": "0a6fc2d666ffe28cf32992d2baa47beeb5ff3b53d7abd620499dadf51ef21347",
+      "imageHash": "b436ee75a2720604c973efa2ac3c8429c133ba297c27ef9d2135fb0c7495626d",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -3860,7 +3864,7 @@
       "dependencies": [
         {
           "file": "index.html",
-          "hash": "95a3ba533815749b8b82c3f7520bf0628d021ff2fad40de921853f13621fc8b5"
+          "hash": "98dcba22ca3b934d7daf793d39c73e3085c52e3689634e78ff456b7ecc925922"
         },
         {
           "file": "js/nav-icons.js",
@@ -3869,7 +3873,7 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "5e97ab054e1862ed668b83c9f824f719cd7cafee0a14898f1debcc019c0d64a8"
+          "hash": "3161ad6fd0653746864573c61b64a431ab597656fb7d89c0b264295da892ec86"
         },
         {
           "file": "js/data-integrity.js",
@@ -3885,7 +3889,7 @@
         },
         {
           "file": "css/source/base.css",
-          "hash": "58e9b402d3d746f8c8756dfd1904f3f62d7e3dd59ad6dc79287f971bd904e28c"
+          "hash": "6e7807962c6aacbca9bc650f13d0d92e1e520afec872c289d7d16c2fe81c48de"
         },
         {
           "file": "css/source/navigation-controls.css",
@@ -3925,11 +3929,11 @@
         },
         {
           "file": "css/source/home-sharing.css",
-          "hash": "8341362ccc0fefecc4b8d59bded4360b9ae0fa6ada4a33fd8b41aa56db8231fa"
+          "hash": "642d92e1540aa56d716c103987b0b740242bf58946d4c6006ccb07773c47d71a"
         },
         {
           "file": "css/source/hours-kairo.css",
-          "hash": "83c6e241ca0bf9dcaab9f2bc4579ec9d724d242b67784d1fea7b93e4ab205931"
+          "hash": "af45c189fcd2e4eded0129b47f17a7e4dd6366dd7d3e0df47ca0ff1a89b417ed"
         },
         {
           "file": "css/source/energy-refinements.css",
@@ -3953,7 +3957,7 @@
         },
         {
           "file": "js/home-hours.js",
-          "hash": "a65c4b5bb0aebe28c33166740cdf421ceeef926b0e081491c1c5dcdb6139a16d"
+          "hash": "c6719879fb1c9c59d688d7395ed8a9387d426fbc3ec9674ce98828600fa95530"
         },
         {
           "file": "js/home-weeks.js",
@@ -3961,7 +3965,11 @@
         },
         {
           "file": "js/hours-kairo.js",
-          "hash": "25104222e695d11096a786aa1479b0d78090522820480654d97196e9864107ac"
+          "hash": "381827284d34fd9627457a1384898b7334c8794d4ac89a615308530611ad6c09"
+        },
+        {
+          "file": "js/hours-cache.js",
+          "hash": "35108d71492f5213683fb6945ec85cd9ba9ee446213e0ca0442e39d6f34f4e8d"
         },
         {
           "file": "js/invoices-home.js",
@@ -3990,11 +3998,11 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "d9440acd3a274dc334252ceb8790d7c9d7a27507",
+      "commit": "f4f03731e8eca2b352d83262fd0a140adb934cf0",
       "verifiedEdges": [
         "home-october"
       ],
-      "imageHash": "b4e4661552f243f12f39e88aea67dc963bfe32332f22321d5d573dfd61b0deaf",
+      "imageHash": "eee15df6e75f9e992266cc362e00cf72c83b885a659eee6840b80fea018f3ccb",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -4043,7 +4051,7 @@
       "dependencies": [
         {
           "file": "index.html",
-          "hash": "95a3ba533815749b8b82c3f7520bf0628d021ff2fad40de921853f13621fc8b5"
+          "hash": "98dcba22ca3b934d7daf793d39c73e3085c52e3689634e78ff456b7ecc925922"
         },
         {
           "file": "js/nav-icons.js",
@@ -4052,7 +4060,7 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "5e97ab054e1862ed668b83c9f824f719cd7cafee0a14898f1debcc019c0d64a8"
+          "hash": "3161ad6fd0653746864573c61b64a431ab597656fb7d89c0b264295da892ec86"
         },
         {
           "file": "js/data-integrity.js",
@@ -4068,7 +4076,7 @@
         },
         {
           "file": "css/source/base.css",
-          "hash": "58e9b402d3d746f8c8756dfd1904f3f62d7e3dd59ad6dc79287f971bd904e28c"
+          "hash": "6e7807962c6aacbca9bc650f13d0d92e1e520afec872c289d7d16c2fe81c48de"
         },
         {
           "file": "css/source/navigation-controls.css",
@@ -4108,11 +4116,11 @@
         },
         {
           "file": "css/source/home-sharing.css",
-          "hash": "8341362ccc0fefecc4b8d59bded4360b9ae0fa6ada4a33fd8b41aa56db8231fa"
+          "hash": "642d92e1540aa56d716c103987b0b740242bf58946d4c6006ccb07773c47d71a"
         },
         {
           "file": "css/source/hours-kairo.css",
-          "hash": "83c6e241ca0bf9dcaab9f2bc4579ec9d724d242b67784d1fea7b93e4ab205931"
+          "hash": "af45c189fcd2e4eded0129b47f17a7e4dd6366dd7d3e0df47ca0ff1a89b417ed"
         },
         {
           "file": "css/source/energy-refinements.css",
@@ -4136,7 +4144,7 @@
         },
         {
           "file": "js/home-hours.js",
-          "hash": "a65c4b5bb0aebe28c33166740cdf421ceeef926b0e081491c1c5dcdb6139a16d"
+          "hash": "c6719879fb1c9c59d688d7395ed8a9387d426fbc3ec9674ce98828600fa95530"
         },
         {
           "file": "js/home-weeks.js",
@@ -4144,7 +4152,11 @@
         },
         {
           "file": "js/hours-kairo.js",
-          "hash": "25104222e695d11096a786aa1479b0d78090522820480654d97196e9864107ac"
+          "hash": "381827284d34fd9627457a1384898b7334c8794d4ac89a615308530611ad6c09"
+        },
+        {
+          "file": "js/hours-cache.js",
+          "hash": "35108d71492f5213683fb6945ec85cd9ba9ee446213e0ca0442e39d6f34f4e8d"
         },
         {
           "file": "js/invoices-home.js",
@@ -4173,12 +4185,12 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "d9440acd3a274dc334252ceb8790d7c9d7a27507",
+      "commit": "f4f03731e8eca2b352d83262fd0a140adb934cf0",
       "verifiedEdges": [
         "home-invoice-connection",
         "invoice-current"
       ],
-      "imageHash": "061de63b09b4d2637e2fe6e1eced70b11957029d0df58d4b3602482c56b04972",
+      "imageHash": "fdd2324ce9c48614ee6b2c26897648eecfe1922d5b8ea224cd12f05002b52b65",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -34929,7 +34941,7 @@
     {
       "symbol": "openSheet",
       "file": "js/core.js",
-      "line": 612
+      "line": 580
     },
     {
       "symbol": "openEstudio",

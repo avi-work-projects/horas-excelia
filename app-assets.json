@@ -58,6 +58,9 @@
       "path": "js/hours-kairo.js"
     },
     {
+      "path": "js/hours-cache.js"
+    },
+    {
       "path": "js/statistics-ui.js"
     },
     {

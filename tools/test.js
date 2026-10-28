@@ -355,6 +355,7 @@ const REGLAS = [
       'excelia-vac-days':          'vacEntitlement',
       'excelia-csv-exports-v1': 'csvExports',
       'excelia-invoices-v1': 'invoices',
+      'excelia-hours-cache-v1': false, // hechos remotos derivados, propios de este dispositivo
       'excelia-calendar-exports-v1': 'calendarExports',
       'excelia-calendar-author-v1': 'calendarAuthor',
       'excelia-calendar-notes-v1': 'calendarNotes',

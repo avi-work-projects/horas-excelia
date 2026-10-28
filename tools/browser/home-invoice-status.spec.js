@@ -16,9 +16,14 @@ for(const width of [320,400,440])test('Home: total, descuentos y horas destacada
   await page.setViewportSize({width,height:880});const api=await setup(page,context);const status=page.locator('#homeInvoiceStatus');
   await expect(status).toContainText('Factura pendiente de enviar');
   const summary=page.locator('.home-summary-compact');await expect(summary).toBeVisible();
-  await expect(summary.locator('.total')).toContainText('185,5h');await expect(summary.locator('.off')).toContainText('1 día no trabajado');await expect(summary.locator('.ms-breakdown')).toContainText('1 festivo');await expect(summary.locator('.worked')).toContainText('21 días trabajados');await expect(summary.locator('.worked-hours strong')).toHaveText('176,5h');
-  const order=await summary.locator(':scope > *').evaluateAll(els=>els.map(e=>e.className));expect(order[0]).toContain('total');expect(order.at(-1)).toBe('home-worked-total');
-  const hours=summary.locator('.worked-hours strong');expect(await hours.evaluate(el=>+getComputedStyle(el).fontWeight)).toBeGreaterThanOrEqual(700);expect(await hours.evaluate(el=>parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThan(await summary.locator('.total .ms-num').evaluate(el=>parseFloat(getComputedStyle(el).fontSize)));
+  await expect(summary.locator('.total')).toContainText('22 días laborables');await expect(summary.locator('.total')).toContainText('185,5h');await expect(summary.locator('.off')).toContainText('− 1 festivo');await expect(summary.locator('.off')).toContainText('9h');await expect(summary.locator('.worked')).toContainText('21 días trabajados');await expect(summary.locator('.worked strong')).toHaveText('176,5h');
+  const order=await summary.locator(':scope > *').evaluateAll(els=>els.map(e=>e.className));expect(order[0]).toBe('month-total');expect(order.at(-1)).toContain('home-worked-total');
+  const hours=summary.locator('.worked strong');expect(await hours.evaluate(el=>+getComputedStyle(el).fontWeight)).toBeGreaterThanOrEqual(700);expect(await hours.evaluate(el=>parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThan(await summary.locator('.total .ms-num').evaluate(el=>parseFloat(getComputedStyle(el).fontSize)));
+  for(const row of await summary.locator('.month-stat').all()){
+    const boxes=await row.locator(':scope > *').evaluateAll(els=>els.map(el=>({top:el.getBoundingClientRect().top,bottom:el.getBoundingClientRect().bottom})));
+    expect(Math.max(...boxes.map(b=>b.top))).toBeLessThan(Math.min(...boxes.map(b=>b.bottom)));
+  }
+  expect(await summary.locator('.off').evaluate(el=>Array.from(el.children).every(child=>getComputedStyle(child).color===getComputedStyle(el).color))).toBe(true);
   const storage=await page.evaluate(()=>JSON.stringify(localStorage)),height=(await status.boundingBox()).height;
   for(const [state,label]of [['scheduled','Factura programada'],['sent','Factura enviada'],['missing','Factura pendiente de preparar']]){api.set(result(state));await page.getByRole('button',{name:'Actualizar estado de factura',exact:true}).click();await expect(status).toContainText(label);expect((await status.boundingBox()).height).toBe(height);}
   expect(api.calls.every(r=>r.method()==='GET'&&r.postData()===null)).toBe(true);expect(await page.evaluate(()=>JSON.stringify(localStorage))).toBe(storage);
@@ -26,6 +31,13 @@ for(const width of [320,400,440])test('Home: total, descuentos y horas destacada
   await page.screenshot({path:info.outputPath('home-factura-'+width+'.png'),animations:'disabled'});
   api.set(result('scheduled'));await page.getByRole('button',{name:'Actualizar estado de factura',exact:true}).click();await expect(status).toContainText('Factura programada');await page.screenshot({path:info.outputPath('home-programada-'+width+'.png'),animations:'disabled'});
   api.set(result('sent'));await page.evaluate(()=>window.dispatchEvent(new Event('focus')));await expect(status).toContainText('Factura enviada');
+  await page.evaluate(()=>{ST['2026-10-13']={type:'vacaciones'};ST['2026-10-14']={type:'ausencia'};render();});await expect(summary.locator('.off')).toHaveCount(3);
+  expect(await summary.evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
+  for(const row of await summary.locator('.off').all())expect(await row.evaluate(el=>Array.from(el.children).every(child=>getComputedStyle(child).color===getComputedStyle(el).color))).toBe(true);
+  await page.screenshot({path:info.outputPath('home-desglose-'+width+'.png'),animations:'disabled'});
+  await page.evaluate(()=>{ST={};render();});await expect(summary.locator('.total')).toHaveCount(0);await expect(summary.locator('.off')).toHaveCount(0);await expect(summary.locator('.worked')).toHaveText('22 días trabajados185,5h');await expect(summary.locator('.ms-no-off')).toHaveText('* sin días no trabajados');
+  expect(await summary.evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
+  await page.screenshot({path:info.outputPath('home-sin-descuentos-'+width+'.png'),animations:'disabled'});
 });
 
 test('Sin conexión o respuesta incoherente no afirma factura pendiente ni enviada',async({page,context})=>{
