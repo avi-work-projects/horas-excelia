@@ -1517,3 +1517,35 @@ selectores de rutinas siguen excluyéndolo mediante remaining:false.
 Se comprueban los tres anchos de móvil, cambio de año y cambio horario. Son
 ajustes puntuales: se mantienen las capturas generales y se añaden únicamente
 ejemplos a la revisión existente, conservando su historial.
+
+## Home persistente y programación independiente del móvil (v516)
+
+Contrato y evidencia en [home-mail-maintenance.md](home-mail-maintenance.md).
+Home conserva el resumen a la derecha en todos los estados y un único total;
+la fórmula de jornadas se despliega mediante un control discreto. Los colores
+de 7/8/9/6,5 h se comparten entre opciones, celdas y fórmula. El lápiz SVG
+editPencilHtml sustituye el glifo de los botones que ya mostraban lápiz.
+
+Las tarjetas mantienen sus tres zonas, envío manual y desbloqueo local.
+V/F/A sombrean la celda; el estado remoto y la edición son independientes.
+Abrir Outlook no marca enviada una semana. La programación individual se abre
+desde su distintivo; la conjunta permanece en el aviso del mes.
+
+La auditoría inicial cubre anterior/actual/siguiente. Al cambiar el mes real
+se consulta solo el periodo nuevo; los hechos compartidos conservan la lectura
+más reciente. El histórico anterior queda cerrado. Foco, navegación, cambios
+locales y conexión no fuerzan barridos. Actualizar estado comprueba correos y
+factura; errores conservan lo confirmado. Las cachés y referencias de trabajo
+son derivadas y están expresamente excluidas del backup.
+
+hours_jobs mantiene en SQLite trabajos, resultados y estados confirmados en
+Kairo. El móvil conserva identificadores recuperables, sin cuerpos ni direcciones.
+Una confirmación repetida reutiliza su trabajo; un reinicio no reintenta una
+escritura interrumpida. Se conserva el diario y bloqueo antes de escribir.
+La confirmación de un correo sirve como comprobación previa del siguiente,
+sin repetir el barrido; la hora se vuelve a comprobar antes de cada escritura.
+La interfaz actualiza indicadores sin reemplazar las tarjetas durante el foco.
+
+Facturas muestra fecha/estado confirmado por Kairo y compara el día 20 o laboral
+anterior con el calendario local. Una discrepancia se señala, sin alterar una
+factura aprobada. La integración existente de Kairo ya utiliza día 20 y festivos.

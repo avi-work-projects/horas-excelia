@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v515 — Resumen afinado y continuidad entre meses';
+var APP_VERSION = 'v516 — Home persistente y programación en segundo plano';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -348,29 +348,23 @@ function homeSubmissionStatus(year,month){
   var remote=typeof hoursRemoteConfigured==='function'&&hoursRemoteConfigured(),states={},counts={sent:0,scheduled:0,pending:0,review:0};
   var scope=homeSubmissionWeeks(year,month),known=true;
   scope.forEach(function(week){
-    var state=remote?hoursWeekState(week.key):SW[week.key]?'sent':'missing';states[week.key]=state;
+    var state=homePeriodMode(year,month)==='closed'?'closed':remote?hoursWeekState(week.key):SW[week.key]?'sent':'missing';states[week.key]=state;
     if(!state)known=false;
     if(state==='sent'||state==='scheduled')counts[state]++;
+    else if(state==='closed'){}
     else if(state==='missing'||state==='ready')counts.pending++;
     else if(state)counts.review++;
   });
-  var pending=scope.filter(function(week){return !['sent','scheduled'].includes(states[week.key]);});
+  var pending=scope.filter(function(week){return !['sent','scheduled','closed'].includes(states[week.key]);});
   return {remote:remote,states:states,counts:counts,known:known,review:counts.review>0,missing:pending.filter(function(week){return !week.extra;}).length,extras:pending.filter(function(week){return week.extra;}),complete:pending.length===0};
 }
 function renderHomeSubmissionStatus(year,month,state){
   state=state||homeSubmissionStatus(year,month);
-  var detail=state.missing?(state.missing+' semana'+(state.missing===1?'':'s')+' del mes sin enviar'):'';
-  state.extras.forEach(function(week){detail+=(detail?' · ':'')+'Falta la semana adicional del '+fd(week.mon)+' al '+fd(ad(week.mon,6));});
-  var title=state.complete?'Todo enviado':'Semanas pendientes de enviar';
-  if(state.remote){
-    title=!state.known?'Sin comprobar':state.complete?'Todo al día':state.review?'Revisar semanas':'Semanas pendientes';
-    var parts=[];if(state.counts.sent)parts.push(state.counts.sent+' enviada'+(state.counts.sent===1?'':'s'));
-    if(state.counts.scheduled)parts.push(state.counts.scheduled+' programada'+(state.counts.scheduled===1?'':'s'));
-    if(state.counts.pending)parts.push(state.counts.pending+' pendiente'+(state.counts.pending===1?'':'s'));
-    if(state.counts.review)parts.push(state.counts.review+' por revisar');
-    detail=state.known?parts.join(' · '):'Comprueba la conexión con Outlook.';
-  }
-  return '<div class="home-submission '+(!state.known?'unknown':state.complete?'complete':'pending')+'" role="status"><span class="home-submission-icon" aria-hidden="true">'+(!state.known?'◷':state.complete?'&#10003;':'&#9888;')+'</span><div class="home-submission-message"><strong>'+title+'</strong>'+((state.remote||!state.complete)&&detail?'<span>'+detail+'</span>':'')+'</div>'+(typeof renderHoursAccess==='function'?renderHoursAccess(state):'')+'</div>';
+  var closed=homePeriodMode(year,month)==='closed',title=closed?'Mes cerrado':!state.known?'Estado pendiente':state.complete?'Correos al día':state.review?'Hay cambios':'Semanas pendientes';
+  var detail=closed?'Histórico · sin consultas automáticas':!state.known?'Pendiente de primera comprobación':state.review?'Revisa las programaciones afectadas':state.complete?(state.counts.scheduled?state.counts.scheduled+' programadas':'Sin semanas pendientes'):(state.missing+state.extras.length)+' semanas por programar';
+  var scheduled=homeSubmissionWeeks(year,month).map(function(w){return hoursCachedWeek(w.key);}).filter(function(row){return row&&row.state==='scheduled'&&Date.parse(row.schedule)>Date.now();}).sort(function(a,b){return Date.parse(a.schedule)-Date.parse(b.schedule);})[0];
+  var next=scheduled?new Date(scheduled.schedule):null;
+  return '<section class="home-submission '+(!state.known?'unknown':state.complete?'complete':'pending')+'" aria-label="Correos y horas del mes"><div class="home-submission-heading"><span class="home-submission-icon" aria-hidden="true">'+(!state.known?'◷':state.complete?'&#10003;':'!')+'</span><strong>'+title+'</strong></div><div class="home-submission-detail">'+detail+'</div><div class="home-submission-body"><div class="home-submission-next"><span>'+(closed?'Mes cerrado':next?'Próximo envío':state.review?'Cambios locales':'Por preparar')+'</span><strong>'+(closed?'Archivado':next?fd(next):state.complete?'Al día':String(state.missing+state.extras.length)+' semanas')+'</strong><span>'+(next?'08:00 Madrid':closed?'Guardado':'')+'</span></div><div class="month-summary home-summary-compact">'+renderHomeMonthSummary(homeMonthHours(year,month))+'</div></div>'+renderHoursAccess(state)+'</section>';
 }
 
 // ── Comprueba si hay semanas enviadas en el mes actual ────────
@@ -474,6 +468,18 @@ function showToast(msg,type,undoFn,btnTxt,todoPulsable){
 function sendEmail(wkey){
   return openHoursReview(wkey);
 }
+function editPencilHtml(){return '<svg class="edit-pencil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 3 5 5L8 21H3v-5L16 3Zm-2 2 5 5"/></svg>';}
+function sendManualEmail(wkey){
+  var state=hoursWeekState(wkey),previous=hoursWeekState(dk(ad(new Date(wkey+'T12:00:00'),-7)));
+  if(previous&&!['sent','scheduled'].includes(previous)){showToast('La semana anterior requiere revisión. Compruébala antes de enviar esta.','error');return;}
+  var notes=[];
+  if(!previous&&hoursRemoteConfigured())notes.push('Comprueba que la semana anterior ya está enviada o programada.');
+  if(['sent','scheduled','changed'].includes(state))notes.push('Esta semana ya tiene un correo enviado o programado; otro borrador podría duplicarlo.');
+  if(notes.length&&!window.confirm(notes.join(' ')+' ¿Quieres abrir Outlook?'))return;
+  var wd=getWD(wkey),url='mailto:'+TO+'?cc='+encodeURIComponent(CC.join(','))+'&subject='+encodeURIComponent(hoursMailSubject(wd))+'&body='+encodeURIComponent(buildMailtoBody(wd));
+  window.location.href=url;
+  showToast('Abriendo Outlook. El envío se confirmará cuando Kairo lo compruebe.','info');
+}
 
 function buildMailtoBody(wd){
   var DN5=['L','M','X','J','V'];
@@ -504,8 +510,9 @@ function render(){
   // Actualizar texto del botón de jornada
   var dhBtn=document.getElementById('editHoursBtn');
   if(dhBtn){
+    var pencil=dhBtn.querySelector('[data-home-pencil]');if(pencil&&!pencil.firstChild)pencil.innerHTML=editPencilHtml();
     var dhSpan=dhBtn.querySelector('.dh-val');
-    if(dhSpan)dhSpan.textContent=curMonthH+'h';
+    if(dhSpan){dhSpan.textContent=curMonthH+'h';dhSpan.className='dh-val '+homeHourClass(curMonthH);}
   }
 
   buildHomeCalendar(document.getElementById('weeksContainer'));
@@ -519,13 +526,17 @@ function buildHomeCalendar(c){
   c.innerHTML=renderHomeSubmissionStatus(CY,CM,submission)+(typeof renderHomeInvoiceStatus==='function'?renderHomeInvoiceStatus(CY,CM):'');
 
   wks.forEach(function(wk){
-    var mon=wk[0],sun=wk[6],wkey=dk(mon),remote=submission.remote,mailState=remote?submission.states[wkey]:'',sent=remote?mailState==='sent':!!SW[wkey],dias=0;
+    var mon=wk[0],sun=wk[6],wkey=dk(mon),remote=submission.remote,mailState=remote?submission.states[wkey]:'',covered=homeWeekCovered(wkey),unlocked=homeWeekUnlocked(wkey),sent=covered&&!unlocked,dias=0;
     for(var i=0;i<5;i++){if(dayH(wk[i])>0)dias++;}
     var dStr=dias+(dias===1?' d\u00eda':' d\u00edas');
 
     var card=document.createElement('div');
+    card.dataset.week=wkey;
     card.className='week-card'+(sent?' sent':'');
-    card.innerHTML='<div class="week-header"><div class="week-info"><h3>Semana '+wn(mon)+(remote?'<span class="sent-badge hours-week-badge '+(mailState==='sent'||mailState==='scheduled'?'covered':mailState?'attention':'unknown')+'">'+hoursWeekBadge(mailState)+'</span>':sent?'<span class="sent-badge">\u2713 Enviada</span>':'')+'</h3><div class="week-range">'+fd(mon)+' \u2014 '+fd(sun)+'</div></div><div class="week-total">'+dStr+'</div></div>';
+    var reviewLabel=mailState==='sent'?'Ver estado':mailState==='scheduled'?'Ver programación':mailState==='changed'?'Revisar cambios':'Programar semana';
+    var badge=remote&&mailState==='closed'?'<span class="sent-badge">Cerrada</span>':remote?'<button type="button" class="sent-badge hours-week-badge '+(covered?'covered':mailState?'attention':'unknown')+'" data-hours-week="'+wkey+'" aria-label="'+reviewLabel+'">'+(mailState==='missing'||mailState==='ready'?reviewLabel:hoursWeekBadge(mailState))+'</button>':sent?'<span class="sent-badge">\u2713 Enviada</span>':'';
+    card.innerHTML='<div class="week-header"><div class="week-info"><h3>Semana '+wn(mon)+badge+'</h3><div class="week-range">'+fd(mon)+' \u2014 '+fd(sun)+'</div></div><div class="week-total">'+dStr+'</div></div>';
+    if(remote&&hoursWeekDate(wkey,mailState)){var scheduleNote=document.createElement('div');scheduleNote.className='hours-week-readonly';scheduleNote.textContent='Envío '+hoursWeekDate(wkey,mailState);card.querySelector('.week-info').appendChild(scheduleNote);}
 
     var grid=document.createElement('div'); grid.className='days-grid';
     for(var i=0;i<5;i++){
@@ -535,17 +546,18 @@ function buildHomeCalendar(c){
       cell.className='day-cell'+(dt!=='normal'?' '+dt:hCls);
       if(!inM)cell.style.opacity='0.4';
       var ts=isToday(d)?'color:var(--accent-bright)':'';
-      cell.innerHTML=(dt!=='normal'?'<div class="day-status-dot"></div>':'')+
+      cell.innerHTML=
         '<div class="day-name" style="'+ts+'">'+DN[d.getDay()]+'</div>'+
         '<div class="day-date">'+fd(d)+'</div>'+
-        '<div class="day-hours">'+fh(hrs)+'</div>';
+        '<div class="day-hours">'+(dt==='normal'?fh(hrs):dt==='vacaciones'?'V':dt==='festivo'?'F':'A')+'</div>';
+      cell.setAttribute('aria-label',fd(d)+', '+(dt==='normal'?fh(hrs):dt));
       // Bloquear clic si semana enviada
-      (function(dd,isSent){
+      (function(dd,key){
         cell.addEventListener('click',function(){
-          if(isSent){showToast(remote?'Semana ya enviada en Outlook.':'Semana enviada. Desmarca primero para editar.','error');return;}
+          if(!homeWeekUnlocked(key)){showToast('Desmarca primero la semana para editar sus días.','error');return;}
           openSheet(dd);
         });
-      })(d,sent);
+      })(d,wkey);
       grid.appendChild(cell);
     }
     card.appendChild(grid);
@@ -553,27 +565,16 @@ function buildHomeCalendar(c){
     var acts=document.createElement('div'); acts.className='week-actions';
     var sendBtn=document.createElement('button');
     sendBtn.className='action-btn send';
-    sendBtn.innerHTML='<svg class="week-action-icon mail-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M3 4h18a1 1 0 0 1 1 1v.5L12 12 2 5.5V5a1 1 0 0 1 1-1Zm-1 4 9.45 6.14a1 1 0 0 0 1.1 0L22 8v11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1Z"/></svg><span>'+(remote&&mailState==='sent'?'Ver estado':remote&&mailState==='scheduled'?'Ver programación':remote&&mailState==='changed'?'Revisar cambios':'Programar semana')+'</span>';
-    (function(k){sendBtn.addEventListener('click',function(e){e.stopPropagation();sendEmail(k);});})(wkey);
-    var sb=document.createElement(remote?'span':'button');
-    if(remote){
-      sb.className='hours-week-readonly'+(mailState==='changed'?' attention':'');
-      sb.textContent=hoursWeekDate(wkey,mailState)||(sent?'Enviada en Outlook':mailState==='changed'?'Pendiente de actualizar':mailState==='missing'||mailState==='ready'?'Sin correo programado':'Sin comprobar');
-    }else{
+    sendBtn.innerHTML='<svg class="week-action-icon mail-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M3 4h18a1 1 0 0 1 1 1v.5L12 12 2 5.5V5a1 1 0 0 1 1-1Zm-1 4 9.45 6.14a1 1 0 0 0 1.1 0L22 8v11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1Z"/></svg><span>Enviar a Outlook</span>';
+    (function(k){sendBtn.addEventListener('click',function(e){e.stopPropagation();sendManualEmail(k);});})(wkey);
+    var sb=document.createElement('button');
       sb.className='action-btn sent-toggle';
-      sb.innerHTML=sent?'<svg class="week-action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12h8"/></svg><span>Desmarcar</span>':'\u2713 Marcar enviada';
+      sb.innerHTML='<svg class="week-action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12h8"/></svg><span>'+(unlocked?'Cerrar edición':covered?'Desmarcar':'Editar días')+'</span>';
       (function(k){sb.addEventListener('click',function(e){e.stopPropagation();togSent(k);});})(wkey);
-    }
     acts.appendChild(sendBtn); acts.appendChild(sb);
     card.appendChild(acts); c.appendChild(card);
   });
 
-  // El mismo modelo puro sirve para Home y su vista previa.
-  var footer=document.createElement('div'); footer.className='month-summary';
-  footer.innerHTML=renderHomeMonthSummary(homeMonthHours(CY,CM));
-  c.appendChild(footer);
-  var complete=c.querySelector('.home-submission.complete');
-  if(complete){var compact=footer.cloneNode(true);compact.classList.add('home-summary-compact');complete.appendChild(compact);}
 }
 
 // ── Bottom sheet (selector de tipo de día) ───────────────────
@@ -686,7 +687,10 @@ function confirmarCupoFestivos(k){
     +'Con este ser\u00edan: '+usados+' ('+(usados-FESTIVOS_ANIO)+' de m\u00e1s)\n\n'
     +'\u00bfMarcarlo de todas formas?');
 }
-function togSent(k){if(SW[k])delete SW[k]; else SW[k]=true; save(); render();}
+var HOURS_WEEK_UNLOCKED=Object.create(null);
+function togSent(k){
+  HOURS_WEEK_UNLOCKED[k]=!homeWeekUnlocked(k);render();
+}
 
 /* ══ Paneles deslizantes: una sola puerta de entrada ═══════════════════
    Abrir un panel eran seis pasos que estaban copiados en 27 sitios: crear el

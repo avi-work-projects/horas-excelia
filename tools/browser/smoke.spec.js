@@ -550,12 +550,12 @@ test('Home: aviso de semanas y estado completo, cabecera opaca',async({page})=>{
  await page.clock.setFixedTime(new Date('2026-09-11T10:00:00'));
  await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));await page.goto('/');
  await page.evaluate(()=>{applyTheme('light');SW={};render();});
- await expect(page.locator('.home-submission.pending')).toContainText('5 semanas del mes sin enviar');
+ await expect(page.locator('.home-submission.pending')).toContainText('7 semanas por programar');
  await page.screenshot({path:'.local-preview/home-pending.png',animations:'disabled'});
  await page.evaluate(()=>{weeks(CY,CM).forEach(w=>SW[dk(w[0])]=true);render();});
- await expect(page.locator('.home-submission.pending')).toContainText('05/10 al 11/10');
+ await expect(page.locator('.home-submission.pending')).toContainText('2 semanas por programar');
  await page.evaluate(()=>{homeSubmissionWeeks(CY,CM).forEach(w=>SW[w.key]=true);render();});
- await expect(page.locator('.home-submission.complete')).toContainText('Todo enviado');
+ await expect(page.locator('.home-submission.complete')).toContainText('Correos al día');
  await page.screenshot({path:'.local-preview/home-complete.png',animations:'disabled'});
  await page.evaluate(()=>{
   CY=2026;CM=4;ST={};MONTH_H['2026-05']=9;SW={};
@@ -569,17 +569,15 @@ test('Home: aviso de semanas y estado completo, cabecera opaca',async({page})=>{
   const boxes=await row.locator('span').evaluateAll(els=>els.map(el=>el.getBoundingClientRect().bottom));
   expect(Math.max(...boxes)-Math.min(...boxes)).toBeLessThan(6);
  }
- await expect(page.locator('.month-summary:not(.home-summary-compact) .ms-breakdown > span')).toHaveCount(2);
+ await expect(page.locator('.month-summary:not(.home-summary-compact)')).toHaveCount(0);
  await page.screenshot({path:'.local-preview/home-may-breakdown.png',animations:'disabled'});
- await page.locator('.month-summary:not(.home-summary-compact)').scrollIntoViewIfNeeded();
- await page.screenshot({path:'.local-preview/home-footer-breakdown.png',animations:'disabled'});
  await page.evaluate(()=>window.scrollTo(0,0));
 
  for(const theme of ['light','dark','grey']){
   await page.evaluate(t=>applyTheme(t),theme);
   expect(await page.locator('.header').evaluate(el=>getComputedStyle(el).backgroundColor)).toBe(await page.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor));
  }
- await page.evaluate(()=>{delete SW[dk(weeks(CY,CM)[0][0])];render();});await expect(page.locator('.home-submission.pending')).toBeVisible();
+ await page.evaluate(()=>{delete SW[dk(weeks(CY,CM)[0][0])];render();});await expect(page.locator('.home-submission.complete')).toContainText('Mes cerrado');
 });
 
 

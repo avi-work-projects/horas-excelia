@@ -54,7 +54,7 @@ function renderRutHistorySession(r,x,today,state){
   if(x.extra)h+='<small class="rut-session-tag">'+escHtml(rutSessionTag(r,x))+'</small>';
   if(recovered)h+='<em class="rut-recovery-note">'+escHtml(recovered)+'</em>';
   h+='</div><div class="rut-history-status">'+(x.skip?'Cancelada'+(!recovered?' (sin recuperar)':''):x.ds<today?'Realizada':x.ds===today?'Hoy':'Prevista')+(edited?'<small>Editada</small>':override?'<small>Excepción semanal</small>':'')+'</div>';
-  return h+'<button class="boda-mini-btn action-edit" data-history-edit="'+x.key+'" aria-label="Editar sesión '+x.ds+' '+x.time+'">&#9998;</button></div>';
+  return h+'<button class="boda-mini-btn action-edit" data-history-edit="'+x.key+'" aria-label="Editar sesión '+x.ds+' '+x.time+'">'+editPencilHtml()+'</button></div>';
 }
 function renderRutHistory(r,state){
   var today=evDk(new Date()),groups=rutHistoryMonthGroups(r,state);

@@ -16,8 +16,19 @@
     });
   }
   async function api(action,data){
-    const response=await fetch(new URL(action,location.href),{method:'POST',headers:{'Content-Type':'application/json','X-CSRF':hoursBridgeConfig.csrf},body:JSON.stringify(data),cache:'no-store',redirect:'error'});
-    const result=await response.json();if(!response.ok)throw new Error(result.error||'No se ha confirmado la operación');return result;
+    const response=await fetch(new URL(action,location.href),{method:'POST',headers:{'Content-Type':'application/json','X-CSRF':hoursBridgeConfig.csrf},body:JSON.stringify({...data,background:true}),cache:'no-store',redirect:'error'});
+    let result=await response.json();if(!response.ok)throw new Error(result.error||'No se ha confirmado la operación');
+    if(result.jobId){
+      send({type:'job',job:{jobId:result.jobId,kind:result.kind}});
+      while(result.phase==='queued'||result.phase==='running'){
+        await new Promise(resolve=>setTimeout(resolve,1500));
+        const poll=await fetch(new URL('jobs/'+result.jobId,location.href),{cache:'no-store',redirect:'error'});
+        if(!poll.ok)throw new Error('El trabajo continúa en Kairo. Puedes volver a Gestify.');result=await poll.json();
+      }
+      if(result.phase!=='done')throw new Error(result.error||'Revisa el estado en Gestify');
+      return result.result;
+    }
+    return result;
   }
   function updates(){return [...document.querySelectorAll('[data-update]:checked')].map(n=>n.dataset.update);}
   function controls(){
@@ -101,7 +112,8 @@
       try{
         if(!await verifySource())throw new Error('Los datos de Gestify han cambiado o su ventana está cerrada. Abre una revisión nueva.');
         el('message').textContent='Programando y comprobando en Outlook…';
-        const result=await api('commit',{planId:plan.planId,updates:selected,sourceVerified:true});send({type:'committed'});busy=false;await review(true);
+        const result=await api('commit',{planId:plan.planId,updates:selected,sourceVerified:true});send({type:'committed'});
+        if(result.status){send({type:'result',ok:true,result:result.status});plan.rows=result.status.rows;plan.ready=0;paint();}else{busy=false;await review();}
         el('message').textContent=!result.results.length?'No se ha modificado ningún correo. Revisa el estado actualizado.':result.results.some(r=>r.state!=='scheduled')?'Hay una semana pendiente de comprobar. Revisa antes de repetir.':'Programación confirmada. El estado ya aparece en Home.';
       }catch(error){el('message').textContent=error.message;}finally{busy=false;controls();}
     };

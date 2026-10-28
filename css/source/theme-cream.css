@@ -54,7 +54,7 @@
 [data-theme="grey"] .day-cell.h7,[data-theme="grey"] .day-cell.h7 .day-hours{color:var(--c-yellow)}
 [data-theme="grey"] .day-cell.h8,[data-theme="grey"] .day-cell.h8 .day-hours{color:var(--c-blue)}
 [data-theme="grey"] .day-cell.h9,[data-theme="grey"] .day-cell.h9 .day-hours{color:var(--c-green)}
-[data-theme="grey"] .action-btn.send{background:var(--c-blue);border-color:var(--c-blue);color:#fff}
+[data-theme="grey"] .action-btn.send{background:#203b5a;border-color:#203b5a;color:#fff}
 [data-theme="grey"] .action-btn.send:active{background:var(--accent-bright)}
 [data-theme="grey"] .week-card.sent{--sent:#edf2e9;--sent-border:#becfba;--sent-text:#44674e;border-color:var(--sent-border)}
 [data-theme="grey"] .week-card.sent :is(.week-total,.action-btn.sent-toggle){background:#dce7d8;color:var(--sent-text)}

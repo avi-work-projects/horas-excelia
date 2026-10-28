@@ -7,12 +7,13 @@ function hoursScopeKeys(period){
   return homeSubmissionWeeks(+period.slice(0,4),+period.slice(5)-1).map(function(w){return w.key;});
 }
 function hoursCacheRead(){
-  var empty={schema:1,url:'',periods:{},weeks:{}};
+  var empty={schema:1,url:'',periods:{},weeks:{},attempts:{}};
   try{
     var raw=localStorage.getItem(HOURS_CACHE_KEY);if(!raw||raw.length>500000)return empty;
     var data=JSON.parse(raw),now=Date.now();
     if(data.schema!==1||typeof data.url!=='string'||data.url.length>1000||!data.periods||!data.weeks)return empty;
-    var cache={schema:1,url:data.url,periods:{},weeks:{}};
+    var cache={schema:1,url:data.url,periods:{},weeks:{},attempts:{}};
+    if(data.attempts&&typeof data.attempts==='object')Object.keys(data.attempts).slice(-48).forEach(function(k){if(k.length<100&&data.attempts[k]===true)cache.attempts[k]=true;});
     Object.keys(data.periods).slice(0,24).forEach(function(period){
       try{hoursScopeKeys(period);var p=data.periods[period];if(typeof p.source!=='string'||p.source.length>20000||!Number.isFinite(p.checkedAt)||p.checkedAt<=0||p.checkedAt>now+300000)return;cache.periods[period]={source:p.source,checkedAt:p.checkedAt};}catch(e){}
     });
@@ -30,6 +31,7 @@ function hoursCacheRow(row,checkedAt){
   var clean={key:row.key,state:row.state,checkedAt:checkedAt};
   if(row.days)clean.days=row.days.map(function(d){return {date:d.date,type:d.type,hours:d.hours};});
   if(row.schedule)clean.schedule=row.schedule;
+  if(typeof row.settings==='string'&&row.settings.length<100)clean.settings=row.settings;
   return clean;
 }
 var HOURS_CACHE=hoursCacheRead();
@@ -47,11 +49,16 @@ function hoursCachedWeek(key){
 function hoursSourceSignature(scope){
   return JSON.stringify(scope.map(function(w){return {key:w.key,days:w.days||hoursWeekDays(w.key)};}));
 }
-function hoursCacheRemember(result,url,source){
+function hoursSettingsSignature(){
+  var value=JSON.stringify([String(TO||''),CC,AUTHOR_NAME]),a=2166136261,b=5381;
+  for(var i=0;i<value.length;i++){a=Math.imul(a^value.charCodeAt(i),16777619);b=Math.imul(b,33)^value.charCodeAt(i);}
+  return (a>>>0).toString(16)+'-'+(b>>>0).toString(16);
+}
+function hoursCacheRemember(result,url,source,settings){
   validateHoursResult(result,result.period,hoursScopeKeys(result.period));
-  if(HOURS_CACHE.url!==url)HOURS_CACHE={schema:1,url:url,periods:{},weeks:{}};
-  var now=Date.now();
-  result.rows.forEach(function(row){HOURS_CACHE.weeks[row.key]=hoursCacheRow(row,now);});
+  if(HOURS_CACHE.url!==url)HOURS_CACHE={schema:1,url:url,periods:{},weeks:{},attempts:{}};
+  var now=Date.parse(result.checkedAt);
+  result.rows.forEach(function(row){if(HOURS_CACHE.weeks[row.key]&&HOURS_CACHE.weeks[row.key].checkedAt>now)return;var clean=hoursCacheRow(row,now);clean.settings=settings||hoursSettingsSignature();HOURS_CACHE.weeks[row.key]=clean;});
   HOURS_CACHE.periods[result.period]={source:source,checkedAt:now};hoursCacheSave();
 }
 function hoursCacheDue(keys){

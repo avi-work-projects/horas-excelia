@@ -129,7 +129,7 @@ function renderBodaConfig(){
     var kind=pair[0];h+='<section class="boda-config-section"><header class="boda-cfg-section-head"><div><h4>'+pair[1]+'</h4><p>'+({packs:'Clases incluidas por pareja',durations:'Tiempo de cada ensayo',places:'Lugares disponibles para enseñar'})[kind]+'</p></div><button class="ev-io-btn io-primaria" data-cfg-add="'+kind+'">+ Añadir</button></header>';
     BODA_CONFIG[kind].forEach(function(x){var id=x.id||x.k;
       h+='<div class="boda-catalog-row"><div class="boda-cfg-card-head"><span><b>'+escHtml(x.name||x.n||x.minutes+' min')+'</b><small>'+escHtml(kind==='packs'?x.classes+' clases':kind==='places'?x.d:(id===BODA_CONFIG.defaultDurationId?'Predeterminada':''))+'</small></span>';
-      h+='<button class="boda-mini-btn action-edit" data-cfg-edit="'+kind+'" data-id="'+id+'" aria-label="Editar '+escHtml(x.name||x.n||x.minutes+' min')+'">&#9998;</button>';
+      h+='<button class="boda-mini-btn action-edit" data-cfg-edit="'+kind+'" data-id="'+id+'" aria-label="Editar '+escHtml(x.name||x.n||x.minutes+' min')+'">'+editPencilHtml()+'</button>';
       h+='</div><div class="boda-cfg-card-controls"><label><input type="checkbox" data-cfg-active="'+kind+'" data-id="'+id+'"'+(x.active!==false?' checked':'')+'> Activo</label>';
       if(kind==='places'&&x.active!==false)h+='<label><input type="radio" name="bodaDefaultPlace" data-default-place="'+id+'"'+(id===BODA_CONFIG.defaultPlace?' checked':'')+'> Por defecto</label>';
       if(kind==='durations'&&x.active!==false)h+='<label><input type="radio" name="bodaDefaultDuration" data-default="'+id+'"'+(id===BODA_CONFIG.defaultDurationId?' checked':'')+'> Por defecto</label>';

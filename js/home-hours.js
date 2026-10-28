@@ -1,14 +1,16 @@
 /* Modelo y presentación compartidos por Home y su previsualización de swipe.
    Solo lectura: las jornadas y los estados siguen viviendo en core.js. */
+var HOME_FORMULA_OPEN=false;
+function homeHourClass(value){return value===6.5?'hour-65':value===7?'hour-7':value===8?'hour-8':value===9?'hour-9':'';}
 function homeMonthHours(year,month){
-  var result={days:0,hours:0,workedDays:0,workedHours:0,adjustment:0,off:[]};
+  var result={days:0,hours:0,workedDays:0,workedHours:0,adjustment:0,off:[],buckets:{}};
   var groups={festivo:{label:'Festivos',days:0,hours:0},vacaciones:{label:'Vacaciones',days:0,hours:0},ausencia:{label:'Ausencias',days:0,hours:0}};
   weeks(year,month).forEach(function(week){
     week.slice(0,5).forEach(function(day){
       if(day.getMonth()!==month)return;
-      var base=defH(day),type=dayT(day);result.days++;result.hours+=base;
+      var type=dayT(day),base=type==='normal'?dayH(day):defH(day);result.days++;result.hours+=base;result.buckets[base]=(result.buckets[base]||0)+1;
       if(type==='normal'){
-        var actual=dayH(day);result.workedDays++;result.workedHours+=actual;result.adjustment+=actual-base;
+        result.workedDays++;result.workedHours+=base;
       }else if(groups[type]){groups[type].days++;groups[type].hours+=base;}
     });
   });
@@ -28,9 +30,12 @@ function renderHomeMonthHours(data){
 }
 function renderHomeMonthSummary(data){
   function hours(value){return (value%1===0?String(value):value.toFixed(1).replace('.',','))+'h';}
+  var toggle='<button type="button" class="home-formula-toggle" data-home-formula aria-expanded="'+HOME_FORMULA_OPEN+'" aria-label="'+(HOME_FORMULA_OPEN?'Ocultar':'Mostrar')+' desglose de horas">'+(HOME_FORMULA_OPEN?'−':'+')+'</button>';
+  var values=Object.keys(data.buckets||{}).map(Number).sort(function(a,b){return b-a;}),formula='';
+  if(HOME_FORMULA_OPEN)formula='<div class="home-hours-equation">'+values.map(function(value,i){return '<span class="home-hours-term">'+(!i?'(':'')+'<span class="'+homeHourClass(value)+'">'+String(value).replace('.',',')+'</span>×'+data.buckets[value]+(i===values.length-1?') <span class="home-hours-equals">= '+hours(data.hours)+'</span>':'')+'</span>';}).join(' + ')+'</div>';
   var html='';
   if(data.off.length){
-    html='<div class="month-total"><span class="ms-caption">Total mensual</span><div class="month-stat total"><span class="ms-days">'+data.days+' días laborables</span><span class="ms-num">'+hours(data.hours)+'</span></div></div><div class="ms-breakdown">';
+    html='<div class="month-total"><div class="ms-caption-row"><span class="ms-caption">Total mensual</span>'+toggle+'</div><div class="month-stat total"><span class="ms-days">'+data.days+' días laborables</span>'+(!HOME_FORMULA_OPEN?'<span class="ms-num">'+hours(data.hours)+'</span>':'')+'</div>'+formula+'</div><div class="ms-breakdown">';
     var labels={festivo:['festivo','festivos'],vacaciones:['vacaciones','vacaciones'],ausencia:['ausencia','ausencias']};
     data.off.forEach(function(group){
       html+='<span class="month-stat off '+group.type+'" style="color:var(--'+group.type+')"><span>− '+group.days+' '+labels[group.type][group.days===1?0:1]+'</span><span class="ms-value">'+hours(group.hours)+'</span></span>';
@@ -38,7 +43,7 @@ function renderHomeMonthSummary(data){
     if(data.adjustment)html+='<span class="month-stat adjustment"><span>'+(data.adjustment<0?'−':'+')+' Ajuste jornada</span><span class="ms-value">'+hours(Math.abs(data.adjustment))+'</span></span>';
     html+='</div>';
   }
-  html+='<div class="month-stat worked'+(data.off.length?' home-worked-total':'')+'" aria-label="'+data.workedDays+' días trabajados, '+hours(data.workedHours)+' trabajadas"><span class="ms-days">'+data.workedDays+' día'+(data.workedDays===1?'':'s')+' trabajado'+(data.workedDays===1?'':'s')+'</span><strong class="ms-num">'+hours(data.workedHours)+'</strong></div>';
-  if(!data.off.length)html+='<small class="ms-no-off"><em>* sin días no trabajados</em></small>';
+  html+='<div class="month-stat worked'+(data.off.length?' home-worked-total':'')+'" aria-label="'+data.workedDays+' días trabajados, '+hours(data.workedHours)+' trabajadas"><span class="ms-days">'+data.workedDays+' día'+(data.workedDays===1?'':'s')+' trabajado'+(data.workedDays===1?'':'s')+'</span>'+(!data.off.length&&HOME_FORMULA_OPEN?'':'<strong class="ms-num">'+hours(data.workedHours)+'</strong>')+'</div>';
+  if(!data.off.length)html+=formula+'<div class="ms-no-off"><em>* sin días no trabajados</em>'+toggle+'</div>';
   return html;
 }

@@ -12,7 +12,7 @@ function openEvDeleteSheet(ev){
   h+='<div class="ev-del-title">'+escHtml(ev.title)+'</div>';
   h+='<div class="ev-del-sub">'+getEvType(ev)+' \u00b7 '+_fmtDayEs(ev.start)+'</div>';
   h+='<div class="ev-detail-actions">';
-  h+='<button class="action-edit action-edit-text ev-btn" id="evDelEdit">&#9998; Editar</button>';
+  h+='<button class="action-edit action-edit-text ev-btn" id="evDelEdit">'+editPencilHtml()+' Editar</button>';
   h+='<button class="ev-btn danger" id="evDelGo">&#128465; Eliminar</button>';
   h+='</div></div></div>';
   abrirPanel('evDelWrap',h,{overlay:'evDelOv',alCerrar:closeEvDeleteSheet});
@@ -194,14 +194,14 @@ function renderEvDetail(ev,fromSummary,car,occurrenceDs){
   h+='<div class="ev-detail-actions">';
   var trash='<svg class="ev-delete-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7m4-7v7" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   if(ev._rut){
-    h+='<button class="action-edit action-edit-text ev-btn ev-edit-orange" id="evDRutEdit">&#9998; Editar</button>';
+    h+='<button class="action-edit action-edit-text ev-btn ev-edit-orange" id="evDRutEdit">'+editPencilHtml()+' Editar</button>';
     h+='<button class="ev-btn danger" id="evDRutDelete">'+trash+'Eliminar</button>';
   } else if(ev.id.indexOf('ev-bday-vip-')===0){
-    h+='<button class="action-edit action-edit-text ev-btn ev-edit-orange" id="evDEdit">&#9998; Editar</button><button class="ev-btn danger" id="evDBdayDelete">'+trash+'Eliminar</button>';
+    h+='<button class="action-edit action-edit-text ev-btn ev-edit-orange" id="evDEdit">'+editPencilHtml()+' Editar</button><button class="ev-btn danger" id="evDBdayDelete">'+trash+'Eliminar</button>';
   } else {
     if(fromSummary)h+='<button class="ev-btn" id="evDGoCal" style="border-color:var(--c-blue);color:var(--c-blue)">&#128197; Ver en Calendario</button>';
     /* Mismo boton que en el panel de alarma de Proximos */
-    h+='<button class="action-edit action-edit-text ev-btn ev-edit-orange" id="evDEdit">&#9998; Editar</button>';
+    h+='<button class="action-edit action-edit-text ev-btn ev-edit-orange" id="evDEdit">'+editPencilHtml()+' Editar</button>';
     h+='<button class="ev-btn danger" id="evDDel">'+trash+'Eliminar</button>';
   }
   h+='</div>';
@@ -476,7 +476,7 @@ function renderEvAlarmPanel(ev,firstDate){
   h+='</div>';
   h+='<div class="ev-form-actions">';
   h+='<button class="ev-btn primary" id="evAlarmCreate">&#128276; Crear alarma</button>';
-  h+='<button class="action-edit action-edit-text ev-btn ev-edit-orange" id="evAlarmEdit">&#9998; '+(ev._rut?'Editar rutina':'Editar evento')+'</button>';
+  h+='<button class="action-edit action-edit-text ev-btn ev-edit-orange" id="evAlarmEdit">'+editPencilHtml()+' '+(ev._rut?'Editar rutina':'Editar evento')+'</button>';
   h+='</div></div></div>';
   return h;
 }

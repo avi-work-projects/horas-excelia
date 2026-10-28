@@ -18,7 +18,7 @@ function renderBdayDetail(b){
   h+=renderBdayPersonGroups(b);
   if(hasAlarm)h+='<section class="bday-detail-alarm bd-alarm-marker-row" aria-label="Alarma"><span class="ev-upcoming-bell'+(isBdayAlarmSet(b)?' set':'')+'" aria-hidden="true">&#128276;</span><div class="bday-detail-alarm-copy"><strong>Alarma</strong><span>'+(isBdayAlarmSet(b)?'Configurada':'Sin configurar')+'</span></div><button class="ev-btn" id="bdDAlarm">Configurar</button></section>';
   h+='</div>';
-  h+='<footer class="bd-panel-footer ev-detail-actions"><button class="action-edit action-edit-text ev-btn ev-edit-orange" id="bdDEdit">&#9998; Editar</button><button class="ev-btn danger" id="bdDDel">Eliminar</button></footer>';
+  h+='<footer class="bd-panel-footer ev-detail-actions"><button class="action-edit action-edit-text ev-btn ev-edit-orange" id="bdDEdit">'+editPencilHtml()+' Editar</button><button class="ev-btn danger" id="bdDDel">Eliminar</button></footer>';
   h+='</div></div>';
   return h;
 }
@@ -86,7 +86,7 @@ function renderBdayAlarmPanel(b){
   h+='<div class="bd-alarm-time"><input id="bdAlarmH2" type="number" min="0" max="23" value="'+_bdT2.h+'"><span class="bd-alarm-time-sep">:</span><input id="bdAlarmM2" type="number" min="0" max="59" value="'+String(_bdT2.m).padStart(2,'0')+'"></div>';
   h+='</div>';
   h+='</div>';
-  h+='<div class="ev-form-actions" style="margin-top:12px"><button class="action-edit action-edit-text ev-btn ev-edit-orange" id="bdAlarmEdit">&#9998; Editar cumplea\u00f1os</button></div>';
+  h+='<div class="ev-form-actions" style="margin-top:12px"><button class="action-edit action-edit-text ev-btn ev-edit-orange" id="bdAlarmEdit">'+editPencilHtml()+' Editar cumplea\u00f1os</button></div>';
   h+='</div></div>';
   return h;
 }

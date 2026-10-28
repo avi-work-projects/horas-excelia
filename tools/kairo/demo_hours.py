@@ -42,7 +42,7 @@ def demo_reader(request):
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--port',type=int,default=8771);parser.add_argument('--app-origin',default='http://127.0.0.1:8766');args=parser.parse_args()
     with tempfile.TemporaryDirectory(prefix='gestify-hours-demo-') as state:
-        config=dict(private_origin='http://127.0.0.1:'+str(args.port),app_origin=args.app_origin,local_review=True,cache_seconds=0)
+        config=dict(private_origin='http://127.0.0.1:'+str(args.port),app_origin=args.app_origin,local_review=True,cache_seconds=0,sender='sender@example.invalid')
         parent=make_handler(config,Store(state),demo_reader,clock=lambda:NOW)
         class DemoHandler(parent):
             def do_GET(self):
@@ -58,4 +58,4 @@ if __name__=='__main__':
         server=ThreadingHTTPServer(('127.0.0.1',args.port),DemoHandler)
         print('Demo ficticia de horas en loopback',flush=True)
         try:server.serve_forever()
-        finally:server.server_close()
+        finally:server.server_close();parent.jobs.close()

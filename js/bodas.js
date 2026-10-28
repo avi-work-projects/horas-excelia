@@ -426,7 +426,7 @@ function _renderBodasBody(){
     var edit=(BODA_CLASS_MODE==='editar');
     h+='<div class="boda-mode-row">';
     h+='<button class="boda-mode-btn'+(edit?'':' active')+'" data-bmode="ver">&#128065; Consulta</button>';
-    h+='<button class="boda-mode-btn'+(edit?' active':'')+'" data-bmode="editar">&#9998; Edición</button>';
+    h+='<button class="boda-mode-btn'+(edit?' active':'')+'" data-bmode="editar">'+editPencilHtml()+' Edición</button>';
     h+='</div>';
   }
   h+='</div>';
@@ -506,7 +506,7 @@ function _renderBodaParejas(){
     if(c.weddingDate)h+='<span class="boda-wed-tag">&#128141; '+_bodaFmt(c.weddingDate)+'</span>';
     /* Editar, junto al nombre. El 📅 que habia aqui era el mismo "Asignar"
        de la tarjeta desplegada; con dos puertas a lo mismo sobra una. */
-    h+='<button class="action-edit boda-mini-btn boda-c-edit boda-hd-edit" data-cid="'+c.id+'" title="Editar pareja">&#9998;</button>';
+    h+='<button class="action-edit boda-mini-btn boda-c-edit boda-hd-edit" data-cid="'+c.id+'" title="Editar pareja">'+editPencilHtml()+'</button>';
     h+='</div>';
     h+='<div class="boda-prog"><div class="boda-prog-bar" style="width:'+pct+'%;background:'+c.color+'"></div></div>';
     h+='<div class="boda-card-ft"><span>'+p.done+' / '+(p.total||0)+' clases</span>'+falta+'</div>';
@@ -525,7 +525,7 @@ function _renderBodaParejas(){
         h+='<span class="boda-det-day">'+_bodaFmtCorto(ev.start)+'</span>';
         h+='<span class="boda-ro-time'+(b.time?'':' none')+'">'+(b.time||'--:--')+'</span>';
         h+='<span class="boda-ro-place'+(bodaPlaceOf(ev)?'':' vacio')+'">'+escHtml(bodaPlaceLabel(bodaPlaceOf(ev)))+'</span>';
-        h+='<button class="action-edit boda-mini-btn boda-cl-edit" data-id="'+ev.id+'" title="Editar esta clase">&#9998;</button>';
+        h+='<button class="action-edit boda-mini-btn boda-cl-edit" data-id="'+ev.id+'" title="Editar esta clase">'+editPencilHtml()+'</button>';
         h+='</div>';
       });
       h+='<div class="boda-det-actions boda-det-actions-row">';
@@ -615,7 +615,7 @@ function _renderBodaClases(){
           +(c?('<span class="ev-bpunto" style="background:'+c.color+'"></span><span>'+escHtml(c.name)+'</span>')
              :'<span class="boda-ro-sin">sin asignar</span>')+'</span>';
         h+='<span class="boda-ro-place'+(b.place?'':' vacio')+'">'+escHtml(bodaPlaceLabel(b.place))+'</span>';
-        h+='<button class="action-edit boda-mini-btn boda-cl-edit" data-id="'+ev.id+'" title="Editar esta clase">&#9998;</button>';
+        h+='<button class="action-edit boda-mini-btn boda-cl-edit" data-id="'+ev.id+'" title="Editar esta clase">'+editPencilHtml()+'</button>';
         h+='</div>';
         return;
       }

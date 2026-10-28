@@ -1,7 +1,7 @@
 /* Weekly mail uses the same scope for the warning and both entry points.
    Verified facts live in hours-cache; SW is a legacy manual mark, not proof. */
 var HOURS_STATUS={period:'',phase:'idle',rows:[],checkedAt:0};
-var HOURS_REQUEST=null,HOURS_SEQUENCE=0;
+var HOURS_REQUEST=null,HOURS_SEQUENCE=0,HOURS_REFRESHING=false;
 function hoursKairoUrl(){
   var base=invoiceKairoUrl(invoiceData().config.kairoUrl);
   return base?new URL('/horas/',base).href:'';
@@ -21,27 +21,28 @@ function hoursWeekState(key){
     if(!Array.isArray(row.days)||!row.schedule)return row.state==='scheduled'?'unverified':'changed';
     var expected=hoursWeekDays(key),date=homeWeekSchedule(key).date;
     var equal=expected.every(function(day,i){var other=row.days[i];return other&&day.date===other.date&&day.type===other.type&&day.hours===other.hours;});
-    return equal&&hoursCivilTime(row.schedule)===date+'T08:00'?'scheduled':'changed';
+    return equal&&hoursCivilTime(row.schedule)===date+'T08:00'&&(!row.settings||row.settings===hoursSettingsSignature())?'scheduled':'changed';
   }
   return row.state;
 }
 function hoursRemoteConfigured(){try{return !!hoursKairoUrl();}catch(e){return false;}}
 function hoursCovered(key){var state=hoursWeekState(key);return state==='sent'||state==='scheduled';}
+function hoursHasConfirmedMail(key){var row=hoursCachedWeek(key);return !!row&&['sent','scheduled','changed'].includes(row.state);}
 function hoursWeekBadge(state){
-  var labels={sent:'✓ Enviada',scheduled:'◷ Programada',changed:'Revisar cambios',missing:'Pendiente',ready:'Pendiente'};
+  var labels={sent:'✓ Enviada',scheduled:'◷ Programada',closed:'Cerrada',changed:'Revisar cambios',missing:'Pendiente',ready:'Pendiente'};
   return labels[state]||(state?'Revisar':'Sin comprobar');
 }
 function hoursWeekDate(key,state){
   var row=hoursCachedWeek(key);
-  if(state!=='scheduled'||!row||!row.schedule)return '';
+  if(!['scheduled','changed'].includes(state)||!row||!row.schedule)return '';
   return new Intl.DateTimeFormat('es-ES',{timeZone:'Europe/Madrid',weekday:'short',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(row.schedule));
 }
 function renderHoursAccess(state){
-  var fresh=state?state.remote&&state.known:!!hoursWeekState(homeSubmissionWeeks(CY,CM)[0].key);
-  var checked=homeSubmissionWeeks(CY,CM).map(function(w){var row=hoursCachedWeek(w.key);return row?row.checkedAt:0;});
-  var note=fresh?'Comprobado '+new Intl.DateTimeFormat('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(Math.min.apply(null,checked))):'Pulsa ↻ para comprobar Outlook';
-  var label=state&&state.remote&&state.complete?'Revisar semanas':state&&state.remote&&state.review?'Revisar cambios':'Programar pendientes';
-  return '<div class="hours-home-actions"><span class="hours-verified-note">'+note+'</span><button type="button" class="hours-check-button" data-hours-check aria-label="Comprobar Outlook" title="Comprobar Outlook">↻</button><button type="button" class="hours-pending-button" data-hours-review>'+label+'</button></div>';
+  var closed=homePeriodMode(CY,CM)==='closed',checked=homeSubmissionWeeks(CY,CM).map(function(w){var row=hoursCachedWeek(w.key);return row?row.checkedAt:0;}).filter(Boolean);
+  var note=checked.length?'Comprobado '+new Intl.DateTimeFormat('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(Math.min.apply(null,checked))):closed?'Histórico cerrado':'Sin comprobación guardada';
+  var running=typeof HOURS_JOBS!=='undefined'&&HOURS_JOBS.some(function(j){return j.url===hoursKairoUrl();});
+  var label=state&&state.review?'Revisar cambios':'Programar pendientes';
+  return '<div class="hours-home-actions"><span class="hours-verified-note">'+note+'</span><button type="button" class="hours-check-button" data-hours-check aria-label="Actualizar estado de correos y factura"'+(running||HOURS_REFRESHING?' disabled':'')+'>↻ <span>Actualizar estado</span></button>'+(!closed&&(!state||!state.complete)?'<button type="button" class="hours-pending-button" data-hours-review>'+label+'</button>':'')+(running?'<span class="hours-job-note" role="status">Kairo está trabajando. Puedes salir de Gestify.</span>':typeof HOURS_JOB_ERROR!=='undefined'&&HOURS_JOB_ERROR?'<span class="hours-job-note" role="status">'+escHtml(HOURS_JOB_ERROR)+'</span>':'')+'</div>';
 }
 function hoursMailSubject(wd){return 'HORAS Y DIAS TRABAJADOS - '+AUTHOR_NAME+' - Semana del '+fd(wd.mon)+' al '+fd(wd.fri);}
 function hoursMailRequest(targetWeek){
@@ -73,7 +74,7 @@ function rememberHoursReview(result,request,url){
   if(url===hoursKairoUrl())hoursCacheRemember(result,url,hoursSourceSignature(request.weeks));
   if(result.period===mkey(CY,CM)&&url===hoursKairoUrl()){
     ++HOURS_SEQUENCE;if(HOURS_REQUEST)HOURS_REQUEST.abort();HOURS_REQUEST=null;
-    HOURS_STATUS={period:result.period,url:url,phase:'ready',rows:result.rows,checkedAt:Date.now(),attemptedAt:Date.now()};render();
+    HOURS_STATUS={period:result.period,url:url,phase:'ready',rows:result.rows,checkedAt:Date.now(),attemptedAt:Date.now()};paintHoursStatus();
   }
 }
 /* Transport checks origin/window/id; Home owns its state and source validation.
@@ -85,6 +86,7 @@ function hoursKairoExchange(url,request,popup,options){
     function closed(){return options.isClosed?options.isClosed():popup.closed;}
     function verifySource(event){
       var m=event.data;if(event.origin!==origin||event.source!==popup||!m||m.channel!=='gestify-hours-v1'||m.id!==id)return;
+      if(m.type==='job'&&done&&options.onJob)options.onJob(m.job);
       if(m.type==='close'&&options.close){options.close();stopWatch();if(!done)finish(new Error('Revisión cerrada. No se ha confirmado ninguna programación.'));return;}
       if(m.type==='verify-source'&&typeof m.probe==='string'){
         var matches=false;try{matches=!!options.sourceMatches&&options.sourceMatches()===true;}catch(e){}
@@ -103,6 +105,7 @@ function hoursKairoExchange(url,request,popup,options){
     function receive(event){
       var message=event.data;
       if(event.origin!==origin||event.source!==popup||!message||message.channel!=='gestify-hours-v1'||message.id!==id)return;
+      if(message.type==='job'&&sent){clearTimeout(timeout);if(options.onJob)options.onJob(message.job);}
       if(message.type==='ready'&&!sent){sent=true;popup.postMessage({channel:message.channel,id:id,type:'request',intent:options.intent||'review',request:request},origin);}
       if(message.type==='result'&&sent){
         if(!message.ok)return finish(new Error('No se ha podido comprobar Outlook.'));
@@ -130,7 +133,8 @@ function hoursReviewSurface(url){
   return {window:frame.contentWindow,close:close,isClosed:function(){return !dialog.isConnected;}};
 }
 function invalidateHoursReview(request,url,phase){
-  hoursCacheInvalidate(request,url);
+  // Preserve observed facts until Kairo confirms the replacement. A lost
+  // result is a running/uncertain operation, not evidence that mail disappeared.
   if(request.period!==mkey(CY,CM)||url!==hoursKairoUrl())return;
   ++HOURS_SEQUENCE;if(HOURS_REQUEST)HOURS_REQUEST.abort();HOURS_REQUEST=null;
   HOURS_STATUS={period:request.period,url:url,phase:phase,rows:[],checkedAt:0,attemptedAt:Date.now()};paintHoursStatus();
@@ -146,6 +150,7 @@ async function openHoursReview(targetWeek,intent){
       intent:intent||'review',sourceMatches:function(){return intent!=='check'&&JSON.stringify(hoursMailRequest(request.targetWeek))===original;},
       isClosed:surface.isClosed,close:surface.close,
       onCommitted:function(){invalidateHoursReview(request,url,'loading');},
+      onJob:function(job){hoursTrackJob(job,request,url);},
       onUpdate:function(result){rememberHoursReview(result,request,url);},
       onError:function(){HOURS_STATUS.phase='error';paintHoursStatus();}
     });
@@ -155,40 +160,54 @@ async function openHoursReview(targetWeek,intent){
   }catch(e){HOURS_STATUS={period:'',phase:'error',rows:[],checkedAt:0};paintHoursStatus();showToast(e.message,'error');}
 }
 function paintHoursStatus(){
-  var container=document.getElementById('weeksContainer');if(container)buildHomeCalendar(container);
+  var container=document.getElementById('weeksContainer');if(!container)return;
+  var summary=container.querySelector('.home-submission');if(summary)summary.outerHTML=renderHomeSubmissionStatus(CY,CM);
+  container.querySelectorAll('.week-card[data-week]').forEach(function(card){
+    var key=card.dataset.week,state=homePeriodMode(CY,CM)==='closed'?'closed':hoursWeekState(key),covered=homeWeekCovered(key),open=homeWeekUnlocked(key),badge=card.querySelector('.hours-week-badge');
+    card.classList.toggle('sent',covered&&!open);
+    if(badge){badge.textContent=state==='missing'||state==='ready'?'Programar semana':hoursWeekBadge(state);badge.className='sent-badge hours-week-badge '+(covered?'covered':state?'attention':'unknown');badge.setAttribute('aria-label',state==='sent'?'Ver estado':state==='scheduled'?'Ver programación':state==='changed'?'Revisar cambios':'Programar semana');}
+    var note=card.querySelector('.hours-week-readonly'),date=hoursWeekDate(key,state);
+    if(date&&!note){note=document.createElement('div');note.className='hours-week-readonly';card.querySelector('.week-info').appendChild(note);}
+    if(note){note.textContent=date?'Envío '+date:'';note.hidden=!date;}
+    var label=card.querySelector('.sent-toggle span');if(label)label.textContent=open?'Cerrar edición':covered?'Desmarcar':'Editar días';
+  });
 }
 async function syncHoursStatus(force){
   var url;try{url=hoursKairoUrl();}catch(e){return;}
   if(!url)return;
-  var period=mkey(CY,CM),scope=homeSubmissionWeeks(CY,CM),keys=scope.map(function(w){return w.key;}),source=hoursSourceSignature(scope),attemptKey=url+'|'+period;
-  if(!force&&HOURS_REQUEST&&HOURS_STATUS.period===period&&HOURS_STATUS.url===url&&HOURS_STATUS.source===source)return;
-  if(HOURS_REQUEST){delete HOURS_ATTEMPTS[HOURS_STATUS.url+'|'+HOURS_STATUS.period];HOURS_REQUEST.abort();HOURS_REQUEST=null;++HOURS_SEQUENCE;}
-  var cached=HOURS_CACHE.url===url&&HOURS_CACHE.periods[period],due=hoursCacheDue(keys),known=keys.every(function(key){return !!hoursCachedWeek(key);});
-  if(!force&&cached&&known&&cached.source===source&&!due.length){HOURS_STATUS={url:url,period:period,phase:'ready',rows:keys.map(hoursCachedWeek),checkedAt:cached.checkedAt};return;}
-  var fingerprint=source+'|'+due.join(',');
-  if(!force&&HOURS_ATTEMPTS[attemptKey]===fingerprint)return;
-  HOURS_ATTEMPTS[attemptKey]=fingerprint;
-  var sequence=++HOURS_SEQUENCE,controller=new AbortController();HOURS_REQUEST=controller;
-  HOURS_STATUS={period:period,url:url,source:source,phase:'loading',rows:[],checkedAt:0,attemptedAt:Date.now()};
-  var timeout=setTimeout(function(){controller.abort();},100000);
+  var period=mkey(CY,CM),keys=hoursScopeKeys(period),mode=homePeriodMode(CY,CM),known=keys.every(function(key){return !!hoursCachedWeek(key);}),due=hoursCacheDue(keys);
+  var cached=HOURS_CACHE.url===url&&HOURS_CACHE.periods[period];
+  var today=new Date(),audit=mkey(today.getFullYear(),today.getMonth());
+  var auditMissing=[-1,0,1].some(function(offset){var d=new Date(today.getFullYear(),today.getMonth()+offset,1);return HOURS_CACHE.url!==url||!HOURS_CACHE.periods[mkey(d.getFullYear(),d.getMonth())];});
+  if(!force&&(mode!=='audit'||known&&!due.length&&!auditMissing)){HOURS_STATUS={url:url,period:period,phase:known?'ready':'idle',checkedAt:cached?cached.checkedAt:0};return;}
+  var target=force||due.length?period:audit,windowAudit=target===audit&&!due.length&&(!force||auditMissing);
+  var attempt=(due.length?'delivery:'+period+':'+due.join(','):'audit:'+audit);
+  if(!force&&(HOURS_ATTEMPTS[url+'|'+attempt]||HOURS_CACHE.url===url&&HOURS_CACHE.attempts&&HOURS_CACHE.attempts[attempt]))return;
+  if(HOURS_CACHE.url!==url)HOURS_CACHE={schema:1,url:url,periods:{},weeks:{},attempts:{}};
+  HOURS_CACHE.attempts=HOURS_CACHE.attempts||{};HOURS_CACHE.attempts[attempt]=true;hoursCacheSave();HOURS_ATTEMPTS[url+'|'+attempt]=true;
+  HOURS_STATUS={period:period,url:url,phase:'loading',checkedAt:cached?cached.checkedAt:0};
+  var controller=new AbortController(),timeout=setTimeout(function(){controller.abort();},10000);
   try{
-    var response=await fetch(url+'status?period='+encodeURIComponent(period),{method:'GET',mode:'cors',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',targetAddressSpace:'local',signal:controller.signal});
+    var response=await fetch(url+'status?period='+target+'&background=1&audit='+(windowAudit?'1':'0')+'&refresh='+(force||due.length?'1':'0'),{method:'GET',mode:'cors',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',targetAddressSpace:'local',signal:controller.signal});
     if(!response.ok)throw new Error('Outlook sin confirmar');
-    var result=validateHoursResult(await response.json(),period,keys);
-    if(sequence!==HOURS_SEQUENCE||period!==mkey(CY,CM))return;
-    hoursCacheRemember(result,url,source);
-    HOURS_STATUS={period:period,url:url,phase:'ready',rows:result.rows,checkedAt:Date.now(),attemptedAt:Date.now()};
+    var result=await response.json();
+    if(result.phase==='done'){hoursAcceptJobResult({url:url},result.result);if(period===mkey(CY,CM))HOURS_STATUS={period:period,url:url,phase:'ready',checkedAt:Date.now()};}
+    else{hoursTrackJob(result,{period:target},url);if(period===mkey(CY,CM))HOURS_STATUS={period:period,url:url,phase:'loading',checkedAt:cached?cached.checkedAt:0};}
   }catch(e){
-    var denied=false;try{denied=(await navigator.permissions.query({name:'local-network-access'})).state==='denied';}catch(ignore){}
-    if(sequence===HOURS_SEQUENCE)HOURS_STATUS={period:period,url:url,phase:'error',rows:[],checkedAt:0,attemptedAt:Date.now(),networkPermissionDenied:denied};
+    if(period===mkey(CY,CM))HOURS_STATUS={period:period,url:url,phase:'error',checkedAt:cached?cached.checkedAt:0};
+    HOURS_JOB_ERROR='Kairo no está disponible. Se conserva el estado guardado y el envío manual.';
   }
-  finally{clearTimeout(timeout);if(sequence===HOURS_SEQUENCE){HOURS_REQUEST=null;paintHoursStatus();}}
+  finally{clearTimeout(timeout);paintHoursStatus();}
+}
+function refreshHomeStates(){
+  if(HOURS_REFRESHING)return;HOURS_REFRESHING=true;HOURS_JOB_ERROR='';
+  Promise.all([syncHoursStatus(true),typeof syncHomeInvoiceStatus==='function'?syncHomeInvoiceStatus(true):null]).finally(function(){HOURS_REFRESHING=false;paintHoursStatus();});paintHoursStatus();
 }
 function initHoursKairo(){
   var container=document.getElementById('weeksContainer');if(!container)return;
-  container.addEventListener('click',function(event){if(event.target.closest('[data-hours-check]'))openHoursReview(null,'check');else if(event.target.closest('[data-hours-review]'))openHoursReview();});
-  function resume(){if(!document.hidden)syncHoursStatus(false);}
-  window.addEventListener('focus',resume);window.addEventListener('online',function(){HOURS_ATTEMPTS=Object.create(null);resume();});
-  window.addEventListener('storage',function(event){if(event.key===HOURS_CACHE_KEY){HOURS_CACHE=hoursCacheRead();paintHoursStatus();}});syncHoursStatus(false);
+  container.addEventListener('click',function(event){var week=event.target.closest('[data-hours-week]');if(week)openHoursReview(week.dataset.hoursWeek);else if(event.target.closest('[data-hours-check]'))refreshHomeStates();else if(event.target.closest('[data-hours-review]'))openHoursReview();else if(event.target.closest('[data-home-formula]')){HOME_FORMULA_OPEN=!HOME_FORMULA_OPEN;paintHoursStatus();}});
+  function resume(){if(!document.hidden)hoursResumeJobs();}
+  window.addEventListener('focus',resume);window.addEventListener('online',resume);document.addEventListener('visibilitychange',resume);
+  window.addEventListener('storage',function(event){if(event.key===HOURS_CACHE_KEY){HOURS_CACHE=hoursCacheRead();paintHoursStatus();}});hoursResumeJobs();syncHoursStatus(false);
 }
 if(typeof document!=='undefined')document.addEventListener('DOMContentLoaded',initHoursKairo);
