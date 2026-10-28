@@ -1480,3 +1480,26 @@ semana individual: cuatro enviadas y tres programadas, sin escrituras y con
 la misma huella del almacenamiento antes y después. La prueba usó el candidato
 en memoria sobre v512; la publicación v513 incorpora esa misma corrección.
 Solo se añade la captura ficticia del diálogo a la revisión del mapa.
+
+## Resumen mensual y caché de horas (v514)
+
+Home usa homeMonthHours y renderHomeMonthSummary, también en el swipe. Días y
+horas comparten línea en el total, cada descuento y el resultado. Sin días no
+trabajados se muestra solo el resultado y su nota; con ajustes de jornada, la
+resta conserva su correspondencia con las horas reales. Los descuentos completos
+heredan el color de festivo, vacaciones o ausencia.
+
+hours-cache.js guarda hechos verificados por semana y firmas por mes, vinculados
+a la conexión configurada y limitados a 24 meses. No hay caducidad de dos minutos:
+navegar, recargar o perder conexión conserva la última comprobación. Un cambio
+local se compara inmediatamente con el correo observado. Al llegar la fecha de
+una programación se consulta una vez; ↻ fuerza una revisión. Los fallos no borran
+la evidencia y los intentos automáticos idénticos no se repiten continuamente.
+
+La caché derivada se excluye del backup, no incluye destinatarios ni contenido y
+los renders no la escriben. Confirmar una programación invalida las semanas
+afectadas hasta obtener evidencia nueva. La conciliación previa a escribir y el
+diario contra duplicados de Kairo mantienen sus comprobaciones independientes.
+Las modificaciones hechas directamente en Outlook se descubren en una nueva
+consulta, no por la caché. Solo se recapturan las tres escenas de Home; se
+conservan las demás referencias y revisiones del mapa.

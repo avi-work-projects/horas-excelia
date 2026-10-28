@@ -298,3 +298,19 @@ con la solicitud privada de referencia. El contexto de prueba bloqueaba commit
 por precaución y registró cero peticiones de escritura. No se conectó ni utilizó
 el teléfono. La evidencia real queda fuera de Git y las capturas del atlas son
 ficticias.
+
+## Caché local de conciliación (v514)
+
+Gestify conserva los últimos hechos verificados por semana, compartidos entre
+meses y asociados a la URL de Kairo. Cambiar de mes o recargar no inicia otra
+lectura si sus jornadas no han cambiado. La fecha de la última comprobación
+permanece visible incluso sin conexión. Días y horas locales diferentes siguen
+marcándose «Revisar cambios», aunque no se pueda consultar Outlook.
+
+Una fecha de envío alcanzada provoca una nueva lectura; ↻ actualiza a petición.
+Los cambios externos en Outlook requieren esa nueva lectura para conocerse. La
+caché nunca autoriza por sí sola una escritura: el servicio conserva la revisión
+fresca, las comprobaciones de duplicados y el diario. Al confirmar, Gestify elimina
+los hechos afectados hasta recibir el nuevo estado. La revisión individual
+invalida solo su semana; un error de consulta no borra las verificaciones previas.
+No cambian el servicio de Kairo ni la política de programación en esta entrega.

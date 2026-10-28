@@ -325,8 +325,7 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 :is([data-theme="light"],[data-theme="grey"]) input[type="checkbox"]:checked{background:var(--chk,var(--accent));border-color:var(--chk,var(--accent))}
 .excl-item{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--text-muted);cursor:pointer;-webkit-user-select:none;user-select:none}
 /* Month summary breakdown */
-.ms-breakdown>span{display:block;padding-left:12px}
-.ms-breakdown>span::before{content:"– ";}
+.ms-breakdown>span{display:flex}
 .ms-breakdown{font-size:.72rem;color:var(--text-dim);margin-top:0;line-height:1.6}
 .ms-sep{color:var(--border-light)}
 /* Ausencia list tag */

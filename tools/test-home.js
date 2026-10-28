@@ -11,8 +11,13 @@ assert.equal(data.hours,185.5);assert.equal(data.adjustment,-5);assert.equal(dat
 assert.equal(data.hours-data.off.reduce((sum,row)=>sum+row.hours,0)+data.adjustment,data.workedHours);
 const before=JSON.stringify(a.ST),storage=JSON.stringify(a.localStorage);
 assert.match(a.renderHomeMonthHours(data),/Ajuste de jornada/);
+const summary=a.renderHomeMonthSummary(data);
+assert.match(summary,/22 días laborables/);assert.match(summary,/185,5h/);assert.match(summary,/19 días trabajados/);assert.match(summary,/153,5h/);assert.match(summary,/− Ajuste jornada/);
+assert.equal((summary.match(/class="month-stat worked/g)||[]).length,1);
 assert.equal(JSON.stringify(a.ST),before);assert.equal(JSON.stringify(a.localStorage),storage);
 a.ST={};a.SW={};
+const noOff=a.renderHomeMonthSummary(a.homeMonthHours(2026,9));
+assert.match(noOff,/22 días trabajados/);assert.match(noOff,/185,5h/);assert.match(noOff,/\* sin días no trabajados/);assert.doesNotMatch(noOff,/Total mensual|ms-breakdown/);
 for(let year=2025;year<=2028;year++)for(let month=0;month<12;month++){
   const scope=a.homeSubmissionWeeks(year,month),current=a.weeks(year,month);
   assert.equal(scope.length,current.length+2);assert.equal(new Set(scope.map(w=>w.key)).size,scope.length);

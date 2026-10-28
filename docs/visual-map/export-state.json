@@ -11,41 +11,41 @@
     }
   },
   "general": {
-    "fingerprint": "a51f00081efcb5cee444e1799fccd3451bf147c2267e816e0296668a0c314d50",
+    "fingerprint": "3715557389933ef55ba53c22cf431a94016f9f0b4af9711d558d5fc65d4041cf",
     "files": [
       "map-general.svg",
       "map-general.png"
     ],
     "hashes": {
-      "map-general.svg": "f14e8d6eea03cc99528b2ac160e9c835a0cae197038e971a086f5b579bb255e3",
-      "map-general.png": "7bc9d4bae5366608cbc7e6f56546044f961b5b52cc9ec205e03dcadcd081c46b"
+      "map-general.svg": "2c27328c51bba2e1f5bea029aa99aa5de8206508533040a5ba25607014ec874f",
+      "map-general.png": "059aeaf9be463c4fe61c9fdfc7cfb17fbc9acf8ffbf960d486b9b040c4084f18"
     }
   },
   "area-0-0": {
-    "fingerprint": "fc069c1069c4a6cde87bbbc8bb0a9679b8c198bdab5890c38988eac256bce042",
+    "fingerprint": "02172e5e0ae38aeb982afddf84a07e8d774c1785e0414ace1b81c74b332dd3f0",
     "files": [
       "sheets/area-0-0.png"
     ],
     "hashes": {
-      "sheets/area-0-0.png": "be21f372358140ecfea1235ecd4a7740066b9e3cec9330f494ee82cb279d0c27"
+      "sheets/area-0-0.png": "bd55fa2f04a875b57afec0c9256bda3e47d6bcafd500ed2ab402fa27ed348703"
     }
   },
   "area-0-1": {
-    "fingerprint": "ed28b14083fc9fb79e4304a54a6f8239e7dab8f1a195c668ebd6f18c6aa46c19",
+    "fingerprint": "04217fe665c9298fec7f276b58b72206733059819fc84c46f92556085dc8611b",
     "files": [
       "sheets/area-0-1.png"
     ],
     "hashes": {
-      "sheets/area-0-1.png": "6f1721304ea99f19458b95e5fdf29d063531edeef02e9e90b8b1b4cab50b49c9"
+      "sheets/area-0-1.png": "99db4128d8b901baa04b940e4f8ac97f784529e43eba88fe3bec599728e6aa20"
     }
   },
   "area-1-0": {
-    "fingerprint": "90548aeb6be6387b1d3a8e5faf371b238735dc65e84395be09f7c8d325c12fbc",
+    "fingerprint": "b663435bb3372f3528801b6c551bc3f424af047904d0341264eaaac277fbfbfa",
     "files": [
       "sheets/area-1-0.png"
     ],
     "hashes": {
-      "sheets/area-1-0.png": "da9a19ffc6c50f6f77943ff48bc3e82f377fc55b044072d712f00641f9be42a4"
+      "sheets/area-1-0.png": "470d19f3fa4099dbf9d360320bdd0b9c7181a49e4345c1bb8d9c627a37f6254c"
     }
   },
   "area-1-1": {
@@ -58,12 +58,12 @@
     }
   },
   "area-2-0": {
-    "fingerprint": "b9f7e77a328d44a9153e79c27ec8596a67b269bc2ae2fc9f9c83f69184e12e96",
+    "fingerprint": "9dcceca706ae80a69bed6b59805aac1201bf35e6518d540465c83eb9640e8e35",
     "files": [
       "sheets/area-2-0.png"
     ],
     "hashes": {
-      "sheets/area-2-0.png": "a71505328280261a4a16289a69bd892ef05348d3e7108d55b11e54b20fa81c83"
+      "sheets/area-2-0.png": "5fc8037a47aa26d9efcc2eeadf98754eb5666d24c411d7304bee777ea96b845d"
     }
   },
   "area-3-0": {
@@ -94,21 +94,21 @@
     }
   },
   "area-4-0": {
-    "fingerprint": "ba3c3642a366a30d4cbeaf811cf6576887d23aeb0d95a6c640bc559944ab5ef0",
+    "fingerprint": "fb497f2628b7e931eca3dd563e84bc8753bb16f0948c671ccc69d38415746cbe",
     "files": [
       "sheets/area-4-0.png"
     ],
     "hashes": {
-      "sheets/area-4-0.png": "2ff7e1b5bbbe2fc5e685b59a2554ddd16d503e3a8df7ec6853aa08f343fc96b8"
+      "sheets/area-4-0.png": "8c2be330f11c13a7b61d3c00732b153e9ef6e681f3ebe86501236f753866a6bb"
     }
   },
   "area-5-0": {
-    "fingerprint": "cd216d8a3490dfe398b604405738e43c90c485ed2ec8c186bd47e46685184a85",
+    "fingerprint": "e31e639c6d8dc45d83ef38a28db102683e83dffb2428456209e01749829e8b6a",
     "files": [
       "sheets/area-5-0.png"
     ],
     "hashes": {
-      "sheets/area-5-0.png": "453b68d3dc4389d1b0daccaf56a7ab6caf9b6a0ba6879ae6be917405ff09dc80"
+      "sheets/area-5-0.png": "fdce6120cd74bfd9c13dcc6fb40ab552a8d7a757ad415a709deb691568644696"
     }
   },
   "area-5-1": {
@@ -220,12 +220,12 @@
     }
   },
   "area-12-0": {
-    "fingerprint": "272ed1cd68a3a41767b08007f6ef8da71342b747590b3af68a5eb9ed88538bc2",
+    "fingerprint": "3832a8d4e6befa2da4192b10c725c3a9673756400c6ee9850208db9d1c27fae1",
     "files": [
       "sheets/area-12-0.png"
     ],
     "hashes": {
-      "sheets/area-12-0.png": "669f915e6021e6db61c4c073ea093ce956fa9770fe5c3381dcec7a4cd41351d7"
+      "sheets/area-12-0.png": "63ede5fdfa8809262035ad7c8ac7e397637d17c057675165dc89998fe2791076"
     }
   }
 }

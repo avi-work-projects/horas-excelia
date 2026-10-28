@@ -1,5 +1,5 @@
 /* Weekly mail uses the same scope for the warning and both entry points.
-   Remote facts live in memory; SW remains a legacy manual mark, not proof. */
+   Verified facts live in hours-cache; SW is a legacy manual mark, not proof. */
 var HOURS_STATUS={period:'',phase:'idle',rows:[],checkedAt:0};
 var HOURS_REQUEST=null,HOURS_SEQUENCE=0;
 function hoursKairoUrl(){
@@ -16,9 +16,7 @@ function hoursCivilTime(value){
   return values.year+'-'+values.month+'-'+values.day+'T'+values.hour+':'+values.minute;
 }
 function hoursWeekState(key){
-  var url='';try{url=hoursKairoUrl();}catch(e){return '';}
-  if(HOURS_STATUS.url!==url||HOURS_STATUS.period!==mkey(CY,CM)||HOURS_STATUS.phase!=='ready'||Date.now()-HOURS_STATUS.checkedAt>120000)return '';
-  var row=HOURS_STATUS.rows.find(function(r){return r.key===key;});if(!row)return '';
+  var row=hoursCachedWeek(key);if(!row)return '';
   if(row.state==='scheduled'||row.state==='changed'){
     if(!Array.isArray(row.days)||!row.schedule)return row.state==='scheduled'?'unverified':'changed';
     var expected=hoursWeekDays(key),date=homeWeekSchedule(key).date;
@@ -34,13 +32,14 @@ function hoursWeekBadge(state){
   return labels[state]||(state?'Revisar':'Sin comprobar');
 }
 function hoursWeekDate(key,state){
-  var row=HOURS_STATUS.rows.find(function(r){return r.key===key;});
+  var row=hoursCachedWeek(key);
   if(state!=='scheduled'||!row||!row.schedule)return '';
   return new Intl.DateTimeFormat('es-ES',{timeZone:'Europe/Madrid',weekday:'short',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(row.schedule));
 }
 function renderHoursAccess(state){
   var fresh=state?state.remote&&state.known:!!hoursWeekState(homeSubmissionWeeks(CY,CM)[0].key);
-  var note=fresh?'Comprobado en Outlook':'Pulsa ↻ para comprobar Outlook';
+  var checked=homeSubmissionWeeks(CY,CM).map(function(w){var row=hoursCachedWeek(w.key);return row?row.checkedAt:0;});
+  var note=fresh?'Comprobado '+new Intl.DateTimeFormat('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(Math.min.apply(null,checked))):'Pulsa ↻ para comprobar Outlook';
   var label=state&&state.remote&&state.complete?'Revisar semanas':state&&state.remote&&state.review?'Revisar cambios':'Programar pendientes';
   return '<div class="hours-home-actions"><span class="hours-verified-note">'+note+'</span><button type="button" class="hours-check-button" data-hours-check aria-label="Comprobar Outlook" title="Comprobar Outlook">↻</button><button type="button" class="hours-pending-button" data-hours-review>'+label+'</button></div>';
 }
@@ -71,6 +70,7 @@ function validateHoursResult(result,period,keys){
 function rememberHoursReview(result,request,url){
   validateHoursResult(result,request.period,request.weeks.map(function(w){return w.key;}));
   if(result.verified!==true)throw new Error('La lectura de Outlook está sin confirmar.');
+  if(url===hoursKairoUrl())hoursCacheRemember(result,url,hoursSourceSignature(request.weeks));
   if(result.period===mkey(CY,CM)&&url===hoursKairoUrl()){
     ++HOURS_SEQUENCE;if(HOURS_REQUEST)HOURS_REQUEST.abort();HOURS_REQUEST=null;
     HOURS_STATUS={period:result.period,url:url,phase:'ready',rows:result.rows,checkedAt:Date.now(),attemptedAt:Date.now()};render();
@@ -130,6 +130,7 @@ function hoursReviewSurface(url){
   return {window:frame.contentWindow,close:close,isClosed:function(){return !dialog.isConnected;}};
 }
 function invalidateHoursReview(request,url,phase){
+  hoursCacheInvalidate(request,url);
   if(request.period!==mkey(CY,CM)||url!==hoursKairoUrl())return;
   ++HOURS_SEQUENCE;if(HOURS_REQUEST)HOURS_REQUEST.abort();HOURS_REQUEST=null;
   HOURS_STATUS={period:request.period,url:url,phase:phase,rows:[],checkedAt:0,attemptedAt:Date.now()};paintHoursStatus();
@@ -146,7 +147,7 @@ async function openHoursReview(targetWeek,intent){
       isClosed:surface.isClosed,close:surface.close,
       onCommitted:function(){invalidateHoursReview(request,url,'loading');},
       onUpdate:function(result){rememberHoursReview(result,request,url);},
-      onError:function(){invalidateHoursReview(request,url,'error');}
+      onError:function(){HOURS_STATUS.phase='error';paintHoursStatus();}
     });
     rememberHoursReview(result,request,url);
     if(intent==='check'){surface.close();window.focus();showToast('Estado de Outlook actualizado.','success');}
@@ -159,19 +160,23 @@ function paintHoursStatus(){
 async function syncHoursStatus(force){
   var url;try{url=hoursKairoUrl();}catch(e){return;}
   if(!url)return;
-  var period=mkey(CY,CM);
-  if(HOURS_REQUEST&&HOURS_STATUS.period===period&&HOURS_STATUS.url===url)return;
-  if(HOURS_REQUEST)HOURS_REQUEST.abort();
-  if(!force&&HOURS_STATUS.period===period&&HOURS_STATUS.url===url&&Date.now()-HOURS_STATUS.attemptedAt<60000)return;
+  var period=mkey(CY,CM),scope=homeSubmissionWeeks(CY,CM),keys=scope.map(function(w){return w.key;}),source=hoursSourceSignature(scope),attemptKey=url+'|'+period;
+  if(!force&&HOURS_REQUEST&&HOURS_STATUS.period===period&&HOURS_STATUS.url===url&&HOURS_STATUS.source===source)return;
+  if(HOURS_REQUEST){delete HOURS_ATTEMPTS[HOURS_STATUS.url+'|'+HOURS_STATUS.period];HOURS_REQUEST.abort();HOURS_REQUEST=null;++HOURS_SEQUENCE;}
+  var cached=HOURS_CACHE.url===url&&HOURS_CACHE.periods[period],due=hoursCacheDue(keys),known=keys.every(function(key){return !!hoursCachedWeek(key);});
+  if(!force&&cached&&known&&cached.source===source&&!due.length){HOURS_STATUS={url:url,period:period,phase:'ready',rows:keys.map(hoursCachedWeek),checkedAt:cached.checkedAt};return;}
+  var fingerprint=source+'|'+due.join(',');
+  if(!force&&HOURS_ATTEMPTS[attemptKey]===fingerprint)return;
+  HOURS_ATTEMPTS[attemptKey]=fingerprint;
   var sequence=++HOURS_SEQUENCE,controller=new AbortController();HOURS_REQUEST=controller;
-  var keys=homeSubmissionWeeks(CY,CM).map(function(w){return w.key;});
-  HOURS_STATUS={period:period,url:url,phase:'loading',rows:[],checkedAt:0,attemptedAt:Date.now()};
+  HOURS_STATUS={period:period,url:url,source:source,phase:'loading',rows:[],checkedAt:0,attemptedAt:Date.now()};
   var timeout=setTimeout(function(){controller.abort();},100000);
   try{
     var response=await fetch(url+'status?period='+encodeURIComponent(period),{method:'GET',mode:'cors',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',targetAddressSpace:'local',signal:controller.signal});
     if(!response.ok)throw new Error('Outlook sin confirmar');
     var result=validateHoursResult(await response.json(),period,keys);
     if(sequence!==HOURS_SEQUENCE||period!==mkey(CY,CM))return;
+    hoursCacheRemember(result,url,source);
     HOURS_STATUS={period:period,url:url,phase:'ready',rows:result.rows,checkedAt:Date.now(),attemptedAt:Date.now()};
   }catch(e){
     var denied=false;try{denied=(await navigator.permissions.query({name:'local-network-access'})).state==='denied';}catch(ignore){}
@@ -183,6 +188,7 @@ function initHoursKairo(){
   var container=document.getElementById('weeksContainer');if(!container)return;
   container.addEventListener('click',function(event){if(event.target.closest('[data-hours-check]'))openHoursReview(null,'check');else if(event.target.closest('[data-hours-review]'))openHoursReview();});
   function resume(){if(!document.hidden)syncHoursStatus(false);}
-  window.addEventListener('focus',resume);window.addEventListener('online',resume);syncHoursStatus(false);
+  window.addEventListener('focus',resume);window.addEventListener('online',function(){HOURS_ATTEMPTS=Object.create(null);resume();});
+  window.addEventListener('storage',function(event){if(event.key===HOURS_CACHE_KEY){HOURS_CACHE=hoursCacheRead();paintHoursStatus();}});syncHoursStatus(false);
 }
 if(typeof document!=='undefined')document.addEventListener('DOMContentLoaded',initHoursKairo);

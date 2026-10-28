@@ -41,7 +41,7 @@ test('Android instalado conserva la revisión en Gestify y vuelve a Home',async(
     Object.defineProperty(navigator,'userAgent',{get:()=> 'Mozilla/5.0 Android Gestify'});
     const media=window.matchMedia.bind(window);window.matchMedia=query=>query==='(display-mode: standalone)'?{matches:true}:media(query);
   });
-  const calls=await setup(page,context),before=await page.evaluate(()=>JSON.stringify(localStorage));
+  const calls=await setup(page,context),before=await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>key!==HOURS_CACHE_KEY))));
   const popups=[];page.on('popup',popup=>popups.push(popup));
   await page.getByRole('button',{name:'Comprobar Outlook',exact:true}).click();
   await expect(page.locator('.home-submission')).toContainText('1 enviada · 1 programada · 3 pendientes · 1 por revisar');
@@ -60,7 +60,7 @@ test('Android instalado conserva la revisión en Gestify y vuelve a Home',async(
   await expect(page.locator('.hours-review-dialog')).toHaveCount(0);
   expect(popups).toHaveLength(0);
   expect(calls.some(c=>c.path.endsWith('/commit')||c.path.endsWith('/simulate'))).toBe(false);
-  expect(await page.evaluate(()=>JSON.stringify(localStorage))).toBe(before);
+  expect(await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>key!==HOURS_CACHE_KEY))))).toBe(before);
 });
 
 test('lote e individual conservan alcance; revisión muestra cambios y simula sin correos reales',async({page,context},info)=>{
@@ -106,12 +106,12 @@ test('la revisión comunica estados aunque el navegador bloquee la consulta auto
 
 test('comprobar vuelve a Home sin confirmar ni cambiar correos',async({page,context})=>{
   await page.route(base+'horas/status?**',route=>route.abort());
-  const calls=await setup(page,context),before=await page.evaluate(()=>JSON.stringify(localStorage));
+  const calls=await setup(page,context),before=await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>key!==HOURS_CACHE_KEY))));
   const waiting=page.waitForEvent('popup');await page.getByRole('button',{name:'Comprobar Outlook',exact:true}).click();const popup=await waiting;
   await expect.poll(()=>popup.isClosed()).toBe(true);
   await expect(page.locator('.home-submission')).toContainText('1 enviada · 1 programada · 3 pendientes · 1 por revisar');
   expect(calls.some(c=>c.path.endsWith('/commit')||c.path.endsWith('/simulate'))).toBe(false);
-  expect(await page.evaluate(()=>JSON.stringify(localStorage))).toBe(before);
+  expect(await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>key!==HOURS_CACHE_KEY))))).toBe(before);
 });
 
 test('Home compara la programación con los días actuales y detecta cambios locales',async({page,context},info)=>{
