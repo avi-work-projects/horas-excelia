@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 
 from hours_model import content_hash, monday, parse_days, reconcile, schedule, scope, validate_request
 from hours_store import Store, StalePlan
-from outlook_hours import week_from_label, header_date, header_week_year, scheduled_time
+from outlook_hours import week_from_label, header_date, header_week_year, scheduled_time, outlook_page, item_identity
 from demo_hours import synthetic_request
 
 NOW = datetime(2027, 2, 1, 6, tzinfo=timezone.utc)
@@ -26,6 +26,16 @@ def inventory(req, count=0):
 
 
 class ModelTests(unittest.TestCase):
+    def test_official_outlook_redirect_keeps_identity_and_rejects_lookalikes(self):
+        old='https://outlook.office.com/mail/drafts/id/item%2Bid%3D'
+        new='https://outlook.cloud.microsoft/mail/drafts/id/item%2Bid%3D'
+        self.assertTrue(outlook_page(old));self.assertTrue(outlook_page(new))
+        self.assertEqual(item_identity(old,'sender@example.invalid'),item_identity(new,'sender@example.invalid'))
+        for bad in ('http://outlook.cloud.microsoft/mail/','https://outlook.cloud.microsoft.evil.invalid/mail/',
+                    'https://outlook.office.com@evil.invalid/mail/','https://user@outlook.office.com/mail/',
+                    'https://outlook.office.com:8000/mail/','https://outlook.office.com:bad/mail/'):
+            self.assertFalse(outlook_page(bad))
+
     def test_pwa_payload_and_python_share_the_mail_contract(self):
         import json,subprocess
         from pathlib import Path
@@ -189,7 +199,14 @@ class HttpTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             store=Store(temp);req=request();inv=inventory(req)
             cfg=dict(private_origin='https://hours.example.invalid',app_origin='https://app.example.invalid',owner='owner@example.invalid')
-            server=ThreadingHTTPServer(('127.0.0.1',0),make_handler(cfg,store,lambda _req:copy.deepcopy(inv)))
+            class FreshReader:
+                fresh=False
+                def invalidate(self):self.fresh=True
+                def __call__(self,_request):
+                    if not self.fresh:raise RuntimeError('El DOM almacenado no acredita el servidor')
+                    self.fresh=False
+                    return copy.deepcopy(inv)
+            server=ThreadingHTTPServer(('127.0.0.1',0),make_handler(cfg,store,FreshReader()))
             thread=Thread(target=server.serve_forever,daemon=True);thread.start()
             root='http://127.0.0.1:'+str(server.server_port)
             headers={'Host':'hours.example.invalid','Tailscale-User-Login':cfg['owner']}

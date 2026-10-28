@@ -7,9 +7,37 @@ import re
 import traceback
 import sys
 from datetime import date, datetime, timedelta
-from urllib.parse import urlsplit
+from urllib.parse import urlsplit, unquote
 
 from hours_model import MADRID, addresses, content_hash, digest, monday, parse_days, scope
+
+OUTLOOK_HOSTS = {'outlook.office.com', 'outlook.cloud.microsoft'}
+
+
+def outlook_page(url):
+    try:
+        value = urlsplit(str(url))
+        return (value.scheme == 'https' and value.hostname in OUTLOOK_HOSTS
+                and value.port in (None,443) and not value.username and not value.password
+                and value.path.startswith('/mail/'))
+    except ValueError:
+        return False
+
+
+def item_identity(url, sender):
+    if not outlook_page(url):
+        raise ValueError('Destino de Outlook no reconocido')
+    match = re.fullmatch(r'/mail/(?:drafts|sentitems)/id/(.+)', urlsplit(url).path)
+    if not match:
+        raise ValueError('Identificador de correo no reconocido')
+    # Microsoft's domain redirect must not change a message's identity.
+    return digest([addresses([sender],True)[0],unquote(match[1])])
+
+
+def mailbox_matches(page, sender):
+    labels = page.locator('[role=treeitem]').evaluate_all('(es)=>es.map(e=>[e.textContent,e.getAttribute("title"),e.getAttribute("data-folder-name")].join(" "))')
+    pattern = re.compile(r'(?<![\w.+%-])'+re.escape(sender)+r'(?![\w.-])',re.I)
+    return any(pattern.search(label) for label in labels)
 
 def week_from_label(label, keys):
     match = re.search(r'Semana del (\d{1,2})/(\d{1,2}) al (\d{1,2})/(\d{1,2})', label, re.I)
@@ -75,6 +103,10 @@ class OutlookReader:
         if endpoint != 'http://127.0.0.1:9223':
             raise ValueError('Usa el Chromium privado local existente')
         self.endpoint = endpoint
+        self.refresh_required = True
+
+    def invalidate(self):
+        self.refresh_required = True
 
     def __call__(self, request):
         from playwright.sync_api import sync_playwright
@@ -88,22 +120,26 @@ class OutlookReader:
                 contexts = browser.contexts
                 if len(contexts) != 1:
                     raise ValueError('Revisa la sesión privada de Outlook')
-                pages = [p for p in contexts[0].pages if p.url.startswith('https://outlook.office.com/mail/')]
+                pages = [p for p in contexts[0].pages if outlook_page(p.url)]
                 if len(pages) != 1:
                     raise ValueError('Abre una única ventana de Outlook de horas')
                 page = pages[0]
                 if page.locator('[contenteditable=true]:visible').count():
                     raise ValueError('Cierra el borrador antes de conciliar')
                 page.set_default_timeout(15000)
+                if self.refresh_required:
+                    page.reload(wait_until='domcontentloaded',timeout=30000)
+                    page.wait_for_url(lambda url:outlook_page(str(url)),timeout=10000)
                 page.get_by_role('listbox').wait_for()
-                mailbox = page.locator('[role=treeitem]').evaluate_all('(es)=>es.map(e=>[e.textContent,e.getAttribute("title"),e.getAttribute("data-folder-name")].join(" "))')
-                if not any(self.sender in text.lower() for text in mailbox):
+                if not mailbox_matches(page,self.sender):
                     raise ValueError('La cuenta de Outlook no coincide con el correo de horas')
                 result['accountVerified'] = True
                 for folder in ('sentitems', 'drafts'):
                     self._folder(page, folder, wanted, result['records'])
                 result['complete'] = True
+                self.refresh_required = False
             except Exception as error:
+                self.refresh_required = True
                 # Error text must not leak email bodies, selectors or addresses.
                 result['problem'] = 'Outlook requiere revisión o no se ha podido completar la lectura'
                 frames = [f for f in traceback.extract_tb(sys.exc_info()[2]) if f.filename.endswith('outlook_hours.py')]
@@ -149,7 +185,7 @@ class OutlookReader:
         # Sent Items and Drafts are scoped to the verified mailbox above. The
         # future writer must separately check the From field before any write.
         recipients = page.get_by_test_id('RecipientWell').locator('[role=presentation][aria-label]').evaluate_all('(es)=>es.map(e=>e.getAttribute("aria-label"))')
-        record.update(id=digest(page.url), url=page.url,
+        record.update(id=item_identity(page.url,self.sender), url=page.url,
                       state='sent' if folder == 'sentitems' else 'scheduled',
                       days=days, toDisplay=next((v for v in recipients if re.match('Para:|To:',v)), 'Ver en Outlook'),
                       ccDisplay=next((v for v in recipients if re.match('CC:|Cc:',v)), 'Sin CC'),
@@ -162,7 +198,7 @@ class OutlookReader:
     def _folder(self, page, folder, keys, records):
         title = re.compile(r'^Elementos enviados|^Sent Items', re.I) if folder == 'sentitems' else re.compile(r'^Borradores|^Drafts', re.I)
         page.get_by_role('treeitem', name=title).first.click()
-        page.wait_for_url(re.compile(r'https://outlook.office.com/mail/'+folder+r'(?:/|$)'))
+        page.wait_for_url(lambda url:outlook_page(str(url)) and re.match(r'^/mail/'+folder+r'(?:/|$)',urlsplit(str(url)).path))
         page.get_by_role('listbox').wait_for()
         scroller = page.locator('[data-app-section=MessageList]').get_by_test_id('virtuoso-scroller')
         scroller.wait_for()
