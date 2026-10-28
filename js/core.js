@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v511 — Programación de horas con Kairo';
+var APP_VERSION = 'v512 — Estado de Outlook en Home';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -345,23 +345,32 @@ function weeks(y,m){
 
 /* El aviso y la futura programación consumen el mismo alcance. */
 function homeSubmissionStatus(year,month){
-  var scope=homeSubmissionWeeks(year,month);
-  var remote=typeof hoursRemoteConfigured==='function'&&hoursRemoteConfigured();
-  var pending=scope.filter(function(week){return remote?!hoursCovered(week.key):!SW[week.key];});
-  return {missing:pending.filter(function(week){return !week.extra;}).length,extras:pending.filter(function(week){return week.extra;}),complete:pending.length===0};
+  var remote=typeof hoursRemoteConfigured==='function'&&hoursRemoteConfigured(),states={},counts={sent:0,scheduled:0,pending:0,review:0};
+  var scope=homeSubmissionWeeks(year,month),known=true;
+  scope.forEach(function(week){
+    var state=remote?hoursWeekState(week.key):SW[week.key]?'sent':'missing';states[week.key]=state;
+    if(!state)known=false;
+    if(state==='sent'||state==='scheduled')counts[state]++;
+    else if(state==='missing'||state==='ready')counts.pending++;
+    else if(state)counts.review++;
+  });
+  var pending=scope.filter(function(week){return !['sent','scheduled'].includes(states[week.key]);});
+  return {remote:remote,states:states,counts:counts,known:known,review:counts.review>0,missing:pending.filter(function(week){return !week.extra;}).length,extras:pending.filter(function(week){return week.extra;}),complete:pending.length===0};
 }
-function renderHomeSubmissionStatus(year,month){
-  var state=homeSubmissionStatus(year,month);
-  var scope=homeSubmissionWeeks(year,month),remote=typeof hoursRemoteConfigured==='function'&&hoursRemoteConfigured();
-  var known=!remote||scope.every(function(w){return !!hoursWeekState(w.key);});
-  var review=remote&&scope.some(function(w){return ['changed','duplicate','uncertain','draft','unverified','ambiguous-thread'].includes(hoursWeekState(w.key));});
-  var scheduled=remote&&scope.some(function(w){return hoursWeekState(w.key)==='scheduled';});
+function renderHomeSubmissionStatus(year,month,state){
+  state=state||homeSubmissionStatus(year,month);
   var detail=state.missing?(state.missing+' semana'+(state.missing===1?'':'s')+' del mes sin enviar'):'';
   state.extras.forEach(function(week){detail+=(detail?' · ':'')+'Falta la semana adicional del '+fd(week.mon)+' al '+fd(ad(week.mon,6));});
-  if(!known)detail='Consulta Outlook para confirmar las semanas enviadas y programadas.';
-  else if(review)detail='Hay cambios o estados que requieren revisión. No se crearán correos repetidos.';
-  var title=!known?'Semanas por comprobar':review?'Semanas pendientes de revisión':state.complete?(scheduled?'Todo enviado o programado':'Todo enviado'):'Semanas pendientes de enviar';
-  return '<div class="home-submission '+(!known?'unknown':state.complete?'complete':'pending')+'" role="status"><span class="home-submission-icon" aria-hidden="true">'+(!known?'◷':state.complete?'&#10003;':'&#9888;')+'</span><div class="home-submission-message"><strong>'+title+'</strong>'+(!state.complete||!known?'<span>'+detail+'</span>':'')+'</div>'+(typeof renderHoursAccess==='function'?renderHoursAccess():'')+'</div>';
+  var title=state.complete?'Todo enviado':'Semanas pendientes de enviar';
+  if(state.remote){
+    title=!state.known?'Sin comprobar':state.complete?'Todo al día':state.review?'Revisar semanas':'Semanas pendientes';
+    var parts=[];if(state.counts.sent)parts.push(state.counts.sent+' enviada'+(state.counts.sent===1?'':'s'));
+    if(state.counts.scheduled)parts.push(state.counts.scheduled+' programada'+(state.counts.scheduled===1?'':'s'));
+    if(state.counts.pending)parts.push(state.counts.pending+' pendiente'+(state.counts.pending===1?'':'s'));
+    if(state.counts.review)parts.push(state.counts.review+' por revisar');
+    detail=state.known?parts.join(' · '):'Comprueba la conexión con Outlook.';
+  }
+  return '<div class="home-submission '+(!state.known?'unknown':state.complete?'complete':'pending')+'" role="status"><span class="home-submission-icon" aria-hidden="true">'+(!state.known?'◷':state.complete?'&#10003;':'&#9888;')+'</span><div class="home-submission-message"><strong>'+title+'</strong>'+((state.remote||!state.complete)&&detail?'<span>'+detail+'</span>':'')+'</div>'+(typeof renderHoursAccess==='function'?renderHoursAccess(state):'')+'</div>';
 }
 
 // ── Comprueba si hay semanas enviadas en el mes actual ────────
@@ -506,17 +515,17 @@ function render(){
 
 /* El mismo calendario se ensambla en la Home y en una previsualización inerte. */
 function buildHomeCalendar(c){
-  var wks=weeks(CY,CM);
-  c.innerHTML=renderHomeSubmissionStatus(CY,CM)+(typeof renderHomeInvoiceStatus==='function'?renderHomeInvoiceStatus(CY,CM):'');
+  var wks=weeks(CY,CM),submission=homeSubmissionStatus(CY,CM);
+  c.innerHTML=renderHomeSubmissionStatus(CY,CM,submission)+(typeof renderHomeInvoiceStatus==='function'?renderHomeInvoiceStatus(CY,CM):'');
 
   wks.forEach(function(wk){
-    var mon=wk[0],sun=wk[6],wkey=dk(mon),remote=typeof hoursRemoteConfigured==='function'&&hoursRemoteConfigured(),mailState=remote?hoursWeekState(wkey):'',sent=remote?mailState==='sent':!!SW[wkey],dias=0;
+    var mon=wk[0],sun=wk[6],wkey=dk(mon),remote=submission.remote,mailState=remote?submission.states[wkey]:'',sent=remote?mailState==='sent':!!SW[wkey],dias=0;
     for(var i=0;i<5;i++){if(dayH(wk[i])>0)dias++;}
     var dStr=dias+(dias===1?' d\u00eda':' d\u00edas');
 
     var card=document.createElement('div');
     card.className='week-card'+(sent?' sent':'');
-    card.innerHTML='<div class="week-header"><div class="week-info"><h3>Semana '+wn(mon)+(sent?'<span class="sent-badge">\u2713 Enviada</span>':mailState==='scheduled'?'<span class="sent-badge">◷ Programada</span>':'')+'</h3><div class="week-range">'+fd(mon)+' \u2014 '+fd(sun)+'</div></div><div class="week-total">'+dStr+'</div></div>';
+    card.innerHTML='<div class="week-header"><div class="week-info"><h3>Semana '+wn(mon)+(remote?'<span class="sent-badge hours-week-badge '+(mailState==='sent'||mailState==='scheduled'?'covered':mailState?'attention':'unknown')+'">'+hoursWeekBadge(mailState)+'</span>':sent?'<span class="sent-badge">\u2713 Enviada</span>':'')+'</h3><div class="week-range">'+fd(mon)+' \u2014 '+fd(sun)+'</div></div><div class="week-total">'+dStr+'</div></div>';
 
     var grid=document.createElement('div'); grid.className='days-grid';
     for(var i=0;i<5;i++){
@@ -533,7 +542,7 @@ function buildHomeCalendar(c){
       // Bloquear clic si semana enviada
       (function(dd,isSent){
         cell.addEventListener('click',function(){
-          if(isSent){showToast('Semana enviada. Desmarca primero para editar.','error');return;}
+          if(isSent){showToast(remote?'Semana ya enviada en Outlook.':'Semana enviada. Desmarca primero para editar.','error');return;}
           openSheet(dd);
         });
       })(d,sent);
@@ -544,13 +553,17 @@ function buildHomeCalendar(c){
     var acts=document.createElement('div'); acts.className='week-actions';
     var sendBtn=document.createElement('button');
     sendBtn.className='action-btn send';
-    sendBtn.innerHTML='<svg class="week-action-icon mail-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M3 4h18a1 1 0 0 1 1 1v.5L12 12 2 5.5V5a1 1 0 0 1 1-1Zm-1 4 9.45 6.14a1 1 0 0 0 1.1 0L22 8v11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1Z"/></svg><span>Programar semana</span>';
+    sendBtn.innerHTML='<svg class="week-action-icon mail-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M3 4h18a1 1 0 0 1 1 1v.5L12 12 2 5.5V5a1 1 0 0 1 1-1Zm-1 4 9.45 6.14a1 1 0 0 0 1.1 0L22 8v11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1Z"/></svg><span>'+(remote&&mailState==='sent'?'Ver estado':remote&&mailState==='scheduled'?'Ver programación':remote&&mailState==='changed'?'Revisar cambios':'Programar semana')+'</span>';
     (function(k){sendBtn.addEventListener('click',function(e){e.stopPropagation();sendEmail(k);});})(wkey);
-    var sb=document.createElement('button');
-    sb.className='action-btn sent-toggle';
-    sb.innerHTML=sent?'<svg class="week-action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12h8"/></svg><span>Desmarcar</span>':'\u2713 Marcar enviada';
-    (function(k){sb.addEventListener('click',function(e){e.stopPropagation();togSent(k);});})(wkey);
-    if(remote){sb.disabled=true;sb.textContent=mailState==='scheduled'?'Programada en Outlook':sent?'Enviada en Outlook':'Estado sin confirmar';}
+    var sb=document.createElement(remote?'span':'button');
+    if(remote){
+      sb.className='hours-week-readonly'+(mailState==='changed'?' attention':'');
+      sb.textContent=hoursWeekDate(wkey,mailState)||(sent?'Enviada en Outlook':mailState==='changed'?'Pendiente de actualizar':mailState==='missing'||mailState==='ready'?'Sin correo programado':'Sin comprobar');
+    }else{
+      sb.className='action-btn sent-toggle';
+      sb.innerHTML=sent?'<svg class="week-action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12h8"/></svg><span>Desmarcar</span>':'\u2713 Marcar enviada';
+      (function(k){sb.addEventListener('click',function(e){e.stopPropagation();togSent(k);});})(wkey);
+    }
     acts.appendChild(sendBtn); acts.appendChild(sb);
     card.appendChild(acts); c.appendChild(card);
   });

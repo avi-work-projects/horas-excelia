@@ -7,6 +7,7 @@ from zoneinfo import ZoneInfo
 
 MADRID = ZoneInfo('Europe/Madrid')
 DAY_TYPES = {'normal', 'festivo', 'vacaciones', 'ausencia'}
+SCHEDULE_POLICY = 2  # Changing eligible send dates invalidates earlier reviews.
 
 
 def digest(value):
@@ -92,6 +93,8 @@ def content_hash(week):
 
 def schedule(week, now):
     days = [d['date'] for d in week['days'] if d['type'] == 'normal' and d['hours'] > 0]
+    if not days and all(d['type'] in ('vacaciones','festivo') for d in week['days']):
+        days = [d['date'] for d in week['days'] if d['type'] != 'festivo']
     if not days:
         return None, 'no-workdays'
     target = datetime.fromisoformat(days[-1]+'T08:00:00').replace(tzinfo=MADRID)
@@ -99,7 +102,7 @@ def schedule(week, now):
 
 
 def inventory_signature(inventory):
-    return digest({'complete': inventory.get('complete'), 'account': inventory.get('account'),
+    return digest({'policy':SCHEDULE_POLICY,'complete': inventory.get('complete'), 'account': inventory.get('account'),
                    'accountVerified': inventory.get('accountVerified'),
                    'records': sorted(inventory.get('records', []), key=lambda r: (r.get('week', ''), r.get('id', '')))})
 
@@ -141,7 +144,7 @@ def reconcile(request, inventory, now, ledger=None):
             covered.discard(key)
         elif items and items[0].get('state') == 'scheduled':
             record = items[0]
-            row.update(recordId=record['id'], previousSchedule=record.get('schedule'))
+            row.update(recordId=record['id'], previousSchedule=record.get('schedule'),existingDays=record.get('days'))
             row.update(recipientPolicy='preserve-existing',toDisplay=record.get('toDisplay','Ver en Outlook'),ccDisplay=record.get('ccDisplay','Ver en Outlook'))
             if record.get('contentHash') != wanted_hash:
                 row['changes'].append('days')

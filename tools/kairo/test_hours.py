@@ -20,7 +20,7 @@ def inventory(req, count=0):
     records = [dict(id='prior', week=previous, state='sent')]
     for week in req['weeks'][:count]:
         records.append(dict(id=week['key'], week=week['key'], state='scheduled',
-                            contentHash=content_hash(week),
+                            contentHash=content_hash(week),days=copy.deepcopy(week['days']),
                             schedule=schedule(week, NOW)[0]))
     return dict(complete=True, accountVerified=True, account='sender@example.invalid', records=records)
 
@@ -56,6 +56,31 @@ class ModelTests(unittest.TestCase):
     def test_scope_bridge_and_year_boundary(self):
         self.assertEqual(scope('2026-10'), ['2026-09-28', '2026-10-05', '2026-10-12', '2026-10-19', '2026-10-26', '2026-11-02', '2026-11-09'])
         self.assertEqual(scope('2026-12')[-2:], ['2027-01-04', '2027-01-11'])
+
+    def test_vacation_fallback_matches_home_and_keeps_expired_dates_pending(self):
+        import json,subprocess
+        from pathlib import Path
+        cases=[['normal']*5,['normal']*4+['vacaciones'],['vacaciones']*5,
+               ['vacaciones']*4+['festivo'],['festivo']*5,['ausencia']*5]
+        script="""const a=require('./tools/entorno').cargarApp({});const cases=JSON.parse(process.argv[1]);
+        process.stdout.write(JSON.stringify(cases.map(types=>{a.ST={};types.forEach((type,i)=>{a.ST['2026-10-'+(26+i)]={type};});return a.homeWeekSchedule('2026-10-26',new Date('2026-10-26T06:00:00Z'));})));"""
+        client=json.loads(subprocess.check_output(['node','-e',script,json.dumps(cases)],cwd=Path(__file__).resolve().parents[2],encoding='utf-8'))
+        for types,expected,row in zip(cases,['2026-10-30','2026-10-29','2026-10-30','2026-10-29',None,None],client):
+            week=dict(days=[dict(date='2026-10-'+str(26+i),type=kind,hours=9 if kind=='normal' else 0) for i,kind in enumerate(types)])
+            target,issue=schedule(week,datetime(2026,10,26,6,tzinfo=timezone.utc))
+            self.assertEqual(target[:10] if target else None,expected)
+            self.assertEqual((row['date'],row['reason']),(expected,issue))
+        week=dict(days=[dict(date='2026-10-'+str(26+i),type='vacaciones',hours=0) for i in range(5)])
+        self.assertEqual(schedule(week,datetime(2026,10,30,7,tzinfo=timezone.utc))[1],'past-due')
+
+    def test_vacation_week_can_be_scheduled_without_breaking_predecessor_rule(self):
+        req=request()
+        for day in req['weeks'][0]['days']:day.update(type='vacaciones',hours=0)
+        req['weeks'][0]['body']='\n'.join('LMXJV'[i]+' '+datetime.fromisoformat(d['date']).strftime('%d/%m')+' — Vacaciones' for i,d in enumerate(req['weeks'][0]['days']))
+        plan=reconcile(req,inventory(req),NOW)
+        self.assertEqual((plan['rows'][0]['state'],plan['rows'][0]['schedule']),('ready','2027-02-05T08:00:00+01:00'))
+        self.assertEqual(plan['rows'][1]['state'],'ready')
+        self.assertEqual(reconcile(req,dict(complete=True,accountVerified=True,records=[]),NOW)['rows'][0]['state'],'blocked-previous')
 
     def test_sequential_and_individual(self):
         req = request(); inv = inventory(req)
@@ -94,8 +119,8 @@ class ModelTests(unittest.TestCase):
         req = request(); inv = inventory(req)
         self.assertEqual(reconcile(req, inv, datetime(2027,2,6,tzinfo=timezone.utc))['rows'][0]['state'], 'past-due')
         for day in req['weeks'][0]['days']:
-            day.update(type='vacaciones', hours=0)
-        req['weeks'][0]['body'] = '\n'.join('LMXJV'[i]+' '+datetime.fromisoformat(d['date']).strftime('%d/%m')+' — Vacaciones' for i,d in enumerate(req['weeks'][0]['days']))
+            day.update(type='festivo', hours=0)
+        req['weeks'][0]['body'] = '\n'.join('LMXJV'[i]+' '+datetime.fromisoformat(d['date']).strftime('%d/%m')+' — Festivo' for i,d in enumerate(req['weeks'][0]['days']))
         plan = reconcile(req, inv, NOW)
         self.assertEqual(plan['rows'][0]['state'], 'no-workdays')
         self.assertEqual(plan['rows'][1]['state'], 'blocked-previous')
@@ -142,6 +167,13 @@ class StoreTests(unittest.TestCase):
         self.assertEqual(self.store.ledger(), {})
         with self.assertRaises(PermissionError): self.store.commit(plan['planId'], self.reader, self.writer, NOW, updates=[])
         self.assertEqual(self.calls, [])
+
+    def test_date_policy_change_requires_a_new_review(self):
+        from unittest.mock import patch
+        plan=self.store.preview(self.req,self.inv,NOW)
+        with patch('hours_model.SCHEDULE_POLICY',999):
+            with self.assertRaises(StalePlan):self.store.commit(plan['planId'],self.reader,self.writer,NOW,allow_writes=True,updates=[])
+        self.assertEqual(self.calls,[])
 
     def test_chronological_commit_and_repeat_do_not_duplicate(self):
         plan = self.store.preview(self.req, self.inv, NOW)
@@ -197,7 +229,7 @@ class HttpTests(unittest.TestCase):
         from urllib.error import HTTPError
         import json,re
         with tempfile.TemporaryDirectory() as temp:
-            store=Store(temp);req=request();inv=inventory(req)
+            store=Store(temp);req=request();inv=inventory(req,1)
             observed_clock=[NOW];read_calls=[]
             cfg=dict(private_origin='https://hours.example.invalid',app_origin='https://app.example.invalid',owner='owner@example.invalid')
             class FreshReader:
@@ -227,6 +259,10 @@ class HttpTests(unittest.TestCase):
                 # A slow observation must not expire its cache before returning.
                 json.load(post('/preview',req))
                 self.assertEqual(len(read_calls),1)
+                status=json.load(urlopen(Request(root+'/status?period=2027-02',headers=headers|{'Origin':cfg['app_origin']})))
+                self.assertEqual(status['rows'][0]['days'],req['weeks'][0]['days'])
+                self.assertEqual(status['rows'][0]['schedule'],'2027-02-05T08:00:00+01:00')
+                self.assertNotIn('body',status['rows'][0]);self.assertNotIn('toDisplay',status['rows'][0])
                 result=json.load(post('/simulate',dict(planId=plan['planId'],updates=[])))
                 self.assertTrue(result['simulation']);self.assertEqual(store.ledger(),{})
                 with self.assertRaises(HTTPError) as caught:post('/commit',dict(planId=plan['planId']))

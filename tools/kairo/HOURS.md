@@ -11,8 +11,10 @@ integración más reciente figura al final.
 
 - Mes visible, incluida su semana puente, más dos semanas completas posteriores.
   Identidad: lunes `YYYY-MM-DD`, nunca el día de envío ni solo el número de semana.
-- Último día realmente trabajado, a las 08:00 de `Europe/Madrid`. Si ya pasó o
-  no hay días laborables, dejar pendiente; no enviar inmediatamente.
+- Último día realmente trabajado de lunes a viernes, a las 08:00 de Madrid.
+  Si los cinco días son vacaciones/festivos, usar el último que no sea festivo,
+  aunque sea de vacaciones. Con los cinco festivos o una fecha ya pasada, dejar
+  pendiente; no enviar inmediatamente.
 - La anterior debe existir enviada/programada. El lote avanza cronológicamente;
   una incidencia sin resolver bloquea las nuevas semanas posteriores.
 - Enviada: conservar. Programada idéntica: conservar. Programada con cambios:
@@ -236,3 +238,46 @@ La caché de lectura empieza al terminar la observación, para que una consulta
 lenta no nazca ya caducada. El commit conserva sus lecturas frescas y el diario.
 La prueba HTTP simula una observación de 40 segundos y acredita que la segunda
 revisión inmediata reutiliza la observación, sin escribir correo.
+
+
+## Home y confirmación compacta (v512)
+
+El estado principal está en Home: «Todo al día», pendientes o revisión, con
+recuentos y una etiqueta por semana. Las programadas muestran su fecha/hora.
+El resumen mensual conserva su composición a la derecha. «Comprobar Outlook»
+abre el puente de consulta y vuelve automáticamente a Home; no confirma ni
+programa. Si hay que programar, solo se muestran de entrada semanas nuevas o
+modificadas. Resueltas, destinatarios y contenido permanecen plegados.
+En producción se oculta la simulación. Cero operaciones no ofrece confirmar.
+
+GET /status añade únicamente días y fecha de las programaciones a su resultado
+privado. Home compara esos datos con los días actuales y la fecha prevista:
+existencia de correo no acredita sincronización de horas o fecha. La consulta
+completa devuelve la misma evidencia mediante el puente de ventanas. Una edición
+local deja de verse sincronizada y deshacerla recupera el estado si vuelve a
+coincidir. Sin esa evidencia, una programación no se presenta como sincronizada.
+No se incluyen cuerpo ni destinatarios en este endpoint.
+
+hoursWeekDays centraliza el desglose que se envía y el que se compara. El puente
+solo gestiona origen/ventana/ID; Home aporta callbacks y la validación de datos
+sin cambios. La demostración documental no depende de los globales de la app.
+La intención check oculta la confirmación y tampoco autoriza la comprobación
+previa a un commit.
+
+La excepción de vacaciones se calcula tanto en Home como en Kairo; una prueba
+cruzada verifica ambas versiones. SCHEDULE_POLICY=2 invalida las revisiones
+anteriores al cambio de regla, sin borrar el diario ni tocar correos existentes.
+Si se cambia otra vez la elegibilidad o fecha de envío, revisar esta versión de
+política para no confirmar una decisión diferente de la que vio el usuario.
+
+Las pruebas de esta entrega usan datos ficticios y Edge en anchuras de móvil.
+No necesitan ni manejan el teléfono. No se programa correo real para validar la
+nueva presentación; la comprobación remota posterior es de solo lectura.
+
+
+La comprobación de solo lectura del candidato v512 contra Kairo real acreditó
+el regreso automático a Home y cuatro enviadas/tres programadas sincronizadas
+con la solicitud privada de referencia. El contexto de prueba bloqueaba commit
+por precaución y registró cero peticiones de escritura. No se conectó ni utilizó
+el teléfono. La evidencia real queda fuera de Git y las capturas del atlas son
+ficticias.

@@ -33,18 +33,18 @@ async function setup(page,context,scenario='mixed'){
   await expect(page.locator('[data-hours-review]')).toBeVisible();
   return calls;
 }
-async function open(page,button){const waiting=page.waitForEvent('popup');await button.click();const popup=await waiting;await expect(popup.locator('#message')).toContainText('Conciliación terminada');return popup;}
+async function open(page,button){const waiting=page.waitForEvent('popup');await button.click();const popup=await waiting;await expect(popup.locator('#message')).toContainText('Estado actualizado en Home');return popup;}
 
 test('lote e individual conservan alcance; revisión muestra cambios y simula sin correos reales',async({page,context},info)=>{
   const calls=await setup(page,context);const before=await page.evaluate(()=>JSON.stringify(SW));
   const popup=await open(page,page.locator('[data-hours-review]'));
-  await expect(popup.locator('.week')).toHaveCount(6);await expect(popup.locator('.week[data-state=sent]')).toHaveCount(1);await expect(popup.locator('.week[data-state=scheduled]')).toHaveCount(1);await expect(popup.locator('.week[data-state=changed]')).toHaveCount(1);await expect(popup.locator('.week[data-state=ready]')).toHaveCount(3);
-  await expect(popup.locator('.week[data-state=changed]')).toContainText('8 h → 9 h');
-  await expect(popup.locator('#recipients')).toContainText('copia@example.invalid');
+  await expect(popup.locator('.week')).toHaveCount(4);await expect(popup.locator('.resolved-week[data-state=sent]')).toHaveCount(1);await expect(popup.locator('.resolved-week[data-state=scheduled]')).toHaveCount(1);await expect(popup.locator('#resolved')).not.toHaveAttribute('open','');await popup.screenshot({path:info.outputPath('hours-batch.png'),fullPage:true});await expect(popup.locator('.week[data-state=changed]')).toHaveCount(1);await expect(popup.locator('.week[data-state=ready]')).toHaveCount(3);
+  await expect(popup.locator('.week[data-state=changed] details')).not.toHaveAttribute('open','');await popup.locator('.week[data-state=changed] summary').click();await expect(popup.locator('.week[data-state=changed]')).toContainText('8 h → 9 h');await popup.locator('.week[data-state=changed] summary').click();
+  await expect(popup.locator('#recipients')).not.toHaveAttribute('open','');await popup.locator('#recipients > summary').click();await expect(popup.locator('#recipients')).toContainText('copia@example.invalid');await popup.locator('#recipients > summary').click();
   await popup.locator('[data-update]').check();await popup.locator('#simulate').click();await expect(popup.locator('#simulation')).toContainText('No se ha creado ni modificado ningún correo');
   expect(await page.evaluate(()=>JSON.stringify(SW))).toBe(before);
   expect(calls.some(c=>c.path.endsWith('/commit'))).toBe(false);
-  await popup.screenshot({path:info.outputPath('hours-batch.png'),fullPage:true});await popup.close();
+  await popup.close();
   const individual=await open(page,page.locator('.week-card').nth(3).getByRole('button',{name:'Programar semana'}));
   await expect(individual.locator('h1')).toHaveText('Programar esta semana');await expect(individual.locator('.week')).toHaveCount(1);await expect(individual.locator('.week')).toHaveAttribute('data-state','ready');
   await individual.close();expect(await page.evaluate(()=>JSON.stringify(SW))).toBe(before);
@@ -57,7 +57,7 @@ test('un duplicado se revisa por semana aunque cambie su día de envío',async({
 
 test('individual no adelanta una semana anterior pendiente',async({page,context})=>{
   await setup(page,context,'previous-missing');const popup=await open(page,page.locator('.week-card').nth(3).getByRole('button',{name:'Programar semana'}));
-  await expect(popup.locator('.week')).toHaveAttribute('data-state','blocked-previous');await expect(popup.locator('.week')).toContainText('2027-02-15');
+  await expect(popup.locator('.week')).toHaveAttribute('data-state','blocked-previous');await expect(popup.locator('.week')).toContainText('15 feb');
   await popup.locator('#simulate').click();await expect(popup.locator('#simulation')).toContainText('No hay programaciones nuevas');
 });
 
@@ -74,6 +74,48 @@ test('la revisión comunica estados aunque el navegador bloquee la consulta auto
   await popup.locator('#refresh').click();
   await expect(popup.locator('.week[data-state=duplicate]')).toHaveCount(1);
   await expect.poll(()=>page.evaluate(()=>HOURS_STATUS.rows.filter(r=>r.state==='duplicate').length)).toBe(1);
+});
+
+test('comprobar vuelve a Home sin confirmar ni cambiar correos',async({page,context})=>{
+  await page.route(base+'horas/status?**',route=>route.abort());
+  const calls=await setup(page,context),before=await page.evaluate(()=>JSON.stringify(localStorage));
+  const waiting=page.waitForEvent('popup');await page.getByRole('button',{name:'Comprobar Outlook',exact:true}).click();const popup=await waiting;
+  await expect.poll(()=>popup.isClosed()).toBe(true);
+  await expect(page.locator('.home-submission')).toContainText('1 enviada · 1 programada · 3 pendientes · 1 por revisar');
+  expect(calls.some(c=>c.path.endsWith('/commit')||c.path.endsWith('/simulate'))).toBe(false);
+  expect(await page.evaluate(()=>JSON.stringify(localStorage))).toBe(before);
+});
+
+test('Home compara la programación con los días actuales y detecta cambios locales',async({page,context},info)=>{
+  await setup(page,context);await expect.poll(()=>page.evaluate(()=>HOURS_STATUS.phase)).toBe('ready');
+  const week=page.locator('.week-card').nth(1);
+  await expect(week.locator('.hours-week-badge')).toHaveText('◷ Programada');
+  await expect(week.locator('.hours-week-readonly')).toContainText('12/02');
+  await page.evaluate(()=>{ST['2027-02-09']={type:'vacaciones'};render();});
+  await expect(week.locator('.hours-week-badge')).toHaveText('Revisar cambios');
+  await page.screenshot({path:info.outputPath('hours-home-changed.png'),animations:'disabled'});
+  await page.evaluate(()=>{delete ST['2027-02-09'];render();});
+  await expect(week.locator('.hours-week-badge')).toHaveText('◷ Programada');
+});
+
+test('semana de vacaciones usa el último día no festivo y muestra solo lo que requiere revisión',async({page,context})=>{
+  await setup(page,context);await page.evaluate(()=>{for(let day=8;day<=12;day++)ST['2027-02-'+String(day).padStart(2,'0')]={type:day===12?'festivo':'vacaciones'};render();});
+  const popup=await open(page,page.locator('.week-card').nth(1).getByRole('button',{name:'Revisar cambios'}));
+  await expect(popup.locator('.week .date')).toContainText('11/02');await expect(popup.locator('.week .date')).toContainText('08:00');
+  await expect(popup.locator('[data-update]')).not.toBeChecked();
+});
+
+test('semanas resueltas aparecen sincronizadas en Home y no ofrecen una confirmación vacía',async({page,context},info)=>{
+  await page.route(base+'horas/status?**',async route=>{
+    const request=await (await context.request.get('http://127.0.0.1:8772/example?mode=month',{headers:{Origin:'http://127.0.0.1:8765'}})).json();
+    return route.fulfill({json:{period:request.period,checkedAt:new Date().toISOString(),rows:request.weeks.map((w,i)=>({key:w.key,state:i?'scheduled':'sent',days:w.days,schedule:w.days[4].date+'T08:00:00+01:00'}))},headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}});
+  });
+  await setup(page,context);await expect(page.locator('.home-submission.complete')).toContainText('Todo al día');
+  await expect(page.locator('.home-submission.complete')).toContainText('1 enviada · 5 programadas');
+  await page.screenshot({path:info.outputPath('hours-home-synced.png'),animations:'disabled'});
+  await context.route(base+'horas/',async route=>{const response=await context.request.get('http://127.0.0.1:8772/');await route.fulfill({contentType:'text/html',body:(await response.text()).replace('"allowWrites": false','"allowWrites": true')});});
+  const popup=await open(page,page.locator('.week-card').first().getByRole('button',{name:'Ver estado'}));
+  await expect(popup.locator('#summary')).toContainText('Todo al día');await expect(popup.locator('#commit')).toBeHidden();await expect(popup.locator('#simulate')).toBeHidden();
 });
 
 test('si Gestify cambia tras revisar, no permite confirmar el lote antiguo',async({page,context})=>{
