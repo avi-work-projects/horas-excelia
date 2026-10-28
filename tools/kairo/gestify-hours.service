@@ -1,0 +1,15 @@
+[Unit]
+Description=Gestify - conciliacion y programacion de horas
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/gestify-outlook
+ExecStart=%h/gestify-outlook/hours-venv/bin/python %h/gestify-outlook/tools/hours_service.py --config %h/gestify-outlook/hours.json
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+
+[Install]
+WantedBy=default.target

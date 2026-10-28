@@ -111,3 +111,44 @@ ctx.startActivity(intent);
 La "eliminación" desde el PWA sigue siendo:
 1. Borra del registro `excelia-alarms-v1` (siempre, inmediato)
 2. Llama al webhook MacroDroid `/apagar_alarmas?names=label` → ejecuta el script DISMISS_ALARM
+
+
+### Investigación del 27/10/2026: apertura del reloj y retraso intermitente
+
+Comprobaciones de solo lectura en el Vivo: MacroDroid 6.0.11 habilitado, permiso
+SET_ALARM concedido, ejecución en segundo plano permitida y exclusión del ahorro
+de batería presente. La copia automática de esa madrugada conserva ambas
+macros de alta con SKIP_UI=true y pausas de 10/40 ms; no hay una pausa de dos
+minutos en esas acciones. El registro contiene errores UnknownHostException
+para backend.macrodroid.com del 25/10. En la comprobación actual, ese dominio y
+mtalk.google.com resolvían y respondían. Esto documenta un fallo previo de DNS;
+no demuestra que causara el retraso concreto relatado por Ángel. No se cambia
+DNS, VPN, permisos ni macros durante esta revisión.
+
+Ángel autorizó una única alarma temporal Prueba Gestify, miércoles 28/10/2026
+a las 18:00, desde la campana. Marcador de inicio: 12:36:56.273 Europe/Madrid.
+Android llevó al frente la tarea existente del reloj a las 12:36:57.106 y creó
+HandleApiCalls con SET_ALARM a las 12:36:57.108; terminó a las 12:36:57.177 y
+quedó Timer (la pantalla del reloj) al frente. Se verificó la alarma de las
+18:00 con ese nombre y miércoles en la lista del reloj. Al terminar se eligió
+Descartar alarmas repetidas y se comprobó su interruptor en false. Las demás
+alarmas no se modificaron. Los registros y capturas reales quedan fuera de Git.
+
+Resultado: reproducida la apertura del reloj, con la petición entrando en su
+tarea existente; no reproducido el retraso de dos minutos. La actividad de alta
+termina, pero queda al frente la pantalla de la tarea reutilizada. SKIP_UI pide
+omitir la interfaz intermedia, no constituye un acuse de creación. Además el
+script de MacroDroid muestra su propio toast nativo tras startActivity: tampoco
+comprueba la base de datos del reloj. No atribuir el aviso visto por Ángel a una
+u otra app sin identificar su texto u origen.
+
+Pendiente para el ajuste del móvil: probar el lanzamiento de alta en una tarea
+temporal independiente (manteniendo SKIP_UI) y validar con reloj ya abierto y
+cerrado antes de cambiar las dos macros. Esta es una hipótesis de corrección
+del salto de pantalla, no una solución validada ni aplicada. Para el retraso,
+correlacionar en el próximo caso la petición de Gestify, la recepción del
+webhook y la actividad del reloj; el HTTP del webhook no es ese acuse. No
+reenviar a ciegas una petición incierta, pues puede llegar más tarde.
+
+Referencias: [AlarmClock y SKIP_UI](https://developer.android.com/reference/android/provider/AlarmClock#EXTRA_SKIP_UI),
+[webhook de MacroDroid por FCM](https://macrodroidforum.com/wiki/index.php/Trigger%3A_Webhook_%28URL%29).

@@ -1396,3 +1396,53 @@ El lector admite solo los hosts HTTPS exactos `outlook.office.com` y
 consultas sin caché y las verificaciones del commit refrescan el servidor para
 no tomar por definitivo un estado anterior de la lista. Un editor abierto o
 un inicio de sesión interrumpen esa lectura sin provocar reintentos de escritura.
+## Regreso a Ajustes y entrega de alarmas (v510)
+
+settingsPanelBack (settings-menu.js) conserva el anclaje, scroll y navegación
+anterior de Configuración. Correo, MacroDroid, Facturas, Ruta de guardado, Mis
+Datos y Notas restauran ese origen al pulsar Atrás. Los accesos directos conservan
+su destino anterior; repintar una factura abierta conserva el mismo retorno y
+reabrir durante los 300 ms de cierre captura un origen nuevo. No se cambia el
+aspecto de los menús: las capturas del atlas siguen siendo representativas.
+
+requestMacroAlarm (alarms.js) centraliza los envíos de campana/Siesta, eventos
+y cumpleaños: GET sin caché, sin reintentos automáticos y respuesta opaca sin
+interpretarla como creación confirmada. El registro se añade tras terminar la
+petición del navegador; un fallo conocido no marca el evento como enviado. En
+lotes puede quedar constancia de las peticiones completadas antes de un fallo.
+Una petición que siga pendiente tras 10 s muestra un aviso, sin abortarla ni
+reenviarla. No detecta el retraso posterior en FCM, MacroDroid o el reloj.
+ALARM_REQUESTS conserva en memoria los últimos 20 intentos con fecha, duración
+y estado, sin URL, texto, horas de la alarma ni datos privados. No es un acuse
+del teléfono y no se exporta al backup.
+
+Las pruebas de navegador interceptan todos los webhooks. La investigación
+controlada del móvil y sus límites están en docs/macrodroid.md. El trabajo
+de programación semanal de Outlook y el nuevo resumen de Home siguen en su
+rama WIP; esta entrega no los publica.
+
+
+## Programación de horas integrada (v511)
+
+Home abre la misma revisión privada de Kairo desde «Programar pendientes» y
+«Programar semana». El alcance compartido es el mes visible más dos semanas
+completas adicionales. La conciliación remota sustituye las marcas manuales
+como evidencia y exige confirmación antes de programar. El resumen conserva
+su diseño de producción a la derecha; la propuesta de rediseño sigue separada.
+
+La conexión privada HTTPS reconoce las semanas enviadas y las programadas desde
+Android. Se validó una programación ficticia en jueves y su actualización por
+el adaptador al miércoles, conservando un único correo y su ID. El formulario
+real necesitó ajustes de destinatarios asíncronos, selector de fecha y selección
+de fila; las pruebas offline reproducen esas diferencias. Ver el estado,
+servicios, diario y límites de sesión en [HOURS.md](../tools/kairo/HOURS.md).
+
+El atlas recaptura solo las tres vistas de Home afectadas. Las otras referencias
+y revisiones históricas se conservan mediante verificación representativa;
+no se regeneran por cambios de huellas compartidas.
+
+La revisión HTTPS real también se confirmó con un lote sin operaciones. El
+estado vuelve a Home por el canal de ventana validado, incluso cuando el
+navegador deniega la consulta automática de red local. No conceder ni desactivar
+ese permiso por código. Su denegación no se presenta como rechazo de Outlook.
+La comprobación física de la PWA nueva en el Vivo sigue separada de esta prueba.

@@ -63,7 +63,8 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
         now = clock()
         old = cache.get(request['period'])
         if force or not old or (now-old[0]).total_seconds() >= config.get('cache_seconds',30):
-            cache[request['period']] = (now, current(request))
+            inventory=current(request)
+            cache[request['period']] = (clock(), inventory)
         return copy.deepcopy(cache[request['period']][1])
 
     class Handler(BaseHTTPRequestHandler):

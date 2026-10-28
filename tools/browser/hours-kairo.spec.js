@@ -61,6 +61,21 @@ test('individual no adelanta una semana anterior pendiente',async({page,context}
   await popup.locator('#simulate').click();await expect(popup.locator('#simulation')).toContainText('No hay programaciones nuevas');
 });
 
+test('la revisión comunica estados aunque el navegador bloquee la consulta automática',async({page,context})=>{
+  await page.route(base+'horas/status?**',route=>route.abort());
+  await setup(page,context);
+  const popup=await open(page,page.locator('[data-hours-review]'));
+  await expect.poll(()=>page.evaluate(()=>HOURS_STATUS.phase)).toBe('ready');
+  await popup.route(base+'horas/preview',async route=>{
+    const payload=route.request().postDataJSON();payload.demoScenario='duplicate';
+    const response=await context.request.post('http://127.0.0.1:8772/preview',{headers:{Origin:'http://127.0.0.1:8772','X-CSRF':route.request().headers()['x-csrf']},data:payload});
+    await route.fulfill({response});
+  });
+  await popup.locator('#refresh').click();
+  await expect(popup.locator('.week[data-state=duplicate]')).toHaveCount(1);
+  await expect.poll(()=>page.evaluate(()=>HOURS_STATUS.rows.filter(r=>r.state==='duplicate').length)).toBe(1);
+});
+
 test('si Gestify cambia tras revisar, no permite confirmar el lote antiguo',async({page,context})=>{
   const calls=await setup(page,context);
   // Only this synthetic page exposes the future confirmation control. The

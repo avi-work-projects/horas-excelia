@@ -20,6 +20,7 @@ for(const mode of ['midnight','return'])test(`alarma ${mode}: fecha real del avi
   await expect(page.locator('.bd-alarm-date')).toContainText('23/08');
  }else await expect(page.locator('.ev-alarm-pre-btn.on')).toContainText('23:15 · 21/08');
  await page.locator('#evAlarmCreate').click();await expect.poll(()=>requests.length).toBe(1);
+ await expect.poll(()=>page.evaluate(()=>ALARMS.length)).toBe(1);
  const saved=await page.evaluate(()=>ALARMS[0]);
  expect(saved.targetDate).toBe(mode==='return'?'2026-08-23':'2026-08-21');
  expect(saved.hour).toBe(mode==='return'?17:23);expect(saved.minute).toBe(mode==='return'?0:15);

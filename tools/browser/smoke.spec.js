@@ -157,8 +157,8 @@ test('ajustes bloqueados, guardado explicito y backup con conexiones',async({pag
  await page.locator('#mailToLocal').fill('test@example.invalid');await page.locator('#mailNameLocal').fill('Prueba');
 
  expect(await page.evaluate(()=>localStorage.getItem('excelia-mail-config-v1'))).toBeNull();
- await page.locator('#connectionsSave').click();await expect(page.locator('#mailToLocal')).toHaveAttribute('readonly','');await page.locator('#connectionsClose').click();await expect(page.locator('#connectionsWrap')).toHaveCount(0);await page.locator('#menuBtn').click();
- await page.locator('#editMacroBtn').click();await page.locator('#connectionsEdit').click();await page.locator('#macroAlarmUrlMenu').fill('https://trigger.macrodroid.com/TEST');await page.locator('#connectionsSave').click();await page.locator('#connectionsClose').click();await expect(page.locator('#connectionsWrap')).toHaveCount(0);await page.locator('#menuBtn').click();
+ await page.locator('#connectionsSave').click();await expect(page.locator('#mailToLocal')).toHaveAttribute('readonly','');await page.locator('#connectionsClose').click();await expect(page.locator('#connectionsWrap')).toHaveCount(0);await expect(page.locator('#dataMenu')).toHaveClass(/open/);
+ await page.locator('#editMacroBtn').click();await page.locator('#connectionsEdit').click();await page.locator('#macroAlarmUrlMenu').fill('https://trigger.macrodroid.com/TEST');await page.locator('#connectionsSave').click();await page.locator('#connectionsClose').click();await expect(page.locator('#connectionsWrap')).toHaveCount(0);await expect(page.locator('#dataMenu')).toHaveClass(/open/);
  const [download]=await Promise.all([page.waitForEvent('download'),exportFile(page,'#exportAllBtn','save')]);
  const data=JSON.parse(require('fs').readFileSync(await download.path(),'utf8'));
  expect(data.mailConfig.to).toBe('test@example.invalid');expect(data.macroUrl).toBe('https://trigger.macrodroid.com/TEST');
@@ -564,12 +564,12 @@ test('Home: aviso de semanas y estado completo, cabecera opaca',async({page})=>{
   weeks(CY,CM).forEach(w=>SW[dk(w[0])]=true);homeSubmissionWeeks(CY,CM).forEach(w=>SW[w.key]=true);render();
  });
  const compact=page.locator('.home-summary-compact');
- await expect(compact.locator('.home-hours-row.off')).toHaveCount(2);
- for(const row of await compact.locator('.home-hours-row').all()){
-  const boxes=await row.locator(':scope > *').evaluateAll(els=>els.map(el=>el.getBoundingClientRect().bottom));
-  expect(Math.max(...boxes)-Math.min(...boxes)).toBeLessThan(16);
+ await expect(compact.locator('.ms-breakdown > span')).toHaveCount(2);
+ for(const row of await compact.locator('.month-stat').all()){
+  const boxes=await row.locator('span').evaluateAll(els=>els.map(el=>el.getBoundingClientRect().bottom));
+  expect(Math.max(...boxes)-Math.min(...boxes)).toBeLessThan(6);
  }
- await expect(page.locator('.month-summary:not(.home-summary-compact) .home-hours-row.off')).toHaveCount(2);
+ await expect(page.locator('.month-summary:not(.home-summary-compact) .ms-breakdown > span')).toHaveCount(2);
  await page.screenshot({path:'.local-preview/home-may-breakdown.png',animations:'disabled'});
  await page.locator('.month-summary:not(.home-summary-compact)').scrollIntoViewIfNeeded();
  await page.screenshot({path:'.local-preview/home-footer-breakdown.png',animations:'disabled'});

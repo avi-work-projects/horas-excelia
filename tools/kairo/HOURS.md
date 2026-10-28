@@ -1,9 +1,11 @@
-# Programación de horas: candidato en revisión
+# Programación de horas con Kairo
 
 El acceso individual y «Programar pendientes» abren la misma conciliación.
-El servicio sigue **deshabilitado en producción**. La autorización posterior de
-Ángel permitió una prueba real acotada, ya anulada, que se describe debajo;
-no activa el lote de horas. La clave de paso queda fuera de este trabajo.
+La programación requiere confirmar una revisión vigente, sin cambios en los
+datos de Gestify. El servidor conserva el interruptor privado `writes_enabled`;
+instalar código no programa correos por sí solo. La clave de paso queda pendiente.
+Las secciones siguientes conservan el historial de preparación; el estado de
+integración más reciente figura al final.
 
 ## Reglas compartidas
 
@@ -158,3 +160,79 @@ La prueba reveló dos requisitos de integración:
 Recargar mediante la API de navegación o el botón del navegador, con el editor
 cerrado. No usar Ctrl+R dentro de Outlook: puede abrir una respuesta. La respuesta
 accidental a la prueba se descartó sin enviarse antes de la auditoría final.
+
+## Integración v511 — 28/10/2026
+
+- Home incorpora «Programar pendientes» y conserva «Programar semana». El resumen
+  vuelve a la composición de producción en el lado derecho; su propuesta de
+  rediseño permanece separada. Se incluyen las correcciones de Ajustes y alarmas
+  de v510, sin revertirlas al integrar la rama.
+- Tailscale Serve publica `/horas` hacia `127.0.0.1:8770`, con el usuario y origen
+  exactos. Las rutas anteriores, incluida `/facturas`, se conservan. Se comprobó
+  por HTTPS la lectura de cuatro semanas enviadas y tres programadas.
+- El adaptador programó una prueba ficticia a la propia cuenta para el jueves
+  19/11 a las 08:00, con viernes no laborable. Después el diario y adaptador
+  actualizaron ese mismo correo al miércoles 18/11 a las 08:00, al descontar
+  también el jueves. La lectura fresca confirmó un solo correo y el mismo ID.
+  Ningún correo real de horas se creó ni se reprogramó durante estas pruebas.
+- Las comprobaciones reales detectaron diferencias del formulario que una
+  simulación no acredita: sugerencias de destinatarios asíncronas, icono dentro
+  del botón de fecha y dos elementos con la misma etiqueta de hora. Ahora se
+  selecciona la dirección exacta y solo el input de hora. El día se elige en el
+  calendario y se comprueban tanto su selección como el texto DD/MM/YYYY.
+- Para actualizar se abre la fila observada y se verifica el ID del mensaje.
+  Navegar directamente a su URL puede volver a la carpeta sin seleccionar el
+  correo. Una fila ausente o una identidad distinta bloquean la operación.
+- Los intentos interrumpidos de prueba se conservaron en su diario privado y se
+  conciliaron antes de continuar. Ese diario está separado del de producción;
+  no se borra una reserva incierta como mecanismo de reintento.
+
+### Servicio persistente privado
+
+Las unidades de usuario están en `gestify-hours.service` y
+`gestify-outlook.service`; requieren el directorio privado `~/gestify-outlook`,
+su venv y `hours.json` con remitente, propietario, orígenes y estado reales.
+Configurar permisos 700/600 y mantener todo ello fuera de Git.
+El comando de horas escucha solo en loopback; no publicar CDP, VNC o el perfil.
+
+En Kairo se habilitó el mantenimiento de la sesión de usuario con linger y ambas
+unidades para próximos arranques. El Chromium autenticado actual no se reinició:
+continúa la unidad temporal anterior hasta que termine. No iniciar una segunda
+sesión sobre el mismo perfil mientras esa unidad siga activa. El nuevo arranque
+tras reiniciar Kairo no se ha ensayado en esta validación.
+
+Si Microsoft caduca la sesión, pide elegir cuenta o cambia una interfaz que no
+se reconoce, la conciliación queda sin confirmar y no crea correos. El acceso
+no equivale a una autenticación permanente ni a acceso por Graph.
+
+Para desactivar escrituras, cambiar únicamente `writes_enabled` a false en la
+configuración privada y reiniciar `gestify-hours.service`. Conserva el estado y
+el diario. La revisión y la simulación permanecen disponibles.
+
+
+### Estado comprobado de la activación
+
+El servicio persistente de horas está activo y permite confirmar programaciones
+tras la revisión. La auditoría final confirmó la anulación y retirada del
+correo ficticio automático, sin modificar las programaciones originales.
+El borrador manual de la prueba anterior se conserva sin programación.
+
+Se comprobó el candidato desde el origen HTTPS de Gestify contra el servicio
+real: siete semanas conciliadas, confirmación del origen sin cambios, commit
+sin operaciones (cuatro enviadas y tres programadas) y devolución del estado a
+Home. Se usó una copia privada de la solicitud del Vivo; esta prueba web no
+sustituye la comprobación física de la PWA instalada después de publicar.
+
+Edge bloqueó la consulta automática por el permiso Local Network Access.
+[Documentación oficial de Microsoft](https://learn.microsoft.com/en-us/deployedge/ms-edge-local-network-access).
+El fetch señala `targetAddressSpace: local`, sin conceder ni desactivar permisos.
+Si se deniega, la revisión por navegación HTTPS sigue disponible y devuelve sus
+estados por el canal de ventana ya validado, también al refrescar o confirmar.
+No se sustituye ese resultado por un fetch automático denegado. El aviso señala
+el permiso necesario; no inventa semanas enviadas ni pendientes sin comprobar.
+La sincronización automática al abrir Home requiere ese permiso del navegador.
+
+La caché de lectura empieza al terminar la observación, para que una consulta
+lenta no nazca ya caducada. El commit conserva sus lecturas frescas y el diario.
+La prueba HTTP simula una observación de 40 segundos y acredita que la segunda
+revisión inmediata reutiliza la observación, sin escribir correo.

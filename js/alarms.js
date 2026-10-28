@@ -6,6 +6,7 @@
    ============================================================ */
 
 var ALARMS_SK='excelia-alarms-v1';
+var ALARM_REQUESTS=[]; // Diagnóstico en memoria, sin URL, nombre ni datos del aviso.
 var ALARMS=(function(){
   try{
     var r=appStorage.getItem(ALARMS_SK);
@@ -42,6 +43,18 @@ function isAlarmPast(alarm){
 // Devuelve {h, m} sin comprobar historial
 function nextAlarmTime(targetDate,defaultH,defaultM){
   return{h:defaultH,m:defaultM};
+}
+
+/* Una respuesta opaca solo confirma que terminó la petición del navegador:
+   no acredita recepción de MacroDroid ni creación en el reloj. Sin reintentos. */
+function requestMacroAlarm(url){
+  var started=Date.now(),entry={startedAt:new Date().toISOString(),state:'sending',durationMs:null};
+  ALARM_REQUESTS.push(entry);if(ALARM_REQUESTS.length>20)ALARM_REQUESTS.shift();
+  var slow=setTimeout(function(){showToast('La entrega sigue sin confirmar. Comprueba el reloj antes de repetir.','error');},10000);
+  function settled(state){clearTimeout(slow);entry.state=state;entry.durationMs=Date.now()-started;}
+  return Promise.resolve().then(function(){return fetch(url,{mode:'no-cors',cache:'no-store'});}).then(function(){
+    settled('submitted');
+  },function(error){settled('unknown');throw error;});
 }
 
 // ── Abrir/cerrar overlay ────────────────────────────────────

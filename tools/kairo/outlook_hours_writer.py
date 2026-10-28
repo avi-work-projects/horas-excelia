@@ -43,12 +43,42 @@ def add_recipients(page, compose, kind, values):
         # fill() would remove every previous pill on the second recipient.
         field.press('End')
         page.keyboard.insert_text(address)
-        field.press('Enter')
+        # Resolve only the exact address. Enter can choose a stale suggestion
+        # while Outlook is fetching the new one.
+        exact=page.locator('#FloatingSuggestionsList').get_by_role('option',
+            name=re.compile(r'(?:^| - )'+re.escape(address)+r'$',re.I))
+        exact.wait_for(state='visible')
+        if exact.count()!=1:raise ValueError('Destinatario sugerido ambiguo')
+        exact.click()
         chips=field.locator('._EType_RECIPIENT_ENTITY')
         chips.nth(index).wait_for(state='visible')
         pending=field.evaluate("e=>[...e.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent).join('').replace(/[\\s\\u200b]/g,'')")
         if chips.count()!=index+1 or pending:
             raise ValueError('Destinatario sin resolver')
+
+
+def select_calendar_date(dialog, when):
+    navigation=dialog.locator('button[aria-label$=", change month"]')
+    if navigation.count()!=1:raise ValueError('Calendario de Outlook no reconocido')
+    match=re.fullmatch(r'('+'|'.join(MONTHS)+r') (20\d\d), change month',navigation.get_attribute('aria-label') or '')
+    if not match:raise ValueError('Mes visible sin confirmar')
+    current=int(match[2])*12+MONTHS.index(match[1])
+    target=when.year*12+when.month-1
+    if abs(target-current)>120:raise ValueError('Fecha fuera del calendario admitido')
+    while current!=target:
+        step=1 if target>current else -1
+        next_month=current+step
+        title=('Next month ' if step>0 else 'Previous month ')+MONTHS[next_month%12]
+        arrow=dialog.get_by_title(title,exact=True)
+        if arrow.count()!=1:raise ValueError('Navegación de calendario no reconocida')
+        arrow.click()
+        label=MONTHS[next_month%12]+' '+str(next_month//12)+', change month'
+        dialog.locator('button[aria-label="'+label+'"]').wait_for(state='visible')
+        current=next_month
+    label=str(when.day)+', '+MONTHS[when.month-1]+', '+str(when.year)
+    date=dialog.get_by_role('button',name=label,exact=True,include_hidden=True)
+    if date.count()!=1:raise ValueError('Día del calendario ambiguo')
+    date.click()
 
 
 class OutlookWriter:
@@ -75,7 +105,7 @@ class OutlookWriter:
                     if not record or record['state']!='scheduled':raise ValueError('La programación ha cambiado')
                     if not outlook_page(record['url']) or not urlsplit(record['url']).path.startswith('/mail/drafts/id/'):
                         raise ValueError('No es una programación editable de Outlook')
-                    page.goto(record['url'],wait_until='domcontentloaded')
+                    self.reader.open_scheduled(page,record)
                     page.get_by_role('button',name=re.compile('^Cancelar envío$|^Cancel send$',re.I),include_hidden=True).click()
                 else:
                     page.get_by_role('button',name=re.compile('^Correo nuevo$|^New mail$',re.I),include_hidden=True).click()
@@ -108,12 +138,14 @@ class OutlookWriter:
         compose.locator('button[aria-label="Más opciones de envío"]:visible').click()
         page.get_by_role('menuitem',name='Programar envío',exact=True,include_hidden=True).click()
         suggested=visible_dialog(page,'Programar envío')
-        suggested.get_by_role('button',name='Tiempo personalizado',exact=True,include_hidden=True).click()
+        custom=suggested.locator('button').filter(has_text=re.compile(r'Tiempo personalizado$'))
+        if custom.count()!=1:raise ValueError('Control de fecha personalizada ambiguo')
+        custom.click()
         dialog=visible_dialog(page,'Establecer fecha y hora personalizadas')
-        day=dialog.get_by_label('Seleccionar una fecha',exact=True)
-        clock=dialog.get_by_label('Seleccionar una hora',exact=True)
+        day=dialog.locator('input').and_(dialog.get_by_label('Seleccionar una fecha',exact=True))
+        clock=dialog.locator('input').and_(dialog.get_by_label('Seleccionar una hora',exact=True))
         if day.count()!=1 or clock.count()!=1:raise ValueError('Fecha y hora de Outlook no reconocidas')
-        day.fill(when.strftime('%d/%m/%Y'));day.press('Tab')
+        select_calendar_date(dialog,when)
         clock.fill('08:00');clock.press('Tab')
         selected='Selected date '+MONTHS[when.month-1]+' '+str(when.day)+', '+str(when.year)
         grid=dialog.locator('[role=grid]')

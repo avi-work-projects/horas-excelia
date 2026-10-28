@@ -89,9 +89,12 @@
       const updates=[...document.querySelectorAll('[data-update]:checked')].map(n=>n.dataset.update);
       try{
         if(!await verifySource())throw new Error('Los datos de Gestify han cambiado o su ventana está cerrada. Abre una revisión nueva.');
+        el('message').textContent='Programando y comprobando las semanas en Outlook… Mantén abierta esta revisión.';
         const result=await api('commit',{planId:plan.planId,updates,sourceVerified:true});
-        el('message').textContent=result.results.some(r=>r.state!=='scheduled')?'Hay una operación pendiente de comprobar. No repitas la programación.':'Programaciones verificadas en Outlook.';
         send({type:'committed'});
+        busy=false;await review(true);
+        el('message').textContent=!result.results.length?'No había programaciones nuevas ni actualizaciones seleccionadas. No se ha modificado ningún correo.':result.results.some(r=>r.state!=='scheduled')?'Hay una operación pendiente de comprobar. No repitas la programación.':'Programaciones verificadas en Outlook.';
+        button.disabled=true;el('simulate').disabled=true;
       }catch(error){el('message').textContent=error.message;}
       finally{busy=false;el('refresh').hidden=false;}
     };
