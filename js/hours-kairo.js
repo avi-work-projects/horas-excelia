@@ -82,8 +82,10 @@ function hoursKairoExchange(url,request,popup,options){
   options=options||{};
   return new Promise(function(resolve,reject){
     var origin=new URL(url).origin,id=crypto.randomUUID(),sent=false,done=false;
+    function closed(){return options.isClosed?options.isClosed():popup.closed;}
     function verifySource(event){
       var m=event.data;if(event.origin!==origin||event.source!==popup||!m||m.channel!=='gestify-hours-v1'||m.id!==id)return;
+      if(m.type==='close'&&options.close){options.close();stopWatch();if(!done)finish(new Error('Revisión cerrada. No se ha confirmado ninguna programación.'));return;}
       if(m.type==='verify-source'&&typeof m.probe==='string'){
         var matches=false;try{matches=!!options.sourceMatches&&options.sourceMatches()===true;}catch(e){}
         popup.postMessage({channel:m.channel,id:id,type:'source-result',probe:m.probe,matches:matches},origin);
@@ -96,7 +98,7 @@ function hoursKairoExchange(url,request,popup,options){
     }
     window.addEventListener('message',verifySource);
     function stopWatch(){clearInterval(watch);clearTimeout(watchTimeout);window.removeEventListener('message',verifySource);}
-    var watch=setInterval(function(){if(popup.closed)stopWatch();},1000),watchTimeout=setTimeout(stopWatch,1800000);
+    var watch=setInterval(function(){if(closed())stopWatch();},1000),watchTimeout=setTimeout(stopWatch,1800000);
     function finish(error,result){if(done)return;done=true;clearInterval(ping);clearTimeout(timeout);window.removeEventListener('message',receive);if(error){stopWatch();reject(error);}else resolve(result);}
     function receive(event){
       var message=event.data;
@@ -108,9 +110,24 @@ function hoursKairoExchange(url,request,popup,options){
       }
     }
     window.addEventListener('message',receive);
-    var ping=setInterval(function(){if(popup.closed)return finish(new Error('Ventana cerrada. No se ha confirmado ninguna programación.'));if(!sent)popup.postMessage({channel:'gestify-hours-v1',id:id,type:'hello'},origin);},400);
+    var ping=setInterval(function(){if(closed())return finish(new Error('Ventana cerrada. No se ha confirmado ninguna programación.'));if(!sent)popup.postMessage({channel:'gestify-hours-v1',id:id,type:'hello'},origin);},400);
     var timeout=setTimeout(function(){finish(new Error('Outlook sigue sin confirmar. Revisa la ventana de Kairo.'));},120000);
   });
+}
+function hoursReviewSurface(url){
+  // Android can capture a new window in another installed PWA, losing its opener.
+  if(!/Android/i.test(navigator.userAgent)||!matchMedia('(display-mode: standalone)').matches){
+    var popup=window.open(url,'_blank');
+    if(!popup)throw new Error('Permite abrir la revisión privada de Kairo.');
+    return {window:popup,close:function(){popup.close();},isClosed:function(){return popup.closed;}};
+  }
+  var dialog=document.createElement('dialog'),header=document.createElement('header'),title=document.createElement('strong'),back=document.createElement('button'),frame=document.createElement('iframe'),previous=document.activeElement;
+  dialog.className='hours-review-dialog';title.id='hours-review-title';title.textContent='Correo de horas';dialog.setAttribute('aria-labelledby',title.id);
+  back.type='button';back.textContent='Volver a Home';frame.title='Revisión de programación de horas';frame.referrerPolicy='no-referrer';frame.setAttribute('sandbox','allow-scripts allow-same-origin');frame.setAttribute('allow','local-network-access');
+  function close(){if(!dialog.isConnected)return;dialog.close();dialog.remove();if(previous&&previous.isConnected)previous.focus();}
+  header.append(title,back);dialog.append(header,frame);document.body.append(dialog);dialog.showModal();
+  back.onclick=close;dialog.addEventListener('cancel',function(event){event.preventDefault();close();});frame.src=url;
+  return {window:frame.contentWindow,close:close,isClosed:function(){return !dialog.isConnected;}};
 }
 function invalidateHoursReview(request,url,phase){
   if(request.period!==mkey(CY,CM)||url!==hoursKairoUrl())return;
@@ -118,20 +135,21 @@ function invalidateHoursReview(request,url,phase){
   HOURS_STATUS={period:request.period,url:url,phase:phase,rows:[],checkedAt:0,attemptedAt:Date.now()};paintHoursStatus();
 }
 async function openHoursReview(targetWeek,intent){
-  var popup;
+  var popup,surface;
   try{
     if(navigator.onLine===false)throw new Error('Sin conexión. No se puede comprobar Outlook.');
     var url=hoursKairoUrl();if(!url){openInvoiceSettings({connection:true});return;}
     var request=hoursMailRequest(targetWeek),original=JSON.stringify(request);
-    popup=window.open(url,'_blank');if(!popup)throw new Error('Permite abrir la revisión privada de Kairo.');
+    surface=hoursReviewSurface(url);popup=surface.window;
     var result=await hoursKairoExchange(url,request,popup,{
       intent:intent||'review',sourceMatches:function(){return intent!=='check'&&JSON.stringify(hoursMailRequest(request.targetWeek))===original;},
+      isClosed:surface.isClosed,close:surface.close,
       onCommitted:function(){invalidateHoursReview(request,url,'loading');},
       onUpdate:function(result){rememberHoursReview(result,request,url);},
       onError:function(){invalidateHoursReview(request,url,'error');}
     });
     rememberHoursReview(result,request,url);
-    if(intent==='check'){popup.close();window.focus();showToast('Estado de Outlook actualizado.','success');}
+    if(intent==='check'){surface.close();window.focus();showToast('Estado de Outlook actualizado.','success');}
     else showToast('Revisa las semanas antes de confirmar.','info');
   }catch(e){HOURS_STATUS={period:'',phase:'error',rows:[],checkedAt:0};paintHoursStatus();showToast(e.message,'error');}
 }

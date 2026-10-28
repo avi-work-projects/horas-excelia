@@ -234,6 +234,23 @@ No se sustituye ese resultado por un fetch automático denegado. El aviso señal
 el permiso necesario; no inventa semanas enviadas ni pendientes sin comprobar.
 La sincronización automática al abrir Home requiere ese permiso del navegador.
 
+### PWA de Android y captura de enlaces (v513)
+
+En el Vivo, abrir directamente la ventana de `/horas/` podía lanzar la PWA de
+Kairo y cerrar el `WindowProxy` esperado por Gestify. La consulta automática
+sí funcionaba; eso no acreditaba el recorrido del botón. Android standalone
+usa ahora un iframe dentro de un diálogo de Gestify, con sandbox de scripts y
+origen, sin navegación superior ni ventanas nuevas. El HTML solo permite como
+ancestro el origen configurado de Gestify; las demás respuestas prohíben marcos.
+La identidad Tailscale, Host, origen, CSRF y verificación del contenido al
+confirmar conservan sus comprobaciones. No se cambian permisos del dispositivo.
+
+La prueba física del candidato validó Comprobar Outlook con regreso automático,
+el lote de siete semanas y la revisión individual del 26/10. El resultado fue
+cuatro enviadas y tres programadas, sin crear o cambiar correos. La huella de
+localStorage coincidió con la inicial. Evidencia privada fuera de Git; el mapa
+añade únicamente una captura ficticia de esta presentación.
+
 La caché de lectura empieza al terminar la observación, para que una consulta
 lenta no nazca ya caducada. El commit conserva sus lecturas frescas y el diario.
 La prueba HTTP simula una observación de 40 segundos y acredita que la segunda
