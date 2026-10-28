@@ -1446,3 +1446,22 @@ estado vuelve a Home por el canal de ventana validado, incluso cuando el
 navegador deniega la consulta automática de red local. No conceder ni desactivar
 ese permiso por código. Su denegación no se presenta como rechazo de Outlook.
 La comprobación física de la PWA nueva en el Vivo sigue separada de esta prueba.
+
+
+## Outlook integrado en Home (v512)
+
+El panel y tarjetas de Home muestran el estado y la fecha de cada semana;
+Comprobar Outlook devuelve el resultado a Home sin programar. La confirmación
+solo presenta las excepciones y mantiene plegados los detalles. La consulta de
+estado incluye los días y fecha observados, para detectar diferencias reales
+con Gestify en lugar de comprobar únicamente si existe un correo.
+
+La fecha es el último día trabajado de lunes a viernes a las 08:00 de Madrid;
+si toda la semana son vacaciones/festivos, el último día no festivo, aunque sea
+de vacaciones. Con cinco festivos o una fecha pasada queda pendiente.
+Pruebas cruzadas JS/Python acreditan la regla compartida. La revisión anterior
+se invalida al cambiar la versión de política para que no cree una programación
+que no estaba propuesta. No se modifica el diario existente.
+
+Solo se actualizan las tres vistas de Home y las evidencias ficticias de esta
+interfaz. Las pruebas usan el navegador y no necesitan el teléfono del propietario.

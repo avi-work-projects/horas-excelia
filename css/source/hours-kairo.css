@@ -1,7 +1,13 @@
 /* The warning owns the batch entry; individual week actions stay in place. */
 .home-submission.unknown{--status-tone:var(--text-muted)}
-.hours-home-actions{grid-column:1/-1;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hours-home-actions{grid-column:1/-1;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.hours-home-actions .hours-verified-note{flex:1 1 88px}
+.hours-check-button{display:inline-grid;place-items:center;width:34px;height:34px;padding:0;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--status-tone);font:1.2rem var(--font);cursor:pointer}
 .hours-pending-button{border:1px solid color-mix(in srgb,var(--status-tone) 55%,var(--border));border-radius:8px;padding:8px 11px;background:var(--surface);color:var(--status-tone);font:600 .73rem var(--font);cursor:pointer;min-height:34px}
 .hours-pending-button:focus-visible{outline:2px solid var(--status-tone);outline-offset:3px}
 .hours-verified-note{font-size:.64rem;line-height:1.4;color:var(--text-muted)}
 .week-actions .sent-toggle:disabled{opacity:.75;cursor:default}
+.week-actions .hours-week-readonly{flex:1;display:flex;align-items:center;justify-content:center;padding:8px;min-width:0;color:var(--text-muted);font-size:.7rem;line-height:1.4;text-align:center}
+.week-actions .hours-week-readonly.attention{color:var(--c-orange)}
+.hours-week-badge.attention{color:var(--c-orange)}
+.hours-week-badge.unknown{color:var(--text-muted)}

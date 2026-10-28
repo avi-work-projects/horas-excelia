@@ -11,41 +11,41 @@
     }
   },
   "general": {
-    "fingerprint": "cd5e8f4d0d09559f9fe809b31dbf6146aa1d6738b3c93db394a5458a7aff5d67",
+    "fingerprint": "a51f00081efcb5cee444e1799fccd3451bf147c2267e816e0296668a0c314d50",
     "files": [
       "map-general.svg",
       "map-general.png"
     ],
     "hashes": {
-      "map-general.svg": "6caab08466e4572bb21f232ce620c606a6170f43b212aaacf1b8d1935a922025",
-      "map-general.png": "0c8dc0694f06c43f12d2457ce68d684ec6ac6b486dc348ae2c3018d6333c5a21"
+      "map-general.svg": "f14e8d6eea03cc99528b2ac160e9c835a0cae197038e971a086f5b579bb255e3",
+      "map-general.png": "7bc9d4bae5366608cbc7e6f56546044f961b5b52cc9ec205e03dcadcd081c46b"
     }
   },
   "area-0-0": {
-    "fingerprint": "a00296a5e7862e744a36e5c21f83f0a9da443c72e780642bf67d265298c69a02",
+    "fingerprint": "fc069c1069c4a6cde87bbbc8bb0a9679b8c198bdab5890c38988eac256bce042",
     "files": [
       "sheets/area-0-0.png"
     ],
     "hashes": {
-      "sheets/area-0-0.png": "b90587fae94d0cf1d335d4a532c0ca2b178493567c1d6206b6d069ea2cba6a1c"
+      "sheets/area-0-0.png": "be21f372358140ecfea1235ecd4a7740066b9e3cec9330f494ee82cb279d0c27"
     }
   },
   "area-0-1": {
-    "fingerprint": "ce78a89747de4781f997beb7f55defdda22a7fff08c5ec0bf1086c588fd03e23",
+    "fingerprint": "ed28b14083fc9fb79e4304a54a6f8239e7dab8f1a195c668ebd6f18c6aa46c19",
     "files": [
       "sheets/area-0-1.png"
     ],
     "hashes": {
-      "sheets/area-0-1.png": "e791c1fae756c8213b8889961f8396e5e1b67b7030da221f1c5013149ccc298a"
+      "sheets/area-0-1.png": "6f1721304ea99f19458b95e5fdf29d063531edeef02e9e90b8b1b4cab50b49c9"
     }
   },
   "area-1-0": {
-    "fingerprint": "f26bec3598f06f411e5d7fa7e6469079aca2ac4b96a50db36c490a13f40e0ce2",
+    "fingerprint": "90548aeb6be6387b1d3a8e5faf371b238735dc65e84395be09f7c8d325c12fbc",
     "files": [
       "sheets/area-1-0.png"
     ],
     "hashes": {
-      "sheets/area-1-0.png": "68e973d3d9a60da3604ad5c41b3e697a8606eb97382f01cec12e0f81f5c0a1be"
+      "sheets/area-1-0.png": "da9a19ffc6c50f6f77943ff48bc3e82f377fc55b044072d712f00641f9be42a4"
     }
   },
   "area-1-1": {
@@ -58,12 +58,12 @@
     }
   },
   "area-2-0": {
-    "fingerprint": "d2b75fd5d99052b6af903306a449828f09e939fbcb19579b0b77ae31095039ed",
+    "fingerprint": "b9f7e77a328d44a9153e79c27ec8596a67b269bc2ae2fc9f9c83f69184e12e96",
     "files": [
       "sheets/area-2-0.png"
     ],
     "hashes": {
-      "sheets/area-2-0.png": "e66de20cb80443c50a6bc07d3c8b5a2c0dd06d9300755a744d09037c6d7077a4"
+      "sheets/area-2-0.png": "a71505328280261a4a16289a69bd892ef05348d3e7108d55b11e54b20fa81c83"
     }
   },
   "area-3-0": {
@@ -94,21 +94,21 @@
     }
   },
   "area-4-0": {
-    "fingerprint": "d0e4de787d270b7d7784909e9b43fd55d1443aabdda7271460a4a7e5bd8843fb",
+    "fingerprint": "ba3c3642a366a30d4cbeaf811cf6576887d23aeb0d95a6c640bc559944ab5ef0",
     "files": [
       "sheets/area-4-0.png"
     ],
     "hashes": {
-      "sheets/area-4-0.png": "694d1104e015570c89f2d461a8b96a12ba7e4ce796967215cb6fe72c10f968ca"
+      "sheets/area-4-0.png": "2ff7e1b5bbbe2fc5e685b59a2554ddd16d503e3a8df7ec6853aa08f343fc96b8"
     }
   },
   "area-5-0": {
-    "fingerprint": "25e1a21a6d145d00bd7ac8af2956e1a406fca6a55e3d158f441b54618d2135b4",
+    "fingerprint": "cd216d8a3490dfe398b604405738e43c90c485ed2ec8c186bd47e46685184a85",
     "files": [
       "sheets/area-5-0.png"
     ],
     "hashes": {
-      "sheets/area-5-0.png": "5c363efaed84b8546a7c9903df37ae3dce0b1212f6cfb10d3f4f2ab2ea5e08e2"
+      "sheets/area-5-0.png": "453b68d3dc4389d1b0daccaf56a7ab6caf9b6a0ba6879ae6be917405ff09dc80"
     }
   },
   "area-5-1": {
@@ -220,12 +220,12 @@
     }
   },
   "area-12-0": {
-    "fingerprint": "c629426063577333c36348125c08b1a357757ceb3e06437d007e60a12db3abd8",
+    "fingerprint": "272ed1cd68a3a41767b08007f6ef8da71342b747590b3af68a5eb9ed88538bc2",
     "files": [
       "sheets/area-12-0.png"
     ],
     "hashes": {
-      "sheets/area-12-0.png": "fcafcfbc37b97d5cb4e21206109a5b1326189c2234cca4e613748a8b0c63d5a4"
+      "sheets/area-12-0.png": "669f915e6021e6db61c4c073ea093ce956fa9770fe5c3381dcec7a4cd41351d7"
     }
   }
 }

@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
   "title": "Gestify · mapa visual",
-  "generatedAt": "2026-10-28T12:03:50.686Z",
-  "referenceCommit": "1cc68e42b143175b1a6cdf8398f5c075776761c0",
+  "generatedAt": "2026-10-28T13:09:08.418Z",
+  "referenceCommit": "d9440acd3a274dc334252ceb8790d7c9d7a27507",
   "date": "2026-08-21T10:00:00+02:00",
   "viewport": {
     "width": 400,
@@ -28,7 +28,6 @@
       ],
       "region": "body",
       "image": "captures/home.png",
-      "imageHash": "db60c8ec83c914bf90b43026e8631d631d26e02ca662d32e87badf35fb5190d9",
       "anchors": {
         "household": {
           "x": 16,
@@ -74,7 +73,7 @@
         },
         "workday": {
           "x": 17,
-          "y": 403.546875,
+          "y": 379.21875,
           "width": 72.390625,
           "height": 85
         },
@@ -116,7 +115,7 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "70e4e65360a43d72dfaeb17c84813b425e3fa518ef603c4fbfdb1a944dc65733"
+          "hash": "5e97ab054e1862ed668b83c9f824f719cd7cafee0a14898f1debcc019c0d64a8"
         },
         {
           "file": "js/data-integrity.js",
@@ -176,7 +175,7 @@
         },
         {
           "file": "css/source/hours-kairo.css",
-          "hash": "e406f64422739163915fb45da706c706cff0d4a280ec004f1153c9b5f6b265ac"
+          "hash": "83c6e241ca0bf9dcaab9f2bc4579ec9d724d242b67784d1fea7b93e4ab205931"
         },
         {
           "file": "css/source/energy-refinements.css",
@@ -204,11 +203,11 @@
         },
         {
           "file": "js/home-weeks.js",
-          "hash": "d23a782c51b0031d9dea19c4dfe262487b281d43b96dc00e491564ce5909d673"
+          "hash": "7010c84eed8ecf240f11ec2baa72a27c292cadf7b4767cfd822e7e671ddcb867"
         },
         {
           "file": "js/hours-kairo.js",
-          "hash": "59381a42aa757d0bd5b808983e24d1b17f8f668ab21bec2a04c2dc1137465082"
+          "hash": "25104222e695d11096a786aa1479b0d78090522820480654d97196e9864107ac"
         },
         {
           "file": "js/invoices-home.js",
@@ -237,20 +236,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "1cc68e42b143175b1a6cdf8398f5c075776761c0",
-      "review": "Sin revisar",
-      "reviewHistory": [
-        {
-          "imageHash": "3493bf6888e56c26aa0080cd30012227abc1b4f452587c63e94dd312106716b2",
-          "review": "Revisada visualmente",
-          "commit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
-          "reviewEvidence": {
-            "referenceCommit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
-            "reviewedAt": "2026-10-25",
-            "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
-          }
-        }
-      ],
+      "commit": "d9440acd3a274dc334252ceb8790d7c9d7a27507",
       "verifiedEdges": [
         "household",
         "study",
@@ -265,7 +251,21 @@
         "home-september",
         "tasks"
       ],
-      "fresh": false
+      "imageHash": "0a6fc2d666ffe28cf32992d2baa47beeb5ff3b53d7abd620499dadf51ef21347",
+      "review": "Sin revisar",
+      "reviewHistory": [
+        {
+          "imageHash": "3493bf6888e56c26aa0080cd30012227abc1b4f452587c63e94dd312106716b2",
+          "review": "Revisada visualmente",
+          "commit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
+          "reviewEvidence": {
+            "referenceCommit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
+            "reviewedAt": "2026-10-25",
+            "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
+          }
+        }
+      ],
+      "fresh": true
     },
     {
       "id": "household",
@@ -3848,7 +3848,6 @@
       ],
       "region": "body",
       "image": "captures/home-september.png",
-      "imageHash": "a2370811daa5fd83ea83be8dc16022ed3bf0c73b1bc5a6ee5ee56b4e9ff9eb21",
       "anchors": {
         "home-october": {
           "x": 244.671875,
@@ -3870,7 +3869,7 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "70e4e65360a43d72dfaeb17c84813b425e3fa518ef603c4fbfdb1a944dc65733"
+          "hash": "5e97ab054e1862ed668b83c9f824f719cd7cafee0a14898f1debcc019c0d64a8"
         },
         {
           "file": "js/data-integrity.js",
@@ -3930,7 +3929,7 @@
         },
         {
           "file": "css/source/hours-kairo.css",
-          "hash": "e406f64422739163915fb45da706c706cff0d4a280ec004f1153c9b5f6b265ac"
+          "hash": "83c6e241ca0bf9dcaab9f2bc4579ec9d724d242b67784d1fea7b93e4ab205931"
         },
         {
           "file": "css/source/energy-refinements.css",
@@ -3958,11 +3957,11 @@
         },
         {
           "file": "js/home-weeks.js",
-          "hash": "d23a782c51b0031d9dea19c4dfe262487b281d43b96dc00e491564ce5909d673"
+          "hash": "7010c84eed8ecf240f11ec2baa72a27c292cadf7b4767cfd822e7e671ddcb867"
         },
         {
           "file": "js/hours-kairo.js",
-          "hash": "59381a42aa757d0bd5b808983e24d1b17f8f668ab21bec2a04c2dc1137465082"
+          "hash": "25104222e695d11096a786aa1479b0d78090522820480654d97196e9864107ac"
         },
         {
           "file": "js/invoices-home.js",
@@ -3991,7 +3990,11 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "1cc68e42b143175b1a6cdf8398f5c075776761c0",
+      "commit": "d9440acd3a274dc334252ceb8790d7c9d7a27507",
+      "verifiedEdges": [
+        "home-october"
+      ],
+      "imageHash": "b4e4661552f243f12f39e88aea67dc963bfe32332f22321d5d573dfd61b0deaf",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -4005,10 +4008,7 @@
           }
         }
       ],
-      "verifiedEdges": [
-        "home-october"
-      ],
-      "fresh": false
+      "fresh": true
     },
     {
       "id": "home-october",
@@ -4025,11 +4025,10 @@
       ],
       "region": "body",
       "image": "captures/home-october.png",
-      "imageHash": "6c7c6892e5c709e8175eda1e612d57c6863d92b6134fcb7af5cd91f302342163",
       "anchors": {
         "home-invoice-connection": {
           "x": 310.765625,
-          "y": 379.546875,
+          "y": 355.21875,
           "width": 59.234375,
           "height": 32
         },
@@ -4053,7 +4052,7 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "70e4e65360a43d72dfaeb17c84813b425e3fa518ef603c4fbfdb1a944dc65733"
+          "hash": "5e97ab054e1862ed668b83c9f824f719cd7cafee0a14898f1debcc019c0d64a8"
         },
         {
           "file": "js/data-integrity.js",
@@ -4113,7 +4112,7 @@
         },
         {
           "file": "css/source/hours-kairo.css",
-          "hash": "e406f64422739163915fb45da706c706cff0d4a280ec004f1153c9b5f6b265ac"
+          "hash": "83c6e241ca0bf9dcaab9f2bc4579ec9d724d242b67784d1fea7b93e4ab205931"
         },
         {
           "file": "css/source/energy-refinements.css",
@@ -4141,11 +4140,11 @@
         },
         {
           "file": "js/home-weeks.js",
-          "hash": "d23a782c51b0031d9dea19c4dfe262487b281d43b96dc00e491564ce5909d673"
+          "hash": "7010c84eed8ecf240f11ec2baa72a27c292cadf7b4767cfd822e7e671ddcb867"
         },
         {
           "file": "js/hours-kairo.js",
-          "hash": "59381a42aa757d0bd5b808983e24d1b17f8f668ab21bec2a04c2dc1137465082"
+          "hash": "25104222e695d11096a786aa1479b0d78090522820480654d97196e9864107ac"
         },
         {
           "file": "js/invoices-home.js",
@@ -4174,7 +4173,12 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "1cc68e42b143175b1a6cdf8398f5c075776761c0",
+      "commit": "d9440acd3a274dc334252ceb8790d7c9d7a27507",
+      "verifiedEdges": [
+        "home-invoice-connection",
+        "invoice-current"
+      ],
+      "imageHash": "061de63b09b4d2637e2fe6e1eced70b11957029d0df58d4b3602482c56b04972",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -4188,11 +4192,7 @@
           }
         }
       ],
-      "verifiedEdges": [
-        "home-invoice-connection",
-        "invoice-current"
-      ],
-      "fresh": false
+      "fresh": true
     },
     {
       "id": "home-invoice-connection",
@@ -34929,7 +34929,7 @@
     {
       "symbol": "openSheet",
       "file": "js/core.js",
-      "line": 599
+      "line": 612
     },
     {
       "symbol": "openEstudio",

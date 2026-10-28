@@ -22,6 +22,9 @@ function homeWeekSchedule(weekKey,now){
   if(!/^\d{4}-\d{2}-\d{2}$/.test(weekKey)||isNaN(mon.getTime())||dk(mon)!==weekKey||mon.getDay()!==1)throw new Error('Semana no válida');
   var day=null;
   for(var i=4;i>=0;i--){var candidate=ad(mon,i);if(dayT(candidate)==='normal'&&dayH(candidate)>0){day=candidate;break;}}
+  if(!day&&[0,1,2,3,4].every(function(i){return ['vacaciones','festivo'].includes(dayT(ad(mon,i)));})){
+    for(var i=4;i>=0;i--){var candidate=ad(mon,i);if(dayT(candidate)!=='festivo'){day=candidate;break;}}
+  }
   var result={week:weekKey,date:day?dk(day):null,time:'08:00',timeZone:'Europe/Madrid',reason:day?null:'no-workdays'};
   if(day){
     var parts=new Intl.DateTimeFormat('en-CA',{timeZone:result.timeZone,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(now||new Date());

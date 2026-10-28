@@ -118,7 +118,9 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
                         state = 'missing' if not found else 'duplicate' if len(found)>1 else found[0]['state']
                         if state != 'sent' and ledger.get(key,{}).get('state') in ('reserved','uncertain'):
                             state = 'uncertain'
-                        rows.append(dict(key=key, state=state))
+                        row=dict(key=key,state=state)
+                        if state=='scheduled':row.update(days=found[0].get('days'),schedule=found[0].get('schedule'))
+                        rows.append(row)
                     return self.reply(200, dict(period=query['period'][0], checkedAt=clock().isoformat(), rows=rows), cors=True)
                 except Exception:
                     return self.reply(503, {'error':'Estado de Outlook sin confirmar'}, cors=True)
