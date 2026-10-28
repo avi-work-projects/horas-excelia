@@ -248,7 +248,10 @@ class HttpTests(unittest.TestCase):
             try:
                 with self.assertRaises(HTTPError) as caught:urlopen(root+'/')
                 caught.exception.close()
-                html=urlopen(Request(root+'/',headers=headers)).read().decode()
+                with urlopen(Request(root+'/',headers=headers)) as response:
+                    self.assertEqual(response.headers['Content-Security-Policy'],'frame-ancestors '+cfg['app_origin'])
+                    self.assertIsNone(response.headers.get('X-Frame-Options'))
+                    html=response.read().decode()
                 csrf=json.loads(re.search(r'const hoursBridgeConfig=(.*?);',html).group(1))['csrf']
                 def post(path,data,token=csrf):
                     return urlopen(Request(root+path,data=json.dumps(data).encode(),headers=headers|{'Origin':cfg['private_origin'],'X-CSRF':token,'Content-Type':'application/json'}))

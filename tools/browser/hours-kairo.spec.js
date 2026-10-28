@@ -35,6 +35,34 @@ async function setup(page,context,scenario='mixed'){
 }
 async function open(page,button){const waiting=page.waitForEvent('popup');await button.click();const popup=await waiting;await expect(popup.locator('#message')).toContainText('Estado actualizado en Home');return popup;}
 
+test('Android instalado conserva la revisión en Gestify y vuelve a Home',async({page,context},info)=>{
+  await page.setViewportSize({width:400,height:850});
+  await page.addInitScript(()=>{
+    Object.defineProperty(navigator,'userAgent',{get:()=> 'Mozilla/5.0 Android Gestify'});
+    const media=window.matchMedia.bind(window);window.matchMedia=query=>query==='(display-mode: standalone)'?{matches:true}:media(query);
+  });
+  const calls=await setup(page,context),before=await page.evaluate(()=>JSON.stringify(localStorage));
+  const popups=[];page.on('popup',popup=>popups.push(popup));
+  await page.getByRole('button',{name:'Comprobar Outlook',exact:true}).click();
+  await expect(page.locator('.home-submission')).toContainText('1 enviada · 1 programada · 3 pendientes · 1 por revisar');
+  await expect(page.locator('.hours-review-dialog')).toHaveCount(0);
+  await page.locator('[data-hours-review]').click();
+  const review=page.frameLocator('.hours-review-dialog iframe');
+  await expect(review.locator('#message')).toContainText('Estado actualizado en Home');
+  await expect(review.locator('.week')).toHaveCount(4);
+  await page.screenshot({path:info.outputPath('hours-android-review.png'),animations:'disabled'});
+  await review.getByRole('button',{name:'Volver a Gestify'}).click();
+  await expect(page.locator('.hours-review-dialog')).toHaveCount(0);
+  await page.locator('.week-card').nth(3).getByRole('button',{name:'Programar semana'}).click();
+  await expect(review.locator('h1')).toHaveText('Programar esta semana');
+  await expect(review.locator('.week')).toHaveCount(1);
+  await page.getByRole('button',{name:'Volver a Home',exact:true}).click();
+  await expect(page.locator('.hours-review-dialog')).toHaveCount(0);
+  expect(popups).toHaveLength(0);
+  expect(calls.some(c=>c.path.endsWith('/commit')||c.path.endsWith('/simulate'))).toBe(false);
+  expect(await page.evaluate(()=>JSON.stringify(localStorage))).toBe(before);
+});
+
 test('lote e individual conservan alcance; revisión muestra cambios y simula sin correos reales',async({page,context},info)=>{
   const calls=await setup(page,context);const before=await page.evaluate(()=>JSON.stringify(SW));
   const popup=await open(page,page.locator('[data-hours-review]'));

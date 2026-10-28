@@ -302,10 +302,10 @@
 ### js/home-weeks.js  _(36 líneas)_
 **Funciones:** homeSubmissionWeeks:2 · homeSubmissionWarnings:10 · homeWeekSchedule:20
 
-### js/hours-kairo.js  _(171 líneas)_
+### js/hours-kairo.js  _(189 líneas)_
 **Estado global:** HOURS_STATUS:3 · HOURS_REQUEST:4
 
-**Funciones:** hoursKairoUrl:5 · hoursWeekDays:9 · hoursCivilTime:13 · hoursWeekState:18 · hoursRemoteConfigured:30 · hoursCovered:31 · hoursWeekBadge:32 · hoursWeekDate:36 · renderHoursAccess:41 · hoursMailSubject:47 · hoursMailRequest:48 · validateHoursResult:58 · rememberHoursReview:71 · hoursKairoExchange:81 · verifySource:85 · stopWatch:98 · finish:100 · receive:101 · invalidateHoursReview:115 · paintHoursStatus:138 · initHoursKairo:164 · resume:167
+**Funciones:** hoursKairoUrl:5 · hoursWeekDays:9 · hoursCivilTime:13 · hoursWeekState:18 · hoursRemoteConfigured:30 · hoursCovered:31 · hoursWeekBadge:32 · hoursWeekDate:36 · renderHoursAccess:41 · hoursMailSubject:47 · hoursMailRequest:48 · validateHoursResult:58 · rememberHoursReview:71 · hoursKairoExchange:81 · closed:85 · verifySource:86 · stopWatch:100 · finish:102 · receive:103 · hoursReviewSurface:117 · close:127 · invalidateHoursReview:132 · paintHoursStatus:156 · initHoursKairo:182 · resume:185
 
 ### js/household-summary.js  _(92 líneas)_
 **Funciones:** householdMortgagePayment:2 · householdMortgagePeriod:5 · householdValue:18 · householdMortgageCard:19 · date:20 · householdUtilityPrices:35 · householdUtilityCard:67 · householdMortgageAnalysisButton:79 · renderHouseholdSummary:80
@@ -858,14 +858,14 @@
 **Rangos por prefijo de clase:**
 .boda-future:82-82 · .contact-address:128-140 · .contact-entry:127-127 · .contact-primary:138-144 · .contact-shortcuts:133-156 · .energy-contract:109-110 · .energy-field:112-113 · .energy-history:107-108 · .energy-price:111-116 · .energy-sheet:106-106 · .energy-tax:114-114 · .ev-cal:36-105 · .ev-field:81-81 · .ev-list:122-151 · .ev-period:165-168 · .ev-share:34-35 · .ev-stat:120-121 · .ev-stats:152-157 · .ev-up:148-172 · .ev-week:68-83 · .ev-wk:3-3 · .header:2-2 · .home-submission:4-17 · .home-summary:18-30 · .home-worked:21-21 · .month-summary:20-23
 
-### css/source/hours-kairo.css  _(14 líneas)_
+### css/source/hours-kairo.css  _(20 líneas)_
 
 **Secciones:**
 
 - The warning owns the batch entry; individual week actions stay in place.:1
 
 **Rangos por prefijo de clase:**
-.home-submission:2-2 · .hours-check:5-5 · .hours-home:3-4 · .hours-pending:6-7 · .hours-verified:8-8 · .hours-week:12-13 · .week-actions:9-11
+.home-submission:2-2 · .hours-check:5-5 · .hours-home:3-4 · .hours-pending:6-7 · .hours-review:14-19 · .hours-verified:8-8 · .hours-week:12-13 · .week-actions:9-11
 
 ### css/source/energy-refinements.css  _(292 líneas)_
 

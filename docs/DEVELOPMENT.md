@@ -1465,3 +1465,18 @@ que no estaba propuesta. No se modifica el diario existente.
 
 Solo se actualizan las tres vistas de Home y las evidencias ficticias de esta
 interfaz. Las pruebas usan el navegador y no necesitan el teléfono del propietario.
+
+## Revisión de horas en Android instalado (v513)
+
+La prueba física detectó que Android intentaba abrir `/horas/` en la PWA de
+Kairo, perdiendo el canal de ventana con Gestify. En Android standalone se usa
+ahora una revisión integrada en un diálogo; el escritorio conserva la ventana.
+El servicio permite incrustar su HTML solo al origen configurado de Gestify
+mediante CSP, conservando propietario, Host, origen, CSRF y confirmación del
+contenido. El canal sigue validando origen, ventana e identificador.
+
+El Vivo comprobó el mes, el regreso automático de Comprobar Outlook y una
+semana individual: cuatro enviadas y tres programadas, sin escrituras y con
+la misma huella del almacenamiento antes y después. La prueba usó el candidato
+en memoria sobre v512; la publicación v513 incorpora esa misma corrección.
+Solo se añade la captura ficticia del diálogo a la revisión del mapa.

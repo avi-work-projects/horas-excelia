@@ -81,7 +81,8 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
             body = b'' if status == 204 else (json.dumps(data, ensure_ascii=False) if content_type == 'application/json' else data).encode()
             self.send_response(status)
             for key, value in {'Content-Type': content_type+'; charset=utf-8', 'Cache-Control':'no-store',
-                               'X-Content-Type-Options':'nosniff', 'X-Frame-Options':'DENY',
+                               'X-Content-Type-Options':'nosniff',
+                               'Content-Security-Policy':"frame-ancestors "+(app_origin if status == 200 and content_type == 'text/html' else "'none'"),
                                'Referrer-Policy':'no-referrer', 'Content-Length':str(len(body))}.items():
                 self.send_header(key, value)
             if cors:

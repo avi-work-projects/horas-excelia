@@ -1,5 +1,5 @@
 (() => {
-  const el=id=>document.getElementById(id),opener=window.opener;
+  const embedded=window.parent!==window,el=id=>document.getElementById(id),opener=embedded?window.parent:window.opener;
   let id=null,request=null,plan=null,busy=false,intent='review';
   const labels={sent:'Enviada',scheduled:'Programada',ready:'Por programar',changed:'Cambios por revisar',duplicate:'Posible duplicado',uncertain:'Sin confirmar',draft:'Borrador existente',unverified:'Sin confirmar','ambiguous-thread':'Revisar conversación','past-due':'Fecha vencida','no-workdays':'Sin fecha disponible','blocked-previous':'Semana anterior pendiente'};
   const text=(tag,value,className='')=>{const node=document.createElement(tag);node.textContent=value;if(className)node.className=className;return node;};
@@ -91,7 +91,7 @@
     try{const result=await api('simulate',{planId:plan.planId,updates:updates()});if(result.simulation!==true)throw new Error('Resultado de simulación no válido');el('simulation').hidden=false;el('simulation').textContent='Simulación completada. No se ha creado ni modificado ningún correo.\n'+(result.results.length?result.results.map(r=>r.key+': '+(r.state==='scheduled'?'se programaría':labels[r.state]||'requiere revisión')).join('\n'):'No hay programaciones nuevas ni actualizaciones seleccionadas.');}
     catch(e){el('message').textContent=e.message;}finally{busy=false;controls();}
   };
-  el('return').onclick=()=>{if(opener){opener.focus();window.close();}else el('message').textContent='Cierra esta ventana para volver a Gestify.';};
+  el('return').onclick=()=>{if(embedded)send({type:'close'});else if(opener){opener.focus();window.close();}else el('message').textContent='Cierra esta ventana para volver a Gestify.';};
   document.querySelector('.badge').textContent=hoursBridgeConfig.allowWrites?'Revisión previa':'Demostración';
   el('notice').textContent=hoursBridgeConfig.allowWrites?'Los correos existentes se conservan.':'Datos ficticios. La simulación no crea correos.';
   if(hoursBridgeConfig.allowWrites){
