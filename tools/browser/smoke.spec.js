@@ -244,11 +244,11 @@ test('rutinas: horario por semana, duración, histórico editable y backup',asyn
  await page.screenshot({path:'.local-preview/routine-form-spacing.png',animations:'disabled'});
  await expect(page.locator('#rutFStart')).toHaveCount(0);
  await expect(page.locator('#rutFTime,#rutFDur')).toHaveCount(0);await page.locator('#rutFClose').click();await expect(page.locator('#rutFWrap')).toHaveCount(0);
- await page.locator('[data-rweek]').click();await page.locator('[data-week="2026-08-17"]').click();
+ await page.locator('[data-rweek]').click();await page.locator('#rutWkOv [data-week="2026-08-17"]').click();
  await chooseTime(page,'#rutWkTime','18:00');await page.locator('#rutWkDur').fill('75');await page.locator('#rutWkForward').check();await page.locator('#rutWkSave').click();await expect(page.locator('#rutWkWrap')).toHaveCount(0);
  expect(await page.evaluate(()=>['2026-08-17','2026-08-24'].map(ds=>rutDurationOn(RUTINAS[0],ds)))).toEqual([60,75]);
  expect(await page.evaluate(()=>['2026-08-17','2026-08-24'].map(ds=>rutOccursOn(RUTINAS[0],ds)))).toEqual(['17:00','18:00']);
- await page.locator('[data-rweek]').click();await page.locator('[data-week="2026-08-31"]').click();
+ await page.locator('[data-rweek]').click();await page.locator('#rutWkOv [data-week="2026-08-31"]').click();
  await page.locator('#rutWkDays [data-wd="1"]').click();await page.locator('#rutWkDays [data-wd="2"]').click();await chooseTime(page,'#rutWkTime','19:00');
  await page.locator('#rutWkForward').check();await expect(page.locator('#rutWkScope')).toContainText('Nuevo horario habitual');await page.locator('#rutWkSave').click();await expect(page.locator('#rutWkWrap')).toHaveCount(0);
  expect(await page.evaluate(()=>['2026-08-17','2026-08-24','2026-08-31','2026-09-01','2026-09-07'].map(ds=>rutOccursOn(RUTINAS[0],ds)))).toEqual(['17:00','18:00','17:00','19:00',null]);
