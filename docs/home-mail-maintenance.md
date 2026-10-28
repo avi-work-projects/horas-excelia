@@ -48,6 +48,8 @@ La cola SQLite comparte el bloqueo del navegador y el diario previo a escribir.
 Una confirmación repetida recupera el mismo trabajo; un reinicio recupera las
 lecturas y deja las escrituras interrumpidas pendientes de revisión. El estado
 final se recalcula con el diario ya confirmado, sin otro barrido de Outlook.
+Recuperar la conexión elimina el aviso transitorio de red; los errores del
+trabajo que requieren revisión se conservan hasta una acción explícita.
 
 La actualización de indicadores conserva los botones y las celdas: reemplazar
 las tarjetas al recuperar el foco podía perder una pulsación al salir del iframe.

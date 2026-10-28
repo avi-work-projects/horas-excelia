@@ -15,12 +15,12 @@ async function setup(page,context,{queued=false}={}){
     bundle=await page.evaluate(requested=>({periods:[-1,0,1].map(offset=>{const d=new Date(Number(requested.slice(0,4)),Number(requested.slice(5))-1+offset,1),period=mkey(d.getFullYear(),d.getMonth());return {period,checkedAt:new Date().toISOString(),verified:true,rows:hoursScopeKeys(period).map(key=>({key,state:'scheduled',days:hoursWeekDays(key),schedule:homeWeekSchedule(key).date+'T08:00:00+01:00'}))};})}),requested);
     await route.fulfill({status:queued?202:200,json:queued?{jobId,kind:'status',phase:'queued'}:{phase:'done',result:bundle},headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}});
   });
-  await context.route(origin+'horas/jobs/**',route=>{calls.jobs++;return route.fulfill({json:{jobId,kind:'status',phase,...(phase==='done'?{result:bundle}:{})},headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}});});
+  await context.route(origin+'horas/jobs/**',route=>{calls.jobs++;if(offline)return route.abort();return route.fulfill({json:{jobId,kind:'status',phase,...(phase==='done'?{result:bundle}:{})},headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}});});
   await page.goto('/');
   await expect.poll(()=>calls.hours).toBe(1);
   if(!queued)await expect(page.locator('.home-submission.complete')).toContainText('Correos al día');
   await expect.poll(()=>calls.invoices.length).toBe(3);
-  return {calls,finish(){phase='done';},offline(){offline=true;}};
+  return {calls,finish(){phase='done';},offline(){offline=true;},online(){offline=false;}};
 }
 test('una auditoría de tres meses; navegar, editar, foco y recarga reutilizan los hechos',async({page,context})=>{
   const api=await setup(page,context);
@@ -56,6 +56,16 @@ test('fallo de actualización conserva factura y correos; el refresco está dent
   api.offline();await page.locator('.home-submission').getByRole('button',{name:'Actualizar estado de correos y factura'}).click();
   await expect.poll(()=>api.calls.hours).toBe(2);await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura programada');await expect(page.locator('.home-submission')).toContainText('Correos al día');
   expect(api.calls.invoices).toHaveLength(4);
+});
+
+test('recuperar un trabajo elimina el aviso de desconexión sin repetir Outlook',async({page,context})=>{
+  const api=await setup(page,context,{queued:true});
+  await expect.poll(()=>page.evaluate(()=>HOURS_JOB_POLL!==true)).toBe(true);
+  api.offline();await page.evaluate(async()=>{clearTimeout(HOURS_JOB_POLL);HOURS_JOB_POLL=null;await hoursResumeJobs();});
+  expect(await page.evaluate(()=>HOURS_JOB_ERROR)).toContain('Sin conexión');
+  api.online();api.finish();await page.evaluate(async()=>{clearTimeout(HOURS_JOB_POLL);HOURS_JOB_POLL=null;await hoursResumeJobs();});
+  await expect(page.locator('.home-submission.complete')).toContainText('Correos al día');
+  expect(await page.evaluate(()=>HOURS_JOB_ERROR)).toBe('');await expect(page.locator('.hours-job-note')).toHaveCount(0);expect(api.calls.hours).toBe(1);
 });
 test('doble actualización no encola dos comprobaciones',async({page,context})=>{
   const api=await setup(page,context);await page.evaluate(()=>{refreshHomeStates();refreshHomeStates();});
