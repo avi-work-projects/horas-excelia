@@ -5,7 +5,7 @@ test.beforeEach(async({page})=>{
   await page.addInitScript(()=>{
     localStorage.setItem('excelia-theme-v1','light');localStorage.setItem('excelia-nav-icons-v1','professional');
     localStorage.setItem('excelia-tasks-v1',JSON.stringify({items:['Comprar pintura','Revisar recibos','Reservar cita'].map((title,i)=>({id:'task'+i,title,createdAt:1,updatedAt:1,completedAt:null,deletedAt:null})),weeklyReminder:false,reminderWeek:''}));
-    localStorage.setItem('excelia-horas-v3',JSON.stringify({sent:{'2026-10-05':true,'2026-10-12':true,'2026-10-26':true,'2026-11-02':true,'2026-11-09':true}}));
+    localStorage.setItem('excelia-horas-v3',JSON.stringify({sent:{'2026-09-28':true,'2026-10-05':true,'2026-10-12':true,'2026-10-26':true,'2026-11-02':true,'2026-11-09':true}}));
     localStorage.setItem('excelia-bdays-v1',JSON.stringify([{name:'Ana',day:24,month:10},{name:'Luis',day:25,month:10,vip:true},{name:'Marina',day:26,month:10}]));
     localStorage.setItem('excelia-events-v1',JSON.stringify([
       {id:'dinner',kind:'puntual',type:'Cena',title:'Cena con amigos',start:'2026-10-24',end:'2026-10-24',time:'21:00',color:'#a78bfa',note:'Mesa en la terraza'},

@@ -23,18 +23,18 @@ HTML='''<!doctype html><html lang="es"><meta charset="utf-8"><title>Prueba ficti
 </section>
 <div id="menu" role="menu" hidden><button role="menuitem" onclick="document.getElementById('suggested').hidden=false;this.parentElement.hidden=true">Programar envío</button></div>
 <div id="suggested" role="dialog" aria-hidden="true" hidden><h2>Programar envío</h2>
-<button onclick="document.getElementById('custom').hidden=false;this.parentElement.hidden=true">Tiempo personalizado</button>
+<button onclick="document.getElementById('custom').hidden=false;this.parentElement.hidden=true"><span aria-hidden="true">&#xe837;</span>Tiempo personalizado</button>
 <button onclick="immediate++">Enviar</button></div>
 <div id="custom" role="dialog" aria-hidden="true" aria-labelledby="customTitle" hidden>
 <h2 id="customTitle">Establecer fecha y hora personalizadas</h2>
 <label id="dateLabel" for="different-control">Seleccionar una fecha</label>
-<input role="combobox" aria-labelledby="dateLabel" type="text" id="date" value="04/02/2027">
-<label for="time">Seleccionar una hora</label><input role="combobox" type="text" id="time" value="8:00">
-<div role="grid" aria-label="February 2027, Selected date February 4, 2027"></div>
+<input role="combobox" aria-labelledby="dateLabel" type="text" id="date" value="04/01/2027">
+<label for="time" id="timeLabel">Seleccionar una hora</label><span aria-labelledby="timeLabel"><input role="combobox" type="text" id="time" value="8:00"></span>
+<div id="calendarNav"></div><div role="grid"></div>
 <button onclick="result={date:document.getElementById('date').value,time:document.getElementById('time').value,body:document.getElementById('body').innerText,subject:document.getElementById('subject').value,to:chips('to'),cc:chips('cc')};this.parentElement.hidden=true;document.querySelector('[data-app-section]').hidden=true">Enviar</button>
 <button>Cancelar</button></div>
 <script>
-let immediate=0,result=null;
+let immediate=0,result=null,delayedRecipients=false;
 function chips(kind){return [...document.querySelector('[data-recipient='+kind+']').querySelectorAll('._EType_RECIPIENT_ENTITY')].map(e=>e.textContent);}
 function addChip(field,address){
  const chip=document.createElement('span');chip.className='_EType_RECIPIENT_ENTITY';chip.contentEditable='false';chip.textContent=address;
@@ -43,13 +43,25 @@ function addChip(field,address){
  field.append(chip,document.createTextNode(String.fromCharCode(8203)));
  const range=document.createRange();range.selectNodeContents(field);range.collapse(false);getSelection().removeAllRanges();getSelection().addRange(range);
 }
-for(const field of document.querySelectorAll('[data-recipient]'))field.onkeydown=e=>{
- if(e.key==='Enter'){e.preventDefault();const address=[...field.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent).join('').replace(/[\\s\\u200b]/g,'');addChip(field,address);}
+for(const field of document.querySelectorAll('[data-recipient]'))field.oninput=e=>{
+ const address=[...field.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent).join('').replace(/[\\s\\u200b]/g,'');
+  if(!address.includes('@'))return;
+  setTimeout(()=>{const list=document.createElement('div');list.id='FloatingSuggestionsList';
+   for(const value of ['otra-persona@example.invalid',address]){const option=document.createElement('button');option.setAttribute('role','option');option.setAttribute('aria-label','Persona - '+value);option.textContent=value;option.onclick=()=>{addChip(field,value);list.remove();};list.append(option);}
+   document.body.append(list);
+  },delayedRecipients?50:0);
 };
-document.getElementById('date').onblur=function(){
- const [day,month,year]=this.value.split('/').map(Number),date=new Date(Date.UTC(year,month-1,day));
- document.querySelector('[role=grid]').setAttribute('aria-label','Selected date '+new Intl.DateTimeFormat('en-US',{month:'long',timeZone:'UTC'}).format(date)+' '+day+', '+year);
-};
+let calendarYear=2027,calendarMonth=0,calendarSelected=new Date(2027,0,4),disableCalendar=false;
+const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function paintCalendar(){
+ const nav=document.getElementById('calendarNav'),grid=document.querySelector('[role=grid]');nav.replaceChildren();grid.replaceChildren();
+ const label=document.createElement('button');label.setAttribute('aria-label',months[calendarMonth]+' '+calendarYear+', change month');nav.append(label);
+ for(const step of [-1,1]){const button=document.createElement('button');button.title=(step===1?'Next month ':'Previous month ')+months[(calendarMonth+step+12)%12];button.onclick=()=>{const next=new Date(calendarYear,calendarMonth+step,1);calendarYear=next.getFullYear();calendarMonth=next.getMonth();paintCalendar();};nav.append(button);}
+ grid.setAttribute('aria-label',months[calendarMonth]+' '+calendarYear+', Selected date '+months[calendarSelected.getMonth()]+' '+calendarSelected.getDate()+', '+calendarSelected.getFullYear());
+ for(let day=1;day<=new Date(calendarYear,calendarMonth+1,0).getDate();day++){const button=document.createElement('button');button.setAttribute('aria-label',day+', '+months[calendarMonth]+', '+calendarYear);button.textContent=day;button.onclick=()=>{if(!disableCalendar){calendarSelected=new Date(calendarYear,calendarMonth,day);document.getElementById('date').value=String(day).padStart(2,'0')+'/'+String(calendarMonth+1).padStart(2,'0')+'/'+calendarYear;paintCalendar();}};grid.append(button);}
+}
+paintCalendar();
+
 document.getElementById('time').onblur=function(){this.value=this.value.replace(/^0/,'');};
 </script></html>'''
 
@@ -79,13 +91,16 @@ def run(endpoint):
             result=page.evaluate('({result,immediate})')
             assert result['immediate']==0 and result['result']['time']=='8:00' and result['result']['date']=='05/02/2027'
             assert result['result']['to']==req['config']['to'] and result['result']['cc']==req['config']['cc']
+            reset();page.evaluate('delayedRecipients=true');writer.edit_and_schedule(page,req,row)
+            result=page.evaluate('result')
+            assert result['to']==req['config']['to'] and result['cc']==req['config']['cc']
             reset();page.evaluate("addChip(document.querySelector('[data-recipient=to]'),'original@example.invalid');document.getElementById('subject').value='Asunto original'")
             writer.edit_and_schedule(page,req,row|{'action':'update'})
             result=page.evaluate('({result,immediate})')
             assert result['result']['to']==['original@example.invalid'] and result['result']['subject']=='Asunto original' and result['immediate']==0
             reset();page.locator('button[aria-label^="De:"]').evaluate('(e)=>e.setAttribute("aria-label","De: otro@example.invalid")');blocked()
             reset();page.locator('#dateLabel').evaluate('(e)=>e.textContent="Fecha desconocida"');blocked()
-            reset();page.locator('#date').evaluate('(e)=>e.onblur=null');blocked()
+            reset();page.evaluate('disableCalendar=true');blocked()
             reset();page.locator('button[aria-label="Más opciones de envío"]').evaluate("e=>e.addEventListener('click',()=>{document.getElementById('body').textContent=document.getElementById('body').textContent.replace('9 h','8 h');})");blocked()
             reset()
             try:writer.edit_and_schedule(page,req,row|{'schedule':'2020-02-05T08:00:00+01:00'})

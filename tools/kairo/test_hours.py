@@ -198,6 +198,7 @@ class HttpTests(unittest.TestCase):
         import json,re
         with tempfile.TemporaryDirectory() as temp:
             store=Store(temp);req=request();inv=inventory(req)
+            observed_clock=[NOW];read_calls=[]
             cfg=dict(private_origin='https://hours.example.invalid',app_origin='https://app.example.invalid',owner='owner@example.invalid')
             class FreshReader:
                 fresh=False
@@ -205,8 +206,10 @@ class HttpTests(unittest.TestCase):
                 def __call__(self,_request):
                     if not self.fresh:raise RuntimeError('El DOM almacenado no acredita el servidor')
                     self.fresh=False
+                    read_calls.append(True)
+                    observed_clock[0]+=timedelta(seconds=40)
                     return copy.deepcopy(inv)
-            server=ThreadingHTTPServer(('127.0.0.1',0),make_handler(cfg,store,FreshReader()))
+            server=ThreadingHTTPServer(('127.0.0.1',0),make_handler(cfg,store,FreshReader(),clock=lambda:observed_clock[0]))
             thread=Thread(target=server.serve_forever,daemon=True);thread.start()
             root='http://127.0.0.1:'+str(server.server_port)
             headers={'Host':'hours.example.invalid','Tailscale-User-Login':cfg['owner']}
@@ -221,6 +224,9 @@ class HttpTests(unittest.TestCase):
                 caught.exception.close()
                 plan=json.load(post('/preview',req))
                 self.assertFalse(plan['allowWrites'])
+                # A slow observation must not expire its cache before returning.
+                json.load(post('/preview',req))
+                self.assertEqual(len(read_calls),1)
                 result=json.load(post('/simulate',dict(planId=plan['planId'],updates=[])))
                 self.assertTrue(result['simulation']);self.assertEqual(store.ledger(),{})
                 with self.assertRaises(HTTPError) as caught:post('/commit',dict(planId=plan['planId']))

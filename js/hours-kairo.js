@@ -15,7 +15,7 @@ function hoursRemoteConfigured(){try{return !!hoursKairoUrl();}catch(e){return f
 function hoursCovered(key){var state=hoursWeekState(key);return state==='sent'||state==='scheduled';}
 function renderHoursAccess(){
   var fresh=!!hoursWeekState(homeSubmissionWeeks(CY,CM)[0].key);
-  return '<div class="hours-home-actions"><button type="button" class="hours-pending-button" data-hours-review>Programar pendientes</button><span class="hours-verified-note">'+(fresh?'Estado consultado en Outlook':'Revisión previa · no programa sin confirmar')+'</span></div>';
+  return '<div class="hours-home-actions"><button type="button" class="hours-pending-button" data-hours-review>Programar pendientes</button><span class="hours-verified-note">'+(fresh?'Estado consultado en Outlook':HOURS_STATUS.networkPermissionDenied?'El navegador necesita permiso de red local para la consulta automática. Puedes abrir la revisión igualmente.':'Revisión previa · no programa sin confirmar')+'</span></div>';
 }
 function hoursMailSubject(wd){return 'HORAS Y DIAS TRABAJADOS - '+AUTHOR_NAME+' - Semana del '+fd(wd.mon)+' al '+fd(wd.fri);}
 function hoursMailRequest(targetWeek){
@@ -34,6 +34,14 @@ function validateHoursResult(result,period,keys){
   result.rows.forEach(function(r,i){if(!r||r.key!==keys[i]||!states.includes(r.state))throw new Error('Las semanas recibidas no coinciden con la revisión.');});
   return result;
 }
+function rememberHoursReview(result,request,url){
+  validateHoursResult(result,request.period,request.weeks.map(function(w){return w.key;}));
+  if(result.verified!==true)throw new Error('La lectura de Outlook está sin confirmar.');
+  if(result.period===mkey(CY,CM)&&url===hoursKairoUrl()){
+    ++HOURS_SEQUENCE;if(HOURS_REQUEST)HOURS_REQUEST.abort();HOURS_REQUEST=null;
+    HOURS_STATUS={period:result.period,url:url,phase:'ready',rows:result.rows,checkedAt:Date.now(),attemptedAt:Date.now()};render();
+  }
+}
 function hoursKairoExchange(url,request,popup){
   return new Promise(function(resolve,reject){
     var origin=new URL(url).origin,id=crypto.randomUUID(),sent=false,done=false;
@@ -44,7 +52,14 @@ function hoursKairoExchange(url,request,popup){
         var matches=false;try{matches=JSON.stringify(hoursMailRequest(request.targetWeek))===original;}catch(e){}
         popup.postMessage({channel:m.channel,id:id,type:'source-result',probe:m.probe,matches:matches},origin);
       }
-      if(m.type==='committed'){HOURS_STATUS={period:'',phase:'idle',rows:[],checkedAt:0};syncHoursStatus(true);}
+      if(m.type==='committed'&&request.period===mkey(CY,CM)&&url===hoursKairoUrl()){
+        ++HOURS_SEQUENCE;if(HOURS_REQUEST)HOURS_REQUEST.abort();HOURS_REQUEST=null;
+        HOURS_STATUS={period:request.period,url:url,phase:'loading',rows:[],checkedAt:0,attemptedAt:Date.now()};paintHoursStatus();
+      }
+      if(m.type==='result'&&done&&sent){
+        try{if(!m.ok)throw new Error();rememberHoursReview(m.result,request,url);}
+        catch(e){if(request.period===mkey(CY,CM)&&url===hoursKairoUrl()){HOURS_STATUS={period:request.period,url:url,phase:'error',rows:[],checkedAt:0,attemptedAt:Date.now()};paintHoursStatus();}}
+      }
     }
     window.addEventListener('message',verifySource);
     function stopWatch(){clearInterval(watch);clearTimeout(watchTimeout);window.removeEventListener('message',verifySource);}
@@ -72,7 +87,7 @@ async function openHoursReview(targetWeek){
     var request=hoursMailRequest(targetWeek);
     popup=window.open(url,'_blank');if(!popup)throw new Error('Permite abrir la revisión privada de Kairo.');
     var result=await hoursKairoExchange(url,request,popup);
-    if(result.period===mkey(CY,CM)&&url===hoursKairoUrl()){HOURS_STATUS={period:result.period,url:url,phase:'ready',rows:result.rows,checkedAt:Date.now(),attemptedAt:Date.now()};render();}
+    rememberHoursReview(result,request,url);
     showToast('Conciliación terminada. Revisa las semanas en Kairo; no se ha programado ningún correo.','info');
   }catch(e){HOURS_STATUS={period:'',phase:'error',rows:[],checkedAt:0};paintHoursStatus();showToast(e.message,'error');}
 }
@@ -91,12 +106,15 @@ async function syncHoursStatus(force){
   HOURS_STATUS={period:period,url:url,phase:'loading',rows:[],checkedAt:0,attemptedAt:Date.now()};
   var timeout=setTimeout(function(){controller.abort();},100000);
   try{
-    var response=await fetch(url+'status?period='+encodeURIComponent(period),{method:'GET',mode:'cors',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',signal:controller.signal});
+    var response=await fetch(url+'status?period='+encodeURIComponent(period),{method:'GET',mode:'cors',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',targetAddressSpace:'local',signal:controller.signal});
     if(!response.ok)throw new Error('Outlook sin confirmar');
     var result=validateHoursResult(await response.json(),period,keys);
     if(sequence!==HOURS_SEQUENCE||period!==mkey(CY,CM))return;
     HOURS_STATUS={period:period,url:url,phase:'ready',rows:result.rows,checkedAt:Date.now(),attemptedAt:Date.now()};
-  }catch(e){if(sequence===HOURS_SEQUENCE)HOURS_STATUS={period:period,url:url,phase:'error',rows:[],checkedAt:0,attemptedAt:Date.now()};}
+  }catch(e){
+    var denied=false;try{denied=(await navigator.permissions.query({name:'local-network-access'})).state==='denied';}catch(ignore){}
+    if(sequence===HOURS_SEQUENCE)HOURS_STATUS={period:period,url:url,phase:'error',rows:[],checkedAt:0,attemptedAt:Date.now(),networkPermissionDenied:denied};
+  }
   finally{clearTimeout(timeout);if(sequence===HOURS_SEQUENCE){HOURS_REQUEST=null;paintHoursStatus();}}
 }
 function initHoursKairo(){

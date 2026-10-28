@@ -1,0 +1,13 @@
+[Unit]
+Description=Gestify - sesion privada de Outlook
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=%h/gestify-outlook/session.sh
+Restart=on-failure
+RestartSec=10
+UMask=0077
+
+[Install]
+WantedBy=default.target

@@ -73,6 +73,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .hour-chip-day{font-family:var(--mono);font-size:.85rem;font-weight:500;padding:9px 22px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;flex:1}
 .hour-chip-day.active{border-color:var(--accent);background:var(--accent-glow);color:var(--accent-bright)}
 .month-summary{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;display:flex;flex-direction:column;gap:5px}
+.month-stat{display:flex;align-items:baseline;gap:4px}
+.ms-num{font-family:var(--mono);font-size:1.2rem;font-weight:500}
+.month-stat.worked .ms-num{color:var(--accent-bright)}
+.month-stat.off .ms-num{color:var(--text-muted)}
+.ms-label{font-size:.82rem;color:var(--text-muted)}
+.ms-hrs{font-family:var(--mono);font-size:.78rem;color:var(--text-dim)}
 .data-actions{display:flex;gap:6px;flex-wrap:nowrap;align-items:center}
 .data-btn{width:44px;height:44px;border-radius:8px;border:none;background:transparent;color:var(--text-muted);font-size:1.35rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,color .15s,box-shadow .15s;-webkit-user-select:none;user-select:none;position:relative}
 .data-btn:has(.btn-icon){width:66px;height:66px;border-radius:12px}
@@ -319,6 +325,9 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 :is([data-theme="light"],[data-theme="grey"]) input[type="checkbox"]:checked{background:var(--chk,var(--accent));border-color:var(--chk,var(--accent))}
 .excl-item{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--text-muted);cursor:pointer;-webkit-user-select:none;user-select:none}
 /* Month summary breakdown */
+.ms-breakdown>span{display:block;padding-left:12px}
+.ms-breakdown>span::before{content:"– ";}
+.ms-breakdown{font-size:.72rem;color:var(--text-dim);margin-top:0;line-height:1.6}
 .ms-sep{color:var(--border-light)}
 /* Ausencia list tag */
 .sy-list-tag.ausencia{background:rgba(192,132,252,.15);color:var(--ausencia)}

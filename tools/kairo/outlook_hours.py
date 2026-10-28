@@ -39,6 +39,15 @@ def mailbox_matches(page, sender):
     pattern = re.compile(r'(?<![\w.+%-])'+re.escape(sender)+r'(?![\w.-])',re.I)
     return any(pattern.search(label) for label in labels)
 
+
+def folder_entry(page,folder):
+    names={'sentitems':('elementos enviados','sent items'),'drafts':('borradores','drafts')}[folder]
+    # The Favorites icon can become part of the accessible name while composing.
+    # The folder's explicit attribute stays stable; URL checks still follow.
+    items=page.locator(','.join('[role=treeitem][data-folder-name="'+name+'"]:visible' for name in names))
+    if not items.count():raise ValueError('Carpeta de Outlook no reconocida')
+    return items.first
+
 def week_from_label(label, keys):
     match = re.search(r'Semana del (\d{1,2})/(\d{1,2}) al (\d{1,2})/(\d{1,2})', label, re.I)
     if not match:
@@ -185,7 +194,7 @@ class OutlookReader:
         # Sent Items and Drafts are scoped to the verified mailbox above. The
         # future writer must separately check the From field before any write.
         recipients = page.get_by_test_id('RecipientWell').locator('[role=presentation][aria-label]').evaluate_all('(es)=>es.map(e=>e.getAttribute("aria-label"))')
-        record.update(id=item_identity(page.url,self.sender), url=page.url,
+        record.update(id=item_identity(page.url,self.sender), url=page.url,rowId=opaque,
                       state='sent' if folder == 'sentitems' else 'scheduled',
                       days=days, toDisplay=next((v for v in recipients if re.match('Para:|To:',v)), 'Ver en Outlook'),
                       ccDisplay=next((v for v in recipients if re.match('CC:|Cc:',v)), 'Sin CC'),
@@ -195,9 +204,29 @@ class OutlookReader:
             record['schedule'] = scheduled_time(banner, key, datetime.now(MADRID))
         return record
 
+    def open_scheduled(self,page,record):
+        # Outlook can drop the selected item on a full deep-link navigation.
+        # Select the observed row, then verify the immutable item identity.
+        opaque=record.get('rowId','')
+        if not re.fullmatch(r'[\w+/=.-]+',opaque):raise ValueError('Fila de programación sin confirmar')
+        folder_entry(page,'drafts').click()
+        scroller=page.locator('[data-app-section=MessageList]').get_by_test_id('virtuoso-scroller')
+        scroller.wait_for();scroller.evaluate('(e)=>e.scrollTo(0,0)')
+        for _ in range(160):
+            row=page.locator('[role=option][id="'+opaque+'"]')
+            if row.count()==1:
+                row.click()
+                label='Semana del '+monday(record['week']).strftime('%d/%m')+' al '+(monday(record['week'])+timedelta(days=4)).strftime('%d/%m')
+                page.get_by_role('main').get_by_role('heading').filter(has_text=label).first.wait_for()
+                if item_identity(page.url,self.sender)!=record['id']:raise ValueError('El correo seleccionado ha cambiado')
+                return
+            metrics=scroller.evaluate('(e)=>({top:e.scrollTop,height:e.clientHeight,total:e.scrollHeight})')
+            if metrics['top']+metrics['height']>=metrics['total']-2:break
+            scroller.evaluate('(e)=>e.scrollBy(0,e.clientHeight*.8)');page.wait_for_timeout(350)
+        raise ValueError('La programación ya no está en la lista observada')
+
     def _folder(self, page, folder, keys, records):
-        title = re.compile(r'^Elementos enviados|^Sent Items', re.I) if folder == 'sentitems' else re.compile(r'^Borradores|^Drafts', re.I)
-        page.get_by_role('treeitem', name=title).first.click()
+        folder_entry(page,folder).click()
         page.wait_for_url(lambda url:outlook_page(str(url)) and re.match(r'^/mail/'+folder+r'(?:/|$)',urlsplit(str(url)).path))
         page.get_by_role('listbox').wait_for()
         scroller = page.locator('[data-app-section=MessageList]').get_by_test_id('virtuoso-scroller')
