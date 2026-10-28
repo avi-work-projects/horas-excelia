@@ -134,6 +134,15 @@ test('si Gestify cambia tras revisar, no permite confirmar el lote antiguo',asyn
   expect(calls.some(c=>c.path.endsWith('/commit'))).toBe(false);
 });
 
+test('una confirmación sin operaciones no anuncia que haya programado correos',async({page,context})=>{
+  await setup(page,context);
+  await context.route(base+'horas/',async route=>{const response=await context.request.get('http://127.0.0.1:8772/');await route.fulfill({contentType:'text/html',body:(await response.text()).replace('"allowWrites": false','"allowWrites": true')});});
+  await context.route(base+'horas/commit',route=>route.fulfill({json:{results:[]}}));
+  const popup=await open(page,page.locator('[data-hours-review]'));await popup.locator('#commit').click();
+  await expect(popup.locator('#message')).toContainText('No se ha modificado ningún correo');
+  await expect(popup.locator('#message')).not.toContainText('Programación confirmada');
+});
+
 test('Recordatorios comparte las dos semanas extra y reconoce enviadas y programadas',async({page,context})=>{
   await setup(page,context);
   const popup=await open(page,page.locator('[data-hours-review]'));

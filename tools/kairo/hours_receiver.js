@@ -102,7 +102,7 @@
         if(!await verifySource())throw new Error('Los datos de Gestify han cambiado o su ventana está cerrada. Abre una revisión nueva.');
         el('message').textContent='Programando y comprobando en Outlook…';
         const result=await api('commit',{planId:plan.planId,updates:selected,sourceVerified:true});send({type:'committed'});busy=false;await review(true);
-        el('message').textContent=result.results.some(r=>r.state!=='scheduled')?'Hay una semana pendiente de comprobar. Revisa antes de repetir.':'Programación confirmada. El estado ya aparece en Home.';
+        el('message').textContent=!result.results.length?'No se ha modificado ningún correo. Revisa el estado actualizado.':result.results.some(r=>r.state!=='scheduled')?'Hay una semana pendiente de comprobar. Revisa antes de repetir.':'Programación confirmada. El estado ya aparece en Home.';
       }catch(error){el('message').textContent=error.message;}finally{busy=false;controls();}
     };
     el('simulate').parentElement.prepend(button);
