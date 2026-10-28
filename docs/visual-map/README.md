@@ -1,5 +1,12 @@
 # Mapa visual de Gestify
 
+Revisión de Home v516: [estados guardados, facturas y programación](review/updates-v516.html).
+Solo se recapturan `home`, `home-september` y `home-october`; las otras 170
+referencias conservan sus imágenes y revisiones. El lápiz común es un cambio
+menor que no exige recapturar los otros menús. Las variantes configuradas se
+documentan mediante cinco ejemplos ficticios de la interfaz real. El servicio
+privado de Kairo y el buzón autenticado siguen siendo un límite del atlas.
+
 Atlas ampliado el 24/10/2026 tras aprobar Ángel el piloto: **173 capturas,
 179 relaciones y 13 áreas**, repartidas en láminas legibles.
 

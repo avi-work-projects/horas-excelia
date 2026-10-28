@@ -11,41 +11,41 @@
     }
   },
   "general": {
-    "fingerprint": "861f7823e7dad7beb0812c82065a79cc4a6652f302df4fcae51c2b9cdcae9965",
+    "fingerprint": "07138947fb9a647528fdaa531e91f115980898d54eb0efbb9fb37b371330b380",
     "files": [
       "map-general.svg",
       "map-general.png"
     ],
     "hashes": {
-      "map-general.svg": "2c27328c51bba2e1f5bea029aa99aa5de8206508533040a5ba25607014ec874f",
-      "map-general.png": "059aeaf9be463c4fe61c9fdfc7cfb17fbc9acf8ffbf960d486b9b040c4084f18"
+      "map-general.svg": "be8526d4b10a18e2ca2aa15f8f9acc26b598c333c63bfcf0edf485dee2821df7",
+      "map-general.png": "36abd5548c48ec6beb6e502bcac56c573114ff56aa68f08813be94cc5ecd5368"
     }
   },
   "area-0-0": {
-    "fingerprint": "80e0ac47caf83e71befb7db6a687d97e48cb245855be0ca409845a2eef4ebc90",
+    "fingerprint": "1a86afdf1897e6033bf0886e7c02a7f68fffa02611ed393a0911b1c76124e843",
     "files": [
       "sheets/area-0-0.png"
     ],
     "hashes": {
-      "sheets/area-0-0.png": "bd55fa2f04a875b57afec0c9256bda3e47d6bcafd500ed2ab402fa27ed348703"
+      "sheets/area-0-0.png": "3161caecb0865628f258c57117407d10806050ef39ac17445bc4221a96b38e86"
     }
   },
   "area-0-1": {
-    "fingerprint": "82e256fe6a804899d65c0b8d7ae74ae452e8c27717c1bbb5134e1f42ce79bfa6",
+    "fingerprint": "be1771c8ab5607394657854d4841a9b8f86f8ed6e363ccefa6b9c4199c8c3127",
     "files": [
       "sheets/area-0-1.png"
     ],
     "hashes": {
-      "sheets/area-0-1.png": "99db4128d8b901baa04b940e4f8ac97f784529e43eba88fe3bec599728e6aa20"
+      "sheets/area-0-1.png": "1ecd7d410c28356139332fe91fb0b3c3c2a81afbc16a28bc7d9f9f0bbf4e100f"
     }
   },
   "area-1-0": {
-    "fingerprint": "bf0aeeeb46d9959aaecf4bf71dc5ba4c954555fbbbb4da91aeb5eddf9a31a95a",
+    "fingerprint": "74b1d3b6606405cead67c5a426282467c864fdb25cf348796afe08d03b2447e4",
     "files": [
       "sheets/area-1-0.png"
     ],
     "hashes": {
-      "sheets/area-1-0.png": "470d19f3fa4099dbf9d360320bdd0b9c7181a49e4345c1bb8d9c627a37f6254c"
+      "sheets/area-1-0.png": "af21d6581dac56d4f4558b29fa3c2b19a49db549c9a5344929311ec0d99d4426"
     }
   },
   "area-1-1": {
@@ -58,12 +58,12 @@
     }
   },
   "area-2-0": {
-    "fingerprint": "f9c1e852cf33aa8c5896749358759330b73948a6a16751d2bc7deb78d83876a5",
+    "fingerprint": "9ba332c7c061e1928a641fa7c824ff36f132eba7b1b17556059a42e9f738cc37",
     "files": [
       "sheets/area-2-0.png"
     ],
     "hashes": {
-      "sheets/area-2-0.png": "5fc8037a47aa26d9efcc2eeadf98754eb5666d24c411d7304bee777ea96b845d"
+      "sheets/area-2-0.png": "bbbf229680dde5a43fd709e287277d881469588466c33ed28732f154772bc1a2"
     }
   },
   "area-3-0": {
@@ -94,21 +94,21 @@
     }
   },
   "area-4-0": {
-    "fingerprint": "8cbc739998520a90a03446d4e97ef19f3e6490abc98bf962d70483a9d0be58d5",
+    "fingerprint": "4b914e720e7656882956ec2b810e036d6ddd01183f9b941a35b7a47a4ef70d29",
     "files": [
       "sheets/area-4-0.png"
     ],
     "hashes": {
-      "sheets/area-4-0.png": "8c2be330f11c13a7b61d3c00732b153e9ef6e681f3ebe86501236f753866a6bb"
+      "sheets/area-4-0.png": "bd60fc19260e4a50b4a61e712ac31108ef80fe97db0ae5b2ae5f5d292bfee114"
     }
   },
   "area-5-0": {
-    "fingerprint": "5613b878a6a8586d900a8d492487a6c2d853c46dcf7a715652aa92317b48c103",
+    "fingerprint": "86c08c705e4a12abb88202189b66950eb687336fab7d7ed564b64e196c9a136d",
     "files": [
       "sheets/area-5-0.png"
     ],
     "hashes": {
-      "sheets/area-5-0.png": "fdce6120cd74bfd9c13dcc6fb40ab552a8d7a757ad415a709deb691568644696"
+      "sheets/area-5-0.png": "823bddd0ee831020bec50563d95a39e14f201dba2de3244a349459eee46db049"
     }
   },
   "area-5-1": {
@@ -220,12 +220,12 @@
     }
   },
   "area-12-0": {
-    "fingerprint": "39f89766297030407da0f88064e7f6e51d5672fecda543f038e8f2cfbe3a99e2",
+    "fingerprint": "e4efccd7f602d43ec1126be99309d7cc246058932f7c9246c7b534bb513846a9",
     "files": [
       "sheets/area-12-0.png"
     ],
     "hashes": {
-      "sheets/area-12-0.png": "63ede5fdfa8809262035ad7c8ac7e397637d17c057675165dc89998fe2791076"
+      "sheets/area-12-0.png": "6817a468e5114adf354446292dcfaea1a2617edefab027a52bd0bb04c8701d6c"
     }
   }
 }
