@@ -17,7 +17,8 @@ function _renderEvCalMonth(opts){
   var dow=cur.getDay();var off=dow===0?6:dow-1;
   cur.setDate(cur.getDate()-off);
   // También en el mes siguiente si hoy está en su primera semana compartida.
-  var remaining=(!opts||opts.remaining!==false)&&today>=cur&&today<=last;
+  var showsToday=today>=cur&&today<=last;
+  var remaining=(!opts||opts.remaining!==false)&&showsToday;
   var puenteMap={};
   if(typeof computePuentes==='function'){
     computePuentes(EV_YEAR).puentes.forEach(function(seq){
@@ -32,7 +33,7 @@ function _renderEvCalMonth(opts){
      las 6 semanas de meses como agosto 2026) y acota el sticky de la cabecera */
   var h='<div class="ev-month-wrap'+(remaining?' ev-month-current':'')+'">';
   h+='<div class="ev-week-hdr">';
-  DN7.forEach(function(n,i){var current=EV_YEAR===today.getFullYear()&&EV_MONTH===today.getMonth()&&i===(today.getDay()+6)%7;h+='<div><span'+(current?' class="ev-current-weekday" aria-label="Día de la semana actual"':'')+'>'+n+'</span></div>';});
+  DN7.forEach(function(n,i){var current=showsToday&&i===(today.getDay()+6)%7;h+='<div><span'+(current?' class="ev-current-weekday" aria-label="Día de la semana actual"':'')+'>'+n+'</span></div>';});
   h+='</div>';
   while(cur<=last){
     // Build week days array

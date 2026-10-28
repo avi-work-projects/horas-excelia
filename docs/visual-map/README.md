@@ -1,5 +1,8 @@
 # Mapa visual de Gestify
 
+Revisión v517: [hoy al consultar el mes siguiente](review/updates-v517.html).
+Corrección puntual: se conserva el atlas y se añade solo un ejemplo de prueba.
+
 Revisión de Home v516: [estados guardados, facturas y programación](review/updates-v516.html).
 Solo se recapturan `home`, `home-september` y `home-october`; las otras 170
 referencias conservan sus imágenes y revisiones. El lápiz común es un cambio
