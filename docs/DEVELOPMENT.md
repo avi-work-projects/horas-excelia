@@ -1278,8 +1278,9 @@ validación y publicación. Los cambios están en la rama de la tarea.
   mismo render alimenta el resumen superior, el pie y la previsualización.
 - homeSubmissionWeeks (js/home-weeks.js) define las semanas del mes visible
   más dos completas posteriores, sin repetir la semana puente. Aviso y futura
-  programación deben consumir esta lista. Por ahora, el aviso conserva los
-  estados locales SW: aún no es una confirmación de Outlook.
+  programación consumen esta lista. En el candidato del 28/10, el aviso usa
+  estados conciliados de Outlook cuando Kairo está configurado; SW queda como
+  marca manual heredada sin conexión privada y no acredita un envío remoto.
 - homeWeekSchedule define el último día realmente trabajado de esa semana a
   las 08:00 Europe/Madrid. Si ha vencido o no hay días trabajados, dejar pendiente
   para decidir. El huso del navegador no debe decidir la hora de envío.
@@ -1357,3 +1358,25 @@ existentes en Outlook no equivale todavía a tener implementado ese circuito.
 
 Estos recursos son una herramienta privada de administración, fuera del catálogo
 de la PWA. No modifican Gestify, sus capturas ni los servicios de facturas.
+
+## Conciliación de horas — candidato del 28/10/2026
+
+`js/hours-kairo.js` conecta el aviso y la acción individual con una revisión
+privada. El cálculo no escribe datos y el estado remoto solo vive en memoria,
+con vencimiento y descarte de respuestas de otro mes. Abrir la revisión ya no
+marca una semana enviada. Sin confirmar Outlook, Home muestra estado desconocido.
+
+El modelo, diario persistente y servidor privado están en `tools/kairo/`:
+[contrato, pruebas y limitaciones](../tools/kairo/HOURS.md). Un duplicado o un
+resultado incierto bloquean; cambios de días/horas/fecha requieren actualizar
+el mismo correo expresamente. La simulación usa un diario temporal y un
+escritor ficticio. El endpoint real empieza deshabilitado en servidor.
+
+La lectura real reconoce enviados y programaciones de Android. El escritor
+solo tiene validación de formulario ficticio: falta calibrarlo con Outlook
+real después de la revisión de Ángel. No instalar/activar la ruta de horas ni
+programar correos reales en esta entrega. La clave de paso queda pendiente.
+
+La [revisión local](visual-map/review/hours-scheduling-preview.html) conserva
+la evidencia histórica y añade solo dos capturas ficticias del recorrido nuevo.
+El resumen de horas de Home sigue siendo una propuesta independiente.

@@ -11,3 +11,9 @@ node_modules/
 dist/
 test-results/
 playwright-report/
+
+# Estado y configuración privada del candidato Kairo; nunca viajan con código.
+__pycache__/
+*.pyc
+tools/kairo/state/
+tools/kairo/hours-config*.json
