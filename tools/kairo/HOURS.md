@@ -95,3 +95,32 @@ el perfil solo son accesibles mediante loopback/túnel privado existente.
 Las capturas nuevas son únicamente Home y la revisión ficticia; se conservan
 las históricas. El resumen de horas de Home sigue en su propuesta separada;
 esta entrega no aprueba ni publica su diseño.
+
+## Comprobación del Vivo por USB — 28/10/2026
+
+El dispositivo conserva v510 de producción; no confundir esa PWA con el candidato.
+Se comprobó «Correo de horas → Atrás → Ajustes» y se comparó la solicitud de horas
+real con el lector de Outlook, sin activar un escritor ni cambiar correos.
+`tools/browser/mobile-hours-probe.cjs` lee solo los datos de horas necesarios y
+guarda el resultado fuera del repositorio, en LocalAppData/Gestify/private-tests.
+Compara además un SHA-256 del almacenamiento para acreditar que sigue intacto.
+No sustituye la primera muestra salvo `--replace-baseline` explícito. Requiere el
+puente USB ya autorizado en loopback 9225 hacia `chrome_devtools_remote`.
+
+La prueba detectó que Recordatorios todavía usaba desde dos semanas antes hasta
+tres después de hoy. Se corrigió en el candidato: `homeSubmissionWarnings` usa
+el mes visible más sus dos semanas adicionales, reconoce enviadas/programadas
+y muestra un único aviso de consulta si Outlook está sin confirmar. El contenido
+de las capturas representativas no se regenera por este ajuste de lógica.
+
+La interfaz ficticia se abrió en Chrome del Vivo por USB: la revisión del lote,
+la selección expresa de una actualización, su simulación sin correo y el regreso
+al origen funcionan. El acceso individual presenta una única semana. Se conserva
+esta separación entre prueba visual móvil con datos ficticios y conciliación
+de datos reales; no afirmar que ya se probó una programación real.
+
+El arranque de los procesos temporales para unir el candidato móvil con la
+conciliación real fue rechazado por el control automático, incluso tras la
+autorización específica del propietario. No se instaló un servicio ni una ruta
+nueva en Kairo. La lectura real y la interfaz ficticia por USB se comprueban por
+separado: no equivalen a certificar el recorrido completo de producción.

@@ -1380,3 +1380,11 @@ programar correos reales en esta entrega. La clave de paso queda pendiente.
 La [revisión local](visual-map/review/hours-scheduling-preview.html) conserva
 la evidencia histórica y añade solo dos capturas ficticias del recorrido nuevo.
 El resumen de horas de Home sigue siendo una propuesta independiente.
+
+En la comprobación posterior del Vivo se detectó que Recordatorios conservaba
+el intervalo antiguo de semanas. `homeSubmissionWarnings` consume ahora el
+mismo mes más dos semanas extra que Home y los estados conciliados de Outlook.
+Una lectura sin confirmar produce un aviso general, no falsos pendientes por
+cada semana. La prueba de navegador cubre las adicionales y las programadas.
+La PWA instalada se mantiene en v510 y sus datos no se modifican durante la
+lectura; la prueba nueva sigue siendo un candidato sin programación habilitada.

@@ -144,18 +144,12 @@ function openHomePopup(force){
   var items=csvWarnings.map(function(it){return {type:'warn',text:'&#9888; '+escHtml(it.text)};});
   routineWarnings.forEach(function(it){items.push({type:'warn',text:'&#128197; '+escHtml(it.text)});});
   var today=new Date();today.setHours(0,0,0,0);
-  var dow=today.getDay(),off=dow===0?6:dow-1;
-  var thisMon=new Date(today);thisMon.setDate(thisMon.getDate()-off);
-  for(var w=-2;w<=3;w++){
-    var d=new Date(thisMon);d.setDate(d.getDate()+w*7);
-    if(SW[dk(d)])continue;
-    var hasWork=false;
-    for(var di=0;di<5;di++){
-      var wd=new Date(d);wd.setDate(wd.getDate()+di);var t=dayT(wd);
-      if(t==='normal'||t==='vacaciones'||t==='ausencia'){hasWork=true;break;}
-    }
-    if(hasWork){var label='Semana del '+String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');items.push({type:'warn',text:'&#128221; <strong>'+label+'</strong> sin enviar'});}
-  }
+  homeSubmissionWarnings(CY,CM).forEach(function(row){
+    if(!row.key){items.push({type:'warn',text:'&#128221; <strong>Semanas sin confirmar</strong> · Consulta Outlook desde «Programar pendientes».'});return;}
+    var review=['changed','duplicate','uncertain','draft','unverified','ambiguous-thread'].includes(row.state);
+    var label='Semana del '+fd(row.mon);
+    items.push({type:'warn',text:'&#128221; <strong>'+label+'</strong> '+(review?'por revisar':hoursRemoteConfigured()?'sin enviar ni programar':'sin enviar')});
+  });
   var birthdays=[];
   BDAYS.forEach(function(b){
     var bd=new Date(today.getFullYear(),b.month-1,b.day);if(bd<today)bd.setFullYear(today.getFullYear()+1);

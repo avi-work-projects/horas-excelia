@@ -5,6 +5,16 @@ function homeSubmissionWeeks(year,month){
     var mon=ad(last,7*n);return {key:dk(mon),mon:mon,extra:true};
   }));
 }
+/* Recordatorios y Home comparten alcance y hechos de Outlook. Desconocido
+   nunca se convierte en siete avisos falsos de semanas sin enviar. */
+function homeSubmissionWarnings(year,month){
+  var remote=typeof hoursRemoteConfigured==='function'&&hoursRemoteConfigured();
+  var rows=homeSubmissionWeeks(year,month).map(function(week){
+    return {key:week.key,mon:week.mon,state:remote?hoursWeekState(week.key):SW[week.key]?'sent':'missing'};
+  });
+  if(remote&&rows.some(function(row){return !row.state;}))return [{state:'unverified'}];
+  return rows.filter(function(row){return row.state!=='sent'&&row.state!=='scheduled';});
+}
 /* Fecha civil de Madrid: no depende del huso del ordenador ni añade 24 h al
    cruzar el cambio de hora. La conversión a instante la hará Kairo con ZoneInfo. */
 function homeWeekSchedule(weekKey,now){

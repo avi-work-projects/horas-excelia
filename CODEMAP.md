@@ -294,13 +294,13 @@
 ### js/home-hours.js  _(29 líneas)_
 **Funciones:** homeMonthHours:3 · renderHomeMonthHours:18 · hours:19 · row:20
 
-### js/home-popup.js  _(196 líneas)_
+### js/home-popup.js  _(190 líneas)_
 **Estado global:** HOME_BIRTHDAYS_OPEN:2 · HOME_REMINDER_EDITING:3
 
 **Funciones:** homeReminderColor:4 · homeReminderEventText:5 · homeReminderNoteHtml:10 · homeReminderEvents:14 · homeReminderTasksHtml:38 · homeReminderCardHtml:45 · homeReminderGroup:55 · homeReminderPendingHtml:58 · homeReminderLargeHtml:63 · homeReminderItemsHtml:78 · closeHomePopup:95 · homeReminderEdit:101 · homeReminderSelectEdit:113 · bindHomeReminderEditing:121 · choose:128 · openHomePopup:140
 
-### js/home-weeks.js  _(23 líneas)_
-**Funciones:** homeSubmissionWeeks:2 · homeWeekSchedule:10
+### js/home-weeks.js  _(33 líneas)_
+**Funciones:** homeSubmissionWeeks:2 · homeSubmissionWarnings:10 · homeWeekSchedule:20
 
 ### js/hours-kairo.js  _(109 líneas)_
 **Estado global:** HOURS_STATUS:3 · HOURS_REQUEST:4

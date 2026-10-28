@@ -21,7 +21,13 @@ assert.equal(a.homeSubmissionStatus(a.CY,a.CM).complete,false,'Las marcas locale
 const url=a.hoursKairoUrl();
 a.HOURS_STATUS={url,period:'2026-10',phase:'ready',checkedAt:Date.now(),rows:request.weeks.map(w=>({key:w.key,state:'scheduled'}))};
 assert.equal(a.homeSubmissionStatus(a.CY,a.CM).complete,true);
+assert.equal(a.homeSubmissionWarnings(a.CY,a.CM).length,0,'Recordatorios también reconoce las programadas');
+a.HOURS_STATUS.rows[6].state='changed';
+assert.equal(a.homeSubmissionWarnings(a.CY,a.CM)[0].key,'2026-11-09');
+a.HOURS_STATUS.rows[6].state='scheduled';
 a.HOURS_STATUS.checkedAt=0;assert.equal(a.hoursWeekState('2026-10-26'),'');
+assert.equal(a.homeSubmissionWarnings(a.CY,a.CM).length,1,'Un estado desconocido produce un único aviso de consulta');
+assert.equal(a.homeSubmissionWarnings(a.CY,a.CM)[0].state,'unverified');
 const good={period:'2026-10',checkedAt:'2026-10-28T12:00:00+01:00',rows:request.weeks.map(w=>({key:w.key,state:'sent'}))};
 a.validateHoursResult(good,'2026-10',Array.from(request.weeks,w=>w.key));
 assert.throws(()=>a.validateHoursResult({...good,rows:good.rows.slice(1)},'2026-10',Array.from(request.weeks,w=>w.key)));
