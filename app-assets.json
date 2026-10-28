@@ -13,6 +13,7 @@
     "css/source/routines.css",
     "css/source/shared-refinements.css",
     "css/source/home-sharing.css",
+    "css/source/hours-kairo.css",
     "css/source/energy-refinements.css",
     "css/source/home-reminders.css",
     "css/source/invoices.css",
@@ -52,6 +53,9 @@
     },
     {
       "path": "js/home-weeks.js"
+    },
+    {
+      "path": "js/hours-kairo.js"
     },
     {
       "path": "js/statistics-ui.js"

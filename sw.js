@@ -25,6 +25,7 @@ var ASSETS = [
   "./js/core.js",
   "./js/home-hours.js",
   "./js/home-weeks.js",
+  "./js/hours-kairo.js",
   "./js/statistics-ui.js",
   "./js/swipe-content.js",
   "./js/swipe-render.js",

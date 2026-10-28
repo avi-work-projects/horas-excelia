@@ -1,0 +1,7 @@
+/* The warning owns the batch entry; individual week actions stay in place. */
+.home-submission.unknown{--status-tone:var(--text-muted)}
+.hours-home-actions{grid-column:1/-1;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hours-pending-button{border:1px solid color-mix(in srgb,var(--status-tone) 55%,var(--border));border-radius:8px;padding:8px 11px;background:var(--surface);color:var(--status-tone);font:600 .73rem var(--font);cursor:pointer;min-height:34px}
+.hours-pending-button:focus-visible{outline:2px solid var(--status-tone);outline-offset:3px}
+.hours-verified-note{font-size:.64rem;line-height:1.4;color:var(--text-muted)}
+.week-actions .sent-toggle:disabled{opacity:.75;cursor:default}
