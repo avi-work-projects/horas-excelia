@@ -119,7 +119,7 @@ class OutlookReader:
 
     def __call__(self, request):
         from playwright.sync_api import sync_playwright
-        wanted = scope(request['period'])
+        wanted = sorted({key for period in request.get('periods', [request['period']]) for key in scope(period)})
         wanted.insert(0, (monday(wanted[0])-timedelta(weeks=1)).isoformat())
         result = dict(complete=False, accountVerified=False, account=self.sender,
                       records=[], problem=None)

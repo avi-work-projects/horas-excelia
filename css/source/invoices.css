@@ -105,13 +105,13 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 .invoice-kairo-card>.invoice-actions{margin:0}
 .invoice-kairo-card .ev-btn{min-height:44px}
 .invoice-kairo-locked .invoice-connection-action{margin-top:8px}
-.home-invoice-status{--invoice-tone:var(--text-muted);display:grid;grid-template-columns:18px minmax(0,1fr) auto;align-items:center;gap:9px;min-height:112px;box-sizing:border-box;padding:11px 13px;border:1px solid color-mix(in srgb,var(--invoice-tone) 65%,var(--border));border-radius:10px;background:color-mix(in srgb,var(--invoice-tone) 7%,var(--surface));color:var(--invoice-tone)}
+.home-invoice-status{--invoice-tone:var(--text-muted);display:grid;grid-template-columns:22px minmax(0,1fr);align-items:center;gap:10px;box-sizing:border-box;padding:13px;border:1px solid color-mix(in srgb,var(--invoice-tone) 65%,var(--border));border-radius:10px;background:color-mix(in srgb,var(--invoice-tone) 7%,var(--surface));color:var(--invoice-tone)}
 .home-invoice-status.pending{--invoice-tone:var(--c-orange)}
 .home-invoice-status.complete{--invoice-tone:var(--c-green)}
 .home-invoice-status.scheduled{--invoice-tone:var(--upcoming-text)}
 .home-invoice-copy{min-width:0}
 .home-invoice-copy strong{display:block;font-size:.78rem;font-weight:600}
-.home-invoice-copy>span{display:block;font-size:.67rem;line-height:1.4;min-height:2.8em;color:var(--text-muted);margin-top:3px}
+.home-invoice-copy>span{display:block;font-size:.67rem;line-height:1.4;color:var(--text-muted);margin-top:3px}
 .home-invoice-copy a{display:inline-block;font-size:.67rem;color:var(--invoice-tone);margin-top:2px;text-underline-offset:2px}
 .home-invoice-refresh{min-width:32px;min-height:32px;padding:4px 6px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font:inherit;font-size:.65rem;cursor:pointer}
 .home-invoice-refresh[data-home-invoice="refresh"]{font-size:1.15rem}

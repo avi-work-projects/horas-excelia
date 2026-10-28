@@ -12,6 +12,7 @@
 --sent:#1a3a2a;--sent-border:#2a5a3a;--sent-text:#5ae088;
 --falta:#3a3320;--falta-border:#6a5a2a;
 --festivo:#ff6b6b;--vacaciones:#ffb347;--ausencia:#c084fc;--normal:#6c8cff;
+--hour-7:#e2c447;--hour-8:#60a5fa;--hour-9:#34d399;--hour-65:#fb923c;
 --wm-wine:#cc9294;--c-orange:#fb923c;--c-red:#ff6b6b;--c-green:#34d399;--c-blue:#6c8cff;--c-purple:#c084fc;--c-yellow:#fbbf24;
 --radius:14px;--radius-sm:10px;
 --font:'DM Sans',sans-serif;--mono:'JetBrains Mono',monospace;
@@ -27,6 +28,7 @@
 --sent:#e8f5ee;--sent-border:#90d4ac;--sent-text:#1a7040;
 --falta:#fdf6e0;--falta-border:#e0c878;
 --festivo:#d83030;--vacaciones:#c07800;--ausencia:#8030b8;--normal:#4d6ae8;
+--hour-7:#8a6d00;--hour-8:#1d4ed8;--hour-9:#047857;--hour-65:#c2410c;
 --wm-wine:#6b1f20;--c-orange:#d05818;--c-red:#d83030;--c-green:#1a9060;--c-blue:#4d6ae8;--c-purple:#8030b8;--c-yellow:#a07000;
 --radius:14px;--radius-sm:10px;
 --font:'DM Sans',sans-serif;--mono:'JetBrains Mono',monospace;
@@ -60,6 +62,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .csv-export-btn,.pdf-export-btn{padding:6px 12px;gap:6px}
 .ico-doc{width:14px;height:14px;opacity:.7;flex-shrink:0}
 .default-hours-btn .dh-val{color:var(--accent-bright);font-family:var(--mono);font-weight:600}
+.edit-pencil{display:inline-block;width:16px;height:16px;vertical-align:-.18em;flex-shrink:0}
 .default-hours-panel{display:none;align-items:center;gap:8px;flex-wrap:wrap;animation:fadeUp .15s ease both}
 .default-hours-panel.open{display:flex}
 .hours-label{font-size:.72rem;color:var(--text-muted);font-weight:500;flex-shrink:0}
@@ -112,27 +115,26 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .weeks-container{padding:12px 16px 30px;display:flex;flex-direction:column;gap:12px}
 .week-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all .25s}
 .week-card.sent{background:var(--sent);border-color:var(--sent-border)}
-.week-card.sent .week-header{border-bottom-color:var(--sent-border)}
-.week-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 12px;border-bottom:1px solid var(--border)}
+.week-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 12px}
 .week-info h3{font-size:.88rem;font-weight:600}
 .week-info .week-range{font-size:.73rem;color:var(--text-muted);margin-top:2px}
 .sent-badge{font-size:.68rem;color:var(--sent-text);font-weight:500;margin-left:8px}
 .week-total{font-family:var(--mono);font-size:.82rem;font-weight:500;color:var(--accent-bright);background:var(--accent-glow);padding:4px 10px;border-radius:8px}
 .week-card.sent .week-total{color:var(--sent-text);background:#1a3a2a88}
-.days-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border)}
+.days-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;background:var(--border);border-top:2px solid var(--border);border-bottom:2px solid var(--border)}
 .day-cell{background:var(--surface);padding:12px 4px 10px;text-align:center;cursor:pointer;transition:all .12s;-webkit-user-select:none;user-select:none;position:relative}
 .day-cell:active{background:var(--surface3)}
 .week-card.sent .day-cell{background:var(--sent);cursor:not-allowed}
 .week-card.sent .day-cell:active{background:var(--sent)}
 .day-name{font-size:.68rem;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
 .day-date{font-size:.82rem;font-weight:400;color:var(--text-muted);margin-bottom:6px}
-.day-hours{font-family:var(--mono);font-size:1.05rem;font-weight:500;color:var(--text)}
+.day-hours{font-family:var(--mono);font-size:1.05rem;font-weight:600;color:var(--text)}
 .day-cell.festivo .day-hours{color:var(--festivo)}
-.day-cell.festivo::after{content:'Festivo';font-size:.58rem;color:var(--festivo);display:block;margin-top:2px}
+.week-card .day-cell.festivo{background:color-mix(in srgb,var(--festivo) 17%,var(--surface))}
 .day-cell.vacaciones .day-hours{color:var(--vacaciones)}
-.day-cell.vacaciones::after{content:'Vac.';font-size:.58rem;color:var(--vacaciones);display:block;margin-top:2px}
+.week-card .day-cell.vacaciones{background:color-mix(in srgb,var(--vacaciones) 17%,var(--surface))}
 .day-cell.ausencia .day-hours{color:var(--ausencia)}
-.day-cell.ausencia::after{content:'Ausencia';font-size:.58rem;color:var(--ausencia);display:block;margin-top:2px}
+.week-card .day-cell.ausencia{background:color-mix(in srgb,var(--ausencia) 17%,var(--surface))}
 .day-status-dot{width:5px;height:5px;border-radius:50%;position:absolute;top:6px;right:6px}
 .day-cell.festivo .day-status-dot{background:var(--festivo)}
 .day-cell.vacaciones .day-status-dot{background:var(--vacaciones)}
@@ -144,7 +146,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .week-actions{display:flex;gap:6px;padding:10px 12px}
 .action-btn{flex:1;padding:12px 6px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:var(--font);font-size:.74rem;font-weight:500;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px;-webkit-user-select:none;user-select:none;white-space:nowrap}
 .action-btn:active{transform:scale(.97)}
-.action-btn.send{background:linear-gradient(135deg,#1a2a4a,#1a3a5a);border-color:#2a4a6a;color:#6cb8ff}
+.action-btn.send{background:linear-gradient(135deg,#1a2a4a,#1a3a5a);border-color:#2a4a6a;color:#fff}
 .action-btn.send:active{background:#1a4a6a}
 .action-btn.sent-toggle{border-color:var(--sent-border);color:var(--sent-text)}
 .week-card.sent .action-btn.sent-toggle,.action-btn.sent-toggle.is-marked{background:var(--sent-border);color:#fff}
@@ -205,19 +207,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .day-cell.h65,.day-cell.h7,.day-cell.h8,.day-cell.h9{background:var(--surface)}
 .week-card.sent .day-cell.h65,.week-card.sent .day-cell.h7,
 .week-card.sent .day-cell.h8,.week-card.sent .day-cell.h9{background:var(--sent)}
-.day-cell.h65::before,.day-cell.h7::before,
-.day-cell.h8::before,.day-cell.h9::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:3px;background:currentColor;opacity:.9}
-.day-cell.h65{color:#fb923c}.day-cell.h65 .day-hours{color:#fb923c}
-.day-cell.h7 {color:#fbbf24}.day-cell.h7  .day-hours{color:#fbbf24}
-.day-cell.h8 {color:#60a5fa}.day-cell.h8  .day-hours{color:#60a5fa}
-.day-cell.h9 {color:#34d399}.day-cell.h9  .day-hours{color:#34d399}
+.day-cell.h65::before,.day-cell.h7::before,.day-cell.h8::before,.day-cell.h9::before{content:none}
+.day-cell.h65,.day-cell.h65 .day-hours,.hour-65{color:var(--hour-65)}
+.day-cell.h7,.day-cell.h7 .day-hours,.hour-7,.hours-chip[data-h="7"],.hour-chip-day[data-h="7"],.default-hours-btn .dh-val.hour-7{color:var(--hour-7)}
+.day-cell.h8,.day-cell.h8 .day-hours,.hour-8,.hours-chip[data-h="8"],.hour-chip-day[data-h="8"],.default-hours-btn .dh-val.hour-8{color:var(--hour-8)}
+.day-cell.h9,.day-cell.h9 .day-hours,.hour-9,.hours-chip[data-h="9"],.hour-chip-day[data-h="9"],.default-hours-btn .dh-val.hour-9{color:var(--hour-9)}
 /* Tema claro: mismo matiz por jornada pero mas profundo, que sobre blanco (o
    sobre el verde de "enviada") los tonos claros no contrastan. */
-:is([data-theme="light"],[data-theme="grey"]) .day-cell.h65,:is([data-theme="light"],[data-theme="grey"]) .day-cell.h65 .day-hours{color:#c2410c}
-:is([data-theme="light"],[data-theme="grey"]) .day-cell.h7, :is([data-theme="light"],[data-theme="grey"]) .day-cell.h7  .day-hours{color:#b45309}
-:is([data-theme="light"],[data-theme="grey"]) .day-cell.h8, :is([data-theme="light"],[data-theme="grey"]) .day-cell.h8  .day-hours{color:#1d4ed8}
-:is([data-theme="light"],[data-theme="grey"]) .day-cell.h9, :is([data-theme="light"],[data-theme="grey"]) .day-cell.h9  .day-hours{color:#047857}
+[data-theme="grey"]{--hour-7:#8a6d00;--hour-8:#1d4ed8;--hour-9:#047857;--hour-65:#c2410c}
 /* Los dias marcados (festivo/vacaciones/ausencia) mandan sobre la jornada */
 .day-cell.festivo .day-hours{color:var(--festivo)!important}
 .day-cell.vacaciones .day-hours{color:var(--vacaciones)!important}

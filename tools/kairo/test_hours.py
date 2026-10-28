@@ -192,6 +192,15 @@ class StoreTests(unittest.TestCase):
         next_plan = self.store.preview(self.req, self.inv, NOW)
         self.assertEqual(next_plan['rows'][0]['state'], 'uncertain')
 
+    def test_time_is_rechecked_after_a_slow_browser_read(self):
+        target=datetime.fromisoformat(schedule(self.req['weeks'][0],NOW)[0])
+        before=target-timedelta(minutes=2)
+        plan=self.store.preview(self.req,self.inv,before)
+        result=self.store.commit(plan['planId'],self.reader,self.writer,before,
+                                 allow_writes=True,updates=[],clock=lambda:target+timedelta(seconds=1))
+        self.assertEqual(self.calls,[])
+        self.assertEqual(result['results'][0]['state'],'changed-before-write')
+
     def test_outlook_change_and_expiry_require_new_review(self):
         plan = self.store.preview(self.req, self.inv, NOW)
         self.inv['records'].append(dict(id='external', week=self.req['weeks'][0]['key'], state='draft'))

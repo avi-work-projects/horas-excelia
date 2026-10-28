@@ -3,6 +3,7 @@ const {cargarApp}=require('./entorno');
 const a=cargarApp({});
 a.URL=URL;
 a.CY=2026;a.CM=9;a.TO='destino@example.invalid';a.CC=['copia@example.invalid'];a.AUTHOR_NAME='Persona de prueba';a.ST={};
+a.saveMailConfig();
 const before=JSON.stringify(a.localStorage._datos),sw=JSON.stringify(a.SW);
 const request=a.hoursMailRequest();
 assert.equal(request.mode,'month');assert.equal(request.weeks.length,7);
@@ -38,9 +39,11 @@ assert.equal(JSON.stringify(a.localStorage._datos),saved,'Repintar no escribe ca
 const restored=cargarApp(a.localStorage._datos);restored.URL=URL;restored.ST={};
 assert.equal(restored.hoursWeekState('2026-10-26'),'scheduled','Sobrevive a recargar');
 const novemberKeys=Array.from(a.hoursScopeKeys('2026-11'));
-a.hoursCacheRemember({period:'2026-11',checkedAt:new a.Date().toISOString(),rows:novemberKeys.map(key=>({key,state:'sent',body:'no guardar',to:'no guardar'}))},url,'source-nov');
+a.hoursCacheRemember({period:'2026-11',checkedAt:new a.Date(originalNow()+1000).toISOString(),rows:novemberKeys.map(key=>({key,state:'sent',body:'no guardar',to:'no guardar'}))},url,'source-nov');
 a.CM=9;assert.equal(a.hoursWeekState('2026-11-02'),'sent','Los meses comparten el hecho más reciente');
 assert.ok(!a.localStorage.getItem(a.HOURS_CACHE_KEY).includes('no guardar'));
+a.hoursCacheRemember(verified,url,'older-month');
+assert.equal(a.hoursWeekState('2026-10-26'),'sent','Una copia antigua de otro mes no revierte el hecho compartido más reciente');
 a.HOURS_CACHE.weeks['2026-10-26']=a.hoursCacheRow(verified.rows[4],originalNow());
 a.Date.now=()=>Date.parse('2026-10-30T08:00:00Z');
 assert.ok(a.hoursCacheDue(['2026-10-26']).includes('2026-10-26'),'Reconsulta cuando llega la fecha programada');
@@ -58,4 +61,8 @@ for(const invalid of ['bad',JSON.stringify({schema:2}),JSON.stringify({schema:1,
   a.localStorage.setItem(a.HOURS_CACHE_KEY,invalid);assert.equal(Object.keys(a.hoursCacheRead().weeks).length,0);
 }
 data.config.kairoUrl='https://another.test.ts.net/facturas/';a.invoiceSave(data);assert.equal(a.hoursWeekState('2026-11-02'),'','Otra conexión no hereda estados');
+a.window=a;a.location={href:''};a.confirm=()=>true;a.showToast=()=>{};
+const manualBefore=JSON.stringify(a.SW);a.sendManualEmail('2026-10-26');
+assert.match(a.location.href,/^mailto:destino@example.invalid/);assert.match(a.location.href,/cc=copia%40example.invalid/);
+assert.equal(JSON.stringify(a.SW),manualBefore,'Abrir Outlook manualmente no confirma un envío');
 console.log('Horas: alcance compartido, recorrido individual sin falso enviado, cuenta privada y respuesta íntegra OK');

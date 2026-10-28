@@ -74,7 +74,7 @@ class Store:
                        (plan_id, json.dumps(request), result['signature'], expires))
         return result | {'planId': plan_id, 'expiresAt': expires}
 
-    def commit(self, plan_id, reader, writer, now, *, allow_writes=False, updates=()):
+    def commit(self, plan_id, reader, writer, now, *, allow_writes=False, updates=(), clock=None):
         if not allow_writes:
             raise PermissionError('Modo de revisión: los correos reales no están habilitados')
         if not isinstance(updates, list) or len(updates) != len(set(updates)):
@@ -98,13 +98,15 @@ class Store:
             if not set(updates) <= allowed_updates:
                 raise ValueError('La actualización no corresponde a esta revisión')
             results = []
+            fresh = inventory
             for row in decision['rows']:
                 if not row['selected'] or row['action'] is None:
                     continue
                 if row['action'] == 'update' and row['key'] not in updates:
                     continue
-                fresh = reader(request)
-                live = reconcile(request, fresh, now, self.ledger())
+                # The initial live read checks the first write. Each confirmed
+                # read below also checks the next week, under the same lock.
+                live = reconcile(request, fresh, clock() if clock else now, self.ledger())
                 current = next(r for r in live['rows'] if r['key'] == row['key'])
                 # A preceding write is verified in Outlook before the next one.
                 if current['action'] != row['action'] or current['contentHash'] != row['contentHash'] or current.get('recordId') != row.get('recordId'):
@@ -121,6 +123,7 @@ class Store:
                 try:
                     writer(request, current)
                     observed = reader(request)
+                    fresh = observed
                     matches = [r for r in observed.get('records', []) if r.get('week') == row['key']]
                     if not observed.get('complete') or not observed.get('accountVerified') or len(matches) != 1:
                         raise RuntimeError('Programación sin confirmación única')

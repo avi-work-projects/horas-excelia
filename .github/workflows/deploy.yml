@@ -34,6 +34,7 @@ jobs:
       - run: npm test
       - run: python3 tools/kairo/test_home_status.py
       - run: python3 tools/kairo/test_hours.py
+      - run: python3 tools/kairo/test_hours_jobs.py
       - run: npm run build
       - name: Check preinstalled Chrome
         run: google-chrome --version

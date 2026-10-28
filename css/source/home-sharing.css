@@ -1,21 +1,25 @@
 /* Cabecera de Home opaca, incluso sobre los botones oscuros de las semanas. */
 .header,:is([data-theme="light"],[data-theme="grey"]) .header,[data-theme="grey"] .header{background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none}
 .ev-wk-travel-row:not(.ev-wk-travel-footer) > .ev-wk-travel{gap:0}
-.home-submission{display:grid;grid-template-columns:18px minmax(0,1fr);align-items:center;gap:8px;padding:11px 13px;border:1px solid var(--status-tone);border-radius:10px;background:color-mix(in srgb,var(--status-tone) 9%,var(--surface));color:var(--status-tone)}
+.home-submission{display:flex;flex-direction:column;gap:0;padding:12px;border:1px solid var(--status-tone);border-radius:10px;background:color-mix(in srgb,var(--status-tone) 9%,var(--surface));color:var(--status-tone)}
 .home-submission.pending{--status-tone:var(--c-orange)}
 .home-submission.complete{--status-tone:var(--c-green)}
 .home-submission strong{display:block;font-size:.78rem;font-weight:600}
-.home-submission-message > span{display:block;font-size:.68rem;line-height:1.4;margin-top:3px;color:var(--text-muted)}
+.home-submission-heading{display:flex;align-items:center;gap:6px}
+.home-submission-detail{font-size:.68rem;line-height:1.4;margin:6px 0 12px;color:var(--text-muted)}
+.home-submission-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,176px);gap:10px;align-items:center}
+.home-submission-next{min-width:0}
+.home-submission-next>span{display:block;font-size:.66rem;color:var(--text-muted)}
+.home-submission-next>strong{font-size:.9rem;margin:3px 0;font-variant-numeric:tabular-nums}
 .home-submission-icon{font-size:1.1rem;flex-shrink:0}
-.home-submission.pending>.home-submission-icon,.home-submission.pending>.home-submission-message{animation:home-pending-pulse 1.8s ease-in-out infinite}
+.home-submission.pending .home-submission-heading{animation:home-pending-pulse 1.8s ease-in-out infinite}
 @keyframes home-pending-pulse{0%,100%{opacity:1}50%{opacity:.3}}
-@media(prefers-reduced-motion:reduce){.home-submission.pending>.home-submission-icon,.home-submission.pending>.home-submission-message{animation:none}}
+@media(prefers-reduced-motion:reduce){.home-submission.pending .home-submission-heading{animation:none}}
 
 :root{--upcoming-tone:#71c9ed;--upcoming-text:#91d9f6}
 [data-theme="light"]{--upcoming-tone:#56b6e0;--upcoming-text:#227fa8}
 #eventsOverlay .ev-hdr-sub #evViewUpcoming{--tab-tone:var(--upcoming-tone)}
-.home-submission.complete{grid-template-columns:18px 70px minmax(0,1fr)}
-.home-summary-compact{grid-column:3;grid-row:1;justify-self:end;width:max-content;max-width:100%;box-sizing:border-box;padding:6px 7px;border:1px solid var(--border);border-radius:8px;background:var(--surface);gap:3px;min-width:0}
+.home-summary-compact{justify-self:end;width:100%;box-sizing:border-box;padding:7px;border:1px solid var(--border);border-radius:8px;background:var(--surface);gap:3px;min-width:0}
 .month-summary .month-stat{justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:nowrap;white-space:nowrap}
 .month-summary .ms-days{font-size:.8rem;color:var(--text-muted)}
 .month-summary .worked .ms-days{color:var(--c-green)}
@@ -26,11 +30,17 @@
 .home-worked-total{border-top:1px solid var(--border);padding-top:5px;margin-top:2px}
 .month-summary .worked .ms-num{font-size:1.6rem;font-weight:700;color:var(--c-green);line-height:1.2}
 .home-summary-compact .month-stat.total .ms-num{font-size:.8rem;font-weight:500}
-.home-summary-compact .month-stat{font-size:.6rem;line-height:1.35;gap:7px}
+.home-summary-compact .month-stat{font-size:.6rem;line-height:1.35;gap:5px}
 .home-summary-compact .ms-days{font-size:.62rem}
-.home-summary-compact .ms-caption,.home-summary-compact .ms-no-off{font-size:.58rem}
+.home-summary-compact .ms-caption,.home-summary-compact .ms-no-off{font-size:.6rem}
 .home-summary-compact .worked .ms-num{font-size:1.15rem;font-weight:700}
-@media(max-width:360px){.home-submission.complete{grid-template-columns:14px 60px minmax(0,1fr);gap:6px;padding-inline:11px}}
+.ms-caption-row,.ms-no-off{display:flex;align-items:center;justify-content:space-between;gap:4px}
+.home-formula-toggle{position:relative;display:inline-grid;place-items:center;width:14px;height:14px;flex:0 0 14px;min-height:14px;padding:0;border:0;background:transparent;color:var(--text-dim);font:400 13px/1 var(--font);cursor:pointer}
+.home-hours-equation{font-size:.6rem;line-height:1.6;margin:3px 0 5px;color:var(--text-muted);font-variant-numeric:tabular-nums}
+.home-hours-term{display:inline-block;white-space:nowrap}
+.home-hours-equals{font-family:var(--mono);font-size:.68rem}
+@media(pointer:coarse){.home-formula-toggle::before{content:'';position:absolute;inset:-15px -7px -15px -23px}}
+@media(max-width:360px){.home-submission{padding:10px}.home-submission-body{grid-template-columns:minmax(0,1fr) minmax(0,173px);gap:8px}.home-summary-compact .worked .ms-num{font-size:1.05rem}}
 
 /* Selector de eventos para compartir por iCalendar */
 /* Selector de exportación: controles compactos y lista con espacio propio. */

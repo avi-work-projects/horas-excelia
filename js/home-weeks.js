@@ -1,4 +1,10 @@
 /* Una identidad por lunes; la semana puente del mes no se repite. */
+function homePeriodMode(year,month){
+  var today=new Date(),distance=year*12+month-(today.getFullYear()*12+today.getMonth());
+  return distance< -1?'closed':distance<=1?'audit':'future';
+}
+function homeWeekCovered(key){return hoursRemoteConfigured()?hoursHasConfirmedMail(key)||homePeriodMode(CY,CM)==='closed':!!SW[key];}
+function homeWeekUnlocked(key){return Object.prototype.hasOwnProperty.call(HOURS_WEEK_UNLOCKED,key)?HOURS_WEEK_UNLOCKED[key]:!homeWeekCovered(key);}
 function homeSubmissionWeeks(year,month){
   var current=weeks(year,month),last=current[current.length-1][0];
   return current.map(function(week){return {key:dk(week[0]),mon:week[0],extra:false};}).concat([1,2].map(function(n){

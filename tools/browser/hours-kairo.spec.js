@@ -3,7 +3,7 @@ const {spawn}=require('node:child_process');
 const base='https://synthetic-hours.test.ts.net/';
 let demo;
 test.beforeAll(async()=>{
-  demo=spawn('python',['tools/kairo/demo_hours.py','--port','8772','--app-origin','http://127.0.0.1:8765'],{stdio:['ignore','pipe','pipe']});
+  demo=spawn(process.env.GESTIFY_TEST_PYTHON||'python',['tools/kairo/demo_hours.py','--port','8772','--app-origin','http://127.0.0.1:8765'],{stdio:['ignore','pipe','pipe']});
   await new Promise((resolve,reject)=>{demo.stdout.once('data',resolve);demo.once('error',reject);demo.once('exit',code=>reject(Error('Demo no disponible: '+code)));});
 });
 test.afterAll(()=>{demo?.kill();});
@@ -33,7 +33,7 @@ async function setup(page,context,scenario='mixed'){
   });
   await page.goto('/');
   await page.evaluate(()=>{CY=2027;CM=1;MONTH_H={'2027-02':9,'2027-03':9};ST={};SW={};render();});
-  await expect(page.locator('[data-hours-review]')).toBeVisible();
+  await expect.poll(()=>page.evaluate(()=>HOURS_STATUS.phase)).toMatch(/ready|error/);
   return calls;
 }
 async function open(page,button){const waiting=page.waitForEvent('popup');await button.click();const popup=await waiting;await expect(popup.locator('#message')).toContainText('Estado actualizado en Home');return popup;}
@@ -44,10 +44,10 @@ test('Android instalado conserva la revisión en Gestify y vuelve a Home',async(
     Object.defineProperty(navigator,'userAgent',{get:()=> 'Mozilla/5.0 Android Gestify'});
     const media=window.matchMedia.bind(window);window.matchMedia=query=>query==='(display-mode: standalone)'?{matches:true}:media(query);
   });
-  const calls=await setup(page,context),before=await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>key!==HOURS_CACHE_KEY))));
+  const calls=await setup(page,context),before=await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>![HOURS_CACHE_KEY,HOURS_JOBS_KEY,INVOICE_HOME_CACHE_KEY].includes(key)))));
   const popups=[];page.on('popup',popup=>popups.push(popup));
-  await page.getByRole('button',{name:'Comprobar Outlook',exact:true}).click();
-  await expect(page.locator('.home-submission')).toContainText('1 enviada · 1 programada · 3 pendientes · 1 por revisar');
+  await page.getByRole('button',{name:'Actualizar estado de correos y factura',exact:true}).click();
+  await expect(page.locator('.home-submission')).toContainText('Hay cambios');
   await expect(page.locator('.hours-review-dialog')).toHaveCount(0);
   await page.locator('[data-hours-review]').click();
   const review=page.frameLocator('.hours-review-dialog iframe');
@@ -63,7 +63,7 @@ test('Android instalado conserva la revisión en Gestify y vuelve a Home',async(
   await expect(page.locator('.hours-review-dialog')).toHaveCount(0);
   expect(popups).toHaveLength(0);
   expect(calls.some(c=>c.path.endsWith('/commit')||c.path.endsWith('/simulate'))).toBe(false);
-  expect(await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>key!==HOURS_CACHE_KEY))))).toBe(before);
+  expect(await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>![HOURS_CACHE_KEY,HOURS_JOBS_KEY,INVOICE_HOME_CACHE_KEY].includes(key)))))).toBe(before);
 });
 
 test('lote e individual conservan alcance; revisión muestra cambios y simula sin correos reales',async({page,context},info)=>{
@@ -108,13 +108,12 @@ test('la revisión comunica estados aunque el navegador bloquee la consulta auto
 });
 
 test('comprobar vuelve a Home sin confirmar ni cambiar correos',async({page,context})=>{
-  await page.route(base+'horas/status?**',route=>route.abort());
-  const calls=await setup(page,context),before=await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>key!==HOURS_CACHE_KEY))));
-  const waiting=page.waitForEvent('popup');await page.getByRole('button',{name:'Comprobar Outlook',exact:true}).click();const popup=await waiting;
-  await expect.poll(()=>popup.isClosed()).toBe(true);
-  await expect(page.locator('.home-submission')).toContainText('1 enviada · 1 programada · 3 pendientes · 1 por revisar');
+  const calls=await setup(page,context),before=await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>![HOURS_CACHE_KEY,HOURS_JOBS_KEY,INVOICE_HOME_CACHE_KEY].includes(key)))));
+  await page.getByRole('button',{name:'Actualizar estado de correos y factura',exact:true}).click();
+  await expect(page.locator('.hours-review-dialog')).toHaveCount(0);
+  await expect(page.locator('.home-submission')).toContainText('Hay cambios');
   expect(calls.some(c=>c.path.endsWith('/commit')||c.path.endsWith('/simulate'))).toBe(false);
-  expect(await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>key!==HOURS_CACHE_KEY))))).toBe(before);
+  expect(await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>![HOURS_CACHE_KEY,HOURS_JOBS_KEY,INVOICE_HOME_CACHE_KEY].includes(key)))))).toBe(before);
 });
 
 test('Home compara la programación con los días actuales y detecta cambios locales',async({page,context},info)=>{
@@ -139,10 +138,10 @@ test('semana de vacaciones usa el último día no festivo y muestra solo lo que 
 test('semanas resueltas aparecen sincronizadas en Home y no ofrecen una confirmación vacía',async({page,context},info)=>{
   await page.route(base+'horas/status?**',async route=>{
     const request=await (await context.request.get('http://127.0.0.1:8772/example?mode=month',{headers:{Origin:'http://127.0.0.1:8765'}})).json();
-    return route.fulfill({json:{period:request.period,checkedAt:new Date().toISOString(),rows:request.weeks.map((w,i)=>({key:w.key,state:i?'scheduled':'sent',days:w.days,schedule:w.days[4].date+'T08:00:00+01:00'}))},headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}});
+    return route.fulfill({json:{phase:'done',result:{periods:[{period:request.period,verified:true,checkedAt:new Date().toISOString(),rows:request.weeks.map((w,i)=>({key:w.key,state:i?'scheduled':'sent',days:w.days,schedule:w.days[4].date+'T08:00:00+01:00'}))}]}},headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}});
   });
-  await setup(page,context);await expect(page.locator('.home-submission.complete')).toContainText('Todo al día');
-  await expect(page.locator('.home-submission.complete')).toContainText('1 enviada · 5 programadas');
+  await setup(page,context);await expect(page.locator('.home-submission.complete')).toContainText('Correos al día');
+  await expect(page.locator('.home-submission.complete')).toContainText('5 programadas');
   await page.screenshot({path:info.outputPath('hours-home-synced.png'),animations:'disabled'});
   await context.route(base+'horas/',async route=>{const response=await context.request.get('http://127.0.0.1:8772/');await route.fulfill({contentType:'text/html',body:(await response.text()).replace('"allowWrites": false','"allowWrites": true')});});
   const popup=await open(page,page.locator('.week-card').first().getByRole('button',{name:'Ver estado'}));

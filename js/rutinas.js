@@ -317,7 +317,7 @@ function _renderRutLista(){
     h+='<span class="rut-card-icon" aria-hidden="true">'+rutIconSvg(rutIconOf(r),rutDisplayColor(r),true)+'</span>';
     h+='<span class="rut-name">'+escHtml(r.name)+'</span>';
     if(susp)h+='<span class="rut-tag susp">en pausa'+(r.suspend&&r.suspend.to?(' hasta '+_rutFmt(r.suspend.to)):'')+'</span>';
-    h+='<button class="action-edit boda-mini-btn rut-edit" data-rid="'+r.id+'" title="Editar">&#9998;</button>';
+    h+='<button class="action-edit boda-mini-btn rut-edit" data-rid="'+r.id+'" title="Editar">'+editPencilHtml()+'</button>';
     h+='</div>';
     if(r.flex)h+=rutFlexSummary(r);
     else h+=_renderRutSchedule(r,hoy);
