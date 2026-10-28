@@ -54,11 +54,16 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
     allow_writes=config.get('writes_enabled') is True
     cache = {}
 
+    def current(request):
+        # A successful Schedule send can leave Draft in the cached DOM.
+        if hasattr(reader,'invalidate'):reader.invalidate()
+        return reader(request)
+
     def observed(request, force=False):
         now = clock()
         old = cache.get(request['period'])
         if force or not old or (now-old[0]).total_seconds() >= config.get('cache_seconds',30):
-            cache[request['period']] = (now, reader(request))
+            cache[request['period']] = (now, current(request))
         return copy.deepcopy(cache[request['period']][1])
 
     class Handler(BaseHTTPRequestHandler):
@@ -148,7 +153,7 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
                     if not allow_writes or data.get('sourceVerified') is not True:
                         return self.reply(403, {'error':'Revisión previa: la programación real está deshabilitada'})
                     from outlook_hours_writer import OutlookWriter
-                    result=store.commit(data['planId'],reader,OutlookWriter(config['sender'],reader,enabled=True),now,allow_writes=True,updates=data.get('updates',[]))
+                    result=store.commit(data['planId'],current,OutlookWriter(config['sender'],reader,enabled=True),now,allow_writes=True,updates=data.get('updates',[]))
                     cache.clear()
                     return self.reply(200,result)
                 return self.reply(404, {'error':'No encontrado'})

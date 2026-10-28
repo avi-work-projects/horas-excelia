@@ -1,83 +1,130 @@
-"""Guarded UI writer. Disabled by default; never falls back to immediate Send.
+"""Guarded Outlook UI writer, disabled by default and reserved by the journal.
 
-The UI contract is tested in an offline synthetic browser. Enabling real writes
-requires the owner's review and a controlled validation of Outlook's composer.
+Selectors reflect the Spanish Outlook form validated on 28 October 2026.
+Only the final button inside the verified custom-date dialog can submit.
 """
 import re
 from datetime import datetime
 from urllib.parse import urlsplit
 
 from hours_model import MADRID, addresses
+from outlook_hours import mailbox_matches, outlook_page
+
+MONTHS = ('January','February','March','April','May','June','July','August',
+          'September','October','November','December')
+
+
+def body_lines(value):
+    # Rich-text editors add empty paragraphs and non-breaking spaces. Keep
+    # every meaningful line and word; only layout whitespace is equivalent.
+    return [re.sub(r'\s+',' ',line).strip() for line in value.splitlines() if line.strip()]
+
+
+def visible_dialog(page, title):
+    heading=page.get_by_role('heading',name=title,exact=True,include_hidden=True)
+    dialog=page.locator('[role=dialog]:visible').filter(has=heading)
+    dialog.wait_for(state='visible')
+    if dialog.count()!=1:raise ValueError('Diálogo de programación ambiguo')
+    return dialog
+
+
+def verify_from(compose, sender):
+    source=compose.locator('button[aria-label^="De:"]:visible,button[aria-label^="From:"]:visible')
+    if source.count()!=1 or not re.fullmatch(r'(?:De|From):\s*'+re.escape(sender),source.get_attribute('aria-label'),re.I):
+        raise ValueError('Remitente del borrador sin confirmar')
+
+
+def add_recipients(page, compose, kind, values):
+    label={'to':'Para','cc':'CC','bcc':'CCO'}[kind]
+    field=compose.locator('[contenteditable=true][aria-label="'+label+'"]:visible')
+    if field.count()!=1 or field.inner_text().replace('\u200b','').strip():
+        raise ValueError('Campo de destinatarios no vacío o no reconocido')
+    for index,address in enumerate(values):
+        # fill() would remove every previous pill on the second recipient.
+        field.press('End')
+        page.keyboard.insert_text(address)
+        field.press('Enter')
+        chips=field.locator('._EType_RECIPIENT_ENTITY')
+        chips.nth(index).wait_for(state='visible')
+        pending=field.evaluate("e=>[...e.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent).join('').replace(/[\\s\\u200b]/g,'')")
+        if chips.count()!=index+1 or pending:
+            raise ValueError('Destinatario sin resolver')
 
 
 class OutlookWriter:
-    def __init__(self, sender, reader, *, enabled=False):
-        self.sender = addresses([sender], True)[0]
-        self.reader = reader
-        self.enabled = enabled
+    def __init__(self, sender, reader, *, enabled=False, clock=None):
+        self.sender=addresses([sender],True)[0]
+        self.reader=reader
+        self.enabled=enabled
+        self.clock=clock or (lambda:datetime.now(MADRID))
 
     def __call__(self, request, row):
-        if not self.enabled:
-            raise PermissionError('Programación real deshabilitada')
+        if not self.enabled:raise PermissionError('Programación real deshabilitada')
         from playwright.sync_api import sync_playwright
         with sync_playwright() as p:
             browser=p.chromium.connect_over_cdp('http://127.0.0.1:9223',timeout=10000)
             try:
-                pages=[q for c in browser.contexts for q in c.pages if q.url.startswith('https://outlook.office.com/mail/')]
+                if len(browser.contexts)!=1:raise ValueError('Revisa la sesión privada de Outlook')
+                pages=[q for c in browser.contexts for q in c.pages if outlook_page(q.url)]
                 if len(pages)!=1:raise ValueError('Revisa la sesión de Outlook')
-                page=pages[0]
-                mailboxes=page.locator('[role=treeitem]').all_text_contents()
-                if not any(self.sender in x.lower() for x in mailboxes):raise ValueError('Remitente sin confirmar')
+                page=pages[0];page.set_default_timeout(15000)
+                if not mailbox_matches(page,self.sender):raise ValueError('Remitente sin confirmar')
                 if page.locator('[contenteditable=true]:visible').count():raise ValueError('Hay un borrador abierto')
                 if row['action']=='update':
                     record=self.reader.records.get(row['recordId'])
                     if not record or record['state']!='scheduled':raise ValueError('La programación ha cambiado')
-                    url=urlsplit(record['url'])
-                    if url.scheme!='https' or url.hostname!='outlook.office.com' or not url.path.startswith('/mail/drafts/id/'):
+                    if not outlook_page(record['url']) or not urlsplit(record['url']).path.startswith('/mail/drafts/id/'):
                         raise ValueError('No es una programación editable de Outlook')
                     page.goto(record['url'],wait_until='domcontentloaded')
-                    page.get_by_role('button',name=re.compile('^Cancelar envío$|^Cancel send$',re.I)).click()
+                    page.get_by_role('button',name=re.compile('^Cancelar envío$|^Cancel send$',re.I),include_hidden=True).click()
                 else:
-                    page.get_by_role('button',name=re.compile('^Correo nuevo$|^New mail$',re.I)).click()
+                    page.get_by_role('button',name=re.compile('^Correo nuevo$|^New mail$',re.I),include_hidden=True).click()
                 self.edit_and_schedule(page,request,row)
             finally:browser.close()
 
-    def edit_and_schedule(self,page,request,row):
-        """Only compose/date UI. A journal reservation must already exist."""
+    def edit_and_schedule(self, page, request, row):
+        if not self.enabled:raise PermissionError('Programación real deshabilitada')
+        when=datetime.fromisoformat(row['schedule'])
+        if when.tzinfo is None:raise ValueError('La fecha prevista debe incluir zona horaria')
+        when=when.astimezone(MADRID)
+        if when<=self.clock() or when.strftime('%H:%M:%S')!='08:00:00':
+            raise ValueError('La fecha prevista ya pasó o no es a las 08:00')
+        if page.evaluate('Intl.DateTimeFormat().resolvedOptions().timeZone')!='Europe/Madrid':
+            raise ValueError('La zona horaria del navegador no es Madrid')
         week=next(w for w in request['weeks'] if w['key']==row['key'])
         compose=page.locator('[data-app-section=MailReadCompose]')
-        subject=compose.get_by_role('textbox',name=re.compile('^Agregar un asunto$|^Add a subject$',re.I))
-        body=compose.get_by_role('textbox',name=re.compile('^Cuerpo del mensaje|^Message body',re.I))
-        subject.wait_for();body.wait_for()
+        subject=compose.locator('input[aria-label="Asunto"]:visible')
+        body=compose.locator('[role=textbox][aria-label="Cuerpo del mensaje"][contenteditable=true]:visible')
+        subject.wait_for();body.wait_for();verify_from(compose,self.sender)
+        original_subject=subject.input_value()
         if row['action']=='create':
-            # From must be explicitly visible and agree, not merely assumed from
-            # the active account. Unknown composer layouts stop before Send.
-            sender=compose.locator('[data-email-address][data-recipient-kind=from]')
-            if sender.count()!=1 or sender.get_attribute('data-email-address').lower()!=self.sender:
-                raise ValueError('Remitente del borrador sin confirmar')
-            for kind,label in [('to',r'^Para$|^To$'),('cc',r'^CC$|^Cc$')]:
-                values=addresses(request['config'][kind],kind=='to')
-                if not values:continue
-                field=compose.get_by_role('combobox',name=re.compile(label))
-                if field.count()!=1:raise ValueError('Campo de destinatarios no reconocido')
-                for address in values:
-                    field.fill(address);field.press('Enter')
+            to=addresses(request['config']['to'],True);cc=addresses(request['config']['cc'])
+            add_recipients(page,compose,'bcc',[])
+            add_recipients(page,compose,'to',to)
+            add_recipients(page,compose,'cc',cc)
             subject.fill(week['subject'])
-        # Updates retain the existing subject and all existing recipients.
+        # Updates retain all recipients and the original subject.
         body.fill(week['body'])
-        compose.get_by_role('button',name=re.compile('^Más opciones de envío$|^More send options$',re.I)).click()
-        page.get_by_role('menuitem',name=re.compile('^Programar envío$|^Schedule send$',re.I)).click()
-        dialog=page.get_by_role('dialog',name=re.compile('Programar envío|Schedule send',re.I))
-        dialog.wait_for()
-        custom=dialog.get_by_role('button',name=re.compile('^Hora personalizada$|^Custom time$',re.I))
-        if custom.count():custom.click()
-        when=datetime.fromisoformat(row['schedule']).astimezone(MADRID)
-        day=dialog.locator('input[type=date]');clock=dialog.locator('input[type=time]')
+        compose.locator('button[aria-label="Más opciones de envío"]:visible').click()
+        page.get_by_role('menuitem',name='Programar envío',exact=True,include_hidden=True).click()
+        suggested=visible_dialog(page,'Programar envío')
+        suggested.get_by_role('button',name='Tiempo personalizado',exact=True,include_hidden=True).click()
+        dialog=visible_dialog(page,'Establecer fecha y hora personalizadas')
+        day=dialog.get_by_label('Seleccionar una fecha',exact=True)
+        clock=dialog.get_by_label('Seleccionar una hora',exact=True)
         if day.count()!=1 or clock.count()!=1:raise ValueError('Fecha y hora de Outlook no reconocidas')
-        day.fill(when.date().isoformat());clock.fill(when.strftime('%H:%M'))
-        if day.input_value()!=when.date().isoformat() or clock.input_value()[:5]!='08:00':
+        day.fill(when.strftime('%d/%m/%Y'));day.press('Tab')
+        clock.fill('08:00');clock.press('Tab')
+        selected='Selected date '+MONTHS[when.month-1]+' '+str(when.day)+', '+str(when.year)
+        grid=dialog.locator('[role=grid]')
+        if day.input_value()!=when.strftime('%d/%m/%Y') or not re.fullmatch(r'0?8:00',clock.input_value()) or grid.count()!=1 or selected not in (grid.get_attribute('aria-label') or ''):
             raise ValueError('Fecha u hora sin confirmar')
-        # Scope the final button to the verified scheduling dialog. There is
-        # deliberately no fallback to the composer's immediate Send button.
-        dialog.get_by_role('button',name=re.compile('^Confirmar programación$|^Programar$|^Send$|^Enviar$',re.I)).click()
-        dialog.wait_for(state='hidden')
+        expected_subject=week['subject'] if row['action']=='create' else original_subject
+        if subject.input_value()!=expected_subject or body_lines(body.inner_text())!=body_lines(week['body']):
+            raise ValueError('El borrador no coincide con la revisión')
+        verify_from(compose,self.sender)
+        if when<=self.clock():raise ValueError('La hora prevista ya pasó durante la revisión')
+        if self.reader is not None:self.reader.invalidate()
+        # Never select immediate Send or a suggested slot.
+        dialog.get_by_role('button',name='Enviar',exact=True,include_hidden=True).click()
+        dialog.wait_for(state='hidden');body.wait_for(state='hidden')

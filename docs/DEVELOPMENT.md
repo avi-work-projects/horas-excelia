@@ -1372,10 +1372,12 @@ resultado incierto bloquean; cambios de días/horas/fecha requieren actualizar
 el mismo correo expresamente. La simulación usa un diario temporal y un
 escritor ficticio. El endpoint real empieza deshabilitado en servidor.
 
-La lectura real reconoce enviados y programaciones de Android. El escritor
-solo tiene validación de formulario ficticio: falta calibrarlo con Outlook
-real después de la revisión de Ángel. No instalar/activar la ruta de horas ni
-programar correos reales en esta entrega. La clave de paso queda pendiente.
+La lectura real reconoce enviados y programaciones de Android. Con autorización
+posterior de Ángel se validó manualmente el formulario real mediante una única
+programación técnica a su propia cuenta, que se anuló y se comprobó después de
+recargar. El adaptador refleja esos controles y tiene regresiones sin red;
+el recorrido completo desde la PWA mediante el servicio sigue pendiente. No se
+activó el lote ni una ruta nueva. La clave de paso queda pendiente.
 
 La [revisión local](visual-map/review/hours-scheduling-preview.html) conserva
 la evidencia histórica y añade solo dos capturas ficticias del recorrido nuevo.
@@ -1388,3 +1390,9 @@ Una lectura sin confirmar produce un aviso general, no falsos pendientes por
 cada semana. La prueba de navegador cubre las adicionales y las programadas.
 La PWA instalada se mantiene en v510 y sus datos no se modifican durante la
 lectura; la prueba nueva sigue siendo un candidato sin programación habilitada.
+
+El lector admite solo los hosts HTTPS exactos `outlook.office.com` y
+`outlook.cloud.microsoft`. La identidad del mensaje no depende del host. Las
+consultas sin caché y las verificaciones del commit refrescan el servidor para
+no tomar por definitivo un estado anterior de la lista. Un editor abierto o
+un inicio de sesión interrumpen esa lectura sin provocar reintentos de escritura.

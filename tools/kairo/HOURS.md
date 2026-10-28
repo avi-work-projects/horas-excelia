@@ -1,8 +1,9 @@
 # Programación de horas: candidato en revisión
 
 El acceso individual y «Programar pendientes» abren la misma conciliación.
-Esta entrega permite revisar y simular; **no está activada en producción ni
-autoriza programaciones reales**. La clave de paso queda fuera de este trabajo.
+El servicio sigue **deshabilitado en producción**. La autorización posterior de
+Ángel permitió una prueba real acotada, ya anulada, que se describe debajo;
+no activa el lote de horas. La clave de paso queda fuera de este trabajo.
 
 ## Reglas compartidas
 
@@ -77,13 +78,19 @@ La lectura real se ha comprobado con la sesión ya iniciada por el propietario:
 reconoce enviados y mensajes programados desde Outlook Android, incluidas
 las dos semanas adicionales. La configuración real permanece fuera de Git.
 
-`outlook_hours_writer.py` es un adaptador protegido, deshabilitado por defecto.
-Su formulario se ha probado **solo sobre HTML ficticio sin red**. Los selectores
-de remitente, destinatarios, fecha y confirmación deben calibrarse con Outlook
-real. No activar `writes_enabled` por haber pasado la simulación.
+`outlook_hours_writer.py` sigue protegido y deshabilitado por defecto. Se han
+adaptado los controles al formulario español real: remitente en un botón «De:»,
+destinatarios contenteditable, Asunto y dos diálogos de fecha personalizada.
+La fecha es texto DD/MM/YYYY y debe coincidir también con el calendario
+seleccionado; no se aceptan las horas sugeridas. El botón final «Enviar» se
+busca únicamente dentro de ese diálogo y con fecha futura a las 08:00 de Madrid.
+Las pruebas sin red reproducen estos controles, incluida la conservación de dos
+Para y dos CC, actualizaciones y bloqueo de un cuerpo o calendario distinto.
+No confundir la prueba manual descrita debajo con validar todo el recorrido
+Gestify → servicio privado → diario → adaptador. Este último sigue pendiente;
+no activar `writes_enabled` por haber pasado una simulación.
 
-Tras la revisión de Ángel falta validar de forma controlada el formulario real,
-la zona horaria del buzón y la verificación posterior. Si el buzón crece debe
+Si el buzón crece debe
 reforzarse la acreditación de lista completa: el lector recorre desde el inicio
 hasta un final estable, con límites que bloquean, pero depende de la
 virtualización de Outlook. Una interfaz desconocida nunca permite crear correo.
@@ -124,3 +131,30 @@ conciliación real fue rechazado por el control automático, incluso tras la
 autorización específica del propietario. No se instaló un servicio ni una ruta
 nueva en Kairo. La lectura real y la interfaz ficticia por USB se comprueban por
 separado: no equivalen a certificar el recorrido completo de producción.
+
+## Prueba real autorizada y anulada — 28/10/2026
+
+Se creó una única prueba técnica con contenido ficticio, dirigida a la propia
+cuenta del propietario, para el 06/11/2026 a las 08:00. Outlook mostró su estado
+Programado y la fecha prevista. Se anuló con «Cancelar envío» y quedó como
+borrador, sin enviarse. La lectura final, tras recargar del servidor, confirmó
+la anulación, ningún editor abierto y las programaciones originales intactas.
+El diario de la prueba y las imágenes reales quedan fuera de Git.
+
+El recorrido se hizo mediante la interfaz existente; no se reintentó instalar
+los procesos o rutas que el control automático había rechazado.
+
+La prueba reveló dos requisitos de integración:
+
+- Outlook puede conservar temporalmente «Borrador» en la lista después de
+  programar. Las consultas reales sin caché ahora recargan el buzón; después
+  de escribir no se admite la pantalla anterior como prueba de éxito o ausencia.
+  Si aparece un inicio de sesión o un editor, se deja sin confirmar y no se repite.
+- Microsoft redirige de `outlook.office.com` a `outlook.cloud.microsoft`:
+  [documentación oficial](https://learn.microsoft.com/en-us/microsoft-365/enterprise/cloud-microsoft-domain?view=o365-worldwide).
+  Se aceptan solo esos hosts HTTPS exactos. La identidad del correo usa la cuenta
+  y su ID, sin depender del host, para que el cambio no parezca otro mensaje.
+
+Recargar mediante la API de navegación o el botón del navegador, con el editor
+cerrado. No usar Ctrl+R dentro de Outlook: puede abrir una respuesta. La respuesta
+accidental a la prueba se descartó sin enviarse antes de la auditoría final.
