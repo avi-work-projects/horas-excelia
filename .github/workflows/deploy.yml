@@ -46,7 +46,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2]
+        shard: [1, 2, 3, 4]
     env:
       GESTIFY_BROWSER_CHANNEL: chrome
     steps:
@@ -62,7 +62,7 @@ jobs:
           path: dist
       - name: Check preinstalled Chrome
         run: google-chrome --version
-      - run: npm run test:browser -- --shard=${{ matrix.shard }}/2 --workers=1
+      - run: npm run test:browser -- --shard=${{ matrix.shard }}/4 --workers=1
 
   deploy:
     needs: [checks, browser]
