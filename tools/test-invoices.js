@@ -1,6 +1,15 @@
 const assert=require('node:assert/strict');
 const {cargarApp}=require('./entorno');
 const g=cargarApp(),cfg=g.invoiceDefaults();
+{
+  const local=cargarApp(),config=local.invoiceDefaults();config.rate='320';
+  const preparation=local.invoiceCalculate('2026-10',config,local.invoiceDayRows('2026-10',config));
+  const saved={config,months:{'2026-10':{preparation}}},original=JSON.stringify(saved);
+  assert.equal(local.invoiceHasLocalChanges('2026-10',saved),false);
+  local.ST['2026-10-08']={type:'vacaciones'};assert.equal(local.invoiceHasLocalChanges('2026-10',saved),true);
+  local.ST={};local.MONTH_H['2026-10']=7;assert.equal(local.invoiceHasLocalChanges('2026-10',saved),true);
+  assert.equal(JSON.stringify(saved),original,'La comparación no guarda ni altera la factura');
+}
 cfg.rate='320';
 let rows=g.invoiceDayRows('2026-09',cfg);rows.forEach(r=>r.selected=!r.weekend);let p=g.invoiceCalculate('2026-09',cfg,rows);
 assert.equal(p.days.length,22);assert.equal(p.baseCents,704000);assert.equal(p.vatCents,147840);assert.equal(p.withholdingCents,105600);assert.equal(p.totalCents,746240);

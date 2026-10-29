@@ -1567,3 +1567,42 @@ no añade otra caché ni configura un secreto de autenticación nuevo.
 
 Se conserva el atlas representativo: este ajuste puntual añade un único ejemplo
 en la revisión v517, sin recapturar los menús anteriores.
+
+## Avisos y reingreso privado de Outlook (v518)
+
+`outlook_auth.py` observa el Chromium existente bajo el mismo bloqueo del lector
+y escritor. La identidad de la pestaña dedicada se conserva entre redirecciones.
+Solo admite formularios Microsoft reconocidos y la cuenta configurada. Reserva
+el intento antes de interactuar; MFA, contraseña rechazada, estado corrupto,
+interrupción o pantalla desconocida detienen los intentos. Solo observar el
+buzón correcto o una sustitución expresa del secreto libera la pausa pertinente.
+No modifica mensajes ni reintenta trabajos de correo fallidos.
+
+La utilidad privada instalada en Kairo recibe dos entradas ocultas por SSH y
+envía el secreto por stdin a `systemd-creds encrypt`. Solo persiste el cifrado,
+con modo 600 y clave del host. La unidad de sistema entrega la credencial con
+`LoadCredentialEncrypted` a un proceso del propietario. Permanece inactiva hasta
+provisionar el secreto; no se incluye un valor real en pruebas ni en Git.
+Instrucciones: [OUTLOOK-AUTH.md](../tools/kairo/OUTLOOK-AUTH.md).
+
+El endpoint protegido `/horas/auth-status` devuelve únicamente fase y fecha.
+Home consulta ese archivo al entrar/volver, refrescar acceso, fallar un trabajo
+y cada minuto solo en primer plano; no recorre Outlook para mostrar el aviso.
+El aviso MFA es de Home y toast, sin push cuando la app está cerrada. Las
+comprobaciones de progreso son acotadas y no hay sondeo periódico de correos.
+
+Home oculta el resumen mensual si faltan semanas por programar; los estados
+confirmados y las programaciones con cambios mantienen su resumen. El aviso de
+factura sin enviar parpadea, respeta movimiento reducido y abre el circuito
+existente de factura. La comparación local de factura usa su preparación
+guardada, ignora versión de app y metadatos y no altera contenido ni estado remoto.
+
+Septiembre mostraba un negativo del móvil de las 18:00 frente a una lectura
+posterior de Kairo que acredita las siete semanas de su alcance como enviadas.
+El mes previo con un negativo antiguo recupera una vez la caché del servidor
+sin `refresh=1`; no inventa envíos ni repite el barrido del buzón.
+
+Validación: transiciones de acceso y fronteras HTTP; Chromium separado con toda
+la red interceptada; cifrado/entrega de una credencial sintética real por systemd;
+secreto ausente, diario de semanas intacto y API de salud protegida en Kairo.
+Solo se recapturan las tres referencias de Home, conservando las otras 170.

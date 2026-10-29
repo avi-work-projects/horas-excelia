@@ -164,6 +164,11 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
 
         def do_GET(self):
             if not self.allowed(): return self.reply(403, {'error':'Acceso no permitido'})
+            if self.route() == '/auth-status':
+                if self.headers.get('Origin') != app_origin:
+                    return self.reply(403, {'error':'Origen no permitido'})
+                from outlook_auth import public_state
+                return self.reply(200, public_state(store.root), cors=True)
             if self.route().startswith('/jobs/'):
                 origin = self.headers.get('Origin')
                 if origin not in (None, private_origin, app_origin):
@@ -221,7 +226,7 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
             return self.reply(404, {'error':'No encontrado'})
 
         def do_OPTIONS(self):
-            if not self.allowed() or (self.route() != '/status' and not self.route().startswith('/jobs/')) or self.headers.get('Origin') != app_origin or self.headers.get('Access-Control-Request-Method') != 'GET' or self.headers.get('Access-Control-Request-Headers','').lower() not in ('','accept'):
+            if not self.allowed() or (self.route() not in ('/status','/auth-status') and not self.route().startswith('/jobs/')) or self.headers.get('Origin') != app_origin or self.headers.get('Access-Control-Request-Method') != 'GET' or self.headers.get('Access-Control-Request-Headers','').lower() not in ('','accept'):
                 return self.reply(403, {'error':'Consulta no permitida'})
             extra={'Access-Control-Allow-Methods':'GET','Access-Control-Max-Age':'600'}
             if self.headers.get('Access-Control-Request-Private-Network') == 'true':extra['Access-Control-Allow-Private-Network']='true'

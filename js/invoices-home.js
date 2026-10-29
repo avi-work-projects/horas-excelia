@@ -28,18 +28,21 @@ function homeInvoiceModel(year,month){
   var saved=INVOICE_HOME_CACHE.url===url&&INVOICE_HOME_CACHE.periods[period],data=saved&&saved.data;
   if(!data){if(homePeriodMode(year,month)==='closed'){model.title='Factura de mes cerrado';model.detail='Histórico guardado · sin consultas automáticas';}return model;}
   var pending=['missing','draft','issued'].includes(data.state);
+  model.unsent=pending;
   model.title=data.state==='sent'?'Factura enviada':data.state==='scheduled'?'Factura programada':pending?'Factura sin enviar':data.state==='processing'?'Factura en proceso':'Factura por revisar';
   model.tone=data.state==='sent'?'complete':data.state==='scheduled'?'scheduled':pending||['attention','multiple'].includes(data.state)?'pending':'unknown';
   model.detail=data.state==='sent'?'Envío confirmado':data.state==='scheduled'?'Envío el '+data.scheduledDate.split('-').reverse().slice(0,2).join('/'):'Fecha prevista: '+homeInvoiceScheduleDate(year,month).split('-').reverse().slice(0,2).join('/');
   if(data.state==='scheduled'&&data.scheduledDate!==homeInvoiceScheduleDate(year,month)){model.detail+=' · revisar fecha';model.attention=true;}
   if(data.state==='missing')model.detail='Pendiente de preparar · '+model.detail;
   if(['attention','multiple','processing'].includes(data.state))model.detail='Consulta el detalle en Kairo.';
+  model.changed=invoiceHasLocalChanges(period,invoiceData());
+  if(model.changed){model.detail+=' · cambios locales por revisar';model.tone='pending';}
   model.checkedAt=saved.checkedAt;return model;
 }
 function renderHomeInvoiceStatus(year,month){
   if(mkey(year,month)<INVOICE_FIRST_PERIOD)return '';
   var m=homeInvoiceModel(year,month),icon=m.tone==='complete'?'✓':m.tone==='scheduled'?'◷':'!';
-  return '<section class="home-invoice-status '+m.tone+'" id="homeInvoiceStatus" aria-label="Estado de factura" aria-live="polite"><span class="home-invoice-icon" aria-hidden="true">'+icon+'</span><div class="home-invoice-copy"><strong>'+escHtml(m.title)+'</strong><span>'+escHtml(m.detail)+'</span>'+(m.configure?'<button type="button" data-home-invoice="configure">Conectar Kairo</button>':m.tone==='pending'&&m.url?'<a href="'+escHtml(m.url)+'" target="_blank" rel="noopener noreferrer">Ver en Kairo</a>':'')+'</div></section>';
+  return '<section class="home-invoice-status '+m.tone+(m.unsent?' unsent':'')+'" id="homeInvoiceStatus" aria-label="Estado de factura" aria-live="polite"><span class="home-invoice-icon" aria-hidden="true">'+icon+'</span><div class="home-invoice-copy"><strong>'+escHtml(m.title)+'</strong><span>'+escHtml(m.detail)+'</span>'+(m.configure?'<button type="button" data-home-invoice="configure">Conectar Kairo</button>':m.unsent||m.changed?'<button type="button" class="home-invoice-action" data-home-invoice="send">'+(m.changed?'Revisar cambios':'Enviar factura')+'</button>':m.tone==='pending'&&m.url?'<a href="'+escHtml(m.url)+'" target="_blank" rel="noopener noreferrer">Ver en Kairo</a>':'')+'</div></section>';
 }
 function paintHomeInvoiceStatus(){var current=document.getElementById('homeInvoiceStatus');if(current)current.outerHTML=renderHomeInvoiceStatus(CY,CM);}
 async function fetchHomeInvoiceStatus(period,url,force){
@@ -67,7 +70,7 @@ async function syncHomeInvoiceStatus(force){
 }
 function initHomeInvoiceStatus(){
   var container=document.getElementById('weeksContainer');if(!container)return;
-  container.addEventListener('click',function(e){var button=e.target.closest('[data-home-invoice]');if(button)openInvoiceSettings({connection:true});});
+  container.addEventListener('click',function(e){var button=e.target.closest('[data-home-invoice]');if(button){if(button.dataset.homeInvoice==='send')openInvoiceMonth(mkey(CY,CM));else openInvoiceSettings({connection:true});}});
   window.addEventListener('storage',function(e){if(e.key===INVOICE_HOME_CACHE_KEY){INVOICE_HOME_CACHE=homeInvoiceCacheRead();paintHomeInvoiceStatus();}});syncHomeInvoiceStatus(false);
 }
 if(typeof document!=='undefined')document.addEventListener('DOMContentLoaded',initHomeInvoiceStatus);

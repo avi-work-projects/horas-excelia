@@ -70,6 +70,12 @@ function invoiceCalculate(period,config,rows){
   return {schemaVersion:1,appVersion:APP_VERSION,period:period,kind:'auxiliary',condition:'calendar-month',issuer:{name:config.issuer,taxId:config.issuerTax,address:config.issuerAddress},client:{name:config.client,taxId:config.clientTax,address:config.clientAddress},project:config.project,payment:{iban:invoiceIban(config.iban||'')},concept:invoiceText(config.concept,period),days:chosen,lines:lines,vatBasisPoints:vat,withholdingBasisPoints:ret,baseCents:base,vatCents:iva,withholdingCents:irpf,totalCents:base+iva-irpf};
 }
 async function invoiceHash(value){var bytes=typeof value==='string'?new TextEncoder().encode(value):value;return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(function(b){return b.toString(16).padStart(2,'0');}).join('');}
+function invoiceHasLocalChanges(period,data){
+  var record=data.months[period];if(!record||!record.preparation)return false;
+  if(record.kairo&&record.kairo.contentHash!==record.preparation.contentHash)return true;
+  function equal(a,b){if(a===b)return true;if(!a||!b||typeof a!=='object'||typeof b!=='object')return false;var keys=Object.keys(a);return keys.length===Object.keys(b).length&&keys.every(function(k){return Object.prototype.hasOwnProperty.call(b,k)&&equal(a[k],b[k]);});}
+  try{var current=invoiceCalculate(period,data.config,invoiceDayRows(period,data.config)),saved=record.preparation;if(!saved.payment)saved=Object.assign({payment:{iban:''}},saved);return Object.keys(current).some(function(k){return k!=='appVersion'&&!equal(current[k],saved[k]);});}catch(e){return true;}
+}
 async function invoicePrepare(period,config,rows){
   if(!config.issuer.trim()||!config.issuerTax.trim()||!config.client.trim()||!config.clientTax.trim()||!config.project.trim())throw new Error('Completa emisor, cliente, NIF y proyecto en Edición facturas y correo');
   var data=invoiceData();if(data.months[period]&&data.months[period].final)throw new Error('Este mes ya tiene un PDF definitivo. La preparación queda conservada.');

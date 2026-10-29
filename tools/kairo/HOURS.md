@@ -9,6 +9,8 @@ integración más reciente figura al final.
 
 El contrato de uso vigente, con cachés de móvil y Kairo, facturas, trabajos y
 límites de la sesión, está en [Gestify y Kairo: funcionamiento y límites](../../docs/gestify-kairo-flujo.md).
+El reingreso preparado con secreto cifrado se configura en
+[OUTLOOK-AUTH.md](OUTLOOK-AUTH.md); la contraseña se introduce por SSH, nunca en Gestify.
 
 ## Reglas compartidas
 

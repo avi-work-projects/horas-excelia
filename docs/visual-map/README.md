@@ -1,5 +1,8 @@
 # Mapa visual de Gestify
 
+Revisión v518: [avisos y recuperación de acceso](review/updates-v518.html).
+Solo cambian las tres referencias de Home; se conservan las otras 170.
+
 Revisión v517: [hoy al consultar el mes siguiente](review/updates-v517.html).
 Corrección puntual: se conserva el atlas y se añade solo un ejemplo de prueba.
 

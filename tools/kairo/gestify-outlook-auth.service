@@ -1,0 +1,22 @@
+[Unit]
+Description=Gestify - recuperacion acotada de la sesion de Outlook
+After=network-online.target
+ConditionPathExists=/etc/credstore.encrypted/gestify-outlook-password
+
+[Service]
+Type=simple
+User=@@USER@@
+WorkingDirectory=@@HOME@@/gestify-outlook
+ExecStart=@@HOME@@/gestify-outlook/hours-venv/bin/python @@HOME@@/gestify-outlook/tools/outlook_auth.py --config @@HOME@@/gestify-outlook/hours.json
+LoadCredentialEncrypted=outlook-password:/etc/credstore.encrypted/gestify-outlook-password
+Restart=on-failure
+RestartSec=15
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+LimitCORE=0
+Environment=DEBUG=
+Environment=PWDEBUG=
+
+[Install]
+WantedBy=multi-user.target
