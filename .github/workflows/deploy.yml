@@ -15,13 +15,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  checks:
     runs-on: ubuntu-24.04
-    env:
-      GESTIFY_BROWSER_CHANNEL: chrome
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -37,9 +32,49 @@ jobs:
       - run: python3 tools/kairo/test_hours_jobs.py
       - run: python3 tools/kairo/test_outlook_auth.py
       - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gestify-dist
+          path: dist
+          retention-days: 1
+          if-no-files-found: error
+          include-hidden-files: true
+
+  browser:
+    needs: checks
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
+    env:
+      GESTIFY_BROWSER_CHANNEL: chrome
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v5
+        with:
+          name: gestify-dist
+          path: dist
       - name: Check preinstalled Chrome
         run: google-chrome --version
-      - run: npm run test:browser
+      - run: npm run test:browser -- --shard=${{ matrix.shard }}/2 --workers=1
+
+  deploy:
+    needs: [checks, browser]
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v5
+        with:
+          name: gestify-dist
+          path: dist
 
       - name: Setup Pages
         uses: actions/configure-pages@v6

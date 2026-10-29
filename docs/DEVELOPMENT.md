@@ -103,6 +103,22 @@ las pruebas. Windows sigue usando Edge; Linux local conserva el valor por defect
 si no se declara el canal. Referencias: [imagen oficial](https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md)
 y [canales admitidos por Playwright](https://playwright.dev/docs/browsers#google-chrome--microsoft-edge).
 
+Desde v519, CI compila y ejecuta las pruebas rápidas una vez. Dos máquinas
+independientes reparten los archivos de navegador mediante `--shard=1/2` y
+`--shard=2/2`, con un trabajador por máquina: no comparten puertos ni bases de
+prueba. Ambas deben pasar antes de publicar exactamente el `dist` validado.
+Cada grupo registra los ocho archivos más lentos para orientar mejoras futuras.
+No se habilita `fullyParallel`: se conserva el orden dentro de cada archivo.
+Referencia: [reparto oficial de Playwright](https://playwright.dev/docs/test-sharding).
+
+En cada tarea, elegir primero las pruebas afectadas y ejecutarlas juntas tras
+el último cambio relevante; repetir solo por un fallo o un cambio posterior.
+Kairo real se utiliza para cambios de integración; los ajustes de presentación
+usan datos ficticios. No ampliar una entrega pequeña a refactors ni comprobaciones
+ajenas. Buscar en fuentes concretas, excluyendo artefactos generados voluminosos.
+Entregar la previsualización útil antes de esperar a CI y comunicar por separado
+el resultado final de publicación. El atlas conserva su criterio representativo.
+
 ## Capturas representativas y alcance (27/10/2026)
 
 El atlas es una referencia visual de menús y recorridos, no una réplica exacta

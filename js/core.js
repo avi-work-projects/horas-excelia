@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v518 — Acceso a Outlook y avisos de semanas y facturas';
+var APP_VERSION = 'v519 — Validación ágil y comprobación de acceso';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

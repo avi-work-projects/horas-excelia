@@ -6,13 +6,14 @@ crea, actualiza, programa o envía mensajes.
 
 ## Introducir o sustituir la contraseña
 
-En PowerShell del mini, ejecutar el script de este repositorio:
+En una ventana propia de PowerShell del mini, ejecutar directamente SSH (funciona
+también cuando Windows no permite ejecutar archivos `.ps1`):
 
 ```powershell
-& 'C:\Users\Angel\.codex\worktrees\mapa-visual-piloto\horas-excelia\tools\kairo\set-outlook-secret.ps1'
+ssh -t -i "$env:USERPROFILE\.ssh\raspberry_casa" -o HostKeyAlias=kairo.local angel@kairo "sudo /home/angel/gestify-outlook/hours-venv/bin/python /usr/local/libexec/gestify-outlook-secret --config /home/angel/gestify-outlook/hours.json"
 ```
 
-El script conecta por SSH con la clave existente y abre un terminal en Kairo.
+El comando conecta por SSH con la clave existente y abre un terminal en Kairo.
 Pide la contraseña dos veces mediante `getpass`: no se muestran caracteres.
 No pegarla en el chat ni añadirla al comando. No se transmite a Gestify.
 `sudo` utiliza la configuración ya existente del propietario.
@@ -43,6 +44,8 @@ almacenamiento, no una comprobación de contraseña contra Microsoft.
   pestañas de buzón o una pantalla no reconocida requieren revisión.
 - Solo introduce el secreto en formularios reconocidos de Microsoft, para la
   cuenta configurada. Conserva la sesión cuando Microsoft ofrece esa opción.
+- Reconoce el selector «Usar mi contraseña» / «Use my password». Elegir ese método
+  no rellena datos hasta que el formulario acredite la cuenta configurada.
 - Reserva el intento en `auth-status.json` antes de interactuar. Un reinicio,
   una interrupción o un estado corrupto no autorizan repetir la contraseña.
 - Contraseña rechazada, MFA o pantalla desconocida dejan una pausa persistente.
@@ -68,6 +71,9 @@ El aviso es de la interfaz de Gestify, no una notificación push con la app
 cerrada. Para completar MFA, utilizar Authenticator y, si hace falta, la sesión
 de Outlook de Kairo mediante el visor ya existente. «Comprobar acceso» solo
 actualiza el indicador: no omite MFA ni libera la pausa a ciegas.
+Desde v519 muestra progreso y un resultado explícito, también cuando el estado
+continúa detenido o falla la conexión. Una pausa por una pantalla antigua requiere
+revisar esa pantalla; pulsar el botón no repite una contraseña rechazada.
 
 Excelia/Microsoft pueden exigir MFA, cambiar el método de acceso o revocar la
 sesión. El secreto facilita el primer factor; no garantiza acceso perpetuo.
@@ -86,8 +92,14 @@ de Chromium, los correos y las bases de Kairo.
 
 Pruebas de transiciones y privacidad; formularios reales de un Chromium
 separado, con todas las peticiones interceptadas y datos ficticios; cifrado y
-entrega de una credencial sintética mediante systemd en Kairo. No se ha usado
-una contraseña real, cerrado la sesión actual ni modificado mensajes.
+entrega de una credencial sintética mediante systemd en Kairo.
+
+El 29/10/2026 se validó también el primer reingreso real: el propietario introdujo
+el secreto por SSH; se cerró una solicitud antigua de clave de paso caducada y se
+seleccionó el método de contraseña. Tras verificar el formulario de la cuenta,
+se autorizó un único intento del recuperador. El buzón y el estado `ready`
+confirmaron el acceso, sin MFA en ese intento. No se leyó el secreto ni se
+modificaron mensajes. Esta prueba no garantiza la ausencia de MFA en el futuro.
 
 Fuentes: [credenciales systemd](https://www.freedesktop.org/software/systemd/man/257/systemd-creds.html),
 [sesiones y MFA de Microsoft](https://learn.microsoft.com/en-us/entra/identity/authentication/concepts-azure-multi-factor-authentication-prompts-session-lifetime).

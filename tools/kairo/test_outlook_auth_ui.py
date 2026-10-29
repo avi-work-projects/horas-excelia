@@ -12,6 +12,7 @@ PASSWORD='synthetic-password-only'
 
 def html(mode):
     label='another@example.invalid' if mode=='wrong-account' else SENDER
+    choice_script='''<script>document.querySelector('#i0116').style.display='none';const b=document.createElement('button');b.textContent='Use my password';b.onclick=()=>{window.actions++;b.remove();document.querySelector('#i0118').style.display='block';};document.body.append(b);</script>''' if mode=='choice' else ''
     return '''<div id="displayName">'''+label+'''</div>
 <input id="i0116"><input id="i0118" type="password" style="display:none">
 <div id="idDiv_SAOTCAS_Title" style="display:none">Approve sign in request</div>
@@ -25,7 +26,7 @@ window.actions=0;document.querySelector('#idSIButton9').onclick=()=>{
   else if(mode==='rejected')document.querySelector('#passwordError').style.display='block';
   else location.href='https://outlook.office.com/mail/';
  }
-};</script>'''
+};</script>'''+choice_script
 
 
 class BrowserContract(unittest.TestCase):
@@ -60,6 +61,7 @@ class BrowserContract(unittest.TestCase):
         finally:context.close()
 
     def test_password_success(self):self.exercise('success','ready')
+    def test_choose_password(self):self.exercise('choice','ready')
     def test_mfa_pauses(self):self.exercise('mfa','mfa')
     def test_wrong_password_stops(self):self.exercise('rejected','rejected')
     def test_wrong_account_stops(self):self.exercise('wrong-account','unknown')

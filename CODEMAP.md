@@ -304,10 +304,10 @@
 ### js/home-weeks.js  _(42 líneas)_
 **Funciones:** homePeriodMode:2 · homeWeekCovered:6 · homeWeekUnlocked:7 · homeSubmissionWeeks:8 · homeSubmissionWarnings:16 · homeWeekSchedule:26
 
-### js/hours-auth.js  _(31 líneas)_
+### js/hours-auth.js  _(36 líneas)_
 **Estado global:** HOURS_AUTH:2
 
-**Funciones:** renderHoursAuthNotice:3 · resume:27
+**Funciones:** hoursAuthFeedback:3 · renderHoursAuthNotice:4 · resume:32
 
 ### js/hours-cache.js  _(73 líneas)_
 **Estado global:** HOURS_CACHE_KEY:3 · HOURS_ATTEMPTS:4 · HOURS_CACHE:37
