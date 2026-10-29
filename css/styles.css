@@ -3948,6 +3948,9 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 .hours-check-button>span{font:.65rem var(--font)}
 .hours-home-actions .hours-pending-button{flex:1 0 100%;background:var(--c-green);color:var(--surface);border-color:var(--c-green)}
 .hours-job-note{flex:1 0 100%;font-size:.67rem;color:var(--text-muted);line-height:1.5}
+.hours-auth-alert{padding:10px;margin-bottom:10px;border:1px solid var(--c-orange);border-radius:8px;background:var(--surface);color:var(--text);font-size:.68rem}
+.hours-auth-alert>span{display:block;margin:5px 0;line-height:1.4}
+.hours-auth-alert button{padding:6px 10px;border:1px solid var(--c-orange);border-radius:7px;background:transparent;color:var(--text);font:inherit;cursor:pointer}
 .week-info .hours-week-badge{border:0;background:none;padding:2px 0;font-family:var(--font);cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-color:color-mix(in srgb,currentColor 40%,transparent)}
 .hours-pending-button{border:1px solid color-mix(in srgb,var(--status-tone) 55%,var(--border));border-radius:8px;padding:8px 11px;background:var(--surface);color:var(--status-tone);font:600 .73rem var(--font);cursor:pointer;min-height:34px}
 .hours-pending-button:focus-visible{outline:2px solid var(--status-tone);outline-offset:3px}
@@ -4453,6 +4456,9 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 .home-invoice-refresh{min-width:32px;min-height:32px;padding:4px 6px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font:inherit;font-size:.65rem;cursor:pointer}
 .home-invoice-refresh[data-home-invoice="refresh"]{font-size:1.15rem}
 .home-invoice-refresh:disabled{opacity:.5;cursor:wait}
+.home-invoice-status.unsent .home-invoice-copy>strong{animation:home-pending-pulse 1.8s ease-in-out infinite}
+.home-invoice-action{display:block;margin-top:8px;padding:8px 12px;min-height:36px;border:1px solid var(--invoice-tone);border-radius:8px;background:var(--surface);color:var(--invoice-tone);font:600 .7rem var(--font);cursor:pointer}
+@media(prefers-reduced-motion:reduce){.home-invoice-status.unsent .home-invoice-copy>strong{animation:none}}
 
 /* Fuente: css/source/theme-cream.css */
 /* Tema Crema: marfil, ciruela, eucalipto, arcilla y azul pizarra.

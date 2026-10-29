@@ -64,6 +64,9 @@
       "path": "js/hours-jobs.js"
     },
     {
+      "path": "js/hours-auth.js"
+    },
+    {
       "path": "js/statistics-ui.js"
     },
     {

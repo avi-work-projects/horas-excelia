@@ -63,3 +63,23 @@ test('Una respuesta tardía del mes anterior no sustituye el estado visible',asy
   await page.evaluate(data=>invoiceReplies[1].resolve({ok:true,json:async()=>data}),result('sent','2026-11'));await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura enviada');
   await page.evaluate(data=>invoiceReplies[0].resolve({ok:true,json:async()=>data}),result('draft'));await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura enviada');expect(await page.evaluate(()=>INVOICE_HOME_STATUS.period)).toBe('2026-11');
 });
+
+test('factura sin enviar parpadea y abre el mismo circuito de Enviar factura',async({page,context})=>{
+  await setup(page,context);const panel=page.locator('#homeInvoiceStatus');
+  await expect(panel).toHaveClass(/unsent/);await expect(panel.locator('strong')).toHaveCSS('animation-name','home-pending-pulse');
+  await panel.getByRole('button',{name:'Enviar factura',exact:true}).click();await expect(page.locator('#invoiceOv')).toBeVisible();
+  await expect(page.locator('#invoiceOv')).toContainText('Enviar factura');
+});
+
+test('la factura detecta cambios locales sin consultar Kairo ni alterar lo programado',async({page,context},info)=>{
+  const api=await setup(page,context);
+  await page.evaluate(async()=>{var d=invoiceData();Object.assign(d.config,{issuer:'Emisor prueba',issuerTax:'B00000000',client:'Cliente prueba',clientTax:'B00000001',project:'Proyecto prueba',rate:'320'});invoiceSave(d);await invoicePrepare('2026-10',d.config,invoiceDayRows('2026-10',d.config));});
+  api.set(result('scheduled'));await page.getByRole('button',{name:'Actualizar estado de correos y factura',exact:true}).click();
+  await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura programada');
+  const count=api.calls.length;
+  await page.evaluate(()=>{ST['2026-10-29']={type:'vacaciones'};render();});
+  await expect(page.locator('#homeInvoiceStatus')).toContainText('cambios locales por revisar');
+  await expect(page.locator('#homeInvoiceStatus').getByRole('button',{name:'Revisar cambios'})).toBeVisible();
+  expect(api.calls).toHaveLength(count);expect(await page.evaluate(()=>INVOICE_HOME_CACHE.periods['2026-10'].data.state)).toBe('scheduled');
+  const box=await page.locator('#homeInvoiceStatus').boundingBox();await page.screenshot({path:info.outputPath('invoice-local-change.png'),animations:'disabled',clip:{x:0,y:0,width:400,height:Math.ceil(box.y+box.height+12)}});
+});

@@ -16,6 +16,7 @@ async function setup(page,context,{queued=false}={}){
     await route.fulfill({status:queued?202:200,json:queued?{jobId,kind:'status',phase:'queued'}:{phase:'done',result:bundle},headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}});
   });
   await context.route(origin+'horas/jobs/**',route=>{calls.jobs++;if(offline)return route.abort();return route.fulfill({json:{jobId,kind:'status',phase,...(phase==='done'?{result:bundle}:{})},headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}});});
+  await context.route(origin+'horas/auth-status',route=>route.fulfill({json:{phase:'disabled'},headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}}));
   await page.goto('/');
   await expect.poll(()=>calls.hours).toBe(1);
   if(queued)await expect.poll(()=>page.evaluate(()=>HOURS_JOBS.length)).toBe(1);
@@ -72,6 +73,21 @@ test('doble actualización no encola dos comprobaciones',async({page,context})=>
   const api=await setup(page,context);await page.evaluate(()=>{refreshHomeStates();refreshHomeStates();});
   await expect.poll(()=>api.calls.hours).toBe(2);await expect(page.locator('[data-hours-check]')).toBeEnabled();expect(api.calls.hours).toBe(2);
 });
+
+test('un pendiente antiguo recupera una vez la caché de Kairo sin pedir refresco de Outlook',async({page,context})=>{
+  const api=await setup(page,context);
+  await page.evaluate(()=>{CY=2027;CM=0;HOURS_CACHE.weeks['2026-12-28'].state='missing';hoursCacheSave();render();});
+  await expect.poll(()=>api.calls.hours).toBe(2);
+  await expect(page.locator('.home-submission.complete')).toContainText('Correos al día');
+  await page.evaluate(()=>{CM=1;render();CM=0;render();});expect(api.calls.hours).toBe(2);
+});
+
+test('semanas pendientes ocultan el resumen y al resolverlas se recupera',async({page,context})=>{
+  await setup(page,context);
+  await page.evaluate(()=>{HOURS_CACHE.weeks[homeSubmissionWeeks(CY,CM)[0].key].state='missing';render();});
+  await expect(page.locator('.home-submission')).toContainText('1 semana por programar');await expect(page.locator('.home-summary-compact')).toHaveCount(0);
+  await page.evaluate(()=>{HOURS_CACHE.weeks[homeSubmissionWeeks(CY,CM)[0].key].state='sent';render();});await expect(page.locator('.home-summary-compact')).toBeVisible();
+});
 test('una caché antigua del mes actual se completa con anterior y siguiente',async({page,context})=>{
   const api=await setup(page,context);
   await page.evaluate(()=>{HOURS_CACHE.periods={'2027-02':HOURS_CACHE.periods['2027-02']};HOURS_CACHE.attempts={};HOURS_ATTEMPTS={};hoursCacheSave();syncHoursStatus(false);});
@@ -87,7 +103,7 @@ test('al cambiar el mes real incorpora el nuevo mes de auditoría una sola vez',
 });
 for(const width of [320,400,440])test('resumen, fórmula y colores de jornada a '+width+' px',async({page,context},info)=>{
   await page.setViewportSize({width,height:1000});await setup(page,context);
-  await page.evaluate(()=>{ST['2027-02-02']={type:'normal',hours:7};ST['2027-02-03']={type:'normal',hours:8};ST['2027-02-04']={type:'festivo'};render();});
+  await page.evaluate(()=>{ST['2027-02-02']={type:'normal',hours:7};ST['2027-02-03']={type:'normal',hours:8};ST['2027-02-04']={type:'festivo'};homeSubmissionWeeks(CY,CM).forEach(w=>{var row=hoursCachedWeek(w.key);row.days=hoursWeekDays(w.key);row.schedule=homeWeekSchedule(w.key).date+'T08:00:00+01:00';});render();});
   const summary=page.locator('.home-summary-compact');await expect(summary.locator('.total')).toContainText('20 días laborables');
   await summary.locator('[data-home-formula]').click();await expect(summary.locator('.home-hours-equation')).toContainText('9×14 + 8×1 + 7×1 + 6,5×4');
   expect(await summary.evaluate(e=>e.scrollWidth<=e.clientWidth)).toBe(true);expect(await page.locator('.home-submission').evaluate(e=>e.scrollWidth<=e.clientWidth)).toBe(true);

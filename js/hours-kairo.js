@@ -179,9 +179,12 @@ async function syncHoursStatus(force){
   var cached=HOURS_CACHE.url===url&&HOURS_CACHE.periods[period];
   var today=new Date(),audit=mkey(today.getFullYear(),today.getMonth());
   var auditMissing=[-1,0,1].some(function(offset){var d=new Date(today.getFullYear(),today.getMonth()+offset,1);return HOURS_CACHE.url!==url||!HOURS_CACHE.periods[mkey(d.getFullYear(),d.getMonth())];});
-  if(!force&&(mode!=='audit'||known&&!due.length&&!auditMissing)){HOURS_STATUS={url:url,period:period,phase:known?'ready':'idle',checkedAt:cached?cached.checkedAt:0};return;}
-  var target=force||due.length?period:audit,windowAudit=target===audit&&!due.length&&(!force||auditMissing);
-  var attempt=(due.length?'delivery:'+period+':'+due.join(','):'audit:'+audit);
+  // A legacy negative phone snapshot must not hide a newer confirmed server fact.
+  // Read Kairo's cache once for the previous month; this is not an Outlook refresh.
+  var historicalCache=!force&&!auditMissing&&known&&mode==='audit'&&period<audit&&keys.some(function(key){return hoursCachedWeek(key).state==='missing';});
+  if(!force&&(mode!=='audit'||known&&!due.length&&!auditMissing&&!historicalCache)){HOURS_STATUS={url:url,period:period,phase:known?'ready':'idle',checkedAt:cached?cached.checkedAt:0};return;}
+  var target=force||due.length||historicalCache?period:audit,windowAudit=!historicalCache&&target===audit&&!due.length&&(!force||auditMissing);
+  var attempt=historicalCache?'historical-cache:'+period:(due.length?'delivery:'+period+':'+due.join(','):'audit:'+audit);
   if(!force&&(HOURS_ATTEMPTS[url+'|'+attempt]||HOURS_CACHE.url===url&&HOURS_CACHE.attempts&&HOURS_CACHE.attempts[attempt]))return;
   if(HOURS_CACHE.url!==url)HOURS_CACHE={schema:1,url:url,periods:{},weeks:{},attempts:{}};
   HOURS_CACHE.attempts=HOURS_CACHE.attempts||{};HOURS_CACHE.attempts[attempt]=true;hoursCacheSave();HOURS_ATTEMPTS[url+'|'+attempt]=true;

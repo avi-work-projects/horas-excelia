@@ -35,6 +35,7 @@ jobs:
       - run: python3 tools/kairo/test_home_status.py
       - run: python3 tools/kairo/test_hours.py
       - run: python3 tools/kairo/test_hours_jobs.py
+      - run: python3 tools/kairo/test_outlook_auth.py
       - run: npm run build
       - name: Check preinstalled Chrome
         run: google-chrome --version

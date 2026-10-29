@@ -1,6 +1,6 @@
 # Gestify y Kairo: funcionamiento y límites
 
-Contrato revisado el 28/10/2026 sobre v516–v517. Describe el sistema instalado;
+Contrato revisado el 29/10/2026 sobre v518. Describe el sistema instalado;
 las propuestas de autenticación pendientes se distinguen al final.
 
 ## Qué guarda cada parte
@@ -99,20 +99,38 @@ El reinicio del servicio de horas y la persistencia de su estado se comprobaron;
 no se ha ensayado un reinicio completo de Kairo con Outlook.
 
 Chromium conserva el perfil y los servicios pueden reiniciar sus procesos ante
-fallo. Esto no equivale a una sesión de Microsoft perpetua. No se ha configurado
-un nuevo secreto de contraseña ni un reingreso automático por formulario.
+fallo. Se ha preparado el recuperador con credenciales cifradas de systemd;
+permanece inactivo hasta introducir la contraseña directamente en Kairo. Las
+instrucciones y el procedimiento de eliminación están en
+[Reingreso de Outlook con secreto privado](../tools/kairo/OUTLOOK-AUTH.md).
 
 Microsoft permite sesiones persistentes, pero la organización puede exigir
 reauthenticación o MFA y revocar la sesión. Una contraseña guardada puede servir
 para rellenar el primer factor; no garantiza resolver esos otros requisitos.
 Fuente: [Microsoft, duración y reautenticación de sesiones](https://learn.microsoft.com/en-us/entra/identity/authentication/concepts-azure-multi-factor-authentication-prompts-session-lifetime).
 
-Si se prepara el reingreso con contraseña, el secreto se introduciría directamente
-en Kairo, fuera del chat, del repositorio y de Gestify. Solo se utilizaría ante
-un formulario de acceso reconocido, con un intento acotado; una contraseña
-rechazada, MFA o una pantalla desconocida detendrían la recuperación y pedirían
-intervención. La programación pendiente tendría que volver a conciliarse tras
-recuperar el acceso. Esta ampliación requiere configuración y validación propias.
+El secreto se introduce directamente en Kairo, fuera del chat, del repositorio y
+de Gestify. Solo se utiliza ante un formulario de acceso reconocido, con un intento
+acotado; una contraseña rechazada, MFA o una pantalla desconocida detienen la
+recuperación. El aviso aparece en Home al consultar el estado de acceso. La
+programación pendiente debe volver a conciliarse tras recuperar el acceso.
+
+## Comparación local de cambios
+
+Las semanas programadas comparan días, horas, fecha prevista y configuración con la última
+confirmación guardada. Las facturas conservan identidad, huella de contenido y
+revisión; Home compara el calendario y la configuración actuales con la
+preparación guardada. Estos avisos no necesitan consultar servicios externos.
+Una factura enviada o aprobada conserva su estado y su versión aunque se señalen
+cambios locales. No se sustituye ni se vuelve a enviar automáticamente.
+Las semanas ya enviadas se conservan; el control de actualización automática se
+aplica a las programaciones. No se reabre ni se manda otra semana enviada por
+haber cambiado el calendario local.
+
+La corrección de septiembre de v518 recupera una vez la caché de Kairo cuando
+el mes previo contiene una ausencia antigua en el móvil. No marca enviada una
+semana por su antigüedad ni fuerza un barrido de Outlook: incorpora la lectura
+verificada más reciente que ya conserva Kairo.
 
 ## Consecuencias que conviene tener presentes
 
