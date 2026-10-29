@@ -103,10 +103,10 @@ las pruebas. Windows sigue usando Edge; Linux local conserva el valor por defect
 si no se declara el canal. Referencias: [imagen oficial](https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md)
 y [canales admitidos por Playwright](https://playwright.dev/docs/browsers#google-chrome--microsoft-edge).
 
-Desde v519, CI compila y ejecuta las pruebas rápidas una vez. Dos máquinas
-independientes reparten los archivos de navegador mediante `--shard=1/2` y
-`--shard=2/2`, con un trabajador por máquina: no comparten puertos ni bases de
-prueba. Ambas deben pasar antes de publicar exactamente el `dist` validado.
+Desde v519, CI compila y ejecuta las pruebas rápidas una vez. Cuatro máquinas
+independientes reparten los archivos de navegador mediante `--shard=N/4`,
+con un trabajador por máquina: no comparten puertos ni bases de prueba.
+Todas deben pasar antes de publicar exactamente el `dist` validado.
 Cada grupo registra los ocho archivos más lentos para orientar mejoras futuras.
 No se habilita `fullyParallel`: se conserva el orden dentro de cada archivo.
 Referencia: [reparto oficial de Playwright](https://playwright.dev/docs/test-sharding).
