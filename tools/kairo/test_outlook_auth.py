@@ -41,6 +41,8 @@ class Page:
                 '#KmsiDescription':'stay_signed_in','#tilesHolder [data-test-id]':'account'}.get(selector,'absent')
         return Locator(self,name)
     def get_by_text(self, _):
+        if _.pattern.startswith('^(Use my password'):
+            return Locator(self,'password_choice')
         return Locator(self,'password' if getattr(self,'correct_account',True) else 'absent')
     def goto(self,*_,**__):self.phase='username'
 
@@ -58,6 +60,13 @@ class AuthTests(unittest.TestCase):
             self.assertEqual(page.clicks,3)
             self.assertNotIn(SECRET,(Path(root)/'auth-status.json').read_text())
             self.assertEqual(set(public_state(root)),{'phase','checkedAt'})
+
+    def test_password_choice_then_verified_account_password(self):
+        with tempfile.TemporaryDirectory() as root:
+            page=Page('password_choice',['password','ready'])
+            self.assertEqual(self.run_auth(page,root)['phase'],'ready')
+            self.assertEqual(page.fills,[('password',SECRET)])
+            self.assertEqual(page.clicks,2)
 
     def test_mfa_pauses_and_never_repeats_after_restart(self):
         with tempfile.TemporaryDirectory() as root:

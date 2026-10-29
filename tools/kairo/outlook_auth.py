@@ -76,6 +76,11 @@ def account_tile(page, sender):
     return found[0] if len(found) == 1 else None
 
 
+def password_choice(page):
+    choices = page.get_by_text(re.compile(r'^(Use my password|Usar mi contraseña)$', re.I))
+    return choices if choices.count() == 1 and choices.is_visible() else None
+
+
 def screen(page, sender):
     if outlook_page(page.url):
         if mailbox_matches(page, sender):
@@ -94,6 +99,8 @@ def screen(page, sender):
         return 'password' if any(labels.nth(i).is_visible() for i in range(labels.count())) else 'unknown'
     if visible(page, '#i0116'):
         return 'username'
+    if password_choice(page) is not None:
+        return 'password_choice'
     if visible(page, '#KmsiDescription') and visible(page, '#idSIButton9'):
         return 'stay_signed_in'
     if account_tile(page, sender) is not None:
@@ -138,17 +145,19 @@ def recover(page, sender, password, root, sleep=time.sleep):
             return write_state(root, 'ready')
         if phase in ('mfa', 'rejected', 'unknown'):
             return write_state(root, phase, paused=True)
-        if phase in ('username', 'password', 'stay_signed_in', 'account') and phase not in used:
-            if phase != 'account' and not visible(page, '#idSIButton9'):
+        if phase in ('username', 'password', 'stay_signed_in', 'account', 'password_choice') and phase not in used:
+            if phase not in ('account', 'password_choice') and not visible(page, '#idSIButton9'):
                 return write_state(root, 'unknown', paused=True)
             used.add(phase)
             if phase == 'account':
                 account_tile(page, sender).click(timeout=5000)
+            elif phase == 'password_choice':
+                password_choice(page).click(timeout=5000)
             elif phase == 'username':
                 page.locator('#i0116').fill(sender)
             elif phase == 'password':
                 page.locator('#i0118').fill(password)
-            if phase != 'account':
+            if phase not in ('account', 'password_choice'):
                 page.locator('#idSIButton9').click(timeout=5000)
         sleep(1)
     return write_state(root, 'unknown', paused=True)

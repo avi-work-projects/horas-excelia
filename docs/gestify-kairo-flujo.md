@@ -1,6 +1,6 @@
 # Gestify y Kairo: funcionamiento y límites
 
-Contrato revisado el 29/10/2026 sobre v518. Describe el sistema instalado;
+Contrato revisado el 29/10/2026 sobre v519. Describe el sistema instalado;
 las propuestas de autenticación pendientes se distinguen al final.
 
 ## Qué guarda cada parte
@@ -99,8 +99,9 @@ El reinicio del servicio de horas y la persistencia de su estado se comprobaron;
 no se ha ensayado un reinicio completo de Kairo con Outlook.
 
 Chromium conserva el perfil y los servicios pueden reiniciar sus procesos ante
-fallo. Se ha preparado el recuperador con credenciales cifradas de systemd;
-permanece inactivo hasta introducir la contraseña directamente en Kairo. Las
+fallo. El recuperador con credenciales cifradas de systemd está activo después
+de que el propietario introdujese el secreto por SSH. El primer reingreso real
+ha abierto el buzón correcto y alcanzado `ready`, sin MFA en ese intento. Las
 instrucciones y el procedimiento de eliminación están en
 [Reingreso de Outlook con secreto privado](../tools/kairo/OUTLOOK-AUTH.md).
 

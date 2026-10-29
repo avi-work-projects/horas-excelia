@@ -17,3 +17,20 @@ test('MFA se avisa sin consultar el buzón y se retira tras recuperar acceso',as
   phase='ready';await page.getByRole('button',{name:'Comprobar acceso'}).click();
   await expect(page.locator('.hours-auth-alert')).toHaveCount(0);expect(reads).toBe(1);expect(health).toBeGreaterThanOrEqual(2);
 });
+
+test('comprobar acceso muestra progreso y resultado aunque siga detenido; un fallo conserva el aviso',async({page,context})=>{
+  let fail=false,release,hold=false;
+  await page.clock.setFixedTime(new Date('2026-10-29T10:00:00+01:00'));
+  await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-invoices-v1',JSON.stringify({config:{kairoUrl:'https://auth-review.test.ts.net/facturas/'},months:{}}));});
+  await context.route(base+'**',async route=>{
+    if(!route.request().url().endsWith('/auth-status'))return route.abort();
+    if(hold)await new Promise(resolve=>{release=resolve;});
+    if(fail)return route.abort();
+    return route.fulfill({json:{phase:'unknown'},headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}});
+  });
+  await page.goto('/');const notice=page.locator('.hours-auth-alert');await expect(notice).toContainText('Revisa el acceso');
+  hold=true;await notice.getByRole('button').click();await expect(notice.getByRole('button')).toHaveText('Comprobando…');await expect(notice.getByRole('button')).toBeDisabled();
+  await expect.poll(()=>typeof release).toBe('function');hold=false;release();
+  await expect(page.locator('#toast')).toContainText('Comprobado: el acceso sigue detenido');await expect(notice.getByRole('button')).toBeEnabled();
+  fail=true;await notice.getByRole('button').click();await expect(page.locator('#toast')).toContainText('No se pudo comprobar el acceso');await expect(notice).toContainText('Revisa el acceso');
+});
