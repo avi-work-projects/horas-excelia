@@ -14,6 +14,10 @@ for(const width of [320,400])test('revisión de noviembre compacta a '+width+' p
  await page.screenshot({path:info.outputPath('revision-noviembre-'+width+'.png')});
  await page.getByText('Ver correo',{exact:true}).click();
  await expect(page.locator('details pre')).toHaveText('Correo sintético de revisión.');
+ await expect(page.getByRole('region',{name:'Contenido del correo'})).toContainText('Correo sintético de revisión.');
+ await expect(page.getByRole('region',{name:'Contenido del correo'})).not.toContainText('destino@example.invalid');
+ await expect(page.getByRole('region',{name:'Contenido del correo'})).not.toContainText('Factura de noviembre');
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await expect(page.locator('details')).not.toContainText('IVA:');
  await expect(page.locator('details')).not.toContainText('Días:');
  await page.screenshot({path:info.outputPath('correo-exacto-'+width+'.png')});
