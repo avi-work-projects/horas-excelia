@@ -45,7 +45,7 @@ function renderHomeInvoiceStatus(year,month){
   var action=m.configure?'<button type="button" class="home-invoice-action" data-home-invoice="configure">Conectar Kairo</button>':m.unsent||m.changed?'<button type="button" class="home-invoice-action" data-home-invoice="send">'+(m.changed?'Revisar cambios':'Enviar factura')+'</button>':m.url?'<a class="home-invoice-action" href="'+escHtml(invoiceKairoUrl(m.url)+'gestify-month?period='+m.period)+'" target="_blank" rel="noopener noreferrer">'+(m.tone==='scheduled'?'Ver programación':'Ver factura')+'</a>':'';
   return '<section class="home-invoice-status '+m.tone+(m.unsent?' unsent':'')+'" id="homeInvoiceStatus" aria-label="Estado de factura" aria-live="polite"><span class="home-invoice-icon" aria-hidden="true">'+icon+'</span><div class="home-invoice-copy"><strong>'+escHtml(m.title)+'</strong><span>'+escHtml(m.detail)+'</span></div>'+action+'</section>';
 }
-function paintHomeInvoiceStatus(){var current=document.getElementById('homeInvoiceStatus');if(current)current.outerHTML=renderHomeInvoiceStatus(CY,CM);}
+function paintHomeInvoiceStatus(){if(typeof paintInvoiceCalendar==='function')paintInvoiceCalendar();var current=document.getElementById('homeInvoiceStatus');if(current)current.outerHTML=renderHomeInvoiceStatus(CY,CM);}
 async function fetchHomeInvoiceStatus(period,url,force){
   if(INVOICE_HOME_REQUESTS[period+'|'+url])return;
   if(INVOICE_HOME_CACHE.url!==url)INVOICE_HOME_CACHE={schema:1,url:url,periods:{}};

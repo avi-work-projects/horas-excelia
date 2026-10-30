@@ -4466,6 +4466,34 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 .invoice-month-picker input{min-width:0;max-width:65%;padding:7px 9px;border:1px solid var(--border);border-radius:8px;color:var(--text);background:var(--surface);font:600 .85rem var(--font)}
 @media(prefers-reduced-motion:reduce){.home-invoice-status.unsent .home-invoice-copy>strong{animation:none}}
 
+/* Fuente: css/source/invoices-calendar.css */
+.invoice-calendar{padding:10px 12px}
+.invoice-calendar table{width:100%;table-layout:fixed;border-collapse:separate;border-spacing:3px;font-size:.78rem;text-align:center}
+.invoice-calendar th{font-weight:600;color:var(--text-muted);height:20px}
+.invoice-calendar td{height:35px;border:1px solid var(--border);border-radius:7px;background:var(--surface);position:relative;vertical-align:middle}
+.invoice-calendar td.empty{border:0;background:transparent}
+.invoice-calendar td.weekend{background:var(--surface2);color:var(--text-muted)}
+.invoice-calendar .invoice-calendar-number{font-weight:650;display:block;line-height:1.1}
+.invoice-calendar-mark{display:block;font-size:.55rem;font-weight:750;min-height:.7rem;line-height:1.1}
+.invoice-calendar .vacaciones{--invoice-day-tone:var(--vacaciones)}
+.invoice-calendar .festivo{--invoice-day-tone:var(--festivo)}
+.invoice-calendar .ausencia{--invoice-day-tone:var(--ausencia)}
+.invoice-calendar td:is(.vacaciones,.festivo,.ausencia){color:var(--invoice-day-tone);background:color-mix(in srgb,var(--invoice-day-tone) 15%,var(--surface))}
+.invoice-calendar td.delivery{border:2px solid var(--c-green)}
+.invoice-calendar td.delivery.normal{color:var(--text);background:color-mix(in srgb,var(--c-green) 12%,var(--surface))}
+.invoice-calendar td.delivery.planned{border-style:dashed}
+.invoice-calendar-envelope{position:absolute;right:2px;bottom:1px;font-size:.66rem;color:var(--c-green);line-height:1}
+.invoice-calendar-legend{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;font-size:.62rem;margin:5px 0 8px}
+.invoice-calendar-legend span{color:var(--invoice-day-tone);white-space:nowrap}
+.invoice-calendar-delivery{border-top:1px solid var(--border);padding-top:7px;display:grid;gap:2px;font-size:.75rem;color:var(--c-green)}
+.invoice-calendar-delivery span{font-size:.63rem;color:var(--text-muted)}
+.invoice-calendar-delivery.attention{color:var(--c-orange)}
+.invoice-month-summary>summary{margin:0;list-style:none}
+.invoice-month-summary>summary h3{font-size:.85rem;margin:0}
+.invoice-month-summary[open]>.invoice-filename{margin-top:10px}
+.invoice-calendar + .invoice-days{padding:8px 12px}
+@media(max-height:800px){.invoice-calendar td{height:29px}.invoice-calendar th{height:16px}.invoice-calendar-legend{margin:3px 0 5px}.invoice-calendar-delivery{padding-top:5px}}
+
 /* Fuente: css/source/theme-cream.css */
 /* Tema Crema: marfil, ciruela, eucalipto, arcilla y azul pizarra.
    Paleta independiente, no filtro. La clave grey conserva preferencias y backups.

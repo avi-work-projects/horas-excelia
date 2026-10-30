@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
   "title": "Gestify · mapa visual",
-  "generatedAt": "2026-10-30T12:41:34.529Z",
-  "referenceCommit": "bb299658da93b895f484511f9aa444c272a5d26b",
+  "generatedAt": "2026-10-30T14:19:07.668Z",
+  "referenceCommit": "165241e68e08e5f832dc9000dbbbe8bbf6e4408a",
   "date": "2026-08-21T10:00:00+02:00",
   "viewport": {
     "width": 400,
@@ -28,6 +28,7 @@
       ],
       "region": "body",
       "image": "captures/home.png",
+      "imageHash": "60d0dec67a0706d27b1d2134414cf3f9944129df6840b01c86d1136b801cfca7",
       "anchors": {
         "household": {
           "x": 16,
@@ -249,6 +250,19 @@
       ],
       "dependencyVersion": 2,
       "commit": "bb299658da93b895f484511f9aa444c272a5d26b",
+      "review": "Sin revisar",
+      "reviewHistory": [
+        {
+          "imageHash": "3493bf6888e56c26aa0080cd30012227abc1b4f452587c63e94dd312106716b2",
+          "review": "Revisada visualmente",
+          "commit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
+          "reviewEvidence": {
+            "referenceCommit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
+            "reviewedAt": "2026-10-25",
+            "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
+          }
+        }
+      ],
       "verifiedEdges": [
         "household",
         "study",
@@ -263,21 +277,7 @@
         "home-september",
         "tasks"
       ],
-      "imageHash": "60d0dec67a0706d27b1d2134414cf3f9944129df6840b01c86d1136b801cfca7",
-      "review": "Sin revisar",
-      "reviewHistory": [
-        {
-          "imageHash": "3493bf6888e56c26aa0080cd30012227abc1b4f452587c63e94dd312106716b2",
-          "review": "Revisada visualmente",
-          "commit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
-          "reviewEvidence": {
-            "referenceCommit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
-            "reviewedAt": "2026-10-25",
-            "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
-          }
-        }
-      ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "household",
@@ -3368,16 +3368,16 @@
       "ready": "#invoiceConfig",
       "sources": [
         "js/invoices-ui.js",
-        "js/invoices.js"
+        "js/invoices.js",
+        "js/invoices-calendar.js"
       ],
       "region": ".invoice-body",
       "note": "Agosto de 2026 se presenta como referencia histórica.",
       "image": "captures/invoice.png",
-      "imageHash": "648f53a9cf4b09dcd0d5bf0ffeabe84ebace6b18b49e663f47efcb1dd2897c13",
       "anchors": {
         "invoice-config": {
           "x": 18,
-          "y": 595.921875,
+          "y": 713,
           "width": 171.59375,
           "height": 36
         }
@@ -3386,7 +3386,7 @@
       "dependencies": [
         {
           "file": "index.html",
-          "hash": "4b451a71e39f8db2fa2c200baae35aa9baa68368c8a96fedf8a8a61083b15b21"
+          "hash": "f43ee2bb617a1d731c92e49cae73b4fcb63ff40c1e72ef118e6e1ed19b6fbed3"
         },
         {
           "file": "js/nav-icons.js",
@@ -3395,7 +3395,7 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "7c6d91dc880311b1d887b5ef090b4e9ca0de9d425bf499eb71fd55f991b03599"
+          "hash": "8f51bfd04c870c9399737c944daceffafb4cf53fdf87936337223e62bdbee8ac"
         },
         {
           "file": "js/data-integrity.js",
@@ -3411,7 +3411,7 @@
         },
         {
           "file": "css/source/base.css",
-          "hash": "58e9b402d3d746f8c8756dfd1904f3f62d7e3dd59ad6dc79287f971bd904e28c"
+          "hash": "45c10a4326fcd88babebf8968fdd517c678b16f9c86cf0268fa1c1cf11f81408"
         },
         {
           "file": "css/source/navigation-controls.css",
@@ -3447,11 +3447,15 @@
         },
         {
           "file": "css/source/shared-refinements.css",
-          "hash": "2caba9b567eff1f5f421af5adc11179a5f0df4daa7ff7b344eac354e6e0d5b33"
+          "hash": "ef9752e5632d9aad33fbc38209393a9a36ccf4c0d08b0c2d1fb946c121d6fe0d"
         },
         {
           "file": "css/source/home-sharing.css",
-          "hash": "caac3c233ab62466329f3086e2fc904d5fb79fb541fd7d591cec0f3684b53cc3"
+          "hash": "5dfdf4c713d88fdb5b604948fcc8341adaa86647cf929fa107441f439ea8ca05"
+        },
+        {
+          "file": "css/source/hours-kairo.css",
+          "hash": "feace622fb4946582d1dff8cb1547c20102426f33543f07fa755eb9a69258f77"
         },
         {
           "file": "css/source/energy-refinements.css",
@@ -3463,35 +3467,67 @@
         },
         {
           "file": "css/source/invoices.css",
-          "hash": "e856e3f17686e33c3232c34bc76015d91156cdc46b6d6c864468fbb23f3a8edb"
+          "hash": "c58ca3a04622ab50f646d035f37ea5fa9da3072020649fb29af6a99425b6125c"
+        },
+        {
+          "file": "css/source/invoices-calendar.css",
+          "hash": "fab6f4d1d756a586786aec5c51c7eaccc786b4742b4179d4ce627db9acec0f63"
         },
         {
           "file": "css/source/theme-cream.css",
-          "hash": "d5d09d0ae2535163aac0b663ebe8abc3c8661d0d910fa0674bcd2c42d8e83949"
+          "hash": "2e2f3cae8e4d8ed00e97f4a127fe36564b68b1c55816e1a4cfa6f1cebfb83309"
         },
         {
           "file": "css/tasks.css",
           "hash": "96b4dc532dd2d7eeb82fe5d4c971b8599542860e95b3e8655f45f1922d4365aa"
         },
         {
+          "file": "js/home-hours.js",
+          "hash": "71870fc7ff171b4cb54427c0ddde1348a31dcfd0422d382b423430cb9f489e53"
+        },
+        {
+          "file": "js/home-weeks.js",
+          "hash": "c56ced3f2dd6647942467f69c057805c9d903ae8536d5603410969f2af620276"
+        },
+        {
+          "file": "js/hours-kairo.js",
+          "hash": "b58d9e518228bba3f1c0045523d0cbc18028cd43c67e2612606adf0aecfad996"
+        },
+        {
+          "file": "js/hours-cache.js",
+          "hash": "aa088fc1734adb371cbc9768a945cf1fff7147828242160e6bb5e2ed27b10493"
+        },
+        {
+          "file": "js/hours-jobs.js",
+          "hash": "efabb5585a833346b9cb7595ac9bca9d63b63167ea263dc0d0c8d8d50cec412d"
+        },
+        {
+          "file": "js/hours-auth.js",
+          "hash": "00d408ea38f5b7182c87df93b684fd41b85a13a252d8e1d09770023f9ef58224"
+        },
+        {
           "file": "js/invoices-home.js",
-          "hash": "977e3eca2255875e301a3b51bb472d469808623657ca061a70cddd7c0f2f6583"
+          "hash": "4e6db66f68c7a7e8803517021a7674afa11c40686c43a1b16b35a0f324131243"
         },
         {
           "file": "js/invoices.js",
-          "hash": "4a2efd26b3fc1c2ba865b38f00b7393113da845b92141b7ac000896b743f2384"
+          "hash": "49b25c8121044d3c1b869317821c7995eb08466290bef328e4b17cc0d0581a8a"
         },
         {
           "file": "js/invoices-kairo.js",
-          "hash": "6aa24a375242565c347d3adef6b24739a3625a1e0fdad6ceae495ff9a186cd19"
+          "hash": "54c782f94bc80194781bab1368fcc31c8c3db72fc93a5acb4f6f3850b4ba00d3"
         },
         {
           "file": "js/init.js",
-          "hash": "2402274c8aea9cc86a031ed7d86d1543ecc0668e8a96e1f79c70c1cd0c66a1eb"
+          "hash": "889f1d4fdc2a368fc53ed5d08018676870ca7d005643c87451fa0d03b84fd781"
         },
         {
           "file": "js/invoices-ui.js",
-          "hash": "fe6bda8115ff1cdb558db86b62fd377a7412a96f0b5dd9ff0ddf98d91acea6db"
+          "hash": "1ba58ad9383a5bc60904e1b20e080b0a69dd994ee330c123bc68e3ed74da714a"
+        },
+        {
+          "file": "js/invoices-calendar.js",
+          "hash": "47d567df529b4ec45c858abe614e321c8ce6ccc9119ca35799b13102c6da1f61"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -3504,7 +3540,11 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
+      "commit": "165241e68e08e5f832dc9000dbbbe8bbf6e4408a",
+      "verifiedEdges": [
+        "invoice-config"
+      ],
+      "imageHash": "0976043a0d2005f1b54f45db8819401c205a4033afb9b8e1d5624836dc4f6778",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -3519,10 +3559,7 @@
           }
         }
       ],
-      "verifiedEdges": [
-        "invoice-config"
-      ],
-      "fresh": false
+      "fresh": true
     },
     {
       "id": "invoice-config",
@@ -3860,6 +3897,7 @@
       ],
       "region": "body",
       "image": "captures/home-september.png",
+      "imageHash": "b8c4f406cd7ca695a01fc2e0d15ac8fb6a88485f7f1233346a831b6a7c2dee2f",
       "anchors": {
         "home-october": {
           "x": 244.671875,
@@ -4015,10 +4053,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "bb299658da93b895f484511f9aa444c272a5d26b",
-      "verifiedEdges": [
-        "home-october"
-      ],
-      "imageHash": "b8c4f406cd7ca695a01fc2e0d15ac8fb6a88485f7f1233346a831b6a7c2dee2f",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -4032,7 +4066,10 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [
+        "home-october"
+      ],
+      "fresh": false
     },
     {
       "id": "home-october",
@@ -4049,6 +4086,7 @@
       ],
       "region": "body",
       "image": "captures/home-october.png",
+      "imageHash": "4ff9b7ad79b340b45595963911350ec55e771b684830846d297902c01a466bec",
       "anchors": {
         "home-invoice-connection": {
           "x": 275.390625,
@@ -4210,11 +4248,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "bb299658da93b895f484511f9aa444c272a5d26b",
-      "verifiedEdges": [
-        "home-invoice-connection",
-        "invoice-current"
-      ],
-      "imageHash": "4ff9b7ad79b340b45595963911350ec55e771b684830846d297902c01a466bec",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -4228,7 +4261,11 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [
+        "home-invoice-connection",
+        "invoice-current"
+      ],
+      "fresh": false
     },
     {
       "id": "home-invoice-connection",
@@ -4389,11 +4426,11 @@
       "ready": "#invoiceJson",
       "sources": [
         "js/invoices-ui.js",
-        "js/invoices.js"
+        "js/invoices.js",
+        "js/invoices-calendar.js"
       ],
       "region": ".invoice-body",
       "image": "captures/invoice-current.png",
-      "imageHash": "d22d5f8d14dfbade3b141806b6d708d847180cb81eeda7ae6119f90f048bb8c8",
       "anchors": {
         "invoice-current--scroll-invoice-document": {
           "x": 374,
@@ -4406,7 +4443,7 @@
       "dependencies": [
         {
           "file": "index.html",
-          "hash": "4b451a71e39f8db2fa2c200baae35aa9baa68368c8a96fedf8a8a61083b15b21"
+          "hash": "f43ee2bb617a1d731c92e49cae73b4fcb63ff40c1e72ef118e6e1ed19b6fbed3"
         },
         {
           "file": "js/nav-icons.js",
@@ -4415,7 +4452,7 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "7c6d91dc880311b1d887b5ef090b4e9ca0de9d425bf499eb71fd55f991b03599"
+          "hash": "8f51bfd04c870c9399737c944daceffafb4cf53fdf87936337223e62bdbee8ac"
         },
         {
           "file": "js/data-integrity.js",
@@ -4431,7 +4468,7 @@
         },
         {
           "file": "css/source/base.css",
-          "hash": "58e9b402d3d746f8c8756dfd1904f3f62d7e3dd59ad6dc79287f971bd904e28c"
+          "hash": "45c10a4326fcd88babebf8968fdd517c678b16f9c86cf0268fa1c1cf11f81408"
         },
         {
           "file": "css/source/navigation-controls.css",
@@ -4467,11 +4504,15 @@
         },
         {
           "file": "css/source/shared-refinements.css",
-          "hash": "2caba9b567eff1f5f421af5adc11179a5f0df4daa7ff7b344eac354e6e0d5b33"
+          "hash": "ef9752e5632d9aad33fbc38209393a9a36ccf4c0d08b0c2d1fb946c121d6fe0d"
         },
         {
           "file": "css/source/home-sharing.css",
-          "hash": "caac3c233ab62466329f3086e2fc904d5fb79fb541fd7d591cec0f3684b53cc3"
+          "hash": "5dfdf4c713d88fdb5b604948fcc8341adaa86647cf929fa107441f439ea8ca05"
+        },
+        {
+          "file": "css/source/hours-kairo.css",
+          "hash": "feace622fb4946582d1dff8cb1547c20102426f33543f07fa755eb9a69258f77"
         },
         {
           "file": "css/source/energy-refinements.css",
@@ -4483,35 +4524,67 @@
         },
         {
           "file": "css/source/invoices.css",
-          "hash": "e856e3f17686e33c3232c34bc76015d91156cdc46b6d6c864468fbb23f3a8edb"
+          "hash": "c58ca3a04622ab50f646d035f37ea5fa9da3072020649fb29af6a99425b6125c"
+        },
+        {
+          "file": "css/source/invoices-calendar.css",
+          "hash": "fab6f4d1d756a586786aec5c51c7eaccc786b4742b4179d4ce627db9acec0f63"
         },
         {
           "file": "css/source/theme-cream.css",
-          "hash": "d5d09d0ae2535163aac0b663ebe8abc3c8661d0d910fa0674bcd2c42d8e83949"
+          "hash": "2e2f3cae8e4d8ed00e97f4a127fe36564b68b1c55816e1a4cfa6f1cebfb83309"
         },
         {
           "file": "css/tasks.css",
           "hash": "96b4dc532dd2d7eeb82fe5d4c971b8599542860e95b3e8655f45f1922d4365aa"
         },
         {
+          "file": "js/home-hours.js",
+          "hash": "71870fc7ff171b4cb54427c0ddde1348a31dcfd0422d382b423430cb9f489e53"
+        },
+        {
+          "file": "js/home-weeks.js",
+          "hash": "c56ced3f2dd6647942467f69c057805c9d903ae8536d5603410969f2af620276"
+        },
+        {
+          "file": "js/hours-kairo.js",
+          "hash": "b58d9e518228bba3f1c0045523d0cbc18028cd43c67e2612606adf0aecfad996"
+        },
+        {
+          "file": "js/hours-cache.js",
+          "hash": "aa088fc1734adb371cbc9768a945cf1fff7147828242160e6bb5e2ed27b10493"
+        },
+        {
+          "file": "js/hours-jobs.js",
+          "hash": "efabb5585a833346b9cb7595ac9bca9d63b63167ea263dc0d0c8d8d50cec412d"
+        },
+        {
+          "file": "js/hours-auth.js",
+          "hash": "00d408ea38f5b7182c87df93b684fd41b85a13a252d8e1d09770023f9ef58224"
+        },
+        {
           "file": "js/invoices-home.js",
-          "hash": "977e3eca2255875e301a3b51bb472d469808623657ca061a70cddd7c0f2f6583"
+          "hash": "4e6db66f68c7a7e8803517021a7674afa11c40686c43a1b16b35a0f324131243"
         },
         {
           "file": "js/invoices.js",
-          "hash": "4a2efd26b3fc1c2ba865b38f00b7393113da845b92141b7ac000896b743f2384"
+          "hash": "49b25c8121044d3c1b869317821c7995eb08466290bef328e4b17cc0d0581a8a"
         },
         {
           "file": "js/invoices-kairo.js",
-          "hash": "6aa24a375242565c347d3adef6b24739a3625a1e0fdad6ceae495ff9a186cd19"
+          "hash": "54c782f94bc80194781bab1368fcc31c8c3db72fc93a5acb4f6f3850b4ba00d3"
         },
         {
           "file": "js/init.js",
-          "hash": "2402274c8aea9cc86a031ed7d86d1543ecc0668e8a96e1f79c70c1cd0c66a1eb"
+          "hash": "889f1d4fdc2a368fc53ed5d08018676870ca7d005643c87451fa0d03b84fd781"
         },
         {
           "file": "js/invoices-ui.js",
-          "hash": "fe6bda8115ff1cdb558db86b62fd377a7412a96f0b5dd9ff0ddf98d91acea6db"
+          "hash": "1ba58ad9383a5bc60904e1b20e080b0a69dd994ee330c123bc68e3ed74da714a"
+        },
+        {
+          "file": "js/invoices-calendar.js",
+          "hash": "47d567df529b4ec45c858abe614e321c8ce6ccc9119ca35799b13102c6da1f61"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -4524,7 +4597,11 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
+      "commit": "165241e68e08e5f832dc9000dbbbe8bbf6e4408a",
+      "verifiedEdges": [
+        "invoice-current--scroll-invoice-document"
+      ],
+      "imageHash": "75bb794db813f7619af5da8cbef465d55aa9f112d4e35cbb4174c36c3131b9c9",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -4538,10 +4615,7 @@
           }
         }
       ],
-      "verifiedEdges": [
-        "invoice-current--scroll-invoice-document"
-      ],
-      "fresh": false
+      "fresh": true
     },
     {
       "id": "invoice-current--scroll-invoice-document",
@@ -4558,16 +4632,16 @@
       "ready": "#invoiceDocument summary",
       "sources": [
         "js/invoices-ui.js",
-        "js/invoices.js"
+        "js/invoices.js",
+        "js/invoices-calendar.js"
       ],
       "note": "Misma pantalla, desplazada hasta el control indicado.",
       "region": ".invoice-body",
       "image": "captures/invoice-current--scroll-invoice-document.png",
-      "imageHash": "d22d5f8d14dfbade3b141806b6d708d847180cb81eeda7ae6119f90f048bb8c8",
       "anchors": {
         "invoice-document": {
           "x": 33,
-          "y": 678.046875,
+          "y": 757.125,
           "width": 334,
           "height": 62
         }
@@ -4576,7 +4650,7 @@
       "dependencies": [
         {
           "file": "index.html",
-          "hash": "4b451a71e39f8db2fa2c200baae35aa9baa68368c8a96fedf8a8a61083b15b21"
+          "hash": "f43ee2bb617a1d731c92e49cae73b4fcb63ff40c1e72ef118e6e1ed19b6fbed3"
         },
         {
           "file": "js/nav-icons.js",
@@ -4585,7 +4659,7 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "7c6d91dc880311b1d887b5ef090b4e9ca0de9d425bf499eb71fd55f991b03599"
+          "hash": "8f51bfd04c870c9399737c944daceffafb4cf53fdf87936337223e62bdbee8ac"
         },
         {
           "file": "js/data-integrity.js",
@@ -4601,7 +4675,7 @@
         },
         {
           "file": "css/source/base.css",
-          "hash": "58e9b402d3d746f8c8756dfd1904f3f62d7e3dd59ad6dc79287f971bd904e28c"
+          "hash": "45c10a4326fcd88babebf8968fdd517c678b16f9c86cf0268fa1c1cf11f81408"
         },
         {
           "file": "css/source/navigation-controls.css",
@@ -4637,11 +4711,15 @@
         },
         {
           "file": "css/source/shared-refinements.css",
-          "hash": "2caba9b567eff1f5f421af5adc11179a5f0df4daa7ff7b344eac354e6e0d5b33"
+          "hash": "ef9752e5632d9aad33fbc38209393a9a36ccf4c0d08b0c2d1fb946c121d6fe0d"
         },
         {
           "file": "css/source/home-sharing.css",
-          "hash": "caac3c233ab62466329f3086e2fc904d5fb79fb541fd7d591cec0f3684b53cc3"
+          "hash": "5dfdf4c713d88fdb5b604948fcc8341adaa86647cf929fa107441f439ea8ca05"
+        },
+        {
+          "file": "css/source/hours-kairo.css",
+          "hash": "feace622fb4946582d1dff8cb1547c20102426f33543f07fa755eb9a69258f77"
         },
         {
           "file": "css/source/energy-refinements.css",
@@ -4653,35 +4731,67 @@
         },
         {
           "file": "css/source/invoices.css",
-          "hash": "e856e3f17686e33c3232c34bc76015d91156cdc46b6d6c864468fbb23f3a8edb"
+          "hash": "c58ca3a04622ab50f646d035f37ea5fa9da3072020649fb29af6a99425b6125c"
+        },
+        {
+          "file": "css/source/invoices-calendar.css",
+          "hash": "fab6f4d1d756a586786aec5c51c7eaccc786b4742b4179d4ce627db9acec0f63"
         },
         {
           "file": "css/source/theme-cream.css",
-          "hash": "d5d09d0ae2535163aac0b663ebe8abc3c8661d0d910fa0674bcd2c42d8e83949"
+          "hash": "2e2f3cae8e4d8ed00e97f4a127fe36564b68b1c55816e1a4cfa6f1cebfb83309"
         },
         {
           "file": "css/tasks.css",
           "hash": "96b4dc532dd2d7eeb82fe5d4c971b8599542860e95b3e8655f45f1922d4365aa"
         },
         {
+          "file": "js/home-hours.js",
+          "hash": "71870fc7ff171b4cb54427c0ddde1348a31dcfd0422d382b423430cb9f489e53"
+        },
+        {
+          "file": "js/home-weeks.js",
+          "hash": "c56ced3f2dd6647942467f69c057805c9d903ae8536d5603410969f2af620276"
+        },
+        {
+          "file": "js/hours-kairo.js",
+          "hash": "b58d9e518228bba3f1c0045523d0cbc18028cd43c67e2612606adf0aecfad996"
+        },
+        {
+          "file": "js/hours-cache.js",
+          "hash": "aa088fc1734adb371cbc9768a945cf1fff7147828242160e6bb5e2ed27b10493"
+        },
+        {
+          "file": "js/hours-jobs.js",
+          "hash": "efabb5585a833346b9cb7595ac9bca9d63b63167ea263dc0d0c8d8d50cec412d"
+        },
+        {
+          "file": "js/hours-auth.js",
+          "hash": "00d408ea38f5b7182c87df93b684fd41b85a13a252d8e1d09770023f9ef58224"
+        },
+        {
           "file": "js/invoices-home.js",
-          "hash": "977e3eca2255875e301a3b51bb472d469808623657ca061a70cddd7c0f2f6583"
+          "hash": "4e6db66f68c7a7e8803517021a7674afa11c40686c43a1b16b35a0f324131243"
         },
         {
           "file": "js/invoices.js",
-          "hash": "4a2efd26b3fc1c2ba865b38f00b7393113da845b92141b7ac000896b743f2384"
+          "hash": "49b25c8121044d3c1b869317821c7995eb08466290bef328e4b17cc0d0581a8a"
         },
         {
           "file": "js/invoices-kairo.js",
-          "hash": "6aa24a375242565c347d3adef6b24739a3625a1e0fdad6ceae495ff9a186cd19"
+          "hash": "54c782f94bc80194781bab1368fcc31c8c3db72fc93a5acb4f6f3850b4ba00d3"
         },
         {
           "file": "js/init.js",
-          "hash": "2402274c8aea9cc86a031ed7d86d1543ecc0668e8a96e1f79c70c1cd0c66a1eb"
+          "hash": "889f1d4fdc2a368fc53ed5d08018676870ca7d005643c87451fa0d03b84fd781"
         },
         {
           "file": "js/invoices-ui.js",
-          "hash": "fe6bda8115ff1cdb558db86b62fd377a7412a96f0b5dd9ff0ddf98d91acea6db"
+          "hash": "1ba58ad9383a5bc60904e1b20e080b0a69dd994ee330c123bc68e3ed74da714a"
+        },
+        {
+          "file": "js/invoices-calendar.js",
+          "hash": "47d567df529b4ec45c858abe614e321c8ce6ccc9119ca35799b13102c6da1f61"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -4694,7 +4804,11 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
+      "commit": "165241e68e08e5f832dc9000dbbbe8bbf6e4408a",
+      "verifiedEdges": [
+        "invoice-document"
+      ],
+      "imageHash": "75bb794db813f7619af5da8cbef465d55aa9f112d4e35cbb4174c36c3131b9c9",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -4708,10 +4822,7 @@
           }
         }
       ],
-      "verifiedEdges": [
-        "invoice-document"
-      ],
-      "fresh": false
+      "fresh": true
     },
     {
       "id": "invoice-document",
@@ -4729,17 +4840,17 @@
       "ready": "#invoiceFinalFile",
       "sources": [
         "js/invoices-ui.js",
-        "js/invoices.js"
+        "js/invoices.js",
+        "js/invoices-calendar.js"
       ],
       "region": ".invoice-body",
       "image": "captures/invoice-document.png",
-      "imageHash": "c8c372fa26d97ca4c3fbcd46aaef7a14de0237e16efd558d29d29db0a32d0fdb",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
         {
           "file": "index.html",
-          "hash": "4b451a71e39f8db2fa2c200baae35aa9baa68368c8a96fedf8a8a61083b15b21"
+          "hash": "f43ee2bb617a1d731c92e49cae73b4fcb63ff40c1e72ef118e6e1ed19b6fbed3"
         },
         {
           "file": "js/nav-icons.js",
@@ -4748,7 +4859,7 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "7c6d91dc880311b1d887b5ef090b4e9ca0de9d425bf499eb71fd55f991b03599"
+          "hash": "8f51bfd04c870c9399737c944daceffafb4cf53fdf87936337223e62bdbee8ac"
         },
         {
           "file": "js/data-integrity.js",
@@ -4764,7 +4875,7 @@
         },
         {
           "file": "css/source/base.css",
-          "hash": "58e9b402d3d746f8c8756dfd1904f3f62d7e3dd59ad6dc79287f971bd904e28c"
+          "hash": "45c10a4326fcd88babebf8968fdd517c678b16f9c86cf0268fa1c1cf11f81408"
         },
         {
           "file": "css/source/navigation-controls.css",
@@ -4800,11 +4911,15 @@
         },
         {
           "file": "css/source/shared-refinements.css",
-          "hash": "2caba9b567eff1f5f421af5adc11179a5f0df4daa7ff7b344eac354e6e0d5b33"
+          "hash": "ef9752e5632d9aad33fbc38209393a9a36ccf4c0d08b0c2d1fb946c121d6fe0d"
         },
         {
           "file": "css/source/home-sharing.css",
-          "hash": "caac3c233ab62466329f3086e2fc904d5fb79fb541fd7d591cec0f3684b53cc3"
+          "hash": "5dfdf4c713d88fdb5b604948fcc8341adaa86647cf929fa107441f439ea8ca05"
+        },
+        {
+          "file": "css/source/hours-kairo.css",
+          "hash": "feace622fb4946582d1dff8cb1547c20102426f33543f07fa755eb9a69258f77"
         },
         {
           "file": "css/source/energy-refinements.css",
@@ -4816,35 +4931,67 @@
         },
         {
           "file": "css/source/invoices.css",
-          "hash": "e856e3f17686e33c3232c34bc76015d91156cdc46b6d6c864468fbb23f3a8edb"
+          "hash": "c58ca3a04622ab50f646d035f37ea5fa9da3072020649fb29af6a99425b6125c"
+        },
+        {
+          "file": "css/source/invoices-calendar.css",
+          "hash": "fab6f4d1d756a586786aec5c51c7eaccc786b4742b4179d4ce627db9acec0f63"
         },
         {
           "file": "css/source/theme-cream.css",
-          "hash": "d5d09d0ae2535163aac0b663ebe8abc3c8661d0d910fa0674bcd2c42d8e83949"
+          "hash": "2e2f3cae8e4d8ed00e97f4a127fe36564b68b1c55816e1a4cfa6f1cebfb83309"
         },
         {
           "file": "css/tasks.css",
           "hash": "96b4dc532dd2d7eeb82fe5d4c971b8599542860e95b3e8655f45f1922d4365aa"
         },
         {
+          "file": "js/home-hours.js",
+          "hash": "71870fc7ff171b4cb54427c0ddde1348a31dcfd0422d382b423430cb9f489e53"
+        },
+        {
+          "file": "js/home-weeks.js",
+          "hash": "c56ced3f2dd6647942467f69c057805c9d903ae8536d5603410969f2af620276"
+        },
+        {
+          "file": "js/hours-kairo.js",
+          "hash": "b58d9e518228bba3f1c0045523d0cbc18028cd43c67e2612606adf0aecfad996"
+        },
+        {
+          "file": "js/hours-cache.js",
+          "hash": "aa088fc1734adb371cbc9768a945cf1fff7147828242160e6bb5e2ed27b10493"
+        },
+        {
+          "file": "js/hours-jobs.js",
+          "hash": "efabb5585a833346b9cb7595ac9bca9d63b63167ea263dc0d0c8d8d50cec412d"
+        },
+        {
+          "file": "js/hours-auth.js",
+          "hash": "00d408ea38f5b7182c87df93b684fd41b85a13a252d8e1d09770023f9ef58224"
+        },
+        {
           "file": "js/invoices-home.js",
-          "hash": "977e3eca2255875e301a3b51bb472d469808623657ca061a70cddd7c0f2f6583"
+          "hash": "4e6db66f68c7a7e8803517021a7674afa11c40686c43a1b16b35a0f324131243"
         },
         {
           "file": "js/invoices.js",
-          "hash": "4a2efd26b3fc1c2ba865b38f00b7393113da845b92141b7ac000896b743f2384"
+          "hash": "49b25c8121044d3c1b869317821c7995eb08466290bef328e4b17cc0d0581a8a"
         },
         {
           "file": "js/invoices-kairo.js",
-          "hash": "6aa24a375242565c347d3adef6b24739a3625a1e0fdad6ceae495ff9a186cd19"
+          "hash": "54c782f94bc80194781bab1368fcc31c8c3db72fc93a5acb4f6f3850b4ba00d3"
         },
         {
           "file": "js/init.js",
-          "hash": "2402274c8aea9cc86a031ed7d86d1543ecc0668e8a96e1f79c70c1cd0c66a1eb"
+          "hash": "889f1d4fdc2a368fc53ed5d08018676870ca7d005643c87451fa0d03b84fd781"
         },
         {
           "file": "js/invoices-ui.js",
-          "hash": "fe6bda8115ff1cdb558db86b62fd377a7412a96f0b5dd9ff0ddf98d91acea6db"
+          "hash": "1ba58ad9383a5bc60904e1b20e080b0a69dd994ee330c123bc68e3ed74da714a"
+        },
+        {
+          "file": "js/invoices-calendar.js",
+          "hash": "47d567df529b4ec45c858abe614e321c8ce6ccc9119ca35799b13102c6da1f61"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -4857,7 +5004,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
+      "commit": "165241e68e08e5f832dc9000dbbbe8bbf6e4408a",
+      "verifiedEdges": [],
+      "imageHash": "6bd1159d0806b3c8aa9dc9c0c6e9d917522f5623be59f3a8b1c153cd7c5e5fdb",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -4871,8 +5020,7 @@
           }
         }
       ],
-      "verifiedEdges": [],
-      "fresh": false
+      "fresh": true
     },
     {
       "id": "annual",
@@ -35125,7 +35273,7 @@
     {
       "symbol": "openHoursExport",
       "file": "js/invoices-ui.js",
-      "line": 111
+      "line": 112
     },
     {
       "symbol": "openNavIconPicker",
