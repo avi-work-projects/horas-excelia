@@ -1,4 +1,5 @@
 const {test,expect}=require('@playwright/test');
+test.use({timezoneId:'Europe/Madrid'});
 const base='https://synthetic-cache.test.ts.net/';
 async function setup(page,context){
   let offline=false;const calls=[];
