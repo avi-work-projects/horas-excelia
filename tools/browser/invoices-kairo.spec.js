@@ -61,6 +61,24 @@ test('respuesta perdida: conservar incertidumbre y recuperar por consulta sin re
   const status=await exchange(page,'#invoiceKairoStatus',false);await expect(page.locator('#invoiceKairoMessage')).toContainText('Preparación recibida');await status.close();expect(calls()).toBe(1);
 });
 
+test('desde octubre elige noviembre y revisa ese mes en Kairo sin aprobarlo',async({page,context},info)=>{
+  const calls=await setup(page,context);
+  await page.evaluate(async()=>{CY=2027;CM=9;await openInvoiceMonth('2027-10');});
+  await page.locator('#invoicePeriod').fill('2027-11');await page.locator('#invoicePeriod').dispatchEvent('change');
+  await expect(page.locator('#invoicePeriod')).toHaveValue('2027-11');
+  expect(await page.evaluate(()=>[CY,CM])).toEqual([2027,9]);
+  const popup=await exchange(page,'#invoiceKairoSend');await expect(popup.locator('#resultTitle')).toHaveText('Preparación recibida');
+  await expect(popup.locator('#invoiceReview')).toHaveAttribute('href','/facturas/gestify-month?period=2027-11');
+  await expect(popup.locator('#period')).toHaveText('Noviembre de 2027');
+  expect(await page.evaluate(()=>invoiceData().months['2027-11'].kairo.state)).toBe('review');expect(calls()).toBe(1);
+  for(const width of [320,393]){
+    await popup.setViewportSize({width,height:740});
+    expect(await popup.evaluate(()=>document.documentElement.scrollHeight<=innerHeight)).toBe(true);
+  }
+  await popup.screenshot({path:info.outputPath('factura-noviembre-recibida.png')});
+  await page.screenshot({path:info.outputPath('factura-noviembre-gestify.png')});
+});
+
 test('offline conserva preparación y no intenta enviar; URL rechaza claves y otros orígenes',async({page,context})=>{
   await setup(page,context);
   const stored=await page.evaluate(()=>JSON.stringify(invoiceData()));

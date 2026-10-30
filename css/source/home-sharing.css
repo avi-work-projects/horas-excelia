@@ -6,11 +6,10 @@
 .home-submission.complete{--status-tone:var(--c-green)}
 .home-submission strong{display:block;font-size:.78rem;font-weight:600}
 .home-submission-heading{display:flex;align-items:center;gap:6px}
-.home-submission-detail{font-size:.68rem;line-height:1.4;margin:6px 0 12px;color:var(--text-muted)}
-.home-submission-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,176px);gap:10px;align-items:center}
-.home-submission-next{min-width:0}
-.home-submission-next>span{display:block;font-size:.66rem;color:var(--text-muted)}
-.home-submission-next>strong{font-size:.9rem;margin:3px 0;font-variant-numeric:tabular-nums}
+.home-submission-detail{font-size:.68rem;line-height:1.4;margin:5px 0 0;color:var(--text-muted)}
+.home-submission-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,184px);gap:10px;align-items:start}
+.home-submission-body.summaryless{grid-template-columns:1fr}
+.home-submission-copy{min-width:0}
 .home-submission-icon{font-size:1.1rem;flex-shrink:0}
 .home-submission.pending .home-submission-heading{animation:home-pending-pulse 1.8s ease-in-out infinite}
 @keyframes home-pending-pulse{0%,100%{opacity:1}50%{opacity:.3}}
@@ -36,7 +35,11 @@
 .home-summary-compact .worked .ms-num{font-size:1.15rem;font-weight:700}
 .ms-caption-row,.ms-no-off{display:flex;align-items:center;justify-content:space-between;gap:4px}
 .home-formula-toggle{position:relative;display:inline-grid;place-items:center;width:14px;height:14px;flex:0 0 14px;min-height:14px;padding:0;border:0;background:transparent;color:var(--text-dim);font:400 13px/1 var(--font);cursor:pointer}
-.home-hours-equation{font-size:.6rem;line-height:1.6;margin:3px 0 5px;color:var(--text-muted);font-variant-numeric:tabular-nums}
+.home-summary-compact .home-total-line{gap:2px}
+.home-total-line .home-formula-toggle{margin-right:auto}
+.month-summary .home-hours-equation{align-items:baseline;white-space:normal;gap:3px;margin:3px 0 5px;color:var(--text-muted);font-variant-numeric:tabular-nums}
+.home-hours-terms{font-size:.6rem;line-height:1.6;min-width:0}
+.home-equation-result{display:inline-flex;align-items:baseline;gap:3px;white-space:nowrap}
 .home-hours-term{display:inline-block;white-space:nowrap}
 .home-hours-equals{font-family:var(--mono);font-size:.68rem}
 @media(pointer:coarse){.home-formula-toggle::before{content:'';position:absolute;inset:-15px -7px -15px -23px}}

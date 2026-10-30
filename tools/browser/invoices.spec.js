@@ -63,7 +63,7 @@ test('importar configuración revisable sin sustituir los meses y botones junto 
 
 test('mes de Home, título centrado, tarifa diaria y ojo sin alterar el cálculo',async({page},info)=>{
  await page.evaluate(()=>{CY=2027;CM=4;render();});await page.locator('#invoiceHomeBtn').click();
- await expect(page.locator('.invoice-month')).toHaveText('Mayo 2027');await expect(page.locator('#invoicePrev,#invoiceNext')).toHaveCount(0);
+ await expect(page.locator('#invoicePeriod')).toHaveValue('2027-05');await expect(page.locator('#invoicePrev,#invoiceNext')).toHaveCount(0);
  await expect(page.locator('#invoiceAmounts')).toContainText('Precio por día');await expect(page.locator('#invoiceAmounts')).not.toContainText('€');await expect(page.locator('#invoiceAmounts')).not.toContainText('320,00');await page.getByRole('button',{name:'Mostrar importes',exact:true}).click();await expect(page.locator('#invoiceAmounts')).toContainText('320,00');
  const stored=await page.evaluate(()=>JSON.stringify(invoiceData().months['2027-05']));
  for(const width of [360,400]){

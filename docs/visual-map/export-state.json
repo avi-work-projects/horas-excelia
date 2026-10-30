@@ -11,41 +11,41 @@
     }
   },
   "general": {
-    "fingerprint": "b1393c0fc0fd1d9239e3502fbd394a941105e69376fb644ba42f42193281ad34",
+    "fingerprint": "ca63fa26af21e8467ad047f09c80b87eeeb36df4c568a1aba2c1a6d2de7df361",
     "files": [
       "map-general.svg",
       "map-general.png"
     ],
     "hashes": {
-      "map-general.svg": "f8d46f4d1ccc2075c2635314c67e589e04b5cbfa9c4636f43cea4072b2fd353d",
-      "map-general.png": "c4c5de5ef2bd832e5bf1edd049e213068c0e1d52b68d1efe1cfb331ee3ce13a7"
+      "map-general.svg": "8365851201e577c7859bae7e3de689033172031775e6d3463fc952cc15d2b320",
+      "map-general.png": "683d94ce639b9c593e305779d3b74b56a527e67f10bbba9554d6189300cb319b"
     }
   },
   "area-0-0": {
-    "fingerprint": "84741045cabe6c77cf1968a1ce91760b9aa6470e5431f8b7b250d173f0562a1a",
+    "fingerprint": "bfde3ed697a75ed198eb4f33e0f118b067ba5d1f245d0fc12ecb0ceb48059188",
     "files": [
       "sheets/area-0-0.png"
     ],
     "hashes": {
-      "sheets/area-0-0.png": "93b816c1bc8cda8d1924fb6e3ae063c066352edbb104b499561e2ba8a8deefc9"
+      "sheets/area-0-0.png": "4f99e40c2c6e5076f90c6ef5aae405f07734fc9558f9ceed7cc810eb7bbcc4cd"
     }
   },
   "area-0-1": {
-    "fingerprint": "a8eb37a81289b267e5695601a1b7f4acdf0d9c80d40603e764e3948baec3861e",
+    "fingerprint": "8c697d792cfd0eda6826308c50c531c1b7592a762fe8cf707aa5256c2b68b3e9",
     "files": [
       "sheets/area-0-1.png"
     ],
     "hashes": {
-      "sheets/area-0-1.png": "08c77569629939315df3d122c7bd0224754b10ac65f15a2a8a948115690f3bcf"
+      "sheets/area-0-1.png": "238bffd5df3e9fd7ccd120d03f2ccbfc2246eeaf19d7f443218bd742410534e1"
     }
   },
   "area-1-0": {
-    "fingerprint": "dd273b931d2047053524e062a587e1c0b3fcf84442aa5fd4589f43bba0579144",
+    "fingerprint": "63aff3456aa194a6c187519af5cdf8565449e404114899ed2c07c71a20f95e71",
     "files": [
       "sheets/area-1-0.png"
     ],
     "hashes": {
-      "sheets/area-1-0.png": "3e6dfc9a6ee6c16c29c914551499ff6a27a69875a3d9d36d4630d597c36cf416"
+      "sheets/area-1-0.png": "70c0c334a16b4bebc034a38e52a3bc5f53fc3dd1a9063312339ed74c59b66593"
     }
   },
   "area-1-1": {
@@ -58,12 +58,12 @@
     }
   },
   "area-2-0": {
-    "fingerprint": "ec392747d1c20cedc64fc65d2ccbf038711353fdb3b47718f975b01b5b01987c",
+    "fingerprint": "c518ec2bc2a3f75499ebb3977ff6b79c260f508c591e2ba4828615a646b65ac0",
     "files": [
       "sheets/area-2-0.png"
     ],
     "hashes": {
-      "sheets/area-2-0.png": "c38efa19b4bbe7c9f92712c70d621f5b8ecd85dd126a0179b63804e126743ee9"
+      "sheets/area-2-0.png": "f2d1739cd654f45a9df15c74bf024c7173cbebfac52703695d91e5567a56dcfc"
     }
   },
   "area-3-0": {
@@ -94,21 +94,21 @@
     }
   },
   "area-4-0": {
-    "fingerprint": "f9862edc8d5cf66a21e453209eb5db18680d58bd766f59b97abbc724db835a93",
+    "fingerprint": "73dceecd32131e69124474a4416eae4acaf17c016e6a2a582f12da4b04657c63",
     "files": [
       "sheets/area-4-0.png"
     ],
     "hashes": {
-      "sheets/area-4-0.png": "61646d0b218e7786aef1df1b43f49fc330fd6afe0e44d5212dbb4f83cd367f14"
+      "sheets/area-4-0.png": "f39cb6c183ea62713e94bd70738e43b8681ae8e4c274f9f146a0c6769b8fe44e"
     }
   },
   "area-5-0": {
-    "fingerprint": "ba71b3421455a30e1568b024ad683e77f033b3390369222bd06d9596a8185193",
+    "fingerprint": "a728761443f22141a5678d3f14132b219930cb425116a47b9c29bef875e140dd",
     "files": [
       "sheets/area-5-0.png"
     ],
     "hashes": {
-      "sheets/area-5-0.png": "aad96a5099f6b83f26e474f925c08208606ebb84096c3ff9020376b61c9b0f79"
+      "sheets/area-5-0.png": "3c48ed6addfdaaf1904a6e8ab2547173d710a12383fca65c8e2f49c367879019"
     }
   },
   "area-5-1": {
@@ -220,12 +220,12 @@
     }
   },
   "area-12-0": {
-    "fingerprint": "675d03d81bb25be821ab2ab80bfb6deb10877b15e2c69463d5e5818560ffcb02",
+    "fingerprint": "3a422b30f836bcea525f7216f78d740e910fd9c87b9466bc24fa6fcb2bf2ade5",
     "files": [
       "sheets/area-12-0.png"
     ],
     "hashes": {
-      "sheets/area-12-0.png": "46b869be5a254eecbdfbc0c62ea8e41b5eb7cf15a094c5fc8cc1185cdc8040b9"
+      "sheets/area-12-0.png": "99cc9e9ebcfb1d11eb5cf16af3bae1a192ddb47b7cb3fed1b02b1a981ed2bf71"
     }
   }
 }

@@ -47,8 +47,8 @@ class BridgeTests(unittest.TestCase):
         self.calls.append(raw)
         p = json.loads(raw)
         with self.db() as db:
-            db.execute('INSERT INTO drafts VALUES(1,?,NULL,NULL)', (raw,))
-            db.execute('INSERT INTO plans VALUES(1,?,?,NULL,NULL)', (json.dumps(dict(period=p['period'], source_hash=p['contentHash'])), 'review'))
+            db.execute('INSERT INTO drafts(snapshot) VALUES(?)', (raw,))
+            db.execute('INSERT INTO plans(data,status) VALUES(?,?)', (json.dumps(dict(period=p['period'], source_hash=p['contentHash'])), 'review'))
 
     def call(self, data=None, validator=None):
         return handle(self.service, self.panel, validator or (lambda p: json.loads(p.read_text())), data or self.data)
@@ -113,6 +113,17 @@ class BridgeTests(unittest.TestCase):
         p = dict(self.source, period='2027-03', operationId='d'*64, contentHash='e'*64)
         with self.assertRaises(ValueError): self.call(dict(p, action='prepare', source=json.dumps(p)))
         self.assertEqual(len(self.calls), 1)
+
+    def test_future_month_after_sent_preserves_history(self):
+        self.call()
+        with self.db() as db: db.execute("UPDATE plans SET status='sent',approval='keep'")
+        p = dict(self.source, period='2027-03', operationId='d'*64, contentHash='e'*64)
+        self.assertEqual(self.call(dict(p, action='prepare', source=json.dumps(p)))['state'], 'review')
+        self.assertEqual(self.call(dict(p, action='prepare', source=json.dumps(p)))['state'], 'review')
+        with self.db() as db:
+            rows=db.execute('SELECT status,approval FROM plans ORDER BY id').fetchall()
+        self.assertEqual([tuple(r) for r in rows], [('sent', 'keep'), ('review', None)])
+        self.assertEqual(len(self.calls), 2)
 
     def test_missing_status_no_import(self):
         self.assertEqual(self.call(dict(self.data, action='status'))['state'], 'missing')
