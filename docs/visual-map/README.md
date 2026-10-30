@@ -1,5 +1,8 @@
 # Mapa visual de Gestify
 
+v527 permite programar varios meses de factura de forma independiente. Conserva
+las capturas v526: cambia la selección de planes, no la estructura de los menús.
+
 Revisión v526: [factura del mes y calendario de envíos](review/updates-v526.html).
 Actualiza el recorrido de factura y su configuración desde Ajustes; conserva
 las otras 166 referencias. Añade ejemplos ficticios del calendario de horas.

@@ -26,5 +26,5 @@ for(const width of [320,400])test('revisión de noviembre compacta a '+width+' p
  await expect(page.locator('#confirm')).toBeVisible();expect(writes).toHaveLength(0);
  await page.getByRole('button',{name:'Volver a revisar',exact:true}).click();expect(writes).toHaveLength(0);
  await page.getByRole('button',{name:'Aprobar emisión y envío',exact:true}).click();await page.getByRole('button',{name:'Confirmar',exact:true}).click();
- await expect(page.locator('#result')).toContainText('La versión ha cambiado');expect(writes).toEqual([{hash:'synthetic-hash'}]);
+ await expect(page.locator('#result')).toContainText('La versión ha cambiado');expect(writes).toEqual([{hash:'synthetic-hash',planId:2}]);
 });

@@ -1,6 +1,8 @@
 # Conexión de preparaciones Gestify → Kairo
 
-## Hallazgos y alcance
+## Hallazgos iniciales y alcance histórico
+
+La sección v527 al final sustituye el límite inicial de un único plan activo.
 
 El servicio privado existente autentica al usuario mediante Tailscale Serve,
 valida Host y exige Origin propio + X-CSRF para los POST. Fuera de la consulta
@@ -323,3 +325,50 @@ Los GET privados de facturas y horas responden HTTP 200 con las nuevas vistas.
 La consulta de noviembre de 2026 conserva `scheduled`, con fecha 20/11/2026;
 esta programación ya había sido aprobada por el propietario. Las pruebas de
 esta entrega usan datos ficticios y no aprueban ni programan correos reales.
+
+## Planes independientes por mes (v527)
+
+`invoice_plans.py` selecciona la última revisión de cada mes sobre `plans`, sin
+otra base ni migración de datos. `load` admite mes/id; aprobar/cancelar resuelve
+id y huella y rechaza revisiones sustituidas. Clientes antiguos con solo huella
+siguen funcionando si esta identifica una única revisión vigente. Las escrituras
+de estado requieren id; los antiguos scripts de un solo plan fallan si son ambiguos.
+
+`prepare_multi_invoice.py` genera un candidato privado con puntos exactos y
+compara el AST de las funciones no afectadas. Cambia selección en importación,
+revisión, aprobación, cancelación, transición y runner. Conserva autenticación,
+CSRF, bloqueos de proceso, validador, importador fiscal, PDF, SMTP y sus diarios.
+Las rutas de revisión e histórico apuntan al mes correcto; los POST añaden planId.
+
+El runner recorre las revisiones vigentes por fecha bajo el bloqueo existente.
+Cada transición lleva su id. Un resultado incierto no se reintenta ni permite
+otra emisión, pero no invalida aprobaciones ajenas ni impide entregar un PDF ya
+emitido. Las ventanas 07:30/08:00 se conservan. Los avisos de resultado se acotan
+a los planes atendidos y no reenvían notificaciones históricas al actualizar.
+
+`invoice_monitor.py` separa las alertas por mes, conserva el UUID/slug del aviso
+existente y añade una identidad propia a los nuevos planes aprobados. Guardar
+un borrador no arma una alerta. Se conserva la alerta de disponibilidad.
+
+Validación: selección/id/huella, dos meses aprobados, cancelación aislada,
+revisión de un mes anterior al último creado, fechas, persistencia tras recarga,
+errores inciertos, idempotencia, monitor y contratos HTTP. El candidato real se
+carga en pruebas con bases temporales, transportes ficticios y sockets prohibidos;
+no se copian datos privados ni código con configuración personal a Git.
+
+El mapa conserva las capturas v526: no cambia la estructura visual. Se documenta
+que las mismas acciones funcionan ahora para cada mes independiente.
+
+Instalación: copia privada `backup-v527-multiple` (código y bases), comparación
+de huellas y sustitución bajo el bloqueo existente. Se reinició únicamente
+facturación y se reanudaron sus temporizadores; Outlook/horas permanecieron activos.
+Las siete filas de planes, aprobaciones y diario de correos quedaron idénticas.
+Consultas HTTPS: octubre enviado, noviembre programado para 20/11/2026, diciembre
+sin preparar. Revisión, histórico y monitor HTTP 200. No se creó ni aprobó una
+factura real de diciembre como prueba.
+
+Pruebas del candidato: 11 escenarios multi-mes y 27 regresiones del runner
+anterior con transportes ficticios; 7 pruebas del modelo/monitor, contratos de
+puente/HTTP y revisión, y 8 recorridos de navegador afectados. Las dos pruebas
+antiguas de descripción de conceptos pertenecen al motor sin cambios y no se
+duplicaron en el candidato. La batería completa de la PWA se ejecuta en CI.

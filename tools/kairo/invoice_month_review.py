@@ -1,8 +1,4 @@
-"""Month-specific, read-only rendering. Existing service owns all mutations.
-
-An older plan is never made actionable merely by selecting its month. The POST
-handler still validates the current plan hash, CSRF, owner and execution state.
-"""
+"""Month-specific rendering; actions identify the current revision of this month."""
 import html
 import json
 import re
@@ -24,7 +20,6 @@ def response(service, url, csrf):
     period = values[0]
     with service.db() as db:
         rows = db.execute('SELECT * FROM plans ORDER BY id DESC').fetchall()
-    current = rows[0]['id'] if rows else None
     selected = None
     for row in rows:
         data = json.loads(row['data'])
@@ -33,7 +28,7 @@ def response(service, url, csrf):
             break
     cfg = service.config() if selected else {}
     fingerprint = service.digest(selected['data']) if selected else ''
-    return 200, render(period, selected, current, cfg, csrf, fingerprint)
+    return 200, render(period, selected, selected['id'] if selected else None, cfg, csrf, fingerprint)
 
 
 def render(period, row, current, cfg, csrf, fingerprint):
@@ -68,7 +63,7 @@ def render(period, row, current, cfg, csrf, fingerprint):
         content += '<section class="mail-content" aria-label="Contenido del correo"><span class="mail-content-label">Contenido del correo</span><pre>'+e(p.get('body', ''))+'</pre></section>'
         content += '</details>'
         if not active:
-            content += '<p class="notice">Consulta guardada. Hay otro mes activo; esta vista no cambia su programación.</p>'
-    boot = json.dumps({'csrf': csrf, 'hash': fingerprint, 'period': title}, ensure_ascii=True).replace('<', '\\u003c')
+            content += '<p class="notice">Consulta guardada. Esta revisión ha sido sustituida; vuelve a abrir el mes.</p>'
+    boot = json.dumps({'csrf': csrf, 'hash': fingerprint, 'period': title, 'planId': row['id'] if row else None}, ensure_ascii=True).replace('<', '\\u003c')
     template = Path(__file__).with_name('invoice_month_review.html').read_text(encoding='utf-8')
     return template.replace('<!--TITLE-->', e(title)).replace('<!--CONTENT-->', content).replace('/*BOOT*/', boot)

@@ -1,5 +1,10 @@
 # Arquitectura y desarrollo
 
+Facturación v527: varios meses pueden permanecer aprobados. Las acciones y
+transiciones privadas se vinculan al id y huella de la revisión vigente de cada
+mes. Nunca resolver una escritura por «último plan global». El runner, avisos e
+histórico comparten esta selección. Ver `docs/KAIRO-DEVELOPMENT.md`.
+
 Gestify es una PWA estática sin backend. Mantiene scripts clásicos, renders que
 devuelven HTML y listeners separados. No requiere un framework ni un empaquetador
 de JavaScript. Los datos personales residen en el dispositivo y viajan en JSON.

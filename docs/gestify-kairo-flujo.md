@@ -1,6 +1,6 @@
 # Gestify y Kairo: funcionamiento y límites
 
-Contrato revisado el 30/10/2026 sobre v526. Describe el sistema instalado;
+Contrato revisado el 30/10/2026 sobre v527. Describe el sistema instalado;
 las comprobaciones y límites pendientes se distinguen al final.
 
 ## Qué guarda cada parte
@@ -89,10 +89,14 @@ de Kairo actualiza el calendario cuando llega una nueva respuesta confirmada.
 
 En Kairo, «Preparar borrador» comprueba y guarda los datos recibidos desde
 Gestify. No aprueba la emisión: el propietario revisa el PDF y confirma después.
-Solo puede haber un plan fiscal aprobado o en ejecución pendiente de completar.
-Con noviembre aprobado, otro mes no sustituye su plan; tras finalizar el envío
-se puede preparar el siguiente. El histórico se conserva y este límite no
-afecta a las múltiples semanas de horas.
+Cada mes conserva su propio plan, aprobación y fecha: noviembre y diciembre
+pueden quedar programados simultáneamente. Las acciones identifican la revisión
+vigente del mes y comprueban su huella; preparar o cancelar otro mes no la sustituye.
+Los cambios en una factura requieren revisar y aprobar de nuevo ese mes.
+El proceso recorre los planes por fecha y conserva las ventanas de emisión y envío.
+Una emisión incierta impide iniciar otra hasta conciliarla; no cancela ni borra
+las demás aprobaciones. Los correos de facturas ya emitidas pueden completarse.
+Los avisos de entrega mantienen una identidad independiente para cada mes.
 
 La revisión de horas incorpora un calendario de las semanas seleccionadas y
 sus fechas de envío. Distingue lo ya programado de lo propuesto, muestra V/F/A
@@ -199,7 +203,10 @@ Implementación: `js/hours-cache.js`, `js/hours-jobs.js`, `js/invoices-home.js`,
 - La programación real de horas y modificación del mismo mensaje ya se probaron
   en v511 con un correo de prueba, posteriormente cancelado; el detalle está en
   HOURS.md. No se repite una escritura real para validar este calendario.
-- Pendientes: aprobar y completar el circuito fiscal real de noviembre con el
-  propietario; probar un reinicio completo de Kairo; clave de paso aplazada.
-  El servicio fiscal conserva el límite de un único plan activo. No equivale a
-  que todas las combinaciones o futuras sesiones de Microsoft estén garantizadas.
+- Actualización v527: el propietario ya aprobó noviembre para el 20/11/2026.
+  Se habilitan varias programaciones mensuales y se conserva esa aprobación.
+  Las pruebas usan SQLite temporal y transportes ficticios; no emiten facturas.
+- Pendientes: completar el circuito fiscal real de noviembre en su fecha;
+  probar un reinicio completo del equipo Kairo; clave de paso aplazada.
+  Reiniciar el servicio y las pruebas no acreditan una entrega futura real ni
+  garantizan todas las sesiones futuras de Microsoft.
