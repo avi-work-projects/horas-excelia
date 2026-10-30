@@ -1645,3 +1645,25 @@ No se aplica el nuevo diseño: se entrega una propuesta separada para revisarla.
 El atlas mantiene sus capturas representativas; esta corrección funcional no
 rediseña menús ni justifica regenerar las 173 imágenes. Continúan pendientes la
 interfaz compacta y el recorrido de facturas de meses futuros.
+
+## Calendario de factura y comprobación de conexión (v524)
+
+Las entregas v521–v523 completaron la interfaz compacta, la revisión del mes
+futuro y el proyecto con vigencia sincronizada; el detalle está en
+`docs/KAIRO-DEVELOPMENT.md`. El estado pendiente del apartado v520 anterior es
+histórico, no una lista vigente.
+
+`invoices-calendar.js` representa el mes sin eventos, reutiliza `dayT` y
+`homeInvoiceScheduleDate`, y lee `INVOICE_HOME_CACHE`. No añade almacenamiento,
+temporizadores, consultas ni reglas de emisión. Diferencia previsión de fecha
+confirmada, mantiene la de Kairo ante cambios y no inventa la fecha de una
+factura ya enviada. `paintHomeInvoiceStatus` refresca también este componente
+cuando llega un estado nuevo; conserva la ventana y los desplegables.
+
+La ventana sitúa el calendario arriba y pliega el cálculo económico. Se
+conservan los importes y su privacidad, el selector de mes y las acciones
+actuales. Pruebas de 320/393/440 px, temas, meses de cuatro/seis semanas,
+bisiesto, exclusiones, fecha confirmada, persistencia y apertura sin red.
+El atlas recaptura solo cuatro escenas de factura y conserva las demás.
+La conexión y los límites reales comprobados están en
+`docs/gestify-kairo-flujo.md`: no se aprueba ni emite noviembre en estas pruebas.

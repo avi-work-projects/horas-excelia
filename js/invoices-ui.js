@@ -84,12 +84,13 @@ async function openInvoiceMonth(period){
   if(seq!==INVOICE_OPEN_SEQ)return;
   var h='<label class="invoice-month invoice-month-picker"><span>Mes de la factura</span><input type="month" id="invoicePeriod" value="'+escHtml(period)+'" aria-label="Mes de la factura"></label>';
   if(historical||record.final)h+='<p class="invoice-status">'+(historical?'Referencia histórica':'PDF definitivo de AEAT incorporado')+'</p>';
+  h+=renderInvoiceCalendar(period,c);
   h+=invoiceDaysSummary(period,record.final?p:null);
   if(problem)h+='<p class="invoice-note">'+escHtml(problem)+'</p>';
-  h+='<section class="invoice-card invoice-month-summary"><header class="invoice-summary-header"><h3>Cálculo de la factura</h3>'+(p?'<span id="invoicePrivacyControl">'+invoicePrivacyButton()+'</span>':'')+'</header><p class="invoice-filename">'+escHtml(p&&p.client?p.client.name:c.client||'Cliente pendiente de configurar')+'</p>';
+  h+='<details class="invoice-card invoice-month-summary"><summary class="invoice-summary-header"><h3>Cálculo de la factura</h3>'+(p?'<span id="invoicePrivacyControl">'+invoicePrivacyButton()+'</span>':'')+'</summary><p class="invoice-filename">'+escHtml(p&&p.client?p.client.name:c.client||'Cliente pendiente de configurar')+'</p>';
   if(p)h+='<div id="invoiceAmounts">'+invoiceSummary(p)+'</div>';
   else h+='<p class="invoice-note">Completa los datos de facturación para ver las jornadas, tarifas y el desglose del mes.</p>';
-  h+='</section>';
+  h+='</details>';
   if(!historical)h+=invoiceKairoSection(p,record,c.kairoUrl,problem);
   if(!historical&&!problem&&p&&!record.kairo&&!c.kairoUrl)h+=invoiceManualSection(period,c,record);
   h+='<button class="invoice-config-link" id="invoiceConfig">'+(problem?'Completar datos de facturación':'Datos de factura y correo')+'</button>';
@@ -100,7 +101,7 @@ async function openInvoiceMonth(period){
   function error(e){root.querySelector('#invoiceError').textContent=e.message;root.querySelector('#invoiceError').scrollIntoView({block:'nearest'});}
   root.querySelector('#invoiceConfig').onclick=openInvoiceSettings;
   var kairoConfig=root.querySelector('#invoiceKairoConfig');if(kairoConfig)kairoConfig.onclick=function(){openInvoiceSettings({connection:true});};
-  function bindPrivacy(){root.querySelector('#invoicePrivacy').onclick=function(){INVOICE_HIDE_AMOUNTS=!INVOICE_HIDE_AMOUNTS;root.querySelector('#invoicePrivacyControl').innerHTML=invoicePrivacyButton();root.querySelector('#invoiceAmounts').innerHTML=invoiceSummary(p);bindPrivacy();root.querySelector('#invoicePrivacy').focus();};}if(p)bindPrivacy();
+  function bindPrivacy(){root.querySelector('#invoicePrivacy').onclick=function(e){e.preventDefault();root.querySelector('.invoice-month-summary').open=true;INVOICE_HIDE_AMOUNTS=!INVOICE_HIDE_AMOUNTS;root.querySelector('#invoicePrivacyControl').innerHTML=invoicePrivacyButton();root.querySelector('#invoiceAmounts').innerHTML=invoiceSummary(p);bindPrivacy();root.querySelector('#invoicePrivacy').focus();};}if(p)bindPrivacy();
   if(root.querySelector('#invoiceJson')){
     root.querySelector('#invoiceJson').onclick=function(){shareOrDownload(new Blob([JSON.stringify(p,null,2)],{type:'application/json'}),'datos-auxiliares-'+period+'.json');};
   }

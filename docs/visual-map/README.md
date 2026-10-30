@@ -1,5 +1,9 @@
 # Mapa visual de Gestify
 
+Revisión v524: [calendario de factura](review/updates-v524.html).
+Cuatro escenas del menú de factura actualizadas; ejemplos ficticios de fecha
+prevista/confirmada y temas. Las otras capturas y revisiones se conservan.
+
 Revisión v523: [proyecto sincronizado y mensaje del correo](review/updates-v523.html).
 Tres ejemplos ficticios de las vistas afectadas; el resto del atlas se conserva.
 

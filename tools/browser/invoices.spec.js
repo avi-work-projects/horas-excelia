@@ -112,9 +112,11 @@ test('desglose por tramos antes del envÃ­o, sin scroll inicial y sin Excel en mÃ
  await expect(page.locator('#invoiceExcel,#invoiceTools')).toHaveCount(0);await expect(page.locator('#invoiceJson')).toHaveCount(1);await expect(page.locator('#invoiceDays')).not.toHaveAttribute('open','');
  for(const width of [320,400,440]){
   await page.setViewportSize({width,height:880});
+  await page.evaluate(()=>{document.querySelector('.invoice-month-summary').open=false;document.querySelector('.invoice-body').scrollTop=0;});
   const sheet=await page.locator('.invoice-sheet').boundingBox(),send=await page.locator('#invoiceKairoSend').boundingBox(),summary=await page.locator('.invoice-month-summary').boundingBox();
   expect(send.y).toBeGreaterThanOrEqual(summary.y+summary.height);expect(await page.locator('.invoice-body').evaluate(el=>el.scrollTop)).toBe(0);expect(send.y+send.height).toBeLessThan(sheet.y+sheet.height);
   expect(await page.locator('.invoice-sheet').evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
+  await page.locator('.invoice-month-summary>summary').click();
   const amounts=page.locator('#invoiceAmounts');const height=(await amounts.boundingBox()).height;
   await page.getByRole('button',{name:'Mostrar importes',exact:true}).click();
   await expect(page.locator('.invoice-line-formula')).toHaveCount(2);

@@ -17,6 +17,7 @@
     "css/source/energy-refinements.css",
     "css/source/home-reminders.css",
     "css/source/invoices.css",
+    "css/source/invoices-calendar.css",
     "css/source/theme-cream.css"
   ],
   "styles": [
@@ -351,6 +352,9 @@
     },
     {
       "path": "js/invoices-export.js"
+    },
+    {
+      "path": "js/invoices-calendar.js"
     },
     {
       "path": "js/invoices-ui.js"

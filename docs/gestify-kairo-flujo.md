@@ -1,7 +1,7 @@
 # Gestify y Kairo: funcionamiento y límites
 
-Contrato revisado el 30/10/2026 sobre v520. Describe el sistema instalado;
-las propuestas de autenticación pendientes se distinguen al final.
+Contrato revisado el 30/10/2026 sobre v524. Describe el sistema instalado;
+las comprobaciones y límites pendientes se distinguen al final.
 
 ## Qué guarda cada parte
 
@@ -76,6 +76,13 @@ El botón azul abre el envío manual en Outlook; no acredita que se haya enviado
 `Desmarcar` desbloquea la edición local y no cancela una programación remota.
 
 ## Facturas
+
+«Enviar factura» muestra el mes con V/F/A y sus colores, sin eventos. Reutiliza
+el calendario local y la caché confirmada, sin añadir consultas de red al abrir.
+El borde discontinuo significa fecha prevista; el continuo, programada en Kairo.
+Las enviadas no inventan una fecha de envío si el servicio no la proporciona.
+El cálculo económico queda desplegable. Consultar estado o volver del circuito
+de Kairo actualiza el calendario cuando llega una nueva respuesta confirmada.
 
 Consultar Home es de solo lectura: pide el estado del mes al servicio de
 facturación de Kairo, que lee sus bases existentes. Puede mostrar programada
@@ -159,3 +166,23 @@ verificada más reciente que ya conserva Kairo.
 Implementación: `js/hours-cache.js`, `js/hours-jobs.js`, `js/invoices-home.js`,
 `tools/kairo/hours_service.py`, `hours_jobs.py`, `hours_store.py` y
 `home_invoice_status.py`. Reglas técnicas e historial: [HOURS.md](../tools/kairo/HOURS.md).
+
+## Comprobación del 30/10/2026 y pendientes
+
+- Servicios de horas, Chromium, recuperación de Outlook y facturación activos;
+  temporizador fiscal esperando su siguiente ejecución. Acceso Outlook `ready`
+  a las 15:14 de Madrid. No se ha forzado un cierre de sesión ni MFA.
+- Consulta HTTPS de horas por la ruta utilizada por Gestify (`background=1`):
+  HTTP 200 en 156 ms desde caché. Octubre comprobado a las 15:13: cinco semanas
+  enviadas y dos programadas. La lectura completa previa actualizó esa caché;
+  no se interpreta la latencia de caché como duración de un barrido de Outlook.
+- Consulta HTTPS de factura de noviembre: HTTP 200, borrador sin aprobar ni
+  programar. Octubre consta enviado. Las facturas consultan las bases propias
+  de Kairo; no el buzón Outlook usado para las horas.
+- La programación real de horas y modificación del mismo mensaje ya se probaron
+  en v511 con un correo de prueba, posteriormente cancelado; el detalle está en
+  HOURS.md. No se repite una escritura real para validar este calendario.
+- Pendientes: aprobar y completar el circuito fiscal real de noviembre con el
+  propietario; probar un reinicio completo de Kairo; clave de paso aplazada.
+  El servicio fiscal conserva el límite de un único plan activo. No equivale a
+  que todas las combinaciones o futuras sesiones de Microsoft estén garantizadas.

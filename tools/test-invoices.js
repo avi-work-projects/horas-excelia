@@ -98,3 +98,25 @@ console.log('Jornadas: motivos, fechas, fines de semana, febrero bisiesto y fact
   assert.equal(app.invoiceProjectFor(first,'2027-02'),'');assert.equal(app.invoiceProjectFor(first,'2027-03'),'DEMO/NEW');
 }
 console.log('Proyectos: vigencias, histórico, backup, conflicto y confirmación de Kairo OK');
+
+{
+  const app=cargarApp(),config=app.invoiceDefaults();
+  config.kairoUrl='https://synthetic-calendar.test.ts.net/facturas/';
+  app.ST={'2027-02-19':{type:'festivo'},'2027-02-18':{type:'vacaciones'},'2027-02-17':{type:'ausencia'}};
+  const before=JSON.stringify(app.ST);
+  assert.equal(app.invoiceCalendarDelivery('2027-02',config).date,'2027-02-16');
+  assert.equal(app.invoiceCalendarDelivery('2027-02',config).kind,'planned');
+  let html=app.renderInvoiceCalendar('2027-02',config);
+  for(const mark of ['V · Vacaciones','F · Festivo','A · Ausencia','Envío previsto'])assert.ok(html.includes(mark));
+  assert.equal((html.match(/data-date=/g)||[]).length,28);
+  assert.equal((app.renderInvoiceCalendar('2028-02',config).match(/data-date=/g)||[]).length,29);
+  assert.equal((app.renderInvoiceCalendar('2027-05',config).match(/<tr>/g)||[]).length,7);
+  app.INVOICE_HOME_CACHE={url:config.kairoUrl,periods:{'2027-02':{data:{state:'scheduled',scheduledDate:'2027-02-19'}}}};
+  assert.equal(app.invoiceCalendarDelivery('2027-02',config).date,'2027-02-19');
+  assert.ok(app.invoiceCalendarDelivery('2027-02',config).note.includes('difiere'));
+  app.INVOICE_HOME_CACHE.periods['2027-02'].data={state:'sent',sent:true};
+  assert.equal(app.invoiceCalendarDelivery('2027-02',config).date,null);
+  assert.equal(app.invoiceCalendarDelivery('2027-02',config).kind,'sent');
+  assert.equal(JSON.stringify(app.ST),before);
+}
+console.log('Calendario de factura: exclusiones, fecha prevista/confirmada, histórico y calendario sin escrituras OK');

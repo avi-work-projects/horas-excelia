@@ -343,6 +343,9 @@
 
 **Funciones:** _updateHeaderActive:32 · buildDrumPicker:135 · updateDrumSelected:167 · getDrumValue:172 · checkDrumMinuteWrap:178 · buildAlarmDayBtns:208 · showAlarmPastConfirm:234 · createHeaderAlarm:255 · proceed:275 · aplicarActualizacion:376 · reload:382 · _showUpdateBar:404 · _buscar:439
 
+### js/invoices-calendar.js  _(34 líneas)_
+**Funciones:** invoiceCalendarDelivery:2 · renderInvoiceCalendar:11 · paintInvoiceCalendar:31
+
 ### js/invoices-export.js  _(36 líneas)_
 **Funciones:** invoiceXml:2 · invoiceZip:3 · header:5 · invoiceWorkbook:14 · textCell:15 · numCell:16 · sheet:26
 
@@ -359,8 +362,8 @@
 ### js/invoices-projects.js  _(76 líneas)_
 **Funciones:** invoiceProjectPeriods:2 · invoiceProjectFor:10 · invoiceProjectChange:15 · invoiceProjectApply:22 · invoiceProjectReply:30
 
-### js/invoices-ui.js  _(132 líneas)_
-**Funciones:** invoicePanel:2 · close:5 · invoiceField:10 · openInvoiceSettings:11 · invoiceSummary:34 · money:35 · number:36 · invoiceDaysSummary:44 · invoicePrivacyButton:60 · invoiceManualSection:64 · invoiceTools:73 · error:100 · bindPrivacy:103 · openHoursExport:111 · initInvoices:116 · bindInvoiceConfigImport:121 · readFields:122
+### js/invoices-ui.js  _(133 líneas)_
+**Funciones:** invoicePanel:2 · close:5 · invoiceField:10 · openInvoiceSettings:11 · invoiceSummary:34 · money:35 · number:36 · invoiceDaysSummary:44 · invoicePrivacyButton:60 · invoiceManualSection:64 · invoiceTools:73 · error:101 · bindPrivacy:104 · openHoursExport:112 · initInvoices:117 · bindInvoiceConfigImport:122 · readFields:123
 
 ### js/invoices.js  _(124 líneas)_
 **Estado global:** INVOICE_KEY:2 · INVOICE_FIRST_PERIOD:3 · INVOICE_MONTH:4 · INVOICE_BACK:5 · INVOICE_OPEN_SEQ:6 · INVOICE_HIDE_AMOUNTS:7
@@ -929,6 +932,14 @@
 
 **Rangos por prefijo de clase:**
 .home-invoice:3-120 · .hours-control:1-6 · .hours-export:50-61 · .invoice-action:75-75 · .invoice-actions:21-21 · .invoice-body:10-10 · .invoice-calculation:77-89 · .invoice-card:12-14 · .invoice-config:19-94 · .invoice-confirm:26-26 · .invoice-day:25-25 · .invoice-days:98-104 · .invoice-document:34-34 · .invoice-equals:84-84 · .invoice-error:27-27 · .invoice-eye:46-47 · .invoice-field:16-16 · .invoice-fields:15-37 · .invoice-filename:28-28 · .invoice-kairo:68-107 · .invoice-line:80-83 · .invoice-mail:90-90 · .invoice-money:85-85 · .invoice-month:11-122 · .invoice-note:17-17 · .invoice-send:65-67 · .invoice-sheet:8-74 · .invoice-status:18-18 · .invoice-summary:44-45 · .invoice-tool:91-93 · .invoice-totals:20-97
+
+### css/source/invoices-calendar.css  _(27 líneas)_
+
+**Secciones:**
+
+
+**Rangos por prefijo de clase:**
+.invoice-calendar:1-25 · .invoice-month:22-24
 
 ### css/source/theme-cream.css  _(90 líneas)_
 
