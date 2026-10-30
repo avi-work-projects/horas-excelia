@@ -229,3 +229,28 @@ GET privado de octubre devuelve enviada; noviembre devuelve no preparada,
 sin ofrecer acciones sobre octubre. Sin identidad responde 403. La huella de
 todos los registros de planes antes/después permanece idéntica. Copia privada:
 `backup-v521-20261030-134346`. No se ejecutaron POST de aprobación/cancelación.
+
+
+## Proyecto con vigencia mensual (v522)
+
+El propietario confirmó un cambio de proyecto desde noviembre de 2026 para
+los meses siguientes. La configuración privada conserva el proyecto base y añade
+`project_periods`, un diccionario mes inicial → proyecto autorizado. Sus valores
+reales permanecen solo en Kairo. El último inicio anterior o igual al mes recibido
+es el aplicable; sin regla se conserva el proyecto base. Los borradores nunca
+pueden autorizar por sí mismos un proyecto nuevo.
+
+`project_periods.py` separa esta comprobación de las comparaciones estrictas de
+emisor, cliente e IBAN. `prepare_project_periods.py` solo cambia el punto de
+validación en `engine.target`; preserva las demás funciones por comparación AST.
+No cambia importación/idempotencia, importes, emisión, aprobación ni correos.
+
+Verificación: límites octubre/noviembre, años futuros, configuración antigua,
+proyecto incorrecto, reglas inválidas e identidad/cuenta distintas. En la fuente
+real pendiente, emisor, cliente e IBAN coincidían; la discrepancia era el proyecto.
+Instalación con copia privada `backup-v522-20261030-141658`; planes y aprobaciones
+sin modificar. La preparación real se hace desde Gestify en Vivo Sesiones y
+la aprobación de emisión/envío queda en manos del propietario.
+
+No se regeneran capturas: no hay cambios de estructura visual. Se conserva
+la revisión v521; v522 cambia la validación privada y la etiqueta de versión.
