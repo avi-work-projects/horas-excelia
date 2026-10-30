@@ -25,6 +25,21 @@ def wait_done(jobs, identifier):
 
 
 class JobsTests(unittest.TestCase):
+    def test_failed_status_preserves_facts_and_returns_specific_safe_error(self):
+        with tempfile.TemporaryDirectory() as temp:
+            store=Store(temp)
+            cfg=dict(private_origin='https://hours.invalid',app_origin='https://app.invalid',sender='sender@example.invalid')
+            handler=make_handler(cfg,store,lambda _:dict(complete=False,accountVerified=False,problemCode='auth_required',problem='PRIVATE CONTENT MUST NOT LEAK'))
+            old=dict(period='2027-02',checkedAt='2027-02-01T00:00:00Z',verified=True,rows=[])
+            handler.jobs.remember(cfg['sender'],old)
+            try:
+                job=handler.jobs.submit('status',{'period':'2027-02','periods':['2027-02'],'refresh':True},'test-refresh')
+                result=wait_done(handler.jobs,job['jobId'])
+                self.assertEqual(result['phase'],'error');self.assertEqual(result['errorCode'],'auth_required')
+                self.assertNotIn('PRIVATE CONTENT',json.dumps(result))
+                self.assertEqual(handler.jobs.fact(cfg['sender'],'2027-02'),old)
+            finally:handler.jobs.close()
+
     def test_commit_job_confirms_facts_after_reservations_and_is_idempotent(self):
         from unittest.mock import patch
         import copy

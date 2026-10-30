@@ -9,6 +9,7 @@ import json
 import os
 import re
 import time
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -18,6 +19,7 @@ from outlook_hours import mailbox_matches, outlook_page
 PHASES = {'disabled', 'ready', 'checking', 'reauthenticating', 'mfa', 'rejected',
           'unknown', 'browser_unavailable', 'waiting'}
 LOGIN_HOSTS = {'login.microsoftonline.com', 'login.microsoft.com'}
+RETRYABLE = {'username', 'password', 'password_choice', 'account', 'stay_signed_in', 'passkey_choice'}
 MFA_SELECTORS = ('#idDiv_SAOTCAS_Title', '#idDiv_SAOTCS_Proofs', '#idTxtBx_SAOTCC_OTC',
                  '#idDiv_SAOTCC_Description', '#idTxtBx_SAOTCS_ProofConfirmation',
                  'input[name="otc"]', 'input[name="VerificationCode"]',
@@ -29,11 +31,36 @@ def public_state(root):
         value = json.loads((Path(root)/'auth-status.json').read_text())
         if value['phase'] not in PHASES:
             raise ValueError()
+        if pending_check(root):
+            return {'phase': 'checking', 'checkedAt': value.get('checkedAt')}
         return {key: value.get(key) for key in ('phase', 'checkedAt')}
     except FileNotFoundError:
         return {'phase': 'disabled', 'checkedAt': None}
     except (OSError, ValueError, KeyError, TypeError):
         return {'phase': 'unknown', 'checkedAt': None}
+
+
+def pending_check(root):
+    try:
+        value = json.loads((Path(root)/'auth-check.json').read_text())
+        age = time.time()-float(value['requestedAt'])
+        return value if 0 <= age < 90 else None
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+
+
+def request_check(root):
+    """A user-requested check; never clears the stored pause or reads a secret."""
+    existing = pending_check(root)
+    if existing:
+        return existing
+    value = {'id': str(uuid.uuid4()), 'requestedAt': time.time()}
+    path = Path(root)/('auth-check-'+value['id']+'.tmp')
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    with os.fdopen(fd, 'w') as stream:
+        json.dump(value, stream)
+    os.replace(path, Path(root)/'auth-check.json')
+    return value
 
 
 def read_state(root):
@@ -94,6 +121,10 @@ def screen(page, sender):
         return 'mfa'
     if any(visible(page, selector) for selector in ('#passwordError', '#usernameError')):
         return 'rejected'
+    # Microsoft can prefer a passkey before offering the account's password.
+    # Use its own Back control once; never answer a passkey/MFA challenge.
+    if url.path in ('/common/bridge/fido', '/common/fido/get') and visible(page, '#idBtn_Back'):
+        return 'passkey_choice'
     if visible(page, '#i0118'):
         labels = page.get_by_text(re.compile('^'+re.escape(sender)+'$', re.I))
         return 'password' if any(labels.nth(i).is_visible() for i in range(labels.count())) else 'unknown'
@@ -108,7 +139,7 @@ def screen(page, sender):
     return 'checking'
 
 
-def recover(page, sender, password, root, sleep=time.sleep):
+def recover(page, sender, password, root, sleep=time.sleep, requested=False):
     previous = read_state(root)
     phase = screen(page, sender)
     loading = phase == 'checking' and outlook_page(page.url)
@@ -128,9 +159,15 @@ def recover(page, sender, password, root, sleep=time.sleep):
     if phase in ('mfa', 'rejected'):
         return write_state(root, phase, paused=True)
     if previous.get('paused'):
-        if previous.get('phase') == 'reauthenticating':
-            return write_state(root, 'unknown', paused=True)
-        return previous
+        # Only an explicit request can release an old unknown-screen pause, and
+        # only after recognizing the current Microsoft form. MFA/rejection and
+        # interrupted password attempts are never released by this button.
+        if requested and previous.get('phase') == 'unknown' and phase in RETRYABLE:
+            previous = {}
+        else:
+            if previous.get('phase') == 'reauthenticating':
+                return write_state(root, 'unknown', paused=True)
+            return previous
     if phase in ('mfa', 'rejected', 'unknown'):
         return write_state(root, phase, paused=True)
     if phase == 'checking' and outlook_page(page.url):
@@ -145,21 +182,30 @@ def recover(page, sender, password, root, sleep=time.sleep):
             return write_state(root, 'ready')
         if phase in ('mfa', 'rejected', 'unknown'):
             return write_state(root, phase, paused=True)
-        if phase in ('username', 'password', 'stay_signed_in', 'account', 'password_choice') and phase not in used:
-            if phase not in ('account', 'password_choice') and not visible(page, '#idSIButton9'):
+        if phase in RETRYABLE and phase not in used:
+            if phase not in ('account', 'password_choice', 'passkey_choice') and not visible(page, '#idSIButton9'):
                 return write_state(root, 'unknown', paused=True)
             used.add(phase)
             if phase == 'account':
                 account_tile(page, sender).click(timeout=5000)
             elif phase == 'password_choice':
                 password_choice(page).click(timeout=5000)
+            elif phase == 'passkey_choice':
+                # A browser-owned WebAuthn prompt can consume pointer input.
+                # Invoke Microsoft's visible Back control, which cancels that
+                # first-factor request and exposes its alternative methods.
+                page.locator('#idBtn_Back').evaluate('(button) => button.click()')
             elif phase == 'username':
                 page.locator('#i0116').fill(sender)
             elif phase == 'password':
                 page.locator('#i0118').fill(password)
-            if phase not in ('account', 'password_choice'):
+            if phase not in ('account', 'password_choice', 'passkey_choice'):
                 page.locator('#idSIButton9').click(timeout=5000)
         sleep(1)
+    if outlook_page(page.url) and screen(page, sender) == 'checking':
+        # Loading the mailbox after successful sign-in can exceed this bounded
+        # interaction loop. Continue observing instead of raising a false pause.
+        return write_state(root, 'checking')
     return write_state(root, 'unknown', paused=True)
 
 
@@ -193,6 +239,7 @@ def probe(config, password):
     root = Path(config['state_dir'])
     # Non-blocking: do not interrupt a reader, composer or writer using Chromium.
     with (root/'browser.lock').open('a') as lock:
+        check = pending_check(root)
         try:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
@@ -206,12 +253,15 @@ def probe(config, password):
                     if not read_state(root).get('paused'):
                         write_state(root, 'unknown', paused=True)
                     return
-                recover(page, config['sender'], password, root)
+                recover(page, config['sender'], password, root, requested=bool(check))
                 # Stopping Playwright disconnects CDP; never close the user's browser.
         except Exception:
             if not read_state(root).get('paused'):
                 write_state(root, 'browser_unavailable')
             # Exceptions may include field values. Never print them or a traceback.
+        finally:
+            if check and pending_check(root) == check:
+                (root/'auth-check.json').unlink(missing_ok=True)
 
 
 def main():

@@ -46,6 +46,10 @@ almacenamiento, no una comprobación de contraseña contra Microsoft.
   cuenta configurada. Conserva la sesión cuando Microsoft ofrece esa opción.
 - Reconoce el selector «Usar mi contraseña» / «Use my password». Elegir ese método
   no rellena datos hasta que el formulario acredite la cuenta configurada.
+- Si Microsoft deriva primero a su selector de clave de paso, utiliza una vez
+  su control Atrás para ofrecer los métodos alternativos. No responde al QR ni
+  al desafío. Solo reconoce las rutas Microsoft `/common/bridge/fido` y
+  `/common/fido/get`; las comprobaciones de MFA tienen prioridad.
 - Reserva el intento en `auth-status.json` antes de interactuar. Un reinicio,
   una interrupción o un estado corrupto no autorizan repetir la contraseña.
 - Contraseña rechazada, MFA o pantalla desconocida dejan una pausa persistente.
@@ -63,17 +67,18 @@ operación usando Chromium, el recuperador espera a otra observación.
 Home muestra «Microsoft pide MFA» y explica cómo completar la confirmación.
 El estado se conserva en Kairo aunque Gestify esté cerrado. Se consulta al
 entrar/volver a la app, al comprobar acceso y tras un trabajo fallido. Mientras
-Gestify está en primer plano se lee ese estado ligero una vez por minuto para
-mostrar el aviso y un toast si aparece MFA. Estas consultas leen un archivo;
-no revisan las facturas, programaciones ni el buzón. En segundo plano se omiten.
+la comprobación está en curso se sigue su progreso con un sondeo acotado.
+Desde v520 no hay sondeo periódico permanente. Estas consultas leen un archivo;
+no revisan las facturas, programaciones ni el buzón.
 
 El aviso es de la interfaz de Gestify, no una notificación push con la app
 cerrada. Para completar MFA, utilizar Authenticator y, si hace falta, la sesión
-de Outlook de Kairo mediante el visor ya existente. «Comprobar acceso» solo
-actualiza el indicador: no omite MFA ni libera la pausa a ciegas.
-Desde v519 muestra progreso y un resultado explícito, también cuando el estado
-continúa detenido o falla la conexión. Una pausa por una pantalla antigua requiere
-revisar esa pantalla; pulsar el botón no repite una contraseña rechazada.
+de Outlook de Kairo mediante el visor ya existente. Desde v520 «Comprobar acceso»
+solicita una revisión al recuperador mediante POST `/auth-check`, protegido por
+propietario, Host, origen y JSON exactos. Las peticiones pendientes se reúnen
+durante un máximo de 90 segundos. El botón muestra progreso y resultado.
+Una pausa antigua por pantalla desconocida puede continuar si la pantalla actual
+ya es reconocida; no libera una pausa de MFA ni una contraseña rechazada.
 
 Excelia/Microsoft pueden exigir MFA, cambiar el método de acceso o revocar la
 sesión. El secreto facilita el primer factor; no garantiza acceso perpetuo.
@@ -100,6 +105,12 @@ seleccionó el método de contraseña. Tras verificar el formulario de la cuenta
 se autorizó un único intento del recuperador. El buzón y el estado `ready`
 confirmaron el acceso, sin MFA en ese intento. No se leyó el secreto ni se
 modificaron mensajes. Esta prueba no garantiza la ausencia de MFA en el futuro.
+
+El 30/10/2026 se reprodujo la preferencia de clave de paso y se confirmó el
+recorrido automático Atrás → contraseña → buzón correcto con el secreto existente.
+La carga lenta del buzón sigue en comprobación, sin crear una pausa falsa.
+Después se completó una lectura real de octubre y se conservó en SQLite; consultar
+esa caché devolvió el mismo resultado sin otro barrido. No se programaron mensajes.
 
 Fuentes: [credenciales systemd](https://www.freedesktop.org/software/systemd/man/257/systemd-creds.html),
 [sesiones y MFA de Microsoft](https://learn.microsoft.com/en-us/entra/identity/authentication/concepts-azure-multi-factor-authentication-prompts-session-lifetime).

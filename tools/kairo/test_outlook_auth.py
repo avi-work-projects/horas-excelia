@@ -10,7 +10,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from outlook_auth import recover, public_state, read_state, write_state, choose_page
+from outlook_auth import recover, public_state, read_state, write_state, choose_page, request_check, pending_check
 
 SENDER = 'person@example.invalid'
 SECRET = 'synthetic-only-never-a-real-password'
@@ -27,6 +27,7 @@ class Locator:
         self.page.clicks += 1
         self.page.phase = self.page.transitions.pop(0)
     def get_attribute(self, _): return SENDER
+    def evaluate(self, _): self.click()
 
 
 class Page:
@@ -34,11 +35,12 @@ class Page:
         self.phase, self.transitions = phase, list(transitions or [])
         self.host, self.fills, self.clicks = host, [], 0
     @property
-    def url(self): return 'https://'+('outlook.office.com/mail/' if self.phase=='ready' else self.host+'/common/login')
+    def url(self): return 'https://'+('outlook.office.com/mail/' if self.phase in ('ready','mail_loading') else self.host+('/common/bridge/fido' if self.phase=='passkey_choice' else '/common/login'))
     def locator(self, selector):
         name = {'#i0116':'username','#i0118':'password','#idSIButton9':'next',
                 '#idDiv_SAOTCAS_Title':'mfa','#passwordError':'rejected',
-                '#KmsiDescription':'stay_signed_in','#tilesHolder [data-test-id]':'account'}.get(selector,'absent')
+                '#KmsiDescription':'stay_signed_in','#tilesHolder [data-test-id]':'account',
+                '#idBtn_Back':'passkey_choice'}.get(selector,'absent')
         return Locator(self,name)
     def get_by_text(self, _):
         if _.pattern.startswith('^(Use my password'):
@@ -67,6 +69,54 @@ class AuthTests(unittest.TestCase):
             self.assertEqual(self.run_auth(page,root)['phase'],'ready')
             self.assertEqual(page.fills,[('password',SECRET)])
             self.assertEqual(page.clicks,2)
+
+    def test_microsoft_passkey_preference_returns_to_password_once(self):
+        with tempfile.TemporaryDirectory() as root:
+            page=Page('account',['passkey_choice','password_choice','password','ready'])
+            self.assertEqual(self.run_auth(page,root)['phase'],'ready')
+            self.assertEqual(page.fills,[('password',SECRET)])
+            self.assertEqual(page.clicks,4)
+        with tempfile.TemporaryDirectory() as root:
+            page=Page('passkey_choice',['passkey_choice'])
+            self.assertEqual(self.run_auth(page,root)['phase'],'unknown')
+            self.assertEqual(page.clicks,1)
+
+    def test_explicit_check_recovers_old_unknown_pause_on_recognized_account(self):
+        with tempfile.TemporaryDirectory() as root:
+            write_state(root,'unknown',paused=True)
+            page=Page('account',['password','ready'])
+            self.run_auth(page,root);self.assertEqual(page.clicks,0)
+            with patch('outlook_auth.mailbox_matches',side_effect=lambda p,s:p.phase=='ready'):
+                self.assertEqual(recover(page,SENDER,SECRET,root,sleep=lambda _:None,requested=True)['phase'],'ready')
+            self.assertEqual(page.fills,[('password',SECRET)])
+
+    def test_slow_mailbox_load_does_not_report_a_failed_login(self):
+        with tempfile.TemporaryDirectory() as root:
+            page=Page('password',['mail_loading'])
+            self.assertEqual(self.run_auth(page,root)['phase'],'checking')
+            self.assertFalse(read_state(root)['paused'])
+            page.phase='ready'
+            self.assertEqual(self.run_auth(page,root)['phase'],'ready')
+            self.assertEqual(page.clicks,1)
+
+    def test_explicit_check_never_retries_mfa_rejection_or_unknown_host(self):
+        for phase in ('mfa','rejected','unknown'):
+            with tempfile.TemporaryDirectory() as root:
+                write_state(root,phase,paused=True)
+                page=Page('password',['ready'],host='other.invalid' if phase=='unknown' else 'login.microsoftonline.com')
+                recover(page,SENDER,SECRET,root,sleep=lambda _:None,requested=True)
+                self.assertEqual(page.fills,[])
+
+    def test_check_queue_coalesces_and_keeps_pause_private(self):
+        with tempfile.TemporaryDirectory() as root:
+            write_state(root,'unknown',paused=True)
+            first=request_check(root)
+            self.assertEqual(first,request_check(root))
+            self.assertEqual(public_state(root)['phase'],'checking')
+            self.assertTrue(read_state(root)['paused'])
+            with patch('outlook_auth.time.time',return_value=first['requestedAt']+91):
+                self.assertIsNone(pending_check(root))
+                self.assertEqual(public_state(root)['phase'],'unknown')
 
     def test_mfa_pauses_and_never_repeats_after_restart(self):
         with tempfile.TemporaryDirectory() as root:
@@ -165,6 +215,16 @@ class AuthTests(unittest.TestCase):
                 for change in ({'Origin':'https://other.invalid'},{'Tailscale-User-Login':'other'}):
                     with self.assertRaises(HTTPError) as failure:urlopen(Request(url,headers=headers|change),timeout=3)
                     self.assertEqual(failure.exception.code,403)
+                check_url=url.replace('/auth-status','/auth-check')
+                body=b'{"action":"check"}'
+                for change in ({'Origin':'https://other.invalid'},{'Tailscale-User-Login':'other'},{'Content-Type':'text/plain'}):
+                    with self.assertRaises(HTTPError) as failure:urlopen(Request(check_url,data=body,headers=headers|{'Content-Type':'application/json'}|change),timeout=3)
+                    self.assertEqual(failure.exception.code,403)
+                self.assertIsNone(pending_check(root))
+                with urlopen(Request(check_url,data=body,headers=headers|{'Content-Type':'application/json'}),timeout=3) as response:
+                    self.assertEqual(response.status,202)
+                self.assertEqual(read_state(root)['phase'],'mfa')
+                self.assertIsNotNone(pending_check(root))
             finally:server.shutdown();server.server_close();handler.jobs.close();thread.join(timeout=3)
 
 

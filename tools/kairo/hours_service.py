@@ -13,6 +13,7 @@ from urllib.parse import parse_qs, urlsplit
 from hours_model import MADRID, inventory_signature, scope, validate_request
 from hours_store import Store
 from hours_jobs import Jobs
+from hours_errors import HoursFailure
 from outlook_hours import OutlookReader
 
 
@@ -82,6 +83,8 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
         # A successful Schedule send can leave Draft in the cached DOM.
         if hasattr(reader,'invalidate'):reader.invalidate()
         inventory = reader(request)
+        if not inventory.get('complete') or not inventory.get('accountVerified'):
+            raise HoursFailure(inventory.get('problemCode', 'read_failed'))
         if inventory.get('complete') and inventory.get('accountVerified'):
             latest[request['period']] = inventory
             snapshots(request, inventory)
@@ -226,6 +229,12 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
             return self.reply(404, {'error':'No encontrado'})
 
         def do_OPTIONS(self):
+            if self.route() == '/auth-check':
+                if not self.allowed() or self.headers.get('Origin') != app_origin or self.headers.get('Access-Control-Request-Method') != 'POST' or self.headers.get('Access-Control-Request-Headers','').lower() != 'content-type':
+                    return self.reply(403, {'error':'Comprobación no permitida'})
+                extra={'Access-Control-Allow-Methods':'POST','Access-Control-Allow-Headers':'Content-Type','Access-Control-Max-Age':'600'}
+                if self.headers.get('Access-Control-Request-Private-Network') == 'true':extra['Access-Control-Allow-Private-Network']='true'
+                return self.reply(204, '', cors=True, extra=extra)
             if not self.allowed() or (self.route() not in ('/status','/auth-status') and not self.route().startswith('/jobs/')) or self.headers.get('Origin') != app_origin or self.headers.get('Access-Control-Request-Method') != 'GET' or self.headers.get('Access-Control-Request-Headers','').lower() not in ('','accept'):
                 return self.reply(403, {'error':'Consulta no permitida'})
             extra={'Access-Control-Allow-Methods':'GET','Access-Control-Max-Age':'600'}
@@ -233,6 +242,20 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
             return self.reply(204, '', cors=True, extra=extra)
 
         def do_POST(self):
+            if self.route() == '/auth-check':
+                # Exact owner + origin + non-simple JSON request; this grants no
+                # access to mail writes or the private bridge's CSRF endpoints.
+                if not self.allowed() or self.headers.get('Origin') != app_origin or self.headers.get('Content-Type') != 'application/json':
+                    return self.reply(403, {'error':'Comprobación no permitida'})
+                try:
+                    size=int(self.headers.get('Content-Length','0'))
+                    if not 0 < size <= 128 or json.loads(self.rfile.read(size)) != {'action':'check'}:raise ValueError()
+                except (ValueError, TypeError):return self.reply(400, {'error':'Solicitud no válida'}, cors=True)
+                from outlook_auth import request_check, public_state
+                if public_state(store.root)['phase'] == 'disabled':
+                    return self.reply(200, public_state(store.root), cors=True)
+                request_check(store.root)
+                return self.reply(202, {'phase':'checking'}, cors=True)
             if not self.allowed() or self.headers.get('Origin') != private_origin or self.headers.get('X-CSRF') != csrf:
                 return self.reply(403, {'error':'Acceso no permitido'})
             try:

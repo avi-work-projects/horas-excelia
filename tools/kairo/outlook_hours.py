@@ -122,7 +122,7 @@ class OutlookReader:
         wanted = sorted({key for period in request.get('periods', [request['period']]) for key in scope(period)})
         wanted.insert(0, (monday(wanted[0])-timedelta(weeks=1)).isoformat())
         result = dict(complete=False, accountVerified=False, account=self.sender,
-                      records=[], problem=None)
+                      records=[], problem=None, problemCode='read_failed')
         with sync_playwright() as p:
             browser = p.chromium.connect_over_cdp(self.endpoint, timeout=10000)
             try:
@@ -131,9 +131,11 @@ class OutlookReader:
                     raise ValueError('Revisa la sesión privada de Outlook')
                 pages = [p for p in contexts[0].pages if outlook_page(p.url)]
                 if len(pages) != 1:
+                    result['problemCode'] = 'auth_required' if any(urlsplit(p.url).hostname in ('login.microsoftonline.com','login.microsoft.com') for p in contexts[0].pages) else 'browser_unavailable'
                     raise ValueError('Abre una única ventana de Outlook de horas')
                 page = pages[0]
                 if page.locator('[contenteditable=true]:visible').count():
+                    result['problemCode'] = 'compose_open'
                     raise ValueError('Cierra el borrador antes de conciliar')
                 page.set_default_timeout(15000)
                 if self.refresh_required:
@@ -141,6 +143,7 @@ class OutlookReader:
                     page.wait_for_url(lambda url:outlook_page(str(url)),timeout=10000)
                 page.get_by_role('listbox').wait_for()
                 if not mailbox_matches(page,self.sender):
+                    result['problemCode'] = 'wrong_account'
                     raise ValueError('La cuenta de Outlook no coincide con el correo de horas')
                 result['accountVerified'] = True
                 for folder in ('sentitems', 'drafts'):
@@ -148,6 +151,8 @@ class OutlookReader:
                 result['complete'] = True
                 self.refresh_required = False
             except Exception as error:
+                if 'page' in locals() and urlsplit(page.url).hostname in ('login.microsoftonline.com','login.microsoft.com'):
+                    result['problemCode'] = 'auth_required'
                 self.refresh_required = True
                 # Error text must not leak email bodies, selectors or addresses.
                 result['problem'] = 'Outlook requiere revisión o no se ha podido completar la lectura'

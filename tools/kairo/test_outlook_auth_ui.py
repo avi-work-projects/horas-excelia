@@ -67,5 +67,24 @@ class BrowserContract(unittest.TestCase):
     def test_wrong_account_stops(self):self.exercise('wrong-account','unknown')
     def test_other_host_stops(self):self.exercise('success','unknown','other.invalid')
 
+    def test_passkey_preference_returns_to_password_using_microsoft_back(self):
+        for path in ('/common/bridge/fido','/common/fido/get'):
+            with self.subTest(path=path):
+                context=self.browser.new_context()
+                def route(request):
+                    if request.request.url.startswith('https://outlook.office.com/'):
+                        body='<div role="treeitem" title="'+SENDER+'">Mailbox</div>'
+                    elif request.request.url.endswith(path):
+                        body='<button id="idBtn_Back" onclick="location.href=\'/common/resume\'">Back</button>'
+                    else:body=html('choice')
+                    request.fulfill(status=200,content_type='text/html',body=body)
+                context.route('**/*',route)
+                try:
+                    page=context.new_page();page.goto('https://login.microsoft.com'+path)
+                    with tempfile.TemporaryDirectory() as root:
+                        result=recover(page,SENDER,PASSWORD,root,sleep=lambda _:page.wait_for_timeout(30))
+                        self.assertEqual(result['phase'],'ready')
+                finally:context.close()
+
 
 if __name__=='__main__':unittest.main()

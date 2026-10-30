@@ -304,25 +304,25 @@
 ### js/home-weeks.js  _(42 líneas)_
 **Funciones:** homePeriodMode:2 · homeWeekCovered:6 · homeWeekUnlocked:7 · homeSubmissionWeeks:8 · homeSubmissionWarnings:16 · homeWeekSchedule:26
 
-### js/hours-auth.js  _(36 líneas)_
-**Estado global:** HOURS_AUTH:2
+### js/hours-auth.js  _(45 líneas)_
+**Estado global:** HOURS_AUTH:2 · HOURS_AUTH_MANUAL:3 · HOURS_AUTH_BEFORE:4
 
-**Funciones:** hoursAuthFeedback:3 · renderHoursAuthNotice:4 · resume:32
+**Funciones:** hoursAuthFeedback:5 · renderHoursAuthNotice:6 · resume:41
 
-### js/hours-cache.js  _(73 líneas)_
-**Estado global:** HOURS_CACHE_KEY:3 · HOURS_ATTEMPTS:4 · HOURS_CACHE:37
+### js/hours-cache.js  _(81 líneas)_
+**Estado global:** HOURS_CACHE_KEY:3 · HOURS_ATTEMPTS:4 · HOURS_CACHE:38
 
-**Funciones:** hoursScopeKeys:5 · hoursCacheRead:9 · hoursCacheRow:30 · hoursCacheSave:38 · hoursCachedWeek:46 · hoursSourceSignature:49 · hoursSettingsSignature:52 · hoursCacheRemember:57 · hoursCacheDue:64 · hoursCacheInvalidate:67
+**Funciones:** hoursScopeKeys:5 · hoursCacheRead:9 · hoursCacheRow:31 · hoursCacheSave:39 · hoursCachedWeek:47 · hoursSourceSignature:50 · hoursSettingsSignature:53 · hoursCacheRemember:58 · hoursCheckMessage:65 · hoursRecordCheck:68 · hoursCacheDue:72 · hoursCacheInvalidate:75
 
-### js/hours-jobs.js  _(51 líneas)_
+### js/hours-jobs.js  _(53 líneas)_
 **Estado global:** HOURS_JOBS_KEY:3 · HOURS_JOBS:7
 
 **Funciones:** hoursJobsRead:4 · hoursJobsSave:8 · hoursAcceptSnapshot:9 · hoursAcceptJobResult:17 · hoursTrackJob:24
 
-### js/hours-kairo.js  _(217 líneas)_
+### js/hours-kairo.js  _(223 líneas)_
 **Estado global:** HOURS_STATUS:3 · HOURS_REQUEST:4
 
-**Funciones:** hoursKairoUrl:5 · hoursWeekDays:9 · hoursCivilTime:13 · hoursWeekState:18 · hoursRemoteConfigured:28 · hoursCovered:29 · hoursHasConfirmedMail:30 · hoursWeekBadge:31 · hoursWeekDate:35 · renderHoursAccess:40 · hoursMailSubject:47 · hoursMailRequest:48 · validateHoursResult:58 · rememberHoursReview:71 · hoursKairoExchange:82 · closed:86 · verifySource:87 · stopWatch:102 · finish:104 · receive:105 · hoursReviewSurface:120 · close:130 · invalidateHoursReview:135 · paintHoursStatus:162 · refreshHomeStates:205 · initHoursKairo:209 · resume:212
+**Funciones:** hoursKairoUrl:5 · hoursWeekDays:9 · hoursCivilTime:13 · hoursWeekState:18 · hoursRemoteConfigured:28 · hoursCovered:29 · hoursHasConfirmedMail:30 · hoursWeekBadge:31 · hoursWeekDate:35 · renderHoursAccess:40 · hoursMailSubject:51 · hoursMailRequest:52 · validateHoursResult:62 · rememberHoursReview:75 · hoursKairoExchange:86 · closed:90 · verifySource:91 · stopWatch:106 · finish:108 · receive:109 · hoursReviewSurface:124 · close:134 · invalidateHoursReview:139 · paintHoursStatus:166 · refreshHomeStates:211 · initHoursKairo:215 · resume:218
 
 ### js/household-summary.js  _(92 líneas)_
 **Funciones:** householdMortgagePayment:2 · householdMortgagePeriod:5 · householdValue:18 · householdMortgageCard:19 · date:20 · householdUtilityPrices:35 · householdUtilityCard:67 · householdMortgageAnalysisButton:79 · renderHouseholdSummary:80

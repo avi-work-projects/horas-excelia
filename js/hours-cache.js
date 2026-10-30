@@ -12,7 +12,8 @@ function hoursCacheRead(){
     var raw=localStorage.getItem(HOURS_CACHE_KEY);if(!raw||raw.length>500000)return empty;
     var data=JSON.parse(raw),now=Date.now();
     if(data.schema!==1||typeof data.url!=='string'||data.url.length>1000||!data.periods||!data.weeks)return empty;
-    var cache={schema:1,url:data.url,periods:{},weeks:{},attempts:{}};
+    var cache={schema:1,url:data.url,periods:{},weeks:{},attempts:{},checks:{}};
+    Object.keys(data.checks||{}).slice(-24).forEach(function(period){var c=data.checks[period];if(/^\d{4}-(0[1-9]|1[0-2])$/.test(period)&&c&&['running','done','error'].includes(c.phase)&&Number.isFinite(c.at)&&c.at<=now+300000)cache.checks[period]={phase:c.phase,at:c.at,code:typeof c.code==='string'?c.code.slice(0,40):''};});
     if(data.attempts&&typeof data.attempts==='object')Object.keys(data.attempts).slice(-48).forEach(function(k){if(k.length<100&&data.attempts[k]===true)cache.attempts[k]=true;});
     Object.keys(data.periods).slice(0,24).forEach(function(period){
       try{hoursScopeKeys(period);var p=data.periods[period];if(typeof p.source!=='string'||p.source.length>20000||!Number.isFinite(p.checkedAt)||p.checkedAt<=0||p.checkedAt>now+300000)return;cache.periods[period]={source:p.source,checkedAt:p.checkedAt};}catch(e){}
@@ -60,6 +61,13 @@ function hoursCacheRemember(result,url,source,settings){
   var now=Date.parse(result.checkedAt);
   result.rows.forEach(function(row){if(HOURS_CACHE.weeks[row.key]&&HOURS_CACHE.weeks[row.key].checkedAt>now)return;var clean=hoursCacheRow(row,now);clean.settings=settings||hoursSettingsSignature();HOURS_CACHE.weeks[row.key]=clean;});
   HOURS_CACHE.periods[result.period]={source:source,checkedAt:now};hoursCacheSave();
+}
+function hoursCheckMessage(code){
+  return {auth_required:'Outlook necesita iniciar sesión. Pulsa «Comprobar acceso».',browser_unavailable:'El navegador de Outlook no está disponible en Kairo.',compose_open:'Hay un correo abierto para editar en Outlook. Ciérralo antes de comprobar.',wrong_account:'La cuenta abierta en Outlook no coincide.',read_failed:'No se pudo completar la lectura de Outlook.',network:'No se pudo conectar con Kairo.'}[code]||'Kairo no pudo completar la comprobación.';
+}
+function hoursRecordCheck(period,phase,code,at){
+  HOURS_CACHE.checks=HOURS_CACHE.checks||{};HOURS_CACHE.checks[period]={phase:phase,code:code||'',at:at||Date.now()};
+  Object.keys(HOURS_CACHE.checks).sort().slice(0,-24).forEach(function(key){delete HOURS_CACHE.checks[key];});hoursCacheSave();
 }
 function hoursCacheDue(keys){
   return keys.filter(function(key){var row=hoursCachedWeek(key),due=row&&Date.parse(row.schedule);return row&&(row.state==='scheduled'||row.state==='changed')&&Number.isFinite(due)&&due<=Date.now()&&row.checkedAt<due;});

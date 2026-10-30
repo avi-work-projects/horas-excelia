@@ -56,3 +56,25 @@ test('Respuesta tardía no contamina otro mes y cambiar de servidor no reutiliza
   await page.evaluate(()=>{const data=invoiceData();data.config.kairoUrl='https://another.test.ts.net/facturas/';invoiceSave(data);render();});
   await expect(page.locator('.home-submission')).toContainText('Estado pendiente');
 });
+
+test('actualizar termina con causa visible, conserva fecha y hechos; un nuevo éxito limpia el error y persiste',async({page,context})=>{
+  await setup(page,context);const old=await page.locator('.hours-verified-note').innerText();let fail=true;
+  await page.clock.setFixedTime(new Date('2027-02-01T12:05:00+01:00'));
+  await context.route(base+'horas/status?**',async route=>{
+    if(fail)return route.fulfill({status:202,json:{jobId:'55555555-5555-4555-8555-555555555555',kind:'status',phase:'queued'}});
+    const result=await page.evaluate(()=>({phase:'done',result:{periods:[{period:mkey(CY,CM),checkedAt:new Date().toISOString(),verified:true,rows:hoursScopeKeys(mkey(CY,CM)).map(key=>({key,state:'sent'}))}]}}));
+    return route.fulfill({json:result});
+  });
+  await context.route(base+'horas/jobs/**',route=>route.fulfill({json:{jobId:'55555555-5555-4555-8555-555555555555',kind:'status',phase:'error',errorCode:'auth_required',updatedAt:'2027-02-01T11:05:00Z'}}));
+  await page.locator('[data-hours-check]').click();
+  await expect(page.locator('.hours-job-note')).toContainText('Outlook necesita iniciar sesión');
+  await expect(page.locator('.hours-job-note')).toContainText('12:05');
+  await expect(page.locator('.hours-verified-note')).toHaveText(old);
+  await expect(page.locator('.week-card').nth(1).locator('.hours-week-badge')).toHaveText('◷ Programada');
+  await page.reload();await expect(page.locator('.hours-job-note')).toContainText('Outlook necesita iniciar sesión');
+  fail=false;await page.locator('[data-hours-check]').click();
+  await expect(page.locator('#toast')).toContainText('Estado de correos actualizado');
+  await expect(page.locator('.hours-verified-note')).toContainText('12:05');
+  await expect(page.locator('.hours-job-note')).toHaveCount(0);
+  await page.reload();await expect(page.locator('.hours-job-note')).toHaveCount(0);
+});
