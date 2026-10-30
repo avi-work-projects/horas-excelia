@@ -18,8 +18,9 @@ for(const width of [320,400,440])test('Home: total, descuentos y horas destacada
   const summary=page.locator('.home-summary-compact');await expect(summary).toBeVisible();
   await expect(summary.locator('.total')).toContainText('22 días laborables');await expect(summary.locator('.total')).toContainText('185,5h');await expect(summary.locator('.off')).toContainText('− 1 festivo');await expect(summary.locator('.off')).toContainText('9h');await expect(summary.locator('.worked')).toContainText('21 días trabajados');await expect(summary.locator('.worked strong')).toHaveText('176,5h');
   const order=await summary.locator(':scope > *').evaluateAll(els=>els.map(e=>e.className));expect(order[0]).toBe('month-total');expect(order.at(-1)).toContain('home-worked-total');
-  const hours=summary.locator('.worked strong');expect(await hours.evaluate(el=>+getComputedStyle(el).fontWeight)).toBeGreaterThanOrEqual(700);expect(await hours.evaluate(el=>parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThan(await summary.locator('.total .ms-num').evaluate(el=>parseFloat(getComputedStyle(el).fontSize)));
-  expect(await summary.locator('.worked .ms-days').evaluate(el=>getComputedStyle(el).color)).toBe(await hours.evaluate(el=>getComputedStyle(el).color));
+  // Read one live DOM generation atomically; reconciliation can replace Home.
+  const type=await page.evaluate(()=>{const root=document.querySelector('.home-summary-compact'),hours=getComputedStyle(root.querySelector('.worked strong')),base=getComputedStyle(root.querySelector('.total .ms-num')),days=getComputedStyle(root.querySelector('.worked .ms-days'));return {weight:+hours.fontWeight,size:parseFloat(hours.fontSize),baseSize:parseFloat(base.fontSize),hoursColor:hours.color,daysColor:days.color};});
+  expect(type.weight).toBeGreaterThanOrEqual(700);expect(type.size).toBeGreaterThan(type.baseSize);expect(type.daysColor).toBe(type.hoursColor);
   for(const row of await summary.locator('.month-stat').all()){
     const boxes=await row.locator(':scope > *').evaluateAll(els=>els.map(el=>({top:el.getBoundingClientRect().top,bottom:el.getBoundingClientRect().bottom})));
     expect(Math.max(...boxes.map(b=>b.top))).toBeLessThan(Math.min(...boxes.map(b=>b.bottom)));
