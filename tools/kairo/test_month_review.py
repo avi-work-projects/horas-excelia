@@ -52,10 +52,13 @@ class MonthReviewTests(unittest.TestCase):
         for label in ['Días:','Base:','IVA:','Retención:']:
             self.assertNotIn(label,body)
 
-    def test_old_review_never_offers_mutations(self):
+    def test_each_month_can_be_approved_without_selecting_latest_global_plan(self):
         with self.db() as db: db.execute("UPDATE plans SET status='review'")
         body=response(self.service,'/gestify-month?period=2027-10','csrf')[1]
-        self.assertNotIn('data-action="approve"',body);self.assertNotIn('data-action="cancel"',body)
+        self.assertIn('data-action="approve"',body);self.assertIn('data-action="cancel"',body)
+        self.assertIn('"planId": 1',body);self.assertIn('hash-for-2027-10',body)
+        other=response(self.service,'/gestify-month?period=2027-11','csrf')[1]
+        self.assertIn('"planId": 2',other);self.assertIn('hash-for-2027-11',other)
 
     def test_patch_is_guarded_and_idempotent(self):
         source="class Handler:\n def do_GET(self):\n  try:\n   if path=='/revision': return page()\n  except: pass\n def do_POST(self):\n  validate_then_mutate()\n"

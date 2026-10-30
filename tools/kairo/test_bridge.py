@@ -36,9 +36,10 @@ class BridgeTests(unittest.TestCase):
         finally:
             db.close()
 
-    def load(self):
+    def load(self, period=None):
         with self.db() as db:
-            row = dict(db.execute('SELECT * FROM plans ORDER BY id DESC LIMIT 1').fetchone())
+            records = db.execute('SELECT * FROM plans ORDER BY id DESC').fetchall()
+            row = dict(next(r for r in records if period is None or json.loads(r['data'])['period'] == period))
         row['data'] = json.loads(row['data'])
         return row
 
@@ -107,12 +108,14 @@ class BridgeTests(unittest.TestCase):
             self.assertEqual(self.call()['state'], state)
         self.assertEqual(len(self.calls), 1)
 
-    def test_other_period_cannot_replace_pending_mail(self):
+    def test_other_period_preserves_pending_mail(self):
         self.call()
         with self.db() as db: db.execute("UPDATE plans SET status='accepted'")
         p = dict(self.source, period='2027-03', operationId='d'*64, contentHash='e'*64)
-        with self.assertRaises(ValueError): self.call(dict(p, action='prepare', source=json.dumps(p)))
-        self.assertEqual(len(self.calls), 1)
+        before = self.load()
+        self.assertEqual(self.call(dict(p, action='prepare', source=json.dumps(p)))['state'], 'review')
+        self.assertEqual(self.load(period=self.source['period']), before)
+        self.assertEqual(len(self.calls), 2)
 
     def test_future_month_after_sent_preserves_history(self):
         self.call()
@@ -140,13 +143,15 @@ class BridgeTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'ha cambiado'):
             patch('def unrelated(): pass')
 
-    def test_approved_other_period_cannot_be_replaced(self):
+    def test_approved_other_period_is_independent(self):
         self.call()
         with self.db() as db: db.execute("UPDATE plans SET status='approved'")
         p = dict(self.source, period='2027-03', operationId='d'*64, contentHash='e'*64)
-        with self.assertRaisesRegex(ValueError, 'otro mes aprobado'):
-            self.call(dict(p, action='prepare', source=json.dumps(p)))
-        self.assertEqual(len(self.calls), 1)
+        before = self.load()
+        self.assertEqual(self.call(dict(p, action='prepare', source=json.dumps(p)))['state'], 'review')
+        self.assertEqual(self.load(period=self.source['period']), before)
+        self.assertEqual(self.call()['state'], 'approved')
+        self.assertEqual(len(self.calls), 2)
 
 
 if __name__ == '__main__': unittest.main()

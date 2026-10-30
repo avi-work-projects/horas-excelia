@@ -51,10 +51,8 @@ def handle(service, panel, validate_source, data):
         # content is already registered: keep the original plan and approval.
         # A lost reply or repeated send never reimports or sends mail.
         return result | {'state': state}
-    if any(r['status'] in ACTIVE or (r['data']['period'] == data['period'] and r['status'] in ISSUED) for r in plans):
-        raise ValueError('Hay una emisión o correo pendiente, o este mes ya está emitido')
-    if any(r['status'] == 'approved' and r['data']['period'] != data['period'] for r in plans):
-        raise ValueError('Hay otro mes aprobado; revisa el plan activo')
+    if any(r['data']['period'] == data['period'] and r['status'] in ISSUED for r in plans):
+        raise ValueError('Este mes tiene una emisión o correo pendiente, o ya está emitido')
     if state == 'different':
         # Existing importer refuses changed revisions. Invalidate approvals, leave
         # original invoice intact and require reconciliation in the existing UI.
@@ -69,7 +67,7 @@ def handle(service, panel, validate_source, data):
                     db.execute('UPDATE drafts SET approved_hash=NULL,approved_at=NULL WHERE docid=?', (row['docid'],))
         return result | {'state': 'blocked'}
     service.import_json(raw, notify_review=False)
-    current = service.load()
+    current = service.load(period=data['period'])
     if current['data']['source_hash'] != data['contentHash'] or current['data']['period'] != data['period']:
         raise ValueError('Importación sin confirmar: consultar estado')
     return result | {'state': current['status']}

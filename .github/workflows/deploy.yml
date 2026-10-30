@@ -33,6 +33,7 @@ jobs:
       - run: python3 tools/kairo/test_outlook_auth.py
       - run: python3 tools/kairo/test_bridge.py
       - run: python3 tools/kairo/test_month_review.py
+      - run: python3 tools/kairo/test_invoice_plans.py
       - run: python3 tools/kairo/test_project_periods.py
       - run: python3 tools/kairo/test_project_settings.py
       - run: npm run build

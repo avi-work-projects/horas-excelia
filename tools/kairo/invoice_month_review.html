@@ -15,7 +15,7 @@ document.querySelectorAll('[data-action]').forEach(button=>button.onclick=()=>{
  document.getElementById('confirmGo').onclick=async()=>{
   if(busy)return;busy=true;dialog.close();document.querySelectorAll('[data-action]').forEach(b=>b.disabled=true);
   const result=document.getElementById('result');result.textContent='Guardando…';
-  try{const r=await fetch('/facturas/'+action,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF':boot.csrf},body:JSON.stringify({hash:boot.hash})});const j=await r.json();if(!r.ok)throw Error(j.message||'Operación no confirmada');location.reload();}
+  try{const r=await fetch('/facturas/'+action,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF':boot.csrf},body:JSON.stringify({hash:boot.hash,planId:boot.planId})});const j=await r.json();if(!r.ok)throw Error(j.message||'Operación no confirmada');location.reload();}
   catch(e){result.textContent=e.message;busy=false;document.querySelectorAll('[data-action]').forEach(b=>b.disabled=false);}
  };dialog.showModal();
 });
