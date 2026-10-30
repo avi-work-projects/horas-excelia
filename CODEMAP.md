@@ -351,18 +351,21 @@
 
 **Funciones:** validateHomeInvoiceStatus:6 · homeInvoiceCacheRead:12 · homeInvoiceCacheSave:21 · homeInvoiceCheckedAt:22 · homeInvoiceScheduleDate:23 · homeInvoiceModel:24 · renderHomeInvoiceStatus:42 · paintHomeInvoiceStatus:48 · initHomeInvoiceStatus:72
 
-### js/invoices-kairo.js  _(75 líneas)_
+### js/invoices-kairo.js  _(79 líneas)_
 **Estado global:** INVOICE_KAIRO_BUSY:2
 
-**Funciones:** invoiceKairoUrl:3 · invoiceKairoState:9 · invoiceKairoSection:12 · invoiceKairoExchange:24 · finish:27 · receive:28 · bindInvoiceKairo:44
+**Funciones:** invoiceKairoUrl:3 · invoiceKairoState:9 · invoiceKairoSection:12 · invoiceKairoExchange:24 · finish:27 · receive:28 · bindInvoiceKairo:48
+
+### js/invoices-projects.js  _(76 líneas)_
+**Funciones:** invoiceProjectPeriods:2 · invoiceProjectFor:10 · invoiceProjectChange:15 · invoiceProjectApply:22 · invoiceProjectReply:30
 
 ### js/invoices-ui.js  _(132 líneas)_
 **Funciones:** invoicePanel:2 · close:5 · invoiceField:10 · openInvoiceSettings:11 · invoiceSummary:34 · money:35 · number:36 · invoiceDaysSummary:44 · invoicePrivacyButton:60 · invoiceManualSection:64 · invoiceTools:73 · error:100 · bindPrivacy:103 · openHoursExport:111 · initInvoices:116 · bindInvoiceConfigImport:121 · readFields:122
 
-### js/invoices.js  _(122 líneas)_
+### js/invoices.js  _(124 líneas)_
 **Estado global:** INVOICE_KEY:2 · INVOICE_FIRST_PERIOD:3 · INVOICE_MONTH:4 · INVOICE_BACK:5 · INVOICE_OPEN_SEQ:6 · INVOICE_HIDE_AMOUNTS:7
 
-**Funciones:** invoiceDefaults:8 · invoiceData:9 · invoiceValidate:10 · invoiceSave:31 · invoiceMerge:32 · invoiceDecimal:37 · invoiceMoney:41 · invoiceLabel:42 · invoiceText:43 · invoiceDayRows:44 · invoiceCalculate:56 · invoiceHasLocalChanges:73 · equal:76 · invoiceEmails:87 · invoiceGmailUrl:88 · invoiceFinalBlob:102 · invoiceConfigImport:105 · invoiceIban:115
+**Funciones:** invoiceDefaults:8 · invoiceData:9 · invoiceValidate:10 · invoiceSave:32 · invoiceMerge:33 · invoiceDecimal:39 · invoiceMoney:43 · invoiceLabel:44 · invoiceText:45 · invoiceDayRows:46 · invoiceCalculate:58 · invoiceHasLocalChanges:75 · equal:78 · invoiceEmails:89 · invoiceGmailUrl:90 · invoiceFinalBlob:104 · invoiceConfigImport:107 · invoiceIban:117
 
 ### js/logo-popup.js  _(51 líneas)_
 **Funciones:** _logoUpdateDots:14

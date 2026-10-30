@@ -32,8 +32,21 @@
     const m = event.data;
     if (!opener || event.source !== opener || event.origin !== bridgeConfig.origin || !m || m.channel !== 'gestify-kairo-v1' || typeof m.id !== 'string' || m.id.length > 80) return;
     if (m.type === 'hello' && !requested) { requestId = m.id; send({type:'ready'}); return; }
-    if (m.type !== 'request' || requested || m.id !== requestId || !['prepare','status'].includes(m.action)) return;
+    if (m.type !== 'request' || requested || m.id !== requestId || !['prepare','status','project'].includes(m.action)) return;
     requested = true;
+    if (m.action === 'project') {
+      document.title = 'Kairo · Proyecto';
+      el('title').textContent = 'Guardar proyecto';
+      el('mode').textContent = 'Configuración';
+      el('period').textContent = (m.change?.project || '')+' · desde '+(m.change?.from || '');
+      el('assurance').textContent = 'Las facturas y los envíos existentes se conservan.';
+      show('Guardando proyecto','Confirmando el cambio solicitado desde Gestify.');
+      fetch('/facturas/gestify',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF':bridgeConfig.csrf},body:JSON.stringify({action:'project',change:m.change})})
+        .then(async response => {const data=await response.json();if(!response.ok)throw Error(data.message||'No se pudo guardar el proyecto');return data;})
+        .then(data => {if(data.state==='project_rejected'){show('Proyecto no guardado',data.message,'warning');send({type:'result',ok:false,rejected:true,message:data.message,current:data.current});return;}if(data.state!=='project_saved')throw Error('Kairo no confirmó el proyecto');show('Proyecto guardado','Vuelve a Gestify para terminar. Las facturas anteriores se conservan.','success');send({type:'result',ok:true,result:data});})
+        .catch(error => {show('Proyecto sin confirmar',error.message,'error');send({type:'result',ok:false,message:error.message});});
+      return;
+    }
     const consulting = m.action === 'status';
     document.title = consulting ? 'Kairo · Consultar estado' : 'Kairo · Recibir preparación';
     el('title').textContent = consulting ? 'Estado de tu factura' : 'Recibir preparación';

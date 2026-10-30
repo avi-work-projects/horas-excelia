@@ -254,3 +254,41 @@ la aprobación de emisión/envío queda en manos del propietario.
 
 No se regeneran capturas: no hay cambios de estructura visual. Se conserva
 la revisión v521; v522 cambia la validación privada y la etiqueta de versión.
+
+
+## Proyecto sincronizado desde Gestify y correo exacto (v523)
+
+El editor de Facturas y Correo permite guardar código y mes «Aplicar desde».
+La acción explícita `project` utiliza el mismo receptor autenticado, origen,
+ventana, identificador, CSRF y bloqueo del proceso que el puente existente.
+No autoriza el proyecto a partir de un borrador recibido: solo al guardar
+la configuración. No añade rutas de emisión, aprobación ni correo.
+
+`project_settings.py` incorpora una vigencia a `settings.json` mediante escritura
+atómica privada, conservando todas las demás claves y las reglas posteriores.
+Rechaza meses pasados, conflictos con la configuración conocida y cualquier
+cambio efectivo de proyecto en meses con planes o borradores ya registrados.
+La repetición exacta devuelve la configuración sin escribir de nuevo. No toca
+bases, PDF, fuentes fiscales, aprobaciones ni cuerpos de correo.
+
+Gestify conserva base y vigencias en la configuración del backup existente.
+Calcula el proyecto efectivo también en operationId; el código del formulario
+no cambia retroactivamente los meses anteriores. Antes de solicitar la escritura
+conserva `projectPending` y su destino. Una respuesta perdida bloquea preparaciones
+nuevas afectadas y permite reintentar; una respuesta explícita de rechazo libera
+el intento para corregirlo. El rechazo por configuración desfasada recupera las
+vigencias de Kairo para poder resolverlo desde Gestify, sin editar dos sistemas.
+Sin conexión no cambia la configuración. Los ajustes ajenos al proyecto no abren
+Kairo ni crean consultas periódicas.
+
+«Ver correo» representa únicamente destinatarios, asunto y body del plan. Se
+elimina el desglose que antes se dibujaba debajo del mensaje en la revisión.
+El envío real ya usaba exactamente `plan['body']`; nunca añadía aquel desglose.
+Los importes continúan en el PDF. No se cambia ningún mensaje existente.
+
+Comprobaciones: vigencias y huellas, conservación de meses/backups, rechazo de
+facturas preparadas, reintento idempotente, fallo de disco, pérdida de respuesta,
+conflicto entre dispositivos, offline y vistas móviles. Actualización privada con
+copia `backup-v523-20261030-145736`, conservando las siete filas de planes y la
+configuración. Solo se añaden tres ejemplos ficticios al mapa; el atlas anterior
+se conserva. Ninguna prueba autoriza la emisión o envío de noviembre.

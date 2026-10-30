@@ -13,6 +13,9 @@ ISSUED = ACTIVE | {'sent', 'email_cancelled'}
 
 
 def handle(service, panel, validate_source, data):
+    if data.get('action') == 'project':
+        from project_settings import handle as update_project
+        return update_project(service, panel, data)
     if data.get('action') not in ('prepare', 'status'):
         raise ValueError('Acción no permitida')
     for key in ('operationId', 'contentHash'):
