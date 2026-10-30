@@ -71,3 +71,30 @@ g.ST={};const savedBreakdown=g.invoiceDaysSummary('2026-10',frozen);
 assert.ok(savedBreakdown.includes('19 de 22'));assert.ok(savedBreakdown.includes('Días no incluidos'));assert.ok(!savedBreakdown.includes('Festivos'));
 assert.ok(g.invoiceDaysSummary('2024-02',null).includes('21 de 21'));
 console.log('Jornadas: motivos, fechas, fines de semana, febrero bisiesto y factura conservada OK');
+
+{
+  const app=cargarApp(),old=Object.assign(app.invoiceDefaults(),{project:'DEMO/OLD',rate:'320'});app.URL=URL;
+  const change={project:'DEMO/NEW',from:'2027-03',previous:'DEMO/OLD'};
+  const next=app.invoiceProjectApply(old,change,{'2027-02':{preparation:{}}});
+  assert.equal(old.project,'DEMO/OLD');assert.equal(Object.keys(old.projectPeriods).length,0);
+  for(const [period,expected] of [['2027-02','DEMO/OLD'],['2027-03','DEMO/NEW'],['2030-01','DEMO/NEW']]){
+    assert.equal(app.invoiceProjectFor(next,period),expected);
+    assert.equal(app.invoiceCalculate(period,next,app.invoiceDayRows(period,next)).project,expected);
+  }
+  assert.throws(()=>app.invoiceProjectApply(old,change,{'2027-03':{preparation:{}}}),/factura preparada/);
+  assert.throws(()=>app.invoiceProjectPeriods({'2027-13':'DEMO'}),/Vigencias/);
+  assert.throws(()=>app.invoiceProjectChange({...change,from:''}),/Selecciona/);
+  const saved={config:next,months:{},projectPending:{project:'DEMO/LATER',from:'2027-06',previous:'DEMO/NEW'},projectPendingUrl:'https://synthetic.test.ts.net/facturas/'};
+  app.invoiceSave(saved);const restored=app.invoiceData();
+  assert.equal(app.invoiceProjectFor(restored.config,'2027-02'),'DEMO/OLD');
+  assert.equal(restored.projectPending.project,'DEMO/LATER');
+  const merged=app.invoiceMerge(restored,{config:next,months:{}});
+  assert.equal(merged.projectPendingUrl,saved.projectPendingUrl);
+  const imported=app.invoiceConfigImport({format:'gestify-invoice-settings',version:1,config:next},old);
+  assert.equal(app.invoiceProjectFor(imported,'2027-02'),'DEMO/OLD');
+  assert.equal(app.invoiceProjectReply({state:'project_saved',project:change.project,from:change.from,base:old.project,periods:{'2027-03':change.project}},change).project,change.project);
+  assert.throws(()=>app.invoiceProjectReply({state:'project_saved',project:change.project,from:change.from,base:old.project,periods:{}},change),/vigencia/);
+  const first=app.invoiceProjectApply(app.invoiceDefaults(),{...change,previous:''},{});
+  assert.equal(app.invoiceProjectFor(first,'2027-02'),'');assert.equal(app.invoiceProjectFor(first,'2027-03'),'DEMO/NEW');
+}
+console.log('Proyectos: vigencias, histórico, backup, conflicto y confirmación de Kairo OK');

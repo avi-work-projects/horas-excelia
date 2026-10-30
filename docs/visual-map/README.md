@@ -1,5 +1,8 @@
 # Mapa visual de Gestify
 
+Revisión v523: [proyecto sincronizado y mensaje del correo](review/updates-v523.html).
+Tres ejemplos ficticios de las vistas afectadas; el resto del atlas se conserva.
+
 Revisión v518: [avisos y recuperación de acceso](review/updates-v518.html).
 Solo cambian las tres referencias de Home; se conservan las otras 170.
 

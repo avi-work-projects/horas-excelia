@@ -12,6 +12,12 @@ for(const width of [320,400])test('revisión de noviembre compacta a '+width+' p
  expect(await page.evaluate(()=>document.documentElement.scrollHeight<=innerHeight)).toBe(true);
  await expect(page.getByRole('link',{name:'Revisar borrador PDF'})).toHaveAttribute('href','/facturas/documento/2/draft');
  await page.screenshot({path:info.outputPath('revision-noviembre-'+width+'.png')});
+ await page.getByText('Ver correo',{exact:true}).click();
+ await expect(page.locator('details pre')).toHaveText('Correo sintético de revisión.');
+ await expect(page.locator('details')).not.toContainText('IVA:');
+ await expect(page.locator('details')).not.toContainText('Días:');
+ await page.screenshot({path:info.outputPath('correo-exacto-'+width+'.png')});
+ await page.getByText('Ver correo',{exact:true}).click();
  await page.getByRole('button',{name:'Aprobar emisión y envío',exact:true}).click();
  await expect(page.locator('#confirm')).toBeVisible();expect(writes).toHaveLength(0);
  await page.getByRole('button',{name:'Volver a revisar',exact:true}).click();expect(writes).toHaveLength(0);

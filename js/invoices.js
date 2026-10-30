@@ -5,11 +5,12 @@ var INVOICE_MONTH=null;
 var INVOICE_BACK=null; // Función que restaura el origen del panel, incluso tras repintarlo.
 var INVOICE_OPEN_SEQ=0;
 var INVOICE_HIDE_AMOUNTS=true; // Se reinicia al entrar en Enviar factura.
-function invoiceDefaults(){return {kairoUrl:'',issuer:'',issuerTax:'',issuerAddress:'',iban:'',client:'',clientTax:'',clientAddress:'',project:'',concept:'Servicios de consultoría · {mes} {anio}',unit:'day',rate:'',vat:'21',withholding:'15',from:'',to:'',cc:'',subject:'Factura · {mes} {anio}',body:'Buenos días!\n\nAdjunto la factura relativa a {mes}.\n\nConfirmad recepción,\n\nMuchas gracias,\n\nBuena semana!'};}
+function invoiceDefaults(){return {kairoUrl:'',issuer:'',issuerTax:'',issuerAddress:'',iban:'',client:'',clientTax:'',clientAddress:'',project:'',projectFrom:'',projectBase:'',projectPeriods:{},concept:'Servicios de consultoría · {mes} {anio}',unit:'day',rate:'',vat:'21',withholding:'15',from:'',to:'',cc:'',subject:'Factura · {mes} {anio}',body:'Buenos días!\n\nAdjunto la factura relativa a {mes}.\n\nConfirmad recepción,\n\nMuchas gracias,\n\nBuena semana!'};}
 function invoiceData(){var raw=appStorage.getItem(INVOICE_KEY);return raw?invoiceValidate(JSON.parse(raw)):{config:invoiceDefaults(),months:{}};}
 function invoiceValidate(data){
   if(!data||typeof data!=='object'||Array.isArray(data))throw new Error('Datos de facturación no válidos');
-  var config=invoiceDefaults();Object.keys(config).forEach(function(k){if(data.config&&data.config[k]!=null){if(typeof data.config[k]!=='string'||data.config[k].length>5000)throw new Error('Campo de facturación no válido');config[k]=data.config[k];}});
+  var config=invoiceDefaults();Object.keys(config).forEach(function(k){if(data.config&&data.config[k]!=null){if(k==='projectPeriods'){config[k]=invoiceProjectPeriods(data.config[k]);return;}if(typeof data.config[k]!=='string'||data.config[k].length>5000)throw new Error('Campo de facturación no válido');config[k]=data.config[k];}});
+  if(config.projectFrom&&!/^20\d{2}-(0[1-9]|1[0-2])$/.test(config.projectFrom))throw new Error('Selecciona un mes de vigencia válido');
   config.iban=invoiceIban(config.iban);
   config.kairoUrl=invoiceKairoUrl(config.kairoUrl);
   if(!['day','hour'].includes(config.unit))throw new Error('Unidad no válida');
@@ -26,13 +27,14 @@ function invoiceValidate(data){
     }
     if(r.final&&(!r.preparation||r.final.preparationHash!==r.preparation.contentHash))throw new Error('El PDF no corresponde a la preparación guardada');
     months[k]=r;
-  });return {config:config,months:months};
+  });var result={config:config,months:months};if(data.projectPending){result.projectPending=invoiceProjectChange(data.projectPending);result.projectPendingUrl=invoiceKairoUrl(data.projectPendingUrl||config.kairoUrl);}return result;
 }
 function invoiceSave(data){appStorage.setItem(INVOICE_KEY,JSON.stringify(invoiceValidate(data)));}
 function invoiceMerge(current,incoming){
   current=invoiceValidate(current);incoming=invoiceValidate(incoming);
   Object.keys(incoming.months).forEach(function(k){var a=current.months[k],b=incoming.months[k];if(a&&JSON.stringify(a)!==JSON.stringify(b))throw new Error('Hay dos versiones de facturación para '+k+'. Conserva ambas copias y revisa antes de reemplazar.');});
-  return {config:Object.assign({},current.config,incoming.config),months:Object.assign({},current.months,incoming.months)};
+  if(current.projectPending&&incoming.projectPending&&JSON.stringify(current.projectPending)!==JSON.stringify(incoming.projectPending))throw new Error('Hay dos cambios de proyecto pendientes; confirma primero el vigente');
+  var merged={config:Object.assign({},current.config,incoming.config),months:Object.assign({},current.months,incoming.months)},pending=current.projectPending?current:incoming;if(pending.projectPending){merged.projectPending=pending.projectPending;merged.projectPendingUrl=pending.projectPendingUrl;}return merged;
 }
 function invoiceDecimal(value,scale){
   var s=String(value).trim().replace(',','.');if(!/^\d+(\.\d+)?$/.test(s))throw new Error('Revisa los importes: utiliza números positivos');
@@ -67,7 +69,7 @@ function invoiceCalculate(period,config,rows){
   var lines=Object.values(groups),base=0;lines.forEach(function(l){var product=l.quantity100*l.rateCents;if(!Number.isSafeInteger(product))throw new Error('Importe demasiado grande');l.baseCents=Math.round(product/100);base+=l.baseCents;});
   if(!Number.isSafeInteger(base*10000))throw new Error('Importe demasiado grande');
   var iva=Math.round(base*vat/10000),irpf=Math.round(base*ret/10000);
-  return {schemaVersion:1,appVersion:APP_VERSION,period:period,kind:'auxiliary',condition:'calendar-month',issuer:{name:config.issuer,taxId:config.issuerTax,address:config.issuerAddress},client:{name:config.client,taxId:config.clientTax,address:config.clientAddress},project:config.project,payment:{iban:invoiceIban(config.iban||'')},concept:invoiceText(config.concept,period),days:chosen,lines:lines,vatBasisPoints:vat,withholdingBasisPoints:ret,baseCents:base,vatCents:iva,withholdingCents:irpf,totalCents:base+iva-irpf};
+  return {schemaVersion:1,appVersion:APP_VERSION,period:period,kind:'auxiliary',condition:'calendar-month',issuer:{name:config.issuer,taxId:config.issuerTax,address:config.issuerAddress},client:{name:config.client,taxId:config.clientTax,address:config.clientAddress},project:invoiceProjectFor(config,period),payment:{iban:invoiceIban(config.iban||'')},concept:invoiceText(config.concept,period),days:chosen,lines:lines,vatBasisPoints:vat,withholdingBasisPoints:ret,baseCents:base,vatCents:iva,withholdingCents:irpf,totalCents:base+iva-irpf};
 }
 async function invoiceHash(value){var bytes=typeof value==='string'?new TextEncoder().encode(value):value;return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(function(b){return b.toString(16).padStart(2,'0');}).join('');}
 function invoiceHasLocalChanges(period,data){
@@ -78,8 +80,8 @@ function invoiceHasLocalChanges(period,data){
 }
 async function invoicePrepare(period,config,rows){
   if(!config.issuer.trim()||!config.issuerTax.trim()||!config.client.trim()||!config.clientTax.trim()||!config.project.trim())throw new Error('Completa emisor, cliente, NIF y proyecto en Edición facturas y correo');
-  var data=invoiceData();if(data.months[period]&&data.months[period].final)throw new Error('Este mes ya tiene un PDF definitivo. La preparación queda conservada.');
-  var p=invoiceCalculate(period,config,rows);p.operationId=await invoiceHash(JSON.stringify([config.issuerTax.trim().toUpperCase(),config.clientTax.trim().toUpperCase(),period,config.project.trim().toLowerCase()]));
+  var data=invoiceData();if(data.projectPending&&period>=data.projectPending.from)throw new Error('Cambio de proyecto sin confirmar en Kairo. Vuelve a Configuración y pulsa Guardar.');if(data.months[period]&&data.months[period].final)throw new Error('Este mes ya tiene un PDF definitivo. La preparación queda conservada.');
+  var p=invoiceCalculate(period,config,rows);if(!p.project.trim())throw new Error('No hay un proyecto configurado para este mes');p.operationId=await invoiceHash(JSON.stringify([config.issuerTax.trim().toUpperCase(),config.clientTax.trim().toUpperCase(),period,p.project.trim().toLowerCase()]));
   var hashInput=Object.assign({},p);delete hashInput.appVersion;p.contentHash=await invoiceHash(JSON.stringify(hashInput));var previous=data.months[period]&&data.months[period].preparation;
   p.revision=previous&&previous.contentHash===p.contentHash?previous.revision:(previous&&previous.revision||0)+1;p.preparedAt=new Date().toISOString();
   data.months[period]=Object.assign({},data.months[period],{preparation:p});invoiceSave(data);return p;
@@ -105,7 +107,7 @@ function invoiceFinalBlob(record){if(!record||!record.final)throw new Error('Pen
 function invoiceConfigImport(input,current){
   if(!input||input.format!=='gestify-invoice-settings'||input.version!==1||!input.config||typeof input.config!=='object'||Array.isArray(input.config))throw new Error('Selecciona un archivo de datos de facturación de Gestify');
   var result=Object.assign({},current),keys=Object.keys(invoiceDefaults());
-  Object.keys(input.config).forEach(function(k){if(!keys.includes(k)||typeof input.config[k]!=='string'||input.config[k].length>5000)throw new Error('Campo de configuración no válido: '+k);result[k]=input.config[k].trim();});
+  Object.keys(input.config).forEach(function(k){if(k==='projectPeriods'){result[k]=invoiceProjectPeriods(input.config[k]);return;}if(!keys.includes(k)||typeof input.config[k]!=='string'||input.config[k].length>5000)throw new Error('Campo de configuración no válido: '+k);result[k]=input.config[k].trim();});
   result=invoiceValidate({config:result,months:{}}).config;
   if(result.rate!=='')invoiceDecimal(result.rate,2);
   ['vat','withholding'].forEach(function(k){if(invoiceDecimal(result[k],2)>10000)throw new Error('Porcentaje superior al 100 %');});

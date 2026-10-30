@@ -341,6 +341,9 @@
       "path": "js/invoices-kairo.js"
     },
     {
+      "path": "js/invoices-projects.js"
+    },
+    {
       "path": "js/invoices.js"
     },
     {

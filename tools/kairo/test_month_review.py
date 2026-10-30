@@ -38,6 +38,20 @@ class MonthReviewTests(unittest.TestCase):
         for query in ('','?period=2027-13','?period=2027-10&period=2027-11','?period=<script>'):
             self.assertEqual(response(self.service,'/gestify-month'+query,'csrf')[0],400)
 
+    def test_mail_preview_is_exact_body_without_financial_breakdown(self):
+        with self.db() as db:
+            row=dict(db.execute('SELECT * FROM plans ORDER BY id DESC LIMIT 1').fetchone())
+            data=json.loads(row['data'])
+            data.update(to=['first@example.invalid','second@example.invalid'],body='Hello!\n\nAttached invoice.\nThank you.')
+            data['display'].update(days=19,base=6080,vat=1276.8,withholding=912)
+            db.execute('UPDATE plans SET data=? WHERE id=?',(json.dumps(data),row['id']))
+        body=response(self.service,'/gestify-month?period=2027-11','csrf')[1]
+        self.assertIn('<summary>Ver correo</summary>',body)
+        self.assertIn('<pre>'+data['body']+'</pre>',body)
+        self.assertIn('Para: first@example.invalid, second@example.invalid',body)
+        for label in ['Días:','Base:','IVA:','Retención:']:
+            self.assertNotIn(label,body)
+
     def test_old_review_never_offers_mutations(self):
         with self.db() as db: db.execute("UPDATE plans SET status='review'")
         body=response(self.service,'/gestify-month?period=2027-10','csrf')[1]

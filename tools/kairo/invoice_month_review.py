@@ -61,9 +61,10 @@ def render(period, row, current, cfg, csrf, fingerprint):
             content += '<button class="primary" data-action="approve">Aprobar emisión y envío</button>'
         if cancel:
             content += '<button data-action="cancel">Cancelar programación</button>'
-        content += '</div><details><summary>Correo y desglose</summary><p>Para: '+e(p.get('to', ''))+'</p><p>'+e(p.get('subject', ''))+'</p><pre>'+e(p.get('body', ''))+'</pre>'
-        for key, label in [('days', 'Días'), ('base', 'Base'), ('vat', 'IVA'), ('withholding', 'Retención')]:
-            content += '<p>'+label+': '+e(f.get(key, ''))+'</p>'
+        recipients = p.get('to', '')
+        if isinstance(recipients, list):
+            recipients = ', '.join(recipients)
+        content += '</div><details><summary>Ver correo</summary><p>Para: '+e(recipients)+'</p><p>'+e(p.get('subject', ''))+'</p><pre>'+e(p.get('body', ''))+'</pre>'
         content += '</details>'
         if not active:
             content += '<p class="notice">Consulta guardada. Hay otro mes activo; esta vista no cambia su programación.</p>'

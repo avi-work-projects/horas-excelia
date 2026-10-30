@@ -28,10 +28,14 @@ function invoiceKairoExchange(url,p,action,popup){
     function receive(event){
       var m=event.data;
       if(event.origin!==origin||event.source!==popup||!m||m.channel!=='gestify-kairo-v1'||m.id!==id)return;
-      if(m.type==='ready'&&!sent){sent=true;popup.postMessage({channel:m.channel,id:id,type:'request',action:action,period:p.period,operationId:p.operationId,contentHash:p.contentHash,source:action==='prepare'?JSON.stringify(p):undefined},origin);}
+      if(m.type==='ready'&&!sent){sent=true;popup.postMessage({channel:m.channel,id:id,type:'request',action:action,change:action==='project'?p:undefined,period:p.period,operationId:p.operationId,contentHash:p.contentHash,source:action==='prepare'?JSON.stringify(p):undefined},origin);}
       if(m.type==='result'&&sent){
-        if(!m.ok)return finish(new Error('Kairo no confirmó la operación. Consulta el estado y revisa su ventana.'));
+        if(!m.ok){var error=new Error(typeof m.message==='string'?m.message:'Kairo no confirmó la operación. Consulta el estado y revisa su ventana.');error.projectRejected=action==='project'&&m.rejected===true;error.projectCurrent=m.current;return finish(error);}
         var r=m.result;
+        if(action==='project'){
+          try{invoiceProjectReply(r,p);}catch(e){return finish(e);}
+          return finish(null,r);
+        }
         if(!r||r.operationId!==p.operationId||r.contentHash!==p.contentHash||r.period!==p.period||!['review','cancelled','blocked','approved','accepted','sent','email_cancelled','emitting','queued','sending','uncertain','missing','different'].includes(r.state))return finish(new Error('Respuesta de Kairo no válida. Consulta el estado.'));
         finish(null,r);
       }
