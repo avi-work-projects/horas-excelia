@@ -22,13 +22,13 @@ module.exports=function extend({scenes,edges}){
   add('workday','Ficha de jornada de un día','Inicio','home','.day-cell','#bottomSheet.active',{sources:['js/core.js']});
   add('reminders','Recordatorios','Inicio','settings','#settingsReminders','#homePopup',{sources:['js/home-popup.js','js/events-picker-color.js','js/events-order.js']});
   add('hours-export','Exportar horas','Inicio','home','#hoursExportBtn','#hoursCsv',{sources:['js/invoices-ui.js']});
-  add('invoice','Enviar factura','Inicio','home','#invoiceHomeBtn','#invoiceConfig',{sources:['js/invoices-ui.js','js/invoices.js','js/invoices-calendar.js'],region:'.invoice-body',note:'Agosto de 2026 se presenta como referencia histórica.'});
-  add('invoice-config','Configuración de facturas','Inicio','invoice','#invoiceConfig','#invoiceSettingsEdit',{sources:['js/invoices-ui.js','js/invoices.js']});
+  add('invoice','Enviar factura','Inicio','home','#invoiceHomeBtn','#invoiceCalendar',{sources:['js/invoices-ui.js','js/invoices.js','js/invoices-calendar.js'],region:'.invoice-body',note:'Agosto de 2026 se presenta como referencia histórica.'});
+  add('invoice-config','Configuración de facturas','Inicio','settings','#invoiceSettingsBtn','#invoiceSettingsEdit',{sources:['js/invoices-ui.js','js/invoices.js'],region:'.invoice-body'});
   add('invoice-config-edit','Editar datos de facturación','Inicio','invoice-config','#invoiceSettingsEdit','#invoiceSettingsSave');
   add('home-september','Inicio · septiembre','Inicio','home','#nextBtn','#invoiceHomeBtn');
   add('home-october','Inicio · octubre','Inicio','home-september','#nextBtn','#invoiceHomeBtn');
   add('home-invoice-connection','Inicio · conectar estado de factura','Inicio','home-october','[data-home-invoice="configure"]','#invoiceSettingsSave',{sources:['js/invoices-home.js','js/invoices-ui.js','js/invoices.js'],region:'.invoice-body',note:'Consulta sin configurar: el botón abre la conexión privada existente.'});
-  add('invoice-current','Preparar factura del mes','Inicio','home-october','#invoiceHomeBtn','#invoiceJson',{sources:['js/invoices-ui.js','js/invoices.js','js/invoices-calendar.js'],region:'.invoice-body'});
+  add('invoice-current','Preparar factura del mes','Inicio','home-october','#invoiceHomeBtn','#invoiceCalendar',{sources:['js/invoices-ui.js','js/invoices.js','js/invoices-calendar.js'],region:'.invoice-body'});
   add('invoice-document','Adjuntar factura definitiva','Inicio','invoice-current','#invoiceDocument summary','#invoiceFinalFile',{scroll:true});
   // Calendarios y pestañas de Eventos.
   for(const [id,title,button]of [['annual','Calendario anual','#evViewAnnual'],['quad','Calendario 4 meses','#evViewQuad'],['timeoff','Vacaciones y festivos','#evViewTimeOff']])add(id,title,'Eventos','events',button,button+'.active');

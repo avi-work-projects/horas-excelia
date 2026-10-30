@@ -305,3 +305,21 @@ El mapa conserva sus capturas y añade únicamente este ejemplo de Kairo.
 Instalado con copia privada `backup-v525-20261030-mail-panel`. Servicio activo,
 GET real de noviembre HTTP 200 con el panel separado y pendiente de aprobación.
 La huella de las siete filas de planes permanece idéntica antes/después.
+
+## Calendario de horas y acción comprensible (v526)
+
+`receiver` llama «Preparar borrador» a la recepción validada; no cambia sus
+POST, guardas ni estados. `hours_receiver` dibuja el mes a partir de la revisión:
+fechas confirmadas frente a propuestas, selección individual/lote, V/F/A y
+semanas adicionales. Los cambios de fecha siguen la casilla de actualización.
+Gestify adjunta `calendarDays` como información visual de exclusiones, incluidos
+fines de semana, sin alterar los cinco días del correo ni su huella de contenido.
+No se cambia el modelo, el escritor Outlook ni los trabajos de Kairo.
+Los cuatro archivos de presentación se leen en cada GET: se instalan con copia
+privada sin reiniciar servicios ni interrumpir las pruebas del propietario.
+
+Instalados con copias `backup-v526-20261030-calendars` en ambos servicios.
+Los GET privados de facturas y horas responden HTTP 200 con las nuevas vistas.
+La consulta de noviembre de 2026 conserva `scheduled`, con fecha 20/11/2026;
+esta programación ya había sido aprobada por el propietario. Las pruebas de
+esta entrega usan datos ficticios y no aprueban ni programan correos reales.

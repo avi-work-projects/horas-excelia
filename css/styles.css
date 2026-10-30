@@ -4462,8 +4462,6 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 .home-invoice-refresh:disabled{opacity:.5;cursor:wait}
 .home-invoice-status.unsent .home-invoice-copy>strong{animation:home-pending-pulse 1.8s ease-in-out infinite}
 .home-invoice-action{display:flex;align-items:center;justify-content:center;box-sizing:border-box;max-width:104px;padding:7px 9px;min-height:36px;border:1px solid var(--invoice-tone);border-radius:8px;background:var(--surface);color:var(--invoice-tone);font:600 .65rem var(--font);cursor:pointer;text-align:center;text-decoration:none}
-.invoice-month-picker{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.75rem;color:var(--text-muted)}
-.invoice-month-picker input{min-width:0;max-width:65%;padding:7px 9px;border:1px solid var(--border);border-radius:8px;color:var(--text);background:var(--surface);font:600 .85rem var(--font)}
 @media(prefers-reduced-motion:reduce){.home-invoice-status.unsent .home-invoice-copy>strong{animation:none}}
 
 /* Fuente: css/source/invoices-calendar.css */

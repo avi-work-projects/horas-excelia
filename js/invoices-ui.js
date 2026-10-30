@@ -70,9 +70,6 @@ function invoiceManualSection(period,c,record){
   h+='<label class="invoice-field"><span>PDF definitivo (máximo 2 MB)</span><input type="file" accept="application/pdf,.pdf" id="invoiceFinalFile"></label>'+invoiceField('number','Serie y número de factura',record.final&&record.final.number||'')+invoiceField('date','Fecha de expedición',record.final&&record.final.date||'','date');
   return h+'<label class="invoice-confirm"><input type="checkbox" id="invoiceFinalConfirm">Es el PDF definitivo de AEAT de '+escHtml(invoiceLabel(period))+' y he comprobado sus datos e importes.</label><button class="ev-btn ev-btn-primary" id="invoiceAttach">Guardar PDF y preparar correo</button></details>';
 }
-function invoiceTools(){
-  return '<button class="invoice-config-link" id="invoiceJson">Descargar datos para AEAT · JSON</button>';
-}
 async function openInvoiceMonth(period){
   INVOICE_HIDE_AMOUNTS=true;
   INVOICE_MONTH=period||mkey(CY,CM);period=INVOICE_MONTH;
@@ -82,29 +79,22 @@ async function openInvoiceMonth(period){
     catch(e){problem=e.message;}
   }
   if(seq!==INVOICE_OPEN_SEQ)return;
-  var h='<label class="invoice-month invoice-month-picker"><span>Mes de la factura</span><input type="month" id="invoicePeriod" value="'+escHtml(period)+'" aria-label="Mes de la factura"></label>';
+  var h='<p class="invoice-month" id="invoicePeriod">'+escHtml(invoiceLabel(period))+'</p>';
   if(historical||record.final)h+='<p class="invoice-status">'+(historical?'Referencia histórica':'PDF definitivo de AEAT incorporado')+'</p>';
-  h+=renderInvoiceCalendar(period,c);
-  h+=invoiceDaysSummary(period,record.final?p:null);
   if(problem)h+='<p class="invoice-note">'+escHtml(problem)+'</p>';
-  h+='<details class="invoice-card invoice-month-summary"><summary class="invoice-summary-header"><h3>Cálculo de la factura</h3>'+(p?'<span id="invoicePrivacyControl">'+invoicePrivacyButton()+'</span>':'')+'</summary><p class="invoice-filename">'+escHtml(p&&p.client?p.client.name:c.client||'Cliente pendiente de configurar')+'</p>';
+  h+='<details open class="invoice-card invoice-month-summary"><summary class="invoice-summary-header"><h3>Cálculo de la factura</h3>'+(p?'<span id="invoicePrivacyControl">'+invoicePrivacyButton()+'</span>':'')+'</summary><p class="invoice-filename">'+escHtml(p&&p.client?p.client.name:c.client||'Cliente pendiente de configurar')+'</p>';
   if(p)h+='<div id="invoiceAmounts">'+invoiceSummary(p)+'</div>';
   else h+='<p class="invoice-note">Completa los datos de facturación para ver las jornadas, tarifas y el desglose del mes.</p>';
   h+='</details>';
   if(!historical)h+=invoiceKairoSection(p,record,c.kairoUrl,problem);
+  h+=renderInvoiceCalendar(period,c);
+  h+=invoiceDaysSummary(period,record.final?p:null);
   if(!historical&&!problem&&p&&!record.kairo&&!c.kairoUrl)h+=invoiceManualSection(period,c,record);
-  h+='<button class="invoice-config-link" id="invoiceConfig">'+(problem?'Completar datos de facturación':'Datos de factura y correo')+'</button>';
-  if(p&&!problem&&!historical)h+=invoiceTools();
   h+='<p id="invoiceError" class="invoice-error" role="alert"></p>';var root=invoicePanel('Enviar factura',h);
   root.querySelector('.invoice-sheet').classList.add('invoice-month-sheet');
-  root.querySelector('#invoicePeriod').onchange=function(){if(/^20\d\d-(0[1-9]|1[0-2])$/.test(this.value))openInvoiceMonth(this.value);};
   function error(e){root.querySelector('#invoiceError').textContent=e.message;root.querySelector('#invoiceError').scrollIntoView({block:'nearest'});}
-  root.querySelector('#invoiceConfig').onclick=openInvoiceSettings;
   var kairoConfig=root.querySelector('#invoiceKairoConfig');if(kairoConfig)kairoConfig.onclick=function(){openInvoiceSettings({connection:true});};
   function bindPrivacy(){root.querySelector('#invoicePrivacy').onclick=function(e){e.preventDefault();root.querySelector('.invoice-month-summary').open=true;INVOICE_HIDE_AMOUNTS=!INVOICE_HIDE_AMOUNTS;root.querySelector('#invoicePrivacyControl').innerHTML=invoicePrivacyButton();root.querySelector('#invoiceAmounts').innerHTML=invoiceSummary(p);bindPrivacy();root.querySelector('#invoicePrivacy').focus();};}if(p)bindPrivacy();
-  if(root.querySelector('#invoiceJson')){
-    root.querySelector('#invoiceJson').onclick=function(){shareOrDownload(new Blob([JSON.stringify(p,null,2)],{type:'application/json'}),'datos-auxiliares-'+period+'.json');};
-  }
   if(p&&!historical&&!problem)bindInvoiceKairo(root,p,c.kairoUrl);
   var attach=root.querySelector('#invoiceAttach');if(attach)attach.onclick=async function(){attach.disabled=true;try{await invoiceAttach(period,root.querySelector('#invoiceFinalFile').files[0],root.querySelector('[data-invoice-field="number"]').value,root.querySelector('[data-invoice-field="date"]').value,root.querySelector('#invoiceFinalConfirm').checked);openInvoiceMonth(period);}catch(e){error(e);attach.disabled=false;}};
   if(record.final&&root.querySelector('#invoiceDownloadFinal')){root.querySelector('#invoiceDownloadFinal').onclick=function(){shareOrDownload(invoiceFinalBlob(record),record.final.name);};root.querySelector('#invoiceGmail').onclick=function(){try{window.open(invoiceGmailUrl(invoiceData().config,period),'_blank','noopener,noreferrer');}catch(e){error(e);}};}

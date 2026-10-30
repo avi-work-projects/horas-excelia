@@ -11,32 +11,32 @@
     }
   },
   "general": {
-    "fingerprint": "afc58470d5ded777edf1b336a00de10b58eeb2f38740771f394f8ce368ad21d9",
+    "fingerprint": "ac5f884e0af4122e9c04cf1d82bd49ddad2fed85b44b30d5f521f2b04a974085",
     "files": [
       "map-general.svg",
       "map-general.png"
     ],
     "hashes": {
-      "map-general.svg": "8365851201e577c7859bae7e3de689033172031775e6d3463fc952cc15d2b320",
-      "map-general.png": "683d94ce639b9c593e305779d3b74b56a527e67f10bbba9554d6189300cb319b"
+      "map-general.svg": "a38096bf108bec2931a4a8bb01488a35102def1f3ff68d94b2bb6494c3d290ab",
+      "map-general.png": "d901d4281ca941dc6f75791844e89273db9a99cf9601a892632faf919fd8e86d"
     }
   },
   "area-0-0": {
-    "fingerprint": "cfa913a03cbce842f75a3478b20576ef4388c2c227fc8941f70c0d1c7154d1da",
+    "fingerprint": "aeda0ce3f3f350645879fd184ee77b14d086646ce8048cbe374fc213c302529c",
     "files": [
       "sheets/area-0-0.png"
     ],
     "hashes": {
-      "sheets/area-0-0.png": "a33a72509d6bb767014e1cdb236f06b91d7910d94459e2629aeabc5194ef3b37"
+      "sheets/area-0-0.png": "0e43236a6703d6a15967d75984eba110b91ec37803c7ae53ec837dcd5b0cd034"
     }
   },
   "area-0-1": {
-    "fingerprint": "b030be0f3bdff60c6b2f80562e25873a844b4ae127a5bffe5510607cf33deb7e",
+    "fingerprint": "6c64f7c5a6de2194003577597fac5f790866a25812cb4d0df8623c6df7abc8c1",
     "files": [
       "sheets/area-0-1.png"
     ],
     "hashes": {
-      "sheets/area-0-1.png": "97d696e395cfe552c43eb04c5a0f0b3d31a11c9d2f7cddca98655efcf9378f74"
+      "sheets/area-0-1.png": "92668bab0d595522210fef538ba1a681c8871468928bf147f5bfdc437121f799"
     }
   },
   "area-1-0": {
@@ -103,21 +103,21 @@
     }
   },
   "area-5-0": {
-    "fingerprint": "de150f0f86bd2c8b1aa2e588719e5ef0b27c9ced38bc2927935b52a5c4ddaed8",
+    "fingerprint": "fe7244fa7721ea4a7f37b5c5337a37fd3ed70f4630bbc2793beecce5776f1220",
     "files": [
       "sheets/area-5-0.png"
     ],
     "hashes": {
-      "sheets/area-5-0.png": "3c48ed6addfdaaf1904a6e8ab2547173d710a12383fca65c8e2f49c367879019"
+      "sheets/area-5-0.png": "e01e28837f65720a070f6b2b408bb4e43bfed0eae057ce976244457a91ee92c7"
     }
   },
   "area-5-1": {
-    "fingerprint": "a0f094870ce4f67085518c034705d5a3abcd3403cbac19af96e078def559d6bb",
+    "fingerprint": "a73808a486d88ba2f9483b45604567cb23a1593e7fde21ed343d7c44035c36b7",
     "files": [
       "sheets/area-5-1.png"
     ],
     "hashes": {
-      "sheets/area-5-1.png": "2f39d099ce92c43ded0f97ec2a8659ac11b3db74bb83fea729cf6efa75e797a0"
+      "sheets/area-5-1.png": "f47b9ace6519fe5c65ae8e96f785bc8ecde16137d71c528464adb3418d5516a3"
     }
   },
   "area-6-0": {

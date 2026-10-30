@@ -48,11 +48,11 @@
       return;
     }
     const consulting = m.action === 'status';
-    document.title = consulting ? 'Kairo · Consultar estado' : 'Kairo · Recibir preparación';
-    el('title').textContent = consulting ? 'Estado de tu factura' : 'Recibir preparación';
-    el('intro').textContent = consulting ? 'Comparamos tu preparación de Gestify con la que conserva Kairo.' : 'Revisa el mes antes de recibir los datos en Kairo.';
-    el('mode').textContent = consulting ? 'Solo consulta' : 'Recepción de datos';
-    el('assurance').textContent = consulting ? 'Esta consulta no emite facturas, no envía correos y no cambia tu programación.' : 'Recibir datos no aprueba ni emite facturas y no envía correos.';
+    document.title = consulting ? 'Kairo · Consultar estado' : 'Kairo · Preparar borrador';
+    el('title').textContent = consulting ? 'Estado de tu factura' : 'Preparar borrador';
+    el('intro').textContent = consulting ? 'Comparamos tu preparación de Gestify con la que conserva Kairo.' : 'Guarda los datos de Gestify para revisar el borrador de este mes.';
+    el('mode').textContent = consulting ? 'Solo consulta' : 'Borrador';
+    el('assurance').textContent = consulting ? 'Esta consulta no emite facturas, no envía correos y no cambia tu programación.' : 'Después podrás revisar el PDF y aprobar la emisión y el envío.';
     if (/^20\d\d-(0[1-9]|1[0-2])$/.test(m.period)) {
       const label = new Intl.DateTimeFormat('es-ES',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m.period+'-01T12:00:00Z'));
       el('period').textContent = label.charAt(0).toUpperCase()+label.slice(1);
@@ -76,7 +76,7 @@
       }
     }
     if (consulting) run();
-    else { show('Lista para recibir','Confirma para comprobar y recibir esta preparación. Si ya existe, Kairo conservará la registrada.'); button.hidden=false; button.onclick=run; }
+    else { show('Datos listos','Prepara el borrador para revisarlo. Si ya existe, se conserva el registrado.'); button.hidden=false; button.onclick=run; }
   });
   if (!opener) show('Abre la conexión desde Gestify','Pulsa «Consultar estado» o «Enviar a Kairo» dentro de Gestify. También puedes abrir aquí tu factura y programación.','warning');
 })();

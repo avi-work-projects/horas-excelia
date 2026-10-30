@@ -49,12 +49,18 @@ function renderHoursAccess(state){
   return '<div class="hours-home-actions"><span class="hours-verified-note">'+note+'</span><button type="button" class="hours-check-button" data-hours-check aria-label="Actualizar estado de correos y factura"'+(running||HOURS_REFRESHING?' disabled':'')+'>↻ <span>'+(running||HOURS_REFRESHING?'Actualizando…':'Actualizar estado')+'</span></button>'+(!closed&&(!state||!state.complete)?'<button type="button" class="hours-pending-button" data-hours-review>'+label+'</button>':'')+(running?'<span class="hours-job-note" role="status">Kairo está trabajando. Puedes salir de Gestify.</span>':feedback?'<span class="hours-job-note" role="status">'+escHtml(feedback)+'</span>':'')+'</div>';
 }
 function hoursMailSubject(wd){return 'HORAS Y DIAS TRABAJADOS - '+AUTHOR_NAME+' - Semana del '+fd(wd.mon)+' al '+fd(wd.fri);}
+function hoursCalendarDays(list){
+  var start=new Date(list[0].key+'T12:00:00'),end=ad(new Date(list[list.length-1].key+'T12:00:00'),6),out=[];
+  start=new Date(start.getFullYear(),start.getMonth(),1);end=new Date(end.getFullYear(),end.getMonth()+1,0);
+  for(var day=start;day<=end;day=ad(day,1)){var type=dayT(day);if(type!=='normal')out.push({date:dk(day),type:type});}
+  return out;
+}
 function hoursMailRequest(targetWeek){
   var to=String(TO||'').split(/[;,]/).map(function(v){return v.trim();}).filter(Boolean),cc=CC.slice();
   if(!to.length||!AUTHOR_NAME.trim())throw new Error('Completa destinatario y nombre en Correo de horas.');
   var list=homeSubmissionWeeks(CY,CM);
   if(targetWeek&&!list.some(function(w){return w.key===targetWeek;}))throw new Error('La semana ya no pertenece al mes visible.');
-  return {schema:1,period:mkey(CY,CM),mode:targetWeek?'week':'month',targetWeek:targetWeek||null,config:{to:to,cc:cc},weeks:list.map(function(week){
+  return {schema:1,period:mkey(CY,CM),mode:targetWeek?'week':'month',targetWeek:targetWeek||null,config:{to:to,cc:cc},calendarDays:hoursCalendarDays(list),weeks:list.map(function(week){
     var wd=getWD(week.key);
     return {key:week.key,subject:hoursMailSubject(wd),body:buildMailtoBody(wd),days:hoursWeekDays(week.key)};
   })};
