@@ -64,7 +64,8 @@ def render(period, row, current, cfg, csrf, fingerprint):
         recipients = p.get('to', '')
         if isinstance(recipients, list):
             recipients = ', '.join(recipients)
-        content += '</div><details><summary>Ver correo</summary><p>Para: '+e(recipients)+'</p><p>'+e(p.get('subject', ''))+'</p><pre>'+e(p.get('body', ''))+'</pre>'
+        content += '</div><details><summary>Ver correo</summary><p>Para: '+e(recipients)+'</p><p>Asunto: '+e(p.get('subject', ''))+'</p>'
+        content += '<section class="mail-content" aria-label="Contenido del correo"><span class="mail-content-label">Contenido del correo</span><pre>'+e(p.get('body', ''))+'</pre></section>'
         content += '</details>'
         if not active:
             content += '<p class="notice">Consulta guardada. Hay otro mes activo; esta vista no cambia su programación.</p>'

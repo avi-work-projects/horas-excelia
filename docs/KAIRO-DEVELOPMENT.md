@@ -292,3 +292,16 @@ conflicto entre dispositivos, offline y vistas móviles. Actualización privada 
 copia `backup-v523-20261030-145736`, conservando las siete filas de planes y la
 configuración. Solo se añaden tres ejemplos ficticios al mapa; el atlas anterior
 se conserva. Ninguna prueba autoriza la emisión o envío de noviembre.
+
+## Cuerpo del correo en su propio panel (v525)
+
+En «Ver correo», Para y Asunto permanecen fuera del nuevo recuadro «Contenido
+del correo». Solo se modifica el render de `invoice_month_review.py` y su CSS:
+el cuerpo conserva su escape HTML y saltos de línea. No cambia el plan, los
+destinatarios, el contenido enviado ni las acciones de aprobación/cancelación.
+Se comprueban la vista móvil a 320/400 px y los contratos existentes de revisión.
+El mapa conserva sus capturas y añade únicamente este ejemplo de Kairo.
+
+Instalado con copia privada `backup-v525-20261030-mail-panel`. Servicio activo,
+GET real de noviembre HTTP 200 con el panel separado y pendiente de aprobación.
+La huella de las siete filas de planes permanece idéntica antes/después.

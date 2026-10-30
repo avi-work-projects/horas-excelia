@@ -1,5 +1,8 @@
 # Mapa visual de Gestify
 
+Revisión v525: [contenido del correo separado](review/updates-v525.html).
+Solo se añade el ejemplo afectado de Kairo; se conserva el resto del mapa.
+
 Revisión v524: [calendario de factura](review/updates-v524.html).
 Cuatro escenas del menú de factura actualizadas; ejemplos ficticios de fecha
 prevista/confirmada y temas. Las otras capturas y revisiones se conservan.
