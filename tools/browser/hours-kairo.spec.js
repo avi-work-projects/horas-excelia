@@ -194,3 +194,25 @@ for(const width of [320,400])test('revisión de horas legible a '+width,async({p
   expect(await popup.locator('html').evaluate(e=>e.scrollWidth<=e.clientWidth)).toBe(true);
   await popup.screenshot({path:info.outputPath('hours-review-'+width+'.png'),animations:'disabled',fullPage:true});
 });
+
+test('calendario de horas: exclusiones, envíos y dos semanas siguientes sin consultas al navegar',async({page,context},info)=>{
+ const calls=await setup(page,context,'empty');
+ await page.evaluate(()=>{ST={'2027-02-05':{type:'festivo'},'2027-02-07':{type:'vacaciones'},'2027-02-12':{type:'vacaciones'},'2027-02-17':{type:'ausencia'},'2027-03-05':{type:'festivo'}};render();});
+ const popup=await open(page,page.locator('[data-hours-review]'));await popup.setViewportSize({width:393,height:880});
+ await expect(popup.locator('#calendar [data-date="2027-02-04"]')).toHaveClass(/delivery planned/);
+ await expect(popup.locator('#calendar [data-date="2027-02-05"]')).toContainText('F');
+ await expect(popup.locator('#calendar [data-date="2027-02-07"]')).toContainText('V');
+ await expect(popup.locator('#calendar [data-date="2027-02-11"]')).toHaveClass(/delivery planned/);
+ await expect(popup.locator('#calendar [data-date="2027-02-17"]')).toContainText('A');
+ await expect(popup.locator('#calendar tr.included')).toHaveCount(4);
+ await popup.screenshot({path:info.outputPath('hours-calendar-month.png'),animations:'disabled'});
+ const count=calls.length;await popup.getByRole('button',{name:'Mes siguiente',exact:true}).click();
+ await expect(popup.locator('#calendar tr.included')).toHaveCount(2);
+ await expect(popup.locator('#calendar [data-date="2027-03-04"]')).toHaveClass(/delivery planned/);
+ await expect(popup.locator('#calendar [data-date="2027-03-15"]')).toHaveClass(/unselected/);
+ for(const width of [320,440]){await popup.setViewportSize({width,height:880});expect(await popup.locator('html').evaluate(e=>e.scrollWidth<=e.clientWidth)).toBe(true);}
+ expect(calls.length).toBe(count);expect(calls.some(c=>c.path.endsWith('/commit'))).toBe(false);
+ await popup.screenshot({path:info.outputPath('hours-calendar-extra-weeks.png'),animations:'disabled'});await popup.close();
+ const individual=await open(page,page.locator('.week-card').nth(3).getByRole('button',{name:'Programar semana'}));
+ await expect(individual.locator('#calendar tr.included')).toHaveCount(1);
+});

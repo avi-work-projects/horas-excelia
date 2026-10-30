@@ -9,13 +9,12 @@ test.beforeEach(async({page})=>{
  await page.goto('/');
  await page.evaluate(()=>{const c=invoiceDefaults();Object.assign(c,{issuer:'Persona de prueba',issuerTax:'PRUEBA-EMISOR',issuerAddress:'Dirección de prueba',iban:'ES'+String(98n-(BigInt('142800')%97n)).padStart(2,'0')+'00000000000000000000',client:'Cliente de prueba',clientTax:'PRUEBA-CLIENTE',clientAddress:'Dirección cliente',project:'Consultoría de prueba',rate:'320',from:'demo@example.test',to:'Cliente <cliente@example.test>'});invoiceSave({config:c,months:{}});});
 });
-test('preparación mensual, JSON auxiliar, Gmail solo con definitivo y recuperación tras recarga',async({page},info)=>{
+test('preparación mensual sin opciones auxiliares, Gmail solo con definitivo y recuperación tras recarga',async({page},info)=>{
  await page.screenshot({path:info.outputPath('home.png')});await page.locator('#invoiceHomeBtn').click();await expect(page.locator('.invoice-status')).toHaveCount(0);await expect(page.locator('#invoiceGmail')).toHaveCount(0);
- await expect(page.locator('#invoiceJson')).toBeVisible();await expect(page.locator('#invoiceExcel')).toHaveCount(0);await expect(page.locator('[data-invoice-day]')).toHaveCount(0);await expect(page.locator('#invoiceReloadDays')).toHaveCount(0);
+ await expect(page.locator('#invoiceJson,#invoiceConfig')).toHaveCount(0);await expect(page.locator('#invoiceExcel')).toHaveCount(0);await expect(page.locator('[data-invoice-day]')).toHaveCount(0);await expect(page.locator('#invoiceReloadDays')).toHaveCount(0);
  await page.screenshot({path:info.outputPath('preparacion.png')});
  const first=await page.evaluate(()=>invoiceData().months['2026-10'].preparation);expect(first.days.length).toBe(22);expect(first.baseCents).toBe(704000);expect(first.payment.iban).toMatch(/^ES[0-9]{22}$/);expect(verifyInvoiceExport(first)).toEqual({operationIdMatches:true,contentHashMatches:true});expect(verifyInvoiceExport({...first,baseCents:first.baseCents+1}).contentHashMatches).toBe(false);expect(verifyInvoiceExport({...first,appVersion:'otra',revision:99,preparedAt:'otra'}).contentHashMatches).toBe(true);
- await page.locator('#invoiceBack').click();await page.locator('#invoiceHomeBtn').click();await expect(page.locator('#invoiceJson')).toBeVisible();await expect(page.locator('#invoiceExcel')).toHaveCount(0);expect(await page.evaluate(()=>invoiceData().months['2026-10'].preparation.revision)).toBe(1);
- const dl=page.waitForEvent('download');await page.locator('#invoiceJson').click();await page.locator('[data-export-mode="save"]').click();const exported=await dl;expect(JSON.parse(fs.readFileSync(await exported.path(),'utf8'))).toEqual(first);
+ await page.locator('#invoiceBack').click();await page.locator('#invoiceHomeBtn').click();await expect(page.locator('#invoiceJson,#invoiceConfig')).toHaveCount(0);await expect(page.locator('#invoiceExcel')).toHaveCount(0);expect(await page.evaluate(()=>invoiceData().months['2026-10'].preparation.revision)).toBe(1);
  await page.locator('#invoiceDocument summary').click();
  const invalid=Buffer.from('%PDF-1.4\nprueba');await page.locator('#invoiceFinalFile').setInputFiles({name:'borrador.pdf',mimeType:'application/pdf',buffer:invalid});await page.locator('[data-invoice-field="number"]').fill('PRUEBA-1');await page.locator('[data-invoice-field="date"]').fill('2026-10-11');await page.locator('#invoiceFinalConfirm').check();await page.locator('#invoiceAttach').click();await expect(page.locator('#invoiceError')).toContainText('no un borrador');await expect(page.locator('#invoiceGmail')).toHaveCount(0);
  const pdf=await page.evaluate(()=>{const d=new jspdf.jsPDF();d.text('DOCUMENTO SINTETICO PARA PRUEBAS DE SOFTWARE',10,20);return d.output('datauristring').split(',')[1];});await page.locator('#invoiceFinalFile').setInputFiles({name:'documento-prueba.pdf',mimeType:'application/pdf',buffer:Buffer.from(pdf,'base64')});await page.locator('#invoiceAttach').click();await expect(page.locator('#invoiceGmail')).toHaveCount(1);
@@ -49,21 +48,21 @@ test('importar configuración revisable sin sustituir los meses y botones junto 
   for(const id of ['#hoursExportBtn','#invoiceHomeBtn']){const b=await page.locator(id).boundingBox();expect(b.x).toBeGreaterThan(r.x+r.width);expect(Math.abs(b.y-r.y)).toBeLessThan(1);}
   await page.screenshot({path:info.outputPath('home-'+width+'.png')});
  }
- await page.locator('#invoiceHomeBtn').click();await expect(page.locator('#invoiceJson')).toBeVisible();await expect(page.locator('#invoiceExcel')).toHaveCount(0);const months=await page.evaluate(()=>JSON.stringify(invoiceData().months));
- await page.locator('#invoiceConfig').click();await page.locator('#invoiceSettingsEdit').click();
+ await page.locator('#invoiceHomeBtn').click();await expect(page.locator('#invoiceJson,#invoiceConfig')).toHaveCount(0);await expect(page.locator('#invoiceExcel')).toHaveCount(0);const months=await page.evaluate(()=>JSON.stringify(invoiceData().months));
+ await page.locator('#invoiceBack').click();await page.locator('#menuBtn').click();await page.locator('#invoiceSettingsBtn').click();await page.locator('#invoiceSettingsEdit').click();
  const payload={format:'gestify-invoice-settings',version:1,config:{issuer:'Nuevo emisor de prueba',issuerTax:'NIF-PRUEBA',issuerAddress:'Domicilio inventado'}};
  await page.locator('#invoiceConfigFile').setInputFiles({name:'datos-facturacion.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(payload))});
  await expect(page.locator('[data-invoice-field="issuer"]')).toHaveValue(payload.config.issuer);await expect(page.locator('#invoiceImportStatus')).toContainText('Datos cargados');
  expect(await page.evaluate(()=>invoiceData().config.issuer)).toBe('Persona de prueba');expect(await page.evaluate(()=>JSON.stringify(invoiceData().months))).toBe(months);
  await page.locator('#invoiceConfigFile').setInputFiles({name:'incorrecto.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({format:'gestify-invoice-settings',version:1,config:{vat:'101'}}))});await expect(page.locator('#invoiceError')).toContainText('Porcentaje');await expect(page.locator('[data-invoice-field="issuer"]')).toHaveValue(payload.config.issuer);
- await page.locator('#invoiceSettingsSave').click();await expect(page.locator('#invoiceSettingsEdit')).toBeVisible();await page.locator('#invoiceBack').click();await expect(page.locator('#invoiceWrap')).toHaveCount(0);await page.locator('#invoiceHomeBtn').click();await expect(page.locator('#invoiceJson')).toBeVisible();await expect(page.locator('#invoiceExcel')).toHaveCount(0);expect(await page.evaluate(()=>invoiceData().config.issuer)).toBe(payload.config.issuer);
+ await page.locator('#invoiceSettingsSave').click();await expect(page.locator('#invoiceSettingsEdit')).toBeVisible();await page.locator('#invoiceBack').click();await expect(page.locator('#invoiceWrap')).toHaveCount(0);await page.locator('#menuBtn').click();await page.locator('#invoiceHomeBtn').click();await expect(page.locator('#invoiceJson,#invoiceConfig')).toHaveCount(0);await expect(page.locator('#invoiceExcel')).toHaveCount(0);expect(await page.evaluate(()=>invoiceData().config.issuer)).toBe(payload.config.issuer);
  await page.screenshot({path:info.outputPath('resumen.png')});
  await page.locator('#invoiceDocument summary').click();await expect(page.locator('#invoiceFinalFile')).toBeVisible();await page.screenshot({path:info.outputPath('siguiente-paso.png')});
 });
 
 test('mes de Home, título centrado, tarifa diaria y ojo sin alterar el cálculo',async({page},info)=>{
  await page.evaluate(()=>{CY=2027;CM=4;render();});await page.locator('#invoiceHomeBtn').click();
- await expect(page.locator('#invoicePeriod')).toHaveValue('2027-05');await expect(page.locator('#invoicePrev,#invoiceNext')).toHaveCount(0);
+ await expect(page.locator('#invoicePeriod')).toContainText('Mayo 2027');await expect(page.locator('#invoicePrev,#invoiceNext')).toHaveCount(0);
  await expect(page.locator('#invoiceAmounts')).toContainText('Precio por día');await expect(page.locator('#invoiceAmounts')).not.toContainText('€');await expect(page.locator('#invoiceAmounts')).not.toContainText('320,00');await page.getByRole('button',{name:'Mostrar importes',exact:true}).click();await expect(page.locator('#invoiceAmounts')).toContainText('320,00');
  const stored=await page.evaluate(()=>JSON.stringify(invoiceData().months['2027-05']));
  for(const width of [360,400]){
@@ -109,14 +108,13 @@ test('desglose por tramos antes del envío, sin scroll inicial y sin Excel en m�
  await page.evaluate(()=>{const data=invoiceData();data.config.rate='';data.config.kairoUrl='https://synthetic-kairo.test.ts.net/facturas/';invoiceSave(data);ECON_YEAR_CONFIG[2026]={rate:320,multiRate:true,ratePeriods:[{startDate:'2026-01-01',rate:320,rateMode:'daily'},{startDate:'2026-10-16',rate:340,rateMode:'daily'}]};return openInvoiceMonth('2026-10');});
  await expect(page.locator('#invoiceKairoSend')).toBeVisible();
  await expect(page.locator('#invoiceAmounts')).not.toContainText('€');
- await expect(page.locator('#invoiceExcel,#invoiceTools')).toHaveCount(0);await expect(page.locator('#invoiceJson')).toHaveCount(1);await expect(page.locator('#invoiceDays')).not.toHaveAttribute('open','');
+ await expect(page.locator('#invoiceExcel,#invoiceTools')).toHaveCount(0);await expect(page.locator('#invoiceJson')).toHaveCount(0);await expect(page.locator('#invoiceDays')).not.toHaveAttribute('open','');
  for(const width of [320,400,440]){
   await page.setViewportSize({width,height:880});
-  await page.evaluate(()=>{document.querySelector('.invoice-month-summary').open=false;document.querySelector('.invoice-body').scrollTop=0;});
+  await page.evaluate(()=>{document.querySelector('.invoice-month-summary').open=true;document.querySelector('.invoice-body').scrollTop=0;});
   const sheet=await page.locator('.invoice-sheet').boundingBox(),send=await page.locator('#invoiceKairoSend').boundingBox(),summary=await page.locator('.invoice-month-summary').boundingBox();
   expect(send.y).toBeGreaterThanOrEqual(summary.y+summary.height);expect(await page.locator('.invoice-body').evaluate(el=>el.scrollTop)).toBe(0);expect(send.y+send.height).toBeLessThan(sheet.y+sheet.height);
   expect(await page.locator('.invoice-sheet').evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
-  await page.locator('.invoice-month-summary>summary').click();
   const amounts=page.locator('#invoiceAmounts');const height=(await amounts.boundingBox()).height;
   await page.getByRole('button',{name:'Mostrar importes',exact:true}).click();
   await expect(page.locator('.invoice-line-formula')).toHaveCount(2);
@@ -128,7 +126,7 @@ test('desglose por tramos antes del envío, sin scroll inicial y sin Excel en m�
   await page.screenshot({path:info.outputPath('calculo-'+width+'.png'),animations:'disabled'});
   await page.getByRole('button',{name:'Ocultar importes',exact:true}).click();await expect(amounts).not.toContainText('€');
  }
- await expect(page.locator('#invoiceJson')).toHaveCount(1);
+ await expect(page.locator('#invoiceJson')).toHaveCount(0);
 });
 
 test('jornadas plegadas, ausencias con fecha e impuestos con los colores de Económico',async({page},info)=>{

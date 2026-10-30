@@ -12,6 +12,12 @@ assert.equal(request.weeks[0].days[0].date,'2026-09-28');
 assert.match(request.weeks[0].subject,/Semana del 28\/09 al 02\/10/);
 assert.match(request.weeks[0].body,/Total horas trabajadas/);
 assert.equal(a.hoursMailRequest('2026-10-26').mode,'week');
+{
+ a.ST={'2026-10-04':{type:'vacaciones'},'2026-11-01':{type:'festivo'},'2026-11-10':{type:'ausencia'}};
+ const visual=a.hoursMailRequest();assert.equal(visual.calendarDays.length,3);
+ assert.equal(visual.calendarDays[0].date,'2026-10-04');
+ assert.equal(visual.weeks[0].days.length,5,'El calendario visual no amplía los días del correo');a.ST={};
+}
 assert.throws(()=>a.hoursMailRequest('2027-01-04'));
 let opened=null;a.openHoursReview=key=>{opened=key;};a.sendEmail('2026-10-26');
 assert.equal(opened,'2026-10-26');assert.equal(JSON.stringify(a.SW),sw);assert.equal(JSON.stringify(a.localStorage._datos),before);

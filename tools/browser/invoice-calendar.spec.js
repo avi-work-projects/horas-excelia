@@ -19,12 +19,15 @@ test('mes visual con ausencias y envío previsto, sin eventos ni consultas al ab
  await expect(page.locator('[data-date="2027-02-18"]')).toContainText('V');
  await expect(page.locator('[data-date="2027-02-19"]')).toContainText('F');
  await expect(page.locator('#invoiceCalendar .delivery')).toHaveCount(1);
+ await expect(page.locator('input[type="month"],#invoiceConfig,#invoiceJson')).toHaveCount(0);
+ await expect(page.locator('.invoice-month-summary')).toHaveAttribute('open','');
  for(const width of [320,393,440]){
   await page.setViewportSize({width,height:880});
   expect(await page.locator('.invoice-sheet').evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
   expect(await page.locator('.invoice-body').evaluate(el=>el.scrollTop)).toBe(0);
   const send=await page.locator('#invoiceKairoSend').boundingBox(),sheet=await page.locator('.invoice-sheet').boundingBox();
   expect(send.y+send.height).toBeLessThanOrEqual(sheet.y+sheet.height);
+  const calendar=await page.locator('#invoiceCalendar').boundingBox();expect(calendar.y).toBeGreaterThan(send.y+send.height);
  }
  await page.setViewportSize({width:393,height:880});
  await page.screenshot({path:info.outputPath('invoice-calendar-planned.png'),animations:'disabled'});
@@ -39,12 +42,12 @@ test('fecha confirmada se conserva aunque cambie el calendario local; actualizac
  await expect(page.locator('#invoiceCalendar')).toContainText('difiere');
  await expect(page.locator('.delivery')).toHaveAttribute('data-date','2027-02-16');
  await expect(page.locator('.delivery')).toContainText('V');
- await expect(page.locator('.invoice-month-summary')).not.toHaveAttribute('open','');
+ await expect(page.locator('.invoice-month-summary')).toHaveAttribute('open','');
  await page.evaluate(()=>{INVOICE_HOME_CACHE.periods['2027-02'].data={state:'sent',sent:true};paintHomeInvoiceStatus();});
  await expect(page.locator('#invoiceCalendar')).toContainText('Factura enviada');await expect(page.locator('#invoiceCalendar .delivery')).toHaveCount(0);
 });
 test('seis semanas y temas mantienen casillas y leyenda legibles',async({page},info)=>{
- await setup(page);await page.locator('#invoicePeriod').fill('2027-05');await page.locator('#invoicePeriod').dispatchEvent('change');
+ await setup(page);await page.locator('#invoiceBack').click();await page.evaluate(()=>{CY=2027;CM=4;render();});await page.locator('#invoiceHomeBtn').click();
  await expect(page.locator('#invoiceCalendar tbody tr')).toHaveCount(6);await expect(page.locator('#invoiceCalendar [data-date]')).toHaveCount(31);
  for(const theme of ['dark','grey']){
   await page.evaluate(theme=>{applyTheme(theme);},theme);

@@ -1,6 +1,6 @@
 (() => {
   const embedded=window.parent!==window,el=id=>document.getElementById(id),opener=embedded?window.parent:window.opener;
-  let id=null,request=null,plan=null,busy=false,intent='review';
+  let id=null,request=null,plan=null,busy=false,intent='review',calendarMonth=null;
   const labels={sent:'Enviada',scheduled:'Programada',ready:'Por programar',changed:'Cambios por revisar',duplicate:'Posible duplicado',uncertain:'Sin confirmar',draft:'Borrador existente',unverified:'Sin confirmar','ambiguous-thread':'Revisar conversación','past-due':'Fecha vencida','no-workdays':'Sin fecha disponible','blocked-previous':'Semana anterior pendiente'};
   const text=(tag,value,className='')=>{const node=document.createElement(tag);node.textContent=value;if(className)node.className=className;return node;};
   const date=value=>value?new Intl.DateTimeFormat('es-ES',{timeZone:'Europe/Madrid',weekday:'short',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(value)):'Sin fecha';
@@ -31,6 +31,53 @@
     return result;
   }
   function updates(){return [...document.querySelectorAll('[data-update]:checked')].map(n=>n.dataset.update);}
+  // Read-only calendar: send dates come from reconciliation, never recomputed here.
+  function paintCalendar(){
+    const root=el('calendar');root.replaceChildren();root.hidden=intent==='check'||!plan;if(root.hidden)return;
+    const iso=day=>day.toISOString().slice(0,10),day=value=>new Date(value+'T12:00:00Z');
+    const add=(value,n)=>{const d=day(value);d.setUTCDate(d.getUTCDate()+n);return iso(d);};
+    const civil=value=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Madrid',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(value));
+    const names={vacaciones:['V','Vacaciones'],festivo:['F','Festivo'],ausencia:['A','Ausencia']};
+    const rows=new Map(plan.rows.filter(r=>r.selected).map(r=>[r.key,r])),days=new Map(),deliveries=new Map(),selected=new Set(updates());
+    for(const item of request.calendarDays||[])if(names[item.type])days.set(item.date,item.type);
+    request.weeks.forEach(w=>w.days.forEach(d=>days.set(d.date,d.type)));
+    const months=[...new Set([request.period,...request.weeks.flatMap(w=>[w.key.slice(0,7),add(w.key,6).slice(0,7)])])].sort();
+    if(!months.includes(calendarMonth))calendarMonth=request.period;
+    rows.forEach(row=>{
+      let when=null,confirmed=false;
+      if(row.state==='scheduled'||row.state==='changed'&&!selected.has(row.key)){when=row.previousSchedule||row.schedule;confirmed=true;}
+      else if(row.state==='ready'||row.state==='changed'&&selected.has(row.key))when=row.schedule;
+      if(when&&Number.isFinite(Date.parse(when)))deliveries.set(civil(when),{confirmed,label:confirmed?'Envío programado':'Envío previsto'});
+    });
+    const header=text('header','','calendar-header'),index=months.indexOf(calendarMonth);
+    for(const [step,label] of [[-1,'Mes anterior'],[1,'Mes siguiente']]){
+      const button=text('button',step<0?'‹':'›');button.type='button';button.setAttribute('aria-label',label);button.disabled=index+step<0||index+step>=months.length;
+      button.onclick=()=>{calendarMonth=months[index+step];paintCalendar();};
+      if(step<0)header.append(button);else{header.append(text('h2',new Intl.DateTimeFormat('es-ES',{timeZone:'UTC',month:'long',year:'numeric'}).format(day(calendarMonth+'-01'))),button);}
+    }
+    root.append(header);
+    const table=document.createElement('table'),thead=document.createElement('thead'),head=document.createElement('tr');
+    ['Sem.','L','M','X','J','V','S','D'].forEach(label=>{const th=text('th',label);th.scope='col';head.append(th);});thead.append(head);table.append(thead);
+    const first=day(calendarMonth+'-01'),offset=(first.getUTCDay()+6)%7,start=add(iso(first),-offset),last=new Date(Date.UTC(first.getUTCFullYear(),first.getUTCMonth()+1,0,12)).getUTCDate(),body=document.createElement('tbody');
+    for(let n=0;n<Math.ceil((offset+last)/7);n++){
+      const key=add(start,n*7),row=rows.get(key),tr=document.createElement('tr');tr.dataset.week=key;
+      if(row){tr.className='included';tr.dataset.state=row.state;}
+      const thu=day(add(key,3)),yearStart=new Date(Date.UTC(thu.getUTCFullYear(),0,1,12)),week=Math.ceil((((thu-yearStart)/86400000)+1)/7);
+      const th=text('th',String(week),'week-number');th.scope='row';th.title=row?labels[row.state]||'Revisar':'Fuera de la selección';tr.append(th);
+      for(let col=0;col<7;col++){
+        const ds=add(key,col),kind=days.get(ds),label=names[kind],send=deliveries.get(ds),td=text('td','','calendar-day');td.dataset.date=ds;
+        if(ds.slice(0,7)!==calendarMonth)td.classList.add('outside');if(!row)td.classList.add('unselected');if(label)td.classList.add(kind);
+        td.append(text('span',String(day(ds).getUTCDate()),'day-number'),text('small',label?label[0]:'','day-type'));
+        if(send){td.classList.add('delivery',send.confirmed?'confirmed':'planned');td.append(text('span','✉','envelope'));}
+        td.setAttribute('aria-label',ds+(label?' · '+label[1]:'')+(row?' · '+(labels[row.state]||'Revisar'):' · Fuera de la selección')+(send?' · '+send.label+' · 08:00 Madrid':''));tr.append(td);
+      }
+      body.append(tr);
+    }
+    table.append(body);root.append(table);
+    const legend=text('div','','calendar-legend');Object.entries(names).forEach(([key,value])=>legend.append(text('span',value[0]+' · '+value[1],key)));root.append(legend);
+    root.append(text('p','Semanas resaltadas: incluidas en esta revisión. ✉ 08:00 Madrid. Borde continuo: programado; discontinuo: previsto.','calendar-note'));
+    if([...rows.values()].some(r=>r.state==='changed'))root.append(text('p','Los cambios muestran la fecha actual hasta que selecciones «Actualizar esta semana».','calendar-note'));
+  }
   function controls(){
     const check=intent==='check',count=plan?plan.ready+updates().length:0;
     el('simulate').hidden=check||hoursBridgeConfig.allowWrites;el('simulate').disabled=busy||!plan?.verified;
@@ -76,7 +123,7 @@
     pending.filter(r=>r.action).forEach(row=>{const week=request.weeks.find(w=>w.key===row.key);mail.append(text('strong',week.subject),text('pre',week.body));});
     el('recipientsBody').replaceChildren(text('div','Para: '+request.config.to.join(', ')),text('div','CC: '+(request.config.cc.join(', ')||'Sin CC')));if(mail.children.length>1)el('recipientsBody').append(mail);
     el('message').textContent=plan.verified?'Estado actualizado en Home.':'No se ha podido comprobar Outlook. Revisa la sesión antes de continuar.';
-    controls();
+    controls();paintCalendar();
   }
   async function review(refresh=false){
     if(busy||!request)return;busy=true;controls();el('message').textContent='Comprobando Outlook…';el('simulation').hidden=true;
@@ -96,7 +143,7 @@
     el('recipientsBody').replaceChildren(text('div','Para: '+request.config.to.join(', ')),text('div','CC: '+(request.config.cc.join(', ')||'Sin CC')));
     void review();
   });
-  el('weeks').onchange=controls;el('refresh').onclick=()=>review(true);
+  el('weeks').onchange=()=>{controls();paintCalendar();};el('refresh').onclick=()=>review(true);
   el('simulate').onclick=async()=>{
     if(busy||!plan)return;busy=true;controls();
     try{const result=await api('simulate',{planId:plan.planId,updates:updates()});if(result.simulation!==true)throw new Error('Resultado de simulación no válido');el('simulation').hidden=false;el('simulation').textContent='Simulación completada. No se ha creado ni modificado ningún correo.\n'+(result.results.length?result.results.map(r=>r.key+': '+(r.state==='scheduled'?'se programaría':labels[r.state]||'requiere revisión')).join('\n'):'No hay programaciones nuevas ni actualizaciones seleccionadas.');}

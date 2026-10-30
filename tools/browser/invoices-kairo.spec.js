@@ -37,7 +37,10 @@ test('envío privado, repetido, consulta y vista móvil sin flujo Gmail paralelo
   await expect(page.locator('#invoiceDocument,#invoiceGmail')).toHaveCount(0);
   const height=(await page.locator('.invoice-sheet').boundingBox()).height;
   await page.screenshot({path:info.outputPath('kairo-preparacion-393.png'),animations:'disabled'});
-  const popup=await exchange(page,'#invoiceKairoSend');
+  const popup=await exchange(page,'#invoiceKairoSend',false);
+  await expect(popup.getByRole('button',{name:'Preparar borrador',exact:true})).toBeVisible();
+  await popup.screenshot({path:info.outputPath('invoice-receiver.png'),animations:'disabled'});
+  await popup.getByRole('button',{name:'Preparar borrador',exact:true}).click();
   expect(popup.url()).toBe(base+'gestify');
   await expect(page.locator('#invoiceKairoMessage')).toContainText('Preparación recibida');
   await expect.poll(()=>page.evaluate(()=>INVOICE_HOME_CACHE.periods['2027-02']?.data?.generated)).toBe(true);
@@ -61,12 +64,12 @@ test('respuesta perdida: conservar incertidumbre y recuperar por consulta sin re
   const status=await exchange(page,'#invoiceKairoStatus',false);await expect(page.locator('#invoiceKairoMessage')).toContainText('Preparación recibida');await status.close();expect(calls()).toBe(1);
 });
 
-test('desde octubre elige noviembre y revisa ese mes en Kairo sin aprobarlo',async({page,context},info)=>{
+test('desde Home elige noviembre y el mes queda fijo al revisar en Kairo',async({page,context},info)=>{
   const calls=await setup(page,context);
   await page.evaluate(async()=>{CY=2027;CM=9;await openInvoiceMonth('2027-10');});
-  await page.locator('#invoicePeriod').fill('2027-11');await page.locator('#invoicePeriod').dispatchEvent('change');
-  await expect(page.locator('#invoicePeriod')).toHaveValue('2027-11');
-  expect(await page.evaluate(()=>[CY,CM])).toEqual([2027,9]);
+  await page.locator('#invoiceBack').click();await page.evaluate(()=>render());await page.locator('#nextBtn').click();await page.locator('#invoiceHomeBtn').click();
+  await expect(page.locator('#invoicePeriod')).toContainText('Noviembre 2027');await expect(page.locator('input[type="month"]')).toHaveCount(0);
+  expect(await page.evaluate(()=>[CY,CM])).toEqual([2027,10]);
   const popup=await exchange(page,'#invoiceKairoSend');await expect(popup.locator('#resultTitle')).toHaveText('Preparación recibida');
   await expect(popup.locator('#invoiceReview')).toHaveAttribute('href','/facturas/gestify-month?period=2027-11');
   await expect(popup.locator('#period')).toHaveText('Noviembre de 2027');

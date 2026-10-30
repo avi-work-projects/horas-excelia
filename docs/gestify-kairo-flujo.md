@@ -1,6 +1,6 @@
 # Gestify y Kairo: funcionamiento y límites
 
-Contrato revisado el 30/10/2026 sobre v524. Describe el sistema instalado;
+Contrato revisado el 30/10/2026 sobre v526. Describe el sistema instalado;
 las comprobaciones y límites pendientes se distinguen al final.
 
 ## Qué guarda cada parte
@@ -77,12 +77,29 @@ El botón azul abre el envío manual en Outlook; no acredita que se haya enviado
 
 ## Facturas
 
-«Enviar factura» muestra el mes con V/F/A y sus colores, sin eventos. Reutiliza
+«Enviar factura» fija el mes elegido en Home, sin selector adicional. Abre el
+cálculo primero y sitúa el calendario bajo Enviar a Kairo/Consultar estado.
+Se retiran los enlaces finales de configuración y JSON; los datos se ajustan
+desde Ajustes → Facturas y correo. Muestra V/F/A y sus colores, sin eventos. Reutiliza
 el calendario local y la caché confirmada, sin añadir consultas de red al abrir.
 El borde discontinuo significa fecha prevista; el continuo, programada en Kairo.
 Las enviadas no inventan una fecha de envío si el servicio no la proporciona.
-El cálculo económico queda desplegable. Consultar estado o volver del circuito
+El cálculo económico queda abierto y se puede plegar. Consultar estado o volver del circuito
 de Kairo actualiza el calendario cuando llega una nueva respuesta confirmada.
+
+En Kairo, «Preparar borrador» comprueba y guarda los datos recibidos desde
+Gestify. No aprueba la emisión: el propietario revisa el PDF y confirma después.
+Solo puede haber un plan fiscal aprobado o en ejecución pendiente de completar.
+Con noviembre aprobado, otro mes no sustituye su plan; tras finalizar el envío
+se puede preparar el siguiente. El histórico se conserva y este límite no
+afecta a las múltiples semanas de horas.
+
+La revisión de horas incorpora un calendario de las semanas seleccionadas y
+sus fechas de envío. Distingue lo ya programado de lo propuesto, muestra V/F/A
+también en fines de semana y permite ver los meses limítrofes y las dos semanas
+extra. Los días de envío proceden de la conciliación existente; el calendario
+no los recalcula, consulta ni programa. Una modificación de fecha conserva la
+actual hasta que se seleccione explícitamente actualizar esa semana.
 
 Consultar Home es de solo lectura: pide el estado del mes al servicio de
 facturación de Kairo, que lee sus bases existentes. Puede mostrar programada

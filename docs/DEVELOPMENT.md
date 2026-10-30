@@ -1667,3 +1667,14 @@ bisiesto, exclusiones, fecha confirmada, persistencia y apertura sin red.
 El atlas recaptura solo cuatro escenas de factura y conserva las demás.
 La conexión y los límites reales comprobados están en
 `docs/gestify-kairo-flujo.md`: no se aprueba ni emite noviembre en estas pruebas.
+
+## Factura ligada a Home y calendario de horas (v526)
+
+Por petición de Ángel, se retira el selector de mes de la factura: se entra al
+mes visible de Home, con el cálculo abierto primero, acciones y después calendario.
+Se quitan los enlaces de configuración/JSON al final; Ajustes sigue siendo la
+entrada de configuración. Se mantienen preparación, importes, privacidad y PDF.
+El mapa traslada la relación de configuración a Ajustes y actualiza únicamente
+las escenas afectadas y sus anclajes. El calendario de revisión de horas consume
+las fechas de conciliación y el calendario local, sin consultas al navegar ni
+cambios en la política de programación. Detalle en `docs/KAIRO-DEVELOPMENT.md`.

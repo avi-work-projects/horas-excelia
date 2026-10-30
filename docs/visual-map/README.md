@@ -1,5 +1,9 @@
 # Mapa visual de Gestify
 
+Revisión v526: [factura del mes y calendario de envíos](review/updates-v526.html).
+Actualiza el recorrido de factura y su configuración desde Ajustes; conserva
+las otras 166 referencias. Añade ejemplos ficticios del calendario de horas.
+
 Revisión v525: [contenido del correo separado](review/updates-v525.html).
 Solo se añade el ejemplo afectado de Kairo; se conserva el resto del mapa.
 
