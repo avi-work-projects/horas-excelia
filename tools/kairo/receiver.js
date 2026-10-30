@@ -43,6 +43,8 @@
     if (/^20\d\d-(0[1-9]|1[0-2])$/.test(m.period)) {
       const label = new Intl.DateTimeFormat('es-ES',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m.period+'-01T12:00:00Z'));
       el('period').textContent = label.charAt(0).toUpperCase()+label.slice(1);
+      el('invoiceReview').href = '/facturas/gestify-month?period='+m.period;
+      el('invoiceReview').hidden = false;
     }
     async function run() {
       if (running) return;

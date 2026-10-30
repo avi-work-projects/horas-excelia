@@ -1,0 +1,21 @@
+<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Kairo · Factura del mes</title>
+<style>
+:root{font:15px/1.45 system-ui,sans-serif;color:#183b39;background:#f2f6f4}*{box-sizing:border-box}body{margin:0}.shell{max-width:560px;margin:auto;padding:16px}header{display:flex;align-items:center;justify-content:space-between;margin:0 0 16px}header b{font-size:19px}header a{font-size:13px}a{color:#28695d}h1{font-size:25px;margin:0 0 12px}h2{font-size:18px;margin:0 0 14px}.card{padding:16px;background:white;border:1px solid #d4e1dc;border-radius:16px}.facts{display:flex;justify-content:space-between;align-items:baseline;gap:12px}.facts>strong{font-size:23px;white-space:nowrap}.facts>span{font-size:13px}.date{color:#28695d;font-weight:600;font-size:13px}.notice{font-size:12px;color:#657a75}.actions{display:grid;gap:8px;margin:14px 0}button,.button{display:block;text-align:center;border:1px solid #abc8bd;border-radius:9px;background:white;color:#20594c;padding:10px;font:600 14px/1.4 system-ui;min-height:42px;cursor:pointer;text-decoration:none}.primary{background:#1c755c;color:white;border-color:#1c755c}button:disabled{opacity:.55;cursor:wait}summary{cursor:pointer;font-weight:600;font-size:13px;padding:8px 0}details p,pre{font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere}#result{font-size:13px;color:#965219}#result:empty{display:none}.back{margin-top:12px;width:100%}dialog{max-width:440px;width:calc(100% - 28px);padding:20px;border:1px solid #bdcec6;border-radius:16px}dialog::backdrop{background:#17352c88}dialog button{width:100%;margin-top:10px}button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #b68c32;outline-offset:3px}
+</style><main class="shell"><header><b>Kairo · Facturas</b><a href="/facturas/">Histórico</a></header><h1><!--TITLE--></h1><section class="card"><!--CONTENT--><p id="result" role="status"></p></section><button class="back" id="back">Volver a Gestify</button></main>
+<dialog id="confirm"><h2 id="confirmTitle"></h2><p id="confirmText"></p><button class="primary" id="confirmGo">Confirmar</button><button id="close">Volver a revisar</button></dialog>
+<script>
+const boot=/*BOOT*/;let busy=false;
+document.getElementById('back').onclick=()=>{if(window.opener){window.opener.focus();window.close();}else history.back();};
+const dialog=document.getElementById('confirm');document.getElementById('close').onclick=()=>dialog.close();
+document.querySelectorAll('[data-action]').forEach(button=>button.onclick=()=>{
+ const action=button.dataset.action;
+ document.getElementById('confirmTitle').textContent=action==='approve'?'Aprobar '+boot.period:'Cancelar '+boot.period;
+ document.getElementById('confirmText').textContent=action==='approve'?'Autorizas la emisión fiscal y el envío del correo de este mes en la fecha indicada. Revisa el PDF y los destinatarios antes de confirmar.':'Se detendrá la programación pendiente. Si ya está emitida, solo se cancela el correo.';
+ document.getElementById('confirmGo').onclick=async()=>{
+  if(busy)return;busy=true;dialog.close();document.querySelectorAll('[data-action]').forEach(b=>b.disabled=true);
+  const result=document.getElementById('result');result.textContent='Guardando…';
+  try{const r=await fetch('/facturas/'+action,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF':boot.csrf},body:JSON.stringify({hash:boot.hash})});const j=await r.json();if(!r.ok)throw Error(j.message||'Operación no confirmada');location.reload();}
+  catch(e){result.textContent=e.message;busy=false;document.querySelectorAll('[data-action]').forEach(b=>b.disabled=false);}
+ };dialog.showModal();
+});
+</script></html>

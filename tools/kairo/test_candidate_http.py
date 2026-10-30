@@ -42,13 +42,13 @@ class HandlerTests(unittest.TestCase):
         for item in reversed(self.patches): item.stop()
         self.fixture.tearDown()
 
-    def request(self, changes=None, method='POST'):
+    def request(self, changes=None, method='POST', path='/facturas/gestify'):
         handler = candidate.Handler.__new__(candidate.Handler)
         raw = json.dumps(self.fixture.data).encode()
         handler.headers = {'Tailscale-User-Login':candidate.OWNER, 'Host':'127.0.0.1:8766',
                            'Origin':candidate.ORIGIN, 'X-CSRF':candidate.CSRF, 'Content-Length':str(len(raw))}
         handler.headers.update(changes or {})
-        handler.path = '/facturas/gestify'
+        handler.path = path
         handler.rfile = io.BytesIO(raw)
         response = []
         handler.reply = lambda *args: response.append(args)
@@ -69,6 +69,15 @@ class HandlerTests(unittest.TestCase):
 
     def test_get_requires_identity(self):
         self.assertEqual(self.request({'Tailscale-User-Login':''}, 'GET')[0], 403)
+
+    def test_selected_month_get_is_private_and_read_only(self):
+        path='/facturas/gestify-month?period=2027-11'
+        self.assertEqual(self.request({'Tailscale-User-Login':''},'GET',path)[0],403)
+        self.assertEqual(self.request({'Host':'evil.test'},'GET',path)[0],403)
+        code,body=self.request(method='GET',path=path)
+        self.assertEqual(code,200);self.assertIn('No está preparada',body)
+        self.assertEqual(self.request(method='GET',path='/facturas/gestify-month?period=bad')[0],400)
+        self.assertFalse(self.fixture.calls)
 
     def test_disabled_by_default(self):
         with patch.object(candidate, 'config', lambda:{}):

@@ -105,10 +105,22 @@ for(const width of [320,400,440])test('resumen, fórmula y colores de jornada a 
   await page.setViewportSize({width,height:1000});await setup(page,context);
   await page.evaluate(()=>{ST['2027-02-02']={type:'normal',hours:7};ST['2027-02-03']={type:'normal',hours:8};ST['2027-02-04']={type:'festivo'};homeSubmissionWeeks(CY,CM).forEach(w=>{var row=hoursCachedWeek(w.key);row.days=hoursWeekDays(w.key);row.schedule=homeWeekSchedule(w.key).date+'T08:00:00+01:00';});render();});
   const summary=page.locator('.home-summary-compact');await expect(summary.locator('.total')).toContainText('20 días laborables');
+  const font=el=>{const s=getComputedStyle(el);return [s.fontFamily,s.fontSize,s.fontWeight,s.color,s.lineHeight];};
+  const total=summary.locator('.home-base-total'),before=await total.evaluate(font),closedBox=await total.boundingBox();
+  const toggleBox=await summary.locator('[data-home-formula]').boundingBox();expect(toggleBox.x).toBeLessThan(closedBox.x);
+  await expect(page.locator('.home-submission')).not.toContainText('Próximo envío');
+  expect(Math.abs((await summary.boundingBox()).y-(await page.locator('.home-submission-copy').boundingBox()).y)).toBeLessThan(2);
   await summary.locator('[data-home-formula]').click();await expect(summary.locator('.home-hours-equation')).toContainText('9×14 + 8×1 + 7×1 + 6,5×4');
+  await expect(total).toHaveCount(1);expect(await total.evaluate(font)).toEqual(before);expect((await total.boundingBox()).y).toBeGreaterThan(closedBox.y);
   expect(await summary.evaluate(e=>e.scrollWidth<=e.clientWidth)).toBe(true);expect(await page.locator('.home-submission').evaluate(e=>e.scrollWidth<=e.clientWidth)).toBe(true);
   expect(await summary.evaluate(e=>e.getBoundingClientRect().left>e.parentElement.getBoundingClientRect().left)).toBe(true);
   await page.locator('#editHoursBtn').click();
   const colors=await page.locator('.hours-chip').evaluateAll(nodes=>nodes.map(e=>getComputedStyle(e).color));expect(new Set(colors).size).toBe(3);
   await page.locator('#editHoursBtn').click();await page.screenshot({path:info.outputPath('home-'+width+'.png'),animations:'disabled'});
+});
+test('sin ausencias el total conserva también su tamaño al mostrar la fórmula',async({page,context})=>{
+  await setup(page,context);const total=page.locator('.home-base-total');
+  const font=el=>{const s=getComputedStyle(el);return [s.fontFamily,s.fontSize,s.fontWeight,s.color];};
+  const before=await total.evaluate(font);await page.locator('[data-home-formula]').click();
+  await expect(total).toHaveCount(1);expect(await total.evaluate(font)).toEqual(before);
 });

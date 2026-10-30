@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v520 — Acceso a Outlook y actualización fiable';
+var APP_VERSION = 'v521 — Home compacto y facturas por mes';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -363,11 +363,9 @@ function renderHomeSubmissionStatus(year,month,state){
   var closed=homePeriodMode(year,month)==='closed',title=closed?'Mes cerrado':!state.known?'Estado pendiente':state.complete?'Correos al día':state.review?'Hay cambios':'Semanas pendientes';
   var count=state.missing+state.extras.length;
   var detail=closed?'Histórico · sin consultas automáticas':!state.known?'Pendiente de primera comprobación':state.review?'Revisa las programaciones afectadas':state.complete?(state.counts.scheduled?state.counts.scheduled+' programadas':'Sin semanas pendientes'):count+(count===1?' semana por programar':' semanas por programar');
-  var scheduled=homeSubmissionWeeks(year,month).map(function(w){return hoursCachedWeek(w.key);}).filter(function(row){return row&&row.state==='scheduled'&&Date.parse(row.schedule)>Date.now();}).sort(function(a,b){return Date.parse(a.schedule)-Date.parse(b.schedule);})[0];
-  var next=scheduled?new Date(scheduled.schedule):null;
   var showSummary=closed||state.known&&Object.keys(state.states).every(function(key){return ['sent','scheduled','changed','closed'].includes(state.states[key]);});
-  var body=showSummary?'<div class="home-submission-body"><div class="home-submission-next"><span>'+(closed?'Mes cerrado':next?'Próximo envío':state.review?'Cambios locales':'Por preparar')+'</span><strong>'+(closed?'Archivado':next?fd(next):state.review?'Revisar':'Al día')+'</strong><span>'+(next?'08:00 Madrid':closed?'Guardado':'')+'</span></div><div class="month-summary home-summary-compact">'+renderHomeMonthSummary(homeMonthHours(year,month))+'</div></div>':'';
-  return '<section class="home-submission '+(!state.known?'unknown':state.complete?'complete':'pending')+'" aria-label="Correos y horas del mes">'+(typeof renderHoursAuthNotice==='function'?renderHoursAuthNotice():'')+'<div class="home-submission-heading"><span class="home-submission-icon" aria-hidden="true">'+(!state.known?'◷':state.complete?'&#10003;':'!')+'</span><strong>'+title+'</strong></div><div class="home-submission-detail">'+detail+'</div>'+body+renderHoursAccess(state)+'</section>';
+  var body='<div class="home-submission-body'+(showSummary?'':' summaryless')+'"><div class="home-submission-copy"><div class="home-submission-heading"><span class="home-submission-icon" aria-hidden="true">'+(!state.known?'◷':state.complete?'&#10003;':'!')+'</span><strong>'+title+'</strong></div><div class="home-submission-detail">'+detail+'</div></div>'+(showSummary?'<div class="month-summary home-summary-compact">'+renderHomeMonthSummary(homeMonthHours(year,month))+'</div>':'')+'</div>';
+  return '<section class="home-submission '+(!state.known?'unknown':state.complete?'complete':'pending')+'" aria-label="Correos y horas del mes">'+(typeof renderHoursAuthNotice==='function'?renderHoursAuthNotice():'')+body+renderHoursAccess(state)+'</section>';
 }
 
 // ── Comprueba si hay semanas enviadas en el mes actual ────────

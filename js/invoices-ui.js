@@ -82,7 +82,7 @@ async function openInvoiceMonth(period){
     catch(e){problem=e.message;}
   }
   if(seq!==INVOICE_OPEN_SEQ)return;
-  var h='<p class="invoice-month"><strong>'+escHtml(invoiceLabel(period))+'</strong></p>';
+  var h='<label class="invoice-month invoice-month-picker"><span>Mes de la factura</span><input type="month" id="invoicePeriod" value="'+escHtml(period)+'" aria-label="Mes de la factura"></label>';
   if(historical||record.final)h+='<p class="invoice-status">'+(historical?'Referencia histórica':'PDF definitivo de AEAT incorporado')+'</p>';
   h+=invoiceDaysSummary(period,record.final?p:null);
   if(problem)h+='<p class="invoice-note">'+escHtml(problem)+'</p>';
@@ -96,6 +96,7 @@ async function openInvoiceMonth(period){
   if(p&&!problem&&!historical)h+=invoiceTools();
   h+='<p id="invoiceError" class="invoice-error" role="alert"></p>';var root=invoicePanel('Enviar factura',h);
   root.querySelector('.invoice-sheet').classList.add('invoice-month-sheet');
+  root.querySelector('#invoicePeriod').onchange=function(){if(/^20\d\d-(0[1-9]|1[0-2])$/.test(this.value))openInvoiceMonth(this.value);};
   function error(e){root.querySelector('#invoiceError').textContent=e.message;root.querySelector('#invoiceError').scrollIntoView({block:'nearest'});}
   root.querySelector('#invoiceConfig').onclick=openInvoiceSettings;
   var kairoConfig=root.querySelector('#invoiceKairoConfig');if(kairoConfig)kairoConfig.onclick=function(){openInvoiceSettings({connection:true});};

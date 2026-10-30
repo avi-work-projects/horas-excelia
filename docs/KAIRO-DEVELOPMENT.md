@@ -31,8 +31,9 @@ No hay operaciones de emisión, aprobación, correo ni impuestos en el puente.
    `notify_review=False`. El camino manual `/upload` conserva su comportamiento.
    Recibir desde Gestify nunca manda el correo automático de revisión.
 5. Consultar devuelve solo identidad de operación, hash, mes y estado. No devuelve
-   datos fiscales, credenciales ni una URL arbitraria. La revisión sigue en
-   `/facturas/`, con las cuatro pestañas y aprobación de versión exacta existentes.
+   datos fiscales, credenciales ni una URL arbitraria. La revisión desde Gestify
+   abre `/facturas/gestify-month?period=YYYY-MM`, conservando el mes seleccionado.
+   El histórico y la revisión extensa anterior siguen disponibles en Kairo.
 
 No usar `noopener` en esta ventana de transporte: necesita el opener para el
 intercambio. Solo se abre el destino privado validado y configurado por el usuario.
@@ -192,3 +193,39 @@ navegador del móvil corresponde al usuario.
 
 Pruebas: `python tools/kairo/test_home_status.py`, incluidas en CI, y
 `tools/browser/home-invoice-status.spec.js`. Los fixtures son ficticios.
+
+
+## Home compacto y revisión por mes (v521)
+
+Responsabilidades: Home representa los hechos de caché existentes; el selector
+prepara el mes indicado sin cambiar el mes de Home; la revisión privada solo
+lee planes y delega las acciones en los POST existentes. No cambia fórmulas,
+conciliación de Outlook, vencimientos, importador, aprobación ni runner fiscal.
+
+`invoice_month_review.py` y su plantilla reciben un período obligatorio y buscan
+su último plan. Un mes sin preparar no muestra la factura de otro mes. Los planes
+históricos son de consulta; solo el plan actual puede ofrecer aprobación o
+cancelación, manteniendo hash exacto y segunda confirmación. El PDF usa la ruta
+privada inmutable por ID de plan. Los detalles del correo permanecen disponibles.
+
+`prepare_month_review.py` añade únicamente el GET autenticado. Comprueba mediante
+AST que ninguna función salvo do_GET haya cambiado, y rechaza puntos de inserción
+inesperados. La instalación copia la plantilla, módulo y receptor, además del
+servicio parcheado, con copia privada previa y sin reemplazar datos/configuración.
+
+Límite conservado: Kairo ejecuta un único plan fiscal activo. Se puede preparar
+noviembre en octubre cuando octubre está enviado, pero otro mes ya aprobado o
+con correo pendiente bloquea sustituirlo. Esta entrega no promete varias facturas
+aprobadas simultáneamente; eso requiere ampliar el runner y su modelo de planes.
+
+Validación: resumen cerrado/abierto con tipografía idéntica a 320/400/440 px;
+selector octubre → noviembre, transporte e idempotencia; revisión compacta a
+320/400 px, confirmación y rechazo de versión; SQLite sintético conserva el
+histórico y bloquea otro mes aprobado; ruta HTTP mantiene identidad/Host/CSRF.
+Sin emisión fiscal ni programación real como parte de las pruebas.
+
+Activación del 30/10/2026: instalada la ruta y las pantallas; servicio activo.
+GET privado de octubre devuelve enviada; noviembre devuelve no preparada,
+sin ofrecer acciones sobre octubre. Sin identidad responde 403. La huella de
+todos los registros de planes antes/después permanece idéntica. Copia privada:
+`backup-v521-20261030-134346`. No se ejecutaron POST de aprobación/cancelación.
