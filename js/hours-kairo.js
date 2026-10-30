@@ -40,9 +40,13 @@ function hoursWeekDate(key,state){
 function renderHoursAccess(state){
   var closed=homePeriodMode(CY,CM)==='closed',checked=homeSubmissionWeeks(CY,CM).map(function(w){var row=hoursCachedWeek(w.key);return row?row.checkedAt:0;}).filter(Boolean);
   var note=checked.length?'Comprobado '+new Intl.DateTimeFormat('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(Math.min.apply(null,checked))):closed?'Histórico cerrado':'Sin comprobación guardada';
+  var cached=HOURS_CACHE.url===hoursKairoUrl()&&HOURS_CACHE.periods[mkey(CY,CM)];
+  if(cached)note='Comprobado '+new Intl.DateTimeFormat('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(cached.checkedAt));
+  var last=HOURS_CACHE.url===hoursKairoUrl()&&HOURS_CACHE.checks&&HOURS_CACHE.checks[mkey(CY,CM)];
+  var feedback=last&&last.phase==='error'?'Intento '+new Intl.DateTimeFormat('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(last.at))+': '+hoursCheckMessage(last.code)+' Se conserva la última comprobación correcta.':typeof HOURS_JOB_ERROR==='undefined'?'':HOURS_JOB_ERROR;
   var running=typeof HOURS_JOBS!=='undefined'&&HOURS_JOBS.some(function(j){return j.url===hoursKairoUrl();});
   var label=state&&state.review?'Revisar cambios':'Programar pendientes';
-  return '<div class="hours-home-actions"><span class="hours-verified-note">'+note+'</span><button type="button" class="hours-check-button" data-hours-check aria-label="Actualizar estado de correos y factura"'+(running||HOURS_REFRESHING?' disabled':'')+'>↻ <span>Actualizar estado</span></button>'+(!closed&&(!state||!state.complete)?'<button type="button" class="hours-pending-button" data-hours-review>'+label+'</button>':'')+(running?'<span class="hours-job-note" role="status">Kairo está trabajando. Puedes salir de Gestify.</span>':typeof HOURS_JOB_ERROR!=='undefined'&&HOURS_JOB_ERROR?'<span class="hours-job-note" role="status">'+escHtml(HOURS_JOB_ERROR)+'</span>':'')+'</div>';
+  return '<div class="hours-home-actions"><span class="hours-verified-note">'+note+'</span><button type="button" class="hours-check-button" data-hours-check aria-label="Actualizar estado de correos y factura"'+(running||HOURS_REFRESHING?' disabled':'')+'>↻ <span>'+(running||HOURS_REFRESHING?'Actualizando…':'Actualizar estado')+'</span></button>'+(!closed&&(!state||!state.complete)?'<button type="button" class="hours-pending-button" data-hours-review>'+label+'</button>':'')+(running?'<span class="hours-job-note" role="status">Kairo está trabajando. Puedes salir de Gestify.</span>':feedback?'<span class="hours-job-note" role="status">'+escHtml(feedback)+'</span>':'')+'</div>';
 }
 function hoursMailSubject(wd){return 'HORAS Y DIAS TRABAJADOS - '+AUTHOR_NAME+' - Semana del '+fd(wd.mon)+' al '+fd(wd.fri);}
 function hoursMailRequest(targetWeek){
@@ -189,16 +193,18 @@ async function syncHoursStatus(force){
   if(HOURS_CACHE.url!==url)HOURS_CACHE={schema:1,url:url,periods:{},weeks:{},attempts:{}};
   HOURS_CACHE.attempts=HOURS_CACHE.attempts||{};HOURS_CACHE.attempts[attempt]=true;hoursCacheSave();HOURS_ATTEMPTS[url+'|'+attempt]=true;
   HOURS_STATUS={period:period,url:url,phase:'loading',checkedAt:cached?cached.checkedAt:0};
+  hoursRecordCheck(period,'running');
   var controller=new AbortController(),timeout=setTimeout(function(){controller.abort();},10000);
   try{
     var response=await fetch(url+'status?period='+target+'&background=1&audit='+(windowAudit?'1':'0')+'&refresh='+(force||due.length?'1':'0'),{method:'GET',mode:'cors',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',targetAddressSpace:'local',signal:controller.signal});
     if(!response.ok)throw new Error('Outlook sin confirmar');
     var result=await response.json();
-    if(result.phase==='done'){hoursAcceptJobResult({url:url},result.result);if(period===mkey(CY,CM))HOURS_STATUS={period:period,url:url,phase:'ready',checkedAt:Date.now()};}
-    else{hoursTrackJob(result,{period:target},url);if(period===mkey(CY,CM))HOURS_STATUS={period:period,url:url,phase:'loading',checkedAt:cached?cached.checkedAt:0};}
+    if(result.phase==='done'){hoursAcceptJobResult({url:url},result.result);hoursRecordCheck(period,'done');HOURS_JOB_ERROR='';if(force)showToast('Estado de correos actualizado.');if(period===mkey(CY,CM))HOURS_STATUS={period:period,url:url,phase:'ready',checkedAt:Date.now()};}
+    else{hoursTrackJob(result,{period:target,manual:force},url);if(period===mkey(CY,CM))HOURS_STATUS={period:period,url:url,phase:'loading',checkedAt:cached?cached.checkedAt:0};}
   }catch(e){
     if(period===mkey(CY,CM))HOURS_STATUS={period:period,url:url,phase:'error',checkedAt:cached?cached.checkedAt:0};
     HOURS_JOB_ERROR='Kairo no está disponible. Se conserva el estado guardado y el envío manual.';
+    hoursRecordCheck(period,'error','network');if(force)showToast('No se pudo conectar con Kairo. Se conserva la última comprobación correcta.');
   }
   finally{clearTimeout(timeout);paintHoursStatus();}
 }

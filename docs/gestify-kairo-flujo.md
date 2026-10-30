@@ -1,6 +1,6 @@
 # Gestify y Kairo: funcionamiento y límites
 
-Contrato revisado el 29/10/2026 sobre v519. Describe el sistema instalado;
+Contrato revisado el 30/10/2026 sobre v520. Describe el sistema instalado;
 las propuestas de autenticación pendientes se distinguen al final.
 
 ## Qué guarda cada parte
@@ -115,6 +115,18 @@ de Gestify. Solo se utiliza ante un formulario de acceso reconocido, con un inte
 acotado; una contraseña rechazada, MFA o una pantalla desconocida detienen la
 recuperación. El aviso aparece en Home al consultar el estado de acceso. La
 programación pendiente debe volver a conciliarse tras recuperar el acceso.
+
+«Comprobar acceso» solicita al recuperador una revisión acotada; no relee
+simplemente el aviso anterior. Puede continuar una pantalla antes desconocida
+si ahora reconoce el formulario de Microsoft. MFA y contraseñas rechazadas
+siguen detenidas. El aviso se consulta al entrar/volver y durante esa petición,
+sin un temporizador permanente en Home.
+
+«Actualizar estado» crea un trabajo de lectura en Kairo y muestra su progreso.
+Al completarse, conserva la fecha nueva del mes comprobado. Si falla, muestra
+la hora del intento y una causa concreta, manteniendo por separado la fecha y
+los datos de la última comprobación correcta. Una lectura incompleta tampoco
+produce una revisión de programación aparentemente correcta.
 
 ## Comparación local de cambios
 

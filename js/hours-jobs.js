@@ -24,7 +24,7 @@ function hoursAcceptJobResult(job,result){
 function hoursTrackJob(value,request,url){
   if(!value||!value.jobId||!['status','preview','commit','simulate'].includes(value.kind))return;
   if(!/^[a-f0-9-]{36}$/.test(value.jobId))throw new Error('Identificador de trabajo no válido');
-  if(!HOURS_JOBS.some(function(j){return j.id===value.jobId;}))HOURS_JOBS.push({id:value.jobId,url:url,period:request.period,kind:value.kind,settings:hoursSettingsSignature()});
+  if(!HOURS_JOBS.some(function(j){return j.id===value.jobId;}))HOURS_JOBS.push({id:value.jobId,url:url,period:request.period,kind:value.kind,manual:request.manual===true,settings:hoursSettingsSignature()});
   HOURS_JOBS=HOURS_JOBS.slice(-24);HOURS_JOB_ERROR='';HOURS_JOB_NETWORK_ERROR=false;hoursJobsSave();hoursResumeJobs();paintHoursStatus();
 }
 async function hoursResumeJobs(){
@@ -33,13 +33,15 @@ async function hoursResumeJobs(){
   try{
     var url=hoursKairoUrl(),pending=HOURS_JOBS.filter(function(j){return j.url===url;}),networkFailed=false;
     for(var job of pending){
+      var controller=new AbortController(),timeout=setTimeout(function(){controller.abort();},8000);
       try{
-        var response=await fetch(job.url+'jobs/'+job.id,{mode:'cors',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',targetAddressSpace:'local'});
+        var response=await fetch(job.url+'jobs/'+job.id,{mode:'cors',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',targetAddressSpace:'local',signal:controller.signal});
         if(!response.ok)throw new Error('Kairo no está disponible');
         var data=await response.json();if(data.jobId!==job.id||!['queued','running','done','error'].includes(data.phase))throw new Error('Trabajo no válido');
-        if(data.phase==='done'){hoursAcceptJobResult(job,data.result);HOURS_JOBS=HOURS_JOBS.filter(function(j){return j.id!==job.id;});}
-        else if(data.phase==='error'){HOURS_JOB_ERROR='Kairo requiere revisión. Se conserva el último estado confirmado.';HOURS_JOB_NETWORK_ERROR=false;HOURS_JOBS=HOURS_JOBS.filter(function(j){return j.id!==job.id;});if(typeof checkHoursAuth==='function'){checkHoursAuth(true,6);setTimeout(function(){checkHoursAuth(true,6);},16000);}}
+        if(data.phase==='done'){hoursAcceptJobResult(job,data.result);HOURS_JOBS=HOURS_JOBS.filter(function(j){return j.id!==job.id;});HOURS_JOB_ERROR='';HOURS_JOB_NETWORK_ERROR=false;if(job.kind==='status'){hoursRecordCheck(job.period,'done','',Date.parse(data.updatedAt)||Date.now());if(job.manual)showToast('Estado de correos actualizado.');}}
+        else if(data.phase==='error'){HOURS_JOB_ERROR=hoursCheckMessage(data.errorCode)+' Se conserva el último estado confirmado.';HOURS_JOB_NETWORK_ERROR=false;HOURS_JOBS=HOURS_JOBS.filter(function(j){return j.id!==job.id;});if(job.kind==='status')hoursRecordCheck(job.period,'error',data.errorCode,Date.parse(data.updatedAt)||Date.now());if(job.manual)showToast(hoursCheckMessage(data.errorCode));if(typeof checkHoursAuth==='function')checkHoursAuth(true,6);}
       }catch(e){networkFailed=true;if(!HOURS_JOB_ERROR||HOURS_JOB_NETWORK_ERROR){HOURS_JOB_ERROR='Sin conexión con Kairo. El trabajo y los estados guardados se conservan.';HOURS_JOB_NETWORK_ERROR=true;}}
+      finally{clearTimeout(timeout);}
     }
     if(pending.length&&!networkFailed&&HOURS_JOB_NETWORK_ERROR){HOURS_JOB_ERROR='';HOURS_JOB_NETWORK_ERROR=false;}
     hoursJobsSave();paintHoursStatus();

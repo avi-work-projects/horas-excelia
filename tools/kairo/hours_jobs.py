@@ -3,6 +3,7 @@ import json
 import threading
 import uuid
 from datetime import datetime, timezone
+from hours_errors import HoursFailure, MESSAGES
 
 
 class Jobs:
@@ -66,6 +67,12 @@ class Jobs:
             result['result'] = json.loads(row['result'])
         if row['error']:
             result['error'] = row['error']
+            try:
+                failure = json.loads(row['error'])
+                if failure.get('code') in MESSAGES:
+                    result.update(error=MESSAGES[failure['code']], errorCode=failure['code'])
+            except (ValueError, TypeError, AttributeError):
+                pass
         return result
 
     def _run(self):
@@ -82,6 +89,9 @@ class Jobs:
             try:
                 result = self.execute(row['kind'], json.loads(row['payload']))
                 phase, error = 'done', None
+            except HoursFailure as failure:
+                result, phase = None, 'error'
+                error = json.dumps({'code': failure.code})
             except Exception:
                 # Browser exceptions can contain selectors, addresses or bodies.
                 result, phase = None, 'error'

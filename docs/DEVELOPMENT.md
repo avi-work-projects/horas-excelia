@@ -1622,3 +1622,26 @@ Validación: transiciones de acceso y fronteras HTTP; Chromium separado con toda
 la red interceptada; cifrado/entrega de una credencial sintética real por systemd;
 secreto ausente, diario de semanas intacto y API de salud protegida en Kairo.
 Solo se recapturan las tres referencias de Home, conservando las otras 170.
+
+## Acceso y actualización verificables (v520)
+
+El botón de acceso solicita una revisión real al recuperador privado. Reconoce
+la alternativa de contraseña tras la preferencia de clave de paso de Microsoft;
+MFA y contraseñas rechazadas no se reintentan. Una carga lenta del buzón permanece
+en comprobación. Se elimina el sondeo permanente del aviso en Home.
+
+Los trabajos distinguen acceso caducado, borrador abierto, cuenta incorrecta y
+lectura incompleta mediante códigos seguros. Una lectura incompleta falla también
+en la preparación del lote; no devuelve una revisión vacía como si fuera válida.
+Home conserva hechos confirmados, muestra progreso y registra por separado el
+último intento fallido. La fecha visible usa la comprobación del mes solicitada.
+
+Validación real del 30/10: recuperación del buzón existente y lectura de octubre
+completada a las 13:03 (Madrid), con cinco enviadas y dos programadas. Consulta
+posterior de la caché en Kairo: HTTP 200 sin otro barrido. No hubo escrituras de
+correo. Copia privada previa del código y SQLite conservada en Kairo.
+
+No se aplica el nuevo diseño: se entrega una propuesta separada para revisarla.
+El atlas mantiene sus capturas representativas; esta corrección funcional no
+rediseña menús ni justifica regenerar las 173 imágenes. Continúan pendientes la
+interfaz compacta y el recorrido de facturas de meses futuros.
