@@ -598,23 +598,23 @@
 **Rangos por prefijo de clase:**
 .ah-cuota:121-123 · .ah-donut:131-133 · .ah-section:118-120 · .ah-total:128-130 · .ah-vs:124-127 · .analisis-card:268-270 · .analisis-cards:257-257 · .analisis-hbar:271-276 · .analisis-input:286-289 · .analisis-ins:295-300 · .analisis-insurance:294-294 · .analisis-mortgage:277-293 · .econ-add:203-204 · .econ-ahorro:427-434 · .econ-annual:25-25 · .econ-avg:26-354 · .econ-bracket:186-192 · .econ-calc:337-338 · .econ-casc:341-348 · .econ-cascade:340-340 · .econ-chart:216-217 · .econ-comp:194-218 · .econ-decl:181-358 · .econ-distrib:664-678 · .econ-donut:445-460 · .econ-equiv:659-662 · .econ-fiscal:438-443 · .econ-formula:45-48 · .econ-gastos:360-372 · .econ-gear:153-154 · .econ-hdr:67-155 · .econ-ingresado:33-33 · .econ-irpf:374-436 · .econ-legend:219-220 · .econ-line:214-215 · .econ-month:50-63 · .econ-mr:656-657 · .econ-multi:648-658 · .econ-opt:333-336 · .econ-qcard:15-22 · .econ-qcell:11-14 · .econ-qm:20-20 · .econ-qmonth:18-19 · .econ-quarter:7-10 · .econ-rate:157-165 · .econ-row:34-44 · .econ-sc:196-685 · .econ-scenario:195-195 · .econ-section:64-64 · .econ-sim:222-232 · .econ-stats:169-174 · .econ-sub:70-82 · .econ-tab:68-69 · .econ-toggle:176-179 · .econ-val:49-49 · .est-btn:91-95 · .est-card:101-103 · .est-detail:98-98 · .est-field:110-116 · .est-fields:109-109 · .est-group:89-93 · .est-modo:104-104 · .est-nav:88-88 · .est-section:97-97 · .est-tariff:99-108 · .ev-sub:76-78 · .excl-item:167-167 · .excl-row:166-166 · .fiscal-add:326-489 · .fiscal-body:304-308 · .fiscal-bracket:317-325 · .fiscal-compras:518-553 · .fiscal-copy:150-152 · .fiscal-custom:314-314 · .fiscal-ded:528-542 · .fiscal-desgrav:491-543 · .fiscal-despacho:555-576 · .fiscal-error:330-330 · .fiscal-gasto:462-524 · .fiscal-gastos:544-544 · .fiscal-hdr:474-474 · .fiscal-highlight:515-515 · .fiscal-onoff:557-558 · .fiscal-pct:315-324 · .fiscal-period:470-471 · .fiscal-radio:309-313 · .fiscal-save:328-329 · .fiscal-section:305-482 · .fiscal-sticky:479-479 · .fiscal-subsection:483-484 · .fiscal-tab:475-477 · .fiscal-viaje:485-486 · .fiscal-vinc:568-569 · .fiscal-year:148-149 · .hip-add:646-646 · .hip-auto:597-597 · .hip-bar:583-590 · .hip-cancel:633-633 · .hip-cf:602-607 · .hip-edit:629-631 · .hip-g2:601-601 · .hip-grid:595-595 · .hip-period:635-644 · .hip-resumen:578-582 · .hip-ro:620-627 · .hip-save:632-632 · .hip-section:596-645 · .hip-stat:592-594 · .hip-stats:591-591 · .hip-sub:599-599 · .hip-vinc:598-598 · .hip-vr:609-618 · .mg-budget:135-144 · .mg-cat:145-145 · .mg-desgrav:146-146 · .mg-sort:141-141 · .rate-input:4-4 · .rate-label:3-3 · .rate-row:2-2 · .rate-suffix:5-5 · .rut-sub:74-80 · .sim-combo:234-238 · .sim-field:223-224 · .sim-hr:233-233 · .sim-period:230-230 · .sim-target:225-229 · .study-intro:85-87 · .sub-block:259-260 · .sub-row:261-267 · .sy-sublbl:24-24
 
-### css/source/birthdays.css  _(159 líneas)_
+### css/source/birthdays.css  _(165 líneas)_
 
 **Secciones:**
 
 - BIRTHDAYS:1
-- Vista compacta: dos nombres y acceso al listado completo, sin alterar la casilla.:17
-- Misma posición en las tres vistas; compactar solo el botón.:32
-- VIP controls bar:37
-- Botón Cancelar fijo al fondo de pantalla en modo edición VIP:48
-- VIP edit mode item states:51
-- Feat 1: Buscador en lista por meses:61
-- Upcoming birthdays:87
-- Fin de semana suave; hoy conserva su borde y su fecha destacada.:104
-- Categorías de personas y filtros de consulta.:125
+- La semana crece si lo necesitan los dos nombres visibles y el contador.:17
+- Misma posición en las tres vistas; compactar solo el botón.:38
+- VIP controls bar:43
+- Botón Cancelar fijo al fondo de pantalla en modo edición VIP:54
+- VIP edit mode item states:57
+- Feat 1: Buscador en lista por meses:67
+- Upcoming birthdays:93
+- Fin de semana suave; hoy conserva su borde y su fecha destacada.:110
+- Categorías de personas y filtros de consulta.:131
 
 **Rangos por prefijo de clase:**
-.bd-detail:149-155 · .bday-add:102-103 · .bday-alarm:152-152 · .bday-badge:18-21 · .bday-buscar:64-66 · .bday-calendar:7-23 · .bday-cancel:49-50 · .bday-cell:11-105 · .bday-day:154-158 · .bday-detail:141-141 · .bday-filter:145-147 · .bday-group:126-148 · .bday-hdr:6-6 · .bday-header:24-33 · .bday-io:70-86 · .bday-list:36-60 · .bday-month:35-35 · .bday-num:15-15 · .bday-person:144-144 · .bday-search:67-69 · .bday-symbol:2-2 · .bday-upcoming:3-101 · .bday-vip:26-47 · .bday-week:8-10 · .data-btn:5-5 · .ev-btn:4-4 · .ev-cell:106-123 · .ev-io:72-72 · .io-peligro:77-85 · .io-primaria:76-83 · .vip-no:44-45
+.bd-detail:155-161 · .bday-add:108-109 · .bday-alarm:158-158 · .bday-badge:18-27 · .bday-buscar:70-72 · .bday-calendar:7-29 · .bday-cancel:55-56 · .bday-cell:11-111 · .bday-day:160-164 · .bday-detail:147-147 · .bday-filter:151-153 · .bday-group:132-154 · .bday-hdr:6-6 · .bday-header:30-39 · .bday-io:76-92 · .bday-list:42-66 · .bday-month:41-41 · .bday-num:15-15 · .bday-person:150-150 · .bday-search:73-75 · .bday-symbol:2-2 · .bday-upcoming:3-107 · .bday-vip:32-53 · .bday-week:8-10 · .data-btn:5-5 · .ev-btn:4-4 · .ev-cell:112-129 · .ev-io:78-78 · .io-peligro:83-91 · .io-primaria:82-89 · .vip-no:50-51
 
 ### css/source/event-calendar.css  _(386 líneas)_
 

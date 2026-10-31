@@ -1063,15 +1063,21 @@ input[type="checkbox"]:disabled{opacity:.4;cursor:default}
 .bday-week-hdr{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-bottom:6px}
 .bday-week-hdr div{text-align:center;font-size:.64rem;color:var(--text-muted);padding:8px 0;font-weight:600}
 .bday-week-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-bottom:4px}
-.bday-cell{height:112px;min-height:112px;min-width:0;padding:5px 2px;background:var(--surface);border:1px solid var(--border);border-radius:8px;display:flex;flex-direction:column;gap:4px;cursor:pointer;transition:background .12s}
+.bday-cell{min-height:112px;min-width:0;padding:5px 2px;background:var(--surface);border:1px solid var(--border);border-radius:8px;display:flex;flex-direction:column;gap:4px;cursor:pointer;transition:background .12s}
 .bday-cell.out-m{opacity:.38}
 .bday-cell.past-cal-day .bday-num{color:var(--text-dim)}
 .bday-cell.today-bday{border-color:var(--birthday-tone);box-shadow:inset 0 0 0 1px var(--birthday-tone)}
 .bday-num{display:flex;align-items:center;justify-content:center;align-self:flex-start;min-width:23px;height:23px;font-size:.73rem;font-family:var(--mono);line-height:1;color:var(--text-muted)}
 .bday-calendar .bday-cell.today-bday .bday-num{background:var(--birthday-tone);color:var(--surface);border-radius:50%;font-weight:700}
-/* Vista compacta: dos nombres y acceso al listado completo, sin alterar la casilla. */
-.bday-badge{position:relative;font-size:.64rem;letter-spacing:-.015em;border-radius:4px;padding:3px 2px;line-height:1.25;white-space:nowrap;min-width:0;flex-shrink:0;overflow:hidden;border:1px solid color-mix(in srgb,var(--bday-color) 65%,var(--border));background:color-mix(in srgb,var(--bday-color) 15%,var(--surface));color:var(--text);font-weight:500;cursor:pointer;transition:opacity .1s;text-align:center}
-.bday-badge-name{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* La semana crece si lo necesitan los dos nombres visibles y el contador. */
+.bday-badge{position:relative;font-size:.64rem;letter-spacing:-.015em;border-radius:4px;padding:3px 2px;line-height:1.25;min-width:0;flex-shrink:0;overflow:hidden;border:1px solid color-mix(in srgb,var(--bday-color) 65%,var(--border));background:color-mix(in srgb,var(--bday-color) 15%,var(--surface));color:var(--text);font-weight:500;cursor:pointer;transition:opacity .1s;text-align:center}
+.bday-badge-name{
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:4;
+  overflow:hidden;
+  overflow-wrap:anywhere;
+}
 .bday-badge:active{opacity:.7}
 .bday-badge.bday-badge-vip{background:#ffdf70;border-color:#d8ab28;color:#543e08;font-weight:700;overflow:visible;margin:3px 3px 0 0;padding:3px 2px}
 .bday-calendar-vip{position:absolute;top:0;right:0;transform:translate(50%,-50%);width:24px;height:24px;object-fit:contain;z-index:1;pointer-events:none}

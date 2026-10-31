@@ -125,10 +125,10 @@ function renderBdayCalMonth(){
       h+='<div class="bday-num">'+d.getDate()+'</div>';
       bds.slice(0,2).forEach(function(b){
         var color=getBdayColor(b);
-        var sn=bdName(b.name.trim().split(/\s+/)[0]);
+        var fullName=bdName(b.name);
         var bidx=BDAYS.indexOf(b);
         var vipCls=b.vip?' bday-badge-vip':'';
-        h+='<div class="bday-badge'+vipCls+'" data-bday-idx="'+bidx+'" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" style="--bday-color:'+color+'" title="'+bdName(b.name)+(b.vip?' VIP':'')+'">'+(b.vip?'<img class="bday-calendar-vip" src="./VIP.png" alt="VIP">':'')+'<span class="bday-badge-name">'+sn+'</span></div>';
+        h+='<div class="bday-badge'+vipCls+'" data-bday-idx="'+bidx+'" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" style="--bday-color:'+color+'" title="'+fullName+(b.vip?' VIP':'')+'">'+(b.vip?'<img class="bday-calendar-vip" src="./VIP.png" alt="VIP">':'')+'<span class="bday-badge-name">'+fullName+'</span></div>';
       });
       if(bds.length>2)h+='<button class="bday-day-more" data-bday-day-list="'+d.getDate()+'" data-month="'+(d.getMonth()+1)+'" aria-label="Ver los '+bds.length+' cumpleaños del día">+'+(bds.length-2)+' más</button>';
       h+='</div>';
