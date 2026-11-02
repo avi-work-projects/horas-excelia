@@ -30,12 +30,17 @@ function openMailCalendar(){
   dialog.className='hours-review-dialog';dialog.setAttribute('aria-label','Programación');
   back.textContent='Volver a Gestify';title.textContent='Programación';retry.textContent='Reintentar';
   frame.title='Programación de Kairo';frame.referrerPolicy='no-referrer';
-  frame.setAttribute('sandbox','allow-same-origin allow-scripts');frame.setAttribute('allow','local-network-access');
+  frame.setAttribute('sandbox','allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox');frame.setAttribute('allow','local-network-access');
   function receive(event){
     var message=event.data;
     if(event.origin!==origin||event.source!==frame.contentWindow||!message)return;
     if(message.type==='kairo-calendar-leaving'){dialog.prepend(header);return;}
     if(message.type==='kairo-calendar-close'){close();return;}
+    if(message.type==='kairo-calendar-invoice'&&/^20\d\d-(0[1-9]|1[0-2])$/.test(message.period)){
+      var url=invoiceData().config.kairoUrl,stored=INVOICE_HOME_CACHE.url===url&&INVOICE_HOME_CACHE.periods[message.period];
+      if(stored&&stored.data&&stored.data.state!==message.state)fetchHomeInvoiceStatus(message.period,url,true);
+      return;
+    }
     if(message.type!=='kairo-calendar-month'||!/^20\d\d-(0[1-9]|1[0-2])$/.test(message.period))return;
     header.remove();
     var days=[],date=new Date(message.period+'-01T12:00:00');

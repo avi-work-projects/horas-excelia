@@ -1,5 +1,7 @@
 # Mapa visual de Gestify
 
+v531. [Calendario de envíos, accesos desde Home y confirmación de factura](review/kairo-v531.html).
+
 v530. [Pasos de facturación y programación conjunta de Kairo](review/kairo-v530.html).
 
 v529. [Capturas numeradas de Kairo y del calendario de correos](review/kairo-v529.html).

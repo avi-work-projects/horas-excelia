@@ -4,8 +4,15 @@
 .k-ui .calendar-header button{font-size:22px;width:40px;padding:0}
 .hours-calendar table{width:100%;table-layout:fixed;border-spacing:2px;text-align:center;margin-top:12px}.hours-calendar th{font-size:10px;color:var(--k-muted);padding:4px 0}.hours-calendar th:first-child{width:23px}
 .calendar-day{height:42px;border:1px solid transparent;border-radius:8px;background:var(--k-bg);color:var(--text,#f2f5eb);font-size:13px;font-variant-numeric:tabular-nums}.day-number{display:block;font-weight:650}.day-type{font-size:9px}.calendar-day.outside{opacity:.42}
-.included .week-number{color:var(--k-accent)}.included .calendar-day:not(.vacaciones,.festivo,.ausencia){background:#20372d}.calendar-day.delivery{border-color:var(--k-accent)}.calendar-day.planned{border-style:dashed}.calendar-day.invoice-delivery{box-shadow:inset 0 0 0 1px #99c8b8}
-.envelope,.invoice-marker{display:inline-flex;vertical-align:middle;align-items:center;color:var(--k-accent);font-size:12px;line-height:12px;margin:0 1px}.invoice-marker{color:#bde9dc}.invoice-marker svg{width:12px;height:12px}
+.included .week-number{color:var(--k-accent)}.included .calendar-day:not(.vacaciones,.festivo,.ausencia,.invoice-delivery){background-color:#20372d}.calendar-day.delivery{border-color:var(--k-accent)}.calendar-day.planned{border-style:dashed}
+.calendar-day{padding:0;vertical-align:middle}.day-head,.day-marks{display:flex;align-items:center;justify-content:center;gap:2px}.day-head{height:18px;line-height:1}.day-marks{height:16px;line-height:1}
+.envelope,.invoice-marker{display:block;flex:none;width:15px;height:15px;color:var(--k-accent)}.invoice-marker{width:18px;height:18px;color:#bd497a}
+.calendar-day.invoice-delivery{background-image:linear-gradient(#60394d,#60394d);border-bottom:3px solid #efa6c6;box-shadow:none}
+.calendar-day.invoice-delivery:is(.vacaciones,.festivo,.ausencia){background-image:none}
+html:has(body.k-agenda){scrollbar-gutter:stable}.k-filters .filter-icon{width:19px;height:19px;flex:none}.k-filters [for=showInvoices] .filter-icon{color:#cb5789}
+.k-agenda .invoice-manage summary{display:grid;cursor:pointer;padding:0}.k-agenda .invoice-manage{border:0}
+.k-agenda .invoice-manage summary .k-state:after{content:"";display:inline-block;width:6px;height:6px;margin:0 2px 3px 6px;border-right:1.5px solid;border-bottom:1.5px solid;transform:rotate(45deg)}
+.k-agenda .invoice-manage[open] summary .k-state:after{transform:rotate(225deg);margin-bottom:0}
 .hours-calendar .vacaciones{--day-color:#f0cb83}.hours-calendar .festivo{--day-color:#ffaaa4}.hours-calendar .ausencia{--day-color:#e4c0ee}.calendar-day:is(.vacaciones,.festivo,.ausencia){background:color-mix(in srgb,var(--day-color) 13%,var(--k-bg));color:var(--day-color)}
 .calendar-legend{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px;font-size:10px;color:var(--k-muted)}.calendar-legend span{color:var(--day-color)}
 .calendar-note,.k-ui #message,.k-ui #notice,.k-ui #intro{font-size:12px}
@@ -16,12 +23,13 @@
 #calendar{touch-action:pan-y}.k-ui .k-main:has(#filters:not([hidden])) #weeks{margin-bottom:8px}.k-sync{font-size:11px;color:var(--k-muted)}.k-ui .k-sync button{font-size:12px;min-height:36px}
 .k-agenda .k-main{padding-top:13px}.k-agenda .k-main>h1{margin-bottom:10px}.k-agenda .k-eye{display:none}
 .k-agenda .hours-calendar,.k-agenda #weeks,.k-agenda #invoiceSchedule{padding:11px 13px;margin:8px 0}
-.k-agenda .hours-calendar table{margin-top:5px}.k-agenda .calendar-day{height:35px}.k-agenda .calendar-legend{margin-top:6px}
+.k-agenda .hours-calendar table{margin-top:5px}.k-agenda .calendar-day{height:43px}.k-agenda .calendar-legend{margin-top:6px}
 .k-agenda .k-schedule-row{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:8px;padding:5px 0;min-height:29px}.k-week-number{color:var(--k-muted);font-size:11px;font-weight:700}
 .k-agenda .k-card h2{font-size:15px;margin:0 0 4px}.k-agenda #invoiceSchedule .k-schedule-row{grid-template-columns:auto 1fr auto}.k-agenda #invoiceSchedule h2{margin:0}.k-agenda .k-sync button{min-height:32px}
+@media(max-width:600px){html:has(body.k-agenda){scrollbar-gutter:auto;scrollbar-width:none}}
 </style></head><body class="k-ui"><!--KAIRO_HEADER--><main class="k-main">
 <div class="k-eye">Agenda <span class="badge"></span></div><h1 id="title">Revisar programación</h1><p id="intro"></p>
-<div class="k-filters" id="filters" hidden role="group" aria-label="Mostrar en el calendario"><label><input type="checkbox" id="showMail" checked>Correos</label><label><input type="checkbox" id="showInvoices" checked>Facturas</label></div>
+<div class="k-filters" id="filters" hidden role="group" aria-label="Mostrar en el calendario"><label for="showMail"><input type="checkbox" id="showMail" checked><svg class="filter-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#dispatch-mail"/></svg>Correos</label><label for="showInvoices"><input type="checkbox" id="showInvoices" checked><svg class="filter-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#dispatch-invoice"/></svg>Facturas</label></div>
 <p id="message" role="status">Abre esta revisión desde Gestify.</p>
 <section class="summary" id="summary" hidden></section><section class="hours-calendar" id="calendar" aria-label="Calendario de programación" hidden></section>
 <section class="k-card" id="invoiceSchedule" hidden aria-label="Programación de factura"></section><div id="weeks"></div><div id="calendarSync" class="k-sync"></div>

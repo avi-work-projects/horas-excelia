@@ -1,5 +1,6 @@
 """Month-specific rendering; actions identify the current revision of this month."""
 from kairo_ui import shell
+from invoice_cancellation import can_cancel
 import html
 import json
 import re
@@ -32,7 +33,7 @@ def response(service, url, csrf):
     return 200, render(period, selected, selected['id'] if selected else None, cfg, csrf, fingerprint)
 
 
-def render(period, row, current, cfg, csrf, fingerprint):
+def render(period, row, current, cfg, csrf, fingerprint, moment=None):
     e = lambda value: html.escape(str(value))
     months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio',
               'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
@@ -45,7 +46,7 @@ def render(period, row, current, cfg, csrf, fingerprint):
         fields=p.get('display',{})
         issued=state in {'accepted','sent','email_cancelled','sending'}
         approve=active and cfg.get('commissioned') and cfg.get('mail_enabled') and state in {'review','cancelled'}
-        cancel=active and state not in {'sending','sent','emitting','queued','uncertain','cancelled','email_cancelled'}
+        cancel=active and can_cancel(state,p['send_date'],moment)
         initial=5 if issued else 2 if state in {'review','cancelled'} else 4
         status=e(LABELS.get(state,'Requiere revisión'))
         when=e('/'.join(p['send_date'].split('-')[::-1]))
@@ -59,8 +60,10 @@ def render(period, row, current, cfg, csrf, fingerprint):
             return '<div class="k-action-list"><button type="button" class="k-primary" data-go="'+str(step)+'">'+label+' →</button></div>'
         kind='final' if issued else 'draft'
         pdf='<a class="k-button" target="_blank" rel="noopener" href="/facturas/documento/'+str(int(row['id']))+'/'+kind+'">'+('Ver factura PDF' if issued else 'Revisar borrador PDF')+'</a>'
-        badge='<span class="k-badge">'+status+'</span>'
-        schedule='<a class="k-button" href="/horas/calendario?period='+e(period)+'">Ver programación</a>'
+        def icon(kind):
+            return '<svg class="k-dispatch-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#dispatch-'+kind+'"/></svg>'
+        badge='<span class="k-badge">'+(icon('invoice') if state=='approved' else '')+status+'</span>'
+        schedule='<a class="k-button" href="/horas/calendario?period='+e(period)+'">'+icon('agenda')+'Ver programación</a>'
         total=money(fields['total']) if fields.get('total') is not None else '—'
         breakdown=[(name,money(fields[key])) for key,name in [('base','Base imponible'),('vat','IVA'),('withholding','Retención')] if fields.get(key) is not None]
         content=panel(1,'Borrador','<span class="k-badge">Mes preparado</span>'+facts([('Mes',title),('Proyecto',fields.get('project'))])+next_step(2,'Ver factura'))
@@ -81,11 +84,14 @@ def render(period, row, current, cfg, csrf, fingerprint):
         if not active:approval+='<p>Esta revisión ha sido sustituida.</p>'
         approval+='<div class="k-action-list">'
         if approve:approval+='<button class="k-primary" data-action="approve">Aprobar emisión y envío</button>'
-        if cancel:approval+='<button data-action="cancel">'+('Cancelar envío del correo' if issued else 'Cancelar programación')+'</button>'
-        content+=panel(4,'Aprobar',approval+schedule+'</div>')
+        approval+='<div class="k-schedule-actions">'+schedule
+        if cancel:
+            caption='Cancelar envío del correo' if issued else 'Cancelar programación'
+            approval+='<button type="button" class="k-cancel" data-action="cancel" aria-label="'+caption+'">Cancelar</button>'
+        content+=panel(4,'Aprobar',approval+'</div></div>')
         archive=badge+('<div class="k-action-list">'+pdf+'</div>' if issued else '<p>PDF definitivo pendiente de emisión.</p>')
         content+=panel(5,'Archivo',archive+'<div class="k-action-list">'+schedule+'</div>')
     boot=json.dumps({'csrf':csrf,'hash':fingerprint,'period':title,'planId':row['id'] if row else None,
-                     'initial':initial,'hasPlan':bool(row)},ensure_ascii=True).replace('<',r'\u003c')
+                     'initial':initial,'hasPlan':bool(row),'state':row['status'] if row else None},ensure_ascii=True).replace('<',r'\u003c')
     template=Path(__file__).with_name('invoice_month_review.html').read_text(encoding='utf-8')
     return shell(template,current=initial,interactive=bool(row)).replace('<!--TITLE-->',e(title)).replace('<!--CONTENT-->',content).replace('/*BOOT*/',boot)

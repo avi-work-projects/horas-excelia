@@ -50,6 +50,18 @@ test('calendario compartido de Kairo: jornadas, semanas y navegación por gesto'
   const shared=viewer.locator('[data-date="2027-02-12"]');
   await expect(shared.locator('.invoice-marker')).toBeVisible();
   await expect(shared.locator('.envelope')).toBeVisible();
+  const geometry=()=>viewer.locator('#calendar').evaluate(el=>[el,...el.querySelectorAll('td')].map(n=>{const r=n.getBoundingClientRect();return [r.x,r.y,r.width,r.height];}));
+  for(const width of [320,393,760]){
+    await page.setViewportSize({width,height:800});
+    const bounds=await geometry();
+    for(const id of ['showMail','showInvoices','showMail','showInvoices']){
+      await viewer.locator('#'+id).click();
+      expect(await geometry()).toEqual(bounds);
+    }
+  }
+  await page.setViewportSize({width:393,height:800});
+  await viewer.locator('#invoiceSchedule summary').click();
+  await expect(viewer.getByRole('link',{name:'Gestionar envío de factura'})).toHaveAttribute('href','/facturas/gestify-month?period=2027-02#aprobar');
   await viewer.getByLabel('Facturas',{exact:true}).uncheck();
   await expect(shared.locator('.invoice-marker')).toHaveCount(0);await expect(shared.locator('.envelope')).toBeVisible();
   await viewer.getByLabel('Facturas',{exact:true}).check();
@@ -177,7 +189,7 @@ test('semanas resueltas aparecen sincronizadas en Home y no ofrecen una confirma
     return route.fulfill({json:{phase:'done',result:{periods:[{period:request.period,verified:true,checkedAt:new Date().toISOString(),rows:request.weeks.map((w,i)=>({key:w.key,state:i?'scheduled':'sent',days:w.days,schedule:w.days[4].date+'T08:00:00+01:00'}))}]}},headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}});
   });
   await setup(page,context);await expect(page.locator('.home-submission.complete')).toContainText('Correos al día');
-  await expect(page.locator('.home-submission.complete')).toContainText('5 programadas');
+  await expect(page.locator('.home-submission.complete')).toContainText('Programado hasta el 12 de marzo');
   await page.screenshot({path:info.outputPath('hours-home-synced.png'),animations:'disabled'});
   await context.route(base+'horas/',async route=>{const response=await context.request.get('http://127.0.0.1:8772/');await route.fulfill({contentType:'text/html',body:(await response.text()).replace('"allowWrites": false','"allowWrites": true')});});
   const popup=await open(page,page.locator('.week-card').first().getByRole('button',{name:'Ver estado'}));

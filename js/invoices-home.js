@@ -48,15 +48,17 @@ function homeInvoiceModel(year,month){
 }
 function renderHomeInvoiceStatus(year,month){
   if(mkey(year,month)<INVOICE_FIRST_PERIOD)return '<button type="button" id="invoiceHomeBtn" class="home-invoice-action" data-home-invoice="send">Ver cálculo histórico</button>';
-  var m=homeInvoiceModel(year,month),icon=m.tone==='complete'?'✓':m.tone==='scheduled'?'◷':'!';
+  var m=homeInvoiceModel(year,month),icon=m.tone==='complete'?'✓':m.tone==='scheduled'?dispatchIcon('invoice'):'!';
   var action;
   if(m.week){
     action='<button type="button" class="home-invoice-action" data-home-invoice="hours" data-week="'+m.week+'">Revisar horas</button>';
   }else if(m.configure||m.unsent||m.changed||m.tone==='unknown'){
-    action='<button type="button" class="home-invoice-action" id="invoiceHomeBtn" data-home-invoice="send">'+(m.changed?'Revisar cambios':'Enviar factura')+'</button>';
+    action='<button type="button" class="home-invoice-action'+(m.changed?'':' home-send-invoice')+'" id="invoiceHomeBtn" data-home-invoice="send">'+(m.changed?'Revisar cambios':dispatchIcon('invoice')+'<span>Enviar factura</span>')+'</button>';
+  }else if(m.tone==='scheduled'){
+    action='<button type="button" class="home-schedule-action" data-home-invoice="calendar">'+homeScheduleLabel()+'</button>';
   }else{
     var reviewUrl=invoiceKairoUrl(m.url)+'gestify-month?period='+m.period;
-    action='<a class="home-invoice-action" data-kairo-review href="'+escHtml(reviewUrl)+'" target="_blank" rel="noopener noreferrer">'+(m.tone==='scheduled'?'Ver programación':'Ver factura')+'</a>';
+    action='<a class="home-invoice-action" data-kairo-review href="'+escHtml(reviewUrl)+'" target="_blank" rel="noopener noreferrer">'+'Ver factura</a>';
   }
   if(INVOICE_HOME_STATUS.phase==='error'&&INVOICE_HOME_STATUS.period===m.period&&INVOICE_HOME_STATUS.url===m.url&&INVOICE_HOME_STATUS.reason)m.detail+=' '+INVOICE_HOME_STATUS.reason;
   if(m.configure)action='<div class="home-invoice-options">'+action+'<button type="button" class="home-invoice-action" data-home-invoice="configure">Conectar Kairo</button></div>';
@@ -93,6 +95,7 @@ function initHomeInvoiceStatus(){
     if(link&&!e.ctrlKey&&!e.metaKey){e.preventDefault();openCheckedInvoice(link.href);return;}
     var button=e.target.closest('[data-home-invoice]');if(!button)return;
     if(button.dataset.homeInvoice==='send')openInvoiceMonth(mkey(CY,CM));
+    else if(button.dataset.homeInvoice==='calendar')openMailCalendar();
     else if(button.dataset.homeInvoice==='hours'){
       var card=container.querySelector('.week-card[data-week="'+button.dataset.week+'"]');
       if(card){card.scrollIntoView({block:'center'});var edit=card.querySelector('.sent-toggle');if(edit)edit.focus({preventScroll:true});}

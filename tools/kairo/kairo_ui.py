@@ -21,5 +21,5 @@ def stepper(current, interactive):
 def shell(template, current=None, interactive=False):
     head='<meta name="theme-color" content="#142722"><link rel="icon" href="/assets/icon.svg"><link rel="stylesheet" href="/style.css"><style>'+(ROOT/'kairo_ui.css').read_text(encoding='utf-8')+'</style>'
     header=f'''<header class="k-top"><div class="k-bar"><a href="/" class="wordmark k-mark" aria-label="Kairo · Inicio"></a><a class="k-back" id="return" href="{GESTIFY}">Volver a Gestify <span aria-hidden="true">↗</span></a></div></header>'''
-    return (template.replace('<!--KAIRO_HEAD-->',head).replace('<!--KAIRO_HEADER-->',header)
+    return (template.replace('<!--KAIRO_HEAD-->',head).replace('<!--KAIRO_HEADER-->',(ROOT/'dispatch-icons.svg').read_text(encoding='utf-8')+header)
             .replace('<!--KAIRO_STEPS-->',stepper(current,interactive) if current else ''))

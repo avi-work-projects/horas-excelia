@@ -28,6 +28,7 @@ function replaceBlock(text,name,body){
 }
 function generatedFiles(){
   let html=read('index.html');
+  html=replaceBlock(html,'dispatch-icons',read('tools/kairo/dispatch-icons.svg').trimEnd());
   html=replaceBlock(html,'styles',catalog.styles.map(file=>'<link rel="stylesheet" href="'+file+'">').join('\n'));
   html=replaceBlock(html,'scripts',catalog.scripts.map(s=>'<script defer src="'+s.path+'"></script>').join('\n'));
   const assets=['./',...assetPaths().map(file=>'./'+file)];

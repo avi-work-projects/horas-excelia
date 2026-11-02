@@ -5,6 +5,11 @@
   const labels={sent:'Enviada',scheduled:'Programada',ready:'Por programar',changed:'Cambios por revisar',duplicate:'Posible duplicado',uncertain:'Sin confirmar',draft:'Borrador existente',unverified:'Sin confirmar','ambiguous-thread':'Revisar conversación','past-due':'Fecha vencida','no-workdays':'Sin fecha disponible','blocked-previous':'Semana anterior pendiente'};
   labels.missing='Sin programar';
   const text=(tag,value,className='')=>{const node=document.createElement(tag);node.textContent=value;if(className)node.className=className;return node;};
+  function dispatchMark(kind,cls){
+    const icon=document.createElementNS('http://www.w3.org/2000/svg','svg'),use=document.createElementNS(icon.namespaceURI,'use');
+    icon.setAttribute('class',cls);icon.setAttribute('viewBox','0 0 24 24');icon.setAttribute('aria-hidden','true');
+    use.setAttribute('href','#dispatch-'+kind);icon.append(use);return icon;
+  }
   const date=value=>value?new Intl.DateTimeFormat('es-ES',{timeZone:'Europe/Madrid',weekday:'short',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(value)):'Sin fecha';
   const weekDate=key=>{const first=new Date(key+'T12:00:00'),end=new Date(first);end.setDate(end.getDate()+4);const format=new Intl.DateTimeFormat('es-ES',{day:'2-digit',month:'short'});return format.format(first)+' — '+format.format(end);};
   const send=value=>{if(opener)opener.postMessage({channel:'gestify-hours-v1',id,...value},hoursBridgeConfig.origin);};
@@ -77,17 +82,16 @@
       for(let col=0;col<7;col++){
         const ds=add(key,col),kind=days.get(ds),label=names[kind],send=deliveries.get(ds),td=text('td','','calendar-day');td.dataset.date=ds;
         if(ds.slice(0,7)!==calendarMonth)td.classList.add('outside');if(!row)td.classList.add('unselected');if(label)td.classList.add(kind);
-        td.append(text('span',String(day(ds).getUTCDate()),'day-number'),text('small',label?label[0]:'','day-type'));
-        if(send){td.classList.add('delivery',send.confirmed?'confirmed':'planned');td.append(text('span','✉','envelope'));}
-        const invoiceDate=calendarInvoice?.state==='scheduled'&&calendarInvoice.scheduledDate===ds;
-        if(invoiceDate){
-          td.classList.add('invoice-delivery');
-          const mark=text('span','','invoice-marker');
-          mark.setAttribute('aria-hidden','true');
-          mark.innerHTML='<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3.5 1.5h6l3 3v10h-9zM9 2v3h3M6 8h4M6 11h4"/></svg>';
-          td.append(mark);
+        const head=text('span','','day-head'),marks=text('span','','day-marks');
+        head.append(text('span',String(day(ds).getUTCDate()),'day-number'),text('small',label?label[0]:'','day-type'));
+        td.append(head,marks);
+        if(send){
+          td.classList.add('delivery',send.confirmed?'confirmed':'planned');
+          marks.append(dispatchMark('mail','envelope'));
         }
-        td.setAttribute('aria-label',ds+(label?' · '+label[1]:'')+(row?' · '+(labels[row.state]||'Revisar'):' · Fuera de la selección')+(send?' · '+send.label:'')+(invoiceDate?' · Envío de factura programado':''));tr.append(td);
+        const invoiceDate=calendarInvoice?.state==='scheduled'&&calendarInvoice.scheduledDate===ds;
+        if(invoiceDate){td.classList.add('invoice-delivery');marks.append(dispatchMark('invoice','invoice-marker'));}
+        td.setAttribute('aria-label',ds+(label?' · '+label[1]:'')+(row?' · '+(labels[row.state]||'Revisar'):hoursBridgeConfig.calendar?'':' · Fuera de la selección')+(send?' · '+send.label:'')+(invoiceDate?' · Envío de factura programado':''));tr.append(td);
       }
       body.append(tr);
     }

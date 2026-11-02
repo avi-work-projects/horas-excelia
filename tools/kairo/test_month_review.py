@@ -55,7 +55,7 @@ class MonthReviewTests(unittest.TestCase):
     def test_each_month_can_be_approved_without_selecting_latest_global_plan(self):
         with self.db() as db: db.execute("UPDATE plans SET status='review'")
         body=response(self.service,'/gestify-month?period=2027-10','csrf')[1]
-        self.assertIn('data-action="approve"',body);self.assertIn('data-action="cancel"',body)
+        self.assertIn('data-action="approve"',body);self.assertNotIn('data-action="cancel"',body)
         self.assertIn('"planId": 1',body);self.assertIn('hash-for-2027-10',body)
         other=response(self.service,'/gestify-month?period=2027-11','csrf')[1]
         self.assertIn('"planId": 2',other);self.assertIn('hash-for-2027-11',other)
