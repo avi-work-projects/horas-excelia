@@ -33,7 +33,7 @@ def dashboard(content,tab):
     .k-ui nav{display:flex;gap:5px;margin:0 0 18px}.k-ui nav a{font-size:12px;padding:9px 4px;min-height:36px}.k-ui nav a[aria-current]{background:var(--soft);color:var(--k-accent)}
     .k-ui .card{margin:12px 0;padding:16px}.k-ui .button{min-height:42px}.k-ui .utilities{display:flex;gap:14px;padding:5px 0}
     </style></head><body class="k-ui"><!--KAIRO_HEADER--><main class="k-main"><nav aria-label="Facturación">'''+nav+'</nav>'+content+'''
-    <footer class="utilities"><a href="/facturas/revision">Revisar factura</a><a href="/facturas/ajustes">Ajustes</a><a href="/facturas/monitor">Avisos</a></footer></main></body></html>'''
+    <footer class="utilities"><a href="/facturas/ajustes">Ajustes</a><a href="/facturas/monitor">Avisos</a></footer></main></body></html>'''
     return shell(template)
 
 

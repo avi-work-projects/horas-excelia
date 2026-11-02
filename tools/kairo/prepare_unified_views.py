@@ -30,9 +30,28 @@ def patch_service(source):
 
 
 def patch_dashboard(source):
-    return function(source,'shell',lambda _:'''def shell(content,tab):
+    result=function(source,'shell',lambda _:'''def shell(content,tab):
     from kairo_invoice_web import dashboard
     return dashboard(content,tab)''')
+    return function(result,'summary',lambda _: """def summary(items, root=None):
+    current = [item for item in items if item['active']]
+    if not current:
+        return shell('<h1>Facturación</h1><p>Sin facturas preparadas.</p>', 'summary')
+    pending = [item for item in current if item['mail'] != 'Enviado']
+    item = min(pending,key=lambda x:x['row']['data']['send_date']) if pending else max(current,key=lambda x:x['row']['data']['period'])
+    p=item['row']['data']
+    month=e(p['period'])
+    when=e(day(p['send_date']))+' · 08:00' if item['mail']=='Programado' else ''
+    schedule='<p>'+when+'</p>' if when else ''
+    archive=drive_card(root,item)
+    archive='<details><summary>Archivo en Drive</summary>'+archive+'</details>' if archive else ''
+    content='<div class="k-eye">Facturación</div><h1>'+e(period(p['period']))+'</h1>'
+    content+='<section class="k-card"><div class="row"><span class="k-secondary">'+e(p['number'])+'</span><span class="k-badge">'+e(item['mail'])+'</span></div>'
+    content+='<strong class="k-amount">'+money(item['display'].get('total'))+'</strong>'+schedule
+    content+='<div class="k-action-list"><a class="k-button k-primary" href="/facturas/gestify-month?period='+month+'">Ver factura</a>'
+    content+='<a class="k-button" href="/horas/calendario?period='+month+'">Ver programación</a></div></section>'
+    return shell(content+archive,'summary')""")
+
 
 
 if __name__=='__main__':
