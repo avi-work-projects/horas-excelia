@@ -121,7 +121,7 @@ test('Android instalado conserva la revisión en Gestify y vuelve a Home',async(
   });
   const calls=await setup(page,context),before=await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>![HOURS_CACHE_KEY,HOURS_JOBS_KEY,INVOICE_HOME_CACHE_KEY].includes(key)).sort(([a],[b])=>a.localeCompare(b)))));
   const popups=[];page.on('popup',popup=>popups.push(popup));
-  await page.getByRole('button',{name:'Actualizar estado de correos y factura',exact:true}).click();
+  await page.getByRole('button',{name:'Sync Cairo',exact:true}).click();
   await expect(page.locator('.home-submission')).toContainText('Hay cambios');
   await expect(page.locator('.hours-review-dialog')).toHaveCount(0);
   await page.locator('[data-hours-review]').click();
@@ -184,7 +184,7 @@ test('la revisión comunica estados aunque el navegador bloquee la consulta auto
 
 test('comprobar vuelve a Home sin confirmar ni cambiar correos',async({page,context})=>{
   const calls=await setup(page,context),before=await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>![HOURS_CACHE_KEY,HOURS_JOBS_KEY,INVOICE_HOME_CACHE_KEY].includes(key)).sort(([a],[b])=>a.localeCompare(b)))));
-  await page.getByRole('button',{name:'Actualizar estado de correos y factura',exact:true}).click();
+  await page.getByRole('button',{name:'Sync Cairo',exact:true}).click();
   await expect(page.locator('.hours-review-dialog')).toHaveCount(0);
   await expect(page.locator('.home-submission')).toContainText('Hay cambios');
   expect(calls.some(c=>c.path.endsWith('/commit')||c.path.endsWith('/simulate'))).toBe(false);
@@ -216,7 +216,7 @@ test('semanas resueltas aparecen sincronizadas en Home y no ofrecen una confirma
     return route.fulfill({json:{phase:'done',result:{periods:[{period:request.period,verified:true,checkedAt:new Date().toISOString(),rows:request.weeks.map((w,i)=>({key:w.key,state:i?'scheduled':'sent',days:w.days,schedule:w.days[4].date+'T08:00:00+01:00'}))}]}},headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}});
   });
   await setup(page,context);await expect(page.locator('.home-submission.complete')).toContainText('Correos al día');
-  await expect(page.locator('.home-submission.complete')).toContainText('Programado hasta el 12 de marzo');
+  await expect(page.locator('.home-submission.complete')).not.toContainText('Programado hasta');
   await page.screenshot({path:info.outputPath('hours-home-synced.png'),animations:'disabled'});
   await context.route(base+'horas/',async route=>{const response=await context.request.get('http://127.0.0.1:8772/');await route.fulfill({contentType:'text/html',body:(await response.text()).replace('"allowWrites": false','"allowWrites": true')});});
   const popup=await open(page,page.locator('.week-card').first().getByRole('button',{name:'Ver estado'}));

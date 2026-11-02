@@ -43,9 +43,16 @@ test('PDF: duplicados entre meses, backup completo, importación y falta de espa
 });
 
 test('importar configuración revisable sin sustituir los meses y botones junto a Jornada',async({page},info)=>{
- for(const width of [360,400]){
+ for(const width of [320,360,400]){
   await page.setViewportSize({width,height:880});const row=page.locator('#editHoursBtn');const r=await row.boundingBox();
-  for(const id of ['#hoursExportBtn','#hoursCalendarBtn']){const b=await page.locator(id).boundingBox();expect(b.x).toBeGreaterThan(r.x+r.width);expect(Math.abs(b.y-r.y)).toBeLessThan(1);}
+  let previous=r;
+  for(const id of ['#hoursExportBtn','#hoursCalendarBtn','#homeSyncBtn']){
+   const button=page.locator(id),box=await button.boundingBox();
+   expect(box.x).toBeGreaterThan(previous.x+previous.width);expect(Math.abs(box.y-r.y)).toBeLessThan(1);expect(box.x+box.width).toBeLessThanOrEqual(width);
+   expect(await button.evaluate(e=>[...e.children].every(child=>child.getBoundingClientRect().right<=e.getBoundingClientRect().right))).toBe(true);
+   previous=box;
+  }
+  await expect(page.locator('#hoursCalendarBtn')).toHaveCSS('background-color',await page.locator('#hoursExportBtn').evaluate(e=>getComputedStyle(e).backgroundColor));
   await page.screenshot({path:info.outputPath('home-'+width+'.png')});
  }
  await page.locator('#invoiceHomeBtn').click();await expect(page.locator('#invoiceJson,#invoiceConfig')).toHaveCount(0);await expect(page.locator('#invoiceExcel')).toHaveCount(0);const months=await page.evaluate(()=>JSON.stringify(invoiceData().months));

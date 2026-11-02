@@ -37,17 +37,26 @@ function hoursWeekDate(key,state){
   if(!['scheduled','changed'].includes(state)||!row||!row.schedule)return '';
   return new Intl.DateTimeFormat('es-ES',{timeZone:'Europe/Madrid',weekday:'short',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(row.schedule));
 }
-function renderHoursAccess(state){
-  var closed=homePeriodMode(CY,CM)==='closed',checked=homeSubmissionWeeks(CY,CM).map(function(w){var row=hoursCachedWeek(w.key);return row?row.checkedAt:0;}).filter(Boolean);
-  var note=checked.length?'Comprobado '+new Intl.DateTimeFormat('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(Math.min.apply(null,checked))):closed?'Histórico cerrado':'Sin comprobación guardada';
-  var cached=HOURS_CACHE.url===hoursKairoUrl()&&HOURS_CACHE.periods[mkey(CY,CM)];
-  if(cached)note='Comprobado '+new Intl.DateTimeFormat('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(cached.checkedAt));
-  var last=HOURS_CACHE.url===hoursKairoUrl()&&HOURS_CACHE.checks&&HOURS_CACHE.checks[mkey(CY,CM)];
+function hoursJobRunning(url){
+  return typeof HOURS_JOBS!=='undefined'&&HOURS_JOBS.some(function(job){return job.url===url;});
+}
+function renderHoursAccess(state,compact){
+  var closed=homePeriodMode(CY,CM)==='closed',url=hoursKairoUrl(),period=mkey(CY,CM);
+  var cache=HOURS_CACHE.url===url&&HOURS_CACHE,cached=cache&&cache.periods[period];
+  var checkedAt=cached&&cached.checkedAt;
+  if(!checkedAt){
+    var checked=Object.keys(state.states).map(function(key){var row=hoursCachedWeek(key);return row&&row.checkedAt;}).filter(Boolean);
+    if(checked.length)checkedAt=Math.min.apply(null,checked);
+  }
+  var dateFormat=new Intl.DateTimeFormat('es-ES',{timeZone:'Europe/Madrid',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+  var note=closed?'Histórico cerrado':'Aún sin revisar';
+  if(checkedAt)note=(compact?'Fecha de revisión · ':'Comprobado ')+dateFormat.format(checkedAt);
+  var last=cache&&cache.checks&&cache.checks[period];
   var feedback=last&&last.phase==='error'?'Intento '+new Intl.DateTimeFormat('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(last.at))+': '+hoursCheckMessage(last.code)+' Se conserva la última comprobación correcta.':typeof HOURS_JOB_ERROR==='undefined'?'':HOURS_JOB_ERROR;
   var networkIssue=last&&last.phase==='error'&&last.code==='network'||typeof HOURS_JOB_NETWORK_ERROR!=='undefined'&&HOURS_JOB_NETWORK_ERROR;
-  var running=typeof HOURS_JOBS!=='undefined'&&HOURS_JOBS.some(function(j){return j.url===hoursKairoUrl();});
+  var running=hoursJobRunning(url);
   var label=state&&state.review?'Revisar cambios':'Programar pendientes';
-  return '<div class="hours-home-actions"><span class="hours-verified-note">'+note+'</span><button type="button" class="hours-check-button" data-hours-check aria-label="Actualizar estado de correos y factura"'+(running||HOURS_REFRESHING?' disabled':'')+'>↻ <span>'+(running||HOURS_REFRESHING?'Actualizando…':'Actualizar estado')+'</span></button>'+(!closed&&(!state||!state.complete)?'<button type="button" class="hours-pending-button" data-hours-review>'+label+'</button>':'')+(running?'<span class="hours-job-note" role="status">Kairo está trabajando. Puedes salir de Gestify.</span>':feedback?'<span class="hours-job-note" role="status">'+escHtml(feedback)+ '</span>':'')+(networkIssue&&!running?'<button type="button" class="hours-check-button" data-mobile-connection>Activar VPN</button>':'')+'</div>';
+  return '<div class="hours-home-actions"><span class="hours-verified-note">'+note+'</span>'+(!closed&&!compact&&!state.complete?'<button type="button" class="hours-pending-button" data-hours-review>'+label+'</button>':'')+(running?'<span class="hours-job-note" role="status">Kairo está trabajando. Puedes salir de Gestify.</span>':feedback?'<span class="hours-job-note" role="status">'+escHtml(feedback)+ '</span>':'')+(networkIssue&&!running?'<button type="button" class="hours-check-button" data-mobile-connection>Activar VPN</button>':'')+'</div>';
 }
 function hoursMailSubject(wd){return 'HORAS Y DIAS TRABAJADOS - '+AUTHOR_NAME+' - Semana del '+fd(wd.mon)+' al '+fd(wd.fri);}
 function hoursCalendarDays(list){
@@ -172,6 +181,11 @@ async function openHoursReview(targetWeek,intent){
 }
 function paintHoursStatus(){
   var container=document.getElementById('weeksContainer');if(!container)return;
+  var syncButton=document.getElementById('homeSyncBtn');
+  if(syncButton){
+    syncButton.disabled=HOURS_REFRESHING||hoursJobRunning(hoursKairoUrl());
+    syncButton.setAttribute('aria-busy',String(syncButton.disabled));
+  }
   if(typeof paintHomeInvoiceStatus==='function')paintHomeInvoiceStatus();
   var summary=container.querySelector('.home-submission');if(summary)summary.outerHTML=renderHomeSubmissionStatus(CY,CM);
   container.querySelectorAll('.week-card[data-week]').forEach(function(card){
@@ -218,12 +232,14 @@ async function syncHoursStatus(force){
   finally{clearTimeout(timeout);paintHoursStatus();}
 }
 function refreshHomeStates(){
-  if(HOURS_REFRESHING)return;HOURS_REFRESHING=true;HOURS_JOB_ERROR='';
+  if(!hoursRemoteConfigured()){openInvoiceSettings({connection:true});return;}
+  if(HOURS_REFRESHING||hoursJobRunning(hoursKairoUrl()))return;HOURS_REFRESHING=true;HOURS_JOB_ERROR='';
   Promise.all([syncHoursStatus(true),typeof syncHomeInvoiceStatus==='function'?syncHomeInvoiceStatus(true):null]).finally(function(){HOURS_REFRESHING=false;paintHoursStatus();});paintHoursStatus();
 }
 function initHoursKairo(){
   var container=document.getElementById('weeksContainer');if(!container)return;
-  container.addEventListener('click',function(event){var week=event.target.closest('[data-hours-week]');if(event.target.closest('[data-mobile-connection]'))openMobileConnection(null,'vpn');else if(week)openHoursReview(week.dataset.hoursWeek);else if(event.target.closest('[data-hours-check]'))refreshHomeStates();else if(event.target.closest('[data-hours-review]'))openHoursReview();else if(event.target.closest('[data-home-formula]')){HOME_FORMULA_OPEN=!HOME_FORMULA_OPEN;paintHoursStatus();}});
+  document.getElementById('homeSyncBtn').addEventListener('click',refreshHomeStates);
+  container.addEventListener('click',function(event){var week=event.target.closest('[data-hours-week]');if(event.target.closest('[data-mobile-connection]'))openMobileConnection(null,'vpn');else if(week)openHoursReview(week.dataset.hoursWeek);else if(event.target.closest('[data-hours-review]'))openHoursReview();else if(event.target.closest('[data-home-formula]')){HOME_FORMULA_OPEN=!HOME_FORMULA_OPEN;paintHoursStatus();}});
   function resume(){if(!document.hidden)hoursResumeJobs();}
   window.addEventListener('focus',resume);window.addEventListener('online',resume);document.addEventListener('visibilitychange',resume);
   window.addEventListener('storage',function(event){if(event.key===HOURS_CACHE_KEY){HOURS_CACHE=hoursCacheRead();paintHoursStatus();}});hoursResumeJobs();syncHoursStatus(false);

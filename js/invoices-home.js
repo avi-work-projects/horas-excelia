@@ -30,7 +30,7 @@ function homeInvoiceModel(year,month){
     var pending=homeSubmissionWeeks(year,month).find(function(week){
       return !week.extra&&dk(ad(week.mon,4)).slice(0,7)>=period&&!(url?hoursCovered(week.key):SW[week.key]);
     });
-    if(pending)return Object.assign(model,{title:'Primero, las horas del mes',detail:'Revisa tus jornadas y deja las semanas enviadas o programadas para preparar la factura.',week:pending.key,configure:!url});
+    if(pending)return Object.assign(model,{title:'Factura sin enviar',tone:'pending',unsent:true,detail:'* Programa primero los envíos de horas de este mes.',week:pending.key,configure:!url});
   }
   if(!url)return Object.assign(model,{title:'Conectar facturas con Kairo',detail:'Puedes preparar el mes en Gestify o conectar Kairo.',configure:true});
   if(!data){if(homePeriodMode(year,month)==='closed'){model.title='Factura de mes cerrado';model.detail='Histórico guardado · sin consultas automáticas';}return model;}

@@ -1,5 +1,7 @@
 # Mapa visual de Gestify
 
+v534. Home reúne la consulta de envíos y la sincronización con Kairo en la cabecera. [Mes sin envíos programados y factura pendiente](review/evidence/home-sin-envios-v534.png).
+
 v532. [Conexión DNS / VPN desde Ajustes](captures/mobile-connection.png).
 
 v531. [Calendario de envíos, accesos desde Home y confirmación de factura](review/kairo-v531.html).
