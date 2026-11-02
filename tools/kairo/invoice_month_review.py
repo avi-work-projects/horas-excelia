@@ -1,4 +1,5 @@
 """Month-specific rendering; actions identify the current revision of this month."""
+from kairo_ui import shell
 import html
 import json
 import re
@@ -36,34 +37,55 @@ def render(period, row, current, cfg, csrf, fingerprint):
     months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio',
               'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
     title = months[int(period[5:])-1]+' '+period[:4]
-    content = '<h2>No está preparada en Kairo</h2><p>Vuelve a Gestify y pulsa «Enviar a Kairo» para este mes.</p>'
+    initial=1
+    content='<section class="k-card"><h2>No está preparada en Kairo</h2><p>Abre este mes en Gestify y pulsa «Enviar a Kairo».</p></section>'
     if row:
-        p, state = row['data'], row['status']
-        active = row['id'] == current
-        f = p.get('display', {})
-        date = '/'.join(p['send_date'].split('-')[::-1])
-        issued = state in {'accepted', 'sent', 'email_cancelled', 'sending'}
-        kind = 'final' if issued else 'draft'
-        pdf = '/facturas/documento/'+str(int(row['id']))+'/'+kind
-        ready = active and cfg.get('commissioned') and cfg.get('mail_enabled') and state in {'review', 'cancelled'}
-        cancel = active and state not in {'sending', 'sent', 'emitting', 'queued', 'uncertain', 'cancelled', 'email_cancelled'}
-        total = f"{float(f.get('total', 0)):,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')+' €'
-        content = '<h2>'+e(LABELS.get(state, 'Requiere revisión'))+'</h2><div class="facts"><span>Factura <b>'+e(p['number'])+'</b></span><strong>'+e(total)+'</strong></div>'
-        content += '<p class="date">'+('Envío registrado' if state == 'sent' else 'Envío previsto')+' · '+e(date)+' · 08:00 Madrid</p>'
-        content += '<p class="notice">'+('Factura emitida. Cancelar solo afecta al correo pendiente.' if issued else 'Aprobar autoriza emitir la factura a las 07:30 y enviar su correo a las 08:00 del día indicado.')+'</p>'
-        content += '<div class="actions"><a class="button" href="'+pdf+'" target="_blank" rel="noopener">'+('Ver factura PDF' if issued else 'Revisar borrador PDF')+'</a>'
-        if ready:
-            content += '<button class="primary" data-action="approve">Aprobar emisión y envío</button>'
-        if cancel:
-            content += '<button data-action="cancel">Cancelar programación</button>'
-        recipients = p.get('to', '')
-        if isinstance(recipients, list):
-            recipients = ', '.join(recipients)
-        content += '</div><details><summary>Ver correo</summary><p>Para: '+e(recipients)+'</p><p>Asunto: '+e(p.get('subject', ''))+'</p>'
-        content += '<section class="mail-content" aria-label="Contenido del correo"><span class="mail-content-label">Contenido del correo</span><pre>'+e(p.get('body', ''))+'</pre></section>'
-        content += '</details>'
-        if not active:
-            content += '<p class="notice">Consulta guardada. Esta revisión ha sido sustituida; vuelve a abrir el mes.</p>'
-    boot = json.dumps({'csrf': csrf, 'hash': fingerprint, 'period': title, 'planId': row['id'] if row else None}, ensure_ascii=True).replace('<', '\\u003c')
-    template = Path(__file__).with_name('invoice_month_review.html').read_text(encoding='utf-8')
-    return template.replace('<!--PERIOD-->', e(period)).replace('<!--TITLE-->', e(title)).replace('<!--CONTENT-->', content).replace('/*BOOT*/', boot)
+        p,state=row['data'],row['status']
+        active=row['id']==current
+        fields=p.get('display',{})
+        issued=state in {'accepted','sent','email_cancelled','sending'}
+        approve=active and cfg.get('commissioned') and cfg.get('mail_enabled') and state in {'review','cancelled'}
+        cancel=active and state not in {'sending','sent','emitting','queued','uncertain','cancelled','email_cancelled'}
+        initial=5 if issued else 2 if state in {'review','cancelled'} else 4
+        status=e(LABELS.get(state,'Requiere revisión'))
+        when=e('/'.join(p['send_date'].split('-')[::-1]))
+        def money(value):
+            return f"{float(value):,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')+' €'
+        def facts(pairs):
+            return '<dl class="k-facts">'+''.join('<div><dt>'+label+'</dt><dd>'+e(value)+'</dd></div>' for label,value in pairs if value is not None and value!='')+'</dl>'
+        def panel(step,title,body):
+            return '<section class="k-card" data-panel="'+str(step)+'" aria-label="'+title+'"'+('' if step==initial else ' hidden')+'><h2>'+title+'</h2>'+body+'</section>'
+        def next_step(step,label):
+            return '<div class="k-action-list"><button type="button" class="k-primary" data-go="'+str(step)+'">'+label+' →</button></div>'
+        kind='final' if issued else 'draft'
+        pdf='<a class="k-button" target="_blank" rel="noopener" href="/facturas/documento/'+str(int(row['id']))+'/'+kind+'">'+('Ver factura PDF' if issued else 'Revisar borrador PDF')+'</a>'
+        badge='<span class="k-badge">'+status+'</span>'
+        schedule='<a class="k-button" href="/horas/calendario?period='+e(period)+'">Ver programación</a>'
+        total=money(fields['total']) if fields.get('total') is not None else '—'
+        breakdown=[(name,money(fields[key])) for key,name in [('base','Base imponible'),('vat','IVA'),('withholding','Retención')] if fields.get(key) is not None]
+        content=panel(1,'Borrador','<span class="k-badge">Mes preparado</span>'+facts([('Mes',title),('Proyecto',fields.get('project'))])+next_step(2,'Ver factura'))
+        invoice='<span class="k-secondary">'+e(p['number'])+'</span><strong class="k-amount">'+total+'</strong>'
+        invoice+=facts([('Jornadas',fields.get('days')),('Tarifa',fields.get('rate_label')),('Proyecto',fields.get('project')),('Vencimiento',fields.get('due_date'))])
+        if breakdown:invoice+='<details><summary>Desglose fiscal <span class="disclosure" aria-hidden="true"></span></summary>'+facts(breakdown)+'</details>'
+        content+=panel(2,'Factura',invoice+'<div class="k-action-list">'+pdf+'</div>'+next_step(3,'Ver correo'))
+        recipients=p.get('to','')
+        if isinstance(recipients,list):recipients=', '.join(recipients)
+        mail=facts([('Para',recipients),('Asunto',p.get('subject',''))])
+        mail+='<section class="k-mail" aria-label="Contenido del correo"><small class="k-secondary">Mensaje</small><pre>'+e(p.get('body',''))+'</pre></section>'
+        content+=panel(3,'Correo',mail+next_step(4,'Ver aprobación'))
+        approval=badge+'<h3>'+when+'</h3>'+facts([('Emisión','07:30'),('Envío','08:00 · Madrid')])
+        if state in {'blocked','uncertain','missed'} and row.get('detail'):
+            approval+='<p role="status">'+e(row['detail'])+'</p>'
+        if active and state in {'review','cancelled'} and not approve:
+            approval+='<p>La aprobación está deshabilitada en Kairo.</p>'
+        if not active:approval+='<p>Esta revisión ha sido sustituida.</p>'
+        approval+='<div class="k-action-list">'
+        if approve:approval+='<button class="k-primary" data-action="approve">Aprobar emisión y envío</button>'
+        if cancel:approval+='<button data-action="cancel">'+('Cancelar envío del correo' if issued else 'Cancelar programación')+'</button>'
+        content+=panel(4,'Aprobar',approval+schedule+'</div>')
+        archive=badge+('<div class="k-action-list">'+pdf+'</div>' if issued else '<p>PDF definitivo pendiente de emisión.</p>')
+        content+=panel(5,'Archivo',archive+'<div class="k-action-list">'+schedule+'</div>')
+    boot=json.dumps({'csrf':csrf,'hash':fingerprint,'period':title,'planId':row['id'] if row else None,
+                     'initial':initial,'hasPlan':bool(row)},ensure_ascii=True).replace('<',r'\u003c')
+    template=Path(__file__).with_name('invoice_month_review.html').read_text(encoding='utf-8')
+    return shell(template,current=initial,interactive=bool(row)).replace('<!--TITLE-->',e(title)).replace('<!--CONTENT-->',content).replace('/*BOOT*/',boot)

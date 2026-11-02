@@ -27,13 +27,17 @@ function openMailCalendar(){
   var dialog=document.createElement('dialog'),header=document.createElement('header'),back=document.createElement('button');
   var title=document.createElement('strong'),body=document.createElement('div'),note=document.createElement('p'),retry=document.createElement('button');
   var frame=document.createElement('iframe');
-  dialog.className='hours-review-dialog';dialog.setAttribute('aria-label','Programación de correos');
-  back.textContent='Volver';title.textContent='Programación de correos';retry.textContent='Reintentar';
-  frame.title='Calendario de envíos de Kairo';frame.referrerPolicy='no-referrer';
+  dialog.className='hours-review-dialog';dialog.setAttribute('aria-label','Programación');
+  back.textContent='Volver a Gestify';title.textContent='Programación';retry.textContent='Reintentar';
+  frame.title='Programación de Kairo';frame.referrerPolicy='no-referrer';
   frame.setAttribute('sandbox','allow-same-origin allow-scripts');frame.setAttribute('allow','local-network-access');
   function receive(event){
     var message=event.data;
-    if(event.origin!==origin||event.source!==frame.contentWindow||!message||message.type!=='kairo-calendar-month'||!/^20\d\d-(0[1-9]|1[0-2])$/.test(message.period))return;
+    if(event.origin!==origin||event.source!==frame.contentWindow||!message)return;
+    if(message.type==='kairo-calendar-leaving'){dialog.prepend(header);return;}
+    if(message.type==='kairo-calendar-close'){close();return;}
+    if(message.type!=='kairo-calendar-month'||!/^20\d\d-(0[1-9]|1[0-2])$/.test(message.period))return;
+    header.remove();
     var days=[],date=new Date(message.period+'-01T12:00:00');
     while(dk(date).slice(0,7)===message.period){
       var type=dayT(date);if(type!=='normal')days.push({date:dk(date),type:type});

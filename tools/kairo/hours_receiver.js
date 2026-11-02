@@ -1,5 +1,6 @@
 (() => {
   const embedded=window.parent!==window,el=id=>document.getElementById(id),opener=embedded?window.parent:window.opener;
+  if(embedded)document.querySelector('.k-mark').removeAttribute('href');
   let id=null,request=null,plan=null,busy=false,intent='review',calendarMonth=null;
   const labels={sent:'Enviada',scheduled:'Programada',ready:'Por programar',changed:'Cambios por revisar',duplicate:'Posible duplicado',uncertain:'Sin confirmar',draft:'Borrador existente',unverified:'Sin confirmar','ambiguous-thread':'Revisar conversación','past-due':'Fecha vencida','no-workdays':'Sin fecha disponible','blocked-previous':'Semana anterior pendiente'};
   labels.missing='Sin programar';
@@ -33,6 +34,7 @@
   }
   function updates(){return [...document.querySelectorAll('[data-update]:checked')].map(n=>n.dataset.update);}
   // Read-only calendar: send dates come from reconciliation, never recomputed here.
+  let calendarInvoice=null;
   function paintCalendar(){
     const root=el('calendar');root.replaceChildren();root.hidden=intent==='check'||!plan;if(root.hidden)return;
     const iso=day=>day.toISOString().slice(0,10),day=value=>new Date(value+'T12:00:00Z');
@@ -56,7 +58,10 @@
       if(hoursBridgeConfig.calendar){
         const next=day(calendarMonth+'-01');next.setUTCMonth(next.getUTCMonth()+step);
         const month=iso(next).slice(0,7);button.disabled=!month.startsWith('20');
-        button.onclick=()=>location.assign('?period='+month);
+        button.onclick=()=>{
+          if(embedded)window.parent.postMessage({type:'kairo-calendar-leaving'},hoursBridgeConfig.origin);
+          location.assign('?period='+month);
+        };
       }else button.onclick=()=>{calendarMonth=months[index+step];paintCalendar();};
       if(step<0)header.append(button);else{header.append(text('h2',new Intl.DateTimeFormat('es-ES',{timeZone:'UTC',month:'long',year:'numeric'}).format(day(calendarMonth+'-01'))),button);}
     }
@@ -74,13 +79,21 @@
         if(ds.slice(0,7)!==calendarMonth)td.classList.add('outside');if(!row)td.classList.add('unselected');if(label)td.classList.add(kind);
         td.append(text('span',String(day(ds).getUTCDate()),'day-number'),text('small',label?label[0]:'','day-type'));
         if(send){td.classList.add('delivery',send.confirmed?'confirmed':'planned');td.append(text('span','✉','envelope'));}
-        td.setAttribute('aria-label',ds+(label?' · '+label[1]:'')+(row?' · '+(labels[row.state]||'Revisar'):' · Fuera de la selección')+(send?' · '+send.label:''));tr.append(td);
+        const invoiceDate=calendarInvoice?.state==='scheduled'&&calendarInvoice.scheduledDate===ds;
+        if(invoiceDate){
+          td.classList.add('invoice-delivery');
+          const mark=text('span','','invoice-marker');
+          mark.setAttribute('aria-hidden','true');
+          mark.innerHTML='<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3.5 1.5h6l3 3v10h-9zM9 2v3h3M6 8h4M6 11h4"/></svg>';
+          td.append(mark);
+        }
+        td.setAttribute('aria-label',ds+(label?' · '+label[1]:'')+(row?' · '+(labels[row.state]||'Revisar'):' · Fuera de la selección')+(send?' · '+send.label:'')+(invoiceDate?' · Envío de factura programado':''));tr.append(td);
       }
       body.append(tr);
     }
     table.append(body);root.append(table);
     const legend=text('div','','calendar-legend');Object.entries(names).forEach(([key,value])=>legend.append(text('span',value[0]+' · '+value[1],key)));root.append(legend);
-    root.append(text('p',hoursBridgeConfig.calendar?'✉ Día de envío programado en Outlook.':'Semanas resaltadas: incluidas en esta revisión. ✉ 08:00 Madrid. Borde continuo: programado; discontinuo: previsto.','calendar-note'));
+    if(!hoursBridgeConfig.calendar)root.append(text('p','Semanas resaltadas: incluidas en esta revisión. ✉ 08:00 Madrid. Borde continuo: programado; discontinuo: previsto.','calendar-note'));
     if([...rows.values()].some(r=>r.state==='changed'))root.append(text('p','Los cambios muestran la fecha actual hasta que selecciones «Actualizar esta semana».','calendar-note'));
   }
   function controls(){
@@ -142,7 +155,9 @@
     const data=hoursBridgeConfig.calendar;
     plan={rows:data.rows.map(row=>({...row,selected:true}))};
     request={period:data.period,weeks:data.rows.map(row=>({key:row.key,days:[]})),calendarDays:[]};
-    startMailCalendar(data,labels,days=>{
+    startMailCalendar(data,labels,(days,mailVisible,invoice)=>{
+      calendarInvoice=invoice;
+      plan.rows.forEach(row=>row.selected=mailVisible);
       request.calendarDays=Object.entries(days).map(([date,type])=>({date,type}));
       paintCalendar();
     });
@@ -164,9 +179,9 @@
     try{const result=await api('simulate',{planId:plan.planId,updates:updates()});if(result.simulation!==true)throw new Error('Resultado de simulación no válido');el('simulation').hidden=false;el('simulation').textContent='Simulación completada. No se ha creado ni modificado ningún correo.\n'+(result.results.length?result.results.map(r=>r.key+': '+(r.state==='scheduled'?'se programaría':labels[r.state]||'requiere revisión')).join('\n'):'No hay programaciones nuevas ni actualizaciones seleccionadas.');}
     catch(e){el('message').textContent=e.message;}finally{busy=false;controls();}
   };
-  el('return').onclick=()=>{if(embedded)send({type:'close'});else if(opener){opener.focus();window.close();}else el('message').textContent='Cierra esta ventana para volver a Gestify.';};
+  el('return').onclick=event=>{if(embedded){event.preventDefault();send({type:'close'});}else if(opener&&request){event.preventDefault();opener.focus();window.close();}};
   document.querySelector('.badge').textContent=hoursBridgeConfig.allowWrites?'Revisión previa':'Demostración';
-  el('notice').textContent=hoursBridgeConfig.allowWrites?'Los correos existentes se conservan.':'Datos ficticios. La simulación no crea correos.';
+  el('notice').textContent=hoursBridgeConfig.allowWrites?'':'Datos ficticios. La simulación no crea correos.';
   if(hoursBridgeConfig.allowWrites){
     const button=text('button','Confirmar programación','primary');button.id='commit';button.hidden=true;button.disabled=true;
     button.onclick=async()=>{

@@ -41,12 +41,22 @@ async function open(page,button){const waiting=page.waitForEvent('popup');await 
 test('calendario compartido de Kairo: jornadas, semanas y navegación por gesto',async({page,context},info)=>{
   const calls=await setup(page,context);
   await page.evaluate(()=>{ST={'2027-02-10':{type:'vacaciones'},'2027-02-15':{type:'festivo'},'2027-02-18':{type:'ausencia'}};});
+  await context.route(base+'facturas/programacion?**',route=>{const period=new URL(route.request().url()).searchParams.get('period');return route.fulfill({json:{period,state:'scheduled',scheduledDate:period+'-12'}});});
   await page.locator('#hoursCalendarBtn').click();
-  const viewer=page.frameLocator('iframe[title="Calendario de envíos de Kairo"]');
-  await expect(viewer.locator('#message')).toContainText('sincronizado');
+  const viewer=page.frameLocator('iframe[title="Programación de Kairo"]');
+  await expect(viewer.locator('#calendar')).toHaveAttribute('data-synced','true');
   for(const [day,type] of [['10','V'],['15','F'],['18','A']])await expect(viewer.locator('[data-date="2027-02-'+day+'"] .day-type')).toHaveText(type);
   await expect(viewer.locator('#weeks')).toContainText('Programada');
-  await viewer.locator('main').screenshot({path:info.outputPath('calendario-correos.png')});
+  const shared=viewer.locator('[data-date="2027-02-12"]');
+  await expect(shared.locator('.invoice-marker')).toBeVisible();
+  await expect(shared.locator('.envelope')).toBeVisible();
+  await viewer.getByLabel('Facturas',{exact:true}).uncheck();
+  await expect(shared.locator('.invoice-marker')).toHaveCount(0);await expect(shared.locator('.envelope')).toBeVisible();
+  await viewer.getByLabel('Facturas',{exact:true}).check();
+  await viewer.getByLabel('Correos',{exact:true}).uncheck();
+  await expect(viewer.locator('#weeks')).toBeHidden();await expect(shared.locator('.envelope')).toHaveCount(0);
+  await expect(shared.locator('.invoice-marker')).toBeVisible();
+  await viewer.locator('body').screenshot({path:info.outputPath('calendario-correos.png')});
   const grid=viewer.locator('#calendar');
   await grid.evaluate(el=>{
     const point=x=>new Touch({identifier:1,target:el,clientX:x,clientY:110});
@@ -54,13 +64,14 @@ test('calendario compartido de Kairo: jornadas, semanas y navegación por gesto'
     el.dispatchEvent(new TouchEvent('touchend',{changedTouches:[point(68)]}));
   });
   await expect(viewer.locator('h2').first()).toContainText('marzo');
+  await expect(viewer.getByLabel('Correos',{exact:true})).not.toBeChecked();
   await viewer.getByRole('button',{name:'Mes anterior'}).click();
   await expect(viewer.locator('[data-date="2027-02-10"] .day-type')).toHaveText('V');
   expect(calls.filter(c=>c.path.endsWith('/commit')||c.path.endsWith('/preview'))).toHaveLength(0);
-  await page.getByRole('button',{name:'Volver',exact:true}).click();
+  await viewer.getByRole('link',{name:'Volver a Gestify'}).click();
   await context.route(base+'horas/reachable',r=>r.abort());
   await page.locator('#hoursCalendarBtn').click();
-  await expect(page.getByRole('dialog',{name:'Programación de correos'})).toContainText('Tailscale');
+  await expect(page.getByRole('dialog',{name:'Programación'})).toContainText('Tailscale');
 });
 
 test('Android instalado conserva la revisión en Gestify y vuelve a Home',async({page,context},info)=>{
@@ -79,7 +90,7 @@ test('Android instalado conserva la revisión en Gestify y vuelve a Home',async(
   await expect(review.locator('#message')).toContainText('Estado actualizado en Home');
   await expect(review.locator('.week')).toHaveCount(4);
   await page.screenshot({path:info.outputPath('hours-android-review.png'),animations:'disabled'});
-  await review.getByRole('button',{name:'Volver a Gestify'}).click();
+  await review.getByRole('link',{name:'Volver a Gestify'}).click();
   await expect(page.locator('.hours-review-dialog')).toHaveCount(0);
   await page.locator('.week-card').nth(3).getByRole('button',{name:'Programar semana'}).click();
   await expect(review.locator('h1')).toHaveText('Programar esta semana');

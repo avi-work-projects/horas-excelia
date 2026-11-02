@@ -373,8 +373,8 @@
 ### js/logo-popup.js  _(51 líneas)_
 **Funciones:** _logoUpdateDots:14
 
-### js/mail-calendar.js  _(60 líneas)_
-**Funciones:** openMailCalendar:23 · receive:34 · close:53
+### js/mail-calendar.js  _(64 líneas)_
+**Funciones:** openMailCalendar:23 · receive:34 · close:57
 
 ### js/nav-icons.js  _(70 líneas)_
 **Estado global:** NAV_ICON_STYLE:2 · NAV_MAIN_ITEMS:4 · NAV_ICON_PATHS:11

@@ -1,5 +1,7 @@
 # Mapa visual de Gestify
 
+v530. [Pasos de facturación y programación conjunta de Kairo](review/kairo-v530.html).
+
 v529. [Capturas numeradas de Kairo y del calendario de correos](review/kairo-v529.html).
 Los ejemplos usan datos ficticios. Home abre los correos programados desde la
 cabecera, y la preparación de la factura desde el panel mensual. La referencia

@@ -79,6 +79,21 @@ class HandlerTests(unittest.TestCase):
         self.assertEqual(self.request(method='GET',path='/facturas/gestify-month?period=bad')[0],400)
         self.assertFalse(self.fixture.calls)
 
+    def test_unified_schedule_private_month_only_and_no_writes(self):
+        path='/facturas/programacion?period=2027-02'
+        self.assertEqual(self.request({'Tailscale-User-Login':''},'GET',path)[0],403)
+        self.assertEqual(self.request({'Host':'other.example'},'GET',path)[0],403)
+        fact=dict(period='2027-02',state='scheduled',scheduledDate='2027-02-19',generated=True)
+        with patch('kairo_invoice_web.read_month',return_value=fact) as read:
+            code,body,mime=self.request(method='GET',path=path)
+            self.assertEqual(mime,'application/json')
+            self.assertEqual((code,json.loads(body)),(200,{k:fact[k] for k in ('period','state','scheduledDate')}))
+            self.assertEqual(self.request(method='GET',path=path+'&period=2027-03')[0],400)
+            read.assert_called_once_with(self.fixture.root,'2027-02')
+        with patch('kairo_invoice_web.read_month',side_effect=OSError):
+            self.assertEqual(self.request(method='GET',path=path)[0],503)
+        self.assertFalse(self.fixture.calls)
+
     def test_disabled_by_default(self):
         with patch.object(candidate, 'config', lambda:{}):
             self.assertEqual(self.request()[0], 404)

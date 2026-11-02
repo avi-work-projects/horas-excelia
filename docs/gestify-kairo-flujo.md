@@ -232,3 +232,9 @@ Implementación: `js/hours-cache.js`, `js/hours-jobs.js`, `js/invoices-home.js`,
   probar un reinicio completo del equipo Kairo; clave de paso aplazada.
   Reiniciar el servicio y las pruebas no acreditan una entrega futura real ni
   garantizan todas las sesiones futuras de Microsoft.
+
+## Programación mensual y pasos de facturación (v530)
+
+Home abre **Programación** en el mes visible. La vista privada reúne las semanas guardadas en Kairo y la fecha confirmada de la factura del mes. Cada filtro controla su lista y sus marcas en el calendario. Los gestos horizontales sobre el calendario cambian de mes. Las vacaciones, festivos y ausencias permanecen visibles con cualquiera de los filtros.
+
+La factura recorre Borrador → Factura → Correo → Aprobar → Archivo. La aprobación requiere confirmar el mes y la revisión correspondiente. Las dos entradas de Kairo, desde Gestify y desde la revisión de facturación, comparten la plantilla y los recursos de identidad de Kairo Casa.

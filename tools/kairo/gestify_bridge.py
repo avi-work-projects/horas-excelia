@@ -80,4 +80,5 @@ def receiver(origin, csrf):
     script = (Path(__file__).with_name('receiver.js')).read_text(encoding='utf-8')
     config = json.dumps({'origin': origin, 'csrf': csrf}).replace('<', '\\u003c')
     template = Path(__file__).with_name('receiver.html').read_text(encoding='utf-8')
-    return template.replace('/*BRIDGE_CONFIG*/', config).replace('/*BRIDGE_SCRIPT*/', script)
+    from kairo_ui import shell
+    return shell(template,current=1).replace('/*BRIDGE_CONFIG*/', config).replace('/*BRIDGE_SCRIPT*/', script)
