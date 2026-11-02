@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
   "title": "Gestify · mapa visual",
-  "generatedAt": "2026-11-02T17:52:36.558Z",
-  "referenceCommit": "d6e002765ea9cd9bd5092f4542f881a066d5b98f",
+  "generatedAt": "2026-11-02T19:57:39.633Z",
+  "referenceCommit": "2b88d8c8ba229bdb80f8a259bcee6ad1791bfe67",
   "date": "2026-08-21T10:00:00+02:00",
   "viewport": {
     "width": 400,
@@ -1307,7 +1307,7 @@
         705
       ],
       "image": "captures/settings.png",
-      "imageHash": "ecd80775d06313cc7eb44076e52f96f83e4ab053cf31dc58f37774f81db3901c",
+      "imageHash": "03935cf937c43eea8442f21ce911ba2080ee8cb195b35127aaef9b8f73e04c56",
       "anchors": {
         "reminders": {
           "x": 285,
@@ -1317,7 +1317,13 @@
         },
         "invoice-config": {
           "x": 131,
-          "y": 247,
+          "y": 295,
+          "width": 236,
+          "height": 40
+        },
+        "mobile-connection": {
+          "x": 131,
+          "y": 199,
           "width": 236,
           "height": 40
         },
@@ -1329,19 +1335,19 @@
         },
         "macro": {
           "x": 131,
-          "y": 199,
+          "y": 247,
           "width": 236,
           "height": 40
         },
         "contacts": {
           "x": 131,
-          "y": 360,
+          "y": 408,
           "width": 236,
           "height": 40
         },
         "notes": {
           "x": 131,
-          "y": 408,
+          "y": 456,
           "width": 236,
           "height": 40
         },
@@ -1353,13 +1359,13 @@
         },
         "export-folder": {
           "x": 131,
-          "y": 295,
+          "y": 343,
           "width": 236,
           "height": 40
         },
         "import-preview": {
           "x": 119,
-          "y": 497,
+          "y": 545,
           "width": 260,
           "height": 32
         }
@@ -1368,7 +1374,7 @@
       "dependencies": [
         {
           "file": "index.html",
-          "hash": "f43ee2bb617a1d731c92e49cae73b4fcb63ff40c1e72ef118e6e1ed19b6fbed3"
+          "hash": "6f0d14c928c5f0477223deb0fcdc54afd8824199022d8966c2e0ea40b49d4b41"
         },
         {
           "file": "js/nav-icons.js",
@@ -1377,7 +1383,7 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "8f51bfd04c870c9399737c944daceffafb4cf53fdf87936337223e62bdbee8ac"
+          "hash": "5193b7b2e687f4e4e8f692527e1ee74c3445d1a6d20da9a7eaaf8c8fb7494822"
         },
         {
           "file": "js/data-integrity.js",
@@ -1389,7 +1395,7 @@
         },
         {
           "file": "tools/visual-map/fixture.cjs",
-          "hash": "9a2d9a751e1b17e4a8afbeefbee3cc0bc01d41ae4a49b3c7d0c0c2804072a5c6"
+          "hash": "ed5dd8ba54032603d829a5c3ec2d3b6dd02ee9c2439b4cd315a01db396b19f28"
         },
         {
           "file": "css/source/base.css",
@@ -1405,7 +1411,7 @@
         },
         {
           "file": "css/source/birthdays.css",
-          "hash": "aae1fa4fe0c4b46f60b613e96a1db5cdac9664712da500d4d4c1c45ceb8daacf"
+          "hash": "440692569d9eaffef154455313133b7517cd1e8773f9529b43f751ea1610116e"
         },
         {
           "file": "css/source/event-calendar.css",
@@ -1437,7 +1443,7 @@
         },
         {
           "file": "css/source/hours-kairo.css",
-          "hash": "feace622fb4946582d1dff8cb1547c20102426f33543f07fa755eb9a69258f77"
+          "hash": "bd786731f86cd3c6b91437a9bd9b86865f24019cb15f6eaa1da8d9770b9e307a"
         },
         {
           "file": "css/source/energy-refinements.css",
@@ -1449,7 +1455,7 @@
         },
         {
           "file": "css/source/invoices.css",
-          "hash": "89f0b3a74ee15964606bfc65eef0189d2a6480ad2185e09084653ad740475f11"
+          "hash": "aae20d6d7e15c872a5d2054bacb37156845dbd84f8549a5441c212790119cb35"
         },
         {
           "file": "css/source/invoices-calendar.css",
@@ -1473,11 +1479,11 @@
         },
         {
           "file": "js/hours-kairo.js",
-          "hash": "706af1a84b63fe7bc471a2f96c3663a18c35fb870cdda164b7b2f9be1c955c5a"
+          "hash": "827c57330bd85486efd95f3041acfaf5c065f47ec71129b0e88b273eea4adb12"
         },
         {
           "file": "js/hours-cache.js",
-          "hash": "aa088fc1734adb371cbc9768a945cf1fff7147828242160e6bb5e2ed27b10493"
+          "hash": "37893545d04614465b627ab93dda2bb703a5a7b01e0c9f9da4afae79c882f787"
         },
         {
           "file": "js/hours-jobs.js",
@@ -1485,11 +1491,11 @@
         },
         {
           "file": "js/hours-auth.js",
-          "hash": "00d408ea38f5b7182c87df93b684fd41b85a13a252d8e1d09770023f9ef58224"
+          "hash": "9e1787e0f8fa243f426b2984ae492cd423fa428fb511d1bacbebf181446f9a69"
         },
         {
           "file": "js/invoices-home.js",
-          "hash": "4e6db66f68c7a7e8803517021a7674afa11c40686c43a1b16b35a0f324131243"
+          "hash": "efc7c78984b49d2bba23000e2872df9088ddfd5a8275936af55509453aee4777"
         },
         {
           "file": "js/invoices.js",
@@ -1497,7 +1503,7 @@
         },
         {
           "file": "js/invoices-kairo.js",
-          "hash": "54c782f94bc80194781bab1368fcc31c8c3db72fc93a5acb4f6f3850b4ba00d3"
+          "hash": "d584e058699a96658c8d679250ccf6432df50af9a9161130192bf87c6d586c78"
         },
         {
           "file": "js/init.js",
@@ -1505,12 +1511,12 @@
         },
         {
           "file": "js/settings-menu.js",
-          "hash": "9b0a514ff5ae5aad579e39bf4c7e08baa89700719379f6e60aa8f83b8435d58e"
+          "hash": "4c99b7549fe909af870222aa9b1835350faa81592f2515aa102882c506400bcd"
         },
         {
           "file": "js/core.js",
           "part": "app-version",
-          "hash": "c6d9eaf99bc3656b75ae234a0c53bc9db7578ab35fb862ff236b57adac24fb97"
+          "hash": "6af5e217c4be634ea500cc4882e9e367e5d4f28e319e44d8ca3b8705e1327faf"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -1519,11 +1525,11 @@
         {
           "file": "tools/visual-map/catalog.cjs",
           "part": "scene:settings",
-          "hash": "c7447f39e01d8729101dff5571a9a590051601be88ccec82c1b0b4c8fe4c47bc"
+          "hash": "85a0e61ba31389d57eea0002a31a5ce1409e2e33a020c1368b16423bba979b91"
         }
       ],
       "dependencyVersion": 2,
-      "commit": "06dd913f38219844560c1da37080eec73173461b",
+      "commit": "2b88d8c8ba229bdb80f8a259bcee6ad1791bfe67",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -1540,6 +1546,7 @@
       "verifiedEdges": [
         "reminders",
         "invoice-config",
+        "mobile-connection",
         "mail",
         "macro",
         "contacts",
@@ -4393,6 +4400,7 @@
       ],
       "region": "body",
       "image": "captures/home-october.png",
+      "imageHash": "cf8c9b5344bd52d3ab4b0e2f4e4a6f94a1beaa4f075e9c4706319f1b2c5338e9",
       "anchors": {
         "home-invoice-connection": {
           "x": 275.390625,
@@ -4558,11 +4566,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "d6e002765ea9cd9bd5092f4542f881a066d5b98f",
-      "verifiedEdges": [
-        "home-invoice-connection",
-        "invoice-current"
-      ],
-      "imageHash": "cf8c9b5344bd52d3ab4b0e2f4e4a6f94a1beaa4f075e9c4706319f1b2c5338e9",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -4576,7 +4579,11 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [
+        "home-invoice-connection",
+        "invoice-current"
+      ],
+      "fresh": false
     },
     {
       "id": "home-invoice-connection",
@@ -29337,6 +29344,192 @@
       "fresh": false
     },
     {
+      "id": "mobile-connection",
+      "title": "Conexión DNS / VPN",
+      "group": "Ajustes",
+      "route": [
+        "#menuBtn",
+        "#mobileConnectionBtn"
+      ],
+      "ready": "#mobileConnectionDialog[open]",
+      "sources": [
+        "js/mobile-connection.js",
+        "js/settings-menu.js"
+      ],
+      "region": "#mobileConnectionDialog",
+      "note": "VPN Kairo, DNS AdGuard y OFF llaman a la misma macro que el widget del móvil.",
+      "image": "captures/mobile-connection.png",
+      "anchors": {},
+      "entryBox": null,
+      "dependencies": [
+        {
+          "file": "index.html",
+          "hash": "6f0d14c928c5f0477223deb0fcdc54afd8824199022d8966c2e0ea40b49d4b41"
+        },
+        {
+          "file": "js/nav-icons.js",
+          "hash": "d45ad268333bf5dfda75d71902da1d7572bbec27e15e5b412fb3f785c0808c42"
+        },
+        {
+          "file": "js/core.js",
+          "part": "core-runtime",
+          "hash": "5193b7b2e687f4e4e8f692527e1ee74c3445d1a6d20da9a7eaaf8c8fb7494822"
+        },
+        {
+          "file": "js/data-integrity.js",
+          "hash": "34bfc80472270238e11eb0e194fef19e56c7fbb81a35ff5fde23a8ae23e5e9f0"
+        },
+        {
+          "file": "tools/fixture.json",
+          "hash": "98d54e4adf481a811b8b05627515272fb623f8b78db75b294d07ceed739cd07d"
+        },
+        {
+          "file": "tools/visual-map/fixture.cjs",
+          "hash": "ed5dd8ba54032603d829a5c3ec2d3b6dd02ee9c2439b4cd315a01db396b19f28"
+        },
+        {
+          "file": "css/source/base.css",
+          "hash": "45c10a4326fcd88babebf8968fdd517c678b16f9c86cf0268fa1c1cf11f81408"
+        },
+        {
+          "file": "css/source/navigation-controls.css",
+          "hash": "dbc077d7421c40475885ad1ee8f146743a0e25ab5f6f0d4f0a9a050765add898"
+        },
+        {
+          "file": "css/source/economics.css",
+          "hash": "0139ec7d50ccc8cc00bf4607bcf6563a2989cf20f9655d5d52fa2db223ca0bd8"
+        },
+        {
+          "file": "css/source/birthdays.css",
+          "hash": "440692569d9eaffef154455313133b7517cd1e8773f9529b43f751ea1610116e"
+        },
+        {
+          "file": "css/source/event-calendar.css",
+          "hash": "302e47126cc9555d8fb669c50ffe94f0665a59c8ef7cb772acd6aad45e2fd179"
+        },
+        {
+          "file": "css/source/navigation-alarms.css",
+          "hash": "47d9432b0b15346910793923df7135606c982cf934ab492aaff6aa33777d0227"
+        },
+        {
+          "file": "css/source/event-panels.css",
+          "hash": "a774bd92788f2974acb385c535d2ba6f6f528bf7f7bf82b4562080a8064b7192"
+        },
+        {
+          "file": "css/source/dialogs-responsive.css",
+          "hash": "557d68bac2670445c7edd35896d6a8e90cab5efbc85c6d1684ea31da9451e4b3"
+        },
+        {
+          "file": "css/source/wedding-moves.css",
+          "hash": "5b43e0e0a12fb300f91f7f493ec6b55868daa63844184bf44d7df40a0bd2ed9a"
+        },
+        {
+          "file": "css/source/shared-refinements.css",
+          "hash": "ef9752e5632d9aad33fbc38209393a9a36ccf4c0d08b0c2d1fb946c121d6fe0d"
+        },
+        {
+          "file": "css/source/home-sharing.css",
+          "hash": "5dfdf4c713d88fdb5b604948fcc8341adaa86647cf929fa107441f439ea8ca05"
+        },
+        {
+          "file": "css/source/hours-kairo.css",
+          "hash": "5165aae5a51d17da5c5df6dc41ee209a94ae781e474925cfd724b2aa2c16c842"
+        },
+        {
+          "file": "css/source/energy-refinements.css",
+          "hash": "b07b027bafa68df7ed4d69283f5d10d06be0b34b45c0fe2750c9f37ba37400a5"
+        },
+        {
+          "file": "css/source/home-reminders.css",
+          "hash": "38bdefdcfdfe66af20e803d5e0beabd19dab36551d01c0345bcdc61bd824853d"
+        },
+        {
+          "file": "css/source/invoices.css",
+          "hash": "aae20d6d7e15c872a5d2054bacb37156845dbd84f8549a5441c212790119cb35"
+        },
+        {
+          "file": "css/source/invoices-calendar.css",
+          "hash": "fab6f4d1d756a586786aec5c51c7eaccc786b4742b4179d4ce627db9acec0f63"
+        },
+        {
+          "file": "css/source/theme-cream.css",
+          "hash": "2e2f3cae8e4d8ed00e97f4a127fe36564b68b1c55816e1a4cfa6f1cebfb83309"
+        },
+        {
+          "file": "css/tasks.css",
+          "hash": "96b4dc532dd2d7eeb82fe5d4c971b8599542860e95b3e8655f45f1922d4365aa"
+        },
+        {
+          "file": "js/home-hours.js",
+          "hash": "71870fc7ff171b4cb54427c0ddde1348a31dcfd0422d382b423430cb9f489e53"
+        },
+        {
+          "file": "js/home-weeks.js",
+          "hash": "c56ced3f2dd6647942467f69c057805c9d903ae8536d5603410969f2af620276"
+        },
+        {
+          "file": "js/hours-kairo.js",
+          "hash": "827c57330bd85486efd95f3041acfaf5c065f47ec71129b0e88b273eea4adb12"
+        },
+        {
+          "file": "js/hours-cache.js",
+          "hash": "37893545d04614465b627ab93dda2bb703a5a7b01e0c9f9da4afae79c882f787"
+        },
+        {
+          "file": "js/hours-jobs.js",
+          "hash": "efabb5585a833346b9cb7595ac9bca9d63b63167ea263dc0d0c8d8d50cec412d"
+        },
+        {
+          "file": "js/hours-auth.js",
+          "hash": "9e1787e0f8fa243f426b2984ae492cd423fa428fb511d1bacbebf181446f9a69"
+        },
+        {
+          "file": "js/invoices-home.js",
+          "hash": "efc7c78984b49d2bba23000e2872df9088ddfd5a8275936af55509453aee4777"
+        },
+        {
+          "file": "js/invoices.js",
+          "hash": "49b25c8121044d3c1b869317821c7995eb08466290bef328e4b17cc0d0581a8a"
+        },
+        {
+          "file": "js/invoices-kairo.js",
+          "hash": "d584e058699a96658c8d679250ccf6432df50af9a9161130192bf87c6d586c78"
+        },
+        {
+          "file": "js/init.js",
+          "hash": "889f1d4fdc2a368fc53ed5d08018676870ca7d005643c87451fa0d03b84fd781"
+        },
+        {
+          "file": "js/settings-menu.js",
+          "hash": "4c99b7549fe909af870222aa9b1835350faa81592f2515aa102882c506400bcd"
+        },
+        {
+          "file": "js/mobile-connection.js",
+          "hash": "2ea04b503dc6311f2cce95392ffeed6dea1f988629b77a8f0d3a4543fc944f10"
+        },
+        {
+          "file": "js/core.js",
+          "part": "app-version",
+          "hash": "6af5e217c4be634ea500cc4882e9e367e5d4f28e319e44d8ca3b8705e1327faf"
+        },
+        {
+          "file": "tools/visual-map/capture.cjs",
+          "hash": "ddd175b636479ffd6fc6d38f918a914c6b6a5fd89a58cd664add6c4037047dd8"
+        },
+        {
+          "file": "tools/visual-map/catalog.cjs",
+          "part": "scene:mobile-connection",
+          "hash": "5ea32395c5cccaa84c535b696b28cd1625d79ae6a423c642de2d9c44748133e3"
+        }
+      ],
+      "dependencyVersion": 2,
+      "commit": "2b88d8c8ba229bdb80f8a259bcee6ad1791bfe67",
+      "verifiedEdges": [],
+      "imageHash": "1712ae74faff830d5e3b3afaced7e964c6b9aeceb16078b5b8cb768e5c011210",
+      "review": "Sin revisar",
+      "fresh": true
+    },
+    {
       "id": "mail",
       "title": "Correo de horas",
       "group": "Ajustes",
@@ -33944,6 +34137,14 @@
     },
     {
       "from": "settings",
+      "to": "mobile-connection",
+      "selector": "#mobileConnectionBtn",
+      "label": "Conexión DNS / VPN",
+      "view": "area",
+      "step": "#mobileConnectionBtn"
+    },
+    {
+      "from": "settings",
       "to": "mail",
       "selector": "#editConnectionsBtn",
       "label": "Correo de horas",
@@ -35316,6 +35517,13 @@
       "status": "Capturada · Sin revisar"
     },
     {
+      "group": "Ajustes",
+      "title": "Conexión DNS / VPN",
+      "file": "js/mobile-connection.js",
+      "scene": "mobile-connection",
+      "status": "Capturada · Sin revisar"
+    },
+    {
       "group": "Tareas",
       "title": "Tareas completadas",
       "file": "js/tasks-view.js",
@@ -35495,7 +35703,7 @@
     {
       "symbol": "openSheet",
       "file": "js/core.js",
-      "line": 582
+      "line": 588
     },
     {
       "symbol": "openEstudio",
@@ -35641,6 +35849,11 @@
       "symbol": "openMailCalendar",
       "file": "js/mail-calendar.js",
       "line": 23
+    },
+    {
+      "symbol": "openMobileConnection",
+      "file": "js/mobile-connection.js",
+      "line": 35
     },
     {
       "symbol": "openNavIconPicker",

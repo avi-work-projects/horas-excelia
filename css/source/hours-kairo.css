@@ -34,3 +34,12 @@
 .hours-auth-alert.quiet details>summary::before{content:none}
 .hours-auth-alert.quiet details>summary::after{position:static;width:5px;height:5px;border-width:0 1.5px 1.5px 0;color:inherit;transform:rotate(45deg);margin-top:-2px}
 .hours-auth-alert.quiet details[open]>summary::after{transform:rotate(225deg);margin-top:3px}
+
+.mobile-connection-dialog{box-sizing:border-box;margin:auto;width:min(390px,calc(100% - 24px));padding:16px;border:1px solid var(--border);border-radius:16px;background:var(--surface);color:var(--text);font:normal .84rem/1.4 var(--font)}
+.mobile-connection-dialog::backdrop{background:#10111bb8}.mobile-connection-dialog header{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.mobile-connection-dialog h2{font-size:1.05rem;margin:0}.mobile-connection-dialog p{margin:12px 0;color:var(--text-muted)}
+.mobile-connection-dialog button{min-height:42px;padding:6px 10px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;font:600 .78rem var(--font)}
+.mobile-modes{display:grid;grid-template-columns:1fr 1fr .66fr;gap:6px}.mobile-modes button[data-mobile-mode=vpn]{color:var(--c-green)}.mobile-modes button:disabled{opacity:.55}
+.mobile-connection-dialog [data-route][data-available=true]{color:var(--c-green)}.mobile-connection-dialog [data-mode-result]{font-size:.72rem;margin-bottom:0}
+.mobile-connection-dialog [data-link]{margin-top:12px}.mobile-connection-dialog input{display:block;box-sizing:border-box;width:100%;margin:5px 0 8px;padding:8px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:8px}
+.hours-home-actions [data-mobile-connection]{font:600 .72rem var(--font)}

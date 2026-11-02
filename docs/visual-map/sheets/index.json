@@ -147,14 +147,14 @@
       "home",
       "alarm",
       "settings",
+      "mobile-connection",
       "mail",
       "macro",
       "contacts",
       "notes",
       "icons",
       "hairdresser",
-      "export-folder",
-      "export-mode"
+      "export-folder"
     ]
   },
   {
@@ -162,7 +162,8 @@
     "title": "Ajustes · 2/2",
     "image": "sheets/area-5-1.png",
     "scenes": [
-      "settings",
+      "hours-export",
+      "export-mode",
       "import-preview"
     ]
   },

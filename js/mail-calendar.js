@@ -6,7 +6,7 @@ async function kairoGet(url){
     if(!response.ok)throw Error('Kairo ha respondido con un error de acceso o servicio ('+response.status+').');
     return await response.json();
   }catch(error){
-    if(error.name==='AbortError'||error instanceof TypeError)throw Error(hoursCheckMessage('network'));
+    if(error.name==='AbortError'||error instanceof TypeError){var offline=Error(hoursCheckMessage('network'));offline.code='network';throw offline;}
     throw error;
   }finally{clearTimeout(timeout);}
 }
@@ -18,7 +18,7 @@ async function openCheckedInvoice(href){
     var base=invoiceKairoUrl(invoiceData().config.kairoUrl);
     validateHomeInvoiceStatus(await kairoGet(base+'gestify-status?period='+period),period);
     if(!popup.closed)popup.location.replace(href);
-  }catch(error){popup.close();showToast(error.message,'error');}
+  }catch(error){popup.close();showToast(error.message,'error');if(error.code==='network')openMobileConnection();}
 }
 function openMailCalendar(){
   var base=hoursKairoUrl();
@@ -26,6 +26,7 @@ function openMailCalendar(){
   var period=mkey(CY,CM),origin=new URL(base).origin,previous=NAV_BACK;
   var dialog=document.createElement('dialog'),header=document.createElement('header'),back=document.createElement('button');
   var title=document.createElement('strong'),body=document.createElement('div'),note=document.createElement('p'),retry=document.createElement('button');
+  var modeButton=document.createElement('button');modeButton.type='button';modeButton.textContent='Activar VPN';modeButton.hidden=true;
   var frame=document.createElement('iframe');
   dialog.className='hours-review-dialog';dialog.setAttribute('aria-label','Programación');
   back.textContent='Volver a Gestify';title.textContent='Programación';retry.textContent='Reintentar';
@@ -51,18 +52,18 @@ function openMailCalendar(){
     frame.contentWindow.postMessage({type:'gestify-calendar-days',period:message.period,days:days},origin);
   }
   async function connect(){
-    note.textContent='Conectando con Kairo…';retry.hidden=true;
+    note.textContent='Conectando con Kairo…';retry.hidden=true;modeButton.hidden=true;
     try{
       var result=await kairoGet(base+'reachable');
       if(result.service!=='kairo-hours')throw Error('Respuesta inesperada de Kairo.');
       if(!dialog.open)return;
       frame.src=base+'calendario?period='+period;body.replaceWith(frame);
-    }catch(error){note.textContent=error.message;retry.hidden=false;}
+    }catch(error){note.textContent=error.message;retry.hidden=false;modeButton.hidden=error.code!=='network';}
   }
   function close(){dialog.close();}
   dialog.addEventListener('close',function(){window.removeEventListener('message',receive);dialog.remove();if(NAV_BACK===close)NAV_BACK=previous;backFocus.focus();},{once:true});
   var backFocus=document.activeElement;
-  back.onclick=close;retry.onclick=connect;header.append(title,back);body.append(note,retry);dialog.append(header,body);
+  back.onclick=close;retry.onclick=connect;header.append(title,back);body.append(note,modeButton,retry);modeButton.onclick=function(){openMobileConnection(function(){if(dialog.open)connect();},'vpn');};dialog.append(header,body);
   document.body.append(dialog);dialog.showModal();NAV_BACK=close;
   window.addEventListener('message',receive);connect();
 }

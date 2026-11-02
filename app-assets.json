@@ -59,6 +59,9 @@
       "path": "js/hours-kairo.js"
     },
     {
+      "path": "js/mobile-connection.js"
+    },
+    {
       "path": "js/mail-calendar.js"
     },
     {

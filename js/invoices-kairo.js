@@ -42,7 +42,7 @@ function invoiceKairoExchange(url,p,action,popup){
     }
     window.addEventListener('message',receive);
     var ping=setInterval(function(){if(popup.closed)return finish(new Error('Ventana cerrada. La recepción no está confirmada; consulta el estado.'));if(!sent)popup.postMessage({channel:'gestify-kairo-v1',id:id,type:'hello'},origin);},500);
-    var timeout=setTimeout(function(){finish(new Error('Sin respuesta de Kairo. Comprueba Tailscale y consulta el estado antes de repetir.'));},45000);
+    var timeout=setTimeout(function(){finish(Object.assign(new Error('Sin respuesta de Kairo. Comprueba Tailscale y consulta el estado antes de repetir.'),{code:'network'}));},45000);
   });
 }
 function bindInvoiceKairo(root,p,url){
@@ -52,7 +52,7 @@ function bindInvoiceKairo(root,p,url){
       if(INVOICE_KAIRO_BUSY)return;
       var message=root.querySelector('#invoiceKairoMessage'),popup;
       try{
-        if(navigator.onLine===false)throw new Error('Sin conexión. La preparación sigue guardada en este dispositivo.');
+        if(navigator.onLine===false)throw Object.assign(new Error('Sin conexión. La preparación sigue guardada en este dispositivo.'),{code:'network'});
         url=invoiceKairoUrl(url);
         // Abrir dentro del gesto del usuario; nunca datos fiscales en la URL.
         popup=window.open(url+'gestify','_blank');
@@ -71,7 +71,13 @@ function bindInvoiceKairo(root,p,url){
         data=invoiceData();record=data.months[p.period];
         if(record&&record.preparation.contentHash===p.contentHash){record.kairo={operationId:p.operationId,contentHash:p.contentHash,state:result.state};invoiceSave(data);if(data.config.kairoUrl&&invoiceKairoUrl(data.config.kairoUrl)===url&&typeof fetchHomeInvoiceStatus==='function')fetchHomeInvoiceStatus(p.period,data.config.kairoUrl,true);}
         message.textContent=invoiceKairoState(result.state);
-      }catch(e){message.textContent=e.message;}
+      }catch(e){
+        message.textContent=e.message;
+        if(e.code==='network'){
+          var connect=document.createElement('button');connect.type='button';connect.className='ev-btn';connect.textContent='Activar VPN';
+          connect.onclick=function(){openMobileConnection(null,'vpn');};message.append(' ',connect);
+        }
+      }
       finally{INVOICE_KAIRO_BUSY=false;root.querySelectorAll('#invoiceKairoSend,#invoiceKairoStatus').forEach(function(el){el.disabled=false;});}
     };
   });
