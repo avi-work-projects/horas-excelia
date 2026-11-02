@@ -212,6 +212,8 @@ test('Bodas: configurar pack, duracion, salas y exportar catalogos',async({page}
 });
 
 test('Lista abre en el día sin Hoy flotante y las cinco subpestanas de Bodas admiten swipe',async({page})=>{
+ // La lista de prueba contiene cumpleaños del 1 al 5. Un día sin cumpleaños muestra el separador.
+ await page.clock.setFixedTime(new Date(2026,5,15,12));
  await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-bdays-v1',JSON.stringify(Array.from({length:60},(_,m)=>({name:'Persona '+m,day:1+Math.floor(m/12),month:m%12+1}))));});
  await page.goto('/');await page.locator('#eventsBtn').click();await page.locator('#evViewBday').click();await page.locator('#bdViewList').click();
  await expect(page.locator('#bdVipAll')).toHaveCount(0);
