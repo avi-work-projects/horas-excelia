@@ -23,9 +23,16 @@ function homeInvoiceCheckedAt(value){return new Date(value).toLocaleString('es-E
 function homeInvoiceScheduleDate(year,month){var day=new Date(year,month,20);while(!day.getDay()||day.getDay()===6||dayT(day)!=='normal')day=ad(day,-1);return dk(day);}
 function homeInvoiceModel(year,month){
   var period=mkey(year,month),url='';try{url=invoiceData().config.kairoUrl;}catch(e){}
-  var model={period:period,url:url,tone:'unknown',title:'Factura pendiente de comprobar',detail:'Actualiza el estado para consultar Kairo.'};
-  if(!url)return Object.assign(model,{title:'Conectar facturas con Kairo',detail:'Configura la conexión para consultar este mes.',configure:true});
+  var model={period:period,url:url,tone:'unknown',title:'Factura del mes',detail:'Puedes preparar la factura o consultar su estado en Kairo.'};
   var saved=INVOICE_HOME_CACHE.url===url&&INVOICE_HOME_CACHE.periods[period],data=saved&&saved.data;
+  var today=new Date();
+  if(period>=mkey(today.getFullYear(),today.getMonth())&&(!data||['missing','draft'].includes(data.state))){
+    var pending=homeSubmissionWeeks(year,month).find(function(week){
+      return !week.extra&&dk(ad(week.mon,4)).slice(0,7)>=period&&!(url?hoursCovered(week.key):SW[week.key]);
+    });
+    if(pending)return Object.assign(model,{title:'Primero, las horas del mes',detail:'Revisa tus jornadas y deja las semanas enviadas o programadas para preparar la factura.',week:pending.key,configure:!url});
+  }
+  if(!url)return Object.assign(model,{title:'Conectar facturas con Kairo',detail:'Puedes preparar el mes en Gestify o conectar Kairo.',configure:true});
   if(!data){if(homePeriodMode(year,month)==='closed'){model.title='Factura de mes cerrado';model.detail='Histórico guardado · sin consultas automáticas';}return model;}
   var pending=['missing','draft','issued'].includes(data.state);
   model.unsent=pending;
@@ -40,9 +47,19 @@ function homeInvoiceModel(year,month){
   model.checkedAt=saved.checkedAt;return model;
 }
 function renderHomeInvoiceStatus(year,month){
-  if(mkey(year,month)<INVOICE_FIRST_PERIOD)return '';
+  if(mkey(year,month)<INVOICE_FIRST_PERIOD)return '<button type="button" id="invoiceHomeBtn" class="home-invoice-action" data-home-invoice="send">Ver cálculo histórico</button>';
   var m=homeInvoiceModel(year,month),icon=m.tone==='complete'?'✓':m.tone==='scheduled'?'◷':'!';
-  var action=m.configure?'<button type="button" class="home-invoice-action" data-home-invoice="configure">Conectar Kairo</button>':m.unsent||m.changed?'<button type="button" class="home-invoice-action" data-home-invoice="send">'+(m.changed?'Revisar cambios':'Enviar factura')+'</button>':m.url?'<a class="home-invoice-action" href="'+escHtml(invoiceKairoUrl(m.url)+'gestify-month?period='+m.period)+'" target="_blank" rel="noopener noreferrer">'+(m.tone==='scheduled'?'Ver programación':'Ver factura')+'</a>':'';
+  var action;
+  if(m.week){
+    action='<button type="button" class="home-invoice-action" data-home-invoice="hours" data-week="'+m.week+'">Revisar horas</button>';
+  }else if(m.configure||m.unsent||m.changed||m.tone==='unknown'){
+    action='<button type="button" class="home-invoice-action" id="invoiceHomeBtn" data-home-invoice="send">'+(m.changed?'Revisar cambios':'Enviar factura')+'</button>';
+  }else{
+    var reviewUrl=invoiceKairoUrl(m.url)+'gestify-month?period='+m.period;
+    action='<a class="home-invoice-action" data-kairo-review href="'+escHtml(reviewUrl)+'" target="_blank" rel="noopener noreferrer">'+(m.tone==='scheduled'?'Ver programación':'Ver factura')+'</a>';
+  }
+  if(INVOICE_HOME_STATUS.phase==='error'&&INVOICE_HOME_STATUS.period===m.period&&INVOICE_HOME_STATUS.url===m.url&&INVOICE_HOME_STATUS.reason)m.detail+=' '+INVOICE_HOME_STATUS.reason;
+  if(m.configure)action='<div class="home-invoice-options">'+action+'<button type="button" class="home-invoice-action" data-home-invoice="configure">Conectar Kairo</button></div>';
   return '<section class="home-invoice-status '+m.tone+(m.unsent?' unsent':'')+'" id="homeInvoiceStatus" aria-label="Estado de factura" aria-live="polite"><span class="home-invoice-icon" aria-hidden="true">'+icon+'</span><div class="home-invoice-copy"><strong>'+escHtml(m.title)+'</strong><span>'+escHtml(m.detail)+'</span></div>'+action+'</section>';
 }
 function paintHomeInvoiceStatus(){if(typeof paintInvoiceCalendar==='function')paintInvoiceCalendar();var current=document.getElementById('homeInvoiceStatus');if(current)current.outerHTML=renderHomeInvoiceStatus(CY,CM);}
@@ -60,7 +77,7 @@ async function fetchHomeInvoiceStatus(period,url,force){
     if(!response.ok)throw new Error('Kairo no disponible');var data=validateHomeInvoiceStatus(await response.json(),period);
     if(INVOICE_HOME_CACHE.url!==url)return;
     INVOICE_HOME_CACHE.periods[period]={data:data,checkedAt:Date.now(),attempted:true,dueChecked:!!due};homeInvoiceCacheSave();if(period===mkey(CY,CM))INVOICE_HOME_STATUS={period:period,url:url,phase:'ready',data:data,checkedAt:Date.now()};
-  }catch(e){if(period===mkey(CY,CM))INVOICE_HOME_STATUS={period:period,url:url,phase:'error',checkedAt:previous.checkedAt};}
+  }catch(e){if(period===mkey(CY,CM))INVOICE_HOME_STATUS={period:period,url:url,phase:'error',checkedAt:previous.checkedAt,reason:e.name==='AbortError'||e instanceof TypeError?hoursCheckMessage('network'):'Kairo no ha podido confirmar el estado de la factura.'};}
   finally{clearTimeout(timeout);delete INVOICE_HOME_REQUESTS[period+'|'+url];paintHomeInvoiceStatus();}
 }
 async function syncHomeInvoiceStatus(force){
@@ -71,7 +88,16 @@ async function syncHomeInvoiceStatus(force){
 }
 function initHomeInvoiceStatus(){
   var container=document.getElementById('weeksContainer');if(!container)return;
-  container.addEventListener('click',function(e){var button=e.target.closest('[data-home-invoice]');if(button){if(button.dataset.homeInvoice==='send')openInvoiceMonth(mkey(CY,CM));else openInvoiceSettings({connection:true});}});
+  container.addEventListener('click',function(e){
+    var link=e.target.closest('[data-kairo-review]');
+    if(link&&!e.ctrlKey&&!e.metaKey){e.preventDefault();openCheckedInvoice(link.href);return;}
+    var button=e.target.closest('[data-home-invoice]');if(!button)return;
+    if(button.dataset.homeInvoice==='send')openInvoiceMonth(mkey(CY,CM));
+    else if(button.dataset.homeInvoice==='hours'){
+      var card=container.querySelector('.week-card[data-week="'+button.dataset.week+'"]');
+      if(card){card.scrollIntoView({block:'center'});var edit=card.querySelector('.sent-toggle');if(edit)edit.focus({preventScroll:true});}
+    }else openInvoiceSettings({connection:true});
+  });
   window.addEventListener('storage',function(e){if(e.key===INVOICE_HOME_CACHE_KEY){INVOICE_HOME_CACHE=homeInvoiceCacheRead();paintHomeInvoiceStatus();}});syncHomeInvoiceStatus(false);
 }
 if(typeof document!=='undefined')document.addEventListener('DOMContentLoaded',initHomeInvoiceStatus);

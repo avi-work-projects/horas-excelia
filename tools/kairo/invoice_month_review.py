@@ -66,4 +66,4 @@ def render(period, row, current, cfg, csrf, fingerprint):
             content += '<p class="notice">Consulta guardada. Esta revisión ha sido sustituida; vuelve a abrir el mes.</p>'
     boot = json.dumps({'csrf': csrf, 'hash': fingerprint, 'period': title, 'planId': row['id'] if row else None}, ensure_ascii=True).replace('<', '\\u003c')
     template = Path(__file__).with_name('invoice_month_review.html').read_text(encoding='utf-8')
-    return template.replace('<!--TITLE-->', e(title)).replace('<!--CONTENT-->', content).replace('/*BOOT*/', boot)
+    return template.replace('<!--PERIOD-->', e(period)).replace('<!--TITLE-->', e(title)).replace('<!--CONTENT-->', content).replace('/*BOOT*/', boot)

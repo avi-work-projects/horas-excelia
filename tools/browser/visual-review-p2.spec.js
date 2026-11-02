@@ -19,6 +19,10 @@ test('cumpleaños: dos nombres, contador y listado completo sin escrituras',asyn
   })));
   expect(short.lines).toBeGreaterThan(1);
   expect(short.clipped).toBe(false);
+  const endings=await names.last().locator('.bday-name-tail').evaluateAll(spans=>spans.map(span=>{
+    const range=document.createRange();range.selectNodeContents(span);return range.getClientRects().length;
+  }));
+  expect(endings.length).toBeGreaterThan(0);expect(endings.every(count=>count===1)).toBe(true);
   expect(long).toEqual({lines:4,clipped:true,fitsWidth:true});
   const cell=await day.boundingBox(),more=await day.locator('.bday-day-more').boundingBox();
   expect(more.y+more.height).toBeLessThanOrEqual(cell.y+cell.height);

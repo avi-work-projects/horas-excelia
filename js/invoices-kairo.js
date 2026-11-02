@@ -42,7 +42,7 @@ function invoiceKairoExchange(url,p,action,popup){
     }
     window.addEventListener('message',receive);
     var ping=setInterval(function(){if(popup.closed)return finish(new Error('Ventana cerrada. La recepción no está confirmada; consulta el estado.'));if(!sent)popup.postMessage({channel:'gestify-kairo-v1',id:id,type:'hello'},origin);},500);
-    var timeout=setTimeout(function(){finish(new Error('Sin respuesta de Kairo. Comprueba Tailscale y consulta el estado antes de repetir. Puedes usar Datos para AEAT como alternativa.'));},45000);
+    var timeout=setTimeout(function(){finish(new Error('Sin respuesta de Kairo. Comprueba Tailscale y consulta el estado antes de repetir.'));},45000);
   });
 }
 function bindInvoiceKairo(root,p,url){

@@ -12,6 +12,7 @@ from urllib.parse import parse_qs, urlsplit
 
 from hours_model import MADRID, inventory_signature, scope, validate_request
 from hours_store import Store
+from mail_calendar import calendar_data, save_calendars, remember_review_days
 from hours_jobs import Jobs
 from hours_errors import HoursFailure
 from outlook_hours import OutlookReader
@@ -105,6 +106,8 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
                 payload['periods']=[p for p in payload['periods'] if not jobs.fact(config['sender'],p)]
             if not payload['periods']:
                 return {'periods':[jobs.fact(config['sender'],p) for p in payload['requestedPeriods']]}
+            if hasattr(reader,'ensure_mailbox_page'):
+                reader.ensure_mailbox_page()
             with store.exclusive():
                 inventory = current(payload)
             if not inventory.get('complete') or not inventory.get('accountVerified'):
@@ -113,7 +116,9 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
         if kind == 'preview':
             with store.exclusive():
                 force = payload.pop('refresh', False) is True
-                return store.preview(payload, observed(payload, force), now) | {'allowWrites':allow_writes}
+                plan=store.preview(payload, observed(payload, force), now)
+                remember_review_days(store,payload)
+                return plan | {'allowWrites':allow_writes}
         if kind == 'simulate':
             with store.exclusive():
                 return simulate(store, payload['planId'], observed, now, payload.get('updates', []))
@@ -135,6 +140,8 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
         raise ValueError('Trabajo no válido')
 
     jobs = Jobs(store, execute)
+    with store.db() as db:
+        db.execute('CREATE TABLE IF NOT EXISTS calendar_days (period TEXT PRIMARY KEY,days TEXT NOT NULL)')
     jobs.start()
 
     class Handler(BaseHTTPRequestHandler):
@@ -181,10 +188,19 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
                     return self.reply(200, jobs.get(identifier), cors=origin == app_origin)
                 except (KeyError, ValueError):
                     return self.reply(404, {'error':'Trabajo no encontrado'}, cors=origin == app_origin)
-            if self.route() in ('', '/'):
+            if self.route() == '/reachable':
+                if self.headers.get('Origin') != app_origin:return self.reply(403, {'error':'Origen no permitido'})
+                return self.reply(200, {'service':'kairo-hours'}, cors=True)
+            if self.route() in ('', '/', '/calendario'):
                 template = (source/'hours_receiver.html').read_text(encoding='utf-8')
                 script = (source/'hours_receiver.js').read_text(encoding='utf-8')
-                settings = json.dumps(dict(origin=app_origin, csrf=csrf, allowWrites=allow_writes)).replace('<','\\u003c')
+                boot=dict(origin=app_origin, csrf=csrf, allowWrites=allow_writes)
+                if self.route()=='/calendario':
+                    period=parse_qs(urlsplit(self.path).query).get('period',[clock().strftime('%Y-%m')])[0]
+                    try:boot['calendar']=calendar_data(store,config['sender'],period)
+                    except ValueError:return self.reply(400,{'error':'Mes no válido'})
+                    script=(source/'mail_calendar_view.js').read_text(encoding='utf-8')+'\n'+script
+                settings = json.dumps(boot).replace('<','\\u003c')
                 return self.reply(200, template.replace('/*HOURS_CONFIG*/', settings).replace('/*HOURS_SCRIPT*/', script), 'text/html')
             if self.route() == '/status':
                 if self.headers.get('Origin') != app_origin:
@@ -235,7 +251,7 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
                 extra={'Access-Control-Allow-Methods':'POST','Access-Control-Allow-Headers':'Content-Type','Access-Control-Max-Age':'600'}
                 if self.headers.get('Access-Control-Request-Private-Network') == 'true':extra['Access-Control-Allow-Private-Network']='true'
                 return self.reply(204, '', cors=True, extra=extra)
-            if not self.allowed() or (self.route() not in ('/status','/auth-status') and not self.route().startswith('/jobs/')) or self.headers.get('Origin') != app_origin or self.headers.get('Access-Control-Request-Method') != 'GET' or self.headers.get('Access-Control-Request-Headers','').lower() not in ('','accept'):
+            if not self.allowed() or (self.route() not in ('/status','/auth-status','/reachable') and not self.route().startswith('/jobs/')) or self.headers.get('Origin') != app_origin or self.headers.get('Access-Control-Request-Method') != 'GET' or self.headers.get('Access-Control-Request-Headers','').lower() not in ('','accept'):
                 return self.reply(403, {'error':'Consulta no permitida'})
             extra={'Access-Control-Allow-Methods':'GET','Access-Control-Max-Age':'600'}
             if self.headers.get('Access-Control-Request-Private-Network') == 'true':extra['Access-Control-Allow-Private-Network']='true'
@@ -264,6 +280,13 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
                     raise ValueError()
                 data = json.loads(self.rfile.read(size))
                 now = clock()
+                if self.route()=='/calendar-days':
+                    save_calendars(store,{data['period']:data['days']})
+                    return self.reply(200,{'saved':True})
+                if self.route()=='/calendar-refresh':
+                    period=data['period']
+                    scope(period)
+                    return self.reply(202,jobs.submit('status',{'period':period,'periods':[period],'requestedPeriods':[period],'refresh':True},'status:'+period+':'+str(uuid.uuid4())))
                 background = data.pop('background', False) is True
                 if background and self.route() in ('/preview', '/simulate', '/commit'):
                     kind = self.route()[1:]

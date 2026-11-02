@@ -35,6 +35,13 @@ assert(household.includes('id="electEditBtn"'));assert(household.includes('energ
 const sub=a._defaultSubrogacion();Object.assign(sub,{fecha:'2026-01-01',nuevoImporte:110000,nuevoTipoInteres:2,nuevoPlazoAnios:18,entidadBanco:'Banco nuevo'});comp.subrogaciones.push(sub);
 assert.equal(a.householdMortgagePeriod(comp,-1,new Date('2026-08-21')).end,'2026-01-01');
 const summary=a.renderHouseholdSummary(true);assert(summary.indexOf('Banco nuevo')<summary.indexOf('Banco de prueba'));assert(summary.includes('<details class="household-history">'));
+const beforeSwitch=a.householdMortgagePeriod(comp,-1,new Date('2026-08-21')),amounts=a.householdLoanPayments(beforeSwitch);
+assert.equal(beforeSwitch.paid,24);
+assert(Math.abs(amounts.total-beforeSwitch.payment*24)<.01);
+assert(Math.abs(amounts.capital+amounts.balance-120000)<.01);
+assert(Math.abs(amounts.balance-a._computeBalanceAtDate(comp,sub.fecha))<.01);
+const zeroInterest=a.householdLoanPayments({capital:1200,effective:0,years:1,payment:100,paid:21});
+assert.deepEqual({...zeroInterest},{capital:1200,interest:0,total:1200,balance:0});
 a.DESPACHO.compra=a._defaultCompra();assert(a.renderHouseholdSummary(false).includes('Suministro de prueba'),'Los suministros siguen visibles sin hipoteca');
 console.log('Hogar: consulta sin edición, ventana propia, resumen y precisión íntegra OK');
 

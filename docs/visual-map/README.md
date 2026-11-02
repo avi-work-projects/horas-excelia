@@ -1,5 +1,10 @@
 # Mapa visual de Gestify
 
+v529. [Capturas numeradas de Kairo y del calendario de correos](review/kairo-v529.html).
+Los ejemplos usan datos ficticios. Home abre los correos programados desde la
+cabecera, y la preparación de la factura desde el panel mensual. La referencia
+de Detalle hipoteca incorpora el resumen de importes por préstamo.
+
 v527 permite programar varios meses de factura de forma independiente. Conserva
 las capturas v526: cambia la selección de planes, no la estructura de los menús.
 

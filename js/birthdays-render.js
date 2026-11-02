@@ -93,6 +93,13 @@ function renderBdayUpcoming(){
 function bdayCalendarPeople(day,month){
   return getBdaysOn(month,day).filter(function(b){return !BDAY_CAL_VIP||b.vip;}).slice().sort(function(a,b){return +!!b.vip-+!!a.vip;});
 }
+function bdayCalendarName(name){
+  return tc(name).normalize('NFC').split(/(\p{L}{5,})/u).map(function(word){
+    var letters=Array.from(word);
+    if(letters.length<5||!/^\p{L}+$/u.test(word))return escHtml(word);
+    return escHtml(letters.slice(0,-2).join(''))+'<span class="bday-name-tail">'+escHtml(letters.slice(-2).join(''))+'</span>';
+  }).join('');
+}
 function renderBdayCalendarDay(day,month){
   var people=bdayCalendarPeople(day,month);
   return '<div class="bd-detail-overlay" id="bdDayOv"><div class="bd-detail-sheet bday-day-sheet"><header class="bd-panel-header panel-header-centered"><button class="sy-back" id="bdDayClose" aria-label="Volver">&#8592;</button><h2>'+day+' '+MN[month-1].toLowerCase()+'</h2><span></span></header><div class="bd-panel-body">'
@@ -128,7 +135,7 @@ function renderBdayCalMonth(){
         var fullName=bdName(b.name);
         var bidx=BDAYS.indexOf(b);
         var vipCls=b.vip?' bday-badge-vip':'';
-        h+='<div class="bday-badge'+vipCls+'" data-bday-idx="'+bidx+'" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" style="--bday-color:'+color+'" title="'+fullName+(b.vip?' VIP':'')+'">'+(b.vip?'<img class="bday-calendar-vip" src="./VIP.png" alt="VIP">':'')+'<span class="bday-badge-name">'+fullName+'</span></div>';
+        h+='<div class="bday-badge'+vipCls+'" data-bday-idx="'+bidx+'" data-bday-name="'+escHtml(b.name)+'" data-bday-day="'+b.day+'" data-bday-month="'+b.month+'" style="--bday-color:'+color+'" title="'+fullName+(b.vip?' VIP':'')+'">'+(b.vip?'<img class="bday-calendar-vip" src="./VIP.png" alt="VIP">':'')+'<span class="bday-badge-name">'+bdayCalendarName(b.name)+'</span></div>';
       });
       if(bds.length>2)h+='<button class="bday-day-more" data-bday-day-list="'+d.getDate()+'" data-month="'+(d.getMonth()+1)+'" aria-label="Ver los '+bds.length+' cumpleaños del día">+'+(bds.length-2)+' más</button>';
       h+='</div>';

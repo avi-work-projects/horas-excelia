@@ -1,4 +1,4 @@
-.hours-control:has(.home-invoice-actions){gap:6px;flex-wrap:wrap}
+.hours-control:has(.home-invoice-actions){align-items:stretch;gap:6px;flex-wrap:wrap}
 .hours-control #editHoursBtn{padding:6px 8px;gap:2px;min-height:42px;white-space:nowrap;font-size:.65rem}
 .home-invoice-actions{display:flex;gap:6px;flex:1;min-width:0}
 .home-invoice-actions button{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:4px;min-height:42px;padding:6px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);font:inherit;font-size:.72rem;font-weight:600;line-height:1.25}
@@ -109,6 +109,7 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 .home-invoice-status.pending{--invoice-tone:var(--c-orange)}
 .home-invoice-status.complete{--invoice-tone:var(--c-green)}
 .home-invoice-status.scheduled{--invoice-tone:var(--upcoming-text)}
+.home-invoice-options{display:grid;gap:6px}
 .home-invoice-copy{min-width:0}
 .home-invoice-copy strong{display:block;font-size:.78rem;font-weight:600}
 .home-invoice-copy>span{display:block;font-size:.67rem;line-height:1.4;color:var(--text-muted);margin-top:3px}

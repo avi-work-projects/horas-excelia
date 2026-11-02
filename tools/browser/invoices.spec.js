@@ -7,7 +7,7 @@ test.beforeEach(async({page})=>{
  await page.clock.setFixedTime(new Date(2026,9,11,12));
  await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-theme-v1','light');localStorage.setItem('excelia-nav-icons-v1','professional');});
  await page.goto('/');
- await page.evaluate(()=>{const c=invoiceDefaults();Object.assign(c,{issuer:'Persona de prueba',issuerTax:'PRUEBA-EMISOR',issuerAddress:'Dirección de prueba',iban:'ES'+String(98n-(BigInt('142800')%97n)).padStart(2,'0')+'00000000000000000000',client:'Cliente de prueba',clientTax:'PRUEBA-CLIENTE',clientAddress:'Dirección cliente',project:'Consultoría de prueba',rate:'320',from:'demo@example.test',to:'Cliente <cliente@example.test>'});invoiceSave({config:c,months:{}});});
+ await page.evaluate(()=>{const c=invoiceDefaults();Object.assign(c,{issuer:'Persona de prueba',issuerTax:'PRUEBA-EMISOR',issuerAddress:'Dirección de prueba',iban:'ES'+String(98n-(BigInt('142800')%97n)).padStart(2,'0')+'00000000000000000000',client:'Cliente de prueba',clientTax:'PRUEBA-CLIENTE',clientAddress:'Dirección cliente',project:'Consultoría de prueba',rate:'320',from:'demo@example.test',to:'Cliente <cliente@example.test>'});invoiceSave({config:c,months:{}});weeks(CY,CM).forEach(w=>SW[dk(w[0])]=true);save();render();});
 });
 test('preparación mensual sin opciones auxiliares, Gmail solo con definitivo y recuperación tras recarga',async({page},info)=>{
  await page.screenshot({path:info.outputPath('home.png')});await page.locator('#invoiceHomeBtn').click();await expect(page.locator('.invoice-status')).toHaveCount(0);await expect(page.locator('#invoiceGmail')).toHaveCount(0);
@@ -45,7 +45,7 @@ test('PDF: duplicados entre meses, backup completo, importación y falta de espa
 test('importar configuración revisable sin sustituir los meses y botones junto a Jornada',async({page},info)=>{
  for(const width of [360,400]){
   await page.setViewportSize({width,height:880});const row=page.locator('#editHoursBtn');const r=await row.boundingBox();
-  for(const id of ['#hoursExportBtn','#invoiceHomeBtn']){const b=await page.locator(id).boundingBox();expect(b.x).toBeGreaterThan(r.x+r.width);expect(Math.abs(b.y-r.y)).toBeLessThan(1);}
+  for(const id of ['#hoursExportBtn','#hoursCalendarBtn']){const b=await page.locator(id).boundingBox();expect(b.x).toBeGreaterThan(r.x+r.width);expect(Math.abs(b.y-r.y)).toBeLessThan(1);}
   await page.screenshot({path:info.outputPath('home-'+width+'.png')});
  }
  await page.locator('#invoiceHomeBtn').click();await expect(page.locator('#invoiceJson,#invoiceConfig')).toHaveCount(0);await expect(page.locator('#invoiceExcel')).toHaveCount(0);const months=await page.evaluate(()=>JSON.stringify(invoiceData().months));
@@ -61,7 +61,7 @@ test('importar configuración revisable sin sustituir los meses y botones junto 
 });
 
 test('mes de Home, título centrado, tarifa diaria y ojo sin alterar el cálculo',async({page},info)=>{
- await page.evaluate(()=>{CY=2027;CM=4;render();});await page.locator('#invoiceHomeBtn').click();
+ await page.evaluate(()=>{CY=2027;CM=4;weeks(CY,CM).forEach(w=>SW[dk(w[0])]=true);render();});await page.locator('#invoiceHomeBtn').click();
  await expect(page.locator('#invoicePeriod')).toContainText('Mayo 2027');await expect(page.locator('#invoicePrev,#invoiceNext')).toHaveCount(0);
  await expect(page.locator('#invoiceAmounts')).toContainText('Precio por día');await expect(page.locator('#invoiceAmounts')).not.toContainText('€');await expect(page.locator('#invoiceAmounts')).not.toContainText('320,00');await page.getByRole('button',{name:'Mostrar importes',exact:true}).click();await expect(page.locator('#invoiceAmounts')).toContainText('320,00');
  const stored=await page.evaluate(()=>JSON.stringify(invoiceData().months['2027-05']));

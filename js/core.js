@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v528 — Nombres completos en el calendario de cumpleaños';
+var APP_VERSION = 'v529 — Calendario de correos y detalle de préstamos';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

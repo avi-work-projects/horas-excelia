@@ -72,6 +72,32 @@ test('factura sin enviar parpadea y abre el mismo circuito de Enviar factura',as
   await expect(page.locator('#invoiceOv')).toContainText('Enviar factura');
 });
 
+test('mes futuro: primero horas del mes, después factura, con prioridad para una aprobación confirmada',async({page,context})=>{
+  await setup(page,context);
+  await page.evaluate(()=>{CY=2027;CM=3;render();});
+  const panel=page.locator('#homeInvoiceStatus');
+  await expect(panel).toContainText('Primero, las horas');
+  await expect(panel.locator('[data-home-invoice=send]')).toHaveCount(0);
+  await panel.getByRole('button',{name:'Revisar horas'}).click();
+  await expect(page.locator('.week-card .sent-toggle:focus')).toHaveCount(1);
+  await page.evaluate(()=>{HOURS_CACHE.url=hoursKairoUrl();weeks(CY,CM).forEach(w=>HOURS_CACHE.weeks[dk(w[0])]={state:'sent'});paintHoursStatus();});
+  await expect(panel.getByRole('button',{name:'Enviar factura'})).toBeVisible();
+  await page.evaluate(()=>{HOURS_CACHE.weeks={};INVOICE_HOME_CACHE.periods['2027-04']={data:{state:'scheduled',scheduled:true,scheduledDate:'2027-04-20'}};paintHoursStatus();});
+  await expect(panel).toContainText('Factura programada');
+});
+
+test('Ver programación explica una conexión fallida sin perder la fecha confirmada',async({page,context})=>{
+  const api=await setup(page,context);
+  api.set(result('scheduled'));
+  await page.locator('[data-hours-check]').click();
+  const link=page.locator('[data-kairo-review]');
+  await expect(link).toHaveText('Ver programación');
+  api.offline();
+  await link.click();
+  await expect(page.getByText(/Comprueba que Tailscale está conectado/).last()).toBeVisible();
+  await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura programada');
+});
+
 test('la factura detecta cambios locales sin consultar Kairo ni alterar lo programado',async({page,context},info)=>{
   const api=await setup(page,context);
   await page.evaluate(async()=>{var d=invoiceData();Object.assign(d.config,{issuer:'Emisor prueba',issuerTax:'B00000000',client:'Cliente prueba',clientTax:'B00000001',project:'Proyecto prueba',rate:'320'});invoiceSave(d);await invoicePrepare('2026-10',d.config,invoiceDayRows('2026-10',d.config));});

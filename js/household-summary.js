@@ -16,6 +16,25 @@ function householdMortgagePeriod(comp,index,today){
   return {index:index,bank:(sub?sub.entidadBanco:comp.entidadBanco)||'Entidad sin indicar',label:sub?'Subrogación '+(index+1):'Préstamo original',active:!next,capital:capital,rate:rate||0,effective:effective,years:years,start:start,end:end,paid:paid,remaining:end?0:Math.max(0,months-paid),payment:payment,extra:extra,equivalentRate:equivalentRate};
 }
 function householdValue(label,value,extra){return '<div class="household-value"><dt>'+label+'</dt><dd>'+value+'</dd>'+(extra?'<small>'+extra+'</small>':'')+'</div>';}
+function householdLoanPayments(period){
+  var months=Math.min(period.years*12,Math.max(0,period.paid));
+  var balance=period.capital,interest=0;
+  for(var i=0;i<months&&balance>0;i++){
+    var charge=balance*period.effective/1200;
+    interest+=charge;
+    balance=Math.max(0,balance-(period.payment-charge));
+  }
+  return {capital:period.capital-balance,interest:interest,total:period.capital-balance+interest,balance:balance};
+}
+function renderLoanPayments(period,today){
+  if(!period||!period.start)return '';
+  var ended=period.end&&period.end<=dk(today),amounts=householdLoanPayments(period);
+  var cutoff=(ended?period.end:dk(today)).slice(0,7).split('-').reverse().join('/');
+  return '<section class="hip-rate-detail" aria-label="Pagos del préstamo"><small>Cuotas estimadas hasta '+cutoff+'</small>'
+    +_hipRO('Capital amortizado',fcPlain(amounts.capital))+_hipRO('Intereses pagados',fcPlain(amounts.interest))
+    +_hipRO('Total abonado en cuotas',fcPlain(amounts.total))
+    +_hipRO(ended?'Saldo al subrogar':'Capital pendiente',fcPlain(amounts.balance))+'</section>';
+}
 function householdMortgageCard(comp,p,editable){
   var date=function(s){return s?s.split('-').reverse().join('/'):'Sin fecha';};
   var h='<article class="household-card household-mortgage"><header><div><span class="household-eyebrow">'+p.label+'</span><h3>'+escHtml(p.bank)+'</h3></div><span class="household-status">'+(p.active?'Actual':'Finalizada')+'</span></header>';
