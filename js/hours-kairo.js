@@ -44,9 +44,10 @@ function renderHoursAccess(state){
   if(cached)note='Comprobado '+new Intl.DateTimeFormat('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(cached.checkedAt));
   var last=HOURS_CACHE.url===hoursKairoUrl()&&HOURS_CACHE.checks&&HOURS_CACHE.checks[mkey(CY,CM)];
   var feedback=last&&last.phase==='error'?'Intento '+new Intl.DateTimeFormat('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(last.at))+': '+hoursCheckMessage(last.code)+' Se conserva la última comprobación correcta.':typeof HOURS_JOB_ERROR==='undefined'?'':HOURS_JOB_ERROR;
+  var networkIssue=last&&last.phase==='error'&&last.code==='network'||typeof HOURS_JOB_NETWORK_ERROR!=='undefined'&&HOURS_JOB_NETWORK_ERROR;
   var running=typeof HOURS_JOBS!=='undefined'&&HOURS_JOBS.some(function(j){return j.url===hoursKairoUrl();});
   var label=state&&state.review?'Revisar cambios':'Programar pendientes';
-  return '<div class="hours-home-actions"><span class="hours-verified-note">'+note+'</span><button type="button" class="hours-check-button" data-hours-check aria-label="Actualizar estado de correos y factura"'+(running||HOURS_REFRESHING?' disabled':'')+'>↻ <span>'+(running||HOURS_REFRESHING?'Actualizando…':'Actualizar estado')+'</span></button>'+(!closed&&(!state||!state.complete)?'<button type="button" class="hours-pending-button" data-hours-review>'+label+'</button>':'')+(running?'<span class="hours-job-note" role="status">Kairo está trabajando. Puedes salir de Gestify.</span>':feedback?'<span class="hours-job-note" role="status">'+escHtml(feedback)+'</span>':'')+'</div>';
+  return '<div class="hours-home-actions"><span class="hours-verified-note">'+note+'</span><button type="button" class="hours-check-button" data-hours-check aria-label="Actualizar estado de correos y factura"'+(running||HOURS_REFRESHING?' disabled':'')+'>↻ <span>'+(running||HOURS_REFRESHING?'Actualizando…':'Actualizar estado')+'</span></button>'+(!closed&&(!state||!state.complete)?'<button type="button" class="hours-pending-button" data-hours-review>'+label+'</button>':'')+(running?'<span class="hours-job-note" role="status">Kairo está trabajando. Puedes salir de Gestify.</span>':feedback?'<span class="hours-job-note" role="status">'+escHtml(feedback)+ '</span>':'')+(networkIssue&&!running?'<button type="button" class="hours-check-button" data-mobile-connection>Activar VPN</button>':'')+'</div>';
 }
 function hoursMailSubject(wd){return 'HORAS Y DIAS TRABAJADOS - '+AUTHOR_NAME+' - Semana del '+fd(wd.mon)+' al '+fd(wd.fri);}
 function hoursCalendarDays(list){
@@ -222,7 +223,7 @@ function refreshHomeStates(){
 }
 function initHoursKairo(){
   var container=document.getElementById('weeksContainer');if(!container)return;
-  container.addEventListener('click',function(event){var week=event.target.closest('[data-hours-week]');if(week)openHoursReview(week.dataset.hoursWeek);else if(event.target.closest('[data-hours-check]'))refreshHomeStates();else if(event.target.closest('[data-hours-review]'))openHoursReview();else if(event.target.closest('[data-home-formula]')){HOME_FORMULA_OPEN=!HOME_FORMULA_OPEN;paintHoursStatus();}});
+  container.addEventListener('click',function(event){var week=event.target.closest('[data-hours-week]');if(event.target.closest('[data-mobile-connection]'))openMobileConnection(null,'vpn');else if(week)openHoursReview(week.dataset.hoursWeek);else if(event.target.closest('[data-hours-check]'))refreshHomeStates();else if(event.target.closest('[data-hours-review]'))openHoursReview();else if(event.target.closest('[data-home-formula]')){HOME_FORMULA_OPEN=!HOME_FORMULA_OPEN;paintHoursStatus();}});
   function resume(){if(!document.hidden)hoursResumeJobs();}
   window.addEventListener('focus',resume);window.addEventListener('online',resume);document.addEventListener('visibilitychange',resume);
   window.addEventListener('storage',function(event){if(event.key===HOURS_CACHE_KEY){HOURS_CACHE=hoursCacheRead();paintHoursStatus();}});hoursResumeJobs();syncHoursStatus(false);

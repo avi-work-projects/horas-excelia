@@ -152,3 +152,9 @@ reenviar a ciegas una petición incierta, pues puede llegar más tarde.
 
 Referencias: [AlarmClock y SKIP_UI](https://developer.android.com/reference/android/provider/AlarmClock#EXTRA_SKIP_UI),
 [webhook de MacroDroid por FCM](https://macrodroidforum.com/wiki/index.php/Trigger%3A_Webhook_%28URL%29).
+
+## Modos de conexión desde Gestify
+
+En Ajustes → Conexión DNS / VPN, Gestify reutiliza el enlace privado de MacroDroid de las alarmas. Los botones VPN Kairo, DNS AdGuard y OFF envían respectivamente `conexion_kairo`, `conexion_adguard` y `conexion_normal`, los mismos destinos que Kairo Casa en la macro «Conexión — Tres modos». El widget usa las ramas locales de esa macro. MacroDroid actualiza el rótulo del widget después de comprobar la VPN y el DNS en Android.
+
+Si la agenda no es accesible, «Activar VPN» solicita el modo VPN. La agenda se abre cuando responde la comprobación privada de Kairo. El selector vuelve a leer ese acceso al recuperar el foco y mientras está abierto y visible. DNS y OFF se distinguen en el widget. Los cambios desde la web necesitan Internet para entregar la orden a MacroDroid.

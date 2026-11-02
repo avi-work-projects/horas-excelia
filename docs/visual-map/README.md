@@ -1,5 +1,7 @@
 # Mapa visual de Gestify
 
+v532. [Conexión DNS / VPN desde Ajustes](captures/mobile-connection.png).
+
 v531. [Calendario de envíos, accesos desde Home y confirmación de factura](review/kairo-v531.html).
 
 v530. [Pasos de facturación y programación conjunta de Kairo](review/kairo-v530.html).

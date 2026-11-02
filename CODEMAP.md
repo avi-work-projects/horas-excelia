@@ -319,10 +319,10 @@
 
 **Funciones:** hoursJobsRead:4 · hoursJobsSave:8 · hoursAcceptSnapshot:9 · hoursAcceptJobResult:17 · hoursTrackJob:24
 
-### js/hours-kairo.js  _(231 líneas)_
+### js/hours-kairo.js  _(232 líneas)_
 **Estado global:** HOURS_STATUS:3 · HOURS_REQUEST:4
 
-**Funciones:** hoursKairoUrl:5 · hoursWeekDays:9 · hoursCivilTime:13 · hoursWeekState:18 · hoursRemoteConfigured:28 · hoursCovered:29 · hoursHasConfirmedMail:30 · hoursWeekBadge:31 · hoursWeekDate:35 · renderHoursAccess:40 · hoursMailSubject:51 · hoursCalendarDays:52 · hoursMailRequest:58 · validateHoursResult:68 · rememberHoursReview:81 · hoursKairoExchange:92 · closed:96 · verifySource:97 · stopWatch:112 · finish:114 · receive:115 · hoursReviewSurface:130 · close:140 · invalidateHoursReview:145 · paintHoursStatus:172 · refreshHomeStates:219 · initHoursKairo:223 · resume:226
+**Funciones:** hoursKairoUrl:5 · hoursWeekDays:9 · hoursCivilTime:13 · hoursWeekState:18 · hoursRemoteConfigured:28 · hoursCovered:29 · hoursHasConfirmedMail:30 · hoursWeekBadge:31 · hoursWeekDate:35 · renderHoursAccess:40 · hoursMailSubject:52 · hoursCalendarDays:53 · hoursMailRequest:59 · validateHoursResult:69 · rememberHoursReview:82 · hoursKairoExchange:93 · closed:97 · verifySource:98 · stopWatch:113 · finish:115 · receive:116 · hoursReviewSurface:131 · close:141 · invalidateHoursReview:146 · paintHoursStatus:173 · refreshHomeStates:220 · initHoursKairo:224 · resume:227
 
 ### js/household-summary.js  _(111 líneas)_
 **Funciones:** householdMortgagePayment:2 · householdMortgagePeriod:5 · householdValue:18 · householdLoanPayments:19 · renderLoanPayments:29 · householdMortgageCard:38 · date:39 · householdUtilityPrices:54 · householdUtilityCard:86 · householdMortgageAnalysisButton:98 · renderHouseholdSummary:99
@@ -354,7 +354,7 @@
 
 **Funciones:** validateHomeInvoiceStatus:6 · homeInvoiceCacheRead:12 · homeInvoiceCacheSave:21 · homeInvoiceCheckedAt:22 · homeInvoiceScheduleDate:23 · homeInvoiceModel:24 · renderHomeInvoiceStatus:49 · paintHomeInvoiceStatus:67 · initHomeInvoiceStatus:91
 
-### js/invoices-kairo.js  _(79 líneas)_
+### js/invoices-kairo.js  _(85 líneas)_
 **Estado global:** INVOICE_KAIRO_BUSY:2
 
 **Funciones:** invoiceKairoUrl:3 · invoiceKairoState:9 · invoiceKairoSection:12 · invoiceKairoExchange:24 · finish:27 · receive:28 · bindInvoiceKairo:48
@@ -373,8 +373,13 @@
 ### js/logo-popup.js  _(51 líneas)_
 **Funciones:** _logoUpdateDots:14
 
-### js/mail-calendar.js  _(69 líneas)_
-**Funciones:** openMailCalendar:23 · receive:34 · close:62
+### js/mail-calendar.js  _(70 líneas)_
+**Funciones:** openMailCalendar:23 · receive:35 · close:63
+
+### js/mobile-connection.js  _(110 líneas)_
+**Estado global:** MOBILE_CONNECTION_MODES:2
+
+**Funciones:** mobileWebhookBase:9 · requestMobileMode:19 · openMobileConnection:35 · buttons:50 · schedule:54 · foreground:88 · back:96
 
 ### js/nav-icons.js  _(70 líneas)_
 **Estado global:** NAV_ICON_STYLE:2 · NAV_MAIN_ITEMS:4 · NAV_ICON_PATHS:11
@@ -433,7 +438,7 @@
 
 **Funciones:** saveRutinas:25 · rutMarkerHtml:39 · rutMarkerGroups:47 · rutDayMarkersHtml:54 · rutById:59 · rutWeekKey:64 · rutTimeOfDay:73 · rutTieneHorarios:78 · rutScheduleOn:86 · rutScheduleCopy:91 · rutDurationOn:95 · rutChangeFrom:100 · rutChangeWeek:124 · update:128 · rutWeekCfg:140 · rutSuspendedOn:151 · rutDiaLleno:161 · rutOccursOn:165 · rutIsSkipped:176 · rutToggleSkip:177 · rutFin:197 · rutEventsOn:205 · rutEventFromId:222 · rutSessions:231 · rutStats:245 · rutProximas:259 · renderRutinasBody:269 · _rutTimeRange:282 · _renderRutSchedule:286 · _renderRutLista:300 · _rutFmt:339 · _rutFmtCorto:340 · _renderRutStats:346 · openRutWeek:375 · _rutWeekPick:384 · back:409 · rutDayTimesHtml:440 · _rutWeekRender:443 (!95) · paintTimes:480 · closeRutWeek:538 · openRutSesion:541 · closeRutSesion:545 · bindRutinasEvents:548
 
-### js/settings-menu.js  _(123 líneas)_
+### js/settings-menu.js  _(124 líneas)_
 **Estado global:** SETTINGS_MENU_ANCHOR:3 · SETTINGS_MENU_BACK:4 · SETTINGS_EDITOR_MODES:5
 
 **Funciones:** closeSettingsMenu:6 · positionSettingsMenu:15 · _positionHeaderMenu:19 · toggleSettingsMenu:27 · settingsPanelBack:39 · settingsEditorActions:51 · settingsPanelHtml:54 · bindSettingsEditor:57 · setEditing:61 · settingsCopyIcon:80 · bindSettingsCopy:85 · openConnectionsSettings:93 · close:95 · initSettingsMenu:108
@@ -884,14 +889,14 @@
 **Rangos por prefijo de clase:**
 .boda-future:98-98 · .contact-address:144-156 · .contact-entry:143-143 · .contact-primary:154-160 · .contact-shortcuts:149-172 · .energy-contract:125-126 · .energy-field:128-129 · .energy-history:123-124 · .energy-price:127-132 · .energy-sheet:122-122 · .energy-tax:130-130 · .ev-cal:52-121 · .ev-field:97-97 · .ev-list:138-167 · .ev-period:181-184 · .ev-share:50-51 · .ev-stat:136-137 · .ev-stats:168-173 · .ev-up:164-188 · .ev-week:84-99 · .ev-wk:3-3 · .header:2-2 · .home-equation:42-42 · .home-formula:37-37 · .home-hours:41-44 · .home-submission:4-14 · .home-summary:21-38 · .home-total:39-39 · .home-worked:29-29 · .month-summary:22-40 · .ms-caption:36-36
 
-### css/source/hours-kairo.css  _(37 líneas)_
+### css/source/hours-kairo.css  _(46 líneas)_
 
 **Secciones:**
 
 - The warning owns the batch entry; individual week actions stay in place.:1
 
 **Rangos por prefijo de clase:**
-.home-submission:2-2 · .hours-auth:9-36 · .hours-check:5-6 · .hours-home:3-7 · .hours-job:8-8 · .hours-pending:14-15 · .hours-review:23-28 · .hours-verified:16-16 · .hours-week:20-21 · .week-actions:17-19 · .week-info:13-22
+.home-submission:2-2 · .hours-auth:9-36 · .hours-check:5-6 · .hours-home:3-45 · .hours-job:8-8 · .hours-pending:14-15 · .hours-review:23-28 · .hours-verified:16-16 · .hours-week:20-21 · .mobile-connection:38-44 · .mobile-modes:42-42 · .week-actions:17-19 · .week-info:13-22
 
 ### css/source/energy-refinements.css  _(292 líneas)_
 
