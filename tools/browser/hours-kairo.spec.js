@@ -40,8 +40,13 @@ async function open(page,button){const waiting=page.waitForEvent('popup');await 
 
 test('calendario compartido de Kairo: jornadas, semanas y navegación por gesto',async({page,context},info)=>{
   const calls=await setup(page,context);
-  await page.evaluate(()=>{ST={'2027-02-10':{type:'vacaciones'},'2027-02-15':{type:'festivo'},'2027-02-18':{type:'ausencia'}};});
+  await page.evaluate(()=>{ST={'2027-02-10':{type:'vacaciones'},'2027-02-15':{type:'festivo'},'2027-02-18':{type:'ausencia'},'2026-12-17':{type:'vacaciones'},'2026-12-18':{type:'festivo'}};});
   await context.route(base+'facturas/programacion?**',route=>{const period=new URL(route.request().url()).searchParams.get('period');return route.fulfill({json:{period,state:'scheduled',scheduledDate:period+'-12'}});});
+  for(const width of [320,360,393]){
+    await page.setViewportSize({width,height:800});
+    expect(await page.locator('#hoursCalendarBtn').evaluate(btn=>[...btn.children].every(n=>n.getBoundingClientRect().left>=btn.getBoundingClientRect().left&&n.getBoundingClientRect().right<=btn.getBoundingClientRect().right))).toBe(true);
+  }
+  await page.locator('.hours-control').screenshot({path:info.outputPath('home-envios.png')});
   await page.locator('#hoursCalendarBtn').click();
   const viewer=page.frameLocator('iframe[title="Programación de Kairo"]');
   await expect(viewer.locator('#calendar')).toHaveAttribute('data-synced','true');
@@ -54,12 +59,17 @@ test('calendario compartido de Kairo: jornadas, semanas y navegación por gesto'
   for(const width of [320,393,760]){
     await page.setViewportSize({width,height:800});
     const bounds=await geometry();
+    expect(await shared.evaluate(cell=>{const [a,b]=Array.from(cell.querySelectorAll('.day-marks svg'),n=>n.getBoundingClientRect()),r=cell.getBoundingClientRect();return a.left>=r.left&&a.right<=b.left&&b.right<=r.right&&a.width>=9;})).toBe(true);
+    await expect(shared.locator('.envelope')).toHaveCSS('color','rgb(255, 255, 255)');
+    const ordinary=viewer.locator('[data-date="2027-02-09"]'),background=await ordinary.evaluate(el=>getComputedStyle(el).backgroundColor);
     for(const id of ['showMail','showInvoices','showMail','showInvoices']){
       await viewer.locator('#'+id).click();
       expect(await geometry()).toEqual(bounds);
+      await expect(ordinary).toHaveCSS('background-color',background);
     }
   }
   await page.setViewportSize({width:393,height:800});
+  await viewer.locator('body').screenshot({path:info.outputPath('agenda-compartida.png')});
   await viewer.locator('#invoiceSchedule summary').click();
   await expect(viewer.getByRole('link',{name:'Gestionar envío de factura'})).toHaveAttribute('href','/facturas/gestify-month?period=2027-02#aprobar');
   await viewer.getByLabel('Facturas',{exact:true}).uncheck();
@@ -79,7 +89,24 @@ test('calendario compartido de Kairo: jornadas, semanas y navegación por gesto'
   await expect(viewer.getByLabel('Correos',{exact:true})).not.toBeChecked();
   await viewer.getByRole('button',{name:'Mes anterior'}).click();
   await expect(viewer.locator('[data-date="2027-02-10"] .day-type')).toHaveText('V');
-  expect(calls.filter(c=>c.path.endsWith('/commit')||c.path.endsWith('/preview'))).toHaveLength(0);
+  // Two quick backward gestures: a slow January must not replace December.
+  let releaseJanuary,janSeen;
+  const januarySeen=new Promise(r=>janSeen=r),release=new Promise(r=>releaseJanuary=r);
+  await context.route(base+'horas/calendar-data?period=2027-01',async route=>{janSeen();await release;await route.fallback();});
+  await viewer.getByRole('button',{name:'Mes anterior'}).click();await januarySeen;
+  try{
+    await expect(viewer.locator('.calendar-header')).toContainText('febrero');
+    await viewer.getByRole('button',{name:'Mes anterior'}).click();
+    await expect(viewer.locator('.calendar-header')).toContainText('diciembre');
+  }finally{releaseJanuary();}
+  await viewer.getByLabel('Correos',{exact:true}).check();
+  await expect(grid).toHaveAttribute('data-synced','true');
+  await expect(viewer.locator('[data-date="2026-12-16"].estimated .envelope')).toBeVisible();
+  await expect(viewer.locator('[data-date="2026-12-18"] .envelope')).toHaveCount(0);
+  await expect(viewer.locator('#weeks')).toContainText('fecha calculada');
+  await viewer.locator('body').screenshot({path:info.outputPath('agenda-historica.png')});
+  expect(calls.filter(c=>c.path.endsWith('/calendario'))).toHaveLength(1);
+  expect(calls.filter(c=>['/commit','/preview','/calendar-refresh'].some(s=>c.path.endsWith(s)))).toHaveLength(0);
   await viewer.getByRole('link',{name:'Volver a Gestify'}).click();
   await context.route(base+'horas/reachable',r=>r.abort());
   await page.locator('#hoursCalendarBtn').click();

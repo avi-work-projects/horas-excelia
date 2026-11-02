@@ -44,12 +44,17 @@ function openMailCalendar(){
     }
     if(message.type!=='kairo-calendar-month'||!/^20\d\d-(0[1-9]|1[0-2])$/.test(message.period))return;
     header.remove();
-    var days=[],date=new Date(message.period+'-01T12:00:00');
-    while(dk(date).slice(0,7)===message.period){
-      var type=dayT(date);if(type!=='normal')days.push({date:dk(date),type:type});
-      date=ad(date,1);
-    }
-    frame.contentWindow.postMessage({type:'gestify-calendar-days',period:message.period,days:days},origin);
+    var first=new Date(message.period+'-01T12:00:00'),months={};
+    [-1,0,1].forEach(function(offset){
+      var date=new Date(first.getFullYear(),first.getMonth()+offset,1,12),month=dk(date).slice(0,7);
+      if(month!==message.period&&!(Array.isArray(message.periods)&&message.periods.includes(month)))return;
+      months[month]=[];
+      while(dk(date).slice(0,7)===month){
+        var type=dayT(date);if(type!=='normal')months[month].push({date:dk(date),type:type});
+        date=ad(date,1);
+      }
+    });
+    frame.contentWindow.postMessage({type:'gestify-calendar-days',period:message.period,days:months[message.period],months:months},origin);
   }
   async function connect(){
     note.textContent='Conectando con Kairo…';retry.hidden=true;modeButton.hidden=true;

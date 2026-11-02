@@ -373,8 +373,8 @@
 ### js/logo-popup.js  _(51 líneas)_
 **Funciones:** _logoUpdateDots:14
 
-### js/mail-calendar.js  _(70 líneas)_
-**Funciones:** openMailCalendar:23 · receive:35 · close:63
+### js/mail-calendar.js  _(75 líneas)_
+**Funciones:** openMailCalendar:23 · receive:35 · close:68
 
 ### js/mobile-connection.js  _(110 líneas)_
 **Estado global:** MOBILE_CONNECTION_MODES:2

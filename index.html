@@ -24,7 +24,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="0" height="0" style="position:absolute;overflow:hidden;pointer-events:none">
 <symbol id="dispatch-mail" viewBox="0 0 24 24"><path fill="currentColor" d="M3 4h18a1 1 0 0 1 1 1v.5L12 12 2 5.5V5a1 1 0 0 1 1-1Zm-1 4 9.45 6.14a1 1 0 0 0 1.1 0L22 8v11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1Z"/></symbol>
 <symbol id="dispatch-invoice" viewBox="-12 -12 24 24"><path d="M-7,-9 H3 L7,-5 V9 H-7 Z" fill="#f6faf8" stroke="#171a18" stroke-width="1.6" stroke-linejoin="round"/><path d="M3,-9 V-5 H7 M-4,-3 H1 M-4,0 H0" fill="none" stroke="#000" stroke-width="1.2"/><path d="M-3,5 H8 M4,1 L8,5 L4,9" fill="none" stroke="var(--dispatch-invoice-ink, currentColor)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-<symbol id="dispatch-agenda" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 10h18m-14 4h3m4 0h3m-10 4h3"/></g></symbol>
+<symbol id="dispatch-agenda" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17H4a1.5 1.5 0 0 1-1.5-1.5V5.5A1.5 1.5 0 0 1 4 4h14a1.5 1.5 0 0 1 1.5 1.5V9M3 5l8 6 8-6"/><circle cx="17.5" cy="16.5" r="5"/><path d="M17.5 13.8v3l2 1.2"/></g></symbol>
 </svg>
 <!-- /assets:dispatch-icons -->
 
@@ -120,7 +120,7 @@ var BDAYS_FROM_SECRET=[];
     <button class="default-hours-btn" id="editHoursBtn">
       <span data-home-pencil></span>&nbsp;Jornada:&nbsp;<span class="dh-val">9h</span>&nbsp;&#xB7;&nbsp;Editar
     </button>
-    <div class="home-invoice-actions"><button id="hoursExportBtn">Exportar Horas</button><button id="hoursCalendarBtn" class="home-schedule-action">Ver programación</button></div>
+    <div class="home-invoice-actions"><button id="hoursExportBtn">Exportar Horas</button><button id="hoursCalendarBtn" class="home-schedule-action" aria-label="Ver envíos · Ver programación" title="Ver programación">Ver envíos</button></div>
     <button class="default-hours-btn csv-export-btn" id="csvExportBtn" hidden><svg viewBox="0 0 24 24" class="ico-doc" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>CSV</button>
     <button class="default-hours-btn pdf-export-btn" id="pdfExportBtn" hidden><svg viewBox="0 0 24 24" class="ico-doc" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>PDF</button>
     <div class="default-hours-panel" id="hoursPanel">

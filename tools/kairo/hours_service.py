@@ -12,7 +12,7 @@ from urllib.parse import parse_qs, urlsplit
 
 from hours_model import MADRID, inventory_signature, scope, validate_request
 from hours_store import Store
-from mail_calendar import calendar_data, save_calendars, remember_review_days
+from mail_calendar import calendar_data, grid_periods, save_calendars, remember_review_days
 from hours_jobs import Jobs
 from hours_errors import HoursFailure
 from outlook_hours import OutlookReader
@@ -191,6 +191,10 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
             if self.route() == '/reachable':
                 if self.headers.get('Origin') != app_origin:return self.reply(403, {'error':'Origen no permitido'})
                 return self.reply(200, {'service':'kairo-hours'}, cors=True)
+            if self.route() == '/calendar-data':
+                period=parse_qs(urlsplit(self.path).query).get('period',[''])[0]
+                try:return self.reply(200,calendar_data(store,config['sender'],period,clock()))
+                except ValueError:return self.reply(400,{'error':'Mes no válido'})
             if self.route() in ('', '/', '/calendario'):
                 from kairo_ui import shell
                 template = shell((source/'hours_receiver.html').read_text(encoding='utf-8'))
@@ -198,7 +202,7 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
                 boot=dict(origin=app_origin, csrf=csrf, allowWrites=allow_writes)
                 if self.route()=='/calendario':
                     period=parse_qs(urlsplit(self.path).query).get('period',[clock().strftime('%Y-%m')])[0]
-                    try:boot['calendar']=calendar_data(store,config['sender'],period)
+                    try:boot['calendar']=calendar_data(store,config['sender'],period,clock())
                     except ValueError:return self.reply(400,{'error':'Mes no válido'})
                     script=(source/'mail_calendar_view.js').read_text(encoding='utf-8')+'\n'+script
                 settings = json.dumps(boot).replace('<','\\u003c')
@@ -282,8 +286,12 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
                 data = json.loads(self.rfile.read(size))
                 now = clock()
                 if self.route()=='/calendar-days':
-                    save_calendars(store,{data['period']:data['days']})
-                    return self.reply(200,{'saved':True})
+                    period=data['period']
+                    months=data['months'] if 'months' in data else {period:data['days']}
+                    if not isinstance(months,dict) or period not in months or set(months)-set(grid_periods(period)):
+                        raise ValueError('Mes fuera de la vista')
+                    save_calendars(store,months)
+                    return self.reply(200,{'saved':True,'calendar':calendar_data(store,config['sender'],period,now)})
                 if self.route()=='/calendar-refresh':
                     period=data['period']
                     scope(period)
