@@ -192,7 +192,8 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
                 if self.headers.get('Origin') != app_origin:return self.reply(403, {'error':'Origen no permitido'})
                 return self.reply(200, {'service':'kairo-hours'}, cors=True)
             if self.route() in ('', '/', '/calendario'):
-                template = (source/'hours_receiver.html').read_text(encoding='utf-8')
+                from kairo_ui import shell
+                template = shell((source/'hours_receiver.html').read_text(encoding='utf-8'))
                 script = (source/'hours_receiver.js').read_text(encoding='utf-8')
                 boot=dict(origin=app_origin, csrf=csrf, allowWrites=allow_writes)
                 if self.route()=='/calendario':

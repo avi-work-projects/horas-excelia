@@ -1,8 +1,7 @@
 const {test,expect}=require('@playwright/test');
-const fs=require('node:fs');
+const receiver=require('./kairo-receiver-fixture.cjs');
 const {verifyInvoiceExport}=require('../verify-invoice-export');
 const base='https://synthetic-kairo.test.ts.net/facturas/';
-const receiver=fs.readFileSync('tools/kairo/receiver.html','utf8').replace('/*BRIDGE_CONFIG*/',JSON.stringify({origin:'http://127.0.0.1:8765',csrf:'synthetic'})).replace('/*BRIDGE_SCRIPT*/',()=>fs.readFileSync('tools/kairo/receiver.js','utf8'));
 test.use({viewport:{width:393,height:880},isMobile:true,hasTouch:true});
 
 async function setup(page,context,{loseReply=false,reject=false}={}){

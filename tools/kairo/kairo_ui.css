@@ -1,0 +1,40 @@
+/* Casa serves /style.css and the same transparent wordmark to both services. */
+:root{color-scheme:dark}
+body.k-ui{margin:0;min-height:100svh;font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text,#f2f5eb);background:radial-gradient(ellipse at 85% 0%,#294235 0,transparent 55%),var(--bg,#101d19);--k-accent:var(--accent,#d3eea9);--k-muted:var(--muted,#acbdb1);--k-line:var(--line,#33483e);--k-surface:var(--surface,#182b24);--k-bg:var(--bg,#101d19)}
+.k-ui *{box-sizing:border-box}
+.k-ui [hidden]{display:none!important}
+.k-top{position:sticky;top:0;z-index:5;background:#142722;border-bottom:1px solid var(--k-line)}
+.k-bar{max-width:620px;margin:auto;min-height:62px;padding:8px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.k-mark{display:block;flex:none;width:91px;aspect-ratio:720/306;background:var(--k-accent);mask:url('/assets/kairo-wordmark.png') center/contain no-repeat;-webkit-mask:url('/assets/kairo-wordmark.png') center/contain no-repeat}
+.k-back,.k-link{font-family:inherit;font-weight:600;color:var(--k-accent);text-decoration:none}
+.k-back{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--k-line);padding:7px 11px;border-radius:20px;font-size:12px;font-weight:640;min-height:36px}
+.k-ui main.k-main{width:100%;max-width:600px;margin:0 auto;padding:22px 16px 28px}
+.k-ui h1{font-size:clamp(24px,5vw,32px);line-height:1.1;letter-spacing:-.04em;margin:5px 0 18px}
+.k-ui h2{font-size:19px;letter-spacing:-.02em;line-height:1.22;margin:0 0 12px}
+.k-ui p{margin:6px 0;color:var(--k-muted)}
+.k-eye{color:var(--k-accent);font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+.k-card,.k-ui .hours-calendar,.k-ui .week,.k-ui .resolved,.k-ui .recipients,.k-ui .actions,.k-ui .summary{background:var(--k-surface);border:1px solid var(--k-line);border-radius:16px;padding:16px;margin:12px 0}
+.k-steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));list-style:none;padding:0;margin:0 0 16px}
+.k-steps li{position:relative;text-align:center}
+.k-steps li+li:before{content:"";position:absolute;left:calc(-50% + 14px);right:calc(50% + 14px);top:14px;height:1px;background:var(--k-line)}
+.k-steps span,.k-ui .k-steps button{position:relative;width:100%;display:grid;justify-items:center;gap:4px;background:none;border:0;padding:0;min-height:44px;font:600 11px/1.2 system-ui;color:var(--k-muted)}
+.k-steps i{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--k-bg);border:1px solid var(--k-line);font-style:normal;font-variant-numeric:tabular-nums}
+.k-steps [aria-current=step],.k-ui .k-steps button[aria-current=step]{color:var(--k-accent)}
+.k-steps [aria-current=step] i{background:var(--k-accent);color:#1b2e1d;border-color:var(--k-accent)}
+.k-ui :where(.k-button,button):not(:where(.k-steps button)){display:inline-flex;justify-content:center;align-items:center;min-height:42px;padding:9px 13px;border:1px solid var(--k-line);border-radius:12px;background:var(--k-surface);color:var(--text,#f2f5eb);font:600 14px/1.25 system-ui;text-decoration:none;cursor:pointer}
+.k-ui .k-primary,.k-ui button.k-primary,.k-ui button.primary{background:var(--k-accent);border-color:var(--k-accent);color:#1b2e1d}
+.k-ui button:disabled{opacity:.48;cursor:default}
+.k-action-list{display:grid;gap:8px;margin-top:14px}
+.k-action-list>.k-link{text-align:center;padding:7px}
+.k-badge{display:inline-flex;align-items:center;gap:6px;border-radius:99px;background:#294235;color:var(--k-accent);padding:4px 9px;font-weight:650;font-size:12px}
+.k-badge.warn,.k-ui .issue,.k-ui .change{color:#f0c78d}
+.k-facts{margin:8px 0}.k-facts>div,.k-list-row{display:flex;justify-content:space-between;gap:12px;align-items:baseline;border-bottom:1px solid var(--k-line);padding:8px 0}
+.k-facts dt,.k-secondary{color:var(--k-muted);font-size:13px}.k-facts dd{margin:0;text-align:right;font-weight:620;overflow-wrap:anywhere}
+.k-amount{display:block;font-size:30px;font-weight:680;color:var(--k-accent);letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.k-ui .k-mail{padding:12px;border:1px solid var(--k-line);background:var(--k-bg);border-radius:12px;margin:14px 0}
+.k-ui pre{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;font-size:14px;margin:6px 0}
+.k-ui summary{cursor:pointer;color:var(--k-muted);font-size:13px;padding:6px 0}
+.k-ui dialog{max-width:420px;width:calc(100% - 32px);background:var(--k-surface);color:inherit;border:1px solid var(--k-line);border-radius:16px;padding:20px}
+.k-ui dialog::backdrop{background:#08130fe0}.k-ui #result:empty,.k-ui #status:empty,.k-ui #message:empty{display:none}
+.k-ui :is(a,button,summary,input):focus-visible{outline:2px solid var(--k-accent);outline-offset:3px}
+@media(max-width:355px){.k-ui main.k-main{padding:16px 10px}.k-card{padding:13px}.k-bar{padding-inline:12px}}

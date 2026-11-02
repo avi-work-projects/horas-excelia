@@ -1,7 +1,5 @@
 const {test,expect}=require('@playwright/test');
-const fs=require('node:fs');
-const receiver=fs.readFileSync('tools/kairo/receiver.js','utf8');
-const receiverHtml=fs.readFileSync('tools/kairo/receiver.html','utf8').replace('/*BRIDGE_CONFIG*/',JSON.stringify({origin:'http://127.0.0.1:8765',csrf:'synthetic'})).replace('/*BRIDGE_SCRIPT*/',()=>receiver);
+const receiverHtml=require('./kairo-receiver-fixture.cjs');
 const {verifyInvoiceExport}=require('../verify-invoice-export');
 const base='https://synthetic-kairo.test.ts.net/facturas/';
 test.use({viewport:{width:393,height:880},isMobile:true,hasTouch:true});
@@ -70,7 +68,7 @@ test('desde Home elige noviembre y el mes queda fijo al revisar en Kairo',async(
   await page.locator('#invoiceBack').click();await page.evaluate(()=>{HOURS_CACHE.url=hoursKairoUrl();weeks(2027,10).forEach(w=>HOURS_CACHE.weeks[dk(w[0])]={state:'sent'});render();});await page.locator('#nextBtn').click();await page.locator('#invoiceHomeBtn').click();
   await expect(page.locator('#invoicePeriod')).toContainText('Noviembre 2027');await expect(page.locator('input[type="month"]')).toHaveCount(0);
   expect(await page.evaluate(()=>[CY,CM])).toEqual([2027,10]);
-  const popup=await exchange(page,'#invoiceKairoSend');await expect(popup.locator('#resultTitle')).toHaveText('Preparación recibida');
+  const popup=await exchange(page,'#invoiceKairoSend');await expect(popup.locator('#resultTitle')).toHaveText('Mes preparado');
   await expect(popup.locator('#invoiceReview')).toHaveAttribute('href','/facturas/gestify-month?period=2027-11');
   await expect(popup.locator('#period')).toHaveText('Noviembre de 2027');
   expect(await page.evaluate(()=>invoiceData().months['2027-11'].kairo.state)).toBe('review');expect(calls()).toBe(1);
@@ -103,13 +101,13 @@ test('cambiar un día y restaurarlo: consulta sin recepción, textos claros y pa
   const calls=await setup(page,context);
   const initial=await page.evaluate(()=>invoiceData().months['2027-02'].preparation);
   const first=await exchange(page,'#invoiceKairoSend');
-  await expect(first.locator('#resultTitle')).toHaveText('Preparación recibida');await first.close();
+  await expect(first.locator('#resultTitle')).toHaveText('Mes preparado');await first.close();
   await page.evaluate(()=>{ST['2027-02-01']={type:'festivo'};return openInvoiceMonth('2027-02');});
   expect(await page.evaluate(()=>invoiceData().months['2027-02'].preparation.days.length)).toBe(initial.days.length-1);
   let popup=await exchange(page,'#invoiceKairoStatus',false);
-  await expect(popup.locator('#resultTitle')).toHaveText('Los datos no coinciden');
+  await expect(popup.locator('#resultTitle')).toHaveText('Revisar cambios');
   await expect(popup.locator('#receive')).toBeHidden();
-  await expect(popup.locator('#mode')).toHaveText('Solo consulta');
+  await expect(popup.locator('#title')).toHaveText('Estado de la factura');
   for(const width of [320,393,412,1024]){
     await popup.setViewportSize({width,height:880});
     expect(await popup.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
@@ -120,7 +118,7 @@ test('cambiar un día y restaurarlo: consulta sin recepción, textos claros y pa
   const restored=await page.evaluate(()=>invoiceData().months['2027-02'].preparation);
   expect(restored.contentHash).toBe(initial.contentHash);expect(restored.revision).toBe(initial.revision+2);
   popup=await exchange(page,'#invoiceKairoStatus',false);
-  await expect(popup.locator('#resultTitle')).toHaveText('Preparación recibida');
+  await expect(popup.locator('#resultTitle')).toHaveText('Mes preparado');
   await expect(popup.locator('#receive')).toBeHidden();expect(calls()).toBe(1);
   await popup.screenshot({path:info.outputPath('receptor-restaurado-393.png'),animations:'disabled'});
 });

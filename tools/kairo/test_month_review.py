@@ -46,9 +46,9 @@ class MonthReviewTests(unittest.TestCase):
             data['display'].update(days=19,base=6080,vat=1276.8,withholding=912)
             db.execute('UPDATE plans SET data=? WHERE id=?',(json.dumps(data),row['id']))
         body=response(self.service,'/gestify-month?period=2027-11','csrf')[1]
-        self.assertIn('<summary>Ver correo</summary>',body)
+        self.assertIn('aria-label="Contenido del correo"',body)
         self.assertIn('<pre>'+data['body']+'</pre>',body)
-        self.assertIn('Para: first@example.invalid, second@example.invalid',body)
+        self.assertIn('<dt>Para</dt><dd>first@example.invalid, second@example.invalid</dd>',body)
         for label in ['Días:','Base:','IVA:','Retención:']:
             self.assertNotIn(label,body)
 

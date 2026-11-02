@@ -398,3 +398,9 @@ privado por loopback. Si solo está la identificación de Microsoft, comunica
 `auth_required` antes de esperar el bloqueo del navegador. La caché confirmada
 sigue disponible. En la comprobación del 02/11/2026 el calendario de noviembre
 respondió HTTP 200 y la lectura nueva devolvió ese código en menos de un segundo.
+
+## Vistas privadas compartidas · v530
+
+La cabecera y la tipografía usan los recursos de Kairo Casa en el mismo origen. Ambas aplicaciones privadas necesitan `kairo_ui.py` y `kairo_ui.css`. Facturación sirve `/facturas/programacion?period=AAAA-MM` con la misma comprobación de identidad y host que la revisión mensual. Devuelve exclusivamente mes, estado y fecha confirmada. Cuando falla la lectura, el calendario muestra «Sin confirmar».
+
+Para preparar las dos vistas que dependen de código privado, `prepare_unified_views.py ORIGINALES DESTINO_NUEVO` aplica los cambios sobre copias y verifica las funciones protegidas. Validar el candidato con `test_candidate_http.py` y las pruebas por mes. Las capturas públicas del mapa utilizan datos ficticios.
