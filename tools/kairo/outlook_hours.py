@@ -3,13 +3,16 @@
 Requires the existing, manually signed-in Chromium on loopback CDP. Unknown UI,
 partial lists and unrecognised messages are not evidence that a week is absent.
 """
+import json
 import re
 import traceback
 import sys
 from datetime import date, datetime, timedelta
 from urllib.parse import urlsplit, unquote
+from urllib.request import urlopen
 
 from hours_model import MADRID, addresses, content_hash, digest, monday, parse_days, scope
+from hours_errors import HoursFailure
 
 OUTLOOK_HOSTS = {'outlook.office.com', 'outlook.cloud.microsoft'}
 
@@ -116,6 +119,19 @@ class OutlookReader:
 
     def invalidate(self):
         self.refresh_required = True
+
+    def ensure_mailbox_page(self):
+        """Recognise a signed-out browser before waiting for its exclusive lock."""
+        try:
+            with urlopen(self.endpoint+'/json/list',timeout=3) as response:
+                urls=[tab['url'] for tab in json.load(response) if tab.get('type')=='page']
+            if any(outlook_page(url) for url in urls):
+                return
+            if any(urlsplit(url).hostname in ('login.microsoftonline.com','login.microsoft.com') for url in urls):
+                raise HoursFailure('auth_required')
+        except (OSError,KeyError,TypeError,ValueError):
+            pass
+        raise HoursFailure('browser_unavailable')
 
     def __call__(self, request):
         from playwright.sync_api import sync_playwright

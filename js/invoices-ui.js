@@ -105,7 +105,9 @@ function openHoursExport(){
   root.querySelector('#hoursCsv').onclick=function(){document.getElementById('csvExportBtn').click();};root.querySelector('#hoursPdf').onclick=function(){document.getElementById('pdfExportBtn').click();};
 }
 function initInvoices(){
-  var btn=document.getElementById('invoiceHomeBtn');if(!btn)return;btn.innerHTML='<svg viewBox="-12 -12 24 24" aria-hidden="true">'+evManagementShapeInner('invoice')+'</svg><span>Enviar Factura</span>';btn.onclick=function(){openInvoiceMonth(mkey(CY,CM));};var hoursBtn=document.getElementById('hoursExportBtn');hoursBtn.innerHTML=renderDocumentIcon()+'<span>Exportar Horas</span>';hoursBtn.onclick=openHoursExport;document.getElementById('invoiceSettingsBtn').onclick=openInvoiceSettings;
+  var btn=document.getElementById('hoursCalendarBtn');if(!btn)return;
+  btn.onclick=openMailCalendar;
+  var hoursBtn=document.getElementById('hoursExportBtn');hoursBtn.innerHTML=renderDocumentIcon()+'<span>Exportar Horas</span>';hoursBtn.onclick=openHoursExport;document.getElementById('invoiceSettingsBtn').onclick=openInvoiceSettings;
 }
 if(typeof document!=='undefined')document.addEventListener('DOMContentLoaded',initInvoices);
 

@@ -2,6 +2,7 @@
   const embedded=window.parent!==window,el=id=>document.getElementById(id),opener=embedded?window.parent:window.opener;
   let id=null,request=null,plan=null,busy=false,intent='review',calendarMonth=null;
   const labels={sent:'Enviada',scheduled:'Programada',ready:'Por programar',changed:'Cambios por revisar',duplicate:'Posible duplicado',uncertain:'Sin confirmar',draft:'Borrador existente',unverified:'Sin confirmar','ambiguous-thread':'Revisar conversación','past-due':'Fecha vencida','no-workdays':'Sin fecha disponible','blocked-previous':'Semana anterior pendiente'};
+  labels.missing='Sin programar';
   const text=(tag,value,className='')=>{const node=document.createElement(tag);node.textContent=value;if(className)node.className=className;return node;};
   const date=value=>value?new Intl.DateTimeFormat('es-ES',{timeZone:'Europe/Madrid',weekday:'short',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(value)):'Sin fecha';
   const weekDate=key=>{const first=new Date(key+'T12:00:00'),end=new Date(first);end.setDate(end.getDate()+4);const format=new Intl.DateTimeFormat('es-ES',{day:'2-digit',month:'short'});return format.format(first)+' — '+format.format(end);};
@@ -47,12 +48,16 @@
       let when=null,confirmed=false;
       if(row.state==='scheduled'||row.state==='changed'&&!selected.has(row.key)){when=row.previousSchedule||row.schedule;confirmed=true;}
       else if(row.state==='ready'||row.state==='changed'&&selected.has(row.key))when=row.schedule;
-      if(when&&Number.isFinite(Date.parse(when)))deliveries.set(civil(when),{confirmed,label:confirmed?'Envío programado':'Envío previsto'});
+      if(when&&Number.isFinite(Date.parse(when)))deliveries.set(civil(when),{confirmed,label:(confirmed?'Envío programado':'Envío previsto')+' · '+date(when)});
     });
     const header=text('header','','calendar-header'),index=months.indexOf(calendarMonth);
     for(const [step,label] of [[-1,'Mes anterior'],[1,'Mes siguiente']]){
       const button=text('button',step<0?'‹':'›');button.type='button';button.setAttribute('aria-label',label);button.disabled=index+step<0||index+step>=months.length;
-      button.onclick=()=>{calendarMonth=months[index+step];paintCalendar();};
+      if(hoursBridgeConfig.calendar){
+        const next=day(calendarMonth+'-01');next.setUTCMonth(next.getUTCMonth()+step);
+        const month=iso(next).slice(0,7);button.disabled=!month.startsWith('20');
+        button.onclick=()=>location.assign('?period='+month);
+      }else button.onclick=()=>{calendarMonth=months[index+step];paintCalendar();};
       if(step<0)header.append(button);else{header.append(text('h2',new Intl.DateTimeFormat('es-ES',{timeZone:'UTC',month:'long',year:'numeric'}).format(day(calendarMonth+'-01'))),button);}
     }
     root.append(header);
@@ -69,13 +74,13 @@
         if(ds.slice(0,7)!==calendarMonth)td.classList.add('outside');if(!row)td.classList.add('unselected');if(label)td.classList.add(kind);
         td.append(text('span',String(day(ds).getUTCDate()),'day-number'),text('small',label?label[0]:'','day-type'));
         if(send){td.classList.add('delivery',send.confirmed?'confirmed':'planned');td.append(text('span','✉','envelope'));}
-        td.setAttribute('aria-label',ds+(label?' · '+label[1]:'')+(row?' · '+(labels[row.state]||'Revisar'):' · Fuera de la selección')+(send?' · '+send.label+' · 08:00 Madrid':''));tr.append(td);
+        td.setAttribute('aria-label',ds+(label?' · '+label[1]:'')+(row?' · '+(labels[row.state]||'Revisar'):' · Fuera de la selección')+(send?' · '+send.label:''));tr.append(td);
       }
       body.append(tr);
     }
     table.append(body);root.append(table);
     const legend=text('div','','calendar-legend');Object.entries(names).forEach(([key,value])=>legend.append(text('span',value[0]+' · '+value[1],key)));root.append(legend);
-    root.append(text('p','Semanas resaltadas: incluidas en esta revisión. ✉ 08:00 Madrid. Borde continuo: programado; discontinuo: previsto.','calendar-note'));
+    root.append(text('p',hoursBridgeConfig.calendar?'✉ Día de envío programado en Outlook.':'Semanas resaltadas: incluidas en esta revisión. ✉ 08:00 Madrid. Borde continuo: programado; discontinuo: previsto.','calendar-note'));
     if([...rows.values()].some(r=>r.state==='changed'))root.append(text('p','Los cambios muestran la fecha actual hasta que selecciones «Actualizar esta semana».','calendar-note'));
   }
   function controls(){
@@ -132,6 +137,16 @@
       send({type:'result',ok:true,result:{period:plan.period,checkedAt:plan.checkedAt,verified:plan.verified,rows:plan.rows.map(r=>({key:r.key,state:r.state,...(Array.isArray(r.existingDays)&&r.previousSchedule?{days:r.existingDays,schedule:r.previousSchedule}:{})}))}});
     }catch(e){el('message').textContent=e.message;send({type:'result',ok:false});}
     finally{busy=false;controls();}
+  }
+  if(hoursBridgeConfig.calendar){
+    const data=hoursBridgeConfig.calendar;
+    plan={rows:data.rows.map(row=>({...row,selected:true}))};
+    request={period:data.period,weeks:data.rows.map(row=>({key:row.key,days:[]})),calendarDays:[]};
+    startMailCalendar(data,labels,days=>{
+      request.calendarDays=Object.entries(days).map(([date,type])=>({date,type}));
+      paintCalendar();
+    });
+    return;
   }
   window.addEventListener('message',event=>{
     const m=event.data;if(!opener||event.source!==opener||event.origin!==hoursBridgeConfig.origin||!m||m.channel!=='gestify-hours-v1'||typeof m.id!=='string'||m.id.length>80)return;

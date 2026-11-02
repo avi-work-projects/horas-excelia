@@ -1,6 +1,6 @@
 # Gestify y Kairo: funcionamiento y límites
 
-Contrato revisado el 30/10/2026 sobre v527. Describe el sistema instalado;
+Contrato revisado el 02/11/2026 sobre v529. Describe el sistema instalado;
 las comprobaciones y límites pendientes se distinguen al final.
 
 ## Qué guarda cada parte
@@ -49,6 +49,22 @@ directamente en Outlook se descubren al refrescar, no en tiempo real.
 
 ## Al programar correos de horas
 
+«Correos programados» en Home y «Correos de horas» en Facturación de Kairo
+abren la misma página privada. Las flechas y el gesto horizontal cambian el mes.
+Cada consulta lee las últimas observaciones verificadas en Kairo por semana.
+Una semana sin observación figura sin confirmar. Las reservas e incidencias
+del diario se muestran como pendientes de confirmación. El sobre marca la fecha
+de un correo programado. «Actualizar desde Outlook» pide una conciliación en
+segundo plano. La fecha de lectura distingue los registros guardados de una
+comprobación nueva.
+
+Gestify comunica las vacaciones, festivos y ausencias del mes visible al
+calendario de Kairo. Las revisiones de programación también guardan los días
+de los meses incluidos. En la web privada se usan los días conservados en Kairo.
+Al abrir el visor se comprueba el acceso privado. Un fallo de red aconseja
+comprobar Tailscale. Una respuesta HTTP de error identifica un problema de
+acceso o servicio. El navegador no conoce el estado del interruptor de la VPN.
+
 1. La revisión individual y `Programar pendientes` comparten las reglas. El lote
    abarca las semanas del mes visible y dos semanas completas posteriores.
 2. Gestify envía una propuesta con días, horas y destinatarios de `Correo de
@@ -76,6 +92,12 @@ El botón azul abre el envío manual en Outlook; no acredita que se haya enviado
 `Desmarcar` desbloquea la edición local y no cancela una programación remota.
 
 ## Facturas
+
+En Home, para el mes actual o uno futuro, el panel dirige a la primera semana
+del mes cuyas horas aún hay que revisar. Las semanas enviadas o programadas
+habilitan la preparación. Las dos semanas adicionales del lote de horas no son
+un requisito de facturación. Los meses ya programados o emitidos muestran su
+estado registrado aunque falten datos de horas en la caché local.
 
 «Enviar factura» fija el mes elegido en Home, sin selector adicional. Abre el
 cálculo primero y sitúa el calendario bajo Enviar a Kairo/Consultar estado.

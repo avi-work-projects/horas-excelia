@@ -9,11 +9,11 @@
       "workday",
       "reminders",
       "hours-export",
+      "mail-calendar-connect",
       "invoice",
       "invoice-config",
       "invoice-config-edit",
-      "home-september",
-      "home-october"
+      "home-september"
     ]
   },
   {
@@ -21,6 +21,7 @@
     "title": "Inicio · 2/2",
     "image": "sheets/area-0-1.png",
     "scenes": [
+      "home-september",
       "home-october",
       "home-invoice-connection",
       "invoice-current",

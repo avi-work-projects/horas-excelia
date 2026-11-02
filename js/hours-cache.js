@@ -63,7 +63,7 @@ function hoursCacheRemember(result,url,source,settings){
   HOURS_CACHE.periods[result.period]={source:source,checkedAt:now};hoursCacheSave();
 }
 function hoursCheckMessage(code){
-  return {auth_required:'Outlook necesita iniciar sesión. Pulsa «Comprobar acceso».',browser_unavailable:'El navegador de Outlook no está disponible en Kairo.',compose_open:'Hay un correo abierto para editar en Outlook. Ciérralo antes de comprobar.',wrong_account:'La cuenta abierta en Outlook no coincide.',read_failed:'No se pudo completar la lectura de Outlook.',network:'No se pudo conectar con Kairo.'}[code]||'Kairo no pudo completar la comprobación.';
+  return {auth_required:'Outlook necesita iniciar sesión. Pulsa «Comprobar acceso».',browser_unavailable:'El navegador de Outlook no está disponible en Kairo.',compose_open:'Hay un correo abierto para editar en Outlook. Ciérralo antes de comprobar.',wrong_account:'La cuenta abierta en Outlook no coincide.',read_failed:'No se pudo completar la lectura de Outlook.',network:'No se pudo conectar con Kairo. Comprueba que Tailscale está conectado y vuelve a intentarlo.'}[code]||'Kairo no pudo completar la comprobación.';
 }
 function hoursRecordCheck(period,phase,code,at){
   HOURS_CACHE.checks=HOURS_CACHE.checks||{};HOURS_CACHE.checks[period]={phase:phase,code:code||'',at:at||Date.now()};

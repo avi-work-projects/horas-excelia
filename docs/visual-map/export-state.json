@@ -11,41 +11,41 @@
     }
   },
   "general": {
-    "fingerprint": "ac5f884e0af4122e9c04cf1d82bd49ddad2fed85b44b30d5f521f2b04a974085",
+    "fingerprint": "96546a50b9f21cb59a3da8cf8048b17ed9c09bf3a0b02096865351b768fcf070",
     "files": [
       "map-general.svg",
       "map-general.png"
     ],
     "hashes": {
-      "map-general.svg": "a38096bf108bec2931a4a8bb01488a35102def1f3ff68d94b2bb6494c3d290ab",
-      "map-general.png": "d901d4281ca941dc6f75791844e89273db9a99cf9601a892632faf919fd8e86d"
+      "map-general.svg": "8a99e65fec691954e56ef1d9ff50ad1a031d891f56597e1f7585fa09c21e3585",
+      "map-general.png": "371dddc03f8f4f77a6912e32dba1a0808693e4d03920aa564222b381b29b45a9"
     }
   },
   "area-0-0": {
-    "fingerprint": "aeda0ce3f3f350645879fd184ee77b14d086646ce8048cbe374fc213c302529c",
+    "fingerprint": "b7e76dbb6b1127a6ef387ac63518a7dfee3c098bb067e9afae00d9e10a8655bd",
     "files": [
       "sheets/area-0-0.png"
     ],
     "hashes": {
-      "sheets/area-0-0.png": "0e43236a6703d6a15967d75984eba110b91ec37803c7ae53ec837dcd5b0cd034"
+      "sheets/area-0-0.png": "8eedec19ce084bd5fccafe5c0546e8a9b8f543ceab533bafe4e641cb06d6c49c"
     }
   },
   "area-0-1": {
-    "fingerprint": "6c64f7c5a6de2194003577597fac5f790866a25812cb4d0df8623c6df7abc8c1",
+    "fingerprint": "506a334b14f7e12633c7bca9b48b67f6e04e9727b1a71784b10bcc003fe328d4",
     "files": [
       "sheets/area-0-1.png"
     ],
     "hashes": {
-      "sheets/area-0-1.png": "92668bab0d595522210fef538ba1a681c8871468928bf147f5bfdc437121f799"
+      "sheets/area-0-1.png": "9f742ffed67a93e71493e84d2dd0323a1ffb70c7a0e2522da3030178aeeb15b4"
     }
   },
   "area-1-0": {
-    "fingerprint": "77cf427d0424ca8ab65653e317ec7585e7c4deace1056ec5082cb747e404a246",
+    "fingerprint": "82586d55d49cc4eb974d73f686e1285ff5d721c11b96b954c858188ba99c4073",
     "files": [
       "sheets/area-1-0.png"
     ],
     "hashes": {
-      "sheets/area-1-0.png": "70c0c334a16b4bebc034a38e52a3bc5f53fc3dd1a9063312339ed74c59b66593"
+      "sheets/area-1-0.png": "279e599c417b3aa5a1de181f9883d42b5341fa330b5cbe78592fa8fa0d7053f8"
     }
   },
   "area-1-1": {
@@ -58,12 +58,12 @@
     }
   },
   "area-2-0": {
-    "fingerprint": "34b63035a9c51b1ede1ee1911f36311f17eac290fee41f01b1e07f543fbf5546",
+    "fingerprint": "04e29ac530ea3d87a467e3e270b3a334d5dc730a0aaa6cee10465d7fe12a7b4a",
     "files": [
       "sheets/area-2-0.png"
     ],
     "hashes": {
-      "sheets/area-2-0.png": "f2d1739cd654f45a9df15c74bf024c7173cbebfac52703695d91e5567a56dcfc"
+      "sheets/area-2-0.png": "46246939dd94d2f51743f94b3a219a1362255a28053a1256d338d90a819aef37"
     }
   },
   "area-3-0": {
@@ -94,25 +94,25 @@
     }
   },
   "area-4-0": {
-    "fingerprint": "633f814bc0b2e62597ba3b11b08c7905515f821c3e0ec49b947db16bf76c93b1",
+    "fingerprint": "65e6dd2e09c39cb2511a419a85940e61e838264b250631e050c4d7bcf5e00b09",
     "files": [
       "sheets/area-4-0.png"
     ],
     "hashes": {
-      "sheets/area-4-0.png": "f39cb6c183ea62713e94bd70738e43b8681ae8e4c274f9f146a0c6769b8fe44e"
+      "sheets/area-4-0.png": "40f3698c929f3d3b18887f6b860c60b4167ae7b65916c931caa9dbc8d7d6abab"
     }
   },
   "area-5-0": {
-    "fingerprint": "fe7244fa7721ea4a7f37b5c5337a37fd3ed70f4630bbc2793beecce5776f1220",
+    "fingerprint": "2b900fc8480be230aa606479adc585658581b74399217756bb8a8669567883bd",
     "files": [
       "sheets/area-5-0.png"
     ],
     "hashes": {
-      "sheets/area-5-0.png": "e01e28837f65720a070f6b2b408bb4e43bfed0eae057ce976244457a91ee92c7"
+      "sheets/area-5-0.png": "935f3c20250a56f4f9343c55fcd270c48f666af1c39689f6b694057e3e00173a"
     }
   },
   "area-5-1": {
-    "fingerprint": "a73808a486d88ba2f9483b45604567cb23a1593e7fde21ed343d7c44035c36b7",
+    "fingerprint": "7c5d0c739f2ffb147df9f8a9a0d83f527c8cb5eb5132222c8e7d73abf6ebf6af",
     "files": [
       "sheets/area-5-1.png"
     ],
@@ -220,12 +220,12 @@
     }
   },
   "area-12-0": {
-    "fingerprint": "bfc4a034eb7ea043dde2bd7cd2f19a7fb67c2830af71f71eb233fab1dc00cd58",
+    "fingerprint": "a486fbc1b0cf1aa9d74d0cc0f3fec70e4071e1d52e3d46457e87623ff52f21d4",
     "files": [
       "sheets/area-12-0.png"
     ],
     "hashes": {
-      "sheets/area-12-0.png": "99cc9e9ebcfb1d11eb5cf16af3bae1a192ddb47b7cb3fed1b02b1a981ed2bf71"
+      "sheets/area-12-0.png": "ac56ad0678a1570cafadaa350488163866f561e9f72331a0dbec247a83f23e9b"
     }
   }
 }

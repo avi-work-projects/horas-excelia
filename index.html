@@ -112,7 +112,7 @@ var BDAYS_FROM_SECRET=[];
     <button class="default-hours-btn" id="editHoursBtn">
       <span data-home-pencil></span>&nbsp;Jornada:&nbsp;<span class="dh-val">9h</span>&nbsp;&#xB7;&nbsp;Editar
     </button>
-    <div class="home-invoice-actions"><button id="hoursExportBtn">Exportar Horas</button><button id="invoiceHomeBtn">Enviar Factura</button></div>
+    <div class="home-invoice-actions"><button id="hoursExportBtn">Exportar Horas</button><button id="hoursCalendarBtn" aria-label="Ver programación de correos">Correos programados</button></div>
     <button class="default-hours-btn csv-export-btn" id="csvExportBtn" hidden><svg viewBox="0 0 24 24" class="ico-doc" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>CSV</button>
     <button class="default-hours-btn pdf-export-btn" id="pdfExportBtn" hidden><svg viewBox="0 0 24 24" class="ico-doc" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>PDF</button>
     <div class="default-hours-panel" id="hoursPanel">
@@ -253,6 +253,7 @@ var BDAYS_FROM_SECRET=[];
 <script defer src="js/home-hours.js"></script>
 <script defer src="js/home-weeks.js"></script>
 <script defer src="js/hours-kairo.js"></script>
+<script defer src="js/mail-calendar.js"></script>
 <script defer src="js/hours-cache.js"></script>
 <script defer src="js/hours-jobs.js"></script>
 <script defer src="js/hours-auth.js"></script>

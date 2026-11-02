@@ -505,15 +505,14 @@ function _renderPrestamoSection(comp,isEditing,editable){
   } else {
     h+=_hipRO('Importe',comp.importePrestamo?_fmtMiles(comp.importePrestamo)+' \u20ac':'\u2014');
     h+=_hipRateDetail(comp.tipoInteres,vinc);
+    var today=new Date(),loan=householdMortgagePeriod(comp,-1,today);
+    h+=renderLoanPayments(loan,today);
     h+=_hipRO('Plazo',comp.plazoAnios?comp.plazoAnios+' a\u00f1os':'\u2014');
     h+=_hipRO('Fecha inicio',comp.fechaInicio?comp.fechaInicio.split('-').reverse().join('/'):'\u2014');
     h+=_hipRO('Banco',comp.entidadBanco||'\u2014');
     /* Cuota calculated */
-    if(comp.importePrestamo>0&&comp.tipoInteres>0&&comp.plazoAnios>0){
-      var tipoEf=_hipEffRate(comp.tipoInteres,vinc);
-      var r=tipoEf/100/12,n=comp.plazoAnios*12;
-      var cuota=r>0?Math.round(comp.importePrestamo*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1)*100)/100:0;
-      h+='<div class="hip-ro-row" style="margin-top:4px;border-top:1px solid var(--border);padding-top:4px"><span class="hip-ro-lbl">Cuota mensual</span><span class="hip-ro-val" style="font-size:.88rem;font-weight:700">'+fcPlain(cuota)+'</span></div>';
+    if(loan){
+      h+='<div class="hip-ro-row" style="margin-top:4px;border-top:1px solid var(--border);padding-top:4px"><span class="hip-ro-lbl">Cuota mensual</span><span class="hip-ro-val" style="font-size:.88rem;font-weight:700">'+fcPlain(loan.payment)+'</span></div>';
     }
     /* Vinculaciones read-only */
     h+='<div style="font-size:.66rem;color:var(--text-dim);margin-top:6px;font-weight:600">Vinculaciones</div>';
@@ -564,21 +563,17 @@ function _renderSubSection(comp,sub,idx,isEditing,editable){
     if(costes>0)h+=_hipROmoney('Costes cambio',costes);
     h+=_hipRO('Capital',sub.nuevoImporte?_fmtMiles(sub.nuevoImporte)+' \u20ac':'\u2014');
     h+=_hipRateDetail(sub.nuevoTipoInteres,sub.vinculaciones);
+    var today=new Date(),loan=householdMortgagePeriod(comp,idx,today);
+    h+=renderLoanPayments(loan,today);
     h+=_hipRO('Plazo',sub.nuevoPlazoAnios?sub.nuevoPlazoAnios+' a\u00f1os':'\u2014');
     h+=_hipRO('Banco',sub.entidadBanco||'\u2014');
     /* Cuota + tiempo restante */
-    if(sub.nuevoImporte>0&&sub.nuevoTipoInteres>0&&sub.nuevoPlazoAnios>0){
-      var sv2=sub.vinculaciones||{};
-      var tipoEfS=_hipEffRate(sub.nuevoTipoInteres,sv2);
-      var rs=tipoEfS/100/12,ns=sub.nuevoPlazoAnios*12;
-      var cuotaS=rs>0?Math.round(sub.nuevoImporte*rs*Math.pow(1+rs,ns)/(Math.pow(1+rs,ns)-1)*100)/100:0;
-      h+='<div class="hip-ro-row" style="margin-top:4px;border-top:1px solid var(--border);padding-top:4px"><span class="hip-ro-lbl">Cuota mensual</span><span class="hip-ro-val" style="font-size:.88rem;font-weight:700">'+fcPlain(cuotaS)+'</span></div>';
+    if(loan){
+      h+='<div class="hip-ro-row" style="margin-top:4px;border-top:1px solid var(--border);padding-top:4px"><span class="hip-ro-lbl">Cuota mensual</span><span class="hip-ro-val" style="font-size:.88rem;font-weight:700">'+fcPlain(loan.payment)+'</span></div>';
       /* Tiempo restante */
       if(sub.fecha){
-        var hoy=new Date();
-        var fp=sub.fecha.split('-');
-        var mPagados=Math.max(0,(hoy.getFullYear()-parseInt(fp[0],10))*12+(hoy.getMonth()-(parseInt(fp[1],10)-1)));
-        var mRest=Math.max(0,ns-mPagados);
+        var mPagados=Math.min(loan.years*12,Math.max(0,loan.paid));
+        var mRest=loan.end&&loan.end<=dk(today)?0:loan.years*12-mPagados;
         h+=_hipRO('Tiempo pagado',_fmtDuration(mPagados));
         h+=_hipRO('Tiempo restante',_fmtDuration(mRest));
       }

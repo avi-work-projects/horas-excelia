@@ -47,7 +47,7 @@ test('fecha confirmada se conserva aunque cambie el calendario local; actualizac
  await expect(page.locator('#invoiceCalendar')).toContainText('Factura enviada');await expect(page.locator('#invoiceCalendar .delivery')).toHaveCount(0);
 });
 test('seis semanas y temas mantienen casillas y leyenda legibles',async({page},info)=>{
- await setup(page);await page.locator('#invoiceBack').click();await page.evaluate(()=>{CY=2027;CM=4;render();});await page.locator('#invoiceHomeBtn').click();
+ await setup(page);await page.locator('#invoiceBack').click();await page.evaluate(()=>{CY=2027;CM=4;HOURS_CACHE.url=hoursKairoUrl();weeks(CY,CM).forEach(w=>HOURS_CACHE.weeks[dk(w[0])]={state:'sent'});render();});await page.locator('#invoiceHomeBtn').click();
  await expect(page.locator('#invoiceCalendar tbody tr')).toHaveCount(6);await expect(page.locator('#invoiceCalendar [data-date]')).toHaveCount(31);
  for(const theme of ['dark','grey']){
   await page.evaluate(theme=>{applyTheme(theme);},theme);

@@ -27,10 +27,10 @@
 ### js/birthdays-panels.js  _(368 líneas)_
 **Funciones:** bdaySwitchPanel:1 · renderBdayNameVip:6 · updateBdayNameVip:7 · renderBdayVipToggle:8 · renderBdayDetail:9 · renderBdayAlarmPanel:27 · fmtDate:39 · openBdayAlarm:94 · back:99 · _bdRefreshBoth:103 · closeBdayAlarm:107 · bindBdayAlarmEvents:109 (!147) · fmtD:228 · rememberDay:231 · onOk:232 · onErr:233 · renderBdayForm:256 · openBdayDetail:283 · savePerson:287 · closeBdayDetail:303 · openBdayForm:306 · back:307 · closeBdayForm:316 · deleteBdayPerson:320 · persist:323 · bindBdayDateFields:326 · update:328 · openBdayDatePicker:340 · close:341 · index:357 · mark:358 · select:359
 
-### js/birthdays-render.js  _(257 líneas)_
-**Estado global:** DN7:104
+### js/birthdays-render.js  _(264 líneas)_
+**Estado global:** DN7:111
 
-**Funciones:** renderBdayVipFilter:1 · renderBdayUpcoming:5 (!88) · getBdaysInRange:10 · bdayLabel:25 · renderGroup:34 · bdayCalendarPeople:93 · renderBdayCalendarDay:96 · renderBdayCalMonth:102 · renderBdayList:143 · getEffVip:151 · renderBdayAddButton:199 · renderBdayContent:202
+**Funciones:** renderBdayVipFilter:1 · renderBdayUpcoming:5 (!88) · getBdaysInRange:10 · bdayLabel:25 · renderGroup:34 · bdayCalendarPeople:93 · bdayCalendarName:96 · renderBdayCalendarDay:103 · renderBdayCalMonth:109 · renderBdayList:150 · getEffVip:158 · renderBdayAddButton:206 · renderBdayContent:209
 
 ### js/birthdays.js  _(169 líneas)_
 **Estado global:** BDAY_STORAGE_KEY:5 · BDAY_YEAR:6 · BDAY_CAL_VIP:7 · BDAY_EDIT:8 · BDAY_SEARCH:9 · BDAY_LIST_TOP:10 · BDAY_UP_VIP:11 · BDAY_FILTER_VIP:12 · BDAY_EDIT_VIP:13 · BDAY_VIP_PENDING:14 · BDAY_ALARM_SET_KEY:68 · BDAY_ALARM_SET:69 · BDAY_ALARM_COUNT_KEY:70 · BDAY_ALARM_COUNT:71 · BDAY_PALETTE:75 · BDAYS:79
@@ -110,10 +110,10 @@
 
 **Funciones:** _ensureGasScenarios:6 · _renderGasDetalle:14 · _bindGasDetalle:69
 
-### js/economics-fiscal-hip.js  _(863 líneas)_
+### js/economics-fiscal-hip.js  _(858 líneas)_
 **Estado global:** DESPACHO_SK:5 · DESPACHO:6 · GROUP_CASA:110 · GROUP_UTIL:111
 
-**Funciones:** _defaultCompra:8 · _defaultSubrogacion:9 · loadDespacho:10 · saveDespacho:62 · _despachoGetPct:65 · computeDespachoDeduccion:70 · computeDeclResult:124 · computeIrpfBrackets:177 · _hipEffRate:194 · _buildMortgageSwitches:200 · _computeAnnualInterest:221 · _computeBalanceAtDate:255 · renderFiscalTabDespachoOnly:288 · _getActiveMortgage:352 · _fmtDuration:359 · _hipROvinc:364 · _calcInsOvercost:374 · _renderInlineOvercost:385 · _renderHipResumen:404 · _renderHipDetalle:407 · _renderHipSectionContent:433 · _renderCompraSection:445 · _hipRateDetail:474 · fmt:477 · _renderPrestamoSection:484 · _renderSubSection:530 · renderFiscalTabDespacho:600 · _bindTabDespacho:619 · _bindHipResumen:646 · _bindHipAnalysis:662 · _bindHipDetalle:672 · _rerenderSection:743 · _readSectionInputs:752 · _rv:753 · _rv_s:754 · _bindEditingSection:812
+**Funciones:** _defaultCompra:8 · _defaultSubrogacion:9 · loadDespacho:10 · saveDespacho:62 · _despachoGetPct:65 · computeDespachoDeduccion:70 · computeDeclResult:124 · computeIrpfBrackets:177 · _hipEffRate:194 · _buildMortgageSwitches:200 · _computeAnnualInterest:221 · _computeBalanceAtDate:255 · renderFiscalTabDespachoOnly:288 · _getActiveMortgage:352 · _fmtDuration:359 · _hipROvinc:364 · _calcInsOvercost:374 · _renderInlineOvercost:385 · _renderHipResumen:404 · _renderHipDetalle:407 · _renderHipSectionContent:433 · _renderCompraSection:445 · _hipRateDetail:474 · fmt:477 · _renderPrestamoSection:484 · _renderSubSection:529 · renderFiscalTabDespacho:595 · _bindTabDespacho:614 · _bindHipResumen:641 · _bindHipAnalysis:657 · _bindHipDetalle:667 · _rerenderSection:738 · _readSectionInputs:747 · _rv:748 · _rv_s:749 · _bindEditingSection:807
 
 ### js/economics-fiscal.js  _(435 líneas)_
 **Estado global:** GROUP_CASA_DESP:298 · GROUP_UTIL_DESP:299
@@ -319,13 +319,13 @@
 
 **Funciones:** hoursJobsRead:4 · hoursJobsSave:8 · hoursAcceptSnapshot:9 · hoursAcceptJobResult:17 · hoursTrackJob:24
 
-### js/hours-kairo.js  _(229 líneas)_
+### js/hours-kairo.js  _(231 líneas)_
 **Estado global:** HOURS_STATUS:3 · HOURS_REQUEST:4
 
-**Funciones:** hoursKairoUrl:5 · hoursWeekDays:9 · hoursCivilTime:13 · hoursWeekState:18 · hoursRemoteConfigured:28 · hoursCovered:29 · hoursHasConfirmedMail:30 · hoursWeekBadge:31 · hoursWeekDate:35 · renderHoursAccess:40 · hoursMailSubject:51 · hoursCalendarDays:52 · hoursMailRequest:58 · validateHoursResult:68 · rememberHoursReview:81 · hoursKairoExchange:92 · closed:96 · verifySource:97 · stopWatch:112 · finish:114 · receive:115 · hoursReviewSurface:130 · close:140 · invalidateHoursReview:145 · paintHoursStatus:172 · refreshHomeStates:217 · initHoursKairo:221 · resume:224
+**Funciones:** hoursKairoUrl:5 · hoursWeekDays:9 · hoursCivilTime:13 · hoursWeekState:18 · hoursRemoteConfigured:28 · hoursCovered:29 · hoursHasConfirmedMail:30 · hoursWeekBadge:31 · hoursWeekDate:35 · renderHoursAccess:40 · hoursMailSubject:51 · hoursCalendarDays:52 · hoursMailRequest:58 · validateHoursResult:68 · rememberHoursReview:81 · hoursKairoExchange:92 · closed:96 · verifySource:97 · stopWatch:112 · finish:114 · receive:115 · hoursReviewSurface:130 · close:140 · invalidateHoursReview:145 · paintHoursStatus:172 · refreshHomeStates:219 · initHoursKairo:223 · resume:226
 
-### js/household-summary.js  _(92 líneas)_
-**Funciones:** householdMortgagePayment:2 · householdMortgagePeriod:5 · householdValue:18 · householdMortgageCard:19 · date:20 · householdUtilityPrices:35 · householdUtilityCard:67 · householdMortgageAnalysisButton:79 · renderHouseholdSummary:80
+### js/household-summary.js  _(111 líneas)_
+**Funciones:** householdMortgagePayment:2 · householdMortgagePeriod:5 · householdValue:18 · householdLoanPayments:19 · renderLoanPayments:29 · householdMortgageCard:38 · date:39 · householdUtilityPrices:54 · householdUtilityCard:86 · householdMortgageAnalysisButton:98 · renderHouseholdSummary:99
 
 ### js/household.js  _(39 líneas)_
 **Estado global:** HOUSEHOLD_RETURN:3
@@ -349,10 +349,10 @@
 ### js/invoices-export.js  _(36 líneas)_
 **Funciones:** invoiceXml:2 · invoiceZip:3 · header:5 · invoiceWorkbook:14 · textCell:15 · numCell:16 · sheet:26
 
-### js/invoices-home.js  _(78 líneas)_
+### js/invoices-home.js  _(104 líneas)_
 **Estado global:** INVOICE_HOME_CACHE_KEY:3 · INVOICE_HOME_STATUS:4 · INVOICE_HOME_REQUESTS:5 · INVOICE_HOME_CACHE:20
 
-**Funciones:** validateHomeInvoiceStatus:6 · homeInvoiceCacheRead:12 · homeInvoiceCacheSave:21 · homeInvoiceCheckedAt:22 · homeInvoiceScheduleDate:23 · homeInvoiceModel:24 · renderHomeInvoiceStatus:42 · paintHomeInvoiceStatus:48 · initHomeInvoiceStatus:72
+**Funciones:** validateHomeInvoiceStatus:6 · homeInvoiceCacheRead:12 · homeInvoiceCacheSave:21 · homeInvoiceCheckedAt:22 · homeInvoiceScheduleDate:23 · homeInvoiceModel:24 · renderHomeInvoiceStatus:49 · paintHomeInvoiceStatus:65 · initHomeInvoiceStatus:89
 
 ### js/invoices-kairo.js  _(79 líneas)_
 **Estado global:** INVOICE_KAIRO_BUSY:2
@@ -362,8 +362,8 @@
 ### js/invoices-projects.js  _(76 líneas)_
 **Funciones:** invoiceProjectPeriods:2 · invoiceProjectFor:10 · invoiceProjectChange:15 · invoiceProjectApply:22 · invoiceProjectReply:30
 
-### js/invoices-ui.js  _(123 líneas)_
-**Funciones:** invoicePanel:2 · close:5 · invoiceField:10 · openInvoiceSettings:11 · invoiceSummary:34 · money:35 · number:36 · invoiceDaysSummary:44 · invoicePrivacyButton:60 · invoiceManualSection:64 · error:95 · bindPrivacy:97 · openHoursExport:102 · initInvoices:107 · bindInvoiceConfigImport:112 · readFields:113
+### js/invoices-ui.js  _(125 líneas)_
+**Funciones:** invoicePanel:2 · close:5 · invoiceField:10 · openInvoiceSettings:11 · invoiceSummary:34 · money:35 · number:36 · invoiceDaysSummary:44 · invoicePrivacyButton:60 · invoiceManualSection:64 · error:95 · bindPrivacy:97 · openHoursExport:102 · initInvoices:107 · bindInvoiceConfigImport:114 · readFields:115
 
 ### js/invoices.js  _(124 líneas)_
 **Estado global:** INVOICE_KEY:2 · INVOICE_FIRST_PERIOD:3 · INVOICE_MONTH:4 · INVOICE_BACK:5 · INVOICE_OPEN_SEQ:6 · INVOICE_HIDE_AMOUNTS:7
@@ -372,6 +372,9 @@
 
 ### js/logo-popup.js  _(51 líneas)_
 **Funciones:** _logoUpdateDots:14
+
+### js/mail-calendar.js  _(60 líneas)_
+**Funciones:** openMailCalendar:23 · receive:34 · close:53
 
 ### js/nav-icons.js  _(70 líneas)_
 **Estado global:** NAV_ICON_STYLE:2 · NAV_MAIN_ITEMS:4 · NAV_ICON_PATHS:11
@@ -924,14 +927,14 @@
 **Rangos por prefijo de clase:**
 .home-birthday:47-52 · .home-pending:64-72 · .home-popup:3-73 · .home-reminder:9-63 · .home-tasks:69-70 · .reminders-access:2-2
 
-### css/source/invoices.css  _(122 líneas)_
+### css/source/invoices.css  _(123 líneas)_
 
 **Secciones:**
 
 - Revisar jornadas y cálculo antes de las acciones; caben juntos en móvil.:63
 
 **Rangos por prefijo de clase:**
-.home-invoice:3-120 · .hours-control:1-6 · .hours-export:50-61 · .invoice-action:75-75 · .invoice-actions:21-21 · .invoice-body:10-10 · .invoice-calculation:77-89 · .invoice-card:12-14 · .invoice-config:19-94 · .invoice-confirm:26-26 · .invoice-day:25-25 · .invoice-days:98-104 · .invoice-document:34-34 · .invoice-equals:84-84 · .invoice-error:27-27 · .invoice-eye:46-47 · .invoice-field:16-16 · .invoice-fields:15-37 · .invoice-filename:28-28 · .invoice-kairo:68-107 · .invoice-line:80-83 · .invoice-mail:90-90 · .invoice-money:85-85 · .invoice-month:11-95 · .invoice-note:17-17 · .invoice-send:65-67 · .invoice-sheet:8-74 · .invoice-status:18-18 · .invoice-summary:44-45 · .invoice-tool:91-93 · .invoice-totals:20-97
+.home-invoice:3-121 · .hours-control:1-6 · .hours-export:50-61 · .invoice-action:75-75 · .invoice-actions:21-21 · .invoice-body:10-10 · .invoice-calculation:77-89 · .invoice-card:12-14 · .invoice-config:19-94 · .invoice-confirm:26-26 · .invoice-day:25-25 · .invoice-days:98-104 · .invoice-document:34-34 · .invoice-equals:84-84 · .invoice-error:27-27 · .invoice-eye:46-47 · .invoice-field:16-16 · .invoice-fields:15-37 · .invoice-filename:28-28 · .invoice-kairo:68-107 · .invoice-line:80-83 · .invoice-mail:90-90 · .invoice-money:85-85 · .invoice-month:11-95 · .invoice-note:17-17 · .invoice-send:65-67 · .invoice-sheet:8-74 · .invoice-status:18-18 · .invoice-summary:44-45 · .invoice-tool:91-93 · .invoice-totals:20-97
 
 ### css/source/invoices-calendar.css  _(27 líneas)_
 

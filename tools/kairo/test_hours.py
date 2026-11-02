@@ -26,6 +26,21 @@ def inventory(req, count=0):
 
 
 class ModelTests(unittest.TestCase):
+    def test_status_reports_microsoft_login_before_waiting_for_browser(self):
+        import io,json
+        from unittest.mock import patch
+        from outlook_hours import OutlookReader
+        from hours_errors import HoursFailure
+        reader=OutlookReader('fixture@example.invalid')
+        def tabs(urls):
+            return io.BytesIO(json.dumps([{'type':'page','url':url} for url in urls]).encode())
+        login='https://login.microsoftonline.com/common/login'
+        with patch('outlook_hours.urlopen',return_value=tabs([login])):
+            with self.assertRaises(HoursFailure) as failure:reader.ensure_mailbox_page()
+            self.assertEqual(failure.exception.code,'auth_required')
+        with patch('outlook_hours.urlopen',return_value=tabs([login,'https://outlook.office.com/mail/inbox'])):
+            reader.ensure_mailbox_page()
+
     def test_official_outlook_redirect_keeps_identity_and_rejects_lookalikes(self):
         old='https://outlook.office.com/mail/drafts/id/item%2Bid%3D'
         new='https://outlook.cloud.microsoft/mail/drafts/id/item%2Bid%3D'
@@ -240,7 +255,7 @@ class HttpTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             store=Store(temp);req=request();inv=inventory(req,1)
             observed_clock=[NOW];read_calls=[]
-            cfg=dict(private_origin='https://hours.example.invalid',app_origin='https://app.example.invalid',owner='owner@example.invalid')
+            cfg=dict(private_origin='https://hours.example.invalid',app_origin='https://app.example.invalid',owner='owner@example.invalid',sender='sender@example.invalid')
             class FreshReader:
                 fresh=False
                 def invalidate(self):self.fresh=True
@@ -271,6 +286,21 @@ class HttpTests(unittest.TestCase):
                 # A slow observation must not expire its cache before returning.
                 json.load(post('/preview',req))
                 self.assertEqual(len(read_calls),1)
+                # The standalone calendar reads the same verified facts. Navigating
+                # does not start an Outlook job, and changing day types needs CSRF.
+                from mail_calendar import calendar_data
+                before_reads=len(read_calls)
+                with self.assertRaises(HTTPError) as denied:post('/calendar-days',{'period':'2027-02','days':[]},token='wrong')
+                denied.exception.close()
+                self.assertTrue(json.load(post('/calendar-days',{'period':'2027-02','days':[{'date':'2027-02-07','type':'festivo'}]}))['saved'])
+                with urlopen(Request(root+'/calendario?period=2027-02',headers=headers)) as page:
+                    boot=json.loads(re.search(r'const hoursBridgeConfig=(.*?);',page.read().decode()).group(1))
+                self.assertEqual(boot['calendar']['days'],{'2027-02-07':'festivo'})
+                self.assertEqual(boot['calendar']['rows'][0]['state'],'scheduled')
+                self.assertEqual(len(read_calls),before_reads)
+                with self.assertRaises(HTTPError) as invalid:post('/calendar-days',{'period':'2027-02','days':[{'date':'2027-03-01','type':'ausencia'}]})
+                invalid.exception.close()
+                self.assertEqual(calendar_data(store,cfg['sender'],'2027-02')['days'],{'2027-02-07':'festivo'})
                 status=json.load(urlopen(Request(root+'/status?period=2027-02',headers=headers|{'Origin':cfg['app_origin']})))
                 self.assertEqual(status['rows'][0]['days'],req['weeks'][0]['days'])
                 self.assertEqual(status['rows'][0]['schedule'],'2027-02-05T08:00:00+01:00')

@@ -171,6 +171,7 @@ async function openHoursReview(targetWeek,intent){
 }
 function paintHoursStatus(){
   var container=document.getElementById('weeksContainer');if(!container)return;
+  if(typeof paintHomeInvoiceStatus==='function')paintHomeInvoiceStatus();
   var summary=container.querySelector('.home-submission');if(summary)summary.outerHTML=renderHomeSubmissionStatus(CY,CM);
   container.querySelectorAll('.week-card[data-week]').forEach(function(card){
     var key=card.dataset.week,state=homePeriodMode(CY,CM)==='closed'?'closed':hoursWeekState(key),covered=homeWeekCovered(key),open=homeWeekUnlocked(key),badge=card.querySelector('.hours-week-badge');
@@ -210,7 +211,8 @@ async function syncHoursStatus(force){
   }catch(e){
     if(period===mkey(CY,CM))HOURS_STATUS={period:period,url:url,phase:'error',checkedAt:cached?cached.checkedAt:0};
     HOURS_JOB_ERROR='Kairo no está disponible. Se conserva el estado guardado y el envío manual.';
-    hoursRecordCheck(period,'error','network');if(force)showToast('No se pudo conectar con Kairo. Se conserva la última comprobación correcta.');
+    var code=e.name==='AbortError'||e instanceof TypeError?'network':'read_failed';
+    hoursRecordCheck(period,'error',code);if(force)showToast(hoursCheckMessage(code));
   }
   finally{clearTimeout(timeout);paintHoursStatus();}
 }

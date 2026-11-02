@@ -372,3 +372,29 @@ anterior con transportes ficticios; 7 pruebas del modelo/monitor, contratos de
 puente/HTTP y revisión, y 8 recorridos de navegador afectados. Las dos pruebas
 antiguas de descripción de conceptos pertenecen al motor sin cambios y no se
 duplicaron en el candidato. La batería completa de la PWA se ejecuta en CI.
+
+## Calendario compartido de correos (v529)
+
+La ruta privada `/horas/calendario?period=YYYY-MM` está enlazada desde la
+facturación de Kairo y se abre dentro de Gestify. Reutiliza el calendario de
+la revisión de semanas. El servicio escoge la observación verificada más
+reciente de cada lunes entre los meses solapados y consulta el diario de
+intentos. Una semana sin datos se identifica como sin confirmar.
+
+La consulta del calendario no inicia trabajos de Outlook. La actualización
+explícita se ejecuta en la cola existente. Las excepciones del calendario se
+guardan en `calendar_days` al revisar la programación o abrir el mes desde
+Gestify. Solo se transmiten fecha y tipo. El marco comprueba origen, ventana
+y mes, el POST privado valida propietario, origen y CSRF. La comprobación
+ligera de acceso solo devuelve el nombre del servicio.
+
+Instalación privada con copia en `gestify-calendar-v529/originals`. Las huellas
+de planes, correos de factura y semanas coincidieron antes y después. La galería
+documental usa las plantillas privadas con datos ficticios. Las capturas no
+contienen las facturas ni los correos de la cuenta.
+
+Para una lectura nueva, el lector consulta primero las pestañas del Chromium
+privado por loopback. Si solo está la identificación de Microsoft, comunica
+`auth_required` antes de esperar el bloqueo del navegador. La caché confirmada
+sigue disponible. En la comprobación del 02/11/2026 el calendario de noviembre
+respondió HTTP 200 y la lectura nueva devolvió ese código en menos de un segundo.
