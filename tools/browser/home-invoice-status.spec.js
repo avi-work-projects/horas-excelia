@@ -90,9 +90,9 @@ test('Ver programación explica una conexión fallida sin perder la fecha confir
   const api=await setup(page,context);
   api.set(result('scheduled'));
   await page.locator('[data-hours-check]').click();
-  const link=page.locator('[data-kairo-review]');
+  const link=page.locator('#homeInvoiceStatus [data-home-invoice=calendar]');
   await expect(link).toHaveText('Ver programación');
-  api.offline();
+  await context.route(new URL('/horas/reachable',base).href,r=>r.abort());
   await link.click();
   await expect(page.getByText(/Comprueba que Tailscale está conectado/).last()).toBeVisible();
   await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura programada');

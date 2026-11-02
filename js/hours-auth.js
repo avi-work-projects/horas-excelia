@@ -4,9 +4,10 @@ var HOURS_AUTH_MANUAL=false;
 var HOURS_AUTH_BEFORE=null;
 function hoursAuthFeedback(message){if(typeof showToast==='function')showToast(message);}
 function renderHoursAuthNotice(){
-  var text={mfa:['Microsoft pide MFA','Completa la confirmación en Authenticator o en el Outlook de Kairo. La recuperación automática está detenida.'],rejected:['Revisa la contraseña de Outlook','Microsoft la ha rechazado. No se volverá a intentar hasta que actualices el secreto privado en Kairo.'],unknown:['Revisa el acceso a Outlook','La pantalla no se reconoce. La recuperación está detenida para que la revises en Kairo.'],browser_unavailable:['Outlook de Kairo no está disponible','Revisa el navegador de Kairo. Se conservan las programaciones y los estados confirmados.']};
+  var text={mfa:['Microsoft pide MFA','Completa la confirmación en Authenticator o en el Outlook de Kairo. La recuperación automática está detenida.'],rejected:['Revisa la contraseña de Outlook','Microsoft la ha rechazado. No se volverá a intentar hasta que actualices el secreto privado en Kairo.'],unknown:['Revisa el acceso a Outlook','Kairo no ha podido confirmar la sesión para consultar o programar correos nuevos. Puedes ver lo ya confirmado.'],browser_unavailable:['Outlook de Kairo no está disponible','Revisa el navegador de Kairo. Se conservan las programaciones y los estados confirmados.']};
   var item=HOURS_AUTH.url===hoursKairoUrl()&&(HOURS_AUTH_MANUAL?['Comprobando acceso a Outlook','Kairo está revisando la sesión. Puedes seguir usando Gestify.']:text[HOURS_AUTH.phase]);if(!item)return '';
-  return '<div class="hours-auth-alert" role="'+(HOURS_AUTH_MANUAL?'status':'alert')+'"><details><summary>'+item[0]+'</summary><span>'+item[1]+'</span></details><button type="button" data-hours-auth'+(HOURS_AUTH_MANUAL?' disabled aria-busy="true"':'')+'>'+(HOURS_AUTH_MANUAL?'Comprobando…':'Comprobar acceso')+'</button></div>';
+  var urgent=['mfa','rejected'].includes(HOURS_AUTH.phase)&&!HOURS_AUTH_MANUAL;
+  return '<div class="hours-auth-alert'+(urgent?'':' quiet')+'" role="'+(urgent?'alert':'status')+'"><details><summary>'+item[0]+'</summary><span>'+item[1]+'</span></details><button type="button" data-hours-auth'+(HOURS_AUTH_MANUAL?' disabled aria-busy="true"':'')+'>'+(HOURS_AUTH_MANUAL?'Comprobando…':'Comprobar acceso')+'</button></div>';
 }
 async function checkHoursAuth(force,retries,manual){
   if(retries===undefined)retries=6;

@@ -120,3 +120,9 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 .home-invoice-status.unsent .home-invoice-copy>strong{animation:home-pending-pulse 1.8s ease-in-out infinite}
 .home-invoice-action{display:flex;align-items:center;justify-content:center;box-sizing:border-box;max-width:104px;padding:7px 9px;min-height:36px;border:1px solid var(--invoice-tone);border-radius:8px;background:var(--surface);color:var(--invoice-tone);font:600 .65rem var(--font);cursor:pointer;text-align:center;text-decoration:none}
 @media(prefers-reduced-motion:reduce){.home-invoice-status.unsent .home-invoice-copy>strong{animation:none}}
+
+.dispatch-icon{width:20px;height:20px;flex:none;vertical-align:middle;color:inherit}
+.home-invoice-actions .home-schedule-action,.home-schedule-action,.home-invoice-action.home-send-invoice{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:42px;padding:6px 9px;border:1px solid color-mix(in srgb,var(--home-tone) 55%,var(--border));border-radius:12px;background:color-mix(in srgb,var(--home-tone) 7%,var(--surface));color:var(--home-tone);font:600 .72rem/1.2 var(--font);cursor:pointer;text-align:center}
+.home-invoice-status .home-schedule-action,.home-invoice-action.home-send-invoice{max-width:112px}
+.home-invoice-icon .dispatch-icon{width:25px;height:25px;color:var(--home-tone)}
+.home-invoice-status.scheduled{grid-template-columns:25px minmax(0,1fr) auto}

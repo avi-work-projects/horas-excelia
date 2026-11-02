@@ -1,8 +1,10 @@
 const {test,expect}=require('@playwright/test');
 const {execFileSync}=require('node:child_process');
-const html=execFileSync(process.platform==='win32'?'python':'python3',['-c',`from invoice_month_review import render
-row={'id':2,'status':'review','data':{'period':'2026-11','number':'11-01/2026','send_date':'2026-11-20','display':{'total':1234.56,'days':20,'base':1200,'vat':252,'withholding':217.44},'to':'destino@example.invalid','subject':'Factura de noviembre','body':'Correo sintético de revisión.'}}
-print(render('2026-11',row,2,{'commissioned':True,'mail_enabled':True},'synthetic-csrf','synthetic-hash'))`],{cwd:'tools/kairo',encoding:'utf8',env:{...process.env,PYTHONIOENCODING:'utf-8'}});
+function invoiceFixture(state='review'){return execFileSync(process.platform==='win32'?'python':'python3',['-c',`from invoice_month_review import render
+from datetime import datetime, timezone
+row={'id':2,'status':'${state}','data':{'period':'2026-11','number':'11-01/2026','send_date':'2026-11-20','display':{'total':1234.56,'days':20,'base':1200,'vat':252,'withholding':217.44},'to':'destino@example.invalid','subject':'Factura de noviembre','body':'Correo sintético de revisión.'}}
+print(render('2026-11',row,2,{'commissioned':True,'mail_enabled':True},'synthetic-csrf','synthetic-hash',datetime(2026,11,2,tzinfo=timezone.utc)))`],{cwd:'tools/kairo',encoding:'utf8',env:{...process.env,PYTHONIOENCODING:'utf-8'}});}
+const html=invoiceFixture();
 
 for(const width of [320,400])test('revisión de noviembre compacta a '+width+' px, con confirmación explícita',async({page},info)=>{
  await page.setViewportSize({width,height:740});let writes=[];
@@ -29,4 +31,18 @@ for(const width of [320,400])test('revisión de noviembre compacta a '+width+' p
  await page.getByRole('button',{name:'Volver a revisar',exact:true}).click();expect(writes).toHaveLength(0);
  await page.getByRole('button',{name:'Aprobar emisión y envío',exact:true}).click();await page.getByRole('button',{name:'Confirmar',exact:true}).click();
  await expect(page.locator('#result')).toContainText('La versión ha cambiado');expect(writes).toEqual([{hash:'synthetic-hash',planId:2}]);
+});
+
+test('cancelar requiere confirmar el mes y el estado de la factura programada',async({page})=>{
+ await page.setViewportSize({width:320,height:740});const writes=[];
+ await page.route('**/synthetic-invoice',r=>r.fulfill({contentType:'text/html',body:invoiceFixture('approved')}));
+ await page.route('**/facturas/cancel',r=>{writes.push(r.request().postDataJSON());return r.fulfill({status:409,json:{message:'El estado ha cambiado.'}});});
+ await page.goto('/synthetic-invoice');
+ const cancel=page.getByRole('button',{name:'Cancelar programación',exact:true}),agenda=page.locator('[data-panel="4"]').getByRole('link',{name:'Ver programación'});
+ const [a,b]=await Promise.all([agenda.boundingBox(),cancel.boundingBox()]);expect(b.x).toBeGreaterThanOrEqual(a.x+a.width);expect(b.width).toBeLessThan(a.width);
+ await cancel.click();await expect(page.getByRole('dialog',{name:'¿Seguro que desea hacer esto?'})).toBeVisible();
+ await expect(page.locator('#close')).toBeFocused();await page.keyboard.press('Escape');expect(writes).toHaveLength(0);
+ await cancel.click();await page.getByRole('button',{name:'Sí, cancelar'}).click();
+ await expect(page.locator('#result')).toHaveText('El estado ha cambiado.');
+ expect(writes).toEqual([{hash:'synthetic-hash',planId:2,expectedState:'approved'}]);
 });

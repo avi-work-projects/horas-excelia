@@ -29,6 +29,19 @@ def patch_service(source):
     return result
 
 
+def patch_cancellation(source):
+    """Install the same cutoff in the write path, inside the existing runner lock."""
+    original="if r['status'] in ('sending','sent','emitting','queued','uncertain'):raise ValueError('Proceso iniciado o incierto; requiere revisión manual')"
+    guard="""from invoice_cancellation import can_cancel
+ if expected_state is not None and r['status']!=expected_state:raise ValueError('El estado ha cambiado. Vuelve a abrir la factura.')
+ if not can_cancel(r['status'],r['data']['send_date'],now()):raise ValueError('Esta programación ya no se puede cancelar.')"""
+    def guarded_cancel(text):
+        text=replace(text,'def cancel(expected,plan_id=None):','def cancel(expected,plan_id=None,expected_state=None):')
+        return replace(text,original,guard)
+    result=function(source,'cancel',guarded_cancel)
+    return replace(result,"cancel(data['hash'],data.get('planId'))","cancel(data['hash'],data.get('planId'),data.get('expectedState',''))")
+
+
 def patch_dashboard(source):
     result=function(source,'shell',lambda _:'''def shell(content,tab):
     from kairo_invoice_web import dashboard
@@ -58,5 +71,5 @@ if __name__=='__main__':
     import sys
     src,dst=map(Path,sys.argv[1:])
     dst.mkdir(exist_ok=False)
-    for name,change in [('service.py',patch_service),('invoice_dashboard.py',patch_dashboard)]:
+    for name,change in [('service.py',lambda source:patch_cancellation(patch_service(source))),('invoice_dashboard.py',patch_dashboard)]:
         (dst/name).write_text(change((src/name).read_text(encoding='utf-8')),encoding='utf-8')

@@ -2,7 +2,7 @@
 <body class="k-ui"><!--KAIRO_HEADER--><main class="k-main">
 <div class="k-eye">Facturación · <span id="progress"></span></div><h1><!--TITLE--></h1>
 <!--KAIRO_STEPS--><!--CONTENT--><p id="result" role="status"></p></main>
-<dialog id="confirm"><h2 id="confirmTitle"></h2><p id="confirmText"></p><div class="k-action-list"><button class="k-primary" id="confirmGo">Confirmar</button><button id="close">Volver a revisar</button></div></dialog>
+<dialog id="confirm" aria-labelledby="confirmTitle" aria-describedby="confirmText"><h2 id="confirmTitle"></h2><p id="confirmText"></p><div class="k-action-list"><button class="k-primary" id="confirmGo">Confirmar</button><button id="close">Volver a revisar</button></div></dialog>
 <script>
 const boot=/*BOOT*/;
 const el=id=>document.getElementById(id);
@@ -33,15 +33,16 @@ const dialog=el('confirm');
 el('close').onclick=()=>dialog.close();
 document.querySelectorAll('[data-action]').forEach(button=>button.onclick=()=>{
   const action=button.dataset.action;
-  el('confirmTitle').textContent=button.textContent;
-  el('confirmText').textContent=action==='approve'?boot.period+' · Se autorizarán la emisión y el envío en la fecha indicada.':boot.period+' · '+(button.textContent.includes('correo')?'Se cancelará únicamente el correo pendiente.':'Se cancelará esta programación.');
+  el('confirmTitle').textContent=action==='cancel'?'¿Seguro que desea hacer esto?':button.textContent;
+  el('confirmGo').textContent=action==='cancel'?'Sí, cancelar':'Confirmar';
+  el('confirmText').textContent=action==='approve'?boot.period+' · Se autorizarán la emisión y el envío en la fecha indicada.':boot.period+' · '+(boot.state==='accepted'?'La factura ya está emitida. Se cancelará el correo pendiente.':'Se cancelarán la emisión de la factura y el envío del correo.');
   el('confirmGo').onclick=async()=>{
     if(busy)return;
     busy=true;dialog.close();
     document.querySelectorAll('[data-action]').forEach(b=>b.disabled=true);
     const result=el('result');result.textContent='Guardando…';
     try{
-      const response=await fetch('/facturas/'+action,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF':boot.csrf},body:JSON.stringify({hash:boot.hash,planId:boot.planId})});
+      const response=await fetch('/facturas/'+action,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF':boot.csrf},body:JSON.stringify({hash:boot.hash,planId:boot.planId,...(action==='cancel'?{expectedState:boot.state}:{})})});
       const data=await response.json();
       if(!response.ok)throw Error(data.message||'Operación sin confirmar');
       location.reload();
@@ -51,5 +52,6 @@ document.querySelectorAll('[data-action]').forEach(button=>button.onclick=()=>{
     }
   };
   dialog.showModal();
+  if(action==='cancel')el('close').focus();
 });
 </script></body></html>

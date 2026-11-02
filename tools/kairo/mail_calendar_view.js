@@ -8,7 +8,7 @@ function startMailCalendar(data,labels,draw){
   };
   const privateOrigin=hoursBridgeConfig.origin;
   const prefsKey='kairo-programacion-filtros';
-  let days=data.days,invoice=null;
+  let days=data.days,invoice=null,returnFromInvoice=false;
   const mail=el('showMail'),invoices=el('showInvoices');
   try{
     const prefs=JSON.parse(sessionStorage.getItem(prefsKey));
@@ -62,7 +62,15 @@ function startMailCalendar(data,labels,draw){
       ?new Intl.DateTimeFormat('es-ES',{timeZone:'UTC',day:'numeric',month:'long'}).format(new Date(invoice.scheduledDate+'T12:00:00Z'))+' · 08:00'
       :new Intl.DateTimeFormat('es-ES',{timeZone:'UTC',month:'long'}).format(new Date(data.period+'-01T12:00:00Z'));
     const summary=row(date,state,label);
-    summary.prepend(create('h2','Factura'));bill.append(summary);
+    summary.prepend(create('h2','Factura'));
+    if(state==='scheduled'||state==='issued'){
+      const details=create('details','','invoice-manage'),toggle=create('summary',''),actions=create('div','','k-action-list');
+      const manage=create('a','Gestionar envío de factura','k-button');
+      manage.href='/facturas/gestify-month?period='+data.period+'#aprobar';
+      if(window.parent!==window){manage.target='_blank';manage.rel='noopener noreferrer';manage.onclick=()=>{returnFromInvoice=true;};}
+      toggle.append(...summary.childNodes);toggle.className='k-schedule-row';
+      actions.append(manage);details.append(toggle,actions);bill.append(details);
+    }else bill.append(summary);
   }
   async function readInvoice(){
     invoice={state:'loading'};paint();
@@ -73,9 +81,16 @@ function startMailCalendar(data,labels,draw){
       if(result.period!==data.period||!Object.hasOwn(billLabels,result.state)||
         (result.state==='scheduled'&&!/^20\d\d-\d\d-\d\d$/.test(result.scheduledDate)))throw Error();
       invoice=result;
+      if(window.parent!==window)window.parent.postMessage({type:'kairo-calendar-invoice',period:data.period,state:result.state},privateOrigin);
     }catch{invoice={state:'unknown'};}
     paint();
   }
+  function resumeInvoice(){
+    if(!document.hidden&&returnFromInvoice){returnFromInvoice=false;void readInvoice();}
+  }
+  window.addEventListener('focus',resumeInvoice);
+  document.addEventListener('visibilitychange',resumeInvoice);
+  window.addEventListener('pageshow',e=>{if(e.persisted&&invoices.checked)void readInvoice();});
   for(const input of [mail,invoices])input.onchange=()=>{
     try{sessionStorage.setItem(prefsKey,JSON.stringify({mail:mail.checked,invoices:invoices.checked}));}catch{}
     paint();

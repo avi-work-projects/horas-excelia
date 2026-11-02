@@ -61,6 +61,26 @@ class CandidateTests(unittest.TestCase):
         self.assertEqual(self.backend.calls.count(('emit','2027-11')),1);self.assertEqual(self.backend.calls.count(('emit','2027-12')),1)
         self.assertEqual(self.backend.calls.count(('mail','2027-12')),1)
 
+    def test_stale_cancellation_cannot_change_an_issued_invoice_or_repeat(self):
+        row=self.nov
+        cancel=lambda expected:s.cancel(s.digest(row['data']),row['id'],expected)
+        with patch.object(s,'now',return_value=self.moment(hour=7,minute=30)):
+            with self.assertRaises(ValueError):cancel('approved')
+            s.tick(self.moment(),self.backend)
+            with self.assertRaises(ValueError):cancel('approved')
+            self.assertEqual(s.load(plan_id=row['id'])['status'],'accepted')
+            cancel('accepted')
+            with self.assertRaises(ValueError):cancel('accepted')
+            self.assertEqual(s.load(plan_id=row['id'])['status'],'email_cancelled')
+        self.assertFalse(any(action=='mail' for action,_ in self.backend.calls))
+
+    def test_delivery_deadline_blocks_cancellation_even_if_view_remains_open(self):
+        row=self.nov
+        s.tick(self.moment(),self.backend)
+        with patch.object(s,'now',return_value=self.moment(hour=8,minute=0)):
+            with self.assertRaises(ValueError):s.cancel(s.digest(row['data']),row['id'],'accepted')
+        self.assertEqual(s.load(plan_id=row['id'])['status'],'accepted')
+
     def test_cancel_december_keeps_november_approval_and_execution(self):
         before=s.load(period='2027-11')
         s.cancel(s.digest(self.dec['data']),self.dec['id'])
