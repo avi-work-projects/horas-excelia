@@ -552,7 +552,8 @@ test('Home: aviso de semanas y estado completo, cabecera opaca',async({page})=>{
  await page.clock.setFixedTime(new Date('2026-09-11T10:00:00'));
  await page.addInitScript(()=>sessionStorage.setItem('excelia-popup-dismissed','1'));await page.goto('/');
  await page.evaluate(()=>{applyTheme('light');SW={};render();});
- await expect(page.locator('.home-submission.pending')).toContainText('7 semanas por programar');
+ await expect(page.locator('.home-submission.pending [data-hours-review]')).toContainText('Sin envíos programados');
+ expect(await page.evaluate(()=>homeSubmissionStatus(CY,CM).counts.pending)).toBe(7);
  await page.screenshot({path:'.local-preview/home-pending.png',animations:'disabled'});
  await page.evaluate(()=>{weeks(CY,CM).forEach(w=>SW[dk(w[0])]=true);render();});
  await expect(page.locator('.home-submission.pending')).toContainText('2 semanas por programar');
