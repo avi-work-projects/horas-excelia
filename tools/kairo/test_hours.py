@@ -301,6 +301,32 @@ class HttpTests(unittest.TestCase):
                 with self.assertRaises(HTTPError) as invalid:post('/calendar-days',{'period':'2027-02','days':[{'date':'2027-03-01','type':'ausencia'}]})
                 invalid.exception.close()
                 self.assertEqual(calendar_data(store,cfg['sender'],'2027-02')['days'],{'2027-02-07':'festivo'})
+                def agenda(period):
+                    return json.load(urlopen(Request(root+'/calendar-data?period='+period,headers=headers)))
+                previous='2027-01'
+                civil={'2026-12':[{'date':'2026-12-31','type':'vacaciones'}],previous:[
+                    {'date':'2027-01-01','type':'festivo'},{'date':'2027-01-07','type':'ausencia'},
+                    {'date':'2027-01-08','type':'vacaciones'},
+                    *[{'date':f'2027-01-{day}','type':'vacaciones' if day<15 else 'festivo'} for day in range(11,16)],
+                    *[{'date':f'2027-01-{day}','type':'festivo'} for day in range(18,23)]]}
+                saved=json.load(post('/calendar-days',{'period':previous,'months':civil}))['calendar']
+                rows={r['key']:r for r in saved['rows']}
+                for week,expected in [('2026-12-28','2026-12-30'),('2027-01-04','2027-01-06'),
+                                      ('2027-01-11','2027-01-14'),('2027-01-18',None)]:
+                    self.assertEqual((rows[week]['state'],rows[week]['estimatedDate']),('unverified',expected))
+                self.assertEqual(agenda(previous),saved)
+                self.assertNotIn('estimatedDate',agenda('2027-02')['rows'][0])
+                server.RequestHandlerClass.jobs.remember(cfg['sender'],dict(period=previous,verified=True,checkedAt=NOW.isoformat(),
+                    rows=[dict(key='2027-01-04',state='sent'),dict(key='2027-01-11',state='missing'),
+                          dict(key='2027-01-25',state='scheduled',schedule='2027-01-26T08:00:00+01:00')]))
+                observed={r['key']:r for r in agenda(previous)['rows']}
+                self.assertEqual((observed['2027-01-04']['state'],observed['2027-01-04']['estimatedDate']),('sent','2027-01-06'))
+                self.assertNotIn('estimatedDate',observed['2027-01-11'])
+                self.assertNotIn('estimatedDate',observed['2027-01-25'])
+                self.assertEqual(observed['2027-01-25']['schedule'],'2027-01-26T08:00:00+01:00')
+                with self.assertRaises(HTTPError) as invalid:post('/calendar-days',{'period':previous,'months':{previous:[],'2026-04':[]}})
+                self.assertEqual(invalid.exception.code,400);invalid.exception.close()
+                self.assertEqual(len(read_calls),before_reads)
                 status=json.load(urlopen(Request(root+'/status?period=2027-02',headers=headers|{'Origin':cfg['app_origin']})))
                 self.assertEqual(status['rows'][0]['days'],req['weeks'][0]['days'])
                 self.assertEqual(status['rows'][0]['schedule'],'2027-02-05T08:00:00+01:00')

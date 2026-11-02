@@ -91,13 +91,18 @@ def content_hash(week):
     return digest({'days': days})
 
 
+def delivery_day(days, worked):
+    eligible = [d['date'] for d in days if d['type'] == 'normal' and worked(d)]
+    if not eligible and all(d['type'] in ('vacaciones','festivo') for d in days):
+        eligible = [d['date'] for d in days if d['type'] != 'festivo']
+    return eligible[-1] if eligible else None
+
+
 def schedule(week, now):
-    days = [d['date'] for d in week['days'] if d['type'] == 'normal' and d['hours'] > 0]
-    if not days and all(d['type'] in ('vacaciones','festivo') for d in week['days']):
-        days = [d['date'] for d in week['days'] if d['type'] != 'festivo']
-    if not days:
+    key = delivery_day(week['days'], lambda d: d['hours'] > 0)
+    if not key:
         return None, 'no-workdays'
-    target = datetime.fromisoformat(days[-1]+'T08:00:00').replace(tzinfo=MADRID)
+    target = datetime.fromisoformat(key+'T08:00:00').replace(tzinfo=MADRID)
     return target.isoformat(), 'past-due' if target <= now.astimezone(MADRID) else None
 
 

@@ -1,7 +1,7 @@
 """Monthly view of Kairo's confirmed weekly facts and Gestify's civil calendar."""
 import json
 from datetime import date, datetime, timedelta
-from hours_model import scope
+from hours_model import MADRID, delivery_day, scope
 
 
 def validated_days(period, days):
@@ -42,9 +42,18 @@ def remember_review_days(store,request):
     save_calendars(store,months)
 
 
-def calendar_data(store, sender, period):
+def grid_periods(period):
     keys=scope(period)[:-2]
+    months={period,keys[0][:7],(date.fromisoformat(keys[-1])+timedelta(days=6)).strftime('%Y-%m')}
+    return sorted(m for m in months if m.startswith('20'))
+
+
+def calendar_data(store, sender, period, now=None):
+    keys=scope(period)[:-2]
+    periods=grid_periods(period)
+    today=(now or datetime.now(MADRID)).astimezone(MADRID).date()
     observed={}
+    civil={}
     with store.db() as db:
         for saved in db.execute('SELECT payload FROM status_facts WHERE account=?',(sender,)):
             fact=json.loads(saved['payload'])
@@ -53,14 +62,20 @@ def calendar_data(store, sender, period):
             for row in fact['rows']:
                 if row['key'] in keys and (row['key'] not in observed or stamp>observed[row['key']][0]):
                     observed[row['key']]=(stamp,row,fact['checkedAt'])
-        stored=db.execute('SELECT days FROM calendar_days WHERE period=?',(period,)).fetchone()
-        preparation=None
-        if not stored:
+        for month in periods:
+            stored=db.execute('SELECT days FROM calendar_days WHERE period=?',(month,)).fetchone()
+            if stored:
+                civil[month]=json.loads(stored[0])
+                continue
             preparation=db.execute("""SELECT json_extract(payload,'$.calendarDays') FROM plans
                 WHERE json_type(payload,'$.calendarDays')='array'
                 AND substr(json_extract(payload,'$.weeks[0].key'),1,7)<=?
                 AND substr(date(json_extract(payload,'$.weeks[#-1].key'),'+6 days'),1,7)>=?
-                ORDER BY rowid DESC LIMIT 1""",(period,period)).fetchone()
+                ORDER BY rowid DESC LIMIT 1""",(month,month)).fetchone()
+            if preparation:
+                civil[month]={d['date']:d['type'] for d in json.loads(preparation[0])
+                              if isinstance(d,dict) and str(d.get('date',''))[:7]==month
+                              and d.get('type') in ('vacaciones','festivo','ausencia')}
     dates={}
     ledger=store.ledger()
     rows=[]
@@ -77,8 +92,12 @@ def calendar_data(store, sender, period):
             if day.get('type') in ('vacaciones','festivo','ausencia'):
                 dates[day['date']]=day['type']
         rows.append(dict(key=key,state=state,schedule=when if state=='scheduled' else None,checkedAt=checked))
-    if preparation:
-        dates={d['date']:d['type'] for d in json.loads(preparation[0]) if isinstance(d,dict)
-               and str(d.get('date',''))[:7]==period and d.get('type') in ('vacaciones','festivo','ausencia')}
-    if stored:dates=json.loads(stored[0])
-    return dict(period=period,rows=rows,days=dates,daysSynced=bool(stored or preparation))
+    dates={key:value for key,value in dates.items() if key[:7] not in civil}
+    for saved_days in civil.values():dates.update(saved_days)
+    for row in rows:
+        monday=date.fromisoformat(row['key'])
+        if row['state'] not in ('sent','unverified') or monday+timedelta(days=4)>=today:continue
+        keys_of_week=[(monday+timedelta(days=i)).isoformat() for i in range(5)]
+        days=[{'date':key,'type':dates.get(key,'normal')} for key in keys_of_week]
+        row['estimatedDate']=delivery_day(days,lambda _:True)
+    return dict(period=period,rows=rows,days=dates,daysSynced=period in civil,periods=periods,syncedPeriods=sorted(civil))

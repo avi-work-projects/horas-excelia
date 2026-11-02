@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v532 — Modos de conexión del móvil';
+var APP_VERSION = 'v533 — Agenda de envíos e histórico';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -298,7 +298,7 @@ function shareOrDownload(blob,filename,onSuccess,options){
 
 // ── Utilidades HTML ─────────────────────────────────────────
 function dispatchIcon(name){return '<svg viewBox="0 0 24 24" class="dispatch-icon" aria-hidden="true"><use href="#dispatch-'+name+'" width="24" height="24"/></svg>';}
-function homeScheduleLabel(){return dispatchIcon('agenda')+'<span>Ver programación</span>';}
+function homeScheduleLabel(compact){return dispatchIcon('agenda')+'<span>'+(compact?'Ver envíos':'Ver programación')+'</span>';}
 function renderDocumentIcon(){return '<svg viewBox="0 0 24 24" class="ico-doc" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>';}
 /* Mayúscula inicial en palabras significativas de opciones, nunca en datos. */
 function menuTitle(text){

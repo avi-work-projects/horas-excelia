@@ -10,6 +10,12 @@
 .calendar-day.invoice-delivery{background-image:linear-gradient(#60394d,#60394d);border-bottom:3px solid #efa6c6;box-shadow:none}
 .calendar-day.invoice-delivery:is(.vacaciones,.festivo,.ausencia){background-image:none}
 html:has(body.k-agenda){scrollbar-gutter:stable}.k-filters .filter-icon{width:19px;height:19px;flex:none}.k-filters [for=showInvoices] .filter-icon{color:#cb5789}
+.k-agenda .day-marks{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,12px);justify-content:center;column-gap:1px;padding-inline:1px}
+.k-agenda .day-marks svg{width:100%;max-width:12px;height:12px}
+.k-agenda .envelope,.k-filters [for=showMail] .filter-icon{color:#fff}
+.k-agenda .calendar-day.delivery:not(.invoice-delivery){border-color:transparent}
+.k-agenda .estimated .envelope{border-bottom:1px dotted #fff;padding-bottom:2px;height:14px}
+.calendar-legend .estimate-key{color:var(--k-muted);text-decoration:underline dotted;text-underline-offset:3px}
 .k-agenda .invoice-manage summary{display:grid;cursor:pointer;padding:0}.k-agenda .invoice-manage{border:0}
 .k-agenda .invoice-manage summary .k-state:after{content:"";display:inline-block;width:6px;height:6px;margin:0 2px 3px 6px;border-right:1.5px solid;border-bottom:1.5px solid;transform:rotate(45deg)}
 .k-agenda .invoice-manage[open] summary .k-state:after{transform:rotate(225deg);margin-bottom:0}
@@ -27,6 +33,7 @@ html:has(body.k-agenda){scrollbar-gutter:stable}.k-filters .filter-icon{width:19
 .k-agenda .k-schedule-row{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:8px;padding:5px 0;min-height:29px}.k-week-number{color:var(--k-muted);font-size:11px;font-weight:700}
 .k-agenda .k-card h2{font-size:15px;margin:0 0 4px}.k-agenda #invoiceSchedule .k-schedule-row{grid-template-columns:auto 1fr auto}.k-agenda #invoiceSchedule h2{margin:0}.k-agenda .k-sync button{min-height:32px}
 @media(max-width:600px){html:has(body.k-agenda){scrollbar-gutter:auto;scrollbar-width:none}}
+.k-agenda #calendar{touch-action:pan-y pinch-zoom;overscroll-behavior-x:contain}
 </style></head><body class="k-ui"><!--KAIRO_HEADER--><main class="k-main">
 <div class="k-eye">Agenda <span class="badge"></span></div><h1 id="title">Revisar programación</h1><p id="intro"></p>
 <div class="k-filters" id="filters" hidden role="group" aria-label="Mostrar en el calendario"><label for="showMail"><input type="checkbox" id="showMail" checked><svg class="filter-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#dispatch-mail"/></svg>Correos</label><label for="showInvoices"><input type="checkbox" id="showInvoices" checked><svg class="filter-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#dispatch-invoice"/></svg>Facturas</label></div>

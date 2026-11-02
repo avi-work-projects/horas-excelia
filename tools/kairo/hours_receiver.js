@@ -38,8 +38,8 @@
     return result;
   }
   function updates(){return [...document.querySelectorAll('[data-update]:checked')].map(n=>n.dataset.update);}
-  // Read-only calendar: send dates come from reconciliation, never recomputed here.
-  let calendarInvoice=null;
+  // Estimates are for the historical agenda only; the programming review always uses its plan.
+  let calendarInvoice=null,moveAgenda=null;
   function paintCalendar(){
     const root=el('calendar');root.replaceChildren();root.hidden=intent==='check'||!plan;if(root.hidden)return;
     const iso=day=>day.toISOString().slice(0,10),day=value=>new Date(value+'T12:00:00Z');
@@ -56,6 +56,7 @@
       if(row.state==='scheduled'||row.state==='changed'&&!selected.has(row.key)){when=row.previousSchedule||row.schedule;confirmed=true;}
       else if(row.state==='ready'||row.state==='changed'&&selected.has(row.key))when=row.schedule;
       if(when&&Number.isFinite(Date.parse(when)))deliveries.set(civil(when),{confirmed,label:(confirmed?'Envío programado':'Envío previsto')+' · '+date(when)});
+      else if(moveAgenda&&row.estimatedDate)deliveries.set(row.estimatedDate,{estimated:true,label:'Fecha de correo calculada por calendario'});
     });
     const header=text('header','','calendar-header'),index=months.indexOf(calendarMonth);
     for(const [step,label] of [[-1,'Mes anterior'],[1,'Mes siguiente']]){
@@ -63,10 +64,7 @@
       if(hoursBridgeConfig.calendar){
         const next=day(calendarMonth+'-01');next.setUTCMonth(next.getUTCMonth()+step);
         const month=iso(next).slice(0,7);button.disabled=!month.startsWith('20');
-        button.onclick=()=>{
-          if(embedded)window.parent.postMessage({type:'kairo-calendar-leaving'},hoursBridgeConfig.origin);
-          location.assign('?period='+month);
-        };
+        button.onclick=()=>moveAgenda(step);
       }else button.onclick=()=>{calendarMonth=months[index+step];paintCalendar();};
       if(step<0)header.append(button);else{header.append(text('h2',new Intl.DateTimeFormat('es-ES',{timeZone:'UTC',month:'long',year:'numeric'}).format(day(calendarMonth+'-01'))),button);}
     }
@@ -76,7 +74,7 @@
     const first=day(calendarMonth+'-01'),offset=(first.getUTCDay()+6)%7,start=add(iso(first),-offset),last=new Date(Date.UTC(first.getUTCFullYear(),first.getUTCMonth()+1,0,12)).getUTCDate(),body=document.createElement('tbody');
     for(let n=0;n<Math.ceil((offset+last)/7);n++){
       const key=add(start,n*7),row=rows.get(key),tr=document.createElement('tr');tr.dataset.week=key;
-      if(row){tr.className='included';tr.dataset.state=row.state;}
+      if(row){if(!moveAgenda)tr.className='included';tr.dataset.state=row.state;}
       const thu=day(add(key,3)),yearStart=new Date(Date.UTC(thu.getUTCFullYear(),0,1,12)),week=Math.ceil((((thu-yearStart)/86400000)+1)/7);
       const th=text('th',String(week),'week-number');th.scope='row';th.title=row?labels[row.state]||'Revisar':'Fuera de la selección';tr.append(th);
       for(let col=0;col<7;col++){
@@ -86,7 +84,7 @@
         head.append(text('span',String(day(ds).getUTCDate()),'day-number'),text('small',label?label[0]:'','day-type'));
         td.append(head,marks);
         if(send){
-          td.classList.add('delivery',send.confirmed?'confirmed':'planned');
+          td.classList.add('delivery',send.estimated?'estimated':send.confirmed?'confirmed':'planned');
           marks.append(dispatchMark('mail','envelope'));
         }
         const invoiceDate=calendarInvoice?.state==='scheduled'&&calendarInvoice.scheduledDate===ds;
@@ -97,6 +95,11 @@
     }
     table.append(body);root.append(table);
     const legend=text('div','','calendar-legend');Object.entries(names).forEach(([key,value])=>legend.append(text('span',value[0]+' · '+value[1],key)));root.append(legend);
+    if(moveAgenda&&plan.rows.some(r=>r.estimatedDate)){
+      const hint=text('span','Fecha calculada','estimate-key');
+      if(![...deliveries.values()].some(item=>item.estimated))hint.style.visibility='hidden';
+      legend.append(hint);
+    }
     if(!hoursBridgeConfig.calendar)root.append(text('p','Semanas resaltadas: incluidas en esta revisión. ✉ 08:00 Madrid. Borde continuo: programado; discontinuo: previsto.','calendar-note'));
     if([...rows.values()].some(r=>r.state==='changed'))root.append(text('p','Los cambios muestran la fecha actual hasta que selecciones «Actualizar esta semana».','calendar-note'));
   }
@@ -156,13 +159,10 @@
     finally{busy=false;controls();}
   }
   if(hoursBridgeConfig.calendar){
-    const data=hoursBridgeConfig.calendar;
-    plan={rows:data.rows.map(row=>({...row,selected:true}))};
-    request={period:data.period,weeks:data.rows.map(row=>({key:row.key,days:[]})),calendarDays:[]};
-    startMailCalendar(data,labels,(days,mailVisible,invoice)=>{
-      calendarInvoice=invoice;
-      plan.rows.forEach(row=>row.selected=mailVisible);
-      request.calendarDays=Object.entries(days).map(([date,type])=>({date,type}));
+    startMailCalendar(hoursBridgeConfig.calendar,labels,(data,mailVisible,invoice,move)=>{
+      calendarInvoice=invoice;moveAgenda=move;calendarMonth=data.period;
+      plan={rows:data.rows.map(row=>({...row,selected:mailVisible}))};
+      request={period:data.period,weeks:data.rows.map(row=>({key:row.key,days:[]})),calendarDays:Object.entries(data.days).map(([date,type])=>({date,type}))};
       paintCalendar();
     });
     return;

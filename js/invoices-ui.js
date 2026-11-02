@@ -106,7 +106,7 @@ function openHoursExport(){
 }
 function initInvoices(){
   var btn=document.getElementById('hoursCalendarBtn');if(!btn)return;
-  btn.innerHTML=homeScheduleLabel();btn.onclick=openMailCalendar;
+  btn.innerHTML=homeScheduleLabel(true);btn.onclick=openMailCalendar;
   var hoursBtn=document.getElementById('hoursExportBtn');hoursBtn.innerHTML=renderDocumentIcon()+'<span>Exportar Horas</span>';hoursBtn.onclick=openHoursExport;document.getElementById('invoiceSettingsBtn').onclick=openInvoiceSettings;
 }
 if(typeof document!=='undefined')document.addEventListener('DOMContentLoaded',initInvoices);
