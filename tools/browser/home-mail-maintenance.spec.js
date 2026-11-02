@@ -53,9 +53,9 @@ test('un trabajo sobrevive al cierre de Gestify y devuelve su resultado sin repe
   await expect(next.locator('.home-submission.complete')).toContainText('Correos al día');expect(api.calls.hours).toBe(1);
   await expect.poll(()=>next.evaluate(()=>JSON.parse(localStorage.getItem(HOURS_JOBS_KEY)).length)).toBe(0);
 });
-test('fallo de actualización conserva factura y correos; el refresco está dentro del panel',async({page,context})=>{
+test('fallo de actualización conserva factura y correos; Sync Cairo actualiza ambos estados desde la cabecera',async({page,context})=>{
   const api=await setup(page,context);await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura programada');
-  api.offline();await page.locator('.home-submission').getByRole('button',{name:'Actualizar estado de correos y factura'}).click();
+  api.offline();await page.locator('.home-invoice-actions').getByRole('button',{name:'Sync Cairo'}).click();
   await expect.poll(()=>api.calls.hours).toBe(2);await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura programada');await expect(page.locator('.home-submission')).toContainText('Correos al día');
   expect(api.calls.invoices).toHaveLength(4);
 });
@@ -70,8 +70,30 @@ test('recuperar un trabajo elimina el aviso de desconexión sin repetir Outlook'
   expect(await page.evaluate(()=>HOURS_JOB_ERROR)).toBe('');await expect(page.locator('.hours-job-note')).toHaveCount(0);expect(api.calls.hours).toBe(1);
 });
 test('doble actualización no encola dos comprobaciones',async({page,context})=>{
-  const api=await setup(page,context);await page.evaluate(()=>{refreshHomeStates();refreshHomeStates();});
+  const api=await setup(page,context);await page.locator('#homeSyncBtn').evaluate(btn=>{btn.click();btn.click();});
   await expect.poll(()=>api.calls.hours).toBe(2);await expect(page.locator('[data-hours-check]')).toBeEnabled();expect(api.calls.hours).toBe(2);
+});
+
+test('panel naranja distingue un mes vacío de una primera revisión y de hechos parciales',async({page,context},info)=>{
+  await page.addInitScript(()=>localStorage.setItem('excelia-theme-v1','light'));
+  await setup(page,context);
+  const panel=page.locator('.home-submission'),action=panel.locator('[data-hours-review]');
+  await page.evaluate(()=>{CY=2027;CM=8;render();});
+  await expect(action).toHaveText(/Sin envíos confirmados/);
+  await expect(panel.locator('.hours-verified-note')).toHaveText('Aún sin revisar');
+  await expect(panel.locator('.home-submission-detail,.hours-pending-button')).toHaveCount(0);
+  await page.evaluate(()=>{
+    const period=mkey(CY,CM),stamp='2027-02-01T09:30:00Z';
+    hoursCacheRemember({period,verified:true,checkedAt:stamp,rows:hoursScopeKeys(period).map(key=>({key,state:'missing'}))},hoursKairoUrl(),'');
+    paintHoursStatus();
+  });
+  await expect(action).toHaveText(/Sin envíos programados/);
+  await expect(panel.locator('.hours-verified-note')).toHaveText(/Fecha de revisión.*0?1\/0?2.*10:30/);
+  await page.screenshot({path:info.outputPath('home-sin-envios.png'),animations:'disabled'});
+  await page.evaluate(()=>{
+    const keys=hoursScopeKeys(mkey(CY,CM));delete HOURS_CACHE.weeks[keys[0]];HOURS_CACHE.weeks[keys[1]].state='sent';paintHoursStatus();
+  });
+  await expect(action).toContainText('Programación por confirmar');
 });
 
 test('un pendiente antiguo recupera una vez la caché de Kairo sin pedir refresco de Outlook',async({page,context})=>{

@@ -55,7 +55,7 @@ test('Respuesta tardía no contamina otro mes y cambiar de servidor no reutiliza
   await expect(page.locator('.home-submission.complete')).toContainText('Correos al día');
   await page.evaluate(()=>{CM=1;render();});await expect(page.locator('.home-submission.complete')).toContainText('Correos al día');
   await page.evaluate(()=>{const data=invoiceData();data.config.kairoUrl='https://another.test.ts.net/facturas/';invoiceSave(data);render();});
-  await expect(page.locator('.home-submission')).toContainText('Estado pendiente');
+  await expect(page.locator('.home-submission')).toContainText('Sin envíos confirmados');
 });
 
 test('actualizar termina con causa visible, conserva fecha y hechos; un nuevo éxito limpia el error y persiste',async({page,context})=>{
