@@ -125,10 +125,12 @@ def screen(page, sender):
     # Use its own Back control once; never answer a passkey/MFA challenge.
     if url.path in ('/common/bridge/fido', '/common/fido/get') and visible(page, '#idBtn_Back'):
         return 'passkey_choice'
-    if visible(page, '#i0118'):
+    # Microsoft includes a transparent, aria-hidden password field on its
+    # username screen. Playwright still considers that autofill field visible.
+    if visible(page, '#i0118:not([aria-hidden="true"])'):
         labels = page.get_by_text(re.compile('^'+re.escape(sender)+'$', re.I))
         return 'password' if any(labels.nth(i).is_visible() for i in range(labels.count())) else 'unknown'
-    if visible(page, '#i0116'):
+    if visible(page, '#i0116:not([aria-hidden="true"])'):
         return 'username'
     if password_choice(page) is not None:
         return 'password_choice'
@@ -182,7 +184,13 @@ def recover(page, sender, password, root, sleep=time.sleep, requested=False):
             return write_state(root, 'ready')
         if phase in ('mfa', 'rejected', 'unknown'):
             return write_state(root, phase, paused=True)
-        if phase in RETRYABLE and phase not in used:
+        # Some tenants send Back from a preferred passkey straight to the
+        # account picker. Enter the configured username explicitly once there.
+        if (phase == 'account' and {'account', 'passkey_choice'} <= used and 'username' not in used
+                and 'other_account' not in used and visible(page, '#otherTile')):
+            used.add('other_account')
+            page.locator('#otherTile').click(timeout=5000)
+        elif phase in RETRYABLE and phase not in used:
             if phase not in ('account', 'password_choice', 'passkey_choice') and not visible(page, '#idSIButton9'):
                 return write_state(root, 'unknown', paused=True)
             used.add(phase)

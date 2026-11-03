@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from playwright.sync_api import sync_playwright
-from outlook_auth import recover
+from outlook_auth import recover, screen
 
 SENDER='person@example.invalid'
 PASSWORD='synthetic-password-only'
@@ -61,6 +61,15 @@ class BrowserContract(unittest.TestCase):
         finally:context.close()
 
     def test_password_success(self):self.exercise('success','ready')
+    def test_username_form_with_an_invisible_autofill_password(self):
+        page = self.browser.new_page()
+        try:
+            body = '<input id="i0116" type="email"><input id="i0118" type="password" aria-hidden="true" tabindex="-1" style="opacity:0">'
+            page.route('**/*', lambda route: route.fulfill(content_type='text/html', body=body))
+            page.goto('https://login.microsoftonline.com/common/fixture')
+            self.assertEqual(screen(page, SENDER), 'username')
+        finally:
+            page.close()
     def test_choose_password(self):self.exercise('choice','ready')
     def test_mfa_pauses(self):self.exercise('mfa','mfa')
     def test_wrong_password_stops(self):self.exercise('rejected','rejected')

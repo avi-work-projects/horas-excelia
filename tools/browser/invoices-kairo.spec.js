@@ -65,7 +65,13 @@ test('respuesta perdida: conservar incertidumbre y recuperar por consulta sin re
 test('desde Home elige noviembre y el mes queda fijo al revisar en Kairo',async({page,context},info)=>{
   const calls=await setup(page,context);
   await page.evaluate(async()=>{CY=2027;CM=9;await openInvoiceMonth('2027-10');});
-  await page.locator('#invoiceBack').click();await page.evaluate(()=>{HOURS_CACHE.url=hoursKairoUrl();weeks(2027,10).forEach(w=>HOURS_CACHE.weeks[dk(w[0])]={state:'sent'});render();});await page.locator('#nextBtn').click();await page.locator('#invoiceHomeBtn').click();
+  await page.locator('#invoiceBack').click();
+  await page.evaluate(()=>{
+    const period='2027-11',rows=hoursScopeKeys(period).map(key=>({key,state:'sent'}));
+    hoursCacheRemember({period,rows,checkedAt:new Date().toISOString()},hoursKairoUrl(),hoursSourceSignature(rows));
+    render();
+  });
+  await page.locator('#nextBtn').click();await page.locator('#invoiceHomeBtn').click();
   await expect(page.locator('#invoicePeriod')).toContainText('Noviembre 2027');await expect(page.locator('input[type="month"]')).toHaveCount(0);
   expect(await page.evaluate(()=>[CY,CM])).toEqual([2027,10]);
   const popup=await exchange(page,'#invoiceKairoSend');await expect(popup.locator('#resultTitle')).toHaveText('Mes preparado');
