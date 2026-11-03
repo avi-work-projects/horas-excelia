@@ -5,12 +5,21 @@
 .home-invoice-actions{display:grid;grid-template-columns:repeat(3,var(--home-action-width));gap:4px}
 .home-invoice-actions button,.home-schedule-action{box-sizing:border-box;min-width:0;display:flex;align-items:center;justify-content:center;gap:3px;min-height:max(50px,3.15rem);padding:4px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);font:600 .72rem/1.2 var(--font);cursor:pointer;text-align:center}
 .home-schedule-action{width:var(--home-action-width)}
-.home-invoice-actions svg,.home-schedule-action svg{width:17px;height:17px;flex:none;color:var(--home-tone)}
+.home-invoice-actions svg,.home-schedule-action svg{width:17px;height:17px;flex:none;color:var(--home-tone);opacity:1}
 #homeSyncBtn{flex-direction:column;gap:1px}
 .home-sync-label{display:flex;align-items:center;justify-content:center;gap:3px}
 #homeSyncDate{white-space:nowrap;color:var(--text-muted);font:500 .56rem/1.1 var(--font);font-variant-numeric:tabular-nums}
 #homeSyncDate:empty,#homeSyncResult:empty{display:none}
-.home-sync-options{display:grid;gap:8px;margin-top:12px}
+.home-sync-dialog{--sync-tone:var(--home-tone);padding:18px;border-radius:20px}
+.home-sync-dialog header{padding-bottom:14px;border-bottom:1px solid var(--border)}
+.home-sync-dialog h2{color:var(--sync-tone)}
+.home-sync-dialog [data-close-sync]{border:0;background:transparent;font-size:1.1rem}
+.home-sync-options{display:grid;gap:10px;margin-top:16px}
+.home-sync-dialog .home-sync-options button{display:flex;align-items:center;gap:12px;padding:14px;text-align:left;background:var(--surface);border-color:color-mix(in srgb,var(--sync-tone) 35%,var(--border));font-weight:600}
+.home-sync-dialog .home-sync-options svg{width:23px;height:23px;flex:none;color:var(--sync-tone)}
+.home-sync-dialog .home-sync-options button::after{content:'›';margin-left:auto;color:var(--sync-tone);font-size:1.2rem}
+.home-sync-dialog .home-sync-options button:disabled{opacity:.6}
+.home-sync-dialog #homeSyncResult{font-size:.74rem;line-height:1.45;margin-bottom:0}
 .hours-control .default-hours-panel{flex-basis:100%}
 #csvExportBtn[hidden],#pdfExportBtn[hidden]{display:none!important}
 .invoice-sheet{width:min(560px,100%);max-height:90dvh;display:flex;flex-direction:column;padding:16px!important;box-sizing:border-box}

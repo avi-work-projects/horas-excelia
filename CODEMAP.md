@@ -307,10 +307,10 @@
 ### js/hours-auth.js  _(40 líneas)_
 **Estado global:** HOURS_AUTH_RUN:2 · HOURS_AUTH_MESSAGES:3
 
-### js/hours-cache.js  _(81 líneas)_
+### js/hours-cache.js  _(88 líneas)_
 **Estado global:** HOURS_CACHE_KEY:3 · HOURS_ATTEMPTS:4 · HOURS_CACHE:39
 
-**Funciones:** hoursScopeKeys:5 · hoursCacheRead:9 · hoursCacheRow:32 · hoursCacheSave:40 · hoursCachedWeek:48 · hoursSourceSignature:51 · hoursSettingsSignature:54 · hoursCacheRemember:59 · hoursAccessIssue:67 · hoursCheckMessage:68 · hoursRecordCheck:71 · hoursCacheInvalidate:75
+**Funciones:** hoursScopeKeys:5 · hoursCacheRead:9 · hoursCacheRow:32 · hoursCacheSave:40 · hoursCachedWeek:55 · hoursSourceSignature:58 · hoursSettingsSignature:61 · hoursCacheRemember:66 · hoursAccessIssue:74 · hoursCheckMessage:75 · hoursRecordCheck:78 · hoursCacheInvalidate:82
 
 ### js/hours-jobs.js  _(67 líneas)_
 **Estado global:** HOURS_JOBS_KEY:3 · HOURS_JOBS:7
@@ -347,10 +347,10 @@
 ### js/invoices-export.js  _(36 líneas)_
 **Funciones:** invoiceXml:2 · invoiceZip:3 · header:5 · invoiceWorkbook:14 · textCell:15 · numCell:16 · sheet:26
 
-### js/invoices-home.js  _(109 líneas)_
+### js/invoices-home.js  _(129 líneas)_
 **Estado global:** INVOICE_HOME_CACHE_KEY:3 · INVOICE_HOME_STATUS:4 · INVOICE_HOME_REQUESTS:5 · INVOICE_HOME_CACHE:20
 
-**Funciones:** validateHomeInvoiceStatus:6 · homeInvoiceCacheRead:12 · homeInvoiceCacheSave:21 · homeInvoiceCheckedAt:22 · homeInvoiceScheduleDate:23 · homeInvoiceModel:24 · renderHomeInvoiceStatus:49 · paintHomeInvoiceStatus:68 · initHomeInvoiceStatus:93
+**Funciones:** validateHomeInvoiceStatus:6 · homeInvoiceCacheRead:12 · homeInvoiceCacheSave:21 · homeInvoiceCheckedAt:22 · homeInvoiceScheduleDate:23 · homePreviousInvoicePeriod:24 · homeInvoiceModel:25 · renderHomeInvoiceStatus:56 · paintHomeInvoiceStatus:77 · initHomeInvoiceStatus:112
 
 ### js/invoices-kairo.js  _(85 líneas)_
 **Estado global:** INVOICE_KAIRO_BUSY:2
@@ -930,15 +930,15 @@
 **Rangos por prefijo de clase:**
 .home-birthday:47-52 · .home-pending:64-72 · .home-popup:3-73 · .home-reminder:9-63 · .home-tasks:69-70 · .reminders-access:2-2
 
-### css/source/invoices.css  _(139 líneas)_
+### css/source/invoices.css  _(148 líneas)_
 
 **Secciones:**
 
 - The two agenda links share their label, width and button style.:1
-- Revisar jornadas y cálculo antes de las acciones; caben juntos en móvil.:71
+- Revisar jornadas y cálculo antes de las acciones; caben juntos en móvil.:80
 
 **Rangos por prefijo de clase:**
-.dispatch-icon:134-134 · .home-invoice:5-138 · .home-schedule:7-7 · .home-sync:10-13 · .hours-control:3-14 · .hours-export:58-69 · .invoice-action:83-83 · .invoice-actions:29-29 · .invoice-body:18-18 · .invoice-calculation:85-97 · .invoice-card:20-22 · .invoice-config:27-102 · .invoice-confirm:34-34 · .invoice-day:33-33 · .invoice-days:106-112 · .invoice-document:42-42 · .invoice-equals:92-92 · .invoice-error:35-35 · .invoice-eye:54-55 · .invoice-field:24-24 · .invoice-fields:23-45 · .invoice-filename:36-36 · .invoice-kairo:76-115 · .invoice-line:88-91 · .invoice-mail:98-98 · .invoice-money:93-93 · .invoice-month:19-103 · .invoice-note:25-25 · .invoice-send:73-75 · .invoice-sheet:16-82 · .invoice-status:26-26 · .invoice-summary:52-53 · .invoice-tool:99-101 · .invoice-totals:28-105
+.dispatch-icon:143-143 · .home-invoice:5-147 · .home-schedule:7-7 · .home-sync:10-22 · .hours-control:3-23 · .hours-export:67-78 · .invoice-action:92-92 · .invoice-actions:38-38 · .invoice-body:27-27 · .invoice-calculation:94-106 · .invoice-card:29-31 · .invoice-config:36-111 · .invoice-confirm:43-43 · .invoice-day:42-42 · .invoice-days:115-121 · .invoice-document:51-51 · .invoice-equals:101-101 · .invoice-error:44-44 · .invoice-eye:63-64 · .invoice-field:33-33 · .invoice-fields:32-54 · .invoice-filename:45-45 · .invoice-kairo:85-124 · .invoice-line:97-100 · .invoice-mail:107-107 · .invoice-money:102-102 · .invoice-month:28-112 · .invoice-note:34-34 · .invoice-send:82-84 · .invoice-sheet:25-91 · .invoice-status:35-35 · .invoice-summary:61-62 · .invoice-tool:108-110 · .invoice-totals:37-114
 
 ### css/source/invoices-calendar.css  _(27 líneas)_
 

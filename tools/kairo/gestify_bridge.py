@@ -37,6 +37,9 @@ def handle(service, panel, validate_source, data):
     if data['action'] == 'status':
         return result | {'state': state}
     raw = data.get('source')
+    if not matching and service.config().get('gestify_prerequisites'):
+        from invoice_prerequisites import require
+        require(service.ROOT, data['period'], service.config())
     if not isinstance(raw, str) or len(raw.encode('utf-8')) > 1024 * 1024:
         raise ValueError('JSON no válido o demasiado grande')
     # Reuse the exact existing JS hash and arithmetic validator before any mutation.

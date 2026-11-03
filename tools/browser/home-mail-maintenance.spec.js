@@ -25,6 +25,54 @@ async function setup(page,context,{queued=false}={}){
   await expect.poll(()=>calls.invoices.length).toBe(3);
   return {calls,finish(){phase='done';},offline(){offline=true;},online(){offline=false;}};
 }
+
+test('los pendientes ordinarios no piden revisar cambios y la factura espera a su predecesora',async({page,context},info)=>{
+  await page.addInitScript(()=>{localStorage.setItem('excelia-theme-v1','light');localStorage.setItem('excelia-nav-icons-v1','professional');});
+  await setup(page,context);
+  await page.evaluate(()=>{
+    const data=INVOICE_HOME_CACHE.periods['2027-02'].data;
+    Object.assign(data,{state:'missing',scheduled:false,sent:false,scheduledDate:null});
+    INVOICE_HOME_CACHE.periods['2027-01'].data.state='draft';
+    render();
+  });
+  const invoice=page.locator('#homeInvoiceStatus');
+  await expect(invoice).toContainText('Programa primero la factura del mes anterior');
+  await expect(invoice.locator('[data-home-invoice=send]')).toHaveCount(0);
+  await expect(invoice.locator('em')).toHaveCSS('font-style','italic');
+  await page.evaluate(()=>{
+    INVOICE_HOME_CACHE.periods['2027-01'].data.state='scheduled';
+    render();
+  });
+  await expect(invoice.locator('[data-home-invoice=send]')).toBeVisible();
+  const lines=invoice.locator('.home-invoice-copy>span');
+  await expect(lines).toHaveText(['Pendiente de preparar','Fecha prevista: 19/02']);
+  expect((await lines.nth(1).boundingBox()).y).toBeGreaterThan((await lines.first().boundingBox()).y);
+  await page.screenshot({path:info.outputPath('home-factura-v537.png'),animations:'disabled'});
+  await page.evaluate(()=>{
+    hoursCachedWeek(homeSubmissionWeeks(CY,CM)[2].key).state='blocked-previous';render();
+  });
+  await expect(page.locator('.home-submission')).toContainText('Correos pendientes de programar');
+  await expect(page.locator('[data-hours-review]')).toHaveText('Programar pendientes');
+  await expect(page.locator('.home-submission')).not.toContainText('Revisar cambios');
+  await expect(invoice).toContainText('Programa primero los envíos de horas de este mes');
+  await page.screenshot({path:info.outputPath('home-pendientes-v537.png'),animations:'disabled'});
+});
+
+test('la última sincronización sobrevive a otra pestaña, una respuesta tardía, meses vacíos y recarga',async({page,context})=>{
+  await setup(page,context);
+  await page.locator('#homeSyncBtn').click();await page.locator('[data-hours-check]').click();
+  await expect(page.locator('#homeSyncResult')).toHaveText('Correos y factura actualizados.');
+  const date=await page.locator('#homeSyncDate').textContent();
+  await page.locator('[data-close-sync]').click();
+  await page.evaluate(()=>{
+    const saved=JSON.parse(localStorage.getItem(HOURS_CACHE_KEY));
+    HOURS_CACHE=JSON.parse(JSON.stringify(saved));delete HOURS_CACHE.lastMailSync;
+    hoursCacheSave();paintHoursStatus();
+    CY=2027;CM=8;render();
+  });
+  await expect(page.locator('#homeSyncDate')).toHaveText(date);
+  await page.reload();await expect(page.locator('#homeSyncDate')).toHaveText(date);
+});
 test('una auditoría de tres meses; navegar, editar, foco y recarga reutilizan los hechos',async({page,context})=>{
   const api=await setup(page,context);
   expect(api.calls.invoices.sort()).toEqual(['2027-01','2027-02','2027-03']);
@@ -58,7 +106,7 @@ test('fallo de actualización conserva factura y correos; Sync Kairo actualiza a
   const api=await setup(page,context);await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura programada');
   api.offline();await page.locator('.home-invoice-actions').getByRole('button',{name:'Sync Kairo'}).click();await page.locator('[data-hours-check]').click();
   await expect.poll(()=>api.calls.hours).toBe(2);await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura programada');await expect(page.locator('.home-submission')).toContainText('Correos al día');
-  expect(api.calls.invoices).toHaveLength(4);
+  expect(api.calls.invoices).toHaveLength(5);
 });
 
 test('recuperar un trabajo elimina el aviso de desconexión sin repetir Outlook',async({page,context})=>{
@@ -94,7 +142,7 @@ test('panel naranja distingue un mes vacío de una primera revisión y de hechos
   await page.evaluate(()=>{
     const keys=hoursScopeKeys(mkey(CY,CM));delete HOURS_CACHE.weeks[keys[0]];HOURS_CACHE.weeks[keys[1]].state='sent';paintHoursStatus();
   });
-  await expect(panel).toContainText('Semanas pendientes');await expect(action).toHaveText('Programar pendientes');
+  await expect(panel).toContainText('Correos pendientes de programar');await expect(action).toHaveText('Programar pendientes');
 });
 
 test('un pendiente antiguo recupera una vez la caché de Kairo sin pedir refresco de Outlook',async({page,context})=>{

@@ -21,18 +21,25 @@ var INVOICE_HOME_CACHE=homeInvoiceCacheRead();
 function homeInvoiceCacheSave(){var keys=Object.keys(INVOICE_HOME_CACHE.periods).sort();keys.slice(0,-24).forEach(function(k){delete INVOICE_HOME_CACHE.periods[k];});try{localStorage.setItem(INVOICE_HOME_CACHE_KEY,JSON.stringify(INVOICE_HOME_CACHE));}catch(e){}}
 function homeInvoiceCheckedAt(value){return new Date(value).toLocaleString('es-ES',{timeZone:'Europe/Madrid',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});}
 function homeInvoiceScheduleDate(year,month){var day=new Date(year,month,20);while(!day.getDay()||day.getDay()===6||dayT(day)!=='normal')day=ad(day,-1);return dk(day);}
+function homePreviousInvoicePeriod(year,month){var previous=new Date(year,month-1,1);return mkey(previous.getFullYear(),previous.getMonth());}
 function homeInvoiceModel(year,month){
   var period=mkey(year,month),url='';try{url=invoiceData().config.kairoUrl;}catch(e){}
   var model={period:period,url:url,tone:'unknown',title:'Factura del mes',detail:'Puedes preparar la factura o consultar su estado en Kairo.'};
   var saved=INVOICE_HOME_CACHE.url===url&&INVOICE_HOME_CACHE.periods[period],data=saved&&saved.data;
   var today=new Date();
-  if(period>=mkey(today.getFullYear(),today.getMonth())&&(!data||['missing','draft'].includes(data.state))){
+  if(period>=mkey(today.getFullYear(),today.getMonth())&&(!data||['missing','draft','issued'].includes(data.state))){
     var pending=homeSubmissionWeeks(year,month).find(function(week){
       return !week.extra&&dk(ad(week.mon,4)).slice(0,7)>=period&&!(url?hoursCovered(week.key):SW[week.key]);
     });
     if(pending)return Object.assign(model,{title:'Factura sin enviar',tone:'pending',unsent:true,detail:'* Programa primero los envíos de horas de este mes.',week:pending.key,configure:!url});
   }
   if(!url)return Object.assign(model,{title:'Conectar facturas con Kairo',detail:'Puedes preparar el mes en Gestify o conectar Kairo.',configure:true});
+  var previousPeriod=homePreviousInvoicePeriod(year,month);
+  if(period>=mkey(today.getFullYear(),today.getMonth())&&previousPeriod>=INVOICE_FIRST_PERIOD&&(!data||['missing','draft','issued'].includes(data.state))){
+    var previous=INVOICE_HOME_CACHE.url===url&&INVOICE_HOME_CACHE.periods[previousPeriod];
+    if(!previous||!previous.data||!['scheduled','sent'].includes(previous.data.state))
+      return Object.assign(model,{title:'Factura sin enviar',tone:'pending',unsent:true,previousPeriod:previousPeriod,detail:'* Programa primero la factura del mes anterior.'});
+  }
   if(!data){if(homePeriodMode(year,month)==='closed'){model.title='Factura de mes cerrado';model.detail='Histórico guardado · sin consultas automáticas';}return model;}
   var pending=['missing','draft','issued'].includes(data.state);
   model.unsent=pending;
@@ -40,7 +47,7 @@ function homeInvoiceModel(year,month){
   model.tone=data.state==='sent'?'complete':data.state==='scheduled'?'scheduled':pending||['attention','multiple'].includes(data.state)?'pending':'unknown';
   model.detail=data.state==='sent'?'Envío confirmado':data.state==='scheduled'?'Envío el '+data.scheduledDate.split('-').reverse().slice(0,2).join('/'):'Fecha prevista: '+homeInvoiceScheduleDate(year,month).split('-').reverse().slice(0,2).join('/');
   if(data.state==='scheduled'&&data.scheduledDate!==homeInvoiceScheduleDate(year,month)){model.detail+=' · revisar fecha';model.attention=true;}
-  if(data.state==='missing')model.detail='Pendiente de preparar · '+model.detail;
+  if(data.state==='missing'){model.preparation='Pendiente de preparar';}
   if(['attention','multiple','processing'].includes(data.state))model.detail='Consulta el detalle en Kairo.';
   model.changed=invoiceHasLocalChanges(period,invoiceData());
   if(model.changed){model.detail+=' · cambios locales por revisar';model.tone='pending';}
@@ -53,6 +60,8 @@ function renderHomeInvoiceStatus(year,month){
   var action;
   if(m.week){
     action='<button type="button" class="home-invoice-action" data-home-invoice="hours" data-week="'+m.week+'">Revisar horas</button>';
+  }else if(m.previousPeriod){
+    action='<button type="button" class="home-invoice-action" data-home-invoice="previous" data-period="'+m.previousPeriod+'">Ver mes anterior</button>';
   }else if(m.configure||m.unsent||m.changed||m.tone==='unknown'){
     action='<button type="button" class="home-invoice-action'+(m.changed?'':' home-send-invoice')+'" id="invoiceHomeBtn" data-home-invoice="send">'+(m.changed?'Revisar cambios':dispatchIcon('invoice')+'<span>Enviar factura</span>')+'</button>';
   }else if(m.tone==='scheduled'){
@@ -63,7 +72,7 @@ function renderHomeInvoiceStatus(year,month){
   }
   if(INVOICE_HOME_STATUS.phase==='error'&&INVOICE_HOME_STATUS.period===m.period&&INVOICE_HOME_STATUS.url===m.url&&INVOICE_HOME_STATUS.reason)m.detail+=' '+INVOICE_HOME_STATUS.reason;
   if(m.configure)action='<div class="home-invoice-options">'+action+'<button type="button" class="home-invoice-action" data-home-invoice="configure">Conectar Kairo</button></div>';
-  return '<section class="home-invoice-status '+m.tone+(urgent?' urgent':'')+(m.unsent?' unsent':'')+'" id="homeInvoiceStatus" aria-label="Estado de factura" aria-live="polite"><span class="home-invoice-icon" aria-hidden="true">'+icon+'</span><div class="home-invoice-copy"><strong>'+escHtml(m.title)+'</strong><span>'+(m.week?'<em>'+escHtml(m.detail)+'</em>':escHtml(m.detail))+'</span></div>'+action+'</section>';
+  return '<section class="home-invoice-status '+m.tone+(urgent?' urgent':'')+(m.unsent?' unsent':'')+'" id="homeInvoiceStatus" aria-label="Estado de factura" aria-live="polite"><span class="home-invoice-icon" aria-hidden="true">'+icon+'</span><div class="home-invoice-copy"><strong>'+escHtml(m.title)+'</strong>'+(m.preparation?'<span>'+m.preparation+'</span>':'')+'<span>'+(m.week||m.previousPeriod?'<em>'+escHtml(m.detail)+'</em>':escHtml(m.detail))+'</span></div>'+action+'</section>';
 }
 function paintHomeInvoiceStatus(){if(typeof paintInvoiceCalendar==='function')paintInvoiceCalendar();var current=document.getElementById('homeInvoiceStatus');if(current)current.outerHTML=renderHomeInvoiceStatus(CY,CM);}
 async function fetchHomeInvoiceStatus(period,url,force){
@@ -86,7 +95,17 @@ async function fetchHomeInvoiceStatus(period,url,force){
 }
 async function syncHomeInvoiceStatus(force){
   var model=homeInvoiceModel(CY,CM);if(!model.url||!document.getElementById('homeInvoiceStatus'))return;
-  if(force)return fetchHomeInvoiceStatus(model.period,model.url,true);
+  if(force){
+    var previous=homePreviousInvoicePeriod(CY,CM);
+    var checks=[fetchHomeInvoiceStatus(model.period,model.url,true)];
+    if(previous>=INVOICE_FIRST_PERIOD)checks.push(fetchHomeInvoiceStatus(previous,model.url,true));
+    var results=await Promise.all(checks);
+    return results.every(Boolean);
+  }
+  if(homePeriodMode(CY,CM)==='future'){
+    if(homeSubmissionWeeks(CY,CM).some(function(w){return !w.extra&&!hoursCovered(w.key);}))return;
+    return Promise.all([fetchHomeInvoiceStatus(model.period,model.url,false),fetchHomeInvoiceStatus(homePreviousInvoicePeriod(CY,CM),model.url,false)]);
+  }
   if(homePeriodMode(CY,CM)!=='audit')return;
   var now=new Date();await Promise.all([-1,0,1].map(function(offset){var d=new Date(now.getFullYear(),now.getMonth()+offset,1);return fetchHomeInvoiceStatus(mkey(d.getFullYear(),d.getMonth()),model.url,false);}));
 }
@@ -98,6 +117,7 @@ function initHomeInvoiceStatus(){
     var button=e.target.closest('[data-home-invoice]');if(!button)return;
     if(button.dataset.homeInvoice==='send')openInvoiceMonth(mkey(CY,CM));
     else if(button.dataset.homeInvoice==='calendar')openMailCalendar();
+    else if(button.dataset.homeInvoice==='previous')openInvoiceMonth(button.dataset.period);
     else if(button.dataset.homeInvoice==='hours'){
       var card=container.querySelector('.week-card[data-week="'+button.dataset.week+'"]');
       if(card){card.scrollIntoView({block:'center'});var edit=card.querySelector('.sent-toggle');if(edit)edit.focus({preventScroll:true});}

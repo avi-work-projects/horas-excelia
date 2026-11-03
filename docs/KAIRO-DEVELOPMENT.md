@@ -414,3 +414,9 @@ En v533 las flechas y el gesto leen `GET /horas/calendar-data?period=AAAA-MM` co
 La consulta de Home con `stored=1` solo devuelve instantáneas existentes. Abrir una semana ya programada lleva a la agenda guardada. Una revisión para preparar correos sí usa la cola de Kairo. El identificador de la revisión se comunica a Gestify antes de esperar la respuesta HTTP. El móvil recupera el resultado con ese mismo identificador aunque se cierre el visor. Las escrituras conservan su confirmación, bloqueo y comprobación de duplicados.
 
 Se encontró el recuperador de acceso reteniendo `browser.lock` mientras un trabajo de lectura esperaba. El servicio de autenticación tiene un límite de 55 segundos por ciclo y systemd recupera el proceso si Chromium deja de responder. La lectura del servicio de horas devuelve `browser_busy` tras 12 segundos de contención en Linux. El límite se aplica al adquirir el bloqueo y respeta a quien lo posee. Las pausas por MFA o contraseña rechazada siguen en el estado privado de Kairo.
+
+## Requisitos antes de preparar o aprobar (v537)
+
+El servicio de facturas carga `invoice_prerequisites.py`. La política privada `gestify_prerequisites` del JSON de configuración contiene `first_period` y `hours_config`. El helper abre la base de horas en solo lectura y selecciona el estado más reciente por semana y cuenta. Los estados admitidos son `sent` y `scheduled`. La factura anterior usa el catálogo existente y admite los mismos estados.
+
+`gestify_bridge` verifica la condición al importar una preparación nueva. `prepare_invoice_prerequisites.patch` añade la misma comprobación dentro de `approve`, antes de consultar el borrador y guardar la aprobación, conservando el bloqueo del servicio. `invoice_month_review` muestra la razón si no se cumplen los requisitos. Instalar los tres módulos y aplicar el parche sobre la versión privada vigente, conservando copia del servicio y la configuración. No se cambian las aprobaciones existentes.
