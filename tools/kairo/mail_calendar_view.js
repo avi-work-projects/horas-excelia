@@ -43,7 +43,7 @@ function startMailCalendar(data,labels,draw){
       const weekNumber=1+Math.floor((thursday-Date.UTC(thursday.getUTCFullYear(),0,1))/604800000);
       const friday=new Date(monday);friday.setUTCDate(monday.getUTCDate()+4);
       const estimate=week.estimatedDate?day(new Date(week.estimatedDate+'T12:00:00Z'))+' · fecha calculada':'';
-      const state=week.state==='unverified'&&!week.checkedAt?'Sin comprobar':labels[week.state]||'Revisar';
+      const state=week.state==='unverified'&&!week.checkedAt?'Sin programar':labels[week.state]||'Revisar';
       const entry=row(day(monday)+' – '+day(friday),week.state,state,week.schedule?dateTime(week.schedule):estimate);
       entry.prepend(create('span','S'+weekNumber,'k-week-number'));
       weeks.append(entry);
@@ -60,7 +60,7 @@ function startMailCalendar(data,labels,draw){
     weeks.hidden=!mail.checked;bill.hidden=!invoices.checked;
     sync.hidden=!mail.checked&&!invoices.checked;
     const checks=data.rows.map(r=>r.checkedAt).filter(Boolean).sort((a,b)=>Date.parse(b)-Date.parse(a));
-    note.textContent=mail.checked?(checks.length?'Correos · '+dateTime(checks[0]):'Correos sin comprobar'):'Facturación de Kairo';
+    note.textContent=mail.checked?(checks.length?'Correos · '+dateTime(checks[0]):'Sin programación registrada'):'Facturación de Kairo';
     bill.replaceChildren();
     const state=invoice?.state||'unknown';
     const label=billLabels[state]||(state==='loading'?'Consultando…':'Sin confirmar');
@@ -78,19 +78,23 @@ function startMailCalendar(data,labels,draw){
       actions.append(manage);details.append(toggle,actions);bill.append(details);
     }else bill.append(summary);
   }
-  async function readInvoice(){
-    const token=++billSeq,period=data.period;
-    invoice={state:'loading'};paint();
+  async function loadInvoice(period){
     try{
-      const response=await fetch('/facturas/programacion?period='+data.period,{cache:'no-store',redirect:'error',signal:AbortSignal.timeout(6000)});
+      const response=await fetch('/facturas/programacion?period='+period,{cache:'no-store',redirect:'error',signal:AbortSignal.timeout(6000)});
       if(!response.ok)throw Error();
       const result=await response.json();
-      if(token!==billSeq||period!==data.period)return;
       if(result.period!==period||!Object.hasOwn(billLabels,result.state)||
         (result.state==='scheduled'&&!/^20\d\d-\d\d-\d\d$/.test(result.scheduledDate)))throw Error();
-      invoice=result;
-      if(window.parent!==window)window.parent.postMessage({type:'kairo-calendar-invoice',period:data.period,state:result.state},privateOrigin);
-    }catch{if(token!==billSeq||period!==data.period)return;invoice={state:'unknown'};}
+      return result;
+    }catch{return {state:'unknown'};}
+  }
+  async function readInvoice(loaded){
+    const token=++billSeq,period=data.period;
+    if(!invoice){invoice={state:'loading'};paint();}
+    const result=await (loaded||loadInvoice(period));
+    if(token!==billSeq||period!==data.period)return;
+    invoice=result;
+    if(result.period&&embedded)window.parent.postMessage({type:'kairo-calendar-invoice',period,state:result.state},privateOrigin);
     paint();
   }
   function resumeInvoice(){
@@ -114,24 +118,27 @@ function startMailCalendar(data,labels,draw){
     if(result.period!==period||!Array.isArray(result.rows)||!result.days)throw Error();
     return result;
   }
-  async function navigate(period,historyMode){
+  async function navigate(period,historyMode,loaded,billLoad,previewInvoice){
     const token=++navSeq;wanted=period;feedback.textContent='';
     if(period===data.period){grid.removeAttribute('aria-busy');return;}
     grid.setAttribute('aria-busy','true');
     try{
-      const result=await readMonth(period);
+      const result=await (loaded||readMonth(period));
       if(token!==navSeq)return;
-      data=result;invoice=null;++billSeq;returnFromInvoice=false;delete grid.dataset.synced;
+      data=result;invoice=previewInvoice||null;++billSeq;returnFromInvoice=false;delete grid.dataset.synced;
       if(historyMode!=='pop')history[embedded?'replaceState':'pushState'](null,'','?period='+period);
       weekList();paint();requestCivilDays();
-      if(invoices.checked)void readInvoice();
+      if(invoices.checked)void readInvoice(billLoad);
     }catch{
       if(token===navSeq){wanted=data.period;feedback.textContent='No se ha podido abrir el mes. Vuelve a intentarlo.';if(historyMode==='pop')history.replaceState(null,'','?period='+data.period);}
     }finally{if(token===navSeq)grid.removeAttribute('aria-busy');}
   }
+  function adjacent(period,step){
+    const next=new Date(period+'-01T12:00:00Z');next.setUTCMonth(next.getUTCMonth()+step);
+    return next.toISOString().slice(0,7);
+  }
   function move(step){
-    const next=new Date(wanted+'-01T12:00:00Z');next.setUTCMonth(next.getUTCMonth()+step);
-    const period=next.toISOString().slice(0,7);if(period.startsWith('20'))void navigate(period);
+    const period=adjacent(wanted,step);if(period.startsWith('20'))void navigate(period);
   }
   const firstPeriod=data.period;
   if(!embedded)window.addEventListener('popstate',()=>void navigate(new URL(location.href).searchParams.get('period')||firstPeriod,'pop'));
@@ -161,14 +168,71 @@ function startMailCalendar(data,labels,draw){
     }catch(error){if(data.period===period)feedback.textContent=error.message;}
     finally{refresh.disabled=false;}
   };
-  let touch=null;
-  grid.addEventListener('touchstart',event=>{touch=event.touches.length===1?event.touches[0]:null;},{passive:true});
-  grid.addEventListener('touchcancel',()=>{touch=null;});
+  // Both pages follow the finger. Keep the incoming page mounted until the
+  // confirmed month has been painted, including while a slow read is in flight.
+  const viewport=grid.parentElement;
+  let gesture=null,settling=false;
+  function resetSlide(){
+    if(gesture?.preview)gesture.preview.remove();
+    grid.style.transition='';grid.style.transform='';
+    viewport.classList.remove('sliding');gesture=null;settling=false;
+  }
+  function displaySlide(dx){
+    const g=gesture,step=dx<0?1:-1,period=adjacent(data.period,step);
+    if(!period.startsWith('20'))return;
+    if(g.period!==period){
+      g.preview?.remove();g.period=period;g.step=step;
+      const pane=document.createElement('section');
+      pane.className='hours-calendar k-preview';pane.inert=true;pane.setAttribute('aria-hidden','true');
+      viewport.append(pane);g.preview=pane;
+      let previewMonth={period,rows:[],days:data.days};
+      g.invoice=null;g.billLoad=invoices.checked?loadInvoice(period):null;
+      const render=()=>draw(previewMonth,mail.checked,invoices.checked?g.invoice:null,move,pane);
+      render();
+      g.billLoad?.then(result=>{if(gesture===g&&g.preview===pane){g.invoice=result;render();}});
+      g.load=readMonth(period);
+      g.load.then(month=>{if(gesture===g&&g.preview===pane){previewMonth=month;render();}},()=>{});
+    }
+    const width=viewport.clientWidth;
+    dx=Math.max(-width,Math.min(width,dx));viewport.classList.add('sliding');
+    grid.style.transform='translate3d('+dx+'px,0,0)';
+    g.preview.style.transform='translate3d('+(g.step*width+dx)+'px,0,0)';
+  }
+  async function finishSlide(commit){
+    const g=gesture;
+    if(!g?.preview){resetSlide();return;}
+    settling=true;
+    const duration=matchMedia('(prefers-reduced-motion: reduce)').matches?0:160;
+    grid.style.transition=g.preview.style.transition='transform '+duration+'ms ease-out';
+    // Flush the drag offset before animating, also for a very fast flick.
+    grid.getBoundingClientRect();
+    grid.style.transform='translate3d('+(-g.step*viewport.clientWidth*(commit?1:0))+'px,0,0)';
+    g.preview.style.transform='translate3d('+(g.step*viewport.clientWidth*(commit?0:1))+'px,0,0)';
+    if(duration)await new Promise(resolve=>setTimeout(resolve,duration));
+    if(commit)await navigate(g.period,'swipe',g.load,g.billLoad,g.invoice);
+    resetSlide();
+  }
+  grid.addEventListener('touchstart',event=>{
+    if(settling||wanted!==data.period||event.touches.length!==1)return;
+    const t=event.touches[0];gesture={x:t.clientX,y:t.clientY};
+  },{passive:true});
+  grid.addEventListener('touchmove',event=>{
+    if(!gesture||settling)return;
+    if(event.touches.length!==1){resetSlide();return;}
+    const dx=event.touches[0].clientX-gesture.x,dy=event.touches[0].clientY-gesture.y;
+    if(!gesture.preview){
+      if(Math.abs(dy)>8&&Math.abs(dy)>Math.abs(dx)){resetSlide();return;}
+      if(Math.abs(dx)<6||Math.abs(dx)<Math.abs(dy)*1.25)return;
+    }
+    if(event.cancelable)event.preventDefault();displaySlide(dx||gesture.step*-0.1);
+  },{passive:false});
+  grid.addEventListener('touchcancel',()=>{if(gesture&&!settling)void finishSlide(false);});
   grid.addEventListener('touchend',event=>{
-    if(!touch)return;
-    const dx=event.changedTouches[0].clientX-touch.clientX,dy=event.changedTouches[0].clientY-touch.clientY;
-    touch=null;
-    if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.5){if(event.cancelable)event.preventDefault();move(dx<0?1:-1);}
+    if(!gesture||settling)return;
+    const dx=event.changedTouches[0].clientX-gesture.x,dy=event.changedTouches[0].clientY-gesture.y;
+    const commit=Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.5;
+    if(commit){if(event.cancelable)event.preventDefault();displaySlide(dx);}
+    void finishSlide(commit);
   },{passive:false});
   if(window.parent===window)return;
   el('return').onclick=event=>{

@@ -3,6 +3,11 @@ function homePeriodMode(year,month){
   var today=new Date(),distance=year*12+month-(today.getFullYear()*12+today.getMonth());
   return distance< -1?'closed':distance<=1?'audit':'future';
 }
+function homeDueSoon(date){
+  if(!date)return false;
+  var today=hoursCivilTime(new Date().toISOString()).slice(0,10);
+  return (Date.parse(date)-Date.parse(today))/86400000<7;
+}
 function homeWeekCovered(key){return hoursRemoteConfigured()?hoursHasConfirmedMail(key)||homePeriodMode(CY,CM)==='closed':!!SW[key];}
 function homeWeekUnlocked(key){return Object.prototype.hasOwnProperty.call(HOURS_WEEK_UNLOCKED,key)?HOURS_WEEK_UNLOCKED[key]:!homeWeekCovered(key);}
 function homeSubmissionWeeks(year,month){
@@ -16,9 +21,8 @@ function homeSubmissionWeeks(year,month){
 function homeSubmissionWarnings(year,month){
   var remote=typeof hoursRemoteConfigured==='function'&&hoursRemoteConfigured();
   var rows=homeSubmissionWeeks(year,month).map(function(week){
-    return {key:week.key,mon:week.mon,state:remote?hoursWeekState(week.key):SW[week.key]?'sent':'missing'};
+    return {key:week.key,mon:week.mon,state:remote?(hoursWeekState(week.key)||'missing'):SW[week.key]?'sent':'missing'};
   });
-  if(remote&&rows.some(function(row){return !row.state;}))return [{state:'unverified'}];
   return rows.filter(function(row){return row.state!=='sent'&&row.state!=='scheduled';});
 }
 /* Fecha civil de Madrid: no depende del huso del ordenador ni añade 24 h al

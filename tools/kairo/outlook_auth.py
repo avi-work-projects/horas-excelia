@@ -274,8 +274,16 @@ def main():
     except (OSError,UnicodeError):raise SystemExit('Credencial no disponible') from None
     if not password or len(password) > 1024:
         raise SystemExit('Credencial no disponible')
+    # A CDP call or Playwright teardown can hang below its Python timeout.
+    # SIGALRM terminates this service process, releasing its flock. systemd
+    # cleans its driver and restarts it; the external Chromium stays open.
+    import signal
     while True:
-        probe(config, password)
+        signal.alarm(55)
+        try:
+            probe(config, password)
+        finally:
+            signal.alarm(0)
         time.sleep(15)
 
 

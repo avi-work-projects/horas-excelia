@@ -23,7 +23,14 @@
     });
   }
   async function api(action,data){
-    const response=await fetch(new URL(action,location.href),{method:'POST',headers:{'Content-Type':'application/json','X-CSRF':hoursBridgeConfig.csrf},body:JSON.stringify({...data,background:true}),cache:'no-store',redirect:'error'});
+    let pending;
+    if(action==='preview'){
+      pending=crypto.randomUUID();
+      data={...data,jobId:pending};
+      send({type:'job',job:{jobId:pending,kind:'preview',starting:true}});
+    }
+    const body=JSON.stringify({...data,background:true});
+    const response=await fetch(new URL(action,location.href),{method:'POST',headers:{'Content-Type':'application/json','X-CSRF':hoursBridgeConfig.csrf},body,keepalive:!!pending&&new Blob([body]).size<=65536,cache:'no-store',redirect:'error'});
     let result=await response.json();if(!response.ok)throw new Error(result.error||'No se ha confirmado la operación');
     if(result.jobId){
       send({type:'job',job:{jobId:result.jobId,kind:result.kind}});
@@ -41,7 +48,11 @@
   // Estimates are for the historical agenda only; the programming review always uses its plan.
   let calendarInvoice=null,moveAgenda=null;
   function paintCalendar(){
-    const root=el('calendar');root.replaceChildren();root.hidden=intent==='check'||!plan;if(root.hidden)return;
+    renderCalendar(el('calendar'),request,plan,calendarMonth,calendarInvoice,moveAgenda);
+  }
+  function renderCalendar(root,request,plan,month,calendarInvoice,moveAgenda){
+    root.replaceChildren();root.hidden=intent==='check'||!plan;if(root.hidden)return;
+    month=month||request.period;
     const iso=day=>day.toISOString().slice(0,10),day=value=>new Date(value+'T12:00:00Z');
     const add=(value,n)=>{const d=day(value);d.setUTCDate(d.getUTCDate()+n);return iso(d);};
     const civil=value=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Madrid',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(value));
@@ -50,7 +61,7 @@
     for(const item of request.calendarDays||[])if(names[item.type])days.set(item.date,item.type);
     request.weeks.forEach(w=>w.days.forEach(d=>days.set(d.date,d.type)));
     const months=[...new Set([request.period,...request.weeks.flatMap(w=>[w.key.slice(0,7),add(w.key,6).slice(0,7)])])].sort();
-    if(!months.includes(calendarMonth))calendarMonth=request.period;
+    if(!months.includes(month))month=request.period;
     rows.forEach(row=>{
       let when=null,confirmed=false;
       if(row.state==='scheduled'||row.state==='changed'&&!selected.has(row.key)){when=row.previousSchedule||row.schedule;confirmed=true;}
@@ -58,20 +69,20 @@
       if(when&&Number.isFinite(Date.parse(when)))deliveries.set(civil(when),{confirmed,label:(confirmed?'Envío programado':'Envío previsto')+' · '+date(when)});
       else if(moveAgenda&&row.estimatedDate)deliveries.set(row.estimatedDate,{estimated:true,label:'Fecha de correo calculada por calendario'});
     });
-    const header=text('header','','calendar-header'),index=months.indexOf(calendarMonth);
+    const header=text('header','','calendar-header'),index=months.indexOf(month);
     for(const [step,label] of [[-1,'Mes anterior'],[1,'Mes siguiente']]){
       const button=text('button',step<0?'‹':'›');button.type='button';button.setAttribute('aria-label',label);button.disabled=index+step<0||index+step>=months.length;
       if(hoursBridgeConfig.calendar){
-        const next=day(calendarMonth+'-01');next.setUTCMonth(next.getUTCMonth()+step);
-        const month=iso(next).slice(0,7);button.disabled=!month.startsWith('20');
+        const next=day(month+'-01');next.setUTCMonth(next.getUTCMonth()+step);
+        const target=iso(next).slice(0,7);button.disabled=!target.startsWith('20');
         button.onclick=()=>moveAgenda(step);
       }else button.onclick=()=>{calendarMonth=months[index+step];paintCalendar();};
-      if(step<0)header.append(button);else{header.append(text('h2',new Intl.DateTimeFormat('es-ES',{timeZone:'UTC',month:'long',year:'numeric'}).format(day(calendarMonth+'-01'))),button);}
+      if(step<0)header.append(button);else{header.append(text('h2',new Intl.DateTimeFormat('es-ES',{timeZone:'UTC',month:'long',year:'numeric'}).format(day(month+'-01'))),button);}
     }
     root.append(header);
     const table=document.createElement('table'),thead=document.createElement('thead'),head=document.createElement('tr');
     ['Sem.','L','M','X','J','V','S','D'].forEach(label=>{const th=text('th',label);th.scope='col';head.append(th);});thead.append(head);table.append(thead);
-    const first=day(calendarMonth+'-01'),offset=(first.getUTCDay()+6)%7,start=add(iso(first),-offset),last=new Date(Date.UTC(first.getUTCFullYear(),first.getUTCMonth()+1,0,12)).getUTCDate(),body=document.createElement('tbody');
+    const first=day(month+'-01'),offset=(first.getUTCDay()+6)%7,start=add(iso(first),-offset),last=new Date(Date.UTC(first.getUTCFullYear(),first.getUTCMonth()+1,0,12)).getUTCDate(),body=document.createElement('tbody');
     for(let n=0;n<Math.ceil((offset+last)/7);n++){
       const key=add(start,n*7),row=rows.get(key),tr=document.createElement('tr');tr.dataset.week=key;
       if(row){if(!moveAgenda)tr.className='included';tr.dataset.state=row.state;}
@@ -79,7 +90,7 @@
       const th=text('th',String(week),'week-number');th.scope='row';th.title=row?labels[row.state]||'Revisar':'Fuera de la selección';tr.append(th);
       for(let col=0;col<7;col++){
         const ds=add(key,col),kind=days.get(ds),label=names[kind],send=deliveries.get(ds),td=text('td','','calendar-day');td.dataset.date=ds;
-        if(ds.slice(0,7)!==calendarMonth)td.classList.add('outside');if(!row)td.classList.add('unselected');if(label)td.classList.add(kind);
+        if(ds.slice(0,7)!==month)td.classList.add('outside');if(!row)td.classList.add('unselected');if(label)td.classList.add(kind);
         const head=text('span','','day-head'),marks=text('span','','day-marks');
         head.append(text('span',String(day(ds).getUTCDate()),'day-number'),text('small',label?label[0]:'','day-type'));
         td.append(head,marks);
@@ -159,11 +170,10 @@
     finally{busy=false;controls();}
   }
   if(hoursBridgeConfig.calendar){
-    startMailCalendar(hoursBridgeConfig.calendar,labels,(data,mailVisible,invoice,move)=>{
-      calendarInvoice=invoice;moveAgenda=move;calendarMonth=data.period;
-      plan={rows:data.rows.map(row=>({...row,selected:mailVisible}))};
-      request={period:data.period,weeks:data.rows.map(row=>({key:row.key,days:[]})),calendarDays:Object.entries(data.days).map(([date,type])=>({date,type}))};
-      paintCalendar();
+    startMailCalendar(hoursBridgeConfig.calendar,labels,(data,mailVisible,invoice,move,root=el('calendar'))=>{
+      const visible={rows:data.rows.map(row=>({...row,selected:mailVisible}))};
+      const calendar={period:data.period,weeks:data.rows.map(row=>({key:row.key,days:[]})),calendarDays:Object.entries(data.days).map(([date,type])=>({date,type}))};
+      renderCalendar(root,calendar,visible,data.period,invoice,move);
     });
     return;
   }

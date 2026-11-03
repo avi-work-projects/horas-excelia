@@ -1,5 +1,7 @@
 # Mapa visual de Gestify
 
+v535. [Agenda en tema claro](review/evidence/kairo-v535/agenda.png) y [paso 5 de facturación](review/evidence/kairo-v535/step.png). El mes vecino acompaña al dedo durante el gesto.
+
 v534. Home reúne la consulta de envíos y la sincronización con Kairo en la cabecera. [Mes sin envíos programados y factura pendiente](review/evidence/home-sin-envios-v534.png).
 
 v532. [Conexión DNS / VPN desde Ajustes](captures/mobile-connection.png).

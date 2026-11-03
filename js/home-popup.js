@@ -145,7 +145,6 @@ function openHomePopup(force){
   routineWarnings.forEach(function(it){items.push({type:'warn',text:'&#128197; '+escHtml(it.text)});});
   var today=new Date();today.setHours(0,0,0,0);
   homeSubmissionWarnings(CY,CM).forEach(function(row){
-    if(!row.key){items.push({type:'warn',text:'&#128221; <strong>Semanas sin confirmar</strong> · Consulta Outlook desde «Programar pendientes».'});return;}
     var review=['changed','duplicate','uncertain','draft','unverified','ambiguous-thread'].includes(row.state);
     var label='Semana del '+fd(row.mon);
     items.push({type:'warn',text:'&#128221; <strong>'+label+'</strong> '+(review?'por revisar':hoursRemoteConfigured()?'sin enviar ni programar':'sin enviar')});

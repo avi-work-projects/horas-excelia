@@ -69,7 +69,8 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
             for key in scope(period):
                 found = [r for r in inventory['records'] if r.get('week') == key]
                 state = 'missing' if not found else 'duplicate' if len(found)>1 else found[0]['state']
-                if state != 'sent' and ledger.get(key,{}).get('state') in ('reserved','uncertain'):
+                if (state != 'sent' and ledger.get(key,{}).get('state') in ('reserved','uncertain')
+                        or state=='missing' and ledger.get(key,{}).get('state') in ('sent','scheduled')):
                     state = 'uncertain'
                 row = dict(key=key, state=state)
                 if state == 'scheduled':
@@ -213,7 +214,7 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
                 query = parse_qs(urlsplit(self.path).query)
                 try:
                     if query.get('background') == ['1']:
-                        if set(query) - {'period','background','refresh','audit'} or len(query.get('period',[])) != 1:
+                        if set(query) - {'period','background','refresh','audit','stored'} or len(query.get('period',[])) != 1:
                             raise ValueError()
                         period = query['period'][0]
                         scope(period)
@@ -222,6 +223,8 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
                             number = int(period[:4])*12+int(period[5:])-1
                             periods = [f'{value//12:04d}-{value%12+1:02d}' for value in (number-1,number,number+1)]
                         known = [jobs.fact(config['sender'], p) for p in periods]
+                        if query.get('stored') == ['1']:
+                            return self.reply(200, {'phase':'done','result':{'periods':[fact for fact in known if fact]}}, cors=True)
                         if all(known) and query.get('refresh') != ['1']:
                             return self.reply(200, {'phase':'done','result':{'periods':known}}, cors=True)
                         identity = 'status:'+','.join(periods)
@@ -239,7 +242,8 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
                     for key in keys:
                         found = [r for r in inventory['records'] if r.get('week') == key]
                         state = 'missing' if not found else 'duplicate' if len(found)>1 else found[0]['state']
-                        if state != 'sent' and ledger.get(key,{}).get('state') in ('reserved','uncertain'):
+                        if (state != 'sent' and ledger.get(key,{}).get('state') in ('reserved','uncertain')
+                                or state=='missing' and ledger.get(key,{}).get('state') in ('sent','scheduled')):
                             state = 'uncertain'
                         row=dict(key=key,state=state)
                         if state=='scheduled':row.update(days=found[0].get('days'),schedule=found[0].get('schedule'))
@@ -299,14 +303,17 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
                 background = data.pop('background', False) is True
                 if background and self.route() in ('/preview', '/simulate', '/commit'):
                     kind = self.route()[1:]
+                    identifier=None
                     if kind == 'preview':
+                        if 'jobId' in data:
+                            identifier=str(uuid.UUID(data.pop('jobId')))
                         validate_request(data)
                     elif not isinstance(data.get('planId'), str) or len(data['planId']) > 80:
                         raise ValueError()
                     if kind == 'commit' and (not allow_writes or data.get('sourceVerified') is not True):
                         return self.reply(403, {'error':'Revisa los datos antes de programar'})
-                    identity = 'commit:'+data['planId'] if kind == 'commit' else kind+':'+str(uuid.uuid4())
-                    return self.reply(202, jobs.submit(kind, data, identity))
+                    identity = 'commit:'+data['planId'] if kind == 'commit' else kind+':'+(identifier or str(uuid.uuid4()))
+                    return self.reply(202, jobs.submit(kind, data, identity, identifier))
                 if self.route() == '/preview':
                     validate_request(data)
                     with store.exclusive():

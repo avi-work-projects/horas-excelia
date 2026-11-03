@@ -8,7 +8,7 @@ var HOURS_JOBS=hoursJobsRead();
 function hoursJobsSave(){try{localStorage.setItem(HOURS_JOBS_KEY,JSON.stringify(HOURS_JOBS));}catch(e){}}
 function hoursAcceptSnapshot(result,url,settings){
   if(!result||!Array.isArray(result.rows))throw new Error('Resultado de Kairo incompleto');
-  var rows=result.rows.map(function(r){var row={key:r.key,state:r.state};if(r.days||r.existingDays)row.days=r.days||r.existingDays;if(r.schedule||r.previousSchedule)row.schedule=r.previousSchedule||r.schedule;return row;});
+  var rows=result.rows.map(function(r){var row={key:r.key,state:r.state};if(r.days||r.existingDays)row.days=r.existingDays||r.days;if(r.previousSchedule||r.schedule&&['scheduled','changed'].includes(r.state))row.schedule=r.previousSchedule||r.schedule;return row;});
   var snapshot={period:result.period,checkedAt:result.checkedAt,rows:rows,verified:result.verified};
   var keys=hoursScopeKeys(snapshot.period);validateHoursResult(snapshot,snapshot.period,keys);
   if(snapshot.verified!==true)throw new Error('Lectura de Outlook sin confirmar');
@@ -24,7 +24,7 @@ function hoursAcceptJobResult(job,result){
 function hoursTrackJob(value,request,url){
   if(!value||!value.jobId||!['status','preview','commit','simulate'].includes(value.kind))return;
   if(!/^[a-f0-9-]{36}$/.test(value.jobId))throw new Error('Identificador de trabajo no válido');
-  if(!HOURS_JOBS.some(function(j){return j.id===value.jobId;}))HOURS_JOBS.push({id:value.jobId,url:url,period:request.period,kind:value.kind,manual:request.manual===true,settings:hoursSettingsSignature()});
+  if(!HOURS_JOBS.some(function(j){return j.id===value.jobId;}))HOURS_JOBS.push({id:value.jobId,url:url,period:request.period,kind:value.kind,submittedAt:Date.now(),manual:request.manual===true,settings:hoursSettingsSignature()});
   HOURS_JOBS=HOURS_JOBS.slice(-24);HOURS_JOB_ERROR='';HOURS_JOB_NETWORK_ERROR=false;hoursJobsSave();hoursResumeJobs();paintHoursStatus();
 }
 async function hoursResumeJobs(){
@@ -36,6 +36,11 @@ async function hoursResumeJobs(){
       var controller=new AbortController(),timeout=setTimeout(function(){controller.abort();},8000);
       try{
         var response=await fetch(job.url+'jobs/'+job.id,{mode:'cors',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',targetAddressSpace:'local',signal:controller.signal});
+        if(response.status===404){
+          if(job.submittedAt&&Date.now()-job.submittedAt<15000)continue;
+          HOURS_JOBS=HOURS_JOBS.filter(function(j){return j.id!==job.id;});
+          HOURS_JOB_ERROR='Kairo no ha registrado este trabajo. Vuelve a abrir la revisión.';continue;
+        }
         if(!response.ok)throw new Error('Kairo no está disponible');
         var data=await response.json();if(data.jobId!==job.id||!['queued','running','done','error'].includes(data.phase))throw new Error('Trabajo no válido');
         if(data.phase==='done'){hoursAcceptJobResult(job,data.result);HOURS_JOBS=HOURS_JOBS.filter(function(j){return j.id!==job.id;});HOURS_JOB_ERROR='';HOURS_JOB_NETWORK_ERROR=false;if(job.kind==='status'){hoursRecordCheck(job.period,'done','',Date.parse(data.updatedAt)||Date.now());if(job.manual)showToast('Estado de correos actualizado.');}}

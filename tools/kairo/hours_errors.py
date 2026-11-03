@@ -2,6 +2,7 @@
 MESSAGES = {
     'auth_required': 'Outlook necesita iniciar sesión. Pulsa «Comprobar acceso».',
     'browser_unavailable': 'El navegador de Outlook no está disponible en Kairo.',
+    'browser_busy': 'Outlook está ocupado con otra operación. Vuelve a intentarlo en un momento.',
     'compose_open': 'Hay un correo abierto para editar en Outlook. Ciérralo antes de comprobar.',
     'wrong_account': 'La cuenta abierta en Outlook no es la configurada para las horas.',
     'read_failed': 'No se pudo completar la lectura de Outlook. Se conserva la última comprobación correcta.',

@@ -34,11 +34,15 @@ html:has(body.k-agenda){scrollbar-gutter:stable}.k-filters .filter-icon{width:19
 .k-agenda .k-card h2{font-size:15px;margin:0 0 4px}.k-agenda #invoiceSchedule .k-schedule-row{grid-template-columns:auto 1fr auto}.k-agenda #invoiceSchedule h2{margin:0}.k-agenda .k-sync button{min-height:32px}
 @media(max-width:600px){html:has(body.k-agenda){scrollbar-gutter:auto;scrollbar-width:none}}
 .k-agenda #calendar{touch-action:pan-y pinch-zoom;overscroll-behavior-x:contain}
+.k-agenda .calendar-viewport{position:relative;overflow:clip;touch-action:pan-y pinch-zoom;isolation:isolate}
+.k-agenda .calendar-viewport.sliding{pointer-events:none}
+.k-agenda .calendar-viewport .k-preview{position:absolute;inset:0 0 auto;margin-block:8px;pointer-events:none}
+.k-agenda .calendar-viewport.sliding .hours-calendar{will-change:transform}
 </style></head><body class="k-ui"><!--KAIRO_HEADER--><main class="k-main">
 <div class="k-eye">Agenda <span class="badge"></span></div><h1 id="title">Revisar programación</h1><p id="intro"></p>
 <div class="k-filters" id="filters" hidden role="group" aria-label="Mostrar en el calendario"><label for="showMail"><input type="checkbox" id="showMail" checked><svg class="filter-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#dispatch-mail"/></svg>Correos</label><label for="showInvoices"><input type="checkbox" id="showInvoices" checked><svg class="filter-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#dispatch-invoice"/></svg>Facturas</label></div>
 <p id="message" role="status">Abre esta revisión desde Gestify.</p>
-<section class="summary" id="summary" hidden></section><section class="hours-calendar" id="calendar" aria-label="Calendario de programación" hidden></section>
+<section class="summary" id="summary" hidden></section><div class="calendar-viewport"><section class="hours-calendar" id="calendar" aria-label="Calendario de programación" hidden></section></div>
 <section class="k-card" id="invoiceSchedule" hidden aria-label="Programación de factura"></section><div id="weeks"></div><div id="calendarSync" class="k-sync"></div>
 <details class="resolved" id="resolved" hidden><summary id="resolvedTitle">Semanas enviadas y programadas</summary><div id="resolvedWeeks"></div></details>
 <details class="recipients" id="recipients" hidden><summary>Destinatarios</summary><div id="recipientsBody"></div></details>
