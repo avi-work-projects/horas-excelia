@@ -20,6 +20,7 @@ class Locator:
     def __init__(self, page, name): self.page, self.name = page, name
     def count(self): return int(self.is_visible())
     def is_visible(self):
+        if self.name == 'other_account': return self.page.phase == 'account'
         return self.name == self.page.phase or self.name == 'next' and self.page.phase in ('username','password','stay_signed_in')
     def nth(self, _): return self
     def fill(self, value): self.page.fills.append((self.name,value))
@@ -37,7 +38,8 @@ class Page:
     @property
     def url(self): return 'https://'+('outlook.office.com/mail/' if self.phase in ('ready','mail_loading') else self.host+('/common/bridge/fido' if self.phase=='passkey_choice' else '/common/login'))
     def locator(self, selector):
-        name = {'#i0116':'username','#i0118':'password','#idSIButton9':'next',
+        name = {'#otherTile':'other_account','#i0116':'username','#i0118':'password','#idSIButton9':'next',
+                '#i0116:not([aria-hidden="true"])':'username','#i0118:not([aria-hidden="true"])':'password',
                 '#idDiv_SAOTCAS_Title':'mfa','#passwordError':'rejected',
                 '#KmsiDescription':'stay_signed_in','#tilesHolder [data-test-id]':'account',
                 '#idBtn_Back':'passkey_choice'}.get(selector,'absent')
@@ -80,6 +82,12 @@ class AuthTests(unittest.TestCase):
             page=Page('passkey_choice',['passkey_choice'])
             self.assertEqual(self.run_auth(page,root)['phase'],'unknown')
             self.assertEqual(page.clicks,1)
+
+    def test_passkey_back_to_account_picker_uses_configured_username_once(self):
+        with tempfile.TemporaryDirectory() as root:
+            page=Page('account',['passkey_choice','account','username','password','ready'])
+            self.assertEqual(self.run_auth(page,root)['phase'],'ready')
+            self.assertEqual(page.fills,[('username',SENDER),('password',SECRET)])
 
     def test_explicit_check_recovers_old_unknown_pause_on_recognized_account(self):
         with tempfile.TemporaryDirectory() as root:
