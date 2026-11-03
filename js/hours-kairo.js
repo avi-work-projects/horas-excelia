@@ -18,7 +18,7 @@ function hoursCivilTime(value){
 function hoursWeekState(key){
   var row=hoursCachedWeek(key);if(!row)return '';
   if(row.state==='scheduled'||row.state==='changed'){
-    if(!Array.isArray(row.days)||!row.schedule)return row.state==='scheduled'?'unverified':'changed';
+    if(!Array.isArray(row.days)||!row.schedule)return row.state;
     var expected=hoursWeekDays(key),date=homeWeekSchedule(key).date;
     var equal=expected.every(function(day,i){var other=row.days[i];return other&&day.date===other.date&&day.type===other.type&&day.hours===other.hours;});
     return equal&&hoursCivilTime(row.schedule)===date+'T08:00'&&(!row.settings||row.settings===hoursSettingsSignature())?'scheduled':'changed';
@@ -30,7 +30,7 @@ function hoursCovered(key){var state=hoursWeekState(key);return state==='sent'||
 function hoursHasConfirmedMail(key){var row=hoursCachedWeek(key);return !!row&&['sent','scheduled','changed'].includes(row.state);}
 function hoursWeekBadge(state){
   var labels={sent:'✓ Enviada',scheduled:'◷ Programada',closed:'Cerrada',changed:'Revisar cambios',missing:'Pendiente',ready:'Pendiente'};
-  return labels[state]||(state?'Revisar':'Sin comprobar');
+  return labels[state]||(state?'Revisar':'Sin programar');
 }
 function hoursWeekDate(key,state){
   var row=hoursCachedWeek(key);
@@ -49,7 +49,7 @@ function renderHoursAccess(state,compact){
     if(checked.length)checkedAt=Math.min.apply(null,checked);
   }
   var dateFormat=new Intl.DateTimeFormat('es-ES',{timeZone:'Europe/Madrid',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
-  var note=closed?'Histórico cerrado':'Aún sin revisar';
+  var note=closed?'Histórico cerrado':'';
   if(checkedAt)note=(compact?'Fecha de revisión · ':'Comprobado ')+dateFormat.format(checkedAt);
   var last=cache&&cache.checks&&cache.checks[period];
   var feedback=last&&last.phase==='error'?'Intento '+new Intl.DateTimeFormat('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(last.at))+': '+hoursCheckMessage(last.code)+' Se conserva la última comprobación correcta.':typeof HOURS_JOB_ERROR==='undefined'?'':HOURS_JOB_ERROR;
@@ -102,12 +102,13 @@ function rememberHoursReview(result,request,url){
 function hoursKairoExchange(url,request,popup,options){
   options=options||{};
   return new Promise(function(resolve,reject){
-    var origin=new URL(url).origin,id=crypto.randomUUID(),sent=false,done=false;
+    var origin=new URL(url).origin,id=crypto.randomUUID(),sent=false,done=false,background=false;
+    function leave(){stopWatch();if(!done)finish(null,{detached:true,background:background});}
     function closed(){return options.isClosed?options.isClosed():popup.closed;}
     function verifySource(event){
       var m=event.data;if(event.origin!==origin||event.source!==popup||!m||m.channel!=='gestify-hours-v1'||m.id!==id)return;
       if(m.type==='job'&&done&&options.onJob)options.onJob(m.job);
-      if(m.type==='close'&&options.close){options.close();stopWatch();if(!done)finish(new Error('Revisión cerrada. No se ha confirmado ninguna programación.'));return;}
+      if(m.type==='close'&&options.close){options.close();leave();return;}
       if(m.type==='verify-source'&&typeof m.probe==='string'){
         var matches=false;try{matches=!!options.sourceMatches&&options.sourceMatches()===true;}catch(e){}
         popup.postMessage({channel:m.channel,id:id,type:'source-result',probe:m.probe,matches:matches},origin);
@@ -125,7 +126,7 @@ function hoursKairoExchange(url,request,popup,options){
     function receive(event){
       var message=event.data;
       if(event.origin!==origin||event.source!==popup||!message||message.channel!=='gestify-hours-v1'||message.id!==id)return;
-      if(message.type==='job'&&sent){clearTimeout(timeout);if(options.onJob)options.onJob(message.job);}
+      if(message.type==='job'&&sent){background=true;clearTimeout(timeout);if(options.onJob)options.onJob(message.job);}
       if(message.type==='ready'&&!sent){sent=true;popup.postMessage({channel:message.channel,id:id,type:'request',intent:options.intent||'review',request:request},origin);}
       if(message.type==='result'&&sent){
         if(!message.ok)return finish(new Error('No se ha podido comprobar Outlook.'));
@@ -133,7 +134,7 @@ function hoursKairoExchange(url,request,popup,options){
       }
     }
     window.addEventListener('message',receive);
-    var ping=setInterval(function(){if(closed())return finish(new Error('Ventana cerrada. No se ha confirmado ninguna programación.'));if(!sent)popup.postMessage({channel:'gestify-hours-v1',id:id,type:'hello'},origin);},400);
+    var ping=setInterval(function(){if(closed())return leave();if(!sent)popup.postMessage({channel:'gestify-hours-v1',id:id,type:'hello'},origin);},400);
     var timeout=setTimeout(function(){finish(new Error('Outlook sigue sin confirmar. Revisa la ventana de Kairo.'));},120000);
   });
 }
@@ -174,13 +175,24 @@ async function openHoursReview(targetWeek,intent){
       onUpdate:function(result){rememberHoursReview(result,request,url);},
       onError:function(){HOURS_STATUS.phase='error';paintHoursStatus();}
     });
+    if(result.detached){
+      if(result.background)showToast('La revisión continúa en Kairo.','info');
+      return;
+    }
     rememberHoursReview(result,request,url);
     if(intent==='check'){surface.close();window.focus();showToast('Estado de Outlook actualizado.','success');}
     else showToast('Revisa las semanas antes de confirmar.','info');
   }catch(e){HOURS_STATUS={period:'',phase:'error',rows:[],checkedAt:0};paintHoursStatus();showToast(e.message,'error');}
 }
+function paintHomeSyncDate(){
+  var label=document.getElementById('homeSyncDate');if(!label)return;
+  var stamp=HOURS_CACHE.url===hoursKairoUrl()&&(HOURS_CACHE.lastMailSync||Math.max(0,...Object.values(HOURS_CACHE.periods).map(function(p){return p.checkedAt;})));
+  label.textContent=stamp?'Última sync · '+homeInvoiceCheckedAt(stamp):'';
+  label.title=stamp?'Última sincronización correcta de los correos con Kairo':'';
+}
 function paintHoursStatus(){
   var container=document.getElementById('weeksContainer');if(!container)return;
+  paintHomeSyncDate();
   var syncButton=document.getElementById('homeSyncBtn');
   if(syncButton){
     syncButton.disabled=HOURS_REFRESHING||hoursJobRunning(hoursKairoUrl());
@@ -189,8 +201,8 @@ function paintHoursStatus(){
   if(typeof paintHomeInvoiceStatus==='function')paintHomeInvoiceStatus();
   var summary=container.querySelector('.home-submission');if(summary)summary.outerHTML=renderHomeSubmissionStatus(CY,CM);
   container.querySelectorAll('.week-card[data-week]').forEach(function(card){
-    var key=card.dataset.week,state=homePeriodMode(CY,CM)==='closed'?'closed':hoursWeekState(key),covered=homeWeekCovered(key),open=homeWeekUnlocked(key),badge=card.querySelector('.hours-week-badge');
-    card.classList.toggle('sent',covered&&!open);
+    var key=card.dataset.week,state=homePeriodMode(CY,CM)==='closed'?'closed':(hoursWeekState(key)||'missing'),covered=homeWeekCovered(key),open=homeWeekUnlocked(key),badge=card.querySelector('.hours-week-badge');
+    card.dataset.mailState=state;card.classList.toggle('sent',covered&&!open);
     if(badge){badge.textContent=state==='missing'||state==='ready'?'Programar semana':hoursWeekBadge(state);badge.className='sent-badge hours-week-badge '+(covered?'covered':state?'attention':'unknown');badge.setAttribute('aria-label',state==='sent'?'Ver estado':state==='scheduled'?'Ver programación':state==='changed'?'Revisar cambios':'Programar semana');}
     var note=card.querySelector('.hours-week-readonly'),date=hoursWeekDate(key,state);
     if(date&&!note){note=document.createElement('div');note.className='hours-week-readonly';card.querySelector('.week-info').appendChild(note);}
@@ -198,48 +210,55 @@ function paintHoursStatus(){
     var label=card.querySelector('.sent-toggle span');if(label)label.textContent=open?'Cerrar edición':covered?'Desmarcar':'Editar días';
   });
 }
-async function syncHoursStatus(force){
+async function syncHoursStatus(force,requestedPeriod){
   var url;try{url=hoursKairoUrl();}catch(e){return;}
   if(!url)return;
-  var period=mkey(CY,CM),keys=hoursScopeKeys(period),mode=homePeriodMode(CY,CM),known=keys.every(function(key){return !!hoursCachedWeek(key);}),due=hoursCacheDue(keys);
+  var period=requestedPeriod||mkey(CY,CM),keys=hoursScopeKeys(period),mode=homePeriodMode(+period.slice(0,4),+period.slice(5)-1),known=keys.every(function(key){return !!hoursCachedWeek(key);});
   var cached=HOURS_CACHE.url===url&&HOURS_CACHE.periods[period];
   var today=new Date(),audit=mkey(today.getFullYear(),today.getMonth());
   var auditMissing=[-1,0,1].some(function(offset){var d=new Date(today.getFullYear(),today.getMonth()+offset,1);return HOURS_CACHE.url!==url||!HOURS_CACHE.periods[mkey(d.getFullYear(),d.getMonth())];});
   // A legacy negative phone snapshot must not hide a newer confirmed server fact.
   // Read Kairo's cache once for the previous month; this is not an Outlook refresh.
   var historicalCache=!force&&!auditMissing&&known&&mode==='audit'&&period<audit&&keys.some(function(key){return hoursCachedWeek(key).state==='missing';});
-  if(!force&&(mode!=='audit'||known&&!due.length&&!auditMissing&&!historicalCache)){HOURS_STATUS={url:url,period:period,phase:known?'ready':'idle',checkedAt:cached?cached.checkedAt:0};return;}
-  var target=force||due.length||historicalCache?period:audit,windowAudit=!historicalCache&&target===audit&&!due.length&&(!force||auditMissing);
-  var attempt=historicalCache?'historical-cache:'+period:(due.length?'delivery:'+period+':'+due.join(','):'audit:'+audit);
+  if(!force&&(mode==='closed'||known&&(mode==='future'||!auditMissing)&&!historicalCache)){HOURS_STATUS={url:url,period:period,phase:known?'ready':'idle',checkedAt:cached?cached.checkedAt:0};return;}
+  var target=force||historicalCache||mode==='future'?period:audit,windowAudit=!historicalCache&&target===audit&&(!force||auditMissing);
+  var attempt=historicalCache?'historical-cache:'+period:(mode==='future'?'saved:'+period:'saved-audit:'+audit);
   if(!force&&(HOURS_ATTEMPTS[url+'|'+attempt]||HOURS_CACHE.url===url&&HOURS_CACHE.attempts&&HOURS_CACHE.attempts[attempt]))return;
   if(HOURS_CACHE.url!==url)HOURS_CACHE={schema:1,url:url,periods:{},weeks:{},attempts:{}};
   HOURS_CACHE.attempts=HOURS_CACHE.attempts||{};HOURS_CACHE.attempts[attempt]=true;hoursCacheSave();HOURS_ATTEMPTS[url+'|'+attempt]=true;
   HOURS_STATUS={period:period,url:url,phase:'loading',checkedAt:cached?cached.checkedAt:0};
-  hoursRecordCheck(period,'running');
+  if(force)hoursRecordCheck(period,'running');
   var controller=new AbortController(),timeout=setTimeout(function(){controller.abort();},10000);
   try{
-    var response=await fetch(url+'status?period='+target+'&background=1&audit='+(windowAudit?'1':'0')+'&refresh='+(force||due.length?'1':'0'),{method:'GET',mode:'cors',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',targetAddressSpace:'local',signal:controller.signal});
+    var response=await fetch(url+'status?period='+target+'&background=1&audit='+(windowAudit?'1':'0')+'&refresh='+(force?'1':'0&stored=1'),{method:'GET',mode:'cors',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',targetAddressSpace:'local',signal:controller.signal});
     if(!response.ok)throw new Error('Outlook sin confirmar');
     var result=await response.json();
-    if(result.phase==='done'){hoursAcceptJobResult({url:url},result.result);hoursRecordCheck(period,'done');HOURS_JOB_ERROR='';if(force)showToast('Estado de correos actualizado.');if(period===mkey(CY,CM))HOURS_STATUS={period:period,url:url,phase:'ready',checkedAt:Date.now()};}
+    if(url!==hoursKairoUrl())return;
+    if(result.phase==='done'){hoursAcceptJobResult({url:url},result.result);if(force)hoursRecordCheck(period,'done');HOURS_JOB_ERROR='';if(force)showToast('Estado de correos actualizado.');if(period===mkey(CY,CM))HOURS_STATUS={period:period,url:url,phase:'ready',checkedAt:Date.now()};}
     else{hoursTrackJob(result,{period:target,manual:force},url);if(period===mkey(CY,CM))HOURS_STATUS={period:period,url:url,phase:'loading',checkedAt:cached?cached.checkedAt:0};}
   }catch(e){
     if(period===mkey(CY,CM))HOURS_STATUS={period:period,url:url,phase:'error',checkedAt:cached?cached.checkedAt:0};
-    HOURS_JOB_ERROR='Kairo no está disponible. Se conserva el estado guardado y el envío manual.';
+    if(force)HOURS_JOB_ERROR='Kairo no está disponible. Se conserva el estado guardado y el envío manual.';
     var code=e.name==='AbortError'||e instanceof TypeError?'network':'read_failed';
-    hoursRecordCheck(period,'error',code);if(force)showToast(hoursCheckMessage(code));
+    if(force){hoursRecordCheck(period,'error',code);showToast(hoursCheckMessage(code));}
   }
   finally{clearTimeout(timeout);paintHoursStatus();}
+}
+async function syncHomeMailWithAccess(){
+  var url=hoursKairoUrl(),period=mkey(CY,CM);
+  var phase=await requestHoursSyncAccess();
+  if(['mfa','rejected','checking','waiting','reauthenticating'].includes(phase))return;
+  if(url===hoursKairoUrl())await syncHoursStatus(true,period);
 }
 function refreshHomeStates(){
   if(!hoursRemoteConfigured()){openInvoiceSettings({connection:true});return;}
   if(HOURS_REFRESHING||hoursJobRunning(hoursKairoUrl()))return;HOURS_REFRESHING=true;HOURS_JOB_ERROR='';
-  Promise.all([syncHoursStatus(true),typeof syncHomeInvoiceStatus==='function'?syncHomeInvoiceStatus(true):null]).finally(function(){HOURS_REFRESHING=false;paintHoursStatus();});paintHoursStatus();
+  Promise.all([syncHomeMailWithAccess(),typeof syncHomeInvoiceStatus==='function'?syncHomeInvoiceStatus(true):null]).finally(function(){HOURS_REFRESHING=false;paintHoursStatus();});paintHoursStatus();
 }
 function initHoursKairo(){
   var container=document.getElementById('weeksContainer');if(!container)return;
   document.getElementById('homeSyncBtn').addEventListener('click',refreshHomeStates);
-  container.addEventListener('click',function(event){var week=event.target.closest('[data-hours-week]');if(event.target.closest('[data-mobile-connection]'))openMobileConnection(null,'vpn');else if(week)openHoursReview(week.dataset.hoursWeek);else if(event.target.closest('[data-hours-review]'))openHoursReview();else if(event.target.closest('[data-home-formula]')){HOME_FORMULA_OPEN=!HOME_FORMULA_OPEN;paintHoursStatus();}});
+  container.addEventListener('click',function(event){var week=event.target.closest('[data-hours-week]');if(event.target.closest('[data-mobile-connection]'))openMobileConnection(null,'vpn');else if(week&&hoursCovered(week.dataset.hoursWeek))openMailCalendar();else if(week)openHoursReview(week.dataset.hoursWeek);else if(event.target.closest('[data-hours-review]'))openHoursReview();else if(event.target.closest('[data-home-formula]')){HOME_FORMULA_OPEN=!HOME_FORMULA_OPEN;paintHoursStatus();}});
   function resume(){if(!document.hidden)hoursResumeJobs();}
   window.addEventListener('focus',resume);window.addEventListener('online',resume);document.addEventListener('visibilitychange',resume);
   window.addEventListener('storage',function(event){if(event.key===HOURS_CACHE_KEY){HOURS_CACHE=hoursCacheRead();paintHoursStatus();}});hoursResumeJobs();syncHoursStatus(false);

@@ -36,7 +36,7 @@ class Jobs:
                 self.thread.start()
         self.wake.set()
 
-    def submit(self, kind, payload, identity):
+    def submit(self, kind, payload, identity, identifier=None):
         now = datetime.now(timezone.utc).isoformat()
         with self.store.db() as db:
             db.execute('BEGIN IMMEDIATE')
@@ -52,8 +52,10 @@ class Jobs:
                     self.start()
                     return self.get(identifier)
             db.execute('INSERT OR IGNORE INTO jobs VALUES (?,?,?,?,?,NULL,NULL,?)',
-                       (str(uuid.uuid4()), identity, kind, json.dumps(payload), 'queued', now))
-            row = db.execute('SELECT id FROM jobs WHERE identity=?', (identity,)).fetchone()
+                       (identifier or str(uuid.uuid4()), identity, kind, json.dumps(payload), 'queued', now))
+            row = db.execute('SELECT id,payload FROM jobs WHERE identity=?', (identity,)).fetchone()
+            if not row or kind=='preview' and json.loads(row['payload'])!=payload:
+                raise ValueError('La revisión no corresponde a esta solicitud')
         self.start()
         return self.get(row['id'])
 

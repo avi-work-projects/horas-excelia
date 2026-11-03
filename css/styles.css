@@ -3979,8 +3979,9 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 .hours-review-dialog::backdrop{background:var(--surface)}
 .hours-review-dialog>header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border)}
 .hours-review-dialog>header button{padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font:600 .75rem var(--font)}
-.hours-review-dialog>iframe{display:block;flex:1;min-height:0;width:100%;border:0;background:#101d19;color-scheme:dark}
+.hours-review-dialog>iframe{display:block;flex:1;min-height:0;width:100%;border:0;background:var(--surface);color-scheme:dark}
 
+html[data-theme=light] .hours-review-dialog>iframe{color-scheme:light}
 .hours-auth-alert.quiet{align-items:center;border:0;border-top:1px solid var(--border);border-radius:0;padding:6px 0 0;background:transparent;color:var(--text-muted)}
 .hours-auth-alert.quiet button{border:0;text-decoration:underline;text-underline-offset:2px;color:inherit;padding:4px 2px}
 
@@ -3997,6 +3998,10 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 .mobile-connection-dialog [data-route][data-available=true]{color:var(--c-green)}.mobile-connection-dialog [data-mode-result]{font-size:.72rem;margin-bottom:0}
 .mobile-connection-dialog [data-link]{margin-top:12px}.mobile-connection-dialog input{display:block;box-sizing:border-box;width:100%;margin:5px 0 8px;padding:8px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:8px}
 .hours-home-actions [data-mobile-connection]{font:600 .72rem var(--font)}
+
+.home-submission.urgent{--status-tone:var(--c-red)}
+.week-card[data-mail-state=changed]{border-color:var(--c-red)}
+.week-card[data-mail-state=changed] .hours-week-badge{color:var(--c-red)}
 
 /* Fuente: css/source/energy-refinements.css */
 /* Facturas: mismos componentes que los contratos, cifras sin desbordar. */
@@ -4370,10 +4375,14 @@ body:has(#evDetailOv.open .ev-car-sheet #evDRutSes) .toast{bottom:calc(56dvh + 1
 /* Fuente: css/source/invoices.css */
 .hours-control:has(.home-invoice-actions){align-items:stretch;gap:6px;flex-wrap:wrap}
 .hours-control #editHoursBtn{padding:6px;gap:3px;min-width:44px;min-height:42px;justify-content:center;white-space:nowrap;font-size:.72rem}
-.home-invoice-actions{display:flex;gap:6px;flex:1;min-width:0}
+.home-invoice-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:5px;row-gap:2px;max-width:259px;flex:1;min-width:0}
+#homeSyncDate{grid-column:1/-1;text-align:right;color:var(--text-muted);font-size:.60rem;line-height:1.25}
+#homeSyncDate:empty{display:none}
+.hours-control #editHoursBtn{align-self:start}
 .home-invoice-actions button{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:4px;min-height:42px;padding:6px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);font:inherit;font-size:.72rem;font-weight:600;line-height:1.25}
 .home-invoice-actions svg{width:21px;height:21px;flex-shrink:0;color:var(--home-tone);opacity:1}
-.home-sync-icon{color:var(--home-tone);font:1.15rem/1 var(--font)}
+.home-invoice-actions button{padding:4px;gap:3px;min-height:38px}
+.home-invoice-actions svg{width:17px;height:17px}
 #homeSyncBtn:disabled{opacity:.65;cursor:wait}
 @media (max-width:380px){.home-invoice-actions{gap:4px}.home-invoice-actions button{padding:4px 3px;gap:3px}.home-invoice-actions svg{width:17px;height:17px}}
 .hours-control .default-hours-panel{flex-basis:100%}
@@ -4479,7 +4488,9 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 .invoice-kairo-card .ev-btn{min-height:44px}
 .invoice-kairo-locked .invoice-connection-action{margin-top:8px}
 .home-invoice-status{--invoice-tone:var(--text-muted);display:grid;grid-template-columns:16px minmax(0,1fr) auto;align-items:center;gap:8px;box-sizing:border-box;padding:12px;border:1px solid color-mix(in srgb,var(--invoice-tone) 65%,var(--border));border-radius:10px;background:color-mix(in srgb,var(--invoice-tone) 7%,var(--surface));color:var(--invoice-tone)}
-.home-invoice-status.pending{--invoice-tone:var(--c-orange)}
+.home-invoice-status.urgent{--invoice-tone:var(--c-red)}
+.home-invoice-status.urgent .home-invoice-action{color:var(--c-red);border-color:currentColor}
+.home-invoice-status.pending:not(.urgent){--invoice-tone:var(--c-orange)}
 .home-invoice-status.complete{--invoice-tone:var(--c-green)}
 .home-invoice-status.scheduled{--invoice-tone:var(--upcoming-text)}
 .home-invoice-options{display:grid;gap:6px}

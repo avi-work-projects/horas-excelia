@@ -12,6 +12,8 @@ for(const width of [320,400])test('revisión de noviembre compacta a '+width+' p
  await page.route('**/facturas/approve',r=>{writes.push(r.request().postDataJSON());return r.fulfill({status:409,json:{message:'La versión ha cambiado. Vuelve a revisar.'}});});
  await page.goto('/synthetic-invoice');await expect(page.getByRole('heading',{name:'Noviembre 2026'})).toBeVisible();
  await expect(page.locator('[aria-current=step]')).toHaveAttribute('data-step','2');
+ const step=page.getByRole('button',{name:'Paso 5, Programación'});
+ expect(await step.evaluate(el=>{const range=document.createRange();range.selectNodeContents(el.lastChild);const box=range.getBoundingClientRect();return range.getClientRects().length===1&&box.right<=innerWidth&&box.left>=0;})).toBe(true);
  await expect(page.getByRole('link',{name:'Volver a Gestify'})).toBeVisible();
  expect(await page.evaluate(()=>document.documentElement.scrollHeight<=innerHeight)).toBe(true);
  await expect(page.getByRole('link',{name:'Revisar borrador PDF'})).toHaveAttribute('href','/facturas/documento/2/draft');

@@ -12,6 +12,7 @@
 Una tarea exclusivamente documental conserva las versiones y los archivos de la app. Ver la excepción de publicación en docs/DEVELOPMENT.md.
 
 ## Reglas vigentes
+- En cualquier pantalla, las aclaraciones introducidas con un asterisco se presentan en cursiva, incluido el asterisco.
 - PWA estática sin backend. Mantener la arquitectura actual y la compatibilidad de backups JSON.
 - css/styles.css es generado. Editar css/source/; las otras hojas CSS siguen siendo editables. No alterar el orden de cascada del catálogo por comodidad.
 - Atrás, flechas y Hoy: base y variantes en css/source/navigation-controls.css; disposición de cabeceras en su módulo. El carrusel conserva su combinación con .ev-btn en event-panels.css. No añadir parches de estos controles a shared-refinements.css.

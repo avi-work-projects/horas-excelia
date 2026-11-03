@@ -30,7 +30,7 @@ def dashboard(content,tab):
     template='''<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Facturación · Kairo</title><style>'''+layout+'''</style><!--KAIRO_HEAD--><style>
     body.k-ui{--panel:var(--k-surface);--brand:var(--k-accent);--soft:#294235;--amber:#f0cb83;--amber-bg:#41381f}
-    .k-ui nav{display:flex;gap:5px;margin:0 0 18px}.k-ui nav a{font-size:12px;padding:9px 4px;min-height:36px}.k-ui nav a[aria-current]{background:var(--soft);color:var(--k-accent)}
+    .k-ui nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) max-content;gap:4px;margin:0 0 18px}.k-ui nav a{white-space:nowrap;text-align:center;font-size:12px;padding:9px 4px;min-height:36px}.k-ui nav a[aria-current]{background:var(--soft);color:var(--k-accent)}
     .k-ui .card{margin:12px 0;padding:16px}.k-ui .button{min-height:42px}.k-ui .utilities{display:flex;gap:14px;padding:5px 0}
     </style></head><body class="k-ui"><!--KAIRO_HEADER--><main class="k-main"><nav aria-label="Facturación">'''+nav+'</nav>'+content+'''
     <footer class="utilities"><a href="/facturas/ajustes">Ajustes</a><a href="/facturas/monitor">Avisos</a></footer></main></body></html>'''

@@ -90,7 +90,7 @@ def render(period, row, current, cfg, csrf, fingerprint, moment=None):
             approval+='<button type="button" class="k-cancel" data-action="cancel" aria-label="'+caption+'">Cancelar</button>'
         content+=panel(4,'Aprobar',approval+'</div></div>')
         archive=badge+('<div class="k-action-list">'+pdf+'</div>' if issued else '<p>PDF definitivo pendiente de emisión.</p>')
-        content+=panel(5,'Archivo',archive+'<div class="k-action-list">'+schedule+'</div>')
+        content+=panel(5,'Programación',archive+'<div class="k-action-list">'+schedule+'</div>')
     boot=json.dumps({'csrf':csrf,'hash':fingerprint,'period':title,'planId':row['id'] if row else None,
                      'initial':initial,'hasPlan':bool(row),'state':row['status'] if row else None},ensure_ascii=True).replace('<',r'\u003c')
     template=Path(__file__).with_name('invoice_month_review.html').read_text(encoding='utf-8')

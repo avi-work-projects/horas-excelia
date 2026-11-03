@@ -12,6 +12,7 @@ async function setup(page,context,{queued=false}={}){
   await context.route(origin+'horas/status?**',async route=>{
     calls.hours++;if(offline)return route.abort();
     const requested=new URL(route.request().url()).searchParams.get('period');
+    if(requested==='2027-09')return route.fulfill({json:{phase:'done',result:{periods:[]}}});
     bundle=await page.evaluate(requested=>({periods:[-1,0,1].map(offset=>{const d=new Date(Number(requested.slice(0,4)),Number(requested.slice(5))-1+offset,1),period=mkey(d.getFullYear(),d.getMonth());return {period,checkedAt:new Date().toISOString(),verified:true,rows:hoursScopeKeys(period).map(key=>({key,state:'scheduled',days:hoursWeekDays(key),schedule:homeWeekSchedule(key).date+'T08:00:00+01:00'}))};})}),requested);
     await route.fulfill({status:queued?202:200,json:queued?{jobId,kind:'status',phase:'queued'}:{phase:'done',result:bundle},headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}});
   });
@@ -53,9 +54,9 @@ test('un trabajo sobrevive al cierre de Gestify y devuelve su resultado sin repe
   await expect(next.locator('.home-submission.complete')).toContainText('Correos al día');expect(api.calls.hours).toBe(1);
   await expect.poll(()=>next.evaluate(()=>JSON.parse(localStorage.getItem(HOURS_JOBS_KEY)).length)).toBe(0);
 });
-test('fallo de actualización conserva factura y correos; Sync Cairo actualiza ambos estados desde la cabecera',async({page,context})=>{
+test('fallo de actualización conserva factura y correos; Sync Kairo actualiza ambos estados desde la cabecera',async({page,context})=>{
   const api=await setup(page,context);await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura programada');
-  api.offline();await page.locator('.home-invoice-actions').getByRole('button',{name:'Sync Cairo'}).click();
+  api.offline();await page.locator('.home-invoice-actions').getByRole('button',{name:'Sync Kairo'}).click();
   await expect.poll(()=>api.calls.hours).toBe(2);await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura programada');await expect(page.locator('.home-submission')).toContainText('Correos al día');
   expect(api.calls.invoices).toHaveLength(4);
 });
@@ -79,21 +80,21 @@ test('panel naranja distingue un mes vacío de una primera revisión y de hechos
   await setup(page,context);
   const panel=page.locator('.home-submission'),action=panel.locator('[data-hours-review]');
   await page.evaluate(()=>{CY=2027;CM=8;render();});
-  await expect(action).toHaveText(/Sin envíos confirmados/);
-  await expect(panel.locator('.hours-verified-note')).toHaveText('Aún sin revisar');
+  await expect(action).toHaveText(/Sin programar/);
+  await expect(panel.locator('.hours-verified-note')).toHaveText('');
   await expect(panel.locator('.home-submission-detail,.hours-pending-button')).toHaveCount(0);
   await page.evaluate(()=>{
     const period=mkey(CY,CM),stamp='2027-02-01T09:30:00Z';
     hoursCacheRemember({period,verified:true,checkedAt:stamp,rows:hoursScopeKeys(period).map(key=>({key,state:'missing'}))},hoursKairoUrl(),'');
     paintHoursStatus();
   });
-  await expect(action).toHaveText(/Sin envíos programados/);
+  await expect(action).toHaveText(/Sin programar/);
   await expect(panel.locator('.hours-verified-note')).toHaveText(/Fecha de revisión.*0?1\/0?2.*10:30/);
   await page.screenshot({path:info.outputPath('home-sin-envios.png'),animations:'disabled'});
   await page.evaluate(()=>{
     const keys=hoursScopeKeys(mkey(CY,CM));delete HOURS_CACHE.weeks[keys[0]];HOURS_CACHE.weeks[keys[1]].state='sent';paintHoursStatus();
   });
-  await expect(action).toContainText('Programación por confirmar');
+  await expect(panel).toContainText('Semanas pendientes');await expect(action).toHaveText('Programar pendientes');
 });
 
 test('un pendiente antiguo recupera una vez la caché de Kairo sin pedir refresco de Outlook',async({page,context})=>{
@@ -145,4 +146,22 @@ test('sin ausencias el total conserva también su tamaño al mostrar la fórmula
   const font=el=>{const s=getComputedStyle(el);return [s.fontFamily,s.fontSize,s.fontWeight,s.color];};
   const before=await total.evaluate(font);await page.locator('[data-home-formula]').click();
   await expect(total).toHaveCount(1);expect(await total.evaluate(font)).toEqual(before);
+});
+
+test('factura a siete días en naranja, a seis en rojo y semana editada en rojo',async({page,context})=>{
+  await setup(page,context);
+  await page.evaluate(()=>{
+    const cached=INVOICE_HOME_CACHE.periods['2027-02'].data;
+    Object.assign(cached,{state:'missing',scheduled:false,sent:false,scheduledDate:null});
+    hoursCachedWeek('2027-02-15').state='missing';
+  });
+  // 20 February is Saturday. The invoice is due on Friday 19.
+  await page.clock.setFixedTime(new Date('2027-02-12T12:00:00+01:00'));await page.evaluate(()=>render());
+  await expect(page.locator('#homeInvoiceStatus')).not.toHaveClass(/urgent/);
+  await page.clock.setFixedTime(new Date('2027-02-13T12:00:00+01:00'));await page.evaluate(()=>render());
+  await expect(page.locator('#homeInvoiceStatus')).toHaveClass(/urgent/);
+  await expect(page.locator('#homeInvoiceStatus em')).toHaveCSS('font-style','italic');
+  await page.evaluate(()=>{ST['2027-02-23']={type:'vacaciones'};render();});
+  await expect(page.locator('.week-card[data-week="2027-02-22"]')).toHaveAttribute('data-mail-state','changed');
+  await expect(page.locator('.home-submission.urgent')).toContainText('Hay cambios');
 });

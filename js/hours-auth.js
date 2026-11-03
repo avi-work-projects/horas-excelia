@@ -1,7 +1,13 @@
 /* Session health reads a private status file, never the mailbox or a secret. */
 var HOURS_AUTH={url:'',phase:'disabled'},HOURS_AUTH_BUSY=false,HOURS_AUTH_CHECKED=0,HOURS_AUTH_TIMER=null;
-var HOURS_AUTH_MANUAL=false;
-var HOURS_AUTH_BEFORE=null;
+var HOURS_AUTH_MANUAL=false,HOURS_AUTH_REQUESTED=false;
+var HOURS_AUTH_BEFORE=null,HOURS_AUTH_SYNC_DONE=null;
+function requestHoursSyncAccess(){
+  return new Promise(function(resolve){
+    HOURS_AUTH_SYNC_DONE=resolve;
+    if(!HOURS_AUTH_MANUAL)checkHoursAuth(true,6,true);
+  });
+}
 function hoursAuthFeedback(message){if(typeof showToast==='function')showToast(message);}
 function renderHoursAuthNotice(){
   var text={mfa:['Microsoft pide MFA','Completa la confirmación en Authenticator o en el Outlook de Kairo. La recuperación automática está detenida.'],rejected:['Revisa la contraseña de Outlook','Microsoft la ha rechazado. No se volverá a intentar hasta que actualices el secreto privado en Kairo.'],unknown:['Revisa el acceso a Outlook','Kairo no ha podido confirmar la sesión para consultar o programar correos nuevos. Puedes ver lo ya confirmado.'],browser_unavailable:['Outlook de Kairo no está disponible','Revisa el navegador de Kairo. Se conservan las programaciones y los estados confirmados.']};
@@ -13,6 +19,7 @@ async function checkHoursAuth(force,retries,manual){
   if(retries===undefined)retries=6;
   var url;try{url=hoursKairoUrl();}catch(e){return;}
   if(!url)return;
+  if(HOURS_AUTH_BUSY&&manual&&!HOURS_AUTH_MANUAL){HOURS_AUTH_REQUESTED=true;return;}
   if(HOURS_AUTH_BUSY||manual&&HOURS_AUTH_MANUAL){if(manual)hoursAuthFeedback('La comprobación de acceso ya está en curso.');return;}
   if(!force&&HOURS_AUTH_MANUAL)return;
   if(!force&&Date.now()-HOURS_AUTH_CHECKED<30000)return;
@@ -31,11 +38,13 @@ async function checkHoursAuth(force,retries,manual){
     if(!pending)HOURS_AUTH_MANUAL=false;
     HOURS_AUTH={url:url,phase:value.phase};paintHoursStatus();
     if(notify&&typeof showToast==='function')showToast('Microsoft pide MFA. La recuperación de Outlook está detenida.');
-    if(report&&!notify)hoursAuthFeedback({ready:'Acceso a Outlook confirmado. Ya puedes actualizar el estado.',unknown:'Comprobado: el acceso sigue detenido. Revisa la pantalla de Outlook en Kairo.',mfa:'Microsoft sigue esperando tu confirmación MFA.',rejected:'La contraseña fue rechazada. Actualiza el secreto privado en Kairo.',browser_unavailable:'El navegador de Outlook no está disponible en Kairo.',disabled:'El recuperador de Outlook está desactivado.'}[value.phase]);
+    if(report&&!notify)hoursAuthFeedback({ready:'Acceso a Outlook confirmado.',unknown:'Comprobado: el acceso sigue detenido. Revisa la pantalla de Outlook en Kairo.',mfa:'Microsoft sigue esperando tu confirmación MFA.',rejected:'La contraseña fue rechazada. Actualiza el secreto privado en Kairo.',browser_unavailable:'El navegador de Outlook no está disponible en Kairo.',disabled:'El recuperador de Outlook está desactivado.'}[value.phase]);
     if(retries>0&&pending)HOURS_AUTH_TIMER=setTimeout(function(){HOURS_AUTH_TIMER=null;checkHoursAuth(true,retries-1);},2000);
     else if(pending&&HOURS_AUTH_MANUAL){HOURS_AUTH_MANUAL=false;hoursAuthFeedback('Kairo aún no ha terminado la comprobación de acceso.');paintHoursStatus();}
   }catch(e){if(HOURS_AUTH_MANUAL){hoursAuthFeedback('No se pudo comprobar el acceso. Se conserva el último estado.');if(HOURS_AUTH_BEFORE)HOURS_AUTH=HOURS_AUTH_BEFORE;}HOURS_AUTH_MANUAL=false;paintHoursStatus();}
-  finally{clearTimeout(timeout);HOURS_AUTH_BUSY=false;if(button&&button.isConnected){button.disabled=false;button.textContent='Comprobar acceso';button.removeAttribute('aria-busy');}}
+  finally{clearTimeout(timeout);HOURS_AUTH_BUSY=false;if(HOURS_AUTH_REQUESTED){HOURS_AUTH_REQUESTED=false;void checkHoursAuth(true,6,true);}
+    else if(HOURS_AUTH_SYNC_DONE&&!HOURS_AUTH_MANUAL){var done=HOURS_AUTH_SYNC_DONE;HOURS_AUTH_SYNC_DONE=null;done(HOURS_AUTH.phase);}
+    if(button&&button.isConnected){button.disabled=false;button.textContent='Comprobar acceso';button.removeAttribute('aria-busy');}}
 }
 if(typeof document!=='undefined')document.addEventListener('DOMContentLoaded',function(){
   var root=document.getElementById('weeksContainer');if(root)root.addEventListener('click',function(e){if(e.target.closest('[data-hours-auth]'))checkHoursAuth(true,6,true);});

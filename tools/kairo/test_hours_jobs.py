@@ -25,6 +25,18 @@ def wait_done(jobs, identifier):
 
 
 class JobsTests(unittest.TestCase):
+    @unittest.skipIf(__import__('os').name=='nt','Kairo usa flock de Linux')
+    def test_contended_browser_lock_has_a_deadline(self):
+        from hours_errors import HoursFailure
+        with tempfile.TemporaryDirectory() as temp:
+            store=Store(temp)
+            with store.exclusive(), self.assertRaises(HoursFailure) as caught:
+                with store.exclusive(timeout=0):
+                    self.fail('El segundo lector no puede adquirir el bloqueo')
+            self.assertEqual(caught.exception.code,'browser_busy')
+            with store.exclusive(timeout=0):
+                pass
+
     def test_failed_status_preserves_facts_and_returns_specific_safe_error(self):
         with tempfile.TemporaryDirectory() as temp:
             store=Store(temp)
@@ -121,6 +133,8 @@ class JobsTests(unittest.TestCase):
                 with urlopen(Request(root+path,headers=headers|(extra or {})),timeout=5) as response:
                     return response.status,json.load(response)
             try:
+                self.assertEqual(get('/status?period=2027-02&background=1&audit=1&stored=1'),(200,{'phase':'done','result':{'periods':[]}}))
+                self.assertEqual(calls,[])
                 started=time.monotonic();status,job=get('/status?period=2027-02&background=1&audit=1')
                 self.assertEqual(status,202);self.assertLess(time.monotonic()-started,1)
                 self.assertTrue(entered.wait(2))

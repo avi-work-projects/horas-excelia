@@ -49,6 +49,7 @@ function homeInvoiceModel(year,month){
 function renderHomeInvoiceStatus(year,month){
   if(mkey(year,month)<INVOICE_FIRST_PERIOD)return '<button type="button" id="invoiceHomeBtn" class="home-invoice-action" data-home-invoice="send">Ver cálculo histórico</button>';
   var m=homeInvoiceModel(year,month),icon=m.tone==='complete'?'✓':m.tone==='scheduled'?dispatchIcon('invoice'):'!';
+  var urgent=m.unsent&&homeDueSoon(homeInvoiceScheduleDate(year,month));
   var action;
   if(m.week){
     action='<button type="button" class="home-invoice-action" data-home-invoice="hours" data-week="'+m.week+'">Revisar horas</button>';
@@ -62,7 +63,7 @@ function renderHomeInvoiceStatus(year,month){
   }
   if(INVOICE_HOME_STATUS.phase==='error'&&INVOICE_HOME_STATUS.period===m.period&&INVOICE_HOME_STATUS.url===m.url&&INVOICE_HOME_STATUS.reason)m.detail+=' '+INVOICE_HOME_STATUS.reason;
   if(m.configure)action='<div class="home-invoice-options">'+action+'<button type="button" class="home-invoice-action" data-home-invoice="configure">Conectar Kairo</button></div>';
-  return '<section class="home-invoice-status '+m.tone+(m.unsent?' unsent':'')+'" id="homeInvoiceStatus" aria-label="Estado de factura" aria-live="polite"><span class="home-invoice-icon" aria-hidden="true">'+icon+'</span><div class="home-invoice-copy"><strong>'+escHtml(m.title)+'</strong><span>'+escHtml(m.detail)+'</span></div>'+action+'</section>';
+  return '<section class="home-invoice-status '+m.tone+(urgent?' urgent':'')+(m.unsent?' unsent':'')+'" id="homeInvoiceStatus" aria-label="Estado de factura" aria-live="polite"><span class="home-invoice-icon" aria-hidden="true">'+icon+'</span><div class="home-invoice-copy"><strong>'+escHtml(m.title)+'</strong><span>'+(m.week?'<em>'+escHtml(m.detail)+'</em>':escHtml(m.detail))+'</span></div>'+action+'</section>';
 }
 function paintHomeInvoiceStatus(){if(typeof paintInvoiceCalendar==='function')paintInvoiceCalendar();var current=document.getElementById('homeInvoiceStatus');if(current)current.outerHTML=renderHomeInvoiceStatus(CY,CM);}
 async function fetchHomeInvoiceStatus(period,url,force){

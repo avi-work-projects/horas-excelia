@@ -34,6 +34,9 @@ async function setup(page,context,scenario='mixed'){
   await page.goto('/');
   await page.evaluate(()=>{CY=2027;CM=1;MONTH_H={'2027-02':9,'2027-03':9};ST={};SW={};render();});
   await expect.poll(()=>page.evaluate(()=>HOURS_STATUS.phase)).toMatch(/ready|error/);
+  // Seed the synthetic account explicitly. Opening Home now reads only stored facts.
+  await page.evaluate(()=>syncHoursStatus(true));
+  await expect.poll(()=>page.evaluate(()=>HOURS_JOBS.length)).toBe(0);
   return calls;
 }
 async function open(page,button){const waiting=page.waitForEvent('popup');await button.click();const popup=await waiting;await expect(popup.locator('#message')).toContainText('Estado actualizado en Home');return popup;}
@@ -80,6 +83,20 @@ test('calendario compartido de Kairo: jornadas, semanas y navegación por gesto'
   await expect(shared.locator('.invoice-marker')).toBeVisible();
   await viewer.locator('body').screenshot({path:info.outputPath('calendario-correos.png')});
   const grid=viewer.locator('#calendar');
+  await viewer.getByRole('button',{name:'Tema claro'}).click();
+  const mode=await viewer.locator('html').getAttribute('data-k-theme');
+  await viewer.getByRole('button',{name:'Tema claro'}).click();
+  expect(await viewer.locator('html').getAttribute('data-k-theme')).not.toBe(mode);
+  await grid.evaluate(el=>{
+    const p=x=>new Touch({identifier:1,target:el,clientX:x,clientY:110});
+    el.dispatchEvent(new TouchEvent('touchstart',{touches:[p(200)]}));
+    el.dispatchEvent(new TouchEvent('touchmove',{touches:[p(169)],cancelable:true}));
+  });
+  await expect(viewer.locator('.k-preview h2')).toContainText('marzo');
+  expect(await grid.evaluate(el=>el.getBoundingClientRect().right-document.querySelector('.k-preview').getBoundingClientRect().left)).toBeCloseTo(0,0);
+  await grid.dispatchEvent('touchcancel');
+  await expect(viewer.locator('.k-preview')).toHaveCount(0);
+  await expect(grid.locator('h2')).toContainText('febrero');
   await grid.evaluate(el=>{
     const point=x=>new Touch({identifier:1,target:el,clientX:x,clientY:110});
     el.dispatchEvent(new TouchEvent('touchstart',{touches:[point(270)]}));
@@ -121,7 +138,7 @@ test('Android instalado conserva la revisión en Gestify y vuelve a Home',async(
   });
   const calls=await setup(page,context),before=await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>![HOURS_CACHE_KEY,HOURS_JOBS_KEY,INVOICE_HOME_CACHE_KEY].includes(key)).sort(([a],[b])=>a.localeCompare(b)))));
   const popups=[];page.on('popup',popup=>popups.push(popup));
-  await page.getByRole('button',{name:'Sync Cairo',exact:true}).click();
+  await page.getByRole('button',{name:'Sync Kairo',exact:true}).click();
   await expect(page.locator('.home-submission')).toContainText('Hay cambios');
   await expect(page.locator('.hours-review-dialog')).toHaveCount(0);
   await page.locator('[data-hours-review]').click();
@@ -184,7 +201,7 @@ test('la revisión comunica estados aunque el navegador bloquee la consulta auto
 
 test('comprobar vuelve a Home sin confirmar ni cambiar correos',async({page,context})=>{
   const calls=await setup(page,context),before=await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>![HOURS_CACHE_KEY,HOURS_JOBS_KEY,INVOICE_HOME_CACHE_KEY].includes(key)).sort(([a],[b])=>a.localeCompare(b)))));
-  await page.getByRole('button',{name:'Sync Cairo',exact:true}).click();
+  await page.getByRole('button',{name:'Sync Kairo',exact:true}).click();
   await expect(page.locator('.hours-review-dialog')).toHaveCount(0);
   await expect(page.locator('.home-submission')).toContainText('Hay cambios');
   expect(calls.some(c=>c.path.endsWith('/commit')||c.path.endsWith('/simulate'))).toBe(false);
@@ -218,9 +235,10 @@ test('semanas resueltas aparecen sincronizadas en Home y no ofrecen una confirma
   await setup(page,context);await expect(page.locator('.home-submission.complete')).toContainText('Correos al día');
   await expect(page.locator('.home-submission.complete')).not.toContainText('Programado hasta');
   await page.screenshot({path:info.outputPath('hours-home-synced.png'),animations:'disabled'});
-  await context.route(base+'horas/',async route=>{const response=await context.request.get('http://127.0.0.1:8772/');await route.fulfill({contentType:'text/html',body:(await response.text()).replace('"allowWrites": false','"allowWrites": true')});});
-  const popup=await open(page,page.locator('.week-card').first().getByRole('button',{name:'Ver estado'}));
-  await expect(popup.locator('#summary')).toContainText('Todo al día');await expect(popup.locator('#commit')).toBeHidden();await expect(popup.locator('#simulate')).toBeHidden();
+  await page.locator('.week-card').first().getByRole('button',{name:'Ver estado'}).click();
+  const agenda=page.frameLocator('iframe[title="Programación de Kairo"]');
+  await expect(agenda.locator('#calendar')).toBeVisible();
+  await expect(agenda.locator('#commit,#simulate:visible')).toHaveCount(0);
 });
 
 test('si Gestify cambia tras revisar, no permite confirmar el lote antiguo',async({page,context})=>{
@@ -290,4 +308,29 @@ test('calendario de horas: exclusiones, envíos y dos semanas siguientes sin con
  await popup.screenshot({path:info.outputPath('hours-calendar-extra-weeks.png'),animations:'disabled'});await popup.close();
  const individual=await open(page,page.locator('.week-card').nth(3).getByRole('button',{name:'Programar semana'}));
  await expect(individual.locator('#calendar tr.included')).toHaveCount(1);
+});
+
+test('volver a Home con la revisión aún en curso conserva el trabajo de Kairo',async({page,context})=>{
+  await page.addInitScript(()=>{
+    Object.defineProperty(navigator,'userAgent',{get:()=> 'Android Gestify'});
+    const media=window.matchMedia.bind(window);window.matchMedia=q=>q==='(display-mode: standalone)'?{matches:true}:media(q);
+  });
+  await setup(page,context);
+  let release;
+  const gate=new Promise(r=>release=r);
+  await context.route(base+'horas/preview',async route=>{
+    const req=route.request();
+    const response=await context.request.post('http://127.0.0.1:8772/preview',{headers:{Origin:'http://127.0.0.1:8772','X-CSRF':req.headers()['x-csrf']},data:req.postDataJSON()});
+    await gate;await route.fulfill({response}).catch(()=>{});
+  });
+  await context.route(base+'horas/jobs/**',async r=>{await gate;await r.fallback();});
+  await page.locator('[data-hours-review]').click();
+  try{
+    await expect.poll(()=>page.evaluate(()=>HOURS_JOBS.some(j=>j.kind==='preview'))).toBe(true);
+    await page.getByRole('button',{name:'Volver a Home'}).click();
+    await expect(page.locator('.hours-job-note')).toContainText('Puedes salir');
+  }finally{release();}
+  await expect.poll(()=>page.evaluate(()=>HOURS_JOBS.length)).toBe(0);
+  await expect(page.locator('.home-submission')).toContainText('Hay cambios');
+  await expect(page.locator('#toast')).not.toContainText('cerrada');
 });

@@ -40,7 +40,7 @@ class Store:
             db.close()
 
     @contextmanager
-    def exclusive(self):
+    def exclusive(self, timeout=12):
         # All service processes share this lock, not only one HTTP worker.
         with (self.root/'browser.lock').open('a') as lock:
             if os.name == 'nt':
@@ -50,7 +50,17 @@ class Store:
                 msvcrt.locking(lock.fileno(), msvcrt.LK_LOCK, 1)
             else:
                 import fcntl
-                fcntl.flock(lock, fcntl.LOCK_EX)
+                import time
+                from hours_errors import HoursFailure
+                deadline=time.monotonic()+timeout
+                while True:
+                    try:
+                        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                        break
+                    except BlockingIOError:
+                        if time.monotonic()>=deadline:
+                            raise HoursFailure('browser_busy')
+                        time.sleep(.1)
             try:
                 yield
             finally:
