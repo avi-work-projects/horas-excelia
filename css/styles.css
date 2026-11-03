@@ -3767,6 +3767,7 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 .home-submission-heading{display:flex;align-items:center;gap:6px}
 .home-submission-detail{font-size:.68rem;line-height:1.4;margin:5px 0 0;color:var(--text-muted)}
 .home-submission-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,184px);gap:10px;align-items:start}
+.home-submission.complete .home-submission-body{align-items:center}
 .home-submission-body.summaryless{grid-template-columns:1fr}
 .home-submission-copy{min-width:0}
 .home-submission-icon{font-size:1.1rem;flex-shrink:0}
@@ -3960,10 +3961,6 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 .hours-check-button>span{font:.65rem var(--font)}
 .hours-home-actions .hours-pending-button{flex:1 0 100%;background:var(--c-green);color:var(--surface);border-color:var(--c-green)}
 .hours-job-note{flex:1 0 100%;font-size:.67rem;color:var(--text-muted);line-height:1.5}
-.hours-auth-alert{display:flex;align-items:start;justify-content:space-between;gap:8px;padding:8px;margin:8px 0 0;border:1px solid var(--c-orange);border-radius:8px;background:var(--surface);color:var(--text);font-size:.68rem}
-.hours-auth-alert details{min-width:0;flex:1}.hours-auth-alert summary{font-weight:600;cursor:pointer}.hours-auth-alert details>span{display:block;margin-top:5px;line-height:1.4}
-.hours-auth-alert button{flex:0 0 auto;max-width:112px}
-.hours-auth-alert button{padding:6px 10px;border:1px solid var(--c-orange);border-radius:7px;background:transparent;color:var(--text);font:inherit;cursor:pointer}
 .week-info .hours-week-badge{border:0;background:none;padding:2px 0;font-family:var(--font);cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-color:color-mix(in srgb,currentColor 40%,transparent)}
 .hours-pending-button{border:1px solid color-mix(in srgb,var(--status-tone) 55%,var(--border));border-radius:8px;padding:8px 11px;background:var(--surface);color:var(--status-tone);font:600 .73rem var(--font);cursor:pointer;min-height:34px}
 .hours-pending-button:focus-visible{outline:2px solid var(--status-tone);outline-offset:3px}
@@ -3982,13 +3979,7 @@ body:has(#personalNotesOv.open) .tasks-fab{visibility:hidden}
 .hours-review-dialog>iframe{display:block;flex:1;min-height:0;width:100%;border:0;background:var(--surface);color-scheme:dark}
 
 html[data-theme=light] .hours-review-dialog>iframe{color-scheme:light}
-.hours-auth-alert.quiet{align-items:center;border:0;border-top:1px solid var(--border);border-radius:0;padding:6px 0 0;background:transparent;color:var(--text-muted)}
-.hours-auth-alert.quiet button{border:0;text-decoration:underline;text-underline-offset:2px;color:inherit;padding:4px 2px}
 
-.hours-auth-alert.quiet details>summary{display:inline-flex;align-items:center;gap:6px;min-height:30px;padding:3px 1px!important;background:transparent;color:inherit}
-.hours-auth-alert.quiet details>summary::before{content:none}
-.hours-auth-alert.quiet details>summary::after{position:static;width:5px;height:5px;border-width:0 1.5px 1.5px 0;color:inherit;transform:rotate(45deg);margin-top:-2px}
-.hours-auth-alert.quiet details[open]>summary::after{transform:rotate(225deg);margin-top:3px}
 
 .mobile-connection-dialog{box-sizing:border-box;margin:auto;width:min(390px,calc(100% - 24px));padding:16px;border:1px solid var(--border);border-radius:16px;background:var(--surface);color:var(--text);font:normal .84rem/1.4 var(--font)}
 .mobile-connection-dialog::backdrop{background:#10111bb8}.mobile-connection-dialog header{display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -4373,18 +4364,19 @@ body:has(#evDetailOv.open .ev-car-sheet #evDRutSes) .toast{bottom:calc(56dvh + 1
 @media(max-width:360px){#homePopupContent{padding:12px}.home-reminder-meta{max-width:108px;flex-wrap:wrap;gap:3px}.home-reminder-when{font-size:.6rem}.home-reminder-row{gap:4px 7px}}
 
 /* Fuente: css/source/invoices.css */
+/* The two agenda links share their label, width and button style. */
+:root{--home-action-width:clamp(62px,22vw,104px)}
 .hours-control:has(.home-invoice-actions){align-items:stretch;gap:6px;flex-wrap:wrap}
-.hours-control #editHoursBtn{padding:6px;gap:3px;min-width:44px;min-height:42px;justify-content:center;white-space:nowrap;font-size:.72rem}
-.home-invoice-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:5px;row-gap:2px;max-width:259px;flex:1;min-width:0}
-#homeSyncDate{grid-column:1/-1;text-align:right;color:var(--text-muted);font-size:.60rem;line-height:1.25}
-#homeSyncDate:empty{display:none}
-.hours-control #editHoursBtn{align-self:start}
-.home-invoice-actions button{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:4px;min-height:42px;padding:6px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);font:inherit;font-size:.72rem;font-weight:600;line-height:1.25}
-.home-invoice-actions svg{width:21px;height:21px;flex-shrink:0;color:var(--home-tone);opacity:1}
-.home-invoice-actions button{padding:4px;gap:3px;min-height:38px}
-.home-invoice-actions svg{width:17px;height:17px}
-#homeSyncBtn:disabled{opacity:.65;cursor:wait}
-@media (max-width:380px){.home-invoice-actions{gap:4px}.home-invoice-actions button{padding:4px 3px;gap:3px}.home-invoice-actions svg{width:17px;height:17px}}
+.hours-control #editHoursBtn{flex:1 1 0;min-width:0;min-height:42px;padding:4px;gap:4px;justify-content:center;white-space:nowrap;font-size:.72rem}
+.home-invoice-actions{display:grid;grid-template-columns:repeat(3,var(--home-action-width));gap:4px}
+.home-invoice-actions button,.home-schedule-action{box-sizing:border-box;min-width:0;display:flex;align-items:center;justify-content:center;gap:3px;min-height:max(50px,3.15rem);padding:4px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);font:600 .72rem/1.2 var(--font);cursor:pointer;text-align:center}
+.home-schedule-action{width:var(--home-action-width)}
+.home-invoice-actions svg,.home-schedule-action svg{width:17px;height:17px;flex:none;color:var(--home-tone)}
+#homeSyncBtn{flex-direction:column;gap:1px}
+.home-sync-label{display:flex;align-items:center;justify-content:center;gap:3px}
+#homeSyncDate{white-space:nowrap;color:var(--text-muted);font:500 .56rem/1.1 var(--font);font-variant-numeric:tabular-nums}
+#homeSyncDate:empty,#homeSyncResult:empty{display:none}
+.home-sync-options{display:grid;gap:8px;margin-top:12px}
 .hours-control .default-hours-panel{flex-basis:100%}
 #csvExportBtn[hidden],#pdfExportBtn[hidden]{display:none!important}
 .invoice-sheet{width:min(560px,100%);max-height:90dvh;display:flex;flex-direction:column;padding:16px!important;box-sizing:border-box}
@@ -4506,8 +4498,8 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 @media(prefers-reduced-motion:reduce){.home-invoice-status.unsent .home-invoice-copy>strong{animation:none}}
 
 .dispatch-icon{width:20px;height:20px;flex:none;vertical-align:middle;color:inherit}
-.home-schedule-action,.home-invoice-action.home-send-invoice{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:42px;padding:6px 9px;border:1px solid color-mix(in srgb,var(--home-tone) 55%,var(--border));border-radius:12px;background:color-mix(in srgb,var(--home-tone) 7%,var(--surface));color:var(--home-tone);font:600 .72rem/1.2 var(--font);cursor:pointer;text-align:center}
-.home-invoice-status .home-schedule-action,.home-invoice-action.home-send-invoice{max-width:112px}
+.home-invoice-action.home-send-invoice{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:42px;padding:6px 9px;border:1px solid color-mix(in srgb,var(--home-tone) 55%,var(--border));border-radius:12px;background:color-mix(in srgb,var(--home-tone) 7%,var(--surface));color:var(--home-tone);font:600 .72rem/1.2 var(--font);cursor:pointer;text-align:center}
+.home-invoice-action.home-send-invoice{max-width:112px}
 .home-invoice-icon .dispatch-icon{width:25px;height:25px;color:var(--home-tone)}
 .home-invoice-status.scheduled{grid-template-columns:25px minmax(0,1fr) auto}
 

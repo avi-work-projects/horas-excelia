@@ -122,12 +122,19 @@ var BDAYS_FROM_SECRET=[];
     </button>
     <div class="home-invoice-actions">
       <button type="button" id="hoursExportBtn">Exportar Horas</button>
-      <button type="button" id="hoursCalendarBtn" aria-label="Ver envíos · Ver programación" title="Ver programación">Ver envíos</button>
-      <button type="button" id="homeSyncBtn" data-hours-check title="Sincronizar correos, factura y acceso a Outlook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17H6a4.5 4.5 0 0 1-.6-9A6.5 6.5 0 0 1 18 7a5 5 0 0 1 1 9.8M8.5 13v7m-2.4-4.6L8.5 13l2.4 2.4M15.5 20v-7m-2.4 4.6 2.4 2.4 2.4-2.4"/></svg><span>Sync Kairo</span></button>
-      <small id="homeSyncDate" aria-live="polite"></small>
+      <button type="button" id="hoursCalendarBtn" class="home-schedule-action" aria-label="Ver envíos">Ver envíos</button>
+      <button type="button" id="homeSyncBtn" aria-haspopup="dialog" aria-controls="homeSyncDialog" aria-label="Sync Kairo" aria-describedby="homeSyncDate"><span class="home-sync-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17H6a4.5 4.5 0 0 1-.6-9A6.5 6.5 0 0 1 18 7a5 5 0 0 1 1 9.8M8.5 13v7m-2.4-4.6L8.5 13l2.4 2.4M15.5 20v-7m-2.4 4.6 2.4 2.4 2.4-2.4"/></svg><span>Sync Kairo</span></span><small id="homeSyncDate"></small></button>
     </div>
     <button class="default-hours-btn csv-export-btn" id="csvExportBtn" hidden><svg viewBox="0 0 24 24" class="ico-doc" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>CSV</button>
     <button class="default-hours-btn pdf-export-btn" id="pdfExportBtn" hidden><svg viewBox="0 0 24 24" class="ico-doc" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>PDF</button>
+    <dialog id="homeSyncDialog" class="mobile-connection-dialog" aria-labelledby="homeSyncTitle">
+      <header><h2 id="homeSyncTitle">Sync Kairo</h2><button type="button" data-close-sync aria-label="Cerrar">×</button></header>
+      <div class="home-sync-options">
+        <button type="button" data-hours-check>Sincronizar correos y factura</button>
+        <button type="button" data-hours-auth>Comprobar acceso a Outlook</button>
+      </div>
+      <p id="homeSyncResult" role="status"></p>
+    </dialog>
     <div class="default-hours-panel" id="hoursPanel">
       <span class="hours-label">h/d&#237;a (mes):</span>
       <div class="hours-chips">

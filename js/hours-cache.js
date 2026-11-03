@@ -64,11 +64,11 @@ function hoursCacheRemember(result,url,source,settings){
     clean.settings=prior&&prior.settings&&prior.schedule===row.schedule&&JSON.stringify(prior.days)===JSON.stringify(row.days)?prior.settings:settings||hoursSettingsSignature();HOURS_CACHE.weeks[row.key]=clean;});
   HOURS_CACHE.periods[result.period]={source:source,checkedAt:now};hoursCacheSave();
 }
+function hoursAccessIssue(code){return ['auth_required','browser_unavailable','wrong_account'].includes(code);}
 function hoursCheckMessage(code){
-  return {browser_busy:'Outlook está ocupado con otra operación. Vuelve a intentarlo en un momento.',auth_required:'Outlook necesita iniciar sesión. Pulsa «Comprobar acceso».',browser_unavailable:'El navegador de Outlook no está disponible en Kairo.',compose_open:'Hay un correo abierto para editar en Outlook. Ciérralo antes de comprobar.',wrong_account:'La cuenta abierta en Outlook no coincide.',read_failed:'No se pudo completar la lectura de Outlook.',network:'No se pudo conectar con Kairo. Comprueba que Tailscale está conectado y vuelve a intentarlo.'}[code]||'Kairo no pudo completar la comprobación.';
+  return {stored_read_failed:'Kairo no ha podido devolver los estados guardados.',browser_busy:'Outlook está ocupado con otra operación. Vuelve a intentarlo en un momento.',auth_required:'Outlook necesita iniciar sesión. Abre «Sync Kairo» y pulsa «Comprobar acceso a Outlook».',browser_unavailable:'El navegador de Outlook no está disponible en Kairo.',compose_open:'Hay un correo abierto para editar en Outlook. Ciérralo antes de comprobar.',wrong_account:'La cuenta abierta en Outlook no coincide.',read_failed:'No se pudo completar la lectura de Outlook.',network:'No se pudo conectar con Kairo. Comprueba que Tailscale está conectado y vuelve a intentarlo.'}[code]||'Kairo no pudo completar la comprobación.';
 }
 function hoursRecordCheck(period,phase,code,at){
-  if(phase==='done')HOURS_CACHE.lastMailSync=at||Date.now();
   HOURS_CACHE.checks=HOURS_CACHE.checks||{};HOURS_CACHE.checks[period]={phase:phase,code:code||'',at:at||Date.now()};
   Object.keys(HOURS_CACHE.checks).sort().slice(0,-24).forEach(function(key){delete HOURS_CACHE.checks[key];});hoursCacheSave();
 }

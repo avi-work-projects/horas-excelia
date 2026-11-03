@@ -8,6 +8,7 @@ import argparse
 import json
 import os
 import re
+import socket
 import time
 import uuid
 from datetime import datetime, timezone
@@ -108,6 +109,47 @@ def password_choice(page):
     return choices if choices.count() == 1 and choices.is_visible() else None
 
 
+def cancel_browser_passkey(page, sender):
+    """Dismiss only the browser's first-factor picker on the dedicated Kairo display."""
+    if len(page.context.pages) != 1 or screen(page, sender) != 'passkey_choice':
+        return False
+    account = page.get_by_text(re.compile('^' + re.escape(sender) + '$', re.I))
+    if not any(account.nth(i).is_visible() for i in range(account.count())):
+        return False
+    retry = page.get_by_role('button', name=re.compile(r'^(Try again|Reintentar|Intentarlo de nuevo)$', re.I))
+    if retry.count() == 1 and retry.is_visible():
+        retry.click(timeout=3000)
+    page.wait_for_timeout(650)
+    if (screen(page, sender) != 'passkey_choice' or len(page.context.pages) != 1
+            or page.evaluate('document.visibilityState') != 'visible'):
+        return False
+    # CDP keyboard events reach the document, never Chromium's native picker.
+    # The loopback RFB server belongs to outlook-session.sh's private Xvfb.
+    # Shared client, no framebuffer request, one Escape press/release.
+    try:
+        with socket.create_connection(('127.0.0.1', 5901), timeout=2) as conn, conn.makefile('rb') as stream:
+            version = b'RFB 003.008\n'
+            if stream.read(12) != version:
+                return False
+            conn.sendall(version)
+            offered = stream.read(1)
+            if not offered or 1 not in stream.read(offered[0]):
+                return False
+            conn.sendall(b'\x01')
+            if stream.read(4) != bytes(4):
+                return False
+            conn.sendall(b'\x01')
+            header = stream.read(24)
+            if len(header) != 24 or int.from_bytes(header[20:], 'big') > 256:
+                return False
+            if not stream.read(int.from_bytes(header[20:], 'big')):
+                return False
+            conn.sendall(bytes.fromhex('04 01 0000 0000ff1b 04 00 0000 0000ff1b'))
+            return True
+    except OSError:
+        return False
+
+
 def screen(page, sender):
     if outlook_page(page.url):
         if mailbox_matches(page, sender):
@@ -121,8 +163,7 @@ def screen(page, sender):
         return 'mfa'
     if any(visible(page, selector) for selector in ('#passwordError', '#usernameError')):
         return 'rejected'
-    # Microsoft can prefer a passkey before offering the account's password.
-    # Use its own Back control once; never answer a passkey/MFA challenge.
+    # The same first-factor picker may appear before the password is offered.
     if url.path in ('/common/bridge/fido', '/common/fido/get') and visible(page, '#idBtn_Back'):
         return 'passkey_choice'
     # Microsoft includes a transparent, aria-hidden password field on its
@@ -141,7 +182,7 @@ def screen(page, sender):
     return 'checking'
 
 
-def recover(page, sender, password, root, sleep=time.sleep, requested=False):
+def recover(page, sender, password, root, sleep=time.sleep, requested=False, dismiss_passkey=None):
     previous = read_state(root)
     phase = screen(page, sender)
     loading = phase == 'checking' and outlook_page(page.url)
@@ -182,6 +223,8 @@ def recover(page, sender, password, root, sleep=time.sleep, requested=False):
         phase = screen(page, sender)
         if phase == 'ready':
             return write_state(root, 'ready')
+        if phase == 'passkey_choice' and 'password' in used:
+            return write_state(root, 'mfa', paused=True)
         if phase in ('mfa', 'rejected', 'unknown'):
             return write_state(root, phase, paused=True)
         # Some tenants send Back from a preferred passkey straight to the
@@ -191,18 +234,20 @@ def recover(page, sender, password, root, sleep=time.sleep, requested=False):
             used.add('other_account')
             page.locator('#otherTile').click(timeout=5000)
         elif phase in RETRYABLE and phase not in used:
+            choice = password_choice(page) if phase == 'password_choice' else None
+            if phase == 'password_choice' and choice is None:
+                sleep(1)
+                continue
             if phase not in ('account', 'password_choice', 'passkey_choice') and not visible(page, '#idSIButton9'):
                 return write_state(root, 'unknown', paused=True)
             used.add(phase)
             if phase == 'account':
                 account_tile(page, sender).click(timeout=5000)
             elif phase == 'password_choice':
-                password_choice(page).click(timeout=5000)
+                choice.click(timeout=5000)
             elif phase == 'passkey_choice':
-                # A browser-owned WebAuthn prompt can consume pointer input.
-                # Invoke Microsoft's visible Back control, which cancels that
-                # first-factor request and exposes its alternative methods.
-                page.locator('#idBtn_Back').evaluate('(button) => button.click()')
+                if not (dismiss_passkey and dismiss_passkey(page, sender)) and screen(page, sender) == 'passkey_choice':
+                    page.locator('#idBtn_Back').evaluate('(button) => button.click()')
             elif phase == 'username':
                 page.locator('#i0116').fill(sender)
             elif phase == 'password':
@@ -261,7 +306,7 @@ def probe(config, password):
                     if not read_state(root).get('paused'):
                         write_state(root, 'unknown', paused=True)
                     return
-                recover(page, config['sender'], password, root, requested=bool(check))
+                recover(page, config['sender'], password, root, requested=bool(check), dismiss_passkey=cancel_browser_passkey)
                 # Stopping Playwright disconnects CDP; never close the user's browser.
         except Exception:
             if not read_state(root).get('paused'):

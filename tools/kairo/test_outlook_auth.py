@@ -89,6 +89,15 @@ class AuthTests(unittest.TestCase):
             self.assertEqual(self.run_auth(page,root)['phase'],'ready')
             self.assertEqual(page.fills,[('username',SENDER),('password',SECRET)])
 
+    def test_passkey_after_password_waits_for_mfa_without_touching_the_picker(self):
+        with tempfile.TemporaryDirectory() as root:
+            page=Page('password',['passkey_choice'])
+            with patch('outlook_auth.cancel_browser_passkey') as dismiss:
+                result=recover(page,SENDER,SECRET,root,sleep=lambda _:None,dismiss_passkey=dismiss)
+            self.assertEqual(result['phase'],'mfa')
+            self.assertTrue(result['paused'])
+            dismiss.assert_not_called()
+
     def test_explicit_check_recovers_old_unknown_pause_on_recognized_account(self):
         with tempfile.TemporaryDirectory() as root:
             write_state(root,'unknown',paused=True)

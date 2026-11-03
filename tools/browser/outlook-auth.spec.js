@@ -1,6 +1,8 @@
 const {test,expect}=require('@playwright/test');
 const base='https://auth-review.test.ts.net/';
-test('MFA se avisa sin consultar el buzón y se retira tras recuperar acceso',async({page,context})=>{
+test('MFA se avisa sin consultar el buzón y se retira tras recuperar acceso',async({page,context},info)=>{
+  await page.setViewportSize({width:393,height:840});
+  await page.addInitScript(()=>{localStorage.setItem('excelia-theme-v1','light');localStorage.setItem('excelia-nav-icons-v1','professional');});
   let phase='mfa',reads=0,health=0,checks=0;
   await page.clock.setFixedTime(new Date('2026-10-29T10:00:00+01:00'));
   await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-invoices-v1',JSON.stringify({config:{kairoUrl:'https://auth-review.test.ts.net/facturas/'},months:{}}));});
@@ -8,15 +10,27 @@ test('MFA se avisa sin consultar el buzón y se retira tras recuperar acceso',as
     const url=new URL(route.request().url());let data;
     if(url.pathname==='/horas/auth-status'||url.pathname==='/horas/auth-check'){health++;if(url.pathname.endsWith('auth-check'))checks++;data={phase,checkedAt:'2026-10-29T09:00:00Z'};}
     else if(url.pathname==='/horas/status'){reads++;data=await page.evaluate(()=>({phase:'done',result:{periods:[8,9,10].map(month=>{const period=mkey(2026,month);return {period,verified:true,checkedAt:new Date().toISOString(),rows:hoursScopeKeys(period).map(key=>({key,state:'sent'}))};})}}));}
-    else if(url.pathname.endsWith('gestify-status'))data={period:url.searchParams.get('period'),state:'sent',generated:true,issued:true,scheduled:false,sent:true,scheduledDate:null};
+    else if(url.pathname.endsWith('gestify-status'))data={period:url.searchParams.get('period'),state:'scheduled',generated:true,issued:false,scheduled:true,sent:false,scheduledDate:url.searchParams.get('period')+'-20'};
     else return route.abort();
     return route.fulfill({json:data,headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}});
   });
-  await page.goto('/');await expect(page.locator('.hours-auth-alert')).toContainText('Microsoft pide MFA');
-  await expect(page.locator('.home-submission')).toContainText('Correos al día');expect(reads).toBe(1);
-  await page.locator('#homeSyncBtn').click();await expect.poll(()=>checks).toBe(1);await expect(page.locator('#homeSyncBtn')).toBeEnabled();expect(reads).toBe(1);
-  phase='ready';await page.getByRole('button',{name:'Comprobar acceso'}).click();
-  await expect(page.locator('.hours-auth-alert')).toHaveCount(0);expect(reads).toBe(1);expect(health).toBeGreaterThanOrEqual(2);
+  await page.goto('/');await expect(page.locator('.home-submission')).toContainText('Correos al día');
+  await expect(page.locator('.hours-auth-alert')).toHaveCount(0);expect(health).toBe(0);expect(reads).toBe(1);
+  await page.locator('#homeSyncBtn').click();
+  const access=page.getByRole('button',{name:'Comprobar acceso a Outlook'});
+  await access.click();await expect(page.locator('#homeSyncResult')).toContainText('Microsoft pide MFA');expect(reads).toBe(1);
+  phase='ready';await access.click();await expect(page.locator('#homeSyncResult')).toContainText('Acceso a Outlook confirmado');
+  await page.locator('[data-hours-check]').click();await expect(page.locator('#homeSyncResult')).toContainText('Correos y factura actualizados');
+  await expect(page.locator('#homeSyncBtn #homeSyncDate')).toHaveText(/29\/10.*10:00/);expect(checks).toBe(2);expect(reads).toBe(2);
+  await page.locator('#homeSyncDialog').screenshot({path:info.outputPath('sync-kairo.png'),animations:'disabled'});
+  await page.locator('[data-close-sync]').click();
+  await page.evaluate(()=>{ST['2026-10-12']={type:'festivo'};render();});
+  const agenda=page.locator('[data-home-invoice=calendar]');
+  await expect(agenda).toHaveAccessibleName('Ver envíos');
+  const style=el=>{const s=getComputedStyle(el);return [s.width,s.height,s.backgroundColor,s.borderColor,s.color,s.fontSize];};
+  expect(await agenda.evaluate(style)).toEqual(await page.locator('#hoursCalendarBtn').evaluate(style));
+  await page.screenshot({path:info.outputPath('home-v536.png'),animations:'disabled'});
+  await expect(page.locator('.home-submission')).not.toContainText(/Comprobado|Outlook/);
 });
 
 test('comprobar acceso muestra progreso y resultado aunque siga detenido; un fallo conserva el aviso',async({page,context})=>{
@@ -29,11 +43,12 @@ test('comprobar acceso muestra progreso y resultado aunque siga detenido; un fal
     if(fail)return route.abort();
     return route.fulfill({json:{phase:'unknown'},headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}});
   });
-  await page.goto('/');const notice=page.locator('.hours-auth-alert');await expect(notice).toContainText('Revisa el acceso');
-  hold=true;await notice.getByRole('button').click();await expect(notice.getByRole('button')).toHaveText('Comprobando…');await expect(notice.getByRole('button')).toBeDisabled();
+  await page.goto('/');await page.locator('#homeSyncBtn').click();
+  const access=page.locator('[data-hours-auth]'),result=page.locator('#homeSyncResult');
+  hold=true;await access.click();await expect(result).toContainText('Comprobando el acceso');await expect(access).toBeDisabled();
   await expect.poll(()=>typeof release).toBe('function');hold=false;release();
-  await expect(page.locator('#toast')).toContainText('Comprobado: el acceso sigue detenido');await expect(notice.getByRole('button')).toBeEnabled();
-  fail=true;await notice.getByRole('button').click();await expect(page.locator('#toast')).toContainText('No se pudo comprobar el acceso');await expect(notice).toContainText('Revisa el acceso');
+  await expect(result).toContainText('Microsoft requiere intervención');await expect(access).toBeEnabled();
+  fail=true;await access.click();await expect(result).toContainText('No se pudo comprobar');
 });
 
 test('la comprobación explícita solicita recuperación y espera a que termine sin barrer correos',async({page,context})=>{
@@ -45,8 +60,8 @@ test('la comprobación explícita solicita recuperación y espera a que termine 
     if(path.endsWith('/auth-status'))return route.fulfill({json:{phase:requested?'ready':'unknown'}});
     return route.abort();
   });
-  await page.goto('/');await page.getByRole('button',{name:'Comprobar acceso',exact:true}).click();
-  await expect(page.getByRole('button',{name:'Comprobando…',exact:true})).toBeDisabled();
-  await expect(page.locator('#toast')).toContainText('Acceso a Outlook confirmado');
+  await page.goto('/');await page.locator('#homeSyncBtn').click();await page.locator('[data-hours-auth]').click();
+  await expect(page.locator('[data-hours-auth]')).toBeDisabled();
+  await expect(page.locator('#homeSyncResult')).toContainText('Acceso a Outlook confirmado');
   await expect(page.locator('.hours-auth-alert')).toHaveCount(0);expect(posts).toBe(1);
 });

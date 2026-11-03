@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v535 — Programación y avisos';
+var APP_VERSION = 'v536 — Home y sincronización';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -298,7 +298,7 @@ function shareOrDownload(blob,filename,onSuccess,options){
 
 // ── Utilidades HTML ─────────────────────────────────────────
 function dispatchIcon(name){return '<svg viewBox="0 0 24 24" class="dispatch-icon" aria-hidden="true"><use href="#dispatch-'+name+'" width="24" height="24"/></svg>';}
-function homeScheduleLabel(compact){return dispatchIcon('agenda')+'<span>'+(compact?'Ver envíos':'Ver programación')+'</span>';}
+function homeScheduleLabel(){return dispatchIcon('agenda')+'<span>Ver envíos</span>';}
 function renderDocumentIcon(){return '<svg viewBox="0 0 24 24" class="ico-doc" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>';}
 /* Mayúscula inicial en palabras significativas de opciones, nunca en datos. */
 function menuTitle(text){
@@ -378,7 +378,7 @@ function renderHomeSubmissionStatus(year,month,state){
   if(compact)heading='<button type="button" class="home-submission-heading compact-mail-action" data-hours-review aria-label="'+title+' · '+(state.review?'Revisar cambios':'Programar pendientes')+'">'+heading+'<span aria-hidden="true">›</span></button>';
   else heading='<div class="home-submission-heading">'+heading+'</div>';
   var body='<div class="home-submission-body'+(showSummary?'':' summaryless')+'"><div class="home-submission-copy">'+heading+(detail?'<div class="home-submission-detail">'+detail+'</div>':'')+'</div>'+(showSummary?'<div class="month-summary home-summary-compact">'+renderHomeMonthSummary(homeMonthHours(year,month))+'</div>':'')+'</div>';
-  return '<section class="home-submission '+(compact?'compact-mail ': '')+(urgent?'urgent ':'')+(!state.known?'unknown':state.complete?'complete':'pending')+'" aria-label="Correos y horas del mes">'+body+renderHoursAccess(state,compact)+(typeof renderHoursAuthNotice==='function'?renderHoursAuthNotice():'')+'</section>';
+  return '<section class="home-submission '+(compact?'compact-mail ': '')+(urgent?'urgent ':'')+(!state.known?'unknown':state.complete?'complete':'pending')+'" aria-label="Correos y horas del mes">'+body+renderHoursAccess(state,compact)+'</section>';
 }
 
 // ── Comprueba si hay semanas enviadas en el mes actual ────────

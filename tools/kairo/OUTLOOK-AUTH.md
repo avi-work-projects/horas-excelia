@@ -114,3 +114,5 @@ esa caché devolvió el mismo resultado sin otro barrido. No se programaron mens
 
 Fuentes: [credenciales systemd](https://www.freedesktop.org/software/systemd/man/257/systemd-creds.html),
 [sesiones y MFA de Microsoft](https://learn.microsoft.com/en-us/entra/identity/authentication/concepts-azure-multi-factor-authentication-prompts-session-lifetime).
+
+En v536 el menú Sync Kairo separa el histórico de correos y facturas de la recuperación de acceso. En el primer factor de Excelia, la flecha Atrás de la página puede devolver al selector de cuenta. El recuperador cierra el selector nativo de claves de paso con Escape en el visor privado local de Kairo, tras verificar el origen, la cuenta y la pestaña visible. Solo introduce la contraseña cuando Microsoft ofrece el formulario para la cuenta configurada. Las peticiones de MFA y los rechazos de contraseña detienen la recuperación.

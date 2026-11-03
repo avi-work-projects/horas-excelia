@@ -33,7 +33,7 @@ test('una auditoría de tres meses; navegar, editar, foco y recarga reutilizan l
   await page.evaluate(()=>{ST['2027-02-09']={type:'vacaciones'};render();});
   await expect(page.locator('.week-card').nth(1).locator('.hours-week-badge')).toContainText('Revisar cambios');expect(api.calls.hours).toBe(1);
   await page.reload();await expect(page.locator('.home-submission.complete')).toContainText('Correos al día');expect(api.calls.hours).toBe(1);expect(api.calls.invoices).toHaveLength(3);
-  await expect(page.locator('.hours-verified-note')).toContainText('Comprobado');
+  await expect(page.locator('.hours-verified-note')).toHaveCount(0);
   await page.evaluate(()=>{CY=2025;CM=0;render();});await expect(page.locator('.home-submission')).toContainText('Mes cerrado');expect(api.calls.hours).toBe(1);expect(api.calls.invoices).toHaveLength(3);
 });
 test('desmarcar desbloquea edición y conserva la programación; V/F/A sombrean toda la celda',async({page,context})=>{
@@ -56,7 +56,7 @@ test('un trabajo sobrevive al cierre de Gestify y devuelve su resultado sin repe
 });
 test('fallo de actualización conserva factura y correos; Sync Kairo actualiza ambos estados desde la cabecera',async({page,context})=>{
   const api=await setup(page,context);await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura programada');
-  api.offline();await page.locator('.home-invoice-actions').getByRole('button',{name:'Sync Kairo'}).click();
+  api.offline();await page.locator('.home-invoice-actions').getByRole('button',{name:'Sync Kairo'}).click();await page.locator('[data-hours-check]').click();
   await expect.poll(()=>api.calls.hours).toBe(2);await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura programada');await expect(page.locator('.home-submission')).toContainText('Correos al día');
   expect(api.calls.invoices).toHaveLength(4);
 });
@@ -71,7 +71,7 @@ test('recuperar un trabajo elimina el aviso de desconexión sin repetir Outlook'
   expect(await page.evaluate(()=>HOURS_JOB_ERROR)).toBe('');await expect(page.locator('.hours-job-note')).toHaveCount(0);expect(api.calls.hours).toBe(1);
 });
 test('doble actualización no encola dos comprobaciones',async({page,context})=>{
-  const api=await setup(page,context);await page.locator('#homeSyncBtn').evaluate(btn=>{btn.click();btn.click();});
+  const api=await setup(page,context);await page.locator('#homeSyncBtn').click();await page.locator('[data-hours-check]').evaluate(btn=>{btn.click();btn.click();});
   await expect.poll(()=>api.calls.hours).toBe(2);await expect(page.locator('[data-hours-check]')).toBeEnabled();expect(api.calls.hours).toBe(2);
 });
 
@@ -81,7 +81,7 @@ test('panel naranja distingue un mes vacío de una primera revisión y de hechos
   const panel=page.locator('.home-submission'),action=panel.locator('[data-hours-review]');
   await page.evaluate(()=>{CY=2027;CM=8;render();});
   await expect(action).toHaveText(/Sin programar/);
-  await expect(panel.locator('.hours-verified-note')).toHaveText('');
+  await expect(panel.locator('.hours-verified-note')).toHaveCount(0);
   await expect(panel.locator('.home-submission-detail,.hours-pending-button')).toHaveCount(0);
   await page.evaluate(()=>{
     const period=mkey(CY,CM),stamp='2027-02-01T09:30:00Z';
@@ -132,7 +132,8 @@ for(const width of [320,400,440])test('resumen, fórmula y colores de jornada a 
   const total=summary.locator('.home-base-total'),before=await total.evaluate(font),closedBox=await total.boundingBox();
   const toggleBox=await summary.locator('[data-home-formula]').boundingBox();expect(toggleBox.x).toBeLessThan(closedBox.x);
   await expect(page.locator('.home-submission')).not.toContainText('Próximo envío');
-  expect(Math.abs((await summary.boundingBox()).y-(await page.locator('.home-submission-copy').boundingBox()).y)).toBeLessThan(2);
+  const box=await summary.boundingBox(),copy=await page.locator('.home-submission-copy').boundingBox();
+  expect(Math.abs(box.y+box.height/2-copy.y-copy.height/2)).toBeLessThan(2);
   await summary.locator('[data-home-formula]').click();await expect(summary.locator('.home-hours-equation')).toContainText('9×14 + 8×1 + 7×1 + 6,5×4');
   await expect(total).toHaveCount(1);expect(await total.evaluate(font)).toEqual(before);expect((await total.boundingBox()).y).toBeGreaterThan(closedBox.y);
   expect(await summary.evaluate(e=>e.scrollWidth<=e.clientWidth)).toBe(true);expect(await page.locator('.home-submission').evaluate(e=>e.scrollWidth<=e.clientWidth)).toBe(true);

@@ -19,7 +19,7 @@ function homeInvoiceCacheRead(){
 }
 var INVOICE_HOME_CACHE=homeInvoiceCacheRead();
 function homeInvoiceCacheSave(){var keys=Object.keys(INVOICE_HOME_CACHE.periods).sort();keys.slice(0,-24).forEach(function(k){delete INVOICE_HOME_CACHE.periods[k];});try{localStorage.setItem(INVOICE_HOME_CACHE_KEY,JSON.stringify(INVOICE_HOME_CACHE));}catch(e){}}
-function homeInvoiceCheckedAt(value){return new Date(value).toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});}
+function homeInvoiceCheckedAt(value){return new Date(value).toLocaleString('es-ES',{timeZone:'Europe/Madrid',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});}
 function homeInvoiceScheduleDate(year,month){var day=new Date(year,month,20);while(!day.getDay()||day.getDay()===6||dayT(day)!=='normal')day=ad(day,-1);return dk(day);}
 function homeInvoiceModel(year,month){
   var period=mkey(year,month),url='';try{url=invoiceData().config.kairoUrl;}catch(e){}
@@ -67,21 +67,22 @@ function renderHomeInvoiceStatus(year,month){
 }
 function paintHomeInvoiceStatus(){if(typeof paintInvoiceCalendar==='function')paintInvoiceCalendar();var current=document.getElementById('homeInvoiceStatus');if(current)current.outerHTML=renderHomeInvoiceStatus(CY,CM);}
 async function fetchHomeInvoiceStatus(period,url,force){
-  if(INVOICE_HOME_REQUESTS[period+'|'+url])return;
+  var pending=INVOICE_HOME_REQUESTS[period+'|'+url];if(pending)return pending;
   if(INVOICE_HOME_CACHE.url!==url)INVOICE_HOME_CACHE={schema:1,url:url,periods:{}};
   var previous=INVOICE_HOME_CACHE.periods[period]||{data:null,checkedAt:0};
   var due=previous.data&&previous.data.state==='scheduled'&&hoursCivilTime(new Date().toISOString())>=previous.data.scheduledDate+'T08:00'&&(!previous.checkedAt||hoursCivilTime(new Date(previous.checkedAt).toISOString())<previous.data.scheduledDate+'T08:00');
   if(!force&&(previous.attempted&&!due||due&&previous.dueChecked))return;
   previous.attempted=true;if(due)previous.dueChecked=true;INVOICE_HOME_CACHE.periods[period]=previous;homeInvoiceCacheSave();
-  var controller=new AbortController(),timeout=setTimeout(function(){controller.abort();},8000);INVOICE_HOME_REQUESTS[period+'|'+url]=true;
+  var controller=new AbortController(),timeout=setTimeout(function(){controller.abort();},8000);var finish;INVOICE_HOME_REQUESTS[period+'|'+url]=new Promise(function(resolve){finish=resolve;});var ok=false;
   if(period===mkey(CY,CM))INVOICE_HOME_STATUS={period:period,url:url,phase:'loading',checkedAt:previous.checkedAt};
   try{
     var response=await fetch(invoiceKairoUrl(url)+'gestify-status?period='+period,{mode:'cors',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',signal:controller.signal});
     if(!response.ok)throw new Error('Kairo no disponible');var data=validateHomeInvoiceStatus(await response.json(),period);
     if(INVOICE_HOME_CACHE.url!==url)return;
-    INVOICE_HOME_CACHE.periods[period]={data:data,checkedAt:Date.now(),attempted:true,dueChecked:!!due};homeInvoiceCacheSave();if(period===mkey(CY,CM))INVOICE_HOME_STATUS={period:period,url:url,phase:'ready',data:data,checkedAt:Date.now()};
+    INVOICE_HOME_CACHE.periods[period]={data:data,checkedAt:Date.now(),attempted:true,dueChecked:!!due};homeInvoiceCacheSave();if(period===mkey(CY,CM))INVOICE_HOME_STATUS={period:period,url:url,phase:'ready',data:data,checkedAt:Date.now()};ok=true;
   }catch(e){if(period===mkey(CY,CM))INVOICE_HOME_STATUS={period:period,url:url,phase:'error',checkedAt:previous.checkedAt,reason:e.name==='AbortError'||e instanceof TypeError?hoursCheckMessage('network'):'Kairo no ha podido confirmar el estado de la factura.'};}
-  finally{clearTimeout(timeout);delete INVOICE_HOME_REQUESTS[period+'|'+url];paintHomeInvoiceStatus();}
+  finally{clearTimeout(timeout);delete INVOICE_HOME_REQUESTS[period+'|'+url];finish(ok);paintHomeInvoiceStatus();}
+  return ok;
 }
 async function syncHomeInvoiceStatus(force){
   var model=homeInvoiceModel(CY,CM);if(!model.url||!document.getElementById('homeInvoiceStatus'))return;
