@@ -36,7 +36,7 @@ test('los pendientes ordinarios no piden revisar cambios y la factura espera a s
     render();
   });
   const invoice=page.locator('#homeInvoiceStatus');
-  await expect(invoice).toContainText('Programa primero la factura del mes anterior');
+  await expect(invoice).toContainText('el envío de la factura del mes anterior');
   await expect(invoice.locator('[data-home-invoice=send]')).toHaveCount(0);
   await expect(invoice.locator('em')).toHaveCSS('font-style','italic');
   await page.evaluate(()=>{

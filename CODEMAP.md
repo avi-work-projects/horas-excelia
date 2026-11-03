@@ -347,10 +347,10 @@
 ### js/invoices-export.js  _(36 líneas)_
 **Funciones:** invoiceXml:2 · invoiceZip:3 · header:5 · invoiceWorkbook:14 · textCell:15 · numCell:16 · sheet:26
 
-### js/invoices-home.js  _(129 líneas)_
+### js/invoices-home.js  _(130 líneas)_
 **Estado global:** INVOICE_HOME_CACHE_KEY:3 · INVOICE_HOME_STATUS:4 · INVOICE_HOME_REQUESTS:5 · INVOICE_HOME_CACHE:20
 
-**Funciones:** validateHomeInvoiceStatus:6 · homeInvoiceCacheRead:12 · homeInvoiceCacheSave:21 · homeInvoiceCheckedAt:22 · homeInvoiceScheduleDate:23 · homePreviousInvoicePeriod:24 · homeInvoiceModel:25 · renderHomeInvoiceStatus:56 · paintHomeInvoiceStatus:77 · initHomeInvoiceStatus:112
+**Funciones:** validateHomeInvoiceStatus:6 · homeInvoiceCacheRead:12 · homeInvoiceCacheSave:21 · homeInvoiceCheckedAt:22 · homeInvoiceScheduleDate:23 · homePreviousInvoicePeriod:24 · homeInvoiceModel:25 · renderHomeInvoiceStatus:57 · paintHomeInvoiceStatus:78 · initHomeInvoiceStatus:113
 
 ### js/invoices-kairo.js  _(85 líneas)_
 **Estado global:** INVOICE_KAIRO_BUSY:2
