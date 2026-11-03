@@ -1,10 +1,12 @@
 """Offline DOM contract. Launches a separate Chromium, never the live profile."""
 import json
+import io
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 from playwright.sync_api import sync_playwright
-from outlook_auth import recover, screen
+from outlook_auth import cancel_browser_passkey, recover, screen
 
 SENDER='person@example.invalid'
 PASSWORD='synthetic-password-only'
@@ -94,6 +96,32 @@ class BrowserContract(unittest.TestCase):
                         result=recover(page,SENDER,PASSWORD,root,sleep=lambda _:page.wait_for_timeout(30))
                         self.assertEqual(result['phase'],'ready')
                 finally:context.close()
+
+    def test_private_browser_cancel_only_for_recognized_first_factor(self):
+        page = self.browser.new_page()
+        origin = 'https://login.microsoftonline.com/common/bridge/fido'
+        try:
+            page.route('**/*', lambda route: route.fulfill(content_type='text/html', body=
+                       '<div>' + SENDER + '</div><button id="idBtn_Back">Back</button>'))
+            page.goto(origin)
+            conn = MagicMock()
+            conn.__enter__.return_value = conn
+            greeting = b'RFB 003.008\n\x01\x01' + bytes(4) + bytes(20) + bytes([0, 0, 0, 4]) + b'k:95'
+            conn.makefile.return_value = io.BytesIO(greeting)
+            with patch('outlook_auth.socket.create_connection', return_value=conn) as connect:
+                self.assertFalse(cancel_browser_passkey(page, 'other@example.invalid'))
+                with page.context.expect_page() as opened:
+                    page.evaluate("window.open('about:blank')")
+                self.assertFalse(cancel_browser_passkey(page, SENDER))
+                opened.value.close()
+                connect.assert_not_called()
+                self.assertTrue(cancel_browser_passkey(page, SENDER))
+                self.assertEqual(conn.sendall.call_args.args, (bytes.fromhex('040100000000ff1b040000000000ff1b'),))
+                page.evaluate("document.body.innerHTML += '<p id=idDiv_SAOTCAS_Title>Approve sign in</p>'")
+                self.assertFalse(cancel_browser_passkey(page, SENDER))
+                connect.assert_called_once_with(('127.0.0.1', 5901), timeout=2)
+        finally:
+            page.close()
 
 
 if __name__=='__main__':unittest.main()

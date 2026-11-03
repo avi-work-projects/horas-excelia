@@ -304,25 +304,23 @@
 ### js/home-weeks.js  _(46 líneas)_
 **Funciones:** homePeriodMode:2 · homeDueSoon:6 · homeWeekCovered:11 · homeWeekUnlocked:12 · homeSubmissionWeeks:13 · homeSubmissionWarnings:21 · homeWeekSchedule:30
 
-### js/hours-auth.js  _(55 líneas)_
-**Estado global:** HOURS_AUTH:2 · HOURS_AUTH_MANUAL:3 · HOURS_AUTH_BEFORE:4
-
-**Funciones:** requestHoursSyncAccess:5 · hoursAuthFeedback:11 · renderHoursAuthNotice:12 · resume:51
+### js/hours-auth.js  _(40 líneas)_
+**Estado global:** HOURS_AUTH_RUN:2 · HOURS_AUTH_MESSAGES:3
 
 ### js/hours-cache.js  _(81 líneas)_
 **Estado global:** HOURS_CACHE_KEY:3 · HOURS_ATTEMPTS:4 · HOURS_CACHE:39
 
-**Funciones:** hoursScopeKeys:5 · hoursCacheRead:9 · hoursCacheRow:32 · hoursCacheSave:40 · hoursCachedWeek:48 · hoursSourceSignature:51 · hoursSettingsSignature:54 · hoursCacheRemember:59 · hoursCheckMessage:67 · hoursRecordCheck:70 · hoursCacheInvalidate:75
+**Funciones:** hoursScopeKeys:5 · hoursCacheRead:9 · hoursCacheRow:32 · hoursCacheSave:40 · hoursCachedWeek:48 · hoursSourceSignature:51 · hoursSettingsSignature:54 · hoursCacheRemember:59 · hoursAccessIssue:67 · hoursCheckMessage:68 · hoursRecordCheck:71 · hoursCacheInvalidate:75
 
-### js/hours-jobs.js  _(58 líneas)_
+### js/hours-jobs.js  _(67 líneas)_
 **Estado global:** HOURS_JOBS_KEY:3 · HOURS_JOBS:7
 
 **Funciones:** hoursJobsRead:4 · hoursJobsSave:8 · hoursAcceptSnapshot:9 · hoursAcceptJobResult:17 · hoursTrackJob:24
 
-### js/hours-kairo.js  _(267 líneas)_
+### js/hours-kairo.js  _(280 líneas)_
 **Estado global:** HOURS_STATUS:3 · HOURS_REQUEST:4
 
-**Funciones:** hoursKairoUrl:5 · hoursWeekDays:9 · hoursCivilTime:13 · hoursWeekState:18 · hoursRemoteConfigured:28 · hoursCovered:29 · hoursHasConfirmedMail:30 · hoursWeekBadge:31 · hoursWeekDate:35 · hoursJobRunning:40 · renderHoursAccess:43 · hoursMailSubject:61 · hoursCalendarDays:62 · hoursMailRequest:68 · validateHoursResult:78 · rememberHoursReview:91 · hoursKairoExchange:102 · leave:106 · closed:107 · verifySource:108 · stopWatch:123 · finish:125 · receive:126 · hoursReviewSurface:141 · close:151 · invalidateHoursReview:156 · paintHomeSyncDate:187 · paintHoursStatus:193 · refreshHomeStates:253 · initHoursKairo:258 · resume:262
+**Funciones:** hoursKairoUrl:5 · hoursWeekDays:9 · hoursCivilTime:13 · hoursWeekState:18 · hoursRemoteConfigured:28 · hoursCovered:29 · hoursHasConfirmedMail:30 · hoursWeekBadge:31 · hoursWeekDate:35 · hoursJobRunning:40 · renderHoursAccess:43 · hoursMailSubject:55 · hoursCalendarDays:56 · hoursMailRequest:62 · validateHoursResult:72 · rememberHoursReview:85 · hoursKairoExchange:96 · leave:100 · closed:101 · verifySource:102 · stopWatch:117 · finish:119 · receive:120 · hoursReviewSurface:135 · close:145 · invalidateHoursReview:150 · paintHomeSyncDate:181 · paintHoursStatus:187 · initHoursKairo:250 · closeSync:254 · resume:275
 
 ### js/household-summary.js  _(111 líneas)_
 **Funciones:** householdMortgagePayment:2 · householdMortgagePeriod:5 · householdValue:18 · householdLoanPayments:19 · renderLoanPayments:29 · householdMortgageCard:38 · date:39 · householdUtilityPrices:54 · householdUtilityCard:86 · householdMortgageAnalysisButton:98 · renderHouseholdSummary:99
@@ -349,10 +347,10 @@
 ### js/invoices-export.js  _(36 líneas)_
 **Funciones:** invoiceXml:2 · invoiceZip:3 · header:5 · invoiceWorkbook:14 · textCell:15 · numCell:16 · sheet:26
 
-### js/invoices-home.js  _(108 líneas)_
+### js/invoices-home.js  _(109 líneas)_
 **Estado global:** INVOICE_HOME_CACHE_KEY:3 · INVOICE_HOME_STATUS:4 · INVOICE_HOME_REQUESTS:5 · INVOICE_HOME_CACHE:20
 
-**Funciones:** validateHomeInvoiceStatus:6 · homeInvoiceCacheRead:12 · homeInvoiceCacheSave:21 · homeInvoiceCheckedAt:22 · homeInvoiceScheduleDate:23 · homeInvoiceModel:24 · renderHomeInvoiceStatus:49 · paintHomeInvoiceStatus:68 · initHomeInvoiceStatus:92
+**Funciones:** validateHomeInvoiceStatus:6 · homeInvoiceCacheRead:12 · homeInvoiceCacheSave:21 · homeInvoiceCheckedAt:22 · homeInvoiceScheduleDate:23 · homeInvoiceModel:24 · renderHomeInvoiceStatus:49 · paintHomeInvoiceStatus:68 · initHomeInvoiceStatus:93
 
 ### js/invoices-kairo.js  _(85 líneas)_
 **Estado global:** INVOICE_KAIRO_BUSY:2
@@ -871,32 +869,32 @@
 **Rangos por prefijo de clase:**
 .alarm-now:989-989 · .alarm-panel:986-988 · .app-update:677-679 · .bd-detail:599-600 · .bd-panel:553-835 · .bday-category:525-694 · .bday-date:634-733 · .bday-detail:567-810 · .bday-edit:809-809 · .bday-filter:516-591 · .bday-first:537-537 · .bday-form:672-673 · .bday-group:513-676 · .bday-hdr:156-157 · .bday-header:151-466 · .bday-label:543-543 · .bday-list:522-726 · .bday-month:169-740 · .bday-name:601-681 · .bday-next:99-100 · .bday-no:573-573 · .bday-person:520-566 · .bday-show:524-628 · .bday-sub:280-281 · .bday-today:506-725 · .bday-upcoming:54-491 · .bday-vip:492-828 · .boda-catalog:80-85 · .boda-cfg:126-142 · .boda-config:76-123 · .boda-date:144-162 · .boda-day:113-113 · .boda-field:114-119 · .boda-filter:58-60 · .boda-mini:66-66 · .boda-pfilters:57-61 · .boda-stat:990-990 · .boda-sticky:77-139 · .boda-teachers:101-101 · .contact-add:897-897 · .contact-entry:890-895 · .contact-group:887-889 · .contact-remove:896-896 · .data-actions:339-339 · .data-btn:340-351 · .econ-equiv:460-460 · .econ-tab:322-326 · .econ-tariff:405-462 · .energy-tariff:451-453 · .est-nav:324-325 · .ev-alarm:758-759 · .ev-annual:495-495 · .ev-bday:282-529 · .ev-bright:441-441 · .ev-btn:760-761 · .ev-calendar:963-978 · .ev-current:980-980 · .ev-del:13-14 · .ev-filter:779-948 · .ev-hairdresser:984-985 · .ev-list:2-952 · .ev-month:477-983 · .ev-multi:50-71 · .ev-rut:239-306 · .ev-search:3-7 · .ev-sort:8-53 · .ev-stat:918-954 · .ev-type:426-428 · .ev-types:425-794 · .ev-up:266-915 · .ev-upcoming:916-940 · .ev-view:65-65 · .ev-wk:221-440 · .export-choice:764-925 · .export-folder:742-776 · .fiscal-hdr:499-499 · .fiscal-hip:402-403 · .fiscal-tab:323-323 · .hip-rate:468-472 · .hip-ro:496-497 · .imp-mode:17-27 · .invoice-field:938-938 · .invoice-sheet:858-858 · .macro-url:69-69 · .nav-icon:359-369 · .nav-pro:333-345 · .nav-style:357-357 · .panel-header:836-837 · .personal-copy:874-874 · .personal-data:873-880 · .personal-note:898-930 · .personal-notes:931-935 · .rate-input:46-46 · .rut-addition:201-218 · .rut-agenda:215-216 · .rut-cancelled:242-301 · .rut-done:762-763 · .rut-history:185-236 · .rut-hpd:183-183 · .rut-icon:167-168 · .rut-recovery:210-219 · .rut-session:220-220 · .rut-skipped:302-303 · .rut-week:184-184 · .selected:366-366 · .settings-copy:866-869 · .settings-details:102-104 · .settings-edit:70-886 · .settings-editor:843-881 · .settings-field:864-883 · .settings-is:853-960 · .settings-menu:437-437 · .sw-upd:876-876 · .sy-back:37-37 · .sy-body:35-532 · .sy-card:41-41 · .sy-header:36-467 · .sy-lbl:40-40 · .sy-period:411-418 · .sy-table:42-42 · .sy-tr:43-43 · .sy-val:39-39 · .sy-year:38-38 · .week-action:830-831 · .week-card:387-387 · .weeks-container:957-957 · .wm-logo:88-246
 
-### css/source/home-sharing.css  _(191 líneas)_
+### css/source/home-sharing.css  _(192 líneas)_
 
 **Secciones:**
 
 - Cabecera de Home opaca, incluso sobre los botones oscuros de las semanas.:1
-- Selector de eventos para compartir por iCalendar:48
-- Selector de exportación: controles compactos y lista con espacio propio.:49
-- Colores por tramo, compartidos entre las dos vistas de próximos cumpleaños.:83
-- Compartir: cabecera centrada, categorías completas y lista compacta.:101
-- Próximos comparte identidad celeste en sus cuatro subpestañas.:134
-- Mis Datos: atajos, registros plegables y contenido multilínea completo.:148
-- Próximos: contraste, alternancia y año centrado.:162
-- Año de Estadísticas centrado sin desplazar las pestañas ni cambiar las flechas.:178
-- Agenda y consultas anuales: cabecera estable y flechas neutras compartidas.:180
+- Selector de eventos para compartir por iCalendar:49
+- Selector de exportación: controles compactos y lista con espacio propio.:50
+- Colores por tramo, compartidos entre las dos vistas de próximos cumpleaños.:84
+- Compartir: cabecera centrada, categorías completas y lista compacta.:102
+- Próximos comparte identidad celeste en sus cuatro subpestañas.:135
+- Mis Datos: atajos, registros plegables y contenido multilínea completo.:149
+- Próximos: contraste, alternancia y año centrado.:163
+- Año de Estadísticas centrado sin desplazar las pestañas ni cambiar las flechas.:179
+- Agenda y consultas anuales: cabecera estable y flechas neutras compartidas.:181
 
 **Rangos por prefijo de clase:**
-.boda-future:98-98 · .contact-address:144-156 · .contact-entry:143-143 · .contact-primary:154-160 · .contact-shortcuts:149-172 · .energy-contract:125-126 · .energy-field:128-129 · .energy-history:123-124 · .energy-price:127-132 · .energy-sheet:122-122 · .energy-tax:130-130 · .ev-cal:52-121 · .ev-field:97-97 · .ev-list:138-167 · .ev-period:181-184 · .ev-share:50-51 · .ev-stat:136-137 · .ev-stats:168-173 · .ev-up:164-188 · .ev-week:84-99 · .ev-wk:3-3 · .header:2-2 · .home-equation:42-42 · .home-formula:37-37 · .home-hours:41-44 · .home-submission:4-14 · .home-summary:21-38 · .home-total:39-39 · .home-worked:29-29 · .month-summary:22-40 · .ms-caption:36-36
+.boda-future:99-99 · .contact-address:145-157 · .contact-entry:144-144 · .contact-primary:155-161 · .contact-shortcuts:150-173 · .energy-contract:126-127 · .energy-field:129-130 · .energy-history:124-125 · .energy-price:128-133 · .energy-sheet:123-123 · .energy-tax:131-131 · .ev-cal:53-122 · .ev-field:98-98 · .ev-list:139-168 · .ev-period:182-185 · .ev-share:51-52 · .ev-stat:137-138 · .ev-stats:169-174 · .ev-up:165-189 · .ev-week:85-100 · .ev-wk:3-3 · .header:2-2 · .home-equation:43-43 · .home-formula:38-38 · .home-hours:42-45 · .home-submission:4-15 · .home-summary:22-39 · .home-total:40-40 · .home-worked:30-30 · .month-summary:23-41 · .ms-caption:37-37
 
-### css/source/hours-kairo.css  _(54 líneas)_
+### css/source/hours-kairo.css  _(44 líneas)_
 
 **Secciones:**
 
 - The warning owns the batch entry; individual week actions stay in place.:1
 
 **Rangos por prefijo de clase:**
-.compact-mail:5-5 · .home-submission:2-51 · .hours-auth:12-40 · .hours-check:8-9 · .hours-home:6-49 · .hours-job:11-11 · .hours-pending:17-18 · .hours-review:26-31 · .hours-verified:19-19 · .hours-week:23-24 · .mobile-connection:42-48 · .mobile-modes:46-46 · .week-actions:20-22 · .week-card:52-53 · .week-info:16-25
+.compact-mail:5-5 · .home-submission:2-41 · .hours-check:8-9 · .hours-home:6-39 · .hours-job:11-11 · .hours-pending:13-14 · .hours-review:22-27 · .hours-verified:15-15 · .hours-week:19-20 · .mobile-connection:32-38 · .mobile-modes:36-36 · .week-actions:16-18 · .week-card:42-43 · .week-info:12-21
 
 ### css/source/energy-refinements.css  _(292 líneas)_
 
@@ -932,14 +930,15 @@
 **Rangos por prefijo de clase:**
 .home-birthday:47-52 · .home-pending:64-72 · .home-popup:3-73 · .home-reminder:9-63 · .home-tasks:69-70 · .reminders-access:2-2
 
-### css/source/invoices.css  _(138 líneas)_
+### css/source/invoices.css  _(139 líneas)_
 
 **Secciones:**
 
-- Revisar jornadas y cálculo antes de las acciones; caben juntos en móvil.:70
+- The two agenda links share their label, width and button style.:1
+- Revisar jornadas y cálculo antes de las acciones; caben juntos en móvil.:71
 
 **Rangos por prefijo de clase:**
-.dispatch-icon:133-133 · .home-invoice:3-137 · .home-schedule:134-134 · .hours-control:1-13 · .hours-export:57-68 · .invoice-action:82-82 · .invoice-actions:28-28 · .invoice-body:17-17 · .invoice-calculation:84-96 · .invoice-card:19-21 · .invoice-config:26-101 · .invoice-confirm:33-33 · .invoice-day:32-32 · .invoice-days:105-111 · .invoice-document:41-41 · .invoice-equals:91-91 · .invoice-error:34-34 · .invoice-eye:53-54 · .invoice-field:23-23 · .invoice-fields:22-44 · .invoice-filename:35-35 · .invoice-kairo:75-114 · .invoice-line:87-90 · .invoice-mail:97-97 · .invoice-money:92-92 · .invoice-month:18-102 · .invoice-note:24-24 · .invoice-send:72-74 · .invoice-sheet:15-81 · .invoice-status:25-25 · .invoice-summary:51-52 · .invoice-tool:98-100 · .invoice-totals:27-104
+.dispatch-icon:134-134 · .home-invoice:5-138 · .home-schedule:7-7 · .home-sync:10-13 · .hours-control:3-14 · .hours-export:58-69 · .invoice-action:83-83 · .invoice-actions:29-29 · .invoice-body:18-18 · .invoice-calculation:85-97 · .invoice-card:20-22 · .invoice-config:27-102 · .invoice-confirm:34-34 · .invoice-day:33-33 · .invoice-days:106-112 · .invoice-document:42-42 · .invoice-equals:92-92 · .invoice-error:35-35 · .invoice-eye:54-55 · .invoice-field:24-24 · .invoice-fields:23-45 · .invoice-filename:36-36 · .invoice-kairo:76-115 · .invoice-line:88-91 · .invoice-mail:98-98 · .invoice-money:93-93 · .invoice-month:19-103 · .invoice-note:25-25 · .invoice-send:73-75 · .invoice-sheet:16-82 · .invoice-status:26-26 · .invoice-summary:52-53 · .invoice-tool:99-101 · .invoice-totals:28-105
 
 ### css/source/invoices-calendar.css  _(27 líneas)_
 

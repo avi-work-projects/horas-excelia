@@ -52,6 +52,7 @@ test('importar configuración revisable sin sustituir los meses y botones junto 
    expect(await button.evaluate(e=>[...e.children].every(child=>child.getBoundingClientRect().right<=e.getBoundingClientRect().right))).toBe(true);
    previous=box;
   }
+  const rowBounds=await page.locator('.hours-control').boundingBox();expect(Math.abs(previous.x+previous.width-rowBounds.x-rowBounds.width)).toBeLessThan(1);
   await expect(page.locator('#hoursCalendarBtn')).toHaveCSS('background-color',await page.locator('#hoursExportBtn').evaluate(e=>getComputedStyle(e).backgroundColor));
   await page.screenshot({path:info.outputPath('home-'+width+'.png')});
  }
@@ -103,7 +104,12 @@ test('Kairo sin configurar sigue visible y abre directamente su conexión editab
  expect(await page.evaluate(()=>invoiceExternalCalls)).toEqual([]);
  await page.locator('[data-invoice-field="kairoUrl"]').fill('https://synthetic-kairo.test.ts.net/facturas/');
  await page.locator('#invoiceSettingsSave').click();await expect(page.locator('#invoiceSettingsEdit')).toBeVisible();
- await page.locator('#invoiceBack').click();await page.locator('#invoiceHomeBtn').click();
+ await page.locator('#invoiceBack').click();
+ await page.evaluate(()=>{
+   const period=mkey(CY,CM),rows=hoursScopeKeys(period).map(key=>({key,state:'sent'}));
+   hoursCacheRemember({period,rows,checkedAt:new Date().toISOString()},hoursKairoUrl(),hoursSourceSignature(rows));paintHoursStatus();
+ });
+ await page.locator('#invoiceHomeBtn').click();
  await expect(page.locator('#invoiceKairoSend')).toBeDisabled();await expect(page.locator('#invoiceKairoStatus')).toBeDisabled();
  await expect(page.locator('#invoiceKairoMessage')).toContainText('Completa los datos');
  await expect(page.locator('#invoiceAmounts')).toHaveCount(0);

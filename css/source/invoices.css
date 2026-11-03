@@ -1,15 +1,16 @@
+/* The two agenda links share their label, width and button style. */
+:root{--home-action-width:clamp(62px,22vw,104px)}
 .hours-control:has(.home-invoice-actions){align-items:stretch;gap:6px;flex-wrap:wrap}
-.hours-control #editHoursBtn{padding:6px;gap:3px;min-width:44px;min-height:42px;justify-content:center;white-space:nowrap;font-size:.72rem}
-.home-invoice-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:5px;row-gap:2px;max-width:259px;flex:1;min-width:0}
-#homeSyncDate{grid-column:1/-1;text-align:right;color:var(--text-muted);font-size:.60rem;line-height:1.25}
-#homeSyncDate:empty{display:none}
-.hours-control #editHoursBtn{align-self:start}
-.home-invoice-actions button{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:4px;min-height:42px;padding:6px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);font:inherit;font-size:.72rem;font-weight:600;line-height:1.25}
-.home-invoice-actions svg{width:21px;height:21px;flex-shrink:0;color:var(--home-tone);opacity:1}
-.home-invoice-actions button{padding:4px;gap:3px;min-height:38px}
-.home-invoice-actions svg{width:17px;height:17px}
-#homeSyncBtn:disabled{opacity:.65;cursor:wait}
-@media (max-width:380px){.home-invoice-actions{gap:4px}.home-invoice-actions button{padding:4px 3px;gap:3px}.home-invoice-actions svg{width:17px;height:17px}}
+.hours-control #editHoursBtn{flex:1 1 0;min-width:0;min-height:42px;padding:4px;gap:4px;justify-content:center;white-space:nowrap;font-size:.72rem}
+.home-invoice-actions{display:grid;grid-template-columns:repeat(3,var(--home-action-width));gap:4px}
+.home-invoice-actions button,.home-schedule-action{box-sizing:border-box;min-width:0;display:flex;align-items:center;justify-content:center;gap:3px;min-height:max(50px,3.15rem);padding:4px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);font:600 .72rem/1.2 var(--font);cursor:pointer;text-align:center}
+.home-schedule-action{width:var(--home-action-width)}
+.home-invoice-actions svg,.home-schedule-action svg{width:17px;height:17px;flex:none;color:var(--home-tone)}
+#homeSyncBtn{flex-direction:column;gap:1px}
+.home-sync-label{display:flex;align-items:center;justify-content:center;gap:3px}
+#homeSyncDate{white-space:nowrap;color:var(--text-muted);font:500 .56rem/1.1 var(--font);font-variant-numeric:tabular-nums}
+#homeSyncDate:empty,#homeSyncResult:empty{display:none}
+.home-sync-options{display:grid;gap:8px;margin-top:12px}
 .hours-control .default-hours-panel{flex-basis:100%}
 #csvExportBtn[hidden],#pdfExportBtn[hidden]{display:none!important}
 .invoice-sheet{width:min(560px,100%);max-height:90dvh;display:flex;flex-direction:column;padding:16px!important;box-sizing:border-box}
@@ -131,7 +132,7 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 @media(prefers-reduced-motion:reduce){.home-invoice-status.unsent .home-invoice-copy>strong{animation:none}}
 
 .dispatch-icon{width:20px;height:20px;flex:none;vertical-align:middle;color:inherit}
-.home-schedule-action,.home-invoice-action.home-send-invoice{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:42px;padding:6px 9px;border:1px solid color-mix(in srgb,var(--home-tone) 55%,var(--border));border-radius:12px;background:color-mix(in srgb,var(--home-tone) 7%,var(--surface));color:var(--home-tone);font:600 .72rem/1.2 var(--font);cursor:pointer;text-align:center}
-.home-invoice-status .home-schedule-action,.home-invoice-action.home-send-invoice{max-width:112px}
+.home-invoice-action.home-send-invoice{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:42px;padding:6px 9px;border:1px solid color-mix(in srgb,var(--home-tone) 55%,var(--border));border-radius:12px;background:color-mix(in srgb,var(--home-tone) 7%,var(--surface));color:var(--home-tone);font:600 .72rem/1.2 var(--font);cursor:pointer;text-align:center}
+.home-invoice-action.home-send-invoice{max-width:112px}
 .home-invoice-icon .dispatch-icon{width:25px;height:25px;color:var(--home-tone)}
 .home-invoice-status.scheduled{grid-template-columns:25px minmax(0,1fr) auto}

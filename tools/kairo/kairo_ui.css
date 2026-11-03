@@ -57,5 +57,5 @@ html[data-k-theme=light]{color-scheme:light;background:#f3f7ef}
 [data-k-theme=light] .included .calendar-day:not(.vacaciones,.festivo,.ausencia,.invoice-delivery){background-color:var(--k-selected)}
 [data-k-theme=light] .calendar-day.invoice-delivery{background-image:linear-gradient(#f6dfeb,#f6dfeb);border-bottom-color:#aa4878}
 [data-k-theme=light] .calendar-day.invoice-delivery:is(.vacaciones,.festivo,.ausencia){background-image:none}
-[data-k-theme=light] .k-agenda .envelope,[data-k-theme=light] .k-filters [for=showMail] .filter-icon{background:#42664f;border-radius:3px}
+[data-k-theme=light] .k-agenda .envelope,[data-k-theme=light] .k-filters [for=showMail] .filter-icon{background:transparent;stroke:#36443c;stroke-width:1.45;stroke-linejoin:round;paint-order:stroke fill}
 [data-k-theme=light] .k-agenda .estimated .envelope{border-bottom-color:#34583e}

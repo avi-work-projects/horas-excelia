@@ -1,4 +1,10 @@
 const {test,expect}=require('@playwright/test');
+async function syncFromHome(page){
+  await page.getByRole('button',{name:'Sync Kairo',exact:true}).click();
+  const sync=page.locator('[data-hours-check]');await sync.click();await expect(sync).toBeEnabled();
+  await page.locator('[data-close-sync]').click();
+}
+
 const {spawn}=require('node:child_process');
 const base='https://synthetic-hours.test.ts.net/';
 let demo;
@@ -12,7 +18,7 @@ test.afterAll(()=>{demo?.kill();});
 test.afterEach(async({context})=>{await context.unrouteAll({behavior:'wait'});});
 test.describe.configure({mode:'serial'});
 
-async function setup(page,context,scenario='mixed'){
+async function setup(page,context,scenario='mixed',seed=true){
   const calls=[];
   await context.route(base+'facturas/**',route=>{
     const period=new URL(route.request().url()).searchParams.get('period');
@@ -35,7 +41,13 @@ async function setup(page,context,scenario='mixed'){
   await page.evaluate(()=>{CY=2027;CM=1;MONTH_H={'2027-02':9,'2027-03':9};ST={};SW={};render();});
   await expect.poll(()=>page.evaluate(()=>HOURS_STATUS.phase)).toMatch(/ready|error/);
   // Seed the synthetic account explicitly. Opening Home now reads only stored facts.
-  await page.evaluate(()=>syncHoursStatus(true));
+  if(seed)await page.evaluate(async()=>{
+    const url=hoursKairoUrl(),period=mkey(CY,CM);
+    const response=await fetch(url+'status?period='+period+'&background=1&audit=0&refresh=1');
+    const job=await response.json();
+    if(job.phase==='done')hoursAcceptJobResult({url},job.result);
+    else hoursTrackJob(job,{period},url);
+  });
   await expect.poll(()=>page.evaluate(()=>HOURS_JOBS.length)).toBe(0);
   return calls;
 }
@@ -64,6 +76,7 @@ test('calendario compartido de Kairo: jornadas, semanas y navegación por gesto'
     const bounds=await geometry();
     expect(await shared.evaluate(cell=>{const [a,b]=Array.from(cell.querySelectorAll('.day-marks svg'),n=>n.getBoundingClientRect()),r=cell.getBoundingClientRect();return a.left>=r.left&&a.right<=b.left&&b.right<=r.right&&a.width>=9;})).toBe(true);
     await expect(shared.locator('.envelope')).toHaveCSS('color','rgb(255, 255, 255)');
+    await expect(shared.locator('.envelope')).toHaveCSS('background-color','rgba(0, 0, 0, 0)');
     const ordinary=viewer.locator('[data-date="2027-02-09"]'),background=await ordinary.evaluate(el=>getComputedStyle(el).backgroundColor);
     for(const id of ['showMail','showInvoices','showMail','showInvoices']){
       await viewer.locator('#'+id).click();
@@ -138,7 +151,7 @@ test('Android instalado conserva la revisión en Gestify y vuelve a Home',async(
   });
   const calls=await setup(page,context),before=await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>![HOURS_CACHE_KEY,HOURS_JOBS_KEY,INVOICE_HOME_CACHE_KEY].includes(key)).sort(([a],[b])=>a.localeCompare(b)))));
   const popups=[];page.on('popup',popup=>popups.push(popup));
-  await page.getByRole('button',{name:'Sync Kairo',exact:true}).click();
+  await syncFromHome(page);
   await expect(page.locator('.home-submission')).toContainText('Hay cambios');
   await expect(page.locator('.hours-review-dialog')).toHaveCount(0);
   await page.locator('[data-hours-review]').click();
@@ -186,7 +199,7 @@ test('individual no adelanta una semana anterior pendiente',async({page,context}
 
 test('la revisión comunica estados aunque el navegador bloquee la consulta automática',async({page,context})=>{
   await page.route(base+'horas/status?**',route=>route.abort());
-  await setup(page,context);
+  await setup(page,context,'mixed',false);
   const popup=await open(page,page.locator('[data-hours-review]'));
   await expect.poll(()=>page.evaluate(()=>HOURS_STATUS.phase)).toBe('ready');
   await popup.route(base+'horas/preview',async route=>{
@@ -201,7 +214,7 @@ test('la revisión comunica estados aunque el navegador bloquee la consulta auto
 
 test('comprobar vuelve a Home sin confirmar ni cambiar correos',async({page,context})=>{
   const calls=await setup(page,context),before=await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>![HOURS_CACHE_KEY,HOURS_JOBS_KEY,INVOICE_HOME_CACHE_KEY].includes(key)).sort(([a],[b])=>a.localeCompare(b)))));
-  await page.getByRole('button',{name:'Sync Kairo',exact:true}).click();
+  await syncFromHome(page);
   await expect(page.locator('.hours-review-dialog')).toHaveCount(0);
   await expect(page.locator('.home-submission')).toContainText('Hay cambios');
   expect(calls.some(c=>c.path.endsWith('/commit')||c.path.endsWith('/simulate'))).toBe(false);

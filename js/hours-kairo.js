@@ -1,7 +1,7 @@
 /* Weekly mail uses the same scope for the warning and both entry points.
    Verified facts live in hours-cache; SW is a legacy manual mark, not proof. */
 var HOURS_STATUS={period:'',phase:'idle',rows:[],checkedAt:0};
-var HOURS_REQUEST=null,HOURS_SEQUENCE=0,HOURS_REFRESHING=false;
+var HOURS_REQUEST=null,HOURS_SEQUENCE=0;
 function hoursKairoUrl(){
   var base=invoiceKairoUrl(invoiceData().config.kairoUrl);
   return base?new URL('/horas/',base).href:'';
@@ -43,20 +43,14 @@ function hoursJobRunning(url){
 function renderHoursAccess(state,compact){
   var closed=homePeriodMode(CY,CM)==='closed',url=hoursKairoUrl(),period=mkey(CY,CM);
   var cache=HOURS_CACHE.url===url&&HOURS_CACHE,cached=cache&&cache.periods[period];
-  var checkedAt=cached&&cached.checkedAt;
-  if(!checkedAt){
-    var checked=Object.keys(state.states).map(function(key){var row=hoursCachedWeek(key);return row&&row.checkedAt;}).filter(Boolean);
-    if(checked.length)checkedAt=Math.min.apply(null,checked);
-  }
-  var dateFormat=new Intl.DateTimeFormat('es-ES',{timeZone:'Europe/Madrid',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
-  var note=closed?'Histórico cerrado':'';
-  if(checkedAt)note=(compact?'Fecha de revisión · ':'Comprobado ')+dateFormat.format(checkedAt);
+  var note=compact&&cached&&cached.checkedAt?'Fecha de revisión · '+homeInvoiceCheckedAt(cached.checkedAt):'';
   var last=cache&&cache.checks&&cache.checks[period];
-  var feedback=last&&last.phase==='error'?'Intento '+new Intl.DateTimeFormat('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(last.at))+': '+hoursCheckMessage(last.code)+' Se conserva la última comprobación correcta.':typeof HOURS_JOB_ERROR==='undefined'?'':HOURS_JOB_ERROR;
+  var feedback=last&&last.phase==='error'&&!hoursAccessIssue(last.code)?'Intento '+new Intl.DateTimeFormat('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(last.at))+': '+hoursCheckMessage(last.code)+' Se conserva la última comprobación correcta.':typeof HOURS_JOB_ERROR==='undefined'?'':HOURS_JOB_ERROR;
   var networkIssue=last&&last.phase==='error'&&last.code==='network'||typeof HOURS_JOB_NETWORK_ERROR!=='undefined'&&HOURS_JOB_NETWORK_ERROR;
   var running=hoursJobRunning(url);
   var label=state&&state.review?'Revisar cambios':'Programar pendientes';
-  return '<div class="hours-home-actions"><span class="hours-verified-note">'+note+'</span>'+(!closed&&!compact&&!state.complete?'<button type="button" class="hours-pending-button" data-hours-review>'+label+'</button>':'')+(running?'<span class="hours-job-note" role="status">Kairo está trabajando. Puedes salir de Gestify.</span>':feedback?'<span class="hours-job-note" role="status">'+escHtml(feedback)+ '</span>':'')+(networkIssue&&!running?'<button type="button" class="hours-check-button" data-mobile-connection>Activar VPN</button>':'')+'</div>';
+  var actions=(note?'<span class="hours-verified-note">'+note+'</span>':'')+(!closed&&!compact&&!state.complete?'<button type="button" class="hours-pending-button" data-hours-review>'+label+'</button>':'')+(running?'<span class="hours-job-note" role="status">Kairo está trabajando. Puedes salir de Gestify.</span>':feedback?'<span class="hours-job-note" role="status">'+escHtml(feedback)+ '</span>':'')+(networkIssue&&!running?'<button type="button" class="hours-check-button" data-mobile-connection>Activar VPN</button>':'');
+  return actions?'<div class="hours-home-actions">'+actions+'</div>':'';
 }
 function hoursMailSubject(wd){return 'HORAS Y DIAS TRABAJADOS - '+AUTHOR_NAME+' - Semana del '+fd(wd.mon)+' al '+fd(wd.fri);}
 function hoursCalendarDays(list){
@@ -186,18 +180,13 @@ async function openHoursReview(targetWeek,intent){
 }
 function paintHomeSyncDate(){
   var label=document.getElementById('homeSyncDate');if(!label)return;
-  var stamp=HOURS_CACHE.url===hoursKairoUrl()&&(HOURS_CACHE.lastMailSync||Math.max(0,...Object.values(HOURS_CACHE.periods).map(function(p){return p.checkedAt;})));
-  label.textContent=stamp?'Última sync · '+homeInvoiceCheckedAt(stamp):'';
-  label.title=stamp?'Última sincronización correcta de los correos con Kairo':'';
+  var stamp=HOURS_CACHE.url===hoursKairoUrl()&&HOURS_CACHE.lastMailSync;
+  label.textContent=stamp?homeInvoiceCheckedAt(stamp):'';
+  label.title=stamp?'Última sincronización correcta con Kairo':'';
 }
 function paintHoursStatus(){
   var container=document.getElementById('weeksContainer');if(!container)return;
   paintHomeSyncDate();
-  var syncButton=document.getElementById('homeSyncBtn');
-  if(syncButton){
-    syncButton.disabled=HOURS_REFRESHING||hoursJobRunning(hoursKairoUrl());
-    syncButton.setAttribute('aria-busy',String(syncButton.disabled));
-  }
   if(typeof paintHomeInvoiceStatus==='function')paintHomeInvoiceStatus();
   var summary=container.querySelector('.home-submission');if(summary)summary.outerHTML=renderHomeSubmissionStatus(CY,CM);
   container.querySelectorAll('.week-card[data-week]').forEach(function(card){
@@ -230,34 +219,58 @@ async function syncHoursStatus(force,requestedPeriod){
   if(force)hoursRecordCheck(period,'running');
   var controller=new AbortController(),timeout=setTimeout(function(){controller.abort();},10000);
   try{
-    var response=await fetch(url+'status?period='+target+'&background=1&audit='+(windowAudit?'1':'0')+'&refresh='+(force?'1':'0&stored=1'),{method:'GET',mode:'cors',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',targetAddressSpace:'local',signal:controller.signal});
+    var response=await fetch(url+'status?period='+target+'&background=1&audit='+(windowAudit?'1':'0')+'&refresh=0&stored=1',{method:'GET',mode:'cors',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',targetAddressSpace:'local',signal:controller.signal});
     if(!response.ok)throw new Error('Outlook sin confirmar');
     var result=await response.json();
     if(url!==hoursKairoUrl())return;
-    if(result.phase==='done'){hoursAcceptJobResult({url:url},result.result);if(force)hoursRecordCheck(period,'done');HOURS_JOB_ERROR='';if(force)showToast('Estado de correos actualizado.');if(period===mkey(CY,CM))HOURS_STATUS={period:period,url:url,phase:'ready',checkedAt:Date.now()};}
+    if(result.phase==='done'){hoursAcceptJobResult({url:url},result.result);if(force)hoursRecordCheck(period,'done');HOURS_JOB_ERROR='';if(period===mkey(CY,CM))HOURS_STATUS={period:period,url:url,phase:'ready',checkedAt:Date.now()};return true;}
     else{hoursTrackJob(result,{period:target,manual:force},url);if(period===mkey(CY,CM))HOURS_STATUS={period:period,url:url,phase:'loading',checkedAt:cached?cached.checkedAt:0};}
   }catch(e){
     if(period===mkey(CY,CM))HOURS_STATUS={period:period,url:url,phase:'error',checkedAt:cached?cached.checkedAt:0};
     if(force)HOURS_JOB_ERROR='Kairo no está disponible. Se conserva el estado guardado y el envío manual.';
-    var code=e.name==='AbortError'||e instanceof TypeError?'network':'read_failed';
+    var code=e.name==='AbortError'||e instanceof TypeError?'network':'stored_read_failed';
     if(force){hoursRecordCheck(period,'error',code);showToast(hoursCheckMessage(code));}
   }
   finally{clearTimeout(timeout);paintHoursStatus();}
 }
-async function syncHomeMailWithAccess(){
+async function refreshHomeStates(){
   var url=hoursKairoUrl(),period=mkey(CY,CM);
-  var phase=await requestHoursSyncAccess();
-  if(['mfa','rejected','checking','waiting','reauthenticating'].includes(phase))return;
-  if(url===hoursKairoUrl())await syncHoursStatus(true,period);
-}
-function refreshHomeStates(){
-  if(!hoursRemoteConfigured()){openInvoiceSettings({connection:true});return;}
-  if(HOURS_REFRESHING||hoursJobRunning(hoursKairoUrl()))return;HOURS_REFRESHING=true;HOURS_JOB_ERROR='';
-  Promise.all([syncHomeMailWithAccess(),typeof syncHomeInvoiceStatus==='function'?syncHomeInvoiceStatus(true):null]).finally(function(){HOURS_REFRESHING=false;paintHoursStatus();});paintHoursStatus();
+  var results=await Promise.all([syncHoursStatus(true,period),syncHomeInvoiceStatus(true)]);
+  if(url!==hoursKairoUrl())return 'La conexión con Kairo ha cambiado.';
+  if(results[0]&&results[1]){
+    HOURS_CACHE.lastMailSync=Date.now();hoursCacheSave();paintHomeSyncDate();return 'Correos y factura actualizados.';
+  }
+  var last=HOURS_CACHE.checks&&HOURS_CACHE.checks[period];
+  if(last&&last.phase==='error'&&hoursAccessIssue(last.code))return hoursCheckMessage(last.code);
+  if(last&&last.phase==='running')return 'Kairo está comprobando los correos.';
+  if(results[0])return 'Correos actualizados. La factura sigue sin comprobar.';
+  if(results[1])return 'Factura actualizada. Los correos siguen sin comprobar.';
+  return 'No se ha podido sincronizar con Kairo. Se conserva el último estado.';
 }
 function initHoursKairo(){
   var container=document.getElementById('weeksContainer');if(!container)return;
-  document.getElementById('homeSyncBtn').addEventListener('click',refreshHomeStates);
+  var dialog=document.getElementById('homeSyncDialog'),result=document.getElementById('homeSyncResult');
+  var check=dialog.querySelector('[data-hours-check]'),access=dialog.querySelector('[data-hours-auth]'),restore;
+  function closeSync(){dialog.close();}
+  document.getElementById('homeSyncBtn').addEventListener('click',function(){
+    if(!hoursRemoteConfigured()){openInvoiceSettings({connection:true});return;}
+    if(dialog.open)return;
+    var last=HOURS_CACHE.url===hoursKairoUrl()&&HOURS_CACHE.checks&&HOURS_CACHE.checks[mkey(CY,CM)];
+    if(last&&last.phase==='error'&&hoursAccessIssue(last.code))result.textContent=hoursCheckMessage(last.code);
+    restore=settingsPanelBack();NAV_BACK=closeSync;dialog.showModal();
+  });
+  dialog.querySelector('[data-close-sync]').onclick=closeSync;
+  dialog.addEventListener('close',function(){if(NAV_BACK===closeSync)restore();});
+  dialog.addEventListener('click',async function(event){
+    var action=event.target.closest('[data-hours-check],[data-hours-auth]');
+    if(!action||action.disabled)return;
+    check.disabled=access.disabled=true;
+    action.setAttribute('aria-busy','true');
+    result.textContent=action===access?'Comprobando el acceso a Outlook…':'Sincronizando con Kairo…';
+    try{result.textContent=await (action===access?requestHoursSyncAccess():refreshHomeStates());}
+    catch(e){result.textContent=action===access?'No se pudo comprobar el acceso a Outlook. Revisa la conexión con Kairo.':'No se pudo sincronizar con Kairo.';}
+    finally{action.removeAttribute('aria-busy');check.disabled=access.disabled=false;if(!dialog.open)showToast(result.textContent);}
+  });
   container.addEventListener('click',function(event){var week=event.target.closest('[data-hours-week]');if(event.target.closest('[data-mobile-connection]'))openMobileConnection(null,'vpn');else if(week&&hoursCovered(week.dataset.hoursWeek))openMailCalendar();else if(week)openHoursReview(week.dataset.hoursWeek);else if(event.target.closest('[data-hours-review]'))openHoursReview();else if(event.target.closest('[data-home-formula]')){HOME_FORMULA_OPEN=!HOME_FORMULA_OPEN;paintHoursStatus();}});
   function resume(){if(!document.hidden)hoursResumeJobs();}
   window.addEventListener('focus',resume);window.addEventListener('online',resume);document.addEventListener('visibilitychange',resume);

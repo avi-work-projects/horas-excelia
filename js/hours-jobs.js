@@ -44,7 +44,16 @@ async function hoursResumeJobs(){
         if(!response.ok)throw new Error('Kairo no está disponible');
         var data=await response.json();if(data.jobId!==job.id||!['queued','running','done','error'].includes(data.phase))throw new Error('Trabajo no válido');
         if(data.phase==='done'){hoursAcceptJobResult(job,data.result);HOURS_JOBS=HOURS_JOBS.filter(function(j){return j.id!==job.id;});HOURS_JOB_ERROR='';HOURS_JOB_NETWORK_ERROR=false;if(job.kind==='status'){hoursRecordCheck(job.period,'done','',Date.parse(data.updatedAt)||Date.now());if(job.manual)showToast('Estado de correos actualizado.');}}
-        else if(data.phase==='error'){HOURS_JOB_ERROR=hoursCheckMessage(data.errorCode)+' Se conserva el último estado confirmado.';HOURS_JOB_NETWORK_ERROR=false;HOURS_JOBS=HOURS_JOBS.filter(function(j){return j.id!==job.id;});if(job.kind==='status')hoursRecordCheck(job.period,'error',data.errorCode,Date.parse(data.updatedAt)||Date.now());if(job.manual)showToast(hoursCheckMessage(data.errorCode));if(typeof checkHoursAuth==='function')checkHoursAuth(true,6);}
+        else if(data.phase==='error'){
+          var message=hoursCheckMessage(data.errorCode),accessIssue=hoursAccessIssue(data.errorCode);
+          HOURS_JOB_ERROR=accessIssue?'':message+' Se conserva el último estado confirmado.';HOURS_JOB_NETWORK_ERROR=false;
+          HOURS_JOBS=HOURS_JOBS.filter(function(j){return j.id!==job.id;});
+          if(job.kind==='status')hoursRecordCheck(job.period,'error',data.errorCode,Date.parse(data.updatedAt)||Date.now());
+          var sync=document.getElementById('homeSyncDialog');
+          if(accessIssue&&sync&&sync.open)document.getElementById('homeSyncResult').textContent=message;
+          else if(job.manual||accessIssue)showToast(message);
+          if(accessIssue&&typeof checkHoursAuth==='function')checkHoursAuth();
+        }
       }catch(e){networkFailed=true;if(!HOURS_JOB_ERROR||HOURS_JOB_NETWORK_ERROR){HOURS_JOB_ERROR='Sin conexión con Kairo. El trabajo y los estados guardados se conservan.';HOURS_JOB_NETWORK_ERROR=true;}}
       finally{clearTimeout(timeout);}
     }

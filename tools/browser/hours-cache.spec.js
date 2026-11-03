@@ -26,7 +26,7 @@ test('Cambiar de mes, volver y recargar conserva la comprobación sin nuevas con
   await page.clock.setFixedTime(new Date('2027-02-01T15:00:00+01:00'));
   await page.evaluate(()=>{render();window.dispatchEvent(new Event('focus'));});expect(api.calls).toHaveLength(1);
   await page.reload();await expect(page.locator('.home-submission.complete')).toContainText('Correos al día');expect(api.calls).toHaveLength(1);
-  await expect(page.locator('.hours-verified-note')).toContainText('Comprobado');
+  await expect(page.locator('.hours-verified-note')).toHaveCount(0);
 });
 test('Sin conexión conserva hechos conocidos y señala cambios locales sin reintentar continuamente',async({page,context})=>{
   const api=await setup(page,context);api.offline();
@@ -59,7 +59,7 @@ test('Respuesta tardía no contamina otro mes y cambiar de servidor no reutiliza
 });
 
 test('actualizar termina con causa visible, conserva fecha y hechos; un nuevo éxito limpia el error y persiste',async({page,context})=>{
-  await setup(page,context);const old=await page.locator('.hours-verified-note').innerText();let fail=true;
+  await setup(page,context);const old=await page.locator('#homeSyncDate').textContent();let fail=true;
   await page.clock.setFixedTime(new Date('2027-02-01T12:05:00+01:00'));
   await context.route(base+'horas/status?**',async route=>{
     if(fail)return route.fulfill({status:202,json:{jobId:'55555555-5555-4555-8555-555555555555',kind:'status',phase:'queued'}});
@@ -67,15 +67,16 @@ test('actualizar termina con causa visible, conserva fecha y hechos; un nuevo é
     return route.fulfill({json:result});
   });
   await context.route(base+'horas/jobs/**',route=>route.fulfill({json:{jobId:'55555555-5555-4555-8555-555555555555',kind:'status',phase:'error',errorCode:'auth_required',updatedAt:'2027-02-01T11:05:00Z'}}));
-  await page.locator('[data-hours-check]').click();
-  await expect(page.locator('.hours-job-note')).toContainText('Outlook necesita iniciar sesión');
-  await expect(page.locator('.hours-job-note')).toContainText('12:05');
-  await expect(page.locator('.hours-verified-note')).toHaveText(old);
+  await page.locator('#homeSyncBtn').click();await page.locator('[data-hours-check]').click();
+  await expect(page.locator('#homeSyncResult')).toContainText('Outlook necesita iniciar sesión');
+  await expect(page.locator('.home-submission')).not.toContainText('Outlook necesita iniciar sesión');
+  await expect(page.locator('#homeSyncDate')).toHaveText(old);
   await expect(page.locator('.week-card').nth(1).locator('.hours-week-badge')).toHaveText('◷ Programada');
-  await page.reload();await expect(page.locator('.hours-job-note')).toContainText('Outlook necesita iniciar sesión');
+  await page.reload();await expect(page.locator('.home-submission')).not.toContainText('Outlook necesita iniciar sesión');
+  await page.locator('#homeSyncBtn').click();await expect(page.locator('#homeSyncResult')).toContainText('Outlook necesita iniciar sesión');
   fail=false;await page.locator('[data-hours-check]').click();
-  await expect(page.locator('#toast')).toContainText('Estado de correos actualizado');
-  await expect(page.locator('.hours-verified-note')).toContainText('12:05');
+  await expect(page.locator('#homeSyncResult')).toContainText(/Correos (y factura actualizados|actualizados)/);
+  await expect(page.locator('.hours-verified-note')).toHaveCount(0);
   await expect(page.locator('.hours-job-note')).toHaveCount(0);
   await page.reload();await expect(page.locator('.hours-job-note')).toHaveCount(0);
 });

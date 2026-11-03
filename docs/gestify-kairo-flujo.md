@@ -248,3 +248,9 @@ Desde v533 el acceso junto a «Exportar Horas» se llama «Ver envíos». En las
 Home muestra la programación guardada por semana. Si el móvil necesita recuperar el histórico, pide a Kairo únicamente los registros guardados. Un mes sin registros queda «Sin programar». Navegar o alcanzar la fecha prevista conserva el último estado. La comparación de jornadas y fechas se hace en Gestify. Un cambio posterior a la programación se señala en rojo.
 
 «Sync Kairo» pide una lectura de Outlook, el estado de la factura del mes y la revisión del acceso a Microsoft. La fecha de la cabecera corresponde a la última sincronización correcta de correos. Una revisión solicitada para programar tiene un identificador persistente y puede terminar en Kairo con la ventana cerrada. La programación requiere la confirmación del usuario y conserva la comprobación de duplicados antes de escribir.
+
+## Sync Kairo en Home (v536)
+
+**Sincronizar correos y factura** lee las semanas guardadas en Kairo y el estado de la factura del mes visible. Funciona aunque la sesión de Outlook haya caducado. La fecha y la hora bajo el nombre del botón avanzan al completarse ambas lecturas.
+
+**Comprobar acceso a Outlook** solicita al recuperador de Kairo que abra el buzón con el secreto privado si hace falta. El menú muestra el resultado. Una petición de MFA detiene el intento y requiere la intervención del titular. Las dos entradas **Ver envíos** abren la misma agenda del mes visible.
