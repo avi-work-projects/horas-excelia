@@ -27,18 +27,19 @@ function homeInvoiceModel(year,month){
   var model={period:period,url:url,tone:'unknown',title:'Factura del mes',detail:'Puedes preparar la factura o consultar su estado en Kairo.'};
   var saved=INVOICE_HOME_CACHE.url===url&&INVOICE_HOME_CACHE.periods[period],data=saved&&saved.data;
   var today=new Date();
+  var requirementsNote='* Programa primero los envíos de horas de este mes y el envío de la factura del mes anterior.';
   if(period>=mkey(today.getFullYear(),today.getMonth())&&(!data||['missing','draft','issued'].includes(data.state))){
     var pending=homeSubmissionWeeks(year,month).find(function(week){
       return !week.extra&&dk(ad(week.mon,4)).slice(0,7)>=period&&!(url?hoursCovered(week.key):SW[week.key]);
     });
-    if(pending)return Object.assign(model,{title:'Factura sin enviar',tone:'pending',unsent:true,detail:'* Programa primero los envíos de horas de este mes.',week:pending.key,configure:!url});
+    if(pending)return Object.assign(model,{title:'Factura sin enviar',tone:'pending',unsent:true,detail:requirementsNote,week:pending.key,configure:!url});
   }
   if(!url)return Object.assign(model,{title:'Conectar facturas con Kairo',detail:'Puedes preparar el mes en Gestify o conectar Kairo.',configure:true});
   var previousPeriod=homePreviousInvoicePeriod(year,month);
   if(period>=mkey(today.getFullYear(),today.getMonth())&&previousPeriod>=INVOICE_FIRST_PERIOD&&(!data||['missing','draft','issued'].includes(data.state))){
     var previous=INVOICE_HOME_CACHE.url===url&&INVOICE_HOME_CACHE.periods[previousPeriod];
     if(!previous||!previous.data||!['scheduled','sent'].includes(previous.data.state))
-      return Object.assign(model,{title:'Factura sin enviar',tone:'pending',unsent:true,previousPeriod:previousPeriod,detail:'* Programa primero la factura del mes anterior.'});
+      return Object.assign(model,{title:'Factura sin enviar',tone:'pending',unsent:true,previousPeriod:previousPeriod,detail:requirementsNote});
   }
   if(!data){if(homePeriodMode(year,month)==='closed'){model.title='Factura de mes cerrado';model.detail='Histórico guardado · sin consultas automáticas';}return model;}
   var pending=['missing','draft','issued'].includes(data.state);

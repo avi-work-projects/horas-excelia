@@ -85,12 +85,12 @@ test('mes futuro: primero horas del mes, después factura, con prioridad para un
   await page.evaluate(()=>{CY=2027;CM=3;render();});
   const panel=page.locator('#homeInvoiceStatus');
   await expect(panel).toContainText('Factura sin enviar');
-  await expect(panel.locator('.home-invoice-copy>span')).toHaveText('* Programa primero los envíos de horas de este mes.');
+  await expect(panel.locator('.home-invoice-copy>span')).toHaveText('* Programa primero los envíos de horas de este mes y el envío de la factura del mes anterior.');
   await expect(panel.locator('[data-home-invoice=send]')).toHaveCount(0);
   await panel.getByRole('button',{name:'Revisar horas'}).click();
   await expect(page.locator('.week-card .sent-toggle:focus')).toHaveCount(1);
   await page.evaluate(()=>{HOURS_CACHE.url=hoursKairoUrl();weeks(CY,CM).forEach(w=>HOURS_CACHE.weeks[dk(w[0])]={state:'sent'});paintHoursStatus();});
-  await expect(panel).toContainText('Programa primero la factura del mes anterior');
+  await expect(panel).toContainText('el envío de la factura del mes anterior');
   await page.evaluate(()=>{INVOICE_HOME_CACHE.periods['2027-03']={data:{state:'scheduled'}};paintHoursStatus();});
   await expect(panel.getByRole('button',{name:'Enviar factura'})).toBeVisible();
   await page.evaluate(()=>{HOURS_CACHE.weeks={};INVOICE_HOME_CACHE.periods['2027-04']={data:{state:'scheduled',scheduled:true,scheduledDate:'2027-04-20'}};paintHoursStatus();});
