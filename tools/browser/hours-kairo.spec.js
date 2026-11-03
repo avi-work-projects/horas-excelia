@@ -312,12 +312,16 @@ test('calendario de horas: exclusiones, envíos y dos semanas siguientes sin con
  await expect(popup.locator('#calendar [data-date="2027-02-17"]')).toContainText('A');
  await expect(popup.locator('#calendar tr.included')).toHaveCount(4);
  await popup.screenshot({path:info.outputPath('hours-calendar-month.png'),animations:'disabled'});
+ // Home can still collect a review already shown in the popup. Only its
+ // outstanding job may be polled while the calendar moves locally.
+ const pendingJobs=await page.evaluate(()=>HOURS_JOBS.map(job=>new URL('jobs/'+job.id,job.url).pathname));
  const count=calls.length;await popup.getByRole('button',{name:'Mes siguiente',exact:true}).click();
  await expect(popup.locator('#calendar tr.included')).toHaveCount(2);
  await expect(popup.locator('#calendar [data-date="2027-03-04"]')).toHaveClass(/delivery planned/);
  await expect(popup.locator('#calendar [data-date="2027-03-15"]')).toHaveClass(/unselected/);
  for(const width of [320,440]){await popup.setViewportSize({width,height:880});expect(await popup.locator('html').evaluate(e=>e.scrollWidth<=e.clientWidth)).toBe(true);}
- expect(calls.length).toBe(count);expect(calls.some(c=>c.path.endsWith('/commit'))).toBe(false);
+ expect(calls.slice(count).filter(call=>call.method!=='GET'||!pendingJobs.includes(call.path))).toEqual([]);
+ expect(calls.some(c=>c.path.endsWith('/commit'))).toBe(false);
  await popup.screenshot({path:info.outputPath('hours-calendar-extra-weeks.png'),animations:'disabled'});await popup.close();
  const individual=await open(page,page.locator('.week-card').nth(3).getByRole('button',{name:'Programar semana'}));
  await expect(individual.locator('#calendar tr.included')).toHaveCount(1);
