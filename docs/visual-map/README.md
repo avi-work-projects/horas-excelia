@@ -1,5 +1,7 @@
 # Mapa visual de Gestify
 
+v537. [Sync Kairo con acciones e iconos](review/evidence/home-v537/sync-kairo.png), [factura por preparar](review/evidence/home-v537/home-factura-v537.png) y [correos pendientes](review/evidence/home-v537/home-pendientes-v537.png).
+
 v536. [Home con el resumen centrado](review/evidence/home-v536/home-v536.png) y [selector de Sync Kairo](review/evidence/home-v536/sync-kairo.png).
 
 v535. [Agenda en tema claro](review/evidence/kairo-v535/agenda.png) y [paso 5 de facturación](review/evidence/kairo-v535/step.png). El mes vecino acompaña al dedo durante el gesto.

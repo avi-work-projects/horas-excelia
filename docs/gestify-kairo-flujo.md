@@ -254,3 +254,9 @@ Home muestra la programación guardada por semana. Si el móvil necesita recuper
 **Sincronizar correos y factura** lee las semanas guardadas en Kairo y el estado de la factura del mes visible. Funciona aunque la sesión de Outlook haya caducado. La fecha y la hora bajo el nombre del botón avanzan al completarse ambas lecturas.
 
 **Comprobar acceso a Outlook** solicita al recuperador de Kairo que abra el buzón con el secreto privado si hace falta. El menú muestra el resultado. Una petición de MFA detiene el intento y requiere la intervención del titular. Las dos entradas **Ver envíos** abren la misma agenda del mes visible.
+
+## Requisitos de facturación y avisos (v537)
+
+Para preparar una factura nueva y aprobar su programación, las semanas laborales del mes tienen que constar como programadas o enviadas y la factura del mes anterior tiene que estar programada o enviada. El primer mes del histórico se configura en Kairo. La condición se verifica con los registros guardados, sin abrir Outlook. Una aprobación existente conserva su estado.
+
+Home distingue los correos pendientes de programar de las semanas ya programadas cuyos datos han cambiado. Las incidencias de duplicados y resultados inciertos mantienen su aviso específico. La última fecha de sincronización se conserva cuando una pestaña o respuesta antigua vuelve a guardar la caché.

@@ -29,7 +29,7 @@ function hoursRemoteConfigured(){try{return !!hoursKairoUrl();}catch(e){return f
 function hoursCovered(key){var state=hoursWeekState(key);return state==='sent'||state==='scheduled';}
 function hoursHasConfirmedMail(key){var row=hoursCachedWeek(key);return !!row&&['sent','scheduled','changed'].includes(row.state);}
 function hoursWeekBadge(state){
-  var labels={sent:'✓ Enviada',scheduled:'◷ Programada',closed:'Cerrada',changed:'Revisar cambios',missing:'Pendiente',ready:'Pendiente'};
+  var labels={sent:'✓ Enviada',scheduled:'◷ Programada',closed:'Cerrada',changed:'Revisar cambios',missing:'Pendiente',ready:'Pendiente',unverified:'Pendiente',draft:'Pendiente','blocked-previous':'Pendiente','past-due':'Pendiente','no-workdays':'Pendiente'};
   return labels[state]||(state?'Revisar':'Sin programar');
 }
 function hoursWeekDate(key,state){
@@ -48,7 +48,7 @@ function renderHoursAccess(state,compact){
   var feedback=last&&last.phase==='error'&&!hoursAccessIssue(last.code)?'Intento '+new Intl.DateTimeFormat('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(last.at))+': '+hoursCheckMessage(last.code)+' Se conserva la última comprobación correcta.':typeof HOURS_JOB_ERROR==='undefined'?'':HOURS_JOB_ERROR;
   var networkIssue=last&&last.phase==='error'&&last.code==='network'||typeof HOURS_JOB_NETWORK_ERROR!=='undefined'&&HOURS_JOB_NETWORK_ERROR;
   var running=hoursJobRunning(url);
-  var label=state&&state.review?'Revisar cambios':'Programar pendientes';
+  var label=Object.values(state.states).includes('changed')?'Revisar cambios':'Programar pendientes';
   var actions=(note?'<span class="hours-verified-note">'+note+'</span>':'')+(!closed&&!compact&&!state.complete?'<button type="button" class="hours-pending-button" data-hours-review>'+label+'</button>':'')+(running?'<span class="hours-job-note" role="status">Kairo está trabajando. Puedes salir de Gestify.</span>':feedback?'<span class="hours-job-note" role="status">'+escHtml(feedback)+ '</span>':'')+(networkIssue&&!running?'<button type="button" class="hours-check-button" data-mobile-connection>Activar VPN</button>':'');
   return actions?'<div class="hours-home-actions">'+actions+'</div>':'';
 }

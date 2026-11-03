@@ -17,7 +17,7 @@ class BridgeTests(unittest.TestCase):
         self.calls = []
         self.source = dict(operationId='a'*64, contentHash='b'*64, period='2027-02', revision=1)
         self.data = dict(self.source, action='prepare', source=json.dumps(self.source))
-        self.service = SimpleNamespace(ROOT=self.root, db=self.db, import_json=self.import_json, load=self.load)
+        self.service = SimpleNamespace(ROOT=self.root, db=self.db, import_json=self.import_json, load=self.load, config=lambda: {})
         self.panel = SimpleNamespace(db=self.db)
         with self.db() as db:
             db.execute('CREATE TABLE plans(id INTEGER PRIMARY KEY,data TEXT,status TEXT,approval TEXT,detail TEXT)')

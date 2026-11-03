@@ -8,6 +8,8 @@ async function setup(page,context,{loseReply=false}={}){
   let stored=null,calls=0;
   await context.route('https://synthetic-kairo.test.ts.net/**',async route=>{
     const req=route.request();
+    if(req.method()==='GET'&&new URL(req.url()).pathname.endsWith('/gestify-status')&&new URL(req.url()).searchParams.get('period')==='2027-10')
+      return route.fulfill({json:{period:'2027-10',state:'sent',generated:true,issued:true,scheduled:false,sent:true,scheduledDate:null},headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}});
     if(req.method()==='GET'&&new URL(req.url()).pathname.endsWith('/gestify-status')){const period=new URL(req.url()).searchParams.get('period');return route.fulfill({json:{period,state:stored?'draft':'missing',generated:!!stored,issued:false,scheduled:false,sent:false,scheduledDate:null},headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}});}
     if(req.method()==='GET')return route.fulfill({contentType:'text/html',body:receiverHtml});
     const data=req.postDataJSON();expect(req.headers()['x-csrf']).toBe('synthetic');

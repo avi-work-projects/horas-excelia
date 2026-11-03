@@ -29,6 +29,9 @@ def response(service, url, csrf):
             selected = dict(row, data=data)
             break
     cfg = service.config() if selected else {}
+    if selected and selected['status'] in ('review', 'cancelled') and cfg.get('gestify_prerequisites'):
+        from invoice_prerequisites import check
+        cfg = dict(cfg, invoice_prerequisite=check(service.ROOT, period, cfg))
     fingerprint = service.digest(selected['data']) if selected else ''
     return 200, render(period, selected, selected['id'] if selected else None, cfg, csrf, fingerprint)
 
@@ -45,7 +48,8 @@ def render(period, row, current, cfg, csrf, fingerprint, moment=None):
         active=row['id']==current
         fields=p.get('display',{})
         issued=state in {'accepted','sent','email_cancelled','sending'}
-        approve=active and cfg.get('commissioned') and cfg.get('mail_enabled') and state in {'review','cancelled'}
+        prerequisite=cfg.get('invoice_prerequisite')
+        approve=active and cfg.get('commissioned') and cfg.get('mail_enabled') and state in {'review','cancelled'} and not prerequisite
         cancel=active and can_cancel(state,p['send_date'],moment)
         initial=5 if issued else 2 if state in {'review','cancelled'} else 4
         status=e(LABELS.get(state,'Requiere revisión'))
@@ -80,7 +84,7 @@ def render(period, row, current, cfg, csrf, fingerprint, moment=None):
         if state in {'blocked','uncertain','missed'} and row.get('detail'):
             approval+='<p role="status">'+e(row['detail'])+'</p>'
         if active and state in {'review','cancelled'} and not approve:
-            approval+='<p>La aprobación está deshabilitada en Kairo.</p>'
+            approval+='<p>'+e(prerequisite['message'] if prerequisite else 'La aprobación está deshabilitada en Kairo.')+'</p>'
         if not active:approval+='<p>Esta revisión ha sido sustituida.</p>'
         approval+='<div class="k-action-list">'
         if approve:approval+='<button class="k-primary" data-action="approve">Aprobar emisión y envío</button>'

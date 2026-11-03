@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v536 — Home y sincronización';
+var APP_VERSION = 'v537 — Facturas y correos pendientes';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -354,7 +354,7 @@ function homeSubmissionStatus(year,month){
     if(!state)known=false;
     if(state==='sent'||state==='scheduled')counts[state]++;
     else if(state==='closed'){}
-    else if(state==='missing'||state==='ready')counts.pending++;
+    else if(['missing','ready','unverified','draft','past-due','no-workdays','blocked-previous'].includes(state))counts.pending++;
     else if(state)counts.review++;
   });
   var pending=scope.filter(function(week){return !['sent','scheduled','closed'].includes(states[week.key]);});
@@ -366,12 +366,12 @@ function renderHomeSubmissionStatus(year,month,state){
   var compact=!closed&&!state.complete&&!state.review&&!state.counts.sent&&!state.counts.scheduled;
   var changed=Object.values(state.states).includes('changed');
   var urgent=changed||!closed&&Object.keys(state.states).some(function(key){return ['missing','ready',''].includes(state.states[key])&&homeDueSoon(homeWeekSchedule(key).date);});
-  var title='Semanas pendientes',detail='';
+  var title='Correos pendientes de programar',detail='';
   if(closed){title='Mes cerrado';detail='Histórico · sin consultas automáticas';}
   else if(state.complete)title='Correos al día';
   else if(compact){
     title='Sin programar';
-  }else if(state.review){title=changed?'Hay cambios':'Revisar semanas';detail=changed?'Revisa las programaciones afectadas':'';}
+  }else if(state.review){title=changed?'Hay cambios':'Correos por revisar';detail=changed?'Revisa las programaciones afectadas':'Hay un envío duplicado o sin confirmar';}
   else detail=count+(count===1?' semana por programar':' semanas por programar');
   var showSummary=closed||state.known&&Object.keys(state.states).every(function(key){return ['sent','scheduled','changed','closed'].includes(state.states[key]);});
   var heading='<span class="home-submission-icon" aria-hidden="true">'+(state.complete?'&#10003;':'!')+'</span><strong>'+title+'</strong>';

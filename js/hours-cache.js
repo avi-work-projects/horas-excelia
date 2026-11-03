@@ -38,6 +38,13 @@ function hoursCacheRow(row,checkedAt){
 }
 var HOURS_CACHE=hoursCacheRead();
 function hoursCacheSave(){
+  // Another tab or an older request can save an earlier snapshot. Keep the
+  // last successful sync independently of which month's facts are being saved.
+  try{
+    var stored=JSON.parse(localStorage.getItem(HOURS_CACHE_KEY)||'null');
+    if(stored&&stored.schema===1&&stored.url===HOURS_CACHE.url&&Number.isFinite(stored.lastMailSync)&&stored.lastMailSync>0)
+      HOURS_CACHE.lastMailSync=Math.max(HOURS_CACHE.lastMailSync||0,stored.lastMailSync);
+  }catch(e){}
   var periods=Object.keys(HOURS_CACHE.periods).sort(function(a,b){return HOURS_CACHE.periods[b].checkedAt-HOURS_CACHE.periods[a].checkedAt;});
   periods.slice(24).forEach(function(p){delete HOURS_CACHE.periods[p];});
   var keys=new Set();periods.slice(0,24).forEach(function(p){hoursScopeKeys(p).forEach(function(k){keys.add(k);});});

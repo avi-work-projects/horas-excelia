@@ -127,11 +127,11 @@ var BDAYS_FROM_SECRET=[];
     </div>
     <button class="default-hours-btn csv-export-btn" id="csvExportBtn" hidden><svg viewBox="0 0 24 24" class="ico-doc" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>CSV</button>
     <button class="default-hours-btn pdf-export-btn" id="pdfExportBtn" hidden><svg viewBox="0 0 24 24" class="ico-doc" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>PDF</button>
-    <dialog id="homeSyncDialog" class="mobile-connection-dialog" aria-labelledby="homeSyncTitle">
+    <dialog id="homeSyncDialog" class="mobile-connection-dialog home-sync-dialog" aria-labelledby="homeSyncTitle">
       <header><h2 id="homeSyncTitle">Sync Kairo</h2><button type="button" data-close-sync aria-label="Cerrar">×</button></header>
       <div class="home-sync-options">
-        <button type="button" data-hours-check>Sincronizar correos y factura</button>
-        <button type="button" data-hours-auth>Comprobar acceso a Outlook</button>
+        <button type="button" data-hours-check><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M20 7a8 8 0 0 0-14-1L3 9m0-6v6h6M4 17a8 8 0 0 0 14 1l3-3m0 6v-6h-6"/></svg><span>Sincronizar correos y factura</span></button>
+        <button type="button" data-hours-auth><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg><span>Comprobar acceso a Outlook</span></button>
       </div>
       <p id="homeSyncResult" role="status"></p>
     </dialog>

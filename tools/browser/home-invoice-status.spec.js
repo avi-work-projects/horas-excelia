@@ -90,6 +90,8 @@ test('mes futuro: primero horas del mes, después factura, con prioridad para un
   await panel.getByRole('button',{name:'Revisar horas'}).click();
   await expect(page.locator('.week-card .sent-toggle:focus')).toHaveCount(1);
   await page.evaluate(()=>{HOURS_CACHE.url=hoursKairoUrl();weeks(CY,CM).forEach(w=>HOURS_CACHE.weeks[dk(w[0])]={state:'sent'});paintHoursStatus();});
+  await expect(panel).toContainText('Programa primero la factura del mes anterior');
+  await page.evaluate(()=>{INVOICE_HOME_CACHE.periods['2027-03']={data:{state:'scheduled'}};paintHoursStatus();});
   await expect(panel.getByRole('button',{name:'Enviar factura'})).toBeVisible();
   await page.evaluate(()=>{HOURS_CACHE.weeks={};INVOICE_HOME_CACHE.periods['2027-04']={data:{state:'scheduled',scheduled:true,scheduledDate:'2027-04-20'}};paintHoursStatus();});
   await expect(panel).toContainText('Factura programada');
