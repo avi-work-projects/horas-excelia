@@ -117,7 +117,7 @@ function renderRutPlan(r){
   var range=rutFlexRange(month+'-01','month'),first=new Date(range.start+'T12:00:00'),days=+range.end.slice(8),offset=(first.getDay()+6)%7;
   var h='<div class="ev-form-overlay" id="rutPlanOv"><div class="ev-form-sheet rut-plan"><div class="ev-form-handle"></div>'
     +'<div class="rut-plan-header"><button class="sy-back" id="rutPlanClose">←</button><div><strong>Planificar sesiones</strong><span>'+escHtml(r.name)+'</span></div><span></span></div>'
-    +'<div class="rut-plan-body"><p class="sy-note">Marca varios días y guarda todas las clases de una vez.</p>'
+    +'<div class="rut-plan-body">'
     +'<div class="ev-date-row rut-session-fields"><div class="ev-field"><label for="rutPlanTime">Hora común</label><input class="ev-input" id="rutPlanTime" type="text" readonly data-time-picker data-time-quarter aria-haspopup="dialog" value="'+escHtml(RUT_PLAN.time||r.time||RUT_TIME_DEFAULT)+'"></div><div class="ev-field"><label for="rutPlanDur">Duración · min</label><input class="ev-input" id="rutPlanDur" type="number" min="15" max="480" value="'+(RUT_PLAN.dur==null?r.dur:RUT_PLAN.dur)+'"></div></div>'
     +'<div class="rut-plan-month"><button class="sy-back" data-rmonth="-1">◀</button><b>'+MN[first.getMonth()]+' '+first.getFullYear()+'</b><button class="sy-back" data-rmonth="1">▶</button></div>'
     +'<p class="rut-plan-quota">'+(r.flex.period==='month'?rutFlexCount(r,range)+' / '+rutFlexTarget(r,range.start)+' sesiones del mes · Objetivo: '+r.flex.weeklyTarget+' por semana':r.flex.target+' sesiones por semana')+'</p><div class="rut-plan-grid">';
@@ -130,8 +130,9 @@ function renderRutPlan(r){
   }
   h+='</div>';
   var list=Object.keys(r.flex.sessions).filter(function(day){return day.slice(0,7)===month;}).sort();
-  if(list.length)h+='<h4>Clases planificadas · pulsa para editar una</h4>';
+  if(list.length)h+='<details class="rut-plan-list"><summary>'+list.length+' sesiones planificadas</summary>';
   list.forEach(function(day){var s=r.flex.sessions[day];h+='<div class="rut-plan-row"><button class="ev-btn" data-redit="'+day+'">'+_rutFmtCorto(day)+' · '+s.time+'–'+rutFin(s.time,s.dur)+(rutIsSkipped(r,day)?' · Cancelada':'')+'<span>Editar →</span></button></div>';});
+  if(list.length)h+='</details>';
   return h+'</div><div class="rut-plan-footer"><span aria-live="polite">'+selected.length+' días seleccionados</span><button class="ev-btn primary" id="rutPlanSave"'+(!selected.length?' disabled':'')+'>Guardar '+(selected.length===1?'1 sesión':selected.length+' sesiones')+'</button></div></div></div>';
 }
 function openRutPlan(r){RUT_PLAN={id:r.id,month:evDk(new Date()).slice(0,7),selected:[],time:r.time||RUT_TIME_DEFAULT,dur:r.dur};refreshRutPlan();}

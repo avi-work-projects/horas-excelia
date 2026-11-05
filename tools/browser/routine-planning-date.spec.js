@@ -9,6 +9,38 @@ async function setup(page){
  });
  await page.goto('/');await page.evaluate(()=>{applyTheme('light');closeHomePopup();EV_VIEW='cal';EV_YEAR=2026;EV_MONTH=9;openEventsAt();});
 }
+test('mes de seis filas y editor de sesión completos en móvil',async({page},info)=>{
+ await page.clock.setFixedTime(new Date('2026-11-05T12:00:00+01:00'));await setup(page);
+ await page.evaluate(()=>{
+  const r=RUTINAS[0];r.name='Gimnasio';r.flex.target=8;r.flex.weeklyTarget=2;
+  for(const day of ['03','05','10','12','17','19','24','26'])r.flex.sessions['2026-11-'+day]={time:'18:00',dur:60};
+  saveRutinas();openRutPlan(r);
+ });
+ await expect(page.locator('#rutPlanOv')).toHaveClass(/open/);
+ await page.evaluate(()=>Promise.all(document.getAnimations().filter(a=>a.effect.getTiming().iterations!==Infinity).map(a=>a.finished.catch(()=>{}))));
+ for(const [width,height] of [[320,640],[360,720],[393,820],[440,880]]){
+  await page.setViewportSize({width,height});
+  const last=await page.locator('[data-rday="2026-11-30"]').boundingBox(),footer=await page.locator('.rut-plan-footer').boundingBox();
+  expect(last.y+last.height).toBeLessThanOrEqual(footer.y);
+  expect(await page.locator('.rut-plan').evaluate(e=>e.scrollWidth<=e.clientWidth)).toBe(true);
+ }
+ await page.setViewportSize({width:393,height:820});
+ await page.screenshot({path:info.outputPath('planificar-sesiones.png'),animations:'disabled'});
+ await page.locator('[data-rday="2026-11-03"]').click();
+ const editor=page.locator('.rut-session-editor');
+ await expect(editor).toBeVisible();
+ for(const [width,height] of [[320,640],[393,820]]){
+  await page.setViewportSize({width,height});
+  const save=await page.locator('#rutHistorySave').boundingBox(),date=await page.locator('#rutHistoryDate').boundingBox();
+  expect(save.y+save.height).toBeLessThanOrEqual(height);
+  expect(date.y+date.height).toBeLessThan(save.y);
+  expect(await editor.evaluate(e=>e.scrollWidth<=e.clientWidth)).toBe(true);
+ }
+ await page.setViewportSize({width:393,height:820});
+ await page.screenshot({path:info.outputPath('editar-sesion.png'),animations:'disabled'});
+ await page.locator('#rutHistoryEditClose').click();
+ await expect(page.locator('#rutPlanOv')).toBeVisible();
+});
 test('Planificación conjunta: borrador, cupo, una confirmación y altura estable',async({page},info)=>{
  await page.clock.setFixedTime(new Date('2026-10-24T12:00:00+02:00'));await setup(page);
  await page.evaluate(()=>openRutPlan(RUTINAS[0]));await expect(page.locator('#rutPlanSave')).toBeDisabled();

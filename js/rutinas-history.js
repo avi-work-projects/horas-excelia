@@ -158,18 +158,19 @@ function rutRescheduleSession(r,key,ds,time,dur){
 }
 function openRutHistoryEdit(r,key,onSave){
   var session=rutSessionByKey(r,key);if(!session)return;var ds=session.ds;
-  var h='<div class="ev-form-overlay" id="rutHistoryEditOv"><div class="ev-form-sheet"><div class="ev-form-handle"></div>';
-  h+='<div class="rut-history-head"><button class="sy-back" id="rutHistoryEditClose">&#8592;</button><div><strong>Editar sesión</strong><span>'+_rutFmtCorto(ds)+'</span></div></div>';
+  var h='<div class="ev-form-overlay" id="rutHistoryEditOv"><div class="ev-form-sheet ev-fixed-form-sheet rut-session-editor"><div class="ev-form-handle"></div>';
+  h+='<div class="ev-fixed-form-header rut-session-header"><button class="sy-back" id="rutHistoryEditClose" aria-label="Volver">&#8592;</button><div><h2>Editar sesión</h2><span>'+_rutFmtCorto(ds)+'</span></div><button type="button" class="rut-session-delete" id="rutHistoryDelete">Eliminar</button></div>';
+  h+='<div class="ev-fixed-form-body"><fieldset class="rut-session-card"><legend>'+escHtml(r.name)+'</legend>';
   if(rutFlexible(r)&&!session.extra)h+='<div class="ev-field rut-session-date"><label for="rutHistoryDate">Día de la clase</label><input type="date" class="ev-input" id="rutHistoryDate" min="'+rutFlexEarliest(r)+'" value="'+ds+'"></div>';
   h+='<div class="ev-date-row rut-session-fields"><div class="ev-field"><label for="rutHistoryTime">Hora</label><input type="text" readonly data-time-picker data-time-quarter aria-haspopup="dialog" placeholder="Sin hora" class="ev-input" id="rutHistoryTime" value="'+session.time+'"></div><div class="ev-field"><label for="rutHistoryDuration">Duración · min</label><input type="number" class="ev-input" id="rutHistoryDuration" min="15" max="480" value="'+session.dur+'"></div></div>';
-  h+='<p class="sy-note">Solo cambia esta sesión. El horario habitual se conserva.</p><div class="rut-session-state">';
+  h+='</fieldset><p class="sy-note rut-session-note"><em>* Los cambios se aplican solo a esta sesión.</em></p><div class="rut-session-state">';
   if(session.skip&&(!session.extra||session.recoveryOf)){
     h+='<button class="ev-io-btn" id="rutHistoryCancel">Descancelar clase</button>';
     if(!rutRecoveryFor(r,key))h+='<button class="ev-io-btn rut-recovery-confirm" id="rutHistoryRecover">Recuperar clase</button>';
     else h+='<p class="sy-note">'+escHtml(rutRecoveryNote(r,key))+'</p>';
   }else if(!rutFlexible(r)&&(!session.extra||session.recoveryOf))h+='<button class="ev-io-btn io-peligro" id="rutHistoryCancel">Cancelar clase</button>';
-  h+='</div>';
-  h+='<div class="ev-form-actions"><button class="ev-btn danger" id="rutHistoryDelete">Eliminar</button><button class="ev-btn primary" id="rutHistorySave">Guardar</button></div></div></div>';
+  h+='</div></div>';
+  h+='<div class="ev-fixed-form-actions"><button class="ev-btn primary" id="rutHistorySave">Guardar cambios</button></div></div></div>';
   var close=function(){cerrarPanel('rutHistoryEditWrap','rutHistoryEditOv');};
   var wrap=abrirPanel('rutHistoryEditWrap',h,{overlay:'rutHistoryEditOv',alCerrar:close});
   wrap.querySelector('#rutHistoryEditClose').onclick=close;
