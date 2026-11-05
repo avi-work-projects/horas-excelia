@@ -30,3 +30,29 @@ test('Pasado y bombilla conservan el contraste sin atenuar el texto dos veces',a
  await page.clock.setFixedTime(new Date('2026-10-26T10:00:00+01:00'));await page.evaluate(()=>refreshEvents(false));
  const title=page.locator('.ev-month-title[data-title-for="month-split"]');await expect(title).toHaveCSS('opacity','1');const before=await title.evaluate(el=>getComputedStyle(el).color);await page.locator('#evBright').click();await expect.poll(()=>page.evaluate(()=>EV_BRIGHT_PAST)).toBe(true);await expect(title).toHaveCSS('color','rgb(255, 255, 255)');expect(await title.evaluate(el=>getComputedStyle(el).color)).not.toBe(before);
 });
+
+for(const width of [320,400,440])test('Eventos de uno o dos días usan hasta dos líneas solo dentro de una semana '+width,async({page},info)=>{
+ await page.setViewportSize({width,height:880});
+ await page.clock.setFixedTime(new Date('2026-11-05T10:00:00+01:00'));
+ await page.evaluate(()=>{
+  EVENTS=[
+   {id:'short-one',kind:'grande',type:'Plan exterior',title:'Plan exterior',start:'2026-11-07',end:'2026-11-07',barSize:'lg',color:'#568600'},
+   {id:'short-two',kind:'grande',type:'Viaje',title:'Fin de semana tranquilo en la montaña',start:'2026-11-09',end:'2026-11-10',color:'#1946a0'},
+   {id:'short-weekend',kind:'grande',type:'Viaje',title:'Ruta tranquila por la montaña',start:'2026-11-28',end:'2026-11-29',color:'#1946a0'},
+   {id:'short-medium',kind:'grande',type:'Otros',title:'Cena especial',start:'2026-11-18',end:'2026-11-18',color:'#956c49'},
+   {id:'short-fit',kind:'grande',type:'Otros',title:'Sol',start:'2026-11-20',end:'2026-11-20',color:'#956c49'},
+   {id:'cross-week',kind:'grande',type:'Viaje',title:'Un viaje que cruza la semana',start:'2026-11-15',end:'2026-11-16',color:'#1946a0'},
+   {id:'longer',kind:'grande',type:'Viaje',title:'Un viaje de tres días',start:'2026-11-23',end:'2026-11-25',color:'#1946a0'}
+  ];EV_YEAR=2026;EV_MONTH=10;refreshEvents(false);
+ });
+ await page.evaluate(()=>document.fonts.ready);await page.waitForTimeout(350);
+ for(const id of ['short-one','short-two','short-weekend','short-medium']){
+  const title=page.locator('.ev-month-title[data-title-for="'+id+'"]');await expect(title).toHaveClass(/ev-title-short/);
+  const size=await title.locator('.ev-month-title-text').evaluate(el=>({height:el.getBoundingClientRect().height,line:parseFloat(getComputedStyle(el).lineHeight),clip:el.parentElement.getBoundingClientRect().height,overflow:el.scrollWidth>el.clientWidth+1}));
+  expect(size.height).toBeGreaterThan(size.line*1.5);expect(size.height).toBeLessThanOrEqual(size.line*2+.5);expect(size.height).toBeLessThanOrEqual(size.clip+.5);expect(size.overflow).toBe(false);
+ }
+ const fit=await page.locator('[data-title-for="short-fit"] .ev-month-title-text').evaluate(el=>({height:el.getBoundingClientRect().height,line:parseFloat(getComputedStyle(el).lineHeight)}));expect(fit.height).toBeLessThan(fit.line*1.5);
+ await expect(page.locator('[data-title-for="cross-week"]')).toHaveCount(2);await expect(page.locator('[data-title-for="cross-week"].ev-title-short')).toHaveCount(0);await expect(page.locator('[data-title-for="longer"].ev-title-short')).toHaveCount(0);
+ await page.screenshot({path:info.outputPath('titulos-cortos-'+width+'.png'),animations:'disabled'});
+ await page.locator('.ev-multi-bar[data-id="short-one"]').click();await expect(page.locator('#evDTitle')).toHaveText('Plan exterior');
+});

@@ -26,7 +26,12 @@ for(const width of [320,400,440])test('Un contorno continuo desde hoy, con escal
   const friday=await page.locator('.ev-cell[data-ds="2026-08-21"]').boundingBox();
   expect(Math.abs(first.x-friday.x)).toBeLessThan(1);expect(Math.abs(first.y+first.height-second.y)).toBeLessThan(1);
   await expect(outlines.nth(1)).toHaveClass(/ev-pending-step/);
-  expect(await outlines.nth(1).evaluate(el=>parseFloat(getComputedStyle(el,'::before').width))).toBeCloseTo(first.x-second.x+2,0);
+  expect((await outlines.nth(1).locator('.ev-pending-step-edge').boundingBox()).width).toBeCloseTo(first.x-second.x-4,0);
+  await expect(outlines.first().locator('.ev-pending-turn-edge')).toHaveCSS('border-bottom-right-radius','6px');
+  await expect(outlines.nth(1).locator('.ev-pending-step-edge')).toHaveCSS('border-top-left-radius','6px');
+  const turn=await outlines.first().locator('.ev-pending-turn-edge').boundingBox(),step=await outlines.nth(1).locator('.ev-pending-step-edge').boundingBox();
+  expect(Math.abs(turn.y+turn.height-step.y-2)).toBeLessThan(1);
+  expect(Math.abs(step.x+step.width-turn.x-2)).toBeLessThan(1);
   await expect(outlines.nth(1)).toHaveCSS('border-top-width','0px');await expect(outlines.nth(1)).toHaveCSS('border-bottom-width','0px');
   const sunday=await page.locator('.ev-cell[data-ds="2026-09-06"]').boundingBox();expect(Math.abs(last.y+last.height-sunday.y-sunday.height)).toBeLessThan(1);
   const before=await page.locator('.ev-month-wrap').boundingBox();

@@ -1745,11 +1745,18 @@ button.bday-group-tag{cursor:pointer;min-height:44px;text-align:left}
 .ev-week-outer{margin-bottom:3px;position:relative;isolation:isolate}
 /* Un contorno para hoy y lo pendiente, incluidos los días del mes vecino.
    Las semanas solo aportan el borde exterior; el escalón enlaza con hoy. */
-.ev-pending-outline{position:absolute;top:-1.5px;bottom:-1.5px;left:calc(var(--ev-pending-from) * (100% + 2px) / 7);right:0;border:2px solid var(--calendar-tone);border-top:0;border-bottom:0;pointer-events:none;z-index:6}
-.ev-pending-start{top:0;border-top:2px solid var(--calendar-tone);border-radius:6px 6px 0 0}
-.ev-pending-end{bottom:0;border-bottom:2px solid var(--calendar-tone);border-radius:0 0 6px 6px}
-.ev-pending-start.ev-pending-end{border-radius:6px}
-.ev-pending-step::before{content:"";position:absolute;left:-2px;top:0;width:calc(var(--ev-pending-step) * (100% + 6px) / 7 + 2px);border-top:2px solid var(--calendar-tone)}
+.ev-pending-outline{position:absolute;top:-1.5px;bottom:-1.5px;left:calc(var(--ev-pending-from) * (100% + 2px) / 7);right:0;pointer-events:none;z-index:6}
+.ev-pending-start{top:0}.ev-pending-end{bottom:0}
+.ev-pending-outline>span{position:absolute;box-sizing:border-box;border-color:var(--calendar-tone);border-style:solid;border-width:0;pointer-events:none}
+.ev-pending-outline>.ev-pending-left{left:0;top:0;bottom:0;border-left-width:2px}
+.ev-pending-outline>.ev-pending-right{right:0;top:0;bottom:0;border-right-width:2px}
+.ev-pending-start>.ev-pending-left,.ev-pending-step>.ev-pending-left,.ev-pending-start>.ev-pending-right{top:6px}
+.ev-pending-end>.ev-pending-left,.ev-pending-turn>.ev-pending-left,.ev-pending-end>.ev-pending-right{bottom:6px}
+.ev-pending-outline>.ev-pending-top{top:0;left:0;right:0;height:8px;border-width:2px 2px 0;border-radius:6px 6px 0 0}
+.ev-pending-outline>.ev-pending-bottom{bottom:0;left:0;right:0;height:8px;border-width:0 2px 2px;border-radius:0 0 6px 6px}
+/* El escalón tiene un giro exterior a la izquierda y uno interior junto a hoy. */
+.ev-pending-outline>.ev-pending-step-edge{left:0;top:0;width:calc(var(--ev-pending-step) * (100% + 2px) / 7 - 4px);height:8px;border-width:2px 0 0 2px;border-radius:6px 0 0 0}
+.ev-pending-outline>.ev-pending-turn-edge{left:-6px;bottom:-2px;width:8px;height:8px;border-width:0 2px 2px 0;border-radius:0 0 6px 0}
 /* Barras multi-día: 65% de la celda, centradas verticalmente, encima de números */
 .ev-bars-row{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;position:absolute;top:19px;left:0;right:0;bottom:4px;z-index:3;pointer-events:none;grid-auto-rows:1fr;align-items:center}
 /* La geometria de las barras se calcula por tramo en _evBarSegmentStyle:
@@ -1835,6 +1842,7 @@ button.bday-group-tag{cursor:pointer;min-height:44px;text-align:left}
 .ev-month-title.ev-part-past{mask-image:none}
 .ev-month-title-label{position:absolute;display:flex;align-items:center;box-sizing:border-box;padding:0 6px;overflow:hidden;white-space:nowrap;line-height:1.1}
 .ev-month-title-text{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ev-title-short .ev-month-title-text{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;white-space:normal;overflow-wrap:anywhere}
 /* El testigo de ancho cero ocupa la primera línea: si no cabe la palabra
    completa, pasa a la segunda y queda recortada. Solo para títulos repetidos. */
 .ev-month-title-label.ev-title-optional{flex-wrap:wrap;align-content:flex-start;align-items:flex-start}
