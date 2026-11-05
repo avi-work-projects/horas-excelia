@@ -11,7 +11,7 @@
     }
   },
   "general": {
-    "fingerprint": "275ba0c1aa36e7411e9c352886156c77fd5cd6fec76e6762ec434e72fabdcc99",
+    "fingerprint": "817b7d583f69b4a9479b4cc8ce15d8164769d1dc16a0b446fa7dbe01cf1e3c72",
     "files": [
       "map-general.svg",
       "map-general.png"
@@ -22,7 +22,7 @@
     }
   },
   "area-0-0": {
-    "fingerprint": "7734d2a0f2ca5c90e27b310147fdfb030382dacc110c5dcc1a88f06b006a8ed3",
+    "fingerprint": "75a47d5e41002231562aff6be25774a53aff201ca435b5473d5992f93cc41f0c",
     "files": [
       "sheets/area-0-0.png"
     ],
@@ -31,7 +31,7 @@
     }
   },
   "area-0-1": {
-    "fingerprint": "4e052e87f7cb1f9095050baf950410169052561c017f7cc03403205f67c4dfd4",
+    "fingerprint": "ce7c0d685e5aff2f4f17d00a519a7774da9d52db10c175eb729bb96de527171b",
     "files": [
       "sheets/area-0-1.png"
     ],
@@ -40,7 +40,7 @@
     }
   },
   "area-1-0": {
-    "fingerprint": "855289d9895b34b39463bdc363857f91bcc49f5b3a2bc7487a92db203c82ce6e",
+    "fingerprint": "05138812f6eae5cf8fe4edadc6a79d01a562ae1b8ac4415da5f934ab5bb338c2",
     "files": [
       "sheets/area-1-0.png"
     ],
@@ -58,7 +58,7 @@
     }
   },
   "area-2-0": {
-    "fingerprint": "e4ae30a02e1bbeee2f81dd3331f88f295ee5a132ea76aaa9457c64d607577328",
+    "fingerprint": "fe5d627f45fe68de660aad9254c7c3bc80a53462634059829e3c03b97e253e20",
     "files": [
       "sheets/area-2-0.png"
     ],
@@ -94,7 +94,7 @@
     }
   },
   "area-4-0": {
-    "fingerprint": "d9741d23016beb430779e1f626304d2ea9a6a88915a0d1deca550d326b849bdf",
+    "fingerprint": "e14e1dfda3658c8f03b367302d5c2b84b85acbf8d63029d0370bc9ae6fd270dd",
     "files": [
       "sheets/area-4-0.png"
     ],
@@ -103,7 +103,7 @@
     }
   },
   "area-5-0": {
-    "fingerprint": "e6ee2e3c238070dec4387d245bcbbce65da56ad707b1312b069bd745cb062dbe",
+    "fingerprint": "c1300a1aa5f93280a3a5ff1854b072f90b7c142150a4e663b0ef1a187595c40b",
     "files": [
       "sheets/area-5-0.png"
     ],
@@ -121,12 +121,12 @@
     }
   },
   "area-6-0": {
-    "fingerprint": "6b27e2376e753b5f6c40e6743d18123151787e0a71cac4d4e5a54f253ea70dbd",
+    "fingerprint": "c8047d09046e77a5a6242f2370d57dd72f7b9bed82404e8e15fc4595f4df4b9c",
     "files": [
       "sheets/area-6-0.png"
     ],
     "hashes": {
-      "sheets/area-6-0.png": "510b8935abecd301c40af48dafa6349174de824c16abb017b685f9384937adc7"
+      "sheets/area-6-0.png": "c9c252d6eaecdc952a8e1dbff194e1e64f58f994e748b0303224caa4b6a7e021"
     }
   },
   "area-6-1": {
@@ -139,12 +139,12 @@
     }
   },
   "area-6-2": {
-    "fingerprint": "344bb75ba8a0e3e257c426be96c0ea9f998e594d3c57cb79257b0ab9895bdb49",
+    "fingerprint": "9481b39030c9b4533971a904978f4892814b80899c3e1f161fe73689bd86765f",
     "files": [
       "sheets/area-6-2.png"
     ],
     "hashes": {
-      "sheets/area-6-2.png": "dcdb73a8a54986c818bf3a6a50fc9e1dda4c6bd8930b21e17671e45be6567e6a"
+      "sheets/area-6-2.png": "5e7690bdbeb8ecc407ffa7a803263d8f3fb6c1a76becb1cc209587be931de9b7"
     }
   },
   "area-7-0": {
@@ -220,7 +220,7 @@
     }
   },
   "area-12-0": {
-    "fingerprint": "5a5951fd155a4f0b02664e3af3d486e3aa4a8a4f963ca88ee2544b25f7a64855",
+    "fingerprint": "efcb509c07da1fb558c1fa7b8a8fbb9eb2c6432e057d6aac1d226d5cc2868ed6",
     "files": [
       "sheets/area-12-0.png"
     ],

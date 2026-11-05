@@ -405,18 +405,18 @@
 ### js/rutinas-bulk.js  _(61 líneas)_
 **Funciones:** rutBulkChange:3 · rutOffsetDate:11 · rutPauseAfter:12 · rutHistorySelectionHtml:19 · bindRutHistorySelection:25 · openRutBulkConfirm:37 · close:49
 
-### js/rutinas-flex.js  _(154 líneas)_
+### js/rutinas-flex.js  _(155 líneas)_
 **Estado global:** RUT_PLAN:2
 
-**Funciones:** rutFlexible:3 · rutFlexEarliest:4 · rutFlexTarget:5 · rutFlexRange:9 · rutFlexCount:15 · rutFlexStatus:18 · rutFlexWarnings:25 · rutFlexSummary:31 · rutFlexOptionsHtml:36 · bindRutFlexOptions:51 · paint:53 · rutFlexRead:71 · rutFlexSetSession:90 · rutFlexPlanSessions:109 · renderRutPlan:115 · openRutPlan:137 · closeRutPlan:138 · refreshRutPlan:139 · read:143 · edit:144
+**Funciones:** rutFlexible:3 · rutFlexEarliest:4 · rutFlexTarget:5 · rutFlexRange:9 · rutFlexCount:15 · rutFlexStatus:18 · rutFlexWarnings:25 · rutFlexSummary:31 · rutFlexOptionsHtml:36 · bindRutFlexOptions:51 · paint:53 · rutFlexRead:71 · rutFlexSetSession:90 · rutFlexPlanSessions:109 · renderRutPlan:115 · openRutPlan:138 · closeRutPlan:139 · refreshRutPlan:140 · read:144 · edit:145
 
 ### js/rutinas-form.js  _(240 líneas)_
 **Funciones:** rutSetupLocked:3 · rutFormCandidate:11 · rutReadForm:41 · renderRutForm:75 · openRutForm:142 (!97) · _rutRepaintIcons:149 · _rutPintaHoras:175 · closeRutForm:239
 
-### js/rutinas-history.js  _(192 líneas)_
+### js/rutinas-history.js  _(193 líneas)_
 **Estado global:** RUT_HISTORY:2
 
-**Funciones:** rutNewSchedule:3 · rutScheduleSignature:12 · rutHistoryPeriods:15 · rutHistorySessions:27 · rutHistoryLabel:36 · rutHistoryMonthGroups:41 · renderRutHistorySession:47 · renderRutHistory:59 · rutHistoryScrollToday:82 · openRutHistory:87 · closeRutHistory:113 · rutSessionOriginal:114 · rutSessionMoved:123 · rutEditSession:127 · rutRescheduleSession:147 · openRutHistoryEdit:159 · close:173
+**Funciones:** rutNewSchedule:3 · rutScheduleSignature:12 · rutHistoryPeriods:15 · rutHistorySessions:27 · rutHistoryLabel:36 · rutHistoryMonthGroups:41 · renderRutHistorySession:47 · renderRutHistory:59 · rutHistoryScrollToday:82 · openRutHistory:87 · closeRutHistory:113 · rutSessionOriginal:114 · rutSessionMoved:123 · rutEditSession:127 · rutRescheduleSession:147 · openRutHistoryEdit:159 · close:174
 
 ### js/rutinas-icons.js  _(95 líneas)_
 **Estado global:** RUT_ICONS:7 · RUT_APPEARANCE_KEY:8 · RUT_GYM_COLOR:9 · RUT_FIXED_COLOR:10 · RUT_ICON_LABEL:13
@@ -795,16 +795,16 @@
 **Rangos por prefijo de clase:**
 .boda-actions:199-199 · .boda-add:201-201 · .boda-asg:224-246 · .boda-buscar:321-323 · .boda-cal:248-273 · .boda-card:106-329 · .boda-chip:103-105 · .boda-chips:102-102 · .boda-cl:161-198 · .boda-class:85-160 · .boda-controls:63-63 · .boda-couple:142-144 · .boda-cpk:215-223 · .boda-create:17-19 · .boda-date:200-200 · .boda-day:79-122 · .boda-det:206-319 · .boda-dia:149-151 · .boda-distribution:23-25 · .boda-dot:110-110 · .boda-falta:117-117 · .boda-filters:66-66 · .boda-fsel:67-70 · .boda-ftoggles:71-72 · .boda-hd:194-196 · .boda-inp:137-137 · .boda-iss:41-43 · .boda-issue:28-39 · .boda-issues:27-27 · .boda-legend:202-205 · .boda-mini:156-189 · .boda-mode:55-57 · .boda-multi:152-158 · .boda-name:111-111 · .boda-ok:118-118 · .boda-overview:21-21 · .boda-place:145-171 · .boda-prog:113-114 · .boda-ro:162-170 · .boda-save:99-100 · .boda-savebar:95-98 · .boda-search:324-324 · .boda-sec:12-20 · .boda-sobra:119-119 · .boda-sort:325-325 · .boda-stat:45-47 · .boda-sticky:8-10 · .boda-sum:59-62 · .boda-summary:58-58 · .boda-swap:127-134 · .boda-time:138-138 · .boda-tp:277-280 · .boda-wed:112-112 · .ev-alarm:177-183 · .ev-bficha:303-303 · .ev-bfila:304-313 · .ev-bpunto:311-311 · .ev-bver:316-316 · .ev-car:299-300 · .ev-detail:297-297 · .ev-upcoming:173-175 · .ev-wk:185-187 · .hbar-lbl:51-51 · .hbar-row:50-50 · .hbar-rows:49-49 · .hbar-track:52-53 · .hbar-val:54-54 · .rut-wpick:290-295 · .sy-body:5-11
 
-### css/source/routines.css  _(106 líneas)_
+### css/source/routines.css  _(132 líneas)_
 
 **Secciones:**
 
 - Horario distinto segun el dia:1
 - Selector de icono de rutina:6
-- Editor semanal: controles comunes, opciones legibles y marco estable.:70
+- Editor semanal: controles comunes, opciones legibles y marco estable.:96
 
 **Rangos por prefijo de clase:**
-.ev-shape:19-19 · .rut-add:56-56 · .rut-card:46-54 · .rut-day:62-63 · .rut-days:61-61 · .rut-dot:49-49 · .rut-first:16-16 · .rut-flex:13-21 · .rut-hist:65-68 · .rut-hpd:2-5 · .rut-icon:7-11 · .rut-name:50-50 · .rut-pct:55-55 · .rut-plan:22-45 · .rut-sec:12-12 · .rut-session:42-42 · .rut-sug:57-60 · .rut-susp:64-64 · .rut-tag:51-52 · .rut-vacio:53-53 · .rut-week:72-103
+.ev-shape:19-19 · .rut-add:82-82 · .rut-card:72-80 · .rut-day:88-89 · .rut-days:87-87 · .rut-dot:75-75 · .rut-first:16-16 · .rut-flex:13-21 · .rut-hist:91-94 · .rut-hpd:2-5 · .rut-icon:7-11 · .rut-name:76-76 · .rut-pct:81-81 · .rut-plan:22-71 · .rut-sec:12-12 · .rut-session:47-69 · .rut-sug:83-86 · .rut-susp:90-90 · .rut-tag:77-78 · .rut-vacio:79-79 · .rut-week:98-129
 
 ### css/source/shared-refinements.css  _(993 líneas)_
 
@@ -896,7 +896,7 @@
 **Rangos por prefijo de clase:**
 .compact-mail:5-5 · .home-submission:2-41 · .hours-check:8-9 · .hours-home:6-39 · .hours-job:11-11 · .hours-pending:13-14 · .hours-review:22-27 · .hours-verified:15-15 · .hours-week:19-20 · .mobile-connection:32-38 · .mobile-modes:36-36 · .week-actions:16-18 · .week-card:42-43 · .week-info:12-21
 
-### css/source/energy-refinements.css  _(292 líneas)_
+### css/source/energy-refinements.css  _(287 líneas)_
 
 **Secciones:**
 
@@ -912,13 +912,13 @@
 - Tarjetas compactas: días visibles y un único estilo para inicio y fin.:144
 - Selección por fondo en las subpestañas de Eventos; cada una conserva su tono.:162
 - Histórico: esquinas opacas incluso cuando la cabecera queda fija.:196
-- El selector de día conserva marco y seis huecos semanales al cambiar de mes.:266
-- El ancho del nombre del mes no desplaza las flechas compartidas.:281
-- Deshacer acompaña a la ficha de sesión sin tapar sus controles de estado.:284
-- Coste sin cobertura calculable: explicación en lugar de un gráfico vacío.:288
+- El selector de día conserva marco y seis huecos semanales al cambiar de mes.:261
+- El ancho del nombre del mes no desplaza las flechas compartidas.:276
+- Deshacer acompaña a la ficha de sesión sin tapar sus controles de estado.:279
+- Coste sin cobertura calculable: explicación en lugar de un gráfico vacío.:283
 
 **Rangos por prefijo de clase:**
-.boda-asg:101-283 · .boda-det:97-100 · .boda-last:15-18 · .contact-shortcuts:209-212 · .data-actions:134-135 · .energy-bar:86-86 · .energy-caption:2-2 · .energy-choice:12-12 · .energy-compare:128-128 · .energy-contract:4-5 · .energy-cost:82-291 · .energy-coverage:73-73 · .energy-extremes:69-69 · .energy-fee:36-37 · .energy-field:7-7 · .energy-fields:9-9 · .energy-info:57-59 · .energy-inline:79-79 · .energy-legend:87-87 · .energy-metric:120-122 · .energy-metrics:119-119 · .energy-overview:61-63 · .energy-period:64-67 · .energy-price:178-183 · .energy-range:88-88 · .energy-reconciliation:72-72 · .energy-scenario:129-129 · .energy-section:56-56 · .energy-supplier:70-123 · .energy-table:3-3 · .energy-tabs:39-50 · .energy-tariff:75-179 · .energy-tax:68-126 · .energy-vat:124-124 · .energy-window:25-118 · .energy-year:6-94 · .ev-btn:141-141 · .ev-cell:277-278 · .ev-day:279-279 · .ev-io:131-131 · .ev-main:159-160 · .ev-order:234-246 · .ev-routine:230-232 · .ev-routines:224-228 · .ev-stat:213-213 · .ev-stats:214-220 · .ev-type:229-229 · .ev-up:255-264 · .ev-upcoming:168-172 · .ev-wk:16-171 · .imp-mode:108-108 · .imp-preview:109-113 · .nav-bar:136-136 · .rut-addition:249-276 · .rut-bulk:189-194 · .rut-card:153-208 · .rut-day:142-148 · .rut-days:145-145 · .rut-dpick:140-274 · .rut-history:185-200 · .rut-hora:149-151 · .rut-month:193-193 · .rut-recovery:139-139 · .rut-routine:155-155 · .rut-session:138-204 · .rut-time:152-152 · .rut-weekdays:146-146 · .sy-body:166-166 · .sy-hdr:258-258
+.boda-asg:101-278 · .boda-det:97-100 · .boda-last:15-18 · .contact-shortcuts:204-207 · .data-actions:134-135 · .energy-bar:86-86 · .energy-caption:2-2 · .energy-choice:12-12 · .energy-compare:128-128 · .energy-contract:4-5 · .energy-cost:82-286 · .energy-coverage:73-73 · .energy-extremes:69-69 · .energy-fee:36-37 · .energy-field:7-7 · .energy-fields:9-9 · .energy-info:57-59 · .energy-inline:79-79 · .energy-legend:87-87 · .energy-metric:120-122 · .energy-metrics:119-119 · .energy-overview:61-63 · .energy-period:64-67 · .energy-price:178-183 · .energy-range:88-88 · .energy-reconciliation:72-72 · .energy-scenario:129-129 · .energy-section:56-56 · .energy-supplier:70-123 · .energy-table:3-3 · .energy-tabs:39-50 · .energy-tariff:75-179 · .energy-tax:68-126 · .energy-vat:124-124 · .energy-window:25-118 · .energy-year:6-94 · .ev-btn:141-141 · .ev-cell:272-273 · .ev-day:274-274 · .ev-io:131-131 · .ev-main:159-160 · .ev-order:229-241 · .ev-routine:225-227 · .ev-routines:219-223 · .ev-stat:208-208 · .ev-stats:209-215 · .ev-type:224-224 · .ev-up:250-259 · .ev-upcoming:168-172 · .ev-wk:16-171 · .imp-mode:108-108 · .imp-preview:109-113 · .nav-bar:136-136 · .rut-addition:244-271 · .rut-bulk:189-194 · .rut-card:153-203 · .rut-day:142-148 · .rut-days:145-145 · .rut-dpick:140-269 · .rut-history:185-200 · .rut-hora:149-151 · .rut-month:193-193 · .rut-recovery:139-139 · .rut-routine:155-155 · .rut-session:138-138 · .rut-time:152-152 · .rut-weekdays:146-146 · .sy-body:166-166 · .sy-hdr:253-253
 
 ### css/source/home-reminders.css  _(75 líneas)_
 

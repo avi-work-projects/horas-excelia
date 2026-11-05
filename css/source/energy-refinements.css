@@ -198,11 +198,6 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .rut-history-month h3::before{content:'';position:absolute;inset:0;background:var(--surface2);border-radius:11px 11px 0 0;z-index:-1}
 .rut-history-time{display:flex;flex-direction:column;gap:3px;margin-top:6px}
 .rut-history-time>small{font-size:.62rem;color:var(--text-muted)}
-#rutHistoryEditOv .ev-form-sheet{height:min(430px,80dvh);display:flex;flex-direction:column}
-.rut-session-fields{gap:12px;margin-top:8px}
-.rut-session-fields .ev-field{min-width:0;margin:0}
-.rut-session-fields+p.sy-note{margin:18px 0 20px;line-height:1.5}
-#rutHistoryEditOv .ev-form-actions{margin-top:auto;padding-top:20px;flex-shrink:0}
 .rut-card-actions:has([data-rextra]){grid-template-columns:repeat(3,minmax(0,1fr))}
 .rut-card-actions [data-rextra]{--rut-action:#9272b9}
 .rut-card-ft>span:first-child{line-height:1.6}

@@ -2677,15 +2677,19 @@ button.boda-overview-total{cursor:pointer}.boda-overview-total b{font-size:1.5re
 .ev-shape-group-label{grid-column:1/-1;margin-top:6px;color:var(--text-muted);font-size:.72rem}
 .rut-flex-summary{display:grid;gap:8px;margin:12px 0;font-size:.8rem}
 .rut-flex-summary span{color:var(--text-muted)}
-.rut-plan{height:min(88dvh,840px);display:flex;flex-direction:column;overflow:hidden!important}
+.rut-plan{height:min(90dvh,840px);display:flex;flex-direction:column;overflow:hidden!important}
+.rut-plan>.ev-form-handle{margin-bottom:8px}
 body:has(#rutPlanOv.open) .tasks-fab{visibility:hidden}
 .rut-plan-header{display:grid;grid-template-columns:36px minmax(0,1fr) 36px;align-items:center;gap:12px;margin-bottom:12px;flex-shrink:0;text-align:center}
 .rut-plan-header strong{font-size:.95rem}.rut-plan-header span{display:block;font-size:.75rem;color:var(--text-muted);margin-top:4px}
 .rut-plan-body{flex:1;min-height:0;overflow-y:auto;padding:0 3px 8px}
-.rut-plan-body>.sy-note{margin:0 0 12px}.rut-plan-body .rut-session-fields{margin:0 0 16px}
+.rut-plan-body .rut-session-fields{margin:0 0 10px;gap:10px}
+.rut-plan-body .rut-session-fields .ev-field{margin:0}
+.rut-plan .ev-field label{margin-bottom:4px;font-size:.73rem}
+.rut-plan .ev-input{min-height:40px;padding:7px 10px}
 .rut-plan-month{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .rut-plan-month b{font-size:.85rem;text-align:center}
-.rut-plan-quota{font-size:.7rem;color:var(--text-muted);text-align:center;margin:10px 0}
+.rut-plan-quota{font-size:.7rem;color:var(--text-muted);text-align:center;margin:8px 0}
 .rut-plan-footer{display:grid;gap:8px;padding-top:12px;flex-shrink:0;box-shadow:0 -1px 0 var(--border)}
 .rut-plan-footer>span{font-size:.72rem;color:var(--text-muted);text-align:center}
 .rut-plan-footer button:disabled{opacity:.5;cursor:default}
@@ -2697,8 +2701,30 @@ body:has(#rutPlanOv.open) .tasks-fab{visibility:hidden}
 .rut-plan-day.selected{outline:2px solid var(--accent);background:var(--accent-glow)}
 .rut-plan-day.skipped{opacity:.5;text-decoration:line-through}
 .rut-plan-day:disabled{opacity:.35;cursor:default}
+.rut-plan-list summary{font-size:.72rem;color:var(--text-muted);cursor:pointer;padding:6px 0}
+.rut-session-editor.ev-fixed-form-sheet{height:auto;max-height:90dvh}
+.rut-session-fields{gap:12px;margin-top:8px}
+.rut-session-fields .ev-field{min-width:0;margin:0}
+.rut-session-header>div{min-width:0;text-align:center}
+.rut-session-header span{display:block;font-size:.72rem;color:var(--text-muted);margin-top:4px}
+.rut-session-delete{min-height:36px;border:0;padding:4px;background:transparent;color:var(--c-red);font:600 .68rem var(--font);cursor:pointer}
+.rut-session-editor .ev-fixed-form-body{min-height:0;overflow-y:auto;padding:18px 20px}
+.rut-session-card{margin:0;padding:14px;border:1px solid var(--border);border-radius:14px;background:var(--surface2)}
+.rut-session-card legend{padding:0 6px;color:var(--accent);font-size:.76rem;font-weight:600;max-width:100%;overflow-wrap:anywhere}
+.rut-session-card .ev-input{background:var(--surface)}
+.rut-session-editor .rut-session-date{margin:0 0 14px}
+.rut-session-editor .rut-session-fields{margin:0}
+.rut-session-editor .rut-session-note{margin:18px 0 0;padding:0;border:0;background:transparent;font-size:.7rem;line-height:1.5}
+.rut-session-editor .rut-session-state:empty{display:none}
+.rut-session-editor .ev-fixed-form-actions{border-top:1px solid var(--border)}
+@media(max-height:720px){
+  .rut-plan{height:100dvh;max-height:100dvh;padding:6px 14px calc(10px + env(safe-area-inset-bottom,0px))}
+  .rut-plan-header{margin-bottom:8px}
+  .rut-plan-grid{margin:8px 0;gap:3px}
+  .rut-plan-footer{grid-template-columns:auto 1fr;align-items:center;gap:10px;padding-top:8px}
+  .rut-plan-footer>span{max-width:88px;text-align:left}
+}
 .rut-session-date{margin:16px 0 12px}
-.rut-plan h4{font-size:.75rem;margin:18px 0 8px;color:var(--text-muted)}
 .rut-plan-row{margin:6px 0}.rut-plan-row>:first-child{flex:1;text-align:left;font-size:.72rem}
 .rut-plan-row button{display:flex;justify-content:space-between;gap:8px}.rut-plan-row button span{color:var(--accent);white-space:nowrap}
 .rut-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;display:flex;flex-direction:column;gap:7px}
@@ -4195,11 +4221,6 @@ body:has(#energyAnalysisOverlay.open){overflow:hidden}
 .rut-history-month h3::before{content:'';position:absolute;inset:0;background:var(--surface2);border-radius:11px 11px 0 0;z-index:-1}
 .rut-history-time{display:flex;flex-direction:column;gap:3px;margin-top:6px}
 .rut-history-time>small{font-size:.62rem;color:var(--text-muted)}
-#rutHistoryEditOv .ev-form-sheet{height:min(430px,80dvh);display:flex;flex-direction:column}
-.rut-session-fields{gap:12px;margin-top:8px}
-.rut-session-fields .ev-field{min-width:0;margin:0}
-.rut-session-fields+p.sy-note{margin:18px 0 20px;line-height:1.5}
-#rutHistoryEditOv .ev-form-actions{margin-top:auto;padding-top:20px;flex-shrink:0}
 .rut-card-actions:has([data-rextra]){grid-template-columns:repeat(3,minmax(0,1fr))}
 .rut-card-actions [data-rextra]{--rut-action:#9272b9}
 .rut-card-ft>span:first-child{line-height:1.6}
