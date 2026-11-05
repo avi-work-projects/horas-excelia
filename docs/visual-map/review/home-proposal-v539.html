@@ -2,7 +2,7 @@
 <html lang="es" data-theme="light">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Home · Propuesta revisada · R6</title>
+<title>Home · Propuesta revisada · R7</title>
 <link rel="stylesheet" href="../../../css/styles.css">
 <style>
 body{margin:0;padding:24px 14px 40px;max-width:none;min-height:100vh}
@@ -18,8 +18,9 @@ body{margin:0;padding:24px 14px 40px;max-width:none;min-height:100vh}
 .draft-month{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:16px}
 .draft-month strong{font-size:1.05rem}.draft-month span{color:var(--home-tone);font-size:.78rem}
 .draft-tools{display:grid;grid-template-columns:minmax(0,1fr) repeat(3,var(--draft-button-width));gap:5px;margin-bottom:20px}
-.draft-tools button,.draft-view-button{box-sizing:border-box;min-width:0;padding:7px 3px;height:60px;min-height:60px;border:1px solid var(--home-tone);border-radius:12px;background:var(--surface);color:var(--text);font:600 .69rem/1.25 var(--font);cursor:pointer}
+.draft-tools button,.draft-view-button,.draft-action{box-sizing:border-box;min-width:0;padding:7px 3px;height:60px;min-height:60px;border:1px solid var(--home-tone);border-radius:12px;background:var(--surface);color:var(--text);font:600 .69rem/1.25 var(--font);cursor:pointer}
 .draft-view-button{width:var(--draft-button-width);flex:none}
+.draft-action{width:94px}
 .draft-tools button:first-child{background:var(--surface2);color:var(--hour-9)}
 .draft-tools small{display:block;font-size:.56rem;font-weight:500;color:var(--text-muted);margin-top:3px}
 .draft-tools small.draft-sync-error{color:var(--c-red)}
@@ -40,9 +41,7 @@ body{margin:0;padding:24px 14px 40px;max-width:none;min-height:100vh}
 .draft-copy h2{font-size:.83rem;font-weight:650;line-height:1.35;color:var(--tone);margin:0}
 .draft-note{font-size:.7rem;line-height:1.55;color:var(--text-muted);margin:8px 0 0}
 .draft-rules{display:grid;gap:6px}
-.draft-rule{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
-.draft-rule>em{min-width:0}
-.draft-rule-result{flex:none;color:var(--c-red);font-size:.85rem;font-weight:700;line-height:1}
+.draft-rule-result{color:var(--c-red);font-size:.85rem;font-weight:700;line-height:1}
 .draft-rule-result.complete{color:var(--c-green)}
 .draft-rules u{text-decoration-thickness:1px;text-underline-offset:3px}
 .draft-rules strong{font-weight:700}
@@ -53,19 +52,17 @@ body{margin:0;padding:24px 14px 40px;max-width:none;min-height:100vh}
 .draft-pending-note>summary::before,.draft-pending-note>summary::after{content:none}
 .draft-pending-note>summary em{text-decoration:underline dotted;text-underline-offset:3px}
 .draft-pending-note>p{margin:2px 0 0;text-align:left;font:inherit}
-.draft-invoice-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px}
+.draft-panel-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px}
 .draft-invoice-date{display:flex;align-items:center;gap:7px;color:var(--tone)}
 .draft-invoice-date-label{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;flex:none}
-.draft-invoice-date-label svg{width:15px;height:15px;flex:none}
+.draft-invoice-date-label svg,.draft-deadline svg{width:15px;height:15px;flex:none}
 .draft-invoice-date-label time{font-style:italic}
 .draft-invoice-alert{display:inline-flex;align-items:center;gap:4px;padding:3px 4px;border:1px solid var(--c-red);border-radius:5px;background:color-mix(in srgb,var(--c-red) 8%,var(--surface));color:var(--c-red);font-size:.63rem;font-weight:650;line-height:1.25;min-width:0;flex:0 1 auto;animation:draft-invoice-alert-pulse 2s ease-in-out infinite}
 .draft-invoice-alert svg{width:12px;height:12px;flex:none}
 .draft-invoice-alert span{min-width:0}
 @keyframes draft-invoice-alert-pulse{0%,100%{opacity:1}50%{opacity:.5}}
 @media(prefers-reduced-motion:reduce){.draft-panel:not(.complete):not(.scheduled),.draft-invoice-alert{animation:none}}
-.draft-deadline{font-size:.7rem;font-style:italic;line-height:1.5;color:var(--tone);margin:10px 0 0}
-.draft-action{display:flex;align-items:center;justify-content:center;gap:7px;width:fit-content;max-width:100%;min-height:40px;padding:8px 10px;border-radius:10px;border:1px solid var(--home-tone);background:var(--surface);color:var(--home-tone);font:600 .76rem var(--font);margin:12px 0 0 auto;cursor:pointer}
-.draft-action svg{width:18px;height:18px;flex:none}
+.draft-deadline{display:flex;align-items:flex-start;gap:4px;font-size:.7rem;font-style:italic;line-height:1.5;color:var(--tone);margin:10px 0 0}
 .draft-summary-row{display:grid;grid-template-columns:minmax(75px,1fr) minmax(150px,184px);gap:10px;align-items:center}
 .draft-summary{padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--surface);font-size:.66rem;color:var(--text-muted)}
 .draft-summary p{margin:0 0 7px;display:flex;justify-content:space-between;gap:7px;line-height:1.3}
@@ -84,7 +81,7 @@ body{margin:0;padding:24px 14px 40px;max-width:none;min-height:100vh}
 </style>
 <main class="proposal">
   <h1>Home · Propuesta para revisar</h1>
-  <p class="proposal-revision">HOME-539-R6 · Alertas, requisitos y acciones a la derecha</p>
+  <p class="proposal-revision">HOME-539-R7 · Acciones en columna derecha y formato de cabecera</p>
   <p class="proposal-intro">Dos paneles estables y una acción principal cuando procede. Ejemplos con datos ficticios.</p>
   <div class="proposal-controls">
     <label>Mes
@@ -121,11 +118,11 @@ body{margin:0;padding:24px 14px 40px;max-width:none;min-height:100vh}
       <h2>Cómo quedaría organizado</h2>
       <ol>
         <li><strong>Correos.</strong> «Correos pendientes de programar», «Correos al día» o «Correos con cambios». El contador breve se puede desplegar para consultar el alcance.</li>
-        <li><strong>Factura.</strong> Reloj azul para la programada y check verde para la enviada. Junto a la fecha aparece el icono de factura con el color del panel. Fechas y plazos en cursiva. Los requisitos se numeran y subrayan; a su derecha, check verde si se cumplen y cruz roja si faltan.</li>
+        <li><strong>Factura.</strong> Exclamación para la pendiente, reloj azul para la programada y check verde para la enviada. El icono de factura acompaña al plazo o fecha con el color del panel. Fechas y plazos en cursiva. Los requisitos se numeran y subrayan; cada frase lleva al lado su check verde o cruz roja.</li>
         <li><strong>Alineación.</strong> Los dos títulos comparten el mismo margen y la misma columna de icono.</li>
         <li><strong>Última sincronización.</strong> La fecha queda en Sync Kairo. Si falla al pulsarlo, se sustituye por «error» en rojo y cursiva. En el ejemplo «Sin conexión», pulsa Sync Kairo para verlo; los paneles conservan sus estados.</li>
-        <li><strong>Botones.</strong> Las acciones de los paneles se alinean a la derecha y tienen su icono. Los botones de acción y cabecera comparten borde rosa.</li>
-        <li><strong>Dos niveles de alerta.</strong> Los paneles pendientes parpadean tanto en rosa como en rojo. La factura programada conserva su panel azul y añade «Mejor revisar cambios» con borde rojo y parpadeo a la derecha de la fecha cuando hay cambios en los correos.</li>
+        <li><strong>Botones.</strong> Las acciones tienen reservada una columna a la derecha del panel. Comparten formato con la cabecera: texto oscuro en dos líneas, icono rosa, fondo blanco y borde rosa.</li>
+        <li><strong>Dos niveles de alerta.</strong> Los paneles pendientes parpadean tanto en rosa como en rojo. La factura programada conserva su panel azul y añade «Revisar Cambios» con borde rojo y parpadeo a la derecha de la fecha cuando hay cambios en los correos.</li>
       </ol>
       <p>Tras revisar la propuesta, el modelo de estados y los mensajes se unificarían en Home y se comprobarían los meses actuales, futuros y los cambios de datos.</p>
     </aside>
@@ -157,11 +154,11 @@ function summary(month){
   const december=month===12;
   return '<div class="draft-summary"><p><span>Total mensual</span></p><p><span>'+(december?'23':'21')+' días laborables</span><b>'+(december?'197':'179')+'h</b></p><p class="off"><span>− 2 festivos</span><b>18h</b></p><p class="worked"><span>'+(december?'21':'19')+' días trabajados</span><strong>'+(december?'179':'161')+'h</strong></p></div>';
 }
-function action(label,icon){
-  return '<button type="button" class="draft-action">'+icon+'<span>'+label+'</span></button>';
+function action(firstLine,secondLine,icon){
+  return '<button type="button" class="draft-action" aria-label="'+firstLine+' '+secondLine+'"><span class="draft-tool-label">'+icon+'<span>'+firstLine+'<br>'+secondLine+'</span></span></button>';
 }
 function requirement(number,text,done){
-  return '<div class="draft-rule'+(done?' draft-rule-done':'')+'"><em><strong>('+number+') <u>'+text+'</u></strong></em><span class="draft-rule-result'+(done?' complete':'')+'" role="img" aria-label="'+(done?'Cumplido':'Pendiente')+'">'+(done?'✓':'✕')+'</span></div>';
+  return '<div class="draft-rule'+(done?' draft-rule-done':'')+'"><em><strong>('+number+') <u>'+text+'</u></strong></em>&nbsp;<span class="draft-rule-result'+(done?' complete':'')+'" role="img" aria-label="'+(done?'Cumplido':'Pendiente')+'">'+(done?'✓':'✕')+'</span></div>';
 }
 function renderDraft(){
   const month=Number(monthInput.value),scenario=scenarioInput.value;
@@ -175,21 +172,22 @@ function renderDraft(){
   else if(pending)mailContent='<details class="draft-pending-note"><summary><em>* 3 semanas pendientes por programar</em></summary><p><em>Se incluyen las 2 que hay que programar del mes siguiente.</em></p></details>';
   let mail=status(pending||changed?'!':'✓',mailTitle,mailContent);
   if(!pending&&!changed)mail='<div class="draft-summary-row">'+mail+summary(month)+'</div>';
-  if(pending||changed)mail+=action(changed?'Revisar cambios':'Programar pendientes',changed?reviewIcon:mailScheduleIcon);
+  if(pending||changed)mail='<div class="draft-panel-row">'+mail+action(changed?'Revisar':'Programar',changed?'cambios':'pendientes',changed?reviewIcon:mailScheduleIcon)+'</div>';
   const mailTone=changed?'changed':pending?(scenario==='urgent'?'urgent':''):'complete';
   let invoice;
   if(['scheduled','offline','sent','changed'].includes(scenario)){
     const sent=scenario==='sent';
     const invoiceTone=sent?'complete':'scheduled';
-    const warning=changed?'<span class="draft-invoice-alert" title="Hay cambios en los días de una semana ya programada."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2 21h20Z M12 9v5 M12 17v.1"/></svg><span>Mejor revisar cambios</span></span>':'';
+    const warning=changed?'<span class="draft-invoice-alert" title="Hay cambios en los días de una semana ya programada."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2 21h20Z M12 9v5 M12 17v.1"/></svg><span>Revisar Cambios</span></span>':'';
     const date='<p class="draft-note draft-invoice-date"><span class="draft-invoice-date-label">'+invoiceIcon+'<time datetime="2026-'+month+'-'+(month===12?'18':'20')+'">'+(month===12?'18/12':'20/11')+'</time></span>'+warning+'</p>';
-    invoice='<section class="draft-panel '+invoiceTone+'"><div class="draft-invoice-row">'+status(sent?'✓':clockIcon,sent?'Factura enviada':'Factura programada',date)+viewButton()+'</div></section>';
+    invoice='<section class="draft-panel '+invoiceTone+'"><div class="draft-panel-row">'+status(sent?'✓':clockIcon,sent?'Factura enviada':'Factura programada',date)+viewButton()+'</div></section>';
   }else{
     const blocked=pending||scenario==='previous';
     const note=blocked?'<div class="draft-note draft-rules"><em>* Se requiere tener los correos del mes programados</em>'+requirement(1,'Los envíos de horas de este mes.',scenario==='previous')+requirement(2,'El envío de la factura del mes anterior.',scenario==='hours')+'</div>':'';
-    const deadline='<p class="draft-deadline">Debe programarse en los próximos '+remaining+' días.</p>';
-    const invoiceAction=scenario==='previous'?action('Ver factura anterior',invoiceIcon):pending?'':action('Enviar factura',invoiceIcon);
-    invoice='<section class="draft-panel '+(remaining<7?'urgent':'')+'">'+status(invoiceIcon,'Factura sin enviar',note+deadline)+invoiceAction+'</section>';
+    const deadline='<p class="draft-deadline">'+invoiceIcon+'<span>Debe programarse en los próximos '+remaining+' días.</span></p>';
+    const invoiceAction=scenario==='previous'?action('Ver factura','anterior',invoiceIcon):pending?'':action('Enviar','factura',invoiceIcon);
+    const invoiceContent=status('!','Factura sin enviar',note+deadline);
+    invoice='<section class="draft-panel '+(remaining<7?'urgent':'')+'">'+(invoiceAction?'<div class="draft-panel-row">'+invoiceContent+invoiceAction+'</div>':invoiceContent)+'</section>';
   }
   document.getElementById('draftMonthTitle').textContent=(month===12?'Diciembre':'Noviembre')+' 2026';
   document.getElementById('draftPanels').innerHTML='<section class="draft-panel '+mailTone+'">'+mail+'</section>'+invoice;
