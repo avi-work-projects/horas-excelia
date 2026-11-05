@@ -693,7 +693,7 @@ function _evMonthBarTitle(it,segments,showTitle,week,today,monthFirst,monthLast)
   var left=it.halfL?.5:0,right=it.halfR?.5:0,days=it.ce-it.cs+1-left-right;
   var start=Math.max(0,100*(label.cs-it.cs-left)/days),end=Math.min(100,100*(label.ce+1-it.cs-left)/days);
   var optional=_evMonthBarTitleRepeats(it,week,monthFirst,monthLast);
-  var shortTitle=it.starts&&it.ends&&it.ce-it.cs<=1;
+  var shortTitle=evBarSize(it.ev)!=='sm'&&it.starts&&it.ends&&it.ce-it.cs<=1;
   var past=_evBarPast(it,week,today,true);
   return '<div class="ev-month-title'+past.cls+(it.labelTop?' ev-label-top':'')+(shortTitle?' ev-title-short':'')+'" data-title-for="'+escHtml(it.ev.id)+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:1;z-index:'+evBarZ(it.ev)+_evMitadesStyle(it)+past.style+'">'
     +'<span class="ev-month-title-label'+(optional?' ev-title-optional':'')+'" style="left:'+start+'%;width:'+(end-start)+'%;top:'+label.top+'%;height:'+(label.bottom-label.top)+'%"><span class="ev-month-title-text">'+escHtml(it.ev.title)+'</span></span></div>';

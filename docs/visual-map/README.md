@@ -1,5 +1,7 @@
 # Mapa visual de Gestify
 
+v541 aclara la regla de v540: las barras finas conservan una sola línea. Las capturas se mantienen como referencia representativa.
+
 v540. [Calendario mensual: títulos cortos en dos líneas y contorno redondeado](review/updates-v540.html). Solo se añaden dos ejemplos ficticios de la vista afectada; las referencias anteriores se conservan.
 
 v539. [Planificar sesiones](review/evidence/sesiones-v539/planificar-sesiones.png), [editar una sesión](review/evidence/sesiones-v539/editar-sesion.png) y [propuesta de estados de Home para revisar](review/home-proposal-v539.html). La propuesta de Home está separada de la app.
