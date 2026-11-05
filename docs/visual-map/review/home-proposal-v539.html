@@ -2,7 +2,7 @@
 <html lang="es" data-theme="light">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Home · Propuesta revisada · R4</title>
+<title>Home · Propuesta revisada · R5</title>
 <link rel="stylesheet" href="../../../css/styles.css">
 <style>
 body{margin:0;padding:24px 14px 40px;max-width:none;min-height:100vh}
@@ -22,8 +22,11 @@ body{margin:0;padding:24px 14px 40px;max-width:none;min-height:100vh}
 .draft-view-button{width:var(--draft-button-width);flex:none}
 .draft-tools button:first-child{background:var(--surface2);color:var(--hour-9)}
 .draft-tools small{display:block;font-size:.56rem;font-weight:500;color:var(--text-muted);margin-top:3px}
+.draft-tools small.draft-sync-error{color:var(--c-red)}
 .draft-tool-label{display:flex;align-items:center;justify-content:center;gap:4px}
 .draft-tool-label svg{width:17px;height:17px;flex:none;color:var(--home-tone)}
+.draft-tool-label .draft-view-icon{width:22px;height:22px}
+.draft-tool-label .draft-sync-icon{width:20px;height:20px}
 .draft-panel{--tone:var(--home-tone);padding:14px;border:1.5px solid var(--tone);border-radius:14px;background:color-mix(in srgb,var(--tone) 5%,var(--surface));margin-bottom:12px}
 .draft-panel.complete{--tone:var(--c-green)}
 .draft-panel.scheduled{--tone:var(--upcoming-text)}
@@ -61,7 +64,6 @@ body{margin:0;padding:24px 14px 40px;max-width:none;min-height:100vh}
 .draft-summary .worked{border-top:1px solid var(--border);padding-top:8px;margin:0;color:var(--c-green);align-items:center}
 .draft-summary .worked strong{font-size:1.1rem;white-space:nowrap}
 .draft-summary .worked span{white-space:nowrap}
-.draft-network{font-size:.65rem;line-height:1.4;color:var(--text-muted);margin:-10px 0 16px}
 .proposal-guide h2{font-size:.98rem;margin:0 0 12px}
 .proposal-guide p,.proposal-guide li{font-size:.8rem;line-height:1.6;color:var(--text-muted)}
 .proposal-guide ol{padding-left:20px}.proposal-guide li{margin-bottom:10px}
@@ -73,7 +75,7 @@ body{margin:0;padding:24px 14px 40px;max-width:none;min-height:100vh}
 </style>
 <main class="proposal">
   <h1>Home · Propuesta para revisar</h1>
-  <p class="proposal-revision">HOME-539-R4 · Icono de factura y aviso junto a la fecha</p>
+  <p class="proposal-revision">HOME-539-R5 · Nuevos iconos y error dentro de Sync Kairo</p>
   <p class="proposal-intro">Dos paneles estables y una acción principal cuando procede. Ejemplos con datos ficticios.</p>
   <div class="proposal-controls">
     <label>Mes
@@ -99,7 +101,7 @@ body{margin:0;padding:24px 14px 40px;max-width:none;min-height:100vh}
         <button type="button">✎ 9h</button>
         <button type="button"><span class="draft-tool-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h9l5 5v13H5zM14 3v5h5"/></svg><span>Exportar<br>horas</span></span></button>
         <button type="button" id="draftTopView" class="draft-view-button" aria-label="Ver envíos"></button>
-        <button type="button"><span class="draft-tool-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 16H5a4 4 0 0 1-.4-8A7 7 0 0 1 18 7a4.5 4.5 0 0 1 1 8.9h-1.5"/><path d="M9 21v-9m-2 2 2-2 2 2M15 12v9m-2-2 2 2 2-2"/></svg><span>Sync<br>Kairo</span></span><small>5/11, 12:30</small></button>
+        <button type="button" id="draftSync"><span class="draft-tool-label"><svg class="draft-sync-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 8A8 8 0 0 0 6.4 4.9L3 8 M3 3v5h5 M4 16a8 8 0 0 0 13.6 3.1L21 16 M21 21v-5h-5"/></svg><span>Sync<br>Kairo</span></span><small id="draftSyncStatus" role="status" aria-live="polite">5/11, 12:30</small></button>
       </div>
       <div id="draftPanels" aria-live="polite"></div>
       <p id="draftActionFeedback" role="status"></p>
@@ -111,7 +113,7 @@ body{margin:0;padding:24px 14px 40px;max-width:none;min-height:100vh}
         <li><strong>Correos.</strong> «Correos pendientes de programar», «Correos al día» o «Correos con cambios». El contador breve se puede desplegar para consultar el alcance.</li>
         <li><strong>Factura.</strong> Reloj azul para la programada y check verde para la enviada. Junto a la fecha aparece el icono de factura con el color del panel. El plazo pendiente se expresa en días. Cuando falten requisitos, aparecen numerados y subrayados.</li>
         <li><strong>Alineación.</strong> Los dos títulos comparten el mismo margen y la misma columna de icono.</li>
-        <li><strong>Última sincronización.</strong> La fecha queda en Sync Kairo. Los paneles muestran los estados guardados.</li>
+        <li><strong>Última sincronización.</strong> La fecha queda en Sync Kairo. Si falla al pulsarlo, se sustituye por «error» en rojo y cursiva. En el ejemplo «Sin conexión», pulsa Sync Kairo para verlo; los paneles conservan sus estados.</li>
         <li><strong>Botones.</strong> Fondo blanco, iconos y texto con el acento rosa de Home. El mismo formato para exportar, consultar, sincronizar y enviar la factura.</li>
         <li><strong>Dos niveles de alerta.</strong> Rosa de Home con fondo suave y borde marcado para pendientes. Rojo más intenso si quedan menos de siete días o se requiere revisar una programación. La factura programada conserva su panel azul y añade un aviso con borde rojo y parpadeo a la derecha de la fecha cuando hay cambios en los correos.</li>
       </ol>
@@ -122,11 +124,17 @@ body{margin:0;padding:24px 14px 40px;max-width:none;min-height:100vh}
 <script>
 const monthInput=document.getElementById('draftMonth');
 const scenarioInput=document.getElementById('draftScenario');
+let syncFailed=false;
 const mailIcon='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 4h18a1 1 0 0 1 1 1v.5L12 12 2 5.5V5a1 1 0 0 1 1-1Zm-1 4 9.45 6.14a1 1 0 0 0 1.1 0L22 8v11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1Z"/></svg>';
 const invoiceIcon='<svg viewBox="-12 -12 24 24" aria-hidden="true"><path d="M-7,-9 H3 L7,-5 V9 H-7 Z" fill="#fff" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M3,-9 V-5 H7 M-4,-3 H1 M-4,0 H0" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M-3,5 H8 M4,1 L8,5 L4,9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const clockIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
-const viewLabel='<span class="draft-tool-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10V4H2v14h9M2 5l9 7 9-7"/><circle cx="17" cy="17" r="5"/><path d="M17 14v3l2 1"/></svg><span>Ver<br>envíos</span></span>';
+const viewLabel='<span class="draft-tool-label"><svg class="draft-view-icon" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 16V3h8l5 5v12H19Z" fill="var(--surface)"/><path d="M21 3v5h5 M16 11h7 M16 14h5"/><rect x="2" y="13" width="17" height="12" rx="1.5" fill="var(--surface)"/><path d="m2 14 8.5 6 8.5-6"/></svg><span>Ver<br>envíos</span></span>';
 document.getElementById('draftTopView').innerHTML=viewLabel;
+function renderSyncStatus(){
+  const label=document.getElementById('draftSyncStatus');
+  label.classList.toggle('draft-sync-error',syncFailed);
+  label.innerHTML=syncFailed?'<em>error</em>':'5/11, 12:30';
+}
 function viewButton(){
   return '<button type="button" class="draft-view-button" aria-label="Ver envíos">'+viewLabel+'</button>';
 }
@@ -168,16 +176,22 @@ function renderDraft(){
     const invoiceAction=scenario==='previous'?action('Ver factura anterior'):pending?'':action('Enviar factura');
     invoice='<section class="draft-panel '+(remaining<7?'urgent':'')+'">'+status(invoiceIcon,'Factura sin enviar',note+deadline)+invoiceAction+'</section>';
   }
-  const offline=scenario==='offline'?'<p class="draft-network">Sin conexión. Se muestran los últimos estados guardados.</p>':'';
   document.getElementById('draftMonthTitle').textContent=(month===12?'Diciembre':'Noviembre')+' 2026';
-  document.getElementById('draftPanels').innerHTML=offline+'<section class="draft-panel '+mailTone+'">'+mail+'</section>'+invoice;
+  document.getElementById('draftPanels').innerHTML='<section class="draft-panel '+mailTone+'">'+mail+'</section>'+invoice;
+  renderSyncStatus();
   document.getElementById('draftToday').textContent='Hoy de ejemplo · '+new Date(today).toLocaleDateString('es-ES',{timeZone:'UTC'});
   document.getElementById('draftActionFeedback').textContent='';
 }
 monthInput.addEventListener('change',renderDraft);
-scenarioInput.addEventListener('change',renderDraft);
+scenarioInput.addEventListener('change',()=>{syncFailed=false;renderDraft();});
 document.querySelector('.home-draft').addEventListener('click',event=>{
   const button=event.target.closest('button');
+  if(button&&button.id==='draftSync'){
+    syncFailed=scenarioInput.value==='offline';
+    renderSyncStatus();
+    document.getElementById('draftActionFeedback').textContent='';
+    return;
+  }
   if(button)document.getElementById('draftActionFeedback').textContent='Ejemplo de la acción «'+button.textContent.trim()+'».';
 });
 renderDraft();
