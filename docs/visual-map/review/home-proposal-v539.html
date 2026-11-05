@@ -13,11 +13,12 @@ body{margin:0;padding:24px 14px 40px;max-width:none;min-height:100vh}
 .proposal-controls label{display:grid;gap:5px;font-size:.75rem}
 .proposal-controls select{min-height:40px;max-width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font:inherit}
 .proposal-content{display:grid;grid-template-columns:minmax(0,410px) minmax(0,1fr);gap:28px;align-items:start}
-.home-draft{--home-tone:#bb3979;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:12px;min-width:0}
+.home-draft{--home-tone:#bb3979;--draft-button-width:clamp(70px,24cqw,94px);container-type:inline-size;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:12px;min-width:0}
 .draft-month{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:16px}
 .draft-month strong{font-size:1.05rem}.draft-month span{color:var(--home-tone);font-size:.78rem}
-.draft-tools{display:grid;grid-template-columns:.8fr 1fr 1fr 1fr;gap:5px;margin-bottom:20px}
-.draft-tools button{min-width:0;padding:7px 3px;min-height:52px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);font:600 .69rem/1.25 var(--font)}
+.draft-tools{display:grid;grid-template-columns:minmax(0,1fr) repeat(3,var(--draft-button-width));gap:5px;margin-bottom:20px}
+.draft-tools button,.draft-view-button{box-sizing:border-box;min-width:0;padding:7px 3px;height:60px;min-height:60px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);font:600 .69rem/1.25 var(--font);cursor:pointer}
+.draft-view-button{width:var(--draft-button-width);flex:none}
 .draft-tools button:first-child{background:var(--surface2);color:var(--hour-9)}
 .draft-tools small{display:block;font-size:.56rem;font-weight:500;color:var(--text-muted);margin-top:3px}
 .draft-tool-label{display:flex;align-items:center;justify-content:center;gap:4px}
@@ -34,7 +35,16 @@ body{margin:0;padding:24px 14px 40px;max-width:none;min-height:100vh}
 .draft-note{font-size:.7rem;line-height:1.55;color:var(--text-muted);margin:8px 0 0}
 .draft-rules{display:grid;gap:6px}.draft-rules span{display:block}
 .draft-rules u{text-decoration-thickness:1px;text-underline-offset:3px}
+.draft-rules strong{font-weight:700}
 .draft-rule-done{color:var(--c-green)}
+.draft-pending-note{margin:2px 0 0 10px;color:var(--text-muted);font-size:.7rem;line-height:1.5}
+.draft-pending-note>summary,.draft-pending-note>summary:hover{display:flex;justify-content:flex-end;min-height:32px;padding:6px 0!important;background:transparent;border:0;cursor:pointer;list-style:none;text-align:right;color:inherit;font-weight:400}
+.draft-pending-note>summary::-webkit-details-marker{display:none}
+.draft-pending-note>summary::before,.draft-pending-note>summary::after{content:none}
+.draft-pending-note>summary em{text-decoration:underline dotted;text-underline-offset:3px}
+.draft-pending-note>p{margin:2px 0 0;text-align:right;font:inherit}
+.draft-invoice-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px}
+.draft-invoice-warning{margin-left:30px;color:var(--c-red)}
 .draft-deadline{font-size:.7rem;line-height:1.5;color:var(--tone);margin:10px 0 0}
 .draft-action{display:block;width:100%;min-height:40px;padding:8px;border-radius:10px;border:1px solid var(--home-tone);background:var(--surface);color:var(--home-tone);font:600 .76rem var(--font);margin-top:12px;cursor:pointer}
 .draft-summary-row{display:grid;grid-template-columns:minmax(75px,1fr) minmax(150px,184px);gap:10px;align-items:center}
@@ -80,7 +90,7 @@ body{margin:0;padding:24px 14px 40px;max-width:none;min-height:100vh}
       <div class="draft-tools">
         <button type="button">✎ 9h</button>
         <button type="button"><span class="draft-tool-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h9l5 5v13H5zM14 3v5h5"/></svg><span>Exportar<br>horas</span></span></button>
-        <button type="button"><span class="draft-tool-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10V4H2v14h9M2 5l9 7 9-7"/><circle cx="17" cy="17" r="5"/><path d="M17 14v3l2 1"/></svg><span>Ver<br>envíos</span></span></button>
+        <button type="button" id="draftTopView" class="draft-view-button" aria-label="Ver envíos"></button>
         <button type="button"><span class="draft-tool-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 16H5a4 4 0 0 1-.4-8A7 7 0 0 1 18 7a4.5 4.5 0 0 1 1 8.9h-1.5"/><path d="M9 21v-9m-2 2 2-2 2 2M15 12v9m-2-2 2 2 2-2"/></svg><span>Sync<br>Kairo</span></span><small>5/11, 12:30</small></button>
       </div>
       <div id="draftPanels" aria-live="polite"></div>
@@ -90,12 +100,12 @@ body{margin:0;padding:24px 14px 40px;max-width:none;min-height:100vh}
     <aside class="proposal-guide">
       <h2>Cómo quedaría organizado</h2>
       <ol>
-        <li><strong>Correos.</strong> «Correos pendientes de programar», «Correos al día» o «Correos con cambios». Una aclaración breve en cursiva indica la tarea pendiente.</li>
+        <li><strong>Correos.</strong> «Correos pendientes de programar», «Correos al día» o «Correos con cambios». El contador breve se puede desplegar para consultar el alcance.</li>
         <li><strong>Factura.</strong> «Factura sin enviar», «Factura programada» o «Factura enviada». El plazo se expresa en días. Cuando falten requisitos, aparecen numerados y subrayados.</li>
         <li><strong>Alineación.</strong> Los dos títulos comparten el mismo margen y la misma columna de icono.</li>
         <li><strong>Última sincronización.</strong> La fecha queda en Sync Kairo. Los paneles muestran los estados guardados.</li>
         <li><strong>Botones.</strong> Fondo blanco, iconos y texto con el acento rosa de Home. El mismo formato para exportar, consultar, sincronizar y enviar la factura.</li>
-        <li><strong>Dos niveles de alerta.</strong> Rosa de Home con fondo suave y borde marcado para pendientes. Rojo más intenso si quedan menos de siete días o se requiere revisar una programación.</li>
+        <li><strong>Dos niveles de alerta.</strong> Rosa de Home con fondo suave y borde marcado para pendientes. Rojo más intenso si quedan menos de siete días o se requiere revisar una programación. Los cambios de correos también muestran un aviso en la factura programada.</li>
       </ol>
       <p>Tras revisar la propuesta, el modelo de estados y los mensajes se unificarían en Home y se comprobarían los meses actuales, futuros y los cambios de datos.</p>
     </aside>
@@ -106,6 +116,11 @@ const monthInput=document.getElementById('draftMonth');
 const scenarioInput=document.getElementById('draftScenario');
 const mailIcon='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 4h18a1 1 0 0 1 1 1v.5L12 12 2 5.5V5a1 1 0 0 1 1-1Zm-1 4 9.45 6.14a1 1 0 0 0 1.1 0L22 8v11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1Z"/></svg>';
 const invoiceIcon='<svg viewBox="-12 -12 24 24" aria-hidden="true"><path d="M-7,-9 H3 L7,-5 V9 H-7 Z" fill="#fff" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M3,-9 V-5 H7 M-4,-3 H1 M-4,0 H0" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M-3,5 H8 M4,1 L8,5 L4,9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const viewLabel='<span class="draft-tool-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10V4H2v14h9M2 5l9 7 9-7"/><circle cx="17" cy="17" r="5"/><path d="M17 14v3l2 1"/></svg><span>Ver<br>envíos</span></span>';
+document.getElementById('draftTopView').innerHTML=viewLabel;
+function viewButton(){
+  return '<button type="button" class="draft-view-button" aria-label="Ver envíos">'+viewLabel+'</button>';
+}
 function status(icon,title,content){
   return '<div class="draft-status"><span class="draft-symbol">'+icon+'</span><div class="draft-copy"><h2>'+title+'</h2>'+content+'</div></div>';
 }
@@ -123,8 +138,9 @@ function renderDraft(){
   const remaining=Math.round((due-today)/86400000);
   const pending=['pending','urgent'].includes(scenario),changed=scenario==='changed';
   const mailTitle=changed?'Correos con cambios':pending?'Correos pendientes de programar':'Correos al día';
-  const mailNote=changed?'* Hay cambios en los datos de una semana ya programada.':'* Quedan 3 semanas por programar, incluidas las dos siguientes al mes.';
-  let mailContent=pending||changed?'<p class="draft-note"><em>'+mailNote+'</em></p>':'';
+  let mailContent='';
+  if(changed)mailContent='<p class="draft-note"><em>* Hay cambios en los datos de una semana ya programada.</em></p>';
+  else if(pending)mailContent='<details class="draft-pending-note"><summary><em>* 3 semanas pendientes por programar</em></summary><p><em>Se incluyen las 2 que hay que programar del mes siguiente.</em></p></details>';
   let mail=status(pending||changed?'!':'✓',mailTitle,mailContent);
   if(!pending&&!changed)mail='<div class="draft-summary-row">'+mail+summary(month)+'</div>';
   if(pending||changed)mail+=action(changed?'Revisar cambios':'Programar pendientes');
@@ -132,11 +148,13 @@ function renderDraft(){
   let invoice;
   if(['scheduled','offline','sent','changed'].includes(scenario)){
     const sent=scenario==='sent';
-    invoice='<section class="draft-panel '+(sent?'complete':'scheduled')+'">'+status(invoiceIcon,sent?'Factura enviada':'Factura programada','<p class="draft-note">Envío '+(sent?'confirmado':'el '+(month===12?'18/12':'20/11'))+'</p>')+action('Ver envíos')+'</section>';
+    const invoiceTone=changed?'changed':sent?'complete':'scheduled';
+    const warning=changed?'<p class="draft-note draft-invoice-warning"><em>* Es necesario revisar la factura tras los cambios en los correos.</em></p>':'';
+    invoice='<section class="draft-panel '+invoiceTone+'"><div class="draft-invoice-row">'+status(changed?'!':sent?'✓':invoiceIcon,sent?'Factura enviada':'Factura programada','<p class="draft-note">Envío '+(sent?'confirmado':'el '+(month===12?'18/12':'20/11'))+'</p>')+viewButton()+'</div>'+warning+'</section>';
   }else{
     const blocked=pending||scenario==='previous';
-    const note=blocked?'<div class="draft-note draft-rules"><em>* Se requiere tener programados</em><span'+(scenario==='previous'?' class="draft-rule-done"':'')+'><em><u>(1) Los envíos de horas de este mes.</u>'+(scenario==='previous'?' ✓':'')+'</em></span><span><em><u>(2) El envío de la factura del mes anterior.</u></em></span></div>':'';
-    const deadline='<p class="draft-deadline">Debe enviarse o programarse en los próximos '+remaining+' días.</p>';
+    const note=blocked?'<div class="draft-note draft-rules"><em>* Se requiere tener los correos del mes programados</em><span'+(scenario==='previous'?' class="draft-rule-done"':'')+'><em><strong>(1) <u>Los envíos de horas de este mes.</u>'+(scenario==='previous'?' ✓':'')+'</strong></em></span><span><em><strong>(2) <u>El envío de la factura del mes anterior.</u></strong></em></span></div>':'';
+    const deadline='<p class="draft-deadline">Debe programarse en los próximos '+remaining+' días.</p>';
     const invoiceAction=scenario==='previous'?action('Ver factura anterior'):pending?'':action('Enviar factura');
     invoice='<section class="draft-panel '+(remaining<7?'urgent':'')+'">'+status(invoiceIcon,'Factura sin enviar',note+deadline)+invoiceAction+'</section>';
   }
