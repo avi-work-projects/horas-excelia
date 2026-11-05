@@ -376,7 +376,11 @@ function _evMonthRemainingOutline(week,today,last){
   var column=(today.getDay()+6)%7;
   var since=Math.round((week[0]-today)/86400000);
   var step=since>0&&since<7?column:0;
-  return '<div aria-hidden="true" class="ev-pending-outline'+(starts?' ev-pending-start':'')+(ends?' ev-pending-end':'')+(step?' ev-pending-step':'')+'" style="--ev-pending-from:'+(starts?column:0)+';--ev-pending-step:'+step+'"></div>';
+  var turn=starts&&column>0&&!ends;
+  return '<div aria-hidden="true" class="ev-pending-outline'+(starts?' ev-pending-start':'')+(ends?' ev-pending-end':'')+(step?' ev-pending-step':'')+(turn?' ev-pending-turn':'')+'" style="--ev-pending-from:'+(starts?column:0)+';--ev-pending-step:'+step+'">'
+    +'<span class="ev-pending-left"></span><span class="ev-pending-right"></span>'
+    +(starts?'<span class="ev-pending-top"></span>':'')+(ends?'<span class="ev-pending-bottom"></span>':'')
+    +(step?'<span class="ev-pending-step-edge"></span>':'')+(turn?'<span class="ev-pending-turn-edge"></span>':'')+'</div>';
 }
 function renderEvCalMonth(opts){return withEventDateIndex(new Date(EV_YEAR,EV_MONTH, -6),new Date(EV_YEAR,EV_MONTH+1,7),function(){return _renderEvCalMonth(opts);});}
 function renderEvAnnual(){return withEventDateIndex(new Date(EV_YEAR,0,1),new Date(EV_YEAR,11,31),_renderEvAnnual);}

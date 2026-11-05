@@ -1,5 +1,7 @@
 # Mapa visual de Gestify
 
+v540. [Calendario mensual: títulos cortos en dos líneas y contorno redondeado](review/updates-v540.html). Solo se añaden dos ejemplos ficticios de la vista afectada; las referencias anteriores se conservan.
+
 v539. [Planificar sesiones](review/evidence/sesiones-v539/planificar-sesiones.png), [editar una sesión](review/evidence/sesiones-v539/editar-sesion.png) y [propuesta de estados de Home para revisar](review/home-proposal-v539.html). La propuesta de Home está separada de la app.
 
 v537. [Sync Kairo con acciones e iconos](review/evidence/home-v537/sync-kairo.png), [factura por preparar](review/evidence/home-v537/home-factura-v537.png) y [correos pendientes](review/evidence/home-v537/home-pendientes-v537.png).
