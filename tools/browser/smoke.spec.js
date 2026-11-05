@@ -30,6 +30,7 @@ test('rutina flexible: cupo del primer mes, sesiones pasadas y conservación al 
  await chooseTime(page,'#rutPlanTime','19:30');await page.locator('#rutPlanSave').click();
  await expect(page.locator('.rut-plan-day.planned')).toHaveCount(1);
  await expect(page.locator('.rut-plan-row')).toContainText('19:30');
+ await page.locator('.rut-plan-list summary').click();
  await page.locator('[data-redit]').click();await expect(page.locator('#rutHistoryEditOv')).toBeVisible();
  await expect(page.locator('#rutHistoryCancel')).toHaveCount(0);
  await page.locator('#rutHistoryEditClose').click();
