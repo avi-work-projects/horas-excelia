@@ -2,7 +2,7 @@
 <html lang="es" data-theme="light">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Home · Propuesta revisada · R2</title>
+<title>Home · Propuesta revisada · R3</title>
 <link rel="stylesheet" href="../../../css/styles.css">
 <style>
 body{margin:0;padding:24px 14px 40px;max-width:none;min-height:100vh}
@@ -38,14 +38,16 @@ body{margin:0;padding:24px 14px 40px;max-width:none;min-height:100vh}
 .draft-rules u{text-decoration-thickness:1px;text-underline-offset:3px}
 .draft-rules strong{font-weight:700}
 .draft-rule-done{color:var(--c-green)}
-.draft-pending-note{margin:2px 0 0 10px;color:var(--text-muted);font-size:.7rem;line-height:1.5}
-.draft-pending-note>summary,.draft-pending-note>summary:hover{display:flex;justify-content:flex-end;min-height:32px;padding:6px 0!important;background:transparent;border:0;cursor:pointer;list-style:none;text-align:right;color:inherit;font-weight:400}
+.draft-pending-note{margin:2px 0 0;color:var(--text-muted);font-size:.7rem;line-height:1.5}
+.draft-pending-note>summary,.draft-pending-note>summary:hover{display:flex;justify-content:flex-start;min-height:32px;padding:6px 0!important;background:transparent;border:0;cursor:pointer;list-style:none;text-align:left;color:inherit;font-weight:400}
 .draft-pending-note>summary::-webkit-details-marker{display:none}
 .draft-pending-note>summary::before,.draft-pending-note>summary::after{content:none}
 .draft-pending-note>summary em{text-decoration:underline dotted;text-underline-offset:3px}
-.draft-pending-note>p{margin:2px 0 0;text-align:right;font:inherit}
+.draft-pending-note>p{margin:2px 0 0;text-align:left;font:inherit}
 .draft-invoice-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px}
-.draft-invoice-warning{margin-left:30px;color:var(--c-red)}
+.draft-invoice-date{color:var(--tone)}
+.draft-invoice-alert{display:inline-flex;align-items:center;gap:4px;padding:3px 6px;margin:0 0 5px 30px;border-radius:5px;background:color-mix(in srgb,var(--c-red) 8%,var(--surface));color:var(--c-red);font-size:.63rem;font-weight:650;line-height:1.25}
+.draft-invoice-alert svg{width:12px;height:12px;flex:none}
 .draft-deadline{font-size:.7rem;line-height:1.5;color:var(--tone);margin:10px 0 0}
 .draft-action{display:block;width:100%;min-height:40px;padding:8px;border-radius:10px;border:1px solid var(--home-tone);background:var(--surface);color:var(--home-tone);font:600 .76rem var(--font);margin-top:12px;cursor:pointer}
 .draft-summary-row{display:grid;grid-template-columns:minmax(75px,1fr) minmax(150px,184px);gap:10px;align-items:center}
@@ -67,7 +69,7 @@ body{margin:0;padding:24px 14px 40px;max-width:none;min-height:100vh}
 </style>
 <main class="proposal">
   <h1>Home · Propuesta para revisar</h1>
-  <p class="proposal-revision">HOME-539-R2 · 7 comentarios incorporados</p>
+  <p class="proposal-revision">HOME-539-R3 · Alineación, fecha y avisos revisados</p>
   <p class="proposal-intro">Dos paneles estables y una acción principal cuando procede. Ejemplos con datos ficticios.</p>
   <div class="proposal-controls">
     <label>Mes
@@ -103,11 +105,11 @@ body{margin:0;padding:24px 14px 40px;max-width:none;min-height:100vh}
       <h2>Cómo quedaría organizado</h2>
       <ol>
         <li><strong>Correos.</strong> «Correos pendientes de programar», «Correos al día» o «Correos con cambios». El contador breve se puede desplegar para consultar el alcance.</li>
-        <li><strong>Factura.</strong> «Factura sin enviar», «Factura programada» o «Factura enviada». El plazo se expresa en días. Cuando falten requisitos, aparecen numerados y subrayados.</li>
+        <li><strong>Factura.</strong> Reloj azul y fecha para la programada; check verde y fecha para la enviada. El plazo pendiente se expresa en días. Cuando falten requisitos, aparecen numerados y subrayados.</li>
         <li><strong>Alineación.</strong> Los dos títulos comparten el mismo margen y la misma columna de icono.</li>
         <li><strong>Última sincronización.</strong> La fecha queda en Sync Kairo. Los paneles muestran los estados guardados.</li>
         <li><strong>Botones.</strong> Fondo blanco, iconos y texto con el acento rosa de Home. El mismo formato para exportar, consultar, sincronizar y enviar la factura.</li>
-        <li><strong>Dos niveles de alerta.</strong> Rosa de Home con fondo suave y borde marcado para pendientes. Rojo más intenso si quedan menos de siete días o se requiere revisar una programación. Los cambios de correos también muestran un aviso en la factura programada.</li>
+        <li><strong>Dos niveles de alerta.</strong> Rosa de Home con fondo suave y borde marcado para pendientes. Rojo más intenso si quedan menos de siete días o se requiere revisar una programación. La factura programada conserva su panel azul y añade un aviso rojo sobre el título cuando hay cambios en los correos.</li>
       </ol>
       <p>Tras revisar la propuesta, el modelo de estados y los mensajes se unificarían en Home y se comprobarían los meses actuales, futuros y los cambios de datos.</p>
     </aside>
@@ -118,6 +120,7 @@ const monthInput=document.getElementById('draftMonth');
 const scenarioInput=document.getElementById('draftScenario');
 const mailIcon='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 4h18a1 1 0 0 1 1 1v.5L12 12 2 5.5V5a1 1 0 0 1 1-1Zm-1 4 9.45 6.14a1 1 0 0 0 1.1 0L22 8v11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1Z"/></svg>';
 const invoiceIcon='<svg viewBox="-12 -12 24 24" aria-hidden="true"><path d="M-7,-9 H3 L7,-5 V9 H-7 Z" fill="#fff" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M3,-9 V-5 H7 M-4,-3 H1 M-4,0 H0" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M-3,5 H8 M4,1 L8,5 L4,9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const clockIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
 const viewLabel='<span class="draft-tool-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10V4H2v14h9M2 5l9 7 9-7"/><circle cx="17" cy="17" r="5"/><path d="M17 14v3l2 1"/></svg><span>Ver<br>envíos</span></span>';
 document.getElementById('draftTopView').innerHTML=viewLabel;
 function viewButton(){
@@ -150,9 +153,10 @@ function renderDraft(){
   let invoice;
   if(['scheduled','offline','sent','changed'].includes(scenario)){
     const sent=scenario==='sent';
-    const invoiceTone=changed?'changed':sent?'complete':'scheduled';
-    const warning=changed?'<p class="draft-note draft-invoice-warning"><em>* Es necesario revisar la factura tras los cambios en los correos.</em></p>':'';
-    invoice='<section class="draft-panel '+invoiceTone+'"><div class="draft-invoice-row">'+status(changed?'!':sent?'✓':invoiceIcon,sent?'Factura enviada':'Factura programada','<p class="draft-note">Envío '+(sent?'confirmado':'el '+(month===12?'18/12':'20/11'))+'</p>')+viewButton()+'</div>'+warning+'</section>';
+    const invoiceTone=sent?'complete':'scheduled';
+    const warning=changed?'<span class="draft-invoice-alert" title="Hay cambios en los días de una semana ya programada."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2 21h20Z M12 9v5 M12 17v.1"/></svg>Revisar cambios</span>':'';
+    const date='<p class="draft-note draft-invoice-date"><time datetime="2026-'+month+'-'+(month===12?'18':'20')+'">'+(month===12?'18/12':'20/11')+'</time></p>';
+    invoice='<section class="draft-panel '+invoiceTone+'"><div class="draft-invoice-row"><div>'+warning+status(sent?'✓':clockIcon,sent?'Factura enviada':'Factura programada',date)+'</div>'+viewButton()+'</div></section>';
   }else{
     const blocked=pending||scenario==='previous';
     const note=blocked?'<div class="draft-note draft-rules"><em>* Se requiere tener los correos del mes programados</em><span'+(scenario==='previous'?' class="draft-rule-done"':'')+'><em><strong>(1) <u>Los envíos de horas de este mes.</u>'+(scenario==='previous'?' ✓':'')+'</strong></em></span><span><em><strong>(2) <u>El envío de la factura del mes anterior.</u></strong></em></span></div>':'';
