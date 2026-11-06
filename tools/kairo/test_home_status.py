@@ -2,8 +2,11 @@
 import copy
 import json
 import unittest
+import tempfile
+from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
-from home_invoice_status import month_status, reply_status
+from home_invoice_status import month_status, reply_status, read_month
 from prepare_home_status import patch_status_service
 
 
@@ -12,6 +15,19 @@ def item(state='review', mail='Sin programar', accepted=False, period='2027-02')
 
 
 class StatusTests(unittest.TestCase):
+    def test_sent_date_comes_from_its_confirmed_mail_event(self):
+        source = [item('sent', 'Enviado', True)]
+        events = [dict(id=1,event='mail_sent',at='2027-02-18T23:30:00+00:00',detail='{"key":"final:current"}'),
+                  dict(id=2,event='mail_sent',at='2027-02-21T12:00:00+00:00',detail='{"key":"notice:another"}')]
+        catalog = SimpleNamespace(catalog=lambda root: source, digest=lambda p: 'current', rows=lambda *args: events)
+        with tempfile.TemporaryDirectory() as tmp, patch.dict('sys.modules', {'invoice_catalog':catalog}):
+            for name in ('service.sqlite','workflow.sqlite'):(Path(tmp)/name).touch()
+            result = read_month(tmp,'2027-02')
+            self.assertEqual(result['sentDate'], '2027-02-19')
+            self.assertNotIn('secret',json.dumps(result))
+            events.clear()
+            self.assertNotIn('sentDate',read_month(tmp,'2027-02'), 'Never invent the actual send date')
+
     def test_real_mail_wins_and_private_fields_never_leave(self):
         source = [item('sent', 'Enviado', True)]
         original = copy.deepcopy(source)

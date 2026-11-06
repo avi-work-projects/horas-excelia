@@ -28,7 +28,7 @@ function invoiceKairoExchange(url,p,action,popup){
     function receive(event){
       var m=event.data;
       if(event.origin!==origin||event.source!==popup||!m||m.channel!=='gestify-kairo-v1'||m.id!==id)return;
-      if(m.type==='ready'&&!sent){sent=true;popup.postMessage({channel:m.channel,id:id,type:'request',action:action,change:action==='project'?p:undefined,period:p.period,operationId:p.operationId,contentHash:p.contentHash,source:action==='prepare'?JSON.stringify(p):undefined},origin);}
+      if(m.type==='ready'&&!sent){sent=true;popup.postMessage({channel:m.channel,id:id,type:'request',action:action,change:action==='project'?p:undefined,period:p.period,operationId:p.operationId,contentHash:p.contentHash,source:['prepare','revise'].includes(action)?JSON.stringify(p):undefined},origin);}
       if(m.type==='result'&&sent){
         if(!m.ok){var error=new Error(typeof m.message==='string'?m.message:'Kairo no confirmó la operación. Consulta el estado y revisa su ventana.');error.projectRejected=action==='project'&&m.rejected===true;error.projectCurrent=m.current;return finish(error);}
         var r=m.result;
@@ -45,7 +45,9 @@ function invoiceKairoExchange(url,p,action,popup){
     var timeout=setTimeout(function(){finish(Object.assign(new Error('Sin respuesta de Kairo. Comprueba Tailscale y consulta el estado antes de repetir.'),{code:'network'}));},45000);
   });
 }
-function bindInvoiceKairo(root,p,url){
+function bindInvoiceKairo(root,p,url,options){
+  options=options||{};
+  var send=root.querySelector('#invoiceKairoSend');if(options.revise&&send)send.textContent='Enviar cambios a Kairo';
   ['Send','Status'].forEach(function(suffix){
     var button=root.querySelector('#invoiceKairo'+suffix);if(!button)return;
     button.onclick=async function(){
@@ -61,13 +63,13 @@ function bindInvoiceKairo(root,p,url){
         if(!record||record.preparation.contentHash!==p.contentHash)throw new Error('La preparación cambió. Vuelve a abrir el mes.');
         if(suffix==='Send'&&record.final)throw new Error('Este mes ya tiene un PDF definitivo. Consulta su estado.');
         if(suffix==='Send'){
-          record.kairo={operationId:p.operationId,contentHash:p.contentHash,state:'pending'};invoiceSave(data);
+          if(!options.revise){record.kairo={operationId:p.operationId,contentHash:p.contentHash,state:'pending'};invoiceSave(data);}
           var manual=root.querySelector('#invoiceDocument');if(manual)manual.remove();
           var gmail=root.querySelector('#invoiceGmail');if(gmail)gmail.remove();
         }
         INVOICE_KAIRO_BUSY=true;root.querySelectorAll('#invoiceKairoSend,#invoiceKairoStatus').forEach(function(el){el.disabled=true;});
         message.textContent='Conectando con Kairo… Mantén abierta su ventana.';
-        var result=await invoiceKairoExchange(url,p,suffix==='Send'?'prepare':'status',popup);
+        var result=await invoiceKairoExchange(url,p,suffix==='Send'?(options.revise?'revise':'prepare'):'status',popup);
         data=invoiceData();record=data.months[p.period];
         if(record&&record.preparation.contentHash===p.contentHash){record.kairo={operationId:p.operationId,contentHash:p.contentHash,state:result.state};invoiceSave(data);if(data.config.kairoUrl&&invoiceKairoUrl(data.config.kairoUrl)===url&&typeof fetchHomeInvoiceStatus==='function')fetchHomeInvoiceStatus(p.period,data.config.kairoUrl,true);}
         message.textContent=invoiceKairoState(result.state);

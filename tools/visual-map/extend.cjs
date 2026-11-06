@@ -28,8 +28,8 @@ module.exports=function extend({scenes,edges}){
   add('invoice-config-edit','Editar datos de facturación','Inicio','invoice-config','#invoiceSettingsEdit','#invoiceSettingsSave');
   add('home-september','Inicio · septiembre','Inicio','home','#nextBtn','#hoursCalendarBtn');
   add('home-october','Inicio · octubre','Inicio','home-september','#nextBtn','#hoursCalendarBtn');
-  add('home-invoice-connection','Inicio · conectar estado de factura','Inicio','home-october','[data-home-invoice="configure"]','#invoiceSettingsSave',{sources:['js/invoices-home.js','js/invoices-ui.js','js/invoices.js'],region:'.invoice-body',note:'Consulta sin configurar: el botón abre la conexión privada existente.'});
   add('invoice-current','Preparar factura del mes','Inicio','home-october','#invoiceHomeBtn','#invoiceCalendar',{sources:['js/invoices-ui.js','js/invoices.js','js/invoices-calendar.js'],region:'.invoice-body'});
+  add('home-invoice-connection','Inicio · conectar estado de factura','Inicio','invoice-current','#invoiceKairoConfig','#invoiceSettingsSave',{sources:['js/invoices-home.js','js/invoices-ui.js','js/invoices.js'],region:'.invoice-body',note:'Consulta sin configurar: el botón abre la conexión privada existente.'});
   add('invoice-document','Adjuntar factura definitiva','Inicio','invoice-current','#invoiceDocument summary','#invoiceFinalFile',{scroll:true});
   // Calendarios y pestañas de Eventos.
   for(const [id,title,button]of [['annual','Calendario anual','#evViewAnnual'],['quad','Calendario 4 meses','#evViewQuad'],['timeoff','Vacaciones y festivos','#evViewTimeOff']])add(id,title,'Eventos','events',button,button+'.active');

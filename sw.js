@@ -4,7 +4,7 @@
    → Cambiar CACHE_VER en cada deploy para forzar actualización
    ============================================================ */
 
-var CACHE_VER = 'v542';
+var CACHE_VER = 'v543';
 var CACHE_NAME = 'horas-excelia-' + CACHE_VER;
 
 /* Generado desde app-assets.json: npm run assets */
@@ -22,6 +22,7 @@ var ASSETS = [
   "./js/data-integrity.js",
   "./js/energy-data.js",
   "./js/nav-icons.js",
+  "./js/home-status.js",
   "./js/core.js",
   "./js/home-hours.js",
   "./js/home-weeks.js",

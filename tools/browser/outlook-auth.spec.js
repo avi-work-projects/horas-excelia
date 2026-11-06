@@ -25,10 +25,8 @@ test('MFA se avisa sin consultar el buzón y se retira tras recuperar acceso',as
   await page.locator('#homeSyncDialog').screenshot({path:info.outputPath('sync-kairo.png'),animations:'disabled'});
   await page.locator('[data-close-sync]').click();
   await page.evaluate(()=>{ST['2026-10-12']={type:'festivo'};render();});
-  const agenda=page.locator('[data-home-invoice=calendar]');
-  await expect(agenda).toHaveAccessibleName('Ver envíos');
-  const style=el=>{const s=getComputedStyle(el);return [s.width,s.height,s.backgroundColor,s.borderColor,s.color,s.fontSize];};
-  expect(await agenda.evaluate(style)).toEqual(await page.locator('#hoursCalendarBtn').evaluate(style));
+  await expect(page.locator('[data-home-invoice=calendar]')).toHaveCount(0);
+  await expect(page.locator('#hoursCalendarBtn')).toHaveAccessibleName('Ver envíos');
   await page.screenshot({path:info.outputPath('home-v536.png'),animations:'disabled'});
   await expect(page.locator('.home-submission')).not.toContainText(/Comprobado|Outlook/);
 });

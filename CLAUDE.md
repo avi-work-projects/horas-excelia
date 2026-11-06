@@ -13,7 +13,7 @@ Una tarea exclusivamente documental conserva las versiones y los archivos de la 
 
 ## Reglas vigentes
 - En cualquier pantalla, las aclaraciones introducidas con un asterisco se presentan en cursiva, incluido el asterisco.
-- Próxima revisión de Home acordada el 05/11/2026. Los botones de acción (exportar, ver envíos, sincronizar y enviar factura) comparten fondo blanco y acento rosa. Los avisos pendientes usan ese acento con fondo suave y borde marcado. El rojo se reserva a revisiones y plazos urgentes. La propuesta se revisa antes de aplicar esta actualización visual a Home.
+- Home R8 integrada en v543 tras la revisión de Ángel. Los botones de acción (exportar, ver envíos, sincronizar y enviar factura) comparten fondo blanco y borde/iconos rosas; las acciones de panel tienen su columna a la derecha. Los avisos pendientes usan ese acento con fondo suave y borde marcado. El rojo se reserva a revisiones y plazos urgentes. La factura programada conserva el azul ante cambios y añade el aviso rojo. Las modificaciones de correo y factura usan sus recorridos de Kairo por separado, con confirmación; actualizar un borrador requiere nueva aprobación.
 - PWA estática sin backend. Mantener la arquitectura actual y la compatibilidad de backups JSON.
 - css/styles.css es generado. Editar css/source/; las otras hojas CSS siguen siendo editables. No alterar el orden de cascada del catálogo por comodidad.
 - Atrás, flechas y Hoy: base y variantes en css/source/navigation-controls.css; disposición de cabeceras en su módulo. El carrusel conserva su combinación con .ev-btn en event-panels.css. No añadir parches de estos controles a shared-refinements.css.

@@ -58,8 +58,8 @@ test('Sin conexión o respuesta incoherente no afirma factura pendiente ni envia
 });
 
 test('Conectar reutiliza la configuración privada; meses anteriores no consultan Kairo',async({page,context})=>{
-  const api=await setup(page,context,false);await expect(page.locator('#homeInvoiceStatus')).toContainText('Conectar facturas con Kairo');expect(api.calls).toHaveLength(0);
-  await page.getByRole('button',{name:'Conectar Kairo',exact:true}).click();await expect(page.locator('#invoiceConnection')).toHaveAttribute('open','');await expect(page.locator('[data-invoice-field=kairoUrl]')).toBeEditable();await page.locator('#invoiceBack').click();
+  const api=await setup(page,context,false);await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura sin enviar');expect(api.calls).toHaveLength(0);
+  await page.locator('#invoiceHomeBtn').click();await page.locator('#invoiceKairoConfig').click();await expect(page.locator('#invoiceConnection')).toHaveAttribute('open','');await expect(page.locator('[data-invoice-field=kairoUrl]')).toBeEditable();await page.locator('#invoiceBack').click();
   await page.getByRole('button',{name:'Sync Kairo',exact:true}).click();await expect(page.locator('#invoiceConnection')).toHaveAttribute('open','');await page.locator('#invoiceBack').click();
   await page.evaluate(()=>{CM=8;render();});await expect(page.locator('#homeInvoiceStatus')).toHaveCount(0);expect(api.calls).toHaveLength(0);
 });
@@ -74,7 +74,7 @@ test('Una respuesta tardía del mes anterior no sustituye el estado visible',asy
 
 test('factura sin enviar parpadea y abre el mismo circuito de Enviar factura',async({page,context})=>{
   await setup(page,context);const panel=page.locator('#homeInvoiceStatus');
-  await expect(panel).toHaveClass(/unsent/);await expect(panel.locator('strong')).toHaveCSS('animation-name','home-pending-pulse');
+  await expect(panel).toHaveClass(/unsent/);await expect(panel).toHaveCSS('animation-name','home-panel-pulse');
   await panel.getByRole('button',{name:'Enviar factura',exact:true}).click();await expect(page.locator('#invoiceOv')).toBeVisible();
   await expect(page.locator('#invoiceOv')).toContainText('Enviar factura');
 });
@@ -85,12 +85,13 @@ test('mes futuro: primero horas del mes, después factura, con prioridad para un
   await page.evaluate(()=>{CY=2027;CM=3;render();});
   const panel=page.locator('#homeInvoiceStatus');
   await expect(panel).toContainText('Factura sin enviar');
-  await expect(panel.locator('.home-invoice-copy>span')).toHaveText('* Programa primero los envíos de horas de este mes y el envío de la factura del mes anterior.');
+  await expect(panel.locator('.home-invoice-rules')).toContainText('Se requiere tener los correos del mes programados');
+  await expect(panel.locator('.home-invoice-rule')).toHaveCount(2);
   await expect(panel.locator('[data-home-invoice=send]')).toHaveCount(0);
-  await panel.getByRole('button',{name:'Revisar horas'}).click();
-  await expect(page.locator('.week-card .sent-toggle:focus')).toHaveCount(1);
+  await expect(panel.getByRole('button',{name:'Revisar horas'})).toHaveCount(0);
+  await expect(page.locator('.home-submission [data-hours-review]')).toBeVisible();
   await page.evaluate(()=>{HOURS_CACHE.url=hoursKairoUrl();weeks(CY,CM).forEach(w=>HOURS_CACHE.weeks[dk(w[0])]={state:'sent'});paintHoursStatus();});
-  await expect(panel).toContainText('el envío de la factura del mes anterior');
+  await expect(panel).toContainText('El envío de la factura del mes anterior');
   await page.evaluate(()=>{INVOICE_HOME_CACHE.periods['2027-03']={data:{state:'scheduled'}};paintHoursStatus();});
   await expect(panel.getByRole('button',{name:'Enviar factura'})).toBeVisible();
   await page.evaluate(()=>{HOURS_CACHE.weeks={};INVOICE_HOME_CACHE.periods['2027-04']={data:{state:'scheduled',scheduled:true,scheduledDate:'2027-04-20'}};paintHoursStatus();});
@@ -101,8 +102,9 @@ test('Ver programación explica una conexión fallida sin perder la fecha confir
   const api=await setup(page,context);
   api.set(result('scheduled'));
   await page.locator('#homeSyncBtn').click();await page.locator('[data-hours-check]').click();await page.locator('[data-close-sync]').click();
-  const link=page.locator('#homeInvoiceStatus [data-home-invoice=calendar]');
-  await expect(link).toHaveText('Ver envíos');
+  const link=page.locator('#hoursCalendarBtn');
+  await expect(page.locator('#homeInvoiceStatus').getByRole('button',{name:'Ver envíos'})).toHaveCount(0);
+  await expect(link).toHaveAccessibleName('Ver envíos');
   await context.route(new URL('/horas/reachable',base).href,r=>r.abort());
   await link.click();
   await expect(page.getByText(/Comprueba que Tailscale está conectado/).last()).toBeVisible();
@@ -116,8 +118,8 @@ test('la factura detecta cambios locales sin consultar Kairo ni alterar lo progr
   await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura programada');
   const count=api.calls.length;
   await page.evaluate(()=>{ST['2026-10-29']={type:'vacaciones'};render();});
-  await expect(page.locator('#homeInvoiceStatus')).toContainText('cambios locales por revisar');
-  await expect(page.locator('#homeInvoiceStatus').getByRole('button',{name:'Revisar cambios'})).toBeVisible();
+  await expect(page.locator('#homeInvoiceStatus')).toContainText('Revisar Cambios');
+  await expect(page.locator('#homeInvoiceStatus').getByRole('button',{name:'Modificar envíos'})).toBeVisible();
   expect(api.calls).toHaveLength(count);expect(await page.evaluate(()=>INVOICE_HOME_CACHE.periods['2026-10'].data.state)).toBe('scheduled');
   const box=await page.locator('#homeInvoiceStatus').evaluate(el=>el.getBoundingClientRect().toJSON());await page.screenshot({path:info.outputPath('invoice-local-change.png'),animations:'disabled',clip:{x:0,y:0,width:400,height:Math.ceil(box.y+box.height+12)}});
 });

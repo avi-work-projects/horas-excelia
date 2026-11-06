@@ -29,7 +29,7 @@
     const m = event.data;
     if (!opener || event.source !== opener || event.origin !== bridgeConfig.origin || !m || m.channel !== 'gestify-kairo-v1' || typeof m.id !== 'string' || m.id.length > 80) return;
     if (m.type === 'hello' && !requested) { requestId = m.id; send({type:'ready'}); return; }
-    if (m.type !== 'request' || requested || m.id !== requestId || !['prepare','status','project'].includes(m.action)) return;
+    if (m.type !== 'request' || requested || m.id !== requestId || !['prepare','revise','status'].includes(m.action)) return;
     requested = true;
     if (m.action === 'project') {
       document.title = 'Kairo · Proyecto';
@@ -43,9 +43,10 @@
         .catch(error => {show('Proyecto sin confirmar',error.message,'error');send({type:'result',ok:false,message:error.message});});
       return;
     }
-    const consulting = m.action === 'status';
-    document.title = consulting ? 'Kairo · Consultar estado' : 'Kairo · Preparar borrador';
-    el('title').textContent = consulting ? 'Estado de la factura' : 'Borrador';
+    const consulting = m.action === 'status', revising = m.action === 'revise';
+    if(revising){button.textContent='Actualizar borrador';el('title').textContent='Modificar factura';}
+    document.title = consulting ? 'Kairo · Consultar estado' : revising ? 'Kairo · Modificar factura' : 'Kairo · Preparar borrador';
+    el('title').textContent = consulting ? 'Estado de la factura' : revising ? 'Modificar factura' : 'Borrador';
     if (/^20\d\d-(0[1-9]|1[0-2])$/.test(m.period)) {
       const label = new Intl.DateTimeFormat('es-ES',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m.period+'-01T12:00:00Z'));
       el('period').textContent = label.charAt(0).toUpperCase()+label.slice(1);
@@ -69,7 +70,7 @@
       }
     }
     if (consulting) run();
-    else { show('Datos listos',''); button.hidden=false; button.onclick=run; }
+    else { show(revising?'Cambios listos':'Datos listos',revising?'Se conserva la factura y se solicitará una nueva aprobación.':''); button.hidden=false; button.onclick=run; }
   });
   if (!opener) show('Abre la conexión desde Gestify','Pulsa «Consultar estado» o «Enviar a Kairo» dentro de Gestify.','warning');
 })();

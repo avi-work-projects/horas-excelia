@@ -1,20 +1,7 @@
 /* Cabecera de Home opaca, incluso sobre los botones oscuros de las semanas. */
 .header,:is([data-theme="light"],[data-theme="grey"]) .header,[data-theme="grey"] .header{background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none}
 .ev-wk-travel-row:not(.ev-wk-travel-footer) > .ev-wk-travel{gap:0}
-.home-submission{display:flex;flex-direction:column;gap:0;padding:12px;border:1px solid var(--status-tone);border-radius:10px;background:color-mix(in srgb,var(--status-tone) 9%,var(--surface));color:var(--status-tone)}
-.home-submission.pending{--status-tone:var(--c-orange)}
-.home-submission.complete{--status-tone:var(--c-green)}
-.home-submission strong{display:block;font-size:.78rem;font-weight:600}
-.home-submission-heading{display:flex;align-items:center;gap:6px}
-.home-submission-detail{font-size:.68rem;line-height:1.4;margin:5px 0 0;color:var(--text-muted)}
-.home-submission-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,184px);gap:10px;align-items:start}
-.home-submission.complete .home-submission-body{align-items:center}
-.home-submission-body.summaryless{grid-template-columns:1fr}
-.home-submission-copy{min-width:0}
-.home-submission-icon{font-size:1.1rem;flex-shrink:0}
-.home-submission.pending .home-submission-heading{animation:home-pending-pulse 1.8s ease-in-out infinite}
 @keyframes home-pending-pulse{0%,100%{opacity:1}50%{opacity:.3}}
-@media(prefers-reduced-motion:reduce){.home-submission.pending .home-submission-heading{animation:none}}
 
 :root{--upcoming-tone:#71c9ed;--upcoming-text:#91d9f6}
 [data-theme="light"]{--upcoming-tone:#56b6e0;--upcoming-text:#227fa8}
@@ -44,7 +31,7 @@
 .home-hours-term{display:inline-block;white-space:nowrap}
 .home-hours-equals{font-family:var(--mono);font-size:.68rem}
 @media(pointer:coarse){.home-formula-toggle::before{content:'';position:absolute;inset:-15px -7px -15px -23px}}
-@media(max-width:360px){.home-submission{padding:10px}.home-submission-body{grid-template-columns:minmax(0,1fr) minmax(0,173px);gap:8px}.home-summary-compact .worked .ms-num{font-size:1.05rem}}
+@media(max-width:360px){.home-summary-compact .worked .ms-num{font-size:1.05rem}}
 
 /* Selector de eventos para compartir por iCalendar */
 /* Selector de exportación: controles compactos y lista con espacio propio. */

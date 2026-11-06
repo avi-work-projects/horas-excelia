@@ -1683,3 +1683,25 @@ El mapa traslada la relación de configuración a Ajustes y actualiza únicament
 las escenas afectadas y sus anclajes. El calendario de revisión de horas consume
 las fechas de conciliación y el calendario local, sin consultas al navegar ni
 cambios en la política de programación. Detalle en `docs/KAIRO-DEVELOPMENT.md`.
+
+## Home R8 aplicada (v543)
+
+`home-status.js` reúne solo iconos y acciones de Home; `home-status.css` comparte
+la geometría de sus dos paneles. Los cálculos y la comparación de jornadas siguen
+en sus dominios. Los paneles no consultan Outlook al renderizar; conservan la
+caché, las marcas, los botones manuales y la edición semanal. El fallo de una
+sincronización explícita muestra «error» en rojo/cursiva dentro de Sync Kairo,
+sin borrar la última fecha correcta. Los errores diferidos de trabajos manuales
+actualizan también ese indicador.
+
+El correo con cambios abre `openHoursReview`; la factura programada con cambios
+abre el mes fijo con `revise:true`. El envío de esos cambios utiliza la acción
+privada `revise`, con confirmación en Kairo y nueva aprobación posterior. El
+puente reutiliza el importador y el motor de revisión del documento existente;
+no añade un emisor ni un escritor de correo. La fecha de factura enviada procede
+del evento confirmado `mail_sent`, nunca de la fecha prevista.
+
+Verificación: pruebas de dominio y navegador de Home, caché, Outlook, revisión
+individual/conjunta y puente; datos ficticios a 320/400/440 px y tres temas.
+El atlas solo recaptura Home y los anclajes afectados del acceso a factura.
+La prueba desde Vivo Sesiones queda pendiente a petición de Ángel (móvil ausente).

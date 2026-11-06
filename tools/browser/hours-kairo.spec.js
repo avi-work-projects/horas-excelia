@@ -152,7 +152,7 @@ test('Android instalado conserva la revisión en Gestify y vuelve a Home',async(
   const calls=await setup(page,context),before=await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>![HOURS_CACHE_KEY,HOURS_JOBS_KEY,INVOICE_HOME_CACHE_KEY].includes(key)).sort(([a],[b])=>a.localeCompare(b)))));
   const popups=[];page.on('popup',popup=>popups.push(popup));
   await syncFromHome(page);
-  await expect(page.locator('.home-submission')).toContainText('Hay cambios');
+  await expect(page.locator('.home-submission')).toContainText('Correos con cambios');
   await expect(page.locator('.hours-review-dialog')).toHaveCount(0);
   await page.locator('[data-hours-review]').click();
   const review=page.frameLocator('.hours-review-dialog iframe');
@@ -216,7 +216,7 @@ test('comprobar vuelve a Home sin confirmar ni cambiar correos',async({page,cont
   const calls=await setup(page,context),before=await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>![HOURS_CACHE_KEY,HOURS_JOBS_KEY,INVOICE_HOME_CACHE_KEY].includes(key)).sort(([a],[b])=>a.localeCompare(b)))));
   await syncFromHome(page);
   await expect(page.locator('.hours-review-dialog')).toHaveCount(0);
-  await expect(page.locator('.home-submission')).toContainText('Hay cambios');
+  await expect(page.locator('.home-submission')).toContainText('Correos con cambios');
   expect(calls.some(c=>c.path.endsWith('/commit')||c.path.endsWith('/simulate'))).toBe(false);
   expect(await page.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([key])=>![HOURS_CACHE_KEY,HOURS_JOBS_KEY,INVOICE_HOME_CACHE_KEY].includes(key)).sort(([a],[b])=>a.localeCompare(b)))))).toBe(before);
 });
@@ -348,6 +348,6 @@ test('volver a Home con la revisión aún en curso conserva el trabajo de Kairo'
     await expect(page.locator('.hours-job-note')).toContainText('Puedes salir');
   }finally{release();}
   await expect.poll(()=>page.evaluate(()=>HOURS_JOBS.length)).toBe(0);
-  await expect(page.locator('.home-submission')).toContainText('Hay cambios');
+  await expect(page.locator('.home-submission')).toContainText('Correos con cambios');
   await expect(page.locator('#toast')).not.toContainText('cerrada');
 });

@@ -16,7 +16,7 @@ def handle(service, panel, validate_source, data):
     if data.get('action') == 'project':
         from project_settings import handle as update_project
         return update_project(service, panel, data)
-    if data.get('action') not in ('prepare', 'status'):
+    if data.get('action') not in ('prepare', 'revise', 'status'):
         raise ValueError('Acción no permitida')
     for key in ('operationId', 'contentHash'):
         if not re.fullmatch('[a-f0-9]{64}', str(data.get(key, ''))):
@@ -56,6 +56,17 @@ def handle(service, panel, validate_source, data):
         return result | {'state': state}
     if any(r['data']['period'] == data['period'] and r['status'] in ISSUED for r in plans):
         raise ValueError('Este mes tiene una emisión o correo pendiente, o ya está emitido')
+    if data['action'] == 'revise':
+        # The existing revision engine reuses docid and fiscal number, checks the
+        # emission journal, archives the old PDF and requires a fresh approval.
+        current = service.load(period=data['period'])
+        if current['status'] not in {'review', 'approved', 'cancelled', 'blocked'}:
+            raise ValueError('Solo se modifica un borrador sin emisión iniciada')
+        service.import_json(raw, notify_review=False)
+        current = service.load(period=data['period'])
+        if current['data']['source_hash'] != data['contentHash']:
+            raise ValueError('Revisión sin confirmar: consultar estado')
+        return result | {'state': current['status']}
     if state == 'different':
         # Existing importer refuses changed revisions. Invalidate approvals, leave
         # original invoice intact and require reconciliation in the existing UI.

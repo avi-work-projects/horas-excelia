@@ -17,6 +17,7 @@
     "css/source/energy-refinements.css",
     "css/source/home-reminders.css",
     "css/source/invoices.css",
+    "css/source/home-status.css",
     "css/source/invoices-calendar.css",
     "css/source/theme-cream.css"
   ],
@@ -45,6 +46,9 @@
     },
     {
       "path": "js/nav-icons.js"
+    },
+    {
+      "path": "js/home-status.js"
     },
     {
       "path": "js/core.js"
