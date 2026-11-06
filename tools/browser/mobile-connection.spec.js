@@ -67,3 +67,27 @@ test('vinculación privada sin Kairo permite los modos y rechaza orígenes ajeno
   await dialog.getByRole('button',{name:'DNS AdGuard'}).click();await expect(dialog.locator('[data-mode-result]')).toContainText('Solicitud enviada');
   expect(state.commands).toEqual([trigger+'/conexion_adguard']);
 });
+
+test('Conexión DNS / VPN tiene fondo visible y contraste en todos los temas; Atrás recupera Ajustes',async({page})=>{
+ await setup(page);
+ for(const width of [320,440]){
+  await page.setViewportSize({width,height:880});
+  for(const theme of ['light','dark','grey']){
+   await page.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);
+   await page.locator('#menuBtn').click();
+   const button=page.getByRole('button',{name:'Conexión DNS / VPN',exact:true});await expect(button).toBeVisible();
+   const styles=await button.evaluate(el=>({background:getComputedStyle(el).backgroundColor,color:getComputedStyle(el).color}));
+   expect(styles.background).not.toBe('rgba(0, 0, 0, 0)');expect(styles.background).not.toBe(styles.color);
+   const luminance=color=>{const rgb=color.match(/[\d.]+/g).slice(0,3).map(v=>+v/255).map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4);return rgb[0]*.2126+rgb[1]*.7152+rgb[2]*.0722;};
+   const a=luminance(styles.background),b=luminance(styles.color);expect((Math.max(a,b)+.05)/(Math.min(a,b)+.05)).toBeGreaterThanOrEqual(4.5);
+   // Una variante sin color también conserva el fondo de respaldo.
+   await button.evaluate(el=>el.classList.remove('settings-edit-mobile'));
+   expect(await button.evaluate(el=>getComputedStyle(el).backgroundColor)).not.toBe('rgba(0, 0, 0, 0)');
+   await button.evaluate(el=>el.classList.add('settings-edit-mobile'));
+   await button.focus();await page.keyboard.press('Enter');
+   const dialog=page.getByRole('dialog',{name:'Conexión del móvil'});await expect(dialog).toBeVisible();
+   await dialog.getByRole('button',{name:'Volver',exact:true}).click();await expect(page.locator('#dataMenu')).toHaveClass(/open/);await expect(button).toBeFocused();
+   await page.locator('#menuBtn').click();
+  }
+ }
+});

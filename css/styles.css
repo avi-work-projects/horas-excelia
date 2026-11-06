@@ -3637,8 +3637,8 @@ body:has(#bdGroupEditOv.open) .tasks-fab{visibility:hidden}
 
 
 .settings-edit-links{display:grid;gap:8px;padding:10px 12px}
-.settings-edit-links .settings-edit-btn{margin:0;white-space:normal;padding:11px 12px;text-align:left;font-weight:600;background:var(--settings-tone)!important;border-color:var(--settings-tone)!important;color:#fff!important}
-.settings-edit-connections{--settings-tone:#c06619}.settings-edit-invoices{--settings-tone:#27815a}.settings-edit-directory{--settings-tone:#496ac0}
+.settings-edit-links .settings-edit-btn{margin:0;white-space:normal;padding:11px 12px;text-align:left;font-weight:600;background:var(--settings-tone,var(--c-orange))!important;border-color:var(--settings-tone,var(--c-orange))!important;color:#fff!important}
+.settings-edit-connections{--settings-tone:#c06619}.settings-edit-mobile{--settings-tone:#236e78}.settings-edit-invoices{--settings-tone:#27815a}.settings-edit-directory{--settings-tone:#496ac0}
 .settings-editor-sheet{box-sizing:border-box;width:min(480px,calc(100vw - 24px));height:min(660px,88dvh);max-height:88dvh;border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:14px;overflow:hidden}
 .settings-editor-sheet>.bd-panel-header{flex:none;margin:0;padding-bottom:12px;box-shadow:0 1px 0 var(--border)}
 .settings-editor-body,.settings-editor-sheet>.invoice-body{flex:1;min-height:0;overflow:auto;padding:2px}

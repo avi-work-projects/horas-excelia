@@ -1,5 +1,7 @@
 # Mapa visual de Gestify
 
+v542. [Ajustes con el botón «Conexión DNS / VPN» visible](captures/settings.png). Se actualiza solo esa captura. El rediseño de Home sigue en la [propuesta R8](review/home-proposal-v539.html?revision=539-r8), pendiente de integrar y de conectar sus acciones de modificación con Kairo.
+
 v541 aclara la regla de v540: las barras finas conservan una sola línea. Las capturas se mantienen como referencia representativa.
 
 v540. [Calendario mensual: títulos cortos en dos líneas y contorno redondeado](review/updates-v540.html). Solo se añaden dos ejemplos ficticios de la vista afectada; las referencias anteriores se conservan.
