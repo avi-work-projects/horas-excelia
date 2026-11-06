@@ -31,12 +31,25 @@ test('La línea permanece completa durante el swipe y Agenda tapa sus esquinas a
 async function dragMinutes(page,selector,delay,direction=1,wait=true){
  const drum=page.locator(selector),r=await drum.boundingBox(),x=r.x+r.width/2,y=direction>0?r.y+r.height-18:r.y+18;
  const cdp=await page.context().newCDPSession(page);
- await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y,id:1}]});
- for(let i=1;i<=8;i++){if(delay)await page.waitForTimeout(delay);await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x,y:y-direction*i*11,id:1}]});}
- await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await cdp.detach();
+ // Native input/capture and inertia stay real. A constant-speed timestamp
+ // follows distance, so CI transport/coalescing cannot change gesture velocity.
+ await drum.evaluate((el,clock)=>{
+  const start=performance.now();
+  el._testGestureStamp=e=>Object.defineProperty(e,'timeStamp',{value:start+Math.abs(e.clientY-clock.y)*clock.step/11});
+  for(const type of ['pointerdown','pointermove','pointerup'])el.addEventListener(type,el._testGestureStamp,true);
+ },{y,step:delay||8});
+ try{
+  await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y,id:1}]});
+  for(let i=1;i<=8;i++)await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x,y:y-direction*i*11,id:1}]});
+  await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+ }finally{
+  await drum.evaluate(el=>{for(const type of ['pointerdown','pointermove','pointerup'])el.removeEventListener(type,el._testGestureStamp,true);delete el._testGestureStamp;});
+  await cdp.detach();
+ }
  if(wait)await expect.poll(()=>drum.evaluate(el=>!!el._minuteGesture)).toBe(false);
  return drum.evaluate(el=>Math.round(el.scrollTop/44));
 }
+
 test('Minutero: el gesto rápido recorre más, el lento conserva precisión y el toque funciona',async({page},info)=>{
  await page.evaluate(()=>{const input=document.createElement('input');input.id='motionTime';input.value='09:00';document.body.append(input);openTimePicker(input);});
  await expect(page.locator('#timePickerMinutes')).toHaveAttribute('aria-valuenow','0');await settled(page);
