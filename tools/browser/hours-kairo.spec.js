@@ -43,7 +43,7 @@ async function setup(page,context,scenario='mixed',seed=true){
   // Seed the synthetic account explicitly. Opening Home now reads only stored facts.
   if(seed)await page.evaluate(async()=>{
     const url=hoursKairoUrl(),period=mkey(CY,CM);
-    const response=await fetch(url+'status?period='+period+'&background=1&audit=0&refresh=1');
+    const response=await fetch(url+'status?period='+period+'&background=1&audit=1&refresh=1');
     const job=await response.json();
     if(job.phase==='done')hoursAcceptJobResult({url},job.result);
     else hoursTrackJob(job,{period},url);
@@ -140,7 +140,8 @@ test('calendario compartido de Kairo: jornadas, semanas y navegación por gesto'
   await viewer.getByRole('link',{name:'Volver a Gestify'}).click();
   await context.route(base+'horas/reachable',r=>r.abort());
   await page.locator('#hoursCalendarBtn').click();
-  await expect(page.getByRole('dialog',{name:'Programación'})).toContainText('Tailscale');
+  await expect(page.getByRole('dialog',{name:'Comprobar conexión',exact:true})).toContainText('VPN');
+  await page.getByRole('dialog',{name:'Comprobar conexión',exact:true}).getByRole('button',{name:'Cancelar',exact:true}).click();
 });
 
 test('Android instalado conserva la revisión en Gestify y vuelve a Home',async({page,context},info)=>{

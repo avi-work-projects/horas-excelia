@@ -36,3 +36,6 @@ html[data-theme=light] .hours-review-dialog>iframe{color-scheme:light}
 
 .week-card[data-mail-state=changed]{border-color:var(--c-red)}
 .week-card[data-mail-state=changed] .hours-week-badge{color:var(--c-red)}
+.kairo-vpn-prompt h2{margin:0;font-size:1.05rem}
+.kairo-vpn-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}
+.kairo-vpn-actions button{border-color:var(--home-tone);background:var(--surface);color:var(--text)}

@@ -13,6 +13,7 @@ async function setup(page,context,configured=true){
   const calls=[];let value=result('draft'),fail=false;
   await context.route(base+'gestify-status?**',async route=>{calls.push(route.request());if(fail)return route.abort();const period=new URL(route.request().url()).searchParams.get('period');return route.fulfill({headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765','Cache-Control':'no-store'},json:{...value,period}});});
   await context.route(new URL('/horas/status',base).href+'?**',async route=>{const period=new URL(route.request().url()).searchParams.get('period');const day=new Date(period+'-01T12:00:00');day.setDate(1-(day.getDay()+6)%7);const keys=[];while(day.getMonth()===+period.slice(5)-1||keys.length===0||day.getDate()<7){keys.push(day.toISOString().slice(0,10));day.setDate(day.getDate()+7);if(day.getMonth()!==+period.slice(5)-1)break;}for(let i=0;i<2;i++){keys.push(day.toISOString().slice(0,10));day.setDate(day.getDate()+7);}return route.fulfill({json:{phase:'done',result:{periods:[{period,verified:true,checkedAt:'2026-10-26T11:00:00Z',rows:keys.map(key=>({key,state:'sent'}))}]}},headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}});});
+  await context.route('**/horas/reachable',r=>r.fulfill({json:{service:'kairo-hours'},headers:{'Access-Control-Allow-Origin':'*'}}));
   await page.goto('/');
   await page.evaluate(()=>{CY=2026;CM=9;MONTH_H={'2026-10':9};ST={'2026-10-12':{type:'festivo'}};SW={};weeks(CY,CM).forEach(w=>SW[dk(w[0])]=true);homeSubmissionWeeks(CY,CM).forEach(w=>SW[w.key]=true);render();});
   return {calls,set(valueToSet){value=valueToSet;},offline(){fail=true;}};
@@ -61,7 +62,7 @@ test('Conectar reutiliza la configuración privada; meses anteriores no consulta
   const api=await setup(page,context,false);await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura sin enviar');expect(api.calls).toHaveLength(0);
   await page.locator('#invoiceHomeBtn').click();await page.locator('#invoiceKairoConfig').click();await expect(page.locator('#invoiceConnection')).toHaveAttribute('open','');await expect(page.locator('[data-invoice-field=kairoUrl]')).toBeEditable();await page.locator('#invoiceBack').click();
   await page.getByRole('button',{name:'Sync Kairo',exact:true}).click();await expect(page.locator('#invoiceConnection')).toHaveAttribute('open','');await page.locator('#invoiceBack').click();
-  await page.evaluate(()=>{CM=8;render();});await expect(page.locator('#homeInvoiceStatus')).toHaveCount(0);expect(api.calls).toHaveLength(0);
+  await page.evaluate(()=>{CM=8;render();});await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura enviada');await expect(page.getByRole('button',{name:'Ver cálculo histórico'})).toHaveCount(0);expect(api.calls).toHaveLength(0);
 });
 
 test('Una respuesta tardía del mes anterior no sustituye el estado visible',async({page,context})=>{
@@ -107,7 +108,7 @@ test('Ver programación explica una conexión fallida sin perder la fecha confir
   await expect(link).toHaveAccessibleName('Ver envíos');
   await context.route(new URL('/horas/reachable',base).href,r=>r.abort());
   await link.click();
-  await expect(page.getByText(/Comprueba que Tailscale está conectado/).last()).toBeVisible();
+  const prompt=page.getByRole('dialog',{name:'Comprobar conexión',exact:true});await expect(prompt).toContainText('VPN');await prompt.getByRole('button',{name:'Cancelar',exact:true}).click();
   await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura programada');
 });
 

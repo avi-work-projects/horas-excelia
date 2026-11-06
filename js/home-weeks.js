@@ -16,6 +16,14 @@ function homeSubmissionWeeks(year,month){
     var mon=ad(last,7*n);return {key:dk(mon),mon:mon,extra:true};
   }));
 }
+function homePreviousMailMonth(year,month){
+  var previous=new Date(year,month-1,1),period=mkey(previous.getFullYear(),previous.getMonth());
+  var pending=homePeriodMode(previous.getFullYear(),previous.getMonth())==='closed'?[]:weeks(previous.getFullYear(),previous.getMonth()).filter(function(week){
+    return hoursRemoteConfigured()?!hoursCovered(dk(week[0])):!SW[dk(week[0])];
+  });
+  var known=homePeriodMode(previous.getFullYear(),previous.getMonth())==='closed'||!hoursRemoteConfigured()||weeks(previous.getFullYear(),previous.getMonth()).every(function(week){return !!hoursWeekState(dk(week[0]));});
+  return {period:period,ready:pending.length===0,known:known};
+}
 /* Recordatorios y Home comparten alcance y hechos de Outlook. Desconocido
    nunca se convierte en siete avisos falsos de semanas sin enviar. */
 function homeSubmissionWarnings(year,month){

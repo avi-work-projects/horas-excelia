@@ -14,6 +14,7 @@ test('MFA se avisa sin consultar el buzón y se retira tras recuperar acceso',as
     else return route.abort();
     return route.fulfill({json:data,headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}});
   });
+  await context.route('**/horas/reachable',r=>r.fulfill({json:{service:'kairo-hours'},headers:{'Access-Control-Allow-Origin':'*'}}));
   await page.goto('/');await expect(page.locator('.home-submission')).toContainText('Correos al día');
   await expect(page.locator('.hours-auth-alert')).toHaveCount(0);expect(health).toBe(0);expect(reads).toBe(1);
   await page.locator('#homeSyncBtn').click();
@@ -41,6 +42,7 @@ test('comprobar acceso muestra progreso y resultado aunque siga detenido; un fal
     if(fail)return route.abort();
     return route.fulfill({json:{phase:'unknown'},headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}});
   });
+  await context.route('**/horas/reachable',r=>r.fulfill({json:{service:'kairo-hours'},headers:{'Access-Control-Allow-Origin':'*'}}));
   await page.goto('/');await page.locator('#homeSyncBtn').click();
   const access=page.locator('[data-hours-auth]'),result=page.locator('#homeSyncResult');
   hold=true;await access.click();await expect(result).toContainText('Comprobando el acceso');await expect(access).toBeDisabled();
@@ -58,6 +60,7 @@ test('la comprobación explícita solicita recuperación y espera a que termine 
     if(path.endsWith('/auth-status'))return route.fulfill({json:{phase:requested?'ready':'unknown'}});
     return route.abort();
   });
+  await context.route('**/horas/reachable',r=>r.fulfill({json:{service:'kairo-hours'},headers:{'Access-Control-Allow-Origin':'*'}}));
   await page.goto('/');await page.locator('#homeSyncBtn').click();await page.locator('[data-hours-auth]').click();
   await expect(page.locator('[data-hours-auth]')).toBeDisabled();
   await expect(page.locator('#homeSyncResult')).toContainText('Acceso a Outlook confirmado');

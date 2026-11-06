@@ -46,12 +46,15 @@ async function invoiceSaveSettings(config,root){
     if(INVOICE_KAIRO_BUSY)throw new Error('Espera a que termine la conexión con Kairo');
     if(navigator.onLine===false)throw new Error('Sin conexión. El proyecto no se ha cambiado; vuelve a Guardar cuando tengas conexión');
     url=invoiceKairoUrl(url);
-    var popup=window.open(url+'gestify','_blank');
+    var popup=window.open('about:blank','_blank');
     if(!popup)throw new Error('Permite abrir Kairo para guardar el proyecto en ambos sitios');
-    data.projectPending=change;data.projectPendingUrl=url;invoiceSave(data);
     INVOICE_KAIRO_BUSY=true;
     root.querySelector('#invoiceProjectStatus').textContent='Guardando proyecto en Kairo…';
     try{
+      if(!await ensureKairoConnection()){popup.close();throw new Error('Conexión cancelada; el proyecto no se ha cambiado');}
+      if(popup.closed)throw new Error('Ventana cerrada; el proyecto no se ha cambiado');
+      popup.location.replace(url+'gestify');
+      data.projectPending=change;data.projectPendingUrl=url;invoiceSave(data);
       var result=await invoiceKairoExchange(url,change,'project',popup);
       Object.assign(next,invoiceProjectReply(result,change));
     }catch(e){

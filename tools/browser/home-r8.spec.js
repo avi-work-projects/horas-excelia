@@ -20,6 +20,7 @@ async function setup(page,context){
     return route.fulfill({json:{phase:'done',result:{periods:[]}},headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}});
   });
   await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-theme-v1','light');localStorage.setItem('excelia-nav-icons-v1','professional');});
+  await context.route('**/horas/reachable',r=>r.fulfill({json:{service:'kairo-hours'},headers:{'Access-Control-Allow-Origin':'*'}}));
   await page.goto('/');
   stored=await page.evaluate(async origin=>{
     CY=2027;CM=1;ST={'2027-02-15':{type:'festivo'}};SW={};MONTH_H={};
@@ -97,4 +98,34 @@ test('Sync con error conserva la fecha guardada y solo muestra error dentro del 
   await expect(page.locator('#homeSyncDate')).toHaveClass(/home-sync-error/);await expect(page.locator('#homeSyncDate em')).toHaveCSS('font-style','italic');
   expect(await page.evaluate(()=>HOURS_CACHE.lastMailSync)).toBe(stamp);
   await expect(page.locator('.home-submission')).not.toContainText('Sin conexión');await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura programada');
+});
+
+test('el histórico conserva los rótulos habituales y no inventa fechas ni confirmaciones',async({page,context},info)=>{
+  const api=await setup(page,context);const saved=await page.evaluate(()=>JSON.stringify([HOURS_CACHE,INVOICE_HOME_CACHE,invoiceData(),ST,SW]));
+  await page.evaluate(()=>{CY=2026;CM=8;render();});
+  await expect(page.locator('.home-submission')).toContainText('Correos al día');
+  await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura enviada');
+  await expect(page.locator('#homeInvoiceStatus')).toHaveClass(/complete/);
+  await expect(page.getByRole('button',{name:'Ver cálculo histórico'})).toHaveCount(0);
+  await expect(page.locator('#homeInvoiceStatus time')).toHaveCount(0);
+  await expect(page.locator('#weeksContainer')).not.toContainText('Mes cerrado');
+  await expect(page.locator('.week-card').first()).toContainText('Enviada');
+  for(const status of await page.locator('.home-panel-status').all()){
+    expect(await status.evaluate(e=>{const icon=e.firstElementChild.getBoundingClientRect(),title=e.querySelector('strong').getBoundingClientRect();return title.left-icon.right;})).toBeGreaterThanOrEqual(10);
+  }
+  expect(await page.evaluate(()=>JSON.stringify([HOURS_CACHE,INVOICE_HOME_CACHE,invoiceData(),ST,SW]))).toBe(saved);expect(api.posts).toEqual([]);
+  await page.screenshot({path:info.outputPath('home-historico-v544.png'),animations:'disabled'});
+});
+
+test('programar el mes exige su predecesor y no afecta al envío manual ni a editar días',async({page,context})=>{
+  await setup(page,context);const popups=[];page.on('popup',p=>popups.push(p));
+  await page.evaluate(()=>{HOURS_CACHE.weeks['2026-12-28'].state='missing';HOURS_CACHE.weeks['2027-02-08'].state='missing';render();});
+  await page.getByRole('button',{name:'Programar pendientes',exact:true}).click();
+  await expect(page.locator('#toast')).toContainText('Primero deben estar programados los correos de enero de 2027');
+  expect(popups).toHaveLength(0);
+  await expect(page.locator('.week-card').first().getByRole('button',{name:'Enviar a Outlook'})).toBeVisible();
+  await page.locator('.week-card').first().getByRole('button',{name:'Desmarcar'}).click();
+  await expect(page.locator('.week-card').first()).not.toHaveClass(/sent/);
+  await page.evaluate(()=>{HOURS_CACHE.weeks['2026-12-28'].state='sent';});
+  expect(await page.evaluate(()=>homePreviousMailMonth(CY,CM).ready)).toBe(true);
 });

@@ -23,7 +23,6 @@ module.exports=function extend({scenes,edges}){
   add('reminders','Recordatorios','Inicio','settings','#settingsReminders','#homePopup',{sources:['js/home-popup.js','js/events-picker-color.js','js/events-order.js']});
   add('hours-export','Exportar horas','Inicio','home','#hoursExportBtn','#hoursCsv',{sources:['js/invoices-ui.js']});
   add('mail-calendar-connect','Correos programados · conectar Kairo','Inicio','home','#hoursCalendarBtn','#invoiceSettingsSave',{sources:['js/mail-calendar.js','js/invoices-ui.js'],region:'.invoice-body',note:'Primera conexión. El calendario privado conectado se muestra en la revisión v529.'});
-  add('invoice','Enviar factura','Inicio','home','#invoiceHomeBtn','#invoiceCalendar',{sources:['js/invoices-ui.js','js/invoices.js','js/invoices-calendar.js'],region:'.invoice-body',note:'Agosto de 2026 se presenta como referencia histórica.'});
   add('invoice-config','Configuración de facturas','Inicio','settings','#invoiceSettingsBtn','#invoiceSettingsEdit',{sources:['js/invoices-ui.js','js/invoices.js'],region:'.invoice-body'});
   add('invoice-config-edit','Editar datos de facturación','Inicio','invoice-config','#invoiceSettingsEdit','#invoiceSettingsSave');
   add('home-september','Inicio · septiembre','Inicio','home','#nextBtn','#hoursCalendarBtn');

@@ -40,14 +40,18 @@ function homeInvoiceModel(year,month){
   model.mailChanged=state==='scheduled'&&homeSubmissionWeeks(year,month).some(function(w){return !w.extra&&hoursWeekState(w.key)==='changed';});
   model.attention=state==='scheduled'&&data.scheduledDate!==homeInvoiceScheduleDate(year,month);
   model.editable=state==='scheduled'&&(model.changed||model.mailChanged||model.attention);
-  if(!data&&homePeriodMode(year,month)==='closed'){model.title='Factura de mes cerrado';model.unsent=false;model.tone='unknown';}
+  // Older months are treated as completed, as agreed, without inventing an
+  // Outlook confirmation or a send date in the persisted invoice history.
+  if(period<INVOICE_FIRST_PERIOD||!data&&homePeriodMode(year,month)==='closed'){
+    model.title='Factura enviada';model.unsent=false;model.tone='complete';model.date=state==='sent'?data.sentDate||'':'';
+    model.requirements=false;model.changed=false;model.mailChanged=false;model.attention=false;model.editable=false;
+  }
   return model;
 }
 function homeInvoiceRequirement(number,text,done){
   return '<div class="home-invoice-rule"><em><strong>('+number+') <u>'+text+'</u></strong></em> <span class="home-rule-result '+(done?'complete':'')+'" role="img" aria-label="'+(done?'Cumplido':'Pendiente')+'">'+(done?'✓':'✕')+'</span></div>';
 }
 function renderHomeInvoiceStatus(year,month){
-  if(mkey(year,month)<INVOICE_FIRST_PERIOD)return '<button type="button" id="invoiceHomeBtn" class="home-invoice-action" data-home-invoice="send">Ver cálculo histórico</button>';
   var m=homeInvoiceModel(year,month),urgent=m.unsent&&homeDueSoon(m.date),icon=m.tone==='complete'?'✓':m.tone==='scheduled'?homeStatusIcon('clock'):'!';
   var detail='',action='';
   if(m.requirements)detail='<div class="home-invoice-rules"><em>* Se requiere tener los correos del mes programados</em>'+homeInvoiceRequirement(1,'Los envíos de horas de este mes.',m.hoursReady)+homeInvoiceRequirement(2,'El envío de la factura del mes anterior.',m.previousReady)+'</div>';

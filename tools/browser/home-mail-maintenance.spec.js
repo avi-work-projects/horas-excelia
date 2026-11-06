@@ -18,6 +18,7 @@ async function setup(page,context,{queued=false}={}){
   });
   await context.route(origin+'horas/jobs/**',route=>{calls.jobs++;if(offline)return route.abort();return route.fulfill({json:{jobId,kind:'status',phase,...(phase==='done'?{result:bundle}:{})},headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}});});
   await context.route(origin+'horas/auth-status',route=>route.fulfill({json:{phase:'disabled'},headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}}));
+  await context.route('**/horas/reachable',r=>r.fulfill({json:{service:'kairo-hours'},headers:{'Access-Control-Allow-Origin':'*'}}));
   await page.goto('/');
   await expect.poll(()=>calls.hours).toBe(1);
   if(queued)await expect.poll(()=>page.evaluate(()=>HOURS_JOBS.length)).toBe(1);
@@ -81,7 +82,7 @@ test('una auditoría de tres meses; navegar, editar, foco y recarga reutilizan l
   await expect(page.locator('.week-card').nth(1).locator('.hours-week-badge')).toContainText('Revisar cambios');expect(api.calls.hours).toBe(1);
   await page.reload();await expect(page.locator('.home-submission.complete')).toContainText('Correos al día');expect(api.calls.hours).toBe(1);expect(api.calls.invoices).toHaveLength(3);
   await expect(page.locator('.hours-verified-note')).toHaveCount(0);
-  await page.evaluate(()=>{CY=2025;CM=0;render();});await expect(page.locator('.home-submission')).toContainText('Mes cerrado');expect(api.calls.hours).toBe(1);expect(api.calls.invoices).toHaveLength(3);
+  await page.evaluate(()=>{CY=2025;CM=0;render();});await expect(page.locator('.home-submission')).toContainText('Correos al día');expect(api.calls.hours).toBe(1);expect(api.calls.invoices).toHaveLength(3);
 });
 test('desmarcar desbloquea edición y conserva la programación; V/F/A sombrean toda la celda',async({page,context})=>{
   const api=await setup(page,context),card=page.locator('.week-card').first();

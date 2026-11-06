@@ -17,6 +17,7 @@ async function setup(page,context,{loseReply=false,reject=false}={}){
   return route.fulfill({json:{state:'project_saved',project:data.change.project,from:data.change.from,base:'DEMO/OLD',periods:rules}});
  });
  await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-theme-v1','light');localStorage.setItem('excelia-nav-icons-v1','professional');});
+ await context.route('**/horas/reachable',r=>r.fulfill({json:{service:'kairo-hours'},headers:{'Access-Control-Allow-Origin':'*'}}));
  await page.goto('/');
  await page.evaluate(async url=>{
   const c=invoiceDefaults();Object.assign(c,{issuer:'Persona sintética',issuerTax:'TEST-ISSUER',client:'Cliente sintético',clientTax:'TEST-CLIENT',project:'DEMO/OLD',rate:'320',kairoUrl:url});

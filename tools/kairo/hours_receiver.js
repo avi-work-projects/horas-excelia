@@ -146,7 +146,8 @@
         card.append(text('p',row.changes.includes('days')?'Han cambiado los días o las horas.':'Ha cambiado la fecha de envío.','change'));
         if(row.action==='update'){const label=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.dataset.update=row.key;label.append(check,text('span','Actualizar esta semana'));card.append(label);}
       }
-      if(row.state==='blocked-previous')card.append(text('p','Primero hay que resolver la semana '+weekDate(row.previousWeek)+'.','issue'));
+      if(row.previousPeriod)card.append(text('p','Primero deben estar programados los correos de '+row.previousPeriod+'.','issue'));
+      else if(row.state==='blocked-previous')card.append(text('p','Primero hay que resolver la semana '+weekDate(row.previousWeek)+'.','issue'));
       if(row.state==='past-due'||row.reason==='past-due')card.append(text('p','La fecha prevista ha pasado. Queda pendiente para decidir.','issue'));
       if(row.state==='no-workdays')card.append(text('p','No hay una fecha de envío definida para esta semana.','issue'));
       if(['duplicate','uncertain','draft','unverified','ambiguous-thread'].includes(row.state))card.append(text('p','Revisa lo que existe en Outlook. No se creará otro correo.','issue'));
