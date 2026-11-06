@@ -420,3 +420,29 @@ Se encontró el recuperador de acceso reteniendo `browser.lock` mientras un trab
 El servicio de facturas carga `invoice_prerequisites.py`. La política privada `gestify_prerequisites` del JSON de configuración contiene `first_period` y `hours_config`. El helper abre la base de horas en solo lectura y selecciona el estado más reciente por semana y cuenta. Los estados admitidos son `sent` y `scheduled`. La factura anterior usa el catálogo existente y admite los mismos estados.
 
 `gestify_bridge` verifica la condición al importar una preparación nueva. `prepare_invoice_prerequisites.patch` añade la misma comprobación dentro de `approve`, antes de consultar el borrador y guardar la aprobación, conservando el bloqueo del servicio. `invoice_month_review` muestra la razón si no se cumplen los requisitos. Instalar los tres módulos y aplicar el parche sobre la versión privada vigente, conservando copia del servicio y la configuración. No se cambian las aprobaciones existentes.
+
+## Modificación explícita de borradores desde Home (v543)
+
+`gestify_bridge.handle` admite `revise` además de `prepare` y `status`. La nueva
+acción pasa por el mismo validador, identidad, CSRF y bloqueo de proceso. El
+receptor espera «Actualizar borrador» antes del POST. Llama a `import_json` con
+`notify_review=False`; este reutiliza el motor privado `draft_revision.replace`,
+que conserva docid/número, archiva el PDF anterior, comprueba el diario fiscal
+y elimina la aprobación al sustituirlo. Emisiones iniciadas, envíos inciertos
+y facturas enviadas quedan bloqueados para modificación. La revisión repetida
+con la misma huella devuelve su estado sin repetir la sustitución. Ninguna de
+estas rutas aprueba, emite ni envía correo.
+
+El estado de Home añade `sentDate` únicamente si el diario contiene el evento
+`mail_sent` de la clave final de esa factura. Se convierte a Europe/Madrid; no
+se usa una fecha prevista para fingir la fecha real del envío.
+
+Instalación del 6/11/2026: copia privada en `gestify-home-r8-*/originals`, tres
+archivos actualizados y reinicio exclusivo de `kairo-facturas.service`. Pruebas
+sintéticas en el propio Kairo: 13 del puente, 9 del estado y 13 del servicio
+mensual cargado con bases temporales y transportes ficticios. Las huellas de
+planes, borradores y correos coinciden antes/después. HTTPS real: octubre enviado
+el 20/10; noviembre conserva 20/11 programado. La sesión de Chromium bloqueaba
+CDP; reiniciar la unidad aislada `gestify-outlook.service` y solicitar la
+comprobación explícita recuperó el estado `ready`. No se usó el teléfono ni se
+programaron, emitieron o enviaron correos reales. La prueba en Vivo queda pendiente.

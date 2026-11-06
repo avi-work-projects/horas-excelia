@@ -2,6 +2,8 @@
 import json
 import re
 from datetime import date as calendar_date
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from pathlib import Path
 from urllib.parse import urlsplit, parse_qs
 
@@ -38,8 +40,24 @@ def read_month(root, period):
     # Reuse the service's catalog, which opens existing SQLite files in mode=ro.
     if not all((Path(root) / name).is_file() for name in ('service.sqlite', 'workflow.sqlite')):
         raise RuntimeError('Registro no disponible')
-    from invoice_catalog import catalog
-    return month_status(period, catalog(root))
+    from invoice_catalog import catalog, digest, rows
+    items = catalog(root)
+    result = month_status(period, items)
+    if result['sent']:
+        selected = [item for item in items if item['row']['data']['period'] == period]
+        key = 'final:' + digest(selected[0]['row']['data'])
+        for event in sorted(rows(root, 'service.sqlite', 'events'), key=lambda row: row['id'], reverse=True):
+            if event['event'] != 'mail_sent':
+                continue
+            try:
+                if json.loads(event['detail']).get('key') == key:
+                    instant = datetime.fromisoformat(event['at'])
+                    if instant.tzinfo is not None:
+                        result['sentDate'] = instant.astimezone(ZoneInfo('Europe/Madrid')).date().isoformat()
+                    break
+            except (ValueError, TypeError, KeyError):
+                continue
+    return result
 
 
 def reply_status(handler, root, origin, preflight=False):

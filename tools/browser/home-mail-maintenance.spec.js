@@ -36,25 +36,24 @@ test('los pendientes ordinarios no piden revisar cambios y la factura espera a s
     render();
   });
   const invoice=page.locator('#homeInvoiceStatus');
-  await expect(invoice).toContainText('el envío de la factura del mes anterior');
+  await expect(invoice).toContainText('El envío de la factura del mes anterior');
   await expect(invoice.locator('[data-home-invoice=send]')).toHaveCount(0);
-  await expect(invoice.locator('em')).toHaveCSS('font-style','italic');
+  await expect(invoice.locator('em').first()).toHaveCSS('font-style','italic');
   await page.evaluate(()=>{
     INVOICE_HOME_CACHE.periods['2027-01'].data.state='scheduled';
     render();
   });
   await expect(invoice.locator('[data-home-invoice=send]')).toBeVisible();
-  const lines=invoice.locator('.home-invoice-copy>span');
-  await expect(lines).toHaveText(['Pendiente de preparar','Fecha prevista: 19/02']);
-  expect((await lines.nth(1).boundingBox()).y).toBeGreaterThan((await lines.first().boundingBox()).y);
+  await expect(invoice).not.toContainText('Pendiente de preparar');
+  await expect(invoice.locator('.home-invoice-deadline')).toContainText('Debe programarse en los próximos');
   await page.screenshot({path:info.outputPath('home-factura-v537.png'),animations:'disabled'});
   await page.evaluate(()=>{
     hoursCachedWeek(homeSubmissionWeeks(CY,CM)[2].key).state='blocked-previous';render();
   });
   await expect(page.locator('.home-submission')).toContainText('Correos pendientes de programar');
-  await expect(page.locator('[data-hours-review]')).toHaveText('Programar pendientes');
+  await expect(page.locator('[data-hours-review]')).toHaveAccessibleName('Programar pendientes');
   await expect(page.locator('.home-submission')).not.toContainText('Revisar cambios');
-  await expect(invoice).toContainText('Programa primero los envíos de horas de este mes');
+  await expect(invoice).toContainText('Los envíos de horas de este mes');
   await page.screenshot({path:info.outputPath('home-pendientes-v537.png'),animations:'disabled'});
 });
 
@@ -128,21 +127,21 @@ test('panel naranja distingue un mes vacío de una primera revisión y de hechos
   await setup(page,context);
   const panel=page.locator('.home-submission'),action=panel.locator('[data-hours-review]');
   await page.evaluate(()=>{CY=2027;CM=8;render();});
-  await expect(action).toHaveText(/Sin programar/);
+  await expect(panel).toContainText('Correos pendientes de programar');await expect(action).toHaveAccessibleName('Programar pendientes');
   await expect(panel.locator('.hours-verified-note')).toHaveCount(0);
-  await expect(panel.locator('.home-submission-detail,.hours-pending-button')).toHaveCount(0);
+  await expect(panel.locator('.home-pending-note')).toContainText('semanas pendientes por programar');
   await page.evaluate(()=>{
     const period=mkey(CY,CM),stamp='2027-02-01T09:30:00Z';
     hoursCacheRemember({period,verified:true,checkedAt:stamp,rows:hoursScopeKeys(period).map(key=>({key,state:'missing'}))},hoursKairoUrl(),'');
     paintHoursStatus();
   });
-  await expect(action).toHaveText(/Sin programar/);
-  await expect(panel.locator('.hours-verified-note')).toHaveText(/Fecha de revisión.*0?1\/0?2.*10:30/);
+  await expect(panel).toContainText('Correos pendientes de programar');await expect(action).toHaveAccessibleName('Programar pendientes');
+  await expect(panel.locator('.hours-verified-note')).toHaveCount(0);
   await page.screenshot({path:info.outputPath('home-sin-envios.png'),animations:'disabled'});
   await page.evaluate(()=>{
     const keys=hoursScopeKeys(mkey(CY,CM));delete HOURS_CACHE.weeks[keys[0]];HOURS_CACHE.weeks[keys[1]].state='sent';paintHoursStatus();
   });
-  await expect(panel).toContainText('Correos pendientes de programar');await expect(action).toHaveText('Programar pendientes');
+  await expect(panel).toContainText('Correos pendientes de programar');await expect(action).toHaveAccessibleName('Programar pendientes');
 });
 
 test('un pendiente antiguo recupera una vez la caché de Kairo sin pedir refresco de Outlook',async({page,context})=>{
@@ -156,7 +155,7 @@ test('un pendiente antiguo recupera una vez la caché de Kairo sin pedir refresc
 test('semanas pendientes ocultan el resumen y al resolverlas se recupera',async({page,context})=>{
   await setup(page,context);
   await page.evaluate(()=>{HOURS_CACHE.weeks[homeSubmissionWeeks(CY,CM)[0].key].state='missing';render();});
-  await expect(page.locator('.home-submission')).toContainText('1 semana por programar');await expect(page.locator('.home-summary-compact')).toHaveCount(0);
+  await expect(page.locator('.home-submission')).toContainText('1 semana pendiente por programar');await expect(page.locator('.home-summary-compact')).toHaveCount(0);
   await page.evaluate(()=>{HOURS_CACHE.weeks[homeSubmissionWeeks(CY,CM)[0].key].state='sent';render();});await expect(page.locator('.home-summary-compact')).toBeVisible();
 });
 test('una caché antigua del mes actual se completa con anterior y siguiente',async({page,context})=>{
@@ -209,8 +208,8 @@ test('factura a siete días en naranja, a seis en rojo y semana editada en rojo'
   await expect(page.locator('#homeInvoiceStatus')).not.toHaveClass(/urgent/);
   await page.clock.setFixedTime(new Date('2027-02-13T12:00:00+01:00'));await page.evaluate(()=>render());
   await expect(page.locator('#homeInvoiceStatus')).toHaveClass(/urgent/);
-  await expect(page.locator('#homeInvoiceStatus em')).toHaveCSS('font-style','italic');
+  await expect(page.locator('#homeInvoiceStatus em').first()).toHaveCSS('font-style','italic');
   await page.evaluate(()=>{ST['2027-02-23']={type:'vacaciones'};render();});
   await expect(page.locator('.week-card[data-week="2027-02-22"]')).toHaveAttribute('data-mail-state','changed');
-  await expect(page.locator('.home-submission.urgent')).toContainText('Hay cambios');
+  await expect(page.locator('.home-submission.urgent')).toContainText('Correos con cambios');
 });

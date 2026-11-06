@@ -96,6 +96,31 @@ class BridgeTests(unittest.TestCase):
             self.assertIsNone(db.execute('SELECT approved_hash FROM drafts').fetchone()[0])
         self.assertEqual(len(self.calls), 1)
 
+    def test_explicit_revision_reuses_existing_importer_and_requires_approval(self):
+        self.call()
+        with self.db() as db:
+            db.execute("UPDATE plans SET status='approved',approval='keep-until-confirmed'")
+        p = dict(self.source, contentHash='c'*64, revision=2)
+        request = dict(p, action='revise', source=json.dumps(p))
+        # The real importer's replace_draft performs the same-document update;
+        # the bridge must call it only for this explicit action, without mail.
+        self.assertEqual(self.call(request)['state'], 'review')
+        self.assertIsNone(self.load()['approval'])
+        self.assertEqual(len(self.calls), 2)
+        self.assertEqual(self.call(request)['state'], 'review')
+        self.assertEqual(len(self.calls), 2, 'A lost reply must not repeat replacement')
+
+    def test_explicit_revision_preserves_other_month_and_rejects_issued(self):
+        self.call()
+        p = dict(self.source, contentHash='c'*64, revision=2)
+        with self.db() as db:
+            db.execute("UPDATE plans SET status='sent',approval='keep'")
+        before = self.load()
+        with self.assertRaisesRegex(ValueError, 'emitido'):
+            self.call(dict(p, action='revise', source=json.dumps(p)))
+        self.assertEqual(self.load(), before)
+        self.assertEqual(len(self.calls), 1)
+
     def test_issued_month_and_other_month_blocked_without_mutation(self):
         self.call()
         for state in ('accepted','sent','email_cancelled','sending','uncertain','emitting','queued'):

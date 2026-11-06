@@ -70,7 +70,8 @@ function invoiceManualSection(period,c,record){
   h+='<label class="invoice-field"><span>PDF definitivo (máximo 2 MB)</span><input type="file" accept="application/pdf,.pdf" id="invoiceFinalFile"></label>'+invoiceField('number','Serie y número de factura',record.final&&record.final.number||'')+invoiceField('date','Fecha de expedición',record.final&&record.final.date||'','date');
   return h+'<label class="invoice-confirm"><input type="checkbox" id="invoiceFinalConfirm">Es el PDF definitivo de AEAT de '+escHtml(invoiceLabel(period))+' y he comprobado sus datos e importes.</label><button class="ev-btn ev-btn-primary" id="invoiceAttach">Guardar PDF y preparar correo</button></details>';
 }
-async function openInvoiceMonth(period){
+async function openInvoiceMonth(period,options){
+  options=options||{};
   INVOICE_HIDE_AMOUNTS=true;
   INVOICE_MONTH=period||mkey(CY,CM);period=INVOICE_MONTH;
   var seq=++INVOICE_OPEN_SEQ,data=invoiceData(),c=data.config,record=data.months[period]||{},historical=period<INVOICE_FIRST_PERIOD,p=record.preparation,problem='';
@@ -95,7 +96,7 @@ async function openInvoiceMonth(period){
   function error(e){root.querySelector('#invoiceError').textContent=e.message;root.querySelector('#invoiceError').scrollIntoView({block:'nearest'});}
   var kairoConfig=root.querySelector('#invoiceKairoConfig');if(kairoConfig)kairoConfig.onclick=function(){openInvoiceSettings({connection:true});};
   function bindPrivacy(){root.querySelector('#invoicePrivacy').onclick=function(e){e.preventDefault();root.querySelector('.invoice-month-summary').open=true;INVOICE_HIDE_AMOUNTS=!INVOICE_HIDE_AMOUNTS;root.querySelector('#invoicePrivacyControl').innerHTML=invoicePrivacyButton();root.querySelector('#invoiceAmounts').innerHTML=invoiceSummary(p);bindPrivacy();root.querySelector('#invoicePrivacy').focus();};}if(p)bindPrivacy();
-  if(p&&!historical&&!problem)bindInvoiceKairo(root,p,c.kairoUrl);
+  if(p&&!historical&&!problem)bindInvoiceKairo(root,p,c.kairoUrl,options);
   var attach=root.querySelector('#invoiceAttach');if(attach)attach.onclick=async function(){attach.disabled=true;try{await invoiceAttach(period,root.querySelector('#invoiceFinalFile').files[0],root.querySelector('[data-invoice-field="number"]').value,root.querySelector('[data-invoice-field="date"]').value,root.querySelector('#invoiceFinalConfirm').checked);openInvoiceMonth(period);}catch(e){error(e);attach.disabled=false;}};
   if(record.final&&root.querySelector('#invoiceDownloadFinal')){root.querySelector('#invoiceDownloadFinal').onclick=function(){shareOrDownload(invoiceFinalBlob(record),record.final.name);};root.querySelector('#invoiceGmail').onclick=function(){try{window.open(invoiceGmailUrl(invoiceData().config,period),'_blank','noopener,noreferrer');}catch(e){error(e);}};}
 }
@@ -107,6 +108,7 @@ function openHoursExport(){
 function initInvoices(){
   var btn=document.getElementById('hoursCalendarBtn');if(!btn)return;
   btn.innerHTML=homeScheduleLabel();btn.onclick=openMailCalendar;
+  document.querySelector('#homeSyncBtn .home-sync-label svg').outerHTML=homeStatusIcon('sync');
   var hoursBtn=document.getElementById('hoursExportBtn');hoursBtn.innerHTML=renderDocumentIcon()+'<span>Exportar Horas</span>';hoursBtn.onclick=openHoursExport;document.getElementById('invoiceSettingsBtn').onclick=openInvoiceSettings;
 }
 if(typeof document!=='undefined')document.addEventListener('DOMContentLoaded',initInvoices);

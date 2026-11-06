@@ -48,6 +48,7 @@ async function hoursResumeJobs(){
           var message=hoursCheckMessage(data.errorCode),accessIssue=hoursAccessIssue(data.errorCode);
           HOURS_JOB_ERROR=accessIssue?'':message+' Se conserva el último estado confirmado.';HOURS_JOB_NETWORK_ERROR=false;
           HOURS_JOBS=HOURS_JOBS.filter(function(j){return j.id!==job.id;});
+          if(job.manual&&typeof HOME_SYNC_ERROR!=='undefined')HOME_SYNC_ERROR=true;
           if(job.kind==='status')hoursRecordCheck(job.period,'error',data.errorCode,Date.parse(data.updatedAt)||Date.now());
           var sync=document.getElementById('homeSyncDialog');
           if(accessIssue&&sync&&sync.open)document.getElementById('homeSyncResult').textContent=message;

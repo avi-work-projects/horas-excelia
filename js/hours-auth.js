@@ -33,6 +33,7 @@ async function requestHoursSyncAccess(){
       await new Promise(function(resolve){setTimeout(resolve,2000);});
       phase=await hoursAuthPhase(url,false);
     }
+    if(typeof HOME_SYNC_ERROR!=='undefined'){HOME_SYNC_ERROR=phase!=='ready';paintHomeSyncDate();}
     return HOURS_AUTH_MESSAGES[phase]||'Kairo sigue comprobando el acceso.';
   })();
   try{return await HOURS_AUTH_RUN;}finally{HOURS_AUTH_RUN=null;}

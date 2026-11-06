@@ -55,11 +55,11 @@ test('Respuesta tardía no contamina otro mes y cambiar de servidor no reutiliza
   await expect(page.locator('.home-submission.complete')).toContainText('Correos al día');
   await page.evaluate(()=>{CM=1;render();});await expect(page.locator('.home-submission.complete')).toContainText('Correos al día');
   await page.evaluate(()=>{const data=invoiceData();data.config.kairoUrl='https://another.test.ts.net/facturas/';invoiceSave(data);render();});
-  await expect(page.locator('.home-submission')).toContainText('Sin programar');
+  await expect(page.locator('.home-submission')).toContainText('Correos pendientes de programar');
 });
 
 test('actualizar termina con causa visible, conserva fecha y hechos; un nuevo éxito limpia el error y persiste',async({page,context})=>{
-  await setup(page,context);const old=await page.locator('#homeSyncDate').textContent();let fail=true;
+  await setup(page,context);const old=await page.evaluate(()=>HOURS_CACHE.lastMailSync||0);let fail=true;
   await page.clock.setFixedTime(new Date('2027-02-01T12:05:00+01:00'));
   await context.route(base+'horas/status?**',async route=>{
     if(fail)return route.fulfill({status:202,json:{jobId:'55555555-5555-4555-8555-555555555555',kind:'status',phase:'queued'}});
@@ -70,7 +70,7 @@ test('actualizar termina con causa visible, conserva fecha y hechos; un nuevo é
   await page.locator('#homeSyncBtn').click();await page.locator('[data-hours-check]').click();
   await expect(page.locator('#homeSyncResult')).toContainText('Outlook necesita iniciar sesión');
   await expect(page.locator('.home-submission')).not.toContainText('Outlook necesita iniciar sesión');
-  await expect(page.locator('#homeSyncDate')).toHaveText(old);
+  await expect(page.locator('#homeSyncDate')).toHaveText('error');expect(await page.evaluate(()=>HOURS_CACHE.lastMailSync||0)).toBe(old);
   await expect(page.locator('.week-card').nth(1).locator('.hours-week-badge')).toHaveText('◷ Programada');
   await page.reload();await expect(page.locator('.home-submission')).not.toContainText('Outlook necesita iniciar sesión');
   await page.locator('#homeSyncBtn').click();await expect(page.locator('#homeSyncResult')).toContainText('Outlook necesita iniciar sesión');
