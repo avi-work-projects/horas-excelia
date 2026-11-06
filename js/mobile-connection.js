@@ -5,6 +5,53 @@ var MOBILE_CONNECTION_MODES={
   off:{label:'OFF',trigger:'conexion_normal'}
 };
 var mobileModeRequest=null;
+var kairoConnectionRequest=null;
+
+async function mobileConnectionStatus(){
+  if(!/Android/i.test(navigator.userAgent))return null;
+  var controller=new AbortController(),timer=setTimeout(function(){controller.abort();},800);
+  try{
+    // Read the state published after a verified connection change. This does
+    // not ask MacroDroid to recalculate it or switch the phone's connection.
+    // An absent bridge is unknown, never evidence that the VPN is off.
+    var response=await fetch('http://127.0.0.1:8080/gestify-connection',{mode:'cors',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',targetAddressSpace:'loopback',signal:controller.signal});
+    if(!response.ok)return null;
+    var status=await response.json();
+    return status&&status.schema===1&&status.service==='gestify-mobile-connection'&&status.confirmed===true&&Number.isFinite(status.updatedAt)&&status.updatedAt>0&&status.updatedAt<=Date.now()+5000&&Object.hasOwn(MOBILE_CONNECTION_MODES,status.mode)?status.mode:null;
+  }catch(e){return null;}finally{clearTimeout(timer);}
+}
+
+async function kairoReachable(){
+  var controller=new AbortController(),timer=setTimeout(function(){controller.abort();},4000);
+  try{
+    var response=await fetch(hoursKairoUrl()+'reachable',{mode:'cors',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',targetAddressSpace:'local',signal:controller.signal});
+    return response.ok&&(await response.json()).service==='kairo-hours';
+  }catch(e){return false;}finally{clearTimeout(timer);}
+}
+function ensureKairoConnection(){
+  if(kairoConnectionRequest)return kairoConnectionRequest;
+  kairoConnectionRequest=(async function(){
+    var mode=await mobileConnectionStatus();
+    if(mode==='vpn'||mode===null){
+      if(await kairoReachable())return true;
+      if(mode==='vpn'){showToast('La VPN está activa, pero Kairo no responde.','error');return false;}
+    }
+    return new Promise(function(resolve){
+      var dialog=document.createElement('dialog'),previous=NAV_BACK,connecting=false;
+      dialog.className='mobile-connection-dialog kairo-vpn-prompt';dialog.setAttribute('aria-labelledby','kairoVpnTitle');
+      dialog.innerHTML='<h2 id="kairoVpnTitle">'+(mode===null?'Comprobar conexión':'Conectar VPN')+'</h2><p>'+(mode===null?'No se ha podido acceder a Kairo ni confirmar la VPN. ¿Quieres conectar la VPN?':'Para hacer esta operación hace falta conectar la VPN.')+'</p><div class="kairo-vpn-actions"><button type="button" data-cancel>Cancelar</button><button type="button" data-accept>Aceptar</button></div>';
+      function cancel(){dialog.close();}
+      dialog.querySelector('[data-cancel]').onclick=cancel;
+      dialog.querySelector('[data-accept]').onclick=function(){connecting=true;dialog.close();};
+      dialog.addEventListener('close',function(){
+        dialog.remove();if(NAV_BACK===cancel)NAV_BACK=previous;
+        if(connecting)openMobileConnection(null,'vpn',resolve);else resolve(false);
+      },{once:true});
+      document.body.append(dialog);dialog.showModal();NAV_BACK=cancel;
+    });
+  })().finally(function(){kairoConnectionRequest=null;});
+  return kairoConnectionRequest;
+}
 
 function mobileWebhookBase(value){
   try{
@@ -32,8 +79,8 @@ function requestMobileMode(mode,base){
   return request;
 }
 
-function openMobileConnection(onVpnReady,initialMode){
-  if(document.getElementById('mobileConnectionDialog'))return;
+function openMobileConnection(onVpnReady,initialMode,onClosed){
+  if(document.getElementById('mobileConnectionDialog')){if(onClosed)onClosed(false);return;}
   var restore=settingsPanelBack(),dialog=document.createElement('dialog');
   dialog.id='mobileConnectionDialog';dialog.className='mobile-connection-dialog';
   dialog.setAttribute('aria-labelledby','mobileConnectionTitle');
@@ -46,7 +93,7 @@ function openMobileConnection(onVpnReady,initialMode){
   var route=dialog.querySelector('[data-route]'),feedback=dialog.querySelector('[data-mode-result]');
   var link=dialog.querySelector('[data-link]'),input=link.querySelector('input');
   var base=mobileWebhookBase(appStorage.getItem('excelia-alarm-url')||'');
-  var timer=null,probe=null,requestSerial=0,resume=typeof onVpnReady==='function',completed=false,fastCheckUntil=0;
+  var timer=null,probe=null,requestSerial=0,resume=typeof onVpnReady==='function'||typeof onClosed==='function',completed=false,fastCheckUntil=0;
   function buttons(){
     link.hidden=!!base;
     dialog.querySelectorAll('[data-mobile-mode]').forEach(function(button){button.disabled=!base||!!mobileModeRequest;});
@@ -63,11 +110,14 @@ function openMobileConnection(onVpnReady,initialMode){
     var controller=new AbortController(),serial=requestSerial;probe=controller;
     var deadline=setTimeout(function(){controller.abort();},4000),available=false;
     try{
-      var response=await fetch(target+'reachable',{mode:'cors',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',targetAddressSpace:'local',signal:controller.signal});
-      available=response.ok&&(await response.json()).service==='kairo-hours';
+      var mode=await mobileConnectionStatus();
+      if(mode==='vpn'||mode===null){
+        var response=await fetch(target+'reachable',{mode:'cors',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',targetAddressSpace:'local',signal:controller.signal});
+        available=response.ok&&(await response.json()).service==='kairo-hours';
+      }
     }catch(e){}finally{clearTimeout(deadline);if(probe===controller)probe=null;}
     if(!dialog.open||serial!==requestSerial)return;
-    route.textContent=available?'Kairo accesible desde este dispositivo':'Acceso a Kairo sin confirmar';
+    route.textContent=available?'Kairo accesible desde este dispositivo':mode==='vpn'?'VPN Kairo activa · Kairo no responde':mode?MOBILE_CONNECTION_MODES[mode].label+' · VPN Kairo desconectada':'Acceso a Kairo sin confirmar';
     route.dataset.available=String(available);
     if(available&&resume){completed=true;dialog.close();return;}
     schedule(Date.now()<fastCheckUntil?2000:10000);
@@ -82,7 +132,7 @@ function openMobileConnection(onVpnReady,initialMode){
     if(!dialog.open)return;
     feedback.textContent=received?'Solicitud enviada. El widget confirma el modo aplicado.':'Entrega sin confirmar. Comprueba el widget antes de repetir.';
     fastCheckUntil=Date.now()+20000;
-    resume=mode==='vpn'&&typeof onVpnReady==='function';
+    resume=mode==='vpn'&&(typeof onVpnReady==='function'||typeof onClosed==='function');
     schedule(1000);
   }
   function foreground(){if(document.hidden){clearTimeout(timer);return;}check();}
@@ -101,6 +151,7 @@ function openMobileConnection(onVpnReady,initialMode){
     document.removeEventListener('visibilitychange',foreground);dialog.remove();
     if(NAV_BACK===back)restore();
     if(completed&&typeof onVpnReady==='function')onVpnReady();
+    if(typeof onClosed==='function')onClosed(completed);
   },{once:true});
   document.body.append(dialog);dialog.showModal();NAV_BACK=back;buttons();
   if(!base)feedback.textContent='Vincula este móvil con el mismo enlace que usas para las alarmas.';

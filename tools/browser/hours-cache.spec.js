@@ -15,6 +15,7 @@ async function setup(page,context){
     const periods=await page.evaluate(period=>[0,1,2].map(month=>{const p='2027-'+String(month+1).padStart(2,'0');return {period:p,checkedAt:new Date().toISOString(),verified:true,rows:hoursScopeKeys(p).map(key=>({key,state:key==='2027-02-08'?'scheduled':'sent',days:hoursWeekDays(key),schedule:homeWeekSchedule(key).date+'T08:00:00+01:00'}))};}),period);
     await route.fulfill({json:{phase:'done',result:{periods}},headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}});
   });
+  await context.route('**/horas/reachable',r=>r.fulfill({json:{service:'kairo-hours'},headers:{'Access-Control-Allow-Origin':'*'}}));
   await page.goto('/');
   await expect(page.locator('.home-submission.complete')).toContainText('Correos al día');
   return {calls,offline(){offline=true;}};

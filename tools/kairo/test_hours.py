@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from datetime import datetime, timedelta, timezone
 
-from hours_model import content_hash, monday, parse_days, reconcile, schedule, scope, validate_request
+from hours_model import content_hash, monday, parse_days, reconcile, schedule, scope, validate_request, prerequisite_weeks
 from hours_store import Store, StalePlan
 from outlook_hours import week_from_label, header_date, header_week_year, scheduled_time, outlook_page, item_identity
 from demo_hours import synthetic_request
@@ -22,10 +22,32 @@ def inventory(req, count=0):
         records.append(dict(id=week['key'], week=week['key'], state='scheduled',
                             contentHash=content_hash(week),days=copy.deepcopy(week['days']),
                             schedule=schedule(week, NOW)[0]))
+    records.extend(dict(id='prior-'+key,week=key,state='sent') for key in prerequisite_weeks(req)
+                   if key not in {r['week'] for r in records})
     return dict(complete=True, accountVerified=True, account='sender@example.invalid', records=records)
 
 
 class ModelTests(unittest.TestCase):
+    def test_month_requires_all_previous_month_weeks_but_not_its_extras(self):
+        req=request();inv=inventory(req)
+        previous=prerequisite_weeks(req)
+        self.assertEqual(len(previous),5)
+        self.assertEqual(reconcile(req,inv,NOW)['ready'],len(req['weeks']))
+        missing=previous[0]
+        inv['records']=[r for r in inv['records'] if r['week']!=missing]
+        result=reconcile(req,inv,NOW)
+        self.assertEqual(result['ready'],0)
+        self.assertFalse(any(r['action'] for r in result['rows']))
+        self.assertEqual(result['previousMonth']['pending'],[missing])
+        self.assertEqual(result['rows'][0]['previousPeriod'],'2027-01')
+        inv['records'].append(dict(id='recovered',week=missing,state='scheduled'))
+        self.assertGreater(reconcile(req,inv,NOW)['ready'],0)
+
+    def test_individual_route_keeps_its_previous_week_rule(self):
+        req=request('week','2027-02-01');inv=inventory(req)
+        self.assertEqual(prerequisite_weeks(req),[])
+        self.assertEqual(reconcile(req,inv,NOW)['rows'][0]['action'],'create')
+
     def test_status_reports_microsoft_login_before_waiting_for_browser(self):
         import io,json
         from unittest.mock import patch
@@ -183,6 +205,15 @@ class StoreTests(unittest.TestCase):
         with self.assertRaises(PermissionError): self.store.commit(plan['planId'], self.reader, self.writer, NOW, updates=[])
         self.assertEqual(self.calls, [])
 
+    def test_month_prerequisite_is_enforced_at_commit_too(self):
+        missing=prerequisite_weeks(self.req)[0]
+        self.inv['records']=[r for r in self.inv['records'] if r['week']!=missing]
+        plan=self.store.preview(self.req,self.inv,NOW)
+        result=self.store.commit(plan['planId'],self.reader,self.writer,NOW,allow_writes=True,updates=[])
+        self.assertEqual(result['results'],[])
+        self.assertEqual(self.calls,[])
+        self.assertEqual(self.store.ledger(),{})
+
     def test_date_policy_change_requires_a_new_review(self):
         from unittest.mock import patch
         plan=self.store.preview(self.req,self.inv,NOW)
@@ -232,7 +263,7 @@ class StoreTests(unittest.TestCase):
         self.assertEqual(self.calls, [])
         plan = self.store.preview(self.req, self.inv, NOW)
         self.store.commit(plan['planId'], self.reader, self.writer, NOW, allow_writes=True, updates=[self.req['targetWeek']])
-        self.assertEqual(self.inv['records'][1]['id'], self.req['targetWeek'])
+        self.assertEqual(next(r for r in self.inv['records'] if r['week']==self.req['targetWeek'])['id'], self.req['targetWeek'])
 
     def test_two_devices_cannot_reserve_the_same_week(self):
         from concurrent.futures import ThreadPoolExecutor

@@ -48,13 +48,42 @@ test('Ajustes usa los tres destinos del widget, limita toques repetidos y distin
 });
 test('la agenda activa VPN con un solo toque y continúa únicamente tras una lectura privada válida',async({page})=>{
   const state=await setup(page);await page.locator('#hoursCalendarBtn').click();
-  await page.getByRole('dialog',{name:'Programación',exact:true}).getByRole('button',{name:'Activar VPN'}).click();
+  await page.getByRole('dialog',{name:'Comprobar conexión',exact:true}).getByRole('button',{name:'Aceptar',exact:true}).click();
   const dialog=page.locator('#mobileConnectionDialog');
   await expect(dialog.locator('[data-mode-result]')).toContainText('Solicitud enviada');
   await page.clock.fastForward(2000);await expect(dialog.locator('[data-route]')).toContainText('sin confirmar');
   expect(state.agenda).toBe(0);state.reachable=true;await page.evaluate(()=>window.dispatchEvent(new Event('focus')));
   await expect(dialog).toHaveCount(0);await expect(page.frameLocator('iframe[title="Programación de Kairo"]').getByRole('heading')).toHaveText('Agenda de prueba');
   expect(state.commands).toEqual([trigger+'/conexion_kairo']);expect(state.agenda).toBe(1);
+});
+
+test('cancelar el aviso no cambia la red ni abre la agenda',async({page},info)=>{
+  const state=await setup(page);await page.locator('#hoursCalendarBtn').click();
+  const prompt=page.getByRole('dialog',{name:'Comprobar conexión',exact:true});
+  await expect(prompt).toBeVisible();await expect(prompt).toContainText('ni confirmar la VPN');
+  await prompt.screenshot({path:info.outputPath('aviso-vpn.png'),animations:'disabled'});
+  await prompt.getByRole('button',{name:'Cancelar',exact:true}).click();
+  await expect(page.getByRole('dialog',{name:'Programación',exact:true})).toHaveCount(0);
+  expect(state.commands).toEqual([]);expect(state.agenda).toBe(0);
+});
+
+test('Android lee primero el registro publicado; no confunde Kairo caído con VPN apagada',async({page,context})=>{
+  await context.addInitScript(()=>Object.defineProperty(navigator,'userAgent',{value:'Android Gestify test'}));
+  const state=await setup(page),reads=[];let mode='dns',confirmed=true;
+  await page.route('http://127.0.0.1:8080/gestify-connection',r=>{
+    reads.push('local');return r.fulfill({json:{schema:1,service:'gestify-mobile-connection',mode,confirmed,updatedAt:Date.now()},headers:{'Access-Control-Allow-Origin':'*'}});
+  });
+  await page.route(service+'/horas/reachable',r=>{reads.push('kairo');return r.abort();});
+  await page.locator('#hoursCalendarBtn').click();
+  const prompt=page.getByRole('dialog',{name:'Conectar VPN',exact:true});await expect(prompt).toBeVisible();
+  expect(reads).toEqual(['local']);await prompt.getByRole('button',{name:'Cancelar',exact:true}).click();
+  mode='vpn';await page.locator('#hoursCalendarBtn').click();
+  await expect(page.locator('#toast')).toContainText('La VPN está activa, pero Kairo no responde');
+  expect(reads).toEqual(['local','local','kairo']);expect(state.commands).toEqual([]);
+  await expect(page.locator('.kairo-vpn-prompt')).toHaveCount(0);
+  confirmed=false;await page.locator('#hoursCalendarBtn').click();
+  await expect(page.getByRole('dialog',{name:'Comprobar conexión',exact:true})).toBeVisible();
+  await page.keyboard.press('Escape');expect(state.commands).toEqual([]);
 });
 test('vinculación privada sin Kairo permite los modos y rechaza orígenes ajenos',async({page})=>{
   const state=await setup(page,{linked:false,configured:false}),dialog=await fromMenu(page);

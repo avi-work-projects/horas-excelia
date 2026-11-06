@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v543 — Home y modificación de envíos';
+var APP_VERSION = 'v544 — Histórico y conexión del móvil';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -365,10 +365,9 @@ function renderHomeSubmissionStatus(year,month,state){
   var closed=homePeriodMode(year,month)==='closed',count=state.missing+state.extras.length;
   var changed=Object.values(state.states).includes('changed');
   var urgent=state.review||!closed&&Object.keys(state.states).some(function(key){return ['missing','ready',''].includes(state.states[key])&&homeDueSoon(homeWeekSchedule(key).date);});
-  var title=closed?'Mes cerrado':state.complete?'Correos al día':changed?'Correos con cambios':state.review?'Correos por revisar':'Correos pendientes de programar';
+  var title=closed||state.complete?'Correos al día':changed?'Correos con cambios':state.review?'Correos por revisar':'Correos pendientes de programar';
   var detail='';
-  if(closed)detail='<em>Histórico · sin consultas automáticas</em>';
-  else if(changed)detail='<em>* Hay cambios en los datos de una semana ya programada.</em>';
+  if(changed)detail='<em>* Hay cambios en los datos de una semana ya programada.</em>';
   else if(state.review)detail='<em>* Hay un envío duplicado o un resultado sin confirmar.</em>';
   else if(!state.complete)detail='<details class="home-pending-note"><summary><em>* '+count+(count===1?' semana pendiente':' semanas pendientes')+' por programar</em></summary><p><em>Se incluyen las 2 que hay que programar del mes siguiente.</em></p></details>';
   var copy='<div class="home-panel-status"><span class="home-submission-icon" aria-hidden="true">'+(state.complete||closed?'✓':'!')+'</span><div class="home-submission-copy home-panel-copy"><strong>'+title+'</strong>'+(detail?'<div class="home-submission-detail">'+detail+'</div>':'')+'</div></div>';
@@ -547,7 +546,7 @@ function buildHomeCalendar(c){
     card.dataset.week=wkey;card.dataset.mailState=mailState;
     card.className='week-card'+(sent?' sent':'');
     var reviewLabel=mailState==='sent'?'Ver estado':mailState==='scheduled'?'Ver programación':mailState==='changed'?'Revisar cambios':'Programar semana';
-    var badge=remote&&mailState==='closed'?'<span class="sent-badge">Cerrada</span>':remote?'<button type="button" class="sent-badge hours-week-badge '+(covered?'covered':mailState?'attention':'unknown')+'" data-hours-week="'+wkey+'" aria-label="'+reviewLabel+'">'+(mailState==='missing'||mailState==='ready'?reviewLabel:hoursWeekBadge(mailState))+'</button>':sent?'<span class="sent-badge">\u2713 Enviada</span>':'';
+    var badge=remote&&mailState==='closed'?'<span class="sent-badge">✓ Enviada</span>':remote?'<button type="button" class="sent-badge hours-week-badge '+(covered?'covered':mailState?'attention':'unknown')+'" data-hours-week="'+wkey+'" aria-label="'+reviewLabel+'">'+(mailState==='missing'||mailState==='ready'?reviewLabel:hoursWeekBadge(mailState))+'</button>':sent?'<span class="sent-badge">\u2713 Enviada</span>':'';
     card.innerHTML='<div class="week-header"><div class="week-info"><h3>Semana '+wn(mon)+badge+'</h3><div class="week-range">'+fd(mon)+' \u2014 '+fd(sun)+'</div></div><div class="week-total">'+dStr+'</div></div>';
     if(remote&&hoursWeekDate(wkey,mailState)){var scheduleNote=document.createElement('div');scheduleNote.className='hours-week-readonly';scheduleNote.textContent='Envío '+hoursWeekDate(wkey,mailState);card.querySelector('.week-info').appendChild(scheduleNote);}
 

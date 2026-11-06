@@ -57,8 +57,12 @@ function bindInvoiceKairo(root,p,url,options){
         if(navigator.onLine===false)throw Object.assign(new Error('Sin conexión. La preparación sigue guardada en este dispositivo.'),{code:'network'});
         url=invoiceKairoUrl(url);
         // Abrir dentro del gesto del usuario; nunca datos fiscales en la URL.
-        popup=window.open(url+'gestify','_blank');
+        popup=window.open('about:blank','_blank');
         if(!popup)throw new Error('Permite abrir la ventana privada de Kairo para continuar.');
+        INVOICE_KAIRO_BUSY=true;root.querySelectorAll('#invoiceKairoSend,#invoiceKairoStatus').forEach(function(el){el.disabled=true;});
+        if(!await ensureKairoConnection()){popup.close();return;}
+        if(popup.closed)return;
+        popup.location.replace(url+'gestify');
         var data=invoiceData(),record=data.months[p.period];
         if(!record||record.preparation.contentHash!==p.contentHash)throw new Error('La preparación cambió. Vuelve a abrir el mes.');
         if(suffix==='Send'&&record.final)throw new Error('Este mes ya tiene un PDF definitivo. Consulta su estado.');

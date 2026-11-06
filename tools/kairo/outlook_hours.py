@@ -11,7 +11,7 @@ from datetime import date, datetime, timedelta
 from urllib.parse import urlsplit, unquote
 from urllib.request import urlopen
 
-from hours_model import MADRID, addresses, content_hash, digest, monday, parse_days, scope
+from hours_model import MADRID, addresses, content_hash, digest, monday, parse_days, scope, prerequisite_weeks
 from hours_errors import HoursFailure
 
 OUTLOOK_HOSTS = {'outlook.office.com', 'outlook.cloud.microsoft'}
@@ -135,7 +135,7 @@ class OutlookReader:
 
     def __call__(self, request):
         from playwright.sync_api import sync_playwright
-        wanted = sorted({key for period in request.get('periods', [request['period']]) for key in scope(period)})
+        wanted = sorted({key for period in request.get('periods', [request['period']]) for key in scope(period)} | set(prerequisite_weeks(request)))
         wanted.insert(0, (monday(wanted[0])-timedelta(weeks=1)).isoformat())
         result = dict(complete=False, accountVerified=False, account=self.sender,
                       records=[], problem=None, problemCode='read_failed')

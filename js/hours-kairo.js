@@ -29,7 +29,7 @@ function hoursRemoteConfigured(){try{return !!hoursKairoUrl();}catch(e){return f
 function hoursCovered(key){var state=hoursWeekState(key);return state==='sent'||state==='scheduled';}
 function hoursHasConfirmedMail(key){var row=hoursCachedWeek(key);return !!row&&['sent','scheduled','changed'].includes(row.state);}
 function hoursWeekBadge(state){
-  var labels={sent:'✓ Enviada',scheduled:'◷ Programada',closed:'Cerrada',changed:'Revisar cambios',missing:'Pendiente',ready:'Pendiente',unverified:'Pendiente',draft:'Pendiente','blocked-previous':'Pendiente','past-due':'Pendiente','no-workdays':'Pendiente'};
+  var labels={sent:'✓ Enviada',scheduled:'◷ Programada',closed:'✓ Enviada',changed:'Revisar cambios',missing:'Pendiente',ready:'Pendiente',unverified:'Pendiente',draft:'Pendiente','blocked-previous':'Pendiente','past-due':'Pendiente','no-workdays':'Pendiente'};
   return labels[state]||(state?'Revisar':'Sin programar');
 }
 function hoursWeekDate(key,state){
@@ -151,8 +151,15 @@ async function openHoursReview(targetWeek,intent){
   try{
     if(navigator.onLine===false)throw new Error('Sin conexión. No se puede comprobar Outlook.');
     var url=hoursKairoUrl();if(!url){openInvoiceSettings({connection:true});return;}
+    if(!targetWeek&&intent!=='check'){
+      var previous=homePreviousMailMonth(CY,CM);
+      if(previous.known&&!previous.ready){showToast('Primero deben estar programados los correos de '+new Date(previous.period+'-01T12:00:00').toLocaleDateString('es-ES',{month:'long',year:'numeric'})+'.','error');return;}
+    }
     var request=hoursMailRequest(targetWeek),original=JSON.stringify(request);
-    surface=hoursReviewSurface(url);popup=surface.window;
+    surface=hoursReviewSurface('about:blank');popup=surface.window;
+    if(!await ensureKairoConnection()){surface.close();return;}
+    if(surface.isClosed())return;
+    popup.location.replace(url);
     var result=await hoursKairoExchange(url,request,popup,{
       intent:intent||'review',sourceMatches:function(){return intent!=='check'&&JSON.stringify(hoursMailRequest(request.targetWeek))===original;},
       isClosed:surface.isClosed,close:surface.close,
@@ -261,7 +268,7 @@ function initHoursKairo(){
     check.disabled=access.disabled=true;
     action.setAttribute('aria-busy','true');
     result.textContent=action===access?'Comprobando el acceso a Outlook…':'Sincronizando con Kairo…';
-    try{result.textContent=await (action===access?requestHoursSyncAccess():refreshHomeStates());}
+    try{if(!await ensureKairoConnection()){HOME_SYNC_ERROR=true;paintHomeSyncDate();result.textContent='Operación cancelada.';return;}result.textContent=await (action===access?requestHoursSyncAccess():refreshHomeStates());}
     catch(e){HOME_SYNC_ERROR=true;paintHomeSyncDate();result.textContent=action===access?'No se pudo comprobar el acceso a Outlook. Revisa la conexión con Kairo.':'No se pudo sincronizar con Kairo.';}
     finally{action.removeAttribute('aria-busy');check.disabled=access.disabled=false;if(!dialog.open)showToast(result.textContent);}
   });

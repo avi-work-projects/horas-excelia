@@ -15,6 +15,7 @@ async function openCheckedInvoice(href){
   if(!popup){showToast('Permite abrir la revisión de Kairo.','error');return;}
   popup.opener=null;popup.document.body.textContent='Conectando con Kairo…';
   try{
+    if(!await ensureKairoConnection()){popup.close();return;}
     var base=invoiceKairoUrl(invoiceData().config.kairoUrl);
     validateHomeInvoiceStatus(await kairoGet(base+'gestify-status?period='+period),period);
     if(!popup.closed)popup.location.replace(href);
@@ -59,8 +60,7 @@ function openMailCalendar(){
   async function connect(){
     note.textContent='Conectando con Kairo…';retry.hidden=true;modeButton.hidden=true;
     try{
-      var result=await kairoGet(base+'reachable');
-      if(result.service!=='kairo-hours')throw Error('Respuesta inesperada de Kairo.');
+      if(!await ensureKairoConnection()){if(dialog.open)close();return;}
       if(!dialog.open)return;
       frame.src=base+'calendario?period='+period;body.replaceWith(frame);
     }catch(error){note.textContent=error.message;retry.hidden=false;modeButton.hidden=error.code!=='network';}

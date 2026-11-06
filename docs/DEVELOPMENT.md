@@ -1705,3 +1705,28 @@ Verificación: pruebas de dominio y navegador de Home, caché, Outlook, revisió
 individual/conjunta y puente; datos ficticios a 320/400/440 px y tres temas.
 El atlas solo recaptura Home y los anclajes afectados del acceso a factura.
 La prueba desde Vivo Sesiones queda pendiente a petición de Ángel (móvil ausente).
+
+
+## Histórico de Home, secuencia mensual y conexión explícita (v544)
+
+Home mantiene «Correos al día» y «Factura enviada» en los meses antiguos, sin el
+botón «Ver cálculo histórico» ni rótulos alternativos. Se conserva el supuesto
+histórico acordado; el render no fabrica confirmaciones remotas ni fechas de
+envío y no consulta Outlook. Los títulos comparten 12 px de separación respecto
+al icono (10 px en pantallas estrechas). La ruta antigua del cálculo se retira del
+atlas; las capturas revisadas de las otras pantallas se conservan.
+
+La programación mensual exige las semanas del mes anterior enviadas o
+programadas. No exige sus dos extras, que introducirían una dependencia circular.
+Gestify comprueba su caché; Kairo aplica la misma condición con hechos del buzón
+en la revisión y antes de cada escritura. Cambios y duplicados no satisfacen la
+condición. La política de revisión cambia para invalidar revisiones anteriores.
+La ruta individual conserva su requisito semanal; el envío manual y la edición
+de días se mantienen. No se programan correos reales durante estas pruebas.
+
+Las acciones privadas comparten el aviso de conexión con Aceptar/Cancelar y el
+selector MacroDroid existente. La preparación local de facturas, la edición de
+días y el envío manual no requieren ese acceso. El lector del registro publicado
+por MacroDroid está preparado; su instalación y validación en el Vivo quedan
+pendientes porque el móvil no está disponible. No se confunde un registro ausente
+con una VPN apagada. Detalle del contrato en `docs/macrodroid.md`.

@@ -21,6 +21,7 @@ async function setup(page,context,{loseReply=false}={}){
     return route.fulfill({json:{operationId:data.operationId,contentHash:data.contentHash,period:data.period,state:!stored?'missing':stored.contentHash===data.contentHash?'review':'different'}});
   });
   await page.addInitScript(()=>{sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-theme-v1','light');localStorage.setItem('excelia-nav-icons-v1','professional');});
+  await context.route('**/horas/reachable',r=>r.fulfill({json:{service:'kairo-hours'},headers:{'Access-Control-Allow-Origin':'*'}}));
   await page.goto('/');
   await page.evaluate(url=>{let c=invoiceDefaults();Object.assign(c,{issuer:'Persona sintética',issuerTax:'PRUEBA-EMISOR',client:'Cliente sintético',clientTax:'PRUEBA-CLIENTE',project:'Proyecto sintético',rate:'320',kairoUrl:url});invoiceSave({config:c,months:{}});openInvoiceMonth('2027-02');},base);
   await expect(page.locator('#invoiceKairoSend')).toBeVisible();

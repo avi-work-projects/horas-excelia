@@ -581,7 +581,7 @@ test('Home: aviso de semanas y estado completo, cabecera opaca',async({page})=>{
   await page.evaluate(t=>applyTheme(t),theme);
   expect(await page.locator('.header').evaluate(el=>getComputedStyle(el).backgroundColor)).toBe(await page.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor));
  }
- await page.evaluate(()=>{delete SW[dk(weeks(CY,CM)[0][0])];render();});await expect(page.locator('.home-submission.complete')).toContainText('Mes cerrado');
+ await page.evaluate(()=>{delete SW[dk(weeks(CY,CM)[0][0])];render();});await expect(page.locator('.home-submission.complete')).toContainText('Correos al día');
 });
 
 

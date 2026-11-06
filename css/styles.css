@@ -4009,6 +4009,9 @@ html[data-theme=light] .hours-review-dialog>iframe{color-scheme:light}
 
 .week-card[data-mail-state=changed]{border-color:var(--c-red)}
 .week-card[data-mail-state=changed] .hours-week-badge{color:var(--c-red)}
+.kairo-vpn-prompt h2{margin:0;font-size:1.05rem}
+.kairo-vpn-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}
+.kairo-vpn-actions button{border-color:var(--home-tone);background:var(--surface);color:var(--text)}
 
 /* Fuente: css/source/energy-refinements.css */
 /* Facturas: mismos componentes que los contratos, cifras sin desbordar. */
@@ -4513,7 +4516,7 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 .home-panel{--home-panel-action-width:96px}
 .home-panel-row{display:grid;grid-template-columns:minmax(0,1fr) var(--home-panel-action-width);gap:10px;align-items:center}
 .home-panel-row.no-action{grid-template-columns:minmax(0,1fr)}
-.home-panel-status{display:grid;grid-template-columns:18px minmax(0,1fr);gap:8px;align-items:start;min-width:0}
+.home-panel-status{display:grid;grid-template-columns:18px minmax(0,1fr);gap:12px;align-items:start;min-width:0}
 .home-panel-copy{min-width:0}
 .home-panel-copy>strong{display:block;font-size:.78rem;font-weight:650;line-height:1.4}
 .home-submission-icon,.home-invoice-icon{display:flex;align-items:center;justify-content:center;font-size:1.1rem;line-height:1.2}
@@ -4547,7 +4550,7 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 .home-invoice-actions button{border-color:var(--home-tone)}
 .home-invoice-actions #hoursExportBtn svg{color:var(--home-tone)}
 .home-submission .hours-home-actions{margin-top:8px;padding-top:0;border:0}
-@media(max-width:360px){.home-panel{padding:10px;--home-panel-action-width:84px}.home-submission-body{grid-template-columns:minmax(0,1fr) minmax(0,173px);gap:7px}.home-panel-row,.home-submission-body.summaryless{gap:7px}.home-panel-status{grid-template-columns:14px minmax(0,1fr);gap:6px}.home-panel-action{gap:3px;padding:4px;font-size:.62rem}.home-panel-action svg{width:17px;height:17px}}
+@media(max-width:360px){.home-panel{padding:10px;--home-panel-action-width:84px}.home-submission-body{grid-template-columns:minmax(0,1fr) minmax(0,173px);gap:7px}.home-panel-row,.home-submission-body.summaryless{gap:7px}.home-panel-status{grid-template-columns:14px minmax(0,1fr);gap:10px}.home-panel-action{gap:3px;padding:4px;font-size:.62rem}.home-panel-action svg{width:17px;height:17px}}
 @media(prefers-reduced-motion:reduce){.home-panel.pending,.home-panel.unsent,.home-panel.urgent,.home-invoice-alert{animation:none}}
 
 /* Fuente: css/source/invoices-calendar.css */

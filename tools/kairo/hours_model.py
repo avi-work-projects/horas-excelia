@@ -7,7 +7,7 @@ from zoneinfo import ZoneInfo
 
 MADRID = ZoneInfo('Europe/Madrid')
 DAY_TYPES = {'normal', 'festivo', 'vacaciones', 'ausencia'}
-SCHEDULE_POLICY = 2  # Changing eligible send dates invalidates earlier reviews.
+SCHEDULE_POLICY = 3  # Scheduling also requires the preceding month to be covered.
 
 
 def digest(value):
@@ -47,6 +47,17 @@ def addresses(values, required=False):
     if required and not result:
         raise ValueError('Completa Para en Correo de horas')
     return sorted(set(result))
+
+
+def previous_month(period):
+    scope(period)  # Validate before constructing calendar boundaries.
+    return (date.fromisoformat(period+'-01')-timedelta(days=1)).strftime('%Y-%m')
+
+
+def prerequisite_weeks(request):
+    # The two additional weeks belong to the following month's preparation;
+    # requiring them here would make that month depend on itself.
+    return scope(previous_month(request['period']))[:-2] if request.get('mode') == 'month' else []
 
 
 def validate_request(request):
@@ -126,6 +137,7 @@ def reconcile(request, inventory, now, ledger=None):
     previous = (first-timedelta(weeks=1)).isoformat()
     covered = {key for key, items in grouped.items()
                if len(items) == 1 and items[0].get('state') in ('sent', 'scheduled')}
+    month_pending = sorted(set(prerequisite_weeks(request))-covered)
     rows = []
     for week in request['weeks']:
         key = week['key']
@@ -176,12 +188,18 @@ def reconcile(request, inventory, now, ledger=None):
         else:
             row['state'] = 'ready'
             row['action'] = 'create'
-            if selected:
+            if selected and not month_pending:
                 covered.add(key)
+        if selected and month_pending and row['action']:
+            row['action'] = None
+            if row['state'] == 'ready':
+                row['state'] = 'blocked-previous'
+            row['previousPeriod'] = previous_month(request['period'])
         rows.append(row)
         previous = key
     return dict(schema=1, period=request['period'], mode=request['mode'],
                 verified=verified, checkedAt=now.isoformat(), rows=rows,
+                previousMonth=dict(period=previous_month(request['period']), pending=month_pending),
                 signature=inventory_signature(inventory),
                 ready=sum(r['selected'] and r['state'] == 'ready' for r in rows),
                 needsReview=sum(r['selected'] and r['state'] not in ('sent', 'scheduled', 'ready') for r in rows))

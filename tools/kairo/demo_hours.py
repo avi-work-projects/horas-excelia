@@ -6,7 +6,7 @@ from datetime import datetime, timedelta, timezone
 from http.server import ThreadingHTTPServer
 from urllib.parse import urlsplit, parse_qs
 
-from hours_model import content_hash, monday, schedule, scope
+from hours_model import content_hash, monday, schedule, scope, prerequisite_weeks
 from hours_service import make_handler
 from hours_store import Store
 
@@ -36,6 +36,9 @@ def demo_reader(request):
             record=dict(id='demo-'+week['key'],week=week['key'],state='sent' if index==0 else 'scheduled',days=days,toDisplay='Destino de prueba',ccDisplay='Copia de prueba',contentHash=content_hash({'days':days}),schedule=schedule(week,NOW)[0])
             records.append(record)
         if scenario=='duplicate': records.append(records[2]|{'id':'demo-duplicate','schedule':'2027-02-11T08:00:00+01:00'})
+    if scenario!='previous-missing':
+        records.extend(dict(id='demo-prior-'+key,week=key,state='sent') for key in prerequisite_weeks(request | dict(mode="month"))
+                       if key not in {r['week'] for r in records})
     return dict(complete=scenario!='incomplete',accountVerified=True,account='sender@example.invalid',records=records)
 
 
