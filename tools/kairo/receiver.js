@@ -29,7 +29,7 @@
     const m = event.data;
     if (!opener || event.source !== opener || event.origin !== bridgeConfig.origin || !m || m.channel !== 'gestify-kairo-v1' || typeof m.id !== 'string' || m.id.length > 80) return;
     if (m.type === 'hello' && !requested) { requestId = m.id; send({type:'ready'}); return; }
-    if (m.type !== 'request' || requested || m.id !== requestId || !['prepare','revise','status'].includes(m.action)) return;
+    if (m.type !== 'request' || requested || m.id !== requestId || !['prepare','revise','status','project'].includes(m.action)) return;
     requested = true;
     if (m.action === 'project') {
       document.title = 'Kairo · Proyecto';
