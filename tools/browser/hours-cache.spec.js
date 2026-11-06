@@ -1,4 +1,5 @@
 const {test,expect}=require('@playwright/test');
+require('./vpn-confirmation-fixture.cjs').confirmedVpn(test,'https://synthetic-cache.test.ts.net');
 test.use({timezoneId:'Europe/Madrid'});
 const base='https://synthetic-cache.test.ts.net/';
 async function setup(page,context){

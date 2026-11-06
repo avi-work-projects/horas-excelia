@@ -3,9 +3,10 @@ function invoiceCalendarDelivery(period,config){
   var year=+period.slice(0,4),month=+period.slice(5)-1,expected=homeInvoiceScheduleDate(year,month);
   var saved=config.kairoUrl&&INVOICE_HOME_CACHE.url===config.kairoUrl&&INVOICE_HOME_CACHE.periods[period],state=saved&&saved.data;
   if(state&&state.state==='scheduled')return {kind:'scheduled',date:state.scheduledDate,title:'Envío programado',note:state.scheduledDate!==expected?'La fecha de Kairo difiere del calendario actual. Revisa antes de cambiarla.':'Confirmado en Kairo · 08:00 Madrid'};
-  if(state&&state.sent)return {kind:'sent',date:null,title:'Factura enviada',note:'Envío confirmado en Kairo'};
+  var historical=homeInvoiceHistoricalFact(period,config.kairoUrl);
+  if(state&&state.sent||historical&&(!state||state.state==='missing'))return {kind:'sent',date:state&&state.sentDate||historical&&historical.sentDate||null,title:'Factura enviada',note:'Fecha de envío registrada en Kairo'};
   if(state&&['processing','attention','multiple'].includes(state.state))return {kind:'attention',date:null,title:'Revisar estado de la factura',note:'Consulta el detalle en Kairo'};
-  if(period<INVOICE_FIRST_PERIOD)return {kind:'history',date:null,title:'Mes histórico',note:'Sin nueva programación'};
+  if(period<mkey(new Date().getFullYear(),new Date().getMonth())&&(!state||state.state==='missing'))return {kind:'history',date:null,title:'Factura sin registro',note:'No consta un envío en el histórico'};
   return {kind:'planned',date:expected,title:'Envío previsto',note:state&&state.state==='draft'?'Pendiente de aprobación · 08:00 Madrid':'Según el calendario · aún sin fecha confirmada en Kairo'};
 }
 function renderInvoiceCalendar(period,config){

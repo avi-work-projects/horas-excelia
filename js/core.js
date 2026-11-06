@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v544 — Histórico y conexión del móvil';
+var APP_VERSION = 'v545 — Confirmación VPN e histórico acreditado';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -347,34 +347,35 @@ function weeks(y,m){
 
 /* El aviso y la futura programación consumen el mismo alcance. */
 function homeSubmissionStatus(year,month){
-  var remote=typeof hoursRemoteConfigured==='function'&&hoursRemoteConfigured(),states={},counts={sent:0,scheduled:0,pending:0,review:0};
+  var remote=typeof hoursRemoteConfigured==='function'&&hoursRemoteConfigured(),states={},counts={sent:0,scheduled:0,pending:0,review:0,unrecorded:0};
   var scope=homeSubmissionWeeks(year,month),known=true;
   scope.forEach(function(week){
-    var state=homePeriodMode(year,month)==='closed'?'closed':remote?(hoursWeekState(week.key)||'missing'):SW[week.key]?'sent':'missing';states[week.key]=state;
+    var state=homeMailState(week.key,year,month);states[week.key]=state;
     if(!state)known=false;
     if(state==='sent'||state==='scheduled')counts[state]++;
-    else if(state==='closed'){}
+    else if(state==='unrecorded')counts.unrecorded++;
     else if(['missing','ready','unverified','draft','past-due','no-workdays','blocked-previous'].includes(state))counts.pending++;
     else if(state)counts.review++;
   });
-  var pending=scope.filter(function(week){return !['sent','scheduled','closed'].includes(states[week.key]);});
-  return {remote:remote,states:states,counts:counts,known:known,review:counts.review>0,missing:pending.filter(function(week){return !week.extra;}).length,extras:pending.filter(function(week){return week.extra;}),complete:pending.length===0};
+  var pending=scope.filter(function(week){return !['sent','scheduled','unrecorded'].includes(states[week.key]);});
+  return {remote:remote,states:states,counts:counts,known:known,review:counts.review>0,missing:pending.filter(function(week){return !week.extra;}).length,extras:pending.filter(function(week){return week.extra;}),unrecorded:counts.unrecorded,complete:pending.length===0&&counts.unrecorded===0};
 }
 function renderHomeSubmissionStatus(year,month,state){
   state=state||homeSubmissionStatus(year,month);
   var closed=homePeriodMode(year,month)==='closed',count=state.missing+state.extras.length;
   var changed=Object.values(state.states).includes('changed');
   var urgent=state.review||!closed&&Object.keys(state.states).some(function(key){return ['missing','ready',''].includes(state.states[key])&&homeDueSoon(homeWeekSchedule(key).date);});
-  var title=closed||state.complete?'Correos al día':changed?'Correos con cambios':state.review?'Correos por revisar':'Correos pendientes de programar';
+  var unknown=state.unrecorded>0&&!count&&!state.review;
+  var title=state.complete?'Correos al día':changed?'Correos con cambios':state.review?'Correos por revisar':unknown?'Correos sin registro':'Correos pendientes de programar';
   var detail='';
   if(changed)detail='<em>* Hay cambios en los datos de una semana ya programada.</em>';
   else if(state.review)detail='<em>* Hay un envío duplicado o un resultado sin confirmar.</em>';
-  else if(!state.complete)detail='<details class="home-pending-note"><summary><em>* '+count+(count===1?' semana pendiente':' semanas pendientes')+' por programar</em></summary><p><em>Se incluyen las 2 que hay que programar del mes siguiente.</em></p></details>';
-  var copy='<div class="home-panel-status"><span class="home-submission-icon" aria-hidden="true">'+(state.complete||closed?'✓':'!')+'</span><div class="home-submission-copy home-panel-copy"><strong>'+title+'</strong>'+(detail?'<div class="home-submission-detail">'+detail+'</div>':'')+'</div></div>';
-  var showSummary=closed||state.complete;
-  var action=closed||state.complete?'':homePanelAction(changed?'edit-mail':'schedule',state.review?(changed?'Modificar':'Revisar'):'Programar',state.review?(changed?'envíos':'incidencias'):'pendientes','data-hours-review');
+  else if(!state.complete&&!unknown)detail='<details class="home-pending-note"><summary><em>* '+count+(count===1?' semana pendiente':' semanas pendientes')+' por programar</em></summary><p><em>Se incluyen las 2 que hay que programar del mes siguiente.</em></p></details>';
+  var copy='<div class="home-panel-status"><span class="home-submission-icon" aria-hidden="true">'+(state.complete?'✓':unknown?'—':'!')+'</span><div class="home-submission-copy home-panel-copy"><strong>'+title+'</strong>'+(detail?'<div class="home-submission-detail">'+detail+'</div>':'')+'</div></div>';
+  var showSummary=unknown||closed||state.complete;
+  var action=unknown||closed||state.complete?'':homePanelAction(changed?'edit-mail':'schedule',state.review?(changed?'Modificar':'Revisar'):'Programar',state.review?(changed?'envíos':'incidencias'):'pendientes','data-hours-review');
   var body='<div class="home-submission-body'+(showSummary?'':' summaryless home-panel-row')+'">'+copy+(showSummary?'<div class="month-summary home-summary-compact">'+renderHomeMonthSummary(homeMonthHours(year,month))+'</div>':action)+'</div>';
-  return '<section class="home-submission home-panel '+(urgent?'urgent ':'')+(state.complete||closed?'complete':'pending')+'" aria-label="Correos y horas del mes">'+body+renderHoursAccess(state)+'</section>';
+  return '<section class="home-submission home-panel '+(urgent?'urgent ':'')+(state.complete?'complete':unknown?'unknown':'pending')+'" aria-label="Correos y horas del mes">'+body+renderHoursAccess(state)+'</section>';
 }
 
 // ── Comprueba si hay semanas enviadas en el mes actual ────────
@@ -538,7 +539,7 @@ function buildHomeCalendar(c){
   c.innerHTML=renderHomeSubmissionStatus(CY,CM,submission)+(typeof renderHomeInvoiceStatus==='function'?renderHomeInvoiceStatus(CY,CM):'');
 
   wks.forEach(function(wk){
-    var mon=wk[0],sun=wk[6],wkey=dk(mon),remote=submission.remote,mailState=remote?submission.states[wkey]:'',covered=homeWeekCovered(wkey),unlocked=homeWeekUnlocked(wkey),sent=covered&&!unlocked,dias=0;
+    var mon=wk[0],sun=wk[6],wkey=dk(mon),remote=submission.remote,mailState=submission.states[wkey]||'',covered=homeWeekCovered(wkey),unlocked=homeWeekUnlocked(wkey),sent=covered&&!unlocked,dias=0;
     for(var i=0;i<5;i++){if(dayH(wk[i])>0)dias++;}
     var dStr=dias+(dias===1?' d\u00eda':' d\u00edas');
 
@@ -546,7 +547,7 @@ function buildHomeCalendar(c){
     card.dataset.week=wkey;card.dataset.mailState=mailState;
     card.className='week-card'+(sent?' sent':'');
     var reviewLabel=mailState==='sent'?'Ver estado':mailState==='scheduled'?'Ver programación':mailState==='changed'?'Revisar cambios':'Programar semana';
-    var badge=remote&&mailState==='closed'?'<span class="sent-badge">✓ Enviada</span>':remote?'<button type="button" class="sent-badge hours-week-badge '+(covered?'covered':mailState?'attention':'unknown')+'" data-hours-week="'+wkey+'" aria-label="'+reviewLabel+'">'+(mailState==='missing'||mailState==='ready'?reviewLabel:hoursWeekBadge(mailState))+'</button>':sent?'<span class="sent-badge">\u2713 Enviada</span>':'';
+    var badge=mailState==='unrecorded'?'<span class="sent-badge hours-unrecorded">Sin registro</span>':remote?'<button type="button" class="sent-badge hours-week-badge '+(covered?'covered':mailState?'attention':'unknown')+'" data-hours-week="'+wkey+'" aria-label="'+reviewLabel+'">'+(mailState==='missing'||mailState==='ready'?reviewLabel:hoursWeekBadge(mailState))+'</button>':sent?'<span class="sent-badge">\u2713 Enviada</span>':'';
     card.innerHTML='<div class="week-header"><div class="week-info"><h3>Semana '+wn(mon)+badge+'</h3><div class="week-range">'+fd(mon)+' \u2014 '+fd(sun)+'</div></div><div class="week-total">'+dStr+'</div></div>';
     if(remote&&hoursWeekDate(wkey,mailState)){var scheduleNote=document.createElement('div');scheduleNote.className='hours-week-readonly';scheduleNote.textContent='Envío '+hoursWeekDate(wkey,mailState);card.querySelector('.week-info').appendChild(scheduleNote);}
 

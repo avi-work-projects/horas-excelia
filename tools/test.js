@@ -358,6 +358,7 @@ const REGLAS = [
       'excelia-hours-cache-v1': false, // hechos remotos derivados, propios de este dispositivo
       'excelia-hours-jobs-v1': false, // referencias a trabajos privados recuperables
       'excelia-invoice-status-v1': false, // estados derivados, nunca facturas ni credenciales
+      'excelia-kairo-vpn-v1': false, // confirmación temporal de sesión, no estado real de red
       'excelia-calendar-exports-v1': 'calendarExports',
       'excelia-calendar-author-v1': 'calendarAuthor',
       'excelia-calendar-notes-v1': 'calendarNotes',

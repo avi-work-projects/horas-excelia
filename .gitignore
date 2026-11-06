@@ -17,3 +17,4 @@ __pycache__/
 *.pyc
 tools/kairo/state/
 tools/kairo/hours-config*.json
+invoice-mail-history.json

@@ -29,7 +29,7 @@ function hoursRemoteConfigured(){try{return !!hoursKairoUrl();}catch(e){return f
 function hoursCovered(key){var state=hoursWeekState(key);return state==='sent'||state==='scheduled';}
 function hoursHasConfirmedMail(key){var row=hoursCachedWeek(key);return !!row&&['sent','scheduled','changed'].includes(row.state);}
 function hoursWeekBadge(state){
-  var labels={sent:'✓ Enviada',scheduled:'◷ Programada',closed:'✓ Enviada',changed:'Revisar cambios',missing:'Pendiente',ready:'Pendiente',unverified:'Pendiente',draft:'Pendiente','blocked-previous':'Pendiente','past-due':'Pendiente','no-workdays':'Pendiente'};
+  var labels={sent:'✓ Enviada',scheduled:'◷ Programada',unrecorded:'Sin registro',changed:'Revisar cambios',missing:'Pendiente',ready:'Pendiente',unverified:'Pendiente',draft:'Pendiente','blocked-previous':'Pendiente','past-due':'Pendiente','no-workdays':'Pendiente'};
   return labels[state]||(state?'Revisar':'Sin programar');
 }
 function hoursWeekDate(key,state){
@@ -190,8 +190,10 @@ function paintHoursStatus(){
   if(typeof paintHomeInvoiceStatus==='function')paintHomeInvoiceStatus();
   var summary=container.querySelector('.home-submission');if(summary)summary.outerHTML=renderHomeSubmissionStatus(CY,CM);
   container.querySelectorAll('.week-card[data-week]').forEach(function(card){
-    var key=card.dataset.week,state=homePeriodMode(CY,CM)==='closed'?'closed':(hoursWeekState(key)||'missing'),covered=homeWeekCovered(key),open=homeWeekUnlocked(key),badge=card.querySelector('.hours-week-badge');
+    var key=card.dataset.week,state=homeMailState(key,CY,CM),covered=homeWeekCovered(key),open=homeWeekUnlocked(key),badge=card.querySelector('.hours-week-badge,.hours-unrecorded');
     card.dataset.mailState=state;card.classList.toggle('sent',covered&&!open);
+    if(badge&&state==='unrecorded'){var label=document.createElement('span');label.className='sent-badge hours-unrecorded';label.textContent='Sin registro';badge.replaceWith(label);badge=null;}
+    else if(badge&&badge.classList.contains('hours-unrecorded')){var button=document.createElement('button');button.type='button';button.dataset.hoursWeek=key;badge.replaceWith(button);badge=button;}
     if(badge){badge.textContent=state==='missing'||state==='ready'?'Programar semana':hoursWeekBadge(state);badge.className='sent-badge hours-week-badge '+(covered?'covered':state?'attention':'unknown');badge.setAttribute('aria-label',state==='sent'?'Ver estado':state==='scheduled'?'Ver programación':state==='changed'?'Revisar cambios':'Programar semana');}
     var note=card.querySelector('.hours-week-readonly'),date=hoursWeekDate(key,state);
     if(date&&!note){note=document.createElement('div');note.className='hours-week-readonly';card.querySelector('.week-info').appendChild(note);}

@@ -1730,3 +1730,26 @@ días y el envío manual no requieren ese acceso. El lector del registro publica
 por MacroDroid está preparado; su instalación y validación en el Vivo quedan
 pendientes porque el móvil no está disponible. No se confunde un registro ausente
 con una VPN apagada. Detalle del contrato en `docs/macrodroid.md`.
+
+
+## Confirmación VPN e histórico acreditado (v545)
+
+Sustituye el supuesto de v544 que presentaba todos los meses antiguos como enviados.
+En meses anteriores al intervalo de auditoría, una semana sin evidencia aparece
+como «Sin registro»; el panel conserva el resumen mensual. Una factura pasada sin
+hecho confirmado aparece como «Factura sin registro», sin alerta de programación.
+Los hechos actuales, programaciones, envío manual y edición de días se conservan.
+
+`invoice_mail_history.py` consolida evidencias verificadas en un JSON privado de
+Kairo, con permisos 0600 y escritura atómica. No toca SQLite, PDFs, planes, emisión
+ni correo. Por mes conserva primer envío, último reenvío y referencias privadas;
+rechaza conflictos de fecha para la misma evidencia. La respuesta autenticada
+existente `gestify-status` incluye solo fechas y contadores. Gestify guarda ese
+histórico aparte de sus 24 estados mensuales: cambiar de mes o recargar no vuelve
+a consultar Gmail ni Outlook. Sync Kairo actualiza la copia. Una programación
+vigente nunca se sustituye por el archivo histórico. Los datos reales no van a Git.
+
+El aviso común de VPN recuerda solo la confirmación positiva durante 20 minutos
+por origen, en sessionStorage; Cancelar no se recuerda. Sustituye el lector del
+registro local que quedó planteado en v544. El contrato y límites se documentan
+en `docs/macrodroid.md`. No se añaden sondeos ni dependencias del móvil.

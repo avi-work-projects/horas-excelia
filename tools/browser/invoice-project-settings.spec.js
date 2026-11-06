@@ -1,4 +1,5 @@
 const {test,expect}=require('@playwright/test');
+require('./vpn-confirmation-fixture.cjs').confirmedVpn(test,'https://synthetic-kairo.test.ts.net');
 const receiver=require('./kairo-receiver-fixture.cjs');
 const {verifyInvoiceExport}=require('../verify-invoice-export');
 const base='https://synthetic-kairo.test.ts.net/facturas/';
