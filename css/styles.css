@@ -4012,6 +4012,7 @@ html[data-theme=light] .hours-review-dialog>iframe{color-scheme:light}
 .kairo-vpn-prompt h2{margin:0;font-size:1.05rem}
 .kairo-vpn-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}
 .kairo-vpn-actions button{border-color:var(--home-tone);background:var(--surface);color:var(--text)}
+.kairo-vpn-actions{display:grid;grid-template-columns:1fr 1fr}.kairo-vpn-actions [data-cancel]{grid-column:1/-1}.hours-unrecorded{color:var(--text-muted);font-weight:400}
 
 /* Fuente: css/source/energy-refinements.css */
 /* Facturas: mismos componentes que los contratos, cifras sin desbordar. */

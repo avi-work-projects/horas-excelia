@@ -1,4 +1,5 @@
 const {test,expect}=require('@playwright/test');
+require('./vpn-confirmation-fixture.cjs').confirmedVpn(test,'https://synthetic-status.test.ts.net');
 async function syncFromHome(page){
   await page.getByRole('button',{name:'Sync Kairo',exact:true}).click();
   const sync=page.locator('[data-hours-check]');await sync.click();await expect(sync).toBeEnabled();
@@ -62,7 +63,7 @@ test('Conectar reutiliza la configuración privada; meses anteriores no consulta
   const api=await setup(page,context,false);await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura sin enviar');expect(api.calls).toHaveLength(0);
   await page.locator('#invoiceHomeBtn').click();await page.locator('#invoiceKairoConfig').click();await expect(page.locator('#invoiceConnection')).toHaveAttribute('open','');await expect(page.locator('[data-invoice-field=kairoUrl]')).toBeEditable();await page.locator('#invoiceBack').click();
   await page.getByRole('button',{name:'Sync Kairo',exact:true}).click();await expect(page.locator('#invoiceConnection')).toHaveAttribute('open','');await page.locator('#invoiceBack').click();
-  await page.evaluate(()=>{CM=8;render();});await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura enviada');await expect(page.getByRole('button',{name:'Ver cálculo histórico'})).toHaveCount(0);expect(api.calls).toHaveLength(0);
+  await page.evaluate(()=>{CM=8;render();});await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura sin registro');await expect(page.getByRole('button',{name:'Ver cálculo histórico'})).toHaveCount(0);expect(api.calls).toHaveLength(0);
 });
 
 test('Una respuesta tardía del mes anterior no sustituye el estado visible',async({page,context})=>{
@@ -107,8 +108,9 @@ test('Ver programación explica una conexión fallida sin perder la fecha confir
   await expect(page.locator('#homeInvoiceStatus').getByRole('button',{name:'Ver envíos'})).toHaveCount(0);
   await expect(link).toHaveAccessibleName('Ver envíos');
   await context.route(new URL('/horas/reachable',base).href,r=>r.abort());
+  await page.evaluate(()=>forgetKairoVpn());
   await link.click();
-  const prompt=page.getByRole('dialog',{name:'Comprobar conexión',exact:true});await expect(prompt).toContainText('VPN');await prompt.getByRole('button',{name:'Cancelar',exact:true}).click();
+  const prompt=page.getByRole('dialog',{name:'VPN de Kairo',exact:true});await expect(prompt).toContainText('VPN');await prompt.getByRole('button',{name:'Cancelar',exact:true}).click();
   await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura programada');
 });
 

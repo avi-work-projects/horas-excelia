@@ -6,6 +6,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from pathlib import Path
 from urllib.parse import urlsplit, parse_qs
+from invoice_mail_history import public_history
 
 
 def month_status(period, items):
@@ -57,6 +58,12 @@ def read_month(root, period):
                     break
             except (ValueError, TypeError, KeyError):
                 continue
+    history = public_history(root)
+    if history:
+        recorded = history['months'].get(period)
+        if recorded and result['state'] == 'missing':
+            result.update(state='sent', sent=True, sentDate=recorded['sentDate'])
+        result['history'] = history
     return result
 
 

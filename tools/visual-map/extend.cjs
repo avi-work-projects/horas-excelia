@@ -27,6 +27,7 @@ module.exports=function extend({scenes,edges}){
   add('invoice-config-edit','Editar datos de facturación','Inicio','invoice-config','#invoiceSettingsEdit','#invoiceSettingsSave');
   add('home-september','Inicio · septiembre','Inicio','home','#nextBtn','#hoursCalendarBtn');
   add('home-october','Inicio · octubre','Inicio','home-september','#nextBtn','#hoursCalendarBtn');
+  add('home-archive','Inicio · histórico sin registro','Inicio','home',['#prevBtn','#prevBtn'],'#hoursCalendarBtn',{label:'Dos meses atrás',sources:['js/core.js','js/home-weeks.js','js/invoices-home.js','js/invoices-history.js'],note:'Los estados antiguos sin evidencia no se presentan como enviados. El envío manual y la edición de días siguen disponibles.'});
   add('invoice-current','Preparar factura del mes','Inicio','home-october','#invoiceHomeBtn','#invoiceCalendar',{sources:['js/invoices-ui.js','js/invoices.js','js/invoices-calendar.js'],region:'.invoice-body'});
   add('home-invoice-connection','Inicio · conectar estado de factura','Inicio','invoice-current','#invoiceKairoConfig','#invoiceSettingsSave',{sources:['js/invoices-home.js','js/invoices-ui.js','js/invoices.js'],region:'.invoice-body',note:'Consulta sin configurar: el botón abre la conexión privada existente.'});
   add('invoice-document','Adjuntar factura definitiva','Inicio','invoice-current','#invoiceDocument summary','#invoiceFinalFile',{scroll:true});

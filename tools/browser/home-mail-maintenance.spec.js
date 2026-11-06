@@ -1,4 +1,5 @@
 const {test,expect}=require('@playwright/test');
+require('./vpn-confirmation-fixture.cjs').confirmedVpn(test,'https://home-maintenance.test.ts.net');
 const origin='https://home-maintenance.test.ts.net/';
 async function setup(page,context,{queued=false}={}){
   const calls={hours:0,invoices:[],jobs:0},jobId='10000000-0000-4000-8000-000000000001';let phase='running',offline=false,bundle;
@@ -82,7 +83,7 @@ test('una auditoría de tres meses; navegar, editar, foco y recarga reutilizan l
   await expect(page.locator('.week-card').nth(1).locator('.hours-week-badge')).toContainText('Revisar cambios');expect(api.calls.hours).toBe(1);
   await page.reload();await expect(page.locator('.home-submission.complete')).toContainText('Correos al día');expect(api.calls.hours).toBe(1);expect(api.calls.invoices).toHaveLength(3);
   await expect(page.locator('.hours-verified-note')).toHaveCount(0);
-  await page.evaluate(()=>{CY=2025;CM=0;render();});await expect(page.locator('.home-submission')).toContainText('Correos al día');expect(api.calls.hours).toBe(1);expect(api.calls.invoices).toHaveLength(3);
+  await page.evaluate(()=>{CY=2025;CM=0;render();});await expect(page.locator('.home-submission')).toContainText('Correos sin registro');expect(api.calls.hours).toBe(1);expect(api.calls.invoices).toHaveLength(3);
 });
 test('desmarcar desbloquea edición y conserva la programación; V/F/A sombrean toda la celda',async({page,context})=>{
   const api=await setup(page,context),card=page.locator('.week-card').first();

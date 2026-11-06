@@ -8,7 +8,11 @@ function homeDueSoon(date){
   var today=hoursCivilTime(new Date().toISOString()).slice(0,10);
   return (Date.parse(date)-Date.parse(today))/86400000<7;
 }
-function homeWeekCovered(key){return hoursRemoteConfigured()?hoursHasConfirmedMail(key)||homePeriodMode(CY,CM)==='closed':!!SW[key];}
+function homeMailState(key,year,month){
+  var state=hoursRemoteConfigured()?(hoursWeekState(key)||'missing'):SW[key]?'sent':'missing';
+  return homePeriodMode(year,month)==='closed'&&['missing','ready','unverified','draft','past-due','no-workdays','blocked-previous'].includes(state)?'unrecorded':state;
+}
+function homeWeekCovered(key){return hoursRemoteConfigured()?hoursHasConfirmedMail(key):!!SW[key];}
 function homeWeekUnlocked(key){return Object.prototype.hasOwnProperty.call(HOURS_WEEK_UNLOCKED,key)?HOURS_WEEK_UNLOCKED[key]:!homeWeekCovered(key);}
 function homeSubmissionWeeks(year,month){
   var current=weeks(year,month),last=current[current.length-1][0];
@@ -29,9 +33,9 @@ function homePreviousMailMonth(year,month){
 function homeSubmissionWarnings(year,month){
   var remote=typeof hoursRemoteConfigured==='function'&&hoursRemoteConfigured();
   var rows=homeSubmissionWeeks(year,month).map(function(week){
-    return {key:week.key,mon:week.mon,state:remote?(hoursWeekState(week.key)||'missing'):SW[week.key]?'sent':'missing'};
+    return {key:week.key,mon:week.mon,state:homeMailState(week.key,year,month)};
   });
-  return rows.filter(function(row){return row.state!=='sent'&&row.state!=='scheduled';});
+  return rows.filter(function(row){return !['sent','scheduled','unrecorded'].includes(row.state);});
 }
 /* Fecha civil de Madrid: no depende del huso del ordenador ni añade 24 h al
    cruzar el cambio de hora. La conversión a instante la hará Kairo con ZoneInfo. */

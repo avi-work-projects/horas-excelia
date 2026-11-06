@@ -15,7 +15,8 @@ function homeInvoiceCacheRead(){
   try{
     var data=JSON.parse(localStorage.getItem(INVOICE_HOME_CACHE_KEY)||'null');if(!data||data.schema!==1||typeof data.url!=='string'||data.url.length>1000||!data.periods)return empty;
     var out={schema:1,url:data.url,periods:{}};
-    Object.keys(data.periods).slice(-24).forEach(function(period){try{if(!/^\d{4}-\d{2}$/.test(period))return;var row=data.periods[period];out.periods[period]={attempted:row.attempted===true,dueChecked:row.dueChecked===true,checkedAt:Number.isFinite(row.checkedAt)?row.checkedAt:0,data:row.data?validateHomeInvoiceStatus(row.data,period):null};}catch(e){}});return out;
+    Object.keys(data.periods).slice(-24).forEach(function(period){try{if(!/^\d{4}-\d{2}$/.test(period))return;var row=data.periods[period];out.periods[period]={attempted:row.attempted===true,dueChecked:row.dueChecked===true,checkedAt:Number.isFinite(row.checkedAt)?row.checkedAt:0,data:row.data?validateHomeInvoiceStatus(row.data,period):null};}catch(e){}});
+    try{if(data.history)out.history=validateInvoiceMailHistory(data.history);}catch(e){}return out;
   }catch(e){return empty;}
 }
 var INVOICE_HOME_CACHE=homeInvoiceCacheRead();
@@ -40,19 +41,22 @@ function homeInvoiceModel(year,month){
   model.mailChanged=state==='scheduled'&&homeSubmissionWeeks(year,month).some(function(w){return !w.extra&&hoursWeekState(w.key)==='changed';});
   model.attention=state==='scheduled'&&data.scheduledDate!==homeInvoiceScheduleDate(year,month);
   model.editable=state==='scheduled'&&(model.changed||model.mailChanged||model.attention);
-  // Older months are treated as completed, as agreed, without inventing an
-  // Outlook confirmation or a send date in the persisted invoice history.
-  if(period<INVOICE_FIRST_PERIOD||!data&&homePeriodMode(year,month)==='closed'){
-    model.title='Factura enviada';model.unsent=false;model.tone='complete';model.date=state==='sent'?data.sentDate||'':'';
+  var historical=homeInvoiceHistoricalFact(period,url);
+  if(historical&&state==='missing'){
+    model.title='Factura enviada';model.unsent=false;model.tone='complete';model.date=historical.sentDate;
+    model.requirements=false;model.changed=false;model.mailChanged=false;model.attention=false;model.editable=false;
+  }else if(!current&&state==='missing'){
+    model.title='Factura sin registro';model.unsent=false;model.tone='unknown';model.date='';
     model.requirements=false;model.changed=false;model.mailChanged=false;model.attention=false;model.editable=false;
   }
+  if(historical&&state==='sent'&&!model.date)model.date=historical.sentDate;
   return model;
 }
 function homeInvoiceRequirement(number,text,done){
   return '<div class="home-invoice-rule"><em><strong>('+number+') <u>'+text+'</u></strong></em> <span class="home-rule-result '+(done?'complete':'')+'" role="img" aria-label="'+(done?'Cumplido':'Pendiente')+'">'+(done?'✓':'✕')+'</span></div>';
 }
 function renderHomeInvoiceStatus(year,month){
-  var m=homeInvoiceModel(year,month),urgent=m.unsent&&homeDueSoon(m.date),icon=m.tone==='complete'?'✓':m.tone==='scheduled'?homeStatusIcon('clock'):'!';
+  var m=homeInvoiceModel(year,month),urgent=m.unsent&&homeDueSoon(m.date),icon=m.tone==='complete'?'✓':m.tone==='scheduled'?homeStatusIcon('clock'):m.tone==='unknown'?'—':'!';
   var detail='',action='';
   if(m.requirements)detail='<div class="home-invoice-rules"><em>* Se requiere tener los correos del mes programados</em>'+homeInvoiceRequirement(1,'Los envíos de horas de este mes.',m.hoursReady)+homeInvoiceRequirement(2,'El envío de la factura del mes anterior.',m.previousReady)+'</div>';
   if(m.unsent){
@@ -86,8 +90,9 @@ async function fetchHomeInvoiceStatus(period,url,force){
   if(period===mkey(CY,CM))INVOICE_HOME_STATUS={period:period,url:url,phase:'loading',checkedAt:previous.checkedAt};
   try{
     var response=await fetch(invoiceKairoUrl(url)+'gestify-status?period='+period,{mode:'cors',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',signal:controller.signal});
-    if(!response.ok)throw new Error('Kairo no disponible');var data=validateHomeInvoiceStatus(await response.json(),period);
+    if(!response.ok)throw new Error('Kairo no disponible');var payload=await response.json(),data=validateHomeInvoiceStatus(payload,period);
     if(INVOICE_HOME_CACHE.url!==url)return;
+    if(payload.history){var history=validateInvoiceMailHistory(payload.history);if(!INVOICE_HOME_CACHE.history||Date.parse(history.checkedAt)>=Date.parse(INVOICE_HOME_CACHE.history.checkedAt))INVOICE_HOME_CACHE.history=history;}
     INVOICE_HOME_CACHE.periods[period]={data:data,checkedAt:Date.now(),attempted:true,dueChecked:!!due};homeInvoiceCacheSave();if(period===mkey(CY,CM))INVOICE_HOME_STATUS={period:period,url:url,phase:'ready',data:data,checkedAt:Date.now()};ok=true;
   }catch(e){if(period===mkey(CY,CM))INVOICE_HOME_STATUS={period:period,url:url,phase:'error',checkedAt:previous.checkedAt,reason:e.name==='AbortError'||e instanceof TypeError?hoursCheckMessage('network'):'Kairo no ha podido confirmar el estado de la factura.'};}
   finally{clearTimeout(timeout);delete INVOICE_HOME_REQUESTS[period+'|'+url];finish(ok);paintHomeInvoiceStatus();}

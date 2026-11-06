@@ -1,4 +1,5 @@
 const {test,expect}=require('@playwright/test');
+require('./vpn-confirmation-fixture.cjs').confirmedVpn(test,'https://home-r8.test.ts.net');
 const receiver=require('./kairo-receiver-fixture.cjs');
 const origin='https://home-r8.test.ts.net/';
 
@@ -103,18 +104,18 @@ test('Sync con error conserva la fecha guardada y solo muestra error dentro del 
 test('el histórico conserva los rótulos habituales y no inventa fechas ni confirmaciones',async({page,context},info)=>{
   const api=await setup(page,context);const saved=await page.evaluate(()=>JSON.stringify([HOURS_CACHE,INVOICE_HOME_CACHE,invoiceData(),ST,SW]));
   await page.evaluate(()=>{CY=2026;CM=8;render();});
-  await expect(page.locator('.home-submission')).toContainText('Correos al día');
-  await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura enviada');
-  await expect(page.locator('#homeInvoiceStatus')).toHaveClass(/complete/);
+  await expect(page.locator('.home-submission')).toContainText('Correos sin registro');
+  await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura sin registro');
+  await expect(page.locator('#homeInvoiceStatus')).toHaveClass(/unknown/);
   await expect(page.getByRole('button',{name:'Ver cálculo histórico'})).toHaveCount(0);
   await expect(page.locator('#homeInvoiceStatus time')).toHaveCount(0);
   await expect(page.locator('#weeksContainer')).not.toContainText('Mes cerrado');
-  await expect(page.locator('.week-card').first()).toContainText('Enviada');
+  await expect(page.locator('.week-card').first()).toContainText('Sin registro');
   for(const status of await page.locator('.home-panel-status').all()){
     expect(await status.evaluate(e=>{const icon=e.firstElementChild.getBoundingClientRect(),title=e.querySelector('strong').getBoundingClientRect();return title.left-icon.right;})).toBeGreaterThanOrEqual(10);
   }
   expect(await page.evaluate(()=>JSON.stringify([HOURS_CACHE,INVOICE_HOME_CACHE,invoiceData(),ST,SW]))).toBe(saved);expect(api.posts).toEqual([]);
-  await page.screenshot({path:info.outputPath('home-historico-v544.png'),animations:'disabled'});
+  await page.screenshot({path:info.outputPath('home-sin-registro-v545.png'),animations:'disabled'});
 });
 
 test('programar el mes exige su predecesor y no afecta al envío manual ni a editar días',async({page,context})=>{

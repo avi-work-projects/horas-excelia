@@ -1,4 +1,5 @@
 const {test,expect}=require('@playwright/test');
+require('./vpn-confirmation-fixture.cjs').confirmedVpn(test,'https://auth-review.test.ts.net');
 const base='https://auth-review.test.ts.net/';
 test('MFA se avisa sin consultar el buzón y se retira tras recuperar acceso',async({page,context},info)=>{
   await page.setViewportSize({width:393,height:840});

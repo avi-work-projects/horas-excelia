@@ -1,4 +1,5 @@
 const {test,expect}=require('@playwright/test');
+require('./vpn-confirmation-fixture.cjs').confirmedVpn(test,'https://synthetic-hours.test.ts.net');
 async function syncFromHome(page){
   await page.getByRole('button',{name:'Sync Kairo',exact:true}).click();
   const sync=page.locator('[data-hours-check]');await sync.click();await expect(sync).toBeEnabled();
@@ -139,9 +140,10 @@ test('calendario compartido de Kairo: jornadas, semanas y navegación por gesto'
   expect(calls.filter(c=>['/commit','/preview','/calendar-refresh'].some(s=>c.path.endsWith(s)))).toHaveLength(0);
   await viewer.getByRole('link',{name:'Volver a Gestify'}).click();
   await context.route(base+'horas/reachable',r=>r.abort());
+  await page.evaluate(()=>forgetKairoVpn());
   await page.locator('#hoursCalendarBtn').click();
-  await expect(page.getByRole('dialog',{name:'Comprobar conexión',exact:true})).toContainText('VPN');
-  await page.getByRole('dialog',{name:'Comprobar conexión',exact:true}).getByRole('button',{name:'Cancelar',exact:true}).click();
+  await expect(page.getByRole('dialog',{name:'VPN de Kairo',exact:true})).toContainText('VPN');
+  await page.getByRole('dialog',{name:'VPN de Kairo',exact:true}).getByRole('button',{name:'Cancelar',exact:true}).click();
 });
 
 test('Android instalado conserva la revisión en Gestify y vuelve a Home',async({page,context},info)=>{

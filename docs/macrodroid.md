@@ -160,38 +160,26 @@ En Ajustes → Conexión DNS / VPN, Gestify reutiliza el enlace privado de Macro
 Si la agenda no es accesible, «Activar VPN» solicita el modo VPN. La agenda se abre cuando responde la comprobación privada de Kairo. El selector vuelve a leer ese acceso al recuperar el foco y mientras está abierto y visible. DNS y OFF se distinguen en el widget. Los cambios desde la web necesitan Internet para entregar la orden a MacroDroid.
 
 
-## Registro de conexión para Gestify (v544, pendiente de instalar en el Vivo)
+## Confirmación temporal de VPN en Gestify (v545)
 
-MacroDroid será el escritor del estado. Tras aplicar **y verificar** VPN Kairo,
-DNS AdGuard u OFF, la macro de conexión publica un registro local. El widget y
-ese registro deben alimentarse del mismo resultado; nunca de la orden solicitada
-ni de la respuesta HTTP del webhook. Los cambios externos de VPN/DNS y el inicio
-del dispositivo deben invalidar el estado anterior y volver a verificarlo.
+Se descarta el puente HTTP y el registro de conexión propuestos en v544; no hay
+que instalar un servidor ni publicar estado desde MacroDroid.
 
-Contrato preparado en Gestify para un puente local de solo lectura:
-`http://127.0.0.1:8080/gestify-connection`.
+Antes de una acción privada de Kairo, Gestify muestra «Para realizar esta
+operación es necesario que la VPN esté activada». Se puede elegir **Activar VPN**,
+**Ya está activada** o **Cancelar**. Activar utiliza una sola orden
+`conexion_kairo` del enlace privado existente; no solicita leer variables.
+Si la entrega no se confirma, la operación no continúa y se ofrece usar el widget.
+Una respuesta del webhook acredita la entrega de la solicitud, no la conexión VPN.
 
-```json
-{"schema":1,"service":"gestify-mobile-connection","mode":"vpn","confirmed":true,"updatedAt":1793962800000}
-```
+Solo la confirmación positiva se recuerda durante **20 minutos**, por origen de
+Kairo y dentro de la sesión del navegador. Cancelar o cerrar el aviso no se
+recuerda. Cambiar a DNS/OFF desde Gestify invalida la confirmación. Un cambio
+externo desde el widget no se detecta: durante esos 20 minutos la confirmación
+sigue siendo una preferencia del usuario; los errores de la operación privada
+se comunican sin inventar un estado de la VPN. No se sondea el teléfono ni Kairo
+para decidir si mostrar el aviso. La caché temporal no forma parte del backup.
 
-`mode` admite `vpn`, `dns` y `off`; `updatedAt` es el instante real en milisegundos.
-Durante una transición, después de reiniciar y ante un resultado desconocido,
-publicar `confirmed:false`. El lector no ordena ejecutar una comprobación, no
-cambia la red y no guarda otra copia permanente. Lee el registro publicado al
-pulsar una acción privada. No hay sondeo en Home.
-
-El puente debe estar limitado a loopback, sin modificación de variables desde
-parámetros y con CORS para el origen HTTPS de Gestify, `Content-Type:
-application/json` y `Cache-Control: no-store`. MacroDroid dispone de servidor
-HTTP y cabeceras de respuesta, pero falta comprobar en el Vivo la configuración,
-el acceso desde la PWA y los permisos de red local. No se presenta como una
-integración ya instalada. Referencia: [servidor HTTP de MacroDroid](https://macrodroidforum.com/wiki/index.php?title=Trigger%3A_HTTP_Server_Request).
-
-Si el registro confirma DNS/OFF, Gestify ofrece Aceptar/Cancelar antes de la
-operación; Aceptar usa `conexion_kairo` y solo continúa tras recuperar el acceso.
-Si confirma VPN pero falla Kairo, se informa de que Kairo no responde, sin
-atribuir el fallo a una VPN apagada. Si el puente no está disponible, el estado
-es desconocido: se prueba el acceso privado y, si falla, se ofrece comprobar la
-conexión sin afirmar que la VPN esté desactivada. El selector existente sigue
-siendo la alternativa hasta terminar la validación física.
+La preparación local, el envío manual a Outlook y la edición de días no necesitan
+este aviso. La validación del webhook real desde Vivo Sesiones queda pendiente;
+las pruebas de navegador utilizan un destino ficticio.
