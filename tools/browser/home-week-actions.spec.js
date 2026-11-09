@@ -22,8 +22,13 @@ test('una acción centrada por semana; despliegue y cancelar conservan los datos
     const button=actions.getByRole('button',{name:'Acciones',exact:true});
     expect(await button.evaluate(e=>{const p=e.parentElement.getBoundingClientRect(),b=e.getBoundingClientRect();return Math.abs(p.x+p.width/2-b.x-b.width/2);})).toBeLessThan(2);
     if(theme==='light'&&width===400)await card.screenshot({path:info.outputPath('semana-acciones.png')});
-    await button.click();await expect(actions.getByRole('button')).toHaveText(['Outlook','Editar horas','×Cancelar']);
+    await button.click();await expect(actions.getByRole('button')).toHaveText(['Enviar a Outlook','Editar horas','Cancelar']);
     expect(await actions.evaluate(e=>e.scrollWidth<=e.clientWidth)).toBe(true);
+    const geometry=await actions.evaluate(e=>{const boxes=[...e.children].map(b=>b.getBoundingClientRect()),p=e.getBoundingClientRect(),s=getComputedStyle(e);return {widths:boxes.map(b=>b.width),heights:boxes.map(b=>b.height),left:boxes[0].left-p.left-parseFloat(s.paddingLeft),right:p.right-boxes[2].right-parseFloat(s.paddingRight)};});
+    expect(Math.max(...geometry.widths)-Math.min(...geometry.widths)).toBeLessThan(1);
+    expect(new Set(geometry.heights).size).toBe(1);expect(Math.abs(geometry.left)).toBeLessThan(1);expect(Math.abs(geometry.right)).toBeLessThan(1);
+    const colors=await actions.locator('.home-week-edit,.home-week-cancel').evaluateAll(nodes=>nodes.map(e=>({text:getComputedStyle(e).color,border:getComputedStyle(e).borderTopColor,icon:getComputedStyle(e.querySelector('svg')).color})));
+    expect(colors[0].text).not.toBe(colors[1].text);for(const color of colors){expect(color.text).toBe(color.border);expect(color.text).toBe(color.icon);}
     if(theme==='light'&&width===400)await card.screenshot({path:info.outputPath('semana-desplegada.png')});
     await actions.getByRole('button',{name:'Cancelar',exact:true}).click();await expect(button).toBeFocused();
   }
@@ -43,7 +48,7 @@ for(const state of ['scheduled','sent'])test('Editar horas protege la semana '+s
   expect(await page.evaluate(()=>JSON.stringify(HOURS_CACHE.weeks))).toBe(stored);
   expect(await page.evaluate(()=>hoursWeekState('2027-02-01'))).toBe(state==='sent'?'sent':'changed');
   await card.getByRole('button',{name:'Acciones',exact:true}).click();
-  page.once('dialog',d=>d.dismiss());await card.getByRole('button',{name:'Outlook',exact:true}).click();
+  page.once('dialog',d=>d.dismiss());await card.getByRole('button',{name:'Enviar a Outlook',exact:true}).click();
   expect(await page.evaluate(()=>JSON.stringify(HOURS_CACHE.weeks))).toBe(stored);
 });
 test('primer cambio pendiente: cancelar no guarda; aceptar dura 20 minutos y no se extiende al usarlo',async({page},info)=>{

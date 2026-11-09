@@ -185,6 +185,12 @@ este aviso. Las pruebas de navegador utilizan un destino ficticio.
 
 ## Activación y carga de agenda (v548)
 
+Presentación v550: Ajustes muestra únicamente título y botones de los tres modos,
+con la marca y el formato de Kairo Casa. El selector vinculado no muestra los
+textos de estado de Kairo o del widget ni sondea Kairo desde Ajustes.
+Solo comprueba acceso si tiene que reanudar una operación; las órdenes siguen
+siendo explícitas y los errores se comunican con un aviso puntual.
+
 El 9/11/2026 se reproduce desde Vivo Sesiones: «Activar VPN» lleva a Tailscale y
 el teléfono pasa a Connected, pero la agenda intenta navegar antes de disponer
 de acceso y muestra un iframe fallido. Reabrir la agenda con la VPN conectada

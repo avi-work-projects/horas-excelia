@@ -28,23 +28,42 @@ async function fromMenu(page){
   await page.locator('#menuBtn').click();await page.locator('#mobileConnectionBtn').click();
   return page.getByRole('dialog',{name:'Conexión del móvil'});
 }
-test('Ajustes usa los tres destinos del widget, limita toques repetidos y distingue entrega de acceso privado',async({page},info)=>{
+test('el selector conserva el formato de Kairo en los tres temas y la vuelta automática espera acceso real',async({page},info)=>{
+  const state=await setup(page);const dialog=await fromMenu(page);
+  for(const theme of ['light','dark','grey'])for(const width of [320,400,440]){
+    await page.setViewportSize({width,height:880});await page.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);
+    await expect(dialog.locator('p')).toHaveCount(0);await expect(dialog.locator('.mobile-modes button')).toHaveCount(3);
+    expect(await dialog.evaluate(e=>e.scrollWidth<=e.clientWidth)).toBe(true);
+    const widths=await dialog.locator('.mobile-modes button').evaluateAll(buttons=>buttons.map(b=>b.getBoundingClientRect().width));expect(Math.max(...widths)-Math.min(...widths)).toBeLessThan(1);
+    await expect(dialog.locator('[data-mobile-mode=off] .prohibition-icon')).toBeVisible();
+    await expect(dialog.locator('[data-mobile-mode=vpn] .mobile-kairo-wordmark')).toBeVisible();
+    if(theme==='light'&&width===400)await dialog.screenshot({path:info.outputPath('conexion-tres-botones.png')});
+  }
+  expect((await page.request.get('/kairo-wordmark.png')).status()).toBe(200);expect(state.checks).toBe(0);
+  await dialog.getByRole('button',{name:'Volver',exact:true}).click();
+  await page.evaluate(()=>{window.connectionResumed=0;openMobileConnection(function(){window.connectionResumed++;},'vpn');});
+  await expect(page.locator('#toast')).toContainText('solicitud enviada');await page.clock.fastForward(1500);
+  await expect(dialog).toBeVisible();expect(await page.evaluate(()=>window.connectionResumed)).toBe(0);
+  state.reachable=true;await page.clock.fastForward(3000);await expect(dialog).toHaveCount(0);
+  expect(await page.evaluate(()=>window.connectionResumed)).toBe(1);expect(await page.evaluate(()=>kairoVpnConfirmed())).toBe(true);
+});
+test('Ajustes muestra solo los tres modos, limita toques repetidos y no sondea Kairo',async({page},info)=>{
   const state=await setup(page),dialog=await fromMenu(page);
-  await expect(dialog.locator('[data-route]')).toHaveText('Acceso a Kairo sin confirmar');
+  await expect(dialog.locator('p')).toHaveCount(0);expect(state.checks).toBe(0);
   await dialog.getByRole('button',{name:'VPN Kairo'}).dblclick({delay:15,force:true});
-  await expect(dialog.locator('[data-mode-result]')).toContainText('Solicitud enviada');
+  await expect(page.locator('#toast')).toContainText('solicitud enviada');
   await expect(dialog.getByRole('button',{name:'DNS AdGuard'})).toBeDisabled();
   expect(state.commands).toEqual([trigger+'/conexion_kairo']);
   state.reachable=true;await page.clock.fastForward(9000);await page.evaluate(()=>window.dispatchEvent(new Event('focus')));
-  await expect(dialog.locator('[data-route]')).toHaveText('Kairo accesible desde este dispositivo');
+  expect(state.checks).toBe(0);await expect(dialog).not.toContainText('Kairo accesible');
   await page.evaluate(()=>window.getSelection().removeAllRanges());
   await dialog.screenshot({path:info.outputPath('conexion.png')});
   state.reachable=false;await page.evaluate(()=>window.dispatchEvent(new Event('focus')));
-  await expect(dialog.locator('[data-route]')).toHaveText('Acceso a Kairo sin confirmar');
-  await dialog.getByRole('button',{name:'DNS AdGuard'}).click();await expect(dialog.locator('[data-mode-result]')).toContainText('Solicitud enviada');
+  await expect(dialog.locator('p')).toHaveCount(0);expect(state.checks).toBe(0);
+  await dialog.getByRole('button',{name:'DNS AdGuard'}).click();await expect(page.locator('#toast')).toContainText('solicitud enviada');
   await page.clock.fastForward(9000);
   state.reject=true;await dialog.getByRole('button',{name:'OFF',exact:true}).click();
-  await expect(dialog.locator('[data-mode-result]')).toContainText('Entrega sin confirmar');
+  await expect(page.locator('#toast')).toContainText('Entrega sin confirmar');
   expect(state.commands).toEqual(['conexion_kairo','conexion_adguard','conexion_normal'].map(id=>trigger+'/'+id));
   await dialog.getByRole('button',{name:'Volver'}).click();await expect(page.locator('#dataMenu')).toHaveClass(/open/);
 });
@@ -130,7 +149,7 @@ test('vinculación privada sin Kairo permite los modos y rechaza orígenes ajeno
   await input.fill(trigger+'/conexion_normal');await dialog.getByRole('button',{name:/Guardar para/}).click();
   await expect(input).toBeHidden();await expect(dialog).not.toContainText('synthetic-test-device');
   expect(await page.evaluate(()=>localStorage.getItem('excelia-alarm-url'))).toBe(trigger);
-  await dialog.getByRole('button',{name:'DNS AdGuard'}).click();await expect(dialog.locator('[data-mode-result]')).toContainText('Solicitud enviada');
+  await dialog.getByRole('button',{name:'DNS AdGuard'}).click();await expect(page.locator('#toast')).toContainText('solicitud enviada');
   expect(state.commands).toEqual([trigger+'/conexion_adguard']);
 });
 

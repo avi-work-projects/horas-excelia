@@ -27,7 +27,7 @@ function renderHomeWeekActions(card,key){
   section.className='week-actions home-week-actions';section.replaceChildren();
   var covered=homeWeekCovered(key),expanded=covered&&HOME_WEEK_ACTIONS[key];
   var mail='<svg class="week-action-icon mail-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M3 4h18a1 1 0 0 1 1 1v.5L12 12 2 5.5V5a1 1 0 0 1 1-1Zm-1 4 9.45 6.14a1 1 0 0 0 1.1 0L22 8v11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1Z"/></svg>';
-  if(!covered||expanded)section.appendChild(homeWeekActionsButton(expanded?'Outlook':'Enviar a Outlook',mail,'send',function(){sendManualEmail(key);}));
+  if(!covered||expanded)section.appendChild(homeWeekActionsButton('Enviar a Outlook',mail,'send',function(){sendManualEmail(key);}));
   if(!covered)return;
   if(!expanded){
     var more=homeWeekActionsButton('Acciones','<svg class="week-action-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>','home-week-more',function(){HOME_WEEK_ACTIONS[key]=true;renderHomeWeekActions(card,key);card.querySelector('.week-actions button').focus();});
@@ -39,7 +39,7 @@ function renderHomeWeekActions(card,key){
     HOURS_WEEK_UNLOCKED[key]=true;HOME_WEEK_ACTIONS[key]=false;render();
     showToast('Selecciona un día de la semana para editarlo.','info');
   }));
-  section.appendChild(homeWeekActionsButton('Cancelar','<span aria-hidden="true">×</span>','home-week-cancel',function(){
+  section.appendChild(homeWeekActionsButton('Cancelar',prohibitionIconHtml(),'home-week-cancel',function(){
     HOME_WEEK_ACTIONS[key]=false;HOURS_WEEK_UNLOCKED[key]=false;delete HOME_WEEK_EDIT_STATE[key];render();
     var button=document.querySelector('.week-card[data-week="'+key+'"] .home-week-more');if(button)button.focus();
   }));

@@ -1,5 +1,21 @@
 # Arquitectura y desarrollo
 
+## Selector de conexión y fila de acciones (v550)
+
+El selector vinculado de Ajustes muestra el título y los tres modos con el formato
+de Kairo Casa: VPN verde claro con su marca original, DNS neutro y OFF con el
+símbolo de prohibido. No muestra párrafos permanentes ni consulta Kairo al
+abrirlo desde Ajustes. Las solicitudes y errores se comunican mediante toast.
+Se conservan la vinculación del dispositivo cuando falta y la comprobación
+de acceso si una operación necesita reanudarse tras activar la VPN.
+
+El pie semanal desplegado distribuye Enviar a Outlook, Editar horas y Cancelar
+en tres columnas iguales que ocupan el ancho disponible. Edición usa naranja;
+Cancelar, rojo y el mismo SVG de prohibido que OFF. La confirmación de edición
+y la protección contra duplicados no cambian. Validación en 320–440 px y los
+tres temas, con igualdad de dimensiones y sin desbordamiento. Se actualizan solo
+la referencia de Conexión DNS / VPN y el ejemplo del pie desplegado.
+
 ## Acciones semanales y horarios coordinados (v549)
 
 `home-week-actions.js` ensambla el pie semanal tanto al renderizar como al

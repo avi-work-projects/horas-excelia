@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v549 — Horas coordinadas y acciones de semana';
+var APP_VERSION = 'v550 — Conexión compacta y acciones equilibradas';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -480,6 +480,7 @@ function sendEmail(wkey){
   return openHoursReview(wkey);
 }
 function editPencilHtml(){return '<svg class="edit-pencil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 3 5 5L8 21H3v-5L16 3Zm-2 2 5 5"/></svg>';}
+function prohibitionIconHtml(){return '<svg class="prohibition-icon week-action-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="24" r="20"/><path d="m9.9 9.9 28.2 28.2"/></svg>';}
 function sendManualEmail(wkey){
   var state=hoursWeekState(wkey),previous=hoursWeekState(dk(ad(new Date(wkey+'T12:00:00'),-7)));
   if(previous&&!['sent','scheduled'].includes(previous)){showToast('La semana anterior requiere revisión. Compruébala antes de enviar esta.','error');return;}

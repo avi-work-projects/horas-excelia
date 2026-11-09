@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
   "title": "Gestify · mapa visual",
-  "generatedAt": "2026-11-09T19:23:25.060Z",
-  "referenceCommit": "9c1f95f2435b40a82250339d4d9adbe450069239",
+  "generatedAt": "2026-11-09T19:39:15.451Z",
+  "referenceCommit": "50cc996007da5f93ae715dddd271281a3d5bee6d",
   "date": "2026-08-21T10:00:00+02:00",
   "viewport": {
     "width": 400,
@@ -29,6 +29,7 @@
       ],
       "region": "body",
       "image": "captures/home.png",
+      "imageHash": "af391e50c58200a1f55c8ed0e470ae07621e78953a9ba4ee3ff5fdd10325f64d",
       "anchors": {
         "household": {
           "x": 16,
@@ -266,6 +267,19 @@
       ],
       "dependencyVersion": 2,
       "commit": "9c1f95f2435b40a82250339d4d9adbe450069239",
+      "review": "Sin revisar",
+      "reviewHistory": [
+        {
+          "imageHash": "3493bf6888e56c26aa0080cd30012227abc1b4f452587c63e94dd312106716b2",
+          "review": "Revisada visualmente",
+          "commit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
+          "reviewEvidence": {
+            "referenceCommit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
+            "reviewedAt": "2026-10-25",
+            "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
+          }
+        }
+      ],
       "verifiedEdges": [
         "household",
         "study",
@@ -280,21 +294,7 @@
         "home-september",
         "tasks"
       ],
-      "imageHash": "af391e50c58200a1f55c8ed0e470ae07621e78953a9ba4ee3ff5fdd10325f64d",
-      "review": "Sin revisar",
-      "reviewHistory": [
-        {
-          "imageHash": "3493bf6888e56c26aa0080cd30012227abc1b4f452587c63e94dd312106716b2",
-          "review": "Revisada visualmente",
-          "commit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
-          "reviewEvidence": {
-            "referenceCommit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
-            "reviewedAt": "2026-10-25",
-            "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
-          }
-        }
-      ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "household",
@@ -29272,7 +29272,12 @@
       "group": "Ajustes",
       "route": [
         "#menuBtn",
-        "#mobileConnectionBtn"
+        "#mobileConnectionBtn",
+        {
+          "fill": "#mobileConnectionDialog [data-link] input",
+          "value": "https://trigger.macrodroid.com/map-connection-fixture"
+        },
+        "#mobileConnectionDialog [data-save]"
       ],
       "ready": "#mobileConnectionDialog[open]",
       "sources": [
@@ -29280,15 +29285,14 @@
         "js/settings-menu.js"
       ],
       "region": "#mobileConnectionDialog",
-      "note": "VPN Kairo, DNS AdGuard y OFF llaman a la misma macro que el widget del móvil.",
+      "note": "Dispositivo ficticio vinculado; no se pulsa ningún modo ni se envían órdenes.",
       "image": "captures/mobile-connection.png",
-      "imageHash": "1712ae74faff830d5e3b3afaced7e964c6b9aeceb16078b5b8cb768e5c011210",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
         {
           "file": "index.html",
-          "hash": "6f0d14c928c5f0477223deb0fcdc54afd8824199022d8966c2e0ea40b49d4b41"
+          "hash": "63c2cb41d09407fe0449d180bf47374f8be7b99e5c5236d0771a5b646b4fd958"
         },
         {
           "file": "js/nav-icons.js",
@@ -29297,7 +29301,7 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "5193b7b2e687f4e4e8f692527e1ee74c3445d1a6d20da9a7eaaf8c8fb7494822"
+          "hash": "022ba6857ffc2c1386d8d548e4f1898ff87870b866a11de7776b2b30d84df770"
         },
         {
           "file": "js/data-integrity.js",
@@ -29309,7 +29313,7 @@
         },
         {
           "file": "tools/visual-map/fixture.cjs",
-          "hash": "ed5dd8ba54032603d829a5c3ec2d3b6dd02ee9c2439b4cd315a01db396b19f28"
+          "hash": "864d6ab429fdfd0fce7e683d4fbbad6525bb89a1e0d11bc99a2f6b2853dbb0d2"
         },
         {
           "file": "css/source/base.css",
@@ -29337,7 +29341,7 @@
         },
         {
           "file": "css/source/event-panels.css",
-          "hash": "a774bd92788f2974acb385c535d2ba6f6f528bf7f7bf82b4562080a8064b7192"
+          "hash": "cf04dfaf3dd263378f4d27e19c3e6b5b5b0f1386bbd86b881de725b5bbc92849"
         },
         {
           "file": "css/source/dialogs-responsive.css",
@@ -29349,19 +29353,19 @@
         },
         {
           "file": "css/source/shared-refinements.css",
-          "hash": "ef9752e5632d9aad33fbc38209393a9a36ccf4c0d08b0c2d1fb946c121d6fe0d"
+          "hash": "36b8dc3c0069c98f2d5e975512e4885de2c4688c067c3a4c011812ed28318aa1"
         },
         {
           "file": "css/source/home-sharing.css",
-          "hash": "5dfdf4c713d88fdb5b604948fcc8341adaa86647cf929fa107441f439ea8ca05"
+          "hash": "8d2556639e8223d19d2670108fb6d7cebf353e25c2b4561bed3bdcf33d48f001"
         },
         {
           "file": "css/source/hours-kairo.css",
-          "hash": "5165aae5a51d17da5c5df6dc41ee209a94ae781e474925cfd724b2aa2c16c842"
+          "hash": "0648a1480ca35d7357596dcfea956897180c528b1ede95d023d47edd8c736ac2"
         },
         {
           "file": "css/source/energy-refinements.css",
-          "hash": "b07b027bafa68df7ed4d69283f5d10d06be0b34b45c0fe2750c9f37ba37400a5"
+          "hash": "ad85d3b26f5f8df5ee36ff93be1fc959a75319d21835eb64572b248eb8e89965"
         },
         {
           "file": "css/source/home-reminders.css",
@@ -29369,7 +29373,11 @@
         },
         {
           "file": "css/source/invoices.css",
-          "hash": "aae20d6d7e15c872a5d2054bacb37156845dbd84f8549a5441c212790119cb35"
+          "hash": "f46218b0ea03bf6b6557f01dbea23f773800e41429fb34d5f22b2d76a44f7556"
+        },
+        {
+          "file": "css/source/home-status.css",
+          "hash": "47bb829c24cafd4916894c457616c6cb6e31f800a046af18940725705ef0ba1e"
         },
         {
           "file": "css/source/invoices-calendar.css",
@@ -29389,27 +29397,31 @@
         },
         {
           "file": "js/home-weeks.js",
-          "hash": "c56ced3f2dd6647942467f69c057805c9d903ae8536d5603410969f2af620276"
+          "hash": "19e5fb14cee09683c4053d9518dd0b7098179d6e56d34d102a6a9bfa1c3e2b2a"
         },
         {
           "file": "js/hours-kairo.js",
-          "hash": "827c57330bd85486efd95f3041acfaf5c065f47ec71129b0e88b273eea4adb12"
+          "hash": "f0d95bc9a22f56e59ac72b111329ba43780ac658d878ca3f246c182a0f09a302"
         },
         {
           "file": "js/hours-cache.js",
-          "hash": "37893545d04614465b627ab93dda2bb703a5a7b01e0c9f9da4afae79c882f787"
+          "hash": "50bbe9b99c405b1cf7fa614742d50a540f855e3cd547cb982ca7686f036eca0b"
         },
         {
           "file": "js/hours-jobs.js",
-          "hash": "efabb5585a833346b9cb7595ac9bca9d63b63167ea263dc0d0c8d8d50cec412d"
+          "hash": "ffae1192de0371271cfd06e1808f43ed587e20dfe71727704729d86d32a64c35"
         },
         {
           "file": "js/hours-auth.js",
-          "hash": "9e1787e0f8fa243f426b2984ae492cd423fa428fb511d1bacbebf181446f9a69"
+          "hash": "6bf0b6c1d87c56ac618c7c816a56db8a7c93edab05d83795fb5822a5cb93931a"
         },
         {
           "file": "js/invoices-home.js",
-          "hash": "efc7c78984b49d2bba23000e2872df9088ddfd5a8275936af55509453aee4777"
+          "hash": "26529402e4c198c38ddbf21ba621dbc93662bd727e327cc00c133d60f7225c3a"
+        },
+        {
+          "file": "js/invoices-history.js",
+          "hash": "165fa23fc876e28be14d501f5b58596c7724cd5538a038600ee5a868585364d1"
         },
         {
           "file": "js/invoices.js",
@@ -29417,11 +29429,15 @@
         },
         {
           "file": "js/invoices-kairo.js",
-          "hash": "d584e058699a96658c8d679250ccf6432df50af9a9161130192bf87c6d586c78"
+          "hash": "881075c071599882b55fed61abe4850671b1eb337944456eaec766dc2dd0345f"
         },
         {
           "file": "js/init.js",
-          "hash": "889f1d4fdc2a368fc53ed5d08018676870ca7d005643c87451fa0d03b84fd781"
+          "hash": "9c900a17529bbb74810fb1a8d7d8a3c025cca599dbcb1e944fde9b60a3b4c46b"
+        },
+        {
+          "file": "js/home-week-actions.js",
+          "hash": "7a6e1a71c1c7b57d985ce5f5d16e75af3f4088f542f8573dc1951216471c4948"
         },
         {
           "file": "js/settings-menu.js",
@@ -29429,12 +29445,12 @@
         },
         {
           "file": "js/mobile-connection.js",
-          "hash": "2ea04b503dc6311f2cce95392ffeed6dea1f988629b77a8f0d3a4543fc944f10"
+          "hash": "461c5ea68db983f0f75dd634cc7a82865dabbf2540e266284a2dca04594b9706"
         },
         {
           "file": "js/core.js",
           "part": "app-version",
-          "hash": "6af5e217c4be634ea500cc4882e9e367e5d4f28e319e44d8ca3b8705e1327faf"
+          "hash": "eac1e3ecd855b9e18e3ec77cd6303a660546645f34ebd7c987a9ff4f87926041"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -29443,14 +29459,15 @@
         {
           "file": "tools/visual-map/catalog.cjs",
           "part": "scene:mobile-connection",
-          "hash": "5ea32395c5cccaa84c535b696b28cd1625d79ae6a423c642de2d9c44748133e3"
+          "hash": "a4bfba05d7f1295d4c35a876a7ebee25b63a00a5ad9fab60e5f4d4ac9af1dda1"
         }
       ],
       "dependencyVersion": 2,
-      "commit": "2b88d8c8ba229bdb80f8a259bcee6ad1791bfe67",
-      "review": "Sin revisar",
+      "commit": "50cc996007da5f93ae715dddd271281a3d5bee6d",
       "verifiedEdges": [],
-      "fresh": false
+      "imageHash": "1fec31f54a1bb3d3fa6046a1387dde14fd390694d087021bac8f20a8decb76cd",
+      "review": "Sin revisar",
+      "fresh": true
     },
     {
       "id": "mail",
@@ -35611,7 +35628,7 @@
     {
       "symbol": "openSheet",
       "file": "js/core.js",
-      "line": 584
+      "line": 585
     },
     {
       "symbol": "openEstudio",

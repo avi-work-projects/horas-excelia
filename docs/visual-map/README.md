@@ -1,5 +1,7 @@
 # Mapa visual de Gestify
 
+v550. [Selector DNS/VPN y botones semanales equilibrados](review/updates-v550.html). Solo se actualiza la referencia del selector vinculado y el ejemplo de las tres acciones desplegadas.
+
 v549. [Acciones semanales y horarios coordinados](review/updates-v549.html). Home se actualiza por el cambio de estructura del pie semanal. Se añaden ejemplos de Acciones, su despliegue, una semana pendiente y transporte Ninguno; las demás referencias se conservan.
 
 v548. [VPN sobre Home y pendientes más visibles](review/updates-v548.html). Se añaden únicamente dos referencias de los estados afectados; el resto del atlas se conserva.
