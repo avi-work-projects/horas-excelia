@@ -1,5 +1,7 @@
 # Mapa visual de Gestify
 
+v551. [Elipsis de un día y acciones con fondo de color](review/updates-v551.html). Solo se añaden ejemplos de los dos detalles afectados; se conservan las capturas y revisiones anteriores.
+
 v550. [Selector DNS/VPN y botones semanales equilibrados](review/updates-v550.html). Solo se actualiza la referencia del selector vinculado y el ejemplo de las tres acciones desplegadas.
 
 v549. [Acciones semanales y horarios coordinados](review/updates-v549.html). Home se actualiza por el cambio de estructura del pie semanal. Se añaden ejemplos de Acciones, su despliegue, una semana pendiente y transporte Ninguno; las demás referencias se conservan.

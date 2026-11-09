@@ -132,7 +132,11 @@
 .ev-multi-bar.ev-bar-day:not(.ev-stepped-bar){border-radius:5px}
 .ev-title-day .ev-month-title-label{padding:0 1px;justify-content:center;container-type:inline-size}
 .ev-title-day .ev-month-title-text{width:100%;text-align:center}
-.ev-title-day.ev-title-short .ev-month-title-text{font-size:clamp(.42rem,26cqi,.52rem);line-height:1.08;text-wrap:balance}
+.ev-month-day-copy{width:100%;min-width:0;max-height:100%;overflow:hidden;font-size:clamp(.42rem,26cqi,.52rem);line-height:1.08;text-align:center}
+.ev-title-day.ev-title-short .ev-month-title-label{container-type:size}
+.ev-month-day-copy.is-overflowing{font-size:min(clamp(.42rem,26cqi,.52rem),30cqb)}
+.ev-title-day.ev-title-short .ev-month-title-text{display:block;max-height:2lh;font-size:inherit;line-height:inherit;text-wrap:balance;text-overflow:clip}
+.ev-month-title-overflow:not([hidden]){display:block;line-height:inherit}
 @container(max-width:32px){.ev-title-day.ev-title-short .ev-month-title-text{word-break:break-all}}
 /* El testigo de ancho cero ocupa la primera línea: si no cabe la palabra
    completa, pasa a la segunda y queda recortada. Solo para títulos repetidos. */

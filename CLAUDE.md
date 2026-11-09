@@ -12,6 +12,7 @@
 Una tarea exclusivamente documental conserva las versiones y los archivos de la app. Ver la excepción de publicación en docs/DEVELOPMENT.md.
 
 ## Reglas vigentes
+- v551: los eventos grandes de un día, salvo barra fina, reservan dos líneas de título y una tercera solo con «…» cuando se recorta; aplicar la misma distribución en la vista previa del swipe. Editar horas y Cancelar en las acciones semanales llevan fondo naranja y rojo, respectivamente.
 - Home v550: las semanas con correo programado/enviado tienen un botón central Acciones. Su despliegue ocupa la fila con tres botones iguales: Enviar a Outlook, Editar horas (naranja) y Cancelar (rojo, símbolo de prohibido). Las pendientes solo muestran Enviar a Outlook. La edición de semanas protegidas requiere confirmar según su estado y conserva el correo remoto. El primer cambio concreto de un día pendiente se confirma; solo esa aceptación se recuerda 20 minutos en la sesión.
 - Eventos grandes: las horas inicio/fin y las de ida/vuelta se editan de forma coordinada en el borrador. Ninguno es un transporte válido; cancelar no modifica el evento guardado.
 - En cualquier pantalla, las aclaraciones introducidas con un asterisco se presentan en cursiva, incluido el asterisco.

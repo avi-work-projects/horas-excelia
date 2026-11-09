@@ -1846,7 +1846,11 @@ button.bday-group-tag{cursor:pointer;min-height:44px;text-align:left}
 .ev-multi-bar.ev-bar-day:not(.ev-stepped-bar){border-radius:5px}
 .ev-title-day .ev-month-title-label{padding:0 1px;justify-content:center;container-type:inline-size}
 .ev-title-day .ev-month-title-text{width:100%;text-align:center}
-.ev-title-day.ev-title-short .ev-month-title-text{font-size:clamp(.42rem,26cqi,.52rem);line-height:1.08;text-wrap:balance}
+.ev-month-day-copy{width:100%;min-width:0;max-height:100%;overflow:hidden;font-size:clamp(.42rem,26cqi,.52rem);line-height:1.08;text-align:center}
+.ev-title-day.ev-title-short .ev-month-title-label{container-type:size}
+.ev-month-day-copy.is-overflowing{font-size:min(clamp(.42rem,26cqi,.52rem),30cqb)}
+.ev-title-day.ev-title-short .ev-month-title-text{display:block;max-height:2lh;font-size:inherit;line-height:inherit;text-wrap:balance;text-overflow:clip}
+.ev-month-title-overflow:not([hidden]){display:block;line-height:inherit}
 @container(max-width:32px){.ev-title-day.ev-title-short .ev-month-title-text{word-break:break-all}}
 /* El testigo de ancho cero ocupa la primera línea: si no cabe la palabra
    completa, pasa a la segunda y queda recortada. Solo para títulos repetidos. */
@@ -4573,8 +4577,9 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 .home-week-actions .action-btn{flex:0 1 auto;min-height:38px;padding:8px 13px;font-size:.7rem}
 .home-week-actions .home-week-more,.home-week-actions .home-week-edit,.home-week-actions .home-week-cancel{border-color:var(--home-tone);color:var(--text);background:var(--surface)}
 .home-week-actions .home-week-more svg{color:var(--home-tone)}
-.home-week-actions .home-week-edit,.home-week-actions .home-week-edit svg{color:var(--c-orange);border-color:var(--c-orange)}
-.home-week-actions .home-week-cancel,.home-week-actions .home-week-cancel svg{color:var(--c-red);border-color:var(--c-red)}
+.home-week-actions .home-week-edit{background:#fb923c;border-color:#fb923c;color:#1a1a2e}
+.home-week-actions .home-week-cancel{background:#d83030;border-color:#d83030;color:#fff}
+.home-week-actions .home-week-edit svg,.home-week-actions .home-week-cancel svg{color:inherit}
 .home-week-actions .action-btn:focus-visible{outline:2px solid var(--home-tone);outline-offset:3px}
 .week-actions.home-week-actions.expanded{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}
 .home-week-actions.expanded .action-btn{width:100%;min-height:44px;padding:8px 6px;gap:4px;min-width:0;white-space:normal;font-size:.7rem}

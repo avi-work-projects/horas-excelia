@@ -108,6 +108,7 @@ function bindEvYearHeader(){
 function bindEvEvents(){
   _bindEvNav();
   _bindEvCal();
+  _bindEvMonthDayTitles();
   _bindEvListas();
   _bindEvGestos();
 }
@@ -430,6 +431,33 @@ function evLayoutWeekTitles(body){
         if(stops.length)t.el.style.background='linear-gradient(to bottom,'+stops.join(',')+')';
       });
     });
+}
+/* Solo los títulos de un día con barra alta: dos líneas de texto, y una
+   tercera con la elipsis si hay contenido recortado. Sin tocar los eventos. */
+function evLayoutMonthDayTitles(root){
+  var copies=Array.from(root.querySelectorAll('.ev-month-day-copy'));
+  copies.forEach(function(copy){copy.classList.remove('is-overflowing');});
+  var overflow=copies.map(function(copy){
+    var text=copy.querySelector('.ev-month-title-text');
+    return {copy:copy,text:text,mark:copy.querySelector('.ev-month-title-overflow'),clipped:text.scrollHeight>text.clientHeight+1};
+  });
+  overflow.forEach(function(item){item.copy.classList.toggle('is-overflowing',item.clipped);});
+  // Reservar la tercera línea dentro de la barra, también en el tamaño mediano.
+  overflow.forEach(function(item){item.clipped=item.text.scrollHeight>item.text.clientHeight+1;});
+  overflow.forEach(function(item){item.mark.hidden=!item.clipped;});
+}
+var EV_MONTH_TITLE_OBSERVER=null;
+function _bindEvMonthDayTitles(){
+  if(EV_MONTH_TITLE_OBSERVER)EV_MONTH_TITLE_OBSERVER.disconnect();
+  var root=document.querySelector('#eventsOverlay .sy-body');
+  if(!root||!root.querySelector('.ev-month-day-copy'))return;
+  function layout(){if(root.isConnected)evLayoutMonthDayTitles(root);}
+  layout();
+  if(typeof ResizeObserver!=='undefined'){
+    EV_MONTH_TITLE_OBSERVER=new ResizeObserver(layout);
+    root.querySelectorAll('.ev-title-day.ev-title-short .ev-month-title-label').forEach(function(label){EV_MONTH_TITLE_OBSERVER.observe(label);});
+  }
+  if(document.fonts&&document.fonts.status==='loading')document.fonts.ready.then(layout);
 }
 function _bindEvWeekTitleBackground(){
   var body=document.querySelector('#eventsOverlay .sy-body');

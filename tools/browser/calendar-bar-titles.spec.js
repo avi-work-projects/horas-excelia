@@ -31,7 +31,7 @@ test('Pasado y bombilla conservan el contraste sin atenuar el texto dos veces',a
  const title=page.locator('.ev-month-title[data-title-for="month-split"]');await expect(title).toHaveCSS('opacity','1');const before=await title.evaluate(el=>getComputedStyle(el).color);await page.locator('#evBright').click();await expect.poll(()=>page.evaluate(()=>EV_BRIGHT_PAST)).toBe(true);await expect(title).toHaveCSS('color','rgb(255, 255, 255)');expect(await title.evaluate(el=>getComputedStyle(el).color)).not.toBe(before);
 });
 
-for(const width of [320,400,440])test('Eventos de uno o dos días usan hasta dos líneas solo dentro de una semana '+width,async({page},info)=>{
+for(const width of [320,400,440])test('Dos líneas de título y elipsis aparte solo en las barras de un día que se cortan '+width,async({page},info)=>{
  await page.setViewportSize({width,height:880});
  await page.clock.setFixedTime(new Date('2026-11-05T10:00:00+01:00'));
  await page.evaluate(()=>{
@@ -43,6 +43,8 @@ for(const width of [320,400,440])test('Eventos de uno o dos días usan hasta dos
    {id:'thin-one',kind:'grande',type:'Otros',barSize:'sm',title:'Una barra fina de un día con título largo',start:'2026-11-21',end:'2026-11-21',color:'#956c49'},
    {id:'thin-two',kind:'grande',type:'Otros',barSize:'sm',title:'Una barra fina de dos días con título largo',start:'2026-11-26',end:'2026-11-27',color:'#956c49'},
    {id:'short-fit',kind:'grande',type:'Otros',title:'Sol',start:'2026-11-20',end:'2026-11-20',color:'#956c49'},
+   {id:'overflow-one',kind:'grande',type:'Viaje',barSize:'lg',title:'Un nombre de evento de un solo día que no cabe completo en dos líneas',start:'2026-11-04',end:'2026-11-04',color:'#1946a0'},
+   {id:'overflow-medium',kind:'grande',type:'Otros',title:'Un nombre largo de un día en la barra mediana',start:'2026-11-06',end:'2026-11-06',color:'#956c49'},
    {id:'cross-week',kind:'grande',type:'Viaje',title:'Un viaje que cruza la semana',start:'2026-11-15',end:'2026-11-16',color:'#1946a0'},
    {id:'longer',kind:'grande',type:'Viaje',title:'Un viaje de tres días',start:'2026-11-23',end:'2026-11-25',color:'#1946a0'}
   ];EV_YEAR=2026;EV_MONTH=10;refreshEvents(false);
@@ -55,6 +57,16 @@ for(const width of [320,400,440])test('Eventos de uno o dos días usan hasta dos
   expect(size.height).toBeLessThanOrEqual(size.line*2+.5);expect(size.height).toBeLessThanOrEqual(size.clip+.5);expect(size.overflow).toBe(false);
  }
  const fit=await page.locator('[data-title-for="short-fit"] .ev-month-title-text').evaluate(el=>({height:el.getBoundingClientRect().height,line:parseFloat(getComputedStyle(el).lineHeight)}));expect(fit.height).toBeLessThan(fit.line*1.5);
+ await expect(page.locator('[data-title-for="short-fit"] .ev-month-title-overflow')).toBeHidden();
+ for(const id of ['overflow-one','overflow-medium']){
+  const title=page.locator('[data-title-for="'+id+'"]'),mark=title.locator('.ev-month-title-overflow');
+  await expect(mark).toBeVisible();await expect(mark).toHaveText('…');
+  const box=await title.evaluate(e=>{const text=e.querySelector('.ev-month-title-text'),mark=e.querySelector('.ev-month-title-overflow'),label=e.querySelector('.ev-month-title-label');return {text:text.getBoundingClientRect().toJSON(),mark:mark.getBoundingClientRect().toJSON(),label:label.getBoundingClientRect().toJSON(),line:parseFloat(getComputedStyle(text).lineHeight)};});
+  expect(box.text.height).toBeLessThanOrEqual(box.line*2+.5);
+  expect(box.mark.top).toBeGreaterThanOrEqual(box.text.bottom-.5);
+  expect(box.mark.bottom).toBeLessThanOrEqual(box.label.bottom+.5);
+ }
+ await expect(page.locator('[data-title-for="short-two"] .ev-month-title-overflow')).toHaveCount(0);
  for(const id of ['thin-one','thin-two']){
   const title=page.locator('[data-title-for="'+id+'"]');await expect(title).not.toHaveClass(/ev-title-short/);
   const text=title.locator('.ev-month-title-text');await expect(text).toHaveCSS('white-space','nowrap');await expect(text).toHaveCSS('text-overflow','ellipsis');
@@ -62,5 +74,19 @@ for(const width of [320,400,440])test('Eventos de uno o dos días usan hasta dos
  }
  await expect(page.locator('[data-title-for="cross-week"]')).toHaveCount(2);await expect(page.locator('[data-title-for="cross-week"].ev-title-short')).toHaveCount(0);await expect(page.locator('[data-title-for="longer"].ev-title-short')).toHaveCount(0);
  await page.screenshot({path:info.outputPath('titulos-cortos-'+width+'.png'),animations:'disabled'});
+ if(width===400)await page.locator('.ev-month-wrap').screenshot({path:info.outputPath('elipsis-un-dia.png'),animations:'disabled'});
+ const preview=await page.evaluate(()=>{
+  const before=JSON.stringify(EVENTS),source=document.getElementById('eventsOverlay'),resolve=swipeContentResolver(source);
+  const frame=swipeLayoutFrame(source,resolve,swipeLayoutViewport(source,resolve()),renderEvContent(),'incoming');
+  const clipped=frame.scope.querySelector('[data-title-for="overflow-one"] .ev-month-title-overflow');
+  const fit=frame.scope.querySelector('[data-title-for="short-fit"] .ev-month-title-overflow');
+  const result={clipped:!clipped.hidden,fit:fit.hidden,unchanged:before===JSON.stringify(EVENTS)};
+  frame.frame.remove();return result;
+ });
+ expect(preview).toEqual({clipped:true,fit:true,unchanged:true});
+ // El mismo rótulo reacciona al cambio de anchura, sin recrear los eventos.
+ await page.setViewportSize({width:width===440?320:440,height:880});
+ await expect(page.locator('[data-title-for="overflow-one"] .ev-month-title-overflow')).toBeVisible();
+ await expect(page.locator('[data-title-for="short-fit"] .ev-month-title-overflow')).toBeHidden();
  await page.locator('.ev-multi-bar[data-id="short-one"]').click();await expect(page.locator('#evDTitle')).toHaveText('Plan exterior');
 });

@@ -1,5 +1,19 @@
 # Arquitectura y desarrollo
 
+## Elipsis de un día y acciones con relleno (v551)
+
+En Calendario 1 mes, un evento grande de un día conserva dos líneas de título;
+si todavía se recorta, añade una tercera únicamente con «…». La distribución
+mide el rótulo real al abrir o redimensionar, sin modificar eventos, y se comparte
+con la vista previa del swipe. Solo si hace falta se adapta a la altura disponible.
+Las barras finas siguen en una línea y los eventos de varios días no cambian.
+
+Editar horas usa fondo naranja y Cancelar rojo en el pie semanal desplegado.
+Conservan los iconos, las tres columnas iguales y las confirmaciones existentes.
+Validación local: lógica, build y las 12 pruebas afectadas de calendario/acciones,
+incluyendo tamaños 320/400/440 px, tres temas y vista previa sin escrituras.
+Se añaden solo los dos ejemplos afectados al mapa, conservando las otras referencias.
+
 ## Selector de conexión y fila de acciones (v550)
 
 El selector vinculado de Ajustes muestra el título y los tres modos con el formato

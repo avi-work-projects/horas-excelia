@@ -27,8 +27,9 @@ test('una acción centrada por semana; despliegue y cancelar conservan los datos
     const geometry=await actions.evaluate(e=>{const boxes=[...e.children].map(b=>b.getBoundingClientRect()),p=e.getBoundingClientRect(),s=getComputedStyle(e);return {widths:boxes.map(b=>b.width),heights:boxes.map(b=>b.height),left:boxes[0].left-p.left-parseFloat(s.paddingLeft),right:p.right-boxes[2].right-parseFloat(s.paddingRight)};});
     expect(Math.max(...geometry.widths)-Math.min(...geometry.widths)).toBeLessThan(1);
     expect(new Set(geometry.heights).size).toBe(1);expect(Math.abs(geometry.left)).toBeLessThan(1);expect(Math.abs(geometry.right)).toBeLessThan(1);
-    const colors=await actions.locator('.home-week-edit,.home-week-cancel').evaluateAll(nodes=>nodes.map(e=>({text:getComputedStyle(e).color,border:getComputedStyle(e).borderTopColor,icon:getComputedStyle(e.querySelector('svg')).color})));
-    expect(colors[0].text).not.toBe(colors[1].text);for(const color of colors){expect(color.text).toBe(color.border);expect(color.text).toBe(color.icon);}
+    const colors=await actions.locator('.home-week-edit,.home-week-cancel').evaluateAll(nodes=>nodes.map(e=>({text:getComputedStyle(e).color,fill:getComputedStyle(e).backgroundColor,border:getComputedStyle(e).borderTopColor,icon:getComputedStyle(e.querySelector('svg')).color})));
+    expect(colors.map(c=>c.fill)).toEqual(['rgb(251, 146, 60)','rgb(216, 48, 48)']);
+    for(const color of colors){expect(color.fill).toBe(color.border);expect(color.text).toBe(color.icon);expect(color.text).not.toBe(color.fill);}
     if(theme==='light'&&width===400)await card.screenshot({path:info.outputPath('semana-desplegada.png')});
     await actions.getByRole('button',{name:'Cancelar',exact:true}).click();await expect(button).toBeFocused();
   }
