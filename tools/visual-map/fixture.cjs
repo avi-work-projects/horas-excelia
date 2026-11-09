@@ -4,6 +4,7 @@ module.exports=function visualFixture(){
   f['excelia-events-v1'].push(
     {id:'map-started',kind:'puntual',type:'Otros',title:'Cita ya iniciada',start:'2026-08-21',end:'2026-08-21',time:'08:00',endTime:'09:00',color:'#537b78'},
     {id:'map-demo',kind:'puntual',type:'Otros',title:'Café de ejemplo',note:'Datos ficticios para revisar la interfaz.',start:'2026-08-21',end:'2026-08-21',color:'#537b78',time:'18:30',endTime:'19:30',shape:'circle'},
+    {id:'map-day-plan',kind:'grande',type:'Plan exterior',title:'Plan exterior',start:'2026-08-21',end:'2026-08-21',barSize:'lg',color:'#568600'},
     {id:'map-trip',kind:'grande',type:'Viaje',title:'Viaje de ejemplo',start:'2026-08-24',end:'2026-08-28',color:'#5b7db5',note:'Estancia de ejemplo. Las horas de transporte son salidas.',viaje:{ida:{time:'15:00',modo:'coche',conductor:'Conductor de ejemplo'},vuelta:{time:'10:00',modo:'tren'}}},
     {id:'map-week-label',kind:'grande',type:'Asturias',title:'Asturias',start:'2026-09-06',end:'2026-09-12',color:'#1d4ed8',note:'Ejemplo ficticio de corte semanal.',viaje:{ida:{time:'15:00'},vuelta:{time:'18:00'}}},
     {id:'map-month-label',kind:'grande',type:'Asturias',title:'Asturias',start:'2026-09-30',end:'2026-10-04',color:'#1d4ed8',note:'Ejemplo ficticio de cambio de mes.',viaje:{ida:{time:'15:00'},vuelta:{time:'18:00'}}},

@@ -1753,3 +1753,24 @@ El aviso común de VPN recuerda solo la confirmación positiva durante 20 minuto
 por origen, en sessionStorage; Cancelar no se recuerda. Sustituye el lector del
 registro local que quedó planteado en v544. El contrato y límites se documentan
 en `docs/macrodroid.md`. No se añaden sondeos ni dependencias del móvil.
+
+
+## Fecha real y planes de un día (v546)
+
+El alta de cumpleaños propone el día y mes del reloj al abrir el formulario;
+las fechas explícitas del calendario y los datos editados tienen prioridad.
+Recordatorios toma las semanas del mes real, aunque Home muestre otro mes o año.
+Conserva el alcance compartido del mes y sus dos semanas adicionales.
+
+`isEvMultiDayPlan` distingue los intervalos de varios días de la representación
+como barra. Próximos y Recordatorios agrupan los planes grandes de un día bajo
+su fecha, incluidos los repetidos en su próxima ocurrencia. Los trayectos del
+plan de un día se conservan en sus notas desplegables. El calendario mensual
+mantiene las medias casillas, hasta dos líneas centradas y esquinas compactas;
+las barras finas siguen en una línea. Los intervalos de varios días conservan
+sus extremos y títulos semanales. No hay mediciones de texto en cada render.
+
+Verificado en Edge a 320/400/440 px, con cambio de mes y año, alta y edición de
+cumpleaños, plan repetido, avisos reales frente al mes navegado, barras finas y
+solapadas. El mapa solo recaptura calendario mensual, Próximos y Recordatorios,
+con un plan de ejemplo inventado; conserva las demás imágenes y revisiones.

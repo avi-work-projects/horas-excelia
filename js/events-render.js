@@ -107,7 +107,7 @@ function renderEvUpcoming(){
     var grandes=[],sueltos=[];
     ids.forEach(function(id){
       var it=map[id];
-      if(isEvBarAlways(it.ev)&&it.ev.start<=evDk(today)&&(it.ev.end||it.ev.start)>=evDk(today))grandes.push(id);
+      if(isEvMultiDayPlan(it.ev)&&it.ev.start<=evDk(today)&&it.ev.end>=evDk(today))grandes.push(id);
       else sueltos.push(id);
     });
     var out='';
@@ -143,9 +143,9 @@ function renderEvUpcoming(){
         if(!EV_UP_SHOW_BODA&&getEvType(ev)==='Ensayos boda')return;
         var key=occurrenceKey(ev,ds);
         if(_seenEv[key])return;
-        if((ev.repeat||!isEvBarAlways(ev))&&day<today)return;
+        if((ev.repeat||!isEvMultiDayPlan(ev))&&day<today)return;
         _seenEv[key]=true;
-        var _startD=isEvBarAlways(ev)&&!ev.repeat?new Date(ev.start+'T00:00:00'):new Date(day);
+        var _startD=isEvMultiDayPlan(ev)&&!ev.repeat?new Date(ev.start+'T00:00:00'):new Date(day);
         weeks[w][key]={ev:ev,firstDate:_startD};
       });
     }

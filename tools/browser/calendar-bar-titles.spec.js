@@ -51,7 +51,8 @@ for(const width of [320,400,440])test('Eventos de uno o dos días usan hasta dos
  for(const id of ['short-one','short-two','short-weekend','short-medium']){
   const title=page.locator('.ev-month-title[data-title-for="'+id+'"]');await expect(title).toHaveClass(/ev-title-short/);
   const size=await title.locator('.ev-month-title-text').evaluate(el=>({height:el.getBoundingClientRect().height,line:parseFloat(getComputedStyle(el).lineHeight),clip:el.parentElement.getBoundingClientRect().height,overflow:el.scrollWidth>el.clientWidth+1}));
-  expect(size.height).toBeGreaterThan(size.line*1.5);expect(size.height).toBeLessThanOrEqual(size.line*2+.5);expect(size.height).toBeLessThanOrEqual(size.clip+.5);expect(size.overflow).toBe(false);
+  if(id==='short-two'||id==='short-weekend')expect(size.height).toBeGreaterThan(size.line*1.5);
+  expect(size.height).toBeLessThanOrEqual(size.line*2+.5);expect(size.height).toBeLessThanOrEqual(size.clip+.5);expect(size.overflow).toBe(false);
  }
  const fit=await page.locator('[data-title-for="short-fit"] .ev-month-title-text').evaluate(el=>({height:el.getBoundingClientRect().height,line:parseFloat(getComputedStyle(el).lineHeight)}));expect(fit.height).toBeLessThan(fit.line*1.5);
  for(const id of ['thin-one','thin-two']){

@@ -288,6 +288,8 @@ function getEvType(ev){
 // (Viaje, Asturias, Casa Rural, Otros-grande) son barra, duren 1 día o varios.
 // Los "puntuales" nunca son barra: un marcador por cada día que ocupan.
 function isEvBarAlways(ev){return getEvKind(ev)==='grande';}
+/* Un plan grande de un día sigue siendo barra, pero no es un intervalo. */
+function isEvMultiDayPlan(ev){return isEvBarAlways(ev)&&!!ev.end&&ev.end>ev.start;}
 // Devuelve el color de visualización (viajes → azul único por evento, resto → color guardado)
 function getEvDisplayColor(ev){
   if(!ev)return'#888';

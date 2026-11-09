@@ -162,7 +162,7 @@ function _renderEvCalMonth(opts){
           var med=_evMitadesStyle({cs:tr.cs,ce:tr.ce,
             halfL:it.halfL&&tr.cs===it.cs, halfR:it.halfR&&tr.ce===it.ce});
           var past=_evBarPast({cs:tr.cs,ce:tr.ce,halfL:it.halfL&&tr.cs===it.cs,halfR:it.halfR&&tr.ce===it.ce},wk,today,tr.dentro);
-          h+='<div class="ev-multi-bar '+evBarSizeCls(ev)+(!tr.overlap?' ev-bar-alone':'')+sc+past.cls+(it.labelTop?' ev-label-top':'')+'" data-id="'+ev.id+'"'
+          h+='<div class="ev-multi-bar '+evBarSizeCls(ev)+(!tr.overlap?' ev-bar-alone':'')+(!isEvMultiDayPlan(ev)?' ev-bar-day':'')+sc+past.cls+(it.labelTop?' ev-label-top':'')+'" data-id="'+ev.id+'"'
             +' style="grid-column:'+(tr.cs+1)+'/'+(tr.ce+2)+';grid-row:'+(it.row+1)+';z-index:'+evBarZ(ev)+';border:1.5px solid '+_evBarMutedColor(_dc,tr.dentro)+';background:'+_evBarMutedColor(fakeTrans(_dc,0.65),tr.dentro)+';color:#fff'+med+past.style+_evBarSegmentStyle(ev,tr,false)+'">'
             +'</div>';
         });

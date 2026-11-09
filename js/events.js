@@ -584,7 +584,7 @@ function _evBarExtent(ev,tr,annual){
 
 /* Un unico contorno para todos los escalones: sin bordes interiores ni gaps
    de rejilla entre los tramos del mismo evento. El SVG escala sin pixelarse. */
-function _evRoundedOutline(vertices,rx,ry,days,roundStart,roundEnd){
+function _evRoundedOutline(vertices,rx,ry,days,roundStart,roundEnd,cornerLimit){
   var points=vertices.filter(function(p,i){
     var prev=vertices[(i+vertices.length-1)%vertices.length];
     return p[0]!==prev[0]||p[1]!==prev[1];
@@ -603,7 +603,7 @@ function _evRoundedOutline(vertices,rx,ry,days,roundStart,roundEnd){
     var prev=points[(i+points.length-1)%points.length],next=points[(i+1)%points.length];
     var outer=p[0]===0||p[0]===1000;
     if((p[0]===0&&!roundStart)||(p[0]===1000&&!roundEnd))return (i?' L ':'M ')+p.join(' ');
-    var cap=outer?Math.abs((prev[0]===p[0]?prev:next)[1]-p[1])/2:ry;
+    var cap=outer?Math.min(Math.abs((prev[0]===p[0]?prev:next)[1]-p[1])/2,cornerLimit||Infinity):ry;
     var rX=outer?cap/days:rx,rY=outer?cap:ry;
     var entry=near(p,prev,rX,rY);
     var exit=near(p,next,rX,rY);
@@ -655,7 +655,7 @@ function _evSteppedBar(it,segments,annual,showTitle,week,today){
     pts.forEach(function(p){vertices.push([p.x,p.top],[p.end,p.top]);});
     pts.slice().reverse().forEach(function(p){vertices.push([p.end,p.bottom],[p.x,p.bottom]);});
     var path=_evRoundedOutline(vertices,60/(annual?days:visibleDays),annual?30:60,annual?days:visibleDays,
-      it.starts&&first.cs===it.cs,it.ends&&last.ce===it.ce);
+      it.starts&&first.cs===it.cs,it.ends&&last.ce===it.ce,!annual&&!isEvMultiDayPlan(it.ev)?60:null);
     var med=_evMitadesStyle({cs:first.cs,ce:last.ce,
       halfL:it.halfL&&first.cs===it.cs,halfR:it.halfR&&last.ce===it.ce});
     var label=pts.reduce(function(best,p){return p.end-p.x>best.end-best.x?p:best;},pts[0]);
@@ -669,7 +669,7 @@ function _evSteppedBar(it,segments,annual,showTitle,week,today){
       return '<g style="clip-path:inset(0 '+right+'% 0 '+left+'%)">'+halo+'</g>';
     }).join('');
     var past=_evBarPast({cs:first.cs,ce:last.ce,halfL:it.halfL&&first.cs===it.cs,halfR:it.halfR&&last.ce===it.ce},week,today,first.dentro);
-    return '<div class="'+(annual?'ev-annual-mbar':'ev-multi-bar')+' ev-stepped-bar '+evBarSizeCls(it.ev)+past.cls+'" data-id="'+it.ev.id+'"'
+    return '<div class="'+(annual?'ev-annual-mbar':'ev-multi-bar')+' ev-stepped-bar '+evBarSizeCls(it.ev)+(!annual&&!isEvMultiDayPlan(it.ev)?' ev-bar-day':'')+past.cls+'" data-id="'+it.ev.id+'"'
       +' style="grid-column:'+(first.cs+1)+'/'+(last.ce+2)+';grid-row:1;z-index:'+evBarZ(it.ev)+med+past.style+'">'
       +'<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">'+halo+'<path d="'+path+'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+(annual?1:1.5)+'" vector-effect="non-scaling-stroke"/></svg>'
       +(showTitle&&gi===titleGroup?'<span title="'+escHtml(it.ev.title)+'" style="left:'+label.x/10+'%;width:'+(label.end-label.x)/10+'%;top:'+label.top/10+'%;height:'+(label.bottom-label.top)/10+'%;'+(it.labelTop?'align-content:start;padding-top:1px;':'')+'">'+escHtml(it.ev.title)+'</span>':'')+'</div>';
@@ -695,7 +695,7 @@ function _evMonthBarTitle(it,segments,showTitle,week,today,monthFirst,monthLast)
   var optional=_evMonthBarTitleRepeats(it,week,monthFirst,monthLast);
   var shortTitle=evBarSize(it.ev)!=='sm'&&it.starts&&it.ends&&it.ce-it.cs<=1;
   var past=_evBarPast(it,week,today,true);
-  return '<div class="ev-month-title'+past.cls+(it.labelTop?' ev-label-top':'')+(shortTitle?' ev-title-short':'')+'" data-title-for="'+escHtml(it.ev.id)+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:1;z-index:'+evBarZ(it.ev)+_evMitadesStyle(it)+past.style+'">'
+  return '<div class="ev-month-title'+past.cls+(it.labelTop?' ev-label-top':'')+(shortTitle?' ev-title-short':'')+(!isEvMultiDayPlan(it.ev)?' ev-title-day':'')+'" data-title-for="'+escHtml(it.ev.id)+'" style="grid-column:'+(it.cs+1)+'/'+(it.ce+2)+';grid-row:1;z-index:'+evBarZ(it.ev)+_evMitadesStyle(it)+past.style+'">'
     +'<span class="ev-month-title-label'+(optional?' ev-title-optional':'')+'" style="left:'+start+'%;width:'+(end-start)+'%;top:'+label.top+'%;height:'+(label.bottom-label.top)+'%"><span class="ev-month-title-text">'+escHtml(it.ev.title)+'</span></span></div>';
 }
 /* Ocultar una abreviatura solo si hay una continuación mayor dentro del mes

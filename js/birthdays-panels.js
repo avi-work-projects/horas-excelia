@@ -255,9 +255,10 @@ function bindBdayAlarmEvents(b,onBack,back){
 /* ── Form panel (añadir/editar cumpleaños) ─────────────────── */
 function renderBdayForm(b,prefillDay,prefillMonth){
   var isEdit=!!b;
+  var today=new Date();
   var name=isEdit?b.name:'';
-  var day=isEdit?b.day:(prefillDay||'');
-  var month=isEdit?b.month:(prefillMonth||1);
+  var day=isEdit?b.day:(prefillDay||today.getDate());
+  var month=isEdit?b.month:(prefillMonth||today.getMonth()+1);
   var vip=isEdit?!!b.vip:false;
   var h='<div class="bd-form-overlay" id="bdFormOv"><div class="bd-form-sheet">';
   h+='<div class="bd-form-handle"></div>';

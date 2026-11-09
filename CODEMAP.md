@@ -24,8 +24,8 @@
 
 **Funciones:** bdayNormalizeGroup:7 · bdayGroups:14 · bdayGroupCatalog:15 · bdayGroupHue:17 · bdayGroupTags:18 · bdayGroupMatch:19 · bdayGroupChips:20 · renderBdayGroupTools:21 · bdayGroupFilterLabel:29 · renderBdayGroupPickerFields:30 · renderBdayGroupFields:31 · renderBdayPersonGroups:32 · bindBdayCategoryButton:33 · openBdayCategoryPicker:37 · close:38 · bdayReadGroupFields:45 · updateBdayGroupStatus:46 · bindBdayGroupTools:57 · bdaySaveGroupDraft:64 · cancelBdayGroupEdit:70 · openBdayGroupEdit:71 · close:72 · bindBdayGroupEdit:81 · toggleBdayGroupPerson:89
 
-### js/birthdays-panels.js  _(368 líneas)_
-**Funciones:** bdaySwitchPanel:1 · renderBdayNameVip:6 · updateBdayNameVip:7 · renderBdayVipToggle:8 · renderBdayDetail:9 · renderBdayAlarmPanel:27 · fmtDate:39 · openBdayAlarm:94 · back:99 · _bdRefreshBoth:103 · closeBdayAlarm:107 · bindBdayAlarmEvents:109 (!147) · fmtD:228 · rememberDay:231 · onOk:232 · onErr:233 · renderBdayForm:256 · openBdayDetail:283 · savePerson:287 · closeBdayDetail:303 · openBdayForm:306 · back:307 · closeBdayForm:316 · deleteBdayPerson:320 · persist:323 · bindBdayDateFields:326 · update:328 · openBdayDatePicker:340 · close:341 · index:357 · mark:358 · select:359
+### js/birthdays-panels.js  _(369 líneas)_
+**Funciones:** bdaySwitchPanel:1 · renderBdayNameVip:6 · updateBdayNameVip:7 · renderBdayVipToggle:8 · renderBdayDetail:9 · renderBdayAlarmPanel:27 · fmtDate:39 · openBdayAlarm:94 · back:99 · _bdRefreshBoth:103 · closeBdayAlarm:107 · bindBdayAlarmEvents:109 (!147) · fmtD:228 · rememberDay:231 · onOk:232 · onErr:233 · renderBdayForm:256 · openBdayDetail:284 · savePerson:288 · closeBdayDetail:304 · openBdayForm:307 · back:308 · closeBdayForm:317 · deleteBdayPerson:321 · persist:324 · bindBdayDateFields:327 · update:329 · openBdayDatePicker:341 · close:342 · index:358 · mark:359 · select:360
 
 ### js/birthdays-render.js  _(264 líneas)_
 **Estado global:** DN7:111
@@ -248,10 +248,10 @@
 
 **Funciones:** renderEvPlanOrderButton:6 · evPlanOrderDefaults:7 · validateEvPlanOrder:11 · evPlanOrderData:20 · evPlanReferenceTime:28 · evCompareOrder:32 · evPlanOrderPosition:42 · minutes:43 · closeEvPlanOrder:53 · evPlanOrderReorder:54 · openEvPlanOrder:64 · renderEvPlanOrder:65
 
-### js/events-picker-color.js  _(385 líneas)_
+### js/events-picker-color.js  _(387 líneas)_
 **Estado global:** EV_COLOR_GRID:6 · EV_COLOR_TYPES:25 · EV_MANAGEMENT_SUBTYPES:42 · EV_PLAN_SUBTYPES:43 · EV_KINDS:49 · EV_TYPE_COLORS:54 · EV_FREE_COLOR:107 · EV_FREE_SHAPE:108 · EV_OTHER_FIXED_COLORS:110 · EV_FREE_DATES:114 · EV_BAR_SIZES:117 · EV_FREE_BARSIZE:118 · EV_DOT_SOLID:122 · EV_SHAPE_BW:149
 
-**Funciones:** evPlanType:45 · evIsManagement:46 · evIsPlan:47 · evFixedSymbol:48 · evOtherShapeColor:111 · evBarSize:123 · evBarSizeCls:129 · evTypeKey:130 · evTypeColor:131 · getEvKind:134 · evPlanShapeInner:150 · evShapeSvg:176 (!87) · evMorePlusSvg:263 · evTravelColor:272 · getEvType:278 · isEvBarAlways:290 · getEvDisplayColor:292 · _renderColorPicker:314 · _bindColorPicker:337 · updatePreview:347
+**Funciones:** evPlanType:45 · evIsManagement:46 · evIsPlan:47 · evFixedSymbol:48 · evOtherShapeColor:111 · evBarSize:123 · evBarSizeCls:129 · evTypeKey:130 · evTypeColor:131 · getEvKind:134 · evPlanShapeInner:150 · evShapeSvg:176 (!87) · evMorePlusSvg:263 · evTravelColor:272 · getEvType:278 · isEvBarAlways:290 · isEvMultiDayPlan:292 · getEvDisplayColor:294 · _renderColorPicker:316 · _bindColorPicker:339 · updatePreview:349
 
 ### js/events-picker-date.js  _(103 líneas)_
 **Estado global:** MNS:12
@@ -296,10 +296,10 @@
 
 **Funciones:** homeHourClass:4 · homeMonthHours:5 · renderHomeMonthHours:20 · hours:21 · row:22 · renderHomeMonthSummary:31 · hours:32
 
-### js/home-popup.js  _(189 líneas)_
+### js/home-popup.js  _(193 líneas)_
 **Estado global:** HOME_BIRTHDAYS_OPEN:2 · HOME_REMINDER_EDITING:3
 
-**Funciones:** homeReminderColor:4 · homeReminderEventText:5 · homeReminderNoteHtml:10 · homeReminderEvents:14 · homeReminderTasksHtml:38 · homeReminderCardHtml:45 · homeReminderGroup:55 · homeReminderPendingHtml:58 · homeReminderLargeHtml:63 · homeReminderItemsHtml:78 · closeHomePopup:95 · homeReminderEdit:101 · homeReminderSelectEdit:113 · bindHomeReminderEditing:121 · choose:128 · openHomePopup:140
+**Funciones:** homeReminderColor:4 · homeReminderEventText:5 · homeReminderNoteHtml:10 · homeReminderEvents:17 · homeReminderTasksHtml:42 · homeReminderCardHtml:49 · homeReminderGroup:59 · homeReminderPendingHtml:62 · homeReminderLargeHtml:67 · homeReminderItemsHtml:82 · closeHomePopup:99 · homeReminderEdit:105 · homeReminderSelectEdit:117 · bindHomeReminderEditing:125 · choose:132 · openHomePopup:144
 
 ### js/home-status.js  _(17 líneas)_
 **Funciones:** homeStatusIcon:2 · homeActionLabel:15 · homePanelAction:16
@@ -694,7 +694,7 @@
 **Rangos por prefijo de clase:**
 .bd-alarm:26-78 · .bd-detail:97-104 · .bday-hdr:6-6 · .bday-upcoming:24-24 · .bday-vip:23-23 · .ev-alarm:49-55 · .ev-hdr:7-7 · .ev-upcoming:29-32 · .macro-section:81-82 · .macro-url:83-85 · .nav-bar:3-95 · .overlay-nav:2-4 · .sy-puente:14-21 · .sy-tab:9-12
 
-### css/source/event-panels.css  _(432 líneas)_
+### css/source/event-panels.css  _(437 líneas)_
 
 **Secciones:**
 
@@ -712,28 +712,28 @@
 - Rutinas en anual y 4 meses: puntitos en fila arriba del dia:84
 - Conservar espacio cuando la pila está llena.:93
 - Los cumpleaños VIP se solapan al 75% (12px de marcador -> -9px):96
-- Sin z-index propio para no crear stacking context — permite que ev-badge (z-index:4) quede encima de ev-bars-row (z-index:3):145
-- Perímetro puente: capa inferior a eventos:147
-- Bright past: bombilla override:167
-- Bombilla en Anual/Quad — mismo estilo que la pequeña inline del 1-mes/Semanal:174
-- Bombilla en 1-mes y agenda semanal: posicionada en el centro entre el ▶ y "Hoy":179
-- Quad label 3 lines:182
-- ev-num con altura fija para alinear perfectamente todos los números de la misma semana:189
-- ev-badge: z-index:4 > ev-bars-row z-index:3 → los badges 1-día quedan encima de barras multi-día:191
-- Events list view:193
-- Event form overlay (inside eventsOverlay):207
-- Flechas de carrusel: mantener el padding, fuente y borde heredados de .ev-btn.:231
-- Relleno, para que haga pareja con el naranja de "Editar evento":239
-- Event detail:245
-- El color del título depende de la familia; el símbolo conserva su identidad.:253
-- Fichas de consulta: jerarquía común, datos legibles y controles discretos.:261
-- Consulta compacta: fecha y estado comparten fila; el carrusel no cambia de alto.:298
-- Formulario de evento: marco fijo, texto a la izquierda y agenda a la derecha.:347
-- Solo el contenido de la ficha acompaña el dedo.:387
-- Las etiquetas comparten la línea de Título/Notas; solo el dato ocupa la tarjeta.:396
+- Sin z-index propio para no crear stacking context — permite que ev-badge (z-index:4) quede encima de ev-bars-row (z-index:3):150
+- Perímetro puente: capa inferior a eventos:152
+- Bright past: bombilla override:172
+- Bombilla en Anual/Quad — mismo estilo que la pequeña inline del 1-mes/Semanal:179
+- Bombilla en 1-mes y agenda semanal: posicionada en el centro entre el ▶ y "Hoy":184
+- Quad label 3 lines:187
+- ev-num con altura fija para alinear perfectamente todos los números de la misma semana:194
+- ev-badge: z-index:4 > ev-bars-row z-index:3 → los badges 1-día quedan encima de barras multi-día:196
+- Events list view:198
+- Event form overlay (inside eventsOverlay):212
+- Flechas de carrusel: mantener el padding, fuente y borde heredados de .ev-btn.:236
+- Relleno, para que haga pareja con el naranja de "Editar evento":244
+- Event detail:250
+- El color del título depende de la familia; el símbolo conserva su identidad.:258
+- Fichas de consulta: jerarquía común, datos legibles y controles discretos.:266
+- Consulta compacta: fecha y estado comparten fila; el carrusel no cambia de alto.:303
+- Formulario de evento: marco fijo, texto a la izquierda y agenda a la derecha.:352
+- Solo el contenido de la ficha acompaña el dedo.:392
+- Las etiquetas comparten la línea de Título/Notas; solo el dato ocupa la tarjeta.:401
 
 **Rangos por prefijo de clase:**
-.data-btn:2-2 · .ev-alarm:429-429 · .ev-ann:89-91 · .ev-annual:144-166 · .ev-badge:192-192 · .ev-badges:54-54 · .ev-bar:125-125 · .ev-bars:47-47 · .ev-bright:139-181 · .ev-btn:230-241 · .ev-car:69-405 · .ev-category:400-403 · .ev-cell:152-188 · .ev-char:219-219 · .ev-checkbox:224-224 · .ev-chip:106-106 · .ev-colors:220-220 · .ev-date:221-221 · .ev-day:57-116 · .ev-delete:406-406 · .ev-detail:246-407 · .ev-edit:235-236 · .ev-event:349-355 · .ev-field:213-214 · .ev-fixed:356-362 · .ev-form:208-385 · .ev-hdr:3-5 · .ev-input:215-216 · .ev-io:243-244 · .ev-kind:404-404 · .ev-large:333-340 · .ev-list:14-206 · .ev-main:6-6 · .ev-management:281-283 · .ev-month:22-138 · .ev-multi:51-160 · .ev-num:190-190 · .ev-otros:67-121 · .ev-part:169-169 · .ev-pending:34-45 · .ev-puente:148-148 · .ev-quad:183-184 · .ev-repeat:225-225 · .ev-routine:408-408 · .ev-rut:112-410 · .ev-schedule:378-399 · .ev-stepped:141-143 · .ev-textarea:217-218 · .ev-title:131-136 · .ev-toggle:222-223 · .ev-types:17-19 · .ev-view:4-8 · .ev-wd:227-228 · .ev-week:28-146 · .ev-weekday:226-226 · .rut-marker:108-111 · .rut-week:415-417 · .rut-wpick:418-422 · .swipe-content:413-413 · .sy-body:412-412
+.data-btn:2-2 · .ev-alarm:434-434 · .ev-ann:89-91 · .ev-annual:149-171 · .ev-badge:197-197 · .ev-badges:54-54 · .ev-bar:125-125 · .ev-bars:47-47 · .ev-bright:144-186 · .ev-btn:235-246 · .ev-car:69-410 · .ev-category:405-408 · .ev-cell:157-193 · .ev-char:224-224 · .ev-checkbox:229-229 · .ev-chip:106-106 · .ev-colors:225-225 · .ev-date:226-226 · .ev-day:57-116 · .ev-delete:411-411 · .ev-detail:251-412 · .ev-edit:240-241 · .ev-event:354-360 · .ev-field:218-219 · .ev-fixed:361-367 · .ev-form:213-390 · .ev-hdr:3-5 · .ev-input:220-221 · .ev-io:248-249 · .ev-kind:409-409 · .ev-large:338-345 · .ev-list:14-211 · .ev-main:6-6 · .ev-management:286-288 · .ev-month:22-143 · .ev-multi:51-165 · .ev-num:195-195 · .ev-otros:67-121 · .ev-part:174-174 · .ev-pending:34-45 · .ev-puente:153-153 · .ev-quad:188-189 · .ev-repeat:230-230 · .ev-routine:413-413 · .ev-rut:112-415 · .ev-schedule:383-404 · .ev-stepped:146-148 · .ev-textarea:222-223 · .ev-title:131-141 · .ev-toggle:227-228 · .ev-types:17-19 · .ev-view:4-8 · .ev-wd:232-233 · .ev-week:28-151 · .ev-weekday:231-231 · .rut-marker:108-111 · .rut-week:420-422 · .rut-wpick:423-427 · .swipe-content:418-418 · .sy-body:417-417
 
 ### css/source/dialogs-responsive.css  _(159 líneas)_
 

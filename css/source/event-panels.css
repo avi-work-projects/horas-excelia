@@ -129,6 +129,11 @@
 .ev-month-title-label{position:absolute;display:flex;align-items:center;box-sizing:border-box;padding:0 6px;overflow:hidden;white-space:nowrap;line-height:1.1}
 .ev-month-title-text{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ev-title-short .ev-month-title-text{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;white-space:normal;overflow-wrap:anywhere}
+.ev-multi-bar.ev-bar-day:not(.ev-stepped-bar){border-radius:5px}
+.ev-title-day .ev-month-title-label{padding:0 1px;justify-content:center;container-type:inline-size}
+.ev-title-day .ev-month-title-text{width:100%;text-align:center}
+.ev-title-day.ev-title-short .ev-month-title-text{font-size:clamp(.42rem,26cqi,.52rem);line-height:1.08;text-wrap:balance}
+@container(max-width:32px){.ev-title-day.ev-title-short .ev-month-title-text{word-break:break-all}}
 /* El testigo de ancho cero ocupa la primera línea: si no cabe la palabra
    completa, pasa a la segunda y queda recortada. Solo para títulos repetidos. */
 .ev-month-title-label.ev-title-optional{flex-wrap:wrap;align-content:flex-start;align-items:flex-start}

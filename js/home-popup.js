@@ -9,7 +9,10 @@ function homeReminderEventText(time,content,ev){
 }
 function homeReminderNoteHtml(ev,ds){
   var notes=[ev.note,ev.dayNotes&&ev.dayNotes[ds]].filter(function(note){return typeof note==='string'&&note.trim();});
-  return notes.length?'<p class="home-reminder-description">'+escHtml(notes.join('\n\n'))+'</p>':'';
+  var h=notes.length?'<p class="home-reminder-description">'+escHtml(notes.join('\n\n'))+'</p>':'';
+  var legs=isEvBarAlways(ev)&&!isEvMultiDayPlan(ev)?evTramos(ev):[];
+  if(legs.length)h+='<p class="home-reminder-description">'+legs.map(evTramoTexto).join(' · ')+'</p>';
+  return h;
 }
 function homeReminderEvents(today){
   var items=[];
@@ -18,7 +21,8 @@ function homeReminderEvents(today){
     getEventsOn(ds).forEach(function(ev){
       if(ev.id&&ev.id.indexOf('ev-bday-vip-')===0)return; // Ya figuran en el bloque de cumpleaños.
       var time=evTimeLabel(ev),content=ev.title||getEvType(ev),type=getEvType(ev);
-      if(isEvBarAlways(ev)){
+      if(isEvBarAlways(ev)&&!isEvMultiDayPlan(ev))time=time||evBarTravelTimes(ev).start||'';
+      if(isEvMultiDayPlan(ev)){
         var leg=ds===ev.start?'ida':ds===ev.end?'vuelta':null;
         var tramo=evTramos(ev).filter(function(t){return t.k===leg;})[0];
         time=tramo&&tramo.t.time||'';
@@ -84,10 +88,10 @@ function homeReminderItemsHtml(items,birthdayCount){
     if(birthdays.length>2)cards+='<div id="homeBirthdayExtra" hidden>'+birthdays.slice(2).map(homeReminderCardHtml).join('')+'</div><button type="button" class="home-birthday-more" id="homeBirthdayToggle" aria-controls="homeBirthdayExtra" aria-expanded="false">Ver '+(birthdayCount-2)+' cumpleaños más <span class="ev-tax-chevron" aria-hidden="true"></span></button>';
     h+=homeReminderGroup('Cumpleaños',cards,'Próximos 7 días','birthdays');
   }
-  var large=events.filter(function(it){return isEvBarAlways(it.event);});
+  var large=events.filter(function(it){return isEvMultiDayPlan(it.event);});
   if(large.length)h+=homeReminderGroup('Planes en curso y próximos',homeReminderLargeHtml(large),'','plans');
   [0,1].forEach(function(day){
-    var list=events.filter(function(it){return it.days===day&&!isEvBarAlways(it.event);});
+    var list=events.filter(function(it){return it.days===day&&!isEvMultiDayPlan(it.event);});
     if(list.length)h+=homeReminderGroup(day?'Mañana':'Hoy',list.map(homeReminderCardHtml).join(''),list.length+' '+(list.length===1?'evento':'eventos'),day?'tomorrow':'today');
   });
   return h;
@@ -144,7 +148,7 @@ function openHomePopup(force){
   var items=csvWarnings.map(function(it){return {type:'warn',text:'&#9888; '+escHtml(it.text)};});
   routineWarnings.forEach(function(it){items.push({type:'warn',text:'&#128197; '+escHtml(it.text)});});
   var today=new Date();today.setHours(0,0,0,0);
-  homeSubmissionWarnings(CY,CM).forEach(function(row){
+  homeSubmissionWarnings(today.getFullYear(),today.getMonth()).forEach(function(row){
     var review=['changed','duplicate','uncertain','draft','unverified','ambiguous-thread'].includes(row.state);
     var label='Semana del '+fd(row.mon);
     items.push({type:'warn',text:'&#128221; <strong>'+label+'</strong> '+(review?'por revisar':hoursRemoteConfigured()?'sin enviar ni programar':'sin enviar')});
