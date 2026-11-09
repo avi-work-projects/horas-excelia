@@ -387,10 +387,10 @@
 
 **Funciones:** openMailCalendar:25 · showMailCalendar:33 · receive:45 · close:82
 
-### js/mobile-connection.js  _(175 líneas)_
+### js/mobile-connection.js  _(181 líneas)_
 **Estado global:** MOBILE_CONNECTION_MODES:2 · KAIRO_VPN_CACHE_KEY:10
 
-**Funciones:** kairoVpnConfirmed:11 · rememberKairoVpn:17 · forgetKairoVpn:21 · done:40 · ensureKairoConnection:47 · cancel:54 · ready:55 · mobileWebhookBase:79 · requestMobileMode:89 · openMobileConnection:106 · buttons:119 · schedule:123 · foreground:154 · back:162
+**Funciones:** kairoVpnConfirmed:11 · rememberKairoVpn:17 · forgetKairoVpn:21 · done:40 · ensureKairoConnection:47 · cancel:54 · ready:55 · mobileWebhookBase:79 · requestMobileMode:89 · openMobileConnection:106 · notify:119 · buttons:125 · schedule:129 · foreground:160 · back:168
 
 ### js/nav-icons.js  _(70 líneas)_
 **Estado global:** NAV_ICON_STYLE:2 · NAV_MAIN_ITEMS:4 · NAV_ICON_PATHS:11

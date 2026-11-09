@@ -115,7 +115,13 @@ function openMobileConnection(onVpnReady,initialMode){
     '<button type="button" data-save>Guardar para conexión y alarmas</button></div>';
   var link=dialog.querySelector('[data-link]'),input=link.querySelector('input');
   var base=mobileWebhookBase(appStorage.getItem('excelia-alarm-url')||'');
-  var timer=null,probe=null,requestSerial=0,resume=typeof onVpnReady==='function',completed=false,fastCheckUntil=0;
+  var timer=null,probe=null,requestSerial=0,resume=typeof onVpnReady==='function',completed=false,fastCheckUntil=0,notice=null,noticeTimer=null;
+  function notify(text,type){
+    clearTimeout(noticeTimer);
+    if(!notice){notice=document.createElement('div');notice.setAttribute('role','status');dialog.appendChild(notice);}
+    notice.className='toast show '+(type||'info');notice.textContent=text;
+    noticeTimer=setTimeout(function(){notice.remove();notice=null;},3500);
+  }
   function buttons(){
     link.hidden=!!base;
     dialog.querySelectorAll('[data-mobile-mode]').forEach(function(button){button.disabled=!base||!!mobileModeRequest;button.setAttribute('aria-busy',String(mobileModeRequest===button.dataset.mobileMode));});
@@ -146,7 +152,7 @@ function openMobileConnection(onVpnReady,initialMode){
     resume=false;buttons();
     var received=await request;
     if(!dialog.open)return;
-    showToast(received?MOBILE_CONNECTION_MODES[mode].label+': solicitud enviada.':'Entrega sin confirmar. Comprueba el widget antes de repetir.',received?'info':'error');
+    notify(received?MOBILE_CONNECTION_MODES[mode].label+': solicitud enviada.':'Entrega sin confirmar. Comprueba el widget antes de repetir.',received?'info':'error');
     fastCheckUntil=Date.now()+20000;
     resume=mode==='vpn'&&(typeof onVpnReady==='function');
     schedule(1000);
@@ -155,14 +161,14 @@ function openMobileConnection(onVpnReady,initialMode){
   dialog.querySelector('.mobile-modes').onclick=function(e){var b=e.target.closest('[data-mobile-mode]');if(b)choose(b.dataset.mobileMode);};
   link.querySelector('[data-save]').onclick=function(){
     var candidate=mobileWebhookBase(input.value.trim());
-    if(!candidate){showToast('Introduce un enlace HTTPS de trigger.macrodroid.com.','error');return;}
-    try{appStorage.setItem('excelia-alarm-url',candidate);}catch(e){showToast('El navegador no ha podido guardar el enlace.','error');return;}
+    if(!candidate){notify('Introduce un enlace HTTPS de trigger.macrodroid.com.','error');return;}
+    try{appStorage.setItem('excelia-alarm-url',candidate);}catch(e){notify('El navegador no ha podido guardar el enlace.','error');return;}
     base=candidate;input.value='';buttons();
   };
   function back(){dialog.close();}
   dialog.querySelector('[data-back]').onclick=back;
   dialog.addEventListener('close',function(){
-    clearTimeout(timer);if(probe)probe.abort();
+    clearTimeout(timer);clearTimeout(noticeTimer);if(probe)probe.abort();
     window.removeEventListener('gestify-mode-idle',buttons);window.removeEventListener('focus',foreground);window.removeEventListener('online',foreground);
     document.removeEventListener('visibilitychange',foreground);dialog.remove();
     if(NAV_BACK===back)restore();
