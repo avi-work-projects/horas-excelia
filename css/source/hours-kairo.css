@@ -21,6 +21,11 @@
 .hours-review-dialog>header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border)}
 .hours-review-dialog>header button{padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font:600 .75rem var(--font)}
 .hours-review-dialog>iframe{display:block;flex:1;min-height:0;width:100%;border:0;background:var(--surface);color-scheme:dark}
+.hours-calendar-dialog>iframe[hidden]{display:none}
+.hours-calendar-dialog>header{justify-content:flex-start;color:var(--home-tone)}
+.hours-calendar-dialog>header button{order:-1;border-color:var(--home-tone);color:var(--home-tone);font-size:1rem}
+.hours-calendar-loading{margin:auto;text-align:center;padding:24px;color:var(--text-muted);font-size:.82rem}
+.hours-calendar-loading button{margin:8px;padding:10px 14px;border:1px solid var(--home-tone);border-radius:10px;background:var(--surface);color:var(--text);font:600 .75rem var(--font)}
 
 html[data-theme=light] .hours-review-dialog>iframe{color-scheme:light}
 

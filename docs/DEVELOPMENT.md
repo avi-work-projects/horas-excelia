@@ -1,5 +1,17 @@
 # Arquitectura y desarrollo
 
+## VPN y avisos de Home (v548)
+
+Ámbito: activación explícita de VPN, apertura de la agenda y pulso de pendientes.
+Se conserva el enlace de MacroDroid, la confirmación de 20 minutos, el envío
+manual y la edición de días. No se consulta Outlook para comprobar la VPN.
+La orden no se reintenta: tras activarla se espera acceso válido a Kairo con un
+plazo acotado y cancelable. La agenda se crea después del aviso y espera su
+mensaje de inicio antes de mostrar el iframe. El pulso refuerza fondo y halo sin
+cambiar geometría ni animar los estados completos; respeta movimiento reducido.
+Validación dirigida en Edge: 31 pruebas de Home, conexión y Kairo; detalle de la
+reproducción real y límites en `docs/macrodroid.md`. Atlas: solo dos ejemplos.
+
 Facturación v527: varios meses pueden permanecer aprobados. Las acciones y
 transiciones privadas se vinculan al id y huella de la revisión vigente de cada
 mes. Nunca resolver una escritura por «último plan global». El runner, avisos e

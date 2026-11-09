@@ -4,8 +4,8 @@
 .home-panel.scheduled{--status-tone:var(--upcoming-text)}
 .home-panel.urgent{--status-tone:var(--c-red)}
 .home-panel.unknown{--status-tone:var(--text-muted)}
-.home-panel.pending,.home-panel.unsent,.home-panel.urgent{animation:home-panel-pulse 2s ease-in-out infinite}
-@keyframes home-panel-pulse{0%,100%{background-color:color-mix(in srgb,var(--status-tone) 5%,var(--surface))}50%{background-color:color-mix(in srgb,var(--status-tone) 15%,var(--surface))}}
+.home-panel.pending,.home-panel.unsent,.home-panel.urgent{animation:home-panel-pulse 1.6s ease-in-out infinite}
+@keyframes home-panel-pulse{0%,100%{background-color:color-mix(in srgb,var(--status-tone) 5%,var(--surface));box-shadow:0 0 0 0 transparent}50%{background-color:color-mix(in srgb,var(--status-tone) 23%,var(--surface));box-shadow:0 0 0 3px color-mix(in srgb,var(--status-tone) 48%,transparent),inset 0 0 0 1px var(--status-tone)}}
 .home-panel{--home-panel-action-width:96px}
 .home-panel-row{display:grid;grid-template-columns:minmax(0,1fr) var(--home-panel-action-width);gap:10px;align-items:center}
 .home-panel-row.no-action{grid-template-columns:minmax(0,1fr)}

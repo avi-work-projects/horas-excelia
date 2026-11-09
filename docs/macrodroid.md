@@ -181,5 +181,23 @@ se comunican sin inventar un estado de la VPN. No se sondea el teléfono ni Kair
 para decidir si mostrar el aviso. La caché temporal no forma parte del backup.
 
 La preparación local, el envío manual a Outlook y la edición de días no necesitan
-este aviso. La validación del webhook real desde Vivo Sesiones queda pendiente;
-las pruebas de navegador utilizan un destino ficticio.
+este aviso. Las pruebas de navegador utilizan un destino ficticio.
+
+## Activación y carga de agenda (v548)
+
+El 9/11/2026 se reproduce desde Vivo Sesiones: «Activar VPN» lleva a Tailscale y
+el teléfono pasa a Connected, pero la agenda intenta navegar antes de disponer
+de acceso y muestra un iframe fallido. Reabrir la agenda con la VPN conectada
+sí permite ver Kairo. No fue necesario cambiar la macro ni el enlace privado.
+
+La respuesta del webhook ya no autoriza por sí sola a abrir la agenda. Después
+de una única orden se espera una respuesta válida de `/horas/reachable`, durante
+un máximo aproximado de 25 segundos (peticiones de hasta 3 segundos). Esta
+comprobación solo se hace tras pulsar Activar VPN, no consulta Outlook y termina
+al cancelar. Si no responde, no se reenvía la orden y queda disponible la
+confirmación manual. La confirmación positiva sigue durando 20 minutos.
+
+El aviso de VPN aparece sobre Home, antes de crear la agenda. Esta oculta el
+iframe mientras espera su mensaje de inicio; si falla, presenta Reintentar y
+Activar VPN, en lugar de dejar una página rota. Las pruebas cubren conexión
+tardía, cancelación, entrega fallida, caducidad y recuperación de la agenda.

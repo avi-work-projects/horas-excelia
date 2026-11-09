@@ -377,13 +377,15 @@
 ### js/logo-popup.js  _(51 líneas)_
 **Funciones:** _logoUpdateDots:14
 
-### js/mail-calendar.js  _(75 líneas)_
-**Funciones:** openMailCalendar:24 · receive:36 · close:68
+### js/mail-calendar.js  _(89 líneas)_
+**Estado global:** MAIL_CALENDAR_OPENING:24
 
-### js/mobile-connection.js  _(156 líneas)_
+**Funciones:** openMailCalendar:25 · showMailCalendar:33 · receive:45 · close:82
+
+### js/mobile-connection.js  _(181 líneas)_
 **Estado global:** MOBILE_CONNECTION_MODES:2 · KAIRO_VPN_CACHE_KEY:10
 
-**Funciones:** kairoVpnConfirmed:11 · rememberKairoVpn:17 · forgetKairoVpn:21 · ensureKairoConnection:24 · cancel:31 · ready:32 · mobileWebhookBase:54 · requestMobileMode:64 · openMobileConnection:81 · buttons:96 · schedule:100 · foreground:134 · back:142
+**Funciones:** kairoVpnConfirmed:11 · rememberKairoVpn:17 · forgetKairoVpn:21 · done:40 · ensureKairoConnection:47 · cancel:54 · ready:55 · mobileWebhookBase:79 · requestMobileMode:89 · openMobileConnection:106 · buttons:121 · schedule:125 · foreground:159 · back:167
 
 ### js/nav-icons.js  _(70 líneas)_
 **Estado global:** NAV_ICON_STYLE:2 · NAV_MAIN_ITEMS:4 · NAV_ICON_PATHS:11
@@ -894,14 +896,14 @@
 **Rangos por prefijo de clase:**
 .boda-future:86-86 · .contact-address:132-144 · .contact-entry:131-131 · .contact-primary:142-148 · .contact-shortcuts:137-160 · .energy-contract:113-114 · .energy-field:116-117 · .energy-history:111-112 · .energy-price:115-120 · .energy-sheet:110-110 · .energy-tax:118-118 · .ev-cal:40-109 · .ev-field:85-85 · .ev-list:126-155 · .ev-period:169-172 · .ev-share:38-39 · .ev-stat:124-125 · .ev-stats:156-161 · .ev-up:152-176 · .ev-week:72-87 · .ev-wk:3-3 · .header:2-2 · .home-equation:30-30 · .home-formula:25-25 · .home-hours:29-32 · .home-summary:9-26 · .home-total:27-27 · .home-worked:17-17 · .month-summary:10-28 · .ms-caption:24-24
 
-### css/source/hours-kairo.css  _(43 líneas)_
+### css/source/hours-kairo.css  _(48 líneas)_
 
 **Secciones:**
 
 - The warning owns the batch entry; individual week actions stay in place.:1
 
 **Rangos por prefijo de clase:**
-.hours-check:4-5 · .hours-home:2-35 · .hours-job:7-7 · .hours-pending:9-10 · .hours-review:18-23 · .hours-verified:11-11 · .hours-week:15-16 · .kairo-vpn:39-42 · .mobile-connection:28-34 · .mobile-modes:32-32 · .week-actions:12-14 · .week-card:37-38 · .week-info:8-17
+.hours-calendar:24-28 · .hours-check:4-5 · .hours-home:2-40 · .hours-job:7-7 · .hours-pending:9-10 · .hours-review:18-23 · .hours-verified:11-11 · .hours-week:15-16 · .kairo-vpn:44-47 · .mobile-connection:33-39 · .mobile-modes:37-37 · .week-actions:12-14 · .week-card:42-43 · .week-info:8-17
 
 ### css/source/energy-refinements.css  _(287 líneas)_
 

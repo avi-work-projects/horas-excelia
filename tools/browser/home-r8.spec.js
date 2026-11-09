@@ -92,6 +92,20 @@ test('modificar factura usa la revisión real, conserva la confirmación y nunca
   await popup.close();await page.locator('#invoiceBack').click();await expect(invoice).toContainText('Factura sin enviar');
 });
 
+test('los pendientes destacan con fondo y halo sin mover el panel ni animar los estados completos',async({page,context},info)=>{
+  await setup(page,context);
+  await expect(page.locator('.home-submission')).toHaveCSS('animation-name','none');
+  await expect(page.locator('#homeInvoiceStatus')).toHaveCSS('animation-name','none');
+  await page.evaluate(()=>{HOURS_CACHE.weeks['2027-02-08'].state='missing';Object.assign(INVOICE_HOME_CACHE.periods['2027-02'].data,{state:'missing',scheduled:false});render();});
+  const panels=page.locator('.home-panel');
+  const initial=await panels.evaluateAll(nodes=>nodes.map(e=>{const a=e.getAnimations()[0];a.pause();a.currentTime=0;return {height:e.getBoundingClientRect().height,background:getComputedStyle(e).backgroundColor};}));
+  const peak=await panels.evaluateAll(nodes=>nodes.map(e=>{e.getAnimations()[0].currentTime=800;return {height:e.getBoundingClientRect().height,background:getComputedStyle(e).backgroundColor,shadow:getComputedStyle(e).boxShadow};}));
+  peak.forEach((p,i)=>{expect(p.height).toBe(initial[i].height);expect(p.background).not.toBe(initial[i].background);expect(p.shadow).toContain('3px');});
+  await page.screenshot({path:info.outputPath('home-pendientes-pulso.png')});
+  await page.emulateMedia({reducedMotion:'reduce'});
+  for(const panel of await panels.all())await expect(panel).toHaveCSS('animation-name','none');
+});
+
 test('Sync con error conserva la fecha guardada y solo muestra error dentro del botón',async({page,context})=>{
   const api=await setup(page,context);const stamp=await page.evaluate(()=>HOURS_CACHE.lastMailSync);api.offline();
   await page.locator('#homeSyncBtn').click();await page.locator('[data-hours-check]').click();await expect(page.locator('[data-hours-check]')).toBeEnabled();

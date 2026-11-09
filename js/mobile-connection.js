@@ -21,11 +21,34 @@ function rememberKairoVpn(){
 function forgetKairoVpn(){
   KAIRO_VPN_MEMORY=null;try{sessionStorage.removeItem(KAIRO_VPN_CACHE_KEY);}catch(e){}
 }
+async function waitForKairoVpn(signal){
+  var base=hoursKairoUrl(),deadline=Date.now()+25000;
+  if(!base)return false;
+  while(!signal.aborted){
+    var controller=new AbortController(),abort=function(){controller.abort();};
+    signal.addEventListener('abort',abort,{once:true});
+    var timeout=setTimeout(abort,3000),available=false;
+    try{
+      var response=await fetch(base+'reachable',{mode:'cors',credentials:'omit',cache:'no-store',redirect:'error',referrerPolicy:'no-referrer',targetAddressSpace:'local',signal:controller.signal});
+      available=response.ok&&(await response.json()).service==='kairo-hours';
+    }catch(e){}finally{clearTimeout(timeout);signal.removeEventListener('abort',abort);}
+    if(signal.aborted)return false;
+    if(available)return true;
+    if(Date.now()>=deadline)return false;
+    await new Promise(function(resolve){
+      var timer=setTimeout(done,1000);
+      function done(){clearTimeout(timer);signal.removeEventListener('abort',done);resolve();}
+      signal.addEventListener('abort',done,{once:true});
+      if(signal.aborted)done();
+    });
+  }
+  return false;
+}
 function ensureKairoConnection(){
   if(kairoVpnConfirmed())return Promise.resolve(true);
   if(kairoConnectionRequest)return kairoConnectionRequest;
   kairoConnectionRequest=new Promise(function(resolve){
-    var dialog=document.createElement('dialog'),previous=NAV_BACK,confirmed=false;
+    var dialog=document.createElement('dialog'),previous=NAV_BACK,confirmed=false,activation=new AbortController();
     dialog.className='mobile-connection-dialog kairo-vpn-prompt';dialog.setAttribute('aria-labelledby','kairoVpnTitle');
     dialog.innerHTML='<h2 id="kairoVpnTitle">VPN de Kairo</h2><p>Para realizar esta operación es necesario que la VPN esté activada.</p><p class="invoice-note"><em>La confirmación se recordará durante 20 minutos.</em></p><p data-vpn-result role="status" hidden></p><div class="kairo-vpn-actions"><button type="button" data-activate>Activar VPN</button><button type="button" data-ready>Ya está activada</button><button type="button" data-cancel>Cancelar</button></div>';
     function cancel(){dialog.close();}
@@ -39,11 +62,13 @@ function ensureKairoConnection(){
       var request=requestMobileMode('vpn',base);
       if(!request){feedback.textContent='Ya hay una solicitud en curso. Pulsa «Ya está activada» cuando esté lista.';return;}
       button.disabled=true;feedback.textContent='Solicitando la VPN…';
-      var received=await request;if(!dialog.open)return;
-      if(received)ready();else{feedback.textContent='Solicitud sin confirmar. Activa la VPN desde el widget y pulsa «Ya está activada».';button.disabled=false;}
+      await request;if(!dialog.open)return;
+      feedback.textContent='Esperando a que la VPN conecte con Kairo…';
+      if(await waitForKairoVpn(activation.signal)){if(dialog.open)ready();}
+      else if(dialog.open){feedback.textContent='No se ha podido confirmar el acceso a Kairo. Comprueba la VPN en el widget y pulsa «Ya está activada».';button.disabled=false;}
     };
     dialog.addEventListener('close',function(){
-      dialog.remove();if(NAV_BACK===cancel)NAV_BACK=previous;
+      activation.abort();dialog.remove();if(NAV_BACK===cancel)NAV_BACK=previous;
       if(confirmed)rememberKairoVpn();resolve(confirmed);
     },{once:true});
     document.body.append(dialog);dialog.showModal();NAV_BACK=cancel;

@@ -21,16 +21,25 @@ async function openCheckedInvoice(href){
     if(!popup.closed)popup.location.replace(href);
   }catch(error){popup.close();showToast(error.message,'error');if(error.code==='network')openMobileConnection();}
 }
+var MAIL_CALENDAR_OPENING=false;
 function openMailCalendar(){
+  if(MAIL_CALENDAR_OPENING||document.querySelector('.hours-calendar-dialog'))return;
   var base=hoursKairoUrl();
   if(!base){openInvoiceSettings({connection:true});return;}
-  var period=mkey(CY,CM),origin=new URL(base).origin,previous=NAV_BACK;
+  var period=mkey(CY,CM);
+  MAIL_CALENDAR_OPENING=true;
+  return ensureKairoConnection().then(function(confirmed){if(confirmed)showMailCalendar(base,period);}).finally(function(){MAIL_CALENDAR_OPENING=false;});
+}
+function showMailCalendar(base,period){
+  var origin=new URL(base).origin;
+  var previous=NAV_BACK,loadTimer=null,closed=false;
   var dialog=document.createElement('dialog'),header=document.createElement('header'),back=document.createElement('button');
   var title=document.createElement('strong'),body=document.createElement('div'),note=document.createElement('p'),retry=document.createElement('button');
   var modeButton=document.createElement('button');modeButton.type='button';modeButton.textContent='Activar VPN';modeButton.hidden=true;
   var frame=document.createElement('iframe');
-  dialog.className='hours-review-dialog';dialog.setAttribute('aria-label','Programación');
-  back.textContent='Volver a Gestify';title.textContent='Programación';retry.textContent='Reintentar';
+  dialog.className='hours-review-dialog hours-calendar-dialog';dialog.setAttribute('aria-label','Programación');
+  back.textContent='←';back.setAttribute('aria-label','Volver a Gestify');title.textContent='Ver envíos';retry.textContent='Reintentar';
+  body.className='hours-calendar-loading';note.setAttribute('role','status');
   frame.title='Programación de Kairo';frame.referrerPolicy='no-referrer';
   frame.setAttribute('sandbox','allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox');frame.setAttribute('allow','local-network-access');
   function receive(event){
@@ -44,7 +53,7 @@ function openMailCalendar(){
       return;
     }
     if(message.type!=='kairo-calendar-month'||!/^20\d\d-(0[1-9]|1[0-2])$/.test(message.period))return;
-    header.remove();
+    clearTimeout(loadTimer);header.remove();body.remove();frame.hidden=false;
     var first=new Date(message.period+'-01T12:00:00'),months={};
     [-1,0,1].forEach(function(offset){
       var date=new Date(first.getFullYear(),first.getMonth()+offset,1,12),month=dk(date).slice(0,7);
@@ -58,15 +67,20 @@ function openMailCalendar(){
     frame.contentWindow.postMessage({type:'gestify-calendar-days',period:message.period,days:months[message.period],months:months},origin);
   }
   async function connect(){
-    note.textContent='Conectando con Kairo…';retry.hidden=true;modeButton.hidden=true;
+    clearTimeout(loadTimer);frame.hidden=true;
+    if(!body.isConnected)dialog.append(body);
+    note.textContent='Abriendo Kairo…';retry.hidden=true;modeButton.hidden=true;
     try{
-      if(!await ensureKairoConnection()){if(dialog.open)close();return;}
       if(!dialog.open)return;
-      frame.src=base+'calendario?period='+period;body.replaceWith(frame);
+      frame.src=base+'calendario?period='+period;dialog.append(frame);
+      loadTimer=setTimeout(function(){
+        if(closed)return;
+        frame.remove();note.textContent='No se ha podido abrir Kairo.';retry.hidden=false;modeButton.hidden=false;
+      },15000);
     }catch(error){note.textContent=error.message;retry.hidden=false;modeButton.hidden=error.code!=='network';}
   }
   function close(){dialog.close();}
-  dialog.addEventListener('close',function(){window.removeEventListener('message',receive);dialog.remove();if(NAV_BACK===close)NAV_BACK=previous;backFocus.focus();},{once:true});
+  dialog.addEventListener('close',function(){closed=true;clearTimeout(loadTimer);frame.remove();window.removeEventListener('message',receive);dialog.remove();if(NAV_BACK===close)NAV_BACK=previous;if(backFocus&&backFocus.isConnected)backFocus.focus();},{once:true});
   var backFocus=document.activeElement;
   back.onclick=close;retry.onclick=connect;header.append(title,back);body.append(note,modeButton,retry);modeButton.onclick=function(){openMobileConnection(function(){if(dialog.open)connect();},'vpn');};dialog.append(header,body);
   document.body.append(dialog);dialog.showModal();NAV_BACK=close;
