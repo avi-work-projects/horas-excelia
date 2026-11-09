@@ -85,15 +85,15 @@ test('una auditoría de tres meses; navegar, editar, foco y recarga reutilizan l
   await expect(page.locator('.hours-verified-note')).toHaveCount(0);
   await page.evaluate(()=>{CY=2025;CM=0;render();});await expect(page.locator('.home-submission')).toContainText('Correos al día');expect(api.calls.hours).toBe(1);expect(api.calls.invoices).toHaveLength(3);
 });
-test('desmarcar desbloquea edición y conserva la programación; V/F/A sombrean toda la celda',async({page,context})=>{
+test('Acciones desbloquea edición y conserva la programación; V/F/A sombrean toda la celda',async({page,context})=>{
   const api=await setup(page,context),card=page.locator('.week-card').first();
-  await expect(card).toHaveClass(/sent/);await card.getByRole('button',{name:'Desmarcar',exact:true}).click();await expect(card).not.toHaveClass(/sent/);
+  await expect(card).toHaveClass(/sent/);await card.getByRole('button',{name:'Acciones',exact:true}).click();page.once('dialog',d=>d.accept());await card.getByRole('button',{name:'Editar horas',exact:true}).click();await expect(card).not.toHaveClass(/sent/);
   await card.locator('.day-cell').first().click();await expect(page.locator('#bottomSheet')).toHaveClass(/active/);
   await page.evaluate(()=>{closeSheet();ST['2027-02-01']={type:'vacaciones'};ST['2027-02-02']={type:'festivo'};ST['2027-02-03']={type:'ausencia'};render();});
   await expect(card.locator('.day-hours')).toHaveText(['V','F','A','9h',/6,5\s*h/]);
   const backgrounds=await card.locator('.day-cell').evaluateAll(cells=>cells.map(c=>getComputedStyle(c).backgroundColor));expect(new Set(backgrounds).size).toBe(4);
   expect(await page.evaluate(()=>hoursCachedWeek('2027-02-01').state)).toBe('scheduled');expect(api.calls.hours).toBe(1);
-  await expect(card.getByRole('button',{name:'Enviar a Outlook',exact:true})).toBeVisible();await expect(card.locator('.hours-week-badge')).toHaveAccessibleName('Revisar cambios');
+  await card.getByRole('button',{name:'Acciones',exact:true}).click();await expect(card.getByRole('button',{name:'Outlook',exact:true})).toBeVisible();await expect(card.locator('.hours-week-badge')).toHaveAccessibleName('Revisar cambios');
   await expect(card.locator('.days-grid')).toHaveCSS('border-top-width','2px');await expect(card.locator('.days-grid')).toHaveCSS('border-bottom-width','2px');
 });
 test('un trabajo sobrevive al cierre de Gestify y devuelve su resultado sin repetir Outlook',async({page,context})=>{

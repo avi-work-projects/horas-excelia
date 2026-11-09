@@ -4,7 +4,7 @@ const day=[...calendar,'.ev-cell[data-ds="2026-08-21"] [data-id="map-demo"]'];
 const edit=[...day,'#evDEdit'];
 const lower=[...edit,{scroll:'#evFTypePicker [data-ev-multiday="Otros"]'}];
 const scenes=[
-  {id:'home',title:'Inicio',group:'Inicio',route:home,ready:'#homeBtn',sources:['js/core.js','js/init.js'],layout:[850,65]},
+  {id:'home',title:'Inicio',group:'Inicio',route:home,ready:'#homeBtn',sources:['js/core.js','js/init.js','js/home-week-actions.js'],layout:[850,65]},
   {id:'household',hidesHome:true,title:'Gastos del hogar',group:'Hogar',route:['#householdBtn'],ready:'#householdOverlay.open',sources:['js/household.js','js/household-summary.js','js/economics-fiscal-hip.js','css/household.css'],layout:[40,705]},
   {id:'study',hidesHome:true,title:'Herramientas de comparación',group:'Herramientas',route:['#estudioBtn'],ready:'#estudioOverlay.open',sources:['js/economics-estudio.js','js/economics-comp.js','js/economics-sim.js'],layout:[365,705]},
   {id:'events',title:'Eventos · Próximos',group:'Eventos',route:events,ready:'#evViewUpcoming.active',sources:['js/events-render.js','js/events-bind.js','js/swipe-render.js','js/events-picker-color.js','js/events-order.js','js/events.js','js/events-alarm-policy.js']},

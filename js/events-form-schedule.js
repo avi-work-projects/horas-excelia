@@ -10,11 +10,12 @@ function renderEvFormLead(ev,showDayNote){
   var kind=ev?getEvKind(ev):'puntual',start=ev?ev.start:evDk(new Date()),end=ev&&ev.end||start;
   var boda=ev&&getEvType(ev)==='Ensayos boda',time=ev&&(boda?ev.boda&&ev.boda.time:ev.time)||'';
   var finish=boda&&time?bodaEndAt(time,bodaDuration(ev)):ev&&ev.endTime||'';
+  if(kind==='grande'){var travel=evBarTravelTimes(ev);time=travel.start||'';finish=travel.end||'';}
   var legacy=evFormLegacyDays(ev,kind),note=ev&&ev.note||'';
   var multi=!!EV_FREE_DATES[evTypeKey(kind,ev?getEvType(ev):'')];
   var h='<div class="ev-form-lead"><div class="ev-form-writing"><div class="ev-field"><label for="evFTitle">Título</label><input class="ev-input" id="evFTitle" type="text" maxlength="80" placeholder="Nombre del evento" value="'+escHtml(ev&&ev.title||'')+'"></div>';
   h+='<div class="ev-field"><label for="evFNote">'+(showDayNote?'Notas generales':'Notas')+' <span id="evCharCnt" class="ev-form-counter">'+note.length+'/200</span></label><textarea class="ev-textarea" id="evFNote" maxlength="200" placeholder="Notas opcionales…">'+escHtml(note)+'</textarea></div></div>';
-  h+='<div class="ev-form-schedule"><div id="evFHoraRow">'+evFormScheduleControl('evFTime','Hora',time,false,false)+evFormScheduleControl('evFEndTime','Hora fin',finish,false,boda||!time)+'</div>';
+  h+='<div class="ev-form-schedule"><div id="evFHoraRow">'+evFormScheduleControl('evFTime','Hora',time,false,false)+evFormScheduleControl('evFEndTime','Hora fin',finish,false,boda||kind!=='grande'&&!time)+'</div>';
   h+='<div id="evFDateRow">'+evFormScheduleControl('evFStart','Día',start,true,legacy)+evFormScheduleControl('evFEnd','Día fin',end,true,kind==='puntual')+'</div></div></div>';
   if(legacy)h+='<p class="sy-note ev-form-legacy">'+(multi?'Edita los días desde Multidía.':'Se conservan los días de este evento anterior.')+'</p>';
   return h;
@@ -44,13 +45,21 @@ function _evFormScheduleState(form){
   });
   var previous=form.root.querySelector('.ev-form-legacy');if(previous)previous.hidden=!!form.multiChanged;
   var time=_evFormEl(form,'evFTime'),finish=_evFormEl(form,'evFEndTime'),boda=type==='Ensayos boda';
-  finish.disabled=boda||!time.value;
+  finish.disabled=boda||kind!=='grande'&&!time.value;
   if(boda)finish.value=time.value?bodaEndAt(time.value,form.edit&&form.edit.boda?bodaDuration(form.edit):bodaDefaultDuration().minutes):'';
-  else if(!time.value)finish.value='';
+  else if(kind!=='grande'&&!time.value)finish.value='';
   ['evFStart','evFEnd','evFTime','evFEndTime'].forEach(function(id){
     var input=_evFormEl(form,id),control=input.closest('[data-schedule]'),isDate=input.type==='date';
     control.classList.toggle('disabled',input.disabled);control.setAttribute('aria-disabled',String(input.disabled));
     control.querySelector('[data-schedule-value]').textContent=id==='evFStart'&&multi?form.dates.length+' días':id==='evFEnd'&&kind==='puntual'&&!legacy?'—':isDate?evFormDateLabel(input.value):input.value||'Sin hora';
+  });
+  syncEvFormTravelTimes(form);
+}
+function syncEvFormTravelTimes(form){
+  if(_evFormKind(form)!=='grande')return;
+  [['ida','evFTime'],['vuelta','evFEndTime']].forEach(function(pair){
+    var time=form.root.querySelector('.ev-viaje-time[data-tramo="'+pair[0]+'"]');
+    if(time)time.value=_evFormEl(form,pair[1]).value;
   });
 }
 function bindEvFormSchedule(form){
@@ -58,6 +67,17 @@ function bindEvFormSchedule(form){
     var input=_evFormEl(form,id);['input','change'].forEach(function(event){input.addEventListener(event,function(){if(id==='evFStart'&&!input.disabled&&form.dates.length===1)form.dates=[input.value];_evFormScheduleState(form);});});
   });
   _evFormScheduleState(form);_evFormUpdateHeading(form);
+  bindEvFormTravelTimes(form);
+}
+/* Un cambio explícito manda en ambos campos; abrir/cancelar no escribe el evento. */
+function bindEvFormTravelTimes(form){
+  [['ida','evFTime'],['vuelta','evFEndTime']].forEach(function(pair){
+    var box=form.root.querySelector('.ev-viaje-tramo[data-tramo="'+pair[0]+'"]'),main=_evFormEl(form,pair[1]);
+    var time=box.querySelector('.ev-viaje-time'),check=box.querySelector('.ev-viaje-chk');
+    function fromTravel(){if(_evFormKind(form)==='grande'&&check.checked){main.value=time.value;_evFormScheduleState(form);}}
+    ['input','change'].forEach(function(name){time.addEventListener(name,fromTravel);});
+    check.addEventListener('change',function(){_evFormScheduleState(form);});
+  });
 }
 function bindEvFormMultiday(form){
   _evFormAll(form,'[data-ev-multiday]').forEach(function(button){button.onclick=function(){

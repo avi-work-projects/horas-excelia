@@ -1,5 +1,7 @@
 # Mapa visual de Gestify
 
+v549. [Acciones semanales y horarios coordinados](review/updates-v549.html). Home se actualiza por el cambio de estructura del pie semanal. Se añaden ejemplos de Acciones, su despliegue, una semana pendiente y transporte Ninguno; las demás referencias se conservan.
+
 v548. [VPN sobre Home y pendientes más visibles](review/updates-v548.html). Se añaden únicamente dos referencias de los estados afectados; el resto del atlas se conserva.
 
 v543. [Home R8 aplicada en Gestify](review/updates-v543.html): estados, botones y acciones reales de modificación. Se actualizan únicamente las referencias de Home y los anclajes del acceso a la factura; las demás capturas y revisiones se conservan. La propuesta R8 se mantiene como referencia histórica.

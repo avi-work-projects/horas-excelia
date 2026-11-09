@@ -1,5 +1,29 @@
 # Arquitectura y desarrollo
 
+## Acciones semanales y horarios coordinados (v549)
+
+`home-week-actions.js` ensambla el pie semanal tanto al renderizar como al
+actualizar el estado de Kairo. Una semana cubierta muestra Acciones en el centro;
+se despliega a Outlook, Editar horas y Cancelar. Las pendientes solo muestran
+Enviar a Outlook. Cancelar repliega y bloquea la edición sin revertir datos ni
+cancelar correos. Editar horas avisa de que habrá que modificar un correo
+programado, o de que el correo enviado ya no se puede cambiar. El desbloqueo es
+local y se vuelve a confirmar si cambia el estado de programada a enviada.
+
+La primera modificación real de un día pendiente muestra origen y destino antes
+de escribir. Solo aceptar guarda una confirmación de sesión de 20 minutos; no se
+renueva al utilizarla ni se exporta en backups. No suprime los avisos de semanas
+programadas o enviadas. Los estados de Outlook y el envío manual se conservan.
+
+Los formularios grandes coordinan inicio/ida y fin/vuelta en ambos sentidos.
+Al editar datos anteriores con horas distintas se presentan las que ya usa la
+barra del calendario (prioridad del trayecto), sin escribir hasta Guardar. El
+fin de un grande puede existir sin hora de ida. Ninguno no borra la hora y no
+guarda conductor. No se migran eventos al abrirlos. Los puntuales y los ensayos
+conservan sus reglas. Solo dos instantáneas HTML del formulario cambian por
+Ninguno y por habilitar ese fin independiente. Pruebas dirigidas de navegador y
+de lógica; atlas limitado a Home y a los ejemplos de las acciones nuevas.
+
 ## VPN y avisos de Home (v548)
 
 Ámbito: activación explícita de VPN, apertura de la agenda y pulso de pendientes.

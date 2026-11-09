@@ -347,12 +347,7 @@
   /* ── Chips de horas por día (dentro del sheet) ── */
   document.querySelectorAll('.hour-chip-day').forEach(function(chip){
     chip.addEventListener('click',function(){
-      if(!ED)return;
-      var h=+chip.dataset.h;
-      var k=dk(ED);
-      if(ST[k]&&ST[k].type)return; // bloqueado si día no-normal (vac/fest/aus)
-      ST[k]={hours:h};
-      save();render();closeSheet();
+      setHomeDayHours(+chip.dataset.h);
     });
   });
 

@@ -60,6 +60,9 @@
       "path": "js/home-weeks.js"
     },
     {
+      "path": "js/home-week-actions.js"
+    },
+    {
       "path": "js/hours-kairo.js"
     },
     {

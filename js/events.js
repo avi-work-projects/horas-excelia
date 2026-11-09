@@ -784,12 +784,14 @@ function _evCancelRemove(id){_panelCancelarBorrado(id);}
    - Puntual (menos las clases de boda, que tienen su propia hora en
      ev.boda.time): ev.time y ev.endTime, las dos opcionales; el fin solo se
      puede poner si hay inicio.
-   - Grande: ev.viaje = {ida:{time,modo,conductor}, vuelta:{...}}, cada tramo
-     opcional. La hora es la de SALIDA, que es de lo que uno quiere avisarse.
+   - Grande: time/endTime se coordinan en el formulario con viaje.ida/vuelta.
+     Cada tramo es opcional, al igual que su transporte. La hora del trayecto
+     es la de SALIDA, que es de lo que uno quiere avisarse.
    Las rutinas y las clases de boda mantienen su hora donde estaba; estas
    funciones leen de donde corresponda para que el resto del codigo no tenga
    que saberlo. */
 var EV_TRANSPORTES = [
+  {k:'ninguno',l:'Ninguno',e:''},
   {k:'tren',  l:'Tren',    e:'\ud83d\ude86'},
   {k:'bus',   l:'Autobús', e:'\ud83d\ude8c'},
   {k:'coche', l:'Coche',   e:'\ud83d\ude97'},
@@ -808,7 +810,7 @@ function evEndTime(ev){
   if(!ev)return null;
   if(ev._rut)return (typeof rutFin==='function')?rutFin(ev._rutTime,ev._rutDur||rutDurationOn(ev._rut,ev.start)):null;
   if(getEvType(ev)==='Ensayos boda')return ev.boda&&ev.boda.time?bodaEndAt(ev.boda.time,bodaDuration(ev)):null;
-  return (ev.time&&ev.endTime)?ev.endTime:null;
+  return ((getEvKind(ev)==='grande'||ev.time)&&ev.endTime)?ev.endTime:null;
 }
 /* Texto corto "09:30 – 11:00" para las tarjetas */
 function evTimeLabel(ev){

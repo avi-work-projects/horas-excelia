@@ -29,7 +29,8 @@ function _evFormRead(form){
 function _evFormReadDetails(form,event){
   if(event.type!=='Ensayos boda'){
     var start=_evFormEl(form,'evFTime'),end=_evFormEl(form,'evFEndTime');
-    if(start&&start.value){event.time=start.value;if(end&&end.value&&(end.value>start.value||event.end>event.start))event.endTime=end.value;}
+    if(start&&start.value)event.time=start.value;
+    if(end&&end.value&&(event.kind==='grande'||start&&start.value&&(end.value>start.value||event.end>event.start)))event.endTime=end.value;
   }
   if(event.kind==='grande'){
     var travel={};['ida','vuelta'].forEach(function(part){

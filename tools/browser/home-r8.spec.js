@@ -138,8 +138,8 @@ test('programar el mes exige su predecesor y no afecta al envío manual ni a edi
   await page.getByRole('button',{name:'Programar pendientes',exact:true}).click();
   await expect(page.locator('#toast')).toContainText('Primero deben estar programados los correos de enero de 2027');
   expect(popups).toHaveLength(0);
-  await expect(page.locator('.week-card').first().getByRole('button',{name:'Enviar a Outlook'})).toBeVisible();
-  await page.locator('.week-card').first().getByRole('button',{name:'Desmarcar'}).click();
+  await page.locator('.week-card').first().getByRole('button',{name:'Acciones'}).click();await expect(page.locator('.week-card').first().getByRole('button',{name:'Outlook',exact:true})).toBeVisible();
+  page.once('dialog',d=>d.accept());await page.locator('.week-card').first().getByRole('button',{name:'Editar horas',exact:true}).click();
   await expect(page.locator('.week-card').first()).not.toHaveClass(/sent/);
   await page.evaluate(()=>{HOURS_CACHE.weeks['2026-12-28'].state='sent';});
   expect(await page.evaluate(()=>homePreviousMailMonth(CY,CM).ready)).toBe(true);

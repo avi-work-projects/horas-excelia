@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v548 — Activación VPN y avisos visibles';
+var APP_VERSION = 'v549 — Horas coordinadas y acciones de semana';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -567,7 +567,7 @@ function buildHomeCalendar(c){
       // Bloquear clic si semana enviada
       (function(dd,key){
         cell.addEventListener('click',function(){
-          if(!homeWeekUnlocked(key)){showToast('Desmarca primero la semana para editar sus días.','error');return;}
+          if(homeWeekCovered(key)&&!homeWeekUnlocked(key)){showToast('Pulsa Acciones → Editar horas para cambiar esta semana.','info');return;}
           openSheet(dd);
         });
       })(d,wkey);
@@ -575,17 +575,7 @@ function buildHomeCalendar(c){
     }
     card.appendChild(grid);
 
-    var acts=document.createElement('div'); acts.className='week-actions';
-    var sendBtn=document.createElement('button');
-    sendBtn.className='action-btn send';
-    sendBtn.innerHTML='<svg class="week-action-icon mail-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M3 4h18a1 1 0 0 1 1 1v.5L12 12 2 5.5V5a1 1 0 0 1 1-1Zm-1 4 9.45 6.14a1 1 0 0 0 1.1 0L22 8v11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1Z"/></svg><span>Enviar a Outlook</span>';
-    (function(k){sendBtn.addEventListener('click',function(e){e.stopPropagation();sendManualEmail(k);});})(wkey);
-    var sb=document.createElement('button');
-      sb.className='action-btn sent-toggle';
-      sb.innerHTML='<svg class="week-action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12h8"/></svg><span>'+(unlocked?'Cerrar edición':covered?'Desmarcar':'Editar días')+'</span>';
-      (function(k){sb.addEventListener('click',function(e){e.stopPropagation();togSent(k);});})(wkey);
-    acts.appendChild(sendBtn); acts.appendChild(sb);
-    card.appendChild(acts); c.appendChild(card);
+    renderHomeWeekActions(card,wkey);c.appendChild(card);
   });
 
 }
@@ -620,6 +610,7 @@ function selectType(t){
   if(!ED)return; var k=dk(ED),dow=ED.getDay();
   if(t==='normal'){
     var e=ST[k]||{},wasNormal=!e.type;
+    if(!wasNormal&&!homeConfirmDayChange(ED,'normal',dow===5?6.5:getMonthH(ED.getFullYear(),ED.getMonth(),ED.getDate())))return;
     if(!wasNormal){delete ST[k];}
     document.querySelectorAll('.sheet-option').forEach(function(el){el.classList.toggle('selected',el.dataset.type==='normal');});
     if(dow>=1&&dow<=4){
@@ -642,6 +633,7 @@ function selectType(t){
     /* Avisar antes de marcar si se pasa del cupo anual */
     if(t==='vacaciones'&&!confirmarCupoVacaciones(k))return;
     if(t==='festivo'&&!confirmarCupoFestivos(k))return;
+    if(!homeConfirmDayChange(ED,t,0))return;
     delete ST[k]; ST[k]={type:t};
     save(); closeSheet(); render();
   }
@@ -701,9 +693,6 @@ function confirmarCupoFestivos(k){
     +'\u00bfMarcarlo de todas formas?');
 }
 var HOURS_WEEK_UNLOCKED=Object.create(null);
-function togSent(k){
-  HOURS_WEEK_UNLOCKED[k]=!homeWeekUnlocked(k);render();
-}
 
 /* ══ Paneles deslizantes: una sola puerta de entrada ═══════════════════
    Abrir un panel eran seis pasos que estaban copiados en 27 sitios: crear el

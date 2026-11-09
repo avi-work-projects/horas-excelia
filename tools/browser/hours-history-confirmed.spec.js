@@ -18,10 +18,10 @@ for(const connected of [false,true])test('histórico confirmado: verde, resumen,
   await page.locator('.week-card[data-week="2026-10-19"]').screenshot({path:info.outputPath('semana-confirmada-'+connected+'.png'),animations:'disabled'});
   await page.screenshot({path:info.outputPath('historico-confirmado-'+connected+'.png'),animations:'disabled'});
   const week=page.locator('.week-card[data-week="2026-10-19"]');
-  await week.getByRole('button',{name:'Desmarcar',exact:true}).click();await expect(week).not.toHaveClass(/sent/);
+  await week.getByRole('button',{name:'Acciones',exact:true}).click();page.once('dialog',d=>d.accept());await week.getByRole('button',{name:'Editar horas',exact:true}).click();await expect(week).not.toHaveClass(/sent/);
   await week.locator('.day-cell').first().click();await expect(page.locator('#bottomSheet.active')).toBeVisible();await page.evaluate(()=>closeSheet());
   expect(await page.evaluate(()=>JSON.stringify([ST,MONTH_H,SW]))).toBe(original);
-  page.once('dialog',d=>d.dismiss());await week.getByRole('button',{name:'Enviar a Outlook'}).click();
+  await week.getByRole('button',{name:'Acciones',exact:true}).click();page.once('dialog',d=>d.dismiss());await week.getByRole('button',{name:'Outlook',exact:true}).click();
   expect(await page.evaluate(()=>hoursHistorySent('2026-11-02'))).toBe(true);
   expect(await page.evaluate(()=>hoursHistorySent('2026-11-09'))).toBe(false);
   await page.clock.setFixedTime(new Date('2027-02-01T12:00:00+01:00'));

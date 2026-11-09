@@ -4563,6 +4563,14 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 .home-submission .hours-home-actions{margin-top:8px;padding-top:0;border:0}
 @media(max-width:360px){.home-panel{padding:10px;--home-panel-action-width:84px}.home-submission-body{grid-template-columns:minmax(0,1fr) minmax(0,173px);gap:7px}.home-panel-row,.home-submission-body.summaryless{gap:7px}.home-panel-status{grid-template-columns:14px minmax(0,1fr);gap:10px}.home-panel-action{gap:3px;padding:4px;font-size:.62rem}.home-panel-action svg{width:17px;height:17px}}
 @media(prefers-reduced-motion:reduce){.home-panel.pending,.home-panel.unsent,.home-panel.urgent,.home-invoice-alert{animation:none}}
+.week-actions.home-week-actions{justify-content:center;gap:8px;min-height:64px;box-sizing:border-box}
+.home-week-actions .action-btn{flex:0 1 auto;min-height:38px;padding:8px 13px;font-size:.7rem}
+.home-week-actions .home-week-more,.home-week-actions .home-week-edit,.home-week-actions .home-week-cancel{border-color:var(--home-tone);color:var(--text);background:var(--surface)}
+.home-week-actions .home-week-more svg,.home-week-actions .home-week-edit svg,.home-week-actions .home-week-cancel>span:first-child{color:var(--home-tone)}
+.home-week-actions .action-btn:focus-visible{outline:2px solid var(--home-tone);outline-offset:3px}
+.home-week-actions.expanded .action-btn{padding:8px 7px;gap:4px;min-width:0;white-space:normal;font-size:.66rem}
+.home-week-actions.expanded .week-action-icon{width:18px;height:18px}
+.home-week-actions .edit-pencil{width:18px;height:18px;flex:none}
 
 /* Fuente: css/source/invoices-calendar.css */
 .invoice-calendar{padding:10px 12px}

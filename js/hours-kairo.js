@@ -202,7 +202,7 @@ function paintHoursStatus(){
     var note=card.querySelector('.hours-week-readonly'),date=hoursWeekDate(key,state);
     if(date&&!note){note=document.createElement('div');note.className='hours-week-readonly';card.querySelector('.week-info').appendChild(note);}
     if(note){note.textContent=date?'Envío '+date:'';note.hidden=!date;}
-    var label=card.querySelector('.sent-toggle span');if(label)label.textContent=open?'Cerrar edición':covered?'Desmarcar':'Editar días';
+    renderHomeWeekActions(card,key);
   });
 }
 async function syncHoursStatus(force,requestedPeriod){
