@@ -1,9 +1,10 @@
 const {test,expect}=require('@playwright/test');
 const service='https://network-fixture.test.ts.net';
 const trigger='https://trigger.macrodroid.com/synthetic-test-device';
-async function setup(page,{configured=true,linked=true}={}){
+async function setup(page,{configured=true,linked=true,paused=false}={}){
   const state={reachable:false,reject:false,commands:[],agenda:0,checks:0,brokenAgenda:false};
   await page.clock.install({time:new Date('2027-02-01T12:00:00+01:00')});
+  if(paused)await page.clock.pauseAt(new Date('2027-02-01T12:00:10+01:00'));
   await page.addInitScript(({service,trigger,linked,configured})=>{
     sessionStorage.setItem('excelia-popup-dismissed','1');
     localStorage.setItem('excelia-theme-v1','light');
@@ -28,7 +29,7 @@ async function fromMenu(page){
   await page.locator('#menuBtn').click();await page.locator('#mobileConnectionBtn').click();
   return page.getByRole('dialog',{name:'Conexión del móvil'});
 }
-test('el selector conserva el formato de Kairo en los tres temas y la vuelta automática espera acceso real',async({page},info)=>{
+test('el selector conserva el formato de Kairo en los tres temas',async({page},info)=>{
   const state=await setup(page);const dialog=await fromMenu(page);
   for(const theme of ['light','dark','grey'])for(const width of [320,400,440]){
     await page.setViewportSize({width,height:880});await page.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);
@@ -42,11 +43,20 @@ test('el selector conserva el formato de Kairo en los tres temas y la vuelta aut
   expect((await page.request.get('/kairo-wordmark.png')).status()).toBe(200);expect(state.checks).toBe(0);
   await dialog.getByRole('button',{name:'Volver',exact:true}).click();
   await expect(dialog).toHaveCount(0);
+});
+test('la vuelta automática espera acceso real y solo reanuda una vez',async({page})=>{
+  const state=await setup(page,{paused:true});
+  const dialog=page.getByRole('dialog',{name:'Conexión del móvil'});
   await page.evaluate(()=>{window.connectionResumed=0;openMobileConnection(function(){window.connectionResumed++;},'vpn');});
-  await expect(dialog.getByRole('status')).toContainText('solicitud enviada');await page.clock.fastForward(1500);
+  await expect.poll(()=>state.commands.length).toBe(1);
+  await expect(dialog.getByRole('status')).toContainText('solicitud enviada');
+  await page.clock.fastForward(1500);
   await expect(dialog).toBeVisible();expect(await page.evaluate(()=>window.connectionResumed)).toBe(0);
-  state.reachable=true;await page.clock.fastForward(3000);await expect(dialog).toHaveCount(0);
-  expect(await page.evaluate(()=>window.connectionResumed)).toBe(1);expect(await page.evaluate(()=>kairoVpnConfirmed())).toBe(true);
+  state.reachable=true;
+  await expect.poll(async()=>{await page.clock.fastForward(2500);return page.evaluate(()=>window.connectionResumed);}).toBe(1);
+  await expect(dialog).toHaveCount(0);expect(await page.evaluate(()=>kairoVpnConfirmed())).toBe(true);
+  await page.clock.fastForward(30000);expect(state.commands).toEqual([trigger+'/conexion_kairo']);
+  expect(await page.evaluate(()=>window.connectionResumed)).toBe(1);
 });
 test('Ajustes muestra solo los tres modos, limita toques repetidos y no sondea Kairo',async({page},info)=>{
   const state=await setup(page),dialog=await fromMenu(page);
