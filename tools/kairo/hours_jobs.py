@@ -4,6 +4,7 @@ import threading
 import uuid
 from datetime import datetime, timezone
 from hours_errors import HoursFailure, MESSAGES
+from hours_model import user_confirmed
 
 
 class Jobs:
@@ -112,7 +113,14 @@ class Jobs:
         with self.store.db() as db:
             row = db.execute('SELECT payload FROM status_facts WHERE account=? AND period=?',
                              (account, period)).fetchone()
-        return json.loads(row['payload']) if row else None
+        if not row:return None
+        fact=json.loads(row['payload'])
+        ledger=self.store.ledger([item['key'] for item in fact['rows']])
+        for item in fact['rows']:
+            if user_confirmed(ledger.get(item['key'],{})):
+                item.update(state='sent',confirmedByUser=True)
+                item.pop('schedule',None)
+        return fact
 
     def close(self):
         self.stopped = True

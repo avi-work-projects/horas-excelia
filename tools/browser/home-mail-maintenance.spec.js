@@ -83,7 +83,7 @@ test('una auditoría de tres meses; navegar, editar, foco y recarga reutilizan l
   await expect(page.locator('.week-card').nth(1).locator('.hours-week-badge')).toContainText('Revisar cambios');expect(api.calls.hours).toBe(1);
   await page.reload();await expect(page.locator('.home-submission.complete')).toContainText('Correos al día');expect(api.calls.hours).toBe(1);expect(api.calls.invoices).toHaveLength(3);
   await expect(page.locator('.hours-verified-note')).toHaveCount(0);
-  await page.evaluate(()=>{CY=2025;CM=0;render();});await expect(page.locator('.home-submission')).toContainText('Correos sin registro');expect(api.calls.hours).toBe(1);expect(api.calls.invoices).toHaveLength(3);
+  await page.evaluate(()=>{CY=2025;CM=0;render();});await expect(page.locator('.home-submission')).toContainText('Correos al día');expect(api.calls.hours).toBe(1);expect(api.calls.invoices).toHaveLength(3);
 });
 test('desmarcar desbloquea edición y conserva la programación; V/F/A sombrean toda la celda',async({page,context})=>{
   const api=await setup(page,context),card=page.locator('.week-card').first();

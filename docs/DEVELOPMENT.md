@@ -1774,3 +1774,29 @@ Verificado en Edge a 320/400/440 px, con cambio de mes y año, alta y edición d
 cumpleaños, plan repetido, avisos reales frente al mes navegado, barras finas y
 solapadas. El mapa solo recaptura calendario mensual, Próximos y Recordatorios,
 con un plan de ejemplo inventado; conserva las demás imágenes y revisiones.
+
+
+## Semanas anteriores confirmadas por el propietario (v547)
+
+Ángel confirma expresamente el 09/11/2026 que todas las semanas anteriores a la
+actual están enviadas. Sustituye para ese tramo el estado «Correos sin registro»
+de v545. `HOURS_HISTORY_BEFORE` queda fijado en 2026-11-09; no es una regla móvil
+que vaya dando por enviadas semanas nuevas. Los meses totalmente cubiertos usan
+solo sus semanas propias para el resumen: las dos extras no convierten un mes
+histórico confirmado en pendiente. El alcance normal de programación no cambia.
+
+La misma declaración queda en la tabla privada `history_confirmations` de Kairo.
+El diario, conciliación, estados guardados y calendario comparten su procedencia
+`user-confirmed`. No se inventan mensajes, identificadores ni fechas de envío.
+Las semanas declaradas no producen operaciones de crear/actualizar correo. Las
+semanas posteriores conservan sus estados existentes y la política normal. La
+política de revisión pasa a v4 para invalidar revisiones transitorias anteriores.
+Antes de consolidar se realiza un backup SQLite privado; no se cambian filas de
+semanas, programaciones, trabajos o estados existentes, ni datos de jornada.
+
+Se conservan Desmarcar/editar días y Enviar a Outlook manual, con su advertencia
+de duplicado. CSV marca también las semanas confirmadas. No requiere generar ni
+importar un backup del móvil; el cambio entra al cargar la versión actualizada.
+El atlas activo retira el antiguo estado desconocido de Home; sus capturas se
+conservan en la revisión histórica. No se recapturan otros menús por este cambio
+de datos y lógica. La revisión v547 reutiliza evidencia funcional ficticia.

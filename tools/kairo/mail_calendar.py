@@ -1,7 +1,7 @@
 """Monthly view of Kairo's confirmed weekly facts and Gestify's civil calendar."""
 import json
 from datetime import date, datetime, timedelta
-from hours_model import MADRID, delivery_day, scope
+from hours_model import MADRID, delivery_day, scope, user_confirmed
 
 
 def validated_days(period, days):
@@ -77,14 +77,16 @@ def calendar_data(store, sender, period, now=None):
                               if isinstance(d,dict) and str(d.get('date',''))[:7]==month
                               and d.get('type') in ('vacaciones','festivo','ausencia')}
     dates={}
-    ledger=store.ledger()
+    ledger=store.ledger(keys)
     rows=[]
     for key in keys:
         _,fact,checked=observed.get(key,(0,{},None))
         journal=ledger.get(key,{})
         state=fact.get('state','unverified')
         when=fact.get('schedule')
-        if state!='sent' and journal.get('state') in ('reserved','uncertain'):
+        if user_confirmed(journal):
+            state,when='sent',None
+        elif state!='sent' and journal.get('state') in ('reserved','uncertain'):
             state,when='uncertain',None
         elif not fact and journal.get('state')=='scheduled':
             state,when='scheduled',journal.get('schedule')

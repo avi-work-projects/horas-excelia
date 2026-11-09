@@ -1,0 +1,31 @@
+const {test,expect}=require('@playwright/test');
+test.use({timezoneId:'Europe/Madrid'});
+for(const connected of [false,true])test('histórico confirmado: verde, resumen, edición y corte fijo; conexión '+connected,async({page},info)=>{
+  await page.clock.setFixedTime(new Date('2026-11-09T10:00:00+01:00'));
+  await page.addInitScript(connected=>{
+    sessionStorage.setItem('excelia-popup-dismissed','1');localStorage.setItem('excelia-theme-v1','light');localStorage.setItem('excelia-nav-icons-v1','professional');
+    if(connected)localStorage.setItem('excelia-invoices-v1',JSON.stringify({config:{kairoUrl:'https://history-confirmed.test.ts.net/facturas/'},months:{}}));
+  },connected);
+  await page.route('https://history-confirmed.test.ts.net/**',r=>r.abort());
+  await page.goto('/');
+  await page.evaluate(()=>{CY=2026;CM=9;SW={};ST={'2026-10-12':{type:'festivo'}};MONTH_H={'2026-10':9};render();});
+  const original=await page.evaluate(()=>JSON.stringify([ST,MONTH_H,SW]));
+  await expect(page.locator('.home-submission.complete')).toContainText('Correos al día');await expect(page.locator('.home-summary-compact')).toContainText('176,5h');
+  await expect(page.locator('#weeksContainer')).not.toContainText('Correos sin registro');
+  expect(await page.locator('.week-card').evaluateAll(es=>es.every(e=>e.classList.contains('sent')&&e.dataset.mailState==='sent'))).toBe(true);
+  await expect(page.locator('.week-card .sent-badge')).toHaveText(['✓ Enviada','✓ Enviada','✓ Enviada','✓ Enviada','✓ Enviada']);
+  await page.locator('.home-submission').screenshot({path:info.outputPath('panel-confirmado-'+connected+'.png'),animations:'disabled'});
+  await page.locator('.week-card[data-week="2026-10-19"]').screenshot({path:info.outputPath('semana-confirmada-'+connected+'.png'),animations:'disabled'});
+  await page.screenshot({path:info.outputPath('historico-confirmado-'+connected+'.png'),animations:'disabled'});
+  const week=page.locator('.week-card[data-week="2026-10-19"]');
+  await week.getByRole('button',{name:'Desmarcar',exact:true}).click();await expect(week).not.toHaveClass(/sent/);
+  await week.locator('.day-cell').first().click();await expect(page.locator('#bottomSheet.active')).toBeVisible();await page.evaluate(()=>closeSheet());
+  expect(await page.evaluate(()=>JSON.stringify([ST,MONTH_H,SW]))).toBe(original);
+  page.once('dialog',d=>d.dismiss());await week.getByRole('button',{name:'Enviar a Outlook'}).click();
+  expect(await page.evaluate(()=>hoursHistorySent('2026-11-02'))).toBe(true);
+  expect(await page.evaluate(()=>hoursHistorySent('2026-11-09'))).toBe(false);
+  await page.clock.setFixedTime(new Date('2027-02-01T12:00:00+01:00'));
+  expect(await page.evaluate(()=>hoursHistorySent('2026-11-09'))).toBe(false);
+  await page.evaluate(()=>{HOURS_WEEK_UNLOCKED={};render();});await expect(page.locator('.home-submission.complete')).toContainText('Correos al día');
+  expect(await page.evaluate(()=>JSON.stringify([ST,MONTH_H,SW]))).toBe(original);
+});

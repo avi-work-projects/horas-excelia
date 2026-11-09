@@ -141,7 +141,7 @@ var _g2=document.getElementById('pdfExportBtn'); if(_g2)_g2.addEventListener('cl
       // Check if week is sent (find monday)
       var monday=new Date(dt);
       monday.setDate(monday.getDate()-(w===0?6:w-1));
-      var isSent=!!SW[dk(monday)];
+      var isSent=hoursHistorySent(dk(monday))||!!SW[dk(monday)];
 
       var tipoStr=typeLabels[tipo]||tipo;
       var hrsStr=hrs>0?(hrs%1===0?hrs+'h':hrs.toFixed(1)+'h'):'—';

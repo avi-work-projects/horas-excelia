@@ -9,10 +9,11 @@ function homeDueSoon(date){
   return (Date.parse(date)-Date.parse(today))/86400000<7;
 }
 function homeMailState(key,year,month){
-  var state=hoursRemoteConfigured()?(hoursWeekState(key)||'missing'):SW[key]?'sent':'missing';
+  var state=hoursRemoteConfigured()?(hoursWeekState(key)||'missing'):hoursHistorySent(key)||SW[key]?'sent':'missing';
   return homePeriodMode(year,month)==='closed'&&['missing','ready','unverified','draft','past-due','no-workdays','blocked-previous'].includes(state)?'unrecorded':state;
 }
-function homeWeekCovered(key){return hoursRemoteConfigured()?hoursHasConfirmedMail(key):!!SW[key];}
+function homeWeekCovered(key){return hoursRemoteConfigured()?hoursHasConfirmedMail(key):hoursHistorySent(key)||!!SW[key];}
+function homeStatusWeeks(year,month){var scope=homeSubmissionWeeks(year,month),confirmed=scope.every(function(week){return week.extra||hoursHistorySent(week.key);});return confirmed?scope.filter(function(week){return !week.extra;}):scope;}
 function homeWeekUnlocked(key){return Object.prototype.hasOwnProperty.call(HOURS_WEEK_UNLOCKED,key)?HOURS_WEEK_UNLOCKED[key]:!homeWeekCovered(key);}
 function homeSubmissionWeeks(year,month){
   var current=weeks(year,month),last=current[current.length-1][0];
@@ -31,8 +32,7 @@ function homePreviousMailMonth(year,month){
 /* Recordatorios y Home comparten alcance y hechos de Outlook. Desconocido
    nunca se convierte en siete avisos falsos de semanas sin enviar. */
 function homeSubmissionWarnings(year,month){
-  var remote=typeof hoursRemoteConfigured==='function'&&hoursRemoteConfigured();
-  var rows=homeSubmissionWeeks(year,month).map(function(week){
+  var rows=homeStatusWeeks(year,month).map(function(week){
     return {key:week.key,mon:week.mon,state:homeMailState(week.key,year,month)};
   });
   return rows.filter(function(row){return !['sent','scheduled','unrecorded'].includes(row.state);});

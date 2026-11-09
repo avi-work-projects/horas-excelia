@@ -31,6 +31,7 @@ jobs:
       - run: python3 tools/kairo/test_invoice_mail_history.py
       - run: python3 tools/kairo/test_hours.py
       - run: python3 tools/kairo/test_hours_jobs.py
+      - run: python3 tools/kairo/test_hours_history.py
       - run: python3 tools/kairo/test_outlook_auth.py
       - run: python3 tools/kairo/test_bridge.py
       - run: python3 tools/kairo/test_month_review.py

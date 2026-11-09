@@ -1,7 +1,10 @@
 /* Weekly mail uses the same scope for the warning and both entry points.
-   Verified facts live in hours-cache; SW is a legacy manual mark, not proof. */
+   Remote facts live in hours-cache; historical owner confirmations have a fixed cutoff. */
 var HOURS_STATUS={period:'',phase:'idle',rows:[],checkedAt:0};
 var HOURS_REQUEST=null,HOURS_SEQUENCE=0,HOME_SYNC_ERROR=false;
+/* Confirmación expresa de Ángel (09/11/2026), congelada: no avanza con el reloj. */
+var HOURS_HISTORY_BEFORE='2026-11-09';
+function hoursHistorySent(key){return dk(new Date())>=HOURS_HISTORY_BEFORE&&validIsoDate(key)&&key<HOURS_HISTORY_BEFORE&&new Date(key+'T12:00:00').getDay()===1;}
 function hoursKairoUrl(){
   var base=invoiceKairoUrl(invoiceData().config.kairoUrl);
   return base?new URL('/horas/',base).href:'';
@@ -16,6 +19,7 @@ function hoursCivilTime(value){
   return values.year+'-'+values.month+'-'+values.day+'T'+values.hour+':'+values.minute;
 }
 function hoursWeekState(key){
+  if(hoursHistorySent(key))return 'sent';
   var row=hoursCachedWeek(key);if(!row)return '';
   if(row.state==='scheduled'||row.state==='changed'){
     if(!Array.isArray(row.days)||!row.schedule)return row.state;
@@ -27,7 +31,7 @@ function hoursWeekState(key){
 }
 function hoursRemoteConfigured(){try{return !!hoursKairoUrl();}catch(e){return false;}}
 function hoursCovered(key){var state=hoursWeekState(key);return state==='sent'||state==='scheduled';}
-function hoursHasConfirmedMail(key){var row=hoursCachedWeek(key);return !!row&&['sent','scheduled','changed'].includes(row.state);}
+function hoursHasConfirmedMail(key){var row=hoursCachedWeek(key);return hoursHistorySent(key)||!!row&&['sent','scheduled','changed'].includes(row.state);}
 function hoursWeekBadge(state){
   var labels={sent:'✓ Enviada',scheduled:'◷ Programada',unrecorded:'Sin registro',changed:'Revisar cambios',missing:'Pendiente',ready:'Pendiente',unverified:'Pendiente',draft:'Pendiente','blocked-previous':'Pendiente','past-due':'Pendiente','no-workdays':'Pendiente'};
   return labels[state]||(state?'Revisar':'Sin programar');

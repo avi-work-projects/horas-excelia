@@ -7,7 +7,7 @@ from zoneinfo import ZoneInfo
 
 MADRID = ZoneInfo('Europe/Madrid')
 DAY_TYPES = {'normal', 'festivo', 'vacaciones', 'ausencia'}
-SCHEDULE_POLICY = 3  # Scheduling also requires the preceding month to be covered.
+SCHEDULE_POLICY = 4  # Explicit historical confirmations also prevent replacements.
 
 
 def digest(value):
@@ -58,6 +58,15 @@ def prerequisite_weeks(request):
     # The two additional weeks belong to the following month's preparation;
     # requiring them here would make that month depend on itself.
     return scope(previous_month(request['period']))[:-2] if request.get('mode') == 'month' else []
+
+
+def reconciliation_keys(request):
+    keys = [w['key'] for w in request['weeks']]
+    return keys + prerequisite_weeks(request) + [(monday(keys[0])-timedelta(weeks=1)).isoformat()]
+
+
+def user_confirmed(row):
+    return row.get('state') == 'sent' and row.get('plan','').startswith('user-confirmed:')
 
 
 def validate_request(request):
@@ -137,6 +146,7 @@ def reconcile(request, inventory, now, ledger=None):
     previous = (first-timedelta(weeks=1)).isoformat()
     covered = {key for key, items in grouped.items()
                if len(items) == 1 and items[0].get('state') in ('sent', 'scheduled')}
+    covered.update(key for key,row in ledger.items() if user_confirmed(row))
     month_pending = sorted(set(prerequisite_weeks(request))-covered)
     rows = []
     for week in request['weeks']:
@@ -147,7 +157,9 @@ def reconcile(request, inventory, now, ledger=None):
         selected = request['mode'] == 'month' or request['targetWeek'] == key
         row = dict(key=key, extra=len(rows) >= len(request['weeks'])-2, schedule=target,
                    contentHash=wanted_hash, selected=selected, action=None, changes=[])
-        if not verified:
+        if user_confirmed(ledger.get(key,{})):
+            row.update(state='sent', confirmedByUser=True, schedule=None)
+        elif not verified:
             row['state'] = 'unverified'
         elif len(items) > 1:
             row['state'] = 'duplicate'

@@ -7,7 +7,7 @@ from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from hours_model import inventory_signature, reconcile
+from hours_model import inventory_signature, reconcile, reconciliation_keys, monday, MADRID
 
 
 class StalePlan(ValueError):
@@ -26,7 +26,9 @@ class Store:
                 expires TEXT NOT NULL, result TEXT);
                 CREATE TABLE IF NOT EXISTS weeks (
                 week TEXT PRIMARY KEY, state TEXT NOT NULL, plan TEXT NOT NULL,
-                record_id TEXT, content_hash TEXT NOT NULL, schedule TEXT);''')
+                record_id TEXT, content_hash TEXT NOT NULL, schedule TEXT);
+                CREATE TABLE IF NOT EXISTS history_confirmations (
+                before_week TEXT PRIMARY KEY, confirmed_at TEXT NOT NULL);''')
         os.chmod(self.path, 0o600)
 
     @contextmanager
@@ -69,12 +71,26 @@ class Store:
                 else:
                     fcntl.flock(lock, fcntl.LOCK_UN)
 
-    def ledger(self):
+    def confirm_history(self, before, now):
+        boundary=monday(before)
+        if now.tzinfo is None or boundary>now.astimezone(MADRID).date()-timedelta(days=now.astimezone(MADRID).weekday()):
+            raise ValueError('No se pueden confirmar semanas futuras')
         with self.db() as db:
-            return {row['week']: dict(row) for row in db.execute('SELECT * FROM weeks')}
+            db.execute('INSERT OR IGNORE INTO history_confirmations VALUES (?,?)',(before,now.isoformat()))
+
+    def ledger(self, keys=()):
+        with self.db() as db:
+            result={row['week']: dict(row) for row in db.execute('SELECT * FROM weeks')}
+            confirmation=db.execute('SELECT * FROM history_confirmations ORDER BY before_week DESC LIMIT 1').fetchone()
+        if confirmation:
+            boundary=monday(confirmation['before_week'])
+            for key in keys:
+                if monday(key)<boundary:
+                    result[key]=dict(week=key,state='sent',plan='user-confirmed:'+confirmation['confirmed_at'],record_id=None,content_hash='',schedule=None)
+        return result
 
     def preview(self, request, inventory, now):
-        result = reconcile(request, inventory, now, self.ledger())
+        result = reconcile(request, inventory, now, self.ledger(reconciliation_keys(request)))
         plan_id = str(uuid.uuid4())
         expires = (now.astimezone(timezone.utc)+timedelta(minutes=5)).isoformat()
         with self.db() as db:
@@ -102,7 +118,7 @@ class Store:
             inventory = reader(request)
             if inventory_signature(inventory) != plan['signature']:
                 raise StalePlan('Outlook ha cambiado; revisa el nuevo resultado')
-            decision = reconcile(request, inventory, now, self.ledger())
+            decision = reconcile(request, inventory, now, self.ledger(reconciliation_keys(request)))
             allowed_updates = {r['key'] for r in decision['rows']
                                if r['selected'] and r['action'] == 'update'}
             if not set(updates) <= allowed_updates:
@@ -116,7 +132,7 @@ class Store:
                     continue
                 # The initial live read checks the first write. Each confirmed
                 # read below also checks the next week, under the same lock.
-                live = reconcile(request, fresh, clock() if clock else now, self.ledger())
+                live = reconcile(request, fresh, clock() if clock else now, self.ledger(reconciliation_keys(request)))
                 current = next(r for r in live['rows'] if r['key'] == row['key'])
                 # A preceding write is verified in Outlook before the next one.
                 if current['action'] != row['action'] or current['contentHash'] != row['contentHash'] or current.get('recordId') != row.get('recordId'):

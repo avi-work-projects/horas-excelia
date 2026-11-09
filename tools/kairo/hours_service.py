@@ -10,7 +10,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
 
-from hours_model import MADRID, inventory_signature, scope, validate_request
+from hours_model import MADRID, inventory_signature, scope, validate_request, reconciliation_keys, user_confirmed
 from hours_store import Store
 from mail_calendar import calendar_data, grid_periods, save_calendars, remember_review_days
 from hours_jobs import Jobs
@@ -32,7 +32,7 @@ def simulate(store, plan_id, reader, now, updates):
         # Uncertain real attempts also block simulation; it cannot teach an
         # unsafe recovery path. Copy only ledger entries, not credentials.
         with sandbox.db() as db:
-            for row in store.ledger().values():
+            for row in store.ledger(reconciliation_keys(request)).values():
                 db.execute('INSERT INTO weeks VALUES (?,?,?,?,?,?)',
                            tuple(row[k] for k in ('week','state','plan','record_id','content_hash','schedule')))
         plan = sandbox.preview(request, observed, now)
@@ -62,14 +62,16 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
     def snapshots(request, inventory):
         if not inventory.get('complete') or not inventory.get('accountVerified'):
             raise RuntimeError('Lectura incompleta')
-        ledger = store.ledger()
+        ledger = store.ledger([key for period in request.get('periods',[request['period']]) for key in scope(period)])
         result = []
         for period in request.get('periods', [request['period']]):
             rows = []
             for key in scope(period):
                 found = [r for r in inventory['records'] if r.get('week') == key]
                 state = 'missing' if not found else 'duplicate' if len(found)>1 else found[0]['state']
-                if (state != 'sent' and ledger.get(key,{}).get('state') in ('reserved','uncertain')
+                if user_confirmed(ledger.get(key,{})):
+                    state='sent'
+                elif (state != 'sent' and ledger.get(key,{}).get('state') in ('reserved','uncertain')
                         or state=='missing' and ledger.get(key,{}).get('state') in ('sent','scheduled')):
                     state = 'uncertain'
                 row = dict(key=key, state=state)
@@ -238,11 +240,13 @@ def make_handler(config, store, reader, clock=lambda:datetime.now(MADRID)):
                     if not inventory.get('complete') or not inventory.get('accountVerified'):
                         raise RuntimeError()
                     rows = []
-                    ledger = store.ledger()
+                    ledger = store.ledger(keys)
                     for key in keys:
                         found = [r for r in inventory['records'] if r.get('week') == key]
                         state = 'missing' if not found else 'duplicate' if len(found)>1 else found[0]['state']
-                        if (state != 'sent' and ledger.get(key,{}).get('state') in ('reserved','uncertain')
+                        if user_confirmed(ledger.get(key,{})):
+                            state='sent'
+                        elif (state != 'sent' and ledger.get(key,{}).get('state') in ('reserved','uncertain')
                                 or state=='missing' and ledger.get(key,{}).get('state') in ('sent','scheduled')):
                             state = 'uncertain'
                         row=dict(key=key,state=state)

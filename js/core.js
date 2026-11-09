@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v546 — Cumpleaños y planes en su día';
+var APP_VERSION = 'v547 — Semanas anteriores confirmadas';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -348,7 +348,7 @@ function weeks(y,m){
 /* El aviso y la futura programación consumen el mismo alcance. */
 function homeSubmissionStatus(year,month){
   var remote=typeof hoursRemoteConfigured==='function'&&hoursRemoteConfigured(),states={},counts={sent:0,scheduled:0,pending:0,review:0,unrecorded:0};
-  var scope=homeSubmissionWeeks(year,month),known=true;
+  var scope=homeStatusWeeks(year,month),known=true;
   scope.forEach(function(week){
     var state=homeMailState(week.key,year,month);states[week.key]=state;
     if(!state)known=false;
@@ -547,7 +547,7 @@ function buildHomeCalendar(c){
     card.dataset.week=wkey;card.dataset.mailState=mailState;
     card.className='week-card'+(sent?' sent':'');
     var reviewLabel=mailState==='sent'?'Ver estado':mailState==='scheduled'?'Ver programación':mailState==='changed'?'Revisar cambios':'Programar semana';
-    var badge=mailState==='unrecorded'?'<span class="sent-badge hours-unrecorded">Sin registro</span>':remote?'<button type="button" class="sent-badge hours-week-badge '+(covered?'covered':mailState?'attention':'unknown')+'" data-hours-week="'+wkey+'" aria-label="'+reviewLabel+'">'+(mailState==='missing'||mailState==='ready'?reviewLabel:hoursWeekBadge(mailState))+'</button>':sent?'<span class="sent-badge">\u2713 Enviada</span>':'';
+    var badge=hoursHistorySent(wkey)?'<span class="sent-badge">✓ Enviada</span>':mailState==='unrecorded'?'<span class="sent-badge hours-unrecorded">Sin registro</span>':remote?'<button type="button" class="sent-badge hours-week-badge '+(covered?'covered':mailState?'attention':'unknown')+'" data-hours-week="'+wkey+'" aria-label="'+reviewLabel+'">'+(mailState==='missing'||mailState==='ready'?reviewLabel:hoursWeekBadge(mailState))+'</button>':sent?'<span class="sent-badge">\u2713 Enviada</span>':'';
     card.innerHTML='<div class="week-header"><div class="week-info"><h3>Semana '+wn(mon)+badge+'</h3><div class="week-range">'+fd(mon)+' \u2014 '+fd(sun)+'</div></div><div class="week-total">'+dStr+'</div></div>';
     if(remote&&hoursWeekDate(wkey,mailState)){var scheduleNote=document.createElement('div');scheduleNote.className='hours-week-readonly';scheduleNote.textContent='Envío '+hoursWeekDate(wkey,mailState);card.querySelector('.week-info').appendChild(scheduleNote);}
 

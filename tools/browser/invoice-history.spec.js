@@ -15,10 +15,10 @@ test('Sync trae todo el histórico una vez: fechas reales, caché tras recarga y
   const count=reads;
   await page.evaluate(()=>{CY=2023;CM=3;render();});
   await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura enviada');await expect(page.locator('#homeInvoiceStatus time')).toHaveText('03/05');
-  await expect(page.locator('.home-submission')).toContainText('Correos sin registro');
-  await expect(page.locator('.week-card').first()).toContainText('Sin registro');
+  await expect(page.locator('.home-submission')).toContainText('Correos al día');
+  await expect(page.locator('.week-card').first()).toContainText('Enviada');
   await expect(page.locator('.week-card').first().getByRole('button',{name:'Enviar a Outlook'})).toBeVisible();
-  await expect(page.locator('.week-card').first().getByRole('button',{name:'Cerrar edición'})).toBeVisible();
+  await expect(page.locator('.week-card').first().getByRole('button',{name:'Desmarcar'})).toBeVisible();
   await page.screenshot({path:info.outputPath('home-historico-v545.png'),animations:'disabled'});
   await page.reload();await page.evaluate(()=>{CY=2023;CM=3;render();});await expect(page.locator('#homeInvoiceStatus time')).toHaveText('03/05');expect(reads).toBe(count);
   await page.evaluate(()=>{CY=2022;CM=11;render();});await expect(page.locator('#homeInvoiceStatus')).toContainText('Factura sin registro');await expect(page.locator('#homeInvoiceStatus time')).toHaveCount(0);
