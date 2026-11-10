@@ -87,7 +87,7 @@ test('mes futuro: primero horas del mes, después factura, con prioridad para un
   await page.evaluate(()=>{CY=2027;CM=3;render();});
   const panel=page.locator('#homeInvoiceStatus');
   await expect(panel).toContainText('Factura sin enviar');
-  await expect(panel.locator('.home-invoice-rules')).toContainText('Se requiere tener los correos del mes programados');
+  await expect(panel.locator('.home-invoice-rules')).toContainText('Antes deben estar programados');
   await expect(panel.locator('.home-invoice-rule')).toHaveCount(2);
   await expect(panel.locator('[data-home-invoice=send]')).toHaveCount(0);
   await expect(panel.getByRole('button',{name:'Revisar horas'})).toHaveCount(0);

@@ -245,10 +245,14 @@
 .ev-edit-orange:active{background:#f97316 !important}
 .ev-btn.cancel{background:var(--surface2);color:var(--text-muted);border:1px solid var(--border)}
 .ev-btn.cancel:active{background:var(--surface3)}
-/* Relleno, para que haga pareja con el naranja de "Editar evento" */
+/* Relleno en confirmaciones y formularios. Junto a "Editar" en una ficha
+   (.ev-detail-actions) va con contorno, para que Editar sea la acción visible. */
 .ev-btn.danger{background:#c0392f;color:#fff;border:1px solid #c0392f}
 .ev-btn.danger:active{background:#9d2c24}
 :is([data-theme="light"],[data-theme="grey"]) .ev-btn.danger{background:#d64541;border-color:#d64541}
+.ev-detail-actions>.ev-btn.danger,:is([data-theme="light"],[data-theme="grey"]) .ev-detail-actions>.ev-btn.danger{background:color-mix(in srgb,var(--c-red) 7%,var(--surface));color:var(--c-red);border:1.5px solid color-mix(in srgb,var(--c-red) 60%,transparent)}
+.ev-detail-actions>.ev-btn.danger:active{background:color-mix(in srgb,var(--c-red) 18%,var(--surface))}
+.ev-detail-actions>.ev-btn.danger .ev-delete-icon path{stroke:currentColor}
 .ev-io-row{display:flex;gap:8px;margin-top:8px}
 .ev-io-btn:active{background:var(--surface3)}
 /* Event detail */

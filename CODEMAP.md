@@ -701,7 +701,7 @@
 **Rangos por prefijo de clase:**
 .bd-alarm:26-78 · .bd-detail:97-104 · .bday-hdr:6-6 · .bday-upcoming:24-24 · .bday-vip:23-23 · .ev-alarm:49-55 · .ev-hdr:7-7 · .ev-upcoming:29-32 · .macro-section:81-82 · .macro-url:83-85 · .nav-bar:3-95 · .overlay-nav:2-4 · .sy-puente:14-21 · .sy-tab:9-12
 
-### css/source/event-panels.css  _(441 líneas)_
+### css/source/event-panels.css  _(445 líneas)_
 
 **Secciones:**
 
@@ -730,17 +730,16 @@
 - Events list view:202
 - Event form overlay (inside eventsOverlay):216
 - Flechas de carrusel: mantener el padding, fuente y borde heredados de .ev-btn.:240
-- Relleno, para que haga pareja con el naranja de "Editar evento":248
-- Event detail:254
-- El color del título depende de la familia; el símbolo conserva su identidad.:262
-- Fichas de consulta: jerarquía común, datos legibles y controles discretos.:270
-- Consulta compacta: fecha y estado comparten fila; el carrusel no cambia de alto.:307
-- Formulario de evento: marco fijo, texto a la izquierda y agenda a la derecha.:356
-- Solo el contenido de la ficha acompaña el dedo.:396
-- Las etiquetas comparten la línea de Título/Notas; solo el dato ocupa la tarjeta.:405
+- Event detail:258
+- El color del título depende de la familia; el símbolo conserva su identidad.:266
+- Fichas de consulta: jerarquía común, datos legibles y controles discretos.:274
+- Consulta compacta: fecha y estado comparten fila; el carrusel no cambia de alto.:311
+- Formulario de evento: marco fijo, texto a la izquierda y agenda a la derecha.:360
+- Solo el contenido de la ficha acompaña el dedo.:400
+- Las etiquetas comparten la línea de Título/Notas; solo el dato ocupa la tarjeta.:409
 
 **Rangos por prefijo de clase:**
-.data-btn:2-2 · .ev-alarm:438-438 · .ev-ann:89-91 · .ev-annual:153-175 · .ev-badge:201-201 · .ev-badges:54-54 · .ev-bar:125-125 · .ev-bars:47-47 · .ev-bright:148-190 · .ev-btn:239-250 · .ev-car:69-414 · .ev-category:409-412 · .ev-cell:161-197 · .ev-char:228-228 · .ev-checkbox:233-233 · .ev-chip:106-106 · .ev-colors:229-229 · .ev-date:230-230 · .ev-day:57-116 · .ev-delete:415-415 · .ev-detail:255-416 · .ev-edit:244-245 · .ev-event:358-364 · .ev-field:222-223 · .ev-fixed:365-371 · .ev-form:217-394 · .ev-hdr:3-5 · .ev-input:224-225 · .ev-io:252-253 · .ev-kind:413-413 · .ev-large:342-349 · .ev-list:14-215 · .ev-main:6-6 · .ev-management:290-292 · .ev-month:22-147 · .ev-multi:51-169 · .ev-num:199-199 · .ev-otros:67-121 · .ev-part:178-178 · .ev-pending:34-45 · .ev-puente:157-157 · .ev-quad:192-193 · .ev-repeat:234-234 · .ev-routine:417-417 · .ev-rut:112-419 · .ev-schedule:387-408 · .ev-stepped:150-152 · .ev-textarea:226-227 · .ev-title:131-145 · .ev-toggle:231-232 · .ev-types:17-19 · .ev-view:4-8 · .ev-wd:236-237 · .ev-week:28-155 · .ev-weekday:235-235 · .rut-marker:108-111 · .rut-week:424-426 · .rut-wpick:427-431 · .swipe-content:422-422 · .sy-body:421-421
+.data-btn:2-2 · .ev-alarm:442-442 · .ev-ann:89-91 · .ev-annual:153-175 · .ev-badge:201-201 · .ev-badges:54-54 · .ev-bar:125-125 · .ev-bars:47-47 · .ev-bright:148-190 · .ev-btn:239-251 · .ev-car:69-418 · .ev-category:413-416 · .ev-cell:161-197 · .ev-char:228-228 · .ev-checkbox:233-233 · .ev-chip:106-106 · .ev-colors:229-229 · .ev-date:230-230 · .ev-day:57-116 · .ev-delete:419-419 · .ev-detail:253-420 · .ev-edit:244-245 · .ev-event:362-368 · .ev-field:222-223 · .ev-fixed:369-375 · .ev-form:217-398 · .ev-hdr:3-5 · .ev-input:224-225 · .ev-io:256-257 · .ev-kind:417-417 · .ev-large:346-353 · .ev-list:14-215 · .ev-main:6-6 · .ev-management:294-296 · .ev-month:22-147 · .ev-multi:51-169 · .ev-num:199-199 · .ev-otros:67-121 · .ev-part:178-178 · .ev-pending:34-45 · .ev-puente:157-157 · .ev-quad:192-193 · .ev-repeat:234-234 · .ev-routine:421-421 · .ev-rut:112-423 · .ev-schedule:391-412 · .ev-stepped:150-152 · .ev-textarea:226-227 · .ev-title:131-145 · .ev-toggle:231-232 · .ev-types:17-19 · .ev-view:4-8 · .ev-wd:236-237 · .ev-week:28-155 · .ev-weekday:235-235 · .rut-marker:108-111 · .rut-week:428-430 · .rut-wpick:431-435 · .swipe-content:426-426 · .sy-body:425-425
 
 ### css/source/dialogs-responsive.css  _(159 líneas)_
 
@@ -961,7 +960,7 @@
 - R8: the two Home panels share spacing, status colors and action geometry.:1
 
 **Rangos por prefijo de clase:**
-.home-invoice:26-44 · .home-panel:2-41 · .home-pending:20-25 · .home-rule:29-30 · .home-status:16-16 · .home-submission:15-45 · .home-week:49-60 · .week-actions:48-56
+.home-invoice:27-44 · .home-panel:2-41 · .home-pending:20-25 · .home-rule:30-31 · .home-status:16-16 · .home-submission:15-45 · .home-week:49-60 · .week-actions:48-56
 
 ### css/source/invoices-calendar.css  _(27 líneas)_
 

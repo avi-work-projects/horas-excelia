@@ -57,7 +57,7 @@ test('R8 aplicada: temas, anchuras y estados sin cambios de datos ni botones dup
   await page.screenshot({path:info.outputPath('home-r8-enviada.png'),animations:'disabled'});
 });
 
-test('pendientes: requisitos junto a cada frase y acción a la derecha, sin resumen',async({page,context},info)=>{
+test('pendientes: icono de requisito delante de cada frase y acción a la derecha, sin resumen',async({page,context},info)=>{
   await setup(page,context);
   await page.evaluate(()=>{HOURS_CACHE.weeks['2027-02-08'].state='missing';Object.assign(INVOICE_HOME_CACHE.periods['2027-02'].data,{state:'missing',scheduled:false,scheduledDate:null});render();});
   const mail=page.locator('.home-submission'),invoice=page.locator('#homeInvoiceStatus');
@@ -67,7 +67,7 @@ test('pendientes: requisitos junto a cada frase y acción a la derecha, sin resu
   expect(await action.evaluate(e=>Array.from(e.children).every(n=>{const a=e.getBoundingClientRect(),b=n.getBoundingClientRect();return b.left>=a.left&&b.right<=a.right;}))).toBe(true);
   expect((await action.boundingBox()).x).toBeGreaterThan((await mail.locator('.home-panel-status').boundingBox()).x);
   await expect(invoice.locator('.home-invoice-rule .home-rule-result')).toHaveText(['✕','✓']);
-  for(const rule of await invoice.locator('.home-invoice-rule').all())expect(await rule.evaluate(e=>{const text=e.querySelector('em').getBoundingClientRect(),mark=e.querySelector('.home-rule-result').getBoundingClientRect();return mark.left-text.right<14;})).toBe(true);
+  for(const rule of await invoice.locator('.home-invoice-rule').all())expect(await rule.evaluate(e=>{const text=e.querySelector('.home-rule-text').getBoundingClientRect(),mark=e.querySelector('.home-rule-result').getBoundingClientRect();return mark.right<=text.left&&text.left-mark.right<14;})).toBe(true);
   await page.screenshot({path:info.outputPath('home-r8-pendientes.png'),animations:'disabled'});
 });
 

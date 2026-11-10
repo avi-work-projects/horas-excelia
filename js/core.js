@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v551 — Títulos de un día y acciones con color';
+var APP_VERSION = 'v552 — Avisos de Inicio más limpios y Eliminar con contorno';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -325,7 +325,7 @@ function dayT(d){var e=ST[dk(d)];return(e&&e.type)||'normal';}
 function dk(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function fd(d){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');}
 function ad(d,n){var r=new Date(d);r.setDate(r.getDate()+n);return r;}
-function fh(h){if(h===0)return'\u2014';if(h%1===0)return String(h)+'h';return h.toFixed(1).replace('.',',')+'\u202fh';}
+function fh(h){if(h===0)return'\u2014';if(h%1===0)return String(h)+'h';return h.toFixed(1).replace('.',',')+'h';}
 function fhP(h){if(h===0)return'';if(h%1===0)return String(h);return h.toFixed(1);}
 function isToday(d){var t=new Date();return d.getFullYear()===t.getFullYear()&&d.getMonth()===t.getMonth()&&d.getDate()===t.getDate();}
 function isPast(d){var t=new Date();t.setHours(0,0,0,0);return d<t;}
@@ -368,9 +368,9 @@ function renderHomeSubmissionStatus(year,month,state){
   var unknown=state.unrecorded>0&&!count&&!state.review;
   var title=state.complete?'Correos al día':changed?'Correos con cambios':state.review?'Correos por revisar':unknown?'Correos sin registro':'Correos pendientes de programar';
   var detail='';
-  if(changed)detail='<em>* Hay cambios en los datos de una semana ya programada.</em>';
-  else if(state.review)detail='<em>* Hay un envío duplicado o un resultado sin confirmar.</em>';
-  else if(!state.complete&&!unknown)detail='<details class="home-pending-note"><summary><em>* '+count+(count===1?' semana pendiente':' semanas pendientes')+' por programar</em></summary><p><em>Se incluyen las 2 que hay que programar del mes siguiente.</em></p></details>';
+  if(changed)detail='Hay cambios en los datos de una semana ya programada.';
+  else if(state.review)detail='Hay un envío duplicado o un resultado sin confirmar.';
+  else if(!state.complete&&!unknown)detail='<details class="home-pending-note"><summary><span>'+count+(count===1?' semana pendiente':' semanas pendientes')+' por programar</span></summary><p>Se incluyen las 2 que hay que programar del mes siguiente.</p></details>';
   var copy='<div class="home-panel-status"><span class="home-submission-icon" aria-hidden="true">'+(state.complete?'✓':unknown?'—':'!')+'</span><div class="home-submission-copy home-panel-copy"><strong>'+title+'</strong>'+(detail?'<div class="home-submission-detail">'+detail+'</div>':'')+'</div></div>';
   var showSummary=unknown||closed||state.complete;
   var action=unknown||closed||state.complete?'':homePanelAction(changed?'edit-mail':'schedule',state.review?(changed?'Modificar':'Revisar'):'Programar',state.review?(changed?'envíos':'incidencias'):'pendientes','data-hours-review');

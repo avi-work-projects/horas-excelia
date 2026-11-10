@@ -119,7 +119,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .week-info h3{font-size:.88rem;font-weight:600}
 .week-info .week-range{font-size:.73rem;color:var(--text-muted);margin-top:2px}
 .sent-badge{font-size:.68rem;color:var(--sent-text);font-weight:500;margin-left:8px}
-.week-total{font-family:var(--mono);font-size:.82rem;font-weight:500;color:var(--accent-bright);background:var(--accent-glow);padding:4px 10px;border-radius:8px}
+.week-total{font-family:var(--font);font-size:.82rem;font-weight:500;color:var(--accent-bright);background:var(--accent-glow);padding:4px 10px;border-radius:8px}
 .week-card.sent .week-total{color:var(--sent-text);background:#1a3a2a88}
 .days-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;background:var(--border);border-top:2px solid var(--border);border-bottom:2px solid var(--border)}
 .day-cell{background:var(--surface);padding:12px 4px 10px;text-align:center;cursor:pointer;transition:all .12s;-webkit-user-select:none;user-select:none;position:relative}

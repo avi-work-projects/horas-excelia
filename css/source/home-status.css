@@ -21,18 +21,18 @@
 .home-pending-note>summary:hover{background:transparent}
 .home-pending-note>summary::before,.home-pending-note>summary::after{content:none}
 .home-pending-note>summary::-webkit-details-marker{display:none}
-.home-pending-note>summary em{text-decoration:underline dotted;text-underline-offset:3px}
+.home-pending-note>summary span{text-decoration:underline dotted;text-underline-offset:3px}
 .home-pending-note>p{margin:5px 0 0}
-.home-invoice-rules{display:grid;gap:6px;margin-top:7px;color:var(--text-muted);font-size:.67rem;line-height:1.5}
-.home-invoice-rule strong{font-weight:700}
-.home-invoice-rule u{text-decoration-thickness:1px;text-underline-offset:3px}
-.home-rule-result{color:var(--c-red);font-size:.85rem;font-weight:700;white-space:nowrap}
+.home-panel-note{margin:5px 0 0;color:var(--text-muted);font-size:.67rem;line-height:1.5}
+.home-invoice-rules{display:grid;gap:4px;margin-top:5px;color:var(--text-muted);font-size:.67rem;line-height:1.5}
+.home-invoice-rules-intro{margin-bottom:1px}
+.home-invoice-rule{display:flex;align-items:baseline;gap:7px;color:var(--text)}
+.home-rule-result{flex:none;width:12px;text-align:center;color:var(--c-red);font-size:.8rem;font-weight:700;white-space:nowrap}
 .home-rule-result.complete{color:var(--c-green)}
 .home-invoice-deadline{display:flex;align-items:flex-start;gap:4px;font-size:.67rem;line-height:1.5;margin:10px 0 0;color:var(--status-tone)}
 .home-invoice-deadline svg,.home-invoice-date-label svg{height:16px;width:16px}
 .home-invoice-date{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-top:5px;font-size:.67rem;line-height:1.4}
 .home-invoice-date-label{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
-.home-invoice-date time{font-style:italic}
 .home-invoice-alert{display:inline-flex;align-items:center;gap:4px;padding:3px 5px;border:1px solid var(--c-red);border-radius:5px;background:color-mix(in srgb,var(--c-red) 8%,var(--surface));color:var(--c-red);font-size:.62rem;font-weight:650;animation:home-pending-pulse 2s ease-in-out infinite}
 .home-invoice-alert svg{width:13px;height:13px}
 .home-panel-action{box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:4px;width:var(--home-panel-action-width);min-width:0;min-height:max(50px,3.15rem);padding:5px;border:1px solid var(--home-tone);border-radius:12px;background:var(--surface);color:var(--text);font:600 .67rem/1.3 var(--font);cursor:pointer;text-align:center}

@@ -40,7 +40,7 @@ test('los pendientes ordinarios no piden revisar cambios y la factura espera a s
   const invoice=page.locator('#homeInvoiceStatus');
   await expect(invoice).toContainText('El envío de la factura del mes anterior');
   await expect(invoice.locator('[data-home-invoice=send]')).toHaveCount(0);
-  await expect(invoice.locator('em').first()).toHaveCSS('font-style','italic');
+  await expect(invoice.locator('em')).toHaveCount(0);await expect(invoice.locator('.home-invoice-rule').first()).toHaveCSS('font-style','normal');
   await page.evaluate(()=>{
     INVOICE_HOME_CACHE.periods['2027-01'].data.state='scheduled';
     render();
@@ -210,7 +210,7 @@ test('factura a siete días en naranja, a seis en rojo y semana editada en rojo'
   await expect(page.locator('#homeInvoiceStatus')).not.toHaveClass(/urgent/);
   await page.clock.setFixedTime(new Date('2027-02-13T12:00:00+01:00'));await page.evaluate(()=>render());
   await expect(page.locator('#homeInvoiceStatus')).toHaveClass(/urgent/);
-  await expect(page.locator('#homeInvoiceStatus em').first()).toHaveCSS('font-style','italic');
+  await expect(page.locator('#homeInvoiceStatus em')).toHaveCount(0);
   await page.evaluate(()=>{ST['2027-02-23']={type:'vacaciones'};render();});
   await expect(page.locator('.week-card[data-week="2027-02-22"]')).toHaveAttribute('data-mail-state','changed');
   await expect(page.locator('.home-submission.urgent')).toContainText('Correos con cambios');

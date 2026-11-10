@@ -52,17 +52,17 @@ function homeInvoiceModel(year,month){
   if(historical&&state==='sent'&&!model.date)model.date=historical.sentDate;
   return model;
 }
-function homeInvoiceRequirement(number,text,done){
-  return '<div class="home-invoice-rule"><em><strong>('+number+') <u>'+text+'</u></strong></em> <span class="home-rule-result '+(done?'complete':'')+'" role="img" aria-label="'+(done?'Cumplido':'Pendiente')+'">'+(done?'✓':'✕')+'</span></div>';
+function homeInvoiceRequirement(text,done){
+  return '<div class="home-invoice-rule"><span class="home-rule-result '+(done?'complete':'')+'" role="img" aria-label="'+(done?'Cumplido':'Pendiente')+'">'+(done?'✓':'✕')+'</span><span class="home-rule-text">'+text+'</span></div>';
 }
 function renderHomeInvoiceStatus(year,month){
   var m=homeInvoiceModel(year,month),urgent=m.unsent&&homeDueSoon(m.date),icon=m.tone==='complete'?'✓':m.tone==='scheduled'?homeStatusIcon('clock'):m.tone==='unknown'?'—':'!';
   var detail='',action='';
-  if(m.requirements)detail='<div class="home-invoice-rules"><em>* Se requiere tener los correos del mes programados</em>'+homeInvoiceRequirement(1,'Los envíos de horas de este mes.',m.hoursReady)+homeInvoiceRequirement(2,'El envío de la factura del mes anterior.',m.previousReady)+'</div>';
+  if(m.requirements)detail='<div class="home-invoice-rules"><span class="home-invoice-rules-intro">Antes deben estar programados:</span>'+homeInvoiceRequirement('Los envíos de horas de este mes',m.hoursReady)+homeInvoiceRequirement('El envío de la factura del mes anterior',m.previousReady)+'</div>';
   if(m.unsent){
     var days=Math.ceil((Date.parse(m.date+'T12:00:00Z')-Date.parse(dk(new Date())+'T12:00:00Z'))/86400000);
     var deadline=days<0?'El plazo de programación ha vencido.':days===0?'Debe programarse hoy.':'Debe programarse en los próximos '+days+' días.';
-    detail+='<p class="home-invoice-deadline">'+homeStatusIcon('invoice')+'<em>'+deadline+'</em></p>';
+    detail+='<p class="home-invoice-deadline">'+homeStatusIcon('invoice')+'<span>'+deadline+'</span></p>';
     if(m.configure)action=homePanelAction('invoice','Enviar','factura','id="invoiceHomeBtn" data-home-invoice="send"');
     else if(m.requirements&&!m.hoursReady){} // The mail panel already owns this action.
     else if(m.requirements&&!m.previousReady)action=homePanelAction('invoice','Ver factura','anterior','data-home-invoice="previous" data-period="'+m.previousPeriod+'"');
@@ -72,7 +72,7 @@ function renderHomeInvoiceStatus(year,month){
     detail='<div class="home-invoice-date">'+(m.date?'<span class="home-invoice-date-label">'+homeStatusIcon('invoice')+'<time datetime="'+m.date+'">'+m.date.split('-').reverse().slice(0,2).join('/')+'</time></span>':'')+(warning?'<span class="home-invoice-alert">'+homeStatusIcon('warning')+'<span>Revisar Cambios</span></span>':'')+'</div>';
     if(m.editable)action=homePanelAction('edit-invoice','Modificar','envíos','data-home-invoice="modify"');
   }else if(m.tone==='urgent'){
-    detail='<em>* Es necesario revisar el estado de la factura en Kairo.</em>';
+    detail='<p class="home-panel-note">Es necesario revisar el estado de la factura en Kairo.</p>';
     action=homePanelAction('invoice','Revisar','factura','data-home-invoice="review"');
   }
   return '<section class="home-invoice-status home-panel '+m.tone+(urgent?' urgent':'')+(m.unsent?' unsent':'')+'" id="homeInvoiceStatus" aria-label="Estado de factura" aria-live="polite"><div class="home-panel-row'+(action?'':' no-action')+'"><div class="home-panel-status"><span class="home-invoice-icon" aria-hidden="true">'+icon+'</span><div class="home-invoice-copy home-panel-copy"><strong>'+escHtml(m.title)+'</strong>'+detail+'</div></div>'+action+'</div></section>';
