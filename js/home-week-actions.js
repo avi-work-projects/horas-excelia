@@ -16,9 +16,10 @@ function homeConfirmWeekEdit(key){
   if(!window.confirm(text))return false;
   HOURS_WEEK_UNLOCKED[key]=true;HOME_WEEK_EDIT_STATE[key]=state;return true;
 }
-function homeWeekActionsButton(label,icon,style,action){
+function homeWeekActionsButton(label,icon,style,action,iconOnly){
   var button=document.createElement('button');button.type='button';button.className='action-btn '+style;
-  button.innerHTML=icon+'<span>'+label+'</span>';
+  button.innerHTML=iconOnly?icon:icon+'<span>'+label+'</span>';
+  if(iconOnly){button.setAttribute('aria-label',label);button.title=label;}
   button.onclick=function(e){e.stopPropagation();action();};return button;
 }
 function renderHomeWeekActions(card,key){
@@ -42,7 +43,7 @@ function renderHomeWeekActions(card,key){
   section.appendChild(homeWeekActionsButton('Cancelar',prohibitionIconHtml(),'home-week-cancel',function(){
     HOME_WEEK_ACTIONS[key]=false;HOURS_WEEK_UNLOCKED[key]=false;delete HOME_WEEK_EDIT_STATE[key];render();
     var button=document.querySelector('.week-card[data-week="'+key+'"] .home-week-more');if(button)button.focus();
-  }));
+  },true));
 }
 function homeDayChangeLabel(type,hours){return type==='normal'?String(hours).replace('.',',')+(hours===1?' hora trabajada':' horas trabajadas'):({vacaciones:'vacaciones',festivo:'festivo',ausencia:'ausencia'}[type]||type);}
 function homeConfirmDayChange(date,type,hours){

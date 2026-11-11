@@ -22,13 +22,14 @@ test('una acción centrada por semana; despliegue y cancelar conservan los datos
     const button=actions.getByRole('button',{name:'Acciones',exact:true});
     expect(await button.evaluate(e=>{const p=e.parentElement.getBoundingClientRect(),b=e.getBoundingClientRect();return Math.abs(p.x+p.width/2-b.x-b.width/2);})).toBeLessThan(2);
     if(theme==='light'&&width===400)await card.screenshot({path:info.outputPath('semana-acciones.png')});
-    await button.click();await expect(actions.getByRole('button')).toHaveText(['Enviar a Outlook','Editar horas','Cancelar']);
+    await button.click();await expect(actions.getByRole('button')).toHaveText(['Enviar a Outlook','Editar horas','']);
+    await expect(actions.locator('.home-week-cancel')).toHaveAccessibleName('Cancelar');await expect(actions.locator('.home-week-cancel .prohibition-icon')).toBeVisible();
     expect(await actions.evaluate(e=>e.scrollWidth<=e.clientWidth)).toBe(true);
     const geometry=await actions.evaluate(e=>{const boxes=[...e.children].map(b=>b.getBoundingClientRect()),p=e.getBoundingClientRect(),s=getComputedStyle(e);return {widths:boxes.map(b=>b.width),heights:boxes.map(b=>b.height),left:boxes[0].left-p.left-parseFloat(s.paddingLeft),right:p.right-boxes[2].right-parseFloat(s.paddingRight)};});
     expect(Math.max(...geometry.widths)-Math.min(...geometry.widths)).toBeLessThan(1);
     expect(new Set(geometry.heights).size).toBe(1);expect(Math.abs(geometry.left)).toBeLessThan(1);expect(Math.abs(geometry.right)).toBeLessThan(1);
     const colors=await actions.locator('.home-week-edit,.home-week-cancel').evaluateAll(nodes=>nodes.map(e=>({text:getComputedStyle(e).color,fill:getComputedStyle(e).backgroundColor,border:getComputedStyle(e).borderTopColor,icon:getComputedStyle(e.querySelector('svg')).color})));
-    expect(colors.map(c=>c.fill)).toEqual(['rgb(251, 146, 60)','rgb(216, 48, 48)']);
+    expect(colors.map(c=>c.fill)).toEqual(['rgb(244, 160, 102)','rgb(216, 48, 48)']);expect(colors.map(c=>c.text)).toEqual(['rgb(255, 255, 255)','rgb(255, 255, 255)']);
     for(const color of colors){expect(color.fill).toBe(color.border);expect(color.text).toBe(color.icon);expect(color.text).not.toBe(color.fill);}
     if(theme==='light'&&width===400)await card.screenshot({path:info.outputPath('semana-desplegada.png')});
     await actions.getByRole('button',{name:'Cancelar',exact:true}).click();await expect(button).toBeFocused();

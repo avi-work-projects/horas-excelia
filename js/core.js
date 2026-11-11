@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v552 — Avisos de Inicio más limpios y Eliminar con contorno';
+var APP_VERSION = 'v553 — Conexión en Ajustes y acciones semanales más ligeras';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

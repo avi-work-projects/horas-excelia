@@ -110,7 +110,7 @@ function initSettingsMenu(){
   var menu=document.getElementById('dataMenu');document.body.appendChild(menu);
   document.getElementById('menuBtn').addEventListener('click',function(e){e.stopPropagation();toggleSettingsMenu(e.currentTarget);});
   document.getElementById('editConnectionsBtn').addEventListener('click',function(){openConnectionsSettings('mail');});
-  document.getElementById('mobileConnectionBtn').onclick=function(){openMobileConnection();};
+  initSettingsConnection(document.getElementById('settingsConnection'));
   document.getElementById('editMacroBtn').onclick=function(){openConnectionsSettings('macro');};
   document.getElementById('personalDataBtn').onclick=openPersonalData;
   document.getElementById('personalNotesBtn').onclick=openPersonalNotes;
