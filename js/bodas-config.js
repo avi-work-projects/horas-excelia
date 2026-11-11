@@ -151,7 +151,7 @@ function bindBodaConfig(){
 
 function openBodaCatalogForm(kind,id){
   var item=BODA_CONFIG[kind].find(function(x){return (x.id||x.k)===id;})||{};
-  var h='<div class="ev-form-overlay" id="bodaCatalogOv"><div class="ev-form-sheet"><h3>'+(id?'Editar':'Añadir')+' '+({packs:'pack',durations:'duracion',places:'sala'})[kind]+'</h3>';
+  var h='<div class="ev-form-overlay" id="bodaCatalogOv"><div class="ev-form-sheet"><h3>'+(id?'Editar':'Añadir')+' '+({packs:'pack',durations:'duración',places:'sala'})[kind]+'</h3>';
   if(kind!=='durations')h+='<label class="ev-field">Nombre<input class="ev-input" id="bodaCatalogName" maxlength="60" value="'+escHtml(item.name||item.n||'')+'"></label>';
   if(kind==='places')h+='<label class="ev-field">Descripción<input class="ev-input" id="bodaCatalogDesc" maxlength="150" value="'+escHtml(item.d||'')+'"></label>';
   else h+='<label class="ev-field">'+(kind==='packs'?'Clases incluidas':'Minutos')+'<input class="ev-input" id="bodaCatalogNumber" type="number" min="1" max="'+(kind==='packs'?100:480)+'" value="'+(kind==='packs'?(item.classes||4):(item.minutes||60))+'"></label>';

@@ -304,10 +304,10 @@
 ### js/home-status.js  _(17 líneas)_
 **Funciones:** homeStatusIcon:2 · homeActionLabel:15 · homePanelAction:16
 
-### js/home-week-actions.js  _(65 líneas)_
+### js/home-week-actions.js  _(66 líneas)_
 **Estado global:** HOME_WEEK_ACTIONS:2 · HOME_EDIT_CONFIRM_KEY:3
 
-**Funciones:** homeWeekEditState:4 · homeConfirmWeekEdit:9 · homeWeekActionsButton:19 · renderHomeWeekActions:24 · homeDayChangeLabel:47 · homeConfirmDayChange:48 · setHomeDayHours:60
+**Funciones:** homeWeekEditState:4 · homeConfirmWeekEdit:9 · homeWeekActionsButton:19 · renderHomeWeekActions:25 · homeDayChangeLabel:48 · homeConfirmDayChange:49 · setHomeDayHours:61
 
 ### js/home-weeks.js  _(58 líneas)_
 **Funciones:** homePeriodMode:2 · homeDueSoon:6 · homeMailState:11 · homeWeekCovered:15 · homeStatusWeeks:16 · homeWeekUnlocked:17 · homeSubmissionWeeks:18 · homePreviousMailMonth:24 · homeSubmissionWarnings:34 · homeWeekSchedule:42
@@ -387,10 +387,10 @@
 
 **Funciones:** openMailCalendar:25 · showMailCalendar:33 · receive:45 · close:82
 
-### js/mobile-connection.js  _(181 líneas)_
+### js/mobile-connection.js  _(203 líneas)_
 **Estado global:** MOBILE_CONNECTION_MODES:2 · KAIRO_VPN_CACHE_KEY:10
 
-**Funciones:** kairoVpnConfirmed:11 · rememberKairoVpn:17 · forgetKairoVpn:21 · done:40 · ensureKairoConnection:47 · cancel:54 · ready:55 · mobileWebhookBase:79 · requestMobileMode:89 · openMobileConnection:106 · notify:119 · buttons:125 · schedule:129 · foreground:160 · back:168
+**Funciones:** kairoVpnConfirmed:11 · rememberKairoVpn:17 · forgetKairoVpn:21 · done:40 · ensureKairoConnection:47 · cancel:54 · ready:55 · mobileWebhookBase:79 · requestMobileMode:89 · mobileModesHtml:107 · initSettingsConnection:112 · linkedBase:115 · paint:116 · say:117 · openMobileConnection:129 · notify:141 · buttons:147 · schedule:151 · foreground:182 · back:190
 
 ### js/nav-icons.js  _(70 líneas)_
 **Estado global:** NAV_ICON_STYLE:2 · NAV_MAIN_ITEMS:4 · NAV_ICON_PATHS:11
@@ -900,14 +900,14 @@
 **Rangos por prefijo de clase:**
 .boda-future:86-86 · .contact-address:132-144 · .contact-entry:131-131 · .contact-primary:142-148 · .contact-shortcuts:137-160 · .energy-contract:113-114 · .energy-field:116-117 · .energy-history:111-112 · .energy-price:115-120 · .energy-sheet:110-110 · .energy-tax:118-118 · .ev-cal:40-109 · .ev-field:85-85 · .ev-list:126-155 · .ev-period:169-172 · .ev-share:38-39 · .ev-stat:124-125 · .ev-stats:156-161 · .ev-up:152-176 · .ev-week:72-87 · .ev-wk:3-3 · .header:2-2 · .home-equation:30-30 · .home-formula:25-25 · .home-hours:29-32 · .home-summary:9-26 · .home-total:27-27 · .home-worked:17-17 · .month-summary:10-28 · .ms-caption:24-24
 
-### css/source/hours-kairo.css  _(54 líneas)_
+### css/source/hours-kairo.css  _(65 líneas)_
 
 **Secciones:**
 
 - The warning owns the batch entry; individual week actions stay in place.:1
 
 **Rangos por prefijo de clase:**
-.hours-calendar:24-28 · .hours-check:4-5 · .hours-home:2-46 · .hours-job:7-7 · .hours-pending:9-10 · .hours-review:18-23 · .hours-verified:11-11 · .hours-week:15-16 · .kairo-vpn:50-53 · .mobile-connection:33-45 · .mobile-kairo:40-40 · .mobile-modes:37-44 · .week-actions:12-14 · .week-card:48-49 · .week-info:8-17
+.hours-calendar:24-28 · .hours-check:4-5 · .hours-home:2-47 · .hours-job:7-7 · .hours-pending:9-10 · .hours-review:18-23 · .hours-verified:11-11 · .hours-week:15-16 · .kairo-vpn:61-64 · .mobile-connection:33-46 · .mobile-kairo:41-41 · .mobile-modes:38-45 · .settings-connection:48-57 · .week-actions:12-14 · .week-card:59-60 · .week-info:8-17
 
 ### css/source/energy-refinements.css  _(287 líneas)_
 
@@ -953,14 +953,14 @@
 **Rangos por prefijo de clase:**
 .dispatch-icon:125-125 · .home-invoice:5-8 · .home-schedule:7-7 · .home-sync:10-22 · .hours-control:3-23 · .hours-export:67-78 · .invoice-action:92-92 · .invoice-actions:38-38 · .invoice-body:27-27 · .invoice-calculation:94-106 · .invoice-card:29-31 · .invoice-config:36-111 · .invoice-confirm:43-43 · .invoice-day:42-42 · .invoice-days:115-121 · .invoice-document:51-51 · .invoice-equals:101-101 · .invoice-error:44-44 · .invoice-eye:63-64 · .invoice-field:33-33 · .invoice-fields:32-54 · .invoice-filename:45-45 · .invoice-kairo:85-124 · .invoice-line:97-100 · .invoice-mail:107-107 · .invoice-money:102-102 · .invoice-month:28-112 · .invoice-note:34-34 · .invoice-send:82-84 · .invoice-sheet:25-91 · .invoice-status:35-35 · .invoice-summary:61-62 · .invoice-tool:108-110 · .invoice-totals:37-114
 
-### css/source/home-status.css  _(61 líneas)_
+### css/source/home-status.css  _(63 líneas)_
 
 **Secciones:**
 
 - R8: the two Home panels share spacing, status colors and action geometry.:1
 
 **Rangos por prefijo de clase:**
-.home-invoice:27-44 · .home-panel:2-41 · .home-pending:20-25 · .home-rule:30-31 · .home-status:16-16 · .home-submission:15-45 · .home-week:49-60 · .week-actions:48-56
+.home-invoice:27-44 · .home-panel:2-41 · .home-pending:20-25 · .home-rule:30-31 · .home-status:16-16 · .home-submission:15-45 · .home-week:49-62 · .week-actions:48-57
 
 ### css/source/invoices-calendar.css  _(27 líneas)_
 

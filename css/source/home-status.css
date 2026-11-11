@@ -48,8 +48,9 @@
 .week-actions.home-week-actions{justify-content:center;gap:8px;min-height:64px;box-sizing:border-box}
 .home-week-actions .action-btn{flex:0 1 auto;min-height:38px;padding:8px 13px;font-size:.7rem}
 .home-week-actions .home-week-more,.home-week-actions .home-week-edit,.home-week-actions .home-week-cancel{border-color:var(--home-tone);color:var(--text);background:var(--surface)}
+.home-week-actions .home-week-more{background:color-mix(in srgb,var(--home-tone) 9%,var(--surface))}
 .home-week-actions .home-week-more svg{color:var(--home-tone)}
-.home-week-actions .home-week-edit{background:#fb923c;border-color:#fb923c;color:#1a1a2e}
+.home-week-actions .home-week-edit{background:#f4a066;border-color:#f4a066;color:#fff;font-weight:700}
 .home-week-actions .home-week-cancel{background:#d83030;border-color:#d83030;color:#fff}
 .home-week-actions .home-week-edit svg,.home-week-actions .home-week-cancel svg{color:inherit}
 .home-week-actions .action-btn:focus-visible{outline:2px solid var(--home-tone);outline-offset:3px}
@@ -58,3 +59,4 @@
 .home-week-actions.expanded .action-btn>span{min-width:0}
 .home-week-actions.expanded .week-action-icon{width:18px;height:18px}
 .home-week-actions .edit-pencil{width:18px;height:18px;flex:none}
+.home-week-actions.expanded .home-week-cancel .prohibition-icon{width:28px;height:28px}

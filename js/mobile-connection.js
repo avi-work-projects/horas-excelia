@@ -103,14 +103,36 @@ function requestMobileMode(mode,base){
   return request;
 }
 
+/* Los tres botones de modo: mismo marcado en el diálogo y en Ajustes. */
+function mobileModesHtml(){
+  return '<div class="mobile-modes" role="group" aria-label="Modo de conexión">'+
+    Object.entries(MOBILE_CONNECTION_MODES).map(function(entry){var label=entry[0]==='off'?prohibitionIconHtml():entry[0]==='vpn'?'VPN <span class="mobile-kairo-wordmark" aria-hidden="true"></span>':entry[1].label;return '<button type="button" data-mobile-mode="'+entry[0]+'" aria-label="'+entry[1].label+'">'+label+'</button>';}).join('')+'</div>';
+}
+/* Ajustes muestra los modos directamente. Sin enlace de MacroDroid abre el diálogo para vincularlo. */
+function initSettingsConnection(container){
+  container.innerHTML='<div class="settings-connection-title">Conexión del móvil</div>'+mobileModesHtml()+'<p class="settings-connection-status" role="status"></p>';
+  var status=container.querySelector('.settings-connection-status'),statusTimer=null;
+  function linkedBase(){return mobileWebhookBase(appStorage.getItem('excelia-alarm-url')||'');}
+  function paint(){container.querySelectorAll('[data-mobile-mode]').forEach(function(button){button.disabled=!!mobileModeRequest;button.setAttribute('aria-busy',String(mobileModeRequest===button.dataset.mobileMode));});}
+  function say(text,type){clearTimeout(statusTimer);status.textContent=text;status.dataset.type=type||'info';statusTimer=setTimeout(function(){status.textContent='';},3500);}
+  container.querySelector('.mobile-modes').onclick=async function(e){
+    var button=e.target.closest('[data-mobile-mode]');if(!button)return;
+    var mode=button.dataset.mobileMode,base=linkedBase();
+    if(!base){openMobileConnection();return;}
+    var request=requestMobileMode(mode,base);if(!request)return;
+    paint();say('Solicitando '+MOBILE_CONNECTION_MODES[mode].label+'…');
+    var received=await request;
+    say(received?MOBILE_CONNECTION_MODES[mode].label+': solicitud enviada.':'Entrega sin confirmar. Comprueba el widget antes de repetir.',received?'info':'error');
+  };
+  window.addEventListener('gestify-mode-idle',paint);paint();
+}
 function openMobileConnection(onVpnReady,initialMode){
   if(document.getElementById('mobileConnectionDialog'))return;
   var restore=settingsPanelBack(),dialog=document.createElement('dialog');
   dialog.id='mobileConnectionDialog';dialog.className='mobile-connection-dialog';
   dialog.setAttribute('aria-labelledby','mobileConnectionTitle');
   dialog.innerHTML='<header><h2 id="mobileConnectionTitle">Conexión del móvil</h2><button type="button" data-back aria-label="Volver">←</button></header>'+
-    '<div class="mobile-modes" role="group" aria-label="Modo de conexión">'+
-    Object.entries(MOBILE_CONNECTION_MODES).map(function(entry){var label=entry[0]==='off'?prohibitionIconHtml():entry[0]==='vpn'?'VPN <span class="mobile-kairo-wordmark" aria-hidden="true"></span>':entry[1].label;return '<button type="button" data-mobile-mode="'+entry[0]+'" aria-label="'+entry[1].label+'">'+label+'</button>';}).join('')+'</div>'+
+    mobileModesHtml()+
     '<div data-link hidden><label>Enlace de MacroDroid<input type="password" autocomplete="off" spellcheck="false" placeholder="https://trigger.macrodroid.com/…"></label>'+
     '<button type="button" data-save>Guardar para conexión y alarmas</button></div>';
   var link=dialog.querySelector('[data-link]'),input=link.querySelector('input');

@@ -25,12 +25,12 @@ async function setup(page,{configured=true,linked=true,paused=false}={}){
   return state;
 }
 async function closeAgenda(page){await page.frameLocator('iframe[title="Programación de Kairo"]').getByRole('button',{name:'Volver a Gestify',exact:true}).click();}
-async function fromMenu(page){
-  await page.locator('#menuBtn').click();await page.locator('#mobileConnectionBtn').click();
+async function openDialog(page){
+  await page.evaluate(()=>openMobileConnection());
   return page.getByRole('dialog',{name:'Conexión del móvil'});
 }
 test('el selector conserva el formato de Kairo en los tres temas',async({page},info)=>{
-  const state=await setup(page);const dialog=await fromMenu(page);
+  const state=await setup(page);const dialog=await openDialog(page);
   for(const theme of ['light','dark','grey'])for(const width of [320,400,440]){
     await page.setViewportSize({width,height:880});await page.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);
     await expect(dialog.locator('p')).toHaveCount(0);await expect(dialog.locator('.mobile-modes button')).toHaveCount(3);
@@ -38,6 +38,7 @@ test('el selector conserva el formato de Kairo en los tres temas',async({page},i
     const widths=await dialog.locator('.mobile-modes button').evaluateAll(buttons=>buttons.map(b=>b.getBoundingClientRect().width));expect(Math.max(...widths)-Math.min(...widths)).toBeLessThan(1);
     await expect(dialog.locator('[data-mobile-mode=off] .prohibition-icon')).toBeVisible();
     await expect(dialog.locator('[data-mobile-mode=vpn] .mobile-kairo-wordmark')).toBeVisible();
+    const head=await dialog.locator('header').evaluate(h=>({back:h.querySelector('[data-back]').getBoundingClientRect().left,title:h.querySelector('h2').getBoundingClientRect().left}));expect(head.back).toBeLessThan(head.title);
     if(theme==='light'&&width===400)await dialog.screenshot({path:info.outputPath('conexion-tres-botones.png')});
   }
   expect((await page.request.get('/kairo-wordmark.png')).status()).toBe(200);expect(state.checks).toBe(0);
@@ -58,25 +59,34 @@ test('la vuelta automática espera acceso real y solo reanuda una vez',async({pa
   await page.clock.fastForward(30000);expect(state.commands).toEqual([trigger+'/conexion_kairo']);
   expect(await page.evaluate(()=>window.connectionResumed)).toBe(1);
 });
-test('Ajustes muestra solo los tres modos, limita toques repetidos y no sondea Kairo',async({page},info)=>{
-  const state=await setup(page),dialog=await fromMenu(page);
-  await expect(dialog.locator('p')).toHaveCount(0);expect(state.checks).toBe(0);
-  await dialog.getByRole('button',{name:'VPN Kairo'}).dblclick({delay:15,force:true});
-  await expect(dialog.getByRole('status')).toContainText('solicitud enviada');
-  await expect(dialog.getByRole('button',{name:'DNS AdGuard'})).toBeDisabled();
+test('Ajustes muestra los tres modos en línea, limita toques repetidos y no sondea Kairo',async({page},info)=>{
+  const state=await setup(page);await page.locator('#menuBtn').click();
+  const group=page.locator('#settingsConnection');
+  await expect(page.locator('#mobileConnectionBtn')).toHaveCount(0);await expect(group.locator('.mobile-modes button')).toHaveCount(3);
+  expect(await group.evaluate(c=>c.previousElementSibling.matches('.settings-menu-separator')&&c.nextElementSibling.matches('.settings-menu-separator')&&c.nextElementSibling.nextElementSibling.firstElementChild.id==='editConnectionsBtn')).toBe(true);
+  for(const width of [320,400,440]){
+    await page.setViewportSize({width,height:880});
+    expect(await page.locator('#dataMenu').evaluate(e=>e.scrollWidth<=e.clientWidth)).toBe(true);
+    expect(await group.locator('.mobile-modes button').evaluateAll(bs=>bs.every(b=>b.scrollWidth<=b.clientWidth+1))).toBe(true);
+  }
+  await group.getByRole('button',{name:'VPN Kairo'}).dblclick({delay:15,force:true});
+  await expect(group.getByRole('status')).toContainText('VPN Kairo: solicitud enviada');
+  await expect(group.getByRole('button',{name:'DNS AdGuard'})).toBeDisabled();
   expect(state.commands).toEqual([trigger+'/conexion_kairo']);
-  state.reachable=true;await page.clock.fastForward(9000);await page.evaluate(()=>window.dispatchEvent(new Event('focus')));
-  expect(state.checks).toBe(0);await expect(dialog).not.toContainText('Kairo accesible');
-  await page.evaluate(()=>window.getSelection().removeAllRanges());
-  await dialog.screenshot({path:info.outputPath('conexion.png')});
-  state.reachable=false;await page.evaluate(()=>window.dispatchEvent(new Event('focus')));
-  await expect(dialog.locator('p')).toHaveCount(0);expect(state.checks).toBe(0);
-  await dialog.getByRole('button',{name:'DNS AdGuard'}).click();await expect(dialog.getByRole('status')).toContainText('solicitud enviada');
+  await page.locator('#dataMenu').screenshot({path:info.outputPath('ajustes-conexion.png')});
+  await page.clock.fastForward(9000);await expect(group.getByRole('button',{name:'DNS AdGuard'})).toBeEnabled();
+  await group.getByRole('button',{name:'DNS AdGuard'}).click();await expect(group.getByRole('status')).toContainText('DNS AdGuard: solicitud enviada');
   await page.clock.fastForward(9000);
-  state.reject=true;await dialog.getByRole('button',{name:'OFF',exact:true}).click();
-  await expect(dialog.getByRole('status')).toContainText('Entrega sin confirmar');expect(await dialog.getByRole('status').evaluate(e=>e.closest('dialog')===document.querySelector('#mobileConnectionDialog'))).toBe(true);
-  await page.screenshot({path:info.outputPath('conexion-error-visible.png'),animations:'disabled'});
+  state.reject=true;await group.getByRole('button',{name:'OFF',exact:true}).click();
+  await expect(group.getByRole('status')).toContainText('Entrega sin confirmar');
   expect(state.commands).toEqual(['conexion_kairo','conexion_adguard','conexion_normal'].map(id=>trigger+'/'+id));
+  expect(state.checks).toBe(0);await expect(page.locator('#dataMenu')).toHaveClass(/open/);
+});
+test('sin enlace, un modo de Ajustes abre el diálogo para vincular MacroDroid sin enviar órdenes',async({page})=>{
+  const state=await setup(page,{linked:false});await page.locator('#menuBtn').click();
+  await page.locator('#settingsConnection').getByRole('button',{name:'VPN Kairo'}).click();
+  const dialog=page.getByRole('dialog',{name:'Conexión del móvil'});
+  await expect(dialog.locator('[data-link]')).toBeVisible();expect(state.commands).toEqual([]);
   await dialog.getByRole('button',{name:'Volver'}).click();await expect(page.locator('#dataMenu')).toHaveClass(/open/);
 });
 test('la confirmación sirve 20 minutos para agenda y sincronización; cancelar nunca se recuerda',async({page},info)=>{
@@ -154,7 +164,8 @@ test('cancelar la espera detiene las comprobaciones y una agenda fallida ofrece 
 });
 
 test('vinculación privada sin Kairo permite los modos y rechaza orígenes ajenos',async({page})=>{
-  const state=await setup(page,{linked:false,configured:false}),dialog=await fromMenu(page);
+  const state=await setup(page,{linked:false,configured:false});await page.locator('#menuBtn').click();
+  await page.locator('#settingsConnection [data-mobile-mode=dns]').click();const dialog=page.getByRole('dialog',{name:'Conexión del móvil'});
   const input=dialog.getByLabel('Enlace de MacroDroid');
   await input.fill('https://trigger.macrodroid.com.ejemplo.invalid/device');await dialog.getByRole('button',{name:/Guardar para/}).click();
   await expect(dialog.getByRole('button',{name:'OFF',exact:true})).toBeDisabled();
@@ -165,22 +176,21 @@ test('vinculación privada sin Kairo permite los modos y rechaza orígenes ajeno
   expect(state.commands).toEqual([trigger+'/conexion_adguard']);
 });
 
-test('Conexión DNS / VPN tiene fondo visible y contraste en todos los temas; Atrás recupera Ajustes',async({page})=>{
- await setup(page);
+test('los modos de Ajustes tienen fondo visible y contraste en todos los temas; Atrás recupera Ajustes',async({page})=>{
+ await setup(page,{linked:false});
+ const luminance=color=>{const rgb=color.match(/[\d.]+/g).slice(0,3).map(v=>+v/255).map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4);return rgb[0]*.2126+rgb[1]*.7152+rgb[2]*.0722;};
  for(const width of [320,440]){
   await page.setViewportSize({width,height:880});
   for(const theme of ['light','dark','grey']){
    await page.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);
    await page.locator('#menuBtn').click();
-   const button=page.getByRole('button',{name:'Conexión DNS / VPN',exact:true});await expect(button).toBeVisible();
-   const styles=await button.evaluate(el=>({background:getComputedStyle(el).backgroundColor,color:getComputedStyle(el).color}));
-   expect(styles.background).not.toBe('rgba(0, 0, 0, 0)');expect(styles.background).not.toBe(styles.color);
-   const luminance=color=>{const rgb=color.match(/[\d.]+/g).slice(0,3).map(v=>+v/255).map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4);return rgb[0]*.2126+rgb[1]*.7152+rgb[2]*.0722;};
-   const a=luminance(styles.background),b=luminance(styles.color);expect((Math.max(a,b)+.05)/(Math.min(a,b)+.05)).toBeGreaterThanOrEqual(4.5);
-   // Una variante sin color también conserva el fondo de respaldo.
-   await button.evaluate(el=>el.classList.remove('settings-edit-mobile'));
-   expect(await button.evaluate(el=>getComputedStyle(el).backgroundColor)).not.toBe('rgba(0, 0, 0, 0)');
-   await button.evaluate(el=>el.classList.add('settings-edit-mobile'));
+   for(const mode of ['vpn','dns']){
+    const button=page.locator('#settingsConnection [data-mobile-mode='+mode+']');await expect(button).toBeVisible();
+    const styles=await button.evaluate(el=>({background:getComputedStyle(el).backgroundColor,color:getComputedStyle(el).color}));
+    expect(styles.background).not.toBe('rgba(0, 0, 0, 0)');
+    const a=luminance(styles.background),b=luminance(styles.color);expect((Math.max(a,b)+.05)/(Math.min(a,b)+.05)).toBeGreaterThanOrEqual(4.5);
+   }
+   const button=page.locator('#settingsConnection [data-mobile-mode=vpn]');
    await button.focus();await page.keyboard.press('Enter');
    const dialog=page.getByRole('dialog',{name:'Conexión del móvil'});await expect(dialog).toBeVisible();
    await dialog.getByRole('button',{name:'Volver',exact:true}).click();await expect(page.locator('#dataMenu')).toHaveClass(/open/);await expect(button).toBeFocused();
