@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
   "title": "Gestify · mapa visual",
-  "generatedAt": "2026-11-09T19:39:15.451Z",
-  "referenceCommit": "50cc996007da5f93ae715dddd271281a3d5bee6d",
+  "generatedAt": "2026-11-11T18:36:03.462Z",
+  "referenceCommit": "54afb756a0ad4f86d38c154b24814ea4882c50b7",
   "date": "2026-08-21T10:00:00+02:00",
   "viewport": {
     "width": 400,
@@ -1321,7 +1321,6 @@
         705
       ],
       "image": "captures/settings.png",
-      "imageHash": "e84bc67d4fa8dce86ceccecf84e1928cb3a0cc380dc6a6fca1f025f99c262f23",
       "anchors": {
         "reminders": {
           "x": 285,
@@ -1331,37 +1330,37 @@
         },
         "invoice-config": {
           "x": 131,
-          "y": 295,
+          "y": 335.046875,
           "width": 236,
           "height": 40
         },
         "mobile-connection": {
-          "x": 131,
-          "y": 199,
-          "width": 236,
-          "height": 40
+          "x": 119,
+          "y": 141,
+          "width": 260,
+          "height": 83.046875
         },
         "mail": {
           "x": 131,
-          "y": 151,
+          "y": 239.046875,
           "width": 236,
           "height": 40
         },
         "macro": {
           "x": 131,
-          "y": 247,
+          "y": 287.046875,
           "width": 236,
           "height": 40
         },
         "contacts": {
           "x": 131,
-          "y": 408,
+          "y": 448.046875,
           "width": 236,
           "height": 40
         },
         "notes": {
           "x": 131,
-          "y": 456,
+          "y": 496.046875,
           "width": 236,
           "height": 40
         },
@@ -1373,13 +1372,13 @@
         },
         "export-folder": {
           "x": 131,
-          "y": 343,
+          "y": 383.046875,
           "width": 236,
           "height": 40
         },
         "import-preview": {
           "x": 119,
-          "y": 545,
+          "y": 585.046875,
           "width": 260,
           "height": 32
         }
@@ -1388,7 +1387,7 @@
       "dependencies": [
         {
           "file": "index.html",
-          "hash": "2cf339d46c766a394a4808606244d12ec0852c7e3ff1003131b57bf9ff0370b7"
+          "hash": "6f811d259bc8b1b1efcfcf488f3a5d265acd7280e57530eaea32da28e0dee149"
         },
         {
           "file": "js/nav-icons.js",
@@ -1397,7 +1396,7 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "b63b74fd764541035dfbd0d5e603d6bda8cdc217fda548e22c62fb9f21c3731a"
+          "hash": "cf0adf093b04cb625864280ca6355e946dc89063307e5116d80ec3c59805d3cb"
         },
         {
           "file": "js/data-integrity.js",
@@ -1409,11 +1408,11 @@
         },
         {
           "file": "tools/visual-map/fixture.cjs",
-          "hash": "ed5dd8ba54032603d829a5c3ec2d3b6dd02ee9c2439b4cd315a01db396b19f28"
+          "hash": "864d6ab429fdfd0fce7e683d4fbbad6525bb89a1e0d11bc99a2f6b2853dbb0d2"
         },
         {
           "file": "css/source/base.css",
-          "hash": "45c10a4326fcd88babebf8968fdd517c678b16f9c86cf0268fa1c1cf11f81408"
+          "hash": "76192f32c58655ef3f58b9d2464020845fe85d70447300a360fc5fa80caaed4b"
         },
         {
           "file": "css/source/navigation-controls.css",
@@ -1437,7 +1436,7 @@
         },
         {
           "file": "css/source/event-panels.css",
-          "hash": "9778be58c6a8ecc69db8ceef66240616ce12a1fd2cc09c0b2c82083562f79a2e"
+          "hash": "0fbf3071bb0e85df489e7a697165ed0f900ba9ca7d60f6fecb7a4da71374ebb1"
         },
         {
           "file": "css/source/dialogs-responsive.css",
@@ -1449,15 +1448,15 @@
         },
         {
           "file": "css/source/shared-refinements.css",
-          "hash": "36b8dc3c0069c98f2d5e975512e4885de2c4688c067c3a4c011812ed28318aa1"
+          "hash": "734db873b39c183e1fe8acca32b6150c34901acd36c274065e85c09ecfe1acef"
         },
         {
           "file": "css/source/home-sharing.css",
-          "hash": "26e5f668abd70ea5d98b958046b01dbdd12f4347e6e97685ac630d81ce97e8d5"
+          "hash": "8d2556639e8223d19d2670108fb6d7cebf353e25c2b4561bed3bdcf33d48f001"
         },
         {
           "file": "css/source/hours-kairo.css",
-          "hash": "9c17a9b8c657ed514aaa982a639b9678ee9cdb25a1b94d419bf6b3d5936de81a"
+          "hash": "0424ce22cb6fb9144fd2015d49dfb7f71796f7ee8440fcc14c8050f97f00dc4b"
         },
         {
           "file": "css/source/energy-refinements.css",
@@ -1469,7 +1468,11 @@
         },
         {
           "file": "css/source/invoices.css",
-          "hash": "5badbb07c090de8eea744588554dc8367ed75a6e8803d04875dc17299f45fcaf"
+          "hash": "3602fab50ba639cc5c2178660bd311fca94ce1f689b836574eeb45b342260bfd"
+        },
+        {
+          "file": "css/source/home-status.css",
+          "hash": "6b734d166980f39ffa8c6ee371b2e96d8b675dd90462160ac73b7daba08c6d4d"
         },
         {
           "file": "css/source/invoices-calendar.css",
@@ -1489,11 +1492,11 @@
         },
         {
           "file": "js/home-weeks.js",
-          "hash": "b064926a171805ade6c5d70811565de97d58f3dbea1a16d2e1351a2948618727"
+          "hash": "19e5fb14cee09683c4053d9518dd0b7098179d6e56d34d102a6a9bfa1c3e2b2a"
         },
         {
           "file": "js/hours-kairo.js",
-          "hash": "d2970ceb050cba518cf8331067500b3376e2f60f0663d130e4c9f0c6382702aa"
+          "hash": "f0d95bc9a22f56e59ac72b111329ba43780ac658d878ca3f246c182a0f09a302"
         },
         {
           "file": "js/hours-cache.js",
@@ -1501,15 +1504,19 @@
         },
         {
           "file": "js/hours-jobs.js",
-          "hash": "80f8bb29f0de6a12a387dcb511f52b037f2ad7f0af24a6ba68c39d83fb998eb1"
+          "hash": "ffae1192de0371271cfd06e1808f43ed587e20dfe71727704729d86d32a64c35"
         },
         {
           "file": "js/hours-auth.js",
-          "hash": "ad30e496a81fcaa3ceeb575215070ca56b0ace458ab83530eef61596fbaca557"
+          "hash": "6bf0b6c1d87c56ac618c7c816a56db8a7c93edab05d83795fb5822a5cb93931a"
         },
         {
           "file": "js/invoices-home.js",
-          "hash": "d26754f24032f50b46612f19fe99ac6388136115e998b2e2c5c7c75d4b3b5fcd"
+          "hash": "89e38383ce7fffa89a1aff51b5643532894c3b4ed30b84b48ba76fe4813f805c"
+        },
+        {
+          "file": "js/invoices-history.js",
+          "hash": "165fa23fc876e28be14d501f5b58596c7724cd5538a038600ee5a868585364d1"
         },
         {
           "file": "js/invoices.js",
@@ -1517,20 +1524,24 @@
         },
         {
           "file": "js/invoices-kairo.js",
-          "hash": "d584e058699a96658c8d679250ccf6432df50af9a9161130192bf87c6d586c78"
+          "hash": "881075c071599882b55fed61abe4850671b1eb337944456eaec766dc2dd0345f"
         },
         {
           "file": "js/init.js",
-          "hash": "889f1d4fdc2a368fc53ed5d08018676870ca7d005643c87451fa0d03b84fd781"
+          "hash": "9c900a17529bbb74810fb1a8d7d8a3c025cca599dbcb1e944fde9b60a3b4c46b"
+        },
+        {
+          "file": "js/home-week-actions.js",
+          "hash": "11fea26112f37e6a41f54e84d3293a041b91a5bf12d0eca5cfca2f27309e2421"
         },
         {
           "file": "js/settings-menu.js",
-          "hash": "4c99b7549fe909af870222aa9b1835350faa81592f2515aa102882c506400bcd"
+          "hash": "ba44d8ef43ece6b16d6a79c0b224cac8010d9f01f274ebe5185c02141de166d5"
         },
         {
           "file": "js/core.js",
           "part": "app-version",
-          "hash": "d649862ec346a9a69c7103c9f4ca26d849b531b5d410ac6ea3796fc3282749f0"
+          "hash": "3b984ec4f3b73a6b5e113aa5b47ffb165af1da01121b4e402763f76de9d67d84"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -1539,11 +1550,24 @@
         {
           "file": "tools/visual-map/catalog.cjs",
           "part": "scene:settings",
-          "hash": "85a0e61ba31389d57eea0002a31a5ce1409e2e33a020c1368b16423bba979b91"
+          "hash": "9c4312a8947677e264ca5ffb1f9fc252421c5277a8c1781798c97eb8a89c2f9a"
         }
       ],
       "dependencyVersion": 2,
-      "commit": "207dde63da3812de3499278e5471ff32f8fd3fed",
+      "commit": "54afb756a0ad4f86d38c154b24814ea4882c50b7",
+      "verifiedEdges": [
+        "mobile-connection",
+        "reminders",
+        "invoice-config",
+        "mail",
+        "macro",
+        "contacts",
+        "notes",
+        "icons",
+        "export-folder",
+        "import-preview"
+      ],
+      "imageHash": "551c47666d10f0076697ee73d715d38bc77f938885fa07a272abcc626463b024",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -1557,19 +1581,7 @@
           }
         }
       ],
-      "verifiedEdges": [
-        "reminders",
-        "invoice-config",
-        "mobile-connection",
-        "mail",
-        "macro",
-        "contacts",
-        "notes",
-        "icons",
-        "export-folder",
-        "import-preview"
-      ],
-      "fresh": false
+      "fresh": true
     },
     {
       "id": "calendar",
@@ -29272,7 +29284,7 @@
       "group": "Ajustes",
       "route": [
         "#menuBtn",
-        "#mobileConnectionBtn",
+        "#settingsConnection [data-mobile-mode=vpn]",
         {
           "fill": "#mobileConnectionDialog [data-link] input",
           "value": "https://trigger.macrodroid.com/map-connection-fixture"
@@ -29292,7 +29304,7 @@
       "dependencies": [
         {
           "file": "index.html",
-          "hash": "63c2cb41d09407fe0449d180bf47374f8be7b99e5c5236d0771a5b646b4fd958"
+          "hash": "6f811d259bc8b1b1efcfcf488f3a5d265acd7280e57530eaea32da28e0dee149"
         },
         {
           "file": "js/nav-icons.js",
@@ -29301,7 +29313,7 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "022ba6857ffc2c1386d8d548e4f1898ff87870b866a11de7776b2b30d84df770"
+          "hash": "cf0adf093b04cb625864280ca6355e946dc89063307e5116d80ec3c59805d3cb"
         },
         {
           "file": "js/data-integrity.js",
@@ -29317,7 +29329,7 @@
         },
         {
           "file": "css/source/base.css",
-          "hash": "45c10a4326fcd88babebf8968fdd517c678b16f9c86cf0268fa1c1cf11f81408"
+          "hash": "76192f32c58655ef3f58b9d2464020845fe85d70447300a360fc5fa80caaed4b"
         },
         {
           "file": "css/source/navigation-controls.css",
@@ -29341,7 +29353,7 @@
         },
         {
           "file": "css/source/event-panels.css",
-          "hash": "cf04dfaf3dd263378f4d27e19c3e6b5b5b0f1386bbd86b881de725b5bbc92849"
+          "hash": "0fbf3071bb0e85df489e7a697165ed0f900ba9ca7d60f6fecb7a4da71374ebb1"
         },
         {
           "file": "css/source/dialogs-responsive.css",
@@ -29353,7 +29365,7 @@
         },
         {
           "file": "css/source/shared-refinements.css",
-          "hash": "36b8dc3c0069c98f2d5e975512e4885de2c4688c067c3a4c011812ed28318aa1"
+          "hash": "734db873b39c183e1fe8acca32b6150c34901acd36c274065e85c09ecfe1acef"
         },
         {
           "file": "css/source/home-sharing.css",
@@ -29361,7 +29373,7 @@
         },
         {
           "file": "css/source/hours-kairo.css",
-          "hash": "0648a1480ca35d7357596dcfea956897180c528b1ede95d023d47edd8c736ac2"
+          "hash": "0424ce22cb6fb9144fd2015d49dfb7f71796f7ee8440fcc14c8050f97f00dc4b"
         },
         {
           "file": "css/source/energy-refinements.css",
@@ -29373,11 +29385,11 @@
         },
         {
           "file": "css/source/invoices.css",
-          "hash": "f46218b0ea03bf6b6557f01dbea23f773800e41429fb34d5f22b2d76a44f7556"
+          "hash": "3602fab50ba639cc5c2178660bd311fca94ce1f689b836574eeb45b342260bfd"
         },
         {
           "file": "css/source/home-status.css",
-          "hash": "47bb829c24cafd4916894c457616c6cb6e31f800a046af18940725705ef0ba1e"
+          "hash": "6b734d166980f39ffa8c6ee371b2e96d8b675dd90462160ac73b7daba08c6d4d"
         },
         {
           "file": "css/source/invoices-calendar.css",
@@ -29417,7 +29429,7 @@
         },
         {
           "file": "js/invoices-home.js",
-          "hash": "26529402e4c198c38ddbf21ba621dbc93662bd727e327cc00c133d60f7225c3a"
+          "hash": "89e38383ce7fffa89a1aff51b5643532894c3b4ed30b84b48ba76fe4813f805c"
         },
         {
           "file": "js/invoices-history.js",
@@ -29437,20 +29449,20 @@
         },
         {
           "file": "js/home-week-actions.js",
-          "hash": "7a6e1a71c1c7b57d985ce5f5d16e75af3f4088f542f8573dc1951216471c4948"
+          "hash": "11fea26112f37e6a41f54e84d3293a041b91a5bf12d0eca5cfca2f27309e2421"
         },
         {
           "file": "js/settings-menu.js",
-          "hash": "4c99b7549fe909af870222aa9b1835350faa81592f2515aa102882c506400bcd"
+          "hash": "ba44d8ef43ece6b16d6a79c0b224cac8010d9f01f274ebe5185c02141de166d5"
         },
         {
           "file": "js/mobile-connection.js",
-          "hash": "461c5ea68db983f0f75dd634cc7a82865dabbf2540e266284a2dca04594b9706"
+          "hash": "53dc14f0c4c586103ca67e080a384c0b3f1ea9862f7f3e5ef4c8897958e6bfeb"
         },
         {
           "file": "js/core.js",
           "part": "app-version",
-          "hash": "eac1e3ecd855b9e18e3ec77cd6303a660546645f34ebd7c987a9ff4f87926041"
+          "hash": "3b984ec4f3b73a6b5e113aa5b47ffb165af1da01121b4e402763f76de9d67d84"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -29459,13 +29471,13 @@
         {
           "file": "tools/visual-map/catalog.cjs",
           "part": "scene:mobile-connection",
-          "hash": "a4bfba05d7f1295d4c35a876a7ebee25b63a00a5ad9fab60e5f4d4ac9af1dda1"
+          "hash": "0b3f630868fc31362a8edd26417bbbaca1fa8a787557e5d6c6fdc93aeb45e9d8"
         }
       ],
       "dependencyVersion": 2,
-      "commit": "50cc996007da5f93ae715dddd271281a3d5bee6d",
+      "commit": "54afb756a0ad4f86d38c154b24814ea4882c50b7",
       "verifiedEdges": [],
-      "imageHash": "1fec31f54a1bb3d3fa6046a1387dde14fd390694d087021bac8f20a8decb76cd",
+      "imageHash": "3d13b944ea6dbd38d5b7f85b4ff1cf44b2d36248acf758824b17594a2233f51a",
       "review": "Sin revisar",
       "fresh": true
     },
@@ -34070,10 +34082,10 @@
     {
       "from": "settings",
       "to": "mobile-connection",
-      "selector": "#mobileConnectionBtn",
+      "selector": "#settingsConnection",
       "label": "Conexión DNS / VPN",
       "view": "area",
-      "step": "#mobileConnectionBtn"
+      "step": "#settingsConnection [data-mobile-mode=vpn]"
     },
     {
       "from": "settings",
@@ -35678,7 +35690,7 @@
     {
       "symbol": "openEvTypeFilter",
       "file": "js/events-bind.js",
-      "line": 482
+      "line": 510
     },
     {
       "symbol": "openEvCalendarExport",
@@ -35778,7 +35790,7 @@
     {
       "symbol": "openMobileConnection",
       "file": "js/mobile-connection.js",
-      "line": 106
+      "line": 129
     },
     {
       "symbol": "openNavIconPicker",
