@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
   "title": "Gestify · mapa visual",
-  "generatedAt": "2026-11-11T18:36:03.462Z",
-  "referenceCommit": "54afb756a0ad4f86d38c154b24814ea4882c50b7",
+  "generatedAt": "2026-11-11T19:27:03.252Z",
+  "referenceCommit": "9e5a6396a8cf00912f45d9ab8a9348596c6dbd3c",
   "date": "2026-08-21T10:00:00+02:00",
   "viewport": {
     "width": 400,
@@ -501,29 +501,28 @@
       ],
       "region": "#estudioOverlay .sy-body",
       "image": "captures/study.png",
-      "imageHash": "8c0e89bbc598ca448f25b7792b4809c01f6756c768ce0b39279826ddcf3d5e97",
       "anchors": {
         "study-rate": {
           "x": 16,
-          "y": 318.1875,
+          "y": 280.75,
           "width": 178,
           "height": 71
         },
         "study-mortgage": {
           "x": 206,
-          "y": 237.1875,
+          "y": 199.75,
           "width": 178,
           "height": 44
         },
         "study-gas": {
           "x": 206,
-          "y": 291.1875,
+          "y": 253.75,
           "width": 178,
           "height": 44
         },
         "study-electric": {
           "x": 206,
-          "y": 345.1875,
+          "y": 307.75,
           "width": 178,
           "height": 44
         }
@@ -532,7 +531,7 @@
       "dependencies": [
         {
           "file": "index.html",
-          "hash": "4b451a71e39f8db2fa2c200baae35aa9baa68368c8a96fedf8a8a61083b15b21"
+          "hash": "6f811d259bc8b1b1efcfcf488f3a5d265acd7280e57530eaea32da28e0dee149"
         },
         {
           "file": "js/nav-icons.js",
@@ -541,7 +540,7 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "7c6d91dc880311b1d887b5ef090b4e9ca0de9d425bf499eb71fd55f991b03599"
+          "hash": "cf0adf093b04cb625864280ca6355e946dc89063307e5116d80ec3c59805d3cb"
         },
         {
           "file": "js/data-integrity.js",
@@ -549,15 +548,15 @@
         },
         {
           "file": "tools/fixture.json",
-          "hash": "98d54e4adf481a811b8b05627515272fb623f8b78db75b294d07ceed739cd07d"
+          "hash": "0e5bcfb1693e1cc957d18bcf9d99b8db5eb013e6772baa9584fae76fa9d8f638"
         },
         {
           "file": "tools/visual-map/fixture.cjs",
-          "hash": "9a2d9a751e1b17e4a8afbeefbee3cc0bc01d41ae4a49b3c7d0c0c2804072a5c6"
+          "hash": "af6c24671b8c6a68da2fd637eae1a5a321ee8f462617770de61e6c182a59acf9"
         },
         {
           "file": "css/source/base.css",
-          "hash": "58e9b402d3d746f8c8756dfd1904f3f62d7e3dd59ad6dc79287f971bd904e28c"
+          "hash": "76192f32c58655ef3f58b9d2464020845fe85d70447300a360fc5fa80caaed4b"
         },
         {
           "file": "css/source/navigation-controls.css",
@@ -565,11 +564,11 @@
         },
         {
           "file": "css/source/economics.css",
-          "hash": "0139ec7d50ccc8cc00bf4607bcf6563a2989cf20f9655d5d52fa2db223ca0bd8"
+          "hash": "a109ec1ee3ed81b6547643b4a52d0a59644f908118a3d116047f07fdefc40d74"
         },
         {
           "file": "css/source/birthdays.css",
-          "hash": "aae1fa4fe0c4b46f60b613e96a1db5cdac9664712da500d4d4c1c45ceb8daacf"
+          "hash": "440692569d9eaffef154455313133b7517cd1e8773f9529b43f751ea1610116e"
         },
         {
           "file": "css/source/event-calendar.css",
@@ -581,7 +580,7 @@
         },
         {
           "file": "css/source/event-panels.css",
-          "hash": "a774bd92788f2974acb385c535d2ba6f6f528bf7f7bf82b4562080a8064b7192"
+          "hash": "0fbf3071bb0e85df489e7a697165ed0f900ba9ca7d60f6fecb7a4da71374ebb1"
         },
         {
           "file": "css/source/dialogs-responsive.css",
@@ -593,15 +592,15 @@
         },
         {
           "file": "css/source/shared-refinements.css",
-          "hash": "2caba9b567eff1f5f421af5adc11179a5f0df4daa7ff7b344eac354e6e0d5b33"
+          "hash": "734db873b39c183e1fe8acca32b6150c34901acd36c274065e85c09ecfe1acef"
         },
         {
           "file": "css/source/home-sharing.css",
-          "hash": "caac3c233ab62466329f3086e2fc904d5fb79fb541fd7d591cec0f3684b53cc3"
+          "hash": "8d2556639e8223d19d2670108fb6d7cebf353e25c2b4561bed3bdcf33d48f001"
         },
         {
           "file": "css/source/energy-refinements.css",
-          "hash": "b07b027bafa68df7ed4d69283f5d10d06be0b34b45c0fe2750c9f37ba37400a5"
+          "hash": "ad85d3b26f5f8df5ee36ff93be1fc959a75319d21835eb64572b248eb8e89965"
         },
         {
           "file": "css/source/home-reminders.css",
@@ -609,11 +608,19 @@
         },
         {
           "file": "css/source/invoices.css",
-          "hash": "e856e3f17686e33c3232c34bc76015d91156cdc46b6d6c864468fbb23f3a8edb"
+          "hash": "3602fab50ba639cc5c2178660bd311fca94ce1f689b836574eeb45b342260bfd"
+        },
+        {
+          "file": "css/source/home-status.css",
+          "hash": "0c87f8bd455d450a684f9f9275106bacda55c368eb0aa874a6893aa1f0cfadf1"
+        },
+        {
+          "file": "css/source/invoices-calendar.css",
+          "hash": "fab6f4d1d756a586786aec5c51c7eaccc786b4742b4179d4ce627db9acec0f63"
         },
         {
           "file": "css/source/theme-cream.css",
-          "hash": "d5d09d0ae2535163aac0b663ebe8abc3c8661d0d910fa0674bcd2c42d8e83949"
+          "hash": "2e2f3cae8e4d8ed00e97f4a127fe36564b68b1c55816e1a4cfa6f1cebfb83309"
         },
         {
           "file": "css/tasks.css",
@@ -629,23 +636,27 @@
         },
         {
           "file": "css/finance-views.css",
-          "hash": "78011cafc4c93a987ce9dc78cadae2dc566849bf9b280c1de745d5edecc300f5"
+          "hash": "7c60712339775091dcef83c2ca27c2bc1f15265bd376602c8a8c50df259d1585"
         },
         {
           "file": "js/init.js",
-          "hash": "2402274c8aea9cc86a031ed7d86d1543ecc0668e8a96e1f79c70c1cd0c66a1eb"
+          "hash": "9c900a17529bbb74810fb1a8d7d8a3c025cca599dbcb1e944fde9b60a3b4c46b"
+        },
+        {
+          "file": "js/home-week-actions.js",
+          "hash": "11fea26112f37e6a41f54e84d3293a041b91a5bf12d0eca5cfca2f27309e2421"
         },
         {
           "file": "js/economics-estudio.js",
-          "hash": "5286e52f9fa18c98e063de0887167b70db464789899b20ed297940616c210327"
+          "hash": "e70aa5c6330aae453be5d203b91804053d71fe84a0a74b6cb67eca3cb1315c4d"
         },
         {
           "file": "js/economics-comp.js",
-          "hash": "8cbdbb61e195b8128930ace4e23331315f308192e35bca0ac81a259d670de2fc"
+          "hash": "5aed65ebf94c465588b508a96b1efed41599e0c88cc218f01186491f096c38f2"
         },
         {
           "file": "js/economics-sim.js",
-          "hash": "bbe0c7e2651bf7660543b0b1140c15ccdd5d032d1f153f544f423b2dadca23f8"
+          "hash": "32c26861517888c427cce3bb4dd161b39b8535f9fa4542b997412215d4d283e6"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -658,7 +669,14 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
+      "commit": "9e5a6396a8cf00912f45d9ab8a9348596c6dbd3c",
+      "verifiedEdges": [
+        "study-rate",
+        "study-mortgage",
+        "study-gas",
+        "study-electric"
+      ],
+      "imageHash": "bdd6df74acd9ff09c4107a75eb5d6c91cec221600c5ee4ae81e69a3f1c788634",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -672,13 +690,7 @@
           }
         }
       ],
-      "verifiedEdges": [
-        "study-rate",
-        "study-mortgage",
-        "study-gas",
-        "study-electric"
-      ],
-      "fresh": false
+      "fresh": true
     },
     {
       "id": "events",
@@ -1321,6 +1333,7 @@
         705
       ],
       "image": "captures/settings.png",
+      "imageHash": "551c47666d10f0076697ee73d715d38bc77f938885fa07a272abcc626463b024",
       "anchors": {
         "reminders": {
           "x": 285,
@@ -1555,19 +1568,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "54afb756a0ad4f86d38c154b24814ea4882c50b7",
-      "verifiedEdges": [
-        "mobile-connection",
-        "reminders",
-        "invoice-config",
-        "mail",
-        "macro",
-        "contacts",
-        "notes",
-        "icons",
-        "export-folder",
-        "import-preview"
-      ],
-      "imageHash": "551c47666d10f0076697ee73d715d38bc77f938885fa07a272abcc626463b024",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -1581,7 +1581,19 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [
+        "mobile-connection",
+        "reminders",
+        "invoice-config",
+        "mail",
+        "macro",
+        "contacts",
+        "notes",
+        "icons",
+        "export-folder",
+        "import-preview"
+      ],
+      "fresh": false
     },
     {
       "id": "calendar",
@@ -29299,6 +29311,7 @@
       "region": "#mobileConnectionDialog",
       "note": "Dispositivo ficticio vinculado; no se pulsa ningún modo ni se envían órdenes.",
       "image": "captures/mobile-connection.png",
+      "imageHash": "3d13b944ea6dbd38d5b7f85b4ff1cf44b2d36248acf758824b17594a2233f51a",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -29476,10 +29489,9 @@
       ],
       "dependencyVersion": 2,
       "commit": "54afb756a0ad4f86d38c154b24814ea4882c50b7",
-      "verifiedEdges": [],
-      "imageHash": "3d13b944ea6dbd38d5b7f85b4ff1cf44b2d36248acf758824b17594a2233f51a",
       "review": "Sin revisar",
-      "fresh": true
+      "verifiedEdges": [],
+      "fresh": false
     },
     {
       "id": "mail",
