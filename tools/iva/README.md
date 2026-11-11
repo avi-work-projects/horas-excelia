@@ -158,9 +158,20 @@ sincronización visible. No hay una segunda fuente maestra editable en Kairo.
 El worker usa configuración privada para archivo, respaldos externos, libro,
 índice y conexión SSH a Kairo; se ejecuta con
 `python tools/iva/sync_models.py --config configuracion-privada.json`.
-Evita ejecuciones simultáneas y no usa sincronización con borrado. La programación
-y el despliegue del worker se verifican por separado; tener el script no prueba
-que exista una tarea activa. No modificar temporizadores de emisión/envío.
+Evita ejecuciones simultáneas y no usa sincronización con borrado. La actualización
+se solicita únicamente al aprobar un gasto, guardar un justificante nuevo o pulsar
+**Actualizar datos**. Abrir pantallas, guardar borradores y consultar el estado no
+solicitan actualizaciones. No hay verificación periódica del archivo ni de Drive.
+
+`model_events.py` conserva las solicitudes en una cola privada de Kairo.
+`listen_models.py --config configuracion-privada.json`, iniciado al abrir sesión
+en el mini, espera una señal por SSH bloqueante. El servidor usa notificaciones
+del sistema de archivos; no consulta el libro en bucle. Despertar/iniciar el mini
+solo recupera acciones ya solicitadas e interrumpidas: sin solicitudes no ejecuta
+el worker. Reconectar el transporte no es una nueva solicitud de actualización.
+Una solicitud fallida queda visible hasta otra acción manual; las que llegan
+durante una ejecución se conservan. Ver [despliegue](../../docs/IVA-DEPLOY.md).
+No modificar los temporizadores independientes de emisión/envío de facturas.
 
 En el runtime privado de Kairo quedan `config.json`, cola de gastos, revisiones,
 evidencias y bases de estado. La configuración identifica `archive_root`, `ledger`,

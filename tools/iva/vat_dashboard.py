@@ -30,7 +30,33 @@ def read_archive(root):
     return index, report, ledger
 
 
-def response(root, url):
+def update_status(runtime):
+    if runtime is None:
+        return {'state':'idle','message':'Consulta de la última copia disponible.'}
+    from model_events import status
+    try:
+        return status(runtime)
+    except Exception:
+        return {'state':'error','message':'No se puede consultar el estado de actualización. Vuelve a intentarlo.'}
+
+
+def update_controls(csrf, status):
+    if not csrf:
+        return ''
+    state = status.get('state','idle')
+    pending = state in ('queued','running')
+    boot = json.dumps({'csrf':csrf,'status':status},ensure_ascii=False).replace('<','\\u003c')
+    controls = '<section class="m-card" aria-label="Actualización de los datos"><div class="m-actions" style="margin-top:0"><button type="button" id="modelos-update" class="m-button m-primary"'+(' disabled' if pending else '')+'>Actualizar datos</button><button type="button" id="modelos-status" class="m-button">Ver estado</button><button type="button" id="modelos-reload" class="m-button" hidden>Ver datos actualizados</button></div><p id="modelos-update-message" role="status" aria-live="polite">'+e(status.get('message','Actualización manual de los datos.'))+'</p><p class="m-note">El mini debe estar encendido y conectado. Si no está disponible, la petición quedará pendiente. Abrir esta pantalla no actualiza los datos.</p></section>'
+    script = r'''<script>(()=>{const context=BOOT;
+const update=document.getElementById('modelos-update'),check=document.getElementById('modelos-status'),reload=document.getElementById('modelos-reload'),output=document.getElementById('modelos-update-message');
+function show(status,canReload){update.disabled=['queued','running'].includes(status.state);check.disabled=false;reload.hidden=!(canReload&&status.state==='verified');output.textContent=status.message||'Estado no disponible.';}
+async function request(manual){update.disabled=true;check.disabled=true;reload.hidden=true;output.textContent=manual?'Solicitando actualización…':'Consultando estado…';try{const options=manual?{method:'POST',headers:{'Content-Type':'application/json','X-CSRF':context.csrf},body:'{}'}:{cache:'no-store'};const result=await fetch('/facturas/modelos/'+(manual?'actualizar':'actualizacion'),options);const data=await result.json();if(!result.ok)throw Error('No se ha podido completar la petición. Vuelve a intentarlo.');show(data,true);}catch(error){show({state:'error',message:error.message},false);}}
+update.addEventListener('click',()=>request(true));check.addEventListener('click',()=>request(false));reload.addEventListener('click',()=>location.reload());
+})();</script>'''.replace('BOOT',boot)
+    return '<style>.modelos #modelos-reload[hidden]{display:none}</style>'+controls+script
+
+
+def response(root, url, csrf='', runtime=None):
     parsed = urlsplit(url)
     path = parsed.path.removeprefix('/facturas')
     if path not in ('/modelos', '/modelos/', '/modelos/descargar', '/modelos/documento'):
@@ -70,9 +96,9 @@ def response(root, url):
         kind = query.get('tipo', ['todos'])[0]
         if kind not in ('todos','income','expense'):
             return 400, 'Filtro no válido'
-        return 200, render(index, report, ledger, quarter, section, kind)
+        return 200, render(index, report, ledger, quarter, section, kind, csrf, update_status(runtime))
     except (OSError, ValueError, KeyError, TypeError):
-        return 503, page('<h1>Modelos temporalmente no disponibles</h1><p>La copia de consulta falta o ha cambiado. Se requiere actualizar y verificar el archivo.</p>'+button('/facturas/','Volver a Facturas'))
+        return 503, page('<h1>Modelos temporalmente no disponibles</h1><p>La copia de consulta falta o ha cambiado. Solicita actualizar y verificar el archivo.</p>'+update_controls(csrf,update_status(runtime))+button('/facturas/','Volver a Facturas'))
 
 
 def documents(ledger, quarter, kind):
@@ -112,12 +138,12 @@ def annual_content(report):
     return f'''<div class="m-card m-hero"><span class="m-eyebrow">Resumen anual · 390</span><div class="m-status">Preparación del ejercicio</div><p>{e(annual['status'])}</p><div class="m-actions">{button(BASE+'/preparacion?periodo=anual','Preparar 390',True)}</div></div><div class="m-columns">{metrics}</div><div class="m-card"><h2>Comparación de los 303</h2><div class="m-table-wrap"><table><thead><tr><th>Periodo</th><th>Calculado</th><th>Referencia presentada</th><th>Diferencia</th></tr></thead><tbody>{rows}</tbody></table></div><p class="m-note">Las diferencias se conservan por trimestre, aunque su suma sea cero. La coincidencia de importes no acredita revisión fiscal ni pago.</p></div><div class="m-card"><h2>Pendientes del año</h2><ul class="m-list">{pending}</ul><p class="m-note">{e(annual['scope'])}</p></div>'''
 
 
-def render(index, report, ledger, quarter, section, kind='todos'):
+def render(index, report, ledger, quarter, section, kind='todos', csrf='', update=None):
     year = report['year']
     annual = section == 'anual'
     tabs = ''.join(f'<a href="{BASE}?periodo={q}"'+(' aria-current="page"' if q==quarter and not annual else '')+'>'+q+'</a>' for q in ('1T','2T','3T','4T'))
     tabs += f'<a href="{BASE}?periodo={quarter}&paso=anual"'+(' aria-current="page"' if annual else '')+'>Año</a>'
-    head = f'<h1>IVA {year}</h1><nav class="m-periods" aria-label="Periodo fiscal">{tabs}</nav>'
+    head = f'<h1>IVA {year}</h1><nav class="m-periods" aria-label="Periodo fiscal">{tabs}</nav>'+update_controls(csrf,update or {'state':'idle','message':'Actualización manual de los datos.'})
     if annual:
         content = annual_content(report)
     elif section == 'documentos':

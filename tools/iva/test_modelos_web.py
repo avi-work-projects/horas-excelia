@@ -74,13 +74,14 @@ class ModelosTests(unittest.TestCase):
             factory.return_value.update.assert_not_called()
 
     def test_expense_approval_passes_exact_revision_without_user_actor_override(self):
-        with patch.object(modelos_web,'store') as factory:
+        with patch.object(modelos_web,'store') as factory, patch('model_events.request') as request:
             queue=factory.return_value
             queue.approve.return_value={'id':'abc','revision':'r2','state':'approved'}
             result=modelos_web.post('runtime','/modelos/gastos',{'action':'approve','id':'abc','revision':'r1','actor':'forged'},'authenticated-owner')
             queue.approve.assert_called_once_with('abc','r1','authenticated-owner')
             self.assertEqual(result['state'],'approved')
             self.assertIn('pendiente de incorporación',result['message'])
+            request.assert_called_once_with('runtime','expense','authenticated-owner')
 
     def test_untrusted_filename_text_and_csrf_cannot_break_html_script(self):
         row={'id':'abc','revision':'r','state':'draft','filename':'<img src=x onerror=alert(1)>','pages':1,'fields':{},'warnings':[]}
@@ -100,6 +101,8 @@ class ModelosTests(unittest.TestCase):
             saved=modelos_web.post(runtime,'/modelos/gastos',{'action':'edit','id':first['id'],'revision':first['revision'],'fields':fields()},'owner')
             approved=modelos_web.post(runtime,'/modelos/gastos',{'action':'approve','id':saved['id'],'revision':saved['revision']},'owner')
             self.assertEqual(approved['state'],'approved')
+            from model_events import status
+            self.assertEqual(status(runtime)['requested_seq'],1)
             package=modelos_web.get(runtime,'/modelos/gastos/paquete?id='+approved['id'],'csrf')
             self.assertEqual(package[0],200)
             self.assertEqual(modelos_web.get(runtime,'/modelos/gastos/pdf?id='+approved['id'],'csrf')[2],'application/pdf')
@@ -113,6 +116,62 @@ class ModelosTests(unittest.TestCase):
         html=modelos_web.render(None,[],'csrf',{'state':'verified','warnings':['PRIVATE/FILE']})
         self.assertIn('Documentos por revisar',html)
         self.assertNotIn('PRIVATE/FILE',html)
+
+    def test_dashboard_and_status_get_never_request_update_or_create_runtime(self):
+        with tempfile.TemporaryDirectory() as folder, patch('model_events.request') as request:
+            root=Path(folder)
+            fixture(root)
+            runtime=root/'not-created'
+            self.assertEqual(response(root,'/modelos',csrf='token',runtime=runtime)[0],200)
+            result=modelos_web.get(runtime,'/facturas/modelos/actualizacion','token')
+            self.assertEqual(result[0],200)
+            self.assertEqual(json.loads(result[1])['state'],'idle')
+            self.assertEqual(result[3]['Cache-Control'],'no-store')
+            self.assertFalse(runtime.exists())
+            request.assert_not_called()
+
+    def test_manual_request_uses_authenticated_actor_without_opening_expense_store(self):
+        state={'state':'queued','requested_seq':1,'processed_seq':0,'pending':True}
+        with patch('model_events.request',return_value=state) as request, patch.object(modelos_web,'store') as factory:
+            result=modelos_web.post('runtime','/facturas/modelos/actualizar',{'actor':'forged','reason':'evidence'},'owner')
+            self.assertEqual(result,state)
+            request.assert_called_once_with('runtime','manual','owner')
+            factory.assert_not_called()
+
+    def test_upload_edit_and_failed_approval_do_not_request_updates(self):
+        with patch('model_events.request') as request, patch.object(modelos_web,'store') as factory:
+            queue=factory.return_value
+            queue.upload.return_value=queue.update.return_value={'id':'abc','revision':'r1','state':'draft'}
+            modelos_web.post('runtime','/modelos/gastos',{'action':'upload'},'owner')
+            modelos_web.post('runtime','/modelos/gastos',{'action':'edit','fields':{}},'owner')
+            queue.approve.side_effect=ValueError('Not reviewed')
+            with self.assertRaises(ValueError):
+                modelos_web.post('runtime','/modelos/gastos',{'action':'approve'},'owner')
+            request.assert_not_called()
+
+    def test_update_failure_after_successful_approval_preserves_approval_and_recovery(self):
+        with patch('model_events.request',side_effect=OSError('PRIVATE/PATH')) as request, patch.object(modelos_web,'store') as factory:
+            queue=factory.return_value
+            queue.approve.return_value={'id':'abc','revision':'r2','state':'approved'}
+            result=modelos_web.post('runtime','/modelos/gastos',{'action':'approve','id':'abc','revision':'r1'},'owner')
+            self.assertEqual(result['state'],'approved')
+            self.assertIn('actualizacion=pendiente',result['url'])
+            self.assertNotIn('PRIVATE/PATH',result['message'])
+            self.assertIn('Actualizar datos',result['message'])
+            queue.get.return_value=queue.approve.return_value|{'filename':'f.pdf','fields':{}}
+            page=modelos_web.get('runtime',result['url'],'token')[1]
+            self.assertIn('no necesitas volver a aprobar',page)
+            self.assertNotIn('id="expense-approve"',page)
+
+    def test_update_controls_escape_status_and_csrf_and_use_only_manual_actions(self):
+        from vat_dashboard import update_controls
+        html=update_controls('</script><script>evil()</script>',{'state':'queued','message':'<script>bad()</script>'})
+        self.assertNotIn('</script><script>evil()',html)
+        self.assertNotIn('<script>bad()',html)
+        self.assertIn('id="modelos-update" class="m-button m-primary" disabled',html)
+        self.assertIn('Ver estado',html)
+        self.assertNotIn('setInterval',html)
+        self.assertNotIn('setTimeout',html)
 
 
 if __name__=='__main__':

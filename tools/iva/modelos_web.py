@@ -19,6 +19,12 @@ def store(runtime):
 def get(runtime, url, csrf):
     parsed = urlsplit(url)
     path = parsed.path.removeprefix('/facturas')
+    if path == '/modelos/actualizacion':
+        from model_events import status
+        try:
+            return 200, json.dumps(status(runtime),ensure_ascii=False), 'application/json; charset=utf-8', {'Cache-Control':'no-store'}
+        except Exception:
+            return 503, json.dumps({'state':'error','message':'No se puede consultar el estado de actualización. Vuelve a intentarlo.'}), 'application/json; charset=utf-8', {'Cache-Control':'no-store'}
     if path not in ('/modelos/gastos','/modelos/gastos/pdf','/modelos/gastos/paquete'):
         return None
     try:
@@ -33,16 +39,25 @@ def get(runtime, url, csrf):
             sync = json.loads((Path(runtime)/'sync-status.json').read_text(encoding='utf-8'))
         except (OSError, ValueError):
             sync = None
-        return 200, render(queue.get(key) if key else None, queue.list() if not key else [], csrf, sync)
+        return 200, render(queue.get(key) if key else None, queue.list() if not key else [], csrf, sync,
+                           parse_qs(parsed.query).get('actualizacion')==['pendiente'])
     except (ValueError, OSError, KeyError, TypeError):
         return 409, page('<h1>Gasto no disponible</h1><p>El documento o su versión han cambiado. Vuelve a la bandeja para consultar el estado actual.</p>'+button(BASE,'Volver a Gastos'))
 
 
 def post(runtime, path, data, actor):
-    if path.removeprefix('/facturas') != '/modelos/gastos':
+    path = path.removeprefix('/facturas')
+    if path == '/modelos/actualizar':
+        from model_events import request
+        try:
+            return request(runtime,'manual',actor)
+        except Exception:
+            raise ValueError('No se ha podido solicitar la actualización. Vuelve a intentarlo.') from None
+    if path != '/modelos/gastos':
         return None
     queue = store(runtime)
     action = data.get('action')
+    update_failed = False
     if action == 'upload':
         draft = queue.upload(data.get('filename',''), data.get('pdf',''), actor)
         message = 'PDF guardado. Revisa los datos propuestos y todas sus páginas.'
@@ -55,10 +70,17 @@ def post(runtime, path, data, actor):
     elif action == 'approve':
         draft = queue.approve(data.get('id'), data.get('revision'), actor)
         message = 'Revisión aprobada. El gasto queda pendiente de incorporación al libro y de verificación de la copia.'
+        from model_events import request
+        try:
+            request(runtime,'expense',actor)
+        except Exception:
+            # The approval is durable even when its separate update request fails.
+            update_failed = True
+            message += ' No se ha podido solicitar la actualización; usa Actualizar datos en Modelos.'
     else:
         raise ValueError('Acción de gasto no válida')
     return {'id':draft['id'],'revision':draft['revision'],'state':draft['state'],'message':message,
-            'url':BASE+'?id='+draft['id']}
+            'url':BASE+'?id='+draft['id']+('&actualizacion=pendiente' if update_failed else '')}
 
 
 def input_field(fields, name, label, kind='text', required=False):
@@ -71,8 +93,10 @@ def input_field(fields, name, label, kind='text', required=False):
     return f'<label>{e(label)}<input name="{name}" type="{kind}" value="{e(value)}"{attributes}></label>'
 
 
-def render(draft, rows, csrf, sync=None):
+def render(draft, rows, csrf, sync=None, update_failed=False):
     body = button('/facturas/modelos','Volver a Modelos')+'<h1>Gastos</h1>'
+    if update_failed:
+        body += '<section class="m-card m-warning"><h2>Aprobación guardada</h2><p>No se pudo solicitar su actualización. Abre Modelos y pulsa Actualizar datos para continuar; no necesitas volver a aprobar este gasto.</p>'+button('/facturas/modelos','Ir a Modelos')+'</section>'
     if isinstance(sync,dict):
         if sync.get('state')=='pending':
             body += '<section class="m-card m-warning"><h2>Sincronización pendiente</h2><p>La actualización requiere revisión. Los gastos aprobados siguen conservados; Modelos puede mostrar la copia anterior.</p></section>'

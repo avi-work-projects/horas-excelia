@@ -94,13 +94,40 @@ incorporación sin duplicarla. Las anomalías de ingresos se conservan en `warni
 un estado de distribución verificado no las convierte en revisiones fiscales
 resueltas ni actualiza la fecha de cobertura del libro.
 
-Cuando esa ejecución esté verificada, registrar el mismo comando en el
-planificador existente del mini, con directorio de trabajo e intérprete explícitos,
-sin solapar ejecuciones y con logs privados. El archivo de bloqueo del worker
-también protege invocaciones manuales; ante un bloqueo huérfano, comprobar que no
-haya un proceso activo antes de retirarlo. No habilitar dos workers canónicos en
-mini y portátil a la vez. La instalación del código por sí sola no activa esta
-programación ni demuestra que Drive esté al día.
+### Activación por acciones, sin temporizador
+
+Preferencia de Ángel del 11/11/2026: eliminar la comprobación cada 15 minutos.
+Las únicas fuentes de solicitudes son aprobar un gasto, guardar un justificante
+nuevo y pulsar **Actualizar datos**. Un GET, una consulta de estado o un borrador
+no crean trabajo. El botón **Ver estado** consulta la solicitud; no relee Drive.
+
+Instalar `model_events.py` junto al servicio privado. Sus escrituras se realizan
+después de guardar la acción del usuario, tras propietario, Origin y CSRF. La
+cola duradera identifica cada solicitud, fija el límite de cada ejecución y
+conserva las nuevas solicitudes recibidas mientras se ejecuta. Un fallo consume
+el intento y queda pendiente de otra acción manual, sin reintentos por reloj.
+Una caída abrupta conserva la acción interrumpida para recuperarla.
+
+En el mini, instalar `listen_models.py` junto a `sync_models.py` y las dependencias.
+Usa la misma configuración y la misma clave SSH; no abre puertos ni instala
+credenciales nuevas. Registrar `python listen_models.py --config privado.json`
+solo al iniciar sesión, con intérprete/directorio explícitos, ventana oculta,
+sin repetición ni límite de duración y sin instancias simultáneas. Eliminar los
+triggers de la tarea antigua de 15 minutos; conservar antes su XML como respaldo.
+La tarea nueva mantiene una espera de eventos: no ejecuta una revisión al inicio.
+
+El servidor registra su vigilancia antes de examinar la cola, para no perder una
+señal concurrente. SSH permanece bloqueado hasta una solicitud; solo la pérdida
+del transporte requiere reconexión. Al recibir una solicitud se ejecuta el worker
+una vez. El acuse de la solicitud llega después de la publicación verificada.
+Los bloqueos de proceso se liberan incluso tras una caída; los archivos de lock
+no se borran, para no crear carreras con un segundo proceso. No habilitar dos
+workers canónicos en mini y portátil a la vez.
+
+Comprobar que la espera inicial no cambia la última sincronización, solicitar
+una actualización desde el botón y observar su resultado y el retorno a espera.
+La publicación conserva sus comprobaciones de integridad dentro de esa acción.
+
 
 ## Reversión
 

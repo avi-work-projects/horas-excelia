@@ -202,17 +202,15 @@ def main():
     if args.server:
         result=server(args.runtime,json.load(sys.stdin));print(json.dumps(result));return
     config=read(args.config)
-    lock=Path(args.config).with_suffix('.lock')
-    # Scheduler also disallows overlapping runs; file lock protects direct invocations.
-    try:fd=os.open(lock,os.O_CREAT|os.O_EXCL|os.O_WRONLY)
-    except FileExistsError:raise RuntimeError('Ya hay una actualización en curso. Revisar el bloqueo si se interrumpió.')
-    try:
-        os.close(fd);result=run(config);print(json.dumps(result))
-    except Exception as exc:
-        status={'state':'pending','at':datetime.now(timezone.utc).isoformat(),'message':str(exc)[:1500]}
-        try:remote(config,{'action':'status','status':status})
-        except Exception:pass
-        print(json.dumps(status),file=sys.stderr);raise
-    finally:lock.unlink(missing_ok=True)
+    from model_events import process_lock
+    # OS locks release on process exit, including crashes; a leftover file is harmless.
+    with process_lock(Path(args.config).with_suffix('.lock')):
+        try:
+            result=run(config);print(json.dumps(result))
+        except Exception as exc:
+            status={'state':'pending','at':datetime.now(timezone.utc).isoformat(),'message':str(exc)[:1500]}
+            try:remote(config,{'action':'status','status':status})
+            except Exception:pass
+            print(json.dumps(status),file=sys.stderr);raise
 
 if __name__=='__main__':main()

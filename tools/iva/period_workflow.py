@@ -141,11 +141,19 @@ def evidence(runtime, period, supplied, actor):
         for value in boxes.values():money(value)
         if money(boxes['46'])!=money(boxes['09'])-money(boxes['45']):raise ValueError('Las casillas 09, 45 y 46 no concilian')
         record['boxes']=boxes
+    inserted=False
     with connect(runtime) as db:
         key=f'{data["year"]}-{period}'
         existing=db.execute('SELECT data FROM evidence WHERE period=?',(key,)).fetchall()
         if not any(json.loads(r[0]).get('sha256')==sha and json.loads(r[0]).get('kind')==kind for r in existing):
             db.execute('INSERT INTO evidence(period,data) VALUES (?,?)',(key,json.dumps(record)))
+            inserted=True
+    if inserted:
+        from model_events import request
+        try:
+            request(runtime,'evidence',actor)
+        except (OSError,RuntimeError,sqlite3.Error):
+            record['update_request_failed']=True
     return record
 
 def get(runtime,url,csrf):
@@ -187,7 +195,10 @@ def post(runtime,path,data,actor):
         save_review(runtime,period,data,actor)
         current=build_candidate(runtime,period)
         Store(Path(runtime)/'new-closing.sqlite').act(period,'prepare',None,current,actor)
-    elif action=='evidence':evidence(runtime,period,data,actor)
+    elif action=='evidence':
+        saved=evidence(runtime,period,data,actor)
+        if saved.get('update_request_failed'):
+            return {'message':'Justificante guardado. No se pudo solicitar la actualización; pulsa Actualizar datos en Modelos para reintentarlo.'}
     elif action in ('approve','generate','cancel'):
         current=build_candidate(runtime,period)
         Store(Path(runtime)/'new-closing.sqlite').act(period,action,data.get('revision'),current,actor)

@@ -29,13 +29,16 @@ NEW_LIMIT = """   model_path=urlsplit(self.path).path.removeprefix('/facturas')
 """
 LOCK_ANCHOR = '   with MUTEX,process_lock():\n'
 POST_ANCHOR = "    if path=='/modelos/cierre':\n"
-POST_BLOCK = """    if path=='/modelos/gastos':
+POST_BLOCK_V1 = """    if path=='/modelos/gastos':
      from modelos_web import post as modelos_post
      return self.reply(200,json.dumps(modelos_post(ROOT/'vat-workflow',path,data,OWNER)),'application/json')
     if path=='/modelos/preparacion':
      from period_workflow import post as period_post
      return self.reply(200,json.dumps(period_post(ROOT/'vat-workflow',path,data,OWNER)),'application/json')
 """
+POST_BLOCK = POST_BLOCK_V1.replace("if path=='/modelos/gastos':", "if path in ('/modelos/gastos','/modelos/actualizar'):")
+VAT_CALL_V1 = "   vat=vat_response(ROOT.parent/'autonomo-consulta',self.path)\n"
+VAT_CALL = "   vat=vat_response(ROOT.parent/'autonomo-consulta',self.path,csrf=CSRF,runtime=ROOT/'vat-workflow')\n"
 
 
 def sha(raw):
@@ -95,13 +98,20 @@ def patch_source(text):
             raise ValueError('El límite HTTP tiene un formato distinto; requiere revisión')
         result = result.replace(OLD_LIMIT, NEW_LIMIT, 1)
     if LOCK_ANCHOR + POST_BLOCK + POST_ANCHOR not in result:
-        if any(marker in result for marker in ('from modelos_web import post', 'from period_workflow import post')):
-            raise ValueError('Las rutas POST de Modelos tienen una instalación parcial o diferente')
-        if LOCK_ANCHOR + POST_ANCHOR not in result:
-            raise ValueError('El cierre existente no está dentro del bloqueo esperado')
-        result = result.replace(LOCK_ANCHOR + POST_ANCHOR, LOCK_ANCHOR + POST_BLOCK + POST_ANCHOR, 1)
+        if LOCK_ANCHOR + POST_BLOCK_V1 + POST_ANCHOR in result:
+            result = result.replace(POST_BLOCK_V1, POST_BLOCK, 1)
+        else:
+            if any(marker in result for marker in ('from modelos_web import post', 'from period_workflow import post')):
+                raise ValueError('Las rutas POST de Modelos tienen una instalación parcial o diferente')
+            if LOCK_ANCHOR + POST_ANCHOR not in result:
+                raise ValueError('El cierre existente no está dentro del bloqueo esperado')
+            result = result.replace(LOCK_ANCHOR + POST_ANCHOR, LOCK_ANCHOR + POST_BLOCK + POST_ANCHOR, 1)
+    if VAT_CALL not in result:
+        if result.count(VAT_CALL_V1) != 1:
+            raise ValueError('La consulta de Modelos tiene un formato distinto; requiere revisión')
+        result = result.replace(VAT_CALL_V1, VAT_CALL, 1)
     # Verify placement and exact preservation of the existing security controls.
-    if not all(result.count(block) == 1 for block in (GET_BLOCK, NEW_LIMIT, POST_BLOCK)):
+    if not all(result.count(block) == 1 for block in (GET_BLOCK, NEW_LIMIT, POST_BLOCK, VAT_CALL)) or VAT_CALL_V1 in result:
         raise ValueError('Integración duplicada o incompleta')
     verify_gates(clean, result)
     return result.replace('\n', newline)

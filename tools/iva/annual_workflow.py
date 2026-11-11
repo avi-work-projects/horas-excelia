@@ -209,7 +209,9 @@ def post(runtime, path, data, actor):
         if data.get('kind') not in ('validation', 'filing'):
             raise ValueError('El 390 admite justificante de validación o presentación, no de pago.')
         from period_workflow import evidence
-        evidence(runtime, 'anual', data, actor)
+        saved = evidence(runtime, 'anual', data, actor)
+        if saved.get('update_request_failed'):
+            return {'message':'Justificante guardado. No se pudo solicitar la actualización; pulsa Actualizar datos en Modelos para reintentarlo.'}
     elif action in ('approve', 'generate', 'cancel'):
         current = build_candidate(runtime)
         Store(Path(runtime) / 'new-annual.sqlite').act('anual', action, data.get('revision'), current, actor)
