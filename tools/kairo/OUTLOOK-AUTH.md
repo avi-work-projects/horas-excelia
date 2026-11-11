@@ -10,10 +10,12 @@ En una ventana propia de PowerShell del mini, ejecutar directamente SSH (funcion
 también cuando Windows no permite ejecutar archivos `.ps1`):
 
 ```powershell
-ssh -t -i "$env:USERPROFILE\.ssh\clave_ssh" -o HostKeyAlias=kairo.local usuario@kairo "sudo /home/usuario/gestify-outlook/hours-venv/bin/python /usr/local/libexec/gestify-outlook-secret --config /home/usuario/gestify-outlook/hours.json"
+ssh -t kairo 'sudo $HOME/gestify-outlook/hours-venv/bin/python /usr/local/libexec/gestify-outlook-secret --config $HOME/gestify-outlook/hours.json'
 ```
 
-El comando conecta por SSH con la clave existente y abre un terminal en Kairo.
+`kairo` es un alias de `~/.ssh/config` en el equipo local: usuario, clave y
+`HostKeyAlias` viven allí, fuera del repositorio público. El comando conecta por
+SSH con la clave existente y abre un terminal en Kairo.
 Pide la contraseña dos veces mediante `getpass`: no se muestran caracteres.
 No pegarla en el chat ni añadirla al comando. No se transmite a Gestify.
 `sudo` utiliza la configuración ya existente del propietario.
@@ -27,7 +29,7 @@ La clave del host la administra systemd; una reinstalación sin ella requiere
 volver a introducir la contraseña.
 
 Guardar el secreto habilita y arranca `gestify-outlook-auth.service`. Se usa
-`LoadCredentialEncrypted`, con el proceso ejecutándose como `angel`; systemd
+`LoadCredentialEncrypted`, con el proceso ejecutándose como el usuario propietario; systemd
 entrega la credencial en su directorio privado de ejecución. El servicio y el
 provisionador desactivan los volcados de memoria.
 
@@ -87,7 +89,8 @@ Las pantallas nuevas se detienen para revisión.
 ## Desactivar y eliminar el secreto
 
 ```powershell
-& 'C:\Users\usuario\.codex\worktrees\mapa-visual-piloto\horas-excelia\tools\kairo\set-outlook-secret.ps1' -Remove
+# Desde la raíz del proyecto:
+& .\tools\kairo\set-outlook-secret.ps1 -Remove
 ```
 
 Detiene y deshabilita el recuperador y elimina el cifrado. Conserva el perfil

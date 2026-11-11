@@ -18,3 +18,9 @@ __pycache__/
 tools/kairo/state/
 tools/kairo/hours-config*.json
 invoice-mail-history.json
+
+# Archivos locales de agentes y utilidades personales; nunca viajan al repo público.
+.claude/settings.local.json
+.claude/worktrees/
+.codex-remote-attachments/
+push.bat
