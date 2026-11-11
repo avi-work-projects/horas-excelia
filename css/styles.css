@@ -4410,9 +4410,10 @@ body:has(#evDetailOv.open .ev-car-sheet #evDRutSes) .toast{bottom:calc(56dvh + 1
 /* The two agenda links share their label, width and button style. */
 :root{--home-action-width:clamp(62px,22vw,104px)}
 .hours-control:has(.home-invoice-actions){align-items:stretch;gap:6px;flex-wrap:wrap}
-.hours-control #editHoursBtn{flex:1 1 0;min-width:0;min-height:42px;padding:4px;gap:4px;justify-content:center;white-space:nowrap;font-size:.72rem}
+.hours-control #editHoursBtn{flex:1 1 0;min-width:0;min-height:42px;padding:4px;gap:4px;justify-content:center;white-space:nowrap;font-size:.72rem;border-color:var(--home-tone);border-radius:12px;background:var(--surface);color:var(--text)}
+.hours-control #editHoursBtn .edit-pencil{color:var(--home-tone)}
 .home-invoice-actions{display:grid;grid-template-columns:repeat(3,var(--home-action-width));gap:4px}
-.home-invoice-actions button,.home-schedule-action{box-sizing:border-box;min-width:0;display:flex;align-items:center;justify-content:center;gap:3px;min-height:max(50px,3.15rem);padding:4px;border:1px solid var(--home-tone);border-radius:12px;background:color-mix(in srgb,var(--home-tone) 9%,var(--surface));color:var(--text);font:600 .72rem/1.2 var(--font);cursor:pointer;text-align:center}
+.home-invoice-actions button,.home-schedule-action{box-sizing:border-box;min-width:0;display:flex;align-items:center;justify-content:center;gap:3px;min-height:max(50px,3.15rem);padding:4px;border:1px solid var(--home-tone);border-radius:12px;background:var(--surface);color:var(--text);font:600 .72rem/1.2 var(--font);cursor:pointer;text-align:center}
 .home-schedule-action{width:var(--home-action-width)}
 .home-invoice-actions svg,.home-schedule-action svg{width:17px;height:17px;flex:none;color:var(--home-tone);opacity:1}
 #homeSyncBtn{flex-direction:column;gap:1px}
@@ -4584,7 +4585,6 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 .week-actions.home-week-actions{justify-content:center;gap:8px;min-height:64px;box-sizing:border-box}
 .home-week-actions .action-btn{flex:0 1 auto;min-height:38px;padding:8px 13px;font-size:.7rem}
 .home-week-actions .home-week-more,.home-week-actions .home-week-edit,.home-week-actions .home-week-cancel{border-color:var(--home-tone);color:var(--text);background:var(--surface)}
-.home-week-actions .home-week-more{background:color-mix(in srgb,var(--home-tone) 9%,var(--surface))}
 .home-week-actions .home-week-more svg{color:var(--home-tone)}
 .home-week-actions .home-week-edit{background:#f4a066;border-color:#f4a066;color:#fff;font-weight:700}
 .home-week-actions .home-week-cancel{background:color-mix(in srgb,var(--c-red) 10%,var(--surface));border:1.5px solid color-mix(in srgb,var(--c-red) 55%,transparent);color:var(--c-red)}
