@@ -4,7 +4,7 @@
 
 /* ── Estudio Cambio (sub-tabs) ─────────────────────────────── */
 function renderEconEstudio(){
-  var h='<div class="study-intro"><h2>Herramientas de comparación</h2><p>Explora alternativas antes de decidir. Compara ingresos y contratos con tus datos de referencia.</p></div><div class="est-nav">';
+  var h='<div class="study-intro"><h2>Herramientas de comparación</h2></div><div class="est-nav">';
   h+='<div class="est-group">';
   h+='<div class="est-group-label">Trabajo · ingresos</div>';
   h+='<button class="est-btn'+(ECON_ESTUDIO_SUB==='comparador'?' active':'')+'" id="ecSubComp">Comparar Escenarios</button>';

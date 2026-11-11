@@ -82,10 +82,10 @@
 
 **Funciones:** renderEconAnalisis:17 · _renderAnalisisGastos:32 (!250) · _triDonut:282 · _renderAnalisisHipoteca:304 (!119) · _ahRow:423 · _donutChart:428 · _balanceEvolutionChart:444 · xPos:477 · yPos:478 · _renderSubrogacionAnalysis:512 (!152) · _analisisCard:664 · _analisisHBar:672 · _mortgageDiffChart:692 · xPos:712 · yPos:713 · bindEconAnalisisEvents:762 · _reRenderKeepScroll:769
 
-### js/economics-comp.js  _(296 líneas)_
-**Estado global:** ECON_COMP_SK:5 · ECON_SCENARIOS:6 · ECON_COMP_ACCUM:10 · ECON_COMP_DIFF:11 · ECON_COMP_COLORS:12 · SC_LABELS:13 · ECON_COMP_CALC:14
+### js/economics-comp.js  _(250 líneas)_
+**Estado global:** ECON_COMP_SK:5 · ECON_SCENARIOS:6 · ECON_COMP_ACCUM:10 · ECON_COMP_DIFF:11 · ECON_COMP_COLORS:12 · SC_LABELS:13 · ECON_COMP_CALC:14 · ECON_SC_TYPES:79
 
-**Funciones:** _salaryMonths:17 · loadEconComp:23 · saveEconComp:29 · econLineChart:34 · xPos:49 · yPos:50 · renderEconComp:77 (!119) · bindEconCompEvents:196 (!100) · _selectZone:217
+**Funciones:** _salaryMonths:17 · loadEconComp:23 · saveEconComp:29 · econLineChart:35 · xPos:50 · yPos:51 · econScType:85 · renderEconComp:89 (!97) · bindEconCompEvents:186
 
 ### js/economics-estudio.js  _(570 líneas)_
 **Estado global:** ESTUDIO_HIP_ALTS:33 · ESTUDIO_HIP_CALC:34 · ESTUDIO_GAS_SCENARIOS:228 · ESTUDIO_GAS_CALC:229 · ESTUDIO_GAS_IVA:230 · ESTUDIO_ELECT_SCENARIOS:318 · ESTUDIO_ELECT_CALC:319 · ESTUDIO_ELECT_IVA:320 · ESTUDIO_ELECT_TAX:321
@@ -128,10 +128,10 @@
 ### js/economics-helpers.js  _(68 líneas)_
 **Funciones:** _fmtMiles:8 · _hipMoney:14 · _hipNum:19 · _hipDate:24 · _hipText:28 · _hipVinc:32 · _hipVincSum:46 · _hipRO:62 · _hipROmoney:65
 
-### js/economics-sim.js  _(181 líneas)_
+### js/economics-sim.js  _(180 líneas)_
 **Estado global:** SIM_TARGET:5 · SIM_PERIOD:6 · SIM_NET_MODE:7
 
-**Funciones:** _simComputeAll:10 · _inverseSalary:48 · renderEconSim:62 (!82) · bindEconSimEvents:144
+**Funciones:** _simComputeAll:10 · _inverseSalary:48 · renderEconSim:62 (!81) · bindEconSimEvents:143
 
 ### js/economics.js  _(690 líneas)_
 **Estado global:** ECON_YEAR:5 · ECON_VIEW:6 · ECON_RESUMEN_MODE:7 · ECON_RATE_MODE:8 · ECON_MULTI_RATE:9 · ECON_TARIFF_OPEN:10 · ECON_RATE_PERIODS:11 · ECON_ESTUDIO_SUB:15 · ESTUDIO_YEAR:16
@@ -556,7 +556,7 @@
 **Rangos por prefijo de clase:**
 .bday-today:33-33 · .ev-agenda:28-28 · .ev-calendar:30-30 · .fiscal-year:20-21 · .nav-btn:12-13 · .sy-back:4-8 · .sy-nav:9-17 · .today-btn:24-25
 
-### css/source/economics.css  _(686 líneas)_
+### css/source/economics.css  _(678 líneas)_
 
 **Secciones:**
 
@@ -575,47 +575,46 @@
 - §1.4 Toggles:175
 - §1.5 Declaración IRPF:180
 - Tab 2: Comparador:193
-- Calcular Tarifa (sim):221
-- Scenario zones (Comparar Escenarios):239
-- Análisis Ec. Personal:256
-- Bloques de la Subrogación:258
-- Fiscal config modal — purple theme override:301
-- Fiscal config modal:303
-- ECONOMICS v3: opt-buttons, cascade, gastos:332
-- Cascade ingresos/gastos:339
-- Media mensual: cards:349
-- Tab 4: Análisis:359
-- IRPF Breakdown visual:373
-- Card "A pagar / Devolución" más ancha cuando lleva sub-líneas integradas:400
-- Sub-línea de deducciones integrada (antes era una tarjeta verde suelta):402
-- Desglose item-por-item del Ahorro por desgravaciones (ordenado desc):426
-- Anotación inline en Cálculo de base mostrando el ahorro real en IRPF que produce cada reducción:435
-- Resumen fiscal al final de Ingresos y Gastos:437
-- Donut chart:444
-- Breakdown del sector seleccionado (IRPF/IVA dentro de Impuestos, etc.):454
-- Fiscal config: gastos items:461
-- Fiscal: tab bar:473
-- Fiscal: sticky save:478
-- Fiscal: section title income/expense colors:480
-- Fiscal: desgravaciones:490
-- Fiscal: compras profesionales:517
-- Desgravaciones: notas + tabla despacho info:525
-- Nota IVA compras:545
-- IVA por item en compras:547
-- Fiscal: despacho en casa:554
-- Hipoteca — resumen visual:577
-- Hipoteca — compact 2-col grid:600
-- Hipoteca — compact vinculaciones:608
-- Hipoteca — read-only fields:619
-- Hipoteca — edit/detail buttons:628
-- Hipoteca — period summary card:634
-- Multi-rate period cards:647
-- Distribución de ingresos:663
-- Comparador: reorder buttons:679
-- Rate input styled:683
+- Comparar escenarios: tarjeta compacta por escenario:195
+- Resultados: neto por escenario, desglose sin columnas de diferencias y gráfico con colores del tema.:211
+- Calcular Tarifa (sim):237
+- Análisis Ec. Personal:255
+- Bloques de la Subrogación:257
+- Fiscal config modal — purple theme override:300
+- Fiscal config modal:302
+- ECONOMICS v3: opt-buttons, cascade, gastos:331
+- Cascade ingresos/gastos:338
+- Media mensual: cards:348
+- Tab 4: Análisis:358
+- IRPF Breakdown visual:372
+- Card "A pagar / Devolución" más ancha cuando lleva sub-líneas integradas:399
+- Sub-línea de deducciones integrada (antes era una tarjeta verde suelta):401
+- Desglose item-por-item del Ahorro por desgravaciones (ordenado desc):425
+- Anotación inline en Cálculo de base mostrando el ahorro real en IRPF que produce cada reducción:434
+- Resumen fiscal al final de Ingresos y Gastos:436
+- Donut chart:443
+- Breakdown del sector seleccionado (IRPF/IVA dentro de Impuestos, etc.):453
+- Fiscal config: gastos items:460
+- Fiscal: tab bar:472
+- Fiscal: sticky save:477
+- Fiscal: section title income/expense colors:479
+- Fiscal: desgravaciones:489
+- Fiscal: compras profesionales:516
+- Desgravaciones: notas + tabla despacho info:524
+- Nota IVA compras:544
+- IVA por item en compras:546
+- Fiscal: despacho en casa:553
+- Hipoteca — resumen visual:576
+- Hipoteca — compact 2-col grid:599
+- Hipoteca — compact vinculaciones:607
+- Hipoteca — read-only fields:618
+- Hipoteca — edit/detail buttons:627
+- Hipoteca — period summary card:633
+- Multi-rate period cards:646
+- Distribución de ingresos:662
 
 **Rangos por prefijo de clase:**
-.ah-cuota:121-123 · .ah-donut:131-133 · .ah-section:118-120 · .ah-total:128-130 · .ah-vs:124-127 · .analisis-card:268-270 · .analisis-cards:257-257 · .analisis-hbar:271-276 · .analisis-input:286-289 · .analisis-ins:295-300 · .analisis-insurance:294-294 · .analisis-mortgage:277-293 · .econ-add:203-204 · .econ-ahorro:427-434 · .econ-annual:25-25 · .econ-avg:26-354 · .econ-bracket:186-192 · .econ-calc:337-338 · .econ-casc:341-348 · .econ-cascade:340-340 · .econ-chart:216-217 · .econ-comp:194-218 · .econ-decl:181-358 · .econ-distrib:664-678 · .econ-donut:445-460 · .econ-equiv:659-662 · .econ-fiscal:438-443 · .econ-formula:45-48 · .econ-gastos:360-372 · .econ-gear:153-154 · .econ-hdr:67-155 · .econ-ingresado:33-33 · .econ-irpf:374-436 · .econ-legend:219-220 · .econ-line:214-215 · .econ-month:50-63 · .econ-mr:656-657 · .econ-multi:648-658 · .econ-opt:333-336 · .econ-qcard:15-22 · .econ-qcell:11-14 · .econ-qm:20-20 · .econ-qmonth:18-19 · .econ-quarter:7-10 · .econ-rate:157-165 · .econ-row:34-44 · .econ-sc:196-685 · .econ-scenario:195-195 · .econ-section:64-64 · .econ-sim:222-232 · .econ-stats:169-174 · .econ-sub:70-82 · .econ-tab:68-69 · .econ-toggle:176-179 · .econ-val:49-49 · .est-btn:91-95 · .est-card:101-103 · .est-detail:98-98 · .est-field:110-116 · .est-fields:109-109 · .est-group:89-93 · .est-modo:104-104 · .est-nav:88-88 · .est-section:97-97 · .est-tariff:99-108 · .ev-sub:76-78 · .excl-item:167-167 · .excl-row:166-166 · .fiscal-add:326-489 · .fiscal-body:304-308 · .fiscal-bracket:317-325 · .fiscal-compras:518-553 · .fiscal-copy:150-152 · .fiscal-custom:314-314 · .fiscal-ded:528-542 · .fiscal-desgrav:491-543 · .fiscal-despacho:555-576 · .fiscal-error:330-330 · .fiscal-gasto:462-524 · .fiscal-gastos:544-544 · .fiscal-hdr:474-474 · .fiscal-highlight:515-515 · .fiscal-onoff:557-558 · .fiscal-pct:315-324 · .fiscal-period:470-471 · .fiscal-radio:309-313 · .fiscal-save:328-329 · .fiscal-section:305-482 · .fiscal-sticky:479-479 · .fiscal-subsection:483-484 · .fiscal-tab:475-477 · .fiscal-viaje:485-486 · .fiscal-vinc:568-569 · .fiscal-year:148-149 · .hip-add:646-646 · .hip-auto:597-597 · .hip-bar:583-590 · .hip-cancel:633-633 · .hip-cf:602-607 · .hip-edit:629-631 · .hip-g2:601-601 · .hip-grid:595-595 · .hip-period:635-644 · .hip-resumen:578-582 · .hip-ro:620-627 · .hip-save:632-632 · .hip-section:596-645 · .hip-stat:592-594 · .hip-stats:591-591 · .hip-sub:599-599 · .hip-vinc:598-598 · .hip-vr:609-618 · .mg-budget:135-144 · .mg-cat:145-145 · .mg-desgrav:146-146 · .mg-sort:141-141 · .rate-input:4-4 · .rate-label:3-3 · .rate-row:2-2 · .rate-suffix:5-5 · .rut-sub:74-80 · .sim-combo:234-238 · .sim-field:223-224 · .sim-hr:233-233 · .sim-period:230-230 · .sim-target:225-229 · .study-intro:85-87 · .sub-block:259-260 · .sub-row:261-267 · .sy-sublbl:24-24
+.ah-cuota:121-123 · .ah-donut:131-133 · .ah-section:118-120 · .ah-total:128-130 · .ah-vs:124-127 · .analisis-card:267-269 · .analisis-cards:256-256 · .analisis-hbar:270-275 · .analisis-input:285-288 · .analisis-ins:294-299 · .analisis-insurance:293-293 · .analisis-mortgage:276-292 · .econ-add:231-232 · .econ-ahorro:426-433 · .econ-annual:25-25 · .econ-avg:26-353 · .econ-bracket:186-192 · .econ-calc:336-337 · .econ-casc:340-347 · .econ-cascade:339-339 · .econ-chart:233-234 · .econ-comp:194-227 · .econ-decl:181-357 · .econ-distrib:663-677 · .econ-donut:444-459 · .econ-equiv:658-661 · .econ-fiscal:437-442 · .econ-formula:45-48 · .econ-gastos:359-371 · .econ-gear:153-154 · .econ-hdr:67-155 · .econ-ingresado:33-33 · .econ-irpf:373-435 · .econ-legend:235-236 · .econ-line:228-230 · .econ-month:50-63 · .econ-mr:655-656 · .econ-multi:647-657 · .econ-opt:332-335 · .econ-qcard:15-22 · .econ-qcell:11-14 · .econ-qm:20-20 · .econ-qmonth:18-19 · .econ-quarter:7-10 · .econ-rate:157-165 · .econ-row:34-44 · .econ-sc:197-210 · .econ-scenario:196-196 · .econ-section:64-64 · .econ-sim:238-248 · .econ-stats:169-174 · .econ-sub:70-82 · .econ-tab:68-69 · .econ-toggle:176-179 · .econ-val:49-49 · .est-btn:91-95 · .est-card:101-103 · .est-detail:98-98 · .est-field:110-116 · .est-fields:109-109 · .est-group:89-93 · .est-modo:104-104 · .est-nav:88-88 · .est-section:97-97 · .est-tariff:99-108 · .ev-sub:76-78 · .excl-item:167-167 · .excl-row:166-166 · .fiscal-add:325-488 · .fiscal-body:303-307 · .fiscal-bracket:316-324 · .fiscal-compras:517-552 · .fiscal-copy:150-152 · .fiscal-custom:313-313 · .fiscal-ded:527-541 · .fiscal-desgrav:490-542 · .fiscal-despacho:554-575 · .fiscal-error:329-329 · .fiscal-gasto:461-523 · .fiscal-gastos:543-543 · .fiscal-hdr:473-473 · .fiscal-highlight:514-514 · .fiscal-onoff:556-557 · .fiscal-pct:314-323 · .fiscal-period:469-470 · .fiscal-radio:308-312 · .fiscal-save:327-328 · .fiscal-section:304-481 · .fiscal-sticky:478-478 · .fiscal-subsection:482-483 · .fiscal-tab:474-476 · .fiscal-viaje:484-485 · .fiscal-vinc:567-568 · .fiscal-year:148-149 · .hip-add:645-645 · .hip-auto:596-596 · .hip-bar:582-589 · .hip-cancel:632-632 · .hip-cf:601-606 · .hip-edit:628-630 · .hip-g2:600-600 · .hip-grid:594-594 · .hip-period:634-643 · .hip-resumen:577-581 · .hip-ro:619-626 · .hip-save:631-631 · .hip-section:595-644 · .hip-stat:591-593 · .hip-stats:590-590 · .hip-sub:598-598 · .hip-vinc:597-597 · .hip-vr:608-617 · .mg-budget:135-144 · .mg-cat:145-145 · .mg-desgrav:146-146 · .mg-sort:141-141 · .rate-input:4-4 · .rate-label:3-3 · .rate-row:2-2 · .rate-suffix:5-5 · .rut-sub:74-80 · .sim-combo:250-254 · .sim-field:239-240 · .sim-hr:249-249 · .sim-period:246-246 · .sim-target:241-245 · .study-intro:85-87 · .sub-block:258-259 · .sub-row:260-266 · .sy-sublbl:24-24
 
 ### css/source/birthdays.css  _(165 líneas)_
 
@@ -1008,14 +1007,14 @@
 **Rangos por prefijo de clase:**
 .electric-add:72-72 · .electric-card:20-71 · .electric-cards:19-19 · .electric-check:31-31 · .electric-company:34-34 · .electric-comparator:2-73 · .electric-current:6-8 · .electric-field:54-55 · .electric-fields:70-70 · .electric-fold:27-27 · .electric-identity:33-33 · .electric-input:56-58 · .electric-link:9-9 · .electric-modes:41-43 · .electric-period:46-48 · .electric-power:53-53 · .electric-reference:63-63 · .electric-remove:18-18 · .electric-results:74-76 · .electric-scenario:15-17 · .electric-scenarios:10-10 · .electric-section:11-13 · .electric-source:35-40 · .electric-tax:59-62 · .electric-usage:64-69 · .electric-weight:51-52 · .electric-weighted:49-50
 
-### css/finance-views.css  _(82 líneas)_
+### css/finance-views.css  _(69 líneas)_
 
 **Secciones:**
 
 - Contenido financiero. No modifica la navegación ni las subpestañas globales.:1
 
 **Rangos por prefijo de clase:**
-.econ-rate:10-14 · .econ-stats:7-7 · .econ-summary:3-76 · .study-company:20-20 · .study-mortgage:61-64 · .study-rate:51-60 · .study-workspace:15-80
+.econ-rate:10-14 · .econ-stats:7-7 · .econ-summary:3-64 · .study-company:20-20 · .study-mortgage:50-53 · .study-rate:40-49 · .study-workspace:15-67
 
 ### css/personal-periods.css  _(34 líneas)_
 

@@ -29,8 +29,11 @@ test('una acción centrada por semana; despliegue y cancelar conservan los datos
     expect(Math.max(...geometry.widths)-Math.min(...geometry.widths)).toBeLessThan(1);
     expect(new Set(geometry.heights).size).toBe(1);expect(Math.abs(geometry.left)).toBeLessThan(1);expect(Math.abs(geometry.right)).toBeLessThan(1);
     const colors=await actions.locator('.home-week-edit,.home-week-cancel').evaluateAll(nodes=>nodes.map(e=>({text:getComputedStyle(e).color,fill:getComputedStyle(e).backgroundColor,border:getComputedStyle(e).borderTopColor,icon:getComputedStyle(e.querySelector('svg')).color})));
-    expect(colors.map(c=>c.fill)).toEqual(['rgb(244, 160, 102)','rgb(216, 48, 48)']);expect(colors.map(c=>c.text)).toEqual(['rgb(255, 255, 255)','rgb(255, 255, 255)']);
-    for(const color of colors){expect(color.fill).toBe(color.border);expect(color.text).toBe(color.icon);expect(color.text).not.toBe(color.fill);}
+    const [edit,cancel]=colors;
+    expect(edit.fill).toBe('rgb(244, 160, 102)');expect(edit.text).toBe('rgb(255, 255, 255)');expect(edit.fill).toBe(edit.border);expect(edit.text).toBe(edit.icon);
+    // Cancelar: fondo rojo suave y símbolo rojo, sin relleno macizo.
+    const red=await page.evaluate(()=>{const p=document.createElement('i');p.style.color='var(--c-red)';document.body.append(p);const c=getComputedStyle(p).color;p.remove();return c;});
+    expect(cancel.icon).toBe(red);expect(cancel.fill).not.toBe(red);expect(cancel.fill).not.toBe(cancel.text);
     if(theme==='light'&&width===400)await card.screenshot({path:info.outputPath('semana-desplegada.png')});
     await actions.getByRole('button',{name:'Cancelar',exact:true}).click();await expect(button).toBeFocused();
   }

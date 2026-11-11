@@ -31,8 +31,9 @@ function saveEconComp(){
 }
 
 /* ── Gráfico SVG de líneas ───────────────────────────────────── */
+/* Rejilla y textos heredan el color del tema mediante currentColor. */
 function econLineChart(scenariosData,accum){
-  var W=320,H=100,PB=18,PT=16,PL=36,PR=8,W2=W-PL-PR,H2=H-PT;
+  var W=320,H=132,PB=16,PT=18,PL=34,PR=8,W2=W-PL-PR,H2=H-PT;
   var series=scenariosData.map(function(sc){
     var vals=[],cum=0;
     for(var i=0;i<12;i++){cum+=sc.months[i];vals.push(accum?Math.round(cum*100)/100:sc.months[i]);}
@@ -43,80 +44,65 @@ function econLineChart(scenariosData,accum){
   var minV=Math.min.apply(null,allVals)||0;
   var maxV=Math.max.apply(null,allVals)||1;
   var range=maxV-minV||1;
-  var vMin=Math.max(0,minV-range*0.08);
+  var vMin=minV<0?minV-range*0.08:Math.max(0,minV-range*0.08);
   var vMax=maxV+range*0.08;
   var vRange=vMax-vMin||1;
   function xPos(i){return Math.round(PL+(i/11)*W2);}
   function yPos(v){return Math.round(PT+H2-(v-vMin)/vRange*H2);}
-  var svg='<svg viewBox="0 0 '+W+' '+(H+PB)+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">';
+  var svg='<svg class="econ-line-chart" viewBox="0 0 '+W+' '+(H+PB)+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Neto mensual por escenario">';
   var step=2500;
   while((vMax-vMin)/step>4&&step<1e12)step*=2;
   while((vMax-vMin)/step<2&&step>500)step=Math.round(step/2);
   for(var gv=Math.ceil(vMin/step)*step;gv<=vMax;gv+=step){
     var gy=yPos(gv);
-    svg+='<line x1="'+PL+'" y1="'+gy+'" x2="'+(W-PR)+'" y2="'+gy+'" stroke="#2a2a3e" stroke-width="1"/>';
-    var lbl=gv>=1000?(gv/1000).toFixed(1).replace('.',',')+'k':gv;
-    svg+='<text x="'+(PL-2)+'" y="'+(gy+3)+'" text-anchor="end" font-size="6" fill="#5a5a70">'+lbl+'</text>';
+    svg+='<line x1="'+PL+'" y1="'+gy+'" x2="'+(W-PR)+'" y2="'+gy+'" stroke="currentColor" stroke-opacity="'+(gv===0?'.45':'.15')+'" stroke-width="1"/>';
+    var lbl=Math.abs(gv)>=1000?(gv/1000).toFixed(1).replace('.',',')+'k':gv;
+    svg+='<text x="'+(PL-4)+'" y="'+(gy+3)+'" text-anchor="end" font-size="8" fill="currentColor">'+lbl+'</text>';
   }
   series.forEach(function(s){
     var pts=s.vals.map(function(v,i){return xPos(i)+','+yPos(v);}).join(' ');
     svg+='<polyline points="'+pts+'" fill="none" stroke="'+s.color+'" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>';
-    s.vals.forEach(function(v,i){svg+='<circle cx="'+xPos(i)+'" cy="'+yPos(v)+'" r="2.5" fill="'+s.color+'" stroke="#0d0d14" stroke-width="1.5"/>';});
+    s.vals.forEach(function(v,i){svg+='<circle class="econ-line-dot" cx="'+xPos(i)+'" cy="'+yPos(v)+'" r="2.6" fill="'+s.color+'"/>';});
   });
-  MN_SHORT.forEach(function(mn,i){svg+='<text x="'+xPos(i)+'" y="'+(H+PB-2)+'" text-anchor="middle" font-size="6" fill="#5a5a70">'+mn+'</text>';});
+  MN_SHORT.forEach(function(mn,i){svg+='<text x="'+xPos(i)+'" y="'+(H+PB-3)+'" text-anchor="middle" font-size="8" fill="currentColor">'+mn+'</text>';});
   var lx=PL;
   series.forEach(function(s){
-    svg+='<rect x="'+lx+'" y="3" width="10" height="3" rx="1.5" fill="'+s.color+'"/>';
-    svg+='<text x="'+(lx+12)+'" y="7" font-size="7" fill="'+s.color+'">'+s.label+'</text>';
-    lx+=28;
+    svg+='<rect x="'+lx+'" y="4" width="10" height="3" rx="1.5" fill="'+s.color+'"/>';
+    svg+='<text x="'+(lx+13)+'" y="8.5" font-size="8" font-weight="600" fill="'+s.color+'">'+s.label+'</text>';
+    lx+=27+s.label.length*5;
   });
   svg+='</svg>';return svg;
 }
 
 /* ── Render Tab 2 ─────────────────────────────────────────────── */
+/* Cuatro formas de expresar el ingreso; el importe del escenario es único. */
+var ECON_SC_TYPES=[
+  {key:'salary',label:'Nómina',unit:'€/año bruto',step:1000},
+  {key:'daily',label:'€/día',unit:'€/día',step:1},
+  {key:'hourlyReal',label:'€/h real',unit:'€/hora real',step:1},
+  {key:'hourly8h',label:'€/h 8h',unit:'€/hora (8h)',step:1}
+];
+function econScType(sc){
+  var key=sc.rateType==='salary'?'salary':sc.rateType==='daily'?'daily':sc.hoursMode==='8h'?'hourly8h':'hourlyReal';
+  return ECON_SC_TYPES.filter(function(t){return t.key===key;})[0];
+}
 function renderEconComp(){
   var h='';
-  // Cards de escenarios
   h+='<div class="sy-section"><div class="sy-section-title">Escenarios</div>';
   h+='<div class="econ-comp-scenarios">';
   ECON_SCENARIOS.forEach(function(sc,i){
-    var _zoneKey=sc.rateType==='salary'?'salary':sc.rateType==='daily'?'daily':sc.hoursMode==='8h'?'hourly8h':'hourlyReal';
-    h+='<div class="econ-scenario-card" style="--study-tone:'+ECON_COMP_COLORS[i]+'">';
-    h+='<div class="econ-sc-header">';
-    h+='<span class="econ-sc-heading">Escenario '+sc.label+'</span>';
-    h+='<div style="display:flex;gap:2px;align-items:center">';
-    h+='<button class="econ-sc-reorder" data-sci="'+i+'" data-dir="up"'+(i===0?' disabled':'')+'>&#9650;</button>';
-    h+='<button class="econ-sc-reorder" data-sci="'+i+'" data-dir="down"'+(i===ECON_SCENARIOS.length-1?' disabled':'')+'>&#9660;</button>';
-    if(ECON_SCENARIOS.length>2){h+='<button class="econ-sc-del" data-sci="'+i+'">&#10005;</button>';}
+    var type=econScType(sc);
+    h+='<div class="econ-scenario-card" style="--sc-tone:'+ECON_COMP_COLORS[i]+'">';
+    h+='<div class="econ-sc-header"><span class="econ-sc-badge" aria-label="Escenario '+sc.label+'">'+sc.label+'</span>';
+    h+='<div class="econ-sc-types" role="group" aria-label="Tipo de ingreso del escenario '+sc.label+'">';
+    ECON_SC_TYPES.forEach(function(t){h+='<button type="button" class="econ-sc-type'+(t===type?' active':'')+'" data-sci="'+i+'" data-type="'+t.key+'" aria-pressed="'+(t===type)+'">'+t.label+'</button>';});
     h+='</div></div>';
-    /* 3 zones with radio dots */
-    h+='<div class="econ-sc-zones">';
-    /* Zone: Nómina */
-    h+='<div class="econ-sc-zone'+(_zoneKey==='salary'?' active':'')+'" data-sci="'+i+'" data-zone="salary">';
-    h+='<div class="econ-sc-zone-radio"></div>';
-    h+='<div class="econ-sc-zone-body">';
-    h+='<div class="econ-sc-zone-label">N\u00f3mina</div>';
-    h+='<input class="econ-sc-zone-input" data-sci="'+i+'" data-zone="salary" type="number" min="0" step="1000" placeholder="Bruto anual \u20ac" value="'+(sc.rateType==='salary'?sc.rateValue:'')+'">';
-    h+='</div></div>';
-    /* Zone: €/día */
-    h+='<div class="econ-sc-zone'+(_zoneKey==='daily'?' active':'')+'" data-sci="'+i+'" data-zone="daily">';
-    h+='<div class="econ-sc-zone-radio"></div>';
-    h+='<div class="econ-sc-zone-body">';
-    h+='<div class="econ-sc-zone-label">\u20ac/d\u00eda</div>';
-    h+='<input class="econ-sc-zone-input" data-sci="'+i+'" data-zone="daily" type="number" min="0" step="1" placeholder="\u20ac/d\u00eda" value="'+(sc.rateType==='daily'?sc.rateValue:'')+'">';
-    h+='</div></div>';
-    /* Zone: €/hora (2 sub-buttons) */
-    h+='<div class="econ-sc-zone'+(_zoneKey==='hourlyReal'||_zoneKey==='hourly8h'?' active':'')+'" data-sci="'+i+'" data-zone="hourly">';
-    h+='<div class="econ-sc-zone-radio"></div>';
-    h+='<div class="econ-sc-zone-body">';
-    h+='<div class="econ-sc-zone-btns">';
-    h+='<button class="econ-sc-zone-sub'+(_zoneKey==='hourlyReal'?' active':'')+'" data-sci="'+i+'" data-zone="hourlyReal">\u20ac/hora (trabajadas reales)</button>';
-    h+='<button class="econ-sc-zone-sub'+(_zoneKey==='hourly8h'?' active':'')+'" data-sci="'+i+'" data-zone="hourly8h">\u20ac/hora (si jornada 8h)</button>';
-    h+='</div>';
-    h+='<input class="econ-sc-zone-input" data-sci="'+i+'" data-zone="hourly" type="number" min="0" step="1" placeholder="\u20ac/hora" value="'+(sc.rateType==='hourly'?sc.rateValue:'')+'">';
-    h+='</div></div>';
-    h+='</div>';
-    h+='</div>';
+    h+='<div class="econ-sc-row"><label class="econ-sc-amount"><input class="econ-sc-input" data-sci="'+i+'" type="number" inputmode="decimal" min="0" step="'+type.step+'" placeholder="0" value="'+(sc.rateValue>0?sc.rateValue:'')+'" aria-label="Importe del escenario '+sc.label+' en '+type.unit+'"><span class="econ-sc-unit">'+type.unit+'</span></label>';
+    h+='<div class="econ-sc-tools">';
+    h+='<button type="button" class="econ-sc-reorder" data-sci="'+i+'" data-dir="up" aria-label="Subir escenario '+sc.label+'"'+(i===0?' disabled':'')+'>&#9650;</button>';
+    h+='<button type="button" class="econ-sc-reorder" data-sci="'+i+'" data-dir="down" aria-label="Bajar escenario '+sc.label+'"'+(i===ECON_SCENARIOS.length-1?' disabled':'')+'>&#9660;</button>';
+    if(ECON_SCENARIOS.length>2){h+='<button type="button" class="econ-sc-del" data-sci="'+i+'" aria-label="Quitar escenario '+sc.label+'">&#10005;</button>';}
+    h+='</div></div></div>';
   });
   if(ECON_SCENARIOS.length<4){h+='<button class="econ-add-sc-btn" id="ecAddScenario">+ A&#241;adir escenario</button>';}
   h+='</div>';
@@ -138,28 +124,32 @@ function renderEconComp(){
     return computeEconEx(ECON_YEAR,{rateType:sc.rateType,rateValue:sc.rateValue,hoursMode:sc.hoursMode});
   });
 
-  // Tabla comparativa
+  // Neto anual de cada escenario y su diferencia con el primero
+  h+='<div class="sy-section"><div class="sy-section-title">Neto anual</div><div class="econ-comp-totals">';
+  results.forEach(function(r,i){
+    var sc=ECON_SCENARIOS[i],diff=Math.round(((r.netoReal||0)-(results[0].netoReal||0))*100)/100;
+    h+='<div class="econ-comp-total" style="--sc-tone:'+ECON_COMP_COLORS[i]+'"><div class="econ-comp-total-head"><span class="econ-sc-badge">'+sc.label+'</span><span>'+econScType(sc).label+'</span></div>';
+    h+='<div class="econ-comp-total-value">'+fc(r.netoReal||0)+'</div>';
+    if(i>0)h+='<div class="econ-comp-delta'+(diff>0?' pos':diff<0?' neg':'')+'">'+(diff>0?'+':'')+fc(diff)+' vs '+ECON_SCENARIOS[0].label+'</div>';
+    else h+='<div class="econ-comp-delta">Referencia</div>';
+    h+='</div>';
+  });
+  h+='</div></div>';
+
+  // Desglose por concepto
   var hasSalary=results.some(function(r){return r._salary;});
-  h+='<div class="sy-section"><div class="sy-section-title">Tabla comparativa (&#916; relativo a '+ECON_SCENARIOS[0].label+')</div>';
-  h+='<div style="overflow-x:auto"><table class="econ-comp-table"><thead><tr>';
-  h+='<th>Concepto</th>';
-  ECON_SCENARIOS.forEach(function(sc,i){h+='<th style="color:'+ECON_COMP_COLORS[i]+'">'+sc.label+(sc.rateType==='salary'?' \ud83d\udcbc':'')+'</th>';});
-  for(var j=1;j<ECON_SCENARIOS.length;j++){
-    h+='<th style="color:'+ECON_COMP_COLORS[j]+'">&#916;'+ECON_SCENARIOS[j].label+'</th>';
-  }
+  h+='<div class="sy-section"><div class="sy-section-title">Desglose</div>';
+  h+='<div class="econ-comp-table-wrap"><table class="econ-comp-table"><thead><tr><th></th>';
+  ECON_SCENARIOS.forEach(function(sc,i){h+='<th><span class="econ-sc-badge" style="--sc-tone:'+ECON_COMP_COLORS[i]+'">'+sc.label+'</span></th>';});
   h+='</tr></thead><tbody>';
-  var _rows=[{key:'netoReal',label:'Neto anual'},{key:'totBase',label:'Bruto / Base'},{key:'totIrpf',label:'IRPF'}];
+  var _rows=[{key:'totBase',label:'Bruto / Base'},{key:'totIrpf',label:'IRPF'}];
   if(hasSalary)_rows.push({key:'ssEmpleado',label:'SS empleado'});
   _rows.push({key:'totIva',label:'IVA'});
-  _rows.push({key:'totCobrado',label:'Ingresado cuenta'});
-  if(hasSalary)_rows.push({key:'ssEmpleador',label:'SS empleador (info)'},{key:'costeEmpresa',label:'Coste empresa (info)'});
+  _rows.push({key:'totCobrado',label:'Ingresado'});
+  if(hasSalary)_rows.push({key:'ssEmpleador',label:'SS empresa',info:true},{key:'costeEmpresa',label:'Coste empresa',info:true});
   _rows.forEach(function(row){
-    h+='<tr><td>'+row.label+'</td>';
-    results.forEach(function(r){var v=r[row.key]||0;h+='<td>'+fc(v)+'</td>';});
-    for(var j=1;j<results.length;j++){
-      var diff=Math.round(((results[j][row.key]||0)-(results[0][row.key]||0))*100)/100;
-      h+='<td class="'+(diff>0?'pos':diff<0?'neg':'')+'">'+(diff>0?'+':'')+fc(diff)+'</td>';
-    }
+    h+='<tr'+(row.info?' class="info"':'')+'><th scope="row">'+row.label+'</th>';
+    results.forEach(function(r){h+='<td>'+fc(r[row.key]||0)+'</td>';});
     h+='</tr>';
   });
   h+='</tbody></table></div></div>';
@@ -177,7 +167,7 @@ function renderEconComp(){
     for(var si=1;si<results.length;si++){
       var dMonths=[];var cS=0;
       for(var di2=0;di2<12;di2++){cS+=results[si].months[di2].neto;dMonths.push(Math.round((cS-cumA[di2])*100)/100);}
-      diffData.push({label:'\u0394'+ECON_SCENARIOS[si].label+' vs '+ECON_SCENARIOS[0].label,color:ECON_COMP_COLORS[si],months:dMonths});
+      diffData.push({label:'Δ'+ECON_SCENARIOS[si].label+' vs '+ECON_SCENARIOS[0].label,color:ECON_COMP_COLORS[si],months:dMonths});
     }
     h+='<div class="econ-line-chart-wrap">'+econLineChart(diffData,false)+'</div>';
   } else {
@@ -185,69 +175,33 @@ function renderEconComp(){
   }
   var _mAct=!ECON_COMP_ACCUM&&!ECON_COMP_DIFF;
   var _aAct=ECON_COMP_ACCUM&&!ECON_COMP_DIFF;
-  h+='<div style="display:flex;gap:8px;margin-top:8px">';
+  h+='<div class="econ-opt-row">';
   h+='<button class="econ-opt-btn'+(_mAct?' active':'')+'" id="ecChartMensual">Mensual</button>';
   h+='<button class="econ-opt-btn'+(_aAct?' active':'')+'" id="ecChartAcum">Acumulado</button>';
-  h+='<button class="econ-opt-btn'+(ECON_COMP_DIFF?' active':'')+'" id="ecChartDiff">\u0394 vs '+ECON_SCENARIOS[0].label+'</button>';
+  h+='<button class="econ-opt-btn'+(ECON_COMP_DIFF?' active':'')+'" id="ecChartDiff">Δ vs '+ECON_SCENARIOS[0].label+'</button>';
   h+='</div></div>';
   return h;
 }
 
 function bindEconCompEvents(){
-  /* Zone clicks: select the active zone */
-  document.querySelectorAll('.econ-sc-zone').forEach(function(zone){
-    zone.addEventListener('click',function(e){
-      if(e.target.tagName==='INPUT'||e.target.tagName==='BUTTON')return;
-      var sci=parseInt(zone.dataset.sci,10);
-      var zoneType=zone.dataset.zone;
-      if(isNaN(sci))return;
-      _selectZone(sci,zoneType,zoneType==='hourly'?'real':null);
-    });
-  });
-  /* Sub-buttons inside €/hora zone */
-  document.querySelectorAll('.econ-sc-zone-sub').forEach(function(btn){
-    btn.addEventListener('click',function(e){
-      e.stopPropagation();
-      var sci=parseInt(btn.dataset.sci,10);
-      var subZone=btn.dataset.zone; // 'hourlyReal' or 'hourly8h'
-      if(isNaN(sci))return;
-      _selectZone(sci,'hourly',subZone==='hourly8h'?'8h':'real');
-    });
-  });
-  function _selectZone(sci,zoneType,hoursMode){
-    if(zoneType==='salary'){ECON_SCENARIOS[sci].rateType='salary';}
-    else if(zoneType==='daily'){ECON_SCENARIOS[sci].rateType='daily';ECON_SCENARIOS[sci].hoursMode='real';}
-    else{ECON_SCENARIOS[sci].rateType='hourly';ECON_SCENARIOS[sci].hoursMode=hoursMode||'real';}
-    /* Read value from the selected zone's input */
-    var input=document.querySelector('.econ-sc-zone-input[data-sci="'+sci+'"][data-zone="'+zoneType+'"]');
-    if(input&&parseFloat(input.value)>0)ECON_SCENARIOS[sci].rateValue=parseFloat(input.value);
-    ECON_COMP_CALC=false;saveEconComp();_estudioReRender();
-  }
-  /* Zone inputs: update value on change */
-  document.querySelectorAll('.econ-sc-zone-input').forEach(function(el){
-    el.addEventListener('change',function(){
-      var sci=parseInt(this.dataset.sci,10);
-      var v=parseFloat(this.value);
-      var zoneType=this.dataset.zone;
-      if(isNaN(sci))return;
-      /* Auto-select zone when typing into it */
-      var currentZone=ECON_SCENARIOS[sci].rateType==='salary'?'salary':ECON_SCENARIOS[sci].rateType==='daily'?'daily':'hourly';
-      if(currentZone!==zoneType){
-        if(zoneType==='salary')ECON_SCENARIOS[sci].rateType='salary';
-        else if(zoneType==='daily'){ECON_SCENARIOS[sci].rateType='daily';ECON_SCENARIOS[sci].hoursMode='real';}
-        else{ECON_SCENARIOS[sci].rateType='hourly';}
-      }
-      if(v>0)ECON_SCENARIOS[sci].rateValue=v;
+  /* Tipo de ingreso: conserva el importe y cambia cómo se interpreta, como antes. */
+  document.querySelectorAll('.econ-sc-type').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var sc=ECON_SCENARIOS[parseInt(btn.dataset.sci,10)],type=btn.dataset.type;
+      if(!sc)return;
+      if(type==='salary')sc.rateType='salary';
+      else if(type==='daily'){sc.rateType='daily';sc.hoursMode='real';}
+      else{sc.rateType='hourly';sc.hoursMode=type==='hourly8h'?'8h':'real';}
       ECON_COMP_CALC=false;saveEconComp();_estudioReRender();
     });
-    /* Also auto-select on focus */
-    el.addEventListener('focus',function(){
-      var sci=parseInt(this.dataset.sci,10);
-      var zoneType=this.dataset.zone;
-      if(isNaN(sci))return;
-      var card=this.closest('.econ-scenario-card');
-      if(!card)return;
-      card.querySelectorAll('.econ-sc-zone').forEach(function(z){z.classList.toggle('active',z.dataset.zone===zoneType);});
+  });
+  /* Importe: solo se guarda un valor positivo. */
+  document.querySelectorAll('.econ-sc-input').forEach(function(el){
+    el.addEventListener('change',function(){
+      var sc=ECON_SCENARIOS[parseInt(this.dataset.sci,10)],v=parseFloat(this.value);
+      if(!sc)return;
+      if(v>0)sc.rateValue=v;
+      ECON_COMP_CALC=false;saveEconComp();_estudioReRender();
     });
   });
   // Reorder

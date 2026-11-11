@@ -51,7 +51,7 @@
 .home-week-actions .home-week-more{background:color-mix(in srgb,var(--home-tone) 9%,var(--surface))}
 .home-week-actions .home-week-more svg{color:var(--home-tone)}
 .home-week-actions .home-week-edit{background:#f4a066;border-color:#f4a066;color:#fff;font-weight:700}
-.home-week-actions .home-week-cancel{background:#d83030;border-color:#d83030;color:#fff}
+.home-week-actions .home-week-cancel{background:color-mix(in srgb,var(--c-red) 10%,var(--surface));border:1.5px solid color-mix(in srgb,var(--c-red) 55%,transparent);color:var(--c-red)}
 .home-week-actions .home-week-edit svg,.home-week-actions .home-week-cancel svg{color:inherit}
 .home-week-actions .action-btn:focus-visible{outline:2px solid var(--home-tone);outline-offset:3px}
 .week-actions.home-week-actions.expanded{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}

@@ -18,18 +18,7 @@
 .study-workspace .est-section-hdr .sy-section-title{border:0;padding:0;margin:0}
 .study-workspace .study-reference{background:color-mix(in srgb,var(--study-tone) 7%,var(--surface));border-color:color-mix(in srgb,var(--study-tone) 35%,var(--border))}
 .study-company{font-size:1rem;margin:0 0 16px;color:var(--text)}
-.study-workspace .est-tariff-card,.study-workspace .econ-scenario-card{border:1px solid color-mix(in srgb,var(--study-tone) 45%,var(--border));border-radius:14px;padding:16px;background:color-mix(in srgb,var(--study-tone) 7%,var(--surface));margin-bottom:16px;min-width:0}
-.study-workspace .econ-comp-scenarios{gap:16px}
-.study-workspace .econ-scenario-card{gap:12px;margin-bottom:0}
-.study-workspace .econ-sc-header{margin-bottom:4px}
-.study-workspace .econ-sc-zones{gap:10px}
-.study-workspace .econ-sc-zone{padding:12px;border-radius:10px;background:var(--surface)}
-.study-workspace .econ-sc-zone:not(.active){opacity:1}
-.study-workspace .econ-sc-zone-input::placeholder{color:var(--text-muted);font-weight:400}
-.study-workspace .econ-sc-heading{color:color-mix(in srgb,var(--study-tone) 60%,var(--text));font-weight:700;font-size:.88rem}
-.study-workspace .econ-sc-zone.active{border-color:var(--study-tone);background:color-mix(in srgb,var(--study-tone) 9%,var(--surface))}
-.study-workspace .econ-sc-zone-input{border-radius:8px;font-size:.95rem;padding:9px 8px}
-.study-workspace .econ-sc-zone-sub{font-size:.64rem;padding:7px 6px}
+.study-workspace .est-tariff-card{border:1px solid color-mix(in srgb,var(--study-tone) 45%,var(--border));border-radius:14px;padding:16px;background:color-mix(in srgb,var(--study-tone) 7%,var(--surface));margin-bottom:16px;min-width:0}
 .study-workspace .econ-calc-btn{margin-top:18px;min-height:44px;border-radius:11px}
 .study-workspace .hip-g2{gap:14px 12px}
 .study-workspace .hip-cf{gap:6px}
@@ -62,9 +51,8 @@
 .study-mortgage-payment strong{font-size:1.65rem;letter-spacing:-.03em}.study-mortgage-payment>span{font-size:.7rem;color:var(--text-muted)}
 .study-mortgage-facts{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:12px;padding-top:14px;border-top:1px solid var(--border);margin-top:8px}
 .study-mortgage-facts dt{font-size:.63rem;color:var(--text-muted);margin-bottom:6px}.study-mortgage-facts dd{font-size:.78rem;color:var(--text);font-weight:600;overflow-wrap:anywhere}
-.study-workspace .econ-stats-table td,.study-workspace .econ-comp-table td{padding:11px 9px;line-height:1.45}
-.study-workspace .econ-stats-table th,.study-workspace .econ-comp-table th{background:var(--surface2);padding:10px 9px;text-transform:none;color:var(--text-muted)}
-.study-workspace .est-detail-btn{font-size:.7rem;color:var(--accent-bright);padding:7px 0;white-space:nowrap}
+.study-workspace .econ-stats-table td{padding:11px 9px;line-height:1.45}
+.study-workspace .econ-stats-table th{background:var(--surface2);padding:10px 9px;text-transform:none;color:var(--text-muted)}
 .study-workspace .analisis-mortgage-current{background:color-mix(in srgb,#619580 8%,var(--surface));border-radius:12px;padding:16px}
 .study-workspace .mg-budget-table{border-radius:10px;overflow:hidden}
 .study-workspace .mg-budget-row,.study-workspace .mg-budget-hdr{padding:10px 8px;gap:5px}
@@ -74,7 +62,6 @@
   .econ-summary-view .econ-rate-stats td{font-size:.7rem;padding:12px 4px}
   .econ-summary-view .econ-rate-stats tbody th{font-size:.7rem;padding:12px 6px}
   .econ-summary-view .econ-rate-stats thead th{font-size:.62rem}
-  .study-workspace .econ-comp-scenarios{grid-template-columns:1fr}
   .study-workspace .est-fields-row{flex-wrap:wrap}
   .study-workspace .est-field{flex:1 1 40%}
   .study-workspace .est-field-wide{flex-basis:100%}

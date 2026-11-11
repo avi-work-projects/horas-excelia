@@ -106,7 +106,6 @@ function renderEconSim(){
   /* Tarjeta de configuración */
   h+='<div class="sy-section">';
   h+='<div class="sy-section-title">Calcular Tarifa</div>';
-  h+='<div style="font-size:.72rem;color:var(--text-dim);margin-bottom:14px">Calcula qu\u00e9 tarifa necesitas para alcanzar un neto objetivo.</div>';
 
   /* Neto objetivo */
   h+='<div class="sim-field-group">';
