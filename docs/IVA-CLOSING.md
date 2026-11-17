@@ -1,5 +1,10 @@
 # Cierre guiado del IVA: alcance y despliegue
 
+Este documento conserva el ensayo histórico del 26/10/2026. La preparación nueva
+y el [conector AEAT del mini](IVA-AEAT.md) se implementaron después. No interpretar
+«no hay integración de presentación» como el estado actual del código; tampoco
+interpretar el conector nuevo como una presentación real ya comprobada.
+
 Implementación privada de ensayo, 26/10/2026. No pertenece a los assets de la
 PWA. Conserva el motor y sus límites: 2026, régimen general soportado, resultado
 positivo y sin ajustes. El adaptador admite 4T con revisión anual explícita:

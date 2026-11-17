@@ -62,7 +62,7 @@ class Application:
         active = query.get('vista', ['modelos' if 'periodo' in query or 'paso' in query else 'resumen'])[0]
         if parsed.path.startswith(BASE+'/gastos'):
             active = 'gastos'
-        elif parsed.path.startswith(BASE+'/preparacion') or parsed.path.startswith(BASE+'/cierre'):
+        elif parsed.path.startswith(BASE+'/preparacion') or parsed.path.startswith(BASE+'/cierre') or parsed.path.startswith(BASE+'/aeat'):
             active = 'modelos'
         elif parsed.path == '/recoger':
             active = 'recoger'
@@ -132,6 +132,9 @@ class Application:
         if path == '/ayuda':
             from desktop_help import render_help
             return 200, self.shell(render_help(), url, 'Cómo funciona')
+        if path in (BASE+'/aeat',BASE+'/aeat/justificante'):
+            from aeat_web import get
+            return get(self,url)
         if path == BASE+'/gastos':
             from modelos_web import render, filters_from_query
             query = parse_qs(parsed.query)
@@ -142,7 +145,12 @@ class Application:
             result = self.remote(self.config, dict(action='get',url=url,csrf=self.csrf))
             raw = base64.b64decode(result['body'], validate=True)
             if result['mime'].startswith('text/html'):
-                raw = self.shell(raw.decode(), url, 'Preparar modelos')
+                raw = fragment(raw.decode())
+                if path==BASE+'/preparacion':
+                    period = parse_qs(parsed.query).get('periodo',['4T'])[0]
+                    if period in ('1T','2T','3T','4T','anual'):
+                        raw += '<p class="aeat-return"><a class="link-button" href="'+BASE+'/aeat?periodo='+period+'">Continuar a validación y presentación →</a></p>'
+                raw = self.shell(raw, url, 'Preparar modelos')
             return result['status'], raw, result['mime'], result['headers']
         from vat_dashboard import response
         result = response(self.config['archive_root'], url, index_relative=self.config['index'], compact=True)
@@ -160,6 +168,9 @@ class Application:
             if path == '/api/collect-amazon':
                 from desktop_intake import collect
                 result = collect(self.config, self.settings, self.remote)
+            elif path == BASE+'/aeat':
+                from aeat_workflow import post
+                result = post(self,data)
             elif (path.startswith('/facturas/') and not path.startswith(BASE)) or path.startswith('/horas/'):
                 result = self.remote(self.config, dict(action='billing_post',url=path,data=data))
             elif path in (BASE+'/gastos', BASE+'/actualizar', BASE+'/preparacion', BASE+'/cierre'):

@@ -155,7 +155,7 @@ def annual_content(report, compact=False):
     summary = f'''<div class="m-card m-hero"><span class="m-eyebrow">Resumen anual · 390</span><div class="m-status">Preparación del ejercicio</div><p>{e(annual['status'])}</p><div class="m-actions">{button(BASE+'/preparacion?periodo=anual','Preparar 390',True)}</div></div>'''
     detail = f'''<div class="m-card"><h2>Pendientes del año</h2><ul class="m-list">{pending}</ul><p class="m-note">{e(annual['scope'])}</p></div>'''
     if compact:
-        summary = '<div class="m-card m-period-summary"><div><h2>Resumen anual</h2><p class="m-note">Pendiente de cierre</p></div><div class="m-actions">'+button(BASE+'/preparacion?periodo=anual','Preparar 390',True)+'</div></div>'
+        summary = '<div class="m-card m-period-summary"><div><h2>Resumen anual</h2><p class="m-note">Pendiente de cierre</p></div><div class="m-actions">'+button(BASE+'/aeat?periodo=anual','Preparar y presentar 390',True)+'</div></div>'
         detail = f'''<details class="m-card m-period-detail"><summary>Qué falta para cerrar el año</summary><p>{e(annual['status'])}</p><ul class="m-list">{pending}</ul><p class="m-note">{e(annual['scope'])}</p></details>'''
     return summary+f'''<div class="m-columns">{metrics}</div><div class="m-card"><h2>Comparación de los 303</h2><div class="m-table-wrap"><table><thead><tr><th>Periodo</th><th>Calculado</th><th>Referencia presentada</th><th>Diferencia</th></tr></thead><tbody>{rows}</tbody></table></div><p class="m-note">Las diferencias se conservan por trimestre, aunque su suma sea cero. La coincidencia de importes no acredita revisión fiscal ni pago.</p></div>'''+detail
 
@@ -188,7 +188,7 @@ def render(index, report, ledger, quarter, section, kind='todos', csrf='', updat
             status = 'Referencia presentada' if ref is not None else 'En preparación'
             amount = '' if value is None else '<span class="m-eyebrow">'+('Importe presentado' if ref is not None else 'Resultado provisional')+'</span><div class="m-amount">'+e(euro(value))+'</div>'
             primary = (button(BASE+'?periodo='+quarter+'&paso=documentos','Ver documentos',True) if ref is not None else
-                       button(BASE+'/preparacion?periodo='+quarter,'Preparar trimestre',True))
+                       button(BASE+'/aeat?periodo='+quarter,'Preparar y presentar',True))
             content = '<div class="m-card m-period-summary"><div><h2>'+status+'</h2>'+amount+'</div><div class="m-actions">'+primary+'</div></div>'
             content += '<details class="m-card m-period-detail"><summary>'+('Ver detalle del periodo' if ref is not None else 'Qué falta para cerrar')+'</summary><p>'+e(action)+'</p><p>'+e(selected['coverage'])+'</p><p class="m-note">Datos incorporados hasta '+e(report['as_of'])+' · Revisión fiscal pendiente.</p>'
             if missing:

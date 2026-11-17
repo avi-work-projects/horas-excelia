@@ -10,6 +10,13 @@ con recogida manual por correo del pedido Amazon configurado. No requiere Codex
 abierto y no realiza consultas periódicas. El alcance del correo queda limitado
 a ese pedido; otros proveedores y la extracción avanzada siguen pendientes.
 
+El mini incorpora también el [recorrido AEAT](IVA-AEAT.md): validación y confirmación
+manual de presentación con certificado de Windows, recuperación de evidencia y
+archivo. Hay validación oficial sintética y del fichero histórico 303 2T 2026 (sin
+errores y con aviso 31190), no presentación real probada; el 4T real
+permanece incompleto. Gestify conserva la programación de correos y Kairo consulta
+sus estados; la unificación no traslada la interfaz de Gestify.
+
 ## Contratos y responsabilidades
 
 ```mermaid
@@ -34,6 +41,7 @@ flowchart LR
 | Revisión | Propuesta y decisión del usuario | Ficha fiscal versión 1 y paquete aprobado | `expense_policy`, `ExpenseStore.edit/approve/bundle` |
 | Archivo y libro | Paquetes aprobados e ingresos existentes | Versión del libro, originales y recibos de operación | `expense_workflow`, `income_refresh`, `sync_models` |
 | Salidas | Una versión verificada | Excel de consulta, informes, preparación 303/390 | `accounting_workbook`, `review_year`, exportadores existentes |
+| Presentación | Modelo aprobado, validación y confirmación de su versión | Respuesta AEAT y justificante verificado; archivo independiente del pago | `aeat_client`, `aeat_windows`, `aeat_submission`, `aeat_workflow`, `aeat_web`; ejecución manual en el mini |
 | Interfaz | Lectura y comandos autenticados | Resumen, bandeja, ingresos, libros, modelos y documentos de Renta | `accounting_views`, `modelos_web`, `vat_dashboard` |
 
 La interfaz no mantiene un segundo libro ni calcula impuestos por su cuenta.

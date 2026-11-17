@@ -7,9 +7,10 @@ las mismas operaciones en el mini y en el móvil.
 
 **Gestify conserva su interfaz y queda fuera de esta unificación.** Es un cliente
 externo que envía preparaciones y consulta el estado de sus correos y facturas
-mediante el botón de sincronización que ya existe. Kairo debe permitir crear y
-gestionar sus operaciones también sin partir de Gestify. No se añaden acciones
-de Kairo sobre Gestify ni se convierte su calendario en una dependencia del panel.
+mediante el botón de sincronización que ya existe. La preparación y programación
+de los correos se mantiene en Gestify; Kairo permite consultar su calendario y
+estado. No se añade un editor paralelo de esos correos ni acciones de Kairo sobre
+las jornadas o la configuración de Gestify.
 
 Este documento fija el destino y las entregas pendientes. No acredita que todas
 las integraciones estén instaladas. El estado de cada entrega debe actualizarse
@@ -25,10 +26,10 @@ y presenta sus resultados, sin repetir los cálculos ni la lógica de aprobació
 | Módulo | Fuente que se conserva | Copias y salidas |
 |---|---|---|
 | Facturas y su correo | Servicio existente de Kairo, con sus preparaciones, versiones, aprobaciones y planes | PDF definitivo, estado de emisión y registro del correo |
-| Programación de correos de horas | Servicio existente de horas y sus registros de operación | Calendario y última consulta verificada del estado de Outlook |
+| Correos de horas | Preparación/programación desde Gestify y servicio existente de horas | Kairo consulta el calendario y la última comprobación del estado de Outlook |
 | Gastos | Bandeja de revisión existente de Kairo | Originales conservados en el mini y paquetes de incorporación aprobados |
 | Contabilidad | Libro canónico del archivo `AUTONOMO` del mini | Excel, informes y copia de consulta con la misma versión verificada |
-| Modelos | Preparación vinculada a una versión del libro y a sus evidencias | Fichero del modelo, resultado de validación y justificante de presentación cuando exista |
+| Modelos | Preparación vinculada al libro; operaciones AEAT duraderas en el mini | Fichero, resultado de validación y justificante de aceptación, mediante certificado de Windows |
 | Imputaciones Excelia | Motor del bot, calendario revisado y registros comprobados en Excelia | Plan, resultado de ejecución y exportación posterior verificada |
 | Gestify, cliente externo | Conserva sus datos y su interfaz actuales, fuera de Kairo | Preparaciones enviadas a Kairo y respuesta a sus consultas de estado |
 
@@ -47,16 +48,15 @@ flowchart LR
     A -->|Preparación mensual y revisión| F[Motor de facturas]
     F -->|PDF definitivo y resultado| I[Ingresos]
     F -->|Plan de correo aprobado| C[Motor de correo]
-    A -->|Consulta y gestión de planes existentes| C
-    A -.->|Preparación propia y revisión| P[Editor de programación de Kairo: pendiente]
-    P -.->|Plan aprobado| C
+    A -->|Consulta de correos y calendario| C
+    EX -->|Programación de correos revisada| C
     A -->|PDF y procedencia| G[Entrada y revisión de gastos]
     G -->|Paquete aprobado| L[Libro canónico del mini]
     I -->|Documento identificado| L
     L -->|Versión verificada| E[Excel y vistas de consulta]
     L -->|Datos del periodo y evidencias| M[Preparación 303 y 390]
-    M -.->|Modelo aprobado e identidad habilitada| H[Conector AEAT pendiente]
-    H -.->|Respuesta y justificante| M
+    M -->|Validar y confirmar manualmente| H[Conector AEAT en el mini: certificado Windows]
+    H -->|Respuesta y justificante| L
     A -.->|Calendario con revisión| T[Contrato de horas para Imputaciones: pendiente]
     T -.->|Horas y proyectos revisados| X[Motor Imputaciones Excelia]
     X -.->|Resultado verificado| A
@@ -74,9 +74,9 @@ modificar su calendario, sus facturas ni su interfaz.
 Ya existen el circuito de creación y gestión de facturas de Kairo, sus correos,
 la programación de correos de horas y el bot de Imputaciones. Su existencia no
 significa que todos sus controles estén integrados en la aplicación del mini.
-El puente externo de Gestify se conserva. Integrar el calendario y los planes
-existentes en el mini no completa por sí solo la creación de una programación
-nueva desde Kairo: ese recorrido necesita su propio editor y contrato de entrada.
+El puente externo de Gestify se conserva. El calendario de Kairo es una vista de
+consulta de los correos; su programación continúa en Gestify. La gestión de las
+facturas mantiene las aprobaciones y condiciones de su motor existente.
 
 La aplicación local permite consultar Resumen, Ingresos, Gastos, Libros y Modelos,
 usar la bandeja compartida, aprobar incorporaciones y solicitar una actualización.
@@ -85,33 +85,41 @@ adjuntos al correo. El archivo de documentos para Renta existe; su cálculo comp
 y las amortizaciones siguen pendientes.
 
 Los modelos tienen preparación, controles, exportación y archivo de evidencias.
-**Preparar o exportar un modelo no lo presenta en Hacienda.** Falta conectar el
-envío real con su autenticación, validación, respuesta y justificante. La existencia
-de servicios oficiales permite estudiar ese conector, pero no equivale a tenerlo
-configurado o validado en Kairo. La disponibilidad se comprobará para cada modelo
-y ejercicio; presentar, pagar y conservar el justificante son estados distintos.
+El [conector AEAT local](IVA-AEAT.md) añade validación, confirmación, envío y archivo
+con el certificado del almacén de Windows. **Preparar o exportar un modelo no lo
+presenta en Hacienda.** La presentación exige otra acción explícita sobre la versión
+validada, con periodo terminado y configuración habilitada. Presentar, pagar y
+conservar el justificante son estados distintos.
+
+Se ha comprobado la validación oficial con datos sintéticos y del fichero histórico
+303 2T 2026, sin errores y con aviso 31190; no se ha probado una presentación real
+con este conector. La consulta autenticada ha llegado al permiso protegido de Windows
+para usar la clave, pero falta completarla y comprobar su respuesta. La recuperación
+real también sigue pendiente. El 4T real sigue abierto, con octubre únicamente, y el 390 requiere
+el año completo y los cuatro 303. Estos datos no se presentan como parte de una prueba.
 
 La [documentación oficial de servicios de declaraciones de AEAT](https://www.agenciatributaria.es/static_files/AEAT_Desarrolladores/EEDD/General/EspecificacionesServiciosDeclaracionesAEAT_ES.pdf)
 incluye los modelos 303 y 390: `ServValiDos` para validación/impresión,
 `PresBasicaDos` para presentación con certificado y conformidad, y `ConsultaExt`
-para recuperar declaraciones. Son operaciones diferentes. Este conector no existe
-todavía en el código de Kairo; deberá comprobarse contra la especificación vigente
-antes de habilitar cada operación.
+para recuperar declaraciones. Son operaciones diferentes implementadas en `aeat_client`;
+la pantalla y sus estados duraderos viven en el mini. Las comprobaciones pendientes
+se conservan en la guía AEAT y no se sustituyen por el resultado de una prueba sintética.
 
 ## Entregas
 
 1. **Facturas y Programación en el mini — en curso.** Llevar las operaciones
    existentes al mismo menú y mantener sus datos, estados y motores actuales.
    Integrar Facturas y el calendario de Programación reutilizando el circuito ya
-   implantado. Completar después los editores que permitan preparar una factura
-   o una programación nueva desde Kairo, sin exigir abrir Gestify. No crear un
-   segundo emisor ni un segundo programador de correos. La preparación propia
-   y la recibida de Gestify deben converger en los mismos contratos y estados.
-2. **Presentación de modelos — pendiente.** Integrar el canal oficial de AEAT
-   adecuado para el modelo y ejercicio, incluida la identificación necesaria.
-   El botón debe mostrar periodo, tipo de declaración, resultado y versión antes
-   de la confirmación final; después debe conservar la respuesta real. Una
-   validación de prueba no habilita la etiqueta «Presentado».
+   implantado. El calendario consulta los correos; prepararlos y programarlos
+   sigue siendo una operación de Gestify. No crear otro emisor, programador de
+   correos ni una interfaz alternativa de Gestify dentro de Kairo.
+2. **Presentación de modelos — implementada en el mini; comprobación real pendiente.**
+   Validar → revisar resumen → confirmar presentación → conservar respuesta y
+   justificante. El certificado permanece en Windows; no se cambia VeriFactu.
+   Ya existe validación oficial sintética y del fichero histórico 2T 2026, pero falta
+   completar la autorización protegida de Windows, comprobar consulta autenticada
+   y recuperación reales y completar el primer recorrido de presentación autorizado
+   cuando haya un periodo listo. Una prueba no habilita la etiqueta «Presentado».
 3. **Paridad móvil — pendiente.** Servir la misma interfaz adaptable y las mismas
    operaciones mediante el acceso privado de Kairo. Comprobar desde el móvil
    consulta, creación, revisión, aprobación, descarga y recuperación tras una
@@ -120,23 +128,19 @@ antes de habilitar cada operación.
    consulta y el contrato de calendario que recibe el bot, y después conectar sus
    operaciones. Mantener la revisión del plan, la detección de cambios y la
    comprobación posterior en Excelia. No trasladar la interfaz de Gestify a Kairo
-   ni bloquear la programación de correos hasta completar este módulo.
+   ni condicionar su circuito de correos a completar este módulo.
 5. **Ampliaciones documentales — pendientes.** Lectura avanzada de PDF/escaneados,
    más pedidos y proveedores, recopilación de Digi/luz/gas y cálculo completo de
    Renta. Son módulos independientes y no bloquean la integración de funciones
    que ya están operativas.
 
-### Preparaciones propias de Kairo
+### Límite entre Gestify y Kairo
 
-La nueva programación desde Kairo debe construir una entrada completa y revisable
-para el servicio de horas existente: periodo o semana, días y horas, destinatarios,
-mensaje, fecha de envío, identidad de operación y revisión. El editor debe mostrar
-el plan y conservar los mismos controles frente a cambios, duplicados y resultados
-inciertos. Crear esa entrada no debe requerir un calendario abierto en Gestify.
-
-El cliente externo puede seguir enviando sus preparaciones y consultar después
-el resultado mediante su botón de sincronización. La gestión de los planes vive
-en Kairo; no se añade una sincronización que escriba cambios de vuelta en Gestify.
+Gestify sigue preparando y programando los correos con los datos de sus jornadas,
+y consulta después su estado mediante el botón de sincronización. Kairo muestra
+el calendario y permite actualizar esa consulta a petición; no ofrece otro editor
+para esos correos. El servicio conserva las operaciones ya aprobadas y su resultado.
+No se añade una sincronización que escriba cambios de vuelta en Gestify.
 
 ### Contrato futuro de horas para Imputaciones
 
@@ -165,9 +169,14 @@ esa programación no exige vigilar periódicamente los gastos ni los modelos.
 
 La consulta del archivo local del mini funciona con los datos disponibles aunque
 Kairo no esté conectado. Las operaciones que viven en Kairo necesitan su servicio
-y la conexión privada. El motor de Imputaciones necesita el mini encendido y una
-sesión válida de Excelia; el móvil puede ordenar la operación, pero no sustituye
-al proceso que la ejecuta. Ninguno de estos botones debe depender de tener Codex
+y la conexión privada. La presentación AEAT usa el certificado de Windows y la
+conexión a Internet del mini; además necesita recuperar la preparación vigente
+de Kairo. No se trasladan las claves de VeriFactu para este circuito. Windows puede
+solicitar permiso de uso de la clave; se mantiene esa protección. La adaptación
+de ese conector al acceso móvil sigue pendiente. El motor de Imputaciones necesita
+el mini encendido y una sesión válida de Excelia; en la futura integración, el
+móvil podrá ordenar la operación, pero no sustituirá al proceso que la ejecuta.
+Ninguno de estos botones debe depender de tener Codex
 abierto. La futura paridad no implica que todas las acciones funcionen sin red.
 
 ## Cuándo se considera terminado
@@ -178,9 +187,9 @@ abierto. La futura paridad no implica que todas las acciones funcionen sin red.
   propio y devuelve el resultado a Kairo.
 - Facturas, correos, gastos y modelos muestran la misma operación y revisión en
   ambos dispositivos. La repetición o pérdida de respuesta no genera duplicados.
-- Kairo permite preparar y gestionar sus facturas y programaciones sin abrir
-  Gestify. Este conserva su circuito externo de envío y consulta de estados;
-  no recibe órdenes para modificar sus datos desde Kairo.
+- Gestify conserva su interfaz y el circuito de preparación/programación de
+  correos; Kairo consulta sus estados. No se duplican editores ni se envían órdenes
+  desde Kairo para modificar los datos de Gestify.
 - Libro, Excel e índice de consulta coinciden en versión y huellas; los documentos
   originales siguen disponibles. Una publicación fallida conserva la última
   copia verificada, identificada con su fecha.

@@ -39,14 +39,26 @@ def render_help():
 <tbody>
 <tr><th scope="row"><a href="/facturas/modelos?vista=resumen">Resumen</a></th><td>Ver los importes registrados, la cobertura de los datos y el estado de los trimestres.</td></tr>
 <tr><th scope="row"><a href="/facturas/">Facturas</a></th><td>Consultar las facturas preparadas, sus PDF y su histórico; revisar y aprobar o cancelar su programación con los mismos controles del móvil. La preparación desde las jornadas sigue entrando desde Gestify.</td></tr>
-<tr><th scope="row"><a href="/horas/calendario">Programación</a></th><td>Consultar el calendario compartido de correos y facturas y actualizar su estado a petición. Los correos nuevos que dependen de jornadas todavía se preparan desde Gestify, para conservar la comprobación de la versión de esas jornadas.</td></tr>
+<tr><th scope="row"><a href="/horas/calendario">Programación</a></th><td>Consultar el calendario de correos y facturas y actualizar su estado a petición. Los correos se siguen preparando y programando desde Gestify; aquí no hay otro editor de esos correos.</td></tr>
 <tr><th scope="row"><a href="/facturas/modelos?vista=ingresos">Ingresos</a></th><td>Consultar las facturas de clientes incorporadas al libro y abrir sus originales. La generación de ingresos que ya tenías sigue funcionando.</td></tr>
 <tr><th scope="row"><a href="/facturas/modelos?vista=gastos">Gastos</a></th><td>Consultar los gastos registrados. «Añadir o revisar gastos» abre la bandeja de documentos que todavía necesitan revisión o incorporación.</td></tr>
 <tr><th scope="row"><a href="/facturas/modelos?vista=libros">Libros</a></th><td>Descargar el Excel de consulta y acceder a archivos anteriores. El Excel se genera a partir del libro; editar una copia no cambia la contabilidad de la aplicación.</td></tr>
-<tr><th scope="row"><a href="/facturas/modelos?vista=modelos">Modelos</a></th><td>Consultar el IVA por trimestre o del año, preparar el 303/390 y conservar justificantes. La aplicación no firma ni presenta las declaraciones.</td></tr>
+<tr><th scope="row"><a href="/facturas/modelos?vista=modelos">Modelos</a></th><td>Consultar el IVA y preparar el 303/390. Desde «Presentar modelos» puedes validar la versión aprobada, confirmar su presentación con el certificado de Windows y conservar el justificante.</td></tr>
 <tr><th scope="row"><a href="/facturas/modelos?vista=renta">Renta</a></th><td>Consultar los documentos reservados para revisar en Renta, separados del IVA trimestral. Todavía no calcula la declaración ni las amortizaciones.</td></tr>
 <tr><th scope="row"><a href="/modulos">Mapa de módulos</a></th><td>Ver cómo pasan los documentos de la recogida a la revisión, al libro y a sus salidas.</td></tr>
 </tbody></table></div>
+</article>
+
+<article class="feature-card">
+<h2>Para presentar un modelo</h2>
+<ol class="help-steps">
+<li><strong>Prepara el periodo.</strong> Completa la revisión, aprueba el resumen y genera el fichero. La cobertura del trimestre debe estar completa.</li>
+<li><strong>Valida en Hacienda.</strong> En <a href="/facturas/modelos/aeat">Presentar modelos</a>, pulsa «Validar modelo». Revisa los errores y avisos. Validar todavía no presenta.</li>
+<li><strong>Confirma la presentación.</strong> Comprueba titular, periodo, resultado y modalidad, marca la confirmación y pulsa «Firmar y presentar en Hacienda». El botón permanece deshabilitado si falta algún requisito o el periodo no ha terminado.</li>
+<li><strong>Conserva el justificante.</strong> La aceptación y su PDF se guardan en el mini y se incorporan al archivo contable. Si la respuesta queda incierta, consulta ese mismo intento; no lo vuelvas a enviar.</li>
+</ol>
+<p class="quiet">Para ingreso necesitas el NRC de un pago ya realizado; la aplicación no realiza ese pago. La domiciliación se revisa dentro de la declaración. Presentar y comprobar el cargo bancario son pasos distintos.</p>
+<p>El 4T actual todavía está incompleto: solo incluye octubre. Se ha comprobado la validación oficial con datos de prueba y con el fichero histórico del 2T de 2026, sin errores y con un aviso de revisar la información adicional. No se ha vuelto a presentar ese trimestre ni se ha comprobado una presentación real con este conector.</p>
 </article>
 
 <div class="help-grid">
@@ -60,6 +72,11 @@ def render_help():
 <dt><strong>Actualizar datos</strong></dt><dd>Busca nuevos ingresos en la carpeta del flujo existente, incorpora gastos ya aprobados y justificantes pendientes, y regenera los libros y las copias de consulta. No recoge nuevas facturas de Amazon.</dd>
 <dt><strong>Ver estado de actualización</strong></dt><dd>Consulta una vez cómo va el trabajo. No lanza otra actualización ni se queda vigilándolo.</dd>
 <dt><strong>Volver a cargar esta vista</strong></dt><dd>Muestra la versión disponible en ese momento. No inicia una recogida ni una actualización.</dd>
+<dt><strong>Validar modelo</strong></dt><dd>Envía el fichero aprobado al servicio oficial de validación. Muestra errores y avisos, sin presentar la declaración.</dd>
+<dt><strong>Firmar y presentar en Hacienda</strong></dt><dd>Envía la versión validada después de tu confirmación expresa, usando el certificado del almacén de Windows. Su clave no se exporta.</dd>
+<dt><strong>Consultar resultado / recuperar justificante</strong></dt><dd>Comprueba un intento pendiente y trata de recuperar su evidencia. No vuelve a enviar la declaración.</dd>
+<dt><strong>Completar archivo en el libro</strong></dt><dd>Termina de archivar una presentación aceptada cuyo justificante ya está conservado; no la presenta otra vez.</dd>
+<dt><strong>Comprobar conexión con Hacienda</strong></dt><dd>Consulta con el certificado el periodo seleccionado. Windows puede pedir permiso para usar la clave. No valida ni presenta un modelo y no ordena un pago.</dd>
 </dl>
 </details>
 <details class="feature-card">
@@ -69,7 +86,10 @@ def render_help():
 <dt><strong>Aprobado · pendiente de incorporar</strong></dt><dd>La revisión está guardada, pero falta terminar su incorporación y verificar la copia. Puedes consultar el estado de actualización.</dd>
 <dt><strong>Incorporado al libro</strong></dt><dd>La incorporación ha terminado. Su inclusión en el cálculo de IVA depende del destino que se haya revisado para ese documento.</dd>
 <dt><strong>En curso / Pendiente</strong></dt><dd>El trimestre todavía no está cerrado o faltan condiciones para obtener el resultado. «Pendiente» no significa que el importe sea cero.</dd>
-<dt><strong>Referencia presentada</strong></dt><dd>Es el importe histórico guardado para comparar con el libro. La aplicación no consulta Hacienda ni el banco para comprobar un pago.</dd>
+<dt><strong>Referencia presentada</strong></dt><dd>Es el importe histórico guardado para comparar con el libro. Mostrarlo no inicia una consulta a Hacienda ni acredita un cargo bancario.</dd>
+<dt><strong>Validación técnica correcta</strong></dt><dd>Hacienda ha validado esa versión del fichero; todavía falta confirmar su presentación.</dd>
+<dt><strong>Resultado pendiente de comprobar</strong></dt><dd>No hay una respuesta concluyente sobre el intento. Consulta su resultado antes de decidir cómo continuar; no se reenvía automáticamente.</dd>
+<dt><strong>Presentado · justificante conservado</strong></dt><dd>Se ha recibido la aceptación y un PDF verificable con su CSV. La comprobación del pago sigue siendo independiente.</dd>
 </dl>
 <p class="quiet">La fecha de «Datos hasta…» indica la cobertura registrada. Una actualización realizada hoy no significa que ya estén completos todos los documentos hasta hoy.</p>
 </details>
@@ -80,14 +100,16 @@ def render_help():
 <p>El resumen, las tablas, los originales archivados y los libros se leen desde el mini. La bandeja de revisión, la preparación fiscal, la actualización y la recogida del correo utilizan los módulos que ya existen en Kairo, mediante la conexión privada.</p>
 <p>Para esas acciones, el mini y el equipo que aloja esos módulos deben estar encendidos y conectados. Si falla la conexión, puedes seguir consultando el archivo local. Antes de repetir una aprobación, comprueba su estado.</p>
 <p class="quiet">Hay un solo libro y una sola bandeja de revisión. La aplicación no necesita una conversación con la IA para ejecutar sus botones.</p>
-<p>Facturas y Programación consultan y operan sobre los servicios existentes: no crean otra copia de sus planes. Los envíos que ya hayas aprobado para una fecha mantienen esa programación. La contabilidad y la recogida de gastos siguen funcionando bajo petición.</p>
-<p><strong>Gestify sigue siendo una aplicación independiente.</strong> Envía preparaciones a Kairo y consulta los estados mediante su botón de sincronización. Kairo no modifica las jornadas ni la configuración de Gestify. Completar la preparación de correos desde Kairo, sin mantener Gestify abierto, sigue pendiente.</p>
+<p>Facturas utiliza su servicio existente y Programación consulta el calendario compartido. No crean otra copia de los planes. Los envíos que ya hayas aprobado para una fecha mantienen esa programación. La contabilidad y la recogida de gastos siguen funcionando bajo petición.</p>
+<p>La presentación en Hacienda se ejecuta desde el mini, con su certificado de Windows y conexión a Internet. También necesita la preparación vigente de Kairo. La clave del certificado permanece en el mini; esta función aún no está integrada en la interfaz del móvil.</p>
+<p>Si aparece la ventana protegida de Windows, autoriza allí el uso de la clave. No hay que exportarla ni desactivar su protección. Si la petición caduca mientras esperas, comprueba el estado y vuelve a solicitar la consulta manualmente. Una presentación con resultado incierto se consulta, no se reenvía.</p>
+<p><strong>Gestify sigue siendo una aplicación independiente.</strong> Conserva la preparación y programación de correos, envía preparaciones de facturas a Kairo y consulta los estados mediante su botón de sincronización. Kairo consulta esos correos; no modifica las jornadas ni la configuración de Gestify.</p>
 </details>
 
 <article class="feature-card">
 <h2>El siguiente paso</h2>
-<p><strong>Completar el circuito de presentación de modelos.</strong> Ya se preparan los ficheros; falta conectar la validación y el envío oficial a Hacienda, con certificado, confirmación de los datos y recuperación del justificante. Generar un fichero no equivale a presentarlo.</p>
-<p>El objetivo es tener las mismas operaciones desde mini y móvil, sobre una única fuente de datos por módulo. Para crear y programar correos desde Kairo necesitamos conservar una preparación propia revisada, sin depender de la ventana de Gestify. La futura integración del bot de Imputaciones seguirá separada de Gestify.</p>
+<p><strong>Completar la autorización de Windows y comprobar la consulta.</strong> La lectura del certificado funciona y el intento de consulta ha solicitado permiso para usar la clave. Queda completarlo dentro del plazo y comprobar la respuesta de Hacienda y la recuperación de justificantes. También falta completar el 4T antes de su primera presentación autorizada. No hay que volver a presentar un trimestre anterior para hacer pruebas.</p>
+<p>Después podremos llevar el mismo acceso a Modelos al móvil, manteniendo una única fuente de datos y el mini como ejecutor del certificado. La futura integración del bot de Imputaciones seguirá separada de Gestify; la programación de correos continúa en Gestify.</p>
 <p>La lectura asistida de gastos, más pedidos y proveedores, Digi, electricidad, gas y el cálculo completo de Renta siguen siendo módulos pendientes. Podrán añadirse sin rehacer el circuito de facturación.</p>
 <p class="quiet">La lectura actual aprovecha el texto extraíble del PDF y ofrece propuestas básicas. La lectura avanzada con IA y el reconocimiento de documentos escaneados todavía no están conectados.</p>
 </article>

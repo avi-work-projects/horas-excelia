@@ -12,12 +12,15 @@ El proceso queda esperando peticiones HTTP; no consulta fuentes en reposo.
   No añade una emisión inmediata: respeta las horas y condiciones del motor actual.
 - **Programación:** calendario compartido de correos y facturas, navegación mensual
   y consulta explícita de Outlook mediante «Actualizar». Al abrir se leen los
-  estados guardados. Crear correos de horas desde Kairo sin Gestify sigue pendiente.
+  estados guardados. Los correos se siguen preparando y programando desde Gestify;
+  Kairo ofrece su consulta, sin otro editor de programación.
 - **Resumen, Ingresos y Gastos:** consulta del libro existente, filtro por
   trimestre y búsqueda; acceso a los originales verificados.
 - **Libros:** descarga del Excel de la misma versión y archivos históricos.
-- **Modelos:** consulta de 303/390, preparación y archivo de justificantes con
-  los controles fiscales existentes. No firma ni presenta declaraciones.
+- **Modelos:** consulta y preparación de 303/390, validación oficial y presentación
+  manual desde el mini con el certificado de Windows. Requiere una versión aprobada,
+  periodo completo y confirmación final; genera y conserva su evidencia. Véase
+  [el recorrido AEAT y sus comprobaciones pendientes](IVA-AEAT.md).
 - **Renta:** documentos separados del IVA; no calcula la declaración de IRPF.
 - **Recoger facturas:** una consulta al correo Business para el pedido confirmado
   configurado. Conserva los adjuntos en el mini y los envía como borradores a
@@ -57,6 +60,9 @@ flowchart LR
   Q -->|Aprobación explícita| W[Trabajador existente del mini]
   W --> A
   A --> E[Excel, resumen, 303 y 390]
+  D -->|Validar y confirmar manualmente| H[Conector AEAT del mini]
+  E -->|Modelo aprobado y generado| H
+  H -->|Aceptación y justificante| A
 ```
 
 `desktop_app` sirve la interfaz y aplica sesión, Host, Origin y CSRF.
@@ -85,8 +91,19 @@ incluido el posible aviso de revisión al propietario si está configurado. No s
 ejecutan envíos reales para comprobar la integración.
 
 Gestify permanece externo: envía preparaciones y consulta estados por su botón
-de sincronización. La aplicación no controla Gestify. Véase el alcance completo y
-el contrato pendiente para nuevas preparaciones en [KAIRO-ECOSYSTEM.md](KAIRO-ECOSYSTEM.md).
+de sincronización, y conserva la preparación y programación de correos. La aplicación
+no controla Gestify ni crea un segundo editor de esos correos. Véase el alcance
+completo en [KAIRO-ECOSYSTEM.md](KAIRO-ECOSYSTEM.md).
+
+`aeat_workflow` añade el circuito local de presentación; `aeat_submission` conserva
+sus operaciones y `aeat_windows` utiliza el certificado del almacén de Windows sin
+exportar la clave. «Validar modelo» y «Firmar y presentar en Hacienda» son acciones
+distintas. «Consultar resultado / recuperar justificante» nunca reenvía un intento
+incierto. Los modelos, respuestas y justificantes aceptados se archivan en AUTONOMO.
+No se modifica la instalación emisora de facturas ni su certificado de VeriFactu.
+Windows puede pedir permiso para usar la clave en su ventana protegida; se conserva
+esa protección. Una petición caducada requiere otra acción manual, no un reintento
+automático de presentación.
 
 La lectura del correo reutiliza la cuenta y contraseña de aplicación que ya
 usa el servicio de facturas. La contraseña permanece en el equipo que la guarda;
@@ -124,6 +141,15 @@ Resumen, tablas, originales y libros se consultan desde el archivo del mini sin
 conectar a Kairo. La bandeja, preparación fiscal, actualización y recogida de
 correo requieren la conexión privada al equipo que ya tiene esos módulos.
 No hay un segundo libro ni una segunda bandeja.
+
+La presentación AEAT se ejecuta en el mini y requiere Internet, certificado vigente
+y acceso a la preparación de Kairo. El 4T real sigue incompleto; no se habilita su
+presentación por tener instalada la conexión. Hay validación oficial con datos
+sintéticos y del fichero histórico 303 2T 2026 (sin errores, aviso 31190), pero no
+una presentación real probada con este conector. La consulta autenticada está
+pendiente de completar la autorización protegida de Windows y comprobar la respuesta;
+la recuperación real tampoco está comprobada. Esta capacidad
+local todavía no implica paridad de presentación desde el móvil.
 
 Esta entrega configura la recogida del pedido de prueba seleccionado, no una
 descarga de todo el historial de Amazon. Siguen pendientes la extracción avanzada

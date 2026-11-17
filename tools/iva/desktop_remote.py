@@ -130,6 +130,35 @@ def service_lock(root):
 def dispatch(runtime, request):
     runtime = Path(runtime)
     action = request.get('action')
+    if action == 'aeat_source':
+        from period_workflow import context, build_candidate
+        from closing import Store, confined, read
+        period = request.get('period')
+        if period not in ('1T','2T','3T','4T','anual'):
+            raise ValueError('Periodo no válido')
+        with service_lock(runtime.parent):
+            config, root, ledger, ledger_hash = context(runtime)
+            identity = read(confined(root, config['identity']))
+            result = dict(year=ledger['year'],period=period,ledger_sha256=ledger_hash,
+                          as_of=ledger.get('as_of'),coverage=ledger.get('coverage',{}).get(period,''),
+                          nif=identity['nif'],name=identity['name'],snapshot=None,
+                          already_filed=bool(ledger.get('references',{}).get(period)))
+            try:
+                if period == 'anual':
+                    from annual_workflow import build_candidate as annual_candidate
+                    candidate = annual_candidate(runtime)
+                else:
+                    candidate = build_candidate(runtime, period)
+                store = Store(runtime/('new-annual.sqlite' if period=='anual' else 'new-closing.sqlite'))
+                row = store.get(f'{ledger["year"]}-{period}')
+                if not row or row['state'] != 'generated' or row['snapshot']['revision'] != candidate['revision']:
+                    raise ValueError('Primero revisa, aprueba y genera la versión actual del modelo.')
+                store.download(candidate)
+                result['snapshot'] = candidate
+                result['problem'] = ''
+            except (ValueError,KeyError,OSError) as exc:
+                result['problem'] = str(exc)
+            return result
     if action in ('billing_get','billing_post'):
         from desktop_billing import dispatch as billing_dispatch
         return billing_dispatch(runtime.parent, request)

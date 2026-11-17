@@ -1,8 +1,11 @@
 > Estado vigente 17/11/2026: consultar [Contabilidad modular](ACCOUNTING-MODULES.md).
 > El texto siguiente conserva la revisión del 26/10 como antecedente. La bandeja,
 > el cierre guiado y el exportador 390 ya fueron implementados posteriormente;
-> no tratarlos como pendientes. IA/OCR, conectores Amazon/correo y motor IRPF
-> siguen pendientes. No hay actualizaciones por temporizador.
+> no tratarlos como pendientes. Existe además el [conector AEAT local](IVA-AEAT.md),
+> con validación oficial sintética y del fichero histórico 303 2T 2026, sin nueva
+> presentación real probada. El 4T real sigue
+> incompleto. La recogida del pedido Amazon configurado ya existe; faltan otros
+> pedidos/proveedores, IA/OCR y motor IRPF. No hay actualizaciones por temporizador.
 
 # Gastos, cierre anual y renta
 

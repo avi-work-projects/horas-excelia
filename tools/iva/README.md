@@ -1,10 +1,12 @@
-# IVA en Kairo: documentos, libro y preparación de modelos
+# IVA en Kairo: documentos, libro, preparación y presentación de modelos
 
 Herramientas privadas para incorporar documentos, mantener el libro anual,
 preparar los modelos 303 y 390 y conservar sus justificantes. Incluyen módulos
-offline, el panel autenticado de Kairo y el worker del mini. No emiten facturas,
-acceden a certificados, firman, presentan declaraciones ni ordenan pagos. No
-incorporar estos archivos a `app-assets.json` ni a los recursos públicos de la PWA.
+offline, el panel autenticado de Kairo y el worker del mini. El conector `aeat_*`
+añade validación y presentación manual desde el mini con el certificado del almacén
+de Windows, sin exportar su clave. No emite facturas ni realiza pagos previos; la
+modalidad de domiciliación se revisa al confirmar la declaración. No incorporar
+estos archivos a `app-assets.json` ni a los recursos públicos de la PWA.
 
 ## Flujo actual
 
@@ -31,11 +33,20 @@ incorporar estos archivos a `app-assets.json` ni a los recursos públicos de la 
    se prepara mediante su formulario propio cuando existen cobertura completa,
    perfil acreditado y conciliación de los cuatro 303 con sus justificantes.
    El dossier conserva pendientes; no se etiqueta como fichero del modelo.
-6. **Servicio oficial y archivo.** La validación y presentación se realizan en
-   Hacienda. Kairo permite aportar justificantes de validación, presentación y,
-   para el 303, pago. Guardar un PDF documenta lo aportado por el usuario; no es
-   una consulta automática a Hacienda o al banco. El worker archiva las pruebas
-   y añade referencias presentadas nuevas sin sobrescribir otras distintas.
+6. **Servicio oficial y archivo.** Desde el mini: Validar modelo → revisar el
+   resultado → confirmar Firmar y presentar en Hacienda → conservar justificante.
+   La aceptación debe corresponder al modelo y titular, y el PDF debe contener
+   el CSV esperado. Una respuesta incierta requiere consulta manual, sin reenvío.
+   Se archivan original, respuesta y justificante y se solicita actualizar las
+   salidas del libro. Sigue disponible aportar evidencias por el circuito anterior;
+   guardar un PDF aportado por el usuario no equivale a consulta automática.
+
+El 4T real permanece incompleto. El nuevo conector tiene validación oficial con
+datos sintéticos y del fichero histórico 303 2T 2026 (sin errores, aviso 31190), pero
+ninguna presentación real probada. La consulta autenticada espera completar el permiso
+protegido de Windows y comprobar su respuesta; la recuperación real sigue pendiente.
+Instalarlo no autoriza presentar de nuevo periodos históricos
+ni convierte un trimestre abierto en declaración lista. No hay comprobaciones periódicas.
 
 Documentación de detalle:
 
@@ -43,6 +54,7 @@ Documentación de detalle:
 - [Gastos e ingresos: revisión, incorporación y recuperación](../../docs/IVA-EXPENSES.md).
 - [Interfaz privada de Modelos y comprobación visual](../../docs/IVA-UI.md).
 - [Exportador 390, perfil, diseño oficial e integración anual](../../docs/IVA-390.md).
+- [Presentación AEAT local: certificado, confirmación y evidencia](../../docs/IVA-AEAT.md).
 - [Cierre histórico y ensayos del 26/10/2026](../../docs/IVA-CLOSING.md).
   Su estado inicial describe aquel ensayo; la preparación nueva es la indicada
   aquí y en los módulos `period_workflow` y `annual_workflow`.
