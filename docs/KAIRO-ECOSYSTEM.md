@@ -93,9 +93,10 @@ conservar el justificante son estados distintos.
 
 Se ha comprobado la validación oficial con datos sintéticos y del fichero histórico
 303 2T 2026, sin errores y con aviso 31190; no se ha probado una presentación real
-con este conector. La consulta autenticada ha llegado al permiso protegido de Windows
-para usar la clave, pero falta completarla y comprobar su respuesta. La recuperación
-real también sigue pendiente. El 4T real sigue abierto, con octubre únicamente, y el 390 requiere
+con este conector. La consulta autenticada del 303 3T 2026 se completó el 17/11/2026
+a las 19:02:50 UTC: una declaración encontrada, ninguna nueva presentación. La
+descarga directa de su justificante no está comprobada; `ConsultaExt` no facilita
+una URL de descarga. El 4T real sigue abierto, con octubre únicamente, y el 390 requiere
 el año completo y los cuatro 303. Estos datos no se presentan como parte de una prueba.
 
 La [documentación oficial de servicios de declaraciones de AEAT](https://www.agenciatributaria.es/static_files/AEAT_Desarrolladores/EEDD/General/EspecificacionesServiciosDeclaracionesAEAT_ES.pdf)
@@ -113,13 +114,13 @@ se conservan en la guía AEAT y no se sustituyen por el resultado de una prueba 
    implantado. El calendario consulta los correos; prepararlos y programarlos
    sigue siendo una operación de Gestify. No crear otro emisor, programador de
    correos ni una interfaz alternativa de Gestify dentro de Kairo.
-2. **Presentación de modelos — implementada en el mini; comprobación real pendiente.**
+2. **Presentación de modelos — implementada en el mini; validación y consulta comprobadas.**
    Validar → revisar resumen → confirmar presentación → conservar respuesta y
    justificante. El certificado permanece en Windows; no se cambia VeriFactu.
-   Ya existe validación oficial sintética y del fichero histórico 2T 2026, pero falta
-   completar la autorización protegida de Windows, comprobar consulta autenticada
-   y recuperación reales y completar el primer recorrido de presentación autorizado
-   cuando haya un periodo listo. Una prueba no habilita la etiqueta «Presentado».
+   Existen validación oficial sintética, validación del fichero histórico 2T 2026 y
+   consulta autenticada real del 3T. Queda completar el primer recorrido de presentación
+   autorizado cuando haya un periodo listo y comprobar la descarga del justificante
+   mediante una URL oficial disponible. Una prueba no habilita la etiqueta «Presentado».
 3. **Paridad móvil — pendiente.** Servir la misma interfaz adaptable y las mismas
    operaciones mediante el acceso privado de Kairo. Comprobar desde el móvil
    consulta, creación, revisión, aprobación, descarga y recuperación tras una

@@ -106,12 +106,25 @@ corresponda. Se utilizó exclusivamente la operación de validación, no present
 La respuesta histórica queda en `desktop-state/aeat-validation-historical-response.json`,
 fuera de Git.
 
-**No se ha probado una presentación real con este conector.** La consulta autenticada
-real ha llegado a la ventana protegida de Windows para autorizar el uso de la clave;
-falta completar esa autorización dentro del plazo y comprobar la respuesta oficial.
-La recuperación de un justificante real también sigue pendiente. La validación
-técnica, incluso con el fichero histórico, no acredita una nueva presentación ni
-resuelve por sí sola las diferencias documentales del libro.
+La consulta autenticada real del **303 3T 2026** se completó el **17/11/2026 a las
+19:02:50 UTC (20:02:50 en Madrid)**: Hacienda devolvió una declaración. Quedan
+comprobados el uso del certificado de Windows y la recepción/análisis de la respuesta
+oficial de consulta. No se creó ninguna presentación ni se ordenó un pago.
+El NIF, CSV, número de justificante y fecha/hora completos de esa respuesta
+coinciden exactamente con los campos correspondientes del PDF histórico archivado,
+sin discrepancias. Se acredita la consulta y su concordancia con el archivo; ese
+cotejo no es una descarga nueva del PDF.
+
+**No se ha probado una presentación real con este conector.** La descarga directa
+de un justificante mediante URL oficial tampoco está comprobada. `ConsultaExt`
+devuelve identificadores, no una URL de descarga; no se ha inventado una dirección
+a partir del CSV. La descarga se utiliza cuando existe una URL oficial admitida,
+por ejemplo en una respuesta de presentación. La validación técnica y la consulta
+histórica no resuelven por sí solas las diferencias documentales del libro.
+
+El siguiente uso fiscal es completar los documentos del periodo, cerrar y revisar
+su preparación, validar esa versión y obtener la confirmación explícita antes de
+presentarla. La consulta histórica no requiere volver a presentar el trimestre.
 
 Las pruebas usan respuestas y documentos sintéticos para los estados, pérdidas de
 respuesta, duplicados, cambios de revisión y límites del transporte. Ningún test

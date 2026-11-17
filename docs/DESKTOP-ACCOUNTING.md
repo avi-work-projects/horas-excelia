@@ -146,9 +146,11 @@ La presentación AEAT se ejecuta en el mini y requiere Internet, certificado vig
 y acceso a la preparación de Kairo. El 4T real sigue incompleto; no se habilita su
 presentación por tener instalada la conexión. Hay validación oficial con datos
 sintéticos y del fichero histórico 303 2T 2026 (sin errores, aviso 31190), pero no
-una presentación real probada con este conector. La consulta autenticada está
-pendiente de completar la autorización protegida de Windows y comprobar la respuesta;
-la recuperación real tampoco está comprobada. Esta capacidad
+una presentación real probada con este conector. La consulta autenticada del 303
+3T 2026 se completó el 17/11/2026 a las 19:02:50 UTC y encontró una declaración,
+sin crear otra. NIF, CSV, justificante y fecha/hora coinciden con el PDF histórico
+archivado. La descarga directa del justificante no está comprobada: esa
+consulta no proporciona una URL. Esta capacidad
 local todavía no implica paridad de presentación desde el móvil.
 
 Esta entrega configura la recogida del pedido de prueba seleccionado, no una

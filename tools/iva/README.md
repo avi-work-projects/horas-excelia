@@ -43,8 +43,9 @@ estos archivos a `app-assets.json` ni a los recursos públicos de la PWA.
 
 El 4T real permanece incompleto. El nuevo conector tiene validación oficial con
 datos sintéticos y del fichero histórico 303 2T 2026 (sin errores, aviso 31190), pero
-ninguna presentación real probada. La consulta autenticada espera completar el permiso
-protegido de Windows y comprobar su respuesta; la recuperación real sigue pendiente.
+ninguna presentación real probada. La consulta autenticada del 303 3T 2026 se completó
+el 17/11/2026 a las 19:02:50 UTC y encontró una declaración. La descarga directa del
+justificante no está comprobada: `ConsultaExt` no devuelve una URL para hacerlo.
 Instalarlo no autoriza presentar de nuevo periodos históricos
 ni convierte un trimestre abierto en declaración lista. No hay comprobaciones periódicas.
 

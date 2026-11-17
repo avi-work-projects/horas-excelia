@@ -59,6 +59,7 @@ def render_help():
 </ol>
 <p class="quiet">Para ingreso necesitas el NRC de un pago ya realizado; la aplicación no realiza ese pago. La domiciliación se revisa dentro de la declaración. Presentar y comprobar el cargo bancario son pasos distintos.</p>
 <p>El 4T actual todavía está incompleto: solo incluye octubre. Se ha comprobado la validación oficial con datos de prueba y con el fichero histórico del 2T de 2026, sin errores y con un aviso de revisar la información adicional. No se ha vuelto a presentar ese trimestre ni se ha comprobado una presentación real con este conector.</p>
+<p class="quiet">La conexión con certificado también está comprobada: el 17/11/2026 a las 20:02, Hacienda devolvió una declaración al consultar el 3T de 2026. Su identificación, CSV, justificante y fecha coinciden con el PDF que ya tienes archivado. Esa consulta no presentó ni pagó nada.</p>
 </article>
 
 <div class="help-grid">
@@ -108,7 +109,8 @@ def render_help():
 
 <article class="feature-card">
 <h2>El siguiente paso</h2>
-<p><strong>Completar la autorización de Windows y comprobar la consulta.</strong> La lectura del certificado funciona y el intento de consulta ha solicitado permiso para usar la clave. Queda completarlo dentro del plazo y comprobar la respuesta de Hacienda y la recuperación de justificantes. También falta completar el 4T antes de su primera presentación autorizada. No hay que volver a presentar un trimestre anterior para hacer pruebas.</p>
+<p><strong>Completar la documentación del próximo periodo.</strong> La validación y la consulta autenticada ya están comprobadas. Falta incorporar noviembre y diciembre, revisar y cerrar el 4T y aprobar su versión antes de validar y confirmar su primera presentación. Para el 390 harán falta el año completo y los cuatro 303.</p>
+<p class="quiet">La descarga directa de un justificante por el conector aún no está comprobada: la consulta histórica devuelve datos identificativos, pero no una URL de descarga. Los justificantes históricos que ya tienes conservan su archivo.</p>
 <p>Después podremos llevar el mismo acceso a Modelos al móvil, manteniendo una única fuente de datos y el mini como ejecutor del certificado. La futura integración del bot de Imputaciones seguirá separada de Gestify; la programación de correos continúa en Gestify.</p>
 <p>La lectura asistida de gastos, más pedidos y proveedores, Digi, electricidad, gas y el cálculo completo de Renta siguen siendo módulos pendientes. Podrán añadirse sin rehacer el circuito de facturación.</p>
 <p class="quiet">La lectura actual aprovecha el texto extraíble del PDF y ofrece propuestas básicas. La lectura avanzada con IA y el reconocimiento de documentos escaneados todavía no están conectados.</p>

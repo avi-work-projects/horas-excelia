@@ -249,6 +249,16 @@ class AeatClientTests(unittest.TestCase):
             with self.subTest(raw=raw), self.assertRaises(AeatError):
                 parse_consultation(raw,snapshot)
 
+    def test_recovery_parse_error_preserves_raw_without_retry_or_private_error_text(self):
+        snapshot,_=fixture()
+        raw=b'<unexpected>private-response-marker</unexpected>'
+        transport=FakeTransport((200,{'Content-Type':'application/xml'},raw))
+        with self.assertRaises(AeatTransportError) as caught:
+            self.client(transport).recover(snapshot,'operation-1')
+        self.assertEqual(caught.exception.raw_response,raw)
+        self.assertNotIn('private-response-marker',str(caught.exception))
+        self.assertEqual(len(transport.calls),1)
+
 
 if __name__ == '__main__':
     unittest.main()

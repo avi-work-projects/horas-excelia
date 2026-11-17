@@ -108,6 +108,15 @@ class RenderTests(unittest.TestCase):
         self.assertNotIn('aeat-submit',controls.forms)
         self.assertIn('El periodo todavía no ha terminado',markup)
 
+    def test_saved_connection_result_is_visible_after_action_without_another_query(self):
+        (self.app.state/'aeat-connection.json').write_text(json.dumps(dict(at='2026-11-17T19:02:50+00:00',message='Modelo 303 · 3T 2026: 1 declaración encontrada.')))
+        closed,_=self.render()
+        opened=aeat_web.render(self.current,self.entry,[self.entry],self.config,self.app,show_connection=True)
+        self.assertIn('id="certificado"><summary>',closed)
+        self.assertIn('id="certificado" open><summary>',opened)
+        self.assertIn('Conexión con Hacienda confirmada',opened)
+        self.assertIn('1 declaración encontrada',opened)
+
     def test_changed_snapshot_cannot_submit(self):
         for field,value in (('revision','r2'),('account','ES•• ···· 9999'),('boxes',{'71':'200.00'})):
             changed=copy.deepcopy(self.current)

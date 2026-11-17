@@ -79,6 +79,27 @@ class WorkflowTests(unittest.TestCase):
         self.assertEqual(self.ledger.read_bytes(), before)
         self.assertEqual(self.client.submit_calls, 0)
 
+    def test_connection_check_saves_result_and_returns_expanded_result_page(self):
+        result=workflow.post(self.app,dict(action='check_connection',period='3T'))
+        self.assertEqual(self.client.recover_calls,1)
+        self.assertEqual(self.client.submit_calls,0)
+        self.assertEqual(result['url'],workflow.BASE+'?periodo=3T&conexion=1#certificado')
+        saved=json.loads((self.state/'aeat-connection.json').read_text())
+        self.assertEqual((saved['model'],saved['year'],saved['period']),('303',2026,'3T'))
+        self.assertIn('1 declaración encontrada.',saved['message'])
+        self.assertEqual((self.state/'aeat-connection-response.xml').read_bytes(),b'<matches/>')
+
+    def test_unrecognized_connection_response_is_retained_without_success_or_retry(self):
+        from aeat_client import AeatTransportError
+        raw=b'<unrecognized>private diagnostic</unrecognized>'
+        with patch.object(self.client,'recover',side_effect=AeatTransportError('Respuesta no reconocida',raw)) as recover:
+            with self.assertRaisesRegex(ValueError,'Respuesta no reconocida'):
+                workflow.post(self.app,dict(action='check_connection',period='3T'))
+        recover.assert_called_once()
+        self.assertEqual((self.state/'aeat-connection-error-response.bin').read_bytes(),raw)
+        self.assertFalse((self.state/'aeat-connection.json').exists())
+        self.assertEqual(self.client.submit_calls,0)
+
     def test_period_boundaries_use_calendar_not_approximate_days(self):
         for period, last, first in (
             ('1T',date(2026,3,31),date(2026,4,1)),

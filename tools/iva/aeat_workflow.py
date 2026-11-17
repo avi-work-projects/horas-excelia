@@ -154,16 +154,24 @@ def post(app, data):
     if action=='check_connection':
         current = source(app,period)
         # Consultation cannot submit or pay. Keep the response private for diagnosis.
-        result = client(app).recover(dict(model='390' if period=='anual' else '303',year=current['year'],
-                                          period=period,nif=current['nif'],presenter_name=current['name']),uuid.uuid4().hex)
+        model = '390' if period=='anual' else '303'
+        try:
+            result = client(app).recover(dict(model=model,year=current['year'],
+                                              period=period,nif=current['nif'],presenter_name=current['name']),uuid.uuid4().hex)
+        except ValueError as error:
+            raw = getattr(error,'raw_response',b'')
+            if raw:
+                atomic(app.state/'aeat-connection-error-response.bin',raw)
+            raise
         raw = result.get('raw_response',b'')
         if raw:
             atomic(app.state/'aeat-connection-response.xml',raw)
         if result.get('errors'):
             raise ValueError('Hacienda no ha confirmado la consulta: '+'; '.join(result['errors']))
-        message = 'Conexión con certificado confirmada. '+str(len(result.get('matches',[])))+' declaraciones encontradas para este periodo; no se ha presentado ni pagado nada.'
-        atomic(app.state/'aeat-connection.json',json.dumps(dict(at=datetime.now(timezone.utc).isoformat(),message=message)).encode())
-        return dict(message=message,url=BASE+'?periodo='+period)
+        count = len(result.get('matches',[]))
+        message = 'Modelo '+model+' · '+period+' '+str(current['year'])+': '+str(count)+(' declaración encontrada' if count==1 else ' declaraciones encontradas')+'. No se ha presentado ni pagado nada.'
+        atomic(app.state/'aeat-connection.json',json.dumps(dict(at=datetime.now(timezone.utc).isoformat(),message=message,model=model,period=period,year=current['year'])).encode())
+        return dict(message=message,url=BASE+'?periodo='+period+'&conexion=1#certificado')
     active = store(app,active=action!='archive')
     if action=='validate':
         snapshot,payload = candidate(source(app,period),str(data.get('nrc','')).strip())

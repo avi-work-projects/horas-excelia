@@ -13,7 +13,8 @@ a ese pedido; otros proveedores y la extracción avanzada siguen pendientes.
 El mini incorpora también el [recorrido AEAT](IVA-AEAT.md): validación y confirmación
 manual de presentación con certificado de Windows, recuperación de evidencia y
 archivo. Hay validación oficial sintética y del fichero histórico 303 2T 2026 (sin
-errores y con aviso 31190), no presentación real probada; el 4T real
+errores y con aviso 31190) y consulta autenticada real del 3T, con una declaración
+encontrada. No se ha probado una presentación nueva; el 4T real
 permanece incompleto. Gestify conserva la programación de correos y Kairo consulta
 sus estados; la unificación no traslada la interfaz de Gestify.
 

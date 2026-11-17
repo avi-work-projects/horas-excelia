@@ -408,7 +408,10 @@ class AeatClient:
         request += [('HOD',''),('HOH','')]
         raw = self._request('https://'+HOSTS[self.environment][0]+'/wlpl/SCEJ-MANT/ConsultaExt',
                             urlencode(request).encode('ascii'), operation='consult', content_type='application/x-www-form-urlencoded')
-        return parse_consultation(raw, snapshot)
+        try:
+            return parse_consultation(raw, snapshot)
+        except AeatError as exc:
+            raise AeatTransportError(str(exc), raw_response=raw) from exc
 
     def receipt(self, url):
         raw = self._request(url, operation='receipt')
