@@ -130,7 +130,7 @@ test('recordatorios: acceso desde tareas, tres pendientes, cumpleaños plegables
  await expect(third).toBeHidden();await page.locator('#homeBirthdayToggle').click();await expect(third).toBeVisible();
  const position=await page.locator('#homeBirthdayToggle').boundingBox(),lastBirthday=await third.boundingBox();expect(position.y).toBeGreaterThanOrEqual(lastBirthday.y+lastBirthday.height);
  await expect(page.locator('.home-reminder-vip')).toBeVisible();
- await expect(page.locator('.home-popup-item.bday .home-reminder-content').first()).toHaveText('Sin alarma');
+ await expect(page.locator('.home-popup-item.bday .home-reminder-content').first()).toHaveText('1 de Octubre · Sin alarma');
  const note=page.locator('.home-reminder-disclosure').filter({hasText:'Descripción <segura>'});
  await expect(note.locator('p')).toBeHidden();await note.locator('summary').click();await expect(note.locator('p')).toHaveText('Descripción <segura>');
  await note.locator('p').click();await expect(note.locator('p')).toBeHidden();
