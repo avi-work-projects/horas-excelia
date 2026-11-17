@@ -56,7 +56,8 @@ test('Guardar y compartir sin carpeta descarga una sola copia aunque se cancele 
  test('filtro centrado en móvil, controles iguales y grupos desplegados sin desbordamiento',async({page},info)=>{
  for(const width of [360,400]){
   await page.setViewportSize({width,height:880});
-  await page.evaluate(()=>{EV_VIEW='upcoming';openEvents();});
+  // openEvents enlaza los controles tras dos frames, también si el overlay ya estaba abierto.
+  await page.evaluate(()=>new Promise(resolve=>{openEvents();requestAnimationFrame(()=>requestAnimationFrame(resolve));}));
   await page.locator('#evViewUpcoming').click();await page.locator('#evSubTodos').click();
   const search=await page.locator('.ev-list-search-row .ev-search').boundingBox(),filter=await page.locator('#evTypesFilter').boundingBox();
   expect(filter.width).toBe((await page.locator(".ev-list-search-row").boundingBox()).width);expect(filter.y).toBeGreaterThanOrEqual(search.y+search.height);
