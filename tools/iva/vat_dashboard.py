@@ -21,8 +21,8 @@ def verified(root, entry):
     return raw
 
 
-def read_archive(root):
-    index = json.loads((Path(root) / 'modelos-index.json').read_text(encoding='utf-8-sig'))
+def read_archive(root, index_relative='modelos-index.json'):
+    index = json.loads((Path(root) / index_relative).read_text(encoding='utf-8-sig'))
     report = json.loads(verified(root, index['report']))
     ledger = json.loads(verified(root, index['ledger']))
     if report['year'] != ledger['year']:
@@ -56,7 +56,7 @@ update.addEventListener('click',()=>request(true));check.addEventListener('click
     return '<style>.modelos #modelos-reload[hidden]{display:none}</style>'+controls+script
 
 
-def response(root, url, csrf='', runtime=None):
+def response(root, url, csrf='', runtime=None, index_relative='modelos-index.json'):
     parsed = urlsplit(url)
     path = parsed.path.removeprefix('/facturas')
     if path not in ('/modelos', '/modelos/', '/modelos/descargar', '/modelos/documento'):
@@ -64,7 +64,7 @@ def response(root, url, csrf='', runtime=None):
     query = parse_qs(parsed.query)
     try:
         if path.endswith('/descargar'):
-            index = json.loads((Path(root)/'modelos-index.json').read_text(encoding='utf-8-sig'))
+            index = json.loads((Path(root)/index_relative).read_text(encoding='utf-8-sig'))
             key = query.get('id', [''])[0]
             if key not in index['downloads']:
                 return 404, 'Archivo no disponible'
@@ -74,7 +74,7 @@ def response(root, url, csrf='', runtime=None):
             # Never permit a configured filename to inject response headers.
             name = re.sub(r'[^A-Za-z0-9_.-]', '_', Path(item['filename']).name)
             return 200, verified(root, item), item['mime'], {'Content-Disposition':f'attachment; filename="{name}"'}
-        index, report, ledger = read_archive(root)
+        index, report, ledger = read_archive(root, index_relative)
         if path.endswith('/documento'):
             key = query.get('id', [''])[0]
             if not re.fullmatch(r'[a-f0-9]{64}', key):

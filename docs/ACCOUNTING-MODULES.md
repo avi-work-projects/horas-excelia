@@ -4,12 +4,18 @@ Estado funcional del 17/11/2026. Esta guía sustituye los planes anteriores de
 interfaz e ingesta; el estado de despliegue se acredita en la nota privada de
 la entrega. Los documentos fiscales y la configuración quedan fuera de Git.
 
+Actualización de escritorio: [Contabilidad en el mini](DESKTOP-ACCOUNTING.md).
+La aplicación local ya permite consultar el archivo y usar la bandeja existente,
+con recogida manual por correo del pedido Amazon configurado. No requiere Codex
+abierto y no realiza consultas periódicas. El alcance del correo queda limitado
+a ese pedido; otros proveedores y la extracción avanzada siguen pendientes.
+
 ## Contratos y responsabilidades
 
 ```mermaid
 flowchart LR
     A[Amazon o descarga manual] --> B[Entrada de documentos]
-    C[Correo: conector futuro] --> B
+    C[Correo Business: acción manual por pedido] --> B
     B --> D[Extracción propuesta]
     D --> E[Revisión documental y fiscal]
     E --> F[Libro canónico]
@@ -21,7 +27,7 @@ flowchart LR
 
 | Módulo | Entrada | Salida estable | Implementación |
 |---|---|---|---|
-| Obtención | Pedido, descarga o adjunto | Original PDF y procedencia | Descarga manual disponible; acceso Amazon y conector de correo pendientes |
+| Obtención | Pedido, descarga o adjunto | Original PDF y procedencia | Descarga manual y recogida por correo del pedido Business configurado desde la aplicación local |
 | Entrada Amazon | ZIP/PDF ya descargados | Originales por SHA256 y manifiesto documental versión 1 | `amazon_inbox.prepare`; transferencia manual con `amazon_transfer` hacia la bandeja existente |
 | Entrada | Uno o varios PDF | Original inmutable, SHA256 y borrador | `ExpenseStore.upload`, bandeja con carga secuencial y resultado por archivo |
 | Lectura | PDF y contrato | Propuesta versión 1, evidencia por campo | Texto básico; contrato IA en `expense_policy`; sin proveedor IA/OCR integrado |
@@ -94,7 +100,8 @@ instalar este importador. Ver instrucciones de ejecución en `tools/iva/README.m
 
 ## Correo y Renta
 
-El futuro conector de correo entregará el mismo original y manifiesto de entrada:
+El conector local de correo entrega el original y manifiesto de entrada para el
+pedido Business configurado. Su ampliación a otros proveedores conservará:
 ID de mensaje/adjunto, emisor, fecha de recepción, SHA256 y origen. Recopilará
 proveedores seleccionados, no todo el correo. No asignará deducibilidad por
 remitente. Luz/gas se proponen para Renta y su IVA permanece documental.
