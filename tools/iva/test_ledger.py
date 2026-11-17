@@ -4,6 +4,7 @@ from pathlib import Path
 import unittest
 from ledger import calculate, validate, quarter, verify_sources
 from collect_income import parse_income
+from expense_policy import default_fields
 
 
 def record(**values):
@@ -76,6 +77,29 @@ class LedgerTests(unittest.TestCase):
         d=data([record()]);self.assertIsNone(calculate(d)['3T']['boxes']['71'])
         d['profiles']={'3T':{'remaining_boxes_confirmed_zero':True}}
         self.assertEqual(calculate(d)['3T']['boxes']['71'],'21.00')
+
+    def test_direct_calculation_rejects_new_policy_bypass(self):
+        documented = record(kind='expense',withholding='0.00',total='121.00') | default_fields()
+        for changes in ({'tax_scope':'irpf_only','include':True,'mapping':'domestic21'},
+                        {'tax_scope':'iva_irpf','include':True,'mapping':'domestic21',
+                         'invoice_status':'complete','business_purpose':'Synthetic use',
+                         'buyer_tax_id':'00000000T','buyer_identity_confirmed':False,
+                         'fiscal_review_confirmed':True},
+                        {'tax_scope':'iva_irpf','include':True,'mapping':'domestic21',
+                         'invoice_status':'complete','business_purpose':'Synthetic use',
+                         'buyer_tax_id':'00000000T','buyer_identity_confirmed':True,
+                         'fiscal_review_confirmed':False}):
+            with self.subTest(changes=changes), self.assertRaises(ValueError):
+                calculate(data([documented | changes]))
+        renta = documented | {'tax_scope':'irpf_only','category':'electricity'}
+        self.assertEqual(calculate(data([renta]))['3T']['boxes']['29'],'0.00')
+
+    def test_legacy_calculation_keeps_record_unchanged_without_policy_fields(self):
+        original = record(kind='expense',withholding='0.00',total='121.00',mapping='historical_domestic21')
+        before = original.copy()
+        self.assertEqual(calculate(data([original]))['3T']['boxes']['29'],'21.00')
+        self.assertEqual(original,before)
+        self.assertNotIn('expense_policy_version',original)
 
 
 if __name__=='__main__':unittest.main()

@@ -1,8 +1,11 @@
 import hashlib
 import json
+import re
 from pathlib import Path
 import tempfile
 import unittest
+import shutil
+import subprocess
 from unittest.mock import patch
 import modelos_web
 from vat_dashboard import response, render
@@ -172,6 +175,124 @@ class ModelosTests(unittest.TestCase):
         self.assertIn('Ver estado',html)
         self.assertNotIn('setInterval',html)
         self.assertNotIn('setTimeout',html)
+
+    def test_upload_duplicate_preserves_review_and_reports_existing_document(self):
+        from test_expense_workflow import pdf, fields
+        with tempfile.TemporaryDirectory() as folder, patch('model_events.request') as request:
+            first=modelos_web.post(folder,'/modelos/gastos',{'action':'upload','filename':'factura.pdf','pdf':pdf()},'owner')
+            self.assertFalse(first['duplicate'])
+            saved=modelos_web.post(folder,'/modelos/gastos',{'action':'edit','id':first['id'],'revision':first['revision'],'fields':fields()},'owner')
+            repeated=modelos_web.post(folder,'/modelos/gastos',{'action':'upload','filename':'otra-copia.pdf','pdf':pdf()},'owner')
+            self.assertTrue(repeated['duplicate'])
+            self.assertEqual(repeated['id'],saved['id'])
+            self.assertEqual(repeated['revision'],saved['revision'])
+            request.assert_not_called()
+
+    def test_queue_filters_combine_state_scope_category_without_mutating_rows(self):
+        rows=[{'id':'a','state':'draft','fields':{'category':'electricity','tax_scope':'irpf_only'}},
+              {'id':'b','state':'approved','fields':{'category':'electricity','tax_scope':'irpf_only'}},
+              {'id':'c','state':'draft','fields':{'category':'gas','tax_scope':'review'}}]
+        original=json.dumps(rows)
+        filters=modelos_web.filters_from_query({'estado':['draft'],'alcance':['irpf_only'],'categoria':['electricity']})
+        self.assertEqual([row['id'] for row in modelos_web.filtered_rows(rows,filters)],['a'])
+        self.assertEqual(json.dumps(rows),original)
+        with self.assertRaises(ValueError):modelos_web.filters_from_query({'categoria':['<script>']})
+
+    def test_incomplete_amount_in_one_draft_does_not_break_the_inbox(self):
+        row={'id':'abc','state':'draft','filename':'pendiente.pdf','fields':{'total':'ilegible'}}
+        html=modelos_web.render(None,[row],'token')
+        self.assertIn('pendiente.pdf',html)
+        self.assertIn('Por revisar',html)
+
+    def test_renta_fields_pass_through_routes_without_entering_vat(self):
+        from test_expense_workflow import pdf, fields
+        with tempfile.TemporaryDirectory() as folder:
+            first=modelos_web.post(folder,'/modelos/gastos',{'action':'upload','filename':'luz.pdf','pdf':pdf()},'owner')
+            review=fields()|dict(category='electricity',tax_scope='irpf_only',irpf_treatment='pending',include=False,mapping='pending',buyer_tax_id='',buyer_identity_confirmed=False,fiscal_review_confirmed=False,invoice_status='needs_review',tax_id='')
+            saved=modelos_web.post(folder,'/modelos/gastos',{'action':'edit','id':first['id'],'revision':first['revision'],'fields':review},'owner')
+            approved=modelos_web.post(folder,'/modelos/gastos',{'action':'approve','id':saved['id'],'revision':saved['revision']},'owner')
+            record=json.loads(modelos_web.get(folder,'/modelos/gastos/paquete?id='+approved['id'],'token')[1])['record']
+            self.assertFalse(record['include'])
+            self.assertEqual(record['tax_scope'],'irpf_only')
+            self.assertEqual(record['irpf_treatment'],'pending')
+            self.assertEqual(record['vat'],'21.00')
+            html=modelos_web.get(folder,approved['url'],'token')[1]
+            self.assertIn('sin deducción IRPF calculada',html)
+
+    def test_save_and_next_chooses_another_pending_draft_without_approving(self):
+        from test_expense_workflow import pdf, fields
+        with tempfile.TemporaryDirectory() as folder, patch('model_events.request') as request:
+            drafts=[modelos_web.post(folder,'/modelos/gastos',{'action':'upload','filename':name+'.pdf','pdf':pdf(name)},'owner') for name in ('one','two')]
+            first,second=drafts
+            result=modelos_web.post(folder,'/modelos/gastos',{'action':'edit','id':first['id'],'revision':first['revision'],'fields':fields(),'next':True},'owner')
+            self.assertEqual(result['url'],modelos_web.BASE+'?id='+second['id'])
+            self.assertEqual(modelos_web.store(folder).get(first['id'])['state'],'draft')
+            request.assert_not_called()
+
+    @unittest.skipUnless(shutil.which('node'),'Node is required to exercise browser batch logic')
+    def test_batch_upload_is_sequential_and_keeps_successes_after_errors(self):
+        program=r'''
+const assert=require('node:assert/strict');
+const upload=new Function(SOURCE+';return uploadExpenseFiles;')();
+const file=(name,size=3)=>({name,size,arrayBuffer:async()=>new Uint8Array([1,2,3]).buffer});
+let active=0,calls=0;const progress=[];
+(async()=>{const results=await upload([file('ok.pdf'),file('duplicate.pdf'),file('bad.pdf'),file('big.pdf',8*1024*1024+1),file('after.pdf')],async body=>{
+ assert.equal(active,0);active++;calls++;await Promise.resolve();active--;
+ if(body.filename==='bad.pdf')throw Error('PDF dañado');
+ return {duplicate:body.filename==='duplicate.pdf',url:'/facturas/modelos/gastos?id=fixture',message:'Conservado'};
+},result=>progress.push(result));
+assert.equal(calls,4);assert.deepEqual(results.map(r=>r.state),['saved','duplicate','error','error','saved']);assert.ok(results[0].url);assert.ok(results[4].url);assert.equal(progress.length,10);
+})().catch(error=>{console.error(error);process.exitCode=1});
+'''.replace('SOURCE',json.dumps(modelos_web.BATCH_SCRIPT))
+        result=subprocess.run([shutil.which('node'),'-e',program],capture_output=True,text=True,timeout=15)
+        self.assertEqual(result.returncode,0,result.stderr)
+
+    def test_navigation_and_review_escape_new_fiscal_fields_and_show_no_auto_job(self):
+        from modelos_ui import navigation
+        row={'id':'abc','revision':'r1','state':'draft','filename':'invoice.pdf','pages':1,
+             'fields':{'business_purpose':'</textarea><script>evil()</script>','order_reference':'<img src=x>','buyer_tax_id':'\"><svg onload=evil()>','category':'electricity','tax_scope':'irpf_only'}}
+        html=modelos_web.render(row,[],'token')
+        self.assertNotIn('</textarea><script>evil()',html)
+        self.assertNotIn('<img src=x>',html)
+        self.assertIn('Copiar texto',html)
+        self.assertIn('sin deducción IRPF calculada',html)
+        self.assertNotIn('setInterval',html)
+        self.assertEqual(navigation('gastos').count('aria-current="page"'),1)
+        self.assertIn('vista=modelos',navigation('gastos'))
+
+    def test_pdf_preview_is_opt_in_with_new_tab_original_fallback(self):
+        row={'id':'abc','revision':'r1','state':'draft','filename':'invoice.pdf','pages':1,'fields':{}}
+        html=modelos_web.render(row,[],'token')
+        iframe=re.search(r'<iframe\b[^>]*>',html).group()
+        self.assertNotIn('src=',iframe)
+        self.assertIn('hidden',iframe)
+        details=re.search(r'<details\b[^>]*id="expense-preview"[^>]*>',html).group()
+        self.assertNotIn(' open',details)
+        self.assertIn('data-pdf-url=',details)
+        self.assertIn('target="_blank" rel="noopener">Abrir PDF completo',html)
+        self.assertNotIn('matchMedia',html)
+        self.assertIn("addEventListener('toggle'",html)
+
+    @unittest.skipUnless(shutil.which('node'),'Node is required to exercise PDF loader')
+    def test_pdf_loader_accepts_authenticated_pdf_with_deny_header_and_rejects_html(self):
+        program=r'''
+const assert=require('node:assert/strict');
+const load=new Function(SOURCE+';return fetchExpensePdf;')();
+(async()=>{
+ let calls=0;
+ const pdf=await load('/facturas/modelos/gastos/pdf?id=fixture',async(url,options)=>{
+  calls++;assert.equal(options.credentials,'same-origin');assert.equal(options.cache,'no-store');
+  return new Response('%PDF-1.4\nfixture',{headers:{'Content-Type':'application/pdf','X-Frame-Options':'DENY'}});
+ });
+ assert.equal(calls,1);assert.equal(await pdf.slice(0,5).text(),'%PDF-');
+ const objectUrl=URL.createObjectURL(pdf);assert.ok(objectUrl.startsWith('blob:'));URL.revokeObjectURL(objectUrl);
+ for(const response of [new Response('<html>Denied</html>',{status:403}),new Response('<html>Login</html>',{headers:{'Content-Type':'text/html'}}),new Response('not a pdf',{headers:{'Content-Type':'application/pdf'}})]){
+  await assert.rejects(load('/private',async()=>response));
+ }
+})().catch(error=>{console.error(error);process.exitCode=1});
+'''.replace('SOURCE',json.dumps(modelos_web.PDF_SCRIPT))
+        result=subprocess.run([shutil.which('node'),'-e',program],capture_output=True,text=True,timeout=15)
+        self.assertEqual(result.returncode,0,result.stderr)
 
 
 if __name__=='__main__':

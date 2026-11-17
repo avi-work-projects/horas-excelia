@@ -138,6 +138,74 @@ class WorkerIntegrationTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 sync_models.build_manifest(self.root, self.ledger_relative, self.index_relative, self.backup)
 
+    def test_workbook_matches_snapshot_and_keeps_historical_downloads(self):
+        historical = self.root / 'historical.txt'
+        historical.write_bytes(b'SYNTHETIC HISTORICAL EXPORT')
+        old_entry = dict(path='historical.txt',sha256=digest(historical.read_bytes()),period='2T',label='Ensayo histórico')
+        self.index.write_bytes(encoded({'downloads':{'historical':old_entry}}))
+        before = self.ledger.read_bytes()
+        manifest = sync_models.build_manifest(self.root,self.ledger_relative,self.index_relative,self.backup)
+        index = json.loads(self.index.read_bytes())
+        item = index['downloads']['annual-workbook']
+        raw = (self.root / item['path']).read_bytes()
+        self.assertEqual(item['ledger_sha256'], digest(before))
+        self.assertEqual(item['ledger_sha256'], index['ledger']['sha256'])
+        self.assertEqual(item['sha256'], digest(raw))
+        self.assertIn(dict(path=item['path'],sha256=digest(raw)),manifest['files'])
+        self.assertEqual(index['downloads']['historical'],old_entry)
+        self.assertEqual((self.root/index['ledger']['path']).read_bytes(),before)
+        self.assertEqual(self.ledger.read_bytes(),before)
+        # Rendering identical inputs reuses the same immutable workbook/version.
+        again = sync_models.build_manifest(self.root,self.ledger_relative,self.index_relative,self.backup)
+        self.assertEqual(json.loads(self.index.read_bytes())['downloads']['annual-workbook'],item)
+        self.assertEqual(again,manifest)
+        runtime = self.base/'runtime'
+        runtime.mkdir()
+        consultation = self.base/'consultation'
+        consultation.mkdir()
+        config = dict(archive_root=str(self.root),consultation_root=str(consultation))
+        (runtime/'config.json').write_bytes(encoded(config))
+        sync_models.publish(runtime,manifest)
+        published = json.loads((consultation/'modelos-index.json').read_bytes())
+        download = published['downloads']['annual-workbook']
+        self.assertEqual(download['ledger_sha256'],published['ledger']['sha256'])
+        self.assertEqual((consultation/download['path']).read_bytes(),raw)
+        self.assertEqual(published['distribution_status'],'verified')
+
+    def test_workbook_generation_failure_keeps_prior_index_and_old_file(self):
+        sync_models.build_manifest(self.root,self.ledger_relative,self.index_relative,self.backup)
+        previous = self.index.read_bytes()
+        item = json.loads(previous)['downloads']['annual-workbook']
+        original = (self.root/item['path']).read_bytes()
+        self.data['as_of'] = '2026-11-17'
+        self.ledger.write_bytes(encoded(self.data))
+        with patch('accounting_workbook.build',side_effect=ValueError('Synthetic output failure')):
+            with self.assertRaises(ValueError):
+                sync_models.build_manifest(self.root,self.ledger_relative,self.index_relative,self.backup)
+        self.assertEqual(self.index.read_bytes(),previous)
+        self.assertEqual((self.root/item['path']).read_bytes(),original)
+        self.assertNotEqual(item['ledger_sha256'],digest(self.ledger.read_bytes()))
+
+    def test_publication_rejects_excel_from_another_ledger_before_activation(self):
+        manifest = sync_models.build_manifest(self.root,self.ledger_relative,self.index_relative,self.backup)
+        tampered = json.loads(self.index.read_bytes())
+        tampered['downloads']['annual-workbook']['ledger_sha256'] = 'f'*64
+        self.index.write_bytes(encoded(tampered))
+        for entry in manifest['files']:
+            if entry['path']==self.index_relative:
+                entry['sha256']=digest(self.index.read_bytes())
+        runtime = self.base/'runtime'
+        runtime.mkdir()
+        consultation = self.base/'consultation'
+        consultation.mkdir()
+        (consultation/'modelos-index.json').write_bytes(b'PREVIOUS ACTIVE INDEX')
+        config = dict(archive_root=str(self.root),consultation_root=str(consultation))
+        (runtime/'config.json').write_bytes(encoded(config))
+        with self.assertRaisesRegex(ValueError,'Excel anual'):
+            sync_models.publish(runtime,manifest)
+        self.assertEqual((consultation/'modelos-index.json').read_bytes(),b'PREVIOUS ACTIVE INDEX')
+        self.assertEqual(json.loads((runtime/'config.json').read_bytes()),config)
+
 
 if __name__ == '__main__':
     unittest.main()

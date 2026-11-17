@@ -1,3 +1,9 @@
+> Estado vigente 17/11/2026: consultar [Contabilidad modular](ACCOUNTING-MODULES.md).
+> El texto siguiente conserva la revisión del 26/10 como antecedente. La bandeja,
+> el cierre guiado y el exportador 390 ya fueron implementados posteriormente;
+> no tratarlos como pendientes. IA/OCR, conectores Amazon/correo y motor IRPF
+> siguen pendientes. No hay actualizaciones por temporizador.
+
 # Gastos, cierre anual y renta
 
 Revisión del producto Declarando realizada el 26/10/2026, con sesión autorizada.

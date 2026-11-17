@@ -21,6 +21,9 @@ STYLE = '''<style>
 .modelos .m-periods{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;border:1px solid var(--k-line);padding:4px;border-radius:14px;margin:12px 0 16px;background:var(--k-surface)}
 .modelos .m-periods a{display:grid;place-items:center;min-height:44px;text-decoration:none;border-radius:10px;color:var(--k-muted);font-weight:650}
 .modelos .m-periods a[aria-current]{background:var(--k-accent);color:var(--k-bg)}
+.modelos .m-navigation{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin:8px 0 20px;padding:4px;background:var(--k-surface);border:1px solid var(--k-line);border-radius:12px}.modelos .m-navigation a{display:flex;align-items:center;justify-content:center;min-height:44px;padding:6px 3px;text-align:center;text-decoration:none;font-size:13px;color:var(--k-muted);border-radius:8px;overflow-wrap:anywhere}.modelos .m-navigation a[aria-current]{background:var(--k-accent);color:var(--k-bg);font-weight:650}
+.k-main:has(>.modelos.m-wide){max-width:1180px}.modelos.m-wide{min-width:0}.modelos .m-expense-layout{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:20px;align-items:start}.modelos .m-expense-preview{position:sticky;top:12px;min-width:0}.modelos .m-expense-preview iframe{display:block;width:100%;height:76vh;min-height:560px;border:1px solid var(--k-line);border-radius:10px;background:var(--k-bg)}.modelos .m-expense-preview summary{font-size:15px;font-weight:650}.modelos .m-expense-preview .m-card{margin-top:0}.modelos .m-expense-fields>.m-card:first-child{margin-top:0}.modelos .m-expense-upload{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:24px;align-items:center}.modelos .m-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;align-items:end;gap:10px}.modelos .m-expense-list{list-style:none;padding:0;margin:18px 0 0}.modelos .m-expense-row{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) auto;gap:14px;align-items:center;padding:15px 0;border-top:1px solid var(--k-line)}.modelos .m-expense-row p{margin:4px 0}.modelos .m-expense-row strong,.modelos .m-expense-row a{overflow-wrap:anywhere}.modelos .m-expense-row .m-doc-total{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}.modelos .m-batch-results{list-style:none;padding:0}.modelos .m-batch-results li{padding:10px 0;border-bottom:1px solid var(--k-line)}.modelos .m-batch-results strong{display:block}.modelos .m-batch-results span{margin-right:10px}.modelos .m-form .m-actions button{width:auto}.modelos [hidden]{display:none!important}.modelos .m-review-section{padding-top:16px;border-top:1px solid var(--k-line);margin-top:8px}.modelos .m-summary-line{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.modelos .m-summary-line h2{margin:0}.modelos .m-invoice-help textarea{min-height:210px}
+@media(max-width:900px){.modelos .m-expense-layout,.modelos .m-expense-upload{grid-template-columns:minmax(0,1fr)}.modelos .m-expense-preview{position:static}.modelos .m-expense-preview iframe{height:480px;min-height:0}.modelos .m-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.modelos .m-expense-row{grid-template-columns:minmax(0,1fr) auto}.modelos .m-expense-row .m-expense-classification{grid-column:1/-1;grid-row:2}.modelos .m-expense-row .m-doc-total{grid-column:2;grid-row:1}}
 .modelos .m-card{padding:16px;margin:12px 0;border:1px solid var(--k-line);border-radius:16px;background:var(--k-surface)}
 .modelos .m-hero{background:var(--m-tint)}.modelos .m-eyebrow{font-size:12px;color:var(--k-muted);font-weight:650}.modelos .m-status{font-weight:700;font-size:18px;margin:6px 0}.modelos .m-amount{font-size:30px;line-height:1.2;letter-spacing:-.035em;font-weight:700;margin:8px 0;font-variant-numeric:tabular-nums}
 .modelos .m-tag{display:inline-block;font-size:12px;padding:3px 8px;border:1px solid var(--k-line);border-radius:8px;color:var(--k-muted);background:var(--k-bg)}
@@ -33,8 +36,8 @@ STYLE = '''<style>
 </style>'''
 
 
-def page(content, title='Modelos IVA'):
-    content = STYLE + '<section class="modelos">' + content + '</section>'
+def page(content, title='Modelos IVA', wide=False):
+    content = STYLE + '<section class="modelos'+(' m-wide' if wide else '')+'">' + content + '</section>'
     try:
         from kairo_invoice_web import dashboard
     except ModuleNotFoundError as exc:
@@ -52,3 +55,14 @@ def fact(label, value):
 
 def button(url, label, primary=False):
     return '<a class="m-button'+(' m-primary' if primary else '')+'" href="'+e(url)+'">'+e(label)+'</a>'
+
+
+def navigation(active):
+    entries = [('resumen','Resumen','/facturas/modelos?vista=resumen'),
+               ('gastos','Gastos','/facturas/modelos/gastos'),
+               ('ingresos','Ingresos','/facturas/modelos?vista=ingresos'),
+               ('libros','Libros','/facturas/modelos?vista=libros'),
+               ('modelos','Modelos','/facturas/modelos?vista=modelos')]
+    return '<nav class="m-navigation" aria-label="Contabilidad">'+''.join(
+        '<a href="'+url+'"'+(' aria-current="page"' if key==active else '')+'>'+label+'</a>'
+        for key,label,url in entries)+'</nav>'

@@ -10,6 +10,7 @@ from unittest.mock import patch
 from pypdf import PdfWriter
 import expense_workflow as workflow
 from expense_workflow import ExpenseStore, apply_bundle, digest, encoded, exclusive
+from expense_policy import default_fields, POLICY_FIELDS
 
 
 def pdf(tag='one'):
@@ -22,12 +23,14 @@ def pdf(tag='one'):
 
 
 def fields():
-    return dict(year=2026, number='E-TEST', party='Synthetic supplier', tax_id='B00000000',
+    return default_fields() | dict(year=2026, number='E-TEST', party='Synthetic supplier', tax_id='B00000000',
                 date='2026-11-01', period='4T', base='100.00', vat='21.00', withholding='0.00',
                 total='121.00', include=True, mapping='domestic21', rate='21.00',
                 receipt_date='2026-11-02', receipt_date_source='Synthetic receipt log',
                 note='Synthetic test', reviewed_all_pages=True, single_invoice=True,
-                fiscal_review_confirmed=True)
+                fiscal_review_confirmed=True, tax_scope='iva_irpf', invoice_status='complete',
+                buyer_tax_id='00000000T', buyer_identity_confirmed=True,
+                business_purpose='Material utilizado exclusivamente en el servicio ficticio')
 
 
 class ExpenseTests(unittest.TestCase):
@@ -50,6 +53,8 @@ class ExpenseTests(unittest.TestCase):
         return self.store.upload('synthetic.pdf', pdf(tag), 'test-user')
 
     def approved(self, tag='one', **changes):
+        if changes.get('include') is False:
+            changes.setdefault('tax_scope', 'excluded')
         draft = self.draft(tag)
         draft = self.store.edit(draft['id'], draft['revision'], fields() | changes, 'test-user')
         return self.store.approve(draft['id'], draft['revision'], 'test-user')
@@ -196,6 +201,81 @@ class ExpenseTests(unittest.TestCase):
         self.assertEqual(ack['state'], 'incorporated')
         again = self.store.mark_applied(d['id'], bundle['bundle_sha256'], result['ledger_sha256'])
         self.assertEqual(ack['revision'], again['revision'])
+
+    def test_renta_archive_keeps_documentary_vat_out_of_calculation(self):
+        d = self.approved(category='electricity', tax_scope='irpf_only',
+            fiscal_review_confirmed=False, buyer_identity_confirmed=False, buyer_tax_id='',
+            tax_id='', invoice_status='needs_invoice', note='', irpf_treatment='pending')
+        bundle = self.store.bundle(d['id'])
+        self.assertFalse(bundle['record']['include'])
+        self.assertEqual(bundle['record']['vat'], '21.00')
+        self.assertIn('Renta', bundle['record']['note'])
+        self.apply(bundle)
+        data = json.loads(self.ledger.read_text())
+        self.assertEqual(data['calculations']['4T']['boxes']['29'], '0.00')
+        self.assertEqual(data['records'][0]['irpf_treatment'], 'pending')
+        self.assertEqual(data['records'][0]['expense_policy_version'], 1)
+
+    def test_policy_fields_and_buyer_check_are_bound_to_review_version(self):
+        d = self.draft()
+        d = self.store.edit(d['id'], d['revision'], fields(), 'user')
+        changed = self.store.edit(d['id'], d['revision'], {'business_purpose':'Otro uso ficticio'}, 'user')
+        self.assertFalse(changed['fields']['buyer_identity_confirmed'])
+        with self.assertRaises(ValueError):
+            self.store.approve(changed['id'], changed['revision'], 'user')
+        d = self.approved('second', category='telecom', order_reference='Pedido ficticio')
+        record = self.store.bundle(d['id'])['record']
+        self.assertEqual(record['order_reference'], 'Pedido ficticio')
+        self.assertEqual(record['category'], 'telecom')
+
+    def test_legacy_approved_record_keeps_exact_hash_and_no_new_fields(self):
+        d = self.draft()
+        old_fields = {k:v for k,v in fields().items() if k not in POLICY_FIELDS}
+        old_fields['archive_path'] = 'FACTURAS/2026/GASTOS KAIRO/legacy.pdf'
+        d['fields'] = old_fields
+        d = self.store._save(d, 'test-migration', 'legacy-fixture')
+        record = workflow.make_record(d)
+        self.assertFalse(POLICY_FIELDS.intersection(record))
+        before = digest(encoded(record))
+        d = self.store.approve(d['id'], d['revision'], 'user')
+        bundle = self.store.bundle(d['id'])
+        self.assertEqual(bundle['approval']['record_sha256'], before)
+        self.apply(bundle)
+        self.assertEqual(json.loads(self.ledger.read_text())['records'][0], record)
+
+    def test_bundle_rejects_policy_conflict_even_with_recomputed_hashes(self):
+        d = self.approved()
+        bundle = self.store.bundle(d['id'])
+        bundle['record']['category'] = 'gas'
+        bundle['approval']['record_sha256'] = digest(encoded(bundle['record']))
+        bundle['bundle_sha256'] = digest(encoded({k:v for k,v in bundle.items() if k!='bundle_sha256'}))
+        with self.assertRaises(ValueError):
+            self.apply(bundle)
+        self.assertEqual(self.ledger.read_bytes(), self.initial)
+
+    def test_structured_extraction_is_only_unreviewed_draft_bound_to_pdf(self):
+        d = self.draft()
+        d = self.store.edit(d['id'], d['revision'], fields(), 'user')
+        original_book = self.ledger.read_bytes()
+        proposal = dict(schema_version=1, document_sha256=d['sha256'],
+            values={'number':'AI-PROPOSAL'}, evidence={'number':[{'page':1,'quote':'Factura AI-PROPOSAL'}]})
+        updated = self.store.propose(d['id'], proposal, d['revision'], 'extractor')
+        self.assertEqual(updated['state'], 'draft')
+        self.assertEqual(updated['fields']['number'], 'AI-PROPOSAL')
+        self.assertFalse(updated['fields']['include'])
+        self.assertFalse(updated['fields']['buyer_identity_confirmed'])
+        self.assertEqual(updated['fields']['tax_scope'], 'review')
+        self.assertEqual(self.ledger.read_bytes(), original_book)
+        with self.assertRaises(ValueError):
+            self.store.approve(updated['id'], updated['revision'], 'user')
+        bad = deepcopy(proposal)
+        bad['document_sha256'] = '0'*64
+        with self.assertRaises(ValueError):
+            self.store.propose(updated['id'], bad, updated['revision'], 'extractor')
+        bad = deepcopy(proposal)
+        bad['values']['fiscal_review_confirmed'] = True
+        with self.assertRaises(ValueError):
+            self.store.propose(updated['id'], bad, updated['revision'], 'extractor')
 
 
 if __name__ == '__main__':

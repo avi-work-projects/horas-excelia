@@ -6,6 +6,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
+from expense_policy import validate_policy
 
 
 def money(value):
@@ -28,6 +29,8 @@ def validate(records, year):
         seen.add(key)
         if r['kind'] not in ('income', 'expense'):
             raise ValueError('Unknown record kind')
+        if r['kind'] == 'expense':
+            validate_policy(r, for_approval=True)
         if date.fromisoformat(r['date']).year != year:
             raise ValueError('Wrong exercise')
         if r['period'] not in ('1T', '2T', '3T', '4T'):

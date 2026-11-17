@@ -28,6 +28,18 @@ def remote(config,request):
     if result.returncode:raise RuntimeError(result.stderr.decode(errors='replace')[-1500:])
     return json.loads(result.stdout)
 
+def verify_index(index, files, ledger_sha256):
+    """An index may only activate files verified for this complete snapshot."""
+    hashes={item['path']:item['sha256'] for item in files}
+    for item in [index['ledger'],index['report'],*index.get('downloads',{}).values()]:
+        if hashes.get(item['path'])!=item['sha256']:
+            raise ValueError('El índice referencia un archivo fuera de la versión verificada')
+    if index['ledger']['sha256']!=ledger_sha256:
+        raise ValueError('El índice no corresponde al libro verificado')
+    workbook=index.get('downloads',{}).get('annual-workbook')
+    if workbook and workbook.get('ledger_sha256')!=ledger_sha256:
+        raise ValueError('El Excel anual no corresponde a la versión del libro')
+
 def publish(runtime,manifest):
     config=read(Path(runtime)/'config.json')
     # The stable consultation root is configured independently from versioned closing roots.
@@ -52,6 +64,7 @@ def publish(runtime,manifest):
     for item in manifest['files']:
         if digest(confined(target,item['path']).read_bytes())!=item['sha256']:raise ValueError('Copia no coincide')
     index=read(confined(target,manifest['index']))
+    verify_index(index,manifest['files'],manifest['ledger_sha256'])
     for item in [index['ledger'],index['report'],*index['downloads'].values()]:
         item['path']='_versions/'+version+'/'+item['path']
     # Originals are resolved relative to the version root by the panel.
@@ -98,23 +111,34 @@ def build_manifest(root,ledger_relative,index_relative,backup_root=None):
 
 def _build_manifest(root,ledger_relative,index_relative,backup):
     from review_year import review, render
+    from accounting_workbook import build, MIME
     root=Path(root);ledger=confined(root,ledger_relative);ledger_raw=ledger.read_bytes();data=json.loads(ledger_raw.decode('utf-8-sig'))
-    index_path=confined(root,index_relative);index=read(index_path)
+    ledger_sha256=digest(ledger_raw)
+    index_path=confined(root,index_relative);prior_index=index_path.read_bytes();index=json.loads(prior_index.decode('utf-8-sig'))
     result=review(data,root)
     report_bytes=json.dumps(result,ensure_ascii=False,indent=2).encode()
-    version=digest(ledger_raw+report_bytes)
+    filename=f'LIBRO_ANUAL_{data["year"]}_CONSULTA.xlsx'
+    # Construct every output before activating an index. A failed workbook must
+    # not leave an old spreadsheet advertised as the current book's output.
+    outputs={'libro.json':ledger_raw,'revision.json':report_bytes,
+             'revision.html':render(result).encode(),filename:build(data,ledger_sha256,result['quarters'])}
+    version=digest(b''.join(name.encode()+b'\0'+outputs[name] for name in sorted(outputs)))
     prefix=f'REVISIONES/{data["year"]}/CONSULTA/{version}'
-    snapshot=confined(root,prefix+'/libro.json')
-    atomic(snapshot,ledger_raw)
-    report=confined(root,prefix+'/revision.json');raw=json.dumps(result,ensure_ascii=False,indent=2).encode()
-    if not report.exists() or report.read_bytes()!=raw:atomic(report,raw)
-    atomic(report.with_suffix('.html'),render(result).encode())
-    index['ledger']={'path':prefix+'/libro.json','sha256':digest(ledger_raw)}
-    index['report']={'path':prefix+'/revision.json','sha256':digest(raw)}
-    index['updated']=datetime.now().strftime('%d/%m/%Y')
     if ledger.read_bytes()!=ledger_raw:raise ValueError('El libro ha cambiado durante la actualización')
-    atomic(backup/('index-'+digest(index_path.read_bytes())+'.json'),index_path.read_bytes())
-    atomic(index_path,json.dumps(index,ensure_ascii=False,indent=2).encode())
+    for name,raw in outputs.items():
+        destination=confined(root,prefix+'/'+name)
+        if destination.exists():
+            if destination.read_bytes()!=raw:raise ValueError('La instantánea existente ha cambiado')
+        else:atomic(destination,raw)
+    index['ledger']={'path':prefix+'/libro.json','sha256':ledger_sha256}
+    index['report']={'path':prefix+'/revision.json','sha256':digest(report_bytes)}
+    index.setdefault('downloads',{})['annual-workbook']={
+        'path':prefix+'/'+filename,'sha256':digest(outputs[filename]),'ledger_sha256':ledger_sha256,
+        'period':'anual','label':'Libro anual Excel','filename':filename,'mime':MIME,
+        'note':'Consulta del libro y documentos pendientes de IRPF; no es LSI ni declaración fiscal.'}
+    index['updated']=datetime.now().strftime('%d/%m/%Y')
+    index['distribution_status']='Pendiente de verificar copia remota de Drive y Kairo'
+    index_bytes=json.dumps(index,ensure_ascii=False,indent=2).encode()
     paths={ledger_relative,index_relative,index['ledger']['path'],index['report']['path'],prefix+'/revision.html'}
     paths.update(r['source'] for r in data['records'])
     paths.update(item['path'] for item in index['downloads'].values())
@@ -128,9 +152,13 @@ def _build_manifest(root,ledger_relative,index_relative,backup):
         if p.is_file():paths.add(p.relative_to(root).as_posix())
     for p in (root/'REVISIONES'/str(data['year'])/'JUSTIFICANTES').glob('*'):
         if p.is_file() and p.suffix in ('.pdf','.json'):paths.add(p.relative_to(root).as_posix())
-    files=[{'path':relative,'sha256':digest(confined(root,relative).read_bytes())} for relative in sorted(paths)]
+    files=[{'path':relative,'sha256':digest(index_bytes if relative==index_relative else confined(root,relative).read_bytes())} for relative in sorted(paths)]
+    verify_index(index,files,ledger_sha256)
     if ledger.read_bytes()!=ledger_raw:raise ValueError('El libro ha cambiado durante la verificación')
-    return {'files':files,'index':index_relative,'ledger_sha256':digest(ledger_raw)}
+    if index_path.read_bytes()!=prior_index:raise ValueError('El índice ha cambiado durante la verificación')
+    atomic(backup/('index-'+digest(prior_index)+'.json'),prior_index)
+    atomic(index_path,index_bytes)
+    return {'files':files,'index':index_relative,'ledger_sha256':ledger_sha256}
 
 def run(config):
     from expense_workflow import apply_bundle

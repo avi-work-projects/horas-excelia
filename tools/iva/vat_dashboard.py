@@ -5,7 +5,7 @@ import re
 from datetime import date
 from pathlib import Path
 from urllib.parse import parse_qs, urlsplit, quote
-from modelos_ui import e, euro, page, fact, button
+from modelos_ui import e, euro, page, fact, button, navigation
 
 BASE = '/facturas/modelos'
 
@@ -69,6 +69,8 @@ def response(root, url, csrf='', runtime=None):
             if key not in index['downloads']:
                 return 404, 'Archivo no disponible'
             item = index['downloads'][key]
+            if key == 'annual-workbook' and item.get('ledger_sha256') != index.get('ledger', {}).get('sha256'):
+                raise ValueError('Workbook is not from the current ledger')
             # Never permit a configured filename to inject response headers.
             name = re.sub(r'[^A-Za-z0-9_.-]', '_', Path(item['filename']).name)
             return 200, verified(root, item), item['mime'], {'Content-Disposition':f'attachment; filename="{name}"'}
@@ -89,6 +91,21 @@ def response(root, url, csrf='', runtime=None):
                 return 415, 'El original no es un PDF compatible'
             return 200, raw, 'application/pdf', {'Content-Disposition':'inline; filename="documento.pdf"'}
         default = f'{(date.today().month-1)//3+1}T' if report['year'] == date.today().year else '4T'
+        view = query.get('vista', ['modelos' if 'periodo' in query or 'paso' in query else 'resumen'])[0]
+        if view != 'modelos':
+            from accounting_views import VIEWS, render as accounting_render
+            if view not in VIEWS:
+                return 400, 'Vista no válida'
+            pending_count = None
+            if runtime is not None and view == 'resumen':
+                try:
+                    from expense_workflow import ExpenseStore
+                    pending_count = sum(row['state'] != 'incorporated' for row in ExpenseStore(Path(runtime)/'expenses').list())
+                except (OSError, ValueError, KeyError):
+                    pass
+            return 200, accounting_render(index, report, ledger, view,
+                query.get('periodo', ['todos'])[0], query.get('buscar', [''])[0][:160],
+                update_controls(csrf, update_status(runtime)), pending_count)
         quarter = query.get('periodo', [default])[0]
         section = query.get('paso', ['revision'])[0]
         if quarter not in report['quarters'] or section not in ('documentos','revision','archivos','anual'):
@@ -143,7 +160,7 @@ def render(index, report, ledger, quarter, section, kind='todos', csrf='', updat
     annual = section == 'anual'
     tabs = ''.join(f'<a href="{BASE}?periodo={q}"'+(' aria-current="page"' if q==quarter and not annual else '')+'>'+q+'</a>' for q in ('1T','2T','3T','4T'))
     tabs += f'<a href="{BASE}?periodo={quarter}&paso=anual"'+(' aria-current="page"' if annual else '')+'>Año</a>'
-    head = f'<h1>IVA {year}</h1><nav class="m-periods" aria-label="Periodo fiscal">{tabs}</nav>'+update_controls(csrf,update or {'state':'idle','message':'Actualización manual de los datos.'})
+    head = navigation('modelos')+f'<h1>IVA {year}</h1><nav class="m-periods" aria-label="Periodo fiscal">{tabs}</nav>'+update_controls(csrf,update or {'state':'idle','message':'Actualización manual de los datos.'})
     if annual:
         content = annual_content(report)
     elif section == 'documentos':

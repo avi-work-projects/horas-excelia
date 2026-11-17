@@ -18,13 +18,16 @@ import uuid
 
 from ledger import calculate, money, quarter, validate, verify_sources
 from review_year import review, render
+from expense_policy import (POLICY_FIELDS, CONFIRMATION_FIELDS, default_fields,
+    has_policy, normalize_fields, record_note, validate_policy, proposal_contract,
+    validate_proposal)
 
 MAX_PDF_BYTES = 8 * 1024 * 1024
 MAX_PAGES = 60
 FIELDS = {'year', 'number', 'party', 'tax_id', 'date', 'period', 'base', 'vat',
           'withholding', 'total', 'include', 'mapping', 'rate', 'note',
           'receipt_date', 'receipt_date_source', 'archive_path', 'reviewed_all_pages',
-          'single_invoice', 'fiscal_review_confirmed'}
+          'single_invoice', 'fiscal_review_confirmed'} | POLICY_FIELDS
 
 
 def now():
@@ -135,9 +138,12 @@ def clean_fields(fields):
         raise ValueError('Campos de gasto no admitidos')
     result = dict(fields)
     for key, value in result.items():
-        if key in ('include', 'reviewed_all_pages', 'single_invoice', 'fiscal_review_confirmed'):
+        if key == 'include' or key in CONFIRMATION_FIELDS:
             if type(value) is not bool:
                 raise ValueError('La confirmación debe ser explícita')
+        elif key == 'expense_policy_version':
+            if type(value) is not int:
+                raise ValueError('Versión de ficha fiscal no válida')
         elif key == 'year':
             if type(value) is not int or not 2000 <= value <= 2100:
                 raise ValueError('Ejercicio no válido')
@@ -150,15 +156,20 @@ def clean_fields(fields):
 
 def make_record(draft):
     f = clean_fields(draft['fields'])
-    required = ('year', 'number', 'party', 'tax_id', 'date', 'period', 'base', 'vat',
+    validate_policy(f, for_approval=True)
+    required = ('year', 'number', 'party', 'date', 'period', 'base', 'vat',
                 'withholding', 'total', 'include', 'mapping', 'rate', 'archive_path')
+    if not has_policy(f) or f.get('include'):
+        required += ('tax_id',)
+    else:
+        f.setdefault('tax_id', '')
     if any(key not in f or f[key] == '' for key in required):
         raise ValueError('Completa identificación, fechas, importes, destino y tratamiento')
     if f.get('reviewed_all_pages') is not True or f.get('single_invoice') is not True:
         raise ValueError('Revisa todas las páginas y confirma que contienen una sola factura')
     if f['include'] and f.get('fiscal_review_confirmed') is not True:
         raise ValueError('Confirma la revisión del tratamiento fiscal antes de incorporar al cálculo')
-    if not f['include'] and not f.get('note'):
+    if not f['include'] and not record_note(f):
         raise ValueError('Indica el motivo de exclusión')
     for key in ('date', 'receipt_date'):
         if f.get(key):
@@ -174,7 +185,10 @@ def make_record(draft):
     record = {key: f[key] for key in ('number', 'party', 'tax_id', 'date', 'period', 'base',
                                      'vat', 'withholding', 'total', 'include', 'mapping', 'rate')}
     record.update(kind='expense', source=f['archive_path'], sha256=draft['sha256'],
-                  pages=list(range(1, draft['pages'] + 1)), note=f.get('note', ''))
+                  pages=list(range(1, draft['pages'] + 1)), note=record_note(f))
+    if has_policy(f):
+        record.update({key: f[key] for key in POLICY_FIELDS})
+        record['fiscal_review_confirmed'] = f.get('fiscal_review_confirmed', False)
     for key in ('receipt_date', 'receipt_date_source'):
         if f.get(key):
             record[key] = f[key]
@@ -237,7 +251,7 @@ class ExpenseStore:
             ident = uuid.uuid4().hex
             atomic(self._dir(ident) / 'original.pdf', raw)
             draft = dict(id=ident, state='draft', filename=Path(filename).name, sha256=sha,
-                         pages=pages, text_excerpt=text, fields=propose(text),
+                         pages=pages, text_excerpt=text, fields=default_fields() | propose(text),
                          warnings=['Los datos extraídos son propuestas: revisa el documento completo.'],
                          created_at=now(), approval=None)
             if not text.strip():
@@ -254,16 +268,44 @@ class ExpenseStore:
             if draft['state'] != 'draft':
                 raise ValueError('El gasto aprobado está cerrado para incorporación; registra una corrección por separado')
             draft['fields'].update(clean_fields(fields))
+            draft['fields'] = normalize_fields(draft['fields'])
             if draft['fields'].get('year') and 'archive_path' not in fields:
                 draft['fields']['archive_path'] = f'FACTURAS/{draft["fields"]["year"]}/GASTOS KAIRO/{ident}.pdf'
             draft['state'], draft['approval'] = 'draft', None
             # Every edit invalidates review confirmations, unless supplied anew in this action.
-            for key in ('reviewed_all_pages', 'single_invoice', 'fiscal_review_confirmed'):
-                draft['fields'][key] = fields.get(key, False)
+            for key in CONFIRMATION_FIELDS:
+                if key != 'buyer_identity_confirmed' or has_policy(draft['fields']):
+                    draft['fields'][key] = fields.get(key, False)
             return self._save(draft, actor, 'edit')
 
     def update(self, ident, fields, expected_revision, actor):
         return self.edit(ident, expected_revision, fields, actor)
+
+    def extraction_request(self, ident):
+        """Export documentary context for an authorized extractor; no network IO."""
+        draft = self.get(ident)
+        self.pdf(ident)
+        return dict(document_sha256=draft['sha256'], pages=draft['pages'],
+                    text_excerpt=draft['text_excerpt'], contract=proposal_contract())
+
+    def propose(self, ident, proposal, expected_revision, actor):
+        """Store structured extraction as draft values, invalidating every review."""
+        with exclusive(self.root / '.queue.lock'):
+            draft = self.get(ident)
+            if draft['revision'] != expected_revision or draft['state'] != 'draft':
+                raise ValueError('La propuesta requiere la versión actual de un borrador sin aprobar')
+            self.pdf(ident)
+            proposed = validate_proposal(proposal, draft['pages'], draft['sha256'])
+            # A legacy draft explicitly entering this new flow gets an unreviewed
+            # policy; approved historical drafts and canonical records are untouched.
+            draft['fields'] = normalize_fields(default_fields() | draft['fields'] | clean_fields(proposed['values'])
+                | {'tax_scope': 'review', 'irpf_treatment': 'pending'})
+            for key in CONFIRMATION_FIELDS:
+                draft['fields'][key] = False
+            draft.setdefault('extraction_proposals', []).append(dict(proposal=proposed, at=now(), actor=actor))
+            draft['extraction_proposals'] = draft['extraction_proposals'][-5:]
+            draft['approval'] = None
+            return self._save(draft, actor, 'propose')
 
     def approve(self, ident, expected_revision, actor):
         with exclusive(self.root / '.queue.lock'):
@@ -331,6 +373,7 @@ def validate_bundle(bundle):
     if record.get('kind') != 'expense':
         raise ValueError('El paquete solo admite gastos')
     validate([record], bundle['year'])
+    validate_policy(record, for_approval=True)
     approval = bundle.get('approval') or {}
     if not approval.get('actor') or not approval.get('at') or approval.get('record_sha256') != digest(encoded(record)):
         raise ValueError('Aprobación ausente o no correspondiente al registro')

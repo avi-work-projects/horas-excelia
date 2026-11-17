@@ -181,6 +181,37 @@ configuración de conexiones, PDFs, libros, bases de estado o índices reales a 
 Respaldar los módulos del servicio y configuración antes del despliegue; la
 reversión conserva originales y auditoría. Verificar HTTP 403 sin autorización.
 
+## Excel anual de consulta
+
+`accounting_workbook.py` genera el Excel en cada actualización manual del worker,
+con `openpyxl==3.1.5` y sin depender de un runtime interactivo. Sus hojas son
+Resumen, Ingresos, Gastos, Renta pendiente y Documentos. Los importes son valores
+numéricos calculados y contrastados con las filas del motor Decimal; el archivo
+no necesita ejecutar fórmulas para mostrar sus resultados. Editarlo no modifica
+el libro canónico ni recalcula este resumen de consulta.
+
+Los gastos con `tax_scope=irpf_only`, como luz y gas en este circuito, conservan
+sus importes documentales y permanecen fuera del IVA. Renta pendiente no calcula
+porcentajes, deducciones ni resultado IRPF: también mantiene pendientes las
+clasificaciones propuestas de gasto corriente o activo. Las exclusiones expresas
+de IRPF quedan fuera de esa vista, conservadas en Gastos y Documentos.
+
+El XLSX forma parte de la misma versión inmutable que libro, JSON e informe HTML.
+`downloads['annual-workbook']` conserva su SHA256 y `ledger_sha256`, igual a la
+huella del libro del índice. El constructor relee el XLSX emitido para verificar
+importes y versión. Si falla, no activa un índice con un Excel anterior etiquetado
+como actual. Las salidas anteriores y sus respaldos permanecen conservados.
+
+También puede generarse únicamente el Excel, sin incorporar documentos, ejecutar
+el worker ni consultar Drive:
+
+```text
+python tools/iva/accounting_workbook.py --input privado.json --root AUTONOMO --output LIBRO_ANUAL_2026_CONSULTA.xlsx
+```
+
+Esta salida no es la plantilla LSI de Pre303 ni un libro IRPF definitivo.
+`build_workbooks.mjs` conserva el circuito independiente de LSI y sus requisitos.
+
 ## Uso local, LSI y recuperación histórica
 
 ```text
