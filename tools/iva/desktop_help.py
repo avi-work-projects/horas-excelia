@@ -4,8 +4,8 @@
 def render_help():
     return '''<section class="local-page help-page">
 <div class="eyebrow">GUÍA DE USO</div>
-<h1>Cómo usar tu contabilidad</h1>
-<p class="lead">Conserva las facturas, revisa sus datos y consulta todo desde el mismo sitio.</p>
+<h1>Cómo usar tu espacio de trabajo</h1>
+<p class="lead">Facturas, programación y contabilidad, conectadas a los mismos motores.</p>
 
 <article class="feature-card">
 <h2>Cuando vuelvas</h2>
@@ -38,6 +38,8 @@ def render_help():
 <thead><tr><th scope="col">Sección</th><th scope="col">Para qué sirve</th></tr></thead>
 <tbody>
 <tr><th scope="row"><a href="/facturas/modelos?vista=resumen">Resumen</a></th><td>Ver los importes registrados, la cobertura de los datos y el estado de los trimestres.</td></tr>
+<tr><th scope="row"><a href="/facturas/">Facturas</a></th><td>Consultar las facturas preparadas, sus PDF y su histórico; revisar y aprobar o cancelar su programación con los mismos controles del móvil. La preparación desde las jornadas sigue entrando desde Gestify.</td></tr>
+<tr><th scope="row"><a href="/horas/calendario">Programación</a></th><td>Consultar el calendario compartido de correos y facturas y actualizar su estado a petición. Los correos nuevos que dependen de jornadas todavía se preparan desde Gestify, para conservar la comprobación de la versión de esas jornadas.</td></tr>
 <tr><th scope="row"><a href="/facturas/modelos?vista=ingresos">Ingresos</a></th><td>Consultar las facturas de clientes incorporadas al libro y abrir sus originales. La generación de ingresos que ya tenías sigue funcionando.</td></tr>
 <tr><th scope="row"><a href="/facturas/modelos?vista=gastos">Gastos</a></th><td>Consultar los gastos registrados. «Añadir o revisar gastos» abre la bandeja de documentos que todavía necesitan revisión o incorporación.</td></tr>
 <tr><th scope="row"><a href="/facturas/modelos?vista=libros">Libros</a></th><td>Descargar el Excel de consulta y acceder a archivos anteriores. El Excel se genera a partir del libro; editar una copia no cambia la contabilidad de la aplicación.</td></tr>
@@ -78,12 +80,15 @@ def render_help():
 <p>El resumen, las tablas, los originales archivados y los libros se leen desde el mini. La bandeja de revisión, la preparación fiscal, la actualización y la recogida del correo utilizan los módulos que ya existen en Kairo, mediante la conexión privada.</p>
 <p>Para esas acciones, el mini y el equipo que aloja esos módulos deben estar encendidos y conectados. Si falla la conexión, puedes seguir consultando el archivo local. Antes de repetir una aprobación, comprueba su estado.</p>
 <p class="quiet">Hay un solo libro y una sola bandeja de revisión. La aplicación no necesita una conversación con la IA para ejecutar sus botones.</p>
+<p>Facturas y Programación consultan y operan sobre los servicios existentes: no crean otra copia de sus planes. Los envíos que ya hayas aprobado para una fecha mantienen esa programación. La contabilidad y la recogida de gastos siguen funcionando bajo petición.</p>
+<p><strong>Gestify sigue siendo una aplicación independiente.</strong> Envía preparaciones a Kairo y consulta los estados mediante su botón de sincronización. Kairo no modifica las jornadas ni la configuración de Gestify. Completar la preparación de correos desde Kairo, sin mantener Gestify abierto, sigue pendiente.</p>
 </details>
 
 <article class="feature-card">
 <h2>El siguiente paso</h2>
-<p><strong>Reducir el trabajo de revisar cada factura.</strong> El siguiente módulo recomendado es una lectura asistida de los PDF que proponga proveedor, número, fecha e importes, indicando de dónde ha sacado cada dato. Tú revisarías la propuesta antes de aprobarla.</p>
-<p>Después podremos ampliar la recogida a más pedidos y proveedores, e incorporar los documentos de Digi, electricidad y gas al circuito que corresponda. El cálculo completo de Renta y la interfaz móvil siguen pendientes.</p>
+<p><strong>Completar el circuito de presentación de modelos.</strong> Ya se preparan los ficheros; falta conectar la validación y el envío oficial a Hacienda, con certificado, confirmación de los datos y recuperación del justificante. Generar un fichero no equivale a presentarlo.</p>
+<p>El objetivo es tener las mismas operaciones desde mini y móvil, sobre una única fuente de datos por módulo. Para crear y programar correos desde Kairo necesitamos conservar una preparación propia revisada, sin depender de la ventana de Gestify. La futura integración del bot de Imputaciones seguirá separada de Gestify.</p>
+<p>La lectura asistida de gastos, más pedidos y proveedores, Digi, electricidad, gas y el cálculo completo de Renta siguen siendo módulos pendientes. Podrán añadirse sin rehacer el circuito de facturación.</p>
 <p class="quiet">La lectura actual aprovecha el texto extraíble del PDF y ofrece propuestas básicas. La lectura avanzada con IA y el reconocimiento de documentos escaneados todavía no están conectados.</p>
 </article>
 </section>'''

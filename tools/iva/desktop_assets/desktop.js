@@ -1,5 +1,11 @@
 'use strict';
 (() => {
+  const billingTheme = document.querySelector('.billing-theme');
+  if (billingTheme) {
+    const syncTheme = () => { billingTheme.dataset.kTheme = document.documentElement.dataset.kTheme; };
+    syncTheme();
+    new MutationObserver(syncTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-k-theme']});
+  }
   const output = document.getElementById('action-message');
   const controls = ['refresh-data','check-state','collect-amazon'].map(id=>document.getElementById(id)).filter(Boolean);
   let busy = false;

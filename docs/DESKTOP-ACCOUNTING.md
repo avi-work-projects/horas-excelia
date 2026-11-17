@@ -7,6 +7,12 @@ El proceso queda esperando peticiones HTTP; no consulta fuentes en reposo.
 
 ## Uso
 
+- **Facturas:** catálogo, histórico, PDF y revisión mensual de los servicios
+  existentes. Permite aprobar/cancelar la programación de una factura preparada.
+  No añade una emisión inmediata: respeta las horas y condiciones del motor actual.
+- **Programación:** calendario compartido de correos y facturas, navegación mensual
+  y consulta explícita de Outlook mediante «Actualizar». Al abrir se leen los
+  estados guardados. Crear correos de horas desde Kairo sin Gestify sigue pendiente.
 - **Resumen, Ingresos y Gastos:** consulta del libro existente, filtro por
   trimestre y búsqueda; acceso a los originales verificados.
 - **Libros:** descarga del Excel de la misma versión y archivos históricos.
@@ -65,6 +71,23 @@ recogidos son `source_kind=unknown` y deben revisarse. Un error conserva el PDF
 para repetir manualmente sin perderlo ni duplicarlo. Los abonos necesitan revisión
 específica; no existe clasificación fiscal automática por remitente.
 
+`desktop_billing` es el adaptador de Facturas y Programación. Viaja como código
+de esta instalación en la petición SSH y llama únicamente a rutas permitidas de
+los dos servicios HTTP locales existentes en Kairo. Conserva sus bloqueos, trabajos,
+identidades de plan y huellas de aprobación. El navegador usa la sesión/CSRF del
+mini; el token del servicio remoto se obtiene y utiliza solo dentro del adaptador.
+No instala otro servicio, abre puertos de red ni inicia los emisores.
+
+El HTML se incorpora al marco local, conservando diálogos y controles propios
+de cada módulo. Sus estilos quedan acotados para mantener el tema del escritorio.
+La importación de un borrador mantiene el comportamiento del servicio existente,
+incluido el posible aviso de revisión al propietario si está configurado. No se
+ejecutan envíos reales para comprobar la integración.
+
+Gestify permanece externo: envía preparaciones y consulta estados por su botón
+de sincronización. La aplicación no controla Gestify. Véase el alcance completo y
+el contrato pendiente para nuevas preparaciones en [KAIRO-ECOSYSTEM.md](KAIRO-ECOSYSTEM.md).
+
 La lectura del correo reutiliza la cuenta y contraseña de aplicación que ya
 usa el servicio de facturas. La contraseña permanece en el equipo que la guarda;
 no se copia al mini, a Git, al navegador ni a los registros. Gmail se abre en modo
@@ -107,5 +130,5 @@ descarga de todo el historial de Amazon. Siguen pendientes la extracción avanza
 IA/OCR, la recogida de otros proveedores y el cálculo completo de Renta. La interfaz
 móvil no se despliega ni modifica en esta entrega.
 
-Validación: pruebas `test_desktop` y `test_vat_dashboard`; revisión visual local
+Validación: pruebas `test_desktop`, `test_desktop_billing` y `test_vat_dashboard`; revisión visual local
 en claro/oscuro y ancho estrecho; comprobación real de correo sin factura disponible.

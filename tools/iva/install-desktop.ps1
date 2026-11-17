@@ -28,7 +28,7 @@ if (Test-Path -LiteralPath $instance) {
 }
 $code = Join-Path $Runtime 'code'
 $backup = Join-Path $Runtime ('backups/desktop-' + (Get-Date -Format 'yyyyMMdd-HHmmss'))
-$files = @('desktop_app.py','desktop_help.py','desktop_transport.py','desktop_remote.py','desktop_intake.py','vat_dashboard.py')
+$files = @('desktop_app.py','desktop_help.py','desktop_transport.py','desktop_remote.py','desktop_intake.py','desktop_billing.py','vat_dashboard.py')
 New-Item -ItemType Directory -Path $backup -Force | Out-Null
 foreach ($file in $files) {
     $target = Join-Path $code $file

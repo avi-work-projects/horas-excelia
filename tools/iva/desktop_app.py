@@ -70,7 +70,13 @@ class Application:
             active = 'modulos'
         elif parsed.path == '/ayuda':
             active = 'ayuda'
+        elif parsed.path.startswith('/horas'):
+            active = 'programacion'
+        elif parsed.path.startswith('/facturas') and not parsed.path.startswith(BASE):
+            active = 'facturas'
         entries = [('resumen','Resumen','◫',BASE+'?vista=resumen'),
+                   ('facturas','Facturas','▱','/facturas/'),
+                   ('programacion','Programación','◷','/horas/calendario'),
                    ('ingresos','Ingresos','↗',BASE+'?vista=ingresos'),
                    ('gastos','Gastos','↙',BASE+'?vista=gastos'),
                    ('libros','Libros','▤',BASE+'?vista=libros'),
@@ -85,8 +91,8 @@ class Application:
         css += '.brand-mark{mask-image:url('+wordmark+');-webkit-mask-image:url('+wordmark+')}'
         script = (ASSETS/'desktop.js').read_text(encoding='utf-8')
         return '''<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f3f7ef"><meta name="referrer" content="no-referrer"><title>'''+e(title)+''' · Kairo en el mini</title><script>'''+theme+'''</script><style>'''+css+'''</style><link rel="icon" href="/assets/icon.png"></head>
-<body data-csrf="'''+e(self.csrf)+'''"><aside class="sidebar"><a class="brand" href="/" aria-label="Kairo · Resumen"><span class="brand-mark" aria-hidden="true"></span></a><div class="workspace-label">CONTABILIDAD <span>Mini</span></div><nav aria-label="Secciones">'''+nav+'''</nav><div class="sidebar-bottom"><a href="/recoger"'''+(' aria-current="page"' if active == 'recoger' else '')+'''>↓ &nbsp; Recoger facturas</a><a href="/modulos"'''+(' aria-current="page"' if active == 'modulos' else '')+'''>⋮ &nbsp; Mapa de módulos</a><a href="/ayuda"'''+(' aria-current="page"' if active == 'ayuda' else '')+'''>? &nbsp; Cómo funciona</a><p><span class="dot"></span> Solo acciones manuales</p></div></aside>
-<div class="workspace"><header class="topbar"><span>Tu espacio contable <span class="muted">/ Ordenador mini</span></span><div><button id="refresh-data" type="button">Actualizar datos</button><button id="theme-toggle" type="button" aria-label="Cambiar tema">'''+THEME_ICONS+'''</button></div></header><div id="action-message" class="action-message" role="status" aria-live="polite" hidden></div><main class="desktop-main k-main">'''+fragment(content)+'''</main><footer class="desktop-footer"><span>Archivo único · Documentos originales conservados</span><button id="check-state" type="button">Ver estado de actualización</button></footer></div><script>'''+script+'''</script></body></html>'''
+<body data-csrf="'''+e(self.csrf)+'''"><aside class="sidebar"><a class="brand" href="/" aria-label="Kairo · Resumen"><span class="brand-mark" aria-hidden="true"></span></a><div class="workspace-label">TU ESPACIO <span>Mini</span></div><nav aria-label="Secciones">'''+nav+'''</nav><div class="sidebar-bottom"><a href="/recoger"'''+(' aria-current="page"' if active == 'recoger' else '')+'''>↓ &nbsp; Recoger facturas</a><a href="/modulos"'''+(' aria-current="page"' if active == 'modulos' else '')+'''>⋮ &nbsp; Mapa de módulos</a><a href="/ayuda"'''+(' aria-current="page"' if active == 'ayuda' else '')+'''>? &nbsp; Cómo funciona</a><p><span class="dot"></span> Contabilidad bajo petición</p></div></aside>
+<div class="workspace"><header class="topbar"><span>Tu espacio de trabajo <span class="muted">/ Ordenador mini</span></span><div><button id="refresh-data" type="button">Actualizar datos</button><button id="theme-toggle" type="button" aria-label="Cambiar tema">'''+THEME_ICONS+'''</button></div></header><div id="action-message" class="action-message" role="status" aria-live="polite" hidden></div><main class="desktop-main k-main">'''+fragment(content)+'''</main><footer class="desktop-footer"><span>Archivo único · Documentos originales conservados</span><button id="check-state" type="button">Ver estado de actualización</button></footer></div><script>'''+script+'''</script></body></html>'''
 
     def collect_page(self):
         order = json.loads(Path(self.settings['order_path']).read_text(encoding='utf-8-sig'))
@@ -109,9 +115,16 @@ class Application:
     def get(self, url):
         parsed = urlsplit(url)
         path = parsed.path
-        if path in ('/', '/facturas/', '/facturas'):
+        if path == '/':
             url = BASE+'?vista=resumen'
             path = BASE
+        if (path.startswith('/facturas') and not path.startswith(BASE)) or path.startswith('/horas'):
+            result = self.remote(self.config, dict(action='billing_get',url=url,csrf=self.csrf))
+            raw = base64.b64decode(result['body'], validate=True)
+            if result['mime'].startswith('text/html'):
+                raw = self.shell('<section class="billing-content"><div class="billing-theme"><script>document.currentScript.parentElement.dataset.kTheme=document.documentElement.dataset.kTheme;</script><div class="k-ui">'+raw.decode()+'</div></div></section>',url,
+                                 'Programación' if path.startswith('/horas') else 'Facturas')
+            return result['status'], raw, result['mime'], result['headers']
         if path == '/recoger':
             return 200, self.shell(self.collect_page(), url, 'Recoger facturas')
         if path == '/modulos':
@@ -147,6 +160,8 @@ class Application:
             if path == '/api/collect-amazon':
                 from desktop_intake import collect
                 result = collect(self.config, self.settings, self.remote)
+            elif (path.startswith('/facturas/') and not path.startswith(BASE)) or path.startswith('/horas/'):
+                result = self.remote(self.config, dict(action='billing_post',url=path,data=data))
             elif path in (BASE+'/gastos', BASE+'/actualizar', BASE+'/preparacion', BASE+'/cierre'):
                 # Suppress historical duplicates before any upload to the queue.
                 if path == BASE+'/gastos' and data.get('action') == 'upload':

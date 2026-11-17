@@ -130,6 +130,9 @@ def service_lock(root):
 def dispatch(runtime, request):
     runtime = Path(runtime)
     action = request.get('action')
+    if action in ('billing_get','billing_post'):
+        from desktop_billing import dispatch as billing_dispatch
+        return billing_dispatch(runtime.parent, request)
     if action == 'mail':
         return collect_mail(runtime.parent, request['data'])
     # Render the existing fiscal screens inside the local desktop shell.

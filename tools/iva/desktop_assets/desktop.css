@@ -11,6 +11,20 @@
 
 /* Paint the root in the selected theme, including cross-document navigation. */
 html{background:var(--k-bg)}
+.sidebar{overflow-y:auto}
+.billing-content{--bg:var(--k-bg);--surface:var(--k-surface);--line:var(--k-line);--muted:var(--k-muted);--accent:var(--k-accent);--panel:var(--k-surface);--brand:var(--k-accent);--soft:var(--hover);--k-selected:var(--hover);--amber:#866018;--amber-bg:#fbefcf;max-width:1100px;margin:auto}
+:root[data-k-theme=dark] .billing-content{--amber:#f0cb83;--amber-bg:#41381f}
+.billing-content .k-tabs{display:none}
+.billing-content .invoice-tabs{position:static!important;max-width:480px}
+.billing-content:has(#calendar) .invoice-tabs{display:none!important}
+.billing-content .invoice-tabs a[href="/facturas/modelos"],.billing-content .invoice-tabs a[href^="/horas/"]{display:none}
+.billing-content .k-badge{background:var(--hover);color:var(--k-accent)}
+.billing-content .k-badge.warn{background:var(--amber-bg);color:var(--amber)}
+.billing-content .k-ui .invoice-tabs a[aria-current]{color:var(--k-bg);background:var(--k-accent)}
+.billing-content h1{font-size:32px}
+.billing-content main{max-width:none}
+.billing-content svg{max-width:100%}
+.billing-content input,.billing-content select,.billing-content textarea{color:var(--text);background:var(--k-surface)}
 @view-transition{navigation:auto}
 ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none;mix-blend-mode:normal}
 .desktop-main .modelos .m-period-summary{display:flex;align-items:center;justify-content:space-between;gap:24px;background:var(--k-surface);padding:22px 24px}

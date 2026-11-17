@@ -46,7 +46,7 @@ class DesktopTests(unittest.TestCase):
         for path in ('/recoger','/modulos'):
             code, html = app.get(path)
             self.assertEqual(code,200)
-            self.assertIn('Solo acciones manuales',html)
+            self.assertIn('Contabilidad bajo petición',html)
         self.assertEqual(self.calls,[])
         self.assertEqual(before,set(self.root.rglob('*')))
 
@@ -62,6 +62,27 @@ class DesktopTests(unittest.TestCase):
         app.post('/facturas/modelos/actualizar',{})
         self.assertEqual(len(self.calls),1)
         self.assertEqual(self.calls[0]['action'],'post')
+
+    def test_billing_and_calendar_share_remote_state_inside_local_shell(self):
+        def remote(config, request):
+            self.calls.append(request)
+            return dict(status=200,body=base64.b64encode(b'<h1>Existing service</h1>').decode(),
+                        mime='text/html; charset=utf-8',headers={})
+        app = Application(self.settings_path,remote=remote)
+        for path in ('/facturas/','/horas/calendario?month=2026-11'):
+            code, html, *_ = app.get(path)
+            self.assertEqual(code,200)
+            self.assertIn('Existing service',html)
+            self.assertIn('billing-content"><div class="billing-theme',html)
+            self.assertEqual(self.calls[-1]['url'],path)
+            self.assertEqual(self.calls[-1]['csrf'],app.csrf)
+        self.assertEqual([v['action'] for v in self.calls],['billing_get','billing_get'])
+
+    def test_billing_action_preserves_approved_identity(self):
+        app = Application(self.settings_path,remote=self.remote)
+        data = dict(planId=7,hash='approved-content-hash',expectedState='review')
+        app.post('/facturas/approve',data)
+        self.assertEqual(self.calls,[dict(action='billing_post',url='/facturas/approve',data=data)])
 
     def test_historical_pdf_is_not_uploaded_again(self):
         raw = pdf('fictional historic invoice')

@@ -5,11 +5,15 @@ import shlex
 import subprocess
 
 
-BOOT = '''import json,sys
+BOOT = '''import json,sys,types
 p=json.load(sys.stdin)
 sys.path.insert(0,p['code_root'])
 ns={'__name__':'desktop_remote'}
 try:
+ for name,source in p.get('modules',{}).items():
+  module=types.ModuleType(name)
+  sys.modules[name]=module
+  exec(source,module.__dict__)
  exec(p['source'],ns)
  result=ns['dispatch'](p['runtime'],p['request'])
  print(json.dumps({'ok':True,'result':result}))
@@ -22,6 +26,8 @@ def call(config, request, timeout=60):
     source = Path(__file__).with_name('desktop_remote.py').read_text(encoding='utf-8')
     payload = dict(source=source, code_root=str(Path(config['remote_script']).parent).replace('\\','/'),
                    runtime=config['remote_runtime'], request=request)
+    if request.get('action') in ('billing_get','billing_post'):
+        payload['modules'] = {'desktop_billing':Path(__file__).with_name('desktop_billing.py').read_text(encoding='utf-8')}
     command = [config.get('ssh', 'ssh'), '-i', config['ssh_key'], '-o', 'BatchMode=yes',
                '-o', 'ConnectTimeout=8', config['host'],
                ' '.join(shlex.quote(x) for x in (config['remote_python'], '-B', '-c', BOOT))]
