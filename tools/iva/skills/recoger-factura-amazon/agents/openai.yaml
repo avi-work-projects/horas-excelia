@@ -1,0 +1,4 @@
+interface:
+  display_name: "Recoger factura de Amazon"
+  short_description: "Factura de Amazon a Gastos de Kairo, bajo petición"
+  default_prompt: "Usa $recoger-factura-amazon para recoger la factura de mi compra pendiente y dejarla en Gastos de Kairo para revisar."

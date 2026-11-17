@@ -55,8 +55,9 @@ Documentación de detalle:
 SHA256 y emite un manifiesto documental versión 1. `amazon_transfer.py` lleva un
 lote verificado a la bandeja de Kairo por la conexión SSH ya configurada.
 Se ejecuta solo a petición; no incluye cron, vigilancia de Descargas, sesión de
-Amazon ni credenciales de su API. La descarga automática desde Amazon todavía
-requiere integrar y validar el acceso a esa cuenta.
+Amazon ni credenciales de su API. La habilidad `recoger-factura-amazon` utiliza
+correo o navegador conectados bajo una petición manual; no es un descargador
+autónomo en el servidor ni se ejecuta al recibir correos.
 
 ```powershell
 # Un ZIP o PDF concreto; --input puede repetirse. Configuración fuera de Git.
@@ -95,6 +96,106 @@ Fuentes oficiales consultadas el 17/11/2026:
 - https://business.amazon.es/es/blog/bulk-download
 - https://docs.business.amazon.com/docs/downloading-invoices-in-eu-and-jp-regions
 - https://docs.business.amazon.com/docs/onboarding-overview
+
+### Recogida manual de la factura de un pedido
+
+La petición a Codex «Recoge la factura de mis tapones» inicia una ejecución
+puntual: consultar el pedido privado, buscar la factura en el correo conectado
+o abrir el pedido en la sesión de Amazon autorizada y descargar el PDF real.
+El correo de confirmación, el resumen imprimible y el importe de compra no
+sustituyen esa factura. Si todavía no está disponible, se informa del pendiente y
+se termina; no se programa otra consulta. La recepción de correos de Amazon no
+activa por sí sola una importación ni proporciona credenciales al servidor.
+
+El helper del mini consume una ruta explícita, conserva el pedido original y
+utiliza la configuración SSH existente. No navega ni consulta Gmail:
+
+```powershell
+python tools/iva/amazon_order.py --config CONFIG_PRIVADA.json --order PEDIDO_PRIVADO.json --status
+python tools/iva/amazon_order.py --config CONFIG_PRIVADA.json --order PEDIDO_PRIVADO.json --input FACTURA_REAL.pdf --source-kind invoice
+# Si se interrumpió el envío, reutilizar el manifiesto sin descargar de nuevo:
+python tools/iva/amazon_order.py --config CONFIG_PRIVADA.json --order PEDIDO_PRIVADO.json --resume
+```
+
+`--status` solo lee el estado local. El resultado identifica `order_reference`,
+`status`, `sha256`, `manifest` y `draft_id`. Los recibos operativos quedan en
+`amazon-order-receipts` junto a la configuración privada, fuera de AUTONOMO;
+los originales y manifiestos permanecen en `archive_root/ENTRADA/AMAZON`.
+`created` o `existing_in_queue` enlazan con la revisión de Gastos mediante
+`/facturas/modelos/gastos?id=DRAFT_ID`; `already_in_book` evita una segunda alta.
+Un PDF distinto para el mismo pedido requiere revisión explícita. Clasificar
+como `invoice` exige haber comprobado el documento, y todavía no aprueba su
+tratamiento fiscal. Un abono sigue el circuito documental separado del importador.
+
+La extracción opcional se realiza después de disponer del PDF. El helper no
+llama a una IA: el agente autorizado lee el original y puede proponer únicamente
+campos respaldados por él. Para usar el contrato de `ExpenseStore` por el SSH
+existente, guardar este bloque como script privado, fuera de Git:
+
+```python
+import json, os, shlex, subprocess, sys
+from pathlib import Path, PurePosixPath
+
+config = json.loads(Path(sys.argv[1]).read_text(encoding='utf-8-sig'))
+request = json.loads(Path(sys.argv[2]).read_text(encoding='utf-8-sig'))
+remote_code = '''
+import json, sys
+from pathlib import Path
+sys.path.insert(0, sys.argv[1])
+from expense_workflow import ExpenseStore
+store = ExpenseStore(Path(sys.argv[2]) / 'expenses')
+request = json.load(sys.stdin)
+ident = request['id']
+if request['action'] == 'extract':
+    draft = store.get(ident)
+    if draft['state'] != 'draft':
+        raise ValueError('El documento ya está aprobado o incorporado')
+    result = dict(id=ident, revision=draft['revision'],
+                  context=store.extraction_request(ident))
+elif request['action'] == 'propose':
+    draft = store.propose(ident, request['proposal'], request['revision'],
+                          'codex-manual-document')
+    result = {key: draft[key] for key in ('id', 'revision', 'state')}
+else:
+    raise ValueError('Solo se admite extract o propose')
+print(json.dumps(result, ensure_ascii=False))
+'''
+command = [config.get('ssh', 'ssh'), '-T', '-i', config['ssh_key'],
+           '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=10', config['host'],
+           shlex.join([config['remote_python'], '-c', remote_code,
+                       str(PurePosixPath(config['remote_script']).parent),
+                       config['remote_runtime']])]
+result = subprocess.run(command, input=json.dumps(request).encode('utf-8'),
+                        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                        timeout=60,
+                        creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
+if result.returncode:
+    raise SystemExit('No se completó la acción; revisar estado y versión antes de repetir.')
+print(json.dumps(json.loads(result.stdout), ensure_ascii=False))
+```
+
+Ejecutar `python SCRIPT_PRIVADO.py CONFIG_PRIVADA.json SOLICITUD_PRIVADA.json`.
+Primero usar `{"action":"extract","id":"DRAFT_ID"}`. La respuesta aporta la
+revisión exacta y `context` con SHA256, número de páginas, texto extraído y
+campos permitidos. Leer también el PDF: el extracto puede estar incompleto.
+Después, la solicitud `propose` incluye `id`, esa `revision` y `proposal`:
+
+```json
+{
+  "schema_version": 1,
+  "document_sha256": "SHA256_DEL_PDF_LEIDO",
+  "values": {"number": "NUMERO_LEIDO_EN_EL_PDF"},
+  "evidence": {"number": [{"page": 1, "quote": "Cita literal del documento"}]}
+}
+```
+
+Cada campo necesita su propia cita y página, numerada desde 1; los importes son
+cadenas decimales. Omitir datos ausentes, sin inferirlos del pedido ni trasladar
+identidades de otro documento. Si la revisión ha cambiado, volver a consultar
+y respetar el trabajo existente. `propose` conserva el estado de borrador,
+restablece el destino fiscal a «Por decidir», deja Renta pendiente y borra las
+confirmaciones. No aprueba, no modifica el libro y no solicita actualización.
+La revisión y aprobación posteriores siguen el flujo autenticado de Gastos.
 
 ### Libro fiscal
 
