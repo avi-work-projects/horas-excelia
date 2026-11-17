@@ -56,7 +56,7 @@ update.addEventListener('click',()=>request(true));check.addEventListener('click
     return '<style>.modelos #modelos-reload[hidden]{display:none}</style>'+controls+script
 
 
-def response(root, url, csrf='', runtime=None, index_relative='modelos-index.json'):
+def response(root, url, csrf='', runtime=None, index_relative='modelos-index.json', compact=False):
     parsed = urlsplit(url)
     path = parsed.path.removeprefix('/facturas')
     if path not in ('/modelos', '/modelos/', '/modelos/descargar', '/modelos/documento'):
@@ -113,7 +113,7 @@ def response(root, url, csrf='', runtime=None, index_relative='modelos-index.jso
         kind = query.get('tipo', ['todos'])[0]
         if kind not in ('todos','income','expense'):
             return 400, 'Filtro no válido'
-        return 200, render(index, report, ledger, quarter, section, kind, csrf, update_status(runtime))
+        return 200, render(index, report, ledger, quarter, section, kind, csrf, update_status(runtime), compact=compact)
     except (OSError, ValueError, KeyError, TypeError):
         return 503, page('<h1>Modelos temporalmente no disponibles</h1><p>La copia de consulta falta o ha cambiado. Solicita actualizar y verificar el archivo.</p>'+update_controls(csrf,update_status(runtime))+button('/facturas/','Volver a Facturas'))
 
@@ -141,7 +141,7 @@ def documents(ledger, quarter, kind):
     return content
 
 
-def annual_content(report):
+def annual_content(report, compact=False):
     annual = report.get('preparation_390')
     if not annual:
         return '<div class="m-card"><h2>Preparación anual pendiente</h2><p>Actualiza el informe anual para incorporar esta vista.</p></div>'
@@ -152,17 +152,22 @@ def annual_content(report):
         diff = data.get('difference',{}).get('71')
         rows += '<tr><th scope="row">'+e(q)+'</th><td>'+e(euro(data['boxes'].get('71')))+'</td><td>'+e(euro(ref) if ref is not None else 'Sin referencia')+'</td><td>'+e(euro(diff,True) if diff is not None else '—')+'</td></tr>'
     pending = ''.join('<li>'+e(x)+'</li>' for x in annual.get('pending',[]))
-    return f'''<div class="m-card m-hero"><span class="m-eyebrow">Resumen anual · 390</span><div class="m-status">Preparación del ejercicio</div><p>{e(annual['status'])}</p><div class="m-actions">{button(BASE+'/preparacion?periodo=anual','Preparar 390',True)}</div></div><div class="m-columns">{metrics}</div><div class="m-card"><h2>Comparación de los 303</h2><div class="m-table-wrap"><table><thead><tr><th>Periodo</th><th>Calculado</th><th>Referencia presentada</th><th>Diferencia</th></tr></thead><tbody>{rows}</tbody></table></div><p class="m-note">Las diferencias se conservan por trimestre, aunque su suma sea cero. La coincidencia de importes no acredita revisión fiscal ni pago.</p></div><div class="m-card"><h2>Pendientes del año</h2><ul class="m-list">{pending}</ul><p class="m-note">{e(annual['scope'])}</p></div>'''
+    summary = f'''<div class="m-card m-hero"><span class="m-eyebrow">Resumen anual · 390</span><div class="m-status">Preparación del ejercicio</div><p>{e(annual['status'])}</p><div class="m-actions">{button(BASE+'/preparacion?periodo=anual','Preparar 390',True)}</div></div>'''
+    detail = f'''<div class="m-card"><h2>Pendientes del año</h2><ul class="m-list">{pending}</ul><p class="m-note">{e(annual['scope'])}</p></div>'''
+    if compact:
+        summary = '<div class="m-card m-period-summary"><div><h2>Resumen anual</h2><p class="m-note">Pendiente de cierre</p></div><div class="m-actions">'+button(BASE+'/preparacion?periodo=anual','Preparar 390',True)+'</div></div>'
+        detail = f'''<details class="m-card m-period-detail"><summary>Qué falta para cerrar el año</summary><p>{e(annual['status'])}</p><ul class="m-list">{pending}</ul><p class="m-note">{e(annual['scope'])}</p></details>'''
+    return summary+f'''<div class="m-columns">{metrics}</div><div class="m-card"><h2>Comparación de los 303</h2><div class="m-table-wrap"><table><thead><tr><th>Periodo</th><th>Calculado</th><th>Referencia presentada</th><th>Diferencia</th></tr></thead><tbody>{rows}</tbody></table></div><p class="m-note">Las diferencias se conservan por trimestre, aunque su suma sea cero. La coincidencia de importes no acredita revisión fiscal ni pago.</p></div>'''+detail
 
 
-def render(index, report, ledger, quarter, section, kind='todos', csrf='', update=None):
+def render(index, report, ledger, quarter, section, kind='todos', csrf='', update=None, compact=False):
     year = report['year']
     annual = section == 'anual'
     tabs = ''.join(f'<a href="{BASE}?periodo={q}"'+(' aria-current="page"' if q==quarter and not annual else '')+'>'+q+'</a>' for q in ('1T','2T','3T','4T'))
     tabs += f'<a href="{BASE}?periodo={quarter}&paso=anual"'+(' aria-current="page"' if annual else '')+'>Año</a>'
     head = navigation('modelos')+f'<h1>IVA {year}</h1><nav class="m-periods" aria-label="Periodo fiscal">{tabs}</nav>'+update_controls(csrf,update or {'state':'idle','message':'Actualización manual de los datos.'})
     if annual:
-        content = annual_content(report)
+        content = annual_content(report, compact=compact)
     elif section == 'documentos':
         content = button(BASE+'?periodo='+quarter,'Volver al '+quarter)+f'<h2 style="margin-top:18px">Documentos · {quarter} de {year}</h2>'+documents(ledger,quarter,kind)
     else:
@@ -179,13 +184,25 @@ def render(index, report, ledger, quarter, section, kind='todos', csrf='', updat
         primary = button(BASE+'/gastos','Añadir o revisar gastos',True)
         if ref is None: primary += button(BASE+'/preparacion?periodo='+quarter,'Preparar trimestre')
         content = f'''<div class="m-card m-hero"><span class="m-eyebrow">{quarter} · {year}</span><div class="m-status">{status}</div><span class="m-eyebrow">{label}</span><div class="m-amount">{e(euro(value))}</div><p>{action}</p><p class="m-note">Datos incorporados hasta {e(report['as_of'])} · Revisión fiscal pendiente.</p><div class="m-actions">{primary}</div></div>'''
+        if compact:
+            status = 'Referencia presentada' if ref is not None else 'En preparación'
+            amount = '' if value is None else '<span class="m-eyebrow">'+('Importe presentado' if ref is not None else 'Resultado provisional')+'</span><div class="m-amount">'+e(euro(value))+'</div>'
+            primary = (button(BASE+'?periodo='+quarter+'&paso=documentos','Ver documentos',True) if ref is not None else
+                       button(BASE+'/preparacion?periodo='+quarter,'Preparar trimestre',True))
+            content = '<div class="m-card m-period-summary"><div><h2>'+status+'</h2>'+amount+'</div><div class="m-actions">'+primary+'</div></div>'
+            content += '<details class="m-card m-period-detail"><summary>'+('Ver detalle del periodo' if ref is not None else 'Qué falta para cerrar')+'</summary><p>'+e(action)+'</p><p>'+e(selected['coverage'])+'</p><p class="m-note">Datos incorporados hasta '+e(report['as_of'])+' · Revisión fiscal pendiente.</p>'
+            if missing:
+                content += '<p class="m-warning">'+str(len(missing))+' gastos necesitan completar los datos de recepción para la importación de libros.</p>'
+            content += '<div class="m-actions">'+button(BASE+'/gastos','Añadir o revisar gastos')+'</div></details>'
         facts = fact('IVA de ingresos · 09', euro(boxes['09']))+fact('IVA de gastos incorporados · 29',euro(boxes['29']))+fact('Resultado calculado · 71',euro(boxes.get('71')))
         if ref is not None:
             facts += fact('Referencia presentada',euro(ref))+fact('Diferencia documental',euro(diff,True))
         content += '<div class="m-card"><h2>Cálculo y comparación</h2><dl class="m-facts">'+facts+'</dl><p class="m-note">Resultado para el perfil soportado. Los ajustes pendientes mantienen el resultado sin cerrar. El pago se comprueba por separado.</p></div>'
         counts = fact('Ingresos',str(sum(r['kind']=='income' for r in rows)))+fact('Gastos',str(sum(r['kind']=='expense' for r in rows)))
-        content += f'<div class="m-card"><h2>Documentos del trimestre</h2><dl class="m-facts">{counts}</dl><p>{e(selected["coverage"])}</p>'
-        if missing: content += f'<p class="m-warning">{len(missing)} gastos necesitan completar los datos de recepción para la importación de libros.</p>'
+        content += f'<div class="m-card"><h2>Documentos del trimestre</h2><dl class="m-facts">{counts}</dl>'
+        if not compact:
+            content += '<p>'+e(selected['coverage'])+'</p>'
+            if missing: content += f'<p class="m-warning">{len(missing)} gastos necesitan completar los datos de recepción para la importación de libros.</p>'
         content += '<div class="m-actions">'+button(BASE+'?periodo='+quarter+'&paso=documentos','Ver documentos')+'</div></div>'
         items = [(key,item) for key,item in index.get('downloads',{}).items() if item.get('period')==quarter]
         content += '<div class="m-card" id="archivos"><h2>Archivos y preparación</h2>'

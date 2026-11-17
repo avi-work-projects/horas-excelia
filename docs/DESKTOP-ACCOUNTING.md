@@ -21,10 +21,23 @@ El proceso queda esperando peticiones HTTP; no consulta fuentes en reposo.
 - **Actualizar datos:** solicita una ejecución al trabajador de Modelos ya
   instalado. **Ver estado** consulta su resultado una sola vez; recargar la vista
   lee la versión disponible, sin lanzar otra actualización.
+- **Cómo funciona** (`/ayuda`): guía integrada con el recorrido de un gasto,
+  significado de cada botón y estado, conexiones necesarias y alcance pendiente.
+  Se puede consultar al volver a abrir el acceso directo, sin depender del chat.
 
 La recogida no aprueba la clasificación fiscal, los importes ni la identidad del
 proveedor. El correo no se marca como leído. No abre Chromium, no usa una API de
 comprador de Amazon ni requiere que Codex esté abierto.
+
+La vista local de Modelos muestra una tarjeta breve por periodo: estado, importe
+cuando está disponible y acción principal. La cobertura, los avisos y los pasos
+pendientes siguen accesibles en un desplegable. Este modo compacto no cambia
+los cálculos ni la presentación de la interfaz remota.
+
+El tema, los estilos y los iconos se incluyen en el HTML inicial para evitar
+destellos al navegar. El logotipo usa la forma oficial como máscara transparente,
+con el color de acento de cada tema. No depende de una descarga posterior de
+la imagen para mostrar el encabezado.
 
 ## Módulos y contratos
 

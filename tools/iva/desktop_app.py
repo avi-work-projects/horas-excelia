@@ -26,6 +26,8 @@ from desktop_transport import call
 
 BASE = '/facturas/modelos'
 ASSETS = Path(__file__).with_name('desktop_assets')
+THEME_ICONS = ('<svg class="theme-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg>'
+               '<svg class="theme-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" aria-hidden="true"><path d="M20 14a8.5 8.5 0 0 1-10-11 9 9 0 1 0 10 11Z"/></svg>')
 
 
 def fragment(html):
@@ -66,6 +68,8 @@ class Application:
             active = 'recoger'
         elif parsed.path == '/modulos':
             active = 'modulos'
+        elif parsed.path == '/ayuda':
+            active = 'ayuda'
         entries = [('resumen','Resumen','◫',BASE+'?vista=resumen'),
                    ('ingresos','Ingresos','↗',BASE+'?vista=ingresos'),
                    ('gastos','Gastos','↙',BASE+'?vista=gastos'),
@@ -73,9 +77,16 @@ class Application:
                    ('modelos','Modelos','▧',BASE+'?vista=modelos'),
                    ('renta','Renta','◷',BASE+'?vista=renta')]
         nav = ''.join('<a href="'+url+'"'+(' aria-current="page"' if key == active else '')+'><span aria-hidden="true">'+icon+'</span>'+label+'</a>' for key,label,icon,url in entries)
-        return '''<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f3f7ef"><meta name="referrer" content="no-referrer"><title>'''+e(title)+''' · Kairo en el mini</title><link rel="icon" href="/assets/icon.png"><link rel="stylesheet" href="/assets/desktop.css"><script src="/theme.js"></script><script src="/assets/desktop.js" defer></script></head>
-<body data-csrf="'''+e(self.csrf)+'''"><aside class="sidebar"><a class="brand" href="/" aria-label="Kairo · Resumen"><img src="/assets/wordmark.png" alt="Kairo"></a><div class="workspace-label">CONTABILIDAD <span>Mini</span></div><nav aria-label="Secciones">'''+nav+'''</nav><div class="sidebar-bottom"><a href="/recoger"'''+(' aria-current="page"' if active == 'recoger' else '')+'''>↓ &nbsp; Recoger facturas</a><a href="/modulos"'''+(' aria-current="page"' if active == 'modulos' else '')+'''>⋮ &nbsp; Mapa de módulos</a><p><span class="dot"></span> Solo acciones manuales</p></div></aside>
-<div class="workspace"><header class="topbar"><span>Tu espacio contable <span class="muted">/ Ordenador mini</span></span><div><button id="refresh-data" type="button">Actualizar datos</button><button id="theme-toggle" type="button" aria-label="Cambiar tema"></button></div></header><div id="action-message" class="action-message" role="status" aria-live="polite" hidden></div><main class="desktop-main k-main">'''+fragment(content)+'''</main><footer class="desktop-footer"><span>Archivo único · Documentos originales conservados</span><button id="check-state" type="button">Ver estado de actualización</button></footer></div></body></html>'''
+        # Each navigation gets the theme and critical chrome in the initial HTML.
+        # No unstyled frame, delayed icon, or logo fetch on a no-store response.
+        theme = (ASSETS/'theme.js').read_text(encoding='utf-8')
+        css = (ASSETS/'desktop.css').read_text(encoding='utf-8')
+        wordmark = 'data:image/png;base64,'+base64.b64encode((ASSETS/'wordmark-mask.png').read_bytes()).decode()
+        css += '.brand-mark{mask-image:url('+wordmark+');-webkit-mask-image:url('+wordmark+')}'
+        script = (ASSETS/'desktop.js').read_text(encoding='utf-8')
+        return '''<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f3f7ef"><meta name="referrer" content="no-referrer"><title>'''+e(title)+''' · Kairo en el mini</title><script>'''+theme+'''</script><style>'''+css+'''</style><link rel="icon" href="/assets/icon.png"></head>
+<body data-csrf="'''+e(self.csrf)+'''"><aside class="sidebar"><a class="brand" href="/" aria-label="Kairo · Resumen"><span class="brand-mark" aria-hidden="true"></span></a><div class="workspace-label">CONTABILIDAD <span>Mini</span></div><nav aria-label="Secciones">'''+nav+'''</nav><div class="sidebar-bottom"><a href="/recoger"'''+(' aria-current="page"' if active == 'recoger' else '')+'''>↓ &nbsp; Recoger facturas</a><a href="/modulos"'''+(' aria-current="page"' if active == 'modulos' else '')+'''>⋮ &nbsp; Mapa de módulos</a><a href="/ayuda"'''+(' aria-current="page"' if active == 'ayuda' else '')+'''>? &nbsp; Cómo funciona</a><p><span class="dot"></span> Solo acciones manuales</p></div></aside>
+<div class="workspace"><header class="topbar"><span>Tu espacio contable <span class="muted">/ Ordenador mini</span></span><div><button id="refresh-data" type="button">Actualizar datos</button><button id="theme-toggle" type="button" aria-label="Cambiar tema">'''+THEME_ICONS+'''</button></div></header><div id="action-message" class="action-message" role="status" aria-live="polite" hidden></div><main class="desktop-main k-main">'''+fragment(content)+'''</main><footer class="desktop-footer"><span>Archivo único · Documentos originales conservados</span><button id="check-state" type="button">Ver estado de actualización</button></footer></div><script>'''+script+'''</script></body></html>'''
 
     def collect_page(self):
         order = json.loads(Path(self.settings['order_path']).read_text(encoding='utf-8-sig'))
@@ -105,6 +116,9 @@ class Application:
             return 200, self.shell(self.collect_page(), url, 'Recoger facturas')
         if path == '/modulos':
             return 200, self.shell(self.modules_page(), url, 'Mapa de módulos')
+        if path == '/ayuda':
+            from desktop_help import render_help
+            return 200, self.shell(render_help(), url, 'Cómo funciona')
         if path == BASE+'/gastos':
             from modelos_web import render, filters_from_query
             query = parse_qs(parsed.query)
@@ -118,7 +132,7 @@ class Application:
                 raw = self.shell(raw.decode(), url, 'Preparar modelos')
             return result['status'], raw, result['mime'], result['headers']
         from vat_dashboard import response
-        result = response(self.config['archive_root'], url, index_relative=self.config['index'])
+        result = response(self.config['archive_root'], url, index_relative=self.config['index'], compact=True)
         if result is not None:
             status, body, *rest = result
             if not rest:
