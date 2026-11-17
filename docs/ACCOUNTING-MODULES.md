@@ -21,7 +21,8 @@ flowchart LR
 
 | Módulo | Entrada | Salida estable | Implementación |
 |---|---|---|---|
-| Obtención | Pedido, descarga o adjunto | Original PDF y procedencia | Descarga manual disponible; conector Amazon/correo pendiente |
+| Obtención | Pedido, descarga o adjunto | Original PDF y procedencia | Descarga manual disponible; acceso Amazon y conector de correo pendientes |
+| Entrada Amazon | ZIP/PDF ya descargados | Originales por SHA256 y manifiesto documental versión 1 | `amazon_inbox.prepare`; transferencia manual con `amazon_transfer` hacia la bandeja existente |
 | Entrada | Uno o varios PDF | Original inmutable, SHA256 y borrador | `ExpenseStore.upload`, bandeja con carga secuencial y resultado por archivo |
 | Lectura | PDF y contrato | Propuesta versión 1, evidencia por campo | Texto básico; contrato IA en `expense_policy`; sin proveedor IA/OCR integrado |
 | Revisión | Propuesta y decisión del usuario | Ficha fiscal versión 1 y paquete aprobado | `expense_policy`, `ExpenseStore.edit/approve/bundle` |
@@ -76,6 +77,21 @@ duplicadas por pedido/vendedor. Descargar y solicitar son acciones diferentes.
 Requiere acceso a la cuenta correspondiente; no crear cuentas ni cambiar
 suscripciones como parte de una descarga.
 
+Amazon Business ofrece descarga masiva de documentos desde Análisis de empresa.
+El módulo de entrada recibe el ZIP o los PDF obtenidos y conserva originales y
+procedencia en `ENTRADA/AMAZON`, sin mover `FACTURAS/año/FACTURAS AMAZON`.
+Se activa manualmente; no vigila la carpeta Descargas ni realiza lecturas periódicas.
+El transporte reutiliza la conexión SSH privada de Modelos. La cola de revisión
+continúa siendo la de Kairo, sin crear una segunda cola en el mini.
+
+Las facturas desconocidas entran como borradores y requieren revisión documental:
+un PDF descargado puede ser un resumen de pedido y no acreditar una factura.
+Los abonos identificados se conservan para revisión específica, fuera de la cola
+de aprobación de gastos ordinarios. Una descarga o una importación no acredita
+deducibilidad ni cobertura del trimestre. La API oficial de documentos de comprador
+para España requiere aprobación y credenciales de Amazon; no está habilitada por
+instalar este importador. Ver instrucciones de ejecución en `tools/iva/README.md`.
+
 ## Correo y Renta
 
 El futuro conector de correo entregará el mismo original y manifiesto de entrada:
@@ -98,7 +114,7 @@ debe llevar la misma huella de libro que el índice; los anteriores se identific
 como archivos históricos. Las confirmaciones de cobertura, presentación y pago
 siguen separadas.
 
-Siguiente entrega: entrada asistida por IA utilizando el contrato existente,
-conector de descarga de Amazon y recopilación seleccionada desde correo.
+Siguiente entrega: verificar el acceso y la descarga real en la cuenta Amazon,
+entrada asistida por IA utilizando el contrato existente y recopilación desde correo.
 Amortizaciones y cálculo IRPF requieren su módulo propio; no bloquean el archivo
 de documentos pendientes. No reabrir todos los ensayos históricos para cada cambio.

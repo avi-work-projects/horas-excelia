@@ -49,6 +49,55 @@ Documentación de detalle:
 
 ## Fuente de datos y alcance
 
+### Entrada de documentos de Amazon
+
+`amazon_inbox.py` procesa ZIP y PDF ya descargados, conserva los originales por
+SHA256 y emite un manifiesto documental versión 1. `amazon_transfer.py` lleva un
+lote verificado a la bandeja de Kairo por la conexión SSH ya configurada.
+Se ejecuta solo a petición; no incluye cron, vigilancia de Descargas, sesión de
+Amazon ni credenciales de su API. La descarga automática desde Amazon todavía
+requiere integrar y validar el acceso a esa cuenta.
+
+```powershell
+# Un ZIP o PDF concreto; --input puede repetirse. Configuración fuera de Git.
+python tools/iva/amazon_transfer.py --config CONFIG_PRIVADA.json --input DOCUMENTOS.zip
+
+# Preparar sin transferir, útil también para otros PDF descargados manualmente.
+python tools/iva/amazon_inbox.py prepare --input DOCUMENTOS.zip --output ENTRADA_PRIVADA
+
+# Repetir un lote cuya transferencia se interrumpió.
+python tools/iva/amazon_transfer.py --config CONFIG_PRIVADA.json --manifest MANIFIESTO.json
+```
+
+La ejecución con `--input` guarda documentos y manifiestos bajo
+`archive_root/ENTRADA/AMAZON`. Los recibos operativos y la cola permanecen en el
+runtime privado de Kairo. No cambia los nombres ni mueve documentos de las
+carpetas históricas. Reversión: retirar los dos módulos de código y dejar de
+ejecutar la orden; conservar originales y recibos, sin borrar ni revertir el libro.
+Los módulos deben estar instalados tanto en el mini como junto a `sync_models.py`
+en Kairo. La configuración de conexión es la existente del worker de Modelos.
+
+La entrada es idempotente por huella, coteja el libro de consulta verificado y
+crea solamente borradores. No aprueba gastos, recalcula el libro ni envía mensajes
+al vendedor. Los abonos identificados quedan para revisión específica. Los PDF
+desconocidos requieren comprobar que sean facturas, proveedor, destinatario,
+importes y uso profesional; un resumen de pedido no se convierte en factura por
+haber sido descargado de Amazon.
+
+La descarga masiva oficial se encuentra en Análisis de empresa → Informes →
+Pedidos → Descargar documentos de pedidos. La disponibilidad y alcance dependen
+de la cuenta y sus permisos. Seleccionar facturas, no solo resúmenes de pedido.
+La API de comprador para España es Document API con el rol Business Purchase
+Reconciliation; Amazon exige solicitud y aprobación de acceso. El importador no
+crea cuentas, tokens ni aplicaciones, y no equivale a tener esa API operativa.
+
+Fuentes oficiales consultadas el 17/11/2026:
+- https://business.amazon.es/es/blog/bulk-download
+- https://docs.business.amazon.com/docs/downloading-invoices-in-eu-and-jp-regions
+- https://docs.business.amazon.com/docs/onboarding-overview
+
+### Libro fiscal
+
 El JSON privado de AUTONOMO es la fuente maestra: `year`, `as_of`, `records`,
 `documents`, `coverage`, `profiles`, `references`, `reference_source` y `activity`.
 Los Excel, informes y copias de consulta son salidas regenerables. Editar un
