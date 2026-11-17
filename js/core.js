@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v556 — Cabecera de Inicio con botones blancos iguales';
+var APP_VERSION = 'v557 — Cumpleaños recientes y destacados en Recordatorios';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

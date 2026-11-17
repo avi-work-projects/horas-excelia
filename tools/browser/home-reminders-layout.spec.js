@@ -1,6 +1,56 @@
 const {test,expect}=require('@playwright/test');
 test.use({timezoneId:'Europe/Madrid'});
 
+test('cumpleaños: hoy y mañana siempre visibles, recientes y panel estable en móvil y escritorio',async({page})=>{
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.clock.setFixedTime(new Date('2027-01-02T12:00:00+01:00'));
+  await page.addInitScript(()=>{
+    localStorage.setItem('excelia-theme-v1','light');localStorage.setItem('excelia-nav-icons-v1','professional');
+    localStorage.setItem('excelia-bdays-v1',JSON.stringify([
+      {name:'Ana',day:2,month:1},{name:'Luis',day:2,month:1,vip:true},{name:'Marina del Valle',day:3,month:1},
+      {name:'Lucía',day:1,month:1},{name:'Pablo',day:31,month:12},{name:'Sara',day:29,month:12},
+      {name:'Próximo de ejemplo',day:9,month:1},{name:'Demasiado antiguo',day:28,month:12},{name:'Fuera de plazo',day:10,month:1}
+    ]));
+  });
+  await page.goto('/');await page.evaluate(()=>applyTheme('light'));
+  const section=page.locator('.home-reminder-birthdays'),popup=page.locator('.home-popup');
+  await expect(section.locator('.home-birthday-today')).toHaveCount(2);
+  await expect(section.locator('.home-birthday-tomorrow')).toBeVisible();
+  await expect(section.locator('.home-birthday-past .home-reminder-when')).toHaveText(['Ayer','Antes de ayer','Hace 4\u202fdías']);
+  await expect(section.locator('.home-birthday-past .home-reminder-content').first()).toHaveText('1 de Enero');
+  expect((await section.locator('.home-birthday-past').allTextContents()).join(' ')).not.toContain('Sin alarma');
+  await expect(section).not.toContainText('Demasiado antiguo');await expect(section).not.toContainText('Fuera de plazo');
+  await expect(page.locator('#homeBirthdayToggle')).toContainText('Ver 1 cumpleaños más');
+  const stored=await page.evaluate(()=>localStorage.getItem('excelia-bdays-v1'));
+  for(const width of [400,320,440,1280]){
+    await page.setViewportSize({width,height:880});
+    await page.locator('#homePopupContent').evaluate(el=>el.scrollTop=0);
+    const before=await popup.boundingBox();
+    for(const row of await section.locator('.home-birthday-today,.home-birthday-tomorrow').all())await expect(row).toBeVisible();
+    expect(await section.evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
+    const badge=await section.locator('.home-birthday-today .home-reminder-when').first().evaluate(el=>({weight:getComputedStyle(el).fontWeight,bg:getComputedStyle(el).backgroundColor}));
+    expect(+badge.weight).toBeGreaterThanOrEqual(700);expect(badge.bg).not.toBe('rgba(0, 0, 0, 0)');
+    await page.locator('#homeBirthdayToggle').click();await expect(page.locator('#homeBirthdayExtra')).toBeVisible();
+    expect(await popup.boundingBox()).toEqual(before);
+    await page.locator('#homeBirthdayToggle').click();await expect(page.locator('#homeBirthdayExtra')).toBeHidden();
+    await page.locator('#homePopupContent').evaluate(el=>el.scrollTop=0);
+    await expect(page.locator('#homePopupClose')).toBeInViewport();
+    await page.screenshot({path:'test-results/cumpleanos-recordatorios-'+width+'.png'});
+  }
+  expect(await page.evaluate(()=>localStorage.getItem('excelia-bdays-v1'))).toBe(stored);
+  // Una fecha reciente abre su persona y su año correctos; cancelar conserva los datos.
+  await section.locator('[data-reminder-birthday="4"]').press('F2');
+  await expect(page.locator('#bdFName')).toHaveValue('Pablo');
+  expect(await page.evaluate(()=>EV_YEAR)).toBe(2026);
+  await page.locator('#bdFClose').click();
+  expect(await page.evaluate(()=>localStorage.getItem('excelia-bdays-v1'))).toBe(stored);
+  await page.evaluate(()=>{BDAYS=BDAYS.filter(b=>b.name==='Sara');openHomePopup(true);});
+  await expect(section.locator('.home-birthday-recent-heading')).toBeVisible();
+  await expect(section.locator('h3')).toHaveText('Cumpleaños');
+  await expect(section.locator('.home-birthday-past')).toContainText('Hace 4\u202fdías');
+  expect(errors).toEqual([]);
+});
+
 test('recordatorios agrupados: pendientes primero, símbolos propios y alarmas persistidas',async({page})=>{
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.clock.setFixedTime(new Date('2026-10-24T12:00:00+02:00'));

@@ -4381,6 +4381,13 @@ body:has(#evDetailOv.open .ev-car-sheet #evDRutSes) .toast{bottom:calc(56dvh + 1
 .home-birthday-line>.bday-symbol,.home-reminder-vip{width:26px;height:26px;flex-shrink:0;object-fit:contain}
 .home-birthday-name{flex:1;min-width:0}.home-birthday-name>strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .home-birthday-line .home-reminder-content{display:block;font-size:.65rem;color:var(--text-muted);margin-top:3px}
+.home-birthday-today .home-reminder-when,.home-birthday-tomorrow .home-reminder-when{flex-shrink:0;padding:5px 8px;border:1px solid var(--birthday-tone);border-radius:7px;font-size:.72rem;font-weight:700;color:var(--birthday-tone)}
+.home-birthday-today .home-reminder-when{background:var(--birthday-tone);color:var(--surface)}
+.home-popup-item:has(.home-birthday-today){background:color-mix(in srgb,var(--birthday-tone) 9%,transparent);box-shadow:inset 3px 0 var(--birthday-tone)}
+.home-birthday-recent-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border-top:1px solid color-mix(in srgb,var(--birthday-tone) 35%,var(--border));background:color-mix(in srgb,var(--birthday-tone) 6%,var(--surface));font-size:.66rem;font-weight:600;color:var(--birthday-tone)}
+.home-birthday-recent-heading:first-child{border-top:0}
+.home-birthday-recent-heading small{font-size:.6rem;font-weight:400;color:var(--text-muted)}
+.home-birthday-past .home-reminder-when{white-space:normal;text-align:right;max-width:72px;line-height:1.4}
 .home-birthday-more{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:0;padding:8px 9px;background:transparent;border:0;border-top:1px solid color-mix(in srgb,var(--birthday-tone) 25%,var(--border));border-radius:0;color:var(--birthday-tone);font:inherit;font-size:.66rem;cursor:pointer}
 .home-birthday-more[aria-expanded="true"] .ev-tax-chevron{transform:rotate(225deg)}
 #homeBirthdayExtra[hidden]{display:none}#homeBirthdayExtra{display:block}

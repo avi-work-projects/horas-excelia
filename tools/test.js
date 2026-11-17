@@ -685,6 +685,21 @@ REGLAS.push(['cumpleanos: grupos sin duplicar en limites 1, 7 y 14 dias',functio
   return ['Manana','Siete','Ocho','Catorce'].every(name=>(html.match(new RegExp('data-bday-name="'+name+'"','g'))||[]).length===1)&&!html.includes('data-bday-name="Fuera"');
 }]);
 
+REGLAS.push(['cumpleanos: recientes y próximos conservan días civiles y personas al cruzar de año',function(){
+  const ctx=cargarApp(claves);
+  ctx.BDAYS=[{name:'Fuera pasado',day:28,month:12},{name:'Límite pasado',day:29,month:12},{name:'Ayer',day:1,month:1},{name:'Hoy',day:2,month:1},{name:'Mañana',day:3,month:1,vip:true},{name:'Límite futuro',day:9,month:1},{name:'Fuera futuro',day:10,month:1}];
+  const before=JSON.stringify(ctx.BDAYS),today=new ctx.Date(2027,0,2);
+  const items=ctx.bdayItemsInRange(today,-ctx.BDAY_RECENT_DAYS,ctx.BDAY_RECENT_DAYS+8);
+  return JSON.stringify(items.map(it=>it.diff))==='[-4,-1,0,1,7]'
+    &&items[0].date.getFullYear()===2026&&items[0].b===ctx.BDAYS[1]
+    &&JSON.stringify(ctx.BDAYS)===before
+    &&ctx.bdayItemsInRange(today,-4,12,true).length===1;
+}]);
+REGLAS.push(['cumpleanos: el 29 de febrero solo aparece cuando existe ese día',function(){
+  const ctx=cargarApp(claves);ctx.BDAYS=[{name:'Bisiesto',day:29,month:2}];
+  return ctx.bdayItemsInRange(new ctx.Date(2027,2,1),-4,12).length===0
+    &&ctx.bdayItemsInRange(new ctx.Date(2028,2,1),-4,12)[0].diff===-1;
+}]);
 REGLAS.push(['cumpleanos: Solo VIP filtra sin cambiar grupos',function(){
   const ctx=cargarApp(claves);ctx.BDAYS=[{name:'Normal',day:22,month:8},{name:'Vip',day:22,month:8,vip:true}];ctx.BDAY_UP_VIP=true;
   const html=ctx.renderBdayUpcoming();return html.includes('data-bday-name="Vip"')&&!html.includes('data-bday-name="Normal"')&&html.includes('ev-week-sep');

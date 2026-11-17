@@ -8,35 +8,19 @@ function renderBdayUpcoming(){
   var today=new Date();today.setHours(0,0,0,0);
 
   function getBdaysInRange(startOffset,days){
-    var items=[];
-    for(var i=0;i<days;i++){
-      var d=new Date(today);d.setDate(d.getDate()+startOffset+i);
-      var bds=getBdaysOn(d.getMonth()+1,d.getDate());
-      var diff=startOffset+i;
-      bds.forEach(function(b){if(!BDAY_UP_VIP||b.vip)items.push({b:b,diff:diff});});
-    }
-    return items;
+    return bdayItemsInRange(today,startOffset,days,BDAY_UP_VIP);
   }
 
-  var prevItems=getBdaysInRange(-4,4);   /* 4 días anteriores */
+  var prevItems=getBdaysInRange(-BDAY_RECENT_DAYS,BDAY_RECENT_DAYS);
   var todayItems=getBdaysInRange(0,1);   /* hoy */
   var nxtItems=getBdaysInRange(1,14);    /* proximos 14 dias */
-
-  function bdayLabel(diff){
-    if(diff===0)return '\u00a1Hoy!';
-    if(diff===1)return 'Ma\u00f1ana';
-    if(diff>1)return 'en '+diff+'\u202fd\u00edas';
-    if(diff===-1)return 'Ayer';
-    if(diff===-2)return 'Antes de ayer';
-    return 'Hace '+Math.abs(diff)+'\u202fd\u00edas';
-  }
 
   function renderGroup(title,list,isCurWeek){
     if(!list.length)return '<div class="sy-note">No hay cumplea\u00f1os '+title.toLowerCase()+'.</div>';
     var diff=list[0].diff,group=diff<0?'past':diff===0?'today':diff===1?'tomorrow':diff===2?'after-tomorrow':diff<=7?'week':diff<=14?'fortnight':'later';
     var s='<div class="ev-week-sep bday-group-'+group+(list[0].diff===0?' now':'')+'">'+title+'</div><div class="ev-upcoming-section">';
     list.forEach(function(x){
-      var lbl=bdayLabel(x.diff);
+      var lbl=bdayRelativeLabel(x.diff);
       var color=getBdayColor(x.b);
       var isT=x.diff===0;
       var isPastDay=x.diff<0;

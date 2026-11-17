@@ -1,4 +1,4 @@
-/* Recordatorios: todas las ocurrencias de hoy/mañana y cumpleaños a siete días. */
+/* Recordatorios: hoy/mañana, cumpleaños recientes y próximos siete días. */
 var HOME_BIRTHDAYS_OPEN=false;
 var HOME_REMINDER_EDITING=null; // Fila puntual que ofrece Editar/Cancelar, sin modificar datos.
 function homeReminderColor(ev){return ev._rut?getEvDisplayColor(ev):getEvType(ev)==='Ensayos boda'?'#92334d':evTypeColor(getEvKind(ev),getEvType(ev));}
@@ -49,7 +49,7 @@ function homeReminderTasksHtml(){
 function homeReminderCardHtml(it){
   var hasNotes=it.type==='event'&&!!it.note;
   var attrs=' class="home-popup-item '+it.type+(hasNotes?' home-reminder-disclosure':'')+'"'+(it.color?' style="--reminder-color:'+it.color+'"':'');
-  if(it.person)attrs+=' data-reminder-birthday="'+BDAYS.indexOf(it.person)+'"';
+  if(it.person)attrs+=' data-reminder-birthday="'+BDAYS.indexOf(it.person)+'" data-birthday-days="'+it.days+'"';
   if(it.type!=='event')return '<div'+attrs+'>'+it.text+'</div>';
   attrs+=' data-reminder-id="'+escHtml(it.event.id)+'" data-reminder-date="'+it.date+'"';
   var actions=isEvBarAlways(it.event)?'':'<span class="home-reminder-edit-actions" hidden><button type="button" data-reminder-edit>Editar</button><button type="button" data-reminder-cancel aria-label="Cancelar edición">×</button></span>';
@@ -79,15 +79,22 @@ function homeReminderLargeHtml(items){
   });
   return h;
 }
-function homeReminderItemsHtml(items,birthdayCount){
+function homeReminderBirthdaysHtml(birthdays){
+  var upcoming=birthdays.filter(function(it){return it.days>=0;});
+  var recent=birthdays.filter(function(it){return it.days<0;}).sort(function(a,b){return b.days-a.days;});
+  // Hoy y mañana nunca quedan dentro del desplegable.
+  var visible=Math.max(2,upcoming.filter(function(it){return it.days<=1;}).length);
+  var cards=upcoming.slice(0,visible).map(homeReminderCardHtml).join('');
+  var extra=upcoming.length-visible;
+  if(extra>0)cards+='<div id="homeBirthdayExtra" hidden>'+upcoming.slice(visible).map(homeReminderCardHtml).join('')+'</div><button type="button" class="home-birthday-more" id="homeBirthdayToggle" data-count="'+extra+'" aria-controls="homeBirthdayExtra" aria-expanded="false">Ver '+extra+' cumpleaños más <span class="ev-tax-chevron" aria-hidden="true"></span></button>';
+  if(recent.length)cards+='<div class="home-birthday-recent-heading">Recientes <small>Últimos '+BDAY_RECENT_DAYS+' días</small></div>'+recent.map(homeReminderCardHtml).join('');
+  return homeReminderGroup('Cumpleaños',cards,upcoming.length?'Próximos 7 días':'','birthdays');
+}
+function homeReminderItemsHtml(items){
   var birthdays=items.filter(function(it){return it.type==='vip'||it.type==='bday';});
   var events=items.filter(function(it){return it.type==='event';});
   var h=homeReminderPendingHtml(items.filter(function(it){return it.type==='warn';}));
-  if(birthdays.length){
-    var cards=birthdays.slice(0,2).map(homeReminderCardHtml).join('');
-    if(birthdays.length>2)cards+='<div id="homeBirthdayExtra" hidden>'+birthdays.slice(2).map(homeReminderCardHtml).join('')+'</div><button type="button" class="home-birthday-more" id="homeBirthdayToggle" aria-controls="homeBirthdayExtra" aria-expanded="false">Ver '+(birthdayCount-2)+' cumpleaños más <span class="ev-tax-chevron" aria-hidden="true"></span></button>';
-    h+=homeReminderGroup('Cumpleaños',cards,'Próximos 7 días','birthdays');
-  }
+  if(birthdays.length)h+=homeReminderBirthdaysHtml(birthdays);
   var large=events.filter(function(it){return isEvMultiDayPlan(it.event);});
   if(large.length)h+=homeReminderGroup('Planes en curso y próximos',homeReminderLargeHtml(large),'','plans');
   [0,1].forEach(function(day){
@@ -154,11 +161,12 @@ function openHomePopup(force){
     items.push({type:'warn',text:'&#128221; <strong>'+label+'</strong> '+(review?'por revisar':hoursRemoteConfigured()?'sin enviar ni programar':'sin enviar')});
   });
   var birthdays=[];
-  BDAYS.forEach(function(b){
-    var bd=new Date(today.getFullYear(),b.month-1,b.day);if(bd<today)bd.setFullYear(today.getFullYear()+1);
-    var diff=Math.round((bd-today)/86400000);if(diff>7)return;
-    var when=diff===0?'Hoy':diff===1?'Mañana':'En '+diff+' días';
-    birthdays.push({days:diff,person:b,date:evDk(bd),type:b.vip?'vip':'bday',text:'<span class="home-birthday-line">'+(b.vip?'<img class="home-reminder-vip" src="./VIP.png" alt="VIP">':bdaySymbolHtml())+'<span class="home-birthday-name" title="'+escHtml(b.name)+'"><strong>'+escHtml(b.name)+'</strong><span class="home-reminder-content">'+(isBdayAlarmSet(b)?'Alarma creada':'Sin alarma')+'</span></span><span class="home-reminder-when">'+when+'</span></span>'});
+  bdayItemsInRange(today,-BDAY_RECENT_DAYS,BDAY_RECENT_DAYS+8).forEach(function(it){
+    var b=it.b,diff=it.diff,when=diff===0?'Hoy':bdayRelativeLabel(diff);
+    var status=diff<0?'past':diff===0?'today':diff===1?'tomorrow':'upcoming';
+    var date=b.day+' de '+MN[b.month-1];
+    var detail=diff<0?date:date+' · '+(isBdayAlarmSet(b)?'Alarma creada':'Sin alarma');
+    birthdays.push({days:diff,person:b,date:evDk(it.date),type:b.vip?'vip':'bday',text:'<span class="home-birthday-line home-birthday-'+status+'">'+(b.vip?'<img class="home-reminder-vip" src="./VIP.png" alt="VIP">':bdaySymbolHtml())+'<span class="home-birthday-name" title="'+escHtml(b.name)+'"><strong>'+escHtml(b.name)+'</strong><span class="home-reminder-content">'+detail+'</span></span><span class="home-reminder-when">'+when+'</span></span>'});
   });
   birthdays.sort(function(a,b){return a.days-b.days||(a.type==='vip'?0:1)-(b.type==='vip'?0:1);});
   items=items.concat(birthdays,homeReminderEvents(today));
@@ -166,7 +174,7 @@ function openHomePopup(force){
   var content=document.getElementById('homePopupContent');if(!content)return;
   HOME_BIRTHDAYS_OPEN=false;
   HOME_REMINDER_EDITING=null;
-  content.innerHTML=homeReminderItemsHtml(items,birthdays.length);
+  content.innerHTML=homeReminderItemsHtml(items);
   bindHomeReminderEditing(content,items);
   content.scrollTop=0;
   document.getElementById('homePopup').style.display='flex';
@@ -177,7 +185,7 @@ function openHomePopup(force){
     HOME_BIRTHDAYS_OPEN=!HOME_BIRTHDAYS_OPEN;
     document.getElementById('homeBirthdayExtra').hidden=!HOME_BIRTHDAYS_OPEN;
     toggle.setAttribute('aria-expanded',String(HOME_BIRTHDAYS_OPEN));
-    toggle.innerHTML=HOME_BIRTHDAYS_OPEN?'Mostrar menos <span class="ev-tax-chevron" aria-hidden="true"></span>':'Ver '+(birthdays.length-2)+' cumpleaños más <span class="ev-tax-chevron" aria-hidden="true"></span>';
+    toggle.innerHTML=HOME_BIRTHDAYS_OPEN?'Mostrar menos <span class="ev-tax-chevron" aria-hidden="true"></span>':'Ver '+toggle.dataset.count+' cumpleaños más <span class="ev-tax-chevron" aria-hidden="true"></span>';
   };
   document.getElementById('homePopup').onclick=function(e){
     if(e.target===this){closeHomePopup();return;}

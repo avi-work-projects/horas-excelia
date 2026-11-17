@@ -75,6 +75,20 @@ Gestify es una PWA estática sin backend. Mantiene scripts clásicos, renders qu
 devuelven HTML y listeners separados. No requiere un framework ni un empaquetador
 de JavaScript. Los datos personales residen en el dispositivo y viajan en JSON.
 
+## Recordatorios: cumpleaños recientes y destacados (v557)
+
+- Incluye los cuatro días anteriores, igual que Próximos cumpleaños. Los recientes
+  aparecen siempre debajo de los próximos, del más cercano al más antiguo, con
+  fecha y etiqueta relativa; no muestran un estado de alarma ya pasado.
+- Hoy lleva etiqueta rellena y franja lateral; Mañana, etiqueta con contorno.
+  Todas las personas de hoy y mañana quedan visibles al plegar los próximos.
+  Se conserva el panel continuo con acento de cumpleaños, VIP y edición existente.
+- `bdayItemsInRange`, `bdayRelativeLabel` y `BDAY_RECENT_DAYS` comparten el recorrido
+  de días civiles y las etiquetas con Próximos; conservan sus filtros VIP y HTML.
+- Validación: pruebas de límites, cambio de año y bisiestos; Edge oculto en tema
+  claro profesional a 320, 400, 440 y 1280 px, expansión estable y cancelar edición.
+  El atlas actualiza solo Recordatorios; las capturas nuevas esperan revisión de Ángel.
+
 ## Publicación al terminar
 
 Por autorización permanente de Ángel del 11/10/2026, después de realizar cambios:

@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
   "title": "Gestify · mapa visual",
-  "generatedAt": "2026-11-11T19:27:03.252Z",
-  "referenceCommit": "9e5a6396a8cf00912f45d9ab8a9348596c6dbd3c",
+  "generatedAt": "2026-11-17T11:36:57.863Z",
+  "referenceCommit": "14d01bfbc0fe4ac9b8119b0478e56f854a65b135",
   "date": "2026-08-21T10:00:00+02:00",
   "viewport": {
     "width": 400,
@@ -501,6 +501,7 @@
       ],
       "region": "#estudioOverlay .sy-body",
       "image": "captures/study.png",
+      "imageHash": "bdd6df74acd9ff09c4107a75eb5d6c91cec221600c5ee4ae81e69a3f1c788634",
       "anchors": {
         "study-rate": {
           "x": 16,
@@ -670,13 +671,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "9e5a6396a8cf00912f45d9ab8a9348596c6dbd3c",
-      "verifiedEdges": [
-        "study-rate",
-        "study-mortgage",
-        "study-gas",
-        "study-electric"
-      ],
-      "imageHash": "bdd6df74acd9ff09c4107a75eb5d6c91cec221600c5ee4ae81e69a3f1c788634",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -690,7 +684,13 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [
+        "study-rate",
+        "study-mortgage",
+        "study-gas",
+        "study-electric"
+      ],
+      "fresh": false
     },
     {
       "id": "events",
@@ -3171,13 +3171,12 @@
         "js/events-order.js"
       ],
       "image": "captures/reminders.png",
-      "imageHash": "f47cf1f7abf748f65f55ce8a607ae8da9e9df500cc6d0acca30629aae88f5e6c",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
         {
           "file": "index.html",
-          "hash": "143699c9c4ace8d4d3c2507b3af696d3b4e547bd37e1c1eade50bb6d0b49e261"
+          "hash": "6f811d259bc8b1b1efcfcf488f3a5d265acd7280e57530eaea32da28e0dee149"
         },
         {
           "file": "js/nav-icons.js",
@@ -3186,7 +3185,7 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "e9e8afc09faad108684d8dfe37ed3f07def02274d131b1f227fdaeb5e24d1883"
+          "hash": "cf0adf093b04cb625864280ca6355e946dc89063307e5116d80ec3c59805d3cb"
         },
         {
           "file": "js/data-integrity.js",
@@ -3194,15 +3193,15 @@
         },
         {
           "file": "tools/fixture.json",
-          "hash": "98d54e4adf481a811b8b05627515272fb623f8b78db75b294d07ceed739cd07d"
+          "hash": "0e5bcfb1693e1cc957d18bcf9d99b8db5eb013e6772baa9584fae76fa9d8f638"
         },
         {
           "file": "tools/visual-map/fixture.cjs",
-          "hash": "864d6ab429fdfd0fce7e683d4fbbad6525bb89a1e0d11bc99a2f6b2853dbb0d2"
+          "hash": "af6c24671b8c6a68da2fd637eae1a5a321ee8f462617770de61e6c182a59acf9"
         },
         {
           "file": "css/source/base.css",
-          "hash": "45c10a4326fcd88babebf8968fdd517c678b16f9c86cf0268fa1c1cf11f81408"
+          "hash": "76192f32c58655ef3f58b9d2464020845fe85d70447300a360fc5fa80caaed4b"
         },
         {
           "file": "css/source/navigation-controls.css",
@@ -3210,7 +3209,7 @@
         },
         {
           "file": "css/source/economics.css",
-          "hash": "0139ec7d50ccc8cc00bf4607bcf6563a2989cf20f9655d5d52fa2db223ca0bd8"
+          "hash": "a109ec1ee3ed81b6547643b4a52d0a59644f908118a3d116047f07fdefc40d74"
         },
         {
           "file": "css/source/birthdays.css",
@@ -3226,7 +3225,7 @@
         },
         {
           "file": "css/source/event-panels.css",
-          "hash": "cf04dfaf3dd263378f4d27e19c3e6b5b5b0f1386bbd86b881de725b5bbc92849"
+          "hash": "0fbf3071bb0e85df489e7a697165ed0f900ba9ca7d60f6fecb7a4da71374ebb1"
         },
         {
           "file": "css/source/dialogs-responsive.css",
@@ -3238,7 +3237,7 @@
         },
         {
           "file": "css/source/shared-refinements.css",
-          "hash": "36b8dc3c0069c98f2d5e975512e4885de2c4688c067c3a4c011812ed28318aa1"
+          "hash": "734db873b39c183e1fe8acca32b6150c34901acd36c274065e85c09ecfe1acef"
         },
         {
           "file": "css/source/home-sharing.css",
@@ -3246,7 +3245,7 @@
         },
         {
           "file": "css/source/hours-kairo.css",
-          "hash": "b91f6a2be06d6d56d04ada176c79c45d3295e4bff4801bf5288547e42a707d10"
+          "hash": "0424ce22cb6fb9144fd2015d49dfb7f71796f7ee8440fcc14c8050f97f00dc4b"
         },
         {
           "file": "css/source/energy-refinements.css",
@@ -3254,15 +3253,15 @@
         },
         {
           "file": "css/source/home-reminders.css",
-          "hash": "38bdefdcfdfe66af20e803d5e0beabd19dab36551d01c0345bcdc61bd824853d"
+          "hash": "985fbb309c64ae0e557c6359cb7e8f570210fd125b76f50db1caad7d1e613453"
         },
         {
           "file": "css/source/invoices.css",
-          "hash": "f46218b0ea03bf6b6557f01dbea23f773800e41429fb34d5f22b2d76a44f7556"
+          "hash": "0c83cd625c58680cf850008dff125883a91efc999bb889594c23423a9a4b454e"
         },
         {
           "file": "css/source/home-status.css",
-          "hash": "e90eb804d531facf52dfedb46db84522676ff598fb0e6d73832a874b2cc1539d"
+          "hash": "ce05d6d8c773b5469b79234aea1904b90a46b633172f6743b0e206b53c577499"
         },
         {
           "file": "css/source/invoices-calendar.css",
@@ -3282,11 +3281,11 @@
         },
         {
           "file": "js/home-weeks.js",
-          "hash": "df126483ff333e5814cf6b078ab36a595c406b56c338fba53c9e4048ca4674f1"
+          "hash": "19e5fb14cee09683c4053d9518dd0b7098179d6e56d34d102a6a9bfa1c3e2b2a"
         },
         {
           "file": "js/hours-kairo.js",
-          "hash": "543695f8fac79e338667a6542632047cb028d8c1c1f1abb0d27df51756dcf8c8"
+          "hash": "f0d95bc9a22f56e59ac72b111329ba43780ac658d878ca3f246c182a0f09a302"
         },
         {
           "file": "js/hours-cache.js",
@@ -3302,7 +3301,7 @@
         },
         {
           "file": "js/invoices-home.js",
-          "hash": "26529402e4c198c38ddbf21ba621dbc93662bd727e327cc00c133d60f7225c3a"
+          "hash": "89e38383ce7fffa89a1aff51b5643532894c3b4ed30b84b48ba76fe4813f805c"
         },
         {
           "file": "js/invoices-history.js",
@@ -3318,15 +3317,19 @@
         },
         {
           "file": "js/init.js",
-          "hash": "889f1d4fdc2a368fc53ed5d08018676870ca7d005643c87451fa0d03b84fd781"
+          "hash": "9c900a17529bbb74810fb1a8d7d8a3c025cca599dbcb1e944fde9b60a3b4c46b"
+        },
+        {
+          "file": "js/home-week-actions.js",
+          "hash": "11fea26112f37e6a41f54e84d3293a041b91a5bf12d0eca5cfca2f27309e2421"
         },
         {
           "file": "js/settings-menu.js",
-          "hash": "4c99b7549fe909af870222aa9b1835350faa81592f2515aa102882c506400bcd"
+          "hash": "ba44d8ef43ece6b16d6a79c0b224cac8010d9f01f274ebe5185c02141de166d5"
         },
         {
           "file": "js/home-popup.js",
-          "hash": "122772d6c6d5d1da2138128451bfee574cd4f35328ccad76cccf911c1f0c579a"
+          "hash": "7788bc99c829595531890550c9ce8abc789115634859e42b6287654cbfba2ed1"
         },
         {
           "file": "js/events-picker-color.js",
@@ -3339,7 +3342,7 @@
         {
           "file": "js/core.js",
           "part": "app-version",
-          "hash": "08379eafb129e48105f0b895650d39cdf791cb491ad726473c44b4415b5b70d6"
+          "hash": "a06ff4c1664564b3e0a95d00bc61ff97064fd7f6ecf430a6c116d90ae228f3ca"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -3352,7 +3355,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "950cef8ce64516325ea19a8824970868be25b0a0",
+      "commit": "14d01bfbc0fe4ac9b8119b0478e56f854a65b135",
+      "verifiedEdges": [],
+      "imageHash": "181322d4a39d95fb4d8b6ee6595ef72a443266a59a08b32540e16394e5f14d4f",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -3366,8 +3371,7 @@
           }
         }
       ],
-      "verifiedEdges": [],
-      "fresh": false
+      "fresh": true
     },
     {
       "id": "hours-export",
@@ -35772,7 +35776,7 @@
     {
       "symbol": "openHomePopup",
       "file": "js/home-popup.js",
-      "line": 144
+      "line": 151
     },
     {
       "symbol": "openHousehold",

@@ -27,15 +27,15 @@
 ### js/birthdays-panels.js  _(369 líneas)_
 **Funciones:** bdaySwitchPanel:1 · renderBdayNameVip:6 · updateBdayNameVip:7 · renderBdayVipToggle:8 · renderBdayDetail:9 · renderBdayAlarmPanel:27 · fmtDate:39 · openBdayAlarm:94 · back:99 · _bdRefreshBoth:103 · closeBdayAlarm:107 · bindBdayAlarmEvents:109 (!147) · fmtD:228 · rememberDay:231 · onOk:232 · onErr:233 · renderBdayForm:256 · openBdayDetail:284 · savePerson:288 · closeBdayDetail:304 · openBdayForm:307 · back:308 · closeBdayForm:317 · deleteBdayPerson:321 · persist:324 · bindBdayDateFields:327 · update:329 · openBdayDatePicker:341 · close:342 · index:358 · mark:359 · select:360
 
-### js/birthdays-render.js  _(264 líneas)_
-**Estado global:** DN7:111
+### js/birthdays-render.js  _(248 líneas)_
+**Estado global:** DN7:95
 
-**Funciones:** renderBdayVipFilter:1 · renderBdayUpcoming:5 (!88) · getBdaysInRange:10 · bdayLabel:25 · renderGroup:34 · bdayCalendarPeople:93 · bdayCalendarName:96 · renderBdayCalendarDay:103 · renderBdayCalMonth:109 · renderBdayList:150 · getEffVip:158 · renderBdayAddButton:206 · renderBdayContent:209
+**Funciones:** renderBdayVipFilter:1 · renderBdayUpcoming:5 · getBdaysInRange:10 · renderGroup:18 · bdayCalendarPeople:77 · bdayCalendarName:80 · renderBdayCalendarDay:87 · renderBdayCalMonth:93 · renderBdayList:134 · getEffVip:142 · renderBdayAddButton:190 · renderBdayContent:193
 
-### js/birthdays.js  _(169 líneas)_
-**Estado global:** BDAY_STORAGE_KEY:5 · BDAY_YEAR:6 · BDAY_CAL_VIP:7 · BDAY_EDIT:8 · BDAY_SEARCH:9 · BDAY_LIST_TOP:10 · BDAY_UP_VIP:11 · BDAY_FILTER_VIP:12 · BDAY_EDIT_VIP:13 · BDAY_VIP_PENDING:14 · BDAY_ALARM_SET_KEY:68 · BDAY_ALARM_SET:69 · BDAY_ALARM_COUNT_KEY:70 · BDAY_ALARM_COUNT:71 · BDAY_PALETTE:75 · BDAYS:79
+### js/birthdays.js  _(190 líneas)_
+**Estado global:** BDAY_STORAGE_KEY:5 · BDAY_YEAR:6 · BDAY_CAL_VIP:7 · BDAY_EDIT:8 · BDAY_SEARCH:9 · BDAY_LIST_TOP:10 · BDAY_UP_VIP:11 · BDAY_FILTER_VIP:12 · BDAY_EDIT_VIP:13 · BDAY_VIP_PENDING:14 · BDAY_ALARM_SET_KEY:68 · BDAY_ALARM_SET:69 · BDAY_ALARM_COUNT_KEY:70 · BDAY_ALARM_COUNT:71 · BDAY_PALETTE:75 · BDAYS:79 · BDAY_RECENT_DAYS:102
 
-**Funciones:** _showBdayInlineCtrl:20 · tc:88 · bdName:89 · getBdayColor:91 · getBdaysOn:100 · daysUntil:102 · bdayCanSetAlarm:110 · hasUpcomingBday:116 · updateBdayBtn:122 · getBdayAlarmKey:132 · isBdayAlarmSet:133 · setBdayAlarmState:137 · syncVipBdaysToEvents:144
+**Funciones:** _showBdayInlineCtrl:20 · tc:88 · bdName:89 · getBdayColor:91 · getBdaysOn:100 · bdayItemsInRange:104 · bdayRelativeLabel:114 · daysUntil:123 · bdayCanSetAlarm:131 · hasUpcomingBday:137 · updateBdayBtn:143 · getBdayAlarmKey:153 · isBdayAlarmSet:154 · setBdayAlarmState:158 · syncVipBdaysToEvents:165
 
 ### js/bodas-assign.js  _(479 líneas)_
 **Estado global:** DN2:196 · BODA_ASSIGN:229
@@ -296,10 +296,10 @@
 
 **Funciones:** homeHourClass:4 · homeMonthHours:5 · renderHomeMonthHours:20 · hours:21 · row:22 · renderHomeMonthSummary:31 · hours:32
 
-### js/home-popup.js  _(193 líneas)_
+### js/home-popup.js  _(201 líneas)_
 **Estado global:** HOME_BIRTHDAYS_OPEN:2 · HOME_REMINDER_EDITING:3
 
-**Funciones:** homeReminderColor:4 · homeReminderEventText:5 · homeReminderNoteHtml:10 · homeReminderEvents:17 · homeReminderTasksHtml:42 · homeReminderCardHtml:49 · homeReminderGroup:59 · homeReminderPendingHtml:62 · homeReminderLargeHtml:67 · homeReminderItemsHtml:82 · closeHomePopup:99 · homeReminderEdit:105 · homeReminderSelectEdit:117 · bindHomeReminderEditing:125 · choose:132 · openHomePopup:144
+**Funciones:** homeReminderColor:4 · homeReminderEventText:5 · homeReminderNoteHtml:10 · homeReminderEvents:17 · homeReminderTasksHtml:42 · homeReminderCardHtml:49 · homeReminderGroup:59 · homeReminderPendingHtml:62 · homeReminderLargeHtml:67 · homeReminderBirthdaysHtml:82 · homeReminderItemsHtml:93 · closeHomePopup:106 · homeReminderEdit:112 · homeReminderSelectEdit:124 · bindHomeReminderEditing:132 · choose:139 · openHomePopup:151
 
 ### js/home-status.js  _(17 líneas)_
 **Funciones:** homeStatusIcon:2 · homeActionLabel:15 · homePanelAction:16
@@ -932,15 +932,15 @@
 **Rangos por prefijo de clase:**
 .boda-asg:101-278 · .boda-det:97-100 · .boda-last:15-18 · .contact-shortcuts:204-207 · .data-actions:134-135 · .energy-bar:86-86 · .energy-caption:2-2 · .energy-choice:12-12 · .energy-compare:128-128 · .energy-contract:4-5 · .energy-cost:82-286 · .energy-coverage:73-73 · .energy-extremes:69-69 · .energy-fee:36-37 · .energy-field:7-7 · .energy-fields:9-9 · .energy-info:57-59 · .energy-inline:79-79 · .energy-legend:87-87 · .energy-metric:120-122 · .energy-metrics:119-119 · .energy-overview:61-63 · .energy-period:64-67 · .energy-price:178-183 · .energy-range:88-88 · .energy-reconciliation:72-72 · .energy-scenario:129-129 · .energy-section:56-56 · .energy-supplier:70-123 · .energy-table:3-3 · .energy-tabs:39-50 · .energy-tariff:75-179 · .energy-tax:68-126 · .energy-vat:124-124 · .energy-window:25-118 · .energy-year:6-94 · .ev-btn:141-141 · .ev-cell:272-273 · .ev-day:274-274 · .ev-io:131-131 · .ev-main:159-160 · .ev-order:229-241 · .ev-routine:225-227 · .ev-routines:219-223 · .ev-stat:208-208 · .ev-stats:209-215 · .ev-type:224-224 · .ev-up:250-259 · .ev-upcoming:168-172 · .ev-wk:16-171 · .imp-mode:108-108 · .imp-preview:109-113 · .nav-bar:136-136 · .rut-addition:244-271 · .rut-bulk:189-194 · .rut-card:153-203 · .rut-day:142-148 · .rut-days:145-145 · .rut-dpick:140-269 · .rut-history:185-200 · .rut-hora:149-151 · .rut-month:193-193 · .rut-recovery:139-139 · .rut-routine:155-155 · .rut-session:138-138 · .rut-time:152-152 · .rut-weekdays:146-146 · .sy-body:166-166 · .sy-hdr:253-253
 
-### css/source/home-reminders.css  _(75 líneas)_
+### css/source/home-reminders.css  _(82 líneas)_
 
 **Secciones:**
 
 - Recordatorios de inicio: marco fijo, filas compactas y detalles interiores.:1
-- Excepción de filas unidas: el contorno y el color pertenecen al día.:54
+- Excepción de filas unidas: el contorno y el color pertenecen al día.:61
 
 **Rangos por prefijo de clase:**
-.home-birthday:47-52 · .home-pending:64-72 · .home-popup:3-73 · .home-reminder:9-63 · .home-tasks:69-70 · .reminders-access:2-2
+.home-birthday:47-59 · .home-pending:71-79 · .home-popup:3-80 · .home-reminder:9-70 · .home-tasks:76-77 · .reminders-access:2-2
 
 ### css/source/invoices.css  _(127 líneas)_
 

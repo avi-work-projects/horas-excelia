@@ -99,6 +99,27 @@ function getBdayColor(b){
 
 function getBdaysOn(m1,d){return BDAYS.filter(function(b){return b.month===m1&&b.day===d;});}
 
+var BDAY_RECENT_DAYS=4;
+/* Recorrer días civiles conserva los límites al cambiar de mes, año u horario. */
+function bdayItemsInRange(today,startOffset,days,vipOnly){
+  var items=[];
+  for(var i=0;i<days;i++){
+    var date=new Date(today);date.setDate(date.getDate()+startOffset+i);
+    getBdaysOn(date.getMonth()+1,date.getDate()).forEach(function(b){
+      if(!vipOnly||b.vip)items.push({b:b,diff:startOffset+i,date:date});
+    });
+  }
+  return items;
+}
+function bdayRelativeLabel(diff){
+  if(diff===0)return '\u00a1Hoy!';
+  if(diff===1)return 'Ma\u00f1ana';
+  if(diff>1)return 'en '+diff+'\u202fd\u00edas';
+  if(diff===-1)return 'Ayer';
+  if(diff===-2)return 'Antes de ayer';
+  return 'Hace '+Math.abs(diff)+'\u202fd\u00edas';
+}
+
 function daysUntil(m1,d){
   var today=new Date();today.setHours(0,0,0,0);
   var bd=new Date(today.getFullYear(),m1-1,d);

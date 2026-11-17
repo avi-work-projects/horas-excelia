@@ -1,5 +1,10 @@
 # Mapa visual de Gestify
 
+v557. [Recordatorios](captures/reminders.png) incorpora cumpleaños recientes y
+resalta Hoy/Mañana. [Ejemplo móvil con recientes](review/evidence/recordatorios-v557/movil-400.png)
+y [ancho reducido](review/evidence/recordatorios-v557/movil-320.png), con datos ficticios.
+Solo se recaptura este menú; las imágenes nuevas quedan pendientes de revisión de Ángel.
+
 v551. [Elipsis de un día y acciones con fondo de color](review/updates-v551.html). Solo se añaden ejemplos de los dos detalles afectados; se conservan las capturas y revisiones anteriores.
 
 v550. [Selector DNS/VPN y botones semanales equilibrados](review/updates-v550.html). Solo se actualiza la referencia del selector vinculado y el ejemplo de las tres acciones desplegadas.
