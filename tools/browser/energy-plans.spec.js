@@ -92,7 +92,7 @@ test('autotítulos, planes fijos y símbolos anteriores compatibles',async({page
   await page.locator('#eventsBtn').click();await page.locator('#evViewUpcoming').click();await page.locator('#evAdd').click();
   const form=page.locator('#evFWrap'),title=page.locator('#evFTitle');
   await expect(form.locator('.ev-kind-picker')).toBeVisible();
-  for(const type of ['Llamada','Peluquería','Médico','Cena','Tomar algo','Montaña','Plan romántico','Comida','Salir de fiesta','Copas','Barbacoa']){
+  for(const type of ['Llamada','Peluquería','Médico','Cena','Tomar algo','Montaña','¡Sorpresa!','Comida','Salir de fiesta','Copas','Barbacoa']){
     const option=page.locator('#evFTypePicker').locator('[data-type="'+type+'"]');
     if(await option.count())await option.click();
     else {await page.locator('[data-picker="'+(['Llamada','Peluquería','Médico'].includes(type)?'management':'plans')+'"]').click();await page.locator('#evPlanPickerOv').locator('[data-type="'+type+'"]').click();await page.locator('#evPlanConfirm').click();await expect(page.locator('#evPlanPickerWrap')).toHaveCount(0);}

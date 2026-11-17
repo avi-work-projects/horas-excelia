@@ -12,13 +12,13 @@ function evPuntualDays(ev){
 }
 
 /* Swatches de categoria de la clase indicada */
-function _renderEvTypeSwatches(kind,selType,extras){
+function _renderEvTypeSwatches(kind,selType,extras,romantic){
   var groups=kind==='puntual'
     ?[['Rec. Gestiones',Object.keys(EV_MANAGEMENT_SUBTYPES)],['Plan/Quedada',Object.keys(EV_PLAN_SUBTYPES)],['Ensayos boda',[]],['Otros',[]]]
     :EV_KINDS[kind].types.map(function(t){return [t,[]];});
   return groups.map(function(group){
     if(kind==='puntual'&&group[0]==='Rec. Gestiones')return renderEvQuickPlans(selType,'management',extras&&extras.management);
-    if(kind==='puntual'&&group[0]==='Plan/Quedada')return renderEvQuickPlans(selType,'plans',extras&&extras.plans);
+    if(kind==='puntual'&&group[0]==='Plan/Quedada')return renderEvQuickPlans(selType,'plans',extras&&extras.plans,romantic);
     var selected=selType===group[0]||group[1].indexOf(selType)>=0;
     var h='<section class="ev-category-group'+(kind==='grande'||group[0]==='Ensayos boda'||group[0]==='Otros'?' ev-category-single':'')+(selected?' chosen':'')+'" style="--category-tone:'+evTypeColor(kind,group[0])+'" aria-label="'+group[0]+'">'+_renderEvTypeButton(kind,group[0],selType);
     if(group[1].length)h+='<div class="ev-category-children">'+group[1].map(function(t){return _renderEvTypeButton(kind,t,selType);}).join('')+'</div>';
@@ -26,7 +26,7 @@ function _renderEvTypeSwatches(kind,selType,extras){
     return h+'</section>'+(kind==='puntual'&&group[0]==='Ensayos boda'?renderEvRoutineChoices():'');
   }).join('');
 }
-function _renderEvTypeButton(kind,t,selType){
+function _renderEvTypeButton(kind,t,selType,romantic){
     var h='';
     var key=evTypeKey(kind,t);
     var c=evTypeColor(kind,t);
@@ -36,7 +36,7 @@ function _renderEvTypeButton(kind,t,selType){
     var sel=(t===selType)?' selected':'';
     h+='<button type="button" class="ev-color-swatch'+sel+(isMulti?' ev-color-swatch-multi':'')+'" data-hex="'+c+'" data-type="'+escHtml(t)+'" data-kind="'+kind+'"'+(isMulti?'':' style="color:'+c+'"')+'>';
     h+=isMulti?'<div class="ev-type-dot ev-type-dot-multi"></div>'
-      :kind==='puntual'?'<span class="ev-type-dot ev-type-symbol">'+evShapeSvg(t==='Ensayos boda'?'x-thick':evDefaultShape({type:t}))+'</span>'
+      :kind==='puntual'?'<span class="ev-type-dot ev-type-symbol">'+evShapeSvg(t==='Ensayos boda'?'x-thick':evDefaultShape({type:t}),romantic&&evIsPlan(t))+'</span>'
       :'<div class="ev-type-dot" style="background:'+c+'"></div>';
     h+='<span class="ev-type-name">'+escHtml(menuTitle(t==='Contratar electricidad'?'Contratar electric.':t))+'</span></button>';
   return h;
@@ -86,7 +86,7 @@ function renderEvForm(ev){
   });
   h+='</div></div>';
   h+='<div class="ev-field"><label>Categor\u00eda</label><div class="ev-type-picker" id="evFTypePicker">';
-  h+=_renderEvTypeSwatches(curKind,curType);
+  h+=_renderEvTypeSwatches(curKind,curType,null,evIsRomantic(ev));
   h+='</div></div>';
   h+=renderEvTaxFields(ev);
   h+=renderEvCultureFields(ev);
@@ -205,7 +205,7 @@ function evSuggestedTitle(type){
 }
 function bindEvFormEvents(){
   var root=document.getElementById('evFWrap'),edit=EV_EDIT;
-  var form={root:root,edit:edit,day:EV_EDIT_DS,autoTitle:edit?null:'',quickExtras:{},
+  var form={root:root,edit:edit,day:EV_EDIT_DS,autoTitle:edit?null:'',quickExtras:{},romantic:evIsRomantic(edit),
     colorPicker:_bindColorPicker(root,'evFCp',function(){_evFormShapePreviews(form);}),shape:edit&&edit.shape||'circle',
     dates:edit&&Array.isArray(edit.dates)?edit.dates.slice():[],multiChanged:false,barSize:edit&&edit.barSize||null};
   Object.keys(EV_PICKER_GROUPS).forEach(function(k){if(edit&&evQuickSelection(getEvType(edit),EV_PICKER_GROUPS[k]))form.quickExtras[k]=getEvType(edit);});

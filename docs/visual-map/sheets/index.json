@@ -10,10 +10,10 @@
       "reminders",
       "hours-export",
       "mail-calendar-connect",
-      "invoice",
       "invoice-config",
       "invoice-config-edit",
-      "home-september"
+      "home-september",
+      "home-october"
     ]
   },
   {
@@ -21,10 +21,9 @@
     "title": "Inicio · 2/2",
     "image": "sheets/area-0-1.png",
     "scenes": [
-      "home-september",
       "home-october",
-      "home-invoice-connection",
       "invoice-current",
+      "home-invoice-connection",
       "invoice-current--scroll-invoice-document",
       "invoice-document"
     ]
@@ -76,7 +75,7 @@
   },
   {
     "id": "area-3-0",
-    "title": "Eventos · 1/3",
+    "title": "Eventos · 1/4",
     "image": "sheets/area-3-0.png",
     "scenes": [
       "events",
@@ -93,7 +92,7 @@
   },
   {
     "id": "area-3-1",
-    "title": "Eventos · 2/3",
+    "title": "Eventos · 2/4",
     "image": "sheets/area-3-1.png",
     "scenes": [
       "timeoff",
@@ -111,7 +110,7 @@
   },
   {
     "id": "area-3-2",
-    "title": "Eventos · 3/3",
+    "title": "Eventos · 3/4",
     "image": "sheets/area-3-2.png",
     "scenes": [
       "event-new",
@@ -123,6 +122,15 @@
       "edit--scroll-plan-picker",
       "plan-picker",
       "plan-picker-new-plans",
+      "plan-picker-romantic",
+      "event-stats-breakdown"
+    ]
+  },
+  {
+    "id": "area-3-3",
+    "title": "Eventos · 4/4",
+    "image": "sheets/area-3-3.png",
+    "scenes": [
       "event-stats-breakdown",
       "event-stats-links"
     ]

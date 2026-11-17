@@ -47,6 +47,7 @@ module.exports=function extend({scenes,edges}){
   add('routine-session','Ficha de sesión','Rutinas','calendar','.ev-cell[data-ds="2026-08-21"] [data-id="rut-fx-rut-gym-2026-08-21"]','#evDetailOv.open',{sources:['js/events-detail.js','js/rutinas.js']});
   add('plan-picker','Selector de planes','Eventos','edit','.ev-plan-more[data-picker="plans"]','#evPlanPickerOv.open',{scroll:true,sources:['js/events-plan-picker.js'],region:'#evPlanPickerOv .ev-plan-options'});
   add('plan-picker-new-plans','Planes · nuevas opciones','Eventos','plan-picker',{scroll:'#evPlanPickerOv [data-type="Fútbol"]'},'#evPlanPickerOv [data-type="Fútbol"]',{label:'Deslizar · nuevos planes',region:'#evPlanPickerOv .ev-plan-options'});
+  add('plan-picker-romantic','Planes · románticos','Eventos','plan-picker','#evPlanRomantic','#evPlanRomantic:checked',{label:'Marcar Plan romántico',sources:['js/events-plan-picker.js','js/events-picker-color.js'],region:'#evPlanPickerOv .ev-plan-options'});
   // Bodas: rutas de consulta y formularios compartidos.
   add('weddings','Consulta de clases','Bodas','events','#evViewBodas','[data-bsub="clases"].active',{sources:['js/bodas.js','js/bodas-bind.js']});
   add('calendar-export','Exportar calendario','Bodas','weddings','#evCalendarExport','#evCalendarExportOv.open',{sources:['js/events-calendar-export.js']});

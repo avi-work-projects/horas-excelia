@@ -22,6 +22,7 @@ function _evFormTypeUI(form,kind,type){
 function _bindEvFormTypes(form){
   bindEvFormMultiday(form);
   bindEvCultureFields(form);
+  bindEvRomanticField(form);
   if(form.edit){var routines=form.root.querySelector('.ev-routines-active');if(routines)routines.remove();}
   else bindEvRoutineChoices(form);
   form.root.querySelectorAll('.ev-plan-more').forEach(function(more){more.onclick=function(){openEvPlanPicker(form,more.dataset.picker);};});

@@ -75,6 +75,28 @@ Gestify es una PWA estática sin backend. Mantiene scripts clásicos, renders qu
 devuelven HTML y listeners separados. No requiere un framework ni un empaquetador
 de JavaScript. Los datos personales residen en el dispositivo y viajan en JSON.
 
+## Planes románticos y Sorpresa (v558)
+
+- «¡Sorpresa!» sustituye al tipo «Plan romántico». Por indicación de Ángel, los
+  anteriores se leen como sorpresas románticas, conservando títulos, fechas y horas.
+  `evPlanType` mantiene compatibles las categorías, filtros y preferencias de orden;
+  la lectura no reescribe datos. Al guardar se utiliza el tipo nuevo y `romantic:true`.
+- «Plan romántico» es una casilla del formulario y del selector. En el selector es
+  provisional: Confirmar aplica tipo y casilla al borrador; cerrar los descarta.
+  Guardar confirma el evento; desmarcar elimina el atributo. No afecta a gestiones,
+  rutinas ni eventos grandes. Los próximos planes empiezan sin marcar.
+- `evIsRomantic` y `evRomanticBadgeSvg` añaden el corazón original abajo a la derecha
+  del símbolo de cada actividad. Calendarios, fichas, Próximos y Recordatorios
+  reutilizan la misma composición. Fútbol incorpora bota y balón; Boda, alianzas
+  con diamante. La casilla mantiene altura, foco visible y acento rosa propio.
+- El atributo viaja dentro de los eventos del backup y se valida como booleano.
+  La firma distingue planes románticos y normales y reconoce el alias anterior.
+- Edge oculto a 320, 400 y 440 px: alta desde el mes, vista previa de todas las
+  opciones, cerrar sin confirmar, guardar, recargar, editar, quitar el corazón,
+  calendarios mensual/anual/cuatro meses, ficha, Próximos e importación anterior.
+  Atlas: cuatro referencias renovadas y un estado romántico nuevo; no se recapturan
+  los antecesores. Las imágenes nuevas esperan revisión de Ángel.
+
 ## Recordatorios: cumpleaños recientes y destacados (v557)
 
 - Incluye los cuatro días anteriores, igual que Próximos cumpleaños. Los recientes

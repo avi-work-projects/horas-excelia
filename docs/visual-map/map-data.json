@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
   "title": "Gestify · mapa visual",
-  "generatedAt": "2026-11-17T11:36:57.863Z",
-  "referenceCommit": "14d01bfbc0fe4ac9b8119b0478e56f854a65b135",
+  "generatedAt": "2026-11-17T14:53:43.093Z",
+  "referenceCommit": "87a70742d0d39260c1473fc98c415e884a7dd12a",
   "date": "2026-08-21T10:00:00+02:00",
   "viewport": {
     "width": 400,
@@ -2446,7 +2446,6 @@
       ],
       "note": "Mismo formulario, desplazado hasta el botón Multidía.",
       "image": "captures/edit-scroll.png",
-      "imageHash": "ca73fc460f6cee0c4a9c1756649e8dc2d0eb07341ac2063bb8c12836bcf23024",
       "anchors": {
         "dates": {
           "x": 310.3125,
@@ -2464,7 +2463,7 @@
       "dependencies": [
         {
           "file": "index.html",
-          "hash": "4b451a71e39f8db2fa2c200baae35aa9baa68368c8a96fedf8a8a61083b15b21"
+          "hash": "6f811d259bc8b1b1efcfcf488f3a5d265acd7280e57530eaea32da28e0dee149"
         },
         {
           "file": "js/nav-icons.js",
@@ -2473,23 +2472,23 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "7c6d91dc880311b1d887b5ef090b4e9ca0de9d425bf499eb71fd55f991b03599"
+          "hash": "cf0adf093b04cb625864280ca6355e946dc89063307e5116d80ec3c59805d3cb"
         },
         {
           "file": "js/data-integrity.js",
-          "hash": "34bfc80472270238e11eb0e194fef19e56c7fbb81a35ff5fde23a8ae23e5e9f0"
+          "hash": "8809bc58f3e48fc2e8df059e921ee14daf7ee49ee773fcd82dcd38304eb9d878"
         },
         {
           "file": "tools/fixture.json",
-          "hash": "98d54e4adf481a811b8b05627515272fb623f8b78db75b294d07ceed739cd07d"
+          "hash": "0e5bcfb1693e1cc957d18bcf9d99b8db5eb013e6772baa9584fae76fa9d8f638"
         },
         {
           "file": "tools/visual-map/fixture.cjs",
-          "hash": "9a2d9a751e1b17e4a8afbeefbee3cc0bc01d41ae4a49b3c7d0c0c2804072a5c6"
+          "hash": "af6c24671b8c6a68da2fd637eae1a5a321ee8f462617770de61e6c182a59acf9"
         },
         {
           "file": "css/source/base.css",
-          "hash": "58e9b402d3d746f8c8756dfd1904f3f62d7e3dd59ad6dc79287f971bd904e28c"
+          "hash": "76192f32c58655ef3f58b9d2464020845fe85d70447300a360fc5fa80caaed4b"
         },
         {
           "file": "css/source/navigation-controls.css",
@@ -2497,15 +2496,15 @@
         },
         {
           "file": "css/source/economics.css",
-          "hash": "0139ec7d50ccc8cc00bf4607bcf6563a2989cf20f9655d5d52fa2db223ca0bd8"
+          "hash": "a109ec1ee3ed81b6547643b4a52d0a59644f908118a3d116047f07fdefc40d74"
         },
         {
           "file": "css/source/birthdays.css",
-          "hash": "aae1fa4fe0c4b46f60b613e96a1db5cdac9664712da500d4d4c1c45ceb8daacf"
+          "hash": "440692569d9eaffef154455313133b7517cd1e8773f9529b43f751ea1610116e"
         },
         {
           "file": "css/source/event-calendar.css",
-          "hash": "302e47126cc9555d8fb669c50ffe94f0665a59c8ef7cb772acd6aad45e2fd179"
+          "hash": "4e3ad557e1163941e9c90a58ba6e88f004155202dbdef369cc070adb52ee8912"
         },
         {
           "file": "css/source/navigation-alarms.css",
@@ -2513,7 +2512,7 @@
         },
         {
           "file": "css/source/event-panels.css",
-          "hash": "a774bd92788f2974acb385c535d2ba6f6f528bf7f7bf82b4562080a8064b7192"
+          "hash": "0fbf3071bb0e85df489e7a697165ed0f900ba9ca7d60f6fecb7a4da71374ebb1"
         },
         {
           "file": "css/source/dialogs-responsive.css",
@@ -2525,31 +2524,39 @@
         },
         {
           "file": "css/source/routines.css",
-          "hash": "61c20b228e9cb5a57d9b2a2c35d86360fb4b1859c2344220375ae4d49d8b051d"
+          "hash": "43b1089a41b86a4bf8f03383befef13171eae05beabf4ae35a37ee7e746d2e9e"
         },
         {
           "file": "css/source/shared-refinements.css",
-          "hash": "2caba9b567eff1f5f421af5adc11179a5f0df4daa7ff7b344eac354e6e0d5b33"
+          "hash": "734db873b39c183e1fe8acca32b6150c34901acd36c274065e85c09ecfe1acef"
         },
         {
           "file": "css/source/home-sharing.css",
-          "hash": "caac3c233ab62466329f3086e2fc904d5fb79fb541fd7d591cec0f3684b53cc3"
+          "hash": "8d2556639e8223d19d2670108fb6d7cebf353e25c2b4561bed3bdcf33d48f001"
         },
         {
           "file": "css/source/energy-refinements.css",
-          "hash": "b07b027bafa68df7ed4d69283f5d10d06be0b34b45c0fe2750c9f37ba37400a5"
+          "hash": "ad85d3b26f5f8df5ee36ff93be1fc959a75319d21835eb64572b248eb8e89965"
         },
         {
           "file": "css/source/home-reminders.css",
-          "hash": "38bdefdcfdfe66af20e803d5e0beabd19dab36551d01c0345bcdc61bd824853d"
+          "hash": "985fbb309c64ae0e557c6359cb7e8f570210fd125b76f50db1caad7d1e613453"
         },
         {
           "file": "css/source/invoices.css",
-          "hash": "e856e3f17686e33c3232c34bc76015d91156cdc46b6d6c864468fbb23f3a8edb"
+          "hash": "0c83cd625c58680cf850008dff125883a91efc999bb889594c23423a9a4b454e"
+        },
+        {
+          "file": "css/source/home-status.css",
+          "hash": "ce05d6d8c773b5469b79234aea1904b90a46b633172f6743b0e206b53c577499"
+        },
+        {
+          "file": "css/source/invoices-calendar.css",
+          "hash": "fab6f4d1d756a586786aec5c51c7eaccc786b4742b4179d4ce627db9acec0f63"
         },
         {
           "file": "css/source/theme-cream.css",
-          "hash": "d5d09d0ae2535163aac0b663ebe8abc3c8661d0d910fa0674bcd2c42d8e83949"
+          "hash": "2e2f3cae8e4d8ed00e97f4a127fe36564b68b1c55816e1a4cfa6f1cebfb83309"
         },
         {
           "file": "css/tasks.css",
@@ -2557,39 +2564,43 @@
         },
         {
           "file": "js/init.js",
-          "hash": "2402274c8aea9cc86a031ed7d86d1543ecc0668e8a96e1f79c70c1cd0c66a1eb"
+          "hash": "9c900a17529bbb74810fb1a8d7d8a3c025cca599dbcb1e944fde9b60a3b4c46b"
+        },
+        {
+          "file": "js/home-week-actions.js",
+          "hash": "11fea26112f37e6a41f54e84d3293a041b91a5bf12d0eca5cfca2f27309e2421"
         },
         {
           "file": "js/events-cal.js",
-          "hash": "6a82645259cb083c59bf7c2b85033733f4b07d130b9e629345174be735250d7a"
+          "hash": "1ccd9c02932a22336fd612cbb3a3585b2934d969b02539713f36eb33a0591884"
         },
         {
           "file": "js/events-render.js",
-          "hash": "c574c563bf0442c0394aea0838a3f3e56fd52ffca8bf51a395d3953b0008d62b"
+          "hash": "7e4aca0172e921e765147b884767fedeedf1e4e9ae1dbed613fae4edece0a143"
         },
         {
           "file": "js/events-bind.js",
-          "hash": "28236ef28430ff1de9c619be4ce52f2cf07c2daf545b88900c2f4f4adf064d27"
+          "hash": "c98e5398e84176153e3d98282e5479c2ad222c11198a248975a018d05cebb50a"
         },
         {
           "file": "js/events.js",
-          "hash": "ff878881e8610165efa89e3a76690e775c6dd4bdad2e7eebbe96281a0d16a504"
+          "hash": "9530d3a96a9a90dc63eccbf74fa660f63763342cd9374e1144d30965557e3aa3"
         },
         {
           "file": "js/events-detail.js",
-          "hash": "55dadcc8dbf9ea9962b2f4b36ca1473a92a80da279c52fd284770433b663c84c"
+          "hash": "30a6d652d63be072da4bcbd34a36d289a8fd1bacd63487224f6be57842e19661"
         },
         {
           "file": "js/events-form.js",
-          "hash": "b5093a84a7f19758f855bded042485e4c9dd438375acd741a27758d4308caa40"
+          "hash": "5955ead8d40a2b45036ab3c7d46e1afc4169876dd52acbed49a1cb0ed416976c"
         },
         {
           "file": "js/events-form-schedule.js",
-          "hash": "8aaeba5654a8c1f123b053120c52f253f128907df8d43894d4e4f6987fe9e43d"
+          "hash": "fab8a280f1b59625c095c326b1356ff55c93ac399a8ab43e28f5fdea48aaaa1b"
         },
         {
           "file": "js/events-form-controls.js",
-          "hash": "e88275e0a787237dc4ce5b0df5c793343cf2a5dfd96a86580a56ea8065c851b1"
+          "hash": "a8ec53d2690303cdb0ece33b10656463bb52992ff740a1179b5787ad1cabf9ad"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -2602,7 +2613,11 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
+      "commit": "87a70742d0d39260c1473fc98c415e884a7dd12a",
+      "verifiedEdges": [
+        "dates"
+      ],
+      "imageHash": "36eb4471e8580fda029251d94c4046b80c49c9e547b6a018398265d938015a08",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -2616,10 +2631,7 @@
           }
         }
       ],
-      "verifiedEdges": [
-        "dates"
-      ],
-      "fresh": false
+      "fresh": true
     },
     {
       "id": "dates",
@@ -3171,6 +3183,7 @@
         "js/events-order.js"
       ],
       "image": "captures/reminders.png",
+      "imageHash": "181322d4a39d95fb4d8b6ee6595ef72a443266a59a08b32540e16394e5f14d4f",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -3356,8 +3369,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "14d01bfbc0fe4ac9b8119b0478e56f854a65b135",
-      "verifiedEdges": [],
-      "imageHash": "181322d4a39d95fb4d8b6ee6595ef72a443266a59a08b32540e16394e5f14d4f",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -3371,7 +3382,8 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [],
+      "fresh": false
     },
     {
       "id": "hours-export",
@@ -7523,7 +7535,6 @@
       ],
       "region": ".ev-event-form-body",
       "image": "captures/event-new.png",
-      "imageHash": "831290ea51139fbd3e8b68c8ebca37814fca33ec561b6c019371580dfc1e6a7d",
       "anchors": {
         "event-new-details": {
           "x": 390,
@@ -7536,7 +7547,7 @@
       "dependencies": [
         {
           "file": "index.html",
-          "hash": "4b451a71e39f8db2fa2c200baae35aa9baa68368c8a96fedf8a8a61083b15b21"
+          "hash": "6f811d259bc8b1b1efcfcf488f3a5d265acd7280e57530eaea32da28e0dee149"
         },
         {
           "file": "js/nav-icons.js",
@@ -7545,23 +7556,23 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "7c6d91dc880311b1d887b5ef090b4e9ca0de9d425bf499eb71fd55f991b03599"
+          "hash": "cf0adf093b04cb625864280ca6355e946dc89063307e5116d80ec3c59805d3cb"
         },
         {
           "file": "js/data-integrity.js",
-          "hash": "34bfc80472270238e11eb0e194fef19e56c7fbb81a35ff5fde23a8ae23e5e9f0"
+          "hash": "8809bc58f3e48fc2e8df059e921ee14daf7ee49ee773fcd82dcd38304eb9d878"
         },
         {
           "file": "tools/fixture.json",
-          "hash": "98d54e4adf481a811b8b05627515272fb623f8b78db75b294d07ceed739cd07d"
+          "hash": "0e5bcfb1693e1cc957d18bcf9d99b8db5eb013e6772baa9584fae76fa9d8f638"
         },
         {
           "file": "tools/visual-map/fixture.cjs",
-          "hash": "9a2d9a751e1b17e4a8afbeefbee3cc0bc01d41ae4a49b3c7d0c0c2804072a5c6"
+          "hash": "af6c24671b8c6a68da2fd637eae1a5a321ee8f462617770de61e6c182a59acf9"
         },
         {
           "file": "css/source/base.css",
-          "hash": "58e9b402d3d746f8c8756dfd1904f3f62d7e3dd59ad6dc79287f971bd904e28c"
+          "hash": "76192f32c58655ef3f58b9d2464020845fe85d70447300a360fc5fa80caaed4b"
         },
         {
           "file": "css/source/navigation-controls.css",
@@ -7569,15 +7580,15 @@
         },
         {
           "file": "css/source/economics.css",
-          "hash": "0139ec7d50ccc8cc00bf4607bcf6563a2989cf20f9655d5d52fa2db223ca0bd8"
+          "hash": "a109ec1ee3ed81b6547643b4a52d0a59644f908118a3d116047f07fdefc40d74"
         },
         {
           "file": "css/source/birthdays.css",
-          "hash": "aae1fa4fe0c4b46f60b613e96a1db5cdac9664712da500d4d4c1c45ceb8daacf"
+          "hash": "440692569d9eaffef154455313133b7517cd1e8773f9529b43f751ea1610116e"
         },
         {
           "file": "css/source/event-calendar.css",
-          "hash": "302e47126cc9555d8fb669c50ffe94f0665a59c8ef7cb772acd6aad45e2fd179"
+          "hash": "4e3ad557e1163941e9c90a58ba6e88f004155202dbdef369cc070adb52ee8912"
         },
         {
           "file": "css/source/navigation-alarms.css",
@@ -7585,7 +7596,7 @@
         },
         {
           "file": "css/source/event-panels.css",
-          "hash": "a774bd92788f2974acb385c535d2ba6f6f528bf7f7bf82b4562080a8064b7192"
+          "hash": "0fbf3071bb0e85df489e7a697165ed0f900ba9ca7d60f6fecb7a4da71374ebb1"
         },
         {
           "file": "css/source/dialogs-responsive.css",
@@ -7597,31 +7608,39 @@
         },
         {
           "file": "css/source/routines.css",
-          "hash": "61c20b228e9cb5a57d9b2a2c35d86360fb4b1859c2344220375ae4d49d8b051d"
+          "hash": "43b1089a41b86a4bf8f03383befef13171eae05beabf4ae35a37ee7e746d2e9e"
         },
         {
           "file": "css/source/shared-refinements.css",
-          "hash": "2caba9b567eff1f5f421af5adc11179a5f0df4daa7ff7b344eac354e6e0d5b33"
+          "hash": "734db873b39c183e1fe8acca32b6150c34901acd36c274065e85c09ecfe1acef"
         },
         {
           "file": "css/source/home-sharing.css",
-          "hash": "caac3c233ab62466329f3086e2fc904d5fb79fb541fd7d591cec0f3684b53cc3"
+          "hash": "8d2556639e8223d19d2670108fb6d7cebf353e25c2b4561bed3bdcf33d48f001"
         },
         {
           "file": "css/source/energy-refinements.css",
-          "hash": "b07b027bafa68df7ed4d69283f5d10d06be0b34b45c0fe2750c9f37ba37400a5"
+          "hash": "ad85d3b26f5f8df5ee36ff93be1fc959a75319d21835eb64572b248eb8e89965"
         },
         {
           "file": "css/source/home-reminders.css",
-          "hash": "38bdefdcfdfe66af20e803d5e0beabd19dab36551d01c0345bcdc61bd824853d"
+          "hash": "985fbb309c64ae0e557c6359cb7e8f570210fd125b76f50db1caad7d1e613453"
         },
         {
           "file": "css/source/invoices.css",
-          "hash": "e856e3f17686e33c3232c34bc76015d91156cdc46b6d6c864468fbb23f3a8edb"
+          "hash": "0c83cd625c58680cf850008dff125883a91efc999bb889594c23423a9a4b454e"
+        },
+        {
+          "file": "css/source/home-status.css",
+          "hash": "ce05d6d8c773b5469b79234aea1904b90a46b633172f6743b0e206b53c577499"
+        },
+        {
+          "file": "css/source/invoices-calendar.css",
+          "hash": "fab6f4d1d756a586786aec5c51c7eaccc786b4742b4179d4ce627db9acec0f63"
         },
         {
           "file": "css/source/theme-cream.css",
-          "hash": "d5d09d0ae2535163aac0b663ebe8abc3c8661d0d910fa0674bcd2c42d8e83949"
+          "hash": "2e2f3cae8e4d8ed00e97f4a127fe36564b68b1c55816e1a4cfa6f1cebfb83309"
         },
         {
           "file": "css/tasks.css",
@@ -7629,15 +7648,19 @@
         },
         {
           "file": "js/init.js",
-          "hash": "2402274c8aea9cc86a031ed7d86d1543ecc0668e8a96e1f79c70c1cd0c66a1eb"
+          "hash": "9c900a17529bbb74810fb1a8d7d8a3c025cca599dbcb1e944fde9b60a3b4c46b"
+        },
+        {
+          "file": "js/home-week-actions.js",
+          "hash": "11fea26112f37e6a41f54e84d3293a041b91a5bf12d0eca5cfca2f27309e2421"
         },
         {
           "file": "js/events-render.js",
-          "hash": "c574c563bf0442c0394aea0838a3f3e56fd52ffca8bf51a395d3953b0008d62b"
+          "hash": "7e4aca0172e921e765147b884767fedeedf1e4e9ae1dbed613fae4edece0a143"
         },
         {
           "file": "js/events-bind.js",
-          "hash": "28236ef28430ff1de9c619be4ce52f2cf07c2daf545b88900c2f4f4adf064d27"
+          "hash": "c98e5398e84176153e3d98282e5479c2ad222c11198a248975a018d05cebb50a"
         },
         {
           "file": "js/swipe-render.js",
@@ -7645,15 +7668,15 @@
         },
         {
           "file": "js/events-picker-color.js",
-          "hash": "b6b0c21463d3c3738b4ee478eefe74b2f13b73590214aa199fd0d4ed35517a7d"
+          "hash": "0d188c7e89dd923e5d8b7607fd18851fa62d6adca379ec8542e32fe23a000eaf"
         },
         {
           "file": "js/events-order.js",
-          "hash": "afa4736901e061cefcd811be25c90003e8f9dcc1e67dcd888a978e02d14f99f6"
+          "hash": "630b29033f17301d691c4a2938ff85a50c66e1943f64c081d504e8e7b889e46a"
         },
         {
           "file": "js/events.js",
-          "hash": "ff878881e8610165efa89e3a76690e775c6dd4bdad2e7eebbe96281a0d16a504"
+          "hash": "9530d3a96a9a90dc63eccbf74fa660f63763342cd9374e1144d30965557e3aa3"
         },
         {
           "file": "js/events-alarm-policy.js",
@@ -7661,19 +7684,19 @@
         },
         {
           "file": "js/events-cal.js",
-          "hash": "6a82645259cb083c59bf7c2b85033733f4b07d130b9e629345174be735250d7a"
+          "hash": "1ccd9c02932a22336fd612cbb3a3585b2934d969b02539713f36eb33a0591884"
         },
         {
           "file": "js/events-form.js",
-          "hash": "b5093a84a7f19758f855bded042485e4c9dd438375acd741a27758d4308caa40"
+          "hash": "5955ead8d40a2b45036ab3c7d46e1afc4169876dd52acbed49a1cb0ed416976c"
         },
         {
           "file": "js/events-form-controls.js",
-          "hash": "e88275e0a787237dc4ce5b0df5c793343cf2a5dfd96a86580a56ea8065c851b1"
+          "hash": "a8ec53d2690303cdb0ece33b10656463bb52992ff740a1179b5787ad1cabf9ad"
         },
         {
           "file": "js/events-form-schedule.js",
-          "hash": "8aaeba5654a8c1f123b053120c52f253f128907df8d43894d4e4f6987fe9e43d"
+          "hash": "fab8a280f1b59625c095c326b1356ff55c93ac399a8ab43e28f5fdea48aaaa1b"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -7686,7 +7709,11 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
+      "commit": "87a70742d0d39260c1473fc98c415e884a7dd12a",
+      "verifiedEdges": [
+        "event-new-details"
+      ],
+      "imageHash": "c0a533972b57f03311204af4232df277b21eef37e9ab0d46950b637289e07be3",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -7701,10 +7728,7 @@
           }
         }
       ],
-      "verifiedEdges": [
-        "event-new-details"
-      ],
-      "fresh": false
+      "fresh": true
     },
     {
       "id": "event-new-details",
@@ -8928,20 +8952,25 @@
       ],
       "region": "#evPlanPickerOv .ev-plan-options",
       "image": "captures/plan-picker.png",
-      "imageHash": "240e426f9c767e70477ddddcd1a69a68a47174622d90792b1aa3491d0e5b12f5",
       "anchors": {
         "plan-picker-new-plans": {
           "x": 370,
-          "y": 552.85,
+          "y": 577.1500000000001,
           "width": 8,
           "height": 100
+        },
+        "plan-picker-romantic": {
+          "x": 334,
+          "y": 287,
+          "width": 18,
+          "height": 18
         }
       },
       "entryBox": null,
       "dependencies": [
         {
           "file": "index.html",
-          "hash": "4b451a71e39f8db2fa2c200baae35aa9baa68368c8a96fedf8a8a61083b15b21"
+          "hash": "6f811d259bc8b1b1efcfcf488f3a5d265acd7280e57530eaea32da28e0dee149"
         },
         {
           "file": "js/nav-icons.js",
@@ -8950,23 +8979,23 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "7c6d91dc880311b1d887b5ef090b4e9ca0de9d425bf499eb71fd55f991b03599"
+          "hash": "cf0adf093b04cb625864280ca6355e946dc89063307e5116d80ec3c59805d3cb"
         },
         {
           "file": "js/data-integrity.js",
-          "hash": "34bfc80472270238e11eb0e194fef19e56c7fbb81a35ff5fde23a8ae23e5e9f0"
+          "hash": "8809bc58f3e48fc2e8df059e921ee14daf7ee49ee773fcd82dcd38304eb9d878"
         },
         {
           "file": "tools/fixture.json",
-          "hash": "98d54e4adf481a811b8b05627515272fb623f8b78db75b294d07ceed739cd07d"
+          "hash": "0e5bcfb1693e1cc957d18bcf9d99b8db5eb013e6772baa9584fae76fa9d8f638"
         },
         {
           "file": "tools/visual-map/fixture.cjs",
-          "hash": "9a2d9a751e1b17e4a8afbeefbee3cc0bc01d41ae4a49b3c7d0c0c2804072a5c6"
+          "hash": "af6c24671b8c6a68da2fd637eae1a5a321ee8f462617770de61e6c182a59acf9"
         },
         {
           "file": "css/source/base.css",
-          "hash": "58e9b402d3d746f8c8756dfd1904f3f62d7e3dd59ad6dc79287f971bd904e28c"
+          "hash": "76192f32c58655ef3f58b9d2464020845fe85d70447300a360fc5fa80caaed4b"
         },
         {
           "file": "css/source/navigation-controls.css",
@@ -8974,15 +9003,15 @@
         },
         {
           "file": "css/source/economics.css",
-          "hash": "0139ec7d50ccc8cc00bf4607bcf6563a2989cf20f9655d5d52fa2db223ca0bd8"
+          "hash": "a109ec1ee3ed81b6547643b4a52d0a59644f908118a3d116047f07fdefc40d74"
         },
         {
           "file": "css/source/birthdays.css",
-          "hash": "aae1fa4fe0c4b46f60b613e96a1db5cdac9664712da500d4d4c1c45ceb8daacf"
+          "hash": "440692569d9eaffef154455313133b7517cd1e8773f9529b43f751ea1610116e"
         },
         {
           "file": "css/source/event-calendar.css",
-          "hash": "302e47126cc9555d8fb669c50ffe94f0665a59c8ef7cb772acd6aad45e2fd179"
+          "hash": "4e3ad557e1163941e9c90a58ba6e88f004155202dbdef369cc070adb52ee8912"
         },
         {
           "file": "css/source/navigation-alarms.css",
@@ -8990,7 +9019,7 @@
         },
         {
           "file": "css/source/event-panels.css",
-          "hash": "a774bd92788f2974acb385c535d2ba6f6f528bf7f7bf82b4562080a8064b7192"
+          "hash": "0fbf3071bb0e85df489e7a697165ed0f900ba9ca7d60f6fecb7a4da71374ebb1"
         },
         {
           "file": "css/source/dialogs-responsive.css",
@@ -9002,31 +9031,39 @@
         },
         {
           "file": "css/source/routines.css",
-          "hash": "61c20b228e9cb5a57d9b2a2c35d86360fb4b1859c2344220375ae4d49d8b051d"
+          "hash": "43b1089a41b86a4bf8f03383befef13171eae05beabf4ae35a37ee7e746d2e9e"
         },
         {
           "file": "css/source/shared-refinements.css",
-          "hash": "2caba9b567eff1f5f421af5adc11179a5f0df4daa7ff7b344eac354e6e0d5b33"
+          "hash": "734db873b39c183e1fe8acca32b6150c34901acd36c274065e85c09ecfe1acef"
         },
         {
           "file": "css/source/home-sharing.css",
-          "hash": "caac3c233ab62466329f3086e2fc904d5fb79fb541fd7d591cec0f3684b53cc3"
+          "hash": "8d2556639e8223d19d2670108fb6d7cebf353e25c2b4561bed3bdcf33d48f001"
         },
         {
           "file": "css/source/energy-refinements.css",
-          "hash": "b07b027bafa68df7ed4d69283f5d10d06be0b34b45c0fe2750c9f37ba37400a5"
+          "hash": "ad85d3b26f5f8df5ee36ff93be1fc959a75319d21835eb64572b248eb8e89965"
         },
         {
           "file": "css/source/home-reminders.css",
-          "hash": "38bdefdcfdfe66af20e803d5e0beabd19dab36551d01c0345bcdc61bd824853d"
+          "hash": "985fbb309c64ae0e557c6359cb7e8f570210fd125b76f50db1caad7d1e613453"
         },
         {
           "file": "css/source/invoices.css",
-          "hash": "e856e3f17686e33c3232c34bc76015d91156cdc46b6d6c864468fbb23f3a8edb"
+          "hash": "0c83cd625c58680cf850008dff125883a91efc999bb889594c23423a9a4b454e"
+        },
+        {
+          "file": "css/source/home-status.css",
+          "hash": "ce05d6d8c773b5469b79234aea1904b90a46b633172f6743b0e206b53c577499"
+        },
+        {
+          "file": "css/source/invoices-calendar.css",
+          "hash": "fab6f4d1d756a586786aec5c51c7eaccc786b4742b4179d4ce627db9acec0f63"
         },
         {
           "file": "css/source/theme-cream.css",
-          "hash": "d5d09d0ae2535163aac0b663ebe8abc3c8661d0d910fa0674bcd2c42d8e83949"
+          "hash": "2e2f3cae8e4d8ed00e97f4a127fe36564b68b1c55816e1a4cfa6f1cebfb83309"
         },
         {
           "file": "css/tasks.css",
@@ -9034,43 +9071,47 @@
         },
         {
           "file": "js/init.js",
-          "hash": "2402274c8aea9cc86a031ed7d86d1543ecc0668e8a96e1f79c70c1cd0c66a1eb"
+          "hash": "9c900a17529bbb74810fb1a8d7d8a3c025cca599dbcb1e944fde9b60a3b4c46b"
+        },
+        {
+          "file": "js/home-week-actions.js",
+          "hash": "11fea26112f37e6a41f54e84d3293a041b91a5bf12d0eca5cfca2f27309e2421"
         },
         {
           "file": "js/events-cal.js",
-          "hash": "6a82645259cb083c59bf7c2b85033733f4b07d130b9e629345174be735250d7a"
+          "hash": "1ccd9c02932a22336fd612cbb3a3585b2934d969b02539713f36eb33a0591884"
         },
         {
           "file": "js/events-render.js",
-          "hash": "c574c563bf0442c0394aea0838a3f3e56fd52ffca8bf51a395d3953b0008d62b"
+          "hash": "7e4aca0172e921e765147b884767fedeedf1e4e9ae1dbed613fae4edece0a143"
         },
         {
           "file": "js/events-bind.js",
-          "hash": "28236ef28430ff1de9c619be4ce52f2cf07c2daf545b88900c2f4f4adf064d27"
+          "hash": "c98e5398e84176153e3d98282e5479c2ad222c11198a248975a018d05cebb50a"
         },
         {
           "file": "js/events.js",
-          "hash": "ff878881e8610165efa89e3a76690e775c6dd4bdad2e7eebbe96281a0d16a504"
+          "hash": "9530d3a96a9a90dc63eccbf74fa660f63763342cd9374e1144d30965557e3aa3"
         },
         {
           "file": "js/events-detail.js",
-          "hash": "55dadcc8dbf9ea9962b2f4b36ca1473a92a80da279c52fd284770433b663c84c"
+          "hash": "30a6d652d63be072da4bcbd34a36d289a8fd1bacd63487224f6be57842e19661"
         },
         {
           "file": "js/events-form.js",
-          "hash": "b5093a84a7f19758f855bded042485e4c9dd438375acd741a27758d4308caa40"
+          "hash": "5955ead8d40a2b45036ab3c7d46e1afc4169876dd52acbed49a1cb0ed416976c"
         },
         {
           "file": "js/events-form-schedule.js",
-          "hash": "8aaeba5654a8c1f123b053120c52f253f128907df8d43894d4e4f6987fe9e43d"
+          "hash": "fab8a280f1b59625c095c326b1356ff55c93ac399a8ab43e28f5fdea48aaaa1b"
         },
         {
           "file": "js/events-form-controls.js",
-          "hash": "e88275e0a787237dc4ce5b0df5c793343cf2a5dfd96a86580a56ea8065c851b1"
+          "hash": "a8ec53d2690303cdb0ece33b10656463bb52992ff740a1179b5787ad1cabf9ad"
         },
         {
           "file": "js/events-plan-picker.js",
-          "hash": "d87baf477036659593ebaafd17bb3e8ff46e00f6f4e0ff8aad26582e2e7b11b0"
+          "hash": "e4de678b85f116d42c949443ba4cda35e26f2acfd5b25689aec94202ad67dca3"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -9079,11 +9120,16 @@
         {
           "file": "tools/visual-map/catalog.cjs",
           "part": "scene:plan-picker",
-          "hash": "65085c52b9b23065a6c739339c4714bf5116f493d7944343a1cbea9dcf9a9836"
+          "hash": "e663a945b8ca3de00859d89cf2cf393259790f392106ea206cdf7c97d2ef8456"
         }
       ],
       "dependencyVersion": 2,
-      "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
+      "commit": "87a70742d0d39260c1473fc98c415e884a7dd12a",
+      "verifiedEdges": [
+        "plan-picker-new-plans",
+        "plan-picker-romantic"
+      ],
+      "imageHash": "9361d74e4b3aa601b3c0668af35df2ddaf21b11f9c062c0ce5f21fe0a146341e",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -9098,10 +9144,7 @@
           }
         }
       ],
-      "verifiedEdges": [
-        "plan-picker-new-plans"
-      ],
-      "fresh": false
+      "fresh": true
     },
     {
       "id": "plan-picker-new-plans",
@@ -9125,13 +9168,12 @@
       ],
       "region": "#evPlanPickerOv .ev-plan-options",
       "image": "captures/plan-picker-new-plans.png",
-      "imageHash": "94c9a8daa0f2d115687cf65b277f2682b821806e768865fc8e11f72528052dd1",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
         {
           "file": "index.html",
-          "hash": "4b451a71e39f8db2fa2c200baae35aa9baa68368c8a96fedf8a8a61083b15b21"
+          "hash": "6f811d259bc8b1b1efcfcf488f3a5d265acd7280e57530eaea32da28e0dee149"
         },
         {
           "file": "js/nav-icons.js",
@@ -9140,23 +9182,23 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "7c6d91dc880311b1d887b5ef090b4e9ca0de9d425bf499eb71fd55f991b03599"
+          "hash": "cf0adf093b04cb625864280ca6355e946dc89063307e5116d80ec3c59805d3cb"
         },
         {
           "file": "js/data-integrity.js",
-          "hash": "34bfc80472270238e11eb0e194fef19e56c7fbb81a35ff5fde23a8ae23e5e9f0"
+          "hash": "8809bc58f3e48fc2e8df059e921ee14daf7ee49ee773fcd82dcd38304eb9d878"
         },
         {
           "file": "tools/fixture.json",
-          "hash": "98d54e4adf481a811b8b05627515272fb623f8b78db75b294d07ceed739cd07d"
+          "hash": "0e5bcfb1693e1cc957d18bcf9d99b8db5eb013e6772baa9584fae76fa9d8f638"
         },
         {
           "file": "tools/visual-map/fixture.cjs",
-          "hash": "9a2d9a751e1b17e4a8afbeefbee3cc0bc01d41ae4a49b3c7d0c0c2804072a5c6"
+          "hash": "af6c24671b8c6a68da2fd637eae1a5a321ee8f462617770de61e6c182a59acf9"
         },
         {
           "file": "css/source/base.css",
-          "hash": "58e9b402d3d746f8c8756dfd1904f3f62d7e3dd59ad6dc79287f971bd904e28c"
+          "hash": "76192f32c58655ef3f58b9d2464020845fe85d70447300a360fc5fa80caaed4b"
         },
         {
           "file": "css/source/navigation-controls.css",
@@ -9164,15 +9206,15 @@
         },
         {
           "file": "css/source/economics.css",
-          "hash": "0139ec7d50ccc8cc00bf4607bcf6563a2989cf20f9655d5d52fa2db223ca0bd8"
+          "hash": "a109ec1ee3ed81b6547643b4a52d0a59644f908118a3d116047f07fdefc40d74"
         },
         {
           "file": "css/source/birthdays.css",
-          "hash": "aae1fa4fe0c4b46f60b613e96a1db5cdac9664712da500d4d4c1c45ceb8daacf"
+          "hash": "440692569d9eaffef154455313133b7517cd1e8773f9529b43f751ea1610116e"
         },
         {
           "file": "css/source/event-calendar.css",
-          "hash": "302e47126cc9555d8fb669c50ffe94f0665a59c8ef7cb772acd6aad45e2fd179"
+          "hash": "4e3ad557e1163941e9c90a58ba6e88f004155202dbdef369cc070adb52ee8912"
         },
         {
           "file": "css/source/navigation-alarms.css",
@@ -9180,7 +9222,7 @@
         },
         {
           "file": "css/source/event-panels.css",
-          "hash": "a774bd92788f2974acb385c535d2ba6f6f528bf7f7bf82b4562080a8064b7192"
+          "hash": "0fbf3071bb0e85df489e7a697165ed0f900ba9ca7d60f6fecb7a4da71374ebb1"
         },
         {
           "file": "css/source/dialogs-responsive.css",
@@ -9192,31 +9234,39 @@
         },
         {
           "file": "css/source/routines.css",
-          "hash": "61c20b228e9cb5a57d9b2a2c35d86360fb4b1859c2344220375ae4d49d8b051d"
+          "hash": "43b1089a41b86a4bf8f03383befef13171eae05beabf4ae35a37ee7e746d2e9e"
         },
         {
           "file": "css/source/shared-refinements.css",
-          "hash": "2caba9b567eff1f5f421af5adc11179a5f0df4daa7ff7b344eac354e6e0d5b33"
+          "hash": "734db873b39c183e1fe8acca32b6150c34901acd36c274065e85c09ecfe1acef"
         },
         {
           "file": "css/source/home-sharing.css",
-          "hash": "caac3c233ab62466329f3086e2fc904d5fb79fb541fd7d591cec0f3684b53cc3"
+          "hash": "8d2556639e8223d19d2670108fb6d7cebf353e25c2b4561bed3bdcf33d48f001"
         },
         {
           "file": "css/source/energy-refinements.css",
-          "hash": "b07b027bafa68df7ed4d69283f5d10d06be0b34b45c0fe2750c9f37ba37400a5"
+          "hash": "ad85d3b26f5f8df5ee36ff93be1fc959a75319d21835eb64572b248eb8e89965"
         },
         {
           "file": "css/source/home-reminders.css",
-          "hash": "38bdefdcfdfe66af20e803d5e0beabd19dab36551d01c0345bcdc61bd824853d"
+          "hash": "985fbb309c64ae0e557c6359cb7e8f570210fd125b76f50db1caad7d1e613453"
         },
         {
           "file": "css/source/invoices.css",
-          "hash": "e856e3f17686e33c3232c34bc76015d91156cdc46b6d6c864468fbb23f3a8edb"
+          "hash": "0c83cd625c58680cf850008dff125883a91efc999bb889594c23423a9a4b454e"
+        },
+        {
+          "file": "css/source/home-status.css",
+          "hash": "ce05d6d8c773b5469b79234aea1904b90a46b633172f6743b0e206b53c577499"
+        },
+        {
+          "file": "css/source/invoices-calendar.css",
+          "hash": "fab6f4d1d756a586786aec5c51c7eaccc786b4742b4179d4ce627db9acec0f63"
         },
         {
           "file": "css/source/theme-cream.css",
-          "hash": "d5d09d0ae2535163aac0b663ebe8abc3c8661d0d910fa0674bcd2c42d8e83949"
+          "hash": "2e2f3cae8e4d8ed00e97f4a127fe36564b68b1c55816e1a4cfa6f1cebfb83309"
         },
         {
           "file": "css/tasks.css",
@@ -9224,43 +9274,47 @@
         },
         {
           "file": "js/init.js",
-          "hash": "2402274c8aea9cc86a031ed7d86d1543ecc0668e8a96e1f79c70c1cd0c66a1eb"
+          "hash": "9c900a17529bbb74810fb1a8d7d8a3c025cca599dbcb1e944fde9b60a3b4c46b"
+        },
+        {
+          "file": "js/home-week-actions.js",
+          "hash": "11fea26112f37e6a41f54e84d3293a041b91a5bf12d0eca5cfca2f27309e2421"
         },
         {
           "file": "js/events-cal.js",
-          "hash": "6a82645259cb083c59bf7c2b85033733f4b07d130b9e629345174be735250d7a"
+          "hash": "1ccd9c02932a22336fd612cbb3a3585b2934d969b02539713f36eb33a0591884"
         },
         {
           "file": "js/events-render.js",
-          "hash": "c574c563bf0442c0394aea0838a3f3e56fd52ffca8bf51a395d3953b0008d62b"
+          "hash": "7e4aca0172e921e765147b884767fedeedf1e4e9ae1dbed613fae4edece0a143"
         },
         {
           "file": "js/events-bind.js",
-          "hash": "28236ef28430ff1de9c619be4ce52f2cf07c2daf545b88900c2f4f4adf064d27"
+          "hash": "c98e5398e84176153e3d98282e5479c2ad222c11198a248975a018d05cebb50a"
         },
         {
           "file": "js/events.js",
-          "hash": "ff878881e8610165efa89e3a76690e775c6dd4bdad2e7eebbe96281a0d16a504"
+          "hash": "9530d3a96a9a90dc63eccbf74fa660f63763342cd9374e1144d30965557e3aa3"
         },
         {
           "file": "js/events-detail.js",
-          "hash": "55dadcc8dbf9ea9962b2f4b36ca1473a92a80da279c52fd284770433b663c84c"
+          "hash": "30a6d652d63be072da4bcbd34a36d289a8fd1bacd63487224f6be57842e19661"
         },
         {
           "file": "js/events-form.js",
-          "hash": "b5093a84a7f19758f855bded042485e4c9dd438375acd741a27758d4308caa40"
+          "hash": "5955ead8d40a2b45036ab3c7d46e1afc4169876dd52acbed49a1cb0ed416976c"
         },
         {
           "file": "js/events-form-schedule.js",
-          "hash": "8aaeba5654a8c1f123b053120c52f253f128907df8d43894d4e4f6987fe9e43d"
+          "hash": "fab8a280f1b59625c095c326b1356ff55c93ac399a8ab43e28f5fdea48aaaa1b"
         },
         {
           "file": "js/events-form-controls.js",
-          "hash": "e88275e0a787237dc4ce5b0df5c793343cf2a5dfd96a86580a56ea8065c851b1"
+          "hash": "a8ec53d2690303cdb0ece33b10656463bb52992ff740a1179b5787ad1cabf9ad"
         },
         {
           "file": "js/events-plan-picker.js",
-          "hash": "d87baf477036659593ebaafd17bb3e8ff46e00f6f4e0ff8aad26582e2e7b11b0"
+          "hash": "e4de678b85f116d42c949443ba4cda35e26f2acfd5b25689aec94202ad67dca3"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -9273,10 +9327,201 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "70f9b66b5180565bfd1f58769b790cd4229957f1",
-      "review": "Sin revisar",
+      "commit": "87a70742d0d39260c1473fc98c415e884a7dd12a",
       "verifiedEdges": [],
-      "fresh": false
+      "imageHash": "afce44f42b56e953bdbc52760d692fbfbf87278089f25005a64fc4378e79d5d2",
+      "review": "Sin revisar",
+      "fresh": true
+    },
+    {
+      "id": "plan-picker-romantic",
+      "title": "Planes · románticos",
+      "group": "Eventos",
+      "route": [
+        "#eventsBtn",
+        ".ev-cell[data-ds=\"2026-08-21\"] [data-id=\"map-demo\"]",
+        "#evDEdit",
+        {
+          "scroll": ".ev-plan-more[data-picker=\"plans\"]"
+        },
+        ".ev-plan-more[data-picker=\"plans\"]",
+        "#evPlanRomantic"
+      ],
+      "ready": "#evPlanRomantic:checked",
+      "sources": [
+        "js/events-plan-picker.js",
+        "js/events-picker-color.js"
+      ],
+      "region": "#evPlanPickerOv .ev-plan-options",
+      "image": "captures/plan-picker-romantic.png",
+      "anchors": {},
+      "entryBox": null,
+      "dependencies": [
+        {
+          "file": "index.html",
+          "hash": "6f811d259bc8b1b1efcfcf488f3a5d265acd7280e57530eaea32da28e0dee149"
+        },
+        {
+          "file": "js/nav-icons.js",
+          "hash": "d45ad268333bf5dfda75d71902da1d7572bbec27e15e5b412fb3f785c0808c42"
+        },
+        {
+          "file": "js/core.js",
+          "part": "core-runtime",
+          "hash": "cf0adf093b04cb625864280ca6355e946dc89063307e5116d80ec3c59805d3cb"
+        },
+        {
+          "file": "js/data-integrity.js",
+          "hash": "8809bc58f3e48fc2e8df059e921ee14daf7ee49ee773fcd82dcd38304eb9d878"
+        },
+        {
+          "file": "tools/fixture.json",
+          "hash": "0e5bcfb1693e1cc957d18bcf9d99b8db5eb013e6772baa9584fae76fa9d8f638"
+        },
+        {
+          "file": "tools/visual-map/fixture.cjs",
+          "hash": "af6c24671b8c6a68da2fd637eae1a5a321ee8f462617770de61e6c182a59acf9"
+        },
+        {
+          "file": "css/source/base.css",
+          "hash": "76192f32c58655ef3f58b9d2464020845fe85d70447300a360fc5fa80caaed4b"
+        },
+        {
+          "file": "css/source/navigation-controls.css",
+          "hash": "dbc077d7421c40475885ad1ee8f146743a0e25ab5f6f0d4f0a9a050765add898"
+        },
+        {
+          "file": "css/source/economics.css",
+          "hash": "a109ec1ee3ed81b6547643b4a52d0a59644f908118a3d116047f07fdefc40d74"
+        },
+        {
+          "file": "css/source/birthdays.css",
+          "hash": "440692569d9eaffef154455313133b7517cd1e8773f9529b43f751ea1610116e"
+        },
+        {
+          "file": "css/source/event-calendar.css",
+          "hash": "4e3ad557e1163941e9c90a58ba6e88f004155202dbdef369cc070adb52ee8912"
+        },
+        {
+          "file": "css/source/navigation-alarms.css",
+          "hash": "47d9432b0b15346910793923df7135606c982cf934ab492aaff6aa33777d0227"
+        },
+        {
+          "file": "css/source/event-panels.css",
+          "hash": "0fbf3071bb0e85df489e7a697165ed0f900ba9ca7d60f6fecb7a4da71374ebb1"
+        },
+        {
+          "file": "css/source/dialogs-responsive.css",
+          "hash": "557d68bac2670445c7edd35896d6a8e90cab5efbc85c6d1684ea31da9451e4b3"
+        },
+        {
+          "file": "css/source/wedding-moves.css",
+          "hash": "5b43e0e0a12fb300f91f7f493ec6b55868daa63844184bf44d7df40a0bd2ed9a"
+        },
+        {
+          "file": "css/source/routines.css",
+          "hash": "43b1089a41b86a4bf8f03383befef13171eae05beabf4ae35a37ee7e746d2e9e"
+        },
+        {
+          "file": "css/source/shared-refinements.css",
+          "hash": "734db873b39c183e1fe8acca32b6150c34901acd36c274065e85c09ecfe1acef"
+        },
+        {
+          "file": "css/source/home-sharing.css",
+          "hash": "8d2556639e8223d19d2670108fb6d7cebf353e25c2b4561bed3bdcf33d48f001"
+        },
+        {
+          "file": "css/source/energy-refinements.css",
+          "hash": "ad85d3b26f5f8df5ee36ff93be1fc959a75319d21835eb64572b248eb8e89965"
+        },
+        {
+          "file": "css/source/home-reminders.css",
+          "hash": "985fbb309c64ae0e557c6359cb7e8f570210fd125b76f50db1caad7d1e613453"
+        },
+        {
+          "file": "css/source/invoices.css",
+          "hash": "0c83cd625c58680cf850008dff125883a91efc999bb889594c23423a9a4b454e"
+        },
+        {
+          "file": "css/source/home-status.css",
+          "hash": "ce05d6d8c773b5469b79234aea1904b90a46b633172f6743b0e206b53c577499"
+        },
+        {
+          "file": "css/source/invoices-calendar.css",
+          "hash": "fab6f4d1d756a586786aec5c51c7eaccc786b4742b4179d4ce627db9acec0f63"
+        },
+        {
+          "file": "css/source/theme-cream.css",
+          "hash": "2e2f3cae8e4d8ed00e97f4a127fe36564b68b1c55816e1a4cfa6f1cebfb83309"
+        },
+        {
+          "file": "css/tasks.css",
+          "hash": "96b4dc532dd2d7eeb82fe5d4c971b8599542860e95b3e8655f45f1922d4365aa"
+        },
+        {
+          "file": "js/init.js",
+          "hash": "9c900a17529bbb74810fb1a8d7d8a3c025cca599dbcb1e944fde9b60a3b4c46b"
+        },
+        {
+          "file": "js/home-week-actions.js",
+          "hash": "11fea26112f37e6a41f54e84d3293a041b91a5bf12d0eca5cfca2f27309e2421"
+        },
+        {
+          "file": "js/events-cal.js",
+          "hash": "1ccd9c02932a22336fd612cbb3a3585b2934d969b02539713f36eb33a0591884"
+        },
+        {
+          "file": "js/events-render.js",
+          "hash": "7e4aca0172e921e765147b884767fedeedf1e4e9ae1dbed613fae4edece0a143"
+        },
+        {
+          "file": "js/events-bind.js",
+          "hash": "c98e5398e84176153e3d98282e5479c2ad222c11198a248975a018d05cebb50a"
+        },
+        {
+          "file": "js/events.js",
+          "hash": "9530d3a96a9a90dc63eccbf74fa660f63763342cd9374e1144d30965557e3aa3"
+        },
+        {
+          "file": "js/events-detail.js",
+          "hash": "30a6d652d63be072da4bcbd34a36d289a8fd1bacd63487224f6be57842e19661"
+        },
+        {
+          "file": "js/events-form.js",
+          "hash": "5955ead8d40a2b45036ab3c7d46e1afc4169876dd52acbed49a1cb0ed416976c"
+        },
+        {
+          "file": "js/events-form-schedule.js",
+          "hash": "fab8a280f1b59625c095c326b1356ff55c93ac399a8ab43e28f5fdea48aaaa1b"
+        },
+        {
+          "file": "js/events-form-controls.js",
+          "hash": "a8ec53d2690303cdb0ece33b10656463bb52992ff740a1179b5787ad1cabf9ad"
+        },
+        {
+          "file": "js/events-plan-picker.js",
+          "hash": "e4de678b85f116d42c949443ba4cda35e26f2acfd5b25689aec94202ad67dca3"
+        },
+        {
+          "file": "js/events-picker-color.js",
+          "hash": "0d188c7e89dd923e5d8b7607fd18851fa62d6adca379ec8542e32fe23a000eaf"
+        },
+        {
+          "file": "tools/visual-map/capture.cjs",
+          "hash": "ddd175b636479ffd6fc6d38f918a914c6b6a5fd89a58cd664add6c4037047dd8"
+        },
+        {
+          "file": "tools/visual-map/catalog.cjs",
+          "part": "scene:plan-picker-romantic",
+          "hash": "b4c33063526366f65af93d48edcaa153a97c427d4b07039a3a2978116522b41e"
+        }
+      ],
+      "dependencyVersion": 2,
+      "commit": "87a70742d0d39260c1473fc98c415e884a7dd12a",
+      "verifiedEdges": [],
+      "imageHash": "0f82845eed31af0c1cb499f5f05d1908c37404326f65ce8a04934f1517021e1e",
+      "review": "Sin revisar",
+      "fresh": true
     },
     {
       "id": "weddings",
@@ -33241,6 +33486,14 @@
       }
     },
     {
+      "from": "plan-picker",
+      "to": "plan-picker-romantic",
+      "selector": "#evPlanRomantic",
+      "label": "Marcar Plan romántico",
+      "view": "area",
+      "step": "#evPlanRomantic"
+    },
+    {
       "from": "events",
       "to": "weddings",
       "selector": "#evViewBodas",
@@ -35239,6 +35492,13 @@
       "status": "Capturada · Sin revisar"
     },
     {
+      "group": "Eventos",
+      "title": "Planes · románticos",
+      "file": "js/events-plan-picker.js",
+      "scene": "plan-picker-romantic",
+      "status": "Capturada · Sin revisar"
+    },
+    {
       "group": "Bodas",
       "title": "Edición de clases",
       "file": "js/bodas.js",
@@ -35756,7 +36016,7 @@
     {
       "symbol": "openEvPlanPicker",
       "file": "js/events-plan-picker.js",
-      "line": 48
+      "line": 61
     },
     {
       "symbol": "openEvRoutineSession",

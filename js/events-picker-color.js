@@ -40,11 +40,12 @@ var EV_COLOR_TYPES = {
    - puntual: se dibuja UN MARCADOR POR D\u00cdA (aunque abarque varios d\u00edas)
    - grande:  se dibuja como BARRA continua (formato actual de Viaje/Asturias) */
 var EV_MANAGEMENT_SUBTYPES={'Llamada':'phone','Peluquería':'scissors','Médico':'medical','Dentista':'tooth','Pago Hacienda':'tax','Pago':'payment','Contratar seguro':'insurance','Contratar gas/electricidad':'utilities','Enviar factura':'invoice','Cita':'appointment','Presentar Modelo':'tax-form','Contratar gas':'gas-home','Contratar electricidad':'electric-home'};
-var EV_PLAN_SUBTYPES={'Plan romántico':'heart','Comida':'meal','Cena':'dinner','Salir de fiesta':'disco','Copas':'party','Tomar algo':'beer','Montaña':'mountain','Barbacoa':'barbecue','Cumpleaños':'cake','Brunch':'brunch','Bolos':'bowling','Cine':'cinema','Ping pong':'pingpong','Ver partido fútbol':'football-tv','Juegos de mesa':'boardgames','Ponencia':'lecture','Carrera':'race','Merendar':'snack','Plan cultural':'culture','Desayunar':'breakfast','Salir a Correr':'running','Pádel':'plan-padel','Salir a bailar':'plan-dance','Boda':'rings','Fiesta':'celebration','Plan exterior':'outdoors','Navidad':'christmas','Torneo':'trophy','Fútbol':'football'};
+var EV_PLAN_SUBTYPES={'¡Sorpresa!':'surprise','Comida':'meal','Cena':'dinner','Salir de fiesta':'disco','Copas':'party','Tomar algo':'beer','Montaña':'mountain','Barbacoa':'barbecue','Cumpleaños':'cake','Brunch':'brunch','Bolos':'bowling','Cine':'cinema','Ping pong':'pingpong','Ver partido fútbol':'football-tv','Juegos de mesa':'boardgames','Ponencia':'lecture','Carrera':'race','Merendar':'snack','Plan cultural':'culture','Desayunar':'breakfast','Salir a Correr':'running','Pádel':'plan-padel','Salir a bailar':'plan-dance','Boda':'rings','Fiesta':'celebration','Plan exterior':'outdoors','Navidad':'christmas','Torneo':'trophy','Fútbol':'football'};
 // Alias de lectura: conserva eventos y preferencias anteriores sin reescribirlos.
-function evPlanType(type){return type==='Baile'?'Salir a bailar':type;}
+function evPlanType(type){return type==='Baile'?'Salir a bailar':type==='Plan romántico'?'¡Sorpresa!':type;}
 function evIsManagement(type){return type==='Rec. Gestiones'||Object.prototype.hasOwnProperty.call(EV_MANAGEMENT_SUBTYPES,type);}
 function evIsPlan(type){return type==='Plan/Quedada'||Object.prototype.hasOwnProperty.call(EV_PLAN_SUBTYPES,evPlanType(type));}
+function evIsRomantic(ev){return !!ev&&getEvKind(ev)==='puntual'&&evIsPlan(getEvType(ev))&&(ev.romantic===true||(ev.type==='Plan romántico'&&ev.romantic!==false));}
 function evFixedSymbol(type){return EV_MANAGEMENT_SUBTYPES[type]||EV_PLAN_SUBTYPES[evPlanType(type)]||null;}
 var EV_KINDS = {
   puntual:{label:'Puntual', types:['Rec. Gestiones'].concat(Object.keys(EV_MANAGEMENT_SUBTYPES),['Plan/Quedada'],Object.keys(EV_PLAN_SUBTYPES),['Ensayos boda','Otros'])},
@@ -67,7 +68,7 @@ var EV_TYPE_COLORS = {
   'puntual|Contratar gas/electricidad':'#dea642',
   'puntual|Enviar factura':'#5b9ea4',
   'puntual|Plan/Quedada'  :'#fb923c',
-  'puntual|Plan romántico':'#e03131',
+  'puntual|¡Sorpresa!':'#d15380',
   'puntual|Comida'        :'#e99a31',
   'puntual|Cena'          :'#6574c4',
   'puntual|Salir de fiesta':'#c553a5',
@@ -150,11 +151,12 @@ var EV_SHAPE_BW = 2;
 function evPlanShapeInner(shape){
   var outline=' stroke="#000" '+evSymbolStroke(EV_SHAPE_BW)+' stroke-linejoin="round"';
   var shapes={
+    surprise:'<path d="M-8,0 H8 V9 H-8 Z" fill="currentColor"'+outline+'/><path d="M-9,-3 H9 V1 H-9 Z" fill="#f3c868"'+outline+'/><path d="M-1.5,-3 H1.5 V9 H-1.5 Z" fill="#f3c868" stroke="#000" stroke-width="1.2"/><path d="M0,-3 C-9,-2 -9,-10 -5,-9 C-2,-9 0,-5 0,-3 C0,-5 2,-9 5,-9 C9,-10 9,-2 0,-3 Z" fill="#f3c868"'+outline+'/><path d="M-10,-8 V-5 M-11.5,-6.5 H-8.5 M10,-11 V-7 M8,-9 H12" stroke="#000" stroke-width="1.1" stroke-linecap="round"/>',
     celebration:'<path d="M-9,9 L-5,-3 L3,5 Z" fill="currentColor"'+outline+'/><path d="M-6,4 L-3,7 M-5,0 L0,5" stroke="#f6d88b" stroke-width="2"/><path d="M-1,0 Q-1,-7 5,-8 M2,3 Q8,2 9,-3 M-7,-6 L-5,-8 M7,7 L9,9" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"/><circle cx="1" cy="-8" r="1.4" fill="#e4b74f"/><circle cx="8" cy="1" r="1.4" fill="#e77867"/>',
     outdoors:'<circle cx="6" cy="-6" r="3" fill="#f2c756"'+outline+'/><path d="M-4,1 V8" stroke="#694c34" stroke-width="3"/><path d="M-4,-8 C-10,-8 -11,-1 -7,2 C-5,5 2,3 2,-1 C5,-6 -1,-10 -4,-8 Z" fill="currentColor"'+outline+'/><path d="M-10,9 Q0,6 10,9" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>',
     christmas:'<path d="M-2,5 H2 V10 H-2 Z" fill="#98704a"'+outline+'/><path d="M0,-9 L-5,-3 H-2 L-8,3 H-4 L-10,8 H10 L4,3 H8 L2,-3 H5 Z" fill="currentColor"'+outline+'/><path d="M0,-11 L1,-8 L4,-8 L2,-6 L3,-3 L0,-5 L-3,-3 L-2,-6 L-4,-8 L-1,-8 Z" fill="#f4ca55" stroke="#000" stroke-width=".9"/><circle cx="-3" cy="1" r="1.3" fill="#e77a6a"/><circle cx="3" cy="4" r="1.3" fill="#f4ca55"/><circle cx="-4" cy="6" r="1.2" fill="#f4ca55"/>',
     trophy:'<path d="M-5,-8 H5 V-2 Q5,3 0,4 Q-5,3 -5,-2 Z" fill="currentColor"'+outline+'/><path d="M-5,-6 H-9 V-2 Q-9,1 -4,1 M5,-6 H9 V-2 Q9,1 4,1 M0,4 V8 M-5,9 H5" fill="none"'+outline+' stroke-linecap="round"/><path d="M0,-5 L1,-3 L3,-3 L1.5,-1 L2,1 L0,0 L-2,1 L-1.5,-1 L-3,-3 L-1,-3 Z" fill="#fff2b4"/>',
-    football:'<circle r="9" fill="#fff"'+outline+'/><path d="M0,-4 L4,-1 L2.5,3 H-2.5 L-4,-1 Z M-7,-6 L-8,-2 L-9,-2 M7,-6 L8,-2 L9,-2 M-6,7 L-3,8 L-2,9 M6,7 L3,8 L2,9" fill="#20252b"/><path d="M0,-9 V-4 M-4,-1 L-8,-2 M4,-1 L8,-2 M-2.5,3 L-6,7 M2.5,3 L6,7" fill="none" stroke="#20252b" stroke-width="1.1"/>',
+    football:'<path d="M-8,-7 L-3,-6 L-3,-1 L1,2 L5,3 Q8,4 7,7 H-9 V2 L-8,-1 Z" fill="currentColor"'+outline+'/><path d="M-9,7 H7 V9 H-9 Z" fill="#f5dfaf" stroke="#000" stroke-width="1.3"/><path d="M-3,0 L-6,1 M0,2 L-3,3 M-6,9 V10 M2,9 V10" fill="none" stroke="#000" stroke-width="1.3" stroke-linecap="round"/><circle cx="5" cy="-4" r="5" fill="#fff" stroke="#000" stroke-width="1.5"/><path d="M5,-6.5 L7.5,-4.5 L6.5,-2 H3.5 L2.5,-4.5 Z M1,-7 L2,-8 M9,-7 L8,-8 M1,0 L2,-1 M9,0 L8,-1" fill="#25332d"/><path d="M5,-9 V-6.5 M2.5,-4.5 L0,-4 M7.5,-4.5 L10,-4 M3.5,-2 L2,0 M6.5,-2 L8,0" stroke="#25332d" stroke-width=".8"/>',
     breakfast:'<path d="M-7,7 V-2 C-11,-7 -3,-11 1,-7 C5,-9 9,-5 5,-2 V7 Z" fill="#c48b45"'+outline+'/><path d="M-3,9 V0 C-7,-5 1,-9 5,-5 C9,-7 12,-3 8,0 V9 Z" fill="#f6d99a"'+outline+'/><path d="M0,6 V1 Q3,-2 5,1 V6 Z" fill="#e7ae5c"/><rect x="1" y="2" width="4" height="3" rx=".7" fill="#ffe066"/>',
     'plan-padel':'<g transform="rotate(-28)"><path d="M-1.5,2 H1.5 V9 H-1.5 Z" fill="#e5b275"'+outline+'/><ellipse cy="-3" rx="5.8" ry="6.5" fill="currentColor"'+outline+'/><g fill="#263328"><circle cx="-2" cy="-5" r=".7"/><circle cx="2" cy="-5" r=".7"/><circle cx="-2" cy="-1" r=".7"/><circle cx="2" cy="-1" r=".7"/><circle cy="-3" r=".7"/></g></g><circle cx="6.5" cy="5.5" r="3" fill="#ffe066"'+outline+'/><path d="M5,3 Q8,5 7,8" fill="none" stroke="#fff" stroke-width="1"/>',
     'plan-dance':'<circle cx="-4" cy="-7" r="2.1" fill="#f2c49f"'+outline+'/><circle cx="4" cy="-6" r="2.1" fill="#f2c49f"'+outline+'/><path d="M-6,-4 H-2 L0,2 H-6 Z" fill="#325ab3"'+outline+'/><path d="M2,-3 H6 L9,5 H0 Z" fill="currentColor"'+outline+'/><path d="M-5,2 L-7,9 M-2,2 L0,8 M2,5 L1,9 M6,5 L8,8 M-6,-3 L-9,-6 M-2,-3 L2,-2 M6,-2 L9,-5" fill="none"'+outline+' stroke-linecap="round"/>',
@@ -173,7 +175,13 @@ function evPlanShapeInner(shape){
   };
   return shapes[shape]?(shape==='boardgames'?'<g transform="scale(.82)">'+shapes[shape]+'</g>':shapes[shape]):null;
 }
-function evShapeSvg(shape){
+function evHeartShapeInner(color,bw){
+  return '<path d="M0,8 C-3,5 -9,1 -9,-3 C-9,-9 -2,-10 0,-5 C2,-10 9,-9 9,-3 C9,1 3,5 0,8 Z" fill="'+(color||'currentColor')+'" stroke="#000" '+evSymbolStroke(bw||EV_SHAPE_BW)+' stroke-linejoin="round"/>';
+}
+function evRomanticBadgeSvg(){
+  return '<g class="ev-romantic-badge" transform="translate(7 7) scale(.44)"><circle r="11" fill="var(--surface,#fff)"/>'+evHeartShapeInner('#e2527a',1.6)+'</g>';
+}
+function evShapeSvg(shape,romantic){
   /* Las siluetas de rutina (mancuerna, pala, bailarin) tambien se pueden
      elegir como forma para un evento puntual de tipo Otros. */
   if(typeof RUT_ICON_LABEL!=='undefined'&&RUT_ICON_LABEL[shape]&&typeof rutIconSvg==='function'){
@@ -200,7 +208,7 @@ function evShapeSvg(shape){
   } else if(shape==='tooth'){
     inner='<path d="M0,-6 C-9,-12 -10,-3 -7,2 C-6,5 -6,9 -3,9 C-1,9 -2,2 0,2 C2,2 1,9 3,9 C6,9 6,5 7,2 C10,-3 9,-12 0,-6 Z" fill="#e8f7fa" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/><path d="M-4,-4 Q-2,-5 0,-3" fill="none" stroke="#16859b" stroke-width="1.3" stroke-linecap="round"/>';
   } else if(shape==='heart'){
-    inner='<path d="M0,8 C-3,5 -9,1 -9,-3 C-9,-9 -2,-10 0,-5 C2,-10 9,-9 9,-3 C9,1 3,5 0,8 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/>';
+    inner=evHeartShapeInner();
   } else if(shape==='meal'){
     inner='<rect x="-11" y="-9" width="22" height="18" rx="2" fill="#ead6b4" stroke="#b59a72" stroke-width=".7"/><circle r="5.1" fill="currentColor" stroke="#000" stroke-width="1.3"/><circle r="3.4" fill="#fff7e6" stroke="#000" stroke-width=".7"/>'
       +'<path d="M-9,-7 V-3 Q-9,-1 -7.5,-1 Q-6,-1 -6,-3 V-7 M-7.5,-7 V-3 M-7.5,-1 V7" fill="none" stroke="#000" stroke-width="1.25" stroke-linecap="round"/>'
@@ -223,7 +231,7 @@ function evShapeSvg(shape){
   } else if(shape==='mountain'){
     inner='<path d="M-9,8 L-1,-8 L9,8 Z" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+' stroke-linejoin="round"/><path d="M-4,-2 L-1,-8 L3,-2 L0,-3 L-2,-1 Z" fill="#fff" stroke="#000" stroke-width="1" stroke-linejoin="round"/>';
   } else if(shape==='rings'){
-    inner='<ellipse cx="-3" cy="0" rx="4.5" ry="7" fill="none" stroke="#000" '+evSymbolStroke(5,'outline',2.5)+'/><ellipse cx="-3" cy="0" rx="4.5" ry="7" fill="none" stroke="currentColor" stroke-width="2.5"/><ellipse cx="3" cy="0" rx="4.5" ry="7" fill="none" stroke="#000" '+evSymbolStroke(5,'outline',2.5)+'/><ellipse cx="3" cy="0" rx="4.5" ry="7" fill="none" stroke="currentColor" stroke-width="2.5"/>';
+    inner='<g transform="rotate(-24 -3 3)"><ellipse cx="-3" cy="3" rx="5" ry="6" fill="none" stroke="#000" '+evSymbolStroke(4.7,'outline',2.7)+'/><ellipse cx="-3" cy="3" rx="5" ry="6" fill="none" stroke="currentColor" stroke-width="2.7"/><path d="M-6,-2 Q-3,-5 0,-2" fill="none" stroke="#fff0a5" stroke-width="1"/></g><g transform="rotate(24 3 2)"><ellipse cx="3" cy="2" rx="5" ry="6" fill="none" stroke="#000" '+evSymbolStroke(4.7,'outline',2.7)+'/><ellipse cx="3" cy="2" rx="5" ry="6" fill="none" stroke="#f0c963" stroke-width="2.7"/></g><path d="M0,-8 L3,-10 L6,-8 L3,-4 Z" fill="#c8ecf5" stroke="#000" stroke-width="1.3" stroke-linejoin="round"/><path d="M0,-8 H6 M3,-10 V-4 M-8,-9 V-5 M-10,-7 H-6" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>';
   } else if(shape==='x-thick'||shape==='x-thin'){
     var swIn=5;
     var swOut=swIn+bw*2;
@@ -256,7 +264,7 @@ function evShapeSvg(shape){
   } else { /* rounded */
     inner='<rect x="-9" y="-6" width="18" height="12" rx="4" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+'/>';
   }
-  return '<svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet">'+inner+'</svg>';
+  return '<svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet"'+(romantic?' overflow="visible"':'')+'>'+inner+(romantic?evRomanticBadgeSvg():'')+'</svg>';
 }
 /* Marcador "+N" (4ª posición cuando hay más de 4 eventos puntuales en un día):
    círculo blanco con borde negro y un + negro. Mismo grosor de borde. */

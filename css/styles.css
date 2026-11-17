@@ -1553,6 +1553,13 @@ button.bday-group-tag{cursor:pointer;min-height:44px;text-align:left}
 @media(max-width:360px){.ev-plan-sheet[data-picker-kind="plans"] .ev-type-name{font-size:.64rem;overflow-wrap:normal}}
 .ev-plan-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;flex-shrink:0}
 .ev-plan-header h2{font-size:1.15rem;margin:0}
+.ev-romantic-toggle{--romantic-tone:#b43768;--chk:var(--romantic-tone);display:flex;align-items:center;gap:10px;min-height:44px;padding:9px 11px;margin:10px 8px 8px;box-sizing:border-box;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font-size:.72rem;font-weight:600;cursor:pointer}
+.ev-romantic-toggle:has(input:checked){border-color:color-mix(in srgb,var(--romantic-tone) 55%,var(--border));background:color-mix(in srgb,var(--romantic-tone) 8%,var(--surface))}
+.ev-romantic-toggle:focus-within{outline:2px solid var(--romantic-tone);outline-offset:2px}
+.ev-romantic-toggle-symbol{display:flex;width:22px;height:22px;flex-shrink:0;color:var(--romantic-tone)}
+.ev-romantic-toggle-symbol svg{width:100%;height:100%}
+.ev-romantic-toggle input{margin:0 0 0 auto;flex-shrink:0}
+.ev-plan-sheet>.ev-romantic-toggle{margin:0 16px 10px;flex-shrink:0}
 .ev-plan-options{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;padding:4px 16px 18px;overflow-y:auto;min-height:0}
 .ev-plan-option>.ev-color-swatch{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;width:100%;height:100%;min-height:86px;padding:10px 3px;text-align:center}
 .ev-plan-options .ev-type-dot{width:28px;height:28px}

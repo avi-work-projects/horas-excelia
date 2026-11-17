@@ -27,4 +27,26 @@ assert.deepEqual(JSON.parse(JSON.stringify(a.validateEvPlanOrder(oldRows))).map(
 assert.throws(()=>a.validateEvPlanOrder([{type:'Baile',time:'10:00'},{type:'Salir a bailar',time:'11:00'}]),/horas/);
 assert.throws(()=>a.validateEvPlanOrder([{type:'Cena',time:'12:00'},{type:'Comida',time:'11:00'}]),/horas/);
 assert.notEqual(a.evFixedSymbol('Fiesta'),a.evFixedSymbol('Salir de fiesta'));assert.notEqual(a.evFixedSymbol('Fútbol'),a.evFixedSymbol('Ver partido fútbol'));
+const oldRomantic={id:'romantic-old',type:'Plan romántico',kind:'puntual',title:'Nuestro plan',start:'2026-08-23',end:'2026-08-23',time:'18:30',note:'Nota anterior',color:'#e03131'};
+const oldRomanticRaw=JSON.stringify(oldRomantic);
+assert.equal(a.getEvType(oldRomantic),'¡Sorpresa!');assert(a.evIsRomantic(oldRomantic));
+assert.equal(JSON.stringify(oldRomantic),oldRomanticRaw);
+assert.match(a.renderEvForm(oldRomantic),/id="evFRomantic" checked/);
+assert.match(a.renderEvForm(oldRomantic),/data-cur-type="¡Sorpresa!"/);
+assert.deepEqual(JSON.parse(JSON.stringify(a.validateEvPlanOrder([{type:'Plan romántico',time:'16:35'}]))),[{type:'¡Sorpresa!',time:'16:35',order:0}]);
+assert.doesNotThrow(()=>a.validateImport({events:[oldRomantic,{...oldRomantic,id:'new',type:'Cena',romantic:true}]}));
+assert.throws(()=>a.validateImport({events:[{...oldRomantic,romantic:'true'}]}),/romántico/);
+for(const type of ['Plan/Quedada',...Object.keys(a.EV_PLAN_SUBTYPES)]){
+ const plan={...oldRomantic,type,romantic:true};
+ assert(a.evIsRomantic(plan));assert.match(a.evMarkerHtml(plan),/ev-romantic-badge/);
+ assert(!a.evMarkerHtml({...plan,romantic:false}).includes('ev-romantic-badge'));
+ assert(!a.evUpcomingMarkHtml({...plan,romantic:false}).includes('ev-romantic-badge'));
+}
+assert(!a.evIsRomantic({...oldRomantic,type:'Médico',romantic:true}));
+assert(!a.evIsRomantic({...oldRomantic,type:'Otros',kind:'grande',romantic:true}));
+const modernRomantic={...oldRomantic,type:'¡Sorpresa!',romantic:true};
+assert.equal(a.evSignature(oldRomantic),a.evSignature(modernRomantic));
+assert.notEqual(a.evSignature(modernRomantic),a.evSignature({...modernRomantic,romantic:false}));
+a.EVENTS=[oldRomantic];assert.equal(a.evMergeIncoming([{...modernRomantic,id:'other-device'}]).duplicados,1);
+assert.equal(a.EVENTS.length,1);assert.equal(a.EVENTS[0].id,'romantic-old');assert(a.evIsRomantic(a.EVENTS[0]));
 console.log('Planes: catálogo, alias Baile, preferencias intactas, altas al final sin hora y backup anterior OK');

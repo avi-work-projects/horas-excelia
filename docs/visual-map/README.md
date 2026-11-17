@@ -1,5 +1,15 @@
 # Mapa visual de Gestify
 
+v558. Se renuevan [Nuevo evento](captures/event-new.png),
+[categorías al editar](captures/edit-scroll.png), [selector de planes](captures/plan-picker.png)
+y [opciones inferiores](captures/plan-picker-new-plans.png). Se añade el estado
+[Plan romántico activado](captures/plan-picker-romantic.png): corazón abajo a la derecha
+en todas las opciones, «¡Sorpresa!» y nuevos símbolos de Fútbol/Boda.
+[Ejemplo móvil de 400 px](review/evidence/planes-v558/romanticos-400.png) y
+[símbolos a 320 px](review/evidence/planes-v558/simbolos-320.png).
+175 capturas y 181 relaciones; se conservan las otras referencias y su revisión.
+Las imágenes nuevas siguen pendientes de revisión de Ángel.
+
 v557. [Recordatorios](captures/reminders.png) incorpora cumpleaños recientes y
 resalta Hoy/Mañana. [Ejemplo móvil con recientes](review/evidence/recordatorios-v557/movil-400.png)
 y [ancho reducido](review/evidence/recordatorios-v557/movil-320.png), con datos ficticios.

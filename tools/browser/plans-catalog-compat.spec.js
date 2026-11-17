@@ -24,3 +24,75 @@ test('El orden previo, Baile y su hora sobreviven a guardar, recargar e importar
  expect(await page.evaluate(()=>EVENTS.find(ev=>ev.id==='dance-old'))).toMatchObject({id:'dance-old',title:'Mi plan anterior',note:'Nota anterior',type:'Salir a bailar',start:'2026-08-22'});
  await page.evaluate(prefs=>applyFullImport({version:7,planOrder:prefs},'merge'),prefs);await page.reload();await check();
 });
+
+for(const width of [320,400,440])test('Plan romántico desde calendario: vista previa, cancelar y persistencia '+width,async({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width,height:880});
+ await page.locator('#evViewCal').click();await page.locator('.ev-cell[data-ds="2026-08-24"]').click();
+ await expect(page.locator('#evFStart')).toHaveValue('2026-08-24');
+ await expect(page.locator('#evFRomantic')).not.toBeChecked();
+ await page.locator('[data-picker="plans"]').click();
+ const picker=page.locator('#evPlanPickerOv'),sheet=picker.locator('.ev-plan-sheet');
+ await expect(picker.locator('[data-type="¡Sorpresa!"]')).toHaveCount(1);
+ await expect(picker.locator('[data-type="Plan romántico"]')).toHaveCount(0);
+ await expect(picker.locator('.ev-romantic-badge')).toHaveCount(0);
+ await picker.locator('[data-type="Comida"]').click();
+ const box=await sheet.boundingBox();
+ if(width===400)await page.screenshot({path:'test-results/planes-sin-corazon-400.png',animations:'disabled'});
+ await picker.locator('#evPlanRomantic').check();
+ const types=await picker.locator('[data-type]').count();
+ await expect(picker.locator('.ev-romantic-badge')).toHaveCount(types);
+ expect(await sheet.boundingBox()).toEqual(box);
+ expect(await sheet.evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
+ await expect(picker.locator('#evPlanConfirm')).toBeInViewport();
+ await page.screenshot({path:'test-results/planes-romanticos-'+width+'.png',animations:'disabled'});
+ await picker.locator('[data-type="Fútbol"]').scrollIntoViewIfNeeded();
+ await page.screenshot({path:'test-results/planes-simbolos-'+width+'.png',animations:'disabled'});
+ await picker.locator('#evPlanCancel').click();
+ await expect(page.locator('#evFRomantic')).not.toBeChecked();
+ await page.locator('[data-picker="plans"]').click();
+ await expect(picker.locator('#evPlanRomantic')).not.toBeChecked();
+ await picker.locator('#evPlanRomantic').check();
+ await picker.locator('[data-type="Fútbol"]').click();await picker.locator('#evPlanConfirm').click();
+ await expect(page.locator('#evFRomantic')).toBeChecked();
+ await expect(page.locator('.ev-quick-selection [data-type="Fútbol"] .ev-romantic-badge')).toHaveCount(1);
+ await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);
+ const created=await page.evaluate(()=>EVENTS.find(ev=>ev.type==='Fútbol'));
+ expect(created).toMatchObject({romantic:true,start:'2026-08-24',title:'Fútbol'});
+ const marker=page.locator('.ev-cell[data-ds="2026-08-24"] [data-id="'+created.id+'"]');
+ await expect(marker.locator('.ev-romantic-badge')).toHaveCount(1);
+ if(width===400)await page.screenshot({path:'test-results/plan-romantico-calendario-400.png',animations:'disabled'});
+ await marker.click();await expect(page.locator('#evDMarker .ev-romantic-badge')).toHaveCount(1);
+ await page.locator('#evDClose').click();
+ if(width===400){
+  for(const view of ['#evViewAnnual','#evViewQuad','#evViewUpcoming']){
+   await page.locator(view).click();await expect(page.locator('#eventsContent [data-id="'+created.id+'"] .ev-romantic-badge').first()).toBeVisible();
+  }
+ }
+ await page.reload();expect(await page.evaluate(()=>EVENTS.find(ev=>ev.type==='Fútbol').romantic)).toBe(true);
+ await page.evaluate(id=>{openEvents();openEvForm(EVENTS.find(ev=>ev.id===id));},created.id);
+ await page.locator('#evFRomantic').uncheck();
+ await expect(page.locator('[data-group="plans"] .ev-romantic-badge')).toHaveCount(0);
+ await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);
+ expect(await page.evaluate(id=>EVENTS.find(ev=>ev.id===id).romantic,created.id)).toBeUndefined();
+ await expect(page.locator('#eventsContent [data-id="'+created.id+'"] .ev-romantic-badge')).toHaveCount(0);
+ expect(errors).toEqual([]);
+});
+
+test('Plan romántico antiguo: Sorpresa con corazón, orden e importación sin perder datos',async({page})=>{
+ const legacy={id:'old-romantic',kind:'puntual',type:'Plan romántico',title:'Título que conservo',note:'Nota que conservo',start:'2026-08-22',end:'2026-08-22',time:'17:30',color:'#e03131'};
+ await page.evaluate(ev=>{EVENTS.push(ev);saveEvents();refreshEvents();},legacy);
+ const stored=await page.evaluate(()=>appStorage.getItem('excelia-events-v1'));
+ await page.evaluate(()=>openEvForm(EVENTS.find(ev=>ev.id==='old-romantic')));
+ await expect(page.locator('.ev-kind-picker')).toHaveAttribute('data-cur-type','¡Sorpresa!');
+ await expect(page.locator('#evFRomantic')).toBeChecked();
+ await expect(page.locator('#evFTitle')).toHaveValue(legacy.title);
+ await page.locator('#evFClose').click();await expect(page.locator('#evFWrap')).toHaveCount(0);
+ expect(await page.evaluate(()=>appStorage.getItem('excelia-events-v1'))).toBe(stored);
+ await page.evaluate(()=>openEvForm(EVENTS.find(ev=>ev.id==='old-romantic')));
+ await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);
+ const saved=await page.evaluate(()=>JSON.parse(appStorage.getItem('excelia-events-v1')).find(ev=>ev.id==='old-romantic'));
+ expect(saved).toMatchObject({...legacy,type:'¡Sorpresa!',romantic:true,color:await page.evaluate(()=>evTypeColor('puntual','¡Sorpresa!'))});
+ await page.evaluate(ev=>{EVENTS=[];saveEvents();applyFullImport({version:7,events:[ev]},'merge');},saved);
+ await page.reload();expect(await page.evaluate(()=>EVENTS.find(ev=>ev.id==='old-romantic'))).toMatchObject(saved);
+});
