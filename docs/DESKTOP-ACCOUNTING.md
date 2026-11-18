@@ -1,5 +1,11 @@
 # Contabilidad en el mini
 
+Desde el 18/11/2026, el trabajo de Kairo continúa en el repositorio
+`C:/Users/Angel/proyectos_claude/kairo`. El commit inicial de la separación
+es `b57cd96`. Su README localiza el código del mini, la web móvil y los
+módulos compartidos. Esta guía conserva el historial anterior. Gestify
+mantiene su propio repositorio y su lado del puente con Kairo.
+
 Aplicación local para Windows, iniciada desde **Kairo Contabilidad** en el
 escritorio. La interfaz se sirve en `127.0.0.1:18766`, con sesión local privada.
 No hay publicación web, acceso por LAN, tarea programada ni recogida periódica.
