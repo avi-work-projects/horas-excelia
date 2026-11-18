@@ -96,3 +96,37 @@ test('Plan romántico antiguo: Sorpresa con corazón, orden e importación sin p
  await page.evaluate(ev=>{EVENTS=[];saveEvents();applyFullImport({version:7,events:[ev]},'merge');},saved);
  await page.reload();expect(await page.evaluate(()=>EVENTS.find(ev=>ev.id==='old-romantic'))).toMatchObject(saved);
 });
+
+for(const width of [320,400,440])test('Interrogación, Ir a casa de y Hacer deporte: símbolos y guardado '+width,async({page})=>{
+ await page.setViewportSize({width,height:880});await page.locator('#evAdd').click();
+ await page.locator('[data-picker="plans"]').click();
+ const picker=page.locator('#evPlanPickerOv');
+ await expect(picker.locator('[data-type="Copas"]')).toHaveCount(0);
+ await expect(picker.locator('[data-type="Ir a casa de"]')).toHaveCount(1);
+ await picker.locator('[data-type="¡Sorpresa!"]').click();
+ await page.screenshot({path:'test-results/planes-interrogacion-casa-'+width+'.png',animations:'disabled'});
+ await picker.locator('#evPlanRomantic').check();
+ await expect(picker.locator('[data-type="Ir a casa de"] .ev-romantic-badge')).toHaveCount(1);
+ await picker.locator('[data-type="Hacer deporte"]').scrollIntoViewIfNeeded();
+ await expect(picker.locator('[data-type="Hacer deporte"] .ev-romantic-badge')).toHaveCount(1);
+ await page.screenshot({path:'test-results/planes-deporte-'+width+'.png',animations:'disabled'});
+ await expect(picker.locator('#evPlanConfirm')).toBeInViewport();
+ await picker.locator('[data-type="Hacer deporte"]').click();await picker.locator('#evPlanConfirm').click();
+ await expect(page.locator('#evFTitle')).toHaveValue('Hacer deporte');
+ await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);
+ await page.reload();expect(await page.evaluate(()=>EVENTS.find(ev=>ev.type==='Hacer deporte'))).toMatchObject({title:'Hacer deporte',romantic:true});
+});
+test('Copas antiguo conserva datos, corazón y orden al convertirse en Ir a casa de',async({page})=>{
+ const legacy={id:'old-copas',kind:'puntual',type:'Copas',title:'Visita a una amiga',note:'Conservar',start:'2026-08-22',end:'2026-08-22',time:'22:30',color:'#9f62bc',romantic:true};
+ const order=[{type:'Copas',time:'21:45'},{type:'Cena',time:'23:00'}];
+ await page.evaluate(({legacy,order})=>{EVENTS.push(legacy);saveEvents();appStorage.setItem(EV_PLAN_ORDER_KEY,JSON.stringify(order));openEvForm(EVENTS.find(ev=>ev.id===legacy.id));},{legacy,order});
+ await expect(page.locator('.ev-kind-picker')).toHaveAttribute('data-cur-type','Ir a casa de');
+ await expect(page.locator('#evFRomantic')).toBeChecked();
+ await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);await page.reload();
+ expect(await page.evaluate(()=>EVENTS.find(ev=>ev.id==='old-copas'))).toMatchObject({...legacy,type:'Ir a casa de'});
+ expect(await page.evaluate(()=>evPlanOrderData().slice(0,2).map(({type,time})=>({type,time})))).toEqual([{type:'Ir a casa de',time:'21:45'},{type:'Cena',time:'23:00'}]);
+ expect(await page.evaluate(()=>appStorage.getItem(EV_PLAN_ORDER_KEY))).toBe(JSON.stringify(order));
+ expect(await page.evaluate(()=>evPlanOrderData().find(row=>row.type==='Hacer deporte').time)).toBeNull();
+ await page.evaluate(ev=>{EVENTS=[];saveEvents();applyFullImport({version:7,events:[ev]},'merge');},legacy);
+ await page.reload();expect(await page.evaluate(()=>[getEvType(EVENTS[0]),evIsRomantic(EVENTS[0])])).toEqual(['Ir a casa de',true]);
+});

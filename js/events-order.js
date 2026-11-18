@@ -5,7 +5,7 @@ var EV_PLAN_ORDER_CACHE=null;
 var EV_PLAN_ORDER_STOP=null;
 function renderEvPlanOrderButton(){return '<button class="ev-up-order-button" id="evUpcomingOrder" aria-label="Configurar orden de planes" title="Configurar orden de planes">⚙</button>';}
 function evPlanOrderDefaults(){
-  var hours={'Desayunar':'09:00','Brunch':'11:00','Comida':'14:00','Barbacoa':'14:00','¡Sorpresa!':'18:00','Tomar algo':'18:00','Montaña':'09:00','Salir a Correr':'09:00','Carrera':'10:00','Bolos':'19:00','Cine':'20:00','Cena':'21:00','Copas':'22:00','Salir de fiesta':'23:50'};
+  var hours={'Desayunar':'09:00','Brunch':'11:00','Comida':'14:00','Barbacoa':'14:00','¡Sorpresa!':'18:00','Tomar algo':'18:00','Montaña':'09:00','Salir a Correr':'09:00','Carrera':'10:00','Bolos':'19:00','Cine':'20:00','Cena':'21:00','Ir a casa de':'22:00','Salir de fiesta':'23:50'};
   return Object.keys(EV_PLAN_SUBTYPES).map(function(type,i){return {type:type,time:hours[type]||'18:00',order:i};}).sort(function(a,b){return a.time.localeCompare(b.time)||a.order-b.order;});
 }
 function validateEvPlanOrder(value){

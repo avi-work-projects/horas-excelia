@@ -75,6 +75,19 @@ Gestify es una PWA estática sin backend. Mantiene scripts clásicos, renders qu
 devuelven HTML y listeners separados. No requiere un framework ni un empaquetador
 de JavaScript. Los datos personales residen en el dispositivo y viajan en JSON.
 
+## Símbolos y catálogo de Planes (v559)
+
+- Sorpresa utiliza una interrogación dibujada en SVG, con el mismo relleno de color
+  y contorno de los otros símbolos. «Ir a casa de», con una casa, sustituye a Copas.
+  El alias de lectura conserva eventos, títulos, fechas, horas, corazón y orden
+  anteriores; al guardar se emplea el nombre nuevo. Su referencia sigue en 22:00.
+- «Hacer deporte» incorpora una pesa rusa con rayo y se añade al final del catálogo.
+  Si hay preferencias guardadas aparece al final y sin hora, sin desplazar las demás.
+  Los tres símbolos comparten los marcadores y el distintivo romántico existentes.
+- Verificación Edge a 320, 400 y 440 px: símbolos, guardado, recarga, compatibilidad
+  de Copas e importación; se renuevan solo las tres referencias del selector.
+  Las capturas de formulario y calendarios se conservan como representativas.
+
 ## Planes románticos y Sorpresa (v558)
 
 - «¡Sorpresa!» sustituye al tipo «Plan romántico». Por indicación de Ángel, los

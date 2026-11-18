@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v558 — Sorpresas y planes románticos con símbolo propio';
+var APP_VERSION = 'v559 — Interrogación, visitas a casa y deporte en Planes';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
   "title": "Gestify · mapa visual",
-  "generatedAt": "2026-11-17T14:53:43.093Z",
-  "referenceCommit": "87a70742d0d39260c1473fc98c415e884a7dd12a",
+  "generatedAt": "2026-11-18T13:20:57.524Z",
+  "referenceCommit": "b7403b4c66ce7b63f4fbb70bddd7bd0bc0e1d393",
   "date": "2026-08-21T10:00:00+02:00",
   "viewport": {
     "width": 400,
@@ -2446,6 +2446,7 @@
       ],
       "note": "Mismo formulario, desplazado hasta el botón Multidía.",
       "image": "captures/edit-scroll.png",
+      "imageHash": "36eb4471e8580fda029251d94c4046b80c49c9e547b6a018398265d938015a08",
       "anchors": {
         "dates": {
           "x": 310.3125,
@@ -2614,10 +2615,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "87a70742d0d39260c1473fc98c415e884a7dd12a",
-      "verifiedEdges": [
-        "dates"
-      ],
-      "imageHash": "36eb4471e8580fda029251d94c4046b80c49c9e547b6a018398265d938015a08",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -2630,6 +2627,9 @@
             "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
           }
         }
+      ],
+      "verifiedEdges": [
+        "dates"
       ],
       "fresh": true
     },
@@ -7535,6 +7535,7 @@
       ],
       "region": ".ev-event-form-body",
       "image": "captures/event-new.png",
+      "imageHash": "c0a533972b57f03311204af4232df277b21eef37e9ab0d46950b637289e07be3",
       "anchors": {
         "event-new-details": {
           "x": 390,
@@ -7710,10 +7711,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "87a70742d0d39260c1473fc98c415e884a7dd12a",
-      "verifiedEdges": [
-        "event-new-details"
-      ],
-      "imageHash": "c0a533972b57f03311204af4232df277b21eef37e9ab0d46950b637289e07be3",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -7728,7 +7725,10 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [
+        "event-new-details"
+      ],
+      "fresh": false
     },
     {
       "id": "event-new-details",
@@ -9111,7 +9111,7 @@
         },
         {
           "file": "js/events-plan-picker.js",
-          "hash": "e4de678b85f116d42c949443ba4cda35e26f2acfd5b25689aec94202ad67dca3"
+          "hash": "c35ed477262fd9a5bf5cac6d0bc8b96a7e4f605f6eb7efde7dd4801b24ec9d2f"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -9124,12 +9124,12 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "87a70742d0d39260c1473fc98c415e884a7dd12a",
+      "commit": "b7403b4c66ce7b63f4fbb70bddd7bd0bc0e1d393",
       "verifiedEdges": [
         "plan-picker-new-plans",
         "plan-picker-romantic"
       ],
-      "imageHash": "9361d74e4b3aa601b3c0668af35df2ddaf21b11f9c062c0ce5f21fe0a146341e",
+      "imageHash": "2a7bec044457cbc1aca7e693cea6a8f4f32d443bd7a49d4125d7c51f527b4617",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -9314,7 +9314,7 @@
         },
         {
           "file": "js/events-plan-picker.js",
-          "hash": "e4de678b85f116d42c949443ba4cda35e26f2acfd5b25689aec94202ad67dca3"
+          "hash": "c35ed477262fd9a5bf5cac6d0bc8b96a7e4f605f6eb7efde7dd4801b24ec9d2f"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -9327,9 +9327,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "87a70742d0d39260c1473fc98c415e884a7dd12a",
+      "commit": "b7403b4c66ce7b63f4fbb70bddd7bd0bc0e1d393",
       "verifiedEdges": [],
-      "imageHash": "afce44f42b56e953bdbc52760d692fbfbf87278089f25005a64fc4378e79d5d2",
+      "imageHash": "8f63ce167bf76417434dd73bf0c954976d124573e8dff01c63858e429350bd02",
       "review": "Sin revisar",
       "fresh": true
     },
@@ -9500,11 +9500,11 @@
         },
         {
           "file": "js/events-plan-picker.js",
-          "hash": "e4de678b85f116d42c949443ba4cda35e26f2acfd5b25689aec94202ad67dca3"
+          "hash": "c35ed477262fd9a5bf5cac6d0bc8b96a7e4f605f6eb7efde7dd4801b24ec9d2f"
         },
         {
           "file": "js/events-picker-color.js",
-          "hash": "0d188c7e89dd923e5d8b7607fd18851fa62d6adca379ec8542e32fe23a000eaf"
+          "hash": "0f420a8b538d47bfeea68e4f6ac5a9ac838a605251ab3d3dc4eb993f37ae79bb"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -9517,9 +9517,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "87a70742d0d39260c1473fc98c415e884a7dd12a",
+      "commit": "b7403b4c66ce7b63f4fbb70bddd7bd0bc0e1d393",
       "verifiedEdges": [],
-      "imageHash": "0f82845eed31af0c1cb499f5f05d1908c37404326f65ce8a04934f1517021e1e",
+      "imageHash": "deecc260fa678b5d5d175baf680377377788b02d4147bd71506aab86a930fdad",
       "review": "Sin revisar",
       "fresh": true
     },

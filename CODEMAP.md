@@ -248,10 +248,10 @@
 
 **Funciones:** renderEvPlanOrderButton:6 · evPlanOrderDefaults:7 · validateEvPlanOrder:11 · evPlanOrderData:20 · evPlanReferenceTime:28 · evCompareOrder:32 · evPlanOrderPosition:42 · minutes:43 · closeEvPlanOrder:53 · evPlanOrderReorder:54 · openEvPlanOrder:64 · renderEvPlanOrder:65
 
-### js/events-picker-color.js  _(395 líneas)_
-**Estado global:** EV_COLOR_GRID:6 · EV_COLOR_TYPES:25 · EV_MANAGEMENT_SUBTYPES:42 · EV_PLAN_SUBTYPES:43 · EV_KINDS:50 · EV_TYPE_COLORS:55 · EV_FREE_COLOR:108 · EV_FREE_SHAPE:109 · EV_OTHER_FIXED_COLORS:111 · EV_FREE_DATES:115 · EV_BAR_SIZES:118 · EV_FREE_BARSIZE:119 · EV_DOT_SOLID:123 · EV_SHAPE_BW:150
+### js/events-picker-color.js  _(398 líneas)_
+**Estado global:** EV_COLOR_GRID:6 · EV_COLOR_TYPES:25 · EV_MANAGEMENT_SUBTYPES:42 · EV_PLAN_SUBTYPES:43 · EV_KINDS:50 · EV_TYPE_COLORS:55 · EV_FREE_COLOR:109 · EV_FREE_SHAPE:110 · EV_OTHER_FIXED_COLORS:112 · EV_FREE_DATES:116 · EV_BAR_SIZES:119 · EV_FREE_BARSIZE:120 · EV_DOT_SOLID:124 · EV_SHAPE_BW:151
 
-**Funciones:** evPlanType:45 · evIsManagement:46 · evIsPlan:47 · evIsRomantic:48 · evFixedSymbol:49 · evOtherShapeColor:112 · evBarSize:124 · evBarSizeCls:130 · evTypeKey:131 · evTypeColor:132 · getEvKind:135 · evPlanShapeInner:151 · evHeartShapeInner:178 · evRomanticBadgeSvg:181 · evShapeSvg:184 (!87) · evMorePlusSvg:271 · evTravelColor:280 · getEvType:286 · isEvBarAlways:298 · isEvMultiDayPlan:300 · getEvDisplayColor:302 · _renderColorPicker:324 · _bindColorPicker:347 · updatePreview:357
+**Funciones:** evPlanType:45 · evIsManagement:46 · evIsPlan:47 · evIsRomantic:48 · evFixedSymbol:49 · evOtherShapeColor:113 · evBarSize:125 · evBarSizeCls:131 · evTypeKey:132 · evTypeColor:133 · getEvKind:136 · evPlanShapeInner:152 · evHeartShapeInner:181 · evRomanticBadgeSvg:184 · evShapeSvg:187 (!87) · evMorePlusSvg:274 · evTravelColor:283 · getEvType:289 · isEvBarAlways:301 · isEvMultiDayPlan:303 · getEvDisplayColor:305 · _renderColorPicker:327 · _bindColorPicker:350 · updatePreview:360
 
 ### js/events-picker-date.js  _(103 líneas)_
 **Estado global:** MNS:12

@@ -1,14 +1,15 @@
 const assert=require('node:assert/strict'),{cargarApp}=require('./entorno');
-const a=cargarApp({}),added=['Fiesta','Plan exterior','Navidad','Torneo','Fútbol'];
-const oldTypes=['Cena','Baile','Comida',...Object.keys(a.EV_PLAN_SUBTYPES).filter(t=>!added.includes(t)&&!['Cena','Salir a bailar','Comida'].includes(t))];
+const a=cargarApp({}),added=['Fiesta','Plan exterior','Navidad','Torneo','Fútbol','Hacer deporte'];
+const oldTypes=['Cena','Baile','Comida',...Object.keys(a.EV_PLAN_SUBTYPES).filter(t=>!added.includes(t)&&!['Cena','Salir a bailar','Comida'].includes(t))].map(type=>type==='Ir a casa de'?'Copas':type);
 const oldRows=oldTypes.map((type,i)=>({type,time:i===0?'07:20':i===1?'10:35':i===2?null:'19:45'}));
 const raw=JSON.stringify(oldRows);a.appStorage.setItem(a.EV_PLAN_ORDER_KEY,raw);
-const expected=oldRows.map(row=>({...row,type:row.type==='Baile'?'Salir a bailar':row.type}));
+const expected=oldRows.map(row=>({...row,type:a.evPlanType(row.type)}));
 const data=JSON.parse(JSON.stringify(a.evPlanOrderData()));
 assert.deepEqual(data.slice(0,oldRows.length).map(({type,time})=>({type,time})),expected);
 assert.deepEqual(data.slice(oldRows.length).map(({type,time})=>({type,time})),added.map(type=>({type,time:null})));
 assert.equal(a.appStorage.getItem(a.EV_PLAN_ORDER_KEY),raw);
 assert.equal(a.evPlanReferenceTime('Baile'),'10:35');assert.equal(a.evPlanReferenceTime('Salir a bailar'),'10:35');
+assert.equal(a.evPlanReferenceTime('Copas'),a.evPlanReferenceTime('Ir a casa de'));
 assert(a.evCompareOrder({type:'Baile'},{type:'Comida'})<0);
 a.evPlanOrderData()[0].time='00:01';assert.equal(a.evPlanOrderData()[0].time,'07:20');
 for(const type of added){
@@ -27,6 +28,12 @@ assert.deepEqual(JSON.parse(JSON.stringify(a.validateEvPlanOrder(oldRows))).map(
 assert.throws(()=>a.validateEvPlanOrder([{type:'Baile',time:'10:00'},{type:'Salir a bailar',time:'11:00'}]),/horas/);
 assert.throws(()=>a.validateEvPlanOrder([{type:'Cena',time:'12:00'},{type:'Comida',time:'11:00'}]),/horas/);
 assert.notEqual(a.evFixedSymbol('Fiesta'),a.evFixedSymbol('Salir de fiesta'));assert.notEqual(a.evFixedSymbol('Fútbol'),a.evFixedSymbol('Ver partido fútbol'));
+const oldVisit={...oldEvent,type:'Copas',romantic:true};
+assert.equal(a.getEvType(oldVisit),'Ir a casa de');assert.equal(a.evFixedSymbol('Copas'),'visit-home');
+assert.equal(a.evTypeColor('puntual','Copas'),'#9f62bc');assert(a.evIsRomantic(oldVisit));
+assert.equal(a.evSignature(oldVisit),a.evSignature({...oldVisit,type:'Ir a casa de'}));
+assert.match(a.renderEvForm(oldVisit),/data-cur-type="Ir a casa de"/);
+assert(!a.EV_PICKER_GROUPS.plans.types.includes('Copas'));
 const oldRomantic={id:'romantic-old',type:'Plan romántico',kind:'puntual',title:'Nuestro plan',start:'2026-08-23',end:'2026-08-23',time:'18:30',note:'Nota anterior',color:'#e03131'};
 const oldRomanticRaw=JSON.stringify(oldRomantic);
 assert.equal(a.getEvType(oldRomantic),'¡Sorpresa!');assert(a.evIsRomantic(oldRomantic));

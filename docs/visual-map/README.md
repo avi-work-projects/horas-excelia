@@ -1,5 +1,13 @@
 # Mapa visual de Gestify
 
+v559. El [selector](captures/plan-picker.png) muestra la interrogación de Sorpresa
+y «Ir a casa de» con una casa. Las [opciones inferiores](captures/plan-picker-new-plans.png)
+incluyen «Hacer deporte»; el [estado romántico](captures/plan-picker-romantic.png)
+conserva los corazones. Solo se renuevan esas tres referencias y sus láminas.
+[Ejemplo a 400 px](review/evidence/planes-v559/simbolos-400.png) y
+[deporte a 320 px](review/evidence/planes-v559/deporte-320.png), con datos ficticios;
+imágenes nuevas pendientes de revisión de Ángel.
+
 v558. Se renuevan [Nuevo evento](captures/event-new.png),
 [categorías al editar](captures/edit-scroll.png), [selector de planes](captures/plan-picker.png)
 y [opciones inferiores](captures/plan-picker-new-plans.png). Se añade el estado
