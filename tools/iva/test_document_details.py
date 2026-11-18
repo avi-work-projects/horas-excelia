@@ -54,10 +54,26 @@ class DetailsTests(unittest.TestCase):
         self.data['records'].append(dict(self.row,number='I-2'))
         self.assertTrue(all('display_details' not in r for r in attach_details(self.data,self.path)['records']))
 
-    def test_concept_fallback_labels_filename_and_never_infers_from_supplier(self):
-        self.assertEqual(description(self.row)[0],'Concepto pendiente de completar')
+    def test_missing_concept_never_uses_filename_or_supplier(self):
+        self.assertEqual(description(self.row)[0],'Concepto pendiente de revisar')
         self.row['source']='FACTURAS/2026/TECLADO_TRABAJO.pdf'
-        self.assertEqual(description(self.row),('Teclado trabajo','Nombre del archivo original'))
+        self.assertEqual(description(self.row),('Concepto pendiente de revisar','Consulta el PDF original'))
+        self.row['description']='Teclado de oficina documentado'
+        self.assertEqual(description(self.row),('Teclado de oficina documentado','Concepto registrado'))
+
+    def test_shared_pdf_uses_exact_invoice_with_its_identity_evidence(self):
+        self.data['records'].append(dict(self.row,number='I-2'))
+        self.details={'invoices':{
+            'I-1':{'description':'Regleta de 4 tomas','evidence':[dict(page=1,quote='Factura I-1: regleta de 4 tomas')]},
+            'I-2':{'description':'Regleta USB','evidence':[dict(page=2,quote='Factura I-2: regleta USB')]}}}
+        self.save()
+        rows=attach_details(self.data,self.path)['records']
+        self.assertEqual([description(r)[0] for r in rows],['Regleta de 4 tomas','Regleta USB'])
+        self.details['invoices']['I-2']['evidence'][0]['quote']='No corresponde a esa factura'
+        self.save()
+        rows=attach_details(self.data,self.path)['records']
+        self.assertEqual(description(rows[1])[0],'Concepto pendiente de revisar')
+        self.assertEqual(description(rows[0])[0],'Regleta de 4 tomas')
 
 
 if __name__ == '__main__':

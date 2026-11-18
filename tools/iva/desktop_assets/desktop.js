@@ -7,7 +7,7 @@
     new MutationObserver(syncTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-k-theme']});
   }
   const output = document.getElementById('action-message');
-  const controls = [...document.querySelectorAll('#refresh-data,#check-state,#collect-amazon,#assistant-create button,[data-intake-open],[data-intake-import],[data-assistant-reconcile]')];
+  const controls = [...document.querySelectorAll('#refresh-data,#check-state,#collect-amazon,#assistant-create button,[data-intake-open],[data-intake-import],[data-assistant-reconcile],[data-renta-scan],[data-renta-check],[data-renta-assign],.renta-search button')];
   let busy = false;
   function show(message, url, label) {
     output.hidden = false;
@@ -97,6 +97,20 @@
   document.querySelectorAll('[data-assistant-reconcile]').forEach(button=>button.addEventListener('click',async()=>{
     const result=await run('/api/assistant-reconcile',true,'Comprobando huellas, libro y bandeja…',null,{id:button.dataset.assistantReconcile});
     openResult(result);
+  }));
+  document.querySelectorAll('[data-renta-scan]').forEach(button=>button.addEventListener('click',async()=>{
+    openResult(await run('/api/renta-scan',true,'Revisando los documentos locales de 2026…'));
+  }));
+  document.querySelectorAll('[data-renta-check]').forEach(input=>input.addEventListener('change',async()=>{
+    const result=await run('/api/renta-mark',true,'Guardando tu revisión documental…',null,{item:input.dataset.rentaCheck,complete:input.checked});
+    if(result)openResult(result);else input.checked=!input.checked;
+  }));
+  document.querySelectorAll('[data-renta-assign]').forEach(select=>select.addEventListener('change',async()=>{
+    openResult(await run('/api/renta-assign',true,'Asignando documento a la partida…',null,{sha:select.dataset.rentaAssign,item:select.value}));
+  }));
+  document.querySelectorAll('.renta-search').forEach(form=>form.addEventListener('submit',async event=>{
+    event.preventDefault();
+    openResult(await run('/api/renta-search',true,'Preparando instrucciones de búsqueda…',null,{...Object.fromEntries(new FormData(form)),item:form.dataset.item}));
   }));
   document.getElementById('assistant-copy')?.addEventListener('click',async()=>{
     const prompt=document.getElementById('assistant-prompt'), feedback=document.getElementById('assistant-copy-status');

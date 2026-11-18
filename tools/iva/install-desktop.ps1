@@ -29,7 +29,7 @@ if (Test-Path -LiteralPath $instance) {
 $code = Join-Path $Runtime 'code'
 $backup = Join-Path $Runtime ('backups/desktop-' + (Get-Date -Format 'yyyyMMdd-HHmmss'))
 $files = @('desktop_app.py','desktop_help.py','desktop_transport.py','desktop_remote.py','desktop_intake.py','desktop_billing.py','vat_dashboard.py','aeat_client.py','aeat_submission.py','aeat_windows.py','aeat_windows.ps1','aeat_workflow.py','aeat_web.py')
-$files += @('sync_models.py','document_details.py','assistant_requests.py','ledger.py','expense_policy.py','expense_workflow.py','modelos_web.py','accounting_workbook.py','accounting_views.py','export_303_test.py','period_workflow.py','export_390.py','prepare_390.py','annual_workflow.py','review_year.py','reconcile_open.py')
+$files += @('sync_models.py','document_details.py','renta_documents.py','assistant_requests.py','ledger.py','expense_policy.py','expense_workflow.py','modelos_web.py','accounting_workbook.py','accounting_views.py','export_303_test.py','period_workflow.py','export_390.py','prepare_390.py','annual_workflow.py','review_year.py','reconcile_open.py')
 New-Item -ItemType Directory -Path $backup -Force | Out-Null
 foreach ($file in $files) {
     $target = Join-Path $code $file

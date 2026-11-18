@@ -2,7 +2,7 @@
 from copy import deepcopy
 from decimal import Decimal, InvalidOperation
 import json
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 import re
 
 
@@ -23,11 +23,22 @@ def attach_details(data, ledger_path):
         if not isinstance(documents, dict):
             return result
         for row in result['records']:
-            # Some scanned PDFs contain several invoices. A document-level
-            # description must not silently be assigned to all of them.
-            if sum(r['sha256'] == row['sha256'] for r in result['records']) != 1:
+            document = documents.get(row['sha256'])
+            shared = sum(r['sha256'] == row['sha256'] for r in result['records']) != 1
+            if not isinstance(document, dict):
                 continue
-            detail = documents.get(row['sha256'])
+            # Multiple invoices may share one PDF. Such descriptions require
+            # an exact invoice-number match and documentary identity evidence.
+            invoices = document.get('invoices')
+            if isinstance(invoices, dict):
+                if sum(r['sha256'] == row['sha256'] and r['number'] == row['number']
+                       for r in result['records']) != 1:
+                    continue
+                detail = invoices.get(row['number'])
+            elif shared:
+                continue
+            else:
+                detail = document
             if not isinstance(detail, dict):
                 continue
             clean = {}
@@ -35,6 +46,8 @@ def attach_details(data, ledger_path):
             if not isinstance(evidence, list) or not evidence or not all(
                     isinstance(x, dict) and type(x.get('page')) is int and x['page'] > 0
                     and isinstance(x.get('quote'), str) and 0 < len(x['quote']) <= 3000 for x in evidence):
+                continue
+            if shared and not any(row['number'] in x['quote'] for x in evidence):
                 continue
             description = detail.get('description')
             if isinstance(description, str) and 0 < len(description) <= 600:
@@ -70,7 +83,4 @@ def description(row):
         return detail['description'], 'Según PDF original'
     if row.get('description'):
         return str(row['description']), 'Concepto registrado'
-    stem = PurePosixPath(str(row.get('source', '')).replace('\\', '/')).stem
-    if stem and not re.match(r'^(?:factura|invoice|documento|receipt|scan)[_\s\d-]', stem, re.I):
-        return stem.replace('_', ' ').strip().capitalize(), 'Nombre del archivo original'
-    return 'Concepto pendiente de completar', 'Consulta el PDF original'
+    return 'Concepto pendiente de revisar', 'Consulta el PDF original'

@@ -70,6 +70,8 @@ class Application:
             active = 'modulos'
         elif parsed.path == '/ayuda':
             active = 'ayuda'
+        elif parsed.path.startswith('/renta'):
+            active = 'renta'
         elif parsed.path.startswith('/horas'):
             active = 'programacion'
         elif parsed.path.startswith('/facturas') and not parsed.path.startswith(BASE):
@@ -97,6 +99,53 @@ class Application:
     def assistant_store(self):
         from assistant_requests import Requests
         return Requests(self.state,self.config['archive_root'])
+
+    def renta_store(self):
+        from renta_documents import Store
+        return Store(self.state,self.config['archive_root'],2026)
+
+    def mail_accounts(self):
+        accounts = self.settings.get('accounts',[])
+        accounts = accounts if isinstance(accounts,list) else []
+        return list(dict.fromkeys(a for a in accounts+[self.settings.get('account','')] if isinstance(a,str) and a))
+
+    def renta_search(self, data):
+        store = self.renta_store()
+        catalog = store.read()
+        item = next((x for x in catalog['items'] if x['id']==data.get('item')),None)
+        if item is None or data.get('kind') not in ('mail','web'):
+            raise ValueError('Selecciona una partida y dónde buscar')
+        accounts = self.mail_accounts()
+        account = data.get('account','all')
+        if account == 'all':
+            account = 'Todos los correos conectados: '+', '.join(accounts)
+        elif account not in accounts:
+            raise ValueError('Selecciona una de las cuentas configuradas')
+        linked = [d for d in catalog['documents'] if d.get('item_id')==item['id']]
+        unassigned = [d for d in catalog['documents'] if not d.get('item_id')]
+        candidates = linked + unassigned
+        payload = dict(year=2026,partida=item['label'],nota=item.get('note',''),
+                       catalogo_completo=str(store.path.resolve()),documentos_totales=len(catalog['documents']),
+                       documentos_de_partida=len(linked),documentos_sin_clasificar=len(unassigned),
+                       documentos_omitidos=len(candidates),documentos_conocidos=[],
+                       aviso='La muestra prioriza esta partida y después los PDF sin clasificar. Consulta el catálogo completo para comprobar todos los documentos; una omisión no significa que falte la factura.')
+        def encode(value):
+            return json.dumps(value,ensure_ascii=False)
+        context = encode(payload)
+        if max(len(context),len(context.encode('utf-8'))) > 16000:
+            raise ValueError('La referencia de esta partida es demasiado extensa para el encargo. Revisa su nota en el seguimiento documental.')
+        for document in candidates:
+            if len(payload['documentos_conocidos']) >= 60:
+                break
+            known = payload['documentos_conocidos'] + [dict(path=document['path'],sha256=document['sha256'])]
+            candidate = dict(payload,documentos_conocidos=known,documentos_omitidos=len(candidates)-len(known))
+            encoded = encode(candidate)
+            if len(encode(known).encode('utf-8')) > 12000 or max(len(encoded),len(encoded.encode('utf-8'))) > 16000:
+                continue
+            payload, context = candidate, encoded
+        record = self.assistant_store().create(dict(kind=data['kind'],provider='other',other_provider=item['label'],account=account,
+               date_from='2026-01-01',date_to='2026-12-31',renta_item=item['id'],renta_context=context))
+        return dict(id=record['id'],url='/recoger?id='+record['id']+'#assistant-detail',message='Búsqueda preparada. Revisa y envía el prompt al asistente.')
 
     def intake_toolbar(self):
         return '<section class="intake-toolbar"><div><strong>Documentos de gastos · 2026</strong><p class="quiet">Tus originales siguen en FACTURAS/2026. La entrada es una bandeja para PDF nuevos, no otro libro.</p></div><div class="assistant-actions"><button type="button" data-intake-open="archive">Mis carpetas de 2026</button><button type="button" data-intake-open>Abrir carpeta de entrada</button><button type="button" data-intake-import>Importar PDF depositados</button><a class="link-button" href="/recoger">Encargos a la IA</a></div></section>'
@@ -128,11 +177,17 @@ class Application:
                  ('3','Libro','Gasto aprobado e ingresos existentes','Libro único y originales archivados',BASE+'?vista=gastos'),
                  ('4','Salidas','Una versión del libro','Excel, resumen, 303, 390 y documentos de Renta',BASE+'?vista=libros')]
         cards = ''.join('<article class="module-card"><span class="module-number">'+n+'</span><h2>'+name+'</h2><p><small>RECIBE</small>'+e(inp)+'</p><p><small>ENTREGA</small>'+e(out)+'</p><a href="'+url+'">Abrir módulo →</a></article>' for n,name,inp,out,url in parts)
-        return '<section class="local-page"><div class="eyebrow">CÓMO SE CONECTA TODO</div><h1>Un archivo, cuatro pasos</h1><p class="lead">Cada módulo conserva una entrada y una salida claras.</p><div class="module-grid">'+cards+'</div><div class="feature-card"><h2>Qué está conectado</h2><p>El resumen, los libros y los originales se leen del archivo del mini. La revisión de gastos y la preparación fiscal reutilizan la bandeja existente de Kairo a través de la conexión privada.</p><p>La recogida de correo y la actualización solo se ejecutan al pulsar sus botones. Los ingresos mantienen el flujo de generación que ya tenías.</p><p class="quiet">La extracción avanzada con IA/OCR, la recopilación de luz, gas y Digi y el cálculo de Renta siguen pendientes. Los modelos requieren sus revisiones y validaciones antes de presentar.</p></div></section>'
+        return '<section class="local-page"><div class="eyebrow">CÓMO SE CONECTA TODO</div><h1>Un archivo, cuatro pasos</h1><p class="lead">Cada módulo conserva una entrada y una salida claras.</p><div class="module-grid">'+cards+'</div><div class="feature-card"><h2>Qué está conectado</h2><p>El resumen, los libros y los originales se leen del archivo del mini. La revisión de gastos y la preparación fiscal reutilizan la bandeja existente de Kairo a través de la conexión privada.</p><p>La recogida de correo y la actualización solo se ejecutan al pulsar sus botones. Los ingresos mantienen el flujo de generación que ya tenías.</p><p class="quiet">Renta permite seguir la documentación y preparar búsquedas asistidas de Digi, luz, gas y otras partidas cuando tú lo pidas. El cálculo de la declaración y las amortizaciones siguen pendientes. Los modelos requieren sus revisiones y validaciones antes de presentar.</p></div></section>'
 
     def get(self, url):
         parsed = urlsplit(url)
         path = parsed.path
+        if path == '/renta/documento':
+            document = self.renta_store().document(parse_qs(parsed.query).get('id',[''])[0],as_bytes=True)
+            return 200,document,'application/pdf',{'Content-Disposition':'inline; filename="documento-renta.pdf"'}
+        if path == BASE and parse_qs(parsed.query).get('vista') == ['renta']:
+            from renta_documents import render
+            return 200,self.shell(render(self.renta_store(),self.mail_accounts()),url,'Renta 2026')
         if path == '/importacion':
             from assistant_requests import render_import
             ident = parse_qs(parsed.query).get('id',[''])[0]
@@ -207,7 +262,18 @@ class Application:
         if not self.mutex.acquire(blocking=False):
             raise ValueError('Hay una acción en curso. Espera a que termine antes de repetir.')
         try:
-            if path == '/api/assistant-requests':
+            if path == '/api/renta-search':
+                result = self.renta_search(data)
+            elif path in ('/api/renta-scan','/api/renta-mark','/api/renta-assign'):
+                store = self.renta_store()
+                if path.endswith('-scan'):
+                    store.scan()
+                elif path.endswith('-mark'):
+                    store.mark(data.get('item'),data.get('complete'))
+                else:
+                    store.assign(data.get('sha'),data.get('item'))
+                result = dict(url=BASE+'?vista=renta',message='Seguimiento documental guardado. No cambia el libro ni el IVA.')
+            elif path == '/api/assistant-requests':
                 record = self.assistant_store().create(data)
                 result = dict(id=record['id'],url='/recoger?id='+record['id']+'#assistant-detail',message='Encargo guardado. Revisa el prompt y envíalo cuando quieras.')
             elif path == '/api/assistant-reconcile':

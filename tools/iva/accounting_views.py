@@ -67,7 +67,7 @@ def record_table(rows, income=False):
             cells += ('<small>Según PDF original</small>' if lines else '<small>Desglose pendiente de documentar</small>')+'</td>'
         else:
             concept, origin = description(row)
-            cells += party+'<td class="a-concept">'+e(concept)+'<small>'+e(origin)+'</small></td>'
+            cells += party+'<td class="a-concept">'+e(concept)+'</td>'
         cells += '<td>'+e(euro(row['base']))+'</td><td>'+e(euro(row['vat']))+'</td>'
         if income:
             cells += '<td>'+e(euro(row['withholding']))+'</td><td>'+e(euro(row['total']))+'</td>'
@@ -77,8 +77,13 @@ def record_table(rows, income=False):
             if row['include'] and row.get('mapping') == 'eu_services21':
                 levy = euro(eu_service_vat(row))
                 cells += '<small>Servicio UE · autoliquidado '+e(levy)+' · deducible '+e(levy)+'</small>'
+            evidence = row.get('display_details', {}).get('evidence', [])
+            cells += '<details><summary>Detalle</summary><p>'+e(origin)+'</p>'
+            if evidence:
+                cells += '<ul>'+''.join('<li>Página '+e(item['page'])+': '+e(item['quote'])+'</li>' for item in evidence)+'</ul>'
             if row.get('note'):
-                cells += '<details><summary>Detalle</summary><p>'+e(row['note'])+'</p></details>'
+                cells += '<p>'+e(row['note'])+'</p>'
+            cells += '</details>'
             cells += '</td>'
         cells += '<td>'+button(BASE+'/documento?id='+quote(row['sha256'], safe=''), 'PDF')+'</td>'
         tone = int(hashlib.sha256(str(row.get('tax_id') or row['party']).casefold().encode()).hexdigest()[:8],16) % 4

@@ -17,7 +17,7 @@ import unittest
 from unittest.mock import patch
 from urllib.parse import parse_qs, urlsplit
 
-from assistant_requests import Requests, FOLDER, render, main
+from assistant_requests import Requests, FOLDER, render, render_import, main
 from desktop_app import Application, Handler, Server
 from expense_workflow import ExpenseStore
 from test_amazon_inbox import pdf
@@ -88,6 +88,69 @@ class AssistantRequestsTests(unittest.TestCase):
         self.assertEqual(json.loads(app.get('/api/assistant-requests')[1]),[])
         self.assertEqual(set(self.root.rglob('*')),before)
         self.assertEqual(self.calls,[])
+
+    def test_web_request_accepts_optional_dates_without_mail_account(self):
+        record=self.store.create(dict(kind='web',provider='electricity',date_from='2026-01-01',date_to='2026-12-31'))
+        prompt=self.store.prompt(record,self.settings)
+        self.assertIn('web oficial',prompt)
+        self.assertIn('iniciar sesión',prompt)
+        self.assertIn('2026-01-01',prompt)
+        self.assertIn('Web · 2026-01-01 → 2026-12-31',render(self.store,self.settings,record['id']))
+        for fields in [dict(kind='web',provider='gas',date_from='wrong'),dict(kind='web',provider='gas',date_from='2026-12-31',date_to='2026-01-01')]:
+            with self.assertRaises(ValueError):self.store.create(fields)
+        self.assertEqual(self.calls,[])
+
+    def test_renta_requires_bounded_context_pair(self):
+        base=dict(kind='web',provider='gas')
+        for extra in [dict(renta_item='gas'),dict(renta_context='{}'),dict(renta_item='x'*101,renta_context='{}'),dict(renta_item='gas',renta_context='x'*16001)]:
+            with self.assertRaises(ValueError):self.store.create(base|extra)
+        record=self.store.create(base|dict(renta_item='gas',renta_context='{"documents":[]}'))
+        self.assertEqual(record['purpose'],'renta_documents')
+        prompt=self.store.prompt(record,self.settings)
+        self.assertIn('INICIO_DATOS_CONTEXTO_RENTA',prompt)
+        self.assertIn('{"documents":[]}',prompt)
+        self.assertIn('No importes a Gastos ni al IVA',prompt)
+        self.assertIn('no marques ningún elemento como completo',prompt)
+
+    def test_renta_report_verifies_documents_without_importing_or_checking_iva(self):
+        record=self.store.create(dict(kind='mail',provider='gas',account='example@example.test',renta_item='gas',renta_context='{}'))
+        doc=self.document()
+        self.report(record['id'],[doc])
+        before=self.store.get(record['id'])
+        with self.assertRaisesRegex(ValueError,'documental de Renta'):
+            self.store.import_folder(record['id'],self.config,self.remote)
+        self.assertEqual(self.store.get(record['id']),before)
+        checked=self.store.reconcile(record['id'],self.config,self.remote)
+        self.assertEqual(checked['documents'][0]['status'],'recovered')
+        self.assertTrue(checked['checks']['documents_only'])
+        self.assertFalse(checked['checks']['ledger_verified'])
+        self.assertEqual(self.calls,[])
+        rendered=render(self.store,self.settings,record['id'])
+        self.assertIn('← Volver a Renta',rendered)
+        self.assertIn('Revisar documentos locales',rendered)
+        self.assertNotIn('data-intake-import',rendered)
+        self.assertNotIn('incorporados al libro',rendered)
+        (self.store.folder()/'one.pdf').write_bytes(b'changed')
+        self.assertEqual(self.store.reconcile(record['id'],self.config,self.remote)['documents'][0]['status'],'unavailable')
+
+    def test_folder_import_reserves_renta_documents_by_hash_and_imports_other_pdf(self):
+        renta=self.store.create(dict(kind='web',provider='gas',renta_item='gas',renta_context='{}'))
+        reserved=self.document('renta.pdf','renta')
+        self.report(renta['id'],[reserved])
+        # A different filename for the same original must keep the same boundary.
+        (self.store.folder()/'renamed-renta.pdf').write_bytes((self.store.folder()/'renta.pdf').read_bytes())
+        regular=self.document('regular.pdf','regular')
+        folder=self.create()
+        result=self.store.import_folder(folder['id'],self.config,self.remote)
+        states={item['filename']:item['status'] for item in result['attempts']}
+        self.assertEqual(states,{'renta.pdf':'renta_document','renamed-renta.pdf':'renta_document','regular.pdf':'created'})
+        self.assertEqual([row['sha256'] for row in self.queue.list()],[regular['sha256']])
+        self.assertEqual([row['sha256'] for row in result['documents']],[regular['sha256']])
+        self.assertEqual(self.store.get(renta['id'])['documents'][0]['status'],'recovered')
+        rendered=render_import(result)
+        self.assertIn('Reservado para seguimiento de Renta',rendered)
+        self.assertIn('Revisar documentos de Renta',rendered)
+        self.assertTrue((self.store.folder()/'renta.pdf').is_file())
 
     def test_durable_prompt_and_desktop_link_escape_input_without_auto_send(self):
         record = self.create(mail=True)

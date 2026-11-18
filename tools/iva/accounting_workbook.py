@@ -204,7 +204,7 @@ def build(data, ledger_sha256, calculations=None):
             rows.append([r['number'],date.fromisoformat(r['date']),r['period'],r['party'],r.get('tax_id') or 'Sin dato',
                 money(r['base']),money(r['vat']),money(r['withholding']),money(r['total']),
                 'Sí' if r['include'] else 'No',SCOPES.get(r.get('tax_scope'), 'Histórico; IRPF no revisado'),r['sha256'][:16],
-                description(r)[0]+(' ('+description(r)[1]+')' if not r.get('display_details',{}).get('description') else '')])
+                description(r)[0]])
         _table(sheet, ['Factura','Fecha','Trimestre','Cliente' if kind=='income' else 'Proveedor','NIF documental',
                       'Base EUR','IVA documental','Retención EUR','Total EUR','Incluido IVA','Ámbito','Documento','Concepto / producto'],
                rows, {6,7,8,9}, checks)

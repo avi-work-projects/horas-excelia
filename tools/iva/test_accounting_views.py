@@ -74,12 +74,25 @@ class AccountingViewsTests(unittest.TestCase):
 
     def test_expense_and_books_show_concept_with_fixed_table_columns(self):
         self.ledger['records'][0]['source']='TECLADO_TRABAJO.pdf'
+        self.ledger['records'][0]['description']='Teclado trabajo'
         for view in ('gastos','libros'):
             html=render(self.index,self.report,self.ledger,view)
             self.assertIn('Qué compraste',html)
             self.assertIn('Teclado trabajo',html)
             self.assertIn('<colgroup>',html)
             self.assertIn('table-layout:fixed',html)
+
+    def test_missing_product_is_pending_and_evidence_only_appears_in_detail(self):
+        row=self.ledger['records'][0]
+        row['source']='NOMBRE_INVENTADO_DEL_PRODUCTO.pdf'
+        html=render(self.index,self.report,self.ledger,'gastos')
+        self.assertIn('Concepto pendiente de revisar',html)
+        self.assertNotIn('Nombre inventado del producto',html)
+        row['display_details']={'description':'Producto documentado','evidence':[dict(page=1,quote='Producto del PDF')]}
+        html=render(self.index,self.report,self.ledger,'gastos')
+        self.assertIn('<td class="a-concept">Producto documentado</td>',html)
+        self.assertIn('<summary>Detalle</summary><p>Según PDF original</p>',html)
+        self.assertIn('Página 1: Producto del PDF',html)
 
 
 if __name__ == '__main__':

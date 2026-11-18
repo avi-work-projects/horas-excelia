@@ -17,8 +17,8 @@ def render_help():
 <article class="feature-card">
 <h2>Para añadir un gasto</h2>
 <ol class="help-steps">
-<li><strong>Consigue el PDF.</strong> Usa <a href="/recoger">Recoger facturas</a> o descárgalo tú. En Gastos, «Abrir carpeta de gastos 2026» abre la entrada donde puedes arrastrar los PDF desde Descargas.</li>
-<li><strong>Importa cuando quieras.</strong> «Importar PDF de la carpeta» los añade a la bandeja y evita duplicados. Abrir la carpeta o dejar allí un archivo no inicia ninguna comprobación.</li>
+<li><strong>Consigue el PDF.</strong> Usa <a href="/recoger">Recoger facturas</a> o descárgalo tú. En Gastos, «Mis carpetas de 2026» abre tus carpetas históricas y «Abrir carpeta de entrada» abre la bandeja para PDF nuevos, donde puedes arrastrarlos desde Descargas.</li>
+<li><strong>Importa cuando quieras.</strong> «Importar PDF depositados» los añade a la bandeja y evita duplicados. Abrir la carpeta o dejar allí un archivo no inicia ninguna comprobación. Los documentos reservados para Renta se organizan desde Renta, sin importarlos al IVA.</li>
 <li><strong>Revisa el borrador.</strong> En <a href="/facturas/modelos/gastos">Añadir o revisar gastos</a>, compara el PDF con proveedor, número, fecha e importes. Completa los datos que falten y el destino del gasto.</li>
 <li><strong>Guarda y aprueba.</strong> Guardar conserva tu revisión. Aprobar solicita que esa versión se incorpore al libro.</li>
 <li><strong>Consulta el resultado.</strong> Pulsa «Ver estado de actualización» y, cuando termine, vuelve a cargar la vista. El gasto incorporado aparecerá en «Gastos» y en el Excel actualizado.</li>
@@ -35,10 +35,26 @@ def render_help():
 
 <article class="feature-card">
 <h2>Encargar una búsqueda o lectura a la IA</h2>
-<p>En <a href="/recoger">Recoger facturas</a>, elige buscar en correo o procesar la carpeta. Indica proveedor y, para correo, cuenta y fechas. «Crear encargo» guarda esas instrucciones en este mini.</p>
+<p>En <a href="/recoger">Recoger facturas</a>, elige buscar en correo o procesar la carpeta. Indica proveedor y, para correo, cuenta. Las fechas son opcionales: puedes dejar «Sin límite de fechas», usar «Este trimestre», «Trimestre anterior» o elegir un trimestre y año. «Crear encargo y preparar prompt» guarda esas instrucciones en este mini.</p>
 <p>«Abrir en ChatGPT» abre un chat nuevo con el texto preparado; tú lo envías. También puedes copiarlo y pegarlo. La IA necesitará acceso al correo o a los archivos, según el encargo. Kairo no instala un agente que trabaje por su cuenta.</p>
 <p>El encargo pide conservar los PDF y registrar su procedencia y los documentos pendientes. Al terminar, «Comprobar resultados» contrasta ese informe con la bandeja y el libro: distingue PDF recuperado, en revisión e incorporado. Un documento encontrado no demuestra que se haya recuperado todo un periodo.</p>
 <p class="quiet">La carpeta de entrada conserva los originales. El historial de encargos se guarda en este mini y todavía no se sincroniza con el móvil. Electricidad y gas siguen separados del IVA trimestral, para su revisión en Renta.</p>
+</article>
+
+<article class="feature-card">
+<h2>Organizar la documentación de Renta</h2>
+<p>En <a href="/facturas/modelos?vista=renta">Renta</a> tienes un seguimiento por partidas. «Revisar documentos locales» comprueba los archivos disponibles en el mini. Puedes asignar cada PDF a su partida y preparar una búsqueda en una cuenta de correo, en todas las cuentas configuradas o en la web del proveedor.</p>
+<p>«Preparar búsqueda» crea un encargo para el asistente con los documentos ya conocidos. No busca ni descarga por sí solo. La casilla de partida completa la marcas tú cuando hayas revisado la documentación del ejercicio: no aprueba una deducción, no modifica el libro y no presenta la Renta.</p>
+<h3>Primera prueba: una factura de Digi de octubre de 2026</h3>
+<ol class="help-steps">
+<li><strong>Abre Renta y localiza Digi.</strong> Pulsa «Revisar documentos locales» para ver si el PDF ya está disponible.</li>
+<li><strong>Prepara la petición.</strong> En la partida Digi, elige buscar en el correo y selecciona una cuenta o todas las configuradas. Pulsa «Preparar búsqueda».</li>
+<li><strong>Acota esta prueba.</strong> El encargo de Renta se prepara para 2026 completo; no hay un selector de mes en esa partida. Pulsa «Copiar prompt», pégalo al asistente y añade: «Dentro del ejercicio 2026, recupera únicamente la factura de Digi correspondiente a octubre de 2026. Comprueba antes si ya está disponible, registra el resultado y deja pendiente revisar el resto del año. No marques la partida como completa».</li>
+<li><strong>Envía el mensaje cuando quieras iniciar la búsqueda.</strong> El asistente necesitará acceso al correo y al mini. Si falta una sesión, la completarás en la aplicación o web correspondiente; no compartas contraseñas ni códigos en el chat.</li>
+<li><strong>Comprueba el documento recuperado.</strong> Cuando el asistente haya registrado su informe, usa «Volver a Renta» y pulsa «Revisar documentos locales». Abre el PDF, confirma que corresponde a octubre y asígnalo a Digi si todavía no está asociado.</li>
+<li><strong>Conserva la partida pendiente.</strong> Una factura de octubre no completa Digi para todo 2026. Marca la partida completa únicamente cuando hayas comprobado la documentación necesaria de todo el ejercicio. El año en curso puede seguir incompleto.</li>
+</ol>
+<p class="quiet">Este recorrido conserva y organiza documentación. Recuperar o asignar un PDF de Renta no crea un gasto de IVA ni inicia una presentación.</p>
 </article>
 
 <article class="feature-card help-sections">
@@ -53,7 +69,7 @@ def render_help():
 <tr><th scope="row"><a href="/facturas/modelos?vista=gastos">Gastos</a></th><td>Consultar los gastos registrados. «Añadir o revisar gastos» abre la bandeja de documentos que todavía necesitan revisión o incorporación.</td></tr>
 <tr><th scope="row"><a href="/facturas/modelos?vista=libros">Libros</a></th><td>Descargar el Excel de consulta y acceder a archivos anteriores. El Excel se genera a partir del libro; editar una copia no cambia la contabilidad de la aplicación.</td></tr>
 <tr><th scope="row"><a href="/facturas/modelos?vista=modelos">Modelos</a></th><td>Consultar el IVA y preparar el 303/390. Desde «Presentar modelos» puedes validar la versión aprobada, confirmar su presentación con el certificado de Windows y conservar el justificante.</td></tr>
-<tr><th scope="row"><a href="/facturas/modelos?vista=renta">Renta</a></th><td>Consultar los documentos reservados para revisar en Renta, separados del IVA trimestral. Todavía no calcula la declaración ni las amortizaciones.</td></tr>
+<tr><th scope="row"><a href="/facturas/modelos?vista=renta">Renta</a></th><td>Seguir las partidas del ejercicio, revisar y asignar PDF locales y preparar búsquedas asistidas en correo o web. Las comprobaciones y las marcas de partida completa son manuales. Todavía no calcula la declaración, las deducciones ni las amortizaciones.</td></tr>
 <tr><th scope="row"><a href="/modulos">Mapa de módulos</a></th><td>Ver cómo pasan los documentos de la recogida a la revisión, al libro y a sus salidas.</td></tr>
 </tbody></table></div>
 </article>
@@ -85,6 +101,11 @@ def render_help():
 <summary>Qué hace cada botón</summary>
 <dl>
 <dt><strong>Recoger factura ahora</strong></dt><dd>Consulta el correo una vez y conserva los PDF encontrados como documentos por revisar. No aprueba gastos ni modifica el libro.</dd>
+<dt><strong>Mis carpetas de 2026</strong></dt><dd>Abre tus carpetas históricas de facturas. No las mueve ni vuelve a contabilizar sus documentos.</dd>
+<dt><strong>Abrir carpeta de entrada</strong></dt><dd>Abre la bandeja local para PDF nuevos. Dejarlos allí no inicia una importación.</dd>
+<dt><strong>Revisar documentos locales · Renta</strong></dt><dd>Comprueba los archivos disponibles y actualiza su seguimiento documental. No consulta correos, no descarga facturas y no modifica el libro ni el IVA.</dd>
+<dt><strong>Preparar búsqueda · Renta</strong></dt><dd>Guarda un encargo con la partida, el ejercicio y los documentos conocidos. Copia el prompt o ábrelo en el asistente y envíalo para iniciar el trabajo.</dd>
+<dt><strong>Marcar partida completa · Renta</strong></dt><dd>Registra tu comprobación de la documentación del ejercicio. No equivale a revisión fiscal, deducibilidad aprobada ni declaración presentada.</dd>
 <dt><strong>Subir archivos</strong></dt><dd>Conserva los PDF seleccionados y crea sus borradores. Detecta los documentos que ya estaban en el libro o en la bandeja.</dd>
 <dt><strong>Guardar revisión</strong></dt><dd>Guarda los datos que has revisado en el borrador. El gasto aún no queda incorporado al libro.</dd>
 <dt><strong>Aprobar revisión</strong></dt><dd>Aprueba la versión revisada y solicita su incorporación. «Aprobado» puede aparecer mientras el trabajo está pendiente; «Incorporado» indica que terminó.</dd>
@@ -130,7 +151,7 @@ def render_help():
 <p><strong>Completar la documentación del próximo periodo.</strong> La validación y la consulta autenticada ya están comprobadas. Falta incorporar noviembre y diciembre, revisar y cerrar el 4T y aprobar su versión antes de validar y confirmar su primera presentación. Para el 390 harán falta el año completo y los cuatro 303.</p>
 <p class="quiet">La descarga directa de un justificante por el conector aún no está comprobada: la consulta histórica devuelve datos identificativos, pero no una URL de descarga. Los justificantes históricos que ya tienes conservan su archivo.</p>
 <p>Después podremos llevar el mismo acceso a Modelos al móvil, manteniendo una única fuente de datos y el mini como ejecutor del certificado. La futura integración del bot de Imputaciones seguirá separada de Gestify; la programación de correos continúa en Gestify.</p>
-<p>La lectura asistida de gastos, más pedidos y proveedores, Digi, electricidad, gas y el cálculo completo de Renta siguen siendo módulos pendientes. Podrán añadirse sin rehacer el circuito de facturación.</p>
-<p class="quiet">La lectura actual aprovecha el texto extraíble del PDF y ofrece propuestas básicas. La lectura avanzada con IA y el reconocimiento de documentos escaneados todavía no están conectados.</p>
+<p>La documentación de Digi, electricidad, gas y otras partidas ya puede organizarse en Renta y buscarse mediante encargos al asistente. El cálculo completo de Renta, las deducciones y las amortizaciones siguen pendientes.</p>
+<p class="quiet">Los encargos permiten pedir al asistente que lea documentos y registre información acreditada. La aplicación no ejecuta una IA ni reconoce automáticamente documentos escaneados por su cuenta.</p>
 </article>
 </section>'''

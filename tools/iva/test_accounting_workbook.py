@@ -83,6 +83,14 @@ class AccountingWorkbookTests(unittest.TestCase):
         self.assertEqual(book['Resumen']['B14'].value, 0)
         self.assertEqual(book['Ingresos'].max_row, 5)
 
+    def test_product_column_requires_documentary_concept_not_filename(self):
+        self.data['records'][1]['source']='PRODUCTO_NO_ACREDITADO.pdf'
+        raw=workbook.build(self.data,self.sha)
+        book=load_workbook(io.BytesIO(raw),data_only=True)
+        self.addCleanup(book.close)
+        self.assertEqual(book['Gastos']['M6'].value,'Concepto pendiente de revisar')
+        self.assertNotIn('PRODUCTO_NO_ACREDITADO',book['Gastos']['M6'].value)
+
     def test_summary_has_one_selection_without_orphaned_frozen_panes(self):
         raw = workbook.build(self.data,self.sha)
         ns = {'s':'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}

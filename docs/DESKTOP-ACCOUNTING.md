@@ -263,9 +263,11 @@ conciliar son POST explícitos. La CLI escribe únicamente el informe del encarg
 - Resumen ofrece 1T–4T y Año. Ingresos identifica el cliente a la izquierda y
   muestra días × tarifa y fórmulas; los desgloses proceden del PDF, no de dividir
   el importe. `document_details.py` adjunta metadatos de consulta por SHA, sin
-  cambiar el JSON fiscal. Un PDF con varias facturas no recibe un concepto común.
-- Gastos y Libros muestran el concepto y su procedencia. Si solo se conoce el
-  nombre del archivo, se indica expresamente. Detalle conserva los anchos.
+  cambiar el JSON fiscal. Un PDF con varias facturas requiere además identidad
+  por número de factura y evidencia específica; no recibe un concepto común.
+- Gastos y Libros muestran conceptos documentados. Si falta descripción,
+  aparece «Concepto pendiente de revisar»; nunca se sustituye por el nombre
+  del archivo. Procedencia y citas quedan en Detalle, que conserva los anchos.
 - Mis carpetas de 2026 abre FACTURAS/2026. La entrada sigue siendo una bandeja
   separada para documentos nuevos; no se han movido ni borrado originales.
 - Importar termina en un resultado por PDF con el siguiente paso de revisión.
@@ -282,3 +284,126 @@ Vistas principales de Programación, Resumen, Ingresos, Gastos, importación y
 facturas revisadas; PDF histórico y emitido visibles dentro de la pantalla.
 La revisión adicional de todos los estados oscuros/estrechos quedó interrumpida
 por desconexión del navegador. El Excel actualizado fue renderizado y revisado.
+
+## Referencia para continuar con Claude u otro agente
+
+Esta referencia identifica el código y el trabajo pendiente; no autoriza a
+implementar automáticamente toda la lista visual de la sección siguiente.
+
+Para retomar con Claude en el mini, abrir como espacio de trabajo
+`C:/Users/Angel/Configuración ordenador mini codex`. Esa carpeta superior no es
+por sí misma un repositorio. Según la pantalla, usar el checkout de contabilidad
+o el repositorio Kairo Casa que figuran a continuación; no empezar a modificar
+la copia instalada en AppData.
+
+### Dos repositorios y una instalación
+
+| Parte | Fuente que se debe editar | Referencia y destino |
+| --- | --- | --- |
+| Aplicación del mini, contabilidad y adaptadores | `tools/iva/` de este repositorio | [GitHub: horas-excelia, rama trabajo/libro-anual-iva](https://github.com/avi-work-projects/horas-excelia/tree/trabajo/libro-anual-iva). Checkout del mini: `C:/Users/Angel/proyectos_claude/worktrees/kairo-pruebas-pdf`. |
+| Histórico y detalle de facturas | `tools/kairo/invoice_dashboard.py` de este repositorio | Se instala en el servicio existente `/home/angel/gestify-facturacion`. No sustituir sus otros módulos por copias antiguas del repositorio. |
+| Programación compartida entre móvil y mini | `ui-horas/hours_receiver.html`, `ui-horas/hours_receiver.js`, `ui-horas/mail_calendar_view.js` del repositorio local Kairo Casa | `C:/Users/Angel/Configuración ordenador mini codex/setup-kvm/kairo-casa`. Rama observada: `trabajo/iconos-programacion`. No tiene remoto configurado. Destino: `/home/angel/gestify-outlook/tools`. |
+| Portada, cabecera y estilos compartidos de Kairo | `web/` y `ui-facturas/` de Kairo Casa | Seguir `CLAUDE.md`, `INTERFAZ-KAIRO.txt` y los scripts de ese repositorio. |
+| Gestify en el móvil | Aplicación `js/`, `css/` y recursos de horas-excelia | Es una interfaz distinta que entrega preparaciones y consulta estados. Cambiar la vista de Programación servida por Kairo no implica publicar Gestify. |
+| Copia ejecutable del mini | `%LOCALAPPDATA%/GestifyFacturacion/modelos/code` | Es una instalación, no el checkout. Se actualiza con `tools/iva/install-desktop.ps1`; no editar aquí como única fuente. |
+
+Hitos de esta rama de horas-excelia:
+
+- `8af4cba`: conexión AEAT y resultado comprobado de la consulta existente.
+- `2ccfacb`: preparación de IVA 2026 y encargos manuales de facturas a la IA.
+- `b69d0a4`: tablas, conceptos, navegación y consulta visual de facturas;
+  punto de control WIP porque quedaban comprobaciones visuales de tamaños/temas.
+
+Antes de continuar, comprobar `git status`, rama, remoto y `git log` en **cada**
+repositorio. `git fetch` del repositorio de GitHub no recupera Kairo Casa. El
+HEAD observado de Kairo Casa al hacer esta auditoría era `ce8bd65`; los tres
+archivos de Programación ya estaban rastreados. Se guardaron en el commit local
+`1568913` de `trabajo/iconos-programacion`, sin cambiar su contenido instalado.
+Este commit no está en GitHub: Kairo Casa no tiene remoto. Hay cambios ajenos en otros archivos: no incluirlos en un
+commit general. No se ha creado una segunda copia de `ui-horas` en `tools/kairo`.
+
+El 18/11/2026 se comprobó que las tres fuentes locales de Programación coinciden
+byte a byte con las instaladas en Kairo. Huellas de esa comprobación:
+
+| Archivo | SHA256 |
+| --- | --- |
+| `hours_receiver.html` | `724aab83533b98153d1379a29e9483463b2bf98df88110f0b4eaaa6f93beadd1` |
+| `hours_receiver.js` | `d00a1e76ea7b4cdf33ae94e2e1783ecb83c902be91098b07b44a3a4e59f9cea7` |
+| `mail_calendar_view.js` | `3416dba756a29a06798db85d01292294f4567f134a24fd82668bccaf8aafb056` |
+
+Los tres archivos funcionan juntos: la plantilla recibe configuración del
+servicio de horas, `hours_receiver.js` aporta el calendario y los iconos, y
+`mail_calendar_view.js` compone la vista mensual y la actualización explícita.
+Dependen del servicio existente de horas y de la cabecera/tema compartidos;
+copiarlos por separado a otro repositorio no constituye una instalación completa.
+En el mini, `desktop_billing.py` incorpora esa vista mediante el puente existente
+y acota el CSS con `@scope (.billing-content)`: los selectores que dependen de
+ancestros exteriores como `body` o `html` requieren especial cuidado.
+
+Configuración privada, bases de datos, estado de encargos, PDF, libros y
+certificados permanecen fuera de Git. El archivo de documentos es AUTONOMO.
+Un checkout de GitHub no sustituye esos datos ni una copia de seguridad.
+
+**Renta, trabajo funcional separado del backlog visual:** el módulo
+`renta_documents` mantiene partidas, referencias a los Excel anteriores,
+documentos deduplicados por SHA y casillas manuales en un catálogo privado bajo
+`DECLARACION RENTA/2026`. Leer la vista no escanea carpetas: «Revisar documentos
+locales» lo hace explícitamente, conservando originales y marcando los ausentes.
+El documento puede asignarse a una partida y abrirse con verificación de huella.
+Las búsquedas por partida preparan encargos por una cuenta, todas las cuentas
+configuradas o la web del proveedor. El asistente registra el resultado; no se
+envía automáticamente ningún prompt. Los PDF declarados en encargos de Renta
+no pasan por la importación genérica de IVA. Este módulo no calcula ni presenta
+IRPF, ni considera una partida completa por encontrar un PDF. El seguimiento
+está en el mini; la equivalencia móvil de este módulo sigue pendiente.
+
+### Backlog visual solicitado después de la revisión — pendiente, no aplicado
+
+La siguiente petición del usuario se conserva para una próxima intervención.
+No debe confundirse con el diseño ya instalado:
+
+1. **Facturas, una sola vista:** eliminar la separación Resumen/Histórico y usar
+   dos paneles. El primero muestra la próxima factura con los botones actuales
+   «Ver factura» y «Ver programación», más pequeños en escritorio. El segundo
+   reúne todas las facturas.
+2. **Calendario anual de facturas:** en cada subpanel mensual mostrar únicamente
+   la fecha de envío o la fecha programada y un botón cuidado para ver la
+   factura; incluir también los meses programados. Dar más presencia visual a
+   la referencia del mes y mejorar el diseño de esos subpaneles.
+3. **Barra lateral:** separar Programación y Renta del resto mediante líneas
+   horizontales.
+4. **Programación:** usar otro color para «Hoy» y colocarlo en la misma línea
+   horizontal del selector mes/año, en el extremo derecho. Sacar «Actualizar»
+   y su timestamp fuera del panel; el timestamp debe mostrar únicamente la
+   fecha de actualización.
+5. **Ingresos:** centrar verticalmente dentro de su celda los encabezados de
+   base, IVA, retención y demás columnas; aplicar colores agradables a los
+   valores.
+6. **Gastos:** acercar su presentación a la de Ingresos, sin colorear todo el
+   panel; usar un fondo suave común para las filas del mismo trimestre.
+
+**Atendido por separado:** quitar el nombre del archivo de la columna
+«Qué compraste». El original debe seguir accesible mediante su acción de
+documento/detalle; no volver a añadir el nombre como sustituto de una descripción.
+
+Al retomar el backlog, revisar las pantallas reales en claro, oscuro y ancho
+estrecho, sin presentar modelos ni crear envíos para probar la interfaz. Guardar
+solo los cambios de esa tarea; las modificaciones heredadas del árbol local
+requieren su propia revisión.
+
+### Verificación de la entrega documental
+
+El 18/11/2026 se instaló el seguimiento de Renta en el mini. Se inspeccionaron
+Renta en claro/oscuro, la pantalla estrecha, el encargo generado, la copia del
+prompt y la apertura del PDF original. Se corrigió y volvió a mirar que abrir
+una tarjeta no estire sus vecinas. Los conceptos de Gastos se verificaron en
+la pantalla real y se regeneró la consulta Excel mediante una acción manual.
+La automatización del navegador no pudo adjuntarse a la pestaña remota para
+repetir allí la revisión; la vista estrecha comprobada es la aplicación del mini.
+
+Validación: 87 pruebas focalizadas, 85 superadas y 2 omitidas por permisos para
+crear enlaces simbólicos en Windows; guardas de redirecciones y rutas sí
+comprobadas. Incluye sesión/CSRF, lectura sin efectos, deduplicación, documentos
+no disponibles, aislamiento de Renta respecto al IVA y catálogos extensos.
+El manual dentro de «Cómo funciona» explica la prueba con una factura de Digi.
+La preparación del encargo no significa que ya se haya ejecutado la descarga.
