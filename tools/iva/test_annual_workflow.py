@@ -17,6 +17,7 @@ class AnnualWorkflowTests(unittest.TestCase):
     def setUp(self):
         fixture = fixtures.AnnualPreparationTests()
         fixture.setUp()
+        self.fixture = fixture
         self.addCleanup(fixture.doCleanups)
         self.root, self.data = fixture.root, fixture.data
         self.runtime = self.root / 'runtime'
@@ -40,7 +41,7 @@ class AnnualWorkflowTests(unittest.TestCase):
         options = {value:key for key,value in annual.candidates(self.root).items()}
         self.form = dict(period='anual', action='review', ledger_hash=digest((self.root / 'ledger.json').read_bytes()),
             surname='PRUEBA SINTETICA', given_name='EJEMPLO', description='CONSULTORIA', code='A05', iae='763',
-            third_party_return='no', profile_source=options['MODELOS/perfil.pdf'],
+            third_party_return='no', eu_services21='no', profile_source=options['MODELOS/perfil.pdf'],
             **{k:True for k in (*annual.CHECKS, *annual.GROUPS)},
             **{'source_' + p:options['MODELOS/' + p + '.pdf'] for p in ('1T','2T','3T','4T')})
         self.form['source_4T'] = options['REVISIONES/2026/JUSTIFICANTES/filing_4T_synthetic.pdf']
@@ -104,6 +105,51 @@ class AnnualWorkflowTests(unittest.TestCase):
                 annual.save_review(self.runtime, self.form | {group:False}, 'synthetic')
         with self.assertRaisesRegex(ValueError, 'documento existente'):
             annual.save_review(self.runtime, self.form | {'profile_source':'../identity.json'}, 'synthetic')
+        self.assertFalse((self.runtime / 'annual-review.json').exists())
+
+    def test_eu_services_review_and_download_use_explicit_scope(self):
+        self.fixture.eu_year()
+        self.write_ledger()
+        self.form['ledger_hash'] = digest((self.root / 'ledger.json').read_bytes())
+        with self.assertRaisesRegex(ValueError, 'intracomunitarios'):
+            annual.save_review(self.runtime, self.form, 'synthetic')
+        self.form['eu_services21'] = 'yes'
+        annual.save_review(self.runtime, self.form, 'synthetic')
+        current = annual.build_candidate(self.runtime)
+        self.assertEqual(current['boxes']['552'], '23.81')
+        self.assertEqual(current['boxes']['598'], '23.81')
+        self.assertEqual(current['boxes']['99'], '4000.00')
+        record = json.loads((self.runtime / 'annual-review.json').read_text())
+        self.assertTrue(all(record['profile'][k] is True for k in annual.EU_FLAGS))
+        self.assertFalse(record['profile']['other_intracommunity'])
+        self.assertFalse(record['profile']['other_reverse_charge'])
+        for action in ('approve', 'generate'):
+            annual.post(self.runtime, annual.BASE,
+                        dict(period='anual', action=action, revision=current['revision']), 'synthetic')
+        self.assertEqual(annual.get(self.runtime, annual.BASE + '/archivo?periodo=anual', 'token')[0], 200)
+        page = annual.get(self.runtime, annual.BASE + '?periodo=anual', 'token')[1]
+        self.assertIn('23.81', page)
+        self.assertIn('posible obligación del modelo 349', page)
+        self.assertIn('name="eu_services21"', page)
+
+    def test_incomplete_eu_quarter_keeps_documentary_dossier(self):
+        self.fixture.eu_year()
+        del self.data['references']['4T']['37']
+        self.write_ledger()
+        self.form.update(ledger_hash=digest((self.root / 'ledger.json').read_bytes()), eu_services21='yes')
+        with self.assertRaisesRegex(ValueError, '4T: falta completar'):
+            annual.save_review(self.runtime, self.form, 'synthetic')
+        page = annual.get(self.runtime, annual.BASE + '?periodo=anual', 'token')[1]
+        self.assertIn('4T: falta completar', page)
+        response = annual.get(self.runtime, annual.BASE + '/archivo?periodo=anual&tipo=dossier', 'token')
+        self.assertEqual(response[0], 200)
+        report = json.loads(response[1])
+        self.assertTrue(report['provisional'])
+        self.assertFalse(report['filing_ready'])
+        self.assertEqual(report['missing_intracommunity_references'], ['4T'])
+        self.assertEqual(report['intracommunity_services']['accrued_vat'], '23.81')
+        self.assertEqual(report['documentary_totals']['27'], '863.81')
+        self.assertTrue(any('349' in item for item in report['pending']))
         self.assertFalse((self.runtime / 'annual-review.json').exists())
 
     def test_identity_and_ledger_change_invalidate_saved_confirmation(self):

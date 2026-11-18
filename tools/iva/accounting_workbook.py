@@ -13,8 +13,9 @@ from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
+from openpyxl.worksheet.views import Selection
 
-from ledger import calculate, money, verify_sources
+from ledger import calculate, money, verify_sources, eu_service_vat
 
 PERIODS = ('1T', '2T', '3T', '4T')
 CENT = Decimal('0.01')
@@ -131,7 +132,8 @@ def build(data, ledger_sha256, calculations=None):
         rows = [r for r in data['records'] if r['period'] == period and r['include']]
         for kind, field, box in [('income','base','07'), ('income','vat','09'),
                                  ('expense','base','28'), ('expense','vat','29')]:
-            expected = sum((money(r[field]) for r in rows if r['kind'] == kind), Decimal('0.00'))
+            expected = sum((money(r[field]) for r in rows if r['kind'] == kind
+                            and r['mapping'] != 'eu_services21'), Decimal('0.00'))
             if expected != money(q['boxes'][box]):
                 raise ValueError('Las filas no concilian con el motor Decimal')
     book = Workbook()
@@ -158,7 +160,7 @@ def build(data, ledger_sha256, calculations=None):
         total.append(sum(values, Decimal('0.00')) if all(isinstance(v, Decimal) for v in values) else 'Incompleto')
     total.append('El acumulado no confirma el cierre del ejercicio.')
     summary_rows.append(total)
-    _table(summary, ['Periodo','Base ingresos','IVA ingresos','Base gastos IVA','IVA gastos',
+    _table(summary, ['Periodo','Base ingresos','IVA ingresos','Base gastos nacionales','IVA gastos nacionales',
                      'Resultado 303','Referencia 303','Diferencia','Cobertura'], summary_rows, set(range(2,9)), checks)
     summary.freeze_panes = None
     summary.auto_filter.ref = None
@@ -177,7 +179,19 @@ def build(data, ledger_sha256, calculations=None):
                       (18,'Este archivo es una consulta del libro, no una plantilla LSI ni una declaración fiscal.'),
                       (19,'Los valores se regeneran desde Kairo. Editar este Excel no modifica el libro ni recalcula el resumen.')]:
         _cell(summary, row, 1, text)
-    summary.print_area = 'A1:I19'
+    _cell(summary, 21, 1, 'IVA autoliquidado y deducible: desglose del 303')
+    eu_summary = [[period, *[money(quarters[period]['boxes'][box])
+        for box in ('10','11','36','37','27','45','46')]] for period in PERIODS]
+    _table(summary, ['Periodo','Base servicios UE (10)','IVA UE devengado (11)',
+        'Base UE deducible (36)','IVA UE deducible (37)','Total devengado (27)',
+        'Total deducible (45)','Resultado (46)'], eu_summary, set(range(2,9)), checks, first=22)
+    summary.auto_filter.ref = None
+    summary.freeze_panes = None
+    # Removing a frozen pane does not clear openpyxl's pane selections. The two
+    # tables above otherwise leave five orphan/duplicate selections, which Excel
+    # repairs on opening even though openpyxl can read the workbook itself.
+    summary.sheet_view.selection = [Selection(activeCell='A1', sqref='A1')]
+    summary.print_area = 'A1:I26'
 
     for kind, title in [('income','Ingresos'), ('expense','Gastos')]:
         sheet = _sheet(book, title, f'{title} documentales',
@@ -192,6 +206,18 @@ def build(data, ledger_sha256, calculations=None):
         _table(sheet, ['Factura','Fecha','Trimestre','Cliente' if kind=='income' else 'Proveedor','NIF documental',
                       'Base EUR','IVA documental','Retención EUR','Total EUR','Incluido IVA','Ámbito','Documento'],
                rows, {6,7,8,9}, checks)
+
+    eu_rows = [r for r in expenses if r['include'] and r['mapping'] == 'eu_services21']
+    if eu_rows:
+        services = _sheet(book, 'Servicios UE', 'Servicios intracomunitarios revisados',
+            'IVA documental cero; autoliquidación y deducción explícitas, sin validación VIES automática.',
+            [22,15,12,35,20,17,17,17,17,17,17])
+        rows = [[r['number'],date.fromisoformat(r['date']),r['period'],r['party'],r['tax_id'],
+                 money(r['base']),money(r['vat']),money(r['reverse_charge_rate']),
+                 eu_service_vat(r),money(r['deductible_percentage']),eu_service_vat(r)] for r in eu_rows]
+        _table(services, ['Factura','Fecha','Trimestre','Proveedor','NIF-IVA documental','Base EUR',
+            'IVA documental','Tipo autoliquidado %','IVA autoliquidado','Deducción %','IVA deducible'],
+            rows, set(range(6,12)), checks)
 
     renta = _sheet(book, 'Renta pendiente', 'Documentos para revisar el IRPF',
         'Importes documentales completos. Porcentaje y deducción pendientes de revisar.', [22,15,12,33,24,17,17,17,28,42,33,20])

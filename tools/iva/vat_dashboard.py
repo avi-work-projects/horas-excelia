@@ -3,6 +3,7 @@ import hashlib
 import json
 import re
 from datetime import date
+from decimal import Decimal
 from pathlib import Path
 from urllib.parse import parse_qs, urlsplit, quote
 from modelos_ui import e, euro, page, fact, button, navigation
@@ -145,7 +146,12 @@ def annual_content(report, compact=False):
     annual = report.get('preparation_390')
     if not annual:
         return '<div class="m-card"><h2>Preparación anual pendiente</h2><p>Actualiza el informe anual para incorporar esta vista.</p></div>'
-    metrics = ''.join('<div class="m-card"><span class="m-eyebrow">'+label+'</span><strong class="m-metric">'+e(euro(annual['documentary_totals'].get(key)))+'</strong></div>' for key,label in [('07','Base de ingresos'),('09','IVA de ingresos'),('28','Base de gastos'),('29','IVA de gastos')])
+    totals = annual['documentary_totals']
+    metrics = ''.join('<div class="m-card"><span class="m-eyebrow">'+label+'</span><strong class="m-metric">'+e(euro(value))+'</strong></div>' for label,value in [
+        ('Base de ingresos',totals.get('07')),('IVA de ingresos',totals.get('09')),
+        ('Base de gastos nacionales',totals.get('28')),('IVA deducible',totals.get('45',totals.get('29')))])
+    if totals.get('36') and Decimal(totals['36']):
+        metrics += '<div class="m-card"><span class="m-eyebrow">Base de servicios UE</span><strong class="m-metric">'+e(euro(totals['36']))+'</strong></div>'
     rows = ''
     for q, data in report['quarters'].items():
         ref = data.get('reference',{}).get('71')
@@ -194,7 +200,7 @@ def render(index, report, ledger, quarter, section, kind='todos', csrf='', updat
             if missing:
                 content += '<p class="m-warning">'+str(len(missing))+' gastos necesitan completar los datos de recepción para la importación de libros.</p>'
             content += '<div class="m-actions">'+button(BASE+'/gastos','Añadir o revisar gastos')+'</div></details>'
-        facts = fact('IVA de ingresos · 09', euro(boxes['09']))+fact('IVA de gastos incorporados · 29',euro(boxes['29']))+fact('Resultado calculado · 71',euro(boxes.get('71')))
+        facts = fact('IVA devengado · 27', euro(boxes.get('27', boxes['09'])))+fact('IVA deducible · 45',euro(boxes.get('45', boxes['29'])))+fact('Resultado calculado · 71',euro(boxes.get('71')))
         if ref is not None:
             facts += fact('Referencia presentada',euro(ref))+fact('Diferencia documental',euro(diff,True))
         content += '<div class="m-card"><h2>Cálculo y comparación</h2><dl class="m-facts">'+facts+'</dl><p class="m-note">Resultado para el perfil soportado. Los ajustes pendientes mantienen el resultado sin cerrar. El pago se comprueba por separado.</p></div>'

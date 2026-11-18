@@ -26,3 +26,17 @@ class AnnualPreparationTests(unittest.TestCase):
         del report['quarters']['4T']
         with self.assertRaises(ValueError):
             prepare(report)
+
+    def test_eu_services_remain_provisional_with_explicit_pending_reconciliation(self):
+        report = self.report()
+        report['annual_documentary_totals'].update({'10':'100.00','11':'21.00',
+            '27':'42.00','36':'100.00','37':'21.00','45':'21.00'})
+        report['quarters']['4T']['boxes'] = {'10':'100.00','11':'21.00','36':'100.00','37':'21.00'}
+        report['quarters']['4T']['reference'] = {'71':'21.00'}
+        result = prepare(report)
+        self.assertTrue(result['provisional'])
+        self.assertFalse(result['filing_ready'])
+        self.assertEqual(result['intracommunity_services'], {'base':'100.00',
+            'accrued_vat':'21.00','deductible_base':'100.00','deductible_vat':'21.00'})
+        self.assertEqual(result['missing_intracommunity_references'], ['4T'])
+        self.assertTrue(any('349' in item for item in result['pending']))

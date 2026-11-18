@@ -172,6 +172,12 @@ def dispatch(runtime, request):
         store = ExpenseStore(runtime/'expenses')
         with service_lock(runtime.parent):
             return dict(rows=store.list(), draft=store.get(request['id']) if request.get('id') else None)
+    if action == 'expense_propose':
+        from expense_workflow import ExpenseStore
+        with service_lock(runtime.parent):
+            draft = ExpenseStore(runtime/'expenses').propose(request.get('id'),request.get('proposal'),
+                request.get('expected_revision'),'desktop-assistant-proposal')
+            return {key:draft[key] for key in ('id','revision','state')}
     if action == 'get':
         from modelos_web import get as expense_get
         from period_workflow import get as period_get

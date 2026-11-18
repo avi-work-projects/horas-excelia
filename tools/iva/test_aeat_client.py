@@ -53,6 +53,16 @@ def json_response(data, status=200):
 
 
 class AeatClientTests(unittest.TestCase):
+    def test_official_multiline_notices_do_not_block_valid_fourth_quarter(self):
+        message = 'INF024 - Aviso del último periodo:\n\n1. Primera condición.\r\n2. Segunda\tcondición.'
+        response = {'respuesta':{'pdf':[base64.b64encode(PDF).decode()], 'avisos':[message]}}
+        result = parse_validation(encoded(response))
+        self.assertTrue(result['valid'])
+        self.assertIn('1. Primera condición.',result['warnings'][0])
+        self.assertNotIn('\n',result['warnings'][0])
+        response['respuesta']['avisos'] = ['Aviso\x00alterado']
+        with self.assertRaises(AeatError): parse_validation(encoded(response))
+
     def client(self, transport, **options):
         return AeatClient(environment='production', external_certificate=CERT, transport=transport, **options)
 

@@ -8,6 +8,7 @@ from rehearse_fourth import build_case
 from closing import Store, digest
 from period_workflow import save_review, build_candidate, CHECKS
 from sync_models import publish
+from test_eu_services import eu_record
 
 class PeriodIntegrationTests(unittest.TestCase):
     def test_real_303_engine_approval_and_source_change(self):
@@ -15,6 +16,9 @@ class PeriodIntegrationTests(unittest.TestCase):
         if not design:self.skipTest('Set IVA303_DESIGN to original AEAT workbook')
         with tempfile.TemporaryDirectory() as folder:
             root=Path(folder)/'archive';data,_=build_case(root)
+            data['records'].append(eu_record(date='2026-11-10',period='4T',
+                source=data['records'][0]['source'],sha256=data['records'][0]['sha256']))
+            (root/'libro_ficticio.json').write_text(json.dumps(data))
             runtime=Path(folder)/'runtime';runtime.mkdir()
             (root/'identity.json').write_text(json.dumps(dict(nif='00000000T',name='ENSAYO FICTICIO',developer_nif='00000000T',foral_only=False,monthly_refund=False)))
             (root/'payment.json').write_text(json.dumps(dict(mode='direct_debit',iban='ES9121000418450200051332')))
@@ -25,6 +29,8 @@ class PeriodIntegrationTests(unittest.TestCase):
             with self.assertRaises(ValueError):save_review(runtime,'4T',supplied|{'fiscal':False},'test')
             save_review(runtime,'4T',supplied,'test')
             candidate=build_candidate(runtime,'4T');self.assertEqual(candidate['boxes']['71'],'189.00')
+            self.assertEqual(candidate['boxes']['11'],'3.78')
+            self.assertEqual(candidate['boxes']['37'],'3.78')
             store=Store(runtime/'new-closing.sqlite')
             store.act('4T','prepare',None,candidate,'test')
             with self.assertRaises(ValueError):store.download(candidate)

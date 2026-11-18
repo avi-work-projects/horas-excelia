@@ -16,10 +16,17 @@ PERIODS = ('1T', '2T', '3T', '4T')
 PAGES = ('01000', '02000', '02B00', '03000', '04000', '06000')
 FALSE_FLAGS = ('exempt_390', 'simplified_regime', 'joint_return', 'cash_accounting',
                'recipient_cash_accounting', 'insolvency', 'monthly_refund',
-               'group_entities', 'sii', 'special_regimes', 'intracommunity',
-               'imports_exports', 'reverse_charge', 'investment_goods',
+               'group_entities', 'sii', 'special_regimes', 'other_intracommunity',
+               'imports_exports', 'other_reverse_charge', 'investment_goods',
                'prorata', 'annual_adjustments', 'prior_compensation',
                'substitute_return', 'other_operations', 'fuel_payments')
+EU_FLAGS = ('eu_services21', 'intracommunity', 'reverse_charge')
+DOCUMENTARY_BOXES = ('07', '09', '10', '11', '27', '28', '29', '36', '37', '45', '46')
+
+
+def has_eu_services(data, period=None):
+    return any(r.get('include') is True and r.get('mapping') == 'eu_services21'
+               and (period is None or r.get('period') == period) for r in data['records'])
 
 
 def fingerprint(data):
@@ -53,6 +60,11 @@ def prepare(data, profile, root):
         raise ValueError('Falta confirmar cobertura anual, perfil y revisión fiscal')
     if any(profile.get(k) is not False for k in FALSE_FLAGS):
         raise ValueError('Perfil anual incompleto o con operaciones no soportadas')
+    # These are explicit declarations, never broad permissions for foreign operations.
+    # The ledger validator independently accepts only the narrow eu_services21 contract.
+    eu_services = has_eu_services(data)
+    if any(profile.get(k) is not eu_services for k in EU_FLAGS):
+        raise ValueError('Confirma los servicios intracomunitarios al 21 % y su inversión del sujeto pasivo de acuerdo con el libro')
     if profile.get('state_percentage') != '100.00':
         raise ValueError('Solo se admite tributación exclusiva al Estado')
     if not isinstance(profile.get('third_party_return'), bool):
@@ -67,7 +79,7 @@ def prepare(data, profile, root):
     quarters = calculate(data)
     comparisons = {}
     filed_total = Decimal('0.00')
-    sums = {box: Decimal('0.00') for box in ('07', '09', '28', '29', '71')}
+    sums = {box: Decimal('0.00') for box in (*DOCUMENTARY_BOXES, '71')}
     for period in PERIODS:
         q = quarters[period]
         if q['boxes']['71'] is None or money(q['boxes']['71']) < 0:
@@ -75,9 +87,22 @@ def prepare(data, profile, root):
         ref = q['reference']
         if any(k not in ref for k in ('07', '09', '28', '29', '45', '46', '71')):
             raise ValueError(f'{period}: falta referencia completa del 303 presentado')
-        if (money(ref['71']) < 0 or money(ref['71']) != money(ref['46'])
-                or money(ref['46']) != money(ref['09']) - money(ref['45'])
-                or money(ref['45']) != money(ref['29'])):
+        if has_eu_services(data, period) and any(k not in ref for k in ('10', '11', '27', '36', '37')):
+            raise ValueError(f'{period}: falta referencia 303 de servicios intracomunitarios (10, 11, 27, 36 y 37)')
+        # Historic domestic-only references did not store the newly supported boxes.
+        # Missing EU boxes can mean zero only for a quarter with no included EU service.
+        reference_eu = {k: money(ref.get(k, '0.00')) for k in ('10', '11', '36', '37')}
+        reference_accrued = money(ref.get('27', ref['09']))
+        if any(reference_eu.values()) and not has_eu_services(data, period):
+            raise ValueError(f'{period}: el 303 contiene operaciones intracomunitarias sin servicios acreditados en el libro')
+        if (any(money(ref[k]) < 0 for k in ('07', '09', '28', '29', '45', '46', '71'))
+                or any(value < 0 for value in reference_eu.values())
+                or reference_eu['10'] != reference_eu['36']
+                or reference_eu['11'] != reference_eu['37']
+                or reference_accrued != money(ref['09']) + reference_eu['11']
+                or money(ref['71']) != money(ref['46'])
+                or money(ref['46']) != reference_accrued - money(ref['45'])
+                or money(ref['45']) != money(ref['29']) + reference_eu['37']):
             raise ValueError(f'{period}: referencia presentada incompatible con el alcance')
         evidence[period] = verified_document(root, profile.get('filed_evidence', {}).get(period, {}))
         differences = {k: v for k, v in q['difference'].items() if money(v) != 0}
@@ -93,15 +118,19 @@ def prepare(data, profile, root):
             sums[box] += money(q['boxes'][box])
     if sums['71'] != filed_total:
         raise ValueError('El resultado anual y los cuatro 303 difieren; requiere tratamiento específico')
-    boxes = {'05': sums['07'], '06': sums['09'], '33': sums['07'], '34': sums['09'],
-             '47': sums['09'], '605': sums['28'], '606': sums['29'],
-             '48': sums['28'], '49': sums['29'], '64': sums['29'],
+    boxes = {'05': sums['07'], '06': sums['09'], '551': sums['10'], '552': sums['11'],
+             '33': sums['07'] + sums['10'], '34': sums['27'],
+             '47': sums['27'], '605': sums['28'], '606': sums['29'],
+             '48': sums['28'], '49': sums['29'],
+             '637': sums['36'], '638': sums['37'], '597': sums['36'], '598': sums['37'],
+             '64': sums['45'],
              '65': sums['71'], '84': sums['71'], '86': sums['71'],
              '95': filed_total, '99': sums['07'], '108': sums['07']}
     result = {'model': '390', 'year': 2026, 'filing_ready': False,
               'status': 'Fichero de preparación; pendiente de validación oficial',
               'boxes': {k: str(v) for k, v in boxes.items()}, 'quarters': comparisons,
               'activity': activity, 'third_party_return': profile['third_party_return'],
+              'eu_services21': eu_services,
               'ledger_fingerprint': fingerprint(data), 'profile_fingerprint': fingerprint(profile),
               'evidence': evidence}
     result['preparation_fingerprint'] = fingerprint(result)
@@ -213,10 +242,12 @@ def serialize(design, prepared, identity):
                   20: '2', 21: '2', 22: '2', 23: '0', 24: '0',
                   26: activity['description'].upper(), 27: activity['code'],
                   28: activity['iae'], 44: '1' if prepared['third_party_return'] else '0'},
-        '02000': {18: cents('05'), 19: cents('06'), 100: cents('33'), 101: cents('34')},
+        '02000': {18: cents('05'), 19: cents('06'), 90: cents('551'), 91: cents('552'),
+                  100: cents('33'), 101: cents('34')},
         '02B00': {26: cents('47')},
         '03000': {16: cents('605'), 17: cents('606'), 18: cents('48'), 19: cents('49')},
-        '04000': {44: cents('64'), 45: cents('65')},
+        '04000': {30: cents('637'), 31: cents('638'), 32: cents('597'), 33: cents('598'),
+                  44: cents('64'), 45: cents('65')},
         # Exclusive common territory: section 7, not mixed-territory section 8.
         '06000': {7: cents('84'), 11: cents('86'), 24: cents('95'),
                   32: cents('99'), 49: cents('108')},

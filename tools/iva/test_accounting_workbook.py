@@ -83,6 +83,19 @@ class AccountingWorkbookTests(unittest.TestCase):
         self.assertEqual(book['Resumen']['B14'].value, 0)
         self.assertEqual(book['Ingresos'].max_row, 5)
 
+    def test_summary_has_one_selection_without_orphaned_frozen_panes(self):
+        raw = workbook.build(self.data,self.sha)
+        ns = {'s':'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
+        with ZipFile(io.BytesIO(raw)) as archive:
+            root = ET.fromstring(archive.read('xl/worksheets/sheet1.xml'))
+            view = root.find('s:sheetViews/s:sheetView',ns)
+            self.assertIsNone(view.find('s:pane',ns))
+            selections = view.findall('s:selection',ns)
+            self.assertEqual(len(selections),1)
+            self.assertNotIn('pane',selections[0].attrib)
+            self.assertEqual(selections[0].get('activeCell'),'A1')
+            self.assertEqual(selections[0].get('sqref'),'A1')
+
     def test_untrusted_text_stays_text_and_report_mismatch_blocks(self):
         self.data['records'][0]['party'] = '=HYPERLINK("https://example.invalid","unsafe")'
         book = load_workbook(io.BytesIO(workbook.build(self.data,self.sha)), data_only=False)

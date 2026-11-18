@@ -1,12 +1,12 @@
 """Offline, decimal VAT worksheet engine. Never files a return or changes originals."""
 import argparse
 from datetime import date
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 import hashlib
 import json
 from pathlib import Path
 import re
-from expense_policy import validate_policy
+from expense_policy import validate_policy, validate_eu_services, normalized_tax_id
 
 
 def money(value):
@@ -23,7 +23,8 @@ def quarter(day):
 def validate(records, year):
     seen = set()
     for r in records:
-        key = (r['kind'], (r.get('tax_id') or r['party']).strip().casefold(), r['number'].strip().casefold())
+        party_key = normalized_tax_id(r['tax_id']) if r.get('tax_id') else r['party'].strip().casefold()
+        key = (r['kind'], party_key, r['number'].strip().casefold())
         if key in seen:
             raise ValueError('Duplicate invoice identity')
         seen.add(key)
@@ -31,6 +32,7 @@ def validate(records, year):
             raise ValueError('Unknown record kind')
         if r['kind'] == 'expense':
             validate_policy(r, for_approval=True)
+            validate_eu_services(r)
         if date.fromisoformat(r['date']).year != year:
             raise ValueError('Wrong exercise')
         if r['period'] not in ('1T', '2T', '3T', '4T'):
@@ -45,10 +47,23 @@ def validate(records, year):
             raise ValueError('Expense withholding requires a separate adapter')
         if money(r['base']) + money(r['vat']) - money(r['withholding']) != money(r['total']):
             raise ValueError('Invoice totals do not reconcile')
-        if r['include'] and (r['mapping'] not in ('domestic21', 'historical_domestic21') or r['rate'] != '21.00'):
-            raise ValueError('Unsupported VAT treatment; do not silently map it')
+        if r['include']:
+            if r['mapping'] == 'eu_services21':
+                if r['kind'] != 'expense':
+                    raise ValueError('EU services mapping is only for acquired current services')
+            elif r['mapping'] not in ('domestic21', 'historical_domestic21') or r['rate'] != '21.00':
+                raise ValueError('Unsupported VAT treatment; do not silently map it')
         if not r['source'] or not re.fullmatch('[a-f0-9]{64}', r['sha256']):
             raise ValueError('Document provenance required')
+
+
+def eu_service_vat(record):
+    """Per-invoice reverse-charge VAT, separate from the documentary zero VAT."""
+    validate_eu_services(record)
+    if record.get('mapping') != 'eu_services21':
+        return Decimal('0.00')
+    return (money(record['base']) * money(record['reverse_charge_rate']) / 100).quantize(
+        Decimal('0.01'), rounding=ROUND_HALF_UP)
 
 
 def calculate(data):
@@ -57,11 +72,20 @@ def calculate(data):
     for period in ('1T', '2T', '3T', '4T'):
         rows = [r for r in data['records'] if r['include'] and r['period'] == period]
         def total(kind, field):
-            return sum((money(r[field]) for r in rows if r['kind'] == kind), Decimal('0.00'))
+            return sum((money(r[field]) for r in rows if r['kind'] == kind
+                        and r['mapping'] != 'eu_services21'), Decimal('0.00'))
+        eu = [r for r in rows if r['mapping'] == 'eu_services21']
+        eu_base = sum((money(r['base']) for r in eu), Decimal('0.00'))
+        eu_vat = sum((eu_service_vat(r) for r in eu), Decimal('0.00'))
+        # AEAT 303 (2026): EU acquired services use 10/11 and current deductions
+        # 36/37. Their zero invoice VAT never belongs to domestic boxes 28/29.
         boxes = {'07': total('income', 'base'), '09': total('income', 'vat'),
-                 '28': total('expense', 'base'), '29': total('expense', 'vat')}
-        boxes['45'] = boxes['29']
-        boxes['46'] = boxes['09'] - boxes['45']
+                 '10': eu_base, '11': eu_vat,
+                 '28': total('expense', 'base'), '29': total('expense', 'vat'),
+                 '36': eu_base, '37': eu_vat}
+        boxes['27'] = boxes['09'] + boxes['11']
+        boxes['45'] = boxes['29'] + boxes['37']
+        boxes['46'] = boxes['27'] - boxes['45']
         # Only calculate final payable for an explicitly documented zero-adjustment profile.
         profile = data.get('profiles', {}).get(period, {})
         boxes['71'] = boxes['46'] if profile.get('remaining_boxes_confirmed_zero') is True else None

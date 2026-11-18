@@ -94,7 +94,25 @@ class Application:
 <body data-csrf="'''+e(self.csrf)+'''"><aside class="sidebar"><a class="brand" href="/" aria-label="Kairo · Resumen"><span class="brand-mark" aria-hidden="true"></span></a><div class="workspace-label">TU ESPACIO <span>Mini</span></div><nav aria-label="Secciones">'''+nav+'''</nav><div class="sidebar-bottom"><a href="/recoger"'''+(' aria-current="page"' if active == 'recoger' else '')+'''>↓ &nbsp; Recoger facturas</a><a href="/modulos"'''+(' aria-current="page"' if active == 'modulos' else '')+'''>⋮ &nbsp; Mapa de módulos</a><a href="/ayuda"'''+(' aria-current="page"' if active == 'ayuda' else '')+'''>? &nbsp; Cómo funciona</a><p><span class="dot"></span> Contabilidad bajo petición</p></div></aside>
 <div class="workspace"><header class="topbar"><span>Tu espacio de trabajo <span class="muted">/ Ordenador mini</span></span><div><button id="refresh-data" type="button">Actualizar datos</button><button id="theme-toggle" type="button" aria-label="Cambiar tema">'''+THEME_ICONS+'''</button></div></header><div id="action-message" class="action-message" role="status" aria-live="polite" hidden></div><main class="desktop-main k-main">'''+fragment(content)+'''</main><footer class="desktop-footer"><span>Archivo único · Documentos originales conservados</span><button id="check-state" type="button">Ver estado de actualización</button></footer></div><script>'''+script+'''</script></body></html>'''
 
-    def collect_page(self):
+    def assistant_store(self):
+        from assistant_requests import Requests
+        return Requests(self.state,self.config['archive_root'])
+
+    def intake_toolbar(self):
+        return '<section class="intake-toolbar"><div><strong>Entrada de gastos · 2026</strong><p class="quiet">Deposita PDF y decide cuándo importarlos.</p></div><div class="assistant-actions"><button type="button" data-intake-open>Abrir carpeta de entrada</button><button type="button" data-intake-import>Importar PDF depositados</button><a class="link-button" href="/recoger">Encargos a la IA</a></div></section>'
+
+    def collect_page(self, url='/recoger'):
+        from assistant_requests import render
+        accounts = self.settings.get('accounts',[])
+        accounts = accounts if isinstance(accounts,list) else []
+        accounts = accounts+[self.settings['account']] if self.settings.get('account') else accounts
+        selected = parse_qs(urlsplit(url).query).get('id',[''])[0]
+        body = render(self.assistant_store(),self.path,selected,accounts)
+        if self.settings.get('order_path'):
+            body += '<details class="feature-card direct-collection"><summary>Recogida directa del pedido Amazon configurado</summary>'+self.amazon_page()+'</details>'
+        return body
+
+    def amazon_page(self):
         order = json.loads(Path(self.settings['order_path']).read_text(encoding='utf-8-sig'))
         reference = order['order_reference']
         receipt = self.state/'mail'/(reference+'.json')
@@ -126,7 +144,11 @@ class Application:
                                  'Programación' if path.startswith('/horas') else 'Facturas')
             return result['status'], raw, result['mime'], result['headers']
         if path == '/recoger':
-            return 200, self.shell(self.collect_page(), url, 'Recoger facturas')
+            return 200, self.shell(self.collect_page(url), url, 'Encargos a la IA')
+        if path == '/api/assistant-requests':
+            selected = parse_qs(parsed.query).get('id',[''])[0]
+            store = self.assistant_store()
+            return 200, json.dumps(store.get(selected) if selected else store.list(),ensure_ascii=False), 'application/json; charset=utf-8'
         if path == '/modulos':
             return 200, self.shell(self.modules_page(), url, 'Mapa de módulos')
         if path == '/ayuda':
@@ -140,7 +162,7 @@ class Application:
             query = parse_qs(parsed.query)
             payload = self.remote(self.config, dict(action='expense_data', id=query.get('id',[''])[0]))
             body = render(payload['draft'], payload['rows'], self.csrf, filters=filters_from_query(query))
-            return 200, self.shell(body, url, 'Revisar gastos')
+            return 200, self.shell(self.intake_toolbar()+fragment(body), url, 'Revisar gastos')
         if path.startswith(BASE+'/gastos/') or path.startswith(BASE+'/preparacion') or path.startswith(BASE+'/cierre') or path == BASE+'/actualizacion':
             result = self.remote(self.config, dict(action='get',url=url,csrf=self.csrf))
             raw = base64.b64decode(result['body'], validate=True)
@@ -158,6 +180,8 @@ class Application:
             status, body, *rest = result
             if not rest:
                 body = self.shell(body if '<' in body else '<p>'+e(body)+'</p>', url)
+                if parse_qs(parsed.query).get('vista') == ['gastos']:
+                    body = body.replace('<main class="desktop-main k-main">','<main class="desktop-main k-main">'+self.intake_toolbar(),1)
             return (status,body,*rest)
         return 404, self.shell('<h1>Página no encontrada</h1>',url)
 
@@ -165,7 +189,34 @@ class Application:
         if not self.mutex.acquire(blocking=False):
             raise ValueError('Hay una acción en curso. Espera a que termine antes de repetir.')
         try:
-            if path == '/api/collect-amazon':
+            if path == '/api/assistant-requests':
+                record = self.assistant_store().create(data)
+                result = dict(id=record['id'],url='/recoger?id='+record['id']+'#assistant-detail',message='Encargo guardado. Revisa el prompt y envíalo cuando quieras.')
+            elif path == '/api/assistant-reconcile':
+                record = self.assistant_store().reconcile(data.get('id'),self.config,self.remote)
+                result = dict(id=record['id'],url='/recoger?id='+record['id']+'#assistant-detail',message='Resultados comprobados. La búsqueda no acredita cobertura del periodo.')
+            elif path == '/api/intake-open':
+                folder = self.assistant_store().folder(create=True)
+                if os.name != 'nt':
+                    raise ValueError('La apertura de carpeta requiere el ordenador mini Windows')
+                # The local server is launched hidden. Explicitly show Explorer
+                # instead of inheriting that startup state through ShellExecute.
+                import subprocess
+                startup = subprocess.STARTUPINFO()
+                startup.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                startup.wShowWindow = 1
+                subprocess.Popen([str(Path(os.environ['SystemRoot'])/'explorer.exe'),str(folder)],
+                                 startupinfo=startup,close_fds=True)
+                result = dict(message='Carpeta de entrada solicitada en el Explorador. Deposita los PDF y pulsa Importar cuando quieras.')
+            elif path == '/api/intake-import':
+                store = self.assistant_store()
+                ident = data.get('id')
+                if not ident:
+                    ident = store.create(dict(kind='folder',provider='other',other_provider='PDF depositados'))['id']
+                record = store.import_folder(ident,self.config,self.remote)
+                errors = sum(item['status']=='error' for item in record['attempts'])
+                result = dict(id=ident,url='/recoger?id='+ident+'#assistant-detail',message=f'Importación terminada: {len(record["attempts"])-errors} archivos confirmados y {errors} con incidencia. Revisa el resultado de cada PDF.')
+            elif path == '/api/collect-amazon':
                 from desktop_intake import collect
                 result = collect(self.config, self.settings, self.remote)
             elif path == BASE+'/aeat':

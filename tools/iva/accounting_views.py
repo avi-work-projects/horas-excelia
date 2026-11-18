@@ -7,6 +7,7 @@ from decimal import Decimal
 from urllib.parse import quote
 
 from modelos_ui import e, euro, page, button, navigation
+from ledger import eu_service_vat
 
 BASE = '/facturas/modelos'
 VIEWS = ('resumen', 'ingresos', 'gastos', 'libros', 'renta')
@@ -50,6 +51,9 @@ def record_table(rows, income=False):
         else:
             cells += '<td>'+e(euro(row['total']))+'</td><td><span class="m-tag">'+e(scope(row))+'</span>'
             cells += '<small>'+e(CATEGORIES.get(row.get('category'), 'Sin categoría histórica'))+'</small>'
+            if row['include'] and row.get('mapping') == 'eu_services21':
+                levy = euro(eu_service_vat(row))
+                cells += '<small>Servicio UE · autoliquidado '+e(levy)+' · deducible '+e(levy)+'</small>'
             if row.get('note'):
                 cells += '<details><summary>Detalle</summary><p>'+e(row['note'])+'</p></details>'
             cells += '</td>'
@@ -64,7 +68,8 @@ def overview(report, rows, pending_count):
     renta = [r for r in rows if r['kind'] == 'expense' and r.get('tax_scope') == 'irpf_only']
     metrics = [('Ingresos · base registrada', euro(total(incomes, 'base'))),
                ('Gastos incluidos en IVA · base', euro(total(expenses, 'base'))),
-               ('IVA de gastos incorporados', euro(total(expenses, 'vat'))),
+               ('IVA deducible calculado', euro(total(expenses, 'vat') + sum((eu_service_vat(r)
+                    for r in expenses if r.get('mapping') == 'eu_services21'), Decimal('0.00')))),
                ('Documentos solo para Renta', str(len(renta)))]
     content = '<div class="m-columns a-metrics">'+''.join('<div class="m-card"><span class="m-eyebrow">'+label+'</span><strong class="m-metric">'+e(value)+'</strong></div>' for label, value in metrics)+'</div>'
     content += '<p class="m-note">Importes del libro registrado. La base de gastos del IVA no equivale al gasto deducible en Renta; los cobros y pagos no se dan por conciliados.</p>'

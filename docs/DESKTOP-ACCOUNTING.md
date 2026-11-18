@@ -160,3 +160,100 @@ móvil no se despliega ni modifica en esta entrega.
 
 Validación: pruebas `test_desktop`, `test_desktop_billing` y `test_vat_dashboard`; revisión visual local
 en claro/oscuro y ancho estrecho; comprobación real de correo sin factura disponible.
+
+## Encargos a la IA y carpeta de entrada
+
+En **Recoger facturas** se puede crear un encargo de correo (Amazon, Digi,
+electricidad, gas u otro proveedor, cuenta y fechas) o de revisión de PDF ya
+depositados. Crear el encargo guarda su ID y alcance en
+`state_root/assistant-requests`, fuera de Git. La cuenta se introduce libremente
+o se elige entre las sugerencias de la configuración privada; el código no
+incluye direcciones personales. Las fechas son criterios de búsqueda, nunca una
+declaración de cobertura contable del mes o trimestre.
+
+**Copiar prompt** prepara texto para un asistente con los accesos necesarios.
+**Abrir en ChatGPT** usa el enlace de escritorio documentado
+`codex://new?prompt=...&path=...`: coloca el encargo en el compositor y el usuario
+lo envía. No envía mensajes automáticamente ni utiliza una API de IA. Si la
+aplicación no maneja el enlace, se puede copiar el texto. El acceso al correo y
+al mini debe existir en el asistente elegido; abrir ChatGPT no lo concede.
+[Referencia del enlace de escritorio](https://learn.chatgpt.com/docs/reference/commands.md).
+
+**Abrir carpeta de entrada**, disponible también en Gastos, abre el Explorador
+en `AUTONOMO/ENTRADA/GASTOS/2026`. La carpeta se crea solo mediante una acción
+manual. Depositar archivos no activa nada. **Importar PDF depositados** recorre
+una vez los PDF de esa carpeta (sin subcarpetas), admite hasta 100 documentos de
+8 MiB cada uno y rechaza enlaces, rutas externas y PDF inválidos. Cada archivo
+conserva su resultado; una incidencia no descarta los demás. El libro verificado
+y la bandeja única existente permiten evitar una segunda alta por SHA256.
+La recogida directa del pedido Amazon configurado sigue disponible en un
+desplegable separado y mantiene su alcance anterior.
+
+El asistente puede devolver un informe privado con este contrato:
+
+```json
+{
+  "schema_version": 1,
+  "request_id": "ID_DEL_ENCARGO",
+  "documents": [{
+    "path": "ENTRADA/GASTOS/2026/documento.pdf",
+    "sha256": "HUELLA_REAL_DEL_ORIGINAL",
+    "source": {"kind": "email", "provider": "Proveedor", "message_id": "ID_REAL"}
+  }],
+  "pending": ["Incidencias concretas o documentos todavía no localizados"]
+}
+```
+
+`source.kind` admite `email`, `download`, `manual_folder` u `other`; los demás
+campos opcionales son `provider`, `account`, `message_id`, `attachment_id`,
+`received_at`, `url` HTTPS y `note`. Se omiten los datos desconocidos. El prompt
+incluye el intérprete, script y configuración locales para registrar el informe:
+
+```powershell
+python RUTA_INSTALADA/assistant_requests.py --settings DESKTOP_CONFIG_PRIVADA.json --request ID_DEL_ENCARGO --report INFORME_PRIVADO.json
+```
+
+Para procesar los PDF, el prompt pide leer todas las páginas y extraer emisor
+fiscal real, NIF, número, fecha e importes documentales. Cada elemento de
+`documents` admite además `proposal`, con el contrato de `expense_policy`:
+
+```json
+{
+  "schema_version": 1,
+  "document_sha256": "LA_MISMA_HUELLA_DEL_PDF",
+  "values": {"number": "NUMERO_LEIDO", "base": "18.00"},
+  "evidence": {
+    "number": [{"page": 1, "quote": "Cita literal del número"}],
+    "base": [{"page": 1, "quote": "Cita literal de la base"}]
+  }
+}
+```
+
+Se valida el SHA, la existencia de cada página y la evidencia de cada campo.
+Las citas siguen siendo propuestas que el usuario debe cotejar. No se aceptan
+tratamientos fiscales, inclusión ni confirmaciones en ese contrato. La CLI solo
+registra el informe. Al importar manualmente, la propuesta se aplica únicamente
+a un borrador recién creado, con su revisión exacta; un duplicado conserva su
+revisión. Si falla la propuesta después de guardar el PDF, se informa por separado
+y el documento permanece en la bandeja. El comando copiable utiliza `python.exe`
+cuando la aplicación local se ejecuta mediante `pythonw.exe`.
+
+El registro verifica ruta, PDF y huella antes de aceptar la procedencia. Conserva
+los eventos e informes anteriores. Un informe posterior actualiza sus pendientes
+declarados, sin borrar el historial. En encargos de correo, la importación acepta
+solo los documentos declarados y con su SHA original; un reemplazo se señala como
+incidencia. En encargos de carpeta se recoge el contenido de la acción manual y
+también se exige el SHA original de los archivos previamente declarados.
+
+**Comprobar resultados** consulta una vez el libro local verificado y la bandeja:
+«PDF recuperado» acredita el original local; «En revisión» acredita el documento
+en la bandeja; «Incorporado al libro» requiere registro y original coincidentes
+por SHA256. Subir un PDF o recibir un informe no acredita incorporación. Los
+errores de consulta se muestran y no se convierten en comprobaciones superadas.
+Ninguna de estas acciones aprueba gastos, solicita una actualización fiscal,
+envía correos ni presenta modelos. No hay temporizadores ni sondeos.
+
+El módulo `assistant_requests` gestiona registros, importación y conciliación.
+`desktop_app` expone las acciones bajo las mismas guardas de sesión, Host, Origin
+y CSRF. GET solo lee registros guardados; crear, abrir carpeta, importar y
+conciliar son POST explícitos. La CLI escribe únicamente el informe del encargo.

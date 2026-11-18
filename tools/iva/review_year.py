@@ -22,7 +22,7 @@ def review(data, root, report=None, period=None):
                   excluded_records=[{'number': r['number'], 'period': r['period'], 'note': r.get('note', '')}
                                     for r in data['records'] if not r['include']],
                   annual_documentary_totals={b: str(sum((Decimal(q['boxes'][b]) for q in calculated.values()), Decimal('0.00')))
-                                             for b in ('07', '09', '28', '29')},
+                                             for b in ('07', '09', '10', '11', '27', '28', '29', '36', '37', '45')},
                   annual_status='Acumulado documental disponible; NO es modelo 390 ni cierre anual',
                   submission_status='No se presenta ni se modifica ninguna declaración')
     if report is not None:
@@ -41,7 +41,7 @@ def render(result):
     def e(value):
         return escape(str(value if value is not None else 'Pendiente'))
     rows = ''.join('<tr>' + ''.join(f'<td>{e(v)}</td>' for v in (
-        period, q['boxes']['07'], q['boxes']['09'], q['boxes']['29'],
+        period, q['boxes']['07'], q['boxes'].get('27', q['boxes']['09']), q['boxes']['45'],
         q['boxes']['71'], q['reference'].get('71'), q['difference'].get('71'), q['coverage'])) + '</tr>'
         for period, q in result['quarters'].items())
     missing = ''.join(f"<li>{e(r['period'])} · {e(r['number'])}: falta fecha de recepción o su procedencia</li>"
@@ -62,7 +62,7 @@ section{{background:white;border-radius:14px;padding:22px;margin:18px 0}}h1{{fon
 th{{background:#eaf1f7}}li{{margin:12px 0}}.notice{{border-left:5px solid #be8121}}small{{color:#526477}}</style>
 <main><h1>Revisión del IVA · {e(result['year'])}</h1><p>Datos hasta {e(result['as_of'])}. Ensayo sin presentación.</p>
 <section><h2>1. Comparación trimestral</h2><div class="scroll"><table><thead><tr>
-<th>Periodo</th><th>Base ingresos</th><th>IVA ingresos</th><th>IVA gastos</th><th>Resultado</th><th>Presentado</th><th>Diferencia</th><th>Cobertura</th>
+<th>Periodo</th><th>Base ingresos</th><th>IVA devengado · 27</th><th>IVA deducible · 45</th><th>Resultado</th><th>Presentado</th><th>Diferencia</th><th>Cobertura</th>
 </tr></thead><tbody>{rows}</tbody></table></div><p>Importes en euros. Se conservan las cuotas de los documentos; las diferencias no se corrigen artificialmente.</p></section>
 <section><h2>2. Comprobación de importación</h2><p>{proof}</p><small>Comprueba filas e importes del CSV; no acredita por sí solo validación final ni presentación.</small></section>
 <section><h2>3. Documentos pendientes para importar</h2><ul>{missing}</ul><h2>Exclusiones conservadas</h2><ul>{excluded}</ul></section>

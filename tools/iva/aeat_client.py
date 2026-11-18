@@ -112,7 +112,12 @@ def _messages(value):
         value = [value]
     if not isinstance(value, list) or len(value) > 100:
         raise AeatError('Lista de mensajes no válida')
-    return [_string(item, 'mensaje de Hacienda', maximum=4000) for item in value]
+    # Official 4T informational notices (e.g. INF024) contain line breaks.
+    # Normalize display whitespace only; identifiers and other controls remain
+    # subject to the strict validator used everywhere else.
+    return [_string(item.replace('\r', ' ').replace('\n', ' ').replace('\t', ' ')
+                    if isinstance(item, str) else item,
+                    'mensaje de Hacienda', maximum=4000) for item in value]
 
 
 def _pdf(raw):

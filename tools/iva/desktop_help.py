@@ -17,7 +17,8 @@ def render_help():
 <article class="feature-card">
 <h2>Para añadir un gasto</h2>
 <ol class="help-steps">
-<li><strong>Consigue el PDF.</strong> Usa <a href="/recoger">Recoger facturas</a> o descárgalo tú de la web del proveedor.</li>
+<li><strong>Consigue el PDF.</strong> Usa <a href="/recoger">Recoger facturas</a> o descárgalo tú. En Gastos, «Abrir carpeta de gastos 2026» abre la entrada donde puedes arrastrar los PDF desde Descargas.</li>
+<li><strong>Importa cuando quieras.</strong> «Importar PDF de la carpeta» los añade a la bandeja y evita duplicados. Abrir la carpeta o dejar allí un archivo no inicia ninguna comprobación.</li>
 <li><strong>Revisa el borrador.</strong> En <a href="/facturas/modelos/gastos">Añadir o revisar gastos</a>, compara el PDF con proveedor, número, fecha e importes. Completa los datos que falten y el destino del gasto.</li>
 <li><strong>Guarda y aprueba.</strong> Guardar conserva tu revisión. Aprobar solicita que esa versión se incorpore al libro.</li>
 <li><strong>Consulta el resultado.</strong> Pulsa «Ver estado de actualización» y, cuando termine, vuelve a cargar la vista. El gasto incorporado aparecerá en «Gastos» y en el Excel actualizado.</li>
@@ -28,9 +29,17 @@ def render_help():
 <h2>Ejemplo: los tapones</h2>
 <p>Pulsa <strong>«Recoger factura ahora»</strong>. Se buscarán una sola vez los PDF adjuntos a los correos del pedido configurado.</p>
 <p>Si se encuentra un documento, quedará en la bandeja para revisar. Si aún no hay PDF, o el correo solo contiene un enlace, la aplicación te lo dirá y podrás abrir el pedido para descargarlo.</p>
-<p class="quiet">Por ahora, este botón está configurado para el pedido de los tapones. Todavía no recoge todo tu historial de Amazon ni las facturas de otros proveedores.</p>
+<p class="quiet">El botón de Amazon está configurado para el pedido de los tapones. Para otros proveedores y periodos usa los encargos a la IA de la misma pantalla.</p>
 </article>
 </div>
+
+<article class="feature-card">
+<h2>Encargar una búsqueda o lectura a la IA</h2>
+<p>En <a href="/recoger">Recoger facturas</a>, elige buscar en correo o procesar la carpeta. Indica proveedor y, para correo, cuenta y fechas. «Crear encargo» guarda esas instrucciones en este mini.</p>
+<p>«Abrir en ChatGPT» abre un chat nuevo con el texto preparado; tú lo envías. También puedes copiarlo y pegarlo. La IA necesitará acceso al correo o a los archivos, según el encargo. Kairo no instala un agente que trabaje por su cuenta.</p>
+<p>El encargo pide conservar los PDF y registrar su procedencia y los documentos pendientes. Al terminar, «Comprobar resultados» contrasta ese informe con la bandeja y el libro: distingue PDF recuperado, en revisión e incorporado. Un documento encontrado no demuestra que se haya recuperado todo un periodo.</p>
+<p class="quiet">La carpeta de entrada conserva los originales. El historial de encargos se guarda en este mini y todavía no se sincroniza con el móvil. Electricidad y gas siguen separados del IVA trimestral, para su revisión en Renta.</p>
+</article>
 
 <article class="feature-card help-sections">
 <h2>Qué encontrarás en cada sección</h2>
@@ -60,6 +69,15 @@ def render_help():
 <p class="quiet">Para ingreso necesitas el NRC de un pago ya realizado; la aplicación no realiza ese pago. La domiciliación se revisa dentro de la declaración. Presentar y comprobar el cargo bancario son pasos distintos.</p>
 <p>El 4T actual todavía está incompleto: solo incluye octubre. Se ha comprobado la validación oficial con datos de prueba y con el fichero histórico del 2T de 2026, sin errores y con un aviso de revisar la información adicional. No se ha vuelto a presentar ese trimestre ni se ha comprobado una presentación real con este conector.</p>
 <p class="quiet">La conexión con certificado también está comprobada: el 17/11/2026 a las 20:02, Hacienda devolvió una declaración al consultar el 3T de 2026. Su identificación, CSV, justificante y fecha coinciden con el PDF que ya tienes archivado. Esa consulta no presentó ni pagó nada.</p>
+<h3>Cómo cerrar 2026 en enero</h3>
+<ol class="help-steps">
+<li><strong>Completar los documentos.</strong> Actualizar ingresos y aprobar los gastos revisados del 4T. Resolver los PDF pendientes y las exclusiones; los datos de noviembre y diciembre todavía no están completos.</li>
+<li><strong>Revisar el 303 del 4T.</strong> Confirmar cobertura, tratamiento, ajustes y modalidad. Generar, validar y presentar únicamente la versión final que autorices.</li>
+<li><strong>Preparar el 390 anual.</strong> Con el justificante del 4T archivado, conciliar los cuatro 303 y revisar el perfil anual. Validar y presentar el 390 por separado.</li>
+<li><strong>Archivar y comprobar.</strong> Conservar ambos justificantes y comprobar el cargo o pago cuando corresponda.</li>
+</ol>
+<p>Los servicios adquiridos a empresas de la UE disponen de un tratamiento específico al 21 %, con deducción completa tras revisión. Antes de incorporar Claude quedan por comprobar los datos NIF-IVA/ROI y la posible obligación del modelo 349. El 349 todavía no se genera desde esta aplicación.</p>
+<p class="quiet">Comprobación del 18/11/2026: el validador oficial acepta el ensayo 303 del 4T con servicios UE, sin errores y con avisos informativos que deberán revisarse en el cierre real. Para el 390 devuelve que todavía no encuentra la presentación de 2026. Queda pendiente repetir esa validación cuando esté disponible. Ninguno de esos ensayos ha presentado una declaración.</p>
 </article>
 
 <div class="help-grid">

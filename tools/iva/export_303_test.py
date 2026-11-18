@@ -9,6 +9,30 @@ from prepare_open import prepare
 
 DESIGN_SHA256 = '0be8b156da2250c6b11f6253e0165221ed2e549ec4c65a562021bec6b9b8489b'
 DESIGN_URL = 'https://www3.agenciatributaria.gob.es/static_files/Sede/Disenyo_registro/DR_300_399/archivos_26/DR303e26v101.xlsx'
+BASE_BOXES = ('07', '09', '28', '29', '45', '46', '71')
+EU_BOXES = ('10', '11', '27', '36', '37')
+REVIEWED_BOXES = ('07', '09', '10', '11', '27', '28', '29', '36', '37', '45', '46', '71')
+
+
+def checked_boxes(boxes):
+    """Accept the historical domestic shape or the complete reviewed EU shape."""
+    if set(boxes) not in (set(BASE_BOXES), set(REVIEWED_BOXES)):
+        raise ValueError('Completa las casillas del 303; no se admiten casillas parciales o desconocidas')
+    values = {key: money(value) for key, value in boxes.items()}
+    if any(value < 0 for value in values.values()):
+        raise ValueError('Negative values outside reviewed scope')
+    if not set(EU_BOXES) & set(values):
+        values.update({key: money('0.00') for key in ('10', '11', '36', '37')})
+        values['27'] = values['09']
+    if (values['27'] != values['09'] + values['11']
+            or values['45'] != values['29'] + values['37']
+            or values['46'] != values['27'] - values['45']
+            or values['71'] != values['46']
+            or values['10'] != values['36'] or values['11'] != values['37']):
+        raise ValueError('Las casillas del 303 no concilian con el tratamiento revisado sin ajustes')
+    if values['10'] == 0 and values['11'] != 0:
+        raise ValueError('Base y cuota intracomunitarias incompletas')
+    return {key: str(values[key]) for key in REVIEWED_BOXES}
 
 
 def field(value, length, numeric=False):
@@ -98,6 +122,7 @@ def serialize(design, boxes, identity, year, period, payment=None, annual_closin
     if year != 2026 or period not in ('1T', '2T', '3T', '4T'):
         raise ValueError('Only reviewed 2026 quarterly structure is supported')
     annual_fields = year_end_fields(period, annual_closing)
+    boxes = checked_boxes(boxes)
     if identity.get('foral_only') is not False or identity.get('monthly_refund') is not False:
         raise ValueError('Explicit historical non-foral and non-REDEME profile required')
     nif, name, developer = identity['nif'], identity['name'], identity['developer_nif']
@@ -116,8 +141,9 @@ def serialize(design, boxes, identity, year, period, payment=None, annual_closin
     first = {6: payment_type, 7: nif, 8: name, 9: str(year), 10: period,
              11: '2', 12: '2', 13: '3', 14: '2', 15: '2', 16: '2',
              17: '2', 18: '2', 19: '2', 22: '2', 23: '0', 24: '0', 25: '0',
-             41: cents('07'), 43: cents('09'), 54: '00050', 67: cents('09'),
-             68: cents('28'), 69: cents('29'), 85: cents('45'), 86: cents('46')}
+             41: cents('07'), 43: cents('09'), 44: cents('10'), 45: cents('11'),
+             54: '00050', 67: cents('27'), 68: cents('28'), 69: cents('29'),
+             76: cents('36'), 77: cents('37'), 85: cents('45'), 86: cents('46')}
     first.update(annual_fields)
     third = {16: cents('46'), 17: '10000', 18: cents('46'), 25: cents('71'), 29: cents('71')}
     header = f'<T3030{year}{period}0000><AUX>' + ' ' * 70 + '0001' + ' ' * 4 + developer + ' ' * 213 + '</AUX>'

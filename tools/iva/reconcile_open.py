@@ -9,6 +9,9 @@ from ledger import money
 def reconcile(data, period, text):
     if period not in ('1T', '2T', '3T', '4T'):
         raise ValueError('Invalid period')
+    if any(r['include'] and r.get('mapping') == 'eu_services21'
+           and int(r['period'][0]) <= int(period[0]) for r in data['records']):
+        raise ValueError('El cotejo del informe OPEN todavía no admite servicios UE; usa el TXT 303 revisado')
     expected = {}
     excluded = set()
     for kind, prefix, fields in (

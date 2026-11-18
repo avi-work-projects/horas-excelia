@@ -18,7 +18,7 @@ import uuid
 
 from ledger import calculate, money, quarter, validate, verify_sources
 from review_year import review, render
-from expense_policy import (POLICY_FIELDS, CONFIRMATION_FIELDS, default_fields,
+from expense_policy import (POLICY_FIELDS, TREATMENT_FIELDS, CONFIRMATION_FIELDS, default_fields,
     has_policy, normalize_fields, record_note, validate_policy, proposal_contract,
     validate_proposal)
 
@@ -27,7 +27,7 @@ MAX_PAGES = 60
 FIELDS = {'year', 'number', 'party', 'tax_id', 'date', 'period', 'base', 'vat',
           'withholding', 'total', 'include', 'mapping', 'rate', 'note',
           'receipt_date', 'receipt_date_source', 'archive_path', 'reviewed_all_pages',
-          'single_invoice', 'fiscal_review_confirmed'} | POLICY_FIELDS
+          'single_invoice', 'fiscal_review_confirmed'} | POLICY_FIELDS | TREATMENT_FIELDS
 
 
 def now():
@@ -189,6 +189,7 @@ def make_record(draft):
     if has_policy(f):
         record.update({key: f[key] for key in POLICY_FIELDS})
         record['fiscal_review_confirmed'] = f.get('fiscal_review_confirmed', False)
+    record.update({key: f[key] for key in TREATMENT_FIELDS if f.get(key)})
     for key in ('receipt_date', 'receipt_date_source'):
         if f.get(key):
             record[key] = f[key]
