@@ -6,7 +6,7 @@ import unittest
 from contextlib import closing
 from pathlib import Path
 from invoice_catalog import catalog, digest, archived_pdf
-from invoice_dashboard import response
+from invoice_dashboard import response, history
 
 
 class DashboardTests(unittest.TestCase):
@@ -72,6 +72,38 @@ class DashboardTests(unittest.TestCase):
         with self.assertRaises(ValueError):archived_pdf(self.root,dict(data=p),'draft')
         p=dict(self.p,panel_hash='../outside')
         with self.assertRaises(ValueError):archived_pdf(self.root,dict(data=p),'final')
+
+    def test_annual_history_keeps_multiple_invoices_and_old_delivery_evidence(self):
+        p=dict(self.p,docid=2,period='2026-10',number='02-10/2026')
+        with closing(sqlite3.connect(self.root/'service.sqlite')) as c, c:
+            c.execute('INSERT INTO plans VALUES(3,?,?,NULL,NULL)',(json.dumps(p),'review'))
+        text=history(catalog(self.root),{},[('2026-01','2026-01-20'),('2026-10','2026-10-20')])
+        self.assertEqual(text.count('class="invoice-month"'),12)
+        self.assertIn('href="/facturas/factura/1"',text)
+        self.assertIn('href="/facturas/factura/2"',text)
+        self.assertIn('data-local-archive-period="2026-01"',text)
+        self.assertNotIn('data-local-archive-period="2026-10"',text)
+        self.assertIn('20 enero 2026',text)
+        self.assertNotIn('<iframe',text)
+
+    def test_inline_preview_uses_verified_artifact_and_explicit_document_kind(self):
+        before=self.hashes()
+        text=response(self.root,'/facturas/factura/1')[1]
+        self.assertIn('src="/facturas/documento/2/final#toolbar=0&amp;navpanes=0"',text)
+        self.assertIn('title="Vista previa del PDF definitivo"',text)
+        self.assertIn('href="/horas/calendario?period=2026-10"',text)
+        self.assertEqual(self.hashes(),before)
+        with closing(sqlite3.connect(self.root/'emission-production.sqlite')) as c, c:
+            c.execute('DELETE FROM emissions')
+        text=response(self.root,'/facturas/factura/1')[1]
+        self.assertIn('title="Vista previa del borrador PDF"',text)
+        self.assertNotIn('/final#',text)
+
+    def test_corrupted_pdf_has_no_embedded_preview(self):
+        (self.root/'archive/issued/1'/('a'*64)/'factura.pdf').write_bytes(b'bad')
+        text=response(self.root,'/facturas/factura/1')[1]
+        self.assertNotIn('<iframe',text)
+        self.assertIn('Documento archivado no disponible',text)
 
     def test_empty_does_not_create_databases(self):
         with tempfile.TemporaryDirectory() as folder:

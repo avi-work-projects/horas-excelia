@@ -371,5 +371,23 @@ assert.equal(reloads,1);
         self.assertEqual(self.calls,[])
 
 
+class OptionalDateTests(unittest.TestCase):
+    def test_open_ended_dates_are_preserved(self):
+        from assistant_requests import request_fields
+        for values in ({},{'date_from':'2026-01-01'},{'date_to':'2026-11-18'}):
+            result=request_fields(dict(kind='mail',provider='digi',account='test@example.test',**values))
+            self.assertEqual(result['date_from'],values.get('date_from',''))
+            self.assertEqual(result['date_to'],values.get('date_to',''))
+        with self.assertRaises(ValueError):
+            request_fields(dict(kind='mail',provider='digi',account='test@example.test',date_from='invalid'))
+
+    def test_import_result_explains_duplicate_and_next_action(self):
+        from assistant_requests import render_import
+        page=render_import({'id':'a'*32,'attempts':[{'filename':'invoice.pdf','status':'existing_in_queue','message':'Ya existe','draft_id':'b'*32}]})
+        self.assertIn('Ya estaba en revisión',page)
+        self.assertIn('Revisar este gasto',page)
+        self.assertIn('/facturas/modelos/gastos?id='+'b'*32,page)
+        self.assertNotIn('Crear encargo y preparar prompt',page)
+
 if __name__=='__main__':
     unittest.main()

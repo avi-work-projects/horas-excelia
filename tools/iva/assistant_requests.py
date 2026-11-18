@@ -50,10 +50,11 @@ def request_fields(data):
         if not result['account']:
             raise ValueError('Indica la cuenta de correo que debe consultar el asistente')
         try:
-            start, end = date.fromisoformat(result['date_from']), date.fromisoformat(result['date_to'])
+            start = date.fromisoformat(result['date_from']) if result['date_from'] else None
+            end = date.fromisoformat(result['date_to']) if result['date_to'] else None
         except ValueError:
             raise ValueError('Indica las fechas desde y hasta') from None
-        if start > end:
+        if start and end and start > end:
             raise ValueError('La fecha inicial debe ser anterior o igual a la final')
     elif result['date_from'] or result['date_to']:
         raise ValueError('El encargo de carpeta no necesita fechas de búsqueda')
@@ -291,7 +292,8 @@ class Requests:
     def prompt(self, record, settings_path):
         fields = record['request']
         provider = fields['other_provider'] if fields['provider']=='other' else PROVIDERS[fields['provider']]
-        target = ('Busca facturas de '+provider+' en la cuenta '+fields['account']+' desde '+fields['date_from']+' hasta '+fields['date_to']+' (ambos inclusive).'
+        interval = (' desde '+fields['date_from'] if fields['date_from'] else '')+(' hasta '+fields['date_to'] if fields['date_to'] else '')
+        target = ('Busca facturas de '+provider+' en la cuenta '+fields['account']+(interval+' (límites inclusive).' if interval else ', sin limitar las fechas. Registra el intervalo realmente revisado y lo que quede pendiente.')
                   if fields['kind']=='mail' else 'Revisa los PDF depositados en la carpeta de entrada indicada, sin recorrer otras carpetas.')
         cli_python = Path(sys.executable)
         if cli_python.name.lower()=='pythonw.exe':
@@ -322,8 +324,8 @@ def render(store, settings_path, selected='', accounts=()):
     today = date.today()
     options = ''.join('<option value="'+key+'">'+e(label)+'</option>' for key,label in PROVIDERS.items())
     suggestions = ''.join('<option value="'+e(account)+'">' for account in dict.fromkeys(accounts) if isinstance(account,str))
-    body = '''<section class="local-page assistant-page"><div class="eyebrow">TRABAJO ASISTIDO</div><h1>Encargos a la IA</h1><p class="lead">Prepara el trabajo, conserva sus resultados y decide qué incorporar.</p><div class="notice"><p>El encargo necesita un asistente con acceso autorizado al correo o al mini. Abrir ChatGPT no concede esos permisos ni inicia el trabajo.</p></div>'''
-    body += '''<div class="assistant-grid"><article class="feature-card"><h2>Nuevo encargo</h2><form id="assistant-create" class="assistant-form"><label>Qué necesitas<select name="kind"><option value="mail">Recoger facturas del correo</option><option value="folder">Procesar PDF de la carpeta de entrada</option></select></label><label>Proveedor<select name="provider">'''+options+'''</select></label><label id="assistant-other" hidden>Nombre del proveedor<input name="other_provider" maxlength="300"></label><div id="assistant-mail-fields"><label>Cuenta de correo<input name="account" list="assistant-accounts" maxlength="300" placeholder="Cuenta que debe consultar el asistente"><datalist id="assistant-accounts">'''+suggestions+'''</datalist></label><div class="assistant-dates"><label>Desde<input name="date_from" type="date" value="'''+today.replace(day=1).isoformat()+'''"></label><label>Hasta<input name="date_to" type="date" value="'''+today.isoformat()+'''"></label></div></div><p class="quiet">Las fechas delimitan la búsqueda. No confirman que un mes o trimestre esté completo.</p><button class="primary" type="submit">Crear encargo y preparar prompt</button></form></article><article class="feature-card"><h2>Entrada de gastos · 2026</h2><p>Arrastra los PDF a la carpeta desde el Explorador. Después impórtalos cuando tú decidas.</p><p class="folder-path">'''+e(str(store.folder()))+'''</p><div class="assistant-actions"><button type="button" data-intake-open>Abrir carpeta de entrada</button><button type="button" data-intake-import>Importar los PDF de la carpeta</button></div><p class="quiet">Una factura por PDF, hasta 8 MB y 100 archivos por acción. Se leen los PDF de esta carpeta, sin recorrer subcarpetas ni vigilar cambios. Importar crea borradores para revisar.</p></article></div>'''
+    body = '''<section class="local-page assistant-page"><a class="link-button" href="/facturas/modelos?vista=gastos">← Volver a Gastos</a><div class="eyebrow">TRABAJO ASISTIDO</div><h1>Encargos a la IA</h1><p class="lead">Prepara el trabajo, conserva sus resultados y decide qué incorporar.</p><div class="notice"><p>El encargo necesita un asistente con acceso autorizado al correo o al mini. Abrir ChatGPT no concede esos permisos ni inicia el trabajo.</p></div>'''
+    body += '''<div class="assistant-grid"><article class="feature-card"><h2>Nuevo encargo</h2><form id="assistant-create" class="assistant-form"><label>Qué necesitas<select name="kind"><option value="mail">Recoger facturas del correo</option><option value="folder">Procesar PDF de la carpeta de entrada</option></select></label><label>Proveedor<select name="provider">'''+options+'''</select></label><label id="assistant-other" hidden>Nombre del proveedor<input name="other_provider" maxlength="300"></label><div id="assistant-mail-fields"><label>Cuenta de correo<input name="account" list="assistant-accounts" maxlength="300" placeholder="Cuenta que debe consultar el asistente"><datalist id="assistant-accounts">'''+suggestions+'''</datalist></label><div class="assistant-dates"><label>Periodo<select id="assistant-period"><option value="all">Sin límite de fechas</option><option value="current">Este trimestre</option><option value="previous">Trimestre anterior</option><option value="1">1T</option><option value="2">2T</option><option value="3">3T</option><option value="4">4T</option><option value="custom">Fechas personalizadas</option></select></label><label>Año<input id="assistant-year" type="number" min="2000" max="2100" value="2026"></label></div><div class="assistant-dates"><label>Desde (opcional)<input name="date_from" type="date" value="'''+''+'''"></label><label>Hasta (opcional)<input name="date_to" type="date" value="'''+''+'''"></label></div></div><p class="quiet">Las fechas delimitan la búsqueda. No confirman que un mes o trimestre esté completo.</p><button class="primary" type="submit">Crear encargo y preparar prompt</button></form></article><article class="feature-card"><h2>Entrada de gastos · 2026</h2><p>Esta es la bandeja de documentos nuevos, separada de tus carpetas históricas. No sustituye FACTURAS/2026. Depositar un PDF aquí no lo contabiliza.</p><p class="folder-path">'''+e(str(store.folder()))+'''</p><div class="assistant-actions"><button type="button" data-intake-open>Abrir carpeta de entrada</button><button type="button" data-intake-import>Importar los PDF de la carpeta</button></div><p class="quiet">Una factura por PDF, hasta 8 MB y 100 archivos por acción. Se leen los PDF de esta carpeta, sin recorrer subcarpetas ni vigilar cambios. Importar crea borradores para revisar. Tus facturas históricas permanecen en sus carpetas originales.</p></article></div>'''
     if record:
         prompt = store.prompt(record,settings_path)
         deep_link = 'codex://new?prompt='+quote(prompt,safe='')+'&path='+quote(str(store.folder()),safe='')
@@ -360,11 +362,29 @@ def render(store, settings_path, selected='', accounts=()):
     for item in rows:
         fields = item['request']
         label = fields['other_provider'] if fields['provider']=='other' else PROVIDERS[fields['provider']]
-        scope = fields['date_from']+' → '+fields['date_to'] if fields['kind']=='mail' else 'Carpeta de entrada'
+        scope = ((fields['date_from'] or 'Sin inicio')+' → '+(fields['date_to'] or 'Sin fin')) if fields['kind']=='mail' else 'Carpeta de entrada'
         body += '<li><a href="/recoger?id='+e(item['id'])+'#assistant-detail"><strong>'+e(label)+'</strong><span>'+e(scope)+'</span></a><span class="quiet">'+e(item['created_at'][:10])+' · '+str(len({d['sha256'] for d in item['documents']}))+' PDF</span></li>'
     if not rows:
         body += '<li class="quiet">Todavía no hay encargos. Crea uno para guardar su alcance y preparar el prompt.</li>'
     return body+'</ul></article></section>'
+
+
+def render_import(record):
+    from modelos_ui import e
+    labels = {'created':'Añadido para revisar','existing_in_queue':'Ya estaba en revisión',
+              'already_in_book':'Ya estaba en el libro','error':'No se ha importado'}
+    body = '<section class="local-page"><a class="link-button" href="/facturas/modelos?vista=gastos">← Volver a Gastos</a><h1>Resultado de importación</h1><p class="lead">Los PDF se conservan. Ahora puedes revisar los datos de cada gasto.</p>'
+    if not record['attempts']:
+        body += '<article class="feature-card"><h2>No había PDF para importar</h2><p>Abre la carpeta de entrada, deposita una factura en PDF y vuelve a importar.</p><button type="button" data-intake-open>Abrir carpeta de entrada</button></article>'
+    for item in record['attempts']:
+        body += '<article class="feature-card"><h2>'+e(item['filename'])+'</h2><p><strong>'+e(labels.get(item['status'],'Revisar resultado'))+'</strong></p><p>'+e(item['message'])+'</p>'
+        if item.get('draft_id'):
+            body += '<a class="primary link-button" href="/facturas/modelos/gastos?id='+e(item['draft_id'])+'">Revisar este gasto →</a>'
+        elif item['status']=='already_in_book':
+            body += '<a class="link-button" href="/facturas/modelos?vista=gastos">Ver gastos contabilizados</a>'
+        body += '</article>'
+    body += '<article class="feature-card"><h2>¿Necesitas ayuda para rellenar los datos?</h2><p>La importación guarda documentos. La IA puede leerlos y proponer sus datos; la revisión fiscal y la aprobación son pasos separados.</p><a class="link-button" href="/recoger?id='+e(record['id'])+'#assistant-detail">Preparar instrucciones para la IA</a></article></section>'
+    return body
 
 
 def main():

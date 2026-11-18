@@ -112,6 +112,7 @@ def build_manifest(root,ledger_relative,index_relative,backup_root=None):
 def _build_manifest(root,ledger_relative,index_relative,backup):
     from review_year import review, render
     from accounting_workbook import build, MIME
+    from document_details import attach_details
     root=Path(root);ledger=confined(root,ledger_relative);ledger_raw=ledger.read_bytes();data=json.loads(ledger_raw.decode('utf-8-sig'))
     ledger_sha256=digest(ledger_raw)
     index_path=confined(root,index_relative);prior_index=index_path.read_bytes();index=json.loads(prior_index.decode('utf-8-sig'))
@@ -121,7 +122,7 @@ def _build_manifest(root,ledger_relative,index_relative,backup):
     # Construct every output before activating an index. A failed workbook must
     # not leave an old spreadsheet advertised as the current book's output.
     outputs={'libro.json':ledger_raw,'revision.json':report_bytes,
-             'revision.html':render(result).encode(),filename:build(data,ledger_sha256,result['quarters'])}
+             'revision.html':render(result).encode(),filename:build(attach_details(data,ledger),ledger_sha256,result['quarters'])}
     version=digest(b''.join(name.encode()+b'\0'+outputs[name] for name in sorted(outputs)))
     prefix=f'REVISIONES/{data["year"]}/CONSULTA/{version}'
     if ledger.read_bytes()!=ledger_raw:raise ValueError('El libro ha cambiado durante la actualización')

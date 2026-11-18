@@ -16,6 +16,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.views import Selection
 
 from ledger import calculate, money, verify_sources, eu_service_vat
+from document_details import attach_details, description
 
 PERIODS = ('1T', '2T', '3T', '4T')
 CENT = Decimal('0.01')
@@ -195,16 +196,17 @@ def build(data, ledger_sha256, calculations=None):
 
     for kind, title in [('income','Ingresos'), ('expense','Gastos')]:
         sheet = _sheet(book, title, f'{title} documentales',
-                       'Los documentos excluidos se conservan sin sumar al IVA.', [22,15,12,35,18,17,17,17,17,16,25,20])
+                       'Los documentos excluidos se conservan sin sumar al IVA.', [22,15,12,35,18,17,17,17,17,16,25,20,38])
         rows = []
         for r in data['records']:
             if r['kind'] != kind:
                 continue
             rows.append([r['number'],date.fromisoformat(r['date']),r['period'],r['party'],r.get('tax_id') or 'Sin dato',
                 money(r['base']),money(r['vat']),money(r['withholding']),money(r['total']),
-                'Sí' if r['include'] else 'No',SCOPES.get(r.get('tax_scope'), 'Histórico; IRPF no revisado'),r['sha256'][:16]])
+                'Sí' if r['include'] else 'No',SCOPES.get(r.get('tax_scope'), 'Histórico; IRPF no revisado'),r['sha256'][:16],
+                description(r)[0]+(' ('+description(r)[1]+')' if not r.get('display_details',{}).get('description') else '')])
         _table(sheet, ['Factura','Fecha','Trimestre','Cliente' if kind=='income' else 'Proveedor','NIF documental',
-                      'Base EUR','IVA documental','Retención EUR','Total EUR','Incluido IVA','Ámbito','Documento'],
+                      'Base EUR','IVA documental','Retención EUR','Total EUR','Incluido IVA','Ámbito','Documento','Concepto / producto'],
                rows, {6,7,8,9}, checks)
 
     eu_rows = [r for r in expenses if r['include'] and r['mapping'] == 'eu_services21']
@@ -220,15 +222,15 @@ def build(data, ledger_sha256, calculations=None):
             rows, set(range(6,12)), checks)
 
     renta = _sheet(book, 'Renta pendiente', 'Documentos para revisar el IRPF',
-        'Importes documentales completos. Porcentaje y deducción pendientes de revisar.', [22,15,12,33,24,17,17,17,28,42,33,20])
+        'Importes documentales completos. Porcentaje y deducción pendientes de revisar.', [22,15,12,33,24,17,17,17,28,42,33,20,38])
     rows = [[r['number'],date.fromisoformat(r['date']),r['period'],r['party'],
              CATEGORIES.get(r.get('category'),r.get('category','Sin clasificar')),
              money(r['base']),money(r['vat']),money(r['total']),
              IRPF.get(r.get('irpf_treatment'), 'Tratamiento no confirmado'),
              r.get('business_purpose','Sin finalidad documentada'),
-             'Pendiente; sin deducción calculada',r['sha256'][:16]] for r in pending]
+             'Pendiente; sin deducción calculada',r['sha256'][:16],description(r)[0]] for r in pending]
     _table(renta, ['Factura','Fecha','Trimestre','Proveedor','Categoría','Base EUR','IVA documental',
-                   'Total documental','Clasificación propuesta','Finalidad declarada','Estado IRPF','Documento'], rows, {6,7,8}, checks)
+                   'Total documental','Clasificación propuesta','Finalidad declarada','Estado IRPF','Documento','Concepto / producto'], rows, {6,7,8}, checks)
 
     documents = _sheet(book, 'Documentos', 'Originales y versión del libro',
                         'Cada identificador enlaza los registros con su original conservado.', [21,80,15,60,75])
@@ -274,6 +276,7 @@ def main():
     source = args.input.read_bytes()
     data = json.loads(source.decode('utf-8-sig'))
     verify_sources(data, args.root)
+    data = attach_details(data, args.input)
     payload = build(data, hashlib.sha256(source).hexdigest())
     if args.output.resolve() == args.input.resolve():
         raise ValueError('La salida no puede reemplazar el libro de origen')

@@ -66,6 +66,21 @@ class AccountingViewsTests(unittest.TestCase):
         self.assertIn('IVA 2026', response(self.root, '/modelos?vista=modelos')[1])
         self.assertEqual(response(self.root, '/modelos?vista=unknown')[0], 400)
 
+    def test_overview_has_explicit_year_and_quarter_selector(self):
+        html=render(self.index,self.report,self.ledger,'resumen','4T')
+        self.assertIn('aria-label="Periodo del resumen"',html)
+        self.assertIn('periodo=4T" aria-current="page">4T',html)
+        self.assertIn('periodo=todos">Año',html)
+
+    def test_expense_and_books_show_concept_with_fixed_table_columns(self):
+        self.ledger['records'][0]['source']='TECLADO_TRABAJO.pdf'
+        for view in ('gastos','libros'):
+            html=render(self.index,self.report,self.ledger,view)
+            self.assertIn('Qué compraste',html)
+            self.assertIn('Teclado trabajo',html)
+            self.assertIn('<colgroup>',html)
+            self.assertIn('table-layout:fixed',html)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -257,3 +257,28 @@ El módulo `assistant_requests` gestiona registros, importación y conciliación
 `desktop_app` expone las acciones bajo las mismas guardas de sesión, Host, Origin
 y CSRF. GET solo lee registros guardados; crear, abrir carpeta, importar y
 conciliar son POST explícitos. La CLI escribe únicamente el informe del encargo.
+
+## Revisión de interfaz del 18 de noviembre de 2026
+
+- Resumen ofrece 1T–4T y Año. Ingresos identifica el cliente a la izquierda y
+  muestra días × tarifa y fórmulas; los desgloses proceden del PDF, no de dividir
+  el importe. `document_details.py` adjunta metadatos de consulta por SHA, sin
+  cambiar el JSON fiscal. Un PDF con varias facturas no recibe un concepto común.
+- Gastos y Libros muestran el concepto y su procedencia. Si solo se conoce el
+  nombre del archivo, se indica expresamente. Detalle conserva los anchos.
+- Mis carpetas de 2026 abre FACTURAS/2026. La entrada sigue siendo una bandeja
+  separada para documentos nuevos; no se han movido ni borrado originales.
+- Importar termina en un resultado por PDF con el siguiente paso de revisión.
+  Encargos permite fechas opcionales y atajos por trimestre, y ofrece volver.
+- El histórico de facturas agrupa los meses de cada año. El detalle muestra el
+  PDF verificado y su programación. En el mini, los envíos históricos enlazan
+  a los originales incorporados al libro; una evidencia de envío por sí sola
+  no acredita que el PDF esté disponible.
+- El libro del 3T es un corte histórico. Las versiones CONSULTA son salidas del
+  mismo libro; no se vuelven a rellenar ni se suman unas con otras.
+
+Verificación: 73 pruebas focalizadas, una omitida por permisos de enlaces.
+Vistas principales de Programación, Resumen, Ingresos, Gastos, importación y
+facturas revisadas; PDF histórico y emitido visibles dentro de la pantalla.
+La revisión adicional de todos los estados oscuros/estrechos quedó interrumpida
+por desconexión del navegador. El Excel actualizado fue renderizado y revisado.

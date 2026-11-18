@@ -99,7 +99,7 @@ class Application:
         return Requests(self.state,self.config['archive_root'])
 
     def intake_toolbar(self):
-        return '<section class="intake-toolbar"><div><strong>Entrada de gastos · 2026</strong><p class="quiet">Deposita PDF y decide cuándo importarlos.</p></div><div class="assistant-actions"><button type="button" data-intake-open>Abrir carpeta de entrada</button><button type="button" data-intake-import>Importar PDF depositados</button><a class="link-button" href="/recoger">Encargos a la IA</a></div></section>'
+        return '<section class="intake-toolbar"><div><strong>Documentos de gastos · 2026</strong><p class="quiet">Tus originales siguen en FACTURAS/2026. La entrada es una bandeja para PDF nuevos, no otro libro.</p></div><div class="assistant-actions"><button type="button" data-intake-open="archive">Mis carpetas de 2026</button><button type="button" data-intake-open>Abrir carpeta de entrada</button><button type="button" data-intake-import>Importar PDF depositados</button><a class="link-button" href="/recoger">Encargos a la IA</a></div></section>'
 
     def collect_page(self, url='/recoger'):
         from assistant_requests import render
@@ -133,6 +133,23 @@ class Application:
     def get(self, url):
         parsed = urlsplit(url)
         path = parsed.path
+        if path == '/importacion':
+            from assistant_requests import render_import
+            ident = parse_qs(parsed.query).get('id',[''])[0]
+            return 200, self.shell(render_import(self.assistant_store().get(ident)),url,'Resultado de importación')
+        if re.fullmatch(r'/facturas/archivo/20\d\d-(0[1-9]|1[0-2])',path):
+            from vat_dashboard import read_archive
+            _,_,ledger = read_archive(self.config['archive_root'],self.config['index'])
+            period = path.rsplit('/',1)[-1]
+            rows = [r for r in ledger['records'] if r['kind']=='income' and r['date'].startswith(period)]
+            body = '<section class="local-page"><a class="link-button" href="/facturas/historico">← Volver a Facturas</a><h1>Facturas · '+e(period)+'</h1><p>PDF originales del libro. La fecha de expedición puede diferir del mes trabajado.</p>'
+            if not rows:
+                body += '<p>No hay PDF incorporados al libro para este mes.</p>'
+            for row in rows:
+                pdf = BASE+'/documento?id='+row['sha256']
+                body += '<article class="feature-card"><h2>'+e(row['number'])+' · '+e(row['party'])+'</h2><p>'+e(row['date'])+' · Total '+e(row['total'])+' €</p><a class="link-button" href="'+pdf+'" target="_blank" rel="noopener">Abrir PDF en el visor ↗</a><iframe title="PDF '+e(row['number'])+'" src="'+pdf+'" style="width:100%;height:65vh;border:1px solid var(--k-line);margin-top:16px"></iframe></article>'
+            body += '<a class="link-button" href="/horas/calendario?period='+period+'">Ver programación del mes</a></section>'
+            return 200,self.shell(body,url,'Facturas archivadas')
         if path == '/':
             url = BASE+'?vista=resumen'
             path = BASE
@@ -140,6 +157,7 @@ class Application:
             result = self.remote(self.config, dict(action='billing_get',url=url,csrf=self.csrf))
             raw = base64.b64decode(result['body'], validate=True)
             if result['mime'].startswith('text/html'):
+                raw = re.sub(rb'data-local-archive-period="(20\d\d-\d\d)" href="[^"]*">Ver env[^<]*',lambda m:b'data-local-archive-period="'+m[1]+b'" href="/facturas/archivo/'+m[1]+b'">Ver documentos',raw)
                 raw = self.shell('<section class="billing-content"><div class="billing-theme"><script>document.currentScript.parentElement.dataset.kTheme=document.documentElement.dataset.kTheme;</script><div class="k-ui">'+raw.decode()+'</div></div></section>',url,
                                  'Programación' if path.startswith('/horas') else 'Facturas')
             return result['status'], raw, result['mime'], result['headers']
@@ -196,7 +214,13 @@ class Application:
                 record = self.assistant_store().reconcile(data.get('id'),self.config,self.remote)
                 result = dict(id=record['id'],url='/recoger?id='+record['id']+'#assistant-detail',message='Resultados comprobados. La búsqueda no acredita cobertura del periodo.')
             elif path == '/api/intake-open':
+                if data.get('folder','inbox') not in ('inbox','archive'):
+                    raise ValueError('Carpeta no disponible')
                 folder = self.assistant_store().folder(create=True)
+                if data.get('folder')=='archive':
+                    folder = Path(self.config['archive_root'])/'FACTURAS'/'2026'
+                    if not folder.is_dir():
+                        raise ValueError('No se encuentra tu carpeta FACTURAS/2026')
                 if os.name != 'nt':
                     raise ValueError('La apertura de carpeta requiere el ordenador mini Windows')
                 # The local server is launched hidden. Explicitly show Explorer
@@ -215,7 +239,7 @@ class Application:
                     ident = store.create(dict(kind='folder',provider='other',other_provider='PDF depositados'))['id']
                 record = store.import_folder(ident,self.config,self.remote)
                 errors = sum(item['status']=='error' for item in record['attempts'])
-                result = dict(id=ident,url='/recoger?id='+ident+'#assistant-detail',message=f'Importación terminada: {len(record["attempts"])-errors} archivos confirmados y {errors} con incidencia. Revisa el resultado de cada PDF.')
+                result = dict(id=ident,url='/importacion?id='+ident,message=f'Importación terminada: {len(record["attempts"])-errors} archivos confirmados y {errors} con incidencia. Revisa el resultado de cada PDF.')
             elif path == '/api/collect-amazon':
                 from desktop_intake import collect
                 result = collect(self.config, self.settings, self.remote)

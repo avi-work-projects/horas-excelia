@@ -4,10 +4,12 @@ The expense queue owns drafts; this module never edits it or the ledger.
 Renta is an explicit documentary collection, not an IRPF calculation.
 """
 from decimal import Decimal
+import hashlib
 from urllib.parse import quote
 
 from modelos_ui import e, euro, page, button, navigation
 from ledger import eu_service_vat
+from document_details import description
 
 BASE = '/facturas/modelos'
 VIEWS = ('resumen', 'ingresos', 'gastos', 'libros', 'renta')
@@ -38,13 +40,34 @@ def filters(view, period, search=''):
 def record_table(rows, income=False):
     if not rows:
         return '<div class="m-card"><p>No hay documentos registrados con este filtro.</p></div>'
-    headers = ['Fecha / factura', 'Cliente' if income else 'Proveedor', 'Base', 'IVA documental']
-    headers += ['Retención', 'Total a cobrar'] if income else ['Total documental', 'Destino / categoría']
+    def formula(label, expression):
+        return e(label)+'<small>('+e(expression)+')</small>'
+    def common_rate(key):
+        values = {r.get('display_details', {}).get(key) for r in rows}
+        return format(Decimal(next(iter(values))).normalize(),'f')+' %' if len(values)==1 and None not in values else 'tipo de la factura'
+    headers = (['Cliente', 'Fecha / factura', 'Días × tarifa'] if income else ['Fecha / factura', 'Proveedor', 'Qué compraste'])
+    headers += [formula('Base', 'Σ días × tarifa' if income else 'Importe sin IVA'),
+                formula('IVA' if income else 'IVA documental', 'Base × '+common_rate('vat_rate') if income else 'Según factura')]
+    headers += [formula('Retención', 'Base × '+common_rate('withholding_rate')), formula('Total a cobrar','Base + IVA − retención')] if income else [formula('Total documental','Base + IVA − retención'), 'Uso fiscal / tipo de gasto']
     headers += ['Original']
     body = ''
     for row in sorted(rows, key=lambda r: (r['date'], r['number']), reverse=True):
-        cells = '<td><strong>'+e(row['date'])+'</strong><small>'+e(row['number'])+' · '+e(row['period'])+'</small></td>'
-        cells += '<td>'+e(row['party'])+'<small>'+e(row.get('tax_id', ''))+'</small></td>'
+        party = '<td class="a-party">'+e(row['party'])+'<small>'+e(row.get('tax_id', ''))+'</small></td>'
+        cells = party if income else ''
+        cells += '<td><strong>'+e(row['date'])+'</strong><small>'+e(row['number'])+' · '+e(row['period'])+'</small></td>'
+        if income:
+            lines = row.get('display_details', {}).get('work_lines', [])
+            cells += '<td class="a-work">'
+            for line in lines:
+                rate = Decimal(line['rate'])
+                hue = int(rate * 100 * 137) % 360
+                days = format(Decimal(line['days']).normalize(), 'f').replace('.', ',')
+                rate_text = format(rate.normalize(), 'f').replace('.', ',')
+                cells += '<span class="a-rate" style="--rate-hue:'+str(hue)+'">'+e(days)+' × '+e(rate_text)+' €</span>'
+            cells += ('<small>Según PDF original</small>' if lines else '<small>Desglose pendiente de documentar</small>')+'</td>'
+        else:
+            concept, origin = description(row)
+            cells += party+'<td class="a-concept">'+e(concept)+'<small>'+e(origin)+'</small></td>'
         cells += '<td>'+e(euro(row['base']))+'</td><td>'+e(euro(row['vat']))+'</td>'
         if income:
             cells += '<td>'+e(euro(row['withholding']))+'</td><td>'+e(euro(row['total']))+'</td>'
@@ -58,8 +81,11 @@ def record_table(rows, income=False):
                 cells += '<details><summary>Detalle</summary><p>'+e(row['note'])+'</p></details>'
             cells += '</td>'
         cells += '<td>'+button(BASE+'/documento?id='+quote(row['sha256'], safe=''), 'PDF')+'</td>'
-        body += '<tr>'+cells+'</tr>'
-    return '<div class="m-card m-table-wrap a-table"><table><thead><tr>'+''.join('<th scope="col">'+h+'</th>' for h in headers)+'</tr></thead><tbody>'+body+'</tbody></table></div>'
+        tone = int(hashlib.sha256(str(row.get('tax_id') or row['party']).casefold().encode()).hexdigest()[:8],16) % 4
+        body += '<tr'+(' class="a-client a-client-'+str(tone)+'"' if income else '')+'>'+cells+'</tr>'
+    widths = [16,16,16,10,10,10,13,9] if income else [14,17,19,9,9,10,15,7]
+    columns = '<colgroup>'+''.join('<col style="width:'+str(w)+'%">' for w in widths)+'</colgroup>'
+    return '<div class="m-card m-table-wrap a-table"><table>'+columns+'<thead><tr>'+''.join('<th scope="col">'+h+'</th>' for h in headers)+'</tr></thead><tbody>'+body+'</tbody></table></div>'
 
 
 def overview(report, rows, pending_count):
@@ -84,13 +110,14 @@ def overview(report, rows, pending_count):
     return content
 
 
-def books(index, report):
+def books(index, report, rows=()):
     current = index.get('downloads', {}).get('annual-workbook')
     matches = current and current.get('ledger_sha256') == index['ledger']['sha256']
     if matches:
         content = '<div class="m-card m-hero"><h2>Libro anual de consulta</h2><p>Ingresos, gastos, resumen y documentos para Renta desde la misma versión del libro.</p>'+button(BASE+'/descargar?id=annual-workbook', 'Descargar Excel actualizado', True)+'</div>'
     else:
         content = '<div class="m-card m-hero"><h2>Libro anual de consulta</h2><p>El Excel de esta versión todavía no está disponible. Pulsa «Actualizar datos» para generarlo y publicar la copia verificada.</p></div>'
+    content += '<p class="m-note">Este libro se genera desde los registros existentes: no tienes que volver a rellenarlo. Los libros anteriores del 3T y las carpetas CONSULTA conservan cortes de otras fechas; no son nuevas contabilidades que debas mantener.</p>'
     content += '<p class="m-note">El Excel es una salida de consulta. Para corregir un dato se conserva el documento y se registra el cambio en su fuente. No es un fichero de presentación LSI ni un cálculo completo de Renta.</p>'
     historical = [(k, v) for k, v in index.get('downloads', {}).items() if k != 'annual-workbook']
     if historical:
@@ -99,12 +126,13 @@ def books(index, report):
             content += '<div class="a-download"><strong>'+e(item.get('label', item['filename']))+'</strong><p class="m-note">'+e(item.get('note', 'Archivo histórico'))+'</p>'+button(BASE+'/descargar?id='+quote(key, safe=''), 'Descargar')+'</div>'
         content += '</details>'
     content += '<div class="m-actions">'+button(BASE+'?vista=ingresos', 'Consultar ingresos')+button(BASE+'?vista=gastos', 'Consultar gastos')+button(BASE+'?vista=renta', 'Documentos para Renta')+'</div>'
+    content += '<h2 style="margin-top:24px">Qué compraste · documentos del libro</h2>'+record_table([r for r in rows if r['kind']=='expense'])
     return content
 
 
 STYLE = '''<style>
 .modelos .a-filters{grid-template-columns:minmax(130px,1fr) minmax(200px,3fr) auto;align-items:end;margin:18px 0}
-.modelos .a-table table{table-layout:auto;min-width:790px}.modelos .a-table th:first-child,.modelos .a-table td:first-child{width:auto;min-width:130px}.modelos .a-table th:nth-child(2),.modelos .a-table td:nth-child(2){text-align:left;min-width:170px;max-width:280px}.modelos .a-table small{display:block;color:var(--k-muted);font-size:12px;font-weight:400}.modelos .a-table td{vertical-align:top}.modelos .a-table td details{text-align:left;max-width:260px}.modelos .a-table .m-tag{white-space:normal}
+.modelos .a-table table{table-layout:fixed;min-width:1080px;width:100%}.modelos .a-table th,.modelos .a-table td{width:auto;min-width:0;max-width:none;overflow-wrap:anywhere;vertical-align:top}.modelos .a-table th:nth-child(-n+3),.modelos .a-table td:nth-child(-n+3){text-align:left}.modelos .a-table small{display:block;color:var(--k-muted);font-size:11px;font-weight:400;line-height:1.45;margin-top:5px}.modelos .a-table td details{text-align:left;max-width:100%}.modelos .a-table .m-tag{white-space:normal}.modelos .a-table td details p{white-space:normal;overflow-wrap:anywhere;margin:10px 0}.modelos .a-table .a-client{background:light-dark(#fff7fa,#30272c)}.modelos .a-table .a-client .a-party{background:light-dark(#fbe6ef,#492f3d);border-left:4px solid #c86a92;font-weight:650}.modelos .a-table .a-client-1 .a-party{border-left-color:#a85e97}.modelos .a-table .a-client-2 .a-party{border-left-color:#b96b70}.modelos .a-table .a-client-3 .a-party{border-left-color:#9572ac}.modelos .a-rate{display:block;width:fit-content;border-radius:6px;padding:4px 7px;margin-bottom:5px;font-weight:650;background:light-dark(hsl(var(--rate-hue) 70% 94%),hsl(var(--rate-hue) 25% 23%));color:light-dark(hsl(var(--rate-hue) 48% 33%),hsl(var(--rate-hue) 75% 82%))}
 .modelos .a-quarters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}.modelos .a-quarters article{padding:8px;border-left:2px solid var(--k-line)}.modelos .a-quarters h3{margin-top:9px}.modelos .a-quarters p{font-size:13px;color:var(--k-muted)}.modelos .a-download{padding:14px 0;border-top:1px solid var(--k-line)}
 @media(min-width:900px){.modelos .a-metrics{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:600px){.modelos .a-filters{grid-template-columns:1fr}.modelos .a-quarters{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -118,12 +146,13 @@ def render(index, report, ledger, view, period='todos', search='', controls='', 
               'libros': 'Libros y archivos', 'renta': 'Documentación para Renta'}
     rows = [r for r in ledger['records'] if period == 'todos' or r['period'] == period]
     if search:
-        rows = [r for r in rows if search.casefold() in ' '.join(str(r.get(k, '')) for k in ('party', 'number', 'tax_id')).casefold()]
+        rows = [r for r in rows if search.casefold() in (' '.join(str(r.get(k, '')) for k in ('party', 'number', 'tax_id'))+' '+description(r)[0]).casefold()]
     head = navigation('gastos' if view == 'renta' else view)+'<h1>'+titles[view]+'</h1><p class="m-note">Ejercicio '+e(ledger['year'])+' · Cobertura declarada hasta '+e(report['as_of'])+'</p>'
     if view == 'resumen':
-        content = overview(report, rows, pending_count)
+        tabs = ''.join('<a href="'+BASE+'?vista=resumen&amp;periodo='+q+'"'+(' aria-current="page"' if period==q else '')+'>'+label+'</a>' for q,label in [('1T','1T'),('2T','2T'),('3T','3T'),('4T','4T'),('todos','Año')])
+        content = '<nav class="m-periods" aria-label="Periodo del resumen">'+tabs+'</nav>'+overview(report, rows, pending_count)
     elif view == 'libros':
-        content = books(index, report)
+        content = books(index, report, rows)
     else:
         rows = [r for r in rows if r['kind'] == ('income' if view == 'ingresos' else 'expense')]
         if view == 'renta':
@@ -133,6 +162,7 @@ def render(index, report, ledger, view, period='todos', search='', controls='', 
             content = ''
         if view != 'ingresos':
             content += '<div class="m-actions">'+button(BASE+'/gastos', 'Añadir o revisar gastos', True)+button(BASE+'?vista='+('gastos' if view == 'renta' else 'renta'), 'Todos los gastos' if view == 'renta' else 'Solo Renta')+'</div>'
+            content += '<p class="m-note">Uso fiscal indica si el documento está incluido en IVA, reservado para revisar en Renta o excluido. Tipo de gasto describe su clasificación; no es el producto comprado.</p>'
         content += filters(view, period, search)+record_table(rows, income=view == 'ingresos')
         content += '<p class="m-note">'+str(len(rows))+' documentos. '+('Los importes a cobrar no acreditan cobros recibidos.' if view == 'ingresos' else 'IVA documental y destino fiscal se muestran por separado.')+'</p>'
     sync = index.get('sync', {}).get('at')

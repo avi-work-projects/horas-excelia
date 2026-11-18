@@ -28,6 +28,11 @@ def read_archive(root, index_relative='modelos-index.json'):
     ledger = json.loads(verified(root, index['ledger']))
     if report['year'] != ledger['year']:
         raise ValueError('Year mismatch')
+    from document_details import attach_details
+    # The verified fiscal copy can live in an immutable CONSULTA snapshot.
+    # Display metadata remains next to the canonical year book and is joined
+    # only by the original PDF hash; it cannot change any fiscal field.
+    ledger = attach_details(ledger, Path(root) / 'LIBROS CONTABLES' / str(ledger['year']) / 'libro.json')
     return index, report, ledger
 
 

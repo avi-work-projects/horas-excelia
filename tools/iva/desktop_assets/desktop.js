@@ -51,11 +51,31 @@
     const fields = requestForm.elements, mail = fields.kind.value === 'mail', other = fields.provider.value === 'other';
     document.getElementById('assistant-mail-fields').hidden = !mail;
     document.getElementById('assistant-other').hidden = !other;
-    ['account','date_from','date_to'].forEach(name=>{fields[name].required=mail;fields[name].disabled=!mail;});
+    ['account','date_from','date_to'].forEach(name=>{fields[name].required=mail&&name==='account';fields[name].disabled=!mail;});
     fields.other_provider.required=other;fields.other_provider.disabled=!other;
   }
   requestForm?.addEventListener('change',requestFields);
   requestFields();
+  const periodPicker=document.getElementById('assistant-period'),yearPicker=document.getElementById('assistant-year');
+  function selectPeriod(){
+    if(!requestForm)return;
+    const f=requestForm.elements, mode=periodPicker.value, now=new Date();
+    if(mode==='custom')return;
+    if(mode==='all'){f.date_from.value='';f.date_to.value='';return;}
+    let year=Number(yearPicker.value), q=Number(mode);
+    if(mode==='current'||mode==='previous'){
+      year=now.getFullYear();q=Math.floor(now.getMonth()/3)+1-(mode==='previous'?1:0);
+      if(q===0){q=4;year--;}
+      yearPicker.value=year;
+    }
+    if(!Number.isInteger(year)||year<2000||year>2100)return;
+    const stamp=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    f.date_from.value=stamp(new Date(year,(q-1)*3,1));
+    f.date_to.value=stamp(new Date(year,q*3,0));
+  }
+  periodPicker?.addEventListener('change',selectPeriod);
+  yearPicker?.addEventListener('change',selectPeriod);
+  ['date_from','date_to'].forEach(name=>requestForm?.elements[name].addEventListener('input',()=>{periodPicker.value='custom';}));
   function openResult(result) {
     if (!result?.url) return;
     const target = new URL(result.url,location.href);
@@ -69,7 +89,7 @@
     const result=await run('/api/assistant-requests',true,'Guardando el encargo…',null,data);
     openResult(result);
   });
-  document.querySelectorAll('[data-intake-open]').forEach(button=>button.addEventListener('click',()=>run('/api/intake-open',true,'Abriendo la carpeta de entrada…')));
+  document.querySelectorAll('[data-intake-open]').forEach(button=>button.addEventListener('click',()=>run('/api/intake-open',true,'Abriendo la carpeta…',null,{folder:button.dataset.intakeOpen||'inbox'})));
   document.querySelectorAll('[data-intake-import]').forEach(button=>button.addEventListener('click',async()=>{
     const result=await run('/api/intake-import',true,'Comprobando e importando los PDF. Los originales se conservan…',null,button.dataset.request?{id:button.dataset.request}:{});
     openResult(result);
