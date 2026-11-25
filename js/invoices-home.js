@@ -71,6 +71,7 @@ function renderHomeInvoiceStatus(year,month){
     var warning=m.changed||m.mailChanged||m.attention;
     detail='<div class="home-invoice-date">'+(m.date?'<span class="home-invoice-date-label">'+homeStatusIcon('invoice')+'<time datetime="'+m.date+'">'+m.date.split('-').reverse().slice(0,2).join('/')+'</time></span>':'')+(warning?'<span class="home-invoice-alert">'+homeStatusIcon('warning')+'<span>Revisar Cambios</span></span>':'')+'</div>';
     if(m.editable)action=homePanelAction('edit-invoice','Modificar','envíos','data-home-invoice="modify"');
+    else action=homePanelAction('invoice','Ver','factura','data-home-invoice="view"');
   }else if(m.tone==='urgent'){
     detail='<p class="home-panel-note">Es necesario revisar el estado de la factura en Kairo.</p>';
     action=homePanelAction('invoice','Revisar','factura','data-home-invoice="review"');
@@ -122,6 +123,7 @@ function initHomeInvoiceStatus(){
     var button=e.target.closest('[data-home-invoice]');if(!button)return;
     if(button.dataset.homeInvoice==='send')openInvoiceMonth(mkey(CY,CM));
     else if(button.dataset.homeInvoice==='modify')openInvoiceMonth(mkey(CY,CM),{revise:true});
+    else if(button.dataset.homeInvoice==='view')openInvoiceMonth(mkey(CY,CM));
     else if(button.dataset.homeInvoice==='review')openCheckedInvoice(invoiceKairoUrl(invoiceData().config.kairoUrl)+'gestify-month?period='+mkey(CY,CM));
     else if(button.dataset.homeInvoice==='calendar')openMailCalendar();
     else if(button.dataset.homeInvoice==='previous')openInvoiceMonth(button.dataset.period);

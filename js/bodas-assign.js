@@ -165,23 +165,6 @@ function _renderBodaStats(){
   var all=bodaSortClasses(bodaClasses());
   var overview=renderBodaStatsOverview(bodaStatsOverview(all));
   if(!all.length)return '<div class="stats-stack stats-stack-wedding">'+overview+renderBodaPackStats()+'</div>';
-  /* Reparto por mes (ultimos 12 meses hasta hoy) */
-  var hoy=new Date();
-  var meses=[],mLabels=[],mVals=[];
-  for(var i=11;i>=0;i--){
-    var d=new Date(hoy.getFullYear(),hoy.getMonth()-i,1);
-    var key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
-    meses.push(key);mLabels.push(MN_SHORT[d.getMonth()]);
-    mVals.push(all.filter(function(ev){return ev.start.indexOf(key)===0;}).length);
-  }
-  /* Reparto por semana (ultimas 10 semanas) */
-  var wLabels=[],wVals=[];
-  for(var w=9;w>=0;w--){
-    var wd=new Date(hoy.getTime());wd.setDate(wd.getDate()-w*7);
-    var wk=_bodaWeekKey(wd);
-    wLabels.push(wk.slice(8)+'/'+wk.slice(5,7));
-    wVals.push(all.filter(function(ev){return _bodaWeekKey(new Date(ev.start+'T00:00:00'))===wk;}).length);
-  }
   /* Medias sobre el periodo real con clases */
   var primera=all[0].start, ultima=all[all.length-1].start;
   var dias=Math.max(1,Math.round((new Date(ultima+'T00:00:00')-new Date(primera+'T00:00:00'))/86400000)+1);
@@ -202,8 +185,8 @@ function _renderBodaStats(){
 
   var h=overview;
   h+=renderStatsCard('Ritmo programado',renderStatsMetrics([[mediaSem.toFixed(1),'clases / semana'],[mediaMes.toFixed(1),'clases / mes']]),'Del '+_bodaFmt(primera)+' al '+_bodaFmt(ultima)+'. Incluye todas las clases registradas, también futuras y sin pareja.','boda-stats-pace');
-  h+=renderStatsCard('Clases por mes','<div class="sy-chart">'+simpleBarChart(mVals,mLabels,'#c08a5a',{highlight:11})+'</div>','Últimos 12 meses hasta el mes actual.');
-  h+=renderStatsCard('Clases por semana','<div class="sy-chart">'+simpleBarChart(wVals,wLabels,'#e879a8',{highlight:9})+'</div>','Últimas 10 semanas.');
+  h+=renderBodaRecords(all);
+  h+=renderBodaHistoryCharts(all,new Date());
   h+=renderBodaPackStats();
   if(porFranja.length){
     h+=renderStatsCard('Por franja horaria',hBarRows(porFranja));
@@ -232,7 +215,11 @@ function openBodaAssign(couple){
   var now=new Date();
   var refDs=null;
   var cls=bodaClassesOfCouple(couple.id);
-  if(cls.length)refDs=cls[0].start;
+  /* Se abre en lo más próximo desde hoy: una clase suya o una clase libre.
+     Sin nada pendiente, en su primera clase o en la primera libre, como antes. */
+  var hoyDs=evDk(now),proximas=cls.concat(bodaFreeClasses()).map(function(ev){return ev.start;}).filter(function(ds){return ds>=hoyDs;}).sort();
+  if(proximas.length)refDs=proximas[0];
+  else if(cls.length)refDs=cls[0].start;
   else{var libres=bodaFreeClasses();if(libres.length)refDs=libres[0].start;}
   var y=refDs?parseInt(refDs.slice(0,4),10):now.getFullYear();
   var m=refDs?parseInt(refDs.slice(5,7),10)-1:now.getMonth();
@@ -273,6 +260,13 @@ function renderBodaAssignHtml(A){
   h+='<div style="width:36px"></div></div>';
   h+='<div class="boda-asg-info"><b>'+nSel+'</b> / '+p.total+' clases'
     +(c.weddingDate?(' · boda el <b>'+_bodaFmt(c.weddingDate)+'</b>'):'')+'</div>';
+  /* Accesos a las próximas clases libres: evitan buscarlas mes a mes. */
+  var proximasLibres=bodaFreeClasses().map(function(ev){return ev.start;}).filter(function(ds,i,arr){return ds>=evDk(new Date())&&arr.indexOf(ds)===i;}).slice(0,8);
+  if(proximasLibres.length){
+    h+='<div class="boda-asg-free-list" aria-label="Próximas clases libres"><span>Libres</span>';
+    proximasLibres.forEach(function(ds){var here=+ds.slice(0,4)===A.year&&+ds.slice(5,7)-1===A.month;h+='<button type="button" class="boda-asg-jump'+(here?' here':'')+'" data-asg-jump="'+ds+'">'+ds.slice(8)+'/'+ds.slice(5,7)+'</button>';});
+    h+='</div>';
+  }
   /* Conmutador: solo dias de ensayo / todos los dias */
   h+='<div class="boda-mode-row">';
   h+='<button class="boda-mode-btn'+(A.open?'':' active')+'" data-asgmode="ensayo">Días de ensayo</button>';
@@ -338,6 +332,7 @@ function renderBodaAssignHtml(A){
 function bindBodaAssign(){
   var A=BODA_ASSIGN;if(!A)return;
   document.getElementById('bodaAsgClose').addEventListener('click',closeBodaAssign);
+  document.querySelectorAll('[data-asg-jump]').forEach(function(btn){btn.addEventListener('click',function(){var ds=btn.dataset.asgJump;A.year=+ds.slice(0,4);A.month=+ds.slice(5,7)-1;renderBodaAssign();});});
   document.getElementById('bodaAsgPrev').addEventListener('click',function(){
     A.month--;if(A.month<0){A.month=11;A.year--;}renderBodaAssign();
   });

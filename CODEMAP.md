@@ -37,15 +37,15 @@
 
 **Funciones:** _showBdayInlineCtrl:20 · tc:88 · bdName:89 · getBdayColor:91 · getBdaysOn:100 · bdayItemsInRange:104 · bdayRelativeLabel:114 · daysUntil:123 · bdayCanSetAlarm:131 · hasUpcomingBday:137 · updateBdayBtn:143 · getBdayAlarmKey:153 · isBdayAlarmSet:154 · setBdayAlarmState:158 · syncVipBdaysToEvents:165
 
-### js/bodas-assign.js  _(479 líneas)_
-**Estado global:** DN2:196 · BODA_ASSIGN:229
+### js/bodas-assign.js  _(474 líneas)_
+**Estado global:** DN2:179 · BODA_ASSIGN:212
 
-**Funciones:** bodaOpenSheet:1 · bodaCloseSheet:4 · bodaCreatedAt:10 · bodaIssues:15 · _renderBodaIssueCards:31 · card:34 · openBodaIssue:55 (!81) · findEv:97 · closeBodaIssue:136 · _bodaWeekKey:139 · bodaStatsOverview:147 · renderBodaStatsOverview:156 · _renderBodaStats:164 · openBodaAssign:230 · closeBodaAssign:249 · renderBodaAssign:253 · renderBodaAssignHtml:257 (!81) · bindBodaAssign:338 · openBodaPlacePicker:409 · closeBodaPlacePicker:442 · bodaAplicarCampo:446 · bodaTrasElegir:456 · bodaEndAt:468
+**Funciones:** bodaOpenSheet:1 · bodaCloseSheet:4 · bodaCreatedAt:10 · bodaIssues:15 · _renderBodaIssueCards:31 · card:34 · openBodaIssue:55 (!81) · findEv:97 · closeBodaIssue:136 · _bodaWeekKey:139 · bodaStatsOverview:147 · renderBodaStatsOverview:156 · _renderBodaStats:164 · openBodaAssign:213 · closeBodaAssign:236 · renderBodaAssign:240 · renderBodaAssignHtml:244 (!88) · bindBodaAssign:332 · openBodaPlacePicker:404 · closeBodaPlacePicker:437 · bodaAplicarCampo:441 · bodaTrasElegir:451 · bodaEndAt:463
 
-### js/bodas-bind.js  _(304 líneas)_
-**Estado global:** BODA_RENDER_CLASSES:299
+### js/bodas-bind.js  _(305 líneas)_
+**Estado global:** BODA_RENDER_CLASSES:300
 
-**Funciones:** renderBodaCoupleForm:1 · openBodaCoupleForm:30 · closeBodaCoupleForm:70 · bodaRefreshRow:74 · bindBodasEvents:103 (!185) · _guardaPendientes:108 · _bodaCalMove:119 · selectDay:134 · findClass:223 · bodaMatchesDate:288 · bodaMatchesClasses:294 · renderBodasBody:300
+**Funciones:** renderBodaCoupleForm:1 · openBodaCoupleForm:30 · closeBodaCoupleForm:70 · bodaRefreshRow:74 · bindBodasEvents:103 (!186) · _guardaPendientes:109 · _bodaCalMove:120 · selectDay:135 · findClass:224 · bodaMatchesDate:289 · bodaMatchesClasses:295 · renderBodasBody:301
 
 ### js/bodas-class-form.js  _(335 líneas)_
 **Estado global:** BODA_FORM:1 · BODA_TIME_H:212
@@ -56,6 +56,9 @@
 **Estado global:** BODA_CONFIG_SK:2 · BODA_CONFIG:3
 
 **Funciones:** bodaLoadConfig:4 · bodaApplyConfig:15 · saveBodaConfig:24 · validateBodaConfig:25 · importBodaConfig:42 · bodaPackOf:58 · bodaDuration:59 · bodaDefaultDuration:60 · bodaDurationOf:61 · bodaConfigUsed:62 · bodaSetCatalogItem:66 · bodaDeleteCatalogItem:75 · bodaTaken:80 · bodaPackStats:85 · bodaTeacherName:97 · bodaTeacherCount:98 · bodaTeacherStats:99 · renderBodaPackStats:105 · renderBodaConfig:123 · openBodaConfig:142 · bindBodaConfig:143 · openBodaCatalogForm:152
+
+### js/bodas-stats-history.js  _(104 líneas)_
+**Funciones:** bodaMonthSeries:8 · bodaWeekSeries:24 · bodaStatsRecords:40 · best:44 · bodaFmtRate:61 · renderBodaRecords:62 · bodaScrollBarChart:75 · renderBodaHistoryCharts:91 · bindBodaHistoryCharts:98
 
 ### js/bodas.js  _(657 líneas)_
 **Estado global:** BODAS_SK:13 · BODA_COUPLES:14 · BODA_PLACE_LIST:25 · BODA_PLACE_DEFAULT:31 · BODA_PLACE_NONE:34 · BODA_PLACE_SHORT:35 · BODA_PLACE_DESC:36 · BODA_PLACE_EMOJI:38 · BODA_WHITE:55 · BODA_SLOTS:56 · BODA_NO_TIME_COLOR:62 · BODA_NO_COUPLE_COLOR:63 · BODA_DEFAULT_TIME:64 · BODA_PALETTE:67 · BODA_CLOSED_SK:235 · BODA_CLOSED:236 · BODA_PENDING:255 · BODA_SUBTAB:297 · BODA_CLASS_MODE:298 · BODA_CLASES_SEARCH:299 · BODA_HIDE_PAST:300 · BODA_HIDE_CLOSED:301 · BODA_CARD_OPEN:302 · BODA_PAREJAS_SEARCH:303 · BODA_PAREJAS_SORT:306 · BODA_PAREJAS_CLASSES:307 · BODA_PAREJAS_FILTER:308 · BODA_CAL_DAY:309 · BODA_CAL_HL:310 · BODA_CAL_YEAR:311 · BODA_CAL_MONTH:312
@@ -358,10 +361,10 @@
 ### js/invoices-history.js  _(17 líneas)_
 **Funciones:** validateInvoiceMailHistory:2 · homeInvoiceHistoricalFact:13
 
-### js/invoices-home.js  _(136 líneas)_
+### js/invoices-home.js  _(138 líneas)_
 **Estado global:** INVOICE_HOME_CACHE_KEY:3 · INVOICE_HOME_STATUS:4 · INVOICE_HOME_REQUESTS:5 · INVOICE_HOME_CACHE:22
 
-**Funciones:** validateHomeInvoiceStatus:6 · homeInvoiceCacheRead:13 · homeInvoiceCacheSave:23 · homeInvoiceCheckedAt:24 · homeInvoiceScheduleDate:25 · homePreviousInvoicePeriod:26 · homeInvoiceModel:27 · homeInvoiceRequirement:55 · renderHomeInvoiceStatus:58 · paintHomeInvoiceStatus:81 · initHomeInvoiceStatus:117
+**Funciones:** validateHomeInvoiceStatus:6 · homeInvoiceCacheRead:13 · homeInvoiceCacheSave:23 · homeInvoiceCheckedAt:24 · homeInvoiceScheduleDate:25 · homePreviousInvoicePeriod:26 · homeInvoiceModel:27 · homeInvoiceRequirement:55 · renderHomeInvoiceStatus:58 · paintHomeInvoiceStatus:82 · initHomeInvoiceStatus:118
 
 ### js/invoices-kairo.js  _(91 líneas)_
 **Estado global:** INVOICE_KAIRO_BUSY:2
@@ -769,7 +772,7 @@
 **Rangos por prefijo de clase:**
 .stats-empty:23-23 · .stats-head:7-8 · .stats-list:24-25 · .stats-metric:11-14 · .stats-metrics:9-10 · .stats-note:15-15 · .stats-section:6-26 · .stats-stack:2-5 · .stats-table:18-22
 
-### css/source/wedding-moves.css  _(330 líneas)_
+### css/source/wedding-moves.css  _(362 líneas)_
 
 **Secciones:**
 
@@ -803,9 +806,13 @@
 - Los tres botones de la pareja, en una sola linea:317
 - Buscador y boton de anadir en la misma fila:320
 - Tarjeta de pareja desplegada en su sitio (antes era un modal):326
+- Editar pareja: interruptor de «Pareja futura» y pack/boda en la misma fila.:330
+- El interruptor hereda el color de la fila (Eventos fuerza color:inherit en las casillas).:332
+- Asignar clases: accesos a las próximas clases libres en una fila deslizable.:345
+- Estadísticas: histórico deslizable y récords.:351
 
 **Rangos por prefijo de clase:**
-.boda-actions:199-199 · .boda-add:201-201 · .boda-asg:224-246 · .boda-buscar:321-323 · .boda-cal:248-273 · .boda-card:106-329 · .boda-chip:103-105 · .boda-chips:102-102 · .boda-cl:161-198 · .boda-class:85-160 · .boda-controls:63-63 · .boda-couple:142-144 · .boda-cpk:215-223 · .boda-create:17-19 · .boda-date:200-200 · .boda-day:79-122 · .boda-det:206-319 · .boda-dia:149-151 · .boda-distribution:23-25 · .boda-dot:110-110 · .boda-falta:117-117 · .boda-filters:66-66 · .boda-fsel:67-70 · .boda-ftoggles:71-72 · .boda-hd:194-196 · .boda-inp:137-137 · .boda-iss:41-43 · .boda-issue:28-39 · .boda-issues:27-27 · .boda-legend:202-205 · .boda-mini:156-189 · .boda-mode:55-57 · .boda-multi:152-158 · .boda-name:111-111 · .boda-ok:118-118 · .boda-overview:21-21 · .boda-place:145-171 · .boda-prog:113-114 · .boda-ro:162-170 · .boda-save:99-100 · .boda-savebar:95-98 · .boda-search:324-324 · .boda-sec:12-20 · .boda-sobra:119-119 · .boda-sort:325-325 · .boda-stat:45-47 · .boda-sticky:8-10 · .boda-sum:59-62 · .boda-summary:58-58 · .boda-swap:127-134 · .boda-time:138-138 · .boda-tp:277-280 · .boda-wed:112-112 · .ev-alarm:177-183 · .ev-bficha:303-303 · .ev-bfila:304-313 · .ev-bpunto:311-311 · .ev-bver:316-316 · .ev-car:299-300 · .ev-detail:297-297 · .ev-upcoming:173-175 · .ev-wk:185-187 · .hbar-lbl:51-51 · .hbar-row:50-50 · .hbar-rows:49-49 · .hbar-track:52-53 · .hbar-val:54-54 · .rut-wpick:290-295 · .sy-body:5-11
+.boda-actions:199-199 · .boda-add:201-201 · .boda-asg:224-350 · .boda-buscar:321-323 · .boda-cal:248-273 · .boda-card:106-329 · .boda-cform:340-343 · .boda-chip:103-105 · .boda-chips:102-102 · .boda-cl:161-198 · .boda-class:85-160 · .boda-controls:63-63 · .boda-couple:142-144 · .boda-cpk:215-223 · .boda-create:17-19 · .boda-date:200-200 · .boda-day:79-122 · .boda-det:206-319 · .boda-dia:149-151 · .boda-distribution:23-25 · .boda-dot:110-110 · .boda-falta:117-117 · .boda-filters:66-66 · .boda-fsel:67-70 · .boda-ftoggles:71-72 · .boda-hd:194-196 · .boda-inp:137-137 · .boda-iss:41-43 · .boda-issue:28-39 · .boda-issues:27-27 · .boda-legend:202-205 · .boda-mini:156-189 · .boda-mode:55-57 · .boda-multi:152-158 · .boda-name:111-111 · .boda-ok:118-118 · .boda-overview:21-21 · .boda-place:145-171 · .boda-prog:113-114 · .boda-record:356-361 · .boda-records:355-355 · .boda-ro:162-170 · .boda-save:99-100 · .boda-savebar:95-98 · .boda-scroll:352-354 · .boda-search:324-324 · .boda-sec:12-20 · .boda-sobra:119-119 · .boda-sort:325-325 · .boda-stat:45-47 · .boda-sticky:8-10 · .boda-sum:59-62 · .boda-summary:58-58 · .boda-swap:127-134 · .boda-switch:331-333 · .boda-time:138-138 · .boda-tp:277-280 · .boda-wed:112-112 · .ev-alarm:177-183 · .ev-bficha:303-303 · .ev-bfila:304-313 · .ev-bpunto:311-311 · .ev-bver:316-316 · .ev-car:299-300 · .ev-detail:297-297 · .ev-upcoming:173-175 · .ev-wk:185-187 · .hbar-lbl:51-51 · .hbar-row:50-50 · .hbar-rows:49-49 · .hbar-track:52-53 · .hbar-val:54-54 · .rut-wpick:290-295 · .sy-body:5-11
 
 ### css/source/routines.css  _(132 líneas)_
 
@@ -881,7 +888,7 @@
 **Rangos por prefijo de clase:**
 .alarm-now:989-989 · .alarm-panel:986-988 · .app-update:677-679 · .bd-detail:599-600 · .bd-panel:553-835 · .bday-category:525-694 · .bday-date:634-733 · .bday-detail:567-810 · .bday-edit:809-809 · .bday-filter:516-591 · .bday-first:537-537 · .bday-form:672-673 · .bday-group:513-676 · .bday-hdr:156-157 · .bday-header:151-466 · .bday-label:543-543 · .bday-list:522-726 · .bday-month:169-740 · .bday-name:601-681 · .bday-next:99-100 · .bday-no:573-573 · .bday-person:520-566 · .bday-show:524-628 · .bday-sub:280-281 · .bday-today:506-725 · .bday-upcoming:54-491 · .bday-vip:492-828 · .boda-catalog:80-85 · .boda-cfg:126-142 · .boda-config:76-123 · .boda-date:144-162 · .boda-day:113-113 · .boda-field:114-119 · .boda-filter:58-60 · .boda-mini:66-66 · .boda-pfilters:57-61 · .boda-stat:990-990 · .boda-sticky:77-139 · .boda-teachers:101-101 · .contact-add:897-897 · .contact-entry:890-895 · .contact-group:887-889 · .contact-remove:896-896 · .data-actions:339-339 · .data-btn:340-351 · .econ-equiv:460-460 · .econ-tab:322-326 · .econ-tariff:405-462 · .energy-tariff:451-453 · .est-nav:324-325 · .ev-alarm:758-759 · .ev-annual:495-495 · .ev-bday:282-529 · .ev-bright:441-441 · .ev-btn:760-761 · .ev-calendar:963-978 · .ev-current:980-980 · .ev-del:13-14 · .ev-filter:779-948 · .ev-hairdresser:984-985 · .ev-list:2-952 · .ev-month:477-983 · .ev-multi:50-71 · .ev-rut:239-306 · .ev-search:3-7 · .ev-sort:8-53 · .ev-stat:918-954 · .ev-type:426-428 · .ev-types:425-794 · .ev-up:266-915 · .ev-upcoming:916-940 · .ev-view:65-65 · .ev-wk:221-440 · .export-choice:764-925 · .export-folder:742-776 · .fiscal-hdr:499-499 · .fiscal-hip:402-403 · .fiscal-tab:323-323 · .hip-rate:468-472 · .hip-ro:496-497 · .imp-mode:17-27 · .invoice-field:938-938 · .invoice-sheet:858-858 · .macro-url:69-69 · .nav-icon:359-369 · .nav-pro:333-345 · .nav-style:357-357 · .panel-header:836-837 · .personal-copy:874-874 · .personal-data:873-880 · .personal-note:898-930 · .personal-notes:931-935 · .rate-input:46-46 · .rut-addition:201-218 · .rut-agenda:215-216 · .rut-cancelled:242-301 · .rut-done:762-763 · .rut-history:185-236 · .rut-hpd:183-183 · .rut-icon:167-168 · .rut-recovery:210-219 · .rut-session:220-220 · .rut-skipped:302-303 · .rut-week:184-184 · .selected:366-366 · .settings-copy:866-869 · .settings-details:102-104 · .settings-edit:70-886 · .settings-editor:843-881 · .settings-field:864-883 · .settings-is:853-960 · .settings-menu:437-437 · .sw-upd:876-876 · .sy-back:37-37 · .sy-body:35-532 · .sy-card:41-41 · .sy-header:36-467 · .sy-lbl:40-40 · .sy-period:411-418 · .sy-table:42-42 · .sy-tr:43-43 · .sy-val:39-39 · .sy-year:38-38 · .week-action:830-831 · .week-card:387-387 · .weeks-container:957-957 · .wm-logo:88-246
 
-### css/source/home-sharing.css  _(179 líneas)_
+### css/source/home-sharing.css  _(177 líneas)_
 
 **Secciones:**
 
@@ -889,15 +896,15 @@
 - Selector de eventos para compartir por iCalendar:36
 - Selector de exportación: controles compactos y lista con espacio propio.:37
 - Colores por tramo, compartidos entre las dos vistas de próximos cumpleaños.:71
-- Compartir: cabecera centrada, categorías completas y lista compacta.:89
-- Próximos comparte identidad celeste en sus cuatro subpestañas.:122
-- Mis Datos: atajos, registros plegables y contenido multilínea completo.:136
-- Próximos: contraste, alternancia y año centrado.:150
-- Año de Estadísticas centrado sin desplazar las pestañas ni cambiar las flechas.:166
-- Agenda y consultas anuales: cabecera estable y flechas neutras compartidas.:168
+- Compartir: cabecera centrada, categorías completas y lista compacta.:87
+- Próximos comparte identidad celeste en sus cuatro subpestañas.:120
+- Mis Datos: atajos, registros plegables y contenido multilínea completo.:134
+- Próximos: contraste, alternancia y año centrado.:148
+- Año de Estadísticas centrado sin desplazar las pestañas ni cambiar las flechas.:164
+- Agenda y consultas anuales: cabecera estable y flechas neutras compartidas.:166
 
 **Rangos por prefijo de clase:**
-.boda-future:86-86 · .contact-address:132-144 · .contact-entry:131-131 · .contact-primary:142-148 · .contact-shortcuts:137-160 · .energy-contract:113-114 · .energy-field:116-117 · .energy-history:111-112 · .energy-price:115-120 · .energy-sheet:110-110 · .energy-tax:118-118 · .ev-cal:40-109 · .ev-field:85-85 · .ev-list:126-155 · .ev-period:169-172 · .ev-share:38-39 · .ev-stat:124-125 · .ev-stats:156-161 · .ev-up:152-176 · .ev-week:72-87 · .ev-wk:3-3 · .header:2-2 · .home-equation:30-30 · .home-formula:25-25 · .home-hours:29-32 · .home-summary:9-26 · .home-total:27-27 · .home-worked:17-17 · .month-summary:10-28 · .ms-caption:24-24
+.contact-address:130-142 · .contact-entry:129-129 · .contact-primary:140-146 · .contact-shortcuts:135-158 · .energy-contract:111-112 · .energy-field:114-115 · .energy-history:109-110 · .energy-price:113-118 · .energy-sheet:108-108 · .energy-tax:116-116 · .ev-cal:40-107 · .ev-list:124-153 · .ev-period:167-170 · .ev-share:38-39 · .ev-stat:122-123 · .ev-stats:154-159 · .ev-up:150-174 · .ev-week:72-85 · .ev-wk:3-3 · .header:2-2 · .home-equation:30-30 · .home-formula:25-25 · .home-hours:29-32 · .home-summary:9-26 · .home-total:27-27 · .home-worked:17-17 · .month-summary:10-28 · .ms-caption:24-24
 
 ### css/source/hours-kairo.css  _(65 líneas)_
 

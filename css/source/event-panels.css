@@ -437,7 +437,7 @@
 #bodaAsgSheet{height:min(680px,90dvh);display:flex;flex-direction:column;overflow:hidden}
 #bodaAsgSheet>:not(.boda-asg-grid){flex-shrink:0}
 #bodaAsgSheet>.boda-asg-grid{flex:1;min-height:0;grid-template-rows:repeat(6,minmax(32px,1fr));overflow-y:auto;overflow-x:hidden}
-#bodaAsgSheet .boda-asg-day{min-height:0}
+#bodaAsgSheet .boda-asg-day{min-height:0;aspect-ratio:auto}
 
 .ev-alarm-pre-btn:disabled{opacity:.45;cursor:default}
 

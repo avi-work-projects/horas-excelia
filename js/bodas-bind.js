@@ -9,18 +9,18 @@ function renderBodaCoupleForm(c){
   if(isEdit)h+='<button class="ev-btn danger" id="bodaCDel" style="flex:none;padding:6px 12px;font-size:.75rem">Eliminar</button>';
   else h+='<div style="width:36px"></div>';
   h+='</header><div class="bd-panel-body ev-fixed-form-body">';
-  h+='<div class="ev-field"><label>Pareja</label><input class="ev-input" id="bodaCName" type="text" maxlength="40" placeholder="Ej: Marta y Juan" value="'+(isEdit?escHtml(c.name):'')+'"></div>';
-  h+='<div class="ev-field"><label class="boda-future-check" style="--chk:#8b5e34"><input type="checkbox" id="bodaCFuture"'+(c&&c.future?' checked':'')+'> Pareja futura</label><div class="sy-note">Reserva pendiente de concretar. No aparece en Activas hasta que desmarques esta opción.</div></div>';
+  h+='<div class="ev-field"><label for="bodaCName">Pareja</label><input class="ev-input" id="bodaCName" type="text" maxlength="40" placeholder="Ej: Marta y Juan" value="'+(isEdit?escHtml(c.name):'')+'"></div>';
+  h+='<label class="boda-switch-row" for="bodaCFuture"><span>Pareja futura</span><input type="checkbox" role="switch" class="boda-switch" id="bodaCFuture"'+(c&&c.future?' checked':'')+'></label>';
   var selected=isEdit?bodaPackOf(c):(BODA_CONFIG.packs.find(function(p){return p.active!==false&&p.classes===4;})||BODA_CONFIG.packs.find(function(p){return p.active!==false;}));
-  h+='<div class="ev-field"><label>Pack contratado</label><select class="ev-input" id="bodaCPack">';
-  BODA_CONFIG.packs.filter(function(p){return p.active!==false||(selected&&p.id===selected.id);}).forEach(function(p){h+='<option value="'+p.id+'"'+(selected&&selected.id===p.id?' selected':'')+'>'+escHtml(p.name)+' ('+p.classes+' clases)'+(p.active===false?' (inactivo)':'')+'</option>';});
+  /* La pareja conserva sus clases contratadas mientras mantenga el mismo pack. */
+  var kept=isEdit?(c.packClasses==null?c.contracted:c.packClasses):null;
+  h+='<div class="boda-cform-pair"><div class="ev-field"><label for="bodaCPack">Pack</label><select class="ev-input" id="bodaCPack">';
+  BODA_CONFIG.packs.filter(function(p){return p.active!==false||(selected&&p.id===selected.id);}).forEach(function(p){var mine=selected&&selected.id===p.id,n=mine&&kept!=null?kept:p.classes;h+='<option value="'+p.id+'"'+(mine?' selected':'')+'>'+escHtml(p.name)+' · '+n+' clases'+(p.active===false?' (inactivo)':'')+'</option>';});
   h+='</select></div>';
-  if(c)h+='<div class="boda-stat-note">Clases incluidas al contratar: '+(c.packClasses==null?c.contracted:c.packClasses)+'. Se conservan si mantienes el mismo pack.</div>';
-  h+='<div class="ev-field"><label>&#128141; Día de la boda <span class="ev-note-scope">(solo se ve al asignar ensayos)</span></label>';
-  h+='<input class="ev-input" id="bodaCWed" type="date" value="'+(isEdit&&c.weddingDate?c.weddingDate:'')+'"></div>';
-  h+='<div class="ev-field"><label>Notas <span id="bodaCCnt" style="font-weight:400;color:var(--text-dim)">'+((isEdit&&c.note?c.note.length:0))+'/200</span></label>';
-  h+='<textarea class="ev-textarea" id="bodaCNote" maxlength="200" placeholder="Notas de la pareja...">'+(isEdit&&c.note?escHtml(c.note):'')+'</textarea></div>';
-  h+='<div class="ev-field"><label>&#127912; Color (aspas de arriba)'+(isEdit?'':' <span class="ev-note-scope">— asignado automáticamente</span>')+'</label>';
+  h+='<div class="ev-field"><label for="bodaCWed">Día de la boda</label><input class="ev-input" id="bodaCWed" type="date" value="'+(isEdit&&c.weddingDate?c.weddingDate:'')+'"></div></div>';
+  h+='<div class="ev-field"><label for="bodaCNote">Notas <span id="bodaCCnt" class="boda-cform-count">'+((isEdit&&c.note?c.note.length:0))+'/200</span></label>';
+  h+='<textarea class="ev-textarea" id="bodaCNote" maxlength="200" placeholder="Notas de la pareja">'+(isEdit&&c.note?escHtml(c.note):'')+'</textarea></div>';
+  h+='<div class="ev-field"><label>Color</label>';
   h+=_renderColorPicker(col,false,false,'bodaCp');
   h+='</div>';
   h+='</div><footer class="bd-panel-footer ev-fixed-form-actions"><button class="ev-btn" id="bodaCCancel">Cancelar</button><button class="ev-btn primary" id="bodaCSave">Guardar</button></footer>';
@@ -104,6 +104,7 @@ function bindBodasEvents(){
   document.querySelectorAll('[data-stats-couples]').forEach(function(btn){btn.onclick=function(){BODA_SUBTAB='parejas';BODA_PAREJAS_FILTER=btn.dataset.statsCouples;BODA_PAREJAS_CLASSES='';BODA_PAREJAS_SEARCH='';BODA_PAREJAS_SORT='boda';BODA_CARD_OPEN=null;refreshEvents(false);};});
   var exp=document.getElementById('evCalendarExport');if(exp)exp.onclick=openEvCalendarExport;
   bindBodaConfig();
+  if(typeof bindBodaHistoryCharts==='function')bindBodaHistoryCharts();
   /* Al salir de la lista se guarda lo pendiente para no perderlo sin avisar */
   function _guardaPendientes(){
     if(bodaPendingCount())showToast(bodaPendingApply(true)+' cambios guardados','success');

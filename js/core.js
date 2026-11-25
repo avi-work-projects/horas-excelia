@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v559 — Interrogación, visitas a casa y deporte en Planes';
+var APP_VERSION = 'v560 — Ver factura, Editar pareja y récords de Wedding Moves';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

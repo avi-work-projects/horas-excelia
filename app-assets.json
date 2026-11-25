@@ -283,6 +283,9 @@
       "path": "js/bodas-assign.js"
     },
     {
+      "path": "js/bodas-stats-history.js"
+    },
+    {
       "path": "js/bodas-class-form.js"
     },
     {
