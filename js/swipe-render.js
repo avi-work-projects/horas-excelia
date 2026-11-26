@@ -68,7 +68,7 @@ function swipeRenderPreview(el,step){
     return swipeWithState(changes,function(){return swipeFrame('energyAnalysisOverlay',energyAnalysisHtml(ENERGY_ANALYSIS_KIND),'full-overlay energy-window');});
   }
   if(el.matches('.ev-bday-body')){if(BDAY_VIEW!=='cal')return null;month=swipeMonth(BDAY_YEAR,BDAY_MONTH,step);return swipeWithState({BDAY_YEAR:month.year,BDAY_MONTH:month.month},function(){return swipeFrame('eventsOverlay',swipeFrame('eventsContent',renderBdayContent()));});}
-  if(el.id==='bodaCalGrid'){
+  if(el.id==='bodaCalBody'){
     month=swipeMonth(BODA_CAL_YEAR,BODA_CAL_MONTH,step);return swipeWithState({BODA_CAL_YEAR:month.year,BODA_CAL_MONTH:month.month,BODA_CAL_DAY:null},function(){return swipeFrame('eventsOverlay',renderEvContent(),'full-overlay');});
   }
   if(el.matches('.boda-asg-grid')){month=swipeMonth(BODA_ASSIGN.year,BODA_ASSIGN.month,step);return swipeFrame('bodaAsgSheet',renderBodaAssignHtml(Object.assign({},BODA_ASSIGN,month)));}

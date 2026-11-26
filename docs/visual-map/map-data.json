@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
   "title": "Gestify · mapa visual",
-  "generatedAt": "2026-11-26T12:21:08.570Z",
-  "referenceCommit": "e17f7491677298e1c436e51b1df5767c5eca5df2",
+  "generatedAt": "2026-11-26T12:35:06.223Z",
+  "referenceCommit": "95b2ae513ad8c7a65ac0791710ce0492214cc8ba",
   "date": "2026-08-21T10:00:00+02:00",
   "viewport": {
     "width": 400,
@@ -9144,7 +9144,7 @@
         "plan-picker-new-plans",
         "plan-picker-romantic"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "plan-picker-new-plans",
@@ -9331,7 +9331,7 @@
       "commit": "e17f7491677298e1c436e51b1df5767c5eca5df2",
       "review": "Sin revisar",
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "plan-picker-romantic",
@@ -9354,6 +9354,7 @@
       ],
       "region": "#evPlanPickerOv .ev-plan-options",
       "image": "captures/plan-picker-romantic.png",
+      "imageHash": "34cddfdcd4cf4f018739d472cbbd4ec2a8ec295267e40857ed58f27f85031335",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -9518,10 +9519,9 @@
       ],
       "dependencyVersion": 2,
       "commit": "e17f7491677298e1c436e51b1df5767c5eca5df2",
-      "verifiedEdges": [],
-      "imageHash": "34cddfdcd4cf4f018739d472cbbd4ec2a8ec295267e40857ed58f27f85031335",
       "review": "Sin revisar",
-      "fresh": true
+      "verifiedEdges": [],
+      "fresh": false
     },
     {
       "id": "weddings",
@@ -10189,7 +10189,6 @@
         "js/bodas-bind.js"
       ],
       "image": "captures/wedding-calendar.png",
-      "imageHash": "291a143ad1404cda0b31bb13ef7cc70567846299673daa75bd23ffe6a0a68d63",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -10236,7 +10235,7 @@
         },
         {
           "file": "css/source/event-calendar.css",
-          "hash": "4e3ad557e1163941e9c90a58ba6e88f004155202dbdef369cc070adb52ee8912"
+          "hash": "ff359e29018b9020f3d1d402e7f140f94b54157bab364c056a0588c54f5dd4f4"
         },
         {
           "file": "css/source/navigation-alarms.css",
@@ -10252,7 +10251,7 @@
         },
         {
           "file": "css/source/wedding-moves.css",
-          "hash": "6287c90bdfe18d4fc9539d10fcb1f3c17cd94f096632685c6dc9237813031ff2"
+          "hash": "f7b818906f9cdb5aba272b64234d86021d599ee92cd6e37c01bc5ba4be021547"
         },
         {
           "file": "css/source/routines.css",
@@ -10312,11 +10311,11 @@
         },
         {
           "file": "js/swipe-render.js",
-          "hash": "e01eac6ebe460449112b96871abb4643ddce8c088eee73ccdcc01a538bb447ca"
+          "hash": "7e3bffd62179175533d848775d0e23a4397c1249938f91a2d27745bb32295479"
         },
         {
           "file": "js/events-picker-color.js",
-          "hash": "0f420a8b538d47bfeea68e4f6ac5a9ac838a605251ab3d3dc4eb993f37ae79bb"
+          "hash": "bc260d339700805035c3ec90fbe6a50c6e27c8f266c1a4f18401b0dca1e52351"
         },
         {
           "file": "js/events-order.js",
@@ -10336,11 +10335,11 @@
         },
         {
           "file": "js/bodas.js",
-          "hash": "d7550ec741be8cfa544b983ca2ab98846aa30a1a99d6c34d1a008a1243f88f8e"
+          "hash": "1744f2fec13aa84914d6d77497d5dbae2b8a2aada5bb9754af9f551ec017ed42"
         },
         {
           "file": "js/bodas-bind.js",
-          "hash": "86705fea98872278b2a742018fe04f0c720cb54523e72701debe05572b2d1980"
+          "hash": "0f6d0eab6872e1d011c115efa22c95d2f83205df333f168a3b20866dc7d92c88"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -10353,7 +10352,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "dfec87899e32aff4854d829c40f56a31b5954ebb",
+      "commit": "95b2ae513ad8c7a65ac0791710ce0492214cc8ba",
+      "verifiedEdges": [],
+      "imageHash": "217f5e7f9403583ecc1e79bdc8f1c159d520e3416de7825d3aa59c788885ee72",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -10368,8 +10369,7 @@
           }
         }
       ],
-      "verifiedEdges": [],
-      "fresh": false
+      "fresh": true
     },
     {
       "id": "wedding-stats",
@@ -35970,14 +35970,9 @@
       "line": 396
     },
     {
-      "symbol": "openBodaPackPicker",
-      "file": "js/bodas-bind.js",
-      "line": 3
-    },
-    {
       "symbol": "openBodaCoupleForm",
       "file": "js/bodas-bind.js",
-      "line": 54
+      "line": 45
     },
     {
       "symbol": "openBodaClaseForm",

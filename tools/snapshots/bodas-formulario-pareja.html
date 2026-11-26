@@ -18,19 +18,32 @@
 <input type="checkbox" role="switch" class="boda-switch" id="bodaCFuture" aria-label="Pareja futura">
 </label>
 </div>
-<div class="boda-cform-pair">
 <div class="ev-field">
-<label for="bodaCPackBtn">Pack</label>
-<input type="hidden" id="bodaCPack" value="pack-4" data-kept="4" data-orig="pack-4">
-<button type="button" class="ev-input boda-pack-btn" id="bodaCPackBtn" aria-haspopup="dialog">Latido · 4 clases<span class="ev-tax-chevron" aria-hidden="true">
-</span>
+<label>Pack</label>
+<input type="hidden" id="bodaCPack" value="pack-4">
+<div class="boda-pack-tiles" role="group" aria-label="Pack">
+<button type="button" class="boda-pack-tile" data-pack="pack-2" aria-pressed="false">
+<b>2</b>
+<small>clases</small>
+<span>Esencia</span>
+</button>
+<button type="button" class="boda-pack-tile on" data-pack="pack-4" aria-pressed="true">
+<b>4</b>
+<small>clases</small>
+<span>Latido</span>
+</button>
+<button type="button" class="boda-pack-tile" data-pack="pack-6" aria-pressed="false">
+<b>6</b>
+<small>clases</small>
+<span>Eternidad</span>
 </button>
 </div>
-<div class="ev-field">
-<label for="bodaCWed">Día de la boda</label>
-<input class="ev-input" id="bodaCWed" type="date" value="2026-10-10">
 </div>
-</div>
+<label class="boda-wed-box" for="bodaCWed">
+<span class="boda-wed-lbl">&#128141; Día de la boda</span>
+<input class="boda-wed-input" id="bodaCWed" type="date" value="2026-10-10">
+<span class="boda-wed-hint" id="bodaCWedHint">En 50 días</span>
+</label>
 <div class="ev-field">
 <label for="bodaCNote">Notas <span id="bodaCCnt" class="boda-cform-count">8/200</span>
 </label>

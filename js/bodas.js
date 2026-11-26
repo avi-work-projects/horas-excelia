@@ -357,13 +357,14 @@ function _renderBodaCalendario(){
   h+='</div>';
   h+='<div class="boda-cal-hdr">';
   ['L','M','X','J','V','S','D'].forEach(function(d){h+='<div>'+d+'</div>';});
-  h+='</div><div class="boda-cal-grid" id="bodaCalGrid">';
+  /* Rejilla, día elegido y parejas se deslizan juntos; siempre seis semanas,
+     para que el alto no cambie entre meses y nada entre de golpe al final. */
+  h+='</div><div class="boda-cal-body" id="bodaCalBody"><div class="boda-cal-grid" id="bodaCalGrid">';
   var first=new Date(y,m,1);
   var dow=first.getDay(),off=dow===0?6:dow-1;
   var cur=new Date(first);cur.setDate(cur.getDate()-off);
-  var last=new Date(y,m+1,0);
   var todayDs=evDk(new Date());
-  while(cur<=last||cur.getDay()!==1){
+  for(var cell=0;cell<42;cell++){
     var ds=evDk(cur);
     var inM=cur.getMonth()===m;
     var clsDia=bodaSortClasses(porDia[ds]||[]);
@@ -419,6 +420,7 @@ function _renderBodaCalendario(){
       +(c.weddingDate?'<em>&#128141; '+_bodaFmtCorto(c.weddingDate).slice(4)+'</em>':'')
       +'</button>';
   });
+  h+='</div>';
   h+='</div>';
   return h;
 }
